@@ -60,6 +60,149 @@ theorem pathGenerationChildObservable_measurable
     ((survive_measurableSet i).preimage measurable_fst)
     measurable_const
 
+/-- The conditional first moment of one child continuation is the spine
+many-to-one integral, provided that child is present. -/
+theorem lintegral_pathGenerationChildObservable_eq_manyToOne
+    {X : Type*} [MeasurableSpace X]
+    (φ : Potential X) (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
+    (hboundary : HasBoundaryNormalization φ μ)
+    (n : ℕ) (F : (Fin (n + 2) → ℝ) → ℝ≥0∞) (hF : Measurable F)
+    (x : ℝ) (i : ℕ) (ξ : Step ℕ X) :
+    (∫⁻ η, pathGenerationChildObservable φ n F x i ξ η
+      ∂stepFieldLaw μ) =
+      survivingPotentialTest φ
+        (fun y => ∫⁻ increment,
+          ENNReal.ofReal (Real.exp
+            (AdditivePath.displacement n increment)) *
+            F (prependHistory x
+              (ProbabilityTheory.RandomWalk.history n (x + y) increment))
+          ∂tiltedIncrementFieldLaw φ μ) ξ i := by
+  let tailTest : (Fin (n + 1) → ℝ) → ℝ≥0∞ :=
+    fun tail => F (prependHistory x tail)
+  have htailTest : Measurable tailTest :=
+    hF.comp ((prependHistory_joint_measurable n).comp
+      (measurable_const.prodMk measurable_id))
+  have hmean (y : ℝ) :
+      (∫⁻ η, Spine.pathGeneration φ n tailTest (x + y) η
+        ∂stepFieldLaw μ) =
+        ∫⁻ increment,
+          ENNReal.ofReal (Real.exp
+            (AdditivePath.displacement n increment)) *
+            F (prependHistory x
+              (ProbabilityTheory.RandomWalk.history n (x + y) increment))
+          ∂tiltedIncrementFieldLaw φ μ := by
+    simpa [tailTest] using
+      (Spine.pathManyToOneCore φ μ hboundary n htailTest (x + y))
+  classical
+  by_cases hi : survive ξ i
+  · simp [pathGenerationChildObservable, survivingPotentialTest,
+      tailTest, hi, hmean]
+  · simp [pathGenerationChildObservable, survivingPotentialTest, hi]
+
+/-- The terminal cutoff in Lemma 4.5 bounds a child's continuation moment by
+the exponential terminal weight times the corresponding spine corridor
+probability. -/
+theorem lintegral_pathGenerationChildObservable_le_endpoint_weight
+    {X : Type*} [MeasurableSpace X]
+    (φ : Potential X) (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
+    (hboundary : HasBoundaryNormalization φ μ)
+    (n : ℕ) (x terminalUpper : ℝ)
+    (corridor : Set (Fin (n + 2) → ℝ))
+    (hcorridor : MeasurableSet corridor)
+    (hterminal : ∀ history ∈ corridor,
+      history ⟨n + 1, by omega⟩ ≤ terminalUpper)
+    (i : ℕ) (ξ : Step ℕ X) :
+    (∫⁻ η, pathGenerationChildObservable φ n
+      (corridor.indicator fun _ => (1 : ℝ≥0∞)) x i ξ η
+      ∂stepFieldLaw μ) ≤
+      survivingPotentialTest φ
+        (fun y => ENNReal.ofReal (Real.exp (terminalUpper - (x + y))) *
+          (tiltedIncrementFieldLaw φ μ)
+            {increment | prependHistory x
+              (ProbabilityTheory.RandomWalk.history n (x + y) increment) ∈
+                corridor}) ξ i := by
+  classical
+  rw [lintegral_pathGenerationChildObservable_eq_manyToOne
+    φ μ hboundary n (corridor.indicator fun _ => (1 : ℝ≥0∞))
+      (measurable_const.indicator hcorridor) x i ξ]
+  by_cases hi : survive ξ i
+  · simp only [survivingPotentialTest, if_pos hi]
+    let y : ℝ := ξ.potentialValue' φ i
+    let E : Set (ℕ → ℝ) := {increment | prependHistory x
+      (ProbabilityTheory.RandomWalk.history n (x + y) increment) ∈ corridor}
+    have hE : MeasurableSet E :=
+      hcorridor.preimage ((prependHistory_joint_measurable n).comp
+        (measurable_const.prodMk
+          (ProbabilityTheory.RandomWalk.history_measurable n (x + y))))
+    have hterminalPath (increment : ℕ → ℝ) (hevent : increment ∈ E) :
+        AdditivePath.displacement n increment ≤ terminalUpper - (x + y) := by
+      have h := hterminal
+        (prependHistory x
+          (ProbabilityTheory.RandomWalk.history n (x + y) increment)) hevent
+      have hindex :
+          (⟨n + 1, by omega⟩ : Fin (n + 2)) =
+            Fin.succ ⟨n, Nat.lt_succ_self n⟩ := by
+        apply Fin.ext
+        rfl
+      rw [hindex, prependHistory_succ, ProbabilityTheory.RandomWalk.history_last,
+        AdditivePath.fromIncrements_apply] at h
+      linarith
+    have htailBound :
+        (∫⁻ increment,
+          ENNReal.ofReal (Real.exp (AdditivePath.displacement n increment)) *
+            (corridor.indicator fun _ => (1 : ℝ≥0∞))
+              (prependHistory x
+                (ProbabilityTheory.RandomWalk.history n (x + y) increment))
+          ∂tiltedIncrementFieldLaw φ μ) ≤
+        ENNReal.ofReal (Real.exp (terminalUpper - (x + y))) *
+          (tiltedIncrementFieldLaw φ μ) E := by
+      calc
+        _ ≤ ∫⁻ increment,
+            ENNReal.ofReal (Real.exp (terminalUpper - (x + y))) *
+              E.indicator (fun _ => (1 : ℝ≥0∞)) increment
+            ∂tiltedIncrementFieldLaw φ μ := by
+          apply lintegral_mono
+          intro increment
+          by_cases hevent : increment ∈ E
+          · have hweight :
+                ENNReal.ofReal (Real.exp (AdditivePath.displacement n increment)) ≤
+                  ENNReal.ofReal (Real.exp (terminalUpper - (x + y))) :=
+              ENNReal.ofReal_le_ofReal
+                (Real.exp_le_exp.mpr (hterminalPath increment hevent))
+            change ENNReal.ofReal (Real.exp (AdditivePath.displacement n increment)) *
+                corridor.indicator (fun _ => (1 : ℝ≥0∞))
+                  (prependHistory x
+                    (ProbabilityTheory.RandomWalk.history n (x + y) increment)) ≤
+              ENNReal.ofReal (Real.exp (terminalUpper - (x + y))) *
+                E.indicator (fun _ => (1 : ℝ≥0∞)) increment
+            have hcorridorMem : prependHistory x
+                (ProbabilityTheory.RandomWalk.history n (x + y) increment) ∈
+                  corridor := by
+              simpa [E] using hevent
+            simp only [Set.indicator_of_mem hcorridorMem,
+              Set.indicator_of_mem hevent]
+            simpa using hweight
+          · have hcorridorNot :
+                prependHistory x
+                  (ProbabilityTheory.RandomWalk.history n (x + y) increment) ∉
+                    corridor := hevent
+            change ENNReal.ofReal (Real.exp (AdditivePath.displacement n increment)) *
+                corridor.indicator (fun _ => (1 : ℝ≥0∞))
+                  (prependHistory x
+                    (ProbabilityTheory.RandomWalk.history n (x + y) increment)) ≤
+              ENNReal.ofReal (Real.exp (terminalUpper - (x + y))) *
+                E.indicator (fun _ => (1 : ℝ≥0∞)) increment
+            simp only [Set.indicator_of_notMem hcorridorNot,
+              Set.indicator_of_notMem hevent]
+            simp
+        _ = ENNReal.ofReal (Real.exp (terminalUpper - (x + y))) *
+            (tiltedIncrementFieldLaw φ μ) E := by
+          rw [lintegral_const_mul _ (measurable_const.indicator hE)]
+          rw [lintegral_indicator_const hE]
+          simp
+    simpa [y, E] using htailBound
+  · simp [survivingPotentialTest, hi]
+
 /-- Integrating an observable of the root step and a fixed child's subtree
 uses their product law. -/
 theorem lintegral_root_subtreeFunction_eq
