@@ -8,6 +8,7 @@ module
 
 public import Probability.BranchingRandomWalk.Step.Ordering
 public import Probability.BranchingRandomWalk.Step.PointMeasure
+public import Probability.BranchingRandomWalk.Assumptions.Structural
 
 /-!
 # Branching laws presented through a measurable scalar ordering
@@ -121,5 +122,47 @@ theorem StepLaw.totalChildWeight_ordering
     totalChildWeight (L.ordering ξ) = totalChildWeight ξ := by
   rw [← lintegral_stepPointMeasure_exp (L.ordering ξ),
     ← lintegral_stepPointMeasure_exp ξ, L.sorted_pointMeasure ξ]
+
+/-- The complete exponential potential weight is invariant under the
+ordering rule because the rule preserves the child's point measure. -/
+theorem StepLaw.totalPotentialWeight_ordering
+    {ι κ X : Type*} [MeasurableSpace X] [LT κ]
+    (L : StepLaw ι κ X) (ξ : Combinatorics.Branching.Step ι X) :
+    totalPotentialWeight L.potential (-1) (L.ordering ξ) =
+      totalPotentialWeight L.potential (-1) ξ := by
+  calc
+    totalPotentialWeight L.potential (-1) (L.ordering ξ) =
+        ∫⁻ x, ProbabilityTheory.PointProcess.exponentialWeight
+          L.potential (-1) x ∂stepPointMeasure (L.ordering ξ) := by
+      simpa [totalPotentialWeight] using
+        (lintegral_stepPointMeasure_potential L.potential (-1)
+          (L.ordering ξ) (f := fun _ => (1 : ENNReal)) measurable_const).symm
+    _ = ∫⁻ x, ProbabilityTheory.PointProcess.exponentialWeight
+          L.potential (-1) x ∂stepPointMeasure ξ := by
+      rw [L.sorted_pointMeasure ξ]
+    _ = totalPotentialWeight L.potential (-1) ξ := by
+      simpa [totalPotentialWeight] using
+        (lintegral_stepPointMeasure_potential L.potential (-1) ξ
+          (f := fun _ => (1 : ENNReal)) measurable_const)
+
+/-- Boundary normalization is preserved when passing from raw children to
+their measurable ordered realization. -/
+theorem StepLaw.sorted_hasBoundaryNormalization
+    {ι κ X : Type*} [Countable ι] [Countable κ] [MeasurableSpace X] [LT κ]
+    (L : StepLaw ι κ X)
+    (h : HasBoundaryNormalization L.potential L.raw) :
+    HasBoundaryNormalization L.potential L.sorted := by
+  change (∫⁻ η, totalPotentialWeight L.potential (-1) η
+      ∂Measure.map L.ordering L.raw) = 1
+  rw [lintegral_map (totalPotentialWeight_measurable L.potential (-1))
+    L.ordering.measurable_ordered]
+  calc
+    (∫⁻ ξ, totalPotentialWeight L.potential (-1)
+        (L.ordering ξ) ∂L.raw) =
+      ∫⁻ ξ, totalPotentialWeight L.potential (-1) ξ ∂L.raw := by
+        apply lintegral_congr
+        intro ξ
+        exact L.totalPotentialWeight_ordering ξ
+    _ = 1 := h
 
 end ProbabilityTheory.BranchingRandomWalk
