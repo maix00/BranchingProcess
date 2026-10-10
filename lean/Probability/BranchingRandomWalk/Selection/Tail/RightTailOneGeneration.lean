@@ -158,6 +158,102 @@ theorem measure_noRootHasPotentialChildIn_eq_pow
   rw [hnot] at hfactor
   exact hfactor
 
+/-- The independent initial roots all miss a measurable one-root event with
+probability equal to the one-root failure probability raised to the number of
+roots.  The event may inspect the entire pre-sampled descendant field of a
+root, so this is the independence interface needed for multi-generation tube
+success events as well as one-generation hits. -/
+theorem measure_allRootsAvoidStepFieldEvent_eq_pow
+    {X : Type*} [MeasurableSpace X]
+    (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
+    (E : Set (StepField ℕ X)) (hE : MeasurableSet E) (m : ℕ) :
+    (finiteRootStepFieldLaw μ m)
+        {field : FiniteRootStepField m ℕ X |
+          ∀ r : Fin m, field r ∉ E} =
+      ((stepFieldLaw μ) Eᶜ) ^ m := by
+  have hroot (r : Fin m) :
+      (finiteRootStepFieldLaw μ m)
+          ((fun field : FiniteRootStepField m ℕ X => field r) ⁻¹' Eᶜ) =
+        (stepFieldLaw μ) Eᶜ := by
+    rw [← Measure.map_apply (measurable_pi_apply r) hE.compl]
+    rw [finiteRootStepFieldLaw_root_marginal μ r]
+  have hfactor :=
+    (finiteRootStepFieldLaw_roots_independent μ m).measure_inter_preimage_eq_mul
+      Finset.univ (sets := fun _ : Fin m => Eᶜ)
+      (by intro r hr; exact hE.compl)
+  have hset :
+      (⋂ r ∈ Finset.univ,
+        (fun field : FiniteRootStepField m ℕ X => field r) ⁻¹' Eᶜ) =
+        {field : FiniteRootStepField m ℕ X | ∀ r : Fin m, field r ∉ E} := by
+    ext field
+    simp
+  rw [hset] at hfactor
+  have hprod :
+      (∏ r ∈ Finset.univ,
+        (finiteRootStepFieldLaw μ m)
+          ((fun field : FiniteRootStepField m ℕ X => field r) ⁻¹' Eᶜ)) =
+        ((stepFieldLaw μ) Eᶜ) ^ m := by
+    simp_rw [hroot]
+    simp
+  rw [hprod] at hfactor
+  exact hfactor
+
+/-- If one initial root has probability at least `p` of a measurable event
+in its whole descendant field, then the chance that all `m` independent
+roots miss the event is at most `exp (-m * p)`. -/
+theorem measure_allRootsAvoidStepFieldEvent_le_exp
+    {X : Type*} [MeasurableSpace X]
+    (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
+    (E : Set (StepField ℕ X)) (hE : MeasurableSet E) (m : ℕ)
+    (p : ℝ) (hp : 0 ≤ p) (hp_one : p ≤ 1)
+    (hprob : p ≤ ((stepFieldLaw μ) E).toReal) :
+    (finiteRootStepFieldLaw μ m)
+        {field : FiniteRootStepField m ℕ X |
+          ∀ r : Fin m, field r ∉ E} ≤
+      ENNReal.ofReal (Real.exp (-(m : ℝ) * p)) := by
+  let q : ℝ≥0∞ := (stepFieldLaw μ) E
+  have hqtop : q ≠ ∞ := measure_ne_top _ _
+  have hpq : ENNReal.ofReal p ≤ q := by
+    calc
+      ENNReal.ofReal p ≤ ENNReal.ofReal q.toReal :=
+        ENNReal.ofReal_le_ofReal hprob
+      _ = q := ENNReal.ofReal_toReal hqtop
+  have hfailure :
+      (stepFieldLaw μ) Eᶜ ≤ 1 - ENNReal.ofReal p := by
+    have hcompl := prob_compl_le_one_sub_of_le_prob
+      (μ := stepFieldLaw μ) (p := ENNReal.ofReal p) (s := E)
+      (by simpa [q] using hpq) hE
+    exact hcompl
+  have hbase :
+      1 - ENNReal.ofReal p = ENNReal.ofReal (1 - p) := by
+    simpa using (ENNReal.ofReal_sub 1 hp).symm
+  have hexp : (1 - p) ^ m ≤ Real.exp (-(m : ℝ) * p) := by
+    calc
+      (1 - p) ^ m ≤ (Real.exp (-p)) ^ m :=
+        pow_le_pow_left₀ (sub_nonneg.mpr hp_one) (Real.one_sub_le_exp_neg p) m
+      _ = Real.exp (-(m : ℝ) * p) := by
+        rw [← Real.exp_nat_mul]
+        congr 1
+        ring
+  have hpow :
+      (ENNReal.ofReal (1 - p)) ^ m ≤
+        ENNReal.ofReal (Real.exp (-(m : ℝ) * p)) := by
+    calc
+      (ENNReal.ofReal (1 - p)) ^ m = ENNReal.ofReal ((1 - p) ^ m) :=
+        (ENNReal.ofReal_pow (sub_nonneg.mpr hp_one) m).symm
+      _ ≤ ENNReal.ofReal (Real.exp (-(m : ℝ) * p)) :=
+        ENNReal.ofReal_le_ofReal hexp
+  calc
+    (finiteRootStepFieldLaw μ m)
+        {field : FiniteRootStepField m ℕ X |
+          ∀ r : Fin m, field r ∉ E} =
+      ((stepFieldLaw μ) Eᶜ) ^ m :=
+        measure_allRootsAvoidStepFieldEvent_eq_pow μ E hE m
+    _ ≤ (1 - ENNReal.ofReal p) ^ m :=
+      pow_le_pow_left₀ (by positivity) hfailure m
+    _ = (ENNReal.ofReal (1 - p)) ^ m := by rw [hbase]
+    _ ≤ ENNReal.ofReal (Real.exp (-(m : ℝ) * p)) := hpow
+
 /-- A one-generation upper bound for all-root failure.  Its one-root success
 probability is bounded below from the actual offspring law by the
 second-moment estimate. -/
