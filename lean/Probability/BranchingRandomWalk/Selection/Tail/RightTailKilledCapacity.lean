@@ -65,6 +65,113 @@ noncomputable def rightTailPositiveAWindowUpper
       v * (((ellN - ell : ℕ) : ℝ) ^ (1 / 3 : ℝ))
   else 0
 
+/-- The parameter inequalities in the positive-`a` construction are feasible
+whenever the target threshold is strictly above the limiting trajectory.
+Here `r` is the positive cube root of `t`; keeping `r^3 = t` explicit makes
+the algebraic choice of `c` transparent. -/
+theorem exists_rightTailPositiveAParameters
+    (a t r sigmaSq zeta : ℝ)
+    (ha : 0 < a) (ht : 0 < t) (hr : 0 < r) (hrcube : r ^ 3 = t)
+    (hsigma : 0 ≤ sigmaSq)
+    (hgap : -a + Real.pi ^ 2 / 2 * sigmaSq * t < zeta) :
+    ∃ b v c : ℝ,
+      0 < b ∧ b < a ∧ 0 < v ∧ 0 < c ∧ c < r⁻¹ ∧
+      c * r + (a - b) + v < 1 ∧
+      -b + Real.pi ^ 2 / 2 * sigmaSq * (c⁻¹ ^ 2 * r) +
+        2 * v * (1 + r) < zeta := by
+  let C : ℝ := Real.pi ^ 2 / 2 * sigmaSq
+  let gap : ℝ := zeta - (-a + C * t)
+  let K : ℝ := 1 / 3 + 8 * C * t + 2 / 3 * (1 + r)
+  let δ : ℝ := min (min (1 / 2) a) (gap / (2 * K))
+  have hC : 0 ≤ C := by
+    dsimp [C]
+    positivity
+  have hgapPos : 0 < gap := by
+    dsimp [gap, C]
+    linarith
+  have hK : 0 < K := by
+    dsimp [K]
+    positivity
+  have hδ : 0 < δ := by
+    dsimp [δ]
+    positivity
+  have hδHalf : δ ≤ 1 / 2 := by
+    dsimp [δ]
+    exact (min_le_left _ _).trans (min_le_left _ _)
+  have hδA : δ ≤ a := by
+    dsimp [δ]
+    exact (min_le_left _ _).trans (min_le_right _ _)
+  have hδGap : δ ≤ gap / (2 * K) := by
+    dsimp [δ]
+    exact min_le_right _ _
+  have hden : 0 < 1 - δ := by linarith
+  have hquadLeft : 0 ≤ 1 - 2 * δ := by linarith
+  have hquadRight : 0 ≤ (11 : ℝ) / 2 - 4 * δ := by linarith
+  have hquad : 0 ≤ 8 * δ ^ 2 - 15 * δ + 6 := by
+    have hprod := mul_nonneg hquadLeft hquadRight
+    nlinarith
+  have hpolyProduct : 1 ≤ (1 + 8 * δ) * (1 - δ) ^ 2 := by
+    have hprod := mul_nonneg hδ.le hquad
+    nlinarith
+  have hratio : 1 / (1 - δ) ^ 2 ≤ 1 + 8 * δ := by
+    apply (div_le_iff₀ (sq_pos_of_pos hden)).2
+    nlinarith [hpolyProduct]
+  have hratioTerm : C * (t / (1 - δ) ^ 2) ≤ C * t * (1 + 8 * δ) := by
+    calc
+      C * (t / (1 - δ) ^ 2) = (C * t) * (1 / (1 - δ) ^ 2) := by ring
+      _ ≤ (C * t) * (1 + 8 * δ) :=
+        mul_le_mul_of_nonneg_left hratio (mul_nonneg hC ht.le)
+  let b : ℝ := a - δ / 3
+  let v : ℝ := δ / 3
+  let c : ℝ := (1 - δ) / r
+  have hcInv : c⁻¹ = r / (1 - δ) := by
+    dsimp [c]
+    field_simp [hr.ne', hden.ne']
+  have hcScale : c⁻¹ ^ 2 * r = t / (1 - δ) ^ 2 := by
+    rw [hcInv]
+    calc
+      (r / (1 - δ)) ^ 2 * r = r ^ 3 / (1 - δ) ^ 2 := by
+        field_simp [hden.ne']
+      _ = t / (1 - δ) ^ 2 := by rw [hrcube]
+  have hδK : δ * K ≤ gap / 2 := by
+    calc
+      δ * K ≤ (gap / (2 * K)) * K :=
+        mul_le_mul_of_nonneg_right hδGap hK.le
+      _ = gap / 2 := by field_simp [hK.ne']
+  refine ⟨b, v, c, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  · dsimp [b]
+    nlinarith [ha, hδA]
+  · dsimp [b]
+    linarith
+  · dsimp [v]
+    positivity
+  · dsimp [c]
+    exact div_pos (by linarith) hr
+  · dsimp [c]
+    rw [div_lt_iff₀ hr]
+    rw [inv_mul_cancel₀ hr.ne']
+    linarith
+  · dsimp [b, v, c]
+    field_simp [hr.ne']
+    linarith
+  · dsimp [b, v]
+    rw [hcScale]
+    change -(a - δ / 3) + C * (t / (1 - δ) ^ 2) +
+      2 * (δ / 3) * (1 + r) < zeta
+    have hmain : -(a - δ / 3) + C * (t / (1 - δ) ^ 2) +
+        2 * (δ / 3) * (1 + r) ≤ -a + C * t + δ * K := by
+      dsimp [K]
+      nlinarith [hratioTerm]
+    have hgapEq : -a + C * t + gap = zeta := by
+      dsimp [gap]
+      ring
+    calc
+      -(a - δ / 3) + C * (t / (1 - δ) ^ 2) +
+          2 * (δ / 3) * (1 + r) ≤ -a + C * t + δ * K := hmain
+      _ ≤ -a + C * t + gap / 2 := by linarith [hδK]
+      _ < -a + C * t + gap := by linarith [hgapPos]
+      _ = zeta := hgapEq
+
 theorem measurableSet_rightTailPositiveARestartedWindow
     (ell ellN : ℕ) (logN b v c κ : ℝ) (k : ℕ) :
     MeasurableSet (rightTailPositiveARestartedWindow ell ellN logN b v c κ k) := by
