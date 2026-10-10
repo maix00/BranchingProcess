@@ -603,9 +603,37 @@ theorem repairedInfiniteSelection_isSubadditiveCocycle {N : ℕ}
       simpa [Nat.zero_add, Nat.add_zero] using
         (repairedInfiniteSelectionSubadditiveArray_suffix hN ω m 0 n).symm
 
-/-- Apply the ergodic Kingman theorem to the repaired finite-selection array.
-The two analytic inputs are stated explicitly: integrability of every block
-length and a uniform lower bound on normalized expected block values. -/
+/-- Apply the full Kingman theorem to the repaired finite-selection array.
+Besides almost-sure convergence, it returns an integrable limit invariant
+under the generation shift. The two analytic inputs are stated explicitly:
+integrability of every block length and a uniform lower bound on normalized
+expected block values. -/
+theorem repairedInfiniteSelection_tendsto_invariant_integrable {N : ℕ}
+    (hN : 0 < N) (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
+    (hint : ∀ n, Integrable
+      (fun ω : GenerationEnvironment N =>
+        repairedInfiniteSelectionSubadditiveArray hN ω 0 n)
+      (generationEnvironmentLaw μ N))
+    (hbdd : BddBelow (Set.range fun n : ℕ =>
+      (∫ ω, repairedInfiniteSelectionSubadditiveArray hN ω 0 (n + 1)
+        ∂generationEnvironmentLaw μ N) / (n + 1))) :
+    ∃ G : GenerationEnvironment N → ℝ,
+      (G ∘ generationEnvironmentShift =ᵐ[generationEnvironmentLaw μ N] G) ∧
+      Integrable G (generationEnvironmentLaw μ N) ∧
+      ∀ᵐ ω ∂generationEnvironmentLaw μ N,
+      Tendsto
+        (fun n : ℕ => (n : ℝ)⁻¹ *
+          repairedInfiniteSelectionSubadditiveArray hN ω 0 n)
+        atTop (𝓝 (G ω)) := by
+  let ν := generationEnvironmentLaw μ N
+  have hν : IsProbabilityMeasure ν := generationEnvironmentLaw_isProbability μ N
+  letI := hν
+  exact ProbabilityTheory.tendsto_kingman
+    (generationEnvironmentLaw_shift_measurePreserving μ N)
+    (repairedInfiniteSelection_isSubadditiveCocycle hN) hint hbdd
+
+/-- In the i.i.d. generation environment the invariant Kingman limit is
+almost surely constant, giving the scalar-speed form of the theorem. -/
 theorem repairedInfiniteSelection_tendsto_constant {N : ℕ}
     (hN : 0 < N) (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
     (hint : ∀ n, Integrable
@@ -623,9 +651,14 @@ theorem repairedInfiniteSelection_tendsto_constant {N : ℕ}
   let ν := generationEnvironmentLaw μ N
   have hν : IsProbabilityMeasure ν := generationEnvironmentLaw_isProbability μ N
   letI := hν
-  exact ProbabilityTheory.tendsto_kingman_ergodic
-    (generationEnvironmentShift_ergodic μ N)
-    (repairedInfiniteSelection_isSubadditiveCocycle hN) hint hbdd
+  obtain ⟨G, hGinv, hGint, hGconv⟩ :=
+    repairedInfiniteSelection_tendsto_invariant_integrable hN μ hint hbdd
+  have hErg := generationEnvironmentShift_ergodic μ N
+  obtain ⟨c, hc⟩ := hErg.ae_eq_const_of_ae_eq_comp_ae
+    hGint.aestronglyMeasurable hGinv
+  refine ⟨c, ?_⟩
+  filter_upwards [hGconv, hc] with ω hω hωc
+  simpa [hωc] using hω
 
 /-- On an environment whose every generation is a valid transition, repairing
 the environment leaves the deterministic selection array unchanged. -/
