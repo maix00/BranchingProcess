@@ -39,6 +39,13 @@ def affineCorridorHistory (n : ℕ) (lower drift width : ℝ) :
   {history | ∀ k, lower + drift * (k.val : ℝ) ≤ history k ∧
     history k ≤ lower + drift * (k.val : ℝ) + width}
 
+/-- Histories through time `n` that stay in a fixed-width affine corridor.
+Unlike `affineCorridorHistory`, this prefix has no extra terminal time. -/
+def affineCorridorPrefix (n : ℕ) (lower drift width : ℝ) :
+    Set (Fin (n + 1) → ℝ) :=
+  {history | ∀ k, lower + drift * (k.val : ℝ) ≤ history k ∧
+    history k ≤ lower + drift * (k.val : ℝ) + width}
+
 /-- The corridor window at its first positive time coordinate. -/
 def affineCorridorFirstWindow (lower drift width : ℝ) : Set ℝ :=
   {y | lower + drift ≤ y ∧ y ≤ lower + drift + width}
@@ -58,6 +65,20 @@ theorem measurableSet_affineCorridorHistory
         history k ≤ lower + drift * (k.val : ℝ) + width} by
         ext history
         simp [affineCorridorHistory]]
+  apply MeasurableSet.iInter
+  intro k
+  exact MeasurableSet.inter
+    (measurableSet_le measurable_const (measurable_pi_apply k))
+    (measurableSet_le (measurable_pi_apply k) measurable_const)
+
+theorem measurableSet_affineCorridorPrefix
+    (n : ℕ) (lower drift width : ℝ) :
+    MeasurableSet (affineCorridorPrefix n lower drift width) := by
+  rw [show affineCorridorPrefix n lower drift width =
+      ⋂ k : Fin (n + 1), {history | lower + drift * (k.val : ℝ) ≤ history k ∧
+        history k ≤ lower + drift * (k.val : ℝ) + width} by
+        ext history
+        simp [affineCorridorPrefix]]
   apply MeasurableSet.iInter
   intro k
   exact MeasurableSet.inter
