@@ -1553,6 +1553,57 @@ theorem rightTailPositiveA_firstStage_probability_le_of_drawdownBound
     (rightTailPositiveA_firstStage_event_subset_noLargeDropEndpointBelowEvent
       ell logN b)).trans hdrawdown
 
+/-- A horizontal interval corridor has the same uniform finite-variance
+exponential bound as the corresponding drawdown event. This is the first
+stage of the positive-`a` construction in (4.15). -/
+theorem exists_uniform_iidSequenceLaw_firstStageCorridor_le_ah
+    (ν : Measure ℝ) [IsProbabilityMeasure ν] {sigma : ℝ}
+    (hν : ProbabilityTheory.IsCenteredSecondMoment ν (sigma ^ 2))
+    (hsigma : 0 < sigma)
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+    [IsProbabilityMeasure P] {B : NNReal → Ω → ℝ}
+    (hB : IsPreBrownianReal B P)
+    (hcontinuous : ∀ ω, Continuous (B · ω))
+    (hmeasurable : ∀ t, Measurable (B t))
+    (endpointRatio target blockTarget p : ℝ)
+    (hEndpointRatio : 0 < endpointRatio)
+    (htarget : 0 < target) (htargetBlock : target < blockTarget)
+    (hblockTarget : blockTarget < Real.pi ^ 2 / 2) (hp : 0 < p) :
+    ∃ delta0 : ℝ, 0 < delta0 ∧
+      ∀ horizon : ℕ, ∀ width : ℝ, 0 < width → delta0 ≤ width →
+        width ^ (2 + p) ≤ (horizon : ℝ) →
+        iidSequenceLaw ν
+          {increment : ℕ → ℝ |
+            InClosedInterval (-width) 0 horizon 0 increment} ≤
+          ENNReal.ofReal (Real.exp
+            (-target * sigma ^ 2 * (horizon : ℝ) / width ^ 2)) := by
+  obtain ⟨delta0, hdelta0, hdrawdown⟩ :=
+    _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.exists_uniform_iidSequenceLaw_measure_noLargeDropEndpointBelowEvent_le_ah_exp_of_centeredSecondMoment
+      ν hν hsigma hB hcontinuous hmeasurable endpointRatio target blockTarget p
+      hEndpointRatio htarget htargetBlock hblockTarget hp
+  refine ⟨delta0, hdelta0, ?_⟩
+  intro horizon width hwidth hscale hlength
+  have hinterval :=
+    rightTailPositiveA_firstStage_event_subset_noLargeDropEndpointBelowEvent
+      horizon width 1
+  have hinterval' :
+      {increment : ℕ → ℝ |
+        InClosedInterval (-width) 0 horizon 0 increment} ⊆
+      ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.noLargeDropEndpointBelowEvent
+        horizon width 0 := by
+    simpa using hinterval
+  have hthreshold : 0 ≤ width / endpointRatio :=
+    div_nonneg hwidth.le hEndpointRatio.le
+  have hcutoff :
+      ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.noLargeDropEndpointBelowEvent
+        horizon width 0 ⊆
+      ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.noLargeDropEndpointBelowEvent
+        horizon width (width / endpointRatio) := by
+    intro increment h
+    exact ⟨h.1, le_trans h.2 hthreshold⟩
+  have hbound := hdrawdown width hscale horizon hlength
+  exact (measure_mono (hinterval'.trans hcutoff)).trans hbound
+
 /-- The affine second-stage corridor in the positive-`a` proof is controlled
 by the uniform finite-variance Aïdékon--Hu drawdown estimate on every prefix
 whose length is at least a superdiffusive power of the planned tube width.
