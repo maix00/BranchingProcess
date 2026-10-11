@@ -193,7 +193,7 @@ private theorem pathGenerationRootMRCAContribution_joint_measurable
         exact hformula p]
   exact hsum
 
-private theorem pathGenerationMRCAContribution_affineCorridor_measurable
+theorem pathGenerationMRCAContribution_affineCorridor_measurable
     {X : Type*} [MeasurableSpace X]
     (φ : Potential X) (m n : ℕ) (initial lower drift width endpointUpper : ℝ) :
     Measurable (pathGenerationMRCAContribution φ m ((n + 1) + m)
@@ -300,31 +300,20 @@ private theorem pathGenerationMRCAContribution_affineCorridor_measurable
   exact (hA u.1).mul (hrootJoint.comp
     ((hposition u.1).prodMk (subtreeStepField_measurable u.1)))
 
-/-- The expected ordered distinct-pair count inside an affine corridor is
-bounded by the drawdown sum of its actual MRCA contributions. -/
-theorem lintegral_pathGenerationDistinctAddressPairCount_affineCorridor_le_of_drawdown
+/-- The expected number of ordered distinct successful address pairs in an
+affine corridor is the sum of its actual MRCA contributions. Each summand
+retains the corridor and survival indicators along the ancestor prefix. -/
+theorem lintegral_pathGenerationDistinctAddressPairCount_affineCorridor_eq_sum_MRCA
     {X : Type*} [MeasurableSpace X]
     (φ : Potential X) (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
     (hboundary : HasBoundaryNormalization φ μ)
-    (N : ℕ) (initial lower drift width endpointUpper : ℝ)
-    (hdrift : 0 ≤ drift) (q : ℕ → ℝ≥0∞)
-    (hdrawdown : ∀ n,
-      (tiltedIncrementFieldLaw φ μ)
-        (ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.noLargeDropEndpointBelowEvent
-          n width (width + drift * (n : ℝ))) ≤ q n) :
+    (N : ℕ) (initial lower drift width endpointUpper : ℝ) :
     (∫⁻ ω, pathGenerationDistinctAddressPairCount φ N
       ((affineCorridorThrough N lower drift width endpointUpper).indicator
-        (fun _ => (1 : ℝ≥0∞))) initial ω ∂stepFieldLaw μ) ≤
+        (fun _ => (1 : ℝ≥0∞))) initial ω ∂stepFieldLaw μ) =
       ∑ m : Fin N,
-        ENNReal.ofReal (Real.exp (-(2 * initial))) *
-          (ENNReal.ofReal (Real.exp (2 * endpointUpper)) *
-            q (N - m.val - 1) ^ 2) *
-          (∫⁻ ξ, crossChildWeight φ ξ ∂μ) *
-          (ENNReal.ofReal
-            (Real.exp (initial - (lower + drift * (m.val : ℝ)))) *
-            (tiltedIncrementFieldLaw φ μ)
-              {increment | ProbabilityTheory.RandomWalk.history m.val initial increment ∈
-                affineCorridorPrefix m.val lower drift width}) := by
+        affineTubeMRCAPairContribution φ μ m.val (N - m.val - 1)
+          initial lower drift width endpointUpper := by
   classical
   let corridor := affineCorridorThrough N lower drift width endpointUpper
   let F : (Fin (N + 1) → ℝ) → ℝ≥0∞ :=
@@ -390,11 +379,7 @@ theorem lintegral_pathGenerationDistinctAddressPairCount_affineCorridor_le_of_dr
               (N - m.val - 1) initial lower drift width endpointUpper := by
           apply Finset.sum_congr rfl
           intro m hm
-          have hm' : m.val < N := m.isLt
           let n := N - m.val - 1
-          have hN : (n + 1) + m.val = N := by
-            dsimp [n]
-            omega
           have hNat : N - m.val - 1 + 1 + m.val = N := by omega
           have hactual :=
             lintegral_pathGenerationMRCAContribution_affineCorridor_eq
@@ -402,14 +387,43 @@ theorem lintegral_pathGenerationDistinctAddressPairCount_affineCorridor_le_of_dr
           dsimp [n] at hactual
           rw [hNat] at hactual
           simpa [F, corridor] using hactual
+  calc
+    _ = ∫⁻ ω, pathGenerationOffDiagonalPairs φ N F initial ω
+        ∂stepFieldLaw μ := hpairIntegral.symm
+    _ = _ := hterms
+
+/-- The expected ordered distinct-pair count inside an affine corridor is
+bounded by the drawdown sum of its actual MRCA contributions. -/
+theorem lintegral_pathGenerationDistinctAddressPairCount_affineCorridor_le_of_drawdown
+    {X : Type*} [MeasurableSpace X]
+    (φ : Potential X) (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
+    (hboundary : HasBoundaryNormalization φ μ)
+    (N : ℕ) (initial lower drift width endpointUpper : ℝ)
+    (hdrift : 0 ≤ drift) (q : ℕ → ℝ≥0∞)
+    (hdrawdown : ∀ n,
+      (tiltedIncrementFieldLaw φ μ)
+        (ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.noLargeDropEndpointBelowEvent
+          n width (width + drift * (n : ℝ))) ≤ q n) :
+    (∫⁻ ω, pathGenerationDistinctAddressPairCount φ N
+      ((affineCorridorThrough N lower drift width endpointUpper).indicator
+        (fun _ => (1 : ℝ≥0∞))) initial ω ∂stepFieldLaw μ) ≤
+      ∑ m : Fin N,
+        ENNReal.ofReal (Real.exp (-(2 * initial))) *
+          (ENNReal.ofReal (Real.exp (2 * endpointUpper)) *
+            q (N - m.val - 1) ^ 2) *
+          (∫⁻ ξ, crossChildWeight φ ξ ∂μ) *
+          (ENNReal.ofReal
+            (Real.exp (initial - (lower + drift * (m.val : ℝ)))) *
+            (tiltedIncrementFieldLaw φ μ)
+              {increment | ProbabilityTheory.RandomWalk.history m.val initial increment ∈
+                affineCorridorPrefix m.val lower drift width}) := by
+  have hterms :=
+    lintegral_pathGenerationDistinctAddressPairCount_affineCorridor_eq_sum_MRCA
+      φ μ hboundary N initial lower drift width endpointUpper
   have hdrawdownSum :=
     sum_affineTubeMRCAPairContribution_le_of_drawdown
       φ μ hboundary N initial lower drift width endpointUpper hdrift q hdrawdown
   calc
-    (∫⁻ ω, pathGenerationDistinctAddressPairCount φ N F initial ω
-        ∂stepFieldLaw μ) =
-        ∫⁻ ω, pathGenerationOffDiagonalPairs φ N F initial ω
-          ∂stepFieldLaw μ := hpairIntegral.symm
     _ = ∑ m : Fin N,
           affineTubeMRCAPairContribution φ μ m.val (N - m.val - 1)
             initial lower drift width endpointUpper := hterms
