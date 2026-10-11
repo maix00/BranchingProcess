@@ -21,6 +21,7 @@ a generation-`n` address inside that child's subtree.
 -/
 
 open MeasureTheory ProbabilityTheory
+open scoped ENNReal
 
 @[expose] public section
 
@@ -92,5 +93,30 @@ theorem pathPotential_cons
   rw [hmap]
   simp [displace, Combinatorics.Branching.StepField.map_apply,
     Step.potentialValue', Step.potentialAt?, value']
+
+/-- Integrating an observable of the root step and a fixed child's subtree
+uses their product law. -/
+theorem lintegral_root_subtreeFunction_eq
+    {ι X : Type*} [MeasurableSpace X]
+    (μ : Measure (Step ι X)) [IsProbabilityMeasure μ]
+    (i : ι) (H : Step ι X × StepField ι X → ℝ≥0∞)
+    (hH : Measurable H) :
+    (∫⁻ ω, H (ω ([] : TreeNode ι), subtreeStepField [i] ω)
+      ∂stepFieldLaw μ) =
+      ∫⁻ ξ, ∫⁻ η, H (ξ, η) ∂stepFieldLaw μ ∂μ := by
+  let pair : StepField ι X → Step ι X × StepField ι X := fun ω =>
+    (ω [], subtreeStepField [i] ω)
+  have hpair : Measurable pair :=
+    (measurable_pi_apply ([] : TreeNode ι)).prodMk
+      (subtreeStepField_measurable [i])
+  calc
+    (∫⁻ ω, H (ω ([] : TreeNode ι), subtreeStepField [i] ω)
+        ∂stepFieldLaw μ) = ∫⁻ z, H z ∂(stepFieldLaw μ).map pair := by
+      exact (lintegral_map hH hpair).symm
+    _ = ∫⁻ z, H z ∂μ.prod (stepFieldLaw μ) := by
+      rw [root_subtreeStepField_joint_law μ i]
+    _ = ∫⁻ ξ, ∫⁻ η, H (ξ, η) ∂stepFieldLaw μ ∂μ :=
+      lintegral_prod H hH.aemeasurable
+
 
 end ProbabilityTheory.BranchingRandomWalk.Spine
