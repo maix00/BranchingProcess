@@ -242,4 +242,133 @@ theorem selectedRankValue_eq_of_thresholdCounts
         _ ≤ i.val := hcountLeftLe
     omega
 
+/-- Two first-`N` selections have the same value-threshold counts when their
+candidate sets are in value-preserving bijection. This converts an address
+relabeling into the hypothesis of `selectedRankValue_eq_of_thresholdCounts`.
+-/
+theorem firstNBy_value_thresholdCounts_eq_of_bijectiveCandidates
+    {ι κ Value : Type*} [LinearOrder ι] [LinearOrder κ] [LinearOrder Value]
+    {N : ℕ} (valueLeft : ι → Value) (valueRight : κ → Value)
+    (candidatesLeft : Set ι) (candidatesRight : Set κ)
+    (selectedLeft : Finset ι) (selectedRight : Finset κ)
+    (hselectedLeft : Combinatorics.Branching.Selection.NSelection.IsFirstNBy
+      N valueLeft candidatesLeft selectedLeft)
+    (hselectedRight : Combinatorics.Branching.Selection.NSelection.IsFirstNBy
+      N valueRight candidatesRight selectedRight)
+    (hcardLeft : selectedLeft.card = N) (hcardRight : selectedRight.card = N)
+    (forward : κ → ι) (backward : ι → κ)
+    (hforward : ∀ q ∈ candidatesRight, forward q ∈ candidatesLeft)
+    (hbackward : ∀ p ∈ candidatesLeft, backward p ∈ candidatesRight)
+    (hbackwardForward : ∀ p ∈ candidatesLeft, forward (backward p) = p)
+    (hforwardBackward : ∀ q ∈ candidatesRight, backward (forward q) = q)
+    (hvalue : ∀ q ∈ candidatesRight, valueLeft (forward q) = valueRight q)
+    (a : Value) :
+    (selectedLeft.filter fun p => valueLeft p ≤ a).card =
+      (selectedRight.filter fun q => valueRight q ≤ a).card := by
+  let mappedRight := selectedRight.image forward
+  have hforwardInjective : Set.InjOn forward (↑selectedRight : Set κ) := by
+    intro q hq r hr hqr
+    calc
+      q = backward (forward q) := (hforwardBackward q (hselectedRight.subset hq)).symm
+      _ = backward (forward r) := congrArg backward hqr
+      _ = r := hforwardBackward r (hselectedRight.subset hr)
+  have hmappedRightSubset : (↑mappedRight : Set ι) ⊆ candidatesLeft := by
+    intro p hp
+    obtain ⟨q, hq, rfl⟩ := Finset.mem_image.mp hp
+    exact hforward q (hselectedRight.subset hq)
+  have hmappedRightCard : mappedRight.card = N := by
+    rw [Finset.card_image_iff.mpr hforwardInjective, hcardRight]
+  have hrightFilterImage :
+      (mappedRight.filter fun p => valueLeft p ≤ a) =
+        (selectedRight.filter fun q => valueRight q ≤ a).image forward := by
+    ext p
+    constructor
+    · intro hp
+      rcases Finset.mem_filter.mp hp with ⟨hpimage, hpvalue⟩
+      rcases Finset.mem_image.mp hpimage with ⟨q, hq, rfl⟩
+      apply Finset.mem_image.mpr
+      refine ⟨q, Finset.mem_filter.mpr ⟨hq, ?_⟩, rfl⟩
+      simpa [hvalue q (hselectedRight.subset hq)] using hpvalue
+    · intro hp
+      rcases Finset.mem_image.mp hp with ⟨q, hqfilter, rfl⟩
+      rcases Finset.mem_filter.mp hqfilter with ⟨hq, hqvalue⟩
+      apply Finset.mem_filter.mpr
+      refine ⟨Finset.mem_image.mpr ⟨q, hq, rfl⟩, ?_⟩
+      simpa [hvalue q (hselectedRight.subset hq)] using hqvalue
+  have hrightFilterCard :
+      (mappedRight.filter fun p => valueLeft p ≤ a).card =
+        (selectedRight.filter fun q => valueRight q ≤ a).card := by
+    have hinj : Set.InjOn forward
+        (↑(selectedRight.filter fun q => valueRight q ≤ a) : Set κ) := by
+      intro q hq r hr hqr
+      exact hforwardInjective (Finset.mem_filter.mp hq).1
+        (Finset.mem_filter.mp hr).1 hqr
+    rw [hrightFilterImage, Finset.card_image_iff.mpr hinj]
+  have hrightLe :
+      (selectedRight.filter fun q => valueRight q ≤ a).card ≤
+        (selectedLeft.filter fun p => valueLeft p ≤ a).card := by
+    calc
+      _ = (mappedRight.filter fun p => valueLeft p ≤ a).card := hrightFilterCard.symm
+      _ ≤ (selectedLeft.filter fun p => valueLeft p ≤ a).card := by
+        exact Combinatorics.Branching.Selection.NSelection.filter_card_le_filter_of_isFirstNBy
+          N valueLeft candidatesLeft selectedLeft mappedRight hselectedLeft
+          hmappedRightSubset (by simpa only [hmappedRightCard] using Nat.le_refl N) a
+  have hvalueBackward : ∀ p ∈ candidatesLeft,
+      valueRight (backward p) = valueLeft p := by
+    intro p hp
+    have hback := hbackward p hp
+    calc
+      valueRight (backward p) = valueLeft (forward (backward p)) :=
+        (hvalue (backward p) hback).symm
+      _ = valueLeft p := congrArg valueLeft (hbackwardForward p hp)
+  let mappedLeft := selectedLeft.image backward
+  have hbackwardInjective : Set.InjOn backward (↑selectedLeft : Set ι) := by
+    intro p hp q hq hpq
+    calc
+      p = forward (backward p) := (hbackwardForward p (hselectedLeft.subset hp)).symm
+      _ = forward (backward q) := congrArg forward hpq
+      _ = q := hbackwardForward q (hselectedLeft.subset hq)
+  have hmappedLeftSubset : (↑mappedLeft : Set κ) ⊆ candidatesRight := by
+    intro q hq
+    obtain ⟨p, hp, rfl⟩ := Finset.mem_image.mp hq
+    exact hbackward p (hselectedLeft.subset hp)
+  have hmappedLeftCard : mappedLeft.card = N := by
+    rw [Finset.card_image_iff.mpr hbackwardInjective, hcardLeft]
+  have hleftFilterImage :
+      (mappedLeft.filter fun q => valueRight q ≤ a) =
+        (selectedLeft.filter fun p => valueLeft p ≤ a).image backward := by
+    ext q
+    constructor
+    · intro hq
+      rcases Finset.mem_filter.mp hq with ⟨hqimage, hqvalue⟩
+      rcases Finset.mem_image.mp hqimage with ⟨p, hp, rfl⟩
+      apply Finset.mem_image.mpr
+      refine ⟨p, Finset.mem_filter.mpr ⟨hp, ?_⟩, rfl⟩
+      simpa [hvalueBackward p (hselectedLeft.subset hp)] using hqvalue
+    · intro hq
+      rcases Finset.mem_image.mp hq with ⟨p, hpfilter, rfl⟩
+      rcases Finset.mem_filter.mp hpfilter with ⟨hp, hpvalue⟩
+      apply Finset.mem_filter.mpr
+      refine ⟨Finset.mem_image.mpr ⟨p, hp, rfl⟩, ?_⟩
+      simpa [hvalueBackward p (hselectedLeft.subset hp)] using hpvalue
+  have hleftFilterCard :
+      (mappedLeft.filter fun q => valueRight q ≤ a).card =
+        (selectedLeft.filter fun p => valueLeft p ≤ a).card := by
+    have hinj : Set.InjOn backward
+        (↑(selectedLeft.filter fun p => valueLeft p ≤ a) : Set ι) := by
+      intro p hp q hq hpq
+      exact hbackwardInjective (Finset.mem_filter.mp hp).1
+        (Finset.mem_filter.mp hq).1 hpq
+    rw [hleftFilterImage, Finset.card_image_iff.mpr hinj]
+  have hleftLe :
+      (selectedLeft.filter fun p => valueLeft p ≤ a).card ≤
+        (selectedRight.filter fun q => valueRight q ≤ a).card := by
+    calc
+      _ = (mappedLeft.filter fun q => valueRight q ≤ a).card := hleftFilterCard.symm
+      _ ≤ (selectedRight.filter fun q => valueRight q ≤ a).card := by
+        exact Combinatorics.Branching.Selection.NSelection.filter_card_le_filter_of_isFirstNBy
+          N valueRight candidatesRight selectedRight mappedLeft hselectedRight
+          hmappedLeftSubset (by simpa only [hmappedLeftCard] using Nat.le_refl N) a
+  exact Nat.le_antisymm hleftLe hrightLe
+
 end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Speed
