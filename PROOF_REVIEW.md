@@ -368,7 +368,7 @@ Theorem 1.1 or the stated first-moment-only Theorem 1.3. See equations
 
 The lower-speed argument's endpoint at `a = 1` does not need the `L²`
 trajectory conclusion. Under the hypotheses of Theorem 1.3, the previously
-proved polynomial left-tail estimate (4.16) says, for every
+proved polynomial endpoint-sublevel estimate (4.16) says, for every
 `ζ < c_t := -1 + (π²/2) σ² t`, that
 `p_N := P(M^{N|1}_{ℓ_N} ≤ ζ log N) ≤ N^(−ε)` for some `ε > 0`, when
 `ℓ_N/log³ N → t`. The additive-martingale estimate gives
@@ -404,10 +404,9 @@ focused build and axiom audit pass. The declarations
 `target_le_liminf_integral_div_log_of_polynomial_lower_tail` passed the
 repository's axiom allowlist check in
 `lean/BranchingProcessTest/Probability/BranchingRandomWalk/LowerTailExpectationAxioms.lean`.
-The current modules do not yet formalize or instantiate the branching-random-
-walk estimate (4.16). `Analytic/LeftTailAtAOne.lean` proves and axiom-audits
-the fixed-generation, one-root many-to-one bound for an endpoint below a level
-together with a finite-horizon union bound. The shared
+`Spine/FirstPassage.lean` proves and axiom-audits the fixed-generation,
+one-root many-to-one bound for an endpoint below a level; the finite-horizon
+endpoint decomposition is in `Selection/NSelection/Tail/Endpoint.lean`. The shared
 `Spectral/Range/BlockBound.lean` provides an eventual fixed-cover
 horizontal-tube bound uniform over offsets in `[0,1]`; its focused test and
 four-declaration axiom audit pass. The deterministic running-maximum binning,
@@ -428,14 +427,22 @@ sequential and uniform versions to centered positive finite variance, with the
 exponent scaled by the variance. This closes the random-walk estimate at that
 normalization, not the branching-random-walk estimate (4.16).
 
-This closes the random-walk drawdown estimate, not the branching-random-walk
-estimate (4.16). That estimate still requires controlling large drawdowns
-across selected particles and transferring the complementary event to the
-population started from `floor(N^a)`. Thus the `a = 1` endpoint argument is
-closed on paper conditional on (4.16), while its Lean bridge from the BRW
-hypotheses to the polynomial-tail premise remains open. The `a = α`
-random-remaining-time good-event estimate, the post-endpoint restart law, the
-zero-start tube estimate, and the full Theorem 1.3 are also still open.
+This closes the random-walk drawdown estimate. The branching-random-walk
+probability estimate (4.16) has since also been formalized under the paper's
+left-side assumptions: `Selection/NSelection/Tail/SelectedEndpointSublevel.lean` derives
+the required parameters from the separate boundary-normalization,
+supercriticality, centered-spine, and finite-variance conditions, and
+`CountableRootEndpointSublevel.lean` transfers the bound to the common countable-root
+endpoint minimum under the paper's nonempty-offspring condition. This is the
+T11-L probability package; it does not by itself prove Theorem 1.1's `L²`
+conclusion. The endpoint fourth-moment bounds are also formalized:
+`EndpointMoments.lean` proves the logarithmic negative-part bound, and
+`EndpointPositiveMomentClosure.lean` proves the positive-part `O(n^4)` bound
+through the measurable endpoint-minimizing lineage. The final `L²` assembly
+and the right-tail packages remain separate dependencies, as recorded in
+`lean/FORMALIZATION_CHECKLIST.md`. The `a = α` random-remaining-time
+good-event estimate, the post-endpoint restart law, the zero-start tube
+estimate, and the full Theorem 1.3 also remain open.
 
 ## Reuse in Lean
 
