@@ -3516,6 +3516,80 @@ theorem eventually_rightTailPositiveAKilledCapacityFailure_le_polynomial_of_loga
     (by simpa [L, D, logarithmOfSampleSize] using hspanCountLog)
     (by simpa [L, logarithmOfSampleSize] using hERate) ha1 hmargin hm hraw
 
+/-- Choose the corridor parameters from the paper's endpoint gap and apply
+the logarithmic-scale killed-capacity estimate. -/
+theorem exists_rightTailPositiveAKilledCapacityFailure_le_polynomial_of_endpointGap
+    {N : ℕ → ℕ} (hN : Tendsto N atTop atTop)
+    (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
+    (hboundary : HasBoundaryNormalization realPotential μ)
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (hν : ν = tiltedPotentialLaw realPotential (-1) μ)
+    {sigma : ℝ}
+    (hspine : ProbabilityTheory.IsCenteredSecondMoment ν (sigma ^ 2))
+    (hsigma : 0 < sigma)
+    {Ω : Type*} [MeasurableSpace Ω] {brownianMeasure : Measure Ω}
+    [IsProbabilityMeasure brownianMeasure] {B : NNReal → Ω → ℝ}
+    (hB : IsPreBrownianReal B brownianMeasure)
+    (hcontinuous : ∀ ω, Continuous (B · ω))
+    (hmeasurable : ∀ t, Measurable (B t))
+    {a t zeta : ℝ} (ha : 0 < a) (ha1 : a < 1) (ht : 0 < t)
+    (hgap : -a + Real.pi ^ 2 / 2 * sigma ^ 2 * t < zeta) :
+    ∃ b v c epsilon : ℝ,
+      0 < b ∧ b < a ∧ 0 < v ∧ v < b ∧ v ≤ c ∧ 0 < c ∧
+      c < (t ^ (3⁻¹ : ℝ))⁻¹ ∧
+      c * t ^ (3⁻¹ : ℝ) + (a - b) + v < 1 ∧
+      0 < epsilon ∧ ∀ᶠ n : ℕ in atTop,
+        rightTailPositiveAKilledCapacityFailureProbability
+          (Nat.floor ((N n : ℝ) ^ a))
+          (rightTailPositiveAFirstCutoff N n)
+          (logarithmicHorizon N t n) (N n)
+          (logarithmOfSampleSize N n) b v c
+          ((3 * Real.pi ^ 2 / 8) * sigma ^ 2) μ ≤
+          ENNReal.ofReal (Real.exp (-epsilon * Real.log (N n : ℝ))) := by
+  let r : ℝ := t ^ (3⁻¹ : ℝ)
+  have hr : 0 < r := Real.rpow_pos_of_pos ht _
+  have hrcube : r ^ 3 = t := by
+    dsimp [r]
+    calc
+      (t ^ (3⁻¹ : ℝ)) ^ 3 = t ^ ((3⁻¹ : ℝ) * 3) := by
+        rw [← Real.rpow_natCast, ← Real.rpow_mul ht.le]
+        congr 1
+      _ = t := by
+        rw [show (3⁻¹ : ℝ) * 3 = 1 by norm_num, Real.rpow_one]
+  obtain ⟨b, v, c, hb, hba, hv, hvb, hvc, hc, hcr, hmargin, _hendpoint⟩ :=
+    exists_rightTailPositiveAParameters a t r (sigma ^ 2) zeta
+      ha ht hr hrcube (sq_nonneg sigma) hgap
+  let target : ℝ := 3 * Real.pi ^ 2 / 8
+  let blockTarget : ℝ := 7 * Real.pi ^ 2 / 16
+  have htarget : 0 < target := by
+    dsimp [target]
+    positivity
+  have htargetBlock : target < blockTarget := by
+    dsimp [target, blockTarget]
+    nlinarith [sq_pos_of_pos Real.pi_pos]
+  have hblockTarget : blockTarget < Real.pi ^ 2 / 2 := by
+    dsimp [blockTarget]
+    nlinarith [sq_pos_of_pos Real.pi_pos]
+  let κ : ℝ := target * sigma ^ 2
+  have hκ : 0 ≤ κ := by dsimp [κ, target]; positivity
+  have hκrate : κ = target * sigma ^ 2 := rfl
+  have hmargin' : a + (-b + v + c * (t ^ (3⁻¹ : ℝ))) < 1 := by
+    have hmain : c * r + (a - b) + v < 1 := by simpa [r] using hmargin
+    have hmain' : a + (-b + v + c * r) < 1 := by nlinarith [hmain]
+    simpa [r] using hmain'
+  have hp : 0 < (1 / 4 : ℝ) := by norm_num
+  have hpHalf : (1 / 4 : ℝ) < 1 / 2 := by norm_num
+  obtain ⟨epsilon, hepsilon, hcapacity⟩ :=
+    eventually_rightTailPositiveAKilledCapacityFailure_le_polynomial_of_logarithmicScales
+      hN μ hboundary ν hν hspine hsigma hB hcontinuous hmeasurable
+      (a := a) (t := t) (b := b) (v := v) (c := c) (κ := κ)
+      (target := target) (blockTarget := blockTarget) (p := 1 / 4)
+      ha ha1 ht hb.le (by linarith [hvb]) hc hvc hκ hκrate
+      htarget htargetBlock hblockTarget hp hpHalf hmargin'
+  refine ⟨b, v, c, epsilon, hb, hba, hv, hvb, hvc, hc, ?_, ?_, hepsilon, hcapacity⟩
+  · simpa [r] using hcr
+  · simpa [r] using hmargin
+
 /-- The first-stage generations in the two-phase estimate contribute only
 their number of terms. Thus their path probabilities can be bounded by one,
 leaving the Aïdékon--Hu estimate to control the restarted second stage. -/
