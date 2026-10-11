@@ -215,6 +215,25 @@ theorem pathGeneration_indicator_sq_eq_self_add_offDiagonalPairs
   intro history
   by_cases h : history ∈ corridor <;> simp [h]
 
+/-- For a zero-one path test, the second moment splits into its diagonal
+first-moment term and the finite sum of ordered pairs grouped by the
+generation of their most recent common ancestor. This is the combinatorial
+decomposition used in the second-moment expansion of the long-corridor
+argument; the probabilistic bounds on the individual layers are separate. -/
+theorem pathGeneration_indicator_sq_eq_self_add_sum_mrcaContribution
+    {X : Type*} [MeasurableSpace X]
+    (φ : Potential X) (n : ℕ) (corridor : Set (Fin (n + 1) → ℝ))
+    (x : ℝ) (ω : StepField ℕ X) :
+    (pathGeneration φ n
+      (corridor.indicator (fun _ => (1 : ℝ≥0∞))) x ω) ^ 2 =
+      pathGeneration φ n
+          (corridor.indicator (fun _ => (1 : ℝ≥0∞))) x ω +
+        ∑ depth : Fin n,
+          pathGenerationMRCAContribution φ depth.val n
+            (corridor.indicator (fun _ => (1 : ℝ≥0∞))) x ω := by
+  rw [pathGeneration_indicator_sq_eq_self_add_offDiagonalPairs,
+    pathGenerationOffDiagonalPairs_eq_sum_mrcaContribution]
+
 /-- The ordered pairs of distinct generation-`n` addresses that both satisfy
 the path test. Unlike the recursive MRCA remainder above, this presentation
 is directly measurable and can be integrated as the off-diagonal term in a
