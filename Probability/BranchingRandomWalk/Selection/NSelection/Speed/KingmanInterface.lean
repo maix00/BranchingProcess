@@ -1601,55 +1601,6 @@ theorem infiniteOffspringRun_rightmost_ae_hasAsymptoticSpeed
     rw [hrun]
   simpa only [hpath] using hrightNeg
 
-/-! Under the separate left-side and OrderDual/right-side conditions for one
-offspring law, both endpoint speeds exist almost surely under its environment
-law. The two speeds need not agree, and no reflection-invariance assumption
-is imposed on the offspring law. -/
-theorem infiniteOffspringRun_endpoints_ae_hasAsymptoticSpeed
-    {N : ℕ} (hN : 0 < N)
-    (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
-    (hboundaryLeft : HasBoundaryNormalization realPotential μ)
-    (hnonemptyLeft : μ nonemptySupport = 1)
-    (hintLeft : ∀ n, Integrable
-      (fun ω : GenerationEnvironment N =>
-        repairedInfiniteSelectionSubadditiveArray hN ω 0 n)
-      (generationEnvironmentLaw μ N))
-    (hbddLeft : BddBelow (Set.range fun n : ℕ =>
-      (∫ ω, repairedInfiniteSelectionSubadditiveArray hN ω 0 (n + 1)
-        ∂generationEnvironmentLaw μ N) / (n + 1)))
-    (hboundaryRight : HasBoundaryNormalization realPotential
-      (Measure.map reflectOffspringStep μ))
-    (hnonemptyRight :
-      (Measure.map reflectOffspringStep μ) nonemptySupport = 1)
-    (hintRight : ∀ n, Integrable
-      (fun ω : GenerationEnvironment N =>
-        repairedInfiniteSelectionSubadditiveArray hN ω 0 n)
-      (generationEnvironmentLaw (Measure.map reflectOffspringStep μ) N))
-    (hbddRight : BddBelow (Set.range fun n : ℕ =>
-      (∫ ω, repairedInfiniteSelectionSubadditiveArray hN ω 0 (n + 1)
-        ∂generationEnvironmentLaw (Measure.map reflectOffspringStep μ) N) /
-          (n + 1))) :
-    ∃ cLeft cRight : ℝ, ∀ᵐ ω ∂generationEnvironmentLaw μ N,
-      (∃ hgood : ∀ t, IsGoodInfiniteOffspringBatch (ω t),
-        Combinatorics.Branching.Selection.NSelection.HasAsymptoticSpeed
-          (𝕜 := ℝ)
-          (fun n => infiniteOffspringRun ω hgood (fun _ => 0) n ⟨0, hN⟩)
-          (-cLeft)) ∧
-      (∃ hgood : ∀ t, IsGoodInfiniteOffspringBatch
-          (reflectGenerationBatch (ω t)),
-        Combinatorics.Branching.Selection.NSelection.HasAsymptoticSpeed
-          (𝕜 := ℝ)
-          (fun n => infiniteOffspringRunRight ω hgood (fun _ => 0) n ⟨0, hN⟩)
-          cRight) := by
-  obtain ⟨cLeft, hleft⟩ := infiniteOffspringRun_leftmost_ae_hasAsymptoticSpeed
-    hN μ hboundaryLeft hnonemptyLeft hintLeft hbddLeft
-  obtain ⟨cRight, hright⟩ :=
-    infiniteOffspringRun_rightmost_ae_hasAsymptoticSpeed
-      hN μ hboundaryRight hnonemptyRight hintRight hbddRight
-  refine ⟨cLeft, cRight, ?_⟩
-  filter_upwards [hleft, hright] with ω hωLeft hωRight
-  exact ⟨hωLeft, hωRight⟩
-
 end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Speed
 
 end
