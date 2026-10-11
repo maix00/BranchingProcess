@@ -53,6 +53,29 @@ noncomputable def pathGenerationOffDiagonalPairs
             (subtreeStepField [j] ω)) (ω []) j)
         else 0)
 
+/-- Ordered successful path pairs whose most recent common ancestor is at the
+specified generation. `total` is the generation of the two endpoints; the
+recursive case passes to one child subtree and slices the path test by its
+known first coordinate. -/
+noncomputable def pathGenerationMRCAContribution
+    {X : Type*} [MeasurableSpace X] (φ : Potential X) :
+    (depth total : ℕ) → ((Fin (total + 1) → ℝ) → ℝ≥0∞) →
+      ℝ → StepField ℕ X → ℝ≥0∞
+  | _, 0, _, _, _ => 0
+  | 0, n + 1, F, x, ω =>
+      ∑' i : ℕ, ∑' j : ℕ, if i ≠ j then
+        pathGenerationChildObservable φ n F x i (ω [])
+          (subtreeStepField [i] ω) *
+        pathGenerationChildObservable φ n F x j (ω [])
+          (subtreeStepField [j] ω)
+        else 0
+  | d + 1, n + 1, F, x, ω =>
+      ∑' i : ℕ, survivingPotentialTest φ
+        (fun y => pathGenerationMRCAContribution φ d n
+          (fun tail => F (prependHistory x tail)) (x + y)
+          (subtreeStepField [i] ω)) (ω []) i
+termination_by depth _ _ _ _ => depth
+
 /-- For a zero-one test, the square of the number of successful generation-n
 paths is its diagonal contribution plus the ordered distinct-pair remainder.
 This identity closes the diagonal branch of the MRCAs recursion at every
@@ -122,6 +145,59 @@ theorem pathGeneration_sq_eq_self_add_offDiagonalPairs
               simp only [pathGenerationOffDiagonalPairs, childPairs,
                 childCount, tailTest, pathGenerationChildObservable]
               ac_rfl
+
+/-- The recursive ordered-pair remainder is exactly the finite sum over
+possible generations of the most recent common ancestor. -/
+theorem pathGenerationOffDiagonalPairs_eq_sum_mrcaContribution
+    {X : Type*} [MeasurableSpace X]
+    (φ : Potential X) (n : ℕ) (F : (Fin (n + 1) → ℝ) → ℝ≥0∞)
+    (x : ℝ) (ω : StepField ℕ X) :
+    pathGenerationOffDiagonalPairs φ n F x ω =
+      ∑ depth : Fin n,
+        pathGenerationMRCAContribution φ depth.val n F x ω := by
+  classical
+  induction n generalizing x ω with
+  | zero => simp [pathGenerationOffDiagonalPairs]
+  | succ n ih =>
+      rw [pathGenerationOffDiagonalPairs, Fin.sum_univ_succ]
+      let tailTest : (Fin (n + 1) → ℝ) → ℝ≥0∞ :=
+        fun tail => F (prependHistory x tail)
+      have hchild (i : ℕ) :
+          survivingPotentialTest φ
+              (fun y => pathGenerationOffDiagonalPairs φ n tailTest
+                (x + y) (subtreeStepField [i] ω)) (ω []) i =
+            ∑ depth : Fin n, survivingPotentialTest φ
+              (fun y => pathGenerationMRCAContribution φ depth.val n
+                tailTest (x + y) (subtreeStepField [i] ω)) (ω []) i := by
+        unfold survivingPotentialTest
+        by_cases hi : survive (ω []) i
+        · simp [hi, ih]
+        · simp [hi]
+      have hchildren :
+          (∑' i : ℕ, survivingPotentialTest φ
+              (fun y => pathGenerationOffDiagonalPairs φ n tailTest
+                (x + y) (subtreeStepField [i] ω)) (ω []) i) =
+            ∑ depth : Fin n, ∑' i : ℕ, survivingPotentialTest φ
+              (fun y => pathGenerationMRCAContribution φ depth.val n
+                tailTest (x + y) (subtreeStepField [i] ω)) (ω []) i := by
+        calc
+          _ = ∑' i : ℕ, ∑ depth : Fin n, survivingPotentialTest φ
+              (fun y => pathGenerationMRCAContribution φ depth.val n
+                tailTest (x + y) (subtreeStepField [i] ω)) (ω []) i := by
+                apply tsum_congr
+                exact hchild
+          _ = ∑' i : ℕ, ∑' depth : Fin n, survivingPotentialTest φ
+              (fun y => pathGenerationMRCAContribution φ depth.val n
+                tailTest (x + y) (subtreeStepField [i] ω)) (ω []) i := by
+                simp
+          _ = ∑' depth : Fin n, ∑' i : ℕ, survivingPotentialTest φ
+              (fun y => pathGenerationMRCAContribution φ depth.val n
+                tailTest (x + y) (subtreeStepField [i] ω)) (ω []) i :=
+                ENNReal.tsum_comm
+          _ = _ := by rw [tsum_fintype]
+      rw [hchildren]
+      simp [pathGenerationMRCAContribution, pathGenerationChildObservable,
+        tailTest, add_comm]
 
 /-- The same diagonal closure for a measurable or nonmeasurable path
 corridor, represented by its indicator. -/
