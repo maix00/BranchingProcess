@@ -1,36 +1,73 @@
 #!/bin/sh
 set -eu
 
-# Split the canonical lean/ subtree and optionally publish it after CI passes.
+# Split the canonical lean/ subtree. --preflight updates a persistent PR branch,
+# runs CI for that exact commit, and never pushes to the standalone main branch.
 root=$(git rev-parse --show-toplevel)
 cd "$root"
 branch=$(git symbolic-ref --quiet --short HEAD || true)
-if [ "$branch" != master ]; then
-  printf 'Skipping subtree refresh on %s\n' "${branch:-detached HEAD}"
-  exit 0
+mode=${1:-}
+case "$mode" in
+  "") ;;
+  --preflight) ;;
+  *)
+    printf 'Usage: %s [--preflight [branch]]\n' "$0" >&2
+    exit 2
+    ;;
+esac
+
+if [ "$mode" = "--preflight" ]; then
+  if [ "${3:-}" != "" ]; then
+    printf 'Usage: %s [--preflight [branch]]\n' "$0" >&2
+    exit 2
+  fi
+  preflight_branch=${BRANCHINGPROCESS_PREFLIGHT_BRANCH:-${2:-$branch}}
+  if [ -z "$preflight_branch" ]; then
+    printf 'A named branch is required for preflight publication.\n' >&2
+    exit 2
+  fi
+  if [ "${2:-}" != "" ] && [ -n "${BRANCHINGPROCESS_PREFLIGHT_BRANCH:-}" ]; then
+    printf 'Set either the preflight branch argument or BRANCHINGPROCESS_PREFLIGHT_BRANCH, not both.\n' >&2
+    exit 2
+  fi
+  if [ -n "$(git status --porcelain --untracked-files=all)" ]; then
+    printf 'Refusing to publish with uncommitted changes; commit or remove them first.\n' >&2
+    exit 1
+  fi
+else
+  if [ "${2:-}" != "" ]; then
+    printf 'Usage: %s [--preflight [branch]]\n' "$0" >&2
+    exit 2
+  fi
 fi
-push=0
-if [ "${1:-}" = "--push" ]; then
-  push=1
-elif [ "${1:-}" != "" ]; then
-  printf 'Usage: %s [--push]\n' "$0" >&2
-  exit 2
-fi
-if [ "$push" -eq 1 ] && [ -n "$(git status --porcelain --untracked-files=all)" ]; then
-  printf 'Refusing to publish with uncommitted changes; commit or remove them first.\n' >&2
-  exit 1
-fi
+
 remote=${BRANCHINGPROCESS_REMOTE:-branchingprocess}
 target=${BRANCHINGPROCESS_BRANCH:-main}
-if [ "$push" -eq 1 ]; then
+if [ "$mode" = "--preflight" ] && [ "$preflight_branch" = "$target" ]; then
+  printf 'The preflight branch must differ from the PR base branch %s.\n' "$target" >&2
+  exit 2
+fi
+
+if [ "$mode" = "--preflight" ]; then
+  command -v gh >/dev/null 2>&1 || {
+    printf 'Preflight publication requires GitHub CLI (gh) to verify the required CI check.\n' >&2
+    exit 1
+  }
   git fetch "$remote" "$target"
   onto=$(git rev-parse FETCH_HEAD)
-  commit=$(git subtree split --prefix=lean)
-  if ! git merge-base --is-ancestor "$onto" "$commit"; then
-    if git diff --quiet "$onto" "$commit"; then
-      printf 'Standalone %s/%s already has the same tree; no publication needed.\n' "$remote" "$target"
-      exit 0
-    fi
+  preflight_line=$(git ls-remote --heads "$remote" "refs/heads/$preflight_branch")
+  preflight_head=
+  if [ -n "$preflight_line" ]; then
+    git fetch "$remote" "refs/heads/$preflight_branch"
+    preflight_head=$(git rev-parse FETCH_HEAD)
+  fi
+fi
+
+commit=$(git subtree split --prefix=lean)
+if [ "$mode" = "--preflight" ] && ! git merge-base --is-ancestor "$onto" "$commit"; then
+  if git diff --quiet "$onto" "$commit"; then
+    commit=$onto
+  else
     remote_tree=$(git rev-parse "$onto^{tree}")
     matching_base=
     for candidate in $(git log --first-parent --format=%H "$branch" -- lean); do
@@ -49,39 +86,29 @@ if [ "$push" -eq 1 ]; then
     split_tree=$(git rev-parse "$commit^{tree}")
     commit=$(printf 'Merge canonical lean subtree into standalone history\n' |
       git commit-tree "$split_tree" -p "$onto" -p "$commit")
-    if ! git merge-base --is-ancestor "$onto" "$commit"; then
-      printf 'Could not join the subtree split to standalone %s/%s history.\n' "$remote" "$target" >&2
-      exit 1
-    fi
   fi
-else
-  commit=$(git subtree split --prefix=lean)
-fi
-printf 'Prepared standalone subtree commit %s\n' "$commit"
-if [ "$push" -eq 1 ]; then
-  command -v gh >/dev/null 2>&1 || {
-    printf 'Publishing requires GitHub CLI (gh) to verify the required CI check.\n' >&2
+  if ! git merge-base --is-ancestor "$onto" "$commit"; then
+    printf 'Could not join the subtree split to standalone %s/%s history.\n' "$remote" "$target" >&2
     exit 1
-  }
+  fi
+fi
+
+if [ "$mode" = "--preflight" ] && [ -n "$preflight_head" ] &&
+    ! git merge-base --is-ancestor "$preflight_head" "$commit"; then
+  if git diff --quiet "$preflight_head" "$commit"; then
+    commit=$preflight_head
+  else
+    split_tree=$(git rev-parse "$commit^{tree}")
+    commit=$(printf 'Update persistent subtree PR preflight branch\n' |
+      git commit-tree "$split_tree" -p "$preflight_head" -p "$commit")
+  fi
+fi
+
+printf 'Prepared standalone subtree commit %s\n' "$commit"
+if [ "$mode" = "--preflight" ]; then
   remote_url=$(git remote get-url "$remote")
   repository=$(gh repo view "$remote_url" --json nameWithOwner --jq .nameWithOwner)
-  preflight_branch="branchingprocess-preflight-$commit"
-  preflight_pushed=0
-  cleanup_preflight() {
-    cleanup_status=$?
-    trap - EXIT HUP INT TERM
-    if [ "$preflight_pushed" -eq 1 ]; then
-      git push "$remote" --delete "$preflight_branch" >/dev/null 2>&1 || true
-    fi
-    exit "$cleanup_status"
-  }
-  trap cleanup_preflight EXIT
-  trap 'exit 129' HUP
-  trap 'exit 130' INT
-  trap 'exit 143' TERM
-
   git push "$remote" "$commit:refs/heads/$preflight_branch"
-  preflight_pushed=1
   run_id=
   attempt=0
   while [ -z "$run_id" ] && [ "$attempt" -lt 30 ]; do
@@ -93,9 +120,10 @@ if [ "$push" -eq 1 ]; then
     attempt=$((attempt + 1))
   done
   if [ -z "$run_id" ]; then
-    printf 'No GitHub Actions build was created for preflight commit %s.\n' "$commit" >&2
+    printf 'No GitHub Actions build was created for preflight commit %s. The persistent PR branch remains updated.\n' "$commit" >&2
     exit 1
   fi
   gh run watch "$run_id" --repo "$repository" --exit-status --compact
-  git push "$remote" "$commit:refs/heads/$target"
+  printf 'Preflight branch %s is synced and its build passed. No base-branch update was made.\n' \
+    "$preflight_branch"
 fi
