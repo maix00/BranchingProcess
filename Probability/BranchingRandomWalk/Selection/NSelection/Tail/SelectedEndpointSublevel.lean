@@ -18,13 +18,16 @@ import Mathlib.MeasureTheory.Function.L2Space
 /-!
 # Selected-endpoint sublevel from the law assumptions
 
-The law hypotheses in the paper-facing declaration are the paper's boundary
-normalization, supercriticality, zero spine mean, and finite spine variance.
-The arbitrary horizon and its logarithmic-cube limit are the paper's sequence
-input. This adapter uses the left-side boundary and the spine law tilted at
-`-1`; the corresponding right-endpoint theorem is stated on `OrderDual` with
-the original law's right-side conditions, without reflection invariance. All
-block, rate, binning, and exponent parameters are derived internally.
+The law hypotheses in the paper-facing declaration are the boundary
+normalization, supercriticality, zero spine mean, and finite spine variance
+used for this endpoint direction. The arbitrary horizon and its
+logarithmic-cube limit are the sequence input. The endpoint event itself is
+direction-neutral; this adapter proves its lower-endpoint instance using the
+left-side boundary and the spine law tilted at `-1`. The corresponding
+OrderDual adapter under the right-side conditions remains to be formalized;
+it does not require reflection invariance of the offspring law. All block,
+rate, binning, and exponent parameters for this instance are derived
+internally.
 -/
 
 

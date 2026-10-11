@@ -21,14 +21,14 @@ offspring law.
 
 | Package | Status after audit | Deliverable and owner |
 |---|---|---|
-| API0: model and assumption boundary | **Audit mostly clear; final theorem API open** | General/random mechanisms stay in `Selection/`; deterministic first-`N` results stay in `Selection/NSelection/`; generic killed causal populations stay in `Population/Processes/Causal/`. Keep `Potential` and separate assumption predicates. The final adapters must expose the paper's assumptions flatly. |
-| T11-R+: positive-start right tail, `0 < a < 1` | **Conditional corridor survival adapter proved; paper corridor inputs open** | The logarithmic tube parameters, one-generation tube estimates, first-moment capacity overflow bound, and capacity-to-first-`N` spatial injection exist. `Spine/Tube/IndependentRootCorridor.lean` turns a tilted-spine corridor lower probability and an explicit single-root second-moment bound into a finite-root success-count lower tail, then into terminal nonextinction. Still missing are the paper-derived long-tube second-moment bound (4.15), the first-stage population lower bound, the second-stage shifted-root survival estimate, and their combination with capacity failure. The surviving-population branch is a prerequisite to the `a = 1` endpoint package. |
+| API0: model and assumption boundary | **Ownership audit mostly clear; final theorem API open** | General/random mechanisms stay in `Selection/`; deterministic first-`N` results stay in `Selection/NSelection/`; generic killed causal populations stay in `Population/Processes/Causal/`. Keep `Potential` and separate assumption predicates. The final adapters must expose the paper's assumptions flatly. For the right-oriented result use the original law's right-side assumptions through `OrderDual`; if the paper's left and right conditions both hold, derive both conclusions without assuming offspring-law reflection symmetry. |
+| T11-R+: positive-start right tail, `0 < a < 1` | **Conditional corridor survival adapter proved; paper corridor inputs open** | The logarithmic tube parameters, one-generation tube estimates, first-moment capacity overflow bound, and capacity-to-first-`N` spatial injection exist. `Spine/Tube/MultiGenerationSecondMoment.lean` gives a measurable ordered-pair decomposition of the multi-generation corridor count and passes an upper bound on expected distinct successful pairs to the existing finite-root Paley–Zygmund survival adapter. `MRCARootLayer.lean` identifies the root split term and bounds it from an explicit segment-probability estimate and the finite cross-child moment; the ancestor-prefix cross-weight factorization is also proved. The remaining paper-derived input is the complete long-corridor pair estimate from Lemma 4.5/(4.6), including positive-depth prefixes and both shifted-root continuations, then the first-stage population lower bound, second-stage shifted-root survival estimate, and their combination with capacity failure. Do not label the pair estimate as equation (4.15): (4.15) is the right-tail probability target. The surviving-population branch is a prerequisite to the `a = 1` endpoint package. |
 | T11-R1: endpoint `a = 1` | **Open adapter** | Choose `b < 1` close to `1`, use initial-root monotonicity, and transfer T11-R+ to the `a = 1` threshold. Depends on T11-R+. |
 | T11-R0: zero-start right tail | **Partial; main probabilistic bridge open** | Reuse the same pre-sampled tree, generation-observable completion times `σᵢ`, reserve-lineage freshness, and fixed-horizon endpoint coupling. Still prove the thesis candidate-source comparison, finite-time growth success and spatial bounds (including the failure-conditioned displacement transform), and random remaining-horizon combination with T11-R+. Depends on T11-R+ and the existing `Restart/RootedTrial/` interfaces. |
-| T11-L: left tail (4.16) | **Raw-rate endpoint composition proved; paper adapter open** | `Tail/PolynomialLeftTail.lean` composes the drawdown raw-rate bound with the logarithmic scales and yields polynomial decay for `firstNSelectedEndpointBelow` on a finite-root field. Its intermediate interface still takes the centered spine second moment, a strict range-rate, a binning condition, and explicit exponent margins. Derive these from the paper conditions and `exists_leftTailParameters`, specialize to `m_N = ⌊N^a⌋` and the paper's horizon sequence, and transfer from the endpoint sublevel event to the common countable-root endpoint minimum. No fourth- or exponential-moment assumption belongs in this left-tail package. |
-| T11-M: endpoint fourth moment and `L²` closure | **Negative-part moment bridge proved; positive-part moment and assembly open** | `Tail/EndpointMoments.lean` uses boundary normalization, nonempty offspring, finite-root many-to-one, and the generic exponential-moment lemma to prove `E[(M⁻)^4] ≤ 2048(1 + log(m)^4)`. This is the paper's negative-part estimate without adding a theorem assumption. The positive-part estimate `O(n^4)` still needs the adaptive retained-leftmost lineage/fresh-mark bridge from the paper's leftmost-step fourth moment. Then use the common countable-root endpoint sequence and `L2FromPolynomialTails` to combine T11-L and T11-R+, with T11-R0 at `a = 0`. The varying-measure `TailExpectation` result assumes a uniform centered fourth-moment bound and is not a substitute for the paper's logarithmically growing fourth-moment estimate. |
-| T11: final trajectory theorem | **Open** | Assemble the preceding packages into the exact flat theorem statement and its `L²` conclusion. The zero-start clause has the paper's extra positive exponential-moment assumption only. A right-oriented counterpart is obtained from the separately stated OrderDual/right-side conditions; no offspring-law invariance is assumed. |
-| T12-K: speed existence | **Exact-`N` a.s. and `L¹` adapter proved; smaller-start extension open** | The repository's `Probability.Ergodic.Kingman` implementation supplies the random Kingman theorem; Mathlib's `Analysis.Subadditive` supplies the deterministic Fekete input. `Speed/KingmanInterface.lean` derives uniform integrability from the one-generation envelope and IID generation coordinates, then proves `L¹` convergence by Vitali for the measurable repaired representative. A flat-`StepLaw` wrapper gives a.s. speed and `L¹` convergence for exactly `N` initial particles under the paper's left-side conditions. The paper's extension from an initial population of size `N₀ < N` still needs the finite-time saturation/restart coupling under `ψ(0) > 0`. |
+| T11-L: endpoint sublevel (4.16) | **Lower-endpoint probability adapter and countable-root transfer proved; dual-side adapter and `L²` assembly open** | `Tail/PolynomialEndpointSublevel.lean` composes the drawdown raw-rate bound with the logarithmic scales; `SelectedEndpointSublevel.lean` derives its parameters from the lower-endpoint boundary and spine assumptions and specializes to `m_N = ⌊N^a⌋` and the logarithmic horizon sequence. `CountableRootEndpointSublevel.lean` transfers the bound to the common countable-root endpoint minimum, using only the nonempty-offspring condition needed to remove the totalized empty branch. The endpoint event is stated direction-neutrally. The corresponding `OrderDual` adapter under the right-side conditions remains to be formalized; it must not assume reflection invariance of the offspring law. |
+| T11-M: endpoint fourth moment and `L²` closure | **Both endpoint fourth-moment sides proved; `L²` assembly open** | `Tail/EndpointMoments.lean` proves `E[(M⁻)^4] ≤ 2048(1 + log(m)^4)` from the paper assumptions. `EndpointMinimumAddress.lean` and `EndpointMinimumLineage.lean` give a measurable depth-correct minimizing address and compare the next selected minimum to its fresh slot-zero increment; `EndpointPositiveMoments.lean` supplies the predictable fresh-step moment law. `EndpointPositiveMomentClosure.lean` proves the positive endpoint bound `∫(M⁺)^4 ≤ n^4 E[(Ξ₁)₊^4]`, using only the paper boundary, nonempty-offspring, and fourth-moment conditions. The remaining task is to assemble these bounds with the common countable-root two-sided tail estimates through `L2FromPolynomialTails` (including T11-R0 at `a = 0`). The varying-measure `TailExpectation` result assumes a uniform centered fourth-moment bound and is not a substitute for the paper's logarithmically growing fourth-moment estimate. |
+| T11: final trajectory theorem | **Open** | Assemble the preceding packages into the exact flat theorem statement and its `L²` conclusion. The zero-start clause has the paper's extra positive exponential-moment assumption only. State the right-oriented counterpart with the corresponding `OrderDual`/right-side conditions; no offspring-law invariance is assumed. |
+| T12-K: speed existence | **Exact-`N` a.s./`L¹` result and smaller-start capacity hit proved; post-hit speed transfer open** | The repository's `Probability.Ergodic.Kingman` implementation supplies the random Kingman theorem; Mathlib's `Analysis.Subadditive` supplies the deterministic Fekete input. `Speed/KingmanInterface.lean` derives uniform integrability from the one-generation envelope and IID generation coordinates, then proves `L¹` convergence by Vitali for the measurable repaired representative. A flat-`StepLaw` wrapper gives a.s. speed and `L¹` convergence for exactly `N` initial particles under the paper's assumptions. `Speed/InitialPopulation.lean` proves frequent rank-zero split events in the pre-sampled environment, deterministic saturation from frequent strict growth, and invariance under changing initial positions. `Speed/InitialPopulationHitting.lean` chooses a predictable address from the actual current selected population; its fresh offspring marks are i.i.d. with law `μ`. Supercriticality gives positive split probability, and frequent splits plus nonempty offspring make the actual population hit capacity `N` almost surely. The remaining bridge is the conditional law of the future `N` root subtrees after the random hitting time and its coupling to the exact-`N` Kingman trajectory. `RepeatedTrials.lean` remains a generic independent-trial interface, not the proof of this actual-process hit.
 | T12-L/U: speed lower/upper bounds | **Open applications** | The lower bound consumes T11-L (and the endpoint expectation estimate); the upper bound consumes T11-R+ and T11-R0 together with the restart/selection comparison. Existing deterministic squeeze and many-to-one components are inputs, not these probability bounds. |
 | T12: final speed formula | **Open** | Feed both probabilistic speed bounds and the speed-existence/expectation package into `Speed/Asymptotics.lean` and state the paper's exact theorem with flat assumptions. |
 
@@ -36,13 +36,16 @@ Dependency order:
 
 ```text
 existing spine/drawdown/selection interfaces
-        ├── T11-R+ survival + capacity ── T11-R1
-        │                 └────────────── T11-R0 restart/remaining horizon
-        ├── T11-L exact-hypothesis adapter
-        └── T11-M endpoint moments + L² assembly
-                    ↑ T11-L, T11-R+, T11-R0
-T11-L + T11-R+/R0 ──> T12-L/U ──> T12 final formula
-existing Kingman core ──> T12-K range/expectation adapter ─────┘
+        ├── T11-L paper-assumption adapter ───────────┐
+        ├── T11-R+ corridor survival + capacity ── T11-R1
+        │                         └─────────────── T11-R0 restart
+        └── endpoint moment/selector chain ────────────┤
+                   T11-L + T11-R+/R0 + moments ──> T11-M L² closure
+                                                        │
+                                                T11 trajectory theorem
+                                                        │
+existing Kingman core ──> T12-K speed existence ──────┤
+                                  T11 + T12-K ──> T12-L/U ──> T12 final formula
 ```
 
 The package boundaries follow the library ownership map: random-walk tube
@@ -321,7 +324,8 @@ process and Gaussian-law APIs, not a general point-process representation.
   bound; both have a focused test and axiom audit. The uniform-offset
   horizontal-tube block estimate in
   `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Spectral/Range/BlockBound.lean`
-  also builds and passes its focused audit. These are inputs, not (4.16): the
+  also builds and passes its focused audit. These pieces are inputs, not by
+  themselves the BRW estimate (4.16): the
   deterministic running-maximum binning, exact fixed-pattern IID block
   product, finite union over bin patterns, and parameter selection are built
   and audited in `RandomWalk/Path/Drawdown.lean` and
@@ -332,12 +336,14 @@ process and Gaussian-law APIs, not a general point-process representation.
   `Probability/Process/RandomWalk/SmallDeviation/Drawdown/Scaling.lean` now
   transports both the sequential estimate and its uniform-in-parameters
   version to centered positive finite variance, with the exponent scaled by
-  the variance. The remaining gap for (4.16) is the branching-process
-  transfer: control large drawdowns across the selected particles, transfer the
-  no-large-drawdown endpoint event from the selected population to the spine,
-  and assemble the polynomial BRW tail bound. The current random-walk upper
-  bound still accepts an external Brownian witness; the raw increment-law
-  replacement needed by the branching application remains open.
+  the variance. `Selection/NSelection/Tail/SelectedEndpointSublevel.lean` derives the
+  required range and exponent parameters from the paper's boundary,
+  supercriticality, centered-spine, and finite-variance assumptions;
+  `CountableRootEndpointSublevel.lean` transfers its polynomial probability bound to the
+  common countable-root endpoint minimum. Thus the (4.16) probability adapter
+  is proved. The remaining T11-L work is the endpoint-moment and `L²`
+  assembly package recorded above, not a further random-walk or
+  branching-process probability-transfer premise.
 
 Shi, *Branching Random Walks*, §1.3, Theorem 1.1 proves the unweighted
 many-to-one formula by induction: the one-generation weighted law is followed
