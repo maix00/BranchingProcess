@@ -224,6 +224,16 @@ private theorem tendsto_logarithmicDrawdown_div_log
     ring
   exact hratio.congr' heq.symm
 
+/-- Public asymptotic ratio for the logarithmic drawdown scale.  This is the
+sequence-level input needed to turn a raw endpoint estimate into its
+polynomial-in-`N` form. -/
+theorem logarithmicDrawdown_div_log_tendsto
+    {N : ℕ → ℕ} (hN : Tendsto N atTop atTop)
+    {beta b : ℝ} (hbeta : 0 < beta) (hb : 0 < b) :
+    Tendsto (fun n => logarithmicDrawdown N beta b n /
+      logarithmOfSampleSize N n) atTop (𝓝 b) :=
+  tendsto_logarithmicDrawdown_div_log hN hbeta hb
+
 private theorem tendsto_logarithmicHorizon_div_log_cube
     {N : ℕ → ℕ} (hN : Tendsto N atTop atTop)
     {t : ℝ} (ht : 0 < t) :
