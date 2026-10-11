@@ -19,9 +19,16 @@ than the application that first needs it.
 General finite-history drawdown predicates and their measurability belong to
 `Probability/Process/RandomWalk/Path/Drawdown.lean`. Random-walk probability
 bounds for those paths belong to `Probability/Process/RandomWalk/SmallDeviation/Drawdown/`.
-The branching-walk first-passage and many-to-one estimates remain under
-`Probability/BranchingRandomWalk/Spine/`, while selected-population endpoint
-and drawdown transfers live under `Selection/Tail/`.
+Branching-walk first-passage, many-to-one, and tube estimates live under
+`Probability/BranchingRandomWalk/Spine/`. The general `Selection/` layer owns
+selection mechanisms, including random mechanisms; deterministic first-`N`
+selection is the `Selection/NSelection/` specialization. Its selected-
+population endpoint and drawdown transfers live under
+`Selection/NSelection/Tail/`, and its deterministic speed proof lives under
+`Selection/NSelection/Speed/`. Root-indexed position observations are owned
+by `Genealogy/RootIndexed/Measurability`; `Selection/NSelection/Position`
+contains only first-`N` measurability results, while random finite selectors
+adapted to those observations live under `Selection/Finite/`.
 
 These are ownership boundaries, not a requirement to introduce a wrapper at
 every boundary. A concrete theorem should depend on the narrowest module that

@@ -23,6 +23,7 @@ It does not claim that the separate open limit-theorem obligations in
 | Poisson window-integral vectors | `Probability/RandomMeasure/Poisson/WindowIntegral.lean` | Generic construction separated from stable-law identification |
 | Cutoff Poisson path identities | `Probability/Process/Levy/Jump/PoissonConfiguration/Path.lean` | Reusable jump-configuration facts separated from stable-process laws |
 | Convolution powers | `MeasureTheory/Measure/Convolution/Power.lean` | One recursive API remains; the old `convPow` module and definition were removed after proving the convolution-rotation relation |
+| Selection/NSelection boundary | `Probability/BranchingRandomWalk/Genealogy/RootIndexed/Measurability.lean`, `Spine/Tube/`, `Selection/Finite/`, and `Selection/NSelection/{Speed,Tail}/` | Generic root-indexed position observations and path/tube estimates are separated from deterministic first-`N` speed and endpoint arguments; random finite-by-value constructors are under `Selection/Finite/` |
 
 The former source modules for M01--M10 and M13 have been removed. Mixed
 application files for M03, M11, and M12 remain only for the results whose
