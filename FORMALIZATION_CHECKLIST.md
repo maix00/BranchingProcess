@@ -5,6 +5,54 @@ The LaTeX proof is not counted as a Lean proof.
 
 ## Work-package status index
 
+## Integrated work packages for Theorems 1.1 and 1.2 (2026-10-11 audit)
+
+The theorem proofs are being advanced as dependency packages rather than by
+patching isolated gaps. The final theorem declarations must keep the paper's
+assumptions individually visible: `ψ(0) > 0`, nonempty offspring almost
+surely, `ψ(1) = 0`, `ψ'(1) = 0`, finite spine variance, finite cross weight,
+the first and fourth positive moments of the leftmost step, and, only for the
+zero-start right tail, its positive exponential moment. Existing abstractions
+such as `Potential`, `StepLaw`, and the individual `Has…` predicates remain
+valid interfaces; no bundled assumption structure is to appear in a final
+theorem. A right-oriented theorem uses the corresponding conditions for the
+OrderDual/reflected law, without requiring that law to equal the original
+offspring law.
+
+| Package | Status after audit | Deliverable and owner |
+|---|---|---|
+| API0: model and assumption boundary | **Audit mostly clear; final theorem API open** | General/random mechanisms stay in `Selection/`; deterministic first-`N` results stay in `Selection/NSelection/`; generic killed causal populations stay in `Population/Processes/Causal/`. Keep `Potential` and separate assumption predicates. The final adapters must expose the paper's assumptions flatly. |
+| T11-R+: positive-start right tail, `0 < a < 1` | **Partial; independent-root count bound added** | The logarithmic tube parameters, one-generation tube estimates, first-moment capacity overflow bound, and capacity-to-first-`N` spatial injection exist. `Spine/Tube/IndependentRootCorridor.lean` now turns explicit one-root first/second corridor-count moments into an exponential lower-tail bound for the number of successful initial roots. Still missing are the paper-derived long-tube moment bounds, the first-stage population lower bound, the second-stage survival estimate, and their combination with capacity failure into (4.15). The surviving-population branch is a prerequisite to the `a = 1` endpoint package. |
+| T11-R1: endpoint `a = 1` | **Open adapter** | Choose `b < 1` close to `1`, use initial-root monotonicity, and transfer T11-R+ to the `a = 1` threshold. Depends on T11-R+. |
+| T11-R0: zero-start right tail | **Partial; main probabilistic bridge open** | Reuse the same pre-sampled tree, generation-observable completion times `σᵢ`, reserve-lineage freshness, and fixed-horizon endpoint coupling. Still prove the thesis candidate-source comparison, finite-time growth success and spatial bounds (including the failure-conditioned displacement transform), and random remaining-horizon combination with T11-R+. Depends on T11-R+ and the existing `Restart/RootedTrial/` interfaces. |
+| T11-L: left tail (4.16) | **Intermediate chain exists; exact theorem adapter open** | First-passage/many-to-one, selected-population drawdown split, finite-variance drawdown estimate, parameter selection, and polynomial-rate conversion exist. Still connect the exact paper hypotheses to the spine/variance inputs, specialize the scale to `m_N = ⌊N^a⌋` and `H_N = ℓ_N`, and transfer the sublevel event to the endpoint minimum on the common countable-root space. No fourth- or exponential-moment assumption belongs in this left-tail package. |
+| T11-M: endpoint fourth moment and `L²` closure | **Generic moment estimate proved; BRW moment bridge open** | `Probability/MeasureTheory/Moments/ExponentialMoment.lean` proves that a finite exponential moment controls the fourth moment of the negative part, with an explicit logarithmic bound. Still derive the selected-endpoint exponential-minimum and positive-part fourth-moment estimates from the flat paper assumptions. Then use the common countable-root endpoint sequence and `L2FromPolynomialTails` to combine T11-L and T11-R+, with T11-R0 at `a = 0`. The varying-measure `TailExpectation` result assumes a uniform centered fourth-moment bound and is not a substitute for the paper's logarithmically growing fourth-moment estimate. |
+| T11: final trajectory theorem | **Open** | Assemble the preceding packages into the exact flat theorem statement and its `L²` conclusion. The zero-start clause has the paper's extra positive exponential-moment assumption only. A right-oriented counterpart is obtained from the separately stated OrderDual/right-side conditions; no offspring-law invariance is assumed. |
+| T12-K: speed existence | **Core proved; theorem range/expectation adapter open** | The repository's `Probability.Ergodic.Kingman` implementation already supplies the random Kingman theorem; Mathlib's `Analysis.Subadditive` supplies only the deterministic Fekete input. Environment independence, shift ergodicity, cocycle, integrability and lower-bound adapters prove a.s. speed for the full `N`-particle process under the left-side conditions. The paper's full initial-population range and any required `L¹` passage still need an adapter. |
+| T12-L/U: speed lower/upper bounds | **Open applications** | The lower bound consumes T11-L (and the endpoint expectation estimate); the upper bound consumes T11-R+ and T11-R0 together with the restart/selection comparison. Existing deterministic squeeze and many-to-one components are inputs, not these probability bounds. |
+| T12: final speed formula | **Open** | Feed both probabilistic speed bounds and the speed-existence/expectation package into `Speed/Asymptotics.lean` and state the paper's exact theorem with flat assumptions. |
+
+Dependency order:
+
+```text
+existing spine/drawdown/selection interfaces
+        ├── T11-R+ survival + capacity ── T11-R1
+        │                 └────────────── T11-R0 restart/remaining horizon
+        ├── T11-L exact-hypothesis adapter
+        └── T11-M endpoint moments + L² assembly
+                    ↑ T11-L, T11-R+, T11-R0
+T11-L + T11-R+/R0 ──> T12-L/U ──> T12 final formula
+existing Kingman core ──> T12-K range/expectation adapter ─────┘
+```
+
+The package boundaries follow the library ownership map: random-walk tube
+estimates remain in `Probability/Process/RandomWalk/`; spine and many-to-one
+transfers remain in `Probability/BranchingRandomWalk/Spine/`; generic killed
+populations remain in `Probability/BranchingRandomWalk/Population/`; and
+first-`N` endpoint and speed applications remain in
+`Probability/BranchingRandomWalk/Selection/NSelection/`. `Selection/` is not
+used as a synonym for deterministic first-`N` selection.
+
 This index separates reusable infrastructure from the still-open theorem
 applications. “Done” means the stated interface is proved; it does not imply
 that a later theorem which consumes it has also been proved.
@@ -136,8 +184,11 @@ The Lean probability modules are arranged by role:
 
 All modules are reached from the library roots listed in `lakefile.toml`.
 General independent-reserve integration estimates live in
-`Probability/Independence/Integration/Reserve.lean`; the general tail-integral
-bound is in `Probability/Distributions/Moments/TailExpectation.lean`. The
+`Probability/Independence/Integration/Reserve.lean`; general sequence and
+moment estimates are in `Probability/MeasureTheory/Convergence/` and
+`Probability/MeasureTheory/Moments/`, including the tail-integral bound in
+`Convergence/TailExpectation.lean` and the exponential-moment bound in
+`Moments/ExponentialMoment.lean`. The
 deterministic speed squeeze is in
 `Probability/BranchingRandomWalk/Selection/NSelection/Speed/Asymptotics.lean`; it is a
 final implication from eventual bounds, not a speed-existence theorem. Within
@@ -259,7 +310,7 @@ process and Gaussian-law APIs, not a general point-process representation.
   random child and is not marked as the full theorem.
 - `Probability/BranchingRandomWalk/Selection/NSelection/Speed/Asymptotics.lean` contains the final deterministic speed squeeze
   and an elementary first-moment truncation inequality.
-- `Probability/Distributions/Moments/TailExpectation.lean` contains
+- `Probability/MeasureTheory/Convergence/TailExpectation.lean` contains
   the finite-event integral bound and the abstract sequence theorem deriving
   the extended-real bound `liminf E[Xₙ]/log n ≥ target` from eventual
   polynomial lower-tail bounds and `E[exp(−Xₙ)] ≤ n`. The module build, test,

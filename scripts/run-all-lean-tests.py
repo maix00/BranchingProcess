@@ -138,7 +138,7 @@ AXIOM_EXPECTATIONS = {
         "ProbabilityTheory.BranchingRandomWalk.iidGeometricSplitCycle_positiveReward_le",
         "ProbabilityTheory.BranchingRandomWalk.iidGeometricFailureExponentialTransform",
     ),
-    Path("BranchingProcessTest/Probability/Distributions/Moments/TailExpectationAxioms.lean"): (
+    Path("BranchingProcessTest/Probability/MeasureTheory/Convergence/TailExpectationAxioms.lean"): (
         "ProbabilityTheory.neg_exp_neg_le_self",
         "ProbabilityTheory.integral_ge_of_lower_bound_off_event_exp_neg",
         "ProbabilityTheory.target_le_liminf_integral_div_log_of_polynomial_lower_tail",

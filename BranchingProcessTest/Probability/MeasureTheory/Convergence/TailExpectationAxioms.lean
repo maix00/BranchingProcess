@@ -1,4 +1,4 @@
-import Probability.Distributions.Moments.TailExpectation
+import Probability.MeasureTheory.Convergence.TailExpectation
 
 #print axioms ProbabilityTheory.neg_exp_neg_le_self
 
