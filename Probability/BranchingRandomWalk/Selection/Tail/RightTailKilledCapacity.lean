@@ -2416,7 +2416,7 @@ capacity contribution has the limiting rate `-b + v + c t^(1/3)`. The
 additional `κ c^p L^(p/3)` term vanishes after division by `log N`. -/
 theorem tendsto_rightTailPositiveAAHExponent_div_log_of_logarithmicScales
     {N : ℕ → ℕ} (hN : Tendsto N atTop atTop) {t b v c κ p : ℝ}
-    (ht : 0 < t) (hp : 0 < p) (hp1 : p < 1) :
+    (ht : 0 < t) (hp1 : p < 1) :
     Tendsto
       (fun n => ((-b + v) * logarithmOfSampleSize N n +
           c * (((logarithmicHorizon N t n -
@@ -2459,6 +2459,47 @@ theorem tendsto_rightTailPositiveAAHExponent_div_log_of_logarithmicScales
       atTop (𝓝 (-b + v + c * (t ^ (3⁻¹ : ℝ)))) := by
     simpa using hsum
   simpa [L, D] using hlimit.congr' heq.symm
+
+/-- Any rate strictly above the logarithmic limit controls the long-prefix
+AH exponential weight by the corresponding power of the sample size. -/
+theorem eventually_rightTailPositiveAAHWeight_le_sampleSize_rpow
+    {N : ℕ → ℕ} (hN : Tendsto N atTop atTop) {t b v c κ p rate : ℝ}
+    (ht : 0 < t) (hp1 : p < 1)
+    (hrate : -b + v + c * (t ^ (3⁻¹ : ℝ)) < rate) :
+    ∀ᶠ n : ℕ in atTop,
+      ENNReal.ofReal (Real.exp
+        ((-b + v) * logarithmOfSampleSize N n +
+          c * (((logarithmicHorizon N t n -
+            rightTailPositiveAFirstCutoff N n : ℕ) : ℝ) ^ (3⁻¹ : ℝ)) +
+          κ * c ^ p * (((logarithmicHorizon N t n -
+            rightTailPositiveAFirstCutoff N n : ℕ) : ℝ) ^ (p / 3)))) ≤
+        ENNReal.ofReal ((N n : ℝ) ^ rate) := by
+  let L : ℕ → ℝ := logarithmOfSampleSize N
+  let D : ℕ → ℕ := fun n =>
+    logarithmicHorizon N t n - rightTailPositiveAFirstCutoff N n
+  have hL : Tendsto L atTop atTop := by
+    exact Real.tendsto_log_atTop.comp
+      (tendsto_natCast_atTop_atTop.comp hN)
+  have hlimit := tendsto_rightTailPositiveAAHExponent_div_log_of_logarithmicScales
+    hN (t := t) (b := b) (v := v) (c := c) (κ := κ) (p := p) ht hp1
+  have hrateEvent : ∀ᶠ n : ℕ in atTop,
+      ((-b + v) * L n + c * ((D n : ℝ) ^ (3⁻¹ : ℝ)) +
+        κ * c ^ p * ((D n : ℝ) ^ (p / 3))) / L n < rate := by
+    simpa [L, D] using
+      (Filter.Tendsto.eventually hlimit (Iio_mem_nhds hrate))
+  filter_upwards [hrateEvent, hL.eventually_gt_atTop 0,
+    hN.eventually_gt_atTop 0] with n hn hLn hNn
+  have hexponent :
+      (-b + v) * L n + c * ((D n : ℝ) ^ (3⁻¹ : ℝ)) +
+        κ * c ^ p * ((D n : ℝ) ^ (p / 3)) < rate * L n := by
+    exact (div_lt_iff₀ hLn).mp hn
+  have hpow : (N n : ℝ) ^ rate = Real.exp (rate * L n) := by
+    rw [Real.rpow_def_of_pos (by exact_mod_cast hNn : (0 : ℝ) < (N n : ℝ))]
+    simp [L, logarithmOfSampleSize, mul_comm]
+  apply ENNReal.ofReal_le_ofReal
+  rw [hpow]
+  apply Real.exp_le_exp.mpr
+  simpa [D] using le_of_lt hexponent
 
 /-- Along any diverging planned span, the full terminal second-stage
 drawdown probability obeys the uniform Aïdékon--Hu exponential estimate.
