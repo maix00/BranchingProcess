@@ -640,7 +640,7 @@ theorem setIntegral_div_le_level [IsFiniteMeasure μ]
     intro n
     simp only [ha'def]
     exact (hint n).sub (integrable_const _)
-  -- `hBneg` for `a'`: `a(k+1)x < (k+1)β ⟺ a'(k+1)x < 0`.
+  -- `hBneg` for `a'`: `a(k+1)x < (k+1)β` iff `a'(k+1)x < 0`.
   have hBneg' : ∀ᵐ x ∂μ, x ∈ B → ∃ k, a' (k + 1) x < 0 := by
     filter_upwards [hBneg] with x hx hxB
     obtain ⟨k, hk⟩ := hx hxB
