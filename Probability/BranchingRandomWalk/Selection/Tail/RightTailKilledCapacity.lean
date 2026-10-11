@@ -21,7 +21,7 @@ Markov interfaces.
 -/
 
 open Filter MeasureTheory
-open scoped ENNReal BigOperators
+open scoped ENNReal BigOperators Topology
 
 namespace ProbabilityTheory.BranchingRandomWalk.Selection.Tail
 
@@ -1723,6 +1723,23 @@ theorem eventually_rightTailPositiveASecondStageAHScale
       le_of_lt (by nlinarith [hmul])
     _ = (D n : ℝ) := hproduct
 
+/-- A positive cubic-scale limit forces the planned span itself to diverge. -/
+theorem tendsto_rightTailPositiveASpan_atTop_of_cubicRatio
+    {D : ℕ → ℕ} {L : ℕ → ℝ} {t : ℝ}
+    (hL : Tendsto L atTop atTop)
+    (hscale : Tendsto (fun n => (D n : ℝ) / L n ^ 3) atTop (𝓝 t))
+    (ht : 0 < t) :
+    Tendsto (fun n => (D n : ℝ)) atTop atTop := by
+  have hcube : Tendsto (fun n => L n ^ 3) atTop atTop := by
+    exact tendsto_pow_atTop (by norm_num : (3 : ℕ) ≠ 0) |>.comp hL
+  have hproduct := hcube.atTop_mul_pos ht hscale
+  have hLpos : ∀ᶠ n : ℕ in atTop, 0 < L n := hL.eventually_gt_atTop 0
+  have heq : (fun n => L n ^ 3 * ((D n : ℝ) / L n ^ 3)) =ᶠ[atTop]
+      fun n => (D n : ℝ) := by
+    filter_upwards [hLpos] with n hn
+    field_simp
+  exact hproduct.congr' heq
+
 /-- Along any diverging planned span, the full terminal second-stage
 drawdown probability obeys the uniform Aïdékon--Hu exponential estimate.
 The restriction `p < 1` is exactly what makes `width^(2+p)` sublinear in the
@@ -1764,6 +1781,38 @@ theorem eventually_iidSequenceLaw_rightTailPositiveA_terminalDrawdown_le_ah
   have hbound := hAH (ell n) (ellN n) (D n) (hellN n) (by simp [D])
     (by simpa [D] using hscale.1) (by simpa [D] using hscale.2)
   simpa [D] using hbound
+
+/-- The full second-stage tube has the same terminal Aïdékon--Hu bound,
+because its affine corridor is contained in the associated drawdown event. -/
+theorem eventually_iidSequenceLaw_rightTailPositiveASecondStageTube_le_ah
+    (ν : Measure ℝ) [IsProbabilityMeasure ν] {sigma : ℝ}
+    (hν : ProbabilityTheory.IsCenteredSecondMoment ν (sigma ^ 2))
+    (hsigma : 0 < sigma)
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+    [IsProbabilityMeasure P] {B : NNReal → Ω → ℝ}
+    (hB : IsPreBrownianReal B P)
+    (hcontinuous : ∀ ω, Continuous (B · ω))
+    (hmeasurable : ∀ t, Measurable (B t))
+    (κ c v target blockTarget p : ℝ)
+    (hκ : 0 ≤ κ) (hc : 0 < c) (hvc : v ≤ c)
+    (htarget : 0 < target) (htargetBlock : target < blockTarget)
+    (hblockTarget : blockTarget < Real.pi ^ 2 / 2)
+    (hp : 0 < p) (hp1 : p < 1)
+    {ell ellN : ℕ → ℕ} (hellN : ∀ n, ell n < ellN n)
+    (hspan : Tendsto (fun n => ((ellN n - ell n : ℕ) : ℝ)) atTop atTop) :
+    ∀ᶠ n : ℕ in atTop,
+      iidSequenceLaw ν
+        (rightTailPositiveASecondStageTubeEvent (ell n) (ellN n) κ c v) ≤
+        ENNReal.ofReal (Real.exp
+          (-target * sigma ^ 2 * ((ellN n - ell n : ℕ) : ℝ) /
+            (c * (((ellN n - ell n : ℕ) : ℝ) ^ (3⁻¹ : ℝ))) ^ 2)) := by
+  have hdrawdown := eventually_iidSequenceLaw_rightTailPositiveA_terminalDrawdown_le_ah
+    ν hν hsigma hB hcontinuous hmeasurable κ c target blockTarget p hκ hc
+    htarget htargetBlock hblockTarget hp hp1 hellN hspan
+  filter_upwards [hdrawdown] with n hbound
+  apply (measure_mono ?_).trans hbound
+  exact rightTailPositiveASecondStageTubeEvent_subset_drawdownEvent
+    (ell n) (ellN n) κ c v (hellN n) hκ hc hvc
 
 /-- Insert the uniform Aïdékon--Hu estimate into the two-stage capacity
 bound. Long second-stage prefixes use the exponential drawdown estimate;
