@@ -20,7 +20,7 @@ actual tilted-walk corridor probabilities through the first-moment and
 Markov interfaces.
 -/
 
-open MeasureTheory
+open Filter MeasureTheory
 open scoped ENNReal BigOperators
 
 namespace ProbabilityTheory.BranchingRandomWalk.Selection.Tail
@@ -1678,6 +1678,92 @@ theorem iidSequenceLaw_rightTailPositiveASecondStageDrawdown_le_of_ah
   apply le_trans (measure_mono ?_) hbound'
   intro increment hdrop
   exact ⟨hdrop.1, hdrop.2.trans hendpoint⟩
+
+/-- If the planned second-stage span diverges, its spatial width eventually
+passes the uniform Aïdékon--Hu scale threshold. For every `p < 1`, the full
+span is also eventually longer than `width^(2+p)`. -/
+theorem eventually_rightTailPositiveASecondStageAHScale
+    (D : ℕ → ℕ) (c p delta0 : ℝ)
+    (hc : 0 < c) (hp1 : p < 1)
+    (hD : Tendsto (fun n => (D n : ℝ)) atTop atTop) :
+    ∀ᶠ n : ℕ in atTop,
+      delta0 ≤ c * ((D n : ℝ) ^ (3⁻¹ : ℝ)) ∧
+        (c * ((D n : ℝ) ^ (3⁻¹ : ℝ))) ^ (2 + p) ≤ (D n : ℝ) := by
+  have hwidth : Tendsto
+      (fun n => c * ((D n : ℝ) ^ (3⁻¹ : ℝ))) atTop atTop := by
+    exact ((_root_.tendsto_rpow_atTop (by norm_num : (0 : ℝ) < (3⁻¹ : ℝ))).comp hD)
+      |>.const_mul_atTop hc
+  have hexponent : 0 < (1 - p) / 3 := by linarith
+  have hpower : Tendsto
+      (fun n => (D n : ℝ) ^ ((1 - p) / 3)) atTop atTop :=
+    (_root_.tendsto_rpow_atTop hexponent).comp hD
+  filter_upwards [hwidth.eventually_gt_atTop delta0,
+    hpower.eventually_gt_atTop (c ^ (2 + p)),
+    hD.eventually_gt_atTop 0] with n hwidthLarge hpowerLarge hDpos
+  refine ⟨le_of_lt hwidthLarge, ?_⟩
+  have hbase : 0 < (D n : ℝ) := hDpos
+  have hwidthPow :
+      (c * ((D n : ℝ) ^ (3⁻¹ : ℝ))) ^ (2 + p) =
+        c ^ (2 + p) * (D n : ℝ) ^ ((2 + p) / 3) := by
+    rw [Real.mul_rpow hc.le (by positivity)]
+    rw [← Real.rpow_mul hbase.le]
+    congr 1
+    ring_nf
+  have hmul := mul_lt_mul_of_pos_right hpowerLarge
+    (Real.rpow_pos_of_pos hbase ((2 + p) / 3))
+  have hproduct :
+      (D n : ℝ) ^ ((1 - p) / 3) * (D n : ℝ) ^ ((2 + p) / 3) =
+        (D n : ℝ) := by
+    rw [← Real.rpow_add hbase]
+    rw [show (1 - p) / 3 + (2 + p) / 3 = 1 by ring, Real.rpow_one]
+  calc
+    (c * ((D n : ℝ) ^ (3⁻¹ : ℝ))) ^ (2 + p) =
+        c ^ (2 + p) * (D n : ℝ) ^ ((2 + p) / 3) := hwidthPow
+    _ ≤ (D n : ℝ) ^ ((1 - p) / 3) * (D n : ℝ) ^ ((2 + p) / 3) :=
+      le_of_lt (by nlinarith [hmul])
+    _ = (D n : ℝ) := hproduct
+
+/-- Along any diverging planned span, the full terminal second-stage
+drawdown probability obeys the uniform Aïdékon--Hu exponential estimate.
+The restriction `p < 1` is exactly what makes `width^(2+p)` sublinear in the
+planned span. -/
+theorem eventually_iidSequenceLaw_rightTailPositiveA_terminalDrawdown_le_ah
+    (ν : Measure ℝ) [IsProbabilityMeasure ν] {sigma : ℝ}
+    (hν : ProbabilityTheory.IsCenteredSecondMoment ν (sigma ^ 2))
+    (hsigma : 0 < sigma)
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+    [IsProbabilityMeasure P] {B : NNReal → Ω → ℝ}
+    (hB : IsPreBrownianReal B P)
+    (hcontinuous : ∀ ω, Continuous (B · ω))
+    (hmeasurable : ∀ t, Measurable (B t))
+    (κ c target blockTarget p : ℝ)
+    (hκ : 0 ≤ κ) (hc : 0 < c)
+    (htarget : 0 < target) (htargetBlock : target < blockTarget)
+    (hblockTarget : blockTarget < Real.pi ^ 2 / 2)
+    (hp : 0 < p) (hp1 : p < 1)
+    {ell ellN : ℕ → ℕ} (hellN : ∀ n, ell n < ellN n)
+    (hspan : Tendsto (fun n => ((ellN n - ell n : ℕ) : ℝ)) atTop atTop) :
+    ∀ᶠ n : ℕ in atTop,
+      iidSequenceLaw ν
+        (ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.noLargeDropEndpointBelowEvent
+          (ellN n - ell n)
+          (c * (((ellN n - ell n : ℕ) : ℝ) ^ (3⁻¹ : ℝ)))
+          (rightTailPositiveADrift (ell n) (ellN n) κ c (ellN n - ell n) +
+            c * (((ellN n - ell n : ℕ) : ℝ) ^ (3⁻¹ : ℝ)))) ≤
+        ENNReal.ofReal (Real.exp
+          (-target * sigma ^ 2 * ((ellN n - ell n : ℕ) : ℝ) /
+            (c * (((ellN n - ell n : ℕ) : ℝ) ^ (3⁻¹ : ℝ))) ^ 2)) := by
+  let D : ℕ → ℕ := fun n => ellN n - ell n
+  obtain ⟨delta0, _hdelta0, hAH⟩ :=
+    iidSequenceLaw_rightTailPositiveASecondStageDrawdown_le_of_ah
+      ν hν hsigma hB hcontinuous hmeasurable κ c target blockTarget p
+      hκ hc htarget htargetBlock hblockTarget hp
+  have hscale := eventually_rightTailPositiveASecondStageAHScale
+    D c p delta0 hc hp1 hspan
+  filter_upwards [hscale] with n hscale
+  have hbound := hAH (ell n) (ellN n) (D n) (hellN n) (by simp [D])
+    (by simpa [D] using hscale.1) (by simpa [D] using hscale.2)
+  simpa [D] using hbound
 
 /-- Insert the uniform Aïdékon--Hu estimate into the two-stage capacity
 bound. Long second-stage prefixes use the exponential drawdown estimate;
