@@ -50,6 +50,13 @@ noncomputable def logarithmicBlockCount (N : ℕ → ℕ) (beta b t : ℝ) (n : 
   ⌊(logarithmicHorizon N t n : ℝ) /
       logarithmicBlockLength N beta b n⌋₊
 
+/-- The number of complete blocks fitting in an arbitrary horizon.  This is
+the version used for the paper's arbitrary sequence `ℓ_N`, whose only
+assumption is its normalized logarithmic-cube limit. -/
+noncomputable def logarithmicBlockCountForHorizon (N : ℕ → ℕ) (beta b : ℝ)
+    (horizon : ℕ → ℕ) (n : ℕ) : ℕ :=
+  ⌊(horizon n : ℝ) / logarithmicBlockLength N beta b n⌋₊
+
 /-- The block-width factor required by the raw range-rate theorem. -/
 noncomputable def logarithmicRateBeta (factor eta : ℝ) : ℝ := factor * (1 + eta) / 2
 
@@ -777,6 +784,252 @@ theorem logarithmicRawRateParameters
   · exact tendsto_logarithmicCoverage hN hbeta hb ht
   · intro n
     exact logarithmicBlockCount_complete N beta b t n
+  · exact eventually_logarithmicDrawdown_pos hN hbeta hb
+  · simpa using eventually_logarithmicThreshold_floor hN hfactor heta hb hbin
+  · exact eventually_logarithmicBlockScale_aligned hN hfactor heta hb
+
+/-! ## Arbitrary horizons -/
+
+private theorem tendsto_horizon_div_length_atTop_of_logCube_limit
+    {N horizon : ℕ → ℕ} (hN : Tendsto N atTop atTop)
+    {beta b t : ℝ} (hbeta : 0 < beta) (hb : 0 < b) (ht : 0 < t)
+    (hH : Tendsto (fun n => (horizon n : ℝ) /
+      logarithmOfSampleSize N n ^ 3) atTop (𝓝 t)) :
+    Tendsto (fun n => (horizon n : ℝ) /
+      (logarithmicBlockLength N beta b n : ℝ)) atTop atTop := by
+  let L := logarithmOfSampleSize N
+  let root : ℕ → ℝ := fun n => Real.sqrt (L n)
+  let gamma : ℝ := Real.sqrt (beta * b) ^ 5
+  have hgammaPos : 0 < gamma :=
+    pow_pos (Real.sqrt_pos.2 (mul_pos hbeta hb)) 5
+  have hL : Tendsto L atTop atTop := tendsto_logarithmOfSampleSize_atTop hN
+  have hroot : Tendsto root atTop atTop := Real.tendsto_sqrt_atTop.comp hL
+  have hlen := tendsto_logarithmicBlockLength_div_log_two_sqrt hN hbeta hb
+  have hratio : Tendsto
+      (fun n => ((horizon n : ℝ) / L n ^ 3) /
+        ((logarithmicBlockLength N beta b n : ℝ) /
+          (L n ^ 2 * root n))) atTop (𝓝 (t / gamma)) := by
+    have hdiv := hH.div hlen (ne_of_gt hgammaPos)
+    change Tendsto
+      ((fun n => (horizon n : ℝ) / logarithmOfSampleSize N n ^ 3) /
+        (fun n => (logarithmicBlockLength N beta b n : ℝ) /
+          (logarithmOfSampleSize N n ^ 2 *
+            Real.sqrt (logarithmOfSampleSize N n))))
+      atTop (𝓝 (t / gamma))
+    exact hdiv
+  have hscaled : Tendsto
+      (fun n => root n * (((horizon n : ℝ) / L n ^ 3) /
+        ((logarithmicBlockLength N beta b n : ℝ) /
+          (L n ^ 2 * root n)))) atTop atTop :=
+    hroot.atTop_mul_pos (div_pos ht hgammaPos) hratio
+  have hlenPos : ∀ᶠ n : ℕ in atTop,
+      0 < (logarithmicBlockLength N beta b n : ℝ) := by
+    filter_upwards [] with n
+    exact_mod_cast logarithmicBlockLength_pos N beta b n
+  have heq : (fun n => root n * (((horizon n : ℝ) / L n ^ 3) /
+      ((logarithmicBlockLength N beta b n : ℝ) /
+        (L n ^ 2 * root n)))) =ᶠ[atTop]
+      fun n => (horizon n : ℝ) /
+        (logarithmicBlockLength N beta b n : ℝ) := by
+    filter_upwards [hL.eventually_gt_atTop 0, hlenPos] with n hn hlen
+    have hrootSq : root n ^ 2 = L n := Real.sq_sqrt (le_of_lt hn)
+    have hrootNe : root n ≠ 0 := ne_of_gt (Real.sqrt_pos.2 hn)
+    have hLne : L n ≠ 0 := ne_of_gt hn
+    have hlenNe : (logarithmicBlockLength N beta b n : ℝ) ≠ 0 := ne_of_gt hlen
+    field_simp [hrootNe, hLne, hlenNe]
+    rw [hrootSq]
+    ring
+  simpa [L, root, gamma] using hscaled.congr' heq
+
+private theorem tendsto_logarithmicBlockCountForHorizon_atTop
+    {N horizon : ℕ → ℕ} (hN : Tendsto N atTop atTop)
+    {beta b t : ℝ} (hbeta : 0 < beta) (hb : 0 < b) (ht : 0 < t)
+    (hH : Tendsto (fun n => (horizon n : ℝ) /
+      logarithmOfSampleSize N n ^ 3) atTop (𝓝 t)) :
+    Tendsto (logarithmicBlockCountForHorizon N beta b horizon) atTop atTop := by
+  have hquot := tendsto_horizon_div_length_atTop_of_logCube_limit
+    hN hbeta hb ht hH
+  change Tendsto
+    (fun n => Nat.floor ((horizon n : ℝ) /
+      (logarithmicBlockLength N beta b n : ℝ))) atTop atTop
+  exact tendsto_nat_floor_atTop.comp hquot
+
+private theorem tendsto_logarithmicBlockCountForHorizon_div_quotient
+    {N horizon : ℕ → ℕ} (hN : Tendsto N atTop atTop)
+    {beta b t : ℝ} (hbeta : 0 < beta) (hb : 0 < b) (ht : 0 < t)
+    (hH : Tendsto (fun n => (horizon n : ℝ) /
+      logarithmOfSampleSize N n ^ 3) atTop (𝓝 t)) :
+    Tendsto (fun n => (logarithmicBlockCountForHorizon N beta b horizon n : ℝ) /
+      ((horizon n : ℝ) /
+        (logarithmicBlockLength N beta b n : ℝ))) atTop (𝓝 1) := by
+  have hquot := tendsto_horizon_div_length_atTop_of_logCube_limit
+    hN hbeta hb ht hH
+  change Tendsto
+    (fun n => (Nat.floor ((horizon n : ℝ) /
+      (logarithmicBlockLength N beta b n : ℝ)) : ℝ) /
+        ((horizon n : ℝ) /
+          (logarithmicBlockLength N beta b n : ℝ))) atTop (𝓝 1)
+  exact tendsto_nat_floor_div_atTop.comp hquot
+
+private theorem tendsto_logarithmicTotalCost_atTop_of_horizon
+    {N horizon : ℕ → ℕ} (hN : Tendsto N atTop atTop)
+    {beta b t : ℝ} (hbeta : 0 < beta) (hb : 0 < b) (ht : 0 < t)
+    (hH : Tendsto (fun n => (horizon n : ℝ) /
+      logarithmOfSampleSize N n ^ 3) atTop (𝓝 t)) :
+    Tendsto (fun n => (horizon n : ℝ) /
+      logarithmicDrawdown N beta b n ^ 2) atTop atTop := by
+  let L := logarithmOfSampleSize N
+  have hL : Tendsto L atTop atTop := tendsto_logarithmOfSampleSize_atTop hN
+  have hB := tendsto_logarithmicDrawdown_div_log hN hbeta hb
+  have hbase : Tendsto
+      (fun n => ((horizon n : ℝ) / L n ^ 3) /
+        (logarithmicDrawdown N beta b n / L n) ^ 2) atTop
+      (𝓝 (t / b ^ 2)) := by
+    have hden := hB.pow 2
+    have hdiv := hH.div hden (ne_of_gt (sq_pos_of_pos hb))
+    change Tendsto
+      ((fun n => (horizon n : ℝ) / L n ^ 3) /
+        (fun n => (logarithmicDrawdown N beta b n / L n) ^ 2))
+      atTop (𝓝 (t / b ^ 2))
+    exact hdiv
+  have hscaled := hL.atTop_mul_pos (div_pos ht (sq_pos_of_pos hb)) hbase
+  have hdeltaPos := eventually_logarithmicDrawdown_pos hN hbeta hb
+  have heq : (fun n => (horizon n : ℝ) /
+      logarithmicDrawdown N beta b n ^ 2) =ᶠ[atTop]
+      fun n => L n * (((horizon n : ℝ) / L n ^ 3) /
+        (logarithmicDrawdown N beta b n / L n) ^ 2) := by
+    filter_upwards [hL.eventually_gt_atTop 0, hdeltaPos] with n hn hδ
+    have hLne : L n ≠ 0 := ne_of_gt hn
+    have hδne : logarithmicDrawdown N beta b n ≠ 0 := ne_of_gt hδ
+    field_simp [hLne, hδne]
+  exact hscaled.congr' heq.symm
+
+private theorem logarithmicBlockCountForHorizon_complete
+    (N horizon : ℕ → ℕ) (beta b : ℝ) (n : ℕ) :
+    logarithmicBlockCountForHorizon N beta b horizon n *
+      logarithmicBlockLength N beta b n ≤ horizon n := by
+  let len := logarithmicBlockLength N beta b n
+  let H := horizon n
+  have hlenPos : 0 < len := logarithmicBlockLength_pos N beta b n
+  have hfloor :
+      ((Nat.floor ((H : ℝ) / len) : ℕ) : ℝ) ≤ (H : ℝ) / len :=
+    Nat.floor_le (div_nonneg (Nat.cast_nonneg _) (Nat.cast_nonneg _))
+  have hmul := mul_le_mul_of_nonneg_right hfloor
+    (Nat.cast_nonneg len : (0 : ℝ) ≤ len)
+  have hcast : (Nat.floor ((H : ℝ) / len) : ℝ) * len ≤ H := by
+    have hlenNe : (len : ℝ) ≠ 0 := by exact_mod_cast hlenPos.ne'
+    have h := hmul
+    field_simp [hlenNe] at h
+    nlinarith [h]
+  exact_mod_cast hcast
+
+private theorem tendsto_logarithmicCoverageForHorizon
+    {N horizon : ℕ → ℕ} (hN : Tendsto N atTop atTop)
+    {beta b t : ℝ} (hbeta : 0 < beta) (hb : 0 < b) (ht : 0 < t)
+    (hH : Tendsto (fun n => (horizon n : ℝ) /
+      logarithmOfSampleSize N n ^ 3) atTop (𝓝 t)) :
+    Tendsto (fun n => (logarithmicBlockCountForHorizon N beta b horizon n : ℝ) *
+      (((logarithmicBlockLength N beta b n + 1 : ℕ) : ℝ) /
+        logarithmicDrawdown N beta b n ^ 2) /
+      ((horizon n : ℝ) /
+        logarithmicDrawdown N beta b n ^ 2)) atTop (𝓝 1) := by
+  have hblocks := tendsto_logarithmicBlockCountForHorizon_div_quotient
+    hN hbeta hb ht hH
+  have hlength := tendsto_logarithmicLengthSucc_div_length hN hbeta hb
+  have hprod := hblocks.mul hlength
+  have hdeltaPos := eventually_logarithmicDrawdown_pos hN hbeta hb
+  have hL : Tendsto (logarithmOfSampleSize N) atTop atTop :=
+    tendsto_logarithmOfSampleSize_atTop hN
+  have hHpos : ∀ᶠ n : ℕ in atTop, 0 < (horizon n : ℝ) := by
+    have hratioPos := hH.eventually (Ioi_mem_nhds (by linarith : 0 < t))
+    filter_upwards [hratioPos, hL.eventually_gt_atTop 0] with n hr hln
+    have hden : 0 < logarithmOfSampleSize N n ^ 3 := pow_pos hln 3
+    rcases (div_pos_iff.mp hr) with ⟨hnum, _⟩ | ⟨_, hdenNeg⟩
+    · exact hnum
+    · exact (False.elim (not_lt_of_ge hden.le hdenNeg))
+  have heq : (fun n => (logarithmicBlockCountForHorizon N beta b horizon n : ℝ) *
+      (((logarithmicBlockLength N beta b n + 1 : ℕ) : ℝ) /
+        logarithmicDrawdown N beta b n ^ 2) /
+      ((horizon n : ℝ) /
+        logarithmicDrawdown N beta b n ^ 2)) =ᶠ[atTop]
+      fun n => ((logarithmicBlockCountForHorizon N beta b horizon n : ℝ) /
+          ((horizon n : ℝ) /
+            (logarithmicBlockLength N beta b n : ℝ))) *
+        (((logarithmicBlockLength N beta b n + 1 : ℕ) : ℝ) /
+          (logarithmicBlockLength N beta b n : ℝ)) := by
+    filter_upwards [hdeltaPos, hHpos] with n hδ hHn
+    have hδne : logarithmicDrawdown N beta b n ≠ 0 := ne_of_gt hδ
+    have hlenPos : (0 : ℝ) < (logarithmicBlockLength N beta b n : ℝ) := by
+      exact_mod_cast logarithmicBlockLength_pos N beta b n
+    have hlenNe : (logarithmicBlockLength N beta b n : ℝ) ≠ 0 := ne_of_gt hlenPos
+    field_simp [hδne, hlenNe, ne_of_gt hHn]
+  simpa using hprod.congr' heq.symm
+
+/-- Deterministic block parameters for any horizon whose ratio to `log N ^ 3`
+tends to a positive constant.  The block count is the floor of the number of
+whole blocks fitting in the horizon; its unused remainder is automatically
+bounded by one block. -/
+theorem logarithmicRawRateParametersForHorizon
+    {N horizon : ℕ → ℕ} (hN : Tendsto N atTop atTop)
+    {factor eta b t zeta : ℝ} (horizonTends :
+      Tendsto (fun n => (horizon n : ℝ) /
+        logarithmOfSampleSize N n ^ 3) atTop (𝓝 t))
+    (hfactor : 1 < factor) (heta : 0 < eta) (hb : 0 < b) (ht : 0 < t)
+    (hbin : (zeta / b + 1) / eta < 1 ∨
+      ¬ ∃ k : ℕ, (zeta / b + 1) / eta = (k : ℝ)) :
+    ∃ K : ℕ,
+      K = ⌊(zeta / b + 1) / eta⌋₊ ∧
+      Asymptotics.IsSmallDeviationScale logarithmicSmallDeviationScale
+        (fun k => Real.sqrt (k : ℝ)) ∧
+      Tendsto (fun n => logarithmicBlockLength N
+        (logarithmicRateBeta factor eta) b n + 1) atTop atTop ∧
+      Tendsto (logarithmicBlockCountForHorizon N
+        (logarithmicRateBeta factor eta) b horizon) atTop atTop ∧
+      Tendsto (fun n =>
+        ((logarithmicBlockLength N (logarithmicRateBeta factor eta) b n + 1 : ℕ) : ℝ) /
+          logarithmicDrawdown N (logarithmicRateBeta factor eta) b n ^ 2)
+        atTop atTop ∧
+      Tendsto (fun n => (horizon n : ℝ) /
+        logarithmicDrawdown N (logarithmicRateBeta factor eta) b n ^ 2)
+        atTop atTop ∧
+      Tendsto (fun n => (logarithmicBlockCountForHorizon N
+          (logarithmicRateBeta factor eta) b horizon n : ℝ) *
+        (((logarithmicBlockLength N (logarithmicRateBeta factor eta) b n + 1 : ℕ) : ℝ) /
+          logarithmicDrawdown N (logarithmicRateBeta factor eta) b n ^ 2) /
+        ((horizon n : ℝ) /
+          logarithmicDrawdown N (logarithmicRateBeta factor eta) b n ^ 2))
+        atTop (𝓝 1) ∧
+      (∀ n, logarithmicBlockCountForHorizon N
+          (logarithmicRateBeta factor eta) b horizon n *
+          logarithmicBlockLength N (logarithmicRateBeta factor eta) b n ≤
+        horizon n) ∧
+      (∀ᶠ n : ℕ in atTop,
+        0 < logarithmicDrawdown N (logarithmicRateBeta factor eta) b n) ∧
+      (∀ᶠ n : ℕ in atTop,
+        ⌊(logarithmicEndpointThreshold N zeta n +
+          logarithmicDrawdown N (logarithmicRateBeta factor eta) b n) /
+          (eta * logarithmicDrawdown N (logarithmicRateBeta factor eta) b n)⌋₊ = K) ∧
+      (∀ᶠ n : ℕ in atTop,
+        logarithmicSmallDeviationScale
+          (logarithmicBlockLength N (logarithmicRateBeta factor eta) b n + 1) =
+          logarithmicRateBeta factor eta *
+            logarithmicDrawdown N (logarithmicRateBeta factor eta) b n) := by
+  let beta := logarithmicRateBeta factor eta
+  have hbeta : 0 < beta := by
+    dsimp [beta, logarithmicRateBeta]
+    positivity
+  refine ⟨⌊(zeta / b + 1) / eta⌋₊, rfl,
+    logarithmicSmallDeviationScale_isSmallDeviationScale,
+    ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  · exact tendsto_logarithmicBlockLength_succ_atTop hN hbeta hb
+  · exact tendsto_logarithmicBlockCountForHorizon_atTop
+      hN hbeta hb ht horizonTends
+  · exact tendsto_logarithmicBlockCost_atTop hN hbeta hb
+  · exact tendsto_logarithmicTotalCost_atTop_of_horizon
+      hN hbeta hb ht horizonTends
+  · exact tendsto_logarithmicCoverageForHorizon hN hbeta hb ht horizonTends
+  · intro n
+    exact logarithmicBlockCountForHorizon_complete N horizon beta b n
   · exact eventually_logarithmicDrawdown_pos hN hbeta hb
   · simpa using eventually_logarithmicThreshold_floor hN hfactor heta hb hbin
   · exact eventually_logarithmicBlockScale_aligned hN hfactor heta hb
