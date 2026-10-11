@@ -9,6 +9,7 @@ module
 public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Filtration
 public import Combinatorics.BranchingWalk.Step.Basic
 public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Positions
+public import Combinatorics.BranchingWalk.Basic.Position
 
 /-!
 # Measurability of realized nodes and positions, root by root
@@ -160,6 +161,31 @@ theorem positionAtGeneration_measurable
     simpa using RootIndexed.position_measurable initial d hd i u
   · simp only [hu, ite_false]
     exact measurable_const
+
+/-- The observed position of a labelled particle at generation `n`. Labels
+at another depth receive additive zero; actual generation candidate sets
+contain only labels of depth `n`. -/
+def observedPositionAtGeneration
+    {Root α Mark Position Value : Type*} [AddCommMonoid Position]
+    (initial : Root → Position) (d : Mark → Position)
+    (φ : Position → Value) (n : ℕ)
+    (ω : RootIndexed.StepField Root α Mark)
+    (p : RootIndexed.TreeNode Root α) : Value :=
+  φ (RootIndexed.positionAtGeneration initial d n p.1 p.2 ω)
+
+theorem observedPositionAtGeneration_eq
+    {Root α Mark Position Value : Type*} [AddCommMonoid Position]
+    (initial : Root → Position) (d : Mark → Position)
+    (φ : Position → Value) (n : ℕ)
+    (ω : RootIndexed.StepField Root α Mark)
+    (p : RootIndexed.TreeNode Root α) (hp : p.2.length = n) :
+    RootIndexed.observedPositionAtGeneration initial d φ n ω p =
+      φ ((Combinatorics.Branching.RootIndexed.BranchingWalk.ofStepField
+        initial ω).position d p.1 p.2) := by
+  simp [RootIndexed.observedPositionAtGeneration, RootIndexed.positionAtGeneration,
+    RootIndexed.position, RootIndexed.displace,
+    Combinatorics.Branching.displaceWith,
+    Combinatorics.Branching.RootIndexed.BranchingWalk.position, hp]
 
 /-- Position at a fixed root and a generation-measurably selected address is
 measurable whenever the selector has countable range. The proof decomposes
