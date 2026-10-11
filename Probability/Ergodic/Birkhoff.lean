@@ -691,7 +691,7 @@ theorem measure_setOf_lt_limsup_eq_zero [IsFiniteMeasure μ]
       simp only [hBφdef, Set.mem_setOf_eq]
       refine ⟨p, ?_⟩
       rw [hSφx p hxE']
-      -- `A_{p+1}(g) x > L x + ε ⟺ S_{p+1}(g) x > (p+1)(L x + ε)`.
+      -- `A_{p+1}(g) x > L x + ε` iff `S_{p+1}(g) x > (p+1)(L x + ε)`.
       have hpos : (0 : ℝ) < (p : ℝ) + 1 := by positivity
       rw [birkhoffAverage, smul_eq_mul] at hmg
       have hcast : (((p + 1 : ℕ)) : ℝ) = (p : ℝ) + 1 := by push_cast; ring
