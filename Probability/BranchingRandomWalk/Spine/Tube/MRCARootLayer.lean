@@ -1621,6 +1621,36 @@ theorem affineTubeMRCALayer_le_of_drawdown
   exact lintegral_affineCorridorPrefixContinuationPair_indicator_le_of_drawdown
     φ μ hboundary m n initial lower drift width endpointUpper hdrift q hdrawdown
 
+/-- Summing the fixed-depth affine-tube MRCA bounds over every possible
+branching generation gives the corresponding finite aggregate estimate. -/
+theorem sum_affineTubeMRCALayer_le_of_drawdown
+    {X : Type*} [MeasurableSpace X]
+    (φ : Potential X) (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
+    (hboundary : HasBoundaryNormalization φ μ)
+    (N : ℕ) (initial lower drift width endpointUpper : ℝ)
+    (hdrift : 0 ≤ drift) (q : ℕ → ℝ≥0∞)
+    (hdrawdown : ∀ n,
+      (tiltedIncrementFieldLaw φ μ)
+        (ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.noLargeDropEndpointBelowEvent
+          n width (width + drift * (n : ℝ))) ≤ q n) :
+    (∑ m : Fin N, affineTubeMRCALayer φ μ m.val
+        (N - m.val - 1) initial lower drift width endpointUpper) ≤
+      ∑ m : Fin N,
+        ENNReal.ofReal (Real.exp (-(2 * initial))) *
+          (ENNReal.ofReal (Real.exp (2 * endpointUpper)) *
+            q (N - m.val - 1) ^ 2) *
+          (∫⁻ ξ, crossChildWeight φ ξ ∂μ) *
+          (ENNReal.ofReal
+            (Real.exp (initial - (lower + drift * (m.val : ℝ)))) *
+            (tiltedIncrementFieldLaw φ μ)
+              {increment | ProbabilityTheory.RandomWalk.history m.val initial increment ∈
+                affineCorridorPrefix m.val lower drift width}) := by
+  apply Finset.sum_le_sum
+  intro m hm
+  exact affineTubeMRCALayer_le_of_drawdown
+    φ μ hboundary m.val (N - m.val - 1) initial lower drift width endpointUpper
+    hdrift (q (N - m.val - 1)) (hdrawdown (N - m.val - 1))
+
 /-- The prefix endpoint lower bound removes one of the two reciprocal
 potential factors in a positive-depth MRCA term. The remaining expectation is
 the spine prefix probability times the cross-child moment. -/
