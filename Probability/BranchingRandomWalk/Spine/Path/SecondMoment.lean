@@ -647,6 +647,136 @@ theorem lintegral_pathGeneration_childProduct_eq
     (hchildObservable i) (hchildObservable j)
   simpa [tailTest, childObservable] using hfactor
 
+/-- The expected contribution of pairs that split at the root is the
+offspring-law average of the conditional off-diagonal pair observable. This is
+the depth-zero case of the conditional-prefix representation of MRCA terms. -/
+theorem lintegral_pathGenerationMRCAContribution_zero_eq_childMeanOffDiagonal
+    {X : Type*} [MeasurableSpace X]
+    (φ : Potential X) (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
+    (n : ℕ) (F : (Fin (n + 2) → ℝ) → ℝ≥0∞) (hF : Measurable F)
+    (x : ℝ) :
+    (∫⁻ ω, pathGenerationMRCAContribution φ 0 (n + 1) F x ω
+      ∂stepFieldLaw μ) =
+      ∫⁻ ξ, pathGenerationChildMeanOffDiagonal φ μ n F x ξ ∂μ := by
+  classical
+  let childObservable (i : ℕ) (ω : StepField ℕ X) : ℝ≥0∞ :=
+    pathGenerationChildObservable φ n F x i (ω [])
+      (subtreeStepField [i] ω)
+  let childMean (i : ℕ) (ξ : Step ℕ X) : ℝ≥0∞ :=
+    ∫⁻ η, pathGenerationChildObservable φ n F x i ξ η ∂stepFieldLaw μ
+  let pairTerm (i j : ℕ) (ω : StepField ℕ X) : ℝ≥0∞ :=
+    if i ≠ j then childObservable i ω * childObservable j ω else 0
+  let meanPairTerm (i j : ℕ) (ξ : Step ℕ X) : ℝ≥0∞ :=
+    if i ≠ j then childMean i ξ * childMean j ξ else 0
+  have hchildObservable (i : ℕ) : Measurable (childObservable i) := by
+    change Measurable
+      (Function.uncurry (pathGenerationChildObservable φ n F x i) ∘
+        fun ω : StepField ℕ X => (ω [], subtreeStepField [i] ω))
+    exact (pathGenerationChildObservable_measurable φ n F hF x i).comp
+      ((measurable_pi_apply ([] : TreeNode ℕ)).prodMk
+        (subtreeStepField_measurable [i]))
+  have hchildMean (i : ℕ) : Measurable (childMean i) := by
+    apply Measurable.lintegral_prod_right
+    simpa [childMean] using
+      pathGenerationChildObservable_measurable φ n F hF x i
+  have hpairTerm (i j : ℕ) : Measurable (pairTerm i j) := by
+    by_cases hij : i ≠ j
+    · simp only [pairTerm, if_pos hij]
+      exact (hchildObservable i).mul (hchildObservable j)
+    · have hEq : i = j := by
+        by_contra hne
+        exact hij hne
+      simp [pairTerm, hEq]
+  have hmeanPairTerm (i j : ℕ) : Measurable (meanPairTerm i j) := by
+    by_cases hij : i ≠ j
+    · simp only [meanPairTerm, if_pos hij]
+      exact (hchildMean i).mul (hchildMean j)
+    · have hEq : i = j := by
+        by_contra hne
+        exact hij hne
+      simp [meanPairTerm, hEq]
+  have hpairFactor (i j : ℕ) (hij : i ≠ j) :
+      (∫⁻ ω, childObservable i ω * childObservable j ω
+        ∂stepFieldLaw μ) =
+      ∫⁻ ξ, childMean i ξ * childMean j ξ ∂μ := by
+    change (∫⁻ ω, pathGenerationChildObservable φ n F x i
+        (ω []) (subtreeStepField [i] ω) *
+      pathGenerationChildObservable φ n F x j
+        (ω []) (subtreeStepField [j] ω) ∂stepFieldLaw μ) =
+      ∫⁻ ξ,
+        (∫⁻ η, pathGenerationChildObservable φ n F x i ξ η
+          ∂stepFieldLaw μ) *
+        (∫⁻ ζ, pathGenerationChildObservable φ n F x j ξ ζ
+          ∂stepFieldLaw μ) ∂μ
+    exact lintegral_pathGeneration_childProduct_eq φ μ n F hF x i j hij
+  have hterm (i j : ℕ) :
+      (∫⁻ ω, pairTerm i j ω ∂stepFieldLaw μ) =
+        ∫⁻ ξ, meanPairTerm i j ξ ∂μ := by
+    by_cases hij : i ≠ j
+    · simp only [pairTerm, meanPairTerm, if_pos hij]
+      exact hpairFactor i j hij
+    · have hEq : i = j := by
+        by_contra hne
+        exact hij hne
+      simp [pairTerm, meanPairTerm, hEq]
+  have hpairSum (i : ℕ) : Measurable (fun ω => ∑' j, pairTerm i j ω) := by
+    apply Measurable.tsum
+    intro j
+    exact hpairTerm i j
+  have hmeanPairSum (i : ℕ) : Measurable (fun ξ => ∑' j, meanPairTerm i j ξ) := by
+    apply Measurable.tsum
+    intro j
+    exact hmeanPairTerm i j
+  have hleftInner (i : ℕ) :
+      (∫⁻ ω, ∑' j, pairTerm i j ω ∂stepFieldLaw μ) =
+        ∑' j, ∫⁻ ω, pairTerm i j ω ∂stepFieldLaw μ := by
+    rw [lintegral_tsum]
+    intro j
+    exact (hpairTerm i j).aemeasurable
+  have hleft :
+      (∫⁻ ω, ∑' i, ∑' j, pairTerm i j ω ∂stepFieldLaw μ) =
+        ∑' i, ∑' j, ∫⁻ ω, pairTerm i j ω ∂stepFieldLaw μ := by
+    rw [lintegral_tsum]
+    · apply tsum_congr
+      intro i
+      exact hleftInner i
+    · intro i
+      exact (hpairSum i).aemeasurable
+  have hrightInner (i : ℕ) :
+      (∫⁻ ξ, ∑' j, meanPairTerm i j ξ ∂μ) =
+        ∑' j, ∫⁻ ξ, meanPairTerm i j ξ ∂μ := by
+    rw [lintegral_tsum]
+    intro j
+    exact (hmeanPairTerm i j).aemeasurable
+  have hright :
+      (∫⁻ ξ, ∑' i, ∑' j, meanPairTerm i j ξ ∂μ) =
+        ∑' i, ∑' j, ∫⁻ ξ, meanPairTerm i j ξ ∂μ := by
+    rw [lintegral_tsum]
+    · apply tsum_congr
+      intro i
+      exact hrightInner i
+    · intro i
+      exact (hmeanPairSum i).aemeasurable
+  calc
+    (∫⁻ ω, pathGenerationMRCAContribution φ 0 (n + 1) F x ω
+        ∂stepFieldLaw μ) =
+        ∫⁻ ω, ∑' i, ∑' j, pairTerm i j ω ∂stepFieldLaw μ := by
+          apply lintegral_congr
+          intro ω
+          simp [pathGenerationMRCAContribution, pairTerm, childObservable]
+    _ = ∑' i, ∑' j, ∫⁻ ω, pairTerm i j ω ∂stepFieldLaw μ := hleft
+    _ = ∑' i, ∑' j, ∫⁻ ξ, meanPairTerm i j ξ ∂μ := by
+          apply tsum_congr
+          intro i
+          apply tsum_congr
+          intro j
+          exact hterm i j
+    _ = ∫⁻ ξ, ∑' i, ∑' j, meanPairTerm i j ξ ∂μ := hright.symm
+    _ = ∫⁻ ξ, pathGenerationChildMeanOffDiagonal φ μ n F x ξ ∂μ := by
+          apply lintegral_congr
+          intro ξ
+          simp [pathGenerationChildMeanOffDiagonal, meanPairTerm, childMean]
+
 /-- The diagonal term in the generation-`n + 1` second moment is the root-step
 average of the squared generation-`n` child count. -/
 theorem lintegral_pathGeneration_childSquare_eq
