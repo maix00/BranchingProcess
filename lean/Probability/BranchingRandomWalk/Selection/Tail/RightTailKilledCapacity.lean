@@ -2330,6 +2330,136 @@ theorem tendsto_rightTailPositiveASpan_atTop_of_logarithmicScales
   exact (eventually_rightTailPositiveAFirstCutoff_lt_horizon hN ht).mono
     (fun _ h => Nat.le_of_lt h)
 
+/-- A positive cubic-scale span has its cube-root width at the corresponding
+linear logarithmic scale. -/
+theorem tendsto_rightTailPositiveASpan_root_div_log
+    {D : ℕ → ℕ} {L : ℕ → ℝ} {t : ℝ}
+    (hL : Tendsto L atTop atTop)
+    (hscale : Tendsto (fun n => (D n : ℝ) / L n ^ 3)
+      atTop (𝓝 t)) (ht : 0 < t) :
+    Tendsto (fun n => (D n : ℝ) ^ (3⁻¹ : ℝ) / L n)
+      atTop (𝓝 (t ^ (3⁻¹ : ℝ))) := by
+  have hpow :=
+    (Real.continuousAt_rpow_const t (3⁻¹ : ℝ)
+      (Or.inl (ne_of_gt ht))).tendsto.comp hscale
+  have heq : (fun n => (D n : ℝ) ^ (3⁻¹ : ℝ) / L n) =ᶠ[atTop]
+      fun n => ((D n : ℝ) / L n ^ 3) ^ (3⁻¹ : ℝ) := by
+    filter_upwards [hL.eventually_gt_atTop 0] with n hLn
+    have hden : ((L n : ℝ) ^ 3) ^ (3⁻¹ : ℝ) = L n := by
+      rw [← Real.rpow_natCast (L n) 3, ← Real.rpow_mul hLn.le]
+      have hexp : (↑(3 : ℕ) : ℝ) * (3⁻¹ : ℝ) = 1 := by norm_num
+      rw [hexp, Real.rpow_one]
+    rw [Real.div_rpow (Nat.cast_nonneg (D n)) (by positivity) (3⁻¹ : ℝ), hden]
+  exact hpow.congr' heq.symm
+
+/-- A sublinear power of the second-stage span is negligible compared with
+`log N`. This is the `p < 1` remainder in the exponent of the long-prefix
+Aïdékon--Hu terms. -/
+theorem tendsto_rightTailPositiveASpan_sublinearPower_div_log
+    {D : ℕ → ℕ} {L : ℕ → ℝ} {t p : ℝ}
+    (hL : Tendsto L atTop atTop)
+    (hscale : Tendsto (fun n => (D n : ℝ) / L n ^ 3)
+      atTop (𝓝 t)) (ht : 0 < t)
+    (hp1 : p < 1) :
+    Tendsto (fun n => (D n : ℝ) ^ (p / 3) / L n)
+      atTop (𝓝 0) := by
+  let q : ℝ := p / 3
+  have hratio :=
+    (Real.continuousAt_rpow_const t q (Or.inl (ne_of_gt ht))).tendsto.comp hscale
+  have hLp : Tendsto (fun n => L n ^ (p - 1)) atTop (𝓝 0) := by
+    have hneg := (tendsto_rpow_neg_atTop (by linarith : 0 < 1 - p)).comp hL
+    convert hneg using 1
+    ext n
+    congr 1
+    ring
+  have hprod := hratio.mul hLp
+  have heq : (fun n => (D n : ℝ) ^ q / L n) =ᶠ[atTop]
+      fun n => ((D n : ℝ) / L n ^ 3) ^ q * L n ^ (p - 1) := by
+    filter_upwards [hL.eventually_gt_atTop 0] with n hLn
+    have hDnonneg : 0 ≤ (D n : ℝ) := Nat.cast_nonneg _
+    have hratioNonneg : 0 ≤ (D n : ℝ) / L n ^ 3 :=
+      div_nonneg hDnonneg (by positivity)
+    let r : ℝ := (D n : ℝ) / L n ^ 3
+    have hr : r = (D n : ℝ) / L n ^ 3 := rfl
+    have hfactor : (D n : ℝ) ^ q = r ^ q * L n ^ p := by
+      have hsplit : (D n : ℝ) =
+          r * L n ^ 3 := by
+        dsimp [r]
+        field_simp [ne_of_gt hLn]
+      calc
+        (D n : ℝ) ^ q = (r * L n ^ 3) ^ q := by rw [hsplit]
+        _ = r ^ q * (L n ^ 3) ^ q :=
+          Real.mul_rpow (hratioNonneg.trans_eq hr) (by positivity)
+        _ = r ^ q * L n ^ p := by
+          rw [← Real.rpow_natCast (L n) 3, ← Real.rpow_mul hLn.le]
+          have hexp : (↑(3 : ℕ) : ℝ) * q = p := by dsimp [q]; ring
+          rw [hexp]
+    calc
+      (D n : ℝ) ^ q / L n =
+          (r ^ q * L n ^ p) / L n := by rw [hfactor]
+      _ = r ^ q * L n ^ (p - 1) := by
+        calc
+          (r ^ q * L n ^ p) / L n = r ^ q * (L n ^ p / L n) := by ring
+          _ = r ^ q * L n ^ (p - 1) := by
+            have hquot : L n ^ p / L n = L n ^ (p - 1) := by
+              calc
+                L n ^ p / L n = L n ^ p / L n ^ (1 : ℝ) :=
+                  congrArg (fun x : ℝ => L n ^ p / x)
+                    (Real.rpow_one (L n)).symm
+                _ = L n ^ (p - 1) := (Real.rpow_sub hLn p 1).symm
+            rw [hquot]
+      _ = ((D n : ℝ) / L n ^ 3) ^ q * L n ^ (p - 1) := by rw [hr]
+  simpa [q] using hprod.congr' heq.symm
+
+/-- On the paper's logarithmic scales, the exponent in the long-prefix
+capacity contribution has the limiting rate `-b + v + c t^(1/3)`. The
+additional `κ c^p L^(p/3)` term vanishes after division by `log N`. -/
+theorem tendsto_rightTailPositiveAAHExponent_div_log_of_logarithmicScales
+    {N : ℕ → ℕ} (hN : Tendsto N atTop atTop) {t b v c κ p : ℝ}
+    (ht : 0 < t) (hp : 0 < p) (hp1 : p < 1) :
+    Tendsto
+      (fun n => ((-b + v) * logarithmOfSampleSize N n +
+          c * (((logarithmicHorizon N t n -
+            rightTailPositiveAFirstCutoff N n : ℕ) : ℝ) ^ (3⁻¹ : ℝ)) +
+          κ * c ^ p * (((logarithmicHorizon N t n -
+            rightTailPositiveAFirstCutoff N n : ℕ) : ℝ) ^ (p / 3))) /
+          logarithmOfSampleSize N n)
+      atTop (𝓝 (-b + v + c * (t ^ (3⁻¹ : ℝ)))) := by
+  let L : ℕ → ℝ := logarithmOfSampleSize N
+  let D : ℕ → ℕ := fun n =>
+    logarithmicHorizon N t n - rightTailPositiveAFirstCutoff N n
+  have hL : Tendsto L atTop atTop := by
+    exact Real.tendsto_log_atTop.comp
+      (tendsto_natCast_atTop_atTop.comp hN)
+  have hDscale : Tendsto (fun n => (D n : ℝ) / L n ^ 3)
+      atTop (𝓝 t) := by
+    apply tendsto_rightTailPositiveASpan_cubicRatio_of_stageRatios hL
+    · simpa [L] using tendsto_rightTailPositiveAFirstCutoff_div_logCube hN
+    · simpa [L] using logarithmicHorizon_div_logCube_tendsto hN ht
+    · exact (eventually_rightTailPositiveAFirstCutoff_lt_horizon hN ht).mono
+        (fun _ h => Nat.le_of_lt h)
+  have hroot := tendsto_rightTailPositiveASpan_root_div_log hL hDscale ht
+  have hsmall := tendsto_rightTailPositiveASpan_sublinearPower_div_log
+    hL hDscale ht hp1
+  have hconstant : Tendsto (fun _ : ℕ => -b + v) atTop (𝓝 (-b + v)) :=
+    tendsto_const_nhds
+  have hrootTerm := hroot.const_mul c
+  have hsmallTerm := hsmall.const_mul (κ * c ^ p)
+  have hsum := (hconstant.add hrootTerm).add hsmallTerm
+  have heq : (fun n =>
+      ((-b + v) * L n + c * ((D n : ℝ) ^ (3⁻¹ : ℝ)) +
+        κ * c ^ p * ((D n : ℝ) ^ (p / 3))) / L n) =ᶠ[atTop]
+      fun n => (-b + v) + c * ((D n : ℝ) ^ (3⁻¹ : ℝ) / L n) +
+        κ * c ^ p * ((D n : ℝ) ^ (p / 3) / L n) := by
+    filter_upwards [hL.eventually_gt_atTop 0] with n hLn
+    field_simp [ne_of_gt hLn]
+  have hlimit : Tendsto
+      (fun n => (-b + v) + c * ((D n : ℝ) ^ (3⁻¹ : ℝ) / L n) +
+        κ * c ^ p * ((D n : ℝ) ^ (p / 3) / L n))
+      atTop (𝓝 (-b + v + c * (t ^ (3⁻¹ : ℝ)))) := by
+    simpa using hsum
+  simpa [L, D] using hlimit.congr' heq.symm
+
 /-- Along any diverging planned span, the full terminal second-stage
 drawdown probability obeys the uniform Aïdékon--Hu exponential estimate.
 The restriction `p < 1` is exactly what makes `width^(2+p)` sublinear in the
