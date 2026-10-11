@@ -520,6 +520,51 @@ theorem lintegral_weightedPrefixSquareObservableSum_eq_mul
     (lintegral_generationPrefixObservableSum_eq_mul μ n A g
       hAgen hA hsupport hg)
 
+/-- A pointwise cross-child domination for a frontier continuation observable
+can be pulled through the prefix sum.  This is the estimate used for a fixed
+MRCA depth after the shifted continuation probabilities have been bounded. -/
+theorem lintegral_weightedPrefixSquareObservableSum_le_of_crossChildBound
+    {X : Type*} [MeasurableSpace X]
+    (φ : Potential X) (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
+    (n : ℕ) (F : (Fin (n + 1) → ℝ) → ℝ≥0∞) (hF : Measurable F)
+    (x : ℝ) (g : Step ℕ X → ℝ≥0∞) (hg : Measurable g)
+    (C : ℝ≥0∞)
+    (hbound : ∀ ξ, g ξ ≤ C * crossChildWeight φ ξ) :
+    (∫⁻ ω, weightedPrefixSquareObservableSum φ n F x g ω
+      ∂stepFieldLaw μ) ≤
+        C * (∫⁻ ξ, crossChildWeight φ ξ ∂μ) *
+          (∫⁻ ω, ∑' u : TreeNode ℕ,
+            weightedPathGenerationTerm φ n F x u ω *
+              ENNReal.ofReal (Real.exp (-pathPotential φ ω u))
+            ∂stepFieldLaw μ) := by
+  rw [lintegral_weightedPrefixSquareObservableSum_eq_mul
+    φ μ n F hF x g hg]
+  have hmean :
+      (∫⁻ ξ, g ξ ∂μ) ≤ C * (∫⁻ ξ, crossChildWeight φ ξ ∂μ) := by
+    calc
+      (∫⁻ ξ, g ξ ∂μ) ≤
+          ∫⁻ ξ, C * crossChildWeight φ ξ ∂μ := lintegral_mono hbound
+      _ = C * (∫⁻ ξ, crossChildWeight φ ξ ∂μ) := by
+        rw [lintegral_const_mul _ (crossChildWeight_measurable φ)]
+  calc
+    (∫⁻ ξ, g ξ ∂μ) *
+        (∫⁻ ω, ∑' u : TreeNode ℕ,
+          weightedPathGenerationTerm φ n F x u ω *
+            ENNReal.ofReal (Real.exp (-pathPotential φ ω u))
+          ∂stepFieldLaw μ) ≤
+      (C * (∫⁻ ξ, crossChildWeight φ ξ ∂μ)) *
+        (∫⁻ ω, ∑' u : TreeNode ℕ,
+          weightedPathGenerationTerm φ n F x u ω *
+            ENNReal.ofReal (Real.exp (-pathPotential φ ω u))
+          ∂stepFieldLaw μ) := by
+      exact mul_le_mul_of_nonneg_right hmean (by positivity)
+    _ = C * (∫⁻ ξ, crossChildWeight φ ξ ∂μ) *
+          (∫⁻ ω, ∑' u : TreeNode ℕ,
+            weightedPathGenerationTerm φ n F x u ω *
+              ENNReal.ofReal (Real.exp (-pathPotential φ ω u))
+            ∂stepFieldLaw μ) := by
+      ac_rfl
+
 /-- The square-weighted prefix/cross-child observable factors into the
 offspring cross-child moment and the mean square-weighted prefix mass. -/
 theorem lintegral_weightedPrefixSquareCrossChildWeightSum_eq_crossMoment_mul
