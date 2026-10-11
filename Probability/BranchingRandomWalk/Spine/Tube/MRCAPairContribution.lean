@@ -48,58 +48,6 @@ noncomputable def affineTubeRootMRCAPairMean
         ∂stepFieldLaw μ) ∂μ
     else 0
 
-/-- The conditional ordered off-diagonal continuation-pair observable at a
-fixed ancestor position and reproduction mark. The descendant fields below
-distinct children have already been averaged independently. -/
-noncomputable def pathGenerationChildMeanOffDiagonal
-    {X : Type*} [MeasurableSpace X]
-    (φ : Potential X) (μ : Measure (Step ℕ X)) (n : ℕ)
-    (F : (Fin (n + 2) → ℝ) → ℝ≥0∞) (x : ℝ)
-    (ξ : Step ℕ X) : ℝ≥0∞ :=
-  ∑' i : ℕ, ∑' j : ℕ, if i ≠ j then
-    (∫⁻ η, pathGenerationChildObservable φ n F x i ξ η
-      ∂stepFieldLaw μ) *
-    (∫⁻ ζ, pathGenerationChildObservable φ n F x j ξ ζ
-      ∂stepFieldLaw μ) else 0
-
-/-- The conditional off-diagonal continuation-pair observable is measurable
-in the ancestor reproduction mark whenever the path test is measurable. -/
-theorem pathGenerationChildMeanOffDiagonal_measurable
-    {X : Type*} [MeasurableSpace X]
-    (φ : Potential X) (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ] (n : ℕ)
-    (F : (Fin (n + 2) → ℝ) → ℝ≥0∞) (hF : Measurable F)
-    (x : ℝ) :
-    Measurable (pathGenerationChildMeanOffDiagonal φ μ n F x) := by
-  classical
-  let childMean (i : ℕ) (ξ : Step ℕ X) : ℝ≥0∞ :=
-    ∫⁻ η, pathGenerationChildObservable φ n F x i ξ η
-      ∂stepFieldLaw μ
-  let offTerm (i j : ℕ) (ξ : Step ℕ X) : ℝ≥0∞ :=
-    if i ≠ j then childMean i ξ * childMean j ξ else 0
-  have hchildMean (i : ℕ) : Measurable (childMean i) := by
-    apply Measurable.lintegral_prod_right
-    simpa [childMean] using
-      pathGenerationChildObservable_measurable φ n F hF x i
-  have hoffTerm (i j : ℕ) : Measurable (offTerm i j) := by
-    by_cases hij : i ≠ j
-    · simp only [offTerm, if_pos hij]
-      exact (hchildMean i).mul (hchildMean j)
-    · have hEq : i = j := by
-        by_contra hne
-        exact hij hne
-      simp [offTerm, hEq]
-  have hoffInner (i : ℕ) : Measurable (fun ξ => ∑' j, offTerm i j ξ) := by
-    apply Measurable.tsum
-    intro j
-    exact hoffTerm i j
-  have hoffSum : Measurable (fun ξ => ∑' i, ∑' j, offTerm i j ξ) := by
-    apply Measurable.tsum
-    intro i
-    exact hoffInner i
-  change Measurable (fun ξ => ∑' i : ℕ, ∑' j : ℕ,
-    if i ≠ j then childMean i ξ * childMean j ξ else 0)
-  exact hoffSum
-
 /-- The root MRCA mean is the integral of its conditional off-diagonal
 continuation observable. This form is also used at later ancestors, where the
 starting position is measurable with respect to the prefix. -/
