@@ -716,35 +716,36 @@ theorem lintegral_generationPrefixParameterizedObservableSum_le
       ac_rfl
 
 /-- The uniform shifted-spine continuation estimate can be averaged over a
-generation-`n` prefix. This is the local expected-pair bound for one fixed
+generation-`prefixLength` prefix. This is the local expected-pair bound for one fixed
 MRCA depth; the prefix weight `A` is supplied by its ancestral corridor. -/
 theorem lintegral_generationPrefixChildPairObservable_le
     {X : Type*} [MeasurableSpace X]
     (φ : Potential X) (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
     (hboundary : HasBoundaryNormalization φ μ)
-    (n : ℕ)
+    (prefixLength continuationLength : ℕ)
     (A : TreeNode ℕ → StepField ℕ X → ℝ≥0∞)
     (position : TreeNode ℕ → StepField ℕ X → ℝ)
-    (hAgen : ∀ u, Measurable[generationFiltration (M := Step ℕ X) n]
+    (hAgen : ∀ u,
+      Measurable[generationFiltration (M := Step ℕ X) prefixLength]
       (A u))
     (hA : ∀ u, Measurable (A u))
-    (hsupport : ∀ u, u.length ≠ n → A u = fun _ => 0)
+    (hsupport : ∀ u, u.length ≠ prefixLength → A u = fun _ => 0)
     (terminalUpper : ℝ)
-    (corridor : Set (Fin (n + 2) → ℝ))
+    (corridor : Set (Fin (continuationLength + 2) → ℝ))
     (hcorridor : MeasurableSet corridor)
     (hterminal : ∀ history ∈ corridor,
-      history ⟨n + 1, by omega⟩ ≤ terminalUpper)
+      history ⟨continuationLength + 1, by omega⟩ ≤ terminalUpper)
     (window : Set ℝ) (q : ℝ≥0∞)
     (hfirst : ∀ history ∈ corridor,
       history ⟨1, by omega⟩ ∈ window)
     (hprob : ∀ x y : ℝ, x + y ∈ window →
       (tiltedIncrementFieldLaw φ μ)
         {increment | prependHistory x
-          (ProbabilityTheory.RandomWalk.history n (x + y) increment) ∈
+          (ProbabilityTheory.RandomWalk.history continuationLength (x + y) increment) ∈
             corridor} ≤ q) :
     (∫⁻ ω, ∑' u : TreeNode ℕ,
       A u ω * ENNReal.ofReal (Real.exp (2 * position u ω)) *
-        pathGenerationChildMeanOffDiagonal φ μ n
+        pathGenerationChildMeanOffDiagonal φ μ continuationLength
           (corridor.indicator (fun _ => (1 : ℝ≥0∞)))
           (position u ω) (ω u) ∂stepFieldLaw μ) ≤
         ENNReal.ofReal (Real.exp (2 * terminalUpper)) * q ^ 2 *
@@ -752,18 +753,19 @@ theorem lintegral_generationPrefixChildPairObservable_le
           (∫⁻ ω, ∑' u : TreeNode ℕ, A u ω ∂stepFieldLaw μ) := by
   let g : ℝ → Step ℕ X → ℝ≥0∞ := fun x ξ =>
     ENNReal.ofReal (Real.exp (2 * x)) *
-      pathGenerationChildMeanOffDiagonal φ μ n
+      pathGenerationChildMeanOffDiagonal φ μ continuationLength
         (corridor.indicator (fun _ => (1 : ℝ≥0∞))) x ξ
   let C : ℝ≥0∞ := ENNReal.ofReal (Real.exp (2 * terminalUpper)) * q ^ 2
   have hbound : ∀ x ξ, g x ξ ≤ C * crossChildWeight φ ξ := by
     intro x ξ
     simpa [g, C, mul_assoc] using
       pathGenerationChildMeanOffDiagonal_normalized_le_of_uniformShiftedProbability
-        φ μ hboundary n terminalUpper corridor hcorridor hterminal window q
+        φ μ hboundary continuationLength terminalUpper corridor hcorridor
+        hterminal window q
         hfirst hprob x ξ
   simpa [g, C, mul_assoc] using
     lintegral_generationPrefixParameterizedObservableSum_le
-      φ μ n A position g hAgen hA hsupport C hbound
+      φ μ prefixLength A position g hAgen hA hsupport C hbound
 
 private theorem displaceWith_measurable_generation
     {X : Type*} [MeasurableSpace X]
@@ -1141,6 +1143,244 @@ theorem lintegral_weightedPrefixCrossChildWeightSum_indicator_le_crossMoment_mul
   rw [lintegral_weightedPrefixCrossChildWeightSum_indicator_eq_crossMoment_mul_spineProbability
     φ μ hboundary n corridor hcorridor x]
   gcongr
+
+/-- The lower boundary of a generation-`n` corridor controls the extra
+reciprocal-potential factor in a squared ancestral weight.  The remaining
+weighted path mass is exactly its tilted-spine probability. -/
+theorem lintegral_weightedPrefixSquareMass_indicator_le_spineProbability
+    {X : Type*} [MeasurableSpace X]
+    (φ : Potential X) (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
+    (hboundary : HasBoundaryNormalization φ μ)
+    (n : ℕ) (corridor : Set (Fin (n + 1) → ℝ))
+    (hcorridor : MeasurableSet corridor) (x lower : ℝ)
+    (hlower : ∀ history ∈ corridor,
+      lower ≤ history ⟨n, Nat.lt_succ_self n⟩) :
+    (∫⁻ ω, ∑' u : TreeNode ℕ,
+      weightedPathGenerationTerm φ n
+        (corridor.indicator (fun _ => (1 : ℝ≥0∞))) x u ω *
+        ENNReal.ofReal (Real.exp (-pathPotential φ ω u))
+      ∂stepFieldLaw μ) ≤
+      ENNReal.ofReal (Real.exp (x - lower)) *
+        (tiltedIncrementFieldLaw φ μ)
+          {increment | ProbabilityTheory.RandomWalk.history n x increment ∈ corridor} := by
+  let F : (Fin (n + 1) → ℝ) → ℝ≥0∞ :=
+    corridor.indicator (fun _ => (1 : ℝ≥0∞))
+  let K : ℝ≥0∞ := ENNReal.ofReal (Real.exp (x - lower))
+  have hF : Measurable F := measurable_const.indicator hcorridor
+  have hterm (u : TreeNode ℕ) (ω : StepField ℕ X) :
+      weightedPathGenerationTerm φ n F x u ω *
+          ENNReal.ofReal (Real.exp (-pathPotential φ ω u)) ≤
+        K * weightedPathGenerationTerm φ n F x u ω := by
+    by_cases hu : u.length = n
+    · by_cases hs : surviveAlong ω [] u
+      · by_cases hc : pathHistory φ n x ω u ∈ corridor
+        · have hendpoint := hlower (pathHistory φ n x ω u) hc
+          rw [pathHistory_last φ n x ω u hu] at hendpoint
+          have hpotential : -pathPotential φ ω u ≤ x - lower := by linarith
+          have hweight : weightedPathGenerationTerm φ n F x u ω =
+              ENNReal.ofReal (Real.exp (-pathPotential φ ω u)) := by
+            simp [weightedPathGenerationTerm, F, hu, hs, hc]
+          have hextra : ENNReal.ofReal (Real.exp (-pathPotential φ ω u)) ≤ K := by
+            exact ENNReal.ofReal_le_ofReal
+              (Real.exp_le_exp.mpr hpotential)
+          rw [hweight]
+          exact mul_le_mul_of_nonneg_right hextra (by positivity)
+        · simp [weightedPathGenerationTerm, F, hu, hs, hc]
+      · simp [weightedPathGenerationTerm, hu, hs]
+    · simp [weightedPathGenerationTerm, hu]
+  have hsumPointwise (ω : StepField ℕ X) :
+      (∑' u : TreeNode ℕ,
+        weightedPathGenerationTerm φ n F x u ω *
+          ENNReal.ofReal (Real.exp (-pathPotential φ ω u))) ≤
+        K * weightedPathGeneration φ n F x ω := by
+    calc
+      _ ≤ ∑' u : TreeNode ℕ,
+          K * weightedPathGenerationTerm φ n F x u ω :=
+        ENNReal.tsum_le_tsum (fun u => hterm u ω)
+      _ = K * weightedPathGeneration φ n F x ω := by
+        rw [weightedPathGeneration, ENNReal.tsum_mul_left]
+  have hsumMeas : Measurable (fun ω : StepField ℕ X =>
+      ∑' u : TreeNode ℕ,
+        weightedPathGenerationTerm φ n F x u ω *
+          ENNReal.ofReal (Real.exp (-pathPotential φ ω u))) := by
+    apply Measurable.tsum
+    intro u
+    exact (weightedPathGenerationTerm_measurable φ n hF x u).mul
+      ((ENNReal.continuous_ofReal.measurable.comp
+        (Real.continuous_exp.measurable.comp
+          ((pathPotential_measurable φ [] u).neg))))
+  have hweighted : Measurable (weightedPathGeneration φ n F x) :=
+    weightedPathGeneration_measurable (ι := ℕ) φ n hF x
+  have hsumIntegral :
+      (∫⁻ ω, ∑' u : TreeNode ℕ,
+        weightedPathGenerationTerm φ n F x u ω *
+          ENNReal.ofReal (Real.exp (-pathPotential φ ω u))
+        ∂stepFieldLaw μ) =
+        ∑' u : TreeNode ℕ,
+          ∫⁻ ω, weightedPathGenerationTerm φ n F x u ω *
+            ENNReal.ofReal (Real.exp (-pathPotential φ ω u))
+            ∂stepFieldLaw μ := by
+    rw [lintegral_tsum]
+    intro u
+    exact ((weightedPathGenerationTerm_measurable φ n hF x u).mul
+      ((ENNReal.continuous_ofReal.measurable.comp
+        (Real.continuous_exp.measurable.comp
+          ((pathPotential_measurable φ [] u).neg))))).aemeasurable
+  let spineEvent : Set (ℕ → ℝ) :=
+    {increment | ProbabilityTheory.RandomWalk.history n x increment ∈ corridor}
+  have hspineEvent : MeasurableSet spineEvent :=
+    hcorridor.preimage (ProbabilityTheory.RandomWalk.history_measurable n x)
+  have hmanyToOne := weightedPathManyToOneCore φ μ hboundary n hF x
+  calc
+    (∫⁻ ω, ∑' u : TreeNode ℕ,
+        weightedPathGenerationTerm φ n F x u ω *
+          ENNReal.ofReal (Real.exp (-pathPotential φ ω u))
+        ∂stepFieldLaw μ) ≤
+      ∫⁻ ω, K * weightedPathGeneration φ n F x ω ∂stepFieldLaw μ :=
+        lintegral_mono hsumPointwise
+    _ = K * (∫⁻ ω, weightedPathGeneration φ n F x ω ∂stepFieldLaw μ) :=
+      lintegral_const_mul K hweighted
+    _ = K * (∫⁻ increment, F
+          (ProbabilityTheory.RandomWalk.history n x increment)
+          ∂tiltedIncrementFieldLaw φ μ) := by rw [hmanyToOne]
+    _ = K * (tiltedIncrementFieldLaw φ μ) spineEvent := by
+      congr 1
+      change (∫⁻ increment, spineEvent.indicator
+        (fun _ => (1 : ℝ≥0∞)) increment ∂tiltedIncrementFieldLaw φ μ) = _
+      rw [lintegral_indicator_const hspineEvent]
+      simp [spineEvent]
+    _ = _ := by
+      simp only [K]
+      congr 1
+
+/-- A fixed MRCA depth factors into the continuation-pair estimate and the
+square-weighted ancestral corridor mass. This is the positive-depth analogue
+of the root-layer estimate, before summing over all possible MRCA depths. -/
+theorem lintegral_weightedPrefixContinuationPair_indicator_le
+    {X : Type*} [MeasurableSpace X]
+    (φ : Potential X) (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
+    (hboundary : HasBoundaryNormalization φ μ)
+    (m n : ℕ) (prefixCorridor : Set (Fin (m + 1) → ℝ))
+    (hprefixCorridor : MeasurableSet prefixCorridor)
+    (initial prefixLower : ℝ)
+    (hprefixLower : ∀ history ∈ prefixCorridor,
+      prefixLower ≤ history ⟨m, Nat.lt_succ_self m⟩)
+    (continuationCorridor : Set (Fin (n + 2) → ℝ))
+    (hcontinuationCorridor : MeasurableSet continuationCorridor)
+    (terminalUpper : ℝ)
+    (hterminalUpper : ∀ history ∈ continuationCorridor,
+      history ⟨n + 1, by omega⟩ ≤ terminalUpper)
+    (window : Set ℝ) (q : ℝ≥0∞)
+    (hfirst : ∀ history ∈ continuationCorridor,
+      history ⟨1, by omega⟩ ∈ window)
+    (hcontinuation : ∀ x y : ℝ, x + y ∈ window →
+      (tiltedIncrementFieldLaw φ μ)
+        {increment | prependHistory x
+          (ProbabilityTheory.RandomWalk.history n (x + y) increment) ∈
+            continuationCorridor} ≤ q) :
+    ENNReal.ofReal (Real.exp (-(2 * initial))) *
+      (∫⁻ ω, ∑' u : TreeNode ℕ,
+        weightedPathGenerationTerm φ m
+          (prefixCorridor.indicator (fun _ => (1 : ℝ≥0∞))) initial u ω *
+          ENNReal.ofReal (Real.exp (-pathPotential φ ω u)) *
+          ENNReal.ofReal
+            (Real.exp (2 * (initial + pathPotential φ ω u))) *
+          pathGenerationChildMeanOffDiagonal φ μ n
+            (continuationCorridor.indicator (fun _ => (1 : ℝ≥0∞)))
+            (initial + pathPotential φ ω u) (ω u)
+        ∂stepFieldLaw μ) ≤
+      ENNReal.ofReal (Real.exp (-(2 * initial))) *
+        (ENNReal.ofReal (Real.exp (2 * terminalUpper)) * q ^ 2) *
+        (∫⁻ ξ, crossChildWeight φ ξ ∂μ) *
+        (ENNReal.ofReal (Real.exp (initial - prefixLower)) *
+          (tiltedIncrementFieldLaw φ μ)
+            {increment | ProbabilityTheory.RandomWalk.history m initial increment ∈
+              prefixCorridor}) := by
+  let F : (Fin (m + 1) → ℝ) → ℝ≥0∞ :=
+    prefixCorridor.indicator (fun _ => (1 : ℝ≥0∞))
+  let G : (Fin (n + 2) → ℝ) → ℝ≥0∞ :=
+    continuationCorridor.indicator (fun _ => (1 : ℝ≥0∞))
+  let A : TreeNode ℕ → StepField ℕ X → ℝ≥0∞ := fun u ω =>
+    weightedPathGenerationTerm φ m F initial u ω *
+      ENNReal.ofReal (Real.exp (-pathPotential φ ω u))
+  let position : TreeNode ℕ → StepField ℕ X → ℝ := fun u ω =>
+    initial + pathPotential φ ω u
+  let C : ℝ≥0∞ := ENNReal.ofReal (Real.exp (2 * terminalUpper)) * q ^ 2
+  have hF : Measurable F := measurable_const.indicator hprefixCorridor
+  have hG : Measurable G := measurable_const.indicator hcontinuationCorridor
+  have hAgen (u : TreeNode ℕ) :
+      Measurable[generationFiltration (M := Step ℕ X) m] (A u) := by
+    by_cases hu : u.length = m
+    · have hp :
+          Measurable[generationFiltration (M := Step ℕ X) m]
+            (fun ω : StepField ℕ X => pathPotential φ ω u) := by
+        simpa [pathPotential] using
+          displaceWith_measurable_generation φ m [] u (by simpa [hu])
+      exact (weightedPathGenerationTerm_measurable_generation φ m hF initial u).mul
+        hp.neg.exp.ennreal_ofReal
+    · have hzero : A u = fun _ => 0 := by
+        funext ω
+        simp [A, weightedPathGenerationTerm, hu]
+      rw [hzero]
+      exact measurable_const
+  have hA (u : TreeNode ℕ) : Measurable (A u) := by
+    by_cases hu : u.length = m
+    · exact (weightedPathGenerationTerm_measurable φ m hF initial u).mul
+        ((ENNReal.continuous_ofReal.measurable.comp
+          (Real.continuous_exp.measurable.comp
+            ((pathPotential_measurable φ [] u).neg))))
+    · have hzero : A u = fun _ => 0 := by
+        funext ω
+        simp [A, weightedPathGenerationTerm, hu]
+      rw [hzero]
+      exact measurable_const
+  have hsupport (u : TreeNode ℕ) (hu : u.length ≠ m) :
+      A u = fun _ => 0 := by
+    funext ω
+    simp [A, weightedPathGenerationTerm, hu]
+  have hpair :=
+    lintegral_generationPrefixChildPairObservable_le
+      φ μ hboundary m n A position hAgen hA hsupport terminalUpper
+      continuationCorridor hcontinuationCorridor hterminalUpper window q
+      hfirst hcontinuation
+  have hmass :=
+    lintegral_weightedPrefixSquareMass_indicator_le_spineProbability
+      φ μ hboundary m prefixCorridor hprefixCorridor initial prefixLower
+      hprefixLower
+  have hpair' :
+      (∫⁻ ω, ∑' u : TreeNode ℕ,
+        A u ω * ENNReal.ofReal (Real.exp (2 * position u ω)) *
+          pathGenerationChildMeanOffDiagonal φ μ n G
+            (position u ω) (ω u) ∂stepFieldLaw μ) ≤
+        C * (∫⁻ ξ, crossChildWeight φ ξ ∂μ) *
+          (∫⁻ ω, ∑' u : TreeNode ℕ, A u ω ∂stepFieldLaw μ) := by
+    simpa [A, G, position, C, mul_assoc] using hpair
+  have hmass' :
+      (∫⁻ ω, ∑' u : TreeNode ℕ, A u ω ∂stepFieldLaw μ) ≤
+        ENNReal.ofReal (Real.exp (initial - prefixLower)) *
+          (tiltedIncrementFieldLaw φ μ)
+            {increment | ProbabilityTheory.RandomWalk.history m initial increment ∈
+              prefixCorridor} := by
+    simpa [A, F] using hmass
+  calc
+    ENNReal.ofReal (Real.exp (-(2 * initial))) *
+        (∫⁻ ω, ∑' u : TreeNode ℕ,
+          A u ω * ENNReal.ofReal (Real.exp (2 * position u ω)) *
+            pathGenerationChildMeanOffDiagonal φ μ n G
+              (position u ω) (ω u) ∂stepFieldLaw μ) ≤
+      ENNReal.ofReal (Real.exp (-(2 * initial))) *
+        (C * (∫⁻ ξ, crossChildWeight φ ξ ∂μ) *
+          (∫⁻ ω, ∑' u : TreeNode ℕ, A u ω ∂stepFieldLaw μ)) :=
+      mul_le_mul_of_nonneg_left hpair' (by positivity)
+    _ ≤ ENNReal.ofReal (Real.exp (-(2 * initial))) *
+        (C * (∫⁻ ξ, crossChildWeight φ ξ ∂μ) *
+          (ENNReal.ofReal (Real.exp (initial - prefixLower)) *
+            (tiltedIncrementFieldLaw φ μ)
+              {increment | ProbabilityTheory.RandomWalk.history m initial increment ∈
+                prefixCorridor})) := by
+      gcongr
+    _ = _ := by
+      simp [C, mul_assoc]
 
 /-- The prefix endpoint lower bound removes one of the two reciprocal
 potential factors in a positive-depth MRCA term. The remaining expectation is
