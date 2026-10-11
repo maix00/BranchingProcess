@@ -1601,10 +1601,11 @@ theorem infiniteOffspringRun_rightmost_ae_hasAsymptoticSpeed
     rw [hrun]
   simpa only [hpath] using hrightNeg
 
-/-! Under the left-side and OrderDual/right-side conditions for one
-offspring law, both frontier speeds exist almost surely under its environment
-law. The two speeds need not agree. -/
-theorem infiniteOffspringRun_leftmost_rightmost_ae_hasAsymptoticSpeed
+/-! Under the separate left-side and OrderDual/right-side conditions for one
+offspring law, both endpoint speeds exist almost surely under its environment
+law. The two speeds need not agree, and no reflection-invariance assumption
+is imposed on the offspring law. -/
+theorem infiniteOffspringRun_endpoints_ae_hasAsymptoticSpeed
     {N : ℕ} (hN : 0 < N)
     (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
     (hboundaryLeft : HasBoundaryNormalization realPotential μ)
