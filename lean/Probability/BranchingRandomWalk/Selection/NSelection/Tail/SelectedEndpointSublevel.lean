@@ -6,8 +6,8 @@ Authors: WANG Yiyang
 
 import Probability.BranchingProcess.Offspring.Count
 import Probability.BranchingProcess.Offspring.Law
-import Probability.BranchingRandomWalk.Selection.NSelection.Tail.PaperLeftTailParameters
-import Probability.BranchingRandomWalk.Selection.NSelection.Tail.PolynomialLeftTailHorizon
+import Probability.BranchingRandomWalk.Selection.NSelection.Tail.EndpointDeviationParameterSelection
+import Probability.BranchingRandomWalk.Selection.NSelection.Tail.PolynomialEndpointSublevelHorizon
 import Probability.BranchingRandomWalk.Spine.Variance
 import Mathlib.Data.List.Lex
 import Mathlib.Data.Prod.Lex
@@ -16,13 +16,17 @@ import Mathlib.Order.Fin.Basic
 import Mathlib.MeasureTheory.Function.L2Space
 
 /-!
-# Paper-parameter adapter for the selected endpoint left tail
+# Selected-endpoint sublevel from the law assumptions
 
 The law hypotheses in the paper-facing declaration are the paper's boundary
 normalization, supercriticality, zero spine mean, and finite spine variance.
 The arbitrary horizon and its logarithmic-cube limit are the paper's sequence
-input. All block, rate, binning, and exponent parameters are derived internally.
+input. This adapter uses the left-side boundary and the spine law tilted at
+`-1`; the corresponding right-endpoint theorem is stated on `OrderDual` with
+the original law's right-side conditions, without reflection invariance. All
+block, rate, binning, and exponent parameters are derived internally.
 -/
+
 
 open Filter MeasureTheory
 open scoped ENNReal Topology
@@ -34,10 +38,10 @@ open Combinatorics.UlamHarris
 open ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw
 open ProbabilityTheory.BranchingRandomWalk.Spine
 
-/-- The paper's deterministic tie break for a finite initial population and
+/-- The deterministic tie break for a finite initial population and
 Ulam--Harris descendants: first order by root label, then lexicographically by
 the child-label word. -/
-@[instance_reducible] noncomputable def paperRootAddressLinearOrder (m : ℕ) :
+@[instance_reducible] noncomputable def root_address_linear_order (m : ℕ) :
     LinearOrder (RootIndexed.TreeNode (Fin m) ℕ) := by
   letI : LinearOrder (Fin m ×ₗ List ℕ) := inferInstance
   exact LinearOrder.lift'
@@ -46,10 +50,10 @@ the child-label word. -/
       intro x y h
       exact toLex.injective h)
 
-/-- The arbitrary-horizon endpoint left tail under the paper's individual law
-assumptions. The variance, positive variance parameter, and all geometric and
-exponent parameters are derived from the displayed assumptions. -/
-theorem eventually_finiteRootStepFieldLaw_firstNSelectedEndpointBelow_le_polynomial_of_paper_assumptions
+/-- The arbitrary-horizon endpoint sublevel under the displayed individual
+law assumptions. The variance, positive variance parameter, and all geometric
+and exponent parameters are derived from those assumptions. -/
+theorem eventually_finiteRootStepFieldLaw_firstNSelectedEndpointBelow_le_polynomial_of_boundary_and_spine_assumptions
     {L : ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw ℕ ℝ}
     (hboundary : HasBoundaryNormalization realPotential
       (L : Measure (Step ℕ ℝ)))
@@ -71,7 +75,7 @@ theorem eventually_finiteRootStepFieldLaw_firstNSelectedEndpointBelow_le_polynom
     ∃ epsilon : ℝ, 0 < epsilon ∧ ∀ᶠ n : ℕ in atTop,
       (finiteRootStepFieldLaw (L : Measure (Step ℕ ℝ)) (m n))
         (@firstNSelectedEndpointBelow (m n) (N n)
-          (horizon n) (paperRootAddressLinearOrder (m n))
+          (horizon n) (root_address_linear_order (m n))
           (logarithmicEndpointThreshold N zeta n)) ≤
         ENNReal.ofReal
           (Real.exp (-epsilon * Real.log (N n : ℝ))) := by
@@ -104,12 +108,12 @@ theorem eventually_finiteRootStepFieldLaw_firstNSelectedEndpointBelow_le_polynom
   obtain ⟨b, factor, eta, rangeRate, targetRate, k, hk,
       hb, hfactor, heta, hrangeRate, hrangeRateLt, htargetRate, hgap,
       hbin, hmargin⟩ :=
-    exists_paper_leftTailParameters (a := a) (t := t) (zeta := zeta)
+    exists_endpoint_sublevel_parameters_of_diffusive_gap (a := a) (t := t) (zeta := zeta)
       (sigma := sigma) ht hsigma hbelowSigma
   have hbound :=
     eventually_finiteRootStepFieldLaw_firstNSelectedEndpointBelow_le_polynomial_of_horizonRawRate
       μ hboundary hspineMoment hsigma (m := m) (N := N) hN
-      (fun n => paperRootAddressLinearOrder (m n))
+      (fun n => root_address_linear_order (m n))
       (horizon := horizon) (a := a) (t := t) (zeta := zeta) (b := b)
       (factor := factor)
       (eta := eta) (rangeRate := rangeRate) (targetRate := targetRate)
@@ -117,10 +121,10 @@ theorem eventually_finiteRootStepFieldLaw_firstNSelectedEndpointBelow_le_polynom
       (by simpa [logarithmicRateBeta] using hgap) hbin hmPow hmargin
   simpa [μ] using hbound
 
-/-- The left-tail estimate with the paper's population size, horizon sequence,
-and endpoint threshold. The assumptions are stated individually and the
-finite-root order is supplied by a deterministic address order. -/
-theorem eventually_finiteRootStepFieldLaw_firstNSelectedEndpointBelow_le_polynomial_of_paper_sequence
+/-- The endpoint sublevel estimate with the logarithmic population size, horizon
+sequence, and endpoint threshold. The assumptions are stated individually,
+and the finite-root order is supplied by a deterministic address order. -/
+theorem eventually_finiteRootStepFieldLaw_firstNSelectedEndpointBelow_le_polynomial_of_logarithmic_scales
     {L : ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw ℕ ℝ}
     (hboundary : HasBoundaryNormalization realPotential
       (L : Measure (Step ℕ ℝ)))
@@ -142,7 +146,7 @@ theorem eventually_finiteRootStepFieldLaw_firstNSelectedEndpointBelow_le_polynom
           (Nat.floor ((n : ℝ) ^ a)))
         (@firstNSelectedEndpointBelow (Nat.floor ((n : ℝ) ^ a)) n
           (horizon n)
-          (paperRootAddressLinearOrder (Nat.floor ((n : ℝ) ^ a)))
+          (root_address_linear_order (Nat.floor ((n : ℝ) ^ a)))
           (zeta * Real.log (n : ℝ))) ≤
         ENNReal.ofReal (Real.exp (-epsilon * Real.log (n : ℝ))) := by
   have hN : Tendsto (fun n : ℕ => n) atTop atTop := tendsto_id
@@ -179,14 +183,14 @@ theorem eventually_finiteRootStepFieldLaw_firstNSelectedEndpointBelow_le_polynom
     simpa [variance, ν, μ, hsigmaSq] using hbelow
   have horder (n : ℕ) :
       LinearOrder (RootIndexed.TreeNode (Fin (m n)) ℕ) :=
-    paperRootAddressLinearOrder (m n)
+    root_address_linear_order (m n)
   obtain ⟨b, factor, eta, rangeRate, targetRate, k, hk,
       hb, hfactor, heta, hrangeRate, hrangeRateLt, htargetRate, hgap,
       hbin, hmargin⟩ :=
-    exists_paper_leftTailParameters (a := a) (t := t) (zeta := zeta)
+    exists_endpoint_sublevel_parameters_of_diffusive_gap (a := a) (t := t) (zeta := zeta)
       (sigma := sigma) ht hsigma hbelowSigma
   have hbound :=
-    eventually_finiteRootStepFieldLaw_firstNSelectedEndpointBelow_le_polynomial_of_paper_assumptions
+    eventually_finiteRootStepFieldLaw_firstNSelectedEndpointBelow_le_polynomial_of_boundary_and_spine_assumptions
       hboundary hsupercritical hspineMean hspineFiniteVariance
       (m := m) (N := fun n : ℕ => n) (horizon := horizon) hN
       (a := a) (t := t) (zeta := zeta) ha_one ht

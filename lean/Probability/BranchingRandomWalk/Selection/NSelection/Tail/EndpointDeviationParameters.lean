@@ -11,7 +11,7 @@ public import Mathlib.Analysis.Real.Sqrt
 import Mathlib.Tactic
 
 /-!
-# Real parameters for the polynomial left-tail estimate
+# Real parameters for the polynomial endpoint sublevel estimate
 
 These choices are the deterministic parameter step in the proof of (4.16).
 The target level is compared directly with the diffusive rate; the endpoint
@@ -62,7 +62,7 @@ private theorem exists_small_positive_ratio (b r : ℝ) (hb : 0 < b) :
 /-- Given a target strictly below the diffusive rate, choose the corridor
 parameters used in (4.16). The exponent margin is positive even when the
 target lies below `-a`; the small ratio `c` is chosen independently. -/
-theorem exists_leftTailParameters
+theorem exists_endpoint_deviation_parameters
     {a t C zeta : ℝ} (ht : 0 < t) (hC : 0 < C)
     (hzeta : zeta < -a + C * t) :
     ∃ b d c epsilon : ℝ,

@@ -14,12 +14,12 @@ public import Probability.Process.RandomWalk.Path.Drawdown
 public import Mathlib.MeasureTheory.Integral.Lebesgue.Basic
 
 /-!
-# First-passage input for the `a = 1` left-tail argument
+# First-passage input for the `a = 1` endpoint sublevel argument
 
 This file proves the one-generation estimate needed when a lineage first
 crosses a lower level.  The proof is the raw many-to-one identity followed by
 the pointwise exponential weight bound.  It does not assume a polynomial
-left-tail estimate for the selected population.
+endpoint sublevel estimate for the selected population.
 
 The estimate is only one ingredient of (4.16): passing from a randomly
 selected generation to its descendant subtrees and proving the no-large-drop

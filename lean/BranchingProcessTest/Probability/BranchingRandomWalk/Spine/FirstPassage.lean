@@ -8,7 +8,7 @@ import Probability.BranchingRandomWalk.Spine.FirstPassage
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Range.BlockBound
 
 /-!
-# Axiom audit for the raw `a = 1` left-tail input
+# Axiom audit for the raw `a = 1` endpoint sublevel input
 
 These declarations give the BRW-to-spine reduction and the elementary
 many-to-one endpoint estimates. They do not include the sharp Aïdékon--Hu

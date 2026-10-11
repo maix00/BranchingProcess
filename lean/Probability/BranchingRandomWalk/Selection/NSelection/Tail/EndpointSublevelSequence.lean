@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 import Probability.BranchingRandomWalk.Selection.NSelection.Tail.RawRate
 
 /-!
-# Logarithmic-scale conversion for the selected-population left tail
+# Logarithmic-scale conversion for the selected-population endpoint sublevel
 
 This file converts the finite-horizon decomposition in `RawRate` into a
 polynomial bound under the logarithmic scales appearing in (4.16).

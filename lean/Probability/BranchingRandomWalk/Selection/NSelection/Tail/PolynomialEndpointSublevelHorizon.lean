@@ -4,22 +4,17 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Selection.NSelection.Tail.LeftTailSequence
-import Probability.BranchingRandomWalk.Selection.NSelection.Tail.LeftTailParameters
+import Probability.BranchingRandomWalk.Selection.NSelection.Tail.EndpointSublevelSequence
+import Probability.BranchingRandomWalk.Selection.NSelection.Tail.EndpointDeviationParameters
 import Probability.BranchingRandomWalk.Selection.NSelection.Tail.LogarithmicScales
 
 /-!
-# Polynomial left-tail endpoint bounds at logarithmic scales
+# Polynomial endpoint bounds at arbitrary logarithmic-cube horizons
 
-This module composes the finite-horizon branching estimate, the raw centered
-spine range-rate estimate, and the polynomial conversion for the explicit
-logarithmic scales.  The resulting theorem is an intermediate endpoint
-estimate: its inputs include the centered finite-variance spine law and an
-explicit range-rate margin.  The paper-level adapter deriving these inputs
-from the flat offspring-law assumptions remains separate.  For a fixed raw
-rate, `exists_leftTailParameters` supplies `b` and a stricter margin by using
-`C = targetRate * sigma ^ 2`; the caller must still provide the raw range-rate
-and spatial-bin conditions.
+This file composes the finite-horizon branching estimate, the raw centered
+spine range-rate estimate, and the polynomial conversion for any horizon
+sequence whose ratio to `log N ^ 3` tends to a positive constant.  The
+random-walk rate remains an explicit analytic hypothesis.
 -/
 
 open Filter MeasureTheory
@@ -32,25 +27,27 @@ open Combinatorics.UlamHarris
 open ProbabilityTheory.BranchingRandomWalk.Spine
 open ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown
 
-/-- For the concrete logarithmic block scales, a raw centered-spine
-range-rate estimate gives a polynomial endpoint bound.  The parameter `b`
-is the drawdown ratio, and `hmargin` is the strict exponent margin after
-including the spine variance.  The raw rate, bin condition, and moment law
-are explicit so this declaration does not claim the still-open paper-level
-derivation of those inputs. -/
-theorem eventually_finiteRootStepFieldLaw_firstNSelectedEndpointBelow_le_polynomial_of_logarithmicRawRate
+/-- For an arbitrary horizon `horizon`, a raw centered-spine range-rate
+estimate gives a polynomial endpoint bound whenever
+`horizon n / log(N n)^3 → t > 0`.  The raw rate, bin condition, and moment law
+are explicit, so this intermediate theorem does not claim their paper-level
+derivation. -/
+theorem eventually_finiteRootStepFieldLaw_firstNSelectedEndpointBelow_le_polynomial_of_horizonRawRate
     (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
     (hboundary : HasBoundaryNormalization realPotential μ)
     {sigma : ℝ}
     (hspineMoment : IsCenteredSecondMoment
       (tiltedPotentialLaw realPotential (-1) μ) (sigma ^ 2))
     (hsigma : 0 < sigma)
-    {m N : ℕ → ℕ}
+    {m N horizon : ℕ → ℕ}
     (hN : Tendsto N atTop atTop)
     (horder : ∀ n, LinearOrder (RootIndexed.TreeNode (Fin (m n)) ℕ))
     {a b t zeta factor eta rangeRate targetRate : ℝ}
     (ha_one : a ≤ 1)
     (ht : 0 < t) (hb : 1 < b)
+    (hhorizon : Tendsto
+      (fun n => (horizon n : ℝ) / logarithmOfSampleSize N n ^ 3)
+      atTop (𝓝 t))
     (hfactor : 1 < factor) (heta : 0 < eta)
     (hrangeRate : 0 < rangeRate) (k : ℕ) (hk : 0 < k)
     (hrangeRate_lt : rangeRate < (Real.pi ^ 2 / 2) *
@@ -67,14 +64,13 @@ theorem eventually_finiteRootStepFieldLaw_firstNSelectedEndpointBelow_le_polynom
     ∃ epsilon : ℝ, 0 < epsilon ∧ ∀ᶠ n : ℕ in atTop,
       (finiteRootStepFieldLaw μ (m n))
         (@firstNSelectedEndpointBelow (m n) (N n)
-          (logarithmicHorizon N t n) (horder n)
+          (horizon n) (horder n)
           (logarithmicEndpointThreshold N zeta n)) ≤
         ENNReal.ofReal
           (Real.exp (-epsilon * Real.log (N n : ℝ))) := by
   let beta : ℝ := logarithmicRateBeta factor eta
   let length : ℕ → ℕ := fun n => logarithmicBlockLength N beta b n
-  let blocks : ℕ → ℕ := fun n => logarithmicBlockCount N beta b t n
-  let horizon : ℕ → ℕ := fun n => logarithmicHorizon N t n
+  let blocks : ℕ → ℕ := fun n => logarithmicBlockCountForHorizon N beta b horizon n
   let delta : ℕ → ℝ := fun n => logarithmicDrawdown N beta b n
   let width : ℕ → ℝ := fun n => eta * delta n
   let threshold : ℕ → ℝ := fun n => logarithmicEndpointThreshold N zeta n
@@ -83,7 +79,8 @@ theorem eventually_finiteRootStepFieldLaw_firstNSelectedEndpointBelow_le_polynom
     positivity
   obtain ⟨K, hK, hscale, hlength, hblocks, hblockCost, htotalCost,
       hcovered, hcomplete, hdeltaPositive, hthresholdFloor, hscaleBlock⟩ :=
-    logarithmicRawRateParameters hN hfactor heta (by linarith : 0 < b) ht hbin
+    logarithmicRawRateParametersForHorizon hN hhorizon hfactor heta
+      (by linarith : 0 < b) ht hbin
   have hwidth : ∀ᶠ n : ℕ in atTop, width n = eta * delta n := by
     filter_upwards [] with n
     rfl
@@ -126,7 +123,7 @@ theorem eventually_finiteRootStepFieldLaw_firstNSelectedEndpointBelow_le_polynom
         hcovered hcomplete' hwidth hthresholdRaw hscaleBlock
         (by simpa [beta, logarithmicRateBeta] using hgap) hmN hdeltaPositive
     filter_upwards [hraw'] with n hn
-    simpa [horizon, delta, threshold] using hn
+    simpa [delta, threshold] using hn
   have hNcast : Tendsto (fun n => (N n : ℝ)) atTop atTop :=
     tendsto_natCast_atTop_atTop.comp hN
   have hlog : Tendsto (fun n => Real.log (N n : ℝ)) atTop atTop :=
@@ -134,8 +131,7 @@ theorem eventually_finiteRootStepFieldLaw_firstNSelectedEndpointBelow_le_polynom
   have hH : Tendsto
       (fun n => (horizon n : ℝ) / Real.log (N n : ℝ) ^ 3)
       atTop (𝓝 t) := by
-    simpa [horizon, logarithmOfSampleSize] using
-      logarithmicHorizon_div_logCube_tendsto hN ht
+    simpa [logarithmOfSampleSize] using hhorizon
   have hB : Tendsto (fun n => delta n / Real.log (N n : ℝ))
       atTop (𝓝 b) := by
     simpa [delta, beta, logarithmOfSampleSize] using
@@ -153,6 +149,6 @@ theorem eventually_finiteRootStepFieldLaw_firstNSelectedEndpointBelow_le_polynom
   have hleft :=
     eventually_finiteRootStepFieldLaw_firstNSelectedEndpointBelow_le_polynomial_of_rawRate
       μ horder hN hH hB hthresholdScale ht hb hmPow hmargin hraw
-  simpa [horizon, threshold] using hleft
+  simpa [threshold] using hleft
 
 end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail
