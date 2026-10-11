@@ -9,12 +9,12 @@ import Probability.BranchingRandomWalk.Assumptions.CrossWeight
 import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 
 /-!
-# Affine-tube estimates for MRCA layers
+# MRCA pair contributions in affine tubes
 
 This file specializes the BRW path-level MRCA decomposition to affine tubes.
-It identifies and bounds the root layer, factors each positive-depth layer
-into an ancestral-prefix mass and a continuation-pair estimate, and sums the
-fixed-depth bounds. The recursive path-layer terms have not yet been
+It bounds the root-split pair contribution and expresses each later
+ancestor-generation contribution as an ancestral-prefix mass times a
+continuation-pair estimate. The recursive path-pair terms have not yet been
 identified with these conditional-prefix integrals.
 -/
 
@@ -312,10 +312,10 @@ theorem pathGenerationChildMeanOffDiagonal_normalized_le_of_uniformShiftedProbab
     φ μ hboundary n x terminalUpper corridor hcorridor hterminal window q
     hfirst (fun y hy => hprob x y hy) ξ
 
-/-- The root MRCA layer is the off-diagonal term in the one-step second
-moment recursion for the affine tube count. The other term keeps the two
-paths in the same first-generation subtree and therefore contains all deeper
-MRCA layers. -/
+/-- The root-split MRCA pair contribution is the off-diagonal term in the
+one-step second moment recursion for the affine tube count. The other term
+keeps both paths in the same first-generation subtree and contains every
+later ancestor-generation contribution. -/
 theorem lintegral_affineTube_pathGeneration_succ_sq_eq_diagonal_add_rootMRCAPairMean
     {X : Type*} [MeasurableSpace X]
     (φ : Potential X) (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
@@ -341,8 +341,9 @@ theorem lintegral_affineTube_pathGeneration_succ_sq_eq_diagonal_add_rootMRCAPair
     (lintegral_pathGeneration_succ_sq_eq_childPairRecursion
       φ μ n F hF initial)
 
-/-- The root MRCA layer is bounded by the finite cross-child moment once the
-shifted continuation probability has a uniform upper bound. -/
+/-- The root-split MRCA pair contribution is bounded by the finite
+cross-child moment once the shifted continuation probability has a uniform
+upper bound. -/
 theorem affineTubeRootMRCAPairMean_le_of_segmentProbability
     {X : Type*} [MeasurableSpace X]
     (φ : Potential X) (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
@@ -384,9 +385,9 @@ theorem affineTubeRootMRCAPairMean_le_of_segmentProbability
       hterminal window q hfirst hprob)
 
 /-- The source's small-drift Mogulskii bound gives an explicit estimate for
-the root MRCA layer. Here `hsegment` is precisely the remaining segment
-probability input from Lemma 4.2, with the drawdown event obtained from the
-affine tube geometry. -/
+the root-split MRCA pair contribution. Here `hsegment` is precisely the
+remaining segment probability input from Lemma 4.2, with the drawdown event
+obtained from the affine tube geometry. -/
 theorem affineTubeRootMRCAPairMean_le_of_mogulskiiSegmentBound
     {X : Type*} [MeasurableSpace X]
     (φ : Potential X) (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
@@ -408,7 +409,8 @@ theorem affineTubeRootMRCAPairMean_le_of_mogulskiiSegmentBound
 
 /-- Finiteness of the cross-child moment lets the paper's fixed constant be
 absorbed into `exp(width ^ v)` for all sufficiently large tube widths. This
-is the only use of the large-width threshold in the root-layer estimate. -/
+is the only use of the large-width threshold in the root-split contribution
+estimate. -/
 theorem exists_width0_crossChildMoment_le_exp_rpow
     {X : Type*} [MeasurableSpace X]
     (φ : Potential X) (μ : Measure (Step ℕ X))
@@ -432,9 +434,9 @@ theorem exists_width0_crossChildMoment_le_exp_rpow
   exact ENNReal.ofReal_le_ofReal hreal
 
 /-- After absorbing the finite cross-child moment into the large-width
-factor, the root layer has the same `3 * width^v` loss as the corresponding
-single summand of Lemma 4.5. The remaining layers still require the
-generation-`m` prefix estimate. -/
+factor, the root-split contribution has the same `3 * width^v` loss as the
+corresponding single summand of Lemma 4.5. Contributions from later ancestor
+generations still require the generation-`m` prefix estimate. -/
 theorem affineTubeRootMRCAPairMean_le_of_mogulskiiSegmentBound_of_crossAbsorption
     {X : Type*} [MeasurableSpace X]
     (φ : Potential X) (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
@@ -464,9 +466,9 @@ theorem affineTubeRootMRCAPairMean_le_of_mogulskiiSegmentBound_of_crossAbsorptio
           ENNReal.ofReal (Real.exp (width ^ v)) := by
       gcongr
 
-/-- In particular, the root MRCA layer is finite under the paper's
-finite cross-child condition whenever the segment-probability bound is
-finite. This is a derived finiteness result, not a pair-moment assumption. -/
+/-- In particular, the root-split MRCA pair contribution is finite under the
+paper's finite cross-child condition whenever the segment-probability bound
+is finite. This is a derived finiteness result, not a pair-moment assumption. -/
 theorem affineTubeRootMRCAPairMean_ne_top_of_segmentProbability
     {X : Type*} [MeasurableSpace X]
     (φ : Potential X) (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
@@ -494,7 +496,7 @@ theorem affineTubeRootMRCAPairMean_ne_top_of_segmentProbability
   exact ne_of_lt (lt_of_le_of_lt hbound (lt_top_iff_ne_top.mpr hright))
 
 /-- Under the paper's finite cross-weight condition, the explicit
-Mogulskii-controlled root layer is finite. -/
+Mogulskii-controlled root-split contribution is finite. -/
 theorem affineTubeRootMRCAPairMean_ne_top_of_mogulskiiSegmentBound
     {X : Type*} [MeasurableSpace X]
     (φ : Potential X) (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
@@ -536,8 +538,8 @@ noncomputable def weightedPrefixSquareCrossChildWeightSum
 
 /-- The square-weighted prefix sum with an arbitrary observable of the
 offspring mark at the generation-`n` frontier.  This is the reusable form of
-the ancestor factor in an MRCA layer; `weightedPrefixSquareCrossChildWeightSum`
-is its cross-child specialization. -/
+the ancestor factor in an MRCA pair contribution;
+`weightedPrefixSquareCrossChildWeightSum` is its cross-child specialization. -/
 noncomputable def weightedPrefixSquareObservableSum
     {X : Type*} [MeasurableSpace X]
     (φ : Potential X) (n : ℕ) (F : (Fin (n + 1) → ℝ) → ℝ≥0∞)
@@ -970,7 +972,7 @@ theorem lintegral_weightedPrefixSquareCrossChildWeightSum_eq_crossMoment_mul
 /-- The frontier cross-child weight is independent of the generation-`n`
 prefix. Consequently the expected weighted prefix/cross-weight sum factors
 exactly into the finite cross-child moment and the spine prefix integral. This
-is the ancestor-side factor in each positive-depth MRCA layer. -/
+is the ancestor-side factor in each positive-depth MRCA pair contribution. -/
 theorem lintegral_weightedPrefixCrossChildWeightSum_eq_crossMoment_mul
     {X : Type*} [MeasurableSpace X]
     (φ : Potential X) (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
@@ -1084,7 +1086,7 @@ theorem lintegral_weightedPrefixCrossChildWeightSum_eq_crossMoment_mul
 /-- For an indicator prefix corridor, the factorization above is exactly the
 cross-child moment times the corresponding tilted-spine corridor probability.
 This is the ancestor-prefix factor appearing in each positive-depth MRCA
-layer of Lemma 4.5. -/
+pair contribution in Lemma 4.5. -/
 theorem lintegral_weightedPrefixCrossChildWeightSum_indicator_eq_crossMoment_mul_spineProbability
     {X : Type*} [MeasurableSpace X]
     (φ : Potential X) (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
@@ -1254,7 +1256,7 @@ theorem lintegral_weightedPrefixSquareMass_indicator_le_spineProbability
 
 /-- A fixed MRCA depth factors into the continuation-pair estimate and the
 square-weighted ancestral corridor mass. This is the positive-depth analogue
-of the root-layer estimate, before summing over all possible MRCA depths. -/
+of the root-split contribution estimate, before summing over all possible MRCA depths. -/
 theorem lintegral_weightedPrefixContinuationPair_indicator_le
     {X : Type*} [MeasurableSpace X]
     (φ : Potential X) (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
@@ -1458,7 +1460,7 @@ theorem lintegral_affineCorridorPrefixContinuationPair_indicator_le_of_drawdown
 
 /-- Expected ordered successful path pairs whose most recent common ancestor
 is at generation `m`, with `n + 1` generations remaining below that ancestor. -/
-noncomputable def affineTubeMRCALayer
+noncomputable def affineTubeMRCAPairContribution
     {X : Type*} [MeasurableSpace X]
     (φ : Potential X) (μ : Measure (Step ℕ X))
     (m n : ℕ) (initial lower drift width endpointUpper : ℝ) : ℝ≥0∞ :=
@@ -1507,11 +1509,11 @@ private theorem expReciprocalSquareNormalization (x s : ℝ) :
 /-- The square-weighted continuation expression is exactly the expected
 ordered-pair contribution at this MRCA depth after the initial-position
 normalization. -/
-theorem affineTubeMRCALayer_eq_normalized
+theorem affineTubeMRCAPairContribution_eq_normalized
     {X : Type*} [MeasurableSpace X]
     (φ : Potential X) (μ : Measure (Step ℕ X))
     (m n : ℕ) (initial lower drift width endpointUpper : ℝ) :
-    affineTubeMRCALayer φ μ m n initial lower drift width endpointUpper =
+    affineTubeMRCAPairContribution φ μ m n initial lower drift width endpointUpper =
       ENNReal.ofReal (Real.exp (-(2 * initial))) *
         (∫⁻ ω, ∑' u : TreeNode ℕ,
           weightedPathGenerationTerm φ m
@@ -1563,7 +1565,7 @@ theorem affineTubeMRCALayer_eq_normalized
           rw [hscalar]
       _ = _ := by ac_rfl
   calc
-    affineTubeMRCALayer φ μ m n initial lower drift width endpointUpper =
+    affineTubeMRCAPairContribution φ μ m n initial lower drift width endpointUpper =
         ∫⁻ ω, c * (∑' u : TreeNode ℕ,
           weightedPathGenerationTerm φ m F initial u ω *
             ENNReal.ofReal (Real.exp (-pathPotential φ ω u)) *
@@ -1596,9 +1598,10 @@ theorem affineTubeMRCALayer_eq_normalized
       exact lintegral_const_mul' c _ ENNReal.ofReal_ne_top
     _ = _ := by simp [c, F, G]
 
-/-- Each fixed positive-depth MRCA layer of the affine tube is bounded by the
-same drawdown and cross-child estimates as its normalized continuation term. -/
-theorem affineTubeMRCALayer_le_of_drawdown
+/-- The affine-tube MRCA pair contribution at each positive ancestor
+generation is bounded by the same drawdown and cross-child estimates as its
+normalized continuation term. -/
+theorem affineTubeMRCAPairContribution_le_of_drawdown
     {X : Type*} [MeasurableSpace X]
     (φ : Potential X) (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
     (hboundary : HasBoundaryNormalization φ μ)
@@ -1607,7 +1610,7 @@ theorem affineTubeMRCALayer_le_of_drawdown
     (hdrawdown : (tiltedIncrementFieldLaw φ μ)
       (ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.noLargeDropEndpointBelowEvent
         n width (width + drift * (n : ℝ))) ≤ q) :
-    affineTubeMRCALayer φ μ m n initial lower drift width endpointUpper ≤
+    affineTubeMRCAPairContribution φ μ m n initial lower drift width endpointUpper ≤
       ENNReal.ofReal (Real.exp (-(2 * initial))) *
         (ENNReal.ofReal (Real.exp (2 * endpointUpper)) * q ^ 2) *
         (∫⁻ ξ, crossChildWeight φ ξ ∂μ) *
@@ -1616,13 +1619,13 @@ theorem affineTubeMRCALayer_le_of_drawdown
           (tiltedIncrementFieldLaw φ μ)
             {increment | ProbabilityTheory.RandomWalk.history m initial increment ∈
               affineCorridorPrefix m lower drift width}) := by
-  rw [affineTubeMRCALayer_eq_normalized]
+  rw [affineTubeMRCAPairContribution_eq_normalized]
   exact lintegral_affineCorridorPrefixContinuationPair_indicator_le_of_drawdown
     φ μ hboundary m n initial lower drift width endpointUpper hdrift q hdrawdown
 
-/-- Summing the fixed-depth affine-tube MRCA bounds over every possible
+/-- Summing the affine-tube MRCA pair contributions over every possible
 branching generation gives the corresponding finite aggregate estimate. -/
-theorem sum_affineTubeMRCALayer_le_of_drawdown
+theorem sum_affineTubeMRCAPairContribution_le_of_drawdown
     {X : Type*} [MeasurableSpace X]
     (φ : Potential X) (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
     (hboundary : HasBoundaryNormalization φ μ)
@@ -1632,7 +1635,7 @@ theorem sum_affineTubeMRCALayer_le_of_drawdown
       (tiltedIncrementFieldLaw φ μ)
         (ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.noLargeDropEndpointBelowEvent
           n width (width + drift * (n : ℝ))) ≤ q n) :
-    (∑ m : Fin N, affineTubeMRCALayer φ μ m.val
+    (∑ m : Fin N, affineTubeMRCAPairContribution φ μ m.val
         (N - m.val - 1) initial lower drift width endpointUpper) ≤
       ∑ m : Fin N,
         ENNReal.ofReal (Real.exp (-(2 * initial))) *
@@ -1646,7 +1649,7 @@ theorem sum_affineTubeMRCALayer_le_of_drawdown
                 affineCorridorPrefix m.val lower drift width}) := by
   apply Finset.sum_le_sum
   intro m hm
-  exact affineTubeMRCALayer_le_of_drawdown
+  exact affineTubeMRCAPairContribution_le_of_drawdown
     φ μ hboundary m.val (N - m.val - 1) initial lower drift width endpointUpper
     hdrift (q (N - m.val - 1)) (hdrawdown (N - m.val - 1))
 
