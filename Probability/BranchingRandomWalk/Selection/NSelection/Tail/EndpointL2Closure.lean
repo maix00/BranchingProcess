@@ -254,4 +254,84 @@ theorem countableRootEndpointMinimum_sub_memLp_four_and_integral_bound
       apply mul_le_mul_of_nonneg_left ?_ (by norm_num)
       linarith
 
+/-- Normalize the endpoint and its center by the same nonzero scale. This is
+the moment interface for the sequence-level `L²` argument: when the horizon
+is of order `log n ^ 3`, dividing by `log n` converts the fixed-horizon
+`H ^ 4` contribution into logarithmic eighth-power growth. -/
+theorem countableRootEndpointMinimum_div_sub_memLp_four_and_integral_bound
+    (m N H : ℕ) (hm : 0 < m) (hN : 0 < N)
+    [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
+    [Countable (RootIndexed.TreeNode (Fin m) ℕ)]
+    [LinearOrder (RootIndexed.TreeNode (Fin m) ℕ)]
+    (L : StepLaw ℕ ℕ ℝ) [IsProbabilityMeasure L.raw]
+    (hboundary : HasBoundaryNormalization L.potential L.raw)
+    (hnonempty : L.raw nonemptySupport = 1)
+    (hfour : HasLeftmostFourthMoment L)
+    (scale c : ℝ) (hscale : scale ≠ 0) :
+    MemLp
+      (fun field => countableRootEndpointMinimum m N H field / scale - c)
+      (4 : ℝ≥0∞) (RootIndexed.stepFieldLaw (Root := ℕ) L.sortedPotentialImage) ∧
+    (∫ field,
+      (countableRootEndpointMinimum m N H field / scale - c) ^ 4
+        ∂RootIndexed.stepFieldLaw (Root := ℕ) L.sortedPotentialImage) ≤
+      8 * ((H : ℝ) ^ 4 *
+        ∫ ξ, (L.leftmostPositivePart ξ) ^ 4 ∂L.raw +
+        2048 * (1 + Real.log (m : ℝ) ^ 4) + (c * scale) ^ 4) / scale ^ 4 := by
+  let P := RootIndexed.stepFieldLaw (Root := ℕ) L.sortedPotentialImage
+  let endpoint : CountableRootStepField ℕ ℝ → ℝ :=
+    countableRootEndpointMinimum m N H
+  have hcenter := countableRootEndpointMinimum_sub_memLp_four_and_integral_bound
+    m N H hm hN L hboundary hnonempty hfour (c * scale)
+  have hfunction : (fun field => endpoint field / scale - c) =
+      fun field => scale⁻¹ * (endpoint field - c * scale) := by
+    funext field
+    field_simp [hscale]
+  have hmem : MemLp (fun field => endpoint field / scale - c)
+      (4 : ℝ≥0∞) P := by
+    rw [hfunction]
+    exact hcenter.1.const_mul scale⁻¹
+  have hcenterIntegrable :
+      Integrable (fun field => (endpoint field - c * scale) ^ 4) P := by
+    have hnorm := hcenter.1.integrable_norm_pow (by norm_num : 4 ≠ 0)
+    apply hnorm.congr
+    exact ae_of_all P fun field => by
+      have hpow : ‖endpoint field - c * scale‖ ^ 4 =
+          (endpoint field - c * scale) ^ 4 := by
+        rw [Real.norm_eq_abs, pow_abs]
+        exact abs_of_nonneg (by positivity)
+      exact hpow
+  have hintegrand : (fun field =>
+      (endpoint field / scale - c) ^ 4) = fun field =>
+        scale⁻¹ ^ 4 * (endpoint field - c * scale) ^ 4 := by
+    funext field
+    calc
+      (endpoint field / scale - c) ^ 4 =
+          (scale⁻¹ * (endpoint field - c * scale)) ^ 4 :=
+        congrArg (fun x : ℝ => x ^ 4) (congrFun hfunction field)
+      _ = scale⁻¹ ^ 4 * (endpoint field - c * scale) ^ 4 := by ring
+  have hintegral :
+      (∫ field, (endpoint field / scale - c) ^ 4 ∂P) =
+        scale⁻¹ ^ 4 *
+          ∫ field, (endpoint field - c * scale) ^ 4 ∂P := by
+    rw [show (fun field => (endpoint field / scale - c) ^ 4) =
+        fun field => scale⁻¹ ^ 4 * (endpoint field - c * scale) ^ 4 by
+      exact hintegrand]
+    rw [integral_const_mul]
+  refine ⟨by simpa [P, endpoint] using hmem, ?_⟩
+  rw [hintegral]
+  calc
+    scale⁻¹ ^ 4 *
+        (∫ field, (endpoint field - c * scale) ^ 4 ∂P) ≤
+      scale⁻¹ ^ 4 *
+        (8 * ((H : ℝ) ^ 4 *
+          ∫ ξ, (L.leftmostPositivePart ξ) ^ 4 ∂L.raw +
+          2048 * (1 + Real.log (m : ℝ) ^ 4) + (c * scale) ^ 4)) :=
+      mul_le_mul_of_nonneg_left hcenter.2 (by positivity)
+    _ = 8 * ((H : ℝ) ^ 4 *
+          ∫ ξ, (L.leftmostPositivePart ξ) ^ 4 ∂L.raw +
+          2048 * (1 + Real.log (m : ℝ) ^ 4) + (c * scale) ^ 4) / scale ^ 4 := by
+      rw [show scale⁻¹ ^ 4 = 1 / scale ^ 4 by
+        rw [one_div, inv_pow]]
+      ring
+
 end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail
