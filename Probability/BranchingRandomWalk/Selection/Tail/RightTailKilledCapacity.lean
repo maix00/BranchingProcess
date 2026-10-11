@@ -1740,6 +1740,39 @@ theorem tendsto_rightTailPositiveASpan_atTop_of_cubicRatio
     field_simp
   exact hproduct.congr' heq
 
+/-- The cubic ratio of a two-stage span is the difference of the stage ratios,
+provided the natural-valued cutoffs are eventually ordered. -/
+theorem tendsto_rightTailPositiveASpan_cubicRatio_of_stageRatios
+    {ell ellN : ℕ → ℕ} {L : ℕ → ℝ} {t : ℝ}
+    (hL : Tendsto L atTop atTop)
+    (hEll : Tendsto (fun n => (ell n : ℝ) / L n ^ 3) atTop (𝓝 0))
+    (hEllN : Tendsto (fun n => (ellN n : ℝ) / L n ^ 3) atTop (𝓝 t))
+    (hellN : ∀ᶠ n : ℕ in atTop, ell n ≤ ellN n) :
+    Tendsto (fun n => ((ellN n - ell n : ℕ) : ℝ) / L n ^ 3)
+      atTop (𝓝 t) := by
+  have hLpos : ∀ᶠ n : ℕ in atTop, 0 < L n := hL.eventually_gt_atTop 0
+  have heq :
+      (fun n => ((ellN n - ell n : ℕ) : ℝ) / L n ^ 3) =ᶠ[atTop]
+        fun n => (ellN n : ℝ) / L n ^ 3 - (ell n : ℝ) / L n ^ 3 := by
+    filter_upwards [hellN, hLpos] with n horder hLn
+    rw [Nat.cast_sub horder]
+    field_simp
+  simpa using (hEllN.sub hEll).congr' heq.symm
+
+/-- Cubic-scale limits for the two cutoffs imply divergence of their gap,
+which is the scale hypothesis needed by the uniform terminal tube estimate. -/
+theorem tendsto_rightTailPositiveASpan_atTop_of_stageCubicRatios
+    {ell ellN : ℕ → ℕ} {L : ℕ → ℝ} {t : ℝ}
+    (hL : Tendsto L atTop atTop)
+    (hEll : Tendsto (fun n => (ell n : ℝ) / L n ^ 3) atTop (𝓝 0))
+    (hEllN : Tendsto (fun n => (ellN n : ℝ) / L n ^ 3) atTop (𝓝 t))
+    (ht : 0 < t)
+    (hellN : ∀ᶠ n : ℕ in atTop, ell n ≤ ellN n) :
+    Tendsto (fun n => ((ellN n - ell n : ℕ) : ℝ)) atTop atTop := by
+  apply tendsto_rightTailPositiveASpan_atTop_of_cubicRatio hL ?_ ht
+  exact tendsto_rightTailPositiveASpan_cubicRatio_of_stageRatios
+    hL hEll hEllN hellN
+
 /-- Along any diverging planned span, the full terminal second-stage
 drawdown probability obeys the uniform Aïdékon--Hu exponential estimate.
 The restriction `p < 1` is exactly what makes `width^(2+p)` sublinear in the
