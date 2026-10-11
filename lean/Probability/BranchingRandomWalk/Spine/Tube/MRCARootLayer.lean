@@ -49,6 +49,172 @@ noncomputable def affineTubeRootMRCAPairMean
         ∂stepFieldLaw μ) ∂μ
     else 0
 
+/-- The conditional ordered off-diagonal continuation-pair observable at a
+fixed ancestor position and reproduction mark. The descendant fields below
+distinct children have already been averaged independently. -/
+noncomputable def pathGenerationChildMeanOffDiagonal
+    {X : Type*} [MeasurableSpace X]
+    (φ : Potential X) (μ : Measure (Step ℕ X)) (n : ℕ)
+    (F : (Fin (n + 2) → ℝ) → ℝ≥0∞) (x : ℝ)
+    (ξ : Step ℕ X) : ℝ≥0∞ :=
+  ∑' i : ℕ, ∑' j : ℕ, if i ≠ j then
+    (∫⁻ η, pathGenerationChildObservable φ n F x i ξ η
+      ∂stepFieldLaw μ) *
+    (∫⁻ ζ, pathGenerationChildObservable φ n F x j ξ ζ
+      ∂stepFieldLaw μ) else 0
+
+/-- The conditional off-diagonal continuation-pair observable is measurable
+in the ancestor reproduction mark whenever the path test is measurable. -/
+theorem pathGenerationChildMeanOffDiagonal_measurable
+    {X : Type*} [MeasurableSpace X]
+    (φ : Potential X) (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ] (n : ℕ)
+    (F : (Fin (n + 2) → ℝ) → ℝ≥0∞) (hF : Measurable F)
+    (x : ℝ) :
+    Measurable (pathGenerationChildMeanOffDiagonal φ μ n F x) := by
+  classical
+  let childMean (i : ℕ) (ξ : Step ℕ X) : ℝ≥0∞ :=
+    ∫⁻ η, pathGenerationChildObservable φ n F x i ξ η
+      ∂stepFieldLaw μ
+  let offTerm (i j : ℕ) (ξ : Step ℕ X) : ℝ≥0∞ :=
+    if i ≠ j then childMean i ξ * childMean j ξ else 0
+  have hchildMean (i : ℕ) : Measurable (childMean i) := by
+    apply Measurable.lintegral_prod_right
+    simpa [childMean] using
+      pathGenerationChildObservable_measurable φ n F hF x i
+  have hoffTerm (i j : ℕ) : Measurable (offTerm i j) := by
+    by_cases hij : i ≠ j
+    · simp only [offTerm, if_pos hij]
+      exact (hchildMean i).mul (hchildMean j)
+    · have hEq : i = j := by
+        by_contra hne
+        exact hij hne
+      simp [offTerm, hEq]
+  have hoffInner (i : ℕ) : Measurable (fun ξ => ∑' j, offTerm i j ξ) := by
+    apply Measurable.tsum
+    intro j
+    exact hoffTerm i j
+  have hoffSum : Measurable (fun ξ => ∑' i, ∑' j, offTerm i j ξ) := by
+    apply Measurable.tsum
+    intro i
+    exact hoffInner i
+  change Measurable (fun ξ => ∑' i : ℕ, ∑' j : ℕ,
+    if i ≠ j then childMean i ξ * childMean j ξ else 0)
+  exact hoffSum
+
+/-- The root MRCA mean is the integral of its conditional off-diagonal
+continuation observable. This form is also used at later ancestors, where the
+starting position is measurable with respect to the prefix. -/
+theorem affineTubeRootMRCAPairMean_eq_lintegral
+    {X : Type*} [MeasurableSpace X]
+    (φ : Potential X) (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
+    (n : ℕ) (initial lower drift width endpointUpper : ℝ) :
+    affineTubeRootMRCAPairMean φ μ n initial lower drift width endpointUpper =
+      ∫⁻ ξ, pathGenerationChildMeanOffDiagonal φ μ n
+        ((affineCorridorHistoryEndpointCutoff n lower drift width endpointUpper).indicator
+          (fun _ => (1 : ℝ≥0∞))) initial ξ ∂μ := by
+  classical
+  let corridor :=
+    affineCorridorHistoryEndpointCutoff n lower drift width endpointUpper
+  let F : (Fin (n + 2) → ℝ) → ℝ≥0∞ :=
+    corridor.indicator (fun _ => (1 : ℝ≥0∞))
+  let childMean (i : ℕ) (ξ : Step ℕ X) : ℝ≥0∞ :=
+    ∫⁻ η, pathGenerationChildObservable φ n F initial i ξ η
+      ∂stepFieldLaw μ
+  let offTerm (i j : ℕ) (ξ : Step ℕ X) : ℝ≥0∞ :=
+    if i ≠ j then childMean i ξ * childMean j ξ else 0
+  have hF : Measurable F :=
+    measurable_const.indicator
+      (measurableSet_affineCorridorHistoryEndpointCutoff
+        n lower drift width endpointUpper)
+  have hchildMean (i : ℕ) : Measurable (childMean i) := by
+    apply Measurable.lintegral_prod_right
+    simpa [F, childMean, corridor] using
+      pathGenerationChildObservable_measurable φ n F hF initial i
+  have hoffTerm (i j : ℕ) : Measurable (offTerm i j) := by
+    by_cases hij : i ≠ j
+    · simp only [offTerm, if_pos hij]
+      exact (hchildMean i).mul (hchildMean j)
+    · have hEq : i = j := by
+        by_contra hne
+        exact hij hne
+      simp [offTerm, hEq]
+  have hoffInner (i : ℕ) : Measurable (fun ξ => ∑' j, offTerm i j ξ) := by
+    apply Measurable.tsum
+    intro j
+    exact hoffTerm i j
+  have hoffSum : Measurable (fun ξ => ∑' i, ∑' j, offTerm i j ξ) := by
+    apply Measurable.tsum
+    intro i
+    exact hoffInner i
+  have hoffInnerIntegral (i : ℕ) :
+      (∫⁻ ξ, ∑' j, offTerm i j ξ ∂μ) =
+        ∑' j, ∫⁻ ξ, offTerm i j ξ ∂μ := by
+    rw [lintegral_tsum]
+    intro j
+    exact (hoffTerm i j).aemeasurable
+  have hoffIntegral :
+      (∫⁻ ξ, ∑' i, ∑' j, offTerm i j ξ ∂μ) =
+        ∑' i, ∑' j, ∫⁻ ξ, offTerm i j ξ ∂μ := by
+    rw [lintegral_tsum]
+    · apply tsum_congr
+      intro i
+      exact hoffInnerIntegral i
+    · intro i
+      exact (hoffInner i).aemeasurable
+  have hoffTermIntegral (i j : ℕ) :
+      (∫⁻ ξ, offTerm i j ξ ∂μ) =
+        if i ≠ j then ∫⁻ ξ, childMean i ξ * childMean j ξ ∂μ else 0 := by
+    by_cases hij : i ≠ j
+    · simp [offTerm, hij]
+    · have hEq : i = j := by
+        by_contra hne
+        exact hij hne
+      simp [offTerm, hEq]
+  have hsum :
+      (∑' i, ∑' j, if i ≠ j then
+        ∫⁻ ξ, childMean i ξ * childMean j ξ ∂μ else 0) =
+        ∫⁻ ξ, ∑' i, ∑' j, offTerm i j ξ ∂μ := by
+    calc
+      _ = ∑' i, ∑' j, ∫⁻ ξ, offTerm i j ξ ∂μ := by
+        apply tsum_congr
+        intro i
+        apply tsum_congr
+        intro j
+        rw [hoffTermIntegral]
+      _ = ∫⁻ ξ, ∑' i, ∑' j, offTerm i j ξ ∂μ := hoffIntegral.symm
+  simpa [affineTubeRootMRCAPairMean, pathGenerationChildMeanOffDiagonal,
+    corridor, F, childMean, offTerm] using hsum
+
+/-- The pointwise continuation-pair observable is bounded by the
+cross-child weight under the shifted-spine probability estimate used in the
+one-ancestor second-moment bound. -/
+theorem pathGenerationChildMeanOffDiagonal_le_of_shiftedProbability
+    {X : Type*} [MeasurableSpace X]
+    (φ : Potential X) (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
+    (hboundary : HasBoundaryNormalization φ μ)
+    (n : ℕ) (x terminalUpper : ℝ)
+    (corridor : Set (Fin (n + 2) → ℝ))
+    (hcorridor : MeasurableSet corridor)
+    (hterminal : ∀ history ∈ corridor,
+      history ⟨n + 1, by omega⟩ ≤ terminalUpper)
+    (window : Set ℝ) (q : ℝ≥0∞)
+    (hfirst : ∀ history ∈ corridor,
+      history ⟨1, by omega⟩ ∈ window)
+    (hprob : ∀ y : ℝ, x + y ∈ window →
+      (tiltedIncrementFieldLaw φ μ)
+        {increment | prependHistory x
+          (ProbabilityTheory.RandomWalk.history n (x + y) increment) ∈
+            corridor} ≤ q) :
+    ∀ ξ, pathGenerationChildMeanOffDiagonal φ μ n
+      (corridor.indicator (fun _ => (1 : ℝ≥0∞))) x ξ ≤
+        (ENNReal.ofReal (Real.exp (terminalUpper - x)) * q) ^ 2 *
+          crossChildWeight φ ξ := by
+  intro ξ
+  simpa [pathGenerationChildMeanOffDiagonal] using
+    pathGenerationChildMean_offDiagonal_le_crossChildWeight
+      φ μ hboundary n x terminalUpper corridor hcorridor hterminal
+      window q hfirst hprob ξ
+
 /-- The root MRCA layer is the off-diagonal term in the one-step second
 moment recursion for the affine tube count. The other term keeps the two
 paths in the same first-generation subtree and therefore contains all deeper
