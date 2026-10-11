@@ -271,6 +271,118 @@ noncomputable def weightedPrefixSquareCrossChildWeightSum
       ENNReal.ofReal (Real.exp (-pathPotential φ ω u)) *
         crossChildWeight φ (ω u)
 
+/-- The square-weighted prefix sum with an arbitrary observable of the
+offspring mark at the generation-`n` frontier.  This is the reusable form of
+the ancestor factor in an MRCA layer; `weightedPrefixSquareCrossChildWeightSum`
+is its cross-child specialization. -/
+noncomputable def weightedPrefixSquareObservableSum
+    {X : Type*} [MeasurableSpace X]
+    (φ : Potential X) (n : ℕ) (F : (Fin (n + 1) → ℝ) → ℝ≥0∞)
+    (x : ℝ) (g : Step ℕ X → ℝ≥0∞) (ω : StepField ℕ X) : ℝ≥0∞ :=
+  ∑' u : TreeNode ℕ,
+    weightedPathGenerationTerm φ n F x u ω *
+      ENNReal.ofReal (Real.exp (-pathPotential φ ω u)) * g (ω u)
+
+/-- An observable of the reproduction mark at a generation-`n` frontier is
+independent of every measurable generation-`n` prefix observable.  The exact
+factorization lets positive-depth MRCA terms be estimated by first bounding
+the continuation observable at a fixed ancestor, then integrating its mark
+against the original offspring law. -/
+theorem lintegral_generationPrefixObservableSum_eq_mul
+    {X : Type*} [MeasurableSpace X]
+    (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
+    (n : ℕ)
+    (A : TreeNode ℕ → StepField ℕ X → ℝ≥0∞)
+    (g : Step ℕ X → ℝ≥0∞)
+    (hAgen : ∀ u, Measurable[generationFiltration (M := Step ℕ X) n]
+      (A u))
+    (hA : ∀ u, Measurable (A u))
+    (hsupport : ∀ u, u.length ≠ n → A u = fun _ => 0)
+    (hg : Measurable g) :
+    (∫⁻ ω, ∑' u : TreeNode ℕ, A u ω * g (ω u)
+      ∂stepFieldLaw μ) =
+        (∫⁻ ξ, g ξ ∂μ) *
+          (∫⁻ ω, ∑' u : TreeNode ℕ, A u ω ∂stepFieldLaw μ) := by
+  classical
+  let B (u : TreeNode ℕ) : StepField ℕ X → ℝ≥0∞ :=
+    fun ω => g (ω u)
+  have hBgen (u : TreeNode ℕ) :
+      Measurable[MeasurableSpace.comap (subtreeStepField u) inferInstance]
+        (B u) := by
+    have hroot : Measurable (fun η : StepField ℕ X => g (η [])) :=
+      hg.comp (measurable_pi_apply ([] : TreeNode ℕ))
+    apply Measurable.of_comap_le
+    exact MeasurableSpace.comap_le_comap_of_eq_comp
+      (f := subtreeStepField u) (g := B u)
+      (h := fun η : StepField ℕ X => g (η [])) hroot (by
+        funext ω
+        simp [B, subtreeStepField])
+  have hfactor (u : TreeNode ℕ) :
+      (∫⁻ ω, A u ω * B u ω ∂stepFieldLaw μ) =
+        (∫⁻ ω, A u ω ∂stepFieldLaw μ) *
+          (∫⁻ ξ, g ξ ∂μ) := by
+    by_cases hu : u.length = n
+    · subst n
+      have hind : IndepFun (A u) (B u) (stepFieldLaw μ) := by
+        rw [IndepFun_iff_Indep]
+        exact indep_of_indep_of_le_right
+          (indep_of_indep_of_le_left
+            (generation_subtreeStepField_independent μ u) (hAgen u).comap_le)
+          (hBgen u).comap_le
+      calc
+        (∫⁻ ω, A u ω * B u ω ∂stepFieldLaw μ) =
+            (∫⁻ ω, A u ω ∂stepFieldLaw μ) *
+              (∫⁻ ξ, B u ξ ∂stepFieldLaw μ) :=
+          lintegral_mul_eq_lintegral_mul_lintegral_of_indepFun
+            (hA u) (hg.comp (measurable_pi_apply u)) hind
+        _ = (∫⁻ ω, A u ω ∂stepFieldLaw μ) *
+              (∫⁻ ξ, g ξ ∂μ) := by
+          congr 1
+          change (∫⁻ ω, g (ω u) ∂stepFieldLaw μ) = _
+          calc
+            _ = ∫⁻ ξ, g ξ ∂(stepFieldLaw μ).map
+                (fun ω : StepField ℕ X => ω u) := by
+              exact (lintegral_map hg
+                (measurable_pi_apply u :
+                  Measurable (fun ω : StepField ℕ X => ω u))).symm
+            _ = ∫⁻ ξ, g ξ ∂μ := by
+              rw [stepFieldLaw_coordinate μ u]
+    · have hzero : A u = fun _ => 0 := hsupport u hu
+      simp [hzero]
+  have htermMeas (u : TreeNode ℕ) :
+      Measurable (fun ω : StepField ℕ X => A u ω * B u ω) :=
+    (hA u).mul (hg.comp (measurable_pi_apply u))
+  have hsumIntegral :
+      (∫⁻ ω, ∑' u : TreeNode ℕ, A u ω * B u ω ∂stepFieldLaw μ) =
+        ∑' u : TreeNode ℕ,
+          ∫⁻ ω, A u ω * B u ω ∂stepFieldLaw μ := by
+    rw [lintegral_tsum]
+    intro u
+    exact (htermMeas u).aemeasurable
+  have hprefix :
+      (∫⁻ ω, ∑' u : TreeNode ℕ, A u ω ∂stepFieldLaw μ) =
+        ∑' u : TreeNode ℕ, ∫⁻ ω, A u ω ∂stepFieldLaw μ := by
+    rw [lintegral_tsum]
+    intro u
+    exact (hA u).aemeasurable
+  calc
+    (∫⁻ ω, ∑' u : TreeNode ℕ, A u ω * g (ω u)
+        ∂stepFieldLaw μ) =
+        ∑' u : TreeNode ℕ,
+          ∫⁻ ω, A u ω * B u ω ∂stepFieldLaw μ := by
+      change (∫⁻ ω, ∑' u : TreeNode ℕ, A u ω * B u ω
+        ∂stepFieldLaw μ) = _
+      exact hsumIntegral
+    _ = ∑' u : TreeNode ℕ,
+          (∫⁻ ω, A u ω ∂stepFieldLaw μ) *
+            (∫⁻ ξ, g ξ ∂μ) := by
+      apply tsum_congr
+      intro u
+      exact hfactor u
+    _ = (∫⁻ ξ, g ξ ∂μ) *
+          (∫⁻ ω, ∑' u : TreeNode ℕ, A u ω ∂stepFieldLaw μ) := by
+      rw [ENNReal.tsum_mul_right, hprefix, mul_comm]
+
 private theorem displaceWith_measurable_generation
     {X : Type*} [MeasurableSpace X]
     (φ : Potential X) (n : ℕ) (v p : TreeNode ℕ)
@@ -356,6 +468,76 @@ private theorem weightedPathGenerationTerm_measurable_generation
       simp [weightedPathGenerationTerm, hu]
     rw [hzero]
     exact measurable_const
+
+/-- Exact factorization of the square-weighted prefix observable.  Its
+cross-child instance is the ancestor-side term in the paper's positive-depth
+MRCA sum. -/
+theorem lintegral_weightedPrefixSquareObservableSum_eq_mul
+    {X : Type*} [MeasurableSpace X]
+    (φ : Potential X) (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
+    (n : ℕ) (F : (Fin (n + 1) → ℝ) → ℝ≥0∞) (hF : Measurable F)
+    (x : ℝ) (g : Step ℕ X → ℝ≥0∞) (hg : Measurable g) :
+    (∫⁻ ω, weightedPrefixSquareObservableSum φ n F x g ω
+      ∂stepFieldLaw μ) =
+        (∫⁻ ξ, g ξ ∂μ) *
+          (∫⁻ ω, ∑' u : TreeNode ℕ,
+            weightedPathGenerationTerm φ n F x u ω *
+              ENNReal.ofReal (Real.exp (-pathPotential φ ω u))
+            ∂stepFieldLaw μ) := by
+  let A (u : TreeNode ℕ) : StepField ℕ X → ℝ≥0∞ := fun ω =>
+    weightedPathGenerationTerm φ n F x u ω *
+      ENNReal.ofReal (Real.exp (-pathPotential φ ω u))
+  have hAgen (u : TreeNode ℕ) :
+      Measurable[generationFiltration (M := Step ℕ X) n] (A u) := by
+    by_cases hu : u.length = n
+    · have hp := displaceWith_measurable_generation φ n [] u (by simpa [hu])
+      have hpotential : Measurable[generationFiltration (M := Step ℕ X) n]
+          (fun ω : StepField ℕ X => pathPotential φ ω u) := by
+        simpa [pathPotential] using hp
+      exact (weightedPathGenerationTerm_measurable_generation φ n hF x u).mul
+        hpotential.neg.exp.ennreal_ofReal
+    · have hzero : A u = fun _ => 0 := by
+        funext ω
+        simp [A, weightedPathGenerationTerm, hu]
+      rw [hzero]
+      exact measurable_const
+  have hA (u : TreeNode ℕ) : Measurable (A u) := by
+    by_cases hu : u.length = n
+    · exact (weightedPathGenerationTerm_measurable φ n hF x u).mul
+        ((ENNReal.continuous_ofReal.measurable.comp
+          (Real.continuous_exp.measurable.comp
+            ((pathPotential_measurable φ [] u).neg))))
+    · have hzero : A u = fun _ => 0 := by
+        funext ω
+        simp [A, weightedPathGenerationTerm, hu]
+      rw [hzero]
+      exact measurable_const
+  have hsupport (u : TreeNode ℕ) (hu : u.length ≠ n) :
+      A u = fun _ => 0 := by
+    funext ω
+    simp [A, weightedPathGenerationTerm, hu]
+  simpa [weightedPrefixSquareObservableSum, A] using
+    (lintegral_generationPrefixObservableSum_eq_mul μ n A g
+      hAgen hA hsupport hg)
+
+/-- The square-weighted prefix/cross-child observable factors into the
+offspring cross-child moment and the mean square-weighted prefix mass. -/
+theorem lintegral_weightedPrefixSquareCrossChildWeightSum_eq_crossMoment_mul
+    {X : Type*} [MeasurableSpace X]
+    (φ : Potential X) (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
+    (n : ℕ) (F : (Fin (n + 1) → ℝ) → ℝ≥0∞) (hF : Measurable F)
+    (x : ℝ) :
+    (∫⁻ ω, weightedPrefixSquareCrossChildWeightSum φ n F x ω
+      ∂stepFieldLaw μ) =
+        (∫⁻ ξ, crossChildWeight φ ξ ∂μ) *
+          (∫⁻ ω, ∑' u : TreeNode ℕ,
+            weightedPathGenerationTerm φ n F x u ω *
+              ENNReal.ofReal (Real.exp (-pathPotential φ ω u))
+            ∂stepFieldLaw μ) := by
+  simpa [weightedPrefixSquareCrossChildWeightSum,
+    weightedPrefixSquareObservableSum] using
+    (lintegral_weightedPrefixSquareObservableSum_eq_mul
+      φ μ n F hF x (crossChildWeight φ) (crossChildWeight_measurable φ))
 
 /-- The frontier cross-child weight is independent of the generation-`n`
 prefix. Consequently the expected weighted prefix/cross-weight sum factors
