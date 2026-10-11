@@ -62,59 +62,59 @@ def ofDeterministic (M : FiniteMechanism ι) (hM : Measurable M.select) :
 end CausalFiniteMechanism
 
 /-- A causal random selection rule with the uniform population cap `N`. -/
-structure CausalFiniteNSelection (Time Ω ι : Type*) (N : ℕ)
+structure CausalFiniteCapacitySelection (Time Ω ι : Type*) (N : ℕ)
     [MeasurableSpace ι] (ℱ : Time → MeasurableSpace Ω) where
-  rule : ∀ t, @RandomFiniteNSelection Ω ι N (ℱ t) inferInstance
+  rule : ∀ t, @RandomFiniteCapacitySelection Ω ι N (ℱ t) inferInstance
 
-namespace CausalFiniteNSelection
+namespace CausalFiniteCapacitySelection
 
 variable {Time Ω ι : Type*} {N : ℕ} [MeasurableSpace ι]
     {ℱ : Time → MeasurableSpace Ω}
 
-def select (R : CausalFiniteNSelection Time Ω ι N ℱ)
+def select (R : CausalFiniteCapacitySelection Time Ω ι N ℱ)
     (t : Time) (ω : Ω) (s : Finset ι) : Finset ι :=
   @RandomFiniteMechanism.select Ω ι (ℱ t) inferInstance
-    (@RandomFiniteNSelection.toRandomFiniteMechanism Ω ι N (ℱ t) inferInstance
+    (@RandomFiniteCapacitySelection.toRandomFiniteMechanism Ω ι N (ℱ t) inferInstance
       (R.rule t)) ω s
 
-theorem select_subset (R : CausalFiniteNSelection Time Ω ι N ℱ)
+theorem select_subset (R : CausalFiniteCapacitySelection Time Ω ι N ℱ)
     (t : Time) (ω : Ω) (s : Finset ι) : R.select t ω s ⊆ s :=
   @RandomFiniteMechanism.subset Ω ι (ℱ t) inferInstance
-    (@RandomFiniteNSelection.toRandomFiniteMechanism Ω ι N (ℱ t) inferInstance
+    (@RandomFiniteCapacitySelection.toRandomFiniteMechanism Ω ι N (ℱ t) inferInstance
       (R.rule t)) ω s
 
-theorem select_card_le (R : CausalFiniteNSelection Time Ω ι N ℱ)
+theorem select_card_le (R : CausalFiniteCapacitySelection Time Ω ι N ℱ)
     (t : Time) (ω : Ω) (s : Finset ι) :
     (R.select t ω s).card ≤ N :=
-  @RandomFiniteNSelection.select_card_le Ω ι N (ℱ t) inferInstance (R.rule t) ω s
+  @RandomFiniteCapacitySelection.select_card_le Ω ι N (ℱ t) inferInstance (R.rule t) ω s
 
-@[simp] theorem select_card (R : CausalFiniteNSelection Time Ω ι N ℱ)
+@[simp] theorem select_card (R : CausalFiniteCapacitySelection Time Ω ι N ℱ)
     (t : Time) (ω : Ω) (s : Finset ι) :
     (R.select t ω s).card = min N s.card :=
-  @RandomFiniteNSelection.card_eq Ω ι N (ℱ t) inferInstance (R.rule t) ω s
+  @RandomFiniteCapacitySelection.card_eq Ω ι N (ℱ t) inferInstance (R.rule t) ω s
 
-theorem select_eq_self_of_card_le (R : CausalFiniteNSelection Time Ω ι N ℱ)
+theorem select_eq_self_of_card_le (R : CausalFiniteCapacitySelection Time Ω ι N ℱ)
     (t : Time) (ω : Ω) (s : Finset ι) (h : s.card ≤ N) :
     R.select t ω s = s :=
-  @RandomFiniteNSelection.select_eq_self_of_card_le Ω ι N (ℱ t) inferInstance
+  @RandomFiniteCapacitySelection.select_eq_self_of_card_le Ω ι N (ℱ t) inferInstance
     (R.rule t) ω s h
 
-theorem measurable_select (R : CausalFiniteNSelection Time Ω ι N ℱ)
+theorem measurable_select (R : CausalFiniteCapacitySelection Time Ω ι N ℱ)
     (t : Time) (candidates : Ω → Finset ι)
     (hcandidates : @Measurable Ω (Finset ι) (ℱ t) inferInstance candidates) :
     @Measurable Ω (Finset ι) (ℱ t) inferInstance
       (fun ω => R.select t ω (candidates ω)) := by
   let _ : MeasurableSpace Ω := ℱ t
   simpa [select] using
-    (@RandomFiniteNSelection.toRandomFiniteMechanism Ω ι N (ℱ t) inferInstance
+    (@RandomFiniteCapacitySelection.toRandomFiniteMechanism Ω ι N (ℱ t) inferInstance
       (R.rule t)).measurable_apply candidates hcandidates
 
 /-- A deterministic `NSelection` is causal for every information domain. -/
 def ofDeterministic (M : FiniteNSelection ι N) (hM : Measurable M.select) :
-    CausalFiniteNSelection Time Ω ι N ℱ where
-  rule t := @RandomFiniteNSelection.ofDeterministic Ω ι N (ℱ t) _ M hM
+    CausalFiniteCapacitySelection Time Ω ι N ℱ where
+  rule t := @RandomFiniteCapacitySelection.ofDeterministic Ω ι N (ℱ t) _ M hM
 
-end CausalFiniteNSelection
+end CausalFiniteCapacitySelection
 
 end ProbabilityTheory.BranchingRandomWalk.Selection
 

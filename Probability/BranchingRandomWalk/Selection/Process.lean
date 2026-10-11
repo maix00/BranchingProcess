@@ -52,21 +52,21 @@ theorem measurable_population (R : CausalSelectMechanism Time Ω ι ℱ)
 
 end CausalSelectMechanism
 
-namespace CausalNSelection
+namespace CausalCapacitySelection
 
 /-- The finite retained population produced from an arbitrary candidate set. -/
-def population {N : ℕ} (R : CausalNSelection Time Ω ι N ℱ)
+def population {N : ℕ} (R : CausalCapacitySelection Time Ω ι N ℱ)
     (candidates : Time → Ω → Set ι) (t : Time) (ω : Ω) : Finset ι :=
   R.select t ω (candidates t ω)
 
-theorem population_subset {N : ℕ} (R : CausalNSelection Time Ω ι N ℱ)
+theorem population_subset {N : ℕ} (R : CausalCapacitySelection Time Ω ι N ℱ)
     (candidates : Time → Ω → Set ι) (t : Time) (ω : Ω) :
     ∀ q ∈ R.population candidates t ω, q ∈ candidates t ω := by
   intro q hq
   exact R.select_subset t ω (candidates t ω) q hq
 
 theorem measurable_population {N : ℕ}
-    (R : CausalNSelection Time Ω ι N ℱ)
+    (R : CausalCapacitySelection Time Ω ι N ℱ)
     (candidates : Time → Ω → Set ι)
     (hcandidates : ∀ t,
       @Measurable Ω (Set ι) (ℱ t) inferInstance (candidates t)) :
@@ -75,7 +75,7 @@ theorem measurable_population {N : ℕ}
   intro t
   exact R.measurable_select t (candidates t) (hcandidates t)
 
-end CausalNSelection
+end CausalCapacitySelection
 
 namespace CausalFiniteMechanism
 
@@ -101,26 +101,26 @@ theorem measurable_population (R : CausalFiniteMechanism Time Ω ι ℱ)
 
 end CausalFiniteMechanism
 
-namespace CausalFiniteNSelection
+namespace CausalFiniteCapacitySelection
 
 /-- The population process selected by a causal exact-`N` rule. -/
-def population {N : ℕ} (R : CausalFiniteNSelection Time Ω ι N ℱ)
+def population {N : ℕ} (R : CausalFiniteCapacitySelection Time Ω ι N ℱ)
     (candidates : Time → Ω → Finset ι) (t : Time) (ω : Ω) : Finset ι :=
   R.select t ω (candidates t ω)
 
-theorem population_subset {N : ℕ} (R : CausalFiniteNSelection Time Ω ι N ℱ)
+theorem population_subset {N : ℕ} (R : CausalFiniteCapacitySelection Time Ω ι N ℱ)
     (candidates : Time → Ω → Finset ι) (t : Time) (ω : Ω) :
     R.population candidates t ω ⊆ candidates t ω :=
   R.select_subset t ω _
 
 @[simp] theorem population_card {N : ℕ}
-    (R : CausalFiniteNSelection Time Ω ι N ℱ)
+    (R : CausalFiniteCapacitySelection Time Ω ι N ℱ)
     (candidates : Time → Ω → Finset ι) (t : Time) (ω : Ω) :
     (R.population candidates t ω).card = min N (candidates t ω).card :=
   R.select_card t ω _
 
 theorem measurable_population {N : ℕ}
-    (R : CausalFiniteNSelection Time Ω ι N ℱ)
+    (R : CausalFiniteCapacitySelection Time Ω ι N ℱ)
     (candidates : Time → Ω → Finset ι)
     (hcandidates : ∀ t,
       @Measurable Ω (Finset ι) (ℱ t) inferInstance (candidates t)) :
@@ -129,6 +129,6 @@ theorem measurable_population {N : ℕ}
   intro t
   exact R.measurable_select t (candidates t) (hcandidates t)
 
-end CausalFiniteNSelection
+end CausalFiniteCapacitySelection
 
 end ProbabilityTheory.BranchingRandomWalk.Selection
