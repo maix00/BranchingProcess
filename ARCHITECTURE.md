@@ -16,6 +16,23 @@ than the application that first needs it.
 | `Probability` | Laws, filtrations, independence, random processes, and almost-everywhere statements | IID sequences, random walks, Lévy and stable processes |
 | `Probability/BranchingRandomWalk` | Random branching models and their bridges to general process and measure interfaces | offspring fields, spines, selection and coupling |
 
+General finite-history drawdown predicates and their measurability belong to
+`Probability/Process/RandomWalk/Path/Drawdown.lean`. Random-walk probability
+bounds for those paths belong to `Probability/Process/RandomWalk/SmallDeviation/Drawdown/`.
+BRW ancestral-path decompositions, including ordered generation-pair counts
+split by most recent common ancestor, live in `Spine/Path/`; affine-tube
+probability estimates and their use in the second-moment argument live in
+`Spine/Tube/`. Branching-walk first-passage and many-to-one results also live
+under `Probability/BranchingRandomWalk/Spine/`. The general `Selection/` layer owns
+selection mechanisms, including random mechanisms; deterministic first-`N`
+selection is the `Selection/NSelection/` specialization. Its selected-
+population endpoint and drawdown transfers live under
+`Selection/NSelection/Tail/`, and its deterministic speed proof lives under
+`Selection/NSelection/Speed/`. Root-indexed position observations are owned
+by `Genealogy/RootIndexed/Measurability`; `Selection/NSelection/Position`
+contains only first-`N` measurability results, while random finite selectors
+adapted to those observations live under `Selection/Finite/`.
+
 These are ownership boundaries, not a requirement to introduce a wrapper at
 every boundary. A concrete theorem should depend on the narrowest module that
 owns each concept it uses.

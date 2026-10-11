@@ -1,0 +1,3835 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
+import Probability.BranchingRandomWalk.Population.Processes.Causal.CapacitySpine
+import Probability.Process.RandomWalk.Path.Corridor.Horizontal
+import Probability.Process.RandomWalk.Path.Restart.Basic
+import Probability.Process.RandomWalk.SmallDeviation.Drawdown.Upper
+import Probability.Process.RandomWalk.SmallDeviation.Drawdown.Scaling
+import Probability.BranchingRandomWalk.Selection.NSelection.Tail.LogarithmicScales
+
+/-!
+# A killed population for the positive-initial-mass right-tail argument
+
+The two tube stages in the proof of (4.15) are represented by one restarted
+window schedule.  The recursively retained population is constructed from the
+pre-sampled branching field.  Its capacity-failure probability is bounded by
+actual tilted-walk corridor probabilities through the first-moment and
+Markov interfaces.
+-/
+
+open Filter MeasureTheory
+open scoped ENNReal BigOperators Topology
+
+namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail
+
+open Combinatorics.Branching
+open Combinatorics.UlamHarris
+open ProbabilityTheory.BranchingRandomWalk
+open ProbabilityTheory.BranchingRandomWalk.Spine
+open ProbabilityTheory.RandomWalk
+
+/-- The first-stage cutoff `floor((log N)^(5/2))` used in the positive-`a`
+right-tail proof. -/
+noncomputable def rightTailPositiveAFirstCutoff
+    (N : ℕ → ℕ) (n : ℕ) : ℕ :=
+  ⌊logarithmOfSampleSize N n ^ ((5 : ℝ) / 2)⌋₊
+
+/-- The `log^(5/2) N` first-stage cutoff is negligible on the `log^3 N`
+scale. -/
+theorem tendsto_rightTailPositiveAFirstCutoff_div_logCube
+    {N : ℕ → ℕ} (hN : Tendsto N atTop atTop) :
+    Tendsto (fun n => (rightTailPositiveAFirstCutoff N n : ℝ) /
+      logarithmOfSampleSize N n ^ 3) atTop (𝓝 0) := by
+  let L : ℕ → ℝ := logarithmOfSampleSize N
+  let arg : ℕ → ℝ := fun n => L n ^ ((5 : ℝ) / 2)
+  have hL : Tendsto L atTop atTop := by
+    exact Real.tendsto_log_atTop.comp
+      (tendsto_natCast_atTop_atTop.comp hN)
+  have harg : Tendsto arg atTop atTop :=
+    (_root_.tendsto_rpow_atTop (by norm_num : (0 : ℝ) < (5 : ℝ) / 2)).comp hL
+  have hfloor : Tendsto (fun n => (Nat.floor (arg n) : ℝ) / arg n)
+      atTop (𝓝 1) := tendsto_nat_floor_div_atTop.comp harg
+  have hhalf : Tendsto (fun n => L n ^ ((1 : ℝ) / 2)) atTop atTop :=
+    (_root_.tendsto_rpow_atTop (by norm_num : (0 : ℝ) < (1 : ℝ) / 2)).comp hL
+  have hinv : Tendsto (fun n => (L n ^ ((1 : ℝ) / 2))⁻¹)
+      atTop (𝓝 0) := hhalf.inv_tendsto_atTop
+  have hratio : Tendsto (fun n => arg n / L n ^ 3) atTop (𝓝 0) := by
+    have heq : (fun n => arg n / L n ^ 3) =ᶠ[atTop]
+        fun n => (L n ^ ((1 : ℝ) / 2))⁻¹ := by
+      filter_upwards [hL.eventually_gt_atTop 0] with n hn
+      have hpow : L n ^ ((5 : ℝ) / 2) / L n ^ 3 =
+          (L n ^ ((1 : ℝ) / 2))⁻¹ := by
+        calc
+          L n ^ ((5 : ℝ) / 2) / L n ^ 3 =
+              L n ^ ((5 : ℝ) / 2) / L n ^ (3 : ℝ) := by
+                have hcast : L n ^ (3 : ℝ) = L n ^ (3 : ℕ) :=
+                  Real.rpow_natCast (L n) 3
+                rw [← hcast]
+          _ = L n ^ (((5 : ℝ) / 2) - 3) :=
+            (Real.rpow_sub hn ((5 : ℝ) / 2) (3 : ℝ)).symm
+          _ = L n ^ (-((1 : ℝ) / 2)) := by
+            congr 1
+            norm_num
+          _ = (L n ^ ((1 : ℝ) / 2))⁻¹ := Real.rpow_neg hn.le _
+      simpa [arg, L] using hpow
+    exact hinv.congr' heq.symm
+  have hbase := hfloor.mul hratio
+  have heq :
+      (fun n => (rightTailPositiveAFirstCutoff N n : ℝ) / L n ^ 3) =ᶠ[atTop]
+        fun n => (Nat.floor (arg n) : ℝ) / arg n * (arg n / L n ^ 3) := by
+    filter_upwards [hL.eventually_gt_atTop 0] with n hn
+    have hargPos : 0 < arg n := Real.rpow_pos_of_pos hn _
+    have hfloorVal : (rightTailPositiveAFirstCutoff N n : ℝ) =
+        (Nat.floor (arg n) : ℝ) := by
+      simp [rightTailPositiveAFirstCutoff, arg, L, logarithmOfSampleSize]
+    rw [hfloorVal]
+    field_simp [ne_of_gt hargPos, ne_of_gt hn]
+  simpa [L] using hbase.congr' heq.symm
+
+/-- The first-stage cutoff tends to infinity with the sample size. -/
+theorem tendsto_rightTailPositiveAFirstCutoff_atTop
+    {N : ℕ → ℕ} (hN : Tendsto N atTop atTop) :
+    Tendsto (rightTailPositiveAFirstCutoff N) atTop atTop := by
+  let L : ℕ → ℝ := logarithmOfSampleSize N
+  have hL : Tendsto L atTop atTop := by
+    exact Real.tendsto_log_atTop.comp
+      (tendsto_natCast_atTop_atTop.comp hN)
+  have harg : Tendsto (fun n => L n ^ ((5 : ℝ) / 2)) atTop atTop :=
+    (_root_.tendsto_rpow_atTop (by norm_num : (0 : ℝ) < (5 : ℝ) / 2)).comp hL
+  convert tendsto_nat_floor_atTop.comp harg using 1 <;>
+    ext n <;> simp [rightTailPositiveAFirstCutoff, L, logarithmOfSampleSize]
+
+/-- The first-stage cutoff dominates the superdiffusive Aïdékon--Hu power of
+the corridor width when `p < 1/2`, as required by the paper's
+`floor((log N)^(5/2))` choice. -/
+theorem eventually_rightTailPositiveAFirstStageAHScale
+    {N : ℕ → ℕ} (hN : Tendsto N atTop atTop) {b p delta0 : ℝ}
+    (hb : 0 < b) (hpHalf : p < 1 / 2) :
+    ∀ᶠ n : ℕ in atTop,
+      delta0 ≤ b * logarithmOfSampleSize N n ∧
+        (b * logarithmOfSampleSize N n) ^ (2 + p) ≤
+          (rightTailPositiveAFirstCutoff N n : ℝ) := by
+  let L : ℕ → ℝ := logarithmOfSampleSize N
+  let arg : ℕ → ℝ := fun n => L n ^ ((5 : ℝ) / 2)
+  let q : ℝ := (1 : ℝ) / 2 - p
+  have hL : Tendsto L atTop atTop := by
+    exact Real.tendsto_log_atTop.comp
+      (tendsto_natCast_atTop_atTop.comp hN)
+  have harg : Tendsto arg atTop atTop :=
+    (_root_.tendsto_rpow_atTop (by norm_num : (0 : ℝ) < (5 : ℝ) / 2)).comp hL
+  have hfloor : Tendsto (fun n => (Nat.floor (arg n) : ℝ) / arg n)
+      atTop (𝓝 1) := tendsto_nat_floor_div_atTop.comp harg
+  have hq : 0 < q := by dsimp [q]; linarith
+  have hpower : Tendsto (fun n => L n ^ q) atTop atTop :=
+    (_root_.tendsto_rpow_atTop hq).comp hL
+  have hbpow : 0 < b ^ (2 + p) := Real.rpow_pos_of_pos hb _
+  have hratio : Tendsto
+      (fun n => arg n / (b * L n) ^ (2 + p)) atTop atTop := by
+    have hscaled : Tendsto (fun n => (b ^ (2 + p))⁻¹ * L n ^ q)
+        atTop atTop := hpower.const_mul_atTop (inv_pos.mpr hbpow)
+    have heq : (fun n => (b ^ (2 + p))⁻¹ * L n ^ q) =ᶠ[atTop]
+        fun n => arg n / (b * L n) ^ (2 + p) := by
+      filter_upwards [hL.eventually_gt_atTop 0] with n hn
+      have hwidth : (b * L n) ^ (2 + p) =
+          b ^ (2 + p) * L n ^ (2 + p) :=
+        Real.mul_rpow hb.le hn.le
+      have hpowerEq : L n ^ ((5 : ℝ) / 2) =
+          L n ^ q * L n ^ (2 + p) := by
+        rw [← Real.rpow_add hn]
+        congr 1
+        dsimp [q]
+        ring
+      dsimp [arg]
+      rw [hwidth, hpowerEq]
+      field_simp [ne_of_gt hbpow,
+        ne_of_gt (Real.rpow_pos_of_pos hn (2 + p))]
+    exact hscaled.congr' heq
+  filter_upwards [hL.eventually_gt_atTop 0,
+    hL.const_mul_atTop hb |>.eventually_ge_atTop delta0,
+    Filter.Tendsto.eventually hfloor (Ioi_mem_nhds (by norm_num : (1 / 2 : ℝ) < 1)),
+    hratio.eventually_gt_atTop 2] with n hLn hwidthLarge hfloorLarge hratioLarge
+  refine ⟨hwidthLarge, ?_⟩
+  have hargPos : 0 < arg n := Real.rpow_pos_of_pos hLn _
+  have hwidthPos : 0 < (b * L n) ^ (2 + p) :=
+    Real.rpow_pos_of_pos (mul_pos hb hLn) _
+  have hfloorVal : (rightTailPositiveAFirstCutoff N n : ℝ) =
+      (Nat.floor (arg n) : ℝ) := by
+    simp [rightTailPositiveAFirstCutoff, arg, L, logarithmOfSampleSize]
+  have hfloorLower : arg n / 2 < (rightTailPositiveAFirstCutoff N n : ℝ) := by
+    rw [hfloorVal]
+    have hmul := (lt_div_iff₀ hargPos).mp hfloorLarge
+    nlinarith
+  have hratioLower : 2 * (b * L n) ^ (2 + p) < arg n :=
+    (lt_div_iff₀ hwidthPos).mp hratioLarge
+  have hwidthLower : (b * L n) ^ (2 + p) < arg n / 2 := by
+    linarith
+  exact_mod_cast (lt_trans hwidthLower hfloorLower).le
+
+/-- The first cutoff lies strictly before the `floor(t log^3 N)+1` terminal
+horizon for all sufficiently large sample sizes. -/
+theorem eventually_rightTailPositiveAFirstCutoff_lt_horizon
+    {N : ℕ → ℕ} (hN : Tendsto N atTop atTop) {t : ℝ} (ht : 0 < t) :
+    ∀ᶠ n : ℕ in atTop,
+      rightTailPositiveAFirstCutoff N n < logarithmicHorizon N t n := by
+  let L : ℕ → ℝ := logarithmOfSampleSize N
+  have hcut := tendsto_rightTailPositiveAFirstCutoff_div_logCube hN
+  have hterminal := logarithmicHorizon_div_logCube_tendsto hN ht
+  have hgap : Tendsto
+      (fun n => (logarithmicHorizon N t n : ℝ) / L n ^ 3 -
+        (rightTailPositiveAFirstCutoff N n : ℝ) / L n ^ 3)
+      atTop (𝓝 t) := by
+    simpa [L] using hterminal.sub hcut
+  have hL : Tendsto L atTop atTop := by
+    exact Real.tendsto_log_atTop.comp
+      (tendsto_natCast_atTop_atTop.comp hN)
+  have hgapPos : ∀ᶠ n : ℕ in atTop,
+      0 < (logarithmicHorizon N t n : ℝ) / L n ^ 3 -
+        (rightTailPositiveAFirstCutoff N n : ℝ) / L n ^ 3 :=
+    Filter.Tendsto.eventually hgap (Ioi_mem_nhds ht)
+  filter_upwards [hgapPos, hL.eventually_gt_atTop 0]
+    with n hgap hLn
+  have hratio :
+      (rightTailPositiveAFirstCutoff N n : ℝ) / L n ^ 3 <
+        (logarithmicHorizon N t n : ℝ) / L n ^ 3 := by
+    linarith
+  have hreal : (rightTailPositiveAFirstCutoff N n : ℝ) <
+      (logarithmicHorizon N t n : ℝ) := by
+    exact (div_lt_div_iff_of_pos_right (pow_pos hLn 3)).mp hratio
+  exact_mod_cast hreal
+
+/-- Drift of the second-stage tube in the positive-`a` proof of (4.15),
+with `κ = π² σ² / 2`. -/
+noncomputable def rightTailPositiveADrift
+    (ell ellN : ℕ) (κ c : ℝ) (j : ℕ) : ℝ :=
+  κ / c ^ 2 * (((ellN - ell : ℕ) : ℝ) ^ ((-2 : ℝ) / 3)) * (j : ℝ)
+
+/-- Restarted path windows for the killed population used in the proof of
+(4.15). Up to `ell`, paths remain in `[-b log N, 0]`, with a narrower window
+at `ell`. The next stage uses the tilted tube, with a narrower terminal
+window at `ellN`. -/
+noncomputable def rightTailPositiveARestartedWindow
+    (ell ellN : ℕ) (logN b v c κ : ℝ) (k : ℕ) : Set ℝ :=
+  if k < ell then Set.Icc (-b * logN) 0
+  else if k = ell then Set.Icc (-b * logN) ((-b + v) * logN)
+  else if k < ellN then
+    Set.Icc (rightTailPositiveADrift ell ellN κ c (k - ell))
+      (rightTailPositiveADrift ell ellN κ c (k - ell) +
+        c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)))
+  else if k = ellN then
+    Set.Icc (rightTailPositiveADrift ell ellN κ c (ellN - ell))
+      (rightTailPositiveADrift ell ellN κ c (ellN - ell) +
+        v * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)))
+  else ∅
+
+/-- Deterministic upper endpoint for each stage window. -/
+noncomputable def rightTailPositiveAWindowUpper
+    (ell ellN : ℕ) (logN b v c κ : ℝ) (k : ℕ) : ℝ :=
+  if k < ell then 0
+  else if k = ell then (-b + v) * logN
+  else if k < ellN then
+    rightTailPositiveADrift ell ellN κ c (k - ell) +
+      c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ))
+  else if k = ellN then
+    rightTailPositiveADrift ell ellN κ c (ellN - ell) +
+      v * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ))
+  else 0
+
+/-- The second-stage tube as a path started at the restart time. Its terminal
+window may be narrower than the interior window. -/
+noncomputable def rightTailPositiveASecondStageWindow
+    (ell ellN : ℕ) (κ c v : ℝ) (j : ℕ) : Set ℝ :=
+  let D := ellN - ell
+  let width := ((D : ℕ) : ℝ) ^ (3⁻¹ : ℝ)
+  if j = 0 then Set.Icc 0 0
+  else if j < D then
+    Set.Icc (rightTailPositiveADrift ell ellN κ c j)
+      (rightTailPositiveADrift ell ellN κ c j + c * width)
+  else if j = D then
+    Set.Icc (rightTailPositiveADrift ell ellN κ c j)
+      (rightTailPositiveADrift ell ellN κ c j + v * width)
+  else ∅
+
+/-- Membership in the second-stage restarted tube, expressed on the shifted
+increment path beginning at the restart time. -/
+noncomputable def rightTailPositiveASecondStageTubeEvent
+    (ell ellN : ℕ) (κ c v : ℝ) : Set (ℕ → ℝ) :=
+  {increment | ∀ j : Fin (ellN - ell + 1),
+    AdditivePath.displacement (j : ℕ) increment ∈
+      rightTailPositiveASecondStageWindow ell ellN κ c v (j : ℕ)}
+
+/-- A finite initial segment of the second-stage tube. This is the event
+needed at an intermediate generation before the full second-stage horizon. -/
+noncomputable def rightTailPositiveASecondStageTubePrefixEvent
+    (ell ellN d : ℕ) (κ c v : ℝ) : Set (ℕ → ℝ) :=
+  {increment | ∀ j : Fin (d + 1),
+    AdditivePath.displacement (j : ℕ) increment ∈
+      rightTailPositiveASecondStageWindow ell ellN κ c v (j : ℕ)}
+
+/-- A path inside an increasing tube of fixed width has bounded drawdown;
+its endpoint lies below the terminal upper endpoint of the tube. -/
+theorem increasingTubePath_mem_noLargeDropEndpointBelowEvent
+    (D : ℕ) (drift : ℕ → ℝ) (width : ℝ)
+    (hmonotone : Monotone drift)
+    (increment : ℕ → ℝ)
+    (hpath : ∀ j : Fin (D + 1),
+      AdditivePath.displacement (j : ℕ) increment ∈
+        Set.Icc (drift (j : ℕ)) (drift (j : ℕ) + width)) :
+    increment ∈
+      ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.noLargeDropEndpointBelowEvent
+        D width (drift D + width) := by
+  constructor
+  · intro i j hij hj
+    have hi := hpath ⟨i, Nat.lt_succ_of_le (hij.trans hj)⟩
+    have hj' := hpath ⟨j, Nat.lt_succ_of_le hj⟩
+    linarith [hi.2, hj'.1, hmonotone hij]
+  · have hend := hpath ⟨D, Nat.lt_succ_self D⟩
+    exact hend.2
+
+/-- The variable-width second-stage tube is contained in a fixed-width
+increasing tube whenever the terminal window is no wider than the interior
+window. -/
+theorem rightTailPositiveASecondStageTubeEvent_subset_fixedTube
+    (ell ellN : ℕ) (κ c v : ℝ)
+    (hellN : ell < ellN) (hc : 0 ≤ c) (hvc : v ≤ c) :
+    rightTailPositiveASecondStageTubeEvent ell ellN κ c v ⊆
+      {increment : ℕ → ℝ | ∀ j : Fin (ellN - ell + 1),
+        AdditivePath.displacement (j : ℕ) increment ∈
+          Set.Icc (rightTailPositiveADrift ell ellN κ c (j : ℕ))
+            (rightTailPositiveADrift ell ellN κ c (j : ℕ) +
+              c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)))} := by
+  intro increment hpath j
+  let D := ellN - ell
+  let width : ℝ := (D : ℝ) ^ (3⁻¹ : ℝ)
+  have hDpos : 0 < D := by dsimp [D]; exact Nat.sub_pos_of_lt hellN
+  have hwidth : 0 ≤ width := by positivity
+  have hterminal : v * width ≤ c * width :=
+    mul_le_mul_of_nonneg_right hvc hwidth
+  by_cases hjzero : (j : ℕ) = 0
+  · have hj : j = 0 := Fin.ext hjzero
+    subst j
+    simp [rightTailPositiveADrift, D, width, mul_nonneg hc hwidth]
+  · have hjpos : 0 < (j : ℕ) := Nat.pos_of_ne_zero hjzero
+    by_cases hjlt : (j : ℕ) < D
+    · have hmember := hpath j
+      simpa [rightTailPositiveASecondStageWindow, D, width,
+        hjzero, hjlt] using hmember
+    · have hjEq : (j : ℕ) = D := by
+        have hjle : (j : ℕ) ≤ D := Nat.le_of_lt_succ j.isLt
+        omega
+      have hmember := hpath j
+      have hmember' : AdditivePath.displacement (j : ℕ) increment ∈
+          Set.Icc (rightTailPositiveADrift ell ellN κ c (j : ℕ))
+            (rightTailPositiveADrift ell ellN κ c (j : ℕ) + v * width) := by
+        simpa [rightTailPositiveASecondStageWindow, D, width,
+          hjzero, hjlt, hjEq, hDpos.ne'] using hmember
+      have hupper :
+          rightTailPositiveADrift ell ellN κ c (j : ℕ) + v * width ≤
+            rightTailPositiveADrift ell ellN κ c (j : ℕ) + c * width := by
+        linarith [hterminal]
+      exact ⟨hmember'.1,
+        hmember'.2.trans (by simpa [D, width] using hupper)⟩
+
+/-- Every initial segment of the second-stage tube is contained in the
+corresponding fixed-width increasing tube, including the narrower terminal
+window when the segment reaches `ellN`. -/
+theorem rightTailPositiveASecondStageTubePrefixEvent_subset_fixedTube
+    (ell ellN d : ℕ) (κ c v : ℝ)
+    (hellN : ell < ellN) (hd : d ≤ ellN - ell)
+    (hc : 0 ≤ c) (hvc : v ≤ c) :
+    rightTailPositiveASecondStageTubePrefixEvent ell ellN d κ c v ⊆
+      {increment : ℕ → ℝ | ∀ j : Fin (d + 1),
+        AdditivePath.displacement (j : ℕ) increment ∈
+          Set.Icc (rightTailPositiveADrift ell ellN κ c (j : ℕ))
+            (rightTailPositiveADrift ell ellN κ c (j : ℕ) +
+              c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)))} := by
+  intro increment hpath j
+  let D := ellN - ell
+  let width : ℝ := (D : ℝ) ^ (3⁻¹ : ℝ)
+  have hDpos : 0 < D := by dsimp [D]; exact Nat.sub_pos_of_lt hellN
+  have hwidth : 0 ≤ width := by positivity
+  have hterminal : v * width ≤ c * width :=
+    mul_le_mul_of_nonneg_right hvc hwidth
+  by_cases hjzero : (j : ℕ) = 0
+  · have hj : j = 0 := Fin.ext hjzero
+    subst j
+    simp [rightTailPositiveADrift, D, width, mul_nonneg hc hwidth]
+  · have hjpos : 0 < (j : ℕ) := Nat.pos_of_ne_zero hjzero
+    have hjleD : (j : ℕ) ≤ D := by
+      exact (Nat.le_of_lt_succ j.isLt).trans hd
+    by_cases hjlt : (j : ℕ) < D
+    · have hmember := hpath j
+      simpa [rightTailPositiveASecondStageTubePrefixEvent,
+        rightTailPositiveASecondStageWindow, D, width, hjzero, hjlt]
+        using hmember
+    · have hjEq : (j : ℕ) = D := by omega
+      have hmember := hpath j
+      have hmember' : AdditivePath.displacement (j : ℕ) increment ∈
+          Set.Icc (rightTailPositiveADrift ell ellN κ c (j : ℕ))
+            (rightTailPositiveADrift ell ellN κ c (j : ℕ) + v * width) := by
+        simpa [rightTailPositiveASecondStageTubePrefixEvent,
+          rightTailPositiveASecondStageWindow, D, width,
+          hjzero, hjlt, hjEq, hDpos.ne'] using hmember
+      have hupper :
+          rightTailPositiveADrift ell ellN κ c (j : ℕ) + v * width ≤
+            rightTailPositiveADrift ell ellN κ c (j : ℕ) + c * width := by
+        linarith [hterminal]
+      exact ⟨hmember'.1,
+        hmember'.2.trans (by simpa [D, width] using hupper)⟩
+
+/-- The whole second-stage tube event implies the drawdown event with the
+same width as its interior corridor. The increasing linear drift is why a
+path can gain height without increasing its drawdown allowance. -/
+theorem rightTailPositiveASecondStageTubeEvent_subset_drawdownEvent
+    (ell ellN : ℕ) (κ c v : ℝ)
+    (hellN : ell < ellN) (hκ : 0 ≤ κ) (hc : 0 < c) (hvc : v ≤ c) :
+    rightTailPositiveASecondStageTubeEvent ell ellN κ c v ⊆
+      ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.noLargeDropEndpointBelowEvent
+        (ellN - ell)
+        (c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)))
+        (rightTailPositiveADrift ell ellN κ c (ellN - ell) +
+          c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ))) := by
+  let D := ellN - ell
+  let drift : ℕ → ℝ := rightTailPositiveADrift ell ellN κ c
+  let width : ℝ := c * (((D : ℕ) : ℝ) ^ (3⁻¹ : ℝ))
+  have hDpos : 0 < D := by dsimp [D]; exact Nat.sub_pos_of_lt hellN
+  have hDreal : 0 < (D : ℝ) := by exact_mod_cast hDpos
+  have hcoef : 0 ≤ κ / c ^ 2 * (D : ℝ) ^ ((-2 : ℝ) / 3) := by
+    positivity
+  have hmono : Monotone drift := by
+    intro i j hij
+    dsimp [drift, rightTailPositiveADrift]
+    exact mul_le_mul_of_nonneg_left (by exact_mod_cast hij) hcoef
+  have hwidth : 0 ≤ width := by
+    dsimp [width]
+    positivity
+  have hcontained := rightTailPositiveASecondStageTubeEvent_subset_fixedTube
+    ell ellN κ c v hellN hc.le hvc
+  intro increment hpath
+  have hpositions : ∀ j : Fin (D + 1),
+      AdditivePath.displacement (j : ℕ) increment ∈
+        Set.Icc (drift (j : ℕ)) (drift (j : ℕ) + width) := by
+    simpa [D, drift, width] using hcontained hpath
+  have hdrawdown := increasingTubePath_mem_noLargeDropEndpointBelowEvent
+    D drift width hmono increment hpositions
+  simpa [D, drift, width] using hdrawdown
+
+/-- A second-stage prefix of length `d` is contained in a drawdown event at
+that same horizon. The corridor scale still uses the full planned horizon
+`ellN - ell`. -/
+theorem rightTailPositiveASecondStageTubePrefixEvent_subset_drawdownEvent
+    (ell ellN d : ℕ) (κ c v : ℝ)
+    (hellN : ell < ellN) (hd : d ≤ ellN - ell)
+    (hκ : 0 ≤ κ) (hc : 0 < c) (hvc : v ≤ c) :
+    rightTailPositiveASecondStageTubePrefixEvent ell ellN d κ c v ⊆
+      ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.noLargeDropEndpointBelowEvent
+        d
+        (c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)))
+        (rightTailPositiveADrift ell ellN κ c d +
+          c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ))) := by
+  let D := ellN - ell
+  let drift : ℕ → ℝ := rightTailPositiveADrift ell ellN κ c
+  let width : ℝ := c * (((D : ℕ) : ℝ) ^ (3⁻¹ : ℝ))
+  have hDpos : 0 < D := by dsimp [D]; exact Nat.sub_pos_of_lt hellN
+  have hDreal : 0 < (D : ℝ) := by exact_mod_cast hDpos
+  have hcoef : 0 ≤ κ / c ^ 2 * (D : ℝ) ^ ((-2 : ℝ) / 3) := by
+    positivity
+  have hmono : Monotone drift := by
+    intro i j hij
+    dsimp [drift, rightTailPositiveADrift]
+    exact mul_le_mul_of_nonneg_left (by exact_mod_cast hij) hcoef
+  have hcontained := rightTailPositiveASecondStageTubePrefixEvent_subset_fixedTube
+    ell ellN d κ c v hellN hd hc.le hvc
+  intro increment hpath
+  have hpositions : ∀ j : Fin (d + 1),
+      AdditivePath.displacement (j : ℕ) increment ∈
+        Set.Icc (drift (j : ℕ)) (drift (j : ℕ) + width) := by
+    simpa [D, drift, width] using hcontained hpath
+  have hdrawdown := increasingTubePath_mem_noLargeDropEndpointBelowEvent
+    d drift width hmono increment hpositions
+  simpa [D, drift, width] using hdrawdown
+
+/-- After the restart time, membership in the original window schedule
+forces the corresponding shifted increments to stay in the second-stage
+tube through the observed prefix. -/
+theorem rightTailPositiveARestartedWindow_event_subset_shiftedSecondStageTubePrefix
+    (ell ellN k : ℕ) (logN b v c κ : ℝ)
+    (hk : ell < k) (hkN : k ≤ ellN) :
+    {increment : ℕ → ℝ |
+      InRestartedWindows ell
+        (rightTailPositiveARestartedWindow ell ellN logN b v c κ)
+        (history k 0 increment)} ⊆
+      {increment : ℕ → ℝ |
+        (fun j => increment (ell + j)) ∈
+          rightTailPositiveASecondStageTubePrefixEvent
+            ell ellN (k - ell) κ c v} := by
+  intro increment hwindow j
+  change InRestartedWindows ell
+    (rightTailPositiveARestartedWindow ell ellN logN b v c κ)
+    (history k 0 increment) at hwindow
+  have hellN : ell < ellN := lt_of_lt_of_le hk hkN
+  have hEllNe : ellN ≠ ell := Ne.symm hellN.ne
+  have hDpos : 0 < ellN - ell := Nat.sub_pos_of_lt hellN
+  have hDadd : ell + (ellN - ell) = ellN := by omega
+  by_cases hjzero : (j : ℕ) = 0
+  · have hj : j = 0 := Fin.ext hjzero
+    subst j
+    simp [rightTailPositiveASecondStageWindow, AdditivePath.displacement_zero]
+  · have hjpos : 0 < (j : ℕ) := Nat.pos_of_ne_zero hjzero
+    have hleftBound : ell < k + 1 := by omega
+    have hrightBound : ell + (j : ℕ) < k + 1 := by
+      have hjle : (j : ℕ) ≤ k - ell := Nat.le_of_lt_succ j.isLt
+      omega
+    have hpath := hwindow ⟨ell + (j : ℕ), hrightBound⟩
+    have hanchor : restartAnchor ell (ell + (j : ℕ)) = ell :=
+      restartAnchor_eq_cutoff (by omega)
+    have hpath' :
+        history k 0 increment ⟨ell + (j : ℕ), hrightBound⟩ -
+          history k 0 increment ⟨ell, hleftBound⟩ ∈
+          rightTailPositiveARestartedWindow ell ellN logN b v c κ
+            (ell + (j : ℕ)) := by
+      simpa only [hanchor] using hpath
+    have hshift :
+        history k 0 increment ⟨ell + (j : ℕ), hrightBound⟩ -
+          history k 0 increment ⟨ell, hleftBound⟩ =
+        AdditivePath.displacement (j : ℕ) (fun q => increment (ell + q)) := by
+      calc
+        _ = AdditivePath.displacement (ell + (j : ℕ)) increment -
+            AdditivePath.displacement ell increment := by
+          simp [history_eq_fromIncrements, AdditivePath.fromIncrements]
+        _ = AdditivePath.displacement (j : ℕ)
+            (fun q => increment (ell + q)) := by
+          rw [AdditivePath.displacement_add]
+          ring
+    rw [hshift] at hpath'
+    by_cases hjterminal : (j : ℕ) = ellN - ell
+    · have habsolute : ell + (j : ℕ) = ellN := by omega
+      simpa [rightTailPositiveARestartedWindow,
+        rightTailPositiveASecondStageTubePrefixEvent,
+        rightTailPositiveASecondStageWindow, hjpos.ne', hjterminal,
+        habsolute, hDpos.ne', hDadd, Nat.add_sub_cancel_left,
+        not_lt_of_ge hellN.le, hEllNe] using hpath'
+    · have hjlt : (j : ℕ) < ellN - ell := by omega
+      have habsolute : ell + (j : ℕ) < ellN := by omega
+      simpa [rightTailPositiveARestartedWindow,
+        rightTailPositiveASecondStageTubePrefixEvent,
+        rightTailPositiveASecondStageWindow, hjpos.ne', hjterminal,
+        hjlt, habsolute, hDpos.ne', hDadd, Nat.add_sub_cancel_left,
+        not_lt_of_ge hellN.le, hEllNe] using hpath'
+
+/-- Under an IID increment law, the restarted-window probability after the
+cutoff is bounded by the drawdown probability of the shifted second-stage
+prefix at its actual length. -/
+theorem iidSequenceLaw_restartedWindowProbability_le_secondStageDrawdown
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (ell ellN k : ℕ) (logN b v c κ : ℝ)
+    (hk : ell < k) (hkN : k ≤ ellN)
+    (hκ : 0 ≤ κ) (hc : 0 < c) (hvc : v ≤ c) :
+    RandomWalk.restartedWindowProbability (iidSequenceLaw ν) ell
+        (rightTailPositiveARestartedWindow ell ellN logN b v c κ) k 0 ≤
+      iidSequenceLaw ν
+        (ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.noLargeDropEndpointBelowEvent
+          (k - ell)
+          (c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)))
+          (rightTailPositiveADrift ell ellN κ c (k - ell) +
+            c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)))) := by
+  let d := k - ell
+  let tubePrefix := rightTailPositiveASecondStageTubePrefixEvent ell ellN d κ c v
+  let shift : (ℕ → ℝ) → (ℕ → ℝ) := fun increment j => increment (ell + j)
+  have hd : d ≤ ellN - ell := by dsimp [d]; omega
+  have hDpos : 0 < ellN - ell := by omega
+  have hsubsetRestart :
+      {increment : ℕ → ℝ |
+        InRestartedWindows ell
+          (rightTailPositiveARestartedWindow ell ellN logN b v c κ)
+          (history k 0 increment)} ⊆ shift ⁻¹' tubePrefix := by
+    intro increment hmem
+    change shift increment ∈ tubePrefix
+    simpa [d, tubePrefix, shift] using
+      (rightTailPositiveARestartedWindow_event_subset_shiftedSecondStageTubePrefix
+        ell ellN k logN b v c κ hk hkN) hmem
+  have hsubsetDrawdown : tubePrefix ⊆
+      ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.noLargeDropEndpointBelowEvent
+        d
+        (c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)))
+        (rightTailPositiveADrift ell ellN κ c d +
+          c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ))) :=
+    rightTailPositiveASecondStageTubePrefixEvent_subset_drawdownEvent
+      ell ellN d κ c v (lt_of_lt_of_le hk hkN) hd hκ hc hvc
+  have hprefixMeas : MeasurableSet tubePrefix := by
+    classical
+    rw [show tubePrefix = ⋂ j : Fin (d + 1),
+        {increment : ℕ → ℝ |
+          AdditivePath.displacement (j : ℕ) increment ∈
+            rightTailPositiveASecondStageWindow ell ellN κ c v (j : ℕ)} by
+      ext increment
+      simp [tubePrefix, rightTailPositiveASecondStageTubePrefixEvent]]
+    apply MeasurableSet.iInter
+    intro j
+    have hwindow : MeasurableSet
+        (rightTailPositiveASecondStageWindow ell ellN κ c v (j : ℕ)) := by
+      dsimp [rightTailPositiveASecondStageWindow]
+      split_ifs <;> simp [measurableSet_Icc]
+    exact hwindow.preimage (displacement_measurable (j : ℕ))
+  have hshiftMeas : Measurable shift := measurable_natAdd ell
+  have hshiftLaw : (iidSequenceLaw ν).map shift = iidSequenceLaw ν := by
+    simpa [shift] using iidSequenceLaw_map_natAdd ν ell
+  unfold RandomWalk.restartedWindowProbability
+  change (iidSequenceLaw ν)
+      {increment : ℕ → ℝ |
+        InRestartedWindows ell
+          (rightTailPositiveARestartedWindow ell ellN logN b v c κ)
+          (history k 0 increment)} ≤ _
+  calc
+    _ ≤ (iidSequenceLaw ν) (shift ⁻¹' tubePrefix) := measure_mono hsubsetRestart
+    _ = (iidSequenceLaw ν).map shift tubePrefix := by
+      rw [Measure.map_apply hshiftMeas hprefixMeas]
+    _ = (iidSequenceLaw ν) tubePrefix := by rw [hshiftLaw]
+    _ ≤ (iidSequenceLaw ν)
+        (ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.noLargeDropEndpointBelowEvent
+          d
+          (c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)))
+          (rightTailPositiveADrift ell ellN κ c d +
+            c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)))) :=
+      measure_mono hsubsetDrawdown
+
+/-- The parameter inequalities in the positive-`a` construction are feasible
+whenever the target threshold is strictly above the limiting trajectory.
+Here `r` is the positive cube root of `t`; keeping `r^3 = t` explicit makes
+the algebraic choice of `c` transparent. -/
+theorem exists_rightTailPositiveAParameters
+    (a t r sigmaSq zeta : ℝ)
+    (ha : 0 < a) (ht : 0 < t) (hr : 0 < r) (hrcube : r ^ 3 = t)
+    (hsigma : 0 ≤ sigmaSq)
+    (hgap : -a + Real.pi ^ 2 / 2 * sigmaSq * t < zeta) :
+    ∃ b v c : ℝ,
+      0 < b ∧ b < a ∧ 0 < v ∧ v < b ∧ v ≤ c ∧ 0 < c ∧ c < r⁻¹ ∧
+      c * r + (a - b) + v < 1 ∧
+      -b + Real.pi ^ 2 / 2 * sigmaSq * (c⁻¹ ^ 2 * r) +
+        2 * v * (1 + r) < zeta := by
+  let C : ℝ := Real.pi ^ 2 / 2 * sigmaSq
+  let gap : ℝ := zeta - (-a + C * t)
+  let K : ℝ := 1 / 3 + 8 * C * t + 2 / 3 * (1 + r)
+  let δ₀ : ℝ := min (min (1 / 2) a) (gap / (2 * K))
+  let δ : ℝ := min δ₀ (1 / (4 * r))
+  have hC : 0 ≤ C := by
+    dsimp [C]
+    positivity
+  have hgapPos : 0 < gap := by
+    dsimp [gap, C]
+    linarith
+  have hK : 0 < K := by
+    dsimp [K]
+    positivity
+  have hδ : 0 < δ := by
+    dsimp [δ]
+    positivity
+  have hδHalf : δ ≤ 1 / 2 := by
+    dsimp [δ, δ₀]
+    exact (min_le_left _ _).trans ((min_le_left _ _).trans (min_le_left _ _))
+  have hδA : δ ≤ a := by
+    dsimp [δ, δ₀]
+    exact (min_le_left _ _).trans ((min_le_left _ _).trans (min_le_right _ _))
+  have hδGap : δ ≤ gap / (2 * K) := by
+    dsimp [δ, δ₀]
+    exact (min_le_left _ _).trans (min_le_right _ _)
+  have hδSmall : δ ≤ 1 / (4 * r) := by
+    dsimp [δ]
+    exact min_le_right _ _
+  have hden : 0 < 1 - δ := by linarith
+  have hquadLeft : 0 ≤ 1 - 2 * δ := by linarith
+  have hquadRight : 0 ≤ (11 : ℝ) / 2 - 4 * δ := by linarith
+  have hquad : 0 ≤ 8 * δ ^ 2 - 15 * δ + 6 := by
+    have hprod := mul_nonneg hquadLeft hquadRight
+    nlinarith
+  have hpolyProduct : 1 ≤ (1 + 8 * δ) * (1 - δ) ^ 2 := by
+    have hprod := mul_nonneg hδ.le hquad
+    nlinarith
+  have hratio : 1 / (1 - δ) ^ 2 ≤ 1 + 8 * δ := by
+    apply (div_le_iff₀ (sq_pos_of_pos hden)).2
+    nlinarith [hpolyProduct]
+  have hratioTerm : C * (t / (1 - δ) ^ 2) ≤ C * t * (1 + 8 * δ) := by
+    calc
+      C * (t / (1 - δ) ^ 2) = (C * t) * (1 / (1 - δ) ^ 2) := by ring
+      _ ≤ (C * t) * (1 + 8 * δ) :=
+        mul_le_mul_of_nonneg_left hratio (mul_nonneg hC ht.le)
+  let b : ℝ := a - δ / 3
+  let v : ℝ := δ / 3
+  let c : ℝ := (1 - δ) / r
+  have hcInv : c⁻¹ = r / (1 - δ) := by
+    dsimp [c]
+    field_simp [hr.ne', hden.ne']
+  have hcScale : c⁻¹ ^ 2 * r = t / (1 - δ) ^ 2 := by
+    rw [hcInv]
+    calc
+      (r / (1 - δ)) ^ 2 * r = r ^ 3 / (1 - δ) ^ 2 := by
+        field_simp [hden.ne']
+      _ = t / (1 - δ) ^ 2 := by rw [hrcube]
+  have hδK : δ * K ≤ gap / 2 := by
+    calc
+      δ * K ≤ (gap / (2 * K)) * K :=
+        mul_le_mul_of_nonneg_right hδGap hK.le
+      _ = gap / 2 := by field_simp [hK.ne']
+  refine ⟨b, v, c, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  · dsimp [b]
+    nlinarith [ha, hδA]
+  · dsimp [b]
+    linarith
+  · dsimp [v]
+    positivity
+  · dsimp [b, v]
+    nlinarith [ha, hδA]
+  · dsimp [v, c]
+    have hδr : δ * r ≤ 1 / 4 := by
+      have hδr4 : δ * (4 * r) ≤ 1 :=
+        (le_div_iff₀ (by positivity : 0 < 4 * r)).mp hδSmall
+      nlinarith [hδr4]
+    have hvrt : (δ / 3) * r ≤ 1 / 12 := by nlinarith [hδr]
+    apply (le_div_iff₀ hr).2
+    nlinarith [hvrt, hδHalf]
+  · dsimp [c]
+    exact div_pos (by linarith) hr
+  · dsimp [c]
+    rw [div_lt_iff₀ hr]
+    rw [inv_mul_cancel₀ hr.ne']
+    linarith
+  · dsimp [b, v, c]
+    field_simp [hr.ne']
+    linarith
+  · dsimp [b, v]
+    rw [hcScale]
+    change -(a - δ / 3) + C * (t / (1 - δ) ^ 2) +
+      2 * (δ / 3) * (1 + r) < zeta
+    have hmain : -(a - δ / 3) + C * (t / (1 - δ) ^ 2) +
+        2 * (δ / 3) * (1 + r) ≤ -a + C * t + δ * K := by
+      dsimp [K]
+      nlinarith [hratioTerm]
+    have hgapEq : -a + C * t + gap = zeta := by
+      dsimp [gap]
+      ring
+    calc
+      -(a - δ / 3) + C * (t / (1 - δ) ^ 2) +
+          2 * (δ / 3) * (1 + r) ≤ -a + C * t + δ * K := hmain
+      _ ≤ -a + C * t + gap / 2 := by linarith [hδK]
+      _ < -a + C * t + gap := by linarith [hgapPos]
+      _ = zeta := hgapEq
+
+/-- The drift at any time in the second tube is bounded by its terminal
+diffusive scale. -/
+theorem rightTailPositiveADrift_le_span
+    (ell ellN j : ℕ) (κ c : ℝ)
+    (hell : ell < ellN) (hκ : 0 ≤ κ)
+    (hj : j ≤ ellN - ell) :
+    rightTailPositiveADrift ell ellN κ c j ≤
+      κ / c ^ 2 * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)) := by
+  let span : ℝ := ((ellN - ell : ℕ) : ℝ)
+  have hspan : 0 < span := by
+    dsimp [span]
+    exact_mod_cast Nat.sub_pos_of_lt hell
+  have hjReal : (j : ℝ) ≤ span := by
+    dsimp [span]
+    exact_mod_cast hj
+  have hpow : span ^ ((-2 : ℝ) / 3) * span = span ^ (3⁻¹ : ℝ) := by
+    calc
+      span ^ ((-2 : ℝ) / 3) * span =
+          span ^ ((-2 : ℝ) / 3) * span ^ (1 : ℝ) := by rw [Real.rpow_one]
+      _ = span ^ (((-2 : ℝ) / 3) + 1) := by rw [← Real.rpow_add hspan]
+      _ = span ^ (3⁻¹ : ℝ) := by congr 1; norm_num
+  have hcoeff : 0 ≤ κ / c ^ 2 := div_nonneg hκ (sq_nonneg c)
+  calc
+    rightTailPositiveADrift ell ellN κ c j =
+        κ / c ^ 2 * (span ^ ((-2 : ℝ) / 3) * (j : ℝ)) := by
+          simp [rightTailPositiveADrift, span]
+          ring
+    _ ≤ κ / c ^ 2 * (span ^ ((-2 : ℝ) / 3) * span) :=
+      mul_le_mul_of_nonneg_left
+        (mul_le_mul_of_nonneg_left hjReal (Real.rpow_nonneg hspan.le _)) hcoeff
+    _ = κ / c ^ 2 * span ^ (3⁻¹ : ℝ) := by rw [hpow]
+
+/-- At every time strictly after the first cutoff and no later than the
+terminal time, the window's upper endpoint is bounded by the terminal drift
+plus the larger of its two widths. -/
+theorem rightTailPositiveAWindowUpper_le_span
+    (ell ellN k : ℕ) (logN b v c κ : ℝ)
+    (hell : ell < ellN) (hκ : 0 ≤ κ)
+    (hk : ell < k) (hkN : k ≤ ellN) :
+    rightTailPositiveAWindowUpper ell ellN logN b v c κ k ≤
+      (κ / c ^ 2 + max c v) *
+        (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)) := by
+  let span : ℝ := ((ellN - ell : ℕ) : ℝ)
+  have hspan : 0 < span := by
+    dsimp [span]
+    exact_mod_cast Nat.sub_pos_of_lt hell
+  have hspanNonneg :
+      0 ≤ (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)) :=
+    Real.rpow_nonneg hspan.le _
+  have hdrift := rightTailPositiveADrift_le_span ell ellN (k - ell) κ c
+    hell hκ (Nat.sub_le_sub_right hkN ell)
+  have hne : k ≠ ell := ne_of_gt hk
+  by_cases hend : k = ellN
+  · subst k
+    have hnotlt : ¬ellN < ell := Nat.not_lt_of_ge hell.le
+    have hne' : ellN ≠ ell := by omega
+    simp [rightTailPositiveAWindowUpper, hnotlt, hne']
+    calc
+      rightTailPositiveADrift ell ellN κ c (ellN - ell) +
+          v * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)) ≤
+        κ / c ^ 2 * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)) +
+          max c v * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)) := by
+            exact add_le_add hdrift
+              (mul_le_mul_of_nonneg_right (le_max_right c v) hspanNonneg)
+      _ = (κ / c ^ 2 + max c v) *
+          (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)) := by ring
+  · have hkltN : k < ellN := by omega
+    have hnotlt : ¬k < ell := Nat.not_lt_of_ge hk.le
+    simp [rightTailPositiveAWindowUpper, hnotlt, hne, hkltN]
+    calc
+      rightTailPositiveADrift ell ellN κ c (k - ell) +
+          c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)) ≤
+        κ / c ^ 2 * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)) +
+          max c v * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)) := by
+            exact add_le_add hdrift
+              (mul_le_mul_of_nonneg_right (le_max_left c v) hspanNonneg)
+      _ = (κ / c ^ 2 + max c v) *
+          (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)) := by ring
+
+/-- A single deterministic envelope controls every exponential weight in the
+uniform killed-capacity estimate. The initial-stage endpoint is nonpositive
+when `v ≤ b`, and all later upper endpoints are controlled by the terminal
+diffusive scale. -/
+theorem rightTailPositiveAEndpointEnvelope_le
+    (ell ellN : ℕ) (logN b v c κ : ℝ)
+    (hellN : ell < ellN)
+    (hκ : 0 ≤ κ) (hc : 0 < c) (hvb : v ≤ b) (hlog : 0 ≤ logN) :
+    ∀ k : Fin (ellN + 1),
+      (if (k : ℕ) ≤ ell then
+        rightTailPositiveAWindowUpper ell ellN logN b v c κ (k : ℕ)
+      else
+        rightTailPositiveAWindowUpper ell ellN logN b v c κ ell +
+          rightTailPositiveAWindowUpper ell ellN logN b v c κ (k : ℕ)) ≤
+        (κ / c ^ 2 + max c v) *
+          (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)) := by
+  intro k
+  have hscaleNonneg :
+      0 ≤ (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)) :=
+    Real.rpow_nonneg (by positivity) _
+  have hcoeff : 0 ≤ κ / c ^ 2 + max c v := by positivity
+  have hupperEllEq :
+      rightTailPositiveAWindowUpper ell ellN logN b v c κ ell =
+        (-b + v) * logN := by
+    simp [rightTailPositiveAWindowUpper]
+  have hupperEll : rightTailPositiveAWindowUpper ell ellN logN b v c κ ell ≤ 0 := by
+    rw [hupperEllEq]
+    exact mul_nonpos_of_nonpos_of_nonneg (by linarith) hlog
+  by_cases hkle : (k : ℕ) ≤ ell
+  · simp [hkle]
+    by_cases hklt : (k : ℕ) < ell
+    · have hkupper :
+          rightTailPositiveAWindowUpper ell ellN logN b v c κ (k : ℕ) = 0 := by
+        simp [rightTailPositiveAWindowUpper, hklt]
+      rw [hkupper]
+      exact mul_nonneg hcoeff hscaleNonneg
+    · have hkeq : (k : ℕ) = ell := by omega
+      have hkeqFin : k = ⟨ell, by omega⟩ := Fin.ext hkeq
+      rw [hkeqFin]
+      exact hupperEll.trans (mul_nonneg hcoeff hscaleNonneg)
+  · simp [hkle]
+    have hklo : ell < (k : ℕ) := by omega
+    have hkhi : (k : ℕ) ≤ ellN := by omega
+    have hkupper := rightTailPositiveAWindowUpper_le_span ell ellN (k : ℕ)
+      logN b v c κ hellN hκ hklo hkhi
+    calc
+      rightTailPositiveAWindowUpper ell ellN logN b v c κ ell +
+          rightTailPositiveAWindowUpper ell ellN logN b v c κ (k : ℕ) ≤
+        0 + (κ / c ^ 2 + max c v) *
+          (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)) :=
+          add_le_add hupperEll hkupper
+      _ = (κ / c ^ 2 + max c v) *
+          (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)) := by simp
+
+/-- The endpoint of the first tube is its prescribed narrow interval. -/
+theorem rightTailPositiveAWindowUpper_at_cutoff
+    (ell ellN : ℕ) (logN b v c κ : ℝ) :
+    rightTailPositiveAWindowUpper ell ellN logN b v c κ ell =
+      (-b + v) * logN := by
+  simp [rightTailPositiveAWindowUpper]
+
+/-- The first-stage endpoint envelope is nonpositive when the narrow terminal
+window lies below zero. -/
+theorem rightTailPositiveAFirstStageUpper_le_zero
+    (ell ellN : ℕ) (logN b v c κ : ℝ)
+    (hvb : v ≤ b) (hlog : 0 ≤ logN)
+    (k : ℕ) (hk : k ≤ ell) :
+    rightTailPositiveAWindowUpper ell ellN logN b v c κ k ≤ 0 := by
+  by_cases hklt : k < ell
+  · simp [rightTailPositiveAWindowUpper, hklt]
+  · have hkeq : k = ell := by omega
+    rw [hkeq, rightTailPositiveAWindowUpper_at_cutoff]
+    exact mul_nonpos_of_nonpos_of_nonneg (by linarith) hlog
+
+/-- The second-stage exponential endpoint weight retains the negative
+first-stage offset, while its later contribution is controlled by the
+terminal diffusive scale. -/
+theorem rightTailPositiveASecondStageEnvelope_le
+    (ell ellN k : ℕ) (logN b v c κ : ℝ)
+    (hellN : ell < ellN) (hκ : 0 ≤ κ)
+    (hk : ell < k) (hkN : k ≤ ellN) :
+    rightTailPositiveAWindowUpper ell ellN logN b v c κ ell +
+      rightTailPositiveAWindowUpper ell ellN logN b v c κ k ≤
+    (-b + v) * logN + (κ / c ^ 2 + max c v) *
+      (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)) := by
+  rw [rightTailPositiveAWindowUpper_at_cutoff]
+  exact add_le_add_right
+    (rightTailPositiveAWindowUpper_le_span ell ellN k logN b v c κ
+      hellN hκ hk hkN) ((-b + v) * logN)
+
+/-- At a fixed second-stage generation, the endpoint weight uses that
+generation's drift rather than the terminal drift. This pointwise form is
+what allows the branching weight to cancel the small-deviation exponent. -/
+theorem rightTailPositiveAWindowUpper_le_generationDrift_add_width
+    (ell ellN k : ℕ) (logN b v c κ : ℝ)
+    (hellN : ell < ellN) (hvc : v ≤ c)
+    (hk : ell < k) (hkN : k ≤ ellN) :
+    rightTailPositiveAWindowUpper ell ellN logN b v c κ k ≤
+      rightTailPositiveADrift ell ellN κ c (k - ell) +
+        c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)) := by
+  have hwidth : 0 ≤ (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)) := by
+    apply Real.rpow_nonneg
+    positivity
+  by_cases hend : k = ellN
+  · subst k
+    have hnotlt : ¬ellN < ell := Nat.not_lt_of_ge hellN.le
+    have hne : ellN ≠ ell := by omega
+    simp [rightTailPositiveAWindowUpper, hnotlt, hne]
+    exact mul_le_mul_of_nonneg_right hvc hwidth
+  · have hklt : k < ellN := by omega
+    have hnotlt : ¬k < ell := Nat.not_lt_of_ge hk.le
+    have hne : k ≠ ell := ne_of_gt hk
+    simp [rightTailPositiveAWindowUpper, hnotlt, hne, hklt]
+
+/-- When the tube drift coefficient equals the Aïdékon--Hu rate coefficient,
+the generation's deterministic drift exactly cancels the exponential
+small-deviation cost at that generation. -/
+theorem rightTailPositiveADrift_eq_ahExponent
+    (ell ellN d : ℕ) (κ c target sigma : ℝ)
+    (hellN : ell < ellN) (hc : 0 < c)
+    (hκ : κ = target * sigma ^ 2) :
+    rightTailPositiveADrift ell ellN κ c d =
+      target * sigma ^ 2 * (d : ℝ) /
+        (c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ))) ^ 2 := by
+  let D : ℝ := ((ellN - ell : ℕ) : ℝ)
+  have hDpos : 0 < D := by
+    dsimp [D]
+    exact_mod_cast Nat.sub_pos_of_lt hellN
+  have hrootSq : (D ^ (3⁻¹ : ℝ)) ^ 2 = D ^ ((2 : ℝ) / 3) := by
+    calc
+      (D ^ (3⁻¹ : ℝ)) ^ 2 = (D ^ (3⁻¹ : ℝ)) ^ (2 : ℝ) :=
+        (Real.rpow_natCast _ 2).symm
+      _ = D ^ ((3⁻¹ : ℝ) * 2) := by rw [← Real.rpow_mul hDpos.le]
+      _ = D ^ ((2 : ℝ) / 3) := by congr 1 <;> norm_num
+  have hwidthSq : (c * D ^ (3⁻¹ : ℝ)) ^ 2 = c ^ 2 * D ^ ((2 : ℝ) / 3) := by
+    rw [mul_pow, hrootSq]
+  have hDneg : D ^ ((-2 : ℝ) / 3) = (D ^ ((2 : ℝ) / 3))⁻¹ := by
+    have hexponent : (-2 : ℝ) / 3 = -((2 : ℝ) / 3) := by ring
+    rw [hexponent, Real.rpow_neg hDpos.le]
+  change κ / c ^ 2 * D ^ ((-2 : ℝ) / 3) * (d : ℝ) =
+    target * sigma ^ 2 * (d : ℝ) / (c * D ^ (3⁻¹ : ℝ)) ^ 2
+  rw [hκ, hwidthSq, hDneg]
+  field_simp [hc.ne', ne_of_gt hDpos]
+
+/-- Multiplying the generation-specific endpoint weight by its long-prefix
+Aïdékon--Hu probability removes the deterministic drift and leaves only the
+initial offset and tube width. -/
+theorem rightTailPositiveAWindowWeightedAH_le
+    (ell ellN k : ℕ) (logN b v c κ target sigma : ℝ)
+    (hellN : ell < ellN) (hvc : v ≤ c) (hc : 0 < c)
+    (hk : ell < k) (hkN : k ≤ ellN)
+    (hκ : κ = target * sigma ^ 2) :
+    ENNReal.ofReal (Real.exp
+        (rightTailPositiveAWindowUpper ell ellN logN b v c κ ell +
+          rightTailPositiveAWindowUpper ell ellN logN b v c κ k)) *
+      ENNReal.ofReal (Real.exp
+        (-target * sigma ^ 2 * ((k - ell : ℕ) : ℝ) /
+          (c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ))) ^ 2)) ≤
+    ENNReal.ofReal (Real.exp
+      ((-b + v) * logN + c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)))) := by
+  have hcancel := rightTailPositiveADrift_eq_ahExponent
+    ell ellN (k - ell) κ c target sigma hellN hc hκ
+  have hupper := rightTailPositiveAWindowUpper_le_generationDrift_add_width
+    ell ellN k logN b v c κ hellN hvc hk hkN
+  have hcutoff := rightTailPositiveAWindowUpper_at_cutoff ell ellN logN b v c κ
+  have hnegative :
+      -target * sigma ^ 2 * ((k - ell : ℕ) : ℝ) /
+          (c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ))) ^ 2 =
+        -rightTailPositiveADrift ell ellN κ c (k - ell) := by
+    rw [hcancel]
+    ring
+  have hexponent :
+      rightTailPositiveAWindowUpper ell ellN logN b v c κ ell +
+          rightTailPositiveAWindowUpper ell ellN logN b v c κ k +
+        (-target * sigma ^ 2 * ((k - ell : ℕ) : ℝ) /
+          (c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ))) ^ 2) ≤
+      (-b + v) * logN + c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)) := by
+    rw [hcutoff]
+    calc
+      _ ≤ (-b + v) * logN +
+          (rightTailPositiveADrift ell ellN κ c (k - ell) +
+            c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ))) +
+          (-target * sigma ^ 2 * ((k - ell : ℕ) : ℝ) /
+            (c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ))) ^ 2) := by
+          linarith
+      _ = (-b + v) * logN +
+          c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)) := by
+          rw [hnegative]
+          ring
+  calc
+    _ = ENNReal.ofReal (Real.exp
+        (rightTailPositiveAWindowUpper ell ellN logN b v c κ ell +
+          rightTailPositiveAWindowUpper ell ellN logN b v c κ k +
+          (-target * sigma ^ 2 * ((k - ell : ℕ) : ℝ) /
+            (c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ))) ^ 2))) := by
+        rw [← ENNReal.ofReal_mul (Real.exp_nonneg _), ← Real.exp_add]
+    _ ≤ ENNReal.ofReal (Real.exp
+        ((-b + v) * logN + c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)))) :=
+      ENNReal.ofReal_le_ofReal (Real.exp_le_exp.mpr hexponent)
+
+/-- Even before a prefix is long enough for the Aïdékon--Hu estimate, its
+drift is small: below the AH cutoff it is at most a constant times
+`span^(p/3)`, which is lower order than the tube width when `p < 1`. -/
+theorem rightTailPositiveADrift_le_shortPrefix_power
+    (ell ellN d : ℕ) (κ c p : ℝ)
+    (hellN : ell < ellN) (hκ : 0 ≤ κ) (hc : 0 < c)
+    (hshort : (d : ℝ) ≤
+      (c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ))) ^ (2 + p)) :
+    rightTailPositiveADrift ell ellN κ c d ≤
+      κ * c ^ p * (((ellN - ell : ℕ) : ℝ) ^ (p / 3)) := by
+  let D : ℝ := ((ellN - ell : ℕ) : ℝ)
+  have hDpos : 0 < D := by
+    dsimp [D]
+    exact_mod_cast Nat.sub_pos_of_lt hellN
+  have hwidthPow :
+      (c * D ^ (3⁻¹ : ℝ)) ^ (2 + p) =
+        c ^ (2 + p) * D ^ ((2 + p) / 3) := by
+    rw [Real.mul_rpow hc.le (by positivity)]
+    rw [← Real.rpow_mul hDpos.le]
+    congr 1
+    ring_nf
+  have hcPow : c ^ (2 + p) = c ^ (2 : ℝ) * c ^ p :=
+    Real.rpow_add hc 2 p
+  have hcPowTwo : c ^ (2 : ℝ) = c ^ 2 := Real.rpow_natCast c 2
+  have hDpow :
+      D ^ ((-2 : ℝ) / 3) * D ^ ((2 + p) / 3) = D ^ (p / 3) := by
+    rw [← Real.rpow_add hDpos]
+    congr 1
+    ring
+  change κ / c ^ 2 * D ^ ((-2 : ℝ) / 3) * (d : ℝ) ≤
+    κ * c ^ p * D ^ (p / 3)
+  have hshort' := mul_le_mul_of_nonneg_left hshort
+    (Real.rpow_nonneg hDpos.le ((-2 : ℝ) / 3))
+  calc
+    _ = κ / c ^ 2 * (D ^ ((-2 : ℝ) / 3) * (d : ℝ)) := by ring
+    _ ≤ κ / c ^ 2 *
+        (D ^ ((-2 : ℝ) / 3) * (c * D ^ (3⁻¹ : ℝ)) ^ (2 + p)) :=
+          mul_le_mul_of_nonneg_left hshort' (div_nonneg hκ (sq_nonneg c))
+    _ = κ * c ^ p * D ^ (p / 3) := by
+          rw [hwidthPow, hcPow, hcPowTwo]
+          calc
+            κ / c ^ 2 *
+                (D ^ ((-2 : ℝ) / 3) * (c ^ 2 * c ^ p * D ^ ((2 + p) / 3))) =
+              κ / c ^ 2 *
+                (c ^ 2 * c ^ p *
+                  (D ^ ((-2 : ℝ) / 3) * D ^ ((2 + p) / 3))) := by ring
+            _ = κ * c ^ p * D ^ (p / 3) := by
+              rw [hDpow]
+              field_simp [hc.ne']
+
+/-- The canceled two-stage AH sum has only the original first-phase count
+plus a second-phase contribution with exponent
+`(-b+v) logN + c L^(1/3) + O(L^(p/3))`. -/
+theorem sum_fin_if_le_eq_add_mul (ell ellN : ℕ) (A B : ℝ≥0∞)
+    (hell : ell ≤ ellN) :
+    (∑ k : Fin (ellN + 1), if (k : ℕ) ≤ ell then A else B) =
+      ((ell + 1 : ℕ) : ℝ≥0∞) * A +
+        ((ellN - ell : ℕ) : ℝ≥0∞) * B := by
+  rw [Fin.sum_univ_eq_sum_range
+    (fun k : ℕ => if k ≤ ell then A else B)]
+  rw [← Finset.sum_range_add_sum_Ico
+    (fun k : ℕ => if k ≤ ell then A else B)
+    (show ell + 1 ≤ ellN + 1 by omega)]
+  have hfirst :
+      (∑ k ∈ Finset.range (ell + 1), if k ≤ ell then A else B) =
+        ((ell + 1 : ℕ) : ℝ≥0∞) * A := by
+    have hterm : ∀ k ∈ Finset.range (ell + 1), (if k ≤ ell then A else B) = A := by
+      intro k hk
+      have hk' : k < ell + 1 := Finset.mem_range.mp hk
+      simp [Nat.lt_succ_iff.mp hk']
+    rw [Finset.sum_congr rfl hterm]
+    simp [Finset.sum_const]
+  have hsecond :
+      (∑ k ∈ Finset.Ico (ell + 1) (ellN + 1), if k ≤ ell then A else B) =
+        ((ellN - ell : ℕ) : ℝ≥0∞) * B := by
+    have hterm : ∀ k ∈ Finset.Ico (ell + 1) (ellN + 1),
+        (if k ≤ ell then A else B) = B := by
+      intro k hk
+      have hk' := Finset.mem_Ico.mp hk
+      simp [Nat.not_le_of_gt hk'.1]
+    rw [Finset.sum_congr rfl hterm]
+    rw [Finset.sum_Ico_eq_sum_range]
+    have hlength : ellN + 1 - (ell + 1) = ellN - ell := by omega
+    rw [hlength]
+    simp [Finset.sum_const]
+  rw [hfirst, hsecond]
+
+theorem rightTailPositiveA_canceledAH_sum_le
+    (ell ellN : ℕ) (logN b v c κ p : ℝ)
+    (hellN : ell < ellN) (hκ : 0 ≤ κ) (hc : 0 < c)
+    (hvc : v ≤ c) :
+    (∑ k : Fin (ellN + 1),
+      if (k : ℕ) ≤ ell then 1 else
+        if (c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ))) ^ (2 + p) ≤
+            (((k : ℕ) - ell : ℕ) : ℝ) then
+          ENNReal.ofReal (Real.exp
+            ((-b + v) * logN +
+              c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ))))
+        else ENNReal.ofReal (Real.exp
+          (rightTailPositiveAWindowUpper ell ellN logN b v c κ ell +
+            rightTailPositiveAWindowUpper ell ellN logN b v c κ (k : ℕ)))) ≤
+      ((ell + 1 : ℕ) : ℝ≥0∞) +
+        ((ellN - ell : ℕ) : ℝ≥0∞) *
+          ENNReal.ofReal (Real.exp
+            ((-b + v) * logN +
+              c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)) +
+              κ * c ^ p * (((ellN - ell : ℕ) : ℝ) ^ (p / 3)))) := by
+  let width : ℝ := c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ))
+  let lowOrder : ℝ := κ * c ^ p * (((ellN - ell : ℕ) : ℝ) ^ (p / 3))
+  have hlowOrder : 0 ≤ lowOrder := by
+    dsimp [lowOrder]
+    positivity
+  have hsum :
+      (∑ k : Fin (ellN + 1),
+        if (k : ℕ) ≤ ell then 1 else
+          if width ^ (2 + p) ≤ (((k : ℕ) - ell : ℕ) : ℝ) then
+            ENNReal.ofReal (Real.exp ((-b + v) * logN + width))
+          else ENNReal.ofReal (Real.exp
+            (rightTailPositiveAWindowUpper ell ellN logN b v c κ ell +
+              rightTailPositiveAWindowUpper ell ellN logN b v c κ (k : ℕ)))) ≤
+      ∑ k : Fin (ellN + 1),
+        if (k : ℕ) ≤ ell then 1 else
+          ENNReal.ofReal (Real.exp ((-b + v) * logN + width + lowOrder)) := by
+    apply Finset.sum_le_sum
+    intro k _hk
+    by_cases hkle : (k : ℕ) ≤ ell
+    · simp [hkle]
+    · have hk : ell < (k : ℕ) := Nat.lt_of_not_ge hkle
+      have hkN : (k : ℕ) ≤ ellN := Nat.le_of_lt_succ k.isLt
+      by_cases hlong : width ^ (2 + p) ≤ (((k : ℕ) - ell : ℕ) : ℝ)
+      · have hweight :
+            ENNReal.ofReal (Real.exp ((-b + v) * logN + width)) ≤
+              ENNReal.ofReal (Real.exp ((-b + v) * logN + width + lowOrder)) := by
+          apply ENNReal.ofReal_le_ofReal
+          exact Real.exp_le_exp.mpr (by linarith [hlowOrder])
+        simpa [hkle, hlong, width, lowOrder] using hweight
+      · have hd : (((k : ℕ) - ell : ℕ) : ℝ) ≤ width ^ (2 + p) :=
+          le_of_not_ge hlong
+        have hdrift := rightTailPositiveADrift_le_shortPrefix_power
+          ell ellN ((k : ℕ) - ell) κ c p hellN hκ hc (by
+            simpa [width] using hd)
+        have hupper := rightTailPositiveAWindowUpper_le_generationDrift_add_width
+          ell ellN (k : ℕ) logN b v c κ hellN hvc hk hkN
+        have hcutoff := rightTailPositiveAWindowUpper_at_cutoff
+          ell ellN logN b v c κ
+        have hexponent :
+            rightTailPositiveAWindowUpper ell ellN logN b v c κ ell +
+                rightTailPositiveAWindowUpper ell ellN logN b v c κ (k : ℕ) ≤
+              (-b + v) * logN + width + lowOrder := by
+          rw [hcutoff]
+          dsimp [width, lowOrder]
+          linarith
+        simpa [hkle, hlong] using ENNReal.ofReal_le_ofReal
+          (Real.exp_le_exp.mpr hexponent)
+  calc
+    _ ≤ ∑ k : Fin (ellN + 1),
+        if (k : ℕ) ≤ ell then 1 else
+          ENNReal.ofReal (Real.exp ((-b + v) * logN + width + lowOrder)) := by
+            simpa [width, lowOrder] using hsum
+    _ = ((ell + 1 : ℕ) : ℝ≥0∞) * 1 +
+        ((ellN - ell : ℕ) : ℝ≥0∞) *
+          ENNReal.ofReal (Real.exp ((-b + v) * logN + width + lowOrder)) :=
+          sum_fin_if_le_eq_add_mul ell ellN 1
+            (ENNReal.ofReal (Real.exp ((-b + v) * logN + width + lowOrder)))
+            (Nat.le_of_lt hellN)
+    _ = ((ell + 1 : ℕ) : ℝ≥0∞) +
+        ((ellN - ell : ℕ) : ℝ≥0∞) *
+          ENNReal.ofReal (Real.exp ((-b + v) * logN + width + lowOrder)) := by
+            simp
+    _ = _ := by simp [width, lowOrder]
+
+theorem measurableSet_rightTailPositiveARestartedWindow
+    (ell ellN : ℕ) (logN b v c κ : ℝ) (k : ℕ) :
+    MeasurableSet (rightTailPositiveARestartedWindow ell ellN logN b v c κ k) := by
+  classical
+  unfold rightTailPositiveARestartedWindow
+  split_ifs <;> simp [measurableSet_Icc]
+
+theorem rightTailPositiveARestartedWindow_zero_mem
+    (ell ellN : ℕ) (logN b v c κ : ℝ)
+    (hell : 0 < ell) (hb : 0 ≤ b) (hlog : 0 ≤ logN) :
+    0 ∈ rightTailPositiveARestartedWindow ell ellN logN b v c κ 0 := by
+  simp [rightTailPositiveARestartedWindow, hell, mul_nonneg hb hlog]
+
+theorem rightTailPositiveARestartedWindow_subset_Iic_upper
+    (ell ellN : ℕ) (logN b v c κ : ℝ) (k : ℕ) :
+    rightTailPositiveARestartedWindow ell ellN logN b v c κ k ⊆
+      Set.Iic (rightTailPositiveAWindowUpper ell ellN logN b v c κ k) := by
+  classical
+  unfold rightTailPositiveARestartedWindow rightTailPositiveAWindowUpper
+  split_ifs <;> simp [Set.Icc_subset_Iic_self]
+
+/-- Every restarted-window event observed after the first cutoff already
+forces the original path to stay in the first-stage corridor through `ell`.
+This extracts a useful probability bound without estimating the second tube. -/
+theorem rightTailPositiveARestartedWindow_event_subset_firstStage
+    (ell ellN : ℕ) (logN b v c κ : ℝ) (n : ℕ)
+    (hlog : 0 ≤ logN) (hvb : v ≤ b)
+    (hn : ell ≤ n) :
+    {increment : ℕ → ℝ |
+      InRestartedWindows ell
+        (rightTailPositiveARestartedWindow ell ellN logN b v c κ)
+        (history n 0 increment)} ⊆
+      {increment : ℕ → ℝ |
+        InClosedInterval (-b * logN) 0 ell 0 increment} := by
+  intro increment hpath
+  change ∀ j : Fin (ell + 1),
+      history ell 0 increment j ∈ Set.Icc (-b * logN) 0
+  intro j
+  have hjle : (j : ℕ) ≤ ell := Nat.le_of_lt_succ j.isLt
+  have hrestart := hpath ⟨j, by omega⟩
+  have hwindow :
+      history n 0 increment ⟨j, by omega⟩ ∈
+        rightTailPositiveARestartedWindow ell ellN logN b v c κ j := by
+    simpa [restartAnchor_eq_zero hjle] using hrestart
+  have htop : (-b + v) * logN ≤ 0 := by
+    apply mul_nonpos_of_nonpos_of_nonneg _ hlog
+    linarith
+  have hwindow_subset :
+      rightTailPositiveARestartedWindow ell ellN logN b v c κ j ⊆
+        Set.Icc (-b * logN) 0 := by
+    by_cases hjlt : (j : ℕ) < ell
+    · simp [rightTailPositiveARestartedWindow, hjlt]
+    · have hjeq : (j : ℕ) = ell := by omega
+      rw [hjeq]
+      have hcutoff :
+          rightTailPositiveARestartedWindow ell ellN logN b v c κ ell =
+            Set.Icc (-b * logN) ((-b + v) * logN) := by
+        simp [rightTailPositiveARestartedWindow]
+      rw [hcutoff]
+      intro x hx
+      exact ⟨hx.1, hx.2.trans htop⟩
+  have hfirst := hwindow_subset hwindow
+  have hhistory :
+      history n 0 increment ⟨j, by omega⟩ = history ell 0 increment j := by
+    simp [history_eq_fromIncrements, AdditivePath.fromIncrements]
+  rw [← hhistory]
+  exact hfirst
+
+/-- Before the first cutoff, every restarted-window prefix is contained in
+the corresponding initial corridor prefix.  At the cutoff itself the
+narrower terminal window is still below zero when `v ≤ b`. -/
+theorem rightTailPositiveARestartedWindow_event_subset_firstStagePrefix
+    (ell ellN n : ℕ) (logN b v c κ : ℝ)
+    (hlog : 0 ≤ logN) (hvb : v ≤ b) (hn : n ≤ ell) :
+    {increment : ℕ → ℝ |
+      InRestartedWindows ell
+        (rightTailPositiveARestartedWindow ell ellN logN b v c κ)
+        (history n 0 increment)} ⊆
+      {increment : ℕ → ℝ |
+        InClosedInterval (-b * logN) 0 n 0 increment} := by
+  intro increment hpath
+  change ∀ j : Fin (n + 1),
+      history n 0 increment j ∈ Set.Icc (-b * logN) 0
+  intro j
+  have hjle : (j : ℕ) ≤ ell := (Nat.le_of_lt_succ j.isLt).trans hn
+  have hrestart := hpath j
+  have hwindow :
+      history n 0 increment j ∈
+        rightTailPositiveARestartedWindow ell ellN logN b v c κ (j : ℕ) := by
+    simpa [restartAnchor_eq_zero hjle] using hrestart
+  by_cases hjlt : (j : ℕ) < ell
+  · simpa [rightTailPositiveARestartedWindow, hjlt] using hwindow
+  · have hjeq : (j : ℕ) = ell := by omega
+    have htop : (-b + v) * logN ≤ 0 := by
+      apply mul_nonpos_of_nonpos_of_nonneg _ hlog
+      linarith
+    have hcutoff :
+        rightTailPositiveARestartedWindow ell ellN logN b v c κ ell =
+          Set.Icc (-b * logN) ((-b + v) * logN) := by
+      simp [rightTailPositiveARestartedWindow]
+    rw [hjeq, hcutoff] at hwindow
+    exact ⟨hwindow.1, hwindow.2.trans htop⟩
+
+/-- Markov bound for the capacity event of the actual causal killed tree with
+the two stages of the positive-`a` construction. The right side is expressed
+in terms of tilted random-walk corridor probabilities, so the Mogulskii input
+can be supplied separately without assuming any killed-population expectation
+bound. -/
+theorem measure_rightTailPositiveAKilled_capacityEvent_compl_le
+    (m ell ellN N : ℕ) (logN b v c κ : ℝ)
+    [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
+    [Countable (RootIndexed.TreeNode (Fin m) ℕ)]
+    [DecidableEq (RootIndexed.TreeNode (Fin m) ℕ)]
+    (hell : 0 < ell) (_hellN : ell < ellN)
+    (hb : 0 ≤ b) (hlog : 0 ≤ logN)
+    (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
+    (hboundary : HasBoundaryNormalization realPotential μ) :
+    let window := rightTailPositiveARestartedWindow ell ellN logN b v c κ
+    let upper := rightTailPositiveAWindowUpper ell ellN logN b v c κ
+    let P := RootIndexed.CausalPopulation.ofRestartedRealPositionSets
+      (fun _ : Fin m => (0 : ℝ)) id measurable_id
+      (RootIndexed.initialPopulation (α := ℕ) (Finset.univ : Finset (Fin m)))
+      (by
+        intro p hp
+        rcases RootIndexed.mem_initialPopulation_iff.mp hp with ⟨r, _hr, rfl⟩
+        simp) ell window
+      (measurableSet_rightTailPositiveARestartedWindow ell ellN logN b v c κ)
+      upper (rightTailPositiveARestartedWindow_subset_Iic_upper
+        ell ellN logN b v c κ)
+    (RootIndexed.stepFieldLaw (Root := Fin m) μ) (P.capacityEvent N ellN)ᶜ ≤
+      (m : ℝ≥0∞) *
+        (∑ k : Fin (ellN + 1),
+          ENNReal.ofReal (Real.exp
+            (if (k : ℕ) ≤ ell then upper k else upper ell + upper k)) *
+          RandomWalk.restartedWindowProbability
+            (tiltedIncrementFieldLaw realPotential μ) ell window
+            (k : ℕ) 0) / (N + 1 : ℕ) := by
+  dsimp only
+  let window := rightTailPositiveARestartedWindow ell ellN logN b v c κ
+  let upper := rightTailPositiveAWindowUpper ell ellN logN b v c κ
+  let ν := tiltedIncrementFieldLaw realPotential μ
+  let bound : ℕ → ℝ≥0∞ := fun k =>
+    ENNReal.ofReal (Real.exp (if k ≤ ell then upper k else upper ell + upper k)) *
+      RandomWalk.restartedWindowProbability ν ell window k 0
+  have hwindow : ∀ k, MeasurableSet (window k) :=
+    measurableSet_rightTailPositiveARestartedWindow ell ellN logN b v c κ
+  have hzero : 0 ∈ window 0 :=
+    rightTailPositiveARestartedWindow_zero_mem ell ellN logN b v c κ
+      hell hb hlog
+  have hupper : ∀ k, window k ⊆ Set.Iic (upper k) :=
+    rightTailPositiveARestartedWindow_subset_Iic_upper ell ellN logN b v c κ
+  have hbound : HasRestartedWindowFirstMomentBound ν ell window Set.univ bound :=
+    hasRestartedWindowFirstMomentBound_of_zero_probability ν ell window
+      hwindow upper hupper Set.univ
+      (fun k => RandomWalk.restartedWindowProbability ν ell window k 0)
+      (fun _ => le_rfl)
+  simpa [window, upper, ν, RootIndexed.initialPopulation] using
+    RootIndexed.CausalPopulation.measure_capacityEvent_compl_le_card_mul_sum_of_windowFirstMomentBound
+      (roots := Finset.univ) (initialPosition := fun _ : Fin m => (0 : ℝ))
+      (d := id) (hd := measurable_id) (μ := μ) hboundary ell window hwindow
+      hzero upper hupper Set.univ bound
+      (fun _ _ => Set.mem_univ _) hbound N ellN
+
+/-- Uniform corridor estimates can be substituted directly into the
+positive-`a` killed-capacity bound. The endpoint envelope controls the
+exponential weight, while a single bound `p` controls every restarted-window
+probability. -/
+theorem measure_rightTailPositiveAKilled_capacityEvent_compl_le_uniform
+    (m ell ellN N : ℕ) (logN b v c κ U : ℝ)
+    [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
+    [Countable (RootIndexed.TreeNode (Fin m) ℕ)]
+    [DecidableEq (RootIndexed.TreeNode (Fin m) ℕ)]
+    (hell : 0 < ell) (hellN : ell < ellN)
+    (hb : 0 ≤ b) (hlog : 0 ≤ logN)
+    (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
+    (hboundary : HasBoundaryNormalization realPotential μ)
+    (p : ℝ≥0∞)
+    (hupper : ∀ k : Fin (ellN + 1),
+      (if (k : ℕ) ≤ ell then
+        rightTailPositiveAWindowUpper ell ellN logN b v c κ (k : ℕ)
+      else
+        rightTailPositiveAWindowUpper ell ellN logN b v c κ ell +
+          rightTailPositiveAWindowUpper ell ellN logN b v c κ (k : ℕ)) ≤ U)
+    (hpath : ∀ k : Fin (ellN + 1),
+      RandomWalk.restartedWindowProbability
+        (tiltedIncrementFieldLaw realPotential μ) ell
+        (rightTailPositiveARestartedWindow ell ellN logN b v c κ)
+        (k : ℕ) 0 ≤ p) :
+    let window := rightTailPositiveARestartedWindow ell ellN logN b v c κ
+    let upper := rightTailPositiveAWindowUpper ell ellN logN b v c κ
+    let P := RootIndexed.CausalPopulation.ofRestartedRealPositionSets
+      (fun _ : Fin m => (0 : ℝ)) id measurable_id
+      (RootIndexed.initialPopulation (α := ℕ) (Finset.univ : Finset (Fin m)))
+      (by
+        intro p hp
+        rcases RootIndexed.mem_initialPopulation_iff.mp hp with ⟨r, _hr, rfl⟩
+        simp) ell window
+      (measurableSet_rightTailPositiveARestartedWindow ell ellN logN b v c κ)
+      upper (rightTailPositiveARestartedWindow_subset_Iic_upper
+        ell ellN logN b v c κ)
+    (RootIndexed.stepFieldLaw (Root := Fin m) μ) (P.capacityEvent N ellN)ᶜ ≤
+      (m : ℝ≥0∞) *
+        ((ellN + 1 : ℕ) : ℝ≥0∞) *
+          (ENNReal.ofReal (Real.exp U) * p) /
+          (N + 1 : ℕ) := by
+  dsimp only
+  let window := rightTailPositiveARestartedWindow ell ellN logN b v c κ
+  let upper := rightTailPositiveAWindowUpper ell ellN logN b v c κ
+  let ν := tiltedIncrementFieldLaw realPotential μ
+  have hbase := measure_rightTailPositiveAKilled_capacityEvent_compl_le
+    m ell ellN N logN b v c κ hell hellN hb hlog μ hboundary
+  have hsum :
+      (∑ k : Fin (ellN + 1),
+        ENNReal.ofReal (Real.exp
+          (if (k : ℕ) ≤ ell then upper (k : ℕ) else upper ell + upper (k : ℕ))) *
+          RandomWalk.restartedWindowProbability ν ell window (k : ℕ) 0) ≤
+        ∑ _k : Fin (ellN + 1), ENNReal.ofReal (Real.exp U) * p := by
+    apply Finset.sum_le_sum
+    intro k _hk
+    have hweight : ENNReal.ofReal (Real.exp
+        (if (k : ℕ) ≤ ell then upper (k : ℕ) else upper ell + upper (k : ℕ))) ≤
+        ENNReal.ofReal (Real.exp U) :=
+      ENNReal.ofReal_le_ofReal (Real.exp_le_exp.mpr (hupper k))
+    calc
+      _ ≤ ENNReal.ofReal (Real.exp U) *
+          RandomWalk.restartedWindowProbability ν ell window (k : ℕ) 0 :=
+        mul_le_mul_of_nonneg_right hweight (by positivity)
+      _ ≤ ENNReal.ofReal (Real.exp U) * p :=
+        mul_le_mul_of_nonneg_left (hpath k) (by positivity)
+  calc
+    (RootIndexed.stepFieldLaw (Root := Fin m) μ)
+        ((RootIndexed.CausalPopulation.ofRestartedRealPositionSets
+          (fun _ : Fin m => (0 : ℝ)) id measurable_id
+          (RootIndexed.initialPopulation (α := ℕ) (Finset.univ : Finset (Fin m)))
+          (by
+            intro p hp
+            rcases RootIndexed.mem_initialPopulation_iff.mp hp with
+              ⟨r, hr, rfl⟩
+            simp) ell window
+          (measurableSet_rightTailPositiveARestartedWindow ell ellN logN b v c κ)
+          upper (rightTailPositiveARestartedWindow_subset_Iic_upper
+            ell ellN logN b v c κ)).capacityEvent N ellN)ᶜ ≤
+      (m : ℝ≥0∞) *
+        (∑ k : Fin (ellN + 1),
+          ENNReal.ofReal (Real.exp
+            (if (k : ℕ) ≤ ell then upper (k : ℕ) else upper ell + upper (k : ℕ))) *
+            RandomWalk.restartedWindowProbability ν ell window (k : ℕ) 0) /
+          (N + 1 : ℕ) := by
+      simpa [window, upper, ν] using hbase
+    _ ≤ (m : ℝ≥0∞) *
+        (∑ k : Fin (ellN + 1), ENNReal.ofReal (Real.exp U) * p) /
+          (N + 1 : ℕ) := by
+      apply ENNReal.div_le_div_right
+      exact mul_le_mul_of_nonneg_left hsum (by positivity)
+    _ = (m : ℝ≥0∞) *
+        ((ellN + 1 : ℕ) : ℝ≥0∞) *
+          (ENNReal.ofReal (Real.exp U) * p) /
+          (N + 1 : ℕ) := by
+      simp [Finset.sum_const, mul_assoc]
+
+/-- Capacity bound with the positive-`a` tube's deterministic endpoint
+envelope already substituted. The remaining probabilistic input is the
+uniform restarted-window bound `hpath`. -/
+theorem measure_rightTailPositiveAKilled_capacityEvent_compl_le_enveloped
+    (m ell ellN N : ℕ) (logN b v c κ : ℝ)
+    [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
+    [Countable (RootIndexed.TreeNode (Fin m) ℕ)]
+    [DecidableEq (RootIndexed.TreeNode (Fin m) ℕ)]
+    (hell : 0 < ell) (hellN : ell < ellN)
+    (hb : 0 ≤ b) (hlog : 0 ≤ logN)
+    (hκ : 0 ≤ κ) (hc : 0 < c) (hvb : v ≤ b)
+    (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
+    (hboundary : HasBoundaryNormalization realPotential μ)
+    (p : ℝ≥0∞)
+    (hpath : ∀ k : Fin (ellN + 1),
+      RandomWalk.restartedWindowProbability
+        (tiltedIncrementFieldLaw realPotential μ) ell
+        (rightTailPositiveARestartedWindow ell ellN logN b v c κ)
+        (k : ℕ) 0 ≤ p) :
+    let window := rightTailPositiveARestartedWindow ell ellN logN b v c κ
+    let upper := rightTailPositiveAWindowUpper ell ellN logN b v c κ
+    let P := RootIndexed.CausalPopulation.ofRestartedRealPositionSets
+      (fun _ : Fin m => (0 : ℝ)) id measurable_id
+      (RootIndexed.initialPopulation (α := ℕ) (Finset.univ : Finset (Fin m)))
+      (by
+        intro q hq
+        rcases RootIndexed.mem_initialPopulation_iff.mp hq with ⟨r, _hr, rfl⟩
+        simp) ell window
+      (measurableSet_rightTailPositiveARestartedWindow ell ellN logN b v c κ)
+      upper (rightTailPositiveARestartedWindow_subset_Iic_upper
+        ell ellN logN b v c κ)
+    (RootIndexed.stepFieldLaw (Root := Fin m) μ) (P.capacityEvent N ellN)ᶜ ≤
+      (m : ℝ≥0∞) * ((ellN + 1 : ℕ) : ℝ≥0∞) *
+        (ENNReal.ofReal (Real.exp
+          ((κ / c ^ 2 + max c v) *
+            (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)))) * p) /
+          (N + 1 : ℕ) := by
+  let U : ℝ := (κ / c ^ 2 + max c v) *
+    (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ))
+  have hupper : ∀ k : Fin (ellN + 1),
+      (if (k : ℕ) ≤ ell then
+        rightTailPositiveAWindowUpper ell ellN logN b v c κ (k : ℕ)
+      else
+        rightTailPositiveAWindowUpper ell ellN logN b v c κ ell +
+          rightTailPositiveAWindowUpper ell ellN logN b v c κ (k : ℕ)) ≤ U := by
+    intro k
+    simpa [U] using rightTailPositiveAEndpointEnvelope_le
+      ell ellN logN b v c κ hellN hκ hc hvb hlog k
+  have hcapacity := measure_rightTailPositiveAKilled_capacityEvent_compl_le_uniform
+    m ell ellN N logN b v c κ U hell hellN hb hlog μ hboundary p hupper hpath
+  simpa [U] using hcapacity
+
+/-- Two-stage form of the killed-capacity estimate. The first tube and the
+long restarted tube may use different weighted probability bounds, matching
+the separate corridor estimates in the proof of (4.15). -/
+theorem measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhase
+    (m ell ellN N : ℕ) (logN b v c κ : ℝ)
+    [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
+    [Countable (RootIndexed.TreeNode (Fin m) ℕ)]
+    [DecidableEq (RootIndexed.TreeNode (Fin m) ℕ)]
+    (hell : 0 < ell) (hellN : ell < ellN)
+    (hb : 0 ≤ b) (hlog : 0 ≤ logN)
+    (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
+    (hboundary : HasBoundaryNormalization realPotential μ)
+    (A B : ℝ≥0∞)
+    (hfirst : ∀ k : Fin (ellN + 1), (k : ℕ) ≤ ell →
+      ENNReal.ofReal (Real.exp
+        (rightTailPositiveAWindowUpper ell ellN logN b v c κ (k : ℕ))) *
+        RandomWalk.restartedWindowProbability
+          (tiltedIncrementFieldLaw realPotential μ) ell
+          (rightTailPositiveARestartedWindow ell ellN logN b v c κ)
+          (k : ℕ) 0 ≤ A)
+    (hsecond : ∀ k : Fin (ellN + 1), ell < (k : ℕ) →
+      ENNReal.ofReal (Real.exp
+        (rightTailPositiveAWindowUpper ell ellN logN b v c κ ell +
+          rightTailPositiveAWindowUpper ell ellN logN b v c κ (k : ℕ))) *
+        RandomWalk.restartedWindowProbability
+          (tiltedIncrementFieldLaw realPotential μ) ell
+          (rightTailPositiveARestartedWindow ell ellN logN b v c κ)
+          (k : ℕ) 0 ≤ B) :
+    let window := rightTailPositiveARestartedWindow ell ellN logN b v c κ
+    let upper := rightTailPositiveAWindowUpper ell ellN logN b v c κ
+    let P := RootIndexed.CausalPopulation.ofRestartedRealPositionSets
+      (fun _ : Fin m => (0 : ℝ)) id measurable_id
+      (RootIndexed.initialPopulation (α := ℕ) (Finset.univ : Finset (Fin m)))
+      (by
+        intro q hq
+        rcases RootIndexed.mem_initialPopulation_iff.mp hq with ⟨r, _hr, rfl⟩
+        simp) ell window
+      (measurableSet_rightTailPositiveARestartedWindow ell ellN logN b v c κ)
+      upper (rightTailPositiveARestartedWindow_subset_Iic_upper
+        ell ellN logN b v c κ)
+    (RootIndexed.stepFieldLaw (Root := Fin m) μ) (P.capacityEvent N ellN)ᶜ ≤
+      (m : ℝ≥0∞) *
+        (((ell + 1 : ℕ) : ℝ≥0∞) * A +
+          ((ellN - ell : ℕ) : ℝ≥0∞) * B) /
+          (N + 1 : ℕ) := by
+  dsimp only
+  let window := rightTailPositiveARestartedWindow ell ellN logN b v c κ
+  let upper := rightTailPositiveAWindowUpper ell ellN logN b v c κ
+  let ν := tiltedIncrementFieldLaw realPotential μ
+  let term : Fin (ellN + 1) → ℝ≥0∞ := fun k =>
+    ENNReal.ofReal (Real.exp
+      (if (k : ℕ) ≤ ell then upper (k : ℕ) else upper ell + upper (k : ℕ))) *
+      RandomWalk.restartedWindowProbability ν ell window (k : ℕ) 0
+  have hbase := measure_rightTailPositiveAKilled_capacityEvent_compl_le
+    m ell ellN N logN b v c κ hell hellN hb hlog μ hboundary
+  have hsum :
+      (∑ k : Fin (ellN + 1), term k) ≤
+        ∑ k : Fin (ellN + 1), if (k : ℕ) ≤ ell then A else B := by
+    apply Finset.sum_le_sum
+    intro k _hk
+    by_cases hkle : (k : ℕ) ≤ ell
+    · simpa [term, hkle, window, upper, ν] using hfirst k hkle
+    · simpa [term, hkle, window, upper, ν] using
+        hsecond k (Nat.lt_of_not_ge hkle)
+  calc
+    (RootIndexed.stepFieldLaw (Root := Fin m) μ)
+        ((RootIndexed.CausalPopulation.ofRestartedRealPositionSets
+          (fun _ : Fin m => (0 : ℝ)) id measurable_id
+          (RootIndexed.initialPopulation (α := ℕ) (Finset.univ : Finset (Fin m)))
+          (by
+            intro q hq
+            rcases RootIndexed.mem_initialPopulation_iff.mp hq with
+              ⟨r, _hr, rfl⟩
+            simp) ell window
+          (measurableSet_rightTailPositiveARestartedWindow ell ellN logN b v c κ)
+          upper (rightTailPositiveARestartedWindow_subset_Iic_upper
+            ell ellN logN b v c κ)).capacityEvent N ellN)ᶜ ≤
+      (m : ℝ≥0∞) * (∑ k : Fin (ellN + 1), term k) /
+        (N + 1 : ℕ) := by
+          simpa [term, window, upper, ν] using hbase
+    _ ≤ (m : ℝ≥0∞) *
+        (∑ k : Fin (ellN + 1), if (k : ℕ) ≤ ell then A else B) /
+          (N + 1 : ℕ) := by
+      apply ENNReal.div_le_div_right
+      exact mul_le_mul_of_nonneg_left hsum (by positivity)
+    _ = (m : ℝ≥0∞) *
+        (((ell + 1 : ℕ) : ℝ≥0∞) * A +
+          ((ellN - ell : ℕ) : ℝ≥0∞) * B) /
+          (N + 1 : ℕ) := by
+      rw [sum_fin_if_le_eq_add_mul ell ellN A B (Nat.le_of_lt hellN)]
+
+/-- Corridor-probability inputs imply the two weighted phase bounds. The
+first interval uses its nonpositive endpoint weight; the long tube keeps the
+negative cutoff offset in its exponential factor. -/
+theorem measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhaseOfPathBounds
+    (m ell ellN N : ℕ) (logN b v c κ : ℝ)
+    [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
+    [Countable (RootIndexed.TreeNode (Fin m) ℕ)]
+    [DecidableEq (RootIndexed.TreeNode (Fin m) ℕ)]
+    (hell : 0 < ell) (hellN : ell < ellN)
+    (hb : 0 ≤ b) (hlog : 0 ≤ logN) (hκ : 0 ≤ κ) (hvb : v ≤ b)
+    (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
+    (hboundary : HasBoundaryNormalization realPotential μ)
+    (pFirst pSecond : ℝ≥0∞)
+    (hfirstPath : ∀ k : Fin (ellN + 1), (k : ℕ) ≤ ell →
+      RandomWalk.restartedWindowProbability
+        (tiltedIncrementFieldLaw realPotential μ) ell
+        (rightTailPositiveARestartedWindow ell ellN logN b v c κ)
+        (k : ℕ) 0 ≤ pFirst)
+    (hsecondPath : ∀ k : Fin (ellN + 1), ell < (k : ℕ) →
+      RandomWalk.restartedWindowProbability
+        (tiltedIncrementFieldLaw realPotential μ) ell
+        (rightTailPositiveARestartedWindow ell ellN logN b v c κ)
+        (k : ℕ) 0 ≤ pSecond) :
+    let window := rightTailPositiveARestartedWindow ell ellN logN b v c κ
+    let upper := rightTailPositiveAWindowUpper ell ellN logN b v c κ
+    let P := RootIndexed.CausalPopulation.ofRestartedRealPositionSets
+      (fun _ : Fin m => (0 : ℝ)) id measurable_id
+      (RootIndexed.initialPopulation (α := ℕ) (Finset.univ : Finset (Fin m)))
+      (by
+        intro q hq
+        rcases RootIndexed.mem_initialPopulation_iff.mp hq with ⟨r, _hr, rfl⟩
+        simp) ell window
+      (measurableSet_rightTailPositiveARestartedWindow ell ellN logN b v c κ)
+      upper (rightTailPositiveARestartedWindow_subset_Iic_upper
+        ell ellN logN b v c κ)
+    (RootIndexed.stepFieldLaw (Root := Fin m) μ) (P.capacityEvent N ellN)ᶜ ≤
+      (m : ℝ≥0∞) *
+        (((ell + 1 : ℕ) : ℝ≥0∞) * pFirst +
+          ((ellN - ell : ℕ) : ℝ≥0∞) *
+            (ENNReal.ofReal (Real.exp
+              ((-b + v) * logN + (κ / c ^ 2 + max c v) *
+                (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)))) * pSecond)) /
+          (N + 1 : ℕ) := by
+  let U₂ : ℝ := (-b + v) * logN + (κ / c ^ 2 + max c v) *
+    (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ))
+  have hfirst : ∀ k : Fin (ellN + 1), (k : ℕ) ≤ ell →
+      ENNReal.ofReal (Real.exp
+        (rightTailPositiveAWindowUpper ell ellN logN b v c κ (k : ℕ))) *
+        RandomWalk.restartedWindowProbability
+          (tiltedIncrementFieldLaw realPotential μ) ell
+          (rightTailPositiveARestartedWindow ell ellN logN b v c κ)
+          (k : ℕ) 0 ≤ pFirst := by
+    intro k hk
+    have hupper := rightTailPositiveAFirstStageUpper_le_zero
+      ell ellN logN b v c κ hvb hlog (k : ℕ) hk
+    have hweight : ENNReal.ofReal (Real.exp
+        (rightTailPositiveAWindowUpper ell ellN logN b v c κ (k : ℕ))) ≤ 1 := by
+      calc
+        ENNReal.ofReal (Real.exp
+            (rightTailPositiveAWindowUpper ell ellN logN b v c κ (k : ℕ))) ≤
+          ENNReal.ofReal (Real.exp 0) :=
+            ENNReal.ofReal_le_ofReal (Real.exp_le_exp.mpr hupper)
+        _ = 1 := by simp
+    calc
+      _ ≤ 1 * RandomWalk.restartedWindowProbability
+          (tiltedIncrementFieldLaw realPotential μ) ell
+          (rightTailPositiveARestartedWindow ell ellN logN b v c κ)
+          (k : ℕ) 0 := mul_le_mul_of_nonneg_right hweight (by positivity)
+      _ ≤ pFirst := by simpa using hfirstPath k hk
+  have hsecond : ∀ k : Fin (ellN + 1), ell < (k : ℕ) →
+      ENNReal.ofReal (Real.exp
+        (rightTailPositiveAWindowUpper ell ellN logN b v c κ ell +
+          rightTailPositiveAWindowUpper ell ellN logN b v c κ (k : ℕ))) *
+        RandomWalk.restartedWindowProbability
+          (tiltedIncrementFieldLaw realPotential μ) ell
+          (rightTailPositiveARestartedWindow ell ellN logN b v c κ)
+          (k : ℕ) 0 ≤ ENNReal.ofReal (Real.exp U₂) * pSecond := by
+    intro k hk
+    have hkhi : (k : ℕ) ≤ ellN := Nat.le_of_lt_succ k.isLt
+    have hupper := rightTailPositiveASecondStageEnvelope_le
+      ell ellN (k : ℕ) logN b v c κ hellN hκ hk hkhi
+    have hweight : ENNReal.ofReal (Real.exp
+        (rightTailPositiveAWindowUpper ell ellN logN b v c κ ell +
+          rightTailPositiveAWindowUpper ell ellN logN b v c κ (k : ℕ))) ≤
+        ENNReal.ofReal (Real.exp U₂) := by
+      apply ENNReal.ofReal_le_ofReal
+      exact Real.exp_le_exp.mpr (by simpa [U₂] using hupper)
+    calc
+      _ ≤ ENNReal.ofReal (Real.exp U₂) *
+          RandomWalk.restartedWindowProbability
+            (tiltedIncrementFieldLaw realPotential μ) ell
+            (rightTailPositiveARestartedWindow ell ellN logN b v c κ)
+            (k : ℕ) 0 := mul_le_mul_of_nonneg_right hweight (by positivity)
+      _ ≤ ENNReal.ofReal (Real.exp U₂) * pSecond :=
+        mul_le_mul_of_nonneg_left (hsecondPath k hk) (by positivity)
+  simpa [U₂] using measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhase
+    m ell ellN N logN b v c κ hell hellN hb hlog μ hboundary pFirst
+    (ENNReal.ofReal (Real.exp U₂) * pSecond) hfirst hsecond
+
+/-- Generation-dependent bounds can be summed directly in the killed-capacity
+estimate. This retains the shorter-prefix drawdown probabilities instead of
+replacing all of them by the full-horizon probability. -/
+theorem measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhaseOfGenerationPathBounds
+    (m ell ellN N : ℕ) (logN b v c κ : ℝ)
+    [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
+    [Countable (RootIndexed.TreeNode (Fin m) ℕ)]
+    [DecidableEq (RootIndexed.TreeNode (Fin m) ℕ)]
+    (hell : 0 < ell) (hellN : ell < ellN)
+    (hb : 0 ≤ b) (hlog : 0 ≤ logN) (hvb : v ≤ b)
+    (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
+    (hboundary : HasBoundaryNormalization realPotential μ)
+    (pFirst pSecond : ℕ → ℝ≥0∞)
+    (hfirstPath : ∀ k : Fin (ellN + 1), (k : ℕ) ≤ ell →
+      RandomWalk.restartedWindowProbability
+        (tiltedIncrementFieldLaw realPotential μ) ell
+        (rightTailPositiveARestartedWindow ell ellN logN b v c κ)
+        (k : ℕ) 0 ≤ pFirst (k : ℕ))
+    (hsecondPath : ∀ k : Fin (ellN + 1), ell < (k : ℕ) →
+      RandomWalk.restartedWindowProbability
+        (tiltedIncrementFieldLaw realPotential μ) ell
+        (rightTailPositiveARestartedWindow ell ellN logN b v c κ)
+        (k : ℕ) 0 ≤ pSecond (k : ℕ)) :
+    let window := rightTailPositiveARestartedWindow ell ellN logN b v c κ
+    let upper := rightTailPositiveAWindowUpper ell ellN logN b v c κ
+    let P := RootIndexed.CausalPopulation.ofRestartedRealPositionSets
+      (fun _ : Fin m => (0 : ℝ)) id measurable_id
+      (RootIndexed.initialPopulation (α := ℕ) (Finset.univ : Finset (Fin m)))
+      (by
+        intro q hq
+        rcases RootIndexed.mem_initialPopulation_iff.mp hq with ⟨r, _hr, rfl⟩
+        simp) ell window
+      (measurableSet_rightTailPositiveARestartedWindow ell ellN logN b v c κ)
+      upper (rightTailPositiveARestartedWindow_subset_Iic_upper
+        ell ellN logN b v c κ)
+    (RootIndexed.stepFieldLaw (Root := Fin m) μ) (P.capacityEvent N ellN)ᶜ ≤
+      (m : ℝ≥0∞) *
+        (∑ k : Fin (ellN + 1),
+          if (k : ℕ) ≤ ell then pFirst (k : ℕ) else
+            ENNReal.ofReal (Real.exp
+              (rightTailPositiveAWindowUpper ell ellN logN b v c κ ell +
+                rightTailPositiveAWindowUpper ell ellN logN b v c κ (k : ℕ))) *
+              pSecond (k : ℕ)) /
+          (N + 1 : ℕ) := by
+  dsimp only
+  let window := rightTailPositiveARestartedWindow ell ellN logN b v c κ
+  let upper := rightTailPositiveAWindowUpper ell ellN logN b v c κ
+  let ν := tiltedIncrementFieldLaw realPotential μ
+  let term : Fin (ellN + 1) → ℝ≥0∞ := fun k =>
+    ENNReal.ofReal (Real.exp
+      (if (k : ℕ) ≤ ell then upper (k : ℕ) else upper ell + upper (k : ℕ))) *
+      RandomWalk.restartedWindowProbability ν ell window (k : ℕ) 0
+  have hbase := measure_rightTailPositiveAKilled_capacityEvent_compl_le
+    m ell ellN N logN b v c κ hell hellN hb hlog μ hboundary
+  have hsum :
+      (∑ k : Fin (ellN + 1), term k) ≤
+        ∑ k : Fin (ellN + 1),
+          if (k : ℕ) ≤ ell then pFirst (k : ℕ) else
+            ENNReal.ofReal (Real.exp (upper ell + upper (k : ℕ))) *
+              pSecond (k : ℕ) := by
+    apply Finset.sum_le_sum
+    intro k _hk
+    by_cases hkle : (k : ℕ) ≤ ell
+    · have hupper := rightTailPositiveAFirstStageUpper_le_zero
+        ell ellN logN b v c κ hvb hlog (k : ℕ) hkle
+      have hweight : ENNReal.ofReal (Real.exp (upper (k : ℕ))) ≤ 1 := by
+        calc
+          ENNReal.ofReal (Real.exp (upper (k : ℕ))) ≤ ENNReal.ofReal (Real.exp 0) :=
+            ENNReal.ofReal_le_ofReal (Real.exp_le_exp.mpr hupper)
+          _ = 1 := by simp
+      have hpath := hfirstPath k hkle
+      calc
+        _ ≤ 1 * RandomWalk.restartedWindowProbability ν ell window (k : ℕ) 0 :=
+          mul_le_mul_of_nonneg_right (by simpa [hkle] using hweight) (by positivity)
+        _ ≤ pFirst (k : ℕ) := by simpa using hpath
+        _ = (if (k : ℕ) ≤ ell then pFirst (k : ℕ) else
+            ENNReal.ofReal (Real.exp (upper ell + upper (k : ℕ))) *
+              pSecond (k : ℕ)) := by simp [hkle]
+    · have hkle : ell < (k : ℕ) := Nat.lt_of_not_ge hkle
+      have hpath := hsecondPath k hkle
+      calc
+        _ = ENNReal.ofReal (Real.exp (upper ell + upper (k : ℕ))) *
+            RandomWalk.restartedWindowProbability ν ell window (k : ℕ) 0 := by
+              simp [term, Nat.not_le_of_gt hkle]
+        _ ≤ ENNReal.ofReal (Real.exp (upper ell + upper (k : ℕ))) *
+            pSecond (k : ℕ) :=
+          mul_le_mul_of_nonneg_left hpath (by positivity)
+        _ = (if (k : ℕ) ≤ ell then pFirst (k : ℕ) else
+            ENNReal.ofReal (Real.exp (upper ell + upper (k : ℕ))) *
+              pSecond (k : ℕ)) := by
+          simp [Nat.not_le_of_gt hkle]
+  calc
+    (RootIndexed.stepFieldLaw (Root := Fin m) μ)
+        ((RootIndexed.CausalPopulation.ofRestartedRealPositionSets
+          (fun _ : Fin m => (0 : ℝ)) id measurable_id
+          (RootIndexed.initialPopulation (α := ℕ) (Finset.univ : Finset (Fin m)))
+          (by
+            intro q hq
+            rcases RootIndexed.mem_initialPopulation_iff.mp hq with
+              ⟨r, _hr, rfl⟩
+            simp) ell window
+          (measurableSet_rightTailPositiveARestartedWindow ell ellN logN b v c κ)
+          upper (rightTailPositiveARestartedWindow_subset_Iic_upper
+            ell ellN logN b v c κ)).capacityEvent N ellN)ᶜ ≤
+      (m : ℝ≥0∞) * (∑ k : Fin (ellN + 1), term k) /
+        (N + 1 : ℕ) := by
+          simpa [term, window, upper, ν] using hbase
+    _ ≤ (m : ℝ≥0∞) *
+        (∑ k : Fin (ellN + 1),
+            if (k : ℕ) ≤ ell then pFirst (k : ℕ) else
+            ENNReal.ofReal (Real.exp (upper ell + upper (k : ℕ))) *
+              pSecond (k : ℕ)) /
+          (N + 1 : ℕ) := by
+      apply ENNReal.div_le_div_right
+      exact mul_le_mul_of_nonneg_left hsum (by positivity)
+    _ = _ := by simp [upper]
+
+/-- The generation-dependent capacity bound accepts per-prefix random-walk
+drawdown estimates directly. The endpoint threshold and the corridor width
+are kept at the full planned scale, while the drawdown horizon is the actual
+observed prefix length. -/
+theorem measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhaseOfDrawdownBounds
+    (m ell ellN N : ℕ) (logN b v c κ : ℝ)
+    [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
+    [Countable (RootIndexed.TreeNode (Fin m) ℕ)]
+    [DecidableEq (RootIndexed.TreeNode (Fin m) ℕ)]
+    (hell : 0 < ell) (hellN : ell < ellN)
+    (hb : 0 ≤ b) (hlog : 0 ≤ logN) (hκ : 0 ≤ κ) (hvb : v ≤ b)
+    (hc : 0 < c) (hvc : v ≤ c)
+    (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
+    (hboundary : HasBoundaryNormalization realPotential μ)
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (hν : ν = tiltedPotentialLaw realPotential (-1) μ)
+    (pFirst : ℕ → ℝ≥0∞) (pSecond : ℕ → ℝ≥0∞)
+    (hfirstPath : ∀ k : Fin (ellN + 1), (k : ℕ) ≤ ell →
+      RandomWalk.restartedWindowProbability
+        (tiltedIncrementFieldLaw realPotential μ) ell
+        (rightTailPositiveARestartedWindow ell ellN logN b v c κ)
+        (k : ℕ) 0 ≤ pFirst (k : ℕ))
+    (hdrawdown : ∀ k : Fin (ellN + 1), ell < (k : ℕ) →
+      iidSequenceLaw ν
+        (ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.noLargeDropEndpointBelowEvent
+          ((k : ℕ) - ell)
+          (c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)))
+          (rightTailPositiveADrift ell ellN κ c ((k : ℕ) - ell) +
+            c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)))) ≤ pSecond (k : ℕ)) :
+    let window := rightTailPositiveARestartedWindow ell ellN logN b v c κ
+    let upper := rightTailPositiveAWindowUpper ell ellN logN b v c κ
+    let P := RootIndexed.CausalPopulation.ofRestartedRealPositionSets
+      (fun _ : Fin m => (0 : ℝ)) id measurable_id
+      (RootIndexed.initialPopulation (α := ℕ) (Finset.univ : Finset (Fin m)))
+      (by
+        intro q hq
+        rcases RootIndexed.mem_initialPopulation_iff.mp hq with ⟨r, _hr, rfl⟩
+        simp) ell window
+      (measurableSet_rightTailPositiveARestartedWindow ell ellN logN b v c κ)
+      upper (rightTailPositiveARestartedWindow_subset_Iic_upper
+        ell ellN logN b v c κ)
+    (RootIndexed.stepFieldLaw (Root := Fin m) μ) (P.capacityEvent N ellN)ᶜ ≤
+      (m : ℝ≥0∞) *
+        (∑ k : Fin (ellN + 1),
+          if (k : ℕ) ≤ ell then pFirst (k : ℕ) else
+            ENNReal.ofReal (Real.exp
+              (rightTailPositiveAWindowUpper ell ellN logN b v c κ ell +
+                rightTailPositiveAWindowUpper ell ellN logN b v c κ (k : ℕ))) *
+              pSecond (k : ℕ)) /
+          (N + 1 : ℕ) := by
+  have hsecondPath : ∀ k : Fin (ellN + 1), ell < (k : ℕ) →
+      RandomWalk.restartedWindowProbability
+        (tiltedIncrementFieldLaw realPotential μ) ell
+        (rightTailPositiveARestartedWindow ell ellN logN b v c κ)
+        (k : ℕ) 0 ≤ pSecond (k : ℕ) := by
+    intro k hk
+    rw [show tiltedIncrementFieldLaw realPotential μ = iidSequenceLaw ν by
+      rw [hν]
+      rfl]
+    exact (iidSequenceLaw_restartedWindowProbability_le_secondStageDrawdown
+      ν ell ellN (k : ℕ) logN b v c κ hk (by omega) hκ hc hvc)
+      |>.trans (hdrawdown k hk)
+  exact measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhaseOfGenerationPathBounds
+    m ell ellN N logN b v c κ hell hellN hb hlog hvb μ hboundary
+    pFirst pSecond hfirstPath hsecondPath
+
+/-- A bound on the first-stage horizontal corridor controls every later
+restarted-window probability, since those events retain the first-stage
+prefix. The initial-stage terms use only that the tilted path law is a
+probability measure. -/
+theorem measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhaseOfFirstStageBound
+    (m ell ellN N : ℕ) (logN b v c κ : ℝ)
+    [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
+    [Countable (RootIndexed.TreeNode (Fin m) ℕ)]
+    [DecidableEq (RootIndexed.TreeNode (Fin m) ℕ)]
+    (hell : 0 < ell) (hellN : ell < ellN)
+    (hb : 0 ≤ b) (hlog : 0 ≤ logN) (hκ : 0 ≤ κ) (hvb : v ≤ b)
+    (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
+    (hboundary : HasBoundaryNormalization realPotential μ)
+    (pSecond : ℝ≥0∞)
+    (hfirstStage : (tiltedIncrementFieldLaw realPotential μ)
+      {increment : ℕ → ℝ |
+        InClosedInterval (-b * logN) 0 ell 0 increment} ≤ pSecond) :
+    let window := rightTailPositiveARestartedWindow ell ellN logN b v c κ
+    let upper := rightTailPositiveAWindowUpper ell ellN logN b v c κ
+    let P := RootIndexed.CausalPopulation.ofRestartedRealPositionSets
+      (fun _ : Fin m => (0 : ℝ)) id measurable_id
+      (RootIndexed.initialPopulation (α := ℕ) (Finset.univ : Finset (Fin m)))
+      (by
+        intro q hq
+        rcases RootIndexed.mem_initialPopulation_iff.mp hq with ⟨r, _hr, rfl⟩
+        simp) ell window
+      (measurableSet_rightTailPositiveARestartedWindow ell ellN logN b v c κ)
+      upper (rightTailPositiveARestartedWindow_subset_Iic_upper
+        ell ellN logN b v c κ)
+    (RootIndexed.stepFieldLaw (Root := Fin m) μ) (P.capacityEvent N ellN)ᶜ ≤
+      (m : ℝ≥0∞) *
+        (((ell + 1 : ℕ) : ℝ≥0∞) +
+          ((ellN - ell : ℕ) : ℝ≥0∞) *
+            (ENNReal.ofReal (Real.exp
+              ((-b + v) * logN + (κ / c ^ 2 + max c v) *
+                (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)))) * pSecond)) /
+          (N + 1 : ℕ) := by
+  let htilted : IsProbabilityMeasure (tiltedIncrementFieldLaw realPotential μ) :=
+    tiltedIncrementFieldLaw_isProbability realPotential μ hboundary
+  have hfirstPath : ∀ k : Fin (ellN + 1), (k : ℕ) ≤ ell →
+      RandomWalk.restartedWindowProbability
+        (tiltedIncrementFieldLaw realPotential μ) ell
+        (rightTailPositiveARestartedWindow ell ellN logN b v c κ)
+        (k : ℕ) 0 ≤ 1 := by
+    intro k hk
+    calc
+      _ ≤ (tiltedIncrementFieldLaw realPotential μ) Set.univ :=
+        measure_mono (Set.subset_univ _)
+      _ = 1 := htilted.measure_univ
+  have hsecondPath : ∀ k : Fin (ellN + 1), ell < (k : ℕ) →
+      RandomWalk.restartedWindowProbability
+        (tiltedIncrementFieldLaw realPotential μ) ell
+        (rightTailPositiveARestartedWindow ell ellN logN b v c κ)
+        (k : ℕ) 0 ≤ pSecond := by
+    intro k hk
+    have hsubset := rightTailPositiveARestartedWindow_event_subset_firstStage
+      ell ellN logN b v c κ (k : ℕ) hlog hvb (Nat.le_of_lt hk)
+    have hprob :
+        RandomWalk.restartedWindowProbability
+          (tiltedIncrementFieldLaw realPotential μ) ell
+          (rightTailPositiveARestartedWindow ell ellN logN b v c κ)
+          (k : ℕ) 0 ≤
+        (tiltedIncrementFieldLaw realPotential μ)
+          {increment : ℕ → ℝ |
+            InClosedInterval (-b * logN) 0 ell 0 increment} := by
+      unfold RandomWalk.restartedWindowProbability
+      exact measure_mono hsubset
+    exact hprob.trans hfirstStage
+  simpa using
+    (measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhaseOfPathBounds
+      m ell ellN N logN b v c κ hell hellN hb hlog hκ hvb μ hboundary
+      1 pSecond hfirstPath hsecondPath)
+
+/-- The first-stage corridor probability is controlled by any horizontal
+tube whose lower boundary matches the corridor and whose upper boundary is
+nonnegative. The parameterization below makes those inclusions explicit. -/
+theorem rightTailPositiveA_firstStage_probability_le_horizontalTubeProbability
+    (ell : ℕ) (logN b a : ℝ) (hb : 0 ≤ b) (hlog : 0 ≤ logN)
+    (ha : 0 < a) (ha1 : a ≤ 1)
+    (incrementLaw : Measure (ℕ → ℝ)) :
+    incrementLaw {increment : ℕ → ℝ |
+      InClosedInterval (-b * logN) 0 ell 0 increment} ≤
+      horizontalTubeProbability incrementLaw a (b * logN / a) ell := by
+  have hwidth : 0 ≤ b * logN / a :=
+    div_nonneg (mul_nonneg hb hlog) ha.le
+  have hupper : 0 ≤ (1 - a) * (b * logN / a) :=
+    mul_nonneg (by linarith) hwidth
+  have hlower : -a * (b * logN / a) = -b * logN := by
+    field_simp [ha.ne']
+  have hsubset :
+      {increment : ℕ → ℝ |
+        InClosedInterval (-b * logN) 0 ell 0 increment} ⊆
+      {increment : ℕ → ℝ |
+        InHorizontalTube a (b * logN / a) ell increment} := by
+    intro increment hprefix k
+    have hposition := hprefix ⟨(k : ℕ) + 1, by omega⟩
+    have hposition' :
+        AdditivePath.displacement ((k : ℕ) + 1) increment ∈
+          Set.Icc (-b * logN) 0 := by
+      simpa [history_eq_fromIncrements, AdditivePath.fromIncrements] using
+        hposition
+    rw [hlower]
+    exact ⟨hposition'.1, hposition'.2.trans hupper⟩
+  unfold horizontalTubeProbability
+  exact measure_mono hsubset
+
+/-- Staying in the first-stage interval forces every earlier position to be
+at most one corridor width above every later position, and leaves the
+endpoint at or below zero. Thus the first-stage event is contained in the
+drawdown event already estimated by `RawRate`. -/
+theorem rightTailPositiveA_firstStage_event_subset_noLargeDropEndpointBelowEvent
+    (ell : ℕ) (logN b : ℝ) :
+    {increment : ℕ → ℝ |
+      InClosedInterval (-b * logN) 0 ell 0 increment} ⊆
+      ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.noLargeDropEndpointBelowEvent
+        ell (b * logN) 0 := by
+  intro increment hprefix
+  constructor
+  · intro i j hij hj
+    have hleft := hprefix ⟨i, by omega⟩
+    have hright := hprefix ⟨j, by omega⟩
+    have hleft' : AdditivePath.displacement i increment ∈
+        Set.Icc (-b * logN) 0 := by
+      simpa [history_eq_fromIncrements, AdditivePath.fromIncrements] using hleft
+    have hright' : AdditivePath.displacement j increment ∈
+        Set.Icc (-b * logN) 0 := by
+      simpa [history_eq_fromIncrements, AdditivePath.fromIncrements] using hright
+    linarith [hleft'.2, hright'.1]
+  · have hend := hprefix ⟨ell, Nat.lt_succ_self ell⟩
+    simpa [history_eq_fromIncrements, AdditivePath.fromIncrements] using hend.2
+
+/-- The first-stage probability inherits any drawdown-and-endpoint bound,
+ready for direct use with the raw finite-variance rate theorem. -/
+theorem rightTailPositiveA_firstStage_probability_le_of_drawdownBound
+    (ell : ℕ) (logN b : ℝ) (incrementLaw : Measure (ℕ → ℝ))
+    (p : ℝ≥0∞)
+    (hdrawdown : incrementLaw
+      (ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.noLargeDropEndpointBelowEvent
+        ell (b * logN) 0) ≤ p) :
+    incrementLaw {increment : ℕ → ℝ |
+      InClosedInterval (-b * logN) 0 ell 0 increment} ≤ p :=
+  (measure_mono
+    (rightTailPositiveA_firstStage_event_subset_noLargeDropEndpointBelowEvent
+      ell logN b)).trans hdrawdown
+
+/-- A horizontal interval corridor has the same uniform finite-variance
+exponential bound as the corresponding drawdown event. This is the first
+stage of the positive-`a` construction in (4.15). -/
+theorem exists_uniform_iidSequenceLaw_firstStageCorridor_le_ah
+    (ν : Measure ℝ) [IsProbabilityMeasure ν] {sigma : ℝ}
+    (hν : ProbabilityTheory.IsCenteredSecondMoment ν (sigma ^ 2))
+    (hsigma : 0 < sigma)
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+    [IsProbabilityMeasure P] {B : NNReal → Ω → ℝ}
+    (hB : IsPreBrownianReal B P)
+    (hcontinuous : ∀ ω, Continuous (B · ω))
+    (hmeasurable : ∀ t, Measurable (B t))
+    (endpointRatio target blockTarget p : ℝ)
+    (hEndpointRatio : 0 < endpointRatio)
+    (htarget : 0 < target) (htargetBlock : target < blockTarget)
+    (hblockTarget : blockTarget < Real.pi ^ 2 / 2) (hp : 0 < p) :
+    ∃ delta0 : ℝ, 0 < delta0 ∧
+      ∀ horizon : ℕ, ∀ width : ℝ, 0 < width → delta0 ≤ width →
+        width ^ (2 + p) ≤ (horizon : ℝ) →
+        iidSequenceLaw ν
+          {increment : ℕ → ℝ |
+            InClosedInterval (-width) 0 horizon 0 increment} ≤
+          ENNReal.ofReal (Real.exp
+            (-target * sigma ^ 2 * (horizon : ℝ) / width ^ 2)) := by
+  obtain ⟨delta0, hdelta0, hdrawdown⟩ :=
+    _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.exists_uniform_iidSequenceLaw_measure_noLargeDropEndpointBelowEvent_le_ah_exp_of_centeredSecondMoment
+      ν hν hsigma hB hcontinuous hmeasurable endpointRatio target blockTarget p
+      hEndpointRatio htarget htargetBlock hblockTarget hp
+  refine ⟨delta0, hdelta0, ?_⟩
+  intro horizon width hwidth hscale hlength
+  have hinterval :=
+    rightTailPositiveA_firstStage_event_subset_noLargeDropEndpointBelowEvent
+      horizon width 1
+  have hinterval' :
+      {increment : ℕ → ℝ |
+        InClosedInterval (-width) 0 horizon 0 increment} ⊆
+      ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.noLargeDropEndpointBelowEvent
+        horizon width 0 := by
+    simpa using hinterval
+  have hthreshold : 0 ≤ width / endpointRatio :=
+    div_nonneg hwidth.le hEndpointRatio.le
+  have hcutoff :
+      ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.noLargeDropEndpointBelowEvent
+        horizon width 0 ⊆
+      ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.noLargeDropEndpointBelowEvent
+        horizon width (width / endpointRatio) := by
+    intro increment h
+    exact ⟨h.1, le_trans h.2 hthreshold⟩
+  have hbound := hdrawdown width hscale horizon hlength
+  exact (measure_mono (hinterval'.trans hcutoff)).trans hbound
+
+/-- For the paper's `log^(5/2) N` first cutoff, the uniform finite-variance
+Aïdékon--Hu estimate gives the required first-stage corridor probability
+eventually. The restriction `p < 1/2` is precisely the scale comparison
+`(b log N)^(2+p) = o((log N)^(5/2))`. -/
+theorem exists_eventually_iidSequenceLaw_rightTailPositiveAFirstStageCorridor_le_ah
+    (ν : Measure ℝ) [IsProbabilityMeasure ν] {sigma : ℝ}
+    (hν : ProbabilityTheory.IsCenteredSecondMoment ν (sigma ^ 2))
+    (hsigma : 0 < sigma)
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+    [IsProbabilityMeasure P] {B : NNReal → Ω → ℝ}
+    (hB : IsPreBrownianReal B P)
+    (hcontinuous : ∀ ω, Continuous (B · ω))
+    (hmeasurable : ∀ t, Measurable (B t))
+    (endpointRatio target blockTarget p : ℝ)
+    (hEndpointRatio : 0 < endpointRatio)
+    (htarget : 0 < target) (htargetBlock : target < blockTarget)
+    (hblockTarget : blockTarget < Real.pi ^ 2 / 2) (hp : 0 < p)
+    {N : ℕ → ℕ} (hN : Tendsto N atTop atTop) {b : ℝ} (hb : 0 < b)
+    (hpHalf : p < 1 / 2) :
+    ∃ delta0 : ℝ, 0 < delta0 ∧
+      ∀ᶠ n : ℕ in atTop,
+        iidSequenceLaw ν
+          {increment : ℕ → ℝ |
+            InClosedInterval (-b * logarithmOfSampleSize N n) 0
+              (rightTailPositiveAFirstCutoff N n) 0 increment} ≤
+          ENNReal.ofReal (Real.exp
+            (-target * sigma ^ 2 *
+              (rightTailPositiveAFirstCutoff N n : ℝ) /
+                (b * logarithmOfSampleSize N n) ^ 2)) := by
+  obtain ⟨delta0, hdelta0, hAH⟩ :=
+    exists_uniform_iidSequenceLaw_firstStageCorridor_le_ah
+      ν hν hsigma hB hcontinuous hmeasurable endpointRatio target blockTarget p
+      hEndpointRatio htarget htargetBlock hblockTarget hp
+  refine ⟨delta0, hdelta0, ?_⟩
+  have hscale := eventually_rightTailPositiveAFirstStageAHScale
+    (N := N) hN (b := b) (p := p) (delta0 := delta0) hb hpHalf
+  filter_upwards [hscale] with n hscale
+  have hwidthPos : 0 < b * logarithmOfSampleSize N n :=
+    lt_of_lt_of_le hdelta0 hscale.1
+  simpa [neg_mul] using hAH (rightTailPositiveAFirstCutoff N n)
+    (b * logarithmOfSampleSize N n) hwidthPos hscale.1 hscale.2
+
+/-- The first-stage Aïdékon--Hu estimate applies to each generation with
+its actual prefix length.  Short prefixes are bounded by one; long prefixes
+use the uniform corridor estimate at the same width as the full first tube.
+This is the generation-wise form needed when summing the first moments in
+the proof of (4.15). -/
+theorem exists_iidSequenceLaw_rightTailPositiveARestartedWindowProbability_le_firstStageAH
+    (ν : Measure ℝ) [IsProbabilityMeasure ν] {sigma : ℝ}
+    (hν : ProbabilityTheory.IsCenteredSecondMoment ν (sigma ^ 2))
+    (hsigma : 0 < sigma)
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+    [IsProbabilityMeasure P] {B : NNReal → Ω → ℝ}
+    (hB : IsPreBrownianReal B P)
+    (hcontinuous : ∀ ω, Continuous (B · ω))
+    (hmeasurable : ∀ t, Measurable (B t))
+    (ell ellN n : ℕ) (logN b v c κ : ℝ)
+    (hlog : 0 ≤ logN) (hvb : v ≤ b) (hn : n ≤ ell)
+    (endpointRatio target blockTarget p : ℝ)
+    (hEndpointRatio : 0 < endpointRatio)
+    (htarget : 0 < target) (htargetBlock : target < blockTarget)
+    (hblockTarget : blockTarget < Real.pi ^ 2 / 2)
+    (hp : 0 < p) :
+    ∃ delta0 : ℝ, 0 < delta0 ∧
+      ∀ _hwidth : delta0 ≤ b * logN,
+        RandomWalk.restartedWindowProbability (iidSequenceLaw ν) ell
+          (rightTailPositiveARestartedWindow ell ellN logN b v c κ) n 0 ≤
+          (if (b * logN) ^ (2 + p) ≤ (n : ℝ) then
+            ENNReal.ofReal (Real.exp
+              (-target * sigma ^ 2 * (n : ℝ) / (b * logN) ^ 2))
+          else 1) := by
+  obtain ⟨deltaAH, hdeltaAH, hAH⟩ :=
+    exists_uniform_iidSequenceLaw_firstStageCorridor_le_ah
+      ν hν hsigma hB hcontinuous hmeasurable endpointRatio target blockTarget p
+      hEndpointRatio htarget htargetBlock hblockTarget hp
+  refine ⟨deltaAH, hdeltaAH, ?_⟩
+  intro _hwidth
+  have hsubset := rightTailPositiveARestartedWindow_event_subset_firstStagePrefix
+    ell ellN n logN b v c κ hlog hvb hn
+  by_cases hlong : (b * logN) ^ (2 + p) ≤ (n : ℝ)
+  · have hwidthPos : 0 < b * logN := lt_of_lt_of_le hdeltaAH _hwidth
+    have hprob := hAH n (b * logN) hwidthPos _hwidth hlong
+    have hlower : -(b * logN) = -b * logN := by ring
+    rw [hlower] at hprob
+    simpa [RandomWalk.restartedWindowProbability, hlong, neg_mul] using
+      (measure_mono hsubset).trans hprob
+  · have hprob :
+        RandomWalk.restartedWindowProbability (iidSequenceLaw ν) ell
+          (rightTailPositiveARestartedWindow ell ellN logN b v c κ) n 0 ≤ 1 := by
+      unfold RandomWalk.restartedWindowProbability
+      calc
+        _ ≤ (iidSequenceLaw ν) Set.univ := measure_mono (Set.subset_univ _)
+        _ = 1 := measure_univ
+    simpa [hlong] using hprob
+
+/-- The affine second-stage corridor in the positive-`a` proof is controlled
+by the uniform finite-variance Aïdékon--Hu drawdown estimate on every prefix
+whose length is at least a superdiffusive power of the planned tube width.
+The endpoint ceiling is reduced to the fixed ratio required by that estimate
+using the monotone drift envelope. -/
+theorem iidSequenceLaw_rightTailPositiveASecondStageDrawdown_le_of_ah
+    (ν : Measure ℝ) [IsProbabilityMeasure ν] {sigma : ℝ}
+    (hν : ProbabilityTheory.IsCenteredSecondMoment ν (sigma ^ 2))
+    (hsigma : 0 < sigma)
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+    [IsProbabilityMeasure P] {B : NNReal → Ω → ℝ}
+    (hB : IsPreBrownianReal B P)
+    (hcontinuous : ∀ ω, Continuous (B · ω))
+    (hmeasurable : ∀ t, Measurable (B t))
+    (κ c target blockTarget p : ℝ)
+    (hκ : 0 ≤ κ) (hc : 0 < c)
+    (htarget : 0 < target) (htargetBlock : target < blockTarget)
+    (hblockTarget : blockTarget < Real.pi ^ 2 / 2) (hp : 0 < p) :
+    ∃ delta0 : ℝ, 0 < delta0 ∧
+      ∀ ell ellN d : ℕ, ell < ellN → d ≤ ellN - ell →
+      delta0 ≤ c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)) →
+      (c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ))) ^ (2 + p) ≤ (d : ℝ) →
+      iidSequenceLaw ν
+          (ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.noLargeDropEndpointBelowEvent
+            d
+            (c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)))
+            (rightTailPositiveADrift ell ellN κ c d +
+              c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)))) ≤
+        ENNReal.ofReal (Real.exp
+          (-target * sigma ^ 2 * (d : ℝ) /
+            (c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ))) ^ 2)) := by
+  let endpointRatio : ℝ := c / (κ / c ^ 2 + c)
+  have hden : 0 < κ / c ^ 2 + c := by
+    positivity
+  have hratio : 0 < endpointRatio := by
+    dsimp [endpointRatio]
+    exact div_pos hc hden
+  obtain ⟨delta0, hdelta0, hbound⟩ :=
+    _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.exists_uniform_iidSequenceLaw_measure_noLargeDropEndpointBelowEvent_le_ah_exp_of_centeredSecondMoment
+      ν hν hsigma hB hcontinuous hmeasurable endpointRatio target blockTarget p
+      hratio htarget htargetBlock hblockTarget hp
+  refine ⟨delta0, hdelta0, ?_⟩
+  intro ell ellN d hellN hd hwidthLarge hlengthLarge
+  let width : ℝ := c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ))
+  have hwidthPos : 0 < width := by
+    dsimp [width]
+    have hspan : 0 < (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)) := by
+      have hspanNat : 0 < ellN - ell := Nat.sub_pos_of_lt hellN
+      have hspanReal : 0 < ((ellN - ell : ℕ) : ℝ) := by exact_mod_cast hspanNat
+      exact Real.rpow_pos_of_pos hspanReal _
+    exact mul_pos hc hspan
+  have hspan := rightTailPositiveADrift_le_span ell ellN d κ c hellN hκ hd
+  have hratioEq : c / endpointRatio = κ / c ^ 2 + c := by
+    dsimp [endpointRatio]
+    field_simp [hc.ne', hden.ne']
+  have hendpoint :
+      rightTailPositiveADrift ell ellN κ c d + width ≤ width / endpointRatio := by
+    calc
+      rightTailPositiveADrift ell ellN κ c d + width ≤
+          κ / c ^ 2 * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)) + width :=
+        by simpa [add_comm] using add_le_add_right hspan width
+      _ = (κ / c ^ 2 + c) *
+          (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)) := by
+        dsimp [width]
+        ring
+      _ = (c / endpointRatio) *
+          (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)) := by rw [hratioEq]
+      _ = width / endpointRatio := by
+        dsimp [width]
+        ring
+  have hbound' := hbound width hwidthLarge d hlengthLarge
+  apply le_trans (measure_mono ?_) hbound'
+  intro increment hdrop
+  exact ⟨hdrop.1, hdrop.2.trans hendpoint⟩
+
+/-- If the planned second-stage span diverges, its spatial width eventually
+passes the uniform Aïdékon--Hu scale threshold. For every `p < 1`, the full
+span is also eventually longer than `width^(2+p)`. -/
+theorem eventually_rightTailPositiveASecondStageAHScale
+    (D : ℕ → ℕ) (c p delta0 : ℝ)
+    (hc : 0 < c) (hp1 : p < 1)
+    (hD : Tendsto (fun n => (D n : ℝ)) atTop atTop) :
+    ∀ᶠ n : ℕ in atTop,
+      delta0 ≤ c * ((D n : ℝ) ^ (3⁻¹ : ℝ)) ∧
+        (c * ((D n : ℝ) ^ (3⁻¹ : ℝ))) ^ (2 + p) ≤ (D n : ℝ) := by
+  have hwidth : Tendsto
+      (fun n => c * ((D n : ℝ) ^ (3⁻¹ : ℝ))) atTop atTop := by
+    exact ((_root_.tendsto_rpow_atTop (by norm_num : (0 : ℝ) < (3⁻¹ : ℝ))).comp hD)
+      |>.const_mul_atTop hc
+  have hexponent : 0 < (1 - p) / 3 := by linarith
+  have hpower : Tendsto
+      (fun n => (D n : ℝ) ^ ((1 - p) / 3)) atTop atTop :=
+    (_root_.tendsto_rpow_atTop hexponent).comp hD
+  filter_upwards [hwidth.eventually_gt_atTop delta0,
+    hpower.eventually_gt_atTop (c ^ (2 + p)),
+    hD.eventually_gt_atTop 0] with n hwidthLarge hpowerLarge hDpos
+  refine ⟨le_of_lt hwidthLarge, ?_⟩
+  have hbase : 0 < (D n : ℝ) := hDpos
+  have hwidthPow :
+      (c * ((D n : ℝ) ^ (3⁻¹ : ℝ))) ^ (2 + p) =
+        c ^ (2 + p) * (D n : ℝ) ^ ((2 + p) / 3) := by
+    rw [Real.mul_rpow hc.le (by positivity)]
+    rw [← Real.rpow_mul hbase.le]
+    congr 1
+    ring_nf
+  have hmul := mul_lt_mul_of_pos_right hpowerLarge
+    (Real.rpow_pos_of_pos hbase ((2 + p) / 3))
+  have hproduct :
+      (D n : ℝ) ^ ((1 - p) / 3) * (D n : ℝ) ^ ((2 + p) / 3) =
+        (D n : ℝ) := by
+    rw [← Real.rpow_add hbase]
+    rw [show (1 - p) / 3 + (2 + p) / 3 = 1 by ring, Real.rpow_one]
+  calc
+    (c * ((D n : ℝ) ^ (3⁻¹ : ℝ))) ^ (2 + p) =
+        c ^ (2 + p) * (D n : ℝ) ^ ((2 + p) / 3) := hwidthPow
+    _ ≤ (D n : ℝ) ^ ((1 - p) / 3) * (D n : ℝ) ^ ((2 + p) / 3) :=
+      le_of_lt (by nlinarith [hmul])
+    _ = (D n : ℝ) := hproduct
+
+/-- A positive cubic-scale limit forces the planned span itself to diverge. -/
+theorem tendsto_rightTailPositiveASpan_atTop_of_cubicRatio
+    {D : ℕ → ℕ} {L : ℕ → ℝ} {t : ℝ}
+    (hL : Tendsto L atTop atTop)
+    (hscale : Tendsto (fun n => (D n : ℝ) / L n ^ 3) atTop (𝓝 t))
+    (ht : 0 < t) :
+    Tendsto (fun n => (D n : ℝ)) atTop atTop := by
+  have hcube : Tendsto (fun n => L n ^ 3) atTop atTop := by
+    exact tendsto_pow_atTop (by norm_num : (3 : ℕ) ≠ 0) |>.comp hL
+  have hproduct := hcube.atTop_mul_pos ht hscale
+  have hLpos : ∀ᶠ n : ℕ in atTop, 0 < L n := hL.eventually_gt_atTop 0
+  have heq : (fun n => L n ^ 3 * ((D n : ℝ) / L n ^ 3)) =ᶠ[atTop]
+      fun n => (D n : ℝ) := by
+    filter_upwards [hLpos] with n hn
+    field_simp
+  exact hproduct.congr' heq
+
+/-- The cubic ratio of a two-stage span is the difference of the stage ratios,
+provided the natural-valued cutoffs are eventually ordered. -/
+theorem tendsto_rightTailPositiveASpan_cubicRatio_of_stageRatios
+    {ell ellN : ℕ → ℕ} {L : ℕ → ℝ} {t : ℝ}
+    (hL : Tendsto L atTop atTop)
+    (hEll : Tendsto (fun n => (ell n : ℝ) / L n ^ 3) atTop (𝓝 0))
+    (hEllN : Tendsto (fun n => (ellN n : ℝ) / L n ^ 3) atTop (𝓝 t))
+    (hellN : ∀ᶠ n : ℕ in atTop, ell n ≤ ellN n) :
+    Tendsto (fun n => ((ellN n - ell n : ℕ) : ℝ) / L n ^ 3)
+      atTop (𝓝 t) := by
+  have hLpos : ∀ᶠ n : ℕ in atTop, 0 < L n := hL.eventually_gt_atTop 0
+  have heq :
+      (fun n => ((ellN n - ell n : ℕ) : ℝ) / L n ^ 3) =ᶠ[atTop]
+        fun n => (ellN n : ℝ) / L n ^ 3 - (ell n : ℝ) / L n ^ 3 := by
+    filter_upwards [hellN, hLpos] with n horder hLn
+    rw [Nat.cast_sub horder]
+    field_simp
+  simpa using (hEllN.sub hEll).congr' heq.symm
+
+/-- Cubic-scale limits for the two cutoffs imply divergence of their gap,
+which is the scale hypothesis needed by the uniform terminal tube estimate. -/
+theorem tendsto_rightTailPositiveASpan_atTop_of_stageCubicRatios
+    {ell ellN : ℕ → ℕ} {L : ℕ → ℝ} {t : ℝ}
+    (hL : Tendsto L atTop atTop)
+    (hEll : Tendsto (fun n => (ell n : ℝ) / L n ^ 3) atTop (𝓝 0))
+    (hEllN : Tendsto (fun n => (ellN n : ℝ) / L n ^ 3) atTop (𝓝 t))
+    (ht : 0 < t)
+    (hellN : ∀ᶠ n : ℕ in atTop, ell n ≤ ellN n) :
+    Tendsto (fun n => ((ellN n - ell n : ℕ) : ℝ)) atTop atTop := by
+  apply tendsto_rightTailPositiveASpan_atTop_of_cubicRatio hL ?_ ht
+  exact tendsto_rightTailPositiveASpan_cubicRatio_of_stageRatios
+    hL hEll hEllN hellN
+
+/-- The paper's choices `ell = floor((log N)^(5/2))` and
+`ellN = floor(t (log N)^3) + 1` have a diverging second-stage span. -/
+theorem tendsto_rightTailPositiveASpan_atTop_of_logarithmicScales
+    {N : ℕ → ℕ} (hN : Tendsto N atTop atTop) {t : ℝ} (ht : 0 < t) :
+    Tendsto (fun n =>
+      ((logarithmicHorizon N t n - rightTailPositiveAFirstCutoff N n : ℕ) : ℝ))
+      atTop atTop := by
+  let L : ℕ → ℝ := logarithmOfSampleSize N
+  have hL : Tendsto L atTop atTop := by
+    exact Real.tendsto_log_atTop.comp
+      (tendsto_natCast_atTop_atTop.comp hN)
+  apply tendsto_rightTailPositiveASpan_atTop_of_stageCubicRatios hL
+    (by simpa [L] using tendsto_rightTailPositiveAFirstCutoff_div_logCube hN)
+    (by simpa [L] using logarithmicHorizon_div_logCube_tendsto hN ht)
+    ht
+  exact (eventually_rightTailPositiveAFirstCutoff_lt_horizon hN ht).mono
+    (fun _ h => Nat.le_of_lt h)
+
+/-- A positive cubic-scale span has its cube-root width at the corresponding
+linear logarithmic scale. -/
+theorem tendsto_rightTailPositiveASpan_root_div_log
+    {D : ℕ → ℕ} {L : ℕ → ℝ} {t : ℝ}
+    (hL : Tendsto L atTop atTop)
+    (hscale : Tendsto (fun n => (D n : ℝ) / L n ^ 3)
+      atTop (𝓝 t)) (ht : 0 < t) :
+    Tendsto (fun n => (D n : ℝ) ^ (3⁻¹ : ℝ) / L n)
+      atTop (𝓝 (t ^ (3⁻¹ : ℝ))) := by
+  have hpow :=
+    (Real.continuousAt_rpow_const t (3⁻¹ : ℝ)
+      (Or.inl (ne_of_gt ht))).tendsto.comp hscale
+  have heq : (fun n => (D n : ℝ) ^ (3⁻¹ : ℝ) / L n) =ᶠ[atTop]
+      fun n => ((D n : ℝ) / L n ^ 3) ^ (3⁻¹ : ℝ) := by
+    filter_upwards [hL.eventually_gt_atTop 0] with n hLn
+    have hden : ((L n : ℝ) ^ 3) ^ (3⁻¹ : ℝ) = L n := by
+      rw [← Real.rpow_natCast (L n) 3, ← Real.rpow_mul hLn.le]
+      have hexp : (↑(3 : ℕ) : ℝ) * (3⁻¹ : ℝ) = 1 := by norm_num
+      rw [hexp, Real.rpow_one]
+    rw [Real.div_rpow (Nat.cast_nonneg (D n)) (by positivity) (3⁻¹ : ℝ), hden]
+  exact hpow.congr' heq.symm
+
+/-- A sequence with cubic logarithmic size has only a subexponential
+logarithmic count: `log (u + 1) = o(log N)`. -/
+private theorem tendsto_rightTailPositiveA_log_add_one_div_log_of_cubic_scale
+    {u L : ℕ → ℝ} {t : ℝ}
+    (hL : Tendsto L atTop atTop)
+    (hu : ∀ n, 0 ≤ u n)
+    (hscale : Tendsto (fun n => u n / L n ^ 3) atTop (𝓝 t))
+    (ht : 0 < t) :
+    Tendsto (fun n => Real.log (u n + 1) / L n) atTop (𝓝 0) := by
+  have hinv : Tendsto (fun n => (L n)⁻¹) atTop (𝓝 0) :=
+    hL.inv_tendsto_atTop
+  have hinvCube : Tendsto (fun n => (L n)⁻¹ ^ 3) atTop (𝓝 0) := by
+    simpa using hinv.pow 3
+  have hLpos : ∀ᶠ n : ℕ in atTop, 0 < L n := hL.eventually_gt_atTop 0
+  have hscaled : Tendsto (fun n => (u n + 1) / L n ^ 3)
+      atTop (𝓝 t) := by
+    have hsum := hscale.add hinvCube
+    have heq : (fun n => (u n + 1) / L n ^ 3) =ᶠ[atTop]
+        fun n => u n / L n ^ 3 + (L n)⁻¹ ^ 3 := by
+      filter_upwards [hLpos] with n hn
+      field_simp
+    simpa using hsum.congr' heq.symm
+  have hlogScaled : Tendsto
+      (fun n => Real.log ((u n + 1) / L n ^ 3)) atTop (𝓝 (Real.log t)) :=
+    (Real.continuousAt_log (ne_of_gt ht)).tendsto.comp hscaled
+  have hlogScaledDiv : Tendsto
+      (fun n => Real.log ((u n + 1) / L n ^ 3) / L n)
+      atTop (𝓝 0) := hlogScaled.div_atTop hL
+  have hlogLDiv : Tendsto (fun n => Real.log (L n) / L n)
+      atTop (𝓝 0) := by
+    have h := (Real.tendsto_pow_log_div_mul_add_atTop 1 0 1
+      (by norm_num : (1 : ℝ) ≠ 0)).comp hL
+    convert h using 1
+    ext n
+    simp [pow_one]
+  have hsum := hlogScaledDiv.add (hlogLDiv.const_mul 3)
+  have heq : (fun n => Real.log (u n + 1) / L n) =ᶠ[atTop]
+      fun n => Real.log ((u n + 1) / L n ^ 3) / L n +
+        3 * (Real.log (L n) / L n) := by
+    filter_upwards [hLpos] with n hn
+    have hu1 : 0 < u n + 1 := by linarith [hu n]
+    rw [Real.log_div (ne_of_gt hu1) (pow_ne_zero 3 (ne_of_gt hn)),
+      Real.log_pow]
+    field_simp
+    ring
+  simpa using hsum.congr' heq.symm
+
+/-- A sublinear power of the second-stage span is negligible compared with
+`log N`. This is the `p < 1` remainder in the exponent of the long-prefix
+Aïdékon--Hu terms. -/
+theorem tendsto_rightTailPositiveASpan_sublinearPower_div_log
+    {D : ℕ → ℕ} {L : ℕ → ℝ} {t p : ℝ}
+    (hL : Tendsto L atTop atTop)
+    (hscale : Tendsto (fun n => (D n : ℝ) / L n ^ 3)
+      atTop (𝓝 t)) (ht : 0 < t)
+    (hp1 : p < 1) :
+    Tendsto (fun n => (D n : ℝ) ^ (p / 3) / L n)
+      atTop (𝓝 0) := by
+  let q : ℝ := p / 3
+  have hratio :=
+    (Real.continuousAt_rpow_const t q (Or.inl (ne_of_gt ht))).tendsto.comp hscale
+  have hLp : Tendsto (fun n => L n ^ (p - 1)) atTop (𝓝 0) := by
+    have hneg := (tendsto_rpow_neg_atTop (by linarith : 0 < 1 - p)).comp hL
+    convert hneg using 1
+    ext n
+    congr 1
+    ring
+  have hprod := hratio.mul hLp
+  have heq : (fun n => (D n : ℝ) ^ q / L n) =ᶠ[atTop]
+      fun n => ((D n : ℝ) / L n ^ 3) ^ q * L n ^ (p - 1) := by
+    filter_upwards [hL.eventually_gt_atTop 0] with n hLn
+    have hDnonneg : 0 ≤ (D n : ℝ) := Nat.cast_nonneg _
+    have hratioNonneg : 0 ≤ (D n : ℝ) / L n ^ 3 :=
+      div_nonneg hDnonneg (by positivity)
+    let r : ℝ := (D n : ℝ) / L n ^ 3
+    have hr : r = (D n : ℝ) / L n ^ 3 := rfl
+    have hfactor : (D n : ℝ) ^ q = r ^ q * L n ^ p := by
+      have hsplit : (D n : ℝ) =
+          r * L n ^ 3 := by
+        dsimp [r]
+        field_simp [ne_of_gt hLn]
+      calc
+        (D n : ℝ) ^ q = (r * L n ^ 3) ^ q := by rw [hsplit]
+        _ = r ^ q * (L n ^ 3) ^ q :=
+          Real.mul_rpow (hratioNonneg.trans_eq hr) (by positivity)
+        _ = r ^ q * L n ^ p := by
+          rw [← Real.rpow_natCast (L n) 3, ← Real.rpow_mul hLn.le]
+          have hexp : (↑(3 : ℕ) : ℝ) * q = p := by dsimp [q]; ring
+          rw [hexp]
+    calc
+      (D n : ℝ) ^ q / L n =
+          (r ^ q * L n ^ p) / L n := by rw [hfactor]
+      _ = r ^ q * L n ^ (p - 1) := by
+        calc
+          (r ^ q * L n ^ p) / L n = r ^ q * (L n ^ p / L n) := by ring
+          _ = r ^ q * L n ^ (p - 1) := by
+            have hquot : L n ^ p / L n = L n ^ (p - 1) := by
+              calc
+                L n ^ p / L n = L n ^ p / L n ^ (1 : ℝ) :=
+                  congrArg (fun x : ℝ => L n ^ p / x)
+                    (Real.rpow_one (L n)).symm
+                _ = L n ^ (p - 1) := (Real.rpow_sub hLn p 1).symm
+            rw [hquot]
+      _ = ((D n : ℝ) / L n ^ 3) ^ q * L n ^ (p - 1) := by rw [hr]
+  simpa [q] using hprod.congr' heq.symm
+
+/-- On the paper's logarithmic scales, the exponent in the long-prefix
+capacity contribution has the limiting rate `-b + v + c t^(1/3)`. The
+additional `κ c^p L^(p/3)` term vanishes after division by `log N`. -/
+theorem tendsto_rightTailPositiveAAHExponent_div_log_of_logarithmicScales
+    {N : ℕ → ℕ} (hN : Tendsto N atTop atTop) {t b v c κ p : ℝ}
+    (ht : 0 < t) (hp1 : p < 1) :
+    Tendsto
+      (fun n => ((-b + v) * logarithmOfSampleSize N n +
+          c * (((logarithmicHorizon N t n -
+            rightTailPositiveAFirstCutoff N n : ℕ) : ℝ) ^ (3⁻¹ : ℝ)) +
+          κ * c ^ p * (((logarithmicHorizon N t n -
+            rightTailPositiveAFirstCutoff N n : ℕ) : ℝ) ^ (p / 3))) /
+          logarithmOfSampleSize N n)
+      atTop (𝓝 (-b + v + c * (t ^ (3⁻¹ : ℝ)))) := by
+  let L : ℕ → ℝ := logarithmOfSampleSize N
+  let D : ℕ → ℕ := fun n =>
+    logarithmicHorizon N t n - rightTailPositiveAFirstCutoff N n
+  have hL : Tendsto L atTop atTop := by
+    exact Real.tendsto_log_atTop.comp
+      (tendsto_natCast_atTop_atTop.comp hN)
+  have hDscale : Tendsto (fun n => (D n : ℝ) / L n ^ 3)
+      atTop (𝓝 t) := by
+    apply tendsto_rightTailPositiveASpan_cubicRatio_of_stageRatios hL
+    · simpa [L] using tendsto_rightTailPositiveAFirstCutoff_div_logCube hN
+    · simpa [L] using logarithmicHorizon_div_logCube_tendsto hN ht
+    · exact (eventually_rightTailPositiveAFirstCutoff_lt_horizon hN ht).mono
+        (fun _ h => Nat.le_of_lt h)
+  have hroot := tendsto_rightTailPositiveASpan_root_div_log hL hDscale ht
+  have hsmall := tendsto_rightTailPositiveASpan_sublinearPower_div_log
+    hL hDscale ht hp1
+  have hconstant : Tendsto (fun _ : ℕ => -b + v) atTop (𝓝 (-b + v)) :=
+    tendsto_const_nhds
+  have hrootTerm := hroot.const_mul c
+  have hsmallTerm := hsmall.const_mul (κ * c ^ p)
+  have hsum := (hconstant.add hrootTerm).add hsmallTerm
+  have heq : (fun n =>
+      ((-b + v) * L n + c * ((D n : ℝ) ^ (3⁻¹ : ℝ)) +
+        κ * c ^ p * ((D n : ℝ) ^ (p / 3))) / L n) =ᶠ[atTop]
+      fun n => (-b + v) + c * ((D n : ℝ) ^ (3⁻¹ : ℝ) / L n) +
+        κ * c ^ p * ((D n : ℝ) ^ (p / 3) / L n) := by
+    filter_upwards [hL.eventually_gt_atTop 0] with n hLn
+    field_simp [ne_of_gt hLn]
+  have hlimit : Tendsto
+      (fun n => (-b + v) + c * ((D n : ℝ) ^ (3⁻¹ : ℝ) / L n) +
+        κ * c ^ p * ((D n : ℝ) ^ (p / 3) / L n))
+      atTop (𝓝 (-b + v + c * (t ^ (3⁻¹ : ℝ)))) := by
+    simpa using hsum
+  simpa [L, D] using hlimit.congr' heq.symm
+
+/-- Any rate strictly above the logarithmic limit controls the long-prefix
+AH exponential weight by the corresponding power of the sample size. -/
+theorem eventually_rightTailPositiveAAHWeight_le_sampleSize_rpow
+    {N : ℕ → ℕ} (hN : Tendsto N atTop atTop) {t b v c κ p rate : ℝ}
+    (ht : 0 < t) (hp1 : p < 1)
+    (hrate : -b + v + c * (t ^ (3⁻¹ : ℝ)) < rate) :
+    ∀ᶠ n : ℕ in atTop,
+      ENNReal.ofReal (Real.exp
+        ((-b + v) * logarithmOfSampleSize N n +
+          c * (((logarithmicHorizon N t n -
+            rightTailPositiveAFirstCutoff N n : ℕ) : ℝ) ^ (3⁻¹ : ℝ)) +
+          κ * c ^ p * (((logarithmicHorizon N t n -
+            rightTailPositiveAFirstCutoff N n : ℕ) : ℝ) ^ (p / 3)))) ≤
+        ENNReal.ofReal ((N n : ℝ) ^ rate) := by
+  let L : ℕ → ℝ := logarithmOfSampleSize N
+  let D : ℕ → ℕ := fun n =>
+    logarithmicHorizon N t n - rightTailPositiveAFirstCutoff N n
+  have hL : Tendsto L atTop atTop := by
+    exact Real.tendsto_log_atTop.comp
+      (tendsto_natCast_atTop_atTop.comp hN)
+  have hlimit := tendsto_rightTailPositiveAAHExponent_div_log_of_logarithmicScales
+    hN (t := t) (b := b) (v := v) (c := c) (κ := κ) (p := p) ht hp1
+  have hrateEvent : ∀ᶠ n : ℕ in atTop,
+      ((-b + v) * L n + c * ((D n : ℝ) ^ (3⁻¹ : ℝ)) +
+        κ * c ^ p * ((D n : ℝ) ^ (p / 3))) / L n < rate := by
+    simpa [L, D] using
+      (Filter.Tendsto.eventually hlimit (Iio_mem_nhds hrate))
+  filter_upwards [hrateEvent, hL.eventually_gt_atTop 0,
+    hN.eventually_gt_atTop 0] with n hn hLn hNn
+  have hexponent :
+      (-b + v) * L n + c * ((D n : ℝ) ^ (3⁻¹ : ℝ)) +
+        κ * c ^ p * ((D n : ℝ) ^ (p / 3)) < rate * L n := by
+    exact (div_lt_iff₀ hLn).mp hn
+  have hpow : (N n : ℝ) ^ rate = Real.exp (rate * L n) := by
+    rw [Real.rpow_def_of_pos (by exact_mod_cast hNn : (0 : ℝ) < (N n : ℝ))]
+    simp [L, logarithmOfSampleSize, mul_comm]
+  apply ENNReal.ofReal_le_ofReal
+  rw [hpow]
+  apply Real.exp_le_exp.mpr
+  simpa [D] using le_of_lt hexponent
+
+/-- Along any diverging planned span, the full terminal second-stage
+drawdown probability obeys the uniform Aïdékon--Hu exponential estimate.
+The restriction `p < 1` is exactly what makes `width^(2+p)` sublinear in the
+planned span. -/
+theorem eventually_iidSequenceLaw_rightTailPositiveA_terminalDrawdown_le_ah
+    (ν : Measure ℝ) [IsProbabilityMeasure ν] {sigma : ℝ}
+    (hν : ProbabilityTheory.IsCenteredSecondMoment ν (sigma ^ 2))
+    (hsigma : 0 < sigma)
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+    [IsProbabilityMeasure P] {B : NNReal → Ω → ℝ}
+    (hB : IsPreBrownianReal B P)
+    (hcontinuous : ∀ ω, Continuous (B · ω))
+    (hmeasurable : ∀ t, Measurable (B t))
+    (κ c target blockTarget p : ℝ)
+    (hκ : 0 ≤ κ) (hc : 0 < c)
+    (htarget : 0 < target) (htargetBlock : target < blockTarget)
+    (hblockTarget : blockTarget < Real.pi ^ 2 / 2)
+    (hp : 0 < p) (hp1 : p < 1)
+    {ell ellN : ℕ → ℕ}
+    (hellN : ∀ᶠ n : ℕ in atTop, ell n < ellN n)
+    (hspan : Tendsto (fun n => ((ellN n - ell n : ℕ) : ℝ)) atTop atTop) :
+    ∀ᶠ n : ℕ in atTop,
+      iidSequenceLaw ν
+        (ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.noLargeDropEndpointBelowEvent
+          (ellN n - ell n)
+          (c * (((ellN n - ell n : ℕ) : ℝ) ^ (3⁻¹ : ℝ)))
+          (rightTailPositiveADrift (ell n) (ellN n) κ c (ellN n - ell n) +
+            c * (((ellN n - ell n : ℕ) : ℝ) ^ (3⁻¹ : ℝ)))) ≤
+        ENNReal.ofReal (Real.exp
+          (-target * sigma ^ 2 * ((ellN n - ell n : ℕ) : ℝ) /
+            (c * (((ellN n - ell n : ℕ) : ℝ) ^ (3⁻¹ : ℝ))) ^ 2)) := by
+  let D : ℕ → ℕ := fun n => ellN n - ell n
+  obtain ⟨delta0, _hdelta0, hAH⟩ :=
+    iidSequenceLaw_rightTailPositiveASecondStageDrawdown_le_of_ah
+      ν hν hsigma hB hcontinuous hmeasurable κ c target blockTarget p
+      hκ hc htarget htargetBlock hblockTarget hp
+  have hscale := eventually_rightTailPositiveASecondStageAHScale
+    D c p delta0 hc hp1 hspan
+  filter_upwards [hscale, hellN] with n hscale horder
+  have hbound := hAH (ell n) (ellN n) (D n) horder (by simp [D])
+    (by simpa [D] using hscale.1) (by simpa [D] using hscale.2)
+  simpa [D] using hbound
+
+/-- The full second-stage tube has the same terminal Aïdékon--Hu bound,
+because its affine corridor is contained in the associated drawdown event. -/
+theorem eventually_iidSequenceLaw_rightTailPositiveASecondStageTube_le_ah
+    (ν : Measure ℝ) [IsProbabilityMeasure ν] {sigma : ℝ}
+    (hν : ProbabilityTheory.IsCenteredSecondMoment ν (sigma ^ 2))
+    (hsigma : 0 < sigma)
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+    [IsProbabilityMeasure P] {B : NNReal → Ω → ℝ}
+    (hB : IsPreBrownianReal B P)
+    (hcontinuous : ∀ ω, Continuous (B · ω))
+    (hmeasurable : ∀ t, Measurable (B t))
+    (κ c v target blockTarget p : ℝ)
+    (hκ : 0 ≤ κ) (hc : 0 < c) (hvc : v ≤ c)
+    (htarget : 0 < target) (htargetBlock : target < blockTarget)
+    (hblockTarget : blockTarget < Real.pi ^ 2 / 2)
+    (hp : 0 < p) (hp1 : p < 1)
+    {ell ellN : ℕ → ℕ}
+    (hellN : ∀ᶠ n : ℕ in atTop, ell n < ellN n)
+    (hspan : Tendsto (fun n => ((ellN n - ell n : ℕ) : ℝ)) atTop atTop) :
+    ∀ᶠ n : ℕ in atTop,
+      iidSequenceLaw ν
+        (rightTailPositiveASecondStageTubeEvent (ell n) (ellN n) κ c v) ≤
+        ENNReal.ofReal (Real.exp
+          (-target * sigma ^ 2 * ((ellN n - ell n : ℕ) : ℝ) /
+            (c * (((ellN n - ell n : ℕ) : ℝ) ^ (3⁻¹ : ℝ))) ^ 2)) := by
+  have hdrawdown := eventually_iidSequenceLaw_rightTailPositiveA_terminalDrawdown_le_ah
+    ν hν hsigma hB hcontinuous hmeasurable κ c target blockTarget p hκ hc
+    htarget htargetBlock hblockTarget hp hp1 hellN hspan
+  filter_upwards [hdrawdown, hellN] with n hbound horder
+  apply (measure_mono ?_).trans hbound
+  exact rightTailPositiveASecondStageTubeEvent_subset_drawdownEvent
+    (ell n) (ellN n) κ c v horder hκ hc hvc
+
+/-- The paper's logarithmic cutoff and terminal horizon satisfy the hypotheses
+of the uniform second-stage tube estimate, so the full restarted tube inherits
+the terminal Aïdékon--Hu bound eventually. -/
+theorem eventually_iidSequenceLaw_rightTailPositiveASecondStageTube_le_ah_of_logarithmicScales
+    (ν : Measure ℝ) [IsProbabilityMeasure ν] {sigma : ℝ}
+    (hν : ProbabilityTheory.IsCenteredSecondMoment ν (sigma ^ 2))
+    (hsigma : 0 < sigma)
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+    [IsProbabilityMeasure P] {B : NNReal → Ω → ℝ}
+    (hB : IsPreBrownianReal B P)
+    (hcontinuous : ∀ ω, Continuous (B · ω))
+    (hmeasurable : ∀ t, Measurable (B t))
+    (κ c v target blockTarget p : ℝ)
+    (hκ : 0 ≤ κ) (hc : 0 < c) (hvc : v ≤ c)
+    (htarget : 0 < target) (htargetBlock : target < blockTarget)
+    (hblockTarget : blockTarget < Real.pi ^ 2 / 2)
+    (hp : 0 < p) (hp1 : p < 1)
+    {N : ℕ → ℕ} (hN : Tendsto N atTop atTop)
+    {t : ℝ} (ht : 0 < t) :
+    ∀ᶠ n : ℕ in atTop,
+      iidSequenceLaw ν
+        (rightTailPositiveASecondStageTubeEvent
+          (rightTailPositiveAFirstCutoff N n) (logarithmicHorizon N t n)
+          κ c v) ≤
+        ENNReal.ofReal (Real.exp
+          (-target * sigma ^ 2 *
+            ((logarithmicHorizon N t n - rightTailPositiveAFirstCutoff N n : ℕ) : ℝ) /
+              (c * (((logarithmicHorizon N t n -
+                rightTailPositiveAFirstCutoff N n : ℕ) : ℝ) ^ (3⁻¹ : ℝ))) ^ 2)) := by
+  exact eventually_iidSequenceLaw_rightTailPositiveASecondStageTube_le_ah
+    ν hν hsigma hB hcontinuous hmeasurable κ c v target blockTarget p hκ hc hvc
+    htarget htargetBlock hblockTarget hp hp1
+    (eventually_rightTailPositiveAFirstCutoff_lt_horizon hN ht)
+    (tendsto_rightTailPositiveASpan_atTop_of_logarithmicScales hN ht)
+
+/-- Insert the uniform Aïdékon--Hu estimate into the two-stage capacity
+bound. Long second-stage prefixes use the exponential drawdown estimate;
+short prefixes use only that their probability is at most one. This is the
+finite-parameter form of the second-stage estimate in the proof of (4.15). -/
+theorem measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhaseOfAHDrawdown
+    (m ell ellN N : ℕ) (logN b v c κ : ℝ)
+    [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
+    [Countable (RootIndexed.TreeNode (Fin m) ℕ)]
+    [DecidableEq (RootIndexed.TreeNode (Fin m) ℕ)]
+    (hell : 0 < ell) (hellN : ell < ellN)
+    (hb : 0 ≤ b) (hlog : 0 ≤ logN) (hκ : 0 ≤ κ) (hvb : v ≤ b)
+    (hc : 0 < c) (hvc : v ≤ c)
+    (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
+    (hboundary : HasBoundaryNormalization realPotential μ)
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (hν : ν = tiltedPotentialLaw realPotential (-1) μ)
+    {sigma : ℝ}
+    (hspine : ProbabilityTheory.IsCenteredSecondMoment ν (sigma ^ 2))
+    (hsigma : 0 < sigma)
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+    [IsProbabilityMeasure P] {B : NNReal → Ω → ℝ}
+    (hB : IsPreBrownianReal B P)
+    (hcontinuous : ∀ ω, Continuous (B · ω))
+    (hmeasurable : ∀ t, Measurable (B t))
+    (target blockTarget p : ℝ)
+    (htarget : 0 < target) (htargetBlock : target < blockTarget)
+    (hblockTarget : blockTarget < Real.pi ^ 2 / 2) (hp : 0 < p)
+    (pFirst : ℕ → ℝ≥0∞)
+    (hfirstPath : ∀ k : Fin (ellN + 1), (k : ℕ) ≤ ell →
+      RandomWalk.restartedWindowProbability
+        (tiltedIncrementFieldLaw realPotential μ) ell
+        (rightTailPositiveARestartedWindow ell ellN logN b v c κ)
+        (k : ℕ) 0 ≤ pFirst (k : ℕ)) :
+    ∃ delta0 : ℝ, 0 < delta0 ∧
+      (delta0 ≤ c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)) →
+    let window := rightTailPositiveARestartedWindow ell ellN logN b v c κ
+    let upper := rightTailPositiveAWindowUpper ell ellN logN b v c κ
+    let P := RootIndexed.CausalPopulation.ofRestartedRealPositionSets
+      (fun _ : Fin m => (0 : ℝ)) id measurable_id
+      (RootIndexed.initialPopulation (α := ℕ) (Finset.univ : Finset (Fin m)))
+      (by
+        intro q hq
+        rcases RootIndexed.mem_initialPopulation_iff.mp hq with ⟨r, _hr, rfl⟩
+        simp) ell window
+      (measurableSet_rightTailPositiveARestartedWindow ell ellN logN b v c κ)
+      upper (rightTailPositiveARestartedWindow_subset_Iic_upper
+        ell ellN logN b v c κ)
+    (RootIndexed.stepFieldLaw (Root := Fin m) μ) (P.capacityEvent N ellN)ᶜ ≤
+      (m : ℝ≥0∞) *
+        (∑ k : Fin (ellN + 1),
+          if (k : ℕ) ≤ ell then pFirst (k : ℕ) else
+            ENNReal.ofReal (Real.exp
+              (rightTailPositiveAWindowUpper ell ellN logN b v c κ ell +
+                rightTailPositiveAWindowUpper ell ellN logN b v c κ (k : ℕ))) *
+              (if (c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ))) ^ (2 + p) ≤
+                  (((k : ℕ) - ell : ℕ) : ℝ) then
+                ENNReal.ofReal (Real.exp
+                  (-target * sigma ^ 2 * (((k : ℕ) - ell : ℕ) : ℝ) /
+                    (c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ))) ^ 2))
+              else 1)) / (N + 1 : ℕ)) := by
+  obtain ⟨delta0', hdelta0', hAH⟩ :=
+    iidSequenceLaw_rightTailPositiveASecondStageDrawdown_le_of_ah
+      ν hspine hsigma hB hcontinuous hmeasurable κ c target blockTarget p
+      hκ hc htarget htargetBlock hblockTarget hp
+  refine ⟨delta0', hdelta0', ?_⟩
+  intro hscale
+  let width : ℝ := c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ))
+  have hwidthLarge : delta0' ≤ width := by simpa [width] using hscale
+  let pSecond : ℕ → ℝ≥0∞ := fun k =>
+    if width ^ (2 + p) ≤ ((k - ell : ℕ) : ℝ) then
+      ENNReal.ofReal (Real.exp
+        (-target * sigma ^ 2 * ((k - ell : ℕ) : ℝ) / width ^ 2))
+    else 1
+  have hdrawdown : ∀ k : Fin (ellN + 1), ell < (k : ℕ) →
+      iidSequenceLaw ν
+        (ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.noLargeDropEndpointBelowEvent
+          ((k : ℕ) - ell) width
+          (rightTailPositiveADrift ell ellN κ c ((k : ℕ) - ell) + width)) ≤
+        pSecond (k : ℕ) := by
+    intro k hk
+    have hkN : (k : ℕ) ≤ ellN := by omega
+    have hd : (k : ℕ) - ell ≤ ellN - ell := by omega
+    by_cases hlong : width ^ (2 + p) ≤ (((k : ℕ) - ell : ℕ) : ℝ)
+    · have hbound := hAH ell ellN ((k : ℕ) - ell) hellN hd hwidthLarge hlong
+      simpa [pSecond, width, hlong] using hbound
+    · have hprob : iidSequenceLaw ν
+          (ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.noLargeDropEndpointBelowEvent
+            ((k : ℕ) - ell) width
+            (rightTailPositiveADrift ell ellN κ c ((k : ℕ) - ell) + width)) ≤ 1 := by
+        calc
+          _ ≤ iidSequenceLaw ν Set.univ := measure_mono (Set.subset_univ _)
+          _ = 1 := measure_univ
+      simpa [pSecond, width, hlong] using hprob
+  have hcap :=
+    measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhaseOfDrawdownBounds
+      m ell ellN N logN b v c κ hell hellN hb hlog hκ hvb hc hvc μ hboundary
+      ν hν pFirst pSecond hfirstPath hdrawdown
+  simpa [pSecond, width] using hcap
+
+/-- With `κ` chosen as the Aïdékon--Hu rate coefficient, long-prefix terms
+in the capacity sum reduce to the first-stage offset plus one tube width.
+Only short prefixes retain their generation-specific endpoint weight. -/
+theorem measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhaseOfAHDrawdown_canceled
+    (m ell ellN N : ℕ) (logN b v c κ : ℝ)
+    [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
+    [Countable (RootIndexed.TreeNode (Fin m) ℕ)]
+    [DecidableEq (RootIndexed.TreeNode (Fin m) ℕ)]
+    (hell : 0 < ell) (hellN : ell < ellN)
+    (hb : 0 ≤ b) (hlog : 0 ≤ logN) (hκ : 0 ≤ κ) (hvb : v ≤ b)
+    (hc : 0 < c) (hvc : v ≤ c)
+    (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
+    (hboundary : HasBoundaryNormalization realPotential μ)
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (hν : ν = tiltedPotentialLaw realPotential (-1) μ)
+    {sigma : ℝ}
+    (hspine : ProbabilityTheory.IsCenteredSecondMoment ν (sigma ^ 2))
+    (hsigma : 0 < sigma)
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+    [IsProbabilityMeasure P] {B : NNReal → Ω → ℝ}
+    (hB : IsPreBrownianReal B P)
+    (hcontinuous : ∀ ω, Continuous (B · ω))
+    (hmeasurable : ∀ t, Measurable (B t))
+    (target blockTarget p : ℝ)
+    (htarget : 0 < target) (htargetBlock : target < blockTarget)
+    (hblockTarget : blockTarget < Real.pi ^ 2 / 2) (hp : 0 < p)
+    (pFirst : ℕ → ℝ≥0∞)
+    (hfirstPath : ∀ k : Fin (ellN + 1), (k : ℕ) ≤ ell →
+      RandomWalk.restartedWindowProbability
+        (tiltedIncrementFieldLaw realPotential μ) ell
+        (rightTailPositiveARestartedWindow ell ellN logN b v c κ)
+        (k : ℕ) 0 ≤ pFirst (k : ℕ))
+    (hκrate : κ = target * sigma ^ 2) :
+    ∃ delta0 : ℝ, 0 < delta0 ∧
+      (delta0 ≤ c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)) →
+    let window := rightTailPositiveARestartedWindow ell ellN logN b v c κ
+    let upper := rightTailPositiveAWindowUpper ell ellN logN b v c κ
+    let P := RootIndexed.CausalPopulation.ofRestartedRealPositionSets
+      (fun _ : Fin m => (0 : ℝ)) id measurable_id
+      (RootIndexed.initialPopulation (α := ℕ) (Finset.univ : Finset (Fin m)))
+      (by
+        intro q hq
+        rcases RootIndexed.mem_initialPopulation_iff.mp hq with ⟨r, _hr, rfl⟩
+        simp) ell window
+      (measurableSet_rightTailPositiveARestartedWindow ell ellN logN b v c κ)
+      upper (rightTailPositiveARestartedWindow_subset_Iic_upper
+        ell ellN logN b v c κ)
+    (RootIndexed.stepFieldLaw (Root := Fin m) μ) (P.capacityEvent N ellN)ᶜ ≤
+      (m : ℝ≥0∞) *
+        (∑ k : Fin (ellN + 1),
+          if (k : ℕ) ≤ ell then pFirst (k : ℕ) else
+            if (c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ))) ^ (2 + p) ≤
+                (((k : ℕ) - ell : ℕ) : ℝ) then
+              ENNReal.ofReal (Real.exp
+                ((-b + v) * logN +
+                  c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ))))
+            else ENNReal.ofReal (Real.exp
+              (rightTailPositiveAWindowUpper ell ellN logN b v c κ ell +
+                rightTailPositiveAWindowUpper ell ellN logN b v c κ (k : ℕ)))) /
+          (N + 1 : ℕ)) := by
+  obtain ⟨delta0, hdelta0, hcapacity⟩ :=
+    measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhaseOfAHDrawdown
+      m ell ellN N logN b v c κ hell hellN hb hlog hκ hvb hc hvc μ hboundary
+      ν hν hspine hsigma hB hcontinuous hmeasurable target blockTarget p
+      htarget htargetBlock hblockTarget hp pFirst hfirstPath
+  refine ⟨delta0, hdelta0, ?_⟩
+  intro hscale
+  have hbound := hcapacity hscale
+  let width : ℝ := c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ))
+  have hsum :
+      (∑ k : Fin (ellN + 1),
+        if (k : ℕ) ≤ ell then pFirst (k : ℕ) else
+          ENNReal.ofReal (Real.exp
+            (rightTailPositiveAWindowUpper ell ellN logN b v c κ ell +
+              rightTailPositiveAWindowUpper ell ellN logN b v c κ (k : ℕ))) *
+            (if width ^ (2 + p) ≤ (((k : ℕ) - ell : ℕ) : ℝ) then
+              ENNReal.ofReal (Real.exp
+                (-target * sigma ^ 2 * (((k : ℕ) - ell : ℕ) : ℝ) /
+                  width ^ 2))
+            else 1)) ≤
+      ∑ k : Fin (ellN + 1),
+        if (k : ℕ) ≤ ell then pFirst (k : ℕ) else
+          if width ^ (2 + p) ≤ (((k : ℕ) - ell : ℕ) : ℝ) then
+            ENNReal.ofReal (Real.exp
+              ((-b + v) * logN + width))
+          else ENNReal.ofReal (Real.exp
+            (rightTailPositiveAWindowUpper ell ellN logN b v c κ ell +
+              rightTailPositiveAWindowUpper ell ellN logN b v c κ (k : ℕ))) := by
+    apply Finset.sum_le_sum
+    intro k _hk
+    by_cases hkle : (k : ℕ) ≤ ell
+    · simp [hkle]
+    · have hk : ell < (k : ℕ) := Nat.lt_of_not_ge hkle
+      by_cases hlong : width ^ (2 + p) ≤ (((k : ℕ) - ell : ℕ) : ℝ)
+      · have hcancel := rightTailPositiveAWindowWeightedAH_le
+          ell ellN (k : ℕ) logN b v c κ target sigma hellN hvc hc hk
+          (by omega) hκrate
+        simpa [width, Nat.not_le_of_gt hk, hlong] using hcancel
+      · simp [width, Nat.not_le_of_gt hk, hlong]
+  calc
+    _ ≤ (m : ℝ≥0∞) *
+        (∑ k : Fin (ellN + 1),
+          if (k : ℕ) ≤ ell then pFirst (k : ℕ) else
+            ENNReal.ofReal (Real.exp
+              (rightTailPositiveAWindowUpper ell ellN logN b v c κ ell +
+                rightTailPositiveAWindowUpper ell ellN logN b v c κ (k : ℕ))) *
+              (if width ^ (2 + p) ≤ (((k : ℕ) - ell : ℕ) : ℝ) then
+                ENNReal.ofReal (Real.exp
+                  (-target * sigma ^ 2 * (((k : ℕ) - ell : ℕ) : ℝ) /
+                    width ^ 2))
+              else 1)) / (N + 1 : ℕ) := by
+          simpa [width] using hbound
+    _ ≤ (m : ℝ≥0∞) *
+        (∑ k : Fin (ellN + 1),
+          if (k : ℕ) ≤ ell then pFirst (k : ℕ) else
+            if width ^ (2 + p) ≤ (((k : ℕ) - ell : ℕ) : ℝ) then
+              ENNReal.ofReal (Real.exp ((-b + v) * logN + width))
+            else ENNReal.ofReal (Real.exp
+              (rightTailPositiveAWindowUpper ell ellN logN b v c κ ell +
+                rightTailPositiveAWindowUpper ell ellN logN b v c κ (k : ℕ)))) /
+          (N + 1 : ℕ) := by
+          apply ENNReal.div_le_div_right
+          exact mul_le_mul_of_nonneg_left hsum (by positivity)
+    _ = _ := by simp [width]
+
+/-- The polynomial killed-capacity estimate with an externally supplied
+uniform Aïdékon--Hu threshold.  Keeping the threshold explicit lets the
+logarithmic-scale argument use one value for every sample size. -/
+theorem measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhaseOfAHPolynomialInput_of_uniformAH
+    (m ell ellN N : ℕ) (logN b v c κ : ℝ)
+    [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
+    [Countable (RootIndexed.TreeNode (Fin m) ℕ)]
+    [DecidableEq (RootIndexed.TreeNode (Fin m) ℕ)]
+    (hell : 0 < ell) (hellN : ell < ellN)
+    (hb : 0 ≤ b) (hlog : 0 ≤ logN) (hκ : 0 ≤ κ) (hvb : v ≤ b)
+    (hc : 0 < c) (hvc : v ≤ c)
+    (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
+    (hboundary : HasBoundaryNormalization realPotential μ)
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (hν : ν = tiltedPotentialLaw realPotential (-1) μ)
+    {sigma : ℝ} (target p : ℝ) (hκrate : κ = target * sigma ^ 2)
+    (delta0 : ℝ)
+    (hAH : ∀ ell' ellN' d : ℕ, ell' < ellN' → d ≤ ellN' - ell' →
+      delta0 ≤ c * (((ellN' - ell' : ℕ) : ℝ) ^ (3⁻¹ : ℝ)) →
+      (c * (((ellN' - ell' : ℕ) : ℝ) ^ (3⁻¹ : ℝ))) ^ (2 + p) ≤ (d : ℝ) →
+      iidSequenceLaw ν
+        (ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.noLargeDropEndpointBelowEvent
+          d (c * (((ellN' - ell' : ℕ) : ℝ) ^ (3⁻¹ : ℝ)))
+          (rightTailPositiveADrift ell' ellN' κ c d +
+            c * (((ellN' - ell' : ℕ) : ℝ) ^ (3⁻¹ : ℝ)))) ≤
+        ENNReal.ofReal (Real.exp
+          (-target * sigma ^ 2 * (d : ℝ) /
+            (c * (((ellN' - ell' : ℕ) : ℝ) ^ (3⁻¹ : ℝ))) ^ 2)))
+    (hscale : delta0 ≤ c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)))
+    :
+    let window := rightTailPositiveARestartedWindow ell ellN logN b v c κ
+    let upper := rightTailPositiveAWindowUpper ell ellN logN b v c κ
+    let P := RootIndexed.CausalPopulation.ofRestartedRealPositionSets
+      (fun _ : Fin m => (0 : ℝ)) id measurable_id
+      (RootIndexed.initialPopulation (α := ℕ) (Finset.univ : Finset (Fin m)))
+      (by
+        intro q hq
+        rcases RootIndexed.mem_initialPopulation_iff.mp hq with ⟨r, _hr, rfl⟩
+        simp) ell window
+      (measurableSet_rightTailPositiveARestartedWindow ell ellN logN b v c κ)
+      upper (rightTailPositiveARestartedWindow_subset_Iic_upper
+        ell ellN logN b v c κ)
+    (RootIndexed.stepFieldLaw (Root := Fin m) μ) (P.capacityEvent N ellN)ᶜ ≤
+      (m : ℝ≥0∞) *
+        (((ell + 1 : ℕ) : ℝ≥0∞) +
+          ((ellN - ell : ℕ) : ℝ≥0∞) *
+            ENNReal.ofReal (Real.exp
+              ((-b + v) * logN +
+                c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)) +
+                κ * c ^ p * (((ellN - ell : ℕ) : ℝ) ^ (p / 3))))) /
+          (N + 1 : ℕ) := by
+  let width : ℝ := c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ))
+  have htilted : IsProbabilityMeasure (tiltedIncrementFieldLaw realPotential μ) :=
+    tiltedIncrementFieldLaw_isProbability realPotential μ hboundary
+  have hfirstPath : ∀ k : Fin (ellN + 1), (k : ℕ) ≤ ell →
+      RandomWalk.restartedWindowProbability
+        (tiltedIncrementFieldLaw realPotential μ) ell
+        (rightTailPositiveARestartedWindow ell ellN logN b v c κ)
+        (k : ℕ) 0 ≤ 1 := by
+    intro k _hk
+    calc
+      _ ≤ (tiltedIncrementFieldLaw realPotential μ) Set.univ := by
+        unfold RandomWalk.restartedWindowProbability
+        exact measure_mono (Set.subset_univ _)
+      _ = 1 := htilted.measure_univ
+  let pSecond : ℕ → ℝ≥0∞ := fun k =>
+    if width ^ (2 + p) ≤ ((k - ell : ℕ) : ℝ) then
+      ENNReal.ofReal (Real.exp
+        (-target * sigma ^ 2 * ((k - ell : ℕ) : ℝ) / width ^ 2))
+    else 1
+  have hdrawdown : ∀ k : Fin (ellN + 1), ell < (k : ℕ) →
+      iidSequenceLaw ν
+        (ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.noLargeDropEndpointBelowEvent
+          ((k : ℕ) - ell) width
+          (rightTailPositiveADrift ell ellN κ c ((k : ℕ) - ell) + width)) ≤
+        pSecond (k : ℕ) := by
+    intro k hk
+    have hkN : (k : ℕ) ≤ ellN := by omega
+    have hd : (k : ℕ) - ell ≤ ellN - ell := by omega
+    by_cases hlong : width ^ (2 + p) ≤ (((k : ℕ) - ell : ℕ) : ℝ)
+    · have hbound := hAH ell ellN ((k : ℕ) - ell) hellN hd
+        (by simpa [width] using hscale) (by simpa [width] using hlong)
+      simpa [pSecond, width, hlong] using hbound
+    · have hprob : iidSequenceLaw ν
+          (ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.noLargeDropEndpointBelowEvent
+            ((k : ℕ) - ell) width
+            (rightTailPositiveADrift ell ellN κ c ((k : ℕ) - ell) + width)) ≤ 1 := by
+        calc
+          _ ≤ iidSequenceLaw ν Set.univ := measure_mono (Set.subset_univ _)
+          _ = 1 := measure_univ
+      simpa [pSecond, width, hlong] using hprob
+  have hcapacity :=
+    measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhaseOfDrawdownBounds
+      m ell ellN N logN b v c κ hell hellN hb hlog hκ hvb hc hvc μ hboundary
+      ν hν (fun _ : ℕ => 1) pSecond hfirstPath hdrawdown
+  have hsum :
+      (∑ k : Fin (ellN + 1),
+        if (k : ℕ) ≤ ell then 1 else
+          ENNReal.ofReal (Real.exp
+            (rightTailPositiveAWindowUpper ell ellN logN b v c κ ell +
+              rightTailPositiveAWindowUpper ell ellN logN b v c κ (k : ℕ))) *
+            (if width ^ (2 + p) ≤ (((k : ℕ) - ell : ℕ) : ℝ) then
+              ENNReal.ofReal (Real.exp
+                (-target * sigma ^ 2 * (((k : ℕ) - ell : ℕ) : ℝ) / width ^ 2))
+            else 1)) ≤
+      ((ell + 1 : ℕ) : ℝ≥0∞) +
+        ((ellN - ell : ℕ) : ℝ≥0∞) *
+          ENNReal.ofReal (Real.exp
+            ((-b + v) * logN + width +
+              κ * c ^ p * (((ellN - ell : ℕ) : ℝ) ^ (p / 3)))) := by
+    calc
+      _ ≤ ∑ k : Fin (ellN + 1),
+          if (k : ℕ) ≤ ell then 1 else
+            if width ^ (2 + p) ≤ (((k : ℕ) - ell : ℕ) : ℝ) then
+              ENNReal.ofReal (Real.exp ((-b + v) * logN + width))
+            else ENNReal.ofReal (Real.exp
+              (rightTailPositiveAWindowUpper ell ellN logN b v c κ ell +
+                rightTailPositiveAWindowUpper ell ellN logN b v c κ (k : ℕ))) := by
+        apply Finset.sum_le_sum
+        intro k _hk
+        by_cases hkle : (k : ℕ) ≤ ell
+        · simp [hkle]
+        · have hk : ell < (k : ℕ) := Nat.lt_of_not_ge hkle
+          by_cases hlong : width ^ (2 + p) ≤ (((k : ℕ) - ell : ℕ) : ℝ)
+          · have hcancel := rightTailPositiveAWindowWeightedAH_le
+              ell ellN (k : ℕ) logN b v c κ target sigma hellN hvc hc hk
+              (by omega) hκrate
+            simpa [width, Nat.not_le_of_gt hk, hlong] using hcancel
+          · have hd : (((k : ℕ) - ell : ℕ) : ℝ) ≤ width ^ (2 + p) :=
+              le_of_not_ge hlong
+            have hdrift := rightTailPositiveADrift_le_shortPrefix_power
+              ell ellN ((k : ℕ) - ell) κ c p hellN hκ hc
+                (by simpa [width] using hd)
+            have hupper := rightTailPositiveAWindowUpper_le_generationDrift_add_width
+              ell ellN (k : ℕ) logN b v c κ hellN hvc hk (by omega)
+            have hcutoff := rightTailPositiveAWindowUpper_at_cutoff
+              ell ellN logN b v c κ
+            have hexponent :
+                rightTailPositiveAWindowUpper ell ellN logN b v c κ ell +
+                  rightTailPositiveAWindowUpper ell ellN logN b v c κ (k : ℕ) ≤
+                (-b + v) * logN + width +
+                  κ * c ^ p * (((ellN - ell : ℕ) : ℝ) ^ (p / 3)) := by
+              rw [hcutoff]
+              dsimp [width]
+              linarith
+            simpa [hkle, hlong, width] using
+              (ENNReal.ofReal_le_ofReal (Real.exp_le_exp.mpr hexponent))
+      _ ≤ _ := by
+        simpa [width] using rightTailPositiveA_canceledAH_sum_le
+          ell ellN logN b v c κ p hellN hκ hc hvc
+  calc
+    _ ≤ (m : ℝ≥0∞) *
+        (∑ k : Fin (ellN + 1),
+          if (k : ℕ) ≤ ell then 1 else
+            ENNReal.ofReal (Real.exp
+              (rightTailPositiveAWindowUpper ell ellN logN b v c κ ell +
+                rightTailPositiveAWindowUpper ell ellN logN b v c κ (k : ℕ))) *
+              (if width ^ (2 + p) ≤ (((k : ℕ) - ell : ℕ) : ℝ) then
+                ENNReal.ofReal (Real.exp
+                  (-target * sigma ^ 2 * (((k : ℕ) - ell : ℕ) : ℝ) / width ^ 2))
+              else 1)) / (N + 1 : ℕ) := by
+          simpa [pSecond, width] using hcapacity
+    _ ≤ (m : ℝ≥0∞) *
+        (((ell + 1 : ℕ) : ℝ≥0∞) +
+          ((ellN - ell : ℕ) : ℝ≥0∞) *
+            ENNReal.ofReal (Real.exp
+              ((-b + v) * logN + width +
+                κ * c ^ p * (((ellN - ell : ℕ) : ℝ) ^ (p / 3))))) /
+          (N + 1 : ℕ) := by
+          apply ENNReal.div_le_div_right
+          exact mul_le_mul_of_nonneg_left hsum (by positivity)
+    _ = _ := by simp [width]
+
+/-- Combining the generation-wise capacity estimate with the canceled AH sum
+gives the finite-scale bound used for the first term in (4.15). -/
+theorem measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhaseOfAHPolynomialInput
+    (m ell ellN N : ℕ) (logN b v c κ : ℝ)
+    [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
+    [Countable (RootIndexed.TreeNode (Fin m) ℕ)]
+    [DecidableEq (RootIndexed.TreeNode (Fin m) ℕ)]
+    (hell : 0 < ell) (hellN : ell < ellN)
+    (hb : 0 ≤ b) (hlog : 0 ≤ logN) (hκ : 0 ≤ κ) (hvb : v ≤ b)
+    (hc : 0 < c) (hvc : v ≤ c)
+    (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
+    (hboundary : HasBoundaryNormalization realPotential μ)
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (hν : ν = tiltedPotentialLaw realPotential (-1) μ)
+    {sigma : ℝ}
+    (hspine : ProbabilityTheory.IsCenteredSecondMoment ν (sigma ^ 2))
+    (hsigma : 0 < sigma)
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+    [IsProbabilityMeasure P] {B : NNReal → Ω → ℝ}
+    (hB : IsPreBrownianReal B P)
+    (hcontinuous : ∀ ω, Continuous (B · ω))
+    (hmeasurable : ∀ t, Measurable (B t))
+    (target blockTarget p : ℝ)
+    (htarget : 0 < target) (htargetBlock : target < blockTarget)
+    (hblockTarget : blockTarget < Real.pi ^ 2 / 2)
+    (hp : 0 < p)
+    (hκrate : κ = target * sigma ^ 2) :
+    ∃ delta0 : ℝ, 0 < delta0 ∧
+      (delta0 ≤ c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)) →
+    let window := rightTailPositiveARestartedWindow ell ellN logN b v c κ
+    let upper := rightTailPositiveAWindowUpper ell ellN logN b v c κ
+    let P := RootIndexed.CausalPopulation.ofRestartedRealPositionSets
+      (fun _ : Fin m => (0 : ℝ)) id measurable_id
+      (RootIndexed.initialPopulation (α := ℕ) (Finset.univ : Finset (Fin m)))
+      (by
+        intro q hq
+        rcases RootIndexed.mem_initialPopulation_iff.mp hq with ⟨r, _hr, rfl⟩
+        simp) ell window
+      (measurableSet_rightTailPositiveARestartedWindow ell ellN logN b v c κ)
+      upper (rightTailPositiveARestartedWindow_subset_Iic_upper
+        ell ellN logN b v c κ)
+    (RootIndexed.stepFieldLaw (Root := Fin m) μ) (P.capacityEvent N ellN)ᶜ ≤
+      (m : ℝ≥0∞) *
+        (((ell + 1 : ℕ) : ℝ≥0∞) +
+          ((ellN - ell : ℕ) : ℝ≥0∞) *
+            ENNReal.ofReal (Real.exp
+              ((-b + v) * logN +
+                c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)) +
+                κ * c ^ p * (((ellN - ell : ℕ) : ℝ) ^ (p / 3))))) /
+          (N + 1 : ℕ)) := by
+  have htilted : IsProbabilityMeasure (tiltedIncrementFieldLaw realPotential μ) :=
+    tiltedIncrementFieldLaw_isProbability realPotential μ hboundary
+  have hfirstPath : ∀ k : Fin (ellN + 1), (k : ℕ) ≤ ell →
+      RandomWalk.restartedWindowProbability
+        (tiltedIncrementFieldLaw realPotential μ) ell
+        (rightTailPositiveARestartedWindow ell ellN logN b v c κ)
+        (k : ℕ) 0 ≤ 1 := by
+    intro k _hk
+    calc
+      _ ≤ (tiltedIncrementFieldLaw realPotential μ) Set.univ := by
+        unfold RandomWalk.restartedWindowProbability
+        exact measure_mono (Set.subset_univ _)
+      _ = 1 := htilted.measure_univ
+  obtain ⟨delta0, hdelta0, hcapacity⟩ :=
+    measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhaseOfAHDrawdown_canceled
+      m ell ellN N logN b v c κ hell hellN hb hlog hκ hvb hc hvc μ hboundary
+      ν hν hspine hsigma hB hcontinuous hmeasurable target blockTarget p
+      htarget htargetBlock hblockTarget hp (fun _ : ℕ => 1) hfirstPath hκrate
+  refine ⟨delta0, hdelta0, ?_⟩
+  intro hscale
+  have hbound := hcapacity hscale
+  have hsum := rightTailPositiveA_canceledAH_sum_le
+    ell ellN logN b v c κ p hellN hκ hc hvc
+  calc
+    _ ≤ (m : ℝ≥0∞) *
+        (∑ k : Fin (ellN + 1),
+          if (k : ℕ) ≤ ell then 1 else
+            if (c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ))) ^ (2 + p) ≤
+                (((k : ℕ) - ell : ℕ) : ℝ) then
+              ENNReal.ofReal (Real.exp
+                ((-b + v) * logN +
+                  c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ))))
+            else ENNReal.ofReal (Real.exp
+              (rightTailPositiveAWindowUpper ell ellN logN b v c κ ell +
+                rightTailPositiveAWindowUpper ell ellN logN b v c κ (k : ℕ)))) /
+          (N + 1 : ℕ) := by
+          simpa using hbound
+    _ ≤ (m : ℝ≥0∞) *
+        (((ell + 1 : ℕ) : ℝ≥0∞) +
+          ((ellN - ell : ℕ) : ℝ≥0∞) *
+            ENNReal.ofReal (Real.exp
+              ((-b + v) * logN +
+                c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)) +
+                κ * c ^ p * (((ellN - ell : ℕ) : ℝ) ^ (p / 3))))) /
+          (N + 1 : ℕ) := by
+          apply ENNReal.div_le_div_right
+          exact mul_le_mul_of_nonneg_left hsum (by positivity)
+
+
+/-- The finite-scale canceled-AH capacity estimate has polynomial decay when
+the initial root count has exponent `a`, the two multiplicity factors have
+subexponential size, and the combined exponent `a + q` is below one. -/
+theorem eventually_probability_le_polynomial_of_canceledAH_capacity_bound
+    {P : ℕ → ℝ≥0∞} {m ell ellN N : ℕ → ℕ} {E : ℕ → ℝ} {a q : ℝ}
+    (hN : Tendsto N atTop atTop)
+    (horder : ∀ᶠ n : ℕ in atTop, ell n ≤ ellN n)
+    (hfirstCountLog : Tendsto
+      (fun n => Real.log ((ellN n : ℝ) + 1) / Real.log (N n : ℝ))
+      atTop (𝓝 0))
+    (hspanCountLog : Tendsto
+      (fun n => Real.log (((ellN n - ell n : ℕ) : ℝ) + 1) /
+        Real.log (N n : ℝ)) atTop (𝓝 0))
+    (hERate : Tendsto (fun n => E n / Real.log (N n : ℝ)) atTop (𝓝 q))
+    (ha : a < 1) (hmargin : a + q < 1)
+    (hm : ∀ᶠ n : ℕ in atTop, (m n : ℝ) ≤ (N n : ℝ) ^ a)
+    (hraw : ∀ᶠ n : ℕ in atTop,
+      P n ≤ (m n : ℝ≥0∞) *
+        (((ell n + 1 : ℕ) : ℝ≥0∞) +
+          ((ellN n - ell n : ℕ) : ℝ≥0∞) *
+            ENNReal.ofReal (Real.exp (E n))) /
+        (N n + 1 : ℕ)) :
+    ∃ epsilon : ℝ, 0 < epsilon ∧ ∀ᶠ n : ℕ in atTop,
+      P n ≤ ENNReal.ofReal
+        (Real.exp (-epsilon * Real.log (N n : ℝ))) := by
+  let L : ℕ → ℝ := fun n => Real.log (N n : ℝ)
+  let D : ℕ → ℕ := fun n => ellN n - ell n
+  have hNcast : Tendsto (fun n => (N n : ℝ)) atTop atTop :=
+    tendsto_natCast_atTop_atTop.comp hN
+  have hL : Tendsto L atTop atTop := Real.tendsto_log_atTop.comp hNcast
+  have hLpos : ∀ᶠ n : ℕ in atTop, 0 < L n := hL.eventually_gt_atTop 0
+  have hfirstRate : Tendsto
+      (fun n => (a * L n + Real.log ((ellN n : ℝ) + 1)) / L n)
+      atTop (𝓝 a) := by
+    have haConst : Tendsto (fun _ : ℕ => a) atTop (𝓝 a) := tendsto_const_nhds
+    have hsum := haConst.add (by simpa [L] using hfirstCountLog)
+    have heq : (fun n => (a * L n + Real.log ((ellN n : ℝ) + 1)) / L n)
+        =ᶠ[atTop] fun n => a + Real.log ((ellN n : ℝ) + 1) / L n := by
+      filter_upwards [hLpos] with n hn
+      field_simp
+    simpa using hsum.congr' heq.symm
+  have hsecondRate : Tendsto
+      (fun n => (a * L n + Real.log ((D n : ℝ) + 1) + E n) / L n)
+      atTop (𝓝 (a + q)) := by
+    have haConst : Tendsto (fun _ : ℕ => a) atTop (𝓝 a) := tendsto_const_nhds
+    have hsum := (haConst.add (by simpa [L, D] using hspanCountLog)).add
+      (by simpa [L] using hERate)
+    have heq :
+        (fun n => (a * L n + Real.log ((D n : ℝ) + 1) + E n) / L n)
+          =ᶠ[atTop] fun n => a + Real.log ((D n : ℝ) + 1) / L n + E n / L n := by
+      filter_upwards [hLpos] with n hn
+      field_simp
+    simpa using hsum.congr' heq.symm
+  let epsilon : ℝ := min (1 - a) (1 - (a + q)) / 4
+  have hepsilon : 0 < epsilon := by
+    dsimp [epsilon]
+    positivity
+  have hfirstRateGap : a < 1 - 2 * epsilon := by
+    dsimp [epsilon]
+    have hmin : min (1 - a) (1 - (a + q)) ≤ 1 - a := min_le_left _ _
+    linarith
+  have hsecondRateGap : a + q < 1 - 2 * epsilon := by
+    dsimp [epsilon]
+    have hmin : min (1 - a) (1 - (a + q)) ≤ 1 - (a + q) :=
+      min_le_right _ _
+    linarith
+  have hfirstRateEvent : ∀ᶠ n : ℕ in atTop,
+      (a * L n + Real.log ((ellN n : ℝ) + 1)) / L n < 1 - 2 * epsilon :=
+    hfirstRate.eventually (Iio_mem_nhds hfirstRateGap)
+  have hsecondRateEvent : ∀ᶠ n : ℕ in atTop,
+      (a * L n + Real.log ((D n : ℝ) + 1) + E n) / L n <
+        1 - 2 * epsilon :=
+    hsecondRate.eventually (Iio_mem_nhds hsecondRateGap)
+  have hlogLarge : ∀ᶠ n : ℕ in atTop, Real.log 2 < epsilon * L n := by
+    have hmul : Tendsto (fun n => epsilon * L n) atTop atTop :=
+      hL.const_mul_atTop hepsilon
+    exact hmul.eventually_gt_atTop (Real.log 2)
+  have hpowN : ∀ᶠ n : ℕ in atTop, (N n : ℝ) = Real.exp (L n) := by
+    filter_upwards [hLpos] with n hn
+    have hnNat : 0 < N n := by
+      by_contra h
+      have hz : N n = 0 := Nat.eq_zero_of_not_pos h
+      simp [L, hz] at hn
+    have hnReal : 0 < (N n : ℝ) := by exact_mod_cast hnNat
+    simpa [L] using (Real.exp_log hnReal).symm
+  refine ⟨epsilon, hepsilon, ?_⟩
+  filter_upwards [hraw, horder, hm, hfirstRateEvent, hsecondRateEvent,
+    hlogLarge, hLpos, hpowN] with n hrawn hord hmn hrateFirst hrateSecond
+      hlogLarg hLn hpowNn
+  have hNpos : 0 < (N n : ℝ) := by
+    have hnNat : 0 < N n := by
+      by_contra h
+      have hz : N n = 0 := Nat.eq_zero_of_not_pos h
+      simp [L, hz] at hLn
+    exact_mod_cast hnNat
+  have hmENN : (m n : ℝ≥0∞) ≤ ENNReal.ofReal (Real.exp (a * L n)) := by
+    calc
+      (m n : ℝ≥0∞) = ENNReal.ofReal (m n : ℝ) :=
+        (ENNReal.ofReal_natCast (m n)).symm
+      _ ≤ ENNReal.ofReal ((N n : ℝ) ^ a) := ENNReal.ofReal_le_ofReal hmn
+      _ = ENNReal.ofReal (Real.exp (a * L n)) := by
+        rw [Real.rpow_def_of_pos hNpos]
+        simp [L, mul_comm]
+  have hfirstCount : ((ell n + 1 : ℕ) : ℝ≥0∞) ≤
+      ENNReal.ofReal (Real.exp (Real.log ((ellN n : ℝ) + 1))) := by
+    rw [← ENNReal.ofReal_natCast]
+    apply ENNReal.ofReal_le_ofReal
+    rw [Real.exp_log (by positivity : 0 < (ellN n : ℝ) + 1)]
+    exact_mod_cast Nat.add_le_add_right hord 1
+  have hspanCount : (D n : ℝ≥0∞) ≤
+      ENNReal.ofReal (Real.exp (Real.log ((D n : ℝ) + 1))) := by
+    rw [← ENNReal.ofReal_natCast]
+    apply ENNReal.ofReal_le_ofReal
+    rw [Real.exp_log (by positivity : 0 < (D n : ℝ) + 1)]
+    exact_mod_cast Nat.le_add_right (D n) 1
+  have hfirstNum : (m n : ℝ≥0∞) * ((ell n + 1 : ℕ) : ℝ≥0∞) ≤
+      ENNReal.ofReal (Real.exp
+        (a * L n + Real.log ((ellN n : ℝ) + 1))) := by
+    calc
+      _ ≤ ENNReal.ofReal (Real.exp (a * L n)) *
+          ((ell n + 1 : ℕ) : ℝ≥0∞) :=
+        mul_le_mul_of_nonneg_right hmENN (by positivity)
+      _ ≤ ENNReal.ofReal (Real.exp (a * L n)) *
+          ENNReal.ofReal (Real.exp (Real.log ((ellN n : ℝ) + 1))) :=
+        mul_le_mul_of_nonneg_left hfirstCount (by positivity)
+      _ = ENNReal.ofReal (Real.exp
+          (a * L n + Real.log ((ellN n : ℝ) + 1))) := by
+        rw [← ENNReal.ofReal_mul (Real.exp_nonneg _)]
+        congr 1
+        rw [← Real.exp_add]
+  have hsecondNum : (m n : ℝ≥0∞) *
+        ((D n : ℝ≥0∞) * ENNReal.ofReal (Real.exp (E n))) ≤
+      ENNReal.ofReal (Real.exp
+        (a * L n + Real.log ((D n : ℝ) + 1) + E n)) := by
+    calc
+      _ ≤ ENNReal.ofReal (Real.exp (a * L n)) *
+          ((D n : ℝ≥0∞) * ENNReal.ofReal (Real.exp (E n))) :=
+        mul_le_mul_of_nonneg_right hmENN (by positivity)
+      _ ≤ ENNReal.ofReal (Real.exp (a * L n)) *
+          (ENNReal.ofReal (Real.exp (Real.log ((D n : ℝ) + 1))) *
+            ENNReal.ofReal (Real.exp (E n))) := by
+        exact mul_le_mul_of_nonneg_left
+          (mul_le_mul_of_nonneg_right hspanCount (by positivity)) (by positivity)
+      _ = ENNReal.ofReal (Real.exp
+          (a * L n + Real.log ((D n : ℝ) + 1) + E n)) := by
+        calc
+          _ = ENNReal.ofReal (Real.exp (a * L n) *
+              (Real.exp (Real.log ((D n : ℝ) + 1)) * Real.exp (E n))) := by
+                rw [← ENNReal.ofReal_mul (Real.exp_nonneg _),
+                  ← ENNReal.ofReal_mul (Real.exp_nonneg _)]
+          _ = _ := by
+                rw [← Real.exp_add, ← Real.exp_add]
+                ring
+  have hfirstExp : Real.exp
+      (a * L n + Real.log ((ellN n : ℝ) + 1)) ≤
+        Real.exp ((1 - 2 * epsilon) * L n) :=
+    Real.exp_le_exp.mpr ((div_lt_iff₀ hLn).mp hrateFirst).le
+  have hsecondExp : Real.exp
+      (a * L n + Real.log ((D n : ℝ) + 1) + E n) ≤
+        Real.exp ((1 - 2 * epsilon) * L n) :=
+    Real.exp_le_exp.mpr ((div_lt_iff₀ hLn).mp hrateSecond).le
+  have hnumerator : (m n : ℝ≥0∞) *
+      (((ell n + 1 : ℕ) : ℝ≥0∞) +
+        (D n : ℝ≥0∞) * ENNReal.ofReal (Real.exp (E n))) ≤
+      ENNReal.ofReal (Real.exp ((1 - epsilon) * L n)) := by
+    calc
+      _ = (m n : ℝ≥0∞) * ((ell n + 1 : ℕ) : ℝ≥0∞) +
+          (m n : ℝ≥0∞) * ((D n : ℝ≥0∞) * ENNReal.ofReal (Real.exp (E n))) := by
+            rw [mul_add]
+      _ ≤ ENNReal.ofReal (Real.exp ((1 - 2 * epsilon) * L n)) +
+          ENNReal.ofReal (Real.exp ((1 - 2 * epsilon) * L n)) :=
+        add_le_add
+          (le_trans hfirstNum (ENNReal.ofReal_le_ofReal hfirstExp))
+          (le_trans hsecondNum (ENNReal.ofReal_le_ofReal hsecondExp))
+      _ = ENNReal.ofReal
+          (2 * Real.exp ((1 - 2 * epsilon) * L n)) := by
+        rw [← ENNReal.ofReal_add (Real.exp_nonneg _) (Real.exp_nonneg _)]
+        congr 1
+        ring
+      _ ≤ ENNReal.ofReal (Real.exp ((1 - epsilon) * L n)) := by
+        apply ENNReal.ofReal_le_ofReal
+        have hlarge : 2 ≤ Real.exp (epsilon * L n) := by
+          have hexp : Real.exp (Real.log 2) < Real.exp (epsilon * L n) :=
+            Real.exp_lt_exp.mpr hlogLarg
+          have htwo : Real.exp (Real.log 2) = (2 : ℝ) := by
+            rw [Real.exp_log (by norm_num : (0 : ℝ) < 2)]
+          rw [htwo] at hexp
+          exact hexp.le
+        calc
+          2 * Real.exp ((1 - 2 * epsilon) * L n) ≤
+              Real.exp (epsilon * L n) *
+                Real.exp ((1 - 2 * epsilon) * L n) :=
+            mul_le_mul_of_nonneg_right hlarge (Real.exp_nonneg _)
+          _ = Real.exp ((1 - epsilon) * L n) := by
+            rw [← Real.exp_add]
+            congr 1
+            ring
+  have hdenOrder : (N n : ℝ≥0∞) ≤ (N n + 1 : ℕ) := by
+    exact_mod_cast Nat.le_succ (N n)
+  have hNcastENN : (N n : ℝ≥0∞) = ENNReal.ofReal (Real.exp (L n)) := by
+    rw [← ENNReal.ofReal_natCast, hpowNn]
+  have htargetN : ENNReal.ofReal (Real.exp (-epsilon * L n)) *
+      (N n : ℝ≥0∞) = ENNReal.ofReal (Real.exp ((1 - epsilon) * L n)) := by
+    rw [hNcastENN, ← ENNReal.ofReal_mul (Real.exp_nonneg _)]
+    congr 1
+    rw [← Real.exp_add]
+    congr 1
+    ring
+  have htargetDen : ENNReal.ofReal (Real.exp ((1 - epsilon) * L n)) ≤
+      ENNReal.ofReal (Real.exp (-epsilon * L n)) * (N n + 1 : ℕ) := by
+    rw [← htargetN]
+    exact mul_le_mul_of_nonneg_left hdenOrder (by positivity)
+  have hden0 : ((N n + 1 : ℕ) : ℝ≥0∞) ≠ 0 := by
+    exact_mod_cast Nat.succ_ne_zero (N n)
+  have hdenTop : ((N n + 1 : ℕ) : ℝ≥0∞) ≠ ∞ := ENNReal.natCast_ne_top _
+  have hquotient :
+      (m n : ℝ≥0∞) *
+          (((ell n + 1 : ℕ) : ℝ≥0∞) +
+            (D n : ℝ≥0∞) * ENNReal.ofReal (Real.exp (E n))) /
+        (N n + 1 : ℕ) ≤ ENNReal.ofReal (Real.exp (-epsilon * L n)) :=
+    (ENNReal.div_le_iff_le_mul (Or.inl hden0) (Or.inl hdenTop)).2
+      (le_trans hnumerator htargetDen)
+  calc
+    P n ≤ (m n : ℝ≥0∞) *
+        (((ell n + 1 : ℕ) : ℝ≥0∞) +
+          (D n : ℝ≥0∞) * ENNReal.ofReal (Real.exp (E n))) /
+        (N n + 1 : ℕ) := by simpa [D] using hrawn
+    _ ≤ ENNReal.ofReal (Real.exp (-epsilon * Real.log (N n : ℝ))) := by
+      simpa [L] using hquotient
+
+/-- The failure probability for the paper's two-stage killed population. -/
+noncomputable def rightTailPositiveAKilledCapacityFailureProbability
+    (m ell ellN horizon : ℕ) (logN b v c κ : ℝ)
+    (μ : Measure (Step ℕ ℝ)) : ℝ≥0∞ := by
+  let window := rightTailPositiveARestartedWindow ell ellN logN b v c κ
+  let upper := rightTailPositiveAWindowUpper ell ellN logN b v c κ
+  let population := RootIndexed.CausalPopulation.ofRestartedRealPositionSets
+    (fun _ : Fin m => (0 : ℝ)) id measurable_id
+    (RootIndexed.initialPopulation (α := ℕ) (Finset.univ : Finset (Fin m)))
+    (by
+      intro q hq
+      rcases RootIndexed.mem_initialPopulation_iff.mp hq with ⟨r, _hr, rfl⟩
+      simp) ell window
+    (measurableSet_rightTailPositiveARestartedWindow ell ellN logN b v c κ)
+    upper (rightTailPositiveARestartedWindow_subset_Iic_upper
+      ell ellN logN b v c κ)
+  exact (RootIndexed.stepFieldLaw (Root := Fin m) μ)
+    (population.capacityEvent horizon ellN)ᶜ
+
+/-- Under the logarithmic cutoffs used in the paper, the first term in
+(4.15) has polynomial decay whenever its two exponent margins are positive.
+The uniform Aïdékon--Hu threshold is chosen once and then used for every `N`. -/
+theorem eventually_rightTailPositiveAKilledCapacityFailure_le_polynomial_of_logarithmicScales
+    {N : ℕ → ℕ} (hN : Tendsto N atTop atTop)
+    (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
+    (hboundary : HasBoundaryNormalization realPotential μ)
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (hν : ν = tiltedPotentialLaw realPotential (-1) μ)
+    {sigma : ℝ}
+    (hspine : ProbabilityTheory.IsCenteredSecondMoment ν (sigma ^ 2))
+    (hsigma : 0 < sigma)
+    {Ω : Type*} [MeasurableSpace Ω] {brownianMeasure : Measure Ω}
+    [IsProbabilityMeasure brownianMeasure] {B : NNReal → Ω → ℝ}
+    (hB : IsPreBrownianReal B brownianMeasure)
+    (hcontinuous : ∀ ω, Continuous (B · ω))
+    (hmeasurable : ∀ t, Measurable (B t))
+    {a t b v c κ target blockTarget p : ℝ}
+    (_ha : 0 < a) (ha1 : a < 1) (ht : 0 < t)
+    (hb : 0 ≤ b) (hvb : v ≤ b) (hc : 0 < c) (hvc : v ≤ c)
+    (hκ : 0 ≤ κ) (hκrate : κ = target * sigma ^ 2)
+    (htarget : 0 < target) (htargetBlock : target < blockTarget)
+    (hblockTarget : blockTarget < Real.pi ^ 2 / 2)
+    (hp : 0 < p) (hpHalf : p < 1 / 2)
+    (hmargin : a + (-b + v + c * (t ^ (3⁻¹ : ℝ))) < 1) :
+    ∃ epsilon : ℝ, 0 < epsilon ∧ ∀ᶠ n : ℕ in atTop,
+      rightTailPositiveAKilledCapacityFailureProbability
+        (Nat.floor ((N n : ℝ) ^ a))
+        (rightTailPositiveAFirstCutoff N n)
+        (logarithmicHorizon N t n) (N n)
+        (logarithmOfSampleSize N n) b v c κ μ ≤
+        ENNReal.ofReal (Real.exp (-epsilon * Real.log (N n : ℝ))) := by
+  let m : ℕ → ℕ := fun n => Nat.floor ((N n : ℝ) ^ a)
+  let ell : ℕ → ℕ := rightTailPositiveAFirstCutoff N
+  let ellN : ℕ → ℕ := logarithmicHorizon N t
+  let D : ℕ → ℕ := fun n => ellN n - ell n
+  let L : ℕ → ℝ := logarithmOfSampleSize N
+  let E : ℕ → ℝ := fun n =>
+    (-b + v) * L n + c * ((D n : ℝ) ^ (3⁻¹ : ℝ)) +
+      κ * c ^ p * ((D n : ℝ) ^ (p / 3))
+  let P : ℕ → ℝ≥0∞ := fun n =>
+    rightTailPositiveAKilledCapacityFailureProbability
+      (m n) (ell n) (ellN n) (N n) (L n) b v c κ μ
+  have hL : Tendsto L atTop atTop := by
+    exact Real.tendsto_log_atTop.comp
+      (tendsto_natCast_atTop_atTop.comp hN)
+  have hLpos : ∀ᶠ n : ℕ in atTop, 0 < L n := hL.eventually_gt_atTop 0
+  have hellPos : ∀ᶠ n : ℕ in atTop, 0 < ell n := by
+    simpa [ell] using
+      (tendsto_rightTailPositiveAFirstCutoff_atTop hN).eventually_gt_atTop 0
+  have hellN : ∀ᶠ n : ℕ in atTop, ell n < ellN n := by
+    simpa [ell, ellN] using eventually_rightTailPositiveAFirstCutoff_lt_horizon hN ht
+  have horder : ∀ᶠ n : ℕ in atTop, ell n ≤ ellN n :=
+    hellN.mono (fun _ h => Nat.le_of_lt h)
+  have hcutoffScale : Tendsto (fun n => (ell n : ℝ) / L n ^ 3)
+      atTop (𝓝 0) := by
+    simpa [ell, L] using tendsto_rightTailPositiveAFirstCutoff_div_logCube hN
+  have hhorizonScale : Tendsto (fun n => (ellN n : ℝ) / L n ^ 3)
+      atTop (𝓝 t) := by
+    simpa [ellN, L] using logarithmicHorizon_div_logCube_tendsto hN ht
+  have hDScale : Tendsto (fun n => (D n : ℝ) / L n ^ 3)
+      atTop (𝓝 t) := by
+    apply tendsto_rightTailPositiveASpan_cubicRatio_of_stageRatios hL
+      hcutoffScale hhorizonScale
+    exact horder
+  have hfirstCountLog : Tendsto
+      (fun n => Real.log ((ellN n : ℝ) + 1) / L n) atTop (𝓝 0) := by
+    simpa using tendsto_rightTailPositiveA_log_add_one_div_log_of_cubic_scale
+      hL (fun _ => Nat.cast_nonneg _) hhorizonScale ht
+  have hspanCountLog : Tendsto
+      (fun n => Real.log ((D n : ℝ) + 1) / L n) atTop (𝓝 0) := by
+    simpa using tendsto_rightTailPositiveA_log_add_one_div_log_of_cubic_scale
+      hL (fun _ => Nat.cast_nonneg _) hDScale ht
+  have hERate : Tendsto (fun n => E n / L n) atTop
+      (𝓝 (-b + v + c * (t ^ (3⁻¹ : ℝ)))) := by
+    simpa [E, D, L, ell, ellN] using
+      tendsto_rightTailPositiveAAHExponent_div_log_of_logarithmicScales
+        hN ht (by linarith : p < 1)
+  have hspan : Tendsto (fun n => (D n : ℝ)) atTop atTop := by
+    simpa [D, ell, ellN] using
+      tendsto_rightTailPositiveASpan_atTop_of_logarithmicScales hN ht
+  obtain ⟨delta0, hdelta0, hAH⟩ :=
+    iidSequenceLaw_rightTailPositiveASecondStageDrawdown_le_of_ah
+      ν hspine hsigma hB hcontinuous hmeasurable κ c target blockTarget p
+      hκ hc htarget htargetBlock hblockTarget hp
+  have hscale := eventually_rightTailPositiveASecondStageAHScale
+    D c p delta0 hc (by linarith : p < 1) hspan
+  have htiltedLog : ∀ᶠ n : ℕ in atTop, 0 ≤ L n :=
+    hLpos.mono (fun _ h => h.le)
+  have hm : ∀ᶠ n : ℕ in atTop, (m n : ℝ) ≤ (N n : ℝ) ^ a := by
+    filter_upwards [hN.eventually_gt_atTop 0] with n hn
+    dsimp [m]
+    exact Nat.floor_le (by positivity : 0 ≤ (N n : ℝ) ^ a)
+  have hraw : ∀ᶠ n : ℕ in atTop,
+      P n ≤ (m n : ℝ≥0∞) *
+        (((ell n + 1 : ℕ) : ℝ≥0∞) +
+          ((D n : ℕ) : ℝ≥0∞) * ENNReal.ofReal (Real.exp (E n))) /
+          (N n + 1 : ℕ) := by
+    filter_upwards [hscale, hellPos, hellN, htiltedLog] with n hscale hnell hnorder hnlog
+    have hcap :=
+      measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhaseOfAHPolynomialInput_of_uniformAH
+        (m n) (ell n) (ellN n) (N n) (L n) b v c κ
+        hnell hnorder hb hnlog hκ hvb hc hvc μ hboundary ν hν target p hκrate
+        delta0 hAH hscale.1
+    simpa [P, rightTailPositiveAKilledCapacityFailureProbability, m, ell,
+      ellN, D, E, L] using hcap
+  exact eventually_probability_le_polynomial_of_canceledAH_capacity_bound
+    (P := P) (m := m) (ell := ell) (ellN := ellN) (N := N) (E := E)
+    hN horder (by simpa [L, logarithmOfSampleSize] using hfirstCountLog)
+    (by simpa [L, D, logarithmOfSampleSize] using hspanCountLog)
+    (by simpa [L, logarithmOfSampleSize] using hERate) ha1 hmargin hm hraw
+
+/-- Choose the corridor parameters from the paper's endpoint gap and apply
+the logarithmic-scale killed-capacity estimate. -/
+theorem exists_rightTailPositiveAKilledCapacityFailure_le_polynomial_of_endpointGap
+    {N : ℕ → ℕ} (hN : Tendsto N atTop atTop)
+    (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
+    (hboundary : HasBoundaryNormalization realPotential μ)
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (hν : ν = tiltedPotentialLaw realPotential (-1) μ)
+    {sigma : ℝ}
+    (hspine : ProbabilityTheory.IsCenteredSecondMoment ν (sigma ^ 2))
+    (hsigma : 0 < sigma)
+    {Ω : Type*} [MeasurableSpace Ω] {brownianMeasure : Measure Ω}
+    [IsProbabilityMeasure brownianMeasure] {B : NNReal → Ω → ℝ}
+    (hB : IsPreBrownianReal B brownianMeasure)
+    (hcontinuous : ∀ ω, Continuous (B · ω))
+    (hmeasurable : ∀ t, Measurable (B t))
+    {a t zeta : ℝ} (ha : 0 < a) (ha1 : a < 1) (ht : 0 < t)
+    (hgap : -a + Real.pi ^ 2 / 2 * sigma ^ 2 * t < zeta) :
+    ∃ b v c epsilon : ℝ,
+      0 < b ∧ b < a ∧ 0 < v ∧ v < b ∧ v ≤ c ∧ 0 < c ∧
+      c < (t ^ (3⁻¹ : ℝ))⁻¹ ∧
+      c * t ^ (3⁻¹ : ℝ) + (a - b) + v < 1 ∧
+      0 < epsilon ∧ ∀ᶠ n : ℕ in atTop,
+        rightTailPositiveAKilledCapacityFailureProbability
+          (Nat.floor ((N n : ℝ) ^ a))
+          (rightTailPositiveAFirstCutoff N n)
+          (logarithmicHorizon N t n) (N n)
+          (logarithmOfSampleSize N n) b v c
+          ((3 * Real.pi ^ 2 / 8) * sigma ^ 2) μ ≤
+          ENNReal.ofReal (Real.exp (-epsilon * Real.log (N n : ℝ))) := by
+  let r : ℝ := t ^ (3⁻¹ : ℝ)
+  have hr : 0 < r := Real.rpow_pos_of_pos ht _
+  have hrcube : r ^ 3 = t := by
+    dsimp [r]
+    calc
+      (t ^ (3⁻¹ : ℝ)) ^ 3 = t ^ ((3⁻¹ : ℝ) * 3) := by
+        rw [← Real.rpow_natCast, ← Real.rpow_mul ht.le]
+        congr 1
+      _ = t := by
+        rw [show (3⁻¹ : ℝ) * 3 = 1 by norm_num, Real.rpow_one]
+  obtain ⟨b, v, c, hb, hba, hv, hvb, hvc, hc, hcr, hmargin, _hendpoint⟩ :=
+    exists_rightTailPositiveAParameters a t r (sigma ^ 2) zeta
+      ha ht hr hrcube (sq_nonneg sigma) hgap
+  let target : ℝ := 3 * Real.pi ^ 2 / 8
+  let blockTarget : ℝ := 7 * Real.pi ^ 2 / 16
+  have htarget : 0 < target := by
+    dsimp [target]
+    positivity
+  have htargetBlock : target < blockTarget := by
+    dsimp [target, blockTarget]
+    nlinarith [sq_pos_of_pos Real.pi_pos]
+  have hblockTarget : blockTarget < Real.pi ^ 2 / 2 := by
+    dsimp [blockTarget]
+    nlinarith [sq_pos_of_pos Real.pi_pos]
+  let κ : ℝ := target * sigma ^ 2
+  have hκ : 0 ≤ κ := by dsimp [κ, target]; positivity
+  have hκrate : κ = target * sigma ^ 2 := rfl
+  have hmargin' : a + (-b + v + c * (t ^ (3⁻¹ : ℝ))) < 1 := by
+    have hmain : c * r + (a - b) + v < 1 := by simpa [r] using hmargin
+    have hmain' : a + (-b + v + c * r) < 1 := by nlinarith [hmain]
+    simpa [r] using hmain'
+  have hp : 0 < (1 / 4 : ℝ) := by norm_num
+  have hpHalf : (1 / 4 : ℝ) < 1 / 2 := by norm_num
+  obtain ⟨epsilon, hepsilon, hcapacity⟩ :=
+    eventually_rightTailPositiveAKilledCapacityFailure_le_polynomial_of_logarithmicScales
+      hN μ hboundary ν hν hspine hsigma hB hcontinuous hmeasurable
+      (a := a) (t := t) (b := b) (v := v) (c := c) (κ := κ)
+      (target := target) (blockTarget := blockTarget) (p := 1 / 4)
+      ha ha1 ht hb.le (by linarith [hvb]) hc hvc hκ hκrate
+      htarget htargetBlock hblockTarget hp hpHalf hmargin'
+  refine ⟨b, v, c, epsilon, hb, hba, hv, hvb, hvc, hc, ?_, ?_, hepsilon, hcapacity⟩
+  · simpa [r] using hcr
+  · simpa [r] using hmargin
+
+/-- The first-stage generations in the two-phase estimate contribute only
+their number of terms. Thus their path probabilities can be bounded by one,
+leaving the Aïdékon--Hu estimate to control the restarted second stage. -/
+theorem measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhaseOfAHDrawdown_unitFirstStage
+    (m ell ellN N : ℕ) (logN b v c κ : ℝ)
+    [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
+    [Countable (RootIndexed.TreeNode (Fin m) ℕ)]
+    [DecidableEq (RootIndexed.TreeNode (Fin m) ℕ)]
+    (hell : 0 < ell) (hellN : ell < ellN)
+    (hb : 0 ≤ b) (hlog : 0 ≤ logN) (hκ : 0 ≤ κ) (hvb : v ≤ b)
+    (hc : 0 < c) (hvc : v ≤ c)
+    (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
+    (hboundary : HasBoundaryNormalization realPotential μ)
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (hν : ν = tiltedPotentialLaw realPotential (-1) μ)
+    {sigma : ℝ}
+    (hspine : ProbabilityTheory.IsCenteredSecondMoment ν (sigma ^ 2))
+    (hsigma : 0 < sigma)
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+    [IsProbabilityMeasure P] {B : NNReal → Ω → ℝ}
+    (hB : IsPreBrownianReal B P)
+    (hcontinuous : ∀ ω, Continuous (B · ω))
+    (hmeasurable : ∀ t, Measurable (B t))
+    (target blockTarget p : ℝ)
+    (htarget : 0 < target) (htargetBlock : target < blockTarget)
+    (hblockTarget : blockTarget < Real.pi ^ 2 / 2) (hp : 0 < p) :
+    ∃ delta0 : ℝ, 0 < delta0 ∧
+      (delta0 ≤ c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)) →
+    let window := rightTailPositiveARestartedWindow ell ellN logN b v c κ
+    let upper := rightTailPositiveAWindowUpper ell ellN logN b v c κ
+    let P := RootIndexed.CausalPopulation.ofRestartedRealPositionSets
+      (fun _ : Fin m => (0 : ℝ)) id measurable_id
+      (RootIndexed.initialPopulation (α := ℕ) (Finset.univ : Finset (Fin m)))
+      (by
+        intro q hq
+        rcases RootIndexed.mem_initialPopulation_iff.mp hq with ⟨r, _hr, rfl⟩
+        simp) ell window
+      (measurableSet_rightTailPositiveARestartedWindow ell ellN logN b v c κ)
+      upper (rightTailPositiveARestartedWindow_subset_Iic_upper
+        ell ellN logN b v c κ)
+    (RootIndexed.stepFieldLaw (Root := Fin m) μ) (P.capacityEvent N ellN)ᶜ ≤
+      (m : ℝ≥0∞) *
+        (∑ k : Fin (ellN + 1),
+          if (k : ℕ) ≤ ell then 1 else
+            ENNReal.ofReal (Real.exp
+              (rightTailPositiveAWindowUpper ell ellN logN b v c κ ell +
+                rightTailPositiveAWindowUpper ell ellN logN b v c κ (k : ℕ))) *
+              (if (c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ))) ^ (2 + p) ≤
+                  (((k : ℕ) - ell : ℕ) : ℝ) then
+                ENNReal.ofReal (Real.exp
+                  (-target * sigma ^ 2 * (((k : ℕ) - ell : ℕ) : ℝ) /
+                    (c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ))) ^ 2))
+              else 1)) / (N + 1 : ℕ)) := by
+  have htilted : IsProbabilityMeasure (tiltedIncrementFieldLaw realPotential μ) :=
+    tiltedIncrementFieldLaw_isProbability realPotential μ hboundary
+  have hfirstPath : ∀ k : Fin (ellN + 1), (k : ℕ) ≤ ell →
+      RandomWalk.restartedWindowProbability
+        (tiltedIncrementFieldLaw realPotential μ) ell
+        (rightTailPositiveARestartedWindow ell ellN logN b v c κ)
+        (k : ℕ) 0 ≤ 1 := by
+    intro k hk
+    calc
+      _ ≤ (tiltedIncrementFieldLaw realPotential μ) Set.univ := by
+        unfold RandomWalk.restartedWindowProbability
+        exact measure_mono (Set.subset_univ _)
+      _ = 1 := htilted.measure_univ
+  obtain ⟨delta0, hdelta0, hcapacity⟩ :=
+    measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhaseOfAHDrawdown
+      m ell ellN N logN b v c κ hell hellN hb hlog hκ hvb hc hvc μ hboundary
+      ν hν hspine hsigma hB hcontinuous hmeasurable target blockTarget p
+      htarget htargetBlock hblockTarget hp (fun _ : ℕ => 1)
+      (by
+        intro k hk
+        simpa using hfirstPath k hk)
+  refine ⟨delta0, hdelta0, ?_⟩
+  intro hscale
+  simpa using hcapacity hscale
+
+/-- Both phases of the paper's killed-capacity estimate can be supplied by
+the uniform Aïdékon--Hu bound.  The first phase uses its actual prefix
+generation, while the restarted phase uses its actual post-cutoff length. -/
+theorem exists_measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhaseOfAHBothStages
+    (m ell ellN N : ℕ) (logN b v c κ : ℝ)
+    [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
+    [Countable (RootIndexed.TreeNode (Fin m) ℕ)]
+    [DecidableEq (RootIndexed.TreeNode (Fin m) ℕ)]
+    (hell : 0 < ell) (hellN : ell < ellN)
+    (hb : 0 ≤ b) (hlog : 0 ≤ logN) (hκ : 0 ≤ κ) (hvb : v ≤ b)
+    (hc : 0 < c) (hvc : v ≤ c)
+    (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
+    (hboundary : HasBoundaryNormalization realPotential μ)
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (hν : ν = tiltedPotentialLaw realPotential (-1) μ)
+    {sigma : ℝ}
+    (hspine : ProbabilityTheory.IsCenteredSecondMoment ν (sigma ^ 2))
+    (hsigma : 0 < sigma)
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+    [IsProbabilityMeasure P] {B : NNReal → Ω → ℝ}
+    (hB : IsPreBrownianReal B P)
+    (hcontinuous : ∀ ω, Continuous (B · ω))
+    (hmeasurable : ∀ t, Measurable (B t))
+    (endpointRatio target blockTarget p : ℝ)
+    (hEndpointRatio : 0 < endpointRatio)
+    (htarget : 0 < target) (htargetBlock : target < blockTarget)
+    (hblockTarget : blockTarget < Real.pi ^ 2 / 2)
+    (hp : 0 < p) :
+    ∃ deltaFirst : ℝ,
+      0 < deltaFirst ∧
+      (deltaFirst ≤ b * logN →
+        ∃ deltaSecond : ℝ, 0 < deltaSecond ∧
+        (deltaSecond ≤ c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)) →
+        let firstWidth : ℝ := b * logN
+        let spanWidth : ℝ := c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ))
+        let pFirst : ℕ → ℝ≥0∞ := fun k =>
+          if firstWidth ^ (2 + p) ≤ (k : ℝ) then
+            ENNReal.ofReal (Real.exp
+              (-target * sigma ^ 2 * (k : ℝ) / firstWidth ^ 2))
+          else 1
+        let window := rightTailPositiveARestartedWindow ell ellN logN b v c κ
+        let upper := rightTailPositiveAWindowUpper ell ellN logN b v c κ
+        let P := RootIndexed.CausalPopulation.ofRestartedRealPositionSets
+          (fun _ : Fin m => (0 : ℝ)) id measurable_id
+          (RootIndexed.initialPopulation (α := ℕ) (Finset.univ : Finset (Fin m)))
+          (by
+            intro q hq
+            rcases RootIndexed.mem_initialPopulation_iff.mp hq with
+              ⟨r, _hr, rfl⟩
+            simp) ell window
+          (measurableSet_rightTailPositiveARestartedWindow ell ellN logN b v c κ)
+          upper (rightTailPositiveARestartedWindow_subset_Iic_upper
+            ell ellN logN b v c κ)
+        (RootIndexed.stepFieldLaw (Root := Fin m) μ)
+          (P.capacityEvent N ellN)ᶜ ≤
+          (m : ℝ≥0∞) *
+            (∑ k : Fin (ellN + 1),
+              if (k : ℕ) ≤ ell then pFirst (k : ℕ) else
+                ENNReal.ofReal (Real.exp
+                  (rightTailPositiveAWindowUpper ell ellN logN b v c κ ell +
+                    rightTailPositiveAWindowUpper ell ellN logN b v c κ (k : ℕ))) *
+                (if spanWidth ^ (2 + p) ≤
+                    (((k : ℕ) - ell : ℕ) : ℝ) then
+                  ENNReal.ofReal (Real.exp
+                    (-target * sigma ^ 2 * (((k : ℕ) - ell : ℕ) : ℝ) /
+                      spanWidth ^ 2))
+                else 1)) / (N + 1 : ℕ))) := by
+  obtain ⟨deltaFirst, hdeltaFirst, hfirstAH⟩ :=
+    exists_uniform_iidSequenceLaw_firstStageCorridor_le_ah
+      ν hspine hsigma hB hcontinuous hmeasurable endpointRatio target
+      blockTarget p hEndpointRatio htarget htargetBlock hblockTarget hp
+  refine ⟨deltaFirst, hdeltaFirst, ?_⟩
+  intro hfirstWidth
+  have hfirstPath : ∀ k : Fin (ellN + 1), (k : ℕ) ≤ ell →
+      RandomWalk.restartedWindowProbability
+        (tiltedIncrementFieldLaw realPotential μ) ell
+        (rightTailPositiveARestartedWindow ell ellN logN b v c κ)
+        (k : ℕ) 0 ≤
+      if (b * logN) ^ (2 + p) ≤ (k : ℝ) then
+        ENNReal.ofReal (Real.exp
+          (-target * sigma ^ 2 * (k : ℝ) / (b * logN) ^ 2))
+      else 1 := by
+    intro k hk
+    have hsubset := rightTailPositiveARestartedWindow_event_subset_firstStagePrefix
+      ell ellN (k : ℕ) logN b v c κ hlog hvb hk
+    rw [show tiltedIncrementFieldLaw realPotential μ = iidSequenceLaw ν by
+      rw [hν]
+      rfl]
+    by_cases hlong : (b * logN) ^ (2 + p) ≤ (k : ℝ)
+    · have hwidthPos : 0 < b * logN := lt_of_lt_of_le hdeltaFirst hfirstWidth
+      have hcorridor := hfirstAH (k : ℕ) (b * logN) hwidthPos hfirstWidth hlong
+      unfold RandomWalk.restartedWindowProbability
+      have hlower : -(b * logN) = -b * logN := by ring
+      rw [hlower] at hcorridor
+      simpa [hlong, neg_mul] using (measure_mono hsubset).trans hcorridor
+    · have hprob :
+          RandomWalk.restartedWindowProbability (iidSequenceLaw ν) ell
+            (rightTailPositiveARestartedWindow ell ellN logN b v c κ)
+            (k : ℕ) 0 ≤ 1 := by
+        unfold RandomWalk.restartedWindowProbability
+        calc
+          _ ≤ (iidSequenceLaw ν) Set.univ := measure_mono (Set.subset_univ _)
+          _ = 1 := measure_univ
+      simpa [hlong] using hprob
+  obtain ⟨deltaSecond, hdeltaSecond, hcapacity⟩ :=
+    measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhaseOfAHDrawdown
+      m ell ellN N logN b v c κ hell hellN hb hlog hκ hvb hc hvc μ hboundary
+      ν hν hspine hsigma hB hcontinuous hmeasurable target blockTarget p
+      htarget htargetBlock hblockTarget hp (fun k =>
+        if (b * logN) ^ (2 + p) ≤ (k : ℝ) then
+          ENNReal.ofReal (Real.exp
+            (-target * sigma ^ 2 * (k : ℝ) / (b * logN) ^ 2))
+        else 1) hfirstPath
+  refine ⟨deltaSecond, hdeltaSecond, ?_⟩
+  intro hsecondWidth
+  have hbound := hcapacity hsecondWidth
+  simpa using hbound
+
+/-- The two-stage capacity estimate now accepts a one-stage horizontal-tube
+bound as its remaining random-walk input. -/
+theorem measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhaseOfHorizontalTubeBound
+    (m ell ellN N : ℕ) (logN b v c κ a : ℝ)
+    [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
+    [Countable (RootIndexed.TreeNode (Fin m) ℕ)]
+    [DecidableEq (RootIndexed.TreeNode (Fin m) ℕ)]
+    (hell : 0 < ell) (hellN : ell < ellN)
+    (hb : 0 ≤ b) (hlog : 0 ≤ logN) (hκ : 0 ≤ κ) (hvb : v ≤ b)
+    (ha : 0 < a) (ha1 : a ≤ 1)
+    (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
+    (hboundary : HasBoundaryNormalization realPotential μ)
+    (pSecond : ℝ≥0∞)
+    (hhorizontal : horizontalTubeProbability
+      (tiltedIncrementFieldLaw realPotential μ) a (b * logN / a) ell ≤ pSecond) :
+    let window := rightTailPositiveARestartedWindow ell ellN logN b v c κ
+    let upper := rightTailPositiveAWindowUpper ell ellN logN b v c κ
+    let P := RootIndexed.CausalPopulation.ofRestartedRealPositionSets
+      (fun _ : Fin m => (0 : ℝ)) id measurable_id
+      (RootIndexed.initialPopulation (α := ℕ) (Finset.univ : Finset (Fin m)))
+      (by
+        intro q hq
+        rcases RootIndexed.mem_initialPopulation_iff.mp hq with ⟨r, _hr, rfl⟩
+        simp) ell window
+      (measurableSet_rightTailPositiveARestartedWindow ell ellN logN b v c κ)
+      upper (rightTailPositiveARestartedWindow_subset_Iic_upper
+        ell ellN logN b v c κ)
+    (RootIndexed.stepFieldLaw (Root := Fin m) μ) (P.capacityEvent N ellN)ᶜ ≤
+      (m : ℝ≥0∞) *
+        (((ell + 1 : ℕ) : ℝ≥0∞) +
+          ((ellN - ell : ℕ) : ℝ≥0∞) *
+            (ENNReal.ofReal (Real.exp
+              ((-b + v) * logN + (κ / c ^ 2 + max c v) *
+                (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)))) * pSecond)) /
+          (N + 1 : ℕ) := by
+  have hprefix :
+      (tiltedIncrementFieldLaw realPotential μ)
+        {increment : ℕ → ℝ |
+          InClosedInterval (-b * logN) 0 ell 0 increment} ≤ pSecond :=
+    (rightTailPositiveA_firstStage_probability_le_horizontalTubeProbability
+      ell logN b a hb hlog ha ha1 (tiltedIncrementFieldLaw realPotential μ)).trans
+        hhorizontal
+  exact measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhaseOfFirstStageBound
+    m ell ellN N logN b v c κ hell hellN hb hlog hκ hvb μ hboundary
+    pSecond hprefix
+
+end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail
