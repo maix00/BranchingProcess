@@ -22,12 +22,66 @@ definition, and forgetting marks leaves it unchanged.
 
 namespace Combinatorics.Branching
 
+private theorem finite_list_length_eq {α : Type*} [Finite α] (n : ℕ) :
+    Finite {u : List α // u.length = n} := by
+  classical
+  refine Finite.of_injective
+    (fun u : {u : List α // u.length = n} => fun i : Fin n => u.1[i]?) ?_
+  intro u v h
+  apply Subtype.ext
+  refine List.ext_getElem? fun i => ?_
+  by_cases hi : i < n
+  · exact congrFun h ⟨i, hi⟩
+  · rw [List.getElem?_eq_none_iff.mpr (by omega : u.1.length ≤ i),
+      List.getElem?_eq_none_iff.mpr (by omega : v.1.length ≤ i)]
+
 /-- The possibly infinite number of particles present at generation `n`,
 across all labelled initial roots. -/
 noncomputable def RootIndexed.BranchingWalk.generationSize
     {Root α Mark Position : Type*} (β : RootIndexed.BranchingWalk Root α Mark Position)
     (n : ℕ) : ℕ∞ :=
   (survivingParticlesAt β n).encard
+
+/-- Every fixed generation is finite when the child-slot type is finite.
+This is a pathwise combinatorial fact, independent of the offspring law. -/
+theorem RootIndexed.BranchingWalk.generationSlice_finite
+    {α Mark Position : Type*} [Finite α]
+    (β : _root_.Combinatorics.Branching.BranchingWalk α Mark Position) (n : ℕ) :
+    (survivingParticlesAt β n).Finite := by
+  classical
+  have hlist : Finite {u : List α // u.length = n} := finite_list_length_eq n
+  have hlevel : Finite
+      {p : Combinatorics.UlamHarris.RootIndexed.TreeNode PUnit.{1} α //
+        p.2.length = n} := by
+    refine @Finite.of_injective _ _ hlist
+      (fun p => (⟨p.1.2, p.2⟩ : {u : List α // u.length = n})) ?_
+    intro p q hpq
+    apply Subtype.ext
+    have haddr : p.1.2 = q.1.2 := congrArg Subtype.val hpq
+    exact Prod.ext (Subsingleton.elim _ _) haddr
+  have hslice : Finite
+      {p : Combinatorics.UlamHarris.RootIndexed.TreeNode PUnit.{1} α //
+        p ∈ survivingParticlesAt β n} := by
+    refine @Finite.of_injective _ _ hlevel
+      (fun p => (⟨p.1, by
+        simpa [Combinatorics.UlamHarris.RootIndexed.generation] using p.2.2⟩ :
+        {p : Combinatorics.UlamHarris.RootIndexed.TreeNode PUnit.{1} α //
+          p.2.length = n})) ?_
+    intro p q hpq
+    exact Subtype.ext (congrArg
+      (fun q : {p : Combinatorics.UlamHarris.RootIndexed.TreeNode PUnit.{1} α //
+          p.2.length = n} => q.1) hpq)
+  exact Set.finite_coe_iff.mpr hslice
+
+/-- With finitely many child slots, the extended generation count is always
+finite. -/
+theorem RootIndexed.BranchingWalk.generationSize_ne_top_of_finite_slots
+    {α Mark Position : Type*} [Finite α]
+    (β : _root_.Combinatorics.Branching.BranchingWalk α Mark Position) (n : ℕ) :
+    β.generationSize n ≠ ⊤ := by
+  unfold RootIndexed.BranchingWalk.generationSize
+  exact Set.encard_ne_top_iff.mpr
+    (RootIndexed.BranchingWalk.generationSlice_finite β n)
 
 /-- A single-root branching walk has exactly its initial particle in
 generation zero. -/
@@ -99,6 +153,138 @@ theorem RootIndexed.BranchingWalk.generationSize_one_eq_childCount
       exact Prod.ext rfl hu.symm
   }
   exact (Set.encard_congr e).symm
+
+/-- In a single-root walk with finitely many child slots, the next generation is
+the disjoint union of the offspring configurations attached to the current
+generation. This is the pathwise Galton--Watson recursion, before taking any
+expectations. -/
+theorem BranchingWalk.generationSize_succ_eq_sum_childCount
+    {α Mark Position : Type*} [Finite α]
+    (β : BranchingWalk α Mark Position) (n : ℕ) :
+    letI : Fintype {p // p ∈ survivingParticlesAt β n} :=
+      (RootIndexed.BranchingWalk.generationSlice_finite β n).fintype
+    β.generationSize (n + 1) =
+      ∑ p : {p // p ∈ survivingParticlesAt β n},
+        (β.step PUnit.unit p.1.2).childCount := by
+  classical
+  let P := {p // p ∈ survivingParticlesAt β n}
+  let Q := {p // p ∈ survivingParticlesAt β (n + 1)}
+  let C (p : P) :=
+    {i : α // survive (β.step PUnit.unit p.1.2) i}
+  have hPfin : (survivingParticlesAt β n).Finite :=
+    RootIndexed.BranchingWalk.generationSlice_finite β n
+  have hQfin : (survivingParticlesAt β (n + 1)).Finite :=
+    RootIndexed.BranchingWalk.generationSlice_finite β (n + 1)
+  letI : Fintype P := hPfin.fintype
+  letI : Fintype Q := hQfin.fintype
+  letI : ∀ p : P, Fintype (C p) := fun p => Fintype.ofFinite (C p)
+  have hcastVal {p q : P} (h : p = q) (x : C p) :
+      (h ▸ x).val = x.val := by
+    cases h
+    rfl
+  let forward : (Σ p : P, C p) → Q := fun z => by
+    rcases z with ⟨⟨⟨r, u⟩, hp⟩, ⟨i, hi⟩⟩
+    cases r
+    have hp' := (mem_survivingParticlesAt_iff β n (PUnit.unit, u)).mp hp
+    have hparent : surviveAlong (β.step PUnit.unit) [] u :=
+      (mem_survivingParticles_iff_surviveAlong β PUnit.unit u).mp hp'.1
+    refine ⟨(PUnit.unit, u ++ [i]), ?_⟩
+    rw [mem_survivingParticlesAt_iff,
+      mem_survivingParticles_iff_surviveAlong]
+    constructor
+    · rw [surviveAlong_root_append_singleton_iff]
+      exact ⟨hparent, hi⟩
+    · have hlen : u.length = n := by
+        simpa [Combinatorics.UlamHarris.generation] using hp'.2
+      simp [Combinatorics.UlamHarris.generation, hlen]
+  let backward : Q → (Σ p : P, C p) := fun q => by
+    rcases q with ⟨⟨r, u⟩, hq⟩
+    cases r
+    have hlen : u.length = n + 1 := by
+      simpa [Combinatorics.UlamHarris.generation] using hq.2
+    have hidx : n < u.length := by omega
+    have hsurvive : surviveAlong (β.step PUnit.unit) [] u :=
+      (mem_survivingParticles_iff_surviveAlong β PUnit.unit u).mp
+        ((mem_survivingParticlesAt_iff β (n + 1) (PUnit.unit, u)).mp hq).1
+    have hparent : surviveAlong (β.step PUnit.unit) [] (u.take n) := by
+      apply surviveAlong_prefix (β.step PUnit.unit) (u.take n) (u.drop n)
+      rw [List.take_append_drop]
+      exact hsurvive
+    have hchild : survive (β.step PUnit.unit (u.take n)) u[n] :=
+      (surviveAlong_root_iff_forall_fin (β.step PUnit.unit) u).mp hsurvive
+        ⟨n, hidx⟩
+    refine ⟨⟨(PUnit.unit, u.take n), ?_⟩, ⟨u[n], hchild⟩⟩
+    rw [mem_survivingParticlesAt_iff,
+      mem_survivingParticles_iff_surviveAlong]
+    exact ⟨hparent, by simp [Combinatorics.UlamHarris.generation, hlen]⟩
+  let e : (Σ p : P, C p) ≃ Q := {
+    toFun := forward
+    invFun := backward
+    left_inv := by
+      intro z
+      rcases z with ⟨⟨⟨r, u⟩, hp⟩, ⟨i, hi⟩⟩
+      cases r
+      have hlen : u.length = n := by
+        simpa [Combinatorics.UlamHarris.generation] using
+          (mem_survivingParticlesAt_iff β n (PUnit.unit, u)).mp hp |>.2
+      let z' : Σ p : P, C p := ⟨⟨(PUnit.unit, u), hp⟩, ⟨i, hi⟩⟩
+      have hbase : (backward (forward z')).1 = z'.1 := by
+        dsimp [backward, forward]
+        apply Subtype.ext
+        change (PUnit.unit, (u ++ [i]).take n) = (PUnit.unit, u)
+        apply Prod.ext
+        · rfl
+        · simp [hlen]
+      change backward (forward z') = z'
+      refine Sigma.ext hbase ?_
+      have hval : (backward (forward z')).2.val = z'.2.val := by
+        dsimp [backward, forward, z']
+        simp [List.getElem_append_right, hlen]
+      have hcast : hbase ▸ (backward (forward z')).2 = z'.2 := by
+        apply Subtype.ext
+        calc
+          (hbase ▸ (backward (forward z')).2).val =
+              (backward (forward z')).2.val := hcastVal hbase _
+          _ = z'.2.val := hval
+      exact (eqRec_heq hbase (backward (forward z')).2).symm.trans
+        (heq_of_eq hcast)
+    right_inv := by
+      intro q
+      rcases q with ⟨⟨r, u⟩, hq⟩
+      cases r
+      have hlen : u.length = n + 1 := by
+        simpa [Combinatorics.UlamHarris.generation] using hq.2
+      have hidx : n < u.length := by omega
+      apply Subtype.ext
+      dsimp [backward, forward]
+      change (PUnit.unit, u.take n ++ [u[n]]) = (PUnit.unit, u)
+      apply Prod.ext
+      · rfl
+      · calc
+          u.take n ++ [u[n]] = u.take (n + 1) := List.take_concat_get' u n hidx
+          _ = u := by simp [hlen]
+  }
+  have hgen :
+      β.generationSize (n + 1) = (Fintype.card Q : ℕ∞) := by
+    unfold RootIndexed.BranchingWalk.generationSize
+    rw [← Set.coe_fintypeCard (survivingParticlesAt β (n + 1))]
+  have hchild (p : P) :
+      (β.step PUnit.unit p.1.2).childCount = (Fintype.card (C p) : ℕ∞) := by
+    letI : Fintype (Combinatorics.Branching.support
+        (β.step PUnit.unit p.1.2)) :=
+      Fintype.ofFinite _
+    unfold Combinatorics.Branching.Step.childCount
+    rw [← Set.coe_fintypeCard (Combinatorics.Branching.support
+      (β.step PUnit.unit p.1.2))]
+    rfl
+  calc
+    β.generationSize (n + 1) = (Fintype.card Q : ℕ∞) := hgen
+    _ = (Fintype.card (Σ p : P, C p) : ℕ∞) := by
+      exact_mod_cast Fintype.card_congr e.symm
+    _ = ∑ p : P, (Fintype.card (C p) : ℕ∞) := by
+      simp [Fintype.card_sigma]
+    _ = ∑ p : P, (β.step PUnit.unit p.1.2).childCount := by
+      simp_rw [hchild]
 
 /-- Forgetting marks does not change the surviving population at any
 generation. -/
