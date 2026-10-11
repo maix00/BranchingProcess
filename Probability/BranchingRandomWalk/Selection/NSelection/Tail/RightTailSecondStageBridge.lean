@@ -89,7 +89,7 @@ theorem finiteMovingEntrance_and_downwardBridge_mem_affineCorridorThrough
     (horizon prefixLength bridgeLength : ℕ)
     (hpartition : prefixLength + bridgeLength = horizon)
     (entranceScale drift width terminalExtra bridgeLower bridgeUpper
-      bridgeEndpointUpper : ℝ)
+      bridgeEndpointLower bridgeEndpointUpper : ℝ)
     (hscale : 0 < entranceScale) (hdrift : 0 ≤ drift)
     (hentranceWidth : entranceScale ≤ width)
     (hbridgeLower : entranceScale / 3 + bridgeLower ≥
@@ -104,7 +104,7 @@ theorem finiteMovingEntrance_and_downwardBridge_mem_affineCorridorThrough
     (hbridge : Combinatorics.Sequence.blockCoordinates prefixLength
       bridgeLength increment ∈
         finiteCorridorBridgeEvent (n := bridgeLength)
-          bridgeLower bridgeUpper 0 bridgeEndpointUpper) :
+          bridgeLower bridgeUpper bridgeEndpointLower bridgeEndpointUpper) :
     RandomWalk.history horizon 0 increment ∈
       affineCorridorThrough horizon 0 drift width
         (drift * (horizon : ℝ) + terminalExtra) := by
@@ -284,7 +284,7 @@ theorem iidSequenceLaw_measure_ge_mul_of_finiteMovingEntrance_downwardBridge
     (horizon prefixLength bridgeLength : ℕ)
     (hpartition : prefixLength + bridgeLength = horizon)
     (entranceScale drift width terminalExtra bridgeLower bridgeUpper
-      bridgeEndpointUpper : ℝ)
+      bridgeEndpointLower bridgeEndpointUpper : ℝ)
     (hscale : 0 < entranceScale) (hdrift : 0 ≤ drift)
     (hentranceWidth : entranceScale ≤ width)
     (hbridgeLower : entranceScale / 3 + bridgeLower ≥
@@ -300,7 +300,7 @@ theorem iidSequenceLaw_measure_ge_mul_of_finiteMovingEntrance_downwardBridge
     (hbridge : bridgeMass ≤ iidSequenceLaw ν
       {increment | Combinatorics.Sequence.blockCoordinates 0 bridgeLength increment ∈
         finiteCorridorBridgeEvent (n := bridgeLength)
-          bridgeLower bridgeUpper 0 bridgeEndpointUpper}) :
+          bridgeLower bridgeUpper bridgeEndpointLower bridgeEndpointUpper}) :
     entryMass * bridgeMass ≤ iidSequenceLaw ν
       {increment | RandomWalk.history horizon 0 increment ∈
         affineCorridorThrough horizon 0 drift width
@@ -310,7 +310,7 @@ theorem iidSequenceLaw_measure_ge_mul_of_finiteMovingEntrance_downwardBridge
       (drift / entranceScale) 0
   let bridge : Set (Fin bridgeLength → ℝ) :=
     finiteCorridorBridgeEvent (n := bridgeLength)
-      bridgeLower bridgeUpper 0 bridgeEndpointUpper
+      bridgeLower bridgeUpper bridgeEndpointLower bridgeEndpointUpper
   let target : Set (ℕ → ℝ) :=
     {increment | RandomWalk.history horizon 0 increment ∈
       affineCorridorThrough horizon 0 drift width
@@ -327,7 +327,7 @@ theorem iidSequenceLaw_measure_ge_mul_of_finiteMovingEntrance_downwardBridge
     exact hsafe
   have hbridgeMeasurable : MeasurableSet bridge :=
     measurableSet_finiteCorridorBridgeEvent
-      bridgeLower bridgeUpper 0 bridgeEndpointUpper
+      bridgeLower bridgeUpper bridgeEndpointLower bridgeEndpointUpper
   have hfactor := RandomWalk.iidSequenceLaw_measure_inter_prefix_nextBlock
     ν prefixLength bridgeLength entrance bridge hentranceMeasurable hbridgeMeasurable
   have hsubset :
@@ -338,7 +338,8 @@ theorem iidSequenceLaw_measure_ge_mul_of_finiteMovingEntrance_downwardBridge
     intro increment hevent
     exact finiteMovingEntrance_and_downwardBridge_mem_affineCorridorThrough
       horizon prefixLength bridgeLength hpartition entranceScale drift width
-      terminalExtra bridgeLower bridgeUpper bridgeEndpointUpper hscale hdrift
+      terminalExtra bridgeLower bridgeUpper bridgeEndpointLower bridgeEndpointUpper
+      hscale hdrift
       hentranceWidth hbridgeLower hbridgeUpper hterminal increment hevent.1 hevent.2
   calc
     entryMass * bridgeMass ≤
