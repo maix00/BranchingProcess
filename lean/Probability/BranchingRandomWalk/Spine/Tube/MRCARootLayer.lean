@@ -383,6 +383,74 @@ theorem lintegral_generationPrefixObservableSum_eq_mul
           (∫⁻ ω, ∑' u : TreeNode ℕ, A u ω ∂stepFieldLaw μ) := by
       rw [ENNReal.tsum_mul_right, hprefix, mul_comm]
 
+/-- A frontier continuation observable may depend on its ancestor's
+position. A uniform bound in that position lets the position-dependent
+observable be dominated by a fixed offspring observable, which then factors
+from the generation prefix. -/
+theorem lintegral_generationPrefixParameterizedObservableSum_le
+    {X : Type*} [MeasurableSpace X]
+    (φ : Potential X) (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
+    (n : ℕ)
+    (A : TreeNode ℕ → StepField ℕ X → ℝ≥0∞)
+    (position : TreeNode ℕ → StepField ℕ X → ℝ)
+    (g : ℝ → Step ℕ X → ℝ≥0∞)
+    (hAgen : ∀ u, Measurable[generationFiltration (M := Step ℕ X) n]
+      (A u))
+    (hA : ∀ u, Measurable (A u))
+    (hsupport : ∀ u, u.length ≠ n → A u = fun _ => 0)
+    (C : ℝ≥0∞)
+    (hbound : ∀ x ξ, g x ξ ≤ C * crossChildWeight φ ξ) :
+    (∫⁻ ω, ∑' u : TreeNode ℕ,
+      A u ω * g (position u ω) (ω u) ∂stepFieldLaw μ) ≤
+        C * (∫⁻ ξ, crossChildWeight φ ξ ∂μ) *
+          (∫⁻ ω, ∑' u : TreeNode ℕ, A u ω ∂stepFieldLaw μ) := by
+  classical
+  have hpoint (ω : StepField ℕ X) :
+      (∑' u : TreeNode ℕ,
+        A u ω * g (position u ω) (ω u)) ≤
+        ∑' u : TreeNode ℕ,
+          A u ω * (C * crossChildWeight φ (ω u)) := by
+    exact ENNReal.tsum_le_tsum (fun u =>
+      mul_le_mul_of_nonneg_left (hbound (position u ω) (ω u)) (by positivity))
+  have hbase : Measurable (fun ω : StepField ℕ X =>
+      ∑' u : TreeNode ℕ, A u ω * crossChildWeight φ (ω u)) := by
+    apply Measurable.tsum
+    intro u
+    exact (hA u).mul
+      ((crossChildWeight_measurable φ).comp (measurable_pi_apply u))
+  have hmajor (ω : StepField ℕ X) :
+      (∑' u : TreeNode ℕ,
+        A u ω * (C * crossChildWeight φ (ω u))) =
+        C * (∑' u : TreeNode ℕ,
+          A u ω * crossChildWeight φ (ω u)) := by
+    calc
+      _ = ∑' u : TreeNode ℕ,
+          C * (A u ω * crossChildWeight φ (ω u)) := by
+        apply tsum_congr
+        intro u
+        ac_rfl
+      _ = _ := ENNReal.tsum_mul_left
+  calc
+    (∫⁻ ω, ∑' u : TreeNode ℕ,
+        A u ω * g (position u ω) (ω u) ∂stepFieldLaw μ) ≤
+        ∫⁻ ω, ∑' u : TreeNode ℕ,
+          A u ω * (C * crossChildWeight φ (ω u))
+          ∂stepFieldLaw μ := lintegral_mono hpoint
+    _ = C * (∫⁻ ω, ∑' u : TreeNode ℕ,
+          A u ω * crossChildWeight φ (ω u) ∂stepFieldLaw μ) := by
+      calc
+        _ = ∫⁻ ω, C * (∑' u : TreeNode ℕ,
+              A u ω * crossChildWeight φ (ω u)) ∂stepFieldLaw μ := by
+          apply lintegral_congr
+          exact hmajor
+        _ = _ := lintegral_const_mul C hbase
+    _ = C * (∫⁻ ξ, crossChildWeight φ ξ ∂μ) *
+          (∫⁻ ω, ∑' u : TreeNode ℕ, A u ω ∂stepFieldLaw μ) := by
+      rw [lintegral_generationPrefixObservableSum_eq_mul μ n A
+        (crossChildWeight φ) hAgen hA hsupport
+        (crossChildWeight_measurable φ)]
+      ac_rfl
+
 private theorem displaceWith_measurable_generation
     {X : Type*} [MeasurableSpace X]
     (φ : Potential X) (n : ℕ) (v p : TreeNode ℕ)
