@@ -53,7 +53,7 @@ theorem eventually_countableRootEndpointMinimum_sublevel_le_polynomial_of_logari
       (RootIndexed.stepFieldLaw (Root := ℕ)
         (L : Measure (Step ℕ ℝ)))
         {field | @countableRootEndpointMinimum (Nat.floor ((n : ℝ) ^ a)) n
-          (horizon n) (root_address_linear_order (Nat.floor ((n : ℝ) ^ a)))
+          (horizon n) (RootIndexed.addressLinearOrder (Fin (Nat.floor ((n : ℝ) ^ a))) ℕ)
           field ≤ zeta * Real.log (n : ℝ)} ≤
         ENNReal.ofReal (Real.exp (-epsilon * Real.log (n : ℝ))) := by
   let μ : Measure (Step ℕ ℝ) := L
@@ -77,7 +77,7 @@ theorem eventually_countableRootEndpointMinimum_sublevel_le_polynomial_of_logari
   filter_upwards [hfiniteBound, hmPositive,
     hN.eventually_ge_atTop 1] with n hbound hmpos hn
   letI : LinearOrder (RootIndexed.TreeNode (Fin (m n)) ℕ) :=
-    root_address_linear_order (m n)
+      RootIndexed.addressLinearOrder (Fin (m n)) ℕ
   have hminEq :
       (finiteRootStepFieldLaw μ (m n))
         {field | firstNSelectedEndpointMinimum (m n) n (horizon n) field ≤
@@ -95,7 +95,7 @@ theorem eventually_countableRootEndpointMinimum_sublevel_le_polynomial_of_logari
   calc
     (RootIndexed.stepFieldLaw (Root := ℕ) μ)
         {field | @countableRootEndpointMinimum (m n) n (horizon n)
-          (root_address_linear_order (m n)) field ≤
+          (RootIndexed.addressLinearOrder (Fin (m n)) ℕ) field ≤
             zeta * Real.log (n : ℝ)} =
       (finiteRootStepFieldLaw μ (m n))
         {field | firstNSelectedEndpointMinimum (m n) n (horizon n) field ≤
