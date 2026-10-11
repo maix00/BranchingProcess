@@ -15,6 +15,8 @@ public import Probability.Ergodic.Kingman.Core
 public import Combinatorics.BranchingWalk.Selection.NSelection.Speed
 public import Combinatorics.BranchingWalk.Step.Map
 public import Mathlib.MeasureTheory.Order.Group.Lattice
+public import Mathlib.MeasureTheory.Function.UniformIntegrable
+public import Mathlib.Probability.IdentDistrib
 
 /-!
 # Measurable Kingman input for the countable-offspring selection process
@@ -1004,6 +1006,130 @@ theorem repairedInfiniteSelection_tendsto_constant {N : ℕ}
   filter_upwards [hGconv, hc] with ω hω hωc
   simpa [hωc] using hω
 
+/-- The first-row Kingman limit also holds in `L¹` under the same one-step
+leftmost-child moment condition used to prove integrability and the lower
+bound. The proof dominates the normalized endpoint array by averages of the
+i.i.d. generation envelope, obtains uniform integrability from Mathlib's
+uniform-integrability API, and applies Vitali convergence to the almost-sure
+Kingman limit.
+
+This is still the speed result for exactly `N` particles. It does not include
+the paper's extension from an initial population of size `N₀ ≤ N` to size
+`N`; that extension needs a finite-time saturation/restart argument for the
+root-indexed selected-population process. -/
+theorem repairedInfiniteSelection_tendsto_constant_L1_of_leftmostMoment
+    {N : ℕ} (hN : 0 < N) (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
+    (hboundary : HasBoundaryNormalization realPotential μ)
+    (hnonempty : μ nonemptySupport = 1)
+    (hordered : μ (orderedBySteps realPotential) = 1)
+    (hslot : Integrable (fun ξ : Step ℕ ℝ => |value' ξ 0|) μ) :
+    ∃ c : ℝ,
+      (∀ᵐ ω ∂generationEnvironmentLaw μ N,
+        Tendsto
+          (fun n : ℕ => (n : ℝ)⁻¹ *
+            repairedInfiniteSelectionSubadditiveArray hN ω 0 n)
+          atTop (𝓝 c)) ∧
+      Tendsto
+        (fun n : ℕ => eLpNorm
+          (fun ω : GenerationEnvironment N =>
+            (n : ℝ)⁻¹ * repairedInfiniteSelectionSubadditiveArray hN ω 0 n - c)
+          (1 : ℝ≥0∞) (generationEnvironmentLaw μ N))
+        atTop (𝓝 0) := by
+  let ν := generationEnvironmentLaw μ N
+  let D : ℕ → GenerationEnvironment N → ℝ := fun t ω =>
+    infiniteOffspringBatchSlotZeroNorm hN (repairGenerationBatch (ω t))
+  let f : ℕ → GenerationEnvironment N → ℝ := fun n ω =>
+    (n : ℝ)⁻¹ * repairedInfiniteSelectionSubadditiveArray hN ω 0 n
+  let g : ℕ → GenerationEnvironment N → ℝ := fun n ω =>
+    (∑ t ∈ Finset.range n, D t ω) / (n : ℝ)
+  have hν : IsProbabilityMeasure ν := generationEnvironmentLaw_isProbability μ N
+  letI := hν
+  have hDint (t : ℕ) : Integrable (D t) ν := by
+    exact integrable_repairedInfiniteOffspringBatchSlotZeroNorm_at
+      hN μ hboundary hnonempty hslot t
+  have hD0 : MemLp (D 0) (1 : ℝ≥0∞) ν :=
+    MeasureTheory.memLp_one_iff_integrable.mpr (hDint 0)
+  have hbatchMeas : Measurable
+      (fun batch : GenerationBatch N =>
+        infiniteOffspringBatchSlotZeroNorm hN (repairGenerationBatch batch)) :=
+    (measurable_infiniteOffspringBatchSlotZeroNorm hN).comp
+      measurable_repairGenerationBatch
+  have hcoord (t : ℕ) : IdentDistrib (fun ω : GenerationEnvironment N => ω t)
+      (fun ω : GenerationEnvironment N => ω 0) ν ν := by
+    refine ⟨(measurable_pi_apply t).aemeasurable,
+      (measurable_pi_apply 0).aemeasurable, ?_⟩
+    rw [generationEnvironmentLaw_generation_marginal μ N t,
+      generationEnvironmentLaw_generation_marginal μ N 0]
+  have hDident (t : ℕ) : IdentDistrib (D t) (D 0) ν ν := by
+    simpa [D, Function.comp_def] using (hcoord t).comp hbatchMeas
+  have hDui : UniformIntegrable D (1 : ℝ≥0∞) ν :=
+    MemLp.uniformIntegrable_of_identDistrib (by norm_num) (by norm_num)
+      hD0 hDident
+  have havg : UniformIntegrable g (1 : ℝ≥0∞) ν := by
+    have h := uniformIntegrable_average_real (p := (1 : ℝ≥0∞))
+      (by norm_num) hDui
+    convert h using 1
+    ext n ω
+    simp [g, D, div_eq_mul_inv, mul_comm]
+  have hDnonneg (t : ℕ) (ω : GenerationEnvironment N) : 0 ≤ D t ω := by
+    dsimp [D]
+    unfold infiniteOffspringBatchSlotZeroNorm
+    exact le_trans (abs_nonneg _) <| Finset.le_sup'
+      (fun i : Fin N => |value' (repairGenerationBatch (ω t) i) 0|)
+      (Finset.mem_univ ⟨0, hN⟩)
+  have hg_nonneg (n : ℕ) (ω : GenerationEnvironment N) : 0 ≤ g n ω := by
+    dsimp [g]
+    exact div_nonneg (Finset.sum_nonneg fun t ht => hDnonneg t ω)
+      (Nat.cast_nonneg n)
+  have hdom (n : ℕ) : ∀ᵐ ω ∂ν, |f n ω| ≤ g n ω := by
+    by_cases hn : n = 0
+    · subst n
+      filter_upwards [] with ω
+      simp [f, g, repairedInfiniteSelectionSubadditiveArray]
+    · filter_upwards [repairedInfiniteSelectionSubadditiveArray_ae_abs_le_envelope
+        hN μ hordered hnonempty n] with ω hω
+      have hnpos : (0 : ℝ) < (n : ℝ) := by
+        exact_mod_cast Nat.pos_of_ne_zero hn
+      have hinv : 0 ≤ (n : ℝ)⁻¹ := (inv_nonneg.mpr hnpos.le)
+      calc
+        |f n ω| = (n : ℝ)⁻¹ *
+            |repairedInfiniteSelectionSubadditiveArray hN ω 0 n| := by
+              simp [f, abs_mul, abs_of_nonneg hinv]
+        _ ≤ (n : ℝ)⁻¹ * (∑ t ∈ Finset.range n, D t ω) := by
+              exact mul_le_mul_of_nonneg_left (by simpa [D] using hω) hinv
+        _ = g n ω := by
+              simp [g, div_eq_mul_inv, mul_comm]
+  have hfmeas (n : ℕ) : AEStronglyMeasurable (f n) ν := by
+    dsimp [f]
+    exact (measurable_const.mul
+      (measurable_repairedInfiniteSelectionSubadditiveArray hN 0 n)).aestronglyMeasurable
+  have hui : UnifIntegrable f (1 : ℝ≥0∞) ν := by
+    apply havg.unifIntegrable.ae_mono hfmeas
+    intro n
+    filter_upwards [hdom n] with ω hω
+    rw [Real.enorm_eq_ofReal_abs, Real.enorm_eq_ofReal_abs,
+      abs_of_nonneg (hg_nonneg n ω)]
+    exact ENNReal.ofReal_le_ofReal hω
+  have hint : ∀ n, Integrable
+      (fun ω : GenerationEnvironment N =>
+        repairedInfiniteSelectionSubadditiveArray hN ω 0 n) ν := by
+    intro n
+    exact repairedInfiniteSelectionSubadditiveArray_integrable_of_leftmostMoment
+      hN μ hboundary hnonempty hordered hslot n
+  have hbdd := repairedInfiniteSelection_normalizedIntegral_bddBelow_of_leftmostMoment
+    hN μ hboundary hnonempty hordered hslot
+  obtain ⟨c, hconv⟩ := repairedInfiniteSelection_tendsto_constant hN μ hint hbdd
+  have hL1 : Tendsto
+      (fun n : ℕ => eLpNorm (fun ω : GenerationEnvironment N => f n ω - c)
+        (1 : ℝ≥0∞) ν) atTop (𝓝 0) := by
+    apply MeasureTheory.tendsto_Lp_finite_of_tendsto_ae
+      (μ := ν) (p := (1 : ℝ≥0∞)) (by norm_num) (by norm_num)
+      (fun n => hfmeas n) (memLp_const c) hui
+    simpa only [f] using hconv
+  refine ⟨c, ?_, ?_⟩
+  · simpa only [f] using hconv
+  · simpa only [f] using hL1
+
 /-- On an environment whose every generation is a valid transition, repairing
 the environment leaves the deterministic selection array unchanged. -/
 theorem repairedInfiniteSelectionSubadditiveArray_eq_of_allGood {N : ℕ}
@@ -1140,6 +1266,121 @@ theorem infiniteOffspringRun_leftmost_ae_hasAsymptoticSpeed_of_stepLaw
     hN μ hboundaryμ hnonemptyμ horderedμ hslot
   exact infiniteOffspringRun_leftmost_ae_hasAsymptoticSpeed
     hN μ hboundaryμ hnonemptyμ hint hbdd
+
+/-! The speed and `L¹` conclusions for exactly `N` particles, in the paper's
+`StepLaw` assumptions, are packaged together here. The rightmost result is
+obtained by applying this theorem to the OrderDual/reflected law, with its own
+right-side moment assumptions; no reflection invariance is required. -/
+theorem infiniteOffspringRun_leftmost_ae_hasAsymptoticSpeed_and_L1_of_stepLaw
+    {ι X : Type*} [Countable ι] [MeasurableSpace X]
+    {N : ℕ} (hN : 0 < N) (L : StepLaw ι ℕ X)
+    [IsProbabilityMeasure L.raw]
+    (hboundary : HasBoundaryNormalization L.potential L.raw)
+    (hnonempty : L.raw nonemptySupport = 1)
+    (hfirst : HasLeftmostFirstMoment L) :
+    ∃ c : ℝ,
+      (∀ᵐ ω ∂generationEnvironmentLaw L.sortedPotentialImage N,
+        ∃ hgood : ∀ t, IsGoodInfiniteOffspringBatch (ω t),
+          Combinatorics.Branching.Selection.NSelection.HasAsymptoticSpeed
+            (𝕜 := ℝ)
+            (fun n => infiniteOffspringRun ω hgood (fun _ => 0) n ⟨0, hN⟩)
+            (-c)) ∧
+      Tendsto
+        (fun n : ℕ => eLpNorm
+          (fun ω : GenerationEnvironment N =>
+            (n : ℝ)⁻¹ * measurableRepairedInfiniteOffspringRun n
+              ((fun _ : Fin N => (0 : ℝ)), ω) ⟨0, hN⟩ - (-c))
+          (1 : ℝ≥0∞) (generationEnvironmentLaw L.sortedPotentialImage N))
+        atTop (𝓝 0) := by
+  let μ := L.sortedPotentialImage
+  haveI : IsProbabilityMeasure μ := by
+    dsimp [μ]
+    infer_instance
+  have hboundaryμ : HasBoundaryNormalization realPotential μ :=
+    L.sortedPotentialImage_hasBoundaryNormalization hboundary
+  have hnonemptyμ : μ nonemptySupport = 1 := by
+    rw [show μ = L.sortedPotentialImage from rfl,
+      L.sortedPotentialImage_nonemptySupport, L.sorted_nonemptySupport]
+    exact hnonempty
+  have horderedμ : μ (orderedBySteps realPotential) = 1 := by
+    rw [show μ = L.sortedPotentialImage from rfl,
+      L.sortedPotentialImage_orderedBy]
+    simp
+  have hslot : Integrable (fun ξ : Step ℕ ℝ => |value' ξ 0|) μ :=
+    L.integrable_sortedPotentialImage_firstSlot_abs hboundary hfirst
+  let ν := generationEnvironmentLaw μ N
+  haveI : IsProbabilityMeasure ν := generationEnvironmentLaw_isProbability μ N
+  obtain ⟨c, hconv, hL1⟩ :=
+    repairedInfiniteSelection_tendsto_constant_L1_of_leftmostMoment
+      hN μ hboundaryμ hnonemptyμ horderedμ hslot
+  have hgood : ∀ᵐ ω ∂ν, ∀ t, IsGoodInfiniteOffspringBatch (ω t) :=
+    generationEnvironmentLaw_ae_allGood μ hboundaryμ hnonemptyμ N
+  have hconvOriginal : ∀ᵐ ω ∂ν,
+      ∃ hgood : ∀ t, IsGoodInfiniteOffspringBatch (ω t),
+        Tendsto
+          (fun n : ℕ => (n : ℝ)⁻¹ *
+            infiniteSelectionSubadditiveArray hN ω hgood 0 n)
+          atTop (𝓝 c) := by
+    filter_upwards [hgood, hconv] with ω hgoodω hω
+    refine ⟨hgoodω, ?_⟩
+    apply hω.congr'
+    filter_upwards [] with n
+    rw [← repairedInfiniteSelectionSubadditiveArray_eq_of_allGood
+      hN ω hgoodω 0 n]
+  have hspeed : ∀ᵐ ω ∂ν,
+      ∃ hgood : ∀ t, IsGoodInfiniteOffspringBatch (ω t),
+        Combinatorics.Branching.Selection.NSelection.HasAsymptoticSpeed
+          (𝕜 := ℝ)
+          (fun n => infiniteOffspringRun ω hgood (fun _ => 0) n ⟨0, hN⟩)
+          (-c) := by
+    filter_upwards [hconvOriginal] with ω hω
+    rcases hω with ⟨hgoodω, hlim⟩
+    refine ⟨hgoodω, ?_⟩
+    change Tendsto
+      (fun n : ℕ => (n : ℝ)⁻¹ *
+        infiniteOffspringRun ω hgoodω (fun _ => 0) n ⟨0, hN⟩)
+      atTop (𝓝 (-c))
+    have hneg := hlim.neg
+    apply hneg.congr'
+    filter_upwards [] with n
+    simp [infiniteSelectionSubadditiveArray, infiniteSelectionBlockMinimum]
+  let P : ℕ → GenerationEnvironment N → ℝ := fun n ω =>
+    measurableRepairedInfiniteOffspringRun n
+      ((fun _ : Fin N => (0 : ℝ)), ω) ⟨0, hN⟩
+  have hL1position : Tendsto
+      (fun n : ℕ => eLpNorm
+        (fun ω : GenerationEnvironment N => (n : ℝ)⁻¹ * P n ω - (-c))
+        (1 : ℝ≥0∞) ν) atTop (𝓝 0) := by
+    have hnorm (n : ℕ) : eLpNorm
+        (fun ω : GenerationEnvironment N => (n : ℝ)⁻¹ * P n ω - (-c))
+        (1 : ℝ≥0∞) ν =
+      eLpNorm
+        (fun ω : GenerationEnvironment N =>
+          (n : ℝ)⁻¹ * repairedInfiniteSelectionSubadditiveArray hN ω 0 n - c)
+        (1 : ℝ≥0∞) ν := by
+      have hfun : (fun ω : GenerationEnvironment N =>
+          (n : ℝ)⁻¹ * P n ω - (-c)) =
+        fun ω => -((n : ℝ)⁻¹ *
+          repairedInfiniteSelectionSubadditiveArray hN ω 0 n - c) := by
+        funext ω
+        have harray : repairedInfiniteSelectionSubadditiveArray hN ω 0 n = -P n ω := by
+          simp [P, repairedInfiniteSelectionSubadditiveArray]
+        rw [harray]
+        ring
+      rw [hfun]
+      exact eLpNorm_neg _ _ _
+    have hseq : (fun n : ℕ => eLpNorm
+        (fun ω : GenerationEnvironment N => (n : ℝ)⁻¹ * P n ω - (-c))
+        (1 : ℝ≥0∞) ν) =
+      fun (n : ℕ) => eLpNorm
+        (fun ω : GenerationEnvironment N =>
+          (n : ℝ)⁻¹ * repairedInfiniteSelectionSubadditiveArray hN ω 0 n - c)
+        (1 : ℝ≥0∞) ν := by
+      funext n
+      exact hnorm n
+    rw [hseq]
+    simpa [ν, μ] using hL1
+  exact ⟨c, by simpa [ν, μ] using hspeed, by simpa [ν, μ] using hL1position⟩
 
 /-- Reflect every displacement while preserving exactly the same child slots.
 This is the pathwise operation used to turn a rightmost selection into a
