@@ -398,7 +398,17 @@ theorem eventually_rightTailPositiveASpineCorridor_ge_exp_neg_log
       ∃ amplitude : ℝ, 0 < amplitude ∧ ∀ᶠ n : ℕ in atTop,
         ENNReal.ofReal (Real.exp (-epsilon * logarithmOfSampleSize N n)) ≤
           rightTailPositiveASpineCorridorLowerBound ν b v C amplitude
-            entranceMass (rightTailPositiveAFirstCutoff N n) := by
+            entranceMass (rightTailPositiveAFirstCutoff N n) ∧
+        rightTailPositiveASpineCorridorLowerBound ν b v C amplitude
+            entranceMass (rightTailPositiveAFirstCutoff N n) ≤
+          (tiltedIncrementFieldLaw realPotential μ)
+            {increment : ℕ → ℝ |
+              RandomWalk.history (rightTailPositiveAFirstCutoff N n) 0
+                increment ∈
+                affineCorridorThrough (rightTailPositiveAFirstCutoff N n)
+                  (-b * logarithmOfSampleSize N n) 0
+                  (b * logarithmOfSampleSize N n)
+                  ((-b + v) * logarithmOfSampleSize N n)} := by
   obtain ⟨C, hC, entranceMass, hentranceMass, amplitude, hamplitude,
       hcorridor⟩ :=
     eventually_rightTailPositiveA_spineCorridor_lowerBound_of_centeredSecondMoment
@@ -561,7 +571,8 @@ theorem eventually_rightTailPositiveASpineCorridor_ge_exp_neg_log
       _ ≤ entranceMass / (entranceLength n : ℝ≥0∞) :=
         ENNReal.div_le_div_right (min_le_left _ _) _
   refine ⟨C, hC, entranceMass, hentranceMass, amplitude, hamplitude, ?_⟩
-  filter_upwards [hcorridorEventually, hentranceEventually] with n hbridge hentry
+  filter_upwards [hcorridorEventually, hentranceEventually, hcorridor]
+    with n hbridge hentry hprob
   have hproduct :
       ENNReal.ofReal (Real.exp (-epsilon * L n)) ≤
         ENNReal.ofReal (Real.exp (-epsilon / 2 * L n)) *
@@ -571,16 +582,20 @@ theorem eventually_rightTailPositiveASpineCorridor_ge_exp_neg_log
     rw [← Real.exp_add]
     apply Real.exp_le_exp.mpr
     exact le_of_eq (by ring)
-  calc
-    ENNReal.ofReal (Real.exp (-epsilon * L n)) ≤
-        ENNReal.ofReal (Real.exp (-epsilon / 2 * L n)) *
-          ENNReal.ofReal (Real.exp (-epsilon / 2 * L n)) := hproduct
-    _ ≤ ENNReal.ofReal (Real.exp exponent) ^ (blockCount n + 1) *
-        (entranceMass / (entranceLength n : ℝ≥0∞)) :=
-      mul_le_mul hbridge hentry (by positivity) (by positivity)
-    _ = rightTailPositiveASpineCorridorLowerBound ν b v C amplitude
+  have hpower : ENNReal.ofReal (Real.exp (-epsilon * L n)) ≤
+      rightTailPositiveASpineCorridorLowerBound ν b v C amplitude
         entranceMass (rightTailPositiveAFirstCutoff N n) := by
-      simp [rightTailPositiveASpineCorridorLowerBound, L, ell, scale,
-        entranceLength, bridgeLength, blockLength, blockCount, ratio, exponent]
+    calc
+      ENNReal.ofReal (Real.exp (-epsilon * L n)) ≤
+          ENNReal.ofReal (Real.exp (-epsilon / 2 * L n)) *
+            ENNReal.ofReal (Real.exp (-epsilon / 2 * L n)) := hproduct
+      _ ≤ ENNReal.ofReal (Real.exp exponent) ^ (blockCount n + 1) *
+          (entranceMass / (entranceLength n : ℝ≥0∞)) :=
+        mul_le_mul hbridge hentry (by positivity) (by positivity)
+      _ = rightTailPositiveASpineCorridorLowerBound ν b v C amplitude
+          entranceMass (rightTailPositiveAFirstCutoff N n) := by
+        simp [rightTailPositiveASpineCorridorLowerBound, L, ell, scale,
+          entranceLength, bridgeLength, blockLength, blockCount, ratio, exponent]
+  exact ⟨by simpa [L] using hpower, hprob⟩
 
 end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail
