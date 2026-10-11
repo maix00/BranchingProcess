@@ -64,16 +64,28 @@ theorem hasAsymptoticSpeed_unique [T2Space X] {p : ℕ → X} {c d : X}
     c = d :=
   tendsto_nhds_unique hc hd
 
+/-- The normalized trajectory converges to the same speed after deleting any
+fixed finite prefix. The denominator remains the absolute generation index
+`n + k`, so this form applies directly after a deterministic stopping time. -/
+theorem hasAsymptoticSpeed_iff_nat_add (p : ℕ → X) (c : X) (k : ℕ) :
+    HasAsymptoticSpeed (𝕜 := 𝕜) p c ↔
+      Tendsto
+        (fun n : ℕ => (((n + k : ℕ) : 𝕜)⁻¹) • p (n + k))
+        atTop (𝓝 c) := by
+  constructor
+  · intro h
+    exact (tendsto_add_atTop_iff_nat
+      (f := fun n : ℕ => ((n : 𝕜)⁻¹) • p n) k).2 h
+  · intro h
+    exact (tendsto_add_atTop_iff_nat
+      (f := fun n : ℕ => ((n : 𝕜)⁻¹) • p n) k).1 h
+
 /-- Shifting the time index does not change the asymptotic speed. -/
 theorem hasAsymptoticSpeed_iff_succ (p : ℕ → X) (c : X) :
     HasAsymptoticSpeed (𝕜 := 𝕜) p c ↔
       Tendsto (fun n : ℕ => (((n : ℕ) + 1 : ℕ) : 𝕜)⁻¹ • p ((n : ℕ) + 1))
         atTop (𝓝 c) := by
-  constructor
-  · intro h
-    exact (tendsto_add_atTop_iff_nat (f := fun n : ℕ => ((n : 𝕜))⁻¹ • p n) 1).2 h
-  · intro h
-    exact (tendsto_add_atTop_iff_nat (f := fun n : ℕ => ((n : 𝕜))⁻¹ • p n) 1).1 h
+  simpa using hasAsymptoticSpeed_iff_nat_add (𝕜 := 𝕜) p c 1
 
 /-- Reversing the order of positions preserves asymptotic speeds. -/
 theorem hasAsymptoticSpeed_mapOrderDual_iff (p : ℕ → X) (c : X) :

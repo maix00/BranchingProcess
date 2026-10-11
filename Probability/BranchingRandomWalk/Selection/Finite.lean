@@ -82,27 +82,27 @@ noncomputable def kernel (R : RandomFiniteMechanism Ω ι) :
 
 end RandomFiniteMechanism
 
-/-- An environment-dependent selection rule that keeps exactly `min N s.card`
-candidates. This is the random counterpart of deterministic `NSelection`. -/
-structure RandomFiniteNSelection (Ω ι : Type*) (N : ℕ)
+/-- An environment-dependent finite-input selection rule that keeps exactly
+`min N s.card` candidates. -/
+structure RandomFiniteCapacitySelection (Ω ι : Type*) (N : ℕ)
     [MeasurableSpace Ω] [MeasurableSpace ι]
     extends RandomFiniteMechanism Ω ι where
   card_eq : ∀ ω s, (select ω s).card = min N s.card
 
-namespace RandomFiniteNSelection
+namespace RandomFiniteCapacitySelection
 
 variable {Ω ι : Type*} {N : ℕ}
     [MeasurableSpace Ω] [MeasurableSpace ι]
 
-theorem select_card_le (R : RandomFiniteNSelection Ω ι N)
+theorem select_card_le (R : RandomFiniteCapacitySelection Ω ι N)
     (ω : Ω) (s : Finset ι) : (R.select ω s).card ≤ N :=
   (R.card_eq ω s).le.trans (min_le_left _ _)
 
-@[simp] theorem select_card (R : RandomFiniteNSelection Ω ι N)
+@[simp] theorem select_card (R : RandomFiniteCapacitySelection Ω ι N)
     (ω : Ω) (s : Finset ι) : (R.select ω s).card = min N s.card :=
   R.card_eq ω s
 
-theorem select_eq_self_of_card_le (R : RandomFiniteNSelection Ω ι N)
+theorem select_eq_self_of_card_le (R : RandomFiniteCapacitySelection Ω ι N)
     (ω : Ω) (s : Finset ι) (h : s.card ≤ N) : R.select ω s = s := by
   exact Finset.eq_of_subset_of_card_le (R.subset ω s)
     (by rw [R.card_eq, min_eq_right h])
@@ -110,17 +110,17 @@ theorem select_eq_self_of_card_le (R : RandomFiniteNSelection Ω ι N)
 /-- A deterministic capacity-`N` mechanism is the environment-independent
 random capacity-`N` mechanism. -/
 def ofDeterministic (M : FiniteNSelection ι N) (hM : Measurable M.select) :
-    RandomFiniteNSelection Ω ι N where
+    RandomFiniteCapacitySelection Ω ι N where
   toRandomFiniteMechanism :=
     RandomFiniteMechanism.ofDeterministic M.toFiniteMechanism hM
   card_eq _ := M.card_eq
 
 noncomputable def ofDeterministicCountable
     [Countable ι] [MeasurableSingletonClass ι]
-    (M : FiniteNSelection ι N) : RandomFiniteNSelection Ω ι N :=
+    (M : FiniteNSelection ι N) : RandomFiniteCapacitySelection Ω ι N :=
   ofDeterministic M (measurable_of_countable M.select)
 
-end RandomFiniteNSelection
+end RandomFiniteCapacitySelection
 
 end ProbabilityTheory.BranchingRandomWalk.Selection
 
