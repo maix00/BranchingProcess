@@ -27,7 +27,7 @@ open Combinatorics.Branching.Selection.NSelection
 
 variable {Ω ι Value : Type*} [MeasurableSpace Ω]
 
-namespace RandomFiniteNSelection
+namespace RandomFiniteCapacitySelection
 
 /-- The genuinely random dynamic leftmost rule.  Its ordering may depend on
 the environment; observability is expressed by measurable pairwise key
@@ -37,7 +37,7 @@ noncomputable def leftmostBy
     (N : ℕ) (value : Ω → ι → Value)
     (hkey : ∀ p q : ι, Measurable fun ω =>
       valueKey (value ω) q < valueKey (value ω) p) :
-    RandomFiniteNSelection Ω ι N where
+    RandomFiniteCapacitySelection Ω ι N where
   select ω := selectFirstNBy N (value ω)
   subset ω := selectFirstNBy_subset N (value ω)
   measurable_select := by
@@ -58,9 +58,9 @@ noncomputable def leftmostBy
       selectFirstNBy N (value ω) s :=
   rfl
 
-end RandomFiniteNSelection
+end RandomFiniteCapacitySelection
 
-namespace CausalFiniteNSelection
+namespace CausalFiniteCapacitySelection
 
 /-- Time-dependent dynamic leftmost selection is causal when its pairwise
 spatial comparisons are observable in the domain available at each time. -/
@@ -70,8 +70,8 @@ noncomputable def leftmostBy
     (N : ℕ) (value : Time → Ω → ι → Value)
     (hkey : ∀ t p q, @Measurable Ω Prop (ℱ t) inferInstance fun ω =>
       valueKey (value t ω) q < valueKey (value t ω) p) :
-    CausalFiniteNSelection Time Ω ι N ℱ where
-  rule t := @RandomFiniteNSelection.leftmostBy Ω ι Value (ℱ t) _ _ _ _
+    CausalFiniteCapacitySelection Time Ω ι N ℱ where
+  rule t := @RandomFiniteCapacitySelection.leftmostBy Ω ι Value (ℱ t) _ _ _ _
     N (value t) (hkey t)
 
 /-- Causal dynamic leftmost selection constructed directly from measurable
@@ -87,7 +87,7 @@ noncomputable def leftmostByOfMeasurableValue
     (N : ℕ) (value : Time → Ω → ι → Value)
     (hvalue : ∀ t p, @Measurable Ω Value (ℱ t) inferInstance
       fun ω => value t ω p) :
-    CausalFiniteNSelection Time Ω ι N ℱ :=
+    CausalFiniteCapacitySelection Time Ω ι N ℱ :=
   leftmostBy N value fun t p q =>
     @NSelection.measurable_valueKey_lt Ω ι Value (ℱ t) _ _ _ _ _ _ _ _
       (value t) (hvalue t) p q
@@ -120,7 +120,7 @@ omit [MeasurableSpace Ω] in
       selectFirstNBy N (value t ω) s :=
   rfl
 
-end CausalFiniteNSelection
+end CausalFiniteCapacitySelection
 
 
 end ProbabilityTheory.BranchingRandomWalk.Selection

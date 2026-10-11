@@ -46,11 +46,11 @@ noncomputable def leftmostBy
     (N : ℕ) (initial : Root → Position)
     (d : Mark → Position) (hd : Measurable d)
     (φ : Position → Value) (hφ : Measurable φ) :
-    CausalFiniteNSelection ℕ
+    CausalFiniteCapacitySelection ℕ
       (RootIndexed.StepField Root α Mark)
       (RootIndexed.TreeNode Root α) N
       (RootIndexed.stepFiltration (Root := Root) (α := α) (X := Mark)) :=
-  CausalFiniteNSelection.leftmostByOfMeasurableValue N
+  CausalFiniteCapacitySelection.leftmostByOfMeasurableValue N
     (observedPositionAtGeneration initial d φ)
     (fun n p => hφ.comp
       (ProbabilityTheory.BranchingRandomWalk.RootIndexed.positionAtGeneration_measurable
@@ -91,7 +91,7 @@ noncomputable def rightmostBy
     (N : ℕ) (initial : Root → Position)
     (d : Mark → Position) (hd : Measurable d)
     (φ : Position → Value) (hφ : Measurable φ) :
-    CausalFiniteNSelection ℕ
+    CausalFiniteCapacitySelection ℕ
       (RootIndexed.StepField Root α Mark)
       (RootIndexed.TreeNode Root α) N
       (RootIndexed.stepFiltration (Root := Root) (α := α) (X := Mark)) :=
