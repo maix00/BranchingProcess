@@ -9,14 +9,13 @@ import Probability.BranchingRandomWalk.Assumptions.CrossWeight
 import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 
 /-!
-# The root MRCA layer of the long-corridor second moment
+# Affine-tube estimates for MRCA layers
 
-For a generation-`n + 1` tube count, the off-diagonal term at its root is
-exactly the contribution of pairs whose most recent common ancestor is the
-root.  This file specializes the one-generation branching estimate to the
-affine tube and endpoint cutoff from Lemma 4.5.  It derives this root layer
-from a segment-probability estimate and the finite cross-child moment; it does
-not yet sum the layers with positive MRCA depth.
+This file specializes the BRW path-level MRCA decomposition to affine tubes.
+It identifies and bounds the root layer, factors each positive-depth layer
+into an ancestral-prefix mass and a continuation-pair estimate, and sums the
+fixed-depth bounds. The recursive path-layer terms have not yet been
+identified with these conditional-prefix integrals.
 -/
 
 open MeasureTheory
