@@ -132,6 +132,35 @@ theorem affineTubeRootMRCAPairMean_eq_lintegral
   simpa [affineTubeRootMRCAPairMean, pathGenerationChildMeanOffDiagonal,
     corridor, F, childMean, offTerm] using hsum
 
+/-- The affine-tube root-split pair mean is exactly the expected depth-zero
+MRCA contribution in the generic BRW path decomposition. -/
+theorem affineTubeRootMRCAPairMean_eq_lintegral_pathGenerationMRCAContribution
+    {X : Type*} [MeasurableSpace X]
+    (φ : Potential X) (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
+    (n : ℕ) (initial lower drift width endpointUpper : ℝ) :
+    affineTubeRootMRCAPairMean φ μ n initial lower drift width endpointUpper =
+      (∫⁻ ω, pathGenerationMRCAContribution φ 0 (n + 1)
+        ((affineCorridorHistoryEndpointCutoff n lower drift width endpointUpper).indicator
+          (fun _ => (1 : ℝ≥0∞))) initial ω ∂stepFieldLaw μ) := by
+  let F : (Fin (n + 2) → ℝ) → ℝ≥0∞ :=
+    (affineCorridorHistoryEndpointCutoff n lower drift width endpointUpper).indicator
+      (fun _ => (1 : ℝ≥0∞))
+  have hF : Measurable F :=
+    measurable_const.indicator
+      (measurableSet_affineCorridorHistoryEndpointCutoff
+        n lower drift width endpointUpper)
+  calc
+    affineTubeRootMRCAPairMean φ μ n initial lower drift width endpointUpper =
+        ∫⁻ ξ, pathGenerationChildMeanOffDiagonal φ μ n F initial ξ ∂μ := by
+      simpa [F] using
+        affineTubeRootMRCAPairMean_eq_lintegral
+          φ μ n initial lower drift width endpointUpper
+    _ = ∫⁻ ω, pathGenerationMRCAContribution φ 0 (n + 1) F initial ω
+          ∂stepFieldLaw μ :=
+      (lintegral_pathGenerationMRCAContribution_zero_eq_childMeanOffDiagonal
+        φ μ n F hF initial).symm
+    _ = _ := by rfl
+
 /-- The pointwise continuation-pair observable is bounded by the
 cross-child weight under the shifted-spine probability estimate used in the
 one-ancestor second-moment bound. -/
