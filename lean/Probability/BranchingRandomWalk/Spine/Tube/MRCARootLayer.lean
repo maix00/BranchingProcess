@@ -215,6 +215,104 @@ theorem pathGenerationChildMeanOffDiagonal_le_of_shiftedProbability
       φ μ hboundary n x terminalUpper corridor hcorridor hterminal
       window q hfirst hprob ξ
 
+/-- After extracting the endpoint factor `exp(-2 * x)`, the continuation
+pair observable has a bound uniform in the ancestor position. -/
+theorem pathGenerationChildMeanOffDiagonal_normalized_le_of_shiftedProbability
+    {X : Type*} [MeasurableSpace X]
+    (φ : Potential X) (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
+    (hboundary : HasBoundaryNormalization φ μ)
+    (n : ℕ) (x terminalUpper : ℝ)
+    (corridor : Set (Fin (n + 2) → ℝ))
+    (hcorridor : MeasurableSet corridor)
+    (hterminal : ∀ history ∈ corridor,
+      history ⟨n + 1, by omega⟩ ≤ terminalUpper)
+    (window : Set ℝ) (q : ℝ≥0∞)
+    (hfirst : ∀ history ∈ corridor,
+      history ⟨1, by omega⟩ ∈ window)
+    (hprob : ∀ y : ℝ, x + y ∈ window →
+      (tiltedIncrementFieldLaw φ μ)
+        {increment | prependHistory x
+          (ProbabilityTheory.RandomWalk.history n (x + y) increment) ∈
+            corridor} ≤ q) :
+    ∀ ξ, ENNReal.ofReal (Real.exp (2 * x)) *
+        pathGenerationChildMeanOffDiagonal φ μ n
+          (corridor.indicator (fun _ => (1 : ℝ≥0∞))) x ξ ≤
+      ENNReal.ofReal (Real.exp (2 * terminalUpper)) * q ^ 2 *
+        crossChildWeight φ ξ := by
+  intro ξ
+  have hraw := pathGenerationChildMeanOffDiagonal_le_of_shiftedProbability
+    φ μ hboundary n x terminalUpper corridor hcorridor hterminal window q
+    hfirst hprob ξ
+  have hconstant :
+      ENNReal.ofReal (Real.exp (2 * x)) *
+          (ENNReal.ofReal (Real.exp (terminalUpper - x)) * q) ^ 2 =
+        ENNReal.ofReal (Real.exp (2 * terminalUpper)) * q ^ 2 := by
+    have hexp :
+        Real.exp (2 * x) *
+            (Real.exp (terminalUpper - x) * Real.exp (terminalUpper - x)) =
+          Real.exp (2 * terminalUpper) := by
+      rw [← Real.exp_add, ← Real.exp_add]
+      congr 1
+      ring
+    calc
+      _ = (ENNReal.ofReal (Real.exp (2 * x)) *
+            ENNReal.ofReal (Real.exp (terminalUpper - x)) *
+            ENNReal.ofReal (Real.exp (terminalUpper - x))) * q ^ 2 := by
+          simp only [pow_two]
+          ac_rfl
+      _ = ENNReal.ofReal
+            (Real.exp (2 * x) *
+              (Real.exp (terminalUpper - x) *
+                Real.exp (terminalUpper - x))) * q ^ 2 := by
+          rw [← ENNReal.ofReal_mul (Real.exp_nonneg _)]
+          rw [← ENNReal.ofReal_mul
+            (mul_nonneg (Real.exp_nonneg _) (Real.exp_nonneg _))]
+          congr 2
+          ring
+      _ = ENNReal.ofReal (Real.exp (2 * terminalUpper)) * q ^ 2 := by
+          rw [hexp]
+  calc
+    ENNReal.ofReal (Real.exp (2 * x)) *
+        pathGenerationChildMeanOffDiagonal φ μ n
+          (corridor.indicator (fun _ => (1 : ℝ≥0∞))) x ξ ≤
+        ENNReal.ofReal (Real.exp (2 * x)) *
+          ((ENNReal.ofReal (Real.exp (terminalUpper - x)) * q) ^ 2 *
+            crossChildWeight φ ξ) :=
+      mul_le_mul_of_nonneg_left hraw (by positivity)
+    _ = ENNReal.ofReal (Real.exp (2 * terminalUpper)) * q ^ 2 *
+          crossChildWeight φ ξ := by
+      rw [← mul_assoc, hconstant]
+
+/-- The normalized continuation-pair bound holds uniformly over every
+ancestor position when the shifted-spine estimate is uniform in that
+position. -/
+theorem pathGenerationChildMeanOffDiagonal_normalized_le_of_uniformShiftedProbability
+    {X : Type*} [MeasurableSpace X]
+    (φ : Potential X) (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
+    (hboundary : HasBoundaryNormalization φ μ)
+    (n : ℕ) (terminalUpper : ℝ)
+    (corridor : Set (Fin (n + 2) → ℝ))
+    (hcorridor : MeasurableSet corridor)
+    (hterminal : ∀ history ∈ corridor,
+      history ⟨n + 1, by omega⟩ ≤ terminalUpper)
+    (window : Set ℝ) (q : ℝ≥0∞)
+    (hfirst : ∀ history ∈ corridor,
+      history ⟨1, by omega⟩ ∈ window)
+    (hprob : ∀ x y : ℝ, x + y ∈ window →
+      (tiltedIncrementFieldLaw φ μ)
+        {increment | prependHistory x
+          (ProbabilityTheory.RandomWalk.history n (x + y) increment) ∈
+            corridor} ≤ q) :
+    ∀ x ξ, ENNReal.ofReal (Real.exp (2 * x)) *
+        pathGenerationChildMeanOffDiagonal φ μ n
+          (corridor.indicator (fun _ => (1 : ℝ≥0∞))) x ξ ≤
+      ENNReal.ofReal (Real.exp (2 * terminalUpper)) * q ^ 2 *
+        crossChildWeight φ ξ := by
+  intro x ξ
+  exact pathGenerationChildMeanOffDiagonal_normalized_le_of_shiftedProbability
+    φ μ hboundary n x terminalUpper corridor hcorridor hterminal window q
+    hfirst (fun y hy => hprob x y hy) ξ
+
 /-- The root MRCA layer is the off-diagonal term in the one-step second
 moment recursion for the affine tube count. The other term keeps the two
 paths in the same first-generation subtree and therefore contains all deeper
@@ -616,6 +714,56 @@ theorem lintegral_generationPrefixParameterizedObservableSum_le
         (crossChildWeight φ) hAgen hA hsupport
         (crossChildWeight_measurable φ)]
       ac_rfl
+
+/-- The uniform shifted-spine continuation estimate can be averaged over a
+generation-`n` prefix. This is the local expected-pair bound for one fixed
+MRCA depth; the prefix weight `A` is supplied by its ancestral corridor. -/
+theorem lintegral_generationPrefixChildPairObservable_le
+    {X : Type*} [MeasurableSpace X]
+    (φ : Potential X) (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
+    (hboundary : HasBoundaryNormalization φ μ)
+    (n : ℕ)
+    (A : TreeNode ℕ → StepField ℕ X → ℝ≥0∞)
+    (position : TreeNode ℕ → StepField ℕ X → ℝ)
+    (hAgen : ∀ u, Measurable[generationFiltration (M := Step ℕ X) n]
+      (A u))
+    (hA : ∀ u, Measurable (A u))
+    (hsupport : ∀ u, u.length ≠ n → A u = fun _ => 0)
+    (terminalUpper : ℝ)
+    (corridor : Set (Fin (n + 2) → ℝ))
+    (hcorridor : MeasurableSet corridor)
+    (hterminal : ∀ history ∈ corridor,
+      history ⟨n + 1, by omega⟩ ≤ terminalUpper)
+    (window : Set ℝ) (q : ℝ≥0∞)
+    (hfirst : ∀ history ∈ corridor,
+      history ⟨1, by omega⟩ ∈ window)
+    (hprob : ∀ x y : ℝ, x + y ∈ window →
+      (tiltedIncrementFieldLaw φ μ)
+        {increment | prependHistory x
+          (ProbabilityTheory.RandomWalk.history n (x + y) increment) ∈
+            corridor} ≤ q) :
+    (∫⁻ ω, ∑' u : TreeNode ℕ,
+      A u ω * ENNReal.ofReal (Real.exp (2 * position u ω)) *
+        pathGenerationChildMeanOffDiagonal φ μ n
+          (corridor.indicator (fun _ => (1 : ℝ≥0∞)))
+          (position u ω) (ω u) ∂stepFieldLaw μ) ≤
+        ENNReal.ofReal (Real.exp (2 * terminalUpper)) * q ^ 2 *
+          (∫⁻ ξ, crossChildWeight φ ξ ∂μ) *
+          (∫⁻ ω, ∑' u : TreeNode ℕ, A u ω ∂stepFieldLaw μ) := by
+  let g : ℝ → Step ℕ X → ℝ≥0∞ := fun x ξ =>
+    ENNReal.ofReal (Real.exp (2 * x)) *
+      pathGenerationChildMeanOffDiagonal φ μ n
+        (corridor.indicator (fun _ => (1 : ℝ≥0∞))) x ξ
+  let C : ℝ≥0∞ := ENNReal.ofReal (Real.exp (2 * terminalUpper)) * q ^ 2
+  have hbound : ∀ x ξ, g x ξ ≤ C * crossChildWeight φ ξ := by
+    intro x ξ
+    simpa [g, C, mul_assoc] using
+      pathGenerationChildMeanOffDiagonal_normalized_le_of_uniformShiftedProbability
+        φ μ hboundary n terminalUpper corridor hcorridor hterminal window q
+        hfirst hprob x ξ
+  simpa [g, C, mul_assoc] using
+    lintegral_generationPrefixParameterizedObservableSum_le
+      φ μ n A position g hAgen hA hsupport C hbound
 
 private theorem displaceWith_measurable_generation
     {X : Type*} [MeasurableSpace X]
