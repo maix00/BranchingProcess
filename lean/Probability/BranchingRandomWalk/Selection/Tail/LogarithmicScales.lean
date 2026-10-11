@@ -259,6 +259,14 @@ private theorem tendsto_logarithmicHorizon_div_log_cube
     field_simp [hargNe, hLne]
   simpa [L] using (hbase.add hoffset).congr' heq.symm
 
+/-- Public scale limit for the horizon `floor(t log^3 N) + 1`. -/
+theorem logarithmicHorizon_div_logCube_tendsto
+    {N : ℕ → ℕ} (hN : Tendsto N atTop atTop)
+    {t : ℝ} (ht : 0 < t) :
+    Tendsto (fun n => (logarithmicHorizon N t n : ℝ) /
+      logarithmOfSampleSize N n ^ 3) atTop (𝓝 t) :=
+  tendsto_logarithmicHorizon_div_log_cube hN ht
+
 private theorem tendsto_logarithmicLengthSucc_div_log_two_sqrt
     {N : ℕ → ℕ} (hN : Tendsto N atTop atTop)
     {beta b : ℝ} (hbeta : 0 < beta) (hb : 0 < b) :
