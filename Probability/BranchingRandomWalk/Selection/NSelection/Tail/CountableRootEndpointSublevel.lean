@@ -5,16 +5,17 @@ Authors: WANG Yiyang
 -/
 
 import Probability.BranchingRandomWalk.Selection.NSelection.Tail.CountableRoots
-import Probability.BranchingRandomWalk.Selection.NSelection.Tail.PaperLeftTail
+import Probability.BranchingRandomWalk.Selection.NSelection.Tail.SelectedEndpointSublevel
 
 /-!
-# Paper left-tail bound for the endpoint minimum
+# Endpoint sublevel bound for the countable-root minimum
 
 Transfer the finite-root endpoint event to the minimum observable on the
 common countable-root forest. The only additional law condition is the paper's
 almost-sure nonempty-offspring assumption, needed to identify the totalized
 minimum with the ordinary finite-population minimum.
 -/
+
 
 open Filter MeasureTheory
 open scoped ENNReal Topology
@@ -26,11 +27,11 @@ open Combinatorics.UlamHarris
 open ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw
 open ProbabilityTheory.BranchingRandomWalk.Spine
 
-/-- The paper's left-tail polynomial estimate for the generation-`ℓ_N`
-endpoint minimum on the common countable-root forest. The offspring
-nonemptiness, boundary normalization, supercriticality, and spine moment
-conditions are kept as separate hypotheses. -/
-theorem eventually_countableRootEndpointMinimum_sublevel_le_polynomial_of_paper_sequence
+/-- The polynomial endpoint sublevel estimate for the logarithmic-horizon endpoint
+minimum on the common countable-root forest. The offspring nonemptiness,
+boundary normalization, supercriticality, and spine moment conditions are
+kept as separate hypotheses. -/
+theorem eventually_countableRootEndpointMinimum_sublevel_le_polynomial_of_logarithmic_scales
     {L : ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw ℕ ℝ}
     (hboundary : HasBoundaryNormalization realPotential
       (L : Measure (Step ℕ ℝ)))
@@ -52,7 +53,7 @@ theorem eventually_countableRootEndpointMinimum_sublevel_le_polynomial_of_paper_
       (RootIndexed.stepFieldLaw (Root := ℕ)
         (L : Measure (Step ℕ ℝ)))
         {field | @countableRootEndpointMinimum (Nat.floor ((n : ℝ) ^ a)) n
-          (horizon n) (paperRootAddressLinearOrder (Nat.floor ((n : ℝ) ^ a)))
+          (horizon n) (root_address_linear_order (Nat.floor ((n : ℝ) ^ a)))
           field ≤ zeta * Real.log (n : ℝ)} ≤
         ENNReal.ofReal (Real.exp (-epsilon * Real.log (n : ℝ))) := by
   let μ : Measure (Step ℕ ℝ) := L
@@ -66,7 +67,7 @@ theorem eventually_countableRootEndpointMinimum_sublevel_le_polynomial_of_paper_
     dsimp [m]
     exact Nat.le_floor (by exact_mod_cast hpow')
   obtain ⟨epsilon, hepsilon, hfiniteBound⟩ :=
-    eventually_finiteRootStepFieldLaw_firstNSelectedEndpointBelow_le_polynomial_of_paper_sequence
+    eventually_finiteRootStepFieldLaw_firstNSelectedEndpointBelow_le_polynomial_of_logarithmic_scales
       hboundary hsupercritical hspineMean hspineFiniteVariance
       (horizon := horizon) (a := a) (t := t) (zeta := zeta)
       ha_zero ha_one ht hhorizon hbelow
@@ -76,7 +77,7 @@ theorem eventually_countableRootEndpointMinimum_sublevel_le_polynomial_of_paper_
   filter_upwards [hfiniteBound, hmPositive,
     hN.eventually_ge_atTop 1] with n hbound hmpos hn
   letI : LinearOrder (RootIndexed.TreeNode (Fin (m n)) ℕ) :=
-    paperRootAddressLinearOrder (m n)
+    root_address_linear_order (m n)
   have hminEq :
       (finiteRootStepFieldLaw μ (m n))
         {field | firstNSelectedEndpointMinimum (m n) n (horizon n) field ≤
@@ -94,7 +95,7 @@ theorem eventually_countableRootEndpointMinimum_sublevel_le_polynomial_of_paper_
   calc
     (RootIndexed.stepFieldLaw (Root := ℕ) μ)
         {field | @countableRootEndpointMinimum (m n) n (horizon n)
-          (paperRootAddressLinearOrder (m n)) field ≤
+          (root_address_linear_order (m n)) field ≤
             zeta * Real.log (n : ℝ)} =
       (finiteRootStepFieldLaw μ (m n))
         {field | firstNSelectedEndpointMinimum (m n) n (horizon n) field ≤

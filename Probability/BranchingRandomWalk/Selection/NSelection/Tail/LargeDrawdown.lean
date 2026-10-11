@@ -15,7 +15,7 @@ import Probability.BranchingRandomWalk.Population.Processes.Selected.RootIndexed
 # Large ancestral drawdowns for the first-`N` selected population
 
 This file handles the exceptional large-drawdown term in Aïdékon--Hu's
-polynomial left-tail estimate.  It branches at a deterministic generation
+polynomial endpoint sublevel estimate.  It branches at a deterministic generation
 along the generation-measurable first-`N` population, and bounds each
 fresh descendant tree by the one-root many-to-one estimate.  Empty offspring
 remain allowed: all population and descendant events are phrased by actual

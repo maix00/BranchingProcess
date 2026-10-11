@@ -4,7 +4,7 @@ import Probability.BranchingRandomWalk.Selection.NSelection.Tail.LargeDrawdown
 # Axiom audit for the selected-population large-drawdown estimate
 
 The audit covers the raw-event reduction, its measurability input, and the
-finite-horizon probability bound used in the polynomial left-tail proof.
+finite-horizon probability bound used in the polynomial endpoint sublevel proof.
 -/
 
 #print axioms

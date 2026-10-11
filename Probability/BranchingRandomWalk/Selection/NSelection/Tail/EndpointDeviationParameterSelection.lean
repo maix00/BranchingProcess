@@ -6,16 +6,16 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.BranchingRandomWalk.Selection.NSelection.Tail.LeftTailParameters
+public import Probability.BranchingRandomWalk.Selection.NSelection.Tail.EndpointDeviationParameters
 public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.GaussianM3
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Ring
 
 /-!
-# Parameter selection for the paper's left-tail exponent
+# Parameter selection for the selected-endpoint sublevel exponent
 
 This file turns the strict diffusive target inequality in (4.16) into the
-range-rate and spatial-bin parameters used by `PolynomialLeftTail`.  It is a
+range-rate and spatial-bin parameters used by `PolynomialEndpointSublevel`.  It is a
 deterministic parameter lemma; no rate assumption is added to a probabilistic
 theorem.
 -/
@@ -110,10 +110,10 @@ private theorem exists_small_positive_notInteger_ratio
       exact_mod_cast hcast
     omega
 
-/-- Choose the exponent and block parameters required by the raw left-tail
+/-- Choose the exponent and block parameters required by the raw endpoint sublevel
 estimate, assuming only the strict target inequality from (4.16).  In
 particular, the spatial-bin nonresonance condition is chosen internally. -/
-theorem exists_paper_leftTailParameters
+theorem exists_endpoint_sublevel_parameters_of_diffusive_gap
     {a t zeta sigma : ℝ} (ht : 0 < t)
     (hsigma : 0 < sigma)
     (hbelow : zeta < -a + (Real.pi ^ 2 / 2) * sigma ^ 2 * t) :
@@ -132,7 +132,7 @@ theorem exists_paper_leftTailParameters
     exact hbelow
   obtain ⟨b, d, c, epsilon, hb, hd, hdC, hc, hcHalf, hcEndpoint,
       hepsilon, hepsilonB, hepsilonMargin⟩ :=
-    exists_leftTailParameters ht hC hbelow'
+    exists_endpoint_deviation_parameters ht hC hbelow'
   have hsigmaSq : 0 < sigma ^ 2 := sq_pos_of_pos hsigma
   let q₀ : ℝ := d / sigma ^ 2
   have hq₀ : 0 < q₀ := by dsimp [q₀]; exact div_pos hd hsigmaSq
