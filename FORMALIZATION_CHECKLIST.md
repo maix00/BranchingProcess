@@ -139,7 +139,7 @@ General independent-reserve integration estimates live in
 `Probability/Independence/Integration/Reserve.lean`; the general tail-integral
 bound is in `Probability/Distributions/Moments/TailExpectation.lean`. The
 deterministic speed squeeze is in
-`Probability/BranchingRandomWalk/Selection/Speed/Asymptotics.lean`; it is a
+`Probability/BranchingRandomWalk/Selection/NSelection/Speed/Asymptotics.lean`; it is a
 final implication from eventual bounds, not a speed-existence theorem. Within
 one initial ancestor, a *single* i.i.d. pre-sampled marked tree supplies every
 reserve branch. An arbitrary family `κ` of distinct same-generation roots
@@ -257,7 +257,7 @@ process and Gaussian-law APIs, not a general point-process representation.
 - `Probability/BranchingRandomWalk/Spine/FiniteKernel.lean` contains the finite child algebra
   for **both** many-to-one variants. It is not the expectation identity for
   random child and is not marked as the full theorem.
-- `Probability/BranchingRandomWalk/Selection/Speed/Asymptotics.lean` contains the final deterministic speed squeeze
+- `Probability/BranchingRandomWalk/Selection/NSelection/Speed/Asymptotics.lean` contains the final deterministic speed squeeze
   and an elementary first-moment truncation inequality.
 - `Probability/Distributions/Moments/TailExpectation.lean` contains
   the finite-event integral bound and the abstract sequence theorem deriving

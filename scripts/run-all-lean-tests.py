@@ -175,13 +175,13 @@ AXIOM_EXPECTATIONS = {
         "ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.eventually_iidSequenceLaw_measure_noLargeDropEndpointBelowEvent_le_ah_exp_of_centeredSecondMoment",
         "ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.exists_uniform_iidSequenceLaw_measure_noLargeDropEndpointBelowEvent_le_ah_exp_of_centeredSecondMoment",
     ),
-    Path("BranchingProcessTest/Probability/BranchingRandomWalk/Selection/Tail/SelectedPopulationDrawdown.lean"): (
-        "ProbabilityTheory.BranchingRandomWalk.Selection.Tail.firstNSelectedPopulation_measurable",
-        "ProbabilityTheory.BranchingRandomWalk.Selection.Tail.measurableSet_firstNSelectedNoLargeDropEndpointBelow",
-        "ProbabilityTheory.BranchingRandomWalk.Selection.Tail.firstNSelectedPopulation_depth",
-        "ProbabilityTheory.BranchingRandomWalk.Selection.Tail.firstNSelectedPopulation_surviveAlong",
-        "ProbabilityTheory.BranchingRandomWalk.Selection.Tail.firstNSelectedNoLargeDropEndpointBelow_subset_roots",
-        "ProbabilityTheory.BranchingRandomWalk.Selection.Tail.measure_firstNSelectedNoLargeDropEndpointBelow_le",
+    Path("BranchingProcessTest/Probability/BranchingRandomWalk/Selection/NSelection/Tail/SelectedPopulationDrawdown.lean"): (
+        "ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.firstNSelectedPopulation_measurable",
+        "ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.measurableSet_firstNSelectedNoLargeDropEndpointBelow",
+        "ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.firstNSelectedPopulation_depth",
+        "ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.firstNSelectedPopulation_surviveAlong",
+        "ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.firstNSelectedNoLargeDropEndpointBelow_subset_roots",
+        "ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.measure_firstNSelectedNoLargeDropEndpointBelow_le",
     ),
     Path("BranchingProcessTest/SmallDeviation/Mogulskii/Alpha2Target.lean"): (
         "ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.centralCoreTargetMass_lower",

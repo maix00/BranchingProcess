@@ -20,11 +20,20 @@ identify misplaced application-specific assumptions.
 | General random-walk process laws and paths | `Probability/Process/RandomWalk` | path maps, kernels, Donsker and small-deviation interfaces |
 | Stable-law and stable-process semantics | `Probability/Distributions/Stable` and `Probability/Process/Stable` | stable distributions, clock increments, Lévy processes |
 | Branching random-walk models and thesis-specific coupling | `Probability/BranchingRandomWalk` | offspring fields, spine, selected populations, restart coupling |
+| Selection mechanisms, including random rules | `Probability/BranchingRandomWalk/Selection` | random and causal selection interfaces |
+| Deterministic first-`N` selection, speed, and tail estimates | `Probability/BranchingRandomWalk/Selection/NSelection` | `NSelection`, selected-population endpoint/drawdown bounds, and speed proof |
 
 Directory names should follow the owning concept. A declaration is not moved
 to a theorem-specific directory merely because that theorem currently uses it.
 Conversely, a general-looking name does not justify a generic module if its
 definition relies on stable, branching, or other model-specific hypotheses.
+The `Selection` namespace is mechanism-neutral and can describe random or
+deterministic rules. `NSelection` is the deterministic first-`N` specialization;
+results about its selected population belong under `Selection/NSelection`, not
+the generic `Selection` subtree. Position observation on a root-indexed field
+is owned by `Genealogy/RootIndexed/Measurability`, independently of whichever
+selection mechanism consumes it. Branching-walk tube and many-to-one estimates
+that do not use a selection rule belong under `Spine`.
 
 ## Mathlib reuse
 
