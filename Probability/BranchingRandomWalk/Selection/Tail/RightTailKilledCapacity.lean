@@ -9,6 +9,7 @@ import Probability.Process.RandomWalk.Path.Corridor.Horizontal
 import Probability.Process.RandomWalk.Path.Restart.Basic
 import Probability.Process.RandomWalk.SmallDeviation.Drawdown.Upper
 import Probability.Process.RandomWalk.SmallDeviation.Drawdown.Scaling
+import Probability.BranchingRandomWalk.Selection.Tail.LogarithmicScales
 
 /-!
 # A killed population for the positive-initial-mass right-tail argument
@@ -30,6 +31,96 @@ open Combinatorics.UlamHarris
 open ProbabilityTheory.BranchingRandomWalk
 open ProbabilityTheory.BranchingRandomWalk.Spine
 open ProbabilityTheory.RandomWalk
+
+/-- The first-stage cutoff `floor((log N)^(5/2))` used in the positive-`a`
+right-tail proof. -/
+noncomputable def rightTailPositiveAFirstCutoff
+    (N : ℕ → ℕ) (n : ℕ) : ℕ :=
+  ⌊logarithmOfSampleSize N n ^ ((5 : ℝ) / 2)⌋₊
+
+/-- The `log^(5/2) N` first-stage cutoff is negligible on the `log^3 N`
+scale. -/
+theorem tendsto_rightTailPositiveAFirstCutoff_div_logCube
+    {N : ℕ → ℕ} (hN : Tendsto N atTop atTop) :
+    Tendsto (fun n => (rightTailPositiveAFirstCutoff N n : ℝ) /
+      logarithmOfSampleSize N n ^ 3) atTop (𝓝 0) := by
+  let L : ℕ → ℝ := logarithmOfSampleSize N
+  let arg : ℕ → ℝ := fun n => L n ^ ((5 : ℝ) / 2)
+  have hL : Tendsto L atTop atTop := by
+    exact Real.tendsto_log_atTop.comp
+      (tendsto_natCast_atTop_atTop.comp hN)
+  have harg : Tendsto arg atTop atTop :=
+    (_root_.tendsto_rpow_atTop (by norm_num : (0 : ℝ) < (5 : ℝ) / 2)).comp hL
+  have hfloor : Tendsto (fun n => (Nat.floor (arg n) : ℝ) / arg n)
+      atTop (𝓝 1) := tendsto_nat_floor_div_atTop.comp harg
+  have hhalf : Tendsto (fun n => L n ^ ((1 : ℝ) / 2)) atTop atTop :=
+    (_root_.tendsto_rpow_atTop (by norm_num : (0 : ℝ) < (1 : ℝ) / 2)).comp hL
+  have hinv : Tendsto (fun n => (L n ^ ((1 : ℝ) / 2))⁻¹)
+      atTop (𝓝 0) := hhalf.inv_tendsto_atTop
+  have hratio : Tendsto (fun n => arg n / L n ^ 3) atTop (𝓝 0) := by
+    have heq : (fun n => arg n / L n ^ 3) =ᶠ[atTop]
+        fun n => (L n ^ ((1 : ℝ) / 2))⁻¹ := by
+      filter_upwards [hL.eventually_gt_atTop 0] with n hn
+      have hpow : L n ^ ((5 : ℝ) / 2) / L n ^ 3 =
+          (L n ^ ((1 : ℝ) / 2))⁻¹ := by
+        calc
+          L n ^ ((5 : ℝ) / 2) / L n ^ 3 =
+              L n ^ ((5 : ℝ) / 2) / L n ^ (3 : ℝ) := by
+                have hcast : L n ^ (3 : ℝ) = L n ^ (3 : ℕ) :=
+                  Real.rpow_natCast (L n) 3
+                rw [← hcast]
+          _ = L n ^ (((5 : ℝ) / 2) - 3) :=
+            (Real.rpow_sub hn ((5 : ℝ) / 2) (3 : ℝ)).symm
+          _ = L n ^ (-((1 : ℝ) / 2)) := by
+            congr 1
+            norm_num
+          _ = (L n ^ ((1 : ℝ) / 2))⁻¹ := Real.rpow_neg hn.le _
+      simpa [arg, L] using hpow
+    exact hinv.congr' heq.symm
+  have hbase := hfloor.mul hratio
+  have heq :
+      (fun n => (rightTailPositiveAFirstCutoff N n : ℝ) / L n ^ 3) =ᶠ[atTop]
+        fun n => (Nat.floor (arg n) : ℝ) / arg n * (arg n / L n ^ 3) := by
+    filter_upwards [hL.eventually_gt_atTop 0] with n hn
+    have hargPos : 0 < arg n := Real.rpow_pos_of_pos hn _
+    have hfloorVal : (rightTailPositiveAFirstCutoff N n : ℝ) =
+        (Nat.floor (arg n) : ℝ) := by
+      simp [rightTailPositiveAFirstCutoff, arg, L, logarithmOfSampleSize]
+    rw [hfloorVal]
+    field_simp [ne_of_gt hargPos, ne_of_gt hn]
+  simpa [L] using hbase.congr' heq.symm
+
+/-- The first cutoff lies strictly before the `floor(t log^3 N)+1` terminal
+horizon for all sufficiently large sample sizes. -/
+theorem eventually_rightTailPositiveAFirstCutoff_lt_horizon
+    {N : ℕ → ℕ} (hN : Tendsto N atTop atTop) {t : ℝ} (ht : 0 < t) :
+    ∀ᶠ n : ℕ in atTop,
+      rightTailPositiveAFirstCutoff N n < logarithmicHorizon N t n := by
+  let L : ℕ → ℝ := logarithmOfSampleSize N
+  have hcut := tendsto_rightTailPositiveAFirstCutoff_div_logCube hN
+  have hterminal := logarithmicHorizon_div_logCube_tendsto hN ht
+  have hgap : Tendsto
+      (fun n => (logarithmicHorizon N t n : ℝ) / L n ^ 3 -
+        (rightTailPositiveAFirstCutoff N n : ℝ) / L n ^ 3)
+      atTop (𝓝 t) := by
+    simpa [L] using hterminal.sub hcut
+  have hL : Tendsto L atTop atTop := by
+    exact Real.tendsto_log_atTop.comp
+      (tendsto_natCast_atTop_atTop.comp hN)
+  have hgapPos : ∀ᶠ n : ℕ in atTop,
+      0 < (logarithmicHorizon N t n : ℝ) / L n ^ 3 -
+        (rightTailPositiveAFirstCutoff N n : ℝ) / L n ^ 3 :=
+    Filter.Tendsto.eventually hgap (Ioi_mem_nhds ht)
+  filter_upwards [hgapPos, hL.eventually_gt_atTop 0]
+    with n hgap hLn
+  have hratio :
+      (rightTailPositiveAFirstCutoff N n : ℝ) / L n ^ 3 <
+        (logarithmicHorizon N t n : ℝ) / L n ^ 3 := by
+    linarith
+  have hreal : (rightTailPositiveAFirstCutoff N n : ℝ) <
+      (logarithmicHorizon N t n : ℝ) := by
+    exact (div_lt_div_iff_of_pos_right (pow_pos hLn 3)).mp hratio
+  exact_mod_cast hreal
 
 /-- Drift of the second-stage tube in the positive-`a` proof of (4.15),
 with `κ = π² σ² / 2`. -/
@@ -1773,6 +1864,24 @@ theorem tendsto_rightTailPositiveASpan_atTop_of_stageCubicRatios
   exact tendsto_rightTailPositiveASpan_cubicRatio_of_stageRatios
     hL hEll hEllN hellN
 
+/-- The paper's choices `ell = floor((log N)^(5/2))` and
+`ellN = floor(t (log N)^3) + 1` have a diverging second-stage span. -/
+theorem tendsto_rightTailPositiveASpan_atTop_of_logarithmicScales
+    {N : ℕ → ℕ} (hN : Tendsto N atTop atTop) {t : ℝ} (ht : 0 < t) :
+    Tendsto (fun n =>
+      ((logarithmicHorizon N t n - rightTailPositiveAFirstCutoff N n : ℕ) : ℝ))
+      atTop atTop := by
+  let L : ℕ → ℝ := logarithmOfSampleSize N
+  have hL : Tendsto L atTop atTop := by
+    exact Real.tendsto_log_atTop.comp
+      (tendsto_natCast_atTop_atTop.comp hN)
+  apply tendsto_rightTailPositiveASpan_atTop_of_stageCubicRatios hL
+    (by simpa [L] using tendsto_rightTailPositiveAFirstCutoff_div_logCube hN)
+    (by simpa [L] using logarithmicHorizon_div_logCube_tendsto hN ht)
+    ht
+  exact (eventually_rightTailPositiveAFirstCutoff_lt_horizon hN ht).mono
+    (fun _ h => Nat.le_of_lt h)
+
 /-- Along any diverging planned span, the full terminal second-stage
 drawdown probability obeys the uniform Aïdékon--Hu exponential estimate.
 The restriction `p < 1` is exactly what makes `width^(2+p)` sublinear in the
@@ -1791,7 +1900,8 @@ theorem eventually_iidSequenceLaw_rightTailPositiveA_terminalDrawdown_le_ah
     (htarget : 0 < target) (htargetBlock : target < blockTarget)
     (hblockTarget : blockTarget < Real.pi ^ 2 / 2)
     (hp : 0 < p) (hp1 : p < 1)
-    {ell ellN : ℕ → ℕ} (hellN : ∀ n, ell n < ellN n)
+    {ell ellN : ℕ → ℕ}
+    (hellN : ∀ᶠ n : ℕ in atTop, ell n < ellN n)
     (hspan : Tendsto (fun n => ((ellN n - ell n : ℕ) : ℝ)) atTop atTop) :
     ∀ᶠ n : ℕ in atTop,
       iidSequenceLaw ν
@@ -1810,8 +1920,8 @@ theorem eventually_iidSequenceLaw_rightTailPositiveA_terminalDrawdown_le_ah
       hκ hc htarget htargetBlock hblockTarget hp
   have hscale := eventually_rightTailPositiveASecondStageAHScale
     D c p delta0 hc hp1 hspan
-  filter_upwards [hscale] with n hscale
-  have hbound := hAH (ell n) (ellN n) (D n) (hellN n) (by simp [D])
+  filter_upwards [hscale, hellN] with n hscale horder
+  have hbound := hAH (ell n) (ellN n) (D n) horder (by simp [D])
     (by simpa [D] using hscale.1) (by simpa [D] using hscale.2)
   simpa [D] using hbound
 
@@ -1831,7 +1941,8 @@ theorem eventually_iidSequenceLaw_rightTailPositiveASecondStageTube_le_ah
     (htarget : 0 < target) (htargetBlock : target < blockTarget)
     (hblockTarget : blockTarget < Real.pi ^ 2 / 2)
     (hp : 0 < p) (hp1 : p < 1)
-    {ell ellN : ℕ → ℕ} (hellN : ∀ n, ell n < ellN n)
+    {ell ellN : ℕ → ℕ}
+    (hellN : ∀ᶠ n : ℕ in atTop, ell n < ellN n)
     (hspan : Tendsto (fun n => ((ellN n - ell n : ℕ) : ℝ)) atTop atTop) :
     ∀ᶠ n : ℕ in atTop,
       iidSequenceLaw ν
@@ -1842,10 +1953,45 @@ theorem eventually_iidSequenceLaw_rightTailPositiveASecondStageTube_le_ah
   have hdrawdown := eventually_iidSequenceLaw_rightTailPositiveA_terminalDrawdown_le_ah
     ν hν hsigma hB hcontinuous hmeasurable κ c target blockTarget p hκ hc
     htarget htargetBlock hblockTarget hp hp1 hellN hspan
-  filter_upwards [hdrawdown] with n hbound
+  filter_upwards [hdrawdown, hellN] with n hbound horder
   apply (measure_mono ?_).trans hbound
   exact rightTailPositiveASecondStageTubeEvent_subset_drawdownEvent
-    (ell n) (ellN n) κ c v (hellN n) hκ hc hvc
+    (ell n) (ellN n) κ c v horder hκ hc hvc
+
+/-- The paper's logarithmic cutoff and terminal horizon satisfy the hypotheses
+of the uniform second-stage tube estimate, so the full restarted tube inherits
+the terminal Aïdékon--Hu bound eventually. -/
+theorem eventually_iidSequenceLaw_rightTailPositiveASecondStageTube_le_ah_of_logarithmicScales
+    (ν : Measure ℝ) [IsProbabilityMeasure ν] {sigma : ℝ}
+    (hν : ProbabilityTheory.IsCenteredSecondMoment ν (sigma ^ 2))
+    (hsigma : 0 < sigma)
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+    [IsProbabilityMeasure P] {B : NNReal → Ω → ℝ}
+    (hB : IsPreBrownianReal B P)
+    (hcontinuous : ∀ ω, Continuous (B · ω))
+    (hmeasurable : ∀ t, Measurable (B t))
+    (κ c v target blockTarget p : ℝ)
+    (hκ : 0 ≤ κ) (hc : 0 < c) (hvc : v ≤ c)
+    (htarget : 0 < target) (htargetBlock : target < blockTarget)
+    (hblockTarget : blockTarget < Real.pi ^ 2 / 2)
+    (hp : 0 < p) (hp1 : p < 1)
+    {N : ℕ → ℕ} (hN : Tendsto N atTop atTop)
+    {t : ℝ} (ht : 0 < t) :
+    ∀ᶠ n : ℕ in atTop,
+      iidSequenceLaw ν
+        (rightTailPositiveASecondStageTubeEvent
+          (rightTailPositiveAFirstCutoff N n) (logarithmicHorizon N t n)
+          κ c v) ≤
+        ENNReal.ofReal (Real.exp
+          (-target * sigma ^ 2 *
+            ((logarithmicHorizon N t n - rightTailPositiveAFirstCutoff N n : ℕ) : ℝ) /
+              (c * (((logarithmicHorizon N t n -
+                rightTailPositiveAFirstCutoff N n : ℕ) : ℝ) ^ (3⁻¹ : ℝ))) ^ 2)) := by
+  exact eventually_iidSequenceLaw_rightTailPositiveASecondStageTube_le_ah
+    ν hν hsigma hB hcontinuous hmeasurable κ c v target blockTarget p hκ hc hvc
+    htarget htargetBlock hblockTarget hp hp1
+    (eventually_rightTailPositiveAFirstCutoff_lt_horizon hN ht)
+    (tendsto_rightTailPositiveASpan_atTop_of_logarithmicScales hN ht)
 
 /-- Insert the uniform Aïdékon--Hu estimate into the two-stage capacity
 bound. Long second-stage prefixes use the exponential drawdown estimate;
