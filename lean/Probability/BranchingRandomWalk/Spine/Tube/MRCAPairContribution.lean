@@ -14,8 +14,10 @@ import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 This file specializes the BRW path-level MRCA decomposition to affine tubes.
 It bounds the root-split pair contribution and expresses each later
 ancestor-generation contribution as an ancestral-prefix mass times a
-continuation-pair estimate. The recursive path-pair terms have not yet been
-identified with these conditional-prefix integrals.
+continuation-pair estimate. `ActualMRCAContribution` identifies these terms
+with the actual path-level contributions; `AffineCorridorPairBound` sums them
+over ancestor generations, and `AffineCorridorSecondMoment` gives the resulting
+corridor-count second moment.
 -/
 
 open MeasureTheory
