@@ -886,8 +886,169 @@ theorem rightTailPositiveASecondStageEnvelope_le
     (rightTailPositiveAWindowUpper_le_span ell ellN k logN b v c κ
       hellN hκ hk hkN) ((-b + v) * logN)
 
-/-- Splitting the finite generation sum at `ell` gives the expected counts
-of terms from the two stages. -/
+/-- At a fixed second-stage generation, the endpoint weight uses that
+generation's drift rather than the terminal drift. This pointwise form is
+what allows the branching weight to cancel the small-deviation exponent. -/
+theorem rightTailPositiveAWindowUpper_le_generationDrift_add_width
+    (ell ellN k : ℕ) (logN b v c κ : ℝ)
+    (hellN : ell < ellN) (hvc : v ≤ c)
+    (hk : ell < k) (hkN : k ≤ ellN) :
+    rightTailPositiveAWindowUpper ell ellN logN b v c κ k ≤
+      rightTailPositiveADrift ell ellN κ c (k - ell) +
+        c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)) := by
+  have hwidth : 0 ≤ (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)) := by
+    apply Real.rpow_nonneg
+    positivity
+  by_cases hend : k = ellN
+  · subst k
+    have hnotlt : ¬ellN < ell := Nat.not_lt_of_ge hellN.le
+    have hne : ellN ≠ ell := by omega
+    simp [rightTailPositiveAWindowUpper, hnotlt, hne]
+    exact mul_le_mul_of_nonneg_right hvc hwidth
+  · have hklt : k < ellN := by omega
+    have hnotlt : ¬k < ell := Nat.not_lt_of_ge hk.le
+    have hne : k ≠ ell := ne_of_gt hk
+    simp [rightTailPositiveAWindowUpper, hnotlt, hne, hklt]
+
+/-- When the tube drift coefficient equals the Aïdékon--Hu rate coefficient,
+the generation's deterministic drift exactly cancels the exponential
+small-deviation cost at that generation. -/
+theorem rightTailPositiveADrift_eq_ahExponent
+    (ell ellN d : ℕ) (κ c target sigma : ℝ)
+    (hellN : ell < ellN) (hc : 0 < c)
+    (hκ : κ = target * sigma ^ 2) :
+    rightTailPositiveADrift ell ellN κ c d =
+      target * sigma ^ 2 * (d : ℝ) /
+        (c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ))) ^ 2 := by
+  let D : ℝ := ((ellN - ell : ℕ) : ℝ)
+  have hDpos : 0 < D := by
+    dsimp [D]
+    exact_mod_cast Nat.sub_pos_of_lt hellN
+  have hrootSq : (D ^ (3⁻¹ : ℝ)) ^ 2 = D ^ ((2 : ℝ) / 3) := by
+    calc
+      (D ^ (3⁻¹ : ℝ)) ^ 2 = (D ^ (3⁻¹ : ℝ)) ^ (2 : ℝ) :=
+        (Real.rpow_natCast _ 2).symm
+      _ = D ^ ((3⁻¹ : ℝ) * 2) := by rw [← Real.rpow_mul hDpos.le]
+      _ = D ^ ((2 : ℝ) / 3) := by congr 1 <;> norm_num
+  have hwidthSq : (c * D ^ (3⁻¹ : ℝ)) ^ 2 = c ^ 2 * D ^ ((2 : ℝ) / 3) := by
+    rw [mul_pow, hrootSq]
+  have hDneg : D ^ ((-2 : ℝ) / 3) = (D ^ ((2 : ℝ) / 3))⁻¹ := by
+    have hexponent : (-2 : ℝ) / 3 = -((2 : ℝ) / 3) := by ring
+    rw [hexponent, Real.rpow_neg hDpos.le]
+  change κ / c ^ 2 * D ^ ((-2 : ℝ) / 3) * (d : ℝ) =
+    target * sigma ^ 2 * (d : ℝ) / (c * D ^ (3⁻¹ : ℝ)) ^ 2
+  rw [hκ, hwidthSq, hDneg]
+  field_simp [hc.ne', ne_of_gt hDpos]
+
+/-- Multiplying the generation-specific endpoint weight by its long-prefix
+Aïdékon--Hu probability removes the deterministic drift and leaves only the
+initial offset and tube width. -/
+theorem rightTailPositiveAWindowWeightedAH_le
+    (ell ellN k : ℕ) (logN b v c κ target sigma : ℝ)
+    (hellN : ell < ellN) (hvc : v ≤ c) (hc : 0 < c)
+    (hk : ell < k) (hkN : k ≤ ellN)
+    (hκ : κ = target * sigma ^ 2) :
+    ENNReal.ofReal (Real.exp
+        (rightTailPositiveAWindowUpper ell ellN logN b v c κ ell +
+          rightTailPositiveAWindowUpper ell ellN logN b v c κ k)) *
+      ENNReal.ofReal (Real.exp
+        (-target * sigma ^ 2 * ((k - ell : ℕ) : ℝ) /
+          (c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ))) ^ 2)) ≤
+    ENNReal.ofReal (Real.exp
+      ((-b + v) * logN + c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)))) := by
+  have hcancel := rightTailPositiveADrift_eq_ahExponent
+    ell ellN (k - ell) κ c target sigma hellN hc hκ
+  have hupper := rightTailPositiveAWindowUpper_le_generationDrift_add_width
+    ell ellN k logN b v c κ hellN hvc hk hkN
+  have hcutoff := rightTailPositiveAWindowUpper_at_cutoff ell ellN logN b v c κ
+  have hnegative :
+      -target * sigma ^ 2 * ((k - ell : ℕ) : ℝ) /
+          (c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ))) ^ 2 =
+        -rightTailPositiveADrift ell ellN κ c (k - ell) := by
+    rw [hcancel]
+    ring
+  have hexponent :
+      rightTailPositiveAWindowUpper ell ellN logN b v c κ ell +
+          rightTailPositiveAWindowUpper ell ellN logN b v c κ k +
+        (-target * sigma ^ 2 * ((k - ell : ℕ) : ℝ) /
+          (c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ))) ^ 2) ≤
+      (-b + v) * logN + c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)) := by
+    rw [hcutoff]
+    calc
+      _ ≤ (-b + v) * logN +
+          (rightTailPositiveADrift ell ellN κ c (k - ell) +
+            c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ))) +
+          (-target * sigma ^ 2 * ((k - ell : ℕ) : ℝ) /
+            (c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ))) ^ 2) := by
+          linarith
+      _ = (-b + v) * logN +
+          c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)) := by
+          rw [hnegative]
+          ring
+  calc
+    _ = ENNReal.ofReal (Real.exp
+        (rightTailPositiveAWindowUpper ell ellN logN b v c κ ell +
+          rightTailPositiveAWindowUpper ell ellN logN b v c κ k +
+          (-target * sigma ^ 2 * ((k - ell : ℕ) : ℝ) /
+            (c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ))) ^ 2))) := by
+        rw [← ENNReal.ofReal_mul (Real.exp_nonneg _), ← Real.exp_add]
+    _ ≤ ENNReal.ofReal (Real.exp
+        ((-b + v) * logN + c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)))) :=
+      ENNReal.ofReal_le_ofReal (Real.exp_le_exp.mpr hexponent)
+
+/-- Even before a prefix is long enough for the Aïdékon--Hu estimate, its
+drift is small: below the AH cutoff it is at most a constant times
+`span^(p/3)`, which is lower order than the tube width when `p < 1`. -/
+theorem rightTailPositiveADrift_le_shortPrefix_power
+    (ell ellN d : ℕ) (κ c p : ℝ)
+    (hellN : ell < ellN) (hκ : 0 ≤ κ) (hc : 0 < c)
+    (hshort : (d : ℝ) ≤
+      (c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ))) ^ (2 + p)) :
+    rightTailPositiveADrift ell ellN κ c d ≤
+      κ * c ^ p * (((ellN - ell : ℕ) : ℝ) ^ (p / 3)) := by
+  let D : ℝ := ((ellN - ell : ℕ) : ℝ)
+  have hDpos : 0 < D := by
+    dsimp [D]
+    exact_mod_cast Nat.sub_pos_of_lt hellN
+  have hwidthPow :
+      (c * D ^ (3⁻¹ : ℝ)) ^ (2 + p) =
+        c ^ (2 + p) * D ^ ((2 + p) / 3) := by
+    rw [Real.mul_rpow hc.le (by positivity)]
+    rw [← Real.rpow_mul hDpos.le]
+    congr 1
+    ring_nf
+  have hcPow : c ^ (2 + p) = c ^ (2 : ℝ) * c ^ p :=
+    Real.rpow_add hc 2 p
+  have hcPowTwo : c ^ (2 : ℝ) = c ^ 2 := Real.rpow_natCast c 2
+  have hDpow :
+      D ^ ((-2 : ℝ) / 3) * D ^ ((2 + p) / 3) = D ^ (p / 3) := by
+    rw [← Real.rpow_add hDpos]
+    congr 1
+    ring
+  change κ / c ^ 2 * D ^ ((-2 : ℝ) / 3) * (d : ℝ) ≤
+    κ * c ^ p * D ^ (p / 3)
+  have hshort' := mul_le_mul_of_nonneg_left hshort
+    (Real.rpow_nonneg hDpos.le ((-2 : ℝ) / 3))
+  calc
+    _ = κ / c ^ 2 * (D ^ ((-2 : ℝ) / 3) * (d : ℝ)) := by ring
+    _ ≤ κ / c ^ 2 *
+        (D ^ ((-2 : ℝ) / 3) * (c * D ^ (3⁻¹ : ℝ)) ^ (2 + p)) :=
+          mul_le_mul_of_nonneg_left hshort' (div_nonneg hκ (sq_nonneg c))
+    _ = κ * c ^ p * D ^ (p / 3) := by
+          rw [hwidthPow, hcPow, hcPowTwo]
+          calc
+            κ / c ^ 2 *
+                (D ^ ((-2 : ℝ) / 3) * (c ^ 2 * c ^ p * D ^ ((2 + p) / 3))) =
+              κ / c ^ 2 *
+                (c ^ 2 * c ^ p *
+                  (D ^ ((-2 : ℝ) / 3) * D ^ ((2 + p) / 3))) := by ring
+            _ = κ * c ^ p * D ^ (p / 3) := by
+              rw [hDpow]
+              field_simp [hc.ne']
+
+/-- The canceled two-stage AH sum has only the original first-phase count
+plus a second-phase contribution with exponent
+`(-b+v) logN + c L^(1/3) + O(L^(p/3))`. -/
 theorem sum_fin_if_le_eq_add_mul (ell ellN : ℕ) (A B : ℝ≥0∞)
     (hell : ell ≤ ellN) :
     (∑ k : Fin (ellN + 1), if (k : ℕ) ≤ ell then A else B) =
@@ -921,6 +1082,90 @@ theorem sum_fin_if_le_eq_add_mul (ell ellN : ℕ) (A B : ℝ≥0∞)
     rw [hlength]
     simp [Finset.sum_const]
   rw [hfirst, hsecond]
+
+theorem rightTailPositiveA_canceledAH_sum_le
+    (ell ellN : ℕ) (logN b v c κ p : ℝ)
+    (hellN : ell < ellN) (hκ : 0 ≤ κ) (hc : 0 < c)
+    (hvc : v ≤ c) :
+    (∑ k : Fin (ellN + 1),
+      if (k : ℕ) ≤ ell then 1 else
+        if (c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ))) ^ (2 + p) ≤
+            (((k : ℕ) - ell : ℕ) : ℝ) then
+          ENNReal.ofReal (Real.exp
+            ((-b + v) * logN +
+              c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ))))
+        else ENNReal.ofReal (Real.exp
+          (rightTailPositiveAWindowUpper ell ellN logN b v c κ ell +
+            rightTailPositiveAWindowUpper ell ellN logN b v c κ (k : ℕ)))) ≤
+      ((ell + 1 : ℕ) : ℝ≥0∞) +
+        ((ellN - ell : ℕ) : ℝ≥0∞) *
+          ENNReal.ofReal (Real.exp
+            ((-b + v) * logN +
+              c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)) +
+              κ * c ^ p * (((ellN - ell : ℕ) : ℝ) ^ (p / 3)))) := by
+  let width : ℝ := c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ))
+  let lowOrder : ℝ := κ * c ^ p * (((ellN - ell : ℕ) : ℝ) ^ (p / 3))
+  have hlowOrder : 0 ≤ lowOrder := by
+    dsimp [lowOrder]
+    positivity
+  have hsum :
+      (∑ k : Fin (ellN + 1),
+        if (k : ℕ) ≤ ell then 1 else
+          if width ^ (2 + p) ≤ (((k : ℕ) - ell : ℕ) : ℝ) then
+            ENNReal.ofReal (Real.exp ((-b + v) * logN + width))
+          else ENNReal.ofReal (Real.exp
+            (rightTailPositiveAWindowUpper ell ellN logN b v c κ ell +
+              rightTailPositiveAWindowUpper ell ellN logN b v c κ (k : ℕ)))) ≤
+      ∑ k : Fin (ellN + 1),
+        if (k : ℕ) ≤ ell then 1 else
+          ENNReal.ofReal (Real.exp ((-b + v) * logN + width + lowOrder)) := by
+    apply Finset.sum_le_sum
+    intro k _hk
+    by_cases hkle : (k : ℕ) ≤ ell
+    · simp [hkle]
+    · have hk : ell < (k : ℕ) := Nat.lt_of_not_ge hkle
+      have hkN : (k : ℕ) ≤ ellN := Nat.le_of_lt_succ k.isLt
+      by_cases hlong : width ^ (2 + p) ≤ (((k : ℕ) - ell : ℕ) : ℝ)
+      · have hweight :
+            ENNReal.ofReal (Real.exp ((-b + v) * logN + width)) ≤
+              ENNReal.ofReal (Real.exp ((-b + v) * logN + width + lowOrder)) := by
+          apply ENNReal.ofReal_le_ofReal
+          exact Real.exp_le_exp.mpr (by linarith [hlowOrder])
+        simpa [hkle, hlong, width, lowOrder] using hweight
+      · have hd : (((k : ℕ) - ell : ℕ) : ℝ) ≤ width ^ (2 + p) :=
+          le_of_not_ge hlong
+        have hdrift := rightTailPositiveADrift_le_shortPrefix_power
+          ell ellN ((k : ℕ) - ell) κ c p hellN hκ hc (by
+            simpa [width] using hd)
+        have hupper := rightTailPositiveAWindowUpper_le_generationDrift_add_width
+          ell ellN (k : ℕ) logN b v c κ hellN hvc hk hkN
+        have hcutoff := rightTailPositiveAWindowUpper_at_cutoff
+          ell ellN logN b v c κ
+        have hexponent :
+            rightTailPositiveAWindowUpper ell ellN logN b v c κ ell +
+                rightTailPositiveAWindowUpper ell ellN logN b v c κ (k : ℕ) ≤
+              (-b + v) * logN + width + lowOrder := by
+          rw [hcutoff]
+          dsimp [width, lowOrder]
+          linarith
+        simpa [hkle, hlong] using ENNReal.ofReal_le_ofReal
+          (Real.exp_le_exp.mpr hexponent)
+  calc
+    _ ≤ ∑ k : Fin (ellN + 1),
+        if (k : ℕ) ≤ ell then 1 else
+          ENNReal.ofReal (Real.exp ((-b + v) * logN + width + lowOrder)) := by
+            simpa [width, lowOrder] using hsum
+    _ = ((ell + 1 : ℕ) : ℝ≥0∞) * 1 +
+        ((ellN - ell : ℕ) : ℝ≥0∞) *
+          ENNReal.ofReal (Real.exp ((-b + v) * logN + width + lowOrder)) :=
+          sum_fin_if_le_eq_add_mul ell ellN 1
+            (ENNReal.ofReal (Real.exp ((-b + v) * logN + width + lowOrder)))
+            (Nat.le_of_lt hellN)
+    _ = ((ell + 1 : ℕ) : ℝ≥0∞) +
+        ((ellN - ell : ℕ) : ℝ≥0∞) *
+          ENNReal.ofReal (Real.exp ((-b + v) * logN + width + lowOrder)) := by
+            simp
+    _ = _ := by simp [width, lowOrder]
 
 theorem measurableSet_rightTailPositiveARestartedWindow
     (ell ellN : ℕ) (logN b v c κ : ℝ) (k : ℕ) :
@@ -1433,7 +1678,7 @@ theorem measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhaseOfGenera
     [Countable (RootIndexed.TreeNode (Fin m) ℕ)]
     [DecidableEq (RootIndexed.TreeNode (Fin m) ℕ)]
     (hell : 0 < ell) (hellN : ell < ellN)
-    (hb : 0 ≤ b) (hlog : 0 ≤ logN) (hκ : 0 ≤ κ) (hvb : v ≤ b)
+    (hb : 0 ≤ b) (hlog : 0 ≤ logN) (hvb : v ≤ b)
     (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
     (hboundary : HasBoundaryNormalization realPotential μ)
     (pFirst pSecond : ℕ → ℝ≥0∞)
@@ -1464,13 +1709,11 @@ theorem measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhaseOfGenera
         (∑ k : Fin (ellN + 1),
           if (k : ℕ) ≤ ell then pFirst (k : ℕ) else
             ENNReal.ofReal (Real.exp
-              ((-b + v) * logN + (κ / c ^ 2 + max c v) *
-                (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)))) *
+              (rightTailPositiveAWindowUpper ell ellN logN b v c κ ell +
+                rightTailPositiveAWindowUpper ell ellN logN b v c κ (k : ℕ))) *
               pSecond (k : ℕ)) /
           (N + 1 : ℕ) := by
   dsimp only
-  let U₂ : ℝ := (-b + v) * logN + (κ / c ^ 2 + max c v) *
-    (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ))
   let window := rightTailPositiveARestartedWindow ell ellN logN b v c κ
   let upper := rightTailPositiveAWindowUpper ell ellN logN b v c κ
   let ν := tiltedIncrementFieldLaw realPotential μ
@@ -1484,7 +1727,8 @@ theorem measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhaseOfGenera
       (∑ k : Fin (ellN + 1), term k) ≤
         ∑ k : Fin (ellN + 1),
           if (k : ℕ) ≤ ell then pFirst (k : ℕ) else
-            ENNReal.ofReal (Real.exp U₂) * pSecond (k : ℕ) := by
+            ENNReal.ofReal (Real.exp (upper ell + upper (k : ℕ))) *
+              pSecond (k : ℕ) := by
     apply Finset.sum_le_sum
     intro k _hk
     by_cases hkle : (k : ℕ) ≤ ell
@@ -1501,26 +1745,20 @@ theorem measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhaseOfGenera
           mul_le_mul_of_nonneg_right (by simpa [hkle] using hweight) (by positivity)
         _ ≤ pFirst (k : ℕ) := by simpa using hpath
         _ = (if (k : ℕ) ≤ ell then pFirst (k : ℕ) else
-            ENNReal.ofReal (Real.exp U₂) * pSecond (k : ℕ)) := by simp [hkle]
+            ENNReal.ofReal (Real.exp (upper ell + upper (k : ℕ))) *
+              pSecond (k : ℕ)) := by simp [hkle]
     · have hkle : ell < (k : ℕ) := Nat.lt_of_not_ge hkle
-      have hkhi : (k : ℕ) ≤ ellN := Nat.le_of_lt_succ k.isLt
-      have hupper := rightTailPositiveASecondStageEnvelope_le
-        ell ellN (k : ℕ) logN b v c κ hellN hκ hkle hkhi
-      have hweight : ENNReal.ofReal (Real.exp
-          (upper ell + upper (k : ℕ))) ≤ ENNReal.ofReal (Real.exp U₂) := by
-        apply ENNReal.ofReal_le_ofReal
-        exact Real.exp_le_exp.mpr (by simpa [U₂, upper] using hupper)
       have hpath := hsecondPath k hkle
       calc
-        _ ≤ ENNReal.ofReal (Real.exp U₂) *
-            RandomWalk.restartedWindowProbability ν ell window (k : ℕ) 0 :=
-          mul_le_mul_of_nonneg_right
-            (by simpa [Nat.not_le_of_gt hkle] using hweight)
-            (by positivity)
-        _ ≤ ENNReal.ofReal (Real.exp U₂) * pSecond (k : ℕ) :=
+        _ = ENNReal.ofReal (Real.exp (upper ell + upper (k : ℕ))) *
+            RandomWalk.restartedWindowProbability ν ell window (k : ℕ) 0 := by
+              simp [term, Nat.not_le_of_gt hkle]
+        _ ≤ ENNReal.ofReal (Real.exp (upper ell + upper (k : ℕ))) *
+            pSecond (k : ℕ) :=
           mul_le_mul_of_nonneg_left hpath (by positivity)
         _ = (if (k : ℕ) ≤ ell then pFirst (k : ℕ) else
-            ENNReal.ofReal (Real.exp U₂) * pSecond (k : ℕ)) := by
+            ENNReal.ofReal (Real.exp (upper ell + upper (k : ℕ))) *
+              pSecond (k : ℕ)) := by
           simp [Nat.not_le_of_gt hkle]
   calc
     (RootIndexed.stepFieldLaw (Root := Fin m) μ)
@@ -1541,11 +1779,12 @@ theorem measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhaseOfGenera
     _ ≤ (m : ℝ≥0∞) *
         (∑ k : Fin (ellN + 1),
             if (k : ℕ) ≤ ell then pFirst (k : ℕ) else
-            ENNReal.ofReal (Real.exp U₂) * pSecond (k : ℕ)) /
+            ENNReal.ofReal (Real.exp (upper ell + upper (k : ℕ))) *
+              pSecond (k : ℕ)) /
           (N + 1 : ℕ) := by
       apply ENNReal.div_le_div_right
       exact mul_le_mul_of_nonneg_left hsum (by positivity)
-    _ = _ := by simp [U₂]
+    _ = _ := by simp [upper]
 
 /-- The generation-dependent capacity bound accepts per-prefix random-walk
 drawdown estimates directly. The endpoint threshold and the corridor width
@@ -1593,8 +1832,8 @@ theorem measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhaseOfDrawdo
         (∑ k : Fin (ellN + 1),
           if (k : ℕ) ≤ ell then pFirst (k : ℕ) else
             ENNReal.ofReal (Real.exp
-              ((-b + v) * logN + (κ / c ^ 2 + max c v) *
-                (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)))) *
+              (rightTailPositiveAWindowUpper ell ellN logN b v c κ ell +
+                rightTailPositiveAWindowUpper ell ellN logN b v c κ (k : ℕ))) *
               pSecond (k : ℕ)) /
           (N + 1 : ℕ) := by
   have hsecondPath : ∀ k : Fin (ellN + 1), ell < (k : ℕ) →
@@ -1610,7 +1849,7 @@ theorem measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhaseOfDrawdo
       ν ell ellN (k : ℕ) logN b v c κ hk (by omega) hκ hc hvc)
       |>.trans (hdrawdown k hk)
   exact measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhaseOfGenerationPathBounds
-    m ell ellN N logN b v c κ hell hellN hb hlog hκ hvb μ hboundary
+    m ell ellN N logN b v c κ hell hellN hb hlog hvb μ hboundary
     pFirst pSecond hfirstPath hsecondPath
 
 /-- A bound on the first-stage horizontal corridor controls every later
@@ -2254,8 +2493,8 @@ theorem measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhaseOfAHDraw
         (∑ k : Fin (ellN + 1),
           if (k : ℕ) ≤ ell then pFirst (k : ℕ) else
             ENNReal.ofReal (Real.exp
-              ((-b + v) * logN + (κ / c ^ 2 + max c v) *
-                (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)))) *
+              (rightTailPositiveAWindowUpper ell ellN logN b v c κ ell +
+                rightTailPositiveAWindowUpper ell ellN logN b v c κ (k : ℕ))) *
               (if (c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ))) ^ (2 + p) ≤
                   (((k : ℕ) - ell : ℕ) : ℝ) then
                 ENNReal.ofReal (Real.exp
@@ -2300,6 +2539,230 @@ theorem measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhaseOfAHDraw
       m ell ellN N logN b v c κ hell hellN hb hlog hκ hvb hc hvc μ hboundary
       ν hν pFirst pSecond hfirstPath hdrawdown
   simpa [pSecond, width] using hcap
+
+/-- With `κ` chosen as the Aïdékon--Hu rate coefficient, long-prefix terms
+in the capacity sum reduce to the first-stage offset plus one tube width.
+Only short prefixes retain their generation-specific endpoint weight. -/
+theorem measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhaseOfAHDrawdown_canceled
+    (m ell ellN N : ℕ) (logN b v c κ : ℝ)
+    [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
+    [Countable (RootIndexed.TreeNode (Fin m) ℕ)]
+    [DecidableEq (RootIndexed.TreeNode (Fin m) ℕ)]
+    (hell : 0 < ell) (hellN : ell < ellN)
+    (hb : 0 ≤ b) (hlog : 0 ≤ logN) (hκ : 0 ≤ κ) (hvb : v ≤ b)
+    (hc : 0 < c) (hvc : v ≤ c)
+    (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
+    (hboundary : HasBoundaryNormalization realPotential μ)
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (hν : ν = tiltedPotentialLaw realPotential (-1) μ)
+    {sigma : ℝ}
+    (hspine : ProbabilityTheory.IsCenteredSecondMoment ν (sigma ^ 2))
+    (hsigma : 0 < sigma)
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+    [IsProbabilityMeasure P] {B : NNReal → Ω → ℝ}
+    (hB : IsPreBrownianReal B P)
+    (hcontinuous : ∀ ω, Continuous (B · ω))
+    (hmeasurable : ∀ t, Measurable (B t))
+    (target blockTarget p : ℝ)
+    (htarget : 0 < target) (htargetBlock : target < blockTarget)
+    (hblockTarget : blockTarget < Real.pi ^ 2 / 2) (hp : 0 < p)
+    (pFirst : ℕ → ℝ≥0∞)
+    (hfirstPath : ∀ k : Fin (ellN + 1), (k : ℕ) ≤ ell →
+      RandomWalk.restartedWindowProbability
+        (tiltedIncrementFieldLaw realPotential μ) ell
+        (rightTailPositiveARestartedWindow ell ellN logN b v c κ)
+        (k : ℕ) 0 ≤ pFirst (k : ℕ))
+    (hκrate : κ = target * sigma ^ 2) :
+    ∃ delta0 : ℝ, 0 < delta0 ∧
+      (delta0 ≤ c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)) →
+    let window := rightTailPositiveARestartedWindow ell ellN logN b v c κ
+    let upper := rightTailPositiveAWindowUpper ell ellN logN b v c κ
+    let P := RootIndexed.CausalPopulation.ofRestartedRealPositionSets
+      (fun _ : Fin m => (0 : ℝ)) id measurable_id
+      (RootIndexed.initialPopulation (α := ℕ) (Finset.univ : Finset (Fin m)))
+      (by
+        intro q hq
+        rcases RootIndexed.mem_initialPopulation_iff.mp hq with ⟨r, _hr, rfl⟩
+        simp) ell window
+      (measurableSet_rightTailPositiveARestartedWindow ell ellN logN b v c κ)
+      upper (rightTailPositiveARestartedWindow_subset_Iic_upper
+        ell ellN logN b v c κ)
+    (RootIndexed.stepFieldLaw (Root := Fin m) μ) (P.capacityEvent N ellN)ᶜ ≤
+      (m : ℝ≥0∞) *
+        (∑ k : Fin (ellN + 1),
+          if (k : ℕ) ≤ ell then pFirst (k : ℕ) else
+            if (c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ))) ^ (2 + p) ≤
+                (((k : ℕ) - ell : ℕ) : ℝ) then
+              ENNReal.ofReal (Real.exp
+                ((-b + v) * logN +
+                  c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ))))
+            else ENNReal.ofReal (Real.exp
+              (rightTailPositiveAWindowUpper ell ellN logN b v c κ ell +
+                rightTailPositiveAWindowUpper ell ellN logN b v c κ (k : ℕ)))) /
+          (N + 1 : ℕ)) := by
+  obtain ⟨delta0, hdelta0, hcapacity⟩ :=
+    measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhaseOfAHDrawdown
+      m ell ellN N logN b v c κ hell hellN hb hlog hκ hvb hc hvc μ hboundary
+      ν hν hspine hsigma hB hcontinuous hmeasurable target blockTarget p
+      htarget htargetBlock hblockTarget hp pFirst hfirstPath
+  refine ⟨delta0, hdelta0, ?_⟩
+  intro hscale
+  have hbound := hcapacity hscale
+  let width : ℝ := c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ))
+  have hsum :
+      (∑ k : Fin (ellN + 1),
+        if (k : ℕ) ≤ ell then pFirst (k : ℕ) else
+          ENNReal.ofReal (Real.exp
+            (rightTailPositiveAWindowUpper ell ellN logN b v c κ ell +
+              rightTailPositiveAWindowUpper ell ellN logN b v c κ (k : ℕ))) *
+            (if width ^ (2 + p) ≤ (((k : ℕ) - ell : ℕ) : ℝ) then
+              ENNReal.ofReal (Real.exp
+                (-target * sigma ^ 2 * (((k : ℕ) - ell : ℕ) : ℝ) /
+                  width ^ 2))
+            else 1)) ≤
+      ∑ k : Fin (ellN + 1),
+        if (k : ℕ) ≤ ell then pFirst (k : ℕ) else
+          if width ^ (2 + p) ≤ (((k : ℕ) - ell : ℕ) : ℝ) then
+            ENNReal.ofReal (Real.exp
+              ((-b + v) * logN + width))
+          else ENNReal.ofReal (Real.exp
+            (rightTailPositiveAWindowUpper ell ellN logN b v c κ ell +
+              rightTailPositiveAWindowUpper ell ellN logN b v c κ (k : ℕ))) := by
+    apply Finset.sum_le_sum
+    intro k _hk
+    by_cases hkle : (k : ℕ) ≤ ell
+    · simp [hkle]
+    · have hk : ell < (k : ℕ) := Nat.lt_of_not_ge hkle
+      by_cases hlong : width ^ (2 + p) ≤ (((k : ℕ) - ell : ℕ) : ℝ)
+      · have hcancel := rightTailPositiveAWindowWeightedAH_le
+          ell ellN (k : ℕ) logN b v c κ target sigma hellN hvc hc hk
+          (by omega) hκrate
+        simpa [width, Nat.not_le_of_gt hk, hlong] using hcancel
+      · simp [width, Nat.not_le_of_gt hk, hlong]
+  calc
+    _ ≤ (m : ℝ≥0∞) *
+        (∑ k : Fin (ellN + 1),
+          if (k : ℕ) ≤ ell then pFirst (k : ℕ) else
+            ENNReal.ofReal (Real.exp
+              (rightTailPositiveAWindowUpper ell ellN logN b v c κ ell +
+                rightTailPositiveAWindowUpper ell ellN logN b v c κ (k : ℕ))) *
+              (if width ^ (2 + p) ≤ (((k : ℕ) - ell : ℕ) : ℝ) then
+                ENNReal.ofReal (Real.exp
+                  (-target * sigma ^ 2 * (((k : ℕ) - ell : ℕ) : ℝ) /
+                    width ^ 2))
+              else 1)) / (N + 1 : ℕ) := by
+          simpa [width] using hbound
+    _ ≤ (m : ℝ≥0∞) *
+        (∑ k : Fin (ellN + 1),
+          if (k : ℕ) ≤ ell then pFirst (k : ℕ) else
+            if width ^ (2 + p) ≤ (((k : ℕ) - ell : ℕ) : ℝ) then
+              ENNReal.ofReal (Real.exp ((-b + v) * logN + width))
+            else ENNReal.ofReal (Real.exp
+              (rightTailPositiveAWindowUpper ell ellN logN b v c κ ell +
+                rightTailPositiveAWindowUpper ell ellN logN b v c κ (k : ℕ)))) /
+          (N + 1 : ℕ) := by
+          apply ENNReal.div_le_div_right
+          exact mul_le_mul_of_nonneg_left hsum (by positivity)
+    _ = _ := by simp [width]
+
+/-- Combining the generation-wise capacity estimate with the canceled AH sum
+gives the finite-scale bound used for the first term in (4.15). -/
+theorem measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhaseOfAHPolynomialInput
+    (m ell ellN N : ℕ) (logN b v c κ : ℝ)
+    [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
+    [Countable (RootIndexed.TreeNode (Fin m) ℕ)]
+    [DecidableEq (RootIndexed.TreeNode (Fin m) ℕ)]
+    (hell : 0 < ell) (hellN : ell < ellN)
+    (hb : 0 ≤ b) (hlog : 0 ≤ logN) (hκ : 0 ≤ κ) (hvb : v ≤ b)
+    (hc : 0 < c) (hvc : v ≤ c)
+    (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
+    (hboundary : HasBoundaryNormalization realPotential μ)
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (hν : ν = tiltedPotentialLaw realPotential (-1) μ)
+    {sigma : ℝ}
+    (hspine : ProbabilityTheory.IsCenteredSecondMoment ν (sigma ^ 2))
+    (hsigma : 0 < sigma)
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+    [IsProbabilityMeasure P] {B : NNReal → Ω → ℝ}
+    (hB : IsPreBrownianReal B P)
+    (hcontinuous : ∀ ω, Continuous (B · ω))
+    (hmeasurable : ∀ t, Measurable (B t))
+    (target blockTarget p : ℝ)
+    (htarget : 0 < target) (htargetBlock : target < blockTarget)
+    (hblockTarget : blockTarget < Real.pi ^ 2 / 2)
+    (hp : 0 < p)
+    (hκrate : κ = target * sigma ^ 2) :
+    ∃ delta0 : ℝ, 0 < delta0 ∧
+      (delta0 ≤ c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)) →
+    let window := rightTailPositiveARestartedWindow ell ellN logN b v c κ
+    let upper := rightTailPositiveAWindowUpper ell ellN logN b v c κ
+    let P := RootIndexed.CausalPopulation.ofRestartedRealPositionSets
+      (fun _ : Fin m => (0 : ℝ)) id measurable_id
+      (RootIndexed.initialPopulation (α := ℕ) (Finset.univ : Finset (Fin m)))
+      (by
+        intro q hq
+        rcases RootIndexed.mem_initialPopulation_iff.mp hq with ⟨r, _hr, rfl⟩
+        simp) ell window
+      (measurableSet_rightTailPositiveARestartedWindow ell ellN logN b v c κ)
+      upper (rightTailPositiveARestartedWindow_subset_Iic_upper
+        ell ellN logN b v c κ)
+    (RootIndexed.stepFieldLaw (Root := Fin m) μ) (P.capacityEvent N ellN)ᶜ ≤
+      (m : ℝ≥0∞) *
+        (((ell + 1 : ℕ) : ℝ≥0∞) +
+          ((ellN - ell : ℕ) : ℝ≥0∞) *
+            ENNReal.ofReal (Real.exp
+              ((-b + v) * logN +
+                c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)) +
+                κ * c ^ p * (((ellN - ell : ℕ) : ℝ) ^ (p / 3))))) /
+          (N + 1 : ℕ)) := by
+  have htilted : IsProbabilityMeasure (tiltedIncrementFieldLaw realPotential μ) :=
+    tiltedIncrementFieldLaw_isProbability realPotential μ hboundary
+  have hfirstPath : ∀ k : Fin (ellN + 1), (k : ℕ) ≤ ell →
+      RandomWalk.restartedWindowProbability
+        (tiltedIncrementFieldLaw realPotential μ) ell
+        (rightTailPositiveARestartedWindow ell ellN logN b v c κ)
+        (k : ℕ) 0 ≤ 1 := by
+    intro k _hk
+    calc
+      _ ≤ (tiltedIncrementFieldLaw realPotential μ) Set.univ := by
+        unfold RandomWalk.restartedWindowProbability
+        exact measure_mono (Set.subset_univ _)
+      _ = 1 := htilted.measure_univ
+  obtain ⟨delta0, hdelta0, hcapacity⟩ :=
+    measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhaseOfAHDrawdown_canceled
+      m ell ellN N logN b v c κ hell hellN hb hlog hκ hvb hc hvc μ hboundary
+      ν hν hspine hsigma hB hcontinuous hmeasurable target blockTarget p
+      htarget htargetBlock hblockTarget hp (fun _ : ℕ => 1) hfirstPath hκrate
+  refine ⟨delta0, hdelta0, ?_⟩
+  intro hscale
+  have hbound := hcapacity hscale
+  have hsum := rightTailPositiveA_canceledAH_sum_le
+    ell ellN logN b v c κ p hellN hκ hc hvc
+  calc
+    _ ≤ (m : ℝ≥0∞) *
+        (∑ k : Fin (ellN + 1),
+          if (k : ℕ) ≤ ell then 1 else
+            if (c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ))) ^ (2 + p) ≤
+                (((k : ℕ) - ell : ℕ) : ℝ) then
+              ENNReal.ofReal (Real.exp
+                ((-b + v) * logN +
+                  c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ))))
+            else ENNReal.ofReal (Real.exp
+              (rightTailPositiveAWindowUpper ell ellN logN b v c κ ell +
+                rightTailPositiveAWindowUpper ell ellN logN b v c κ (k : ℕ)))) /
+          (N + 1 : ℕ) := by
+          simpa using hbound
+    _ ≤ (m : ℝ≥0∞) *
+        (((ell + 1 : ℕ) : ℝ≥0∞) +
+          ((ellN - ell : ℕ) : ℝ≥0∞) *
+            ENNReal.ofReal (Real.exp
+              ((-b + v) * logN +
+                c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)) +
+                κ * c ^ p * (((ellN - ell : ℕ) : ℝ) ^ (p / 3))))) /
+          (N + 1 : ℕ) := by
+          apply ENNReal.div_le_div_right
+          exact mul_le_mul_of_nonneg_left hsum (by positivity)
+
 
 /-- The first-stage generations in the two-phase estimate contribute only
 their number of terms. Thus their path probabilities can be bounded by one,
@@ -2346,8 +2809,8 @@ theorem measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhaseOfAHDraw
         (∑ k : Fin (ellN + 1),
           if (k : ℕ) ≤ ell then 1 else
             ENNReal.ofReal (Real.exp
-              ((-b + v) * logN + (κ / c ^ 2 + max c v) *
-                (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)))) *
+              (rightTailPositiveAWindowUpper ell ellN logN b v c κ ell +
+                rightTailPositiveAWindowUpper ell ellN logN b v c κ (k : ℕ))) *
               (if (c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ))) ^ (2 + p) ≤
                   (((k : ℕ) - ell : ℕ) : ℝ) then
                 ENNReal.ofReal (Real.exp
@@ -2438,8 +2901,8 @@ theorem exists_measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhaseO
             (∑ k : Fin (ellN + 1),
               if (k : ℕ) ≤ ell then pFirst (k : ℕ) else
                 ENNReal.ofReal (Real.exp
-                  ((-b + v) * logN + (κ / c ^ 2 + max c v) *
-                    (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)))) *
+                  (rightTailPositiveAWindowUpper ell ellN logN b v c κ ell +
+                    rightTailPositiveAWindowUpper ell ellN logN b v c κ (k : ℕ))) *
                 (if spanWidth ^ (2 + p) ≤
                     (((k : ℕ) - ell : ℕ) : ℝ) then
                   ENNReal.ofReal (Real.exp
