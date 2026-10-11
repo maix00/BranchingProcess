@@ -1457,6 +1457,170 @@ theorem lintegral_affineCorridorPrefixContinuationPair_indicator_le_of_drawdown
       (lower + drift * (m : ℝ)) hprefixLower continuationCorridor
       hcontinuationMeas endpointUpper hterminal window q hfirst hcontinuation
 
+/-- Expected ordered successful path pairs whose most recent common ancestor
+is at generation `m`, with `n + 1` generations remaining below that ancestor. -/
+noncomputable def affineTubeMRCALayer
+    {X : Type*} [MeasurableSpace X]
+    (φ : Potential X) (μ : Measure (Step ℕ X))
+    (m n : ℕ) (initial lower drift width endpointUpper : ℝ) : ℝ≥0∞ :=
+  ∫⁻ ω, ∑' u : TreeNode ℕ,
+    pathGenerationTerm φ m
+      ((affineCorridorPrefix m lower drift width).indicator
+        (fun _ => (1 : ℝ≥0∞))) initial u ω *
+    pathGenerationChildMeanOffDiagonal φ μ n
+      ((affineCorridorHistoryEndpointCutoff n
+        (lower + drift * (m : ℝ)) drift width endpointUpper).indicator
+          (fun _ => (1 : ℝ≥0∞)))
+      (initial + pathPotential φ ω u) (ω u) ∂stepFieldLaw μ
+
+private theorem expReciprocalSquareNormalization (x s : ℝ) :
+    ENNReal.ofReal (Real.exp (-(2 * x))) *
+      ((ENNReal.ofReal (Real.exp (-s)) * ENNReal.ofReal (Real.exp (-s))) *
+        ENNReal.ofReal (Real.exp (2 * (x + s)))) = 1 := by
+  have hcancel (t : ℝ) :
+      ENNReal.ofReal (Real.exp (-t)) * ENNReal.ofReal (Real.exp t) = 1 := by
+    rw [← ENNReal.ofReal_mul (Real.exp_nonneg (-t)), ← Real.exp_add]
+    simp
+  have hdouble :
+      ENNReal.ofReal (Real.exp (-s)) * ENNReal.ofReal (Real.exp (-s)) =
+        ENNReal.ofReal (Real.exp (-(2 * s))) := by
+    rw [← ENNReal.ofReal_mul (Real.exp_nonneg (-s)), ← Real.exp_add]
+    congr 1
+    ring_nf
+  have hsplit : ENNReal.ofReal (Real.exp (2 * (x + s))) =
+      ENNReal.ofReal (Real.exp (2 * x)) *
+        ENNReal.ofReal (Real.exp (2 * s)) := by
+    rw [← ENNReal.ofReal_mul (Real.exp_nonneg (2 * x))]
+    congr 1
+    rw [← Real.exp_add]
+    congr 1
+    ring
+  rw [hsplit]
+  calc
+    _ = (ENNReal.ofReal (Real.exp (-(2 * x))) *
+          ENNReal.ofReal (Real.exp (2 * x))) *
+        ((ENNReal.ofReal (Real.exp (-s)) * ENNReal.ofReal (Real.exp (-s))) *
+          ENNReal.ofReal (Real.exp (2 * s))) := by ac_rfl
+    _ = 1 := by
+      rw [hcancel (2 * x), hdouble, hcancel (2 * s)]
+      simp
+
+/-- The square-weighted continuation expression is exactly the expected
+ordered-pair contribution at this MRCA depth after the initial-position
+normalization. -/
+theorem affineTubeMRCALayer_eq_normalized
+    {X : Type*} [MeasurableSpace X]
+    (φ : Potential X) (μ : Measure (Step ℕ X))
+    (m n : ℕ) (initial lower drift width endpointUpper : ℝ) :
+    affineTubeMRCALayer φ μ m n initial lower drift width endpointUpper =
+      ENNReal.ofReal (Real.exp (-(2 * initial))) *
+        (∫⁻ ω, ∑' u : TreeNode ℕ,
+          weightedPathGenerationTerm φ m
+            ((affineCorridorPrefix m lower drift width).indicator
+              (fun _ => (1 : ℝ≥0∞))) initial u ω *
+          ENNReal.ofReal (Real.exp (-pathPotential φ ω u)) *
+          ENNReal.ofReal
+            (Real.exp (2 * (initial + pathPotential φ ω u))) *
+          pathGenerationChildMeanOffDiagonal φ μ n
+            ((affineCorridorHistoryEndpointCutoff n
+              (lower + drift * (m : ℝ)) drift width endpointUpper).indicator
+                (fun _ => (1 : ℝ≥0∞)))
+            (initial + pathPotential φ ω u) (ω u)
+          ∂stepFieldLaw μ) := by
+  let F : (Fin (m + 1) → ℝ) → ℝ≥0∞ :=
+    (affineCorridorPrefix m lower drift width).indicator
+      (fun _ => (1 : ℝ≥0∞))
+  let G : (Fin (n + 2) → ℝ) → ℝ≥0∞ :=
+    (affineCorridorHistoryEndpointCutoff n
+      (lower + drift * (m : ℝ)) drift width endpointUpper).indicator
+        (fun _ => (1 : ℝ≥0∞))
+  let c : ℝ≥0∞ := ENNReal.ofReal (Real.exp (-(2 * initial)))
+  have hterm (ω : StepField ℕ X) (u : TreeNode ℕ) :
+      pathGenerationTerm φ m F initial u ω *
+        pathGenerationChildMeanOffDiagonal φ μ n G
+          (initial + pathPotential φ ω u) (ω u) =
+      c * (weightedPathGenerationTerm φ m F initial u ω *
+        ENNReal.ofReal (Real.exp (-pathPotential φ ω u)) *
+        ENNReal.ofReal
+          (Real.exp (2 * (initial + pathPotential φ ω u))) *
+        pathGenerationChildMeanOffDiagonal φ μ n G
+          (initial + pathPotential φ ω u) (ω u)) := by
+    rw [weightedPathGenerationTerm_eq_reciprocal_mul_pathGenerationTerm]
+    have hscalar := expReciprocalSquareNormalization initial
+      (pathPotential φ ω u)
+    dsimp [c]
+    calc
+      _ = 1 * (pathGenerationTerm φ m F initial u ω *
+          pathGenerationChildMeanOffDiagonal φ μ n G
+            (initial + pathPotential φ ω u) (ω u)) := by simp
+      _ = (ENNReal.ofReal (Real.exp (-(2 * initial))) *
+            ((ENNReal.ofReal (Real.exp (-pathPotential φ ω u)) *
+              ENNReal.ofReal (Real.exp (-pathPotential φ ω u))) *
+              ENNReal.ofReal
+                (Real.exp (2 * (initial + pathPotential φ ω u))))) *
+            (pathGenerationTerm φ m F initial u ω *
+              pathGenerationChildMeanOffDiagonal φ μ n G
+                (initial + pathPotential φ ω u) (ω u)) := by
+          rw [hscalar]
+      _ = _ := by ac_rfl
+  calc
+    affineTubeMRCALayer φ μ m n initial lower drift width endpointUpper =
+        ∫⁻ ω, c * (∑' u : TreeNode ℕ,
+          weightedPathGenerationTerm φ m F initial u ω *
+            ENNReal.ofReal (Real.exp (-pathPotential φ ω u)) *
+            ENNReal.ofReal
+              (Real.exp (2 * (initial + pathPotential φ ω u))) *
+            pathGenerationChildMeanOffDiagonal φ μ n G
+              (initial + pathPotential φ ω u) (ω u)) ∂stepFieldLaw μ := by
+      apply lintegral_congr
+      intro ω
+      calc
+        _ = ∑' u : TreeNode ℕ,
+            c * (weightedPathGenerationTerm φ m F initial u ω *
+              ENNReal.ofReal (Real.exp (-pathPotential φ ω u)) *
+              ENNReal.ofReal
+                (Real.exp (2 * (initial + pathPotential φ ω u))) *
+              pathGenerationChildMeanOffDiagonal φ μ n G
+                (initial + pathPotential φ ω u) (ω u)) := by
+              apply tsum_congr
+              intro u
+              exact hterm ω u
+        _ = _ := ENNReal.tsum_mul_left
+    _ = c * (∫⁻ ω, ∑' u : TreeNode ℕ,
+          weightedPathGenerationTerm φ m F initial u ω *
+            ENNReal.ofReal (Real.exp (-pathPotential φ ω u)) *
+            ENNReal.ofReal
+              (Real.exp (2 * (initial + pathPotential φ ω u))) *
+            pathGenerationChildMeanOffDiagonal φ μ n G
+              (initial + pathPotential φ ω u) (ω u)
+          ∂stepFieldLaw μ) := by
+      exact lintegral_const_mul' c _ ENNReal.ofReal_ne_top
+    _ = _ := by simp [c, F, G]
+
+/-- Each fixed positive-depth MRCA layer of the affine tube is bounded by the
+same drawdown and cross-child estimates as its normalized continuation term. -/
+theorem affineTubeMRCALayer_le_of_drawdown
+    {X : Type*} [MeasurableSpace X]
+    (φ : Potential X) (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
+    (hboundary : HasBoundaryNormalization φ μ)
+    (m n : ℕ) (initial lower drift width endpointUpper : ℝ)
+    (hdrift : 0 ≤ drift) (q : ℝ≥0∞)
+    (hdrawdown : (tiltedIncrementFieldLaw φ μ)
+      (ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.noLargeDropEndpointBelowEvent
+        n width (width + drift * (n : ℝ))) ≤ q) :
+    affineTubeMRCALayer φ μ m n initial lower drift width endpointUpper ≤
+      ENNReal.ofReal (Real.exp (-(2 * initial))) *
+        (ENNReal.ofReal (Real.exp (2 * endpointUpper)) * q ^ 2) *
+        (∫⁻ ξ, crossChildWeight φ ξ ∂μ) *
+        (ENNReal.ofReal (Real.exp
+          (initial - (lower + drift * (m : ℝ)))) *
+          (tiltedIncrementFieldLaw φ μ)
+            {increment | ProbabilityTheory.RandomWalk.history m initial increment ∈
+              affineCorridorPrefix m lower drift width}) := by
+  rw [affineTubeMRCALayer_eq_normalized]
+  exact lintegral_affineCorridorPrefixContinuationPair_indicator_le_of_drawdown
+    φ μ hboundary m n initial lower drift width endpointUpper hdrift q hdrawdown
+
 /-- The prefix endpoint lower bound removes one of the two reciprocal
 potential factors in a positive-depth MRCA term. The remaining expectation is
 the spine prefix probability times the cross-child moment. -/

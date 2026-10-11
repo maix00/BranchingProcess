@@ -45,6 +45,21 @@ noncomputable def pathGenerationTerm
   {ω | u.length = n ∧ surviveAlong ω [] u}.indicator fun ω =>
     F (pathHistory φ n x ω u)
 
+/-- The weighted generation term is the unweighted path term multiplied by
+the reciprocal endpoint potential. Both terms use the same survival event. -/
+theorem weightedPathGenerationTerm_eq_reciprocal_mul_pathGenerationTerm
+    {ι X : Type*} [MeasurableSpace X]
+    (φ : Potential X) (n : ℕ) (F : (Fin (n + 1) → ℝ) → ENNReal)
+    (x : ℝ) (u : TreeNode ι) (ω : Combinatorics.Branching.StepField ι X) :
+    weightedPathGenerationTerm φ n F x u ω =
+      ENNReal.ofReal (Real.exp (-pathPotential φ ω u)) *
+        pathGenerationTerm φ n F x u ω := by
+  by_cases hu : u.length = n
+  · by_cases hs : surviveAlong ω [] u
+    · simp [weightedPathGenerationTerm, pathGenerationTerm, hu, hs]
+    · simp [weightedPathGenerationTerm, pathGenerationTerm, hu, hs]
+  · simp [weightedPathGenerationTerm, pathGenerationTerm, hu]
+
 noncomputable def weightedPathGeneration
     {ι X : Type*} [MeasurableSpace X]
     (φ : Potential X) (n : ℕ)
