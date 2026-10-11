@@ -19,8 +19,11 @@ than the application that first needs it.
 General finite-history drawdown predicates and their measurability belong to
 `Probability/Process/RandomWalk/Path/Drawdown.lean`. Random-walk probability
 bounds for those paths belong to `Probability/Process/RandomWalk/SmallDeviation/Drawdown/`.
-Branching-walk first-passage, many-to-one, and tube estimates live under
-`Probability/BranchingRandomWalk/Spine/`. The general `Selection/` layer owns
+BRW ancestral-path decompositions, including ordered generation-pair counts
+split by most recent common ancestor, live in `Spine/Path/`; affine-tube
+probability estimates and their use in the second-moment argument live in
+`Spine/Tube/`. Branching-walk first-passage and many-to-one results also live
+under `Probability/BranchingRandomWalk/Spine/`. The general `Selection/` layer owns
 selection mechanisms, including random mechanisms; deterministic first-`N`
 selection is the `Selection/NSelection/` specialization. Its selected-
 population endpoint and drawdown transfers live under
