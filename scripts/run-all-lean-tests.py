@@ -68,7 +68,7 @@ AXIOM_EXPECTATIONS = {
         "ProbabilityTheory.BranchingRandomWalk.recursiveReserveFailure_measurable",
         "ProbabilityTheory.BranchingRandomWalk.measure_recursiveReserveFailure_succ",
         "ProbabilityTheory.BranchingRandomWalk.measure_recursiveReserveFailure_eq_pow",
-        "ProbabilityTheory.BranchingRandomWalk.BasicBranchingAssumptions.rawSplitEvent_measure_pos",
+        "ProbabilityTheory.BranchingRandomWalk.rawSplitEvent_measure_pos",
         "ProbabilityTheory.BranchingRandomWalk.exists_nat_cutoff_positive_boundedSelectedSplit",
         "ProbabilityTheory.BranchingRandomWalk.selectedPopulationSplitCompletion_ae_finite_of_nonempty_and_split_pos",
         "concrete_reserve_split_completion_ae_finite",

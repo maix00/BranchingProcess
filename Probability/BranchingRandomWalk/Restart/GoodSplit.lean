@@ -4,7 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Assumptions.Bundles
+import Probability.BranchingRandomWalk.Assumptions.Structural
+import Probability.BranchingProcess.Offspring.Count
+import Probability.BranchingRandomWalk.Step.OrderingLaw
 import Probability.BranchingRandomWalk.Restart.FirstSplit
 import Combinatorics.BranchingWalk.Step.SlotSelection
 import Probability.BranchingRandomWalk.Population.Processes.StepSelection.FirstN
@@ -262,18 +264,21 @@ private theorem childCount_eq_one_of_nonempty_not_split
 larger than one, then the event of at least two children has positive mass.
 The conclusion concerns the complete raw configuration and does not depend on
 any particular child slots or their marks. -/
-theorem BasicBranchingAssumptions.rawSplitEvent_measure_pos
+theorem rawSplitEvent_measure_pos
     {ι α X : Type*} [MeasurableSpace X] [Countable ι]
     [LinearOrder α] [LocallyFiniteOrder α] [OrderBot α] [NoMaxOrder α]
-    (L : StepLaw ι α X) (h : BasicBranchingAssumptions L) :
+    (L : StepLaw ι α X) [IsProbabilityMeasure L.raw]
+    (hnonempty : OffspringConfigurationLaw.HasAtLeastOneChild
+      (⟨L.raw, ‹IsProbabilityMeasure L.raw›⟩ : OffspringConfigurationLaw ι X))
+    (hsupercritical : OffspringConfigurationLaw.IsSupercritical
+      (⟨L.raw, ‹IsProbabilityMeasure L.raw›⟩ : OffspringConfigurationLaw ι X)) :
     0 < L.raw {ξ | rawSplitEvent ξ} := by
-  haveI : IsProbabilityMeasure L.raw := h.rawProbability
   by_contra hpos
   have hzero : L.raw {ξ | rawSplitEvent ξ} = 0 :=
     nonpos_iff_eq_zero.mp (le_of_not_gt hpos)
   have haeNonempty : ∀ᵐ ξ ∂L.raw, ξ ∈ nonemptySupport :=
     OffspringConfigurationLaw.hasAtLeastOneChild_ae
-      ⟨L.raw, h.rawProbability⟩ h.nonempty
+      ⟨L.raw, ‹IsProbabilityMeasure L.raw›⟩ hnonempty
   have haeNotSplit : ∀ᵐ ξ ∂L.raw, ¬ rawSplitEvent ξ := by
     simpa only [Set.mem_setOf_eq] using
       (measure_eq_zero_iff_ae_notMem (μ := L.raw)
@@ -292,9 +297,10 @@ theorem BasicBranchingAssumptions.rawSplitEvent_measure_pos
       _ = 1 := by simp
   have hexpectation :
       OffspringConfigurationLaw.expectedChildCount
-          (⟨L.raw, h.rawProbability⟩ :
+          (⟨L.raw, ‹IsProbabilityMeasure L.raw›⟩ :
             OffspringConfigurationLaw ι X) = 1 := by
-    let μ : OffspringConfigurationLaw ι X := ⟨L.raw, h.rawProbability⟩
+    let μ : OffspringConfigurationLaw ι X :=
+      ⟨L.raw, ‹IsProbabilityMeasure L.raw›⟩
     have hlaw : (μ.childCountLaw : Measure ℕ∞) =
         (L.raw : Measure (Step ι X)).map Step.childCount :=
       OffspringConfigurationLaw.childCountLaw_toMeasure μ
@@ -307,7 +313,7 @@ theorem BasicBranchingAssumptions.rawSplitEvent_measure_pos
         rw [hlaw]
         exact lintegral_map hcast Step.childCount_measurable
       _ = 1 := hrawIntegral
-  exact (ne_of_lt h.supercritical) hexpectation.symm
+  exact (ne_of_lt hsupercritical) hexpectation.symm
 
 /-- Positive mass of a split is inherited by any finite selection that
 retains at least two children whenever the raw configuration has at least
@@ -316,12 +322,16 @@ theorem exists_positive_selectedSplit
     {ι α X : Type*} [MeasurableSpace X] [Countable ι]
     [MeasurableSpace α] [MeasurableSingletonClass α]
     [LinearOrder α] [LocallyFiniteOrder α] [OrderBot α] [NoMaxOrder α]
-    (L : StepLaw ι α X) (h : BasicBranchingAssumptions L)
+    (L : StepLaw ι α X) [IsProbabilityMeasure L.raw]
+    (hnonempty : OffspringConfigurationLaw.HasAtLeastOneChild
+      (⟨L.raw, ‹IsProbabilityMeasure L.raw›⟩ : OffspringConfigurationLaw ι X))
+    (hsupercritical : OffspringConfigurationLaw.IsSupercritical
+      (⟨L.raw, ‹IsProbabilityMeasure L.raw›⟩ : OffspringConfigurationLaw ι X))
     (R : Step.FiniteSelection α X)
     (hadequate : ∀ ξ : Step α X,
       2 ≤ ξ.childCount → 2 ≤ (R ξ).card) :
     0 < L.raw {ξ | 2 ≤ (R (L.ordering ξ)).card} := by
-  have hraw := BasicBranchingAssumptions.rawSplitEvent_measure_pos L h
+  have hraw := rawSplitEvent_measure_pos L hnonempty hsupercritical
   apply lt_of_lt_of_le hraw
   apply measure_mono
   intro ξ hξ
@@ -569,7 +579,11 @@ theorem exists_nat_cutoff_positive_boundedSelectedSplit
     {ι α X : Type*} [MeasurableSpace X] [Countable ι]
     [MeasurableSpace α] [MeasurableSingletonClass α]
     [LinearOrder α] [LocallyFiniteOrder α] [OrderBot α] [NoMaxOrder α]
-    (L : StepLaw ι α X) (h : BasicBranchingAssumptions L)
+    (L : StepLaw ι α X) [IsProbabilityMeasure L.raw]
+    (hnonempty : OffspringConfigurationLaw.HasAtLeastOneChild
+      (⟨L.raw, ‹IsProbabilityMeasure L.raw›⟩ : OffspringConfigurationLaw ι X))
+    (hsupercritical : OffspringConfigurationLaw.IsSupercritical
+      (⟨L.raw, ‹IsProbabilityMeasure L.raw›⟩ : OffspringConfigurationLaw ι X))
     (R : Step.FiniteSelection α X) (hR : Measurable R.select)
     (hadequate : ∀ ξ : Step α X,
       2 ≤ ξ.childCount → 2 ≤ (R ξ).card) :
@@ -580,7 +594,7 @@ theorem exists_nat_cutoff_positive_boundedSelectedSplit
   let bounded (M : ℕ) : Set (Step ι X) :=
     boundedSelectedSplitEvent L R M
   have hselected : 0 < L.raw selectedSplit :=
-    exists_positive_selectedSplit L h R hadequate
+    exists_positive_selectedSplit L hnonempty hsupercritical R hadequate
   have hcover : selectedSplit ⊆ ⋃ M : ℕ, bounded M := by
     intro ξ hξ
     obtain ⟨M, hM⟩ := exists_nat_gt
@@ -601,7 +615,11 @@ theorem exists_nat_cutoff_positive_boundedSelectedSplit_sorted
     {ι α X : Type*} [MeasurableSpace X] [Countable ι]
     [MeasurableSpace α] [MeasurableSingletonClass α]
     [LinearOrder α] [LocallyFiniteOrder α] [OrderBot α] [NoMaxOrder α]
-    (L : StepLaw ι α X) (h : BasicBranchingAssumptions L)
+    (L : StepLaw ι α X) [IsProbabilityMeasure L.raw]
+    (hnonempty : OffspringConfigurationLaw.HasAtLeastOneChild
+      (⟨L.raw, ‹IsProbabilityMeasure L.raw›⟩ : OffspringConfigurationLaw ι X))
+    (hsupercritical : OffspringConfigurationLaw.IsSupercritical
+      (⟨L.raw, ‹IsProbabilityMeasure L.raw›⟩ : OffspringConfigurationLaw ι X))
     (R : Step.FiniteSelection α X) (hR : Measurable R.select)
     (hadequate : ∀ ξ : Step α X,
       2 ≤ ξ.childCount → 2 ≤ (R ξ).card) :
@@ -610,7 +628,8 @@ theorem exists_nat_cutoff_positive_boundedSelectedSplit_sorted
       MeasurableSet
         (boundedSelectedSplitStepEvent R L.potential (M : ℝ)) := by
   obtain ⟨M, hpos, _hmeas⟩ :=
-    exists_nat_cutoff_positive_boundedSelectedSplit L h R hR hadequate
+    exists_nat_cutoff_positive_boundedSelectedSplit L hnonempty
+      hsupercritical R hR hadequate
   have hmap :
       L.sorted (boundedSelectedSplitStepEvent R L.potential (M : ℝ)) =
         L.raw (boundedSelectedSplitEvent L R M) := by
@@ -627,7 +646,11 @@ theorem exists_nat_cutoff_positive_bounded_firstTwoBySlotOrder
     {ι α X : Type*} [MeasurableSpace X] [Countable ι]
     [Countable α] [MeasurableSpace α] [MeasurableSingletonClass α]
     [LinearOrder α] [LocallyFiniteOrder α] [OrderBot α] [NoMaxOrder α]
-    (L : StepLaw ι α X) (h : BasicBranchingAssumptions L) :
+    (L : StepLaw ι α X) [IsProbabilityMeasure L.raw]
+    (hnonempty : OffspringConfigurationLaw.HasAtLeastOneChild
+      (⟨L.raw, ‹IsProbabilityMeasure L.raw›⟩ : OffspringConfigurationLaw ι X))
+    (hsupercritical : OffspringConfigurationLaw.IsSupercritical
+      (⟨L.raw, ‹IsProbabilityMeasure L.raw›⟩ : OffspringConfigurationLaw ι X)) :
     ∃ M : ℕ,
       0 < L.raw (boundedSelectedSplitEvent L
         (Step.FiniteSelection.firstNBySlotOrder (α := α) (X := X) 2) M) ∧
@@ -643,7 +666,8 @@ theorem exists_nat_cutoff_positive_bounded_firstTwoBySlotOrder
     rw [show (R ξ).card = 2 from
       Step.FiniteSelection.card_firstNBySlotOrder_eq_of_le_childCount 2 ξ hcount]
   simpa [R] using
-    (exists_nat_cutoff_positive_boundedSelectedSplit L h R hR hadequate)
+    (exists_nat_cutoff_positive_boundedSelectedSplit L hnonempty
+      hsupercritical R hR hadequate)
 
 /-- Positive mass of a split by the thesis reserve selector. Its base rule
 keeps the first two surviving slots in the ordered realization, and the
@@ -653,7 +677,11 @@ theorem exists_nat_cutoff_positive_reserveSplit
     {ι α X : Type*} [MeasurableSpace X] [Countable ι]
     [Countable α] [MeasurableSpace α] [MeasurableSingletonClass α]
     [LinearOrder α] [LocallyFiniteOrder α] [OrderBot α] [NoMaxOrder α]
-    (L : StepLaw ι α X) (h : BasicBranchingAssumptions L) :
+    (L : StepLaw ι α X) [IsProbabilityMeasure L.raw]
+    (hnonempty : OffspringConfigurationLaw.HasAtLeastOneChild
+      (⟨L.raw, ‹IsProbabilityMeasure L.raw›⟩ : OffspringConfigurationLaw ι X))
+    (hsupercritical : OffspringConfigurationLaw.IsSupercritical
+      (⟨L.raw, ‹IsProbabilityMeasure L.raw›⟩ : OffspringConfigurationLaw ι X)) :
     ∃ M : ℕ,
       0 < L.sorted (splitBy (reserveSelectionBelowPotential
         (Step.FiniteSelection.firstNBySlotOrder (α := α) (X := X) 2)
@@ -671,7 +699,8 @@ theorem exists_nat_cutoff_positive_reserveSplit
     rw [show (R ξ).card = 2 from
       Step.FiniteSelection.card_firstNBySlotOrder_eq_of_le_childCount 2 ξ hcount]
   obtain ⟨M, hpos, _hmeas⟩ :=
-    exists_nat_cutoff_positive_boundedSelectedSplit_sorted L h R hR hadequate
+    exists_nat_cutoff_positive_boundedSelectedSplit_sorted L hnonempty
+      hsupercritical R hR hadequate
   let S := reserveSelectionBelowPotential R L.potential (M : ℝ)
   have hS : Measurable S.select := by
     simpa [S] using reserveSelectionBelowPotential_measurable
@@ -694,18 +723,20 @@ theorem reserveSelectionBelowPotential_nonempty_ae
     {ι α X : Type*} [MeasurableSpace X] [Countable ι]
     [Countable α] [MeasurableSpace α] [MeasurableSingletonClass α]
     [LinearOrder α] [LocallyFiniteOrder α] [OrderBot α] [NoMaxOrder α]
-    (L : StepLaw ι α X) (h : BasicBranchingAssumptions L) (M : ℝ) :
+    (L : StepLaw ι α X) [IsProbabilityMeasure L.raw]
+    (hnonempty : OffspringConfigurationLaw.HasAtLeastOneChild
+      (⟨L.raw, ‹IsProbabilityMeasure L.raw›⟩ : OffspringConfigurationLaw ι X))
+    (M : ℝ) :
     ∀ᵐ ξ ∂L.sorted,
       (reserveSelectionBelowPotential
         (Step.FiniteSelection.firstNBySlotOrder (α := α) (X := X) 2)
         L.potential M ξ).Nonempty := by
-  letI : IsProbabilityMeasure L.raw := h.rawProbability
   letI : IsProbabilityMeasure L.sorted := inferInstance
   let μ : OffspringConfigurationLaw α X := ⟨L.sorted, inferInstance⟩
   have hμ : μ.HasAtLeastOneChild := by
     change L.sorted nonemptySupport = 1
     rw [L.sorted_nonemptySupport]
-    simpa [OffspringConfigurationLaw.HasAtLeastOneChild] using h.nonempty
+    simpa [OffspringConfigurationLaw.HasAtLeastOneChild] using hnonempty
   have hae := OffspringConfigurationLaw.hasAtLeastOneChild_ae μ hμ
   filter_upwards [hae] with ξ hξ
   have hsupport : (support ξ).Nonempty := by

@@ -9,9 +9,12 @@ module
 public import Probability.BranchingRandomWalk.Selection.NSelection.Speed.ErgodicEnvironment
 public import Probability.BranchingRandomWalk.Selection.NSelection.AtRank
 public import Probability.BranchingRandomWalk.Selection.NSelection.Totalized
+public import Probability.BranchingRandomWalk.Assumptions.Moments
+public import Probability.BranchingRandomWalk.Step.OrderingLaw
 public import Probability.Ergodic.Kingman.Core
 public import Combinatorics.BranchingWalk.Selection.NSelection.Speed
 public import Combinatorics.BranchingWalk.Step.Map
+public import Mathlib.MeasureTheory.Order.Group.Lattice
 
 /-!
 # Measurable Kingman input for the countable-offspring selection process
@@ -389,6 +392,170 @@ theorem repairGenerationBatch_eq_of_repairable {N : ℕ}
     repairGenerationBatch batch = batch := by
   simp [repairGenerationBatch, h]
 
+private theorem fallbackOffspringStep_isOrderedBy :
+    fallbackOffspringStep.IsOrderedBy realPotential := by
+  change (fallbackOffspringStep.map id) ∈ orderedSteps
+  rw [mem_orderedSteps_iff]
+  constructor
+  · intro i j hij hi
+    by_cases hi0 : i = 0
+    · simp [fallbackOffspringStep, hi0] at hi
+    · have hj0 : j ≠ 0 := by omega
+      simp [Step.map, fallbackOffspringStep, hj0]
+  · intro i j x y hij hi hj
+    have hix : i = 0 ∧ (0 : ℝ) = x := by
+      simpa [Step.map, fallbackOffspringStep] using hi
+    have hjy : j = 0 ∧ (0 : ℝ) = y := by
+      simpa [Step.map, fallbackOffspringStep] using hj
+    have hi0 : i = 0 := hix.1
+    have hj0 : j = 0 := hjy.1
+    omega
+
+private theorem fallbackGenerationBatch_orderedFirst {N : ℕ} :
+    ∀ i : Fin N,
+      (fallbackGenerationBatch N i).IsOrderedBy realPotential ∧
+        survive (fallbackGenerationBatch N i) 0 := by
+  intro i
+  constructor
+  · exact fallbackOffspringStep_isOrderedBy
+  · simp [fallbackGenerationBatch, fallbackOffspringStep, survive]
+
+/-- Repair preserves the ordered leftmost-child property: valid batches are
+kept, and invalid batches are replaced by the canonical one-child batch. -/
+theorem repairGenerationBatch_orderedFirst_of_orderedFirst {N : ℕ}
+    (batch : GenerationBatch N)
+    (h : ∀ i : Fin N,
+      (batch i).IsOrderedBy realPotential ∧ survive (batch i) 0) :
+    ∀ i : Fin N,
+      (repairGenerationBatch batch i).IsOrderedBy realPotential ∧
+        survive (repairGenerationBatch batch i) 0 := by
+  classical
+  by_cases hgood : IsRepairableBatch batch
+  · simpa [repairGenerationBatch_eq_of_repairable batch hgood] using h
+  · simpa [repairGenerationBatch, hgood] using
+      (fallbackGenerationBatch_orderedFirst (N := N))
+
+/-- An ordered, nonempty offspring law has a surviving slot-zero child almost
+surely. This is transferred through the independent parent coordinates and
+then through the generation environment. -/
+theorem generationEnvironmentLaw_ae_allOrderedFirst
+    (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
+    (hordered : μ (orderedBySteps realPotential) = 1)
+    (hnonempty : μ nonemptySupport = 1) (N : ℕ) :
+    ∀ᵐ ω ∂generationEnvironmentLaw μ N,
+      ∀ t i, (ω t i).IsOrderedBy realPotential ∧ survive (ω t i) 0 := by
+  have horderedAE : ∀ᵐ ξ ∂μ, ξ ∈ orderedBySteps realPotential := by
+    exact (ae_mem_iff_measure_eq
+      (orderedBySteps_measurable (ι := ℕ) realPotential).nullMeasurableSet).2
+        (by simpa using hordered)
+  have hnonemptyAE : ∀ᵐ ξ ∂μ, ξ ∈ nonemptySupport := by
+    exact (ae_mem_iff_measure_eq nonemptySupport_measurable.nullMeasurableSet).2
+      (by simpa using hnonempty)
+  have hstepAE : ∀ᵐ ξ ∂μ,
+      ξ.IsOrderedBy realPotential ∧ survive ξ 0 := by
+    filter_upwards [horderedAE, hnonemptyAE] with ξ ho hn
+    have hmapOrdered : (ξ.map realPotential) ∈ orderedSteps := ho
+    obtain ⟨j, hj⟩ := hn
+    have hjmap : survive (ξ.map realPotential) j :=
+      (survive_map_iff realPotential ξ j).2 hj
+    have hzeroMap : survive (ξ.map realPotential) 0 :=
+      orderedSteps_survive_of_le (ξ.map realPotential) hmapOrdered (Nat.zero_le j) hjmap
+    exact ⟨ho, (survive_map_iff realPotential ξ 0).1 hzeroMap⟩
+  have hbatchAE : ∀ᵐ batch ∂generationBatchLaw μ N,
+      ∀ i, (batch i).IsOrderedBy realPotential ∧ survive (batch i) 0 := by
+    apply ae_all_iff.2
+    intro i
+    have hmapAE : ∀ᵐ ξ ∂(generationBatchLaw μ N).map (fun batch => batch i),
+        ξ.IsOrderedBy realPotential ∧ survive ξ 0 := by
+      rw [generationBatchLaw_parent_marginal μ i]
+      exact hstepAE
+    exact ae_of_ae_map (measurable_pi_apply i).aemeasurable hmapAE
+  apply ae_all_iff.2
+  intro t
+  have hmapAE : ∀ᵐ batch ∂(generationEnvironmentLaw μ N).map (fun ω => ω t),
+      ∀ i, (batch i).IsOrderedBy realPotential ∧ survive (batch i) 0 := by
+    rw [generationEnvironmentLaw_generation_marginal μ N t]
+    exact hbatchAE
+  exact ae_of_ae_map (measurable_pi_apply t).aemeasurable hmapAE
+
+/-- The one-generation leftmost-child envelope is a measurable real random
+variable on the product batch space. -/
+theorem measurable_infiniteOffspringBatchSlotZeroNorm {N : ℕ} (hN : 0 < N) :
+    Measurable (infiniteOffspringBatchSlotZeroNorm hN : GenerationBatch N → ℝ) := by
+  have hne : (Finset.univ : Finset (Fin N)).Nonempty :=
+    Finset.univ_nonempty_iff.mpr ⟨⟨0, hN⟩⟩
+  let f : Fin N → GenerationBatch N → ℝ := fun i batch => |value' (batch i) 0|
+  have hcoord (i : Fin N) :
+      Measurable (f i) := by
+    apply Measurable.abs
+    exact (value'_measurable 0).comp (measurable_pi_apply i)
+  have hsup := Finset.measurable_sup' hne (fun i hi => hcoord i)
+  have heq : Finset.univ.sup' hne f =
+      fun batch => Finset.univ.sup' hne (fun i => |value' (batch i) 0|) := by
+    funext batch
+    rw [Finset.sup'_apply hne f batch]
+  change Measurable (fun batch : GenerationBatch N =>
+    Finset.univ.sup' hne (fun i => |value' (batch i) 0|))
+  rw [← heq]
+  exact hsup
+
+/-- An integrable leftmost-child displacement gives an integrable envelope
+for a finite generation batch. -/
+theorem integrable_infiniteOffspringBatchSlotZeroNorm {N : ℕ}
+    (hN : 0 < N) (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
+    (hslot : Integrable (fun ξ : Step ℕ ℝ => |value' ξ 0|) μ) :
+    Integrable (infiniteOffspringBatchSlotZeroNorm hN)
+      (generationBatchLaw μ N) := by
+  let g : Step ℕ ℝ → ℝ := fun ξ => |value' ξ 0|
+  have hsum : Integrable (fun batch : GenerationBatch N => ∑ i : Fin N, g (batch i))
+      (generationBatchLaw μ N) := by
+    apply integrable_finsetSum Finset.univ
+    intro i hi
+    have hmap : Integrable g
+        ((generationBatchLaw μ N).map (fun batch => batch i)) := by
+      rw [generationBatchLaw_parent_marginal μ i]
+      exact hslot
+    exact (integrable_map_measure hmap.aestronglyMeasurable
+      (measurable_pi_apply i).aemeasurable).mp hmap
+  have henvMeas : Measurable (infiniteOffspringBatchSlotZeroNorm hN) :=
+    measurable_infiniteOffspringBatchSlotZeroNorm hN
+  apply hsum.mono' henvMeas.aestronglyMeasurable
+  filter_upwards [] with batch
+  rw [Real.norm_eq_abs, abs_of_nonneg]
+  · calc
+      infiniteOffspringBatchSlotZeroNorm hN batch ≤ ∑ i : Fin N, g (batch i) := by
+        apply Finset.sup'_le
+        intro i hi
+        exact Finset.single_le_sum
+          (f := fun j : Fin N => |value' (batch j) 0|)
+          (fun j hj => abs_nonneg _) (Finset.mem_univ i)
+      _ = ∑ i : Fin N, |value' (batch i) 0| := rfl
+  · exact le_trans (abs_nonneg _) <|
+      Finset.le_sup' (fun i : Fin N => |value' (batch i) 0|) (Finset.mem_univ ⟨0, hN⟩)
+
+/-- Repairing invalid rows does not change the one-generation envelope
+almost surely under the branching assumptions, so the repaired envelope
+inherits the one-step moment bound. -/
+theorem integrable_repairedInfiniteOffspringBatchSlotZeroNorm {N : ℕ}
+    (hN : 0 < N) (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
+    (hboundary : HasBoundaryNormalization realPotential μ)
+    (hnonempty : μ nonemptySupport = 1)
+    (hslot : Integrable (fun ξ : Step ℕ ℝ => |value' ξ 0|) μ) :
+    Integrable
+      (fun batch : GenerationBatch N =>
+        infiniteOffspringBatchSlotZeroNorm hN (repairGenerationBatch batch))
+      (generationBatchLaw μ N) := by
+  have hraw := integrable_infiniteOffspringBatchSlotZeroNorm hN μ hslot
+  have hgood := generationBatchLaw_ae_isGoodInfiniteOffspringBatch
+    μ hboundary hnonempty N
+  have heq : (fun batch : GenerationBatch N =>
+      infiniteOffspringBatchSlotZeroNorm hN (repairGenerationBatch batch)) =ᵐ[
+        generationBatchLaw μ N]
+      fun batch => infiniteOffspringBatchSlotZeroNorm hN batch := by
+    filter_upwards [hgood] with batch hb
+    rw [repairGenerationBatch_eq_of_repairable batch hb]
+  exact hraw.congr heq.symm
+
 /-- The batch repair is measurable; the valid-domain predicate is measurable
 by the coordinate sigma-algebra and the pointwise offspring observables. -/
 theorem measurable_repairGenerationBatch {N : ℕ} :
@@ -511,6 +678,29 @@ theorem measurable_repairedInfiniteSelectionSubadditiveArray {N : ℕ}
     (measurable_measurableRepairedInfiniteOffspringRun length).comp hinput
   exact (Measurable.eval (a := (⟨0, hN⟩ : Fin N)) hrun).neg
 
+/-- The repaired one-generation envelope remains integrable after reading a
+fixed row of the i.i.d. generation environment. -/
+theorem integrable_repairedInfiniteOffspringBatchSlotZeroNorm_at {N : ℕ}
+    (hN : 0 < N) (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
+    (hboundary : HasBoundaryNormalization realPotential μ)
+    (hnonempty : μ nonemptySupport = 1)
+    (hslot : Integrable (fun ξ : Step ℕ ℝ => |value' ξ 0|) μ) (t : ℕ) :
+    Integrable
+      (fun ω : GenerationEnvironment N =>
+        infiniteOffspringBatchSlotZeroNorm hN
+          (repairGenerationBatch (ω t)))
+      (generationEnvironmentLaw μ N) := by
+  let f : GenerationBatch N → ℝ := fun batch =>
+    infiniteOffspringBatchSlotZeroNorm hN (repairGenerationBatch batch)
+  have hbatch := integrable_repairedInfiniteOffspringBatchSlotZeroNorm
+    hN μ hboundary hnonempty hslot
+  have hmap : Integrable f
+      ((generationEnvironmentLaw μ N).map (fun ω : GenerationEnvironment N => ω t)) := by
+    rw [generationEnvironmentLaw_generation_marginal μ N t]
+    exact hbatch
+  exact (integrable_map_measure hmap.aestronglyMeasurable
+    (measurable_pi_apply t).aemeasurable).mp hmap
+
 /-- The measurable block array is the deterministic subadditive array of
 the repaired generation sequence. -/
 theorem repairedInfiniteSelectionSubadditiveArray_eq_deterministic
@@ -524,6 +714,159 @@ theorem repairedInfiniteSelectionSubadditiveArray_eq_deterministic
   have hrun := measurableRepairedInfiniteOffspringRun_eq_infiniteOffspringRun
     length ((fun _ : Fin N => 0), fun t => ω (start + t))
   exact congrArg (fun state : Fin N → ℝ => -state ⟨0, hN⟩) hrun
+
+/-- Almost surely, the absolute block endpoint is bounded by the sum of the
+repaired generation-wise leftmost-child envelopes. -/
+theorem repairedInfiniteSelectionSubadditiveArray_ae_abs_le_envelope
+    {N : ℕ} (hN : 0 < N) (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
+    (hordered : μ (orderedBySteps realPotential) = 1)
+    (hnonempty : μ nonemptySupport = 1) (n : ℕ) :
+    ∀ᵐ ω ∂generationEnvironmentLaw μ N,
+      |repairedInfiniteSelectionSubadditiveArray hN ω 0 n| ≤
+        ∑ t ∈ Finset.range n,
+          infiniteOffspringBatchSlotZeroNorm hN (repairGenerationBatch (ω t)) := by
+  filter_upwards [generationEnvironmentLaw_ae_allOrderedFirst μ hordered hnonempty N]
+    with ω hω
+  have horderedRepair : ∀ t i,
+      ((repairGenerationBatch (ω t)) i).IsOrderedBy realPotential := by
+    intro t i
+    exact (repairGenerationBatch_orderedFirst_of_orderedFirst (ω t)
+      (hω t) i).1
+  have hfirstRepair : ∀ t i,
+      survive ((repairGenerationBatch (ω t)) i) 0 := by
+    intro t i
+    exact (repairGenerationBatch_orderedFirst_of_orderedFirst (ω t)
+      (hω t) i).2
+  have hpoint :
+      |repairedInfiniteSelectionSubadditiveArray hN ω 0 n| ≤
+        ∑ t ∈ Finset.range n,
+          infiniteOffspringBatchSlotZeroNorm hN (repairGenerationBatch (ω t)) := by
+    rw [repairedInfiniteSelectionSubadditiveArray_eq_deterministic]
+    simpa [repairedGenerationBatchSeq] using infiniteSelectionSubadditiveArray_abs_le hN
+      (repairedGenerationBatchSeq ω) (repairedGenerationBatchSeq_good ω)
+      horderedRepair hfirstRepair n
+  exact hpoint
+
+/-- The block endpoint array is integrable under the paper's one-step
+leftmost-child moment condition and the ordered, nonempty offspring support.
+The proof uses the deterministic sup-norm recursion, then integrates its
+finite sum of generation envelopes. -/
+theorem repairedInfiniteSelectionSubadditiveArray_integrable_of_leftmostMoment
+    {N : ℕ} (hN : 0 < N) (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
+    (hboundary : HasBoundaryNormalization realPotential μ)
+    (hnonempty : μ nonemptySupport = 1)
+    (hordered : μ (orderedBySteps realPotential) = 1)
+    (hslot : Integrable (fun ξ : Step ℕ ℝ => |value' ξ 0|) μ)
+    (n : ℕ) :
+    Integrable
+      (fun ω : GenerationEnvironment N =>
+        repairedInfiniteSelectionSubadditiveArray hN ω 0 n)
+      (generationEnvironmentLaw μ N) := by
+  let D : GenerationEnvironment N → ℕ → ℝ := fun ω t =>
+    infiniteOffspringBatchSlotZeroNorm hN (repairGenerationBatch (ω t))
+  have hD : ∀ t, Integrable (fun ω => D ω t) (generationEnvironmentLaw μ N) := by
+    intro t
+    exact integrable_repairedInfiniteOffspringBatchSlotZeroNorm_at
+      hN μ hboundary hnonempty hslot t
+  have hsum : Integrable (fun ω => ∑ t ∈ Finset.range n, D ω t)
+      (generationEnvironmentLaw μ N) := by
+    apply integrable_finsetSum (Finset.range n)
+    intro t ht
+    exact hD t
+  have hmeas := measurable_repairedInfiniteSelectionSubadditiveArray hN 0 n
+  apply hsum.mono' hmeas.aestronglyMeasurable
+  filter_upwards [repairedInfiniteSelectionSubadditiveArray_ae_abs_le_envelope
+    hN μ hordered hnonempty n] with ω hω
+  rw [Real.norm_eq_abs]
+  simpa [D] using hω
+
+/-- The one-step leftmost-child moment also supplies Kingman's normalized
+expected-value lower bound. Stationarity makes each generation envelope have
+the same finite mean, so the expected block lower bound is linear in its
+length. -/
+theorem repairedInfiniteSelection_normalizedIntegral_bddBelow_of_leftmostMoment
+    {N : ℕ} (hN : 0 < N) (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
+    (hboundary : HasBoundaryNormalization realPotential μ)
+    (hnonempty : μ nonemptySupport = 1)
+    (hordered : μ (orderedBySteps realPotential) = 1)
+    (hslot : Integrable (fun ξ : Step ℕ ℝ => |value' ξ 0|) μ) :
+    BddBelow (Set.range fun n : ℕ =>
+      (∫ ω, repairedInfiniteSelectionSubadditiveArray hN ω 0 (n + 1)
+        ∂generationEnvironmentLaw μ N) / (n + 1)) := by
+  let ν := generationEnvironmentLaw μ N
+  let batchNorm : GenerationBatch N → ℝ := fun batch =>
+    infiniteOffspringBatchSlotZeroNorm hN (repairGenerationBatch batch)
+  let D : GenerationEnvironment N → ℕ → ℝ := fun ω t => batchNorm (ω t)
+  let c : ℝ := ∫ batch, batchNorm batch ∂generationBatchLaw μ N
+  have hbatchNorm : Integrable batchNorm (generationBatchLaw μ N) := by
+    exact integrable_repairedInfiniteOffspringBatchSlotZeroNorm
+      hN μ hboundary hnonempty hslot
+  have hD : ∀ t, Integrable (fun ω => D ω t) ν := by
+    intro t
+    exact integrable_repairedInfiniteOffspringBatchSlotZeroNorm_at
+      hN μ hboundary hnonempty hslot t
+  have hrowIntegral (t : ℕ) : (∫ ω, D ω t ∂ν) = c := by
+    have hmapInt : Integrable batchNorm (ν.map (fun ω : GenerationEnvironment N => ω t)) := by
+      rw [generationEnvironmentLaw_generation_marginal μ N t]
+      exact hbatchNorm
+    calc
+      (∫ ω, D ω t ∂ν) =
+          ∫ batch, batchNorm batch ∂ν.map (fun ω : GenerationEnvironment N => ω t) := by
+            dsimp [D]
+            exact (integral_map (measurable_pi_apply t).aemeasurable
+              hmapInt.aestronglyMeasurable).symm
+      _ = c := by
+        rw [generationEnvironmentLaw_generation_marginal μ N t]
+  have harrayInt (n : ℕ) : Integrable
+      (fun ω => repairedInfiniteSelectionSubadditiveArray hN ω 0 n) ν := by
+    exact repairedInfiniteSelectionSubadditiveArray_integrable_of_leftmostMoment
+      hN μ hboundary hnonempty hordered hslot n
+  have hsumInt (n : ℕ) : Integrable
+      (fun ω => ∑ t ∈ Finset.range n, D ω t) ν := by
+    apply integrable_finsetSum (Finset.range n)
+    intro t ht
+    exact hD t
+  have hsumIntegral (n : ℕ) :
+      (∫ ω, ∑ t ∈ Finset.range n, D ω t ∂ν) = (n : ℝ) * c := by
+    rw [integral_finsetSum (Finset.range n) (fun t ht => hD t)]
+    calc
+      (∑ t ∈ Finset.range n, ∫ ω, D ω t ∂ν) =
+          ∑ t ∈ Finset.range n, c := by
+            apply Finset.sum_congr rfl
+            intro t ht
+            exact hrowIntegral t
+      _ = (n : ℝ) * c := by simp [Finset.sum_const, Finset.card_range]
+  have hlower (n : ℕ) :
+      -((n : ℝ) * c) ≤
+        ∫ ω, repairedInfiniteSelectionSubadditiveArray hN ω 0 n ∂ν := by
+    have hpath := repairedInfiniteSelectionSubadditiveArray_ae_abs_le_envelope
+      hN μ hordered hnonempty n
+    have haeLower : ∀ᵐ ω ∂ν,
+        -(∑ t ∈ Finset.range n, D ω t) ≤
+          repairedInfiniteSelectionSubadditiveArray hN ω 0 n := by
+      filter_upwards [hpath] with ω hω
+      exact neg_le_of_abs_le (by simpa [D] using hω)
+    have hmono := integral_mono_ae (hsumInt n).neg (harrayInt n) haeLower
+    have hmono' :
+        (∫ ω, -(∑ t ∈ Finset.range n, D ω t) ∂ν) ≤
+          ∫ ω, repairedInfiniteSelectionSubadditiveArray hN ω 0 n ∂ν := by
+      simpa using hmono
+    rw [integral_neg, hsumIntegral n] at hmono'
+    simpa using hmono'
+  have hnormalized (n : ℕ) : -c ≤
+      (∫ ω, repairedInfiniteSelectionSubadditiveArray hN ω 0 (n + 1) ∂ν) / (n + 1) := by
+    have hnpos : (0 : ℝ) < (n : ℝ) + 1 := by positivity
+    rw [le_div_iff₀ hnpos]
+    have hlower' := hlower (n + 1)
+    have hlower'' : -(((n : ℝ) + 1) * c) ≤
+        ∫ ω, repairedInfiniteSelectionSubadditiveArray hN ω 0 (n + 1) ∂ν := by
+      simpa [Nat.cast_add, Nat.cast_one] using hlower'
+    have hmul : -c * ((n : ℝ) + 1) = -(((n : ℝ) + 1) * c) := by ring
+    rw [hmul]
+    exact hlower''
+  refine ⟨-c, ?_⟩
+  rintro x ⟨n, rfl⟩
+  exact hnormalized n
 
 theorem repairedInfiniteSelectionSubadditiveArray_subadditive
     {N : ℕ} (hN : 0 < N) (ω : GenerationEnvironment N)
@@ -751,6 +1094,52 @@ theorem infiniteOffspringRun_leftmost_ae_hasAsymptoticSpeed {N : ℕ}
   refine hlim.neg.congr' ?_
   filter_upwards [] with n
   simp [infiniteSelectionSubadditiveArray, infiniteSelectionBlockMinimum]
+
+/-- The ordered, potential-projected realization has an almost-sure
+leftmost speed under the paper's separate boundary, nonempty-offspring, and
+leftmost first-moment assumptions. The integrability and normalized lower
+bound required by Kingman are derived internally from those assumptions. -/
+theorem infiniteOffspringRun_leftmost_ae_hasAsymptoticSpeed_of_stepLaw
+    {ι X : Type*} [Countable ι] [MeasurableSpace X]
+    {N : ℕ} (hN : 0 < N) (L : StepLaw ι ℕ X)
+    [IsProbabilityMeasure L.raw]
+    (hboundary : HasBoundaryNormalization L.potential L.raw)
+    (hnonempty : L.raw nonemptySupport = 1)
+    (hfirst : HasLeftmostFirstMoment L) :
+    ∃ c : ℝ,
+      ∀ᵐ ω ∂generationEnvironmentLaw L.sortedPotentialImage N,
+        ∃ hgood : ∀ t, IsGoodInfiniteOffspringBatch (ω t),
+          Combinatorics.Branching.Selection.NSelection.HasAsymptoticSpeed
+            (𝕜 := ℝ)
+            (fun n => infiniteOffspringRun ω hgood (fun _ => 0) n ⟨0, hN⟩)
+            (-c) := by
+  let μ := L.sortedPotentialImage
+  haveI : IsProbabilityMeasure μ := by
+    dsimp [μ]
+    infer_instance
+  have hboundaryμ : HasBoundaryNormalization realPotential μ :=
+    L.sortedPotentialImage_hasBoundaryNormalization hboundary
+  have hnonemptyμ : μ nonemptySupport = 1 := by
+    rw [show μ = L.sortedPotentialImage from rfl,
+      L.sortedPotentialImage_nonemptySupport, L.sorted_nonemptySupport]
+    exact hnonempty
+  have horderedμ : μ (orderedBySteps realPotential) = 1 := by
+    rw [show μ = L.sortedPotentialImage from rfl,
+      L.sortedPotentialImage_orderedBy]
+    simp
+  have hslot : Integrable (fun ξ : Step ℕ ℝ => |value' ξ 0|) μ :=
+    L.integrable_sortedPotentialImage_firstSlot_abs hboundary hfirst
+  have hint : ∀ n, Integrable
+      (fun ω : GenerationEnvironment N =>
+        repairedInfiniteSelectionSubadditiveArray hN ω 0 n)
+      (generationEnvironmentLaw μ N) := by
+    intro n
+    exact repairedInfiniteSelectionSubadditiveArray_integrable_of_leftmostMoment
+      hN μ hboundaryμ hnonemptyμ horderedμ hslot n
+  have hbdd := repairedInfiniteSelection_normalizedIntegral_bddBelow_of_leftmostMoment
+    hN μ hboundaryμ hnonemptyμ horderedμ hslot
+  exact infiniteOffspringRun_leftmost_ae_hasAsymptoticSpeed
+    hN μ hboundaryμ hnonemptyμ hint hbdd
 
 /-- Reflect every displacement while preserving exactly the same child slots.
 This is the pathwise operation used to turn a rightmost selection into a
