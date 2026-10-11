@@ -90,6 +90,85 @@ theorem tendsto_rightTailPositiveAFirstCutoff_div_logCube
     field_simp [ne_of_gt hargPos, ne_of_gt hn]
   simpa [L] using hbase.congr' heq.symm
 
+/-- The first-stage cutoff tends to infinity with the sample size. -/
+theorem tendsto_rightTailPositiveAFirstCutoff_atTop
+    {N : ℕ → ℕ} (hN : Tendsto N atTop atTop) :
+    Tendsto (rightTailPositiveAFirstCutoff N) atTop atTop := by
+  let L : ℕ → ℝ := logarithmOfSampleSize N
+  have hL : Tendsto L atTop atTop := by
+    exact Real.tendsto_log_atTop.comp
+      (tendsto_natCast_atTop_atTop.comp hN)
+  have harg : Tendsto (fun n => L n ^ ((5 : ℝ) / 2)) atTop atTop :=
+    (_root_.tendsto_rpow_atTop (by norm_num : (0 : ℝ) < (5 : ℝ) / 2)).comp hL
+  convert tendsto_nat_floor_atTop.comp harg using 1 <;>
+    ext n <;> simp [rightTailPositiveAFirstCutoff, L, logarithmOfSampleSize]
+
+/-- The first-stage cutoff dominates the superdiffusive Aïdékon--Hu power of
+the corridor width when `p < 1/2`, as required by the paper's
+`floor((log N)^(5/2))` choice. -/
+theorem eventually_rightTailPositiveAFirstStageAHScale
+    {N : ℕ → ℕ} (hN : Tendsto N atTop atTop) {b p delta0 : ℝ}
+    (hb : 0 < b) (hpHalf : p < 1 / 2) :
+    ∀ᶠ n : ℕ in atTop,
+      delta0 ≤ b * logarithmOfSampleSize N n ∧
+        (b * logarithmOfSampleSize N n) ^ (2 + p) ≤
+          (rightTailPositiveAFirstCutoff N n : ℝ) := by
+  let L : ℕ → ℝ := logarithmOfSampleSize N
+  let arg : ℕ → ℝ := fun n => L n ^ ((5 : ℝ) / 2)
+  let q : ℝ := (1 : ℝ) / 2 - p
+  have hL : Tendsto L atTop atTop := by
+    exact Real.tendsto_log_atTop.comp
+      (tendsto_natCast_atTop_atTop.comp hN)
+  have harg : Tendsto arg atTop atTop :=
+    (_root_.tendsto_rpow_atTop (by norm_num : (0 : ℝ) < (5 : ℝ) / 2)).comp hL
+  have hfloor : Tendsto (fun n => (Nat.floor (arg n) : ℝ) / arg n)
+      atTop (𝓝 1) := tendsto_nat_floor_div_atTop.comp harg
+  have hq : 0 < q := by dsimp [q]; linarith
+  have hpower : Tendsto (fun n => L n ^ q) atTop atTop :=
+    (_root_.tendsto_rpow_atTop hq).comp hL
+  have hbpow : 0 < b ^ (2 + p) := Real.rpow_pos_of_pos hb _
+  have hratio : Tendsto
+      (fun n => arg n / (b * L n) ^ (2 + p)) atTop atTop := by
+    have hscaled : Tendsto (fun n => (b ^ (2 + p))⁻¹ * L n ^ q)
+        atTop atTop := hpower.const_mul_atTop (inv_pos.mpr hbpow)
+    have heq : (fun n => (b ^ (2 + p))⁻¹ * L n ^ q) =ᶠ[atTop]
+        fun n => arg n / (b * L n) ^ (2 + p) := by
+      filter_upwards [hL.eventually_gt_atTop 0] with n hn
+      have hwidth : (b * L n) ^ (2 + p) =
+          b ^ (2 + p) * L n ^ (2 + p) :=
+        Real.mul_rpow hb.le hn.le
+      have hpowerEq : L n ^ ((5 : ℝ) / 2) =
+          L n ^ q * L n ^ (2 + p) := by
+        rw [← Real.rpow_add hn]
+        congr 1
+        dsimp [q]
+        ring
+      dsimp [arg]
+      rw [hwidth, hpowerEq]
+      field_simp [ne_of_gt hbpow,
+        ne_of_gt (Real.rpow_pos_of_pos hn (2 + p))]
+    exact hscaled.congr' heq
+  filter_upwards [hL.eventually_gt_atTop 0,
+    hL.const_mul_atTop hb |>.eventually_ge_atTop delta0,
+    Filter.Tendsto.eventually hfloor (Ioi_mem_nhds (by norm_num : (1 / 2 : ℝ) < 1)),
+    hratio.eventually_gt_atTop 2] with n hLn hwidthLarge hfloorLarge hratioLarge
+  refine ⟨hwidthLarge, ?_⟩
+  have hargPos : 0 < arg n := Real.rpow_pos_of_pos hLn _
+  have hwidthPos : 0 < (b * L n) ^ (2 + p) :=
+    Real.rpow_pos_of_pos (mul_pos hb hLn) _
+  have hfloorVal : (rightTailPositiveAFirstCutoff N n : ℝ) =
+      (Nat.floor (arg n) : ℝ) := by
+    simp [rightTailPositiveAFirstCutoff, arg, L, logarithmOfSampleSize]
+  have hfloorLower : arg n / 2 < (rightTailPositiveAFirstCutoff N n : ℝ) := by
+    rw [hfloorVal]
+    have hmul := (lt_div_iff₀ hargPos).mp hfloorLarge
+    nlinarith
+  have hratioLower : 2 * (b * L n) ^ (2 + p) < arg n :=
+    (lt_div_iff₀ hwidthPos).mp hratioLarge
+  have hwidthLower : (b * L n) ^ (2 + p) < arg n / 2 := by
+    linarith
+  exact_mod_cast (lt_trans hwidthLower hfloorLower).le
+
 /-- The first cutoff lies strictly before the `floor(t log^3 N)+1` terminal
 horizon for all sufficiently large sample sizes. -/
 theorem eventually_rightTailPositiveAFirstCutoff_lt_horizon
@@ -1694,6 +1773,48 @@ theorem exists_uniform_iidSequenceLaw_firstStageCorridor_le_ah
     exact ⟨h.1, le_trans h.2 hthreshold⟩
   have hbound := hdrawdown width hscale horizon hlength
   exact (measure_mono (hinterval'.trans hcutoff)).trans hbound
+
+/-- For the paper's `log^(5/2) N` first cutoff, the uniform finite-variance
+Aïdékon--Hu estimate gives the required first-stage corridor probability
+eventually. The restriction `p < 1/2` is precisely the scale comparison
+`(b log N)^(2+p) = o((log N)^(5/2))`. -/
+theorem exists_eventually_iidSequenceLaw_rightTailPositiveAFirstStageCorridor_le_ah
+    (ν : Measure ℝ) [IsProbabilityMeasure ν] {sigma : ℝ}
+    (hν : ProbabilityTheory.IsCenteredSecondMoment ν (sigma ^ 2))
+    (hsigma : 0 < sigma)
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+    [IsProbabilityMeasure P] {B : NNReal → Ω → ℝ}
+    (hB : IsPreBrownianReal B P)
+    (hcontinuous : ∀ ω, Continuous (B · ω))
+    (hmeasurable : ∀ t, Measurable (B t))
+    (endpointRatio target blockTarget p : ℝ)
+    (hEndpointRatio : 0 < endpointRatio)
+    (htarget : 0 < target) (htargetBlock : target < blockTarget)
+    (hblockTarget : blockTarget < Real.pi ^ 2 / 2) (hp : 0 < p)
+    {N : ℕ → ℕ} (hN : Tendsto N atTop atTop) {b : ℝ} (hb : 0 < b)
+    (hpHalf : p < 1 / 2) :
+    ∃ delta0 : ℝ, 0 < delta0 ∧
+      ∀ᶠ n : ℕ in atTop,
+        iidSequenceLaw ν
+          {increment : ℕ → ℝ |
+            InClosedInterval (-b * logarithmOfSampleSize N n) 0
+              (rightTailPositiveAFirstCutoff N n) 0 increment} ≤
+          ENNReal.ofReal (Real.exp
+            (-target * sigma ^ 2 *
+              (rightTailPositiveAFirstCutoff N n : ℝ) /
+                (b * logarithmOfSampleSize N n) ^ 2)) := by
+  obtain ⟨delta0, hdelta0, hAH⟩ :=
+    exists_uniform_iidSequenceLaw_firstStageCorridor_le_ah
+      ν hν hsigma hB hcontinuous hmeasurable endpointRatio target blockTarget p
+      hEndpointRatio htarget htargetBlock hblockTarget hp
+  refine ⟨delta0, hdelta0, ?_⟩
+  have hscale := eventually_rightTailPositiveAFirstStageAHScale
+    (N := N) hN (b := b) (p := p) (delta0 := delta0) hb hpHalf
+  filter_upwards [hscale] with n hscale
+  have hwidthPos : 0 < b * logarithmOfSampleSize N n :=
+    lt_of_lt_of_le hdelta0 hscale.1
+  simpa [neg_mul] using hAH (rightTailPositiveAFirstCutoff N n)
+    (b * logarithmOfSampleSize N n) hwidthPos hscale.1 hscale.2
 
 /-- The affine second-stage corridor in the positive-`a` proof is controlled
 by the uniform finite-variance Aïdékon--Hu drawdown estimate on every prefix
