@@ -259,6 +259,18 @@ noncomputable def weightedPrefixCrossChildWeightSum
     weightedPathGenerationTerm φ n F x u ω *
       crossChildWeight φ (ω u)
 
+/-- The ancestor-prefix cross-weight sum with one extra reciprocal-potential
+factor. In the MRCA expansion this contributes the prefix indicator times
+`exp(-2 * pathPotential)` and the cross-child weight at that ancestor. -/
+noncomputable def weightedPrefixSquareCrossChildWeightSum
+    {X : Type*} [MeasurableSpace X]
+    (φ : Potential X) (n : ℕ) (F : (Fin (n + 1) → ℝ) → ℝ≥0∞)
+    (x : ℝ) (ω : StepField ℕ X) : ℝ≥0∞ :=
+  ∑' u : TreeNode ℕ,
+    weightedPathGenerationTerm φ n F x u ω *
+      ENNReal.ofReal (Real.exp (-pathPotential φ ω u)) *
+        crossChildWeight φ (ω u)
+
 private theorem displaceWith_measurable_generation
     {X : Type*} [MeasurableSpace X]
     (φ : Potential X) (n : ℕ) (v p : TreeNode ℕ)
@@ -458,5 +470,159 @@ theorem lintegral_weightedPrefixCrossChildWeightSum_eq_crossMoment_mul
           (∫⁻ ω, weightedPathGeneration φ n F x ω ∂stepFieldLaw μ) := by
       rw [ENNReal.tsum_mul_right]
       rw [hweighted, mul_comm]
+
+/-- For an indicator prefix corridor, the factorization above is exactly the
+cross-child moment times the corresponding tilted-spine corridor probability.
+This is the ancestor-prefix factor appearing in each positive-depth MRCA
+layer of Lemma 4.5. -/
+theorem lintegral_weightedPrefixCrossChildWeightSum_indicator_eq_crossMoment_mul_spineProbability
+    {X : Type*} [MeasurableSpace X]
+    (φ : Potential X) (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
+    (hboundary : HasBoundaryNormalization φ μ)
+    (n : ℕ) (corridor : Set (Fin (n + 1) → ℝ))
+    (hcorridor : MeasurableSet corridor) (x : ℝ) :
+    (∫⁻ ω, weightedPrefixCrossChildWeightSum φ n
+      (corridor.indicator (fun _ => (1 : ℝ≥0∞))) x ω
+      ∂stepFieldLaw μ) =
+      (∫⁻ ξ, crossChildWeight φ ξ ∂μ) *
+        (tiltedIncrementFieldLaw φ μ)
+          {increment | ProbabilityTheory.RandomWalk.history n x increment ∈ corridor} := by
+  let F : (Fin (n + 1) → ℝ) → ℝ≥0∞ :=
+    corridor.indicator (fun _ => (1 : ℝ≥0∞))
+  let spineEvent : Set (ℕ → ℝ) :=
+    {increment | ProbabilityTheory.RandomWalk.history n x increment ∈ corridor}
+  have hF : Measurable F := measurable_const.indicator hcorridor
+  have hspineEvent : MeasurableSet spineEvent :=
+    hcorridor.preimage (ProbabilityTheory.RandomWalk.history_measurable n x)
+  have htilted : IsProbabilityMeasure (tiltedIncrementFieldLaw φ μ) :=
+    tiltedIncrementFieldLaw_isProbability φ μ hboundary
+  letI : IsProbabilityMeasure (tiltedIncrementFieldLaw φ μ) := htilted
+  have hmanyToOne := weightedPathManyToOneCore φ μ hboundary n hF x
+  calc
+    (∫⁻ ω, weightedPrefixCrossChildWeightSum φ n F x ω
+        ∂stepFieldLaw μ) =
+        (∫⁻ ξ, crossChildWeight φ ξ ∂μ) *
+          (∫⁻ ω, weightedPathGeneration φ n F x ω ∂stepFieldLaw μ) :=
+      lintegral_weightedPrefixCrossChildWeightSum_eq_crossMoment_mul
+        φ μ n F hF x
+    _ = (∫⁻ ξ, crossChildWeight φ ξ ∂μ) *
+          (tiltedIncrementFieldLaw φ μ) spineEvent := by
+      rw [hmanyToOne]
+      congr 1
+      change (∫⁻ increment, spineEvent.indicator
+        (fun _ => (1 : ℝ≥0∞)) increment ∂tiltedIncrementFieldLaw φ μ) = _
+      rw [lintegral_indicator_const hspineEvent]
+      simp [spineEvent]
+
+/-- A shifted-spine estimate for the prefix corridor immediately gives the
+corresponding averaged ancestor cross-weight bound. No second-moment or
+pair-bound assumption is introduced here. -/
+theorem lintegral_weightedPrefixCrossChildWeightSum_indicator_le_crossMoment_mul
+    {X : Type*} [MeasurableSpace X]
+    (φ : Potential X) (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
+    (hboundary : HasBoundaryNormalization φ μ)
+    (n : ℕ) (corridor : Set (Fin (n + 1) → ℝ))
+    (hcorridor : MeasurableSet corridor) (x : ℝ) (q : ℝ≥0∞)
+    (hprefix : (tiltedIncrementFieldLaw φ μ)
+      {increment | ProbabilityTheory.RandomWalk.history n x increment ∈ corridor} ≤ q) :
+    (∫⁻ ω, weightedPrefixCrossChildWeightSum φ n
+      (corridor.indicator (fun _ => (1 : ℝ≥0∞))) x ω
+      ∂stepFieldLaw μ) ≤
+      (∫⁻ ξ, crossChildWeight φ ξ ∂μ) * q := by
+  rw [lintegral_weightedPrefixCrossChildWeightSum_indicator_eq_crossMoment_mul_spineProbability
+    φ μ hboundary n corridor hcorridor x]
+  gcongr
+
+/-- The prefix endpoint lower bound removes one of the two reciprocal
+potential factors in a positive-depth MRCA term. The remaining expectation is
+the spine prefix probability times the cross-child moment. -/
+theorem lintegral_weightedPrefixSquareCrossChildWeightSum_indicator_le
+    {X : Type*} [MeasurableSpace X]
+    (φ : Potential X) (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
+    (hboundary : HasBoundaryNormalization φ μ)
+    (n : ℕ) (corridor : Set (Fin (n + 1) → ℝ))
+    (hcorridor : MeasurableSet corridor) (x lower : ℝ)
+    (hlower : ∀ history ∈ corridor,
+      lower ≤ history ⟨n, Nat.lt_succ_self n⟩) :
+    (∫⁻ ω, weightedPrefixSquareCrossChildWeightSum φ n
+      (corridor.indicator (fun _ => (1 : ℝ≥0∞))) x ω
+      ∂stepFieldLaw μ) ≤
+      ENNReal.ofReal (Real.exp (x - lower)) *
+        (∫⁻ ξ, crossChildWeight φ ξ ∂μ) *
+        (tiltedIncrementFieldLaw φ μ)
+          {increment | ProbabilityTheory.RandomWalk.history n x increment ∈ corridor} := by
+  let F : (Fin (n + 1) → ℝ) → ℝ≥0∞ :=
+    corridor.indicator (fun _ => (1 : ℝ≥0∞))
+  let K : ℝ≥0∞ := ENNReal.ofReal (Real.exp (x - lower))
+  have hprefixMeas : Measurable (weightedPrefixCrossChildWeightSum φ n F x) := by
+    unfold weightedPrefixCrossChildWeightSum
+    apply Measurable.tsum
+    intro u
+    exact (weightedPathGenerationTerm_measurable φ n
+      (measurable_const.indicator hcorridor) x u).mul
+      ((crossChildWeight_measurable φ).comp (measurable_pi_apply u))
+  have hterm (u : TreeNode ℕ) (ω : StepField ℕ X) :
+      weightedPathGenerationTerm φ n F x u ω *
+          ENNReal.ofReal (Real.exp (-pathPotential φ ω u)) *
+          crossChildWeight φ (ω u) ≤
+        K * (weightedPathGenerationTerm φ n F x u ω *
+          crossChildWeight φ (ω u)) := by
+    by_cases hu : u.length = n
+    · by_cases hs : surviveAlong ω [] u
+      · by_cases hc : pathHistory φ n x ω u ∈ corridor
+        · have hterminal := hlower (pathHistory φ n x ω u) hc
+          rw [pathHistory_last φ n x ω u hu] at hterminal
+          have hpotential : -pathPotential φ ω u ≤ x - lower := by linarith
+          have hextra : ENNReal.ofReal (Real.exp (-pathPotential φ ω u)) ≤ K := by
+            exact ENNReal.ofReal_le_ofReal (Real.exp_le_exp.mpr hpotential)
+          have hweight : weightedPathGenerationTerm φ n F x u ω =
+              ENNReal.ofReal (Real.exp (-pathPotential φ ω u)) := by
+            simp [weightedPathGenerationTerm, F, hu, hs, hc]
+          rw [hweight]
+          dsimp [K]
+          calc
+            _ = ENNReal.ofReal (Real.exp (-pathPotential φ ω u)) *
+                (ENNReal.ofReal (Real.exp (-pathPotential φ ω u)) *
+                  crossChildWeight φ (ω u)) := by ac_rfl
+            _ ≤ ENNReal.ofReal (Real.exp (-pathPotential φ ω u)) *
+                (ENNReal.ofReal (Real.exp (x - lower)) *
+                  crossChildWeight φ (ω u)) := by gcongr
+            _ = ENNReal.ofReal (Real.exp (x - lower)) *
+                (ENNReal.ofReal (Real.exp (-pathPotential φ ω u)) *
+                  crossChildWeight φ (ω u)) := by ac_rfl
+        · have hzero : weightedPathGenerationTerm φ n F x u ω = 0 := by
+            simp [weightedPathGenerationTerm, F, hu, hs, hc]
+          simp [hzero]
+      · have hzero : weightedPathGenerationTerm φ n F x u ω = 0 := by
+          simp [weightedPathGenerationTerm, hu, hs]
+        simp [hzero]
+    · have hzero : weightedPathGenerationTerm φ n F x u ω = 0 := by
+        simp [weightedPathGenerationTerm, hu]
+      simp [hzero]
+  have hpoint (ω : StepField ℕ X) :
+      weightedPrefixSquareCrossChildWeightSum φ n F x ω ≤
+        K * weightedPrefixCrossChildWeightSum φ n F x ω := by
+    unfold weightedPrefixSquareCrossChildWeightSum weightedPrefixCrossChildWeightSum
+    calc
+      _ ≤ ∑' u : TreeNode ℕ, K *
+          (weightedPathGenerationTerm φ n F x u ω *
+            crossChildWeight φ (ω u)) :=
+        ENNReal.tsum_le_tsum (fun u => hterm u ω)
+      _ = K * ∑' u : TreeNode ℕ,
+          weightedPathGenerationTerm φ n F x u ω *
+            crossChildWeight φ (ω u) := ENNReal.tsum_mul_left
+  calc
+    (∫⁻ ω, weightedPrefixSquareCrossChildWeightSum φ n F x ω
+        ∂stepFieldLaw μ) ≤
+        ∫⁻ ω, K * weightedPrefixCrossChildWeightSum φ n F x ω
+          ∂stepFieldLaw μ := lintegral_mono hpoint
+    _ = K * (∫⁻ ω, weightedPrefixCrossChildWeightSum φ n F x ω
+          ∂stepFieldLaw μ) := lintegral_const_mul K hprefixMeas
+    _ = K * ((∫⁻ ξ, crossChildWeight φ ξ ∂μ) *
+          (tiltedIncrementFieldLaw φ μ)
+            {increment | ProbabilityTheory.RandomWalk.history n x increment ∈ corridor}) := by
+      rw [lintegral_weightedPrefixCrossChildWeightSum_indicator_eq_crossMoment_mul_spineProbability
+        φ μ hboundary n corridor hcorridor x]
+    _ = _ := by ac_rfl
 
 end ProbabilityTheory.BranchingRandomWalk.Spine
