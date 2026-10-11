@@ -9,8 +9,7 @@ import Probability.BranchingProcess.Offspring.Law
 import Probability.BranchingRandomWalk.Selection.NSelection.Tail.EndpointDeviationParameterSelection
 import Probability.BranchingRandomWalk.Selection.NSelection.Tail.PolynomialEndpointSublevelHorizon
 import Probability.BranchingRandomWalk.Spine.Variance
-import Mathlib.Data.List.Lex
-import Mathlib.Data.Prod.Lex
+import Combinatorics.UlamHarris.Order
 import Mathlib.Order.Filter.AtTopBot.Basic
 import Mathlib.Order.Fin.Basic
 import Mathlib.MeasureTheory.Function.L2Space
@@ -41,18 +40,6 @@ open Combinatorics.UlamHarris
 open ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw
 open ProbabilityTheory.BranchingRandomWalk.Spine
 
-/-- The deterministic tie break for a finite initial population and
-Ulam--Harris descendants: first order by root label, then lexicographically by
-the child-label word. -/
-@[instance_reducible] noncomputable def root_address_linear_order (m : ℕ) :
-    LinearOrder (RootIndexed.TreeNode (Fin m) ℕ) := by
-  letI : LinearOrder (Fin m ×ₗ List ℕ) := inferInstance
-  exact LinearOrder.lift'
-    (fun x : RootIndexed.TreeNode (Fin m) ℕ => toLex (x.1, x.2))
-    (by
-      intro x y h
-      exact toLex.injective h)
-
 /-- The arbitrary-horizon endpoint sublevel under the displayed individual
 law assumptions. The variance, positive variance parameter, and all geometric
 and exponent parameters are derived from those assumptions. -/
@@ -78,7 +65,7 @@ theorem eventually_finiteRootStepFieldLaw_firstNSelectedEndpointBelow_le_polynom
     ∃ epsilon : ℝ, 0 < epsilon ∧ ∀ᶠ n : ℕ in atTop,
       (finiteRootStepFieldLaw (L : Measure (Step ℕ ℝ)) (m n))
         (@firstNSelectedEndpointBelow (m n) (N n)
-          (horizon n) (root_address_linear_order (m n))
+          (horizon n) (RootIndexed.addressLinearOrder (Fin (m n)) ℕ)
           (logarithmicEndpointThreshold N zeta n)) ≤
         ENNReal.ofReal
           (Real.exp (-epsilon * Real.log (N n : ℝ))) := by
@@ -116,7 +103,7 @@ theorem eventually_finiteRootStepFieldLaw_firstNSelectedEndpointBelow_le_polynom
   have hbound :=
     eventually_finiteRootStepFieldLaw_firstNSelectedEndpointBelow_le_polynomial_of_horizonRawRate
       μ hboundary hspineMoment hsigma (m := m) (N := N) hN
-      (fun n => root_address_linear_order (m n))
+      (fun n => RootIndexed.addressLinearOrder (Fin (m n)) ℕ)
       (horizon := horizon) (a := a) (t := t) (zeta := zeta) (b := b)
       (factor := factor)
       (eta := eta) (rangeRate := rangeRate) (targetRate := targetRate)
@@ -149,7 +136,7 @@ theorem eventually_finiteRootStepFieldLaw_firstNSelectedEndpointBelow_le_polynom
           (Nat.floor ((n : ℝ) ^ a)))
         (@firstNSelectedEndpointBelow (Nat.floor ((n : ℝ) ^ a)) n
           (horizon n)
-          (root_address_linear_order (Nat.floor ((n : ℝ) ^ a)))
+          (RootIndexed.addressLinearOrder (Fin (Nat.floor ((n : ℝ) ^ a))) ℕ)
           (zeta * Real.log (n : ℝ))) ≤
         ENNReal.ofReal (Real.exp (-epsilon * Real.log (n : ℝ))) := by
   have hN : Tendsto (fun n : ℕ => n) atTop atTop := tendsto_id
@@ -186,7 +173,7 @@ theorem eventually_finiteRootStepFieldLaw_firstNSelectedEndpointBelow_le_polynom
     simpa [variance, ν, μ, hsigmaSq] using hbelow
   have horder (n : ℕ) :
       LinearOrder (RootIndexed.TreeNode (Fin (m n)) ℕ) :=
-    root_address_linear_order (m n)
+    RootIndexed.addressLinearOrder (Fin (m n)) ℕ
   obtain ⟨b, factor, eta, rangeRate, targetRate, k, hk,
       hb, hfactor, heta, hrangeRate, hrangeRateLt, htargetRate, hgap,
       hbin, hmargin⟩ :=

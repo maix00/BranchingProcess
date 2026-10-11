@@ -44,14 +44,14 @@ theorem countableRootEndpointMinimum_div_sub_fourthMoment_eventually_le_log_eigh
     (hfour : HasLeftmostFourthMoment L) (c : ℝ) :
     (∀ n, MemLp
       (fun field => @countableRootEndpointMinimum (m n) (N n) (H n)
-          (root_address_linear_order (m n)) field /
+          (RootIndexed.addressLinearOrder (Fin (m n)) ℕ) field /
           Real.log (N n : ℝ) - c)
       (4 : ℝ≥0∞)
       (RootIndexed.stepFieldLaw (Root := ℕ) L.sortedPotentialImage)) ∧
     ∃ C : ℝ, 0 ≤ C ∧ ∀ᶠ n : ℕ in atTop,
       (∫ field,
         (@countableRootEndpointMinimum (m n) (N n) (H n)
-          (root_address_linear_order (m n)) field /
+          (RootIndexed.addressLinearOrder (Fin (m n)) ℕ) field /
           Real.log (N n : ℝ) - c) ^ 4
         ∂RootIndexed.stepFieldLaw (Root := ℕ) L.sortedPotentialImage) ≤
         C * (1 + Real.log (N n : ℝ) ^ 8) := by
@@ -70,12 +70,12 @@ theorem countableRootEndpointMinimum_div_sub_fourthMoment_eventually_le_log_eigh
     hH.eventually (Iio_mem_nhds (by linarith))
   have hmem : ∀ n, MemLp
       (fun field => @countableRootEndpointMinimum (m n) (N n) (H n)
-          (root_address_linear_order (m n)) field /
+          (RootIndexed.addressLinearOrder (Fin (m n)) ℕ) field /
           Real.log (N n : ℝ) - c)
       (4 : ℝ≥0∞) μ := by
     intro n
     letI : LinearOrder (RootIndexed.TreeNode (Fin (m n)) ℕ) :=
-      root_address_linear_order (m n)
+      RootIndexed.addressLinearOrder (Fin (m n)) ℕ
     have hNpos : 0 < N n := Nat.lt_trans Nat.zero_lt_one (hNlarge n)
     have hlogpos : 0 < Real.log (N n : ℝ) := by
       exact Real.log_pos (by exact_mod_cast hNlarge n)
@@ -91,12 +91,12 @@ theorem countableRootEndpointMinimum_div_sub_fourthMoment_eventually_le_log_eigh
   have hbound : ∀ᶠ n : ℕ in atTop,
       (∫ field,
         (@countableRootEndpointMinimum (m n) (N n) (H n)
-          (root_address_linear_order (m n)) field /
+          (RootIndexed.addressLinearOrder (Fin (m n)) ℕ) field /
           Real.log (N n : ℝ) - c) ^ 4 ∂μ) ≤
         C * (1 + Real.log (N n : ℝ) ^ 8) := by
     filter_upwards [hlog_ge_one, hratio_lt] with n hnlog hnratio
     letI : LinearOrder (RootIndexed.TreeNode (Fin (m n)) ℕ) :=
-      root_address_linear_order (m n)
+      RootIndexed.addressLinearOrder (Fin (m n)) ℕ
     let s : ℝ := Real.log (N n : ℝ)
     have hs_ge_one : 1 ≤ s := hnlog
     have hs_pos : 0 < s := by linarith
