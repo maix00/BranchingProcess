@@ -20,6 +20,8 @@ used after a Paley--Zygmund estimate in the positive-initial-mass argument.
 open Filter
 open scoped Topology
 
+@[expose] public section
+
 namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail
 
 open scoped ENNReal
