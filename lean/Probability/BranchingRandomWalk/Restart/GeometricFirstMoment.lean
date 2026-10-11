@@ -7,6 +7,7 @@ Authors: WANG Yiyang
 import Probability.BranchingRandomWalk.Assumptions.Moments
 import Probability.BranchingRandomWalk.Restart.GoodSplit
 import Probability.BranchingRandomWalk.Timing.GeometricTrial.FirstMoment
+import Probability.BranchingProcess.Offspring.Count
 
 /-!
 # First-moment position cost before a reserve split
@@ -31,6 +32,7 @@ section
 namespace ProbabilityTheory.BranchingRandomWalk
 
 open Combinatorics.Branching
+open ProbabilityTheory.BranchingProcess
 
 /-- In an iid sequence of branching steps, the expected total positive
 leftmost displacement accumulated over failed reserve generations, up to the
@@ -94,8 +96,13 @@ theorem exists_nat_cutoff_iidGeometricFailureLeftmostPositiveDisplacement_le
     {Ω ι : Type*} [MeasurableSpace Ω] [MeasurableSpace ι]
     [Countable ι] [MeasurableSingletonClass ι]
     (μ : Measure Ω) [IsProbabilityMeasure μ]
-    (L : StepLaw ι ℕ ℝ)
-    (hbase : BasicBranchingAssumptions L)
+    (L : StepLaw ι ℕ ℝ) [IsProbabilityMeasure L.raw]
+    (hnonempty : OffspringConfigurationLaw.HasAtLeastOneChild
+      (⟨L.raw, ‹IsProbabilityMeasure L.raw›⟩ :
+        OffspringConfigurationLaw ι ℝ))
+    (hsupercritical : OffspringConfigurationLaw.IsSupercritical
+      (⟨L.raw, ‹IsProbabilityMeasure L.raw›⟩ :
+        OffspringConfigurationLaw ι ℝ))
     (hfirst : HasLeftmostFirstMoment L)
     (X : ℕ → Ω → Step ι ℝ) (hX : ∀ n, Measurable (X n))
     (hXi : iIndepFun X μ) (hLaw : ∀ n, μ.map (X n) = L.raw)
@@ -111,9 +118,9 @@ theorem exists_nat_cutoff_iidGeometricFailureLeftmostPositiveDisplacement_le
               (fun _ => (1 : ℝ)) ξ) n ω ∂μ) ≤
         (∫ ξ, L.leftmostPositivePart ξ ∂L.raw) /
           L.raw.real (boundedSelectedSplitEvent L R M) := by
-  letI : IsProbabilityMeasure L.raw := hbase.rawProbability
   obtain ⟨M, hsplit, _hmeas⟩ :=
-    exists_nat_cutoff_positive_boundedSelectedSplit L hbase R hR hadequate
+    exists_nat_cutoff_positive_boundedSelectedSplit L hnonempty
+      hsupercritical R hR hadequate
   have hp : 0 < L.raw.real (boundedSelectedSplitEvent L R M) :=
     ENNReal.toReal_pos hsplit.ne' (measure_ne_top L.raw _)
   refine ⟨M, hp, ?_⟩

@@ -8,6 +8,8 @@ module
 
 public import Combinatorics.BranchingWalk.Step.Basic
 public import Combinatorics.BranchingWalk.Step.ExponentialWeight
+public import Combinatorics.BranchingWalk.Step.Potential
+public import Combinatorics.BranchingWalk.Step.Monotone
 public import Combinatorics.BranchingWalk.Selection.NSelection.Hall
 public import Combinatorics.BranchingWalk.Selection.NSelection.Matching
 public import Mathlib.Data.Finset.Sort
@@ -285,6 +287,123 @@ noncomputable def infiniteOffspringTransition
       (infiniteOffspringFirstN position offspring hgood.finiteWeight)
       (infiniteOffspringFirstN_card position offspring hgood) i)
 
+/-- The sup norm of a nonempty finite ranked population. -/
+noncomputable def infiniteSelectionStateNorm {N : ℕ} (hN : 0 < N)
+    (position : Fin N → ℝ) : ℝ :=
+  Finset.univ.sup' (Finset.univ_nonempty_iff.mpr ⟨⟨0, hN⟩⟩)
+    fun i => |position i|
+
+theorem abs_position_le_infiniteSelectionStateNorm {N : ℕ}
+    (hN : 0 < N) (position : Fin N → ℝ) (i : Fin N) :
+    |position i| ≤ infiniteSelectionStateNorm hN position := by
+  exact Finset.le_sup' (fun j => |position j|) (Finset.mem_univ i)
+
+/-- One generation changes the sup norm by at most the largest absolute
+leftmost-child displacement, provided every parent has a leftmost child and
+the slot enumeration is increasing. The first-`N` property is used in the
+upper bound: the `N` slot-zero children are a competing set of `N` candidates. -/
+theorem infiniteOffspringTransition_stateNorm_le {N : ℕ}
+    (hN : 0 < N) (position : Fin N → ℝ)
+    (offspring : Fin N → Step ℕ ℝ)
+    (hgood : IsGoodInfiniteOffspringBatch offspring)
+    (hordered : ∀ i, (offspring i).IsOrderedBy realPotential)
+    (hfirst : ∀ i, survive (offspring i) 0) :
+    infiniteSelectionStateNorm hN
+        (infiniteOffspringTransition position offspring hgood) ≤
+      infiniteSelectionStateNorm hN position +
+        Finset.univ.sup' (Finset.univ_nonempty_iff.mpr ⟨⟨0, hN⟩⟩)
+          (fun i => |value' (offspring i) 0|) := by
+  classical
+  let B := infiniteSelectionStateNorm hN position
+  let D := Finset.univ.sup' (Finset.univ_nonempty_iff.mpr ⟨⟨0, hN⟩⟩)
+    (fun i => |value' (offspring i) 0|)
+  let value := infiniteOffspringPosition position offspring
+  let selected := infiniteOffspringFirstN position offspring hgood.finiteWeight
+  have hcard : selected.card = N := infiniteOffspringFirstN_card position offspring hgood
+  have hspec := infiniteOffspringFirstN_spec position offspring hgood.finiteWeight
+  have hnorm : ∀ i, |position i| ≤ B := by
+    intro i
+    exact abs_position_le_infiniteSelectionStateNorm hN position i
+  have hdisp : ∀ i, |value' (offspring i) 0| ≤ D := by
+    intro i
+    exact Finset.le_sup' (fun j => |value' (offspring j) 0|) (Finset.mem_univ i)
+  have horderedMap (i : Fin N) : (offspring i).map id ∈ orderedSteps := by
+    simpa [Step.IsOrderedBy, realPotential] using hordered i
+  have hzeroLe (i : Fin N) (j : ℕ) (hj : survive (offspring i) j) :
+      value' (offspring i) 0 ≤ value' (offspring i) j := by
+    have hmono := orderedSteps_value_mono ((offspring i).map id)
+      (horderedMap i) (Nat.zero_le j) (by simpa using hj)
+    simpa using hmono
+  have hbaseCandidate (i : Fin N) :
+      toLex (i, 0) ∈ infiniteOffspringCandidates offspring := by
+    change survive (offspring (ofLex (toLex (i, 0))).1) (ofLex (toLex (i, 0))).2
+    simpa using hfirst i
+  have hbaseValue (i : Fin N) : value (toLex (i, 0)) ≤ B + D := by
+    dsimp [value, infiniteOffspringPosition]
+    have hiPos : position i ≤ B := (le_abs_self _).trans (hnorm i)
+    have hiDisp : value' (offspring i) 0 ≤ D := (le_abs_self _).trans (hdisp i)
+    linarith
+  have hlabelInjective : Function.Injective (fun i : Fin N => toLex (i, 0)) := by
+    intro i j hij
+    have hfst := congrArg (fun q : InfiniteSlotLabel N => (ofLex q).1) hij
+    simpa using hfst
+  let base : Finset (InfiniteSlotLabel N) := Finset.univ.image (fun i : Fin N => toLex (i, 0))
+  have hbaseCard : base.card = N := by
+    change (Finset.univ.image (fun i : Fin N => toLex (i, 0))).card = N
+    rw [Finset.card_image_of_injective _ hlabelInjective]
+    simp
+  have hbaseSubset : (↑base : Set (InfiniteSlotLabel N)) ⊆ infiniteOffspringCandidates offspring := by
+    intro q hq
+    obtain ⟨i, hi, rfl⟩ := Finset.mem_image.mp hq
+    exact hbaseCandidate i
+  have hselectedUpper (q : InfiniteSlotLabel N) (hq : q ∈ selected) :
+      value q ≤ B + D := by
+    by_contra hnot
+    have hstrict : B + D < value q := lt_of_not_ge hnot
+    have hqNotBase : q ∉ base := by
+      intro hqbase
+      obtain ⟨i, -, hEq⟩ := Finset.mem_image.mp hqbase
+      subst q
+      exact (not_lt_of_ge (hbaseValue i)) hstrict
+    have hbaseSelected : base ⊆ selected := by
+      intro p hp
+      obtain ⟨i, -, hEq⟩ := Finset.mem_image.mp hp
+      rw [← hEq]
+      apply hspec.lower q hq (toLex (i, 0)) (hbaseCandidate i)
+      exact valueKey_lt_of_value_lt value (lt_of_le_of_lt (hbaseValue i) hstrict)
+    have hcardLe : (base ∪ {q}).card ≤ selected.card := Finset.card_le_card (by
+      intro p hp
+      rcases Finset.mem_union.mp hp with hpBase | hpq
+      · exact hbaseSelected hpBase
+      · exact Finset.mem_singleton.mp hpq ▸ hq)
+    have hdisjoint : Disjoint base {q} := Finset.disjoint_singleton_right.mpr hqNotBase
+    rw [Finset.card_union_of_disjoint hdisjoint, Finset.card_singleton,
+      hbaseCard, hcard] at hcardLe
+    omega
+  have hselectedLower (q : InfiniteSlotLabel N) (hq : q ∈ selected) :
+      -(B + D) ≤ value q := by
+    have hqcand : q ∈ infiniteOffspringCandidates offspring := hspec.subset hq
+    change survive (offspring (ofLex q).1) (ofLex q).2 at hqcand
+    have hslot := hzeroLe (ofLex q).1 (ofLex q).2 hqcand
+    dsimp [value, infiniteOffspringPosition]
+    have hipos : -B ≤ position (ofLex q).1 := by
+      exact le_trans (neg_le_of_abs_le (hnorm (ofLex q).1)) (by simp)
+    have hidisp : -D ≤ value' (offspring (ofLex q).1) 0 :=
+      le_trans (neg_le_of_abs_le (hdisp (ofLex q).1)) (by simp)
+    linarith
+  have hcoord (i : Fin N) :
+      |infiniteOffspringTransition position offspring hgood i| ≤ B + D := by
+    unfold infiniteOffspringTransition
+    let q := selectedLabelAtRank value selected hcard i
+    have hq : q ∈ selected := selectedLabelAtRank_mem value selected hcard i
+    change |value q| ≤ B + D
+    rw [abs_le]
+    exact ⟨hselectedLower q hq, hselectedUpper q hq⟩
+  unfold infiniteSelectionStateNorm
+  apply Finset.sup'_le _ _
+  intro i hi
+  exact hcoord i
+
 theorem infiniteOffspringTransition_mono
     {N : ℕ} (positionLow positionHigh : Fin N → ℝ)
     (offspring : Fin N → Step ℕ ℝ) (hgood : IsGoodInfiniteOffspringBatch offspring)
@@ -454,6 +573,44 @@ noncomputable def infiniteOffspringRun
       infiniteOffspringTransition (infiniteOffspringRun offspring hgood initial n)
         (offspring n) (hgood n) := rfl
 
+/-- The maximal absolute slot-zero displacement in one generation. -/
+noncomputable def infiniteOffspringBatchSlotZeroNorm {N : ℕ} (hN : 0 < N)
+    (offspring : Fin N → Step ℕ ℝ) : ℝ :=
+  Finset.univ.sup' (Finset.univ_nonempty_iff.mpr ⟨⟨0, hN⟩⟩)
+    (fun i => |value' (offspring i) 0|)
+
+/-- A deterministic trajectory bound: the sup norm of the population after
+`n` generations is at most its initial norm plus the sum of the one-generation
+leftmost-child envelopes. -/
+theorem infiniteOffspringRun_stateNorm_le {N : ℕ} (hN : 0 < N)
+    (offspring : ℕ → Fin N → Step ℕ ℝ)
+    (hgood : ∀ t, IsGoodInfiniteOffspringBatch (offspring t))
+    (hordered : ∀ t i, (offspring t i).IsOrderedBy realPotential)
+    (hfirst : ∀ t i, survive (offspring t i) 0)
+    (initial : Fin N → ℝ) (n : ℕ) :
+    infiniteSelectionStateNorm hN (infiniteOffspringRun offspring hgood initial n) ≤
+      infiniteSelectionStateNorm hN initial +
+        ∑ t ∈ Finset.range n, infiniteOffspringBatchSlotZeroNorm hN (offspring t) := by
+  induction n with
+  | zero => simp [infiniteOffspringRun, infiniteSelectionStateNorm]
+  | succ n ih =>
+      rw [infiniteOffspringRun_succ]
+      calc
+        infiniteSelectionStateNorm hN
+            (infiniteOffspringTransition (infiniteOffspringRun offspring hgood initial n)
+              (offspring n) (hgood n)) ≤
+            infiniteSelectionStateNorm hN (infiniteOffspringRun offspring hgood initial n) +
+              infiniteOffspringBatchSlotZeroNorm hN (offspring n) := by
+                exact infiniteOffspringTransition_stateNorm_le hN _ _ (hgood n)
+                  (hordered n) (hfirst n)
+        _ ≤ infiniteSelectionStateNorm hN initial +
+              (∑ t ∈ Finset.range n, infiniteOffspringBatchSlotZeroNorm hN (offspring t)) +
+              infiniteOffspringBatchSlotZeroNorm hN (offspring n) := by
+                linarith [ih]
+        _ = infiniteSelectionStateNorm hN initial +
+              ∑ t ∈ Finset.range (n + 1), infiniteOffspringBatchSlotZeroNorm hN (offspring t) := by
+                simp [Finset.sum_range_succ, add_assoc]
+
 theorem infiniteOffspringRun_mono_initial
     {N : ℕ} (offspring : ℕ → Fin N → Step ℕ ℝ)
     (hgood : ∀ t, IsGoodInfiniteOffspringBatch (offspring t))
@@ -609,6 +766,30 @@ noncomputable def infiniteSelectionSubadditiveArray
     (hgood : ∀ t, IsGoodInfiniteOffspringBatch (offspring t))
     (start length : ℕ) : ℝ :=
   - infiniteSelectionBlockMinimum hN offspring hgood start length
+
+/-- Under an increasing slot enumeration with one leftmost child for every
+parent, the absolute displacement of the left endpoint is controlled by the
+sum of the generation-wise leftmost-child envelopes. -/
+theorem infiniteSelectionSubadditiveArray_abs_le {N : ℕ}
+    (hN : 0 < N) (offspring : ℕ → Fin N → Step ℕ ℝ)
+    (hgood : ∀ t, IsGoodInfiniteOffspringBatch (offspring t))
+    (hordered : ∀ t i, (offspring t i).IsOrderedBy realPotential)
+    (hfirst : ∀ t i, survive (offspring t i) 0) (n : ℕ) :
+    |infiniteSelectionSubadditiveArray hN offspring hgood 0 n| ≤
+      ∑ t ∈ Finset.range n, infiniteOffspringBatchSlotZeroNorm hN (offspring t) := by
+  unfold infiniteSelectionSubadditiveArray infiniteSelectionBlockMinimum
+  have hrun := infiniteOffspringRun_stateNorm_le hN offspring hgood
+    hordered hfirst (fun _ => 0) n
+  have hcoord : |infiniteOffspringRun offspring hgood (fun _ => 0) n ⟨0, hN⟩| ≤
+      infiniteSelectionStateNorm hN
+        (infiniteOffspringRun offspring hgood (fun _ => 0) n) :=
+    abs_position_le_infiniteSelectionStateNorm hN _ ⟨0, hN⟩
+  have hinitialNorm : infiniteSelectionStateNorm hN (fun _ : Fin N => (0 : ℝ)) = 0 := by
+    unfold infiniteSelectionStateNorm
+    rw [Finset.sup'_const]
+    simp
+  rw [hinitialNorm] at hrun
+  simpa [infiniteSelectionStateNorm] using hcoord.trans hrun
 
 theorem infiniteSelectionSubadditiveArray_subadditive
     {N : ℕ} (hN : 0 < N)

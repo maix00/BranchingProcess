@@ -11,6 +11,7 @@ public import Combinatorics.BranchingWalk.Step.Measurability
 public import Combinatorics.BranchingWalk.Step.Basic
 public import Mathlib.MeasureTheory.Function.L1Space.Integrable
 public import Mathlib.MeasureTheory.Function.StronglyMeasurable.AEStronglyMeasurable
+public import Mathlib.MeasureTheory.Order.Group.Lattice
 
 /-!
 # One-slot moment assumptions on the child law
@@ -122,6 +123,44 @@ theorem StepLaw.integrable_sortedLeftmostDisplacement
   exact (integrable_map_measure
     (Step.potentialValue'_measurable L.potential ⊥).aestronglyMeasurable
     L.ordering.measurable_ordered.aemeasurable).mpr hraw
+
+/-- The paper's positive first moment, together with boundary normalization,
+gives an integrable absolute first slot after sorting and projecting marks
+through the potential. This is the one-step input for the Kingman argument. -/
+theorem StepLaw.integrable_sortedPotentialImage_firstSlot_abs
+    {ι X : Type*} [Countable ι] [MeasurableSpace X]
+    (L : StepLaw ι ℕ X)
+    (hboundary : HasBoundaryNormalization L.potential L.raw)
+    (hfirst : HasLeftmostFirstMoment L) :
+    Integrable (fun ξ : Combinatorics.Branching.Step ℕ ℝ =>
+      |value' ξ 0|) L.sortedPotentialImage := by
+  let f : Combinatorics.Branching.Step ℕ ℝ → ℝ := fun ξ => |value' ξ 0|
+  have hf : Measurable f := by
+    exact Measurable.abs (value'_measurable (0 : ℕ))
+  have hsorted : Integrable
+      (fun ξ : Combinatorics.Branching.Step ℕ X =>
+        |ξ.potentialValue' L.potential 0|) L.sorted := by
+    exact (L.integrable_sortedLeftmostDisplacement hboundary hfirst).abs
+  have hcompose : Integrable
+      (fun ξ : Combinatorics.Branching.Step ℕ X =>
+        f (ξ.map L.potential)) L.sorted := by
+    have hEq : (fun ξ : Combinatorics.Branching.Step ℕ X =>
+        f (ξ.map L.potential)) =
+        fun ξ => |ξ.potentialValue' L.potential 0| := by
+      funext ξ
+      have hvalue : value' (ξ.map L.potential) 0 =
+          ξ.potentialValue' L.potential 0 := by
+        change ((ξ.map L.potential) 0).getD 0 = _
+        rw [Step.map_apply]
+        rfl
+      simp [f, hvalue]
+    rw [hEq]
+    exact hsorted
+  change Integrable f
+    (L.sorted.map (fun ξ : Combinatorics.Branching.Step ℕ X =>
+      ξ.map L.potential))
+  exact (integrable_map_measure hf.aestronglyMeasurable
+    (Step.map_measurable L.potential.measurable_toFun).aemeasurable).mpr hcompose
 
 def HasLeftmostFourthMoment {ι α X : Type*} [MeasurableSpace X]
     [PartialOrder α] [OrderBot α]
