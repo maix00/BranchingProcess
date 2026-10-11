@@ -2352,6 +2352,53 @@ theorem tendsto_rightTailPositiveASpan_root_div_log
     rw [Real.div_rpow (Nat.cast_nonneg (D n)) (by positivity) (3⁻¹ : ℝ), hden]
   exact hpow.congr' heq.symm
 
+/-- A sequence with cubic logarithmic size has only a subexponential
+logarithmic count: `log (u + 1) = o(log N)`. -/
+private theorem tendsto_rightTailPositiveA_log_add_one_div_log_of_cubic_scale
+    {u L : ℕ → ℝ} {t : ℝ}
+    (hL : Tendsto L atTop atTop)
+    (hu : ∀ n, 0 ≤ u n)
+    (hscale : Tendsto (fun n => u n / L n ^ 3) atTop (𝓝 t))
+    (ht : 0 < t) :
+    Tendsto (fun n => Real.log (u n + 1) / L n) atTop (𝓝 0) := by
+  have hinv : Tendsto (fun n => (L n)⁻¹) atTop (𝓝 0) :=
+    hL.inv_tendsto_atTop
+  have hinvCube : Tendsto (fun n => (L n)⁻¹ ^ 3) atTop (𝓝 0) := by
+    simpa using hinv.pow 3
+  have hLpos : ∀ᶠ n : ℕ in atTop, 0 < L n := hL.eventually_gt_atTop 0
+  have hscaled : Tendsto (fun n => (u n + 1) / L n ^ 3)
+      atTop (𝓝 t) := by
+    have hsum := hscale.add hinvCube
+    have heq : (fun n => (u n + 1) / L n ^ 3) =ᶠ[atTop]
+        fun n => u n / L n ^ 3 + (L n)⁻¹ ^ 3 := by
+      filter_upwards [hLpos] with n hn
+      field_simp
+    simpa using hsum.congr' heq.symm
+  have hlogScaled : Tendsto
+      (fun n => Real.log ((u n + 1) / L n ^ 3)) atTop (𝓝 (Real.log t)) :=
+    (Real.continuousAt_log (ne_of_gt ht)).tendsto.comp hscaled
+  have hlogScaledDiv : Tendsto
+      (fun n => Real.log ((u n + 1) / L n ^ 3) / L n)
+      atTop (𝓝 0) := hlogScaled.div_atTop hL
+  have hlogLDiv : Tendsto (fun n => Real.log (L n) / L n)
+      atTop (𝓝 0) := by
+    have h := (Real.tendsto_pow_log_div_mul_add_atTop 1 0 1
+      (by norm_num : (1 : ℝ) ≠ 0)).comp hL
+    convert h using 1
+    ext n
+    simp [pow_one]
+  have hsum := hlogScaledDiv.add (hlogLDiv.const_mul 3)
+  have heq : (fun n => Real.log (u n + 1) / L n) =ᶠ[atTop]
+      fun n => Real.log ((u n + 1) / L n ^ 3) / L n +
+        3 * (Real.log (L n) / L n) := by
+    filter_upwards [hLpos] with n hn
+    have hu1 : 0 < u n + 1 := by linarith [hu n]
+    rw [Real.log_div (ne_of_gt hu1) (pow_ne_zero 3 (ne_of_gt hn)),
+      Real.log_pow]
+    field_simp
+    ring
+  simpa using hsum.congr' heq.symm
+
 /-- A sublinear power of the second-stage span is negligible compared with
 `log N`. This is the `p < 1` remainder in the exponent of the long-prefix
 Aïdékon--Hu terms. -/
@@ -2934,6 +2981,236 @@ theorem measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhaseOfAHPoly
           apply ENNReal.div_le_div_right
           exact mul_le_mul_of_nonneg_left hsum (by positivity)
 
+
+/-- The finite-scale canceled-AH capacity estimate has polynomial decay when
+the initial root count has exponent `a`, the two multiplicity factors have
+subexponential size, and the combined exponent `a + q` is below one. -/
+theorem eventually_probability_le_polynomial_of_canceledAH_capacity_bound
+    {P : ℕ → ℝ≥0∞} {m ell ellN N : ℕ → ℕ} {E : ℕ → ℝ} {a q : ℝ}
+    (hN : Tendsto N atTop atTop)
+    (horder : ∀ᶠ n : ℕ in atTop, ell n ≤ ellN n)
+    (hfirstCountLog : Tendsto
+      (fun n => Real.log ((ellN n : ℝ) + 1) / Real.log (N n : ℝ))
+      atTop (𝓝 0))
+    (hspanCountLog : Tendsto
+      (fun n => Real.log (((ellN n - ell n : ℕ) : ℝ) + 1) /
+        Real.log (N n : ℝ)) atTop (𝓝 0))
+    (hERate : Tendsto (fun n => E n / Real.log (N n : ℝ)) atTop (𝓝 q))
+    (ha : a < 1) (hmargin : a + q < 1)
+    (hm : ∀ᶠ n : ℕ in atTop, (m n : ℝ) ≤ (N n : ℝ) ^ a)
+    (hraw : ∀ᶠ n : ℕ in atTop,
+      P n ≤ (m n : ℝ≥0∞) *
+        (((ell n + 1 : ℕ) : ℝ≥0∞) +
+          ((ellN n - ell n : ℕ) : ℝ≥0∞) *
+            ENNReal.ofReal (Real.exp (E n))) /
+        (N n + 1 : ℕ)) :
+    ∃ epsilon : ℝ, 0 < epsilon ∧ ∀ᶠ n : ℕ in atTop,
+      P n ≤ ENNReal.ofReal
+        (Real.exp (-epsilon * Real.log (N n : ℝ))) := by
+  let L : ℕ → ℝ := fun n => Real.log (N n : ℝ)
+  let D : ℕ → ℕ := fun n => ellN n - ell n
+  have hNcast : Tendsto (fun n => (N n : ℝ)) atTop atTop :=
+    tendsto_natCast_atTop_atTop.comp hN
+  have hL : Tendsto L atTop atTop := Real.tendsto_log_atTop.comp hNcast
+  have hLpos : ∀ᶠ n : ℕ in atTop, 0 < L n := hL.eventually_gt_atTop 0
+  have hfirstRate : Tendsto
+      (fun n => (a * L n + Real.log ((ellN n : ℝ) + 1)) / L n)
+      atTop (𝓝 a) := by
+    have haConst : Tendsto (fun _ : ℕ => a) atTop (𝓝 a) := tendsto_const_nhds
+    have hsum := haConst.add (by simpa [L] using hfirstCountLog)
+    have heq : (fun n => (a * L n + Real.log ((ellN n : ℝ) + 1)) / L n)
+        =ᶠ[atTop] fun n => a + Real.log ((ellN n : ℝ) + 1) / L n := by
+      filter_upwards [hLpos] with n hn
+      field_simp
+    simpa using hsum.congr' heq.symm
+  have hsecondRate : Tendsto
+      (fun n => (a * L n + Real.log ((D n : ℝ) + 1) + E n) / L n)
+      atTop (𝓝 (a + q)) := by
+    have haConst : Tendsto (fun _ : ℕ => a) atTop (𝓝 a) := tendsto_const_nhds
+    have hsum := (haConst.add (by simpa [L, D] using hspanCountLog)).add
+      (by simpa [L] using hERate)
+    have heq :
+        (fun n => (a * L n + Real.log ((D n : ℝ) + 1) + E n) / L n)
+          =ᶠ[atTop] fun n => a + Real.log ((D n : ℝ) + 1) / L n + E n / L n := by
+      filter_upwards [hLpos] with n hn
+      field_simp
+    simpa using hsum.congr' heq.symm
+  let epsilon : ℝ := min (1 - a) (1 - (a + q)) / 4
+  have hepsilon : 0 < epsilon := by
+    dsimp [epsilon]
+    positivity
+  have hfirstRateGap : a < 1 - 2 * epsilon := by
+    dsimp [epsilon]
+    have hmin : min (1 - a) (1 - (a + q)) ≤ 1 - a := min_le_left _ _
+    linarith
+  have hsecondRateGap : a + q < 1 - 2 * epsilon := by
+    dsimp [epsilon]
+    have hmin : min (1 - a) (1 - (a + q)) ≤ 1 - (a + q) :=
+      min_le_right _ _
+    linarith
+  have hfirstRateEvent : ∀ᶠ n : ℕ in atTop,
+      (a * L n + Real.log ((ellN n : ℝ) + 1)) / L n < 1 - 2 * epsilon :=
+    hfirstRate.eventually (Iio_mem_nhds hfirstRateGap)
+  have hsecondRateEvent : ∀ᶠ n : ℕ in atTop,
+      (a * L n + Real.log ((D n : ℝ) + 1) + E n) / L n <
+        1 - 2 * epsilon :=
+    hsecondRate.eventually (Iio_mem_nhds hsecondRateGap)
+  have hlogLarge : ∀ᶠ n : ℕ in atTop, Real.log 2 < epsilon * L n := by
+    have hmul : Tendsto (fun n => epsilon * L n) atTop atTop :=
+      hL.const_mul_atTop hepsilon
+    exact hmul.eventually_gt_atTop (Real.log 2)
+  have hpowN : ∀ᶠ n : ℕ in atTop, (N n : ℝ) = Real.exp (L n) := by
+    filter_upwards [hLpos] with n hn
+    have hnNat : 0 < N n := by
+      by_contra h
+      have hz : N n = 0 := Nat.eq_zero_of_not_pos h
+      simp [L, hz] at hn
+    have hnReal : 0 < (N n : ℝ) := by exact_mod_cast hnNat
+    simpa [L] using (Real.exp_log hnReal).symm
+  refine ⟨epsilon, hepsilon, ?_⟩
+  filter_upwards [hraw, horder, hm, hfirstRateEvent, hsecondRateEvent,
+    hlogLarge, hLpos, hpowN] with n hrawn hord hmn hrateFirst hrateSecond
+      hlogLarg hLn hpowNn
+  have hNpos : 0 < (N n : ℝ) := by
+    have hnNat : 0 < N n := by
+      by_contra h
+      have hz : N n = 0 := Nat.eq_zero_of_not_pos h
+      simp [L, hz] at hLn
+    exact_mod_cast hnNat
+  have hmENN : (m n : ℝ≥0∞) ≤ ENNReal.ofReal (Real.exp (a * L n)) := by
+    calc
+      (m n : ℝ≥0∞) = ENNReal.ofReal (m n : ℝ) :=
+        (ENNReal.ofReal_natCast (m n)).symm
+      _ ≤ ENNReal.ofReal ((N n : ℝ) ^ a) := ENNReal.ofReal_le_ofReal hmn
+      _ = ENNReal.ofReal (Real.exp (a * L n)) := by
+        rw [Real.rpow_def_of_pos hNpos]
+        simp [L, mul_comm]
+  have hfirstCount : ((ell n + 1 : ℕ) : ℝ≥0∞) ≤
+      ENNReal.ofReal (Real.exp (Real.log ((ellN n : ℝ) + 1))) := by
+    rw [← ENNReal.ofReal_natCast]
+    apply ENNReal.ofReal_le_ofReal
+    rw [Real.exp_log (by positivity : 0 < (ellN n : ℝ) + 1)]
+    exact_mod_cast Nat.add_le_add_right hord 1
+  have hspanCount : (D n : ℝ≥0∞) ≤
+      ENNReal.ofReal (Real.exp (Real.log ((D n : ℝ) + 1))) := by
+    rw [← ENNReal.ofReal_natCast]
+    apply ENNReal.ofReal_le_ofReal
+    rw [Real.exp_log (by positivity : 0 < (D n : ℝ) + 1)]
+    exact_mod_cast Nat.le_add_right (D n) 1
+  have hfirstNum : (m n : ℝ≥0∞) * ((ell n + 1 : ℕ) : ℝ≥0∞) ≤
+      ENNReal.ofReal (Real.exp
+        (a * L n + Real.log ((ellN n : ℝ) + 1))) := by
+    calc
+      _ ≤ ENNReal.ofReal (Real.exp (a * L n)) *
+          ((ell n + 1 : ℕ) : ℝ≥0∞) :=
+        mul_le_mul_of_nonneg_right hmENN (by positivity)
+      _ ≤ ENNReal.ofReal (Real.exp (a * L n)) *
+          ENNReal.ofReal (Real.exp (Real.log ((ellN n : ℝ) + 1))) :=
+        mul_le_mul_of_nonneg_left hfirstCount (by positivity)
+      _ = ENNReal.ofReal (Real.exp
+          (a * L n + Real.log ((ellN n : ℝ) + 1))) := by
+        rw [← ENNReal.ofReal_mul (Real.exp_nonneg _)]
+        congr 1
+        rw [← Real.exp_add]
+  have hsecondNum : (m n : ℝ≥0∞) *
+        ((D n : ℝ≥0∞) * ENNReal.ofReal (Real.exp (E n))) ≤
+      ENNReal.ofReal (Real.exp
+        (a * L n + Real.log ((D n : ℝ) + 1) + E n)) := by
+    calc
+      _ ≤ ENNReal.ofReal (Real.exp (a * L n)) *
+          ((D n : ℝ≥0∞) * ENNReal.ofReal (Real.exp (E n))) :=
+        mul_le_mul_of_nonneg_right hmENN (by positivity)
+      _ ≤ ENNReal.ofReal (Real.exp (a * L n)) *
+          (ENNReal.ofReal (Real.exp (Real.log ((D n : ℝ) + 1))) *
+            ENNReal.ofReal (Real.exp (E n))) := by
+        exact mul_le_mul_of_nonneg_left
+          (mul_le_mul_of_nonneg_right hspanCount (by positivity)) (by positivity)
+      _ = ENNReal.ofReal (Real.exp
+          (a * L n + Real.log ((D n : ℝ) + 1) + E n)) := by
+        calc
+          _ = ENNReal.ofReal (Real.exp (a * L n) *
+              (Real.exp (Real.log ((D n : ℝ) + 1)) * Real.exp (E n))) := by
+                rw [← ENNReal.ofReal_mul (Real.exp_nonneg _),
+                  ← ENNReal.ofReal_mul (Real.exp_nonneg _)]
+          _ = _ := by
+                rw [← Real.exp_add, ← Real.exp_add]
+                ring
+  have hfirstExp : Real.exp
+      (a * L n + Real.log ((ellN n : ℝ) + 1)) ≤
+        Real.exp ((1 - 2 * epsilon) * L n) :=
+    Real.exp_le_exp.mpr ((div_lt_iff₀ hLn).mp hrateFirst).le
+  have hsecondExp : Real.exp
+      (a * L n + Real.log ((D n : ℝ) + 1) + E n) ≤
+        Real.exp ((1 - 2 * epsilon) * L n) :=
+    Real.exp_le_exp.mpr ((div_lt_iff₀ hLn).mp hrateSecond).le
+  have hnumerator : (m n : ℝ≥0∞) *
+      (((ell n + 1 : ℕ) : ℝ≥0∞) +
+        (D n : ℝ≥0∞) * ENNReal.ofReal (Real.exp (E n))) ≤
+      ENNReal.ofReal (Real.exp ((1 - epsilon) * L n)) := by
+    calc
+      _ = (m n : ℝ≥0∞) * ((ell n + 1 : ℕ) : ℝ≥0∞) +
+          (m n : ℝ≥0∞) * ((D n : ℝ≥0∞) * ENNReal.ofReal (Real.exp (E n))) := by
+            rw [mul_add]
+      _ ≤ ENNReal.ofReal (Real.exp ((1 - 2 * epsilon) * L n)) +
+          ENNReal.ofReal (Real.exp ((1 - 2 * epsilon) * L n)) :=
+        add_le_add
+          (le_trans hfirstNum (ENNReal.ofReal_le_ofReal hfirstExp))
+          (le_trans hsecondNum (ENNReal.ofReal_le_ofReal hsecondExp))
+      _ = ENNReal.ofReal
+          (2 * Real.exp ((1 - 2 * epsilon) * L n)) := by
+        rw [← ENNReal.ofReal_add (Real.exp_nonneg _) (Real.exp_nonneg _)]
+        congr 1
+        ring
+      _ ≤ ENNReal.ofReal (Real.exp ((1 - epsilon) * L n)) := by
+        apply ENNReal.ofReal_le_ofReal
+        have hlarge : 2 ≤ Real.exp (epsilon * L n) := by
+          have hexp : Real.exp (Real.log 2) < Real.exp (epsilon * L n) :=
+            Real.exp_lt_exp.mpr hlogLarg
+          have htwo : Real.exp (Real.log 2) = (2 : ℝ) := by
+            rw [Real.exp_log (by norm_num : (0 : ℝ) < 2)]
+          rw [htwo] at hexp
+          exact hexp.le
+        calc
+          2 * Real.exp ((1 - 2 * epsilon) * L n) ≤
+              Real.exp (epsilon * L n) *
+                Real.exp ((1 - 2 * epsilon) * L n) :=
+            mul_le_mul_of_nonneg_right hlarge (Real.exp_nonneg _)
+          _ = Real.exp ((1 - epsilon) * L n) := by
+            rw [← Real.exp_add]
+            congr 1
+            ring
+  have hdenOrder : (N n : ℝ≥0∞) ≤ (N n + 1 : ℕ) := by
+    exact_mod_cast Nat.le_succ (N n)
+  have hNcastENN : (N n : ℝ≥0∞) = ENNReal.ofReal (Real.exp (L n)) := by
+    rw [← ENNReal.ofReal_natCast, hpowNn]
+  have htargetN : ENNReal.ofReal (Real.exp (-epsilon * L n)) *
+      (N n : ℝ≥0∞) = ENNReal.ofReal (Real.exp ((1 - epsilon) * L n)) := by
+    rw [hNcastENN, ← ENNReal.ofReal_mul (Real.exp_nonneg _)]
+    congr 1
+    rw [← Real.exp_add]
+    congr 1
+    ring
+  have htargetDen : ENNReal.ofReal (Real.exp ((1 - epsilon) * L n)) ≤
+      ENNReal.ofReal (Real.exp (-epsilon * L n)) * (N n + 1 : ℕ) := by
+    rw [← htargetN]
+    exact mul_le_mul_of_nonneg_left hdenOrder (by positivity)
+  have hden0 : ((N n + 1 : ℕ) : ℝ≥0∞) ≠ 0 := by
+    exact_mod_cast Nat.succ_ne_zero (N n)
+  have hdenTop : ((N n + 1 : ℕ) : ℝ≥0∞) ≠ ∞ := ENNReal.natCast_ne_top _
+  have hquotient :
+      (m n : ℝ≥0∞) *
+          (((ell n + 1 : ℕ) : ℝ≥0∞) +
+            (D n : ℝ≥0∞) * ENNReal.ofReal (Real.exp (E n))) /
+        (N n + 1 : ℕ) ≤ ENNReal.ofReal (Real.exp (-epsilon * L n)) :=
+    (ENNReal.div_le_iff_le_mul (Or.inl hden0) (Or.inl hdenTop)).2
+      (le_trans hnumerator htargetDen)
+  calc
+    P n ≤ (m n : ℝ≥0∞) *
+        (((ell n + 1 : ℕ) : ℝ≥0∞) +
+          (D n : ℝ≥0∞) * ENNReal.ofReal (Real.exp (E n))) /
+        (N n + 1 : ℕ) := by simpa [D] using hrawn
+    _ ≤ ENNReal.ofReal (Real.exp (-epsilon * Real.log (N n : ℝ))) := by
+      simpa [L] using hquotient
 
 /-- The first-stage generations in the two-phase estimate contribute only
 their number of terms. Thus their path probabilities can be bounded by one,
