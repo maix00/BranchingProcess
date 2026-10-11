@@ -5,6 +5,7 @@ Authors: WANG Yiyang
 -/
 
 import Probability.BranchingRandomWalk.Selection.NSelection.Speed.InitialPopulationFreshField
+import Probability.BranchingRandomWalk.Selection.NSelection.Admissible.Real
 import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.SelectedSubtrees.Position
 import Combinatorics.UlamHarris.Order
 
@@ -664,6 +665,102 @@ theorem smallInitialPopulationHitSubtreePopulation_image
         smallInitialPopulationHitSubtreePopulation_image_succ
           m N n j hm field htime (localPopulation j) ih hcandidate
           hlocalSpec hglobalSpec
+
+/-- Boundary admissibility is enough to discharge the pathwise selector
+conditions in the post-hit trajectory comparison.  This version exposes only
+the one-step finite negative exponential weight property of the pre-sampled
+field; the almost-everywhere theorem below derives it from the paper's
+boundary normalization assumption. -/
+theorem smallInitialPopulationHitSubtreePopulation_image_of_weight
+    (m N n : ℕ) (hm : 0 < m)
+    (field : FiniteRootStepField m ℕ ℝ)
+    (htime : @smallInitialPopulationCapacityTime m N
+      (RootIndexed.addressLinearOrder (Fin m) ℕ) field = n)
+    (hweight : ∀ r : Fin m, ∀ u : TreeNode ℕ,
+      totalPotentialWeight realPotential (-1) (field r u) ≠ ∞) :
+    ∀ j,
+      (smallInitialPopulationHitSubtreePopulation m N hm field j).image
+          (@smallInitialPopulationHitAddress m N hm
+            (RootIndexed.addressLinearOrder (Fin m) ℕ) field) =
+        @smallInitialPopulation m N (n + j)
+          (RootIndexed.addressLinearOrder (Fin m) ℕ) field := by
+  classical
+  letI : LinearOrder (RootIndexed.TreeNode (Fin m) ℕ) :=
+    RootIndexed.addressLinearOrder (Fin m) ℕ
+  letI : LinearOrder (RootIndexed.TreeNode (Fin N) ℕ) :=
+    RootIndexed.addressLinearOrder (Fin N) ℕ
+  let localField := @smallInitialPopulationHitSubtreeField m N hm
+    (RootIndexed.addressLinearOrder (Fin m) ℕ) field
+  let localInitial := @smallInitialPopulationHitInitialPosition m N hm
+    (RootIndexed.addressLinearOrder (Fin m) ℕ) field
+  let localPopulation := smallInitialPopulationHitSubtreePopulation m N hm field
+  apply smallInitialPopulationHitSubtreePopulation_image m N n hm field htime
+  · intro j
+    apply RootIndexed.childrenAtGeneration_isLowerFiniteBy_real j
+      (localPopulation j) localField localInitial
+    · intro p hp
+      have hdepth := RootIndexed.selectedPopulationTotalized_depth
+        N Finset.univ localInitial id id j localField p (by
+          simpa [localPopulation, localInitial, localField,
+            smallInitialPopulationHitSubtreePopulation] using hp)
+      simpa [localPopulation, localInitial, localField,
+        smallInitialPopulationHitSubtreePopulation] using hdepth
+    · intro p hp
+      have hweight' := hweight
+        (smallInitialPopulationHitRoots m N hm field p.1).1
+        ((smallInitialPopulationHitRoots m N hm field p.1).2 ++ p.2)
+      simpa [localField, smallInitialPopulationHitSubtreeField,
+        RootIndexed.selectedSubtreeStepFieldVector,
+        RootIndexed.subtreeStepFieldVector] using hweight'
+  · intro j
+    apply RootIndexed.childrenAtGeneration_isLowerFiniteBy_real (n + j)
+      (smallInitialPopulation m N (n + j) field) field
+      (fun _ : Fin m => (0 : ℝ))
+    · intro p hp
+      exact RootIndexed.selectedPopulationTotalized_depth
+        N Finset.univ (fun _ : Fin m => (0 : ℝ)) id id (n + j) field p
+        (by simpa [smallInitialPopulation] using hp)
+    · intro p hp
+      exact hweight p.1 p.2
+
+/-- Almost surely, once the smaller initial population reaches capacity, its
+subsequent selected populations are exactly the descendants of the
+capacity-hitting roots, generation by generation.  Boundary normalization
+supplies all lower-finiteness conditions simultaneously. -/
+theorem finiteRootStepFieldLaw_ae_smallInitialPopulationHitSubtreePopulation_image
+    (m N : ℕ) (hm : 0 < m) (hmN : m ≤ N)
+    [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
+    [MeasurableSingletonClass (RootIndexed.TreeNode (Fin m) ℕ)]
+    [Countable (RootIndexed.TreeNode (Fin m) ℕ)]
+    [LinearOrder (RootIndexed.TreeNode (Fin m) ℕ)]
+    (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
+    (hboundary : HasBoundaryNormalization realPotential μ)
+    (hnonempty : μ nonemptySupport = 1)
+    (hsupercritical : (1 : ℝ≥0∞) <
+      ∫⁻ ξ, (Step.childCount ξ : ℝ≥0∞) ∂μ) :
+    ∀ᵐ field ∂finiteRootStepFieldLaw μ m,
+      ∃ n : ℕ,
+        @smallInitialPopulationCapacityTime m N
+          (RootIndexed.addressLinearOrder (Fin m) ℕ) field = n ∧
+        ∀ j,
+          (smallInitialPopulationHitSubtreePopulation m N hm field j).image
+              (@smallInitialPopulationHitAddress m N hm
+                (RootIndexed.addressLinearOrder (Fin m) ℕ) field) =
+            @smallInitialPopulation m N (n + j)
+              (RootIndexed.addressLinearOrder (Fin m) ℕ) field := by
+  letI : LinearOrder (RootIndexed.TreeNode (Fin m) ℕ) :=
+    RootIndexed.addressLinearOrder (Fin m) ℕ
+  have hweightAE := RootIndexed.stepFieldLaw_ae_real_weight_finite_on_roots
+    μ hboundary (Finset.univ : Finset (Fin m))
+  have htimeAE := ae_smallInitialPopulationCapacityTime_ne_top
+    m N hm hmN μ hboundary hnonempty hsupercritical
+  filter_upwards [hweightAE, htimeAE] with field hweight htime
+  obtain ⟨n, htime⟩ := WithTop.ne_top_iff_exists.mp htime
+  have htime' : smallInitialPopulationCapacityTime m N field = n := htime.symm
+  refine ⟨n, htime', ?_⟩
+  exact smallInitialPopulationHitSubtreePopulation_image_of_weight
+    m N n hm field htime'
+    (fun r _ => hweight r (Finset.mem_univ r) _)
 
 /-- The local exact-`N` forest's position at any descendant address agrees
 with the original forest's position at the corresponding prefixed address.
