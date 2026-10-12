@@ -10,8 +10,11 @@ The Lean predicates are split by mathematical role:
 - `Moments.lean`: the leftmost first, fourth, and positive exponential
   moments;
 - `CrossWeight.lean`: the permutation-invariant pair-weight integrability
-  condition on the raw optional-slot law;
-- `Bundles.lean`: small named collections used by the main theorems.
+  condition on the raw optional-slot law.
+
+The predicates above remain reusable abstractions for individual mathematical
+conditions. The theorem interfaces pass the conditions they use as separate
+hypotheses; they are not combined into assumption structures.
 
 The centered and finite-variance spine assumptions will be stated on the
 spine probability law once that law has been constructed. Writing them now as
@@ -24,11 +27,12 @@ branching law is assumed to arrive ordered. The boundary and cross-weight sums
 remain on the raw law because they are invariant under slot permutations. No
 general point process is silently assumed to contain a child.
 
-The sorted slot type is abstract. Assumption bundles require a linear locally
-finite order with a least element and no greatest element. Mathlib proves that
-such an order is order-isomorphic to `ℕ`; `Step/SlotOrder.lean` reuses that
-isomorphism to define finite prefixes `firstSlots α N`, proves they contain
-exactly `N` slots, and proves that their union exhausts `α`.
+The sorted slot type is abstract. The relevant theorem interfaces require a
+linear locally finite order with a least element and no greatest element.
+Mathlib proves that such an order is order-isomorphic to `ℕ`;
+`Step/SlotOrder.lean` reuses that isomorphism to define finite prefixes
+`firstSlots α N`, proves they contain exactly `N` slots, and proves that their
+union exhausts `α`.
 
 ## Formalization boundary
 
@@ -56,10 +60,9 @@ The following items are still proof obligations for the thesis' main theorems:
 - the full statements of thesis Theorems 1.1 and 1.2, and the one-sided L1
   Theorem 1.3.
 
-Consequently, `BasicBranchingAssumptions`, `TrajectoryMomentAssumptions`, and
-`SpeedL1MomentAssumption` are assumption bundles, not theorem proofs. The
-analytic file proves only the final deterministic limit once the probabilistic
-bounds above are supplied.
+The analytic file proves only the final deterministic limit once the
+probabilistic bounds above are supplied. Its intermediate estimates do not
+change the assumption list in the main theorem statements.
 
 
 ## Abstract marks and the real displacement potential

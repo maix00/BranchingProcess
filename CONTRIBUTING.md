@@ -27,6 +27,28 @@ Include:
 - documentation updates when a theorem moves from an open obligation to a
   verified result, or when a path is renamed.
 
+## Lean module headers and mathematical references
+
+Each Lean module docstring must begin with a list of its public theorem
+declarations, using their exact Lean names and a short description. Keep private
+proof helpers out of this list. Update it whenever a public declaration is
+added, removed, or renamed.
+
+When a declaration formalizes or specializes an external result, cite the work
+by author and title, identify the exact theorem/lemma/proposition (and section
+or page when useful), and give its bibliography key or stable identifier (DOI,
+arXiv ID, or URL). For results from a thesis, identify its exact title,
+chapter, and displayed theorem number. Do not use `the paper`, `the thesis`,
+or `the source` as a substitute for a reference. Apply the same rule to Mogul'skii's results;
+for example, cite Theorem 3, Section 4, p. 764 of A. A. Mogul'skii,
+"Small Deviations in a Space of Trajectories" (Russian original, 1974; English
+translation, *Theory of Probability and Its Applications* 19(4) (1975),
+726–736, DOI 10.1137/1119081). Include the exact Lean theorem name in the
+module header and the exact source result in that theorem's docstring.
+
+Avoid source names such as `paper...` in private declaration identifiers.
+Name helpers for the mathematical object or proof operation they implement.
+
 Prefer explicit assumptions over hidden instances. Reuse Mathlib objects for
 measures, filtrations, kernels, point measures, and topological spaces. A
 formalized theorem should compile from a clean checkout with the pinned
@@ -44,9 +66,6 @@ helpful.
 Pull requests are welcome even when they formalize only an intermediate lemma.
 If a proposed statement is not yet proved, label it as an interface or open
 obligation instead of weakening the assumptions silently.
-
-For private questions or issues that should not be public, email
-**wang_yi_yang@foxmail.com**.
 
 ## Local checks
 
