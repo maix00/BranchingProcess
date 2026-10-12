@@ -462,6 +462,112 @@ theorem horizontalTubeProbability_le_pow_blockOscillation
     ν ha0 ha1 hwidth (horizon / length) length horizon
     (Nat.div_mul_le_self horizon length)
 
+/-- Iterate a one-block oscillation estimate along a horizontal tube. The
+remainder parameter absorbs the cost of the incomplete last block. -/
+theorem horizontalTubeProbability_le_exp_of_blockOscillationProbability
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    {a width d remainder : ℝ} (ha0 : 0 ≤ a) (ha1 : a ≤ 1)
+    (hwidth : 0 < width) (hd : 0 < d)
+    (length horizon : ℕ) (hlength : 0 < length)
+    (hblockRemainder : d * ((length : ℝ) / width ^ 2) ≤ remainder)
+    (hblock : iidSequenceLaw ν {increment : ℕ → ℝ |
+      blockOscillationEvent width length
+        (Combinatorics.Sequence.blockCoordinates 0 length increment)} ≤
+      ENNReal.ofReal (Real.exp (-d * ((length : ℝ) / width ^ 2)))) :
+    horizontalTubeProbability (iidSequenceLaw ν) a width horizon ≤
+      ENNReal.ofReal (Real.exp
+        (remainder - d * ((horizon : ℝ) / width ^ 2))) := by
+  let blocks := horizon / length
+  let cost : ℝ := d / width ^ 2
+  have hcost : 0 < cost := by
+    dsimp [cost]
+    exact div_pos hd (sq_pos_of_pos hwidth)
+  have hblockRemainder' : cost * (length : ℝ) ≤ remainder := by
+    dsimp [cost]
+    have hden : width ^ 2 ≠ 0 := ne_of_gt (sq_pos_of_pos hwidth)
+    rw [div_mul_eq_mul_div, mul_comm]
+    convert hblockRemainder using 1
+    field_simp [hden]
+  have hdecomp : blocks * length + horizon % length = horizon := by
+    dsimp [blocks]
+    calc
+      horizon / length * length + horizon % length =
+          length * (horizon / length) + horizon % length := by rw [Nat.mul_comm]
+      _ = horizon := Nat.div_add_mod horizon length
+  have hrem : horizon % length < length := Nat.mod_lt _ hlength
+  have hcoverageNat : horizon ≤ blocks * length + length := by omega
+  have hcoverage : (horizon : ℝ) ≤ (blocks : ℝ) * length + length := by
+    exact_mod_cast hcoverageNat
+  have hcostCoverage := mul_le_mul_of_nonneg_left hcoverage hcost.le
+  have htotalCost : cost * (horizon : ℝ) ≤
+      cost * ((blocks : ℝ) * length) + remainder := by
+    calc
+      cost * (horizon : ℝ) ≤ cost * ((blocks : ℝ) * length + length) :=
+        hcostCoverage
+      _ = cost * ((blocks : ℝ) * length) + cost * length := by ring
+      _ ≤ cost * ((blocks : ℝ) * length) + remainder := by
+        calc
+          cost * ((blocks : ℝ) * length) + cost * length =
+              cost * length + cost * ((blocks : ℝ) * length) := by ring
+          _ ≤ remainder + cost * ((blocks : ℝ) * length) :=
+            add_le_add_left hblockRemainder' _
+          _ = cost * ((blocks : ℝ) * length) + remainder := by ring
+  have hexponent :
+      (-d * ((length : ℝ) / width ^ 2)) * (blocks : ℝ) ≤
+        remainder - d * ((horizon : ℝ) / width ^ 2) := by
+    have hlengthCost : d * ((length : ℝ) / width ^ 2) = cost * length := by
+      dsimp [cost]
+      field_simp [ne_of_gt hwidth]
+    have hhorizonCost : d * ((horizon : ℝ) / width ^ 2) =
+        cost * (horizon : ℝ) := by
+      dsimp [cost]
+      field_simp [ne_of_gt hwidth]
+    have hnegLength : -d * ((length : ℝ) / width ^ 2) =
+        -(cost * length) := by
+      calc
+        -d * ((length : ℝ) / width ^ 2) =
+            -(d * ((length : ℝ) / width ^ 2)) := by ring
+        _ = -(cost * length) := by rw [hlengthCost]
+    rw [hnegLength, hhorizonCost]
+    have hcostBlocks :
+        cost * ((blocks : ℝ) * length) =
+          (cost * length) * (blocks : ℝ) := by ring
+    nlinarith [htotalCost, hcostBlocks]
+  have hpow := horizontalTubeProbability_le_pow_blockOscillation
+    ν ha0 ha1 hwidth.le length horizon
+  have hpowBlock :
+      (iidSequenceLaw ν {increment : ℕ → ℝ |
+        blockOscillationEvent width length
+          (Combinatorics.Sequence.blockCoordinates 0 length increment)}) ^ blocks ≤
+        (ENNReal.ofReal (Real.exp (-d * ((length : ℝ) / width ^ 2)))) ^ blocks :=
+    pow_le_pow_left' hblock blocks
+  have hexpPow :
+      ENNReal.ofReal (Real.exp (-d * ((length : ℝ) / width ^ 2))) ^ blocks =
+        ENNReal.ofReal (Real.exp
+          ((-d * ((length : ℝ) / width ^ 2)) * (blocks : ℝ))) := by
+    rw [← ENNReal.ofReal_pow (Real.exp_nonneg _) blocks,
+      ← Real.exp_nat_mul]
+    congr 1
+    ring
+  have hfinalReal := Real.exp_le_exp.mpr hexponent
+  have hfinalENN : ENNReal.ofReal (Real.exp
+        ((-d * ((length : ℝ) / width ^ 2)) * (blocks : ℝ))) ≤
+      ENNReal.ofReal (Real.exp
+        (remainder - d * ((horizon : ℝ) / width ^ 2))) :=
+    (ENNReal.ofReal_le_ofReal_iff (Real.exp_nonneg _)).2 hfinalReal
+  calc
+    horizontalTubeProbability (iidSequenceLaw ν) a width horizon ≤
+        (iidSequenceLaw ν {increment : ℕ → ℝ |
+          blockOscillationEvent width length
+            (Combinatorics.Sequence.blockCoordinates 0 length increment)}) ^ blocks := by
+      simpa [blocks] using hpow
+    _ ≤ (ENNReal.ofReal
+        (Real.exp (-d * ((length : ℝ) / width ^ 2)))) ^ blocks := hpowBlock
+    _ = ENNReal.ofReal (Real.exp
+        ((-d * ((length : ℝ) / width ^ 2)) * (blocks : ℝ))) := hexpPow
+    _ ≤ ENNReal.ofReal (Real.exp
+        (remainder - d * ((horizon : ℝ) / width ^ 2))) := hfinalENN
+
 /-- A block lower bound is iterable only when the block returns to the same
 measurable core from which it starts.  Iterating this return kernel gives a
 lower bound for the horizontal-tube probability at the concatenated horizon.
