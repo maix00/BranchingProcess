@@ -216,7 +216,8 @@
         Here the one-block estimate applies since
         $r_0-x\in[-\Delta,0]$ and $r_0+\Delta-x\in[0,\Delta]$.
     }{
-        此处可应用单块估计, 因为
+        此处不等式使用单块估计, 因为对每个
+        $x\in[r_0,r_0+\Delta]$, 均有
         $r_0-x\in[-\Delta,0]$ 且 $r_0+\Delta-x\in[0,\Delta]$.
     }
     \bilingual{
@@ -224,8 +225,11 @@
         follows from $Y_0=0$ and $r_0\le0\le r_0+\Delta$. Thus the tower
         property gives the following recursion:
     }{
-        在 $B_{k-1}$ 上, 分块起点属于 $[r_0,r_0+\Delta]$; 当 $k=1$ 时,
-        由 $Y_0=0$ 和 $r_0\le0\le r_0+\Delta$ 得到这一点. 因而由塔式性质得到下列递推式:
+        在事件 $B_{k-1}$ 上, 分块起点满足
+        $Y_{(k-1)\ell}\in[r_0,r_0+\Delta]$. 当 $k=1$ 时, 该关系由
+        $Y_0=0$ 和 $r_0\le0\le r_0+\Delta$ 得到; 当 $2\le k\le q$ 时,
+        $B_{k-1}\subseteq A_{k-1}$, 故由 $A_{k-1}$ 的定义得到该关系.
+        因而由塔式性质得到下列递推式:
     }
     \begin{equation*}
         \mathbb P(B_k)
