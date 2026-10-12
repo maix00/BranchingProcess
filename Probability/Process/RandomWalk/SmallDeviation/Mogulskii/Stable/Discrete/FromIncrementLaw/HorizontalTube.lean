@@ -13,9 +13,62 @@ public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Dis
 /-!
 # Closed horizontal-tube rates from continuous-boundary rates
 
+For a law `ν` of mean zero and variance \(\sigma^2\in(0,\infty)\), write
+\[
+  T_{a,\Delta,L}:=
+  \left\{\omega:\ -a\Delta\le S_j(\omega)\le(1-a)\Delta
+    \text{ for }1\le j\le L\right\}.
+\]
+
+- `centeredFiniteVariance_closedHorizontalTubeProbabilityRate`: if
+  \(x_n\to\infty\) and \(x_n^2/n\to0\), then
+  \(\frac{x_n^2}{n}\log\mathbb P_\nu(T_{a,x_n,n-1})
+    \to-\frac{\pi^2}{2}\sigma^2\).
+- `centeredFiniteVariance_closedHorizontalTubeProbabilityRate_along`: for
+  strictly increasing times \(t_k\), widths \(x_k\to\infty\), and
+  \(x_k^2/t_k\to0\),
+  \(\frac{x_k^2}{t_k-1}\log\mathbb P_\nu(T_{a,x_k,t_k-1})
+    \to-\frac{\pi^2}{2}\sigma^2\).
+- `centeredFiniteVariance_closedHorizontalTubeProbabilityRate_realWidthAlong`:
+  for real widths \(x_k\to\infty\) and \(x_k^2/t_k\to0\), the same sampled
+  limit \(\frac{x_k^2}{t_k-1}\log\mathbb P_\nu(T_{a,x_k,t_k-1})
+    \to-\frac{\pi^2}{2}\sigma^2\) holds.
+- `centeredUnitVariance_closedHorizontalTubeProbabilityRate`: under
+  \(\sigma^2=1\),
+  \(\frac{x_n^2}{n}\log\mathbb P_\nu(T_{a,x_n,n-1})
+    \to-\frac{\pi^2}{2}\).
+- `inverseScale_closedHorizontalTubeProbabilityRate`: for a superquadratic
+  time scale \(L_n\), with \(x_n=\operatorname{inverseScale}(L,n)\),
+  \(\frac{x_n^2}{n-1}\log\mathbb P_\nu(T_{a,x_n,n-1})
+    \to-\frac{\pi^2}{2}\sigma^2\).
+- `upperInverseScale_closedHorizontalTubeProbabilityRate`: with
+  \(x_n=\operatorname{upperInverseScale}(L,n)\), the same limit holds.
+- `inverseScales_closedHorizontalTubeProbabilityRate`: the conjunction of the
+  preceding limits for both inverse widths.
+- `centeredFiniteVariance_horizontalTubeProbabilityRate`: if
+  \(L_\Delta/\Delta^2\to\infty\), then
+  \(\frac{\Delta^2}{L_\Delta}\log\mathbb P_\nu
+    (T_{a,\Delta,L_\Delta})\to-\frac{\pi^2}{2}\sigma^2\).
+- `centeredFiniteVariance_endpointWindowProbabilityRate_along`: if the
+  scaled terminal window \([v_1(x_k),v_2(x_k)]\) eventually contains a fixed
+  \([u,v]\subset(0,1)\), then
+  \(\frac{x_k^2}{t_k-1}\log\mathbb P_\nu(T_{a,x_k,t_k-1},
+  (v_1(x_k)-a)x_k\le S_{t_k-1}\le(v_2(x_k)-a)x_k)
+  \to-\frac{\pi^2}{2}\sigma^2\).
+- `centeredFiniteVariance_endpointWindowProbabilityRate`: for integer widths
+  \(\Delta\), the corresponding limit is
+  \(\frac{\Delta^2}{L_\Delta}\log\mathbb P_\nu(T_{a,\Delta,L_\Delta},
+  (v_1(\Delta)-a)\Delta\le S_{L_\Delta}\le
+  (v_2(\Delta)-a)\Delta)\to-\frac{\pi^2}{2}\sigma^2\).
+
 This module transfers the source-path rate for strict continuous corridors to
 closed horizontal tubes. The squeeze uses inward and outward constant
-boundaries, as in the proof of Lemma 3.3(i) in the cited paper.
+boundaries, as in the proof of Lemma 3.1(i) in Wang Yiyang, *Asymptotic speed
+of the $N$-branching random walk with infinite offspring*, Chapter 3. The rate
+is Mogul'skii, "Small Deviations in a Space of Trajectories," Theorem 3,
+Section 4, p. 764 (Russian original, 1974;
+English translation, *Theory of Probability and Its Applications* 19(4)
+(1975), 726–736, DOI 10.1137/1119081).
 -/
 
 open Filter MeasureTheory ProbabilityTheory
@@ -415,8 +468,10 @@ private theorem horizontalTube_subset_sourceRelativeConstantCorridor
   exact ⟨lt_of_lt_of_le hlower hboundsPath.1,
     lt_of_le_of_lt hboundsPath.2 hupper⟩
 
-/-- The centered finite-variance closed horizontal tube has its variance-scaled
-diffusive logarithmic rate. The time horizon in the tube is `n - 1`, matching
+/-- Finite-variance form of Wang Yiyang, *Asymptotic speed of the $N$-branching
+random walk with infinite offspring*, Chapter 3, Lemma 3.1(i). The rate input
+is Mogul'skii, "Small Deviations in a Space of Trajectories," Theorem 3,
+Section 4, p. 764 (DOI 10.1137/1119081). The time horizon is `n - 1`, matching
 the terminal-left source path. -/
 theorem centeredFiniteVariance_closedHorizontalTubeProbabilityRate
     {ν : Measure ℝ} [IsProbabilityMeasure ν] {scale : ℕ → ℝ}
@@ -819,9 +874,9 @@ private theorem increasingTimeAuxiliaryScale_isSmallDeviationScale
     (fun n => Nat.cast_nonneg (width (increasingTimeIntervalIndex time htime n))) hscaleSq
   exact Asymptotics.IsSmallDeviationScale.of_tendsto hscaleTop hscaleRatio
 
-/-- A small-deviation rate may be sampled at any strictly increasing sequence
-of source-path times. The piecewise-constant scale agrees with the prescribed
-widths at those times. -/
+/-- Sampling consequence of Wang Yiyang, *Asymptotic speed of the $N$-branching
+random walk with infinite offspring*, Chapter 3, Lemma 3.1(i), under its
+width-time relation. -/
 theorem centeredFiniteVariance_closedHorizontalTubeProbabilityRate_along
     {ν : Measure ℝ} [IsProbabilityMeasure ν]
     {time width : ℕ → ℕ} (htime : StrictMono time)
@@ -893,7 +948,139 @@ theorem centeredFiniteVariance_closedHorizontalTubeProbabilityRate_along
     field_simp [htimeNe, hpredNe]
   simpa only [one_mul] using hproduct.congr' hproductEq
 
-/-- The unit-variance specialization of the finite-variance closed-tube rate. -/
+private noncomputable def increasingTimeRealAuxiliaryScale
+    (time : ℕ → ℕ) (width : ℕ → ℝ) (htime : StrictMono time) : ℕ → ℝ :=
+  fun n => width (increasingTimeIntervalIndex time htime n)
+
+private theorem increasingTimeRealAuxiliaryScale_isSmallDeviationScale
+    {time : ℕ → ℕ} {width : ℕ → ℝ} (htime : StrictMono time)
+    (htimePos : ∀ k, 0 < time k) (hwidthPos : ∀ k, 0 < width k)
+    (hwidth : Tendsto width atTop atTop)
+    (hwidthSq : Tendsto (fun k => width k ^ 2 / (time k : ℝ))
+      atTop (𝓝 0)) :
+    Asymptotics.IsSmallDeviationScale
+      (increasingTimeRealAuxiliaryScale time width htime)
+      (fun n => Real.sqrt (n : ℝ)) := by
+  have hindex := increasingTimeIntervalIndex_tendsto htime
+  have hscaleTop : Tendsto
+      (increasingTimeRealAuxiliaryScale time width htime) atTop atTop :=
+    hwidth.comp hindex
+  have hwidthSqComp := hwidthSq.comp hindex
+  have hscaleSqNonneg (n : ℕ) :
+      0 ≤ (increasingTimeRealAuxiliaryScale time width htime n) ^ 2 /
+        (n : ℝ) := div_nonneg (sq_nonneg _) (Nat.cast_nonneg _)
+  have hscaleSqUpper :
+      (fun n : ℕ =>
+        (increasingTimeRealAuxiliaryScale time width htime n) ^ 2 / (n : ℝ)) ≤ᶠ[atTop]
+        (fun n => width (increasingTimeIntervalIndex time htime n) ^ 2 /
+          (time (increasingTimeIntervalIndex time htime n) : ℝ)) := by
+    filter_upwards [eventually_ge_atTop (time 0)] with n hn
+    let k := increasingTimeIntervalIndex time htime n
+    have hkn := increasingTimeIntervalIndex_lower_bound htime hn
+    have hkpos : 0 < (time k : ℝ) := by exact_mod_cast htimePos k
+    have hnpos : 0 < (n : ℝ) := by
+      exact_mod_cast (lt_of_lt_of_le (htimePos 0) hn)
+    have hdenom : (time k : ℝ) ≤ (n : ℝ) := by exact_mod_cast hkn
+    have hnum : 0 ≤ width k ^ 2 := sq_nonneg _
+    have hcross : width k ^ 2 * (time k : ℝ) ≤
+        width k ^ 2 * (n : ℝ) := mul_le_mul_of_nonneg_left hdenom hnum
+    have hdiv : width k ^ 2 / (n : ℝ) ≤ width k ^ 2 / (time k : ℝ) :=
+      (div_le_div_iff₀ hnpos hkpos).2 (by simpa [mul_comm] using hcross)
+    simpa [k, increasingTimeRealAuxiliaryScale] using hdiv
+  have hscaleSq : Tendsto
+      (fun n : ℕ =>
+        (increasingTimeRealAuxiliaryScale time width htime n) ^ 2 / (n : ℝ))
+      atTop (𝓝 0) :=
+    tendsto_of_tendsto_of_tendsto_of_le_of_le'
+      tendsto_const_nhds hwidthSqComp
+      (Filter.Eventually.of_forall hscaleSqNonneg) hscaleSqUpper
+  have hscaleNonneg (n : ℕ) :
+      0 ≤ increasingTimeRealAuxiliaryScale time width htime n :=
+    (hwidthPos (increasingTimeIntervalIndex time htime n)).le
+  have hscaleRatio := Asymptotics.tendsto_div_sqrt_atTop_zero_of_tendsto_sq_div_atTop_zero
+    hscaleNonneg hscaleSq
+  exact Asymptotics.IsSmallDeviationScale.of_tendsto hscaleTop hscaleRatio
+
+/-- Real-width form of Wang Yiyang, *Asymptotic speed of the $N$-branching
+random walk with infinite offspring*, Chapter 3, Lemma 3.1(i); its sampled
+widths satisfy the lemma's width-time relation. This form supplies the
+one-block input in the equal-partition proof of Lemma 3.2. -/
+theorem centeredFiniteVariance_closedHorizontalTubeProbabilityRate_realWidthAlong
+    {ν : Measure ℝ} [IsProbabilityMeasure ν]
+    {time : ℕ → ℕ} {width : ℕ → ℝ} (htime : StrictMono time)
+    (htimePos : ∀ k, 0 < time k) (hwidthPos : ∀ k, 0 < width k)
+    (hwidth : Tendsto width atTop atTop)
+    (hwidthSq : Tendsto (fun k : ℕ => width k ^ 2 / (time k : ℝ))
+      atTop (𝓝 0))
+    (hcentered : ∫ x, x ∂ν = 0)
+    (hsquare : Integrable (fun x : ℝ => x ^ 2) ν)
+    (hvariance : 0 < ∫ x : ℝ, x ^ 2 ∂ν)
+    {a : ℝ} (ha : 0 < a) (haOne : a < 1) :
+    Tendsto
+      (fun k : ℕ => width k ^ 2 / ((time k - 1 : ℕ) : ℝ) * Real.log
+        (horizontalTubeProbability (iidSequenceLaw ν) a (width k)
+          (time k - 1)).toReal)
+      atTop (𝓝 (-(Real.pi ^ 2) / 2 * (∫ x : ℝ, x ^ 2 ∂ν))) := by
+  let scale := increasingTimeRealAuxiliaryScale time width htime
+  have hsmall := increasingTimeRealAuxiliaryScale_isSmallDeviationScale
+    htime htimePos hwidthPos hwidth hwidthSq
+  have hrate := (centeredFiniteVariance_closedHorizontalTubeProbabilityRate
+    hsmall hcentered hsquare hvariance ha haOne).comp htime.tendsto_atTop
+  have hscaleEq : ∀ k : ℕ, scale (time k) = width k := by
+    intro k
+    simp [scale, increasingTimeRealAuxiliaryScale,
+      increasingTimeIntervalIndex_at_time htime]
+  have hsourceRate : Tendsto
+      (fun k : ℕ => width k ^ 2 / (time k : ℝ) * Real.log
+        (horizontalTubeProbability (iidSequenceLaw ν) a (width k)
+          (time k - 1)).toReal)
+      atTop (𝓝 (-(Real.pi ^ 2) / 2 * (∫ x : ℝ, x ^ 2 ∂ν))) := by
+    have heq : (fun k : ℕ => scale (time k) ^ 2 / (time k : ℝ) *
+        Real.log (horizontalTubeProbability (iidSequenceLaw ν) a
+          (scale (time k)) (time k - 1)).toReal) =
+        (fun k : ℕ => width k ^ 2 / (time k : ℝ) * Real.log
+          (horizontalTubeProbability (iidSequenceLaw ν) a (width k)
+            (time k - 1)).toReal) := by
+      funext k
+      rw [hscaleEq]
+    exact hrate.congr' (Filter.Eventually.of_forall
+      fun k => congrFun heq k)
+  have hratioNat : Tendsto
+      (fun n : ℕ => (n : ℝ) / ((n - 1 : ℕ) : ℝ)) atTop (𝓝 (1 : ℝ)) := by
+    have hratioBase : Tendsto (fun n : ℕ => (n : ℝ) / ((n : ℝ) - 1))
+        atTop (𝓝 (1 : ℝ)) := by
+      simpa [sub_eq_add_neg] using tendsto_natCast_div_add_atTop (-1 : ℝ)
+    have hratioEq : (fun n : ℕ => (n : ℝ) / ((n - 1 : ℕ) : ℝ)) =ᶠ[atTop]
+        fun n : ℕ => (n : ℝ) / ((n : ℝ) - 1) := by
+      filter_upwards [eventually_gt_atTop (0 : ℕ)] with n hn
+      have hn1 : 1 ≤ n := by omega
+      simp [Nat.cast_sub hn1]
+    exact hratioBase.congr' hratioEq.symm
+  have hfactor := hratioNat.comp htime.tendsto_atTop
+  have hproduct := hfactor.mul hsourceRate
+  have hproductEq : (fun k : ℕ =>
+      ((time k : ℝ) / ((time k - 1 : ℕ) : ℝ)) *
+        (width k ^ 2 / (time k : ℝ) *
+          Real.log (horizontalTubeProbability (iidSequenceLaw ν) a
+            (width k) (time k - 1)).toReal)) =ᶠ[atTop]
+      (fun k : ℕ => width k ^ 2 / ((time k - 1 : ℕ) : ℝ) *
+        Real.log (horizontalTubeProbability (iidSequenceLaw ν) a
+          (width k) (time k - 1)).toReal) := by
+    filter_upwards [eventually_gt_atTop (1 : ℕ)] with k hk
+    have htimeNe : (time k : ℝ) ≠ 0 :=
+      ne_of_gt (by exact_mod_cast (htimePos k))
+    have hpredNat : 0 < time k - 1 := by
+      have hk' : 1 < k := by omega
+      have htimeStep : time 1 < time k := htime hk'
+      have htimeOne : 0 < time 1 := htimePos 1
+      omega
+    have hpredPos : 0 < ((time k - 1 : ℕ) : ℝ) := by exact_mod_cast hpredNat
+    have hpredNe : ((time k - 1 : ℕ) : ℝ) ≠ 0 := ne_of_gt hpredPos
+    field_simp [htimeNe, hpredNe]
+  simpa only [one_mul] using hproduct.congr' hproductEq
+
+/-- Unit-variance specialization of Wang Yiyang, *Asymptotic speed of the
+$N$-branching random walk with infinite offspring*, Chapter 3, Lemma 3.1(i). -/
 theorem centeredUnitVariance_closedHorizontalTubeProbabilityRate
     {ν : Measure ℝ} [IsProbabilityMeasure ν] {scale : ℕ → ℝ}
     (hsmall : Asymptotics.IsSmallDeviationScale scale (fun n => Real.sqrt n))
@@ -985,9 +1172,10 @@ private theorem tendsto_scaledLog_div_predTime
     field_simp [htimeNe, hpredNe]
   simpa only [one_mul] using hproduct.congr' hEq
 
-/-- The generalized inverse width has the closed-tube rate in the paper's
-`scale² / (n - 1)` normalization. The source path uses the same `n - 1`
-terminal partial sum. -/
+/-- The generalized inverse width has the closed-tube rate in the normalization
+of Wang Yiyang, *Asymptotic speed of the $N$-branching random walk with
+infinite offspring*, Chapter 3, Lemma 3.1(i): `scale² / (n - 1)`. The source path uses the same
+`n - 1` terminal partial sum. -/
 theorem inverseScale_closedHorizontalTubeProbabilityRate
     {L : ℕ → ℕ}
     (hL : Tendsto L atTop atTop)
@@ -1007,7 +1195,8 @@ theorem inverseScale_closedHorizontalTubeProbabilityRate
     (Asymptotics.isSmallDeviationScale_inverseScale hL hquadratic)
     hcentered hsquare hvariance ha haOne
 
-/-- The upper generalized inverse width has the same closed-tube rate. -/
+/-- Upper-inverse-scale consequence of Wang Yiyang, *Asymptotic speed of the
+$N$-branching random walk with infinite offspring*, Chapter 3, Lemma 3.1(i). -/
 theorem upperInverseScale_closedHorizontalTubeProbabilityRate
     {L : ℕ → ℕ}
     (hL : Tendsto L atTop atTop)
@@ -1027,8 +1216,9 @@ theorem upperInverseScale_closedHorizontalTubeProbabilityRate
     (Asymptotics.isSmallDeviationScale_upperInverseScale hL hquadratic)
     hcentered hsquare hvariance ha haOne
 
-/-- Both generalized inverse widths satisfy the variance-scaled tube limit
-under the standing superquadratic scale assumption. -/
+/-- Both generalized inverse widths satisfy the consequence of Wang Yiyang,
+*Asymptotic speed of the $N$-branching random walk with infinite offspring*,
+Chapter 3, Lemma 3.1(i), under the superquadratic scale assumption. -/
 theorem inverseScales_closedHorizontalTubeProbabilityRate
     {L : ℕ → ℕ}
     (hL : Tendsto L atTop atTop)
@@ -1053,10 +1243,11 @@ theorem inverseScales_closedHorizontalTubeProbabilityRate
     upperInverseScale_closedHorizontalTubeProbabilityRate hL hquadratic
       hcentered hsquare hvariance ha haOne⟩
 
-/-- The centered finite-variance horizontal tube has the Mogulskii rate at
-every integer width when the time scale diverges and is superquadratic. This
-proves the integer-width instance of part (i) of the revised PDF Lemma 3.1;
-the proof interpolates along a subsequence of strictly increasing times. -/
+/-- Integer-width form of Wang Yiyang, *Asymptotic speed of the $N$-branching
+random walk with infinite offspring*, Chapter 3, Lemma 3.1(i). The proof
+interpolates along a subsequence of strictly increasing times. Its rate is
+Mogul'skii, "Small Deviations in a Space of Trajectories," Theorem 3, Section
+4, p. 764 (DOI 10.1137/1119081). -/
 theorem centeredFiniteVariance_horizontalTubeProbabilityRate
     {L : ℕ → ℕ} (hL : Tendsto L atTop atTop)
     (hquadratic : Asymptotics.IsSuperquadraticScale L)
@@ -1129,9 +1320,11 @@ theorem centeredFiniteVariance_horizontalTubeProbabilityRate
   have hge : ε ≤ dist (rate (widthSub N)) c := hwidthBad (φ N)
   exact (not_lt_of_ge hge) hlt
 
-/-- Part (ii) of revised PDF Lemma 3.1 along a strictly increasing horizon sequence. The endpoint
-window may vary with the width, provided it eventually contains a fixed
-interior interval. -/
+/-- Sampled-width form of Wang Yiyang, *Asymptotic speed of the $N$-branching
+random walk with infinite offspring*, Chapter 3, Lemma 3.1(ii). The endpoint
+window eventually contains a fixed interior interval. Its rate input is
+Mogul'skii, "Small Deviations in a Space of Trajectories," Theorem 3, Section
+4, p. 764 (DOI 10.1137/1119081). -/
 theorem centeredFiniteVariance_endpointWindowProbabilityRate_along
     {ν : Measure ℝ} [IsProbabilityMeasure ν]
     {time width : ℕ → ℕ} (htime : StrictMono time)
@@ -1285,9 +1478,12 @@ theorem centeredFiniteVariance_endpointWindowProbabilityRate_along
       exact hk.2
   simpa [targetProbability, limit] using hrate
 
-/-- Part (ii) of revised PDF Lemma 3.1: the endpoint window may vary with the integer width if
-it eventually contains one fixed nonempty interval strictly inside the tube.
-The condition `L Δ / Δ² → ∞` is the only scale assumption. -/
+/-- Integer-width form of Wang Yiyang, *Asymptotic speed of the $N$-branching
+random walk with infinite offspring*, Chapter 3, Lemma 3.1(ii). The endpoint
+window eventually contains one fixed nonempty interval strictly inside the
+tube, and the scale condition is `L Δ / Δ² → ∞`. The rate input is Mogul'skii,
+"Small Deviations in a Space of Trajectories," Theorem 3, Section 4, p. 764
+(DOI 10.1137/1119081). -/
 theorem centeredFiniteVariance_endpointWindowProbabilityRate
     {L : ℕ → ℕ} (hL : Tendsto L atTop atTop)
     (hquadratic : Asymptotics.IsSuperquadraticScale L)
