@@ -7,6 +7,11 @@
 }{
     从本节开始的结论基于并推广了A\"id\'ekon与Hu \mycite{aïdékon2025averageweightpercolationcompletegraph} 的工作. 考虑由\nameref{lemma:many-to-one}得到的随机游走$(Y_n)$.
 }
+\bilingual{
+    Write $\mathscr F_n:=\sigma(Y_0,\ldots,Y_n)$ for the natural filtration of $(Y_n)$.
+}{
+    记 $\mathscr F_n:=\sigma(Y_0,\ldots,Y_n)$ 为随机游走 $(Y_n)$ 的自然域流.
+}
 
 \begin{lemma}[\bilingual{Small Deviation}{水平管道意义下的小偏差}, A\"id\'ekon--Hu \mycite{aïdékon2025averageweightpercolationcompletegraph}]\label{lemma:4.1}
     \bilingual{
@@ -181,72 +186,76 @@
         k\in[\![1,q]\!].
     \end{equation*}
     \bilingual{
-        We have
+        Write $B_0:=\Omega$ and $B_k:=\bigcap_{l=1}^k A_l$ for $1\le k\le q$.
     }{
-        从而
+        记 $B_0:=\Omega$ 且 $B_k:=\bigcap_{l=1}^k A_l$ 对 $1\le k\le q$.
+    }
+    \bilingual{
+        By the Markov property of $(Y_n)$, for each $1\le k\le q$,
+    }{
+        由随机游走 $(Y_n)$ 的 Markov 性质, 对每个 $1\le k\le q$,
+    }
+    \begin{equation*}
+        \mathbb E\left({\bf 1}_{A_k}\middle|\mathscr F_{(k-1)\ell}\right)
+        =p\!\left(Y_{(k-1)\ell}\right),
+    \end{equation*}
+    \bilingual{
+        where, for $x\in\mathbb R$,
+    }{
+        其中, 对 $x\in\mathbb R$,
     }
     \begin{align*}
-        &\quad
-        \mathbb P(
-            r_0\le Y_j\le r_0+\Delta,\,
-            \forall j\in[\![1,L]\!]
-        )
-        \\ &
-        \le
-        \mathbb P(
-            \cap_{k=1}^qA_k
-        )
-        =
-        \prod_{k=1}^q\mathbb P\left(
-            A_k
-            \middle|
-            \cap_{l=1}^{k-1}A_l
-        \right)
-        \\ &
-        =
-        \prod_{k=1}^q\left(
-            \frac 1{
-                \mathbb P\left(
-                    \cap_{l=1}^{k-1}A_l
-                \right)
-            }
-            \mathbb E\left[
-                \mathbb E\left(
-                    {\bf 1}_{A_k}
-                    \middle|
-                    \mathscr F_{(k-1)\ell}
-                \right)
-                {\bf 1}_{
-                    \cap_{l=1}^{k-1}A_l
-                }
-            \right]
-        \right)
-        \\ &
-        \le
-        \prod_{k=1}^q
-        \sup_{x\in r_0+[0,\Delta]}
-        \mathbb P(
-            r_0\le Y_j+x\le r_0+\Delta,\,
-            \forall j\in[\![1,\ell]\!]
-        )
-        \\ &
-        \le
-        \left[
-            \exp\left(
-                -\frac d{\Delta^2}\ell
-            \right)
-        \right]^q
-        =
-        \exp\left(\frac{d}{\Delta^2}r-\frac{d}{\Delta^2}L\right)
-        % \\ &
-        \le
-        \exp\left(\Delta^v-\frac{d}{\Delta^2}L\right),
+        p(x)&:=\mathbb P\left(
+            r_0-x\le Y_j\le r_0+\Delta-x,
+            \,\forall j\in[\![1,\ell]\!]
+        \right),\quad x\in\mathbb R,\\
+        0\le p(x)&\le\exp\left(-\frac{d\ell}{\Delta^2}\right)
+        \quad x\in[r_0,r_0+\Delta].
     \end{align*}
     \bilingual{
-        where $r_0-x\in[-\Delta,0]$ for $x\in r_0+[0,\Delta]$, and the last inequality follows from $r<\ell\le\frac{1}{d}\Delta^{2+v}$.
+        Here the one-block estimate applies since
+        $r_0-x\in[-\Delta,0]$ and $r_0+\Delta-x\in[0,\Delta]$.
     }{
-        其中 $r_0-x\in[-\Delta,0]$ 对 $x\in r_0+[0,\Delta]$ 成立, 且最后一式是因 $r<\ell\le\frac{1}{d}\Delta^{2+v}$.
+        此处可应用单块估计, 因为
+        $r_0-x\in[-\Delta,0]$ 且 $r_0+\Delta-x\in[0,\Delta]$.
     }
+    \bilingual{
+        On $B_{k-1}$, the block starts in $[r_0,r_0+\Delta]$; for $k=1$ this
+        follows from $Y_0=0$ and $r_0\le0\le r_0+\Delta$. Thus the tower
+        property gives the following recursion:
+    }{
+        在 $B_{k-1}$ 上, 分块起点属于 $[r_0,r_0+\Delta]$; 当 $k=1$ 时,
+        由 $Y_0=0$ 和 $r_0\le0\le r_0+\Delta$ 得到这一点. 因而由塔式性质得到下列递推式:
+    }
+    \begin{equation*}
+        \mathbb P(B_k)
+        =\mathbb E\left[{\bf 1}_{B_{k-1}}p\!\left(Y_{(k-1)\ell}\right)\right]
+        \le\exp\left(-\frac{d\ell}{\Delta^2}\right)\mathbb P(B_{k-1}),
+        \quad 1\le k\le q.
+    \end{equation*}
+    \bilingual{
+        Iterating this recursion and using $L=q\ell+r$ gives
+    }{
+        迭代上述递推式并利用 $L=q\ell+r$, 得
+    }
+    \begin{equation*}
+        \mathbb P(B_q)
+        \le\exp\left(-\frac{dq\ell}{\Delta^2}\right)
+        =\exp\left(\frac{dr}{\Delta^2}-\frac{dL}{\Delta^2}\right)
+        \le\exp\left(\Delta^v-\frac{dL}{\Delta^2}\right).
+    \end{equation*}
+    \bilingual{
+        The event up to time $L$ is contained in $B_q$, and the last
+        inequality uses $r<\ell\le\frac{1}{d}\Delta^{2+v}$. Hence
+    }{
+        截至时刻 $L$ 的事件包含于 $B_q$, 最后一式由
+        $r<\ell\le\frac{1}{d}\Delta^{2+v}$ 得到. 因而
+    }
+    \begin{equation*}
+        \mathbb P\left(r_0\le Y_j\le r_0+\Delta,\,
+        \forall j\in[\![1,L]\!]\right)
+        \le\exp\left(\Delta^v-\frac{dL}{\Delta^2}\right).
+    \end{equation*}
 \end{proof}
 
 \begin{remark}

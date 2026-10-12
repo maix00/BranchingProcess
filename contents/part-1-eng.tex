@@ -75,10 +75,10 @@
         \nameref{theorem:mogulskii} 将给出所取子列上事件概率最终为正.
     }
     \bilingual{
-        By (3.1), choose $\Delta_*>0$ such that $L_\Delta\ge1$ for all
+        By \eqref{eq:mogulskii-L-delta-assumptions}, choose $\Delta_*>0$ such that $L_\Delta\ge1$ for all
         $\Delta\ge\Delta_*$. The rate functions below are defined on this tail.
     }{
-        由 (3.1), 取 $\Delta_*>0$ 使得对所有 $\Delta\ge\Delta_*$ 都有
+        由 \eqref{eq:mogulskii-L-delta-assumptions}, 取 $\Delta_*>0$ 使得对所有 $\Delta\ge\Delta_*$ 都有
         $L_\Delta\ge1$. 下文的速率函数均定义在此尾区间上.
     }
     \begin{enumerate}[label=(\roman*)]
@@ -145,9 +145,9 @@
                 s_{n_k}(1)=\frac{Y_{L_k}}{\sigma\Delta_k}.
             \end{equation*}
             \bilingual{
-                For $0<\varepsilon<\frac{\min\{a,1-a\}}{\sigma}$, define
+                For $0<\varepsilon<\frac 1\sigma\min\{a,1-a\}$, define
             }{
-                对 $0<\varepsilon<\frac{\min\{a,1-a\}}{\sigma}$, 定义
+                对 $0<\varepsilon<\frac 1\sigma\min\{a,1-a\}$, 定义
             }
             \begin{align*}
                 S_2^-(t)&:=-\frac{a}{\sigma}+\varepsilon,
@@ -241,7 +241,7 @@
             $\frac{n_k}{L_k}=1+\frac{1}{L_k}\to1$, 得
             }
             \begin{align*}
-                q_k&\longrightarrow c,\\
+                q_k&\longrightarrow c,\qquad
                 \frac{\Delta_k^2}{L_k}\log\mathbb P(\mathcal T_k)
                 &=\frac{n_k}{L_k}q_k\longrightarrow c.
             \end{align*}
