@@ -1,383 +1,458 @@
 \section{\bilingual{Lemmas on Applying \texorpdfstring{Mogul'ski\u i}{Mogul'skii}'s Theorem}{有关应用 \texorpdfstring{Mogul'ski\u i}{Mogul'skii} 定理的引理}}\label{section:mogulskii-lemmas}
 
 \bilingual{
-    In this section,~ we introduce a nonnegative integer parameter $\Delta$ (which will later serve as the tube width in the small deviation estimates of the next section) and an integer-valued sequence $(L_\Delta)_{\Delta\in\mathbb Z_{\ge 0}}$. The main purpose is to reformulate \nameref{theorem:mogulskii} into a form suitable for the tube estimates,~ where the roles of $n$ and $x(n)$ are exchanged via a generalized inverse.
+    In this section, $\Delta>0$ denotes the tube width, and $L:(0,\infty)\to\mathbb Z_{\ge0}$ assigns to each width $\Delta$ its observation time $L_\Delta$, measured in random-walk steps. We assume that this time horizon is asymptotically larger than the diffusive scale $\Delta^2$, in the precise sense
 }{
-    本节引入一个非负整数参数 $\Delta$ (在下一节中它将作为管道宽度参与小偏差估计) 和一个取非负整数值的序列 $(L_\Delta)_{\Delta\in\mathbb Z_{\ge 0}}$. 主要目标是将 \nameref{theorem:mogulskii}改写为适合管道估计的形式, 其中通过广义逆交换 $n$ 与 $x(n)$ 的角色.
+    本节中, $\Delta>0$ 表示管道宽度, $L:(0,\infty)\to\mathbb Z_{\ge0}$ 将每个宽度 $\Delta$ 对应到观测时间 $L_\Delta$, 即随机游走步数. 我们假设该时间长度渐近大于扩散尺度 $\Delta^2$, 精确地说
 }
-
-\bilingual{
-    Now consider a nondecreasing sequence $(L_\Delta)_{\Delta\in\mathbb Z_{\ge 0}}$ with values in $\mathbb Z_{\ge 0}$ such that
-}{
-    现在考虑一个取非负整数值的非递减序列 $(L_\Delta)_{\Delta\in\mathbb Z_{\ge 0}}$, 满足
-}
-\begin{equation*}
-     \lim_{\Delta\to\infty}L_\Delta=\infty,
-     \quad
-     \lim_{\Delta\to\infty}\frac{L_\Delta}{\Delta^2}=\infty.
-\end{equation*}
-\bilingual{
-    Basically, when applying \nameref{theorem:mogulskii}, we are letting $n$ there to be $L_\Delta$ and $x(n)$ there to be $\Delta$, to form an inverse sequence. We are in this section to make rigorous this statement. Let
-}{
-    在应用 \nameref{theorem:mogulskii}时, 要让定理中的 $n$ 等于 $L_\Delta$, 定理中的 $x(n)$ 等于 $\Delta$, 从而形成一个反函数序列. 本节将严格论证这一点. 令
-}
-\begin{align*}
-    x(n)&:=\min\{\Delta\in\mathbb Z_{\ge 0}: L_\Delta+1\ge n\},&n\in\mathbb Z_{\ge 0},
-    \\ y(n)&:= x(n+1)-1,&n\in\mathbb Z_{\ge 0}.
-\end{align*}
-
-\begin{lemma}\label{lemma:mogulskii-x-y}
-    \bilingual{
-        The two sequences $x$ and $y$ satisfy
-    }{
-        序列 $x$ 和 $y$ 满足
-    }
-    $
-        \displaystyle\lim_{n\to\infty}x(n)=\lim_{n\to\infty}y(n)=\infty.
-    $
-    \bilingual{
-        Since $\displaystyle\lim_{\Delta\to\infty}\frac{L_\Delta}{\Delta^2}=\infty$, we have
-    }{
-        由 $\displaystyle\lim_{\Delta\to\infty}\frac{L_\Delta}{\Delta^2}=\infty$ 可知
-    }
-    {
-        \setlength\belowdisplayskip{-15pt}
-        \begin{equation*}
-            \lim_{n\to\infty}x(n)n^{-1/2}
-            =\lim_{n\to\infty}y(n)n^{-1/2}
-            =0.
-        \end{equation*}
-    }
-\end{lemma}
-\bilingual{
-    \noindent The proof for \Cref{lemma:mogulskii-x-y} uses the minimality in the definition of $x$: whenever $x(n)>0$, one has $L_{x(n)-1}+1<n$. Together with $x(n)\to\infty$ and $L_\Delta/\Delta^2\to\infty$, this gives $x^2(n)/n\to0$; the same argument applies to $y$.
-}{
-    \noindent \Cref{lemma:mogulskii-x-y} 的证明使用$x$定义中的最小性: 当$x(n)>0$时, 有$L_{x(n)-1}+1<n$. 结合$x(n)\to\infty$与$L_\Delta/\Delta^2\to\infty$, 可得$x^2(n)/n\to0$; 对$y$可作相同论证.
-}
-
-\bilingual{
-    Consider the random walk $(Y_n)_{n\ge 0}$ with zero mean and finite variance $0<\sigma^2<\infty$ obtained from \nameref{lemma:many-to-one}. For any $a\in(0,1)$, we denote in this section
-}{
-    考虑通过\nameref{lemma:many-to-one}得到的零均值和有限方差 $0<\sigma^2<\infty$ 的随机游走 $(Y_n)_{n\ge 0}$. 对于任意 $a\in(0,1)$, 在本节中定义
-}
-\begin{align*}
-    q(\Delta,n)&:=\log\mathbb P\left(
-        -a\Delta\le Y_j\le (1-a)\Delta,\,
-        \forall j\in[\![1,n]\!]
-    \right),\\
-    p(\Delta,n)&:=\frac{\Delta^2}nq(\Delta,n).
-\end{align*}
-\bilingual{
-    Let $n=n(\Delta):=L_\Delta+1$ such that $x(n)\le\Delta<x(n+1)$, and we can get by monotonicity of probability that
-}{
-    令$n=n(\Delta):=L_\Delta+1$ 使得 $x(n)\le\Delta<x(n+1)$, 并且可由概率单调性得到
-}
-\begin{lemma} \label{lemma:mogulskii-mono}
-    \bilingual{
-        For $\Delta_1\le\Delta_2$ such that $L:=L_{\Delta_1}=L_{\Delta_2}$, we have $q(\Delta_1,L)\le q(\Delta_2,L)$.
-    }{
-        对于满足 $L:=L_{\Delta_1}=L_{\Delta_2}$ 的 $\Delta_1\le\Delta_2$, 有 $q(\Delta_1,L)\le q(\Delta_2,L)$.
-    }
-\end{lemma}
-
-\bilingual{
-    We are now able to get to the main lemma with an additional condition for $(L_\Delta)$.
-}{
-    现在可在对 $(L_\Delta)$ 的额外条件下得到如下主要引理.
-}
+\begin{equation}
+    \lim_{\Delta\to\infty}L_\Delta=\infty,
+    \qquad
+    \lim_{\Delta\to\infty}\frac{L_\Delta}{\Delta^2}=\infty.
+    \label{eq:mogulskii-L-delta-assumptions}
+\end{equation}
 \begin{lemma}
     \label{lemma:mogulskii-cal}
-    \quad
+    \bilingual{
+        Consider the zero-mean random walk $(Y_n)_{n\ge0}$ with finite variance $0<\sigma^2<\infty$ obtained from \nameref{lemma:many-to-one}. Let $(\xi_i)_{i\ge1}$ be its standardized increments, so that
+    }{
+        考虑通过 \nameref{lemma:many-to-one} 得到的零均值和有限方差 $0<\sigma^2<\infty$ 的随机游走 $(Y_n)_{n\ge0}$. 令 $(\xi_i)_{i\ge1}$ 为其标准化增量, 即
+    }
+    \begin{equation*}
+        \xi_i:=\frac{Y_i-Y_{i-1}}{\sigma},\qquad
+        Y_j=\sigma\sum_{i=1}^{j}\xi_i,\qquad j\in\mathbb Z_{\ge0}.
+    \end{equation*}
+    \bilingual{
+        Then $(\xi_i)_{i\ge1}$ are IID, centered, and have unit variance. Fix $a\in(0,1)$. The scale assumption is \eqref{eq:mogulskii-L-delta-assumptions}.
+    }{
+        则 $(\xi_i)_{i\ge1}$ 独立同分布, 均值为 $0$, 方差为 $1$. 固定 $a\in(0,1)$, 并假设尺度条件 \eqref{eq:mogulskii-L-delta-assumptions} 成立.
+    }
     \begin{enumerate}[label=\upshape(\roman*)]
-        \item \bilingual{
-            By \nameref{theorem:mogulskii}, we have, indexed by $n$,
-        }{
-            根据 \nameref{theorem:mogulskii}, 按 $n$ 索引,
-        }
+        \item \bilingual{Define}{定义}
             \begin{equation*}
-                \lim_{n\to\infty}p(x(n),n-1)
-                =\lim_{n\to\infty}p(y(n),n-1)
-                =-\frac{\pi^2}2\sigma^2.
+                \mathcal T_\Delta:=
+                \bigcap_{j=1}^{L_\Delta}
+                    \left\{-a\Delta\le Y_j\le(1-a)\Delta\right\}.
             \end{equation*}
-        \bilingual{
-            For $n=n(\Delta)$, and indexed by $\Delta$,
-        }{
-            对于 $n=n(\Delta)$, 按 $\Delta$ 索引,
-        }
-            \begin{equation*}
-                \lim_{\Delta\to\infty}p(x(n),n-1)
-                =\lim_{\Delta\to\infty}p(y(n),n-1)
-                =-\frac{\pi^2}2\sigma^2.
-            \end{equation*}
-        \item \bilingual{
-            Under the additional condition for $(L_\Delta)$ that, when $\Delta\to\infty$,
-        }{
-            在 $(L_\Delta)$ 的如下额外条件下, 即当 $\Delta\to\infty$ 时,
-        }
-            \begin{equation*}
-                N_\Delta:=\#\left\{\hat\Delta\ge 0: L_\Delta=L_{\hat\Delta}\right\}
-                =O_\Delta(1),
-            \end{equation*}
-            \bilingual{
-                we have
-            }{
-                成立
-            }
+            \bilingual{Then}{则}
             \begin{equation*}
                 \lim_{\Delta\to\infty}\frac{\Delta^2}{L_\Delta}
-                \log\mathbb P\left(
-                    -a\Delta\le Y_j\le (1-a)\Delta,\,
-                    \forall j\in[\![1,L_\Delta]\!]
-                \right)
-                =-\frac{\pi^2}2\sigma^2.
+                    \log\mathbb P(\mathcal T_\Delta)
+                =-\frac{\pi^2}{2}\sigma^2.
             \end{equation*}
-        \item
-            \bilingual{
-                Under the standing scale condition $L_\Delta/\Delta^2\to\infty$, fix $0<u<v<1$. Let $v_1=v_1(\Delta)$ and $v_2=v_2(\Delta)$ be endpoint-window parameters such that, for all sufficiently large $\Delta$, $v_1(\Delta)\le u$ and $v_2(\Delta)\ge v$. Then
-            }{
-                在已有尺度条件 $L_\Delta/\Delta^2\to\infty$ 下, 固定 $0<u<v<1$. 设 $v_1=v_1(\Delta)$ 与 $v_2=v_2(\Delta)$ 是端点窗参数, 且对所有充分大的 $\Delta$ 都有 $v_1(\Delta)\le u$ 和 $v_2(\Delta)\ge v$. 则
-            }
-            {
-                \setlength\belowdisplayskip{-10pt}
-                \begin{equation*}
-                    \lim_{\Delta\to\infty}
-                    \frac{\Delta^2}{L_\Delta}
-                    \log\mathbb P\left(
-                        \begin{aligned}
-                            -a\Delta\le Y_j\le (1-a)\Delta,\,
-                            \forall j\in[\![1,L_\Delta]\!],
-                            \\ (v_1-a)\Delta\le Y_{L_\Delta}\le(v_2-a)\Delta
-                        \end{aligned}
-                    \right)
-                    =
-                    -\frac{\pi^2}{2}\sigma^2.
-                \end{equation*}
-            }
+        \item \bilingual{
+            Fix $0<u<v<1$. Let $v_1,v_2:(0,\infty)\to\mathbb R$ satisfy
+        }{
+            固定 $0<u<v<1$. 设 $v_1,v_2:(0,\infty)\to\mathbb R$ 满足
+        }
+            \begin{equation*}
+                \exists \Delta_0>0,\
+                \forall\Delta\ge\Delta_0:\quad
+                v_1(\Delta)\le u<v\le v_2(\Delta).
+            \end{equation*}
+            \bilingual{Define}{定义}
+            \begin{equation*}
+                \mathcal E_\Delta:=
+                    \mathcal T_\Delta\cap
+                    \left\{(v_1(\Delta)-a)\Delta\le Y_{L_\Delta}
+                        \le(v_2(\Delta)-a)\Delta\right\}.
+            \end{equation*}
+            \bilingual{Then}{则}
+            \begin{equation*}
+                \lim_{\Delta\to\infty}\frac{\Delta^2}{L_\Delta}
+                    \log\mathbb P(\mathcal E_\Delta)
+                =-\frac{\pi^2}{2}\sigma^2.
+            \end{equation*}
     \end{enumerate}
 \end{lemma}
 \begin{proof}
     \bilingual{
-        For (i), we prove here only the result for $x$. The result for $y$ is the same since the conditions for \nameref{theorem:mogulskii} are satisfied by both $x$ and $y$ as stated in \Cref{lemma:mogulskii-x-y}.
+        Use the convention $\log0=-\infty$. The applications of
+        \nameref{theorem:mogulskii} below give positive event probabilities
+        eventually along each selected subsequence.
     }{
-        对于 (i), 由于$x$ 和 $y$ 都满足 \nameref{theorem:mogulskii}的条件, 这里只对$x$证明, 对$y$的证法相同.
+        对零概率事件约定 $\log0=-\infty$. 下文应用
+        \nameref{theorem:mogulskii} 将给出所取子列上事件概率最终为正.
+    }
+    \bilingual{
+        By (3.1), choose $\Delta_*>0$ such that $L_\Delta\ge1$ for all
+        $\Delta\ge\Delta_*$. The rate functions below are defined on this tail.
+    }{
+        由 (3.1), 取 $\Delta_*>0$ 使得对所有 $\Delta\ge\Delta_*$ 都有
+        $L_\Delta\ge1$. 下文的速率函数均定义在此尾区间上.
     }
     \begin{enumerate}[label=(\roman*)]
         \item
             \bilingual{
-                We denote here the step random variables of $(Y_i)$ as $(\sigma\xi_i)$. Define $s_n$ as in \eqref{eq:mogulskii-s-n-t}. We can express $q(x(n),n-1)$ in $s_n$ as
+            Set $c=-\frac{\pi^2}{2}\sigma^2$ and
+            $\rho_{\mathrm{tube}}(\Delta)=\frac{\Delta^2}{L_\Delta}
+                \log\mathbb P(\mathcal T_\Delta)$. For $\eta>0$, define
             }{
-                记 $(Y_i)$ 的步长随机变量为 $(\sigma\xi_i)$. 定义 $s_n$ 如 \eqref{eq:mogulskii-s-n-t}. 可将 $q(x(n),n-1)$ 表示为 $s_n$ 的函数:
-            }
-            \begin{align*}
-                q(x(n),n-1)
-                &=
-                \log\mathbb P
-                \left(
-                    \frac 1\sigma(-a)\le s_n(t)\le\frac 1\sigma(1-a),\,
-                    t\in[0,1]
-                \right) \nonumber
-                \\ &=:\log\mathbb P(s_n\in G_0),
-                \quad n\ge 1.
-            \end{align*}
-            \bilingual{
-                For each $m\ge 1$, we apply \nameref{theorem:mogulskii} for $G=G(m)$ of the form \eqref{eq:mogulskii-G} with
-            }{
-                对于每个 $m\ge 1$, 将 \nameref{theorem:mogulskii}应用于如下形式的 $G=G(m)$:
+            记 $c=-\frac{\pi^2}{2}\sigma^2$ 及
+            $\rho_{\mathrm{tube}}(\Delta)=\frac{\Delta^2}{L_\Delta}
+                \log\mathbb P(\mathcal T_\Delta)$. 对 $\eta>0$, 定义
             }
             \begin{equation*}
-                S_1=\frac{1}\sigma\left(1-a-\frac 1{2m}\right),\,
-                S_2=\frac{1}\sigma\left(-a+\frac 1{2m}\right),
+                \mathcal B_{\mathrm{tube},\eta}:=
+                \left\{\Delta\in[\Delta_*,\infty):
+                    \eta\le|\rho_{\mathrm{tube}}(\Delta)-c|\right\}.
             \end{equation*}
             \bilingual{
-                and we can use \eqref{eq:mogulskii-h-alpha} to calculate the corresponding $H_2(G)$ as
+            The definition of the limit reduces the claim to boundedness of
+            $\mathcal B_{\mathrm{tube},\eta}$. If this set is unbounded, choose
+            $1\le\Delta_1<\Delta_2<\cdots$ in $\mathcal B_{\mathrm{tube},\eta}$,
+            and set $L_k:=L_{\Delta_k}$ and $n_k:=L_k+1$.
             }{
-                并且可以使用 \eqref{eq:mogulskii-h-alpha} 来计算对应的 $H_2(G)$:
+            由极限定义, 只需证明 $\mathcal B_{\mathrm{tube},\eta}$ 有界. 若该集合无界,
+            取其中严格递增的数列 $1\le\Delta_1<\Delta_2<\cdots$, 并记
+            $L_k:=L_{\Delta_k}$ 和 $n_k:=L_k+1$.
+            }
+            \bilingual{
+            By \eqref{eq:mogulskii-L-delta-assumptions}, $L_k/\Delta_k^2\to\infty$ and hence $L_k\to\infty$. Pass to a further subsequence with $L_k$ strictly increasing, and define
+            }{
+            由 \eqref{eq:mogulskii-L-delta-assumptions}, $L_k/\Delta_k^2\to\infty$, 从而 $L_k\to\infty$. 取进一步子列使 $L_k$ 严格递增, 并定义
             }
             \begin{equation*}
-                H_2(G)=\sigma^2\left(1-\frac 1m\right)^{-2}.
-            \end{equation*}
-            \bilingual{
-                Hence, by \nameref{theorem:mogulskii}, we have
-            }{
-                因此, 根据 \nameref{theorem:mogulskii}, 有
-            }
-            \begin{align*}
-                \lim_{n\to\infty}
-                \frac{x^2(n)}{n}
-                \log\mathbb P(s_n\in G(m))
-                =
-                -\frac{\pi^2}2\sigma^2\left(1-\frac 1m\right)^{-2}.
-            \end{align*}
-            \bilingual{
-                Since $G(m)\subset G_0$, by monotonicity of probability,
-            }{
-                由于 $G(m)\subset G_0$, 根据概率的单调性,
-            }
-            \begin{align*}
-                \liminf_{n\to\infty}p(x(n),n-1)
-                &\ge\liminf_{n\to\infty}\frac{x^2(n)}n\log\mathbb P(s_n\in G(m))
-                \nonumber\\ &
-                =-\frac{\pi^2}2\sigma^2\left(1-\frac 1m\right)^{-2}.
-            \end{align*}
-            \bilingual{
-                Let $m\to\infty$ and we get
-            }{
-                令 $m\to\infty$, 可得
-            }
-            \begin{equation*}
-                \liminf_{n\to\infty}p(x(n),n-1)\ge-\frac{\pi^2}{2}\sigma^2.
-            \end{equation*}
-            \bilingual{
-                Similarly, we apply \nameref{theorem:mogulskii} for $G=\widetilde G(m)$ of the form \eqref{eq:mogulskii-G} with
-            }{
-                同样地, 将 \nameref{theorem:mogulskii}应用于如下形式的 $G=\widetilde G(m)$:
-            }
-            \begin{equation*}
-                S_1=\frac{1}\sigma\left(1-a+\frac 1{2m}\right),\,
-                S_2=\frac{1}\sigma\left(-a-\frac 1{2m}\right),
-            \end{equation*}
-            \bilingual{
-                and we can get
-            }{
-                从而可以得到
-            }
-            \begin{equation*}
-                \limsup_{n\to\infty}p(x(n),n-1)\le-\frac{\pi^2}2\sigma^2\left(1+\frac 1m\right)^{-2}.
-            \end{equation*}
-            \bilingual{
-                Let $m\to\infty$ and the result would follow.
-            }{
-                令 $m\to\infty$, 结论得证.
-            }
-        \item
-            \bilingual{
-                By Lemma \ref{lemma:mogulskii-mono} and since $x(n)\le\Delta\le x(n+1)-1=y(n)$, we have the lower and upper bound for $p(\Delta,L_\Delta)$ as
-            }{
-                根据引理 \ref{lemma:mogulskii-mono} 并且由于 $x(n)\le\Delta\le x(n+1)-1=y(n)$, 可得 $p(\Delta,L_\Delta)$ 的上下界为
-            }
-            \begin{align*}
-                p(\Delta,L_\Delta)
-                &=\frac{\Delta^2}{L_\Delta}q(\Delta,L_\Delta)
-                \ge\frac{\Delta^2}{L_\Delta}q(x(n),L_\Delta)
-                =\frac{\Delta^2}{x^2(n)}p(x(n),n-1)
-                \\
-                p(\Delta,L_\Delta)
-                &=\frac{\Delta^2}{L_\Delta}q(\Delta,L_\Delta)
-                \le\frac{\Delta^2}{L_\Delta}q(y(n),L_\Delta)
-                =\frac{\Delta^2}{y^2(n)}p(y(n),n-1)
-            \end{align*}
-            \bilingual{
-                Let $\Delta\to\infty$ in both equations and it suffices to show that
-            }{
-                在两式中令 $\Delta\to\infty$, 只需证明
-            }
-            \begin{equation*}
-                \lim_{\Delta\to\infty}\frac{\Delta}{x(n)}
-                =\lim_{\Delta\to\infty}\frac{\Delta}{y(n)}
-                =1.
-            \end{equation*}
-            \bilingual{
-                Indeed, we have $x(n)\le\Delta\le x(n)+N_\Delta$ and $y(n)-N_\Delta\le\Delta\le y(n)$, and the result follows from the additional condition.
-            }{
-                事实上, 由于 $x(n)\le\Delta\le x(n)+N_\Delta$ 和 $y(n)-N_\Delta\le\Delta\le y(n)$, 结论得证.
-            }
-        \item
-            \bilingual{
-                First fix $0<u<v<1$ and consider the endpoint window with these fixed fractions of the tube width. We prove its rate using one fixed set $G$ in \nameref{theorem:mogulskii}; the set will not depend on $n$.
-            }{
-                先固定 $0<u<v<1$, 考虑端点比例固定为这两个数的管道端点窗. 我们用 \nameref{theorem:mogulskii} 中的一个固定集合 $G$ 求得其概率率; 该集合不依赖于 $n$.
-            }
-            \bilingual{
-                We prove the limit by contradiction. If it failed, there would be a sequence $\Delta_k\to\infty$ along which the normalized logarithm stays a fixed positive distance from the claimed limit. Since $L_k:=L_{\Delta_k}$ satisfies $L_k/\Delta_k^2\to\infty$, pass to a subsequence on which $L_k$ is strictly increasing, and put $n_k:=L_k+1$. Define an auxiliary scale sequence $\widehat x(n)$ by $\widehat x(n)=\Delta_k$ for $n_k\le n<n_{k+1}$, with arbitrary positive values before $n_1$. Then $\widehat x(n)\to\infty$ and $\widehat x(n)/\sqrt n\to0$, because $\Delta_k^2/n_k\to0$.
-            }{
-                用反证法证明该极限. 若极限不成立, 则存在趋于无穷的序列 $(\Delta_k)$, 使相应的归一化对数概率与所称极限始终相差一个固定正数. 由于 $L_k:=L_{\Delta_k}$ 满足 $L_k/\Delta_k^2\to\infty$, 取子列后可设 $L_k$ 严格递增, 并令 $n_k:=L_k+1$. 定义辅助尺度序列 $\widehat x(n)$: 当 $n_k\le n<n_{k+1}$ 时令 $\widehat x(n)=\Delta_k$, 在 $n_1$ 之前任取正值. 因为 $\Delta_k^2/n_k\to0$, 故 $\widehat x(n)\to\infty$ 且 $\widehat x(n)/\sqrt n\to0$.
-            }
-            \begin{equation*}
-                S_2(t)=
+            \widehat{x}:\mathbb Z_{\ge0}\to(0,\infty),\qquad
+            \widehat{x}(n):=
                 \begin{cases}
-                    -a/\sigma, &t\in[0,1),\\
-                    (u-a)/\sigma, &t=1,
+                    1,&0\le n<n_1,\\
+                    \Delta_k,&n_k\le n<n_{k+1}.
                 \end{cases}
+            \end{equation*}
+            \bilingual{
+                For $n_k\le n<n_{k+1}$, we have
+                $\widehat{x}(n)=\Delta_k\to\infty$ and
+                $0\le\frac{\widehat{x}(n)^2}{n}
+                    \le\frac{\Delta_k^2}{L_k+1}\to0$.
+            }{
+                当 $n_k\le n<n_{k+1}$ 时,
+                $\widehat{x}(n)=\Delta_k\to\infty$, 且
+                $0\le\frac{\widehat{x}(n)^2}{n}
+                    \le\frac{\Delta_k^2}{L_k+1}\to0$.
+            }
+            \bilingual{
+                Use $s_n$ from
+                \eqref{eq:mogulskii-s-n-t} with $x(n)=\widehat{x}(n)$.
+            }{
+                在
+                \eqref{eq:mogulskii-s-n-t} 中取 $x(n)=\widehat{x}(n)$.
+            }
+            \begin{equation*}
+                s_{n_k}(t)=\frac{Y_j}{\sigma\Delta_k}
+                \quad\left(\frac{j}{n_k}\le t<\frac{j+1}{n_k},\ 0\le j\le L_k\right),
                 \qquad
-                S_1(t)=
+                s_{n_k}(1)=\frac{Y_{L_k}}{\sigma\Delta_k}.
+            \end{equation*}
+            \bilingual{
+                For $0<\varepsilon<\frac{\min\{a,1-a\}}{\sigma}$, define
+            }{
+                对 $0<\varepsilon<\frac{\min\{a,1-a\}}{\sigma}$, 定义
+            }
+            \begin{align*}
+                S_2^-(t)&:=-\frac{a}{\sigma}+\varepsilon,
+                &S_1^-(t)&:=\frac{1-a}{\sigma}-\varepsilon,\\
+                S_2^+(t)&:=-\frac{a}{\sigma}-\varepsilon,
+                &S_1^+(t)&:=\frac{1-a}{\sigma}+\varepsilon.
+            \end{align*}
+            \bilingual{
+                Let $G^-_\varepsilon$ and $G^+_\varepsilon$ be the sets in
+                \eqref{eq:mogulskii-G} for the boundary pairs
+                $(S_1^-,S_2^-)$ and $(S_1^+,S_2^+)$, respectively, and put
+                $C:=\left\{f\in D(0,1):f(0)=0,\ f([0,1])\subseteq
+                \left[-\frac{a}{\sigma},\frac{1-a}{\sigma}\right]\right\}$.
+            }{
+                令 $G^-_\varepsilon$ 和 $G^+_\varepsilon$ 分别为
+                \eqref{eq:mogulskii-G} 中对应边界对
+                $(S_1^-,S_2^-)$ 和 $(S_1^+,S_2^+)$ 的集合, 并令
+                $C:=\left\{f\in D(0,1):f(0)=0,\ f([0,1])\subseteq
+                \left[-\frac{a}{\sigma},\frac{1-a}{\sigma}\right]\right\}$.
+            }
+            \bilingual{
+                the corridors $G^-_\varepsilon,G^+_\varepsilon$ satisfy
+                \eqref{eq:mogulskii-S-1-S-2} and contain the initial value $0$.
+                The inclusion $G^-_\varepsilon\subset C\subset G^+_\varepsilon$ holds,
+                and their boundary functions satisfy
+                $S_2^\pm(0)<0<S_1^\pm(0)$ and
+                $S_2^\pm(t)<S_1^\pm(t)$ for $t\in[0,1]$.
+            }{
+                管道 $G^-_\varepsilon,G^+_\varepsilon$ 满足
+                \eqref{eq:mogulskii-S-1-S-2}, 且包含初值 $0$.
+                包含关系为 $G^-_\varepsilon\subset C\subset G^+_\varepsilon$,
+                且边界函数满足 $S_2^\pm(0)<0<S_1^\pm(0)$ 及
+                $S_2^\pm(t)<S_1^\pm(t)$ ($t\in[0,1]$).
+            }
+            \bilingual{
+                Their widths are $S_1^\pm-S_2^\pm=\frac{1}{\sigma}\mp2\varepsilon$,
+                so, with matching signs,
+                $H_2(G^\pm_\varepsilon)
+                =\int_0^1\left(\frac{1}{\sigma}\mp2\varepsilon\right)^{-2}\,dt
+                =\left(\frac{1}{\sigma}\mp2\varepsilon\right)^{-2}$.
+            }{
+                其宽度为 $S_1^\pm-S_2^\pm=\frac{1}{\sigma}\mp2\varepsilon$,
+                因而按对应符号有
+                $H_2(G^\pm_\varepsilon)
+                =\int_0^1\left(\frac{1}{\sigma}\mp2\varepsilon\right)^{-2}\,dt
+                =\left(\frac{1}{\sigma}\mp2\varepsilon\right)^{-2}$.
+            }
+            \bilingual{
+                At $n=n_k$, $\widehat{x}(n_k)=\Delta_k$. Define the tube event
+            }{
+                当 $n=n_k$ 时, $\widehat{x}(n_k)=\Delta_k$. 定义管道事件
+            }
+            \begin{equation*}
+                \mathcal T_k:=
+                \bigcap_{j=1}^{L_k}
+                \left\{-a\Delta_k\le Y_j\le(1-a)\Delta_k\right\},
+                \qquad
+                \{s_{n_k}\in C\}=\mathcal T_k.
+            \end{equation*}
+            \bilingual{
+                Put $q_k:=\frac{\Delta_k^2}{n_k}\log\mathbb P(s_{n_k}\in C)$.
+                Applying \nameref{theorem:mogulskii} to $G^-_\varepsilon$ and
+                $G^+_\varepsilon$ along $\widehat{x}$ gives
+            }{
+                记 $q_k:=\frac{\Delta_k^2}{n_k}\log\mathbb P(s_{n_k}\in C)$.
+                沿 $\widehat{x}$ 对 $G^-_\varepsilon$ 与 $G^+_\varepsilon$ 应用
+                \nameref{theorem:mogulskii}, 得
+            }
+            \begin{equation*}
+                -\frac{\pi^2}{2}\left(\frac{1}{\sigma}-2\varepsilon\right)^{-2}
+                \le\liminf_{k\to\infty}q_k
+                \le\limsup_{k\to\infty}q_k
+                \le-\frac{\pi^2}{2}\left(\frac{1}{\sigma}+2\varepsilon\right)^{-2}.
+            \end{equation*}
+            \bilingual{
+                The finite Mogulskii rate for $G^-_\varepsilon$ gives
+                $\mathbb P(s_{n_k}\in G^-_\varepsilon)>0$ eventually; since
+                $G^-_\varepsilon\subset C$ and $\{s_{n_k}\in C\}=\mathcal T_k$,
+                $q_k$ is real for all sufficiently large $k$.
+            }{
+                $G^-_\varepsilon$ 的 Mogulskii 极限有限, 故充分大的 $k$ 满足
+                $\mathbb P(s_{n_k}\in G^-_\varepsilon)>0$. 由
+                $G^-_\varepsilon\subset C$ 及 $\{s_{n_k}\in C\}=\mathcal T_k$,
+                $q_k$ 对充分大的 $k$ 为实数.
+            }
+            \bilingual{
+            Letting $\varepsilon\downarrow0$ in the bound above and using
+            $\frac{n_k}{L_k}=1+\frac{1}{L_k}\to1$ gives
+            }{
+            令 $\varepsilon\downarrow0$ 并利用
+            $\frac{n_k}{L_k}=1+\frac{1}{L_k}\to1$, 得
+            }
+            \begin{align*}
+                q_k&\longrightarrow c,\\
+                \frac{\Delta_k^2}{L_k}\log\mathbb P(\mathcal T_k)
+                &=\frac{n_k}{L_k}q_k\longrightarrow c.
+            \end{align*}
+            \bilingual{
+            The limits above give
+            $\eta\le|\rho_{\mathrm{tube}}(\Delta_k)-c|\to0$, which forces $\eta=0$.
+            Thus $\mathcal B_{\mathrm{tube},\eta}$ is bounded. Since $\eta>0$ was arbitrary,
+            the definition of the limit gives $\lim_{\Delta\to\infty}\rho_{\mathrm{tube}}(\Delta)=c$.
+            }{
+            上述极限给出
+            $\eta\le|\rho_{\mathrm{tube}}(\Delta_k)-c|\to0$, 故 $\eta=0$.
+            因而 $\mathcal B_{\mathrm{tube},\eta}$ 有界. 由于 $\eta>0$ 任意,
+            由极限定义得到 $\lim_{\Delta\to\infty}\rho_{\mathrm{tube}}(\Delta)=c$.
+            }
+        \item
+            \bilingual{
+            Set $c=-\frac{\pi^2}{2}\sigma^2$ and
+            $\rho_{\mathrm{endpoint}}(\Delta)=\frac{\Delta^2}{L_\Delta}
+                \log\mathbb P(\mathcal E_\Delta)$. For $\eta>0$, define
+            }{
+            记 $c=-\frac{\pi^2}{2}\sigma^2$ 及
+            $\rho_{\mathrm{endpoint}}(\Delta)=\frac{\Delta^2}{L_\Delta}
+                \log\mathbb P(\mathcal E_\Delta)$. 对 $\eta>0$, 定义
+            }
+            \begin{equation*}
+                \mathcal B_{\mathrm{endpoint},\eta}:=
+                \left\{\Delta\in[\Delta_*,\infty):
+                    \eta\le|\rho_{\mathrm{endpoint}}(\Delta)-c|\right\}.
+            \end{equation*}
+            \bilingual{
+            The definition of the limit reduces the claim to boundedness of
+            $\mathcal B_{\mathrm{endpoint},\eta}$. If this set is unbounded,
+            choose a strictly increasing sequence
+            $1\le\Delta_1<\Delta_2<\cdots$ in this set, and set
+            $L_k:=L_{\Delta_k}$ and $n_k:=L_k+1$.
+            }{
+            由极限定义, 只需证明 $\mathcal B_{\mathrm{endpoint},\eta}$ 有界.
+            若该集合无界, 取其中严格递增的数列
+            $1\le\Delta_1<\Delta_2<\cdots$, 并令
+            $L_k:=L_{\Delta_k}$ 和 $n_k:=L_k+1$.
+            }
+            \bilingual{
+            By \eqref{eq:mogulskii-L-delta-assumptions}, $L_k\to\infty$. Passing to a further subsequence, assume that $L_k$ is strictly increasing, and set
+            }{
+            由 \eqref{eq:mogulskii-L-delta-assumptions} 可知 $L_k\to\infty$. 再取进一步子列使 $L_k$ 严格递增, 并令
+            }
+            \begin{equation*}
+            \widehat{x}:\mathbb Z_{\ge0}\to(0,\infty),\qquad
+            \widehat{x}(n):=
                 \begin{cases}
-                    (1-a)/\sigma, &t\in[0,1),\\
-                    (v-a)/\sigma, &t=1.
+                    1,&0\le n<n_1,\\
+                    \Delta_k,&n_k\le n<n_{k+1}.
                 \end{cases}
             \end{equation*}
             \bilingual{
-                Let $G$ be the path class \eqref{eq:mogulskii-G} for these fixed boundaries. They are right-continuous and piecewise constant, and satisfy \eqref{eq:mogulskii-S-1-S-2}: at $t=1$, the common admissible overlap is $((u-a)/\sigma,(v-a)/\sigma)$, which is nonempty. Its width is $1/\sigma$ for almost every $t$, so $H_2(G)=\sigma^2$.
+            For $n_k\le n<n_{k+1}$, we have
+            $\widehat{x}(n)=\Delta_k\to\infty$ and
+            $0\le\frac{\widehat{x}(n)^2}{n}
+                \le\frac{\Delta_k^2}{L_k+1}\to0$.
             }{
-                令 $G$ 为以上固定边界对应的 \eqref{eq:mogulskii-G} 路径类. 这些边界右连续且分段常数, 并满足 \eqref{eq:mogulskii-S-1-S-2}: 在 $t=1$ 处, 共同可行区间为 $((u-a)/\sigma,(v-a)/\sigma)$, 因而非空. 边界宽度在几乎处处等于 $1/\sigma$, 故 $H_2(G)=\sigma^2$.
+            当 $n_k\le n<n_{k+1}$ 时,
+            $\widehat{x}(n)=\Delta_k\to\infty$, 且
+            $0\le\frac{\widehat{x}(n)^2}{n}
+                \le\frac{\Delta_k^2}{L_k+1}\to0$.
             }
             \bilingual{
-                By the terminal-left convention for $s_n$, $s_n(1)=\sigma^{-1}\sum_{j=1}^{n-1}\xi_j=Y_{n-1}/(\sigma\widehat x(n))$. Thus for $n=n_k=L_{\Delta_k}+1$, the source endpoint is exactly $Y_{L_{\Delta_k}}/(\sigma\Delta_k)$. Therefore
+            Let $s_n$ be given by \eqref{eq:mogulskii-s-n-t}.
             }{
-                按照 $s_n$ 在终点左连续的约定, $s_n(1)=\sigma^{-1}\sum_{j=1}^{n-1}\xi_j=Y_{n-1}/(\sigma\widehat x(n))$. 因而在 $n=n_k=L_{\Delta_k}+1$ 时, 源路径终点恰为 $Y_{L_{\Delta_k}}/(\sigma\Delta_k)$. 所以
+            令 $s_n$ 由 \eqref{eq:mogulskii-s-n-t} 定义.
+            }
+            \bilingual{
+                Define the boundaries and the path class
+            }{
+                定义边界函数及路径类
+            }
+            \begin{equation*}
+                \begin{alignedat}{2}
+                    S_2(t)&=
+                    \begin{cases}
+                        -\frac{a}{\sigma},&0\le t<1,\\
+                        \frac{u-a}{\sigma},&t=1,
+                    \end{cases}
+                    \qquad&
+                    S_1(t)&=
+                    \begin{cases}
+                        \frac{1-a}{\sigma},&0\le t<1,\\
+                        \frac{v-a}{\sigma},&t=1.
+                    \end{cases}
+                \end{alignedat}
+            \end{equation*}
+            \begin{equation*}
+                G:=\{f\in D(0,1):f(0)=0,\
+                    S_2(t)<f(t)<S_1(t)\ \text{for all }t\in[0,1]\}.
+            \end{equation*}
+            \bilingual{
+                The boundary condition in \eqref{eq:mogulskii-S-1-S-2} follows from
+                $\max\{-a,u-a\}=u-a<v-a=\min\{1-a,v-a\}$ and $-a<0<1-a$.
+                The energy is $H_2(G)=\int_0^1(S_1(t)-S_2(t))^{-2}\,dt
+                =\int_0^1\sigma^2\,dt=\sigma^2$.
+            }{
+                条件 \eqref{eq:mogulskii-S-1-S-2} 由
+                $\max\{-a,u-a\}=u-a<v-a=\min\{1-a,v-a\}$ 和 $-a<0<1-a$ 成立.
+                其能量为 $H_2(G)=\int_0^1(S_1(t)-S_2(t))^{-2}\,dt
+                =\int_0^1\sigma^2\,dt=\sigma^2$.
+            }
+            \bilingual{
+                For $0\le j\le L_k$ and at the terminal time,
+            }{
+                对 $0\le j\le L_k$ 及终点时刻,
+            }
+            \begin{equation*}
+                \begin{aligned}
+                    s_{n_k}(t)&=\frac{Y_j}{\sigma\Delta_k}
+                    \quad\left(\frac{j}{n_k}\le t<\frac{j+1}{n_k},\ 0\le j\le L_k\right),\\
+                    s_{n_k}(1)&=\frac{Y_{L_k}}{\sigma\Delta_k}.
+                \end{aligned}
+            \end{equation*}
+            \bilingual{
+                Write $\mathcal G_k:=\{s_{n_k}\in G\}$. Its exact event identity is
+            }{
+                记 $\mathcal G_k:=\{s_{n_k}\in G\}$. 则有以下事件恒等式
+            }
+            \begin{equation*}
+                \begin{aligned}
+                    \mathcal G_k
+                    &=
+                    \left(\bigcap_{j=1}^{L_k}
+                        \left\{-a\Delta_k<Y_j<(1-a)\Delta_k\right\}\right)\\
+                    &\quad\cap
+                    \left\{(u-a)\Delta_k<Y_{L_k}<(v-a)\Delta_k\right\}.
+                \end{aligned}
+            \end{equation*}
+            \bilingual{
+                Also, $S_1(t)-S_2(t)=\frac{1}{\sigma}$ for $0\le t<1$, and the endpoint assumption gives $v_1(\Delta_k)\le u<v\le v_2(\Delta_k)$ for all sufficiently large $k$. Thus
+            }{
+                此外, $0\le t<1$ 时 $S_1(t)-S_2(t)=\frac{1}{\sigma}$, 且端点条件给出充分大的 $k$ 满足 $v_1(\Delta_k)\le u<v\le v_2(\Delta_k)$. 因而
             }
             \begin{align*}
-                \mathbb P(s_{n_k}\in G)
-                &\le
-                \mathbb P\left(
-                    \begin{aligned}
-                        -a\Delta_k\le Y_j\le(1-a)\Delta_k,\,
-                        &\forall j\in[\![1,L_k]\!],\\
-                        &(u-a)\Delta_k\le Y_{L_k}\le(v-a)\Delta_k
-                    \end{aligned}
-                \right)\\
-                &\le
-                \mathbb P\left(
-                    -a\Delta_k\le Y_j\le(1-a)\Delta_k,\,
-                    \forall j\in[\![1,L_k]\!]
-                \right).
+                \mathcal T_k
+                &:=\bigcap_{j=1}^{L_k}
+                    \left\{-a\Delta_k\le Y_j\le(1-a)\Delta_k\right\}
+                    =\mathcal T_{\Delta_k},\\
+                \mathcal E_k
+                &:=\mathcal T_k\cap
+                    \{(v_1(\Delta_k)-a)\Delta_k\le Y_{L_k}
+                        \le(v_2(\Delta_k)-a)\Delta_k\}
+                    =\mathcal E_{\Delta_k}.
+            \end{align*}
+            \begin{equation*}
+                (v_1(\Delta_k)-a)\Delta_k
+                \le(u-a)\Delta_k<Y_{L_k}
+                <(v-a)\Delta_k\le(v_2(\Delta_k)-a)\Delta_k.
+            \end{equation*}
+            \bilingual{
+                Thus $\mathcal G_k\subseteq\mathcal E_k\subseteq\mathcal T_k$.
+            }{
+                因而 $\mathcal G_k\subseteq\mathcal E_k\subseteq\mathcal T_k$.
+            }
+            \bilingual{
+                By \nameref{theorem:mogulskii}, set
+                $q_k:=\frac{\Delta_k^2}{n_k}\log\mathbb P(\mathcal G_k)$.
+                Then $q_k\to-\frac{\pi^2}{2}H_2(G)=c$ since $H_2(G)=\sigma^2$.
+                Hence $\mathbb P(\mathcal G_k)>0$ eventually, and
+                $\mathcal G_k\subseteq\mathcal E_k\subseteq\mathcal T_k$
+                makes their probabilities positive as well.
+                Also,
+                $\frac{n_k}{L_k}=1+\frac{1}{L_k}\to1$,
+            }{
+                由 \nameref{theorem:mogulskii}, 定义
+                $q_k:=\frac{\Delta_k^2}{n_k}\log\mathbb P(\mathcal G_k)$.
+                结合 $H_2(G)=\sigma^2$, 有 $q_k\to-\frac{\pi^2}{2}H_2(G)=c$.
+                因而充分大的 $k$ 满足 $\mathbb P(\mathcal G_k)>0$;
+                结合 $\mathcal G_k\subseteq\mathcal E_k\subseteq\mathcal T_k$,
+                后两事件的概率也为正.
+                又因
+                $\frac{n_k}{L_k}=1+\frac{1}{L_k}\to1$,
+            }
+            \begin{equation*}
+                \frac{\Delta_k^2}{L_k}\log\mathbb P(\mathcal G_k)
+                =\frac{n_k}{L_k}q_k\longrightarrow c.
+            \end{equation*}
+            \bilingual{
+                Applying (i) to $(L_\Delta)$ gives
+                $\frac{\Delta_k^2}{L_k}\log\mathbb P(\mathcal T_k)\to c$.
+            }{
+                对序列 $(L_\Delta)$ 应用 (i), 得
+                $\frac{\Delta_k^2}{L_k}\log\mathbb P(\mathcal T_k)\to c$.
+            }
+            \bilingual{
+                For an event $A$, set
+                $Q_k(A):=\frac{\Delta_k^2}{L_k}\log\mathbb P(A)$.
+                Since $\Delta_k^2/L_k>0$, the event inclusion gives
+            }{
+                对事件 $A$, 记
+                $Q_k(A):=\frac{\Delta_k^2}{L_k}\log\mathbb P(A)$.
+                由于 $\Delta_k^2/L_k>0$, 事件包含关系给出
+            }
+            \begin{align*}
+                c=\lim_{k\to\infty}Q_k(\mathcal G_k)
+                &\le\liminf_{k\to\infty}Q_k(\mathcal E_k)
+                    \le\limsup_{k\to\infty}Q_k(\mathcal E_k)\\
+                &\le\lim_{k\to\infty}Q_k(\mathcal T_k)=c.
             \end{align*}
             \bilingual{
-                Mogul'ski\u i's theorem for this fixed $G$, together with
-                $n_k/L_k\to1$, gives the limit
+            The limits give $\eta\le|\rho_{\mathrm{endpoint}}(\Delta_k)-c|\to0$, which forces $\eta=0$.
+            Hence $\mathcal B_{\mathrm{endpoint},\eta}$ is bounded. Since $\eta>0$ was arbitrary,
+            $\lim_{\Delta\to\infty}\rho_{\mathrm{endpoint}}(\Delta)=c$.
             }{
-                对这个固定的 $G$ 应用 Mogul'ski\u i 定理, 并利用
-                $n_k/L_k\to1$, 得到以下极限:
-            }
-            \begin{equation*}
-                \frac{\Delta_k^2}{L_k}
-                \log\mathbb P(s_{n_k}\in G)
-                \longrightarrow -\frac{\pi^2}{2}\sigma^2.
-            \end{equation*}
-            \bilingual{
-                For the upper bound, enlarge the horizontal tube by
-                $\varepsilon>0$ on both sides. Its width becomes
-                $1+2\varepsilon$, so its rate tends to
-                $-\frac{\pi^2}{2}\sigma^2$ as $\varepsilon\downarrow0$.
-                Squeezing gives the fixed-window limit along the chosen
-                subsequence, a contradiction. The same argument applies to
-                arbitrary sequences $\Delta_k\to\infty$ and
-                $L_k/\Delta_k^2\to\infty$, provided the endpoint windows
-                eventually contain a common interval $[u,v]$. Thus the
-                convergence is uniform over the block choices below.
-            }{
-                为得到上界, 将水平管道两侧各放宽 $\varepsilon>0$. 新管道宽度为
-                $1+2\varepsilon$, 故其速率在 $\varepsilon\downarrow0$ 时趋于
-                $-\frac{\pi^2}{2}\sigma^2$. 由夹逼, 所选子列上固定端点窗的极限
-                成立, 矛盾. 同一论证适用于任意满足 $\Delta_k\to\infty$ 与
-                $L_k/\Delta_k^2\to\infty$ 的序列, 只要端点窗最终包含一个共同区间
-                $[u,v]$. 因而该收敛对下文的分块选择是一致的.
-            }
-            \begin{equation*}
-                \lim_{\Delta\to\infty}
-                \frac{\Delta^2}{L_\Delta}
-                \log\mathbb P\left(
-                    \begin{aligned}
-                        -a\Delta\le Y_j\le(1-a)\Delta,\,
-                        \forall j\in[\![1,L_\Delta]\!],\\
-                        (u-a)\Delta\le Y_{L_\Delta}\le(v-a)\Delta
-                    \end{aligned}
-                \right)
-                =-\frac{\pi^2}{2}\sigma^2.
-            \end{equation*}
-            \bilingual{
-                Finally, the eventual inclusions $v_1(\Delta)\le u<v\le v_2(\Delta)$ sandwich the variable-window event between this fixed-window event and the horizontal-tube event. The fixed-window lower rate was proved above, while the horizontal-tube upper rate follows from the enlarged fixed path classes used there. Their logarithmic rates agree, proving the stated conclusion.
-            }{
-                最后, 对充分大的 $\Delta$, 条件 $v_1(\Delta)\le u<v\le v_2(\Delta)$ 使变动端点窗事件夹在上述固定端点窗事件与水平管道事件之间. 固定端点窗的下界率已在上文证明, 而水平管道的上界率由上文放宽后的固定路径类给出. 两者的对数率相同, 故得所述结论.
+            上述极限给出 $\eta\le|\rho_{\mathrm{endpoint}}(\Delta_k)-c|\to0$, 故 $\eta=0$.
+            因而 $\mathcal B_{\mathrm{endpoint},\eta}$ 有界. 由于 $\eta>0$ 任意,
+            $\lim_{\Delta\to\infty}\rho_{\mathrm{endpoint}}(\Delta)=c$.
             }
         \qedhere
     \end{enumerate}

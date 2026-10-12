@@ -27,6 +27,39 @@ def InHorizontalTube (a width : ℝ) (n : ℕ)
     -a * width ≤ AdditivePath.displacement (k + 1) increment ∧
       AdditivePath.displacement (k + 1) increment ≤ (1 - a) * width
 
+/-- The paper's interval `[lower, lower + width]`, when it contains zero,
+is the horizontal tube with parameter `a = -lower / width`. This keeps the
+paper's translated-interval statement exact while reusing the centered-tube
+probability and block lemmas. -/
+theorem inHorizontalTube_iff_Icc
+    {lower width : ℝ} (hwidth : 0 < width)
+    (hlower : lower ≤ 0) (hupper : 0 ≤ lower + width)
+    {n : ℕ} {increment : ℕ → ℝ} :
+    0 ≤ -lower / width ∧ -lower / width ≤ 1 ∧
+      (InHorizontalTube (-lower / width) width n increment ↔
+        ∀ k : Fin n,
+          AdditivePath.displacement (k + 1) increment ∈
+            Set.Icc lower (lower + width)) := by
+  have ha0 : 0 ≤ -lower / width :=
+    div_nonneg (by linarith) hwidth.le
+  have ha1 : -lower / width ≤ 1 := by
+    apply (div_le_iff₀ hwidth).2
+    linarith
+  have hleft : -(-lower / width) * width = lower := by
+    field_simp [ne_of_gt hwidth]
+  have hright : (1 - (-lower / width)) * width = lower + width := by
+    field_simp [ne_of_gt hwidth]
+    ring
+  have hevent : InHorizontalTube (-lower / width) width n increment ↔
+      ∀ k : Fin n,
+        lower ≤ AdditivePath.displacement (k + 1) increment ∧
+          AdditivePath.displacement (k + 1) increment ≤ lower + width := by
+    unfold InHorizontalTube
+    rw [hleft, hright]
+  refine ⟨ha0, ha1, ?_⟩
+  rw [hevent]
+  simp only [Set.mem_Icc]
+
 /-- A nonempty horizontal tube also constrains its terminal partial sum. -/
 theorem InHorizontalTube.mem_endpoint {a width : ℝ} {n : ℕ}
     {increment : ℕ → ℝ} (h : InHorizontalTube a width n increment) (hn : 0 < n) :

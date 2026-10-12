@@ -7,8 +7,16 @@
         Mogul'ski\u i \mycite{doi:10.1137/1119081} 给出了一个关于具$\alpha$-稳定步长随机游走的小偏差结果. 考虑某个独立同分布的随机变量列 $(\xi_i)_{i\ge 1}$ 和某个以 $n$ 为索引的序列 $(x(n))$. 令
     }
     \begin{equation}
-        s_n(t):=\frac{1}{x(n)}\sum_{i=0}^{\lfloor nt\rfloor}\xi_i,\quad
-        t\in[0,1],\,\xi_0=0.
+        s_n(t):=
+        \begin{cases}
+            \displaystyle\frac{1}{x(n)}
+                \sum_{i=1}^{\lfloor nt\rfloor}\xi_i,
+                &0\le t<1,\\[1ex]
+            \displaystyle\frac{1}{x(n)}
+                \sum_{i=1}^{n-1}\xi_i,
+                &t=1,
+        \end{cases}
+        \quad \text{with an empty sum equal to }0.
         \label{eq:mogulskii-s-n-t}
     \end{equation}
     \bilingual{

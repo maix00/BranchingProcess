@@ -10,6 +10,8 @@ public import Combinatorics.BranchingWalk.Selection.NSelection.Speed
 public import Mathlib.MeasureTheory.Measure.Prod
 public import Mathlib.MeasureTheory.MeasurableSpace.MeasurablyGenerated
 
+@[expose] public section
+
 /-!
 # Almost-sure limits under product measures
 

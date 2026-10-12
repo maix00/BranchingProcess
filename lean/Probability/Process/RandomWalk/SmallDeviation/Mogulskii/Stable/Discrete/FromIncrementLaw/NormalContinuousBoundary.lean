@@ -270,9 +270,233 @@ theorem rawNormalContinuousBoundaryProbabilityRate_of_rawSource
   rw [hcoefficient] at hrate
   exact hrate
 
-/-- The centered, unit-variance continuous-boundary case of Mogul'skii's
-Theorem 3, in the paper's `scale² / n` normalization. The source-path event
-is measurable by its finite-step cell characterization. -/
+/-- The centered finite-variance continuous-boundary case of Mogul'skii's
+Theorem 3, in the paper's `scale² / n` normalization. The variance enters
+through the truncated-second-moment limit; the increment law is not
+standardized. The standard-Gaussian domain-of-attraction input uses the
+norming sequence `sqrt (n * variance)`, while the source-path event still uses
+the original increments and the given `scale`. The source-path event is
+measurable by its finite-step cell characterization. -/
+theorem centeredFiniteVariance_sourceRelativeContinuousBoundaryProbabilityRate
+    {ν : Measure ℝ} [IsProbabilityMeasure ν] {scale : ℕ → ℝ}
+    (hsmall : Asymptotics.IsSmallDeviationScale scale (fun n => Real.sqrt n))
+    (hcentered : ∫ x, x ∂ν = 0)
+    (hsquare : Integrable (fun x : ℝ => x ^ 2) ν)
+    (hvariance : 0 < ∫ x, x ^ 2 ∂ν)
+    (lower upper : C(unitInterval, ℝ))
+    (hwidth : ∀ t, lower t < upper t)
+    (hstartLower : lower ⊥ < 0) (hstartUpper : 0 < upper ⊥) :
+    (∀ᶠ n : ℕ in atTop,
+      0 < (iidSequenceLaw ν
+        {increment : ℕ → ℝ |
+          RandomWalk.sourceNormalizedStepCadlagPathIcc scale n increment ∈
+            relativeContinuousBoundaryCorridorSet lower upper}).toReal) ∧
+    Tendsto
+      (fun n : ℕ => (scale n) ^ 2 / (n : ℝ) * Real.log
+        ((iidSequenceLaw ν
+          {increment : ℕ → ℝ |
+            RandomWalk.sourceNormalizedStepCadlagPathIcc scale n increment ∈
+              relativeContinuousBoundaryCorridorSet lower upper}).toReal))
+      atTop (𝓝 (-(Real.pi ^ 2) / 2 * (∫ x, x ^ 2 ∂ν) *
+        ∫ t : unitInterval, continuousBoundaryDensity 2 lower upper t ∂volume)) := by
+  let G := relativeContinuousBoundaryCorridorSet lower upper
+  let variance : ℝ := ∫ x, x ^ 2 ∂ν
+  let normalization : ℕ → ℝ := fun n => Real.sqrt ((n : ℝ) * variance)
+  let sigma : ℝ := Real.sqrt variance
+  have hvariance' : 0 < variance := by
+    simpa [variance] using hvariance
+  have hsigma : 0 < sigma := Real.sqrt_pos.2 hvariance'
+  have hDOA :=
+    isInDomainOfAttractionAlong_gaussianReal_zero_one_of_centered_integrable_sq
+      ν hcentered hsquare hvariance
+  have hnormalizationRatio : Tendsto
+      (fun n : ℕ => normalization n / Real.sqrt (n : ℝ)) atTop
+        (𝓝 sigma) := by
+    have heq : (fun n : ℕ => normalization n / Real.sqrt (n : ℝ)) =ᶠ[atTop]
+        fun _ => sigma := by
+      filter_upwards [eventually_gt_atTop (0 : ℕ)] with n hn
+      have hnReal : 0 < (n : ℝ) := by exact_mod_cast hn
+      have hsqrt : Real.sqrt ((n : ℝ) * variance) =
+          Real.sqrt (n : ℝ) * Real.sqrt variance :=
+        Real.sqrt_mul (Nat.cast_nonneg n) variance
+      have hsqrtPos : 0 < Real.sqrt (n : ℝ) := Real.sqrt_pos.2 hnReal
+      rw [show normalization n = Real.sqrt ((n : ℝ) * variance) by rfl,
+        hsqrt, show sigma = Real.sqrt variance by rfl]
+      field_simp [ne_of_gt hsqrtPos]
+    exact tendsto_const_nhds.congr' heq.symm
+  have hrootPos : ∀ᶠ n : ℕ in atTop, 0 < Real.sqrt (n : ℝ) := by
+    filter_upwards [eventually_gt_atTop (0 : ℕ)] with n hn
+    exact Real.sqrt_pos.2 (by exact_mod_cast hn)
+  have hsmall' : Asymptotics.IsSmallDeviationScale scale normalization :=
+    hsmall.of_tendsto_normalization_ratio hrootPos hnormalizationRatio hsigma
+  have hstable : IsStrictlyAlphaStable 2 (gaussianReal 0 1) :=
+    isStrictlyAlphaStable_gaussianReal_zero (v := 1) (by norm_num)
+  let source := rawNormalSourceRateData_of_rawSource hsmall' hstable hDOA
+  let rates := source.continuousBoundaryRates lower upper hwidth hstartLower hstartUpper
+  have hrawProbability := rates.probabilityRate
+  have hcoefficient : rateCoefficient 2
+      (rates.source.timeFactor * rates.source.sourceEscapeConstant) =
+        rateCoefficient 2 (-(Real.pi ^ 2) / 8) :=
+    congrArg (rateCoefficient 2) rates.source.normalizedEscape_eq
+  rw [hcoefficient] at hrawProbability
+  have htruncated := tendsto_truncatedSecondMoment ν hsquare
+  have hvarianceLimit : Tendsto
+      (fun n : ℕ => truncatedSecondMoment ν (scale n)) atTop
+        (𝓝 (∫ x, x ^ 2 ∂ν)) := by
+    simpa only [Function.comp_def] using htruncated.comp hsmall.tendsto_atTop
+  have hvariancePositive : ∀ᶠ n : ℕ in atTop,
+      0 < truncatedSecondMoment ν (scale n) :=
+    hvarianceLimit.eventually (Ioi_mem_nhds hvariance)
+  have hscaledRate : Tendsto
+      (fun n : ℕ => (scale n) ^ 2 / (n : ℝ) * Real.log
+        ((iidSequenceLaw ν
+          {increment : ℕ → ℝ |
+            RandomWalk.sourceNormalizedStepCadlagPathIcc scale n increment ∈
+              relativeContinuousBoundaryCorridorSet lower upper}).toReal))
+      atTop (𝓝 (-(Real.pi ^ 2) / 2 * (∫ x, x ^ 2 ∂ν) *
+        ∫ t : unitInterval, continuousBoundaryDensity 2 lower upper t ∂volume)) := by
+    have hproduct := hrawProbability.2.mul hvarianceLimit.neg
+    have hcoefficient' : rateCoefficient 2 (-(Real.pi ^ 2) / 8) =
+        (Real.pi ^ 2) / 2 := by
+      rw [rateCoefficient]
+      norm_num [Real.rpow_natCast]
+      ring
+    have hlimit : rateCoefficient 2 (-(Real.pi ^ 2) / 8) *
+        (∫ t : unitInterval, continuousBoundaryDensity 2 lower upper t ∂volume) *
+          (-(∫ x, x ^ 2 ∂ν)) =
+        -(Real.pi ^ 2) / 2 * (∫ x, x ^ 2 ∂ν) *
+          ∫ t : unitInterval, continuousBoundaryDensity 2 lower upper t ∂volume := by
+      rw [hcoefficient']
+      ring
+    have hEq : (fun n : ℕ => Real.log
+        ((iidSequenceLaw ν
+          {increment : ℕ → ℝ |
+            RandomWalk.sourceNormalizedStepCadlagPathIcc scale n increment ∈
+              relativeContinuousBoundaryCorridorSet lower upper}).toReal) /
+          probabilityRateDenominator 2 ν scale n *
+            (-(truncatedSecondMoment ν (scale n)))) =ᶠ[atTop]
+        (fun n : ℕ => (scale n) ^ 2 / (n : ℝ) * Real.log
+          ((iidSequenceLaw ν
+            {increment : ℕ → ℝ |
+              RandomWalk.sourceNormalizedStepCadlagPathIcc scale n increment ∈
+                relativeContinuousBoundaryCorridorSet lower upper}).toReal)) := by
+      filter_upwards [eventually_gt_atTop (0 : ℕ), hsmall.eventually_pos,
+        hvariancePositive] with n hn hscale hmoment
+      have hnReal : (n : ℝ) ≠ 0 := by exact_mod_cast hn.ne'
+      have hscaleNe : scale n ≠ 0 := ne_of_gt hscale
+      have hmomentNe : truncatedSecondMoment ν (scale n) ≠ 0 := ne_of_gt hmoment
+      rw [probabilityRateDenominator, stableSmallDeviationRate_two]
+      field_simp [hnReal, hscaleNe, hmomentNe]
+    have hlimit' := hproduct.congr' hEq
+    simpa [hlimit] using hlimit'
+  exact ⟨hrawProbability.1, by simpa [G] using hscaledRate⟩
+
+/-- A finite union of admissible step corridors has its finite-variance
+source-path rate in the `scale² / n` normalization. This form is useful when
+the corridor itself has a terminal jump: changing the boundary at `t = 1`
+does not require approximating it by continuous boundaries. -/
+theorem centeredFiniteVariance_sourceFiniteCorridorUnionProbabilityRate
+    {ν : Measure ℝ} [IsProbabilityMeasure ν] {scale : ℕ → ℝ}
+    (hsmall : Asymptotics.IsSmallDeviationScale scale (fun n => Real.sqrt n))
+    (hcentered : ∫ x, x ∂ν = 0)
+    (hsquare : Integrable (fun x : ℝ => x ^ 2) ν)
+    (hvariance : 0 < ∫ x, x ^ 2 ∂ν)
+    (C₃ : FiniteCorridorUnion 2) :
+    (∀ᶠ n : ℕ in atTop,
+      0 < (iidSequenceLaw ν
+        {increment : ℕ → ℝ |
+          RandomWalk.sourceNormalizedStepCadlagPathIcc scale n increment ∈ C₃.toSet}).toReal) ∧
+    Tendsto
+      (fun n : ℕ => (scale n) ^ 2 / (n : ℝ) * Real.log
+        ((iidSequenceLaw ν
+          {increment : ℕ → ℝ |
+            RandomWalk.sourceNormalizedStepCadlagPathIcc scale n increment ∈ C₃.toSet}).toReal))
+      atTop (𝓝 (-(Real.pi ^ 2) / 2 * (∫ x, x ^ 2 ∂ν) * C₃.realEnergy)) := by
+  let variance : ℝ := ∫ x, x ^ 2 ∂ν
+  let normalization : ℕ → ℝ := fun n => Real.sqrt ((n : ℝ) * variance)
+  let sigma : ℝ := Real.sqrt variance
+  have hvariance' : 0 < variance := by simpa [variance] using hvariance
+  have hsigma : 0 < sigma := Real.sqrt_pos.2 hvariance'
+  have hDOA :=
+    isInDomainOfAttractionAlong_gaussianReal_zero_one_of_centered_integrable_sq
+      ν hcentered hsquare hvariance
+  have hnormalizationRatio : Tendsto
+      (fun n : ℕ => normalization n / Real.sqrt (n : ℝ)) atTop (𝓝 sigma) := by
+    have heq : (fun n : ℕ => normalization n / Real.sqrt (n : ℝ)) =ᶠ[atTop]
+        fun _ => sigma := by
+      filter_upwards [eventually_gt_atTop (0 : ℕ)] with n hn
+      have hnReal : 0 < (n : ℝ) := by exact_mod_cast hn
+      have hsqrt : Real.sqrt ((n : ℝ) * variance) =
+          Real.sqrt (n : ℝ) * Real.sqrt variance :=
+        Real.sqrt_mul (Nat.cast_nonneg n) variance
+      have hsqrtPos : 0 < Real.sqrt (n : ℝ) := Real.sqrt_pos.2 hnReal
+      rw [show normalization n = Real.sqrt ((n : ℝ) * variance) by rfl,
+        hsqrt, show sigma = Real.sqrt variance by rfl]
+      field_simp [ne_of_gt hsqrtPos]
+    exact tendsto_const_nhds.congr' heq.symm
+  have hrootPos : ∀ᶠ n : ℕ in atTop, 0 < Real.sqrt (n : ℝ) := by
+    filter_upwards [eventually_gt_atTop (0 : ℕ)] with n hn
+    exact Real.sqrt_pos.2 (by exact_mod_cast hn)
+  have hsmall' : Asymptotics.IsSmallDeviationScale scale normalization :=
+    hsmall.of_tendsto_normalization_ratio hrootPos hnormalizationRatio hsigma
+  have hstable : IsStrictlyAlphaStable 2 (gaussianReal 0 1) :=
+    isStrictlyAlphaStable_gaussianReal_zero (v := 1) (by norm_num)
+  let source := rawNormalSourceRateData_of_rawSource hsmall' hstable hDOA
+  have hraw := source.finiteCorridorUnionRate C₃
+  have htruncated := tendsto_truncatedSecondMoment ν hsquare
+  have hvarianceLimit : Tendsto
+      (fun n : ℕ => truncatedSecondMoment ν (scale n)) atTop (𝓝 variance) := by
+    simpa only [Function.comp_def] using htruncated.comp hsmall.tendsto_atTop
+  have hvariancePositive : ∀ᶠ n : ℕ in atTop,
+      0 < truncatedSecondMoment ν (scale n) :=
+    hvarianceLimit.eventually (Ioi_mem_nhds hvariance')
+  have hcoefficient : rateCoefficient 2 (-(Real.pi ^ 2) / 8) = (Real.pi ^ 2) / 2 := by
+    rw [rateCoefficient]
+    norm_num [Real.rpow_natCast]
+    ring
+  have hscaledRate : Tendsto
+      (fun n : ℕ => (scale n) ^ 2 / (n : ℝ) * Real.log
+        ((iidSequenceLaw ν
+          {increment : ℕ → ℝ |
+            RandomWalk.sourceNormalizedStepCadlagPathIcc scale n increment ∈ C₃.toSet}).toReal))
+      atTop (𝓝 (-(Real.pi ^ 2) / 2 * variance * C₃.realEnergy)) := by
+    have hrawLimit : Tendsto
+        (fun n : ℕ => Real.log
+          ((iidSequenceLaw ν
+            {increment : ℕ → ℝ |
+              RandomWalk.sourceNormalizedStepCadlagPathIcc scale n increment ∈ C₃.toSet}).toReal) /
+            probabilityRateDenominator 2 ν scale n)
+        atTop (𝓝 ((Real.pi ^ 2) / 2 * C₃.realEnergy)) := by
+      have hnormalized := hraw.2.2
+      have hescape : source.timeFactor * source.sourceEscapeConstant =
+          -(Real.pi ^ 2) / 8 := source.normalizedEscape_eq
+      rw [hescape] at hnormalized
+      simpa [hcoefficient] using hnormalized
+    have hproduct := hrawLimit.mul hvarianceLimit.neg
+    have hEq : (fun n : ℕ => Real.log
+        ((iidSequenceLaw ν
+          {increment : ℕ → ℝ |
+            RandomWalk.sourceNormalizedStepCadlagPathIcc scale n increment ∈ C₃.toSet}).toReal) /
+          probabilityRateDenominator 2 ν scale n *
+            (-(truncatedSecondMoment ν (scale n)))) =ᶠ[atTop]
+        (fun n : ℕ => (scale n) ^ 2 / (n : ℝ) * Real.log
+          ((iidSequenceLaw ν
+            {increment : ℕ → ℝ |
+              RandomWalk.sourceNormalizedStepCadlagPathIcc scale n increment ∈ C₃.toSet}).toReal)) := by
+      filter_upwards [eventually_gt_atTop (0 : ℕ), hsmall.eventually_pos,
+        hvariancePositive] with n hn hscale hmoment
+      have hnReal : (n : ℝ) ≠ 0 := by exact_mod_cast hn.ne'
+      have hscaleNe : scale n ≠ 0 := ne_of_gt hscale
+      have hmomentNe : truncatedSecondMoment ν (scale n) ≠ 0 := ne_of_gt hmoment
+      rw [probabilityRateDenominator, stableSmallDeviationRate_two]
+      field_simp [hnReal, hscaleNe, hmomentNe]
+    have hlimit : (Real.pi ^ 2) / 2 * C₃.realEnergy * (-variance) =
+        -(Real.pi ^ 2) / 2 * variance * C₃.realEnergy := by ring
+    simpa [hlimit] using hproduct.congr' hEq
+  exact ⟨hraw.2.1, hscaledRate⟩
+
+/-- The unit-variance continuous-boundary rate is the finite-variance result
+specialized to second moment one. -/
 theorem centeredUnitVariance_sourceRelativeContinuousBoundaryProbabilityRate
     {ν : Measure ℝ} [IsProbabilityMeasure ν] {scale : ℕ → ℝ}
     (hsmall : Asymptotics.IsSmallDeviationScale scale (fun n => Real.sqrt n))
@@ -295,67 +519,12 @@ theorem centeredUnitVariance_sourceRelativeContinuousBoundaryProbabilityRate
               relativeContinuousBoundaryCorridorSet lower upper}).toReal))
       atTop (𝓝 (-(Real.pi ^ 2) / 2 *
         ∫ t : unitInterval, continuousBoundaryDensity 2 lower upper t ∂volume)) := by
-  let G := relativeContinuousBoundaryCorridorSet lower upper
-  have hG : HasRelativeVanishingEnergyGapApproximation 2
-      Skorokhod.terminalLeftPathSpace G := by
-    simpa [G] using continuousBoundary_hasRelativeVanishingEnergyGapApproximation
-      2 lower upper hwidth hstartLower hstartUpper
-  let rates : HasSourceFiniteVarianceScaledRelativeRate (ν := ν) scale G :=
-    sourceScaledInnerOuterLogRate_of_centered_unitVariance
-      hsmall hcentered hsquare hvariance hG
-  have hnull : ∀ n : ℕ, NullMeasurableSet
-      {increment : ℕ → ℝ |
-        RandomWalk.sourceNormalizedStepCadlagPathIcc scale n increment ∈
-          relativeContinuousBoundaryCorridorSet lower upper}
-      (iidSequenceLaw ν) := by
-    intro n
-    exact (RandomWalk.measurableSet_sourceNormalizedStepCadlagPathIcc_preimage_relativeContinuousBoundaryCorridorSet
-      lower upper scale n).nullMeasurableSet
-  have hprobability := rates.probabilityRate (by simpa [G] using hnull)
-  have henergy : rates.energy =
-      ∫ t : unitInterval, continuousBoundaryDensity 2 lower upper t ∂volume := by
-    let source := rawNormalSourceRateData_of_centered_unitVariance
-      hsmall hcentered hsquare hvariance
-    let paths : ℕ → (ℕ → ℝ) → CadlagPath unitInterval ℝ := fun n increment =>
-      RandomWalk.sourceNormalizedStepCadlagPathIcc scale n increment
-    let denominator : ℕ → ℝ := probabilityRateDenominator 2 ν scale
-    have hpaths : ∀ n increment, paths n increment ∈
-        Skorokhod.terminalLeftPathSpace := by
-      intro n increment
-      exact Skorokhod.terminalLeftPath_mem_space
-        (RandomWalk.normalizedStepCadlagPathIcc scale n increment)
-    have hnegative : source.timeFactor * source.sourceEscapeConstant < 0 := by
-      rw [source.normalizedEscape_eq]
-      nlinarith [sq_pos_of_pos Real.pi_pos]
-    have hκ : 0 < rateCoefficient 2
-        (source.timeFactor * source.sourceEscapeConstant) :=
-      rateCoefficient_pos hnegative
-    have hFiniteUnionRate : ∀ C₃ : FiniteCorridorUnion 2,
-        (∀ n : ℕ, NullMeasurableSet
-          {increment : ℕ → ℝ | paths n increment ∈ C₃.toSet}
-          (iidSequenceLaw ν)) ∧
-        (∀ᶠ n : ℕ in atTop,
-          0 < (iidSequenceLaw ν
-            {increment : ℕ → ℝ | paths n increment ∈ C₃.toSet}).toReal) ∧
-        Tendsto (fun n : ℕ => Real.log
-          ((iidSequenceLaw ν
-            {increment : ℕ → ℝ | paths n increment ∈ C₃.toSet}).toReal) /
-              denominator n)
-          atTop (𝓝 (rateCoefficient 2
-            (source.timeFactor * source.sourceEscapeConstant) * C₃.realEnergy)) := by
-      intro C₃
-      simpa [paths, denominator] using source.finiteCorridorUnionRate C₃
-    obtain ⟨otherApproximation, otherLimits, hOtherEnergy⟩ :=
-      exists_continuousBoundary_relativeApproximation_commonEnergy_eq_integral
-        2 lower upper hwidth hstartLower hstartUpper
-    have hcommonEnergy :=
-      RelativeFiniteCorridorUnionEnergyLimits.commonEnergy_eq_of_approximation
-        (iidSequenceLaw ν) paths Skorokhod.terminalLeftPathSpace hpaths denominator
-        source.denominator_tendsto_atBot hκ rates.approximation otherApproximation
-        rates.energyLimits otherLimits hFiniteUnionRate
-    exact rates.energy_eq.trans (hcommonEnergy.trans hOtherEnergy)
-  refine ⟨hprobability.1, ?_⟩
-  simpa [henergy, G] using hprobability.2
+  have hvariancePos : 0 < ∫ x : ℝ, x ^ 2 ∂ν := by
+    rw [hvariance]
+    norm_num
+  simpa [hvariance] using
+    centeredFiniteVariance_sourceRelativeContinuousBoundaryProbabilityRate
+      hsmall hcentered hsquare hvariancePos lower upper hwidth hstartLower hstartUpper
 
 end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete
 

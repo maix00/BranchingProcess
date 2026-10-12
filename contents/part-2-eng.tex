@@ -77,10 +77,10 @@
 
 \begin{proof}\label{proof:lemma:4.1}
     \bilingual{
-        By applying \nameref{theorem:mogulskii} (see \Cref{lemma:mogulskii-cal} (ii))% and \Cref{example:mogulskii-L-1})
+        By applying \nameref{theorem:mogulskii} (see \Cref{lemma:mogulskii-cal} (i))% and \Cref{example:mogulskii-L-1})
         , for all $a\in(0,1)$ and $\ell=\ell(\Delta)=\lfloor\frac 1d\Delta^{2+v}\rfloor$,
     }{
-        通过应用 \nameref{theorem:mogulskii} (参见\Cref{lemma:mogulskii-cal} (ii))% 和\Cref{example:mogulskii-L-1})
+        通过应用 \nameref{theorem:mogulskii} (参见\Cref{lemma:mogulskii-cal} (i))% 和\Cref{example:mogulskii-L-1})
         , 对所有 $a\in(0,1)$ 和 $\ell=\ell(\Delta)=\lfloor\frac 1d\Delta^{2+v}\rfloor$,
     }
     \begin{equation*}
@@ -1107,9 +1107,9 @@
         <1.
     $
     \bilingual{
-        Apply \nameref{theorem:mogulskii} (see \Cref{lemma:mogulskii-cal} (iii), with $\Delta(k)$ in lieu of $\Delta$, $|I_k|$ in lieu of $L_\Delta$ and $\tilde Y$ in lieu of $Y$), since
+        Apply \nameref{theorem:mogulskii} (see \Cref{lemma:mogulskii-cal} (ii), with $\Delta(k)$ in place of $\Delta$, $|I_k|$ in place of $L_\Delta$, and $\tilde Y$ in place of $Y$), since
     }{
-        应用\nameref{theorem:mogulskii}(参见\Cref{lemma:mogulskii-cal} (iii), 参数设置为$\Delta(k)$代替$\Delta$, $|I_k|$代替$L_\Delta$, ~$\tilde Y$代替$Y$), 由于
+        应用\nameref{theorem:mogulskii}(参见\Cref{lemma:mogulskii-cal} (ii), 参数取 $\Delta(k)$、$|I_k|$ 和 $\tilde Y$, 分别对应 $\Delta$、$L_\Delta$ 和 $Y$), 由于
     }
     \begin{equation*}
         \lim_{\Delta(k)\to\infty} \frac\Delta{\Delta(k)} = 1,
@@ -1152,9 +1152,9 @@
         \label{eq:lemma:4.3:1}
     \end{equation}
     \bilingual{
-        Following the reasoning as in the \nameref{proof:lemma:4.1}, we can deduce that there exists $\Delta_0=\Delta_0(v,d',\varepsilon,c)>\Delta_3$ such that for all $\Delta\ge\Delta_0$, all $k\in[\![1,q]\!]$ and all $r'_0\in[-\frac 23\Delta(k),-\frac 13\Delta(k)]$,
+        Following the proof of \Cref{lemma:4.1}, there exists $\Delta_0=\Delta_0(v,d',\varepsilon,c)>\Delta_3$ such that for all $\Delta\ge\Delta_0$, all $k\in[\![1,q]\!]$ and all $r'_0\in[-\frac 23\Delta(k),-\frac 13\Delta(k)]$,
     }{
-        参照\nameref{proof:lemma:4.1}的推理, 可推得存在 $\Delta_0=\Delta_0(v,d',\varepsilon,c)>\Delta_3$, 使得对所有 $\Delta\ge\Delta_0$, $k\in[\![1,q]\!]$ 且 $r'_0\in[-\frac 23\Delta(k),-\frac 13\Delta(k)]$, 成立
+        由\Cref{lemma:4.1}的证明, 存在 $\Delta_0=\Delta_0(v,d',\varepsilon,c)>\Delta_3$, 使得对所有 $\Delta\ge\Delta_0$, $k\in[\![1,q]\!]$ 且 $r'_0\in[-\frac 23\Delta(k),-\frac 13\Delta(k)]$, 成立
     }
     \begin{equation*}
         \mathbb P\left(\;
@@ -1199,9 +1199,9 @@
         \widehat v_2:=\frac{v_2-\delta}{w}.
     \end{equation*}
     \bilingual{
-        The fixed-window hypothesis in \Cref{lemma:mogulskii-cal} (iii) holds uniformly over the grid cells and blocks. For $k<q$, the formulas for $v_1,v_2$ and $|I_{k+1}|\le2\ell=O(\Delta^{2+\eta})$, with $\eta<1$ and $\Delta(k)/\Delta\to1$, give uniformly
+        The fixed-window hypothesis in \Cref{lemma:mogulskii-cal} (ii) holds uniformly over the grid cells and blocks. For $k<q$, the formulas for $v_1,v_2$ and $|I_{k+1}|\le2\ell=O(\Delta^{2+\eta})$, with $\eta<1$ and $\Delta(k)/\Delta\to1$, give uniformly
     }{
-        \Cref{lemma:mogulskii-cal} (iii) 中的固定端点窗条件对所有网格单元与分块一致成立. 对 $k<q$, 由 $v_1,v_2$ 的定义、$|I_{k+1}|\le2\ell=O(\Delta^{2+\eta})$、$\eta<1$ 以及 $\Delta(k)/\Delta\to1$, 可一致得到
+        \Cref{lemma:mogulskii-cal} (ii) 中的固定端点窗条件对所有网格单元与分块一致成立. 对 $k<q$, 由 $v_1,v_2$ 的定义、$|I_{k+1}|\le2\ell=O(\Delta^{2+\eta})$、$\eta<1$ 以及 $\Delta(k)/\Delta\to1$, 可一致得到
     }
     \begin{equation*}
         \widehat v_1\longrightarrow\frac1{3w}\le\frac25<\frac9{20},
@@ -1213,29 +1213,85 @@
     }{
         因此, 对每个内部块, 固定区间 $[\frac9{20},\frac{11}{20}]$ 最终包含于 $[\widehat v_1,\widehat v_2]$. 对 $k=q$, 有 $v_1=0$ 且 $v_2=v\Delta/\Delta(q)\to v$, 故 $\widehat v_1=0$ 且 $\widehat v_2\to(v-\delta)/w>v/2$. 令 $\rho:=\min\{\frac14,\frac v8\}$, 有 $0<\rho<2\rho<1$ 且 $2\rho<v/2$, 故固定区间 $[\rho,2\rho]$ 最终包含于 $[\widehat v_1,\widehat v_2]$. 对于上端点估计 \eqref{eq:4.3:2}, 反射后的终端窗局部比例为 $v_1^{\mathrm R}=(1-v)\Delta/\Delta(q)$ 与 $v_2^{\mathrm R}=\Delta/\Delta(q)$. 取相同分箱交集并按缩窄宽度重标度后, 比例为 $\widehat v_1^{\mathrm R}=v_1^{\mathrm R}/w$ 与 $\widehat v_2^{\mathrm R}=(v_2^{\mathrm R}-\delta)/w$, 分别趋于 $\alpha:=(1-v)/w$ 与 $1$. 由于 $v>2\delta$, 有 $\alpha<1$. 取固定 $0<u_*<v_*<1$ 且 $\max\{0,\alpha\}<u_*$. 则 $[u_*,v_*]$ 最终包含于反射后的端点窗. 因而每种情形都提供了一个严格位于 $(0,1)$ 内且长度为正的固定端点区间.
     }
-    \bilingual{
-        Applying the sequential form of (iii) to the narrowed tube and these endpoint windows yields the following limit, uniformly over the grid cells $l$ and all blocks $k$:
-    }{
-        对缩窄管道应用 (iii) 的序列形式可得下式, 且对所有网格单元 $l$ 与分块 $k$ 一致成立:
-    }
+    \bilingual{For $l\in[\![0,m-1]\!]$ and $k\in[\![1,q]\!]$, define}{对 $l\in[\![0,m-1]\!]$ 和 $k\in[\![1,q]\!]$, 定义}
     \begin{equation*}
-        \lim_{\Delta\to\infty}
-        \sup_{\substack{l\in[\![0,m-1]\!]\\ k\in[\![1,q]\!]}}
-        \left|
-        \frac{w^2\Delta^2}{|I_k|}
-        \log\mathbb P\left(
-            \begin{aligned}
-                b_{l+1}\le\frac{\tilde Y_j}{\Delta(k)}\le b_l+1,\quad&\forall j,\\
-                b_{l+1}+v_1\le\frac{\tilde Y_{|I_k|}}{\Delta(k)}\le b_l+v_2
-            \end{aligned}
-        \right)
-        +\frac{\pi^2}2\sigma^2
-        \right|=0.
+        \mathcal Q_{\Delta,l,k}:=
+        \left\{
+        \begin{aligned}
+            b_{l+1}\Delta(k)&\le\tilde Y_j\le(b_l+1)\Delta(k),
+                &&j\in[\![1,|I_k|]\!],\\
+            (b_{l+1}+v_1)\Delta(k)&\le\tilde Y_{|I_k|}
+                \le(b_l+v_2)\Delta(k).
+        \end{aligned}
+        \right\}
+    \end{equation*}
+    \bilingual{The normalized log probability is}{记其归一化对数概率为}
+    \begin{equation*}
+        R_{\Delta,l,k}:=
+        \frac{w^2\Delta^2}{|I_k|}\log\mathbb P(\mathcal Q_{\Delta,l,k})
+        +\frac{\pi^2}{2}\sigma^2.
     \end{equation*}
     \bilingual{
-        To justify the uniform quantifier, suppose the displayed limit failed. Then for some sequence $\Delta_n\to\infty$ we could choose bad indices $l_n,k_n$. Since there are finitely many $l$, pass to a subsequence with $l_n=l$ fixed; then pass further so either every $k_n<q_n$ or every $k_n=q_n$. In the first case the fixed interior window $[\frac9{20},\frac{11}{20}]$ is eventually contained in every corresponding endpoint interval; in the second case use $[\rho,2\rho]$. Uniformly in $k$, $\Delta(k)/\Delta\to1$ and $|I_k|/\Delta(k)^2\to\infty$, because $|I_k|\ge\ell\asymp\Delta^{2+\eta}$, $|I_k|<2\ell$, and $\Delta(k)=\Delta-O(\ell/\Delta^2)$. Thus the sequential form of (iii), applied with width $w\Delta_n(k_n)$ and length $|I_{k_n}|$, gives the rate $-\frac{\pi^2}{2}\sigma^2$ along this bad subsequence. Since $\Delta_n(k_n)/\Delta_n\to1$, the displayed normalization has the same limit, a contradiction. The same argument for the reflected terminal window proves the uniform estimate needed for \eqref{eq:4.3:2}.
+        We prove $\lim_{\Delta\to\infty}\sup_{l,k}|R_{\Delta,l,k}|=0$. Fix $\varepsilon>0$. If the set of triples $(\Delta,l,k)$ satisfying $\varepsilon\le|R_{\Delta,l,k}|$ has unbounded $\Delta$-coordinates, choose such triples $(\Delta_n,l_n,k_n)$ with $\Delta_n\to\infty$. Since there are finitely many grid cells, pass to a subsequence with $l_n=l$ fixed, and then to one on which either $k_n<q_n$ for every $n$ or $k_n=q_n$ for every $n$. The corresponding endpoint intervals contain a fixed interval $[u_*,v_*]\subset(0,1)$: take $[\frac9{20},\frac{11}{20}]$ when $k_n<q_n$, and $[\rho,2\rho]$ when $k_n=q_n$. Set $d_n:=w\Delta_n(k_n)$ and $m_n:=|I_{k_n}|$. Since $\Delta_n(k_n)/\Delta_n\to1$ and $|I_{k_n}|\ge\ell\asymp\Delta_n^{2+\eta}$,
     }{
-        为说明这里的一致量词, 反设所示极限不成立. 则存在序列 $\Delta_n\to\infty$ 及坏指标 $l_n,k_n$. 因为 $l$ 只有有限个, 可取子列使 $l_n=l$ 固定; 再取子列, 可设要么对所有 $n$ 都有 $k_n<q_n$, 要么对所有 $n$ 都有 $k_n=q_n$. 第一种情形最终包含固定内部区间 $[\frac9{20},\frac{11}{20}]$; 第二种情形使用 $[\rho,2\rho]$. 一致地对所有 $k$, 有 $\Delta(k)/\Delta\to1$ 和 $|I_k|/\Delta(k)^2\to\infty$, 因为 $|I_k|\ge\ell\asymp\Delta^{2+\eta}$、$|I_k|<2\ell$ 且 $\Delta(k)=\Delta-O(\ell/\Delta^2)$. 因此, 对宽度 $w\Delta_n(k_n)$ 和长度 $|I_{k_n}|$ 应用 (iii) 的序列形式, 得到该坏子列上的速率为 $-\frac{\pi^2}{2}\sigma^2$. 又因 $\Delta_n(k_n)/\Delta_n\to1$, 显示式中的归一化有相同极限, 矛盾. 对反射后的终端窗作相同论证, 即得 \eqref{eq:4.3:2} 所需的一致估计.
+        我们证明 $\lim_{\Delta\to\infty}\sup_{l,k}|R_{\Delta,l,k}|=0$. 固定 $\varepsilon>0$. 若满足 $\varepsilon\le|R_{\Delta,l,k}|$ 的三元组 $(\Delta,l,k)$ 的 $\Delta$ 坐标无界, 取其中一列 $(\Delta_n,l_n,k_n)$ 使 $\Delta_n\to\infty$. 网格单元数有限, 可取子列使 $l_n=l$ 固定; 再取子列, 使得对每个 $n$ 都有 $k_n<q_n$, 或对每个 $n$ 都有 $k_n=q_n$. 相应端点区间包含某个固定区间 $[u_*,v_*]\subset(0,1)$: 当 $k_n<q_n$ 时取 $[\frac9{20},\frac{11}{20}]$, 当 $k_n=q_n$ 时取 $[\rho,2\rho]$. 令 $d_n:=w\Delta_n(k_n)$ 且 $m_n:=|I_{k_n}|$. 由于 $\Delta_n(k_n)/\Delta_n\to1$ 且 $|I_{k_n}|\ge\ell\asymp\Delta_n^{2+\eta}$,
+    }
+    \begin{equation*}
+        d_n\longrightarrow\infty,
+        \qquad
+        \frac{m_n}{d_n^2}\longrightarrow\infty.
+    \end{equation*}
+    \bilingual{
+        Pass to a further subsequence with $d_n$ strictly increasing. Define functions on $d>0$ by
+    }{
+        再取子列使 $d_n$ 严格递增. 对 $d>0$ 定义函数
+    }
+    \begin{align*}
+        \widetilde L_d&:=
+        \begin{cases}
+            m_n,&d=d_n,\\
+            \lceil d^3\rceil,&d\notin\{d_n:n\ge1\},
+        \end{cases}\\
+        \widetilde v_1(d)&:=
+        \begin{cases}
+            \widehat v_{1,n},&d=d_n,\\
+            0,&d\notin\{d_n:n\ge1\},
+        \end{cases}
+        &
+        \widetilde v_2(d)&:=
+        \begin{cases}
+            \widehat v_{2,n},&d=d_n,\\
+            1,&d\notin\{d_n:n\ge1\}.
+        \end{cases}
+    \end{align*}
+    \bilingual{
+        Here $\widehat v_{1,n}=v_1(\Delta_n(k_n))/w$ and
+        $\widehat v_{2,n}=(v_2(\Delta_n(k_n))-\delta)/w$. The preceding endpoint inclusions give $\widetilde v_1(d)\le u_*<v_*\le\widetilde v_2(d)$ for all sufficiently large $d$, and $m_n/d_n^2\to\infty$ together with $\lceil d^3\rceil/d^2\to\infty$ gives $\widetilde L_d/d^2\to\infty$. Part (ii), applied to these functions and the fixed parameters $a_l,u_*,v_*$, now yields
+    }{
+        其中 $\widehat v_{1,n}=v_1(\Delta_n(k_n))/w$ 且
+        $\widehat v_{2,n}=(v_2(\Delta_n(k_n))-\delta)/w$. 由前述端点区间包含关系, 对充分大的 $d$ 有 $\widetilde v_1(d)\le u_*<v_*\le\widetilde v_2(d)$; 又由 $m_n/d_n^2\to\infty$ 及 $\lceil d^3\rceil/d^2\to\infty$, 得 $\widetilde L_d/d^2\to\infty$. 对这些函数及固定参数 $a_l,u_*,v_*$ 应用第 (ii) 部分, 得
+    }
+    \begin{equation*}
+        \begin{aligned}
+            -a_l d_n&=b_{l+1}\Delta_n(k_n),
+            &(1-a_l)d_n&=(b_l+1)\Delta_n(k_n),\\
+            (\widehat v_{1,n}-a_l)d_n&=(b_{l+1}+v_1)\Delta_n(k_n),
+            &(\widehat v_{2,n}-a_l)d_n&=(b_l+v_2)\Delta_n(k_n).
+        \end{aligned}
+    \end{equation*}
+    \bilingual{
+        Thus the event in part (ii) is exactly $\mathcal Q_{\Delta_n,l_n,k_n}$, and
+    }{
+        因而第 (ii) 部分中的事件恰为 $\mathcal Q_{\Delta_n,l_n,k_n}$, 且
+    }
+    \begin{equation*}
+        \frac{d_n^2}{m_n}\log\mathbb P(\mathcal Q_{\Delta_n,l_n,k_n})
+        \longrightarrow-\frac{\pi^2}{2}\sigma^2.
+    \end{equation*}
+    \bilingual{
+        Because $d_n^2=w^2\Delta_n(k_n)^2$ and $\Delta_n(k_n)/\Delta_n\to1$, this gives $R_{\Delta_n,l_n,k_n}\to0$, contrary to $\varepsilon\le|R_{\Delta_n,l_n,k_n}|$. Hence for each $\varepsilon>0$ the set of such triples has bounded $\Delta$-coordinates, which is the claimed uniform limit. The reflected terminal window in \eqref{eq:4.3:2} has the same proof, with its fixed interior interval and reflected endpoint fractions.
+    }{
+        由于 $d_n^2=w^2\Delta_n(k_n)^2$ 且 $\Delta_n(k_n)/\Delta_n\to1$, 上式给出 $R_{\Delta_n,l_n,k_n}\to0$, 与 $\varepsilon\le|R_{\Delta_n,l_n,k_n}|$ 矛盾. 因此, 对每个 $\varepsilon>0$, 满足该不等式的三元组的 $\Delta$ 坐标有界, 这正是所需的一致极限. 对 \eqref{eq:4.3:2} 中反射后的终端窗, 使用其固定内部区间及反射后的端点比例可作同样证明.
     }
     \bilingual{
         Since there are finitely many grid cells and $d''w^2>\frac{\pi^2}2\sigma^2$, the resulting lower bound holds for all sufficiently large $\Delta$ uniformly over $l$ and the block choices:
@@ -1243,12 +1299,7 @@
         由于网格单元只有有限个且 $d''w^2>\frac{\pi^2}2\sigma^2$, 对充分大的 $\Delta$, 下界对所有 $l$ 及各分块选择一致成立:
     }
     \begin{equation*}
-        \mathbb P\left(
-            \begin{aligned}
-                b_{l+1}\le\frac{\tilde Y_j}{\Delta(k)}\le b_l+1,\quad&\forall j,\\
-                b_{l+1}+v_1\le\frac{\tilde Y_{|I_k|}}{\Delta(k)}\le b_l+v_2
-            \end{aligned}
-        \right)
+        \mathbb P(\mathcal Q_{\Delta,l,k})
         \ge
         \exp\left(-\frac{d''}{\Delta^2}|I_k|\right).
     \end{equation*}
