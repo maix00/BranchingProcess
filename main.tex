@@ -30,19 +30,40 @@
     \makeatother
 \fi
 
-\newcommand{\bilingual}[2]{%
-  \ifchinese
-    #2\relax
+% Ignore the source line-break space between consecutive \bilingual calls in
+% Chinese mode (xeCJK supplies the natural boundary spacing).  Keep one space
+% in English mode, and leave ordinary spaces before other tokens unchanged.
+% A blank line is still a \par token, so it remains a paragraph break.
+\makeatletter
+\def\bilingual@checkspace{%
+  \futurelet\bilingual@nexttoken\bilingual@checkspace@i}
+\def\bilingual@checkspace@i{%
+  \ifx\bilingual@nexttoken\@sptoken
+    \expandafter\bilingual@eatspace\fi}
+\def\bilingual@eatspace {%
+  \futurelet\bilingual@nexttoken\bilingual@afterspace}
+\def\bilingual@afterspace{%
+  \ifx\bilingual@nexttoken\bilingual
+    \ifchinese\else\space\fi
+  \else\ifx\bilingual@nexttoken\par
+    % The source space before a blank line is discarded at paragraph end.
   \else
-    #1\relax
-  \fi
-}
+    \space
+  \fi\fi}
+\DeclareRobustCommand{\bilingual}[2]{%
+  \ifchinese #2\relax\else #1\relax\fi
+  \bilingual@checkspace}
+\makeatother
 
 
 % \documentclass[type=master]{fduthesis-en}%硕士
 % \documentclass[type=doctor]{fduthesis}
 
 \input{setup}
+% The spacing look-ahead is for typesetting only; keep it out of PDF bookmarks.
+\pdfstringdefDisableCommands{%
+  \def\bilingual#1#2{\ifchinese #2\else #1\fi}%
+}
 \setlength{\abovedisplayskip}{0pt}
 \setlength{\belowdisplayskip}{0pt}
 \usepackage{enumitem}
