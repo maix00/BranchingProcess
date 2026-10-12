@@ -247,6 +247,20 @@ theorem rankedPopulation_card_eq_of_rankedBatches_good
   | succ n ih =>
       exact rankedPopulation_succ_card_of_good N n initial field ih (hgood n)
 
+/-- The same full-cardinality statement with the public root-indexed
+population, for use by modules that do not have access to the private ranked
+population abbreviation. -/
+theorem selectedPopulationTotalized_card_eq_of_rankedBatches_good
+    (N : ℕ) (initial : Fin N → ℝ)
+    [LinearOrder (RootIndexed.TreeNode (Fin N) ℕ)]
+    (field : RootIndexed.StepField (Fin N) ℕ ℝ)
+    (hgood : ∀ n, IsGoodInfiniteOffspringBatch
+      (selectedRootBatch (selectedPopulationRankRoots N initial) n field)) :
+    ∀ n, (RootIndexed.selectedPopulationTotalized N Finset.univ
+      initial id id n field).card = N := by
+  simpa [rankedPopulation] using
+    rankedPopulation_card_eq_of_rankedBatches_good N initial field hgood
+
 private theorem rankedPosition_succ_eq_transition
     (N n : ℕ) (initial : Fin N → ℝ)
     [LinearOrder (RootIndexed.TreeNode (Fin N) ℕ)]

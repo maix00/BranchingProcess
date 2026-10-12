@@ -125,6 +125,24 @@ the exact variable-length last block. Intermediate rate adapters accept a
 stable-process witness `hX`; the tested `FromIncrementLaw/` public theorems construct
 that witness internally from the stated raw domain-of-attraction assumptions.
 
+### Lemmas applying the path-rate theorem: compiled numbering and proof order
+
+The current `main.tex` PDF was compiled to check theorem counters and labels;
+the strings in `\label{...}` are keys, not displayed numbers. Lemma 3.1 is in
+`contents/part-1-eng.tex`; Lemmas 3.2–3.5 continue in `contents/part-2-eng.tex`.
+The order here follows the displayed PDF numbers.
+
+| PDF number | TeX label key | Paper statement and dependency | Lean status |
+|---|---|---|---|
+| 3.1(i) | `lemma:mogulskii-cal` | For each real width `Δ>0` and integer time horizon `L_Δ` with `L_Δ/Δ²→∞`, the horizontal-tube probability has rate `−π²σ²/2`. | **Formalized for integer widths.** `FromIncrementLaw/HorizontalTube.lean` proves the rate for `L:ℕ→ℕ`, identifying the event with the terminal-left source path convention and squeezing the closed tube between inward and outward strict corridors. The paper proof uses the same interpolation for positive real widths, which are needed for the local widths `Δ(k)` in part 4. The inverse-scale and width-monotonicity results remain Lean infrastructure; the revised paper proof does not require them as separate lemmas. |
+| 3.1(ii) | `lemma:mogulskii-cal` | Under the same width-time relation, for fixed `0<u<v<1` and endpoint functions with `v₁(Δ)≤u<v≤v₂(Δ)` eventually, the tube probability with terminal value in `[(v₁(Δ)−a)Δ,(v₂(Δ)−a)Δ]` has rate `−π²σ²/2`. | **Formalized for integer widths.** `centeredFiniteVariance_endpointWindowProbabilityRate` uses the source path ending at `S_(n−1)`, the terminal-jump corridor with energy `H₂=σ²`, and the squeeze between that corridor probability and the tube probability from part (i). Its Lean width parameter is natural-valued; the paper statement also allows positive real widths. |
+| 3.2 | `lemma:4.1` | Horizontal-tube upper bound `exp(Δ^v − dL/Δ²)`. The proof uses Mogulskii Theorem 2.4 and Lemma 3.1(i), covers translated tubes by finitely many fixed corridors for one block, then iterates full blocks and bounds the remainder. | **Not formalized as stated.** The centered unit-variance source rate, finite range cover, and IID block inequalities exist in `Drawdown/RangeRate.lean`, `Drawdown/RangeRateBlock.lean`, and `Mogulskii/Discrete/Horizontal.lean`; `Path/Corridor/Horizontal/Basic.lean` now identifies the paper interval `[r₀,r₀+Δ]` exactly with the centered-tube parameter `a = -r₀/Δ`. No theorem yet combines these into the paper's uniform-in-`r₀`, all-`L` bound with the `Δ^v` remainder, or restores general variance `σ²`. The no-large-drop theorem is a different event. |
+| 3.3 | `lemma:2.3` | No-large-drop plus endpoint bound. Its proof uses the 3.2 horizontal-tube estimate at the fourth inequality in the block argument (source line 597). | **Partial, not a paper-assumption proof.** `Drawdown/Upper.lean` has the sharp Aïdékon–Hu estimate but takes an external Brownian witness. The raw-source `Drawdown/UniformRawRangeRate.lean` removes that witness but only proves the weaker fixed rate `π²σ²/4608`, not every `d < π²σ²/2`. |
+| 3.4 | `lemma:4.2` | Small-drift tilted-tube upper bound. The proof explicitly invokes 3.3 at the block estimate (source line 840), then iterates blocks and absorbs the remainder. | **Not formalized as stated.** Existing drawdown/corridor inputs do not establish this tilted-tube event or its exact exponent and prefactor. |
+| 3.5 | `lemma:4.3` | Tilted-tube lower bound with either endpoint window. The proof uses Mogulskii Theorem 2.4 and Lemma 3.1(ii), then the entrance and drift stages with endpoint-window block composition. | **Partial.** `Mogulskii/Discrete/EndpointWindows.lean` and `Spine/Tube/FiniteVarianceCorridor.lean` provide endpoint-window composition and a finite-variance affine-corridor lower bound, but neither states the paper's two-sided endpoint-window estimate `exp(−d'L/Δ²)` under its full quantifiers. |
+
+Thus the paper-order dependency chain is 3.1(i) → 3.2 → 3.3 → 3.4, while 3.1(ii) supports the separate lower-bound branch 3.5. The inverse-scale and monotonicity developments remain formalized supporting results, but the revised proof no longer gives them standalone paper numbers. Do not use the source label text as a theorem number, and do not mark a supporting block or drawdown estimate as one of these paper lemmas.
+
 | Source component | Lean modules | Verified scope |
 |---|---|---|
 | Stable-process escape and comparison estimates (Lemmas 1–2) | `Probability/Process/Stable/SmallDeviation/` | Finite negative escape rates, translated corridors, endpoint constraints, and path-law transfer are proved under the stated stable-process assumptions. |
