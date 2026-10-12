@@ -30,29 +30,57 @@
     \makeatother
 \fi
 
-% Ignore the source line-break space between consecutive \bilingual calls in
-% Chinese mode (xeCJK supplies the natural boundary spacing).  Keep one space
-% in English mode, and leave ordinary spaces before other tokens unchanged.
-% A blank line is still a \par token, so it remains a paragraph break.
+% Normalize formatting whitespace around bilingual blocks: adjacent blocks
+% need no explicit space in Chinese mode (xeCJK supplies natural boundary
+% spacing), while English mode and ordinary text retain one space. A blank
+% line remains a \par and therefore still separates paragraphs.
 \makeatletter
 \def\bilingual@checkspace{%
   \futurelet\bilingual@nexttoken\bilingual@checkspace@i}
 \def\bilingual@checkspace@i{%
   \ifx\bilingual@nexttoken\@sptoken
-    \expandafter\bilingual@eatspace\fi}
-\def\bilingual@eatspace {%
-  \futurelet\bilingual@nexttoken\bilingual@afterspace}
-\def\bilingual@afterspace{%
-  \ifx\bilingual@nexttoken\bilingual
-    \ifchinese\else\space\fi
-  \else\ifx\bilingual@nexttoken\par
-    % The source space before a blank line is discarded at paragraph end.
+    \let\bilingual@nextaction\bilingual@eatspace
   \else
-    \space
-  \fi\fi}
+    \let\bilingual@nextaction\relax
+  \fi
+  \bilingual@nextaction}
+% Define a macro delimited by one literal space, then restore \: (math space).
+\let\bilingual@savedcolon\:
+\def\:{\bilingual@eatspace}
+\expandafter\def\: {%
+  \futurelet\bilingual@nexttoken\bilingual@afterspace}
+\let\:\bilingual@savedcolon
+\def\bilingual@afterspace{%
+  \ifx\bilingual@nexttoken\@sptoken
+    \let\bilingual@nextaction\bilingual@eatspace
+  \else
+    \ifx\bilingual@nexttoken\bilingual
+      \ifchinese
+        \let\bilingual@nextaction\relax
+      \else
+        \let\bilingual@nextaction\space
+      \fi
+    \else
+      \ifx\bilingual@nexttoken\par
+        % Keep the paragraph break, but discard its preceding source spaces.
+        \let\bilingual@nextaction\relax
+      \else
+        \let\bilingual@nextaction\space
+      \fi
+    \fi
+  \fi
+  \bilingual@nextaction}
+% Strip formatting spaces at the edges of the selected language. This makes
+% adjacent bilingual blocks rely on xeCJK's natural CJK/Latin boundary spacing.
+\ExplSyntaxOn
 \DeclareRobustCommand{\bilingual}[2]{%
-  \ifchinese #2\relax\else #1\relax\fi
+  \ifchinese
+    \tl_trim_spaces:n {#2}\relax
+  \else
+    \tl_trim_spaces:n {#1}\relax
+  \fi
   \bilingual@checkspace}
+\ExplSyntaxOff
 \makeatother
 
 
