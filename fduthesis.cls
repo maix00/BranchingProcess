@@ -325,9 +325,15 @@
       {
         \bool_if:NT \g__fdu_ascii_punctuation_spacing_bool
           {
-            \bool_if:NTF \g__fdu_theorem_head_end_bool
-              { \__fdu_punctuation_glue: }
-              { \unskip \__fdu_punctuation_glue: }
+            % Theorem headings suppress this custom glue.  Do not remove an
+            % explicit fixed gap in a note, or punctuation before Latin text
+            % (for example, `中文, A. Author') would run together.
+            \bool_if:NF \g__fdu_theorem_head_bool
+              {
+                \bool_if:NTF \g__fdu_theorem_head_end_bool
+                  { \__fdu_punctuation_glue: }
+                  { \unskip \__fdu_punctuation_glue: }
+              }
           }
       }
     % The HalfRight-to-CJK transition clears its own class-specific hook once
