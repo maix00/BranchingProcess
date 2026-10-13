@@ -11,7 +11,7 @@ public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Dis
 /-!
 # Finite-variance lower bounds in a tilted tube
 
-The public theorems in this file are:
+The public objects and theorems in this file are:
 
 - `eventually_horizontalTubeEndpointWindowProbability_ge_exp_of_centeredSecondMoment`:
   if S_j is centered with variance σ², its tube width Δ_n tends to infinity,
@@ -27,11 +27,26 @@ The public theorems in this file are:
   integer width and horizon. This is the uniform block estimate used in the
   staircase part of Wang Yiyang, Chapter 3, Lemma 3.5.
 
+- `staircaseBinLower`, `staircaseBinUpper`, and `staircaseBinWidth` encode
+  $b_l=-\frac23+\frac{l}{3m}$,
+  $b_{l+1}=b_l+\frac1{3m}$, and $w=1-\frac1{3m}$.
+- `relativeHorizontalTubeEndpointWindowEvent` is
+  $\{r\le S_j\le r+D\ (1\le j\le n),\ S_n\in
+  [r+v_1D,r+v_2D]\}$.
+- `horizontalTubeEndpointWindowEvent_subset_relativeHorizontalTubeEndpointWindowEvent`
+  proves that the common narrowed event on $[b_{l+1}D,(b_l+1)D]$, with
+  terminal interval $[(b_{l+1}+v_1)D,(b_l+v_2)D]$, is contained in the
+  target event whenever $b_lD\le r\le b_{l+1}D$. This is the common-event
+  step in the staircase argument of Wang Yiyang, Chapter 3, Lemma 3.5.
+
 This is the exponential form of Wang Yiyang, *Asymptotic speed of the
 $N$-branching random walk with infinite offspring*, Chapter 3, Lemma 3.1(ii),
 whose rate input is Mogul'skii, "Small Deviations in a Space of Trajectories,"
 Theorem 3, Section 4, p. 764 (English translation, *Theory of Probability
 and Its Applications* 19(4) (1975), 726–736, DOI 10.1137/1119081).
+The staircase-bin definitions and common-event inclusion formalize the
+corresponding part of Wang Yiyang, *Asymptotic speed of the $N$-branching
+random walk with infinite offspring*, Chapter 3, Lemma 3.5.
 -/
 
 open Filter MeasureTheory ProbabilityTheory
@@ -290,6 +305,220 @@ theorem exists_eventually_horizontalTubeEndpointWindowProbability_ge_exp_uniform
     simpa [widthFinal, horizonFinal, timeFinal, Function.comp_def, timeRaw,
       indexFinal, Nat.add_sub_cancel_right] using hgood
   exact (not_lt_of_ge hgood') hbadK
+
+/-- The lower endpoint of the l-th spatial bin in the staircase
+construction of Wang Yiyang, Chapter 3, proof of Lemma 3.5. -/
+noncomputable def staircaseBinLower (m l : ℕ) : ℝ :=
+  -(2 : ℝ) / 3 + (l : ℝ) / (3 * (m : ℝ))
+
+/-- The upper endpoint of the l-th spatial bin in the staircase
+construction of Wang Yiyang, Chapter 3, proof of Lemma 3.5. -/
+noncomputable def staircaseBinUpper (m l : ℕ) : ℝ :=
+  staircaseBinLower m l + 1 / (3 * (m : ℝ))
+
+/-- The width factor of the common narrowed tube in one staircase bin. -/
+noncomputable def staircaseBinWidth (m : ℕ) : ℝ :=
+  1 - 1 / (3 * (m : ℝ))
+
+/-- The horizontal-tube parameter whose lower edge is b_{l+1} and whose
+width is 1 - 1/(3m). -/
+noncomputable def staircaseBinTubeParameter (m l : ℕ) : ℝ :=
+  -staircaseBinUpper m l / staircaseBinWidth m
+
+/-- The lower endpoint fraction of the common terminal interval in the
+narrowed staircase tube. -/
+noncomputable def staircaseBinEndpointLowerFraction (m : ℕ) (v₁ : ℝ) : ℝ :=
+  v₁ / staircaseBinWidth m
+
+/-- The upper endpoint fraction of the common terminal interval in the
+narrowed staircase tube. -/
+noncomputable def staircaseBinEndpointUpperFraction (m : ℕ) (v₂ : ℝ) : ℝ :=
+  (v₂ - 1 / (3 * (m : ℝ))) / staircaseBinWidth m
+
+/-- A horizontal tube with a specified lower edge and endpoint window. -/
+def relativeHorizontalTubeEndpointWindowEvent (lower width : ℝ)
+    (horizon : ℕ) (v₁ v₂ : ℝ) : Set (ℕ → ℝ) :=
+  {increment | (∀ k : Fin horizon,
+      lower ≤ AdditivePath.displacement (k + 1) increment ∧
+        AdditivePath.displacement (k + 1) increment ≤ lower + width) ∧
+    AdditivePath.displacement horizon increment ∈
+      Set.Icc (lower + v₁ * width) (lower + v₂ * width)}
+
+/-- For a starting offset in one spatial bin, the common narrowed-tube
+event is contained in the desired horizontal tube and terminal window.
+This is the deterministic bin-inclusion step in the staircase proof of
+Wang Yiyang, Asymptotic speed of the N-branching random walk with infinite
+offspring, Chapter 3, Lemma 3.5. -/
+theorem horizontalTubeEndpointWindowEvent_subset_relativeHorizontalTubeEndpointWindowEvent
+    {m l horizon : ℕ} {width v₁ v₂ lower : ℝ}
+    (hm : 2 ≤ m)
+    (hlower : staircaseBinLower m l * width ≤ lower)
+    (hupper : lower ≤ staircaseBinUpper m l * width) :
+    horizontalTubeEndpointWindowEvent
+        (staircaseBinTubeParameter m l)
+        (staircaseBinWidth m * width) horizon
+        (staircaseBinEndpointLowerFraction m v₁)
+        (staircaseBinEndpointUpperFraction m v₂) ⊆
+      relativeHorizontalTubeEndpointWindowEvent lower width horizon v₁ v₂ := by
+  have hbinWidth : 0 < staircaseBinWidth m := by
+    dsimp [staircaseBinWidth]
+    have hm' : 0 < (m : ℝ) := by exact_mod_cast (by omega : 0 < m)
+    have hdenom : 0 < 3 * (m : ℝ) := by positivity
+    have hfrac : 1 / (3 * (m : ℝ)) < 1 := by
+      rw [div_lt_one hdenom]
+      have hmR : (2 : ℝ) ≤ (m : ℝ) := by exact_mod_cast hm
+      nlinarith [hmR]
+    linarith
+  have hdelta : 1 / (3 * (m : ℝ)) + staircaseBinWidth m = 1 := by
+    dsimp [staircaseBinWidth]
+    ring
+  have hbinAdjacent : staircaseBinUpper m l =
+      staircaseBinLower m l + 1 / (3 * (m : ℝ)) := rfl
+  have hparameterWidth :
+      staircaseBinTubeParameter m l * staircaseBinWidth m =
+        -staircaseBinUpper m l := by
+    dsimp [staircaseBinTubeParameter]
+    field_simp [ne_of_gt hbinWidth]
+  have hnegativeParameterWidth :
+      -staircaseBinTubeParameter m l * staircaseBinWidth m =
+        staircaseBinUpper m l := by
+    calc
+      -staircaseBinTubeParameter m l * staircaseBinWidth m =
+          -(staircaseBinTubeParameter m l *
+            staircaseBinWidth m) := by ring
+      _ = staircaseBinUpper m l := by rw [hparameterWidth]; ring
+  have hpositiveParameterWidth :
+      (1 - staircaseBinTubeParameter m l) * staircaseBinWidth m =
+        staircaseBinWidth m + staircaseBinUpper m l := by
+    calc
+      (1 - staircaseBinTubeParameter m l) * staircaseBinWidth m =
+          staircaseBinWidth m -
+            staircaseBinTubeParameter m l * staircaseBinWidth m := by ring
+      _ = staircaseBinWidth m + staircaseBinUpper m l := by
+        rw [hparameterWidth]
+        ring
+  have hwidthDelta :
+      staircaseBinWidth m + 1 / (3 * (m : ℝ)) = 1 := by
+    rw [add_comm]
+    exact hdelta
+  have hleft :
+      -staircaseBinTubeParameter m l *
+          (staircaseBinWidth m * width) = staircaseBinUpper m l * width := by
+    calc
+      -staircaseBinTubeParameter m l *
+          (staircaseBinWidth m * width) =
+          (-staircaseBinTubeParameter m l *
+            staircaseBinWidth m) * width := by ring
+      _ = staircaseBinUpper m l * width := by rw [hnegativeParameterWidth]
+  have hright :
+      (1 - staircaseBinTubeParameter m l) *
+          (staircaseBinWidth m * width) =
+        (staircaseBinLower m l + 1) * width := by
+    calc
+      (1 - staircaseBinTubeParameter m l) *
+          (staircaseBinWidth m * width) =
+          ((1 - staircaseBinTubeParameter m l) *
+            staircaseBinWidth m) * width := by ring
+      _ = (staircaseBinWidth m +
+          staircaseBinUpper m l) * width := by rw [hpositiveParameterWidth]
+      _ = (staircaseBinLower m l + 1) * width := by
+        rw [hbinAdjacent]
+        congr 1
+        dsimp [staircaseBinWidth] at hdelta
+        dsimp [staircaseBinWidth]
+        linarith [hdelta]
+  have hendpointLowerWidth :
+      staircaseBinEndpointLowerFraction m v₁ *
+          staircaseBinWidth m = v₁ := by
+    dsimp [staircaseBinEndpointLowerFraction]
+    field_simp [ne_of_gt hbinWidth]
+  have hendpointUpperWidth :
+      staircaseBinEndpointUpperFraction m v₂ *
+          staircaseBinWidth m =
+        v₂ - 1 / (3 * (m : ℝ)) := by
+    dsimp [staircaseBinEndpointUpperFraction]
+    field_simp [ne_of_gt hbinWidth]
+  have hterminalLower :
+      (staircaseBinEndpointLowerFraction m v₁ -
+          staircaseBinTubeParameter m l) *
+          (staircaseBinWidth m * width) =
+        (staircaseBinUpper m l + v₁) * width := by
+    have hwidthExpr :
+        (staircaseBinEndpointLowerFraction m v₁ -
+          staircaseBinTubeParameter m l) * staircaseBinWidth m =
+            v₁ + staircaseBinUpper m l := by
+      calc
+        _ = staircaseBinEndpointLowerFraction m v₁ *
+              staircaseBinWidth m -
+            staircaseBinTubeParameter m l * staircaseBinWidth m := by ring
+        _ = v₁ + staircaseBinUpper m l := by
+          rw [hendpointLowerWidth, hparameterWidth]
+          ring
+    calc
+      (staircaseBinEndpointLowerFraction m v₁ -
+          staircaseBinTubeParameter m l) *
+          (staircaseBinWidth m * width) =
+          ((staircaseBinEndpointLowerFraction m v₁ -
+            staircaseBinTubeParameter m l) *
+            staircaseBinWidth m) * width := by ring
+      _ = (v₁ + staircaseBinUpper m l) * width := by rw [hwidthExpr]
+      _ = (staircaseBinUpper m l + v₁) * width := by ring
+  have hterminalUpper :
+      (staircaseBinEndpointUpperFraction m v₂ -
+          staircaseBinTubeParameter m l) *
+          (staircaseBinWidth m * width) =
+        (staircaseBinLower m l + v₂) * width := by
+    have hwidthExpr :
+        (staircaseBinEndpointUpperFraction m v₂ -
+          staircaseBinTubeParameter m l) * staircaseBinWidth m =
+            staircaseBinLower m l + v₂ := by
+      calc
+        _ = staircaseBinEndpointUpperFraction m v₂ *
+              staircaseBinWidth m -
+            staircaseBinTubeParameter m l * staircaseBinWidth m := by ring
+        _ = (v₂ - 1 / (3 * (m : ℝ))) +
+              staircaseBinUpper m l := by
+          rw [hendpointUpperWidth, hparameterWidth]
+          ring
+        _ = staircaseBinLower m l + v₂ := by rw [hbinAdjacent]; ring
+    calc
+      (staircaseBinEndpointUpperFraction m v₂ -
+          staircaseBinTubeParameter m l) *
+          (staircaseBinWidth m * width) =
+          ((staircaseBinEndpointUpperFraction m v₂ -
+            staircaseBinTubeParameter m l) *
+            staircaseBinWidth m) * width := by ring
+      _ = (staircaseBinLower m l + v₂) * width := by rw [hwidthExpr]
+  intro increment hevent
+  change InHorizontalTube (staircaseBinTubeParameter m l)
+      (staircaseBinWidth m * width) horizon increment ∧
+    AdditivePath.displacement horizon increment ∈
+      Set.Icc
+        ((staircaseBinEndpointLowerFraction m v₁ -
+            staircaseBinTubeParameter m l) *
+            (staircaseBinWidth m * width))
+        ((staircaseBinEndpointUpperFraction m v₂ -
+            staircaseBinTubeParameter m l) *
+            (staircaseBinWidth m * width)) at hevent
+  rcases hevent with ⟨htube, hend⟩
+  refine ⟨?_, ?_⟩
+  · intro k
+    have hk := htube k
+    rw [hleft, hright] at hk
+    constructor
+    · exact le_trans hupper hk.1
+    · have htop : (staircaseBinLower m l + 1) * width ≤ lower + width := by
+        have hrewrite : (staircaseBinLower m l + 1) * width =
+            staircaseBinLower m l * width + width := by ring
+        rw [hrewrite]
+        linarith [hlower]
+      exact le_trans hk.2 htop
+  · rw [hterminalLower, hterminalUpper] at hend
+    rcases Set.mem_Icc.mp hend with ⟨hendLower, hendUpper⟩
+    rw [Set.mem_Icc]
+    constructor
+    · nlinarith [hupper, hendLower]
+    · nlinarith [hlower, hendUpper]
 
 end ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 
