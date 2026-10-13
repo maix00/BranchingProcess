@@ -1010,17 +1010,151 @@
         E_0 := \left\{ r_j \le Y_j \le s_j, \, \forall j \in [\![1, t_1]\!],\, Y_{t_1} \in W_1 \right\},
     \end{equation*}
     \bilingual{
-        where $W_1 := [r_{t_1}+\frac13\Delta,r_{t_1}+\frac23\Delta]$ is the central window. The claimed $C/\Delta$ lower bound does not follow from weak convergence to Brownian motion started at the boundary: the limiting probability of staying in the closed corridor from that boundary is zero. We use a cyclic-rotation argument instead, which gives the sufficient lower bound $C/\Delta^2$. Set $n:=t_1$ and $u:=-r_0/\Delta\in[0,1]$. Donsker's theorem and the full support of the Gaussian path law give a positive lower bound, uniform for slopes $1/2-u\in[-1/2,1/2]$, on the probability that the scaled partial-sum path lies in a fixed small $J_1$ ball around $t\mapsto(1/2-u)t$. Uniformity follows by covering this compact slope interval with finitely many smaller balls. In the scaled coordinates the lower boundary has drift $c/\Delta^3$ per step, whose total displacement by time $n$ is $cn/\Delta^3=o(1)$. The all-offset cyclic-rotation lemma then covers the linear-tube event by the $n$ cyclic shifts of the drift-removed corridor event. Since the increments are i.i.d., each cyclic shift has the same probability, so the corridor event has probability at least $q_0/n$ for some $q_0>0$, uniformly in $u$ and all sufficiently large $\Delta$. The exact drift-removal identity turns this event into $E_0$. Since $n\le\Delta^2$, this is at least $q_0/\Delta^2$.
+        where $W_1 := [r_{t_1}+\frac13\Delta,r_{t_1}+\frac23\Delta]$ is the central window. Put $n:=t_1$, $x:=-r_0\in[0,\Delta]$, $\xi_j:=Y_j-Y_{j-1}$, $S_j:=x+Y_j$, and $h_j:=\frac{c}{\Delta^2}j$. Write $\mathbb P_x$ for the law of $(S_j)$ started at $S_0=x$. Then
     }{
-        其中 $W_1 := [r_{t_1}+\frac13\Delta,r_{t_1}+\frac23\Delta]$ 是中心窗口. 原先声称的 $C/\Delta$ 下界不能仅由从边界出发的布朗弱收敛推出: 极限过程从边界出发并留在闭管道内的概率为零. 我们改用循环旋转论证, 得到足够的 $C/\Delta^2$ 下界. 令 $n:=t_1$ 且 $u:=-r_0/\Delta\in[0,1]$. Donsker 定理及 Gaussian 路径律的满支撑性表明, 对斜率 $1/2-u\in[-1/2,1/2]$, 缩放后的部分和路径落入直线 $t\mapsto(1/2-u)t$ 的一个固定小 $J_1$ 球的概率有正下界, 且该下界可对所有斜率统一选取. 这是因为斜率区间紧, 可用有限个较小的球覆盖. 缩放后下边界每步的漂移为 $c/\Delta^3$, 到时刻 $n$ 的总位移为 $cn/\Delta^3=o(1)$. 全偏移循环旋转引理将上述线性管道事件覆盖在 $n$ 个去漂移管道事件的循环平移之下. 由于步长独立同分布, 每个循环平移事件的概率相同, 因此原管道事件的概率至少为 $q/n$, 其中 $q>0$ 可对所有 $u$ 和充分大的 $\Delta$ 统一选取. 精确的去漂移恒等式将此事件转化为 $E_0$. 又因 $n\le\Delta^2$, 该下界至少为 $q/\Delta^2$.
-    }
-    \bilingual{
-        Finally, since $L\ge\lfloor\Delta^{2+\varepsilon}\rfloor$, the logarithmic loss $2\log\Delta+O(1)$ is $o(L/\Delta^2)$. Hence, for every fixed $d'>d''$, after increasing $\Delta_1$ if necessary,
-    }{
-        最后, 由 $L\ge\lfloor\Delta^{2+\varepsilon}\rfloor$ 可知对数损失 $2\log\Delta+O(1)=o(L/\Delta^2)$. 因此, 对任意固定的 $d'>d''$, 适当增大 $\Delta_1$ 后有
+        其中 $W_1 := [r_{t_1}+\frac13\Delta,r_{t_1}+\frac23\Delta]$ 是中心窗口. 令 $n:=t_1$, $x:=-r_0\in[0,\Delta]$, $\xi_j:=Y_j-Y_{j-1}$, $S_j:=x+Y_j$ 且 $h_j:=\frac{c}{\Delta^2}j$. 记 $(S_j)$ 从 $S_0=x$ 出发时的概率律为 $\mathbb P_x$. 则
     }
     \begin{equation*}
-        \mathbb{P}(E_0) \ge \frac{q_0}{\Delta^2} \ge \exp\left(-\frac{d'-d''}{\Delta^2}L\right).
+        E_0=
+        \left\{
+        h_j\le S_j\le\Delta+h_j\ (1\le j\le n),\quad
+        S_n\in\left[h_n+\frac13\Delta,h_n+\frac23\Delta\right]
+        \right\}.
+    \end{equation*}
+    \bilingual{
+        For $\theta\in\{-1,1\}$, let $(Z_j^\theta)$ start at $Z_0^\theta=0$, have increments distributed as $\theta\xi_1$, and put $C_N^\theta:=\{Z_j^\theta\ge0,\ 1\le j\le N\}$. Caravenna and Chaumont~\mycite{Caravenna_Chaumont_2008}, Lemma 2.1, gives $\mathbb P(C_N^\theta)\sim N^{-\frac12}\ell_\theta(N)$ with $\ell_\theta$ slowly varying. Their meander invariance principle, equation (3.3), gives
+    }{
+        对 $\theta\in\{-1,1\}$, 令 $(Z_j^\theta)$ 从 $Z_0^\theta=0$ 出发且增量分布与 $\theta\xi_1$ 相同, 并记 $C_N^\theta:=\{Z_j^\theta\ge0,\ 1\le j\le N\}$. Caravenna 与 Chaumont~\mycite{Caravenna_Chaumont_2008} 的引理 2.1 给出渐近关系 $\mathbb P(C_N^\theta)\sim N^{-\frac12}\ell_\theta(N)$, 其中 $\ell_\theta$ 缓变. 其 meander 不变原理 (公式 (3.3)) 给出
+    }
+    \begin{equation*}
+        \mathcal L\left(\left.\left(\frac{Z_{\lfloor Nt\rfloor}^\theta}{\sigma\sqrt N}\right)_{0\le t\le1}\,\right|C_N^\theta\right)
+        \Longrightarrow \mathsf m.
+    \end{equation*}
+    \bilingual{
+        where $\mathsf m$ is the standard Brownian meander. Fix $\rho:=\frac1{100}$. Its support gives the positive constant
+    }{
+        其中 $\mathsf m$ 为标准 Brownian meander. 令 $\rho:=\frac1{100}$. 由其支撑性质, 下式定义的常数为正:
+    }
+    \begin{equation*}
+        D_{N,\Delta}^\theta:=
+        \left\{
+        0\le Z_j^\theta\le\frac56\Delta\ (1\le j\le N),\quad
+        Z_N^\theta\in\left[\frac5{12}\Delta,\frac{11}{24}\Delta\right]
+        \right\}
+    \end{equation*}
+    \bilingual{
+        Define the open set
+    }{
+        定义开集
+    }
+    \begin{equation*}
+        \mathcal U:=\left\{f\in C([0,1]):
+        \begin{aligned}
+            \sigma\sup_{0\le t\le1}f(t)&<\frac56-\rho,\\
+            \sigma f(1)&\in\left(\frac5{12}+\rho,\frac{11}{24}-\rho\right)
+        \end{aligned}
+        \right\}.
+    \end{equation*}
+    \bilingual{
+        The Brownian meander has full support on positive continuous paths, so $q_*:=\mathsf m(\mathcal U)>0$. For $N=n-m$, the meander convergence and $\Delta/\sqrt N\to1$ give
+    }{
+        Brownian meander 在正连续路径上具有满支撑, 故 $q_*:=\mathsf m(\mathcal U)>0$. 对 $N=n-m$, meander 收敛及 $\Delta/\sqrt N\to1$ 给出
+    }
+    \begin{equation*}
+        \liminf_{\Delta\to\infty}\mathbb P\left(D_{n-m,\Delta}^\theta\middle| C_{n-m}^\theta\right)\ge q_*.
+    \end{equation*}
+    \bilingual{
+        Potter's bound for $\ell_\theta$ then gives, for every $\alpha>0$ and fixed integer $m\ge0$, constants $C_{\alpha,m}>0$ and $\Delta_{\alpha,m}$ such that for all $\Delta\ge\Delta_{\alpha,m}$,
+    }{
+        再由 $\ell_\theta$ 的 Potter 界, 对每个 $\alpha>0$ 及固定整数 $m\ge0$, 存在常数 $C_{\alpha,m}>0$ 与 $\Delta_{\alpha,m}$, 使得对所有 $\Delta\ge\Delta_{\alpha,m}$,
+    }
+    \begin{equation*}
+        \min_{\theta\in\{-1,1\}}\mathbb P\left(D_{n-m,\Delta}^\theta\right)\ge C_{\alpha,m}\Delta^{-1-\alpha}.
+    \end{equation*}
+    \bilingual{
+        For the middle starting range, let $B$ be standard Brownian motion. Brownian path support and compactness give
+    }{
+        对中间起点区间, 令 $B$ 为标准 Brownian motion. 由 Brownian 路径的支撑性质及紧致性,
+    }
+    \begin{equation*}
+        p_0:=\inf_{z\in[\frac1{12},\frac{11}{12}]}
+        \mathbb P\left(
+            \frac1{24}<z+\sigma B_t<\frac{23}{24}\ (0\le t\le1),\quad
+            z+\sigma B_1\in\left(\frac5{12},\frac7{12}\right)
+        \right)>0.
+    \end{equation*}
+    \bilingual{
+        Since $n/\Delta^2\to1$ and $c/\Delta\to0$, Donsker's invariance principle, applied uniformly by compactness of $x/\Delta$, gives for all sufficiently large $\Delta$,
+    }{
+        由于 $n/\Delta^2\to1$ 且 $c/\Delta\to0$, 由 Donsker 不变原理及 $x/\Delta$ 所在紧区间的一致性, 对充分大的 $\Delta$ 有
+    }
+    \begin{equation*}
+        \inf_{x\in[\frac1{12}\Delta,\frac{11}{12}\Delta]}\mathbb P_x\left(
+            c\le S_j\le\Delta\ (1\le j\le n),\quad
+            S_n\in\left[\frac5{12}\Delta,\frac7{12}\Delta\right]
+        \right)\ge\frac{p_0}{2}.
+    \end{equation*}
+    \bilingual{
+        For $x\le\frac1{12}\Delta$, choose $0<a_+<b_+$ with $p_+:=\mathbb P(\xi_1\in[a_+,b_+])>0$, and then fix $m_+$ with $m_+a_+>c+1$. Put $Z_j^+:=\sum_{i=m_++1}^{m_++j}\xi_i$. This suffix is independent of $A_+:=\{\xi_i\in[a_+,b_+],\ 1\le i\le m_+\}$; on $A_+\cap D_{n-m_+,\Delta}^{1}$,
+    }{
+        对 $x\le\frac1{12}\Delta$, 取 $0<a_+<b_+$ 使 $p_+:=\mathbb P(\xi_1\in[a_+,b_+])>0$, 再固定 $m_+$ 使 $m_+a_+>c+1$. 记 $Z_j^+:=\sum_{i=m_++1}^{m_++j}\xi_i$. 该后缀与 $A_+:=\{\xi_i\in[a_+,b_+],\ 1\le i\le m_+\}$ 独立; 在 $A_+\cap D_{n-m_+,\Delta}^{1}$ 上,
+    }
+    \begin{equation*}
+        \begin{aligned}
+            h_j&\le\frac{cm_+}{\Delta^2}<a_+\le ja_+\le S_j,
+            &&1\le j\le m_+,\\
+            S_j&\le\frac1{12}\Delta+m_+b_+\le\Delta,
+            &&1\le j\le m_+,\\
+            c&<m_+a_+\le S_{m_+}+Z_j^+=S_{m_++j},
+            &&1\le j\le n-m_+,\\
+            S_{m_++j}&\le\frac1{12}\Delta+m_+b_++\frac56\Delta\le\Delta,
+            &&1\le j\le n-m_+,\\
+            S_n&\in\left[\frac5{12}\Delta,\frac{13}{24}\Delta+m_+b_+\right]
+            &\subseteq&\left[h_n+\frac13\Delta,h_n+\frac23\Delta\right].
+        \end{aligned}
+    \end{equation*}
+    \bilingual{Consequently,}{因此,}
+    \begin{equation*}
+        \inf_{0\le x\le\frac1{12}\Delta}\mathbb P_x(E_0)
+        \ge p_+^{m_+}C_{\alpha,m_+}\Delta^{-1-\alpha}.
+    \end{equation*}
+    \bilingual{
+        For $x\ge\frac{11}{12}\Delta$, choose $0<a_-<b_-$ with $p_-:=\mathbb P(-\xi_1\in[a_-,b_-])>0$ and fix $m_-$ with $m_-a_->c+1$. Put $y:=\Delta-x$ and $R_j:=\Delta-S_j$. The prefix event $A_-:=\{-\xi_i\in[a_-,b_-],\ 1\le i\le m_-\}$ has probability $p_-^{m_-}$; the suffix $Z_j^-:=-\sum_{i=m_-+1}^{m_-+j}\xi_i$ is independent of $A_-$. On $A_-\cap D_{n-m_-,\Delta}^{-1}$,
+    }{
+        对 $x\ge\frac{11}{12}\Delta$, 取 $0<a_-<b_-$ 使 $p_-:=\mathbb P(-\xi_1\in[a_-,b_-])>0$, 再固定 $m_-$ 使 $m_-a_->c+1$. 记 $y:=\Delta-x$ 且 $R_j:=\Delta-S_j$. 前缀事件 $A_-:=\{-\xi_i\in[a_-,b_-],\ 1\le i\le m_-\}$ 的概率为 $p_-^{m_-}$; 后缀 $Z_j^-:=-\sum_{i=m_-+1}^{m_-+j}\xi_i$ 与 $A_-$ 独立. 在 $A_-\cap D_{n-m_-,\Delta}^{-1}$ 上,
+    }
+    \begin{equation*}
+        \begin{aligned}
+            0&\le R_j=y+\sum_{i=1}^j(-\xi_i)\le\frac1{12}\Delta+m_-b_-\le\Delta-c,
+            &&1\le j\le m_-,\\
+            0&\le R_{m_-+j}=R_{m_-}+Z_j^-\le\frac1{12}\Delta+m_-b_-+\frac56\Delta\le\Delta-c,
+            &&1\le j\le n-m_-,\\
+            c&\le S_j=\Delta-R_j\le\Delta,
+            &&1\le j\le n,\\
+            S_n&\in\left[\frac{11}{24}\Delta-m_-b_-,\frac7{12}\Delta\right]
+            &\subseteq&\left[h_n+\frac13\Delta,h_n+\frac23\Delta\right].
+        \end{aligned}
+    \end{equation*}
+    \bilingual{Thus}{故}
+    \begin{equation*}
+        \inf_{\frac{11}{12}\Delta\le x\le\Delta}\mathbb P_x(E_0)
+        \ge p_-^{m_-}C_{\alpha,m_-}\Delta^{-1-\alpha}.
+    \end{equation*}
+    \bilingual{
+        Since $[c,\Delta]\subseteq[h_j,\Delta+h_j]$ for $1\le j\le n$, the three starting-point ranges yield, after taking the minimum of their constants,
+    }{
+        由于 $[c,\Delta]\subseteq[h_j,\Delta+h_j]$ 对 $1\le j\le n$ 成立, 合并这三个起点区间并取其常数的最小值, 得
+    }
+    \begin{equation*}
+        \inf_{x\in[0,\Delta]}\mathbb P_x(E_0)\ge C_\alpha\Delta^{-1-\alpha}.
+    \end{equation*}
+    \bilingual{
+        Since $L\ge\lfloor\Delta^{2+\varepsilon}\rfloor$, we have $\frac{L}{\Delta^2}\ge\frac12\Delta^\varepsilon$ for all sufficiently large $\Delta$, and hence $-\log C_\alpha+(1+\alpha)\log\Delta=o(L/\Delta^2)$. Thus, for the fixed $d'>d''$, after increasing $\Delta_1$ if necessary,
+    }{
+        由 $L\ge\lfloor\Delta^{2+\varepsilon}\rfloor$, 对充分大的 $\Delta$ 有 $\frac{L}{\Delta^2}\ge\frac12\Delta^\varepsilon$, 从而 $-\log C_\alpha+(1+\alpha)\log\Delta=o(L/\Delta^2)$. 因此, 对固定的 $d'>d''$, 适当增大 $\Delta_1$ 后有
+    }
+    \begin{equation*}
+        \mathbb{P}(E_0) \ge C_\alpha\Delta^{-1-\alpha} \ge \exp\left(-\frac{d'-d''}{\Delta^2}L\right).
     \end{equation*}
 
     \bilingual{
