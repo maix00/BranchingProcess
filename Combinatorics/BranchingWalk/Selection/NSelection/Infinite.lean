@@ -162,6 +162,29 @@ theorem IsFirstNBy.card_le [LinearOrder ι] [LinearOrder Value]
     exact min_le_left _ _
   · rw [h.card_infinite hinfinite]
 
+/-- A nonempty candidate set has a nonempty first-`N` selection whenever
+`N` is positive. This applies to both finite and infinite candidate sets. -/
+theorem IsFirstNBy.nonempty_of_nonempty_candidates
+    [LinearOrder ι] [LinearOrder Value]
+    {N : ℕ} {value : ι → Value} {candidates : Set ι}
+    {selected : Finset ι}
+    (h : IsFirstNBy N value candidates selected)
+    (hN : 0 < N) (hcandidates : candidates.Nonempty) :
+    selected.Nonempty := by
+  classical
+  rcases candidates.finite_or_infinite with hfinite | hinfinite
+  · have hcard : 0 < hfinite.toFinset.card := by
+      rcases hcandidates with ⟨p, hp⟩
+      exact Finset.card_pos.mpr ⟨p, hfinite.mem_toFinset.mpr hp⟩
+    have hselected : 0 < selected.card := by
+      rw [h.card_finite hfinite]
+      omega
+    exact Finset.card_pos.mp hselected
+  · have hselected : 0 < selected.card := by
+      rw [h.card_infinite hinfinite]
+      exact hN
+    exact Finset.card_pos.mp hselected
+
 /-- The first-`N` property depends only on observation values at candidate
 points. This permits measurable total extensions of a generation-level
 observation without changing its intrinsic selection. -/
