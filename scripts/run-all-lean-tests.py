@@ -149,7 +149,7 @@ AXIOM_EXPECTATIONS = {
         "ProbabilityTheory.BranchingRandomWalk.Spine.measure_hasEndpointBelowByHorizon_le_sum_exp",
         "ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.eventually_horizontalTubeProbability_le_pow_fixedCover_uniformOffset",
     ),
-    Path("BranchingProcessTest/Probability/Process/RandomWalk/SmallDeviation/Drawdown/Upper.lean"): (
+    Path("BranchingProcessTest/Probability/Process/RandomWalk/SmallDeviation/Drawdown/FiniteVarianceUpper.lean"): (
         "ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.additivePath_le_threshold_add_delta_of_noLargeDrop",
         "ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.neg_delta_le_additivePath_of_noLargeDrop",
         "ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.iidSequenceLaw_measure_spatialBinPatternEvent_eq_pow",

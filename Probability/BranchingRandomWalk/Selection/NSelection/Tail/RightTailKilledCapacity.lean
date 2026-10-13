@@ -7,8 +7,7 @@ Authors: WANG Yiyang
 import Probability.BranchingRandomWalk.Population.Processes.Causal.CapacitySpine
 import Probability.Process.RandomWalk.Path.Corridor.Horizontal
 import Probability.Process.RandomWalk.Path.Restart.Basic
-import Probability.Process.RandomWalk.SmallDeviation.Drawdown.Upper
-import Probability.Process.RandomWalk.SmallDeviation.Drawdown.Scaling
+import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper
 import Probability.BranchingRandomWalk.Selection.NSelection.Tail.LogarithmicScales
 import Probability.BranchingRandomWalk.Spine.Tube.AffineCorridorPairBound
 
@@ -2023,9 +2022,9 @@ theorem exists_uniform_iidSequenceLaw_firstStageCorridor_le_ah
           ENNReal.ofReal (Real.exp
             (-target * sigma ^ 2 * (horizon : ℝ) / width ^ 2)) := by
   obtain ⟨delta0, hdelta0, hdrawdown⟩ :=
-    _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.exists_uniform_iidSequenceLaw_measure_noLargeDropEndpointBelowEvent_le_ah_exp_of_centeredSecondMoment
-      ν hν hsigma hB hcontinuous hmeasurable endpointRatio target blockTarget p
-      hEndpointRatio htarget htargetBlock hblockTarget hp
+    _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.exists_uniform_iidSequenceLaw_measure_noLargeDropEndpointBelowEvent_le_of_centeredSecondMoment
+      ν hν hsigma endpointRatio target p hEndpointRatio htarget
+      (lt_trans htargetBlock hblockTarget) hp
   refine ⟨delta0, hdelta0, ?_⟩
   intro horizon width hwidth hscale hlength
   have hinterval :=
@@ -2182,9 +2181,9 @@ theorem iidSequenceLaw_rightTailPositiveASecondStageDrawdown_le_of_ah
     dsimp [endpointRatio]
     exact div_pos hc hden
   obtain ⟨delta0, hdelta0, hbound⟩ :=
-    _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.exists_uniform_iidSequenceLaw_measure_noLargeDropEndpointBelowEvent_le_ah_exp_of_centeredSecondMoment
-      ν hν hsigma hB hcontinuous hmeasurable endpointRatio target blockTarget p
-      hratio htarget htargetBlock hblockTarget hp
+    _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.exists_uniform_iidSequenceLaw_measure_noLargeDropEndpointBelowEvent_le_of_centeredSecondMoment
+      ν hν hsigma endpointRatio target p hratio htarget
+      (lt_trans htargetBlock hblockTarget) hp
   refine ⟨delta0, hdelta0, ?_⟩
   intro ell ellN d hellN hd hwidthLarge hlengthLarge
   let width : ℝ := c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ))
