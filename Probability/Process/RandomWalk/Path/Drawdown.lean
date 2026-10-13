@@ -273,7 +273,8 @@ def spatialBinJumpSet {q K : ℕ} (bins : Fin (q + 1) → Fin (K + 1)) :
   Finset.univ.filter fun j => bins j.castSucc ≠ bins j.succ
 
 /-- A nonincreasing sequence with `K+1` possible bin values can jump at most
-`K+1` times. This loose bound is convenient for finite pattern counting. -/
+`K+1` times. The bound controls the exceptional indices in the running-
+maximum decomposition. -/
 theorem card_spatialBinJumpSet_le
     {q K : ℕ} (bins : Fin (q + 1) → Fin (K + 1))
     (hmono : ∀ i j, i ≤ j → bins j ≤ bins i) :

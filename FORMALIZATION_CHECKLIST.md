@@ -137,7 +137,7 @@ The order here follows the displayed PDF numbers.
 | 3.1(i) | `lemma:mogulskii-cal` | For each real width `Δ>0` and integer time horizon `L_Δ` with `L_Δ/Δ²→∞`, the horizontal-tube probability has rate `−π²σ²/2`. | **Formalized for integer widths.** `FromIncrementLaw/HorizontalTube.lean` proves the rate for `L:ℕ→ℕ`, identifying the event with the terminal-left source path convention and squeezing the closed tube between inward and outward strict corridors. The paper proof uses the same interpolation for positive real widths, which are needed for the local widths `Δ(k)` in part 4. The inverse-scale and width-monotonicity results remain Lean infrastructure; the revised paper proof does not require them as separate lemmas. |
 | 3.1(ii) | `lemma:mogulskii-cal` | Under the same width-time relation, for fixed `0<u<v<1` and endpoint functions with `v₁(Δ)≤u<v≤v₂(Δ)` eventually, the tube probability with terminal value in `[(v₁(Δ)−a)Δ,(v₂(Δ)−a)Δ]` has rate `−π²σ²/2`. | **Formalized for integer widths.** `centeredFiniteVariance_endpointWindowProbabilityRate` uses the source path ending at `S_(n−1)`, the terminal-jump corridor with energy `H₂=σ²`, and the squeeze between that corridor probability and the tube probability from part (i). Its Lean width parameter is natural-valued; the paper statement also allows positive real widths. |
 | 3.2 | `lemma:4.1` | Horizontal-tube upper bound `exp(uΔ^v − dL/Δ²)` for arbitrary `u,v>0`, and the coefficient-one specialization. The proof uses the closed-tube Mogul'skii rate, an equal partition to select one fixed corridor, iteration over full blocks, and a remainder estimate. | **Formalized.** `Mogulskii/Discrete/HorizontalTubeUpper.lean` proves the centered-tube bounds `horizontalTubeProbability_le_exp_of_finiteVariance_withRemainder` and `horizontalTubeProbability_le_exp_of_finiteVariance`, and the corresponding translated-interval bounds for IID partial sums. The input rate is the closed horizontal-tube form of Mogul'skii, Theorem 3, Section 4, p. 764. |
-| 3.3 | `lemma:2.3` | No-large-drop plus endpoint bound. Its proof uses the 3.2 horizontal-tube estimate at the fourth inequality in the block argument (source line 597). | **Partial, not a paper-assumption proof.** `Drawdown/Upper.lean` has the sharp Aïdékon–Hu estimate but takes an external Brownian witness. The raw-source `Drawdown/UniformRawRangeRate.lean` removes that witness but only proves the weaker fixed rate `π²σ²/4608`, not every `d < π²σ²/2`. |
+| 3.3 | `lemma:2.3` | No-large-drop plus endpoint bound. Its proof uses the 3.2 horizontal-tube estimate for each nonjump block. | **Formalized.** `Drawdown/Upper.lean` proves `measureReal_noLargeDropEndpointBelowEvent_le_exp_of_finiteVariance`: for a centered law of variance `σ² ∈ (0,∞)`, every `c>0` and `0<d<π²σ²/2` admit one `Δ₀≥1` such that the estimate holds for all `Δ≥Δ₀` and `L≥Δ^(2+c)`. The proof uses the dissertation's rounded running maximum, conditional block estimates, jump-pattern union, and the `c′` event inclusion. |
 | 3.4 | `lemma:4.2` | Small-drift tilted-tube upper bound. The proof explicitly invokes 3.3 at the block estimate (source line 840), then iterates blocks and absorbs the remainder. | **Not formalized as stated.** Existing drawdown/corridor inputs do not establish this tilted-tube event or its exact exponent and prefactor. |
 | 3.5 | `lemma:4.3` | Tilted-tube lower bound with either endpoint window. The proof uses Mogulskii Theorem 2.4 and Lemma 3.1(ii), then the entrance and drift stages with endpoint-window block composition. | **Partial.** `Mogulskii/Discrete/EndpointWindows.lean` and `Spine/Tube/FiniteVarianceCorridor.lean` provide endpoint-window composition and a finite-variance affine-corridor lower bound, but neither states the paper's two-sided endpoint-window estimate `exp(−d'L/Δ²)` under its full quantifiers. |
 
@@ -349,13 +349,12 @@ process and Gaussian-law APIs, not a general point-process representation.
   product, finite union over bin patterns, and parameter selection are built
   and audited in `RandomWalk/Path/Drawdown.lean` and
   `Probability/Process/RandomWalk/SmallDeviation/Drawdown/Upper.lean`. In particular,
-  `exists_uniform_iidSequenceLaw_measure_noLargeDropEndpointBelowEvent_le_ah_exp`
-  proves the uniform finite-variance Aïdékon--Hu no-large-drawdown estimate
-  for centered variance-one increments.
-  `Probability/Process/RandomWalk/SmallDeviation/Drawdown/Scaling.lean` now
-  transports both the sequential estimate and its uniform-in-parameters
-  version to centered positive finite variance, with the exponent scaled by
-  the variance. `Selection/NSelection/Tail/SelectedEndpointSublevel.lean` derives the
+  `measureReal_noLargeDropEndpointBelowEvent_le_exp_of_finiteVariance`
+  proves the uniform no-large-drawdown estimate for centered increments of
+  arbitrary positive finite variance. The estimate is direct at that variance;
+  `Probability/Process/RandomWalk/SmallDeviation/Drawdown/Scaling.lean`
+  records the corresponding event and measure scaling identities.
+  `Selection/NSelection/Tail/SelectedEndpointSublevel.lean` derives the
   required range and exponent parameters from the paper's boundary,
   supercriticality, centered-spine, and finite-variance assumptions;
   `CountableRootEndpointSublevel.lean` transfers its polynomial probability bound to the
