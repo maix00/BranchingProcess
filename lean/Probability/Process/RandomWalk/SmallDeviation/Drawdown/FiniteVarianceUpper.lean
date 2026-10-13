@@ -10,7 +10,7 @@ public import Probability.Process.RandomWalk.Path.Drawdown
 public import Probability.Process.RandomWalk.Path.Filtration
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.BlockScale
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Discrete.Horizontal
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Discrete.HorizontalTubeUpper
+public import Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.FiniteVarianceUpper
 public import Probability.Independence.ConditionalIntegral
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 
@@ -48,6 +48,8 @@ Public theorem declarations (write `S_i` for the additive path and `P` for its I
 - `measureReal_drawdownConditionalBlockIntersection_le_pow`:
   with a common factor, `P(⋂_j E_j) ≤ p^q`.
 - `drawdownBlockStart_last_eq_horizon`: the remainder plus `qℓ` equals `L`.
+- `eventually_drawdownFloorBlockLength_bounds`: for `η>0`,
+  `Δ^(2+η/2) ≤ ⌊Δ^(2+η)⌋ ≤ Δ^(2+η)` for large `Δ`.
 - `drawdown_prod_jumpPatternBound_eq_pow`: the block product is `p^(q-|J|)`.
 - `drawdown_prod_jumpPatternBound_le_pow`: `|J| ≤ K`, `p ≤ 1` give
   `p^(q-|J|) ≤ p^(q-K)`.
@@ -1887,7 +1889,9 @@ private theorem eventually_real_rpow_ge_const
   exact (_root_.tendsto_rpow_atTop hpower).eventually
     (eventually_ge_atTop bound)
 
-private theorem eventually_drawdownFloorBlockLength_bounds
+/-- For every positive block exponent, a floor-rounded block length remains
+between the half-exponent and full-exponent powers once the width is large. -/
+theorem eventually_drawdownFloorBlockLength_bounds
     {eta : ℝ} (heta : 0 < eta) :
     ∀ᶠ Delta : ℝ in atTop,
       1 ≤ (⌊Delta ^ (2 + eta)⌋₊ : ℝ) ∧

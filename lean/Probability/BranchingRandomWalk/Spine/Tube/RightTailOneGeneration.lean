@@ -11,7 +11,7 @@ import Probability.Distributions.Moments.Signs
 import Probability.BranchingRandomWalk.Assumptions.Structural
 import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law
 import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.JointSubtrees
-import Probability.Process.RandomWalk.SmallDeviation.Drawdown.Upper
+import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper
 
 /-!
 # A one-generation upper-tail bound from the offspring law

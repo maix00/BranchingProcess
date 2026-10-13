@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 import Probability.BranchingRandomWalk.Population.Processes.Causal.CapacitySpine
 import Probability.Process.RandomWalk.Path.Corridor.Horizontal
 import Probability.Process.RandomWalk.Path.Restart.Basic
-import Probability.Process.RandomWalk.SmallDeviation.Drawdown.Upper
+import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper
 import Probability.Process.RandomWalk.SmallDeviation.Drawdown.Scaling
 import Probability.BranchingRandomWalk.Selection.NSelection.Tail.LogarithmicScales
 import Probability.BranchingRandomWalk.Spine.Tube.AffineCorridorPairBound
