@@ -9,6 +9,9 @@ public import Mathlib.Order.Filter.AtTopBot.Basic
 public import Mathlib.Order.Lattice.Nat
 public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 public import Mathlib.Analysis.SpecificLimits.Basic
+public import Mathlib.Analysis.Real.Sqrt
+public import Mathlib.Order.Interval.Set.Nat
+public import Analysis.Asymptotics.Scale
 import Mathlib.Tactic.Ring
 
 /-!
@@ -32,6 +35,34 @@ square of its width.  This order-theoretic form avoids casts and is equivalent
 to the usual assertion `L δ / δ² → ∞`. -/
 def IsSuperquadraticScale (L : ℕ → ℕ) : Prop :=
   ∀ K : ℕ, Filter.Eventually (fun δ => K * δ ^ 2 ≤ L δ) atTop
+
+/-- Along a superquadratic time scale, the squared width is negligible even
+when the time is shifted by a fixed nonnegative amount. -/
+theorem tendsto_width_sq_div_shiftedScale_of_superquadratic
+    {L : ℕ → ℕ} (hquadratic : IsSuperquadraticScale L) :
+    Tendsto (fun δ : ℕ => (δ : ℝ) ^ 2 / ((L δ : ℝ) + 1)) atTop (nhds 0) := by
+  apply Metric.tendsto_atTop.2
+  intro ε hε
+  obtain ⟨K, hK⟩ := exists_nat_gt (2 / ε)
+  have hKpos : 0 < (K : ℝ) := by
+    exact lt_trans (by positivity : (0 : ℝ) < 2 / ε) hK
+  have hKbound : 1 / (K : ℝ) < ε := by
+    have hK' : 2 < (K : ℝ) * ε := by
+      simpa [mul_comm] using (div_lt_iff₀ hε).mp hK
+    rw [div_lt_iff₀ hKpos]
+    nlinarith
+  obtain ⟨N, hN⟩ := eventually_atTop.1 (hquadratic K)
+  refine ⟨N, ?_⟩
+  intro δ hNδ
+  have hδreal : (K : ℝ) * (δ : ℝ) ^ 2 ≤ (L δ : ℝ) := by
+    exact_mod_cast hN δ hNδ
+  have hratio : (δ : ℝ) ^ 2 / ((L δ : ℝ) + 1) ≤ 1 / (K : ℝ) := by
+    apply (div_le_iff₀ (by positivity : 0 < (L δ : ℝ) + 1)).2
+    rw [one_div, mul_comm]
+    apply (le_div_iff₀ hKpos).2
+    nlinarith [hδreal]
+  rw [Real.dist_eq, sub_zero, abs_of_nonneg (div_nonneg (sq_nonneg _) (by positivity))]
+  exact hratio.trans_lt hKbound
 
 /-- The first integer width whose time scale, with the conventional one-step
 offset, reaches `n`.  When the threshold set is empty, `sInf` has the harmless
@@ -104,7 +135,7 @@ theorem inverseScale_le_width_le_upperInverseScale {L : ℕ → ℕ}
   · have hupper := lt_inverseScale_scale_add_two hL hmono δ
     have hupper' : δ < inverseScale L (L δ + 1 + 1) := by
       simpa [Nat.add_assoc] using hupper
-    simp only [upperInverseScale]
+    rw [upperInverseScale_apply]
     omega
 
 /-- Every strictly smaller width fails to reach the threshold. -/
@@ -113,6 +144,109 @@ theorem lt_threshold_of_lt_inverseScale {L : ℕ → ℕ}
     L δ + 1 < n := by
   exact Nat.lt_of_not_ge fun hreach =>
     (not_le_of_gt hδ) (inverseScale_le hreach)
+
+/-- The cardinality of the fiber of an integer-valued scale at the value
+`L δ`. -/
+noncomputable def levelMultiplicity (L : ℕ → ℕ) (δ : ℕ) : ℕ :=
+  ({η | L η = L δ} : Set ℕ).ncard
+
+/-- An integer-valued scale has eventually bounded level multiplicities. -/
+def HasEventuallyBoundedLevelMultiplicity (L : ℕ → ℕ) : Prop :=
+  ∃ C : ℕ, ∀ᶠ δ : ℕ in atTop, levelMultiplicity L δ ≤ C
+
+/-- Every level set of a scale tending to infinity is finite. -/
+theorem finite_levelSet_of_tendsto_atTop {L : ℕ → ℕ}
+    (hL : Tendsto L atTop atTop) (δ : ℕ) :
+    ({η | L η = L δ} : Set ℕ).Finite := by
+  obtain ⟨N, hN⟩ := eventually_atTop.1
+    (tendsto_atTop.1 hL (L δ + 1))
+  apply Set.finite_Iio N |>.subset
+  intro η hη
+  rw [Set.mem_Iio]
+  by_contra hnot
+  have hNη : N ≤ η := Nat.le_of_not_gt hnot
+  have hlarge := hN η hNη
+  rw [hη] at hlarge
+  omega
+
+/-- At the threshold `L δ + 1`, the lower inverse lies in the level set of
+`L δ`. -/
+private theorem inverseScale_level_eq {L : ℕ → ℕ}
+    (hL : Tendsto L atTop atTop) (hmono : Monotone L) (δ : ℕ) :
+    L (inverseScale L (L δ + 1)) = L δ := by
+  have hle := inverseScale_scale_add_one_le L δ
+  have hmono' := hmono hle
+  have hspec := inverseScale_spec hL (L δ + 1)
+  omega
+
+/-- At the threshold `L δ + 1`, the upper inverse also lies in the level set
+of `L δ`. -/
+private theorem upperInverseScale_level_eq {L : ℕ → ℕ}
+    (hL : Tendsto L atTop atTop) (hmono : Monotone L) (δ : ℕ) :
+    L (upperInverseScale L (L δ + 1)) = L δ := by
+  have hle := (inverseScale_le_width_le_upperInverseScale hL hmono δ).2
+  have hmono' := hmono hle
+  have hinv := lt_inverseScale_scale_add_two hL hmono δ
+  have hylt : upperInverseScale L (L δ + 1) < inverseScale L (L δ + 2) := by
+    have hpositive : 0 < inverseScale L (L δ + 2) := by omega
+    have hstrict : inverseScale L (L δ + 2) - 1 <
+        inverseScale L (L δ + 2) := Nat.sub_lt hpositive (by omega)
+    simpa [upperInverseScale_apply, Nat.add_assoc] using hstrict
+  have hthreshold := lt_threshold_of_lt_inverseScale hylt
+  omega
+
+/-- The lower-inverse-to-width gap is bounded by the cardinality of the
+corresponding level set. -/
+private theorem inverseScale_gap_le_levelMultiplicity {L : ℕ → ℕ}
+    (hL : Tendsto L atTop atTop) (hmono : Monotone L) (δ : ℕ) :
+    δ - inverseScale L (L δ + 1) ≤ levelMultiplicity L δ := by
+  have hxle := inverseScale_scale_add_one_le L δ
+  have hxlevel := inverseScale_level_eq hL hmono δ
+  have hsubset : Set.Icc (inverseScale L (L δ + 1)) δ ⊆
+      {η : ℕ | L η = L δ} := by
+    intro η hη
+    simp only [Set.mem_Icc, Set.mem_ofPred_eq] at hη ⊢
+    apply Nat.le_antisymm
+    · exact hmono hη.2
+    · calc
+        L δ = L (inverseScale L (L δ + 1)) := hxlevel.symm
+        _ ≤ L η := hmono hη.1
+  have hcard := Set.ncard_le_ncard hsubset
+    (finite_levelSet_of_tendsto_atTop hL δ)
+  rw [Set.ncard_Icc_nat] at hcard
+  dsimp [levelMultiplicity]
+  calc
+    δ - inverseScale L (L δ + 1) ≤
+        δ + 1 - inverseScale L (L δ + 1) :=
+      Nat.sub_le_sub_right (Nat.le_succ δ) _
+    _ ≤ ({η : ℕ | L η = L δ} : Set ℕ).ncard := hcard
+
+/-- The upper-inverse-to-width gap is bounded by the cardinality of the
+corresponding level set. -/
+private theorem upperInverseScale_gap_le_levelMultiplicity {L : ℕ → ℕ}
+    (hL : Tendsto L atTop atTop) (hmono : Monotone L) (δ : ℕ) :
+    upperInverseScale L (L δ + 1) - δ ≤ levelMultiplicity L δ := by
+  have hyle := (inverseScale_le_width_le_upperInverseScale hL hmono δ).2
+  have hylevel := upperInverseScale_level_eq hL hmono δ
+  have hsubset : Set.Icc δ (upperInverseScale L (L δ + 1)) ⊆
+      {η : ℕ | L η = L δ} := by
+    intro η hη
+    simp only [Set.mem_Icc, Set.mem_ofPred_eq] at hη ⊢
+    apply Nat.le_antisymm
+    · calc
+        L η ≤ L (upperInverseScale L (L δ + 1)) := hmono hη.2
+        _ = L δ := hylevel
+    · exact hmono hη.1
+  have hcard := Set.ncard_le_ncard hsubset
+    (finite_levelSet_of_tendsto_atTop hL δ)
+  rw [Set.ncard_Icc_nat] at hcard
+  dsimp [levelMultiplicity]
+  calc
+    upperInverseScale L (L δ + 1) - δ ≤
+        upperInverseScale L (L δ + 1) + 1 - δ :=
+      Nat.sub_le_sub_right
+        (Nat.le_succ (upperInverseScale L (L δ + 1))) _
+    _ ≤ ({η : ℕ | L η = L δ} : Set ℕ).ncard := hcard
 
 /-- At a positive generalized inverse, the preceding width has not reached
 the target.  This is the inequality needed to control `x(n) / sqrt n`; the
@@ -163,6 +297,101 @@ theorem tendsto_upperInverseScale_atTop {L : ℕ → ℕ}
     simpa [Nat.succ_eq_add_one] using hmono
   simp only [upperInverseScale]
   omega
+
+/-- If the level multiplicities of a nondecreasing scale are eventually
+bounded, then the scale index is asymptotic to both inverse widths. -/
+theorem tendsto_width_div_inverseScales_of_boundedLevelMultiplicity
+    {L : ℕ → ℕ} (hL : Tendsto L atTop atTop) (hmono : Monotone L)
+    (hbounded : HasEventuallyBoundedLevelMultiplicity L) :
+    Tendsto (fun δ : ℕ => (δ : ℝ) /
+      (inverseScale L (L δ + 1) : ℝ)) atTop (nhds 1) ∧
+    Tendsto (fun δ : ℕ => (δ : ℝ) /
+      (upperInverseScale L (L δ + 1) : ℝ)) atTop (nhds 1) := by
+  obtain ⟨C, hC⟩ := hbounded
+  have hindex : Tendsto (fun δ : ℕ => L δ + 1) atTop atTop := by
+    rw [tendsto_atTop]
+    intro b
+    filter_upwards [tendsto_atTop.1 hL b] with δ hδ
+    omega
+  have hxTop : Tendsto (fun δ : ℕ => inverseScale L (L δ + 1)) atTop atTop :=
+    (tendsto_inverseScale_atTop hL).comp hindex
+  have hyTop : Tendsto (fun δ : ℕ => upperInverseScale L (L δ + 1)) atTop atTop :=
+    (tendsto_upperInverseScale_atTop hL).comp hindex
+  have hxRealTop : Tendsto
+      (fun δ : ℕ => (inverseScale L (L δ + 1) : ℝ)) atTop atTop :=
+    tendsto_natCast_atTop_atTop.comp hxTop
+  have hyRealTop : Tendsto
+      (fun δ : ℕ => (upperInverseScale L (L δ + 1) : ℝ)) atTop atTop :=
+    tendsto_natCast_atTop_atTop.comp hyTop
+  have hxPos : ∀ᶠ δ : ℕ in atTop,
+      0 < (inverseScale L (L δ + 1) : ℝ) :=
+    hxRealTop.eventually (eventually_gt_atTop 0)
+  have hyPos : ∀ᶠ δ : ℕ in atTop,
+      0 < (upperInverseScale L (L δ + 1) : ℝ) :=
+    hyRealTop.eventually (eventually_gt_atTop 0)
+  have hgapX : ∀ᶠ δ : ℕ in atTop,
+      δ ≤ inverseScale L (L δ + 1) + C := by
+    filter_upwards [hC] with δ hCδ
+    have hgap := inverseScale_gap_le_levelMultiplicity hL hmono δ
+    have hxle := inverseScale_scale_add_one_le L δ
+    omega
+  have hgapY : ∀ᶠ δ : ℕ in atTop,
+      upperInverseScale L (L δ + 1) ≤ δ + C := by
+    filter_upwards [hC] with δ hCδ
+    have hgap := upperInverseScale_gap_le_levelMultiplicity hL hmono δ
+    have hyle := (inverseScale_le_width_le_upperInverseScale hL hmono δ).2
+    omega
+  have hCOverX : Tendsto (fun δ : ℕ => (C : ℝ) /
+      (inverseScale L (L δ + 1) : ℝ)) atTop (nhds 0) :=
+    tendsto_const_nhds.div_atTop hxRealTop
+  have hCOverY : Tendsto (fun δ : ℕ => (C : ℝ) /
+      (upperInverseScale L (L δ + 1) : ℝ)) atTop (nhds 0) :=
+    tendsto_const_nhds.div_atTop hyRealTop
+  have hxUpper : Tendsto (fun δ : ℕ => (1 : ℝ) +
+      (C : ℝ) / (inverseScale L (L δ + 1) : ℝ)) atTop (nhds 1) := by
+    simpa using tendsto_const_nhds.add hCOverX
+  have hyLower : Tendsto (fun δ : ℕ => (1 : ℝ) -
+      (C : ℝ) / (upperInverseScale L (L δ + 1) : ℝ)) atTop (nhds 1) := by
+    simpa using tendsto_const_nhds.sub hCOverY
+  have hxBounds : (fun δ : ℕ => (1 : ℝ)) ≤ᶠ[atTop]
+      (fun δ => (δ : ℝ) / (inverseScale L (L δ + 1) : ℝ)) ∧
+    (fun δ : ℕ => (δ : ℝ) / (inverseScale L (L δ + 1) : ℝ)) ≤ᶠ[atTop]
+      (fun δ => 1 + (C : ℝ) / (inverseScale L (L δ + 1) : ℝ)) := by
+    constructor
+    · filter_upwards [hxPos] with δ hxδ
+      rw [le_div_iff₀ hxδ]
+      have hxle : (inverseScale L (L δ + 1) : ℝ) ≤ δ := by
+        exact_mod_cast inverseScale_scale_add_one_le L δ
+      nlinarith
+    · filter_upwards [hxPos, hgapX] with δ hxδ hgapδ
+      rw [div_le_iff₀ hxδ]
+      have hgapReal : (δ : ℝ) ≤
+          (inverseScale L (L δ + 1) : ℝ) + C := by exact_mod_cast hgapδ
+      have hxne : (inverseScale L (L δ + 1) : ℝ) ≠ 0 := ne_of_gt hxδ
+      field_simp [hxne]
+      nlinarith
+  have hyBounds : (fun δ : ℕ => (1 : ℝ) -
+      (C : ℝ) / (upperInverseScale L (L δ + 1) : ℝ)) ≤ᶠ[atTop]
+      (fun δ => (δ : ℝ) / (upperInverseScale L (L δ + 1) : ℝ)) ∧
+    (fun δ : ℕ => (δ : ℝ) / (upperInverseScale L (L δ + 1) : ℝ)) ≤ᶠ[atTop]
+      (fun δ => (1 : ℝ)) := by
+    constructor
+    · filter_upwards [hyPos, hgapY] with δ hyδ hgapδ
+      rw [sub_le_iff_le_add, ← add_div, le_div_iff₀ hyδ]
+      have hgapReal : (upperInverseScale L (L δ + 1) : ℝ) ≤
+          (δ : ℝ) + C := by exact_mod_cast hgapδ
+      nlinarith
+    · filter_upwards [hyPos] with δ hyδ
+      rw [div_le_iff₀ hyδ]
+      have hδle : (δ : ℝ) ≤ upperInverseScale L (L δ + 1) := by
+        exact_mod_cast (inverseScale_le_width_le_upperInverseScale hL hmono δ).2
+      nlinarith
+  exact ⟨
+    tendsto_of_tendsto_of_tendsto_of_le_of_le'
+      tendsto_const_nhds hxUpper hxBounds.1 hxBounds.2,
+    tendsto_of_tendsto_of_tendsto_of_le_of_le'
+      hyLower tendsto_const_nhds hyBounds.1 hyBounds.2⟩
+
 
 /-- A superquadratic lower bound on the original scale gives the corresponding
 subdiffusive bound on its generalized inverse.  This is the integer core of
@@ -245,5 +474,148 @@ theorem tendsto_sq_inverseScale_div_atTop_zero
   rw [Real.dist_eq, sub_zero, abs_of_nonneg
     (div_nonneg (sq_nonneg _) hnpos.le)]
   exact hratio.trans_lt hfour
+
+/-- A uniform quadratic bound with an arbitrary fixed linear coefficient
+implies that a natural-valued sequence is subdiffusive. This form is useful
+for both generalized inverses and their shifted variants. -/
+theorem tendsto_sq_natCast_div_atTop_zero_of_eventually_mul_sq_le
+    {f : ℕ → ℕ} {C : ℕ}
+    (hbound : ∀ K : ℕ,
+      Filter.Eventually (fun n => K * f n ^ 2 ≤ C * n) atTop) :
+    Tendsto (fun n : ℕ => ((f n : ℝ) ^ 2) / (n : ℝ)) atTop (nhds 0) := by
+  refine Metric.tendsto_atTop.2 ?_
+  intro ε hε
+  obtain ⟨K, hK⟩ := exists_nat_gt ((C : ℝ) / ε)
+  have hKpos : 0 < (K : ℝ) := by
+    exact lt_of_le_of_lt (div_nonneg (Nat.cast_nonneg _) hε.le) hK
+  have hCbound : (C : ℝ) / K < ε := by
+    rw [div_lt_iff₀ hKpos]
+    simpa [mul_comm] using (div_lt_iff₀ hε).mp hK
+  obtain ⟨N, hN⟩ := eventually_atTop.1 (hbound K)
+  refine ⟨max N 1, fun n hn => ?_⟩
+  have hnN : N ≤ n := le_trans (le_max_left N 1) hn
+  have hnposNat : 0 < n := lt_of_lt_of_le Nat.zero_lt_one
+    (le_trans (le_max_right N 1) hn)
+  have hboundN := hN n hnN
+  have hboundReal :
+      (K : ℝ) * (f n : ℝ) ^ 2 ≤ (C : ℝ) * (n : ℝ) := by
+    exact_mod_cast hboundN
+  have hxbound :
+      (f n : ℝ) ^ 2 ≤ (C : ℝ) * (n : ℝ) / K := by
+    rw [le_div_iff₀ hKpos]
+    simpa [mul_comm] using hboundReal
+  have hnpos : 0 < (n : ℝ) := by exact_mod_cast hnposNat
+  have hratio :
+      (f n : ℝ) ^ 2 / (n : ℝ) ≤ (C : ℝ) / K := by
+    rw [div_le_iff₀ hnpos]
+    calc
+      (f n : ℝ) ^ 2 ≤ (C : ℝ) * (n : ℝ) / K := hxbound
+      _ = ((C : ℝ) / K) * n := by ring
+  rw [Real.dist_eq, sub_zero, abs_of_nonneg
+    (div_nonneg (sq_nonneg _) hnpos.le)]
+  exact hratio.trans_lt hCbound
+
+/-- The upper generalized inverse inherits the subdiffusive bound from a
+superquadratic scale. The shift from `n` to `n + 1` changes only the uniform
+constant in the quadratic estimate. -/
+theorem eventually_mul_sq_upperInverseScale_le_eight_mul
+    {L : ℕ → ℕ} (hL : Tendsto L atTop atTop)
+    (hquadratic : IsSuperquadraticScale L) (K : ℕ) :
+    Filter.Eventually
+      (fun n => K * (upperInverseScale L n) ^ 2 ≤ 8 * n) atTop := by
+  obtain ⟨N, hN⟩ := eventually_atTop.1
+    (eventually_mul_sq_inverseScale_le_four_mul_of_superquadratic
+      hL hquadratic K)
+  filter_upwards [eventually_ge_atTop (max N 1)] with n hn
+  have hnN : N ≤ n := le_trans (le_max_left N 1) hn
+  have hn1 : 1 ≤ n := le_trans (le_max_right N 1) hn
+  have hupper : upperInverseScale L n ≤ inverseScale L (n + 1) := by
+    simp only [upperInverseScale]
+    omega
+  have hnext := hN (n + 1) (by omega)
+  calc
+    K * (upperInverseScale L n) ^ 2 ≤
+        K * (inverseScale L (n + 1)) ^ 2 :=
+      Nat.mul_le_mul_left K (Nat.pow_le_pow_left hupper 2)
+    _ ≤ 4 * (n + 1) := by simpa using hnext
+    _ ≤ 8 * n := by omega
+
+/-- The squared upper generalized inverse is negligible compared with time. -/
+theorem tendsto_sq_upperInverseScale_div_atTop_zero
+    {L : ℕ → ℕ} (hL : Tendsto L atTop atTop)
+    (hquadratic : IsSuperquadraticScale L) :
+    Tendsto (fun n : ℕ => ((upperInverseScale L n : ℝ) ^ 2) / (n : ℝ))
+      atTop (nhds 0) :=
+  tendsto_sq_natCast_div_atTop_zero_of_eventually_mul_sq_le
+    (fun K => eventually_mul_sq_upperInverseScale_le_eight_mul
+      hL hquadratic K)
+
+/-- Convert a vanishing squared ratio into the corresponding square-root
+ratio for any nonnegative real sequence. -/
+theorem tendsto_div_sqrt_atTop_zero_of_tendsto_sq_div_atTop_zero
+    {f : ℕ → ℝ} (hf : ∀ n, 0 ≤ f n)
+    (hsq : Tendsto (fun n : ℕ => (f n ^ 2) / (n : ℝ)) atTop (nhds 0)) :
+    Tendsto (fun n : ℕ => f n / Real.sqrt (n : ℝ)) atTop (nhds 0) := by
+  have hroot : Tendsto
+      ((fun x : ℝ => Real.sqrt x) ∘ (fun n : ℕ => f n ^ 2 / (n : ℝ)))
+      atTop (nhds 0) := by
+    simpa only [Real.sqrt_zero] using
+      (Real.continuous_sqrt.tendsto 0).comp hsq
+  have heq : (fun n : ℕ => f n / Real.sqrt (n : ℝ)) =ᶠ[atTop]
+      ((fun x : ℝ => Real.sqrt x) ∘ (fun n : ℕ => f n ^ 2 / (n : ℝ))) := by
+    filter_upwards [eventually_gt_atTop (0 : ℕ)] with n hn
+    have hnreal : 0 < (n : ℝ) := by exact_mod_cast hn
+    change f n / Real.sqrt (n : ℝ) = Real.sqrt (f n ^ 2 / (n : ℝ))
+    rw [Real.sqrt_div (sq_nonneg (f n)), Real.sqrt_sq_eq_abs,
+      abs_of_nonneg (hf n)]
+  exact hroot.congr' heq.symm
+
+/-- The inverse scale in a superquadratic regime is negligible relative to
+the square-root time scale. -/
+theorem tendsto_inverseScale_div_sqrt_atTop_zero
+    {L : ℕ → ℕ} (hL : Tendsto L atTop atTop)
+    (hquadratic : IsSuperquadraticScale L) :
+    Tendsto (fun n : ℕ => (inverseScale L n : ℝ) / Real.sqrt (n : ℝ))
+      atTop (nhds 0) :=
+  tendsto_div_sqrt_atTop_zero_of_tendsto_sq_div_atTop_zero
+    (fun n => Nat.cast_nonneg (inverseScale L n))
+    (tendsto_sq_inverseScale_div_atTop_zero hL hquadratic)
+
+/-- The upper inverse scale in a superquadratic regime is negligible relative
+to the square-root time scale. -/
+theorem tendsto_upperInverseScale_div_sqrt_atTop_zero
+    {L : ℕ → ℕ} (hL : Tendsto L atTop atTop)
+    (hquadratic : IsSuperquadraticScale L) :
+    Tendsto (fun n : ℕ => (upperInverseScale L n : ℝ) / Real.sqrt (n : ℝ))
+      atTop (nhds 0) :=
+  tendsto_div_sqrt_atTop_zero_of_tendsto_sq_div_atTop_zero
+    (fun n => Nat.cast_nonneg (upperInverseScale L n))
+    (tendsto_sq_upperInverseScale_div_atTop_zero hL hquadratic)
+
+/-- Package the generalized inverse as a small-deviation scale with the
+diffusive normalization `sqrt n`. -/
+theorem isSmallDeviationScale_inverseScale
+    {L : ℕ → ℕ} (hL : Tendsto L atTop atTop)
+    (hquadratic : IsSuperquadraticScale L) :
+    IsSmallDeviationScale (fun n => (inverseScale L n : ℝ))
+      (fun n => Real.sqrt (n : ℝ)) := by
+  apply IsSmallDeviationScale.of_tendsto
+  · simpa only [Function.comp_def] using
+      (tendsto_natCast_atTop_atTop : Tendsto (fun n : ℕ => (n : ℝ))
+        atTop atTop).comp (tendsto_inverseScale_atTop hL)
+  · exact tendsto_inverseScale_div_sqrt_atTop_zero hL hquadratic
+
+/-- Package the upper generalized inverse as a small-deviation scale with
+the diffusive normalization `sqrt n`. -/
+theorem isSmallDeviationScale_upperInverseScale
+    {L : ℕ → ℕ} (hL : Tendsto L atTop atTop)
+    (hquadratic : IsSuperquadraticScale L) :
+    IsSmallDeviationScale (fun n => (upperInverseScale L n : ℝ))
+      (fun n => Real.sqrt (n : ℝ)) := by
+  apply IsSmallDeviationScale.of_tendsto
+  · simpa only [Function.comp_def] using
+      (tendsto_natCast_atTop_atTop : Tendsto (fun n : ℕ => (n : ℝ))
+        atTop atTop).comp (tendsto_upperInverseScale_atTop hL)
+  · exact tendsto_upperInverseScale_div_sqrt_atTop_zero hL hquadratic
 
 end Asymptotics
