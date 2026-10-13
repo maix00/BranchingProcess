@@ -51,6 +51,30 @@ theorem eventually_pos {scale normalization : ℕ → ℝ}
     ∀ᶠ n in atTop, 0 < scale n :=
   h.tendsto_atTop.eventually (eventually_gt_atTop 0)
 
+/-- Dividing a small-deviation scale by a fixed positive spatial factor
+preserves its relation to the reference normalization. -/
+theorem div_const {scale normalization : ℕ → ℝ} {c : ℝ} (hc : 0 < c)
+    (h : IsSmallDeviationScale scale normalization) :
+    IsSmallDeviationScale (fun n => scale n / c) normalization := by
+  refine ⟨?_, ?_⟩
+  · apply Filter.tendsto_atTop_atTop.2
+    intro b
+    obtain ⟨N, hN⟩ :=
+      (Filter.tendsto_atTop_atTop.1 h.tendsto_atTop) (b * c)
+    refine ⟨N, ?_⟩
+    intro n hn
+    apply (le_div_iff₀ hc).2
+    exact hN n hn
+  · have hratio : Tendsto (fun n => (scale n / normalization n) / c)
+        atTop (nhds 0) := by
+      simpa using h.tendsto_div.div_const c
+    have heq : (fun n => (scale n / c) / normalization n) =ᶠ[atTop]
+        fun n => (scale n / normalization n) / c := by
+      filter_upwards [] with n
+      simp only [div_div]
+      rw [mul_comm c (normalization n)]
+    exact hratio.congr' heq.symm
+
 /-- Replacing a normalization by an asymptotically proportional positive
 normalization preserves the small-deviation relation. -/
 theorem of_tendsto_normalization_ratio
