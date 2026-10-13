@@ -234,6 +234,7 @@
     \bool_new:N \g__fdu_period_space_bool
     \bool_new:N \g__fdu_theorem_head_bool
     \bool_new:N \g__fdu_theorem_head_end_bool
+    \bool_new:N \g__fdu_reference_right_gap_bool
     \newcount\g__fdu_last_char_cjk_int
     \newcount\g__fdu_reference_left_int
     \newcount\g__fdu_reference_right_int
@@ -246,6 +247,7 @@
         \bool_gset_false:N \g__fdu_half_right_space_bool
         \bool_gset_false:N \g__fdu_period_space_bool
         \bool_gset_false:N \g__fdu_theorem_head_end_bool
+        \bool_gset_false:N \g__fdu_reference_right_gap_bool
         \global\g__fdu_last_char_cjk_int=0\relax
         \global\g__fdu_reference_left_int=0\relax
         \global\g__fdu_reference_right_int=0\relax
@@ -492,6 +494,7 @@
             \bool_gset_false:N \g__fdu_half_right_space_bool
             \bool_gset_false:N \g__fdu_period_space_bool
             \bool_gset_false:N \g__fdu_theorem_head_end_bool
+            \bool_gset_false:N \g__fdu_reference_right_gap_bool
             \global\g__fdu_last_char_cjk_int=0\relax
             \global\g__fdu_reference_left_int=0\relax
             \global\g__fdu_reference_right_int=0\relax
@@ -502,6 +505,7 @@
             \bool_gset_false:N \g__fdu_half_right_space_bool
             \bool_gset_false:N \g__fdu_period_space_bool
             \bool_gset_false:N \g__fdu_theorem_head_end_bool
+            \bool_gset_false:N \g__fdu_reference_right_gap_bool
             \global\g__fdu_last_char_cjk_int=0\relax
             \global\g__fdu_reference_left_int=0\relax
             \global\g__fdu_reference_right_int=0\relax
@@ -571,13 +575,12 @@
       }
       {
         % Older xeCJK releases do not capture the visible edge classes of
-        % commands. Track those classes only in this compatibility path. A
-        % source space at a reference edge is removed only when both visible
-        % edge characters are CJK; the normal CJK glyph spacing is then left
-        % to xeCJK. Classify the two edges independently: a mixed CJK/non-CJK
-        % boundary in commands such as \nameref keeps its authored space and
-        % ordinary inter-script spacing. Numeric/Latin edges likewise retain
-        % their authored source spaces.
+        % commands. Track those classes only in this compatibility path.
+        % Classify the two edges independently: same-script CJK boundaries
+        % retain xeCJK's ordinary glyph spacing, while mixed boundaries get
+        % the ordinary inter-script spacing. A reference ending in a non-CJK
+        % character needs an explicit right-edge transition before following
+        % CJK text; normalize any source space there to xeCJK's natural glue.
         \bool_new:N \g__fdu_reference_left_gap_bool
         \cs_new_protected:Npn \__fdu_reference_cjk_transition:
           {
@@ -607,6 +610,32 @@
                 \fi
               }
           }
+        \cs_new_protected:Npn \__fdu_reference_right_cjk_boundary:
+          {
+            \ifnum\g__fdu_reference_right_int=2\relax
+              \bool_gset_true:N \g__fdu_reference_right_gap_bool
+            \fi
+          }
+        % The native Boundary-to-CJK transition first resolves pending source
+        % whitespace with \xeCJK_check_for_glue:. Wrap that check so the
+        % normalized inter-script glue is inserted immediately afterwards,
+        % before xeCJK selects the CJK glyph. This matches the ordinary
+        % non-CJK-to-CJK transition rather than a generic word space.
+        \cs_new_eq:NN \__fdu_original_xeCJK_check_for_glue:
+          \xeCJK_check_for_glue:
+        \cs_gset_protected:Npn \xeCJK_check_for_glue:
+          {
+            \__fdu_original_xeCJK_check_for_glue:
+            \bool_if:NT \g__fdu_reference_right_gap_bool
+              {
+                \ifdim\lastskip>0pt\relax
+                  \unskip
+                \fi
+                \CJKecglue
+                \bool_gset_false:N \g__fdu_reference_right_gap_bool
+                \global\g__fdu_reference_right_int=0\relax
+              }
+          }
         \cs_new_protected:Npn \__fdu_reference_non_cjk_transition:
           {
             % A command boundary (notably the hyperlink in \nameref) can
@@ -617,6 +646,7 @@
               \bool_if:NT \g__fdu_reference_left_gap_bool { \CJKecglue }
             \fi
             \bool_gset_false:N \g__fdu_reference_left_gap_bool
+            \bool_gset_false:N \g__fdu_reference_right_gap_bool
             \global\g__fdu_reference_left_int=0\relax
             \global\g__fdu_reference_right_int=0\relax
             \global\g__fdu_last_char_cjk_int=0\relax
@@ -676,6 +706,8 @@
               { \__fdu_reference_non_cjk_transition: }
             \xeCJK_pre_inter_class_toks:nnn { Boundary } { CJK }
               { \__fdu_reference_boundary_to_cjk: }
+            \xeCJK_pre_inter_class_toks:nnn { Boundary } { CJK }
+              { \__fdu_reference_right_cjk_boundary: }
             \xeCJK_pre_inter_class_toks:nnn { Boundary } { FullLeft }
               { \__fdu_reference_boundary_to_cjk: }
             \xeCJK_pre_inter_class_toks:nnn { Boundary } { FullRight }
@@ -690,6 +722,7 @@
             \global\g__fdu_reference_left_int=1\relax
             \global\g__fdu_reference_right_int=0\relax
             \bool_gset_false:N \g__fdu_reference_left_gap_bool
+            \bool_gset_false:N \g__fdu_reference_right_gap_bool
             % Sample the source boundary before the reference's hyperlink
             % starts inserting whatsits: preserve a supplied space, and add
             % inter-script glue later only if the visible first edge is Latin.
@@ -705,23 +738,26 @@
         \cs_new_protected:Npn \__fdu_reference_end:
           {
             \bool_gset_false:N \g__fdu_reference_left_gap_bool
+            \bool_gset_false:N \g__fdu_reference_right_gap_bool
             \global\g__fdu_reference_left_int=0\relax
             \ifnum\g__fdu_last_char_cjk_int=1
               \global\g__fdu_reference_right_int=1\relax
             \else
-              \global\g__fdu_reference_right_int=0\relax
+              \global\g__fdu_reference_right_int=2\relax
             \fi
           }
         \cs_new_protected:Npn \__fdu_reference_box_begin:
           {
             \global\g__fdu_reference_left_int=0\relax
             \global\g__fdu_reference_right_int=0\relax
+            \bool_gset_false:N \g__fdu_reference_right_gap_bool
           }
         \cs_new_protected:Npn \__fdu_reference_box_end:
           {
             \global\g__fdu_last_char_cjk_int=0\relax
             \global\g__fdu_reference_left_int=0\relax
             \global\g__fdu_reference_right_int=0\relax
+            \bool_gset_false:N \g__fdu_reference_right_gap_bool
           }
         \cs_new_protected:Npn \__fdu_install_reference_boundaries:
           {
