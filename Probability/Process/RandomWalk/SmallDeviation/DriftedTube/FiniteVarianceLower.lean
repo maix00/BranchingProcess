@@ -45,6 +45,10 @@ The public objects and theorems in this file are:
   cover and this inclusion: every relative starting point in
   $[-2/3,-1/3]$ admits a common narrowed-tube event contained in its target
   tube and endpoint-window event.
+- `relativeLowerEdge_mem_staircaseRange_of_centerWindow` derives
+  $(-y+r)/D\in[-2/3,-1/3]$ from the paper's central window
+  $y\in[r+D/3,r+2D/3]$; `exists_staircaseBin_commonEvent_subset_centerWindow`
+  then selects the common event for every point in that window.
 
 This is the exponential form of Wang Yiyang, *Asymptotic speed of the
 $N$-branching random walk with infinite offspring*, Chapter 3, Lemma 3.1(ii),
@@ -432,6 +436,33 @@ def relativeHorizontalTubeEndpointWindowEvent (lower width : ℝ)
     AdditivePath.displacement horizon increment ∈
       Set.Icc (lower + v₁ * width) (lower + v₂ * width)}
 
+/-- The central window $[r+D/3,r+2D/3]$ makes the relative lower edge
+$r-y$ lie in $[-2D/3,-D/3]$, as used for each block in Wang Yiyang,
+Chapter 3, proof of Lemma 3.5. -/
+theorem relativeLowerEdge_mem_staircaseRange_of_centerWindow
+    {width lowerEdge position : ℝ} (hwidth : 0 < width)
+    (hposition : position ∈
+      Set.Icc (lowerEdge + width / 3) (lowerEdge + 2 * width / 3)) :
+    (lowerEdge - position) / width ∈
+      Set.Icc (-(2 : ℝ) / 3) (-(1 : ℝ) / 3) := by
+  rcases Set.mem_Icc.mp hposition with ⟨hpositionLower, hpositionUpper⟩
+  rw [Set.mem_Icc]
+  have hleft : (-(2 : ℝ) / 3) * width ≤ lowerEdge - position := by
+    nlinarith [hpositionUpper]
+  have hright : lowerEdge - position ≤ (-(1 : ℝ) / 3) * width := by
+    nlinarith [hpositionLower]
+  constructor
+  · calc
+      -(2 : ℝ) / 3 = ((-(2 : ℝ) / 3) * width) / width := by
+        field_simp [ne_of_gt hwidth]
+      _ ≤ (lowerEdge - position) / width :=
+        (div_le_div_iff_of_pos_right hwidth).2 hleft
+  · calc
+      (lowerEdge - position) / width ≤
+          ((-(1 : ℝ) / 3) * width) / width :=
+        (div_le_div_iff_of_pos_right hwidth).2 hright
+      _ = -(1 : ℝ) / 3 := by field_simp [ne_of_gt hwidth]
+
 /-- For a starting offset in one spatial bin, the common narrowed-tube
 event is contained in the desired horizontal tube and terminal window.
 This is the deterministic bin-inclusion step in the staircase proof of
@@ -640,6 +671,28 @@ theorem exists_staircaseBin_commonEvent_subset_relativeTube
   exact ⟨l, hl,
     horizontalTubeEndpointWindowEvent_subset_relativeHorizontalTubeEndpointWindowEvent
       hm hlower hupper⟩
+
+/-- At every point of the central window used in the staircase proof, a
+common narrowed-tube event is contained in the corresponding target event.
+This combines the central-window geometry with the bin selection in Wang
+Yiyang, Chapter 3, proof of Lemma 3.5. -/
+theorem exists_staircaseBin_commonEvent_subset_centerWindow
+    {m horizon : ℕ} {width v₁ v₂ lowerEdge position : ℝ}
+    (hm : 2 ≤ m) (hwidth : 0 < width)
+    (hposition : position ∈
+      Set.Icc (lowerEdge + width / 3) (lowerEdge + 2 * width / 3)) :
+    ∃ l : ℕ, l < m ∧
+      horizontalTubeEndpointWindowEvent
+          (staircaseBinTubeParameter m l)
+          (staircaseBinWidth m * width) horizon
+          (staircaseBinEndpointLowerFraction m v₁)
+          (staircaseBinEndpointUpperFraction m v₂) ⊆
+        relativeHorizontalTubeEndpointWindowEvent
+          (lowerEdge - position) width horizon v₁ v₂ := by
+  have hrelative := relativeLowerEdge_mem_staircaseRange_of_centerWindow
+    hwidth hposition
+  exact exists_staircaseBin_commonEvent_subset_relativeTube hm hwidth
+    hrelative.1 hrelative.2
 
 end ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 
