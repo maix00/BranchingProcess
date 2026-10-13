@@ -81,6 +81,10 @@ Public theorem declarations (write `S_i` for the additive path and `P` for its I
   explicit entropy and jump-count bounds give `P(B_{L,Δ,r}) ≤ exp(-d z)`.
 - `measureReal_noLargeDropEndpointBelowEvent_le_exp_of_finiteVariance`:
   for large `Δ` and `L ≥ Δ^(2+c)`, `P(B_{L,Δ,Δ/c}) ≤ exp(-d L/Δ²)`.
+- `exists_uniform_iidSequenceLaw_measure_noLargeDropEndpointBelowEvent_le_of_centeredSecondMoment`:
+  for `ρ,p>0`, a centered law with variance `σ²`, and `target<π²/2`, uniformly
+  for large `Δ` and `L ≥ Δ^(2+p)`,
+  `P(B_{L,Δ,Δ/ρ}) ≤ exp(-target·σ²L/Δ²)`.
 - `tendsto_diffusiveBlockCount_atTop_of_horizonRatio`:
   `L_n/Δ_n² → ∞` gives `L_n/⌊AΔ_n²⌋ → ∞` when `Δ_n → ∞`, `A > 0`.
 
@@ -2670,6 +2674,96 @@ theorem measureReal_noLargeDropEndpointBelowEvent_le_exp_of_finiteVariance
           (measure_ne_top (iidSequenceLaw ν) _)
       _ ≤ Real.exp (-d * ((horizon : ℝ) / Delta ^ 2)) := by
         simpa using htransformedBound
+
+/-- The finite-variance endpoint estimate is uniform over all horizons that
+dominate a prescribed power of the width. This is a direct scaling of the
+finite-variance form of Wang Yiyang, Chapter 3, Lemma 3.3: choose the smaller
+of the requested horizon exponent and the endpoint exponent, then apply the
+drawdown estimate above. -/
+theorem exists_uniform_iidSequenceLaw_measure_noLargeDropEndpointBelowEvent_le_of_centeredSecondMoment
+    (ν : Measure ℝ) [IsProbabilityMeasure ν] {sigma : ℝ}
+    (hν : ProbabilityTheory.IsCenteredSecondMoment ν (sigma ^ 2))
+    (hsigma : 0 < sigma)
+    (endpointRatio target p : ℝ)
+    (hEndpointRatio : 0 < endpointRatio)
+    (htarget : 0 < target)
+    (htargetCritical : target < Real.pi ^ 2 / 2)
+    (hp : 0 < p) :
+    ∃ delta0 : ℝ, 0 < delta0 ∧
+      ∀ delta : ℝ, delta0 ≤ delta → ∀ horizon : ℕ,
+        delta ^ (2 + p) ≤ (horizon : ℝ) →
+          iidSequenceLaw ν (noLargeDropEndpointBelowEvent
+            horizon delta (delta / endpointRatio)) ≤
+            ENNReal.ofReal (Real.exp
+              (-target * sigma ^ 2 * (horizon : ℝ) / delta ^ 2)) := by
+  have hsquare : Integrable (fun x : ℝ => x ^ 2) ν :=
+    Integrable.of_integral_ne_zero (by
+      rw [hν.2]
+      exact ne_of_gt (sq_pos_of_pos hsigma))
+  have hvariance : 0 < sigma ^ 2 := sq_pos_of_pos hsigma
+  have htargetRate : 0 < target * sigma ^ 2 := mul_pos htarget hvariance
+  have hcritical : target * sigma ^ 2 < (Real.pi ^ 2 / 2) * sigma ^ 2 :=
+    mul_lt_mul_of_pos_right htargetCritical hvariance
+  let endpointPower : ℝ := min p endpointRatio
+  have hendpointPowerPos : 0 < endpointPower := by
+    dsimp [endpointPower]
+    exact lt_min hp hEndpointRatio
+  have hendpointPowerLeP : endpointPower ≤ p := min_le_left _ _
+  have hendpointPowerLeRatio : endpointPower ≤ endpointRatio :=
+    min_le_right _ _
+  obtain ⟨Delta0, hDelta0, hbound⟩ :=
+    measureReal_noLargeDropEndpointBelowEvent_le_exp_of_finiteVariance
+      ν hν hsquare hvariance hendpointPowerPos htargetRate hcritical
+  refine ⟨Delta0, lt_of_lt_of_le (by norm_num) hDelta0, ?_⟩
+  intro delta hdelta horizon hlarge
+  have hdeltaOne : 1 ≤ delta := hDelta0.trans hdelta
+  have hdeltaPos : 0 < delta := lt_of_lt_of_le (by norm_num) hdeltaOne
+  have hpower : delta ^ (2 + endpointPower) ≤ delta ^ (2 + p) :=
+    Real.rpow_le_rpow_of_exponent_le hdeltaOne (by linarith)
+  have hlarge' : delta ^ (2 + endpointPower) ≤ (horizon : ℝ) :=
+    hpower.trans hlarge
+  have hbound' := hbound delta hdelta horizon hlarge'
+  have hthreshold : delta / endpointRatio ≤ delta / endpointPower :=
+    (div_le_div_iff₀ hEndpointRatio hendpointPowerPos).2
+      (mul_le_mul_of_nonneg_left hendpointPowerLeRatio hdeltaPos.le)
+  have hsubset :
+      noLargeDropEndpointBelowEvent horizon delta
+          (delta / endpointRatio) ⊆
+        noLargeDropEndpointBelowEvent horizon delta
+          (delta / endpointPower) := by
+    intro increment hevent
+    exact ⟨hevent.1, hevent.2.trans hthreshold⟩
+  have hrealBound :
+      (iidSequenceLaw ν).real
+          (noLargeDropEndpointBelowEvent horizon delta
+            (delta / endpointRatio)) ≤
+        Real.exp (-target * sigma ^ 2 * (horizon : ℝ) / delta ^ 2) := by
+    calc
+      _ ≤ (iidSequenceLaw ν).real
+          (noLargeDropEndpointBelowEvent horizon delta
+            (delta / endpointPower)) :=
+        measureReal_mono hsubset (measure_ne_top (iidSequenceLaw ν) _)
+      _ ≤ Real.exp (-target * sigma ^ 2 * (horizon : ℝ) / delta ^ 2) := by
+        have hexponent : -(target * sigma ^ 2) *
+            ((horizon : ℝ) / delta ^ 2) =
+            -target * sigma ^ 2 * (horizon : ℝ) / delta ^ 2 := by ring
+        rw [← hexponent]
+        exact hbound'
+  let event := noLargeDropEndpointBelowEvent horizon delta
+    (delta / endpointRatio)
+  let q : ℝ≥0∞ := iidSequenceLaw ν event
+  have hqle : q ≤ 1 := by
+    calc
+      q ≤ iidSequenceLaw ν Set.univ := measure_mono (Set.subset_univ _)
+      _ = 1 := measure_univ
+  have hqtop : q ≠ ∞ := ne_of_lt (lt_of_le_of_lt hqle ENNReal.one_lt_top)
+  have hrealQ : q.toReal ≤
+      Real.exp (-target * sigma ^ 2 * (horizon : ℝ) / delta ^ 2) := by
+    simpa [q, event, Measure.real] using hrealBound
+  change q ≤ ENNReal.ofReal
+    (Real.exp (-target * sigma ^ 2 * (horizon : ℝ) / delta ^ 2))
+  rw [← ENNReal.ofReal_toReal hqtop]
+  exact (ENNReal.ofReal_le_ofReal_iff (Real.exp_nonneg _)).2 hrealQ
 
 /-- The quotient by a floor-rounded diffusive block length diverges whenever
 the horizon is large compared with the square of the spatial scale. The
