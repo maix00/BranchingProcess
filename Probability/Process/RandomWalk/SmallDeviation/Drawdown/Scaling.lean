@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.Upper
+public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper
 public import Probability.Process.RandomWalk.Path.Basic
 public import Probability.Sequence.IID
 

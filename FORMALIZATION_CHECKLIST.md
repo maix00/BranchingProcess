@@ -348,7 +348,7 @@ process and Gaussian-law APIs, not a general point-process representation.
   deterministic running-maximum binning, exact fixed-pattern IID block
   product, finite union over bin patterns, and parameter selection are built
   and audited in `RandomWalk/Path/Drawdown.lean` and
-  `Probability/Process/RandomWalk/SmallDeviation/Drawdown/Upper.lean`. In particular,
+  `Probability/Process/RandomWalk/SmallDeviation/Drawdown/FiniteVarianceUpper.lean`. In particular,
   `measureReal_noLargeDropEndpointBelowEvent_le_exp_of_finiteVariance`
   proves the uniform no-large-drawdown estimate for centered increments of
   arbitrary positive finite variance. The estimate is direct at that variance;
