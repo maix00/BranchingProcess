@@ -7,11 +7,14 @@ Authors: WANG Yiyang
 import Probability.Process.RandomWalk.SmallDeviation.Drawdown.Upper
 
 /-!
-# Axiom audit for deterministic spatial slicing
+# Axiom audit for the pathwise drawdown lemmas
 
-This test checks the bounded-drawdown finite-pattern reduction and its exact
-IID block factorization.  It does not claim the subsequent Mogulskii parameter
-estimate needed for Aïdékon--Hu Lemma 2.3.
+This audit checks the declarations expressing the finite-horizon event
+\(S_i-S_j\leq\Delta\) for \(i\leq j\), the resulting path bounds, and the
+identification of segment oscillation with the increment-block event.
+It also audits the finite-variance exponential estimate corresponding to
+Wang Yiyang, *Asymptotic speed of the $N$-branching random walk with infinite
+offspring*, Chapter 3, Lemma 3.3.
 -/
 
 #print axioms
@@ -21,46 +24,10 @@ estimate needed for Aïdékon--Hu Lemma 2.3.
   ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.neg_delta_le_additivePath_of_noLargeDrop
 
 #print axioms
-  ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.iidSequenceLaw_measure_spatialBinPatternEvent_eq_pow
+  ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.blockOscillationEvent_of_additiveSegment
 
 #print axioms
-  ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.exists_spatialBinPatternEvent_of_noLargeDrop
+  ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.tendsto_diffusiveBlockCount_atTop_of_horizonRatio
 
 #print axioms
-  ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.card_monotoneSpatialBinPattern_le
-
-#print axioms
-  ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.measurableSet_monotoneSpatialBinPatternUnionEvent
-
-#print axioms
-  ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.iidSequenceLaw_measure_monotoneSpatialBinPatternUnionEvent_le
-
-#print axioms
-  ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.noLargeDropEndpointBelowEvent_subset_monotoneSpatialBinPatternUnionEvent
-
-#print axioms
-  ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.iidSequenceLaw_measure_monotoneSpatialBinPatternUnionEvent_le_exp
-
-#print axioms
-  ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.iidSequenceLaw_measure_noLargeDropEndpointBelowEvent_le_exp
-
-#print axioms
-  ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.eventually_integerDiffusiveBlockOscillationProbability_le_exp
-
-#print axioms
-  ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.eventually_finitePatternEntropyCondition_of_rate_gap
-
-#print axioms
-  ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.eventually_iidSequenceLaw_measure_monotoneSpatialBinPatternUnionEvent_le_exp_of_rate_gap
-
-#print axioms
-  ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.eventually_iidSequenceLaw_measure_noLargeDropEndpointBelowEvent_le_exp_of_rate_gap
-
-#print axioms
-  ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.eventually_iidSequenceLaw_measure_noLargeDropEndpointBelowEvent_le_ah_exp
-
-#print axioms
-  ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.exists_ah_diffusive_parameters
-
-#print axioms
-  ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.exists_uniform_iidSequenceLaw_measure_noLargeDropEndpointBelowEvent_le_ah_exp
+  ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.measureReal_noLargeDropEndpointBelowEvent_le_exp_of_finiteVariance

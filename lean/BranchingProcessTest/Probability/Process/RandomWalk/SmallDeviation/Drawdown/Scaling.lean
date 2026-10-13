@@ -7,11 +7,10 @@ Authors: WANG Yiyang
 import Probability.Process.RandomWalk.SmallDeviation.Drawdown.Scaling
 
 /-!
-# Axiom audit for finite-variance drawdown normalization
+# Axiom audit for drawdown-event scaling
 
-This test checks measurability of the finite-horizon event, its pathwise
-scaling identity, and the transfer of the unit-variance Aïdékon--Hu estimate
-to arbitrary positive finite variance.
+This audit checks measurability of the finite-horizon event and its pathwise
+and probability scaling identities under division by a positive constant.
 -/
 
 #print axioms
@@ -22,9 +21,3 @@ to arbitrary positive finite variance.
 
 #print axioms
   ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.iidSequenceLaw_measure_noLargeDropEndpointBelowEvent_eq_map_div
-
-#print axioms
-  ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.eventually_iidSequenceLaw_measure_noLargeDropEndpointBelowEvent_le_ah_exp_of_centeredSecondMoment
-
-#print axioms
-  ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.exists_uniform_iidSequenceLaw_measure_noLargeDropEndpointBelowEvent_le_ah_exp_of_centeredSecondMoment

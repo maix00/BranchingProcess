@@ -7,24 +7,127 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.Path.Drawdown
+public import Probability.Process.RandomWalk.Path.Filtration
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.BlockScale
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Discrete.Horizontal
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Range.BlockBound
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Range.Parameters
-public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.RangeRate
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Discrete.HorizontalTubeUpper
+public import Probability.Independence.ConditionalIntegral
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 
 import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 
-set_option maxHeartbeats 800000
-
 /-!
-# Spatial slicing for bounded-drawdown walk events
+# Bounded-drawdown walk events
 
-This file connects the deterministic running-maximum bins to finite IID
-increment-block events.  Once a fixed bin pattern is specified, every block
-whose endpoint bins agree is contained in a deterministic spatial interval;
-its translated partial-sum path therefore has bounded oscillation.  The
-remaining fixed-pattern event factors by the generic consecutive-block law.
+Public theorem declarations (write `S_i` for the additive path and `P` for its IID law):
+
+- `iidSequenceLaw_condExp_prefix_nextBlock`: `E[f(X,Y) | X] = ∫ f(X,y) dν^ℓ(y)`.
+- `iidSequenceLaw_condExp_pairEvent_le_of_sectionProbability`: section bounds `≤ p`
+  give `E[1_E | X] ≤ p`.
+- `measurable_drawdownPastDiscretizedMaximum`: the rounded past maximum `M_j` is measurable.
+- `drawdownPastDiscretizedMaximum_eq_runningMaximum`:
+  `M_j = U - w ⌊(U - max_{i≤j} S_i)/w⌋`.
+- `drawdownTubeBlockEvent_iff_path_in_interval`: a tube event is the interval
+  condition `M_j-w-Δ ≤ S_i ≤ M_j` throughout its block.
+- `measurableSet_drawdownTubePairEvent`: the prefix/block tube event is measurable.
+- `measurableSet_drawdownTubeBlockEvent`: the full-path tube event is measurable.
+- `finiteInClosedInterval_translate_by_initial`: `S_i ∈ [l,u]` from `a` is
+  equivalent to `S_i-a ∈ [l-a,u-a]` from zero.
+- `iidSequenceLaw_map_blockCoordinates_finiteInterval_le`: interval-block
+  probability is at most its uniform translated-interval bound.
+- `iidSequenceLaw_condExp_drawdownTubePairEvent_le_of_intervalBound`:
+  a uniform interval bound `p` gives `E[1_E | X] ≤ p`.
+- `iidSequenceLaw_condExp_drawdownTubePairEvent_le_of_finiteVariance`:
+  `E[1_E | X] ≤ exp(w^v-dℓ/w²)` for sufficiently large `w`.
+- `iidSequenceLaw_condExp_drawdownTubeBlockEvent_le_of_finiteVariance`:
+  `E[1_{E_j} | F_j] ≤ exp(w^v-dℓ/w²)`.
+- `measureReal_inter_le_of_condExp_indicator_le`:
+  `E[1_E | F] ≤ p` gives `P(A ∩ E) ≤ p P(A)` for `A ∈ F`.
+- `measureReal_drawdownConditionalBlockIntersection_le_prod`:
+  `P(⋂_j E_j) ≤ ∏_j p_j`.
+- `measureReal_drawdownConditionalBlockIntersection_le_pow`:
+  with a common factor, `P(⋂_j E_j) ≤ p^q`.
+- `drawdownBlockStart_last_eq_horizon`: the remainder plus `qℓ` equals `L`.
+- `drawdown_prod_jumpPatternBound_eq_pow`: the block product is `p^(q-|J|)`.
+- `drawdown_prod_jumpPatternBound_le_pow`: `|J| ≤ K`, `p ≤ 1` give
+  `p^(q-|J|) ≤ p^(q-K)`.
+- `measureReal_drawdownJumpPatternTubeIntersection_le_prod`:
+  `P(E_J) ≤ ∏_j p_j` for a fixed jump pattern.
+- `drawdownBlockTubeCondition_implies_tubeBlockEvent`: constant `M_j`
+  imposes the tube condition on the next block.
+- `drawdown_card_maximumJumpSet_le`: the number of maximum jumps is `≤ K`.
+- `drawdown_discretizedMaximumBlockDecomposition`: a bounded-drawdown
+  path admits rounded maxima with at most `K` jumps.
+- `additivePath_le_threshold_add_delta_of_noLargeDrop`:
+  `S_L ≤ r` and drawdown `≤ Δ` imply `S_i ≤ r+Δ`.
+- `neg_delta_le_additivePath_of_noLargeDrop`: drawdown `≤ Δ` gives `S_i ≥ -Δ`.
+- `blockOscillationEvent_of_additiveSegment`: bounded segment oscillation
+  gives the corresponding increment-block oscillation event.
+- `drawdown_event_discretizedMaximumBlockDecomposition`:
+  `B_{L,Δ,r}` has the rounded-maximum decomposition.
+- `drawdown_event_goodBlocks_satisfy_tubeCondition`:
+  on `B_{L,Δ,r}`, a nonjump block lies in its width `w+Δ` tube.
+- `drawdown_mem_jumpPatternTubeIntersection_of_goodBlocks`:
+  `B_{L,Δ,r} ∩ {J=J₀} ⊆ E_{J₀}`.
+- `drawdown_noLargeDropEvent_subset_jumpPatternUnion`:
+  `B_{L,Δ,r} ⊆ ⋃_{|J₀|≤K} E_{J₀}`.
+- `measureReal_noLargeDropEvent_le_sum_jumpPatternProducts`:
+  `P(B_{L,Δ,r}) ≤ ∑_{|J₀|≤K} ∏_j p_j`.
+- `measureReal_noLargeDropEvent_le_jumpPatternCount_mul_pow`:
+  `P(B_{L,Δ,r}) ≤ 2^q p^(q-K)` when `p ≤ 1`.
+- `measureReal_noLargeDropEvent_le_exp_of_blockParameters`:
+  explicit entropy and jump-count bounds give `P(B_{L,Δ,r}) ≤ exp(-d z)`.
+- `measureReal_noLargeDropEndpointBelowEvent_le_exp_of_finiteVariance`:
+  for large `Δ` and `L ≥ Δ^(2+c)`, `P(B_{L,Δ,Δ/c}) ≤ exp(-d L/Δ²)`.
+- `tendsto_diffusiveBlockCount_atTop_of_horizonRatio`:
+  `L_n/Δ_n² → ∞` gives `L_n/⌊AΔ_n²⌋ → ∞` when `Δ_n → ∞`, `A > 0`.
+
+For the additive path \(S_j=\sum_{i<j}\xi_i\),
+`noLargeDropEndpointBelowEvent L Δ r` is
+\[
+  B_{L,\Delta,r}:=\{\xi:\ S_i-S_j\leq\Delta\ (0\leq i\leq j\leq L),\ S_L\leq r\}.
+\]
+The public estimates formalize the deterministic bounds on \(B_{L,\Delta,r}\),
+the block decomposition in the proof of Wang Yiyang, *Asymptotic speed of the
+\(N\)-branching random walk with infinite offspring*, Chapter 3, Lemma 3.3,
+and the finite jump-pattern estimate for the drawdown endpoint event: with
+\(q=\lfloor L/\ell\rfloor\),
+\(K=\lfloor(r+\Delta)/w\rfloor+1\), and
+\(p=\exp((w+\Delta)^v-d\ell/(w+\Delta)^2)\),
+\[
+  \mathbb P(B_{L,\Delta,r})\leq 2^q p^{q-K}\qquad (p\leq1).
+\]
+Here \(w\) is the spatial bin width, \(\ell\) is the block length, and the
+rounded maximum at block \(j\) is
+\(M_j=U-w\lfloor(U-\max_{i\leq r_0+j\ell}S_i)/w\rfloor\), where \(r_0\) is
+the initial remainder. The unchanged-maximum blocks satisfy
+\(M_j-w-\Delta<S_i\leq M_j\). The final lemma gives
+\[
+  \frac{L_n}{\lfloor A\Delta_n^2\rfloor}\longrightarrow\infty
+  \quad\text{when}\quad
+  \Delta_n\longrightarrow\infty,\qquad
+  \frac{L_n}{\Delta_n^2}\longrightarrow\infty,
+\]
+which supplies the block-count limit used by the proof layer for Lemma 3.3.
+The finite-variance theorem formalizes Lemma 3.3 of Wang Yiyang,
+*Asymptotic speed of the $N$-branching random walk with infinite offspring*,
+Chapter 3, extending Lemma 2.3 of Elie Aïdékon and Yueyun Hu,
+*Average-weight percolation on the complete graph*, Lemma 2.3
+(2025, arXiv:2512.23266): for a centered increment law of variance `σ² > 0`,
+`c > 0`, and `0 < d < π²σ²/2`,
+\[
+  \mathbb P\!\left(Y_L\leq\frac{\Delta}{c},\quad
+    \min_{0\leq i\leq j\leq L}(Y_j-Y_i)\geq-\Delta\right)
+  \leq \exp\!\left(-d\frac{L}{\Delta^2}\right)
+\]
+for all sufficiently large `Δ` and `L ≥ Δ^(2+c)`. Its discretized-maximum
+block decomposition follows Wang Yiyang, *Asymptotic speed of the
+N-branching random walk with infinite offspring*, Chapter 3, Lemma 3.3; its
+one-block estimate combines Wang Yiyang, Chapter 3, Lemma 3.2, Aïdékon and
+Hu, *Average-weight percolation on the complete graph*, Lemma 4.1, and
+Mogul'skii, *Small deviations in a space of trajectories*, Theorem 3,
+Section 4, p. 764 (English translation, *Theory of Probability and Its
+Applications* 19(4) (1975), 726–736, DOI 10.1137/1119081).
 -/
 
 open Filter MeasureTheory Topology
@@ -37,90 +140,1186 @@ namespace ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown
 open ProbabilityTheory.RandomWalk
 open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
-/-- Logarithmic one-block rate supplied by the Brownian finite-cover bound.
-The logarithmic cover cost is included explicitly, so this rate can be
-compared directly with the entropy of the spatial-bin patterns. -/
-noncomputable def finiteCoverBlockRate (count : ℕ) (width : ℝ) : ℝ :=
-  Real.pi ^ 2 /
-      (2 * ((1 + 3 / (count : ℝ)) * width) ^ 2) -
-    Real.log (16 * (count : ℝ))
-
-theorem two_mul_finiteCoverRangeBound_eq_exp_neg_rate
-    {count : ℕ} (hcount : 0 < count) {width : ℝ} :
-    2 * finiteCoverRangeBound count width =
-      Real.exp (-finiteCoverBlockRate count width) := by
-  let eigenExponent : ℝ := Real.pi ^ 2 /
-    (2 * ((1 + 3 / (count : ℝ)) * width) ^ 2)
-  have hcoverPos : 0 < 16 * (count : ℝ) := by positivity
-  calc
-    2 * finiteCoverRangeBound count width =
-        16 * (count : ℝ) * Real.exp (-eigenExponent) := by
-      simp [finiteCoverRangeBound, finiteCoverCorridorExponential,
-        eigenExponent]
-      ring_nf
-    _ = Real.exp (Real.log (16 * (count : ℝ))) *
-          Real.exp (-eigenExponent) := by
-      rw [Real.exp_log hcoverPos]
-    _ = Real.exp (Real.log (16 * (count : ℝ)) + -eigenExponent) := by
-      rw [← Real.exp_add]
-    _ = Real.exp (-finiteCoverBlockRate count width) := by
-      congr 1
-      dsimp [finiteCoverBlockRate, eigenExponent]
-      ring
-
-/-- Applying the general one-block estimate to widths proportional to an
-arbitrary diverging scale gives the exact AH diffusive block size
-`floor(A * Δ^2)`. The block probability is at most `exp(-r_A)`, with `r_A`
-the finite-cover Brownian exponent minus the logarithmic cover cost. -/
-theorem eventually_integerDiffusiveBlockOscillationProbability_le_exp
+/-- Conditional expectation at the start of a block integrates over the
+fresh block increments. This is the finite-prefix version of the Markov
+property used in Wang Yiyang, *Asymptotic speed of the $N$-branching random
+walk with infinite offspring*, Chapter 3, proof of Lemma 3.3:
+\[
+  \mathbb E[f(X,Y)\mid X](\omega)
+    =\int f(X(\omega),y)\,d\mathcal L(Y)(y).
+\]
+Here `X` is the increment prefix and `Y` is the next block of increments. -/
+theorem iidSequenceLaw_condExp_prefix_nextBlock
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
-    (hcentered : ∫ x : ℝ, x ∂ν = 0)
-    (hsecondMoment : ∫ x : ℝ, x ^ 2 ∂ν = 1)
-    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
-    [IsProbabilityMeasure P] {B : NNReal → Ω → ℝ}
-    (hB : IsPreBrownianReal B P)
-    (hcontinuous : ∀ ω, Continuous (B · ω))
-    (hmeasurable : ∀ t, Measurable (B t))
-    {delta : ℕ → ℝ} (hdelta : Tendsto delta atTop atTop)
-    {A eta enlargement : ℝ} {count : ℕ}
-    (hA : 0 < A) (heta : 0 < eta) (henlargement : 0 < enlargement)
-    (hcount : 0 < count)
-    (hspectral : finiteCoverCorridorExponential count
-      ((1 + enlargement) / Real.sqrt (A / (1 + eta) ^ 2)) < 1 / 2) :
-    ∀ᶠ n : ℕ in atTop,
-      iidSequenceLaw ν {increment : ℕ → ℝ |
-        Combinatorics.Sequence.blockCoordinates 0
-          (⌊A * delta n ^ 2⌋₊) increment ∈
-            blockOscillationEvent ((1 + eta) * delta n)
-              (⌊A * delta n ^ 2⌋₊)} ≤
-        ENNReal.ofReal (Real.exp (-finiteCoverBlockRate count
-          ((1 + enlargement) / Real.sqrt (A / (1 + eta) ^ 2)))) := by
-  let scale : ℕ → ℝ := fun n => (1 + eta) * delta n
-  let constant : ℝ := A / (1 + eta) ^ 2
-  have hscale : Tendsto scale atTop atTop := by
-    dsimp [scale]
-    simpa [mul_comm] using hdelta.const_mul_atTop
-      (by positivity : 0 < 1 + eta)
-  have hconstant : 0 < constant := by
-    dsimp [constant]
-    positivity
-  have hbound := eventually_diffusiveBlockOscillationProbability_le_of_fixedCover_of_tendsto_atTop
-    ν hcentered hsecondMoment hB hcontinuous hmeasurable hscale
-    hconstant henlargement hcount hspectral
-  filter_upwards [hbound] with n hn
-  have hlength : diffusiveBlockLength constant scale n = ⌊A * delta n ^ 2⌋₊ := by
-    dsimp [diffusiveBlockLength, constant, scale]
-    congr 1
-    have honeEta : 1 + eta ≠ 0 := ne_of_gt (by positivity)
-    field_simp [honeEta]
-  rw [two_mul_finiteCoverRangeBound_eq_exp_neg_rate hcount] at hn
-  rw [← hlength]
-  change iidSequenceLaw ν {increment : ℕ → ℝ |
-      blockOscillationEvent ((1 + eta) * delta n)
-        (diffusiveBlockLength constant scale n)
-        (Combinatorics.Sequence.blockCoordinates 0
-          (diffusiveBlockLength constant scale n) increment)} ≤ _
-  exact hn
+    (start length : ℕ)
+    {f : (Fin start → ℝ) × (Fin length → ℝ) → ℝ}
+    (hf : StronglyMeasurable f)
+    (hfi : Integrable
+      (fun increment : ℕ → ℝ =>
+        f (Combinatorics.Sequence.blockCoordinates 0 start increment,
+          Combinatorics.Sequence.blockCoordinates start length increment))
+      (iidSequenceLaw ν)) :
+    condExp
+        (MeasurableSpace.comap
+          (Combinatorics.Sequence.blockCoordinates 0 start) inferInstance)
+        (iidSequenceLaw ν)
+        (fun increment : ℕ → ℝ =>
+          f (Combinatorics.Sequence.blockCoordinates 0 start increment,
+            Combinatorics.Sequence.blockCoordinates start length increment))
+      =ᵐ[iidSequenceLaw ν]
+        fun increment =>
+          ∫ block, f
+            (Combinatorics.Sequence.blockCoordinates 0 start increment, block)
+            ∂(iidSequenceLaw ν).map
+              (Combinatorics.Sequence.blockCoordinates start length) := by
+  have hblock : Measurable
+      (Combinatorics.Sequence.blockCoordinates (E := ℝ) (0 + start) length) := by
+    simpa only [Nat.zero_add] using
+      (measurable_blockCoordinates (E := ℝ) start length)
+  have hfi' : Integrable
+      (fun sample : ℕ → ℝ =>
+        f (Combinatorics.Sequence.blockCoordinates 0 start sample,
+          Combinatorics.Sequence.blockCoordinates (0 + start) length sample))
+      (iidSequenceLaw ν) := by
+    simpa only [Nat.zero_add] using hfi
+  have hcond := (indepFun_blockCoordinates_blockCoordinates ν 0 start length)
+    |>.condExp_prod_ae_eq_integral_map
+      (measurable_blockCoordinates (E := ℝ) 0 start)
+      hblock hf hfi'
+  simpa only [Nat.zero_add] using hcond
+
+/-- A uniform bound on every section of a measurable event in
+`prefix × nextBlock` gives the corresponding conditional-probability bound.
+The conditional expectation is evaluated by integrating the next block
+against its IID law, exactly as in the Markov step of Wang Yiyang, Chapter 3,
+Lemma 3.3. -/
+theorem iidSequenceLaw_condExp_pairEvent_le_of_sectionProbability
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (start length : ℕ)
+    (E : Set ((Fin start → ℝ) × (Fin length → ℝ)))
+    (hE : MeasurableSet E) {bound : ℝ}
+    (hsections : ∀ past,
+      ((iidSequenceLaw ν).map
+        (Combinatorics.Sequence.blockCoordinates start length)).real
+        {block | (past, block) ∈ E} ≤ bound) :
+    ∀ᵐ increment ∂iidSequenceLaw ν,
+      condExp
+        (MeasurableSpace.comap
+          (Combinatorics.Sequence.blockCoordinates 0 start) inferInstance)
+        (iidSequenceLaw ν)
+        (fun increment => E.indicator (fun _ => (1 : ℝ))
+          (Combinatorics.Sequence.blockCoordinates 0 start increment,
+            Combinatorics.Sequence.blockCoordinates start length increment))
+        increment ≤ bound := by
+  let pastBlock : (ℕ → ℝ) → Fin start → ℝ :=
+    Combinatorics.Sequence.blockCoordinates 0 start
+  let nextBlock : (ℕ → ℝ) → Fin length → ℝ :=
+    Combinatorics.Sequence.blockCoordinates start length
+  let pair : (ℕ → ℝ) → (Fin start → ℝ) × (Fin length → ℝ) :=
+    fun increment => (pastBlock increment, nextBlock increment)
+  let f : (Fin start → ℝ) × (Fin length → ℝ) → ℝ :=
+    E.indicator (fun _ => (1 : ℝ))
+  have hpairMeasurable : Measurable pair := by
+    exact (measurable_blockCoordinates 0 start).prodMk
+      (measurable_blockCoordinates start length)
+  have hpreimage : MeasurableSet (pair ⁻¹' E) := hE.preimage hpairMeasurable
+  have hf : StronglyMeasurable f := stronglyMeasurable_const.indicator hE
+  have hfi : Integrable (fun increment => f (pair increment))
+      (iidSequenceLaw ν) :=
+    (integrable_const (c := (1 : ℝ))).indicator hpreimage
+  have hcond := iidSequenceLaw_condExp_prefix_nextBlock
+    ν start length hf hfi
+  have hsectionIntegral (x : Fin start → ℝ) :
+      (∫ block, f (x, block) ∂
+        (iidSequenceLaw ν).map nextBlock) =
+        ((iidSequenceLaw ν).map nextBlock).real
+          {block | (x, block) ∈ E} := by
+    let sectionEvent : Set (Fin length → ℝ) := {block | (x, block) ∈ E}
+    have hsectionMeasurable : MeasurableSet sectionEvent :=
+      hE.preimage (measurable_const.prodMk measurable_id)
+    have hfunction : (fun block => f (x, block)) =
+        sectionEvent.indicator (fun _ => (1 : ℝ)) := by
+      funext block
+      simp [f, sectionEvent, Set.indicator]
+    rw [hfunction]
+    change (∫ block, sectionEvent.indicator (fun _ => (1 : ℝ)) block
+        ∂(iidSequenceLaw ν).map nextBlock) =
+      ((iidSequenceLaw ν).map nextBlock).real sectionEvent
+    rw [integral_indicator_const (e := (1 : ℝ)) hsectionMeasurable,
+      smul_eq_mul, mul_one]
+  filter_upwards [hcond] with increment hincrement
+  rw [hincrement]
+  have hsection := hsectionIntegral
+    (Combinatorics.Sequence.blockCoordinates 0 start increment)
+  rw [hsection]
+  exact hsections (Combinatorics.Sequence.blockCoordinates 0 start increment)
+
+/-- Sum of the increments in a finite prefix. -/
+def drawdownPrefixSum {n : ℕ} (increments : Fin n → ℝ) : ℝ :=
+  ∑ i : Fin n, increments i
+
+/-- Sum of the increments in a finite block through the time indexed by
+`k : Fin (length + 1)`. -/
+def drawdownPartialBlockSum {length : ℕ} (block : Fin length → ℝ)
+    (k : Fin (length + 1)) : ℝ :=
+  Fin.partialSum block k
+
+/-- The finite path generated by the increments available at a block start.
+It is set to zero after that time so its running maximum depends only on the
+given prefix. -/
+def drawdownPrefixPath {start : ℕ} (past : Fin start → ℝ) : ℕ → ℝ :=
+  fun time =>
+    if htime : time ≤ start then
+      drawdownPartialBlockSum past ⟨time, Nat.lt_succ_of_le htime⟩
+    else 0
+
+private theorem partialBlockSum_eq_prefixSum {length : ℕ}
+    (block : Fin length → ℝ) (k : Fin (length + 1)) :
+    drawdownPartialBlockSum block k =
+      ∑ j : Fin k, block
+        ⟨j, lt_of_lt_of_le j.isLt (Nat.le_of_lt_succ k.isLt)⟩ := by
+  induction k using Fin.induction with
+  | zero =>
+      change Fin.partialSum block 0 = ∑ j : Fin 0, _
+      rw [Fin.partialSum_zero, Fin.sum_univ_zero]
+  | succ k ih =>
+      have hrec : drawdownPartialBlockSum block k.succ =
+          drawdownPartialBlockSum block k.castSucc + block k := by
+        simpa only [drawdownPartialBlockSum] using Fin.partialSum_succ block k
+      rw [hrec, ih]
+      change (∑ j : Fin k, block ⟨j, by omega⟩) + block k =
+        ∑ j : Fin ((k : ℕ) + 1), block ⟨j, by omega⟩
+      rw [Fin.sum_univ_castSucc]
+      congr 1
+
+private theorem measurable_partialBlockSum {length : ℕ}
+    (k : Fin (length + 1)) :
+    Measurable (fun block : Fin length → ℝ =>
+      drawdownPartialBlockSum block k) := by
+  induction k using Fin.induction with
+  | zero => exact measurable_const
+  | succ k ih =>
+      have hsum := ih.add (measurable_pi_apply k)
+      have heq : (fun block : Fin length → ℝ =>
+          drawdownPartialBlockSum block k.succ) =
+        (fun block => drawdownPartialBlockSum block k.castSucc) +
+          (fun block : Fin length → ℝ => block k) := by
+        funext block
+        simp only [drawdownPartialBlockSum, Fin.partialSum_succ, Pi.add_apply]
+      exact heq ▸ hsum
+
+private theorem measurable_prefixPath_coordinate {start : ℕ}
+    (time : ℕ) :
+    Measurable (fun past : Fin start → ℝ => drawdownPrefixPath past time) := by
+  by_cases htime : time ≤ start
+  · simpa [drawdownPrefixPath, htime] using
+      measurable_partialBlockSum
+        (⟨time, Nat.lt_succ_of_le htime⟩ : Fin (start + 1))
+  · simp [drawdownPrefixPath, htime]
+
+/-- The discretized maximum computed from the available finite increment
+prefix. This is the `M_j` center used when conditioning at a block start. -/
+noncomputable def drawdownPastDiscretizedMaximum {start : ℕ}
+    (upper width : ℝ) (past : Fin start → ℝ) : ℝ :=
+  spatialBinLevel upper width (drawdownPrefixPath past) start
+
+theorem measurable_drawdownPastDiscretizedMaximum {start : ℕ}
+    (upper width : ℝ) :
+    Measurable (drawdownPastDiscretizedMaximum (start := start) upper width) := by
+  have hmaximum : Measurable
+      (fun past : Fin start → ℝ =>
+        prefixMaximum (drawdownPrefixPath past) start) :=
+    Finset.measurable_range_sup'' fun time htime =>
+      measurable_prefixPath_coordinate time
+  have hquotient : Measurable
+      (fun past : Fin start → ℝ =>
+        (upper - prefixMaximum (drawdownPrefixPath past) start) / width) :=
+    (measurable_const.sub hmaximum).div_const width
+  have hfloor : Measurable
+      (fun past : Fin start → ℝ =>
+        (Nat.floor ((upper - prefixMaximum (drawdownPrefixPath past) start) /
+          width) : ℝ)) :=
+    (MeasurableEmbedding.natCast (α := ℝ)).measurable.comp
+      hquotient.nat_floor
+  change Measurable (fun past : Fin start → ℝ =>
+    upper - width *
+      (Nat.floor ((upper - prefixMaximum (drawdownPrefixPath past) start) /
+        width) : ℝ))
+  exact measurable_const.sub (measurable_const.mul hfloor)
+
+private theorem prefixPath_blockCoordinates_eq
+    {start : ℕ} (increment : ℕ → ℝ) {time : ℕ} (htime : time ≤ start) :
+    drawdownPrefixPath
+        (Combinatorics.Sequence.blockCoordinates 0 start increment) time =
+      AdditivePath.displacement time increment := by
+  rw [drawdownPrefixPath, dite_eq_left htime]
+  change Fin.partialSum
+      (Combinatorics.Sequence.blockCoordinates 0 start increment)
+        ⟨time, Nat.lt_succ_of_le htime⟩ = _
+  calc
+    Fin.partialSum
+        (Combinatorics.Sequence.blockCoordinates 0 start increment)
+          ⟨time, Nat.lt_succ_of_le htime⟩ =
+        AdditivePath.blockSum 0 time increment := by
+          exact partialSum_blockCoordinates 0 increment
+            ⟨time, Nat.lt_succ_of_le htime⟩
+    _ = AdditivePath.displacement time increment := by
+      simp [AdditivePath.blockSum_eq_displacement_natAdd]
+
+private theorem prefixMaximum_blockCoordinates_eq
+    (start : ℕ) (increment : ℕ → ℝ) :
+    prefixMaximum
+        (drawdownPrefixPath
+          (Combinatorics.Sequence.blockCoordinates 0 start increment)) start =
+      prefixMaximum (AdditivePath.displacement · increment) start := by
+  unfold prefixMaximum
+  exact Finset.sup'_congr
+    (⟨0, Finset.mem_range.mpr (Nat.zero_lt_succ _)⟩ :
+      (Finset.range (start + 1)).Nonempty)
+    rfl
+    (fun time htime => prefixPath_blockCoordinates_eq increment
+      (Nat.le_of_lt_succ (Finset.mem_range.mp htime)))
+
+theorem drawdownPastDiscretizedMaximum_eq_runningMaximum
+    (start : ℕ) (upper width : ℝ) (increment : ℕ → ℝ) :
+    drawdownPastDiscretizedMaximum upper width
+        (Combinatorics.Sequence.blockCoordinates 0 start increment) =
+      spatialBinLevel upper width (AdditivePath.displacement · increment) start := by
+  simp only [drawdownPastDiscretizedMaximum, spatialBinLevel, spatialBinIndex]
+  rw [prefixMaximum_blockCoordinates_eq start increment]
+
+private theorem prefixSum_blockCoordinates_eq
+    (start : ℕ) (increment : ℕ → ℝ) :
+    drawdownPrefixSum
+        (Combinatorics.Sequence.blockCoordinates 0 start increment) =
+      AdditivePath.displacement start increment := by
+  simp [drawdownPrefixSum, Combinatorics.Sequence.blockCoordinates,
+    AdditivePath.displacement, Fin.sum_univ_eq_sum_range]
+
+private theorem tubeBlockPosition_eq
+    (start length : ℕ) (increment : ℕ → ℝ)
+    (k : Fin (length + 1)) :
+    drawdownPrefixSum
+        (Combinatorics.Sequence.blockCoordinates 0 start increment) +
+      drawdownPartialBlockSum
+        (Combinatorics.Sequence.blockCoordinates start length increment) k =
+      AdditivePath.displacement (start + (k : ℕ)) increment := by
+  rw [prefixSum_blockCoordinates_eq, drawdownPartialBlockSum,
+    partialSum_blockCoordinates]
+  exact (AdditivePath.displacement_add_eq_add_blockSum
+    start (k : ℕ) increment).symm
+
+/-- The event for a pair consisting of a past increment prefix and the next
+block: throughout the block, the walk remains in the interval
+`[center(prefix) - width, center(prefix)]`. -/
+def drawdownTubePairEvent {start length : ℕ}
+    (center : (Fin start → ℝ) → ℝ) (width : ℝ) :
+    Set ((Fin start → ℝ) × (Fin length → ℝ)) :=
+  {pair | ∀ k : Fin (length + 1),
+    drawdownPrefixSum pair.1 + drawdownPartialBlockSum pair.2 k ∈
+      Set.Icc (center pair.1 - width) (center pair.1)}
+
+/-- The tube event for one increment block, with its center determined by
+the increment prefix at the block's starting time. -/
+def drawdownTubeBlockEvent (start length : ℕ)
+    (center : (Fin start → ℝ) → ℝ) (width : ℝ) : Set (ℕ → ℝ) :=
+  {increment |
+    (Combinatorics.Sequence.blockCoordinates 0 start increment,
+      Combinatorics.Sequence.blockCoordinates start length increment) ∈
+      drawdownTubePairEvent center width}
+
+/-- Membership in a tube block event is the requirement that the original
+walk remain in the corresponding translated interval at every time from the
+block start through its end. -/
+theorem drawdownTubeBlockEvent_iff_path_in_interval
+    (start length : ℕ) (upper binWidth tubeWidth : ℝ)
+    (increment : ℕ → ℝ) :
+    increment ∈ drawdownTubeBlockEvent start length
+        (drawdownPastDiscretizedMaximum (start := start) upper binWidth)
+        tubeWidth ↔
+      ∀ k : Fin (length + 1),
+        AdditivePath.displacement (start + (k : ℕ)) increment ∈
+          Set.Icc
+            (spatialBinLevel upper binWidth
+              (AdditivePath.displacement · increment) start - tubeWidth)
+            (spatialBinLevel upper binWidth
+              (AdditivePath.displacement · increment) start) := by
+  have hcenter :
+      drawdownPastDiscretizedMaximum (start := start) upper binWidth
+          (Combinatorics.Sequence.blockCoordinates 0 start increment) =
+        spatialBinLevel upper binWidth
+          (AdditivePath.displacement · increment) start :=
+    drawdownPastDiscretizedMaximum_eq_runningMaximum
+      start upper binWidth increment
+  simp only [drawdownTubeBlockEvent, Set.mem_ofPred_eq,
+    drawdownTubePairEvent]
+  rw [hcenter]
+  constructor <;> intro h k
+  · simpa only [tubeBlockPosition_eq] using h k
+  · simpa only [tubeBlockPosition_eq] using h k
+
+private def blockPrefixPair (start length : ℕ) :
+    (Fin (start + length) → ℝ) →
+      (Fin start → ℝ) × (Fin length → ℝ) :=
+  fun (whole : Fin (start + length) → ℝ) =>
+    (fun i : Fin start =>
+      whole (⟨(i : ℕ), by omega⟩ : Fin (start + length)),
+      fun j : Fin length =>
+        whole (⟨start + (j : ℕ), by omega⟩ : Fin (start + length)))
+
+private theorem measurable_blockPrefixPair (start length : ℕ) :
+    Measurable (blockPrefixPair start length) := by
+  have hpast : Measurable
+      (fun whole : Fin (start + length) → ℝ =>
+        fun i : Fin start => whole ⟨i, by omega⟩) := by
+    rw [measurable_pi_iff]
+    intro i
+    exact measurable_pi_apply
+      (⟨(i : ℕ), by omega⟩ : Fin (start + length))
+  have hblock : Measurable
+      (fun whole : Fin (start + length) → ℝ =>
+        fun j : Fin length => whole ⟨start + (j : ℕ), by omega⟩) := by
+    rw [measurable_pi_iff]
+    intro j
+    exact measurable_pi_apply
+      (⟨start + (j : ℕ), by omega⟩ : Fin (start + length))
+  exact hpast.prodMk hblock
+
+private theorem blockPrefixPair_blockCoordinates
+    (start length : ℕ) (increment : ℕ → ℝ) :
+    blockPrefixPair start length
+        (Combinatorics.Sequence.blockCoordinates 0 (start + length) increment) =
+      (Combinatorics.Sequence.blockCoordinates 0 start increment,
+        Combinatorics.Sequence.blockCoordinates start length increment) := by
+  apply Prod.ext
+  · funext i
+    simp [blockPrefixPair, Combinatorics.Sequence.blockCoordinates]
+  · funext j
+    simp [blockPrefixPair, Combinatorics.Sequence.blockCoordinates]
+
+/-- A measurable choice of the interval center makes the next-block tube
+event measurable in the past prefix and block increments. -/
+theorem measurableSet_drawdownTubePairEvent {start length : ℕ}
+    (center : (Fin start → ℝ) → ℝ) (hcenter : Measurable center)
+    (width : ℝ) : MeasurableSet
+      (drawdownTubePairEvent (start := start) (length := length) center width) := by
+  rw [show drawdownTubePairEvent (start := start) (length := length)
+        center width =
+      ⋂ k : Fin (length + 1),
+        {pair : (Fin start → ℝ) × (Fin length → ℝ) |
+          drawdownPrefixSum pair.1 + drawdownPartialBlockSum pair.2 k ∈
+            Set.Icc (center pair.1 - width) (center pair.1)} by
+    ext pair
+    simp [drawdownTubePairEvent]]
+  apply MeasurableSet.iInter
+  intro k
+  have hpast : Measurable (fun pair :
+      (Fin start → ℝ) × (Fin length → ℝ) => drawdownPrefixSum pair.1) := by
+    exact ((Finset.measurable_sum Finset.univ fun i _ =>
+      measurable_pi_apply i).comp measurable_fst)
+  have hblock : Measurable (fun pair :
+      (Fin start → ℝ) × (Fin length → ℝ) => drawdownPartialBlockSum pair.2 k) := by
+    exact (measurable_partialBlockSum k).comp measurable_snd
+  have hcenterValue : Measurable (fun pair :
+      (Fin start → ℝ) × (Fin length → ℝ) => center pair.1) :=
+    hcenter.comp measurable_fst
+  have hvalue : Measurable (fun pair :
+      (Fin start → ℝ) × (Fin length → ℝ) =>
+        drawdownPrefixSum pair.1 + drawdownPartialBlockSum pair.2 k) :=
+    hpast.add hblock
+  have hlower : Measurable (fun pair :
+      (Fin start → ℝ) × (Fin length → ℝ) =>
+        drawdownPrefixSum pair.1 + drawdownPartialBlockSum pair.2 k -
+          (center pair.1 - width)) :=
+    hvalue.sub (hcenterValue.sub measurable_const)
+  have hupper : Measurable (fun pair :
+      (Fin start → ℝ) × (Fin length → ℝ) =>
+        drawdownPrefixSum pair.1 + drawdownPartialBlockSum pair.2 k -
+          center pair.1) := hvalue.sub hcenterValue
+  have heq :
+      {pair : (Fin start → ℝ) × (Fin length → ℝ) |
+        drawdownPrefixSum pair.1 + drawdownPartialBlockSum pair.2 k ∈
+          Set.Icc (center pair.1 - width) (center pair.1)} =
+      {pair | 0 ≤ drawdownPrefixSum pair.1 + drawdownPartialBlockSum pair.2 k -
+          (center pair.1 - width) ∧
+        drawdownPrefixSum pair.1 + drawdownPartialBlockSum pair.2 k -
+          center pair.1 ≤ 0} := by
+    ext pair
+    simp only [Set.mem_Icc, Set.mem_ofPred_eq]
+    constructor <;> intro h <;> constructor <;> linarith
+  rw [heq]
+  exact (measurableSet_Ici.preimage hlower).inter
+    (measurableSet_Iic.preimage hupper)
+
+/-- A tube block event is measurable at the end of its increment block, so
+it can serve as the next event in the conditional-expectation recursion over
+the natural domain filtration. -/
+theorem measurableSet_drawdownTubeBlockEvent
+    (start length : ℕ) (center : (Fin start → ℝ) → ℝ)
+    (hcenter : Measurable center) (width : ℝ) :
+    MeasurableSet[ProbabilityTheory.sequencePrefixFiltration
+      (E := ℝ) (start + length)]
+      (drawdownTubeBlockEvent start length center width) := by
+  have hpairEvent : MeasurableSet
+      (drawdownTubePairEvent (start := start) (length := length)
+        center width) :=
+    measurableSet_drawdownTubePairEvent
+      (start := start) (length := length) center hcenter width
+  have hpreimage : MeasurableSet
+      ((blockPrefixPair start length) ⁻¹'
+        drawdownTubePairEvent center width) :=
+    hpairEvent.preimage (measurable_blockPrefixPair start length)
+  have hevent : drawdownTubeBlockEvent start length center width =
+      (Combinatorics.Sequence.blockCoordinates 0 (start + length)) ⁻¹'
+        ((blockPrefixPair start length) ⁻¹'
+          drawdownTubePairEvent center width) := by
+    ext increment
+    simp only [drawdownTubeBlockEvent, Set.mem_preimage, Set.mem_ofPred_eq]
+    rw [← blockPrefixPair_blockCoordinates start length increment]
+  rw [ProbabilityTheory.sequencePrefixFiltration_eq_comap_blockCoordinates]
+  exact (MeasurableSpace.measurableSet_comap).2
+    ⟨_, hpreimage, hevent.symm⟩
+
+/-- A translated finite interval event has the same membership condition
+after subtracting its initial position from both interval endpoints. -/
+theorem finiteInClosedInterval_translate_by_initial
+    {length : ℕ} (lower upper initial : ℝ)
+    (block : Fin length → ℝ) :
+    FiniteInClosedInterval lower upper initial block ↔
+      FiniteInClosedInterval (lower - initial) (upper - initial) 0 block := by
+  simp only [FiniteInClosedInterval, Set.mem_Icc]
+  constructor <;> intro h k
+  · have hk := h k
+    constructor <;> linarith
+  · have hk := h k
+    constructor <;> linarith
+
+/-- The law of a finite coordinate block assigns the same mass to the
+finite-path interval event as the infinite IID law assigns to the associated
+partial-sum interval event. -/
+theorem iidSequenceLaw_map_blockCoordinates_finiteInterval_le
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    {length : ℕ} {lower upper : ℝ}
+    (hzero : (0 : ℝ) ∈ Set.Icc lower upper)
+    {bound : ℝ≥0∞}
+    (hbound : iidSequenceLaw ν
+      {increment : ℕ → ℝ | ∀ j : Fin length,
+        AdditivePath.displacement (j + 1) increment ∈ Set.Icc lower upper} ≤
+      bound) :
+    ((iidSequenceLaw ν).map
+      (Combinatorics.Sequence.blockCoordinates 0 length))
+      {block | FiniteInClosedInterval lower upper 0 block} ≤ bound := by
+  have hfinite : MeasurableSet
+      {block : Fin length → ℝ | FiniteInClosedInterval lower upper 0 block} :=
+    measurableSet_finiteInClosedInterval lower upper 0 length
+  have hevent :
+      {increment : ℕ → ℝ |
+        FiniteInClosedInterval lower upper 0
+          (Combinatorics.Sequence.blockCoordinates 0 length increment)} =
+      {increment | ∀ j : Fin length,
+        AdditivePath.displacement (j + 1) increment ∈ Set.Icc lower upper} := by
+    ext increment
+    have hbridge := finiteInClosedInterval_blockCoordinates_iff
+      lower upper 0 0 length increment
+    have hstays := staysIn_Icc_iff_inClosedInterval
+      lower upper length 0 hzero (fun k => increment (0 + k))
+    constructor
+    · intro h
+      have hpath := hbridge.mp h
+      have hstay := hstays.mpr hpath
+      simpa [StaysIn, Nat.zero_add] using hstay
+    · intro h
+      have hstay : StaysIn (Set.Icc lower upper) length 0
+          (fun k => increment (0 + k)) := by
+        simpa [StaysIn, Nat.zero_add] using h
+      exact hbridge.mpr (hstays.mp hstay)
+  calc
+    _ = iidSequenceLaw ν
+        {increment | FiniteInClosedInterval lower upper 0
+          (Combinatorics.Sequence.blockCoordinates 0 length increment)} := by
+      rw [Measure.map_apply (measurable_blockCoordinates 0 length) hfinite]
+      rfl
+    _ = iidSequenceLaw ν
+        {increment | ∀ j : Fin length,
+          AdditivePath.displacement (j + 1) increment ∈ Set.Icc lower upper} := by
+      rw [hevent]
+    _ ≤ bound := hbound
+
+/-- Lemma 3.2's uniform translated-interval estimate bounds the
+conditional probability of the next tube block, even when its upper endpoint
+is selected measurably from the past. The time-zero constraint contributes
+conditional probability zero whenever the current position is outside the
+chosen interval. -/
+theorem iidSequenceLaw_condExp_drawdownTubePairEvent_le_of_intervalBound
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (start length : ℕ)
+    (center : (Fin start → ℝ) → ℝ) (hcenter : Measurable center)
+    (width bound : ℝ) (hboundNonneg : 0 ≤ bound)
+    (hinterval : ∀ lower : ℝ, lower ≤ 0 → 0 ≤ lower + width →
+      ((iidSequenceLaw ν).map
+        (Combinatorics.Sequence.blockCoordinates 0 length))
+        {block | FiniteInClosedInterval lower (lower + width) 0 block} ≤
+          ENNReal.ofReal bound) :
+    ∀ᵐ increment ∂iidSequenceLaw ν,
+      condExp
+        (MeasurableSpace.comap
+          (Combinatorics.Sequence.blockCoordinates 0 start) inferInstance)
+        (iidSequenceLaw ν)
+        (fun increment =>
+          (drawdownTubePairEvent center width).indicator (fun _ => (1 : ℝ))
+            (Combinatorics.Sequence.blockCoordinates 0 start increment,
+              Combinatorics.Sequence.blockCoordinates start length increment))
+        increment ≤ bound := by
+  have hE : MeasurableSet
+      (drawdownTubePairEvent (start := start) (length := length)
+        center width) :=
+    measurableSet_drawdownTubePairEvent center hcenter width
+  have hsections : ∀ past,
+      ((iidSequenceLaw ν).map
+        (Combinatorics.Sequence.blockCoordinates start length)).real
+        {block | (past, block) ∈ drawdownTubePairEvent center width} ≤ bound := by
+    intro past
+    let initial := drawdownPrefixSum past
+    let top := center past
+    let sectionEvent : Set (Fin length → ℝ) :=
+      {block | (past, block) ∈ drawdownTubePairEvent center width}
+    have hsectionEq : sectionEvent =
+        {block | FiniteInClosedInterval (top - width) top initial block} := by
+      ext block
+      simp only [sectionEvent, drawdownTubePairEvent, FiniteInClosedInterval,
+        Set.mem_ofPred_eq, Set.mem_Icc]
+      constructor <;> intro h k
+      · have hk := h k
+        simpa only [initial, top, drawdownPrefixSum,
+          partialBlockSum_eq_prefixSum] using hk
+      · have hk := h k
+        simpa only [initial, top, drawdownPrefixSum,
+          partialBlockSum_eq_prefixSum] using hk
+    by_cases hstart : initial ∈ Set.Icc (top - width) top
+    · let lower := top - width - initial
+      have hlower : lower ≤ 0 := by
+        dsimp [lower]
+        exact sub_nonpos.mpr hstart.1
+      have hupper : 0 ≤ lower + width := by
+        dsimp [lower]
+        linarith [hstart.2]
+      have hendpoint : lower + width = top - initial := by
+        dsimp [lower]
+        ring
+      have htranslate : sectionEvent =
+          {block | FiniteInClosedInterval lower (lower + width) 0 block} := by
+        rw [hsectionEq]
+        ext block
+        have htrans := finiteInClosedInterval_translate_by_initial
+          (top - width) top initial block
+        simpa [lower, hendpoint] using htrans
+      have hprobability :
+          ((iidSequenceLaw ν).map
+            (Combinatorics.Sequence.blockCoordinates start length))
+            sectionEvent ≤ ENNReal.ofReal bound := by
+        rw [iidSequenceLaw_map_blockCoordinates ν start length]
+        simpa [htranslate] using hinterval lower hlower hupper
+      have hreal := ENNReal.toReal_mono ENNReal.ofReal_ne_top hprobability
+      simpa [Measure.real, ENNReal.toReal_ofReal hboundNonneg] using hreal
+    · have hempty : sectionEvent = ∅ := by
+        ext block
+        constructor
+        · intro hmem
+          have hinitial := hmem ⟨0, Nat.zero_lt_succ _⟩
+          have hinitialMem : initial ∈ Set.Icc (top - width) top := by
+            simpa [initial, top, drawdownPrefixSum,
+              drawdownPartialBlockSum] using hinitial
+          exact (hstart hinitialMem).elim
+        · simp
+      change ((iidSequenceLaw ν).map
+        (Combinatorics.Sequence.blockCoordinates start length)).real sectionEvent ≤ bound
+      rw [hempty]
+      simpa [Measure.real] using hboundNonneg
+  exact iidSequenceLaw_condExp_pairEvent_le_of_sectionProbability
+    ν start length (drawdownTubePairEvent center width) hE hsections
+
+/-- Applying the translated-interval estimate of Wang Yiyang, *Asymptotic
+speed of the $N$-branching random walk with infinite offspring*, Chapter 3,
+Lemma 3.2, bounds the conditional probability of each tube block in the
+Lemma 3.3 decomposition. -/
+theorem iidSequenceLaw_condExp_drawdownTubePairEvent_le_of_finiteVariance
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    {variance : ℝ}
+    (hν : ProbabilityTheory.IsCenteredSecondMoment ν variance)
+    (hsquare : Integrable (fun x : ℝ => x ^ 2) ν)
+    (hvariance : 0 < variance)
+    {v d : ℝ} (hv : 0 < v) (hd : 0 < d)
+    (hcritical : d < (Real.pi ^ 2 / 2) * variance) :
+    ∃ width₀ : ℝ, 0 < width₀ ∧
+      ∀ width : ℝ, width₀ ≤ width → ∀ length : ℕ, 1 ≤ length →
+      ∀ start : ℕ, ∀ center : (Fin start → ℝ) → ℝ,
+        Measurable center →
+        ∀ᵐ increment ∂iidSequenceLaw ν,
+          condExp
+            (MeasurableSpace.comap
+              (Combinatorics.Sequence.blockCoordinates 0 start) inferInstance)
+            (iidSequenceLaw ν)
+            (fun increment =>
+              (drawdownTubePairEvent center width).indicator
+                (fun _ => (1 : ℝ))
+                (Combinatorics.Sequence.blockCoordinates 0 start increment,
+                  Combinatorics.Sequence.blockCoordinates start length increment))
+            increment ≤ Real.exp (width ^ v - d * ((length : ℝ) / width ^ 2)) := by
+  have hvariance' : 0 < ∫ x : ℝ, x ^ 2 ∂ν := by
+    rw [hν.2]
+    exact hvariance
+  obtain ⟨width₀, hwidth₀, hintervalBound⟩ :=
+    iidSequenceLaw_intervalProbability_le_exp_of_finiteVariance
+      ν hν.1 hsquare hvariance' hv hd (by simpa [hν.2] using hcritical)
+  refine ⟨width₀, hwidth₀, ?_⟩
+  intro width hwidth length hlength start center hcenter
+  apply iidSequenceLaw_condExp_drawdownTubePairEvent_le_of_intervalBound
+    ν start length center hcenter width
+    (Real.exp (width ^ v - d * ((length : ℝ) / width ^ 2))) (by positivity)
+  intro lower hlower hupper
+  exact iidSequenceLaw_map_blockCoordinates_finiteInterval_le ν
+    ⟨hlower, hupper⟩
+    (hintervalBound width hwidth lower hlower hupper length hlength)
+
+/-- The block-event form of the Lemma 3.2 estimate, conditioned on the
+natural domain filtration at the block's starting time. -/
+theorem iidSequenceLaw_condExp_drawdownTubeBlockEvent_le_of_finiteVariance
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    {variance : ℝ}
+    (hν : ProbabilityTheory.IsCenteredSecondMoment ν variance)
+    (hsquare : Integrable (fun x : ℝ => x ^ 2) ν)
+    (hvariance : 0 < variance)
+    {v d : ℝ} (hv : 0 < v) (hd : 0 < d)
+    (hcritical : d < (Real.pi ^ 2 / 2) * variance) :
+    ∃ width₀ : ℝ, 0 < width₀ ∧
+      ∀ width : ℝ, width₀ ≤ width → ∀ length : ℕ, 1 ≤ length →
+      ∀ start : ℕ, ∀ center : (Fin start → ℝ) → ℝ,
+        Measurable center →
+        ∀ᵐ increment ∂iidSequenceLaw ν,
+          condExp
+            (ProbabilityTheory.sequencePrefixFiltration (E := ℝ) start)
+            (iidSequenceLaw ν)
+            ((drawdownTubeBlockEvent start length center width).indicator
+              (fun _ => (1 : ℝ))) increment ≤
+            Real.exp (width ^ v - d * ((length : ℝ) / width ^ 2)) := by
+  obtain ⟨width₀, hwidth₀, hbound⟩ :=
+    iidSequenceLaw_condExp_drawdownTubePairEvent_le_of_finiteVariance
+      ν hν hsquare hvariance hv hd hcritical
+  refine ⟨width₀, hwidth₀, ?_⟩
+  intro width hwidth length hlength start center hcenter
+  rw [ProbabilityTheory.sequencePrefixFiltration_eq_comap_blockCoordinates]
+  have hindicator :
+      (drawdownTubeBlockEvent start length center width).indicator
+          (fun _ => (1 : ℝ)) =
+        fun increment =>
+          (drawdownTubePairEvent center width).indicator (fun _ => (1 : ℝ))
+            (Combinatorics.Sequence.blockCoordinates 0 start increment,
+              Combinatorics.Sequence.blockCoordinates start length increment) := by
+    funext increment
+    rfl
+  filter_upwards [hbound width hwidth length hlength start center hcenter]
+    with increment hincrement
+  rw [hindicator]
+  exact hincrement
+
+/-- If the conditional probability of the next event is at most `p` on a
+measurable past event `A`, integration over `A` gives
+`P (A ∩ E) ≤ p * P A`. This is the tower-property step iterated over the
+good blocks in Wang Yiyang, Chapter 3, proof of Lemma 3.3. -/
+theorem measureReal_inter_le_of_condExp_indicator_le
+    {Ω : Type*} [mΩ : MeasurableSpace Ω] {P : Measure Ω}
+    [IsProbabilityMeasure P]
+    (m : MeasurableSpace Ω) (hm : m ≤ mΩ)
+    {A E : Set Ω} (hA : MeasurableSet[m] A)
+    (hE : MeasurableSet[mΩ] E)
+    {p : ℝ}
+    (hcond : ∀ᵐ ω ∂P, ω ∈ A →
+      condExp m P (E.indicator fun _ => (1 : ℝ)) ω ≤ p) :
+    P.real (A ∩ E) ≤ p * P.real A := by
+  let f : Ω → ℝ := E.indicator fun _ => (1 : ℝ)
+  have hf : Integrable f P :=
+    (integrable_const (c := (1 : ℝ))).indicator hE
+  have hAE : MeasurableSet[mΩ] (A ∩ E) := (hm A hA).inter hE
+  have hindicator : (A ∩ E).indicator (fun _ => (1 : ℝ)) = A.indicator f := by
+    funext ω
+    by_cases hωA : ω ∈ A <;> by_cases hωE : ω ∈ E <;>
+      simp [f, hωA, hωE]
+  calc
+    P.real (A ∩ E) = ∫ ω, (A ∩ E).indicator (fun _ => (1 : ℝ)) ω ∂P :=
+      (integral_indicator_one hAE).symm
+    _ = ∫ ω in A, f ω ∂P := by
+      rw [hindicator, integral_indicator (hm A hA)]
+    _ = ∫ ω in A, condExp m P f ω ∂P :=
+      (setIntegral_condExp hm hf hA).symm
+    _ ≤ ∫ ω in A, p ∂P := by
+      apply setIntegral_mono_on_ae
+      · exact integrable_condExp.integrableOn
+      · exact (integrable_const p).integrableOn
+      · exact hm A hA
+      · exact hcond
+    _ = p * P.real A := by
+      rw [setIntegral_const, smul_eq_mul, mul_comm]
+
+/-- The intersection of the first `n` block events in a conditional
+expectation iteration. -/
+def drawdownConditionalBlockIntersection
+    {Ω : Type*} [MeasurableSpace Ω]
+    (events : ℕ → Set Ω) : ℕ → Set Ω
+  | 0 => Set.univ
+  | n + 1 => drawdownConditionalBlockIntersection events n ∩ events n
+
+/-- Conditional integration over the first `n` blocks bounds the
+intersection by the product of the individual conditional bounds. -/
+theorem measureReal_drawdownConditionalBlockIntersection_le_prod
+    {Ω : Type*} [mΩ : MeasurableSpace Ω] {P : Measure Ω}
+    [IsProbabilityMeasure P]
+    (filtration : ℕ → MeasurableSpace Ω)
+    (hfiltrationMono : ∀ n, filtration n ≤ filtration (n + 1))
+    (hfiltrationAmbient : ∀ n, filtration n ≤ mΩ)
+    (events : ℕ → Set Ω)
+    (heventMeasurable : ∀ n,
+      MeasurableSet[filtration (n + 1)] (events n))
+    (bounds : ℕ → ℝ) (hboundNonneg : ∀ n, 0 ≤ bounds n)
+    (hconditional : ∀ n, ∀ᵐ ω ∂P,
+      condExp (filtration n) P
+        ((events n).indicator fun _ => (1 : ℝ)) ω ≤ bounds n)
+    (n : ℕ) :
+    P.real (drawdownConditionalBlockIntersection events n) ≤
+      ∏ j ∈ Finset.range n, bounds j := by
+  have hmeas : ∀ n,
+      MeasurableSet[filtration n]
+        (drawdownConditionalBlockIntersection events n) := by
+    intro n
+    induction n with
+    | zero => simp [drawdownConditionalBlockIntersection]
+    | succ n ih =>
+        rw [drawdownConditionalBlockIntersection]
+        exact (hfiltrationMono n _ ih).inter (heventMeasurable n)
+  induction n with
+  | zero => simp [drawdownConditionalBlockIntersection]
+  | succ n ih =>
+      rw [drawdownConditionalBlockIntersection]
+      have hconditionalOnPrefix : ∀ᵐ ω ∂P,
+          ω ∈ drawdownConditionalBlockIntersection events n →
+            condExp (filtration n) P
+              ((events n).indicator fun _ => (1 : ℝ)) ω ≤ bounds n := by
+        filter_upwards [hconditional n] with ω hω
+        intro _
+        exact hω
+      calc
+        P.real
+            (drawdownConditionalBlockIntersection events n ∩ events n) ≤
+            bounds n * P.real (drawdownConditionalBlockIntersection events n) :=
+          measureReal_inter_le_of_condExp_indicator_le
+            (filtration n) (hfiltrationAmbient n) (hmeas n)
+            (hfiltrationAmbient (n + 1) (events n)
+              (heventMeasurable n)) hconditionalOnPrefix
+        _ ≤ bounds n * (∏ j ∈ Finset.range n, bounds j) :=
+          mul_le_mul_of_nonneg_left ih (hboundNonneg n)
+        _ = ∏ j ∈ Finset.range (n + 1), bounds j := by
+          rw [Finset.prod_range_succ]
+          ring
+
+/-- If each next-block event is measurable at its block end and has
+conditional probability at most `p` given the preceding domain, the
+conditional-expectation recursion yields
+\[
+  \mathbb P\!\left(\bigcap_{j=0}^{n-1}E_j\right)\leq p^n.
+\]
+This is the iteration used for the complement of the jump set in the proof
+of Wang Yiyang, Chapter 3, Lemma 3.3. The conditional bounds are imposed on
+the whole sample space; for a tube event, its time-zero constraint makes the
+conditional probability zero whenever the starting point lies outside the
+interval. -/
+theorem measureReal_drawdownConditionalBlockIntersection_le_pow
+    {Ω : Type*} [mΩ : MeasurableSpace Ω] {P : Measure Ω}
+    [IsProbabilityMeasure P]
+    (filtration : ℕ → MeasurableSpace Ω)
+    (hfiltrationMono : ∀ n, filtration n ≤ filtration (n + 1))
+    (hfiltrationAmbient : ∀ n, filtration n ≤ mΩ)
+    (events : ℕ → Set Ω)
+    (heventMeasurable : ∀ n,
+      MeasurableSet[filtration (n + 1)] (events n))
+    {p : ℝ} (hp : 0 ≤ p)
+    (hconditional : ∀ n, ∀ᵐ ω ∂P,
+      condExp (filtration n) P (events n |>.indicator fun _ => (1 : ℝ)) ω ≤ p)
+    (n : ℕ) :
+    P.real (drawdownConditionalBlockIntersection events n) ≤ p ^ n := by
+  have hprod := measureReal_drawdownConditionalBlockIntersection_le_prod
+    filtration hfiltrationMono hfiltrationAmbient events heventMeasurable
+    (fun _ => p) (fun _ => hp) hconditional n
+  simpa [Finset.prod_const, Finset.card_range] using hprod
+
+/-- The start time of block `j` in the decomposition used in Wang Yiyang,
+*Asymptotic speed of the $N$-branching random walk with infinite offspring*,
+Chapter 3, Lemma 3.3. The initial remainder is followed by equal blocks. -/
+def drawdownBlockStart (remainder blockLength j : ℕ) : ℕ :=
+  remainder + j * blockLength
+
+/-- The number of complete blocks of length `blockLength` in a horizon. -/
+def drawdownBlockCount (horizon blockLength : ℕ) : ℕ :=
+  horizon / blockLength
+
+/-- The initial remainder in the Lemma 3.3 block decomposition. -/
+def drawdownBlockRemainder (horizon blockLength : ℕ) : ℕ :=
+  horizon % blockLength
+
+/-- The remainder and complete blocks end exactly at the horizon. -/
+theorem drawdownBlockStart_last_eq_horizon {horizon blockLength : ℕ} :
+    drawdownBlockStart (drawdownBlockRemainder horizon blockLength)
+      blockLength (drawdownBlockCount horizon blockLength) = horizon := by
+  simp [drawdownBlockStart, drawdownBlockRemainder, drawdownBlockCount,
+    Nat.mod_add_div, Nat.mul_comm]
+
+/-- The rounded running maximum `M_j` from the proof of Wang Yiyang,
+Chapter 3, Lemma 3.3, at the start time of block `j`. -/
+noncomputable def drawdownDiscretizedMaximum
+    (upper width : ℝ) (path : ℕ → ℝ)
+    (remainder blockLength : ℕ) (j : ℕ) : ℝ :=
+  spatialBinLevel upper width path
+    (drawdownBlockStart remainder blockLength j)
+
+/-- The index set of blocks on which the discretized running maximum
+changes. -/
+def drawdownMaximumJumpSet {q K : ℕ}
+    (bins : Fin (q + 1) → Fin (K + 1)) : Finset (Fin q) :=
+  spatialBinJumpSet bins
+
+/-- The spatial-bin indices of the running maximum at the block starts for a
+fixed increment path. -/
+noncomputable def drawdownRunningMaximumBins {q : ℕ}
+    (upper width : ℝ) (starts : Fin (q + 1) → ℕ)
+    (hwidth : 0 < width) (increment : ℕ → ℝ) :
+    Fin (q + 1) → Fin (⌊upper / width⌋₊ + 1) := by
+  intro j
+  refine ⟨spatialBinIndex upper width
+      (AdditivePath.displacement · increment) (starts j), ?_⟩
+  exact Nat.lt_succ_of_le
+    (spatialBinIndex_le_of_zero upper width
+      (AdditivePath.displacement · increment) (starts j) hwidth
+      (AdditivePath.displacement_zero increment))
+
+/-- The jump indices of the discretized running maximum for one sample path. -/
+noncomputable def drawdownRunningMaximumJumpSet {q : ℕ}
+    (upper width : ℝ) (starts : Fin (q + 1) → ℕ)
+    (hwidth : 0 < width) (increment : ℕ → ℝ) : Finset (Fin q) :=
+  spatialBinJumpSet
+    (drawdownRunningMaximumBins upper width starts hwidth increment)
+
+/-- For a fixed candidate jump set, impose the rounded-maximum tube on each
+block outside that set and leave the jump blocks unrestricted. -/
+def drawdownJumpPatternTubeEvent {q : ℕ}
+    (remainder blockLength : ℕ) (pattern : Finset (Fin q))
+    (upper binWidth tubeWidth : ℝ) (n : ℕ) : Set (ℕ → ℝ) :=
+  if hn : n < q then
+    if (⟨n, hn⟩ : Fin q) ∈ pattern then Set.univ
+    else drawdownTubeBlockEvent (remainder + n * blockLength) blockLength
+      (drawdownPastDiscretizedMaximum
+        (start := remainder + n * blockLength) upper binWidth) tubeWidth
+  else Set.univ
+
+/-- The conditional factor attached to a block for a fixed jump pattern. -/
+def drawdownJumpPatternBound {q : ℕ}
+    (pattern : Finset (Fin q)) (p : ℝ) (n : ℕ) : ℝ :=
+  if hn : n < q then
+    if (⟨n, hn⟩ : Fin q) ∈ pattern then 1 else p
+  else 1
+
+/-- The factors for a fixed jump pattern multiply to the tube-bound factor
+raised to the number of indices outside that pattern. -/
+theorem drawdown_prod_jumpPatternBound_eq_pow {q : ℕ}
+    (pattern : Finset (Fin q)) (p : ℝ) :
+    (∏ j ∈ Finset.range q, drawdownJumpPatternBound pattern p j) =
+      p ^ (q - pattern.card) := by
+  classical
+  rw [← Fin.prod_univ_eq_prod_range
+    (fun n : ℕ => drawdownJumpPatternBound pattern p n) q]
+  have hterm (j : Fin q) :
+      drawdownJumpPatternBound pattern p j.val =
+        if j ∈ pattern then 1 else p := by
+    simp [drawdownJumpPatternBound]
+  simp_rw [hterm]
+  rw [Finset.prod_ite]
+  have hnonjump :
+      (Finset.univ.filter (fun j : Fin q => j ∉ pattern)).card =
+        q - pattern.card := by
+    rw [show Finset.univ.filter (fun j : Fin q => j ∉ pattern) =
+      Finset.univ \ pattern by ext j; simp]
+    rw [Finset.card_sdiff_of_subset pattern.subset_univ]
+    simp
+  simp [hnonjump]
+
+/-- A jump pattern with at most `K` indices has at least `q-K` nonjump
+indices, so its product is bounded by the corresponding power whenever the
+one-block factor lies in `[0,1]`. -/
+theorem drawdown_prod_jumpPatternBound_le_pow {q K : ℕ}
+    (pattern : Finset (Fin q)) (p : ℝ)
+    (hp0 : 0 ≤ p) (hp1 : p ≤ 1)
+    (hcard : pattern.card ≤ K) :
+    (∏ j ∈ Finset.range q, drawdownJumpPatternBound pattern p j) ≤
+      p ^ (q - K) := by
+  rw [drawdown_prod_jumpPatternBound_eq_pow]
+  exact pow_le_pow_of_le_one hp0 hp1 (by omega)
+
+/-- For a fixed jump pattern, conditional integration contributes the
+Lemma 3.2 tube bound on each nonjump block and the factor one on jump
+blocks. This is the block-by-block estimate in Wang Yiyang, *Asymptotic
+speed of the $N$-branching random walk with infinite offspring*, Chapter 3,
+proof of Lemma 3.3. -/
+private theorem measureReal_drawdownJumpPatternTubeIntersection_le_prod_of_uniformBlockBound
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    {v d tubeWidth₀ : ℝ}
+    (hblockBound : ∀ tubeWidth : ℝ, tubeWidth₀ ≤ tubeWidth →
+      ∀ length : ℕ, 1 ≤ length → ∀ start : ℕ,
+      ∀ center : (Fin start → ℝ) → ℝ, Measurable center →
+      ∀ᵐ increment ∂iidSequenceLaw ν,
+        condExp
+          (ProbabilityTheory.sequencePrefixFiltration (E := ℝ) start)
+          (iidSequenceLaw ν)
+          ((drawdownTubeBlockEvent start length center tubeWidth).indicator
+            (fun _ => (1 : ℝ))) increment ≤
+          Real.exp (tubeWidth ^ v - d * ((length : ℝ) / tubeWidth ^ 2)))
+    (remainder q blockLength : ℕ) (hblockLength : 1 ≤ blockLength) :
+    ∀ tubeWidth : ℝ, tubeWidth₀ ≤ tubeWidth →
+      ∀ upper binWidth : ℝ, ∀ pattern : Finset (Fin q),
+        (iidSequenceLaw ν).real
+          (drawdownConditionalBlockIntersection
+            (drawdownJumpPatternTubeEvent remainder blockLength pattern
+              upper binWidth tubeWidth) q) ≤
+          ∏ j ∈ Finset.range q,
+            drawdownJumpPatternBound pattern
+              (Real.exp (tubeWidth ^ v -
+                d * ((blockLength : ℝ) / tubeWidth ^ 2))) j := by
+  intro tubeWidth htubeWidth upper binWidth pattern
+  let filtration : ℕ → MeasurableSpace (ℕ → ℝ) :=
+    fun n => ProbabilityTheory.sequencePrefixFiltration (E := ℝ)
+      (remainder + n * blockLength)
+  let events : ℕ → Set (ℕ → ℝ) :=
+    drawdownJumpPatternTubeEvent remainder blockLength pattern
+      upper binWidth tubeWidth
+  let p := Real.exp (tubeWidth ^ v -
+    d * ((blockLength : ℝ) / tubeWidth ^ 2))
+  let bounds : ℕ → ℝ := fun n => drawdownJumpPatternBound pattern p n
+  have hfiltrationMono : ∀ n, filtration n ≤ filtration (n + 1) := by
+    intro n
+    dsimp [filtration]
+    apply (ProbabilityTheory.sequencePrefixFiltration (E := ℝ)).mono'
+    have htime : remainder + n * blockLength + blockLength =
+        remainder + (n + 1) * blockLength := by
+      simp [Nat.add_mul, Nat.add_assoc]
+    rw [← htime]
+    exact Nat.le_add_right _ _
+  have hfiltrationAmbient : ∀ n,
+      filtration n ≤ (inferInstance : MeasurableSpace (ℕ → ℝ)) := by
+    intro n
+    exact (ProbabilityTheory.sequencePrefixFiltration (E := ℝ)).le'
+      (remainder + n * blockLength)
+  have heventMeasurable : ∀ n,
+      MeasurableSet[filtration (n + 1)] (events n) := by
+    intro n
+    have htime : remainder + (n + 1) * blockLength =
+        remainder + n * blockLength + blockLength := by
+      simp [Nat.add_mul, Nat.add_assoc]
+    change MeasurableSet[ProbabilityTheory.sequencePrefixFiltration
+      (E := ℝ) (remainder + (n + 1) * blockLength)]
+      (drawdownJumpPatternTubeEvent remainder blockLength pattern
+        upper binWidth tubeWidth n)
+    by_cases hn : n < q
+    · by_cases hjump : (⟨n, hn⟩ : Fin q) ∈ pattern
+      · simp [drawdownJumpPatternTubeEvent, hn, hjump]
+      · rw [htime]
+        simpa [drawdownJumpPatternTubeEvent, hn, hjump] using
+          measurableSet_drawdownTubeBlockEvent
+          (remainder + n * blockLength) blockLength
+          (drawdownPastDiscretizedMaximum
+            (start := remainder + n * blockLength) upper binWidth)
+          (measurable_drawdownPastDiscretizedMaximum upper binWidth) tubeWidth
+    · simp [drawdownJumpPatternTubeEvent, hn]
+  have hboundNonneg : ∀ n, 0 ≤ bounds n := by
+    intro n
+    by_cases hn : n < q
+    · by_cases hjump : (⟨n, hn⟩ : Fin q) ∈ pattern
+      · simp [bounds, drawdownJumpPatternBound, hn, hjump]
+      · simp [bounds, drawdownJumpPatternBound, hn, hjump, p]
+        positivity
+    · simp [bounds, drawdownJumpPatternBound, hn]
+  have hconditional : ∀ n, ∀ᵐ increment ∂iidSequenceLaw ν,
+      condExp (filtration n) (iidSequenceLaw ν)
+        ((events n).indicator (fun _ => (1 : ℝ))) increment ≤ bounds n := by
+    intro n
+    by_cases hn : n < q
+    · by_cases hjump : (⟨n, hn⟩ : Fin q) ∈ pattern
+      · have hconst := condExp_const (μ := iidSequenceLaw ν)
+          (hfiltrationAmbient n) (1 : ℝ)
+        have hconstAE : ∀ᵐ increment ∂iidSequenceLaw ν,
+            condExp (filtration n) (iidSequenceLaw ν)
+              (fun _ => (1 : ℝ)) increment = 1 := by
+          rw [hconst]
+          exact Filter.Eventually.of_forall (fun _ => rfl)
+        have hevent : events n = Set.univ := by
+          simp [events, drawdownJumpPatternTubeEvent, hn, hjump]
+        rw [hevent]
+        filter_upwards [hconstAE] with increment hvalue
+        simpa [bounds, drawdownJumpPatternBound, hn, hjump] using hvalue.le
+      · filter_upwards
+          [hblockBound tubeWidth htubeWidth blockLength hblockLength
+            (remainder + n * blockLength)
+            (drawdownPastDiscretizedMaximum
+              (start := remainder + n * blockLength) upper binWidth)
+            (measurable_drawdownPastDiscretizedMaximum upper binWidth)]
+          with increment hbound
+        simpa [events, bounds, p, drawdownJumpPatternTubeEvent,
+          drawdownJumpPatternBound, hn, hjump, filtration] using hbound
+    · have hconst := condExp_const (μ := iidSequenceLaw ν)
+        (hfiltrationAmbient n) (1 : ℝ)
+      have hconstAE : ∀ᵐ increment ∂iidSequenceLaw ν,
+          condExp (filtration n) (iidSequenceLaw ν)
+            (fun _ => (1 : ℝ)) increment = 1 := by
+        rw [hconst]
+        exact Filter.Eventually.of_forall (fun _ => rfl)
+      have hevent : events n = Set.univ := by
+        simp [events, drawdownJumpPatternTubeEvent, hn]
+      rw [hevent]
+      filter_upwards [hconstAE] with increment hvalue
+      simpa [bounds, drawdownJumpPatternBound, hn] using hvalue.le
+  exact measureReal_drawdownConditionalBlockIntersection_le_prod
+    filtration hfiltrationMono hfiltrationAmbient events heventMeasurable
+    bounds hboundNonneg hconditional q
+
+/-- Conditional block estimates from Wang Yiyang, *Asymptotic speed of the
+$N$-branching random walk with infinite offspring*, Chapter 3, Lemma 3.3,
+give a uniform tube-width threshold for each fixed finite block decomposition. -/
+theorem measureReal_drawdownJumpPatternTubeIntersection_le_prod
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    {variance : ℝ}
+    (hν : ProbabilityTheory.IsCenteredSecondMoment ν variance)
+    (hsquare : Integrable (fun x : ℝ => x ^ 2) ν)
+    (hvariance : 0 < variance)
+    {v d : ℝ} (hv : 0 < v) (hd : 0 < d)
+    (hcritical : d < (Real.pi ^ 2 / 2) * variance)
+    (remainder q blockLength : ℕ) (hblockLength : 1 ≤ blockLength) :
+    ∃ tubeWidth₀ : ℝ, 0 < tubeWidth₀ ∧
+      ∀ tubeWidth : ℝ, tubeWidth₀ ≤ tubeWidth →
+      ∀ upper binWidth : ℝ, ∀ pattern : Finset (Fin q),
+        (iidSequenceLaw ν).real
+          (drawdownConditionalBlockIntersection
+            (drawdownJumpPatternTubeEvent remainder blockLength pattern
+              upper binWidth tubeWidth) q) ≤
+          ∏ j ∈ Finset.range q,
+            drawdownJumpPatternBound pattern
+              (Real.exp (tubeWidth ^ v -
+                d * ((blockLength : ℝ) / tubeWidth ^ 2))) j := by
+  obtain ⟨tubeWidth₀, htubeWidth₀, hblockBound⟩ :=
+    iidSequenceLaw_condExp_drawdownTubeBlockEvent_le_of_finiteVariance
+      ν hν hsquare hvariance hv hd hcritical
+  refine ⟨tubeWidth₀, htubeWidth₀, ?_⟩
+  intro tubeWidth htubeWidth upper binWidth pattern
+  exact measureReal_drawdownJumpPatternTubeIntersection_le_prod_of_uniformBlockBound
+    ν hblockBound remainder q blockLength hblockLength
+    tubeWidth htubeWidth upper binWidth pattern
+
+/-- The tube condition for block `j` in the proof of Wang Yiyang, Chapter 3,
+Lemma 3.3. Its interval is centered at the discretized running maximum at
+the block's starting time. -/
+def drawdownBlockTubeCondition
+    (upper width delta : ℝ) (path : ℕ → ℝ)
+    (remainder blockLength : ℕ) (j : ℕ) : Prop :=
+  ∀ k ≤ blockLength,
+    drawdownDiscretizedMaximum upper width path remainder blockLength j -
+        width - delta < path (drawdownBlockStart remainder blockLength j + k) ∧
+      path (drawdownBlockStart remainder blockLength j + k) ≤
+        drawdownDiscretizedMaximum upper width path remainder blockLength j
+
+/-- The deterministic tube condition on a block implies membership in the
+corresponding conditional tube event centered at the rounded running maximum
+of the past. -/
+theorem drawdownBlockTubeCondition_implies_tubeBlockEvent
+    (increment : ℕ → ℝ) (upper binWidth delta : ℝ)
+    (remainder blockLength j : ℕ)
+    (hcondition : drawdownBlockTubeCondition upper binWidth delta
+      (AdditivePath.displacement · increment)
+      remainder blockLength j) :
+    increment ∈ drawdownTubeBlockEvent
+      (drawdownBlockStart remainder blockLength j) blockLength
+      (drawdownPastDiscretizedMaximum
+        (start := drawdownBlockStart remainder blockLength j)
+        upper binWidth)
+      (binWidth + delta) := by
+  apply (drawdownTubeBlockEvent_iff_path_in_interval
+    (drawdownBlockStart remainder blockLength j) blockLength upper
+    binWidth (binWidth + delta) increment).2
+  intro k
+  have hcenter :
+      drawdownPastDiscretizedMaximum
+          (start := drawdownBlockStart remainder blockLength j)
+          upper binWidth
+          (Combinatorics.Sequence.blockCoordinates 0
+            (drawdownBlockStart remainder blockLength j) increment) =
+        spatialBinLevel upper binWidth
+          (AdditivePath.displacement · increment)
+          (drawdownBlockStart remainder blockLength j) :=
+    drawdownPastDiscretizedMaximum_eq_runningMaximum
+      (drawdownBlockStart remainder blockLength j) upper binWidth increment
+  have htube := hcondition (k : ℕ) (Nat.le_of_lt_succ k.isLt)
+  have htube' := htube
+  simp only [drawdownDiscretizedMaximum] at htube'
+  rw [← hcenter] at htube'
+  rw [← hcenter]
+  simp only [Set.mem_Icc]
+  constructor
+  · nlinarith [htube'.1]
+  · exact htube'.2
+
+/-- A nonincreasing discretized running maximum has at most `K + 1` jump
+indices when its levels are encoded by `K + 1` possible grid indices. -/
+theorem drawdown_card_maximumJumpSet_le {q K : ℕ}
+    (bins : Fin (q + 1) → Fin (K + 1))
+    (hmono : ∀ i j, i ≤ j → bins j ≤ bins i) :
+    (drawdownMaximumJumpSet bins).card ≤ K + 1 := by
+  exact card_spatialBinJumpSet_le bins hmono
+
+/-- On the event in Wang Yiyang, Chapter 3, Lemma 3.3, the running maximum
+can be rounded to a nondecreasing sequence of finitely many levels. Every
+block with unchanged level is contained in the interval
+`(M_j - width - delta, M_j]`.
+
+The sequence is encoded by its grid indices, so `hmono` states that the
+indices are nonincreasing. The last component is the tube inclusion used in
+the conditional-expectation step of Wang Yiyang, *Asymptotic speed of the
+$N$-branching random walk with infinite offspring*, Chapter 3, Lemma 3.3. -/
+theorem drawdown_discretizedMaximumBlockDecomposition
+    (increment : ℕ → ℝ) (horizon remainder blocks blockLength : ℕ)
+    (upper width delta : ℝ)
+    (hzero : AdditivePath.displacement 0 increment = 0)
+    (hwidth : 0 < width)
+    (hnoDrop : ∀ i j : ℕ, i ≤ j → j ≤ horizon →
+      AdditivePath.displacement i increment -
+        AdditivePath.displacement j increment ≤ delta)
+    (hupper : ∀ i ≤ horizon,
+      AdditivePath.displacement i increment ≤ upper)
+    (hblocks : remainder + blocks * blockLength ≤ horizon) :
+    ∃ bins : Fin (blocks + 1) → Fin (⌊upper / width⌋₊ + 1),
+      (∀ i j, i ≤ j → bins j ≤ bins i) ∧
+      (∀ j, (bins j : ℕ) = spatialBinIndex upper width
+        (AdditivePath.displacement · increment)
+        (drawdownBlockStart remainder blockLength j.val)) ∧
+      (∀ j : Fin blocks,
+        bins j.castSucc = bins j.succ →
+        ∀ k ≤ blockLength,
+          drawdownDiscretizedMaximum upper width
+              (AdditivePath.displacement · increment)
+              remainder blockLength j.val - width - delta <
+            AdditivePath.displacement
+              (drawdownBlockStart remainder blockLength j.val + k) increment ∧
+          AdditivePath.displacement
+              (drawdownBlockStart remainder blockLength j.val + k) increment ≤
+            drawdownDiscretizedMaximum upper width
+              (AdditivePath.displacement · increment)
+              remainder blockLength j.val) := by
+  simpa only [drawdownBlockStart, drawdownDiscretizedMaximum] using
+    exists_spatialBinSequence_for_noLargeDrop
+      (AdditivePath.displacement · increment) upper width delta
+      hzero hwidth hnoDrop hupper hblocks
 
 /-- A no-large-drawdown path whose endpoint is below a threshold stays below
 that threshold plus one drawdown allowance throughout the finite horizon. -/
@@ -150,188 +1349,6 @@ theorem neg_delta_le_additivePath_of_noLargeDrop
     AdditivePath.displacement_zero increment
   rw [hzero] at h
   linarith
-
-/-- The one-block constraint prescribed by a fixed spatial-bin pattern.  A
-block whose endpoint bins jump is left unrestricted. -/
-def spatialBinPatternBlockEvent {q K length : ℕ} (width : ℝ)
-    (bins : Fin (q + 1) → Fin (K + 1)) (j : Fin q) :
-    Set (Fin length → ℝ) :=
-  if bins j.castSucc = bins j.succ then
-    blockOscillationEvent width length else Set.univ
-
-/-- The increment event associated with one fixed spatial-bin pattern. -/
-def spatialBinPatternEvent {q K : ℕ} (width : ℝ) (length : ℕ)
-    (bins : Fin (q + 1) → Fin (K + 1)) : Set (ℕ → ℝ) :=
-  {increment | ∀ j : Fin q,
-    Combinatorics.Sequence.blockCoordinates (j.val * length) length increment ∈
-      spatialBinPatternBlockEvent width bins j}
-
-theorem measurableSet_spatialBinPatternEvent {q K : ℕ} (width : ℝ) (length : ℕ)
-    (bins : Fin (q + 1) → Fin (K + 1)) :
-    MeasurableSet (spatialBinPatternEvent width length bins) := by
-  rw [show spatialBinPatternEvent width length bins =
-      ⋂ j : Fin q, {increment |
-        Combinatorics.Sequence.blockCoordinates (j.val * length) length increment ∈
-          spatialBinPatternBlockEvent width bins j} by
-    ext increment
-    simp [spatialBinPatternEvent]]
-  apply MeasurableSet.iInter
-  intro j
-  by_cases hbin : bins j.castSucc = bins j.succ
-  · simp only [spatialBinPatternBlockEvent, if_pos hbin]
-    exact (measurableSet_blockOscillationEvent width length).preimage
-      (measurable_blockCoordinates (j.val * length) length)
-  · simp [spatialBinPatternBlockEvent, hbin]
-
-/-- Probability of a fixed spatial-bin pattern factors into the one-block
-probabilities prescribed by that pattern.  Jump blocks contribute probability
-one; unchanged-bin blocks contribute the oscillation probability. -/
-theorem iidSequenceLaw_measure_spatialBinPatternEvent
-    (ν : Measure ℝ) [IsProbabilityMeasure ν]
-    {q K length : ℕ} (width : ℝ)
-    (bins : Fin (q + 1) → Fin (K + 1)) :
-    iidSequenceLaw ν (spatialBinPatternEvent width length bins) =
-      ∏ j : Fin q, iidSequenceLaw ν {increment : ℕ → ℝ |
-        Combinatorics.Sequence.blockCoordinates 0 length increment ∈
-          spatialBinPatternBlockEvent width bins j} := by
-  let event : ∀ j : Fin q, Set (Fin length → ℝ) :=
-    spatialBinPatternBlockEvent width bins
-  have hfactor := iidSequenceLaw_measure_forall_variableConsecutiveBlockEvent
-    (ν := ν) (length := fun _ : ℕ => length) (blocks := q) event
-    (fun j => by
-      by_cases hbin : bins j.castSucc = bins j.succ
-      · simp only [event, spatialBinPatternBlockEvent, if_pos hbin]
-        exact measurableSet_blockOscillationEvent width length
-      · simp [event, spatialBinPatternBlockEvent, hbin])
-  have hpatterns : spatialBinPatternEvent width length bins =
-      {increment : ℕ → ℝ | ∀ j : Fin q,
-        Combinatorics.Sequence.blockCoordinates
-          (AdditivePath.blockStart (fun _ : ℕ => length) j.val)
-          length increment ∈ event j} := by
-    ext increment
-    simp [spatialBinPatternEvent, event, AdditivePath.blockStart_const]
-  rw [hpatterns]
-  simpa only [event] using hfactor
-
-/-- The fixed-pattern probability is the one-block oscillation probability
-raised to the number of unchanged-bin blocks. -/
-theorem iidSequenceLaw_measure_spatialBinPatternEvent_eq_pow
-    (ν : Measure ℝ) [IsProbabilityMeasure ν]
-    {q K length : ℕ} (width : ℝ)
-    (bins : Fin (q + 1) → Fin (K + 1)) :
-    iidSequenceLaw ν (spatialBinPatternEvent width length bins) =
-      (iidSequenceLaw ν {increment : ℕ → ℝ |
-        Combinatorics.Sequence.blockCoordinates 0 length increment ∈
-          blockOscillationEvent width length}) ^
-        (spatialBinGoodBlockSet bins).card := by
-  rw [iidSequenceLaw_measure_spatialBinPatternEvent]
-  let p : ℝ≥0∞ := iidSequenceLaw ν {increment : ℕ → ℝ |
-    Combinatorics.Sequence.blockCoordinates 0 length increment ∈
-      blockOscillationEvent width length}
-  have hfactor (j : Fin q) :
-      iidSequenceLaw ν {increment : ℕ → ℝ |
-        Combinatorics.Sequence.blockCoordinates 0 length increment ∈
-          spatialBinPatternBlockEvent width bins j} =
-        if bins j.castSucc = bins j.succ then p else 1 := by
-    by_cases hbin : bins j.castSucc = bins j.succ
-    · simp [spatialBinPatternBlockEvent, hbin, p]
-    · simp [spatialBinPatternBlockEvent, hbin, p]
-  calc
-    _ = ∏ j : Fin q, (if bins j.castSucc = bins j.succ then p else 1) := by
-      apply Finset.prod_congr rfl
-      intro j hj
-      exact hfactor j
-    _ = p ^ (spatialBinGoodBlockSet bins).card := by
-      have hmem (j : Fin q) :
-          (bins j.castSucc = bins j.succ) =
-            (j ∈ spatialBinGoodBlockSet bins) := by
-        simp [spatialBinGoodBlockSet]
-      simp only [hmem]
-      rw [Finset.prod_ite_mem]
-      simp [Finset.prod_const]
-    _ = _ := rfl
-
-/-- Finite type of all nonincreasing spatial-bin patterns with `q` blocks
-and `K+1` bin values. -/
-def MonotoneSpatialBinPattern (q K : ℕ) :=
-  {bins : Fin (q + 1) → Fin (K + 1) //
-    ∀ i j, i ≤ j → bins j ≤ bins i}
-
-noncomputable instance (q K : ℕ) : Fintype (MonotoneSpatialBinPattern q K) :=
-  Fintype.ofInjective (fun bins : MonotoneSpatialBinPattern q K => bins.1)
-    Subtype.coe_injective
-
-/-- A crude cardinality bound for monotone patterns, obtained by counting
-all bin-valued sequences. -/
-theorem card_monotoneSpatialBinPattern_le (q K : ℕ) :
-    Fintype.card (MonotoneSpatialBinPattern q K) ≤ (K + 1) ^ (q + 1) := by
-  classical
-  calc
-    Fintype.card (MonotoneSpatialBinPattern q K) ≤
-        Fintype.card (Fin (q + 1) → Fin (K + 1)) :=
-      Fintype.card_le_of_injective (fun bins : MonotoneSpatialBinPattern q K => bins.1)
-        Subtype.coe_injective
-    _ = (K + 1) ^ (q + 1) := by simp
-
-/-- The union of fixed-pattern events over all nonincreasing spatial-bin
-patterns. -/
-def monotoneSpatialBinPatternUnionEvent {q K : ℕ} (width : ℝ) (length : ℕ) :
-    Set (ℕ → ℝ) :=
-  ⋃ bins : MonotoneSpatialBinPattern q K,
-    spatialBinPatternEvent width length bins.1
-
-theorem measurableSet_monotoneSpatialBinPatternUnionEvent
-    {q K : ℕ} (width : ℝ) (length : ℕ) :
-    MeasurableSet (monotoneSpatialBinPatternUnionEvent
-      (q := q) (K := K) width length) := by
-  classical
-  exact MeasurableSet.iUnion fun bins =>
-    measurableSet_spatialBinPatternEvent width length bins.1
-
-/-- The finite union bound for monotone patterns.  If the probability of a
-single-block oscillation is `p`, then every unchanged-bin block contributes
-one factor `p`; each monotone pattern has at least `q-K-1` such blocks. -/
-theorem iidSequenceLaw_measure_monotoneSpatialBinPatternUnionEvent_le
-    (ν : Measure ℝ) [IsProbabilityMeasure ν]
-    {q K length : ℕ} (width : ℝ) (hK : K + 1 ≤ q) :
-    iidSequenceLaw ν (monotoneSpatialBinPatternUnionEvent
-        (q := q) (K := K) width length) ≤
-      ((K + 1) ^ (q + 1) : ℝ≥0∞) *
-        (iidSequenceLaw ν {increment : ℕ → ℝ |
-          Combinatorics.Sequence.blockCoordinates 0 length increment ∈
-            blockOscillationEvent width length}) ^ (q - (K + 1)) := by
-  classical
-  let p : ℝ≥0∞ := iidSequenceLaw ν {increment : ℕ → ℝ |
-    Combinatorics.Sequence.blockCoordinates 0 length increment ∈
-      blockOscillationEvent width length}
-  have hp : p ≤ 1 := by
-    dsimp [p]
-    calc
-      iidSequenceLaw ν {increment : ℕ → ℝ |
-          Combinatorics.Sequence.blockCoordinates 0 length increment ∈
-            blockOscillationEvent width length} ≤
-          iidSequenceLaw ν Set.univ := measure_mono (Set.subset_univ _)
-      _ = 1 := measure_univ
-  calc
-    iidSequenceLaw ν (monotoneSpatialBinPatternUnionEvent
-        (q := q) (K := K) width length) ≤
-        ∑ bins : MonotoneSpatialBinPattern q K,
-          iidSequenceLaw ν (spatialBinPatternEvent width length bins.1) := by
-      rw [monotoneSpatialBinPatternUnionEvent]
-      exact measure_iUnion_fintype_le (iidSequenceLaw ν) _
-    _ ≤ ∑ _bins : MonotoneSpatialBinPattern q K, p ^ (q - (K + 1)) := by
-      apply Finset.sum_le_sum
-      intro bins _
-      rw [iidSequenceLaw_measure_spatialBinPatternEvent_eq_pow]
-      apply pow_le_pow_right_of_le_one' hp
-      have hgood := card_spatialBinGoodBlockSet_ge bins.1 bins.2
-      omega
-    _ = (Fintype.card (MonotoneSpatialBinPattern q K) : ℝ≥0∞) *
-          p ^ (q - (K + 1)) := by simp
-    _ ≤ ((K + 1) ^ (q + 1) : ℝ≥0∞) * p ^ (q - (K + 1)) := by
-      apply mul_le_mul_of_nonneg_right _ (by positivity)
-      exact_mod_cast card_monotoneSpatialBinPattern_le q K
-    _ = _ := rfl
 
 /-- An oscillation bound for the additive path over one segment is exactly
 the finite-block oscillation event for its increments. -/
@@ -369,77 +1386,6 @@ theorem blockOscillationEvent_of_additiveSegment
       ring
     _ ≤ width := hsegment i j
 
-/-- A no-large-drawdown path with a deterministic upper bound admits a
-nonincreasing finite spatial-bin encoding. Every unchanged-bin block belongs
-to the corresponding translation-invariant oscillation event. This is the
-deterministic finite-pattern reduction used before taking the finite union
-over bin patterns. -/
-theorem exists_spatialBinPatternEvent_of_noLargeDrop
-    {horizon blocks blockLength : ℕ}
-    (increment : ℕ → ℝ) (upper width delta : ℝ)
-    (hwidth : 0 < width)
-    (hnoDrop : ∀ i j : ℕ, i ≤ j → j ≤ horizon →
-      AdditivePath.displacement i increment -
-        AdditivePath.displacement j increment ≤ delta)
-    (hupper : ∀ i ≤ horizon, AdditivePath.displacement i increment ≤ upper)
-    (hblocks : blocks * blockLength ≤ horizon) :
-    ∃ bins : Fin (blocks + 1) → Fin (⌊upper / width⌋₊ + 1),
-      (∀ i j, i ≤ j → bins j ≤ bins i) ∧
-        increment ∈ spatialBinPatternEvent (width + delta) blockLength bins := by
-  let path : ℕ → ℝ := fun t => AdditivePath.displacement t increment
-  have hzero : path 0 = 0 := by simp [path]
-  have hnoDrop' : ∀ i j : ℕ, i ≤ j → j ≤ horizon →
-      path i - path j ≤ delta := hnoDrop
-  have hupper' : ∀ i ≤ horizon, path i ≤ upper := hupper
-  have hblocks' : 0 + blocks * blockLength ≤ horizon := by simpa using hblocks
-  obtain ⟨bins, hmono, hindex, hgood⟩ :=
-    exists_spatialBinSequence_for_noLargeDrop
-      (horizon := horizon) (remainder := 0) (blocks := blocks)
-      (blockLength := blockLength)
-      path upper width delta
-      hzero hwidth hnoDrop' hupper' hblocks'
-  refine ⟨bins, hmono, ?_⟩
-  intro j
-  by_cases hsame : bins j.castSucc = bins j.succ
-  · have hsegment : OscillationBounded
-        (fun k : Fin (blockLength + 1) =>
-          AdditivePath.displacement (j.val * blockLength + (k : ℕ)) increment)
-        (width + delta) := by
-      intro i k
-      have hi := by
-        simpa [path] using
-          hgood j hsame (i : ℕ) (Nat.le_of_lt_succ i.isLt)
-      have hk := by
-        simpa [path] using
-          hgood j hsame (k : ℕ) (Nat.le_of_lt_succ k.isLt)
-      have hupperDiff :
-          AdditivePath.displacement (j.val * blockLength + (i : ℕ)) increment -
-            AdditivePath.displacement (j.val * blockLength + (k : ℕ)) increment ≤
-              width + delta := by
-        linarith [hi.2, hk.1]
-      have hlowerDiff :
-          -(width + delta) ≤
-            AdditivePath.displacement (j.val * blockLength + (i : ℕ)) increment -
-              AdditivePath.displacement (j.val * blockLength + (k : ℕ)) increment := by
-        linarith [hk.2, hi.1]
-      exact abs_le.mpr ⟨hlowerDiff, hupperDiff⟩
-    have hblock := blockOscillationEvent_of_additiveSegment hsegment
-    rw [spatialBinPatternBlockEvent, if_pos hsame]
-    change OscillationBounded
-      (fun k : Fin (blockLength + 1) =>
-        Fin.partialSum
-          (Combinatorics.Sequence.blockCoordinates
-            (j.val * blockLength) blockLength increment) k)
-      (width + delta)
-    change OscillationBounded
-      (fun k : Fin (blockLength + 1) =>
-        Fin.partialSum
-          (Combinatorics.Sequence.blockCoordinates
-            (j.val * blockLength) blockLength increment) k)
-      (width + delta) at hblock
-    exact hblock
-  · simp [spatialBinPatternBlockEvent, hsame]
-
 /-- A finite-horizon event imposing both a drawdown bound and an endpoint
 upper bound. -/
 def noLargeDropEndpointBelowEvent (horizon : ℕ) (delta threshold : ℝ) :
@@ -449,455 +1395,1282 @@ def noLargeDropEndpointBelowEvent (horizon : ℕ) (delta threshold : ℝ) :
         AdditivePath.displacement j increment ≤ delta) ∧
     AdditivePath.displacement horizon increment ≤ threshold}
 
-/-- Every path in the drawdown-and-endpoint event belongs to a monotone
-spatial-bin pattern event, with the finite bin range determined by the
-endpoint ceiling. -/
-theorem noLargeDropEndpointBelowEvent_subset_monotoneSpatialBinPatternUnionEvent
-    {horizon blocks blockLength : ℕ} (delta width threshold : ℝ)
-    (hwidth : 0 < width) (hblocks : blocks * blockLength ≤ horizon) :
-    noLargeDropEndpointBelowEvent horizon delta threshold ⊆
-      monotoneSpatialBinPatternUnionEvent
-        (q := blocks)
-        (K := ⌊(threshold + delta) / width⌋₊)
-        (width + delta) blockLength := by
-  intro increment h
-  have hupper := additivePath_le_threshold_add_delta_of_noLargeDrop
-    increment delta threshold h.1 h.2
-  obtain ⟨bins, hmono, hpattern⟩ :=
-    exists_spatialBinPatternEvent_of_noLargeDrop
-      (horizon := horizon) (blocks := blocks)
-      (blockLength := blockLength) increment (threshold + delta) width delta
-      hwidth h.1 hupper hblocks
-  exact Set.mem_iUnion.mpr ⟨⟨bins, hmono⟩, hpattern⟩
+/-- Every path in `noLargeDropEndpointBelowEvent` has the discretized
+running-maximum decomposition of Wang Yiyang, Chapter 3, Lemma 3.3. The
+endpoint condition supplies the deterministic ceiling `threshold + delta`;
+the drawdown condition supplies the lower side of each unchanged-maximum
+block interval. -/
+theorem drawdown_event_discretizedMaximumBlockDecomposition
+    (increment : ℕ → ℝ) (horizon remainder blocks blockLength : ℕ)
+    (delta threshold width : ℝ) (hwidth : 0 < width)
+    (hblocks : remainder + blocks * blockLength ≤ horizon)
+    (hevent : increment ∈
+      noLargeDropEndpointBelowEvent horizon delta threshold) :
+    ∃ bins : Fin (blocks + 1) → Fin
+        (⌊(threshold + delta) / width⌋₊ + 1),
+      (∀ i j, i ≤ j → bins j ≤ bins i) ∧
+      (∀ j, (bins j : ℕ) = spatialBinIndex (threshold + delta) width
+        (AdditivePath.displacement · increment)
+        (drawdownBlockStart remainder blockLength j.val)) ∧
+      (∀ j : Fin blocks,
+        bins j.castSucc = bins j.succ →
+        ∀ k ≤ blockLength,
+          drawdownDiscretizedMaximum (threshold + delta) width
+              (AdditivePath.displacement · increment)
+              remainder blockLength j.val - width - delta <
+            AdditivePath.displacement
+              (drawdownBlockStart remainder blockLength j.val + k) increment ∧
+          AdditivePath.displacement
+              (drawdownBlockStart remainder blockLength j.val + k) increment ≤
+            drawdownDiscretizedMaximum (threshold + delta) width
+              (AdditivePath.displacement · increment)
+              remainder blockLength j.val) := by
+  rcases hevent with ⟨hnoDrop, hendpoint⟩
+  have hzero : AdditivePath.displacement 0 increment = 0 :=
+    AdditivePath.displacement_zero increment
+  have hupper : ∀ i ≤ horizon,
+      AdditivePath.displacement i increment ≤ threshold + delta :=
+    additivePath_le_threshold_add_delta_of_noLargeDrop
+      increment delta threshold hnoDrop hendpoint
+  exact drawdown_discretizedMaximumBlockDecomposition
+    increment horizon remainder blocks blockLength (threshold + delta)
+    width delta hzero hwidth hnoDrop hupper hblocks
 
-/-- A one-block exponential estimate and a scalar entropy condition for the
-finite set of patterns imply exponential decay in the number of blocks.
-The block probability is kept explicit; the scalar condition records the
-required domination of pattern count by good-block decay. -/
-theorem iidSequenceLaw_measure_monotoneSpatialBinPatternUnionEvent_le_exp
+/-- On a drawdown event, the rounded maximum has a bounded jump set, and
+every block outside that set satisfies the fixed-interval condition in Wang
+Yiyang, *Asymptotic speed of the $N$-branching random walk with infinite
+offspring*, Chapter 3, Lemma 3.3. This packages the deterministic reduction
+preceding its conditional-expectation iteration. -/
+theorem drawdown_event_goodBlocks_satisfy_tubeCondition
+    (increment : ℕ → ℝ) (horizon remainder blocks blockLength : ℕ)
+    (delta threshold width : ℝ) (hwidth : 0 < width)
+    (hblocks : remainder + blocks * blockLength ≤ horizon)
+    (hevent : increment ∈
+      noLargeDropEndpointBelowEvent horizon delta threshold) :
+    (drawdownRunningMaximumJumpSet (q := blocks) (threshold + delta) width
+      (fun j : Fin (blocks + 1) => drawdownBlockStart remainder blockLength j.val)
+      hwidth increment).card ≤ ⌊(threshold + delta) / width⌋₊ + 1 ∧
+      ∀ j : Fin blocks,
+        j ∉ drawdownRunningMaximumJumpSet (q := blocks) (threshold + delta) width
+          (fun i : Fin (blocks + 1) => drawdownBlockStart remainder blockLength i.val)
+          hwidth increment →
+        drawdownBlockTubeCondition (threshold + delta) width delta
+          (AdditivePath.displacement · increment)
+          remainder blockLength j.val := by
+  obtain ⟨bins, hmono, hindex, htube⟩ :=
+    drawdown_event_discretizedMaximumBlockDecomposition
+      increment horizon remainder blocks blockLength delta threshold width
+      hwidth hblocks hevent
+  let starts : Fin (blocks + 1) → ℕ :=
+    fun j => drawdownBlockStart remainder blockLength (j : ℕ)
+  have hbins : bins = drawdownRunningMaximumBins (threshold + delta)
+      width starts hwidth increment := by
+    funext j
+    apply Fin.ext
+    simpa [drawdownRunningMaximumBins, starts] using hindex j
+  have hjumps : drawdownMaximumJumpSet bins =
+      drawdownRunningMaximumJumpSet (q := blocks) (threshold + delta) width
+        starts hwidth increment := by
+    simp [drawdownMaximumJumpSet, drawdownRunningMaximumJumpSet, hbins]
+  refine ⟨?_, ?_⟩
+  · rw [← hjumps]
+    exact drawdown_card_maximumJumpSet_le bins hmono
+  · intro j hj
+    have hj' : j ∉ drawdownMaximumJumpSet bins := by
+      simpa [hjumps] using hj
+    have hsame : bins j.castSucc = bins j.succ := by
+      by_contra hne
+      apply hj'
+      simp [drawdownMaximumJumpSet, spatialBinJumpSet, hne]
+    simpa [drawdownBlockTubeCondition] using htube j hsame
+
+/-- The tube events selected by a fixed jump pattern, intersected over the
+first `q` blocks. -/
+def drawdownJumpPatternTubeIntersection {q : ℕ}
+    (remainder blockLength : ℕ) (pattern : Finset (Fin q))
+    (upper binWidth tubeWidth : ℝ) : Set (ℕ → ℝ) :=
+  drawdownConditionalBlockIntersection
+    (drawdownJumpPatternTubeEvent remainder blockLength pattern
+      upper binWidth tubeWidth) q
+
+/-- The finite family of jump patterns with at most `K` jump indices. -/
+noncomputable def drawdownAdmissibleJumpPatterns (q K : ℕ) :
+    Finset (Finset (Fin q)) :=
+  Finset.univ.filter fun pattern => pattern.card ≤ K
+
+/-- If the pattern is the actual jump set of the rounded running maximum,
+every block tube required by that pattern holds whenever its deterministic
+good-block condition holds. -/
+theorem drawdown_mem_jumpPatternTubeIntersection_of_goodBlocks
+    {q : ℕ} (increment : ℕ → ℝ)
+    (remainder blockLength : ℕ) (upper binWidth delta : ℝ)
+    (hbinWidth : 0 < binWidth) (pattern : Finset (Fin q))
+    (hpattern : pattern = drawdownRunningMaximumJumpSet upper binWidth
+      (fun j : Fin (q + 1) => drawdownBlockStart remainder blockLength j.val)
+      hbinWidth increment)
+    (hgood : ∀ j : Fin q,
+      j ∉ drawdownRunningMaximumJumpSet upper binWidth
+        (fun i : Fin (q + 1) => drawdownBlockStart remainder blockLength i.val)
+        hbinWidth increment →
+      drawdownBlockTubeCondition upper binWidth delta
+        (AdditivePath.displacement · increment) remainder blockLength j.val) :
+    increment ∈ drawdownJumpPatternTubeIntersection remainder blockLength
+      pattern upper binWidth (binWidth + delta) := by
+  let jumps := drawdownRunningMaximumJumpSet upper binWidth
+    (fun j : Fin (q + 1) => drawdownBlockStart remainder blockLength j.val)
+    hbinWidth increment
+  let events := drawdownJumpPatternTubeEvent remainder blockLength pattern
+    upper binWidth (binWidth + delta)
+  have hprefix : ∀ n : ℕ, n ≤ q →
+      increment ∈ drawdownConditionalBlockIntersection events n := by
+    intro n hn
+    induction n with
+    | zero => simp [drawdownConditionalBlockIntersection]
+    | succ n ih =>
+        rw [drawdownConditionalBlockIntersection]
+        constructor
+        · exact ih (by omega)
+        · have hnq : n < q := by omega
+          let j : Fin q := ⟨n, hnq⟩
+          by_cases hjump : j ∈ pattern
+          · simp [events, drawdownJumpPatternTubeEvent, hnq, hjump, j]
+          · have hnotJump : j ∉ jumps := by
+              simpa [hpattern, jumps] using hjump
+            have hblock := hgood j hnotJump
+            have htube := drawdownBlockTubeCondition_implies_tubeBlockEvent
+              increment upper binWidth delta remainder blockLength j.val hblock
+            simpa [events, drawdownJumpPatternTubeEvent, hnq, hjump, j,
+              drawdownBlockStart] using htube
+  exact hprefix q le_rfl
+
+/-- Every path in the drawdown event belongs to a tube intersection for one
+of the finitely many jump patterns allowed by the discretized-maximum
+decomposition in Wang Yiyang, *Asymptotic speed of the $N$-branching random
+walk with infinite offspring*, Chapter 3, proof of Lemma 3.3. -/
+theorem drawdown_noLargeDropEvent_subset_jumpPatternUnion
+    (increment : ℕ → ℝ) (horizon blockLength : ℕ)
+    (delta threshold binWidth : ℝ) (hbinWidth : 0 < binWidth)
+    (hevent : increment ∈
+      noLargeDropEndpointBelowEvent horizon delta threshold) :
+    increment ∈ ⋃ pattern ∈ drawdownAdmissibleJumpPatterns
+        (horizon / blockLength)
+        (⌊(threshold + delta) / binWidth⌋₊ + 1),
+      drawdownJumpPatternTubeIntersection
+        (horizon % blockLength) blockLength pattern
+        (threshold + delta) binWidth (binWidth + delta) := by
+  classical
+  let q := horizon / blockLength
+  let remainder := horizon % blockLength
+  let starts : Fin (q + 1) → ℕ := fun j =>
+    drawdownBlockStart remainder blockLength j.val
+  let jumps := drawdownRunningMaximumJumpSet (threshold + delta) binWidth
+    starts hbinWidth increment
+  have hblocks : remainder + q * blockLength ≤ horizon := by
+    apply le_of_eq
+    simpa [q, remainder, Nat.mul_comm] using
+      (Nat.mod_add_div horizon blockLength)
+  obtain ⟨hcard, hgood⟩ := drawdown_event_goodBlocks_satisfy_tubeCondition
+    increment horizon remainder q blockLength delta threshold binWidth
+    hbinWidth hblocks hevent
+  have hpattern : jumps = drawdownRunningMaximumJumpSet
+      (threshold + delta) binWidth
+      (fun j : Fin (q + 1) => drawdownBlockStart remainder blockLength j.val)
+      hbinWidth increment := by
+    rfl
+  have hcard' : jumps.card ≤ ⌊(threshold + delta) / binWidth⌋₊ + 1 := by
+    simpa [jumps, starts] using hcard
+  have hpatternAdmissible : jumps ∈ drawdownAdmissibleJumpPatterns q
+      (⌊(threshold + delta) / binWidth⌋₊ + 1) := by
+    simp [drawdownAdmissibleJumpPatterns, hcard']
+  have hgood' : ∀ j : Fin q, j ∉ jumps →
+      drawdownBlockTubeCondition (threshold + delta) binWidth delta
+        (AdditivePath.displacement · increment) remainder blockLength j.val := by
+    simpa [jumps, starts] using hgood
+  refine Set.mem_iUnion.2 ⟨jumps, Set.mem_iUnion.2 ?_⟩
+  refine ⟨hpatternAdmissible, ?_⟩
+  exact drawdown_mem_jumpPatternTubeIntersection_of_goodBlocks
+    increment remainder blockLength (threshold + delta) binWidth delta
+    hbinWidth jumps (by simp [jumps, starts]) hgood'
+
+private theorem measureReal_noLargeDropEvent_le_sum_jumpPatternProducts_of_uniformBlockBound
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
-    {q K length : ℕ} (width rate c : ℝ)
-    (hK : K + 1 ≤ q) (hrate : 0 < rate) (hc : 0 < c)
-    (hblock : iidSequenceLaw ν {increment : ℕ → ℝ |
-        Combinatorics.Sequence.blockCoordinates 0 length increment ∈
-          blockOscillationEvent width length} ≤
-      ENNReal.ofReal (Real.exp (-rate)))
-    (hparameters :
-      ((K + 1) ^ (q + 1) : ℝ≥0∞) *
-          ENNReal.ofReal (Real.exp (-rate)) ^ (q - (K + 1)) ≤
-        ENNReal.ofReal (Real.exp (-c * q))) :
-    0 < rate ∧ 0 < c ∧
-      iidSequenceLaw ν (monotoneSpatialBinPatternUnionEvent
-        (q := q) (K := K) width length) ≤
-        ENNReal.ofReal (Real.exp (-c * q)) := by
-  have hunion := iidSequenceLaw_measure_monotoneSpatialBinPatternUnionEvent_le
-    (ν := ν) (q := q) (K := K) (length := length) width hK
-  have hpow := pow_le_pow_left' hblock (q - (K + 1))
-  refine ⟨hrate, hc, ?_⟩
+    {v d tubeWidth₀ : ℝ}
+    (horizon blockLength : ℕ)
+    (hpatternBound : ∀ tubeWidth : ℝ, tubeWidth₀ ≤ tubeWidth →
+      ∀ upper binWidth : ℝ, ∀ pattern : Finset (Fin (horizon / blockLength)),
+        (iidSequenceLaw ν).real
+          (drawdownConditionalBlockIntersection
+            (drawdownJumpPatternTubeEvent (horizon % blockLength) blockLength pattern
+              upper binWidth tubeWidth) (horizon / blockLength)) ≤
+          ∏ j ∈ Finset.range (horizon / blockLength),
+            drawdownJumpPatternBound pattern
+              (Real.exp (tubeWidth ^ v -
+                d * ((blockLength : ℝ) / tubeWidth ^ 2))) j)
+    (delta threshold binWidth : ℝ) (hbinWidth : 0 < binWidth)
+    (htubeWidth : tubeWidth₀ ≤ binWidth + delta) :
+      (iidSequenceLaw ν).real
+        (noLargeDropEndpointBelowEvent horizon delta threshold) ≤
+        ∑ pattern ∈ drawdownAdmissibleJumpPatterns
+            (horizon / blockLength)
+            (⌊(threshold + delta) / binWidth⌋₊ + 1),
+          ∏ j ∈ Finset.range (horizon / blockLength),
+            drawdownJumpPatternBound pattern
+              (Real.exp ((binWidth + delta) ^ v -
+                d * ((blockLength : ℝ) / (binWidth + delta) ^ 2))) j := by
+  let tubeWidth := binWidth + delta
+  let q := horizon / blockLength
+  let maxJumps := ⌊(threshold + delta) / binWidth⌋₊ + 1
+  let patterns := drawdownAdmissibleJumpPatterns q maxJumps
+  let events : Finset (Fin q) → Set (ℕ → ℝ) := fun pattern =>
+    drawdownJumpPatternTubeIntersection (horizon % blockLength) blockLength
+      pattern (threshold + delta) binWidth tubeWidth
+  have hsubset : noLargeDropEndpointBelowEvent horizon delta threshold ⊆
+      ⋃ pattern ∈ patterns, events pattern := by
+    intro increment hevent
+    have hmem := drawdown_noLargeDropEvent_subset_jumpPatternUnion
+      increment horizon blockLength delta threshold binWidth hbinWidth hevent
+    simpa [q, maxJumps, patterns, events] using hmem
+  have hbound : ∀ pattern ∈ patterns,
+      (iidSequenceLaw ν).real (events pattern) ≤
+        ∏ j ∈ Finset.range q,
+          drawdownJumpPatternBound pattern
+            (Real.exp (tubeWidth ^ v -
+              d * ((blockLength : ℝ) / tubeWidth ^ 2))) j := by
+    intro pattern hpattern
+    simpa [events, q, drawdownJumpPatternTubeIntersection] using
+      hpatternBound tubeWidth htubeWidth (threshold + delta) binWidth pattern
+  have hfiniteUnion : (iidSequenceLaw ν) (⋃ pattern ∈ patterns, events pattern) ≠ ∞ :=
+    measure_ne_top (iidSequenceLaw ν) _
   calc
-    iidSequenceLaw ν (monotoneSpatialBinPatternUnionEvent
-        (q := q) (K := K) width length) ≤
-        ((K + 1) ^ (q + 1) : ℝ≥0∞) *
-          (iidSequenceLaw ν {increment : ℕ → ℝ |
-            Combinatorics.Sequence.blockCoordinates 0 length increment ∈
-              blockOscillationEvent width length}) ^ (q - (K + 1)) := hunion
-    _ ≤ ((K + 1) ^ (q + 1) : ℝ≥0∞) *
-          ENNReal.ofReal (Real.exp (-rate)) ^ (q - (K + 1)) := by
-      exact mul_le_mul_of_nonneg_left hpow (by positivity)
-    _ ≤ ENNReal.ofReal (Real.exp (-c * q)) := hparameters
+    (iidSequenceLaw ν).real
+        (noLargeDropEndpointBelowEvent horizon delta threshold) ≤
+        (iidSequenceLaw ν).real (⋃ pattern ∈ patterns, events pattern) :=
+      measureReal_mono hsubset hfiniteUnion
+    _ ≤ ∑ pattern ∈ patterns, (iidSequenceLaw ν).real (events pattern) :=
+      measureReal_biUnion_finset_le patterns events
+    _ ≤ ∑ pattern ∈ patterns,
+          ∏ j ∈ Finset.range q,
+            drawdownJumpPatternBound pattern
+              (Real.exp (tubeWidth ^ v -
+                d * ((blockLength : ℝ) / tubeWidth ^ 2))) j := by
+      exact Finset.sum_le_sum hbound
 
-/-- For a fixed number of spatial bins, the entropy term is eventually
-absorbed by any strictly smaller exponential rate than the one-block rate.
-This is the finite-pattern estimate needed before converting the block count
-to elapsed time: `K` is fixed while the number of blocks tends to infinity. -/
-theorem eventually_finitePatternEntropyCondition_of_rate_gap
-    {q : ℕ → ℕ} (hq : Tendsto q atTop atTop) {K : ℕ} {rate c : ℝ}
-    (hrate : 0 < rate) (hc : 0 < c)
-    (hgap : c < rate - Real.log ((K + 1 : ℕ) : ℝ)) :
-    ∀ᶠ n : ℕ in atTop,
-      ((K + 1) ^ (q n + 1) : ℝ≥0∞) *
-          ENNReal.ofReal (Real.exp (-rate)) ^ (q n - (K + 1)) ≤
-        ENNReal.ofReal (Real.exp (-c * (q n : ℝ))) := by
-  let binCount : ℝ := (K + 1 : ℕ)
-  let gap : ℝ := rate - Real.log binCount - c
-  let offset : ℝ := Real.log binCount + rate * binCount
-  have hbinCountPos : 0 < binCount := by
-    dsimp [binCount]
-    positivity
-  have hgapPos : 0 < gap := by
-    dsimp [gap, binCount]
+/-- The probability of the drawdown event is bounded by the sum of the
+conditional-expectation products over all admissible rounded-maximum jump
+patterns. This is the finite-horizon estimate obtained by the Markov
+iteration in Wang Yiyang, *Asymptotic speed of the $N$-branching random walk
+with infinite offspring*, Chapter 3, proof of Lemma 3.3. -/
+theorem measureReal_noLargeDropEvent_le_sum_jumpPatternProducts
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    {variance : ℝ}
+    (hν : ProbabilityTheory.IsCenteredSecondMoment ν variance)
+    (hsquare : Integrable (fun x : ℝ => x ^ 2) ν)
+    (hvariance : 0 < variance)
+    {v d : ℝ} (hv : 0 < v) (hd : 0 < d)
+    (hcritical : d < (Real.pi ^ 2 / 2) * variance)
+    (horizon blockLength : ℕ) (hblockLength : 1 ≤ blockLength)
+    (delta threshold binWidth : ℝ) (hbinWidth : 0 < binWidth) :
+    ∃ tubeWidth₀ : ℝ, 0 < tubeWidth₀ ∧
+      (tubeWidth₀ ≤ binWidth + delta →
+        (iidSequenceLaw ν).real
+          (noLargeDropEndpointBelowEvent horizon delta threshold) ≤
+          ∑ pattern ∈ drawdownAdmissibleJumpPatterns
+              (horizon / blockLength)
+              (⌊(threshold + delta) / binWidth⌋₊ + 1),
+            ∏ j ∈ Finset.range (horizon / blockLength),
+              drawdownJumpPatternBound pattern
+                (Real.exp ((binWidth + delta) ^ v -
+                  d * ((blockLength : ℝ) / (binWidth + delta) ^ 2))) j) := by
+  obtain ⟨tubeWidth₀, htubeWidth₀, hpatternBound⟩ :=
+    measureReal_drawdownJumpPatternTubeIntersection_le_prod
+      ν hν hsquare hvariance hv hd hcritical
+      (horizon % blockLength) (horizon / blockLength) blockLength hblockLength
+  refine ⟨tubeWidth₀, htubeWidth₀, ?_⟩
+  intro htubeWidth
+  simpa using measureReal_noLargeDropEvent_le_sum_jumpPatternProducts_of_uniformBlockBound
+    ν horizon blockLength hpatternBound
+    delta threshold binWidth hbinWidth htubeWidth
+
+/-- Counting the admissible jump patterns and using at least `q-K` nonjump
+blocks gives the exponential-count times one-block-power estimate from the
+proof of Wang Yiyang, *Asymptotic speed of the $N$-branching random walk with
+infinite offspring*, Chapter 3, Lemma 3.3. -/
+private theorem measureReal_noLargeDropEvent_le_jumpPatternCount_mul_pow_of_sumBound
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    {v d : ℝ}
+    (horizon blockLength : ℕ)
+    (delta threshold binWidth : ℝ)
+    (hsum : (iidSequenceLaw ν).real
+      (noLargeDropEndpointBelowEvent horizon delta threshold) ≤
+      ∑ pattern ∈ drawdownAdmissibleJumpPatterns
+          (horizon / blockLength)
+          (⌊(threshold + delta) / binWidth⌋₊ + 1),
+        ∏ j ∈ Finset.range (horizon / blockLength),
+          drawdownJumpPatternBound pattern
+            (Real.exp ((binWidth + delta) ^ v -
+              d * ((blockLength : ℝ) / (binWidth + delta) ^ 2))) j)
+    (hp : Real.exp ((binWidth + delta) ^ v -
+      d * ((blockLength : ℝ) / (binWidth + delta) ^ 2)) ≤ 1) :
+    (iidSequenceLaw ν).real
+        (noLargeDropEndpointBelowEvent horizon delta threshold) ≤
+      (2 : ℝ) ^ (horizon / blockLength) *
+        Real.exp ((binWidth + delta) ^ v -
+          d * ((blockLength : ℝ) / (binWidth + delta) ^ 2)) ^
+            (horizon / blockLength -
+              (⌊(threshold + delta) / binWidth⌋₊ + 1)) := by
+  let q := horizon / blockLength
+  let maxJumps := ⌊(threshold + delta) / binWidth⌋₊ + 1
+  let patterns := drawdownAdmissibleJumpPatterns q maxJumps
+  let p := Real.exp ((binWidth + delta) ^ v -
+    d * ((blockLength : ℝ) / (binWidth + delta) ^ 2))
+  have hpatternProduct : ∀ pattern ∈ patterns,
+      (∏ j ∈ Finset.range q, drawdownJumpPatternBound pattern p j) ≤
+        p ^ (q - maxJumps) := by
+    intro pattern hpattern
+    have hcard : pattern.card ≤ maxJumps := by
+      simpa [patterns, drawdownAdmissibleJumpPatterns, q, maxJumps] using hpattern
+    exact drawdown_prod_jumpPatternBound_le_pow pattern p
+      (Real.exp_nonneg _) hp hcard
+  have hsum' : (iidSequenceLaw ν).real
+      (noLargeDropEndpointBelowEvent horizon delta threshold) ≤
+      ∑ pattern ∈ patterns,
+        ∏ j ∈ Finset.range q, drawdownJumpPatternBound pattern p j := by
+    simpa [q, maxJumps, patterns, p] using hsum
+  have hcardPatterns : patterns.card ≤ 2 ^ q := by
+    calc
+      patterns.card ≤ Finset.univ.card :=
+        Finset.card_le_card (Finset.filter_subset _ _)
+      _ = 2 ^ q := by simp [q]
+  have hsumPow :
+      (∑ pattern ∈ patterns,
+        ∏ j ∈ Finset.range q, drawdownJumpPatternBound pattern p j) ≤
+          (patterns.card : ℝ) * p ^ (q - maxJumps) := by
+    calc
+      (∑ pattern ∈ patterns,
+          ∏ j ∈ Finset.range q, drawdownJumpPatternBound pattern p j) ≤
+          ∑ pattern ∈ patterns, p ^ (q - maxJumps) :=
+        Finset.sum_le_sum hpatternProduct
+      _ = (patterns.card : ℝ) * p ^ (q - maxJumps) := by simp
+  have hcount : (patterns.card : ℝ) ≤ (2 : ℝ) ^ q := by
+    exact_mod_cast hcardPatterns
+  have hpowerNonneg : 0 ≤ p ^ (q - maxJumps) :=
+    pow_nonneg (Real.exp_nonneg _) _
+  have hfinal := hsum'.trans hsumPow
+  have hfinal' := hfinal.trans
+    (mul_le_mul_of_nonneg_right hcount hpowerNonneg)
+  simpa [q, maxJumps, p, mul_comm] using hfinal'
+
+theorem measureReal_noLargeDropEvent_le_jumpPatternCount_mul_pow
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    {variance : ℝ}
+    (hν : ProbabilityTheory.IsCenteredSecondMoment ν variance)
+    (hsquare : Integrable (fun x : ℝ => x ^ 2) ν)
+    (hvariance : 0 < variance)
+    {v d : ℝ} (hv : 0 < v) (hd : 0 < d)
+    (hcritical : d < (Real.pi ^ 2 / 2) * variance)
+    (horizon blockLength : ℕ) (hblockLength : 1 ≤ blockLength)
+    (delta threshold binWidth : ℝ) (hbinWidth : 0 < binWidth) :
+    ∃ tubeWidth₀ : ℝ, 0 < tubeWidth₀ ∧
+      (tubeWidth₀ ≤ binWidth + delta →
+        Real.exp ((binWidth + delta) ^ v -
+          d * ((blockLength : ℝ) / (binWidth + delta) ^ 2)) ≤ 1 →
+        (iidSequenceLaw ν).real
+          (noLargeDropEndpointBelowEvent horizon delta threshold) ≤
+          (2 : ℝ) ^ (horizon / blockLength) *
+            Real.exp ((binWidth + delta) ^ v -
+              d * ((blockLength : ℝ) / (binWidth + delta) ^ 2)) ^
+                (horizon / blockLength -
+                  (⌊(threshold + delta) / binWidth⌋₊ + 1))) := by
+  obtain ⟨tubeWidth₀, htubeWidth₀, hsum⟩ :=
+    measureReal_noLargeDropEvent_le_sum_jumpPatternProducts
+      ν hν hsquare hvariance hv hd hcritical horizon blockLength hblockLength
+      delta threshold binWidth hbinWidth
+  refine ⟨tubeWidth₀, htubeWidth₀, ?_⟩
+  intro htubeWidth hp
+  exact measureReal_noLargeDropEvent_le_jumpPatternCount_mul_pow_of_sumBound
+    ν horizon blockLength delta threshold binWidth (hsum htubeWidth) hp
+
+private theorem exp_pow_nat (x : ℝ) (n : ℕ) :
+    Real.exp x ^ n = Real.exp ((n : ℝ) * x) := by
+  induction n with
+  | zero => simp
+  | succ n ih =>
+      calc
+        Real.exp x ^ (n + 1) = Real.exp x ^ n * Real.exp x := by
+          rw [pow_succ]
+        _ = Real.exp ((n : ℝ) * x) * Real.exp x := by rw [ih]
+        _ = Real.exp ((n : ℝ) * x + x) := by rw [← Real.exp_add]
+        _ = Real.exp (((n : ℝ) + 1) * x) := by
+          congr 1
+          ring
+        _ = Real.exp (((n + 1 : ℕ) : ℝ) * x) := by
+          congr 1
+          rw [Nat.cast_succ]
+
+private theorem jumpPatternProbability_le_exp
+    {q K : ℕ} {z t eta d : ℝ}
+    (hz : 0 ≤ z) (ht : 0 < t) (heta : 0 < eta) (hd : 0 < d)
+    (hqLower : z / t - 1 ≤ (q : ℝ))
+    (hqUpper : (q : ℝ) ≤ z / Real.sqrt t)
+    (hqK : K ≤ q)
+    (hentropy : Real.log 2 / Real.sqrt t ≤ d * eta)
+    (hjump : d * (1 + 2 * eta) * t * ((K : ℝ) + 1) ≤ d * eta * z) :
+    (2 : ℝ) ^ q * Real.exp (-d * (1 + 2 * eta) * t) ^ (q - K) ≤
+      Real.exp (-d * z) := by
+  have hlog2 : 0 < Real.log 2 := Real.log_pos (by norm_num)
+  have hqEntropy : (q : ℝ) * Real.log 2 ≤ d * eta * z := by
+    calc
+      (q : ℝ) * Real.log 2 ≤ (z / Real.sqrt t) * Real.log 2 :=
+        mul_le_mul_of_nonneg_right hqUpper hlog2.le
+      _ = (Real.log 2 / Real.sqrt t) * z := by ring
+      _ ≤ d * eta * z := mul_le_mul_of_nonneg_right hentropy hz
+  have hqSub : ((q - K : ℕ) : ℝ) = (q : ℝ) - (K : ℝ) := by
+    rw [Nat.cast_sub hqK]
+  have hcoef : 0 < d * (1 + 2 * eta) * t := by positivity
+  have hqLowerMul :
+      -(d * (1 + 2 * eta) * t) * (q : ℝ) ≤
+        -(d * (1 + 2 * eta) * t) * (z / t - 1) :=
+    mul_le_mul_of_nonpos_left hqLower (neg_nonpos.mpr hcoef.le)
+  have hnegative :
+      -(d * (1 + 2 * eta) * t) * ((q - K : ℕ) : ℝ) ≤
+        -d * (1 + 2 * eta) * z +
+          d * (1 + 2 * eta) * t * ((K : ℝ) + 1) := by
+    rw [hqSub]
+    calc
+      -(d * (1 + 2 * eta) * t) * ((q : ℝ) - (K : ℝ)) =
+          -(d * (1 + 2 * eta) * t) * (q : ℝ) +
+            d * (1 + 2 * eta) * t * (K : ℝ) := by ring
+      _ ≤ -(d * (1 + 2 * eta) * t) * (z / t - 1) +
+            d * (1 + 2 * eta) * t * (K : ℝ) :=
+        by nlinarith [hqLowerMul]
+      _ = -d * (1 + 2 * eta) * z +
+            d * (1 + 2 * eta) * t * ((K : ℝ) + 1) := by
+        field_simp [ht.ne']
+        ring
+  have hexponent :
+      (q : ℝ) * Real.log 2 -
+        d * (1 + 2 * eta) * t * ((q - K : ℕ) : ℝ) ≤ -d * z := by
+    calc
+      (q : ℝ) * Real.log 2 -
+          d * (1 + 2 * eta) * t * ((q - K : ℕ) : ℝ) =
+          (q : ℝ) * Real.log 2 +
+            (-(d * (1 + 2 * eta) * t) * ((q - K : ℕ) : ℝ)) := by ring
+      _ ≤ d * eta * z +
+            (-d * (1 + 2 * eta) * z +
+              d * (1 + 2 * eta) * t * ((K : ℝ) + 1)) :=
+        add_le_add hqEntropy hnegative
+      _ ≤ d * eta * z + (-d * (1 + 2 * eta) * z + d * eta * z) := by
+        nlinarith [hjump]
+      _ = -d * z := by ring
+  have hpowTwo : (2 : ℝ) ^ q = Real.exp ((q : ℝ) * Real.log 2) := by
+    calc
+      (2 : ℝ) ^ q = (Real.exp (Real.log 2)) ^ q := by
+        rw [Real.exp_log (by norm_num)]
+      _ = Real.exp ((q : ℝ) * Real.log 2) := exp_pow_nat _ _
+  have hpowExp :
+      Real.exp (-d * (1 + 2 * eta) * t) ^ (q - K) =
+        Real.exp ((-d * (1 + 2 * eta) * t) * ((q - K : ℕ) : ℝ)) := by
+    convert exp_pow_nat
+      (-(d * (1 + 2 * eta) * t)) (q - K) using 1 <;> ring
+  calc
+    (2 : ℝ) ^ q * Real.exp (-d * (1 + 2 * eta) * t) ^ (q - K) =
+        Real.exp ((q : ℝ) * Real.log 2 -
+          d * (1 + 2 * eta) * t * ((q - K : ℕ) : ℝ)) := by
+            rw [hpowTwo, hpowExp, ← Real.exp_add]
+            congr 1
+            ring
+    _ ≤ Real.exp (-d * z) := Real.exp_le_exp.mpr hexponent
+
+private theorem eventually_real_rpow_ge_const
+    {power bound : ℝ} (hpower : 0 < power) :
+    ∀ᶠ x : ℝ in atTop, bound ≤ x ^ power := by
+  exact (_root_.tendsto_rpow_atTop hpower).eventually
+    (eventually_ge_atTop bound)
+
+private theorem eventually_drawdownFloorBlockLength_bounds
+    {eta : ℝ} (heta : 0 < eta) :
+    ∀ᶠ Delta : ℝ in atTop,
+      1 ≤ (⌊Delta ^ (2 + eta)⌋₊ : ℝ) ∧
+      Delta ^ (2 + eta) - Delta ^ (2 + eta / 2) ≤
+        (⌊Delta ^ (2 + eta)⌋₊ : ℝ) ∧
+      Delta ^ (2 + eta / 2) ≤ (⌊Delta ^ (2 + eta)⌋₊ : ℝ) ∧
+      (⌊Delta ^ (2 + eta)⌋₊ : ℝ) ≤ Delta ^ (2 + eta) := by
+  have hlargePower := eventually_real_rpow_ge_const
+    (power := 2 + eta / 2) (bound := 1) (by linarith)
+  have hlargeFactor := eventually_real_rpow_ge_const
+    (power := eta / 2) (bound := 2) (by linarith)
+  filter_upwards [eventually_ge_atTop (1 : ℝ), hlargePower, hlargeFactor] with
+    Delta hDelta hlarge hfactor
+  have hDeltaPos : 0 < Delta := by linarith
+  have hbaseNonneg : 0 ≤ Delta ^ (2 + eta) := by positivity
+  have hfloorUpper : (⌊Delta ^ (2 + eta)⌋₊ : ℝ) ≤ Delta ^ (2 + eta) :=
+    Nat.floor_le hbaseNonneg
+  have hfloorLower : Delta ^ (2 + eta) - 1 <
+      (⌊Delta ^ (2 + eta)⌋₊ : ℝ) := by
+    have hfloor := Nat.lt_floor_add_one (Delta ^ (2 + eta))
+    have hfloorReal : Delta ^ (2 + eta) <
+        (⌊Delta ^ (2 + eta)⌋₊ : ℝ) + 1 := by exact_mod_cast hfloor
     linarith
-  have hqReal : Tendsto (fun n => (q n : ℝ)) atTop atTop :=
-    tendsto_natCast_atTop_atTop.comp hq
-  have hlarge : ∀ᶠ n : ℕ in atTop,
-      offset / gap < (q n : ℝ) :=
-    hqReal.eventually (eventually_gt_atTop (offset / gap))
-  have hKle : ∀ᶠ n : ℕ in atTop, K + 1 ≤ q n :=
-    hq.eventually (eventually_ge_atTop (K + 1))
-  filter_upwards [hlarge, hKle] with n hlarge hKle
-  have hlarge' : offset < gap * (q n : ℝ) :=
-    by simpa [mul_comm] using (div_lt_iff₀ hgapPos).mp hlarge
-  have hlinear :
-      ((q n + 1 : ℕ) : ℝ) * Real.log binCount -
-          rate * ((q n - (K + 1) : ℕ) : ℝ) ≤
-        -c * (q n : ℝ) := by
-    rw [Nat.cast_add, Nat.cast_sub hKle]
-    have hbin : ((K + 1 : ℕ) : ℝ) = binCount := by simp [binCount]
-    have hlarge'' : Real.log binCount + rate * binCount <
-        (rate - Real.log binCount - c) * (q n : ℝ) := by
-      simpa [gap, offset] using hlarge'
-    rw [hbin]
-    have hid :
-        ((q n : ℝ) + 1) * Real.log binCount -
-            rate * ((q n : ℝ) - binCount) + c * (q n : ℝ) =
-          Real.log binCount + rate * binCount -
-            (rate - Real.log binCount - c) * (q n : ℝ) := by ring
-    have hstrict :
-        ((q n : ℝ) + 1) * Real.log binCount -
-            rate * ((q n : ℝ) - binCount) < -c * (q n : ℝ) := by
-      have hsum :
-          ((q n : ℝ) + 1) * Real.log binCount -
-              rate * ((q n : ℝ) - binCount) + c * (q n : ℝ) < 0 := by
-        rw [hid]
-        linarith [hlarge'']
+  have hpowerOrder : Delta ^ (2 + eta / 2) ≤ Delta ^ (2 + eta) :=
+    Real.rpow_le_rpow_of_exponent_le hDelta (by linarith)
+  have hpowerSplit : Delta ^ (2 + eta) =
+      Delta ^ (2 + eta / 2) * Delta ^ (eta / 2) := by
+    rw [← Real.rpow_add hDeltaPos (2 + eta / 2) (eta / 2)]
+    congr 1
+    ring
+  have hpowerGap : 1 ≤ Delta ^ (2 + eta) - Delta ^ (2 + eta / 2) := by
+    rw [hpowerSplit]
+    nlinarith [mul_nonneg (sub_nonneg.mpr hlarge) (sub_nonneg.mpr hfactor)]
+  have hhalfPowerLower : Delta ^ (2 + eta / 2) ≤
+      Delta ^ (2 + eta) - 1 := by linarith
+  have hhalfPowerFloor : Delta ^ (2 + eta / 2) ≤
+      (⌊Delta ^ (2 + eta)⌋₊ : ℝ) := by
+    exact hhalfPowerLower.trans hfloorLower.le
+  have hfloorPos : 1 ≤ (⌊Delta ^ (2 + eta)⌋₊ : ℝ) := by
+    have hnat : 1 ≤ ⌊Delta ^ (2 + eta)⌋₊ := by
+      rw [Nat.one_le_floor_iff]
+      exact hlarge.trans hpowerOrder
+    exact_mod_cast hnat
+  refine ⟨?_, ?_, hhalfPowerFloor, hfloorUpper⟩
+  · exact hfloorPos
+  · nlinarith [hlarge, hfloorLower]
+
+private theorem eventually_drawdownCeilingBinWidth_bounds
+    {eta : ℝ} (heta : 0 < eta) :
+    ∀ᶠ Delta : ℝ in atTop,
+      1 ≤ Delta ∧
+      Delta + (⌈eta * Delta⌉₊ : ℝ) ≤ (1 + 2 * eta) * Delta := by
+  filter_upwards [eventually_ge_atTop (1 / eta : ℝ),
+      eventually_ge_atTop (1 : ℝ)] with Delta hDeltaEta hDelta
+  have hDeltaPos : 0 < Delta := by linarith
+  have hEtaDelta : 1 ≤ eta * Delta := by
+    have h := (div_le_iff₀ heta).mp hDeltaEta
+    nlinarith [h]
+  have hceilLower : eta * Delta ≤ (⌈eta * Delta⌉₊ : ℝ) := by
+    exact_mod_cast (Nat.le_ceil (eta * Delta))
+  have hceilUpper : (⌈eta * Delta⌉₊ : ℝ) < eta * Delta + 1 := by
+    exact_mod_cast (Nat.ceil_lt_add_one (mul_nonneg heta.le hDeltaPos.le))
+  refine ⟨hDelta, ?_⟩
+  calc
+    Delta + (⌈eta * Delta⌉₊ : ℝ) ≤ Delta + (eta * Delta + 1) := by
       linarith
-    simpa using le_of_lt hstrict
-  have hbase : binCount ^ (q n + 1) =
-      Real.exp (((q n + 1 : ℕ) : ℝ) * Real.log binCount) := by
-    calc
-      binCount ^ (q n + 1) =
-          (Real.exp (Real.log binCount)) ^ (q n + 1) := by
-            rw [Real.exp_log hbinCountPos]
-      _ = Real.exp (((q n + 1 : ℕ) : ℝ) * Real.log binCount) := by
-            rw [← Real.exp_nat_mul]
-  have htail : Real.exp (-rate) ^ (q n - (K + 1)) =
-      Real.exp (-rate * ((q n - (K + 1) : ℕ) : ℝ)) := by
-    calc
-      _ = Real.exp (((q n - (K + 1) : ℕ) : ℝ) * (-rate)) := by
-        rw [← Real.exp_nat_mul]
-      _ = _ := by congr 1 <;> ring
-  have hreal :
-      binCount ^ (q n + 1) * Real.exp (-rate) ^ (q n - (K + 1)) ≤
-        Real.exp (-c * (q n : ℝ)) := by
-    have hvalue :
-        binCount ^ (q n + 1) * Real.exp (-rate) ^ (q n - (K + 1)) =
-          Real.exp (((q n + 1 : ℕ) : ℝ) * Real.log binCount -
-            rate * ((q n - (K + 1) : ℕ) : ℝ)) := by
-      rw [hbase, htail, ← Real.exp_add]
-      congr 1
-      ring
-    rw [hvalue]
-    exact Real.exp_le_exp.mpr hlinear
-  have hbinCountPow :
-      (((K + 1 : ℕ) : ℝ≥0∞) ^ (q n + 1)) =
-        ENNReal.ofReal (binCount ^ (q n + 1)) := by
-    have hcastNat : ((K + 1 : ℕ) : ℝ≥0∞) =
-        ENNReal.ofReal ((K + 1 : ℕ) : ℝ) :=
-      (ENNReal.ofReal_natCast (K + 1)).symm
-    have hcastReal : ((K + 1 : ℕ) : ℝ) = binCount := by
-      simp [binCount]
-    change ((K + 1 : ℕ) : ℝ≥0∞) ^ (q n + 1) =
-      ENNReal.ofReal (binCount ^ (q n + 1))
-    rw [hcastNat,
-      ENNReal.ofReal_pow (p := ((K + 1 : ℕ) : ℝ)) (by positivity) (q n + 1),
-      hcastReal]
-  have hexpPow :
-      ENNReal.ofReal (Real.exp (-rate)) ^ (q n - (K + 1)) =
-        ENNReal.ofReal (Real.exp (-rate) ^ (q n - (K + 1))) :=
-    (ENNReal.ofReal_pow (Real.exp_nonneg _) _).symm
-  have hENNreal :
-      (((K + 1 : ℕ) : ℝ≥0∞) ^ (q n + 1)) *
-          ENNReal.ofReal (Real.exp (-rate)) ^ (q n - (K + 1)) =
-        ENNReal.ofReal
-          (binCount ^ (q n + 1) * Real.exp (-rate) ^ (q n - (K + 1))) := by
-    rw [hbinCountPow, hexpPow,
-      ← ENNReal.ofReal_mul (by positivity : 0 ≤ binCount ^ (q n + 1))]
-  have hcastSum : (K + 1 : ℝ≥0∞) = ((K + 1 : ℕ) : ℝ≥0∞) := by simp
-  rw [hcastSum, hENNreal]
-  exact (ENNReal.ofReal_le_ofReal_iff (by positivity)).2 hreal
+    _ ≤ Delta + 2 * eta * Delta := by nlinarith
+    _ = (1 + 2 * eta) * Delta := by ring
 
-/-- The finite-pattern entropy is negligible relative to the total spatial
-cost when each block has diverging cost.  If `q` blocks cover asymptotically
-all of the horizon, and the one-block probability is at most
-`exp (-rate * blockCost)`, then every smaller rate than `rate` survives at
-the total-cost scale. -/
-theorem eventually_finitePatternEntropyCondition_of_scaled_rate_gap
-    {q : ℕ → ℕ} {blockCost totalCost : ℕ → ℝ} {K : ℕ}
-    {rate c : ℝ} (hq : Tendsto q atTop atTop)
-    (hblockCost : Tendsto blockCost atTop atTop)
-    (htotalCost : Tendsto totalCost atTop atTop)
-    (hcovered : Tendsto (fun n => (q n : ℝ) * blockCost n / totalCost n)
-      atTop (𝓝 1))
-    (hgap : c < rate) :
-    ∀ᶠ n : ℕ in atTop,
-      ((K + 1) ^ (q n + 1) : ℝ≥0∞) *
-          ENNReal.ofReal (Real.exp (-rate * blockCost n)) ^
-            (q n - (K + 1)) ≤
-        ENNReal.ofReal (Real.exp (-c * totalCost n)) := by
-  let binCount : ℝ := ((K + 1 : ℕ) : ℝ)
-  let qReal : ℕ → ℝ := fun n => (q n : ℝ)
-  have hbinCountPos : 0 < binCount := by
-    dsimp [binCount]
+private theorem eventually_drawdownTubeBlockExponent_le
+    {eta d : ℝ} (heta : 0 < eta) (hd : 0 < d) :
+    ∀ᶠ Delta : ℝ in atTop,
+      (⌈eta * Delta⌉₊ + Delta) ^ (eta / 2) -
+        d * (1 + 2 * eta) ^ 4 *
+          ((⌊Delta ^ (2 + eta)⌋₊ : ℝ) /
+            (⌈eta * Delta⌉₊ + Delta) ^ 2) ≤
+        -d * (1 + 2 * eta) * Delta ^ eta := by
+  let B : ℝ := 1 + 2 * eta
+  let A : ℝ := B ^ (eta / 2) + d * B ^ 2
+  let R : ℝ := 2 * d * eta * B
+  have hB : 0 < B := by dsimp [B]; positivity
+  have hA : 0 < A := by dsimp [A]; positivity
+  have hR : 0 < R := by dsimp [R]; positivity
+  have hgrowth := eventually_real_rpow_ge_const
+    (power := eta / 2) (bound := A / R) (by linarith)
+  filter_upwards [eventually_drawdownFloorBlockLength_bounds heta,
+      eventually_drawdownCeilingBinWidth_bounds heta, hgrowth] with
+      Delta hfloor hceil hgrowth
+  have hDelta : 1 ≤ Delta := hceil.1
+  have hDeltaPos : 0 < Delta := by linarith
+  let width : ℝ := (⌈eta * Delta⌉₊ : ℝ) + Delta
+  let length : ℝ := (⌊Delta ^ (2 + eta)⌋₊ : ℝ)
+  let g : ℝ := Delta ^ (eta / 2)
+  let a : ℝ := Delta ^ eta
+  have hwidthPos : 0 < width := by dsimp [width]; positivity
+  have hwidthUpper : width ≤ B * Delta := by
+    dsimp [width, B]
+    simpa [add_comm] using hceil.2
+  have hwidthPow : width ^ (eta / 2) ≤ B ^ (eta / 2) * g := by
+    calc
+      width ^ (eta / 2) ≤ (B * Delta) ^ (eta / 2) := by
+        apply Real.rpow_le_rpow (le_of_lt hwidthPos) hwidthUpper
+        linarith
+      _ = B ^ (eta / 2) * g := by
+        rw [Real.mul_rpow hB.le hDeltaPos.le]
+  have hpowerEta : Delta ^ (2 + eta) = Delta ^ 2 * a := by
+    simpa [a, Real.rpow_natCast] using
+      (Real.rpow_add hDeltaPos (2 : ℝ) eta)
+  have hpowerEtaHalf : Delta ^ (2 + eta / 2) = Delta ^ 2 * g := by
+    simpa [g, Real.rpow_natCast] using
+      (Real.rpow_add hDeltaPos (2 : ℝ) (eta / 2))
+  have hpowOrder : g ≤ a := by
+    dsimp [g, a]
+    exact Real.rpow_le_rpow_of_exponent_le hDelta (by linarith)
+  have hlengthLower : Delta ^ 2 * (a - g) ≤ length := by
+    calc
+      Delta ^ 2 * (a - g) = Delta ^ (2 + eta) - Delta ^ (2 + eta / 2) := by
+        rw [hpowerEta, hpowerEtaHalf]
+        ring
+      _ ≤ length := by simpa [length] using hfloor.2.1
+  have hnumNonneg : 0 ≤ Delta ^ 2 * (a - g) := by
+    exact mul_nonneg (sq_nonneg Delta) (sub_nonneg.mpr hpowOrder)
+  have hwidthUpperSq : width ^ 2 ≤ (B * Delta) ^ 2 := by
+    exact (sq_le_sq₀ (le_of_lt hwidthPos) (mul_nonneg hB.le hDeltaPos.le)).2
+      hwidthUpper
+  have hwidthSqPos : 0 < width ^ 2 := sq_pos_of_pos hwidthPos
+  have hupperSqPos : 0 < (B * Delta) ^ 2 :=
+    sq_pos_of_pos (mul_pos hB hDeltaPos)
+  have hinv : ((B * Delta) ^ 2)⁻¹ ≤ (width ^ 2)⁻¹ :=
+    (inv_le_inv₀ hupperSqPos hwidthSqPos).2 hwidthUpperSq
+  have hfrac : (a - g) / B ^ 2 ≤ length / width ^ 2 := by
+    have hfrac' :
+        Delta ^ 2 * (a - g) / (B * Delta) ^ 2 ≤ length / width ^ 2 := by
+      rw [div_eq_mul_inv, div_eq_mul_inv]
+      calc
+        Delta ^ 2 * (a - g) * ((B * Delta) ^ 2)⁻¹ ≤
+            Delta ^ 2 * (a - g) * (width ^ 2)⁻¹ :=
+              mul_le_mul_of_nonneg_left hinv hnumNonneg
+        _ ≤ length * (width ^ 2)⁻¹ :=
+              mul_le_mul_of_nonneg_right hlengthLower
+                (inv_nonneg.mpr (le_of_lt hwidthSqPos))
+    have hcancel :
+        Delta ^ 2 * (a - g) / (B * Delta) ^ 2 = (a - g) / B ^ 2 := by
+      field_simp [ne_of_gt hDeltaPos, ne_of_gt hB]
+    rw [hcancel] at hfrac'
+    exact hfrac'
+  have hpenalty : d * B ^ 2 * (a - g) ≤
+      d * B ^ 4 * (length / width ^ 2) := by
+    calc
+      d * B ^ 2 * (a - g) = d * B ^ 4 * ((a - g) / B ^ 2) := by
+        field_simp [ne_of_gt hB]
+      _ ≤ d * B ^ 4 * (length / width ^ 2) :=
+        mul_le_mul_of_nonneg_left hfrac (by positivity)
+  have hdominance : A ≤ R * g := by
+    have h := mul_le_mul_of_nonneg_left hgrowth hR.le
+    calc
+      A = R * (A / R) := by field_simp [ne_of_gt hR]
+      _ ≤ R * g := h
+  have hdominanceMul : A * g ≤ R * g ^ 2 := by
+    calc
+      A * g ≤ (R * g) * g :=
+        mul_le_mul_of_nonneg_right hdominance (show 0 ≤ g by positivity)
+      _ = R * g ^ 2 := by ring
+  have hgsq : g ^ 2 = a := by
+    dsimp [g, a]
+    rw [← Real.rpow_natCast (Delta ^ (eta / 2)) 2,
+      ← Real.rpow_mul hDeltaPos.le]
+    congr 1
+    ring
+  have hexponent : width ^ (eta / 2) -
+      d * B ^ 4 * (length / width ^ 2) ≤ -d * B * a := by
+    dsimp [A, R] at hdominanceMul
+    rw [hgsq] at hdominanceMul
+    nlinarith [hwidthPow, hpenalty, hdominanceMul]
+  simpa [width, length, a, B] using hexponent
+
+private theorem drawdownBlockCount_scaledBounds
+    {Delta eta : ℝ} {horizon blockLength : ℕ}
+    (hDelta : 0 < Delta)
+    (hblockLength : 1 ≤ blockLength)
+    (hblockLengthLower : Delta ^ (2 + eta / 2) ≤ (blockLength : ℝ))
+    (hblockLengthUpper : (blockLength : ℝ) ≤ Delta ^ (2 + eta)) :
+    ((horizon : ℝ) / Delta ^ 2) / Delta ^ eta - 1 ≤
+        ((horizon / blockLength : ℕ) : ℝ) ∧
+      ((horizon / blockLength : ℕ) : ℝ) ≤
+        ((horizon : ℝ) / Delta ^ 2) / Real.sqrt (Delta ^ eta) := by
+  let q : ℕ := horizon / blockLength
+  let qReal : ℝ := (q : ℝ)
+  have hblockLengthPos : 0 < (blockLength : ℝ) := by
+    exact_mod_cast (show 0 < blockLength by omega)
+  have hscaleDenom : Delta ^ (2 + eta) = Delta ^ 2 * Delta ^ eta := by
+    simpa [Real.rpow_natCast] using (Real.rpow_add hDelta (2 : ℝ) eta)
+  have hscaleDenomHalf : Delta ^ (2 + eta / 2) =
+      Delta ^ 2 * Delta ^ (eta / 2) := by
+    simpa [Real.rpow_natCast] using (Real.rpow_add hDelta (2 : ℝ) (eta / 2))
+  have hsqrt : Real.sqrt (Delta ^ eta) = Delta ^ (eta / 2) := by
+    rw [Real.sqrt_eq_rpow, ← Real.rpow_mul hDelta.le]
+    congr 1
+    ring
+  have hNatDivUpper : q * blockLength ≤ horizon := by
+    dsimp [q]
+    exact Nat.div_mul_le_self _ _
+  have hNatDivLower : horizon < (q + 1) * blockLength := by
+    apply (Nat.div_lt_iff_lt_mul hblockLength).mp
+    dsimp [q]
+    exact Nat.lt_succ_self _
+  have hqUpper : qReal ≤ (horizon : ℝ) / Delta ^ (2 + eta / 2) := by
+    have hmul : qReal * Delta ^ (2 + eta / 2) ≤ (horizon : ℝ) := by
+      calc
+        qReal * Delta ^ (2 + eta / 2) ≤ qReal * (blockLength : ℝ) :=
+          mul_le_mul_of_nonneg_left hblockLengthLower (by positivity)
+        _ ≤ (horizon : ℝ) := by
+          change (q : ℝ) * (blockLength : ℝ) ≤ (horizon : ℝ)
+          exact_mod_cast hNatDivUpper
+    exact (le_div_iff₀ (Real.rpow_pos_of_pos hDelta (2 + eta / 2))).2 hmul
+  have hqLower : (horizon : ℝ) / Delta ^ (2 + eta) < qReal + 1 := by
+    have hmul : (horizon : ℝ) < (qReal + 1) * Delta ^ (2 + eta) := by
+      calc
+        (horizon : ℝ) < ((q + 1) * blockLength : ℕ) := by exact_mod_cast hNatDivLower
+        _ ≤ (qReal + 1) * Delta ^ (2 + eta) := by
+          calc
+            ((q + 1) * blockLength : ℕ) =
+                ((q + 1 : ℕ) : ℝ) * (blockLength : ℝ) := by norm_num
+            _ ≤ ((q + 1 : ℕ) : ℝ) * Delta ^ (2 + eta) :=
+              mul_le_mul_of_nonneg_left hblockLengthUpper (by positivity)
+            _ = (qReal + 1) * Delta ^ (2 + eta) := by simp [qReal]
+    exact (div_lt_iff₀ (Real.rpow_pos_of_pos hDelta (2 + eta))).2 hmul
+  have hqLowerScaled :
+      ((horizon : ℝ) / Delta ^ 2) / Delta ^ eta - 1 < qReal := by
+    have hratio : ((horizon : ℝ) / Delta ^ 2) / Delta ^ eta =
+        (horizon : ℝ) / Delta ^ (2 + eta) := by
+      rw [div_div, hscaleDenom]
+    rw [hratio]
+    linarith
+  have hqUpperScaled :
+      qReal ≤ ((horizon : ℝ) / Delta ^ 2) / Real.sqrt (Delta ^ eta) := by
+    have hratio : (horizon : ℝ) / Delta ^ (2 + eta / 2) =
+        ((horizon : ℝ) / Delta ^ 2) / Real.sqrt (Delta ^ eta) := by
+      rw [div_div, hsqrt, hscaleDenomHalf]
+    rw [← hratio]
+    exact hqUpper
+  constructor
+  · exact le_of_lt (by simpa [q, qReal] using hqLowerScaled)
+  · simpa [q, qReal] using hqUpperScaled
+
+private theorem drawdownJumpCount_add_one_le
+    {Delta c eta : ℝ}
+    (hDelta : 1 ≤ Delta) (hc : 0 < c)
+    (heta : 0 < eta) (hetaLeOne : eta ≤ 1) :
+    ((⌊(Delta / c + Delta) / (⌈eta * Delta⌉₊ : ℝ)⌋₊ + 1 : ℕ) : ℝ) + 1 ≤
+      2 * (1 / c + 2) / eta := by
+  have hDeltaPos : 0 < Delta := by linarith
+  have hbinLower : eta * Delta ≤ (⌈eta * Delta⌉₊ : ℝ) := by
+    exact_mod_cast Nat.le_ceil (eta * Delta)
+  have hbinPos : 0 < (⌈eta * Delta⌉₊ : ℝ) :=
+    lt_of_lt_of_le (mul_pos heta hDeltaPos) hbinLower
+  have hratio : (Delta / c + Delta) / (⌈eta * Delta⌉₊ : ℝ) ≤
+      (1 / c + 1) / eta := by
+    have hnum : Delta / c + Delta = (1 / c + 1) * Delta := by ring
+    have hfirst :
+        (Delta / c + Delta) / (⌈eta * Delta⌉₊ : ℝ) ≤
+          (Delta / c + Delta) / (eta * Delta) :=
+      div_le_div_of_nonneg_left (by positivity) (mul_pos heta hDeltaPos) hbinLower
+    have hsecond : (Delta / c + Delta) / (eta * Delta) =
+        (1 / c + 1) / eta := by rw [hnum]; field_simp [ne_of_gt heta, ne_of_gt hDeltaPos]
+    exact hfirst.trans_eq hsecond
+  have hratioNonneg : 0 ≤ (Delta / c + Delta) /
+      (⌈eta * Delta⌉₊ : ℝ) := by positivity
+  have hfloor :
+      (⌊(Delta / c + Delta) / (⌈eta * Delta⌉₊ : ℝ)⌋₊ : ℝ) ≤
+        (Delta / c + Delta) / (⌈eta * Delta⌉₊ : ℝ) :=
+    Nat.floor_le hratioNonneg
+  have hconstant : (1 / c + 1) / eta + 2 ≤ 2 * (1 / c + 2) / eta := by
+    have hc' : 0 < 1 / c := by positivity
+    field_simp [ne_of_gt hc, ne_of_gt heta]
+    nlinarith [hetaLeOne]
+  have hcast :
+      ((⌊(Delta / c + Delta) / (⌈eta * Delta⌉₊ : ℝ)⌋₊ + 1 : ℕ) : ℝ) + 1 =
+        (⌊(Delta / c + Delta) / (⌈eta * Delta⌉₊ : ℝ)⌋₊ : ℝ) + 2 := by
+    norm_num
+    ring
+  rw [hcast]
+  calc
+    (⌊(Delta / c + Delta) / (⌈eta * Delta⌉₊ : ℝ)⌋₊ : ℝ) + 2 ≤
+        (Delta / c + Delta) / (⌈eta * Delta⌉₊ : ℝ) + 2 := by linarith
+    _ ≤ (1 / c + 1) / eta + 2 := by linarith
+    _ ≤ 2 * (1 / c + 2) / eta := hconstant
+
+/-- The final entropy and jump-count estimates in Wang Yiyang,
+*Asymptotic speed of the $N$-branching random walk with infinite offspring*,
+Chapter 3, proof of Lemma 3.3, turn the finite jump-pattern bound into the
+desired exponential rate. Here `z = L / Δ^2`, `t = Δ^η`, and `K` bounds the
+number of jumps. The one-block rate is assumed in the explicit form
+\[
+  (w+\Delta)^v-d_0\frac{\ell}{(w+\Delta)^2}
+    \le -d(1+2\eta)t.
+\] -/
+theorem measureReal_noLargeDropEvent_le_exp_of_blockParameters
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    {variance v blockRate eta target t z : ℝ}
+    (hν : ProbabilityTheory.IsCenteredSecondMoment ν variance)
+    (hsquare : Integrable (fun x : ℝ => x ^ 2) ν)
+    (hvariance : 0 < variance)
+    (hv : 0 < v) (hblockRate : 0 < blockRate)
+    (hcritical : blockRate < (Real.pi ^ 2 / 2) * variance)
+    (heta : 0 < eta) (ht : 0 < t) (htarget : 0 < target)
+    (hz : 0 ≤ z)
+    (horizon blockLength : ℕ) (hblockLength : 1 ≤ blockLength)
+    (delta threshold binWidth : ℝ) (hbinWidth : 0 < binWidth)
+    (honeBlock : (binWidth + delta) ^ v -
+        blockRate * ((blockLength : ℝ) / (binWidth + delta) ^ 2) ≤
+          -target * (1 + 2 * eta) * t)
+    (hqLower : z / t - 1 ≤ ((horizon / blockLength : ℕ) : ℝ))
+    (hqUpper : ((horizon / blockLength : ℕ) : ℝ) ≤ z / Real.sqrt t)
+    (hmaxJumps :
+      ⌊(threshold + delta) / binWidth⌋₊ + 1 ≤ horizon / blockLength)
+    (hentropy : Real.log 2 / Real.sqrt t ≤ target * eta)
+    (hjump : target * (1 + 2 * eta) * t *
+        (((⌊(threshold + delta) / binWidth⌋₊ + 1 : ℕ) : ℝ) + 1) ≤
+      target * eta * z) :
+    ∃ width₀, 0 < width₀ ∧
+      (width₀ ≤ binWidth + delta →
+        (iidSequenceLaw ν).real
+            (noLargeDropEndpointBelowEvent horizon delta threshold) ≤
+          Real.exp (-target * z)) := by
+  obtain ⟨width₀, hwidth₀pos, hfinite⟩ :=
+    measureReal_noLargeDropEvent_le_jumpPatternCount_mul_pow
+      ν hν hsquare hvariance hv hblockRate hcritical
+      horizon blockLength hblockLength delta threshold binWidth hbinWidth
+  refine ⟨width₀, hwidth₀pos, ?_⟩
+  intro hwidth
+  have hexponentNonpos :
+      (binWidth + delta) ^ v -
+        blockRate * ((blockLength : ℝ) / (binWidth + delta) ^ 2) ≤ 0 := by
+    calc
+      (binWidth + delta) ^ v -
+          blockRate * ((blockLength : ℝ) / (binWidth + delta) ^ 2) ≤
+          -target * (1 + 2 * eta) * t := honeBlock
+      _ ≤ 0 := by
+        have hpositive : 0 ≤ target * (1 + 2 * eta) * t := by positivity
+        nlinarith
+  have hp : Real.exp ((binWidth + delta) ^ v -
+      blockRate * ((blockLength : ℝ) / (binWidth + delta) ^ 2)) ≤ 1 :=
+    Real.exp_le_one_iff.mpr hexponentNonpos
+  have hfiniteBound := hfinite hwidth hp
+  let q : ℕ := horizon / blockLength
+  let K : ℕ := ⌊(threshold + delta) / binWidth⌋₊ + 1
+  let p : ℝ := Real.exp ((binWidth + delta) ^ v -
+      blockRate * ((blockLength : ℝ) / (binWidth + delta) ^ 2))
+  have hqK : K ≤ q := by exact hmaxJumps
+  have hsmallBlock : p ≤ Real.exp (-target * (1 + 2 * eta) * t) := by
+    exact Real.exp_le_exp.mpr honeBlock
+  have hpow : p ^ (q - K) ≤
+      Real.exp (-target * (1 + 2 * eta) * t) ^ (q - K) :=
+    pow_le_pow_left₀ (Real.exp_nonneg _) hsmallBlock _
+  have hfiniteBound' :
+      (iidSequenceLaw ν).real
+          (noLargeDropEndpointBelowEvent horizon delta threshold) ≤
+        (2 : ℝ) ^ q *
+          Real.exp (-target * (1 + 2 * eta) * t) ^ (q - K) := by
+    calc
+      (iidSequenceLaw ν).real
+          (noLargeDropEndpointBelowEvent horizon delta threshold) ≤
+          (2 : ℝ) ^ q * p ^ (q - K) := by
+            simpa only [q, K, p] using hfiniteBound
+      _ ≤ (2 : ℝ) ^ q *
+          Real.exp (-target * (1 + 2 * eta) * t) ^ (q - K) :=
+        mul_le_mul_of_nonneg_left hpow (by positivity)
+  have hfinal := jumpPatternProbability_le_exp hz ht heta htarget
+    (by simpa only [q] using hqLower)
+    (by simpa only [q] using hqUpper)
+    hqK hentropy (by simpa only [K] using hjump)
+  simpa only [q, K] using hfiniteBound'.trans hfinal
+
+private theorem exists_drawdownBlockExponent
+    {variance endpointPower horizonPower d : ℝ}
+    (hvariance : 0 < variance) (hendpoint : 0 < endpointPower)
+    (hhorizon : 0 < horizonPower) (hd : 0 < d)
+    (hcritical : d < (Real.pi ^ 2 / 2) * variance) :
+    ∃ eta : ℝ, 0 < eta ∧ eta < endpointPower ∧ eta < horizonPower ∧
+      eta < 1 ∧ d * (1 + 2 * eta) ^ 4 < (Real.pi ^ 2 / 2) * variance := by
+  let criticalRatio : ℝ := ((Real.pi ^ 2 / 2) * variance) / d
+  have hratio : 1 < criticalRatio := by
+    dsimp [criticalRatio]
+    exact (one_lt_div hd).2 hcritical
+  have hcontinuous : ContinuousAt (fun eta : ℝ => (1 + 2 * eta) ^ 4) 0 := by
+    fun_prop
+  have hcriticalEventually : ∀ᶠ eta : ℝ in 𝓝 0,
+      (1 + 2 * eta) ^ 4 < criticalRatio :=
+    hcontinuous.eventually (Iio_mem_nhds (by simpa using hratio))
+  obtain ⟨radius, hradius, hball⟩ := Metric.mem_nhds_iff.mp hcriticalEventually
+  let bound := min radius (min endpointPower (min horizonPower 1))
+  let eta := bound / 2
+  have hboundPos : 0 < bound := by
+    dsimp [bound]
     positivity
-  have hqReal : Tendsto qReal atTop atTop := by
-    exact tendsto_natCast_atTop_atTop.comp hq
-  have hqInv : Tendsto (fun n => (qReal n)⁻¹) atTop (𝓝 0) :=
-    tendsto_inv_atTop_zero.comp hqReal
-  have hcostInv : Tendsto (fun n => (blockCost n)⁻¹) atTop (𝓝 0) :=
-    tendsto_inv_atTop_zero.comp hblockCost
-  have hqPlusRatio : Tendsto (fun n => (qReal n + 1) / qReal n)
-      atTop (𝓝 1) := by
-    have heq : (fun n => (qReal n + 1) / qReal n) =ᶠ[atTop]
-        fun n => 1 + (qReal n)⁻¹ := by
-      filter_upwards [hqReal.eventually (eventually_gt_atTop 0)] with n hn
-      field_simp
-    refine Filter.Tendsto.congr' heq.symm ?_
-    simpa using tendsto_const_nhds.add hqInv
-  have hqMinusRatio : Tendsto
-      (fun n => (qReal n - binCount) / qReal n) atTop (𝓝 1) := by
-    have heq : (fun n => (qReal n - binCount) / qReal n) =ᶠ[atTop]
-        fun n => 1 - binCount * (qReal n)⁻¹ := by
-      filter_upwards [hqReal.eventually (eventually_gt_atTop 0)] with n hn
-      field_simp
-    refine Filter.Tendsto.congr' heq.symm ?_
-    simpa using tendsto_const_nhds.sub (tendsto_const_nhds.mul hqInv)
-  have hlogCost : Tendsto (fun n => Real.log binCount / blockCost n)
-      atTop (𝓝 0) := by
-    have hconst : Tendsto (fun _ : ℕ => Real.log binCount) atTop
-        (𝓝 (Real.log binCount)) := tendsto_const_nhds
-    have h := hconst.mul hcostInv
-    simpa [div_eq_mul_inv] using h
-  have hfirst : Tendsto
-      (fun n => ((qReal n + 1) / qReal n) *
-        (Real.log binCount / blockCost n) *
-        (qReal n * blockCost n / totalCost n)) atTop (𝓝 0) := by
-    simpa using (hqPlusRatio.mul hlogCost).mul hcovered
-  have hsecond : Tendsto
-      (fun n => rate * ((qReal n - binCount) / qReal n) *
-        (qReal n * blockCost n / totalCost n)) atTop (𝓝 rate) := by
-    simpa using (tendsto_const_nhds.mul hqMinusRatio).mul hcovered
-  have hnormalized : Tendsto
-      (fun n => (((q n + 1 : ℕ) : ℝ) * Real.log binCount -
-        rate * blockCost n * ((q n - (K + 1) : ℕ) : ℝ)) /
-          totalCost n) atTop (𝓝 (-rate)) := by
-    have hformula : (fun n => (((q n + 1 : ℕ) : ℝ) * Real.log binCount -
-        rate * blockCost n * ((q n - (K + 1) : ℕ) : ℝ)) /
-          totalCost n) =ᶠ[atTop] fun n =>
-        ((qReal n + 1) / qReal n) *
-          (Real.log binCount / blockCost n) *
-          (qReal n * blockCost n / totalCost n) -
-        (rate * ((qReal n - binCount) / qReal n) *
-          (qReal n * blockCost n / totalCost n)) := by
-      have hqLarge : ∀ᶠ n : ℕ in atTop, K + 1 ≤ q n :=
-        hq.eventually (eventually_ge_atTop (K + 1))
-      filter_upwards [hqLarge,
-        hblockCost.eventually (eventually_gt_atTop 0),
-        htotalCost.eventually (eventually_gt_atTop 0)] with n hnq hnl hnt
-      have hqsub : ((q n - (K + 1) : ℕ) : ℝ) = qReal n - binCount := by
-        rw [Nat.cast_sub hnq]
-      have hqPos : 0 < qReal n := by
-        dsimp [qReal]
-        exact_mod_cast (lt_of_lt_of_le (by omega : 0 < K + 1) hnq)
-      have hcostPos : blockCost n ≠ 0 := ne_of_gt hnl
-      have htotalPos : totalCost n ≠ 0 := ne_of_gt hnt
-      have hfactor :
-          (((qReal n + 1) * Real.log binCount -
-            rate * blockCost n * (qReal n - binCount)) / totalCost n) =
-          ((qReal n + 1) / qReal n) *
-            (Real.log binCount / blockCost n) *
-            (qReal n * blockCost n / totalCost n) -
-          (rate * ((qReal n - binCount) / qReal n) *
-            (qReal n * blockCost n / totalCost n)) := by
-        field_simp [ne_of_gt hqPos, hcostPos, htotalPos]
-        <;> ring
-      rw [hqsub, Nat.cast_add, Nat.cast_one]
-      simpa [qReal] using hfactor
-    refine Filter.Tendsto.congr' hformula.symm ?_
-    simpa using hfirst.sub hsecond
-  have htarget : -rate < -c := by linarith
-  have hnormalizedEventually :=
-    hnormalized.eventually (eventually_lt_nhds htarget)
-  have hqLarge : ∀ᶠ n : ℕ in atTop, K + 1 ≤ q n :=
-    hq.eventually (eventually_ge_atTop (K + 1))
-  have hcostPos : ∀ᶠ n : ℕ in atTop, 0 < blockCost n :=
-    hblockCost.eventually (eventually_gt_atTop 0)
-  have htotalPos : ∀ᶠ n : ℕ in atTop, 0 < totalCost n :=
-    htotalCost.eventually (eventually_gt_atTop 0)
-  filter_upwards [hnormalizedEventually, hqLarge, hcostPos, htotalPos]
-    with n hnorm hnq hcost htotal
-  have hlinear :
-      ((q n + 1 : ℕ) : ℝ) * Real.log binCount -
-          rate * blockCost n * ((q n - (K + 1) : ℕ) : ℝ) <
-        -c * totalCost n := by
-    have hdiv := (div_lt_iff₀ htotal).mp hnorm
-    nlinarith
-  have hbase : binCount ^ (q n + 1) =
-      Real.exp (((q n + 1 : ℕ) : ℝ) * Real.log binCount) := by
+  have hetaPos : 0 < eta := by dsimp [eta]; linarith
+  have hetaBound : eta < bound := by dsimp [eta]; linarith
+  have hboundEndpoint : bound ≤ endpointPower := by
+    dsimp [bound]
+    exact (min_le_right _ _).trans (min_le_left _ _)
+  have hboundHorizon : bound ≤ horizonPower := by
+    dsimp [bound]
+    exact (min_le_right _ _).trans ((min_le_right _ _).trans (min_le_left _ _))
+  have hboundOne : bound ≤ 1 := by
+    dsimp [bound]
+    exact (min_le_right _ _).trans ((min_le_right _ _).trans (min_le_right _ _))
+  have hetaEndpoint : eta < endpointPower := lt_of_lt_of_le hetaBound hboundEndpoint
+  have hetaHorizon : eta < horizonPower := lt_of_lt_of_le hetaBound hboundHorizon
+  have hetaOne : eta < 1 := lt_of_lt_of_le hetaBound hboundOne
+  have hetaRadius : eta < radius :=
+    lt_of_lt_of_le hetaBound (min_le_left _ _)
+  have hetaBall : eta ∈ Metric.ball (0 : ℝ) radius := by
+    simpa [Metric.mem_ball, Real.dist_eq, abs_of_pos hetaPos] using hetaRadius
+  have hcriticalEta : (1 + 2 * eta) ^ 4 < criticalRatio := hball hetaBall
+  refine ⟨eta, hetaPos, hetaEndpoint, hetaHorizon, hetaOne, ?_⟩
+  calc
+    d * (1 + 2 * eta) ^ 4 < d * criticalRatio :=
+      mul_lt_mul_of_pos_left hcriticalEta hd
+    _ = (Real.pi ^ 2 / 2) * variance := by
+      dsimp [criticalRatio]
+      field_simp [ne_of_gt hd]
+
+private theorem eventually_drawdownScaleAbsorptions
+    {endpointPower horizonPower eta d : ℝ}
+    (hhorizon : eta < horizonPower) (heta : 0 < eta) :
+    ∀ᶠ Delta : ℝ in atTop,
+      2 * (1 + 2 * eta) * (1 / endpointPower + 2) / eta ^ 2 ≤
+          Delta ^ (horizonPower - eta) ∧
+        Real.log 2 / (d * eta) ≤ Delta ^ (eta / 2) := by
+  have hjumpExponent : 0 < horizonPower - eta := by linarith
+  have hjump := eventually_real_rpow_ge_const
+    (power := horizonPower - eta)
+    (bound := 2 * (1 + 2 * eta) * (1 / endpointPower + 2) / eta ^ 2)
+    hjumpExponent
+  have hentropy := eventually_real_rpow_ge_const
+    (power := eta / 2) (bound := Real.log 2 / (d * eta)) (by linarith)
+  filter_upwards [hjump, hentropy] with Delta hjump hentropy
+  exact ⟨hjump, hentropy⟩
+
+/-- The generalized endpoint and horizon form of Wang Yiyang,
+*Asymptotic speed of the $N$-branching random walk with infinite offspring*,
+Chapter 3, Lemma 3.3. That result extends Elie Aïdékon and Yueyun Hu,
+*Average-weight percolation on the complete graph*, Lemma 2.3 (2025,
+arXiv:2512.23266), to centered finite-variance increments. For endpoint scale
+`Δ / endpointPower` and horizon `L ≥ Δ^(2+horizonPower)`, the event
+
+\[
+  \{Y_L\leq \Delta/\mathrm{endpointPower},\
+    \min_{0\leq i\leq j\leq L}(Y_j-Y_i)\geq-\Delta\}
+\]
+has real probability at most `exp (-d * (L / Δ^2))` once `Δ` is large. -/
+private theorem exists_eventually_measureReal_noLargeDropEvent_le_exp_of_endpointAndHorizonPowers
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    {variance endpointPower horizonPower d : ℝ}
+    (hν : ProbabilityTheory.IsCenteredSecondMoment ν variance)
+    (hsquare : Integrable (fun x : ℝ => x ^ 2) ν)
+    (hvariance : 0 < variance)
+    (hendpoint : 0 < endpointPower) (hhorizon : 0 < horizonPower)
+    (hd : 0 < d)
+    (hcritical : d < (Real.pi ^ 2 / 2) * variance) :
+    ∃ Delta₀ : ℝ, 1 ≤ Delta₀ ∧
+      ∀ Delta ≥ Delta₀, ∀ horizon : ℕ,
+        Delta ^ (2 + horizonPower) ≤ (horizon : ℝ) →
+        (iidSequenceLaw ν).real
+          (noLargeDropEndpointBelowEvent horizon Delta (Delta / endpointPower)) ≤
+          Real.exp (-d * ((horizon : ℝ) / Delta ^ 2)) := by
+  obtain ⟨eta, hetaPos, hetaEndpoint, hetaHorizon, hetaOne, hcriticalEta⟩ :=
+    exists_drawdownBlockExponent hvariance hendpoint hhorizon hd hcritical
+  let B : ℝ := 1 + 2 * eta
+  let blockRate : ℝ := d * B ^ 4
+  let maxJumpFactor : ℝ := 2 * (1 / endpointPower + 2) / eta
+  have hblockRatePos : 0 < blockRate := by
+    dsimp [blockRate, B]
+    positivity
+  have hblockCritical : blockRate < (Real.pi ^ 2 / 2) * variance := by
+    simpa [blockRate, B] using hcriticalEta
+  obtain ⟨tubeWidth₀, htubeWidth₀, hblockBound⟩ :=
+    iidSequenceLaw_condExp_drawdownTubeBlockEvent_le_of_finiteVariance
+      ν hν hsquare hvariance (by linarith : 0 < eta / 2)
+      hblockRatePos hblockCritical
+  have hscaleAbsorptions := eventually_drawdownScaleAbsorptions
+    (endpointPower := endpointPower) (d := d) hetaHorizon hetaPos
+  have hgood : ∀ᶠ Delta : ℝ in atTop,
+      1 ≤ Delta ∧
+      1 ≤ (⌊Delta ^ (2 + eta)⌋₊ : ℝ) ∧
+      Delta ^ (2 + eta / 2) ≤ (⌊Delta ^ (2 + eta)⌋₊ : ℝ) ∧
+      (⌊Delta ^ (2 + eta)⌋₊ : ℝ) ≤ Delta ^ (2 + eta) ∧
+      Delta + (⌈eta * Delta⌉₊ : ℝ) ≤ B * Delta ∧
+      (⌈eta * Delta⌉₊ + Delta) ^ (eta / 2) -
+        blockRate * ((⌊Delta ^ (2 + eta)⌋₊ : ℝ) /
+          (⌈eta * Delta⌉₊ + Delta) ^ 2) ≤ -d * B * Delta ^ eta ∧
+      2 * B * (1 / endpointPower + 2) / eta ^ 2 ≤
+        Delta ^ (horizonPower - eta) ∧
+      Real.log 2 / (d * eta) ≤ Delta ^ (eta / 2) ∧
+      tubeWidth₀ ≤ Delta := by
+    filter_upwards [eventually_drawdownFloorBlockLength_bounds hetaPos,
+      eventually_drawdownCeilingBinWidth_bounds hetaPos,
+      eventually_drawdownTubeBlockExponent_le hetaPos hd,
+      hscaleAbsorptions, eventually_ge_atTop tubeWidth₀] with
+      Delta hfloor hceil hexponent hscale hwidth₀
+    refine ⟨hceil.1, hfloor.1, hfloor.2.2.1, hfloor.2.2.2,
+      ?_, hexponent, ?_, hscale.2, hwidth₀⟩
+    · simpa [B, add_comm] using hceil.2
+    · simpa [B] using hscale.1
+  obtain ⟨DeltaBound, hDeltaBound⟩ := Filter.eventually_atTop.1 hgood
+  let Delta₀ := max 1 DeltaBound
+  refine ⟨Delta₀, le_max_left _ _, ?_⟩
+  intro Delta hDelta horizon hhorizon
+  have hDeltaLarge : DeltaBound ≤ Delta :=
+    (le_max_right _ _).trans hDelta
+  obtain ⟨hDeltaOne, hlengthPos, hlengthLower, hlengthUpper, hwidthUpper,
+    honeBlock, hjumpGrowth, hentropyGrowth, hwidth₀Le⟩ := hDeltaBound Delta hDeltaLarge
+  have hDeltaPos : 0 < Delta := by linarith
+  let blockLength : ℕ := ⌊Delta ^ (2 + eta)⌋₊
+  let binWidth : ℝ := (⌈eta * Delta⌉₊ : ℝ)
+  let threshold : ℝ := Delta / endpointPower
+  let q : ℕ := horizon / blockLength
+  let K : ℕ := ⌊(threshold + Delta) / binWidth⌋₊ + 1
+  let z : ℝ := (horizon : ℝ) / Delta ^ 2
+  let t : ℝ := Delta ^ eta
+  have hblockLength : 1 ≤ blockLength := by
+    exact_mod_cast hlengthPos
+  have hblockLengthLower : Delta ^ (2 + eta / 2) ≤ (blockLength : ℝ) := by
+    exact hlengthLower
+  have hblockLengthUpper : (blockLength : ℝ) ≤ Delta ^ (2 + eta) := by
+    exact hlengthUpper
+  have hpatternBound : ∀ tubeWidth : ℝ, tubeWidth₀ ≤ tubeWidth →
+      ∀ upper binWidth' : ℝ, ∀ pattern : Finset (Fin q),
+        (iidSequenceLaw ν).real
+          (drawdownConditionalBlockIntersection
+            (drawdownJumpPatternTubeEvent (horizon % blockLength) blockLength
+              pattern upper binWidth' tubeWidth) q) ≤
+          ∏ j ∈ Finset.range q,
+            drawdownJumpPatternBound pattern
+              (Real.exp (tubeWidth ^ (eta / 2) -
+                blockRate * ((blockLength : ℝ) / tubeWidth ^ 2))) j := by
+    intro tubeWidth hwidth upper binWidth' pattern
+    exact measureReal_drawdownJumpPatternTubeIntersection_le_prod_of_uniformBlockBound
+      ν hblockBound (horizon % blockLength) q blockLength hblockLength
+      tubeWidth hwidth upper binWidth' pattern
+  have hbinWidthPos : 0 < binWidth := by
+    dsimp [binWidth]
+    exact lt_of_lt_of_le (mul_pos hetaPos hDeltaPos) (by exact_mod_cast Nat.le_ceil _)
+  have hwidthThreshold : tubeWidth₀ ≤ binWidth + Delta := by
+    dsimp [binWidth]
+    have hbinNonneg : 0 ≤ (⌈eta * Delta⌉₊ : ℝ) := by positivity
+    linarith
+  have honeBlock' : (binWidth + Delta) ^ (eta / 2) -
+      blockRate * ((blockLength : ℝ) / (binWidth + Delta) ^ 2) ≤
+        -d * (1 + 2 * eta) * t := by
+    simpa [binWidth, blockLength, t, B, add_comm] using honeBlock
+  have hpowerHorizon : Delta ^ (2 + horizonPower) =
+      Delta ^ 2 * Delta ^ horizonPower := by
+    simpa [Real.rpow_natCast] using
+      (Real.rpow_add hDeltaPos (2 : ℝ) horizonPower)
+  have hzLower : Delta ^ horizonPower ≤ z := by
+    apply (le_div_iff₀ (sq_pos_of_pos hDeltaPos)).2
+    have h := hhorizon
+    rw [hpowerHorizon] at h
+    simpa [mul_comm] using h
+  have hcounts := drawdownBlockCount_scaledBounds
+    (horizon := horizon) (blockLength := blockLength) hDeltaPos
+    hblockLength hblockLengthLower hblockLengthUpper
+  have hqLower : z / t - 1 ≤ (q : ℝ) := by
+    simpa [q, z, t] using hcounts.1
+  have hqUpper : (q : ℝ) ≤ z / Real.sqrt t := by
+    simpa [q, z, t] using hcounts.2
+  have hpowerDifference : Delta ^ horizonPower =
+      Delta ^ eta * Delta ^ (horizonPower - eta) := by
     calc
-      binCount ^ (q n + 1) =
-          (Real.exp (Real.log binCount)) ^ (q n + 1) := by
-            rw [Real.exp_log hbinCountPos]
-      _ = Real.exp (((q n + 1 : ℕ) : ℝ) * Real.log binCount) := by
-            rw [← Real.exp_nat_mul]
-  have htail : Real.exp (-rate * blockCost n) ^
-      (q n - (K + 1)) = Real.exp
-        (-rate * blockCost n * ((q n - (K + 1) : ℕ) : ℝ)) := by
+      Delta ^ horizonPower = Delta ^ (eta + (horizonPower - eta)) := by
+        congr 1
+        ring
+      _ = Delta ^ eta * Delta ^ (horizonPower - eta) :=
+        Real.rpow_add hDeltaPos eta (horizonPower - eta)
+  have hratioGrowth : Delta ^ (horizonPower - eta) ≤ z / t := by
+    apply (le_div_iff₀ (Real.rpow_pos_of_pos hDeltaPos eta)).2
     calc
-      _ = Real.exp (((q n - (K + 1) : ℕ) : ℝ) *
-          (-rate * blockCost n)) := by rw [← Real.exp_nat_mul]
-      _ = _ := by congr 1 <;> ring
-  have hreal : binCount ^ (q n + 1) *
-      Real.exp (-rate * blockCost n) ^ (q n - (K + 1)) ≤
-        Real.exp (-c * totalCost n) := by
-    have hvalue : binCount ^ (q n + 1) *
-        Real.exp (-rate * blockCost n) ^ (q n - (K + 1)) =
-        Real.exp (((q n + 1 : ℕ) : ℝ) * Real.log binCount -
-          rate * blockCost n * ((q n - (K + 1) : ℕ) : ℝ)) := by
-      rw [hbase, htail, ← Real.exp_add]
-      congr 1
+      Delta ^ (horizonPower - eta) * t = Delta ^ horizonPower := by
+        rw [hpowerDifference]
+        dsimp [t]
+        ring
+      _ ≤ z := hzLower
+  have hconst : B * maxJumpFactor / eta ≤ Delta ^ (horizonPower - eta) := by
+    calc
+      B * maxJumpFactor / eta =
+          2 * B * (1 / endpointPower + 2) / eta ^ 2 := by
+            dsimp [maxJumpFactor]
+            field_simp [ne_of_gt hetaPos]
+      _ ≤ Delta ^ (horizonPower - eta) := by
+        simpa [B] using hjumpGrowth
+  have hjumpCountBound : (K : ℝ) + 1 ≤ maxJumpFactor := by
+    dsimp [K, maxJumpFactor, threshold, binWidth]
+    exact drawdownJumpCount_add_one_le hDeltaOne hendpoint hetaPos hetaOne.le
+  have hKleq : K ≤ q := by
+    have hfactor : 1 ≤ B / eta := by
+      rw [one_le_div hetaPos]
+      dsimp [B]
+      linarith
+    have hgrowth : maxJumpFactor ≤ Delta ^ (horizonPower - eta) := by
+      calc
+        maxJumpFactor = 1 * maxJumpFactor := by ring
+        _ ≤ (B / eta) * maxJumpFactor :=
+          mul_le_mul_of_nonneg_right hfactor (by positivity)
+        _ = B * maxJumpFactor / eta := by ring
+        _ ≤ Delta ^ (horizonPower - eta) := hconst
+    have hKreal : (K : ℝ) ≤ (q : ℝ) := by
+      nlinarith [hjumpCountBound, hqLower, hratioGrowth, hgrowth]
+    exact_mod_cast hKreal
+  have hmaxJumps : ⌊(threshold + Delta) / binWidth⌋₊ + 1 ≤ q := by
+    simpa [K] using hKleq
+  have hsqrt : Real.sqrt t = Delta ^ (eta / 2) := by
+    dsimp [t]
+    rw [Real.sqrt_eq_rpow, ← Real.rpow_mul hDeltaPos.le]
+    congr 1
+    ring
+  have hentropy : Real.log 2 / Real.sqrt t ≤ d * eta := by
+    rw [hsqrt]
+    apply (div_le_iff₀ (Real.rpow_pos_of_pos hDeltaPos (eta / 2))).2
+    simpa [mul_comm] using
+      (div_le_iff₀ (mul_pos hd hetaPos)).1 hentropyGrowth
+  have hscaledJump : d * B * t * maxJumpFactor ≤ d * eta * Delta ^ horizonPower := by
+    calc
+      d * B * t * maxJumpFactor = (d * eta * t) *
+          (B * maxJumpFactor / eta) := by
+            dsimp [t]
+            field_simp [ne_of_gt hetaPos]
+      _ ≤ (d * eta * t) * Delta ^ (horizonPower - eta) :=
+            mul_le_mul_of_nonneg_left hconst (by positivity)
+      _ = d * eta * Delta ^ horizonPower := by
+            rw [hpowerDifference]
+            dsimp [t]
+            ring
+  have hjump : d * (1 + 2 * eta) * t * ((K : ℝ) + 1) ≤ d * eta * z := by
+    calc
+      d * (1 + 2 * eta) * t * ((K : ℝ) + 1) ≤
+          d * B * t * maxJumpFactor := by
+            exact mul_le_mul_of_nonneg_left hjumpCountBound (by positivity)
+      _ ≤ d * eta * Delta ^ horizonPower := hscaledJump
+      _ ≤ d * eta * z := mul_le_mul_of_nonneg_left hzLower (by positivity)
+  have hsum := measureReal_noLargeDropEvent_le_sum_jumpPatternProducts_of_uniformBlockBound
+    ν horizon blockLength hpatternBound
+    Delta threshold binWidth hbinWidthPos hwidthThreshold
+  have hp : Real.exp ((binWidth + Delta) ^ (eta / 2) -
+      blockRate * ((blockLength : ℝ) / (binWidth + Delta) ^ 2)) ≤ 1 := by
+    apply Real.exp_le_one_iff.mpr
+    have hpositive : 0 < d * (1 + 2 * eta) * t := by positivity
+    have hnonpos : -d * (1 + 2 * eta) * t ≤ 0 := by linarith
+    exact honeBlock'.trans hnonpos
+  have hfiniteBound := measureReal_noLargeDropEvent_le_jumpPatternCount_mul_pow_of_sumBound
+    ν horizon blockLength Delta threshold binWidth hsum hp
+  have hsmallBlock :
+      Real.exp ((binWidth + Delta) ^ (eta / 2) -
+        blockRate * ((blockLength : ℝ) / (binWidth + Delta) ^ 2)) ≤
+      Real.exp (-d * (1 + 2 * eta) * t) := by
+    apply Real.exp_le_exp.mpr
+    exact honeBlock'
+  have hpow :
+      Real.exp ((binWidth + Delta) ^ (eta / 2) -
+        blockRate * ((blockLength : ℝ) / (binWidth + Delta) ^ 2)) ^ (q - K) ≤
+      Real.exp (-d * (1 + 2 * eta) * t) ^ (q - K) :=
+    pow_le_pow_left₀ (Real.exp_nonneg _) hsmallBlock _
+  have hfiniteBound' :
+      (iidSequenceLaw ν).real
+          (noLargeDropEndpointBelowEvent horizon Delta threshold) ≤
+        (2 : ℝ) ^ q * Real.exp (-d * (1 + 2 * eta) * t) ^ (q - K) := by
+    calc
+      (iidSequenceLaw ν).real
+          (noLargeDropEndpointBelowEvent horizon Delta threshold) ≤
+          (2 : ℝ) ^ q *
+            Real.exp ((binWidth + Delta) ^ (eta / 2) -
+              blockRate * ((blockLength : ℝ) / (binWidth + Delta) ^ 2)) ^ (q - K) := by
+                simpa [q, K, binWidth, threshold, blockLength] using hfiniteBound
+      _ ≤ (2 : ℝ) ^ q *
+          Real.exp (-d * (1 + 2 * eta) * t) ^ (q - K) :=
+            mul_le_mul_of_nonneg_left hpow (by positivity)
+  have hfinal := jumpPatternProbability_le_exp (by positivity) (by positivity)
+    hetaPos hd hqLower hqUpper hKleq hentropy hjump
+  have hprobability :
+      (iidSequenceLaw ν).real
+          (noLargeDropEndpointBelowEvent horizon Delta threshold) ≤
+        Real.exp (-d * z) := hfiniteBound'.trans hfinal
+  simpa [threshold, z] using hprobability
+
+/-- Finite-variance no-large-drawdown estimate stated as Lemma 3.3 of Wang
+Yiyang, *Asymptotic speed of the $N$-branching random walk with infinite
+offspring*, Chapter 3, extending Elie Aïdékon and Yueyun Hu,
+*Average-weight percolation on the complete graph*, Lemma 2.3 (2025,
+arXiv:2512.23266). The block proof follows Wang Yiyang's Lemma 3.3:
+discretize the running maximum, encode its jump blocks, and apply the uniform
+block estimate of Chapter 3, Lemma 3.2. The one-block rate follows Aïdékon
+and Hu, Lemma 4.1, together with Mogul'skii, *Small deviations in a space of
+trajectories*, Theorem 3, Section 4, p. 764.
+
+For
+\[
+  B_{L,\Delta,c}:=\left\{Y_L\leq\frac{\Delta}{c},\quad
+    \min_{0\leq i\leq j\leq L}(Y_j-Y_i)\geq-\Delta\right\},
+\]
+the conclusion is `P(B_{L,Δ,c}) ≤ exp(-d L / Δ²)` whenever `Δ` is large
+enough and `L ≥ Δ^(2+c)`. -/
+theorem measureReal_noLargeDropEndpointBelowEvent_le_exp_of_finiteVariance
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    {variance c d : ℝ}
+    (hν : ProbabilityTheory.IsCenteredSecondMoment ν variance)
+    (hsquare : Integrable (fun x : ℝ => x ^ 2) ν)
+    (hvariance : 0 < variance) (hc : 0 < c) (hd : 0 < d)
+    (hcritical : d < (Real.pi ^ 2 / 2) * variance) :
+    ∃ Delta₀ : ℝ, 1 ≤ Delta₀ ∧
+      ∀ Delta ≥ Delta₀, ∀ horizon : ℕ,
+        Delta ^ (2 + c) ≤ (horizon : ℝ) →
+        (iidSequenceLaw ν).real
+          (noLargeDropEndpointBelowEvent horizon Delta (Delta / c)) ≤
+          Real.exp (-d * ((horizon : ℝ) / Delta ^ 2)) := by
+  by_cases hcSmall : c < 1 / 2
+  · obtain ⟨Delta₀, hDelta₀, hbound⟩ :=
+      exists_eventually_measureReal_noLargeDropEvent_le_exp_of_endpointAndHorizonPowers
+        ν hν hsquare hvariance hc hc hd hcritical
+    refine ⟨Delta₀, hDelta₀, ?_⟩
+    intro Delta hDelta horizon hhorizon
+    exact hbound Delta hDelta horizon hhorizon
+  · let c' : ℝ := 1 / 2 - 1 / (2 + c)
+    have hcHalf : 1 / 2 ≤ c := le_of_not_gt hcSmall
+    have hcPlus : 0 < 2 + c := by linarith
+    have hc'Form : c' = c / (2 * (2 + c)) := by
+      dsimp [c']
+      field_simp [ne_of_gt hcPlus]
       ring
-    rw [hvalue]
-    exact Real.exp_le_exp.mpr hlinear.le
-  have hbinCountPow : (((K + 1 : ℕ) : ℝ≥0∞) ^ (q n + 1)) =
-      ENNReal.ofReal (binCount ^ (q n + 1)) := by
-    have hcastNat : ((K + 1 : ℕ) : ℝ≥0∞) =
-        ENNReal.ofReal ((K + 1 : ℕ) : ℝ) :=
-      (ENNReal.ofReal_natCast (K + 1)).symm
-    have hcastReal : ((K + 1 : ℕ) : ℝ) = binCount := by
-      simp [binCount]
-    change ((K + 1 : ℕ) : ℝ≥0∞) ^ (q n + 1) =
-      ENNReal.ofReal (binCount ^ (q n + 1))
-    rw [hcastNat,
-      ENNReal.ofReal_pow (p := ((K + 1 : ℕ) : ℝ)) (by positivity) (q n + 1),
-      hcastReal]
-  have hexpPow : ENNReal.ofReal (Real.exp (-rate * blockCost n)) ^
-      (q n - (K + 1)) = ENNReal.ofReal
-        (Real.exp (-rate * blockCost n) ^ (q n - (K + 1))) :=
-    (ENNReal.ofReal_pow (Real.exp_nonneg _) _).symm
-  have hENNreal :
-      (((K + 1 : ℕ) : ℝ≥0∞) ^ (q n + 1)) *
-        ENNReal.ofReal (Real.exp (-rate * blockCost n)) ^
-          (q n - (K + 1)) = ENNReal.ofReal
-            (binCount ^ (q n + 1) *
-              Real.exp (-rate * blockCost n) ^ (q n - (K + 1))) := by
-    rw [hbinCountPow, hexpPow,
-      ← ENNReal.ofReal_mul (by positivity : 0 ≤ binCount ^ (q n + 1))]
-  have hcastSum : (K + 1 : ℝ≥0∞) = ((K + 1 : ℕ) : ℝ≥0∞) := by simp
-  rw [hcastSum, hENNreal]
-  exact (ENNReal.ofReal_le_ofReal_iff (by positivity)).2 hreal
-
-/-- The fixed-pattern union bound closes along any diverging block-count
-sequence once a single-block exponential estimate is available. The bin count
-is fixed, so its logarithmic entropy is negligible per block. -/
-theorem eventually_iidSequenceLaw_measure_monotoneSpatialBinPatternUnionEvent_le_exp_of_rate_gap
-    (ν : Measure ℝ) [IsProbabilityMeasure ν]
-    {blocks length : ℕ → ℕ} {width : ℕ → ℝ} (K : ℕ)
-    {rate c : ℝ} (hblocks : Tendsto blocks atTop atTop)
-    (hrate : 0 < rate) (hc : 0 < c)
-    (hgap : c < rate - Real.log ((K + 1 : ℕ) : ℝ))
-    (hblock : ∀ᶠ n : ℕ in atTop,
-      iidSequenceLaw ν {increment : ℕ → ℝ |
-        Combinatorics.Sequence.blockCoordinates 0 (length n) increment ∈
-          blockOscillationEvent (width n) (length n)} ≤
-        ENNReal.ofReal (Real.exp (-rate))) :
-    ∀ᶠ n : ℕ in atTop,
-      iidSequenceLaw ν (monotoneSpatialBinPatternUnionEvent
-        (q := blocks n) (K := K) (width n) (length n)) ≤
-        ENNReal.ofReal (Real.exp (-c * (blocks n : ℝ))) := by
-  have hentropy := eventually_finitePatternEntropyCondition_of_rate_gap
-    hblocks hrate hc hgap
-  have hK : ∀ᶠ n : ℕ in atTop, K + 1 ≤ blocks n :=
-    hblocks.eventually (eventually_ge_atTop (K + 1))
-  filter_upwards [hblock, hentropy, hK] with n hp he hkn
-  have hresult := iidSequenceLaw_measure_monotoneSpatialBinPatternUnionEvent_le_exp
-    (ν := ν) (q := blocks n) (K := K) (length := length n)
-    (width n) rate c hkn hrate hc hp he
-  exact hresult.2.2
-
-/-- The endpoint event inherits the finite-pattern exponential bound. This
-is a finite-horizon reduction only; no asymptotic parameter choice is hidden
-in the theorem. -/
-theorem iidSequenceLaw_measure_noLargeDropEndpointBelowEvent_le_exp
-    (ν : Measure ℝ) [IsProbabilityMeasure ν]
-    {horizon blocks blockLength : ℕ} (delta width threshold rate c : ℝ)
-    (hwidth : 0 < width)
-    (hblocks : blocks * blockLength ≤ horizon)
-    (hK : ⌊(threshold + delta) / width⌋₊ + 1 ≤ blocks)
-    (hrate : 0 < rate) (hc : 0 < c)
-    (hblock : iidSequenceLaw ν {increment : ℕ → ℝ |
-        Combinatorics.Sequence.blockCoordinates 0 blockLength increment ∈
-          blockOscillationEvent (width + delta) blockLength} ≤
-      ENNReal.ofReal (Real.exp (-rate)))
-    (hparameters :
-      ((⌊(threshold + delta) / width⌋₊ + 1) ^ (blocks + 1) : ℝ≥0∞) *
-          ENNReal.ofReal (Real.exp (-rate)) ^
-            (blocks - (⌊(threshold + delta) / width⌋₊ + 1)) ≤
-        ENNReal.ofReal (Real.exp (-c * blocks))) :
-    0 < rate ∧ 0 < c ∧
-      iidSequenceLaw ν (noLargeDropEndpointBelowEvent
-        horizon delta threshold) ≤
-        ENNReal.ofReal (Real.exp (-c * blocks)) := by
-  have hunion := iidSequenceLaw_measure_monotoneSpatialBinPatternUnionEvent_le_exp
-    (ν := ν) (q := blocks)
-    (K := ⌊(threshold + delta) / width⌋₊) (length := blockLength)
-    (width + delta) rate c hK hrate hc hblock hparameters
-  rcases hunion with ⟨hrate', hc', hmeasure⟩
-  exact ⟨hrate', hc', measure_mono
-    (noLargeDropEndpointBelowEvent_subset_monotoneSpatialBinPatternUnionEvent
-      delta width threshold hwidth hblocks) |>.trans hmeasure⟩
-
-
-/-- The drawdown-and-endpoint estimate follows from the entropy-closed
-finite-pattern bound when the spatial-bin count is fixed. This is still a
-finite-variance random-walk input theorem: the one-block bound remains an
-explicit hypothesis and must be supplied by a proved block estimate. -/
-theorem eventually_iidSequenceLaw_measure_noLargeDropEndpointBelowEvent_le_exp_of_rate_gap
-    (ν : Measure ℝ) [IsProbabilityMeasure ν]
-    {horizon blocks blockLength : ℕ → ℕ}
-    {delta width threshold : ℕ → ℝ} (K : ℕ)
-    {rate c : ℝ} (hblocksTop : Tendsto blocks atTop atTop)
-    (hrate : 0 < rate) (hc : 0 < c)
-    (hgap : c < rate - Real.log ((K + 1 : ℕ) : ℝ))
-    (hwidthPos : ∀ᶠ n : ℕ in atTop, 0 < width n)
-    (hcomplete : ∀ᶠ n : ℕ in atTop,
-      blocks n * blockLength n ≤ horizon n)
-    (hbinCount : ∀ᶠ n : ℕ in atTop,
-      ⌊(threshold n + delta n) / width n⌋₊ = K)
-    (hblock : ∀ᶠ n : ℕ in atTop,
-      iidSequenceLaw ν {increment : ℕ → ℝ |
-        Combinatorics.Sequence.blockCoordinates 0 (blockLength n) increment ∈
-          blockOscillationEvent (width n + delta n) (blockLength n)} ≤
-        ENNReal.ofReal (Real.exp (-rate))) :
-    ∀ᶠ n : ℕ in atTop,
-      iidSequenceLaw ν (noLargeDropEndpointBelowEvent
-        (horizon n) (delta n) (threshold n)) ≤
-        ENNReal.ofReal (Real.exp (-c * (blocks n : ℝ))) := by
-  have hentropy := eventually_finitePatternEntropyCondition_of_rate_gap
-    hblocksTop hrate hc hgap
-  have hK : ∀ᶠ n : ℕ in atTop, K + 1 ≤ blocks n :=
-    hblocksTop.eventually (eventually_ge_atTop (K + 1))
-  filter_upwards [hwidthPos, hcomplete, hbinCount, hblock,
-    hentropy, hK] with n hwidthn hcompleten hbin hblockn hentropyn hKn
-  have hKn' : ⌊(threshold n + delta n) / width n⌋₊ + 1 ≤ blocks n := by
-    rw [hbin]
-    exact hKn
-  have hparameters :
-      ((⌊(threshold n + delta n) / width n⌋₊ + 1) ^ (blocks n + 1) : ℝ≥0∞) *
-          ENNReal.ofReal (Real.exp (-rate)) ^
-            (blocks n - (⌊(threshold n + delta n) / width n⌋₊ + 1)) ≤
-        ENNReal.ofReal (Real.exp (-c * (blocks n : ℝ))) := by
-    simpa [hbin] using hentropyn
-  have hresult := iidSequenceLaw_measure_noLargeDropEndpointBelowEvent_le_exp
-    (ν := ν) (horizon := horizon n) (blocks := blocks n)
-    (blockLength := blockLength n) (delta n) (width n) (threshold n)
-    rate c hwidthn hcompleten hKn' hrate hc hblockn hparameters
-  exact hresult.2.2
-
+    have hc'Pos : 0 < c' := by
+      rw [hc'Form]
+      positivity
+    have hc'LtHalf : c' < 1 / 2 := by
+      dsimp [c']
+      have hreciprocal : 0 < 1 / (2 + c) := by positivity
+      linarith
+    have hc'LeC : c' ≤ c := le_trans hc'LtHalf.le hcHalf
+    have htransformedExponent : 2 / (1 - 2 * c') = 2 + c := by
+      have hdenominator : 1 - 2 * c' = 2 / (2 + c) := by
+        dsimp [c']
+        field_simp [ne_of_gt hcPlus]
+        ring
+      rw [hdenominator]
+      field_simp [ne_of_gt hcPlus]
+    have hhorizonPowerPos : 0 < 2 / (1 - 2 * c') - 2 := by
+      rw [htransformedExponent]
+      linarith
+    obtain ⟨Delta₀, hDelta₀, hbound⟩ :=
+      exists_eventually_measureReal_noLargeDropEvent_le_exp_of_endpointAndHorizonPowers
+        (endpointPower := c') (horizonPower := 2 / (1 - 2 * c') - 2)
+        ν hν hsquare hvariance hc'Pos hhorizonPowerPos hd hcritical
+    refine ⟨Delta₀, hDelta₀, ?_⟩
+    intro Delta hDelta horizon hhorizon
+    have hhorizon' :
+        Delta ^ (2 + (2 / (1 - 2 * c') - 2)) ≤ (horizon : ℝ) := by
+      have hexponent : 2 + (2 / (1 - 2 * c') - 2) = 2 + c := by
+        rw [htransformedExponent]
+        ring
+      rw [hexponent]
+      exact hhorizon
+    have htransformedBound := hbound Delta hDelta horizon hhorizon'
+    have hthreshold : Delta / c ≤ Delta / c' := by
+      apply (div_le_div_iff₀ hc hc'Pos).2
+      exact mul_le_mul_of_nonneg_left hc'LeC (by linarith : 0 ≤ Delta)
+    have heventSubset :
+        noLargeDropEndpointBelowEvent horizon Delta (Delta / c) ⊆
+          noLargeDropEndpointBelowEvent horizon Delta (Delta / c') := by
+      intro increment hevent
+      exact ⟨hevent.1, le_trans hevent.2 hthreshold⟩
+    calc
+      (iidSequenceLaw ν).real
+          (noLargeDropEndpointBelowEvent horizon Delta (Delta / c)) ≤
+        (iidSequenceLaw ν).real
+          (noLargeDropEndpointBelowEvent horizon Delta (Delta / c')) :=
+        measureReal_mono heventSubset
+          (measure_ne_top (iidSequenceLaw ν) _)
+      _ ≤ Real.exp (-d * ((horizon : ℝ) / Delta ^ 2)) := by
+        simpa using htransformedBound
 
 /-- The quotient by a floor-rounded diffusive block length diverges whenever
-the horizon is large compared with the square of the spatial scale.  The
-statement is deliberately phrased for a real scale: no integer rounding of
-the AH parameter is needed. -/
+the horizon is large compared with the square of the spatial scale. The
+statement is phrased for a real scale, so the deterministic result can be
+used with any positive diffusive block constant. -/
 theorem tendsto_diffusiveBlockCount_atTop_of_horizonRatio
     {horizon : ℕ → ℕ} {delta : ℕ → ℝ} {A : ℝ}
     (hdelta : Tendsto delta atTop atTop) (hA : 0 < A)
@@ -959,429 +2732,6 @@ theorem tendsto_diffusiveBlockCount_atTop_of_horizonRatio
     dsimp [blocks, length] at hdiv ⊢
     omega
   simpa [blocks, length] using hblocks
-
-/-- The finite-cover sharp-rate theorem can be combined with a fixed spatial
-bin width to choose every block parameter internally.  The cover is chosen
-first; its diffusive constant is then enlarged enough to absorb the fixed
-spatial-bin entropy. -/
-theorem exists_ah_diffusive_parameters
-    {c blockTarget : ℝ} (hc : 0 < c) (hblockTarget : 0 < blockTarget)
-    (hsharp : blockTarget < Real.pi ^ 2 / 2) :
-    ∃ A eta enlargement : ℝ, ∃ count : ℕ,
-      0 < A ∧ 0 < eta ∧ 0 < enlargement ∧ 0 < count ∧
-      finiteCoverCorridorExponential count
-        ((1 + enlargement) / Real.sqrt (A / (1 + eta) ^ 2)) < 1 / 2 ∧
-      A * blockTarget < finiteCoverBlockRate count
-        ((1 + enlargement) / Real.sqrt (A / (1 + eta) ^ 2)) -
-          Real.log ((⌊(1 + 1 / c) / eta⌋₊ + 1 : ℕ) : ℝ) := by
-  let gap : ℝ := Real.pi ^ 2 / 2 - blockTarget
-  have hgap : 0 < gap := by dsimp [gap]; linarith
-  let eta : ℝ := min 1 (gap / (8 * blockTarget))
-  have heta : 0 < eta := by
-    dsimp [eta]
-    apply lt_min
-    · norm_num
-    · positivity
-  have hetaOne : eta ≤ 1 := by dsimp [eta]; exact min_le_left _ _
-  have hetaGap : eta ≤ gap / (8 * blockTarget) := by
-    dsimp [eta]
-    exact min_le_right _ _
-  have hetaBlock : eta * blockTarget ≤ gap / 8 := by
-    have h := mul_le_mul_of_nonneg_right hetaGap hblockTarget.le
-    have hcancel : gap / (8 * blockTarget) * blockTarget = gap / 8 := by
-      field_simp [ne_of_gt hblockTarget]
-    rw [hcancel] at h
-    exact h
-  have hetaSq : eta ^ 2 ≤ eta := by
-    nlinarith [mul_nonneg heta.le (sub_nonneg.mpr hetaOne)]
-  have hetaSqBlock : eta ^ 2 * blockTarget ≤ gap / 8 := by
-    calc
-      eta ^ 2 * blockTarget ≤ eta * blockTarget :=
-        mul_le_mul_of_nonneg_right hetaSq hblockTarget.le
-      _ ≤ gap / 8 := hetaBlock
-  have hscaledBlock : (1 + eta) ^ 2 * blockTarget ≤
-      Real.pi ^ 2 / 2 - gap / 2 := by
-    calc
-      (1 + eta) ^ 2 * blockTarget = blockTarget +
-          2 * (eta * blockTarget) + eta ^ 2 * blockTarget := by ring
-      _ ≤ blockTarget + 3 * gap / 8 := by nlinarith [hetaBlock, hetaSqBlock]
-      _ ≤ Real.pi ^ 2 / 2 - gap / 2 := by dsimp [gap]; ring_nf; linarith
-  let binCount : ℕ := ⌊(1 + 1 / c) / eta⌋₊
-  let entropyLog : ℝ := Real.log ((binCount + 1 : ℕ) : ℝ)
-  have hentropyLog : 0 ≤ entropyLog := by
-    apply Real.log_nonneg
-    have hcount : (1 : ℝ) ≤ ((binCount + 1 : ℕ) : ℝ) := by
-      exact_mod_cast (Nat.le_add_left 1 binCount)
-    exact hcount
-  let eps : ℝ := gap / 16
-  have heps : 0 < eps := by dsimp [eps]; positivity
-  obtain ⟨count, hcount, enlargement, C₀, henlargement, hC₀,
-      hspectral₀, _hbound₀, hsharpRate⟩ :=
-    exists_finiteCover_parameters_for_sharp_rate heps
-  let prefactor : ℝ := Real.log (16 * (count : ℝ))
-  let lambda : ℝ := Real.pi ^ 2 /
-    (2 * ((1 + 3 / (count : ℝ)) * (1 + enlargement)) ^ 2)
-  have hprefactor : 0 ≤ prefactor := by
-    apply Real.log_nonneg
-    have hcountOne : (1 : ℝ) ≤ (count : ℝ) := by exact_mod_cast (Nat.one_le_iff_ne_zero.mpr hcount.ne')
-    nlinarith
-  have hscaledSharp : prefactor / C₀ - lambda <
-      -(Real.pi ^ 2) / 2 + eps := by
-    have hformula := scaledLog_two_finiteCoverRangeBound_diffusive
-      hcount henlargement hC₀
-    rw [hformula] at hsharpRate
-    simpa [prefactor, lambda, div_eq_mul_inv, mul_comm] using hsharpRate
-  have hlambdaBase : Real.pi ^ 2 / 2 - eps < lambda - prefactor / C₀ := by
-    dsimp [eps] at hscaledSharp ⊢
-    linarith [hscaledSharp]
-  let C : ℝ := max C₀ (entropyLog / eps + 1)
-  have hC₀C : C₀ ≤ C := by dsimp [C]; exact le_max_left _ _
-  have hCbig : entropyLog / eps < C := by
-    dsimp [C]
-    exact lt_of_lt_of_le (lt_add_of_pos_right _ zero_lt_one) (le_max_right _ _)
-  have hC : 0 < C := lt_of_lt_of_le hC₀ hC₀C
-  have hentropySmall : entropyLog / C < eps := by
-    apply (div_lt_iff₀ hC).2
-    have hprod := (div_lt_iff₀ heps).mp hCbig
-    nlinarith [hprod]
-  have hprefactorSmall : prefactor / C ≤ prefactor / C₀ :=
-    div_le_div_of_nonneg_left hprefactor hC₀ hC₀C
-  have hlambdaNet : Real.pi ^ 2 / 2 - eps < lambda - prefactor / C :=
-    lt_of_lt_of_le hlambdaBase (sub_le_sub_left hprefactorSmall lambda)
-  let widthC : ℝ := (1 + enlargement) / Real.sqrt C
-  let oneBlockRate : ℝ := finiteCoverBlockRate count widthC
-  have hformula (D : ℝ) (hD : 0 < D) :
-      finiteCoverCorridorExponential count
-          ((1 + enlargement) / Real.sqrt D) = Real.exp (-lambda * D) := by
-    rw [finiteCoverCorridorExponential_diffusive hcount henlargement hD]
-    congr 1
-    dsimp [lambda]
-    ring
-  have hlogExp : Real.log (2 * finiteCoverRangeBound count widthC) = -oneBlockRate := by
-    rw [two_mul_finiteCoverRangeBound_eq_exp_neg_rate hcount]
-    exact Real.log_exp _
-  have hscaledC := scaledLog_two_finiteCoverRangeBound_diffusive
-    hcount henlargement hC
-  rw [hlogExp] at hscaledC
-  have hscaleIdentity : (1 / C) * (-oneBlockRate) = -(oneBlockRate / C) := by
-    field_simp [ne_of_gt hC]
-  rw [hscaleIdentity] at hscaledC
-  have hrateNormalized : oneBlockRate / C = lambda - prefactor / C := by
-    dsimp [prefactor, lambda] at hscaledC ⊢
-    field_simp [ne_of_gt hC] at hscaledC ⊢
-    nlinarith [hscaledC]
-  have hnetRate : Real.pi ^ 2 / 2 - 2 * eps <
-      oneBlockRate / C - entropyLog / C := by
-    rw [hrateNormalized]
-    dsimp [prefactor, lambda] at hlambdaNet ⊢
-    linarith [hlambdaNet, hentropySmall]
-  have hgapCompare : Real.pi ^ 2 / 2 - gap / 2 <
-      Real.pi ^ 2 / 2 - 2 * eps := by
-    dsimp [eps]
-    linarith [hgap]
-  have hscaledRate : (1 + eta) ^ 2 * blockTarget <
-      oneBlockRate / C - entropyLog / C := by
-    exact lt_of_le_of_lt hscaledBlock (lt_trans hgapCompare hnetRate)
-  let A : ℝ := C * (1 + eta) ^ 2
-  have hA : 0 < A := by dsimp [A]; positivity
-  have hconst : A / (1 + eta) ^ 2 = C := by
-    dsimp [A]
-    field_simp [ne_of_gt (by positivity : 0 < 1 + eta)]
-  have hspectralC : finiteCoverCorridorExponential count widthC < 1 / 2 := by
-    have hspec₀ : Real.exp (-lambda * C₀) < 1 / 2 := by
-      rw [hformula C₀ hC₀] at hspectral₀
-      exact hspectral₀
-    have hlambda : 0 < lambda := by dsimp [lambda]; positivity
-    have hmul : lambda * C₀ ≤ lambda * C := mul_le_mul_of_nonneg_left hC₀C hlambda.le
-    have hexp : Real.exp (-lambda * C) ≤ Real.exp (-lambda * C₀) :=
-      Real.exp_le_exp.mpr (calc
-        -lambda * C = -(lambda * C) := by ring
-        _ ≤ -(lambda * C₀) := neg_le_neg hmul
-        _ = -lambda * C₀ := by ring)
-    rw [hformula C hC]
-    exact lt_of_le_of_lt hexp hspec₀
-  have hAconst : finiteCoverCorridorExponential count
-      ((1 + enlargement) / Real.sqrt (A / (1 + eta) ^ 2)) < 1 / 2 := by
-    rw [hconst]
-    exact hspectralC
-  have hAentropy : A * blockTarget < oneBlockRate - entropyLog := by
-    have hmul := mul_lt_mul_of_pos_left hscaledRate hC
-    have hleft : C * ((1 + eta) ^ 2 * blockTarget) = A * blockTarget := by
-      dsimp [A]
-      ring
-    have hright : C * (oneBlockRate / C - entropyLog / C) =
-        oneBlockRate - entropyLog := by
-      field_simp [ne_of_gt hC]
-    rw [hleft, hright] at hmul
-    exact hmul
-  have hAentropy' : A * blockTarget < finiteCoverBlockRate count
-      ((1 + enlargement) / Real.sqrt (A / (1 + eta) ^ 2)) -
-        Real.log ((binCount + 1 : ℕ) : ℝ) := by
-    have hrequestedRate : finiteCoverBlockRate count
-        ((1 + enlargement) / Real.sqrt (A / (1 + eta) ^ 2)) = oneBlockRate := by
-      simp [oneBlockRate, widthC, hconst]
-    rw [hrequestedRate]
-    simpa [entropyLog, binCount] using hAentropy
-  refine ⟨A, eta, enlargement, count, hA, heta, henlargement, hcount,
-    hAconst, hAentropy'⟩
-
-/-- Sequential form of the finite-variance AH no-large-drawdown estimate. For
-any specified spatial-scale sequence tending to infinity and horizon sequence
-with `horizon / delta^2 → ∞`, the fixed-cover Brownian bound supplies the
-one-block estimate, the finite-pattern entropy is absorbed internally, and
-the floor/remainder loss is absorbed. The uniform-in-`delta`/`horizon` paper
-quantifier is proved separately below. The spatial bin count is the explicit
-fixed integer `floor((1 + 1/c) / eta)`; no one-block or entropy inequality is
-left as an input.
-
-This version is normalized to increment variance one, exactly as the
-Brownian BlockBound API.  Restoring a general variance parameter requires a
-separate law-scaling theorem. -/
-theorem eventually_iidSequenceLaw_measure_noLargeDropEndpointBelowEvent_le_ah_exp
-    (ν : Measure ℝ) [IsProbabilityMeasure ν]
-    (hcentered : ∫ x : ℝ, x ∂ν = 0)
-    (hsecondMoment : ∫ x : ℝ, x ^ 2 ∂ν = 1)
-    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
-    [IsProbabilityMeasure P] {B : NNReal → Ω → ℝ}
-    (hB : IsPreBrownianReal B P)
-    (hcontinuous : ∀ ω, Continuous (B · ω))
-    (hmeasurable : ∀ t, Measurable (B t))
-    {horizon : ℕ → ℕ} {delta : ℕ → ℝ}
-    (c target blockTarget : ℝ) (hc : 0 < c)
-    (htarget : 0 < target) (hblockTarget : target < blockTarget)
-    (hblockTargetUpper : blockTarget < Real.pi ^ 2 / 2)
-    (hdelta : Tendsto delta atTop atTop)
-    (hratio : Tendsto (fun n => (horizon n : ℝ) / delta n ^ 2)
-      atTop atTop) :
-    ∀ᶠ n : ℕ in atTop,
-      iidSequenceLaw ν (noLargeDropEndpointBelowEvent
-        (horizon n) (delta n) (delta n / c)) ≤
-        ENNReal.ofReal (Real.exp
-          (-target * (horizon n : ℝ) / delta n ^ 2)) := by
-  obtain ⟨A, eta, enlargement, count, hA, heta, henlargement, hcount,
-      hspectral, hentropyRate⟩ :=
-    exists_ah_diffusive_parameters hc (lt_trans htarget hblockTarget)
-      hblockTargetUpper
-  let binCount : ℕ := ⌊(1 + 1 / c) / eta⌋₊
-  let blockLength : ℕ → ℕ := fun n => ⌊A * delta n ^ 2⌋₊
-  let blocks : ℕ → ℕ := fun n => horizon n / blockLength n
-  let oneBlockRate : ℝ := finiteCoverBlockRate count
-    ((1 + enlargement) / Real.sqrt (A / (1 + eta) ^ 2))
-  have hblocksTop : Tendsto blocks atTop atTop := by
-    simpa [blocks, blockLength] using
-      tendsto_diffusiveBlockCount_atTop_of_horizonRatio hdelta hA hratio
-  have honeBlock := eventually_integerDiffusiveBlockOscillationProbability_le_exp
-    ν hcentered hsecondMoment hB hcontinuous hmeasurable hdelta
-    hA heta henlargement hcount hspectral
-  have hratePos : 0 < oneBlockRate := by
-    have hgap : A * blockTarget < oneBlockRate - Real.log ((binCount + 1 : ℕ) : ℝ) := by
-      simpa [oneBlockRate, binCount] using hentropyRate
-    have hlogNonneg : 0 ≤ Real.log ((binCount + 1 : ℕ) : ℝ) := by
-      apply Real.log_nonneg
-      have : (1 : ℝ) ≤ (binCount + 1 : ℕ) := by exact_mod_cast (Nat.le_add_left 1 binCount)
-      exact this
-    have htargetPos' : 0 < blockTarget := lt_trans htarget hblockTarget
-    have hAblock : 0 < A * blockTarget := mul_pos hA htargetPos'
-    linarith
-  have hpattern := eventually_iidSequenceLaw_measure_noLargeDropEndpointBelowEvent_le_exp_of_rate_gap
-    (ν := ν) (horizon := horizon) (blocks := blocks) (blockLength := blockLength)
-    (delta := delta) (width := fun n => eta * delta n)
-    (threshold := fun n => delta n / c) binCount
-    (rate := oneBlockRate) (c := A * blockTarget)
-    hblocksTop hratePos (mul_pos hA (lt_trans htarget hblockTarget)) hentropyRate
-    (by
-      filter_upwards [hdelta.eventually_gt_atTop 0] with n hδ
-      exact mul_pos heta hδ)
-    (by
-      filter_upwards [] with n
-      dsimp [blocks, blockLength]
-      exact Nat.div_mul_le_self _ _)
-    (by
-      filter_upwards [hdelta.eventually_gt_atTop 0] with n hδ
-      have hδne : delta n ≠ 0 := ne_of_gt hδ
-      have hetaNe : eta ≠ 0 := ne_of_gt heta
-      have hdiv : (delta n / c + delta n) / (eta * delta n) =
-          (1 + 1 / c) / eta := by
-        field_simp [hc.ne', hetaNe, hδne]
-        ring
-      simpa [binCount, hdiv])
-    (by
-      filter_upwards [honeBlock] with n hn
-      have hwidth : eta * delta n + delta n = (1 + eta) * delta n := by ring
-      simpa [blocks, blockLength, oneBlockRate, hwidth] using hn)
-  have hratioLarge : ∀ᶠ n : ℕ in atTop,
-      A * blockTarget ≤ (blockTarget - target) *
-        ((horizon n : ℝ) / delta n ^ 2) := by
-    have hgap : 0 < blockTarget - target := sub_pos.mpr hblockTarget
-    filter_upwards [hratio.eventually
-      (eventually_ge_atTop (A * blockTarget / (blockTarget - target)))] with n hn
-    have hmul := (div_le_iff₀ hgap).1 hn
-    simpa [mul_comm] using hmul
-  filter_upwards [hpattern, hratioLarge,
-    hdelta.eventually_gt_atTop 0,
-    Asymptotics.eventually_floorBlockLength_pos (by
-      have hsquare : Tendsto (fun n => delta n * delta n) atTop atTop :=
-        hdelta.atTop_mul_atTop₀ hdelta
-      simpa [Asymptotics.floorBlockLength, blockLength, pow_two, mul_comm] using
-        hsquare.const_mul_atTop hA)] with n hpn hratioN hδ hlen
-  have hlengthLe : (blockLength n : ℝ) ≤ A * delta n ^ 2 := by
-    exact Nat.floor_le (mul_nonneg hA.le (sq_nonneg (delta n)))
-  have hlen' : 0 < blockLength n := by
-    simpa [blockLength, Asymptotics.floorBlockLength, pow_two] using hlen
-  have hmod : horizon n % blockLength n < blockLength n :=
-    Nat.mod_lt _ hlen'
-  have hdivmod : horizon n / blockLength n * blockLength n +
-      horizon n % blockLength n = horizon n := by
-    simpa [Nat.mul_comm] using (Nat.div_add_mod (horizon n) (blockLength n))
-  have hcastDivmod : (blocks n : ℝ) * (blockLength n : ℝ) +
-      ((horizon n % blockLength n : ℕ) : ℝ) = (horizon n : ℝ) := by
-    have hcast : ((horizon n / blockLength n : ℕ) : ℝ) *
-        (blockLength n : ℝ) + ((horizon n % blockLength n : ℕ) : ℝ) =
-          (horizon n : ℝ) := by exact_mod_cast hdivmod
-    simpa [blocks] using hcast
-  have hmodCast : ((horizon n % blockLength n : ℕ) : ℝ) < (blockLength n : ℝ) := by
-    exact_mod_cast hmod
-  have hdenPos : 0 < A * delta n ^ 2 := mul_pos hA (sq_pos_of_pos hδ)
-  have hquot : (horizon n : ℝ) / (A * delta n ^ 2) < (blocks n : ℝ) + 1 := by
-    apply (div_lt_iff₀ hdenPos).2
-    rw [← hcastDivmod]
-    nlinarith [hmodCast, hlengthLe]
-  have hblockCountLower : (blocks n : ℝ) >
-      (horizon n : ℝ) / (A * delta n ^ 2) - 1 := by linarith
-  have hcancel : A * ((horizon n : ℝ) / (A * delta n ^ 2)) =
-      (horizon n : ℝ) / delta n ^ 2 := by
-    field_simp [hA.ne', (sq_pos_of_pos hδ).ne']
-  have hrateLower : A * blockTarget * (blocks n : ℝ) ≥
-      blockTarget * ((horizon n : ℝ) / delta n ^ 2) - A * blockTarget := by
-    have hbpos : 0 < A * blockTarget := mul_pos hA (lt_trans htarget hblockTarget)
-    have hmul := mul_lt_mul_of_pos_left hblockCountLower hbpos
-    nlinarith [hcancel]
-  have htargetExponent : target * ((horizon n : ℝ) / delta n ^ 2) ≤
-      A * blockTarget * (blocks n : ℝ) := by
-    have hrateBound : target * ((horizon n : ℝ) / delta n ^ 2) + A * blockTarget ≤
-        blockTarget * ((horizon n : ℝ) / delta n ^ 2) := by
-      nlinarith [hratioN]
-    nlinarith [hrateLower, hrateBound]
-  have hprobExp : ENNReal.ofReal (Real.exp
-      (-(A * blockTarget) * (blocks n : ℝ))) ≤
-        ENNReal.ofReal (Real.exp
-          (-target * (horizon n : ℝ) / delta n ^ 2)) := by
-    apply ENNReal.ofReal_le_ofReal
-    apply Real.exp_le_exp.mpr
-    have htargetExponent' : target * (horizon n : ℝ) / delta n ^ 2 ≤
-        A * blockTarget * (blocks n : ℝ) := by
-      calc
-        target * (horizon n : ℝ) / delta n ^ 2 =
-            target * ((horizon n : ℝ) / delta n ^ 2) := by ring
-        _ ≤ A * blockTarget * (blocks n : ℝ) := htargetExponent
-    calc
-      -(A * blockTarget) * (blocks n : ℝ) =
-          -((A * blockTarget) * (blocks n : ℝ)) := by ring
-      _ ≤ -(target * (horizon n : ℝ) / delta n ^ 2) :=
-        neg_le_neg htargetExponent'
-      _ = -target * (horizon n : ℝ) / delta n ^ 2 := by ring
-  calc
-    iidSequenceLaw ν (noLargeDropEndpointBelowEvent
-        (horizon n) (delta n) (delta n / c)) ≤
-      ENNReal.ofReal (Real.exp (-(A * blockTarget) * (blocks n : ℝ))) := hpn
-    _ ≤ ENNReal.ofReal (Real.exp
-        (-target * (horizon n : ℝ) / delta n ^ 2)) := by
-        -- `hpattern` carries the finite-pattern estimate with the per-block
-        -- rate `blockTarget`; the deterministic quotient comparison above
-        -- inserts the elapsed-time exponent.
-        exact hprobExp
-
-/-- Uniform-in-scale version of the finite-variance Aïdékon–Hu no-large-drop
-estimate.  For every positive endpoint parameter `c`, every target rate below
-the Brownian spectral rate, and every positive polynomial excess `p`, all
-sufficiently large spatial scales `delta` and all horizons
-`horizon ≥ delta^(2+p)` satisfy the claimed exponential bound.  The proof is a
-sequential compactness argument: a failure of the uniform quantifiers would
-give counterexample sequences with `delta → ∞` and `horizon / delta^2 → ∞`,
-contradicting the sequence theorem above.
-
-The increment variance is normalized to one, as in the Brownian block-bound
-API. -/
-theorem exists_uniform_iidSequenceLaw_measure_noLargeDropEndpointBelowEvent_le_ah_exp
-    (ν : Measure ℝ) [IsProbabilityMeasure ν]
-    (hcentered : ∫ x : ℝ, x ∂ν = 0)
-    (hsecondMoment : ∫ x : ℝ, x ^ 2 ∂ν = 1)
-    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
-    [IsProbabilityMeasure P] {B : NNReal → Ω → ℝ}
-    (hB : IsPreBrownianReal B P)
-    (hcontinuous : ∀ ω, Continuous (B · ω))
-    (hmeasurable : ∀ t, Measurable (B t))
-    (c target blockTarget p : ℝ) (hc : 0 < c)
-    (htarget : 0 < target) (hblockTarget : target < blockTarget)
-    (hblockTargetUpper : blockTarget < Real.pi ^ 2 / 2) (hp : 0 < p) :
-    ∃ delta0 : ℝ, 0 < delta0 ∧
-      ∀ delta : ℝ, delta0 ≤ delta → ∀ horizon : ℕ,
-        delta ^ (2 + p) ≤ (horizon : ℝ) →
-          iidSequenceLaw ν (noLargeDropEndpointBelowEvent
-            horizon delta (delta / c)) ≤
-            ENNReal.ofReal (Real.exp
-              (-target * (horizon : ℝ) / delta ^ 2)) := by
-  by_contra hnoUniform
-  have hbad : ∀ delta0 : ℝ, 0 < delta0 →
-      ∃ delta : ℝ, delta0 ≤ delta ∧ ∃ horizon : ℕ,
-        delta ^ (2 + p) ≤ (horizon : ℝ) ∧
-          ¬ iidSequenceLaw ν (noLargeDropEndpointBelowEvent
-            horizon delta (delta / c)) ≤
-              ENNReal.ofReal (Real.exp
-                (-target * (horizon : ℝ) / delta ^ 2)) := by
-    intro delta0 hdelta0
-    by_contra hnotBad
-    apply hnoUniform
-    refine ⟨delta0, hdelta0, ?_⟩
-    intro delta hdelta horizon hlarge
-    by_contra hnotBound
-    exact hnotBad ⟨delta, hdelta, horizon, hlarge, hnotBound⟩
-  have hbadNat : ∀ n : ℕ, ∃ delta : ℝ, (n : ℝ) ≤ delta ∧
-      ∃ horizon : ℕ, delta ^ (2 + p) ≤ (horizon : ℝ) ∧
-        ¬ iidSequenceLaw ν (noLargeDropEndpointBelowEvent
-          horizon delta (delta / c)) ≤
-            ENNReal.ofReal (Real.exp
-              (-target * (horizon : ℝ) / delta ^ 2)) := by
-    intro n
-    obtain ⟨delta, hdelta, horizon, hlarge, hbadBound⟩ :=
-      hbad (max (n : ℝ) 1) (lt_of_lt_of_le (by norm_num)
-        (le_max_right _ _))
-    exact ⟨delta, le_trans (le_max_left _ _) hdelta,
-      horizon, hlarge, hbadBound⟩
-  choose delta hdeltaLower horizon hpower hbadBound using hbadNat
-  have hdeltaTop : Tendsto delta atTop atTop :=
-    tendsto_atTop_mono' atTop (Filter.Eventually.of_forall hdeltaLower)
-      tendsto_natCast_atTop_atTop
-  have hdeltaPos : ∀ᶠ n : ℕ in atTop, 0 < delta n :=
-    hdeltaTop.eventually_gt_atTop 0
-  have hratioLower : ∀ᶠ n : ℕ in atTop,
-      delta n ^ p ≤ (horizon n : ℝ) / delta n ^ 2 := by
-    filter_upwards [hdeltaPos] with n hδ
-    have hpowerEq : delta n ^ (2 + p) = delta n ^ 2 * delta n ^ p := by
-      calc
-        delta n ^ (2 + p) = delta n ^ (2 : ℝ) * delta n ^ p :=
-          Real.rpow_add hδ 2 p
-        _ = delta n ^ 2 * delta n ^ p := by
-          congr 1
-          exact Real.rpow_natCast (delta n) 2
-    apply (le_div_iff₀ (sq_pos_of_pos hδ)).2
-    calc
-      delta n ^ p * delta n ^ 2 = delta n ^ 2 * delta n ^ p := by ring
-      _ = delta n ^ (2 + p) := hpowerEq.symm
-      _ ≤ (horizon n : ℝ) := hpower n
-  have hdeltaPowerTop : Tendsto (fun n : ℕ => delta n ^ p) atTop atTop :=
-    (_root_.tendsto_rpow_atTop hp).comp hdeltaTop
-  have hratioTop : Tendsto (fun n : ℕ => (horizon n : ℝ) / delta n ^ 2)
-      atTop atTop :=
-    tendsto_atTop_mono' atTop hratioLower hdeltaPowerTop
-  have hsequence :=
-    eventually_iidSequenceLaw_measure_noLargeDropEndpointBelowEvent_le_ah_exp
-      ν hcentered hsecondMoment hB hcontinuous hmeasurable
-      (horizon := horizon) (delta := delta)
-      c target blockTarget hc htarget hblockTarget hblockTargetUpper
-      hdeltaTop hratioTop
-  obtain ⟨N, hN⟩ := Filter.eventually_atTop.1 hsequence
-  exact hbadBound N (hN N le_rfl)
 
 end ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown
 
