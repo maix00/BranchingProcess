@@ -30,6 +30,9 @@ The public objects and theorems in this file are:
 - `staircaseBinLower`, `staircaseBinUpper`, and `staircaseBinWidth` encode
   $b_l=-\frac23+\frac{l}{3m}$,
   $b_{l+1}=b_l+\frac1{3m}$, and $w=1-\frac1{3m}$.
+- `exists_staircaseBin_covering_relativeOffset` proves that every
+  $r/\Delta\in[-\frac23,-\frac13]$ belongs to one of the $m$ spatial bins
+  $[b_l,b_{l+1}]$.
 - `relativeHorizontalTubeEndpointWindowEvent` is
   $\{r\le S_j\le r+D\ (1\le j\le n),\ S_n\in
   [r+v_1D,r+v_2D]\}$.
@@ -38,6 +41,10 @@ The public objects and theorems in this file are:
   terminal interval $[(b_{l+1}+v_1)D,(b_l+v_2)D]$, is contained in the
   target event whenever $b_lD\le r\le b_{l+1}D$. This is the common-event
   step in the staircase argument of Wang Yiyang, Chapter 3, Lemma 3.5.
+- `exists_staircaseBin_commonEvent_subset_relativeTube` combines the bin
+  cover and this inclusion: every relative starting point in
+  $[-2/3,-1/3]$ admits a common narrowed-tube event contained in its target
+  tube and endpoint-window event.
 
 This is the exponential form of Wang Yiyang, *Asymptotic speed of the
 $N$-branching random walk with infinite offspring*, Chapter 3, Lemma 3.1(ii),
@@ -335,6 +342,87 @@ narrowed staircase tube. -/
 noncomputable def staircaseBinEndpointUpperFraction (m : ℕ) (v₂ : ℝ) : ℝ :=
   (v₂ - 1 / (3 * (m : ℝ))) / staircaseBinWidth m
 
+/-- The bins in the staircase construction of Wang Yiyang, Chapter 3,
+proof of Lemma 3.5, cover the full range of normalized relative starting
+positions used there: for every $r/\Delta\in[-2/3,-1/3]$, there is
+$0\le l<m$ with $b_l\le r/\Delta\le b_{l+1}$. -/
+theorem exists_staircaseBin_covering_relativeOffset
+    {m : ℕ} (hm : 2 ≤ m) {offset : ℝ}
+    (hoffsetLower : -(2 : ℝ) / 3 ≤ offset)
+    (hoffsetUpper : offset ≤ -(1 : ℝ) / 3) :
+    ∃ l : ℕ, l < m ∧ staircaseBinLower m l ≤ offset ∧
+      offset ≤ staircaseBinUpper m l := by
+  let scale : ℝ := 3 * (m : ℝ)
+  have hscale : 0 < scale := by
+    dsimp [scale]
+    positivity
+  let x : ℝ := (offset + (2 : ℝ) / 3) * scale
+  have hxLower : 0 ≤ x := by
+    dsimp [x]
+    apply mul_nonneg _ hscale.le
+    linarith [hoffsetLower]
+  have hxUpper : x ≤ (m : ℝ) := by
+    calc
+      x = (offset + (2 : ℝ) / 3) * scale := rfl
+      _ ≤ ((1 : ℝ) / 3) * scale :=
+        mul_le_mul_of_nonneg_right (by linarith [hoffsetUpper]) hscale.le
+      _ = (m : ℝ) := by dsimp [scale]; ring
+  let q : ℕ := ⌊x⌋₊
+  have hqLower : (q : ℝ) ≤ x := by
+    exact Nat.floor_le hxLower
+  have hxFloor : x < (q : ℝ) + 1 := by
+    exact Nat.lt_floor_add_one x
+  let l : ℕ := min q (m - 1)
+  have hl : l < m := by
+    dsimp [l]
+    have hm' : m - 1 < m := by omega
+    exact lt_of_le_of_lt (Nat.min_le_right _ _) hm'
+  have hlLower : (l : ℝ) ≤ x := by
+    dsimp [l]
+    exact le_trans (by exact_mod_cast (Nat.min_le_left q (m - 1))) hqLower
+  have hlUpper : x ≤ (l : ℝ) + 1 := by
+    by_cases hq : q < m
+    · have hlEq : l = q := by
+        dsimp [l]
+        apply Nat.min_eq_left
+        omega
+      rw [hlEq]
+      exact le_of_lt hxFloor
+    · have hmq : m ≤ q := by omega
+      have hqle : (q : ℝ) ≤ (m : ℝ) := by
+        exact le_trans hqLower hxUpper
+      have hxeq : x = (m : ℝ) := by
+        exact le_antisymm hxUpper (le_trans (by exact_mod_cast hmq : (m : ℝ) ≤ (q : ℝ)) hqLower)
+      have hqeq : q = m := by
+        exact_mod_cast (le_antisymm hqle (by exact_mod_cast hmq : (m : ℝ) ≤ (q : ℝ)))
+      have hleq : l = m - 1 := by
+        dsimp [l]
+        rw [hqeq]
+        exact Nat.min_eq_right (by omega)
+      rw [hxeq, hleq]
+      norm_cast
+      omega
+  have hoffsetForm : offset = -(2 : ℝ) / 3 + x / scale := by
+    dsimp [x]
+    field_simp [ne_of_gt hscale]
+    ring
+  have hscaleDivLower : (l : ℝ) / scale ≤ x / scale :=
+    div_le_div_of_nonneg_right hlLower hscale.le
+  have hscaleDivUpper : x / scale ≤ ((l + 1 : ℕ) : ℝ) / scale := by
+    apply div_le_div_of_nonneg_right _ hscale.le
+    exact_mod_cast hlUpper
+  refine ⟨l, hl, ?_, ?_⟩
+  · change -(2 : ℝ) / 3 + (l : ℝ) / scale ≤ offset
+    rw [hoffsetForm]
+    linarith [hscaleDivLower]
+  · change offset ≤ -(2 : ℝ) / 3 + (l : ℝ) / scale + 1 / scale
+    rw [hoffsetForm]
+    have hsuccessor : ((l + 1 : ℕ) : ℝ) / scale =
+        (l : ℝ) / scale + 1 / scale := by
+      push_cast
+      ring
+    linarith [hscaleDivUpper, hsuccessor]
+
 /-- A horizontal tube with a specified lower edge and endpoint window. -/
 def relativeHorizontalTubeEndpointWindowEvent (lower width : ℝ)
     (horizon : ℕ) (v₁ v₂ : ℝ) : Set (ℕ → ℝ) :=
@@ -519,6 +607,39 @@ theorem horizontalTubeEndpointWindowEvent_subset_relativeHorizontalTubeEndpointW
     constructor
     · nlinarith [hupper, hendLower]
     · nlinarith [hlower, hendUpper]
+
+/-- For every positive tube width and every relative lower edge in
+$[-2/3,-1/3]$, one of the staircase bins supplies a common narrowed-tube
+event contained in the target tube and endpoint window. This packages the
+bin selection and event inclusion used in Wang Yiyang, Chapter 3, proof of
+Lemma 3.5. -/
+theorem exists_staircaseBin_commonEvent_subset_relativeTube
+    {m horizon : ℕ} {width v₁ v₂ lower : ℝ}
+    (hm : 2 ≤ m) (hwidth : 0 < width)
+    (hrelativeLower : -(2 : ℝ) / 3 ≤ lower / width)
+    (hrelativeUpper : lower / width ≤ -(1 : ℝ) / 3) :
+    ∃ l : ℕ, l < m ∧
+      horizontalTubeEndpointWindowEvent
+          (staircaseBinTubeParameter m l)
+          (staircaseBinWidth m * width) horizon
+          (staircaseBinEndpointLowerFraction m v₁)
+          (staircaseBinEndpointUpperFraction m v₂) ⊆
+        relativeHorizontalTubeEndpointWindowEvent lower width horizon v₁ v₂ := by
+  obtain ⟨l, hl, hbinLower, hbinUpper⟩ :=
+    exists_staircaseBin_covering_relativeOffset hm hrelativeLower hrelativeUpper
+  have hlower : staircaseBinLower m l * width ≤ lower := by
+    calc
+      staircaseBinLower m l * width ≤ (lower / width) * width :=
+        mul_le_mul_of_nonneg_right hbinLower hwidth.le
+      _ = lower := by field_simp [ne_of_gt hwidth]
+  have hupper : lower ≤ staircaseBinUpper m l * width := by
+    calc
+      lower = (lower / width) * width := by field_simp [ne_of_gt hwidth]
+      _ ≤ staircaseBinUpper m l * width :=
+        mul_le_mul_of_nonneg_right hbinUpper hwidth.le
+  exact ⟨l, hl,
+    horizontalTubeEndpointWindowEvent_subset_relativeHorizontalTubeEndpointWindowEvent
+      hm hlower hupper⟩
 
 end ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 
