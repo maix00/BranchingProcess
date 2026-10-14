@@ -13,6 +13,23 @@ public import Mathlib.Algebra.BigOperators.Fin
 
 An additive path records the positions obtained by accumulating an increment
 sequence. It carries no probability or branching structure.
+
+The public definitions and theorems are:
+
+- `AdditivePath.displacement`: $S_n=\sum_{j<n}\xi_j$.
+- `AdditivePath.fromIncrements`: $x+S_n$.
+- `AdditivePath.finitePrefix`: the finite vector $(x+S_j)_{0\le j\le n}$.
+- `AdditivePath.fromIncrements_apply`, `AdditivePath.displacement_zero`,
+  `AdditivePath.displacement_succ`, `AdditivePath.fromIncrements_zero`, and
+  `AdditivePath.fromIncrements_succ`: the defining prefix-sum identities.
+- `AdditivePath.displacement_add` and
+  `AdditivePath.displacement_natAdd_eq_sub`: $S_{m+n}-S_m$ is the sum of the
+  increments in the window from $m$ through $m+n$.
+- `AdditivePath.displacement_succ_eq_head_add_tail`: the first-step split.
+- `AdditivePath.displacement_neg`: termwise negation negates the sum.
+- `AdditivePath.finitePrefix_zero`, `AdditivePath.finitePrefix_succ`, and
+  `AdditivePath.finitePrefix_restrict_eq_fromIncrements`: finite-prefix
+  evaluation and consistency.
 -/
 
 open scoped BigOperators
@@ -79,6 +96,18 @@ theorem fromIncrements_succ (initial : E) (increment : ℕ → E) (n : ℕ) :
 section AddCommGroup
 
 variable {G : Type*} [AddCommGroup G]
+
+/-- The displacement of the increments after `start` is the difference
+between the positions at `finish` and `start`. -/
+theorem displacement_natAdd_eq_sub (increment : ℕ → G)
+    {start finish : ℕ} (hstart : start ≤ finish) :
+    displacement (finish - start) (fun k => increment (start + k)) =
+      displacement finish increment - displacement start increment := by
+  have hsplit := displacement_add start (finish - start) increment
+  have hend : start + (finish - start) = finish := Nat.add_sub_of_le hstart
+  rw [hend] at hsplit
+  rw [hsplit]
+  simp
 
 /-- Negating every increment negates its accumulated displacement. -/
 @[simp] theorem displacement_neg (n : ℕ) (increment : ℕ → G) :
