@@ -14,8 +14,7 @@ public import Probability.Process.RandomWalk.FunctionalLimit.Stable.PathLimit.Bl
 public import Probability.Distributions.Stable.Attraction.Norming.Inverse
 public import Probability.Sequence.IID
 public import Probability.Process.Stable.SmallDeviation.EscapeRate.PathLaw.Basic
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Discrete.Horizontal
-
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.Horizontal
 /-!
 # One-block corridors for the stable Mogulskii route
 

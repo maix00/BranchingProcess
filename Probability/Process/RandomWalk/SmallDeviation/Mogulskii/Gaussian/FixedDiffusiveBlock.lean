@@ -8,9 +8,8 @@ module
 
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.BlockScale
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Gaussian.PathLawExistence
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.EndpointBandTransfer.StableLower.EndpointMass
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.EndpointBandTransfer.StableLower.PathLimit
-
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.EndpointBandTransfer.StableLower.EndpointMass
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.EndpointBandTransfer.StableLower.PathLimit
 /-!
 # Fixed diffusive blocks from a generated Gaussian path law
 

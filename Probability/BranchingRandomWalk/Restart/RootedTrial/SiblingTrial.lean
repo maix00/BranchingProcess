@@ -6,8 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.BranchingRandomWalk.Restart.RootedTrial.ReserveLineage
-
+public import Probability.BranchingRandomWalk.Restart.RootedTrial.Reserve.Lineage
 /-!
 # A growth trial and its reserve sibling
 

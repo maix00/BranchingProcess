@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.NormalConstant
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.NormalConstant
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.CLT
 public import Probability.Process.RandomWalk.FunctionalLimit.Normal.Tightness
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Scaling.Discretization

@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.BlockScale
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Discrete.Horizontal
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.Horizontal
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Range.BlockDonsker
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Range.Rate
 import Probability.Process.Path.Oscillation

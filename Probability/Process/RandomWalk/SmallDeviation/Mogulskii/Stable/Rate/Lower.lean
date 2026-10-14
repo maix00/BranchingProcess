@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.FunctionalLimit.Stable.PathLimit.Block
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.EndpointBandTransfer.StableRate
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.EndpointBandTransfer.StableRate
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Partition
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Scale
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Scale.Rate

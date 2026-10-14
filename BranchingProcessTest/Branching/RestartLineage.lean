@@ -10,7 +10,7 @@ import Probability.BranchingRandomWalk.Restart.FirstSplit
 import Probability.BranchingRandomWalk.Restart.FirstSplit.BranchingProperty
 import Probability.BranchingRandomWalk.Restart.ReserveLineage
 import Probability.BranchingRandomWalk.Restart.Trial
-import Probability.BranchingRandomWalk.Restart.RootedTrial.ReserveLineage
+import Probability.BranchingRandomWalk.Restart.RootedTrial.Reserve.Lineage
 import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.StoppingSubtreeVector.Factorization
 import Probability.BranchingRandomWalk.Timing.TimingCounterexample
 
