@@ -8,7 +8,7 @@ module
 
 public import Probability.Process.RandomWalk.FunctionalLimit.Donsker.Continuous
 public import Probability.Process.RandomWalk.Path.Corridor.Interpolation
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Discrete.Horizontal
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.Horizontal
 public import Probability.Process.Path.Oscillation
 public import MeasureTheory.Measure.ContinuousMap.Oscillation
 public import MeasureTheory.MeasurableSpace.ContinuousMap.Oscillation

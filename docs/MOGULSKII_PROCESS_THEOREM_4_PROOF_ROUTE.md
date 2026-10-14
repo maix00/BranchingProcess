@@ -53,7 +53,7 @@ remain those recorded in `Probability/Process/RandomWalk/SmallDeviation/Mogulski
   estimates needed in a block squeeze.
 - The random-walk stable-domain functional limit and `M₂` rates are already
   available in `Probability/Process/RandomWalk/FunctionalLimit/Stable/` and
-  `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Stable/Discrete/`.
+  `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Stable/RandomWalkBounds/`.
   They concern the step path made from unit-time increments, not the full
   continuous-time path `t ↦ ξ(n t)`.
 - The generic Skorokhod tightness and finite-grid identification criteria,

@@ -1,5 +1,5 @@
 import Probability.Process.Path.PathClass.StepCorridor.Probability.Rate.Relative
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.SourcePathClassRelative
+import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.Source.PathClassRelative
 import Topology.Cadlag.TerminalLeft
 
 open MeasureTheory

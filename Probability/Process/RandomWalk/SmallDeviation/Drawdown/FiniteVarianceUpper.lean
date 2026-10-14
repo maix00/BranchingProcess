@@ -9,7 +9,7 @@ module
 public import Probability.Process.RandomWalk.Path.Drawdown
 public import Probability.Process.RandomWalk.Path.Filtration
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.BlockScale
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Discrete.Horizontal
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.Horizontal
 public import Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.FiniteVarianceUpper
 public import Probability.Independence.ConditionalIntegral
 public import Probability.Sequence.IID.ConditionalBlocks

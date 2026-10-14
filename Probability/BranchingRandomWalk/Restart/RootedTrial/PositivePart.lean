@@ -5,7 +5,7 @@ Authors: WANG Yiyang
 -/
 
 import Probability.BranchingRandomWalk.Restart.GoodSplit
-import Probability.BranchingRandomWalk.Restart.RootedTrial.CausalReserve
+import Probability.BranchingRandomWalk.Restart.RootedTrial.Reserve.Causal
 import Probability.BranchingRandomWalk.Spine.Generation
 
 /-!

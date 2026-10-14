@@ -2,10 +2,10 @@ import MeasureTheory.MeasurableSpace.CadlagPath.TerminalLeft
 import Topology.Cadlag.TerminalLeft
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.SourcePath
 import Probability.Process.Stable.SmallDeviation.PathClass.StepCorridor.Rate
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.PathClassInnerOuter
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.SourcePathClassRate
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.SourcePathClassRegimes
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.SourcePathClassInnerOuter
+import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.PathClass.InnerOuter
+import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.Source.PathClassRate
+import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.Source.PathClassRegimes
+import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.Source.PathClassInnerOuter
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Gaussian.EscapeConstant
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Gaussian.SourcePathClass
 import Probability.Process.Stable.PathLaw.UnitInterval
