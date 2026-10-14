@@ -175,6 +175,13 @@ staircase theorem; the remaining entrance input is exactly the probability
 lower bound for this robust event. The printed $8c\ell<\Delta^3$ is used for the broader
 first-window inclusion; $10c\ell<\Delta^3$ is an eventual strengthening
 for the robust central-window inclusion in this formalization.
+`StaircaseNumeric.lean` proves common width, time-ratio, and exponent
+bounds for all actual blocks from four inequalities at the global width.
+`StaircaseEndpointMargins.lean` proves the two separate endpoint-margin
+comparisons for ordinary and final blocks; `StaircaseGlobalConditions.lean`
+combines them into exactly the six per-block hypotheses of the finite
+product. These results formalize the common-threshold part of the paper's
+schedule argument without a varying block-index assumption.
 The conditional Appendix A.2 deduction is now present:
 `Entrance/RobustTransition.lean` transfers the middle Donsker event to the
 robust endpoint window, `RobustEdgeGeometry.lean` proves both fixed-prefix
@@ -191,7 +198,7 @@ bound with the proved polynomial-to-exponential comparison, giving the
 entrance probability budget for every horizon
 $L\ge\lfloor\Delta^{2+\varepsilon}\rfloor$ along arbitrary real-width
 sequences tending to infinity. The source-level probability inputs and the
-remaining concrete staircase inequalities are still needed to obtain the
+eventual verification of the global staircase inequalities is still needed to obtain the
 unconditional statement of Lemma 3.5.
 `Analysis/Asymptotics/SequentialEventually.lean` proves that eventual
 validity along every divergent real-width sequence yields a common real
