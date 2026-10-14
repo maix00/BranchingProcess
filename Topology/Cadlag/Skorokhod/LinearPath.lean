@@ -102,7 +102,8 @@ theorem abs_sub_linear_lt_two_mul_of_dist_lt
       |slope * (change t : ℝ) - slope * (t : ℝ)| =
           |slope| * |(change t : ℝ) - (t : ℝ)| := by
             rw [← abs_mul]
-            congr 1 <;> ring
+            congr 1
+            ring
       _ = |slope| * dist (change t) t := by
         rw [Subtype.dist_eq, Real.dist_eq]
       _ ≤ |slope| * radius :=
@@ -117,6 +118,59 @@ theorem abs_sub_linear_lt_two_mul_of_dist_lt
       _ ≤ 2 * radius := by
         have hmul := mul_le_mul_of_nonneg_right hslope hradius.le
         nlinarith
+  simpa [linearPath, ofContinuousMap_apply, Real.dist_eq] using htotal
+
+/-- A `J₁` ball around a line controls the pointwise error for any slope.
+The time-change error is proportional to the absolute slope. -/
+theorem abs_sub_linear_lt_radius_mul_of_dist_lt
+    {path : CadlagPath unitInterval ℝ} {slope radius : ℝ}
+    (hradius : 0 < radius)
+    (hpath : dist path (linearPath slope) < radius) :
+    ∀ t, |path t - slope * (t : ℝ)| < radius * (1 + |slope|) := by
+  have hj1 : j1EDist (linearPath slope) path < ENNReal.ofReal radius := by
+    rw [← edist_cadlagPath_eq_j1EDist, edist_dist,
+      ENNReal.ofReal_lt_ofReal_iff hradius]
+    simpa [dist_comm] using hpath
+  obtain ⟨change, hcost⟩ := exists_timeChange_j1Cost_lt hj1
+  have hclockENN : ENNReal.ofReal change.distortion < ENNReal.ofReal radius :=
+    (le_max_left _ _).trans_lt hcost
+  have hclock : change.distortion < radius :=
+    (ENNReal.ofReal_lt_ofReal_iff hradius).1 hclockENN
+  have huniform : uniformEDist (change.act (linearPath slope)) path <
+      ENNReal.ofReal radius :=
+    (le_max_right _ _).trans_lt hcost
+  intro t
+  have hpointENN :=
+    (edist_apply_le_uniformEDist
+      (change.act (linearPath slope)) path t).trans_lt huniform
+  rw [TimeChange.act_apply, edist_dist,
+    ENNReal.ofReal_lt_ofReal_iff hradius] at hpointENN
+  have hpoint : dist (path t) (linearPath slope (change t)) < radius := by
+    simpa [dist_comm] using hpointENN
+  have htime : dist (change t) t < radius :=
+    (change.dist_apply_le_distortion t).trans_lt hclock
+  have hline : dist (linearPath slope (change t))
+      (linearPath slope t) ≤ |slope| * radius := by
+    rw [linearPath, ofContinuousMap_apply, Real.dist_eq]
+    calc
+      |slope * (change t : ℝ) - slope * (t : ℝ)| =
+          |slope| * |(change t : ℝ) - (t : ℝ)| := by
+            rw [← abs_mul]
+            congr 1
+            ring
+      _ = |slope| * dist (change t) t := by
+        rw [Subtype.dist_eq, Real.dist_eq]
+      _ ≤ |slope| * radius :=
+        mul_le_mul_of_nonneg_left htime.le (abs_nonneg slope)
+  have htotal : dist (path t) (linearPath slope t) <
+      radius * (1 + |slope|) := by
+    calc
+      dist (path t) (linearPath slope t) ≤
+          dist (path t) (linearPath slope (change t)) +
+            dist (linearPath slope (change t)) (linearPath slope t) :=
+        dist_triangle _ _ _
+      _ < radius + |slope| * radius := add_lt_add_of_lt_of_le hpoint hline
+      _ = radius * (1 + |slope|) := by ring
   simpa [linearPath, ofContinuousMap_apply, Real.dist_eq] using htotal
 
 end Skorokhod
