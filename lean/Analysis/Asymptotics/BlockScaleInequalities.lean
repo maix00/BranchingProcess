@@ -6,28 +6,29 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.StaircaseRateLimit
+public import Analysis.Asymptotics.BlockScale
 
 /-!
-# Time-to-width condition for the staircase blocks
+# Rounded width and block-length scale inequalities
 
 The public theorems in this file are:
 
-- `eventually_staircaseHalfWidthThreshold`:
+- `Asymptotics.eventually_floor_half_width_ge`:
   for fixed $W_0$ and $\beta>0$,
   $W_0\le\lfloor\beta\Delta_n/2\rfloor$ eventually.
-- `eventually_staircaseMarginWidth`:
+- `Asymptotics.eventually_half_width_ge_inverse_margin`:
   for fixed $\varepsilon>0$,
   $1/\varepsilon\le\beta\Delta_n/2$ eventually.
-- `eventually_staircaseTimeRatio`:
+- `Asymptotics.eventually_floor_width_sq_le_blockLength`:
   if $\Delta_n^2/\ell_n\to0$ and $\ell_n>0$ eventually, then for every
   fixed $R\in\mathbb N$ and $\beta>0$,
   $R\lfloor\beta\Delta_n\rfloor^2\le\ell_n$ eventually.
-- `eventually_staircaseCost`:
+- `Asymptotics.eventually_linear_block_cost_lt_width_cubed`:
   $\ell_n/\Delta_n^3\to0$ implies
-  $10c\ell_n<\Delta_n^3$ eventually for fixed drift $c$.
+  $K\ell_n<\Delta_n^3$ eventually for fixed $K\in\mathbb R$.
 
-This is the block-time condition $\ell/\Delta^2\to\infty$ in Wang Yiyang,
+These deterministic estimates specialize the block-time condition
+$\ell/\Delta^2\to\infty$ in Wang Yiyang,
 *Asymptotic speed of the $N$-branching random walk with infinite offspring*,
 Chapter 3, proof of Lemma 3.5.
 -/
@@ -37,10 +38,10 @@ Chapter 3, proof of Lemma 3.5.
 open Filter
 open scoped Topology
 
-namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
+namespace Asymptotics
 
 /-- The lower rounded half-width passes every fixed integer threshold. -/
-theorem eventually_staircaseHalfWidthThreshold
+theorem eventually_floor_half_width_ge
     {width : ℕ → ℝ} {beta : ℝ}
     (hbeta : 0 < beta)
     (hwidth : Tendsto width atTop atTop)
@@ -58,7 +59,7 @@ theorem eventually_staircaseHalfWidthThreshold
 
 /-- A fixed positive endpoint margin fits inside the narrowed half-width
 when the global width tends to infinity. -/
-theorem eventually_staircaseMarginWidth
+theorem eventually_half_width_ge_inverse_margin
     {width : ℕ → ℝ} {beta margin : ℝ}
     (hbeta : 0 < beta)
     (hwidth : Tendsto width atTop atTop) :
@@ -74,7 +75,7 @@ theorem eventually_staircaseMarginWidth
 
 /-- The superquadratic block length eventually dominates every fixed
 integer multiple of the squared rounded narrowed width. -/
-theorem eventually_staircaseTimeRatio
+theorem eventually_floor_width_sq_le_blockLength
     {width : ℕ → ℝ} {blockLength : ℕ → ℕ}
     {beta : ℝ} (hbeta : 0 < beta)
     (hwidth : Tendsto width atTop atTop)
@@ -114,31 +115,31 @@ theorem eventually_staircaseTimeRatio
       (Nat.cast_nonneg ratio₀)]
   exact_mod_cast hreal
 
-/-- The subcubic block scale supplies the robust entrance and staircase
-geometry inequality for all sufficiently large widths. -/
-theorem eventually_staircaseCost
-    {width : ℕ → ℝ} {blockLength : ℕ → ℕ} {drift : ℝ}
+/-- A subcubic block length is eventually smaller than the cube of the
+width after multiplication by any fixed real coefficient. -/
+theorem eventually_linear_block_cost_lt_width_cubed
+    {width : ℕ → ℝ} {blockLength : ℕ → ℕ} {coefficient : ℝ}
     (hwidth : Tendsto width atTop atTop)
     (hscale : Tendsto (fun n =>
       (blockLength n : ℝ) / width n ^ 3) atTop (𝓝 0)) :
     ∀ᶠ n : ℕ in atTop,
-      10 * drift * (blockLength n : ℝ) < width n ^ 3 := by
+      coefficient * (blockLength n : ℝ) < width n ^ 3 := by
   have hscaled : Tendsto (fun n =>
-      (10 * drift) * ((blockLength n : ℝ) / width n ^ 3))
+      coefficient * ((blockLength n : ℝ) / width n ^ 3))
       atTop (𝓝 0) := by
     simpa using tendsto_const_nhds.mul hscale
   have hsmall : ∀ᶠ n : ℕ in atTop,
-      (10 * drift) * ((blockLength n : ℝ) / width n ^ 3) < 1 :=
+      coefficient * ((blockLength n : ℝ) / width n ^ 3) < 1 :=
     hscaled.eventually (eventually_lt_nhds (by norm_num : (0 : ℝ) < 1))
   have hwidthPos : ∀ᶠ n : ℕ in atTop, 0 < width n :=
     hwidth.eventually (eventually_gt_atTop 0)
   filter_upwards [hsmall, hwidthPos] with n hsmallN hwidthN
-  have heq : (10 * drift) * ((blockLength n : ℝ) / width n ^ 3) =
-      10 * drift * (blockLength n : ℝ) / width n ^ 3 := by ring
+  have heq : coefficient * ((blockLength n : ℝ) / width n ^ 3) =
+      coefficient * (blockLength n : ℝ) / width n ^ 3 := by ring
   rw [heq] at hsmallN
   simpa only [one_mul] using
     (div_lt_iff₀ (pow_pos hwidthN _)).1 hsmallN
 
-end ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
+end Asymptotics
 
 end
