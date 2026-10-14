@@ -7,6 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.Path.Continuous
+public import Probability.Process.Path.FirstPassage
 
 /-!
 # Running minimum of a continuous path
@@ -17,6 +18,8 @@ The public definitions and theorems in this file are:
 - `ProbabilityTheory.exists_runningMinimum_eq`: the minimum is attained.
 - `ProbabilityTheory.runningMinimum_le`: $m_f(t)\le f(u)$ for $u\le t$.
 - `ProbabilityTheory.runningMinimum_antitone`: $m_f$ is antitone.
+- `ProbabilityTheory.runningMinimum_le_iff_firstPassageBelow_le`:
+  $m_f(t)\le a$ exactly when first passage below $a$ occurs by $t$.
 - `ProbabilityTheory.runningMinimum_eq_of_between`: if
   $m_f(t+1)=m_f(t)$, then $m_f(t+u)=m_f(t)$ for $0\le u\le1$.
 - `ProbabilityTheory.aboveRunningMinimum`: $D_f(t)=f(t)-m_f(t)$.
@@ -74,6 +77,19 @@ theorem runningMinimum_antitone (f : C(ℝ≥0, ℝ)) :
   calc
     runningMinimum f t ≤ f u := runningMinimum_le f (hu.2.trans hst)
     _ = runningMinimum f s := hmin
+
+/-- A path's running minimum is at most `a` by time `t` exactly when
+its first passage below `a` occurs by `t`. -/
+theorem runningMinimum_le_iff_firstPassageBelow_le
+    (f : C(ℝ≥0, ℝ)) (t : ℝ≥0) (a : ℝ) :
+    runningMinimum f t ≤ a ↔ firstPassageBelow f a ≤ t := by
+  rw [firstPassageBelow_le_iff]
+  constructor
+  · intro hmin
+    obtain ⟨u, hu, hvalue⟩ := exists_runningMinimum_eq f t
+    exact ⟨u, hu.2, hvalue.le.trans hmin⟩
+  · rintro ⟨u, hu, hvalue⟩
+    exact (runningMinimum_le f hu).trans hvalue
 
 /-- A running minimum constant over a unit interval is constant at each
 intermediate time. -/
