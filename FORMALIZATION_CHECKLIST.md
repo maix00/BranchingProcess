@@ -146,9 +146,10 @@ Thus the lemma dependency chain is 3.1(i) → 3.2 → 3.3 → 3.4, while 3.1(ii)
 For the Brownian first-window input to Lemma 3.5, Bolthausen's Lemma 2.3
 equation (2.3) is proved in `Brownian/AboveStart/RunningMinimum.lean`, and
 equation (2.4) is proved for finite and unrestricted horizons in
-`Brownian/AboveStart/InteriorReturn.lean`. The latter follows the rational
-interval covering of repeated running-minimum values, using independent past
-and future continuous paths and the atomless Brownian running minimum.
+`Brownian/AboveStart/InteriorReturn.lean`. That file also proves that
+Bolthausen's three-contact event $U$ is null. Both conclusions use the
+rational-interval covering of repeated running-minimum values, independent
+past and future continuous paths, and the atomless Brownian running minimum.
 `Path/AboveStart/RunningMinimum.lean` reduces the endpoint equality in
 equation (2.2) to an interior return or a unit-length excursion above the
 running minimum. The remaining input is the zero probability of a unit-length
