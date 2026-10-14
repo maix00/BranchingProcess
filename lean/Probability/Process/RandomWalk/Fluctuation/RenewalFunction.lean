@@ -16,6 +16,8 @@ The public definitions and theorems in this file are:
 
 - ProbabilityTheory.RandomWalk.strictDescendingLadderHeight:
   $H_k^-=-S_{T_k^-}$ if $T_k^-<\infty$, and infinity otherwise.
+- ProbabilityTheory.RandomWalk.measurableSet_strictDescendingLadderHeight_le:
+  the finite descending ladder-height event $\{H_k^-\le x\}$ is measurable.
 - ProbabilityTheory.RandomWalk.descendingLadderRenewalFunction:
   $V_\nu(x)=\sum_{k\ge0}\mathbb P_\nu(H_k^-\le x)$.
 - ProbabilityTheory.RandomWalk.descendingLadderRenewalFunction_mono:
@@ -40,6 +42,21 @@ namespace ProbabilityTheory.RandomWalk
 noncomputable def strictDescendingLadderHeight
     (increment : ℕ → ℝ) (k : ℕ) : WithTop ℝ :=
   strictAscendingLadderHeight (fun i => -increment i) k
+
+/-- The descending ladder-height event is measurable; it is the reflected
+ascending ladder-height event. -/
+theorem measurableSet_strictDescendingLadderHeight_le
+    (k : ℕ) (x : ℝ) :
+    MeasurableSet
+      {increment : ℕ → ℝ |
+        strictDescendingLadderHeight increment k ≤ (x : WithTop ℝ)} := by
+  have hneg : Measurable (fun increment : ℕ → ℝ =>
+      fun i => -increment i) := by
+    rw [measurable_pi_iff]
+    intro i
+    exact (measurable_pi_apply i).neg
+  simpa [strictDescendingLadderHeight, Set.preimage_ofPred_eq] using
+    (measurableSet_strictAscendingLadderHeight_le k x).preimage hneg
 
 /-- The renewal mass accumulated by the descending ladder heights up
 to x under an i.i.d. increment law. -/
