@@ -20,6 +20,8 @@ The public definitions and theorems in this file are:
 - `ProbabilityTheory.runningMinimum_antitone`: $m_f$ is antitone.
 - `ProbabilityTheory.runningMinimum_le_iff_firstPassageBelow_le`:
   $m_f(t)\le a$ exactly when first passage below $a$ occurs by $t$.
+- `ProbabilityTheory.measurableSet_runningMinimum_lt_zero`:
+  $\{f:m_f(t)<0\}$ is measurable on continuous path space.
 - `ProbabilityTheory.runningMinimum_eq_of_between`: if
   $m_f(t+1)=m_f(t)$, then $m_f(t+u)=m_f(t)$ for $0\le u\le1$.
 - `ProbabilityTheory.aboveRunningMinimum`: $D_f(t)=f(t)-m_f(t)$.
@@ -90,6 +92,36 @@ theorem runningMinimum_le_iff_firstPassageBelow_le
     exact ⟨u, hu.2, hvalue.le.trans hmin⟩
   · rintro ⟨u, hu, hvalue⟩
     exact (runningMinimum_le f hu).trans hvalue
+
+/-- Strict negativity of the running minimum is a measurable path event.
+It is the union of the closed negative-level passage events. -/
+theorem measurableSet_runningMinimum_lt_zero (t : ℝ≥0) :
+    MeasurableSet {f : C(ℝ≥0, ℝ) | runningMinimum f t < 0} := by
+  let level : ℕ → ℝ := fun n => -(1 / (n + 1 : ℝ))
+  have hset : {f : C(ℝ≥0, ℝ) | runningMinimum f t < 0} =
+      ⋃ n, {f | runningMinimum f t ≤ level n} := by
+    ext f
+    simp only [Set.mem_iUnion, Set.mem_ofPred_eq]
+    constructor
+    · intro hf
+      obtain ⟨n, hn⟩ := exists_nat_one_div_lt (neg_pos.mpr hf)
+      refine ⟨n, ?_⟩
+      dsimp [level]
+      linarith
+    · rintro ⟨n, hn⟩
+      have hlevel : level n < 0 := by
+        dsimp [level]
+        exact neg_neg_of_pos (by positivity)
+      exact hn.trans_lt hlevel
+  rw [hset]
+  apply MeasurableSet.iUnion
+  intro n
+  have hfirst : MeasurableSet {f : C(ℝ≥0, ℝ) |
+      firstPassageBelow f (level n) ≤ (t : WithTop ℝ≥0)} :=
+    (measurable_firstPassageBelow _) measurableSet_Iic
+  convert hfirst using 1
+  ext f
+  exact runningMinimum_le_iff_firstPassageBelow_le f t _
 
 /-- A running minimum constant over a unit interval is constant at each
 intermediate time. -/
