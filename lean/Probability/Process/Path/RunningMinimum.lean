@@ -20,6 +20,8 @@ The public definitions and theorems in this file are:
 - `ProbabilityTheory.runningMinimum_antitone`: $m_f$ is antitone.
 - `ProbabilityTheory.runningMinimum_le_iff_firstPassageBelow_le`:
   $m_f(t)\le a$ exactly when first passage below $a$ occurs by $t$.
+- `ProbabilityTheory.measurable_runningMinimum`:
+  $f\mapsto m_f(t)$ is measurable on continuous path space.
 - `ProbabilityTheory.measurableSet_runningMinimum_lt_zero`:
   $\{f:m_f(t)<0\}$ is measurable on continuous path space.
 - `ProbabilityTheory.runningMinimum_eq_of_between`: if
@@ -93,35 +95,25 @@ theorem runningMinimum_le_iff_firstPassageBelow_le
   · rintro ⟨u, hu, hvalue⟩
     exact (runningMinimum_le f hu).trans hvalue
 
+/-- Evaluation of the running minimum at a fixed time is measurable.
+Its closed sublevel sets are closed-level first-passage events. -/
+theorem measurable_runningMinimum (t : ℝ≥0) :
+    Measurable (fun f : C(ℝ≥0, ℝ) => runningMinimum f t) := by
+  apply measurable_of_Iic
+  intro a
+  have hset : {f : C(ℝ≥0, ℝ) | runningMinimum f t ≤ a} =
+      {f | firstPassageBelow f a ≤ (t : WithTop ℝ≥0)} := by
+    ext f
+    exact runningMinimum_le_iff_firstPassageBelow_le f t a
+  rw [show (fun f : C(ℝ≥0, ℝ) => runningMinimum f t) ⁻¹' Set.Iic a =
+    {f | runningMinimum f t ≤ a} from rfl, hset]
+  exact (measurable_firstPassageBelow a) measurableSet_Iic
+
 /-- Strict negativity of the running minimum is a measurable path event.
 It is the union of the closed negative-level passage events. -/
 theorem measurableSet_runningMinimum_lt_zero (t : ℝ≥0) :
     MeasurableSet {f : C(ℝ≥0, ℝ) | runningMinimum f t < 0} := by
-  let level : ℕ → ℝ := fun n => -(1 / (n + 1 : ℝ))
-  have hset : {f : C(ℝ≥0, ℝ) | runningMinimum f t < 0} =
-      ⋃ n, {f | runningMinimum f t ≤ level n} := by
-    ext f
-    simp only [Set.mem_iUnion, Set.mem_ofPred_eq]
-    constructor
-    · intro hf
-      obtain ⟨n, hn⟩ := exists_nat_one_div_lt (neg_pos.mpr hf)
-      refine ⟨n, ?_⟩
-      dsimp [level]
-      linarith
-    · rintro ⟨n, hn⟩
-      have hlevel : level n < 0 := by
-        dsimp [level]
-        exact neg_neg_of_pos (by positivity)
-      exact hn.trans_lt hlevel
-  rw [hset]
-  apply MeasurableSet.iUnion
-  intro n
-  have hfirst : MeasurableSet {f : C(ℝ≥0, ℝ) |
-      firstPassageBelow f (level n) ≤ (t : WithTop ℝ≥0)} :=
-    (measurable_firstPassageBelow _) measurableSet_Iic
-  convert hfirst using 1
-  ext f
-  exact runningMinimum_le_iff_firstPassageBelow_le f t _
+  exact (measurable_runningMinimum t) measurableSet_Iio
 
 /-- A running minimum constant over a unit interval is constant at each
 intermediate time. -/
