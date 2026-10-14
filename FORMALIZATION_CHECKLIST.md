@@ -152,8 +152,10 @@ rational-interval covering of repeated running-minimum values, independent
 past and future continuous paths, and the atomless Brownian running minimum.
 `Path/AboveStart/RunningMinimum.lean` reduces the endpoint equality in
 equation (2.2) to an interior return or a unit-length excursion above the
-running minimum. The remaining input is the zero probability of a unit-length
-excursion, which Bolthausen derives from the Lévy decomposition of the
+running minimum. Outside $U$, it also identifies the window start with the
+first passage of its height and proves that every strictly lower level is
+first reached after the returned endpoint. The remaining input is the zero
+probability of a unit-length excursion, which Bolthausen derives from the Lévy decomposition of the
 descending Brownian hitting-time process. The pathwise process
 $\tau_x=\inf\{t:B(t)\le-x\}$, its monotonicity, and its fixed-level
 measurability are in `Path/DescendingHittingTime.lean`. The existing
