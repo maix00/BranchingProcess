@@ -6,24 +6,21 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.Path.Window.Continuous
+public import Probability.Process.Path.AboveStart.Continuous
+public import Probability.Process.Path.RunningMinimum
 
 /-!
 # First windows and the running minimum of a continuous path
 
 The public definitions and theorems in this file are:
 
-- `ProbabilityTheory.runningMinimum`: $m_f(t)=\min_{0\le u\le t}f(u)$.
-- `ProbabilityTheory.exists_runningMinimum_eq`: the minimum is attained.
-- `ProbabilityTheory.runningMinimum_le`: $m_f(t)\le f(u)$ for $u\le t$.
-- `ProbabilityTheory.runningMinimum_antitone`: $m_f$ is antitone.
-- `ProbabilityTheory.runningMinimum_eq_of_between`: if
-  $m_f(t+1)=m_f(t)$, then $m_f(t+u)=m_f(t)$ for $0\le u\le1$.
 - `ProbabilityTheory.firstNonnegativeWindowStartUpTo_runningMinimum`:
   if $T^s(f)=t<\infty$, then $f(t)=m_f(t)=m_f(t+1)$.
 - `ProbabilityTheory.firstNonnegativeWindowStartUpTo_eq_runningMinimum_iff`:
   for $0\le u\le1$ and $T^s(f)=t$, the equality $f(t+u)=f(t)$
   holds exactly when $f(t+u)=m_f(t+u)$.
+- `ProbabilityTheory.firstNonnegativeWindowStartUpTo_lastStart_aboveRunningMinimum_eq_zero`:
+  $T^{t+1}(f)=t$ implies $D_f(t)=0$.
 - `ProbabilityTheory.firstNonnegativeWindowStartUpTo_eq_coe_iff_runningMinimum`:
   $T^s(f)=t$ exactly when $t+1\le s$ and $t$ is the first time for
   which $m_f(t+1)=m_f(t)$.
@@ -39,57 +36,6 @@ theorem for random walks conditioned to stay positive*, Ann. Probab. 4(3)
 open scoped NNReal
 
 namespace ProbabilityTheory
-
-/-- The minimum of a continuous path on the time interval $[0,t]$. -/
-noncomputable def runningMinimum (f : C(ℝ≥0, ℝ)) (t : ℝ≥0) : ℝ :=
-  sInf (f '' Set.Icc 0 t)
-
-/-- A continuous path attains its running minimum. -/
-theorem exists_runningMinimum_eq (f : C(ℝ≥0, ℝ)) (t : ℝ≥0) :
-    ∃ u ∈ Set.Icc (0 : ℝ≥0) t, f u = runningMinimum f t := by
-  have hne : (Set.Icc (0 : ℝ≥0) t).Nonempty :=
-    ⟨0, bot_le, bot_le⟩
-  obtain ⟨u, hu, hmin⟩ :=
-    (isCompact_Icc : IsCompact (Set.Icc (0 : ℝ≥0) t)).exists_isMinOn
-      hne f.continuous.continuousOn
-  have hcompact : IsCompact (f '' Set.Icc (0 : ℝ≥0) t) :=
-    isCompact_Icc.image f.continuous
-  have himage : (f '' Set.Icc (0 : ℝ≥0) t).Nonempty :=
-    ⟨f 0, 0, ⟨bot_le, bot_le⟩, rfl⟩
-  have hvalue : f u = sInf (f '' Set.Icc (0 : ℝ≥0) t) := by
-    apply le_antisymm
-    · apply le_csInf himage
-      rintro v ⟨w, hw, rfl⟩
-      exact hmin hw
-    · exact csInf_le hcompact.bddBelow ⟨u, hu, rfl⟩
-  exact ⟨u, hu, hvalue⟩
-
-/-- The running minimum bounds every path value up to the same time. -/
-theorem runningMinimum_le (f : C(ℝ≥0, ℝ)) {u t : ℝ≥0}
-    (hut : u ≤ t) : runningMinimum f t ≤ f u := by
-  have hcompact : IsCompact (f '' Set.Icc (0 : ℝ≥0) t) :=
-    isCompact_Icc.image f.continuous
-  exact csInf_le hcompact.bddBelow ⟨u, ⟨bot_le, hut⟩, rfl⟩
-
-/-- The running minimum decreases as the time interval grows. -/
-theorem runningMinimum_antitone (f : C(ℝ≥0, ℝ)) :
-    Antitone (runningMinimum f) := by
-  intro s t hst
-  obtain ⟨u, hu, hmin⟩ := exists_runningMinimum_eq f s
-  calc
-    runningMinimum f t ≤ f u := runningMinimum_le f (hu.2.trans hst)
-    _ = runningMinimum f s := hmin
-
-/-- A running minimum constant over a unit interval is constant at each
-intermediate time. -/
-theorem runningMinimum_eq_of_between (f : C(ℝ≥0, ℝ)) {t : ℝ≥0}
-    (hflat : runningMinimum f (t + 1) = runningMinimum f t)
-    {u : ℝ≥0} (hu : u ≤ 1) :
-    runningMinimum f (t + u) = runningMinimum f t := by
-  apply le_antisymm
-  · exact runningMinimum_antitone f (le_add_of_nonneg_right u.property)
-  · rw [← hflat]
-    exact runningMinimum_antitone f (add_le_add_right hu t)
 
 private theorem earlier_nonnegativeWindowStart_of_runningMinimum_lt
     (f : C(ℝ≥0, ℝ)) {t : ℝ≥0}
@@ -174,6 +120,16 @@ theorem firstNonnegativeWindowStartUpTo_eq_runningMinimum_iff
   obtain ⟨hrecord, hflat⟩ :=
     firstNonnegativeWindowStartUpTo_runningMinimum f s t hfirst
   rw [runningMinimum_eq_of_between f hflat hu, ← hrecord]
+
+/-- If the first unit window begins at the last admissible time, its
+starting height above the running minimum is zero. This is the event
+inclusion used for equation (2.3) in Bolthausen's Lemma 2.3. -/
+theorem firstNonnegativeWindowStartUpTo_lastStart_aboveRunningMinimum_eq_zero
+    (f : C(ℝ≥0, ℝ)) (t : ℝ≥0)
+    (hfirst : firstNonnegativeWindowStartUpTo f (t + 1) = t) :
+    aboveRunningMinimum f t = 0 := by
+  exact (aboveRunningMinimum_eq_zero_iff f t).2
+    (firstNonnegativeWindowStartUpTo_runningMinimum f (t + 1) t hfirst).1
 
 private theorem exists_nonnegativeWindowStart_le_of_runningMinimum_eq
     (f : C(ℝ≥0, ℝ)) {t : ℝ≥0}

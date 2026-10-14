@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.Brownian.ContinuousPathLaw
-public import Probability.Process.Brownian.Window.NonAntitone
+public import Probability.Process.Brownian.AboveStart.NonAntitone
 
 /-!
 # Almost-sure finiteness of the first Brownian unit window

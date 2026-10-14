@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.Path.Window.Continuous
+public import Probability.Process.Path.AboveStart.Continuous
 
 /-!
 # Local windows above the starting level
