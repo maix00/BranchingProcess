@@ -7,6 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.Brownian.Skorokhod
+public import Probability.Process.Brownian.ContinuousModification
 public import Mathlib.MeasureTheory.Measure.Prod
 
 /-!
@@ -19,6 +20,10 @@ The public objects and theorems in this file are:
 - `BrownianBessel3.radius`: $R_t=\sqrt{B_t^{(1)2}+B_t^{(2)2}+B_t^{(3)2}}$.
 - `BrownianBessel3.path` and `BrownianBessel3.pathLaw`: the radial path on
   $[0,1]$ and its pushforward law $P^{\otimes3}\circ R^{-1}$.
+- `BrownianBessel3.pathLawOfBrownian`: the radial path law formed from the
+  measurable continuous modification of a Brownian process.
+- `BrownianBessel3.isProbabilityMeasure_pathLawOfBrownian`: this path law
+  has total mass one.
 - `BrownianBessel3.continuous_radius`, `measurable_radius`,
   `measurable_path`, and `isProbabilityMeasure_pathLaw`: continuity,
   measurability, and unit total mass of this path construction.
@@ -123,6 +128,15 @@ noncomputable def pathLaw {Ω : Type*} [MeasurableSpace Ω]
     Measure (CadlagPath unitInterval ℝ) :=
   (productLaw P).map (path B hB)
 
+/-- The radial path law of three independent copies of a Brownian process,
+using the measurable continuous version determined by its coordinate laws. -/
+noncomputable def pathLawOfBrownian {Ω : Type*} [MeasurableSpace Ω]
+    {P : Measure Ω} [IsProbabilityMeasure P] {B : ℝ≥0 → Ω → ℝ}
+    (hB : IsBrownianReal B P) (hBmeasurable : ∀ t, Measurable (B t)) :
+    Measure (CadlagPath unitInterval ℝ) :=
+  pathLaw P (hB.continuousModification hBmeasurable)
+    (hB.continuous_continuousModification hBmeasurable)
+
 theorem isProbabilityMeasure_pathLaw {Ω : Type*} [MeasurableSpace Ω]
     (P : Measure Ω) [IsProbabilityMeasure P]
     (B : ℝ≥0 → Ω → ℝ) (hB : ∀ ω, Continuous (B · ω))
@@ -131,6 +145,18 @@ theorem isProbabilityMeasure_pathLaw {Ω : Type*} [MeasurableSpace Ω]
   unfold pathLaw
   exact (Measure.isProbabilityMeasure_map_iff
     (measurable_path hB hBmeas).aemeasurable).2 inferInstance
+
+/-- The radial path law from the measurable continuous version of a
+Brownian process is a probability measure. -/
+theorem isProbabilityMeasure_pathLawOfBrownian
+    {Ω : Type*} [MeasurableSpace Ω]
+    {P : Measure Ω} [IsProbabilityMeasure P] {B : ℝ≥0 → Ω → ℝ}
+    (hB : IsBrownianReal B P) (hBmeasurable : ∀ t, Measurable (B t)) :
+    IsProbabilityMeasure (pathLawOfBrownian hB hBmeasurable) := by
+  exact isProbabilityMeasure_pathLaw P
+    (hB.continuousModification hBmeasurable)
+    (hB.continuous_continuousModification hBmeasurable)
+    (fun t => hB.measurable_continuousModification hBmeasurable t)
 
 end BrownianBessel3
 
