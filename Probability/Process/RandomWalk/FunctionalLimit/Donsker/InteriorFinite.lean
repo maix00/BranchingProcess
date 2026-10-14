@@ -17,6 +17,9 @@ The public definitions and theorems in this file are:
 - `ProbabilityTheory.RandomWalk.FunctionalLimit.Donsker.finiteInteriorEvent`:
   $c\le x+S_j\le\Delta$ for $1\le j\le n$, with
   $x+S_n\in[5\Delta/12,7\Delta/12]$.
+- `ProbabilityTheory.RandomWalk.FunctionalLimit.Donsker.scaledInteriorPathEvent_eq_closedCorridor`:
+  the translated and scaled path event is a closed Skorokhod corridor
+  with an endpoint interval.
 - `ProbabilityTheory.RandomWalk.FunctionalLimit.Donsker.mem_finiteInteriorEvent_iff_scaledPath`:
   this event equals the normalized path corridor at
   $z=x/\Delta$, $r=\sqrt n/\Delta$, and $o=c/\Delta$.
