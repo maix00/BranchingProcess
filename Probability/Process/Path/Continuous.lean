@@ -7,16 +7,29 @@ Authors: WANG Yiyang
 module
 
 public import Mathlib.MeasureTheory.Constructions.BorelSpace.ContinuousMap
+public import Mathlib.Topology.Instances.NNReal.Lemmas
 
 /-!
 # Continuous sample paths
 
-This file turns a process whose every sample path is continuous into a
-continuous-map-valued function. Randomness remains in the outer argument:
-processes use mathlib's convention `Time → Ω → State`.
+The public definitions and theorems in this file are:
+
+- `ProbabilityTheory.continuousPath`: a process with continuous sample
+  paths is bundled as an element of $C(\mathrm{Time},\mathrm{State})$.
+- `ProbabilityTheory.continuousPath_apply`: evaluation of that bundle
+  recovers the original process coordinate.
+- `ProbabilityTheory.measurable_continuousPath`: measurable coordinates
+  make this continuous-path-valued random variable measurable.
+- `ProbabilityTheory.freezeAfter`: the path $u\mapsto f(\min(u,r))$.
+- `ProbabilityTheory.measurable_freezeAfter`: freezing at $r$ is a
+  measurable operation on continuous path space.
+
+Processes use mathlib's convention `Time → Ω → State`.
 -/
 
 @[expose] public section
+
+open scoped NNReal
 
 namespace ProbabilityTheory
 
@@ -47,5 +60,16 @@ theorem measurable_continuousPath {Time Ω State : Type*}
     Measurable (continuousPath X hX) := by
   rw [ContinuousMap.measurable_iff_eval]
   simpa using hXmeas
+
+/-- Freeze a continuous path at the value it has at time `r`. -/
+noncomputable def freezeAfter (f : C(ℝ≥0, ℝ)) (r : ℝ≥0) : C(ℝ≥0, ℝ) :=
+  ⟨fun u => f (min u r), by fun_prop⟩
+
+/-- Freezing a continuous path at a fixed time is measurable. -/
+theorem measurable_freezeAfter (r : ℝ≥0) :
+    Measurable (fun f : C(ℝ≥0, ℝ) => freezeAfter f r) := by
+  rw [ContinuousMap.measurable_iff_eval]
+  intro u
+  exact ContinuousMap.measurable_eval (min u r)
 
 end ProbabilityTheory
