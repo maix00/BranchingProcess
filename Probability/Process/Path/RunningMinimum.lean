@@ -24,6 +24,9 @@ The public definitions and theorems in this file are:
   $f\mapsto m_f(t)$ is measurable on continuous path space.
 - `ProbabilityTheory.runningMinimum_freezeAfter_eq`:
   for $t\le r$, freezing the path after $r$ preserves $m_f(t)$.
+- `ProbabilityTheory.runningMinimum_shiftToZero_eq_of_record`:
+  a record value attained between $r$ and $q$ gives the minimum of
+  the increment path on $[0,q-r]$.
 - `ProbabilityTheory.measurableSet_runningMinimum_lt_zero`:
   $\{f:m_f(t)<0\}$ is measurable on continuous path space.
 - `ProbabilityTheory.runningMinimum_eq_of_between`: if
@@ -127,6 +130,32 @@ theorem runningMinimum_freezeAfter_eq (f : C(ℝ≥0, ℝ))
     refine ⟨u, hu, ?_⟩
     simp [freezeAfter, min_eq_left (hu.2.trans htr)]
 
+/-- If the running minimum stays constant from `r` to `q` and is
+attained at `v` in this interval, the minimum of the increments from
+`r` is the previous minimum minus the value at `r`. -/
+theorem runningMinimum_shiftToZero_eq_of_record (f : C(ℝ≥0, ℝ))
+    {r v q : ℝ≥0} (hrv : r ≤ v) (hvq : v ≤ q)
+    (hflat : runningMinimum f q = runningMinimum f r)
+    (hrecord : f v = runningMinimum f r) :
+    runningMinimum (shiftToZero f r) (q - r) =
+      runningMinimum f r - f r := by
+  have hrq : r ≤ q := hrv.trans hvq
+  apply le_antisymm
+  · have hv : v - r ≤ q - r := tsub_le_tsub_right hvq r
+    have hle := runningMinimum_le (shiftToZero f r) hv
+    have hrv' : r + (v - r) = v := add_tsub_cancel_of_le hrv
+    simpa [shiftToZero, hrv', hrecord] using hle
+  · obtain ⟨u, hu, hmin⟩ :=
+      exists_runningMinimum_eq (shiftToZero f r) (q - r)
+    have hruq : r + u ≤ q := by
+      calc
+        r + u ≤ r + (q - r) := by simpa [add_comm] using add_le_add_left hu.2 r
+        _ = q := add_tsub_cancel_of_le hrq
+    have hle := runningMinimum_le f hruq
+    rw [hflat] at hle
+    rw [← hmin]
+    change runningMinimum f r - f r ≤ f (r + u) - f r
+    linarith
 /-- Strict negativity of the running minimum is a measurable path event.
 It is the union of the closed negative-level passage events. -/
 theorem measurableSet_runningMinimum_lt_zero (t : ℝ≥0) :
