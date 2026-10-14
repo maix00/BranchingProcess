@@ -22,6 +22,8 @@ The public definitions and theorems in this file are:
   $m_f(t)\le a$ exactly when first passage below $a$ occurs by $t$.
 - `ProbabilityTheory.measurable_runningMinimum`:
   $f\mapsto m_f(t)$ is measurable on continuous path space.
+- `ProbabilityTheory.runningMinimum_freezeAfter_eq`:
+  for $t\le r$, freezing the path after $r$ preserves $m_f(t)$.
 - `ProbabilityTheory.measurableSet_runningMinimum_lt_zero`:
   $\{f:m_f(t)<0\}$ is measurable on continuous path space.
 - `ProbabilityTheory.runningMinimum_eq_of_between`: if
@@ -108,6 +110,22 @@ theorem measurable_runningMinimum (t : ℝ≥0) :
   rw [show (fun f : C(ℝ≥0, ℝ) => runningMinimum f t) ⁻¹' Set.Iic a =
     {f | runningMinimum f t ≤ a} from rfl, hset]
   exact (measurable_firstPassageBelow a) measurableSet_Iic
+
+/-- Freezing a path after `r` preserves its running minimum at times
+up to `r`. -/
+theorem runningMinimum_freezeAfter_eq (f : C(ℝ≥0, ℝ))
+    {t r : ℝ≥0} (htr : t ≤ r) :
+    runningMinimum (freezeAfter f r) t = runningMinimum f t := by
+  unfold runningMinimum
+  congr 1
+  ext x
+  constructor
+  · rintro ⟨u, hu, rfl⟩
+    refine ⟨u, hu, ?_⟩
+    simp [freezeAfter, min_eq_left (hu.2.trans htr)]
+  · rintro ⟨u, hu, rfl⟩
+    refine ⟨u, hu, ?_⟩
+    simp [freezeAfter, min_eq_left (hu.2.trans htr)]
 
 /-- Strict negativity of the running minimum is a measurable path event.
 It is the union of the closed negative-level passage events. -/

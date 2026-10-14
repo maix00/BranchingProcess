@@ -8,6 +8,7 @@ module
 
 public import Probability.ConvergenceInDistribution.ContinuousMap.FiniteDimensional
 public import Probability.Process.Brownian.ContinuousModification
+public import Probability.Process.Path.TimeGrid.NonnegativeRationals
 public import Mathlib.Data.Rat.Encodable
 public import Mathlib.Topology.ContinuousMap.SecondCountableSpace
 public import Mathlib.Topology.Metrizable.ContinuousMap
@@ -40,50 +41,6 @@ open MeasureTheory ProbabilityTheory ProbabilityTheory.BrownianReal
 open scoped NNReal
 
 namespace ProbabilityTheory
-
-private instance : Countable ℚ≥0 := by
-  have h : Set.Countable {q : ℚ | 0 ≤ q} :=
-    Set.countable_univ.mono (Set.subset_univ _)
-  exact h.to_subtype
-
-private def nonnegativeRationalTime (q : ℚ≥0) : ℝ≥0 :=
-  q
-
-private theorem nonnegativeRationalTime_injective :
-    Function.Injective nonnegativeRationalTime := by
-  exact NNRat.cast_injective
-
-private theorem denseRange_nonnegativeRationalTime :
-    DenseRange nonnegativeRationalTime := by
-  rw [Metric.denseRange_iff]
-  intro x ε hε
-  by_cases hx : x = 0
-  · subst x
-    refine ⟨0, ?_⟩
-    rw [NNReal.dist_eq]
-    simpa [nonnegativeRationalTime] using hε
-  · have hxreal : (x : ℝ) ≠ 0 := by
-      intro hx0
-      exact hx (NNReal.coe_injective hx0)
-    have hxpos : 0 < (x : ℝ) :=
-      lt_of_le_of_ne x.2 (Ne.symm hxreal)
-    let lower : ℝ := max 0 ((x : ℝ) - ε)
-    have hlowerUpper : lower < (x : ℝ) + ε := by
-      dsimp [lower]
-      exact max_lt (by linarith) (by linarith)
-    obtain ⟨q, hlowerq, hqupper⟩ := exists_rat_btwn hlowerUpper
-    have hqnonneg : 0 ≤ q := by
-      have hqpos := (le_max_left 0 ((x : ℝ) - ε)).trans_lt hlowerq
-      exact_mod_cast hqpos.le
-    refine ⟨⟨q, hqnonneg⟩, ?_⟩
-    rw [NNReal.dist_eq, abs_lt]
-    constructor
-    · change -ε < (x : ℝ) - (q : ℝ)
-      linarith [hqupper]
-    · change (x : ℝ) - (q : ℝ) < ε
-      have hlow : (x : ℝ) - ε < q :=
-        (le_max_right 0 ((x : ℝ) - ε)).trans_lt hlowerq
-      linarith
 
 private theorem continuousPath_standardBorel :
     StandardBorelSpace C(ℝ≥0, ℝ) := by infer_instance
