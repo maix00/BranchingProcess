@@ -18,10 +18,16 @@ The public definitions and theorems in this file are:
   $H_k^-=-S_{T_k^-}$ if $T_k^-<\infty$, and infinity otherwise.
 - ProbabilityTheory.RandomWalk.measurableSet_strictDescendingLadderHeight_le:
   the finite descending ladder-height event $\{H_k^-\le x\}$ is measurable.
+- ProbabilityTheory.RandomWalk.strictDescendingLadderHeight_zero:
+  $H_0^-=0$.
 - ProbabilityTheory.RandomWalk.descendingLadderRenewalFunction:
   $V_\nu(x)=\sum_{k\ge0}\mathbb P_\nu(H_k^-\le x)$.
 - ProbabilityTheory.RandomWalk.descendingLadderRenewalFunction_mono:
   $x\le y$ implies $V_\nu(x)\le V_\nu(y)$.
+- ProbabilityTheory.RandomWalk.descendingLadderRenewalFunction_measurable:
+  $x\mapsto V_\nu(x)$ is Borel measurable.
+- ProbabilityTheory.RandomWalk.one_le_descendingLadderRenewalFunction:
+  $V_\nu(x)\ge1$ for $x\ge0$.
 
 The renewal function is the one used by Francesco Caravenna and Loïc
 Chaumont, *Invariance principles for random walks conditioned to stay
@@ -58,6 +64,11 @@ theorem measurableSet_strictDescendingLadderHeight_le
   simpa [strictDescendingLadderHeight, Set.preimage_ofPred_eq] using
     (measurableSet_strictAscendingLadderHeight_le k x).preimage hneg
 
+/-- The zeroth descending ladder height is the initial height zero. -/
+theorem strictDescendingLadderHeight_zero (increment : ℕ → ℝ) :
+    strictDescendingLadderHeight increment 0 = 0 :=
+  strictAscendingLadderHeight_zero (fun i => -increment i)
+
 /-- The renewal mass accumulated by the descending ladder heights up
 to x under an i.i.d. increment law. -/
 noncomputable def descendingLadderRenewalFunction
@@ -75,6 +86,36 @@ theorem descendingLadderRenewalFunction_mono
   apply measure_mono
   intro increment hin
   exact hin.trans (WithTop.coe_le_coe.mpr hxy)
+
+/-- The monotone descending ladder-height renewal function is Borel
+measurable in its height argument. -/
+theorem descendingLadderRenewalFunction_measurable
+    (ν : Measure ℝ) :
+    Measurable (descendingLadderRenewalFunction ν) :=
+  (descendingLadderRenewalFunction_mono ν).measurable
+
+/-- The zeroth descending ladder level contributes one unit of renewal
+mass on every nonnegative height interval. -/
+theorem one_le_descendingLadderRenewalFunction
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    {x : ℝ} (hx : 0 ≤ x) :
+    1 ≤ descendingLadderRenewalFunction ν x := by
+  have hzero :
+      {increment : ℕ → ℝ |
+        strictDescendingLadderHeight increment 0 ≤ (x : WithTop ℝ)} =
+      Set.univ := by
+    ext increment
+    simp [strictDescendingLadderHeight_zero, hx]
+  calc
+    (1 : ℝ≥0∞) = iidSequenceLaw ν
+        {increment | strictDescendingLadderHeight increment 0 ≤
+          (x : WithTop ℝ)} := by rw [hzero]; simp
+    _ ≤ descendingLadderRenewalFunction ν x := by
+      unfold descendingLadderRenewalFunction
+      exact ENNReal.le_tsum
+        (f := fun k : ℕ => iidSequenceLaw ν
+          {increment | strictDescendingLadderHeight increment k ≤
+            (x : WithTop ℝ)}) 0
 
 end ProbabilityTheory.RandomWalk
 

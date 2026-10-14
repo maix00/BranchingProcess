@@ -186,12 +186,13 @@ schedule argument without a varying block-index assumption.
 `ConcreteStaircaseGlobalLower.lean` applies this reduction to the exact
 finite staircase and robust entrance probability, yielding the target
 exponential lower bound from the global inequalities.
-`StaircaseRateLimit.lean` proves that the rounded narrowed width divided by
-$\Delta$ tends to $\beta=1-1/(3m)$ when $\ell/\Delta^3\to0$, and therefore
-derives the paper's exponent comparison from the strict margin
-$d<d''\beta^2$; no fixed factor-four rate loss is imposed.
-`StaircaseTimeLimit.lean` derives the width threshold, margin width,
-superquadratic time ratio, and subcubic geometric cost eventually.
+`Analysis/Asymptotics/NarrowedWidth.lean` owns the general rounded-width
+ratio and strict exponent comparison. `StaircaseRateLimit.lean` specializes
+them to the paper's narrowed width under $\ell/\Delta^3\to0$ and the
+strict margin $d<d''\beta^2$, where $\beta=1-1/(3m)$.
+`Analysis/Asymptotics/BlockScaleInequalities.lean` owns the general
+rounded-width threshold, margin, superquadratic time ratio, and subcubic
+linear-cost comparisons; the staircase proof instantiates them.
 `StaircaseEndpointLimit.lean` proves that the ordinary endpoint fraction
 tends to $1/(3\beta)$; `StaircaseEventually.lean` takes one common eventual
 threshold for all global conditions. `ConcreteStaircaseAsymptoticLower.lean`
@@ -229,8 +230,9 @@ two reflected transition lower bounds over all divergent real-width
 sequences; the width in its conclusion ranges over all sufficiently large
 real values rather than just integer widths.
 The fluctuation modules now prove $T_k^\pm\le n\iff k\le\ell_n^\pm$,
-measurability of both extended ladder times, and measurability of their
-finite-height events. These are foundational steps toward the cited
+measurability of both extended ladder times and their finite-height events,
+and monotonicity and measurability of the descending ladder renewal function
+$V_\nu(x)=\sum_{k\ge0}\mathbb P_\nu(H_k^-\le x)$. These are foundational steps toward the cited
 renewal and local-time limit theorems; the survival regular variation
 and conditioned meander convergence themselves remain to be proved.
 
