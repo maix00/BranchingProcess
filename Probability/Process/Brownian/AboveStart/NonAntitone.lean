@@ -8,7 +8,7 @@ module
 
 public import Mathlib.Probability.BrownianMotion.Basic
 public import Probability.Distributions.Gaussian.Sign
-public import Probability.Process.Path.Window.LocalMinimum
+public import Probability.Process.Path.AboveStart.LocalMinimum
 
 /-!
 # Brownian paths increase somewhere on every time interval
