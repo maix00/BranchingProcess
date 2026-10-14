@@ -27,7 +27,7 @@ The public objects and theorems in this file are:
   membership of $S_{\lfloor nt\rfloor}/(\sigma\sqrt n)$ in the
   normalized transition corridor with scale $\Delta/\sqrt n$.
 - `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.exists_eventually_transitionConditionalProbability_ge`:
-  given the Caravenna--Chaumont conditioned path limit, Brownian-meander
+  given the Iglehart--Bolthausen conditioned path limit, Brownian-meander
   support at the specified straight path, and $\Delta_n/\sqrt{n+1}\to1$,
   some $q>0$ satisfies $\mathbb P(D_{n+1,\Delta_n}\mid C_{n+1})\ge q$
   eventually.
@@ -141,7 +141,7 @@ theorem mem_nonnegativeTransitionEvent_iff_normalizedTransitionCorridor
         (div_le_div_iff_of_pos_right hnorm).1 hend.2⟩
 
 /-- The positive conditional probability of the precise finite transition
-event follows from the Caravenna--Chaumont conditioned invariance principle
+event follows from the Iglehart--Bolthausen conditioned invariance principle
 and the Brownian-meander support step in Wang Yiyang, Chapter 3,
 Lemma 3.5, Appendix A.2. The invariance principle and support remain
 explicit assumptions until their laws are constructed. -/
@@ -214,8 +214,8 @@ noncomputable def diffusiveTransitionHorizon
 
 /-- The conditioned path limit at integer times remains valid along the
 diffusive transition horizons in Wang Yiyang, Chapter 3, Lemma 3.5,
-Appendix A.2. This is a cofinal reindexing of the limit in
-Caravenna--Chaumont, equation (3.3). -/
+Appendix A.2. This is a cofinal reindexing of the Iglehart--Bolthausen
+limit recalled by Caravenna--Chaumont in equation (3.3). -/
 theorem conditionedMeanderLimit_diffusive
     {Ωm : Type*} [MeasurableSpace Ωm]
     {ν : Measure ℝ} [IsProbabilityMeasure ν]
@@ -271,7 +271,8 @@ theorem conditionedMeanderLimit_diffusive
 /-- The conditional transition probability for the exact diffusive horizon
 $N_{\Delta,m}=\lfloor\Delta^2\rfloor-m$. The scale relation is proved in
 `Analysis.Asymptotics.ShiftedFloor`; the meander limit and support are the
-remaining external inputs from Caravenna--Chaumont, equation (3.3), and
+remaining external inputs from the Iglehart--Bolthausen limit recalled in
+Caravenna--Chaumont, equation (3.3), and
 Wang Yiyang, Chapter 3, Lemma 3.5, Appendix A.2. -/
 theorem exists_eventually_diffusiveTransitionConditionalProbability_ge
     {Ωm : Type*} [MeasurableSpace Ωm]
