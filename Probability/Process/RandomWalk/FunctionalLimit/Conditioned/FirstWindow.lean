@@ -22,6 +22,11 @@ The public theorem in this file is:
   the joint mass of a first surviving window at $m$ and a finite block
   event equals the candidate mass times the probability of that block
   event intersected with finite survival.
+- `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.measure_firstWindow_block_union_eq_tsum`:
+  $\mathbb P(\bigcup_m(F_{n,m}\cap\{B_m\in A\}))
+  =(\sum_m\mathbb P(C_{n,m}))\mathbb P(B_0\in A\cap C_n)$,
+  where $F_{n,m}$ is the first surviving window and $C_{n,m}$ its
+  prefix-measurable candidate event.
 
 This is the independent-block step behind the first-window proof of Erwin
 Bolthausen, *On a functional central limit theorem for random walks
@@ -34,6 +39,7 @@ Stat. 50(1) (2014), Section 3.1, equation (17), DOI 10.1214/12-AIHP487.
 @[expose] public section
 
 open MeasureTheory ProbabilityTheory
+open scoped ENNReal
 
 namespace ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned
 
@@ -108,6 +114,65 @@ theorem measure_firstWindow_inter_block_eq_mul
   rw [hset]
   exact measure_candidate_inter_block_eq_mul ν n start _
     (hevent.inter (measurableSet_finiteSurvivesNonnegative n))
+
+/-- Countable additivity of the disjoint first-window events turns the
+fixed-start factorization into a path-law identity. Almost-sure existence
+of a first window is a separate recurrence step in the argument described by
+Vladislav Vysotsky, *Positivity of integrated random walks*, Section 3.1,
+equation (17), DOI 10.1214/12-AIHP487. -/
+theorem measure_firstWindow_block_union_eq_tsum
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (n : ℕ) (event : Set (Fin n → ℝ))
+    (hevent : MeasurableSet event) :
+    (iidSequenceLaw ν)
+      (⋃ start : ℕ,
+        {increment | IsFirstSurvivingWindow n start increment} ∩
+          (Combinatorics.Sequence.blockCoordinates start n) ⁻¹' event) =
+      (∑' start : ℕ,
+        (iidSequenceLaw ν)
+          {increment | IsCandidateWindowStart n start increment}) *
+        (iidSequenceLaw ν)
+          ((Combinatorics.Sequence.blockCoordinates 0 n) ⁻¹'
+            (event ∩ {block | FiniteSurvivesNonnegative block})) := by
+  let μ := iidSequenceLaw ν
+  let first : ℕ → Set (ℕ → ℝ) := fun start =>
+    {increment | IsFirstSurvivingWindow n start increment}
+  let block : ℕ → Set (ℕ → ℝ) := fun start =>
+    (Combinatorics.Sequence.blockCoordinates start n) ⁻¹' event
+  let candidate : ℕ → Set (ℕ → ℝ) := fun start =>
+    {increment | IsCandidateWindowStart n start increment}
+  let p : ℝ≥0∞ := μ
+    ((Combinatorics.Sequence.blockCoordinates 0 n) ⁻¹'
+      (event ∩ {block | FiniteSurvivesNonnegative block}))
+  have hpair : Pairwise (fun i j => Disjoint (first i) (first j)) := by
+    intro i j hij
+    apply Set.disjoint_left.mpr
+    intro increment hi hj
+    exact hij (hi.unique hj)
+  have hpairBlock : Pairwise
+      (fun i j => Disjoint (first i ∩ block i) (first j ∩ block j)) := by
+    intro i j hij
+    apply Set.disjoint_left.mpr
+    intro increment hi hj
+    exact (Set.disjoint_left.mp (hpair hij)) hi.1 hj.1
+  have hfirstMeasurable (start : ℕ) : MeasurableSet (first start) :=
+    measurableSet_isFirstSurvivingWindow n start
+  have hpairMeasurable (start : ℕ) :
+      MeasurableSet (first start ∩ block start) :=
+    (hfirstMeasurable start).inter
+      (hevent.preimage (measurable_blockCoordinates start n))
+  have hpairMass (start : ℕ) :
+      μ (first start ∩ block start) = μ (candidate start) * p := by
+    exact measure_firstWindow_inter_block_eq_mul ν n start event hevent
+  calc
+    μ (⋃ start, first start ∩ block start) =
+        ∑' start, μ (first start ∩ block start) :=
+      measure_iUnion hpairBlock hpairMeasurable
+    _ = ∑' start, μ (candidate start) * p :=
+      tsum_congr hpairMass
+    _ = (∑' start, μ (candidate start)) * p :=
+      ENNReal.tsum_mul_right
+
 
 end ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned
 
