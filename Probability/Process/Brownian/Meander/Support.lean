@@ -24,6 +24,8 @@ The public theorems in this file are:
   absolutely continuous.
 - `BrownianMeander.imhofTilt_support_eq_besselLaw_support`: their
   topological supports coincide.
+- `BrownianMeander.imhofTilt_inverseDensity`: weighting the Imhof tilt
+  by the reciprocal endpoint density recovers the Bessel path law.
 
 The theorem completes the support step in Wang Yiyang, *Asymptotic speed of
 the $N$-branching random walk with infinite offspring*, Chapter 3,
@@ -74,6 +76,24 @@ theorem imhofTilt_support_eq_besselLaw_support
   obtain ⟨hforward, hbackward⟩ :=
     imhofTilt_besselLaw_equivalent hBrownian hcontinuous hmeasurable
   exact Set.Subset.antisymm hforward.support_mono hbackward.support_mono
+
+/-- The reciprocal Imhof density recovers the radial Brownian law. -/
+theorem imhofTilt_inverseDensity
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+    [IsProbabilityMeasure P] {B : ℝ≥0 → Ω → ℝ}
+    (hBrownian : IsBrownianReal B P)
+    (hcontinuous : ∀ ω, Continuous (B · ω))
+    (hmeasurable : ∀ t, Measurable (B t)) :
+    (imhofTilt (BrownianBessel3.pathLaw P B hcontinuous)).withDensity
+        (fun path => (imhofWeight path)⁻¹) =
+      BrownianBessel3.pathLaw P B hcontinuous := by
+  have hpositive : ∀ᵐ path ∂BrownianBessel3.pathLaw P B hcontinuous,
+      imhofWeight path ≠ 0 := by
+    filter_upwards [BrownianBessel3.ae_pos_endpoint_pathLaw
+      hBrownian hcontinuous hmeasurable] with path hpath
+    exact ne_of_gt (imhofWeight_pos_of_endpoint_pos hpath)
+  exact withDensity_inv_same measurable_imhofWeight hpositive
+    (Filter.Eventually.of_forall fun path => ENNReal.ofReal_ne_top)
 
 /-- The Imhof transform of the radial law of three independent Brownian
 paths gives positive mass to the open corridor used in the thesis. -/
