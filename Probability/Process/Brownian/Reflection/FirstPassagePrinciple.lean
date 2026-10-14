@@ -27,6 +27,12 @@ The public theorem in this file is:
   the same probability identity for the running minimum at time $1$.
 - `ProbabilityTheory.IsBrownianReal.measure_runningMinimum_le`:
   for $t>0$ and $a<0$, $\mathbb P(m(t)\le a)=2\mathbb P(B(t)<a)$.
+- `ProbabilityTheory.IsBrownianReal.measure_runningMinimum_lt`:
+  for $t>0$ and $a<0$, $\mathbb P(m(t)<a)=2\mathbb P(B(t)<a)$.
+- `ProbabilityTheory.IsBrownianReal.measure_runningMinimum_eq_of_neg`:
+  for $t>0$ and $a<0$, $\mathbb P(m(t)=a)=0$.
+- `ProbabilityTheory.IsBrownianReal.measure_runningMinimum_eq`:
+  for $t>0$ and every $a\in\mathbb R$, $\mathbb P(m(t)=a)=0$.
 - `ProbabilityTheory.IsBrownianReal.measure_runningMinimum_lt_zero`:
   for $t>0$, $\mathbb P(m(t)<0)=1$.
 
@@ -42,7 +48,7 @@ Ann. Probab. 4(3) (1976), 480--485, DOI 10.1214/aop/1176996098.
 @[expose] public section
 
 open MeasureTheory
-open scoped NNReal
+open scoped NNReal ENNReal
 
 namespace ProbabilityTheory
 
@@ -248,6 +254,117 @@ theorem IsBrownianReal.measure_runningMinimum_le
     _ = 2 * μ (S ⁻¹' D) := by rw [Measure.map_apply hS hD]
     _ = 2 * μ E := by rw [hE]
 
+/-- The strict running-minimum tail has the same reflection formula.
+Approximate the level from below and use continuity of measure. -/
+theorem IsBrownianReal.measure_runningMinimum_lt
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+    {B : ℝ≥0 → Ω → ℝ} (hB : IsBrownianReal B P)
+    (hBmeasurable : ∀ u, Measurable (B u))
+    {t : ℝ≥0} (ht : 0 < t) {a : ℝ} (ha : a < 0) :
+    let μ := P.map (hB.continuousPathMap hBmeasurable)
+    μ {f : C(ℝ≥0, ℝ) | runningMinimum f t < a} =
+      2 * μ {f : C(ℝ≥0, ℝ) | f t < a} := by
+  dsimp
+  let μ := P.map (hB.continuousPathMap hBmeasurable)
+  let level : ℕ → ℝ := fun n => a - 1 / (n + 1 : ℝ)
+  let A : ℕ → Set C(ℝ≥0, ℝ) := fun n =>
+    {f | runningMinimum f t ≤ level n}
+  let E : ℕ → Set C(ℝ≥0, ℝ) := fun n => {f | f t < level n}
+  have hlevelNeg (n : ℕ) : level n < 0 := by
+    dsimp [level]
+    have hpos : 0 < 1 / (n + 1 : ℝ) := by positivity
+    linarith
+  have hlevelMono : Monotone level := by
+    intro n m hnm
+    dsimp [level]
+    have hdiv : 1 / (m + 1 : ℝ) ≤ 1 / (n + 1 : ℝ) := by
+      apply one_div_le_one_div_of_le (by positivity)
+      exact_mod_cast Nat.add_le_add_right hnm 1
+    linarith
+  have hAmono : Monotone A := by
+    intro n m hnm f hf
+    exact hf.trans (hlevelMono hnm)
+  have hEmono : Monotone E := by
+    intro n m hnm f hf
+    exact hf.trans_le (hlevelMono hnm)
+  have hlevelApprox {x : ℝ} (hx : x < a) :
+      ∃ n : ℕ, x ≤ level n := by
+    obtain ⟨n, hn⟩ := exists_nat_one_div_lt (sub_pos.mpr hx)
+    refine ⟨n, ?_⟩
+    dsimp [level]
+    linarith
+  have hAunion : (⋃ n, A n) =
+      {f : C(ℝ≥0, ℝ) | runningMinimum f t < a} := by
+    ext f
+    simp only [Set.mem_iUnion, Set.mem_ofPred_eq]
+    constructor
+    · rintro ⟨n, hn⟩
+      exact hn.trans_lt (by
+        dsimp [level]
+        have hpos : 0 < 1 / (n + 1 : ℝ) := by positivity
+        linarith)
+    · exact hlevelApprox
+  have hEunion : (⋃ n, E n) =
+      {f : C(ℝ≥0, ℝ) | f t < a} := by
+    ext f
+    simp only [Set.mem_iUnion, Set.mem_ofPred_eq]
+    constructor
+    · rintro ⟨n, hn⟩
+      exact hn.trans (by
+        dsimp [level]
+        have hpos : 0 < 1 / (n + 1 : ℝ) := by positivity
+        linarith)
+    · intro hf
+      obtain ⟨n, hn⟩ := hlevelApprox (show (f t + a) / 2 < a by linarith)
+      have hmid : f t < (f t + a) / 2 := by linarith
+      exact ⟨n, hmid.trans_le hn⟩
+  have hprob (n : ℕ) : μ (A n) = 2 * μ (E n) :=
+    hB.measure_runningMinimum_le hBmeasurable ht (hlevelNeg n)
+  calc
+    μ {f : C(ℝ≥0, ℝ) | runningMinimum f t < a} =
+        μ (⋃ n, A n) := by rw [hAunion]
+    _ = ⨆ n, μ (A n) := hAmono.measure_iUnion
+    _ = ⨆ n, 2 * μ (E n) := by simp_rw [hprob]
+    _ = 2 * (⨆ n, μ (E n)) := (ENNReal.mul_iSup 2 _).symm
+    _ = 2 * μ (⋃ n, E n) := by rw [hEmono.measure_iUnion]
+    _ = 2 * μ {f : C(ℝ≥0, ℝ) | f t < a} := by rw [hEunion]
+
+/-- A negative Brownian running-minimum level is not an atom. -/
+theorem IsBrownianReal.measure_runningMinimum_eq_of_neg
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+    {B : ℝ≥0 → Ω → ℝ} (hB : IsBrownianReal B P)
+    (hBmeasurable : ∀ u, Measurable (B u))
+    {t : ℝ≥0} (ht : 0 < t) {a : ℝ} (ha : a < 0) :
+    let μ := P.map (hB.continuousPathMap hBmeasurable)
+    μ {f : C(ℝ≥0, ℝ) | runningMinimum f t = a} = 0 := by
+  dsimp
+  let μ := P.map (hB.continuousPathMap hBmeasurable)
+  let C : Set C(ℝ≥0, ℝ) := {f | runningMinimum f t ≤ a}
+  let O : Set C(ℝ≥0, ℝ) := {f | runningMinimum f t < a}
+  have hOmeas : MeasurableSet O :=
+    (measurable_runningMinimum t) measurableSet_Iio
+  have hOC : O ⊆ C := by
+    intro f hf
+    change runningMinimum f t < a at hf
+    change runningMinimum f t ≤ a
+    exact hf.le
+  have hOFinite : μ O ≠ ∞ := by
+    letI : IsProbabilityMeasure P :=
+      (hB.toIsPreBrownianReal.hasLaw ∅).isProbabilityMeasure
+    exact measure_ne_top μ O
+  have hdiff : C \ O = {f : C(ℝ≥0, ℝ) | runningMinimum f t = a} := by
+    ext f
+    change (runningMinimum f t ≤ a ∧ ¬ runningMinimum f t < a) ↔
+      runningMinimum f t = a
+    constructor
+    · rintro ⟨hle, hnlt⟩
+      exact le_antisymm hle (le_of_not_gt hnlt)
+    · intro heq
+      exact ⟨heq.le, by rw [heq]; exact lt_irrefl _⟩
+  rw [← hdiff, measure_sdiff hOC hOmeas.nullMeasurableSet hOFinite,
+    hB.measure_runningMinimum_le hBmeasurable ht ha,
+    hB.measure_runningMinimum_lt hBmeasurable ht ha, tsub_self]
+
 /-- A Brownian running minimum is strictly negative at every fixed
 positive time. The levels $-1/(n+1)$ increase to zero, so continuity of
 measure and Gaussian sign symmetry complete the reflection argument. -/
@@ -341,6 +458,59 @@ theorem IsBrownianReal.measure_runningMinimum_lt_zero
     _ = 2 * μ {f : C(ℝ≥0, ℝ) | f t < 0} := by rw [hEunion]
     _ = 2 * gaussianReal 0 t (Set.Iio 0) := by rw [hendpoint]
     _ = 1 := gaussianReal_Iio_zero_two_mul ht
+
+/-- The Brownian running minimum at a fixed positive time has no atoms.
+Negative levels follow from the strict and closed reflection formulas;
+zero follows from strict negativity; positive levels follow from the
+path's initial value. -/
+theorem IsBrownianReal.measure_runningMinimum_eq
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+    {B : ℝ≥0 → Ω → ℝ} (hB : IsBrownianReal B P)
+    (hBmeasurable : ∀ u, Measurable (B u))
+    {t : ℝ≥0} (ht : 0 < t) (a : ℝ) :
+    let μ := P.map (hB.continuousPathMap hBmeasurable)
+    μ {f : C(ℝ≥0, ℝ) | runningMinimum f t = a} = 0 := by
+  dsimp
+  let μ := P.map (hB.continuousPathMap hBmeasurable)
+  by_cases haNeg : a < 0
+  · exact hB.measure_runningMinimum_eq_of_neg hBmeasurable ht haNeg
+  by_cases haZero : a = 0
+  · subst a
+    letI : IsProbabilityMeasure P :=
+      (hB.toIsPreBrownianReal.hasLaw ∅).isProbabilityMeasure
+    have hmeas : MeasurableSet
+        {f : C(ℝ≥0, ℝ) | runningMinimum f t < 0} :=
+      (measurable_runningMinimum t) measurableSet_Iio
+    have hcompl : μ {f : C(ℝ≥0, ℝ) | runningMinimum f t < 0}ᶜ = 0 :=
+      (prob_compl_eq_zero_iff hmeas).2
+        (hB.measure_runningMinimum_lt_zero hBmeasurable ht)
+    apply le_antisymm
+    · exact (measure_mono (show
+      {f : C(ℝ≥0, ℝ) | runningMinimum f t = 0} ⊆
+        {f | runningMinimum f t < 0}ᶜ from by
+          intro f hf
+          change runningMinimum f t = 0 at hf
+          change ¬ runningMinimum f t < 0
+          rw [hf]
+          exact lt_irrefl _)).trans hcompl.le
+    · exact bot_le
+  · have haPos : 0 < a := lt_of_le_of_ne (le_of_not_gt haNeg) (Ne.symm haZero)
+    have hpath0 : ∀ᵐ f ∂μ, f 0 = 0 := by
+      have hset : MeasurableSet {f : C(ℝ≥0, ℝ) | f 0 = 0} :=
+        (ContinuousMap.measurable_eval 0) (measurableSet_singleton 0)
+      have horig : ∀ᵐ ω ∂P,
+          hB.continuousPathMap hBmeasurable ω 0 = 0 := by
+        filter_upwards [hB.continuousPathMap_ae_eq hBmeasurable,
+          hB.eval_zero_ae_eq_zero] with ω hpath hzero
+        rw [hpath 0, hzero]
+      exact (ae_map_iff
+        (hB.measurable_continuousPathMap hBmeasurable).aemeasurable hset).2 horig
+    have hne : ∀ᵐ f ∂μ, runningMinimum f t ≠ a := by
+      filter_upwards [hpath0] with f hf0 heq
+      have hle := runningMinimum_le f (show (0 : ℝ≥0) ≤ t from bot_le)
+      rw [hf0, heq] at hle
+      exact (not_le_of_gt haPos) hle
+    simpa only [not_not] using (ae_iff).mp hne
 
 end ProbabilityTheory
 
