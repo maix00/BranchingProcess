@@ -8,6 +8,7 @@ module
 
 public import Probability.Process.Brownian.Reflection.FirstPassageApproximation
 public import Probability.Process.Brownian.GaussianMarginal
+public import Probability.Distributions.Gaussian.Sign
 public import Probability.Process.Path.FirstPassageReflection
 public import Probability.Process.Path.RunningMinimum
 
@@ -26,6 +27,8 @@ The public theorem in this file is:
   the same probability identity for the running minimum at time $1$.
 - `ProbabilityTheory.IsBrownianReal.measure_runningMinimum_le`:
   for $t>0$ and $a<0$, $\mathbb P(m(t)\le a)=2\mathbb P(B(t)<a)$.
+- `ProbabilityTheory.IsBrownianReal.measure_runningMinimum_lt_zero`:
+  for $t>0$, $\mathbb P(m(t)<0)=1$.
 
 This is the event form of the reflection principle in Theorem 2.1 of
 S. J. Dilworth and Duncan Wright, *A direct proof of the reflection
@@ -244,6 +247,100 @@ theorem IsBrownianReal.measure_runningMinimum_le
     _ = 2 * (μ.map S) D := by rw [hlaw]
     _ = 2 * μ (S ⁻¹' D) := by rw [Measure.map_apply hS hD]
     _ = 2 * μ E := by rw [hE]
+
+/-- A Brownian running minimum is strictly negative at every fixed
+positive time. The levels $-1/(n+1)$ increase to zero, so continuity of
+measure and Gaussian sign symmetry complete the reflection argument. -/
+theorem IsBrownianReal.measure_runningMinimum_lt_zero
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+    {B : ℝ≥0 → Ω → ℝ} (hB : IsBrownianReal B P)
+    (hBmeasurable : ∀ t, Measurable (B t))
+    {t : ℝ≥0} (ht : 0 < t) :
+    let μ := P.map (hB.continuousPathMap hBmeasurable)
+    μ {f : C(ℝ≥0, ℝ) | runningMinimum f t < 0} = 1 := by
+  dsimp
+  let μ := P.map (hB.continuousPathMap hBmeasurable)
+  let level : ℕ → ℝ := fun n => -(1 / (n + 1 : ℝ))
+  let A : ℕ → Set C(ℝ≥0, ℝ) := fun n =>
+    {f | runningMinimum f t ≤ level n}
+  let E : ℕ → Set C(ℝ≥0, ℝ) := fun n => {f | f t < level n}
+  have hlevelNeg (n : ℕ) : level n < 0 := by
+    dsimp [level]
+    exact neg_neg_of_pos (by positivity)
+  have hlevelMono : Monotone level := by
+    intro n m hnm
+    dsimp [level]
+    apply neg_le_neg
+    apply one_div_le_one_div_of_le (by positivity)
+    exact_mod_cast Nat.add_le_add_right hnm 1
+  have hAmono : Monotone A := by
+    intro n m hnm f hf
+    exact hf.trans (hlevelMono hnm)
+  have hEmono : Monotone E := by
+    intro n m hnm f hf
+    exact hf.trans_le (hlevelMono hnm)
+  have hAmeas (n : ℕ) : MeasurableSet (A n) := by
+    have hfirst : MeasurableSet {f : C(ℝ≥0, ℝ) |
+        firstPassageBelow f (level n) ≤ (t : WithTop ℝ≥0)} :=
+      (measurable_firstPassageBelow _) measurableSet_Iic
+    convert hfirst using 1
+    ext f
+    exact runningMinimum_le_iff_firstPassageBelow_le f t _
+  have hEmeas (n : ℕ) : MeasurableSet (E n) :=
+    (ContinuousMap.measurable_eval t) measurableSet_Iio
+  have hlevelApprox {x : ℝ} (hx : x < 0) :
+      ∃ n : ℕ, x ≤ level n := by
+    obtain ⟨n, hn⟩ := exists_nat_one_div_lt (neg_pos.mpr hx)
+    refine ⟨n, ?_⟩
+    dsimp [level]
+    linarith
+  have hAunion : (⋃ n, A n) =
+      {f : C(ℝ≥0, ℝ) | runningMinimum f t < 0} := by
+    ext f
+    simp only [Set.mem_iUnion, Set.mem_ofPred_eq]
+    constructor
+    · rintro ⟨n, hn⟩
+      exact hn.trans_lt (hlevelNeg n)
+    · exact hlevelApprox
+  have hEunion : (⋃ n, E n) =
+      {f : C(ℝ≥0, ℝ) | f t < 0} := by
+    ext f
+    simp only [Set.mem_iUnion, Set.mem_ofPred_eq]
+    constructor
+    · rintro ⟨n, hn⟩
+      exact hn.trans (hlevelNeg n)
+    · intro hf
+      obtain ⟨n, hn⟩ := hlevelApprox (show f t / 2 < 0 by linarith)
+      have hhalf : f t < f t / 2 := by linarith
+      exact ⟨n, hhalf.trans_le hn⟩
+  have hprob (n : ℕ) : μ (A n) = 2 * μ (E n) :=
+    hB.measure_runningMinimum_le hBmeasurable ht (hlevelNeg n)
+  have hendpoint : μ {f : C(ℝ≥0, ℝ) | f t < 0} =
+      gaussianReal 0 t (Set.Iio 0) := by
+    have hpath := hB.measurable_continuousPathMap hBmeasurable
+    have hset : MeasurableSet {f : C(ℝ≥0, ℝ) | f t < 0} :=
+      (ContinuousMap.measurable_eval t) measurableSet_Iio
+    calc
+      μ {f : C(ℝ≥0, ℝ) | f t < 0} =
+          P {ω | hB.continuousPathMap hBmeasurable ω t < 0} := by
+            rw [Measure.map_apply hpath hset]
+            rfl
+      _ = P {ω | B t ω < 0} := by
+            apply measure_congr
+            filter_upwards [hB.continuousPathMap_ae_eq hBmeasurable] with ω hω
+            simp [hω t]
+      _ = gaussianReal 0 t (Set.Iio 0) :=
+            (hB.hasLaw_eval t).measure_eq measurableSet_Iio
+  calc
+    μ {f : C(ℝ≥0, ℝ) | runningMinimum f t < 0} =
+        μ (⋃ n, A n) := by rw [hAunion]
+    _ = ⨆ n, μ (A n) := hAmono.measure_iUnion
+    _ = ⨆ n, 2 * μ (E n) := by simp_rw [hprob]
+    _ = 2 * (⨆ n, μ (E n)) := (ENNReal.mul_iSup 2 _).symm
+    _ = 2 * μ (⋃ n, E n) := by rw [hEmono.measure_iUnion]
+    _ = 2 * μ {f : C(ℝ≥0, ℝ) | f t < 0} := by rw [hEunion]
+    _ = 2 * gaussianReal 0 t (Set.Iio 0) := by rw [hendpoint]
+    _ = 1 := gaussianReal_Iio_zero_two_mul ht
 
 end ProbabilityTheory
 
