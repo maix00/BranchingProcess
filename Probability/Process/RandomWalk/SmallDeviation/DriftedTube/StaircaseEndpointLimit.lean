@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.StaircaseTimeLimit
+public import Analysis.Asymptotics.BlockScaleInequalities
 
 /-!
 # Interior endpoint ratio for the staircase blocks

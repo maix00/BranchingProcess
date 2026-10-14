@@ -7,6 +7,8 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.StaircaseEndpointLimit
+public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.BinParameters
+public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.StaircaseRateLimit
 
 /-!
 # A common threshold for every staircase block
@@ -85,13 +87,13 @@ theorem eventually_staircaseGlobalConditions
   have hbeta : 0 < staircaseBinWidth m := staircaseBinWidth_pos hm
   have hwidthPos : ∀ᶠ n : ℕ in atTop, 0 < width n :=
     hwidth.eventually (eventually_gt_atTop 0)
-  have hcost := eventually_staircaseCost hwidth hcubic
-    (drift := drift)
-  have hfloor := eventually_staircaseHalfWidthThreshold hbeta
+  have hcost := Asymptotics.eventually_linear_block_cost_lt_width_cubed hwidth hcubic
+    (coefficient := 10 * drift)
+  have hfloor := Asymptotics.eventually_floor_half_width_ge hbeta
     hwidth width₀
-  have hmarginWidth := eventually_staircaseMarginWidth hbeta hwidth
+  have hmarginWidth := Asymptotics.eventually_half_width_ge_inverse_margin hbeta hwidth
     (margin := margin)
-  have htime := eventually_staircaseTimeRatio hbeta hwidth
+  have htime := Asymptotics.eventually_floor_width_sq_le_blockLength hbeta hwidth
     hlength hquadratic ratio₀
   have hrate' := eventually_staircaseRateComparison_of_blockScale
     hbeta hwidth hcubic hrate (drift := drift)
