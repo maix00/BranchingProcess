@@ -168,11 +168,27 @@ both its tilted-tube path constraint and its membership in the first
 horizontal central window. `ConcreteStaircaseEntranceLower.lean` eliminates
 the entrance geometry and measurability assumptions from the finite
 staircase theorem; the remaining entrance input is exactly the probability
-lower bound for this robust event. Its deduction from the three Appendix
-A.2 cases, including the conditioned Brownian-meander source theorems,
-remains open. The printed $8c\ell<\Delta^3$ is used for the broader
+lower bound for this robust event. The printed $8c\ell<\Delta^3$ is used for the broader
 first-window inclusion; $10c\ell<\Delta^3$ is an eventual strengthening
 for the robust central-window inclusion in this formalization.
+The conditional Appendix A.2 deduction is now present:
+`Entrance/RobustTransition.lean` transfers the middle Donsker event to the
+robust endpoint window, `RobustEdgeGeometry.lean` proves both fixed-prefix
+and meander-suffix event inclusions after increasing the width threshold,
+`RobustEdgeProbability.lean` proves the corresponding independent-product
+lower bounds, `RobustThreeRegions.lean` takes their minimum with the middle
+bound, and `RobustPowerAssembly.lean` proves the uniform
+$C_\alpha\Delta^{-1-\alpha}$ entrance estimate from the two reflected
+nonnegative transition bounds. The source-level conditioned meander
+invariance and survival regular variation hypotheses used by those
+transition bounds have not yet been discharged.
+`Entrance/RobustExponentialBudget.lean` combines that conditional power
+bound with the proved polynomial-to-exponential comparison, giving the
+entrance probability budget for every horizon
+$L\ge\lfloor\Delta^{2+\varepsilon}\rfloor$ along arbitrary real-width
+sequences tending to infinity. A uniform real-width threshold and the
+remaining concrete staircase inequalities are still needed to obtain the
+unconditional statement of Lemma 3.5.
 
 | Source component | Lean modules | Verified scope |
 |---|---|---|

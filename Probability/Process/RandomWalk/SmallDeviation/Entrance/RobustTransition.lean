@@ -20,6 +20,11 @@ The public object and theorem in this file are:
   this robust event is contained in $\mathcal A_\Delta(x)$.
 - `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.measurableSet_robustMovingTransitionEvent`:
   the robust event belongs to the natural increment domain at time $n$.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.finiteInteriorEvent_subset_robustMovingTransitionEvent`:
+  the fixed Donsker corridor implies the robust moving entrance event once
+  $60c\le\Delta$.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.eventually_middleRobustTransitionProbability_pos`:
+  the middle starting interval has a uniform positive entrance probability.
 
 The middle-start and two edge constructions in Wang Yiyang,
 *Asymptotic speed of the $N$-branching random walk with infinite offspring*,
@@ -31,6 +36,8 @@ Appendix A.2, proof of the meander transition lemma, have terminal
 @[expose] public section
 
 open MeasureTheory ProbabilityTheory
+open Filter
+open scoped ENNReal Topology
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Entrance
 
@@ -111,6 +118,60 @@ theorem measurableSet_robustMovingTransitionEvent
       (measurableSet_Iic.preimage hposition)
   simpa only [robustMovingTransitionEvent, movingTransitionEvent,
     Set.ofPred_and] using (hpath.inter hend).inter hrobust
+
+/-- The Brownian interior-corridor event fits the stronger endpoint window
+when the drift over the diffusive entrance is small compared with its width. -/
+theorem finiteInteriorEvent_subset_robustMovingTransitionEvent
+    {n : ℕ} {width drift start : ℝ}
+    (hwidth : 0 < width) (hdrift : 0 ≤ drift)
+    (hn : (n : ℝ) ≤ width ^ 2)
+    (hlarge : 60 * drift ≤ width) :
+    FunctionalLimit.Donsker.finiteInteriorEvent n width drift start ⊆
+      robustMovingTransitionEvent n width drift start := by
+  intro increment hinc
+  have hlargeOld : 12 * drift ≤ width := by nlinarith [hlarge, hdrift]
+  have hmove := finiteInteriorEvent_subset_movingTransitionEvent
+    hwidth hdrift hn hlargeOld hinc
+  have hsq : 0 < width ^ 2 := sq_pos_of_pos hwidth
+  have hshift : drift * (n : ℝ) / width ^ 2 ≤ drift := by
+    exact (div_le_iff₀ hsq).2
+      (mul_le_mul_of_nonneg_left hn hdrift)
+  have hshiftNonneg : 0 ≤ drift * (n : ℝ) / width ^ 2 := by positivity
+  refine ⟨hmove, ?_⟩
+  exact ⟨by nlinarith [hinc.2.1, hshift, hlarge],
+    by nlinarith [hinc.2.2, hshiftNonneg, hwidth]⟩
+
+/-- Middle starting points reach the robust window with probability
+bounded below uniformly at sufficiently large diffusive widths. -/
+theorem eventually_middleRobustTransitionProbability_pos
+    {ν : Measure ℝ} [IsProbabilityMeasure ν] {sigma : ℝ}
+    (hν : IsCenteredSecondMoment ν (sigma ^ 2)) (hsigma : 0 < sigma)
+    {width : ℕ → ℝ} (hwidth : Tendsto width atTop atTop)
+    {drift : ℝ} (hdrift : 0 ≤ drift) :
+    ∃ q : ℝ≥0∞, 0 < q ∧ ∀ᶠ n : ℕ in atTop,
+      ∀ start ∈ Set.Icc (width n / 12) (11 / 12 * width n),
+        q ≤ iidSequenceLaw ν
+          (robustMovingTransitionEvent
+            (Asymptotics.floorBlockLength (fun k => width k ^ 2) n)
+            (width n) drift start) := by
+  obtain ⟨q, hq, hmiddle⟩ :=
+    FunctionalLimit.Donsker.eventually_diffusiveInteriorProbability_pos_uniform_of_centeredSecondMoment
+      hν hsigma hwidth drift
+  refine ⟨q, hq, ?_⟩
+  have hwidthPos : ∀ᶠ n : ℕ in atTop, 0 < width n :=
+    hwidth.eventually (eventually_gt_atTop 0)
+  have hwidthLarge : ∀ᶠ n : ℕ in atTop, 60 * drift ≤ width n := by
+    filter_upwards [hwidth.eventually
+      (eventually_ge_atTop (60 * drift))] with n hn
+    exact hn
+  filter_upwards [hmiddle, hwidthPos, hwidthLarge] with n hn hw hl
+  intro start hs
+  have hfloor :
+      ((Asymptotics.floorBlockLength (fun k => width k ^ 2) n : ℕ) : ℝ) ≤
+        width n ^ 2 := Nat.floor_le (sq_nonneg _)
+  exact (hn start hs).trans (measure_mono
+    (finiteInteriorEvent_subset_robustMovingTransitionEvent
+      hw hdrift hfloor hl))
 
 end ProbabilityTheory.RandomWalk.SmallDeviation.Entrance
 
