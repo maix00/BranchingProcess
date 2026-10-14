@@ -12,6 +12,7 @@ public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.BlockScale
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Discrete.Horizontal
 public import Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.FiniteVarianceUpper
 public import Probability.Independence.ConditionalIntegral
+public import Probability.Sequence.IID.ConditionalBlocks
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 
 import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
@@ -178,21 +179,8 @@ theorem iidSequenceLaw_condExp_prefix_nextBlock
             (Combinatorics.Sequence.blockCoordinates 0 start increment, block)
             ∂(iidSequenceLaw ν).map
               (Combinatorics.Sequence.blockCoordinates start length) := by
-  have hblock : Measurable
-      (Combinatorics.Sequence.blockCoordinates (E := ℝ) (0 + start) length) := by
-    simpa only [Nat.zero_add] using
-      (measurable_blockCoordinates (E := ℝ) start length)
-  have hfi' : Integrable
-      (fun sample : ℕ → ℝ =>
-        f (Combinatorics.Sequence.blockCoordinates 0 start sample,
-          Combinatorics.Sequence.blockCoordinates (0 + start) length sample))
-      (iidSequenceLaw ν) := by
-    simpa only [Nat.zero_add] using hfi
-  have hcond := (indepFun_blockCoordinates_blockCoordinates ν 0 start length)
-    |>.condExp_prod_ae_eq_integral_map
-      (measurable_blockCoordinates (E := ℝ) 0 start)
-      hblock hf hfi'
-  simpa only [Nat.zero_add] using hcond
+  exact ProbabilityTheory.iidSequenceLaw_condExp_prefix_nextBlock
+    ν start length hf hfi
 
 /-- A uniform bound on every section of a measurable event in
 `prefix × nextBlock` gives the corresponding conditional-probability bound.
