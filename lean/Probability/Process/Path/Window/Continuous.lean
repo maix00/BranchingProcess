@@ -8,6 +8,7 @@ module
 
 public import Probability.Process.Path.Continuous
 public import Mathlib.Topology.Order.Monotone
+public import Mathlib.Data.NNRat.Encodable
 
 /-!
 # Windows above their starting level on a continuous path
@@ -18,6 +19,23 @@ The public definition and theorems in this file are:
   $f(t+u)\ge f(t)$ for every $u\in[0,1]$.
 - `ProbabilityTheory.isClosed_nonnegativeWindowStarts`: the set of such
   starting times is closed.
+- `ProbabilityTheory.measurableSet_nonnegativeWindowStart`:
+  for fixed $t$, the path event that the window at $t$ stays above
+  its starting value is Borel measurable.
+- `ProbabilityTheory.ApproxNonnegativeWindowStart`:
+  $f(r)\le f(r+i/(n+1))+1/(n+1)$ for $1\le i\le n$.
+- `ProbabilityTheory.measurableSet_approxNonnegativeWindowStart`:
+  this finite-grid path event is Borel measurable.
+- `ProbabilityTheory.HasApproxWindowBefore`:
+  a rational start $r\le u+1/(n+1)$ satisfies the finite-grid
+  inequalities in Bolthausen's approximation.
+- `ProbabilityTheory.measurableSet_hasApproxWindowBefore`:
+  the corresponding countable union of finite-grid events is Borel.
+- `ProbabilityTheory.HasApproxFirstWindowBefore`:
+  the countable intersection over all grid sizes of the rational-start
+  events appearing in Bolthausen's proof of Lemma 2.1.
+- `ProbabilityTheory.measurableSet_hasApproxFirstWindowBefore`:
+  this countable-intersection path event is Borel.
 - `ProbabilityTheory.exists_earliestNonnegativeWindowStart`: if this set
   is nonempty, it has a least element.
 - `ProbabilityTheory.firstNonnegativeWindowStart`: the earliest eligible
@@ -35,10 +53,12 @@ The public definition and theorems in this file are:
   $s\le s'$ implies $T^{s'}(f)\le T^s(f)$.
 - `ProbabilityTheory.firstNonnegativeWindowStart_le_upTo`:
   $T(f)\le T^s(f)$.
+- `ProbabilityTheory.firstNonnegativeWindowStartUpTo_eq_first_of_le`:
+  $T(f)=t$ and $t+1\le s$ imply $T^s(f)=t$.
 
 These are deterministic ingredients of the first-window time $T^s$ in
 Erwin Bolthausen, *On a functional central limit theorem for random walks
-conditioned to stay positive*, Section 2, Lemmas 2.1 and 2.4,
+conditioned to stay positive*, Section 2, definition (2.1),
 Ann. Probab. 4(3) (1976), 480--485, DOI 10.1214/aop/1176996098.
 -/
 
@@ -68,6 +88,112 @@ theorem isClosed_nonnegativeWindowStarts (f : C(ℝ≥0, ℝ)) :
   intro u
   exact isClosed_le f.continuous
     (f.continuous.comp (continuous_id.add continuous_const))
+
+/-- At a fixed starting time, eligibility of the window is a Borel
+path event. This supplies the fixed-time events in Bolthausen's
+rational approximation of $T^s$ in the proof of Lemma 2.1. -/
+theorem measurableSet_nonnegativeWindowStart (t : ℝ≥0) :
+    MeasurableSet {f : C(ℝ≥0, ℝ) |
+      IsNonnegativeWindowStart f t} := by
+  have hset : {f : C(ℝ≥0, ℝ) | IsNonnegativeWindowStart f t} =
+      ⋂ u : Set.Icc (0 : ℝ≥0) 1,
+        {f | f t ≤ f (t + u)} := by
+    ext f
+    simp [IsNonnegativeWindowStart]
+  rw [hset]
+  have hclosed (u : Set.Icc (0 : ℝ≥0) 1) :
+      IsClosed {f : C(ℝ≥0, ℝ) | f t ≤ f (t + u)} :=
+    isClosed_le (continuous_eval_const t)
+      (continuous_eval_const (t + u))
+  exact (isClosed_iInter hclosed).measurableSet
+
+/-- The finite-grid inequality in Bolthausen's rational approximation
+to $\{T^s\le u\}$, Lemma 2.1, p. 481. -/
+def ApproxNonnegativeWindowStart
+    (n : ℕ) (r : ℝ≥0) (f : C(ℝ≥0, ℝ)) : Prop :=
+  ∀ i : Fin n,
+    f r ≤ f (r + ((i : ℝ≥0) + 1) / (n + 1)) +
+      (1 : ℝ) / (n + 1)
+
+/-- Each fixed rational-start finite-grid inequality from the proof of
+Bolthausen's Lemma 2.1 is a Borel path event. -/
+theorem measurableSet_approxNonnegativeWindowStart
+    (n : ℕ) (r : ℝ≥0) :
+    MeasurableSet {f : C(ℝ≥0, ℝ) |
+      ApproxNonnegativeWindowStart n r f} := by
+  have hset : {f : C(ℝ≥0, ℝ) |
+      ApproxNonnegativeWindowStart n r f} =
+      ⋂ i : Fin n,
+        {f | f r ≤ f (r + ((i : ℝ≥0) + 1) / (n + 1)) +
+          (1 : ℝ) / (n + 1)} := by
+    ext f
+    simp [ApproxNonnegativeWindowStart]
+  rw [hset]
+  have hclosed (i : Fin n) :
+      IsClosed {f : C(ℝ≥0, ℝ) |
+        f r ≤ f (r + ((i : ℝ≥0) + 1) / (n + 1)) +
+          (1 : ℝ) / (n + 1)} :=
+    isClosed_le (continuous_eval_const r)
+      ((continuous_eval_const _).add continuous_const)
+  exact (isClosed_iInter hclosed).measurableSet
+
+/-- The rational-start event in Bolthausen's approximation of
+$\{T^s\le u\}$ in the proof of Lemma 2.1. -/
+def HasApproxWindowBefore
+    (n : ℕ) (u : ℝ≥0) (f : C(ℝ≥0, ℝ)) : Prop :=
+  ∃ r : ℚ≥0, (r : ℝ≥0) ≤ u + 1 / (n + 1) ∧
+    ApproxNonnegativeWindowStart n (r : ℝ≥0) f
+
+/-- The rational-start finite-grid event is a countable union of Borel
+path events. -/
+theorem measurableSet_hasApproxWindowBefore (n : ℕ) (u : ℝ≥0) :
+    MeasurableSet {f : C(ℝ≥0, ℝ) | HasApproxWindowBefore n u f} := by
+  have hset : {f : C(ℝ≥0, ℝ) | HasApproxWindowBefore n u f} =
+      ⋃ r : ℚ≥0, {f | (r : ℝ≥0) ≤ u + 1 / (n + 1) ∧
+        ApproxNonnegativeWindowStart n (r : ℝ≥0) f} := by
+    ext f
+    simp [HasApproxWindowBefore]
+  rw [hset]
+  apply MeasurableSet.iUnion
+  intro r
+  by_cases hr : (r : ℝ≥0) ≤ u + 1 / (n + 1)
+  · have hr' : (r : ℝ≥0) ≤ u + ((n : ℝ≥0) + 1)⁻¹ := by
+      simpa only [one_div] using hr
+    have heq : {f : C(ℝ≥0, ℝ) |
+        (r : ℝ≥0) ≤ u + 1 / (n + 1) ∧
+          ApproxNonnegativeWindowStart n (r : ℝ≥0) f} =
+        {f | ApproxNonnegativeWindowStart n (r : ℝ≥0) f} := by
+      ext f
+      simp [hr']
+    rw [heq]
+    exact measurableSet_approxNonnegativeWindowStart n (r : ℝ≥0)
+  · have hr' : ¬ (r : ℝ≥0) ≤ u + ((n : ℝ≥0) + 1)⁻¹ := by
+      simpa only [one_div] using hr
+    have heq : {f : C(ℝ≥0, ℝ) |
+        (r : ℝ≥0) ≤ u + 1 / (n + 1) ∧
+          ApproxNonnegativeWindowStart n (r : ℝ≥0) f} = ∅ := by
+      ext f
+      simp [hr']
+    rw [heq]
+    exact MeasurableSet.empty
+
+/-- The countable rational approximation appearing on the right side
+of Bolthausen's formula for $\{T^s\le u\}$ in Lemma 2.1. -/
+def HasApproxFirstWindowBefore
+    (u : ℝ≥0) (f : C(ℝ≥0, ℝ)) : Prop :=
+  ∀ n : ℕ, HasApproxWindowBefore n u f
+
+/-- The countable rational approximation is a Borel path event. -/
+theorem measurableSet_hasApproxFirstWindowBefore (u : ℝ≥0) :
+    MeasurableSet {f : C(ℝ≥0, ℝ) |
+      HasApproxFirstWindowBefore u f} := by
+  have hset : {f : C(ℝ≥0, ℝ) | HasApproxFirstWindowBefore u f} =
+      ⋂ n : ℕ, {f | HasApproxWindowBefore n u f} := by
+    ext f
+    simp [HasApproxFirstWindowBefore]
+  rw [hset]
+  exact MeasurableSet.iInter fun n =>
+    measurableSet_hasApproxWindowBefore n u
 
 /-- A nonempty closed family of eligible starts has a first member. -/
 theorem exists_earliestNonnegativeWindowStart
@@ -202,6 +328,17 @@ theorem firstNonnegativeWindowStart_le_upTo
     intro t ht
     exact csInf_le ⟨0, fun _ _ => bot_le⟩ ht.2
   · simp [firstNonnegativeWindowStartUpTo, hfinite]
+
+/-- Once the finite horizon contains the unrestricted first eligible
+window, the two first-window times agree. -/
+theorem firstNonnegativeWindowStartUpTo_eq_first_of_le
+    (f : C(ℝ≥0, ℝ)) {s t : ℝ≥0}
+    (ht : firstNonnegativeWindowStart f = t) (hts : t + 1 ≤ s) :
+    firstNonnegativeWindowStartUpTo f s = t := by
+  obtain ⟨heligible, hfirst⟩ :=
+    (firstNonnegativeWindowStart_eq_coe_iff f t).mp ht
+  exact (firstNonnegativeWindowStartUpTo_eq_coe_iff f s t).mpr
+    ⟨hts, heligible, fun r _ hr => hfirst r hr⟩
 
 end ProbabilityTheory
 
