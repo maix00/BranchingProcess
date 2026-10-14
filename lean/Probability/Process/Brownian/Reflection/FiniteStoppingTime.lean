@@ -12,8 +12,11 @@ public import Mathlib.MeasureTheory.Measure.Basic
 /-!
 # Reflection at a finite-valued Brownian stopping time
 
-The public theorem in this file is:
+The public theorems in this file are:
 
+- `ProbabilityTheory.IsBrownianReal.measure_reflectAfter_finitePathwiseStoppingTime_eq`:
+  a measurable, finite-valued pathwise stopping time preserves Brownian
+  path law under reflection.
 - `ProbabilityTheory.IsBrownianReal.measure_reflectAfter_finiteStoppingTime_eq`:
   for a finite-valued stopping time $T$ whose fibers are measurable with
   respect to the past path, reflection of a Brownian path after $T$
@@ -93,6 +96,29 @@ private theorem measure_piecewise_reflection_eq
       exact ⟨by simpa [R, hfi'] using hfA, hfi'⟩
   rw [hset, ← Measure.map_apply (hR i) (hA.inter (hfiber i)), hinvariant i]
 
+/-- Reflection after a measurable finite-valued pathwise stopping time
+preserves Brownian path law. The fiber $T=i$ is unchanged when the path
+is changed after $r_i$. This is the finite-valued stopping-time step of
+Theorem 2.1 in S. J. Dilworth and Duncan Wright, *A direct proof of the
+reflection principle for Brownian motion*, arXiv:1810.01783. -/
+theorem IsBrownianReal.measure_reflectAfter_finitePathwiseStoppingTime_eq
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+    {B : ℝ≥0 → Ω → ℝ} (hB : IsBrownianReal B P)
+    (hBmeasurable : ∀ t, Measurable (B t))
+    {ι : Type*} [MeasurableSpace ι] [MeasurableSingletonClass ι]
+    [Fintype ι] [DecidableEq ι]
+    (T : C(ℝ≥0, ℝ) → ι) (r : ι → ℝ≥0)
+    (hT : Measurable T)
+    (hlocal : ∀ i f g, (∀ u, u ≤ r i → f u = g u) → (T f = i ↔ T g = i)) :
+    (P.map (hB.continuousPathMap hBmeasurable)).map
+        (fun f => reflectAfter f (r (T f))) =
+      P.map (hB.continuousPathMap hBmeasurable) := by
+  let μ := P.map (hB.continuousPathMap hBmeasurable)
+  apply measure_piecewise_reflection_eq μ T r hT hlocal
+  intro i
+  rw [Measure.map_map (measurable_reflectAfter _) (hB.measurable_continuousPathMap _)]
+  exact hB.measure_reflectAfter_continuousPathMap_eq hBmeasurable (r i)
+
 /-- Reflection after a finite-valued stopping time preserves Brownian
 path law. The stopping-time condition says that the event $T=i$ is
 measurable with respect to the path through the associated time $r_i$.
@@ -140,11 +166,8 @@ theorem IsBrownianReal.measure_reflectAfter_finiteStoppingTime_eq
       g ∈ {f : C(ℝ≥0, ℝ) | T f = i}
     rw [← heq]
     simpa only [Set.mem_preimage] using (congrArg (· ∈ s) hp).to_iff
-  let μ := P.map (hB.continuousPathMap hBmeasurable)
-  apply measure_piecewise_reflection_eq μ T r hT hlocal
-  intro i
-  rw [Measure.map_map (measurable_reflectAfter _) (hB.measurable_continuousPathMap _)]
-  exact hB.measure_reflectAfter_continuousPathMap_eq hBmeasurable (r i)
+  exact hB.measure_reflectAfter_finitePathwiseStoppingTime_eq
+    hBmeasurable T r hT hlocal
 
 end ProbabilityTheory
 
