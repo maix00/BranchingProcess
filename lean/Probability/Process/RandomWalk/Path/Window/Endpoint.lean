@@ -21,6 +21,9 @@ The public objects and theorems in this file are:
 - `ProbabilityTheory.RandomWalk.finiteInClosedIntervalEndsIn_blockCoordinates_iff`:
   applying the event to a coordinate block equals the corresponding
   infinite-sequence corridor and endpoint event.
+- `ProbabilityTheory.RandomWalk.measurableSet_pairFiniteInClosedIntervalEndsIn`:
+  the same event remains measurable when its initial position is a
+  measurable function of a preceding block.
 
 The endpoint-window event is the reusable finite-path version of the
 horizontal sub-tubes in Wang Yiyang, *Asymptotic speed of the $N$-branching
@@ -83,6 +86,46 @@ theorem finiteInClosedIntervalEndsIn_blockCoordinates_iff
     refine ⟨(finiteInClosedInterval_blockCoordinates_iff
       lower upper initial start n increment).mpr hpath, ?_⟩
     simpa only [hsum] using hend
+
+/-- A finite corridor and terminal-window event is measurable when the
+initial position is read from another measurable coordinate block. -/
+theorem measurableSet_pairFiniteInClosedIntervalEndsIn
+    {A : Type*} [MeasurableSpace A] {n : ℕ}
+    (lower upper endLower endUpper : ℝ)
+    (initial : A → ℝ) (hinitial : Measurable initial) :
+    MeasurableSet
+      {p : A × (Fin n → ℝ) |
+        FiniteInClosedIntervalEndsIn
+          lower upper endLower endUpper (initial p.1) p.2} := by
+  have hinitialPair : Measurable (fun p : A × (Fin n → ℝ) => initial p.1) :=
+    hinitial.comp measurable_fst
+  have hpartial (k : Fin (n + 1)) :
+      Measurable (fun p : A × (Fin n → ℝ) =>
+        initial p.1 +
+          ∑ j : Fin k, p.2
+            ⟨j, lt_of_lt_of_le j.isLt (Nat.le_of_lt_succ k.isLt)⟩) := by
+    exact hinitialPair.add (Finset.measurable_sum Finset.univ
+      fun j _ => (measurable_pi_apply
+        (⟨j, lt_of_lt_of_le j.isLt (Nat.le_of_lt_succ k.isLt)⟩ : Fin n)).comp
+          measurable_snd)
+  have hend : Measurable (fun p : A × (Fin n → ℝ) =>
+      initial p.1 + ∑ j : Fin n, p.2 j) := by
+    exact hinitialPair.add (Finset.measurable_sum Finset.univ
+      fun j _ => (measurable_pi_apply j).comp measurable_snd)
+  rw [show {p : A × (Fin n → ℝ) |
+        FiniteInClosedIntervalEndsIn
+          lower upper endLower endUpper (initial p.1) p.2} =
+      (⋂ k : Fin (n + 1), {p | initial p.1 +
+        ∑ j : Fin k, p.2
+          ⟨j, lt_of_lt_of_le j.isLt (Nat.le_of_lt_succ k.isLt)⟩ ∈
+            Set.Icc lower upper}) ∩
+      {p | initial p.1 + ∑ j : Fin n, p.2 j ∈
+        Set.Icc endLower endUpper} by
+    ext p
+    simp [FiniteInClosedIntervalEndsIn, FiniteInClosedInterval]]
+  exact (MeasurableSet.iInter fun k =>
+    measurableSet_Icc.preimage (hpartial k)).inter
+      (measurableSet_Icc.preimage hend)
 
 end ProbabilityTheory.RandomWalk
 
