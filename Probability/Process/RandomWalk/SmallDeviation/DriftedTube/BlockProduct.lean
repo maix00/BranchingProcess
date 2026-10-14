@@ -14,9 +14,11 @@ public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.BlockEve
 The public theorem in this file is:
 
 - `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.measureReal_tubeBlockIntersection_ge_prod`:
-  if the preceding blocks place the walk inside the next horizontal tube
-  and each translated one-block probability is at least $p_j$, then
-  $\mathbb P(\bigcap_{j<q}E_j)\ge\prod_{j<q}p_j$.
+  if an initial entrance event $E_0$ and the preceding blocks place the
+  walk inside the next horizontal tube, and each translated one-block
+  probability is at least $p_j$, then
+  $\mathbb P(E_0\cap\bigcap_{j<q}E_j)\ge
+  \mathbb P(E_0)\prod_{j<q}p_j$.
 
 This is the reverse Markov product in Wang Yiyang,
 *Asymptotic speed of the $N$-branching random walk with infinite offspring*,
@@ -36,25 +38,31 @@ theorem measureReal_tubeBlockIntersection_ge_prod
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (start length : ℕ → ℕ)
     (hnext : ∀ j, start (j + 1) = start j + length j)
+    (initial : Set (ℕ → ℝ))
+    (hinitial : MeasurableSet[sequencePrefixFiltration (E := ℝ) (start 0)]
+      initial)
     (lower width v₁ v₂ bounds : ℕ → ℝ)
+    (good : ℕ → Set ℝ)
+    (hgoodTube : ∀ j, good j ⊆
+      Set.Icc (lower j) (lower j + width j))
     (hboundNonneg : ∀ j, 0 ≤ bounds j)
     (hblockBound : ∀ j initial,
-      initial ∈ Set.Icc (lower j) (lower j + width j) →
+      initial ∈ good j →
         bounds j ≤ (iidSequenceLaw ν).real
           (relativeHorizontalTubeEndpointWindowEvent
           (lower j - initial) (width j) (length j) (v₁ j) (v₂ j)))
     (henter : ∀ j (increment : ℕ → ℝ),
-      increment ∈ conditionalBlockIntersection
+      increment ∈ initial ∩ conditionalBlockIntersection
         (fun i => tubeBlockEvent (start i) (length i)
           (lower i) (width i) (v₁ i) (v₂ i)) j →
       (∑ k : Fin (start j),
         Combinatorics.Sequence.blockCoordinates 0
-          (start j) increment k) ∈
-        Set.Icc (lower j) (lower j + width j))
+          (start j) increment k) ∈ good j)
     (q : ℕ) :
-    (∏ j ∈ Finset.range q, bounds j) ≤
+    (iidSequenceLaw ν).real initial *
+      (∏ j ∈ Finset.range q, bounds j) ≤
       (iidSequenceLaw ν).real
-        (conditionalBlockIntersection
+        (initial ∩ conditionalBlockIntersection
           (fun j => tubeBlockEvent (start j) (length j)
             (lower j) (width j) (v₁ j) (v₂ j)) q) := by
   let events : ℕ → Set (ℕ → ℝ) := fun j =>
@@ -85,17 +93,17 @@ theorem measureReal_tubeBlockIntersection_ge_prod
       (start j) (length j)
         (lower j) (width j) (v₁ j) (v₂ j)
   have hconditional : ∀ j, ∀ᵐ increment ∂iidSequenceLaw ν,
-      increment ∈ conditionalBlockIntersection events j →
+      increment ∈ initial ∩ conditionalBlockIntersection events j →
         bounds j ≤ condExp (filtration j) (iidSequenceLaw ν)
           ((events j).indicator fun _ => (1 : ℝ)) increment := by
     intro j
     have h := iidSequenceLaw_condExp_tubeBlockEvent_ge
       ν (lower j) (width j) (v₁ j) (v₂ j)
-        (start j) (length j) (hblockBound j)
+        (start j) (length j) (good j) (hgoodTube j) (hblockBound j)
     filter_upwards [h] with increment hstep hpast
     exact hstep (henter j increment hpast)
-  exact measureReal_conditionalBlockIntersection_ge_prod
-    filtration hfiltrationMono hfiltrationAmbient events
+  exact measureReal_initialInterConditionalBlockIntersection_ge_mul_prod
+    filtration hfiltrationMono hfiltrationAmbient initial hinitial events
       heventMeasurable bounds hboundNonneg hconditional q
 
 end ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
