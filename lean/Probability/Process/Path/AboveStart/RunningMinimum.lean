@@ -7,6 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.Path.AboveStart.Continuous
+public import Probability.Process.Path.DescendingHittingTime
 public import Probability.Process.Path.RunningMinimum
 public import Probability.Process.Path.TimeGrid.NonnegativeRationals
 
@@ -30,6 +31,15 @@ The public definitions and theorems in this file are:
 - `ProbabilityTheory.HasTripleRunningMinimumContact.rationalInterval`:
   such contacts yield a rational interval on which the old minimum is
   attained again.
+- `ProbabilityTheory.firstNonnegativeWindowStartUpTo_endpointReturn_firstPassageBelow`:
+  outside the three-contact event, an endpoint return at $t$ is the
+  first passage of the level $f(t)$.
+- `ProbabilityTheory.firstNonnegativeWindowStartUpTo_endpointReturn_unitExcursion`:
+  outside that event, the two endpoint contacts enclose one unit
+  excursion above the running minimum.
+- `ProbabilityTheory.firstNonnegativeWindowStartUpTo_endpointReturn_descendingHittingTime`:
+  at level $x=-f(t)\ge0$ the descending passage occurs at $t$, while
+  passage to every lower level occurs after $t+1$.
 - `ProbabilityTheory.firstNonnegativeWindowStartUpTo_endpointReturn_cases`:
   an endpoint return yields either an interior return or a unit
   excursion above the running minimum.
@@ -219,6 +229,53 @@ theorem HasTripleRunningMinimumContact.rationalInterval
   · rw [hmq, hmr, hmuv]
   · rw [(aboveRunningMinimum_eq_zero_iff f v).mp hDv, hmr, hmuv]
 
+/-- Outside Bolthausen's three-contact event, the beginning of a first
+unit window that returns to its starting level is the first time the
+path reaches that level. This identifies the level of the descending
+hitting-time process used in Lemma 2.3, equation (2.2). -/
+theorem firstNonnegativeWindowStartUpTo_endpointReturn_firstPassageBelow
+    (f : C(ℝ≥0, ℝ)) (s t : ℝ≥0)
+    (hfirst : firstNonnegativeWindowStartUpTo f s = t)
+    (hend : f (t + 1) = f t)
+    (hno : ¬ HasTripleRunningMinimumContact f) :
+    firstPassageBelow f (f t) = t := by
+  obtain ⟨hrecord, hflat⟩ :=
+    firstNonnegativeWindowStartUpTo_runningMinimum f s t hfirst
+  have hbefore (u : ℝ≥0) (hut : u < t) : f t < f u := by
+    by_contra h
+    have hfu : f u ≤ f t := le_of_not_gt h
+    have hmu : runningMinimum f u = f t := by
+      apply le_antisymm
+      · exact (runningMinimum_le f le_rfl).trans hfu
+      · calc
+          f t = runningMinimum f t := hrecord
+          _ ≤ runningMinimum f u := runningMinimum_antitone f hut.le
+    have hcontact : f u = runningMinimum f u := by
+      apply le_antisymm
+      · rw [hmu]
+        exact hfu
+      · exact runningMinimum_le f le_rfl
+    apply hno
+    refine ⟨u, t, t + 1, hut, lt_add_of_pos_right t (by norm_num),
+      ?_, ?_, ?_, ?_, ?_⟩
+    · rw [hmu, ← hrecord]
+    · exact hflat.symm
+    · exact (aboveRunningMinimum_eq_zero_iff f u).2 hcontact
+    · exact (aboveRunningMinimum_eq_zero_iff f t).2 hrecord
+    · apply (aboveRunningMinimum_eq_zero_iff f (t + 1)).2
+      rw [hend, hflat, hrecord]
+  have hex : ∃ u : ℝ≥0, f u ≤ f t := ⟨t, le_rfl⟩
+  have hleast : sInf {u : ℝ≥0 | f u ≤ f t} = t := by
+    apply le_antisymm
+    · exact csInf_le ⟨0, fun _ _ => bot_le⟩
+        (show t ∈ {u : ℝ≥0 | f u ≤ f t} by simp)
+    · apply le_csInf (s := {u : ℝ≥0 | f u ≤ f t})
+        ⟨t, show f t ≤ f t from le_rfl⟩
+      intro u hu
+      exact le_of_not_gt (fun hut => not_le_of_gt (hbefore u hut) hu)
+  simpa [firstPassageBelow, firstPassageLE, hex] using
+    congrArg (fun u : ℝ≥0 => (u : WithTop ℝ≥0)) hleast
+
 /-- The endpoint equality in Bolthausen's Lemma 2.3, equation (2.2),
 reduces to the interior-return event of (2.4) or a unit-length
 excursion of the height above the running minimum. -/
@@ -247,6 +304,64 @@ theorem firstNonnegativeWindowStartUpTo_endpointReturn_cases
       have hle : runningMinimum f (t + u) ≤ f (t + u) :=
         runningMinimum_le f le_rfl
       exact sub_pos.mpr (lt_of_le_of_ne hle (Ne.symm hnemin))
+
+/-- Outside Bolthausen's event `U`, an endpoint return of the first
+unit window encloses a unit excursion above the running minimum. -/
+theorem firstNonnegativeWindowStartUpTo_endpointReturn_unitExcursion
+    (f : C(ℝ≥0, ℝ)) (s t : ℝ≥0)
+    (hfirst : firstNonnegativeWindowStartUpTo f s = t)
+    (hend : f (t + 1) = f t)
+    (hno : ¬ HasTripleRunningMinimumContact f) :
+    IsUnitExcursionAt f t := by
+  rcases firstNonnegativeWindowStartUpTo_endpointReturn_cases
+      f s t hfirst hend with ⟨u, hu0, hu1, hreturn⟩ | hexc
+  · obtain ⟨hrecord, hflat⟩ :=
+      firstNonnegativeWindowStartUpTo_runningMinimum f s t hfirst
+    apply False.elim (hno ?_)
+    refine ⟨t, t + u, t + 1, lt_add_of_pos_right t hu0, ?_,
+      ?_, ?_, ?_, ?_, ?_⟩
+    · simpa [add_comm] using add_lt_add_left hu1 t
+    · exact (runningMinimum_eq_of_between f hflat hu1.le).symm
+    · exact (runningMinimum_eq_of_between f hflat hu1.le).trans hflat.symm
+    · exact (aboveRunningMinimum_eq_zero_iff f t).2 hrecord
+    · exact (aboveRunningMinimum_eq_zero_iff f (t + u)).2 (by
+        rw [hreturn, runningMinimum_eq_of_between f hflat hu1.le, hrecord])
+    · exact (aboveRunningMinimum_eq_zero_iff f (t + 1)).2 (by
+        rw [hend, hflat, hrecord])
+  · exact hexc
+
+/-- The first-window endpoint return produces the unit-length gap in
+the descending hitting-time process used in Bolthausen's proof of
+Lemma 2.3, equation (2.2): the original level is first reached at
+`t`, and all strictly lower levels are reached after `t+1`. -/
+theorem firstNonnegativeWindowStartUpTo_endpointReturn_descendingHittingTime
+    (f : C(ℝ≥0, ℝ)) (s t x : ℝ≥0)
+    (hfirst : firstNonnegativeWindowStartUpTo f s = t)
+    (hend : f (t + 1) = f t)
+    (hlevel : f t = -(x : ℝ))
+    (hno : ¬ HasTripleRunningMinimumContact f) :
+    descendingHittingTime f x = t ∧
+      ∀ y : ℝ≥0, x < y →
+        (t + 1 : WithTop ℝ≥0) < descendingHittingTime f y := by
+  obtain ⟨hrecord, hflat⟩ :=
+    firstNonnegativeWindowStartUpTo_runningMinimum f s t hfirst
+  constructor
+  · simpa [descendingHittingTime, ← hlevel] using
+      firstNonnegativeWindowStartUpTo_endpointReturn_firstPassageBelow
+        f s t hfirst hend hno
+  · intro y hxy
+    have hlevel' : -(y : ℝ) < f t := by
+      rw [hlevel]
+      exact neg_lt_neg (by exact_mod_cast hxy)
+    have hmin : -(y : ℝ) < runningMinimum f (t + 1) := by
+      rw [hflat, ← hrecord]
+      exact hlevel'
+    have hnot : ¬ descendingHittingTime f y ≤ (t + 1 : WithTop ℝ≥0) := by
+      intro hpass
+      have hminle :=
+        (runningMinimum_le_iff_firstPassageBelow_le f (t + 1) (-(y : ℝ))).2 hpass
+      exact (not_le_of_gt hmin) hminle
+    exact lt_of_not_ge hnot
 
 /-- If the first unit window begins at the last admissible time, its
 starting height above the running minimum is zero. This is the event
