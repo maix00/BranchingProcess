@@ -24,6 +24,8 @@ The public theorem in this file is:
   probability of a Brownian endpoint below $a$.
 - `ProbabilityTheory.IsBrownianReal.measure_runningMinimum_le_one`:
   the same probability identity for the running minimum at time $1$.
+- `ProbabilityTheory.IsBrownianReal.measure_runningMinimum_le`:
+  for $t>0$ and $a<0$, $\mathbb P(m(t)\le a)=2\mathbb P(B(t)<a)$.
 
 This is the event form of the reflection principle in Theorem 2.1 of
 S. J. Dilworth and Duncan Wright, *A direct proof of the reflection
@@ -169,6 +171,79 @@ theorem IsBrownianReal.measure_runningMinimum_le_one
     simpa using (runningMinimum_le_iff_firstPassageBelow_le f 1 a)
   rw [hset]
   exact hB.measure_firstPassageBelow_le_one hBmeasurable ha
+
+private theorem runningMinimum_le_brownianPathScaling_iff
+    (f : C(ℝ≥0, ℝ)) {t : ℝ≥0} (ht : 0 < t) (a : ℝ) :
+    runningMinimum (brownianPathScaling t f) 1 ≤ (√t)⁻¹ * a ↔
+      runningMinimum f t ≤ a := by
+  have hfactor : 0 < ((√t)⁻¹ : ℝ) := by
+    positivity
+  rw [runningMinimum_le_iff_firstPassageBelow_le,
+    runningMinimum_le_iff_firstPassageBelow_le,
+    firstPassageBelow_le_iff, firstPassageBelow_le_iff]
+  constructor
+  · rintro ⟨u, hu, hvalue⟩
+    refine ⟨t * u, ?_, ?_⟩
+    · simpa using mul_le_mul_of_nonneg_left hu ht.le
+    · change (√t)⁻¹ * f (t * u) ≤ (√t)⁻¹ * a at hvalue
+      exact (mul_le_mul_iff_of_pos_left hfactor).mp hvalue
+  · rintro ⟨u, hu, hvalue⟩
+    refine ⟨u / t, ?_, ?_⟩
+    · exact (div_le_one ht).2 hu
+    · change (√t)⁻¹ * f (t * (u / t)) ≤ (√t)⁻¹ * a
+      rw [mul_div_cancel₀ _ ht.ne']
+      exact (mul_le_mul_iff_of_pos_left hfactor).mpr hvalue
+
+/-- The reflection-principle formula for the running minimum at any
+positive time. Brownian scaling reduces the assertion to time `1`. -/
+theorem IsBrownianReal.measure_runningMinimum_le
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+    {B : ℝ≥0 → Ω → ℝ} (hB : IsBrownianReal B P)
+    (hBmeasurable : ∀ t, Measurable (B t))
+    {t : ℝ≥0} (ht : 0 < t) {a : ℝ} (ha : a < 0) :
+    let μ := P.map (hB.continuousPathMap hBmeasurable)
+    μ {f : C(ℝ≥0, ℝ) | runningMinimum f t ≤ a} =
+      2 * μ {f : C(ℝ≥0, ℝ) | f t < a} := by
+  dsimp
+  let μ := P.map (hB.continuousPathMap hBmeasurable)
+  let S := brownianPathScaling t
+  let A : Set C(ℝ≥0, ℝ) := {f | runningMinimum f t ≤ a}
+  let C : Set C(ℝ≥0, ℝ) :=
+    {f | runningMinimum f 1 ≤ (√t)⁻¹ * a}
+  let D : Set C(ℝ≥0, ℝ) :=
+    {f | f 1 < (√t)⁻¹ * a}
+  let E : Set C(ℝ≥0, ℝ) := {f | f t < a}
+  have hS : Measurable S := measurable_brownianPathScaling t
+  have hC : MeasurableSet C := by
+    have hfirst : MeasurableSet {f : C(ℝ≥0, ℝ) |
+        firstPassageBelow f ((√t)⁻¹ * a) ≤ (1 : WithTop ℝ≥0)} :=
+      (measurable_firstPassageBelow _) measurableSet_Iic
+    convert hfirst using 1
+    ext f
+    exact runningMinimum_le_iff_firstPassageBelow_le f 1 _
+  have hD : MeasurableSet D :=
+    (ContinuousMap.measurable_eval 1) measurableSet_Iio
+  have hA : S ⁻¹' C = A := by
+    ext f
+    exact runningMinimum_le_brownianPathScaling_iff f ht a
+  have hE : S ⁻¹' D = E := by
+    ext f
+    change (√t)⁻¹ * f (t * 1) < (√t)⁻¹ * a ↔ f t < a
+    simpa using (mul_lt_mul_iff_of_pos_left
+      (by positivity : 0 < ((√t)⁻¹ : ℝ)))
+  have hlaw : μ.map S = μ := by
+    rw [Measure.map_map hS
+      (hB.measurable_continuousPathMap hBmeasurable)]
+    exact hB.measure_continuousPathMap_scale_eq hBmeasurable ht.ne'
+  have hlevel : (√t)⁻¹ * a < 0 := mul_neg_of_pos_of_neg (by positivity) ha
+  calc
+    μ A = μ (S ⁻¹' C) := by rw [hA]
+    _ = (μ.map S) C := (Measure.map_apply hS hC).symm
+    _ = μ C := by rw [hlaw]
+    _ = 2 * μ D := hB.measure_runningMinimum_le_one hBmeasurable hlevel
+    _ = 2 * (μ.map S) D := by rw [hlaw]
+    _ = 2 * μ (S ⁻¹' D) := by rw [Measure.map_apply hS hD]
+    _ = 2 * μ E := by rw [hE]
 
 end ProbabilityTheory
 
