@@ -23,6 +23,11 @@ The public definitions and theorems in this file are:
 - `ProbabilityTheory.firstNonnegativeWindowStartUpTo_return_rationalInterval`:
   an interior return in the first unit window gives rational times
   $r<q$ enclosing a repeated running-minimum value.
+- `ProbabilityTheory.IsUnitExcursionAt`: the height above the running
+  minimum vanishes at $t$ and $t+1$ and is positive between them.
+- `ProbabilityTheory.firstNonnegativeWindowStartUpTo_endpointReturn_cases`:
+  an endpoint return yields either an interior return or a unit
+  excursion above the running minimum.
 - `ProbabilityTheory.firstNonnegativeWindowStartUpTo_lastStart_aboveRunningMinimum_eq_zero`:
   $T^{t+1}(f)=t$ implies $D_f(t)=0$.
 - `ProbabilityTheory.firstNonnegativeWindowStartUpTo_eq_coe_iff_runningMinimum`:
@@ -160,6 +165,43 @@ theorem firstNonnegativeWindowStartUpTo_return_rationalInterval
   refine ⟨r, q, hrv.trans hvq, hmq.trans hmr.symm,
     t + u, hrv.le, hvq.le, ?_⟩
   rw [hmr, hreturn, hrecord]
+
+/-- A unit-length excursion of a path above its running minimum,
+starting at time `t`. -/
+def IsUnitExcursionAt (f : C(ℝ≥0, ℝ)) (t : ℝ≥0) : Prop :=
+  aboveRunningMinimum f t = 0 ∧
+    aboveRunningMinimum f (t + 1) = 0 ∧
+    ∀ u : ℝ≥0, 0 < u → u < 1 →
+      0 < aboveRunningMinimum f (t + u)
+
+/-- The endpoint equality in Bolthausen's Lemma 2.3, equation (2.2),
+reduces to the interior-return event of (2.4) or a unit-length
+excursion of the height above the running minimum. -/
+theorem firstNonnegativeWindowStartUpTo_endpointReturn_cases
+    (f : C(ℝ≥0, ℝ)) (s t : ℝ≥0)
+    (hfirst : firstNonnegativeWindowStartUpTo f s = t)
+    (hend : f (t + 1) = f t) :
+    (∃ u : ℝ≥0, 0 < u ∧ u < 1 ∧ f (t + u) = f t) ∨
+      IsUnitExcursionAt f t := by
+  by_cases hreturn : ∃ u : ℝ≥0, 0 < u ∧ u < 1 ∧ f (t + u) = f t
+  · exact Or.inl hreturn
+  · right
+    obtain ⟨hrecord, hflat⟩ :=
+      firstNonnegativeWindowStartUpTo_runningMinimum f s t hfirst
+    refine ⟨(aboveRunningMinimum_eq_zero_iff f t).2 hrecord,
+      (aboveRunningMinimum_eq_zero_iff f (t + 1)).2 ?_, ?_⟩
+    · rw [hend, hflat, hrecord]
+    · intro u hu0 hu1
+      have hne : f (t + u) ≠ f t := by
+        intro heq
+        exact hreturn ⟨u, hu0, hu1, heq⟩
+      have hnemin : f (t + u) ≠ runningMinimum f (t + u) := by
+        intro heq
+        exact hne ((firstNonnegativeWindowStartUpTo_eq_runningMinimum_iff
+          f s t hfirst hu1.le).2 heq)
+      have hle : runningMinimum f (t + u) ≤ f (t + u) :=
+        runningMinimum_le f le_rfl
+      exact sub_pos.mpr (lt_of_le_of_ne hle (Ne.symm hnemin))
 
 /-- If the first unit window begins at the last admissible time, its
 starting height above the running minimum is zero. This is the event
