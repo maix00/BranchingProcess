@@ -39,11 +39,16 @@ namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 its finite product then yields the target endpoint-window lower bound. -/
 theorem exists_concreteStaircaseLowerBound_of_robustEntrance
     {ν : Measure ℝ} [IsProbabilityMeasure ν]
-    {sigma narrowedRate u v : ℝ}
+    {sigma narrowedRate uInterior vInterior uFinal vFinal : ℝ}
     (hν : IsCenteredSecondMoment ν (sigma ^ 2))
     (hsigma : 0 < sigma)
     (m : ℕ) (hm : 2 ≤ m)
-    (hu : 0 < u) (huv : u < v) (hv : v < 1)
+    (huInterior : 0 < uInterior)
+    (huvInterior : uInterior < vInterior)
+    (hvInterior : vInterior < 1)
+    (huFinal : 0 < uFinal)
+    (huvFinal : uFinal < vFinal)
+    (hvFinal : vFinal < 1)
     (hrate : (Real.pi ^ 2 / 2) * sigma ^ 2 < narrowedRate) :
     ∃ width₀ ratio₀ : ℕ,
       ∀ (entrance horizon blockLength : ℕ)
@@ -67,12 +72,20 @@ theorem exists_concreteStaircaseLowerBound_of_robustEntrance
           let narrowedWidth := staircaseBinWidth m * width
           width₀ ≤ ⌊narrowedWidth⌋₊ ∧
           1 / margin ≤ narrowedWidth ∧
-          staircaseBinEndpointLowerFraction m v₁ + margin ≤ u ∧
-          v + margin ≤ staircaseBinEndpointUpperFraction m v₂ ∧
           ratio₀ * (⌊narrowedWidth⌋₊) ^ 2 ≤
             staircaseBlockLength entrance horizon blockLength j ∧
           narrowedRate * globalWidth ^ 2 ≤
-            blockRate * (⌊narrowedWidth⌋₊ : ℝ) ^ 2) →
+            blockRate * (⌊narrowedWidth⌋₊ : ℝ) ^ 2 ∧
+          (j + 1 < staircaseBlockCount entrance horizon blockLength →
+            staircaseBinEndpointLowerFraction m v₁ + margin ≤
+              uInterior ∧
+            vInterior + margin ≤
+              staircaseBinEndpointUpperFraction m v₂) ∧
+          (¬j + 1 < staircaseBlockCount entrance horizon blockLength →
+            staircaseBinEndpointLowerFraction m v₁ + margin ≤
+              uFinal ∧
+            vFinal + margin ≤
+              staircaseBinEndpointUpperFraction m v₂)) →
         Real.exp (-(totalRate - blockRate) * (horizon : ℝ) /
           globalWidth ^ 2) ≤
           (iidSequenceLaw ν).real
@@ -84,7 +97,8 @@ theorem exists_concreteStaircaseLowerBound_of_robustEntrance
               base endpointFraction) := by
   obtain ⟨width₀, ratio₀, hfinite⟩ :=
     exists_concreteStaircaseLowerBound
-      hν hsigma m hm hu huv hv hrate
+      hν hsigma m hm huInterior huvInterior hvInterior
+        huFinal huvFinal hvFinal hrate
   refine ⟨width₀, ratio₀, ?_⟩
   intro entrance horizon blockLength margin globalWidth drift base
     endpointFraction blockRate totalRate hremaining hblockLength
