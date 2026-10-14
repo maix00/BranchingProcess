@@ -153,14 +153,26 @@ paper's $v_1(k),v_2(k)$ with the next central window and the final endpoint
 window. `ConcreteStaircaseLower.lean` applies the finite product theorem to
 this exact schedule under explicit numerical and entrance assumptions.
 `StaircaseFirstWindow.lean` proves that, when the first block has length
-$\ell$ and $8c\ell<\Delta^3$, the robust interval
-$[r_{t_1}+5\Delta/12,r_{t_1}+7\Delta/12]$ supplied by the three
+$\ell$ and $10c\ell<\Delta^3$, the robust interval
+$[r_{t_1}+2\Delta/5,r_{t_1}+3\Delta/5]$ implied for large widths by the three
 constructions in Appendix A.2 lies in the central window of the first
 horizontal block. The published entrance window
 $[r_{t_1}+\Delta/3,r_{t_1}+2\Delta/3]$ is wider than this central window;
 the robust entrance probability estimate must therefore be carried through
 the Appendix A.2 formalization before it can discharge the first-block
 assumption of `ConcreteStaircaseLower.lean`.
+`Entrance/RobustTransition.lean` defines this narrower event with terminal
+window $[h_{t_1}+2\Delta/5,h_{t_1}+3\Delta/5]$ and proves that it is
+measurable at time $t_1$. `DriftedTube/StaircaseEntranceBridge.lean` proves
+both its tilted-tube path constraint and its membership in the first
+horizontal central window. `ConcreteStaircaseEntranceLower.lean` eliminates
+the entrance geometry and measurability assumptions from the finite
+staircase theorem; the remaining entrance input is exactly the probability
+lower bound for this robust event. Its deduction from the three Appendix
+A.2 cases, including the conditioned Brownian-meander source theorems,
+remains open. The printed $8c\ell<\Delta^3$ is used for the broader
+first-window inclusion; $10c\ell<\Delta^3$ is an eventual strengthening
+for the robust central-window inclusion in this formalization.
 
 | Source component | Lean modules | Verified scope |
 |---|---|---|
