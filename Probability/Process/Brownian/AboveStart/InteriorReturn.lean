@@ -17,6 +17,8 @@ The public theorem in this file is:
 - `ProbabilityTheory.IsBrownianReal.measure_firstNonnegativeWindowStartUpTo_interiorReturn_eq_zero`:
   for a finite horizon $s$, the first unit window of a Brownian path
   almost surely does not return to its starting value at an interior time.
+- `ProbabilityTheory.IsBrownianReal.measure_firstNonnegativeWindowStart_interiorReturn_eq_zero`:
+  the same assertion for the unrestricted first unit window.
 
 This is equation (2.4) of Lemma 2.3 in Erwin Bolthausen,
 *On a functional central limit theorem for random walks conditioned to
@@ -72,6 +74,40 @@ theorem IsBrownianReal.measure_firstNonnegativeWindowStartUpTo_interiorReturn_eq
       ⟨q, ⟨hrq, hflat, v, hrv, hvq, hrecord⟩⟩⟩
   exact measure_mono_null hcover
     (measure_iUnion_null fun r => measure_iUnion_null fun q => hEnull r q)
+
+/-- Bolthausen's Lemma 2.3, equation (2.4), for the unrestricted
+first unit window. Finite-horizon versions cover the event as the
+horizon ranges over natural numbers. -/
+theorem IsBrownianReal.measure_firstNonnegativeWindowStart_interiorReturn_eq_zero
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+    {B : ℝ≥0 → Ω → ℝ} (hB : IsBrownianReal B P)
+    (hBmeasurable : ∀ u, Measurable (B u)) :
+    P {ω | ∃ t u : ℝ≥0,
+      firstNonnegativeWindowStart
+        (hB.continuousPathMap hBmeasurable ω) = t ∧
+      0 < u ∧ u < 1 ∧
+      hB.continuousPathMap hBmeasurable ω (t + u) =
+        hB.continuousPathMap hBmeasurable ω t} = 0 := by
+  let pathB := hB.continuousPathMap hBmeasurable
+  let E : ℕ → Set Ω := fun n =>
+    {ω | ∃ t u : ℝ≥0,
+      firstNonnegativeWindowStartUpTo (pathB ω) n = t ∧
+      0 < u ∧ u < 1 ∧ pathB ω (t + u) = pathB ω t}
+  have hEnull (n : ℕ) : P (E n) = 0 :=
+    hB.measure_firstNonnegativeWindowStartUpTo_interiorReturn_eq_zero
+      hBmeasurable n
+  have hcover :
+      {ω | ∃ t u : ℝ≥0,
+        firstNonnegativeWindowStart (pathB ω) = t ∧
+        0 < u ∧ u < 1 ∧ pathB ω (t + u) = pathB ω t} ⊆
+      ⋃ n : ℕ, E n := by
+    intro ω hω
+    obtain ⟨t, u, hfirst, hu0, hu1, hreturn⟩ := hω
+    obtain ⟨n, hn⟩ := exists_nat_ge (t + 1)
+    have hfirstn := firstNonnegativeWindowStartUpTo_eq_first_of_le
+      (pathB ω) (s := n) hfirst hn
+    exact Set.mem_iUnion.mpr ⟨n, ⟨t, u, hfirstn, hu0, hu1, hreturn⟩⟩
+  exact measure_mono_null hcover (measure_iUnion_null hEnull)
 
 end ProbabilityTheory
 
