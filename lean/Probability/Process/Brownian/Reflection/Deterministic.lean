@@ -7,6 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.Path.Reflection
+public import Probability.Process.Brownian.ContinuousPathLaw
 public import Mathlib.Probability.BrownianMotion.Basic
 public import Mathlib.Probability.Distributions.Gaussian.IsGaussianProcess.Basic
 public import Mathlib.Probability.Distributions.Gaussian.HasGaussianLaw.Basic
@@ -19,6 +20,8 @@ The public theorem in this file is:
 - `ProbabilityTheory.IsBrownianReal.reflection_at_fixed_time`: if $B$ is a
   Brownian motion and $r\ge0$ is fixed, then
   $B'_t=B_t$ for $t\le r$ and $B'_t=2B_r-B_t$ for $t>r$ is a Brownian motion.
+- `ProbabilityTheory.IsBrownianReal.measure_reflectAfter_continuousPathMap_eq`:
+  reflection at a fixed time preserves the law on continuous-path space.
 
 This is the deterministic-time case of Theorem 2.1 in S. J. Dilworth and
 Duncan Wright, *A direct proof of the reflection principle for Brownian
@@ -132,6 +135,41 @@ theorem IsBrownianReal.reflection_at_fixed_time
   change Continuous (fun t => reflectedProcessAtTime B r t ω)
   rw [h]
   exact (reflectAfter f r).continuous
+
+/-- Reflecting a Brownian path at a fixed time preserves its law on
+continuous-path space. -/
+theorem IsBrownianReal.measure_reflectAfter_continuousPathMap_eq
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+    {B : ℝ≥0 → Ω → ℝ} (hB : IsBrownianReal B P)
+    (hBmeasurable : ∀ t, Measurable (B t)) (r : ℝ≥0) :
+    P.map (fun ω => reflectAfter (hB.continuousPathMap hBmeasurable ω) r) =
+      P.map (hB.continuousPathMap hBmeasurable) := by
+  let Br : ℝ≥0 → Ω → ℝ :=
+    fun t ω => if t ≤ r then B t ω else 2 * B r ω - B t ω
+  have hBr : IsBrownianReal Br P := hB.reflection_at_fixed_time r
+  have hBrmeasurable (t : ℝ≥0) : Measurable (Br t) := by
+    by_cases ht : t ≤ r
+    · simpa [Br, ht] using hBmeasurable t
+    · have htarget : Measurable (fun ω => 2 * B r ω - B t ω) := by
+        fun_prop
+      simpa [Br, ht] using htarget
+  have hpathEq :
+      (fun ω => reflectAfter (hB.continuousPathMap hBmeasurable ω) r) =ᵐ[P]
+        hBr.continuousPathMap hBrmeasurable := by
+    filter_upwards [hB.continuousPathMap_ae_eq hBmeasurable,
+      hBr.continuousPathMap_ae_eq hBrmeasurable] with ω hω hωr
+    ext t
+    by_cases ht : t ≤ r
+    · rw [reflectAfter_apply_le _ _ _ ht, hω t, hωr t]
+      simp [Br, ht]
+    · rw [reflectAfter_apply_of_lt _ _ _ (lt_of_not_ge ht),
+        hω r, hω t, hωr t]
+      simp [Br, ht]
+  calc
+    P.map (fun ω => reflectAfter (hB.continuousPathMap hBmeasurable ω) r) =
+        P.map (hBr.continuousPathMap hBrmeasurable) := Measure.map_congr hpathEq
+    _ = P.map (hB.continuousPathMap hBmeasurable) :=
+      hBr.measure_continuousPathMap_eq hB hBrmeasurable hBmeasurable
 
 end ProbabilityTheory
 
