@@ -43,22 +43,22 @@ theorem measureReal_tubeBlockIntersection_ge_prod
       initial)
     (lower width v₁ v₂ bounds : ℕ → ℝ)
     (good : ℕ → Set ℝ)
-    (hgoodTube : ∀ j, good j ⊆
+    (q : ℕ)
+    (hgoodTube : ∀ j, j < q → good j ⊆
       Set.Icc (lower j) (lower j + width j))
     (hboundNonneg : ∀ j, 0 ≤ bounds j)
-    (hblockBound : ∀ j initial,
+    (hblockBound : ∀ j, j < q → ∀ initial,
       initial ∈ good j →
         bounds j ≤ (iidSequenceLaw ν).real
           (relativeHorizontalTubeEndpointWindowEvent
           (lower j - initial) (width j) (length j) (v₁ j) (v₂ j)))
-    (henter : ∀ j (increment : ℕ → ℝ),
+    (henter : ∀ j, j < q → ∀ increment : ℕ → ℝ,
       increment ∈ initial ∩ conditionalBlockIntersection
         (fun i => tubeBlockEvent (start i) (length i)
           (lower i) (width i) (v₁ i) (v₂ i)) j →
       (∑ k : Fin (start j),
         Combinatorics.Sequence.blockCoordinates 0
-          (start j) increment k) ∈ good j)
-    (q : ℕ) :
+          (start j) increment k) ∈ good j) :
     (iidSequenceLaw ν).real initial *
       (∏ j ∈ Finset.range q, bounds j) ≤
       (iidSequenceLaw ν).real
@@ -92,19 +92,20 @@ theorem measureReal_tubeBlockIntersection_ge_prod
     exact measurableSet_tubeBlockEvent
       (start j) (length j)
         (lower j) (width j) (v₁ j) (v₂ j)
-  have hconditional : ∀ j, ∀ᵐ increment ∂iidSequenceLaw ν,
+  have hconditional : ∀ j, j < q → ∀ᵐ increment ∂iidSequenceLaw ν,
       increment ∈ initial ∩ conditionalBlockIntersection events j →
         bounds j ≤ condExp (filtration j) (iidSequenceLaw ν)
           ((events j).indicator fun _ => (1 : ℝ)) increment := by
-    intro j
+    intro j hj
     have h := iidSequenceLaw_condExp_tubeBlockEvent_ge
       ν (lower j) (width j) (v₁ j) (v₂ j)
-        (start j) (length j) (good j) (hgoodTube j) (hblockBound j)
+        (start j) (length j) (good j) (hgoodTube j hj)
+          (hblockBound j hj)
     filter_upwards [h] with increment hstep hpast
-    exact hstep (henter j increment hpast)
-  exact measureReal_initialInterConditionalBlockIntersection_ge_mul_prod
+    exact hstep (henter j hj increment hpast)
+  exact measureReal_initialInterConditionalBlockIntersection_ge_mul_prod_prefix
     filtration hfiltrationMono hfiltrationAmbient initial hinitial events
-      heventMeasurable bounds hboundNonneg hconditional q
+      bounds hboundNonneg q (fun j _ => heventMeasurable j) hconditional
 
 end ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 

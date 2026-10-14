@@ -40,19 +40,20 @@ theorem tubeBlockIntersection_enters_next
     (initial : Set (ℕ → ℝ))
     (lower width v₁ v₂ : ℕ → ℝ)
     (good : ℕ → Set ℝ)
+    (q : ℕ)
     (hfirst : ∀ increment ∈ initial,
       AdditivePath.displacement (start 0) increment ∈ good 0)
-    (hwindow : ∀ j,
+    (hwindow : ∀ j, j + 1 < q →
       Set.Icc (lower j + v₁ j * width j)
         (lower j + v₂ j * width j) ⊆ good (j + 1)) :
-    ∀ j (increment : ℕ → ℝ),
+    ∀ j, j < q → ∀ increment : ℕ → ℝ,
       increment ∈ initial ∩ conditionalBlockIntersection
         (fun i => tubeBlockEvent (start i) (length i)
           (lower i) (width i) (v₁ i) (v₂ i)) j →
       (∑ k : Fin (start j),
         Combinatorics.Sequence.blockCoordinates 0
           (start j) increment k) ∈ good j := by
-  intro j increment hj
+  intro j hjq increment hj
   have hprefix :
       (∑ k : Fin (start j),
         Combinatorics.Sequence.blockCoordinates 0
@@ -69,7 +70,7 @@ theorem tubeBlockIntersection_enters_next
             (lower k) (width k) (v₁ k) (v₂ k) := hj.2.2
       have hend := tubeBlockEvent_end_mem hprevious
       rw [hnext k]
-      exact hwindow k hend
+      exact hwindow k hjq hend
 
 /-- The paper's reverse Markov multiplication for successive horizontal
 tubes, including the entrance event and unequal block lengths. -/
@@ -82,20 +83,20 @@ theorem measureReal_tubeBlockIntersection_ge_prod_of_endpointWindows
       initial)
     (lower width v₁ v₂ bounds : ℕ → ℝ)
     (good : ℕ → Set ℝ)
-    (hgoodTube : ∀ j, good j ⊆
+    (q : ℕ)
+    (hgoodTube : ∀ j, j < q → good j ⊆
       Set.Icc (lower j) (lower j + width j))
     (hfirst : ∀ increment ∈ initial,
       AdditivePath.displacement (start 0) increment ∈ good 0)
-    (hwindow : ∀ j,
+    (hwindow : ∀ j, j + 1 < q →
       Set.Icc (lower j + v₁ j * width j)
         (lower j + v₂ j * width j) ⊆ good (j + 1))
     (hboundNonneg : ∀ j, 0 ≤ bounds j)
-    (hblockBound : ∀ j initial,
+    (hblockBound : ∀ j, j < q → ∀ initial,
       initial ∈ good j →
         bounds j ≤ (iidSequenceLaw ν).real
           (relativeHorizontalTubeEndpointWindowEvent
-            (lower j - initial) (width j) (length j) (v₁ j) (v₂ j)))
-    (q : ℕ) :
+          (lower j - initial) (width j) (length j) (v₁ j) (v₂ j))) :
     (iidSequenceLaw ν).real initial *
       (∏ j ∈ Finset.range q, bounds j) ≤
       (iidSequenceLaw ν).real
@@ -103,10 +104,10 @@ theorem measureReal_tubeBlockIntersection_ge_prod_of_endpointWindows
           (fun j => tubeBlockEvent (start j) (length j)
             (lower j) (width j) (v₁ j) (v₂ j)) q) := by
   exact measureReal_tubeBlockIntersection_ge_prod ν start length hnext
-    initial hinitial lower width v₁ v₂ bounds good hgoodTube
+    initial hinitial lower width v₁ v₂ bounds good q hgoodTube
       hboundNonneg hblockBound
     (tubeBlockIntersection_enters_next start length hnext initial
-      lower width v₁ v₂ good hfirst hwindow) q
+      lower width v₁ v₂ good q hfirst hwindow)
 
 end ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 

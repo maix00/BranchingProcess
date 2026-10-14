@@ -35,6 +35,8 @@ The public theorems in this file are:
   it belongs to the natural domain filtration at the block end.
 - `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.tubeBlockEvent_end_mem`:
   a successful block places the walk in its specified terminal window.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.tubeBlockEvent_path_mem`:
+  every time within a successful block lies in its horizontal tube.
 - `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.iidSequenceLaw_condExp_tubeBlockEvent_ge`:
   the preceding conditional bound expressed on the complete sequence.
 
@@ -265,6 +267,34 @@ theorem tubeBlockEvent_end_mem
     simp [Combinatorics.Sequence.blockCoordinates,
       Finset.mem_range.mp hk]
   simpa only [hpast, hnext, ← AdditivePath.displacement_add] using hend
+
+/-- Every time in the block, including its starting time, lies inside the
+specified horizontal tube. -/
+theorem tubeBlockEvent_path_mem
+    {start length : ℕ} {lower width v₁ v₂ : ℝ}
+    {increment : ℕ → ℝ}
+    (hblock : increment ∈
+      tubeBlockEvent start length lower width v₁ v₂)
+    {k : ℕ} (hk : k ≤ length) :
+    AdditivePath.displacement (start + k) increment ∈
+      Set.Icc lower (lower + width) := by
+  have hpath :=
+    (RandomWalk.finiteInClosedInterval_blockCoordinates_iff
+      lower (lower + width)
+      (∑ j : Fin start,
+        Combinatorics.Sequence.blockCoordinates 0 start increment j)
+      start length increment).mp hblock.1
+  have hposition := hpath ⟨k, Nat.lt_succ_of_le hk⟩
+  have hpast :
+      (∑ j : Fin start,
+        Combinatorics.Sequence.blockCoordinates 0 start increment j) =
+      AdditivePath.displacement start increment := by
+    simp [Combinatorics.Sequence.blockCoordinates,
+      AdditivePath.displacement, Fin.sum_univ_eq_sum_range]
+  simpa [RandomWalk.InClosedInterval, RandomWalk.InWindows,
+    RandomWalk.history_eq_fromIncrements,
+    AdditivePath.fromIncrements, hpast,
+    AdditivePath.displacement_add] using hposition
 
 /-- The block-start conditional probability bound in the natural domain
 filtration, using the translated zero-start bound from the preceding theorem. -/
