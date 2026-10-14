@@ -28,8 +28,9 @@ The public objects and theorems in this file are:
 
 This is the open-set and support step in Wang Yiyang, *Asymptotic speed of
 the $N$-branching random walk with infinite offspring*, Chapter 3,
-Lemma 3.5, Appendix A.2. The support property is stated as a hypothesis
-until a Brownian meander law is constructed in the library.
+Lemma 3.5, Appendix A.2. `Brownian/Meander/Support.lean` proves the
+positive-mass statement for the Imhof tilt of a three-dimensional Brownian
+radial law.
 -/
 
 @[expose] public section
