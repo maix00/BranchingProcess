@@ -33,6 +33,8 @@ The public theorems in this file are:
   the block event on the complete increment sequence.
 - `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.measurableSet_tubeBlockEvent`:
   it belongs to the natural domain filtration at the block end.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.tubeBlockEvent_end_mem`:
+  a successful block places the walk in its specified terminal window.
 - `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.iidSequenceLaw_condExp_tubeBlockEvent_ge`:
   the preceding conditional bound expressed on the complete sequence.
 
@@ -128,15 +130,18 @@ preceding position lying inside the tube, the chance of the next finite
 block is bounded by its translated zero-start probability. -/
 theorem iidSequenceLaw_condExp_tubeBlockPairEvent_ge
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
-    (lower width v₁ v₂ : ℝ) (start length : ℕ) {bound : ℝ}
-    (hbound : ∀ initial ∈ Set.Icc lower (lower + width),
+    (lower width v₁ v₂ : ℝ) (start length : ℕ)
+    (good : Set ℝ)
+    (hgoodTube : good ⊆ Set.Icc lower (lower + width))
+    {bound : ℝ}
+    (hbound : ∀ initial ∈ good,
       bound ≤ (iidSequenceLaw ν).real
         (relativeHorizontalTubeEndpointWindowEvent
           (lower - initial) width length v₁ v₂)) :
     ∀ᵐ increment ∂iidSequenceLaw ν,
       (∑ j : Fin start,
           Combinatorics.Sequence.blockCoordinates 0 start increment j) ∈
-        Set.Icc lower (lower + width) →
+        good →
       bound ≤ condExp
         (MeasurableSpace.comap
           (Combinatorics.Sequence.blockCoordinates 0 start) inferInstance)
@@ -147,21 +152,21 @@ theorem iidSequenceLaw_condExp_tubeBlockPairEvent_ge
             (Combinatorics.Sequence.blockCoordinates 0 start increment,
               Combinatorics.Sequence.blockCoordinates start length increment))
         increment := by
-  let good : Set (Fin start → ℝ) :=
-    {past | (∑ j : Fin start, past j) ∈ Set.Icc lower (lower + width)}
-  have hsections : ∀ past : Fin start → ℝ, past ∈ good →
+  let goodPast : Set (Fin start → ℝ) :=
+    {past | (∑ j : Fin start, past j) ∈ good}
+  have hsections : ∀ past : Fin start → ℝ, past ∈ goodPast →
       bound ≤ ((iidSequenceLaw ν).map
         (Combinatorics.Sequence.blockCoordinates start length)).real
         {block | (past, block) ∈
           tubeBlockPairEvent lower width v₁ v₂ start length} := by
     intro past hpast
     have hpast' : (∑ j : Fin start, past j) ∈
-        Set.Icc lower (lower + width) := hpast
+        Set.Icc lower (lower + width) := hgoodTube hpast
     have hbridge :=
       measure_blockCoordinates_finiteTubeEndpoint_eq_relativeHorizontalTubeEndpointWindowEvent
         ν (lower := lower) (width := width) (v₁ := v₁) (v₂ := v₂)
           hpast' start length
-    have hbound' := hbound (∑ j : Fin start, past j) hpast'
+    have hbound' := hbound (∑ j : Fin start, past j) hpast
     have hbridgeReal := congrArg ENNReal.toReal hbridge
     change bound ≤ ((iidSequenceLaw ν)
       (relativeHorizontalTubeEndpointWindowEvent
@@ -176,7 +181,7 @@ theorem iidSequenceLaw_condExp_tubeBlockPairEvent_ge
     ν start length
       (tubeBlockPairEvent lower width v₁ v₂ start length)
       (measurableSet_tubeBlockPairEvent lower width v₁ v₂ start length)
-      good hsections
+      goodPast hsections
 
 /-- The finite horizontal tube block event on the complete increment path. -/
 def tubeBlockEvent (start length : ℕ)
@@ -233,26 +238,57 @@ theorem measurableSet_tubeBlockEvent
   simp only [Set.mem_preimage, tubeBlockEvent, Set.mem_ofPred_eq]
   rw [tubePrefixBlockPair_blockCoordinates]
 
+/-- The terminal constraint carried by a successful horizontal tube block. -/
+theorem tubeBlockEvent_end_mem
+    {start length : ℕ} {lower width v₁ v₂ : ℝ}
+    {increment : ℕ → ℝ}
+    (hblock : increment ∈
+      tubeBlockEvent start length lower width v₁ v₂) :
+    AdditivePath.displacement (start + length) increment ∈
+      Set.Icc (lower + v₁ * width) (lower + v₂ * width) := by
+  have hend := hblock.2
+  have hpast :
+      (∑ j : Fin start,
+        Combinatorics.Sequence.blockCoordinates 0 start increment j) =
+      AdditivePath.displacement start increment := by
+    simp [Combinatorics.Sequence.blockCoordinates,
+      AdditivePath.displacement, Fin.sum_univ_eq_sum_range]
+  have hnext :
+      (∑ j : Fin length,
+        Combinatorics.Sequence.blockCoordinates start length increment j) =
+      AdditivePath.displacement length
+        (fun k => increment (start + k)) := by
+    rw [Finset.sum_fin_eq_sum_range]
+    simp only [AdditivePath.displacement]
+    apply Finset.sum_congr rfl
+    intro k hk
+    simp [Combinatorics.Sequence.blockCoordinates,
+      Finset.mem_range.mp hk]
+  simpa only [hpast, hnext, ← AdditivePath.displacement_add] using hend
+
 /-- The block-start conditional probability bound in the natural domain
 filtration, using the translated zero-start bound from the preceding theorem. -/
 theorem iidSequenceLaw_condExp_tubeBlockEvent_ge
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
-    (lower width v₁ v₂ : ℝ) (start length : ℕ) {bound : ℝ}
-    (hbound : ∀ initial ∈ Set.Icc lower (lower + width),
+    (lower width v₁ v₂ : ℝ) (start length : ℕ)
+    (good : Set ℝ)
+    (hgoodTube : good ⊆ Set.Icc lower (lower + width))
+    {bound : ℝ}
+    (hbound : ∀ initial ∈ good,
       bound ≤ (iidSequenceLaw ν).real
         (relativeHorizontalTubeEndpointWindowEvent
           (lower - initial) width length v₁ v₂)) :
     ∀ᵐ increment ∂iidSequenceLaw ν,
       (∑ j : Fin start,
           Combinatorics.Sequence.blockCoordinates 0 start increment j) ∈
-        Set.Icc lower (lower + width) →
+        good →
       bound ≤ condExp (sequencePrefixFiltration (E := ℝ) start)
         (iidSequenceLaw ν)
         ((tubeBlockEvent start length lower width v₁ v₂).indicator
           (fun _ => (1 : ℝ))) increment := by
   rw [sequencePrefixFiltration_eq_comap_blockCoordinates]
   have hconditional := iidSequenceLaw_condExp_tubeBlockPairEvent_ge
-    ν lower width v₁ v₂ start length hbound
+    ν lower width v₁ v₂ start length good hgoodTube hbound
   have hindicator :
       (tubeBlockEvent start length lower width v₁ v₂).indicator
           (fun _ => (1 : ℝ)) =
