@@ -15,15 +15,15 @@ The public theorems in this file are:
 
 - `staircaseFirstBlockLength_eq`: if $t_1+2\ell\le L$, the first
   horizontal block has length $\ell$.
-- `staircaseFirstInteriorWindow`: if $8c\ell<\Delta^3$, the robust
+- `staircaseFirstInteriorWindow`: if $10c\ell<\Delta^3$, the robust
   entrance endpoint interval
-  $[r_{t_1}+5\Delta/12,r_{t_1}+7\Delta/12]$ lies inside the central
+  $[r_{t_1}+2\Delta/5,r_{t_1}+3\Delta/5]$ lies inside the central
   window of the first horizontal sub-tube.
 
 This is the first-window geometry in Wang Yiyang,
 *Asymptotic speed of the $N$-branching random walk with infinite offspring*,
 Chapter 3, proof of Lemma 3.5. The displayed robust interval is the
-subinterval obtained from the three cases in Appendix A.2, proof of the
+  subinterval obtained for large widths from the three cases in Appendix A.2, proof of the
 meander transition lemma; the broader stated window is
 $[r_{t_1}+\Delta/3,r_{t_1}+2\Delta/3]$.
 -/
@@ -56,10 +56,10 @@ theorem staircaseFirstInteriorWindow
     (hremaining : entrance + 2 * blockLength ≤ horizon)
     (hblockLength : 0 < blockLength)
     (hwidth : 0 < width) (hdrift : 0 ≤ drift)
-    (hcost : 8 * drift * (blockLength : ℝ) < width ^ 3) :
+    (hcost : 10 * drift * (blockLength : ℝ) < width ^ 3) :
     Set.Icc
-      (base + drift * (entrance : ℝ) / width ^ 2 + 5 * width / 12)
-      (base + drift * (entrance : ℝ) / width ^ 2 + 7 * width / 12) ⊆
+      (base + drift * (entrance : ℝ) / width ^ 2 + 2 * width / 5)
+      (base + drift * (entrance : ℝ) / width ^ 2 + 3 * width / 5) ⊆
     Set.Icc
       (staircaseLowerEdge base drift width
         (staircaseBlockStart entrance horizon blockLength) 0 +
@@ -85,9 +85,9 @@ theorem staircaseFirstInteriorWindow
         (by omega : entrance ≤ horizon) 0
     simpa [hstartZero, hfirstLength] using hnext
   have hsq : 0 < width ^ 2 := sq_pos_of_pos hwidth
-  have hdelta : 8 * (drift * (blockLength : ℝ) / width ^ 2) < width := by
-    rw [show 8 * (drift * (blockLength : ℝ) / width ^ 2) =
-      8 * drift * (blockLength : ℝ) / width ^ 2 by ring]
+  have hdelta : 10 * (drift * (blockLength : ℝ) / width ^ 2) < width := by
+    rw [show 10 * (drift * (blockLength : ℝ) / width ^ 2) =
+      10 * drift * (blockLength : ℝ) / width ^ 2 by ring]
     apply (div_lt_iff₀ hsq).2
     nlinarith [hcost]
   have hadd : drift * ((entrance + blockLength : ℕ) : ℝ) / width ^ 2 =
