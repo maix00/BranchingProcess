@@ -17,6 +17,8 @@ The public objects and theorems in this file are:
 - `ProbabilityTheory.RandomWalk.SurvivesNonnegative`: the event
   $C_n=\{S_j\ge0:1\le j\le n\}$.
 - `ProbabilityTheory.RandomWalk.measurableSet_survivesNonnegative`: $C_n$ is measurable.
+- `ProbabilityTheory.RandomWalk.SurvivesNonnegative.mono`: $C_m\subseteq C_n$
+  whenever $n\le m$.
 - `ProbabilityTheory.RandomWalk.SurvivesNonnegative.displacement_nonneg`:
   $C_n$ also gives $S_k\ge0$ for $0\le k\le n$.
 - `ProbabilityTheory.RandomWalk.SurvivesNonnegative.normalizedStepCadlagPathIcc_nonnegative`:
@@ -50,6 +52,15 @@ theorem measurableSet_survivesNonnegative (n : ℕ) :
     simp [SurvivesNonnegative]]
   exact MeasurableSet.iInter fun k =>
     measurableSet_Ici.preimage (displacement_measurable (k + 1))
+
+/-- Survival through a longer horizon implies survival through every
+shorter horizon. -/
+theorem SurvivesNonnegative.mono
+    {n m : ℕ} (hnm : n ≤ m) {increment : ℕ → ℝ}
+    (h : SurvivesNonnegative m increment) :
+    SurvivesNonnegative n increment := by
+  intro k
+  exact h ⟨k, lt_of_lt_of_le k.isLt hnm⟩
 
 /-- Survival through time `n` includes the nonnegative initial value. -/
 theorem SurvivesNonnegative.displacement_nonneg
