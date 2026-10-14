@@ -50,7 +50,9 @@ theorem staircaseBlockConditions_of_global
       ⌊staircaseBinWidth m * globalWidth⌋₊ ^ 2 ≤ blockLength)
     (hrate : narrowedRate * globalWidth ^ 2 ≤
       blockRate *
-        (⌊staircaseBinWidth m * (globalWidth / 2)⌋₊ : ℝ) ^ 2)
+        (⌊staircaseBinWidth m *
+          (globalWidth - 2 * drift * (blockLength : ℝ) /
+            globalWidth ^ 2)⌋₊ : ℝ) ^ 2)
     (hinteriorLower :
       ((globalWidth / 3 +
           (2 / 3 : ℝ) *

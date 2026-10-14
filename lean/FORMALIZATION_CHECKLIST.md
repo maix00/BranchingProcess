@@ -175,13 +175,21 @@ staircase theorem; the remaining entrance input is exactly the probability
 lower bound for this robust event. The printed $8c\ell<\Delta^3$ is used for the broader
 first-window inclusion; $10c\ell<\Delta^3$ is an eventual strengthening
 for the robust central-window inclusion in this formalization.
-`StaircaseNumeric.lean` proves common width, time-ratio, and exponent
-bounds for all actual blocks from four inequalities at the global width.
+`StaircaseNumeric.lean` proves common width and time-ratio bounds, and
+uses the sharp lower width $\Delta-2c\ell/\Delta^2$ for the exponent
+comparison. The latter retains the paper's limiting width ratio $1$.
 `StaircaseEndpointMargins.lean` proves the two separate endpoint-margin
 comparisons for ordinary and final blocks; `StaircaseGlobalConditions.lean`
 combines them into exactly the six per-block hypotheses of the finite
 product. These results formalize the common-threshold part of the paper's
 schedule argument without a varying block-index assumption.
+`ConcreteStaircaseGlobalLower.lean` applies this reduction to the exact
+finite staircase and robust entrance probability, yielding the target
+exponential lower bound from the global inequalities.
+`StaircaseRateLimit.lean` proves that the rounded narrowed width divided by
+$\Delta$ tends to $\beta=1-1/(3m)$ when $\ell/\Delta^3\to0$, and therefore
+derives the paper's exponent comparison from the strict margin
+$d<d''\beta^2$; no fixed factor-four rate loss is imposed.
 The conditional Appendix A.2 deduction is now present:
 `Entrance/RobustTransition.lean` transfers the middle Donsker event to the
 robust endpoint window, `RobustEdgeGeometry.lean` proves both fixed-prefix
