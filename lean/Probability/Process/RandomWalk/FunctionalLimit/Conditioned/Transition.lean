@@ -9,6 +9,7 @@ module
 public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Meander
 public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Survival
 public import Probability.Process.RandomWalk.Path.Skorokhod.Corridor.Endpoint.Closed
+public import Analysis.Asymptotics.ShiftedFloor
 
 /-!
 # The finite transition event in the conditioned meander argument
@@ -27,6 +28,15 @@ The public objects and theorems in this file are:
   support at the specified straight path, and $\Delta_n/\sqrt{n+1}\to1$,
   some $q>0$ satisfies $\mathbb P(D_{n+1,\Delta_n}\mid C_{n+1})\ge q$
   eventually.
+- `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.diffusiveTransitionHorizon`:
+  $N_{\Delta_n,m}=\lfloor\Delta_n^2\rfloor-m$ for real widths $\Delta_n$.
+- `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.conditionedMeanderLimit_diffusive`:
+  the standard conditioned invariance limit at times $N$ also holds at
+  $N=\lfloor\Delta_n^2\rfloor-m$ whenever $\Delta_n\to\infty$.
+- `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.exists_eventually_diffusiveTransitionConditionalProbability_ge`:
+  for $\Delta_n\to\infty$ and fixed $m$, the conditional meander limit
+  and support give $\mathbb P(D_{N_{\Delta_n,m},\Delta_n}\mid
+  C_{N_{\Delta_n,m}})\ge q>0$ eventually.
 
 This is the transition event and normalization in Wang Yiyang,
 *Asymptotic speed of the $N$-branching random walk with infinite offspring*,
@@ -169,6 +179,162 @@ theorem exists_eventually_transitionConditionalProbability_ge
         (fun j => sigma * Real.sqrt j) (n + 1) increment ∈
       normalizedTransitionCorridor sigma
         (width n / Real.sqrt (n + 1))} at hn
+  rw [heventEq] at hn
+  exact hn
+
+/-- The diffusive transition horizon after a fixed finite entrance segment
+in Wang Yiyang, Chapter 3, Lemma 3.5, Appendix A.2. -/
+noncomputable def diffusiveTransitionHorizon
+    (width : ℕ → ℝ) (offset n : ℕ) : ℕ :=
+  Asymptotics.floorBlockLength (fun k => width k ^ 2) n - offset
+
+/-- The conditioned path limit at integer times remains valid along the
+diffusive transition horizons in Wang Yiyang, Chapter 3, Lemma 3.5,
+Appendix A.2. This is a cofinal reindexing of the limit in
+Caravenna--Chaumont, equation (3.3). -/
+theorem conditionedMeanderLimit_diffusive
+    {Ωm : Type*} [MeasurableSpace Ωm]
+    {ν : Measure ℝ} [IsProbabilityMeasure ν]
+    [∀ n, IsProbabilityMeasure (survivalConditionedLaw ν (n + 1))]
+    {Pm : Measure Ωm} [IsProbabilityMeasure Pm]
+    {M : Ωm → CadlagPath unitInterval ℝ}
+    {sigma : ℝ} {width : ℕ → ℝ}
+    (hwidth : Tendsto width atTop atTop) (offset : ℕ)
+    [∀ n, IsProbabilityMeasure
+      (survivalConditionedLaw ν (diffusiveTransitionHorizon width offset n))]
+    (hlimit : TendstoInDistribution
+      (fun n increment => normalizedStepCadlagPathIcc
+        (fun j => sigma * Real.sqrt j) (n + 1) increment)
+      atTop M (fun n => survivalConditionedLaw ν (n + 1)) Pm) :
+    TendstoInDistribution
+      (fun n increment => normalizedStepCadlagPathIcc
+        (fun j => sigma * Real.sqrt j)
+        (diffusiveTransitionHorizon width offset n) increment)
+      atTop M
+      (fun n => survivalConditionedLaw ν
+        (diffusiveTransitionHorizon width offset n)) Pm := by
+  have hargument : Tendsto (fun n => width n ^ 2) atTop atTop := by
+    have hmul : Tendsto (fun n => width n * width n) atTop atTop :=
+      hwidth.atTop_mul_atTop₀ hwidth
+    simpa [pow_two] using hmul
+  have hhorizon : Tendsto (diffusiveTransitionHorizon width offset)
+      atTop atTop := by
+    change Tendsto (fun n =>
+      Asymptotics.floorBlockLength (fun k => width k ^ 2) n - offset)
+      atTop atTop
+    exact (tendsto_sub_atTop_nat offset).comp
+      (Asymptotics.tendsto_floorBlockLength_atTop hargument)
+  have hindex : Tendsto
+      (fun n => diffusiveTransitionHorizon width offset n - 1)
+      atTop atTop := by
+    simpa only [Function.comp_def] using
+      (tendsto_sub_atTop_nat 1).comp hhorizon
+  have hcomposition := hlimit.comp_tendsto hindex
+  have hpositive : ∀ᶠ n : ℕ in atTop,
+      0 < diffusiveTransitionHorizon width offset n :=
+    hhorizon.eventually (eventually_gt_atTop 0)
+  refine ⟨?_, hlimit.aemeasurable_limit, ?_⟩
+  · intro n
+    exact (RandomWalk.measurable_normalizedStepCadlagPathIcc _ _).aemeasurable
+  apply hcomposition.tendsto.congr'
+  filter_upwards [hpositive] with n hn
+  have hsucc : diffusiveTransitionHorizon width offset n - 1 + 1 =
+      diffusiveTransitionHorizon width offset n :=
+    Nat.sub_add_cancel hn
+  apply Subtype.ext
+  simp only [hsucc]
+
+/-- The conditional transition probability for the exact diffusive horizon
+$N_{\Delta,m}=\lfloor\Delta^2\rfloor-m$. The scale relation is proved in
+`Analysis.Asymptotics.ShiftedFloor`; the meander limit and support are the
+remaining external inputs from Caravenna--Chaumont, equation (3.3), and
+Wang Yiyang, Chapter 3, Lemma 3.5, Appendix A.2. -/
+theorem exists_eventually_diffusiveTransitionConditionalProbability_ge
+    {Ωm : Type*} [MeasurableSpace Ωm]
+    {ν : Measure ℝ} [IsProbabilityMeasure ν]
+    [∀ n, IsProbabilityMeasure (survivalConditionedLaw ν (n + 1))]
+    {width : ℕ → ℝ} (hwidth : Tendsto width atTop atTop)
+    (offset : ℕ)
+    [∀ n, IsProbabilityMeasure
+      (survivalConditionedLaw ν (diffusiveTransitionHorizon width offset n))]
+    {Pm : Measure Ωm} [IsProbabilityMeasure Pm]
+    {M : Ωm → CadlagPath unitInterval ℝ}
+    {sigma rho : ℝ} (hsigma : 0 < sigma)
+    (hrho : 0 < rho) (hrhoSmall : rho < 1 / 48)
+    (hlimit : TendstoInDistribution
+      (fun n increment => normalizedStepCadlagPathIcc
+        (fun j => sigma * Real.sqrt j) (n + 1) increment)
+      atTop M (fun n => survivalConditionedLaw ν (n + 1)) Pm)
+    (hsupport : Skorokhod.straightPath ((7 / 16) / sigma) ∈
+      (Pm.map M).support) :
+    ∃ q : ℝ≥0∞, 0 < q ∧ ∀ᶠ n : ℕ in atTop,
+      q ≤ survivalConditionedLaw ν
+        (diffusiveTransitionHorizon width offset n)
+        (nonnegativeTransitionEvent
+          (diffusiveTransitionHorizon width offset n) (width n)) := by
+  have hratio : Tendsto (fun n => width n /
+      Real.sqrt (diffusiveTransitionHorizon width offset n))
+      atTop (𝓝 1) :=
+    Asymptotics.tendsto_width_div_sqrt_floor_sq_sub_nat hwidth offset
+  have hnonnegative (n : ℕ) :
+      ∀ᵐ increment ∂survivalConditionedLaw ν
+          (diffusiveTransitionHorizon width offset n),
+        ∀ t : unitInterval,
+          0 ≤ normalizedStepCadlagPathIcc
+            (fun j => sigma * Real.sqrt j)
+            (diffusiveTransitionHorizon width offset n) increment t := by
+    by_cases hn : 0 < diffusiveTransitionHorizon width offset n
+    · exact ae_nonnegative_normalizedStepCadlagPathIcc ν
+        (diffusiveTransitionHorizon width offset n)
+        (fun j => sigma * Real.sqrt j)
+        (mul_pos hsigma (Real.sqrt_pos.2 (Nat.cast_pos.mpr hn)))
+    · have hn0 : diffusiveTransitionHorizon width offset n = 0 :=
+        Nat.eq_zero_of_not_pos hn
+      filter_upwards [] with increment
+      intro t
+      simp [normalizedStepCadlagPathIcc_apply, normalizedStepPath, hn0]
+  have hlimitDiffusive := conditionedMeanderLimit_diffusive hwidth offset hlimit
+  obtain ⟨q, hq, hevent⟩ :=
+    exists_eventually_normalizedTransitionCorridorProbability_ge
+      hsigma hrho hrhoSmall hlimitDiffusive hsupport hratio hnonnegative
+  have hwidthPos : ∀ᶠ n : ℕ in atTop, 0 < width n :=
+    hwidth.eventually (eventually_gt_atTop 0)
+  have hargument : Tendsto (fun n => width n ^ 2) atTop atTop := by
+    have hmul : Tendsto (fun n => width n * width n) atTop atTop :=
+      hwidth.atTop_mul_atTop₀ hwidth
+    simpa [pow_two] using hmul
+  have hhorizonPos : ∀ᶠ n : ℕ in atTop,
+      0 < diffusiveTransitionHorizon width offset n := by
+    have hfloor := Asymptotics.tendsto_floorBlockLength_atTop hargument
+    filter_upwards [hfloor.eventually (eventually_gt_atTop offset)] with n hn
+    exact Nat.sub_pos_iff_lt.mpr hn
+  refine ⟨q, hq, ?_⟩
+  filter_upwards [hevent, hwidthPos, hhorizonPos] with n hn hw hN
+  have hmeas : MeasurableSet
+      (normalizedTransitionCorridor sigma
+        (width n / Real.sqrt (diffusiveTransitionHorizon width offset n))) :=
+    (Skorokhod.isClosed_rangeInClosedIntervalEndsIn _ _ _ _).measurableSet
+  rw [Measure.map_apply_of_aemeasurable
+    (hlimitDiffusive.forall_aemeasurable n) hmeas] at hn
+  have heventEq :
+      {increment : ℕ → ℝ |
+        normalizedStepCadlagPathIcc (fun j => sigma * Real.sqrt j)
+          (diffusiveTransitionHorizon width offset n) increment ∈
+        normalizedTransitionCorridor sigma
+          (width n / Real.sqrt (diffusiveTransitionHorizon width offset n))} =
+      nonnegativeTransitionEvent
+        (diffusiveTransitionHorizon width offset n) (width n) := by
+    ext increment
+    exact (mem_nonnegativeTransitionEvent_iff_normalizedTransitionCorridor
+      hN hsigma hw.le increment).symm
+  change q ≤ survivalConditionedLaw ν
+    (diffusiveTransitionHorizon width offset n)
+    {increment : ℕ → ℝ |
+      normalizedStepCadlagPathIcc (fun j => sigma * Real.sqrt j)
+        (diffusiveTransitionHorizon width offset n) increment ∈
+      normalizedTransitionCorridor sigma
+        (width n / Real.sqrt (diffusiveTransitionHorizon width offset n))}
+      at hn
   rw [heventEq] at hn
   exact hn
 
