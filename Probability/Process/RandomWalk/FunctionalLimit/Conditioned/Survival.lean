@@ -21,6 +21,8 @@ The public objects and theorems in this file are:
   $C_n=\{S_j\ge0:1\le j\le n\}$.
 - `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.survivalProbability_pos_of_positiveIncrement`:
   $\nu((0,\infty))>0$ implies $\mathbb P(C_n)>0$ for every $n$.
+- `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.survivalProbability_antitone`:
+  $n\le m$ implies $\mathbb P(C_m)\le\mathbb P(C_n)$.
 - `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.survivalConditionedLaw_isProbabilityMeasure`:
   $\mathbb P(C_n)>0$ makes the conditioned law a probability measure.
 - `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.survivalConditionedLaw_isProbabilityMeasure_of_positiveIncrement`:
@@ -79,6 +81,15 @@ theorem survivalProbability_pos_of_positiveIncrement
     _ ≤ (iidSequenceLaw ν)
         {increment | SurvivesNonnegative n increment} :=
       measure_mono hsubset
+
+/-- The probability of surviving through time `n` decreases with the
+horizon. This is the monotonicity used alongside the survival asymptotic
+in Caravenna--Chaumont, Lemma 2.1. -/
+theorem survivalProbability_antitone
+    (ν : Measure ℝ) {n m : ℕ} (hnm : n ≤ m) :
+    (iidSequenceLaw ν) {increment | SurvivesNonnegative m increment} ≤
+      (iidSequenceLaw ν) {increment | SurvivesNonnegative n increment} :=
+  measure_mono fun _ h => h.mono hnm
 
 /-- Positive survival probability normalizes the conditional law. -/
 theorem survivalConditionedLaw_isProbabilityMeasure
