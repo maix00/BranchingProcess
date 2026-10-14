@@ -30,11 +30,18 @@ The public theorem in this file is:
   then some $q>0$ satisfies
   $Q_n(X_n\in D_{\sigma,s_n})\ge q$ eventually.
 
-The convergence hypothesis is the conditioned invariance principle of
-Francesco Caravenna and Loïc Chaumont, *Invariance principles for random
-walks conditioned to stay positive*, Ann. Inst. H. Poincaré Probab. Stat.
-44(1) (2008), 170–190, Lemma 2.1 and equation (3.3),
-DOI 10.1214/07-AIHP119. The support hypothesis is the one used by
+The convergence hypothesis is the Brownian-meander functional limit proved
+by Donald L. Iglehart, *Functional Central Limit Theorems for Random Walks
+Conditioned to Stay Positive*, Ann. Probab. 2(4) (1974), 608–619,
+DOI 10.1214/aop/1176996607, and extended by Erwin Bolthausen,
+*On a Functional Central Limit Theorem for Random Walks Conditioned to Stay
+Positive*, Ann. Probab. 4(3) (1976), 480–485,
+DOI 10.1214/aop/1176996098. Francesco Caravenna and Loïc Chaumont recall
+this limit in *Invariance principles for random walks conditioned to stay
+positive*, equation (3.3), DOI 10.1214/07-AIHP119. Loïc Chaumont and
+R. A. Doney give a later treatment in *Invariance principles for local
+times at the maximum of random walks and Lévy processes*, Theorem 6,
+DOI 10.1214/09-AOP512. The support hypothesis is the one used by
 Wang Yiyang, *Asymptotic speed of the $N$-branching random walk with
 infinite offspring*, Chapter 3, Lemma 3.5, Appendix A.2. Both hypotheses
 are explicit pending formal constructions of the conditioned limit and
@@ -48,8 +55,9 @@ open scoped ENNReal Topology
 
 namespace ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned
 
-/-- The Portmanteau consequence of the Caravenna--Chaumont conditioned
-invariance principle used in Wang Yiyang, *Asymptotic speed of the
+/-- The Portmanteau consequence of the Iglehart--Bolthausen Brownian-meander
+limit, recalled by Caravenna--Chaumont in equation (3.3), and used in
+Wang Yiyang, *Asymptotic speed of the
 $N$-branching random walk with infinite offspring*, Chapter 3, Lemma 3.5,
 Appendix A.2. The distributional convergence and the support of the
 Brownian meander law are explicit inputs. -/
@@ -124,9 +132,10 @@ theorem mem_normalizedTransitionCorridor_of_meanderCorridor
 
 /-- A conditioned random-walk limit with Brownian-meander support gives
 an eventual positive probability for the finite-width transition corridor.
-The convergence and support inputs are those of Caravenna--Chaumont,
-*Invariance principles for random walks conditioned to stay positive*,
-equation (3.3), and Wang Yiyang, Chapter 3, Lemma 3.5, Appendix A.2.
+The convergence input is the Iglehart--Bolthausen Brownian-meander limit,
+recalled by Caravenna--Chaumont in equation (3.3); the support input is used
+by Wang Yiyang, *Asymptotic speed of the $N$-branching random walk with
+infinite offspring*, Chapter 3, Lemma 3.5, Appendix A.2.
 The scale input represents $\Delta/\sqrt{n_\Delta-m}\to1$. -/
 theorem exists_eventually_normalizedTransitionCorridorProbability_ge
     {Ω Ωm : Type*} [MeasurableSpace Ω] [MeasurableSpace Ωm]
