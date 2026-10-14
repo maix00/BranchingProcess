@@ -23,6 +23,10 @@ The public definition and theorems in this file are:
   $f\mapsto R_t f$ on continuous paths is Borel measurable.
 - `ProbabilityTheory.measurable_reflectAfter_pair`: the map
   $(f,t)\mapsto R_t f$ is Borel measurable.
+- `ProbabilityTheory.continuous_reflectAfter_pair`: reflection depends
+  continuously on both the path and the reflection time.
+- `ProbabilityTheory.continuous_reflectAfter_time`: for a fixed path,
+  reflection varies continuously with the reflection time.
 
 This is the path transformation in Theorem 2.1 of S. J. Dilworth and
 Duncan Wright, *A direct proof of the reflection principle for Brownian
@@ -107,6 +111,33 @@ theorem measurable_reflectAfter_pair :
   change Measurable (fun p : C(ℝ≥0, ℝ) × ℝ≥0 =>
     if u ≤ p.2 then p.1 u else 2 * p.1 p.2 - p.1 u)
   exact Measurable.ite hsplit hfixed hreflect
+
+/-- Reflection depends continuously on the path and the reflection time
+in the compact-open topology on continuous paths. -/
+theorem continuous_reflectAfter_pair :
+    Continuous (fun p : C(ℝ≥0, ℝ) × ℝ≥0 => reflectAfter p.1 p.2) := by
+  apply ContinuousMap.continuous_of_continuous_uncurry
+  have hleft : Continuous (fun p : (C(ℝ≥0, ℝ) × ℝ≥0) × ℝ≥0 => p.1.1 p.2) := by
+    fun_prop
+  have hright : Continuous
+      (fun p : (C(ℝ≥0, ℝ) × ℝ≥0) × ℝ≥0 =>
+        2 * p.1.1 p.1.2 - p.1.1 p.2) := by
+    fun_prop
+  have hpiece : Continuous
+      (fun p : (C(ℝ≥0, ℝ) × ℝ≥0) × ℝ≥0 =>
+        if p.2 ≤ p.1.2 then p.1.1 p.2 else 2 * p.1.1 p.1.2 - p.1.1 p.2) := by
+    apply Continuous.if_le hleft hright continuous_snd (continuous_snd.comp continuous_fst)
+    intro p hp
+    change p.2 = p.1.2 at hp
+    rw [hp]
+    ring
+  exact hpiece
+
+/-- For a fixed continuous path, reflection varies continuously with
+the reflection time in the compact-open topology. -/
+theorem continuous_reflectAfter_time (f : C(ℝ≥0, ℝ)) :
+    Continuous (reflectAfter f) := by
+  exact continuous_reflectAfter_pair.comp (continuous_const.prodMk continuous_id)
 
 end ProbabilityTheory
 
