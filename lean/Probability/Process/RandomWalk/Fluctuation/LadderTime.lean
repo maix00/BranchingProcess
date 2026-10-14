@@ -34,8 +34,16 @@ The public definitions and theorems in this file are:
   $H_k=S_{T_k}$ when $T_k<\infty$, and $H_k=\infty$ otherwise.
 - ProbabilityTheory.RandomWalk.strictAscendingLadderHeight_zero:
   $H_0=0$.
+- ProbabilityTheory.RandomWalk.isStrictAscendingRecord_of_ladderTime_eq:
+  if $k>0$ and $T_k=n<\infty$, then $n$ is a strict ascending record.
+- ProbabilityTheory.RandomWalk.strictAscendingLadderHeight_nonneg:
+  $H_k\ge0$ in $\mathbb R\cup\{\infty\}$.
+- ProbabilityTheory.RandomWalk.strictAscendingLadderHeight_mono:
+  $k\le l$ implies $H_k\le H_l$.
 - ProbabilityTheory.RandomWalk.measurableSet_strictAscendingLadderHeight_le:
   the event $\{H_k\le x\}$ is measurable.
+- ProbabilityTheory.RandomWalk.strictAscendingLadderHeight_measurable:
+  $H_k:\mathbb R^{\mathbb N}\to\mathbb R\cup\{\infty\}$ is measurable.
 
 These objects are the strict ascending ladder time and height in
 Loïc Chaumont and R. A. Doney, *Invariance principles for local times at
@@ -217,6 +225,80 @@ theorem strictAscendingLadderHeight_zero (increment : ℕ → ℝ) :
   simp [strictAscendingLadderHeight, strictAscendingLadderTime_zero,
     AdditivePath.displacement_zero]
 
+/-- A positive ladder level is first reached at a strict new maximum. -/
+theorem isStrictAscendingRecord_of_ladderTime_eq
+    (increment : ℕ → ℝ) {k n : ℕ} (hk : 0 < k)
+    (htime : strictAscendingLadderTime increment k = (n : WithTop ℕ)) :
+    IsStrictAscendingRecord increment n := by
+  have hlocal : k ≤ strictAscendingLocalTime increment n :=
+    (strictAscendingLadderTime_le_iff_localTime_ge increment k n).mp
+      (by rw [htime])
+  cases n with
+  | zero =>
+    simp [strictAscendingLocalTime_zero] at hlocal
+    omega
+  | succ n =>
+    by_contra hnot
+    have hsame := strictAscendingLocalTime_succ increment n
+    simp [hnot] at hsame
+    have hprev : k ≤ strictAscendingLocalTime increment n := by omega
+    have htimePrev :=
+      (strictAscendingLadderTime_le_iff_localTime_ge increment k n).mpr hprev
+    rw [htime] at htimePrev
+    exact (not_le_of_gt (WithTop.coe_lt_coe.mpr (Nat.lt_succ_self n)))
+      htimePrev
+
+/-- Every finite strict ascending ladder height is nonnegative; an
+infinite ladder time has height infinity. -/
+theorem strictAscendingLadderHeight_nonneg
+    (increment : ℕ → ℝ) (k : ℕ) :
+    (0 : WithTop ℝ) ≤ strictAscendingLadderHeight increment k := by
+  by_cases hk : k = 0
+  · subst k
+    simp [strictAscendingLadderHeight_zero]
+  · have hkpos : 0 < k := Nat.pos_of_ne_zero hk
+    cases ht : strictAscendingLadderTime increment k with
+    | top => simp [strictAscendingLadderHeight, ht]
+    | coe n =>
+      have hrecord :=
+        isStrictAscendingRecord_of_ladderTime_eq increment hkpos ht
+      have hpositive : 0 < AdditivePath.displacement n increment := by
+        simpa [AdditivePath.displacement_zero] using
+          hrecord.2 0 hrecord.1
+      simpa [strictAscendingLadderHeight, ht] using
+        (WithTop.coe_le_coe.mpr hpositive.le)
+
+/-- Successive strict ascending ladder heights are nondecreasing. -/
+theorem strictAscendingLadderHeight_mono
+    (increment : ℕ → ℝ) :
+    Monotone (strictAscendingLadderHeight increment) := by
+  intro k l hkl
+  by_cases hlzero : l = 0
+  · have hkzero : k = 0 := by omega
+    simp [hkzero, hlzero]
+  have hlpos : 0 < l := Nat.pos_of_ne_zero hlzero
+  cases htl : strictAscendingLadderTime increment l with
+  | top => simp [strictAscendingLadderHeight, htl]
+  | coe n =>
+    cases htk : strictAscendingLadderTime increment k with
+    | top =>
+      have htime := strictAscendingLadderTime_mono increment hkl
+      rw [htk, htl] at htime
+      exact False.elim ((not_le_of_gt (WithTop.coe_lt_top n)) htime)
+    | coe m =>
+      have htime := strictAscendingLadderTime_mono increment hkl
+      rw [htk, htl] at htime
+      have hmn : m ≤ n := WithTop.coe_le_coe.mp htime
+      have hdisp : AdditivePath.displacement m increment ≤
+          AdditivePath.displacement n increment := by
+        by_cases hmeq : m = n
+        · simp [hmeq]
+        · have hmlt : m < n := lt_of_le_of_ne hmn hmeq
+          exact (isStrictAscendingRecord_of_ladderTime_eq
+            increment hlpos htl).2 m hmlt |>.le
+      simpa [strictAscendingLadderHeight, htk, htl] using
+        (WithTop.coe_le_coe.mpr hdisp)
+
 /-- The finite-height event for an ascending ladder level is measurable.
 It is a countable union over the finite possible ladder times. -/
 theorem measurableSet_strictAscendingLadderHeight_le (k : ℕ) (x : ℝ) :
@@ -258,6 +340,18 @@ theorem measurableSet_strictAscendingLadderHeight_le (k : ℕ) (x : ℝ) :
       (measurableSet_singleton _)
   exact htime.inter
     (measurableSet_le (displacement_measurable n) measurable_const)
+
+/-- The extended-real ascending ladder height is measurable. The finite
+sublevel events determine the Borel σ-algebra of `WithTop ℝ`. -/
+theorem strictAscendingLadderHeight_measurable (k : ℕ) :
+    Measurable (fun increment : ℕ → ℝ =>
+      strictAscendingLadderHeight increment k) := by
+  apply measurable_of_Iic
+  intro x
+  cases x with
+  | top => simp
+  | coe y =>
+    exact measurableSet_strictAscendingLadderHeight_le k y
 
 end ProbabilityTheory.RandomWalk
 
