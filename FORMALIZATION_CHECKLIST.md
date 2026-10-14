@@ -143,6 +143,25 @@ The order here follows the displayed PDF numbers.
 
 Thus the lemma dependency chain is 3.1(i) → 3.2 → 3.3 → 3.4, while 3.1(ii) supports the separate lower-bound branch 3.5. The inverse-scale and monotonicity developments remain formalized supporting results, but the revised proof no longer gives them standalone lemma numbers. Do not use a source label as a theorem number, and do not mark a supporting block or drawdown estimate as one of these lemmas.
 
+The concrete finite staircase now has its own verified schedule and geometry:
+`DriftedTube/StaircaseSchedule.lean` defines
+$q=\lfloor(L-t_1)/\ell\rfloor$ and the final block of length
+$\ell+(L-t_1)\bmod\ell$; `StaircaseParameters.lean` proves that the
+horizontal block is $[r_{t_{j+1}},s_{t_j}]$ with width
+$\Delta-c|I_j|/\Delta^2$; `StaircaseEndpointWindows.lean` identifies the
+paper's $v_1(k),v_2(k)$ with the next central window and the final endpoint
+window. `ConcreteStaircaseLower.lean` applies the finite product theorem to
+this exact schedule under explicit numerical and entrance assumptions.
+`StaircaseFirstWindow.lean` proves that, when the first block has length
+$\ell$ and $8c\ell<\Delta^3$, the robust interval
+$[r_{t_1}+5\Delta/12,r_{t_1}+7\Delta/12]$ supplied by the three
+constructions in Appendix A.2 lies in the central window of the first
+horizontal block. The published entrance window
+$[r_{t_1}+\Delta/3,r_{t_1}+2\Delta/3]$ is wider than this central window;
+the robust entrance probability estimate must therefore be carried through
+the Appendix A.2 formalization before it can discharge the first-block
+assumption of `ConcreteStaircaseLower.lean`.
+
 | Source component | Lean modules | Verified scope |
 |---|---|---|
 | Stable-process escape and comparison estimates (Lemmas 1–2) | `Probability/Process/Stable/SmallDeviation/` | Finite negative escape rates, translated corridors, endpoint constraints, and path-law transfer are proved under the stated stable-process assumptions. |
