@@ -199,6 +199,11 @@ then proves the eventual tilted-tube lower bound from the robust entrance
 probability budget. The remaining probability-theory input is exactly this
 robust entrance budget, downstream of the source meander and survival
 theorems.
+`ConcreteStaircaseConditionalLower.lean` composes the Appendix A.2
+polynomial-to-exponential entrance argument with that asymptotic product.
+Its remaining two reflected transition hypotheses are precisely the
+outputs of the conditioned Brownian-meander limit and survival asymptotic
+used in Appendix A.2.
 The conditional Appendix A.2 deduction is now present:
 `Entrance/RobustTransition.lean` transfers the middle Donsker event to the
 robust endpoint window, `RobustEdgeGeometry.lean` proves both fixed-prefix
@@ -223,6 +228,11 @@ robust exponential entrance bound. Its source assumptions quantify the
 two reflected transition lower bounds over all divergent real-width
 sequences; the width in its conclusion ranges over all sufficiently large
 real values rather than just integer widths.
+The fluctuation modules now prove $T_k^\pm\le n\iff k\le\ell_n^\pm$,
+measurability of both extended ladder times, and measurability of their
+finite-height events. These are foundational steps toward the cited
+renewal and local-time limit theorems; the survival regular variation
+and conditioned meander convergence themselves remain to be proved.
 
 | Source component | Lean modules | Verified scope |
 |---|---|---|

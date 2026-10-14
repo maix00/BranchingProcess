@@ -21,6 +21,14 @@ The public definitions and theorems in this file are:
   the first time at which the descending record count reaches $k$.
 - ProbabilityTheory.RandomWalk.strictDescendingLocalTime_mono:
   $n\le m$ implies $\ell_n^-\le\ell_m^-$.
+- ProbabilityTheory.RandomWalk.strictDescendingLocalTime_measurable:
+  the finite strict-descending record count is measurable.
+- ProbabilityTheory.RandomWalk.strictDescendingLadderTime_le_iff_localTime_ge:
+  $T_k^-\le n$ if and only if $k\le\ell_n^-$.
+- ProbabilityTheory.RandomWalk.measurableSet_strictDescendingLadderTime_le:
+  the finite-horizon descending ladder-time event is measurable.
+- ProbabilityTheory.RandomWalk.strictDescendingLadderTime_measurable:
+  the extended-natural-valued descending ladder time is measurable.
 - ProbabilityTheory.RandomWalk.survivesNonnegative_iff_strictDescendingLocalTime_eq_zero:
   $S_j\ge0$ for $1\le j\le n$ if and only if the descending record
   count through $n$ is zero.
@@ -85,6 +93,54 @@ theorem strictDescendingLocalTime_mono
     strictDescendingLocalTime increment n ≤
       strictDescendingLocalTime increment m :=
   strictAscendingLocalTime_mono (fun i => -increment i) hnm
+
+/-- The strict descending record count is measurable at every finite
+horizon. -/
+theorem strictDescendingLocalTime_measurable (n : ℕ) :
+    Measurable (fun increment : ℕ → ℝ =>
+      strictDescendingLocalTime increment n) := by
+  have hneg : Measurable (fun increment : ℕ → ℝ =>
+      fun i => -increment i) := by
+    rw [measurable_pi_iff]
+    intro i
+    exact (measurable_pi_apply i).neg
+  exact (strictAscendingLocalTime_measurable n).comp hneg
+
+/-- The k-th strict descending ladder time has occurred by n exactly
+when the descending record count has reached k. -/
+theorem strictDescendingLadderTime_le_iff_localTime_ge
+    (increment : ℕ → ℝ) (k n : ℕ) :
+    strictDescendingLadderTime increment k ≤ n ↔
+      k ≤ strictDescendingLocalTime increment n :=
+  strictAscendingLadderTime_le_iff_localTime_ge
+    (fun i => -increment i) k n
+
+/-- The finite-horizon descending ladder-time event is measurable. -/
+theorem measurableSet_strictDescendingLadderTime_le (k n : ℕ) :
+    MeasurableSet
+      {increment : ℕ → ℝ |
+        strictDescendingLadderTime increment k ≤ (n : WithTop ℕ)} := by
+  have hset :
+      {increment : ℕ → ℝ |
+        strictDescendingLadderTime increment k ≤ (n : WithTop ℕ)} =
+      {increment : ℕ → ℝ | k ≤ strictDescendingLocalTime increment n} := by
+    ext increment
+    exact strictDescendingLadderTime_le_iff_localTime_ge increment k n
+  rw [hset]
+  exact measurableSet_le measurable_const
+    (strictDescendingLocalTime_measurable n)
+
+/-- The strict descending ladder time is a measurable extended-natural-
+valued random variable. -/
+theorem strictDescendingLadderTime_measurable (k : ℕ) :
+    Measurable (fun increment : ℕ → ℝ =>
+      strictDescendingLadderTime increment k) := by
+  have hneg : Measurable (fun increment : ℕ → ℝ =>
+      fun i => -increment i) := by
+    rw [measurable_pi_iff]
+    intro i
+    exact (measurable_pi_apply i).neg
+  exact (strictAscendingLadderTime_measurable k).comp hneg
 
 /-- Nonnegative survival is equivalent to having no strict new minimum. -/
 theorem survivesNonnegative_iff_strictDescendingLocalTime_eq_zero
