@@ -7,17 +7,21 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.Brownian.Bessel.Support
+public import Probability.Process.Brownian.Bessel.Endpoint
 public import Probability.Process.Brownian.Meander.Imhof
 
 /-!
 # Positive corridor mass under the Imhof measure
 
-The public theorem in this file is:
+The public theorems in this file are:
 
 - `BrownianMeander.imhofTilt_corridor_pos_of_brownian`: for a real Brownian
   process $B$ and $0<\rho<1/48$, the Imhof tilt of the radial law of three
   independent copies of $B$ assigns positive mass to
   $\mathcal U_{\sigma,\rho}$ when $\sigma>0$.
+- `BrownianMeander.imhofTilt_besselLaw_equivalent`: the Imhof tilt and
+  the law of the three-dimensional Brownian radius are mutually
+  absolutely continuous.
 
 The theorem completes the support step in Wang Yiyang, *Asymptotic speed of
 the $N$-branching random walk with infinite offspring*, Chapter 3,
@@ -32,6 +36,28 @@ open MeasureTheory ProbabilityTheory
 open scoped NNReal
 
 namespace BrownianMeander
+
+/-- The endpoint density is strictly positive almost surely under the
+three-dimensional Bessel path law. Consequently, the tilted and base laws
+have the same null sets. -/
+theorem imhofTilt_besselLaw_equivalent
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+    [IsProbabilityMeasure P] {B : ℝ≥0 → Ω → ℝ}
+    (hBrownian : IsBrownianReal B P)
+    (hcontinuous : ∀ ω, Continuous (B · ω))
+    (hmeasurable : ∀ t, Measurable (B t)) :
+    imhofTilt (BrownianBessel3.pathLaw P B hcontinuous) ≪
+        BrownianBessel3.pathLaw P B hcontinuous ∧
+      BrownianBessel3.pathLaw P B hcontinuous ≪
+        imhofTilt (BrownianBessel3.pathLaw P B hcontinuous) := by
+  let μ := BrownianBessel3.pathLaw P B hcontinuous
+  have hpositive : ∀ᵐ path ∂μ, imhofWeight path ≠ 0 := by
+    filter_upwards [BrownianBessel3.ae_pos_endpoint_pathLaw
+      hBrownian hcontinuous hmeasurable] with path hpath
+    exact ne_of_gt (imhofWeight_pos_of_endpoint_pos hpath)
+  exact ⟨withDensity_absolutelyContinuous μ imhofWeight,
+    withDensity_absolutelyContinuous' measurable_imhofWeight.aemeasurable
+      hpositive⟩
 
 /-- The Imhof transform of the radial law of three independent Brownian
 paths gives positive mass to the open corridor used in the thesis. -/

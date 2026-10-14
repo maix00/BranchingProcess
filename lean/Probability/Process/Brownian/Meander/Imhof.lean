@@ -21,6 +21,8 @@ The public objects and theorems in this file are:
 - `BrownianMeander.imhofTilt`: the measure obtained by weighting a path law
   with this density, $\nu^{\mathrm{Imhof}}=\nu\cdot w$.
 - `BrownianMeander.measurable_imhofWeight`: $w$ is Borel measurable.
+- `BrownianMeander.imhofWeight_pos_of_endpoint_pos`: a positive endpoint
+  gives a strictly positive density.
 - `BrownianMeander.measure_openCorridor_pos_imhofTilt`: a Bessel path law
   whose support contains the straight path gives positive mass to the
   meander corridor after the Imhof tilt.
@@ -28,8 +30,8 @@ The public objects and theorems in this file are:
 The density is the one in Jean-Pierre Imhof, *Density factorizations for
 Brownian motion, meander and the three-dimensional Bessel process, and
 applications*, Journal of Applied Probability 21 (1984), 500--510,
-Theorem 1. Its normalization and the construction of the Bessel path law
-belong to the separate Bessel-process layer.
+Theorem 1. The radial Bessel path law is constructed separately. The
+normalization identity for this density remains to be formalized.
 -/
 
 @[expose] public section
@@ -56,7 +58,8 @@ theorem measurable_imhofWeight : Measurable imhofWeight := by
   exact ENNReal.measurable_ofReal.comp
     (measurable_const.div Skorokhod.continuous_apply_top.measurable)
 
-private theorem imhofWeight_pos_of_endpoint_pos
+/-- The Imhof density is positive at every path with positive endpoint. -/
+theorem imhofWeight_pos_of_endpoint_pos
     {path : CadlagPath unitInterval ℝ} (hend : 0 < path ⊤) :
     0 < imhofWeight path := by
   unfold imhofWeight
