@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.Fluctuation.LadderTime
-public import Probability.Process.RandomWalk.Path.Filtration
+public import Probability.Process.RandomWalk.Path.Survival
 
 /-!
 # Descending records and nonnegative survival
@@ -37,16 +37,6 @@ The public definitions and theorems in this file are:
   $C_n=\{T^-_1>n\}$.
 - ProbabilityTheory.RandomWalk.measure_survival_eq_firstDescendingLadderTime_gt:
   $\mathbb P(C_n)=\mathbb P(T^-_1>n)$ for any measure on increment paths.
-- ProbabilityTheory.RandomWalk.IsFirstSurvivingWindow.strictDescendingRecord:
-  the first surviving length-$n$ window begins at a strict descending
-  record whenever its starting time is positive.
-- ProbabilityTheory.RandomWalk.IsCandidateWindowStart:
-  a descending record whose earlier completed windows failed.
-- ProbabilityTheory.RandomWalk.isFirstSurvivingWindow_iff_candidate_and_survives:
-  the first surviving window is a candidate start followed by a surviving
-  length-$n$ block.
-- ProbabilityTheory.RandomWalk.measurableSet_isCandidateWindowStart_prefix:
-  the candidate event is measurable from increments before its start.
 
 The descending ladder-time interpretation of survival is used in
 Francesco Caravenna and Loïc Chaumont, *Invariance principles for random
@@ -70,169 +60,6 @@ def IsStrictDescendingRecord (increment : ℕ → ℝ) (j : ℕ) : Prop :=
   0 < j ∧ ∀ i < j,
     AdditivePath.displacement j increment <
       AdditivePath.displacement i increment
-
-/-- The first surviving length-`n` window begins at a strict descending
-record when its start is positive. This is the record-time property behind
-the first-window construction in Erwin Bolthausen, *On a functional central
-limit theorem for random walks conditioned to stay positive*, Ann. Probab.
-4(3) (1976), 480–485, DOI 10.1214/aop/1176996098; see also Vladislav
-Vysotsky, *Positivity of integrated random walks*, Section 3.1, equation
-(17), DOI 10.1214/12-AIHP487. -/
-theorem IsFirstSurvivingWindow.strictDescendingRecord
-    {n start : ℕ} {increment : ℕ → ℝ}
-    (hfirst : IsFirstSurvivingWindow n start increment)
-    (hpositive : 0 < start) :
-    IsStrictDescendingRecord increment start := by
-  refine ⟨hpositive, ?_⟩
-  intro i hi
-  by_contra hlt
-  have hile : AdditivePath.displacement i increment ≤
-      AdditivePath.displacement start increment := le_of_not_gt hlt
-  obtain ⟨j, hj, hmin⟩ :=
-    (Finset.range start).exists_min_image
-      (fun t => AdditivePath.displacement t increment)
-      ⟨i, Finset.mem_range.mpr hi⟩
-  have hjlt : j < start := Finset.mem_range.mp hj
-  have hjle : AdditivePath.displacement j increment ≤
-      AdditivePath.displacement start increment :=
-    (hmin i (Finset.mem_range.mpr hi)).trans hile
-  have hwindow : SurvivesNonnegative n
-      (fun k => increment (j + k)) := by
-    apply (SurvivesNonnegative.shift_iff n j increment).2
-    intro k
-    let t := j + (k : ℕ) + 1
-    by_cases ht : t < start
-    · simpa [t, Nat.add_assoc] using hmin t (Finset.mem_range.mpr ht)
-    · have htle : t ≤ start + n := by
-        dsimp [t]
-        omega
-      by_cases heq : t = start
-      · have hgoal : j + ((k : ℕ) + 1) = start := by
-          simpa [t, Nat.add_assoc] using heq
-        simpa [hgoal] using hjle
-      · have hindex : t - start - 1 < n := by omega
-        have hsurvive :=
-          (SurvivesNonnegative.shift_iff n start increment).1 hfirst.1
-            ⟨t - start - 1, hindex⟩
-        have hposition : start + ((t - start - 1) + 1) = t := by omega
-        rw [hposition] at hsurvive
-        exact hjle.trans hsurvive
-  exact hfirst.2 ⟨j, hjlt⟩ hwindow
-
-/-- A candidate start for the first surviving length-`n` window is either
-time zero or a strict descending record, and every earlier window ending
-strictly before this start has failed. All these conditions concern the
-prefix through `start`. -/
-def IsCandidateWindowStart (n start : ℕ) (increment : ℕ → ℝ) : Prop :=
-  (start = 0 ∨ IsStrictDescendingRecord increment start) ∧
-    ∀ j : Fin start, (j : ℕ) + n < start →
-      ¬ SurvivesNonnegative n (fun k => increment (j + k))
-
-/-- The first-window event factors into a prefix candidate event and a
-surviving future block. The strict record at `start` forces every earlier
-window that overlaps `start` to fail. This is the finite-path decomposition
-behind Bolthausen, *On a functional central limit theorem for random walks
-conditioned to stay positive*, Ann. Probab. 4(3) (1976), 480–485,
-DOI 10.1214/aop/1176996098. -/
-theorem isFirstSurvivingWindow_iff_candidate_and_survives
-    (n start : ℕ) (increment : ℕ → ℝ) :
-    IsFirstSurvivingWindow n start increment ↔
-      IsCandidateWindowStart n start increment ∧
-        SurvivesNonnegative n (fun k => increment (start + k)) := by
-  constructor
-  · intro hfirst
-    refine ⟨⟨?_, fun j _ => hfirst.2 j⟩, hfirst.1⟩
-    by_cases hzero : start = 0
-    · exact Or.inl hzero
-    · exact Or.inr (hfirst.strictDescendingRecord (Nat.pos_of_ne_zero hzero))
-  · rintro ⟨⟨hrecord, hfailed⟩, hsurvive⟩
-    refine ⟨hsurvive, ?_⟩
-    intro j
-    by_cases hend : (j : ℕ) + n < start
-    · exact hfailed j hend
-    · intro hwindow
-      rcases hrecord with hzero | hrecord
-      · omega
-      · have hjindex : start - (j : ℕ) - 1 < n := by omega
-        have hjposition :=
-          (SurvivesNonnegative.shift_iff n j increment).1 hwindow
-            ⟨start - (j : ℕ) - 1, hjindex⟩
-        have hendpoint : (j : ℕ) +
-            ((start - (j : ℕ) - 1) + 1) = start := by omega
-        rw [hendpoint] at hjposition
-        exact (not_le_of_gt (hrecord.2 j j.isLt)) hjposition
-
-/-- A shifted survival event is measurable from any prefix containing all
-of its increment coordinates. -/
-private theorem measurableSet_survivesNonnegative_shift_prefix
-    (n j start : ℕ) (hbound : j + n ≤ start) :
-    MeasurableSet[sequencePrefixFiltration (E := ℝ) start]
-      {increment : ℕ → ℝ |
-        SurvivesNonnegative n (fun k => increment (j + k))} := by
-  rw [show {increment : ℕ → ℝ |
-        SurvivesNonnegative n (fun k => increment (j + k))} =
-      ⋂ k : Fin n,
-        {increment | 0 ≤ AdditivePath.displacement (k + 1)
-          (fun t => increment (j + t))} by
-    ext increment
-    simp [SurvivesNonnegative]]
-  exact MeasurableSet.iInter fun k =>
-    measurableSet_Ici.preimage
-      (displacement_natAdd_measurable_prefix (E := ℝ)
-        j (k + 1) start (by omega))
-
-/-- The strict record event at `start` is measurable from the first
-`start` increments. -/
-private theorem measurableSet_strictDescendingRecord_prefix (start : ℕ) :
-    MeasurableSet[sequencePrefixFiltration (E := ℝ) start]
-      {increment : ℕ → ℝ | IsStrictDescendingRecord increment start} := by
-  by_cases hs : 0 < start
-  · rw [show {increment : ℕ → ℝ |
-          IsStrictDescendingRecord increment start} =
-        ⋂ i : Fin start,
-          {increment | AdditivePath.displacement start increment <
-            AdditivePath.displacement i increment} by
-      ext increment
-      simp [IsStrictDescendingRecord, hs, Fin.forall_iff]]
-    exact MeasurableSet.iInter fun i =>
-      measurableSet_lt
-        (displacement_measurable_prefix (E := ℝ) le_rfl)
-        (displacement_measurable_prefix (E := ℝ) i.isLt.le)
-  · have hzero : start = 0 := by omega
-    simp [IsStrictDescendingRecord, hzero]
-
-/-- A candidate first-window start depends only on the increment prefix
-through that start, so it can be multiplied by an independent future-block
-event under an IID increment law. -/
-theorem measurableSet_isCandidateWindowStart_prefix (n start : ℕ) :
-    MeasurableSet[sequencePrefixFiltration (E := ℝ) start]
-      {increment : ℕ → ℝ |
-        IsCandidateWindowStart n start increment} := by
-  rw [show {increment : ℕ → ℝ |
-        IsCandidateWindowStart n start increment} =
-      {increment | start = 0 ∨ IsStrictDescendingRecord increment start} ∩
-        ⋂ j : Fin start,
-          {increment | (j : ℕ) + n < start →
-            ¬ SurvivesNonnegative n (fun k => increment (j + k))} by
-    ext increment
-    simp [IsCandidateWindowStart]]
-  apply MeasurableSet.inter
-  · by_cases hzero : start = 0
-    · simp [hzero]
-    · simpa [hzero] using measurableSet_strictDescendingRecord_prefix start
-  · apply MeasurableSet.iInter
-    intro j
-    by_cases hj : (j : ℕ) + n < start
-    · rw [show {increment : ℕ → ℝ |
-            (j : ℕ) + n < start →
-              ¬ SurvivesNonnegative n (fun k => increment (j + k))} =
-          {increment | SurvivesNonnegative n
-            (fun k => increment (j + k))}ᶜ by
-        ext increment
-        simp [hj]]
-      exact (measurableSet_survivesNonnegative_shift_prefix
-        n j start (by omega)).compl
-    · simp [hj]
 
 /-- New minima of a walk are new maxima of its negation. -/
 theorem isStrictDescendingRecord_iff_ascending_neg
