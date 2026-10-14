@@ -26,6 +26,8 @@ The public theorems in this file are:
   $\mathbb P(A\cap E)\ge p\mathbb P(A)$.
 - `ProbabilityTheory.conditionalBlockIntersection`:
   the event $\bigcap_{j<n}E_j$ formed by successive blocks.
+- `ProbabilityTheory.mem_conditionalBlockIntersection_iff`:
+  membership means membership in every block $E_j$ with $j<n$.
 - `ProbabilityTheory.measureReal_conditionalBlockIntersection_ge_prod`:
   prefix-conditional bounds $\mathbb E[\mathbf1_{E_j}\mid\mathcal F_j]\ge p_j$
   on $\bigcap_{i<j}E_i$ give
@@ -34,6 +36,8 @@ The public theorems in this file are:
   for an initial event $A$ observable before the first block, the same
   argument gives $\mathbb P(A\cap\bigcap_{j<n}E_j)\ge
   \mathbb P(A)\prod_{j<n}p_j$.
+- `ProbabilityTheory.measureReal_initialInterConditionalBlockIntersection_ge_mul_prod_prefix`:
+  the same conclusion uses block assumptions only for indices $j<n$.
 
 The last two statements are the generic conditional-expectation steps in
 Wang Yiyang, *Asymptotic speed of the $N$-branching random walk with infinite
@@ -198,6 +202,26 @@ def conditionalBlockIntersection
   | 0 => Set.univ
   | n + 1 => conditionalBlockIntersection events n ∩ events n
 
+/-- Membership in the first `n` block events is equivalent to membership
+in each indexed event before `n`. -/
+theorem mem_conditionalBlockIntersection_iff
+    {Ω : Type*} [MeasurableSpace Ω]
+    (events : ℕ → Set Ω) (n : ℕ) (ω : Ω) :
+    ω ∈ conditionalBlockIntersection events n ↔
+      ∀ j, j < n → ω ∈ events j := by
+  induction n with
+  | zero => simp [conditionalBlockIntersection]
+  | succ n ih =>
+      rw [conditionalBlockIntersection, Set.mem_inter_iff, ih]
+      constructor
+      · rintro ⟨hprev, hlast⟩ j hj
+        rcases Nat.lt_or_eq_of_le (Nat.lt_succ_iff.mp hj) with h | rfl
+        · exact hprev j h
+        · exact hlast
+      · intro hall
+        exact ⟨fun j hj => hall j (Nat.lt_succ_of_lt hj),
+          hall n (Nat.lt_succ_self n)⟩
+
 /-- Iterating the reverse Markov inequality gives the product of the
 conditional lower bounds for successive blocks. -/
 theorem measureReal_conditionalBlockIntersection_ge_prod
@@ -294,6 +318,72 @@ theorem measureReal_initialInterConditionalBlockIntersection_ge_mul_prod
         _ = P.real
             (initial ∩ conditionalBlockIntersection events (k + 1)) := by
           rw [conditionalBlockIntersection, Set.inter_assoc]
+
+/-- The reverse Markov product through a fixed finite number of blocks,
+using conditional and measurability assumptions only for those blocks. -/
+theorem measureReal_initialInterConditionalBlockIntersection_ge_mul_prod_prefix
+    {Ω : Type*} [mΩ : MeasurableSpace Ω] {P : Measure Ω}
+    [IsProbabilityMeasure P]
+    (filtration : ℕ → MeasurableSpace Ω)
+    (hfiltrationMono : ∀ n, filtration n ≤ filtration (n + 1))
+    (hfiltrationAmbient : ∀ n, filtration n ≤ mΩ)
+    (initial : Set Ω) (hinitial : MeasurableSet[filtration 0] initial)
+    (events : ℕ → Set Ω)
+    (bounds : ℕ → ℝ) (hboundNonneg : ∀ n, 0 ≤ bounds n)
+    (n : ℕ)
+    (heventMeasurable : ∀ j, j < n →
+      MeasurableSet[filtration (j + 1)] (events j))
+    (hconditional : ∀ j, j < n → ∀ᵐ ω ∂P,
+      ω ∈ initial ∩ conditionalBlockIntersection events j →
+        bounds j ≤ condExp (filtration j) P
+          ((events j).indicator fun _ => (1 : ℝ)) ω) :
+    P.real initial * (∏ j ∈ Finset.range n, bounds j) ≤
+      P.real (initial ∩ conditionalBlockIntersection events n) := by
+  have hmeas : ∀ k, k ≤ n →
+      MeasurableSet[filtration k]
+        (initial ∩ conditionalBlockIntersection events k) := by
+    intro k
+    induction k with
+    | zero =>
+        intro _
+        simpa [conditionalBlockIntersection] using hinitial
+    | succ k ih =>
+        intro hk
+        have hk' : k < n := by omega
+        rw [conditionalBlockIntersection, ← Set.inter_assoc]
+        exact (hfiltrationMono k _ (ih (by omega))).inter
+          (heventMeasurable k hk')
+  have hprod : ∀ k, k ≤ n →
+      P.real initial * (∏ j ∈ Finset.range k, bounds j) ≤
+        P.real (initial ∩ conditionalBlockIntersection events k) := by
+    intro k
+    induction k with
+    | zero =>
+        intro _
+        simp [conditionalBlockIntersection]
+    | succ k ih =>
+        intro hk
+        have hk' : k < n := by omega
+        calc
+          P.real initial *
+              (∏ j ∈ Finset.range (k + 1), bounds j) =
+              bounds k * (P.real initial *
+                (∏ j ∈ Finset.range k, bounds j)) := by
+            rw [Finset.prod_range_succ]
+            ring
+          _ ≤ bounds k *
+              P.real (initial ∩ conditionalBlockIntersection events k) :=
+            mul_le_mul_of_nonneg_left (ih (by omega)) (hboundNonneg k)
+          _ ≤ P.real
+              ((initial ∩ conditionalBlockIntersection events k) ∩ events k) :=
+            measureReal_inter_ge_of_condExp_indicator_ge
+              (filtration k) (hfiltrationAmbient k) (hmeas k (by omega))
+              (hfiltrationAmbient (k + 1) (events k)
+                (heventMeasurable k hk')) (hconditional k hk')
+          _ = P.real
+              (initial ∩ conditionalBlockIntersection events (k + 1)) := by
+            rw [conditionalBlockIntersection, Set.inter_assoc]
+  exact hprod n le_rfl
 
 end ProbabilityTheory
 

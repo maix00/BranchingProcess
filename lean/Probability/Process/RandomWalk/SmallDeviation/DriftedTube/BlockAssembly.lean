@@ -44,26 +44,26 @@ theorem measureReal_staircaseBlockIntersection_ge_prod_of_binBounds
     (hinitial : MeasurableSet[sequencePrefixFiltration (E := ℝ) (start 0)]
       initial)
     (lower width v₁ v₂ bounds : ℕ → ℝ)
-    (hwidth : ∀ j, 0 < width j)
+    (q : ℕ)
+    (hwidth : ∀ j, j < q → 0 < width j)
     (hfirst : ∀ increment ∈ initial,
       AdditivePath.displacement (start 0) increment ∈
         Set.Icc (lower 0 + width 0 / 3)
           (lower 0 + 2 * width 0 / 3))
-    (hwindow : ∀ j,
+    (hwindow : ∀ j, j + 1 < q →
       Set.Icc (lower j + v₁ j * width j)
         (lower j + v₂ j * width j) ⊆
       Set.Icc (lower (j + 1) + width (j + 1) / 3)
         (lower (j + 1) + 2 * width (j + 1) / 3))
     (hboundNonneg : ∀ j, 0 ≤ bounds j)
     (m : ℕ) (hm : 2 ≤ m)
-    (hbins : ∀ j l : ℕ, l < m →
+    (hbins : ∀ j, j < q → ∀ l : ℕ, l < m →
       bounds j ≤ (iidSequenceLaw ν).real
         (horizontalTubeEndpointWindowEvent
           (staircaseBinTubeParameter m l)
           (staircaseBinWidth m * width j) (length j)
           (staircaseBinEndpointLowerFraction m (v₁ j))
-          (staircaseBinEndpointUpperFraction m (v₂ j))))
-    (q : ℕ) :
+          (staircaseBinEndpointUpperFraction m (v₂ j)))) :
     (iidSequenceLaw ν).real initial *
       (∏ j ∈ Finset.range q, bounds j) ≤
       (iidSequenceLaw ν).real
@@ -73,22 +73,22 @@ theorem measureReal_staircaseBlockIntersection_ge_prod_of_binBounds
   let good : ℕ → Set ℝ := fun j =>
     Set.Icc (lower j + width j / 3)
       (lower j + 2 * width j / 3)
-  have hgoodTube : ∀ j, good j ⊆
+  have hgoodTube : ∀ j, j < q → good j ⊆
       Set.Icc (lower j) (lower j + width j) := by
-    intro j position hposition
-    have hw := hwidth j
+    intro j hj position hposition
+    have hw := hwidth j hj
     exact ⟨by dsimp [good] at hposition; linarith [hposition.1],
       by dsimp [good] at hposition; linarith [hposition.2]⟩
-  have hblockBound : ∀ j position, position ∈ good j →
+  have hblockBound : ∀ j, j < q → ∀ position, position ∈ good j →
       bounds j ≤ (iidSequenceLaw ν).real
         (relativeHorizontalTubeEndpointWindowEvent
           (lower j - position) (width j) (length j) (v₁ j) (v₂ j)) := by
-    intro j position hp
+    intro j hj position hp
     exact relativeHorizontalTubeProbability_ge_of_staircaseBinBounds
-      ν hm (hwidth j) (fun l hl => hbins j l hl) position hp
+      ν hm (hwidth j hj) (fun l hl => hbins j hj l hl) position hp
   exact measureReal_tubeBlockIntersection_ge_prod_of_endpointWindows
     ν start length hnext initial hinitial lower width v₁ v₂ bounds
-      good hgoodTube hfirst hwindow hboundNonneg hblockBound q
+      good q hgoodTube hfirst hwindow hboundNonneg hblockBound
 
 end ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 
