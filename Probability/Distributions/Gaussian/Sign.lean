@@ -22,6 +22,8 @@ The public theorems in this file are:
 - `ProbabilityTheory.gaussianReal_Iic_zero_eq_standard`:
   for $v>0$, a centered Gaussian law with variance $v$ gives
   $(-\infty,0]$ the same mass as the standard Gaussian law.
+- `ProbabilityTheory.gaussianReal_Iio_zero_two_mul`:
+  for $v>0$, twice the mass of $(-\infty,0)$ is $1$.
 
 These facts use the positive Gaussian density and its scaling identity
 from mathlib's real Gaussian distribution theory. They supply the
@@ -99,6 +101,45 @@ theorem gaussianReal_Iic_zero_eq_standard
       exact (not_le_of_gt (mul_pos hc (lt_of_not_ge hx'))) hx
     · exact mul_nonpos_of_nonneg_of_nonpos hc.le
   rw [hpre]
+
+/-- A nondegenerate centered Gaussian has half of its mass below zero.
+The equation is written without division in `ℝ≥0∞`. -/
+theorem gaussianReal_Iio_zero_two_mul {v : ℝ≥0} (hv : 0 < v) :
+    2 * gaussianReal 0 v (Iio 0) = 1 := by
+  let μ : Measure ℝ := gaussianReal 0 v
+  have hsym : μ (Iio 0) = μ (Ioi 0) := by
+    have hmap : μ.map (fun x : ℝ => -x) = μ := by
+      simpa [μ] using (gaussianReal_map_neg (μ := (0 : ℝ)) (v := v))
+    calc
+      μ (Iio 0) = (μ.map (fun x : ℝ => -x)) (Iio 0) := by rw [hmap]
+      _ = μ (Ioi 0) := by
+        rw [Measure.map_apply (by fun_prop) measurableSet_Iio]
+        congr 1
+        ext x
+        simp
+  have hnull : μ ({0} : Set ℝ) = 0 := by
+    have hclass : NullSingletonClass μ := nullSingletonClass_gaussianReal hv.ne'
+    exact @measure_singleton ℝ _ μ hclass 0
+  have hpartition : μ (Iio 0) + μ (Ioi 0) = 1 := by
+    have hdisj : Disjoint (Iio (0 : ℝ)) (Ioi 0) := by
+      exact Set.disjoint_left.mpr (by intro x hx hy; exact (lt_asymm hx) hy)
+    have hunion : (Iio (0 : ℝ)) ∪ Ioi 0 = {0}ᶜ := by
+      ext x
+      simp only [Set.mem_union, Set.mem_Iio, Set.mem_Ioi, Set.mem_compl_iff,
+        Set.mem_singleton_iff]
+      constructor
+      · rintro (h | h)
+        · exact ne_of_lt h
+        · exact ne_of_gt h
+      · exact lt_or_gt_of_ne
+    calc
+      μ (Iio 0) + μ (Ioi 0) = μ (Iio 0 ∪ Ioi 0) :=
+        (measure_union hdisj measurableSet_Ioi).symm
+      _ = μ {0}ᶜ := by rw [hunion]
+      _ = 1 := by rw [measure_compl (measurableSet_singleton 0) (by finiteness),
+        hnull, measure_univ]; simp
+  rw [← hsym] at hpartition
+  simpa [μ, two_mul] using hpartition
 
 end ProbabilityTheory
 
