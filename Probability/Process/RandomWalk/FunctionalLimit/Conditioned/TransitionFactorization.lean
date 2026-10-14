@@ -21,6 +21,9 @@ The public definitions and theorems in this file are:
   the finite-block version of $D_{N,\Delta}$.
 - `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.measurableSet_finiteNonnegativeTransitionEvent`:
   that finite-block event is measurable.
+- `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.blockCoordinates_mem_finiteNonnegativeTransitionEvent_iff`:
+  a finite increment block satisfies this event exactly when the shifted
+  infinite increment path satisfies $D_{N,\Delta}$.
 - `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.measurableSet_nonnegativeTransitionEvent`:
   the infinite-sequence realization of $D_{N,\Delta}$ is measurable.
 - `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.measurableSet_prefixWindow_and_shiftedTransition`:

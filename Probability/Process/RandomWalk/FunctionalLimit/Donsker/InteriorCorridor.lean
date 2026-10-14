@@ -14,10 +14,21 @@ public import Topology.Cadlag.Skorokhod.LinearPath
 
 The public definitions and theorems in this file are:
 
+- `ProbabilityTheory.RandomWalk.FunctionalLimit.Donsker.brownianMiddlePathEvent`:
+  the Brownian event printed in Wang Yiyang, Appendix A.2, with the
+  endpoint window $(5/12,7/12)$.
 - `ProbabilityTheory.RandomWalk.FunctionalLimit.Donsker.interiorPathEvent`:
   $1/24<z+\sigma f(t)<23/24$ for $0\le t\le1$, with
   $11/24<z+\sigma f(1)<13/24$, a fixed subevent of the endpoint window
   $[5/12,7/12]$ in the thesis.
+- `ProbabilityTheory.RandomWalk.FunctionalLimit.Donsker.interiorPathEvent_subset_brownianMiddlePathEvent`:
+  the robust endpoint subevent belongs to the printed Brownian event.
+- `ProbabilityTheory.RandomWalk.FunctionalLimit.Donsker.scaledInteriorPathEvent`:
+  the corridor with spatial ratio $\sqrt n/\Delta$ and boundary offset
+  $c/\Delta$.
+- `ProbabilityTheory.RandomWalk.FunctionalLimit.Donsker.interiorPathEvent_subset_scaledInteriorPathEvent`:
+  the strict event lies in the scaled finite-width event when these
+  parameters are close to $1$ and $0$.
 - `ProbabilityTheory.RandomWalk.FunctionalLimit.Donsker.mem_interiorPathEvent_of_linearApprox`:
   the line $t\mapsto(1/2-z)t/\sigma$, with a sufficiently small uniform
   error, lies in the interior event for $z\in[1/12,11/12]$.
@@ -26,6 +37,8 @@ The public definitions and theorems in this file are:
 - `ProbabilityTheory.RandomWalk.FunctionalLimit.Donsker.eventually_interiorPathProbability_pos_uniform`:
   one positive lower bound for all $z\in[1/12,11/12]$ and all sufficiently
   large walk horizons, by Donsker's theorem and compactness.
+- `ProbabilityTheory.RandomWalk.FunctionalLimit.Donsker.eventually_brownianMiddlePathProbability_pos_uniform`:
+  the same lower bound for the exact endpoint window printed in the thesis.
 - `ProbabilityTheory.RandomWalk.FunctionalLimit.Donsker.eventually_scaledInteriorPathProbability_pos_uniform`:
   the same lower bound survives the ratios $\sqrt n/\Delta\to1$ and
   $c/\Delta\to0$ in the finite-width corridor.
@@ -43,13 +56,31 @@ namespace ProbabilityTheory.RandomWalk.FunctionalLimit.Donsker
 open Filter MeasureTheory ProbabilityTheory
 open scoped ENNReal Topology
 
+/-- The Brownian middle-start event printed in Wang Yiyang,
+Appendix A.2. -/
+def brownianMiddlePathEvent (sigma z : ℝ) :
+    Set (CadlagPath unitInterval ℝ) :=
+  {path | (∀ t, 1 / 24 < z + sigma * path t ∧
+      z + sigma * path t < 23 / 24) ∧
+    5 / 12 < z + sigma * path ⊤ ∧
+      z + sigma * path ⊤ < 7 / 12}
+
 /-- The strict Brownian path event used for starts in the middle twelfths
-of the entrance corridor in Wang Yiyang, Appendix A.2. -/
+of the entrance corridor. Its tighter endpoint window supplies a fixed
+margin for the subsequent scale perturbation. -/
 def interiorPathEvent (sigma z : ℝ) : Set (CadlagPath unitInterval ℝ) :=
   {path | (∀ t, 1 / 24 < z + sigma * path t ∧
       z + sigma * path t < 23 / 24) ∧
     11 / 24 < z + sigma * path ⊤ ∧
       z + sigma * path ⊤ < 13 / 24}
+
+/-- The robust event is a subevent of the Brownian event in the printed
+proof of Wang Yiyang, Appendix A.2. -/
+theorem interiorPathEvent_subset_brownianMiddlePathEvent
+    (sigma z : ℝ) :
+    interiorPathEvent sigma z ⊆ brownianMiddlePathEvent sigma z := by
+  intro path hpath
+  exact ⟨hpath.1, by linarith [hpath.2.1], by linarith [hpath.2.2]⟩
 
 /-- The normalized finite-width corridor used for the middle starting
 interval. The ratio is `sqrt n / Delta` and `offset` is `c / Delta`. -/
@@ -203,6 +234,30 @@ theorem eventually_interiorPathProbability_pos_uniform
     intro increment hinc
     exact linearBall_subset_interiorPathEvent hsigma hz hinc
   exact (hn ((1 / 2 - z) / sigma) hslope).le.trans (measure_mono hsubset)
+
+/-- The exact Brownian middle-start event printed in Wang Yiyang,
+Appendix A.2, inherits the uniform Donsker lower bound from its robust
+subevent. -/
+theorem eventually_brownianMiddlePathProbability_pos_uniform
+    {ν : Measure ℝ} [IsProbabilityMeasure ν] {sigma : ℝ}
+    (hν : IsCenteredSecondMoment ν (sigma ^ 2)) (hsigma : 0 < sigma)
+    {P : Measure (CadlagPath unitInterval ℝ)} [IsProbabilityMeasure P]
+    (hP : IsStableClockProcessLaw 2 (gaussianReal 0 1)
+      UnitInterval.clock P) :
+    ∃ q : ℝ≥0∞, 0 < q ∧ ∀ᶠ n : ℕ in atTop,
+      ∀ z ∈ Set.Icc (1 / 12) (11 / 12),
+        q ≤ iidSequenceLaw ν
+          {increment | RandomWalk.normalizedStepCadlagPathIcc
+            (fun _ => sigma * Real.sqrt n) n increment ∈
+              brownianMiddlePathEvent sigma z} := by
+  obtain ⟨q, hq, hbase⟩ :=
+    eventually_interiorPathProbability_pos_uniform hν hsigma hP
+  refine ⟨q, hq, ?_⟩
+  filter_upwards [hbase] with n hn
+  intro z hz
+  exact (hn z hz).trans (measure_mono (by
+    intro increment hinc
+    exact interiorPathEvent_subset_brownianMiddlePathEvent sigma z hinc))
 
 /-- The uniform Brownian interior estimate transfers to the finite-width
 middle-start corridor as the scale ratio approaches one. This is the
