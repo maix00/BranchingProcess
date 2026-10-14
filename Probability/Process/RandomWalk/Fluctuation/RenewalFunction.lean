@@ -28,6 +28,8 @@ The public definitions and theorems in this file are:
   $k\le l$ implies $H_k^-\le H_l^-$.
 - ProbabilityTheory.RandomWalk.descendingLadderRenewalFunction:
   $V_\nu(x)=\sum_{k\ge0}\mathbb P_\nu(H_k^-\le x)$.
+- ProbabilityTheory.RandomWalk.descendingLadderRenewalFunction_eq_lintegral_count:
+  $V_\nu(x)=\mathbb E_\nu[\sum_{k\ge0}1_{\{H_k^-\le x\}}]$.
 - ProbabilityTheory.RandomWalk.descendingLadderRenewalFunction_mono:
   $x\le y$ implies $V_\nu(x)\le V_\nu(y)$.
 - ProbabilityTheory.RandomWalk.descendingLadderRenewalFunction_measurable:
@@ -107,6 +109,55 @@ noncomputable def descendingLadderRenewalFunction
     (ν : Measure ℝ) (x : ℝ) : ℝ≥0∞ :=
   ∑' k : ℕ, iidSequenceLaw ν
     {increment | strictDescendingLadderHeight increment k ≤ (x : WithTop ℝ)}
+
+/-- The renewal function is the expected number of descending ladder
+heights in the interval from zero to `x`, as in Caravenna--Chaumont,
+definition (1.1). -/
+theorem descendingLadderRenewalFunction_eq_lintegral_count
+    (ν : Measure ℝ) (x : ℝ) :
+    descendingLadderRenewalFunction ν x =
+      ∫⁻ increment, ∑' k : ℕ,
+        if strictDescendingLadderHeight increment k ≤ (x : WithTop ℝ)
+        then (1 : ℝ≥0∞) else 0 ∂iidSequenceLaw ν := by
+  unfold descendingLadderRenewalFunction
+  have hmeas (k : ℕ) : MeasurableSet
+      {increment : ℕ → ℝ |
+        strictDescendingLadderHeight increment k ≤ (x : WithTop ℝ)} :=
+    measurableSet_strictDescendingLadderHeight_le k x
+  have hind (k : ℕ) :
+      (fun increment : ℕ → ℝ =>
+        if strictDescendingLadderHeight increment k ≤ (x : WithTop ℝ)
+        then (1 : ℝ≥0∞) else 0) =
+      {increment | strictDescendingLadderHeight increment k ≤
+        (x : WithTop ℝ)}.indicator (fun _ => (1 : ℝ≥0∞)) := by
+    funext increment
+    simp [Set.indicator]
+  have hterm (k : ℕ) :
+      iidSequenceLaw ν
+        {increment | strictDescendingLadderHeight increment k ≤
+          (x : WithTop ℝ)} =
+      ∫⁻ increment,
+        (if strictDescendingLadderHeight increment k ≤ (x : WithTop ℝ)
+         then (1 : ℝ≥0∞) else 0) ∂iidSequenceLaw ν := by
+    rw [hind k, lintegral_indicator_const₀ (hmeas k).nullMeasurableSet,
+      one_mul]
+  calc
+    (∑' k : ℕ, iidSequenceLaw ν
+      {increment | strictDescendingLadderHeight increment k ≤
+        (x : WithTop ℝ)}) =
+        ∑' k : ℕ, ∫⁻ increment,
+          (if strictDescendingLadderHeight increment k ≤ (x : WithTop ℝ)
+           then (1 : ℝ≥0∞) else 0) ∂iidSequenceLaw ν := by
+      apply tsum_congr
+      exact hterm
+    _ = ∫⁻ increment, ∑' k : ℕ,
+          (if strictDescendingLadderHeight increment k ≤ (x : WithTop ℝ)
+           then (1 : ℝ≥0∞) else 0) ∂iidSequenceLaw ν := by
+      rw [lintegral_tsum]
+      intro k
+      rw [hind k]
+      exact (aemeasurable_const).indicator₀
+        (hmeas k).nullMeasurableSet
 
 /-- Larger height windows contain all the previous renewal mass. -/
 theorem descendingLadderRenewalFunction_mono
