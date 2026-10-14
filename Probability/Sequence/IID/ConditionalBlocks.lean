@@ -18,8 +18,9 @@ The public theorems in this file are:
   for consecutive coordinate blocks $X,Y$ of an IID sequence,
   $\mathbb E[f(X,Y)\mid X]=\int f(X,y)\,d\mathcal L(Y)(y)$.
 - `ProbabilityTheory.iidSequenceLaw_condExp_pairEvent_ge_of_sectionProbability`:
-  a lower bound $p$ for every section $\mathbb P((x,Y)\in E)$ gives
-  $\mathbb E[\mathbf1_E(X,Y)\mid X]\ge p$ almost surely.
+  a lower bound $p$ for every section $\mathbb P((x,Y)\in E)$ with
+  $x\in G$ gives $\mathbb E[\mathbf1_E(X,Y)\mid X]\ge p$
+  almost surely on $X\in G$.
 - `ProbabilityTheory.measureReal_inter_ge_of_condExp_indicator_ge`:
   on a past-measurable event $A$, the conditional bound gives
   $\mathbb P(A\cap E)\ge p\mathbb P(A)$.
@@ -89,13 +90,15 @@ theorem iidSequenceLaw_condExp_pairEvent_ge_of_sectionProbability
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (start length : ℕ)
     (E : Set ((Fin start → ℝ) × (Fin length → ℝ)))
-    (hE : MeasurableSet E) {bound : ℝ}
+    (hE : MeasurableSet E) (good : Set (Fin start → ℝ))
+    {bound : ℝ}
     (hsections : ∀ past,
-      bound ≤ ((iidSequenceLaw ν).map
+      past ∈ good → bound ≤ ((iidSequenceLaw ν).map
         (Combinatorics.Sequence.blockCoordinates start length)).real
         {block | (past, block) ∈ E}) :
     ∀ᵐ increment ∂iidSequenceLaw ν,
-      bound ≤
+      Combinatorics.Sequence.blockCoordinates 0 start increment ∈ good →
+        bound ≤
         condExp
           (MeasurableSpace.comap
             (Combinatorics.Sequence.blockCoordinates 0 start) inferInstance)
@@ -140,12 +143,13 @@ theorem iidSequenceLaw_condExp_pairEvent_ge_of_sectionProbability
       ((iidSequenceLaw ν).map nextBlock).real sectionEvent
     rw [integral_indicator_const (e := (1 : ℝ)) hsectionMeasurable,
       smul_eq_mul, mul_one]
-  filter_upwards [hcond] with increment hincrement
+  filter_upwards [hcond] with increment hincrement hgood
   rw [hincrement]
   have hsection := hsectionIntegral
     (Combinatorics.Sequence.blockCoordinates 0 start increment)
   rw [hsection]
-  exact hsections (Combinatorics.Sequence.blockCoordinates 0 start increment)
+  exact hsections
+    (Combinatorics.Sequence.blockCoordinates 0 start increment) hgood
 
 /-- Integrating a conditional probability lower bound over a measurable
 past event gives the one-step reverse Markov product bound. -/
