@@ -1,5 +1,5 @@
 import Probability.BranchingRandomWalk.Restart.RootedTrial.SiblingTrial
-import Probability.BranchingRandomWalk.Restart.RootedTrial.RecursiveReserve
+import Probability.BranchingRandomWalk.Restart.RootedTrial.Reserve.Recursive
 import Probability.BranchingRandomWalk.Restart.RootedTrial.FiniteSplitCompletion
 import Probability.BranchingRandomWalk.Restart.GoodSplit
 

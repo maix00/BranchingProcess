@@ -7,8 +7,8 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.Stable.SmallDeviation.Blocks.ShiftComparison.Core
-public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.FeedbackEntrance
-public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.FeedbackEntranceIndexOne
+public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.Feedback.Entrance
+public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.Feedback.EntranceIndexOne
 public import Probability.Distributions.Stable.Sign
 
 /-!

@@ -27,8 +27,8 @@ under `Probability/BranchingRandomWalk/Spine/`. The general `Selection/` layer o
 selection mechanisms, including random mechanisms; deterministic first-`N`
 selection is the `Selection/NSelection/` specialization. Its selected-
 population endpoint and drawdown transfers live under
-`Selection/NSelection/Tail/`, and its deterministic speed proof lives under
-`Selection/NSelection/Speed/`. Root-indexed position observations are owned
+`Selection/NSelection/EndpointDeviation/`, and its deterministic speed proof lives under
+`Selection/NSelection/AsymptoticSpeed/`. Root-indexed position observations are owned
 by `Genealogy/RootIndexed/Measurability`; `Selection/NSelection/Position`
 contains only first-`N` measurability results, while random finite selectors
 adapted to those observations live under `Selection/Finite/`.
@@ -73,6 +73,8 @@ For the completed structural moves and their remaining proof obligations, see
 [`docs/architecture/MIGRATION_PLAN.md`](docs/architecture/MIGRATION_PLAN.md).
 For theorem-by-theorem formalization status, see
 [`FORMALIZATION_CHECKLIST.md`](FORMALIZATION_CHECKLIST.md).
+For the audit of dense module directories and their entry points, see
+[`docs/architecture/MODULE_DIRECTORY_AUDIT.md`](docs/architecture/MODULE_DIRECTORY_AUDIT.md).
 
 There is no umbrella import. Import the module that owns the required
 definition or theorem. The dependency graph and API are checked by the

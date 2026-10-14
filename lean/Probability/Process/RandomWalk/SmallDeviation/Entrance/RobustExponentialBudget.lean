@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Entrance.RobustPowerAssembly
+public import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.PowerAssembly
 public import Analysis.Asymptotics.PolynomialExponential
 
 /-!

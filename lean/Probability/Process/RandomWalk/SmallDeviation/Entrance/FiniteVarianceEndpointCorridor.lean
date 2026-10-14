@@ -7,9 +7,9 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.SmallDeviation.Entrance.NormalDomain
-public import Probability.Process.RandomWalk.SmallDeviation.Entrance.StableEndpointBridge
+public import Probability.Process.RandomWalk.SmallDeviation.Entrance.FiniteVariance.StableEndpointBridge
 public import Probability.Process.RandomWalk.FunctionalLimit.Normal.Tightness
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.FromIncrementLaw.PathLaw
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.FromIncrementLaw.PathLaw
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Scale
 public import Probability.Distributions.Gaussian.Interval
 

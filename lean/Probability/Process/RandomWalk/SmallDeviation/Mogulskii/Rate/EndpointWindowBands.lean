@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.BlockScale
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Discrete.SpectralEndpointBands
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.SpectralEndpointBands
 public import Mathlib.Topology.Order.LiminfLimsup
 
 /-!
