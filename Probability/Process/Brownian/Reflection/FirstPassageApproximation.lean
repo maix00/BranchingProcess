@@ -9,6 +9,7 @@ module
 public import Probability.Process.Brownian.Reflection.FiniteStoppingTime
 public import Probability.Process.Path.FirstPassage
 public import Probability.Process.Path.TimeGrid.UnitInterval
+public import Probability.MeasureTheory.Convergence.InvariantLaw
 public import Mathlib.Probability.Process.HittingTime
 
 /-!
@@ -41,6 +42,11 @@ The public definition and theorem in this file are:
 - `ProbabilityTheory.tendsto_reflectAfter_unitIntervalGridCeiling_capped`:
   for every path, reflection at the selected grid time converges to
   reflection at the capped first-passage time.
+- `ProbabilityTheory.measurable_firstPassageGridCeiling`: the selected
+  finite-grid index is measurable.
+- `ProbabilityTheory.IsBrownianReal.measure_reflectAfter_firstPassageBeforeOne_eq`:
+  reflection at the first passage below $a$, capped at time $1$,
+  preserves Brownian path law.
 - `ProbabilityTheory.IsBrownianReal.measure_reflectAfter_firstPassageGridCeiling_eq`:
   reflection after this finite approximation preserves Brownian path law.
 
@@ -246,6 +252,38 @@ theorem tendsto_reflectAfter_unitIntervalGridCeiling_capped
   exact (continuous_reflectAfter_time f).continuousAt.tendsto.comp
     (tendsto_unitIntervalGridCeiling_time_capped a f)
 
+/-- The selected finite-grid index is a measurable function of the
+continuous path. -/
+theorem measurable_firstPassageGridCeiling (N : ℕ)
+    (r : Fin (N + 1) → ℝ≥0) (a : ℝ) :
+    Measurable (firstPassageGridCeiling N r a) := by
+  let u : Fin (N + 1) → C(ℝ≥0, ℝ) → Bool :=
+    fun i f => if firstPassageBelow f a ≤ r i then true else false
+  have hum (i : Fin (N + 1)) : StronglyMeasurable (u i) := by
+    have hset : MeasurableSet {f : C(ℝ≥0, ℝ) |
+        firstPassageBelow f a ≤ r i} :=
+      (measurable_firstPassageBelow a) measurableSet_Iic
+    exact (Measurable.ite hset measurable_const measurable_const).stronglyMeasurable
+  let ℱ := Filtration.natural u hum
+  have hu : Adapted ℱ u := (Filtration.stronglyAdapted_natural hum).adapted
+  have hτ : IsStoppingTime ℱ
+      (fun f : C(ℝ≥0, ℝ) =>
+        (firstPassageGridCeiling N r a f : WithTop (Fin (N + 1)))) := by
+    exact hu.isStoppingTime_hittingBtwn (measurableSet_singleton true)
+  have hfiber (i : Fin (N + 1)) :
+      MeasurableSet {f : C(ℝ≥0, ℝ) | firstPassageGridCeiling N r a f = i} := by
+    have hi : MeasurableSet[ℱ i] {f : C(ℝ≥0, ℝ) |
+        firstPassageGridCeiling N r a f = i} := by
+      simpa using hτ.measurableSet_eq i
+    exact (ℱ.le i) _ hi
+  intro s hs
+  have heq : (firstPassageGridCeiling N r a) ⁻¹' s =
+      ⋃ i : s, {f : C(ℝ≥0, ℝ) | firstPassageGridCeiling N r a f = i} := by
+    ext f
+    simp
+  rw [heq]
+  exact MeasurableSet.iUnion (fun i => hfiber i)
+
 /-- Reflection at the first grid time after continuous first passage
 preserves Brownian path law. This is the finite-valued stopping-time
 approximation in Theorem 2.1 of S. J. Dilworth and Duncan Wright,
@@ -273,20 +311,8 @@ theorem IsBrownianReal.measure_reflectAfter_firstPassageGridCeiling_eq
       (fun f : C(ℝ≥0, ℝ) =>
         (firstPassageGridCeiling N r a f : WithTop (Fin (N + 1)))) := by
     exact hu.isStoppingTime_hittingBtwn (measurableSet_singleton true)
-  have hfiber (i : Fin (N + 1)) :
-      MeasurableSet {f : C(ℝ≥0, ℝ) | firstPassageGridCeiling N r a f = i} := by
-    have hi : MeasurableSet[ℱ i] {f : C(ℝ≥0, ℝ) |
-        firstPassageGridCeiling N r a f = i} := by
-      simpa using hτ.measurableSet_eq i
-    exact (ℱ.le i) _ hi
-  have hT : Measurable (firstPassageGridCeiling N r a) := by
-    intro s hs
-    have heq : (firstPassageGridCeiling N r a) ⁻¹' s =
-        ⋃ i : s, {f : C(ℝ≥0, ℝ) | firstPassageGridCeiling N r a f = i} := by
-      ext f
-      simp
-    rw [heq]
-    exact MeasurableSet.iUnion (fun i => hfiber i)
+  have hT : Measurable (firstPassageGridCeiling N r a) :=
+    measurable_firstPassageGridCeiling N r a
   have hlocal (i : Fin (N + 1)) (f g : C(ℝ≥0, ℝ))
       (hprefix : ∀ v : ℝ≥0, v ≤ r i → f v = g v) :
       firstPassageGridCeiling N r a f = i ↔
@@ -312,6 +338,48 @@ theorem IsBrownianReal.measure_reflectAfter_firstPassageGridCeiling_eq
     simpa only [Set.mem_preimage] using (congrArg (· ∈ E) hupast).to_iff
   exact hB.measure_reflectAfter_finitePathwiseStoppingTime_eq
     hBmeasurable (firstPassageGridCeiling N r a) r hT hlocal
+
+/-- Reflection at the first passage below `a`, capped at time `1`,
+preserves Brownian path law. Finite-grid reflection invariance passes to
+the pointwise path limit by bounded convergence, as in Theorem 2.1 of
+S. J. Dilworth and Duncan Wright, *A direct proof of the reflection
+principle for Brownian motion*, arXiv:1810.01783. -/
+theorem IsBrownianReal.measure_reflectAfter_firstPassageBeforeOne_eq
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+    {B : ℝ≥0 → Ω → ℝ} (hB : IsBrownianReal B P)
+    (hBmeasurable : ∀ t, Measurable (B t)) (a : ℝ) :
+    (P.map (hB.continuousPathMap hBmeasurable)).map
+        (fun f => reflectAfter f
+          (min (firstPassageBelow f a) (1 : WithTop ℝ≥0)).untopA) =
+      P.map (hB.continuousPathMap hBmeasurable) := by
+  let μ := P.map (hB.continuousPathMap hBmeasurable)
+  haveI : IsProbabilityMeasure P := (hB.hasLaw ∅).isProbabilityMeasure
+  haveI : IsFiniteMeasure μ := inferInstance
+  let F : C(ℝ≥0, ℝ) → C(ℝ≥0, ℝ) := fun f =>
+    reflectAfter f (min (firstPassageBelow f a) (1 : WithTop ℝ≥0)).untopA
+  let Fₙ : ℕ → C(ℝ≥0, ℝ) → C(ℝ≥0, ℝ) := fun n f =>
+    reflectAfter f (unitIntervalGridTime n
+      (firstPassageGridCeiling (n + 1) (unitIntervalGridTime n) a f))
+  have hTmeas : Measurable
+      (fun f : C(ℝ≥0, ℝ) =>
+        (min (firstPassageBelow f a) (1 : WithTop ℝ≥0)).untopA) :=
+    ((measurable_firstPassageBelow a).min measurable_const).untopA
+  have hF : Measurable F :=
+    measurable_reflectAfter_pair.comp (measurable_id.prodMk hTmeas)
+  have hFₙ (n : ℕ) : Measurable (Fₙ n) := by
+    have hT : Measurable (fun f : C(ℝ≥0, ℝ) =>
+        unitIntervalGridTime n
+          (firstPassageGridCeiling (n + 1) (unitIntervalGridTime n) a f)) :=
+      (measurable_of_finite (unitIntervalGridTime n)).comp
+        (measurable_firstPassageGridCeiling (n + 1) (unitIntervalGridTime n) a)
+    exact measurable_reflectAfter_pair.comp (measurable_id.prodMk hT)
+  have hlim (f : C(ℝ≥0, ℝ)) :
+      Filter.Tendsto (fun n => Fₙ n f) Filter.atTop (nhds (F f)) :=
+    tendsto_reflectAfter_unitIntervalGridCeiling_capped a f
+  have hinv (n : ℕ) : μ.map (Fₙ n) = μ :=
+    hB.measure_reflectAfter_firstPassageGridCeiling_eq hBmeasurable
+      (n + 1) (unitIntervalGridTime n) (unitIntervalGridTime_mono n) a
+  exact Measure.map_eq_of_pointwise_limit μ F Fₙ hF hFₙ hlim hinv
 
 end ProbabilityTheory
 
