@@ -186,13 +186,13 @@ schedule argument without a varying block-index assumption.
 `ConcreteStaircaseGlobalLower.lean` applies this reduction to the exact
 finite staircase and robust entrance probability, yielding the target
 exponential lower bound from the global inequalities.
-`Analysis/Asymptotics/NarrowedWidth.lean` owns the general rounded-width
-ratio and strict exponent comparison. `StaircaseRateLimit.lean` specializes
-them to the paper's narrowed width under $\ell/\Delta^3\to0$ and the
-strict margin $d<d''\beta^2$, where $\beta=1-1/(3m)$.
-`Analysis/Asymptotics/BlockScaleInequalities.lean` owns the general
-rounded-width threshold, margin, superquadratic time ratio, and subcubic
-linear-cost comparisons; the staircase proof instantiates them.
+`StaircaseRateLimit.lean` uses private width-ratio and floor-comparison
+helpers to obtain the rounded narrowed-width exponent comparison under
+$\ell/\Delta^3\to0$ and the strict margin $d<d''\beta^2$, where
+$\beta=1-1/(3m)$.
+`StaircaseEventually.lean` keeps its one-use rounded-width threshold,
+margin, superquadratic time ratio, and subcubic cost comparisons private
+and assembles the common threshold for the staircase proof.
 `StaircaseEndpointLimit.lean` proves that the ordinary endpoint fraction
 tends to $1/(3\beta)$; `StaircaseEventually.lean` takes one common eventual
 threshold for all global conditions. `ConcreteStaircaseAsymptoticLower.lean`

@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Analysis.Asymptotics.BlockScaleInequalities
+public import Analysis.Asymptotics.BlockScale
 
 /-!
 # Interior endpoint ratio for the staircase blocks
