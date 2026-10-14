@@ -22,6 +22,8 @@ The public theorems in this file are:
 - `BrownianMeander.imhofTilt_besselLaw_equivalent`: the Imhof tilt and
   the law of the three-dimensional Brownian radius are mutually
   absolutely continuous.
+- `BrownianMeander.imhofTilt_support_eq_besselLaw_support`: their
+  topological supports coincide.
 
 The theorem completes the support step in Wang Yiyang, *Asymptotic speed of
 the $N$-branching random walk with infinite offspring*, Chapter 3,
@@ -58,6 +60,20 @@ theorem imhofTilt_besselLaw_equivalent
   exact ⟨withDensity_absolutelyContinuous μ imhofWeight,
     withDensity_absolutelyContinuous' measurable_imhofWeight.aemeasurable
       hpositive⟩
+
+/-- A strictly positive Imhof density preserves the Bessel path-law
+support. -/
+theorem imhofTilt_support_eq_besselLaw_support
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+    [IsProbabilityMeasure P] {B : ℝ≥0 → Ω → ℝ}
+    (hBrownian : IsBrownianReal B P)
+    (hcontinuous : ∀ ω, Continuous (B · ω))
+    (hmeasurable : ∀ t, Measurable (B t)) :
+    (imhofTilt (BrownianBessel3.pathLaw P B hcontinuous)).support =
+      (BrownianBessel3.pathLaw P B hcontinuous).support := by
+  obtain ⟨hforward, hbackward⟩ :=
+    imhofTilt_besselLaw_equivalent hBrownian hcontinuous hmeasurable
+  exact Set.Subset.antisymm hforward.support_mono hbackward.support_mono
 
 /-- The Imhof transform of the radial law of three independent Brownian
 paths gives positive mass to the open corridor used in the thesis. -/
