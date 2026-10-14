@@ -38,11 +38,16 @@ namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 and event inclusion yield the tilted-tube endpoint lower bound. -/
 theorem exists_uniform_finiteStaircaseLowerBound
     {ν : Measure ℝ} [IsProbabilityMeasure ν]
-    {sigma narrowedRate u v : ℝ}
+    {sigma narrowedRate uInterior vInterior uFinal vFinal : ℝ}
     (hν : IsCenteredSecondMoment ν (sigma ^ 2))
     (hsigma : 0 < sigma)
     (m : ℕ) (hm : 2 ≤ m)
-    (hu : 0 < u) (huv : u < v) (hv : v < 1)
+    (huInterior : 0 < uInterior)
+    (huvInterior : uInterior < vInterior)
+    (hvInterior : vInterior < 1)
+    (huFinal : 0 < uFinal)
+    (huvFinal : uFinal < vFinal)
+    (hvFinal : vFinal < 1)
     (hrate : (Real.pi ^ 2 / 2) * sigma ^ 2 < narrowedRate) :
     ∃ width₀ ratio₀ : ℕ,
       ∀ (start length : ℕ → ℕ)
@@ -70,11 +75,19 @@ theorem exists_uniform_finiteStaircaseLowerBound
           let narrowedWidth := staircaseBinWidth m * blockWidth j
           width₀ ≤ ⌊narrowedWidth⌋₊ ∧
           1 / margin ≤ narrowedWidth ∧
-          staircaseBinEndpointLowerFraction m (v₁ j) + margin ≤ u ∧
-          v + margin ≤ staircaseBinEndpointUpperFraction m (v₂ j) ∧
           ratio₀ * (⌊narrowedWidth⌋₊) ^ 2 ≤ length j ∧
           narrowedRate * globalWidth ^ 2 ≤
-            blockRate * (⌊narrowedWidth⌋₊ : ℝ) ^ 2) →
+            blockRate * (⌊narrowedWidth⌋₊ : ℝ) ^ 2 ∧
+          (j + 1 < q →
+            staircaseBinEndpointLowerFraction m (v₁ j) + margin ≤
+              uInterior ∧
+            vInterior + margin ≤
+              staircaseBinEndpointUpperFraction m (v₂ j)) ∧
+          (¬j + 1 < q →
+            staircaseBinEndpointLowerFraction m (v₁ j) + margin ≤
+              uFinal ∧
+            vFinal + margin ≤
+              staircaseBinEndpointUpperFraction m (v₂ j))) →
         (∀ j, j < q → blockLower j =
           base + drift * ((start j + length j : ℕ) : ℝ) /
             globalWidth ^ 2) →
@@ -103,7 +116,8 @@ theorem exists_uniform_finiteStaircaseLowerBound
               base endpointFraction) := by
   obtain ⟨width₀, ratio₀, hstaircase⟩ :=
     exists_uniform_staircaseProbability_ge_product
-      hν hsigma m hm hu huv hv hrate
+      hν hsigma m hm huInterior huvInterior hvInterior
+        huFinal huvFinal hvFinal hrate
   refine ⟨width₀, ratio₀, ?_⟩
   intro start length hnext q horizon hq hfinish initial hinitial
     blockLower blockWidth v₁ v₂ margin globalWidth drift base

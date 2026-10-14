@@ -152,6 +152,10 @@ $\Delta-c|I_j|/\Delta^2$; `StaircaseEndpointWindows.lean` identifies the
 paper's $v_1(k),v_2(k)$ with the next central window and the final endpoint
 window. `ConcreteStaircaseLower.lean` applies the finite product theorem to
 this exact schedule under explicit numerical and entrance assumptions.
+The finite product now selects separate fixed interior endpoint intervals
+for ordinary blocks and the final block, as in the two cases following the
+uniform-in-$k$ argument of the proof. A single interval would impose an
+impossible overlap when the final endpoint fraction is below $1/3$.
 `StaircaseFirstWindow.lean` proves that, when the first block has length
 $\ell$ and $10c\ell<\Delta^3$, the robust interval
 $[r_{t_1}+2\Delta/5,r_{t_1}+3\Delta/5]$ implied for large widths by the three

@@ -15,9 +15,10 @@ public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.Staircas
 The public theorem in this file is:
 
 - `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.exists_uniform_staircaseProbability_ge_product`:
-  for a fixed finite spatial-bin count, the endpoint-window lower rate of
-  Lemma 3.1(ii) and the paper's numeric staircase conditions imply the
-  entrance probability times the product of all block exponents.
+  for a fixed finite spatial-bin count, separate interior endpoint
+  intervals for ordinary and final blocks, and the endpoint-window lower
+  rate of Lemma 3.1(ii), the staircase conditions imply the entrance
+  probability times the product of all block exponents.
 
 This composes the narrowed-bin argument, central endpoint windows, and
 reverse Markov product in Wang Yiyang,
@@ -38,11 +39,16 @@ namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 product under the quantitative block conditions in the thesis proof. -/
 theorem exists_uniform_staircaseProbability_ge_product
     {ν : Measure ℝ} [IsProbabilityMeasure ν]
-    {sigma d u v : ℝ}
+    {sigma d uInterior vInterior uFinal vFinal : ℝ}
     (hν : IsCenteredSecondMoment ν (sigma ^ 2))
     (hsigma : 0 < sigma)
     (m : ℕ) (hm : 2 ≤ m)
-    (hu : 0 < u) (huv : u < v) (hv : v < 1)
+    (huInterior : 0 < uInterior)
+    (huvInterior : uInterior < vInterior)
+    (hvInterior : vInterior < 1)
+    (huFinal : 0 < uFinal)
+    (huvFinal : uFinal < vFinal)
+    (hvFinal : vFinal < 1)
     (hd : (Real.pi ^ 2 / 2) * sigma ^ 2 < d) :
     ∃ width₀ ratio₀ : ℕ,
       ∀ (start length : ℕ → ℕ)
@@ -67,10 +73,18 @@ theorem exists_uniform_staircaseProbability_ge_product
           let narrowedWidth := staircaseBinWidth m * width j
           width₀ ≤ ⌊narrowedWidth⌋₊ ∧
           1 / margin ≤ narrowedWidth ∧
-          staircaseBinEndpointLowerFraction m (v₁ j) + margin ≤ u ∧
-          v + margin ≤ staircaseBinEndpointUpperFraction m (v₂ j) ∧
           ratio₀ * (⌊narrowedWidth⌋₊) ^ 2 ≤ length j ∧
-          d * globalWidth ^ 2 ≤ target * (⌊narrowedWidth⌋₊ : ℝ) ^ 2) →
+          d * globalWidth ^ 2 ≤ target * (⌊narrowedWidth⌋₊ : ℝ) ^ 2 ∧
+          (j + 1 < q →
+            staircaseBinEndpointLowerFraction m (v₁ j) + margin ≤
+              uInterior ∧
+            vInterior + margin ≤
+              staircaseBinEndpointUpperFraction m (v₂ j)) ∧
+          (¬j + 1 < q →
+            staircaseBinEndpointLowerFraction m (v₁ j) + margin ≤
+              uFinal ∧
+            vFinal + margin ≤
+              staircaseBinEndpointUpperFraction m (v₂ j))) →
           (iidSequenceLaw ν).real initial *
             (∏ j ∈ Finset.range q,
               Real.exp (-target * (length j : ℝ) / globalWidth ^ 2)) ≤
@@ -78,10 +92,14 @@ theorem exists_uniform_staircaseProbability_ge_product
             (initial ∩ conditionalBlockIntersection
               (fun j => tubeBlockEvent (start j) (length j)
                 (lower j) (width j) (v₁ j) (v₂ j)) q) := by
-  obtain ⟨width₀, ratio₀, hrate⟩ :=
+  obtain ⟨widthInterior, ratioInterior, hrateInterior⟩ :=
     exists_uniform_staircaseBinProbability_ge_exp
-      hν hsigma m hm hu huv hv hd
-  refine ⟨width₀, ratio₀, ?_⟩
+      hν hsigma m hm huInterior huvInterior hvInterior hd
+  obtain ⟨widthFinal, ratioFinal, hrateFinal⟩ :=
+    exists_uniform_staircaseBinProbability_ge_exp
+      hν hsigma m hm huFinal huvFinal hvFinal hd
+  refine ⟨max widthInterior widthFinal,
+    max ratioInterior ratioFinal, ?_⟩
   intro start length hnext initial hinitial lower width v₁ v₂
     margin globalWidth target q hglobalWidth hmargin hwidth
     hfirst hwindow hparameters
@@ -98,13 +116,30 @@ theorem exists_uniform_staircaseProbability_ge_product
             (staircaseBinEndpointLowerFraction m (v₁ j))
             (staircaseBinEndpointUpperFraction m (v₂ j))) := by
     intro j hj l hl
-    obtain ⟨hwidthFloor, hwidthMargin, hmarginLower,
-      hmarginUpper, hratio, hscale⟩ := hparameters j hj
-    have hsource := hrate
-      (staircaseBinWidth m * width j) (v₁ j) (v₂ j)
-      margin globalWidth target (hnarrowed j hj) hmargin hglobalWidth
-      hwidthFloor hwidthMargin hmarginLower hmarginUpper hscale
-      (length j) hratio l hl
+    obtain ⟨hwidthFloor, hwidthMargin, hratio, hscale,
+      hmarginInterior, hmarginFinal⟩ := hparameters j hj
+    have hsource : ENNReal.ofReal
+        (Real.exp (-target * (length j : ℝ) / globalWidth ^ 2)) ≤
+        horizontalTubeEndpointWindowProbability
+          (iidSequenceLaw ν) (staircaseBinTubeParameter m l)
+          (staircaseBinWidth m * width j) (length j)
+          (staircaseBinEndpointLowerFraction m (v₁ j))
+          (staircaseBinEndpointUpperFraction m (v₂ j)) := by
+      by_cases hbefore : j + 1 < q
+      · obtain ⟨hmarginLower, hmarginUpper⟩ := hmarginInterior hbefore
+        exact hrateInterior
+          (staircaseBinWidth m * width j) (v₁ j) (v₂ j)
+          margin globalWidth target (hnarrowed j hj) hmargin hglobalWidth
+          ((le_max_left _ _).trans hwidthFloor) hwidthMargin
+          hmarginLower hmarginUpper hscale (length j)
+          ((Nat.mul_le_mul_right _ (le_max_left _ _)).trans hratio) l hl
+      · obtain ⟨hmarginLower, hmarginUpper⟩ := hmarginFinal hbefore
+        exact hrateFinal
+          (staircaseBinWidth m * width j) (v₁ j) (v₂ j)
+          margin globalWidth target (hnarrowed j hj) hmargin hglobalWidth
+          ((le_max_right _ _).trans hwidthFloor) hwidthMargin
+          hmarginLower hmarginUpper hscale (length j)
+          ((Nat.mul_le_mul_right _ (le_max_right _ _)).trans hratio) l hl
     have hreal := ENNReal.toReal_mono (measure_ne_top _ _) hsource
     change Real.exp (-target * (length j : ℝ) / globalWidth ^ 2) ≤
       ((iidSequenceLaw ν)

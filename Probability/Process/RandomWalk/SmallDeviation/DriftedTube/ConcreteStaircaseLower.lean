@@ -38,11 +38,16 @@ namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 schedule and endpoint windows from Wang Yiyang's Lemma 3.5. -/
 theorem exists_concreteStaircaseLowerBound
     {ν : Measure ℝ} [IsProbabilityMeasure ν]
-    {sigma narrowedRate u v : ℝ}
+    {sigma narrowedRate uInterior vInterior uFinal vFinal : ℝ}
     (hν : IsCenteredSecondMoment ν (sigma ^ 2))
     (hsigma : 0 < sigma)
     (m : ℕ) (hm : 2 ≤ m)
-    (hu : 0 < u) (huv : u < v) (hv : v < 1)
+    (huInterior : 0 < uInterior)
+    (huvInterior : uInterior < vInterior)
+    (hvInterior : vInterior < 1)
+    (huFinal : 0 < uFinal)
+    (huvFinal : uFinal < vFinal)
+    (hvFinal : vFinal < 1)
     (hrate : (Real.pi ^ 2 / 2) * sigma ^ 2 < narrowedRate) :
     ∃ width₀ ratio₀ : ℕ,
       ∀ (entrance horizon blockLength : ℕ)
@@ -79,12 +84,20 @@ theorem exists_concreteStaircaseLowerBound
           let narrowedWidth := staircaseBinWidth m * width
           width₀ ≤ ⌊narrowedWidth⌋₊ ∧
           1 / margin ≤ narrowedWidth ∧
-          staircaseBinEndpointLowerFraction m v₁ + margin ≤ u ∧
-          v + margin ≤ staircaseBinEndpointUpperFraction m v₂ ∧
           ratio₀ * (⌊narrowedWidth⌋₊) ^ 2 ≤
             staircaseBlockLength entrance horizon blockLength j ∧
           narrowedRate * globalWidth ^ 2 ≤
-            blockRate * (⌊narrowedWidth⌋₊ : ℝ) ^ 2) →
+            blockRate * (⌊narrowedWidth⌋₊ : ℝ) ^ 2 ∧
+          (j + 1 < staircaseBlockCount entrance horizon blockLength →
+            staircaseBinEndpointLowerFraction m v₁ + margin ≤
+              uInterior ∧
+            vInterior + margin ≤
+              staircaseBinEndpointUpperFraction m v₂) ∧
+          (¬j + 1 < staircaseBlockCount entrance horizon blockLength →
+            staircaseBinEndpointLowerFraction m v₁ + margin ≤
+              uFinal ∧
+            vFinal + margin ≤
+              staircaseBinEndpointUpperFraction m v₂)) →
         (∀ increment ∈ initial, ∀ time : ℕ,
           1 ≤ time → time ≤ entrance →
             base + drift * (time : ℝ) / globalWidth ^ 2 ≤
@@ -100,7 +113,8 @@ theorem exists_concreteStaircaseLowerBound
               base endpointFraction) := by
   obtain ⟨width₀, ratio₀, hfinite⟩ :=
     exists_uniform_finiteStaircaseLowerBound
-      hν hsigma m hm hu huv hv hrate
+      hν hsigma m hm huInterior huvInterior hvInterior
+        huFinal huvFinal hvFinal hrate
   refine ⟨width₀, ratio₀, ?_⟩
   intro entrance horizon blockLength initial margin globalWidth drift base
     endpointFraction blockRate totalRate hentrance hblockLength hremaining
@@ -139,11 +153,19 @@ theorem exists_concreteStaircaseLowerBound
       let narrowedWidth := staircaseBinWidth m * width j
       width₀ ≤ ⌊narrowedWidth⌋₊ ∧
       1 / margin ≤ narrowedWidth ∧
-      staircaseBinEndpointLowerFraction m (v₁ j) + margin ≤ u ∧
-      v + margin ≤ staircaseBinEndpointUpperFraction m (v₂ j) ∧
       ratio₀ * (⌊narrowedWidth⌋₊) ^ 2 ≤ length j ∧
       narrowedRate * globalWidth ^ 2 ≤
-        blockRate * (⌊narrowedWidth⌋₊ : ℝ) ^ 2 := by
+        blockRate * (⌊narrowedWidth⌋₊ : ℝ) ^ 2 ∧
+      (j + 1 < q →
+        staircaseBinEndpointLowerFraction m (v₁ j) + margin ≤
+          uInterior ∧
+        vInterior + margin ≤
+          staircaseBinEndpointUpperFraction m (v₂ j)) ∧
+      (¬j + 1 < q →
+        staircaseBinEndpointLowerFraction m (v₁ j) + margin ≤
+          uFinal ∧
+        vFinal + margin ≤
+          staircaseBinEndpointUpperFraction m (v₂ j)) := by
     intro j hj
     exact hparameters j hj
   have hfinal : Set.Icc (lower (q - 1) +
