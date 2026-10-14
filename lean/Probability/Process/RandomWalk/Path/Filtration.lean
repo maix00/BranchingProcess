@@ -18,6 +18,17 @@ The information available to a walk at time `n` is the generic prefix
 filtration of its increment sequence. This file records the random-walk
 consequences: a position is adapted, and a finite prefix is independent of a
 later block sum under the canonical IID law.
+
+The public theorems in this file are:
+
+- `ProbabilityTheory.RandomWalk.indepFun_sequencePrefix_blockSum`: the
+  increment prefix and a later block sum are independent under an IID law.
+- `ProbabilityTheory.RandomWalk.positionProcess_adapted`: $S_n$ is measurable
+  with respect to the first $n$ increments.
+- `ProbabilityTheory.RandomWalk.displacement_measurable_prefix`: $S_k$ is
+  measurable at prefix time $n$ whenever $k\le n$.
+- `ProbabilityTheory.RandomWalk.displacement_natAdd_measurable_prefix`:
+  a shifted block sum ending by $n$ is measurable at prefix time $n$.
 -/
 
 open MeasureTheory
@@ -82,6 +93,31 @@ theorem positionProcess_adapted (initial : E) :
   exact measurable_const.add
     (Finset.measurable_sum Finset.univ
       fun k _ ↦ sequenceCoordinate_measurable n k)
+
+/-- The displacement at any earlier time is measurable with respect to the
+current increment-prefix sigma algebra. -/
+theorem displacement_measurable_prefix {k n : ℕ} (hkn : k ≤ n) :
+    Measurable[sequencePrefixFiltration (E := E) n]
+      (AdditivePath.displacement (E := E) k) := by
+  unfold AdditivePath.displacement
+  exact Finset.measurable_sum (Finset.range k) fun i hi =>
+    sequenceCoordinate_measurable n
+      ⟨i, lt_of_lt_of_le (Finset.mem_range.mp hi) hkn⟩
+
+/-- A block sum is measurable from any increment prefix containing the
+whole block. -/
+theorem displacement_natAdd_measurable_prefix
+    (start length horizon : ℕ) (hbound : start + length ≤ horizon) :
+    Measurable[sequencePrefixFiltration (E := E) horizon]
+      (fun increment : ℕ → E =>
+        AdditivePath.displacement length
+          (fun k => increment (start + k))) := by
+  unfold AdditivePath.displacement
+  exact Finset.measurable_sum (Finset.range length) fun i hi =>
+    sequenceCoordinate_measurable horizon
+      ⟨start + i, by
+        have hi' := Finset.mem_range.mp hi
+        omega⟩
 
 end AddCommMonoid
 
