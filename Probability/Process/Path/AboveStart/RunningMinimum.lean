@@ -8,6 +8,7 @@ module
 
 public import Probability.Process.Path.AboveStart.Continuous
 public import Probability.Process.Path.RunningMinimum
+public import Probability.Process.Path.TimeGrid.NonnegativeRationals
 
 /-!
 # First windows and the running minimum of a continuous path
@@ -19,6 +20,9 @@ The public definitions and theorems in this file are:
 - `ProbabilityTheory.firstNonnegativeWindowStartUpTo_eq_runningMinimum_iff`:
   for $0\le u\le1$ and $T^s(f)=t$, the equality $f(t+u)=f(t)$
   holds exactly when $f(t+u)=m_f(t+u)$.
+- `ProbabilityTheory.firstNonnegativeWindowStartUpTo_return_rationalInterval`:
+  an interior return in the first unit window gives rational times
+  $r<q$ enclosing a repeated running-minimum value.
 - `ProbabilityTheory.firstNonnegativeWindowStartUpTo_lastStart_aboveRunningMinimum_eq_zero`:
   $T^{t+1}(f)=t$ implies $D_f(t)=0$.
 - `ProbabilityTheory.firstNonnegativeWindowStartUpTo_eq_coe_iff_runningMinimum`:
@@ -120,6 +124,42 @@ theorem firstNonnegativeWindowStartUpTo_eq_runningMinimum_iff
   obtain ⟨hrecord, hflat⟩ :=
     firstNonnegativeWindowStartUpTo_runningMinimum f s t hfirst
   rw [runningMinimum_eq_of_between f hflat hu, ← hrecord]
+
+/-- An interior return of the first unit window to its starting
+level yields a rational interval on which the old running minimum is
+attained again. This is the rational covering step in Bolthausen's
+Lemma 2.3, equation (2.4). -/
+theorem firstNonnegativeWindowStartUpTo_return_rationalInterval
+    (f : C(ℝ≥0, ℝ)) (s t : ℝ≥0)
+    (hfirst : firstNonnegativeWindowStartUpTo f s = t)
+    {u : ℝ≥0} (hu0 : 0 < u) (hu1 : u < 1)
+    (hreturn : f (t + u) = f t) :
+    ∃ r q : ℚ≥0,
+      nonnegativeRationalTime r < nonnegativeRationalTime q ∧
+      runningMinimum f (nonnegativeRationalTime q) =
+        runningMinimum f (nonnegativeRationalTime r) ∧
+      ∃ v, nonnegativeRationalTime r ≤ v ∧
+        v ≤ nonnegativeRationalTime q ∧
+        f v = runningMinimum f (nonnegativeRationalTime r) := by
+  obtain ⟨hrecord, hflat⟩ :=
+    firstNonnegativeWindowStartUpTo_runningMinimum f s t hfirst
+  have htv : t < t + u := lt_add_of_pos_right t hu0
+  have hvt : t + u < t + 1 := by simpa [add_comm] using add_lt_add_left hu1 t
+  obtain ⟨r, htr, hrv⟩ := exists_nonnegativeRationalTime_between htv
+  obtain ⟨q, hvq, hqt⟩ := exists_nonnegativeRationalTime_between hvt
+  have hbetween (x : ℝ≥0) (htx : t ≤ x) (hxt : x ≤ t + 1) :
+      runningMinimum f x = runningMinimum f t := by
+    apply le_antisymm
+    · exact runningMinimum_antitone f htx
+    · rw [← hflat]
+      exact runningMinimum_antitone f hxt
+  have hmr := hbetween (nonnegativeRationalTime r) htr.le
+    (hrv.le.trans hvt.le)
+  have hmq := hbetween (nonnegativeRationalTime q)
+    (htv.le.trans hvq.le) hqt.le
+  refine ⟨r, q, hrv.trans hvq, hmq.trans hmr.symm,
+    t + u, hrv.le, hvq.le, ?_⟩
+  rw [hmr, hreturn, hrecord]
 
 /-- If the first unit window begins at the last admissible time, its
 starting height above the running minimum is zero. This is the event

@@ -21,6 +21,9 @@ The public definition and theorems in this file are:
 - `ProbabilityTheory.denseRange_nonnegativeRationalTime`:
   nonnegative rational observation times are dense in the nonnegative
   real time axis.
+- `ProbabilityTheory.exists_nonnegativeRationalTime_between`:
+  any two strictly ordered nonnegative real times enclose a
+  nonnegative rational time.
 
 This dense time set determines continuous-path laws by finite-dimensional
 distributions and supports path-level independence arguments.
@@ -72,6 +75,17 @@ theorem denseRange_nonnegativeRationalTime :
       have hlow : (x : ℝ) - ε < q :=
         (le_max_right 0 ((x : ℝ) - ε)).trans_lt hlowerq
       linarith
+
+/-- Choose a nonnegative rational time strictly between two
+nonnegative real times. -/
+theorem exists_nonnegativeRationalTime_between {a b : ℝ≥0} (hab : a < b) :
+    ∃ q : ℚ≥0, a < nonnegativeRationalTime q ∧ nonnegativeRationalTime q < b := by
+  obtain ⟨q, haq, hqb⟩ := exists_rat_btwn (show (a : ℝ) < b by exact_mod_cast hab)
+  have hq : 0 ≤ q := by
+    exact_mod_cast (lt_of_le_of_lt a.property haq).le
+  refine ⟨⟨q, hq⟩, ?_, ?_⟩
+  · exact_mod_cast haq
+  · exact_mod_cast hqb
 
 end ProbabilityTheory
 

@@ -23,6 +23,9 @@ The public theorem in this file is:
 - `ProbabilityTheory.IsBrownianReal.measure_pastMinimumGap_eq_futureMinimum`:
   for $d>0$, the probability that $m(r)-B(r)$ equals the minimum of
   $B(r+u)-B(r)$ over $0\le u\le d$ is zero.
+- `ProbabilityTheory.IsBrownianReal.measure_repeatedMinimumOnInterval_eq_zero`:
+  a Brownian running minimum constant from $r$ to $q>r$ is almost
+  surely not attained at a time in $[r,q]$.
 
 This is the path-valued form of the weak Markov property in mathlib's
 `IsPreBrownianReal.indepFun_shift`. It supplies the independence used
@@ -158,6 +161,57 @@ theorem IsBrownianReal.measure_pastMinimumGap_eq_futureMinimum
         rfl
       _ = 0 := hshift.measure_runningMinimum_eq hshiftMeas hd a
   exact hInd.measure_eq_zero_of_right_atomless hX hY hnull
+
+/-- A level already attained by the running minimum before `r` cannot
+be attained again during an interval `[r,q]` on which the running
+minimum remains constant. This is the fixed rational-interval event
+in Bolthausen's Lemma 2.3, equation (2.4). -/
+theorem IsBrownianReal.measure_repeatedMinimumOnInterval_eq_zero
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+    {B : ℝ≥0 → Ω → ℝ} (hB : IsBrownianReal B P)
+    (hBmeasurable : ∀ u, Measurable (B u))
+    {r q : ℝ≥0} (hrq : r < q) :
+    P {ω | runningMinimum (hB.continuousPathMap hBmeasurable ω) q =
+        runningMinimum (hB.continuousPathMap hBmeasurable ω) r ∧
+      ∃ v, r ≤ v ∧ v ≤ q ∧
+        hB.continuousPathMap hBmeasurable ω v =
+          runningMinimum (hB.continuousPathMap hBmeasurable ω) r} = 0 := by
+  let shifted : ℝ≥0 → Ω → ℝ := fun u ω => B (r + u) ω - B r ω
+  let hshift : IsBrownianReal shifted P := hB.shift r
+  let hshiftMeas (u : ℝ≥0) : Measurable (shifted u) :=
+    (hBmeasurable (r + u)).sub (hBmeasurable r)
+  let pathB := hB.continuousPathMap hBmeasurable
+  let pathF := hshift.continuousPathMap hshiftMeas
+  have hPathEq : pathF =ᵐ[P] fun ω => shiftToZero (pathB ω) r := by
+    filter_upwards [hB.continuousPathMap_ae_eq hBmeasurable,
+      hshift.continuousPathMap_ae_eq hshiftMeas] with ω hω hωF
+    ext u
+    change pathF ω u = pathB ω (r + u) - pathB ω r
+    rw [hωF u, hω (r + u), hω r]
+  have hPathNull : P {ω | pathF ω ≠ shiftToZero (pathB ω) r} = 0 :=
+    (ae_iff).mp hPathEq
+  have hMinimumNull :
+      P {ω | runningMinimum (pathB ω) r - pathB ω r =
+        runningMinimum (pathF ω) (q - r)} = 0 :=
+    hB.measure_pastMinimumGap_eq_futureMinimum hBmeasurable r
+      (tsub_pos_iff_lt.mpr hrq)
+  apply measure_mono_null (s := {ω | runningMinimum (pathB ω) q =
+      runningMinimum (pathB ω) r ∧
+    ∃ v, r ≤ v ∧ v ≤ q ∧ pathB ω v = runningMinimum (pathB ω) r})
+    (t := {ω | runningMinimum (pathB ω) r - pathB ω r =
+      runningMinimum (pathF ω) (q - r)} ∪
+      {ω | pathF ω ≠ shiftToZero (pathB ω) r}) ?_
+    (measure_union_null hMinimumNull hPathNull)
+  intro ω hω
+  obtain ⟨hflat, v, hrv, hvq, hrecord⟩ := hω
+  by_cases heq : pathF ω = shiftToZero (pathB ω) r
+  · left
+    change runningMinimum (pathB ω) r - pathB ω r =
+      runningMinimum (pathF ω) (q - r)
+    rw [heq]
+    exact (runningMinimum_shiftToZero_eq_of_record (pathB ω)
+      hrv hvq hflat hrecord).symm
+  · exact Or.inr heq
 
 end ProbabilityTheory
 

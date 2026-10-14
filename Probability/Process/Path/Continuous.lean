@@ -23,6 +23,8 @@ The public definitions and theorems in this file are:
 - `ProbabilityTheory.freezeAfter`: the path $u\mapsto f(\min(u,r))$.
 - `ProbabilityTheory.measurable_freezeAfter`: freezing at $r$ is a
   measurable operation on continuous path space.
+- `ProbabilityTheory.shiftToZero`: the increment path
+  $u\mapsto f(r+u)-f(r)$.
 
 Processes use mathlib's convention `Time → Ω → State`.
 -/
@@ -64,6 +66,10 @@ theorem measurable_continuousPath {Time Ω State : Type*}
 /-- Freeze a continuous path at the value it has at time `r`. -/
 noncomputable def freezeAfter (f : C(ℝ≥0, ℝ)) (r : ℝ≥0) : C(ℝ≥0, ℝ) :=
   ⟨fun u => f (min u r), by fun_prop⟩
+
+/-- Rebase a continuous path at time `r`, with initial value zero. -/
+noncomputable def shiftToZero (f : C(ℝ≥0, ℝ)) (r : ℝ≥0) : C(ℝ≥0, ℝ) :=
+  ⟨fun u => f (r + u) - f r, by fun_prop⟩
 
 /-- Freezing a continuous path at a fixed time is measurable. -/
 theorem measurable_freezeAfter (r : ℝ≥0) :
