@@ -25,6 +25,11 @@ The public definitions and theorems in this file are:
   $r<q$ enclosing a repeated running-minimum value.
 - `ProbabilityTheory.IsUnitExcursionAt`: the height above the running
   minimum vanishes at $t$ and $t+1$ and is positive between them.
+- `ProbabilityTheory.HasTripleRunningMinimumContact`: three ordered
+  contacts with one running-minimum value, Bolthausen's event $U$.
+- `ProbabilityTheory.HasTripleRunningMinimumContact.rationalInterval`:
+  such contacts yield a rational interval on which the old minimum is
+  attained again.
 - `ProbabilityTheory.firstNonnegativeWindowStartUpTo_endpointReturn_cases`:
   an endpoint return yields either an interior return or a unit
   excursion above the running minimum.
@@ -173,6 +178,46 @@ def IsUnitExcursionAt (f : C(ℝ≥0, ℝ)) (t : ℝ≥0) : Prop :=
     aboveRunningMinimum f (t + 1) = 0 ∧
     ∀ u : ℝ≥0, 0 < u → u < 1 →
       0 < aboveRunningMinimum f (t + u)
+
+/-- Three ordered contacts with a common running-minimum value.
+This is the path event `U` in Bolthausen's Lemma 2.3. -/
+def HasTripleRunningMinimumContact (f : C(ℝ≥0, ℝ)) : Prop :=
+  ∃ u v w : ℝ≥0, u < v ∧ v < w ∧
+    runningMinimum f u = runningMinimum f v ∧
+    runningMinimum f v = runningMinimum f w ∧
+    aboveRunningMinimum f u = 0 ∧
+    aboveRunningMinimum f v = 0 ∧
+    aboveRunningMinimum f w = 0
+
+/-- Bolthausen's rational covering of the three-contact event: choose
+rational times between the first two and the last two contacts. -/
+theorem HasTripleRunningMinimumContact.rationalInterval
+    {f : C(ℝ≥0, ℝ)} (h : HasTripleRunningMinimumContact f) :
+    ∃ r q : ℚ≥0,
+      nonnegativeRationalTime r < nonnegativeRationalTime q ∧
+      runningMinimum f (nonnegativeRationalTime q) =
+        runningMinimum f (nonnegativeRationalTime r) ∧
+      ∃ v, nonnegativeRationalTime r ≤ v ∧
+        v ≤ nonnegativeRationalTime q ∧
+        f v = runningMinimum f (nonnegativeRationalTime r) := by
+  obtain ⟨u, v, w, huv, hvw, hmuv, hmvw, _, hDv, _⟩ := h
+  obtain ⟨r, hur, hrv⟩ := exists_nonnegativeRationalTime_between huv
+  obtain ⟨q, hvq, hqw⟩ := exists_nonnegativeRationalTime_between hvw
+  have hmr : runningMinimum f (nonnegativeRationalTime r) =
+      runningMinimum f u := by
+    apply le_antisymm
+    · exact runningMinimum_antitone f hur.le
+    · rw [hmuv]
+      exact runningMinimum_antitone f hrv.le
+  have hmq : runningMinimum f (nonnegativeRationalTime q) =
+      runningMinimum f v := by
+    apply le_antisymm
+    · exact runningMinimum_antitone f hvq.le
+    · rw [hmvw]
+      exact runningMinimum_antitone f hqw.le
+  refine ⟨r, q, hrv.trans hvq, ?_, v, hrv.le, hvq.le, ?_⟩
+  · rw [hmq, hmr, hmuv]
+  · rw [(aboveRunningMinimum_eq_zero_iff f v).mp hDv, hmr, hmuv]
 
 /-- The endpoint equality in Bolthausen's Lemma 2.3, equation (2.2),
 reduces to the interior-return event of (2.4) or a unit-length

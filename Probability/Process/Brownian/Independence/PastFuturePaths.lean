@@ -26,6 +26,8 @@ The public theorem in this file is:
 - `ProbabilityTheory.IsBrownianReal.measure_repeatedMinimumOnInterval_eq_zero`:
   a Brownian running minimum constant from $r$ to $q>r$ is almost
   surely not attained at a time in $[r,q]$.
+- `ProbabilityTheory.IsBrownianReal.measure_rationalRepeatedMinimum_eq_zero`:
+  the union of these events over nonnegative rational intervals is null.
 
 This is the path-valued form of the weak Markov property in mathlib's
 `IsPreBrownianReal.indepFun_shift`. It supplies the independence used
@@ -212,6 +214,51 @@ theorem IsBrownianReal.measure_repeatedMinimumOnInterval_eq_zero
     exact (runningMinimum_shiftToZero_eq_of_record (pathB ω)
       hrv hvq hflat hrecord).symm
   · exact Or.inr heq
+
+/-- The countable union of fixed rational-interval events in
+Bolthausen's Lemma 2.3 has Brownian probability zero. -/
+theorem IsBrownianReal.measure_rationalRepeatedMinimum_eq_zero
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+    {B : ℝ≥0 → Ω → ℝ} (hB : IsBrownianReal B P)
+    (hBmeasurable : ∀ u, Measurable (B u)) :
+    P {ω | ∃ r q : ℚ≥0,
+      nonnegativeRationalTime r < nonnegativeRationalTime q ∧
+      runningMinimum (hB.continuousPathMap hBmeasurable ω)
+        (nonnegativeRationalTime q) =
+        runningMinimum (hB.continuousPathMap hBmeasurable ω)
+          (nonnegativeRationalTime r) ∧
+      ∃ v, nonnegativeRationalTime r ≤ v ∧
+        v ≤ nonnegativeRationalTime q ∧
+        hB.continuousPathMap hBmeasurable ω v =
+          runningMinimum (hB.continuousPathMap hBmeasurable ω)
+            (nonnegativeRationalTime r)} = 0 := by
+  let pathB := hB.continuousPathMap hBmeasurable
+  let E : ℚ≥0 → ℚ≥0 → Set Ω := fun r q =>
+    {ω | nonnegativeRationalTime r < nonnegativeRationalTime q ∧
+      runningMinimum (pathB ω) (nonnegativeRationalTime q) =
+        runningMinimum (pathB ω) (nonnegativeRationalTime r) ∧
+      ∃ v, nonnegativeRationalTime r ≤ v ∧
+        v ≤ nonnegativeRationalTime q ∧
+        pathB ω v = runningMinimum (pathB ω) (nonnegativeRationalTime r)}
+  have hEnull (r q : ℚ≥0) : P (E r q) = 0 := by
+    by_cases hrq : nonnegativeRationalTime r < nonnegativeRationalTime q
+    · simpa only [E, hrq, true_and] using
+        hB.measure_repeatedMinimumOnInterval_eq_zero hBmeasurable hrq
+    · simp [E, hrq]
+  have hUnion : P (⋃ r : ℚ≥0, ⋃ q : ℚ≥0, E r q) = 0 :=
+    measure_iUnion_null fun r => measure_iUnion_null fun q => hEnull r q
+  have hset :
+      {ω | ∃ r q : ℚ≥0,
+        nonnegativeRationalTime r < nonnegativeRationalTime q ∧
+        runningMinimum (pathB ω) (nonnegativeRationalTime q) =
+          runningMinimum (pathB ω) (nonnegativeRationalTime r) ∧
+        ∃ v, nonnegativeRationalTime r ≤ v ∧
+          v ≤ nonnegativeRationalTime q ∧
+          pathB ω v = runningMinimum (pathB ω) (nonnegativeRationalTime r)} =
+      ⋃ r : ℚ≥0, ⋃ q : ℚ≥0, E r q := by
+    ext ω
+    simp only [E, Set.mem_ofPred_eq, Set.mem_iUnion]
+  exact hset ▸ hUnion
 
 end ProbabilityTheory
 

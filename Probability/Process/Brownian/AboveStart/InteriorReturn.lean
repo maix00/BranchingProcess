@@ -12,7 +12,10 @@ public import Probability.Process.Path.AboveStart.RunningMinimum
 /-!
 # Interior returns of the first Brownian unit window
 
-The public theorem in this file is:
+The public theorems in this file are:
+
+- `ProbabilityTheory.IsBrownianReal.measure_tripleRunningMinimumContact_eq_zero`:
+  Bolthausen's three-contact event $U$ has probability zero.
 
 - `ProbabilityTheory.IsBrownianReal.measure_firstNonnegativeWindowStartUpTo_interiorReturn_eq_zero`:
   for a finite horizon $s$, the first unit window of a Brownian path
@@ -38,6 +41,30 @@ open scoped NNReal
 
 namespace ProbabilityTheory
 
+/-- The event `U` introduced in the proof of Bolthausen's Lemma 2.3
+has Brownian probability zero. Its three contacts yield the countable
+rational-interval covering used there. -/
+theorem IsBrownianReal.measure_tripleRunningMinimumContact_eq_zero
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+    {B : ℝ≥0 → Ω → ℝ} (hB : IsBrownianReal B P)
+    (hBmeasurable : ∀ u, Measurable (B u)) :
+    P {ω | HasTripleRunningMinimumContact
+      (hB.continuousPathMap hBmeasurable ω)} = 0 := by
+  let pathB := hB.continuousPathMap hBmeasurable
+  have hcover :
+      {ω | HasTripleRunningMinimumContact (pathB ω)} ⊆
+      {ω | ∃ r q : ℚ≥0,
+        nonnegativeRationalTime r < nonnegativeRationalTime q ∧
+        runningMinimum (pathB ω) (nonnegativeRationalTime q) =
+          runningMinimum (pathB ω) (nonnegativeRationalTime r) ∧
+        ∃ v, nonnegativeRationalTime r ≤ v ∧
+          v ≤ nonnegativeRationalTime q ∧
+          pathB ω v = runningMinimum (pathB ω) (nonnegativeRationalTime r)} := by
+    intro ω hω
+    exact hω.rationalInterval
+  exact measure_mono_null hcover
+    (hB.measure_rationalRepeatedMinimum_eq_zero hBmeasurable)
+
 /-- Bolthausen's Lemma 2.3, equation (2.4): almost surely there is no
 interior return to the starting level of the first qualifying unit
 window before a fixed horizon. -/
@@ -52,32 +79,23 @@ theorem IsBrownianReal.measure_firstNonnegativeWindowStartUpTo_interiorReturn_eq
       hB.continuousPathMap hBmeasurable ω (t + u) =
         hB.continuousPathMap hBmeasurable ω t} = 0 := by
   let pathB := hB.continuousPathMap hBmeasurable
-  let E : ℚ≥0 → ℚ≥0 → Set Ω := fun r q =>
-    {ω | nonnegativeRationalTime r < nonnegativeRationalTime q ∧
-      runningMinimum (pathB ω) (nonnegativeRationalTime q) =
-        runningMinimum (pathB ω) (nonnegativeRationalTime r) ∧
-      ∃ v, nonnegativeRationalTime r ≤ v ∧
-        v ≤ nonnegativeRationalTime q ∧
-        pathB ω v = runningMinimum (pathB ω) (nonnegativeRationalTime r)}
-  have hEnull (r q : ℚ≥0) : P (E r q) = 0 := by
-    by_cases hrq : nonnegativeRationalTime r < nonnegativeRationalTime q
-    · simpa only [E, hrq, true_and] using
-        hB.measure_repeatedMinimumOnInterval_eq_zero hBmeasurable hrq
-    · simp [E, hrq]
   have hcover :
       {ω | ∃ t u : ℝ≥0,
         firstNonnegativeWindowStartUpTo (pathB ω) s = t ∧
         0 < u ∧ u < 1 ∧ pathB ω (t + u) = pathB ω t} ⊆
-      ⋃ r : ℚ≥0, ⋃ q : ℚ≥0, E r q := by
+      {ω | ∃ r q : ℚ≥0,
+        nonnegativeRationalTime r < nonnegativeRationalTime q ∧
+        runningMinimum (pathB ω) (nonnegativeRationalTime q) =
+          runningMinimum (pathB ω) (nonnegativeRationalTime r) ∧
+        ∃ v, nonnegativeRationalTime r ≤ v ∧
+          v ≤ nonnegativeRationalTime q ∧
+          pathB ω v = runningMinimum (pathB ω) (nonnegativeRationalTime r)} := by
     intro ω hω
     obtain ⟨t, u, hfirst, hu0, hu1, hreturn⟩ := hω
-    obtain ⟨r, q, hrq, hflat, v, hrv, hvq, hrecord⟩ :=
-      firstNonnegativeWindowStartUpTo_return_rationalInterval
-        (pathB ω) s t hfirst hu0 hu1 hreturn
-    exact Set.mem_iUnion.mpr ⟨r, Set.mem_iUnion.mpr
-      ⟨q, ⟨hrq, hflat, v, hrv, hvq, hrecord⟩⟩⟩
+    exact firstNonnegativeWindowStartUpTo_return_rationalInterval
+      (pathB ω) s t hfirst hu0 hu1 hreturn
   exact measure_mono_null hcover
-    (measure_iUnion_null fun r => measure_iUnion_null fun q => hEnull r q)
+    (hB.measure_rationalRepeatedMinimum_eq_zero hBmeasurable)
 
 /-- Bolthausen's Lemma 2.3, equation (2.4), for the unrestricted
 first unit window. Finite-horizon versions cover the event as the
