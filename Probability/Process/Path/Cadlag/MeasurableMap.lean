@@ -14,6 +14,20 @@ public import Topology.Order.UnitInterval.Rational
 /-!
 # Measurable path-valued realizations of càdlàg processes
 
+The public objects and theorems in this file are:
+
+- `rationalEvaluationEmbedding`: the map $f\mapsto(f(q))_{q\in\mathbb Q\cap[0,1]}$
+  embeds the càdlàg path space measurably.
+- `pathMap`, `aemeasurable_pathMap`, and `pathLaw`: the measurable
+  realization of $X$ and its pushforward law $P\circ X^{-1}$.
+- `pathMap_ae_eval_eq`: for an almost-surely càdlàg process,
+  $\operatorname{pathMap}(X)(t)=X_t$ almost surely.
+- `pathMap_eq_cadlagunitIntervalPath` and
+  `pathLaw_eq_cadlagunitIntervalPathLaw`: for an everywhere-continuous
+  process, the rational realization and continuous-path realization agree.
+- `hasLaw_pathMap`: $\operatorname{Law}_P(\operatorname{pathMap}(X))=
+  \operatorname{pathLaw}(P,X)$.
+
 A real process with almost-surely càdlàg paths has an almost-everywhere
 measurable realization in Skorokhod path space. The construction uses the
 measurable embedding given by rational coordinates and extends its inverse
@@ -23,6 +37,7 @@ outside the set of càdlàg coordinate vectors by a fixed path.
 @[expose] public section
 
 open MeasureTheory
+open scoped NNReal
 
 namespace ProbabilityTheory.Process.Path.Cadlag
 
@@ -105,6 +120,43 @@ theorem pathMap_ae_eval_eq (X : unitInterval → Ω → ℝ) {P : Measure Ω}
     rw [hcoords]
     exact rationalEvaluationEmbedding.injective.extend_apply _ _ _
   rw [hmap]
+
+omit [MeasurableSpace Ω] in
+/-- For an everywhere-continuous process, the rational-coordinate path
+realization is the usual bundled continuous path at every sample. -/
+theorem pathMap_eq_cadlagunitIntervalPath
+    (B : ℝ≥0 → Ω → ℝ) (hB : ∀ ω, Continuous (B · ω)) (ω : Ω) :
+    pathMap (fun t ω => B (UnitInterval.toNNReal t) ω) ω =
+      cadlagunitIntervalPath B hB ω := by
+  let p := cadlagunitIntervalPath B hB ω
+  have hcoords :
+      (fun q : RationalCoordinate.UnitInterval =>
+        B (UnitInterval.toNNReal (RationalCoordinate.toUnitInterval q)) ω) =
+        MeasureTheory.CadlagPath.denseEvaluation
+          RationalCoordinate.toUnitInterval p := by
+    funext q
+    rfl
+  change Function.extend
+    (MeasureTheory.CadlagPath.denseEvaluation RationalCoordinate.toUnitInterval)
+    id (fun _ => Skorokhod.ofContinuousMap (ContinuousMap.const unitInterval 0))
+    (fun q : RationalCoordinate.UnitInterval =>
+      B (UnitInterval.toNNReal (RationalCoordinate.toUnitInterval q)) ω) = p
+  rw [hcoords]
+  exact rationalEvaluationEmbedding.injective.extend_apply _ _ _
+
+/-- The rational-coordinate path law agrees with the law of the bundled
+continuous path when a process has everywhere-continuous sample paths. -/
+theorem pathLaw_eq_cadlagunitIntervalPathLaw
+    (P : Measure Ω) (B : ℝ≥0 → Ω → ℝ)
+    (hB : ∀ ω, Continuous (B · ω))
+    (hBmeas : ∀ t, Measurable (B t)) :
+    pathLaw P (fun t ω => B (UnitInterval.toNNReal t) ω)
+      (fun t => (hBmeas (UnitInterval.toNNReal t)).aemeasurable) =
+    cadlagunitIntervalPathLaw P B hB hBmeas := by
+  unfold pathLaw cadlagunitIntervalPathLaw
+  congr 1
+  funext ω
+  exact pathMap_eq_cadlagunitIntervalPath B hB ω
 
 /-- The path-valued realization has the expected pushforward law. -/
 theorem hasLaw_pathMap (X : unitInterval → Ω → ℝ) {P : Measure Ω}
