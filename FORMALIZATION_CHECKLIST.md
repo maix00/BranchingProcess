@@ -161,7 +161,8 @@ $\tau_x=\inf\{t:B(t)\le-x\}$, its monotonicity, and its fixed-level
 measurability are in `Path/DescendingHittingTime.lean`. The existing
 `IsPoissonPointFamily.ae_poissonRandomMeasure_apply_eq_zero` in
 `RandomMeasure/Poisson/Support.lean` excludes realized Poisson mass from
-zero-intensity mark sets.
+zero-intensity mark sets; its fixed-mark corollary proves that an atomless
+mark intensity produces no point with a prescribed jump length.
 The Brownian hitting-time process has not yet been identified with such a
 Poisson jump family. Equation (2.2), Lemma 2.4, and the conditioned
 invariance principle remain open.
