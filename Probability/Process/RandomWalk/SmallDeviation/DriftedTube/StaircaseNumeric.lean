@@ -16,8 +16,10 @@ The public theorem in this file is:
 
 - `staircaseBlockNumericConditions`:
   from $\ell\le|I_j|<2\ell$ and
-  $\Delta/2\le\Delta(j)\le\Delta$, common conditions at the two fixed
-  scales $\beta\Delta/2$ and $\beta\Delta$, where
+  $\Delta/2\le\Delta(j)\le\Delta$ and
+  $\Delta(j)\ge\Delta-2c\ell/\Delta^2$, common conditions at
+  $\beta\Delta/2$, $\beta\Delta$, and
+  $\beta(\Delta-2c\ell/\Delta^2)$, where
   $\beta=1-1/(3m)$, give for every actual block the width threshold,
   inverse-margin bound, time-to-width ratio, and exponent comparison
   required by the staircase product.
@@ -51,7 +53,9 @@ theorem staircaseBlockNumericConditions
       ⌊staircaseBinWidth m * globalWidth⌋₊ ^ 2 ≤ blockLength)
     (hrate : narrowedRate * globalWidth ^ 2 ≤
       blockRate *
-        (⌊staircaseBinWidth m * (globalWidth / 2)⌋₊ : ℝ) ^ 2)
+        (⌊staircaseBinWidth m *
+          (globalWidth - 2 * drift * (blockLength : ℝ) /
+            globalWidth ^ 2)⌋₊ : ℝ) ^ 2)
     {j : ℕ}
     (hj : j < staircaseBlockCount entrance horizon blockLength) :
     let actualWidth := staircaseTubeWidth globalWidth drift
@@ -71,6 +75,11 @@ theorem staircaseBlockNumericConditions
       hblockLength hwidth hdrift hcost hj
   have hfull : actualWidth ≤ globalWidth :=
     staircaseTubeWidth_le_globalWidth hdrift
+  have hcommon :
+      globalWidth - 2 * drift * (blockLength : ℝ) /
+          globalWidth ^ 2 ≤ actualWidth :=
+    staircaseTubeWidth_ge_commonLossBound hentrance
+      hblockLength hwidth hdrift hj
   have hβ : 0 ≤ staircaseBinWidth m :=
     (staircaseBinWidth_pos hm).le
   have hlow : staircaseBinWidth m * (globalWidth / 2) ≤
@@ -83,6 +92,11 @@ theorem staircaseBlockNumericConditions
         ⌊narrowedWidth⌋₊ := Nat.floor_mono hlow
   have hfloorHigh : ⌊narrowedWidth⌋₊ ≤
       ⌊staircaseBinWidth m * globalWidth⌋₊ := Nat.floor_mono hhigh
+  have hfloorRate :
+      ⌊staircaseBinWidth m *
+          (globalWidth - 2 * drift * (blockLength : ℝ) /
+            globalWidth ^ 2)⌋₊ ≤ ⌊narrowedWidth⌋₊ :=
+    Nat.floor_mono (mul_le_mul_of_nonneg_left hcommon hβ)
   have hlength := (staircaseBlockLength_bounds
     hentrance hblockLength hj).1
   have htime' : ratio₀ * ⌊narrowedWidth⌋₊ ^ 2 ≤
@@ -95,10 +109,14 @@ theorem staircaseBlockNumericConditions
   have hrate' : narrowedRate * globalWidth ^ 2 ≤
       blockRate * (⌊narrowedWidth⌋₊ : ℝ) ^ 2 := by
     have hfloorReal :
-        (⌊staircaseBinWidth m * (globalWidth / 2)⌋₊ : ℝ) ≤
-          (⌊narrowedWidth⌋₊ : ℝ) := by exact_mod_cast hfloorLow
+        (⌊staircaseBinWidth m *
+          (globalWidth - 2 * drift * (blockLength : ℝ) /
+            globalWidth ^ 2)⌋₊ : ℝ) ≤
+          (⌊narrowedWidth⌋₊ : ℝ) := by exact_mod_cast hfloorRate
     have hsquare :
-        (⌊staircaseBinWidth m * (globalWidth / 2)⌋₊ : ℝ) ^ 2 ≤
+        (⌊staircaseBinWidth m *
+          (globalWidth - 2 * drift * (blockLength : ℝ) /
+            globalWidth ^ 2)⌋₊ : ℝ) ^ 2 ≤
           (⌊narrowedWidth⌋₊ : ℝ) ^ 2 := by
       exact pow_le_pow_left₀ (Nat.cast_nonneg _) hfloorReal _
     exact hrate.trans (mul_le_mul_of_nonneg_left hsquare hblockRate)
