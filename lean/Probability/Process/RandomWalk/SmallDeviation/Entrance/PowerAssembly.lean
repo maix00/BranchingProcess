@@ -1,0 +1,219 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
+module
+
+public import Probability.Process.RandomWalk.SmallDeviation.Entrance.ThreeRegions
+public import Probability.Process.RandomWalk.SmallDeviation.Entrance.PrefixSelection
+
+/-!
+# Assembly of the three diffusive entrance bounds
+
+The public theorem in this file is:
+
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.exists_eventually_movingTransitionProbability_ge_power_of_transitionBounds`:
+  if each reflected transition event at
+  $\lfloor\Delta^2\rfloor-m_\pm$ has probability at least
+  $C_\pm\Delta^{-1-\alpha}$, then the moving entrance event has one
+  lower bound $C\Delta^{-1-\alpha}$ uniformly for $x\in[0,\Delta]$.
+
+This is the final minimum-of-three-intervals step in Wang Yiyang,
+*Asymptotic speed of the $N$-branching random walk with infinite offspring*,
+Appendix A.2, proof of the meander transition lemma used in Chapter 3,
+Lemma 3.5. `FunctionalLimit/Conditioned/TransitionPower.lean` reduces the
+transition bounds to the conditioned Brownian-meander limit and survival
+regular variation; those source-level probability theorems remain open.
+-/
+
+@[expose] public section
+
+open Filter MeasureTheory ProbabilityTheory
+open scoped ENNReal Topology
+
+namespace ProbabilityTheory.RandomWalk.SmallDeviation.Entrance
+
+/-- The middle Donsker bound and the two meander-transition bounds combine
+to give the exact power lower bound for the moving entrance event. -/
+theorem exists_eventually_movingTransitionProbability_ge_power_of_transitionBounds
+    {ν : Measure ℝ} [IsProbabilityMeasure ν]
+    {sigma : ℝ} (hν : IsCenteredSecondMoment ν (sigma ^ 2))
+    (hsigma : 0 < sigma)
+    {width : ℕ → ℝ} (hwidth : Tendsto width atTop atTop)
+    {drift alpha : ℝ} (hdrift : 0 ≤ drift) (halpha : 0 < alpha)
+    (hplus : ∀ m : ℕ, ∃ C : ℝ, 0 < C ∧ ∀ᶠ n : ℕ in atTop,
+      C / width n ^ (1 + alpha) ≤
+        (iidSequenceLaw ν
+          (FunctionalLimit.Conditioned.nonnegativeTransitionEvent
+            (Asymptotics.floorBlockLength (fun k => width k ^ 2) n - m)
+            (width n))).toReal)
+    (hminus : ∀ m : ℕ, ∃ C : ℝ, 0 < C ∧ ∀ᶠ n : ℕ in atTop,
+      C / width n ^ (1 + alpha) ≤
+        (iidSequenceLaw (ν.map fun x : ℝ => -x)
+          (FunctionalLimit.Conditioned.nonnegativeTransitionEvent
+            (Asymptotics.floorBlockLength (fun k => width k ^ 2) n - m)
+            (width n))).toReal) :
+    ∃ C : ℝ, 0 < C ∧ ∀ᶠ n : ℕ in atTop,
+      ∀ start ∈ Set.Icc 0 (width n),
+        C / width n ^ (1 + alpha) ≤
+          (iidSequenceLaw ν
+            (movingTransitionEvent
+              (Asymptotics.floorBlockLength (fun k => width k ^ 2) n)
+              (width n) drift start)).toReal := by
+  obtain ⟨aPlus, bPlus, aMinus, bMinus, mPlus, mMinus,
+    haPlus, habPlus, hpPlus, haMinus, habMinus, hpMinus,
+    hmPlus, hmMinus⟩ :=
+    exists_positive_mass_prefixes hν hsigma drift
+  obtain ⟨CPlus, hCPlus, hplusEventually⟩ := hplus mPlus
+  obtain ⟨CMinus, hCMinus, hminusEventually⟩ := hminus mMinus
+  obtain ⟨q, hq, hmiddleEventually⟩ :=
+    FunctionalLimit.Donsker.eventually_diffusiveInteriorProbability_pos_uniform_of_centeredSecondMoment
+      hν hsigma hwidth drift
+  let q' : ℝ≥0∞ := min q 1
+  have hq' : 0 < q' := lt_min hq (by norm_num)
+  have hq'finite : q' ≠ ⊤ :=
+    ne_of_lt (lt_of_le_of_lt (min_le_right q 1) (by simp))
+  have hpPlusFinite : ν (Set.Icc aPlus bPlus) ≠ ⊤ := measure_ne_top _ _
+  have hpMinusFinite :
+      (ν.map fun x : ℝ => -x) (Set.Icc aMinus bMinus) ≠ ⊤ :=
+    measure_ne_top _ _
+  let pPlus : ℝ≥0∞ := ν (Set.Icc aPlus bPlus)
+  let pMinus : ℝ≥0∞ :=
+    (ν.map fun x : ℝ => -x) (Set.Icc aMinus bMinus)
+  let C : ℝ := min q'.toReal
+    (min (pPlus.toReal ^ mPlus * CPlus)
+      (pMinus.toReal ^ mMinus * CMinus))
+  have hC : 0 < C := by
+    dsimp [C]
+    apply lt_min
+    · exact ENNReal.toReal_pos hq'.ne' hq'finite
+    apply lt_min
+    · exact mul_pos (pow_pos (ENNReal.toReal_pos hpPlus.ne' hpPlusFinite) _) hCPlus
+    · exact mul_pos (pow_pos (ENNReal.toReal_pos hpMinus.ne' hpMinusFinite) _) hCMinus
+  refine ⟨C, hC, ?_⟩
+  have hgeometry := eventually_prefix_geometry hwidth haPlus mPlus mMinus
+    (drift := drift) (bPlus := bPlus) (bMinus := bMinus)
+  have hwidthOne : ∀ᶠ n : ℕ in atTop, 1 ≤ width n :=
+    hwidth.eventually (eventually_ge_atTop 1)
+  filter_upwards [hplusEventually, hminusEventually, hmiddleEventually,
+    hgeometry, hwidthOne] with n hnPlus hnMinus hnMiddle hnGeo hnOne
+  intro start hstart
+  let length := Asymptotics.floorBlockLength (fun k => width k ^ 2) n
+  have hlengthPlus : length = mPlus + (length - mPlus) := by omega
+  have hlengthMinus : length = mMinus + (length - mMinus) := by omega
+  have hfloor : (length : ℝ) ≤ width n ^ 2 :=
+    Nat.floor_le (sq_nonneg _)
+  have hmiddle : ∀ x ∈ Set.Icc (width n / 12) (11 / 12 * width n),
+      q' ≤ iidSequenceLaw ν
+        (FunctionalLimit.Donsker.finiteInteriorEvent
+          length (width n) drift x) := by
+    intro x hx
+    exact (min_le_left _ _).trans (hnMiddle x hx)
+  have hthree :=
+    measure_movingTransitionEvent_ge_threeRegionMinimum ν
+      hnGeo.1 hdrift hfloor hnGeo.2.1
+      hlengthPlus hlengthMinus
+      haPlus habPlus.le
+      (by linarith [hmPlus] : drift ≤ (mPlus : ℝ) * aPlus)
+      hnGeo.2.2.1 hnGeo.2.2.2.2.2.1
+      haMinus habMinus.le
+      hnGeo.2.2.2.1 hnGeo.2.2.2.2.1
+      hmiddle start hstart
+  have hthreeReal := ENNReal.toReal_mono (measure_ne_top _ _) hthree
+  have hpow : 0 < width n ^ (1 + alpha) :=
+    Real.rpow_pos_of_pos hnGeo.1 _
+  have hpowOne : 1 ≤ width n ^ (1 + alpha) := by
+    exact Real.one_le_rpow hnOne (by linarith)
+  have hmiddlePower : C / width n ^ (1 + alpha) ≤ q'.toReal := by
+    have hbound : C ≤ q'.toReal := min_le_left _ _
+    calc
+      C / width n ^ (1 + alpha) ≤ q'.toReal / width n ^ (1 + alpha) :=
+        div_le_div_of_nonneg_right hbound hpow.le
+      _ ≤ q'.toReal := by
+        exact (div_le_iff₀ hpow).2
+          (by nlinarith [ENNReal.toReal_nonneg (a := q')])
+  have hplusPower : C / width n ^ (1 + alpha) ≤
+      pPlus.toReal ^ mPlus *
+        (iidSequenceLaw ν
+          (FunctionalLimit.Conditioned.nonnegativeTransitionEvent
+            (length - mPlus) (width n))).toReal := by
+    have hbound : C ≤ pPlus.toReal ^ mPlus * CPlus :=
+      (min_le_right _ _).trans (min_le_left _ _)
+    have hpNonneg : 0 ≤ pPlus.toReal ^ mPlus := pow_nonneg ENNReal.toReal_nonneg _
+    have hmul := mul_le_mul_of_nonneg_left hnPlus hpNonneg
+    calc
+      C / width n ^ (1 + alpha) ≤
+          (pPlus.toReal ^ mPlus * CPlus) / width n ^ (1 + alpha) :=
+        div_le_div_of_nonneg_right hbound hpow.le
+      _ = pPlus.toReal ^ mPlus * (CPlus / width n ^ (1 + alpha)) := by ring
+      _ ≤ _ := hmul
+  have hminusPower : C / width n ^ (1 + alpha) ≤
+      pMinus.toReal ^ mMinus *
+        (iidSequenceLaw (ν.map fun x : ℝ => -x)
+          (FunctionalLimit.Conditioned.nonnegativeTransitionEvent
+            (length - mMinus) (width n))).toReal := by
+    have hbound : C ≤ pMinus.toReal ^ mMinus * CMinus :=
+      (min_le_right _ _).trans (min_le_right _ _)
+    have hpNonneg : 0 ≤ pMinus.toReal ^ mMinus := pow_nonneg ENNReal.toReal_nonneg _
+    have hmul := mul_le_mul_of_nonneg_left hnMinus hpNonneg
+    calc
+      C / width n ^ (1 + alpha) ≤
+          (pMinus.toReal ^ mMinus * CMinus) / width n ^ (1 + alpha) :=
+        div_le_div_of_nonneg_right hbound hpow.le
+      _ = pMinus.toReal ^ mMinus * (CMinus / width n ^ (1 + alpha)) := by ring
+      _ ≤ _ := hmul
+  have hminimum : C / width n ^ (1 + alpha) ≤
+      min q'.toReal
+        (min
+          (pPlus.toReal ^ mPlus *
+            (iidSequenceLaw ν
+              (FunctionalLimit.Conditioned.nonnegativeTransitionEvent
+                (length - mPlus) (width n))).toReal)
+          (pMinus.toReal ^ mMinus *
+            (iidSequenceLaw (ν.map fun x : ℝ => -x)
+              (FunctionalLimit.Conditioned.nonnegativeTransitionEvent
+                (length - mMinus) (width n))).toReal)) :=
+    le_min hmiddlePower (le_min hplusPower hminusPower)
+  have hplusFinite :
+      pPlus ^ mPlus *
+        iidSequenceLaw ν
+          (FunctionalLimit.Conditioned.nonnegativeTransitionEvent
+            (length - mPlus) (width n)) ≠ ⊤ :=
+    ENNReal.mul_ne_top (ENNReal.pow_ne_top hpPlusFinite) (measure_ne_top _ _)
+  have hminFinite :
+      min
+        (pPlus ^ mPlus *
+          iidSequenceLaw ν
+            (FunctionalLimit.Conditioned.nonnegativeTransitionEvent
+              (length - mPlus) (width n)))
+        (pMinus ^ mMinus *
+          iidSequenceLaw (ν.map fun x : ℝ => -x)
+            (FunctionalLimit.Conditioned.nonnegativeTransitionEvent
+              (length - mMinus) (width n))) ≠ ⊤ :=
+    ne_of_lt (lt_of_le_of_lt (min_le_left _ _)
+      (lt_top_iff_ne_top.mpr hplusFinite))
+  have hconverted :
+      min q'.toReal
+        (min
+          (pPlus.toReal ^ mPlus *
+            (iidSequenceLaw ν
+              (FunctionalLimit.Conditioned.nonnegativeTransitionEvent
+                (length - mPlus) (width n))).toReal)
+          (pMinus.toReal ^ mMinus *
+            (iidSequenceLaw (ν.map fun x : ℝ => -x)
+              (FunctionalLimit.Conditioned.nonnegativeTransitionEvent
+                (length - mMinus) (width n))).toReal)) ≤
+      (iidSequenceLaw ν
+        (movingTransitionEvent length (width n) drift start)).toReal := by
+    simpa only [pPlus, pMinus, ENNReal.toReal_min hq'finite hminFinite,
+      ENNReal.toReal_min hplusFinite
+        (ENNReal.mul_ne_top (ENNReal.pow_ne_top hpMinusFinite)
+          (measure_ne_top _ _)), ENNReal.toReal_mul,
+      ENNReal.toReal_pow] using hthreeReal
+  exact hminimum.trans hconverted
+
+end ProbabilityTheory.RandomWalk.SmallDeviation.Entrance
+
+end
