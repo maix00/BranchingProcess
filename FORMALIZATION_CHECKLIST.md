@@ -186,9 +186,16 @@ transition bounds have not yet been discharged.
 bound with the proved polynomial-to-exponential comparison, giving the
 entrance probability budget for every horizon
 $L\ge\lfloor\Delta^{2+\varepsilon}\rfloor$ along arbitrary real-width
-sequences tending to infinity. A uniform real-width threshold and the
+sequences tending to infinity. The source-level probability inputs and the
 remaining concrete staircase inequalities are still needed to obtain the
 unconditional statement of Lemma 3.5.
+`Analysis/Asymptotics/SequentialEventually.lean` proves that eventual
+validity along every divergent real-width sequence yields a common real
+threshold. `Entrance/RobustUniformBudget.lean` applies this lemma to the
+robust exponential entrance bound. Its source assumptions quantify the
+two reflected transition lower bounds over all divergent real-width
+sequences; the width in its conclusion ranges over all sufficiently large
+real values rather than just integer widths.
 
 | Source component | Lean modules | Verified scope |
 |---|---|---|
