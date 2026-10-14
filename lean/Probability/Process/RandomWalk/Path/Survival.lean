@@ -24,6 +24,14 @@ The public objects and theorems in this file are:
 - `ProbabilityTheory.RandomWalk.SurvivesNonnegative.shift_iff`:
   a shifted window survives precisely when $S_{m+j}\ge S_m$ throughout
   that window.
+- `ProbabilityTheory.RandomWalk.IsFirstSurvivingWindow`: the first
+  length-$n$ surviving window starts at a specified time $m$.
+- `ProbabilityTheory.RandomWalk.measurableSet_isFirstSurvivingWindow`:
+  this finite-time first-window event is measurable.
+- `ProbabilityTheory.RandomWalk.IsFirstSurvivingWindow.unique`:
+  the first surviving window has a unique starting time.
+- `ProbabilityTheory.RandomWalk.exists_firstSurvivingWindow_le`:
+  any surviving window has a first predecessor no later than itself.
 - `ProbabilityTheory.RandomWalk.SurvivesNonnegative.normalizedStepCadlagPathIcc_nonnegative`:
   for a positive normalization, $C_n$ gives a nonnegative normalized
   càdlàg path at every $t\in[0,1]$.
@@ -96,6 +104,62 @@ theorem SurvivesNonnegative.shift_iff
     have hj := h j
     rw [AdditivePath.displacement_add] at hj
     linarith
+
+/-- The first length-`n` surviving window starts at `start`: the window at
+`start` survives, and every earlier window fails. This is the discrete
+first-window event in the path transform of Erwin Bolthausen,
+*On a functional central limit theorem for random walks conditioned to stay
+positive*, Ann. Probab. 4(3) (1976), 480–485, DOI 10.1214/aop/1176996098;
+see also Vladislav Vysotsky, *Positivity of integrated random walks*,
+Section 3.1, equation (17), DOI 10.1214/12-AIHP487. -/
+def IsFirstSurvivingWindow (n start : ℕ) (increment : ℕ → ℝ) : Prop :=
+  SurvivesNonnegative n (fun k => increment (start + k)) ∧
+    ∀ j : Fin start,
+      ¬ SurvivesNonnegative n (fun k => increment (j + k))
+
+/-- Each finite-time first surviving window is a measurable event of the
+increment sequence. -/
+theorem measurableSet_isFirstSurvivingWindow (n start : ℕ) :
+    MeasurableSet {increment : ℕ → ℝ |
+      IsFirstSurvivingWindow n start increment} := by
+  rw [show {increment : ℕ → ℝ |
+        IsFirstSurvivingWindow n start increment} =
+      {increment | SurvivesNonnegative n
+        (fun k => increment (start + k))} ∩
+        ⋂ j : Fin start,
+          {increment | SurvivesNonnegative n
+            (fun k => increment (j + k))}ᶜ by
+    ext increment
+    simp [IsFirstSurvivingWindow]]
+  exact ((measurableSet_survivesNonnegative n).preimage
+      (measurable_natAdd start)).inter
+    (MeasurableSet.iInter fun j : Fin start =>
+      ((measurableSet_survivesNonnegative n).preimage
+        (measurable_natAdd j)).compl)
+
+/-- A first surviving window has only one starting time. -/
+theorem IsFirstSurvivingWindow.unique
+    {n start other : ℕ} {increment : ℕ → ℝ}
+    (hstart : IsFirstSurvivingWindow n start increment)
+    (hother : IsFirstSurvivingWindow n other increment) :
+    start = other := by
+  rcases lt_trichotomy start other with h | h | h
+  · exact False.elim (hother.2 ⟨start, h⟩ hstart.1)
+  · exact h
+  · exact False.elim (hstart.2 ⟨other, h⟩ hother.1)
+
+/-- Among the surviving windows up to a given starting time, one begins
+first. -/
+theorem exists_firstSurvivingWindow_le
+    {n start : ℕ} {increment : ℕ → ℝ}
+    (h : SurvivesNonnegative n (fun k => increment (start + k))) :
+    ∃ first ≤ start, IsFirstSurvivingWindow n first increment := by
+  classical
+  let hex : ∃ j : ℕ,
+      SurvivesNonnegative n (fun k => increment (j + k)) := ⟨start, h⟩
+  refine ⟨Nat.find hex, Nat.find_min' hex h, Nat.find_spec hex, ?_⟩
+  intro j
+  exact Nat.find_min hex j.isLt
 
 /-- A surviving walk has a nonnegative normalized step path for every time
 in the unit interval when the spatial scale is positive. -/
