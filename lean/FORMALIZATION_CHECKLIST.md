@@ -153,8 +153,10 @@ and future continuous paths and the atomless Brownian running minimum.
 equation (2.2) to an interior return or a unit-length excursion above the
 running minimum. The remaining input is the zero probability of a unit-length
 excursion, which Bolthausen derives from the Lévy decomposition of the
-descending Brownian hitting-time process. Equation (2.2), Lemma 2.4, and the
-conditioned invariance principle remain open.
+descending Brownian hitting-time process. The pathwise process
+$\tau_x=\inf\{t:B(t)\le-x\}$, its monotonicity, and its fixed-level
+measurability are in `Path/DescendingHittingTime.lean`. Equation (2.2),
+Lemma 2.4, and the conditioned invariance principle remain open.
 
 The concrete finite staircase now has its own verified schedule and geometry:
 `DriftedTube/FiniteVarianceLower/Staircase/Setup/Schedule.lean` defines
