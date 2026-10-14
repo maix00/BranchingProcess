@@ -35,6 +35,106 @@ open scoped Topology
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 
+/-- The lower rounded half-width passes every fixed integer threshold. -/
+private theorem eventually_floor_half_width_ge
+    {width : ℕ → ℝ} {beta : ℝ}
+    (hbeta : 0 < beta)
+    (hwidth : Tendsto width atTop atTop)
+    (width₀ : ℕ) :
+    ∀ᶠ n : ℕ in atTop,
+      width₀ ≤ ⌊beta * (width n / 2)⌋₊ := by
+  have hscaled : Tendsto (fun n => beta * (width n / 2))
+      atTop atTop := by
+    convert hwidth.const_mul_atTop (div_pos hbeta (by norm_num : (0 : ℝ) < 2))
+      using 1
+    ext n
+    ring
+  exact (tendsto_nat_floor_atTop.comp hscaled).eventually
+    (eventually_ge_atTop width₀)
+
+/-- A fixed positive endpoint margin fits inside the narrowed half-width
+when the global width tends to infinity. -/
+private theorem eventually_half_width_ge_inverse_margin
+    {width : ℕ → ℝ} {beta margin : ℝ}
+    (hbeta : 0 < beta)
+    (hwidth : Tendsto width atTop atTop) :
+    ∀ᶠ n : ℕ in atTop,
+      1 / margin ≤ beta * (width n / 2) := by
+  have hscaled : Tendsto (fun n => beta * (width n / 2))
+      atTop atTop := by
+    convert hwidth.const_mul_atTop (div_pos hbeta (by norm_num : (0 : ℝ) < 2))
+      using 1
+    ext n
+    ring
+  exact hscaled.eventually (eventually_ge_atTop (1 / margin))
+
+/-- The superquadratic block length eventually dominates every fixed
+integer multiple of the squared rounded narrowed width. -/
+private theorem eventually_floor_width_sq_le_blockLength
+    {width : ℕ → ℝ} {blockLength : ℕ → ℕ}
+    {beta : ℝ} (hbeta : 0 < beta)
+    (hwidth : Tendsto width atTop atTop)
+    (hlength : ∀ᶠ n : ℕ in atTop, 0 < blockLength n)
+    (hscale : Tendsto (fun n => width n ^ 2 / (blockLength n : ℝ))
+      atTop (𝓝 0))
+    (ratio₀ : ℕ) :
+    ∀ᶠ n : ℕ in atTop,
+      ratio₀ * ⌊beta * width n⌋₊ ^ 2 ≤ blockLength n := by
+  have hscaled : Tendsto (fun n =>
+      ((ratio₀ : ℝ) * beta ^ 2) *
+        (width n ^ 2 / (blockLength n : ℝ))) atTop (𝓝 0) := by
+    simpa using tendsto_const_nhds.mul hscale
+  have hsmall : ∀ᶠ n : ℕ in atTop,
+      ((ratio₀ : ℝ) * beta ^ 2) *
+        (width n ^ 2 / (blockLength n : ℝ)) < 1 :=
+    hscaled.eventually (eventually_lt_nhds (by norm_num : (0 : ℝ) < 1))
+  have hwidthPos : ∀ᶠ n : ℕ in atTop, 0 < width n :=
+    hwidth.eventually (eventually_gt_atTop 0)
+  filter_upwards [hlength, hsmall, hwidthPos]
+    with n hlengthN hsmallN hwidthN
+  have hlengthReal : 0 < (blockLength n : ℝ) := by exact_mod_cast hlengthN
+  have hfloor : (⌊beta * width n⌋₊ : ℝ) ≤ beta * width n :=
+    Nat.floor_le (mul_nonneg hbeta.le hwidthN.le)
+  have hsquare : (⌊beta * width n⌋₊ : ℝ) ^ 2 ≤
+      (beta * width n) ^ 2 :=
+    pow_le_pow_left₀ (Nat.cast_nonneg _) hfloor 2
+  have hreal : (ratio₀ : ℝ) * (⌊beta * width n⌋₊ : ℝ) ^ 2 ≤
+      (blockLength n : ℝ) := by
+    have hdiv :
+        (ratio₀ : ℝ) * (beta * width n) ^ 2 /
+            (blockLength n : ℝ) < 1 := by
+      convert hsmallN using 1
+      ring
+    have hupper := (div_lt_iff₀ hlengthReal).1 hdiv
+    nlinarith [mul_le_mul_of_nonneg_left hsquare
+      (Nat.cast_nonneg ratio₀)]
+  exact_mod_cast hreal
+
+/-- A subcubic block length is eventually smaller than the cube of the
+width after multiplication by any fixed real coefficient. -/
+private theorem eventually_linear_block_cost_lt_width_cubed
+    {width : ℕ → ℝ} {blockLength : ℕ → ℕ} {coefficient : ℝ}
+    (hwidth : Tendsto width atTop atTop)
+    (hscale : Tendsto (fun n =>
+      (blockLength n : ℝ) / width n ^ 3) atTop (𝓝 0)) :
+    ∀ᶠ n : ℕ in atTop,
+      coefficient * (blockLength n : ℝ) < width n ^ 3 := by
+  have hscaled : Tendsto (fun n =>
+      coefficient * ((blockLength n : ℝ) / width n ^ 3))
+      atTop (𝓝 0) := by
+    simpa using tendsto_const_nhds.mul hscale
+  have hsmall : ∀ᶠ n : ℕ in atTop,
+      coefficient * ((blockLength n : ℝ) / width n ^ 3) < 1 :=
+    hscaled.eventually (eventually_lt_nhds (by norm_num : (0 : ℝ) < 1))
+  have hwidthPos : ∀ᶠ n : ℕ in atTop, 0 < width n :=
+    hwidth.eventually (eventually_gt_atTop 0)
+  filter_upwards [hsmall, hwidthPos] with n hsmallN hwidthN
+  have heq : coefficient * ((blockLength n : ℝ) / width n ^ 3) =
+      coefficient * (blockLength n : ℝ) / width n ^ 3 := by ring
+  rw [heq] at hsmallN
+  simpa only [one_mul] using
+    (div_lt_iff₀ (pow_pos hwidthN _)).1 hsmallN
+
 /-- All width, time, rate, and endpoint inequalities used by the finite
 staircase hold under the paper's superquadratic and subcubic block scale. -/
 theorem eventually_staircaseGlobalConditions
@@ -87,13 +187,13 @@ theorem eventually_staircaseGlobalConditions
   have hbeta : 0 < staircaseBinWidth m := staircaseBinWidth_pos hm
   have hwidthPos : ∀ᶠ n : ℕ in atTop, 0 < width n :=
     hwidth.eventually (eventually_gt_atTop 0)
-  have hcost := Asymptotics.eventually_linear_block_cost_lt_width_cubed hwidth hcubic
+  have hcost := eventually_linear_block_cost_lt_width_cubed hwidth hcubic
     (coefficient := 10 * drift)
-  have hfloor := Asymptotics.eventually_floor_half_width_ge hbeta
+  have hfloor := eventually_floor_half_width_ge hbeta
     hwidth width₀
-  have hmarginWidth := Asymptotics.eventually_half_width_ge_inverse_margin hbeta hwidth
+  have hmarginWidth := eventually_half_width_ge_inverse_margin hbeta hwidth
     (margin := margin)
-  have htime := Asymptotics.eventually_floor_width_sq_le_blockLength hbeta hwidth
+  have htime := eventually_floor_width_sq_le_blockLength hbeta hwidth
     hlength hquadratic ratio₀
   have hrate' := eventually_staircaseRateComparison_of_blockScale
     hbeta hwidth hcubic hrate (drift := drift)
