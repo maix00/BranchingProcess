@@ -58,9 +58,6 @@ AXIOM_EXPECTATIONS = {
         "ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.exists_eventually_measure_pi_finiteMovingEntranceEvent_ge_div_of_centeredSecondMoment",
         "ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.exists_eventually_iidSequenceLaw_finiteMovingEntranceEvent_ge_div_of_centeredSecondMoment",
     ),
-    Path("BranchingProcessTest/Mogulskii/EntranceErrorBudget.lean"): (
-        "ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.exists_eventually_iidSequenceLaw_finiteMovingEntranceEvent_ge_exp_of_centeredSecondMoment",
-    ),
     Path("BranchingProcessTest/Branching/RestartSiblingTrial.lean"): (
         "ProbabilityTheory.BranchingRandomWalk.RootIndexed.ReserveLineages.sigma_firstGrowth_secondReserve_factorization",
         "ProbabilityTheory.BranchingRandomWalk.selectedPopulationFirstSplitSubtrees_measurable",

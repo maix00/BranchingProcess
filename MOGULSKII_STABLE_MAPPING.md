@@ -221,14 +221,13 @@ separate tilted-tube event `E₀` is formalized in
 `Probability/Process/RandomWalk/SmallDeviation/Entrance/`. The all-offset
 rotation theorem is compiled and included in the 24-declaration
 `LinearTubeAxioms.lean` audit. `NormalDomain.lean` constructs the Gaussian
-clock-process law from the raw finite-second-moment assumption and proves the
-uniform `q / floor (Delta²)` entrance bound. `ExponentialLoss.lean` proves the
-polynomial loss is absorbed into the exponential error on the paper's
-long-horizon scale; the focused `EntranceErrorBudget.lean` build and axiom
-check pass. This closes the finite-variance entrance estimate in the paper's
-normalized finite-prefix form, but does not claim the same raw-source result
-for infinite-variance normal attraction. The remaining restart and BRW-tail
-gaps are tracked in [`PROOF_REVIEW.md`](../PROOF_REVIEW.md) and
+clock-process law from the raw finite-second-moment assumption and proves a
+uniform `q / floor (Delta²)` bound for its cyclic-rotation event. The direct
+entrance theorem for Lemma 3.5 follows the Brownian-meander construction in
+Appendix A.2 and remains open. The deterministic polynomial-to-exponential
+comparison on the long-horizon scale is proved in
+`Analysis/Asymptotics/PolynomialExponential.lean`. The remaining restart and
+BRW-tail gaps are tracked in [`PROOF_REVIEW.md`](../PROOF_REVIEW.md) and
 [`FORMALIZATION_CHECKLIST.md`](FORMALIZATION_CHECKLIST.md).
 
 ## Corrections to the block-scale interpretation
