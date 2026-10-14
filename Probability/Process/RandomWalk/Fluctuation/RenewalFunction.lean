@@ -18,8 +18,14 @@ The public definitions and theorems in this file are:
   $H_k^-=-S_{T_k^-}$ if $T_k^-<\infty$, and infinity otherwise.
 - ProbabilityTheory.RandomWalk.measurableSet_strictDescendingLadderHeight_le:
   the finite descending ladder-height event $\{H_k^-\le x\}$ is measurable.
+- ProbabilityTheory.RandomWalk.strictDescendingLadderHeight_measurable:
+  $H_k^-:\mathbb R^{\mathbb N}\to\mathbb R\cup\{\infty\}$ is measurable.
 - ProbabilityTheory.RandomWalk.strictDescendingLadderHeight_zero:
   $H_0^-=0$.
+- ProbabilityTheory.RandomWalk.strictDescendingLadderHeight_nonneg:
+  $H_k^-\ge0$ in $\mathbb R\cup\{\infty\}$.
+- ProbabilityTheory.RandomWalk.strictDescendingLadderHeight_mono:
+  $k\le l$ implies $H_k^-\le H_l^-$.
 - ProbabilityTheory.RandomWalk.descendingLadderRenewalFunction:
   $V_\nu(x)=\sum_{k\ge0}\mathbb P_\nu(H_k^-\le x)$.
 - ProbabilityTheory.RandomWalk.descendingLadderRenewalFunction_mono:
@@ -28,6 +34,8 @@ The public definitions and theorems in this file are:
   $x\mapsto V_\nu(x)$ is Borel measurable.
 - ProbabilityTheory.RandomWalk.one_le_descendingLadderRenewalFunction:
   $V_\nu(x)\ge1$ for $x\ge0$.
+- ProbabilityTheory.RandomWalk.descendingLadderRenewalFunction_eq_zero_of_neg:
+  $V_\nu(x)=0$ for $x<0$.
 
 The renewal function is the one used by Francesco Caravenna and Loïc
 Chaumont, *Invariance principles for random walks conditioned to stay
@@ -64,10 +72,34 @@ theorem measurableSet_strictDescendingLadderHeight_le
   simpa [strictDescendingLadderHeight, Set.preimage_ofPred_eq] using
     (measurableSet_strictAscendingLadderHeight_le k x).preimage hneg
 
+/-- The extended-real descending ladder height is measurable. -/
+theorem strictDescendingLadderHeight_measurable (k : ℕ) :
+    Measurable (fun increment : ℕ → ℝ =>
+      strictDescendingLadderHeight increment k) := by
+  have hneg : Measurable (fun increment : ℕ → ℝ =>
+      fun i => -increment i) := by
+    rw [measurable_pi_iff]
+    intro i
+    exact (measurable_pi_apply i).neg
+  exact (strictAscendingLadderHeight_measurable k).comp hneg
+
 /-- The zeroth descending ladder height is the initial height zero. -/
 theorem strictDescendingLadderHeight_zero (increment : ℕ → ℝ) :
     strictDescendingLadderHeight increment 0 = 0 :=
   strictAscendingLadderHeight_zero (fun i => -increment i)
+
+/-- Descending ladder heights are the ascending ladder heights of the
+reflected walk and hence are nonnegative. -/
+theorem strictDescendingLadderHeight_nonneg
+    (increment : ℕ → ℝ) (k : ℕ) :
+    (0 : WithTop ℝ) ≤ strictDescendingLadderHeight increment k :=
+  strictAscendingLadderHeight_nonneg (fun i => -increment i) k
+
+/-- Strict descending ladder heights increase with the ladder index. -/
+theorem strictDescendingLadderHeight_mono
+    (increment : ℕ → ℝ) :
+    Monotone (strictDescendingLadderHeight increment) :=
+  strictAscendingLadderHeight_mono (fun i => -increment i)
 
 /-- The renewal mass accumulated by the descending ladder heights up
 to x under an i.i.d. increment law. -/
@@ -116,6 +148,23 @@ theorem one_le_descendingLadderRenewalFunction
         (f := fun k : ℕ => iidSequenceLaw ν
           {increment | strictDescendingLadderHeight increment k ≤
             (x : WithTop ℝ)}) 0
+
+/-- No descending ladder height falls below the initial height zero. -/
+theorem descendingLadderRenewalFunction_eq_zero_of_neg
+    (ν : Measure ℝ) {x : ℝ} (hx : x < 0) :
+    descendingLadderRenewalFunction ν x = 0 := by
+  unfold descendingLadderRenewalFunction
+  have hempty (k : ℕ) :
+      {increment : ℕ → ℝ |
+        strictDescendingLadderHeight increment k ≤ (x : WithTop ℝ)} =
+      ∅ := by
+    ext increment
+    simp only [Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false]
+    intro hheight
+    have hnonneg := strictDescendingLadderHeight_nonneg increment k
+    exact (not_le_of_gt (WithTop.coe_lt_coe.mpr hx))
+      (hnonneg.trans hheight)
+  simp [hempty]
 
 end ProbabilityTheory.RandomWalk
 
