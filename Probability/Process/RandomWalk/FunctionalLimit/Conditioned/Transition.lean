@@ -16,6 +16,9 @@ public import Analysis.Asymptotics.ShiftedFloor
 
 The public objects and theorems in this file are:
 
+- `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.measure_nonnegativeTransitionEvent_eq_cond_mul_survival`:
+  $\mathbb P(D_{n,\Delta})=
+  \mathbb P(D_{n,\Delta}\mid C_n)\mathbb P(C_n)$.
 - `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.nonnegativeTransitionEvent`:
   $D_{n,\Delta}=\{0\le S_j\le5\Delta/6\ (1\le j\le n),\
   S_n\in[5\Delta/12,11\Delta/24]\}$.
@@ -59,6 +62,27 @@ def nonnegativeTransitionEvent (n : ℕ) (width : ℝ) : Set (ℕ → ℝ) :=
       AdditivePath.displacement (k + 1) increment ≤ (5 / 6) * width) ∧
     AdditivePath.displacement n increment ∈
       Set.Icc ((5 / 12) * width) ((11 / 24) * width)}
+
+/-- The precise transition event $D_{n,\Delta}$ is contained in the
+survival event $C_n$, so its probability factors into conditional transition
+and survival probabilities. This is the multiplication step in Wang Yiyang,
+*Asymptotic speed of the $N$-branching random walk with infinite offspring*,
+Appendix A.2, proof of the meander transition lemma, using the conditioning
+in Caravenna--Chaumont, equation (3.3) (DOI 10.1214/07-AIHP119). -/
+theorem measure_nonnegativeTransitionEvent_eq_cond_mul_survival
+    (ν : Measure ℝ) [IsProbabilityMeasure ν] (n : ℕ) (width : ℝ) :
+    iidSequenceLaw ν (nonnegativeTransitionEvent n width) =
+      survivalConditionedLaw ν n (nonnegativeTransitionEvent n width) *
+        iidSequenceLaw ν {increment | SurvivesNonnegative n increment} := by
+  let C : Set (ℕ → ℝ) := {increment | SurvivesNonnegative n increment}
+  let D : Set (ℕ → ℝ) := nonnegativeTransitionEvent n width
+  have hsubset : D ⊆ C := by
+    intro increment hin k
+    exact (hin.1 k).1
+  have hinter : C ∩ D = D := Set.inter_eq_right.mpr hsubset
+  have hcond := ProbabilityTheory.cond_mul_eq_inter
+    (measurableSet_survivesNonnegative n) D (iidSequenceLaw ν)
+  simpa only [survivalConditionedLaw, C, D, hinter] using hcond.symm
 
 /-- The finite-grid transition event is exactly its Skorokhod path version
 after the normalization used by Caravenna--Chaumont, equation (3.3). -/
