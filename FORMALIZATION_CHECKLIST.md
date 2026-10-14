@@ -232,7 +232,10 @@ real values rather than just integer widths.
 The fluctuation modules now prove $T_k^\pm\le n\iff k\le\ell_n^\pm$,
 measurability of both extended ladder times and their finite-height events,
 and monotonicity and measurability of the descending ladder renewal function
-$V_\nu(x)=\sum_{k\ge0}\mathbb P_\nu(H_k^-\le x)$. These are foundational steps toward the cited
+$V_\nu(x)=\sum_{k\ge0}\mathbb P_\nu(H_k^-\le x)$. Each finite
+positive-index ladder time is a strict record; ascending and descending
+ladder heights are measurable, nonnegative and nondecreasing, and
+$V_\nu(x)=0$ for $x<0$. These are foundational steps toward the cited
 renewal and local-time limit theorems; the survival regular variation
 and conditioned meander convergence themselves remain to be proved.
 
