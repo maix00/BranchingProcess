@@ -18,6 +18,10 @@ The public theorem in this file is:
   for an IID increment law, a candidate first-window event determined by
   the first $m$ increments is independent of any measurable event of the
   following length-$n$ increment block.
+- `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.measure_firstWindow_inter_block_eq_mul`:
+  the joint mass of a first surviving window at $m$ and a finite block
+  event equals the candidate mass times the probability of that block
+  event intersected with finite survival.
 
 This is the independent-block step behind the first-window proof of Erwin
 Bolthausen, *On a functional central limit theorem for random walks
@@ -74,6 +78,36 @@ theorem measure_candidate_inter_block_eq_mul
         (measurable_blockCoordinates 0 n) hevent
   simpa only [past, future, Nat.zero_add, ← hpastPreimage, hfuture]
     using hfactor
+
+/-- At a fixed starting time, the first surviving-window event factors
+into its prefix candidate event and the finite surviving future block. -/
+theorem measure_firstWindow_inter_block_eq_mul
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (n start : ℕ) (event : Set (Fin n → ℝ))
+    (hevent : MeasurableSet event) :
+    (iidSequenceLaw ν)
+      ({increment | IsFirstSurvivingWindow n start increment} ∩
+        (Combinatorics.Sequence.blockCoordinates start n) ⁻¹' event) =
+      (iidSequenceLaw ν)
+        {increment | IsCandidateWindowStart n start increment} *
+        (iidSequenceLaw ν)
+          ((Combinatorics.Sequence.blockCoordinates 0 n) ⁻¹'
+            (event ∩ {block | FiniteSurvivesNonnegative block})) := by
+  have hset :
+      {increment : ℕ → ℝ |
+        IsFirstSurvivingWindow n start increment} ∩
+          (Combinatorics.Sequence.blockCoordinates start n) ⁻¹' event =
+        {increment | IsCandidateWindowStart n start increment} ∩
+          (Combinatorics.Sequence.blockCoordinates start n) ⁻¹'
+            (event ∩ {block | FiniteSurvivesNonnegative block}) := by
+    ext increment
+    simp only [Set.mem_inter_iff, Set.mem_ofPred_eq, Set.mem_preimage]
+    rw [isFirstSurvivingWindow_iff_candidate_and_survives,
+      ← finiteSurvivesNonnegative_blockCoordinates_iff]
+    tauto
+  rw [hset]
+  exact measure_candidate_inter_block_eq_mul ν n start _
+    (hevent.inter (measurableSet_finiteSurvivesNonnegative n))
 
 end ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned
 

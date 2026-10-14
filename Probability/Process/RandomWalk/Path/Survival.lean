@@ -7,6 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.Path.Skorokhod.Basic
+public import Combinatorics.Sequence.Block
 public import Mathlib.MeasureTheory.Constructions.BorelSpace.Order
 
 /-!
@@ -26,6 +27,13 @@ The public objects and theorems in this file are:
   that window.
 - `ProbabilityTheory.RandomWalk.IsFirstSurvivingWindow`: the first
   length-$n$ surviving window starts at a specified time $m$.
+- `ProbabilityTheory.RandomWalk.FiniteSurvivesNonnegative`: the same
+  survival condition on a finite vector of $n$ increments.
+- `ProbabilityTheory.RandomWalk.finiteSurvivesNonnegative_blockCoordinates_iff`:
+  survival of a shifted infinite sequence is equivalent to survival of
+  its finite coordinate block.
+- `ProbabilityTheory.RandomWalk.measurableSet_finiteSurvivesNonnegative`:
+  the finite survival block event is measurable.
 - `ProbabilityTheory.RandomWalk.measurableSet_isFirstSurvivingWindow`:
   this finite-time first-window event is measurable.
 - `ProbabilityTheory.RandomWalk.IsFirstSurvivingWindow.unique`:
@@ -52,6 +60,57 @@ namespace ProbabilityTheory.RandomWalk
 times. This is the survival event in Caravenna--Chaumont, Lemma 2.1. -/
 def SurvivesNonnegative (n : ℕ) (increment : ℕ → ℝ) : Prop :=
   ∀ k : Fin n, 0 ≤ AdditivePath.displacement (k + 1) increment
+
+/-- Survival of all positive-time prefix sums of a finite increment block. -/
+def FiniteSurvivesNonnegative {n : ℕ} (block : Fin n → ℝ) : Prop :=
+  ∀ k : Fin n,
+    0 ≤ ∑ j : Fin (k + 1),
+      block ⟨j, lt_of_lt_of_le j.isLt (Nat.succ_le_of_lt k.isLt)⟩
+
+/-- The finite block records exactly the survival event of the shifted
+infinite increment sequence. -/
+theorem finiteSurvivesNonnegative_blockCoordinates_iff
+    (n start : ℕ) (increment : ℕ → ℝ) :
+    FiniteSurvivesNonnegative
+        (Combinatorics.Sequence.blockCoordinates start n increment) ↔
+      SurvivesNonnegative n (fun k => increment (start + k)) := by
+  have hsum (k : Fin n) :
+      (∑ j : Fin (k + 1),
+        Combinatorics.Sequence.blockCoordinates start n increment
+          ⟨j, lt_of_lt_of_le j.isLt
+            (Nat.succ_le_of_lt k.isLt)⟩) =
+        AdditivePath.displacement (k + 1)
+          (fun t => increment (start + t)) := by
+    simp only [Combinatorics.Sequence.blockCoordinates,
+      AdditivePath.displacement]
+    exact Fin.sum_univ_eq_sum_range
+      (fun t => increment (start + t)) (k + 1)
+  constructor <;> intro h k
+  · simpa only [hsum k] using h k
+  · simpa only [hsum k] using h k
+
+/-- The finite survival condition is a measurable subset of the space of
+finite increment blocks. -/
+theorem measurableSet_finiteSurvivesNonnegative (n : ℕ) :
+    MeasurableSet {block : Fin n → ℝ | FiniteSurvivesNonnegative block} := by
+  rw [show {block : Fin n → ℝ | FiniteSurvivesNonnegative block} =
+      ⋂ k : Fin n,
+        {block | 0 ≤ ∑ j : Fin (k + 1),
+          block ⟨j, lt_of_lt_of_le j.isLt
+            (Nat.succ_le_of_lt k.isLt)⟩} by
+    ext block
+    simp [FiniteSurvivesNonnegative]]
+  apply MeasurableSet.iInter
+  intro k
+  have hmeas : Measurable (fun block : Fin n → ℝ =>
+      ∑ j : Fin (k + 1),
+        block ⟨j, lt_of_lt_of_le j.isLt
+          (Nat.succ_le_of_lt k.isLt)⟩) := by
+    exact Finset.measurable_sum Finset.univ fun j _ =>
+      measurable_pi_apply
+        (⟨j, lt_of_lt_of_le j.isLt
+          (Nat.succ_le_of_lt k.isLt)⟩ : Fin n)
+  exact measurableSet_Ici.preimage hmeas
 
 /-- The finite survival event is measurable. -/
 theorem measurableSet_survivesNonnegative (n : ℕ) :
