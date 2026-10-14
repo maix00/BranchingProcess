@@ -235,7 +235,9 @@ and monotonicity and measurability of the descending ladder renewal function
 $V_\nu(x)=\sum_{k\ge0}\mathbb P_\nu(H_k^-\le x)$. Each finite
 positive-index ladder time is a strict record; ascending and descending
 ladder heights are measurable, nonnegative and nondecreasing, and
-$V_\nu(x)=0$ for $x<0$. These are foundational steps toward the cited
+$V_\nu(x)=0$ for $x<0$. Tonelli's theorem identifies $V_\nu(x)$ with
+the expected number of ladder heights at most $x$, as in
+Caravenna--Chaumont, definition (1.1). These are foundational steps toward the cited
 renewal and local-time limit theorems; the survival regular variation
 and conditioned meander convergence themselves remain to be proved.
 
