@@ -155,10 +155,10 @@ running minimum. The remaining input is the zero probability of a unit-length
 excursion, which Bolthausen derives from the Lévy decomposition of the
 descending Brownian hitting-time process. The pathwise process
 $\tau_x=\inf\{t:B(t)\le-x\}$, its monotonicity, and its fixed-level
-measurability are in `Path/DescendingHittingTime.lean`. The general Poisson
-null-intensity result in
-`RandomMeasure/Poisson/NullSets.lean` excludes active points with a prescribed
-zero-mass mark, as needed for atomless jump sizes in a Lévy decomposition.
+measurability are in `Path/DescendingHittingTime.lean`. The existing
+`IsPoissonPointFamily.ae_poissonRandomMeasure_apply_eq_zero` in
+`RandomMeasure/Poisson/Support.lean` excludes realized Poisson mass from
+zero-intensity mark sets.
 The Brownian hitting-time process has not yet been identified with such a
 Poisson jump family. Equation (2.2), Lemma 2.4, and the conditioned
 invariance principle remain open.
