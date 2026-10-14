@@ -36,6 +36,9 @@ The public definitions and theorems in this file are:
   $C_n=\{T^-_1>n\}$.
 - ProbabilityTheory.RandomWalk.measure_survival_eq_firstDescendingLadderTime_gt:
   $\mathbb P(C_n)=\mathbb P(T^-_1>n)$ for any measure on increment paths.
+- ProbabilityTheory.RandomWalk.IsFirstSurvivingWindow.strictDescendingRecord:
+  the first surviving length-$n$ window begins at a strict descending
+  record whenever its starting time is positive.
 
 The descending ladder-time interpretation of survival is used in
 Francesco Caravenna and Loïc Chaumont, *Invariance principles for random
@@ -57,6 +60,54 @@ def IsStrictDescendingRecord (increment : ℕ → ℝ) (j : ℕ) : Prop :=
   0 < j ∧ ∀ i < j,
     AdditivePath.displacement j increment <
       AdditivePath.displacement i increment
+
+/-- The first surviving length-`n` window begins at a strict descending
+record when its start is positive. This is the record-time property behind
+the first-window construction in Erwin Bolthausen, *On a functional central
+limit theorem for random walks conditioned to stay positive*, Ann. Probab.
+4(3) (1976), 480–485, DOI 10.1214/aop/1176996098; see also Vladislav
+Vysotsky, *Positivity of integrated random walks*, Section 3.1, equation
+(17), DOI 10.1214/12-AIHP487. -/
+theorem IsFirstSurvivingWindow.strictDescendingRecord
+    {n start : ℕ} {increment : ℕ → ℝ}
+    (hfirst : IsFirstSurvivingWindow n start increment)
+    (hpositive : 0 < start) :
+    IsStrictDescendingRecord increment start := by
+  refine ⟨hpositive, ?_⟩
+  intro i hi
+  by_contra hlt
+  have hile : AdditivePath.displacement i increment ≤
+      AdditivePath.displacement start increment := le_of_not_gt hlt
+  obtain ⟨j, hj, hmin⟩ :=
+    (Finset.range start).exists_min_image
+      (fun t => AdditivePath.displacement t increment)
+      ⟨i, Finset.mem_range.mpr hi⟩
+  have hjlt : j < start := Finset.mem_range.mp hj
+  have hjle : AdditivePath.displacement j increment ≤
+      AdditivePath.displacement start increment :=
+    (hmin i (Finset.mem_range.mpr hi)).trans hile
+  have hwindow : SurvivesNonnegative n
+      (fun k => increment (j + k)) := by
+    apply (SurvivesNonnegative.shift_iff n j increment).2
+    intro k
+    let t := j + (k : ℕ) + 1
+    by_cases ht : t < start
+    · simpa [t, Nat.add_assoc] using hmin t (Finset.mem_range.mpr ht)
+    · have htle : t ≤ start + n := by
+        dsimp [t]
+        omega
+      by_cases heq : t = start
+      · have hgoal : j + ((k : ℕ) + 1) = start := by
+          simpa [t, Nat.add_assoc] using heq
+        simpa [hgoal] using hjle
+      · have hindex : t - start - 1 < n := by omega
+        have hsurvive :=
+          (SurvivesNonnegative.shift_iff n start increment).1 hfirst.1
+            ⟨t - start - 1, hindex⟩
+        have hposition : start + ((t - start - 1) + 1) = t := by omega
+        rw [hposition] at hsurvive
+        exact hjle.trans hsurvive
+  exact hfirst.2 ⟨j, hjlt⟩ hwindow
 
 /-- New minima of a walk are new maxima of its negation. -/
 theorem isStrictDescendingRecord_iff_ascending_neg
