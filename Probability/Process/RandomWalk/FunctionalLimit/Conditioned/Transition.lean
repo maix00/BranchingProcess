@@ -31,6 +31,10 @@ The public objects and theorems in this file are:
   support at the specified straight path, and $\Delta_n/\sqrt{n+1}\to1$,
   some $q>0$ satisfies $\mathbb P(D_{n+1,\Delta_n}\mid C_{n+1})\ge q$
   eventually.
+- `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.exists_eventually_transitionConditionalProbability_ge_of_imhofLaw`:
+  the same estimate when the limiting law is identified with the Imhof
+  transform of the radial law of three independent Brownian paths; its
+  straight-path support input follows from the BES(3) support theorem.
 - `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.diffusiveTransitionHorizon`:
   $N_{\Delta_n,m}=\lfloor\Delta_n^2\rfloor-m$ for real widths $\Delta_n$.
 - `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.conditionedMeanderLimit_diffusive`:
@@ -40,6 +44,9 @@ The public objects and theorems in this file are:
   for $\Delta_n\to\infty$ and fixed $m$, the conditional meander limit
   and support give $\mathbb P(D_{N_{\Delta_n,m},\Delta_n}\mid
   C_{N_{\Delta_n,m}})\ge q>0$ eventually.
+- `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.exists_eventually_diffusiveTransitionConditionalProbability_ge_of_imhofLaw`:
+  the diffusive-horizon estimate with the support input derived from the
+  Imhof representation of the limiting path law.
 
 This is the transition event and normalization in Wang Yiyang,
 *Asymptotic speed of the $N$-branching random walk with infinite offspring*,
@@ -49,7 +56,7 @@ Chapter 3, Lemma 3.5, Appendix A.2.
 @[expose] public section
 
 open Filter MeasureTheory ProbabilityTheory
-open scoped ENNReal Topology
+open scoped ENNReal NNReal Topology
 
 namespace ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned
 
@@ -205,6 +212,45 @@ theorem exists_eventually_transitionConditionalProbability_ge
         (width n / Real.sqrt (n + 1))} at hn
   rw [heventEq] at hn
   exact hn
+
+/-- The transition estimate with its support point derived from the Imhof
+representation of the limiting conditioned path law. The remaining limit
+identification is the Iglehart--Bolthausen conditioned invariance principle,
+recalled by Caravenna--Chaumont in equation (3.3). -/
+theorem exists_eventually_transitionConditionalProbability_ge_of_imhofLaw
+    {Ωm ΩB : Type*} [MeasurableSpace Ωm] [MeasurableSpace ΩB]
+    {ν : Measure ℝ} [IsProbabilityMeasure ν]
+    [∀ n, IsProbabilityMeasure (survivalConditionedLaw ν (n + 1))]
+    {Pm : Measure Ωm} [IsProbabilityMeasure Pm]
+    {M : Ωm → CadlagPath unitInterval ℝ}
+    {PB : Measure ΩB} [IsProbabilityMeasure PB]
+    {W : ℝ≥0 → ΩB → ℝ}
+    (hBrownian : IsBrownianReal W PB)
+    (hWmeasurable : ∀ t, Measurable (W t))
+    {sigma rho : ℝ} (hsigma : 0 < sigma)
+    (hrho : 0 < rho) (hrhoSmall : rho < 1 / 48)
+    (hlimit : TendstoInDistribution
+      (fun n increment => normalizedStepCadlagPathIcc
+        (fun j => sigma * Real.sqrt j) (n + 1) increment)
+      atTop M (fun n => survivalConditionedLaw ν (n + 1)) Pm)
+    (hImhofLaw : Pm.map M = BrownianMeander.imhofTilt
+      (BrownianBessel3.pathLawOfBrownian hBrownian hWmeasurable))
+    {width : ℕ → ℝ} (hwidth : ∀ n, 0 ≤ width n)
+    (hratio : Tendsto (fun n => width n / Real.sqrt (n + 1))
+      atTop (𝓝 1)) :
+    ∃ q : ℝ≥0∞, 0 < q ∧ ∀ᶠ n : ℕ in atTop,
+      q ≤ survivalConditionedLaw ν (n + 1)
+        (nonnegativeTransitionEvent (n + 1) (width n)) := by
+  have hsupport : Skorokhod.straightPath ((7 / 16) / sigma) ∈
+      (Pm.map M).support := by
+    rw [hImhofLaw]
+    change Skorokhod.linearPath ((7 / 16) / sigma) ∈
+      (BrownianMeander.imhofTilt
+        (BrownianBessel3.pathLawOfBrownian hBrownian hWmeasurable)).support
+    exact BrownianMeander.linearPath_mem_imhofTilt_support
+      hBrownian hWmeasurable (div_nonneg (by norm_num) hsigma.le)
+  exact exists_eventually_transitionConditionalProbability_ge
+    hsigma hrho hrhoSmall hlimit hsupport hwidth hratio
 
 /-- The diffusive transition horizon after a fixed finite entrance segment
 in Wang Yiyang, Chapter 3, Lemma 3.5, Appendix A.2. -/
@@ -362,6 +408,48 @@ theorem exists_eventually_diffusiveTransitionConditionalProbability_ge
       at hn
   rw [heventEq] at hn
   exact hn
+
+/-- The transition estimate at $N_{\Delta_n,m}=\lfloor\Delta_n^2\rfloor-m$
+with the limiting support point derived from the Imhof representation of
+the radial Brownian law. The conditioned invariance principle remains the
+explicit limit input. -/
+theorem exists_eventually_diffusiveTransitionConditionalProbability_ge_of_imhofLaw
+    {Ωm ΩB : Type*} [MeasurableSpace Ωm] [MeasurableSpace ΩB]
+    {ν : Measure ℝ} [IsProbabilityMeasure ν]
+    [∀ n, IsProbabilityMeasure (survivalConditionedLaw ν (n + 1))]
+    {width : ℕ → ℝ} (hwidth : Tendsto width atTop atTop)
+    (offset : ℕ)
+    [∀ n, IsProbabilityMeasure
+      (survivalConditionedLaw ν (diffusiveTransitionHorizon width offset n))]
+    {Pm : Measure Ωm} [IsProbabilityMeasure Pm]
+    {M : Ωm → CadlagPath unitInterval ℝ}
+    {PB : Measure ΩB} [IsProbabilityMeasure PB]
+    {W : ℝ≥0 → ΩB → ℝ}
+    (hBrownian : IsBrownianReal W PB)
+    (hWmeasurable : ∀ t, Measurable (W t))
+    {sigma rho : ℝ} (hsigma : 0 < sigma)
+    (hrho : 0 < rho) (hrhoSmall : rho < 1 / 48)
+    (hlimit : TendstoInDistribution
+      (fun n increment => normalizedStepCadlagPathIcc
+        (fun j => sigma * Real.sqrt j) (n + 1) increment)
+      atTop M (fun n => survivalConditionedLaw ν (n + 1)) Pm)
+    (hImhofLaw : Pm.map M = BrownianMeander.imhofTilt
+      (BrownianBessel3.pathLawOfBrownian hBrownian hWmeasurable)) :
+    ∃ q : ℝ≥0∞, 0 < q ∧ ∀ᶠ n : ℕ in atTop,
+      q ≤ survivalConditionedLaw ν
+        (diffusiveTransitionHorizon width offset n)
+        (nonnegativeTransitionEvent
+          (diffusiveTransitionHorizon width offset n) (width n)) := by
+  have hsupport : Skorokhod.straightPath ((7 / 16) / sigma) ∈
+      (Pm.map M).support := by
+    rw [hImhofLaw]
+    change Skorokhod.linearPath ((7 / 16) / sigma) ∈
+      (BrownianMeander.imhofTilt
+        (BrownianBessel3.pathLawOfBrownian hBrownian hWmeasurable)).support
+    exact BrownianMeander.linearPath_mem_imhofTilt_support
+      hBrownian hWmeasurable (div_nonneg (by norm_num) hsigma.le)
+  exact exists_eventually_diffusiveTransitionConditionalProbability_ge
+    hwidth offset hsigma hrho hrhoSmall hlimit hsupport
 
 end ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned
 
