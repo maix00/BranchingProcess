@@ -17,6 +17,19 @@ public section
 A centered increment law with nonzero second moment must charge both open
 half-lines.  These facts are the measure-theoretic input for constructing a
 subexponential entrance path from either boundary of a corridor.
+
+The public theorems in this file are:
+
+- `ProbabilityTheory.IsCenteredUnitSecondMoment.measure_Iio_zero_pos`:
+  unit-variance centered laws charge $(-\infty,0)$.
+- `ProbabilityTheory.IsCenteredUnitSecondMoment.measure_Ioi_zero_pos`:
+  unit-variance centered laws charge $(0,\infty)$.
+- `ProbabilityTheory.IsCenteredSecondMoment.measure_Ioi_zero_pos`:
+  centered laws of variance $\sigma^2>0$ charge $(0,\infty)$.
+- `ProbabilityTheory.IsCenteredUnitSecondMoment.exists_neg_interval_measure_pos`:
+  some bounded interval strictly below zero has positive mass.
+- `ProbabilityTheory.IsCenteredUnitSecondMoment.exists_pos_interval_measure_pos`:
+  some bounded interval strictly above zero has positive mass.
 -/
 
 open MeasureTheory Set
@@ -81,6 +94,23 @@ theorem IsCenteredUnitSecondMoment.measure_Ioi_zero_pos
   have hsquareIntegral : (∫ x : ℝ, x ^ 2 ∂ν) = 0 :=
     integral_eq_zero_of_ae hsquareZero
   linarith [hν.2]
+
+/-- A centered law of positive variance charges the positive half-line.
+Divide by its positive standard deviation and apply the unit-variance
+sign theorem. -/
+theorem IsCenteredSecondMoment.measure_Ioi_zero_pos
+    {ν : Measure ℝ} [IsProbabilityMeasure ν]
+    {sigma : ℝ} (hν : IsCenteredSecondMoment ν (sigma ^ 2))
+    (hsigma : 0 < sigma) :
+    0 < ν (Ioi 0) := by
+  have hunit := (hν.map_div hsigma).measure_Ioi_zero_pos
+  have hmeas : Measurable (fun x : ℝ => x / sigma) := by fun_prop
+  rw [Measure.map_apply hmeas measurableSet_Ioi] at hunit
+  have hpreimage :
+      (fun x : ℝ => x / sigma) ⁻¹' Ioi 0 = Ioi 0 := by
+    ext x
+    simp [div_pos_iff_of_pos_right hsigma]
+  rwa [hpreimage] at hunit
 
 /-- Some bounded open interval of strictly negative increments has positive
 mass.  In particular, the increments in this event are bounded away from
