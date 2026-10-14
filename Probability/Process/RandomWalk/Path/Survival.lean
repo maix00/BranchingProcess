@@ -21,6 +21,9 @@ The public objects and theorems in this file are:
   whenever $n\le m$.
 - `ProbabilityTheory.RandomWalk.SurvivesNonnegative.displacement_nonneg`:
   $C_n$ also gives $S_k\ge0$ for $0\le k\le n$.
+- `ProbabilityTheory.RandomWalk.SurvivesNonnegative.shift_iff`:
+  a shifted window survives precisely when $S_{m+j}\ge S_m$ throughout
+  that window.
 - `ProbabilityTheory.RandomWalk.SurvivesNonnegative.normalizedStepCadlagPathIcc_nonnegative`:
   for a positive normalization, $C_n$ gives a nonnegative normalized
   càdlàg path at every $t\in[0,1]$.
@@ -72,6 +75,27 @@ theorem SurvivesNonnegative.displacement_nonneg
   | succ j =>
       have hj : j < n := by omega
       simpa using h ⟨j, hj⟩
+
+/-- A shifted window survives exactly when all positions in that window
+lie above its starting position. This is the finite-window condition used
+in the path transform described in Vladislav Vysotsky, *Positivity of
+integrated random walks*, Ann. Inst. H. Poincaré Probab. Stat. 50(1)
+(2014), Section 3.1, equation (17), DOI 10.1214/12-AIHP487. -/
+theorem SurvivesNonnegative.shift_iff
+    (n start : ℕ) (increment : ℕ → ℝ) :
+    SurvivesNonnegative n (fun k => increment (start + k)) ↔
+      ∀ j : Fin n,
+        AdditivePath.displacement start increment ≤
+          AdditivePath.displacement (start + (j + 1)) increment := by
+  constructor
+  · intro h j
+    have hj := h j
+    rw [AdditivePath.displacement_add]
+    linarith
+  · intro h j
+    have hj := h j
+    rw [AdditivePath.displacement_add] at hj
+    linarith
 
 /-- A surviving walk has a nonnegative normalized step path for every time
 in the unit interval when the spatial scale is positive. -/
