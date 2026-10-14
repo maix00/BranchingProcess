@@ -11,9 +11,20 @@ public import Topology.Cadlag.Skorokhod.ContinuousMap
 /-!
 # Linear paths in Skorokhod space
 
-This file records the elementary relation between a `J₁` ball centered at a
-linear path and the corresponding uniform tube. The time-change part of the
-`J₁` metric moves a line by at most its slope times the clock distortion.
+The public definitions and theorems in this file are:
+
+- `Skorokhod.linearPath`: $t\mapsto st$.
+- `Skorokhod.dist_linearPath_le`:
+  $d_{J_1}(t\mapsto s_1t,t\mapsto s_2t)\le|s_1-s_2|$.
+- `Skorokhod.abs_sub_linear_lt_two_mul_of_dist_lt`:
+  if $|s|\le1$ and $d_{J_1}(f,st)<r$, then
+  $|f(t)-st|<2r$ for every $t$.
+- `Skorokhod.abs_sub_linear_lt_radius_mul_of_dist_lt`:
+  for any slope $s$, $d_{J_1}(f,st)<r$ implies
+  $|f(t)-st|<r(1+|s|)$ for every $t$.
+
+The time-change part of the `J₁` metric moves a line by at most its slope
+times the clock distortion.
 -/
 
 @[expose] public section
