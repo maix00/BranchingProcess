@@ -17,6 +17,8 @@ The public theorem in this file is:
 - `ProbabilityTheory.IsBrownianReal.measure_intervalMinimum_eq`:
   for $r<q$ and $a\in\mathbb R$,
   $\mathbb P(\min_{r\le t\le q}B_t=a)=0$.
+- `ProbabilityTheory.IsBrownianReal.measure_negIntervalMinimum_eq`:
+  $\mathbb P(\min_{r\le t\le q}(-B_t)=a)=0$ for $r<q$.
 
 The proof combines independence of the path before and after a fixed
 time with the atomless running-minimum law from the Brownian reflection
@@ -98,6 +100,48 @@ theorem IsBrownianReal.measure_intervalMinimum_eq
   change (P.map pathB) {f | intervalMinimum f r q = a} = 0
   rw [Measure.map_apply hpath hset]
   exact heq
+
+/-- The minimum of the negated Brownian path on a nondegenerate
+deterministic interval also has no atoms. -/
+theorem IsBrownianReal.measure_negIntervalMinimum_eq
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+    {B : ℝ≥0 → Ω → ℝ} (hB : IsBrownianReal B P)
+    (hmeasurable : ∀ t, Measurable (B t))
+    {r q : ℝ≥0} (hrq : r < q) (a : ℝ) :
+    let μ := P.map (hB.continuousPathMap hmeasurable)
+    μ {f : C(ℝ≥0, ℝ) | intervalMinimum (-f) r q = a} = 0 := by
+  dsimp
+  let N : ℝ≥0 → Ω → ℝ := fun t ω => -B t ω
+  let hN : IsBrownianReal N P := hB.neg
+  let hNmeas (t : ℝ≥0) : Measurable (N t) := (hmeasurable t).neg
+  let pathB := hB.continuousPathMap hmeasurable
+  let pathN := hN.continuousPathMap hNmeas
+  have hae : pathN =ᵐ[P] fun ω => -(pathB ω) := by
+    filter_upwards [hN.continuousPathMap_ae_eq hNmeas,
+      hB.continuousPathMap_ae_eq hmeasurable] with ω hωN hωB
+    ext t
+    change pathN ω t = -(pathB ω t)
+    rw [hωN t, hωB t]
+  have hnull := hN.measure_intervalMinimum_eq hNmeas hrq a
+  change (P.map pathN) {f : C(ℝ≥0, ℝ) |
+    intervalMinimum f r q = a} = 0 at hnull
+  rw [Measure.map_congr hae] at hnull
+  have hpath : Measurable pathB :=
+    hB.measurable_continuousPathMap hmeasurable
+  have hset : MeasurableSet
+      {f : C(ℝ≥0, ℝ) | intervalMinimum (-f) r q = a} :=
+    (measurable_intervalMinimum r q).comp continuous_neg.measurable
+      (measurableSet_singleton a)
+  change (P.map pathB) {f : C(ℝ≥0, ℝ) |
+    intervalMinimum (-f) r q = a} = 0
+  rw [Measure.map_apply hpath hset]
+  have hnegpath : Measurable (fun ω => -(pathB ω)) :=
+    continuous_neg.measurable.comp hpath
+  have hset2 : MeasurableSet
+      {f : C(ℝ≥0, ℝ) | intervalMinimum f r q = a} :=
+    (measurable_intervalMinimum r q) (measurableSet_singleton a)
+  rw [Measure.map_apply hnegpath hset2] at hnull
+  exact hnull
 
 end ProbabilityTheory
 
