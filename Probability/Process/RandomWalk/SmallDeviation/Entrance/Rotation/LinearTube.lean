@@ -12,7 +12,6 @@ public import Mathlib.MeasureTheory.Measure.Basic
 public import Mathlib.Order.Filter.IsBounded
 public import Mathlib.Topology.UnitInterval
 public import Topology.Cadlag.Skorokhod.LinearPath
-public import Probability.ConvergenceInDistribution.Portmanteau
 public import Algebra.BigOperators.PartialSum
 
 /-!
@@ -22,12 +21,6 @@ The public objects and principal theorems are:
 
 - `normalizedTime`, `cyclicRotatePath`, and `offsetCorridorPath`:
   normalized time, cyclic path rotation, and the offset corridor event.
-- `measure_le_card_smul_of_finiteRotationCover`: a cover by $n$ measure
-  preserving rotations bounds the original event probability by $n$ times
-  the rotated corridor probability.
-- `TendstoInDistribution.measure_openEvent_le_liminf`: if an event contains
-  the preimage of an open path set eventually, Portmanteau bounds its
-  lower limiting probability by the limit law of that open set.
 - `exists_middleOffset_meshPoint` and
   `linearTube_subset_middleOffsetCorridor`: select a spatial mesh point
   whose corridor contains a path close to the line $t\mapsto t/2$.
@@ -65,58 +58,6 @@ def cyclicRotatePath {n : ℕ} (s : Fin (n + 1) → ℝ) (k : Fin n) :
 def offsetCorridorPath {n : ℕ} (u : ℝ) (s : Fin (n + 1) → ℝ) : Prop :=
   (∀ j, s j ∈ Set.Icc (-u) (1 - u)) ∧
     s (Fin.last n) ∈ Set.Icc (1 / 3 - u) (2 / 3 - u)
-
-/-- A finite family of measure-preserving cyclic rotations turns a pointwise
-rotation-cover into the factor-`n` probability loss. -/
-theorem measure_le_card_smul_of_finiteRotationCover
-    {Ω : Type*} [MeasurableSpace Ω] {n : ℕ} (μ : Measure Ω)
-    (event safe : Set Ω) (rotate : Fin n → Ω → Ω)
-    (hcover : event ⊆ ⋃ k, (rotate k) ⁻¹' safe)
-    (hinvariant : ∀ k, μ ((rotate k) ⁻¹' safe) = μ safe) :
-    μ event ≤ n • μ safe := by
-  calc
-    μ event ≤ μ (⋃ k, (rotate k) ⁻¹' safe) := measure_mono hcover
-    _ ≤ ∑ k : Fin n, μ ((rotate k) ⁻¹' safe) := measure_iUnion_fintype_le μ _
-    _ = ∑ _k : Fin n, μ safe := by
-      apply Finset.sum_congr rfl
-      intro k hk
-      exact hinvariant k
-    _ = n • μ safe := by simp
-
-/-- An open-set Portmanteau lower bound transfers to any event that eventually
-contains the corresponding normalized-path preimage. -/
-theorem TendstoInDistribution.measure_openEvent_le_liminf
-    {I E Ω' : Type*} {Ω : I → Type*}
-    {mΩ : ∀ i, MeasurableSpace (Ω i)}
-    {μ : (i : I) → Measure (Ω i)} [∀ i, IsProbabilityMeasure (μ i)]
-    {mΩ' : MeasurableSpace Ω'} {μ' : Measure Ω'} [IsProbabilityMeasure μ']
-    {mE : MeasurableSpace E} [TopologicalSpace E]
-    [OpensMeasurableSpace E] [HasOuterApproxClosed E]
-    {X : (i : I) → Ω i → E} {Z : Ω' → E} {l : Filter I}
-    (h : MeasureTheory.TendstoInDistribution X l Z μ μ')
-    [l.NeBot]
-    {U : Set E} (hU : IsOpen U)
-    (event : ∀ i, Set (Ω i))
-    (hcover : ∀ᶠ i in l, X i ⁻¹' U ⊆ event i) :
-    μ'.map Z U ≤ l.liminf (fun i => μ i (event i)) := by
-  have hport := h.measure_map_le_liminf_of_isOpen hU
-  have hcomp : ∀ᶠ i in l, (μ i).map (X i) U ≤ μ i (event i) := by
-    filter_upwards [hcover] with i hi
-    rw [Measure.map_apply_of_aemeasurable (h.forall_aemeasurable i)
-      hU.measurableSet]
-    exact measure_mono hi
-  have hsourceBounded : Filter.IsBoundedUnder (· ≥ ·) l
-      (fun i => (μ i).map (X i) U) :=
-    ⟨0, Filter.Eventually.of_forall fun _ => bot_le⟩
-  have htargetLeOne (i : I) : μ i (event i) ≤ 1 := by
-    calc
-      μ i (event i) ≤ μ i Set.univ := measure_mono (Set.subset_univ _)
-      _ = 1 := measure_univ
-  have htargetBounded : Filter.IsCoboundedUnder (· ≥ ·) l
-      (fun i => μ i (event i)) :=
-    (Filter.isBoundedUnder_of_eventually_le
-      (Filter.Eventually.of_forall htargetLeOne)).isCoboundedUnder_ge
-  exact hport.trans <| Filter.liminf_le_liminf hcomp hsourceBounded htargetBounded
 
 /-- A middle offset is within `1/100` of one of finitely many mesh points. -/
 theorem exists_middleOffset_meshPoint {u : ℝ}
@@ -189,10 +130,8 @@ theorem linearTube_subset_middleOffsetCorridor
         _ = (1 - u) - (1 / 2 - center) * (t : ℝ) := by ring
     have hlineBounds := abs_lt.mp hline
     constructor
-    · change -u < path t
-      linarith
-    · change path t < 1 - u
-      linarith
+    · linarith
+    · linarith
   have htopTube : |path ⊤ - (1 / 2 - center)| < 1 / 100 := by
     simpa using hpath ⊤
   refine ⟨fun t => ?_, ?_⟩
@@ -331,7 +270,7 @@ theorem cyclicPartialSum_last {n : ℕ} (s : Fin (n + 1) → ℝ)
     have hindex :
         (⟨k.val + n, Nat.lt_succ_of_le (by omega)⟩ : Fin (n + 1)) = Fin.last n := by
       apply Fin.ext
-      simp only [Fin.val_mk, Fin.val_last]
+      simp only [Fin.val_last]
       omega
     rw [hindex, hkzero, hs0]
     ring
@@ -339,7 +278,7 @@ theorem cyclicPartialSum_last {n : ℕ} (s : Fin (n + 1) → ℝ)
     have hindex :
         (⟨k.val + n - n, by omega⟩ : Fin (n + 1)) = k.castSucc := by
       apply Fin.ext
-      simp only [Fin.val_mk, Fin.val_castSucc]
+      simp only [Fin.val_castSucc]
       omega
     rw [hindex]
     ring

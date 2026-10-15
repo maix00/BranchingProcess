@@ -1,5 +1,5 @@
 import Probability.Process.Stable.PathLaw.LinearTube
-import Probability.Process.RandomWalk.SmallDeviation.Entrance.Rotation.Exchangeability
+import Probability.Sequence.IID.FiniteReindex
 import Probability.Process.RandomWalk.SmallDeviation.Entrance.FunctionalLimit
 import Probability.Process.RandomWalk.SmallDeviation.Entrance.Rotation.LinearTube
 import Probability.Process.RandomWalk.SmallDeviation.Entrance.Rotation.CyclicPath
@@ -15,8 +15,7 @@ and the deterministic cyclic-rotation estimate.
 #print axioms ProbabilityTheory.IsStableClockProcessLaw.measure_linearPathBall_pos
 #print axioms ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.exists_cyclicPartialSum_mem_Icc_of_linearTube
 #print axioms ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.exists_cyclicPartialSum_mem_Icc_of_negativeLinearTube
-#print axioms ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.measure_le_card_smul_of_finiteRotationCover
-#print axioms ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.TendstoInDistribution.measure_openEvent_le_liminf
+#print axioms MeasureTheory.measure_le_card_smul_of_finite_cover_invariant
 #print axioms ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.eventually_measure_normalizedStep_linearBall_pos
 #print axioms ProbabilityTheory.iidSequenceLaw_map_finPrefix
 #print axioms ProbabilityTheory.measure_pi_preimage_eq_of_reindex
