@@ -17,6 +17,9 @@ The public theorem in this file is:
   for a finite-valued stopping time $T$, the path
   $u\mapsto B(T+u)-B(T)$ is independent of
   $u\mapsto B(\min(u,T))$.
+- `ProbabilityTheory.IsBrownianReal.indepFun_shiftToZero_freezeAfter_finitePathwiseStoppingTime`:
+  the same conclusion when the stop is given by a measurable pathwise
+  selector whose fibers depend only on the past.
 
 This is the finite-valued strong-Markov step behind the Lévy
 decomposition cited in Erwin Bolthausen, *On a functional central
@@ -157,6 +160,37 @@ theorem IsBrownianReal.indepFun_shiftToZero_freezeAfter_finiteStoppingTime
           exact hterm i
     _ = μ A * ∑ i : ι, P (G ⁻¹' C ∩ {ω | T (pathB ω) = i}) := by
       rw [Finset.mul_sum]
+
+/-- A measurable finite-valued pathwise stopping selector has independent
+stopped past and future increment path. -/
+theorem IsBrownianReal.indepFun_shiftToZero_freezeAfter_finitePathwiseStoppingTime
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+    {B : ℝ≥0 → Ω → ℝ} (hB : IsBrownianReal B P)
+    (hBmeasurable : ∀ u, Measurable (B u))
+    {ι : Type*} [MeasurableSpace ι] [MeasurableSingletonClass ι]
+    [Fintype ι] [DecidableEq ι]
+    (T : C(ℝ≥0, ℝ) → ι) (r : ι → ℝ≥0)
+    (hT : Measurable T)
+    (hlocal : ∀ i f g, (∀ u, u ≤ r i → f u = g u) →
+      (T f = i ↔ T g = i)) :
+    (fun ω => shiftToZero (hB.continuousPathMap hBmeasurable ω)
+      (r (T (hB.continuousPathMap hBmeasurable ω)))) ⟂ᵢ[P]
+    (fun ω => freezeAfter (hB.continuousPathMap hBmeasurable ω)
+      (r (T (hB.continuousPathMap hBmeasurable ω)))) := by
+  have hstop (i : ι) :
+      MeasurableSet[MeasurableSpace.comap
+        (fun f : C(ℝ≥0, ℝ) => freezeAfter f (r i)) inferInstance]
+        {f | T f = i} := by
+    apply (MeasurableSpace.measurableSet_comap).mpr
+    refine ⟨{f | T f = i}, hT (measurableSet_singleton i), ?_⟩
+    ext f
+    change T (freezeAfter f (r i)) = i ↔ T f = i
+    apply hlocal i (freezeAfter f (r i)) f
+    intro u hu
+    change f (min u (r i)) = f u
+    rw [min_eq_left hu]
+  exact hB.indepFun_shiftToZero_freezeAfter_finiteStoppingTime
+    hBmeasurable T r hstop
 
 end ProbabilityTheory
 
