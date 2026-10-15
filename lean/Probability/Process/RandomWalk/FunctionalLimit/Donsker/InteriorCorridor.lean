@@ -20,7 +20,8 @@ The public definitions and theorems in this file are:
 - `ProbabilityTheory.RandomWalk.FunctionalLimit.Donsker.interiorPathEvent`:
   $1/24<z+\sigma f(t)<23/24$ for $0\le t\le1$, with
   $11/24<z+\sigma f(1)<13/24$, a fixed subevent of the endpoint window
-  $[5/12,7/12]$ in the thesis.
+  $[5/12,7/12]$ in Wang Yiyang, Appendix A.2, proof of the meander
+  transition lemma.
 - `ProbabilityTheory.RandomWalk.FunctionalLimit.Donsker.interiorPathEvent_subset_brownianMiddlePathEvent`:
   the robust endpoint subevent belongs to the printed Brownian event.
 - `ProbabilityTheory.RandomWalk.FunctionalLimit.Donsker.scaledInteriorPathEvent`:
@@ -38,7 +39,8 @@ The public definitions and theorems in this file are:
   one positive lower bound for all $z\in[1/12,11/12]$ and all sufficiently
   large walk horizons, by Donsker's theorem and compactness.
 - `ProbabilityTheory.RandomWalk.FunctionalLimit.Donsker.eventually_brownianMiddlePathProbability_pos_uniform`:
-  the same lower bound for the exact endpoint window printed in the thesis.
+  the same lower bound for the endpoint window in Wang Yiyang,
+  Appendix A.2, proof of the meander transition lemma.
 - `ProbabilityTheory.RandomWalk.FunctionalLimit.Donsker.eventually_scaledInteriorPathProbability_pos_uniform`:
   the same lower bound survives the ratios $\sqrt n/\Delta\to1$ and
   $c/\Delta\to0$ in the finite-width corridor.

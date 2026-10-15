@@ -50,7 +50,8 @@ namespace ProbabilityTheory.RandomWalk
 
 open Skorokhod
 
-/-- The normalized step path with the source paper's terminal convention:
+/-- The normalized step path with the terminal convention of Mogul'skii,
+*Small Deviations in a Space of Trajectories*, Theorem 3, Section 4:
 the value at time `1` is the left limit of the usual right-continuous step
 path. -/
 noncomputable def sourceNormalizedStepCadlagPathIcc (scale : ℕ → ℝ) (n : ℕ)

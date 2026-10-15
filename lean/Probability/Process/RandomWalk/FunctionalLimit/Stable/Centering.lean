@@ -39,8 +39,9 @@ noncomputable def discardedTailBiasConstant (α radiusMultiplier : ℝ) : ℝ :=
   ((2 - α) / (α - 1)) * radiusMultiplier ^ (1 - α)
 
 /-- The sine-centering condition used by Mogulskii at stable index one:
-`n ∫ sin(x / B n) dν → 0`.  It is the source paper's `βₙ = o(1/n)`
-condition, expressed at a specified norming sequence. -/
+`n ∫ sin(x / B n) dν → 0`. It expresses `βₙ = o(1/n)` from
+Mogul'skii, *Small Deviations in a Space of Trajectories*, Theorem 3,
+Section 4, at a specified norming sequence. -/
 def IsMogulskiiIndexOneCentered (ν : Measure ℝ) (normalization : ℕ → ℝ) : Prop :=
   Tendsto (fun n : ℕ => (n : ℝ) *
     (∫ x, Real.sin (x / normalization n) ∂ν)) atTop (nhds 0)
