@@ -22,6 +22,16 @@ The public definitions and theorems in this file are:
   whole-time path to the real unit interval.
 - `ProbabilityTheory.continuous_restrictPathToUnitInterval`: this
   restriction is continuous.
+- `ProbabilityTheory.unitIntervalPathOfNNReal`: reparametrization from
+  $C([0,1]_{\mathbb R_{\ge0}},\mathbb R)$ to
+  $C([0,1]_{\mathbb R},\mathbb R)$.
+- `ProbabilityTheory.unitIntervalTimeAsNNRealIcc`: the corresponding
+  coordinate map between the two unit intervals.
+- `ProbabilityTheory.continuous_unitIntervalTimeAsNNRealIcc` and
+  `ProbabilityTheory.continuous_unitIntervalPathOfNNReal`: continuity
+  of these coordinate changes.
+- `ProbabilityTheory.restrictPathToUnitInterval_eq`: compatibility of
+  the two unit-interval restrictions.
 - `ProbabilityTheory.rescaleUnitPath`: for $s>0$ and $a\in\mathbb R$,
   the map $g\mapsto(t\mapsto a g(t/s))$ from
   $C([0,1],\mathbb R)$ to $C([0,s],\mathbb R)$.
@@ -68,6 +78,39 @@ theorem continuous_restrictPathToUnitInterval :
   exact continuous_eval.comp
     (continuous_fst.prodMk
       (UnitInterval.continuous_toNNReal.comp continuous_snd))
+
+noncomputable def unitIntervalTimeAsNNRealIcc
+    (t : unitInterval) : Set.Icc (0 : ℝ≥0) 1 :=
+  ⟨UnitInterval.toNNReal t,
+    ⟨(UnitInterval.toNNReal t).property,
+      UnitInterval.toNNReal_le_one t⟩⟩
+
+theorem continuous_unitIntervalTimeAsNNRealIcc :
+    Continuous unitIntervalTimeAsNNRealIcc :=
+  Continuous.subtype_mk UnitInterval.continuous_toNNReal _
+
+/-- Change the unit-time coordinate from nonnegative real time to real
+time without changing path values. -/
+noncomputable def unitIntervalPathOfNNReal
+    (f : C(Set.Icc (0 : ℝ≥0) 1, ℝ)) : C(unitInterval, ℝ) :=
+  ⟨fun t => f (unitIntervalTimeAsNNRealIcc t),
+    f.continuous.comp continuous_unitIntervalTimeAsNNRealIcc⟩
+
+/-- The unit-time change of coordinate is continuous in the path. -/
+theorem continuous_unitIntervalPathOfNNReal :
+    Continuous unitIntervalPathOfNNReal := by
+  refine ContinuousMap.continuous_of_continuous_uncurry _ ?_
+  exact continuous_eval.comp
+    (continuous_fst.prodMk
+      (continuous_unitIntervalTimeAsNNRealIcc.comp continuous_snd))
+
+/-- Restriction through nonnegative real time agrees with direct
+restriction to the real unit interval. -/
+theorem restrictPathToUnitInterval_eq (f : C(ℝ≥0, ℝ)) :
+    restrictPathToUnitInterval f =
+      unitIntervalPathOfNNReal (restrictPathTo 1 f) := by
+  ext t
+  rfl
 
 /-- Stretch a unit-time path to $[0,s]$ and multiply its values by `a`. -/
 noncomputable def rescaleUnitPath (s : ℝ≥0) (hs : 0 < s)
