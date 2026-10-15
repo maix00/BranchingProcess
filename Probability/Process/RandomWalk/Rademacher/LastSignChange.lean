@@ -8,6 +8,7 @@ module
 
 public import Probability.Process.RandomWalk.Rademacher
 public import Probability.Process.RandomWalk.Path.LastSignChange
+public import Probability.Process.RandomWalk.Path.Interpolation.Basic
 
 /-!
 # The final one-sided segment of a Rademacher walk
@@ -22,6 +23,11 @@ The public theorems in this file are:
   the terminal one-sided segment satisfies $\nu_n=n-\mu_n\ge1$.
 - `ProbabilityTheory.RandomWalk.rademacher_displacement_lastSignChange_eq_zero`:
   $S_{\mu_n}=0$.
+- `ProbabilityTheory.RandomWalk.rademacherTerminalAbsolutePath`:
+  the continuous polygonal path $\widetilde Y_n$ with grid values
+  $\widetilde Y_n(k/\nu_n)=|S_{\mu_n+k}|/\sqrt{\nu_n}$.
+- `ProbabilityTheory.RandomWalk.rademacherTerminalAbsolutePath_grid`:
+  this grid-value identity for $0\le k\le\nu_n$.
 
 The final assertion is the parenthetical remark following the definitions
 of $\mu_n$ and $\nu_n$ on page 484 of Erwin Bolthausen,
@@ -164,6 +170,51 @@ theorem rademacher_displacement_lastSignChange_eq_zero
       cases h : branch (m - 1) <;> simp only [h, ↓reduceIte] at hznonpos ⊢ <;> omega
     rw [hmval]
     exact_mod_cast hz0
+
+/-- Bolthausen's nonnegative polygonal interpolation of the last
+one-sided segment of the simple symmetric walk. -/
+noncomputable def rademacherTerminalAbsolutePath
+    (branch : ℕ → Bool) (n : ℕ) : C(unitInterval, ℝ) where
+  toFun t :=
+    |normalizedLinearContinuousPathIcc
+      (fun j => Real.sqrt j)
+      (terminalSignStableLength n (rademacherIncrementPath branch))
+      (fun j => rademacherIncrementPath branch
+        (lastSignChangeIndex n (rademacherIncrementPath branch) + j)) t|
+  continuous_toFun := by
+    apply continuous_abs.comp
+    exact (normalizedLinearContinuousPathIcc
+      (fun j => Real.sqrt j)
+      (terminalSignStableLength n (rademacherIncrementPath branch))
+      (fun j => rademacherIncrementPath branch
+        (lastSignChangeIndex n (rademacherIncrementPath branch) + j))).continuous
+
+/-- At every grid point, the transformed path is the normalized
+absolute value of the original partial sum after the last sign change. -/
+theorem rademacherTerminalAbsolutePath_grid
+    (branch : ℕ → Bool) {n k : ℕ} (hn : 0 < n)
+    (hk : k ≤ terminalSignStableLength n (rademacherIncrementPath branch))
+    (t : unitInterval)
+    (ht : (t : ℝ) =
+      (k : ℝ) / terminalSignStableLength n (rademacherIncrementPath branch)) :
+    rademacherTerminalAbsolutePath branch n t =
+      |(Real.sqrt (terminalSignStableLength n
+        (rademacherIncrementPath branch) : ℝ))⁻¹ *
+        AdditivePath.displacement
+          (lastSignChangeIndex n (rademacherIncrementPath branch) + k)
+          (rademacherIncrementPath branch)| := by
+  let μ := lastSignChangeIndex n (rademacherIncrementPath branch)
+  let ν := terminalSignStableLength n (rademacherIncrementPath branch)
+  have hν : 0 < ν := rademacher_terminalSignStableLength_pos branch hn
+  have hzero : AdditivePath.displacement μ (rademacherIncrementPath branch) = 0 :=
+    rademacher_displacement_lastSignChange_eq_zero branch n
+  change |normalizedLinearContinuousPathIcc
+      (fun j => Real.sqrt j) ν
+      (fun j => rademacherIncrementPath branch (μ + j)) t| = _
+  rw [normalizedLinearContinuousPathIcc_apply, ht,
+    normalizedLinearPath_grid (fun j => Real.sqrt j) hν hk]
+  rw [AdditivePath.displacement_add μ k (rademacherIncrementPath branch), hzero]
+  simp only [zero_add, ν]
 
 end ProbabilityTheory.RandomWalk
 
