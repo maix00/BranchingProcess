@@ -6,8 +6,8 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.GaussianM3
-public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVariance
+public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.GaussianRangeCover
+public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.BlockOscillation
 
 /-!
 # Sharp range bounds from finite corridor rates
