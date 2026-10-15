@@ -12,12 +12,33 @@ public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.SourcePath
 /-!
 # Measurability of source random-walk continuous-corridor events
 
-The source path has finitely many constant time cells. A continuous boundary
-may approach the value on a cell as time approaches the cell's excluded right
-endpoint, so strict corridor membership need not give a uniform margin on the
-whole cell. This file exhausts each half-open cell by compact subintervals;
-the resulting countable family of finite-coordinate conditions proves
-measurability while retaining the `S_(n-1)` terminal convention.
+For the normalized source path with $n>0$, cell $j<n$ carries the value
+$S_j/x_n$ on $[j/n,(j+1)/n)$. Put
+$b_{j,m}=(j+1)/n-1/(n+m+1)$ for $m\in\mathbb N$. The public
+definitions and theorems are:
+
+- `sourceContinuousBoundaryCellCutoff` and
+  `sourceContinuousBoundaryCellCutoff_val`: the compact-cell endpoint
+  $b_{j,m}$ and its real value.
+- `uniformGridTime_le_sourceContinuousBoundaryCellCutoff` and
+  `sourceContinuousBoundaryCellCutoff_lt_right`:
+  $j/n\le b_{j,m}<(j+1)/n$.
+- `sourceNormalizedStepCellValue`: the cell value $S_j/x_n$.
+- `sourceContinuousBoundaryCellConditions`: for every $j,m$ and
+  $t\in[j/n,b_{j,m}]$, the inequalities
+  $l(t)<S_j/x_n<u(t)$ hold.
+- `measurableSet_sourceContinuousBoundaryCellConditions`:
+  this countable family of finite-coordinate conditions is measurable.
+- `sourceNormalizedStepCadlagPathIcc_mem_relativeContinuousBoundaryCorridorSet_iff`:
+  source-path corridor membership is equivalent to the cell conditions
+  and $l(1)<S_{n-1}/x_n<u(1)$.
+- `measurableSet_sourceNormalizedStepCadlagPathIcc_preimage_relativeContinuousBoundaryCorridorSet`:
+  the corresponding event on increment sequences is measurable.
+
+Compact subintervals exhaust each half-open cell while retaining the
+terminal value $S_{n-1}/x_n$ from Mogul'skii,
+*Small Deviations in a Space of Trajectories*, Theorem 3, Section 4,
+p. 764 (DOI 10.1137/1119081).
 -/
 
 open MeasureTheory
