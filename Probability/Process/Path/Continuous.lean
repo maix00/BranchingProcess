@@ -32,6 +32,12 @@ The public definitions and theorems in this file are:
   jointly in the continuous path and its starting time.
 - `ProbabilityTheory.continuous_shiftToZero`: the same operation is
   continuous for the compact-open topology.
+- `ProbabilityTheory.shiftPath`: the time-shifted path
+  $u\mapsto f(r+u)$.
+- `ProbabilityTheory.continuous_shiftPath`: time shift is jointly
+  continuous in the path and starting time.
+- `ProbabilityTheory.measurable_shiftPath`: the same operation is
+  jointly Borel measurable.
 
 Processes use mathlib's convention `Time → Ω → State`.
 -/
@@ -120,6 +126,24 @@ theorem continuous_shiftToZero :
     continuous_eval.comp
       (hpath.prodMk (continuous_snd.comp continuous_fst))
   exact hfirst.sub hbase
+
+/-- Translate the time origin of a continuous path to `r`. -/
+noncomputable def shiftPath (f : C(ℝ≥0, ℝ)) (r : ℝ≥0) : C(ℝ≥0, ℝ) :=
+  ⟨fun u => f (r + u), by fun_prop⟩
+
+/-- Time translation of continuous paths is jointly continuous for
+the compact-open topology. -/
+theorem continuous_shiftPath :
+    Continuous (fun p : C(ℝ≥0, ℝ) × ℝ≥0 => shiftPath p.1 p.2) := by
+  refine ContinuousMap.continuous_of_continuous_uncurry _ ?_
+  exact continuous_eval.comp
+    ((continuous_fst.comp continuous_fst).prodMk
+      ((continuous_snd.comp continuous_fst).add continuous_snd))
+
+/-- Joint measurability of time translation of continuous paths. -/
+theorem measurable_shiftPath :
+    Measurable (fun p : C(ℝ≥0, ℝ) × ℝ≥0 => shiftPath p.1 p.2) :=
+  continuous_shiftPath.measurable
 
 /-- Freezing a continuous path at a fixed time is measurable. -/
 theorem measurable_freezeAfter (r : ℝ≥0) :
