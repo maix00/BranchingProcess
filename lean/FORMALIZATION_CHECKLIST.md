@@ -328,7 +328,10 @@ event cover and inclusion--exclusion in Bauer--Godrèche--Luck, Appendix A,
 (A.5)--(A.6), and the bijection between nonempty selected-start sets and
 positive compositions with an offset in the last part. The resulting finite
 composition formula for $\mathbb P(S_n\ge0)$ is proved in
-`Fluctuation/SparreAndersen/CompositionFormula.lean`. The generating-function
+`Fluctuation/SparreAndersen/CompositionFormula.lean`.
+`Combinatorics/Enumerative/Composition/FirstPart.lean` supplies the
+first-part/tail equivalence and sum decomposition needed to extract the
+finite coefficient recurrence from this formula. The generating-function
 identity (A.7)--(A.8), the survival asymptotic, and its use in the unconditional
 entrance bound remain open.
 
