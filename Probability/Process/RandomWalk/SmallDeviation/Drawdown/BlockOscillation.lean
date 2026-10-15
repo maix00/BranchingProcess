@@ -10,12 +10,24 @@ public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalk
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.SourcePath
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.FromIncrementLaw.NormalContinuousBoundary
 /-!
-# Finite-variance drawdown block bounds from the source path rate
+# Finite-variance bounds for block oscillation
 
-The range-oscillation event of a block pins every partial sum relative to its
-initial value. After a fixed spatial enlargement, that event lies inside a
-centered source corridor. Mogul'skii's raw finite-variance path rate therefore
-gives an IID block bound without an externally supplied Brownian process.
+The public theorems in this file are:
+
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.blockOscillationEvent_partialSum_abs_le`:
+  a block whose range is at most $\Delta$ has every displacement in
+  $[-\Delta,\Delta]$.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.blockOscillationEvent_subset_enlargedSourceCorridor`:
+  the block event lies in a centered source corridor after enlarging its
+  width by a factor greater than two.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.eventually_iidSequenceLaw_blockOscillationProbability_le_exp_of_centeredUnitVariance`:
+  the source-path rate gives the finite-variance exponential block bound.
+
+These are the source-path inputs for Wang Yiyang, *Asymptotic speed of the
+$N$-branching random walk with infinite offspring*, Chapter 3, proof of
+Lemma 3.3. The rate follows A. A. Mogul'skii, *Small Deviations in a Space
+of Trajectories*, Theorem 3, Section 4, p. 764 (English translation,
+DOI 10.1137/1119081).
 -/
 
 open Filter MeasureTheory ProbabilityTheory
