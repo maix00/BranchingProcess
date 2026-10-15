@@ -41,6 +41,8 @@ The public definitions and theorems in this file are:
   when $\tau'<1$.
 - `ContinuousMap.measurable_lastSignChangeMeanderTransform`:
   $f\mapsto\Psi(f)$ is Borel measurable.
+- `ContinuousMap.continuousAt_lastSignChangeMeanderTransform_of_eq_lastZero`:
+  $f\mapsto\Psi(f)$ is continuous where $\tau'(f)=g(f)<1$.
 - `ContinuousMap.lastSignChangeMeanderTransform_eq_lastZeroMeanderTransform`:
   $\Psi(f)=|f(g+(1-g)\cdot)|/\sqrt{1-g}$ under the same
   opposite-sign accumulation condition.
@@ -254,6 +256,80 @@ theorem measurable_lastSignChangeMeanderTransform :
     measurable_firstNoSignChangeStart (measurableSet_singleton ⊤)
   exact Measurable.ite hset measurable_const
     ((continuous_abs.measurable.comp heval).div hdenom)
+
+private abbrev nonterminalStart := {start : unitInterval // start < ⊤}
+
+private noncomputable def rescaledTailAt
+    (f : C(unitInterval, ℝ)) (start : nonterminalStart) :
+    C(unitInterval, ℝ) :=
+  ⟨fun t => |f (tailAffineTime start.1 t)| /
+    Real.sqrt (1 - (start.1 : ℝ)),
+    ((f.continuous.comp (continuous_tailAffineTime start.1)).abs).div_const _⟩
+
+private theorem continuous_tailAffineTime_pair :
+    Continuous (fun p : unitInterval × unitInterval =>
+      tailAffineTime p.1 p.2) := by
+  apply Continuous.subtype_mk
+  change Continuous (fun p : unitInterval × unitInterval =>
+    (p.1 : ℝ) + (1 - (p.1 : ℝ)) * (p.2 : ℝ))
+  fun_prop
+
+private theorem continuous_rescaledTailAt :
+    Continuous (fun p : C(unitInterval, ℝ) × nonterminalStart =>
+      rescaledTailAt p.1 p.2) := by
+  apply ContinuousMap.continuous_of_continuous_uncurry
+  have htime : Continuous (fun p :
+      (C(unitInterval, ℝ) × nonterminalStart) × unitInterval =>
+      tailAffineTime p.1.2.1 p.2) :=
+    continuous_tailAffineTime_pair.comp
+      ((continuous_subtype_val.comp
+        (continuous_snd.comp continuous_fst)).prodMk continuous_snd)
+  have heval : Continuous (fun p :
+      (C(unitInterval, ℝ) × nonterminalStart) × unitInterval =>
+      p.1.1 (tailAffineTime p.1.2.1 p.2)) :=
+    continuous_eval.comp
+      ((continuous_fst.comp continuous_fst).prodMk htime)
+  have hdenom : Continuous (fun p :
+      (C(unitInterval, ℝ) × nonterminalStart) × unitInterval =>
+      Real.sqrt (1 - (p.1.2.1 : ℝ))) := by fun_prop
+  have hdenom_ne (p :
+      (C(unitInterval, ℝ) × nonterminalStart) × unitInterval) :
+      Real.sqrt (1 - (p.1.2.1 : ℝ)) ≠ 0 := by
+    apply Real.sqrt_ne_zero'.mpr
+    exact sub_pos.mpr (by exact_mod_cast p.1.2.2)
+  exact heval.abs.div hdenom hdenom_ne
+
+/-- Bolthausen's terminal-path transform is continuous at a path whose
+last sign change equals its last zero and precedes time one. -/
+theorem continuousAt_lastSignChangeMeanderTransform_of_eq_lastZero
+    (f : C(unitInterval, ℝ))
+    (heq : firstNoSignChangeStart f = lastZero f)
+    (hlt : lastZero f < ⊤) :
+    ContinuousAt lastSignChangeMeanderTransform f := by
+  classical
+  let start : C(unitInterval, ℝ) → nonterminalStart := fun g =>
+    if h : firstNoSignChangeStart g < ⊤ then
+      ⟨firstNoSignChangeStart g, h⟩ else ⟨0, bot_lt_top⟩
+  have hτcont := continuousAt_firstNoSignChangeStart_of_eq_lastZero f heq
+  have hevent : ∀ᶠ g in nhds f, firstNoSignChangeStart g < ⊤ :=
+    hτcont.eventually (isOpen_Iio.mem_nhds (heq ▸ hlt))
+  have hval : ContinuousAt (fun g => (start g : unitInterval)) f := by
+    apply hτcont.congr
+    filter_upwards [hevent] with g hg
+    simp [start, hg]
+  have hstart : ContinuousAt start f := by
+    exact (continuousAt_codRestrict_iff (fun g => (start g).2)).mpr hval
+  have hrescale : ContinuousAt
+      (fun g => rescaledTailAt g (start g)) f :=
+    continuous_rescaledTailAt.continuousAt.comp
+      (continuousAt_id.prodMk hstart)
+  apply hrescale.congr
+  filter_upwards [hevent] with g hg
+  simp only [start, hg, dite_true, rescaledTailAt,
+    lastSignChangeMeanderTransform]
+  apply ContinuousMap.ext
+  intro t
+  simp [hg.ne]
 
 /-- On paths with opposite-sign values arbitrarily close to the last
 zero, Bolthausen's terminal segment is Iglehart's last-zero segment. -/
