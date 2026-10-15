@@ -38,6 +38,9 @@ The public definition and theorems in this file are:
   the transformed path starts at zero.
 - `ContinuousMap.lastZeroMeanderTransform_nonnegative`: the transformed
   path is nonnegative at every time.
+- `ContinuousMap.lastZeroMeanderTransform_pos_of_lastZero_lt_top`:
+  if $g(f)<1$, then the transformed path is strictly positive at
+  every $t\in(0,1]$.
 - `ContinuousMap.measurable_lastZeroMeanderTransform`: the terminal
   path transform is measurable on continuous path space.
 
@@ -200,6 +203,28 @@ theorem lastZeroMeanderTransform_nonnegative
   split_ifs
   · exact le_refl 0
   · exact div_nonneg (abs_nonneg _) (Real.sqrt_nonneg _)
+
+/-- After a last zero strictly before one, the rescaled terminal
+excursion is strictly positive at each positive time. -/
+theorem lastZeroMeanderTransform_pos_of_lastZero_lt_top
+    (f : C(unitInterval, ℝ)) (hcut : lastZero f < ⊤)
+    {t : unitInterval} (ht : 0 < t) :
+    0 < lastZeroMeanderTransform f t := by
+  have hcutReal : (lastZero f : ℝ) < 1 := hcut
+  have htReal : (0 : ℝ) < t := ht
+  have hafter : lastZero f < tailAffineTime (lastZero f) t := by
+    change (lastZero f : ℝ) <
+      (lastZero f : ℝ) + (1 - (lastZero f : ℝ)) * (t : ℝ)
+    nlinarith
+  have hnonzero : f (tailAffineTime (lastZero f) t) ≠ 0 :=
+    ne_zero_of_lastZero_lt f hafter
+  have hdenom : 0 < Real.sqrt (1 - (lastZero f : ℝ)) :=
+    Real.sqrt_pos.2 (by linarith)
+  change 0 < if lastZero f = ⊤ then 0 else
+    |f (tailAffineTime (lastZero f) t)| /
+      Real.sqrt (1 - (lastZero f : ℝ))
+  simpa [ne_of_lt hcut] using
+    (div_pos (abs_pos.2 hnonzero) hdenom)
 
 /-- The terminal-excursion transform is a measurable continuous-path
 valued functional. -/
