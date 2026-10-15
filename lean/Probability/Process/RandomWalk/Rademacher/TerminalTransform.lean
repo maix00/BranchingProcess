@@ -7,6 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.Rademacher.LastSignChange
+public import Probability.Process.RandomWalk.Path.Interpolation
 public import Topology.ContinuousMap.LastSignChange
 
 /-!
@@ -19,6 +20,8 @@ The public theorem in this file is:
   path is $\tau'(X_n)=\mu_n/n$.
 - `ProbabilityTheory.RandomWalk.rademacher_signStableMeanderTransform_eq_terminalAbsolutePath`:
   $\Psi(X_n)=\widetilde Y_n$ as continuous paths.
+- `ProbabilityTheory.RandomWalk.measurable_rademacherTerminalAbsolutePath`:
+  for $n>0$, the map $\omega\mapsto\widetilde Y_n(\omega)$ is Borel measurable.
 
 This is the discrete path identification used on page 484 of Erwin Bolthausen,
 *On a functional central limit theorem for random walks conditioned
@@ -353,6 +356,26 @@ theorem rademacher_signStableMeanderTransform_eq_terminalAbsolutePath
   rw [abs_mul, abs_mul, abs_inv, abs_inv,
     abs_of_pos hnroot, abs_of_pos hνroot]
   field_simp
+
+/-- The terminal polygonal path of the simple symmetric walk is a
+measurable continuous-path-valued random variable. This is the path
+used on page 484 of Erwin Bolthausen, *On a functional central limit
+theorem for random walks conditioned to stay positive*, Ann. Probab.
+4(3) (1976), 480--485, DOI 10.1214/aop/1176996098. -/
+theorem measurable_rademacherTerminalAbsolutePath
+    {n : ℕ} (hn : 0 < n) :
+    Measurable (fun branch => rademacherTerminalAbsolutePath branch n) := by
+  have heq : (fun branch => rademacherTerminalAbsolutePath branch n) =
+      fun branch => ContinuousMap.signStableMeanderTransform
+        (normalizedLinearContinuousPathIcc
+          (fun j => Real.sqrt j) n (rademacherIncrementPath branch)) := by
+    funext branch
+    exact (rademacher_signStableMeanderTransform_eq_terminalAbsolutePath
+      branch hn).symm
+  rw [heq]
+  exact ContinuousMap.measurable_signStableMeanderTransform.comp
+    ((measurable_normalizedLinearContinuousPathIcc _ _).comp
+      measurable_rademacherIncrementPath)
 
 end ProbabilityTheory.RandomWalk
 
