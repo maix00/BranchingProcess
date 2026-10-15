@@ -253,7 +253,7 @@ first-block assumption of
 window $[h_{t_1}+2\Delta/5,h_{t_1}+3\Delta/5]$ and proves that it is
 measurable at time $t_1$. `DriftedTube/FiniteVarianceLower/Staircase/EntranceBridge.lean` proves
 both its tilted-tube path constraint and its membership in the first
-horizontal central window. `DriftedTube/FiniteVarianceLower/Staircase/Concrete/EntranceLower.lean` eliminates
+horizontal central window. `DriftedTube/FiniteVarianceLower/Staircase/Concrete/Lower/Entrance.lean` eliminates
 the entrance geometry and measurability assumptions from the finite
 staircase theorem; the remaining entrance input is exactly the probability
 lower bound for this robust event. The printed $8c\ell<\Delta^3$ is used for the broader
@@ -267,7 +267,7 @@ comparisons for ordinary and final blocks; `DriftedTube/FiniteVarianceLower/Stai
 combines them into exactly the six per-block hypotheses of the finite
 product. These results formalize the common-threshold part of Wang Yiyang's
 schedule argument without a varying block-index assumption.
-`DriftedTube/FiniteVarianceLower/Staircase/Concrete/GlobalLower.lean` applies this reduction to the exact
+`DriftedTube/FiniteVarianceLower/Staircase/Concrete/Lower/Global.lean` applies this reduction to the exact
 finite staircase and robust entrance probability, yielding the target
 exponential lower bound from the global inequalities.
 `DriftedTube/FiniteVarianceLower/Staircase/Rate/Limit.lean` uses private width-ratio and floor-comparison
@@ -279,14 +279,14 @@ margin, superquadratic time ratio, and subcubic cost comparisons private
 and assembles the common threshold for the staircase proof.
 `DriftedTube/FiniteVarianceLower/Staircase/Endpoint/Limit.lean` proves that the ordinary endpoint fraction
 tends to $1/(3\beta)$; `DriftedTube/FiniteVarianceLower/Staircase/Eventually.lean` takes one common eventual
-threshold for all global conditions. `DriftedTube/FiniteVarianceLower/Staircase/Concrete/AsymptoticLower.lean`
+threshold for all global conditions. `DriftedTube/FiniteVarianceLower/Staircase/Concrete/Lower/Asymptotic.lean`
 then proves the eventual tilted-tube lower bound from the robust entrance
 probability budget. The entrance budget is supplied by
 `Entrance/RobustExponentialBudget.lean`. Its conditional transition estimate
 follows from the Bolthausen--Iglehart meander limit, while the finite-variance
 survival power input follows from the Bauer--Godrèche--Luck coefficient
 recurrence and the Gaussian endpoint-sign limit.
-`DriftedTube/FiniteVarianceLower/Staircase/Concrete/ConditionalLower.lean`
+`DriftedTube/FiniteVarianceLower/Staircase/Concrete/Lower/Conditional.lean`
 and `ConditionalUpper.lean` compose that entrance budget with the staircase
 product. `Analysis/Asymptotics/IntermediatePowerBlock.lean` verifies the
 paper's choice `ℓ=⌊Δ^(2+η)⌋`; `Concrete/Uniform.lean` converts both sequential

@@ -6,22 +6,22 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Staircase.Concrete.EntranceUpper
+public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Staircase.Concrete.Lower.Entrance
 public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Staircase.GlobalConditions
-
 /-!
-# Upper-endpoint bound from global staircase conditions
+# Tilted-tube lower bound from global staircase conditions
 
 The public theorem in this file is:
 
-- `exists_concreteStaircaseUpperEndpointLowerBound_of_globalConditions`:
-  global block-width, time, rate, and endpoint inequalities together
-  with the entrance bound imply
-  $\mathbb P(E_{\rm upper})\ge\exp(-d'L/\Delta^2)$.
+- `exists_concreteStaircaseLowerBound_of_globalConditions`:
+  the robust entrance estimate and the global width, time, rate, and
+  endpoint-margin inequalities imply
+  $\mathbb P(E)\ge\exp(-d'L/\Delta^2)$.
+  The ordinary and final blocks use their respective endpoint intervals.
 
-This is the common-threshold form of the symmetric construction in
-Wang Yiyang, *Asymptotic speed of the $N$-branching random walk with
-infinite offspring*, Chapter 3, proof of Lemma 3.5.
+This is the finite-block multiplication and common-threshold step in
+Wang Yiyang, *Asymptotic speed of the $N$-branching random walk with infinite
+offspring*, Chapter 3, proof of Lemma 3.5.
 -/
 
 @[expose] public section
@@ -32,8 +32,9 @@ open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 
-/-- Global staircase conditions imply the upper-endpoint lower bound. -/
-theorem exists_concreteStaircaseUpperEndpointLowerBound_of_globalConditions
+/-- The concrete staircase lower bound with blockwise conditions reduced to
+inequalities at the global scale. -/
+theorem exists_concreteStaircaseLowerBound_of_globalConditions
     {ν : Measure ℝ} [IsProbabilityMeasure ν]
     {sigma narrowedRate uInterior vInterior uFinal vFinal : ℝ}
     (hν : IsCenteredSecondMoment ν (sigma ^ 2))
@@ -72,12 +73,9 @@ theorem exists_concreteStaircaseUpperEndpointLowerBound_of_globalConditions
         vInterior + margin ≤
           ((2 / 3 : ℝ) - 1 / (3 * (m : ℝ))) /
             staircaseBinWidth m →
-        (max (1 - endpointFraction) 0 * globalWidth /
-            (globalWidth -
-              2 * drift * (blockLength : ℝ) / globalWidth ^ 2)) /
-          staircaseBinWidth m + margin ≤ uFinal →
+        margin ≤ uFinal →
         vFinal + margin ≤
-          (1 - 1 / (3 * (m : ℝ))) /
+          (endpointFraction - 1 / (3 * (m : ℝ))) /
             staircaseBinWidth m →
         Real.exp (-(totalRate - blockRate) * (horizon : ℝ) /
           globalWidth ^ 2) ≤
@@ -86,10 +84,10 @@ theorem exists_concreteStaircaseUpperEndpointLowerBound_of_globalConditions
               (-base)) →
         Real.exp (-totalRate * (horizon : ℝ) / globalWidth ^ 2) ≤
           (iidSequenceLaw ν).real
-            (driftedTubeUpperEndpointWindowEvent horizon globalWidth
-              drift base endpointFraction) := by
+            (driftedTubeEndpointWindowEvent horizon globalWidth drift
+              base endpointFraction) := by
   obtain ⟨width₀, ratio₀, hfinite⟩ :=
-    exists_concreteStaircaseUpperEndpointLowerBound_of_robustEntrance
+    exists_concreteStaircaseLowerBound_of_robustEntrance
       hν hsigma m hm huInterior huvInterior hvInterior
         huFinal huvFinal hvFinal hrate
   refine ⟨width₀, ratio₀, ?_⟩
@@ -101,7 +99,7 @@ theorem exists_concreteStaircaseUpperEndpointLowerBound_of_globalConditions
   apply hfinite entrance horizon blockLength margin globalWidth drift
     base endpointFraction blockRate totalRate hremaining hblockLength
     hglobalWidth hmargin hdrift hblockRate hcost
-  · exact staircaseUpperEndpointBlockConditions_of_global (by omega)
+  · exact staircaseBlockConditions_of_global (by omega)
       hblockLength hm hglobalWidth hdrift hendpoint hblockRate hcost
       hfloorThreshold hmarginWidth htime hrate' hinteriorLower
       hinteriorUpper hfinalLower hfinalUpper

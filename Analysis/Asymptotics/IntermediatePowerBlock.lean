@@ -14,10 +14,10 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 
 The public theorems in this file are:
 
-- `Asymptotics.intermediate_power_block_ratios`: if $\Delta_n	o\infty$
+- `Asymptotics.intermediate_power_block_ratios`: if $\Delta_n\to\infty$
   and $0<\eta<1$, then for
   $\ell_n=\lfloor\Delta_n^{2+\eta}\rfloor$,
-  $\Delta_n^2/\ell_n	o0$, $\ell_n/\Delta_n^3	o0$, and
+  $\Delta_n^2/\ell_n\to0$, $\ell_n/\Delta_n^3\to0$, and
   $\ell_n>0$ eventually.
 - `Asymptotics.eventually_intermediate_block_fits`: if
   $0<\eta<\varepsilon$, then eventually
