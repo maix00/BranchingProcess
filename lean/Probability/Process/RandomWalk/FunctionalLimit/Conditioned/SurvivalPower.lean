@@ -8,6 +8,7 @@ module
 
 public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Survival
 public import Probability.Process.RandomWalk.Fluctuation.StableLadderTimeTail
+public import Probability.Process.RandomWalk.Fluctuation.FiniteVarianceDescendingTime
 public import Analysis.Asymptotics.RegularVariation.LowerPower
 public import Analysis.Asymptotics.ShiftedFloor
 
@@ -24,8 +25,9 @@ The public objects and theorems in this file are:
   regular variation of the first descending ladder-time tail transfers
   to the survival probability.
 - ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.survivalProbabilityReal_regularVariation_of_ladderTimeStableAttraction:
-  stable attraction of the finite first ladder time at index $1/2$
-  gives regular variation of $\mathbb P(C_{\lfloor x\rfloor})$ at index $-1/2$.
+  for centered finite positive variance, stable attraction of the first
+  descending ladder time at index $1/2$ gives regular variation of
+  $\mathbb P(C_{\lfloor x\rfloor})$ at index $-1/2$.
 - ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.survivalProbabilityReal_antitone:
   $x\le y$ implies $\mathbb P(C_{\lfloor y\rfloor})\le
   \mathbb P(C_{\lfloor x\rfloor})$.
@@ -93,8 +95,8 @@ to stay positive*, Lemma 2.1, yield its finite-variance survival exponent
 through $C_N=\{T^-_1>N\}$. -/
 theorem survivalProbabilityReal_regularVariation_of_ladderTimeStableAttraction
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
-    (hfinite : iidSequenceLaw ν {increment |
-      strictDescendingLadderTime increment 1 = ⊤} = 0)
+    {sigma : ℝ} (hν : IsCenteredSecondMoment ν (sigma ^ 2))
+    (hsigma : 0 < sigma)
     {limit : Measure ℝ}
     (hlimit : IsAlphaStable (1 / 2 : ℝ) limit)
     {scale center : ℕ → ℝ}
@@ -103,6 +105,9 @@ theorem survivalProbabilityReal_regularVariation_of_ladderTimeStableAttraction
       hlimit.isProbabilityMeasure scale center) :
     Asymptotics.IsRegularlyVaryingAtTop
       (survivalProbabilityReal ν) (-(1 / 2 : ℝ)) := by
+  have hfinite :=
+    measure_firstDescendingLadderTime_eq_top_zero_of_centeredSecondMoment
+      ν hν hsigma
   have htail :=
     firstDescendingLadderTimeTailReal_regularVariation_of_stableAttraction
       hfinite hlimit h (by norm_num) (by norm_num)
