@@ -227,6 +227,19 @@
     xcolor,
     etoolbox
   }
+\cs_if_exist:NT \newcounteralias
+  {
+    \cs_new_eq:NN \__fdu_thm_original_autorefsetup: \thmt@autorefsetup
+    \cs_set_protected:Npn \thmt@autorefsetup
+      {
+        \cs_set_eq:NN \__fdu_thm_original_sibling: \thmt@sibling
+        \cs_set_eq:NN \__fdu_thm_original_counteralias: \@counteralias
+        \cs_set_eq:NN \@counteralias \use_none:nn
+        \__fdu_thm_original_autorefsetup:
+        \cs_set_eq:NN \@counteralias \__fdu_thm_original_counteralias:
+        \cs_set_eq:NN \thmt@sibling \__fdu_thm_original_sibling:
+      }
+  }
 \sys_if_engine_xetex:T
   {
     \bool_new:N \g__fdu_ascii_punctuation_spacing_bool
@@ -238,6 +251,12 @@
     \newcount\g__fdu_last_char_cjk_int
     \newcount\g__fdu_reference_left_int
     \newcount\g__fdu_reference_right_int
+    \int_new:N \g__fdu_punctuation_char_int
+    \dim_new:N \l__fdu_punctuation_gap_dim
+    \clist_const:Nn \c__fdu_right_punctuation_classes_clist
+      { FduComma, FduColon, FduSemicolon }
+    \clist_const:Nn \c__fdu_punctuation_classes_clist
+      { FduComma, FduColon, FduSemicolon, FduPeriod }
     \bool_gset_true:N \g__fdu_ascii_punctuation_spacing_bool
     % Punctuation state must not survive paragraph boundaries.  The ordinary
     % paragraph hooks do this at both ends; lists replace \everypar, so clear
@@ -248,6 +267,7 @@
         \bool_gset_false:N \g__fdu_period_space_bool
         \bool_gset_false:N \g__fdu_theorem_head_end_bool
         \bool_gset_false:N \g__fdu_reference_right_gap_bool
+        \int_gzero:N \g__fdu_punctuation_char_int
         \global\g__fdu_last_char_cjk_int=0\relax
         \global\g__fdu_reference_left_int=0\relax
         \global\g__fdu_reference_right_int=0\relax
@@ -264,31 +284,40 @@
     % Clone the existing transitions before adding any extra glue.  This
     % keeps these classes identical to HalfRight/Default for all non-spacing
     % purposes, without applying the extra gap to every HalfRight character.
-    \xeCJK_new_class:n { FduRightPunct }
+    \xeCJK_new_class:n { FduComma }
+    \xeCJK_new_class:n { FduColon }
+    \xeCJK_new_class:n { FduSemicolon }
     \xeCJK_new_class:n { FduPeriod }
     \xeCJK_new_class:n { FduDigit }
+    \cs_new_protected:Npn \__fdu_clone_halfright_class:n #1
+      {
+        \seq_map_inline:Nn \g__xeCJK_base_class_seq
+          {
+            \xeCJK_copy_inter_class_toks:nnnn {#1} {##1} { HalfRight } {##1}
+            \xeCJK_copy_inter_class_toks:nnnn {##1} {#1} {##1} { HalfRight }
+          }
+      }
+    \clist_map_inline:Nn \c__fdu_punctuation_classes_clist
+      { \__fdu_clone_halfright_class:n {#1} }
+    % Digits have their own class to distinguish decimal points from sentence
+    % periods. Preserve Default transitions to all native xeCJK classes so a
+    % digit followed by CJK text (e.g. a Chinese date) still selects the CJK
+    % font and receives xeCJK's ordinary inter-script glue.
     \seq_map_inline:Nn \g__xeCJK_base_class_seq
       {
-        \xeCJK_copy_inter_class_toks:nnnn { FduRightPunct } {#1} { HalfRight } {#1}
-        \xeCJK_copy_inter_class_toks:nnnn {#1} { FduRightPunct } {#1} { HalfRight }
-        \xeCJK_copy_inter_class_toks:nnnn { FduPeriod } {#1} { HalfRight } {#1}
-        \xeCJK_copy_inter_class_toks:nnnn {#1} { FduPeriod } {#1} { HalfRight }
         \xeCJK_copy_inter_class_toks:nnnn { FduDigit } {#1} { Default } {#1}
         \xeCJK_copy_inter_class_toks:nnnn {#1} { FduDigit } {#1} { Default }
       }
-    \xeCJK_copy_inter_class_toks:nnnn { FduRightPunct } { FduRightPunct } { HalfRight } { HalfRight }
-    \xeCJK_copy_inter_class_toks:nnnn { FduRightPunct } { Boundary } { HalfRight } { Boundary }
-    \xeCJK_copy_inter_class_toks:nnnn { Boundary } { FduRightPunct } { Boundary } { HalfRight }
-    \xeCJK_copy_inter_class_toks:nnnn { FduPeriod } { FduPeriod } { HalfRight } { HalfRight }
-    \xeCJK_copy_inter_class_toks:nnnn { FduPeriod } { FduRightPunct } { HalfRight } { HalfRight }
-    \xeCJK_copy_inter_class_toks:nnnn { FduRightPunct } { FduPeriod } { HalfRight } { HalfRight }
-    \xeCJK_copy_inter_class_toks:nnnn { FduPeriod } { FduDigit } { HalfRight } { Default }
-    \xeCJK_copy_inter_class_toks:nnnn { FduDigit } { FduPeriod } { Default } { HalfRight }
+    \clist_map_inline:Nn \c__fdu_punctuation_classes_clist
+      {
+        \clist_map_inline:Nn \c__fdu_punctuation_classes_clist
+          { \xeCJK_copy_inter_class_toks:nnnn {#1} {##1} { HalfRight } { HalfRight } }
+        \xeCJK_copy_inter_class_toks:nnnn {#1} { Boundary } { HalfRight } { Boundary }
+        \xeCJK_copy_inter_class_toks:nnnn { Boundary } {#1} { Boundary } { HalfRight }
+        \xeCJK_copy_inter_class_toks:nnnn {#1} { FduDigit } { HalfRight } { Default }
+        \xeCJK_copy_inter_class_toks:nnnn { FduDigit } {#1} { Default } { HalfRight }
+      }
     \xeCJK_copy_inter_class_toks:nnnn { FduDigit } { FduDigit } { Default } { Default }
-    \xeCJK_copy_inter_class_toks:nnnn { FduRightPunct } { FduDigit } { HalfRight } { Default }
-    \xeCJK_copy_inter_class_toks:nnnn { FduDigit } { FduRightPunct } { Default } { HalfRight }
-    \xeCJK_copy_inter_class_toks:nnnn { FduPeriod } { Boundary } { HalfRight } { Boundary }
-    \xeCJK_copy_inter_class_toks:nnnn { Boundary } { FduPeriod } { Boundary } { HalfRight }
     \xeCJK_copy_inter_class_toks:nnnn { FduDigit } { Boundary } { Default } { Boundary }
     \xeCJK_copy_inter_class_toks:nnnn { Boundary } { FduDigit } { Boundary } { Default }
     % In xeCJK's native HalfRight-to-Default transition, the period may
@@ -306,6 +335,16 @@
           }
           { \tl_use:N \c__fdu_period_digit_tl }
       }
+    \cs_new_protected:Npn \__fdu_set_punctuation_char_for_class:n #1
+      {
+        \str_case:nn {#1}
+          {
+            { FduComma }     { \int_gset:Nn \g__fdu_punctuation_char_int { 44 } }
+            { FduColon }     { \int_gset:Nn \g__fdu_punctuation_char_int { 58 } }
+            { FduSemicolon } { \int_gset:Nn \g__fdu_punctuation_char_int { 59 } }
+            { FduPeriod }    { \int_gset:Nn \g__fdu_punctuation_char_int { 46 } }
+          }
+      }
     \cs_new_protected:Npn \__fdu_punctuation_glue:
       {
         \bool_if:NT \g__fdu_ascii_punctuation_spacing_bool
@@ -315,9 +354,23 @@
               {
                 \bool_if:NTF \g__fdu_theorem_head_end_bool
                   { \bool_gset_false:N \g__fdu_theorem_head_end_bool }
-                  { \skip_horizontal:n { .4em } \CJKecglue }
+                  {
+                    \dim_set:Nn \l__fdu_punctuation_gap_dim
+                      {
+                        \ccwd
+                        - \fontcharwd \font
+                            \int_use:N \g__fdu_punctuation_char_int
+                      }
+                    \nobreak
+                    \skip_horizontal:N \l__fdu_punctuation_gap_dim
+                  }
               }
           }
+      }
+    \cs_new_protected:Npn \__fdu_punctuation_glue_for_class:n #1
+      {
+        \__fdu_set_punctuation_char_for_class:n {#1}
+        \__fdu_punctuation_glue:
       }
     % A theorem style puts its original post-head space (6 pt here) at the
     % end of the boxed heading.  When replacing a source space after a
@@ -339,9 +392,10 @@
           }
       }
     % The HalfRight-to-CJK transition clears its own class-specific hook once
-    % the CJK font has been selected; retarget that cleanup for this class.
+    % the CJK font has been selected; retarget that cleanup for these classes.
     \cs_new_protected:Npn \__fdu_right_punct_to_cjk:n #1
       {
+        \__fdu_set_punctuation_char_for_class:n {#1}
         \__fdu_punctuation_glue:
         \xeCJK_class_group_begin:
         \xeCJK_select_font:
@@ -350,47 +404,78 @@
         \xeCJK_fallback_symbol:NN
         \CJKsymbol
       }
-    \xeCJK_inter_class_toks:nnn { FduRightPunct } { CJK }
-      { \__fdu_right_punct_to_cjk:n { FduRightPunct } }
+    \xeCJK_inter_class_toks:nnn { FduComma } { CJK }
+      { \__fdu_right_punct_to_cjk:n { FduComma } }
+    \xeCJK_inter_class_toks:nnn { FduColon } { CJK }
+      { \__fdu_right_punct_to_cjk:n { FduColon } }
+    \xeCJK_inter_class_toks:nnn { FduSemicolon } { CJK }
+      { \__fdu_right_punct_to_cjk:n { FduSemicolon } }
     \xeCJK_inter_class_toks:nnn { FduPeriod } { CJK }
       { \__fdu_right_punct_to_cjk:n { FduPeriod } }
 
-    \xeCJK_declare_char_class:nn { FduRightPunct } { "2C , "3A , "3B }
+    \xeCJK_declare_char_class:nn { FduComma } { "2C }
+    \xeCJK_declare_char_class:nn { FduColon } { "3A }
+    \xeCJK_declare_char_class:nn { FduSemicolon } { "3B }
     \xeCJK_declare_char_class:nn { FduPeriod } { "2E }
     \xeCJK_declare_char_class:nn { FduDigit } { "30 -> "39 }
 
-    \clist_map_inline:nn
-      { Default, HalfLeft, HalfRight, FduRightPunct, FduPeriod, FduDigit,
-        NormalSpace, FullLeft, FullRight }
+    \cs_new_protected:Npn \__fdu_install_right_punctuation_glue:nn #1#2
       {
-        \xeCJK_pre_inter_class_toks:nnn { FduRightPunct } {#1}
-          { \__fdu_punctuation_glue: }
+        \clist_map_inline:nn
+          { Default, HalfLeft, HalfRight, FduComma, FduColon, FduSemicolon,
+            FduPeriod, FduDigit, NormalSpace, FullLeft, FullRight }
+          { \xeCJK_pre_inter_class_toks:nnn {#1} {##1} {#2} }
       }
-    \clist_map_inline:nn
-      { Default, HalfLeft, HalfRight, FduRightPunct,
-        NormalSpace, FullLeft, FullRight }
+    \__fdu_install_right_punctuation_glue:nn
+      { FduComma } { \__fdu_punctuation_glue_for_class:n { FduComma } }
+    \__fdu_install_right_punctuation_glue:nn
+      { FduColon } { \__fdu_punctuation_glue_for_class:n { FduColon } }
+    \__fdu_install_right_punctuation_glue:nn
+      { FduSemicolon } { \__fdu_punctuation_glue_for_class:n { FduSemicolon } }
+    \cs_new_protected:Npn \__fdu_install_period_punctuation_glue:
       {
-        \xeCJK_pre_inter_class_toks:nnn { FduPeriod } {#1}
-          { \__fdu_punctuation_glue: }
+        \clist_map_inline:nn
+          { Default, HalfLeft, HalfRight, FduComma, FduColon,
+            FduSemicolon, FduPeriod, NormalSpace, FullLeft, FullRight }
+          {
+            \xeCJK_pre_inter_class_toks:nnn { FduPeriod } {##1}
+              { \__fdu_punctuation_glue_for_class:n { FduPeriod } }
+          }
       }
-    \xeCJK_pre_inter_class_toks:nnn { FduRightPunct } { Boundary }
+    \__fdu_install_period_punctuation_glue:
+    \cs_new_protected:Npn \__fdu_mark_right_punctuation_boundary:n #1
       {
         \bool_if:NT \g__fdu_ascii_punctuation_spacing_bool
-          { \bool_gset_true:N \g__fdu_half_right_space_bool }
+          {
+            \bool_gset_true:N \g__fdu_half_right_space_bool
+            \__fdu_set_punctuation_char_for_class:n {#1}
+          }
+      }
+    \clist_map_inline:Nn \c__fdu_right_punctuation_classes_clist
+      {
+        \xeCJK_pre_inter_class_toks:nnn {#1} { Boundary }
+          { \__fdu_mark_right_punctuation_boundary:n {#1} }
       }
     \xeCJK_pre_inter_class_toks:nnn { FduPeriod } { Boundary }
       {
         \bool_if:NT \g__fdu_ascii_punctuation_spacing_bool
-          { \bool_gset_true:N \g__fdu_period_space_bool }
+          {
+            \bool_gset_true:N \g__fdu_period_space_bool
+            \__fdu_set_punctuation_char_for_class:n { FduPeriod }
+          }
       }
 
     % Save the cloned transition, then specialize math.  Unlike ordinary
     % text, an inline formula does not cause a later Boundary-to-<class>
     % transition where the source space could be replaced.  Looking through
     % spaces here gives the same fixed gap for ``.$x$'' and ``.   $x$''.
-    \tl_const:Nx \c__fdu_right_punct_boundary_tl
-      { \xeCJK_get_inter_class_toks:nn { FduRightPunct } { Boundary } }
-    \xeCJK_inter_class_toks:nnn { FduRightPunct } { Boundary }
+    \tl_const:Nx \c__fdu_comma_boundary_tl
+      { \xeCJK_get_inter_class_toks:nn { FduComma } { Boundary } }
+    \tl_const:Nx \c__fdu_colon_boundary_tl
+      { \xeCJK_get_inter_class_toks:nn { FduColon } { Boundary } }
+    \tl_const:Nx \c__fdu_semicolon_boundary_tl
+      { \xeCJK_get_inter_class_toks:nn { FduSemicolon } { Boundary } }
+    \cs_new_protected:Npn \__fdu_right_punctuation_boundary:nn #1#2
       {
         \bool_if:NTF \g__fdu_ascii_punctuation_spacing_bool
           {
@@ -400,10 +485,16 @@
                 \bool_gset_false:N \g__fdu_half_right_space_bool
                 \__fdu_punctuation_glue:
               }
-              { \tl_use:N \c__fdu_right_punct_boundary_tl }
+              { \tl_use:N #2 }
           }
-          { \tl_use:N \c__fdu_right_punct_boundary_tl }
+          { \tl_use:N #2 }
       }
+    \xeCJK_inter_class_toks:nnn { FduComma } { Boundary }
+      { \__fdu_right_punctuation_boundary:nn { FduComma } { \c__fdu_comma_boundary_tl } }
+    \xeCJK_inter_class_toks:nnn { FduColon } { Boundary }
+      { \__fdu_right_punctuation_boundary:nn { FduColon } { \c__fdu_colon_boundary_tl } }
+    \xeCJK_inter_class_toks:nnn { FduSemicolon } { Boundary }
+      { \__fdu_right_punctuation_boundary:nn { FduSemicolon } { \c__fdu_semicolon_boundary_tl } }
     \tl_const:Nx \c__fdu_period_boundary_tl
       { \xeCJK_get_inter_class_toks:nn { FduPeriod } { Boundary } }
     \xeCJK_inter_class_toks:nnn { FduPeriod } { Boundary }
@@ -437,7 +528,7 @@
         \bool_gset_false:N \g__fdu_theorem_head_end_bool
       }
     \clist_map_inline:nn
-      { Default, HalfLeft, HalfRight, FduRightPunct, FduPeriod,
+      { Default, HalfLeft, HalfRight, FduComma, FduColon, FduSemicolon, FduPeriod,
         NormalSpace, FullLeft, FullRight }
       {
         \xeCJK_pre_inter_class_toks:nnn { Boundary } {#1}
@@ -476,7 +567,7 @@
                   {
                     \unskip
                     \bool_if:NF \g__fdu_theorem_head_bool
-                      { \skip_horizontal:n { .4em } \CJKecglue }
+                      { \__fdu_punctuation_glue: }
                   }
                 \tl_use:N \c__fdu_boundary_digit_tl
               }
@@ -536,41 +627,22 @@
         \xeCJKsetup
           {
             experiment/boundary-register =
-              { command = \scalebox, strategy = box },
+              { command = \FduAutorefBoundary, strategy = stream },
+            % Wrap cleveref's public commands in ordinary stream adapters.
+            % Its robust wrappers use grouped internal dispatch that cannot be
+            % safely hooked as a stream by the LaTeX command-hook mechanism.
             experiment/boundary-register =
-              { command = \autoref, strategy = stream },
+              { command = \FduCrefBoundary, strategy = stream },
             experiment/boundary-register =
-              { command = \cref, strategy = stream },
+              { command = \FduCrefStarBoundary, strategy = stream },
             experiment/boundary-register =
-              { command = \Cref, strategy = stream },
+              { command = \FduCrefCapitalBoundary, strategy = stream },
             experiment/boundary-register =
-              { command = \crefrange, strategy = stream },
+              { command = \FduCrefCapitalStarBoundary, strategy = stream },
             experiment/boundary-register =
-              { command = \Crefrange, strategy = stream },
+              { command = \FduNamecrefBoundary, strategy = stream },
             experiment/boundary-register =
-              { command = \cpageref, strategy = stream },
-            experiment/boundary-register =
-              { command = \Cpageref, strategy = stream },
-            experiment/boundary-register =
-              { command = \cpagerefrange, strategy = stream },
-            experiment/boundary-register =
-              { command = \Cpagerefrange, strategy = stream },
-            experiment/boundary-register =
-              { command = \labelcref, strategy = stream },
-            experiment/boundary-register =
-              { command = \namecref, strategy = stream },
-            experiment/boundary-register =
-              { command = \nameCref, strategy = stream },
-            experiment/boundary-register =
-              { command = \lcnamecref, strategy = stream },
-            experiment/boundary-register =
-              { command = \namecrefs, strategy = stream },
-            experiment/boundary-register =
-              { command = \nameCrefs, strategy = stream },
-            experiment/boundary-register =
-              { command = \lcnamecrefs, strategy = stream },
-            experiment/boundary-register =
-              { command = \labelcpageref, strategy = stream }
+              { command = \FduNameCrefBoundary, strategy = stream }
           }
       }
       {
@@ -698,8 +770,11 @@
               { \__fdu_reference_non_cjk_transition: }
             \__fdu_reference_track_target:nn { HalfRight }
               { \__fdu_reference_non_cjk_transition: }
-            \__fdu_reference_track_target:nn { FduRightPunct }
-              { \__fdu_reference_non_cjk_transition: }
+            \clist_map_inline:Nn \c__fdu_right_punctuation_classes_clist
+              {
+                \__fdu_reference_track_target:nn {##1}
+                  { \__fdu_reference_non_cjk_transition: }
+              }
             \__fdu_reference_track_target:nn { FduPeriod }
               { \__fdu_reference_non_cjk_transition: }
             \__fdu_reference_track_target:nn { FduDigit }
@@ -1481,7 +1556,6 @@
       % #2 非空：使用 sibling
       \declaretheorem[
         name         = {#4},
-        numberwithin = {#1},
         sibling      = {#2},
         style        = {#3}
       ]{#3}
@@ -2401,6 +2475,49 @@
 \ctex_at_end_preamble:n
   {
     \RequirePackage { hyperref, nameref, cleveref }
+    % Install stable adapters around cleveref.  The original robust commands
+    % are captured at begin-document time (after cleveref enables its starred
+    % forms), while xeCJK tracks the adapters' visible text streams.
+    \NewDocumentCommand \FduAutorefBoundary { m }
+      { \FduOriginalautoref {#1} }
+    \NewDocumentCommand \FduCrefBoundary { m }
+      { \FduOriginalcref {#1} }
+    \NewDocumentCommand \FduCrefStarBoundary { m }
+      { \FduOriginalcref * {#1} }
+    \NewDocumentCommand \FduCrefCapitalBoundary { m }
+      { \FduOriginalCref {#1} }
+    \NewDocumentCommand \FduCrefCapitalStarBoundary { m }
+      { \FduOriginalCref * {#1} }
+    \NewDocumentCommand \FduNamecrefBoundary { m }
+      { \FduOriginalnamecref {#1} }
+    \NewDocumentCommand \FduNameCrefBoundary { m }
+      { \FduOriginalnameCref {#1} }
+    \AtBeginDocument
+      {
+        \NewCommandCopy \FduOriginalautoref \autoref
+        \NewCommandCopy \FduOriginalcref \cref
+        \NewCommandCopy \FduOriginalCref \Cref
+        \NewCommandCopy \FduOriginalnamecref \namecref
+        \NewCommandCopy \FduOriginalnameCref \nameCref
+        \RenewDocumentCommand \cref { s m }
+          {
+            \IfBooleanTF {#1}
+              { \FduCrefStarBoundary {#2} }
+              { \FduCrefBoundary {#2} }
+          }
+        \RenewDocumentCommand \Cref { s m }
+          {
+            \IfBooleanTF {#1}
+              { \FduCrefCapitalStarBoundary {#2} }
+              { \FduCrefCapitalBoundary {#2} }
+          }
+        \RenewDocumentCommand \autoref { m }
+          { \FduAutorefBoundary {#1} }
+        \RenewDocumentCommand \namecref { m }
+          { \FduNamecrefBoundary {#1} }
+        \RenewDocumentCommand \nameCref { m }
+          { \FduNameCrefBoundary {#1} }
+      }
     \newcommand{\crefpairconjunction}{~和~}
     \newcommand{\crefmiddleconjunction}{、}
     \newcommand{\creflastconjunction}{~和~}

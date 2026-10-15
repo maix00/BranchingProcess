@@ -227,6 +227,19 @@
     xcolor,
     etoolbox
   }
+\cs_if_exist:NT \newcounteralias
+  {
+    \cs_new_eq:NN \__fdu_thm_original_autorefsetup: \thmt@autorefsetup
+    \cs_set_protected:Npn \thmt@autorefsetup
+      {
+        \cs_set_eq:NN \__fdu_thm_original_sibling: \thmt@sibling
+        \cs_set_eq:NN \__fdu_thm_original_counteralias: \@counteralias
+        \cs_set_eq:NN \@counteralias \use_none:nn
+        \__fdu_thm_original_autorefsetup:
+        \cs_set_eq:NN \@counteralias \__fdu_thm_original_counteralias:
+        \cs_set_eq:NN \thmt@sibling \__fdu_thm_original_sibling:
+      }
+  }
 \newcommand\deletetheorem[1]{
   \expandafter\let\csname c@#1\endcsname\relax
   \expandafter\let\csname the#1\endcsname\relax
@@ -799,7 +812,6 @@
       % #2 非空：使用 sibling
       \declaretheorem[
         name         = {#4},
-        numberwithin = {#1},
         sibling      = {#2},
         style        = {#3}
       ]{#3}
