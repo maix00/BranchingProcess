@@ -16,6 +16,17 @@ public import Probability.Distributions.Gaussian.Interval
 /-!
 # A finite variance corridor lower bound
 
+The public definitions and theorem are:
+
+- `finiteVarianceEntranceLength` and `finiteVarianceBridgeLength`:
+  $\lfloor\Delta_n^2\rfloor$ and the remaining horizon
+  $n-\lfloor\Delta_n^2\rfloor$.
+- `exists_eventually_iidSequenceLaw_endpointCorridor_lowerBound_of_centeredSecondMoment`:
+  for a centered increment law with positive finite variance, the
+  entrance probability times the stable endpoint-bridge probability
+  bounds below the chance of remaining in the enlarged corridor and
+  ending in its terminal unit-width window.
+
 The diffusive entrance estimate and the stable endpoint-core bridge combine
 to give a quantitative lower bound for a full random-walk corridor event.
 -/

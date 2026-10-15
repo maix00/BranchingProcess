@@ -18,6 +18,18 @@ public import Topology.Cadlag.Skorokhod.LinearPath
 /-!
 # Donsker transfer for a linear open tube
 
+The public theorems are:
+
+- `eventually_measure_normalizedStep_linearBall_pos`: for each slope $s$
+  and radius $r>0$, the unit-variance normalized walk has
+  $\mathbb P(X_n\in B_{J_1}(t\mapsto st,r))>q>0$ eventually.
+- `eventually_measure_normalizedStep_linearBall_pos_of_centeredSecondMoment`:
+  the same bound with normalization $\sigma\sqrt n$ for variance $\sigma^2$.
+- `eventually_measure_normalizedStep_linearBall_pos_on_Icc`:
+  one $q>0$ works for every slope $s\in[-b,b]$ in the unit-variance case.
+- `eventually_measure_normalizedStep_linearBall_pos_on_Icc_of_centeredSecondMoment`:
+  the same uniform slope bound for variance $\sigma^2$.
+
 The Gaussian stable path-law linear-tube positivity theorem and the
 normal-domain functional limit imply a positive lower bound, uniform for all
 sufficiently large sample sizes, on the probability that a normalized

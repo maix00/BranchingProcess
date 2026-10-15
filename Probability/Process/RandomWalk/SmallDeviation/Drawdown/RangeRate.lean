@@ -12,6 +12,21 @@ public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.BlockOscill
 /-!
 # Sharp range bounds from finite corridor rates
 
+The public definitions and theorems are:
+
+- `rangeCoverTarget`, `rangeCoverRelativeApproximation`, and
+  `rangeCoverRelativeEnergyLimits`: the finite translated-corridor cover
+  of the source-path range event and its constant energy approximation.
+- `sourceRangeCoverProbabilityRate_of_centeredUnitVariance`:
+  $\Delta_n^2/n\,\log\mathbb P(R_{k,n})\to
+  -\pi^2\mathcal E_k/2$, where $\mathcal E_k$ is the cover energy.
+- `blockOscillationEvent_subset_sourceRangeTube`:
+  an increment block of oscillation at most $w$ lies in the normalized
+  source-path range tube at spatial scale greater than $w/2$.
+- `eventually_iidSequenceLaw_blockOscillationProbability_le_exp_of_centeredUnitVariance_rangeCover`:
+  for a rate $d<\pi^2\mathcal E_k/2$, the block oscillation probability
+  is eventually at most $\exp(-dn/\Delta_n^2)$.
+
 Finite translated corridors cover paths whose range diameter is bounded.
 Combining that cover with the raw increment-law Mogul'skii rate yields the
 sharp finite-variance exponential rate for block oscillation.

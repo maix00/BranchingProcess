@@ -12,6 +12,13 @@ public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalk
 /-!
 # Entrance followed by a robust endpoint bridge
 
+The public theorem is
+`iidSequenceLaw_measure_mul_of_finiteMovingEntranceEvent_bridge`:
+if the entrance event has probability at least $q$ and the subsequent
+endpoint bridge has probability at least $p$, then the entire path lies
+in $[-r\Delta,0]$, ends in $[-r\Delta,(1-r)\Delta]$, and has probability
+at least $pq$.
+
 This file connects a finite-variance entrance event to a longer corridor
 event.  The entrance endpoint is the source core of a robust bridge block;
 the finite-block comparison theorem then multiplies the two probabilities.

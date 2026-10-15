@@ -11,6 +11,13 @@ public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Ran
 /-!
 # Stable lower bounds for endpoint bridges
 
+The public theorem is
+`exists_eventually_iidSequenceLaw_rightEndpointBridge_ge_stableCellLowerBound`:
+under the stable path-limit and escape-rate hypotheses, the bridge from
+the entrance core to the terminal window has an eventual positive
+block-product lower bound of the form
+$\exp(C_1a^2)^{q_n+1}\le\mathbb P(E_n)$.
+
 This file specializes the stable endpoint-core estimate to the bridge from
 the central third of `[-D, 0]` to the terminal interval of a wider corridor.
 -/
