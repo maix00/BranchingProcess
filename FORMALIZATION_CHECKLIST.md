@@ -150,35 +150,26 @@ equation (2.4) is proved for finite and unrestricted horizons in
 Bolthausen's three-contact event $U$ is null. Both conclusions use the
 rational-interval covering of repeated running-minimum values, independent
 past and future continuous paths, and the atomless Brownian running minimum.
-`Path/AboveStart/RunningMinimum.lean` reduces the endpoint equality in
-equation (2.2) to an interior return or a unit-length excursion above the
-running minimum. Outside $U$, it also identifies the window start with the
-first passage of its height and proves that every strictly lower level is
-first reached after the returned endpoint. The remaining input is the zero
-probability of a unit-length excursion, which Bolthausen derives from the Lévy decomposition of the
-descending Brownian hitting-time process. The pathwise process
-$\tau_x=\inf\{t:B(t)\le-x\}$, its monotonicity, and its fixed-level
-measurability are in `Path/DescendingHittingTime.lean`. If the path later
-reaches a lower value, `Path/AboveStart/RunningMinimum.lean` proves that
-every $v>t+1$ already bounds the hitting time of some lower level, so the
-right-hand level limit is exactly $t+1$.
+`Path/AboveStart/RunningMinimum.lean` reduces endpoint equality in
+equation (2.2) to a unit-length excursion outside $U$. Bolthausen
+excludes this by citing the Lévy decomposition of the descending
+hitting-time process. `Brownian/AboveStart/EndpointReturnZero.lean`
+proves the same fixed-length consequence directly: a rational time
+inside the excursion splits the past-measurable positive gap and
+target return time from the independent Brownian future; fixed-level
+passage times have no atoms. It proves equation (2.2) for both fixed
+and unrestricted horizons. The pathwise process
+$\tau_x=\inf\{t:B(t)\le-x\}$ and its monotonicity are in
+`Path/DescendingHittingTime.lean`.
 `Brownian/Reflection/UnboundedBelow.lean` proves that Brownian paths
 eventually descend below every real level, using the reflection principle
 and scaling. `Brownian/AboveStart/EndpointReturn.lean` combines that result
 with the nullity of $U$ to identify the exact unit hitting-time jump
 almost surely on every first-window endpoint-return event. The existing
 `Brownian/Reflection/DescendingHittingTimeLaw.lean` states its fixed-level
-distribution directly from the reflection principle. The candidate
-half-stable Lévy jump-length intensity is defined in
-`Distributions/Stable/LevyMeasure/HalfSubordinator.lean`; that file proves
-σ-finiteness and zero mass for every singleton, while its identification
-with the Brownian hitting-time process remains to be established. The existing
-`IsPoissonPointFamily.ae_poissonRandomMeasure_apply_eq_zero` in
-`RandomMeasure/Poisson/Support.lean` excludes realized Poisson mass from
-zero-intensity mark sets; its fixed-mark corollary proves that an atomless
-mark intensity produces no point with a prescribed jump length.
-`Brownian/Reflection/FirstPassagePoisson.lean` applies this result to the
-half-stable intensity. `Path/Continuous.lean` now makes the future increment
+distribution and atomlessness directly from the reflection principle.
+The unused candidate Poisson intensity and its unlinked no-fixed-mark
+specialization were removed. `Path/Continuous.lean` makes the future increment
 path jointly measurable in its path and start time, and
 `Brownian/Independence/FiniteStoppingTime.lean` proves that the future
 increment path at a finite-valued stopping time has Brownian path law.
@@ -201,27 +192,18 @@ entire Brownian path stopped at $\tau_x$, hence jointly independent of
 all hitting times $\tau_z$ with $z\le x$. The deterministic preservation
 of these earlier hitting times by the stopped path is proved in
 `Path/DescendingHittingTimeRestart.lean`.
-The process-level Lévy jump decomposition, including identification of
-its jump-length intensity, is the next step.
-The Brownian hitting-time process has not yet been identified with such a
-Poisson jump family. Equation (2.2), Lemma 2.4, and the conditioned
-invariance principle remain open.
-
-An alternative direct derivation of the fixed-length consequence is now
-under construction without asserting a Poisson representation. The
-deterministic implication $\tau_x=t>0\Rightarrow m(t)=-x$ and the
-reflection-principle nullity of a fixed running-minimum value give an
-atomless law for each fixed Brownian first-passage time in
+The deterministic implication $\tau_x=t>0\Rightarrow m(t)=-x$ and the
+reflection-principle nullity of a fixed running-minimum value give the
+atomless fixed-level first-passage law in
 `Brownian/Reflection/DescendingHittingTimeLaw.lean`. First passage is
 jointly measurable in the path and level by `Path/RunningMinimum.lean`.
 `Independence/NullSections.lean` proves the product-measure null-section
 principle, and `Brownian/Reflection/RandomLevelFirstPassage.lean` applies
 it to a positive passage level and positive target time selected from a
-deterministic-time stopped Brownian path. The deterministic restart at a
-time before first passage is in `Path/FirstPassageRestart.lean`. To finish
-equation (2.2), the unit excursion straddling a rational observation time
-must still be identified with the resulting random-level first-passage
-equality; the present lemma does not yet make that identification.
+deterministic-time stopped Brownian path. `Path/FirstPassageRestart.lean`
+provides the deterministic return-time identity used at that rational
+observation time. Lemma 2.4, Lemma 2.5, and the conditioned invariance
+principle remain open.
 
 The concrete finite staircase now has its own verified schedule and geometry:
 `DriftedTube/FiniteVarianceLower/Staircase/Setup/Schedule.lean` defines

@@ -21,6 +21,9 @@ The public theorems in this file are:
 - `ProbabilityTheory.firstPassageBelow_shiftToZero_eq_of_before`:
   for $q<\tau_a(f)<\infty$, passage after time $q$ occurs at
   the elapsed time $\tau_a(f)-q$.
+- `ProbabilityTheory.firstPassageBelow_shiftToZero_eq_of_strictUntil`:
+  if a path is above $a$ on $[q,d)$ and reaches $a$ at $d$,
+  its path shifted at $q$ first enters $(-\infty,a-f(q)]$ at $d-q$.
 
 This deterministic identity is used with the Brownian strong Markov
 property to obtain stationary independent increments of the descending
@@ -107,6 +110,51 @@ theorem firstPassageBelow_shiftToZero_eq_of_before
         _ = t := htime
     have hearly := firstPassageBelow_no_earlier f a hhit
       (show q + u < sInf {v : ℝ≥0 | f v ≤ a} by rw [hinf]; exact hqu)
+    change f (q + u) - f q ≤ a - f q at huVal
+    linarith
+  exact le_antisymm hupper hlower
+
+/-- A path's first return after an observation time is the passage
+time of its future increment path at the corresponding relative level. -/
+theorem firstPassageBelow_shiftToZero_eq_of_strictUntil
+    (f : C(ℝ≥0, ℝ)) (a : ℝ) {q d : ℝ≥0} (hqd : q < d)
+    (hd : f d ≤ a)
+    (hstrict : ∀ u : ℝ≥0, q ≤ u → u < d → a < f u) :
+    firstPassageBelow (shiftToZero f q) (a - f q) =
+      ((d - q : ℝ≥0) : WithTop ℝ≥0) := by
+  have htime : q + (d - q) = d := add_tsub_cancel_of_le hqd.le
+  have hhit : ∃ u : ℝ≥0, (shiftToZero f q) u ≤ a - f q := by
+    refine ⟨d - q, ?_⟩
+    change f (q + (d - q)) - f q ≤ a - f q
+    rw [htime]
+    exact sub_le_sub_right hd _
+  have hupper : firstPassageBelow (shiftToZero f q) (a - f q) ≤
+      (d - q : ℝ≥0) := by
+    apply (firstPassageBelow_le_iff _ _ _).2
+    refine ⟨d - q, le_rfl, ?_⟩
+    change f (q + (d - q)) - f q ≤ a - f q
+    rw [htime]
+    exact sub_le_sub_right hd _
+  have hlower : (d - q : WithTop ℝ≥0) ≤
+      firstPassageBelow (shiftToZero f q) (a - f q) := by
+    by_contra h
+    have hlt : firstPassageBelow (shiftToZero f q) (a - f q) <
+        (d - q : WithTop ℝ≥0) := lt_of_not_ge h
+    obtain ⟨u, hu⟩ := WithTop.ne_top_iff_exists.mp (ne_top_of_lt hlt)
+    have huReal : u < d - q := by
+      rw [← hu] at hlt
+      exact WithTop.coe_lt_coe.mp hlt
+    have huInf : sInf {v : ℝ≥0 | (shiftToZero f q) v ≤ a - f q} = u :=
+      WithTop.coe_eq_coe.mp (by
+        simpa [firstPassageBelow, firstPassageLE, hhit] using hu.symm)
+    have huVal : (shiftToZero f q) u ≤ a - f q := by
+      rw [← huInf]
+      exact firstPassageBelow_attained _ _ hhit
+    have hqu : q + u < d := by
+      calc
+        q + u < q + (d - q) := by simpa [add_comm] using add_lt_add_left huReal q
+        _ = d := htime
+    have hearly := hstrict (q + u) (le_add_of_nonneg_right bot_le) hqu
     change f (q + u) - f q ≤ a - f q at huVal
     linarith
   exact le_antisymm hupper hlower
