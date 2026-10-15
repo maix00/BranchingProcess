@@ -26,6 +26,9 @@ The public definitions and theorems in this file are:
 - `ProbabilityTheory.RandomWalk.measure_pi_cyclicSurvivalEvent_eq_survival`:
   every $B_n^{k+1}$ has the length-$n$ nonnegative-survival probability
   under an i.i.d. finite product law.
+- `ProbabilityTheory.RandomWalk.measure_pi_nonnegative_endpoint_le_card_mul_survival`:
+  for every $n>0$ and any i.i.d. real increments,
+  $\mathbb P(S_n\ge0)\le n\mathbb P(S_j\ge0\text{ for }1\le j\le n)$.
 - `ProbabilityTheory.RandomWalk.measureReal_nonnegative_endpoint_eq_cyclicSurvival_sum`:
   $\mathbb P(S_n\ge0)$ is the alternating sum of probabilities of nonempty
   intersections of cyclic survival events.
@@ -154,6 +157,33 @@ theorem measure_pi_cyclicSurvivalEvent_eq_survival
     rw [hfun]
   rw [hpreimage]
   rw [← Measure.map_apply T.measurable hsafe, hmap]
+
+/-- The union bound applied to the cyclic cover of Bauer--Godrèche--Luck,
+Appendix A, immediately after (A.3). It requires only identical independent
+increments, with no moment or centering assumptions. -/
+theorem measure_pi_nonnegative_endpoint_le_card_mul_survival
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    {n : ℕ} (hn : 0 < n) :
+    Measure.pi (fun _ : Fin n => ν)
+        {x : Fin n → ℝ | 0 ≤ Fin.partialSum x (Fin.last n)} ≤
+      n • Measure.pi (fun _ : Fin n => ν)
+        {x : Fin n → ℝ |
+          ∀ j : Fin (n + 1), 0 ≤ Fin.partialSum x j} := by
+  let μ := Measure.pi (fun _ : Fin n => ν)
+  let safe : Set (Fin n → ℝ) :=
+    {x | ∀ j : Fin (n + 1), 0 ≤ Fin.partialSum x j}
+  calc
+    μ {x | 0 ≤ Fin.partialSum x (Fin.last n)} =
+        μ (⋃ k : Fin n, cyclicSurvivalEvent k) := by
+          simpa only [cyclicSurvivalEvent] using
+            congrArg μ (nonnegative_finitePartialSum_eq_iUnion_cyclic_survival hn)
+    _ ≤ ∑ k : Fin n, μ (cyclicSurvivalEvent k) :=
+      measure_iUnion_fintype_le μ _
+    _ = ∑ _k : Fin n, μ safe := by
+      apply Finset.sum_congr rfl
+      intro k _
+      exact measure_pi_cyclicSurvivalEvent_eq_survival ν hn k
+    _ = n • μ safe := by simp
 
 /-- Inclusion--exclusion for the union of cyclic survival events,
 corresponding to Bauer--Godrèche--Luck, Appendix A, equation (A.4). -/
