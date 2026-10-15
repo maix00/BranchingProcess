@@ -25,12 +25,18 @@ The public objects and principal theorems are:
 - `measure_le_card_smul_of_finiteRotationCover`: a cover by $n$ measure
   preserving rotations bounds the original event probability by $n$ times
   the rotated corridor probability.
+- `TendstoInDistribution.measure_openEvent_le_liminf`: if an event contains
+  the preimage of an open path set eventually, Portmanteau bounds its
+  lower limiting probability by the limit law of that open set.
 - `exists_middleOffset_meshPoint` and
   `linearTube_subset_middleOffsetCorridor`: select a spatial mesh point
   whose corridor contains a path close to the line $t\mapsto t/2$.
 - `exists_cyclicPartialSum_mem_Icc_of_linearTube` and
   `exists_offsetCorridorPath_of_linearTube_allOffsets`: a cyclic origin
   places every partial sum of such a path inside an offset interval.
+- `exists_cyclicPartialSum_mem_Icc_of_negativeLinearTube` and
+  `cyclicPartialSum_last`: the reflected line has a rotated corridor in
+  $[-3/4,0]$, and rotation preserves the terminal sum $S_n$.
 - `exists_offsetCorridorPath_of_linearTube_lowerEdge` and
   `exists_offsetCorridorPath_of_linearTube_upperEdge`: the two boundary
   starting positions satisfy the corresponding corridor inclusions.

@@ -17,6 +17,8 @@ The public objects and theorems in this file are:
 - `staircaseBlockLength`: $|I_k|=t_{k+1}-t_k$.
 - `staircaseBlockStart_zero` and `staircaseBlockStart_count`:
   the first and last block boundaries are $t_1$ and $L$.
+- `staircaseBlockStart_le_horizon`: every boundary $t_k$ with $k\le q$
+  satisfies $t_k\le L$.
 - `staircaseBlockStart_mono_succ` and
   `staircaseBlockStart_next_eq_add_length`:
   consecutive block times are ordered and differ by their block length.
