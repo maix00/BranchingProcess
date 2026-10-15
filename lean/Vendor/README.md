@@ -1,5 +1,12 @@
 # External Lean dependencies
 
+`Mathlib/` is a Git submodule pinned to
+[`maix00/mathlib4`](https://github.com/maix00/mathlib4), commit
+`380f2aafb622cb2c1c93dac545b6389083c68c51`. Lake uses this local
+checkout, so upstreamable changes can be developed in the fork and proposed
+to [`leanprover-community/mathlib4`](https://github.com/leanprover-community/mathlib4)
+without changing the dependency layout.
+
 `BrownianMotion/` is a Git submodule pinned to
 [`maix00/brownian-motion`](https://github.com/maix00/brownian-motion),
 commit `d6d901b6df592a543b7edf221f92d2ee6760d18d` on the

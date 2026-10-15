@@ -1,3 +1,6 @@
 [submodule "lean/Vendor/BrownianMotion"]
 	path = lean/Vendor/BrownianMotion
 	url = https://github.com/maix00/brownian-motion.git
+[submodule "lean/Vendor/Mathlib"]
+	path = lean/Vendor/Mathlib
+	url = https://github.com/maix00/mathlib4.git
