@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Staircase.Concrete.AsymptoticLower
+public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Staircase.Concrete.Lower.Asymptotic
 public import Probability.Process.RandomWalk.SmallDeviation.Entrance.RobustExponentialBudget
 public import Analysis.Asymptotics.IntermediatePowerBlock
 
