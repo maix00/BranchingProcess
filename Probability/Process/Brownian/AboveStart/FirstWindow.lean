@@ -20,6 +20,8 @@ The public theorem in this file is:
   $B(T+u)\ge B(T)$ for every $u\in[0,1]$ is finite almost surely.
 - `ProbabilityTheory.IsBrownianReal.tendsto_measure_firstNonnegativeWindowStartUpTo_ne_top`:
   the probability that $T^{n+1}<\infty$ tends to one.
+- `ProbabilityTheory.IsBrownianReal.tendsto_measure_firstNonnegativeWindowStartUpTo_eq_top`:
+  the complementary probability tends to zero.
 
 This is Erwin Bolthausen, *On a functional central limit theorem for random
 walks conditioned to stay positive*, Lemma 2.2, Ann. Probab. 4(3) (1976),
@@ -332,6 +334,37 @@ theorem IsBrownianReal.tendsto_measure_firstNonnegativeWindowStartUpTo_ne_top
       (measurableSet_singleton (⊤ : WithTop ℝ≥0))).compl
   rw [Measure.map_apply hpath hset]
   rfl
+
+/-- The Brownian probability of finding no eligible unit window before
+the cutoff tends to zero. -/
+theorem IsBrownianReal.tendsto_measure_firstNonnegativeWindowStartUpTo_eq_top
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+    [IsProbabilityMeasure P]
+    {B : ℝ≥0 → Ω → ℝ} (hB : IsBrownianReal B P)
+    (hBmeasurable : ∀ t, Measurable (B t)) :
+    Tendsto (fun n : ℕ => P {ω |
+      firstNonnegativeWindowStartUpTo
+        (hB.continuousPathMap hBmeasurable ω) ((n : ℝ≥0) + 1) = ⊤})
+      atTop (nhds 0) := by
+  have hgood := hB.tendsto_measure_firstNonnegativeWindowStartUpTo_ne_top
+    hBmeasurable
+  have hbad := ENNReal.Tendsto.sub tendsto_const_nhds hgood
+    (Or.inl ENNReal.one_ne_top)
+  have hmeas (n : ℕ) : MeasurableSet {ω |
+      firstNonnegativeWindowStartUpTo
+        (hB.continuousPathMap hBmeasurable ω) ((n : ℝ≥0) + 1) ≠ ⊤} :=
+    (((measurable_firstNonnegativeWindowStartUpTo _).comp
+      (hB.measurable_continuousPathMap hBmeasurable))
+      (measurableSet_singleton ⊤)).compl
+  convert hbad using 1
+  · funext n
+    rw [show {ω | firstNonnegativeWindowStartUpTo
+          (hB.continuousPathMap hBmeasurable ω) ((n : ℝ≥0) + 1) = ⊤} =
+        {ω | firstNonnegativeWindowStartUpTo
+          (hB.continuousPathMap hBmeasurable ω) ((n : ℝ≥0) + 1) ≠ ⊤}ᶜ by ext; simp,
+      measure_compl (hmeas n), measure_univ]
+    exact measure_ne_top _ _
+  · simp
 
 end ProbabilityTheory
 

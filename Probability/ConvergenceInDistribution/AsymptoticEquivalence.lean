@@ -17,6 +17,14 @@ Convergence in distribution is unchanged when two sequences, realized on the
 same probability spaces, admit a measurable error bound tending to zero in
 probability.  This formulation applies to nonlinear path spaces without
 requiring measurability of their distance as an extra global assumption.
+
+The public theorems are:
+
+- `MeasureTheory.tendstoInDistribution_of_error_tendstoInMeasure`:
+  transfer convergence along a vanishing metric error.
+- `MeasureTheory.tendstoInDistribution_of_negligible_disagreement`:
+  transfer convergence when the probability that two coupled random variables
+  differ tends to zero.
 -/
 
 open Filter ProbabilityTheory
@@ -150,5 +158,32 @@ theorem tendstoInDistribution_of_error_tendstoInMeasure
   have h_lt : L * ε / 2 < L * ε := half_lt_self (by positivity)
   filter_upwards [h_tendsto.eventually_lt_const h_lt] with n hn
   exact (h_le n).trans_lt hn
+
+/-- A coupling may be changed on events whose probabilities tend to zero
+without changing its limiting distribution. -/
+theorem tendstoInDistribution_of_negligible_disagreement
+    [l.IsCountablyGenerated] [SecondCountableTopology E]
+    (hXZ : TendstoInDistribution X l Z (fun _ => μ'') μ')
+    (hY : ∀ i, Measurable (Y i))
+    (hbad : Tendsto (fun i => μ''.real {ω | Y i ω ≠ X i ω}) l (nhds 0)) :
+    TendstoInDistribution Y l Z (fun _ => μ'') μ' := by
+  have hX : ∀ i, AEMeasurable (X i) μ'' := hXZ.forall_aemeasurable
+  let error (i : I) (ω : Ω'') := dist (Y i ω) (X i ω)
+  have herror_meas (i : I) : AEMeasurable (error i) μ'' :=
+    (hY i).aemeasurable.dist (hX i)
+  have herror (ε : ℝ) (hε : 0 < ε) :
+      Tendsto (fun i => μ''.real {ω | ε ≤ error i ω}) l (nhds 0) := by
+    have hbound (i : I) :
+        μ''.real {ω | ε ≤ error i ω} ≤
+          μ''.real {ω | Y i ω ≠ X i ω} := by
+      refine measureReal_mono ?_ (measure_ne_top _ _)
+      intro ω hω
+      exact fun heq => (not_le_of_gt hε) (by simpa [error, heq] using hω)
+    have hnonneg (i : I) : 0 ≤ μ''.real {ω | ε ≤ error i ω} :=
+      measureReal_nonneg
+    exact squeeze_zero hnonneg hbound hbad
+  exact tendstoInDistribution_of_error_tendstoInMeasure hXZ
+    herror_meas (fun i ω => le_rfl) herror
+    (fun i => (hY i).aemeasurable)
 
 end MeasureTheory
