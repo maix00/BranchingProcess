@@ -25,6 +25,15 @@ The public definitions and theorems in this file are:
   $k\le l$ and one weak sign from $k$ imply one weak sign from $l$.
 - `ProbabilityTheory.RandomWalk.measurableSet_signStableFrom`:
   the event that $S_k,\ldots,S_n$ have one weak sign is measurable.
+- `ProbabilityTheory.RandomWalk.nonnegativeTail_iff_shiftedSurvival`:
+  when $S_k=0$, nonnegativity of $S_k,\ldots,S_n$ is equivalent
+  to nonnegative survival of the next $n-k$ increments.
+- `ProbabilityTheory.RandomWalk.nonpositiveTail_iff_negShiftedSurvival`:
+  when $S_k=0$, nonpositivity of $S_k,\ldots,S_n$ is equivalent
+  to nonnegative survival of the reflected next $n-k$ increments.
+- `ProbabilityTheory.RandomWalk.signStableFrom_iff_shiftedSurvival`:
+  when $S_k=0$, the tail has one weak sign exactly when either
+  the shifted increments or their negatives survive nonnegatively.
 - `ProbabilityTheory.RandomWalk.not_signStableFrom_before_lastSignChangeIndex`:
   every $k<\mu_n$ has both positive and negative values among
   $S_k,\ldots,S_n$.
@@ -90,6 +99,59 @@ theorem signStableFrom_mono_start (n : ℕ) (increment : ℕ → ℝ)
   rcases h with h | h
   · exact Or.inl (fun j hlj hjn => h j (hkl.trans hlj) hjn)
   · exact Or.inr (fun j hlj hjn => h j (hkl.trans hlj) hjn)
+
+/-- A nonnegative tail starting at zero is the survival event for
+the shifted increments. -/
+theorem nonnegativeTail_iff_shiftedSurvival
+    (n start : ℕ) (increment : ℕ → ℝ) (hstart : start ≤ n)
+    (hzero : AdditivePath.displacement start increment = 0) :
+    (∀ j : ℕ, start ≤ j → j ≤ n →
+      0 ≤ AdditivePath.displacement j increment) ↔
+      SurvivesNonnegative (n - start) (fun k => increment (start + k)) := by
+  rw [SurvivesNonnegative.shift_iff]
+  constructor
+  · intro h j
+    rw [hzero]
+    apply h (start + ((j : ℕ) + 1))
+    · omega
+    · have := j.isLt
+      omega
+  · intro h j hjstart hjn
+    by_cases hj : j = start
+    · simp [hj, hzero]
+    · have hindex : j - start - 1 < n - start := by omega
+      have hposition := h ⟨j - start - 1, hindex⟩
+      have heq : start + ((j - start - 1) + 1) = j := by omega
+      rw [heq, hzero] at hposition
+      exact hposition
+
+/-- The reflected version of the one-sided tail/survival identity. -/
+theorem nonpositiveTail_iff_negShiftedSurvival
+    (n start : ℕ) (increment : ℕ → ℝ) (hstart : start ≤ n)
+    (hzero : AdditivePath.displacement start increment = 0) :
+    (∀ j : ℕ, start ≤ j → j ≤ n →
+      AdditivePath.displacement j increment ≤ 0) ↔
+      SurvivesNonnegative (n - start)
+        (fun k => -increment (start + k)) := by
+  have hzeroNeg : AdditivePath.displacement start
+      (fun k => -increment k) = 0 := by simp [hzero]
+  have h := nonnegativeTail_iff_shiftedSurvival n start
+    (fun k => -increment k) hstart hzeroNeg
+  simpa only [AdditivePath.displacement_neg, neg_nonneg] using h
+
+/-- At a zero of the walk, the terminal one-sign event splits into
+the positive and reflected negative survival events. -/
+theorem signStableFrom_iff_shiftedSurvival
+    (n start : ℕ) (increment : ℕ → ℝ) (hstart : start ≤ n)
+    (hzero : AdditivePath.displacement start increment = 0) :
+    SignStableFrom n start increment ↔
+      SurvivesNonnegative (n - start)
+        (fun k => increment (start + k)) ∨
+      SurvivesNonnegative (n - start)
+        (fun k => -increment (start + k)) := by
+  exact or_congr
+    (nonnegativeTail_iff_shiftedSurvival n start increment hstart hzero)
+    (nonpositiveTail_iff_negShiftedSurvival n start increment hstart hzero)
 
 /-- The one-sided terminal segment is a measurable event on increment
 sequences. -/
