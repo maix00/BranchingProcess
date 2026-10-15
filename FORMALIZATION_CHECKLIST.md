@@ -158,7 +158,10 @@ first reached after the returned endpoint. The remaining input is the zero
 probability of a unit-length excursion, which Bolthausen derives from the Lévy decomposition of the
 descending Brownian hitting-time process. The pathwise process
 $\tau_x=\inf\{t:B(t)\le-x\}$, its monotonicity, and its fixed-level
-measurability are in `Path/DescendingHittingTime.lean`. The existing
+measurability are in `Path/DescendingHittingTime.lean`. If the path later
+reaches a lower value, `Path/AboveStart/RunningMinimum.lean` proves that
+every $v>t+1$ already bounds the hitting time of some lower level, so the
+right-hand level limit is exactly $t+1$. The existing
 `IsPoissonPointFamily.ae_poissonRandomMeasure_apply_eq_zero` in
 `RandomMeasure/Poisson/Support.lean` excludes realized Poisson mass from
 zero-intensity mark sets; its fixed-mark corollary proves that an atomless
