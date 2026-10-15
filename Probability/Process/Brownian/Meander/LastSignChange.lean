@@ -24,6 +24,8 @@ The public theorem in this file is:
   terminal Brownian path almost surely.
 - `ProbabilityTheory.IsBrownianReal.lastSignChangeMeanderPathLaw_eq_lastZeroMeanderPathLaw`:
   the two resulting probability laws on $C([0,1])$ agree.
+- `ProbabilityTheory.IsBrownianReal.ae_continuousAt_lastSignChangeMeanderTransform`:
+  $\Psi$ is continuous at almost every Brownian path.
 
 The proof uses atomlessness of interval minima at countably many
 rational starts. This identifies the two path transforms appearing on
@@ -221,6 +223,23 @@ theorem IsBrownianReal.lastSignChangeMeanderPathLaw_eq_lastZeroMeanderPathLaw
   exact Measure.map_congr
     (hB.ae_lastSignChangeMeanderTransform_eq_lastZeroMeanderTransform
       hmeasurable)
+
+/-- Bolthausen's last-sign-change meander transform is continuous at
+almost every Brownian path, since its last sign change and last zero
+agree almost surely and the Brownian endpoint is nonzero almost surely. -/
+theorem IsBrownianReal.ae_continuousAt_lastSignChangeMeanderTransform
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+    [IsProbabilityMeasure P] {B : ℝ≥0 → Ω → ℝ}
+    (hB : IsBrownianReal B P)
+    (hmeasurable : ∀ t, Measurable (B t)) :
+    ∀ᵐ ω ∂P, ContinuousAt ContinuousMap.lastSignChangeMeanderTransform
+      (restrictPathToUnitInterval
+        (hB.continuousPathMap hmeasurable ω)) := by
+  filter_upwards [hB.ae_lastSignChange_eq_lastZero hmeasurable,
+    hB.ae_lastZero_restrictPathToUnitInterval_lt_top hmeasurable]
+    with ω heq hlt
+  exact ContinuousMap.continuousAt_lastSignChangeMeanderTransform_of_eq_lastZero
+    _ heq hlt
 
 end ProbabilityTheory
 
