@@ -137,7 +137,7 @@ The order here follows the displayed PDF numbers.
 | 3.1(i) | `lemma:mogulskii-cal` | For each real width `Δ>0` and integer time horizon `L_Δ` with `L_Δ/Δ²→∞`, the horizontal-tube probability has rate `−π²σ²/2`. | **Formalized for real widths.** `FromIncrementLaw/HorizontalTube.lean` proves `centeredFiniteVariance_closedHorizontalTubeProbabilityRate_realWidth` for a real-width-indexed integer horizon. Its sampled form `centeredFiniteVariance_closedHorizontalTubeProbabilityRate_realWidthAlong` handles positive real width sequences and strictly increasing sampled times with squared-width/time ratio tending to zero. The proof identifies the closed event with the terminal-left source path convention and squeezes it between inward and outward strict corridors. The inverse-scale and width-monotonicity results remain Lean infrastructure; the revised paper proof does not require them as separate lemmas. |
 | 3.1(ii) | `lemma:mogulskii-cal` | Under the same width-time relation, for fixed `0<u<v<1` and endpoint functions with `v₁(Δ)≤u<v≤v₂(Δ)` eventually, the tube probability with terminal value in `[(v₁(Δ)−a)Δ,(v₂(Δ)−a)Δ]` has rate `−π²σ²/2`. | **Formalized for real widths.** `centeredFiniteVariance_endpointWindowProbabilityRate_realWidth` accepts the thesis's real-width-indexed integer horizon and endpoint functions. Its sampled-width input `centeredFiniteVariance_endpointWindowProbabilityRate_realWidthAlong` uses the source path ending at `S_(n−1)`, the terminal-jump corridor with energy `H₂=σ²`, and the squeeze between that corridor probability and the real-width tube probability from part (i). The earlier integer-width theorem remains available for integer-indexed applications. |
 | 3.2 | `lemma:4.1` | Horizontal-tube upper bound `exp(uΔ^v − dL/Δ²)` for arbitrary `u,v>0`, and the coefficient-one specialization. The proof uses the closed-tube Mogul'skii rate, an equal partition to select one fixed corridor, iteration over full blocks, and a remainder estimate. | **Formalized.** `HorizontalTube/FiniteVarianceUpper.lean` proves the centered-tube bounds `horizontalTubeProbability_le_exp_of_finiteVariance_withRemainder` and `horizontalTubeProbability_le_exp_of_finiteVariance`, and the corresponding translated-interval bounds for IID partial sums. `HorizontalTube/FiniteVarianceUpper/Proof.lean` holds the equal-partition and block-iteration inputs. The input rate is the closed horizontal-tube form of Mogul'skii, Theorem 3, Section 4, p. 764. |
-| 3.3 | `lemma:2.3` | No-large-drop plus endpoint bound. Its proof uses the 3.2 horizontal-tube estimate for each nonjump block. | **Formalized.** `Drawdown/FiniteVarianceUpper.lean` proves `measureReal_noLargeDropEndpointBelowEvent_le_exp_of_finiteVariance`: for a centered law of variance `σ² ∈ (0,∞)`, every `c>0` and `0<d<π²σ²/2` admit one `Δ₀≥1` such that the estimate holds for all `Δ≥Δ₀` and `L≥Δ^(2+c)`. The rounded running maximum, conditional block estimates, and jump-pattern union from Wang Yiyang, *Asymptotic speed of the N-branching random walk with infinite offspring*, Chapter 3, Lemma 3.3, are in `Drawdown/FiniteVarianceUpper/Proof.lean`. |
+| 3.3 | `lemma:2.3` | No-large-drop plus endpoint bound. Its proof uses the 3.2 horizontal-tube estimate for each nonjump block. | **Formalized.** `Drawdown/FiniteVarianceUpper.lean` proves `measureReal_noLargeDropEndpointBelowEvent_le_exp_of_finiteVariance`: for a centered law of variance `σ² ∈ (0,∞)`, every `c>0` and `0<d<π²σ²/2` admit one `Δ₀≥1` such that the estimate holds for all `Δ≥Δ₀` and `L≥Δ^(2+c)`. The conditional block estimates are in `Drawdown/FiniteVarianceUpper/ConditionalBlocks.lean`; the rounded running maximum and jump-pattern union from Wang Yiyang, *Asymptotic speed of the N-branching random walk with infinite offspring*, Chapter 3, Lemma 3.3, are in `Drawdown/FiniteVarianceUpper/Proof.lean`. |
 | 3.4 | `lemma:4.2` | Small-drift tilted-tube upper bound. The proof invokes 3.3 at the complete-block estimate, iterates blocks by the Markov property, and absorbs the remainder into `Δ^v`. | **Formalized.** `DriftedTube/FiniteVarianceUpper.lean` proves `exists_driftedTubeProbability_le_exp_of_finiteVariance`: the short-horizon case uses probability at most one; the long-horizon case follows the equal-length block decomposition, conditional-expectation iteration, and final-remainder estimate from Wang Yiyang, Chapter 3, Lemma 3.4. |
 | 3.5 | `lemma:4.3` | For every sufficiently large real width `Δ`, every `r₀≤0≤r₀+Δ`, and every `L≥⌊Δ^(2+ε)⌋`, the walk stays in the moving tube and reaches either endpoint window with probability at least `exp(−d′L/Δ²)`. | **Formalized.** `DriftedTube/FiniteVarianceLower/EndpointBounds.lean` proves `exists_uniform_driftedTube_endpoint_bounds` from centered finite variance, `v>0`, `d′>π²σ²/2`, `c≥0`, and `ε>0`. The proof first chooses the intermediate rate `d″`, then the finite spatial bin count and strict windows, takes `ℓ=⌊Δ^(2+η)⌋`, and uses the Brownian-meander entrance, common narrowed-tube block rates, reverse Markov product, and counterexample-sequence argument for one threshold. The finite-variance survival power bound follows from Bauer–Godrèche–Luck, Appendix A, (A.7), the Gaussian endpoint-sign limit, and prefix-sum induction. The theorem compiles without project axioms. |
 
@@ -218,11 +218,14 @@ jointly continuous, the shift at a finite continuous first-window
 time is continuous, and the infinite-time branch is locally the
 constant path $-1$ whenever the cutoff is strict. Both unrestricted
 and every fixed finite-horizon shift are measurable and continuous
-at almost every Brownian path. The conditioned invariance principle
-remains open. `Probability/ConvergenceInDistribution/Mapping.lean`
-now provides the reusable almost-surely-continuous mapping theorem
-for convergence in distribution, the measure-theoretic step used
-after Bolthausen's Lemma 2.5 in his Theorem 3.2.
+at almost every Brownian path. The conditioned invariance principle is
+proved in `FunctionalLimit/Conditioned/FirstWindowLimit.lean` and its
+Brownian-meander identification in
+`FunctionalLimit/Conditioned/MeanderIdentification.lean`. The centered
+finite-variance specialization is in
+`FunctionalLimit/Conditioned/MeanderVariance.lean`.
+`Probability/ConvergenceInDistribution/Mapping.lean` supplies the reusable
+almost-surely-continuous mapping theorem used after Bolthausen's Lemma 2.5.
 
 The concrete finite staircase now has its own verified schedule and geometry:
 `DriftedTube/FiniteVarianceLower/Staircase/Setup/Schedule.lean` defines
@@ -230,22 +233,22 @@ $q=\lfloor(L-t_1)/\ell\rfloor$ and the final block of length
 $\ell+(L-t_1)\bmod\ell$; `DriftedTube/FiniteVarianceLower/Staircase/Setup/Parameters.lean` proves that the
 horizontal block is $[r_{t_{j+1}},s_{t_j}]$ with width
 $\Delta-c|I_j|/\Delta^2$; `DriftedTube/FiniteVarianceLower/Staircase/Endpoint/Windows.lean` identifies the
-paper's $v_1(k),v_2(k)$ with the next central window and the final endpoint
+endpoint fractions $v_1(k),v_2(k)$ in Wang Yiyang's Lemma 3.5 with the next central window and the final endpoint
 window. `DriftedTube/FiniteVarianceLower/Staircase/Concrete/Lower.lean` applies the finite product theorem to
 this exact schedule under explicit numerical and entrance assumptions.
 The finite product now selects separate fixed interior endpoint intervals
 for ordinary blocks and the final block, as in the two cases following the
 uniform-in-$k$ argument of the proof. A single interval would impose an
 impossible overlap when the final endpoint fraction is below $1/3$.
-`StaircaseFirstWindow.lean` proves that, when the first block has length
+`DriftedTube/FiniteVarianceLower/Staircase/FirstWindow.lean` proves that, when the first block has length
 $\ell$ and $10c\ell<\Delta^3$, the robust interval
 $[r_{t_1}+2\Delta/5,r_{t_1}+3\Delta/5]$ implied for large widths by the three
 constructions in Appendix A.2 lies in the central window of the first
 horizontal block. The published entrance window
 $[r_{t_1}+\Delta/3,r_{t_1}+2\Delta/3]$ is wider than this central window;
-the robust entrance probability estimate must therefore be carried through
-the Appendix A.2 formalization before it can discharge the first-block
-assumption of `DriftedTube/FiniteVarianceLower/Staircase/Concrete/Lower.lean`.
+the robust entrance probability estimate from Appendix A.2 discharges the
+first-block assumption of
+`DriftedTube/FiniteVarianceLower/Staircase/Concrete/Lower.lean`.
 `Entrance/RobustTransition.lean` defines this narrower event with terminal
 window $[h_{t_1}+2\Delta/5,h_{t_1}+3\Delta/5]$ and proves that it is
 measurable at time $t_1$. `DriftedTube/FiniteVarianceLower/Staircase/EntranceBridge.lean` proves
@@ -256,26 +259,26 @@ staircase theorem; the remaining entrance input is exactly the probability
 lower bound for this robust event. The printed $8c\ell<\Delta^3$ is used for the broader
 first-window inclusion; $10c\ell<\Delta^3$ is an eventual strengthening
 for the robust central-window inclusion in this formalization.
-`StaircaseNumeric.lean` proves common width and time-ratio bounds, and
+`DriftedTube/FiniteVarianceLower/Staircase/Setup/Numeric.lean` proves common width and time-ratio bounds, and
 uses the sharp lower width $\Delta-2c\ell/\Delta^2$ for the exponent
-comparison. The latter retains the paper's limiting width ratio $1$.
+comparison. The latter retains the limiting width ratio $1$ in Wang Yiyang's Lemma 3.5.
 `DriftedTube/FiniteVarianceLower/Staircase/Endpoint/Margins.lean` proves the two separate endpoint-margin
-comparisons for ordinary and final blocks; `StaircaseGlobalConditions.lean`
+comparisons for ordinary and final blocks; `DriftedTube/FiniteVarianceLower/Staircase/GlobalConditions.lean`
 combines them into exactly the six per-block hypotheses of the finite
-product. These results formalize the common-threshold part of the paper's
+product. These results formalize the common-threshold part of Wang Yiyang's
 schedule argument without a varying block-index assumption.
 `DriftedTube/FiniteVarianceLower/Staircase/Concrete/GlobalLower.lean` applies this reduction to the exact
 finite staircase and robust entrance probability, yielding the target
 exponential lower bound from the global inequalities.
-`StaircaseRateLimit.lean` uses private width-ratio and floor-comparison
+`DriftedTube/FiniteVarianceLower/Staircase/Rate/Limit.lean` uses private width-ratio and floor-comparison
 helpers to obtain the rounded narrowed-width exponent comparison under
 $\ell/\Delta^3\to0$ and the strict margin $d<d''\beta^2$, where
 $\beta=1-1/(3m)$.
-`StaircaseEventually.lean` keeps its one-use rounded-width threshold,
+`DriftedTube/FiniteVarianceLower/Staircase/Eventually.lean` keeps its one-use rounded-width threshold,
 margin, superquadratic time ratio, and subcubic cost comparisons private
 and assembles the common threshold for the staircase proof.
 `DriftedTube/FiniteVarianceLower/Staircase/Endpoint/Limit.lean` proves that the ordinary endpoint fraction
-tends to $1/(3\beta)$; `StaircaseEventually.lean` takes one common eventual
+tends to $1/(3\beta)$; `DriftedTube/FiniteVarianceLower/Staircase/Eventually.lean` takes one common eventual
 threshold for all global conditions. `DriftedTube/FiniteVarianceLower/Staircase/Concrete/AsymptoticLower.lean`
 then proves the eventual tilted-tube lower bound from the robust entrance
 probability budget. The entrance budget is supplied by
@@ -370,7 +373,7 @@ does not imply target measurability.
 Generic inner measure and measurable-subset inequalities are in
 `MeasureTheory/Measure/InnerOuter.lean`; generic analytic/capacity theory is in
 `MeasureTheory/Analytic/`. The path-specific projection application remains
-in `Probability/Process/Path/PathClass/StepCorridor/Probability/NullMeasurable.lean`.
+in `MeasureTheory/MeasurableSpace/CadlagPath/PathClass/StepCorridor/NullMeasurable.lean`.
 
 ## Local dependency layout
 
