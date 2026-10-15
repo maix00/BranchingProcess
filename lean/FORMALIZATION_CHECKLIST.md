@@ -293,11 +293,9 @@ rates and endpoint margins in the paper's order and states the complete
 finite-variance result with both endpoint windows.
 `Analysis/Asymptotics/SequentialEventually.lean` proves that eventual
 validity along every divergent real-width sequence yields a common real
-threshold. `Entrance/RobustUniformBudget.lean` applies this lemma to the
-robust exponential entrance bound. Its source assumptions quantify the
-two reflected transition lower bounds over all divergent real-width
-sequences; the width in its conclusion ranges over all sufficiently large
-real values rather than just integer widths.
+threshold. `DriftedTube/FiniteVarianceLower/Staircase/Concrete/Uniform.lean`
+applies its uniform-parameter form directly to both endpoint conclusions.
+The separate unused entrance-budget adapter has been removed.
 The fluctuation modules now prove $T_k^\pm\le n\iff k\le\ell_n^\pm$,
 measurability of both extended ladder times and their finite-height events,
 and monotonicity and measurability of the descending ladder renewal function
