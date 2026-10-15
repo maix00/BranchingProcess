@@ -46,9 +46,9 @@
         \end{aligned}
     \end{equation*}
     \bilingual{
-        The conditioned invariance principle of Bolthausen~\mycite{Bolthausen_1976}, Theorem 3.2, together with the meander identification in Iglehart~\mycite{Iglehart_1974}, Section 3, and Caravenna and Chaumont~\mycite{Caravenna_Chaumont_2008}, equation (3.3), gives
+        In the Skorokhod space $D([0,1])$ of càdlàg paths, the conditioned invariance principle of Bolthausen~\mycite{Bolthausen_1976}, Theorem 3.2, together with the meander identification in Iglehart~\mycite{Iglehart_1974}, Section 3, and Caravenna and Chaumont~\mycite{Caravenna_Chaumont_2008}, equation (3.3), gives
     }{
-        由 Bolthausen~\mycite{Bolthausen_1976} 的定理 3.2、Iglehart~\mycite{Iglehart_1974} 的第 3 节及 Caravenna 与 Chaumont~\mycite{Caravenna_Chaumont_2008} 的公式 (3.3) 中对 Brownian 蜿蜒的识别, 得到条件不变原理
+        在配备 Skorokhod 拓扑的 càdlàg 路径空间 $D([0,1])$ 中, 由 Bolthausen~\mycite{Bolthausen_1976} 的定理 3.2、Iglehart~\mycite{Iglehart_1974} 的第 3 节及 Caravenna 与 Chaumont~\mycite{Caravenna_Chaumont_2008} 的公式 (3.3) 中对 Brownian 蜿蜒的识别, 得到条件不变原理
     }
     \begin{equation*}
         \mathcal L\left(\left.\left(\frac{Z_{\lfloor Nt\rfloor}^\theta}{\sigma\sqrt N}\right)_{0\le t\le1}\,\right|C_N^\theta\right)
@@ -60,15 +60,15 @@
         其中 $\mathsf m$ 为标准 Brownian 蜿蜒. 令 $\rho:=\frac1{100}$, 并定义
     }
     \begin{equation*}
-        \mathcal U:=\left\{f\in C([0,1]):
+        \mathcal U:=\left\{f\in D([0,1]):
             \sigma\sup_{0\le t\le1}f(t)<\frac56-\rho,\quad
             \sigma f(1)\in\left(\frac5{12}+\rho,\frac{11}{24}-\rho\right)
         \right\}.
     \end{equation*}
     \bilingual{
-        The support of the Brownian meander contains the path $f_0(t)=\frac{7t}{16\sigma}$, which lies in $\mathcal U$. Thus $q_*:=\mathsf m(\mathcal U)>0$. For each fixed integer $m\ge0$, the convergence above with $N=n_\Delta-m$ and $\Delta/\sqrt N\to1$ yields
+        The set $\mathcal U$ is open in the Skorokhod topology, and the support of the Brownian meander contains the path $f_0(t)=\frac{7t}{16\sigma}\in\mathcal U$. Thus $q_*:=\mathsf m(\mathcal U)>0$. For each fixed integer $m\ge0$, put $N=n_\Delta-m$; Portmanteau and $\Delta/\sqrt N\to1$ yield
     }{
-        Brownian 蜿蜒的支撑包含路径 $f_0(t)=\frac{7t}{16\sigma}$, 且 $f_0\in\mathcal U$. 故 $q_*:=\mathsf m(\mathcal U)>0$. 对每个固定整数 $m\ge0$, 取 $N=n_\Delta-m$ 并利用 $\Delta/\sqrt N\to1$, 得
+        $\mathcal U$ 在 Skorokhod 拓扑下是开集, Brownian 蜿蜒的支撑包含路径 $f_0(t)=\frac{7t}{16\sigma}\in\mathcal U$. 故 $q_*:=\mathsf m(\mathcal U)>0$. 对每个固定整数 $m\ge0$, 令 $N=n_\Delta-m$; 由 Portmanteau 定理及 $\Delta/\sqrt N\to1$, 得
     }
     \begin{equation*}
         \liminf_{\Delta\to\infty}
