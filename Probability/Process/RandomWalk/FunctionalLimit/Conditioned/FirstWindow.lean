@@ -11,6 +11,7 @@ public import Probability.Process.RandomWalk.Path.Survival
 public import Probability.Process.RandomWalk.Path.Block.Law
 public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Survival
 public import Probability.Sequence.IID.StoppingTime
+public import Algebra.BigOperators.PartialSum
 
 /-!
 # Independent future blocks at first surviving windows
@@ -43,6 +44,10 @@ The public definitions and theorems in this file are:
 - `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.measure_firstWindow_block_union_eq_conditionalBlock`:
   for a measurable block event $A$,
   $\mathbb P(B_{T_n}\in A)=\mathbb P(B_0\in A\cap C_n)/\mathbb P(C_n)$.
+- `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.measure_firstWindow_partialSums_bounded_eq_conditional`:
+  for thresholds $a_1,\ldots,a_n$, the probability that all partial
+  sums of the first surviving block satisfy $Z_k\le a_k$ equals the
+  corresponding conditional probability for $S_1,\ldots,S_n$.
 
 This follows the prefix event $B_j$ in Lemma 3.1 of Erwin
 Bolthausen, *On a functional central limit theorem for random walks
@@ -448,6 +453,53 @@ theorem measure_firstWindow_block_union_eq_conditionalBlock
   calc
     q * (s * p) = (s * q) * p := by ac_rfl
     _ = p := by rw [hnormal]; simp
+
+/-- Bolthausen's Lemma 3.1 in its displayed finite-dimensional form:
+the partial sums of the first surviving length-`n` block have the law
+of the original partial sums conditioned on nonnegative survival.
+See Erwin Bolthausen, *On a functional central limit theorem for random
+walks conditioned to stay positive*, Lemma 3.1, p. 482,
+DOI 10.1214/aop/1176996098. -/
+theorem measure_firstWindow_partialSums_bounded_eq_conditional
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (hpositive : 0 < ν (Set.Ioi 0))
+    (n : ℕ) (threshold : Fin n → ℝ) :
+    (iidSequenceLaw ν)
+      (⋃ start : ℕ,
+        {increment | IsFirstSurvivingWindow n start increment} ∩
+          (Combinatorics.Sequence.blockCoordinates start n) ⁻¹'
+            {block : Fin n → ℝ |
+              ∀ k : Fin n, Fin.partialSum block k.succ ≤ threshold k}) =
+      (iidSequenceLaw ν)
+        ((Combinatorics.Sequence.blockCoordinates 0 n) ⁻¹'
+          ({block : Fin n → ℝ |
+            ∀ k : Fin n, Fin.partialSum block k.succ ≤ threshold k} ∩
+            {block | FiniteSurvivesNonnegative block})) /
+      (iidSequenceLaw ν)
+        ((Combinatorics.Sequence.blockCoordinates 0 n) ⁻¹'
+          {block | FiniteSurvivesNonnegative block}) := by
+  apply measure_firstWindow_block_union_eq_conditionalBlock ν hpositive n
+  rw [show {block : Fin n → ℝ |
+      ∀ k : Fin n, Fin.partialSum block k.succ ≤ threshold k} =
+      ⋂ k : Fin n,
+        {block | Fin.partialSum block k.succ ≤ threshold k} by
+      ext block
+      simp]
+  apply MeasurableSet.iInter
+  intro k
+  have hsum (time : Fin (n + 1)) :
+      Measurable (fun block : Fin n → ℝ => Fin.partialSum block time) := by
+    induction time using Fin.induction with
+    | zero => exact measurable_const
+    | succ time ih =>
+      have heq : (fun block : Fin n → ℝ => Fin.partialSum block time.succ) =
+          (fun block => Fin.partialSum block time.castSucc) +
+            (fun block => block time) := by
+        funext block
+        simp only [Fin.partialSum_succ, Pi.add_apply]
+      exact heq ▸ ih.add (measurable_pi_apply time)
+  exact measurableSet_le
+    (hsum k.succ) measurable_const
 
 
 end ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned
