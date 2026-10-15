@@ -40,6 +40,10 @@ The public definitions and theorems in this file are:
 - `ProbabilityTheory.RandomWalk.lastSignChangeIndex_eq_iff`:
   for $0<k\le n$, $\mu_n=k$ exactly when the tail from $k$
   has one weak sign and the tail from $k-1$ does not.
+- `ProbabilityTheory.RandomWalk.previous_negative_of_nonnegative_terminal`:
+  if $\mu_n>0$ and $S_j\ge0$ for $j\ge\mu_n$, then $S_{\mu_n-1}<0$.
+- `ProbabilityTheory.RandomWalk.previous_positive_of_nonpositive_terminal`:
+  if $\mu_n>0$ and $S_j\le0$ for $j\ge\mu_n$, then $S_{\mu_n-1}>0$.
 - `ProbabilityTheory.RandomWalk.measurable_lastSignChangeIndex`:
   the random time $\mu_n$ is measurable.
 - `ProbabilityTheory.RandomWalk.terminalSignStableLength`:
@@ -237,6 +241,50 @@ theorem lastSignChangeIndex_eq_iff (n : ℕ) (increment : ℕ → ℝ)
       exact hprev (signStableFrom_mono_start n increment hidx
         (signStableFrom_lastSignChangeIndex n increment))
     exact Nat.le_antisymm hle hge
+
+/-- Immediately before the first nonnegative terminal tail, the walk
+is strictly negative. -/
+theorem previous_negative_of_nonnegative_terminal
+    (n : ℕ) (increment : ℕ → ℝ)
+    (hμ : 0 < lastSignChangeIndex n increment)
+    (htail : ∀ j : ℕ, lastSignChangeIndex n increment ≤ j → j ≤ n →
+      0 ≤ AdditivePath.displacement j increment) :
+    AdditivePath.displacement (lastSignChangeIndex n increment - 1)
+      increment < 0 := by
+  let μ := lastSignChangeIndex n increment
+  have hnot : ¬ SignStableFrom n (μ - 1) increment :=
+    not_signStableFrom_before_lastSignChangeIndex n increment
+      (by change μ - 1 < μ; omega)
+  by_contra h
+  have hprev : 0 ≤ AdditivePath.displacement (μ - 1) increment := le_of_not_gt h
+  apply hnot
+  left
+  intro j hj hjn
+  by_cases hjprev : j = μ - 1
+  · simpa [hjprev] using hprev
+  · exact htail j (by omega) hjn
+
+/-- Immediately before the first nonpositive terminal tail, the walk
+is strictly positive. -/
+theorem previous_positive_of_nonpositive_terminal
+    (n : ℕ) (increment : ℕ → ℝ)
+    (hμ : 0 < lastSignChangeIndex n increment)
+    (htail : ∀ j : ℕ, lastSignChangeIndex n increment ≤ j → j ≤ n →
+      AdditivePath.displacement j increment ≤ 0) :
+    0 < AdditivePath.displacement (lastSignChangeIndex n increment - 1)
+      increment := by
+  let μ := lastSignChangeIndex n increment
+  have hnot : ¬ SignStableFrom n (μ - 1) increment :=
+    not_signStableFrom_before_lastSignChangeIndex n increment
+      (by change μ - 1 < μ; omega)
+  by_contra h
+  have hprev : AdditivePath.displacement (μ - 1) increment ≤ 0 := le_of_not_gt h
+  apply hnot
+  right
+  intro j hj hjn
+  by_cases hjprev : j = μ - 1
+  · simpa [hjprev] using hprev
+  · exact htail j (by omega) hjn
 
 /-- At zero, the earliest one-sided segment starts at zero precisely
 when the whole path already has one weak sign. -/

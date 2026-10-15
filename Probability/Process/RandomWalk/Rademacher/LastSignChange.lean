@@ -28,6 +28,9 @@ The public theorems in this file are:
   $\widetilde Y_n(k/\nu_n)=|S_{\mu_n+k}|/\sqrt{\nu_n}$.
 - `ProbabilityTheory.RandomWalk.rademacherTerminalAbsolutePath_grid`:
   this grid-value identity for $0\le k\le\nu_n$.
+- `ProbabilityTheory.RandomWalk.rademacher_lastSignChangeIndex_eq_iff_crossing`:
+  for $0<m<n$, the event $\mu_n=m$ is the union of a negative-to-zero
+  crossing followed by a nonnegative tail and its reflected counterpart.
 
 The final assertion is the parenthetical remark following the definitions
 of $\mu_n$ and $\nu_n$ on page 484 of Erwin Bolthausen,
@@ -55,6 +58,29 @@ private theorem adjacent_integer_steps_same_weak_sign (z : ℤ) (step : Bool) :
     ((0 : ℤ) ≤ z ∧ 0 ≤ z + (if step then 1 else -1)) ∨
       (z ≤ 0 ∧ z + (if step then 1 else -1) ≤ 0) := by
   cases step <;> simp_all <;> omega
+
+private theorem first_branch_true_of_survival (branch : ℕ → Bool)
+    {length : ℕ} (hlength : 0 < length)
+    (h : SurvivesNonnegative length (rademacherIncrementPath branch)) :
+    branch 0 = true := by
+  have hfirst := h ⟨0, hlength⟩
+  cases hzero : branch 0
+  · simp [AdditivePath.displacement, rademacherIncrementPath,
+      rademacherOfBool, hzero] at hfirst
+    norm_num at hfirst
+  · rfl
+
+private theorem first_branch_false_of_reflectedSurvival (branch : ℕ → Bool)
+    {length : ℕ} (hlength : 0 < length)
+    (h : SurvivesNonnegative length
+      (fun k => -rademacherIncrementPath branch k)) :
+    branch 0 = false := by
+  have hfirst := h ⟨0, hlength⟩
+  cases hzero : branch 0
+  · rfl
+  · simp [AdditivePath.displacement, rademacherIncrementPath,
+      rademacherOfBool, hzero] at hfirst
+    norm_num at hfirst
 
 /-- Two consecutive integer partial sums of a nearest-neighbor walk
 cannot have opposite strict signs. -/
@@ -113,10 +139,6 @@ theorem rademacher_displacement_lastSignChange_eq_zero
   · simp [m, hm]
   have hmpos : 0 < m := Nat.pos_of_ne_zero hm
   have hmle : m ≤ n := lastSignChangeIndex_le n (rademacherIncrementPath branch)
-  have hnotprev : ¬ SignStableFrom n (m - 1)
-      (rademacherIncrementPath branch) :=
-    not_signStableFrom_before_lastSignChangeIndex n
-      (rademacherIncrementPath branch) (by change m - 1 < m; omega)
   obtain ⟨z, hz⟩ := rademacher_displacement_int branch (m - 1)
   have hsucc : (m - 1) + 1 = m := by omega
   have hmval : AdditivePath.displacement m (rademacherIncrementPath branch) =
@@ -130,16 +152,9 @@ theorem rademacher_displacement_lastSignChange_eq_zero
   rcases hstable with hnonneg | hnonpos
   · have hmnonneg := hnonneg m le_rfl hmle
     have hprevneg : AdditivePath.displacement (m - 1)
-        (rademacherIncrementPath branch) < 0 := by
-      by_contra h
-      have hprev : 0 ≤ AdditivePath.displacement (m - 1)
-          (rademacherIncrementPath branch) := le_of_not_gt h
-      apply hnotprev
-      left
-      intro j hj hjn
-      by_cases hjprev : j = m - 1
-      · simpa [hjprev] using hprev
-      · exact hnonneg j (by omega) hjn
+        (rademacherIncrementPath branch) < 0 :=
+      previous_negative_of_nonnegative_terminal n
+        (rademacherIncrementPath branch) hmpos hnonneg
     rw [hz] at hprevneg
     rw [hmval] at hmnonneg
     have hzneg : z < 0 := by exact_mod_cast hprevneg
@@ -151,16 +166,9 @@ theorem rademacher_displacement_lastSignChange_eq_zero
     exact_mod_cast hz0
   · have hmnonpos := hnonpos m le_rfl hmle
     have hprevpos : 0 < AdditivePath.displacement (m - 1)
-        (rademacherIncrementPath branch) := by
-      by_contra h
-      have hprev : AdditivePath.displacement (m - 1)
-          (rademacherIncrementPath branch) ≤ 0 := le_of_not_gt h
-      apply hnotprev
-      right
-      intro j hj hjn
-      by_cases hjprev : j = m - 1
-      · simpa [hjprev] using hprev
-      · exact hnonpos j (by omega) hjn
+        (rademacherIncrementPath branch) :=
+      previous_positive_of_nonpositive_terminal n
+        (rademacherIncrementPath branch) hmpos hnonpos
     rw [hz] at hprevpos
     rw [hmval] at hmnonpos
     have hzpos : 0 < z := by exact_mod_cast hprevpos
@@ -215,6 +223,129 @@ theorem rademacherTerminalAbsolutePath_grid
     normalizedLinearPath_grid (fun j => Real.sqrt j) hν hk]
   rw [AdditivePath.displacement_add μ k (rademacherIncrementPath branch), hzero]
   simp only [zero_add, ν]
+
+private theorem lastSignChangeIndex_eq_of_positiveCrossing
+    (branch : ℕ → Bool) (n start : ℕ) (hstart : 0 < start)
+    (hbefore : start < n)
+    (hprevious : AdditivePath.displacement (start - 1)
+      (rademacherIncrementPath branch) < 0)
+    (hzero : AdditivePath.displacement start
+      (rademacherIncrementPath branch) = 0)
+    (hsurvive : SurvivesNonnegative (n - start)
+      (fun k => rademacherIncrementPath branch (start + k))) :
+    lastSignChangeIndex n (rademacherIncrementPath branch) = start := by
+  have htail := (nonnegativeTail_iff_shiftedSurvival n start
+    (rademacherIncrementPath branch) (by omega) hzero).2 hsurvive
+  have hfirst : branch start = true := by
+    have hshift : (fun k => rademacherIncrementPath branch (start + k)) =
+        rademacherIncrementPath (fun k => branch (start + k)) := by
+      funext k
+      rfl
+    rw [hshift] at hsurvive
+    have h := first_branch_true_of_survival (fun k => branch (start + k))
+      (show 0 < n - start by omega)
+      hsurvive
+    simpa using h
+  have hnext : 0 < AdditivePath.displacement (start + 1)
+      (rademacherIncrementPath branch) := by
+    rw [AdditivePath.displacement_succ, hzero]
+    simp [rademacherIncrementPath, rademacherOfBool, hfirst]
+  apply (lastSignChangeIndex_eq_iff n
+    (rademacherIncrementPath branch) hstart).2
+  refine ⟨Or.inl htail, ?_⟩
+  intro hprev
+  rcases hprev with hnonneg | hnonpos
+  · have h := hnonneg (start - 1) le_rfl (by omega)
+    linarith
+  · have h := hnonpos (start + 1) (by omega) (by omega)
+    linarith
+
+private theorem lastSignChangeIndex_eq_of_negativeCrossing
+    (branch : ℕ → Bool) (n start : ℕ) (hstart : 0 < start)
+    (hbefore : start < n)
+    (hprevious : 0 < AdditivePath.displacement (start - 1)
+      (rademacherIncrementPath branch))
+    (hzero : AdditivePath.displacement start
+      (rademacherIncrementPath branch) = 0)
+    (hsurvive : SurvivesNonnegative (n - start)
+      (fun k => -rademacherIncrementPath branch (start + k))) :
+    lastSignChangeIndex n (rademacherIncrementPath branch) = start := by
+  have htail := (nonpositiveTail_iff_negShiftedSurvival n start
+    (rademacherIncrementPath branch) (by omega) hzero).2 hsurvive
+  have hfirst : branch start = false := by
+    have hshift : (fun k => -rademacherIncrementPath branch (start + k)) =
+        (fun k => -rademacherIncrementPath (fun i => branch (start + i)) k) := by
+      funext k
+      rfl
+    rw [hshift] at hsurvive
+    have h := first_branch_false_of_reflectedSurvival
+      (fun k => branch (start + k)) (show 0 < n - start by omega) hsurvive
+    simpa using h
+  have hnext : AdditivePath.displacement (start + 1)
+      (rademacherIncrementPath branch) < 0 := by
+    rw [AdditivePath.displacement_succ, hzero]
+    simp [rademacherIncrementPath, rademacherOfBool, hfirst]
+  apply (lastSignChangeIndex_eq_iff n
+    (rademacherIncrementPath branch) hstart).2
+  refine ⟨Or.inr htail, ?_⟩
+  intro hprev
+  rcases hprev with hnonneg | hnonpos
+  · have h := hnonneg (start + 1) (by omega) (by omega)
+    linarith
+  · have h := hnonpos (start - 1) le_rfl (by omega)
+    linarith
+
+/-- For a simple symmetric walk, fixing the last-sign-change time
+splits the path into a crossing at zero and a one-sided terminal block.
+The terminal block is described by its shifted increments. -/
+theorem rademacher_lastSignChangeIndex_eq_iff_crossing
+    (branch : ℕ → Bool) (n start : ℕ)
+    (hstart : 0 < start) (hbefore : start < n) :
+    lastSignChangeIndex n (rademacherIncrementPath branch) = start ↔
+      (AdditivePath.displacement (start - 1)
+          (rademacherIncrementPath branch) < 0 ∧
+        AdditivePath.displacement start
+          (rademacherIncrementPath branch) = 0 ∧
+        SurvivesNonnegative (n - start)
+          (fun k => rademacherIncrementPath branch (start + k))) ∨
+      (0 < AdditivePath.displacement (start - 1)
+          (rademacherIncrementPath branch) ∧
+        AdditivePath.displacement start
+          (rademacherIncrementPath branch) = 0 ∧
+        SurvivesNonnegative (n - start)
+          (fun k => -rademacherIncrementPath branch (start + k))) := by
+  constructor
+  · intro heq
+    have hzero := rademacher_displacement_lastSignChange_eq_zero branch n
+    rw [heq] at hzero
+    rcases signStableFrom_lastSignChangeIndex n
+        (rademacherIncrementPath branch) with hpositive | hnegative
+    · have hprevious := previous_negative_of_nonnegative_terminal n
+        (rademacherIncrementPath branch) (by rw [heq]; exact hstart) hpositive
+      rw [heq] at hprevious
+      have htail : ∀ j : ℕ, start ≤ j → j ≤ n →
+          0 ≤ AdditivePath.displacement j
+            (rademacherIncrementPath branch) := by
+        simpa only [heq] using hpositive
+      exact Or.inl ⟨hprevious, hzero,
+        (nonnegativeTail_iff_shiftedSurvival n start
+          (rademacherIncrementPath branch) (by omega) hzero).1 htail⟩
+    · have hprevious := previous_positive_of_nonpositive_terminal n
+        (rademacherIncrementPath branch) (by rw [heq]; exact hstart) hnegative
+      rw [heq] at hprevious
+      have htail : ∀ j : ℕ, start ≤ j → j ≤ n →
+          AdditivePath.displacement j
+            (rademacherIncrementPath branch) ≤ 0 := by
+        simpa only [heq] using hnegative
+      exact Or.inr ⟨hprevious, hzero,
+        (nonpositiveTail_iff_negShiftedSurvival n start
+          (rademacherIncrementPath branch) (by omega) hzero).1 htail⟩
+  · rintro (⟨hprevious, hzero, hsurvive⟩ |
+      ⟨hprevious, hzero, hsurvive⟩)
+    · exact lastSignChangeIndex_eq_of_positiveCrossing branch n start
+        hstart hbefore hprevious hzero hsurvive
+    · exact lastSignChangeIndex_eq_of_negativeCrossing branch n start
+        hstart hbefore hprevious hzero hsurvive
 
 end ProbabilityTheory.RandomWalk
 
