@@ -8,7 +8,7 @@ The folders here are organized by the event being estimated.
 | `Drawdown` | The running maximum minus the current walk stays bounded. This is a small-deviation question for the drawdown process. The finite-variance upper estimate is in `Drawdown/FiniteVarianceUpper.lean`. |
 | `DriftedTube` | A walk stays between linearly moving boundaries. The two finite-variance endpoint lower bounds of Wang Yiyang's Lemma 3.5 are in `DriftedTube/FiniteVarianceLower/EndpointBounds.lean`. The `Staircase`, `Binning`, and `Blocks` directories contain its proof components. |
 | `Entrance` | Transition estimates into a corridor, shared by several small-deviation arguments. `RobustExponentialBudget.lean` supplies the entrance factor used by the tilted-tube endpoint bounds. |
-| `HorizontalTube` | Upper bounds for a fixed horizontal corridor. |
+| `HorizontalTube` | Upper bounds for a fixed horizontal corridor and the reusable finite-variance lower bound with an interior endpoint window. |
 
 The conditioned Brownian-meander input to the entrance estimate is in
 `Probability/Process/RandomWalk/FunctionalLimit/Conditioned`. Its finite-variance
