@@ -15,13 +15,18 @@ import Mathlib.Tactic.FieldSimp
 /-!
 # Scaling identities for drawdown events
 
-The public declarations are `measurableSet_noLargeDropEndpointBelowEvent`,
-which states measurability of
-`{S : ∀ i ≤ j ≤ L, S_i - S_j ≤ Δ ∧ S_L ≤ r}`;
-`noLargeDropEndpointBelowEvent_preimage_div`, which identifies the event under
-`S ↦ S/σ` with thresholds `(Δ/σ,r/σ)` for `σ>0`; and
-`iidSequenceLaw_measure_noLargeDropEndpointBelowEvent_eq_map_div`, which gives
-the corresponding equality between IID sequence-law probabilities.
+Write
+$B_{L,\Delta,r}=\{\xi:S_i-S_j\le\Delta\ (0\le i\le j\le L),\ S_L\le r\}$
+for the drawdown endpoint event. The public theorems are:
+
+- `measurableSet_noLargeDropEndpointBelowEvent`: $B_{L,\Delta,r}$ is measurable.
+- `noLargeDropEndpointBelowEvent_preimage_div`: for $\sigma>0$ and
+  $D_\sigma(\xi)_i=\xi_i/\sigma$,
+  $D_\sigma^{-1}(B_{L,\Delta/\sigma,r/\sigma})=B_{L,\Delta,r}$.
+- `iidSequenceLaw_measure_noLargeDropEndpointBelowEvent_eq_map_div`:
+  $\mathbb P_\nu(B_{L,\Delta,r})=
+  \mathbb P_{\nu\circ(x\mapsto x/\sigma)^{-1}}
+  (B_{L,\Delta/\sigma,r/\sigma})$.
 -/
 
 @[expose] public section
