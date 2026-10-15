@@ -22,6 +22,13 @@ $X_n(t)=a_n^{-1}(S_k+(nt-k)\xi_k)$.
 The theorem `ProbabilityTheory.RandomWalk.normalizedLinearPath_nonneg_after_grid`
 states that a polygonal path remains nonnegative after a grid time
 if every later grid value is nonnegative.
+The theorem `ProbabilityTheory.RandomWalk.normalizedLinearPath_neg`
+states $X_n(-\xi)=-X_n(\xi)$.
+The theorem `ProbabilityTheory.RandomWalk.normalizedLinearPath_nonpos_after_grid`
+is the sign-reversed form of the nonnegative-tail result.
+The theorem `ProbabilityTheory.RandomWalk.normalizedLinearPath_before_zero`
+gives the affine value just before a grid point at which the path
+returns to zero.
 -/
 
 open Set
@@ -117,6 +124,14 @@ noncomputable def normalizedLinearPath (scale : ℕ → ℝ) (n : ℕ)
     (increment : ℕ → ℝ) (t : ℝ) : ℝ :=
   (scale n)⁻¹ * ∑ k ∈ Finset.range n,
     linearIncrementWeight n k t * increment k
+
+/-- Sign reversal of all increments reverses the polygonal path. -/
+theorem normalizedLinearPath_neg (scale : ℕ → ℝ) (n : ℕ)
+    (increment : ℕ → ℝ) (t : ℝ) :
+    normalizedLinearPath scale n (fun j => -increment j) t =
+      -normalizedLinearPath scale n increment t := by
+  unfold normalizedLinearPath
+  simp only [mul_neg, Finset.sum_neg_distrib]
 
 theorem continuous_normalizedLinearPath (scale : ℕ → ℝ) (n : ℕ)
     (increment : ℕ → ℝ) :
@@ -226,6 +241,27 @@ theorem normalizedLinearPath_on_interval
     rw [hfirst, hsecond]
   simp only [normalizedLinearPath, hsum]
 
+/-- On a mesh interval ending at a zero, the interpolated value is
+the left endpoint value multiplied by the remaining affine fraction. -/
+theorem normalizedLinearPath_before_zero
+    (scale : ℕ → ℝ) {n k : ℕ} (hk : k < n)
+    (increment : ℕ → ℝ)
+    (hzero : AdditivePath.displacement (k + 1) increment = 0)
+    (t : ℝ) (hleft : (k : ℝ) ≤ (n : ℝ) * t)
+    (hright : (n : ℝ) * t ≤ (k + 1 : ℕ)) :
+    normalizedLinearPath scale n increment t =
+      (scale n)⁻¹ *
+        (1 - ((n : ℝ) * t - k)) *
+          AdditivePath.displacement k increment := by
+  have hinc : increment k =
+      -AdditivePath.displacement k increment := by
+    have hsucc := AdditivePath.displacement_succ k increment
+    rw [hzero] at hsucc
+    linarith
+  rw [normalizedLinearPath_on_interval scale hk increment t hleft hright,
+    hinc]
+  ring
+
 /-- Nonnegative grid values on a final interval imply nonnegativity
 throughout the interpolated final interval. -/
 theorem normalizedLinearPath_nonneg_after_grid
@@ -284,6 +320,27 @@ theorem normalizedLinearPath_nonneg_after_grid
       (add_nonneg
         (mul_nonneg (by linarith) (hgrid j hjstart hjle))
         (mul_nonneg hw0 (hgrid (j + 1) (by omega) (by omega))))
+
+/-- Nonpositive grid values on a final interval imply nonpositivity
+throughout the interpolated final interval. -/
+theorem normalizedLinearPath_nonpos_after_grid
+    (scale : ℕ → ℝ) {n start : ℕ} (hn : 0 < n)
+    (hscale : 0 < scale n) (hstart : start ≤ n)
+    (increment : ℕ → ℝ)
+    (hgrid : ∀ j : ℕ, start ≤ j → j ≤ n →
+      AdditivePath.displacement j increment ≤ 0)
+    (t : unitInterval)
+    (ht : (start : ℝ) ≤ (n : ℝ) * (t : ℝ)) :
+    normalizedLinearPath scale n increment t ≤ 0 := by
+  have hneg : ∀ j : ℕ, start ≤ j → j ≤ n →
+      0 ≤ AdditivePath.displacement j (fun i => -increment i) := by
+    intro j hsj hjn
+    rw [AdditivePath.displacement_neg]
+    exact neg_nonneg.mpr (hgrid j hsj hjn)
+  have h := normalizedLinearPath_nonneg_after_grid scale hn hscale
+    hstart (fun i => -increment i) hneg t ht
+  rw [normalizedLinearPath_neg] at h
+  exact neg_nonneg.mp h
 
 theorem sum_linearIncrementWeight_eq_partialSum_add
     {n : ℕ} {t : ℝ} (ht : 0 ≤ t)
