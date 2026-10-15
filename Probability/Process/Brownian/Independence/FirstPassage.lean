@@ -1,0 +1,114 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
+module
+
+public import Probability.Process.Brownian.Independence.FirstPassageGrid
+public import Probability.Process.Brownian.Reflection.UnboundedBelow
+public import Probability.Process.Path.TimeGrid.Expanding
+
+/-!
+# Brownian future path at first passage
+
+The public theorem in this file is:
+
+- `ProbabilityTheory.IsBrownianReal.measure_shiftToZero_firstPassageBelow_eq`:
+  for each real level $a$, the path
+  $u\mapsto B(\tau_a+u)-B(\tau_a)$ at
+  $\tau_a=\inf\{t:B_t\le a\}$ has the original Brownian path law.
+
+The proof takes expanding finite observation grids, uses the
+finite-valued stopping-time law, and passes to their almost-sure path
+limit. This is the marginal strong-Markov step behind the Lévy
+decomposition cited in Erwin Bolthausen, *On a functional central
+limit theorem for random walks conditioned to stay positive*,
+Lemma 2.3, equation (2.2), Ann. Probab. 4(3) (1976), 480--485,
+DOI 10.1214/aop/1176996098, referring to Kiyosi Itô and Henry P.
+McKean, *Diffusion Processes and Their Sample Paths* (1965), §1.7.
+-/
+
+@[expose] public section
+
+namespace ProbabilityTheory
+
+open MeasureTheory
+open scoped NNReal
+
+/-- Every finite first-passage time is approached from above by the
+expanding first-passage observation grids. -/
+private theorem tendsto_expandingGridCeiling_of_finite
+    (a : ℝ) (f : C(ℝ≥0, ℝ)) (τ : ℝ≥0)
+    (hτ : firstPassageBelow f a = τ) :
+    Filter.Tendsto
+      (fun n => expandingGridTime n
+        (firstPassageGridCeiling (expandingGridCount n)
+          (expandingGridTime n) a f))
+      Filter.atTop (nhds τ) := by
+  exact tendsto_firstPassageGridCeiling_time_of_finite
+    expandingGridCount expandingGridTime expandingGridTime_mono
+    a f τ hτ (expandingGridTime_eventually_cover τ)
+    (fun b hb => expandingGridTime_dense τ b hb)
+
+/-- Brownian motion restarted at its first passage below any fixed
+level has the original Brownian path law. -/
+theorem IsBrownianReal.measure_shiftToZero_firstPassageBelow_eq
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+    {B : ℝ≥0 → Ω → ℝ} (hB : IsBrownianReal B P)
+    (hBmeasurable : ∀ u, Measurable (B u)) (a : ℝ) :
+    (P.map (hB.continuousPathMap hBmeasurable)).map
+        (fun f => shiftToZero f (firstPassageBelow f a).untopA) =
+      P.map (hB.continuousPathMap hBmeasurable) := by
+  let μ := P.map (hB.continuousPathMap hBmeasurable)
+  haveI : IsProbabilityMeasure P := (hB.hasLaw ∅).isProbabilityMeasure
+  haveI : IsFiniteMeasure μ := inferInstance
+  let F : C(ℝ≥0, ℝ) → C(ℝ≥0, ℝ) := fun f =>
+    shiftToZero f (firstPassageBelow f a).untopA
+  let Fₙ : ℕ → C(ℝ≥0, ℝ) → C(ℝ≥0, ℝ) := fun n f =>
+    shiftToZero f (expandingGridTime n
+      (firstPassageGridCeiling (expandingGridCount n)
+        (expandingGridTime n) a f))
+  have hF : Measurable F :=
+    measurable_shiftToZero.comp
+      (measurable_id.prodMk (measurable_firstPassageBelow a).untopA)
+  have hFₙ (n : ℕ) : Measurable (Fₙ n) := by
+    have hT : Measurable (fun f : C(ℝ≥0, ℝ) =>
+        expandingGridTime n
+          (firstPassageGridCeiling (expandingGridCount n)
+            (expandingGridTime n) a f)) :=
+      (measurable_of_finite (expandingGridTime n)).comp
+        (measurable_firstPassageGridCeiling
+          (expandingGridCount n) (expandingGridTime n) a)
+    exact measurable_shiftToZero.comp (measurable_id.prodMk hT)
+  have hfinite : ∀ᵐ f ∂μ, firstPassageBelow f a ≠ ⊤ := by
+    filter_upwards [hB.ae_continuousPath_unboundedBelow hBmeasurable]
+      with f hdesc
+    intro htop
+    obtain ⟨u, hu⟩ := hdesc a
+    have hnever := (firstPassageBelow_eq_top_iff f a).mp htop u
+    exact (not_lt_of_ge hu.le) hnever
+  have hlim : ∀ᵐ f ∂μ,
+      Filter.Tendsto (fun n => Fₙ n f) Filter.atTop (nhds (F f)) := by
+    filter_upwards [hfinite] with f hf
+    obtain ⟨τ, hτ⟩ := WithTop.ne_top_iff_exists.mp hf
+    have htime := tendsto_expandingGridCeiling_of_finite a f τ hτ.symm
+    have htarget : F f = shiftToZero f τ := by
+      change shiftToZero f (firstPassageBelow f a).untopA = shiftToZero f τ
+      rw [← hτ]
+      rfl
+    rw [htarget]
+    exact continuous_shiftToZero.continuousAt.tendsto.comp
+      (tendsto_const_nhds.prodMk_nhds htime)
+  have hinv (n : ℕ) : μ.map (Fₙ n) = μ := by
+    rw [Measure.map_map (hFₙ n)
+      (hB.measurable_continuousPathMap hBmeasurable)]
+    exact hB.measure_shiftToZero_firstPassageGridCeiling_eq hBmeasurable
+      (expandingGridCount n) (expandingGridTime n)
+      (expandingGridTime_mono n) a
+  exact Measure.map_eq_of_ae_pointwise_limit μ F Fₙ hF hFₙ hlim hinv
+
+end ProbabilityTheory
+
+end

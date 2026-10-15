@@ -20,6 +20,12 @@ The public theorem in this file is:
 - `ProbabilityTheory.IsBrownianReal.indepFun_shiftPath_freezePath`:
   the path $u\mapsto B(r+u)-B(r)$ is independent of the frozen past path
   $u\mapsto B(\min(u,r))$.
+- `ProbabilityTheory.IsBrownianReal.indepFun_shiftToZero_freezeAfter`:
+  the same independence expressed directly through the continuous
+  Brownian path map.
+- `ProbabilityTheory.IsBrownianReal.measure_shiftToZero_eq`:
+  the future increment path at a fixed time has the original Brownian
+  path law.
 - `ProbabilityTheory.IsBrownianReal.measure_pastMinimumGap_eq_futureMinimum`:
   for $d>0$, the probability that $m(r)-B(r)$ equals the minimum of
   $B(r+u)-B(r)$ over $0\le u\le d$ is zero.
@@ -98,6 +104,53 @@ theorem IsBrownianReal.indepFun_shiftPath_freezePath
   exact IndepFun.of_indep_finiteEvaluation nonnegativeRationalTime
     denseRange_nonnegativeRationalTime nonnegativeRationalTime
     denseRange_nonnegativeRationalTime hPathEvalInd
+
+/-- The deterministic-time future and frozen past are independent when
+both are taken from the same continuous Brownian path. -/
+theorem IsBrownianReal.indepFun_shiftToZero_freezeAfter
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+    {B : ℝ≥0 → Ω → ℝ} (hB : IsBrownianReal B P)
+    (hBmeasurable : ∀ u, Measurable (B u)) (r : ℝ≥0) :
+    (fun ω => shiftToZero (hB.continuousPathMap hBmeasurable ω) r) ⟂ᵢ[P]
+      (fun ω => freezeAfter (hB.continuousPathMap hBmeasurable ω) r) := by
+  let shifted : ℝ≥0 → Ω → ℝ := fun u ω => B (r + u) ω - B r ω
+  let hshift : IsBrownianReal shifted P := hB.shift r
+  let hshiftMeas : ∀ u, Measurable (shifted u) :=
+    fun u => (hBmeasurable (r + u)).sub (hBmeasurable r)
+  let pathB := hB.continuousPathMap hBmeasurable
+  have hae : (fun ω => shiftToZero (pathB ω) r) =ᵐ[P]
+      hshift.continuousPathMap hshiftMeas := by
+    filter_upwards [hB.continuousPathMap_ae_eq hBmeasurable,
+      hshift.continuousPathMap_ae_eq hshiftMeas] with ω hω hωS
+    ext u
+    change pathB ω (r + u) - pathB ω r =
+      hshift.continuousPathMap hshiftMeas ω u
+    rw [hω (r + u), hω r, hωS u]
+  exact (hB.indepFun_shiftPath_freezePath hBmeasurable r).congr hae.symm
+    (ae_eq_refl _)
+
+/-- Brownian increments after a deterministic time have Brownian path law. -/
+theorem IsBrownianReal.measure_shiftToZero_eq
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+    {B : ℝ≥0 → Ω → ℝ} (hB : IsBrownianReal B P)
+    (hBmeasurable : ∀ u, Measurable (B u)) (r : ℝ≥0) :
+    P.map (fun ω => shiftToZero (hB.continuousPathMap hBmeasurable ω) r) =
+      P.map (hB.continuousPathMap hBmeasurable) := by
+  let shifted : ℝ≥0 → Ω → ℝ := fun u ω => B (r + u) ω - B r ω
+  let hshift : IsBrownianReal shifted P := hB.shift r
+  let hshiftMeas : ∀ u, Measurable (shifted u) :=
+    fun u => (hBmeasurable (r + u)).sub (hBmeasurable r)
+  let pathB := hB.continuousPathMap hBmeasurable
+  have hae : (fun ω => shiftToZero (pathB ω) r) =ᵐ[P]
+      hshift.continuousPathMap hshiftMeas := by
+    filter_upwards [hB.continuousPathMap_ae_eq hBmeasurable,
+      hshift.continuousPathMap_ae_eq hshiftMeas] with ω hω hωS
+    ext u
+    change pathB ω (r + u) - pathB ω r =
+      hshift.continuousPathMap hshiftMeas ω u
+    rw [hω (r + u), hω r, hωS u]
+  rw [Measure.map_congr hae]
+  exact hshift.measure_continuousPathMap_eq hB hshiftMeas hBmeasurable
 
 /-- The minimum of the future increment path almost surely differs
 from the gap between the past minimum and the present Brownian value.
