@@ -125,7 +125,7 @@ theorem firstNonnegativeWindowStart_eq_firstSurvivingWindowIndex
 
 /-- An index satisfying the first-window predicate equals the selected
 index. -/
-theorem firstSurvivingWindowIndex_eq_of_first
+private theorem firstSurvivingWindowIndex_eq_of_first
     (n start : ℕ) (increment : ℕ → ℝ)
     (hfirst : IsFirstSurvivingWindow n start increment) :
     firstSurvivingWindowIndex n increment = start := by
@@ -390,7 +390,7 @@ theorem measure_map_rebasedAtFirstSurvivingWindow_eq
 
 /-- On a walk with a surviving window, the centered continuous first-window
 path is the polygonal path of its first surviving discrete block. -/
-theorem centeredFirstWindowShift_eq_selectedFirstSurvivingBlockPath
+private theorem centeredFirstWindowShift_eq_selectedFirstSurvivingBlockPath
     (scale : ℕ → ℝ) {n : ℕ} (hn : 0 < n)
     (hscale : 0 < scale n) (increment : ℕ → ℝ)
     (hex : ∃ start : ℕ,
