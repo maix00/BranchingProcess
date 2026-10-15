@@ -39,6 +39,9 @@ The public definitions and theorems in this file are:
 - `ProbabilityTheory.RandomWalk.shiftToZero_normalizedLinearContinuousPathUnbounded_grid`:
   rebasing the path at $j/n$ gives
   $a_n^{-1}(S_{j+k}-S_j)$ at time $k/n$.
+- `ProbabilityTheory.RandomWalk.shiftToZero_normalizedLinearContinuousPathUnbounded_eq_bounded`:
+  the entire rebased unit-time polygonal path equals the interpolation
+  of the shifted increment sequence.
 
 The unbounded-time interpolation is the path $Y_n$ used in Erwin
 Bolthausen, *On a functional central limit theorem for random walks
@@ -279,6 +282,72 @@ theorem shiftToZero_normalizedLinearContinuousPathUnbounded_grid
   change normalizedLinearPathUnbounded scale n increment
       (gridTime start) = _ at hbase
   rw [hfirst, hbase]
+  ring
+
+/-- Rebasing the whole-time polygonal walk at a lattice time gives
+exactly the polygonal interpolation of the shifted increment sequence
+throughout the subsequent unit interval. -/
+theorem shiftToZero_normalizedLinearContinuousPathUnbounded_eq_bounded
+    (scale : ℕ → ℝ) {n : ℕ} (hn : 0 < n)
+    (start : ℕ) (increment : ℕ → ℝ) (t : unitInterval) :
+    shiftToZero (normalizedLinearContinuousPathUnbounded scale n increment)
+        (⟨(start : ℝ) / n, div_nonneg (Nat.cast_nonneg start)
+          (Nat.cast_nonneg n)⟩ : ℝ≥0)
+        (⟨(t : ℝ), t.property.1⟩ : ℝ≥0) =
+      normalizedLinearContinuousPathIcc scale n
+        (fun k => increment (start + k)) t := by
+  let gridTime : ℝ≥0 :=
+    ⟨(start : ℝ) / n, div_nonneg (Nat.cast_nonneg start)
+      (Nat.cast_nonneg n)⟩
+  let u : ℝ≥0 := ⟨(t : ℝ), t.property.1⟩
+  let j : ℕ := ⌊(n : ℝ) * (t : ℝ)⌋₊
+  have hnonneg : 0 ≤ (n : ℝ) * (t : ℝ) :=
+    mul_nonneg (Nat.cast_nonneg n) t.property.1
+  have hjlo : (j : ℝ) ≤ (n : ℝ) * (t : ℝ) :=
+    Nat.floor_le hnonneg
+  have hjhi : (n : ℝ) * (t : ℝ) ≤ (j : ℝ) + 1 :=
+    (Nat.lt_floor_add_one _).le
+  have hn0 : (n : ℝ) ≠ 0 := by exact_mod_cast hn.ne'
+  have htime : (n : ℝ) * ((gridTime + u : ℝ≥0) : ℝ) =
+      (start : ℝ) + (n : ℝ) * (t : ℝ) := by
+    change (n : ℝ) * ((start : ℝ) / n + (t : ℝ)) = _
+    field_simp
+  have htime' : (n : ℝ) * ((gridTime : ℝ) + (u : ℝ)) =
+      (start : ℝ) + (n : ℝ) * (t : ℝ) := by
+    simpa only [NNReal.coe_add] using htime
+  have hwhole := normalizedLinearPathUnbounded_segment scale n
+    (start + j) increment (gridTime + u) (by
+      push_cast
+      linarith [hjlo, htime']) (by
+      push_cast
+      linarith [hjhi, htime'])
+  have hshift := normalizedLinearPathUnbounded_segment scale n j
+    (fun k => increment (start + k)) u (by
+      change (j : ℝ) ≤ (n : ℝ) * (t : ℝ)
+      exact hjlo) (by
+      change (n : ℝ) * (t : ℝ) ≤ (j : ℝ) + 1
+      exact hjhi)
+  have hbase := normalizedLinearPathUnbounded_grid scale hn start increment
+  change normalizedLinearPathUnbounded scale n increment (gridTime + u) -
+      normalizedLinearPathUnbounded scale n increment gridTime =
+    normalizedLinearPath scale n (fun k => increment (start + k)) t
+  rw [hwhole, hbase]
+  have hu : u ≤ 1 := by
+    apply NNReal.coe_le_coe.mp
+    change (t : ℝ) ≤ 1
+    exact t.property.2
+  have hbounded := normalizedLinearPathUnbounded_eq_bounded scale n
+    (fun k => increment (start + k)) u hu
+  change (scale n)⁻¹ *
+        (AdditivePath.displacement (start + j) increment +
+          ((n : ℝ) * ((gridTime + u : ℝ≥0) : ℝ) - (start + j : ℕ)) *
+            increment (start + j)) -
+      (scale n)⁻¹ * AdditivePath.displacement start increment =
+    normalizedLinearPath scale n (fun k => increment (start + k)) (u : ℝ)
+  rw [← hbounded, hshift, AdditivePath.displacement_add, htime]
+  simp only [Nat.cast_add]
+  have hut : (u : ℝ) = (t : ℝ) := rfl
+  rw [hut]
   ring
 
 end ProbabilityTheory.RandomWalk

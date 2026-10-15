@@ -24,7 +24,7 @@ The public definitions and theorems in this file are:
   this finite-block path map is measurable.
 - `ProbabilityTheory.RandomWalk.normalizedLinearContinuousPathFromBlock_blockCoordinates`:
   forming a block from a sequence and then interpolating agrees with
-  interpolating its first $n$ increments directly.
+  interpolating the corresponding shifted sequence directly.
 
 This is the path-level passage from Bolthausen's finite-block
 Lemma 3.1 to the polygonal paths in Theorem 3.2 of
@@ -70,15 +70,16 @@ theorem measurable_normalizedLinearContinuousPathFromBlock
 /-- Interpolation of the first `n` coordinates factors through their
 finite block. -/
 theorem normalizedLinearContinuousPathFromBlock_blockCoordinates
-    (scale : ℕ → ℝ) (n : ℕ) (increment : ℕ → ℝ) :
+    (scale : ℕ → ℝ) (n start : ℕ) (increment : ℕ → ℝ) :
     normalizedLinearContinuousPathFromBlock scale n
-        (Combinatorics.Sequence.blockCoordinates 0 n increment) =
-      normalizedLinearContinuousPathIcc scale n increment := by
+        (Combinatorics.Sequence.blockCoordinates start n increment) =
+      normalizedLinearContinuousPathIcc scale n
+        (fun k => increment (start + k)) := by
   ext t
   change normalizedLinearPath scale n
       (extendFiniteIncrementBlock n
-        (Combinatorics.Sequence.blockCoordinates 0 n increment)) t =
-    normalizedLinearPath scale n increment t
+        (Combinatorics.Sequence.blockCoordinates start n increment)) t =
+    normalizedLinearPath scale n (fun k => increment (start + k)) t
   unfold normalizedLinearPath
   congr 1
   apply Finset.sum_congr rfl
