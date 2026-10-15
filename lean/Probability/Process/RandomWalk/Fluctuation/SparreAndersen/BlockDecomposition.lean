@@ -37,6 +37,11 @@ The public theorems in this file are:
   adjacent-block survival implies survival from every selected cyclic start.
 - `ProbabilityTheory.RandomWalk.iInter_cyclicSurvivalEvent_eq_cyclicBlockEvent`:
   the full event identity (A.5) for any nonempty set of selected starts.
+- `ProbabilityTheory.RandomWalk.measurableSet_cyclicBlockEvent`:
+  the adjacent-block event is measurable under every finite product law.
+- `ProbabilityTheory.RandomWalk.measureReal_nonnegative_endpoint_eq_cyclicBlock_sum`:
+  $\mathbb P(S_n\ge0)$ is the alternating sum of the probabilities of
+  adjacent-block events indexed by nonempty subsets of starts.
 
 These are the two kinds of inequalities in the event $B_n^{k+1}$ of
 M. Bauer, C. Godrèche, and J.-M. Luck, *Statistics of persistent events
@@ -380,6 +385,32 @@ theorem iInter_cyclicSurvivalEvent_eq_cyclicBlockEvent
   constructor
   · exact mem_cyclicBlockEvent_of_forall_cyclicSurvivalEvent x u hu
   · exact forall_cyclicSurvivalEvent_of_mem_cyclicBlockEvent x u hu
+
+/-- The adjacent-block event is measurable because it is a finite
+intersection of measurable cyclic survival events. -/
+theorem measurableSet_cyclicBlockEvent
+    {n : ℕ} (u : Finset (Fin n)) (hu : u.Nonempty) :
+    MeasurableSet (cyclicBlockEvent u hu) := by
+  rw [← iInter_cyclicSurvivalEvent_eq_cyclicBlockEvent u hu]
+  exact MeasurableSet.iInter fun k =>
+    MeasurableSet.iInter fun _ => measurableSet_cyclicSurvivalEvent k
+
+/-- Substituting the block decomposition (A.5) into the finite
+inclusion--exclusion identity (A.4) of Bauer--Godrèche--Luck,
+Appendix A. -/
+theorem measureReal_nonnegative_endpoint_eq_cyclicBlock_sum
+    {n : ℕ} (hn : 0 < n) (μ : MeasureTheory.Measure (Fin n → ℝ))
+    [MeasureTheory.IsFiniteMeasure μ] :
+    μ.real {x : Fin n → ℝ | 0 ≤ Fin.partialSum x (Fin.last n)} =
+      ∑ u ∈ (Finset.univ : Finset (Fin n)).powerset with u.Nonempty,
+        (-1 : ℝ) ^ (u.card + 1) *
+          μ.real (if h : u.Nonempty then cyclicBlockEvent u h else ∅) := by
+  rw [measureReal_nonnegative_endpoint_eq_cyclicSurvival_sum hn μ]
+  apply Finset.sum_congr rfl
+  intro u hu
+  have hnonempty : u.Nonempty := (Finset.mem_filter.mp hu).2
+  simp only [dite_eq_left hnonempty]
+  rw [iInter_cyclicSurvivalEvent_eq_cyclicBlockEvent u hnonempty]
 
 end ProbabilityTheory.RandomWalk
 
