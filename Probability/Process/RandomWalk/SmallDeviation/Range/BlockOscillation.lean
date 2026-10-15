@@ -14,20 +14,18 @@ public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Ran
 
 The public theorems in this file are:
 
-- `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.blockOscillationEvent_partialSum_abs_le`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Range.blockOscillationEvent_partialSum_abs_le`:
   a block whose range is at most $\Delta$ has every displacement in
   $[-\Delta,\Delta]$.
-- `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.blockOscillationEvent_subset_enlargedSourceCorridor`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Range.blockOscillationEvent_subset_enlargedSourceCorridor`:
   the block event lies in a centered source corridor after enlarging its
   width by a factor greater than two.
-- `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.eventually_iidSequenceLaw_blockOscillationProbability_le_exp_of_centeredUnitVariance`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Range.eventually_iidSequenceLaw_blockOscillationProbability_le_exp_of_centeredUnitVariance`:
   the source-path rate gives the finite-variance exponential block bound.
 
-These are the source-path inputs for Wang Yiyang, *Asymptotic speed of the
-$N$-branching random walk with infinite offspring*, Chapter 3, proof of
-Lemma 3.3. The rate follows A. A. Mogul'skii, *Small Deviations in a Space
-of Trajectories*, Theorem 3, Section 4, p. 764 (English translation,
-DOI 10.1137/1119081).
+The block-oscillation rate follows A. A. Mogul'skii, *Small Deviations in a
+Space of Trajectories*, Theorem 3, Section 4, p. 764 (English translation,
+DOI 10.1137/1119081). It is a reusable bound for random-walk range events.
 -/
 
 open Filter MeasureTheory ProbabilityTheory
@@ -35,7 +33,7 @@ open scoped ENNReal NNReal Topology
 
 @[expose] public section
 
-namespace ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown
+namespace ProbabilityTheory.RandomWalk.SmallDeviation.Range
 
 open ProbabilityTheory.RandomWalk
 open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
@@ -253,6 +251,6 @@ theorem eventually_iidSequenceLaw_blockOscillationProbability_le_exp_of_centered
       increment hosc
   exact (measure_mono hsubset).trans hcorridorBound
 
-end ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown
+end ProbabilityTheory.RandomWalk.SmallDeviation.Range
 
 end

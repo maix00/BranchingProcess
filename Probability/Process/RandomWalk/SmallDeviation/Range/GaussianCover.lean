@@ -14,26 +14,24 @@ public import Topology.Cadlag.Skorokhod.SmallDeviation.RangeCover
 # Gaussian corridor cover of the range event
 
 The public definitions in this file are
-`ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.rangeCoverLower`,
+`ProbabilityTheory.RandomWalk.SmallDeviation.Range.rangeCoverLower`,
 `rangeCoverUpper`, and `rangeCoverUnion`: the finite family of constant
 corridors used to cover paths with bounded range.
 
 The public theorems are:
 
-- `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.rangeCoverLower_lt_zero`
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Range.rangeCoverLower_lt_zero`
   and `rangeCoverUpper_pos`: each selected corridor contains the origin.
-- `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.rangeCoverWidth`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Range.rangeCoverWidth`:
   each corridor has width $2(1+2/k)$.
-- `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.rangeCoverUnion_realEnergy`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Range.rangeCoverUnion_realEnergy`:
   the finite cover has the Gaussian corridor energy needed for the rate.
-- `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.rangeTubeStartingAtZero_subset_rangeCoverUnion`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Range.rangeTubeStartingAtZero_subset_rangeCoverUnion`:
   the zero-starting bounded-range event is contained in this cover.
 
 The non-strict range-oscillation event is covered by finitely many constant
-corridors. The Gaussian $M_3$ rate then gives the sharp small-width exponential
-bound used in Wang Yiyang, *Asymptotic speed of the $N$-branching random walk
-with infinite offspring*, Chapter 3, proof of Lemma 3.3. Its Gaussian input
-specializes A. A. Mogul'skii, *Small Deviations in a Space of Trajectories*,
+corridors. The resulting Gaussian range estimate is a reusable consequence
+of A. A. Mogul'skii, *Small Deviations in a Space of Trajectories*,
 Theorem 3, Section 4, p. 764 (DOI 10.1137/1119081).
 -/
 
@@ -45,7 +43,7 @@ open ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability
 
 @[expose] public section
 
-namespace ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown
+namespace ProbabilityTheory.RandomWalk.SmallDeviation.Range
 
 open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
@@ -196,6 +194,6 @@ theorem rangeTubeStartingAtZero_subset_rangeCoverUnion
       dsimp [rangeCoverUpper]
       linarith
 
-end ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown
+end ProbabilityTheory.RandomWalk.SmallDeviation.Range
 
 end

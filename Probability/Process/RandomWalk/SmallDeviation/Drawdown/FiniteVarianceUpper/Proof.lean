@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.Path.Drawdown
+public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.Event
 public import Probability.Process.RandomWalk.Path.Filtration
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.BlockScale
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.Horizontal
@@ -1354,15 +1354,6 @@ theorem blockOscillationEvent_of_additiveSegment
       congr 1
       ring
     _ ≤ width := hsegment i j
-
-/-- A finite-horizon event imposing both a drawdown bound and an endpoint
-upper bound. -/
-def noLargeDropEndpointBelowEvent (horizon : ℕ) (delta threshold : ℝ) :
-    Set (ℕ → ℝ) :=
-  {increment | (∀ i j : ℕ, i ≤ j → j ≤ horizon →
-      AdditivePath.displacement i increment -
-        AdditivePath.displacement j increment ≤ delta) ∧
-    AdditivePath.displacement horizon increment ≤ threshold}
 
 /-- Every path in `noLargeDropEndpointBelowEvent` has the discretized
 running-maximum decomposition of Wang Yiyang, Chapter 3, Lemma 3.3. The
