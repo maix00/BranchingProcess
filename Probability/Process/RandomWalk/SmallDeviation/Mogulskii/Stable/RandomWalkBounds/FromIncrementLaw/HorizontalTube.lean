@@ -32,6 +32,11 @@ For a law `ν` of mean zero and variance \(\sigma^2\in(0,\infty)\), write
   for real widths \(x_k\to\infty\) and \(x_k^2/t_k\to0\), the same sampled
   limit \(\frac{x_k^2}{t_k-1}\log\mathbb P_\nu(T_{a,x_k,t_k-1})
     \to-\frac{\pi^2}{2}\sigma^2\) holds.
+- `centeredFiniteVariance_closedHorizontalTubeProbabilityRate_realWidth`:
+  for a real width $D\to\infty$ and integer horizon $L_D$ satisfying
+  $D^2/L_D\to0$,
+  $\frac{D^2}{L_D}\log\mathbb P_\nu(T_{a,D,L_D})
+    \to-\frac{\pi^2}{2}\sigma^2$.
 - `centeredUnitVariance_closedHorizontalTubeProbabilityRate`: under
   \(\sigma^2=1\),
   \(\frac{x_n^2}{n}\log\mathbb P_\nu(T_{a,x_n,n-1})
@@ -1084,6 +1089,113 @@ theorem centeredFiniteVariance_closedHorizontalTubeProbabilityRate_realWidthAlon
     field_simp [htimeNe, hpredNe]
   simpa only [one_mul] using hproduct.congr' hproductEq
 
+/-- A sampled rate along every increasing time subsequence determines the
+rate for arbitrary real widths and a real-width-indexed integer horizon. -/
+private theorem tendsto_realWidthRate_of_sampledTime
+    {L : ℝ → ℕ} (hL : Tendsto L atTop atTop)
+    (hquadratic : Tendsto (fun D : ℝ => D ^ 2 / (L D : ℝ)) atTop (𝓝 0))
+    {rate : ℝ → ℕ → ℝ} {limit : ℝ}
+    (hsampled : ∀ {time : ℕ → ℕ} {width : ℕ → ℝ},
+      StrictMono time → (∀ k, 0 < time k) → (∀ k, 0 < width k) →
+      Tendsto width atTop atTop →
+      Tendsto (fun k => width k ^ 2 / (time k : ℝ)) atTop (𝓝 0) →
+      Tendsto (fun k => rate (width k) (time k - 1)) atTop (𝓝 limit)) :
+    Tendsto (fun D : ℝ => rate D (L D)) atTop (𝓝 limit) := by
+  let f : ℝ → ℝ := fun D => rate D (L D)
+  apply Metric.tendsto_atTop.2
+  intro ε hε
+  by_contra hnot
+  have hbad (n : ℕ) : ∃ D : ℝ, max 1 (n : ℝ) ≤ D ∧
+      ε ≤ dist (f D) limit := by
+    by_contra hN
+    apply hnot
+    refine ⟨max 1 (n : ℝ), ?_⟩
+    intro D hD
+    by_contra hdist
+    exact hN ⟨D, hD, le_of_not_gt hdist⟩
+  let widthSeq : ℕ → ℝ := fun n => Classical.choose (hbad n)
+  have hwidthPos (n : ℕ) : 0 < widthSeq n :=
+    lt_of_lt_of_le (by norm_num) ((le_max_left _ _).trans
+      (Classical.choose_spec (hbad n)).1)
+  have hwidthTop : Tendsto widthSeq atTop atTop := by
+    rw [tendsto_atTop]
+    intro bound
+    obtain ⟨N, hN⟩ := exists_nat_ge bound
+    filter_upwards [eventually_ge_atTop N] with n hn
+    exact hN.trans ((by exact_mod_cast hn : (N : ℝ) ≤ (n : ℝ)).trans
+      ((le_max_right _ _).trans (Classical.choose_spec (hbad n)).1))
+  let rawTime : ℕ → ℕ := fun k => L (widthSeq k) + 1
+  have hLwidth : Tendsto (fun k => L (widthSeq k)) atTop atTop :=
+    hL.comp hwidthTop
+  have hrawTime : Tendsto rawTime atTop atTop := by
+    rw [tendsto_atTop]
+    intro bound
+    filter_upwards [hLwidth.eventually (eventually_ge_atTop bound)] with k hk
+    dsimp [rawTime]
+    omega
+  obtain ⟨φ, hφ, hφtime⟩ := strictMono_subseq_of_tendsto_atTop hrawTime
+  let widthSub : ℕ → ℝ := fun k => widthSeq (φ k)
+  let timeSub : ℕ → ℕ := fun k => rawTime (φ k)
+  have htimeSub : StrictMono timeSub := by
+    simpa [timeSub, Function.comp_def] using hφtime
+  have hwidthSubTop : Tendsto widthSub atTop atTop :=
+    hwidthTop.comp hφ.tendsto_atTop
+  have hwidthSqRaw : Tendsto
+      (fun k => widthSeq k ^ 2 / ((L (widthSeq k) : ℝ) + 1))
+      atTop (𝓝 0) := by
+    apply squeeze_zero'
+    · exact Eventually.of_forall fun k =>
+        div_nonneg (sq_nonneg _) (by positivity)
+    · filter_upwards [hLwidth.eventually (eventually_ge_atTop 1)] with k hk
+      have hLpos : (0 : ℝ) < L (widthSeq k) := by exact_mod_cast hk
+      have hLle : (L (widthSeq k) : ℝ) ≤ (L (widthSeq k) : ℝ) + 1 := by
+        linarith
+      exact div_le_div_of_nonneg_left (sq_nonneg _) hLpos hLle
+    · exact hquadratic.comp hwidthTop
+  have hwidthSqSub : Tendsto
+      (fun k => widthSub k ^ 2 / (timeSub k : ℝ)) atTop (𝓝 0) := by
+    simpa [widthSub, timeSub, rawTime, Nat.cast_add, Nat.cast_one,
+      Function.comp_def] using hwidthSqRaw.comp hφ.tendsto_atTop
+  have hrateSub := hsampled htimeSub
+    (fun k => by dsimp [timeSub, rawTime]; omega)
+    (fun k => hwidthPos (φ k)) hwidthSubTop hwidthSqSub
+  have hrateOnWidths : Tendsto (fun k => f (widthSub k)) atTop (𝓝 limit) := by
+    simpa [f, widthSub, timeSub, rawTime, Function.comp_def,
+      Nat.add_sub_cancel_right] using hrateSub
+  have hclose : ∀ᶠ k : ℕ in atTop, dist (f (widthSub k)) limit < ε :=
+    hrateOnWidths.eventually (Metric.ball_mem_nhds limit hε)
+  obtain ⟨N, hN⟩ := eventually_atTop.1 hclose
+  have hlt := hN N le_rfl
+  have hge : ε ≤ dist (f (widthSub N)) limit :=
+    (Classical.choose_spec (hbad (φ N))).2
+  exact (not_lt_of_ge hge) hlt
+
+/-- Real-width form of Wang Yiyang, *Asymptotic speed of the $N$-branching
+random walk with infinite offspring*, Chapter 3, Lemma 3.1(i). For every
+integer horizon $L_D\to\infty$ with $D^2/L_D\to0$, the closed horizontal-tube
+probability has logarithmic rate $-\pi^2\sigma^2/2$ as real $D\to\infty$. -/
+theorem centeredFiniteVariance_closedHorizontalTubeProbabilityRate_realWidth
+    {L : ℝ → ℕ} (hL : Tendsto L atTop atTop)
+    (hquadratic : Tendsto (fun D : ℝ => D ^ 2 / (L D : ℝ)) atTop (𝓝 0))
+    {ν : Measure ℝ} [IsProbabilityMeasure ν]
+    (hcentered : ∫ x, x ∂ν = 0)
+    (hsquare : Integrable (fun x : ℝ => x ^ 2) ν)
+    (hvariance : 0 < ∫ x, x ^ 2 ∂ν)
+    {a : ℝ} (ha : 0 < a) (haOne : a < 1) :
+    Tendsto
+      (fun D : ℝ => D ^ 2 / (L D : ℝ) * Real.log
+        (horizontalTubeProbability (iidSequenceLaw ν) a D (L D)).toReal)
+      atTop (𝓝 (-(Real.pi ^ 2) / 2 * (∫ x, x ^ 2 ∂ν))) := by
+  apply tendsto_realWidthRate_of_sampledTime
+    (rate := fun D n => D ^ 2 / (n : ℝ) * Real.log
+      (horizontalTubeProbability (iidSequenceLaw ν) a D n).toReal)
+    (limit := -(Real.pi ^ 2) / 2 * (∫ x, x ^ 2 ∂ν)) hL hquadratic
+  intro time width htime htimePos hwidthPos hwidth hwidthSq
+  simpa using
+    centeredFiniteVariance_closedHorizontalTubeProbabilityRate_realWidthAlong
+      htime htimePos hwidthPos hwidth hwidthSq
+      hcentered hsquare hvariance ha haOne
+
 /-- Unit-variance specialization of Wang Yiyang, *Asymptotic speed of the
 $N$-branching random walk with infinite offspring*, Chapter 3, Lemma 3.1(i). -/
 theorem centeredUnitVariance_closedHorizontalTubeProbabilityRate
@@ -1668,81 +1780,18 @@ theorem centeredFiniteVariance_endpointWindowProbabilityRate_realWidth
         (horizontalTubeEndpointWindowProbability (iidSequenceLaw ν) a
           D (L D) (v₁ D) (v₂ D)).toReal)
       atTop (𝓝 (-(Real.pi ^ 2) / 2 * (∫ x, x ^ 2 ∂ν))) := by
-  let rate : ℝ → ℝ := fun D => D ^ 2 / (L D : ℝ) * Real.log
-    (horizontalTubeEndpointWindowProbability (iidSequenceLaw ν) a
-      D (L D) (v₁ D) (v₂ D)).toReal
-  let c : ℝ := -(Real.pi ^ 2) / 2 * (∫ x, x ^ 2 ∂ν)
-  apply Metric.tendsto_atTop.2
-  intro ε hε
-  by_contra hnot
-  have hbad (n : ℕ) : ∃ D : ℝ, max 1 (n : ℝ) ≤ D ∧
-      ε ≤ dist (rate D) c := by
-    by_contra hN
-    apply hnot
-    refine ⟨max 1 (n : ℝ), ?_⟩
-    intro D hD
-    by_contra hdist
-    exact hN ⟨D, hD, le_of_not_gt hdist⟩
-  let widthSeq : ℕ → ℝ := fun n => Classical.choose (hbad n)
-  have hwidthPos (n : ℕ) : 0 < widthSeq n :=
-    lt_of_lt_of_le (by norm_num) ((le_max_left _ _).trans
-      (Classical.choose_spec (hbad n)).1)
-  have hwidthTop : Tendsto widthSeq atTop atTop := by
-    rw [tendsto_atTop]
-    intro bound
-    obtain ⟨N, hN⟩ := exists_nat_ge bound
-    filter_upwards [eventually_ge_atTop N] with n hn
-    exact hN.trans ((by exact_mod_cast hn : (N : ℝ) ≤ (n : ℝ)).trans
-      ((le_max_right _ _).trans (Classical.choose_spec (hbad n)).1))
-  let rawTime : ℕ → ℕ := fun k => L (widthSeq k) + 1
-  have hLwidth : Tendsto (fun k => L (widthSeq k)) atTop atTop :=
-    hL.comp hwidthTop
-  have hrawTime : Tendsto rawTime atTop atTop := by
-    rw [tendsto_atTop]
-    intro bound
-    filter_upwards [hLwidth.eventually (eventually_ge_atTop bound)] with k hk
-    dsimp [rawTime]
-    omega
-  obtain ⟨φ, hφ, hφtime⟩ := strictMono_subseq_of_tendsto_atTop hrawTime
-  let widthSub : ℕ → ℝ := fun k => widthSeq (φ k)
-  let timeSub : ℕ → ℕ := fun k => rawTime (φ k)
-  have htimeSub : StrictMono timeSub := by
-    simpa [timeSub, Function.comp_def] using hφtime
-  have hwidthSubTop : Tendsto widthSub atTop atTop :=
-    hwidthTop.comp hφ.tendsto_atTop
-  have hwidthSqRaw : Tendsto
-      (fun k => widthSeq k ^ 2 / ((L (widthSeq k) : ℝ) + 1))
-      atTop (𝓝 0) := by
-    apply squeeze_zero'
-    · exact Eventually.of_forall fun k =>
-        div_nonneg (sq_nonneg _) (by positivity)
-    · filter_upwards [hLwidth.eventually (eventually_ge_atTop 1)] with k hk
-      have hLpos : (0 : ℝ) < L (widthSeq k) := by exact_mod_cast hk
-      have hLle : (L (widthSeq k) : ℝ) ≤ (L (widthSeq k) : ℝ) + 1 := by
-        linarith
-      exact div_le_div_of_nonneg_left (sq_nonneg _) hLpos hLle
-    · exact hquadratic.comp hwidthTop
-  have hwidthSqSub : Tendsto
-      (fun k => widthSub k ^ 2 / (timeSub k : ℝ)) atTop (𝓝 0) := by
-    simpa [widthSub, timeSub, rawTime, Nat.cast_add, Nat.cast_one,
-      Function.comp_def] using hwidthSqRaw.comp hφ.tendsto_atTop
-  have hwindowSub : ∀ᶠ k : ℕ in atTop,
-      v₁ (widthSub k) ≤ u ∧ v ≤ v₂ (widthSub k) :=
-    hwidthSubTop.eventually hwindow
-  have hrateSub := centeredFiniteVariance_endpointWindowProbabilityRate_realWidthAlong
-    htimeSub (fun k => by dsimp [timeSub, rawTime]; omega)
-    (fun k => hwidthPos (φ k)) hwidthSubTop hwidthSqSub
-    ha haOne hu huv hv hwindowSub hcentered hsquare hvariance
-  have hrateOnWidths : Tendsto (fun k => rate (widthSub k)) atTop (𝓝 c) := by
-    simpa [rate, widthSub, timeSub, rawTime, Function.comp_def,
-      Nat.add_sub_cancel_right] using hrateSub
-  have hclose : ∀ᶠ k : ℕ in atTop, dist (rate (widthSub k)) c < ε :=
-    hrateOnWidths.eventually (Metric.ball_mem_nhds c hε)
-  obtain ⟨N, hN⟩ := eventually_atTop.1 hclose
-  have hlt := hN N le_rfl
-  have hge : ε ≤ dist (rate (widthSub N)) c :=
-    (Classical.choose_spec (hbad (φ N))).2
-  exact (not_lt_of_ge hge) hlt
+  apply tendsto_realWidthRate_of_sampledTime
+    (rate := fun D n => D ^ 2 / (n : ℝ) * Real.log
+      (horizontalTubeEndpointWindowProbability (iidSequenceLaw ν) a
+        D n (v₁ D) (v₂ D)).toReal)
+    (limit := -(Real.pi ^ 2) / 2 * (∫ x, x ^ 2 ∂ν)) hL hquadratic
+  intro time width htime htimePos hwidthPos hwidth hwidthSq
+  have hwindowSample : ∀ᶠ k : ℕ in atTop,
+      v₁ (width k) ≤ u ∧ v ≤ v₂ (width k) :=
+    hwidth.eventually hwindow
+  simpa using centeredFiniteVariance_endpointWindowProbabilityRate_realWidthAlong
+    htime htimePos hwidthPos hwidth hwidthSq ha haOne hu huv hv
+    hwindowSample hcentered hsquare hvariance
 
 /-- Integer-width form of Wang Yiyang, *Asymptotic speed of the $N$-branching
 random walk with infinite offspring*, Chapter 3, Lemma 3.1(ii). The endpoint
