@@ -6,8 +6,8 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.GaussianRangeCover
-public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.BlockOscillation
+public import Probability.Process.RandomWalk.SmallDeviation.Range.GaussianCover
+public import Probability.Process.RandomWalk.SmallDeviation.Range.BlockOscillation
 
 /-!
 # Sharp range bounds from finite corridor rates
@@ -37,7 +37,7 @@ open scoped ENNReal NNReal Topology
 
 @[expose] public section
 
-namespace ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown
+namespace ProbabilityTheory.RandomWalk.SmallDeviation.Range
 
 open ProbabilityTheory.RandomWalk
 open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
@@ -319,6 +319,6 @@ theorem eventually_iidSequenceLaw_blockOscillationProbability_le_exp_of_centered
     exact ⟨hpaths n increment, hcover⟩
   exact (measure_mono hsubset).trans htargetBound
 
-end ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown
+end ProbabilityTheory.RandomWalk.SmallDeviation.Range
 
 end
