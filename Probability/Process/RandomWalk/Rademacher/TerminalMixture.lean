@@ -51,18 +51,8 @@ theorem measure_rademacherTerminalAbsolutePath_eq_mixture
           ((survivalConditionedLaw rademacherMeasure (k + 1)).map
             (normalizedLinearContinuousPathIcc
               (fun j => Real.sqrt j) (k + 1))) pathEvent := by
-  have hY : Measurable (fun branch => rademacherTerminalAbsolutePath branch n) := by
-    have heq : (fun branch => rademacherTerminalAbsolutePath branch n) =
-        fun branch => ContinuousMap.signStableMeanderTransform
-          (normalizedLinearContinuousPathIcc
-            (fun j => Real.sqrt j) n (rademacherIncrementPath branch)) := by
-      funext branch
-      exact (rademacher_signStableMeanderTransform_eq_terminalAbsolutePath
-        branch hn).symm
-    rw [heq]
-    exact ContinuousMap.measurable_signStableMeanderTransform.comp
-      ((measurable_normalizedLinearContinuousPathIcc _ _).comp
-        measurable_rademacherIncrementPath)
+  have hY : Measurable (fun branch => rademacherTerminalAbsolutePath branch n) :=
+    measurable_rademacherTerminalAbsolutePath hn
   have hν : Measurable (fun branch =>
       terminalSignStableLength n (rademacherIncrementPath branch)) := by
     exact (measurable_const.sub (measurable_lastSignChangeIndex n)).comp
