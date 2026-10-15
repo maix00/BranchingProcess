@@ -12,12 +12,12 @@ public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Ran
 
 The public theorems in this file are:
 
-- `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.eventually_horizontalTubeEndpointWindowProbability_ge_exp_of_centeredSecondMoment`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube.eventually_horizontalTubeEndpointWindowProbability_ge_exp_of_centeredSecondMoment`:
   for centered increments of variance $\sigma^2>0$, tube widths tending to infinity,
   and time scales growing faster than the squared width, the probability of
   a horizontal tube with an interior endpoint window has the exponential
   lower bound with any rate above $\pi^2\sigma^2/2$.
-- `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.exists_eventually_horizontalTubeEndpointWindowProbability_ge_exp_uniform`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube.exists_eventually_horizontalTubeEndpointWindowProbability_ge_exp_uniform`:
   the same lower bound with common width and time-ratio thresholds for all
   integer widths and horizons.
 
@@ -34,13 +34,13 @@ open scoped ENNReal Topology
 
 @[expose] public section
 
-namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
+namespace ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube
 
 open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete
 
 /-- The endpoint-window rate from Wang Yiyang, *Asymptotic speed of the
 $N$-branching random walk with infinite offspring*, Chapter 3, Lemma 3.1(ii),
-implies this uniform exponential lower bound along any increasing sequence
+implies this exponential lower bound along any diverging sequence
 of integer tube widths. The endpoint fractions may vary with the width as
 long as they eventually contain one fixed interval strictly inside the tube.
 -/
@@ -220,24 +220,18 @@ theorem exists_eventually_horizontalTubeEndpointWindowProbability_ge_exp_uniform
     filter_upwards [hwidthRawTop.eventually (eventually_ge_atTop b)] with n hn
     exact le_trans hn (htimeRawLower n)
   obtain ⟨ψ, hψ, htimeRawStrict⟩ := strictMono_subseq_of_tendsto_atTop htimeRawTop
-  have hwidthTimeTop : Tendsto (fun k => widthRaw (ψ k)) atTop atTop :=
-    hwidthRawTop.comp hψ.tendsto_atTop
-  obtain ⟨φ, hφ, hwidthFinalStrict⟩ :=
-    strictMono_subseq_of_tendsto_atTop hwidthTimeTop
-  let indexFinal : ℕ → ℕ := fun k => ψ (φ k)
+  let indexFinal : ℕ → ℕ := ψ
   let widthFinal : ℕ → ℕ := fun k => widthRaw (indexFinal k)
   let horizonFinal : ℕ → ℕ := fun k => horizonRaw (indexFinal k)
   let timeFinal : ℕ → ℕ := fun k => timeRaw (indexFinal k)
   have hindexFinalTop : Tendsto indexFinal atTop atTop := by
-    simpa [indexFinal, Function.comp_def] using
-      hψ.tendsto_atTop.comp hφ.tendsto_atTop
+    exact hψ.tendsto_atTop
   have hwidthFinalTop : Tendsto widthFinal atTop atTop :=
     hwidthRawTop.comp hindexFinalTop
   have hwidthFinalRealTop : Tendsto (fun k => (widthFinal k : ℝ)) atTop atTop :=
     tendsto_natCast_atTop_atTop.comp hwidthFinalTop
   have htimeFinalStrict : StrictMono timeFinal := by
-    simpa [timeFinal, indexFinal, Function.comp_def] using
-      htimeRawStrict.comp hφ
+    exact htimeRawStrict
   have htimeFinalPos : ∀ k, 0 < timeFinal k := by
     intro k
     dsimp [timeFinal, timeRaw]
@@ -286,6 +280,6 @@ theorem exists_eventually_horizontalTubeEndpointWindowProbability_ge_exp_uniform
       indexFinal, Nat.add_sub_cancel_right] using hgood
   exact (not_lt_of_ge hgood') hbadK
 
-end ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
+end ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube
 
 end

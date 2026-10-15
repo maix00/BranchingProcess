@@ -21,10 +21,11 @@ The public theorem in this file is:
   if $d\Delta^2\le d''\lfloor D\rfloor^2$, the resulting exponent
   is bounded below by $-d''n/\Delta^2$.
 
-This is the integer-to-real width transfer required when Wang Yiyang,
-*Asymptotic speed of the $N$-branching random walk with infinite offspring*,
-Chapter 3, proof of Lemma 3.5, applies Lemma 3.1(ii) to the narrowed
-staircase tubes. The underlying rate is Mogul'skii,
+Wang Yiyang, *Asymptotic speed of the $N$-branching random walk with infinite
+offspring*, Chapter 3, proof of Lemma 3.5, applies Lemma 3.1(ii) to the
+narrowed staircase tubes. This module obtains the corresponding real-width
+bound by transferring the integer-width uniform estimate. The underlying rate
+is Mogul'skii,
 "Small Deviations in a Space of Trajectories," Theorem 3, Section 4,
 p. 764 (DOI 10.1137/1119081).
 -/
@@ -56,7 +57,7 @@ theorem exists_uniform_realWidthHorizontalTubeEndpointWindowProbability_ge_exp
         horizontalTubeEndpointWindowProbability
           (iidSequenceLaw ν) a width horizon U V := by
   obtain ⟨width₀, ratio₀, hinteger⟩ :=
-    exists_eventually_horizontalTubeEndpointWindowProbability_ge_exp_uniform
+    HorizontalTube.exists_eventually_horizontalTubeEndpointWindowProbability_ge_exp_uniform
       hν hsigma ha haOne hu huv hv hd
   refine ⟨width₀, ratio₀, ?_⟩
   intro width U V margin hwidth hmargin hwidthFloor hwidthMargin
