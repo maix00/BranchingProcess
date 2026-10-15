@@ -15,14 +15,14 @@ The public theorem in this file is:
 
 - `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.exists_uniform_finiteStaircaseLowerBound`:
   if the diffusive entrance probability pays at most
-  $\exp(-(d'-d'')L/D^2)$ and the paper's quantitative staircase conditions
+  $\exp(-(d'-d'')L/D^2)$ and the quantitative staircase conditions of Wang Yiyang's Lemma 3.5
   hold, then the tilted-tube endpoint probability is at least
   $\exp(-d'L/D^2)$.
 
 This is the finite-stage probability calculation in Wang Yiyang,
 *Asymptotic speed of the $N$-branching random walk with infinite offspring*,
 Chapter 3, proof of Lemma 3.5. The theorem exposes the concrete schedule
-inequalities and entrance estimate that must be verified for the thesis
+inequalities and entrance estimate that must be verified for Wang Yiyang's Lemma 3.5
 parameters; it does not replace the conditioned Brownian-meander input.
 -/
 

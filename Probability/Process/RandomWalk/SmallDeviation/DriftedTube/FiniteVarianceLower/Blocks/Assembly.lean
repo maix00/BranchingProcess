@@ -33,7 +33,7 @@ namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 
 open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete
 
-/-- Finitely many narrowed-tube probability bounds and the paper's central
+/-- Finitely many narrowed-tube probability bounds and the central endpoint
 windows give the complete finite staircase probability product. -/
 theorem measureReal_staircaseBlockIntersection_ge_prod_of_binBounds
     (ν : Measure ℝ) [IsProbabilityMeasure ν]

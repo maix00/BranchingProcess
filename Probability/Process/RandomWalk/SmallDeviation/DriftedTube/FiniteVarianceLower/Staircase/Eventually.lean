@@ -138,7 +138,7 @@ private theorem eventually_linear_block_cost_lt_width_cubed
     (div_lt_iff₀ (pow_pos hwidthN _)).1 hsmallN
 
 /-- All width, time, rate, and endpoint inequalities used by the finite
-staircase hold under the paper's superquadratic and subcubic block scale. -/
+staircase hold under the superquadratic and subcubic block scale of Wang Yiyang's Lemma 3.5. -/
 theorem eventually_staircaseGlobalConditions
     {width : ℕ → ℝ} {blockLength : ℕ → ℕ}
     {drift margin endpointFraction narrowedRate blockRate

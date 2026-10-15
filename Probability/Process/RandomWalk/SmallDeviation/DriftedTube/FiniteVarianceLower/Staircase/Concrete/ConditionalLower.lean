@@ -19,7 +19,7 @@ The public theorems in this file are:
   for $t_1=\lfloor\Delta^2\rfloor$ and
   $L\ge\lfloor\Delta^{2+\varepsilon}\rfloor$ and
   $r_{0,n}\le 0\le r_{0,n}+\Delta_n$, the two reflected
-  survival power bounds, the thesis's block-scale limits, and fixed endpoint and rate margins imply
+  survival power bounds, the block-scale limits in Wang Yiyang's Lemma 3.5, and fixed endpoint and rate margins imply
   $\mathbb P(E)\ge\exp(-d'L/\Delta^2)$ eventually.
 - `eventually_concreteStaircaseLowerBound_of_powerBlock`: the same bound
   with $\ell_n=\lfloor\Delta_n^{2+\eta}\rfloor$ and
