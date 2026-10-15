@@ -9,6 +9,7 @@ module
 public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Meander
 public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Survival
 public import Probability.Process.RandomWalk.Path.Skorokhod.Corridor.Endpoint.Closed
+public import Probability.Process.RandomWalk.Path.Skorokhod.Corridor.Endpoint.Interpolation
 public import Analysis.Asymptotics.ShiftedFloor
 
 /-!
@@ -26,6 +27,13 @@ The public objects and theorems in this file are:
   for $n>0$ and $\sigma>0$, membership in $D_{n,\Delta}$ equals
   membership of $S_{\lfloor nt\rfloor}/(\sigma\sqrt n)$ in the
   normalized transition corridor with scale $\Delta/\sqrt n$.
+- `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.mem_nonnegativeTransitionEvent_iff_normalizedInterpolatedTransitionCorridor`:
+  the same grid event is the closed endpoint corridor event of the
+  polygonal interpolation, whose values between grid points are affine.
+- `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.exists_eventually_interpolatedTransitionConditionalProbability_ge`:
+  from a conditioned polygonal-path limit with support at
+  $t\mapsto7t/(16\sigma)$, some $q>0$ satisfies
+  $\mathbb P(D_{n+1,\Delta_n}\mid C_{n+1})\ge q$ eventually.
 - `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.exists_eventually_transitionConditionalProbability_ge`:
   given the Iglehart--Bolthausen conditioned path limit, Brownian-meander
   support at the specified straight path, and $\Delta_n/\sqrt{n+1}\to1$,
@@ -146,6 +154,107 @@ theorem mem_nonnegativeTransitionEvent_iff_normalizedTransitionCorridor
         (div_le_div_iff_of_pos_right hnorm).1 hk.2⟩
     · exact ⟨(div_le_div_iff_of_pos_right hnorm).1 hend.1,
         (div_le_div_iff_of_pos_right hnorm).1 hend.2⟩
+
+/-- The finite-grid transition event is equally the event that the
+polygonal interpolation stays in the closed transition corridor. -/
+theorem mem_nonnegativeTransitionEvent_iff_normalizedInterpolatedTransitionCorridor
+    {n : ℕ} (hn : 0 < n) {sigma : ℝ} (hsigma : 0 < sigma)
+    {width : ℝ} (hwidth : 0 ≤ width) (increment : ℕ → ℝ) :
+    increment ∈ nonnegativeTransitionEvent n width ↔
+      normalizedLinearCadlagPathIcc
+          (fun j => sigma * Real.sqrt j) n increment ∈
+        normalizedTransitionCorridor sigma (width / Real.sqrt n) := by
+  have hupper : 0 ≤ (5 / 6 * (width / Real.sqrt n)) / sigma := by
+    positivity
+  have hpathEq :
+      (normalizedLinearCadlagPathIcc
+          (fun j => sigma * Real.sqrt j) n increment ∈
+        normalizedTransitionCorridor sigma (width / Real.sqrt n)) ↔
+      (normalizedStepCadlagPathIcc
+          (fun j => sigma * Real.sqrt j) n increment ∈
+        normalizedTransitionCorridor sigma (width / Real.sqrt n)) := by
+    change
+      (normalizedLinearCadlagPathIcc
+          (fun j => sigma * Real.sqrt j) n increment ∈
+        Skorokhod.rangeInClosedIntervalEndsIn
+          0 ((5 / 6 * (width / Real.sqrt n)) / sigma)
+          ((5 / 12 * (width / Real.sqrt n)) / sigma)
+          ((11 / 24 * (width / Real.sqrt n)) / sigma)) ↔
+      (normalizedStepCadlagPathIcc
+          (fun j => sigma * Real.sqrt j) n increment ∈
+        Skorokhod.rangeInClosedIntervalEndsIn
+          0 ((5 / 6 * (width / Real.sqrt n)) / sigma)
+          ((5 / 12 * (width / Real.sqrt n)) / sigma)
+          ((11 / 24 * (width / Real.sqrt n)) / sigma))
+    rw [normalizedLinearCadlagPathIcc_mem_rangeInClosedIntervalEndsIn_iff_grid
+      _ hn (le_refl 0) hupper,
+      normalizedStepCadlagPathIcc_mem_rangeInClosedIntervalEndsIn_iff_grid
+        _ hn (le_refl 0) hupper]
+  exact (mem_nonnegativeTransitionEvent_iff_normalizedTransitionCorridor
+    hn hsigma hwidth increment).trans hpathEq.symm
+
+/-- The conditional transition bound follows directly from convergence
+of the polygonal paths and the support point of the limiting law. -/
+theorem exists_eventually_interpolatedTransitionConditionalProbability_ge
+    {Ωm : Type*} [MeasurableSpace Ωm]
+    {ν : Measure ℝ} [IsProbabilityMeasure ν]
+    [∀ n, IsProbabilityMeasure (survivalConditionedLaw ν (n + 1))]
+    {Pm : Measure Ωm} [IsProbabilityMeasure Pm]
+    {M : Ωm → CadlagPath unitInterval ℝ}
+    {sigma rho : ℝ} (hsigma : 0 < sigma)
+    (hrho : 0 < rho) (hrhoSmall : rho < 1 / 48)
+    (hlimit : TendstoInDistribution
+      (fun n increment => normalizedLinearCadlagPathIcc
+        (fun j => sigma * Real.sqrt j) (n + 1) increment)
+      atTop M (fun n => survivalConditionedLaw ν (n + 1)) Pm)
+    (hsupport : Skorokhod.straightPath ((7 / 16) / sigma) ∈
+      (Pm.map M).support)
+    {width : ℕ → ℝ} (hwidth : ∀ n, 0 ≤ width n)
+    (hratio : Tendsto (fun n => width n / Real.sqrt (n + 1))
+      atTop (𝓝 1)) :
+    ∃ q : ℝ≥0∞, 0 < q ∧ ∀ᶠ n : ℕ in atTop,
+      q ≤ survivalConditionedLaw ν (n + 1)
+        (nonnegativeTransitionEvent (n + 1) (width n)) := by
+  have hnonnegative (n : ℕ) :
+      ∀ᵐ increment ∂survivalConditionedLaw ν (n + 1),
+        ∀ t : unitInterval,
+          0 ≤ normalizedLinearCadlagPathIcc
+            (fun j => sigma * Real.sqrt j) (n + 1) increment t := by
+    exact ae_nonnegative_normalizedLinearCadlagPathIcc ν (Nat.succ_pos n)
+      (fun j => sigma * Real.sqrt j)
+      (mul_pos hsigma
+        (Real.sqrt_pos.2 (Nat.cast_pos.mpr (Nat.succ_pos n))))
+  obtain ⟨q, hq, hevent⟩ :=
+    exists_eventually_normalizedTransitionCorridorProbability_ge
+      hsigma hrho hrhoSmall hlimit hsupport hratio hnonnegative
+  refine ⟨q, hq, ?_⟩
+  filter_upwards [hevent] with n hn
+  have hmeas : MeasurableSet
+      (normalizedTransitionCorridor sigma
+        (width n / Real.sqrt (n + 1))) :=
+    (Skorokhod.isClosed_rangeInClosedIntervalEndsIn _ _ _ _).measurableSet
+  rw [Measure.map_apply_of_aemeasurable
+    (hlimit.forall_aemeasurable n) hmeas] at hn
+  have heventEq :
+      {increment : ℕ → ℝ |
+        normalizedLinearCadlagPathIcc
+          (fun j => sigma * Real.sqrt j) (n + 1) increment ∈
+        normalizedTransitionCorridor sigma
+          (width n / Real.sqrt (n + 1))} =
+      nonnegativeTransitionEvent (n + 1) (width n) := by
+    ext increment
+    simpa only [Set.mem_ofPred_eq, Nat.succ_eq_add_one, Nat.cast_add,
+      Nat.cast_one] using
+      (mem_nonnegativeTransitionEvent_iff_normalizedInterpolatedTransitionCorridor
+        (Nat.succ_pos n) hsigma (hwidth n) increment).symm
+  change q ≤ survivalConditionedLaw ν (n + 1)
+    {increment : ℕ → ℝ |
+      normalizedLinearCadlagPathIcc
+        (fun j => sigma * Real.sqrt j) (n + 1) increment ∈
+      normalizedTransitionCorridor sigma
+        (width n / Real.sqrt (n + 1))} at hn
+  rw [heventEq] at hn
+  exact hn
 
 /-- The positive conditional probability of the precise finite transition
 event follows from the Iglehart--Bolthausen conditioned invariance principle
