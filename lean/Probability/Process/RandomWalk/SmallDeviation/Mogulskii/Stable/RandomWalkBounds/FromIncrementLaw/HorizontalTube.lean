@@ -19,6 +19,8 @@ For a law `ν` of mean zero and variance \(\sigma^2\in(0,\infty)\), write
     \text{ for }1\le j\le L\right\}.
 \]
 
+The public theorems are:
+
 - `centeredFiniteVariance_closedHorizontalTubeProbabilityRate`: if
   \(x_n\to\infty\) and \(x_n^2/n\to0\), then
   \(\frac{x_n^2}{n}\log\mathbb P_\nu(T_{a,x_n,n-1})
