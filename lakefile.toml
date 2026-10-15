@@ -9,8 +9,8 @@ path = "Vendor/BrownianMotion"
 
 [[require]]
 name = "mathlib"
-scope = "leanprover-community"
-rev = "380f2aafb622cb2c1c93dac545b6389083c68c51"
+path = "Vendor/Mathlib"
+# Pinned Git submodule of maix00/mathlib4 at 380f2aafb622cb2c1c93dac545b6389083c68c51.
 
 [[lean_lib]]
 name = "BranchingProcess"
