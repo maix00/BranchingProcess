@@ -3,15 +3,16 @@
 This audit uses direct `.lean` file counts, excluding `.lake` and test modules. A
 large directory is split when several files form one proof chain or share a
 specific mathematical subject. Independently reusable concepts remain in the
-owning directory. The move changes import paths only; declaration namespaces,
-statements, and proofs retain their existing names.
+owning directory. A move preserves declaration statements and proofs; a
+semantic move also updates the declaration namespace and its import path.
 
 ## Reorganized proof families
 
 | Family | Main entry or subject | Internal organization |
 | --- | --- | --- |
 | `RandomWalk/SmallDeviation/DriftedTube` | `FiniteVarianceLower/EndpointBounds.lean` contains both endpoint conclusions of Wang Yiyang's Lemma 3.5; `FiniteVarianceUpper.lean` states Lemma 3.4's upper estimate | `FiniteVarianceUpper/Blocks.lean` contains the conditional block construction for the upper estimate. `FiniteVarianceLower/Basic.lean` owns the reusable horizontal-tube lower estimate from Lemma 3.1(ii); `Binning/Geometry.lean` owns the Lemma 3.5 spatial-bin construction. `Blocks` and `Staircase` hold the remaining lower-bound proof components; the staircase has `Setup`, `Endpoint`, `Rate`, and `Concrete` steps. |
-| `RandomWalk/SmallDeviation/Drawdown` | `FiniteVarianceUpper.lean` states Wang Yiyang's Lemma 3.3 and its uniform and block-count forms | `FiniteVarianceUpper/Proof.lean` contains the conditional-block and jump-pattern argument. `BlockOscillation.lean`, `GaussianRangeCover.lean`, `RangeRate.lean`, and `RangeRateBlock.lean` give its reusable source-path and range-rate inputs. |
+| `RandomWalk/SmallDeviation/Drawdown` | `FiniteVarianceUpper.lean` states Wang Yiyang's Lemma 3.3 and its uniform and block-count forms | `FiniteVarianceUpper/Proof.lean` contains the conditional-block and jump-pattern argument. `Scaling.lean` states general event scaling identities and depends only on the drawdown event definition. |
+| `RandomWalk/SmallDeviation/Range` | Independent bounded-range and block-oscillation small-deviation estimates | `GaussianCover.lean` gives the finite translated-corridor cover; `BlockOscillation.lean` gives the source-corridor comparison; `Rate.lean` derives the resulting Gaussian range rate. The unused old block-reindex adapter was removed. These estimates are separate from the Lemma 3.3 drawdown proof, which uses Lemma 3.2 directly. |
 | `RandomWalk/SmallDeviation/HorizontalTube` | `FiniteVarianceUpper.lean` states Wang Yiyang's Lemma 3.2 and its translated-interval form | `FiniteVarianceUpper/Proof.lean` contains the equal-partition cover, fixed-corridor rate, block iteration, and remainder inputs. |
 | `RandomWalk/SmallDeviation/Entrance` | `FiniteVarianceEndpointCorridor.lean`, `RobustTransition.lean`, `RobustExponentialBudget.lean`, and `RobustUniformBudget.lean` | Endpoint bridges, edge arguments, and robust event arguments live in `FiniteVariance`, `Edge`, and `Robust`. `Rotation` groups the cyclic-path and exchangeability method used by `NormalDomain.lean`; the meander-based entrance used by Lemma 3.5 is reached through `RobustExponentialBudget.lean`. |
 | `Selection/NSelection/EndpointDeviation` | Endpoint deviations of the selected population, including estimates that admit reflection | `Endpoint` contains moment and minimum lemmas; `Population`, `PositiveA`, and `SecondStage` contain the specialized right-tail proof chains. `SecondStage/Roots` and `SecondStage/Failure` identify their roles. The directory name does not impose a right-hand orientation. |
