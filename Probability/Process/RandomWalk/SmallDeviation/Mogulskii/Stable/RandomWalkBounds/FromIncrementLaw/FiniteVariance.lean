@@ -11,10 +11,27 @@ public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Ran
 /-!
 # Finite-variance source rates
 
-The finite-variance normal-domain branch is stated for relative path classes,
-independently of the continuous-boundary specialization. Its ordinary
-probability form identifies the inner measure with the event measure under an
-explicit null-measurability hypothesis.
+Let $G$ be a path class relative to the source's terminal-left path space,
+and let $x_n$ be a small-deviation width. The public declarations are:
+
+- `centeredUnitVariance_sourceRelativePathClassRate`: under centered
+  unit variance, the relative inner and outer logarithmic rates have a
+  unique common energy $H$, with coefficient $-\pi^2H/2$ after scaling
+  by $x_n^2/n$.
+- `HasSourceFiniteVarianceScaledRelativeRate`: records this energy, the
+  relative corridor approximation, positivity, and both limits
+  $\frac{x_n^2}{n}\log P_n^{\rm in/out}(G)\to-\frac{\pi^2}{2}H$.
+- `sourceScaledInnerOuterLogRate_of_centered_unitVariance`:
+  constructs that record from the centered unit-variance increment law.
+- `HasSourceFiniteVarianceScaledRelativeRate.probabilityRate`:
+  if every source-path preimage of $G$ is null-measurable, then
+  $\frac{x_n^2}{n}\log\mathbb P_\nu(G)\to-\frac{\pi^2}{2}H$.
+
+These results use Mogul'skii, *Small Deviations in a Space of Trajectories*,
+Theorem 3, Section 4, p. 764 (Russian original, 1974; English translation,
+*Theory of Probability and Its Applications* 19(4) (1975), 726–736,
+DOI 10.1137/1119081). The ordinary-probability form identifies the inner
+measure with the event measure using the stated null-measurability premise.
 -/
 
 open Filter MeasureTheory ProbabilityTheory
