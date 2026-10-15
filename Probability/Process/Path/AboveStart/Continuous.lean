@@ -74,6 +74,8 @@ The public definition and theorems in this file are:
   $T(f)\le T^s(f)$.
 - `ProbabilityTheory.firstNonnegativeWindowStartUpTo_eq_first_of_le`:
   $T(f)=t$ and $t+1\le s$ imply $T^s(f)=t$.
+- `ProbabilityTheory.firstNonnegativeWindowStartUpTo_eq_first_of_ne_top`:
+  $T^s(f)<\infty$ implies $T^s(f)=T(f)$.
 
 These are deterministic ingredients of the first-window time $T^s$ in
 Erwin Bolthausen, *On a functional central limit theorem for random walks
@@ -597,6 +599,29 @@ theorem firstNonnegativeWindowStartUpTo_eq_first_of_le
     (firstNonnegativeWindowStart_eq_coe_iff f t).mp ht
   exact (firstNonnegativeWindowStartUpTo_eq_coe_iff f s t).mpr
     ⟨hts, heligible, fun r _ hr => hfirst r hr⟩
+
+/-- Whenever a finite-horizon eligible window exists, it is also the
+unrestricted first eligible window. -/
+theorem firstNonnegativeWindowStartUpTo_eq_first_of_ne_top
+    (f : C(ℝ≥0, ℝ)) (s : ℝ≥0)
+    (hfinite : firstNonnegativeWindowStartUpTo f s ≠ ⊤) :
+    firstNonnegativeWindowStartUpTo f s = firstNonnegativeWindowStart f := by
+  obtain ⟨t, ht⟩ := WithTop.ne_top_iff_exists.mp hfinite
+  have htime : firstNonnegativeWindowStartUpTo f s = t := ht.symm
+  have hbound := (firstNonnegativeWindowStartUpTo_eq_coe_iff f s t).mp htime |>.1
+  have hfirstle := firstNonnegativeWindowStart_le_upTo f s
+  have hfirstfinite : firstNonnegativeWindowStart f ≠ ⊤ :=
+    ne_of_lt (lt_of_le_of_lt hfirstle (htime ▸ WithTop.coe_lt_top t))
+  obtain ⟨r, hr⟩ := WithTop.ne_top_iff_exists.mp hfirstfinite
+  have hrle : r ≤ t := WithTop.coe_le_coe.mp (by
+    calc
+      (r : WithTop ℝ≥0) = firstNonnegativeWindowStart f := hr
+      _ ≤ firstNonnegativeWindowStartUpTo f s := hfirstle
+      _ = (t : WithTop ℝ≥0) := htime)
+  have hrs : r + 1 ≤ s :=
+    (add_le_add_left hrle 1).trans hbound
+  exact (firstNonnegativeWindowStartUpTo_eq_first_of_le
+    f hr.symm hrs).trans hr
 
 /-- The forward implication in the rational-grid description of
 $\{T^s\le u\}$ from Bolthausen's Lemma 2.1. -/
