@@ -7,6 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Mathlib.Probability.BrownianMotion.Basic
+public import Probability.Process.Stable.Brownian
 public import Mathlib.Probability.Distributions.Gaussian.IsGaussianProcess.Independence
 public import Mathlib.Probability.Distributions.Gaussian.Real
 public import Mathlib.MeasureTheory.Measure.OpenPos
@@ -37,40 +38,6 @@ open MeasureTheory ProbabilityTheory
 open scoped NNReal
 
 namespace ProbabilityTheory
-
-private theorem IsStableLevyProcess.isPreBrownianReal_of_standardGaussian
-    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} [IsProbabilityMeasure P]
-    {B : ℝ≥0 → Ω → ℝ}
-    (hB : IsStableLevyProcess 2 (gaussianReal 0 (1 : ℝ≥0)) B P) :
-    IsPreBrownianReal B P := by
-  let hInc := hB.increments
-  have hLaw : ∀ t, HasLaw (B t) (gaussianReal 0 t) P := by
-    intro t
-    let c : ℝ := (t : ℝ) ^ (1 / (2 : ℝ))
-    have hc2 : c ^ 2 = (t : ℝ) := by
-      dsimp [c]
-      convert Real.rpow_inv_natCast_pow (NNReal.coe_nonneg t)
-        (by norm_num : (2 : ℕ) ≠ 0) using 1 <;> norm_num
-    have hscale :
-        (gaussianReal 0 (1 : ℝ≥0)).map (fun x : ℝ => c * x) =
-          gaussianReal 0 t := by
-      rw [gaussianReal_map_const_mul, mul_zero]
-      congr 1
-      apply NNReal.eq
-      simp only [NNReal.coe_mul, NNReal.coe_mk, NNReal.coe_one]
-      simpa using hc2
-    have hdiff : HasLaw (fun ω => B t ω - B 0 ω)
-        ((gaussianReal 0 (1 : ℝ≥0)).map (fun x : ℝ => c * x)) P := by
-      simpa [c] using hInc.increment_hasLaw (0 : ℝ≥0) t (by simp)
-    have hzero : B 0 =ᵐ[P] fun _ => (0 : ℝ) := by
-      filter_upwards [hInc.ae_start_eq_zero] with ω hω
-      exact hω
-    have hfun : (fun ω => B t ω - B 0 ω) =ᵐ[P] fun ω => B t ω := by
-      filter_upwards [hzero] with ω hω
-      simp [hω]
-    rw [hscale] at hdiff
-    exact hdiff.congr hfun.symm
-  exact HasIndepIncrements.isPreBrownianReal_of_hasLaw hLaw hInc.indepIncrements
 
 private def rationalBrownianBridge {Ω : Type*}
     (B : ℝ≥0 → Ω → ℝ) (q : RationalCoordinate.UnitInterval) : Ω → ℝ :=
