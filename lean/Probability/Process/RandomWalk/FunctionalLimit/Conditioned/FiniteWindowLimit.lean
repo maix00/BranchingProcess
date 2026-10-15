@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.ConvergenceInDistribution.Mapping
-public import Probability.Process.Brownian.AboveStart.FirstWindowFiniteHorizon
+public import Probability.Process.Brownian.AboveStart.FirstWindowCenteredFiniteHorizon
 public import Probability.Process.RandomWalk.FunctionalLimit.Donsker.FiniteHorizon
 
 /-!
@@ -15,17 +15,18 @@ public import Probability.Process.RandomWalk.FunctionalLimit.Donsker.FiniteHoriz
 
 The public theorem in this file is:
 
-- `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.tendstoInDistribution_firstWindowShiftFiniteHorizon`:
-  for every finite $s$, the law of the first-window shift of the
+- `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.tendstoInDistribution_centeredFirstWindowShiftFiniteHorizon`:
+  for every finite $s$, the law of the centered first-window shift of the
   polygonal walk restricted to $[0,s]$ converges to
-  $(P^s)\circ\Phi_s^{-1}$, represented by applying $\Phi_s$ to the
-  projected Brownian path.
+  the law of the centered shift of the projected Brownian path.
 
-This is the continuous-mapping step (3.3) of Erwin Bolthausen,
+This is the centered continuous-mapping step corresponding to (3.3) of Erwin Bolthausen,
 *On a functional central limit theorem for random walks conditioned to
 stay positive*, Theorem 3.2, Ann. Probab. 4(3) (1976), 480--485,
-DOI 10.1214/aop/1176996098. It uses his Lemma 2.5 for almost-sure
-continuity of the displayed, uncentered map $\Phi_m$.
+DOI 10.1214/aop/1176996098. The centered map is required by the
+random-walk block in equation (3.2) and by the limit described on
+p. 484; the printed definition of $\Phi_s$ on p. 482 omits this
+centering. The argument uses the continuity proof of Lemma 2.5.
 -/
 
 @[expose] public section
@@ -35,9 +36,9 @@ namespace ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned
 open Filter MeasureTheory ProbabilityTheory
 open scoped NNReal
 
-/-- The finite-horizon continuous-mapping step in Bolthausen's
-Theorem 3.2, equation (3.3). The integer `m` covers the real horizon `s`. -/
-theorem tendstoInDistribution_firstWindowShiftFiniteHorizon
+/-- The centered finite-horizon continuous-mapping step required by
+Bolthausen's Theorem 3.2. The integer `m` covers the real horizon `s`. -/
+theorem tendstoInDistribution_centeredFirstWindowShiftFiniteHorizon
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (hcentered : ∫ x, x ∂ν = 0)
     (hsecondMoment : ∫ x, x ^ 2 ∂ν = 1)
@@ -48,12 +49,12 @@ theorem tendstoInDistribution_firstWindowShiftFiniteHorizon
     (hmeasurable : ∀ t, Measurable (B t))
     (s : ℝ≥0) (m : ℕ) (hm : 0 < m) (hsm : s ≤ m) :
     TendstoInDistribution
-      (fun n increment => firstWindowShiftFiniteHorizon s
+      (fun n increment => centeredFirstWindowShiftFiniteHorizon s
         (restrictPathTo s
           (normalizedLinearContinuousPathUnbounded
             (fun n => Real.sqrt n) n increment)))
       atTop
-      (fun ω => firstWindowShiftFiniteHorizon s
+      (fun ω => centeredFirstWindowShiftFiniteHorizon s
         (restrictPathTo s
           (hB.continuousPathMap hmeasurable ω)))
       (fun _ => iidSequenceLaw ν) P := by
@@ -63,8 +64,8 @@ theorem tendstoInDistribution_firstWindowShiftFiniteHorizon
   have hcont :
       ∀ᵐ f ∂P.map (fun ω => restrictPathTo s
         (hB.continuousPathMap hmeasurable ω)),
-        ContinuousAt (firstWindowShiftFiniteHorizon s) f := by
-    convert hB.ae_continuousAt_firstWindowShiftFiniteHorizon
+        ContinuousAt (centeredFirstWindowShiftFiniteHorizon s) f := by
+    convert hB.ae_continuousAt_centeredFirstWindowShiftFiniteHorizon
       hmeasurable s using 1
     rw [finiteHorizonPathLaw, Measure.map_map]
     · rfl
@@ -72,7 +73,7 @@ theorem tendstoInDistribution_firstWindowShiftFiniteHorizon
     · exact hB.measurable_continuousPathMap hmeasurable
   simpa only [Function.comp_def] using
     hDonsker.measurable_comp_of_continuousAt_ae
-      (measurable_firstWindowShiftFiniteHorizon s) hcont
+      (measurable_centeredFirstWindowShiftFiniteHorizon s) hcont
 
 end ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned
 
