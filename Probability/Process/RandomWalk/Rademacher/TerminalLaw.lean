@@ -19,6 +19,8 @@ The public theorems in this file are:
   the finite Boolean blocks whose $\pm1$ partial sums stay nonnegative.
 - `ProbabilityTheory.RandomWalk.negativeSurvivesBlock`:
   the blocks whose reflected partial sums stay nonnegative.
+- `ProbabilityTheory.RandomWalk.positiveSurvivesBlock_probability_pos`:
+  $\mathbb P(C_r^+)>0$ for every finite block length $r$.
 - `ProbabilityTheory.RandomWalk.measurableSet_rademacher_positiveCrossing_prefix`:
   $\{S_{m-1}<0,S_m=0\}$ is measurable from the first $m$ increments.
 - `ProbabilityTheory.RandomWalk.measurableSet_rademacher_negativeCrossing_prefix`:
@@ -43,6 +45,8 @@ The public theorems in this file are:
   for a reflection-invariant terminal block event $A$ and $0<m<n$,
   $\mathbb P(\mu_n=m, A)\mathbb P(C_{n-m}^+)
    =\mathbb P(\mu_n=m)\mathbb P(A\cap C_{n-m}^+)$.
+- `ProbabilityTheory.RandomWalk.measure_initialTerminalBlock_conditioned_identity`:
+  the same equality at $m=0$ for $n>0$.
 
 These are the prefix/suffix independence steps behind the final
 simple-symmetric-walk argument on page 484 of Erwin Bolthausen,
@@ -137,6 +141,39 @@ private theorem negativeSurvivesBlock_shift_iff
   exact finiteSurvivesNonnegative_blockCoordinates_iff
     length start (fun k => -rademacherIncrementPath branch k)
 
+/-- The all-positive Boolean block has positive mass and lies in the
+nonnegative-survival event. -/
+theorem positiveSurvivesBlock_probability_pos (length : ℕ) :
+    0 < (iidSequenceLaw fairBoolMeasure)
+      ((Combinatorics.Sequence.blockCoordinates 0 length) ⁻¹'
+        positiveSurvivesBlock length) := by
+  have hsubset : {branch : ℕ → Bool |
+      ∀ (k : ℕ), k < length → branch k ∈ ({true} : Set Bool)} ⊆
+      (Combinatorics.Sequence.blockCoordinates 0 length) ⁻¹'
+        positiveSurvivesBlock length := by
+    intro branch hbranch
+    apply (positiveSurvivesBlock_shift_iff branch 0 length).2
+    intro j
+    rw [AdditivePath.displacement]
+    apply Finset.sum_nonneg
+    intro i hi
+    have htrue : branch i = true :=
+      hbranch i (lt_of_lt_of_le (Finset.mem_range.mp hi)
+        (Nat.succ_le_of_lt j.isLt))
+    simp [rademacherIncrementPath, rademacherOfBool, htrue]
+  have hmass := iidSequenceLaw_measure_forall_lt fairBoolMeasure
+    {true} (measurableSet_singleton true) length
+  calc
+    0 < (fairBoolMeasure {true}) ^ length := by
+      rw [fairBoolMeasure_singleton]
+      exact (pos_iff_ne_zero).2 (pow_ne_zero _ (by norm_num))
+    _ = (iidSequenceLaw fairBoolMeasure)
+        {branch : ℕ → Bool |
+          ∀ (k : ℕ), k < length → branch k ∈ ({true} : Set Bool)} := hmass.symm
+    _ ≤ (iidSequenceLaw fairBoolMeasure)
+        ((Combinatorics.Sequence.blockCoordinates 0 length) ⁻¹'
+          positiveSurvivesBlock length) := measure_mono hsubset
+
 private theorem positiveSurvivesBlock_flip_iff
     {length : ℕ} (block : Fin length → Bool) :
     (fun j => !block j) ∈ positiveSurvivesBlock length ↔
@@ -147,6 +184,41 @@ private theorem positiveSurvivesBlock_flip_iff
     cases block j <;> simp [rademacherOfBool]
   simp only [positiveSurvivesBlock, negativeSurvivesBlock, Set.mem_ofPred_eq,
     hneg]
+
+private theorem lastSignChangeIndex_eq_zero_iff_blockSurvival
+    (branch : ℕ → Bool) (n : ℕ) :
+    lastSignChangeIndex n (rademacherIncrementPath branch) = 0 ↔
+      Combinatorics.Sequence.blockCoordinates 0 n branch ∈
+        positiveSurvivesBlock n ∨
+      Combinatorics.Sequence.blockCoordinates 0 n branch ∈
+        negativeSurvivesBlock n := by
+  rw [lastSignChangeIndex_eq_zero_iff,
+    signStableFrom_iff_shiftedSurvival n 0
+      (rademacherIncrementPath branch) (by omega)
+      (by simp)]
+  simp only [Nat.sub_zero]
+  rw [
+    ← positiveSurvivesBlock_shift_iff branch 0 n,
+    ← negativeSurvivesBlock_shift_iff branch 0 n]
+
+private theorem not_both_blockSurvivals
+    (branch : ℕ → Bool) {n : ℕ} (hn : 0 < n) :
+    ¬ (Combinatorics.Sequence.blockCoordinates 0 n branch ∈
+        positiveSurvivesBlock n ∧
+      Combinatorics.Sequence.blockCoordinates 0 n branch ∈
+        negativeSurvivesBlock n) := by
+  rintro ⟨hpos, hneg⟩
+  have hpos' := (positiveSurvivesBlock_shift_iff branch 0 n).1 hpos
+  have hneg' := (negativeSurvivesBlock_shift_iff branch 0 n).1 hneg
+  have hp := hpos' ⟨0, hn⟩
+  have hm := hneg' ⟨0, hn⟩
+  cases h : branch 0
+  · simp [AdditivePath.displacement, rademacherIncrementPath,
+      rademacherOfBool, h] at hp
+    norm_num at hp
+  · simp [AdditivePath.displacement, rademacherIncrementPath,
+      rademacherOfBool, h] at hm
+    norm_num at hm
 
 private theorem rademacher_displacement_measurable_prefix
     {k start : ℕ} (hkn : k ≤ start) :
@@ -468,6 +540,80 @@ theorem measure_terminalBlock_conditioned_identity
     P {branch : ℕ → Bool |
       lastSignChangeIndex n (rademacherIncrementPath branch) = start} *
       eventMass
+  rw [hjoint, hwhole]
+  ring
+
+/-- The initial terminal segment, selected by `μₙ = 0`, has the same
+survival-conditioned absolute-block law. The two possible signs are
+disjoint because the first Rademacher step is strictly positive or
+strictly negative. -/
+theorem measure_initialTerminalBlock_conditioned_identity
+    (n : ℕ) (hn : 0 < n)
+    (event : Set (Fin n → Bool)) (hevent : MeasurableSet event)
+    (hinvariant : ∀ block : Fin n → Bool,
+      (fun j => !block j) ∈ event ↔ block ∈ event) :
+    (iidSequenceLaw fairBoolMeasure)
+        ({branch : ℕ → Bool |
+          lastSignChangeIndex n (rademacherIncrementPath branch) = 0} ∩
+          (Combinatorics.Sequence.blockCoordinates 0 n) ⁻¹' event) *
+      (iidSequenceLaw fairBoolMeasure)
+        ((Combinatorics.Sequence.blockCoordinates 0 n) ⁻¹'
+          positiveSurvivesBlock n) =
+    (iidSequenceLaw fairBoolMeasure)
+        {branch : ℕ → Bool |
+          lastSignChangeIndex n (rademacherIncrementPath branch) = 0} *
+      (iidSequenceLaw fairBoolMeasure)
+        ((Combinatorics.Sequence.blockCoordinates 0 n) ⁻¹'
+          (event ∩ positiveSurvivesBlock n)) := by
+  let P := iidSequenceLaw fairBoolMeasure
+  let block := Combinatorics.Sequence.blockCoordinates (E := Bool) 0 n
+  let positive : Set (ℕ → Bool) := block ⁻¹' positiveSurvivesBlock n
+  let negative : Set (ℕ → Bool) := block ⁻¹' negativeSurvivesBlock n
+  let selected : Set (ℕ → Bool) :=
+    {branch | lastSignChangeIndex n (rademacherIncrementPath branch) = 0}
+  let blockEvent : Set (ℕ → Bool) := block ⁻¹' event
+  have hselected : selected = positive ∪ negative := by
+    ext branch
+    simp only [selected, positive, negative, block, Set.mem_ofPred_eq,
+      Set.mem_union, Set.mem_preimage]
+    exact lastSignChangeIndex_eq_zero_iff_blockSurvival branch n
+  have hdisj : Disjoint positive negative := by
+    apply Set.disjoint_left.mpr
+    intro branch hpos hneg
+    exact not_both_blockSurvivals branch hn ⟨hpos, hneg⟩
+  have hnegativeMeas : MeasurableSet negative :=
+    (measurableSet_negativeSurvivesBlock n).preimage
+      (measurable_blockCoordinates 0 n)
+  have hnegativeEventMeas : MeasurableSet (blockEvent ∩ negative) :=
+    (hevent.inter (measurableSet_negativeSurvivesBlock n)).preimage
+      (measurable_blockCoordinates 0 n)
+  have hdisjEvent : Disjoint (blockEvent ∩ positive)
+      (blockEvent ∩ negative) := by
+    apply Set.disjoint_left.mpr
+    intro branch hpos hneg
+    exact (Set.disjoint_left.mp hdisj) hpos.2 hneg.2
+  have hwhole : P selected = P positive + P negative := by
+    rw [hselected, measure_union hdisj hnegativeMeas]
+  have hjoinSet : selected ∩ blockEvent =
+      (blockEvent ∩ positive) ∪ (blockEvent ∩ negative) := by
+    rw [hselected]
+    ext branch
+    simp only [Set.mem_inter_iff, Set.mem_union]
+    tauto
+  have hjoint : P (selected ∩ blockEvent) =
+      P (blockEvent ∩ positive) + P (blockEvent ∩ negative) := by
+    rw [hjoinSet, measure_union hdisjEvent hnegativeEventMeas]
+  have hreflect := measure_rademacher_survival_reflection
+    n event hevent hinvariant
+  have hreflectUniv := measure_rademacher_survival_reflection
+    n Set.univ MeasurableSet.univ (by simp)
+  simp only [Set.univ_inter] at hreflectUniv
+  change P (blockEvent ∩ positive) = P (blockEvent ∩ negative) at hreflect
+  change P positive = P negative at hreflectUniv
+  rw [← hreflect] at hjoint
+  rw [← hreflectUniv] at hwhole
+  change P (selected ∩ blockEvent) * P positive =
+    P selected * P (blockEvent ∩ positive)
   rw [hjoint, hwhole]
   ring
 
