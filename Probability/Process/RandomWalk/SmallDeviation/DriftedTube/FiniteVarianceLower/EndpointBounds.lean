@@ -21,8 +21,8 @@ The public theorem in this file is:
 
 This is Wang Yiyang, *Asymptotic speed of the $N$-branching random walk
 with infinite offspring*, Chapter 3, Lemma 3.5. Its parameter selection
-follows the proof there: first choose a finite bin count, then strict
-exponential-rate and window margins, and finally an intermediate power
+follows the proof there: first choose an intermediate exponential rate,
+then a finite bin count, strict window margins, and an intermediate power
 block length.
 -/
 
@@ -64,45 +64,6 @@ private theorem exists_staircase_bin_count
     hinv.eventually (eventually_lt_nhds hv)
   obtain ⟨m, hm⟩ := (Filter.eventually_ge_atTop 2 |>.and hmRate |>.and hmV).exists
   exact ⟨m, hm.1.1, hm.1.2, hm.2⟩
-
-
-private theorem exists_staircase_rate_margins
-    {sigma d : ℝ} {m : ℕ} (hm : 2 ≤ m)
-    (hrate : (Real.pi ^ 2 / 2) * sigma ^ 2 <
-      d * staircaseBinWidth m ^ 2) :
-    ∃ blockRate narrowedRate : ℝ,
-      0 ≤ blockRate ∧ 0 < d - blockRate ∧
-      (Real.pi ^ 2 / 2) * sigma ^ 2 < narrowedRate ∧
-      narrowedRate < blockRate * staircaseBinWidth m ^ 2 := by
-  let K : ℝ := (Real.pi ^ 2 / 2) * sigma ^ 2
-  let beta : ℝ := staircaseBinWidth m
-  have hbeta : 0 < beta := staircaseBinWidth_pos hm
-  have hbetaSq : 0 < beta ^ 2 := sq_pos_of_pos hbeta
-  have hK : 0 ≤ K := by dsimp [K]; positivity
-  have hdiv : K / beta ^ 2 < d :=
-    (div_lt_iff₀ hbetaSq).2 hrate
-  have hd : 0 < d := by
-    have hquot : 0 ≤ K / beta ^ 2 := div_nonneg hK hbetaSq.le
-    linarith
-  let blockRate : ℝ := (K / beta ^ 2 + d) / 2
-  have hblockNonneg : 0 ≤ blockRate := by dsimp [blockRate]; positivity
-  have hblockLt : blockRate < d := by dsimp [blockRate]; linarith
-  have hKBlock : K < blockRate * beta ^ 2 := by
-    have hmid : K / beta ^ 2 < blockRate := by
-      dsimp [blockRate]; linarith
-    have hmul := mul_lt_mul_of_pos_right hmid hbetaSq
-    have heq : K / beta ^ 2 * beta ^ 2 = K := by field_simp
-    rw [heq] at hmul
-    exact hmul
-  let narrowedRate : ℝ := (K + blockRate * beta ^ 2) / 2
-  refine ⟨blockRate, narrowedRate, hblockNonneg, ?_, ?_, ?_⟩
-  · linarith
-  · change K < narrowedRate
-    dsimp [narrowedRate]
-    linarith
-  · change narrowedRate < blockRate * beta ^ 2
-    dsimp [narrowedRate]
-    linarith
 
 
 private theorem exists_staircase_windows
@@ -225,11 +186,31 @@ theorem exists_uniform_driftedTube_endpoint_bounds
       Real.exp (-d * (horizon : ℝ) / width ^ 2) ≤
         (iidSequenceLaw ν).real
           (driftedTubeUpperEndpointWindowEvent horizon width drift base v) := by
+  let criticalRate : ℝ := (Real.pi ^ 2 / 2) * sigma ^ 2
+  let blockRate : ℝ := (criticalRate + d) / 2
+  have hcriticalNonneg : 0 ≤ criticalRate := by
+    dsimp [criticalRate]
+    positivity
+  have hblockCritical : criticalRate < blockRate := by
+    dsimp [blockRate, criticalRate]
+    linarith
+  have hblockNonneg : 0 ≤ blockRate :=
+    hcriticalNonneg.trans hblockCritical.le
+  have hdelta : 0 < d - blockRate := by
+    dsimp [blockRate, criticalRate]
+    linarith
   obtain ⟨m, hm, hmRate, hmV⟩ :=
-    exists_staircase_bin_count hrate hv
-  obtain ⟨blockRate, narrowedRate, hblockNonneg, hdelta,
-    hnarrowedK, hnarrowedBlock⟩ :=
-    exists_staircase_rate_margins hm hmRate
+    exists_staircase_bin_count hblockCritical hv
+  change criticalRate < blockRate * staircaseBinWidth m ^ 2 at hmRate
+  let narrowedRate : ℝ :=
+    (criticalRate + blockRate * staircaseBinWidth m ^ 2) / 2
+  have hnarrowedK : criticalRate < narrowedRate := by
+    dsimp [narrowedRate]
+    linarith
+  have hnarrowedBlock :
+      narrowedRate < blockRate * staircaseBinWidth m ^ 2 := by
+    dsimp [narrowedRate]
+    linarith
   obtain ⟨margin, uInterior, vInterior, uLower, vLower,
     uUpper, vUpper, hmargin, huInterior, huvInterior, hvInterior,
     huLower, huvLower, hvLower, huUpper, huvUpper, hvUpper,
