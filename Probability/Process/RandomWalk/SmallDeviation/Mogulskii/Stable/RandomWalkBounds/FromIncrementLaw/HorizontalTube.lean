@@ -21,6 +21,10 @@ For a law `ν` of mean zero and variance \(\sigma^2\in(0,\infty)\), write
 
 The public theorems are:
 
+- `horizontalTubeEndpointWindowEvent`: the event
+  $T_{a,\Delta,L}\cap\{(u-a)\Delta\le S_L\le(v-a)\Delta\}$.
+- `horizontalTubeEndpointWindowProbability`: the probability of this event
+  under the specified increment law.
 - `centeredFiniteVariance_closedHorizontalTubeProbabilityRate`: if
   \(x_n\to\infty\) and \(x_n^2/n\to0\), then
   \(\frac{x_n^2}{n}\log\mathbb P_\nu(T_{a,x_n,n-1})

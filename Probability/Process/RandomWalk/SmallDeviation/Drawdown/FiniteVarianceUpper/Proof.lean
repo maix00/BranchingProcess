@@ -20,7 +20,23 @@ import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 /-!
 # Bounded-drawdown walk events
 
-Public theorem declarations (write `S_i` for the additive path and `P` for its IID law):
+Public definitions and theorem declarations (write `S_i` for the additive
+path and `P` for its IID law):
+
+- `drawdownPrefixSum`, `drawdownPartialBlockSum`, and `drawdownPrefixPath`:
+  the partial sums of a finite increment prefix, a following block, and
+  the prefix path used in conditional block events.
+- `drawdownBlockStart`, `drawdownBlockCount`, and `drawdownBlockRemainder`:
+  the block starts $r+j\ell$, count $q=\lfloor L/\ell\rfloor$, and
+  initial remainder $r=L\bmod\ell$.
+- `drawdownDiscretizedMaximum`, `drawdownMaximumJumpSet`,
+  `drawdownRunningMaximumBins`, and `drawdownRunningMaximumJumpSet`:
+  the rounded running maximum, its spatial-bin indices, and the blocks
+  at which that bin index increases.
+- `drawdownJumpPatternTubeEvent`, `drawdownJumpPatternTubeIntersection`,
+  `drawdownJumpPatternBound`, and `drawdownAdmissibleJumpPatterns`:
+  the block event and product factor for a fixed jump set $J$, its
+  intersection over all blocks, and the finite family $|J|\le K$.
 
 - `iidSequenceLaw_condExp_prefix_nextBlock`: `E[f(X,Y) | X] = ∫ f(X,y) dν^ℓ(y)`.
 - `iidSequenceLaw_condExp_pairEvent_le_of_sectionProbability`: section bounds `≤ p`
