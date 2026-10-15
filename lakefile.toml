@@ -4,9 +4,8 @@ defaultTargets = ["BranchingProcess"]
 
 [[require]]
 name = "BrownianMotion"
-git = "https://github.com/RemyDegenne/brownian-motion.git"
-# Keep the external foundation reproducible alongside the pinned mathlib.
-rev = "0d5b6eb928e616d3b1f774ad7d233c167d9f42c9"
+path = "Vendor/BrownianMotion"
+# This tracked snapshot of the fork is described in Vendor/BrownianMotion/UPSTREAM.md.
 
 [[require]]
 name = "mathlib"
