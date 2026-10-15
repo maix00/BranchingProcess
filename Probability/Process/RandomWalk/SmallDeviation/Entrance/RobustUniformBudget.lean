@@ -23,10 +23,14 @@ The public theorem in this file is:
 
 This is the real-width quantifier required by Wang Yiyang,
 *Asymptotic speed of the $N$-branching random walk with infinite offspring*,
-Chapter 3, proof of Lemma 3.5. The sequential transition bounds come from
-the conditioned meander and survival source theorems of Caravenna--Chaumont,
-*Invariance principles for random walks conditioned to stay positive*,
-Lemma 2.1 and equation (3.3).
+Chapter 3, proof of Lemma 3.5. The sequential transition bounds use
+Bolthausen, *On a functional central limit theorem for random walks
+conditioned to stay positive*, Theorem 3.2, and the Brownian-meander
+identification in Caravenna--Chaumont, *Invariance principles for random
+walks conditioned to stay positive*, equation (3.3). Their survival-power
+bound follows from the finite coefficient recurrence in Bauer--Godrèche--Luck,
+*Statistics of persistent events in the binomial random walk: Will the
+drunken sailor hit the sober man?*, Appendix A, equation (A.7).
 -/
 
 @[expose] public section
