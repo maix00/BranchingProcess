@@ -13,10 +13,32 @@ import Mathlib.Topology.Order.LiminfLimsup
 /-!
 # Stable Mogulskii upper rate from a fixed block parameter
 
-This module converts the source's independent-block bound into the
-small-deviation logarithmic normalization. The theorem keeps one fixed block
-parameter and one strict one-block base; the source's slow diagonal is a later
-step, after the fixed-parameter limits have been established.
+The public theorems in this file are:
+
+- `limsup_stableSmallDeviationRate_mul_log_probability_le_of_blockPowerBound`:
+  an eventual independent-block bound $p_n\leq q^{\lfloor N_n/\ell_n\rfloor}$
+  implies $\limsup_n a_n\log p_n\leq(\tau/c)\log q$ when $N_n/n\to\tau$.
+- `limsup_stableSmallDeviationRate_mul_log_openHorizontalTubeProbability_le_of_blockPathLimit`
+  and `limsup_stableSmallDeviationRate_mul_log_partialSumRangeOscillationLTProbability_le_of_blockPathLimit`:
+  apply this bound to a horizontal tube and to a translation-invariant range
+  event, respectively, using a fixed stable block and its path-law limit.
+- `limsup_stableSmallDeviationRate_mul_log_openHorizontalTubeProbability_le_of_escapeRate_on_segment`
+  and `limsup_stableSmallDeviationRate_mul_log_partialSumRangeOscillationLTProbability_le_of_escapeRate_on_segment`:
+  for width $w$ and relative duration $\tau$, the normalized logarithmic
+  limsup is at most
+  $\tau[C/((w+m)/2)^\alpha+2\varepsilon]$.
+- `limsup_stableSmallDeviationRate_mul_log_openHorizontalTubeProbability_le_of_escapeRate`:
+  at unit width and full duration, the limsup is at most
+  $C/((1+m)/2)^\alpha+2\varepsilon$.
+- `limsup_stableSmallDeviationRate_mul_log_openHorizontalTubeProbability_le`:
+  the sharp limsup is at most $C/(1/2)^\alpha$.
+
+Here $a_n$ is `stableSmallDeviationRate α ν scale n`, $c$ is the fixed
+block-time parameter, and $\ell_n$ is `stableBlockLength α ν c scale n`.
+This is the independent-block upper-bound argument of A. A. Mogul'skii,
+*Small Deviations in a Space of Trajectories*, Theorem 3, Section 4 (1974
+Russian original; 1975 English translation, DOI 10.1137/1119081). The
+fixed-parameter limits precede the final width optimization.
 -/
 
 open Filter MeasureTheory
@@ -543,7 +565,8 @@ theorem limsup_stableSmallDeviationRate_mul_log_openHorizontalTubeProbability_le
 
 /-- The centered horizontal-tube upper rate is the stable escape constant
 scaled by the inverse `α`-power of the tube's half-width. This is the
-constant-width case of the upper half of Mogulskii's theorem. The hypotheses
+constant-width upper bound in A. A. Mogul'skii, *Small Deviations in a Space
+of Trajectories*, Theorem 3, Section 4 (DOI 10.1137/1119081). The hypotheses
 are the stable path-law escape rate, the stable random-walk `J₁` limit with
 its tightness input, and the lower-side positivity/coboundedness needed for
 real logarithms. -/
