@@ -8,6 +8,7 @@ module
 
 public import Topology.ContinuousMap.LastZero
 public import Mathlib.Topology.Order.IntermediateValue
+public import Mathlib.Topology.ContinuousMap.Algebra
 
 /-!
 # Last sign change of a continuous path
@@ -31,6 +32,10 @@ The public definitions and theorems in this file are:
 - `ContinuousMap.firstSignStableStart_eq_of_positiveTail`:
   a path that becomes nonnegative at $a$, is positive later, and
   approaches $a$ from negative values has sign-stable start time $a$.
+- `ContinuousMap.firstSignStableStart_neg`:
+  sign reversal preserves the first sign-stable start time.
+- `ContinuousMap.firstSignStableStart_eq_of_negativeTail`:
+  the symmetric characterization for a nonpositive final tail.
 - `ContinuousMap.le_lastZero_of_opposite_sign`: $f(t)f(1)<0$
   implies $t\le g(f)$, where $g(f)$ is the last zero.
 - `ContinuousMap.lastOppositeSign_le_lastZero`: the last opposite-sign
@@ -362,6 +367,42 @@ theorem firstSignStableStart_eq_of_positiveTail
     · exact (not_le_of_gt hsneg) (hnonneg s hts)
     · obtain ⟨u, hcu, hupos⟩ := hlater
       exact (not_le_of_gt hupos) (hnonpos u (htc.le.trans hcu))
+
+/-- Reversing every sign preserves the first sign-stable tail time. -/
+theorem firstSignStableStart_neg (f : C(unitInterval, ℝ)) :
+    firstSignStableStart (-f) = firstSignStableStart f := by
+  unfold firstSignStableStart
+  congr 1
+  ext t
+  change ((∀ s : unitInterval, t ≤ s → 0 ≤ -(f s)) ∨
+      (∀ s : unitInterval, t ≤ s → -(f s) ≤ 0)) ↔
+    ((∀ s : unitInterval, t ≤ s → 0 ≤ f s) ∨
+      (∀ s : unitInterval, t ≤ s → f s ≤ 0))
+  simp only [neg_nonneg, neg_nonpos]
+  exact or_comm
+
+/-- The symmetric zero-crossing characterization for a nonpositive
+final tail. -/
+theorem firstSignStableStart_eq_of_negativeTail
+    (f : C(unitInterval, ℝ)) (cut : unitInterval)
+    (hpost : ∀ s : unitInterval, cut ≤ s → f s ≤ 0)
+    (hprior : ∀ t : unitInterval, t < cut →
+      ∃ s : unitInterval, t ≤ s ∧ s < cut ∧ 0 < f s)
+    (hlater : ∃ s : unitInterval, cut ≤ s ∧ f s < 0) :
+    firstSignStableStart f = cut := by
+  have h := firstSignStableStart_eq_of_positiveTail (-f) cut
+    (by
+      intro s hcs
+      change 0 ≤ -(f s)
+      exact neg_nonneg.mpr (hpost s hcs))
+    (by
+      intro t htc
+      obtain ⟨s, hts, hsc, hs⟩ := hprior t htc
+      exact ⟨s, hts, hsc, by change -(f s) < 0; linarith⟩)
+    (by
+      obtain ⟨s, hcs, hs⟩ := hlater
+      exact ⟨s, hcs, by change 0 < -(f s); linarith⟩)
+  simpa only [firstSignStableStart_neg] using h
 
 /-- The last opposite-sign time is continuous at a path where it agrees
 with the last zero. Lower continuity follows from the open opposite-sign
