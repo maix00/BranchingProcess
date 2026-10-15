@@ -19,10 +19,13 @@ The public theorems in this file are:
   if the two reflected transition probabilities obey their polynomial
   lower bounds, then for $L\ge\lfloor\Delta^{2+\varepsilon}\rfloor$,
   $\mathbb P(E_0^{\rm robust})\ge\exp(-\delta L/\Delta^2)$ eventually.
-- `exists_eventually_robustTransitionProbability_ge_exp_of_regularVariation`:
+- `exists_eventually_robustTransitionProbability_ge_exp_of_centeredFiniteVariance`:
   the same bound with the Brownian motion, conditioned meander limit,
   and support supplied by the centered finite-variance increment law;
-  the two reflected survival regular-variation hypotheses remain explicit.
+  the survival power bounds follow from the finite coefficient recurrence
+  in M. Bauer, C. Godrèche, and J.-M. Luck, *Statistics of persistent events
+  in the binomial random walk: Will the drunken sailor hit the sober man?*,
+  Appendix A, equation (A.7) (arXiv:cond-mat/9905252).
 
 This is the polynomial-to-exponential comparison following the entrance
 construction in Wang Yiyang, *Asymptotic speed of the $N$-branching random
@@ -84,16 +87,10 @@ theorem exists_eventually_robustTransitionProbability_ge_exp_of_transitionBounds
 /-- The robust entrance cost is absorbed by the exponential budget after
 the meander transition has been supplied for both the walk and its
 reflection. -/
-theorem exists_eventually_robustTransitionProbability_ge_exp_of_regularVariation
+theorem exists_eventually_robustTransitionProbability_ge_exp_of_centeredFiniteVariance
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     {sigma : ℝ} (hν : IsCenteredSecondMoment ν (sigma ^ 2))
     (hsigma : 0 < sigma)
-    (hregPlus : Asymptotics.IsRegularlyVaryingAtTop
-      (FunctionalLimit.Conditioned.survivalProbabilityReal ν)
-      (-(1 / 2 : ℝ)))
-    (hregMinus : Asymptotics.IsRegularlyVaryingAtTop
-      (FunctionalLimit.Conditioned.survivalProbabilityReal
-        (ν.map fun x : ℝ => -x)) (-(1 / 2 : ℝ)))
     {rho : ℝ} (hrho : 0 < rho) (hrhoSmall : rho < 1 / 48)
     {width : ℕ → ℝ} (hwidth : Tendsto width atTop atTop)
     {drift alpha delta epsilon : ℝ}
@@ -115,16 +112,16 @@ theorem exists_eventually_robustTransitionProbability_ge_exp_of_regularVariation
           (FunctionalLimit.Conditioned.nonnegativeTransitionEvent
             (Asymptotics.floorBlockLength (fun k => width k ^ 2) n - m)
             (width n))).toReal :=
-    FunctionalLimit.Conditioned.exists_eventually_diffusiveTransitionProbability_ge_power_of_regularVariation
-      ν hν hsigma hregPlus halpha hrho hrhoSmall hwidth m
+    FunctionalLimit.Conditioned.exists_eventually_diffusiveTransitionProbability_ge_power_of_centeredFiniteVariance
+      ν hν hsigma halpha hrho hrhoSmall hwidth m
   have hminus (m : ℕ) : ∃ C : ℝ, 0 < C ∧ ∀ᶠ n : ℕ in atTop,
       C / width n ^ (1 + alpha) ≤
         (iidSequenceLaw (ν.map fun x : ℝ => -x)
           (FunctionalLimit.Conditioned.nonnegativeTransitionEvent
             (Asymptotics.floorBlockLength (fun k => width k ^ 2) n - m)
             (width n))).toReal :=
-    FunctionalLimit.Conditioned.exists_eventually_diffusiveTransitionProbability_ge_power_of_regularVariation
-      (ν.map fun x : ℝ => -x) hνneg hsigma hregMinus halpha
+    FunctionalLimit.Conditioned.exists_eventually_diffusiveTransitionProbability_ge_power_of_centeredFiniteVariance
+      (ν.map fun x : ℝ => -x) hνneg hsigma halpha
       hrho hrhoSmall hwidth m
   exact exists_eventually_robustTransitionProbability_ge_exp_of_transitionBounds
     hν hsigma hwidth hdrift halpha hdelta hepsilon hplus hminus

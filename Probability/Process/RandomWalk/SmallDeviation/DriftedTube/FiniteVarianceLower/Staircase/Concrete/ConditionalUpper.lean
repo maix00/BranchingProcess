@@ -14,18 +14,21 @@ public import Probability.Process.RandomWalk.SmallDeviation.Entrance.RobustExpon
 
 The public theorem in this file is:
 
-- `eventually_concreteStaircaseUpperEndpointLowerBound_of_regularVariation`:
+- `eventually_concreteStaircaseUpperEndpointLowerBound_of_centeredFiniteVariance`:
   for $t_1=\lfloor\Delta_n^2\rfloor$ and
-  $L_n\ge\lfloor\Delta_n^{2+\varepsilon}\rfloor$, the two reflected
-  survival regular-variation inputs, the conditioned Brownian-meander
+  $L_n\ge\lfloor\Delta_n^{2+\varepsilon}\rfloor$, the finite-variance
+  survival bounds for the walk and its reflection, the conditioned meander
   transition estimate, and the staircase scale and margin conditions
   imply $\mathbb P(E_{\rm upper})\ge\exp(-d'L_n/\Delta_n^2)$.
 
 This is the symmetric endpoint part of Wang Yiyang,
 *Asymptotic speed of the $N$-branching random walk with infinite offspring*,
-Chapter 3, proof of Lemma 3.5. The transition inputs are those of
-Caravenna--Chaumont, *Invariance principles for random walks conditioned
-to stay positive*, equation (3.3) and Lemma 2.1.
+Chapter 3, proof of Lemma 3.5. The conditioned limit is stated in Caravenna--Chaumont,
+*Invariance principles for random walks conditioned to stay positive*,
+equation (3.3). The survival input follows from M. Bauer, C. Godrèche, and J.-M. Luck,
+*Statistics of persistent events in the binomial random walk: Will the
+drunken sailor hit the sober man?*, Appendix A, equation (A.7)
+(arXiv:cond-mat/9905252).
 -/
 
 @[expose] public section
@@ -37,19 +40,13 @@ open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 
-/-- The remaining fluctuation-theory inputs are the survival
-regular-variation asymptotics for the walk and its reflection. -/
-theorem eventually_concreteStaircaseUpperEndpointLowerBound_of_regularVariation
+/-- The survival power inputs for the walk and its reflection follow from
+the finite-variance hypotheses. -/
+theorem eventually_concreteStaircaseUpperEndpointLowerBound_of_centeredFiniteVariance
     {ν : Measure ℝ} [IsProbabilityMeasure ν]
     {sigma narrowedRate uInterior vInterior uFinal vFinal : ℝ}
     (hν : IsCenteredSecondMoment ν (sigma ^ 2))
     (hsigma : 0 < sigma)
-    (hregPlus : Asymptotics.IsRegularlyVaryingAtTop
-      (FunctionalLimit.Conditioned.survivalProbabilityReal ν)
-      (-(1 / 2 : ℝ)))
-    (hregMinus : Asymptotics.IsRegularlyVaryingAtTop
-      (FunctionalLimit.Conditioned.survivalProbabilityReal
-        (ν.map fun x : ℝ => -x)) (-(1 / 2 : ℝ)))
     {rho : ℝ} (hrho : 0 < rho) (hrhoSmall : rho < 1 / 48)
     (m : ℕ) (hm : 2 ≤ m)
     (huInterior : 0 < uInterior)
@@ -99,8 +96,8 @@ theorem eventually_concreteStaircaseUpperEndpointLowerBound_of_regularVariation
           (driftedTubeUpperEndpointWindowEvent (horizon n) (width n)
             drift (base n) endpointFraction) := by
   have hbudget :=
-    exists_eventually_robustTransitionProbability_ge_exp_of_regularVariation
-      ν hν hsigma hregPlus hregMinus
+    exists_eventually_robustTransitionProbability_ge_exp_of_centeredFiniteVariance
+      ν hν hsigma
       hrho hrhoSmall hwidth hdrift halpha hdelta hepsilon
   have hentrance : ∀ᶠ n : ℕ in atTop,
       Real.exp (-(totalRate - blockRate) * (horizon n : ℝ) /

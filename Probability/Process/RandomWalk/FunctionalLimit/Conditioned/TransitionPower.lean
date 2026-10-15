@@ -8,7 +8,7 @@ module
 
 public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition
 public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.TransitionDiffusiveFromMeander
-public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.SurvivalPower
+public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.FiniteVarianceSurvivalPower
 public import Probability.Process.Brownian.Existence
 
 /-!
@@ -21,17 +21,20 @@ The public theorems in this file are:
 
 - `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.exists_eventually_diffusiveTransitionProbability_ge_power_of_centeredSecondMoment`:
   the same bound with the meander limit and its support supplied by the
-  centered finite-variance hypotheses; survival regular variation remains
-  explicit.
-- `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.exists_eventually_diffusiveTransitionProbability_ge_power_of_regularVariation`:
+  centered finite-variance hypotheses.
+- `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.exists_eventually_diffusiveTransitionProbability_ge_power_of_centeredFiniteVariance`:
   the same estimate with a Brownian witness constructed from the Gaussian
   random-walk functional limit.
 
 This is the multiplication step in Wang Yiyang,
 *Asymptotic speed of the $N$-branching random walk with infinite offspring*,
-Appendix A.2, first lemma. The survival asymptotic is Caravenna--Chaumont,
-*Invariance principles for random walks conditioned to stay positive*,
-Lemma 2.1; the conditioned path limit is recalled in their equation (3.3).
+Appendix A.2, first lemma. The survival power bound follows from the
+finite coefficient recurrence in M. Bauer, C. Godrèche, and J.-M. Luck,
+*Statistics of persistent events in the binomial random walk: Will the
+drunken sailor hit the sober man?*, Appendix A, equation (A.7)
+(arXiv:cond-mat/9905252). The conditioned path limit appears in Francesco
+Caravenna and Loïc Chaumont, *Invariance principles for random walks
+conditioned to stay positive*, equation (3.3) (DOI 10.1214/07-AIHP119).
 Chaumont--Doney, *Invariance principles for local times at the maximum of
 random walks and Lévy processes*, Theorem 6 (DOI 10.1214/09-AOP512),
 provides a later treatment of the meander limit.
@@ -53,8 +56,6 @@ theorem exists_eventually_diffusiveTransitionProbability_ge_power_of_conditional
     {ν : Measure ℝ} [IsProbabilityMeasure ν]
     {sigma : ℝ} (hν : IsCenteredSecondMoment ν (sigma ^ 2))
     (hsigma : 0 < sigma)
-    (hreg : Asymptotics.IsRegularlyVaryingAtTop
-      (survivalProbabilityReal ν) (-(1 / 2 : ℝ)))
     {alpha : ℝ} (halpha : 0 < alpha)
     {width : ℕ → ℝ} (hwidth : Tendsto width atTop atTop)
     (offset : ℕ)
@@ -72,8 +73,8 @@ theorem exists_eventually_diffusiveTransitionProbability_ge_power_of_conditional
             (diffusiveTransitionHorizon width offset n) (width n))).toReal := by
   obtain ⟨q, hq, hconditional⟩ := htransition
   obtain ⟨C, hC, hsurvival⟩ :=
-    exists_eventually_diffusiveSurvivalProbability_ge_power
-      ν hν hsigma hreg halpha hwidth offset
+    exists_eventually_diffusiveSurvivalProbability_ge_power_of_centeredSecondMoment
+      ν hν hsigma halpha hwidth offset
   have hqfinite : (min q 1) ≠ ⊤ :=
     ne_of_lt (lt_of_le_of_lt (min_le_right q 1) (by simp))
   have hqmin : (0 : ℝ≥0∞) < min q 1 :=
@@ -118,8 +119,6 @@ theorem exists_eventually_diffusiveTransitionProbability_ge_power_of_centeredSec
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     {sigma : ℝ} (hν : IsCenteredSecondMoment ν (sigma ^ 2))
     (hsigma : 0 < sigma)
-    (hreg : Asymptotics.IsRegularlyVaryingAtTop
-      (survivalProbabilityReal ν) (-(1 / 2 : ℝ)))
     {alpha : ℝ} (halpha : 0 < alpha)
     {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
     [IsProbabilityMeasure P] {B : ℝ≥0 → Ω → ℝ}
@@ -142,16 +141,14 @@ theorem exists_eventually_diffusiveTransitionProbability_ge_power_of_centeredSec
     exists_eventually_diffusiveTransitionConditionalProbability_ge_of_centeredSecondMoment
       ν hν hsigma hB hcontinuous hmeasurable hrho hrhoSmall hwidth offset
   exact exists_eventually_diffusiveTransitionProbability_ge_power_of_conditionalBound
-    hν hsigma hreg halpha hwidth offset htransition
+    hν hsigma halpha hwidth offset htransition
 
 /-- The Brownian process used in the conditioned-meander transition estimate
 is supplied by the Gaussian random-walk limit and its continuous modification. -/
-theorem exists_eventually_diffusiveTransitionProbability_ge_power_of_regularVariation
+theorem exists_eventually_diffusiveTransitionProbability_ge_power_of_centeredFiniteVariance
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     {sigma : ℝ} (hν : IsCenteredSecondMoment ν (sigma ^ 2))
     (hsigma : 0 < sigma)
-    (hreg : Asymptotics.IsRegularlyVaryingAtTop
-      (survivalProbabilityReal ν) (-(1 / 2 : ℝ)))
     {alpha : ℝ} (halpha : 0 < alpha)
     {rho : ℝ} (hrho : 0 < rho) (hrhoSmall : rho < 1 / 48)
     {width : ℕ → ℝ} (hwidth : Tendsto width atTop atTop)
@@ -165,7 +162,7 @@ theorem exists_eventually_diffusiveTransitionProbability_ge_power_of_regularVari
   letI : IsProbabilityMeasure
       (Q : Measure (ℕ → CadlagPath unitInterval ℝ)) := Q.property
   exact exists_eventually_diffusiveTransitionProbability_ge_power_of_centeredSecondMoment
-    ν hν hsigma hreg halpha hB hcontinuous hmeasurable
+    ν hν hsigma halpha hB hcontinuous hmeasurable
     hrho hrhoSmall hwidth offset
 
 end ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned
