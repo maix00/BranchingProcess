@@ -20,7 +20,7 @@ The public objects and theorems in this file are:
 - `staircaseTubeWidth_pos_of_stepCost_lt_cube`:
   $c|I_j|<D^3$ gives its positive width.
 - `staircaseTubeWidth_pos_of_schedule_bound`:
-  the paper's common bound $2c\ell<D^3$ makes every scheduled
+  the common bound in Wang Yiyang's Lemma 3.5 $2c\ell<D^3$ makes every scheduled
   horizontal sub-tube nonempty.
 - `staircaseTubeWidth_le_globalWidth`:
   for $c\ge0$, every horizontal width is at most $D$.
