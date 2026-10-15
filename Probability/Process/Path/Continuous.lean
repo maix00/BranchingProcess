@@ -25,6 +25,8 @@ The public definitions and theorems in this file are:
   measurable operation on continuous path space.
 - `ProbabilityTheory.shiftToZero`: the increment path
   $u\mapsto f(r+u)-f(r)$.
+- `ProbabilityTheory.measurable_shiftToZero`: the shift is measurable
+  jointly in the continuous path and its starting time.
 
 Processes use mathlib's convention `Time → Ω → State`.
 -/
@@ -70,6 +72,16 @@ noncomputable def freezeAfter (f : C(ℝ≥0, ℝ)) (r : ℝ≥0) : C(ℝ≥0, �
 /-- Rebase a continuous path at time `r`, with initial value zero. -/
 noncomputable def shiftToZero (f : C(ℝ≥0, ℝ)) (r : ℝ≥0) : C(ℝ≥0, ℝ) :=
   ⟨fun u => f (r + u) - f r, by fun_prop⟩
+
+/-- The future increment path is jointly measurable in its path and
+its starting time. -/
+theorem measurable_shiftToZero :
+    Measurable (fun p : C(ℝ≥0, ℝ) × ℝ≥0 => shiftToZero p.1 p.2) := by
+  rw [ContinuousMap.measurable_iff_eval]
+  intro u
+  exact (continuous_eval.comp
+    (continuous_fst.prodMk (continuous_snd.add continuous_const))).measurable.sub
+      (continuous_eval.comp (continuous_fst.prodMk continuous_snd)).measurable
 
 /-- Freezing a continuous path at a fixed time is measurable. -/
 theorem measurable_freezeAfter (r : ℝ≥0) :
