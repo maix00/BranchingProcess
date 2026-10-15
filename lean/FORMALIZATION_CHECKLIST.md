@@ -219,7 +219,10 @@ time is continuous, and the infinite-time branch is locally the
 constant path $-1$ whenever the cutoff is strict. Both unrestricted
 and every fixed finite-horizon shift are measurable and continuous
 at almost every Brownian path. The conditioned invariance principle
-remains open.
+remains open. `Probability/ConvergenceInDistribution/Mapping.lean`
+now provides the reusable almost-surely-continuous mapping theorem
+for convergence in distribution, the measure-theoretic step used
+after Bolthausen's Lemma 2.5 in his Theorem 3.2.
 
 The concrete finite staircase now has its own verified schedule and geometry:
 `DriftedTube/FiniteVarianceLower/Staircase/Setup/Schedule.lean` defines
