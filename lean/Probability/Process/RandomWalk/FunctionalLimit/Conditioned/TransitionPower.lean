@@ -9,6 +9,7 @@ module
 public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition
 public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.TransitionDiffusiveFromMeander
 public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.SurvivalPower
+public import Probability.Process.Brownian.Existence
 
 /-!
 # Diffusive entrance bound from survival and the meander limit
@@ -22,6 +23,9 @@ The public theorems in this file are:
   the same bound with the meander limit and its support supplied by the
   centered finite-variance hypotheses; survival regular variation remains
   explicit.
+- `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.exists_eventually_diffusiveTransitionProbability_ge_power_of_regularVariation`:
+  the same estimate with a Brownian witness constructed from the Gaussian
+  random-walk functional limit.
 
 This is the multiplication step in Wang Yiyang,
 *Asymptotic speed of the $N$-branching random walk with infinite offspring*,
@@ -139,6 +143,30 @@ theorem exists_eventually_diffusiveTransitionProbability_ge_power_of_centeredSec
       ν hν hsigma hB hcontinuous hmeasurable hrho hrhoSmall hwidth offset
   exact exists_eventually_diffusiveTransitionProbability_ge_power_of_conditionalBound
     hν hsigma hreg halpha hwidth offset htransition
+
+/-- The Brownian process used in the conditioned-meander transition estimate
+is supplied by the Gaussian random-walk limit and its continuous modification. -/
+theorem exists_eventually_diffusiveTransitionProbability_ge_power_of_regularVariation
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    {sigma : ℝ} (hν : IsCenteredSecondMoment ν (sigma ^ 2))
+    (hsigma : 0 < sigma)
+    (hreg : Asymptotics.IsRegularlyVaryingAtTop
+      (survivalProbabilityReal ν) (-(1 / 2 : ℝ)))
+    {alpha : ℝ} (halpha : 0 < alpha)
+    {rho : ℝ} (hrho : 0 < rho) (hrhoSmall : rho < 1 / 48)
+    {width : ℕ → ℝ} (hwidth : Tendsto width atTop atTop)
+    (offset : ℕ) :
+    ∃ C : ℝ, 0 < C ∧ ∀ᶠ n : ℕ in atTop,
+      C / width n ^ (1 + alpha) ≤
+        (iidSequenceLaw ν
+          (nonnegativeTransitionEvent
+            (diffusiveTransitionHorizon width offset n) (width n))).toReal := by
+  obtain ⟨Q, B, hB, hmeasurable, hcontinuous⟩ := exists_brownianReal
+  letI : IsProbabilityMeasure
+      (Q : Measure (ℕ → CadlagPath unitInterval ℝ)) := Q.property
+  exact exists_eventually_diffusiveTransitionProbability_ge_power_of_centeredSecondMoment
+    ν hν hsigma hreg halpha hB hcontinuous hmeasurable
+    hrho hrhoSmall hwidth offset
 
 end ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned
 

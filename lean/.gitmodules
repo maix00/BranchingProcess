@@ -1,0 +1,3 @@
+[submodule "Vendor/BrownianMotion"]
+	path = Vendor/BrownianMotion
+	url = https://github.com/maix00/brownian-motion.git
