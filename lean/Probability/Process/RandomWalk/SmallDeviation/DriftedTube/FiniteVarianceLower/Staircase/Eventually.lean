@@ -20,6 +20,9 @@ The public theorem in this file is:
   $\ell_n/\Delta_n^3\to0$, the strict fixed rate and endpoint margins
   imply all global numeric inequalities for the concrete staircase at
   sufficiently large $n$.
+- `eventually_staircaseUpperEndpointGlobalConditions`:
+  the same width, time, and rate conditions with the final endpoint
+  interval adjacent to the upper edge.
 
 This is the common-threshold assertion in Wang Yiyang,
 *Asymptotic speed of the $N$-branching random walk with infinite offspring*,
@@ -204,6 +207,75 @@ theorem eventually_staircaseGlobalConditions
     with n hnWidth hnLength hnCost hnFloor hnMargin hnTime hnRate hnLower
   exact ⟨hnWidth, hnLength, hnCost, hnFloor, hnMargin, hnTime,
     hnRate, hnLower, hinteriorUpper, hfinalLower, hfinalUpper⟩
+
+/-- The common staircase threshold also supports a final window next to
+the upper boundary of the rising tube. -/
+theorem eventually_staircaseUpperEndpointGlobalConditions
+    {width : ℕ → ℝ} {blockLength : ℕ → ℕ}
+    {drift margin endpointFraction narrowedRate blockRate
+      uInterior vInterior uFinal vFinal : ℝ}
+    (m : ℕ) (hm : 2 ≤ m)
+    (hwidth : Tendsto width atTop atTop)
+    (hlength : ∀ᶠ n : ℕ in atTop, 0 < blockLength n)
+    (hquadratic : Tendsto (fun n =>
+      width n ^ 2 / (blockLength n : ℝ)) atTop (𝓝 0))
+    (hcubic : Tendsto (fun n =>
+      (blockLength n : ℝ) / width n ^ 3) atTop (𝓝 0))
+    (hrate : narrowedRate < blockRate * staircaseBinWidth m ^ 2)
+    (hinteriorLower : (1 / 3 : ℝ) / staircaseBinWidth m +
+      margin < uInterior)
+    (hinteriorUpper : vInterior + margin ≤
+      ((2 / 3 : ℝ) - 1 / (3 * (m : ℝ))) /
+        staircaseBinWidth m)
+    (hfinalLower : max (1 - endpointFraction) 0 /
+        staircaseBinWidth m + margin < uFinal)
+    (hfinalUpper : vFinal + margin ≤
+      (1 - 1 / (3 * (m : ℝ))) /
+        staircaseBinWidth m)
+    (width₀ ratio₀ : ℕ) :
+    ∀ᶠ n : ℕ in atTop,
+      0 < width n ∧
+      0 < blockLength n ∧
+      10 * drift * (blockLength n : ℝ) < width n ^ 3 ∧
+      width₀ ≤ ⌊staircaseBinWidth m * (width n / 2)⌋₊ ∧
+      1 / margin ≤ staircaseBinWidth m * (width n / 2) ∧
+      ratio₀ * ⌊staircaseBinWidth m * width n⌋₊ ^ 2 ≤
+        blockLength n ∧
+      narrowedRate * width n ^ 2 ≤
+        blockRate *
+          (⌊staircaseBinWidth m *
+            (width n - 2 * drift * (blockLength n : ℝ) /
+              width n ^ 2)⌋₊ : ℝ) ^ 2 ∧
+      ((width n / 3 + (2 / 3 : ℝ) *
+          (2 * drift * (blockLength n : ℝ) / width n ^ 2)) /
+          (width n -
+            2 * drift * (blockLength n : ℝ) / width n ^ 2)) /
+        staircaseBinWidth m + margin ≤ uInterior ∧
+      vInterior + margin ≤
+        ((2 / 3 : ℝ) - 1 / (3 * (m : ℝ))) /
+          staircaseBinWidth m ∧
+      (max (1 - endpointFraction) 0 * width n /
+          (width n -
+            2 * drift * (blockLength n : ℝ) / width n ^ 2)) /
+        staircaseBinWidth m + margin ≤ uFinal ∧
+      vFinal + margin ≤
+        (1 - 1 / (3 * (m : ℝ))) /
+          staircaseBinWidth m := by
+  have hbase := eventually_staircaseGlobalConditions
+    (drift := drift) (endpointFraction := 1) (uFinal := margin)
+    (vFinal := (1 - 1 / (3 * (m : ℝ))) /
+      staircaseBinWidth m - margin)
+    m hm hwidth hlength hquadratic hcubic hrate
+    hinteriorLower hinteriorUpper (le_refl margin)
+    (by simp) width₀ ratio₀
+  have hlast := eventually_staircaseUpperFinalLowerMargin_of_blockScale
+    (drift := drift) (endpointFraction := endpointFraction)
+    (staircaseBinWidth_pos hm) hwidth hcubic hfinalLower
+  filter_upwards [hbase, hlast] with n hn hnLast
+  obtain ⟨hnWidth, hnLength, hnCost, hnFloor, hnMargin,
+    hnTime, hnRate, hnLower, hnUpper, _, _⟩ := hn
+  exact ⟨hnWidth, hnLength, hnCost, hnFloor, hnMargin,
+    hnTime, hnRate, hnLower, hnUpper, hnLast, hfinalUpper⟩
 
 end ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 
