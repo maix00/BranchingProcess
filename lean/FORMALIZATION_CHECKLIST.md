@@ -331,8 +331,11 @@ composition formula for $\mathbb P(S_n\ge0)$ is proved in
 `Fluctuation/SparreAndersen/CompositionFormula.lean`.
 `Combinatorics/Enumerative/Composition/FirstPart.lean` supplies the
 first-part/tail equivalence and sum decomposition needed to extract the
-finite coefficient recurrence from this formula. The generating-function
-identity (A.7)--(A.8), the survival asymptotic, and its use in the unconditional
+finite coefficient recurrence from this formula.
+`Fluctuation/SparreAndersen/CoefficientRecurrence.lean` now proves
+$P_n=nF_n-\sum_{j=1}^{n-1}F_jP_{n-j}$ directly from that decomposition,
+the coefficient form of (A.7). Its generating-function form (A.7)--(A.8),
+the survival asymptotic, and its use in the unconditional
 entrance bound remain open.
 
 | Source component | Lean modules | Verified scope |
