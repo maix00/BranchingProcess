@@ -9,6 +9,7 @@ module
 public import Probability.Process.Path.FiniteHorizonScaling
 public import Probability.Process.RandomWalk.Path.Interpolation.Unbounded
 public import Probability.Process.RandomWalk.FunctionalLimit.Donsker.Continuous
+public import Probability.Process.Brownian.FiniteHorizonScaling
 
 /-!
 # Finite-horizon polygonal random-walk paths
@@ -24,6 +25,8 @@ The public theorem in this file is:
 - `ProbabilityTheory.RandomWalk.tendstoInDistribution_normalizedLinearContinuousPath_finiteHorizon_scaledBrownian`:
   for each positive integer $m$, the path on $[0,m]$ converges
   to the time-amplitude rescaling $t\mapsto\sqrt m B(t/m)$.
+- `ProbabilityTheory.RandomWalk.tendstoInDistribution_normalizedLinearContinuousPath_finiteHorizon_brownian`:
+  the same finite-horizon limit has the projected Brownian law $P^m$.
 
 This deterministic identity is the path-level step for applying
 Donsker's theorem to $Q_n\Pi_s^{-1}$ in Erwin Bolthausen,
@@ -154,6 +157,50 @@ theorem tendstoInDistribution_normalizedLinearContinuousPath_finiteHorizon_scale
     exact ((continuous_restrictPathTo (m : ℝ≥0)).measurable.comp
       (measurable_normalizedLinearContinuousPathUnbounded
         (fun n => Real.sqrt n) n)).aemeasurable
+
+/-- The finite-horizon polygonal walk converges to the Brownian path
+observed through time `m`; its limit law is the projected path law $P^m$. -/
+theorem tendstoInDistribution_normalizedLinearContinuousPath_finiteHorizon_brownian
+    (nu : Measure ℝ) [IsProbabilityMeasure nu]
+    (hcentered : ∫ x, x ∂nu = 0)
+    (hsecondMoment : ∫ x, x ^ 2 ∂nu = 1)
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+    [IsProbabilityMeasure P] {B : ℝ≥0 → Ω → ℝ}
+    (hB : IsBrownianReal B P)
+    (hcontinuous : ∀ ω, Continuous (B · ω))
+    (hmeasurable : ∀ t, Measurable (B t))
+    (m : ℕ) (hm : 0 < m) :
+    TendstoInDistribution
+      (fun n increment => restrictPathTo (m : ℝ≥0)
+        (normalizedLinearContinuousPathUnbounded
+          (fun n => Real.sqrt n) n increment))
+      atTop
+      (fun ω => restrictPathTo (m : ℝ≥0)
+        (hB.continuousPathMap hmeasurable ω))
+      (fun _ => iidSequenceLaw nu) P := by
+  have hscaled :=
+    tendstoInDistribution_normalizedLinearContinuousPath_finiteHorizon_scaledBrownian
+      nu hcentered hsecondMoment hB.toIsPreBrownianReal
+      hcontinuous hmeasurable m hm
+  apply hscaled.congr_limit
+  · exact (continuous_restrictPathTo (m : ℝ≥0)).measurable.comp
+      (hB.measurable_continuousPathMap hmeasurable) |>.aemeasurable
+  · have hlaw := hB.measure_rescaleUnitPath_eq_finiteHorizonPathLaw
+      hcontinuous hmeasurable (m : ℝ≥0) (by exact_mod_cast hm)
+    have hprojection :
+        finiteHorizonPathLaw
+          (P.map (hB.continuousPathMap hmeasurable)) (m : ℝ≥0) =
+        P.map (fun ω => restrictPathTo (m : ℝ≥0)
+          (hB.continuousPathMap hmeasurable ω)) := by
+      rw [finiteHorizonPathLaw, Measure.map_map]
+      · rfl
+      · exact (continuous_restrictPathTo (m : ℝ≥0)).measurable
+      · exact hB.measurable_continuousPathMap hmeasurable
+    calc
+      _ = finiteHorizonPathLaw
+          (P.map (hB.continuousPathMap hmeasurable)) (m : ℝ≥0) := by
+            simpa only [NNReal.coe_natCast] using hlaw
+      _ = _ := hprojection
 
 end ProbabilityTheory.RandomWalk
 
