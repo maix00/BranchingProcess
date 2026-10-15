@@ -14,6 +14,22 @@ public import Probability.Process.RandomWalk.FunctionalLimit.Stable.ProcessExist
 /-!
 # Normal-domain entrance lower bound
 
+The public definitions and theorems in this file are:
+
+- `finiteMovingEntranceEvent`: the length-$n$ path stays in the corridor
+  $[-u+j\delta,1-u+j\delta]$ and ends in its central third, after spatial
+  normalization, where $\delta$ is the per-step drift.
+- `finiteDriftRemovedOffsetCorridorEvent_iff_finiteMovingEntranceEvent`:
+  subtracting the linear drift gives exactly this entrance event.
+- `measure_pi_finiteMovingEntranceEvent_ge_div_of_uniformLinearBall`:
+  a uniform path-ball probability $q$ gives
+  $\mathbb P(E_n(u))\ge q/n$ for each offset $u\in[0,1]$.
+- `exists_eventually_measure_pi_finiteMovingEntranceEvent_ge_div_of_centeredSecondMoment`:
+  centered finite variance supplies the same $q/n$ bound for
+  $n=\lfloor\Delta^2\rfloor$ and all starting positions.
+- `exists_eventually_iidSequenceLaw_finiteMovingEntranceEvent_ge_div_of_centeredSecondMoment`:
+  the preceding bound holds under the infinite IID increment law.
+
 This file transfers the normal-domain functional limit to the first
 diffusive-time entrance event. The source path is normalized by
 `sigma * sqrt n`, while the moving corridor is normalized by `Delta`; a
