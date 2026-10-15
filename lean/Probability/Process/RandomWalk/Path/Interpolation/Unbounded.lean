@@ -26,6 +26,9 @@ The public definitions and theorems in this file are:
 - `ProbabilityTheory.RandomWalk.normalizedLinearPathUnbounded_eq_sum_range`:
   when $nt\le N$, the defining sum can be extended to the first
   $N$ increments because every added weight vanishes.
+- `ProbabilityTheory.RandomWalk.normalizedLinearPathUnbounded_segment`:
+  on $j\le nt\le j+1$, the path is the affine segment
+  $a_n^{-1}(S_j+(nt-j)\xi_j)$.
 - `ProbabilityTheory.RandomWalk.normalizedLinearPathUnbounded_eq_bounded`:
   on $0\le t\le1$, the unbounded path agrees with the existing
   first-$n$-increment interpolation.
@@ -148,6 +151,40 @@ theorem normalizedLinearPathUnbounded_eq_sum_range
     simp [hweight]
   · exact sum_linearIncrementWeight_eq_range_of_floor_le
       n increment t (Nat.succ_le_iff.mpr hlt)
+
+/-- Between consecutive lattice times, the normalized path is the
+affine interpolation of the two adjacent partial sums. -/
+theorem normalizedLinearPathUnbounded_segment
+    (scale : ℕ → ℝ) (n j : ℕ) (increment : ℕ → ℝ)
+    (t : ℝ≥0)
+    (hlo : (j : ℝ) ≤ (n : ℝ) * (t : ℝ))
+    (hhi : (n : ℝ) * (t : ℝ) ≤ (j : ℝ) + 1) :
+    normalizedLinearPathUnbounded scale n increment t =
+      (scale n)⁻¹ *
+        (AdditivePath.displacement j increment +
+          ((n : ℝ) * (t : ℝ) - j) * increment j) := by
+  have hNt : (n : ℝ) * (t : ℝ) ≤ (j + 1 : ℕ) := by
+    simpa only [Nat.cast_add, Nat.cast_one] using hhi
+  rw [normalizedLinearPathUnbounded_eq_sum_range
+    scale n increment t (j + 1) hNt, Finset.sum_range_succ]
+  have hsum :
+      (∑ i ∈ Finset.range j,
+        linearIncrementWeight n i (t : ℝ) * increment i) =
+        AdditivePath.displacement j increment := by
+    unfold AdditivePath.displacement
+    apply Finset.sum_congr rfl
+    intro i hi
+    have hij : (i : ℝ) + 1 ≤ (j : ℝ) := by
+      exact_mod_cast Nat.succ_le_of_lt (Finset.mem_range.mp hi)
+    have hge : 1 ≤ (n : ℝ) * (t : ℝ) - i := by linarith
+    simp [linearIncrementWeight, max_eq_right (by linarith :
+      0 ≤ (n : ℝ) * (t : ℝ) - i), min_eq_left hge]
+  have hweight : linearIncrementWeight n j (t : ℝ) =
+      (n : ℝ) * (t : ℝ) - j := by
+    have hge : 0 ≤ (n : ℝ) * (t : ℝ) - j := by linarith
+    have hle : (n : ℝ) * (t : ℝ) - j ≤ 1 := by linarith
+    simp [linearIncrementWeight, max_eq_right hge, min_eq_right hle]
+  rw [hsum, hweight]
 
 /-- On the first unit of time, the unbounded interpolation is exactly
 the existing interpolation of the first `n` increments. -/
