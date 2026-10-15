@@ -194,8 +194,11 @@ independence through almost-sure limits is a reusable result in
 for two finite passages of a continuous path and recovers a finite first
 passage from the stopped path. `Path/DescendingHittingTimeRestart.lean`
 specializes the restart identity to the descending hitting-time process.
-Turning strong Markov and these pathwise identities into stationary
-independent increments of the hitting-time process is the next step.
+`Brownian/Reflection/DescendingHittingTimeIncrements.lean` now combines
+strong Markov with the pathwise identities: for positive levels $x,y$,
+$\tau_{x+y}-\tau_x$ is independent of $\tau_x$ and has the law of $\tau_y$.
+The process-level Lévy jump decomposition, including identification of
+its jump-length intensity, is the next step.
 The Brownian hitting-time process has not yet been identified with such a
 Poisson jump family. Equation (2.2), Lemma 2.4, and the conditioned
 invariance principle remain open.
