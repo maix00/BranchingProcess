@@ -13,10 +13,9 @@ public import Probability.Sequence.IID
 /-!
 # Finite exchangeability of an IID prefix
 
-The first `n` coordinates of the canonical IID sequence law have the finite
-product law. Coordinate reindexing by any equivalence of `Fin n` preserves
-that law. These are the measure-theoretic ingredients for the cyclic-shift
-factor in the entrance estimate.
+Coordinate reindexing by any equivalence of `Fin n` preserves the IID
+finite-prefix product law. This is the measure-theoretic ingredient for the
+cyclic-shift factor in the entrance estimate.
 -/
 
 @[expose] public section
@@ -31,19 +30,6 @@ noncomputable def finiteCoordinateReindex
     {E : Type*} [MeasurableSpace E] {n : ℕ} (e : Fin n ≃ Fin n) :
     MeasurableEquiv (Fin n → E) (Fin n → E) :=
   MeasurableEquiv.piCongrLeft (fun _ : Fin n => E) e.symm
-
-/-- The first `n` coordinates of the canonical IID sequence have the finite
-product law. -/
-theorem iidSequenceLaw_map_finPrefix
-    {E : Type*} [MeasurableSpace E] (ν : Measure E)
-    [IsProbabilityMeasure ν] (n : ℕ) :
-    (iidSequenceLaw ν).map (fun x : ℕ → E => fun i : Fin n => x i.val) =
-      Measure.pi (fun _ : Fin n => ν) := by
-  unfold iidSequenceLaw
-  rw [Measure.map_infinitePi_infinitePi_of_inj
-    (P := fun _ : ℕ => ν) (f := fun i : Fin n => i.val)
-    (fun _ _ h => Fin.val_injective h)]
-  rw [Measure.infinitePi_eq_pi]
 
 /-- Reindexing a finite product of copies of the same law preserves its
 measure. This is the Mathlib product-measure route to the cyclic-rotation
