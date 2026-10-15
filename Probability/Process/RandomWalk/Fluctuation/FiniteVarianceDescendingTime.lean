@@ -21,10 +21,9 @@ The public theorems in this file are:
 - `ProbabilityTheory.RandomWalk.tendsto_survivalProbability_zero_of_centeredUnitSecondMoment`:
   for centered, unit-variance increments,
   $\mathbb P(S_j\ge0\text{ for }1\le j\le n)\to0$.
-- `ProbabilityTheory.RandomWalk.measure_firstDescendingLadderTime_eq_top_zero_of_centeredUnitSecondMoment`:
-  under the same assumptions, $\mathbb P(T^-_1=\infty)=0$.
 - `ProbabilityTheory.RandomWalk.measure_firstDescendingLadderTime_eq_top_zero_of_centeredSecondMoment`:
-  the same conclusion holds for every variance $\sigma^2>0$.
+  for every centered variance $\sigma^2>0$,
+  $\mathbb P(T^-_1=\infty)=0$.
 
 The proof combines Donsker's functional central limit theorem with the
 zero probability of a nonnegative Brownian path on $[0,1]$. This supplies
@@ -107,17 +106,14 @@ theorem tendsto_survivalProbability_zero_of_centeredUnitSecondMoment
     simpa only [limsup_congr heq] using hlimsup
   exact tendsto_of_le_liminf_of_limsup_le bot_le hlimsupSurv
 
-/-- Centered unit-variance increments have a finite first strict descending
-ladder time almost surely. -/
-theorem measure_firstDescendingLadderTime_eq_top_zero_of_centeredUnitSecondMoment
+/-- A vanishing finite-horizon survival probability makes the first strict
+descending ladder time finite almost surely. -/
+private theorem measure_firstDescendingLadderTime_eq_top_zero_of_tendsto_survival
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
-    (hcentered : ∫ x, x ∂ν = 0)
-    (hsecondMoment : ∫ x, x ^ 2 ∂ν = 1) :
+    (hsurvival : Tendsto (fun n : ℕ => (iidSequenceLaw ν)
+      {increment | SurvivesNonnegative n increment}) atTop (nhds 0)) :
     iidSequenceLaw ν {increment |
       strictDescendingLadderTime increment 1 = ⊤} = 0 := by
-  have hsurvival :=
-    tendsto_survivalProbability_zero_of_centeredUnitSecondMoment
-      ν hcentered hsecondMoment
   have hle : ∀ n : ℕ,
       iidSequenceLaw ν {increment |
         strictDescendingLadderTime increment 1 = ⊤} ≤
@@ -183,18 +179,8 @@ theorem measure_firstDescendingLadderTime_eq_top_zero_of_centeredSecondMoment
   have hsurvival : Tendsto (fun n : ℕ => (iidSequenceLaw ν)
       {increment | SurvivesNonnegative n increment}) atTop (nhds 0) := by
     simpa only [νunit, measure_survival_map_div ν hsigma] using hunit
-  have hle : ∀ n : ℕ,
-      iidSequenceLaw ν {increment |
-        strictDescendingLadderTime increment 1 = ⊤} ≤
-      iidSequenceLaw ν {increment | SurvivesNonnegative n increment} := by
-    intro n
-    apply measure_mono
-    intro increment htop
-    change strictDescendingLadderTime increment 1 = ⊤ at htop
-    exact (survivesNonnegative_iff_firstDescendingLadderTime_gt
-      increment n).2 (htop ▸ WithTop.coe_lt_top n)
-  exact le_antisymm (ge_of_tendsto hsurvival
-    (Filter.Eventually.of_forall hle)) bot_le
+  exact measure_firstDescendingLadderTime_eq_top_zero_of_tendsto_survival
+    ν hsurvival
 
 end ProbabilityTheory.RandomWalk
 
