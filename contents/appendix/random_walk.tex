@@ -29,21 +29,15 @@
 
 \begin{proof}[\bilingual{Proof of \Cref{lemma:meander-transition}}{\Cref{lemma:meander-transition} 的证明}]
     \bilingual{
-        For $\theta\in\{-1,1\}$, let $Z_0^\theta=0$ and let the increments of $(Z_j^\theta)$ have the law of $\theta\xi_1$. Define
+        For $\theta\in\{-1,1\}$, let $Z_0^\theta=0$ and let the increments of $(Z_j^\theta)$ have the law of $\theta\xi_1$. Put $C_N^\theta:=\{Z_j^\theta\ge0,\ 1\le j\le N\}$ and define
     }{
-        对 $\theta\in\{-1,1\}$, 令 $Z_0^\theta=0$, 且 $(Z_j^\theta)$ 的增量服从 $\theta\xi_1$ 的分布. 定义
+        对 $\theta\in\{-1,1\}$, 令 $Z_0^\theta=0$, 且 $(Z_j^\theta)$ 的增量服从 $\theta\xi_1$ 的分布. 记 $C_N^\theta:=\{Z_j^\theta\ge0,\ 1\le j\le N\}$, 并定义
     }
     \begin{equation*}
-        \begin{aligned}
-            C_N^\theta&:=\{Z_j^\theta\ge0,\ 1\le j\le N\},\\
-            D_{N,\Delta}^\theta&:=
-            \left\{
-                \begin{aligned}
-                    0&\le Z_j^\theta\le\frac56\Delta,\quad 1\le j\le N,\\
-                    Z_N^\theta&\in\left[\frac5{12}\Delta,\frac{11}{24}\Delta\right]
-                \end{aligned}
-            \right\}
-        \end{aligned}
+        D_{N,\Delta}^\theta:=\left\{
+            0\le Z_j^\theta\le\frac56\Delta\ (1\le j\le N),\quad
+            Z_N^\theta\in\left[\frac5{12}\Delta,\frac{11}{24}\Delta\right]
+        \right\}.
     \end{equation*}
     \bilingual{
         In the Skorokhod space $D([0,1])$ of càdlàg paths, the conditioned invariance principle of Bolthausen~\mycite{Bolthausen_1976}, Theorem 3.2, together with the meander identification in Iglehart~\mycite{Iglehart_1974}, Section 3, and Caravenna and Chaumont~\mycite{Caravenna_Chaumont_2008}, equation (3.3), gives
