@@ -12,9 +12,33 @@ public import Analysis.Asymptotics.BlockScale
 /-!
 # Diffusive block lengths
 
-Mogulskii blocking uses integer time blocks whose length is asymptotic to a
-positive constant times the square of the spatial scale.  This file isolates
-the rounding facts from the probabilistic argument.
+Write $b_n=\lfloor c x_n^2\rfloor$ for $c>0$ and a Mogul'skii width
+$x_n\to\infty$ with $x_n^2/n\to0$. The public definition and theorems are:
+
+- `diffusiveBlockLength`: the integer block length $b_n$.
+- `IsMogulskiiScale.tendsto_const_mul_sq_atTop`:
+  $c x_n^2\to\infty$.
+- `IsMogulskiiScale.tendsto_diffusiveBlockLength_atTop` and
+  `IsMogulskiiScale.eventually_diffusiveBlockLength_pos`:
+  $b_n\to\infty$, hence $b_n>0$ eventually.
+- `IsMogulskiiScale.tendsto_diffusiveBlockLength_div_sq`:
+  $b_n/x_n^2\to c$.
+- `IsMogulskiiScale.tendsto_sqrt_diffusiveBlockLength_div` and
+  `tendsto_sqrt_diffusiveBlockLength_div_of_tendsto_atTop`:
+  $\sqrt{b_n}/x_n\to\sqrt c$; the latter needs only $x_n\to\infty$.
+- `IsMogulskiiScale.tendsto_nat_div_diffusiveBlockLength_atTop`:
+  $\lfloor n/b_n\rfloor\to\infty$.
+- `IsMogulskiiScale.tendsto_completeBlockCount_mul_sq_div` and
+  `IsMogulskiiScale.tendsto_succ_completeBlockCount_mul_sq_div`:
+  $\lfloor n/b_n\rfloor x_n^2/n\to1/c$, with the same limit after
+  counting the incomplete final block.
+- `IsMogulskiiScale.tendsto_succ_completeReturnBlockCount_mul_sq_div`:
+  if $m>0$ blocks form one return block, then
+  $(\lfloor n/(m b_n)\rfloor+1)x_n^2/n\to1/(mc)$.
+
+These are the integer-block scaling facts used in the discrete proof of
+Mogul'skii, *Small Deviations in a Space of Trajectories*, Theorem 3,
+Section 4, p. 764 (DOI 10.1137/1119081).
 -/
 
 open Filter Topology

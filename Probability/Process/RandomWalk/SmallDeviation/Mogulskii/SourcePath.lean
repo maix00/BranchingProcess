@@ -15,10 +15,30 @@ public import Topology.Cadlag.TerminalLeft
 /-!
 # Source endpoint convention for the normalized walk path
 
-The path used in the source paper is the right-continuous normalized step path
-on times strictly below `1`, with its terminal value replaced by the left
-limit. Its range therefore records the partial sums through time `n - 1`.
-This file proves that encoding and its exact finite-corridor event identity.
+For increments $\xi_i$, let $S_j=\sum_{i<j}\xi_i$ and let $x_n$ be the
+spatial scale. Mogul'skii's source path takes the right-continuous step
+value $S_{\lfloor nt\rfloor}/x_n$ for $t<1$ and terminal value
+$S_{n-1}/x_n$. The public declarations are:
+
+- `sourceNormalizedStepCadlagPathIcc`: this terminal-left normalized path.
+- `measurable_sourceNormalizedStepCadlagPathIcc`: its path-valued map is
+  Borel measurable.
+- `hasLaw_sourceNormalizedStepCadlagPathIcc_of_iid` and
+  `measure_sourceNormalizedStepCadlagPathIcc_preimage_eq_of_iid`:
+  any IID realization has the same path law and measurable-event
+  probabilities as the canonical IID increment law.
+- `sourceNormalizedStepCadlagPathIcc_apply_of_ne_top` and
+  `sourceNormalizedStepCadlagPathIcc_apply_top`:
+  the path has the stated values for $t<1$ and $t=1$.
+- `sourceNormalizedStepCadlagPathIcc_range_eq_scaledDisplacement`:
+  its range is $\{S_j/x_n:0\le j<n\}$.
+- `sourceNormalizedStepCadlagPathIcc_mem_rangeInOpenInterval_iff`:
+  membership in $(-a,1-a)$ is exactly the strict horizontal-tube event
+  through time $n-1$.
+
+The terminal-left convention is from Mogul'skii,
+*Small Deviations in a Space of Trajectories*, Theorem 3, Section 4,
+p. 764 (DOI 10.1137/1119081).
 -/
 
 @[expose] public section
