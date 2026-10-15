@@ -14,7 +14,7 @@ public import Probability.Process.Path.AboveStart.FirstWindowContinuity
 The public definitions and theorems in this file are:
 
 - `ProbabilityTheory.shiftAtFirstNonnegativeWindowStart`:
-  $\Phi(f)(u)=f(T(f)+u)$ when $T(f)<\infty$ and the constant
+  $\Phi(f)(u)=f(T(f)+u)-f(T(f))$ when $T(f)<\infty$ and the constant
   path $-1$ otherwise.
 - `ProbabilityTheory.shiftAtFirstNonnegativeWindowStartUpTo`:
   the same construction with $T^s(f)$.
@@ -29,9 +29,12 @@ The public definitions and theorems in this file are:
   continuity of $T^s$ at $f$ and $T^s(f)<\infty$ imply
   continuity of $\Phi_s$ at $f$.
 
-These are the path maps in Erwin Bolthausen, *On a functional central
-limit theorem for random walks conditioned to stay positive*, Lemma 2.5,
+These are the centered path maps used in Lemma 3.1, equation (3.2),
+and the conclusion on p. 484 of Erwin Bolthausen, *On a functional
+central limit theorem for random walks conditioned to stay positive*,
 Ann. Probab. 4(3) (1976), 480--485, DOI 10.1214/aop/1176996098.
+The displayed definition of $\Phi_s$ on p. 482 omits the centering
+term; its use in equation (3.2) and on p. 484 requires this term.
 -/
 
 @[expose] public section
@@ -47,7 +50,7 @@ noncomputable def shiftAtFirstNonnegativeWindowStart
     (f : C(ℝ≥0, ℝ)) : C(ℝ≥0, ℝ) :=
   if firstNonnegativeWindowStart f = ⊤ then
     (⟨fun _ => -1, continuous_const⟩ : C(ℝ≥0, ℝ))
-  else shiftPath f (firstNonnegativeWindowStart f).untopA
+  else shiftToZero f (firstNonnegativeWindowStart f).untopA
 
 /-- Shift to the first eligible unit window before horizon $s$;
 use the constant path $-1$ when that window does not exist. -/
@@ -55,7 +58,7 @@ noncomputable def shiftAtFirstNonnegativeWindowStartUpTo
     (f : C(ℝ≥0, ℝ)) (s : ℝ≥0) : C(ℝ≥0, ℝ) :=
   if firstNonnegativeWindowStartUpTo f s = ⊤ then
     (⟨fun _ => -1, continuous_const⟩ : C(ℝ≥0, ℝ))
-  else shiftPath f (firstNonnegativeWindowStartUpTo f s).untopA
+  else shiftToZero f (firstNonnegativeWindowStartUpTo f s).untopA
 
 /-- The unrestricted first-window shift is measurable. -/
 theorem measurable_shiftAtFirstNonnegativeWindowStart :
@@ -63,8 +66,8 @@ theorem measurable_shiftAtFirstNonnegativeWindowStart :
   have hT : Measurable firstNonnegativeWindowStart :=
     measurable_firstNonnegativeWindowStart
   have hshift : Measurable (fun f : C(ℝ≥0, ℝ) =>
-      shiftPath f (firstNonnegativeWindowStart f).untopA) :=
-    measurable_shiftPath.comp (measurable_id.prodMk hT.untopA)
+      shiftToZero f (firstNonnegativeWindowStart f).untopA) :=
+    measurable_shiftToZero.comp (measurable_id.prodMk hT.untopA)
   unfold shiftAtFirstNonnegativeWindowStart
   exact Measurable.ite (hT (measurableSet_singleton ⊤))
     measurable_const hshift
@@ -76,14 +79,14 @@ theorem measurable_shiftAtFirstNonnegativeWindowStartUpTo (s : ℝ≥0) :
       firstNonnegativeWindowStartUpTo f s) :=
     measurable_firstNonnegativeWindowStartUpTo s
   have hshift : Measurable (fun f : C(ℝ≥0, ℝ) =>
-      shiftPath f (firstNonnegativeWindowStartUpTo f s).untopA) :=
-    measurable_shiftPath.comp (measurable_id.prodMk hT.untopA)
+      shiftToZero f (firstNonnegativeWindowStartUpTo f s).untopA) :=
+    measurable_shiftToZero.comp (measurable_id.prodMk hT.untopA)
   unfold shiftAtFirstNonnegativeWindowStartUpTo
   exact Measurable.ite (hT (measurableSet_singleton ⊤))
     measurable_const hshift
 
-/-- At a finite first-window time, Bolthausen's shifted path is the
-composition of the continuous time-shift map and the first-window
+/-- At a finite first-window time, the centered shifted path is the
+composition of the continuous rebasing map and the first-window
 functional. This is the $s=\infty$ step of Lemma 2.5. -/
 theorem continuousAt_shiftAtFirstNonnegativeWindowStart_of_finite
     (f : C(ℝ≥0, ℝ))
@@ -95,8 +98,8 @@ theorem continuousAt_shiftAtFirstNonnegativeWindowStart_of_finite
     (WithTop.tendsto_untopA hfinite).comp hcont
   have hshift : ContinuousAt
       (fun g : C(ℝ≥0, ℝ) =>
-        shiftPath g (firstNonnegativeWindowStart g).untopA) f :=
-    continuous_shiftPath.continuousAt.comp
+        shiftToZero g (firstNonnegativeWindowStart g).untopA) f :=
+    continuous_shiftToZero.continuousAt.comp
       (continuousAt_id.prodMk htime)
   have hnear : ∀ᶠ g in 𝓝 f,
       firstNonnegativeWindowStart g ≠ ⊤ := by
@@ -121,8 +124,8 @@ theorem continuousAt_shiftAtFirstNonnegativeWindowStartUpTo_of_finite
     (WithTop.tendsto_untopA hfinite).comp hcont
   have hshift : ContinuousAt
       (fun g : C(ℝ≥0, ℝ) =>
-        shiftPath g (firstNonnegativeWindowStartUpTo g s).untopA) f :=
-    continuous_shiftPath.continuousAt.comp
+        shiftToZero g (firstNonnegativeWindowStartUpTo g s).untopA) f :=
+    continuous_shiftToZero.continuousAt.comp
       (continuousAt_id.prodMk htime)
   have hnear : ∀ᶠ g in 𝓝 f,
       firstNonnegativeWindowStartUpTo g s ≠ ⊤ := by

@@ -28,6 +28,8 @@ The public definitions and theorems in this file are:
   first-$n$-increment interpolation.
 - `ProbabilityTheory.RandomWalk.normalizedLinearContinuousPathUnbounded_apply_unitInterval`:
   the same equality for bundled continuous paths.
+- `ProbabilityTheory.RandomWalk.normalizedLinearPathUnbounded_grid`:
+  $X_n(k/n)=a_n^{-1}S_k$ for every integer $k\ge0$.
 
 The unbounded-time interpolation is the path $Y_n$ used in Erwin
 Bolthausen, *On a functional central limit theorem for random walks
@@ -159,6 +161,35 @@ theorem normalizedLinearContinuousPathUnbounded_apply_unitInterval
   convert normalizedLinearPathUnbounded_eq_bounded scale n increment
     (⟨(t : ℝ), t.property.1⟩ : ℝ≥0)
     (show (⟨(t : ℝ), t.property.1⟩ : ℝ≥0) ≤ 1 from t.property.2) using 1 <;> rfl
+
+/-- Every lattice-time value of the whole-time interpolation is the
+corresponding normalized random-walk position, including times beyond
+the first unit interval. -/
+theorem normalizedLinearPathUnbounded_grid
+    (scale : ℕ → ℝ) {n : ℕ} (hn : 0 < n) (k : ℕ)
+    (increment : ℕ → ℝ) :
+    normalizedLinearPathUnbounded scale n increment
+        (⟨(k : ℝ) / n, div_nonneg (Nat.cast_nonneg k)
+          (Nat.cast_nonneg n)⟩ : ℝ≥0) =
+      (scale n)⁻¹ * AdditivePath.displacement k increment := by
+  have hn0 : (n : ℝ) ≠ 0 := by exact_mod_cast hn.ne'
+  have hgrid : (n : ℝ) * ((k : ℝ) / n) = k := by field_simp
+  have hfloor : ⌊(n : ℝ) * ((k : ℝ) / n)⌋₊ = k := by
+    rw [hgrid]
+    simp
+  unfold normalizedLinearPathUnbounded AdditivePath.displacement
+  change (scale n)⁻¹ *
+    (∑ i ∈ Finset.range (⌊(n : ℝ) * ((k : ℝ) / n)⌋₊ + 1),
+      linearIncrementWeight n i ((k : ℝ) / n) * increment i) = _
+  rw [hfloor, Finset.sum_range_succ]
+  have hlast : linearIncrementWeight n k ((k : ℝ) / n) = 0 :=
+    linearIncrementWeight_grid_of_le hn le_rfl
+  rw [hlast]
+  simp only [zero_mul, add_zero]
+  congr 1
+  apply Finset.sum_congr rfl
+  intro i hi
+  rw [linearIncrementWeight_grid_of_lt hn (Finset.mem_range.mp hi), one_mul]
 
 end ProbabilityTheory.RandomWalk
 
