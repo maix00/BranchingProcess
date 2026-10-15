@@ -491,7 +491,7 @@ theorem iidSequenceLaw_condExp_driftedTubePairEvent_le_of_blockBound
         sectionEvent ≤ bound
       rw [hempty]
       simpa [Measure.real] using hboundNonneg
-  exact Drawdown.iidSequenceLaw_condExp_pairEvent_le_of_sectionProbability
+  exact ProbabilityTheory.iidSequenceLaw_condExp_pairEvent_le_of_sectionProbability
     ν start length event hmeasurable hsections
 
 private def driftedTubePrefixBlockPair (start length : ℕ) :

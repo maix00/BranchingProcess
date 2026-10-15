@@ -10,13 +10,16 @@ public import Probability.Sequence.IID.StoppingTime
 public import Probability.Independence.ConditionalIntegral
 
 /-!
-# Conditional lower bounds for independent coordinate blocks
+# Conditional bounds for independent coordinate blocks
 
 The public theorems in this file are:
 
 - `ProbabilityTheory.iidSequenceLaw_condExp_prefix_nextBlock`:
   for consecutive coordinate blocks $X,Y$ of an IID sequence,
   $\mathbb E[f(X,Y)\mid X]=\int f(X,y)\,d\mathcal L(Y)(y)$.
+- `ProbabilityTheory.iidSequenceLaw_condExp_pairEvent_le_of_sectionProbability`:
+  a uniform section bound $\mathbb P((x,Y)\in E)\le p$ gives
+  $\mathbb E[\mathbf1_E(X,Y)\mid X]\le p$ almost surely.
 - `ProbabilityTheory.iidSequenceLaw_condExp_pairEvent_ge_of_sectionProbability`:
   a lower bound $p$ for every section $\mathbb P((x,Y)\in E)$ with
   $x\in G$ gives $\mathbb E[\mathbf1_E(X,Y)\mid X]\ge p$
@@ -42,6 +45,8 @@ The public theorems in this file are:
 The last two statements are the generic conditional-expectation steps in
 Wang Yiyang, *Asymptotic speed of the $N$-branching random walk with infinite
 offspring*, Chapter 3, proof of Lemma 3.5, applied to the staircase blocks.
+The upper-section statement is used in the proofs of Lemmas 3.3 and 3.4
+of the same thesis.
 -/
 
 @[expose] public section
@@ -158,6 +163,72 @@ theorem iidSequenceLaw_condExp_pairEvent_ge_of_sectionProbability
   rw [hsection]
   exact hsections
     (Combinatorics.Sequence.blockCoordinates 0 start increment) hgood
+
+/-- A uniform bound on every section of a measurable event in
+`prefix × nextBlock` gives the corresponding conditional-probability bound.
+The conditional expectation is evaluated by integrating the next block
+against its IID law, exactly as in the Markov step of Wang Yiyang, Chapter 3,
+Lemma 3.3. -/
+theorem iidSequenceLaw_condExp_pairEvent_le_of_sectionProbability
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (start length : ℕ)
+    (E : Set ((Fin start → ℝ) × (Fin length → ℝ)))
+    (hE : MeasurableSet E) {bound : ℝ}
+    (hsections : ∀ past,
+      ((iidSequenceLaw ν).map
+        (Combinatorics.Sequence.blockCoordinates start length)).real
+        {block | (past, block) ∈ E} ≤ bound) :
+    ∀ᵐ increment ∂iidSequenceLaw ν,
+      condExp
+        (MeasurableSpace.comap
+          (Combinatorics.Sequence.blockCoordinates 0 start) inferInstance)
+        (iidSequenceLaw ν)
+        (fun increment => E.indicator (fun _ => (1 : ℝ))
+          (Combinatorics.Sequence.blockCoordinates 0 start increment,
+            Combinatorics.Sequence.blockCoordinates start length increment))
+        increment ≤ bound := by
+  let pastBlock : (ℕ → ℝ) → Fin start → ℝ :=
+    Combinatorics.Sequence.blockCoordinates 0 start
+  let nextBlock : (ℕ → ℝ) → Fin length → ℝ :=
+    Combinatorics.Sequence.blockCoordinates start length
+  let pair : (ℕ → ℝ) → (Fin start → ℝ) × (Fin length → ℝ) :=
+    fun increment => (pastBlock increment, nextBlock increment)
+  let f : (Fin start → ℝ) × (Fin length → ℝ) → ℝ :=
+    E.indicator (fun _ => (1 : ℝ))
+  have hpairMeasurable : Measurable pair := by
+    exact (measurable_blockCoordinates 0 start).prodMk
+      (measurable_blockCoordinates start length)
+  have hpreimage : MeasurableSet (pair ⁻¹' E) := hE.preimage hpairMeasurable
+  have hf : StronglyMeasurable f := stronglyMeasurable_const.indicator hE
+  have hfi : Integrable (fun increment => f (pair increment))
+      (iidSequenceLaw ν) :=
+    (integrable_const (c := (1 : ℝ))).indicator hpreimage
+  have hcond := ProbabilityTheory.iidSequenceLaw_condExp_prefix_nextBlock
+    ν start length hf hfi
+  have hsectionIntegral (x : Fin start → ℝ) :
+      (∫ block, f (x, block) ∂
+        (iidSequenceLaw ν).map nextBlock) =
+        ((iidSequenceLaw ν).map nextBlock).real
+          {block | (x, block) ∈ E} := by
+    let sectionEvent : Set (Fin length → ℝ) := {block | (x, block) ∈ E}
+    have hsectionMeasurable : MeasurableSet sectionEvent :=
+      hE.preimage (measurable_const.prodMk measurable_id)
+    have hfunction : (fun block => f (x, block)) =
+        sectionEvent.indicator (fun _ => (1 : ℝ)) := by
+      funext block
+      simp [f, sectionEvent, Set.indicator]
+    rw [hfunction]
+    change (∫ block, sectionEvent.indicator (fun _ => (1 : ℝ)) block
+        ∂(iidSequenceLaw ν).map nextBlock) =
+      ((iidSequenceLaw ν).map nextBlock).real sectionEvent
+    rw [integral_indicator_const (e := (1 : ℝ)) hsectionMeasurable,
+      smul_eq_mul, mul_one]
+  filter_upwards [hcond] with increment hincrement
+  rw [hincrement]
+  have hsection := hsectionIntegral
+    (Combinatorics.Sequence.blockCoordinates 0 start increment)
+  rw [hsection]
+  exact hsections (Combinatorics.Sequence.blockCoordinates 0 start increment)
 
 /-- Integrating a conditional probability lower bound over a measurable
 past event gives the one-step reverse Markov product bound. -/
