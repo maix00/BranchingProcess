@@ -17,6 +17,8 @@ The public theorem in this file is:
 - `ProbabilityTheory.RandomWalk.rademacher_firstSignStableStart_eq_lastSignChangeIndex`:
   for $n>0$, the first sign-stable time of the normalized polygonal
   path is $\tau'(X_n)=\mu_n/n$.
+- `ProbabilityTheory.RandomWalk.rademacher_signStableMeanderTransform_eq_terminalAbsolutePath`:
+  $\Psi(X_n)=\widetilde Y_n$ as continuous paths.
 
 This is the discrete path identification used on page 484 of Erwin Bolthausen,
 *On a functional central limit theorem for random walks conditioned
@@ -261,6 +263,96 @@ theorem rademacher_firstSignStableStart_eq_lastSignChangeIndex
             (Nat.pos_of_ne_zero hμzero) hnegative) t htcut
     · exact ⟨later, hcutlater,
         lt_of_le_of_ne (hpost later hcutlater) hlaterNe⟩
+
+/-- Bolthausen's sign-stable transform of the normalized walk is its
+normalized absolute terminal polygonal segment, pointwise on $[0,1]$. -/
+theorem rademacher_signStableMeanderTransform_eq_terminalAbsolutePath
+    (branch : ℕ → Bool) {n : ℕ} (hn : 0 < n) :
+    ContinuousMap.signStableMeanderTransform
+      (normalizedLinearContinuousPathIcc
+        (fun j => Real.sqrt j) n (rademacherIncrementPath branch)) =
+      rademacherTerminalAbsolutePath branch n := by
+  let μ := lastSignChangeIndex n (rademacherIncrementPath branch)
+  let ν := terminalSignStableLength n (rademacherIncrementPath branch)
+  let cut : unitInterval := ⟨(μ : ℝ) / n, by
+    constructor
+    · positivity
+    · apply (div_le_one (by exact_mod_cast hn)).2
+      exact_mod_cast (lastSignChangeIndex_le n
+        (rademacherIncrementPath branch))⟩
+  have hμle : μ ≤ n := lastSignChangeIndex_le n _
+  have hν : 0 < ν := rademacher_terminalSignStableLength_pos branch hn
+  have hνeq : ν = n - μ := rfl
+  have hzero : AdditivePath.displacement μ
+      (rademacherIncrementPath branch) = 0 :=
+    rademacher_displacement_lastSignChange_eq_zero branch n
+  have hcut : ContinuousMap.firstSignStableStart
+      (normalizedLinearContinuousPathIcc
+        (fun j => Real.sqrt j) n (rademacherIncrementPath branch)) = cut :=
+    rademacher_firstSignStableStart_eq_lastSignChangeIndex branch hn
+  have hcutTop : cut ≠ ⊤ := by
+    have hμlt : μ < n := by omega
+    intro h
+    have hreal : (μ : ℝ) / n = 1 := congrArg Subtype.val h
+    have hnreal : (0 : ℝ) < n := by exact_mod_cast hn
+    have hμreal : (μ : ℝ) < n := by exact_mod_cast hμlt
+    have hlt : (μ : ℝ) / n < 1 :=
+      (div_lt_one hnreal).mpr hμreal
+    linarith
+  ext t
+  change (if ContinuousMap.firstSignStableStart
+      (normalizedLinearContinuousPathIcc
+        (fun j => Real.sqrt j) n (rademacherIncrementPath branch)) = ⊤
+    then 0 else
+      |normalizedLinearContinuousPathIcc
+        (fun j => Real.sqrt j) n (rademacherIncrementPath branch)
+          (ContinuousMap.tailAffineTime
+            (ContinuousMap.firstSignStableStart
+              (normalizedLinearContinuousPathIcc
+                (fun j => Real.sqrt j) n (rademacherIncrementPath branch))) t)| /
+        Real.sqrt (1 -
+          (ContinuousMap.firstSignStableStart
+            (normalizedLinearContinuousPathIcc
+              (fun j => Real.sqrt j) n
+              (rademacherIncrementPath branch)) : ℝ))) = _
+  rw [hcut]
+  simp only [hcutTop, ↓reduceIte]
+  have htime : (ContinuousMap.tailAffineTime cut t : ℝ) =
+      (μ : ℝ) / n + ((n - μ : ℕ) : ℝ) / n * (t : ℝ) := by
+    change (μ : ℝ) / n + (1 - (μ : ℝ) / n) * (t : ℝ) = _
+    have hnreal : (n : ℝ) ≠ 0 := by exact_mod_cast hn.ne'
+    have hνcast : ((n - μ : ℕ) : ℝ) = (n : ℝ) - μ :=
+      Nat.cast_sub hμle
+    rw [hνcast]
+    field_simp
+  rw [normalizedLinearContinuousPathIcc_apply, htime,
+    normalizedLinearPath_tail_after_zero
+      (fun j => Real.sqrt j) hn hμle
+      (rademacherIncrementPath branch) hzero t]
+  change |(Real.sqrt (n : ℝ))⁻¹ *
+      ∑ j ∈ Finset.range ν,
+        linearIncrementWeight ν j (t : ℝ) *
+          rademacherIncrementPath branch (μ + j)| /
+        Real.sqrt (1 - (cut : ℝ)) =
+      |normalizedLinearPath (fun j => Real.sqrt j) ν
+        (fun j => rademacherIncrementPath branch (μ + j)) (t : ℝ)|
+  have hratio : 1 - (cut : ℝ) = (ν : ℝ) / n := by
+    change 1 - (μ : ℝ) / n = (ν : ℝ) / n
+    have hnreal : (n : ℝ) ≠ 0 := by exact_mod_cast hn.ne'
+    have hνcast : (ν : ℝ) = (n : ℝ) - μ := by
+      change ((n - μ : ℕ) : ℝ) = _
+      exact Nat.cast_sub hμle
+    rw [hνcast]
+    field_simp
+  rw [hratio, Real.sqrt_div (Nat.cast_nonneg ν)]
+  unfold normalizedLinearPath
+  have hnroot : 0 < Real.sqrt (n : ℝ) :=
+    Real.sqrt_pos.2 (by exact_mod_cast hn)
+  have hνroot : 0 < Real.sqrt (ν : ℝ) :=
+    Real.sqrt_pos.2 (by exact_mod_cast hν)
+  rw [abs_mul, abs_mul, abs_inv, abs_inv,
+    abs_of_pos hnroot, abs_of_pos hνroot]
+  field_simp
 
 end ProbabilityTheory.RandomWalk
 
