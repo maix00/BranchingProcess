@@ -21,6 +21,9 @@ The public theorems in this file are:
 - `ProbabilityTheory.RandomWalk.mem_cyclicSurvivalEvent_iff_partialSum`:
   the endpoint condition $S_n\ge0$ and these two families of prefix
   inequalities characterize $B_n^{k+1}$.
+- `ProbabilityTheory.RandomWalk.mem_two_cyclicSurvivalEvents_iff_twoBlocks`:
+  for $a<b$, $B_n^{a+1}\cap B_n^{b+1}$ is exactly survival on the
+  disjoint cyclic blocks $[a,b)$ and $[b,n)\cup[0,a)$.
 
 These are the two kinds of inequalities in the event $B_n^{k+1}$ of
 M. Bauer, C. Godrèche, and J.-M. Luck, *Statistics of persistent events
@@ -130,6 +133,61 @@ theorem mem_cyclicSurvivalEvent_iff_partialSum
             Fin.partialSum x k.castSucc + Fin.partialSum x t := by
         linarith
       simpa only [Fin.cyclicPartialSum, dite_eq_right hsum] using hnonneg
+
+/-- The two-start case of Bauer--Godrèche--Luck, Appendix A,
+equation (A.5): the intersection of two cyclic survival events is the
+product condition on the two consecutive cyclic blocks. -/
+theorem mem_two_cyclicSurvivalEvents_iff_twoBlocks
+    {n : ℕ} (x : Fin n → ℝ) (a b : Fin n) (hab : a < b) :
+    x ∈ cyclicSurvivalEvent a ∧ x ∈ cyclicSurvivalEvent b ↔
+      (∀ t : Fin (n + 1), a.val ≤ t.val → t.val ≤ b.val →
+        Fin.partialSum x a.castSucc ≤ Fin.partialSum x t) ∧
+      (∀ t : Fin (n + 1), b.val ≤ t.val →
+        Fin.partialSum x b.castSucc ≤ Fin.partialSum x t) ∧
+      (∀ t : Fin (n + 1), t.val ≤ a.val →
+        Fin.partialSum x b.castSucc ≤
+          Fin.partialSum x (Fin.last n) + Fin.partialSum x t) := by
+  have habval : a.val < b.val := hab
+  constructor
+  · rintro ⟨ha, hb⟩
+    obtain ⟨_, haFirst, _⟩ :=
+      (mem_cyclicSurvivalEvent_iff_partialSum x a).mp ha
+    obtain ⟨_, hbFirst, hbSecond⟩ :=
+      (mem_cyclicSurvivalEvent_iff_partialSum x b).mp hb
+    refine ⟨fun t hat _ => haFirst t hat,
+      hbFirst, fun t hta => ?_⟩
+    exact hbSecond t (by omega)
+  · rintro ⟨hfirstBlock, hsecondBlock, hwrapBlock⟩
+    have hAB : Fin.partialSum x a.castSucc ≤
+        Fin.partialSum x b.castSucc :=
+      hfirstBlock b.castSucc (Nat.le_of_lt habval) le_rfl
+    have hwrapAtA : Fin.partialSum x b.castSucc ≤
+        Fin.partialSum x (Fin.last n) +
+          Fin.partialSum x a.castSucc :=
+      hwrapBlock a.castSucc le_rfl
+    have hlast : 0 ≤ Fin.partialSum x (Fin.last n) := by
+      linarith
+    constructor
+    · apply (mem_cyclicSurvivalEvent_iff_partialSum x a).mpr
+      refine ⟨hlast, ?_, ?_⟩
+      · intro t hat
+        by_cases htb : t.val ≤ b.val
+        · exact hfirstBlock t hat htb
+        · have hbt : b.val ≤ t.val := by omega
+          have hb := hsecondBlock t hbt
+          linarith
+      · intro t hta
+        have hb := hwrapBlock t (Nat.le_of_lt hta)
+        linarith
+    · apply (mem_cyclicSurvivalEvent_iff_partialSum x b).mpr
+      refine ⟨hlast, hsecondBlock, ?_⟩
+      intro t htb
+      by_cases hta : t.val ≤ a.val
+      · exact hwrapBlock t hta
+      · have hat : a.val ≤ t.val := by omega
+        have htb' : t.val ≤ b.val := Nat.le_of_lt htb
+        have ha := hfirstBlock t hat htb'
+        linarith
 
 end ProbabilityTheory.RandomWalk
 
