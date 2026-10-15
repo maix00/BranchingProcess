@@ -8,15 +8,26 @@ module
 
 public import Mathlib.Probability.BrownianMotion.Basic
 public import Mathlib.Probability.Distributions.Gaussian.Real
+public import Mathlib.Probability.Distributions.Gaussian.IsGaussianProcess.Independence
 public import Probability.Distributions.Stable.Gaussian
 public import Probability.Process.Stable.Levy
 
 /-!
 # Brownian motion as a stable Lévy process
 
-Mathlib supplies the Brownian process and its increment laws.  This file
-identifies it with the exponent-two case of the repository's abstract stable
-process interface, using the usual nonnegative-real time axis.
+The public theorems in this file are:
+
+- `IsPreBrownianReal.hasStableClockIncrements`: Brownian increments satisfy
+  $B_t-B_s\sim N(0,t-s)$, hence the exponent-two stable clock law.
+- `IsBrownianReal.isStableLevyProcess`: an almost-surely continuous process
+  with $B_t-B_s\sim N(0,t-s)$ is a Gaussian stable Lévy process.
+- `IsStableLevyProcess.isPreBrownianReal_of_standardGaussian`: a càdlàg
+  exponent-two stable Lévy process with $B_t-B_s\sim N(0,t-s)$ has Brownian
+  finite-dimensional laws and independent increments.
+
+The converse identifies the Gaussian process used in the proof of corridor
+positivity in Wang Yiyang, *Asymptotic speed of the $N$-branching random walk
+with infinite offspring*, Chapter 3, Lemma 3.5.
 -/
 
 open MeasureTheory
@@ -73,5 +84,41 @@ theorem IsBrownianReal.isStableLevyProcess
   refine ⟨hB.toIsPreBrownianReal.hasStableClockIncrements, ?_⟩
   filter_upwards [hB.cont] with ω hω
   exact hω.isCadlag
+
+/-- A standard Gaussian exponent-two stable Lévy process has Brownian
+finite-dimensional distributions and independent increments. -/
+theorem IsStableLevyProcess.isPreBrownianReal_of_standardGaussian
+    {P : Measure Ω} [IsProbabilityMeasure P]
+    {B : ℝ≥0 → Ω → ℝ}
+    (hB : IsStableLevyProcess 2 (gaussianReal 0 (1 : ℝ≥0)) B P) :
+    IsPreBrownianReal B P := by
+  let hInc := hB.increments
+  have hLaw : ∀ t, HasLaw (B t) (gaussianReal 0 t) P := by
+    intro t
+    let c : ℝ := (t : ℝ) ^ (1 / (2 : ℝ))
+    have hc2 : c ^ 2 = (t : ℝ) := by
+      dsimp [c]
+      convert Real.rpow_inv_natCast_pow (NNReal.coe_nonneg t)
+        (by norm_num : (2 : ℕ) ≠ 0) using 1 <;> norm_num
+    have hscale :
+        (gaussianReal 0 (1 : ℝ≥0)).map (fun x : ℝ => c * x) =
+          gaussianReal 0 t := by
+      rw [gaussianReal_map_const_mul, mul_zero]
+      congr 1
+      apply NNReal.eq
+      simp only [NNReal.coe_mul, NNReal.coe_mk, NNReal.coe_one]
+      simpa using hc2
+    have hdiff : HasLaw (fun ω => B t ω - B 0 ω)
+        ((gaussianReal 0 (1 : ℝ≥0)).map (fun x : ℝ => c * x)) P := by
+      simpa [c] using hInc.increment_hasLaw (0 : ℝ≥0) t (by simp)
+    have hzero : B 0 =ᵐ[P] fun _ => (0 : ℝ) := by
+      filter_upwards [hInc.ae_start_eq_zero] with ω hω
+      exact hω
+    have hfun : (fun ω => B t ω - B 0 ω) =ᵐ[P] fun ω => B t ω := by
+      filter_upwards [hzero] with ω hω
+      simp [hω]
+    rw [hscale] at hdiff
+    exact hdiff.congr hfun.symm
+  exact HasIndepIncrements.isPreBrownianReal_of_hasLaw hLaw hInc.indepIncrements
 
 end ProbabilityTheory
