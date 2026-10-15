@@ -18,10 +18,38 @@ public import Mathlib.Algebra.Order.Floor.Semifield
 /-!
 # Discrete horizontal block inequalities
 
-These are finite-time inequalities for a walk with IID increments.  The
-horizontal upper bound is the discrete block comparison used in Mogulskii's
-Lemma 3: a path confined to one interval has bounded oscillation on every
-sub-block, and disjoint increment blocks are independent.
+Write $T_{a,w,N}$ for the width-$w$ horizontal-tube event, $J_{w,m}$
+for the range-at-most-$w$ event on one block of length $m$, and
+$J^\circ_{w,m}$ for its strict version. The public declarations are:
+
+- `blockOscillationEvent`, `measurableSet_blockOscillationEvent`,
+  `blockOscillationLTEvent`, and `measurableSet_blockOscillationLTEvent`:
+  the measurable events $J_{w,m}$ and $J^\circ_{w,m}$.
+- `iidSequenceLaw_measure_forall_blockOscillationLT` and
+  `iidSequenceLaw_measure_forall_blockOscillation`:
+  the event on $q$ disjoint IID blocks has probability
+  $\mathbb P(J_{w,m})^q$, also for $J^\circ_{w,m}$.
+- `openHorizontalTubeProbability_le_pow_blockOscillationLT_of_blockCover`
+  and `openHorizontalTubeProbability_le_pow_blockOscillationLT_source`:
+  $\mathbb P(T^\circ_{a,w,N})\le\mathbb P(J^\circ_{w,m})^q$
+  whenever $qm\le N$, with the source choice $q=\lfloor N/m\rfloor$
+  for $m>0$.
+- `iidSequenceLaw_measure_partialSumRangeLT_le_pow_blockOscillationLT_of_blockCover`:
+  the same bound for a strict whole-path range event.
+- `horizontalTubeProbability_le_pow_blockOscillation_of_blockCover` and
+  `horizontalTubeProbability_le_pow_blockOscillation`:
+  $\mathbb P(T_{a,w,N})\le\mathbb P(J_{w,m})^q$ for $qm\le N$,
+  in particular for $q=\lfloor N/m\rfloor$ when $m>0$.
+- `horizontalTubeProbability_le_exp_of_blockOscillationProbability`:
+  a one-block bound $\mathbb P(J_{w,m})\le e^{-dm/w^2}$ yields
+  $\mathbb P(T_{a,w,N})\le e^{R-dN/w^2}$ with $R\ge dm/w^2$.
+- `horizontalTubeProbability_ge_pow_returnBlock`:
+  a lower return-kernel mass $p$ on a common core yields
+  $p^q\le\mathbb P(T_{a,w,qm})$.
+
+These are the finite-time block comparisons in Mogul'skii,
+*Small Deviations in a Space of Trajectories*, Lemma 3(c), equation (32).
+They apply to IID increments through disjoint-block independence.
 -/
 
 open MeasureTheory
