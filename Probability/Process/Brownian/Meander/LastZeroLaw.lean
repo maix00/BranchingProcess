@@ -34,7 +34,7 @@ Section 3. Iglehart attributes the finite-dimensional distribution
 identification with the conditioned-walk limit to Barry Belkin,
 *An invariance principle for conditioned recurrent random walk attracted
 to a stable law*, Z. Wahrscheinlichkeitstheorie verw. Gebiete 21 (1972),
-45--64, page 61.
+45--64, Theorem 3.1 and equation (3.21), pages 61--63.
 -/
 
 @[expose] public section
