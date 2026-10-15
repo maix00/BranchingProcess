@@ -167,10 +167,21 @@ eventually descend below every real level, using the reflection principle
 and scaling. `Brownian/AboveStart/EndpointReturn.lean` combines that result
 with the nullity of $U$ to identify the exact unit hitting-time jump
 almost surely on every first-window endpoint-return event. The existing
+`Brownian/Reflection/DescendingHittingTimeLaw.lean` states its fixed-level
+distribution directly from the reflection principle. The candidate
+half-stable Lévy jump-length intensity is defined in
+`Distributions/Stable/LevyMeasure/HalfSubordinator.lean`; that file proves
+σ-finiteness and zero mass for every singleton, while its identification
+with the Brownian hitting-time process remains to be established. The existing
 `IsPoissonPointFamily.ae_poissonRandomMeasure_apply_eq_zero` in
 `RandomMeasure/Poisson/Support.lean` excludes realized Poisson mass from
 zero-intensity mark sets; its fixed-mark corollary proves that an atomless
 mark intensity produces no point with a prescribed jump length.
+`Brownian/Reflection/FirstPassagePoisson.lean` applies this result to the
+half-stable intensity. `Path/Continuous.lean` now makes the future increment
+path jointly measurable in its path and start time, and
+`Brownian/Independence/FiniteStoppingTime.lean` proves that the future
+increment path at a finite-valued stopping time has Brownian path law.
 The Brownian hitting-time process has not yet been identified with such a
 Poisson jump family. Equation (2.2), Lemma 2.4, and the conditioned
 invariance principle remain open.
