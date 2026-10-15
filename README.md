@@ -103,6 +103,7 @@ The repository pins Lean, Mathlib, and BrownianMotion in
 [`lake-manifest.json`](lake-manifest.json). A clean checkout can be built with:
 
 ```sh
+git submodule update --init --recursive
 lake exe cache get
 lake build
 ```
