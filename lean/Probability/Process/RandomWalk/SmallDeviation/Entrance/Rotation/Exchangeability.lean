@@ -7,11 +7,21 @@ Authors: WANG Yiyang
 module
 
 public import Mathlib.MeasureTheory.Constructions.Pi
-public import Probability.Process.RandomWalk.SmallDeviation.Entrance.LinearTubeRotation
+public import Probability.Process.RandomWalk.SmallDeviation.Entrance.Rotation.LinearTube
 public import Probability.Sequence.IID
 
 /-!
 # Finite exchangeability of an IID prefix
+
+The public theorems are:
+
+- `finiteCoordinateReindex`: the coordinate permutation of `Fin n`
+  induced by cyclic reindexing.
+- `measure_pi_preimage_eq_of_reindex`: an IID product measure is invariant
+  under this permutation.
+- `measure_pi_event_le_card_smul_of_reindexCover`: if $n$ reindexed
+  copies of an event cover another event, its measure is at most $n$
+  times the measure of the original event.
 
 Coordinate reindexing by any equivalence of `Fin n` preserves the IID
 finite-prefix product law. This is the measure-theoretic ingredient for the

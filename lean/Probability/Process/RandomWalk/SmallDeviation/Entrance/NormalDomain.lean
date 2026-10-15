@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Entrance.CyclicPath
+public import Probability.Process.RandomWalk.SmallDeviation.Entrance.Rotation.CyclicPath
 public import Probability.Process.RandomWalk.SmallDeviation.Entrance.FunctionalLimit
 public import Probability.Process.RandomWalk.FunctionalLimit.Normal.Tightness
 public import Probability.Process.RandomWalk.FunctionalLimit.Stable.ProcessExistence
@@ -320,7 +320,7 @@ theorem exists_eventually_measure_pi_finiteMovingEntranceEvent_ge_div_of_centere
     measure_pi_offsetCorridor_ge_div_of_linearTube_allOffsets_of_normalizationRatio
       hnpos ν Delta sourceScale ratio (c / Delta ^ 3) sourceSlope radius
       (-r₀ / Delta) (by positivity) (ne_of_gt hsourceScale) hratio hcenter
-      hradius hsmall hu (fun k => cyclicCoordinateReindex hnpos k)
+      hradius hsmall hu (fun k => Fin.cyclicCoordinateReindex hnpos k)
       (cyclicCoordinateReindex_isCyclicPartialSumReindex hnpos) hsafe hqsource
   have hevent : finiteDriftRemovedOffsetCorridorEvent
       (n := n) Delta (c / Delta ^ 3) (-r₀ / Delta) =
