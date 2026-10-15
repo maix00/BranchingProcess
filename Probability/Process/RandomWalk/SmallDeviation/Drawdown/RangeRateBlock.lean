@@ -11,6 +11,14 @@ public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.RangeRate
 /-!
 # Reindexing the source-path range rate to block lengths
 
+The public theorem is
+`eventually_iidSequenceLaw_blockOscillationProbability_le_exp_of_rangeRate_reindex`:
+if a block of length $\ell_n$ has spatial width $\Delta_n$ matching the
+source scale and $d<\pi^2\mathcal E_k/2$, then its oscillation probability
+is eventually bounded by
+$\exp\bigl(-d(\ell_n+1)/(a^2\Delta_n^2)\bigr)$,
+where $a$ is the scale-to-width factor in the theorem statement.
+
 The source-path Mogul'skii rate bounds a block oscillation event when the
 spatial scale is a small-deviation scale along the block horizon. This file
 packages that bound for an independently indexed sequence of horizons and
