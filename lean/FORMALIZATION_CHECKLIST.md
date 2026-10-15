@@ -322,6 +322,16 @@ Caravenna--Chaumont, definition (1.1). These are foundational steps toward the c
 renewal and local-time limit theorems; the survival regular variation
 and conditioned meander convergence themselves remain to be proved.
 
+The Sparre--Andersen route to the survival input now formalizes the cyclic
+event cover and inclusion--exclusion in Bauer--Godrèche--Luck, Appendix A,
+(A.3)--(A.4), the adjacent-block decomposition and independent product
+(A.5)--(A.6), and the bijection between nonempty selected-start sets and
+positive compositions with an offset in the last part. The resulting finite
+composition formula for $\mathbb P(S_n\ge0)$ is proved in
+`Fluctuation/SparreAndersen/CompositionFormula.lean`. The generating-function
+identity (A.7)--(A.8), the survival asymptotic, and its use in the unconditional
+entrance bound remain open.
+
 | Source component | Lean modules | Verified scope |
 |---|---|---|
 | Stable-process escape and comparison estimates (Lemmas 1–2) | `Probability/Process/Stable/SmallDeviation/` | Finite negative escape rates, translated corridors, endpoint constraints, and path-law transfer are proved under the stated stable-process assumptions. |
