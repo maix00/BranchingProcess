@@ -21,6 +21,8 @@ change compatible with cyclically rotated increments.
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Entrance
 
+open Fin
+
 /-- Remove a constant drift per step from the partial-sum path. -/
 def removeLinearDrift {n : ℕ} (drift : ℝ) (s : Fin (n + 1) → ℝ) :
     Fin (n + 1) → ℝ :=
