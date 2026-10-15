@@ -28,9 +28,10 @@ The public objects and theorems in this file are:
 
 This is the open-set and support step in Wang Yiyang, *Asymptotic speed of
 the $N$-branching random walk with infinite offspring*, Chapter 3,
-Lemma 3.5, Appendix A.2. `Brownian/Meander/Support.lean` proves the
-positive-mass statement for the Imhof tilt of a three-dimensional Brownian
-radial law.
+Lemma 3.5, Appendix A.2. The positive-mass statement for the Brownian
+meander law follows from the last-zero representation of Donald L. Iglehart,
+*Functional Central Limit Theorems for Random Walks Conditioned to Stay
+Positive*, Ann. Probab. 2(4) (1974), 608--619, Section 3.
 -/
 
 @[expose] public section
