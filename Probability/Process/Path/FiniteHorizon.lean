@@ -19,6 +19,12 @@ The public definitions and theorems in this file are:
   $[0,\infty)$.
 - `ProbabilityTheory.continuous_restrictPathTo`: restriction is
   continuous for the compact-open topologies.
+- `ProbabilityTheory.restrictFinitePathTo`: restrict a path on $[0,t]$
+  to $[0,s]$ when $s\le t$.
+- `ProbabilityTheory.continuous_restrictFinitePathTo`: this restriction
+  is continuous.
+- `ProbabilityTheory.restrictFinitePathTo_restrictPathTo`: successive
+  restrictions of a whole-time path agree with direct restriction.
 - `ProbabilityTheory.extendPathConstantAfter`: the extension of
   $g\in C([0,s],\mathbb R)$ that equals $g(s)$ after time $s$.
 - `ProbabilityTheory.continuous_extendPathConstantAfter`: this extension
@@ -62,6 +68,32 @@ theorem continuous_restrictPathTo (s : ℝ≥0) :
   refine ContinuousMap.continuous_of_continuous_uncurry _ ?_
   exact continuous_eval.comp
     (continuous_fst.prodMk (continuous_subtype_val.comp continuous_snd))
+
+/-- Restrict a finite path from $[0,t]$ to $[0,s]$ when $s\le t$. -/
+noncomputable def restrictFinitePathTo (s t : ℝ≥0) (hst : s ≤ t)
+    (f : C(Set.Icc (0 : ℝ≥0) t, ℝ)) :
+    C(Set.Icc (0 : ℝ≥0) s, ℝ) :=
+  ⟨fun u => f ⟨u.1, ⟨u.property.1, u.property.2.trans hst⟩⟩,
+    f.continuous.comp (Continuous.subtype_mk continuous_subtype_val _)⟩
+
+/-- Restriction between two finite path intervals is continuous. -/
+theorem continuous_restrictFinitePathTo (s t : ℝ≥0) (hst : s ≤ t) :
+    Continuous (restrictFinitePathTo s t hst) := by
+  refine ContinuousMap.continuous_of_continuous_uncurry _ ?_
+  exact continuous_eval.comp
+    (continuous_fst.prodMk
+      (Continuous.subtype_mk
+        (continuous_subtype_val.comp continuous_snd) _))
+
+/-- Restricting a whole-time path first to $[0,t]$ and then to
+$[0,s]$ agrees with its direct restriction to $[0,s]$. -/
+@[simp]
+theorem restrictFinitePathTo_restrictPathTo (s t : ℝ≥0) (hst : s ≤ t)
+    (f : C(ℝ≥0, ℝ)) :
+    restrictFinitePathTo s t hst (restrictPathTo t f) =
+      restrictPathTo s f := by
+  ext u
+  rfl
 
 /-- Extend a finite-horizon path by holding its endpoint value constant. -/
 noncomputable def extendPathConstantAfter (s : ℝ≥0)
