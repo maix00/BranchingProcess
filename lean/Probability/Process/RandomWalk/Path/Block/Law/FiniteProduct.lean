@@ -20,6 +20,9 @@ The public theorem in this file is:
   $\mathbb P(\forall j<q,\ X_{[a_j,a_j+\ell_j)}\in E_j)
    =\prod_{j<q}\mathbb P(X_{[0,\ell_j)}\in E_j)$, where
   $a_j=\sum_{i<j}\ell_i$.
+- `ProbabilityTheory.RandomWalk.measure_pi_forall_variableConsecutiveBlockEvent_of_sum`:
+  the same identity when the total block length is supplied by an
+  equality $\sum_{j<q}\ell_j=N$.
 
 This finite-coordinate form transports the existing independent-block
 identity for the canonical IID sequence law to a finite product measure.
@@ -115,6 +118,28 @@ theorem measure_pi_forall_variableConsecutiveBlockEvent
     funext k
     simp [Combinatorics.Sequence.blockCoordinates]
   rw [heq]
+
+/-- The finite product block factorization with an explicit total length. -/
+theorem measure_pi_forall_variableConsecutiveBlockEvent_of_sum
+    {E : Type*} [MeasurableSpace E]
+    (ν : Measure E) [IsProbabilityMeasure ν]
+    (length : ℕ → ℕ) (blocks n : ℕ)
+    (htotal : AdditivePath.blockStart length blocks = n)
+    (event : ∀ j : Fin blocks, Set (Fin (length j.val) → E))
+    (hmeas : ∀ j, MeasurableSet (event j)) :
+    Measure.pi (fun _ : Fin n => ν)
+      {x : Fin n → E | ∀ j : Fin blocks,
+        (fun k : Fin (length j.val) =>
+          x ⟨AdditivePath.blockStart length j.val + k.val, by
+            have hmono := AdditivePath.blockStart_mono length
+              (Nat.succ_le_of_lt j.isLt)
+            rw [AdditivePath.blockStart_succ] at hmono
+            omega⟩) ∈ event j} =
+      ∏ j : Fin blocks,
+        Measure.pi (fun _ : Fin (length j.val) => ν) (event j) := by
+  subst n
+  exact measure_pi_forall_variableConsecutiveBlockEvent
+    ν length blocks event hmeas
 
 end ProbabilityTheory.RandomWalk
 
