@@ -8,6 +8,7 @@ module
 
 public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.FirstWindow
 public import Probability.Process.RandomWalk.Path.Interpolation.FiniteBlock
+public import Probability.Process.RandomWalk.Path.Interpolation.FirstWindow
 
 /-!
 # Selecting the first surviving random-walk block
@@ -34,6 +35,9 @@ The public definitions and theorems in this file are:
 - `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.measure_map_selectedFirstSurvivingBlockPath_eq`:
   the selected block's polygonal path has the same law as the initial
   polygonal path conditioned on survival.
+- `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.measure_map_rebasedAtFirstSurvivingWindow_eq`:
+  the whole-time walk rebased at its first discrete surviving window
+  has the survival-conditioned unit-time path law.
 
 This is the random index $T_n$ and centered block $Z$ in
 Erwin Bolthausen, *On a functional central limit theorem for random
@@ -46,6 +50,7 @@ Ann. Probab. 4(3) (1976), 480--485, DOI 10.1214/aop/1176996098.
 namespace ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned
 
 open MeasureTheory ProbabilityTheory
+open scoped NNReal
 
 /-- The first index whose next `n` increments keep the walk above its
 starting level; the value is zero on paths without such a window. -/
@@ -287,8 +292,52 @@ theorem measure_map_selectedFirstSurvivingBlockPath_eq
           (normalizedLinearContinuousPathIcc scale n) := by
             congr 1
             funext increment
-            exact normalizedLinearContinuousPathFromBlock_blockCoordinates
-              scale n increment
+            simpa only [zero_add] using
+              (normalizedLinearContinuousPathFromBlock_blockCoordinates
+                scale n 0 increment)
+
+/-- Rebasing the polygonal walk at its selected discrete first-window
+index gives the survival-conditioned unit-time polygonal path law. -/
+theorem measure_map_rebasedAtFirstSurvivingWindow_eq
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (hpositive : 0 < ν (Set.Ioi 0))
+    (scale : ℕ → ℝ) {n : ℕ} (hn : 0 < n) :
+    (iidSequenceLaw ν).map (fun increment =>
+        restrictPathToUnitInterval
+          (shiftToZero
+            (normalizedLinearContinuousPathUnbounded scale n increment)
+            (⟨(firstSurvivingWindowIndex n increment : ℝ) / n,
+              div_nonneg (Nat.cast_nonneg (firstSurvivingWindowIndex n increment))
+                (Nat.cast_nonneg n)⟩ : ℝ≥0))) =
+      (survivalConditionedLaw ν n).map
+        (normalizedLinearContinuousPathIcc scale n) := by
+  have hpath (increment : ℕ → ℝ) :
+      restrictPathToUnitInterval
+          (shiftToZero
+            (normalizedLinearContinuousPathUnbounded scale n increment)
+            (⟨(firstSurvivingWindowIndex n increment : ℝ) / n,
+              div_nonneg (Nat.cast_nonneg (firstSurvivingWindowIndex n increment))
+                (Nat.cast_nonneg n)⟩ : ℝ≥0)) =
+        normalizedLinearContinuousPathFromBlock scale n
+          (selectedFirstSurvivingBlock n increment) := by
+    exact restrictPathToUnitInterval_shiftToZero_grid scale hn
+      (firstSurvivingWindowIndex n increment) increment
+  calc
+    (iidSequenceLaw ν).map (fun increment =>
+        restrictPathToUnitInterval
+          (shiftToZero
+            (normalizedLinearContinuousPathUnbounded scale n increment)
+            (⟨(firstSurvivingWindowIndex n increment : ℝ) / n,
+              div_nonneg (Nat.cast_nonneg (firstSurvivingWindowIndex n increment))
+                (Nat.cast_nonneg n)⟩ : ℝ≥0))) =
+        (iidSequenceLaw ν).map (fun increment =>
+          normalizedLinearContinuousPathFromBlock scale n
+            (selectedFirstSurvivingBlock n increment)) := by
+              congr 1
+              funext increment
+              exact hpath increment
+    _ = _ := measure_map_selectedFirstSurvivingBlockPath_eq
+      ν hpositive scale n
 
 end ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned
 
