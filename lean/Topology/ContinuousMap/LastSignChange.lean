@@ -50,6 +50,10 @@ The public definitions and theorems in this file are:
 - `ContinuousMap.continuousAt_firstNoSignChangeStart_of_eq_lastZero`:
   $f\mapsto\tau'(f)$ is continuous at each path satisfying
   $\tau'(f)=g(f)$.
+- `ContinuousMap.continuousAt_lastZero_of_eq_zero`:
+  $f\mapsto g(f)$ is continuous at every path with $g(f)=0$.
+- `ContinuousMap.continuousAt_lastZeroMeanderTransform_of_lastZero_eq_zero`:
+  the normalized terminal-excursion path is continuous at such a path.
 - `ContinuousMap.lastSignChangeMeanderTransform`:
   the endpoint-sign version of
   $\Psi(f)(t)=|f(\tau'+(1-\tau')t)|/\sqrt{1-\tau'}$
@@ -578,6 +582,58 @@ private theorem continuous_rescaledTailAt :
     apply Real.sqrt_ne_zero'.mpr
     exact sub_pos.mpr (by exact_mod_cast p.1.2.2)
   exact heval.abs.div hdenom hdenom_ne
+
+/-- The last-zero time is continuous at a path whose only zero is at the
+initial time. This follows from the closed upper-level sets of `lastZero`. -/
+theorem continuousAt_lastZero_of_eq_zero
+    (f : C(unitInterval, ℝ)) (hzero : lastZero f = 0) :
+    ContinuousAt lastZero f := by
+  rw [ContinuousAt, tendsto_order]
+  constructor
+  · intro c hc
+    rw [hzero] at hc
+    exact (not_lt_of_ge bot_le hc).elim
+  · intro c hc
+    have hclosed : IsClosed {g : C(unitInterval, ℝ) |
+        c ≤ lastZero g} := isClosed_setOf_le_lastZero c
+    have hopen : IsOpen {g : C(unitInterval, ℝ) | lastZero g < c} := by
+      convert hclosed.isOpen_compl using 1
+      ext g
+      simp only [Set.mem_compl_iff, Set.mem_ofPred_eq, not_le]
+    exact hopen.mem_nhds (by simpa only [Set.mem_ofPred_eq, hzero] using hc)
+
+/-- The normalized terminal-excursion transform is continuous at a path
+whose last zero is its initial time. -/
+theorem continuousAt_lastZeroMeanderTransform_of_lastZero_eq_zero
+    (f : C(unitInterval, ℝ)) (hzero : lastZero f = 0) :
+    ContinuousAt lastZeroMeanderTransform f := by
+  classical
+  let start : C(unitInterval, ℝ) → nonterminalStart := fun g =>
+    if h : lastZero g < ⊤ then ⟨lastZero g, h⟩ else ⟨0, bot_lt_top⟩
+  have hτcont := continuousAt_lastZero_of_eq_zero f hzero
+  have hevent : ∀ᶠ g in nhds f, lastZero g < ⊤ :=
+    hτcont.eventually (isOpen_Iio.mem_nhds (by
+      simpa only [Set.mem_Iio, hzero] using
+        (show (0 : unitInterval) < ⊤ by
+          change (0 : ℝ) < 1
+          norm_num)))
+  have hval : ContinuousAt (fun g => (start g : unitInterval)) f := by
+    apply hτcont.congr
+    filter_upwards [hevent] with g hg
+    simp [start, hg]
+  have hstart : ContinuousAt start f := by
+    exact (continuousAt_codRestrict_iff (fun g => (start g).2)).mpr hval
+  have hrescale : ContinuousAt
+      (fun g => rescaledTailAt g (start g)) f :=
+    continuous_rescaledTailAt.continuousAt.comp
+      (continuousAt_id.prodMk hstart)
+  apply hrescale.congr
+  filter_upwards [hevent] with g hg
+  simp only [start, hg, dite_true, rescaledTailAt,
+    lastZeroMeanderTransform]
+  apply ContinuousMap.ext
+  intro t
+  simp [hg.ne]
 
 /-- The endpoint-sign terminal-path transform is continuous at a path whose
 last sign change equals its last zero and precedes time one. -/
