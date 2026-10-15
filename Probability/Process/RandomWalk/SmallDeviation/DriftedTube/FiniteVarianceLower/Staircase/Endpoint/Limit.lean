@@ -23,6 +23,9 @@ The public theorems in this file are:
 - `eventually_staircaseInteriorLowerMargin_of_blockScale`:
   the same conclusion follows directly from
   $\ell_n/\Delta_n^3\to0$ for fixed drift $c$.
+- `eventually_staircaseUpperFinalLowerMargin_of_blockScale`:
+  the final upper-window lower endpoint ratio tends to
+  $\max(1-v,0)/\beta$ under the same block-scale condition.
 
 These are the ordinary-block endpoint comparisons in Wang Yiyang,
 *Asymptotic speed of the $N$-branching random walk with infinite offspring*,
@@ -121,6 +124,66 @@ theorem eventually_staircaseInteriorLowerMargin_of_blockScale
     field_simp [ne_of_gt hn]
   simpa only [loss] using
     eventually_staircaseInteriorLowerMargin hbeta hwidth hloss hmargin
+
+/-- The normalized lower endpoint of the final upper-edge window tends
+to $\max(1-v,0)/\beta$ when the block drift is negligible relative to
+the tube width. -/
+theorem eventually_staircaseUpperFinalLowerMargin_of_blockScale
+    {width : ℕ → ℝ} {blockLength : ℕ → ℕ}
+    {drift beta margin endpointFraction uFinal : ℝ}
+    (hbeta : 0 < beta)
+    (hwidth : Tendsto width atTop atTop)
+    (hscale : Tendsto (fun n =>
+      (blockLength n : ℝ) / width n ^ 3) atTop (𝓝 0))
+    (hmargin : max (1 - endpointFraction) 0 / beta +
+      margin < uFinal) :
+    ∀ᶠ n : ℕ in atTop,
+      (max (1 - endpointFraction) 0 * width n /
+          (width n -
+            2 * drift * (blockLength n : ℝ) / width n ^ 2)) /
+        beta + margin ≤ uFinal := by
+  let loss : ℕ → ℝ := fun n =>
+    2 * drift * (blockLength n : ℝ) / width n ^ 2
+  let a : ℝ := max (1 - endpointFraction) 0
+  have hloss : Tendsto (fun n => loss n / width n)
+      atTop (𝓝 0) := by
+    have hscaled : Tendsto (fun n =>
+        (2 * drift) * ((blockLength n : ℝ) / width n ^ 3))
+        atTop (𝓝 0) := by
+      simpa using tendsto_const_nhds.mul hscale
+    have hwidthPos : ∀ᶠ n : ℕ in atTop, 0 < width n :=
+      hwidth.eventually (eventually_gt_atTop 0)
+    apply hscaled.congr'
+    filter_upwards [hwidthPos] with n hn
+    dsimp [loss]
+    field_simp [ne_of_gt hn]
+  have hden : Tendsto (fun n => 1 - loss n / width n)
+      atTop (𝓝 1) := by
+    simpa using tendsto_const_nhds.sub hloss
+  have hratio : Tendsto (fun n =>
+      (a / (1 - loss n / width n)) / beta)
+      atTop (𝓝 (a / beta)) := by
+    convert (tendsto_const_nhds.div hden
+      (by norm_num : (1 : ℝ) ≠ 0)).div
+      tendsto_const_nhds (ne_of_gt hbeta) using 1
+    simp [a]
+  have hwidthPos : ∀ᶠ n : ℕ in atTop, 0 < width n :=
+    hwidth.eventually (eventually_gt_atTop 0)
+  have hratio' : Tendsto (fun n =>
+      (a * width n / (width n - loss n)) / beta)
+      atTop (𝓝 (a / beta)) := by
+    apply hratio.congr'
+    filter_upwards [hwidthPos] with n hn
+    have hne : width n ≠ 0 := ne_of_gt hn
+    field_simp [hne]
+  have hsum : Tendsto (fun n =>
+      (a * width n / (width n - loss n)) / beta + margin)
+      atTop (𝓝 (a / beta + margin)) := by
+    simpa using hratio'.add tendsto_const_nhds
+  have hmargin' : a / beta + margin < uFinal := hmargin
+  have heventual := (hsum.eventually (eventually_lt_nhds hmargin')).mono
+    (fun n hn => hn.le)
+  simpa only [a, loss] using heventual
 
 end ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 
