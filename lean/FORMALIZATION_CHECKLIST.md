@@ -196,7 +196,11 @@ passage from the stopped path. `Path/DescendingHittingTimeRestart.lean`
 specializes the restart identity to the descending hitting-time process.
 `Brownian/Reflection/DescendingHittingTimeIncrements.lean` now combines
 strong Markov with the pathwise identities: for positive levels $x,y$,
-$\tau_{x+y}-\tau_x$ is independent of $\tau_x$ and has the law of $\tau_y$.
+$\tau_{x+y}-\tau_x$ has the law of $\tau_y$ and is independent of the
+entire Brownian path stopped at $\tau_x$, hence jointly independent of
+all hitting times $\tau_z$ with $z\le x$. The deterministic preservation
+of these earlier hitting times by the stopped path is proved in
+`Path/DescendingHittingTimeRestart.lean`.
 The process-level Lévy jump decomposition, including identification of
 its jump-length intensity, is the next step.
 The Brownian hitting-time process has not yet been identified with such a
