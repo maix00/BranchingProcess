@@ -13,9 +13,35 @@ public import Analysis.Asymptotics.BlockScale
 /-!
 # Explicit floor grids for the normal-domain lower bound
 
-The spatial interval, return mesh, and terminal windows are chosen by
-ordinary floor approximations. This file keeps those deterministic choices
-and their asymptotic ratios separate from the probabilistic Donsker argument.
+For a spatial width $x_n$, let $a_n$, $s_n$, and $w_n$ be the lattice
+half-scale, return spacing, and terminal-window radius. The public
+declarations are:
+
+- `alphaTwoLatticeScale`, `alphaTwoEndpointSpacing`, and
+  `alphaTwoEndpointWindowRadius`:
+  $a_n=\lfloor qx_n/8\rfloor_++3$,
+  $s_n=\lfloor 8pa_n\rfloor_++1$, and $w_n=s_n+1$, where
+  $\lfloor\cdot\rfloor_+$ is the natural-number floor.
+- `tendsto_eight_alphaTwoLatticeScale_div`:
+  $8a_n/x_n\to q$.
+- `tendsto_alphaTwoEndpointSpacing_div_eightLattice` and
+  `tendsto_alphaTwoEndpointWindowMinusOne_div_eightLattice`:
+  $s_n/(8a_n)\to p$ and $(w_n-1)/(8a_n)\to p$.
+- `one_div_constant_mul_log_toReal_le_liminf_scaledLog_horizontalTubeProbability_of_floorEndpointWindows`:
+  with fixed admissible spectral parameters and return probability $A>0$,
+  $(1/c)\log A\le\liminf_n(x_n^2/n)\log\mathbb P(T_n)$, together with
+  eventual positivity and a lower bound for this logarithmic rate.
+- `neg_half_pi_sq_le_liminf_scaledLog_horizontalTubeProbability_of_floorEndpointWindows`:
+  $-\pi^2/2\le\liminf_n(x_n^2/n)\log\mathbb P(T_n)$, with the same
+  positivity and lower-boundedness conclusions.
+- `tendsto_scaledLog_horizontalTubeProbability_of_centeredUnitSecondMoment`:
+  $(x_n^2/n)\log\mathbb P(T_n)\to-\pi^2/2$ for centered unit-variance
+  increments.
+
+The floor choices keep the finite spectral and endpoint-window hypotheses
+valid. This is an internal spectral route to the horizontal-tube constant in
+Mogul'skii, *Small Deviations in a Space of Trajectories*, Theorem 3,
+Section 4; Wang Yiyang's Chapter 3, Lemma 3.1(i), uses that constant.
 -/
 
 open Filter MeasureTheory ProbabilityTheory Topology
