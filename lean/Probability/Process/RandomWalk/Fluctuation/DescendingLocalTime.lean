@@ -37,6 +37,8 @@ The public definitions and theorems in this file are:
   $C_n=\{T^-_1>n\}$.
 - ProbabilityTheory.RandomWalk.measure_survival_eq_firstDescendingLadderTime_gt:
   $\mathbb P(C_n)=\mathbb P(T^-_1>n)$ for any measure on increment paths.
+- ProbabilityTheory.RandomWalk.firstDescendingLadderTimeTailReal:
+  $x\mapsto\mathbb P(T^-_1>\lfloor x\rfloor)$ for a measure on increment paths.
 
 The descending ladder-time interpretation of survival is used in
 Francesco Caravenna and Loïc Chaumont, *Invariance principles for random
@@ -236,6 +238,16 @@ theorem measure_survival_eq_firstDescendingLadderTime_gt
   congr 1
   ext increment
   exact survivesNonnegative_iff_firstDescendingLadderTime_gt increment n
+
+/-- The real-indexed tail of the first strict descending ladder time.
+Caravenna--Chaumont, *Invariance principles for random walks conditioned
+to stay positive*, Lemma 2.1, equation (2.3), studies this tail under the
+i.i.d. increment law. -/
+noncomputable def firstDescendingLadderTimeTailReal
+    (μ : MeasureTheory.Measure (ℕ → ℝ)) (x : ℝ) : ℝ :=
+  (μ {increment |
+    (Nat.floor x : WithTop ℕ) <
+      strictDescendingLadderTime increment 1}).toReal
 
 end ProbabilityTheory.RandomWalk
 
