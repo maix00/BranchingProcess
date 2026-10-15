@@ -36,6 +36,13 @@ The public theorems in this file are:
   the joint mass of $\mu_n=m$ and a terminal block event is the sum
   of the two crossing-prefix masses multiplied by their respective
   one-sided surviving-block masses.
+- `ProbabilityTheory.RandomWalk.measure_rademacher_survival_reflection`:
+  for a block event $A$ invariant under simultaneous sign reversal,
+  $\mathbb P(A\cap C_r^+)=\mathbb P(A\cap C_r^-)$.
+- `ProbabilityTheory.RandomWalk.measure_terminalBlock_conditioned_identity`:
+  for a reflection-invariant terminal block event $A$ and $0<m<n$,
+  $\mathbb P(\mu_n=m, A)\mathbb P(C_{n-m}^+)
+   =\mathbb P(\mu_n=m)\mathbb P(A\cap C_{n-m}^+)$.
 
 These are the prefix/suffix independence steps behind the final
 simple-symmetric-walk argument on page 484 of Erwin Bolthausen,
@@ -46,6 +53,7 @@ stay positive*, Ann. Probab. 4(3) (1976), 480--485.
 @[expose] public section
 
 open MeasureTheory ProbabilityTheory
+open scoped ENNReal
 
 namespace ProbabilityTheory.RandomWalk
 
@@ -128,6 +136,17 @@ private theorem negativeSurvivesBlock_shift_iff
       (fun k => -rademacherIncrementPath branch (start + k)) := by
   exact finiteSurvivesNonnegative_blockCoordinates_iff
     length start (fun k => -rademacherIncrementPath branch k)
+
+private theorem positiveSurvivesBlock_flip_iff
+    {length : ℕ} (block : Fin length → Bool) :
+    (fun j => !block j) ∈ positiveSurvivesBlock length ↔
+      block ∈ negativeSurvivesBlock length := by
+  have hneg : (fun j : Fin length => rademacherOfBool (!block j)) =
+      (fun j => -rademacherOfBool (block j)) := by
+    funext j
+    cases block j <;> simp [rademacherOfBool]
+  simp only [positiveSurvivesBlock, negativeSurvivesBlock, Set.mem_ofPred_eq,
+    hneg]
 
 private theorem rademacher_displacement_measurable_prefix
     {k start : ℕ} (hkn : k ≤ start) :
@@ -217,6 +236,46 @@ theorem measure_rademacher_crossing_symmetry
         ((sequencePrefixFiltration (E := Bool)).le start _
           (measurableSet_rademacher_positiveCrossing_prefix hstart))
     _ = (iidSequenceLaw fairBoolMeasure) positiveCrossing := by rw [hflip]
+
+/-- Under the fair-Boolean law, reflection exchanges positive and
+negative survival while preserving any reflection-invariant block event. -/
+theorem measure_rademacher_survival_reflection
+    (length : ℕ) (event : Set (Fin length → Bool))
+    (hevent : MeasurableSet event)
+    (hinvariant : ∀ block : Fin length → Bool,
+      (fun j => !block j) ∈ event ↔ block ∈ event) :
+    (iidSequenceLaw fairBoolMeasure)
+        ((Combinatorics.Sequence.blockCoordinates 0 length) ⁻¹'
+          (event ∩ positiveSurvivesBlock length)) =
+      (iidSequenceLaw fairBoolMeasure)
+        ((Combinatorics.Sequence.blockCoordinates 0 length) ⁻¹'
+          (event ∩ negativeSurvivesBlock length)) := by
+  let flip : (ℕ → Bool) → (ℕ → Bool) := fun branch k => !branch k
+  let positiveEvent : Set (ℕ → Bool) :=
+    (Combinatorics.Sequence.blockCoordinates 0 length) ⁻¹'
+      (event ∩ positiveSurvivesBlock length)
+  let negativeEvent : Set (ℕ → Bool) :=
+    (Combinatorics.Sequence.blockCoordinates 0 length) ⁻¹'
+      (event ∩ negativeSurvivesBlock length)
+  have hset : flip ⁻¹' positiveEvent = negativeEvent := by
+    ext branch
+    let block := Combinatorics.Sequence.blockCoordinates 0 length branch
+    change (fun j => !block j) ∈ event ∩ positiveSurvivesBlock length ↔
+      block ∈ event ∩ negativeSurvivesBlock length
+    simp only [Set.mem_inter_iff, hinvariant block,
+      positiveSurvivesBlock_flip_iff block]
+  change (iidSequenceLaw fairBoolMeasure) positiveEvent =
+    (iidSequenceLaw fairBoolMeasure) negativeEvent
+  calc
+    (iidSequenceLaw fairBoolMeasure) positiveEvent =
+        ((iidSequenceLaw fairBoolMeasure).map flip) positiveEvent := by
+      rw [show (iidSequenceLaw fairBoolMeasure).map flip =
+        iidSequenceLaw fairBoolMeasure from map_iidFairBool_flip]
+    _ = (iidSequenceLaw fairBoolMeasure) (flip ⁻¹' positiveEvent) :=
+      Measure.map_apply measurable_flipBoolSequence
+        ((hevent.inter (measurableSet_positiveSurvivesBlock length)).preimage
+          (measurable_blockCoordinates 0 length))
+    _ = (iidSequenceLaw fairBoolMeasure) negativeEvent := by rw [hset]
 
 /-- A negative-to-zero prefix crossing is independent of every
 measurable event of the following IID Boolean block. -/
@@ -344,6 +403,73 @@ theorem measure_lastSignChangeIndex_eq_inter_block
     measure_rademacher_negativeCrossing_inter_block_eq_mul start
       (n - start) hstart _
       (hevent.inter (measurableSet_negativeSurvivesBlock _))]
+
+/-- Cross-multiplied conditional-law identity for the terminal
+absolute-path events, which are invariant under flipping all steps.
+The factors are the survival probabilities of a fresh block. -/
+theorem measure_terminalBlock_conditioned_identity
+    (n start : ℕ) (hstart : 0 < start) (hbefore : start < n)
+    (event : Set (Fin (n - start) → Bool)) (hevent : MeasurableSet event)
+    (hinvariant : ∀ block : Fin (n - start) → Bool,
+      (fun j => !block j) ∈ event ↔ block ∈ event) :
+    (iidSequenceLaw fairBoolMeasure)
+        ({branch : ℕ → Bool |
+          lastSignChangeIndex n (rademacherIncrementPath branch) = start} ∩
+          (Combinatorics.Sequence.blockCoordinates start (n - start)) ⁻¹' event) *
+      (iidSequenceLaw fairBoolMeasure)
+        ((Combinatorics.Sequence.blockCoordinates 0 (n - start)) ⁻¹'
+          positiveSurvivesBlock (n - start)) =
+    (iidSequenceLaw fairBoolMeasure)
+        {branch : ℕ → Bool |
+          lastSignChangeIndex n (rademacherIncrementPath branch) = start} *
+      (iidSequenceLaw fairBoolMeasure)
+        ((Combinatorics.Sequence.blockCoordinates 0 (n - start)) ⁻¹'
+          (event ∩ positiveSurvivesBlock (n - start))) := by
+  let P := iidSequenceLaw fairBoolMeasure
+  let prefixMass : ℝ≥0∞ := P
+    {branch : ℕ → Bool |
+      AdditivePath.displacement (start - 1)
+        (rademacherIncrementPath branch) < 0 ∧
+      AdditivePath.displacement start
+        (rademacherIncrementPath branch) = 0}
+  let survivingMass : ℝ≥0∞ := P
+    ((Combinatorics.Sequence.blockCoordinates 0 (n - start)) ⁻¹'
+      positiveSurvivesBlock (n - start))
+  let eventMass : ℝ≥0∞ := P
+    ((Combinatorics.Sequence.blockCoordinates 0 (n - start)) ⁻¹'
+      (event ∩ positiveSurvivesBlock (n - start)))
+  have hprefix := measure_rademacher_crossing_symmetry hstart
+  have heventReflect := measure_rademacher_survival_reflection
+    (n - start) event hevent hinvariant
+  have hsurviveReflect := measure_rademacher_survival_reflection
+    (n - start) Set.univ MeasurableSet.univ (by simp)
+  simp only [Set.univ_inter] at hsurviveReflect
+  have hjoint := measure_lastSignChangeIndex_eq_inter_block
+    n start hstart hbefore event hevent
+  rw [← hprefix, ← heventReflect] at hjoint
+  change P
+      ({branch : ℕ → Bool |
+        lastSignChangeIndex n (rademacherIncrementPath branch) = start} ∩
+        (Combinatorics.Sequence.blockCoordinates start (n - start)) ⁻¹' event) =
+      prefixMass * eventMass + prefixMass * eventMass at hjoint
+  have hwhole := measure_lastSignChangeIndex_eq_inter_block
+    n start hstart hbefore Set.univ MeasurableSet.univ
+  simp only [Set.inter_univ, Set.preimage_univ, Set.univ_inter] at hwhole
+  rw [← hprefix, ← hsurviveReflect] at hwhole
+  change P
+      {branch : ℕ → Bool |
+        lastSignChangeIndex n (rademacherIncrementPath branch) = start} =
+      prefixMass * survivingMass + prefixMass * survivingMass at hwhole
+  change P
+      ({branch : ℕ → Bool |
+        lastSignChangeIndex n (rademacherIncrementPath branch) = start} ∩
+        (Combinatorics.Sequence.blockCoordinates start (n - start)) ⁻¹' event) *
+      survivingMass =
+    P {branch : ℕ → Bool |
+      lastSignChangeIndex n (rademacherIncrementPath branch) = start} *
+      eventMass
+  rw [hjoint, hwhole]
+  ring
 
 end ProbabilityTheory.RandomWalk
 
