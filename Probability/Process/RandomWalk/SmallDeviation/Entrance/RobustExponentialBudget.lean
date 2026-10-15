@@ -7,17 +7,22 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.PowerAssembly
+public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.TransitionPower
 public import Analysis.Asymptotics.PolynomialExponential
 
 /-!
 # Exponential budget for the robust entrance event
 
-The public theorem in this file is:
+The public theorems in this file are:
 
 - `exists_eventually_robustTransitionProbability_ge_exp_of_transitionBounds`:
   if the two reflected transition probabilities obey their polynomial
   lower bounds, then for $L\ge\lfloor\Delta^{2+\varepsilon}\rfloor$,
   $\mathbb P(E_0^{\rm robust})\ge\exp(-\delta L/\Delta^2)$ eventually.
+- `exists_eventually_robustTransitionProbability_ge_exp_of_regularVariation`:
+  the same bound with the conditioned meander limit and support proved
+  from the centered finite-variance increment law; the two reflected
+  survival regular-variation hypotheses remain explicit.
 
 This is the polynomial-to-exponential comparison following the entrance
 construction in Wang Yiyang, *Asymptotic speed of the $N$-branching random
@@ -28,7 +33,7 @@ entrance construction is formalized in the preceding files of this folder.
 @[expose] public section
 
 open Filter MeasureTheory ProbabilityTheory
-open scoped ENNReal Topology
+open scoped ENNReal NNReal Topology
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Entrance
 
@@ -75,6 +80,60 @@ theorem exists_eventually_robustTransitionProbability_ge_exp_of_transitionBounds
     norm_num [Real.rpow_natCast]
   rw [hpow] at hbudget'
   exact hbudget'.trans (hnPower start hstart)
+
+/-- The robust entrance cost is absorbed by the exponential budget after
+the meander transition has been supplied for both the walk and its
+reflection. -/
+theorem exists_eventually_robustTransitionProbability_ge_exp_of_regularVariation
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    {sigma : ℝ} (hν : IsCenteredSecondMoment ν (sigma ^ 2))
+    (hsigma : 0 < sigma)
+    (hregPlus : Asymptotics.IsRegularlyVaryingAtTop
+      (FunctionalLimit.Conditioned.survivalProbabilityReal ν)
+      (-(1 / 2 : ℝ)))
+    (hregMinus : Asymptotics.IsRegularlyVaryingAtTop
+      (FunctionalLimit.Conditioned.survivalProbabilityReal
+        (ν.map fun x : ℝ => -x)) (-(1 / 2 : ℝ)))
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+    [IsProbabilityMeasure P] {B : ℝ≥0 → Ω → ℝ}
+    (hB : IsBrownianReal B P)
+    (hcontinuous : ∀ ω, Continuous (B · ω))
+    (hmeasurable : ∀ t, Measurable (B t))
+    {rho : ℝ} (hrho : 0 < rho) (hrhoSmall : rho < 1 / 48)
+    {width : ℕ → ℝ} (hwidth : Tendsto width atTop atTop)
+    {drift alpha delta epsilon : ℝ}
+    (hdrift : 0 ≤ drift) (halpha : 0 < alpha)
+    (hdelta : 0 < delta) (hepsilon : 0 < epsilon) :
+    ∀ᶠ n : ℕ in atTop,
+      ∀ start ∈ Set.Icc 0 (width n), ∀ L : ℕ,
+        Nat.floor (width n ^ (2 + epsilon)) ≤ L →
+        Real.exp (-delta * (L : ℝ) / width n ^ 2) ≤
+          (iidSequenceLaw ν).real
+            (robustMovingTransitionEvent
+              (Asymptotics.floorBlockLength (fun k => width k ^ 2) n)
+              (width n) drift start) := by
+  have hνneg : IsCenteredSecondMoment (ν.map fun x : ℝ => -x)
+      (sigma ^ 2) := hν.map_neg
+  have hplus (m : ℕ) : ∃ C : ℝ, 0 < C ∧ ∀ᶠ n : ℕ in atTop,
+      C / width n ^ (1 + alpha) ≤
+        (iidSequenceLaw ν
+          (FunctionalLimit.Conditioned.nonnegativeTransitionEvent
+            (Asymptotics.floorBlockLength (fun k => width k ^ 2) n - m)
+            (width n))).toReal :=
+    FunctionalLimit.Conditioned.exists_eventually_diffusiveTransitionProbability_ge_power_of_centeredSecondMoment
+      ν hν hsigma hregPlus halpha hB hcontinuous hmeasurable
+      hrho hrhoSmall hwidth m
+  have hminus (m : ℕ) : ∃ C : ℝ, 0 < C ∧ ∀ᶠ n : ℕ in atTop,
+      C / width n ^ (1 + alpha) ≤
+        (iidSequenceLaw (ν.map fun x : ℝ => -x)
+          (FunctionalLimit.Conditioned.nonnegativeTransitionEvent
+            (Asymptotics.floorBlockLength (fun k => width k ^ 2) n - m)
+            (width n))).toReal :=
+    FunctionalLimit.Conditioned.exists_eventually_diffusiveTransitionProbability_ge_power_of_centeredSecondMoment
+      (ν.map fun x : ℝ => -x) hνneg hsigma hregMinus halpha
+      hB hcontinuous hmeasurable hrho hrhoSmall hwidth m
+  exact exists_eventually_robustTransitionProbability_ge_exp_of_transitionBounds
+    hν hsigma hwidth hdrift halpha hdelta hepsilon hplus hminus
 
 end ProbabilityTheory.RandomWalk.SmallDeviation.Entrance
 
