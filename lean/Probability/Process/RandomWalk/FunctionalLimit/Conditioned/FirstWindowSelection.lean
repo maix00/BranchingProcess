@@ -9,6 +9,7 @@ module
 public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.FirstWindow
 public import Probability.Process.RandomWalk.Path.Interpolation.FiniteBlock
 public import Probability.Process.RandomWalk.Path.Interpolation.FirstWindow
+public import Probability.Process.Path.AboveStart.FirstWindowCentered
 
 /-!
 # Selecting the first surviving random-walk block
@@ -23,6 +24,9 @@ The public definitions and theorems in this file are:
   `IsFirstSurvivingWindow`.
 - `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.measurable_firstSurvivingWindowIndex`:
   the selected index is a measurable function of all increments.
+- `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.firstNonnegativeWindowStart_eq_firstSurvivingWindowIndex`:
+  the first eligible start of the polygonal walk is exactly the selected
+  lattice index divided by $n$ whenever a surviving window exists.
 - `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.selectedFirstSurvivingBlock`:
   the length-$n$ increment block starting at the selected index.
 - `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.measurable_selectedFirstSurvivingBlock`:
@@ -38,6 +42,9 @@ The public definitions and theorems in this file are:
 - `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.measure_map_rebasedAtFirstSurvivingWindow_eq`:
   the whole-time walk rebased at its first discrete surviving window
   has the survival-conditioned unit-time path law.
+- `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.measure_map_centeredFirstWindowShift_eq`:
+  the centered continuous first-window map has the same
+  survival-conditioned unit-time path law.
 
 This is the random index $T_n$ and centered block $Z$ in
 Erwin Bolthausen, *On a functional central limit theorem for random
@@ -73,6 +80,48 @@ theorem firstSurvivingWindowIndex_spec
   classical
   rw [firstSurvivingWindowIndex, dite_eq_left hex]
   exact ⟨Nat.find_spec hex, fun j => Nat.find_min hex j.isLt⟩
+
+/-- The continuous first-window time of the polygonal walk agrees
+exactly with its first surviving lattice-window index. -/
+theorem firstNonnegativeWindowStart_eq_firstSurvivingWindowIndex
+    (scale : ℕ → ℝ) {n : ℕ} (hn : 0 < n)
+    (hscale : 0 < scale n) (increment : ℕ → ℝ)
+    (hex : ∃ start : ℕ,
+      SurvivesNonnegative n (fun k => increment (start + k))) :
+    firstNonnegativeWindowStart
+        (normalizedLinearContinuousPathUnbounded scale n increment) =
+      WithTop.some
+        ((firstSurvivingWindowIndex n increment : ℝ≥0) / n) := by
+  let j := firstSurvivingWindowIndex n increment
+  let grid : ℝ≥0 := (j : ℝ≥0) / n
+  have hfirst := firstSurvivingWindowIndex_spec n increment hex
+  apply (firstNonnegativeWindowStart_eq_coe_iff _ grid).2
+  constructor
+  · exact (isNonnegativeWindowStart_grid_iff_survivesNonnegative
+      scale hn hscale j increment).2 hfirst.1
+  · intro s hs
+    let k : ℕ := ⌊(n : ℝ) * (s : ℝ)⌋₊
+    have hnonneg : 0 ≤ (n : ℝ) * (s : ℝ) :=
+      mul_nonneg (Nat.cast_nonneg n) (NNReal.coe_nonneg s)
+    have hklo : (k : ℝ) ≤ (n : ℝ) * (s : ℝ) :=
+      Nat.floor_le hnonneg
+    have hkhi : (n : ℝ) * (s : ℝ) < (k : ℝ) + 1 :=
+      Nat.lt_floor_add_one _
+    have hkeligible := isNonnegativeWindowStart_grid_of_between
+      scale hn hscale k increment s hklo hkhi hs
+    have hksurv := (isNonnegativeWindowStart_grid_iff_survivesNonnegative
+      scale hn hscale k increment).1 hkeligible
+    have hjk : j ≤ k := by
+      by_contra hnot
+      exact (hfirst.2 ⟨k, Nat.lt_of_not_ge hnot⟩) hksurv
+    have hnreal : (0 : ℝ) < n := Nat.cast_pos.mpr hn
+    apply NNReal.coe_le_coe.mp
+    change (j : ℝ) / n ≤ (s : ℝ)
+    exact (div_le_iff₀ hnreal).2 (by
+      calc
+        (j : ℝ) ≤ k := by exact_mod_cast hjk
+        _ ≤ (n : ℝ) * (s : ℝ) := hklo
+        _ = (s : ℝ) * n := mul_comm _ _)
 
 /-- An index satisfying the first-window predicate equals the selected
 index. -/
@@ -336,6 +385,70 @@ theorem measure_map_rebasedAtFirstSurvivingWindow_eq
               congr 1
               funext increment
               exact hpath increment
+    _ = _ := measure_map_selectedFirstSurvivingBlockPath_eq
+      ν hpositive scale n
+
+/-- On a walk with a surviving window, the centered continuous first-window
+path is the polygonal path of its first surviving discrete block. -/
+theorem centeredFirstWindowShift_eq_selectedFirstSurvivingBlockPath
+    (scale : ℕ → ℝ) {n : ℕ} (hn : 0 < n)
+    (hscale : 0 < scale n) (increment : ℕ → ℝ)
+    (hex : ∃ start : ℕ,
+      SurvivesNonnegative n (fun k => increment (start + k))) :
+    restrictPathToUnitInterval
+        (centeredFirstWindowShift
+          (normalizedLinearContinuousPathUnbounded scale n increment)) =
+      normalizedLinearContinuousPathFromBlock scale n
+        (selectedFirstSurvivingBlock n increment) := by
+  have htime := firstNonnegativeWindowStart_eq_firstSurvivingWindowIndex
+    scale hn hscale increment hex
+  simp only [centeredFirstWindowShift, htime]
+  simp
+  exact restrictPathToUnitInterval_shiftToZero_grid scale hn
+    (firstSurvivingWindowIndex n increment) increment
+
+/-- Exact centered first-window path-law identity in Bolthausen's
+equation (3.2), after identifying the continuous and lattice starts. -/
+theorem measure_map_centeredFirstWindowShift_eq
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (hpositive : 0 < ν (Set.Ioi 0))
+    (scale : ℕ → ℝ) {n : ℕ} (hn : 0 < n)
+    (hscale : 0 < scale n) :
+    (iidSequenceLaw ν).map (fun increment =>
+        restrictPathToUnitInterval
+          (centeredFirstWindowShift
+            (normalizedLinearContinuousPathUnbounded scale n increment))) =
+      (survivalConditionedLaw ν n).map
+        (normalizedLinearContinuousPathIcc scale n) := by
+  let μ := iidSequenceLaw ν
+  let first : Set (ℕ → ℝ) :=
+    ⋃ start : ℕ,
+      {increment | IsFirstSurvivingWindow n start increment}
+  have hfirstMeas : MeasurableSet first :=
+    MeasurableSet.iUnion fun start =>
+      measurableSet_isFirstSurvivingWindow n start
+  have hfull : μ first = 1 :=
+    measure_exists_firstSurvivingWindow_eq_one ν hpositive n
+  have hfirstAE : ∀ᵐ increment ∂μ,
+      ∃ start : ℕ,
+        SurvivesNonnegative n (fun k => increment (start + k)) := by
+    filter_upwards [(mem_ae_iff_prob_eq_one hfirstMeas).mpr hfull]
+      with increment hinc
+    obtain ⟨start, hstart⟩ := by
+      simpa only [first, Set.mem_iUnion, Set.mem_ofPred_eq] using hinc
+    exact ⟨start, hstart.1⟩
+  calc
+    (iidSequenceLaw ν).map (fun increment =>
+        restrictPathToUnitInterval
+          (centeredFirstWindowShift
+            (normalizedLinearContinuousPathUnbounded scale n increment))) =
+        (iidSequenceLaw ν).map (fun increment =>
+          normalizedLinearContinuousPathFromBlock scale n
+            (selectedFirstSurvivingBlock n increment)) := by
+              apply Measure.map_congr
+              filter_upwards [hfirstAE] with increment hex
+              exact centeredFirstWindowShift_eq_selectedFirstSurvivingBlockPath
+                scale hn hscale increment hex
     _ = _ := measure_map_selectedFirstSurvivingBlockPath_eq
       ν hpositive scale n
 
