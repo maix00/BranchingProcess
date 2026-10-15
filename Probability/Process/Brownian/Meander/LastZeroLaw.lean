@@ -22,6 +22,8 @@ The public objects and theorems in this file are:
   its paths start at zero almost surely.
 - `ProbabilityTheory.IsBrownianReal.ae_lastZeroMeanderPathLaw_pos`:
   at each fixed positive time, its paths are positive almost surely.
+- `ProbabilityTheory.IsBrownianReal.ae_lastZeroMeanderPathLaw_nonnegative`:
+  its paths are nonnegative at every time almost surely.
 
 The construction is the Brownian representation on pages 616--617 of
 Donald L. Iglehart, *Functional Central Limit Theorems for Random Walks
@@ -111,6 +113,37 @@ theorem IsBrownianReal.ae_lastZeroMeanderPathLaw_pos
       (continuous_eval_const t) |>.measurableSet)).2
   exact (hB.ae_lastZeroMeanderTransform_positive hmeasurable).mono
     (fun ω hω => hω.2 t ht)
+
+/-- The Iglehart path law is concentrated on the closed nonnegative cone. -/
+theorem IsBrownianReal.ae_lastZeroMeanderPathLaw_nonnegative
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+    [IsProbabilityMeasure P] {B : ℝ≥0 → Ω → ℝ}
+    (hB : IsBrownianReal B P)
+    (hmeasurable : ∀ t, Measurable (B t)) :
+    ∀ᵐ f ∂hB.lastZeroMeanderPathLaw hmeasurable,
+      ∀ t : unitInterval, 0 ≤ f t := by
+  have hclosed : IsClosed
+      {f : C(unitInterval, ℝ) | ∀ t : unitInterval, 0 ≤ f t} := by
+    have hset :
+        {f : C(unitInterval, ℝ) | ∀ t : unitInterval, 0 ≤ f t} =
+          ⋂ t : unitInterval, {f : C(unitInterval, ℝ) | 0 ≤ f t} := by
+      ext f
+      simp
+    rw [hset]
+    exact isClosed_iInter fun t =>
+      (isClosed_Ici : IsClosed (Set.Ici (0 : ℝ))).preimage
+        (continuous_eval_const t)
+  change ∀ᵐ f ∂P.map (hB.lastZeroMeanderPath hmeasurable),
+    ∀ t : unitInterval, 0 ≤ f t
+  apply (MeasureTheory.ae_map_iff
+    (hB.measurable_lastZeroMeanderPath hmeasurable).aemeasurable
+    hclosed.measurableSet).2
+  exact (hB.ae_lastZeroMeanderTransform_positive hmeasurable).mono
+    (fun ω hω t => by
+      by_cases ht : t = 0
+      · subst t
+        exact le_of_eq hω.1.symm
+      · exact (hω.2 t (lt_of_le_of_ne bot_le (Ne.symm ht))).le)
 
 end ProbabilityTheory
 
