@@ -309,7 +309,12 @@ $V_\nu(x)=0$ for $x<0$. Tonelli's theorem identifies $V_\nu(x)$ with
 the expected number of ladder heights at most $x$, as in
 Caravenna--Chaumont, definition (1.1). These are foundational steps toward the cited
 renewal and local-time limit theorems. The conditioned meander convergence
-is proved separately; survival regular variation remains open.
+is proved separately. The general finite-variance survival
+regular-variation theorem is still open, while Lemma 3.5 uses the proved
+Sparre--Andersen finite recurrence instead. The unused
+`FunctionalLimit/Conditioned/SurvivalPower.lean` Potter adapter was removed;
+the independently reusable descending ladder-time results remain in
+`Fluctuation/`.
 
 The Sparre--Andersen route to the survival input now formalizes the cyclic
 event cover and inclusion--exclusion in Bauer--Godrèche--Luck, Appendix A,
