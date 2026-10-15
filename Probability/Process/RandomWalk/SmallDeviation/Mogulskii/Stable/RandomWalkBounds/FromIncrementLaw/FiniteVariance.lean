@@ -46,7 +46,8 @@ open ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability
 open Skorokhod.PathClass.StepCorridor
 
 /-- The centered finite-variance unit-variance specialization has the exact
-standard-normal rate coefficient in the paper's normalization. -/
+standard-normal rate coefficient in Mogul'skii, *Small Deviations in a Space
+of Trajectories*, Theorem 3, Section 4. -/
 theorem centeredUnitVariance_sourceRelativePathClassRate
     {ν : Measure ℝ} [IsProbabilityMeasure ν] {scale : ℕ → ℝ}
     (hsmall : Asymptotics.IsSmallDeviationScale scale (fun n => Real.sqrt n))
