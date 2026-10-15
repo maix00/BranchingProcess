@@ -14,7 +14,11 @@ public import Mathlib.Topology.ContinuousMap.Bounded.Basic
 /-!
 # Invariance under pointwise limits
 
-The public theorem in this file is:
+The public theorems in this file are:
+
+- `MeasureTheory.Measure.map_eq_of_ae_pointwise_limit`: if a finite Borel
+  measure $\mu$ satisfies $(F_n)_*\mu=\mu$ for every $n$ and
+  $F_n(x)\to F(x)$ for $\mu$-almost every $x$, then $F_*\mu=\mu$.
 
 - `MeasureTheory.Measure.map_eq_of_pointwise_limit`: if a finite Borel
   measure $\mu$ satisfies $(F_n)_*\mu=\mu$ for every $n$, if $F_n(x)$
@@ -33,14 +37,14 @@ open scoped ENNReal NNReal
 namespace MeasureTheory
 
 /-- A finite Borel measure remains invariant under a measurable
-pointwise limit of measurable measure-preserving maps. -/
-theorem Measure.map_eq_of_pointwise_limit
+almost-everywhere pointwise limit of measurable measure-preserving maps. -/
+theorem Measure.map_eq_of_ae_pointwise_limit
     {X : Type*} [MeasurableSpace X] [TopologicalSpace X]
     [HasOuterApproxClosed X] [BorelSpace X]
     (μ : Measure X) [IsFiniteMeasure μ]
     (F : X → X) (Fₙ : ℕ → X → X)
     (hF : Measurable F) (hFₙ : ∀ n, Measurable (Fₙ n))
-    (hlim : ∀ x, Tendsto (fun n => Fₙ n x) atTop (nhds (F x)))
+    (hlim : ∀ᵐ x ∂μ, Tendsto (fun n => Fₙ n x) atTop (nhds (F x)))
     (hinv : ∀ n, μ.map (Fₙ n) = μ) :
     μ.map F = μ := by
   symm
@@ -62,7 +66,7 @@ theorem Measure.map_eq_of_pointwise_limit
     exact Filter.Eventually.of_forall (fun x => ENNReal.coe_le_coe.mpr (hC (Fₙ n x)))
   have hlimφ : ∀ᵐ x ∂μ,
       Tendsto (fun n => φ (Fₙ n x)) atTop (nhds (φ (F x))) :=
-    Filter.Eventually.of_forall (fun x => hφcont.continuousAt.tendsto.comp (hlim x))
+    hlim.mono (fun x hx => hφcont.continuousAt.tendsto.comp hx)
   have hDCT := tendsto_lintegral_of_dominated_convergence
     (μ := μ) (fun _ : X => (C : ℝ≥0∞)) hmeas hbound hfin hlimφ
   have hintegral (n : ℕ) :
@@ -75,6 +79,19 @@ theorem Measure.map_eq_of_pointwise_limit
   have heq := tendsto_nhds_unique hconst hDCT
   rw [lintegral_map hφm hF]
   exact heq
+
+/-- The everywhere pointwise version of invariance under limits. -/
+theorem Measure.map_eq_of_pointwise_limit
+    {X : Type*} [MeasurableSpace X] [TopologicalSpace X]
+    [HasOuterApproxClosed X] [BorelSpace X]
+    (μ : Measure X) [IsFiniteMeasure μ]
+    (F : X → X) (Fₙ : ℕ → X → X)
+    (hF : Measurable F) (hFₙ : ∀ n, Measurable (Fₙ n))
+    (hlim : ∀ x, Tendsto (fun n => Fₙ n x) atTop (nhds (F x)))
+    (hinv : ∀ n, μ.map (Fₙ n) = μ) :
+    μ.map F = μ :=
+  μ.map_eq_of_ae_pointwise_limit F Fₙ hF hFₙ
+    (ae_of_all _ hlim) hinv
 
 end MeasureTheory
 

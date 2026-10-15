@@ -284,6 +284,47 @@ theorem measurable_firstPassageGridCeiling (N : ℕ)
   rw [heq]
   exact MeasurableSet.iUnion (fun i => hfiber i)
 
+/-- A first-passage grid selector is determined at index `i` by the
+path up to its observation time `r i`. -/
+theorem firstPassageGridCeiling_eq_iff_of_agreeOn
+    (N : ℕ) (r : Fin (N + 1) → ℝ≥0) (hr : Monotone r)
+    (a : ℝ) (i : Fin (N + 1)) (f g : C(ℝ≥0, ℝ))
+    (hprefix : ∀ v : ℝ≥0, v ≤ r i → f v = g v) :
+    firstPassageGridCeiling N r a f = i ↔
+      firstPassageGridCeiling N r a g = i := by
+  let u : Fin (N + 1) → C(ℝ≥0, ℝ) → Bool :=
+    fun j p => if firstPassageBelow p a ≤ r j then true else false
+  have hum (j : Fin (N + 1)) : StronglyMeasurable (u j) := by
+    have hset : MeasurableSet {p : C(ℝ≥0, ℝ) |
+        firstPassageBelow p a ≤ r j} :=
+      (measurable_firstPassageBelow a) measurableSet_Iic
+    exact (Measurable.ite hset measurable_const measurable_const).stronglyMeasurable
+  let ℱ := Filtration.natural u hum
+  have hu : Adapted ℱ u := (Filtration.stronglyAdapted_natural hum).adapted
+  have hτ : IsStoppingTime ℱ
+      (fun p : C(ℝ≥0, ℝ) =>
+        (firstPassageGridCeiling N r a p : WithTop (Fin (N + 1)))) := by
+    exact hu.isStoppingTime_hittingBtwn (measurableSet_singleton true)
+  have hi : MeasurableSet[ℱ i] {p : C(ℝ≥0, ℝ) |
+      firstPassageGridCeiling N r a p = i} := by
+    simpa using hτ.measurableSet_eq i
+  rw [Filtration.natural_eq_comap u hum i] at hi
+  obtain ⟨E, hE, hEeq⟩ := (MeasurableSpace.measurableSet_comap).mp hi
+  have hupast : (fun j : Set.Iic i => u j f) =
+      (fun j : Set.Iic i => u j g) := by
+    funext j
+    have hprefix_j (v : ℝ≥0) (hv : v ≤ r j) : f v = g v :=
+      hprefix v (hv.trans (hr j.2))
+    have hpassage := firstPassageBelow_le_congr_of_agreeOn
+      f g a (r j) hprefix_j
+    change (if firstPassageBelow f a ≤ r j then true else false) =
+      (if firstPassageBelow g a ≤ r j then true else false)
+    exact ite_congr (propext hpassage) (fun _ => rfl) (fun _ => rfl)
+  change f ∈ {p : C(ℝ≥0, ℝ) | firstPassageGridCeiling N r a p = i} ↔
+    g ∈ {p : C(ℝ≥0, ℝ) | firstPassageGridCeiling N r a p = i}
+  rw [← hEeq]
+  simpa only [Set.mem_preimage] using (congrArg (· ∈ E) hupast).to_iff
+
 /-- Reflection at the first grid time after continuous first passage
 preserves Brownian path law. This is the finite-valued stopping-time
 approximation in Theorem 2.1 of S. J. Dilworth and Duncan Wright,
@@ -298,44 +339,13 @@ theorem IsBrownianReal.measure_reflectAfter_firstPassageGridCeiling_eq
     (P.map (hB.continuousPathMap hBmeasurable)).map
         (fun f => reflectAfter f (r (firstPassageGridCeiling N r a f))) =
       P.map (hB.continuousPathMap hBmeasurable) := by
-  let u : Fin (N + 1) → C(ℝ≥0, ℝ) → Bool :=
-    fun i f => if firstPassageBelow f a ≤ r i then true else false
-  have hum (i : Fin (N + 1)) : StronglyMeasurable (u i) := by
-    have hset : MeasurableSet {f : C(ℝ≥0, ℝ) |
-        firstPassageBelow f a ≤ r i} :=
-      (measurable_firstPassageBelow a) measurableSet_Iic
-    exact (Measurable.ite hset measurable_const measurable_const).stronglyMeasurable
-  let ℱ := Filtration.natural u hum
-  have hu : Adapted ℱ u := (Filtration.stronglyAdapted_natural hum).adapted
-  have hτ : IsStoppingTime ℱ
-      (fun f : C(ℝ≥0, ℝ) =>
-        (firstPassageGridCeiling N r a f : WithTop (Fin (N + 1)))) := by
-    exact hu.isStoppingTime_hittingBtwn (measurableSet_singleton true)
   have hT : Measurable (firstPassageGridCeiling N r a) :=
     measurable_firstPassageGridCeiling N r a
   have hlocal (i : Fin (N + 1)) (f g : C(ℝ≥0, ℝ))
       (hprefix : ∀ v : ℝ≥0, v ≤ r i → f v = g v) :
       firstPassageGridCeiling N r a f = i ↔
-        firstPassageGridCeiling N r a g = i := by
-    have hi : MeasurableSet[ℱ i] {p : C(ℝ≥0, ℝ) |
-        firstPassageGridCeiling N r a p = i} := by
-      simpa using hτ.measurableSet_eq i
-    rw [Filtration.natural_eq_comap u hum i] at hi
-    obtain ⟨E, hE, hEeq⟩ := (MeasurableSpace.measurableSet_comap).mp hi
-    have hupast : (fun j : Set.Iic i => u j f) =
-        (fun j : Set.Iic i => u j g) := by
-      funext j
-      have hprefix_j (v : ℝ≥0) (hv : v ≤ r j) : f v = g v :=
-        hprefix v (hv.trans (hr j.2))
-      have hpassage := firstPassageBelow_le_congr_of_agreeOn
-        f g a (r j) hprefix_j
-      change (if firstPassageBelow f a ≤ r j then true else false) =
-        (if firstPassageBelow g a ≤ r j then true else false)
-      exact ite_congr (propext hpassage) (fun _ => rfl) (fun _ => rfl)
-    change f ∈ {p : C(ℝ≥0, ℝ) | firstPassageGridCeiling N r a p = i} ↔
-      g ∈ {p : C(ℝ≥0, ℝ) | firstPassageGridCeiling N r a p = i}
-    rw [← hEeq]
-    simpa only [Set.mem_preimage] using (congrArg (· ∈ E) hupast).to_iff
+        firstPassageGridCeiling N r a g = i :=
+    firstPassageGridCeiling_eq_iff_of_agreeOn N r hr a i f g hprefix
   exact hB.measure_reflectAfter_finitePathwiseStoppingTime_eq
     hBmeasurable (firstPassageGridCeiling N r a) r hT hlocal
 

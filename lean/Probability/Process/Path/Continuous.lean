@@ -8,6 +8,7 @@ module
 
 public import Mathlib.MeasureTheory.Constructions.BorelSpace.ContinuousMap
 public import Mathlib.Topology.Instances.NNReal.Lemmas
+public import Mathlib.Topology.CompactOpen
 
 /-!
 # Continuous sample paths
@@ -23,10 +24,14 @@ The public definitions and theorems in this file are:
 - `ProbabilityTheory.freezeAfter`: the path $u\mapsto f(\min(u,r))$.
 - `ProbabilityTheory.measurable_freezeAfter`: freezing at $r$ is a
   measurable operation on continuous path space.
+- `ProbabilityTheory.continuous_freezeAfter`: freezing is jointly
+  continuous in path and time.
 - `ProbabilityTheory.shiftToZero`: the increment path
   $u\mapsto f(r+u)-f(r)$.
 - `ProbabilityTheory.measurable_shiftToZero`: the shift is measurable
   jointly in the continuous path and its starting time.
+- `ProbabilityTheory.continuous_shiftToZero`: the same operation is
+  continuous for the compact-open topology.
 
 Processes use mathlib's convention `Time → Ω → State`.
 -/
@@ -69,6 +74,19 @@ theorem measurable_continuousPath {Time Ω State : Type*}
 noncomputable def freezeAfter (f : C(ℝ≥0, ℝ)) (r : ℝ≥0) : C(ℝ≥0, ℝ) :=
   ⟨fun u => f (min u r), by fun_prop⟩
 
+/-- Freezing a continuous path is jointly continuous in path and time. -/
+theorem continuous_freezeAfter :
+    Continuous (fun p : C(ℝ≥0, ℝ) × ℝ≥0 => freezeAfter p.1 p.2) := by
+  refine ContinuousMap.continuous_of_continuous_uncurry _ ?_
+  exact continuous_eval.comp
+    ((continuous_fst.comp continuous_fst).prodMk
+      (continuous_snd.min (continuous_snd.comp continuous_fst)))
+
+/-- Joint measurability of the stopped past path. -/
+theorem measurable_freezeAfter_pair :
+    Measurable (fun p : C(ℝ≥0, ℝ) × ℝ≥0 => freezeAfter p.1 p.2) :=
+  continuous_freezeAfter.measurable
+
 /-- Rebase a continuous path at time `r`, with initial value zero. -/
 noncomputable def shiftToZero (f : C(ℝ≥0, ℝ)) (r : ℝ≥0) : C(ℝ≥0, ℝ) :=
   ⟨fun u => f (r + u) - f r, by fun_prop⟩
@@ -82,6 +100,26 @@ theorem measurable_shiftToZero :
   exact (continuous_eval.comp
     (continuous_fst.prodMk (continuous_snd.add continuous_const))).measurable.sub
       (continuous_eval.comp (continuous_fst.prodMk continuous_snd)).measurable
+
+/-- Shifting a continuous path by a variable starting time is jointly
+continuous for the compact-open topology. -/
+theorem continuous_shiftToZero :
+    Continuous (fun p : C(ℝ≥0, ℝ) × ℝ≥0 => shiftToZero p.1 p.2) := by
+  refine ContinuousMap.continuous_of_continuous_uncurry _ ?_
+  have hpath : Continuous
+      (fun p : (C(ℝ≥0, ℝ) × ℝ≥0) × ℝ≥0 => p.1.1) :=
+    continuous_fst.comp continuous_fst
+  have htime : Continuous
+      (fun p : (C(ℝ≥0, ℝ) × ℝ≥0) × ℝ≥0 => p.1.2 + p.2) :=
+    (continuous_snd.comp continuous_fst).add continuous_snd
+  have hfirst : Continuous
+      (fun p : (C(ℝ≥0, ℝ) × ℝ≥0) × ℝ≥0 => p.1.1 (p.1.2 + p.2)) :=
+    continuous_eval.comp (hpath.prodMk htime)
+  have hbase : Continuous
+      (fun p : (C(ℝ≥0, ℝ) × ℝ≥0) × ℝ≥0 => p.1.1 p.1.2) :=
+    continuous_eval.comp
+      (hpath.prodMk (continuous_snd.comp continuous_fst))
+  exact hfirst.sub hbase
 
 /-- Freezing a continuous path at a fixed time is measurable. -/
 theorem measurable_freezeAfter (r : ℝ≥0) :
