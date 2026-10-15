@@ -9,8 +9,8 @@ module
 public import Algebra.BigOperators.AdditivePath
 public import Algebra.BigOperators.PartialSum
 public import Algebra.BigOperators.CyclicReindex
-public import Probability.Process.RandomWalk.SmallDeviation.Entrance.DriftedRotation
-public import Probability.Process.RandomWalk.SmallDeviation.Entrance.Exchangeability
+public import Probability.Process.RandomWalk.SmallDeviation.Entrance.Rotation.DriftedTube
+public import Probability.Process.RandomWalk.SmallDeviation.Entrance.Rotation.Exchangeability
 public import Probability.Process.RandomWalk.Path.Skorokhod.Basic
 public import Topology.Cadlag.Skorokhod.Scaling
 public import Topology.Cadlag.Skorokhod.LinearPath
@@ -18,12 +18,45 @@ public import Topology.Cadlag.Skorokhod.LinearPath
 /-!
 # Cyclic rotations of finite random-walk paths
 
+The public definitions and theorem families are:
+
+- `finitePrefixExtension`, `finitePrefixVector`,
+  `finiteNormalizedStepPath`, `finiteNormalizedStepKnots`, and
+  `normalizedGridPoint`: finite increment vectors, their $n+1$
+  partial-sum knots, and the associated normalized step path.
+- `displacement_finitePrefixExtension`,
+  `finiteNormalizedStepPath_apply_grid`,
+  `finiteNormalizedStepPath_prefix_eq`, and
+  `scalePath_finiteNormalizedStepPath_eq`: the exact path and scaling
+  identities for those constructions.
+- `finiteLinearPathBallEvent`,
+  `finiteDriftRemovedOffsetCorridorEvent`, and
+  `movingOffsetCorridorPath`: the line-ball, static corridor, and
+  moving corridor events; the adjacent measurability and finite-prefix
+  law theorems identify their probabilities under IID increments.
+- `finiteCoordinateReindex_apply`,
+  `IsCyclicPartialSumReindex`,
+  `cyclicCoordinateReindex_isCyclicPartialSumReindex`, and
+  `cyclicPartialSum_smul`: cyclic reindexing of $n$ coordinates and
+  its partial-sum identities.
+- `finiteLinearBall_subset_cyclicOffsetCover_allOffsets` and its
+  modular and normalization-ratio versions: the line-ball event is
+  covered by $n$ cyclic images of the offset corridor.
+- `measure_pi_offsetCorridor_ge_div_of_linearTube_allOffsets`
+  and its modular and normalization-ratio versions: the corresponding
+  corridor probability is at least the line-ball probability divided
+  by $n$.
+- `finiteLinearBall_subset_cyclicOffsetCover_lowerEdge` and
+  `measure_pi_offsetCorridor_ge_div_of_linearTube`, together with
+  their modular versions: the same cover and probability bound for
+  a boundary starting position.
+
 This file connects a vector of `n` increments to its `n + 1` partial-sum
 knots and to the normalized càdlàg step path. Cyclic reindexing acts on the
 `n` increments; its partial-sum path has `n + 1` knots. The finite-product
 measure estimate then loses a factor `n`, not `n + 1`.
 
-The drift-removal identity is imported from `DriftedRotation.lean`. This is
+The drift-removal identity is imported from `Rotation/DriftedTube.lean`. This is
 important for entrance events with moving boundaries: the static corridor is
 imposed on the drift-removed path, and the corresponding original path lies
 in the translated moving corridor.

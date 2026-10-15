@@ -18,6 +18,23 @@ public import Algebra.BigOperators.PartialSum
 /-!
 # Cyclic rotations of a path near an increasing line
 
+The public objects and principal theorems are:
+
+- `normalizedTime`, `cyclicRotatePath`, and `offsetCorridorPath`:
+  normalized time, cyclic path rotation, and the offset corridor event.
+- `measure_le_card_smul_of_finiteRotationCover`: a cover by $n$ measure
+  preserving rotations bounds the original event probability by $n$ times
+  the rotated corridor probability.
+- `exists_middleOffset_meshPoint` and
+  `linearTube_subset_middleOffsetCorridor`: select a spatial mesh point
+  whose corridor contains a path close to the line $t\mapsto t/2$.
+- `exists_cyclicPartialSum_mem_Icc_of_linearTube` and
+  `exists_offsetCorridorPath_of_linearTube_allOffsets`: a cyclic origin
+  places every partial sum of such a path inside an offset interval.
+- `exists_offsetCorridorPath_of_linearTube_lowerEdge` and
+  `exists_offsetCorridorPath_of_linearTube_upperEdge`: the two boundary
+  starting positions satisfy the corresponding corridor inclusions.
+
 If a finite partial-sum path stays close to the line `t ↦ t / 2`, rotating
 the increments at a minimum produces a path in a fixed nonnegative corridor.
 This is the deterministic input to the edge-offset entrance estimate.

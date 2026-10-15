@@ -1,8 +1,8 @@
 import Probability.Process.Stable.PathLaw.LinearTube
-import Probability.Process.RandomWalk.SmallDeviation.Entrance.Exchangeability
+import Probability.Process.RandomWalk.SmallDeviation.Entrance.Rotation.Exchangeability
 import Probability.Process.RandomWalk.SmallDeviation.Entrance.FunctionalLimit
-import Probability.Process.RandomWalk.SmallDeviation.Entrance.LinearTubeRotation
-import Probability.Process.RandomWalk.SmallDeviation.Entrance.CyclicPath
+import Probability.Process.RandomWalk.SmallDeviation.Entrance.Rotation.LinearTube
+import Probability.Process.RandomWalk.SmallDeviation.Entrance.Rotation.CyclicPath
 import Probability.Process.RandomWalk.SmallDeviation.Entrance.NormalDomain
 
 /-!
