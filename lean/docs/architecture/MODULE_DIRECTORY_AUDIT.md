@@ -29,7 +29,7 @@ semantic move also updates the declaration namespace and its import path.
 | `Probability/BranchingRandomWalk/Step` and `Probability/BranchingRandomWalk/Spine` | General branching-law and spine interfaces are called from multiple applications; their more specialized path and tube arguments already have subdirectories. |
 | `Probability/RandomMeasure/Poisson` and `MeasureTheory/Measure` | Each file owns a separate measure or point-process operation, with no single main theorem for an additional inner layer. |
 | `Probability/Process/RandomWalk/FunctionalLimit/Stable` | Centering, tightness, finite-dimensional convergence, and path limits are distinct reusable theorem interfaces. |
-| `Probability/Process/RandomWalk/SmallDeviation/Mogulskii` and its `Spectral` subdirectory | The general rate and spectral interfaces already separate by mathematical input; narrower `Rate`, `Gaussian`, `Stable`, and spectral subdirectories are present. |
+| `Probability/Process/RandomWalk/SmallDeviation/Mogulskii` and its `Spectral` subdirectory | The general rate and spectral interfaces already separate by mathematical input; narrower `Rate`, `Gaussian`, `Stable`, and spectral subdirectories are present. The fixed-parameter floor-grid argument now lives in `Rate/EndpointWindowSelection/FixedParameters.lean`; `Rate/EndpointWindowSelection.lean` selects the asymptotically sharp parameters and states the final rate. |
 | `Topology/Cadlag/Skorokhod` and `Analysis/Asymptotics` | These files contain independent reusable topology and asymptotic lemmas. |
 
 ## A file and directory with the same name
