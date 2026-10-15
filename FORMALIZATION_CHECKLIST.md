@@ -191,9 +191,11 @@ independent of the stopped past at each fixed level. The passage of
 independence through almost-sure limits is a reusable result in
 `MeasureTheory/Convergence/IndependentLimits.lean`.
 `Path/FirstPassageRestart.lean` proves the deterministic restart identity
-for two finite passages of a continuous path. Applying it to descending
-Brownian levels and turning strong Markov into stationary independent
-increments of the hitting-time process are the next steps.
+for two finite passages of a continuous path and recovers a finite first
+passage from the stopped path. `Path/DescendingHittingTimeRestart.lean`
+specializes the restart identity to the descending hitting-time process.
+Turning strong Markov and these pathwise identities into stationary
+independent increments of the hitting-time process is the next step.
 The Brownian hitting-time process has not yet been identified with such a
 Poisson jump family. Equation (2.2), Lemma 2.4, and the conditioned
 invariance principle remain open.
