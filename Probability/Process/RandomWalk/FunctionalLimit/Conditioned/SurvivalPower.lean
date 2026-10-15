@@ -20,6 +20,9 @@ The public objects and theorems in this file are:
   $x\mapsto\mathbb P(C_{\lfloor x\rfloor})$.
 - ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.survivalProbabilityReal_eq_firstDescendingLadderTime_tail:
   $\mathbb P(C_{\lfloor x\rfloor})=\mathbb P(T^-_1>\lfloor x\rfloor)$.
+- ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.survivalProbabilityReal_regularVariation_of_ladderTimeTail:
+  regular variation of the first descending ladder-time tail transfers
+  to the survival probability.
 - ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.survivalProbabilityReal_antitone:
   $x\le y$ implies $\mathbb P(C_{\lfloor y\rfloor})\le
   \mathbb P(C_{\lfloor x\rfloor})$.
@@ -62,12 +65,24 @@ walks conditioned to stay positive*, Lemma 2.1. -/
 theorem survivalProbabilityReal_eq_firstDescendingLadderTime_tail
     (ν : Measure ℝ) (x : ℝ) :
     survivalProbabilityReal ν x =
-      ((iidSequenceLaw ν)
-        {increment |
-          (Nat.floor x : WithTop ℕ) <
-            strictDescendingLadderTime increment 1}).toReal := by
+      firstDescendingLadderTimeTailReal (iidSequenceLaw ν) x := by
   unfold survivalProbabilityReal
+    firstDescendingLadderTimeTailReal
   rw [measure_survival_eq_firstDescendingLadderTime_gt]
+
+/-- Caravenna--Chaumont, Lemma 2.1, passes from the first strict
+descending ladder-time tail to the survival probability using
+$C_N=\{T^-_1>N\}$. The fluctuation-theory step establishing the tail's
+regular variation is separate from this identification. -/
+theorem survivalProbabilityReal_regularVariation_of_ladderTimeTail
+    (ν : Measure ℝ)
+    (htail : Asymptotics.IsRegularlyVaryingAtTop
+      (firstDescendingLadderTimeTailReal (iidSequenceLaw ν))
+      (-(1 / 2 : ℝ))) :
+    Asymptotics.IsRegularlyVaryingAtTop
+      (survivalProbabilityReal ν) (-(1 / 2 : ℝ)) := by
+  simpa only [funext (survivalProbabilityReal_eq_firstDescendingLadderTime_tail ν)]
+    using htail
 
 /-- Longer survival has smaller probability. -/
 theorem survivalProbabilityReal_antitone
