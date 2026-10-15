@@ -11,6 +11,7 @@ public import Probability.Distributions.Gaussian.Sign
 public import Probability.Distributions.Moments.Real
 public import Probability.ConvergenceInDistribution.Portmanteau
 public import Algebra.BigOperators.AdditivePath
+public import Mathlib.Analysis.Asymptotics.SpecificAsymptotics
 
 /-!
 # The positivity parameter of a finite-variance random walk
@@ -20,6 +21,9 @@ The public theorem in this file is:
 - `ProbabilityTheory.RandomWalk.tendsto_positivePartialSumProbability_half`:
   for centered increments with variance $\sigma^2>0$,
   $\mathbb P(S_n>0)\to 1/2$.
+- `ProbabilityTheory.RandomWalk.tendsto_cesaro_positivePartialSumProbability_half`:
+  $n^{-1}\sum_{m=1}^n\mathbb P(S_m>0)\to 1/2$, the Spitzer
+  condition used for the ascending ladder epoch.
 
 This is the Gaussian positivity-parameter input to R. A. Doney,
 *Spitzer's condition and ladder variables in random walks*, Theorem 2
@@ -109,6 +113,29 @@ theorem tendsto_positivePartialSumProbability_half
       atTop (nhds (1 / 2 : ℝ≥0∞)) := by
     simpa only [Measure.map_id, hpositive] using hlimit
   exact hlimit'.congr' heq
+
+/-- Spitzer's condition with parameter $1/2$ in the finite-variance case.
+This is condition (1) in Doney, *Spitzer's condition and ladder variables in
+random walks*, preceding Theorem 1. -/
+theorem tendsto_cesaro_positivePartialSumProbability_half
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    {sigma : ℝ} (hν : IsCenteredSecondMoment ν (sigma ^ 2))
+    (hsigma : 0 < sigma) :
+    Tendsto (fun n : ℕ => (n : ℝ)⁻¹ *
+      ∑ k ∈ Finset.range n,
+        (iidSequenceLaw ν
+          {increment | 0 < AdditivePath.displacement (k + 1) increment}).toReal)
+      atTop (nhds (1 / 2 : ℝ)) := by
+  have hprob := tendsto_positivePartialSumProbability_half ν hν hsigma
+  have hreal : Tendsto
+      (fun n : ℕ => (iidSequenceLaw ν
+        {increment | 0 < AdditivePath.displacement n increment}).toReal)
+      atTop (nhds (1 / 2 : ℝ)) := by
+    have h := (ENNReal.tendsto_toReal (by norm_num :
+      (1 / 2 : ℝ≥0∞) ≠ ⊤)).comp hprob
+    have hhalf : (1 / 2 : ℝ≥0∞).toReal = (1 / 2 : ℝ) := by norm_num
+    simpa only [Function.comp_def, hhalf] using h
+  exact (hreal.comp (tendsto_add_atTop_nat 1)).cesaro
 
 end ProbabilityTheory.RandomWalk
 
