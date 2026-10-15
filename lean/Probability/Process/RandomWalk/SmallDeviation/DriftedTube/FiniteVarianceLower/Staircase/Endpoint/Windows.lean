@@ -26,7 +26,7 @@ The public objects and theorems in this file are:
 - `staircaseUpperEndpointWindow_interior` and
   `staircaseUpperEndpointWindow_last_subset`:
   the ordinary windows still match the following central window, and
-  the last window lies in $[s_L-vD,s_L]$.
+  the last window lies in both $[r_L,s_L]$ and $[s_L-vD,s_L]$.
 
 These are the endpoint definitions and equalities in Wang Yiyang,
 *Asymptotic speed of the $N$-branching random walk with infinite offspring*,
@@ -178,8 +178,8 @@ theorem staircaseUpperEndpointWindow_interior
   exact staircaseEndpointWindow_interior base width drift
     endpointFraction start length hnext q j hj hwidth
 
-/-- The last horizontal upper-endpoint window lies inside the upper
-terminal window of the rising target tube. -/
+/-- The last horizontal upper-endpoint window lies inside both the full
+terminal tube and its upper terminal window. -/
 theorem staircaseUpperEndpointWindow_last_subset
     (base width drift endpointFraction : ℝ)
     (start length : ℕ → ℕ)
@@ -197,10 +197,12 @@ theorem staircaseUpperEndpointWindow_last_subset
         staircaseUpperEndpointUpperFraction q width drift
           endpointFraction length (q - 1) *
           staircaseTubeWidth width drift length (q - 1)) ⊆
-    Set.Icc
-      (base + drift * (horizon : ℝ) / width ^ 2 + width -
-        endpointFraction * width)
-      (base + drift * (horizon : ℝ) / width ^ 2 + width) := by
+    Set.Icc (base + drift * (horizon : ℝ) / width ^ 2)
+        (base + drift * (horizon : ℝ) / width ^ 2 + width) ∩
+      Set.Icc
+        (base + drift * (horizon : ℝ) / width ^ 2 + width -
+          endpointFraction * width)
+        (base + drift * (horizon : ℝ) / width ^ 2 + width) := by
   have hlast : ¬q - 1 + 1 < q := by omega
   have hlastEq : q - 1 + 1 = q := by omega
   have hstartEnd : start (q - 1) + length (q - 1) = horizon := by
@@ -215,6 +217,8 @@ theorem staircaseUpperEndpointWindow_last_subset
       (sq_nonneg width)
   have hmax : 1 - endpointFraction ≤
       max (1 - endpointFraction) 0 := le_max_left _ _
+  have hmaxNonneg : 0 ≤ max (1 - endpointFraction) 0 :=
+    le_max_right _ _
   intro y hy
   have hlower :
       base + drift * (horizon : ℝ) / width ^ 2 +
@@ -231,8 +235,12 @@ theorem staircaseUpperEndpointWindow_last_subset
     rw [staircaseLowerEdge_add_staircaseTubeWidth_eq_startUpperBoundary
       base drift width start length hnext (q - 1)]
   constructor
-  · nlinarith [mul_le_mul_of_nonneg_right hmax hwidth.le]
-  · linarith
+  · constructor
+    · nlinarith [mul_nonneg hmaxNonneg hwidth.le]
+    · linarith
+  · constructor
+    · nlinarith [mul_le_mul_of_nonneg_right hmax hwidth.le]
+    · linarith
 
 end ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 
