@@ -27,6 +27,9 @@ The public theorem in this file is:
   to the time-amplitude rescaling $t\mapsto\sqrt m B(t/m)$.
 - `ProbabilityTheory.RandomWalk.tendstoInDistribution_normalizedLinearContinuousPath_finiteHorizon_brownian`:
   the same finite-horizon limit has the projected Brownian law $P^m$.
+- `ProbabilityTheory.RandomWalk.tendstoInDistribution_normalizedLinearContinuousPath_finiteHorizon`:
+  for every finite $s\le m$ and positive integer $m$, the path restricted
+  to $[0,s]$ converges to the Brownian restriction on $[0,s]$.
 
 This deterministic identity is the path-level step for applying
 Donsker's theorem to $Q_n\Pi_s^{-1}$ in Erwin Bolthausen,
@@ -201,6 +204,34 @@ theorem tendstoInDistribution_normalizedLinearContinuousPath_finiteHorizon_brown
           (P.map (hB.continuousPathMap hmeasurable)) (m : ℝ≥0) := by
             simpa only [NNReal.coe_natCast] using hlaw
       _ = _ := hprojection
+
+/-- Donsker's theorem on any finite horizon covered by a positive integer
+horizon; successive path restrictions give the exact projected law $P^s$. -/
+theorem tendstoInDistribution_normalizedLinearContinuousPath_finiteHorizon
+    (nu : Measure ℝ) [IsProbabilityMeasure nu]
+    (hcentered : ∫ x, x ∂nu = 0)
+    (hsecondMoment : ∫ x, x ^ 2 ∂nu = 1)
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+    [IsProbabilityMeasure P] {B : ℝ≥0 → Ω → ℝ}
+    (hB : IsBrownianReal B P)
+    (hcontinuous : ∀ ω, Continuous (B · ω))
+    (hmeasurable : ∀ t, Measurable (B t))
+    (s : ℝ≥0) (m : ℕ) (hm : 0 < m) (hsm : s ≤ m) :
+    TendstoInDistribution
+      (fun n increment => restrictPathTo s
+        (normalizedLinearContinuousPathUnbounded
+          (fun n => Real.sqrt n) n increment))
+      atTop
+      (fun ω => restrictPathTo s
+        (hB.continuousPathMap hmeasurable ω))
+      (fun _ => iidSequenceLaw nu) P := by
+  have hwhole :=
+    tendstoInDistribution_normalizedLinearContinuousPath_finiteHorizon_brownian
+      nu hcentered hsecondMoment hB hcontinuous hmeasurable m hm
+  have hrestricted := hwhole.continuous_comp
+    (continuous_restrictFinitePathTo s (m : ℝ≥0) hsm)
+  simpa only [Function.comp_def, restrictFinitePathTo_restrictPathTo]
+    using hrestricted
 
 end ProbabilityTheory.RandomWalk
 
