@@ -31,6 +31,9 @@ The public theorems in this file are:
 - `ProbabilityTheory.RandomWalk.rademacher_lastSignChangeIndex_eq_iff_crossing`:
   for $0<m<n$, the event $\mu_n=m$ is the union of a negative-to-zero
   crossing followed by a nonnegative tail and its reflected counterpart.
+- `ProbabilityTheory.RandomWalk.rademacher_normalizedPath_terminalSignStable`:
+  the polygonal walk has one weak sign on the interval
+  $[\mu_n/n,1]$.
 
 The final assertion is the parenthetical remark following the definitions
 of $\mu_n$ and $\nu_n$ on page 484 of Erwin Bolthausen,
@@ -346,6 +349,41 @@ theorem rademacher_lastSignChangeIndex_eq_iff_crossing
         hstart hbefore hprevious hzero hsurvive
     · exact lastSignChangeIndex_eq_of_negativeCrossing branch n start
         hstart hbefore hprevious hzero hsurvive
+
+/-- The selected one-sided tail remains one-sided after polygonal
+interpolation. -/
+theorem rademacher_normalizedPath_terminalSignStable
+    (branch : ℕ → Bool) (n : ℕ) (hn : 0 < n) :
+    (∀ t : unitInterval,
+        (lastSignChangeIndex n (rademacherIncrementPath branch) : ℝ) ≤
+          (n : ℝ) * (t : ℝ) →
+        0 ≤ normalizedLinearContinuousPathIcc
+          (fun j => Real.sqrt j) n (rademacherIncrementPath branch) t) ∨
+      (∀ t : unitInterval,
+        (lastSignChangeIndex n (rademacherIncrementPath branch) : ℝ) ≤
+          (n : ℝ) * (t : ℝ) →
+        normalizedLinearContinuousPathIcc
+          (fun j => Real.sqrt j) n (rademacherIncrementPath branch) t ≤ 0) := by
+  let μ := lastSignChangeIndex n (rademacherIncrementPath branch)
+  have hμle : μ ≤ n := lastSignChangeIndex_le n _
+  have hsqrt : 0 < Real.sqrt (n : ℝ) :=
+    Real.sqrt_pos.2 (by exact_mod_cast hn)
+  rcases signStableFrom_lastSignChangeIndex n
+      (rademacherIncrementPath branch) with hpositive | hnegative
+  · left
+    intro t ht
+    rw [normalizedLinearContinuousPathIcc_apply]
+    exact normalizedLinearPath_nonneg_after_grid
+      (fun j => Real.sqrt j) hn hsqrt hμle
+      (rademacherIncrementPath branch)
+      (fun j hμj hjn => hpositive j hμj hjn) t ht
+  · right
+    intro t ht
+    rw [normalizedLinearContinuousPathIcc_apply]
+    exact normalizedLinearPath_nonpos_after_grid
+      (fun j => Real.sqrt j) hn hsqrt hμle
+      (rademacherIncrementPath branch)
+      (fun j hμj hjn => hnegative j hμj hjn) t ht
 
 end ProbabilityTheory.RandomWalk
 
