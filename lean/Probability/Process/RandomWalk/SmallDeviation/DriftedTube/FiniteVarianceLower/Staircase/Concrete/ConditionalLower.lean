@@ -16,7 +16,8 @@ The public theorem in this file is:
 
 - `eventually_concreteStaircaseLowerBound_of_regularVariation`:
   for $t_1=\lfloor\Delta^2\rfloor$ and
-  $L\ge\lfloor\Delta^{2+\varepsilon}\rfloor$, the two reflected
+  $L\ge\lfloor\Delta^{2+\varepsilon}\rfloor$ and
+  $r_{0,n}\le 0\le r_{0,n}+\Delta_n$, the two reflected
   survival regular-variation inputs from Appendix A.2, the paper's
   block-scale limits, and fixed endpoint and rate margins imply
   $\mathbb P(E)\ge\exp(-d'L/\Delta^2)$ eventually.
@@ -66,8 +67,8 @@ theorem eventually_concreteStaircaseLowerBound_of_regularVariation
     (hvFinal : vFinal < 1)
     (hrateMogulskii : (Real.pi ^ 2 / 2) * sigma ^ 2 < narrowedRate)
     {horizon blockLength : ℕ → ℕ}
-    {width : ℕ → ℝ}
-    {margin drift base endpointFraction blockRate totalRate
+    {width base : ℕ → ℝ}
+    {margin drift endpointFraction blockRate totalRate
       alpha epsilon : ℝ}
     (hwidth : Tendsto width atTop atTop)
     (hlength : ∀ᶠ n : ℕ in atTop, 0 < blockLength n)
@@ -81,7 +82,8 @@ theorem eventually_concreteStaircaseLowerBound_of_regularVariation
       (blockLength n : ℝ) / width n ^ 3) atTop (𝓝 0))
     (hmargin : 0 < margin)
     (hdrift : 0 ≤ drift)
-    (hbase : base ≤ 0)
+    (hstart : ∀ᶠ n : ℕ in atTop,
+      -base n ∈ Set.Icc 0 (width n))
     (hendpoint : 0 ≤ endpointFraction)
     (hblockRate : 0 ≤ blockRate)
     (halpha : 0 < alpha)
@@ -101,7 +103,7 @@ theorem eventually_concreteStaircaseLowerBound_of_regularVariation
       Real.exp (-totalRate * (horizon n : ℝ) / width n ^ 2) ≤
         (iidSequenceLaw ν).real
           (driftedTubeEndpointWindowEvent (horizon n) (width n)
-            drift base endpointFraction) := by
+            drift (base n) endpointFraction) := by
   let Bc := hB.continuousModification hmeasurable
   have hBc : IsBrownianReal Bc P :=
     hB.isBrownianReal_continuousModification hmeasurable
@@ -113,20 +115,16 @@ theorem eventually_concreteStaircaseLowerBound_of_regularVariation
     exists_eventually_robustTransitionProbability_ge_exp_of_regularVariation
       ν hν hsigma hregPlus hregMinus hBc hBcContinuous hBcMeasurable
       hrho hrhoSmall hwidth hdrift halpha hdelta hepsilon
-  have hstart : ∀ᶠ n : ℕ in atTop, -base ∈ Set.Icc 0 (width n) := by
-    have hwide := hwidth.eventually (eventually_ge_atTop (-base))
-    filter_upwards [hwide] with n hn
-    exact ⟨by linarith, hn⟩
   have hentrance : ∀ᶠ n : ℕ in atTop,
       Real.exp (-(totalRate - blockRate) * (horizon n : ℝ) /
         width n ^ 2) ≤
         (iidSequenceLaw ν).real
           (robustMovingTransitionEvent
-            (Nat.floor (width n ^ 2)) (width n) drift (-base)) := by
+            (Nat.floor (width n ^ 2)) (width n) drift (-base n)) := by
     filter_upwards [hbudget, hstart, hhorizon]
       with n hnBudget hnStart hnHorizon
     simpa [Asymptotics.floorBlockLength] using
-      hnBudget (-base) hnStart (horizon n) hnHorizon
+      hnBudget (-base n) hnStart (horizon n) hnHorizon
   exact eventually_concreteStaircaseLowerBound_of_robustEntrance
     hν hsigma m hm huInterior huvInterior hvInterior
     huFinal huvFinal hvFinal hrateMogulskii
