@@ -33,6 +33,9 @@ The public definitions and theorems in this file are:
   $\{f:c<\tau'(f)\}$ is open.
 - `ContinuousMap.measurable_firstNoSignChangeStart`:
   $f\mapsto\tau'(f)$ is Borel measurable.
+- `ContinuousMap.continuousAt_firstNoSignChangeStart_of_eq_lastZero`:
+  $f\mapsto\tau'(f)$ is continuous at each path satisfying
+  $\tau'(f)=g(f)$.
 - `ContinuousMap.lastSignChangeMeanderTransform`:
   $\Psi(f)(t)=|f(\tau'+(1-\tau')t)|/\sqrt{1-\tau'}$
   when $\tau'<1$.
@@ -173,6 +176,37 @@ theorem measurable_firstNoSignChangeStart :
   apply measurable_of_Ioi
   intro c
   exact (isOpen_setOf_lt_lastOppositeSign c).measurableSet
+
+/-- The last opposite-sign time is continuous at a path where it agrees
+with the last zero. Lower continuity follows from the open opposite-sign
+event, and upper continuity from the closed last-zero event. -/
+theorem continuousAt_firstNoSignChangeStart_of_eq_lastZero
+    (f : C(unitInterval, ℝ))
+    (heq : firstNoSignChangeStart f = lastZero f) :
+    ContinuousAt firstNoSignChangeStart f := by
+  rw [ContinuousAt, tendsto_order]
+  constructor
+  · intro c hc
+    have hopen : IsOpen {g : C(unitInterval, ℝ) |
+        c < firstNoSignChangeStart g} := by
+      simpa only [firstNoSignChangeStart_eq_lastOppositeSign] using
+        isOpen_setOf_lt_lastOppositeSign c
+    exact hopen.mem_nhds hc
+  · intro c hc
+    have hclosed : IsClosed {g : C(unitInterval, ℝ) |
+        c ≤ lastZero g} := isClosed_setOf_le_lastZero c
+    have hmem : {g : C(unitInterval, ℝ) | lastZero g < c} ∈ nhds f := by
+      have hopen : IsOpen {g : C(unitInterval, ℝ) | lastZero g < c} := by
+        convert hclosed.isOpen_compl using 1
+        ext g
+        simp only [Set.mem_compl_iff, Set.mem_ofPred_eq, not_le]
+      exact hopen.mem_nhds (by simpa only [Set.mem_ofPred_eq, ← heq] using hc)
+    filter_upwards [hmem] with g hg
+    calc
+      firstNoSignChangeStart g = lastOppositeSign g :=
+        firstNoSignChangeStart_eq_lastOppositeSign g
+      _ ≤ lastZero g := lastOppositeSign_le_lastZero g
+      _ < c := hg
 
 /-- Bolthausen's terminal path after its last sign change, rescaled to
 unit duration; the endpoint case is assigned the zero path. -/
