@@ -7,25 +7,41 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.Path.Block.Law
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.CLT
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Gaussian.BlockEndpoint
 public import Probability.ConvergenceInDistribution.Independence
 public import Probability.ConvergenceInDistribution.Portmanteau
 
 /-!
-# Finite-dimensional Gaussian limits for Mogulskii blocks
+# Gaussian block-vector limits for Mogulskii estimates
 
-The endpoint CLT is lifted to consecutive independent blocks.  These results
-are finite-dimensional inputs for the path-level invariance principle; they
-do not assert tightness in path space.
+Let $b_n=\lfloor c x_n^2\rfloor$ and
+$B_{n,j}=\frac{S_{(j+1)b_n}-S_{jb_n}}{x_n}$ for $j<m$.
+The public theorems are:
+
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.tendstoInDistribution_diffusiveBlockSums`:
+  $(B_{n,j})_{j<m}$ converges in law to $m$ independent variables
+  $\sqrt c Z_j$ with standard Gaussian $Z_j$.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.measure_gaussianBlockBox_le_liminf`:
+  the limiting Gaussian mass of an open box is at most the liminf of the
+  corresponding block-vector probabilities.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.measure_gaussianBlockBox_eq_prod`:
+  that Gaussian box mass is
+  $\prod_{j<m}\mathbb P(\frac{a_j}{\sqrt c}<Z_j<\frac{b_j}{\sqrt c})$.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.prod_gaussian_Ioo_le_liminf_measure_diffusiveBlockSums`:
+  the preceding product is at most
+  $\liminf_n\mathbb P(a_j<B_{n,j}<b_j\text{ for every }j<m)$.
+
+These are finite-dimensional inputs for the block argument of Mogul'skii,
+*Small Deviations in a Space of Trajectories*, Theorem 3, Section 4,
+p. 764 (DOI 10.1137/1119081). The endpoint CLT comes from the Donsker
+layer; this file does not assert tightness in path space.
 -/
 
 open Filter MeasureTheory Set
 
 @[expose] public section
 
-namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
-
-
+namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian
 
 /-- Any fixed finite vector of consecutive diffusive block sums converges to
 independent centered Gaussian increments. -/
@@ -197,4 +213,4 @@ theorem prod_gaussian_Ioo_le_liminf_measure_diffusiveBlockSums
   exact measure_gaussianBlockBox_le_liminf ν hcentered hsecondMoment
     hscale hconstant blocks lower upper
 
-end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
+end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian

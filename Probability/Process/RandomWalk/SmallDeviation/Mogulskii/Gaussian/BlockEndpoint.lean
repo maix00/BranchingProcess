@@ -11,10 +11,23 @@ public import Probability.Process.RandomWalk.Path.Basic
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.BlockScale
 
 /-!
-# Diffusive block endpoint adapters for Mogulskii estimates
+# Diffusive Gaussian block endpoint adapters for Mogulskii estimates
 
-The central limit theorem itself lives in the Donsker layer.  This file only
-connects it to the subdiffusive block scale used by Mogulskii's proof.
+Let $b_n=\lfloor c x_n^2\rfloor$ with $c>0$ and $x_n\to\infty$. The public
+theorems in this file are:
+
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.tendstoInDistribution_diffusiveBlockEndpoint`:
+  the product of $\frac{S_{b_n}}{\sqrt{b_n}}$ and
+  $\frac{\sqrt{b_n}}{x_n}$ converges in law to
+  $\sqrt c Z$, where $Z$ is standard Gaussian. The separate factors also
+  define the expression when $b_n=0$.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.tendstoInDistribution_partialSum_diffusiveBlock_div_scale`:
+  the direct quotient $\frac{S_{b_n}}{x_n}$ converges in law to $\sqrt c Z$.
+
+The central limit theorem itself lives in the Donsker layer. These are the
+single-block inputs used in the proof of Mogul'skii, *Small Deviations in a
+Space of Trajectories*, Theorem 3, Section 4, p. 764
+(DOI 10.1137/1119081).
 -/
 
 open Filter MeasureTheory
@@ -22,9 +35,7 @@ open Filter MeasureTheory
 @[expose] public section
 open scoped BigOperators
 
-namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
-
-
+namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian
 
 /-- The normalized endpoint of a diffusive block converges to a Gaussian
 scaled by the square root of the block constant.  The two displayed factors
@@ -84,4 +95,4 @@ theorem tendstoInDistribution_partialSum_diffusiveBlock_div_scale
   · intro n
     exact (displacement_measurable _).div_const _ |>.aemeasurable
 
-end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
+end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian

@@ -9,7 +9,7 @@ module
 public import Probability.Process.RandomWalk.Path.Block.Partition.Normalized
 public import Probability.Process.RandomWalk.Path.Block.Partition
 public import Probability.Process.RandomWalk.Kernel.Killed.Partition
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.FiniteDimensional
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Gaussian.BlockVector
 public import Probability.Process.RandomWalk.FunctionalLimit.Donsker.Tightness.Maximal
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Tightness
 
@@ -58,7 +58,7 @@ theorem prod_gaussian_Ioo_le_liminf_measure_partitionEndpoints
                 scale n ∈ Set.Ioo (lower k) (upper k)}) := by
   let lowerBlock : Fin blocks → ℝ := fun j => target j - radius
   let upperBlock : Fin blocks → ℝ := fun j => target j + radius
-  have hbox := prod_gaussian_Ioo_le_liminf_measure_diffusiveBlockSums
+  have hbox := Gaussian.prod_gaussian_Ioo_le_liminf_measure_diffusiveBlockSums
     ν hcentered hsecondMoment hscale hconstant blocks lowerBlock upperBlock
   refine hbox.trans (Filter.liminf_le_liminf ?_)
   filter_upwards [] with n
