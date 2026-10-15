@@ -50,10 +50,6 @@ theorem eventually_concreteStaircaseUpperEndpointLowerBound_of_regularVariation
     (hregMinus : Asymptotics.IsRegularlyVaryingAtTop
       (FunctionalLimit.Conditioned.survivalProbabilityReal
         (ν.map fun x : ℝ => -x)) (-(1 / 2 : ℝ)))
-    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
-    [IsProbabilityMeasure P] {B : ℝ≥0 → Ω → ℝ}
-    (hB : IsBrownianReal B P)
-    (hmeasurable : ∀ t, Measurable (B t))
     {rho : ℝ} (hrho : 0 < rho) (hrhoSmall : rho < 1 / 48)
     (m : ℕ) (hm : 2 ≤ m)
     (huInterior : 0 < uInterior)
@@ -102,16 +98,9 @@ theorem eventually_concreteStaircaseUpperEndpointLowerBound_of_regularVariation
         (iidSequenceLaw ν).real
           (driftedTubeUpperEndpointWindowEvent (horizon n) (width n)
             drift (base n) endpointFraction) := by
-  let Bc := hB.continuousModification hmeasurable
-  have hBc : IsBrownianReal Bc P :=
-    hB.isBrownianReal_continuousModification hmeasurable
-  have hBcContinuous : ∀ ω, Continuous (Bc · ω) :=
-    hB.continuous_continuousModification hmeasurable
-  have hBcMeasurable : ∀ t, Measurable (Bc t) :=
-    hB.measurable_continuousModification hmeasurable
   have hbudget :=
     exists_eventually_robustTransitionProbability_ge_exp_of_regularVariation
-      ν hν hsigma hregPlus hregMinus hBc hBcContinuous hBcMeasurable
+      ν hν hsigma hregPlus hregMinus
       hrho hrhoSmall hwidth hdrift halpha hdelta hepsilon
   have hentrance : ∀ᶠ n : ℕ in atTop,
       Real.exp (-(totalRate - blockRate) * (horizon n : ℝ) /

@@ -7,6 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Survival
+public import Probability.Process.RandomWalk.Fluctuation.DescendingLocalTime
 public import Analysis.Asymptotics.RegularVariation.LowerPower
 public import Analysis.Asymptotics.ShiftedFloor
 
@@ -17,6 +18,8 @@ The public objects and theorems in this file are:
 
 - ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.survivalProbabilityReal:
   $x\mapsto\mathbb P(C_{\lfloor x\rfloor})$.
+- ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.survivalProbabilityReal_eq_firstDescendingLadderTime_tail:
+  $\mathbb P(C_{\lfloor x\rfloor})=\mathbb P(T^-_1>\lfloor x\rfloor)$.
 - ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.survivalProbabilityReal_antitone:
   $x\le y$ implies $\mathbb P(C_{\lfloor y\rfloor})\le
   \mathbb P(C_{\lfloor x\rfloor})$.
@@ -51,6 +54,20 @@ noncomputable def survivalProbabilityReal (ν : Measure ℝ)
     (x : ℝ) : ℝ :=
   ((iidSequenceLaw ν)
     {increment | SurvivesNonnegative (Nat.floor x) increment}).toReal
+
+/-- The real-indexed survival probability is the tail of the first strict
+descending ladder time. This is the identity $C_N=\{T^-_1>N\}$ used before
+equation (2.3) in Caravenna--Chaumont, *Invariance principles for random
+walks conditioned to stay positive*, Lemma 2.1. -/
+theorem survivalProbabilityReal_eq_firstDescendingLadderTime_tail
+    (ν : Measure ℝ) (x : ℝ) :
+    survivalProbabilityReal ν x =
+      ((iidSequenceLaw ν)
+        {increment |
+          (Nat.floor x : WithTop ℕ) <
+            strictDescendingLadderTime increment 1}).toReal := by
+  unfold survivalProbabilityReal
+  rw [measure_survival_eq_firstDescendingLadderTime_gt]
 
 /-- Longer survival has smaller probability. -/
 theorem survivalProbabilityReal_antitone
