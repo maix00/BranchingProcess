@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Survival
-public import Probability.Process.RandomWalk.Fluctuation.DescendingLocalTime
+public import Probability.Process.RandomWalk.Fluctuation.StableLadderTimeTail
 public import Analysis.Asymptotics.RegularVariation.LowerPower
 public import Analysis.Asymptotics.ShiftedFloor
 
@@ -23,6 +23,9 @@ The public objects and theorems in this file are:
 - ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.survivalProbabilityReal_regularVariation_of_ladderTimeTail:
   regular variation of the first descending ladder-time tail transfers
   to the survival probability.
+- ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.survivalProbabilityReal_regularVariation_of_ladderTimeStableAttraction:
+  stable attraction of the finite first ladder time at index $1/2$
+  gives regular variation of $\mathbb P(C_{\lfloor x\rfloor})$ at index $-1/2$.
 - ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.survivalProbabilityReal_antitone:
   $x\le y$ implies $\mathbb P(C_{\lfloor y\rfloor})\le
   \mathbb P(C_{\lfloor x\rfloor})$.
@@ -83,6 +86,27 @@ theorem survivalProbabilityReal_regularVariation_of_ladderTimeTail
       (survivalProbabilityReal ν) (-(1 / 2 : ℝ)) := by
   simpa only [funext (survivalProbabilityReal_eq_firstDescendingLadderTime_tail ν)]
     using htail
+
+/-- The stable-ladder-time and one-sided-tail steps in
+Caravenna--Chaumont, *Invariance principles for random walks conditioned
+to stay positive*, Lemma 2.1, yield its finite-variance survival exponent
+through $C_N=\{T^-_1>N\}$. -/
+theorem survivalProbabilityReal_regularVariation_of_ladderTimeStableAttraction
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (hfinite : iidSequenceLaw ν {increment |
+      strictDescendingLadderTime increment 1 = ⊤} = 0)
+    {limit : Measure ℝ}
+    (hlimit : IsAlphaStable (1 / 2 : ℝ) limit)
+    {scale center : ℕ → ℝ}
+    (h : @IsInDomainOfAttractionAlong
+      (firstDescendingLadderTimeLaw (iidSequenceLaw ν)) limit inferInstance
+      hlimit.isProbabilityMeasure scale center) :
+    Asymptotics.IsRegularlyVaryingAtTop
+      (survivalProbabilityReal ν) (-(1 / 2 : ℝ)) := by
+  have htail :=
+    firstDescendingLadderTimeTailReal_regularVariation_of_stableAttraction
+      hfinite hlimit h (by norm_num) (by norm_num)
+  exact survivalProbabilityReal_regularVariation_of_ladderTimeTail ν htail
 
 /-- Longer survival has smaller probability. -/
 theorem survivalProbabilityReal_antitone
