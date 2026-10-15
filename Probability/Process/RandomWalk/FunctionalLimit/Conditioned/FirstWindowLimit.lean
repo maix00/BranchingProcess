@@ -17,22 +17,26 @@ public import Topology.Cadlag.Skorokhod.ContinuousMap
 /-!
 # Functional limit after the first eligible window
 
-The public theorem in this file is:
+The public theorems in this file are:
 
 - `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.tendstoInDistribution_centeredFirstWindowShift`:
-  the centered normalized walk shifted at its first eligible unit window
-  converges on $[0,1]$ to the similarly shifted Brownian path.
+  $\Phi(X_n)\Rightarrow\Phi(W)$ on $[0,1]$, where
+  $\Phi(f)(t)=f(T(f)+t)-f(T(f))$ and $T$ is the first eligible
+  unit-window time.
 - `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.tendstoInDistribution_centeredFirstWindowShift_unitInterval`:
-  the same limit on the real unit-interval path space used by the
-  survival-conditioned walk law.
+  $\Phi(X_n)|_{[0,1]}\Rightarrow\Phi(W)|_{[0,1]}$ in
+  $C([0,1],\mathbb R)$.
 - `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.tendstoInDistribution_survivalConditionedPath`:
-  the survival-conditioned polygonal walk converges to the centered
-  Brownian first-window path.
+  $\mathcal L(X_n\mid S_1,\ldots,S_n\ge0)\Rightarrow
+  \mathcal L(\Phi(W)|_{[0,1]})$ in $C([0,1],\mathbb R)$.
 - `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.tendstoInDistribution_survivalConditionedInterpolatedCadlagPath`:
-  the same polygonal paths converge when viewed in the Skorokhod
-  càdlàg space.
+  $\mathcal L(\iota X_n\mid S_1,\ldots,S_n\ge0)\Rightarrow
+  \mathcal L(\iota\Phi(W)|_{[0,1]})$ in Skorokhod $J_1$ space,
+  where $\iota:C([0,1],\mathbb R)\to D([0,1],\mathbb R)$ is the
+  canonical inclusion.
 
-This proves the centered path comparison of Erwin Bolthausen,
+The first three statements formalize the centered path comparison of
+Erwin Bolthausen,
 *On a functional central limit theorem for random walks conditioned to
 stay positive*, Theorem 3.2, equations (3.3)--(3.8), Ann. Probab. 4(3)
 (1976), 480--485, DOI 10.1214/aop/1176996098. For a fixed finite
@@ -40,7 +44,12 @@ cutoff, Donsker convergence and Lemma 2.5 give the shifted limit;
 equation (3.5) controls the probability that the cutoff is reached;
 the Brownian cutoff error tends to zero. The final weak-convergence
 comparison is expressed with bounded Lipschitz observables in place
-of the article's continuity-set formulation.
+of the article's continuity-set formulation. The identification of
+$\mathcal L(\Phi(W))$ with Brownian meander is a separate step on page
+484 of Bolthausen. Donald L. Iglehart, *Functional Central Limit Theorems
+for Random Walks Conditioned to Stay Positive*, Ann. Probab. 2(4)
+(1974), 608--619, DOI 10.1214/aop/1176996607, Section 3, identifies
+the meander law through the path after Brownian motion's last zero.
 -/
 
 @[expose] public section
