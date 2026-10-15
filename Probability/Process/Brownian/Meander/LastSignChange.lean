@@ -26,6 +26,11 @@ The public theorem in this file is:
   the two resulting probability laws on $C([0,1])$ agree.
 - `ProbabilityTheory.IsBrownianReal.ae_continuousAt_lastSignChangeMeanderTransform`:
   $\Psi$ is continuous at almost every Brownian path.
+- `ProbabilityTheory.IsBrownianReal.ae_continuousAt_signStableMeanderTransform`:
+  Bolthausen's original sign-stable $\Psi$ is continuous at almost
+  every Brownian path.
+- `ProbabilityTheory.IsBrownianReal.signStableMeanderPathLaw_eq_lastZeroMeanderPathLaw`:
+  the original sign-stable transform has Iglehart's terminal-excursion law.
 
 The proof uses atomlessness of interval minima at countably many
 rational starts. This identifies the two path transforms appearing on
@@ -240,6 +245,69 @@ theorem IsBrownianReal.ae_continuousAt_lastSignChangeMeanderTransform
     with ω heq hlt
   exact ContinuousMap.continuousAt_lastSignChangeMeanderTransform_of_eq_lastZero
     _ heq hlt
+
+/-- The source transform agrees locally with the endpoint-sign version
+at every Brownian path whose endpoint is nonzero. Consequently the
+source transform is continuous almost surely as asserted on page 484
+of Bolthausen's article. -/
+theorem IsBrownianReal.ae_continuousAt_signStableMeanderTransform
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+    [IsProbabilityMeasure P] {B : ℝ≥0 → Ω → ℝ}
+    (hB : IsBrownianReal B P)
+    (hmeasurable : ∀ t, Measurable (B t)) :
+    ∀ᵐ ω ∂P, ContinuousAt ContinuousMap.signStableMeanderTransform
+      (restrictPathToUnitInterval
+        (hB.continuousPathMap hmeasurable ω)) := by
+  filter_upwards [hB.ae_continuousAt_lastSignChangeMeanderTransform hmeasurable,
+    hB.ae_lastZero_restrictPathToUnitInterval_lt_top hmeasurable]
+    with ω hcont hlt
+  let f := restrictPathToUnitInterval
+    (hB.continuousPathMap hmeasurable ω)
+  have hend : f ⊤ ≠ 0 := by
+    intro hzero
+    exact (not_le_of_gt hlt)
+      (ContinuousMap.le_lastZero_of_apply_eq_zero f hzero)
+  have hevent : ∀ᶠ g in nhds f, g ⊤ ≠ 0 := by
+    have hopen : IsOpen {g : C(unitInterval, ℝ) | g ⊤ ≠ 0} :=
+      (isClosed_singleton.isOpen_compl).preimage
+        (continuous_eval_const ⊤)
+    exact hopen.mem_nhds hend
+  apply hcont.congr
+  filter_upwards [hevent] with g hg
+  exact (ContinuousMap.signStableMeanderTransform_eq_lastSignChangeMeanderTransform
+    g hg).symm
+
+/-- Bolthausen's original sign-stable transform and Iglehart's
+last-zero transform induce the same Brownian path law. -/
+theorem IsBrownianReal.signStableMeanderPathLaw_eq_lastZeroMeanderPathLaw
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+    [IsProbabilityMeasure P] {B : ℝ≥0 → Ω → ℝ}
+    (hB : IsBrownianReal B P)
+    (hmeasurable : ∀ t, Measurable (B t)) :
+    P.map (fun ω => ContinuousMap.signStableMeanderTransform
+      (restrictPathToUnitInterval
+        (hB.continuousPathMap hmeasurable ω))) =
+      hB.lastZeroMeanderPathLaw hmeasurable := by
+  calc
+    P.map (fun ω => ContinuousMap.signStableMeanderTransform
+        (restrictPathToUnitInterval
+          (hB.continuousPathMap hmeasurable ω))) =
+      P.map (fun ω => ContinuousMap.lastSignChangeMeanderTransform
+        (restrictPathToUnitInterval
+          (hB.continuousPathMap hmeasurable ω))) := by
+        apply Measure.map_congr
+        filter_upwards [hB.ae_lastZero_restrictPathToUnitInterval_lt_top
+          hmeasurable] with ω hlt
+        let f := restrictPathToUnitInterval
+          (hB.continuousPathMap hmeasurable ω)
+        have hend : f ⊤ ≠ 0 := by
+          intro hzero
+          exact (not_le_of_gt hlt)
+            (ContinuousMap.le_lastZero_of_apply_eq_zero f hzero)
+        exact ContinuousMap.signStableMeanderTransform_eq_lastSignChangeMeanderTransform
+          f hend
+    _ = hB.lastZeroMeanderPathLaw hmeasurable :=
+      hB.lastSignChangeMeanderPathLaw_eq_lastZeroMeanderPathLaw hmeasurable
 
 end ProbabilityTheory
 

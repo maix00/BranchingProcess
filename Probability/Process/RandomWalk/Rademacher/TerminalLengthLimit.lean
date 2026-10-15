@@ -16,6 +16,8 @@ The public theorem in this file is:
 
 - `ProbabilityTheory.RandomWalk.tendsto_rademacher_returnProbability_zero`:
   for the simple symmetric walk $S_n$, $\mathbb P(S_n=0)\to0$.
+- `ProbabilityTheory.RandomWalk.tendsto_booleanRademacher_returnProbability_zero`:
+  the same estimate in the Boolean coding of the simple symmetric walk.
 - `ProbabilityTheory.RandomWalk.tendsto_terminalSignStableLength_cell_zero`:
   for each fixed $r$, $\mathbb P(\nu_n=r)\to0$.
 - `ProbabilityTheory.RandomWalk.tendsto_terminalSignStableLength_le_zero`:
@@ -81,6 +83,25 @@ theorem tendsto_rademacher_returnProbability_zero :
   rw [Measure.map_id, hzero] at hprob
   exact (tendsto_congr' htail).mp hprob
 
+/-- Return probabilities in the Boolean realization of the simple
+symmetric walk tend to zero. -/
+theorem tendsto_booleanRademacher_returnProbability_zero :
+    Tendsto (fun n : ℕ => (iidSequenceLaw fairBoolMeasure)
+      {branch : ℕ → Bool |
+        AdditivePath.displacement n (rademacherIncrementPath branch) = 0})
+      atTop (nhds 0) := by
+  have hmap (n : ℕ) :
+      (iidSequenceLaw fairBoolMeasure)
+          {branch : ℕ → Bool |
+            AdditivePath.displacement n (rademacherIncrementPath branch) = 0} =
+        (iidSequenceLaw rademacherMeasure)
+          {increment : ℕ → ℝ | AdditivePath.displacement n increment = 0} := by
+    rw [← map_iidSequenceLaw_rademacherIncrementPath,
+      Measure.map_apply measurable_rademacherIncrementPath]
+    · rfl
+    · exact (measurableSet_singleton 0).preimage (displacement_measurable n)
+  simpa only [hmap] using tendsto_rademacher_returnProbability_zero
+
 /-- A fixed terminal length has vanishing mass: on `νₙ = r`, the
 starting position `n - r` of the last sign-stable segment is a return
 to zero. -/
@@ -89,26 +110,12 @@ theorem tendsto_terminalSignStableLength_cell_zero (length : ℕ) :
       {branch : ℕ → Bool |
         terminalSignStableLength n (rademacherIncrementPath branch) = length})
       atTop (nhds 0) := by
-  have hreturn : Tendsto (fun n : ℕ => (iidSequenceLaw fairBoolMeasure)
-      {branch : ℕ → Bool |
-        AdditivePath.displacement n (rademacherIncrementPath branch) = 0})
-      atTop (nhds 0) := by
-    have hmap (n : ℕ) :
-        (iidSequenceLaw fairBoolMeasure)
-            {branch : ℕ → Bool |
-              AdditivePath.displacement n (rademacherIncrementPath branch) = 0} =
-          (iidSequenceLaw rademacherMeasure)
-            {increment : ℕ → ℝ | AdditivePath.displacement n increment = 0} := by
-      rw [← map_iidSequenceLaw_rademacherIncrementPath,
-        Measure.map_apply measurable_rademacherIncrementPath]
-      · rfl
-      · exact (measurableSet_singleton 0).preimage (displacement_measurable n)
-    simpa only [hmap] using tendsto_rademacher_returnProbability_zero
   have hupper : Tendsto (fun n : ℕ => (iidSequenceLaw fairBoolMeasure)
       {branch : ℕ → Bool |
         AdditivePath.displacement (n - length)
           (rademacherIncrementPath branch) = 0}) atTop (nhds 0) :=
-    hreturn.comp (tendsto_sub_atTop_nat length)
+    tendsto_booleanRademacher_returnProbability_zero.comp
+      (tendsto_sub_atTop_nat length)
   apply tendsto_of_tendsto_of_tendsto_of_le_of_le'
     (tendsto_const_nhds : Tendsto (fun _ : ℕ => (0 : ℝ≥0∞)) atTop (nhds 0))
     hupper
