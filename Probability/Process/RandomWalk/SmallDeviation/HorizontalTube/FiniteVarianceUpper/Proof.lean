@@ -21,6 +21,8 @@ Write
 \]
 Here `S_j` is the partial sum of the IID increments with centered law `ν`.
 
+The public definitions and theorems are:
+
 - `partitionTubeParameter`, `partitionTubeWidth`, and `partitionTubeEvent`:
   the fixed translated corridors used to cover the offsets $a\in[0,1]$.
 - `smallDeviationBlockFactor` and `smallDeviationBlockLength`:
