@@ -15,24 +15,31 @@ public import Mathlib.Topology.Order.IntermediateValue
 The public definitions and theorems in this file are:
 
 - `ContinuousMap.lastOppositeSign`: the supremum of times at which a
-  path has sign opposite to its value at time one.
+  path has sign opposite to its value at time one,
+  $\sup\{t:f(t)f(1)<0\}$.
 - `ContinuousMap.firstNoSignChangeStart`: the earliest start of a tail
-  on which the path keeps the endpoint's weak sign.
+  on which the path keeps the endpoint's weak sign,
+  $\inf\{t:\forall s\ge t,\ f(s)f(1)\ge0\}$.
 - `ContinuousMap.firstNoSignChangeStart_eq_lastOppositeSign`:
   these two definitions of the last-sign-change time agree.
+- `ContinuousMap.le_lastZero_of_opposite_sign`: $f(t)f(1)<0$
+  implies $t\le g(f)$, where $g(f)$ is the last zero.
 - `ContinuousMap.lastOppositeSign_le_lastZero`: the last opposite-sign
-  time is no later than the last zero.
+  time is no later than the last zero, $\tau'(f)\le g(f)$.
 - `ContinuousMap.lastOppositeSign_eq_lastZero_of_approaches`:
-  these times agree when opposite-sign values occur arbitrarily close
-  to the last zero from the left.
+  $\tau'(f)=g(f)$ if every $c<g(f)$ precedes some $t$ with
+  $f(t)f(1)<0$.
+- `ContinuousMap.isOpen_setOf_lt_lastOppositeSign`:
+  $\{f:c<\tau'(f)\}$ is open.
 - `ContinuousMap.measurable_firstNoSignChangeStart`:
-  the first stable-sign tail time is Borel measurable.
+  $f\mapsto\tau'(f)$ is Borel measurable.
 - `ContinuousMap.lastSignChangeMeanderTransform`:
-  Bolthausen's rescaled absolute terminal segment.
+  $\Psi(f)(t)=|f(\tau'+(1-\tau')t)|/\sqrt{1-\tau'}$
+  when $\tau'<1$.
 - `ContinuousMap.measurable_lastSignChangeMeanderTransform`:
-  this path-valued transform is Borel measurable.
+  $f\mapsto\Psi(f)$ is Borel measurable.
 - `ContinuousMap.lastSignChangeMeanderTransform_eq_lastZeroMeanderTransform`:
-  the Bolthausen and Iglehart path transforms agree under the same
+  $\Psi(f)=|f(g+(1-g)\cdot)|/\sqrt{1-g}$ under the same
   opposite-sign accumulation condition.
 
 The last-sign-change time is the path functional used in the sketch at
