@@ -34,7 +34,9 @@ stay positive*, Theorem 3.2, equations (3.3)--(3.8), Ann. Probab. 4(3)
 (1976), 480--485, DOI 10.1214/aop/1176996098. For a fixed finite
 cutoff, Donsker convergence and Lemma 2.5 give the shifted limit;
 equation (3.5) controls the probability that the cutoff is reached;
-the Brownian cutoff error tends to zero.
+the Brownian cutoff error tends to zero. The final weak-convergence
+comparison is expressed with bounded Lipschitz observables in place
+of the article's continuity-set formulation.
 -/
 
 @[expose] public section
