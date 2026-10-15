@@ -8,11 +8,12 @@ module
 
 public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Staircase.Concrete.AsymptoticUpper
 public import Probability.Process.RandomWalk.SmallDeviation.Entrance.RobustExponentialBudget
+public import Analysis.Asymptotics.IntermediatePowerBlock
 
 /-!
 # Upper-endpoint tilted-tube bound from conditioned entrance estimates
 
-The public theorem in this file is:
+The public theorems in this file are:
 
 - `eventually_concreteStaircaseUpperEndpointLowerBound_of_centeredFiniteVariance`:
   for $t_1=\lfloor\Delta_n^2\rfloor$ and
@@ -20,6 +21,9 @@ The public theorem in this file is:
   survival bounds for the walk and its reflection, the conditioned meander
   transition estimate, and the staircase scale and margin conditions
   imply $\mathbb P(E_{\rm upper})\ge\exp(-d'L_n/\Delta_n^2)$.
+- `eventually_concreteStaircaseUpperEndpointLowerBound_of_powerBlock`:
+  the same estimate with $\ell_n=\lfloor\Delta_n^{2+\eta}\rfloor$ and
+  $0<\eta<\min(1,\varepsilon)$.
 
 This is the symmetric endpoint part of Wang Yiyang,
 *Asymptotic speed of the $N$-branching random walk with infinite offspring*,
@@ -115,6 +119,76 @@ theorem eventually_concreteStaircaseUpperEndpointLowerBound_of_centeredFiniteVar
     hwidth hlength hremaining hquadratic hcubic hmargin hdrift
     hendpoint hblockRate hrate hinteriorLower hinteriorUpper
     hfinalLower hfinalUpper hentrance
+
+/-- Choose the staircase length as
+$\ell_n=\lfloor\Delta_n^{2+\eta}\rfloor$; its scale conditions and its
+fit inside $L_n\ge\lfloor\Delta_n^{2+\varepsilon}\rfloor$ follow from
+$0<\eta<\min(1,\varepsilon)$. -/
+theorem eventually_concreteStaircaseUpperEndpointLowerBound_of_powerBlock
+    {ν : Measure ℝ} [IsProbabilityMeasure ν]
+    {sigma narrowedRate uInterior vInterior uFinal vFinal : ℝ}
+    (hν : IsCenteredSecondMoment ν (sigma ^ 2))
+    (hsigma : 0 < sigma)
+    {rho : ℝ} (hrho : 0 < rho) (hrhoSmall : rho < 1 / 48)
+    (m : ℕ) (hm : 2 ≤ m)
+    (huInterior : 0 < uInterior)
+    (huvInterior : uInterior < vInterior)
+    (hvInterior : vInterior < 1)
+    (huFinal : 0 < uFinal)
+    (huvFinal : uFinal < vFinal)
+    (hvFinal : vFinal < 1)
+    (hrateMogulskii : (Real.pi ^ 2 / 2) * sigma ^ 2 < narrowedRate)
+    {horizon : ℕ → ℕ} {width base : ℕ → ℝ}
+    {margin drift endpointFraction blockRate totalRate alpha epsilon eta : ℝ}
+    (hwidth : Tendsto width atTop atTop)
+    (hhorizon : ∀ᶠ n : ℕ in atTop,
+      Nat.floor (width n ^ (2 + epsilon)) ≤ horizon n)
+    (heta : 0 < eta) (hetaOne : eta < 1) (hetaEpsilon : eta < epsilon)
+    (hmargin : 0 < margin) (hdrift : 0 ≤ drift)
+    (hstart : ∀ᶠ n : ℕ in atTop,
+      -base n ∈ Set.Icc 0 (width n))
+    (hendpoint : 0 ≤ endpointFraction)
+    (hblockRate : 0 ≤ blockRate)
+    (halpha : 0 < alpha) (hepsilon : 0 < epsilon)
+    (hdelta : 0 < totalRate - blockRate)
+    (hrate : narrowedRate < blockRate * staircaseBinWidth m ^ 2)
+    (hinteriorLower : (1 / 3 : ℝ) / staircaseBinWidth m +
+      margin < uInterior)
+    (hinteriorUpper : vInterior + margin ≤
+      ((2 / 3 : ℝ) - 1 / (3 * (m : ℝ))) /
+        staircaseBinWidth m)
+    (hfinalLower : max (1 - endpointFraction) 0 /
+        staircaseBinWidth m + margin < uFinal)
+    (hfinalUpper : vFinal + margin ≤
+      (1 - 1 / (3 * (m : ℝ))) /
+        staircaseBinWidth m) :
+    ∀ᶠ n : ℕ in atTop,
+      Real.exp (-totalRate * (horizon n : ℝ) / width n ^ 2) ≤
+        (iidSequenceLaw ν).real
+          (driftedTubeUpperEndpointWindowEvent (horizon n) (width n)
+            drift (base n) endpointFraction) := by
+  let blockLength : ℕ → ℕ :=
+    Asymptotics.floorBlockLength (fun n => width n ^ (2 + eta))
+  have hscale := Asymptotics.intermediate_power_block_ratios
+    hwidth heta hetaOne
+  change Tendsto (fun n => width n ^ 2 / (blockLength n : ℝ))
+      atTop (𝓝 0) ∧
+    Tendsto (fun n => (blockLength n : ℝ) / width n ^ 3)
+      atTop (𝓝 0) ∧
+    ∀ᶠ n : ℕ in atTop, 0 < blockLength n at hscale
+  obtain ⟨hquadratic, hcubic, hlength⟩ := hscale
+  have hfit := Asymptotics.eventually_intermediate_block_fits
+    hwidth heta hetaEpsilon
+  have hremaining : ∀ᶠ n : ℕ in atTop,
+      Nat.floor (width n ^ 2) + 2 * blockLength n ≤ horizon n := by
+    filter_upwards [hfit, hhorizon] with n hnfit hnHorizon
+    exact hnfit.trans hnHorizon
+  exact eventually_concreteStaircaseUpperEndpointLowerBound_of_centeredFiniteVariance
+    hν hsigma hrho hrhoSmall m hm huInterior huvInterior hvInterior
+    huFinal huvFinal hvFinal hrateMogulskii hwidth hlength
+    hremaining hhorizon hquadratic hcubic hmargin hdrift hstart
+    hendpoint hblockRate halpha hepsilon hdelta hrate
+    hinteriorLower hinteriorUpper hfinalLower hfinalUpper
 
 end ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 
