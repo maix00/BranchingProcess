@@ -14,7 +14,8 @@ public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVa
 The public theorem in this file is:
 
 - `eventually_concreteStaircaseLowerBound_of_robustEntrance`:
-  along widths $\Delta_n\to\infty$ with
+  along widths $\Delta_n\to\infty$ and arbitrary starting boundaries
+  $r_{0,n}$, with
   $\Delta_n^2/\ell_n\to0$ and $\ell_n/\Delta_n^3\to0$,
   the robust entrance probability budget and fixed rate and endpoint
   margins imply the eventual tilted-tube lower bound
@@ -51,8 +52,8 @@ theorem eventually_concreteStaircaseLowerBound_of_robustEntrance
     (hvFinal : vFinal < 1)
     (hrateMogulskii : (Real.pi ^ 2 / 2) * sigma ^ 2 < narrowedRate)
     {entrance horizon blockLength : ℕ → ℕ}
-    {width : ℕ → ℝ}
-    {margin drift base endpointFraction blockRate totalRate : ℝ}
+    {width base : ℕ → ℝ}
+    {margin drift endpointFraction blockRate totalRate : ℝ}
     (hwidth : Tendsto width atTop atTop)
     (hlength : ∀ᶠ n : ℕ in atTop, 0 < blockLength n)
     (hremaining : ∀ᶠ n : ℕ in atTop,
@@ -80,12 +81,12 @@ theorem eventually_concreteStaircaseLowerBound_of_robustEntrance
         width n ^ 2) ≤
         (iidSequenceLaw ν).real
           (robustMovingTransitionEvent (entrance n) (width n)
-            drift (-base))) :
+            drift (-base n))) :
     ∀ᶠ n : ℕ in atTop,
       Real.exp (-totalRate * (horizon n : ℝ) / width n ^ 2) ≤
         (iidSequenceLaw ν).real
           (driftedTubeEndpointWindowEvent (horizon n) (width n)
-            drift base endpointFraction) := by
+            drift (base n) endpointFraction) := by
   obtain ⟨width₀, ratio₀, hfinite⟩ :=
     exists_concreteStaircaseLowerBound_of_globalConditions
       hν hsigma m hm huInterior huvInterior hvInterior
@@ -100,7 +101,7 @@ theorem eventually_concreteStaircaseLowerBound_of_robustEntrance
     hnTime, hnRate, hnLower, hnUpper, hnFinalLower,
     hnFinalUpper⟩ := hnGlobal
   exact hfinite (entrance n) (horizon n) (blockLength n)
-    margin (width n) drift base endpointFraction blockRate totalRate
+    margin (width n) drift (base n) endpointFraction blockRate totalRate
     hnRemaining hnLength hnWidth hmargin hdrift hendpoint hblockRate
     hnCost hnFloor hnMargin hnTime hnRate hnLower hnUpper
     hnFinalLower hnFinalUpper hnEntrance
