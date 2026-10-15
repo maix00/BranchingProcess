@@ -7,6 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Mathlib.Probability.Independence.InfinitePi
+public import Mathlib.MeasureTheory.Constructions.Pi
 
 /-!
 # Canonical laws of i.i.d. sequences
@@ -40,6 +41,19 @@ theorem iidSequenceLaw_map_apply {X : Type*} [MeasurableSpace X]
     (iidSequenceLaw ν).map (fun sequence => sequence n) = ν := by
   unfold iidSequenceLaw
   exact Measure.infinitePi_map_eval (fun _ : ℕ => ν) n
+
+/-- The first `n` coordinates of the canonical IID sequence have the
+finite product law. -/
+theorem iidSequenceLaw_map_finPrefix
+    {E : Type*} [MeasurableSpace E] (ν : Measure E)
+    [IsProbabilityMeasure ν] (n : ℕ) :
+    (iidSequenceLaw ν).map (fun x : ℕ → E => fun i : Fin n => x i.val) =
+      Measure.pi (fun _ : Fin n => ν) := by
+  unfold iidSequenceLaw
+  rw [Measure.map_infinitePi_infinitePi_of_inj
+    (P := fun _ : ℕ => ν) (f := fun i : Fin n => i.val)
+    (fun _ _ h => Fin.val_injective h)]
+  rw [Measure.infinitePi_eq_pi]
 
 theorem iidSequenceLaw_independent {X : Type*} [MeasurableSpace X]
     (ν : Measure X) [IsProbabilityMeasure ν] :
