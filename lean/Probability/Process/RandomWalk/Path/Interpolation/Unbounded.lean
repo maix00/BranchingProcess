@@ -23,6 +23,9 @@ The public definitions and theorems in this file are:
   the same path bundled in $C([0,\infty),\mathbb R)$.
 - `ProbabilityTheory.RandomWalk.measurable_normalizedLinearContinuousPathUnbounded`:
   the path map is Borel measurable in the increment sequence.
+- `ProbabilityTheory.RandomWalk.normalizedLinearPathUnbounded_eq_sum_range`:
+  when $nt\le N$, the defining sum can be extended to the first
+  $N$ increments because every added weight vanishes.
 - `ProbabilityTheory.RandomWalk.normalizedLinearPathUnbounded_eq_bounded`:
   on $0\le t\le1$, the unbounded path agrees with the existing
   first-$n$-increment interpolation.
@@ -124,6 +127,28 @@ theorem measurable_normalizedLinearContinuousPathUnbounded
   exact measurable_const.mul (Finset.measurable_sum _ fun k _ =>
     measurable_const.mul (measurable_pi_apply k))
 
+/-- A finite increment range containing the time point gives the same
+value as the whole-time interpolation. -/
+theorem normalizedLinearPathUnbounded_eq_sum_range
+    (scale : ℕ → ℝ) (n : ℕ) (increment : ℕ → ℝ)
+    (t : ℝ≥0) (N : ℕ) (hNt : (n : ℝ) * (t : ℝ) ≤ N) :
+    normalizedLinearPathUnbounded scale n increment t =
+      (scale n)⁻¹ *
+        ∑ k ∈ Finset.range N, linearIncrementWeight n k t * increment k := by
+  have hfloor : ⌊(n : ℝ) * (t : ℝ)⌋₊ ≤ N :=
+    Nat.floor_le_of_le hNt
+  unfold normalizedLinearPathUnbounded
+  congr 1
+  rcases hfloor.eq_or_lt with heq | hlt
+  · rw [heq, Finset.sum_range_succ]
+    have hweight : linearIncrementWeight n N (t : ℝ) = 0 := by
+      unfold linearIncrementWeight
+      rw [max_eq_left (sub_nonpos.mpr hNt)]
+      simp
+    simp [hweight]
+  · exact sum_linearIncrementWeight_eq_range_of_floor_le
+      n increment t (Nat.succ_le_iff.mpr hlt)
+
 /-- On the first unit of time, the unbounded interpolation is exactly
 the existing interpolation of the first `n` increments. -/
 theorem normalizedLinearPathUnbounded_eq_bounded
@@ -137,19 +162,9 @@ theorem normalizedLinearPathUnbounded_eq_bounded
         mul_le_mul_of_nonneg_left (NNReal.coe_le_coe.mpr ht)
           (Nat.cast_nonneg n)
       _ = n := by ring
-  have hfloor : ⌊(n : ℝ) * (t : ℝ)⌋₊ ≤ n :=
-    Nat.floor_le_of_le hmul
-  unfold normalizedLinearPathUnbounded normalizedLinearPath
-  congr 1
-  rcases hfloor.eq_or_lt with heq | hlt
-  · rw [heq, Finset.sum_range_succ]
-    have hweight : linearIncrementWeight n n (t : ℝ) = 0 := by
-      unfold linearIncrementWeight
-      rw [max_eq_left (sub_nonpos.mpr hmul)]
-      simp
-    simp [hweight]
-  · exact sum_linearIncrementWeight_eq_range_of_floor_le
-      n increment t (Nat.succ_le_iff.mpr hlt)
+  simpa only [normalizedLinearPath] using
+    normalizedLinearPathUnbounded_eq_sum_range
+      scale n increment t n hmul
 
 /-- Restricting the whole-time path to the unit interval recovers
 the existing bounded continuous-path interpolation. -/
@@ -163,7 +178,7 @@ theorem normalizedLinearContinuousPathUnbounded_apply_unitInterval
     (⟨(t : ℝ), t.property.1⟩ : ℝ≥0) = normalizedLinearPath scale n increment t
   convert normalizedLinearPathUnbounded_eq_bounded scale n increment
     (⟨(t : ℝ), t.property.1⟩ : ℝ≥0)
-    (show (⟨(t : ℝ), t.property.1⟩ : ℝ≥0) ≤ 1 from t.property.2) using 1 <;> rfl
+    (show (⟨(t : ℝ), t.property.1⟩ : ℝ≥0) ≤ 1 from t.property.2) using 1; rfl
 
 /-- Every lattice-time value of the whole-time interpolation is the
 corresponding normalized random-walk position, including times beyond
