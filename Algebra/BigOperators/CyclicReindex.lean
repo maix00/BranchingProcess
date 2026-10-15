@@ -24,6 +24,8 @@ The public declarations in this file are:
   partial sum adds the cyclically reindexed increment.
 - `Fin.partialSum_cyclicCoordinateReindex`: the partial sums of reindexed
   increments equal the cyclic rotation of the original partial-sum path.
+- `Fin.partialSum_cyclicBlock`: a partial sum within a consecutive block
+  of a rotated vector is the difference of the cyclic path at its endpoints.
 
 The same reindexing is used for finite random-walk path rotations in
 M. Bauer, C. Godrèche, and J.-M. Luck, *Statistics of persistent events
@@ -182,6 +184,24 @@ theorem partialSum_cyclicCoordinateReindex {n : ℕ}
   | succ j ih =>
     rw [Fin.partialSum_succ, ih,
       cyclicPartialSum_succ_eq_add_reindexedIncrement hn x k j]
+
+/-- A block of the rotated increment vector has partial sums given by
+differences of the rotated path. -/
+theorem partialSum_cyclicBlock {n : ℕ} (hn : 0 < n)
+    (x : Fin n → ℝ) (k : Fin n)
+    (start length : ℕ) (hbound : start + length ≤ n)
+    (t : Fin (length + 1)) :
+    Fin.partialSum
+      (fun i : Fin length =>
+        x (cyclicCoordinateReindex hn k ⟨start + i.val, by omega⟩)) t =
+      cyclicPartialSum (Fin.partialSum x) k
+        ⟨start + t.val, by omega⟩ -
+        cyclicPartialSum (Fin.partialSum x) k ⟨start, by omega⟩ := by
+  let y : Fin n → ℝ := fun i => x (cyclicCoordinateReindex hn k i)
+  change Fin.partialSum (fun i : Fin length => y ⟨start + i.val, by omega⟩) t = _
+  rw [Fin.partialSum_offset y start length hbound t,
+    Fin.partialSum_cyclicCoordinateReindex hn x k,
+    Fin.partialSum_cyclicCoordinateReindex hn x k]
 
 
 end Fin

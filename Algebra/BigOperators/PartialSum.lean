@@ -20,6 +20,8 @@ The public declarations in this file are:
 - `Fin.partialSum_differences`: consecutive differences telescope to
   $s_j-s_0$.
 - `Fin.partialSum_smul`: scalar multiplication commutes with partial sums.
+- `Fin.partialSum_offset`: the sum of a consecutive subvector equals the
+  difference of its endpoint partial sums.
 - `Fin.cyclicPartialSum`: the partial sum after rotating a finite path at
   one of its increment positions.
 - `Fin.cyclicPartialSum_last_eq_of_zero`: when $s_0=0$, every rotation
@@ -54,6 +56,32 @@ theorem partialSum_differences (f : Fin (n + 1) → G) (i : Fin (n + 1)) :
       f i.castSucc + -f 0 + (f i.succ + -f i.castSucc) =
           (f i.castSucc + -f i.castSucc) + (f i.succ + -f 0) := by ac_rfl
       _ = f i.succ + -f 0 := by simp
+
+/-- The partial sum of a consecutive block is the difference of the
+corresponding partial sums of the full vector. -/
+theorem partialSum_offset (x : Fin n → G) (start length : ℕ)
+    (hbound : start + length ≤ n) (t : Fin (length + 1)) :
+    partialSum
+      (fun k : Fin length => x ⟨start + k.val, by omega⟩) t =
+      partialSum x ⟨start + t.val, by omega⟩ -
+        partialSum x ⟨start, by omega⟩ := by
+  induction t using Fin.induction with
+  | zero => simp
+  | succ t ih =>
+      rw [partialSum_succ, ih]
+      have hstep := partialSum_succ x
+        (⟨start + t.val, by omega⟩ : Fin n)
+      have hstep' :
+          partialSum x ⟨start + t.val + 1, by omega⟩ =
+            partialSum x ⟨start + t.val, by omega⟩ +
+              x ⟨start + t.val, by omega⟩ := by
+        simpa only [Fin.succ_mk, Fin.castSucc_mk, Nat.add_assoc] using hstep
+      have hidx :
+          (⟨start + t.succ.val, by omega⟩ : Fin (n + 1)) =
+            ⟨start + t.val + 1, by omega⟩ := Fin.ext rfl
+      rw [hidx, hstep']
+      simp only [sub_eq_add_neg]
+      ac_rfl
 
 end Fin
 
