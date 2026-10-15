@@ -17,6 +17,9 @@ The public theorem in this file is:
   if a finite-valued pathwise stopping time $T$ has fibers determined by
   the Brownian past, the future increment path
   $u\mapsto B(T+u)-B(T)$ has the original Brownian path law.
+- `ProbabilityTheory.IsBrownianReal.measure_shiftToZero_finitePathwiseStoppingTime_eq`:
+  the same law when past dependence is expressed by path agreement on
+  $[0,T]$.
 
 This is the finite-valued approximation to the strong Markov property
 used to identify the descending first-passage process in the Lévy
@@ -74,38 +77,12 @@ theorem IsBrownianReal.measure_shiftToZero_finiteStoppingTime_eq
     exact measurable_shiftToZero.comp
       (hpathB.prodMk ((measurable_of_finite r).comp (hT.comp hpathB)))
   have hfuture (i : ι) :
-      P.map (fun ω => shiftToZero (pathB ω) (r i)) = μ := by
-    let shifted : ℝ≥0 → Ω → ℝ := fun u ω => B (r i + u) ω - B (r i) ω
-    let hshift : IsBrownianReal shifted P := hB.shift (r i)
-    let hshiftMeas : ∀ u, Measurable (shifted u) :=
-      fun u => (hBmeasurable (r i + u)).sub (hBmeasurable (r i))
-    have hae : (fun ω => shiftToZero (pathB ω) (r i)) =ᵐ[P]
-        hshift.continuousPathMap hshiftMeas := by
-      filter_upwards [hB.continuousPathMap_ae_eq hBmeasurable,
-        hshift.continuousPathMap_ae_eq hshiftMeas] with ω hω hωS
-      ext u
-      change pathB ω (r i + u) - pathB ω (r i) =
-        hshift.continuousPathMap hshiftMeas ω u
-      rw [hω (r i + u), hω (r i), hωS u]
-    rw [Measure.map_congr hae]
-    exact hshift.measure_continuousPathMap_eq hB hshiftMeas hBmeasurable
+      P.map (fun ω => shiftToZero (pathB ω) (r i)) = μ :=
+    hB.measure_shiftToZero_eq hBmeasurable (r i)
   have hind (i : ι) :
       (fun ω => shiftToZero (pathB ω) (r i)) ⟂ᵢ[P]
-        (fun ω => freezeAfter (pathB ω) (r i)) := by
-    let shifted : ℝ≥0 → Ω → ℝ := fun u ω => B (r i + u) ω - B (r i) ω
-    let hshift : IsBrownianReal shifted P := hB.shift (r i)
-    let hshiftMeas : ∀ u, Measurable (shifted u) :=
-      fun u => (hBmeasurable (r i + u)).sub (hBmeasurable (r i))
-    have hae : (fun ω => shiftToZero (pathB ω) (r i)) =ᵐ[P]
-        hshift.continuousPathMap hshiftMeas := by
-      filter_upwards [hB.continuousPathMap_ae_eq hBmeasurable,
-        hshift.continuousPathMap_ae_eq hshiftMeas] with ω hω hωS
-      ext u
-      change pathB ω (r i + u) - pathB ω (r i) =
-        hshift.continuousPathMap hshiftMeas ω u
-      rw [hω (r i + u), hω (r i), hωS u]
-    exact (hB.indepFun_shiftPath_freezePath hBmeasurable (r i)).congr hae.symm
-      (ae_eq_refl _)
+        (fun ω => freezeAfter (pathB ω) (r i)) :=
+    hB.indepFun_shiftToZero_freezeAfter hBmeasurable (r i)
   have hsplit (s : Set Ω) (hs : MeasurableSet s) :
       P s = ∑ i : ι, P (s ∩ {ω | T (pathB ω) = i}) := by
     have hcover : (⋃ i ∈ Finset.univ, s ∩ {ω | T (pathB ω) = i}) = s := by
@@ -176,6 +153,36 @@ theorem IsBrownianReal.measure_shiftToZero_finiteStoppingTime_eq
       simp only [Set.univ_inter] at hsum
       rw [measure_univ] at hsum
       rw [← hsum, mul_one]
+
+/-- Finite-valued pathwise stopping times can be specified by a
+measurable selector whose fibers are unchanged by alterations after
+the selected time. -/
+theorem IsBrownianReal.measure_shiftToZero_finitePathwiseStoppingTime_eq
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+    {B : ℝ≥0 → Ω → ℝ} (hB : IsBrownianReal B P)
+    (hBmeasurable : ∀ u, Measurable (B u))
+    {ι : Type*} [MeasurableSpace ι] [MeasurableSingletonClass ι]
+    [Fintype ι] [DecidableEq ι]
+    (T : C(ℝ≥0, ℝ) → ι) (r : ι → ℝ≥0)
+    (hT : Measurable T)
+    (hlocal : ∀ i f g, (∀ u, u ≤ r i → f u = g u) →
+      (T f = i ↔ T g = i)) :
+    P.map (fun ω => shiftToZero (hB.continuousPathMap hBmeasurable ω)
+      (r (T (hB.continuousPathMap hBmeasurable ω)))) =
+      P.map (hB.continuousPathMap hBmeasurable) := by
+  have hstop (i : ι) :
+      MeasurableSet[MeasurableSpace.comap
+        (fun f : C(ℝ≥0, ℝ) => freezeAfter f (r i)) inferInstance]
+        {f | T f = i} := by
+    apply (MeasurableSpace.measurableSet_comap).mpr
+    refine ⟨{f | T f = i}, hT (measurableSet_singleton i), ?_⟩
+    ext f
+    change T (freezeAfter f (r i)) = i ↔ T f = i
+    apply hlocal i (freezeAfter f (r i)) f
+    intro u hu
+    change f (min u (r i)) = f u
+    rw [min_eq_left hu]
+  exact hB.measure_shiftToZero_finiteStoppingTime_eq hBmeasurable T r hstop
 
 end ProbabilityTheory
 

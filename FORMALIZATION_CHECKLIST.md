@@ -182,6 +182,14 @@ half-stable intensity. `Path/Continuous.lean` now makes the future increment
 path jointly measurable in its path and start time, and
 `Brownian/Independence/FiniteStoppingTime.lean` proves that the future
 increment path at a finite-valued stopping time has Brownian path law.
+`Brownian/Independence/StoppedPast.lean` strengthens this to independence
+from the stopped past. `Brownian/Independence/FirstPassageGrid.lean` applies
+the finite-valued result to first-passage observation grids, and
+`Brownian/Independence/FirstPassage.lean` passes through expanding grids to
+show that the post-passage increment path has Brownian path law at each
+fixed level. Independence from the stopped past at the actual passage time
+is the next strong-Markov step; the current fixed-level law alone does not
+identify the increments of the hitting-time process.
 The Brownian hitting-time process has not yet been identified with such a
 Poisson jump family. Equation (2.2), Lemma 2.4, and the conditioned
 invariance principle remain open.
