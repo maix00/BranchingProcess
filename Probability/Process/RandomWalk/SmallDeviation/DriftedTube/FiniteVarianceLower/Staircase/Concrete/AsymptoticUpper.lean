@@ -15,7 +15,7 @@ public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVa
 The public theorem in this file is:
 
 - `eventually_concreteStaircaseUpperEndpointLowerBound_of_robustEntrance`:
-  under the paper's superquadratic and subcubic block scales, fixed
+  under the superquadratic and subcubic block scales of Wang Yiyang's Lemma 3.5, fixed
   endpoint and rate margins, and the robust entrance probability
   budget, the upper-endpoint event has probability at least
   $\exp(-d'L_n/\Delta_n^2)$ eventually.
