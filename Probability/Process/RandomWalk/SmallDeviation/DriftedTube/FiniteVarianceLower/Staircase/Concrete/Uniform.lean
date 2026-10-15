@@ -35,6 +35,79 @@ open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 
+/-! The integer bin count is chosen before the fixed windows and rate margins. -/
+private theorem exists_staircase_bin_count
+    {sigma d v : ℝ}
+    (hrate : (Real.pi ^ 2 / 2) * sigma ^ 2 < d)
+    (hv : 0 < v) :
+    ∃ m : ℕ, 2 ≤ m ∧
+      (Real.pi ^ 2 / 2) * sigma ^ 2 < d * staircaseBinWidth m ^ 2 ∧
+      1 / (3 * (m : ℝ)) < v := by
+  have hdenom : Tendsto (fun m : ℕ => 3 * (m : ℝ)) atTop atTop :=
+    tendsto_natCast_atTop_atTop.const_mul_atTop (by norm_num : (0 : ℝ) < 3)
+  have hinv : Tendsto (fun m : ℕ => 1 / (3 * (m : ℝ))) atTop (𝓝 0) := by
+    convert tendsto_inv_atTop_zero.comp hdenom using 1
+    funext m
+    simp [one_div, mul_inv_rev, mul_comm]
+  have hbeta : Tendsto staircaseBinWidth atTop (𝓝 (1 : ℝ)) := by
+    convert (tendsto_const_nhds.sub hinv : Tendsto
+      (fun m : ℕ => 1 - 1 / (3 * (m : ℝ))) atTop (𝓝 (1 - 0))) using 1
+    · funext m
+      unfold staircaseBinWidth
+      simp [one_div, mul_inv_rev, mul_comm]
+    · norm_num
+  have hrateLimit : Tendsto (fun m : ℕ => d * staircaseBinWidth m ^ 2)
+      atTop (𝓝 d) := by
+    convert tendsto_const_nhds.mul (hbeta.pow 2) using 1
+    norm_num
+  have hmRate : ∀ᶠ m : ℕ in atTop,
+      (Real.pi ^ 2 / 2) * sigma ^ 2 < d * staircaseBinWidth m ^ 2 :=
+    hrateLimit.eventually (eventually_gt_nhds hrate)
+  have hmV : ∀ᶠ m : ℕ in atTop, 1 / (3 * (m : ℝ)) < v :=
+    hinv.eventually (eventually_lt_nhds hv)
+  obtain ⟨m, hm⟩ := (Filter.eventually_ge_atTop 2 |>.and hmRate |>.and hmV).exists
+  exact ⟨m, hm.1.1, hm.1.2, hm.2⟩
+
+
+private theorem exists_staircase_rate_margins
+    {sigma d : ℝ} {m : ℕ} (hm : 2 ≤ m)
+    (hrate : (Real.pi ^ 2 / 2) * sigma ^ 2 <
+      d * staircaseBinWidth m ^ 2) :
+    ∃ blockRate narrowedRate : ℝ,
+      0 ≤ blockRate ∧ 0 < d - blockRate ∧
+      (Real.pi ^ 2 / 2) * sigma ^ 2 < narrowedRate ∧
+      narrowedRate < blockRate * staircaseBinWidth m ^ 2 := by
+  let K : ℝ := (Real.pi ^ 2 / 2) * sigma ^ 2
+  let beta : ℝ := staircaseBinWidth m
+  have hbeta : 0 < beta := staircaseBinWidth_pos hm
+  have hbetaSq : 0 < beta ^ 2 := sq_pos_of_pos hbeta
+  have hK : 0 ≤ K := by dsimp [K]; positivity
+  have hdiv : K / beta ^ 2 < d :=
+    (div_lt_iff₀ hbetaSq).2 hrate
+  have hd : 0 < d := by
+    have hquot : 0 ≤ K / beta ^ 2 := div_nonneg hK hbetaSq.le
+    linarith
+  let blockRate : ℝ := (K / beta ^ 2 + d) / 2
+  have hblockNonneg : 0 ≤ blockRate := by dsimp [blockRate]; positivity
+  have hblockLt : blockRate < d := by dsimp [blockRate]; linarith
+  have hKBlock : K < blockRate * beta ^ 2 := by
+    have hmid : K / beta ^ 2 < blockRate := by
+      dsimp [blockRate]; linarith
+    have hmul := mul_lt_mul_of_pos_right hmid hbetaSq
+    have heq : K / beta ^ 2 * beta ^ 2 = K := by field_simp
+    rw [heq] at hmul
+    exact hmul
+  let narrowedRate : ℝ := (K + blockRate * beta ^ 2) / 2
+  refine ⟨blockRate, narrowedRate, hblockNonneg, ?_, ?_, ?_⟩
+  · linarith
+  · change K < narrowedRate
+    dsimp [narrowedRate]
+    linarith
+  · change narrowedRate < blockRate * beta ^ 2
+    dsimp [narrowedRate]
+    linarith
+
+
 /-- The paper's common large-width threshold for both endpoint events,
 once its fixed bin fractions and strict margins have been chosen. -/
 theorem exists_uniform_concreteStaircase_bounds_of_powerBlock
