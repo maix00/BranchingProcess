@@ -20,6 +20,26 @@ parameter to one, so the rounded block length is `⌊κν (aₙ)⌋₊` and its 
 spatial normalization is asymptotic to `aₙ`. The endpoint corridor masses are
 then obtained from the stable-process entrance estimate; they are not extra
 hypotheses on the random walk.
+
+The public theorems in this file are:
+
+- `eventually_horizontalTubeProbability_ge_pow_of_stableDomain`:
+  there are $0<r<1/2$ and $p>0$ such that eventually
+  $p^{\lfloor N/\ell_n\rfloor+1}\leq\mathbb P(T_{N,n})$, where
+  $T_{N,n}$ is the centered open horizontal tube of width
+  $2(r+4(r/16))a_n$, $a_n$ is the spatial scale, and $\ell_n$ is its
+  inverse-norming block length.
+- `eventually_horizontalTubeProbability_ge_pow_of_index_lt_one`:
+  the same bound for $0<\alpha<1$, with tightness supplied by tail estimates.
+- `eventually_horizontalTubeProbability_ge_pow_of_index_one`:
+  the same bound for $\alpha=1$, using the sine-centering assumption.
+- `eventually_horizontalTubeProbability_ge_pow_of_index_gt_one`:
+  the same bound for $1<\alpha<2$, using the resulting zero mean and
+  finite first moment.
+
+This is the endpoint-return lower-bound step in A. A. Mogul'skii,
+*Small Deviations in a Space of Trajectories*, Theorem 3, Section 4
+(1974 Russian original; 1975 English translation, DOI 10.1137/1119081).
 -/
 
 open Filter MeasureTheory ProbabilityTheory
@@ -34,7 +54,9 @@ namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete
 imply the discrete horizontal-tube lower bound at block length
 `⌊κν (scale n)⌋₊`. The FCLT is supplied by the already proved finite-grid and
 J₁-tightness interface. No endpoint-boundary nullity is needed: the transfer
-uses open corridor events and the open-set Portmanteau inequality. -/
+uses open corridor events and the open-set Portmanteau inequality. This is
+the endpoint-return step of A. A. Mogul'skii, *Small Deviations in a Space
+of Trajectories*, Theorem 3, Section 4 (DOI 10.1137/1119081). -/
 theorem eventually_horizontalTubeProbability_ge_pow_of_stableDomain
     {ν μ : Measure ℝ} [IsProbabilityMeasure ν] [IsProbabilityMeasure μ]
     {α : ℝ} {normalization scale : ℕ → ℝ} {horizon : ℕ → ℕ}

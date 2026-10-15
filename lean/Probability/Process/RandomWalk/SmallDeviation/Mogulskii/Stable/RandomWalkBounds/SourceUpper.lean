@@ -9,7 +9,25 @@ module
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.Partition.Upper
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.SourcePartition.Events
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.SourcePartitionLower.EnergyLower
-/-! # Stable upper rates for source-convention corridors -/
+
+/-!
+# Stable upper rates for source-convention corridors
+
+The public theorems in this file are:
+
+- `limsup_scaledLog_sourceNormalizedStepCorridor_le_selectedCellRates`:
+  the normalized logarithmic limsup of a source-convention step-corridor
+  probability is bounded by the sum of selected cell rates
+  $\sum_i \Delta t_i[C/((w_i+m_i)/2)^\alpha+2\varepsilon_i]$
+  plus an aggregate slack.
+- `limsup_scaledLog_sourceNormalizedStepCorridor_le_selectedCellRates_of_stepCorridor`:
+  the same bound for a continuous admissible step corridor, with eventual
+  positivity and logarithmic lower boundedness supplied by its energy bound.
+
+These are the finite-cell upper estimates in the proof of A. A. Mogul'skii,
+*Small Deviations in a Space of Trajectories*, Theorem 3, Section 4
+(1974 Russian original; 1975 English translation, DOI 10.1137/1119081).
+-/
 
 @[expose] public section
 
@@ -19,9 +37,13 @@ open scoped ENNReal NNReal Topology
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete
 
 open Skorokhod.PathClass.StepCorridor
-open Skorokhod.PathClass.StepCorridor
 open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Discrete
 
+/-- The finite selected-cell upper estimate in A. A. Mogul'skii,
+*Small Deviations in a Space of Trajectories*, Theorem 3, Section 4
+(DOI 10.1137/1119081). Each selected cell contributes its duration times
+the stable tube escape rate at the enlarged width, with cell and aggregate
+slacks retained before the final limit. -/
 theorem limsup_scaledLog_sourceNormalizedStepCorridor_le_selectedCellRates
     {ν μ : Measure ℝ} [IsProbabilityMeasure ν] [IsProbabilityMeasure μ]
     {α C : ℝ} {normalization scale : ℕ → ℝ}
