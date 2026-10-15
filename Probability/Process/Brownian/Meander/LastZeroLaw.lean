@@ -13,19 +13,26 @@ public import Probability.Process.Brownian.Meander.LastZero
 
 The public objects and theorems in this file are:
 
+- `ProbabilityTheory.IsBrownianReal.lastZeroMeanderPath`:
+  $\omega\mapsto\left(t\mapsto
+  |B_{g+(1-g)t}(\omega)|/\sqrt{1-g}\right)$, where $g$ is the
+  last zero of the path before time one.
+- `ProbabilityTheory.IsBrownianReal.measurable_lastZeroMeanderPath`:
+  this path-valued map is Borel measurable.
 - `ProbabilityTheory.IsBrownianReal.lastZeroMeanderPathLaw`:
-  the law of the normalized absolute Brownian path following its last
-  zero before time one.
+  $P\circ(\operatorname{lastZeroMeanderPath})^{-1}$.
 - `ProbabilityTheory.IsBrownianReal.isProbabilityMeasure_lastZeroMeanderPathLaw`:
-  this law has total mass one.
+  the path law has total mass one.
 - `ProbabilityTheory.IsBrownianReal.ae_lastZeroMeanderPathLaw_zero`:
-  its paths start at zero almost surely.
+  $m\{f:f(0)=0\}=1$.
 - `ProbabilityTheory.IsBrownianReal.ae_lastZeroMeanderPathLaw_pos`:
-  at each fixed positive time, its paths are positive almost surely.
+  $m\{f:f(t)>0\}=1$ for each fixed $t>0$.
 - `ProbabilityTheory.IsBrownianReal.ae_lastZeroMeanderPathLaw_nonnegative`:
-  its paths are nonnegative at every time almost surely.
+  $m\{f:\forall t,\ f(t)\ge0\}=1$.
+- `ProbabilityTheory.measurableSet_strictlyPositiveAfterZero`:
+  $\{f:\forall t>0,\ f(t)>0\}$ is Borel measurable.
 - `ProbabilityTheory.IsBrownianReal.ae_lastZeroMeanderPathLaw_strictlyPositive`:
-  its paths are strictly positive at every positive time almost surely.
+  $m\{f:\forall t>0,\ f(t)>0\}=1$.
 
 The construction is the Brownian representation on pages 616--617 of
 Donald L. Iglehart, *Functional Central Limit Theorems for Random Walks
