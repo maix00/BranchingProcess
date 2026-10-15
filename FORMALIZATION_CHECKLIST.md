@@ -189,9 +189,11 @@ the finite-valued result to first-passage observation grids, and
 show that the post-passage increment path has Brownian path law and is
 independent of the stopped past at each fixed level. The passage of
 independence through almost-sure limits is a reusable result in
-`MeasureTheory/Convergence/IndependentLimits.lean`. The next step is the
-pathwise first-passage restart identity; the current strong-Markov result
-alone does not identify the increments of the hitting-time process.
+`MeasureTheory/Convergence/IndependentLimits.lean`.
+`Path/FirstPassageRestart.lean` proves the deterministic restart identity
+for two finite passages of a continuous path. Applying it to descending
+Brownian levels and turning strong Markov into stationary independent
+increments of the hitting-time process are the next steps.
 The Brownian hitting-time process has not yet been identified with such a
 Poisson jump family. Equation (2.2), Lemma 2.4, and the conditioned
 invariance principle remain open.
