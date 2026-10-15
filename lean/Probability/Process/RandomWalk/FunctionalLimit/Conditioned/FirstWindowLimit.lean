@@ -9,7 +9,9 @@ module
 public import Probability.ConvergenceInDistribution.FiniteApproximation
 public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.FiniteWindowLimit
 public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.FiniteWindowTime
+public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.FirstWindowSelection
 public import Probability.Process.Brownian.AboveStart.FirstWindowCenteredLimit
+public import Probability.Process.Path.FiniteHorizonScaling
 
 /-!
 # Functional limit after the first eligible window
@@ -19,6 +21,12 @@ The public theorem in this file is:
 - `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.tendstoInDistribution_centeredFirstWindowShift`:
   the centered normalized walk shifted at its first eligible unit window
   converges on $[0,1]$ to the similarly shifted Brownian path.
+- `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.tendstoInDistribution_centeredFirstWindowShift_unitInterval`:
+  the same limit on the real unit-interval path space used by the
+  survival-conditioned walk law.
+- `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.tendstoInDistribution_survivalConditionedPath`:
+  the survival-conditioned polygonal walk converges to the centered
+  Brownian first-window path.
 
 This proves the centered path comparison of Erwin Bolthausen,
 *On a functional central limit theorem for random walks conditioned to
@@ -124,6 +132,77 @@ theorem tendstoInDistribution_centeredFirstWindowShift
   exact tendstoInDistribution_of_finite_approximations
     (iidSequenceLaw ν) P X Y Z W hX hY hZ hfinite hlimit
     b c hbound hb hc
+
+/-- Bolthausen's centered first-window limit on the real unit interval. -/
+theorem tendstoInDistribution_centeredFirstWindowShift_unitInterval
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (hcentered : ∫ x, x ∂ν = 0)
+    (hsecondMoment : ∫ x, x ^ 2 ∂ν = 1)
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+    [IsProbabilityMeasure P] {B : ℝ≥0 → Ω → ℝ}
+    (hB : IsBrownianReal B P)
+    (hcontinuous : ∀ ω, Continuous (B · ω))
+    (hmeasurable : ∀ t, Measurable (B t)) :
+    TendstoInDistribution
+      (fun (n : ℕ) increment => restrictPathToUnitInterval
+        (centeredFirstWindowShift
+          (normalizedLinearContinuousPathUnbounded
+            (fun n => Real.sqrt n) n increment)))
+      atTop
+      (fun ω => restrictPathToUnitInterval
+        (centeredFirstWindowShift (hB.continuousPathMap hmeasurable ω)))
+      (fun _ => iidSequenceLaw ν) P := by
+  have hlimit := (tendstoInDistribution_centeredFirstWindowShift
+    ν hcentered hsecondMoment hB hcontinuous hmeasurable).continuous_comp
+      continuous_unitIntervalPathOfNNReal
+  simpa only [Function.comp_def, ← restrictPathToUnitInterval_eq] using hlimit
+
+/-- Bolthausen's law identity transfers first-window convergence to the
+walk conditioned to remain nonnegative for the next $n$ steps. -/
+theorem tendstoInDistribution_survivalConditionedPath
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (hν : IsCenteredUnitSecondMoment ν)
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+    [IsProbabilityMeasure P] {B : ℝ≥0 → Ω → ℝ}
+    (hB : IsBrownianReal B P)
+    (hcontinuous : ∀ ω, Continuous (B · ω))
+    (hmeasurable : ∀ t, Measurable (B t)) :
+    letI : ∀ n : ℕ, IsProbabilityMeasure
+        (survivalConditionedLaw ν (n + 1)) := fun n =>
+      survivalConditionedLaw_isProbabilityMeasure_of_centeredUnitSecondMoment
+        ν hν (n + 1)
+    TendstoInDistribution
+      (fun (n : ℕ) increment => normalizedLinearContinuousPathIcc
+        (fun m => Real.sqrt m) (n + 1) increment)
+      atTop
+      (fun ω => restrictPathToUnitInterval
+        (centeredFirstWindowShift (hB.continuousPathMap hmeasurable ω)))
+      (fun n => survivalConditionedLaw ν (n + 1)) P := by
+  letI : ∀ n : ℕ, IsProbabilityMeasure
+      (survivalConditionedLaw ν (n + 1)) := fun n =>
+    survivalConditionedLaw_isProbabilityMeasure_of_centeredUnitSecondMoment
+      ν hν (n + 1)
+  have hshift := (tendstoInDistribution_centeredFirstWindowShift_unitInterval
+    ν hν.1 hν.2 hB hcontinuous hmeasurable).comp_tendsto
+      (tendsto_add_atTop_nat 1)
+  have hpositive := hν.measure_Ioi_zero_pos
+  have hLaw (n : ℕ) :
+      (iidSequenceLaw ν).map (fun increment => restrictPathToUnitInterval
+        (centeredFirstWindowShift
+          (normalizedLinearContinuousPathUnbounded
+            (fun m => Real.sqrt m) (n + 1) increment))) =
+      (survivalConditionedLaw ν (n + 1)).map
+        (normalizedLinearContinuousPathIcc
+          (fun m => Real.sqrt m) (n + 1)) :=
+    measure_map_centeredFirstWindowShift_eq ν hpositive
+      (fun m => Real.sqrt m) (Nat.succ_pos n)
+      (Real.sqrt_pos.2 (by exact_mod_cast Nat.succ_pos n))
+  refine ⟨fun n => (measurable_normalizedLinearContinuousPathIcc _ _).aemeasurable,
+    hshift.aemeasurable_limit, ?_⟩
+  apply hshift.tendsto.congr'
+  filter_upwards [] with n
+  apply Subtype.ext
+  exact hLaw n
 
 end ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned
 

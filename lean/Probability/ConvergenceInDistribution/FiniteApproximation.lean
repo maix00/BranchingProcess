@@ -94,15 +94,15 @@ theorem tendstoInDistribution_of_finite_approximations
   have hsmall : Tendsto (fun k => M * c k + |C k - D|)
       atTop (nhds 0) := by
     convert ((hc.const_mul M).add
-      (tendsto_iff_dist_tendsto_zero.mp hC)) using 1 <;>
-      simp [Real.dist_eq]
+      (tendsto_iff_dist_tendsto_zero.mp hC)) using 1
+    simp
   obtain ⟨k, hk⟩ : ∃ k, M * c k + |C k - D| < ε / 2 :=
     (hsmall.eventually (isOpen_Iio.mem_nhds (half_pos hε))).exists
   have hnear : Tendsto (fun n => M * b k n + |B k n - C k|)
       atTop (nhds (M * c k)) := by
     convert (((hb k).const_mul M).add
-      (tendsto_iff_dist_tendsto_zero.mp (hB k))) using 1 <;>
-      simp [Real.dist_eq]
+      (tendsto_iff_dist_tendsto_zero.mp (hB k))) using 1
+    simp
   have htarget : M * c k < ε - |C k - D| := by linarith
   filter_upwards [hnear.eventually (isOpen_Iio.mem_nhds htarget)]
     with n hn
