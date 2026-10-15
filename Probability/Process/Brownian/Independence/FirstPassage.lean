@@ -9,6 +9,7 @@ module
 public import Probability.Process.Brownian.Independence.FirstPassageGrid
 public import Probability.Process.Brownian.Reflection.UnboundedBelow
 public import Probability.Process.Path.TimeGrid.Expanding
+public import Probability.MeasureTheory.Convergence.IndependentLimits
 
 /-!
 # Brownian future path at first passage
@@ -19,6 +20,8 @@ The public theorem in this file is:
   for each real level $a$, the path
   $u\mapsto B(\tau_a+u)-B(\tau_a)$ at
   $\tau_a=\inf\{t:B_t\le a\}$ has the original Brownian path law.
+- `ProbabilityTheory.IsBrownianReal.indepFun_shiftToZero_freezeAfter_firstPassageBelow`:
+  the same future path is independent of the path stopped at $\tau_a$.
 
 The proof takes expanding finite observation grids, uses the
 finite-valued stopping-time law, and passes to their almost-sure path
@@ -108,6 +111,77 @@ theorem IsBrownianReal.measure_shiftToZero_firstPassageBelow_eq
       (expandingGridCount n) (expandingGridTime n)
       (expandingGridTime_mono n) a
   exact Measure.map_eq_of_ae_pointwise_limit μ F Fₙ hF hFₙ hlim hinv
+
+/-- At a Brownian first-passage time, the future increment path is
+independent of the stopped past path. -/
+theorem IsBrownianReal.indepFun_shiftToZero_freezeAfter_firstPassageBelow
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+    {B : ℝ≥0 → Ω → ℝ} (hB : IsBrownianReal B P)
+    (hBmeasurable : ∀ u, Measurable (B u)) (a : ℝ) :
+    (fun ω => shiftToZero (hB.continuousPathMap hBmeasurable ω)
+      (firstPassageBelow (hB.continuousPathMap hBmeasurable ω) a).untopA) ⟂ᵢ[P]
+    (fun ω => freezeAfter (hB.continuousPathMap hBmeasurable ω)
+      (firstPassageBelow (hB.continuousPathMap hBmeasurable ω) a).untopA) := by
+  let pathB := hB.continuousPathMap hBmeasurable
+  let μ := P.map pathB
+  letI : IsProbabilityMeasure P := (hB.hasLaw ∅).isProbabilityMeasure
+  let ν : ProbabilityMeasure Ω := ⟨P, inferInstance⟩
+  let t : Ω → ℝ≥0 := fun ω => (firstPassageBelow (pathB ω) a).untopA
+  let tₙ : ℕ → Ω → ℝ≥0 := fun n ω =>
+    expandingGridTime n
+      (firstPassageGridCeiling (expandingGridCount n)
+        (expandingGridTime n) a (pathB ω))
+  let F : Ω → C(ℝ≥0, ℝ) := fun ω => shiftToZero (pathB ω) (t ω)
+  let G : Ω → C(ℝ≥0, ℝ) := fun ω => freezeAfter (pathB ω) (t ω)
+  let Fₙ : ℕ → Ω → C(ℝ≥0, ℝ) := fun n ω => shiftToZero (pathB ω) (tₙ n ω)
+  let Gₙ : ℕ → Ω → C(ℝ≥0, ℝ) := fun n ω => freezeAfter (pathB ω) (tₙ n ω)
+  have hpathB : Measurable pathB := hB.measurable_continuousPathMap hBmeasurable
+  have ht : Measurable t := ((measurable_firstPassageBelow a).comp hpathB).untopA
+  have htₙ (n : ℕ) : Measurable (tₙ n) :=
+    (measurable_of_finite (expandingGridTime n)).comp
+      ((measurable_firstPassageGridCeiling
+        (expandingGridCount n) (expandingGridTime n) a).comp hpathB)
+  have hF : Measurable F := measurable_shiftToZero.comp (hpathB.prodMk ht)
+  have hG : Measurable G := measurable_freezeAfter_pair.comp (hpathB.prodMk ht)
+  have hFₙ (n : ℕ) : Measurable (Fₙ n) :=
+    measurable_shiftToZero.comp (hpathB.prodMk (htₙ n))
+  have hGₙ (n : ℕ) : Measurable (Gₙ n) :=
+    measurable_freezeAfter_pair.comp (hpathB.prodMk (htₙ n))
+  have hfinite : ∀ᵐ f ∂μ, firstPassageBelow f a ≠ ⊤ := by
+    filter_upwards [hB.ae_continuousPath_unboundedBelow hBmeasurable]
+      with f hdesc
+    intro htop
+    obtain ⟨u, hu⟩ := hdesc a
+    have hnever := (firstPassageBelow_eq_top_iff f a).mp htop u
+    exact (not_lt_of_ge hu.le) hnever
+  have hfiniteΩ : ∀ᵐ ω ∂P, firstPassageBelow (pathB ω) a ≠ ⊤ :=
+    ae_of_ae_map hpathB.aemeasurable hfinite
+  have htime : ∀ᵐ ω ∂P,
+      Filter.Tendsto (fun n => tₙ n ω) Filter.atTop (nhds (t ω)) := by
+    filter_upwards [hfiniteΩ] with ω hω
+    obtain ⟨τ, hτ⟩ := WithTop.ne_top_iff_exists.mp hω
+    have htarget : t ω = τ := by
+      change (firstPassageBelow (pathB ω) a).untopA = τ
+      rw [← hτ]
+      rfl
+    rw [htarget]
+    exact tendsto_expandingGridCeiling_of_finite a (pathB ω) τ hτ.symm
+  have hFlim : ∀ᵐ ω ∂P,
+      Filter.Tendsto (fun n => Fₙ n ω) Filter.atTop (nhds (F ω)) :=
+    htime.mono (fun ω hω =>
+      continuous_shiftToZero.continuousAt.tendsto.comp
+        (tendsto_const_nhds.prodMk_nhds hω))
+  have hGlim : ∀ᵐ ω ∂P,
+      Filter.Tendsto (fun n => Gₙ n ω) Filter.atTop (nhds (G ω)) :=
+    htime.mono (fun ω hω =>
+      continuous_freezeAfter.continuousAt.tendsto.comp
+        (tendsto_const_nhds.prodMk_nhds hω))
+  have hind (n : ℕ) : Fₙ n ⟂ᵢ[P] Gₙ n :=
+    hB.indepFun_shiftToZero_freezeAfter_firstPassageGridCeiling
+      hBmeasurable (expandingGridCount n) (expandingGridTime n)
+      (expandingGridTime_mono n) a
+  exact indepFun_of_ae_pointwise_limits ν F G Fₙ Gₙ
+    hF hG hFₙ hGₙ hFlim hGlim hind
 
 end ProbabilityTheory
 

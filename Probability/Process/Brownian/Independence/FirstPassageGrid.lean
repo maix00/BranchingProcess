@@ -7,6 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.Brownian.Independence.FiniteStoppingTime
+public import Probability.Process.Brownian.Independence.StoppedPast
 public import Probability.Process.Brownian.Reflection.FirstPassageApproximation
 
 /-!
@@ -18,6 +19,9 @@ The public theorem in this file is:
   for a finite monotone observation grid, the Brownian future increment
   path at the first grid time after passage below a fixed level has the
   original Brownian path law.
+- `ProbabilityTheory.IsBrownianReal.indepFun_shiftToZero_freezeAfter_firstPassageGridCeiling`:
+  at the same finite grid time, the future increment path is independent
+  of the stopped past.
 - `ProbabilityTheory.IsBrownianReal.measure_shiftToZero_firstPassageBeforeOne_eq`:
   the same path-law identity at the first passage time capped at $1$.
 
@@ -50,6 +54,27 @@ theorem IsBrownianReal.measure_shiftToZero_firstPassageGridCeiling_eq
           (hB.continuousPathMap hBmeasurable ω)))) =
       P.map (hB.continuousPathMap hBmeasurable) := by
   exact hB.measure_shiftToZero_finitePathwiseStoppingTime_eq
+    hBmeasurable (firstPassageGridCeiling N r a) r
+    (measurable_firstPassageGridCeiling N r a)
+    (fun i f g hprefix =>
+      firstPassageGridCeiling_eq_iff_of_agreeOn
+        N r hr a i f g hprefix)
+
+/-- On a finite first-passage observation grid, the future increment
+path and the stopped past path are independent. -/
+theorem IsBrownianReal.indepFun_shiftToZero_freezeAfter_firstPassageGridCeiling
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+    {B : ℝ≥0 → Ω → ℝ} (hB : IsBrownianReal B P)
+    (hBmeasurable : ∀ u, Measurable (B u))
+    (N : ℕ) (r : Fin (N + 1) → ℝ≥0) (hr : Monotone r)
+    (a : ℝ) :
+    (fun ω => shiftToZero (hB.continuousPathMap hBmeasurable ω)
+      (r (firstPassageGridCeiling N r a
+        (hB.continuousPathMap hBmeasurable ω)))) ⟂ᵢ[P]
+    (fun ω => freezeAfter (hB.continuousPathMap hBmeasurable ω)
+      (r (firstPassageGridCeiling N r a
+        (hB.continuousPathMap hBmeasurable ω)))) := by
+  exact hB.indepFun_shiftToZero_freezeAfter_finitePathwiseStoppingTime
     hBmeasurable (firstPassageGridCeiling N r a) r
     (measurable_firstPassageGridCeiling N r a)
     (fun i f g hprefix =>
