@@ -10,14 +10,14 @@ public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVa
 public import Probability.Process.RandomWalk.SmallDeviation.Entrance.RobustExponentialBudget
 
 /-!
-# Tilted-tube lower bound from the two reflected transition estimates
+# Tilted-tube lower bound from the reflected survival asymptotics
 
 The public theorem in this file is:
 
-- `eventually_concreteStaircaseLowerBound_of_transitionBounds`:
+- `eventually_concreteStaircaseLowerBound_of_regularVariation`:
   for $t_1=\lfloor\Delta^2\rfloor$ and
   $L\ge\lfloor\Delta^{2+\varepsilon}\rfloor$, the two reflected
-  polynomial transition estimates from Appendix A.2, the paper's
+  survival regular-variation inputs from Appendix A.2, the paper's
   block-scale limits, and fixed endpoint and rate margins imply
   $\mathbb P(E)\ge\exp(-d'L/\Delta^2)$ eventually.
 
@@ -33,19 +33,31 @@ equation (3.3) and Lemma 2.1, respectively.
 @[expose] public section
 
 open Filter MeasureTheory ProbabilityTheory
-open scoped Topology
+open scoped NNReal Topology
 open ProbabilityTheory.RandomWalk.SmallDeviation.Entrance
 open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 
-/-- The remaining source-level inputs are precisely the positive and
-reflected transition estimates at the diffusive entrance horizon. -/
-theorem eventually_concreteStaircaseLowerBound_of_transitionBounds
+/-- The remaining fluctuation-theory inputs are the survival asymptotics
+for the walk and its reflection. -/
+theorem eventually_concreteStaircaseLowerBound_of_regularVariation
     {ν : Measure ℝ} [IsProbabilityMeasure ν]
     {sigma narrowedRate uInterior vInterior uFinal vFinal : ℝ}
     (hν : IsCenteredSecondMoment ν (sigma ^ 2))
     (hsigma : 0 < sigma)
+    (hregPlus : Asymptotics.IsRegularlyVaryingAtTop
+      (FunctionalLimit.Conditioned.survivalProbabilityReal ν)
+      (-(1 / 2 : ℝ)))
+    (hregMinus : Asymptotics.IsRegularlyVaryingAtTop
+      (FunctionalLimit.Conditioned.survivalProbabilityReal
+        (ν.map fun x : ℝ => -x)) (-(1 / 2 : ℝ)))
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+    [IsProbabilityMeasure P] {B : ℝ≥0 → Ω → ℝ}
+    (hB : IsBrownianReal B P)
+    (hcontinuous : ∀ ω, Continuous (B · ω))
+    (hmeasurable : ∀ t, Measurable (B t))
+    {rho : ℝ} (hrho : 0 < rho) (hrhoSmall : rho < 1 / 48)
     (m : ℕ) (hm : 2 ≤ m)
     (huInterior : 0 < uInterior)
     (huvInterior : uInterior < vInterior)
@@ -85,29 +97,16 @@ theorem eventually_concreteStaircaseLowerBound_of_transitionBounds
     (hfinalLower : margin ≤ uFinal)
     (hfinalUpper : vFinal + margin ≤
       (endpointFraction - 1 / (3 * (m : ℝ))) /
-        staircaseBinWidth m)
-    (hplus : ∀ offset : ℕ, ∃ C : ℝ, 0 < C ∧ ∀ᶠ n : ℕ in atTop,
-      C / width n ^ (1 + alpha) ≤
-        (iidSequenceLaw ν
-          (FunctionalLimit.Conditioned.nonnegativeTransitionEvent
-            (Asymptotics.floorBlockLength
-              (fun k => width k ^ 2) n - offset)
-            (width n))).toReal)
-    (hminus : ∀ offset : ℕ, ∃ C : ℝ, 0 < C ∧ ∀ᶠ n : ℕ in atTop,
-      C / width n ^ (1 + alpha) ≤
-        (iidSequenceLaw (ν.map fun x : ℝ => -x)
-          (FunctionalLimit.Conditioned.nonnegativeTransitionEvent
-            (Asymptotics.floorBlockLength
-              (fun k => width k ^ 2) n - offset)
-            (width n))).toReal) :
+        staircaseBinWidth m) :
     ∀ᶠ n : ℕ in atTop,
       Real.exp (-totalRate * (horizon n : ℝ) / width n ^ 2) ≤
         (iidSequenceLaw ν).real
           (driftedTubeEndpointWindowEvent (horizon n) (width n)
             drift base endpointFraction) := by
   have hbudget :=
-    exists_eventually_robustTransitionProbability_ge_exp_of_transitionBounds
-      hν hsigma hwidth hdrift halpha hdelta hepsilon hplus hminus
+    exists_eventually_robustTransitionProbability_ge_exp_of_regularVariation
+      ν hν hsigma hregPlus hregMinus hB hcontinuous hmeasurable
+      hrho hrhoSmall hwidth hdrift halpha hdelta hepsilon
   have hstart : ∀ᶠ n : ℕ in atTop, -base ∈ Set.Icc 0 (width n) := by
     have hwide := hwidth.eventually (eventually_ge_atTop (-base))
     filter_upwards [hwide] with n hn
