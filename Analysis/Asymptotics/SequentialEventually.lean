@@ -18,6 +18,10 @@ The public theorem in this file is:
   if a predicate $P(\Delta)$ holds eventually along every sequence of real
   widths $\Delta_n\to\infty$, then there is a real threshold $\Delta_0$
   such that $P(\Delta)$ holds for every $\Delta\ge\Delta_0$.
+- `Asymptotics.eventually_uniform_atTop_of_forall_tendsto_nat`:
+  if $D(\Delta_n,x_n)$ implies $P(\Delta_n,x_n)$ eventually along every
+  divergent real sequence and every admissible parameter sequence, then
+  one threshold works for all $x$ satisfying $D(\Delta,x)$.
 
 This general compactness step converts the sequential probability bounds
 used in Wang Yiyang, *Asymptotic speed of the $N$-branching random walk
@@ -56,6 +60,33 @@ theorem eventually_atTop_of_forall_tendsto_nat
       (Classical.choose_spec (hbad n)).1)
   obtain ⟨n, hn⟩ := (hseq width hwidth).exists
   exact (Classical.choose_spec (hbad n)).2 hn
+
+/-- A counterexample above every real threshold can be selected at each
+integer index, producing a divergent counterexample sequence. -/
+theorem eventually_uniform_atTop_of_forall_tendsto_nat
+    {α : Type*} (D P : ℝ → α → Prop)
+    (hseq : ∀ (width : ℕ → ℝ) (parameter : ℕ → α),
+      Tendsto width atTop atTop →
+      (∀ n, D (width n) (parameter n)) →
+      ∀ᶠ n : ℕ in atTop, P (width n) (parameter n)) :
+    ∃ threshold : ℝ, ∀ width ≥ threshold, ∀ parameter,
+      D width parameter → P width parameter := by
+  classical
+  by_contra hnot
+  push Not at hnot
+  have hbad (n : ℕ) : ∃ width : ℝ, (n : ℝ) ≤ width ∧
+      ∃ parameter : α, D width parameter ∧ ¬P width parameter := hnot n
+  choose width hwidth using hbad
+  choose parameter hdomain hfailure using fun n => (hwidth n).2
+  have hlimit : Tendsto width atTop atTop := by
+    rw [tendsto_atTop]
+    intro bound
+    have hnat : ∀ᶠ n : ℕ in atTop, bound ≤ (n : ℝ) :=
+      tendsto_natCast_atTop_atTop.eventually (eventually_ge_atTop bound)
+    filter_upwards [hnat] with n hn
+    exact hn.trans (hwidth n).1
+  obtain ⟨n, hn⟩ := (hseq width parameter hlimit hdomain).exists
+  exact hfailure n hn
 
 end Asymptotics
 
