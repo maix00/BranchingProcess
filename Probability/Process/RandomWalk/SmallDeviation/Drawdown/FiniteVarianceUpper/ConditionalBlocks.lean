@@ -22,10 +22,6 @@ import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 
 The public definitions and theorems are:
 
-- `iidSequenceLaw_condExp_prefix_nextBlock`: for an IID increment prefix
-  $X$ and fresh block $Y$, $\mathbb E[f(X,Y)\mid X]=\int f(X,y)\,d\nu^{\otimes\ell}(y)$.
-- `iidSequenceLaw_condExp_pairEvent_le_of_sectionProbability`:
-  a uniform section bound $p$ implies $\mathbb E[1_E\mid X]\le p$.
 - `drawdownPrefixSum`, `drawdownPartialBlockSum`, and `drawdownPrefixPath`:
   finite-prefix sums and the corresponding path.
 - `drawdownPastDiscretizedMaximum` and
@@ -55,6 +51,11 @@ The public definitions and theorems are:
   `measureReal_drawdownConditionalBlockIntersection_le_pow`:
   the finite block intersection and its product and power bounds.
 
+The conditional step uses the general
+`ProbabilityTheory.iidSequenceLaw_condExp_prefix_nextBlock` identity
+$\mathbb E[f(X,Y)\mid X]=\int f(X,y)\,d\nu^{\otimes\ell}(y)$.
+Its upper-section consequence is
+`ProbabilityTheory.iidSequenceLaw_condExp_pairEvent_le_of_sectionProbability`.
 These are the conditional-expectation and Markov-property steps in Wang
 Yiyang, *Asymptotic speed of the $N$-branching random walk with infinite
 offspring*, Chapter 3, proof of Lemma 3.3. The one-block estimate applies
@@ -73,107 +74,6 @@ namespace ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown
 
 open ProbabilityTheory.RandomWalk
 open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
-
-/-- Conditional expectation at the start of a block integrates over the
-fresh block increments. This is the finite-prefix version of the Markov
-property used in Wang Yiyang, *Asymptotic speed of the $N$-branching random
-walk with infinite offspring*, Chapter 3, proof of Lemma 3.3:
-\[
-  \mathbb E[f(X,Y)\mid X](\omega)
-    =\int f(X(\omega),y)\,d\mathcal L(Y)(y).
-\]
-Here `X` is the increment prefix and `Y` is the next block of increments. -/
-theorem iidSequenceLaw_condExp_prefix_nextBlock
-    (ν : Measure ℝ) [IsProbabilityMeasure ν]
-    (start length : ℕ)
-    {f : (Fin start → ℝ) × (Fin length → ℝ) → ℝ}
-    (hf : StronglyMeasurable f)
-    (hfi : Integrable
-      (fun increment : ℕ → ℝ =>
-        f (Combinatorics.Sequence.blockCoordinates 0 start increment,
-          Combinatorics.Sequence.blockCoordinates start length increment))
-      (iidSequenceLaw ν)) :
-    condExp
-        (MeasurableSpace.comap
-          (Combinatorics.Sequence.blockCoordinates 0 start) inferInstance)
-        (iidSequenceLaw ν)
-        (fun increment : ℕ → ℝ =>
-          f (Combinatorics.Sequence.blockCoordinates 0 start increment,
-            Combinatorics.Sequence.blockCoordinates start length increment))
-      =ᵐ[iidSequenceLaw ν]
-        fun increment =>
-          ∫ block, f
-            (Combinatorics.Sequence.blockCoordinates 0 start increment, block)
-            ∂(iidSequenceLaw ν).map
-              (Combinatorics.Sequence.blockCoordinates start length) := by
-  exact ProbabilityTheory.iidSequenceLaw_condExp_prefix_nextBlock
-    ν start length hf hfi
-
-/-- A uniform bound on every section of a measurable event in
-`prefix × nextBlock` gives the corresponding conditional-probability bound.
-The conditional expectation is evaluated by integrating the next block
-against its IID law, exactly as in the Markov step of Wang Yiyang, Chapter 3,
-Lemma 3.3. -/
-theorem iidSequenceLaw_condExp_pairEvent_le_of_sectionProbability
-    (ν : Measure ℝ) [IsProbabilityMeasure ν]
-    (start length : ℕ)
-    (E : Set ((Fin start → ℝ) × (Fin length → ℝ)))
-    (hE : MeasurableSet E) {bound : ℝ}
-    (hsections : ∀ past,
-      ((iidSequenceLaw ν).map
-        (Combinatorics.Sequence.blockCoordinates start length)).real
-        {block | (past, block) ∈ E} ≤ bound) :
-    ∀ᵐ increment ∂iidSequenceLaw ν,
-      condExp
-        (MeasurableSpace.comap
-          (Combinatorics.Sequence.blockCoordinates 0 start) inferInstance)
-        (iidSequenceLaw ν)
-        (fun increment => E.indicator (fun _ => (1 : ℝ))
-          (Combinatorics.Sequence.blockCoordinates 0 start increment,
-            Combinatorics.Sequence.blockCoordinates start length increment))
-        increment ≤ bound := by
-  let pastBlock : (ℕ → ℝ) → Fin start → ℝ :=
-    Combinatorics.Sequence.blockCoordinates 0 start
-  let nextBlock : (ℕ → ℝ) → Fin length → ℝ :=
-    Combinatorics.Sequence.blockCoordinates start length
-  let pair : (ℕ → ℝ) → (Fin start → ℝ) × (Fin length → ℝ) :=
-    fun increment => (pastBlock increment, nextBlock increment)
-  let f : (Fin start → ℝ) × (Fin length → ℝ) → ℝ :=
-    E.indicator (fun _ => (1 : ℝ))
-  have hpairMeasurable : Measurable pair := by
-    exact (measurable_blockCoordinates 0 start).prodMk
-      (measurable_blockCoordinates start length)
-  have hpreimage : MeasurableSet (pair ⁻¹' E) := hE.preimage hpairMeasurable
-  have hf : StronglyMeasurable f := stronglyMeasurable_const.indicator hE
-  have hfi : Integrable (fun increment => f (pair increment))
-      (iidSequenceLaw ν) :=
-    (integrable_const (c := (1 : ℝ))).indicator hpreimage
-  have hcond := iidSequenceLaw_condExp_prefix_nextBlock
-    ν start length hf hfi
-  have hsectionIntegral (x : Fin start → ℝ) :
-      (∫ block, f (x, block) ∂
-        (iidSequenceLaw ν).map nextBlock) =
-        ((iidSequenceLaw ν).map nextBlock).real
-          {block | (x, block) ∈ E} := by
-    let sectionEvent : Set (Fin length → ℝ) := {block | (x, block) ∈ E}
-    have hsectionMeasurable : MeasurableSet sectionEvent :=
-      hE.preimage (measurable_const.prodMk measurable_id)
-    have hfunction : (fun block => f (x, block)) =
-        sectionEvent.indicator (fun _ => (1 : ℝ)) := by
-      funext block
-      simp [f, sectionEvent, Set.indicator]
-    rw [hfunction]
-    change (∫ block, sectionEvent.indicator (fun _ => (1 : ℝ)) block
-        ∂(iidSequenceLaw ν).map nextBlock) =
-      ((iidSequenceLaw ν).map nextBlock).real sectionEvent
-    rw [integral_indicator_const (e := (1 : ℝ)) hsectionMeasurable,
-      smul_eq_mul, mul_one]
-  filter_upwards [hcond] with increment hincrement
-  rw [hincrement]
-  have hsection := hsectionIntegral
-    (Combinatorics.Sequence.blockCoordinates 0 start increment)
-  rw [hsection]
-  exact hsections (Combinatorics.Sequence.blockCoordinates 0 start increment)
 
 /-- Sum of the increments in a finite prefix. -/
 def drawdownPrefixSum {n : ℕ} (increments : Fin n → ℝ) : ℝ :=
@@ -656,7 +556,7 @@ theorem iidSequenceLaw_condExp_drawdownTubePairEvent_le_of_intervalBound
         (Combinatorics.Sequence.blockCoordinates start length)).real sectionEvent ≤ bound
       rw [hempty]
       simpa [Measure.real] using hboundNonneg
-  exact iidSequenceLaw_condExp_pairEvent_le_of_sectionProbability
+  exact ProbabilityTheory.iidSequenceLaw_condExp_pairEvent_le_of_sectionProbability
     ν start length (drawdownTubePairEvent center width) hE hsections
 
 /-- Applying the translated-interval estimate of Wang Yiyang, *Asymptotic
