@@ -7,12 +7,16 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition
+public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.TransitionDiffusiveFromMeander
 public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.SurvivalPower
 
 /-!
 # Diffusive entrance bound from survival and the meander limit
 
-The public theorem in this file is:
+The public theorems in this file are:
+
+- `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.exists_eventually_diffusiveTransitionProbability_ge_power_of_conditionalBound`:
+  combine a conditional transition lower bound and a survival lower bound.
 
 - ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.exists_eventually_diffusiveTransitionProbability_ge_power:
   for the transition event
@@ -21,6 +25,10 @@ The public theorem in this file is:
   $N=\lfloor\Delta^2\rfloor-m$, the survival regular variation,
   conditioned meander limit, and meander support imply
   $\mathbb P(D_{N,\Delta})\ge C\Delta^{-1-\alpha}$ eventually.
+- `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.exists_eventually_diffusiveTransitionProbability_ge_power_of_centeredSecondMoment`:
+  the same bound with the meander limit and its support supplied by the
+  centered finite-variance hypotheses; survival regular variation remains
+  explicit.
 
 This is the multiplication step in Wang Yiyang,
 *Asymptotic speed of the $N$-branching random walk with infinite offspring*,
@@ -35,7 +43,7 @@ provides a later treatment of the meander limit.
 @[expose] public section
 
 open Filter MeasureTheory ProbabilityTheory
-open scoped ENNReal Topology
+open scoped ENNReal NNReal Topology
 
 namespace ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned
 
@@ -44,10 +52,8 @@ $\mathbb P(D_{N,\Delta})
  =\mathbb P(D_{N,\Delta}\mid C_N)\mathbb P(C_N)$
 at the diffusive horizon. This implements the corresponding step in
 Wang Yiyang, Appendix A.2, first lemma. -/
-theorem exists_eventually_diffusiveTransitionProbability_ge_power
-    {Ωm : Type*} [MeasurableSpace Ωm]
+theorem exists_eventually_diffusiveTransitionProbability_ge_power_of_conditionalBound
     {ν : Measure ℝ} [IsProbabilityMeasure ν]
-    [∀ n, IsProbabilityMeasure (survivalConditionedLaw ν (n + 1))]
     {sigma : ℝ} (hν : IsCenteredSecondMoment ν (sigma ^ 2))
     (hsigma : 0 < sigma)
     (hreg : Asymptotics.IsRegularlyVaryingAtTop
@@ -57,23 +63,17 @@ theorem exists_eventually_diffusiveTransitionProbability_ge_power
     (offset : ℕ)
     [∀ n, IsProbabilityMeasure
       (survivalConditionedLaw ν (diffusiveTransitionHorizon width offset n))]
-    {Pm : Measure Ωm} [IsProbabilityMeasure Pm]
-    {M : Ωm → CadlagPath unitInterval ℝ}
-    {rho : ℝ} (hrho : 0 < rho) (hrhoSmall : rho < 1 / 48)
-    (hlimit : TendstoInDistribution
-      (fun n increment => normalizedStepCadlagPathIcc
-        (fun j => sigma * Real.sqrt j) (n + 1) increment)
-      atTop M (fun n => survivalConditionedLaw ν (n + 1)) Pm)
-    (hsupport : Skorokhod.straightPath ((7 / 16) / sigma) ∈
-      (Pm.map M).support) :
+    (htransition : ∃ q : ℝ≥0∞, 0 < q ∧ ∀ᶠ n : ℕ in atTop,
+      q ≤ survivalConditionedLaw ν
+        (diffusiveTransitionHorizon width offset n)
+        (nonnegativeTransitionEvent
+          (diffusiveTransitionHorizon width offset n) (width n))) :
     ∃ C : ℝ, 0 < C ∧ ∀ᶠ n : ℕ in atTop,
       C / width n ^ (1 + alpha) ≤
         (iidSequenceLaw ν
           (nonnegativeTransitionEvent
             (diffusiveTransitionHorizon width offset n) (width n))).toReal := by
-  obtain ⟨q, hq, hconditional⟩ :=
-    exists_eventually_diffusiveTransitionConditionalProbability_ge
-      hwidth offset hsigma hrho hrhoSmall hlimit hsupport
+  obtain ⟨q, hq, hconditional⟩ := htransition
   obtain ⟨C, hC, hsurvival⟩ :=
     exists_eventually_diffusiveSurvivalProbability_ge_power
       ν hν hsigma hreg halpha hwidth offset
@@ -114,6 +114,73 @@ theorem exists_eventually_diffusiveTransitionProbability_ge_power
   · rw [mul_div_assoc]
   · rw [← ENNReal.toReal_mul,
       ← measure_nonnegativeTransitionEvent_eq_cond_mul_survival]
+
+/-- The probability product bound from an explicitly supplied conditioned
+step-path limit and support point. -/
+theorem exists_eventually_diffusiveTransitionProbability_ge_power
+    {Ωm : Type*} [MeasurableSpace Ωm]
+    {ν : Measure ℝ} [IsProbabilityMeasure ν]
+    [∀ n, IsProbabilityMeasure (survivalConditionedLaw ν (n + 1))]
+    {sigma : ℝ} (hν : IsCenteredSecondMoment ν (sigma ^ 2))
+    (hsigma : 0 < sigma)
+    (hreg : Asymptotics.IsRegularlyVaryingAtTop
+      (survivalProbabilityReal ν) (-(1 / 2 : ℝ)))
+    {alpha : ℝ} (halpha : 0 < alpha)
+    {width : ℕ → ℝ} (hwidth : Tendsto width atTop atTop)
+    (offset : ℕ)
+    [∀ n, IsProbabilityMeasure
+      (survivalConditionedLaw ν (diffusiveTransitionHorizon width offset n))]
+    {Pm : Measure Ωm} [IsProbabilityMeasure Pm]
+    {M : Ωm → CadlagPath unitInterval ℝ}
+    {rho : ℝ} (hrho : 0 < rho) (hrhoSmall : rho < 1 / 48)
+    (hlimit : TendstoInDistribution
+      (fun n increment => normalizedStepCadlagPathIcc
+        (fun j => sigma * Real.sqrt j) (n + 1) increment)
+      atTop M (fun n => survivalConditionedLaw ν (n + 1)) Pm)
+    (hsupport : Skorokhod.straightPath ((7 / 16) / sigma) ∈
+      (Pm.map M).support) :
+    ∃ C : ℝ, 0 < C ∧ ∀ᶠ n : ℕ in atTop,
+      C / width n ^ (1 + alpha) ≤
+        (iidSequenceLaw ν
+          (nonnegativeTransitionEvent
+            (diffusiveTransitionHorizon width offset n) (width n))).toReal := by
+  have htransition :=
+    exists_eventually_diffusiveTransitionConditionalProbability_ge
+      hwidth offset hsigma hrho hrhoSmall hlimit hsupport
+  exact exists_eventually_diffusiveTransitionProbability_ge_power_of_conditionalBound
+    hν hsigma hreg halpha hwidth offset htransition
+
+/-- The probability product bound with the conditioned meander input and
+its support established from centered finite-variance increments. -/
+theorem exists_eventually_diffusiveTransitionProbability_ge_power_of_centeredSecondMoment
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    {sigma : ℝ} (hν : IsCenteredSecondMoment ν (sigma ^ 2))
+    (hsigma : 0 < sigma)
+    (hreg : Asymptotics.IsRegularlyVaryingAtTop
+      (survivalProbabilityReal ν) (-(1 / 2 : ℝ)))
+    {alpha : ℝ} (halpha : 0 < alpha)
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+    [IsProbabilityMeasure P] {B : ℝ≥0 → Ω → ℝ}
+    (hB : IsBrownianReal B P)
+    (hcontinuous : ∀ ω, Continuous (B · ω))
+    (hmeasurable : ∀ t, Measurable (B t))
+    {rho : ℝ} (hrho : 0 < rho) (hrhoSmall : rho < 1 / 48)
+    {width : ℕ → ℝ} (hwidth : Tendsto width atTop atTop)
+    (offset : ℕ) :
+    ∃ C : ℝ, 0 < C ∧ ∀ᶠ n : ℕ in atTop,
+      C / width n ^ (1 + alpha) ≤
+        (iidSequenceLaw ν
+          (nonnegativeTransitionEvent
+            (diffusiveTransitionHorizon width offset n) (width n))).toReal := by
+  letI : ∀ n : ℕ, IsProbabilityMeasure
+      (survivalConditionedLaw ν (diffusiveTransitionHorizon width offset n)) :=
+    fun n => survivalConditionedLaw_isProbabilityMeasure_of_centeredSecondMoment
+      ν hν hsigma _
+  have htransition :=
+    exists_eventually_diffusiveTransitionConditionalProbability_ge_of_centeredSecondMoment
+      ν hν hsigma hB hcontinuous hmeasurable hrho hrhoSmall hwidth offset
+  exact exists_eventually_diffusiveTransitionProbability_ge_power_of_conditionalBound
+    hν hsigma hreg halpha hwidth offset htransition
 
 end ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned
 
