@@ -71,7 +71,7 @@ theorem tubeBlockIntersection_enters_next
       rw [hnext k]
       exact hwindow k hjq hend
 
-/-- The paper's reverse Markov multiplication for successive horizontal
+/-- The reverse Markov multiplication in Wang Yiyang's Lemma 3.5 for successive horizontal
 tubes, including the entrance event and unequal block lengths. -/
 theorem measureReal_tubeBlockIntersection_ge_prod_of_endpointWindows
     (ν : Measure ℝ) [IsProbabilityMeasure ν]

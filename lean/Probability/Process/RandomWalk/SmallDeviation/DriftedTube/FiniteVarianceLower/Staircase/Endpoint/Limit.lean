@@ -92,7 +92,7 @@ theorem eventually_staircaseInteriorLowerMargin
   exact (hsum.eventually (eventually_lt_nhds hmargin)).mono
     (fun n hn => hn.le)
 
-/-- The paper's subcubic block-scale condition gives the ordinary-block
+/-- The subcubic block-scale condition in Wang Yiyang's Lemma 3.5 gives the ordinary-block
 lower endpoint margin with one common width threshold. -/
 theorem eventually_staircaseInteriorLowerMargin_of_blockScale
     {width : ℕ → ℝ} {blockLength : ℕ → ℕ}

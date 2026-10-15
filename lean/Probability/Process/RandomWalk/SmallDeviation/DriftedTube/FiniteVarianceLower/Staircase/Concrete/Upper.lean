@@ -11,7 +11,7 @@ public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVa
 public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Staircase.Concrete.EntranceLower
 
 /-!
-# Upper-endpoint lower bound for the thesis staircase schedule
+# Upper-endpoint bound for Wang Yiyang's Lemma 3.5 staircase schedule
 
 The public theorem in this file is:
 

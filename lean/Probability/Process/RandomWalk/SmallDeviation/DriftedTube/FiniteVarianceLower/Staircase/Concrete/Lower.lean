@@ -9,7 +9,7 @@ module
 public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Staircase.FiniteLower
 public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Staircase.Endpoint.Windows
 /-!
-# Lower bound for the thesis staircase schedule
+# Lower bound for Wang Yiyang's Lemma 3.5 staircase schedule
 
 The public theorem in this file is:
 
