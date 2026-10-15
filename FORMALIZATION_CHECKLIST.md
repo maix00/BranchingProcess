@@ -202,8 +202,17 @@ principle, and `Brownian/Reflection/RandomLevelFirstPassage.lean` applies
 it to a positive passage level and positive target time selected from a
 deterministic-time stopped Brownian path. `Path/FirstPassageRestart.lean`
 provides the deterministic return-time identity used at that rational
-observation time. Lemma 2.4, Lemma 2.5, and the conditioned invariance
-principle remain open.
+observation time. Bolthausen's Lemma 2.4 is now proved in
+`Path/AboveStart/FirstWindowContinuity.lean` and
+`Brownian/AboveStart/FirstWindowContinuity.lean`: the first-window time
+$T$ is lower semicontinuous for every continuous path; a strictly
+positive first window gives upper semicontinuity by Bolthausen's
+short-interval minimizer construction. Equations (2.2) and (2.4)
+make this condition almost sure for Brownian paths. For each finite
+$s>1$, equation (2.3) excludes the sole cutoff $T=s-1$; $s=1$
+uses the strictly negative Brownian running minimum, and $s<1$
+is the constant infinite-time case. Lemma 2.5 and the conditioned
+invariance principle remain open.
 
 The concrete finite staircase now has its own verified schedule and geometry:
 `DriftedTube/FiniteVarianceLower/Staircase/Setup/Schedule.lean` defines
