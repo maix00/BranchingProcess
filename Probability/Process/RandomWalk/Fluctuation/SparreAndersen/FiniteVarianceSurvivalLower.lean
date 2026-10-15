@@ -22,8 +22,10 @@ The public theorem in this file is:
   $\mathbb P(S_1,\ldots,S_n\ge0)\ge C(n+1)^{\gamma-1}$
   for every $n$.
 
-The proof uses the finite coefficient recurrence of Bauer--Godrèche--Luck,
-Appendix A, equation (A.7), together with the Gaussian endpoint sign limit
+The proof uses the finite coefficient recurrence in M. Bauer, C. Godrèche,
+and J.-M. Luck, *Statistics of persistent events in the binomial random
+walk: Will the drunken sailor hit the sober man?*, Appendix A, equation
+(A.7) (arXiv:cond-mat/9905252), together with the Gaussian endpoint sign limit
 and a prefix-sum induction. The recurrence is the finite form of the
 Sparre--Andersen identity.
 -/
