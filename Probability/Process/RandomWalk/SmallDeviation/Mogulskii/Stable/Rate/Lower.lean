@@ -18,11 +18,31 @@ public import Mathlib.Topology.Order.LiminfLimsup
 /-!
 # Stable Mogulskii lower rate
 
-The proof follows the source's endpoint-return construction. A large fixed
-stable block is controlled by the stable endpoint-corridor rate, transferred
-through the open-set Portmanteau inequality, and iterated by the discrete
-seven-band return estimate. The block count is then evaluated using slow
-variation alone.
+The public theorems in this file are:
+
+- `eventually_openHorizontalTubeProbability_ge_exp_of_stableEscapeRate`:
+  for a strict interior radius $r$, a sufficiently large block amplitude $c$
+  gives the lower bound
+  $\exp((C/r^\alpha-\delta)c^\alpha)^{\lfloor n/\ell_n\rfloor+1}
+  \leq \mathbb P(T_n)$.
+- `stableEscapeRate_subtube_liminf_lower`:
+  $C/r^\alpha-\delta\leq\liminf_n a_n\log\mathbb P(T_n)$.
+- `stableEscapeRate_liminf_lower`:
+  $C/(1/2)^\alpha\leq\liminf_n a_n\log\mathbb P(T_n)$.
+- `stableEscapeRate_eventually_positive_and_log_cobounded`:
+  the tube probabilities are eventually positive, and
+  $a_n\log\mathbb P(T_n)$ has the boundedness properties needed to form
+  its real liminf and limsup.
+- `tendsto_stableSmallDeviationRate_mul_log_openHorizontalTubeProbability_of_escapeRate`:
+  $a_n\log\mathbb P(T_n)\to C/(1/2)^\alpha$.
+
+Here $a_n$ is `stableSmallDeviationRate α ν scale n`, $\ell_n$ is
+`stableBlockLength α ν (c ^ α) scale n`, and $T_n$ is the centered open
+horizontal-tube event. The lower-bound construction follows the endpoint
+return argument of A. A. Mogul'skii, *Small Deviations in a Space of
+Trajectories*, Theorem 3, Section 4 (1974 Russian original; 1975 English
+translation, DOI 10.1137/1119081). It combines the stable endpoint-corridor
+rate, open-set Portmanteau, seven-band return estimate, and slow variation.
 -/
 
 open Filter MeasureTheory ProbabilityTheory
@@ -183,9 +203,11 @@ theorem eventually_openHorizontalTubeProbability_ge_exp_of_stableEscapeRate
     exact measure_mono hsubset
   exact hclosed.trans hmono
 
-/-- The source endpoint-return construction gives the sharp stable lower
-rate for every strict sub-tube. The radius may then approach the target
-half-width; the block amplitude is fixed before taking the horizon limit. -/
+/-- The endpoint-return argument of A. A. Mogul'skii, *Small Deviations in a
+Space of Trajectories*, Theorem 3, Section 4 (DOI 10.1137/1119081), gives
+the sharp stable lower rate for every strict sub-tube. The radius may then
+approach the target half-width; the block amplitude is fixed before taking
+the horizon limit. -/
 theorem stableEscapeRate_subtube_liminf_lower
     {ν μ : Measure ℝ} [IsProbabilityMeasure ν] [IsProbabilityMeasure μ]
     {α C : ℝ} {normalization scale : ℕ → ℝ}
@@ -634,9 +656,10 @@ theorem stableEscapeRate_eventually_positive_and_log_cobounded
     ⟨constant⁻¹ * Real.log base - 1, hactualLower⟩,
     ⟨0, hactualUpper⟩⟩
 
-/-- The two rate bounds identify the stable centered horizontal-tube limit.
-The only scale assumption on `L*` is slow variation; no boundedness along
-the shrinking-deviation scale is required. -/
+/-- The two rate bounds identify the stable centered horizontal-tube limit
+of A. A. Mogul'skii, *Small Deviations in a Space of Trajectories*,
+Theorem 3, Section 4 (DOI 10.1137/1119081). The only scale assumption on
+`L*` is slow variation. -/
 theorem tendsto_stableSmallDeviationRate_mul_log_openHorizontalTubeProbability_of_escapeRate
     {ν μ : Measure ℝ} [IsProbabilityMeasure ν] [IsProbabilityMeasure μ]
     {α C : ℝ} {normalization scale : ℕ → ℝ}
