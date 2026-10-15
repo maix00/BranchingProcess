@@ -29,6 +29,9 @@ is the sign-reversed form of the nonnegative-tail result.
 The theorem `ProbabilityTheory.RandomWalk.normalizedLinearPath_before_zero`
 gives the affine value just before a grid point at which the path
 returns to zero.
+The theorem `ProbabilityTheory.RandomWalk.normalizedLinearPath_tail_after_zero`
+states that if $S_m=0$, then
+$X_n(m/n+(n-m)t/n)=a_n^{-1}\sum_{j<n-m}w_{n-m,j}(t)\xi_{m+j}$.
 -/
 
 open Set
@@ -261,6 +264,80 @@ theorem normalizedLinearPath_before_zero
   rw [normalizedLinearPath_on_interval scale hk increment t hleft hright,
     hinc]
   ring
+
+/-- After a zero at lattice index `start`, the tail of a normalized
+polygonal walk is the same weighted increment block with the new time
+mesh. -/
+theorem normalizedLinearPath_tail_after_zero
+    (scale : ℕ → ℝ) {n start : ℕ} (hn : 0 < n)
+    (hstart : start ≤ n) (increment : ℕ → ℝ)
+    (hzero : AdditivePath.displacement start increment = 0)
+    (t : unitInterval) :
+    normalizedLinearPath scale n increment
+        ((start : ℝ) / n + ((n - start : ℕ) : ℝ) / n * (t : ℝ)) =
+      (scale n)⁻¹ *
+        ∑ j ∈ Finset.range (n - start),
+          linearIncrementWeight (n - start) j (t : ℝ) *
+            increment (start + j) := by
+  let length := n - start
+  have hnreal : (n : ℝ) ≠ 0 := by exact_mod_cast hn.ne'
+  have htime : (n : ℝ) *
+      ((start : ℝ) / n + (length : ℝ) / n * (t : ℝ)) =
+      (start : ℝ) + (length : ℝ) * (t : ℝ) := by
+    field_simp
+  have hfirst (i : ℕ) (hi : i < start) :
+      linearIncrementWeight n i
+        ((start : ℝ) / n + (length : ℝ) / n * (t : ℝ)) = 1 := by
+    have hlt : (i : ℝ) + 1 ≤ (start : ℝ) := by
+      exact_mod_cast Nat.succ_le_iff.mpr hi
+    have hnonneg : 0 ≤ (length : ℝ) * (t : ℝ) :=
+      mul_nonneg (Nat.cast_nonneg _) t.property.1
+    simp only [linearIncrementWeight, htime]
+    rw [max_eq_right (by linarith), min_eq_left (by linarith)]
+  have hsecond (j : ℕ) :
+      linearIncrementWeight n (start + j)
+        ((start : ℝ) / n + (length : ℝ) / n * (t : ℝ)) =
+      linearIncrementWeight length j (t : ℝ) := by
+    simp only [linearIncrementWeight, htime]
+    have harg : (start : ℝ) + (length : ℝ) * (t : ℝ) -
+        (↑(start + j) : ℝ) = (length : ℝ) * (t : ℝ) - j := by
+      push_cast
+      ring
+    rw [harg]
+  have hnadd : n = start + length := by
+    dsimp [length]
+    omega
+  have hsum :
+      (∑ i ∈ Finset.range n,
+        linearIncrementWeight n i
+          ((start : ℝ) / n + (length : ℝ) / n * (t : ℝ)) *
+            increment i) =
+      ∑ j ∈ Finset.range length,
+        linearIncrementWeight length j (t : ℝ) *
+          increment (start + j) := by
+    conv_lhs => rw [hnadd]
+    rw [Finset.sum_range_add]
+    have hprefix :
+        (∑ i ∈ Finset.range start,
+          linearIncrementWeight n i
+            ((start : ℝ) / n + (length : ℝ) / n * (t : ℝ)) *
+            increment i) = 0 := by
+      apply Eq.trans _ hzero
+      change (∑ i ∈ Finset.range start,
+        linearIncrementWeight n i
+          ((start : ℝ) / n + (length : ℝ) / n * (t : ℝ)) *
+            increment i) = ∑ i ∈ Finset.range start, increment i
+      apply Finset.sum_congr rfl
+      intro i hi
+      rw [hfirst i (Finset.mem_range.mp hi), one_mul]
+    rw [hnadd] at hprefix
+    rw [hprefix, zero_add]
+    apply Finset.sum_congr rfl
+    intro j hj
+    have hsecond' := hsecond j
+    rw [hnadd] at hsecond'
+    rw [hsecond']
+  exact congrArg ((scale n)⁻¹ * ·) hsum
 
 /-- Nonnegative grid values on a final interval imply nonnegativity
 throughout the interpolated final interval. -/
