@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.Path.Window.Endpoint
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower
+public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Basic
 public import Probability.Sequence.IID.ConditionalBlocks
 
 /-!
