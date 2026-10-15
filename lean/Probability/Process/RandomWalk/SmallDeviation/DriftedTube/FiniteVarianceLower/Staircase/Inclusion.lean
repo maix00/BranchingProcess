@@ -22,9 +22,6 @@ The public objects and theorems in this file are:
   if the entrance stays in the target tube, each horizontal block spans
   $[r_{t_{j+1}},s_{t_j}]$, and the last block ends in the final window,
   then the entrance and all successful blocks imply the target event.
-- `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.initialInterTubeBlocks_subset_driftedTubeEndpointWindowEvent_of_nonpos`:
-  the falling-tube specialization with horizontal blocks
-  $[r_{t_j},s_{t_{j+1}}]$.
 
 This is the deterministic event inclusion at the start and end of the
 reverse Markov product in Wang Yiyang,
@@ -198,66 +195,6 @@ theorem initialInterTubeBlocks_subset_driftedTubeEndpointWindowEvent
           (drift * ((start j + length j : ℕ) : ℝ) / width ^ 2) +
             width := by
     simpa only [min_eq_left (hmono j)] using hblockUpper j hj
-  exact initialInterTubeBlocks_subset_driftedTubeEndpointWindowEvent_of_extremeBounds
-    start length hnext q horizon hq hfinish initial width drift base
-    endpointFraction blockLower blockWidth v₁ v₂ hblockLower'
-    hblockUpper' hentrance hfinalWindow
-
-/-- For nonpositive drift, the maximal lower boundary is at the block
-start and the minimal upper boundary is at the block end. -/
-theorem initialInterTubeBlocks_subset_driftedTubeEndpointWindowEvent_of_nonpos
-    (start length : ℕ → ℕ)
-    (hnext : ∀ j, start (j + 1) = start j + length j)
-    (q horizon : ℕ) (hq : 0 < q)
-    (hfinish : start q = horizon)
-    (initial : Set (ℕ → ℝ))
-    (width drift base endpointFraction : ℝ)
-    (hdrift : drift ≤ 0)
-    (blockLower blockWidth v₁ v₂ : ℕ → ℝ)
-    (hblockLower : ∀ j, j < q →
-      blockLower j = base + drift * (start j : ℝ) / width ^ 2)
-    (hblockUpper : ∀ j, j < q →
-      blockLower j + blockWidth j =
-        base + drift * ((start j + length j : ℕ) : ℝ) / width ^ 2 +
-          width)
-    (hentrance : ∀ increment ∈ initial, ∀ time : ℕ,
-      1 ≤ time → time ≤ start 0 →
-        base + drift * (time : ℝ) / width ^ 2 ≤
-          AdditivePath.displacement time increment ∧
-        AdditivePath.displacement time increment ≤
-          base + drift * (time : ℝ) / width ^ 2 + width)
-    (hfinalWindow :
-      Set.Icc
-        (blockLower (q - 1) + v₁ (q - 1) * blockWidth (q - 1))
-        (blockLower (q - 1) + v₂ (q - 1) * blockWidth (q - 1)) ⊆
-      Set.Icc
-        (base + drift * (horizon : ℝ) / width ^ 2)
-        (base + drift * (horizon : ℝ) / width ^ 2 +
-          endpointFraction * width)) :
-    initial ∩ conditionalBlockIntersection
-      (fun j => tubeBlockEvent (start j) (length j)
-        (blockLower j) (blockWidth j) (v₁ j) (v₂ j)) q ⊆
-      driftedTubeEndpointWindowEvent
-        horizon width drift base endpointFraction := by
-  have hmono (j : ℕ) :
-      drift * ((start j + length j : ℕ) : ℝ) / width ^ 2 ≤
-        drift * (start j : ℝ) / width ^ 2 := by
-    have htime : (start j : ℝ) ≤
-        ((start j + length j : ℕ) : ℝ) := by
-      exact_mod_cast (Nat.le_add_right (start j) (length j))
-    exact div_le_div_of_nonneg_right
-      (mul_le_mul_of_nonpos_left htime hdrift) (sq_nonneg width)
-  have hblockLower' (j : ℕ) (hj : j < q) :
-      blockLower j = base +
-        max (drift * (start j : ℝ) / width ^ 2)
-          (drift * ((start j + length j : ℕ) : ℝ) / width ^ 2) := by
-    simpa only [max_eq_left (hmono j)] using hblockLower j hj
-  have hblockUpper' (j : ℕ) (hj : j < q) :
-      blockLower j + blockWidth j = base +
-        min (drift * (start j : ℝ) / width ^ 2)
-          (drift * ((start j + length j : ℕ) : ℝ) / width ^ 2) +
-            width := by
-    simpa only [min_eq_right (hmono j)] using hblockUpper j hj
   exact initialInterTubeBlocks_subset_driftedTubeEndpointWindowEvent_of_extremeBounds
     start length hnext q horizon hq hfinish initial width drift base
     endpointFraction blockLower blockWidth v₁ v₂ hblockLower'
