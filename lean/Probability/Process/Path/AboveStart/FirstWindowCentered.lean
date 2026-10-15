@@ -21,6 +21,8 @@ The public definitions and theorems in this file are:
 - `ProbabilityTheory.measurable_centeredFirstWindowShift` and
   `ProbabilityTheory.measurable_centeredFirstWindowShiftUpTo`:
   both path maps are Borel measurable.
+- `ProbabilityTheory.centeredFirstWindowShiftUpTo_eq_of_finite`:
+  when $T^s(f)<\infty$, the finite and unrestricted centered shifts agree.
 - `ProbabilityTheory.continuousAt_centeredFirstWindowShift_of_finite` and
   `ProbabilityTheory.continuousAt_centeredFirstWindowShiftUpTo_of_finite`:
   continuity at paths with finite first-window times and continuous
@@ -81,6 +83,20 @@ theorem measurable_centeredFirstWindowShiftUpTo (s : ℝ≥0) :
   unfold centeredFirstWindowShiftUpTo
   exact Measurable.ite (hT (measurableSet_singleton ⊤))
     measurable_const hshift
+
+/-- A finite first eligible window before the cutoff gives the same
+centered path as the unrestricted first eligible window. -/
+theorem centeredFirstWindowShiftUpTo_eq_of_finite
+    (f : C(ℝ≥0, ℝ)) (s : ℝ≥0)
+    (hfinite : firstNonnegativeWindowStartUpTo f s ≠ ⊤) :
+    centeredFirstWindowShiftUpTo f s = centeredFirstWindowShift f := by
+  have htime := firstNonnegativeWindowStartUpTo_eq_first_of_ne_top
+    f s hfinite
+  have hfirstfinite : firstNonnegativeWindowStart f ≠ ⊤ := by
+    rw [← htime]
+    exact hfinite
+  simp [centeredFirstWindowShiftUpTo, centeredFirstWindowShift,
+    hfirstfinite, htime]
 
 /-- Continuity of the first-window time at a path with a finite first
 window implies continuity of its centered first-window path. -/

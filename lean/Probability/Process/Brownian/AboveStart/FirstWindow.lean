@@ -8,6 +8,7 @@ module
 
 public import Probability.Process.Brownian.ContinuousPathLaw
 public import Probability.Process.Brownian.AboveStart.NonAntitone
+public import Probability.Process.Path.AboveStart.FirstWindowTail
 
 /-!
 # Almost-sure finiteness of the first Brownian unit window
@@ -17,6 +18,8 @@ The public theorem in this file is:
 - `ProbabilityTheory.IsBrownianReal.measure_firstNonnegativeWindowStart_ne_top_eq_one`:
   for a Brownian path $B$, the first time $T$ with
   $B(T+u)\ge B(T)$ for every $u\in[0,1]$ is finite almost surely.
+- `ProbabilityTheory.IsBrownianReal.tendsto_measure_firstNonnegativeWindowStartUpTo_ne_top`:
+  the probability that $T^{n+1}<\infty$ tends to one.
 
 This is Erwin Bolthausen, *On a functional central limit theorem for random
 walks conditioned to stay positive*, Lemma 2.2, Ann. Probab. 4(3) (1976),
@@ -292,6 +295,43 @@ theorem IsBrownianReal.measure_firstNonnegativeWindowStart_ne_top_eq_one
   calc
     P EΩ ≤ P Set.univ := measure_mono (Set.subset_univ EΩ)
     _ = 1 := measure_univ
+
+/-- The Brownian first eligible window occurs before a sufficiently
+large finite horizon with probability arbitrarily close to one. -/
+theorem IsBrownianReal.tendsto_measure_firstNonnegativeWindowStartUpTo_ne_top
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+    [IsProbabilityMeasure P]
+    {B : ℝ≥0 → Ω → ℝ} (hB : IsBrownianReal B P)
+    (hBmeasurable : ∀ t, Measurable (B t)) :
+    Tendsto (fun n : ℕ => P {ω |
+      firstNonnegativeWindowStartUpTo
+        (hB.continuousPathMap hBmeasurable ω) ((n : ℝ≥0) + 1) ≠ ⊤})
+      atTop (nhds 1) := by
+  let pathB := hB.continuousPathMap hBmeasurable
+  have hpath : Measurable pathB :=
+    hB.measurable_continuousPathMap hBmeasurable
+  have : IsProbabilityMeasure (P.map pathB) :=
+    (Measure.isProbabilityMeasure_map_iff hpath.aemeasurable).2 inferInstance
+  have hfirstSet : MeasurableSet
+      {f : C(ℝ≥0, ℝ) | firstNonnegativeWindowStart f ≠ ⊤} :=
+    (measurable_firstNonnegativeWindowStart
+      (measurableSet_singleton (⊤ : WithTop ℝ≥0))).compl
+  have hfinite : P.map pathB
+      {f | firstNonnegativeWindowStart f ≠ ⊤} = 1 := by
+    rw [Measure.map_apply hpath hfirstSet]
+    exact hB.measure_firstNonnegativeWindowStart_ne_top_eq_one
+      hBmeasurable
+  have hlimit := ProbabilityTheory.tendsto_measure_firstNonnegativeWindowStartUpTo_ne_top
+    (P.map pathB) hfinite
+  convert hlimit using 1
+  funext n
+  have hset : MeasurableSet
+      {f : C(ℝ≥0, ℝ) |
+        firstNonnegativeWindowStartUpTo f ((n : ℝ≥0) + 1) ≠ ⊤} :=
+    (measurable_firstNonnegativeWindowStartUpTo _
+      (measurableSet_singleton (⊤ : WithTop ℝ≥0))).compl
+  rw [Measure.map_apply hpath hset]
+  rfl
 
 end ProbabilityTheory
 
