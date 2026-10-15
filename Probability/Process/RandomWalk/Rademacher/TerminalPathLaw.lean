@@ -70,12 +70,6 @@ theorem measurable_absoluteRademacherBlockPath (length : ℕ) :
     Measurable (absoluteRademacherBlockPath length) :=
   measurable_of_countable _
 
-private theorem normalizedLinearPath_neg (scale : ℕ → ℝ) (length : ℕ)
-    (increment : ℕ → ℝ) (t : ℝ) :
-    normalizedLinearPath scale length (fun j => -increment j) t =
-      -normalizedLinearPath scale length increment t := by
-  simp [normalizedLinearPath, Finset.sum_neg_distrib, mul_neg]
-
 private theorem normalizedLinearContinuousPathFromBlock_neg
     (scale : ℕ → ℝ) (length : ℕ) (block : Fin length → ℝ) :
     normalizedLinearContinuousPathFromBlock scale length
