@@ -17,6 +17,12 @@ The public theorems in this file are:
 - `ProbabilityTheory.IsBrownianReal.indepFun_descendingHittingTime_increment`:
   for $x,y>0$, the increment $\tau_{x+y}-\tau_x$ is independent of
   $\tau_x$, where $\tau_z=\inf\{t:B_t\le-z\}$.
+- `ProbabilityTheory.IsBrownianReal.indepFun_descendingHittingTime_increment_frozenPast`:
+  the increment is independent of the entire Brownian path stopped at
+  $\tau_x$.
+- `ProbabilityTheory.IsBrownianReal.indepFun_descendingHittingTime_increment_past`:
+  the increment is independent of any measurable family of hitting times
+  at levels at most $x$.
 - `ProbabilityTheory.IsBrownianReal.measure_descendingHittingTime_increment_eq`:
   the same increment has the law of $\tau_y$.
 
@@ -34,6 +40,134 @@ namespace ProbabilityTheory
 
 open MeasureTheory
 open scoped NNReal
+
+/-- A Brownian descending hitting-time increment is independent of
+the complete path stopped at the preceding level. -/
+theorem IsBrownianReal.indepFun_descendingHittingTime_increment_frozenPast
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+    {B : ℝ≥0 → Ω → ℝ} (hB : IsBrownianReal B P)
+    (hBmeasurable : ∀ u, Measurable (B u))
+    {x y : ℝ≥0} (hx : 0 < x) (hy : 0 < y) :
+    (fun ω => (((descendingHittingTime
+        (hB.continuousPathMap hBmeasurable ω) (x + y)).untopA -
+      (descendingHittingTime
+        (hB.continuousPathMap hBmeasurable ω) x).untopA : ℝ≥0) :
+      WithTop ℝ≥0)) ⟂ᵢ[P]
+    (fun ω => freezeAfter (hB.continuousPathMap hBmeasurable ω)
+      (descendingHittingTime
+        (hB.continuousPathMap hBmeasurable ω) x).untopA) := by
+  let pathB := hB.continuousPathMap hBmeasurable
+  let F : Ω → C(ℝ≥0, ℝ) := fun ω =>
+    shiftToZero (pathB ω) (descendingHittingTime (pathB ω) x).untopA
+  let G : Ω → C(ℝ≥0, ℝ) := fun ω =>
+    freezeAfter (pathB ω) (descendingHittingTime (pathB ω) x).untopA
+  have hpathB : Measurable pathB := hB.measurable_continuousPathMap hBmeasurable
+  have hdesc : ∀ᵐ ω ∂P, ∀ a : ℝ, ∃ t : ℝ≥0, pathB ω t < a :=
+    ae_of_ae_map hpathB.aemeasurable
+      (hB.ae_continuousPath_unboundedBelow hBmeasurable)
+  have hfinite (z : ℝ≥0) :
+      ∀ᵐ ω ∂P, descendingHittingTime (pathB ω) z ≠ ⊤ := by
+    filter_upwards [hdesc] with ω hω
+    intro htop
+    obtain ⟨u, hu⟩ := hω (-(z : ℝ))
+    have hnever := (firstPassageBelow_eq_top_iff
+      (pathB ω) (-(z : ℝ))).mp htop u
+    exact (not_lt_of_ge hu.le) hnever
+  have hzero : ∀ᵐ ω ∂P, pathB ω 0 = 0 := by
+    filter_upwards [hB.continuousPathMap_ae_eq hBmeasurable,
+      hB.eval_zero_ae_eq_zero] with ω hω hω0
+    rw [hω 0]
+    exact hω0
+  have hfuture :
+      (fun ω => descendingHittingTime (F ω) y) =ᵐ[P]
+      (fun ω => (((descendingHittingTime (pathB ω) (x + y)).untopA -
+        (descendingHittingTime (pathB ω) x).untopA : ℝ≥0) : WithTop ℝ≥0)) := by
+    filter_upwards [hfinite x, hfinite (x + y), hzero]
+      with ω hxfin hxyfin hω0
+    obtain ⟨tx, htx⟩ := WithTop.ne_top_iff_exists.mp hxfin
+    obtain ⟨txy, htxy⟩ := WithTop.ne_top_iff_exists.mp hxyfin
+    have hstart : -(x : ℝ) < pathB ω 0 := by
+      rw [hω0]
+      exact neg_lt_zero.mpr (by exact_mod_cast hx)
+    have hrestart := descendingHittingTime_shiftToZero_eq
+      (pathB ω) x y hy hstart htx.symm htxy.symm
+    have htxA : (descendingHittingTime (pathB ω) x).untopA = tx := by
+      rw [← htx]
+      rfl
+    have htxyA : (descendingHittingTime (pathB ω) (x + y)).untopA = txy := by
+      rw [← htxy]
+      rfl
+    change descendingHittingTime
+      (shiftToZero (pathB ω) (descendingHittingTime (pathB ω) x).untopA) y =
+      (((descendingHittingTime (pathB ω) (x + y)).untopA -
+        (descendingHittingTime (pathB ω) x).untopA : ℝ≥0) : WithTop ℝ≥0)
+    rw [htxA, htxyA]
+    exact hrestart
+  have hInd : F ⟂ᵢ[P] G :=
+    hB.indepFun_shiftToZero_freezeAfter_firstPassageBelow
+      hBmeasurable (-(x : ℝ))
+  have hcomp :
+      (fun ω => descendingHittingTime (F ω) y) ⟂ᵢ[P] G := by
+    simpa only [Function.comp_def, id_eq] using
+      hInd.comp (measurable_descendingHittingTime y) measurable_id
+  exact hcomp.congr hfuture .rfl
+
+/-- A Brownian descending hitting-time increment is independent of
+all preceding hitting times, jointly. -/
+theorem IsBrownianReal.indepFun_descendingHittingTime_increment_past
+    {Ω ι : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+    {B : ℝ≥0 → Ω → ℝ} (hB : IsBrownianReal B P)
+    (hBmeasurable : ∀ u, Measurable (B u))
+    {x y : ℝ≥0} (hx : 0 < x) (hy : 0 < y)
+    (levels : ι → ℝ≥0) (hle : ∀ i, levels i ≤ x) :
+    (fun ω => (((descendingHittingTime
+        (hB.continuousPathMap hBmeasurable ω) (x + y)).untopA -
+      (descendingHittingTime
+        (hB.continuousPathMap hBmeasurable ω) x).untopA : ℝ≥0) :
+      WithTop ℝ≥0)) ⟂ᵢ[P]
+    (fun ω i => descendingHittingTime
+      (hB.continuousPathMap hBmeasurable ω) (levels i)) := by
+  let pathB := hB.continuousPathMap hBmeasurable
+  let G : Ω → C(ℝ≥0, ℝ) := fun ω =>
+    freezeAfter (pathB ω) (descendingHittingTime (pathB ω) x).untopA
+  let past : C(ℝ≥0, ℝ) → (ι → WithTop ℝ≥0) := fun f i =>
+    descendingHittingTime f (levels i)
+  have hpastMeas : Measurable past := by
+    rw [measurable_pi_iff]
+    intro i
+    exact measurable_descendingHittingTime (levels i)
+  have hcomp :
+      (fun ω => (((descendingHittingTime (pathB ω) (x + y)).untopA -
+        (descendingHittingTime (pathB ω) x).untopA : ℝ≥0) : WithTop ℝ≥0))
+        ⟂ᵢ[P] (past ∘ G) :=
+    (hB.indepFun_descendingHittingTime_increment_frozenPast
+      hBmeasurable hx hy).comp measurable_id hpastMeas
+  have hpathB : Measurable pathB := hB.measurable_continuousPathMap hBmeasurable
+  have hdesc : ∀ᵐ ω ∂P, ∀ a : ℝ, ∃ t : ℝ≥0, pathB ω t < a :=
+    ae_of_ae_map hpathB.aemeasurable
+      (hB.ae_continuousPath_unboundedBelow hBmeasurable)
+  have hfinite : ∀ᵐ ω ∂P, descendingHittingTime (pathB ω) x ≠ ⊤ := by
+    filter_upwards [hdesc] with ω hω
+    intro htop
+    obtain ⟨u, hu⟩ := hω (-(x : ℝ))
+    have hnever := (firstPassageBelow_eq_top_iff
+      (pathB ω) (-(x : ℝ))).mp htop u
+    exact (not_lt_of_ge hu.le) hnever
+  have hpast : (past ∘ G) =ᵐ[P]
+      (fun ω i => descendingHittingTime (pathB ω) (levels i)) := by
+    filter_upwards [hfinite] with ω hxfin
+    obtain ⟨tx, htx⟩ := WithTop.ne_top_iff_exists.mp hxfin
+    funext i
+    change descendingHittingTime
+      (freezeAfter (pathB ω) (descendingHittingTime (pathB ω) x).untopA)
+      (levels i) = descendingHittingTime (pathB ω) (levels i)
+    have htxA : (descendingHittingTime (pathB ω) x).untopA = tx := by
+      rw [← htx]
+      rfl
+    rw [htxA]
+    exact descendingHittingTime_freezeAfter_eq_of_le
+      (pathB ω) (hle i) htx.symm
+  exact hcomp.congr .rfl hpast
 
 /-- A Brownian descending hitting-time increment is independent of
 the preceding hitting time. -/
