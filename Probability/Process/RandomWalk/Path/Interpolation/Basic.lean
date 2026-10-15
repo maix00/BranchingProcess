@@ -15,6 +15,10 @@ public import Topology.Cadlag.Skorokhod.ContinuousMap
 
 This file is deterministic. It constructs the continuous polygonal path
 through the normalized partial sums. Probability laws are added separately.
+
+The public theorem `ProbabilityTheory.RandomWalk.normalizedLinearPath_on_interval`
+states that for $k<n$ and $k\le nt\le k+1$,
+$X_n(t)=a_n^{-1}(S_k+(nt-k)\xi_k)$.
 -/
 
 open Set
@@ -159,6 +163,65 @@ theorem normalizedLinearPath_grid (scale : ℕ → ℝ) {n k : ℕ}
       apply Finset.sum_congr rfl
       intro i hi
       rw [linearIncrementWeight_grid_of_lt hn (Finset.mem_range.mp hi), one_mul]
+
+/-- On each mesh interval, the polygonal path is affine between its
+two adjacent partial sums. -/
+theorem normalizedLinearPath_on_interval
+    (scale : ℕ → ℝ) {n k : ℕ} (hk : k < n)
+    (increment : ℕ → ℝ) (t : ℝ)
+    (hleft : (k : ℝ) ≤ (n : ℝ) * t)
+    (hright : (n : ℝ) * t ≤ (k + 1 : ℕ)) :
+    normalizedLinearPath scale n increment t =
+      (scale n)⁻¹ *
+        (AdditivePath.displacement k increment +
+          ((n : ℝ) * t - k) * increment k) := by
+  have hweight_lt (i : ℕ) (hi : i < k) :
+      linearIncrementWeight n i t = 1 := by
+    have hcast : ((i + 1 : ℕ) : ℝ) ≤ (k : ℝ) := by
+      exact_mod_cast Nat.succ_le_iff.mpr hi
+    push_cast at hcast
+    unfold linearIncrementWeight
+    rw [max_eq_right (by linarith), min_eq_left (by linarith)]
+  have hweight_gt (i : ℕ) (hi : k < i) :
+      linearIncrementWeight n i t = 0 := by
+    have hcast : ((k + 1 : ℕ) : ℝ) ≤ (i : ℝ) := by
+      exact_mod_cast Nat.succ_le_iff.mpr hi
+    unfold linearIncrementWeight
+    rw [max_eq_left (by push_cast at hcast hright ⊢; linarith)]
+    simp
+  have hweight_eq :
+      linearIncrementWeight n k t = (n : ℝ) * t - k := by
+    unfold linearIncrementWeight
+    rw [max_eq_right (by linarith), min_eq_right (by push_cast at hright ⊢; linarith)]
+  have hsum :
+      ∑ i ∈ Finset.range n, linearIncrementWeight n i t * increment i =
+        AdditivePath.displacement k increment +
+          ((n : ℝ) * t - k) * increment k := by
+    have hsplit :
+        ∑ i ∈ Finset.range n, linearIncrementWeight n i t * increment i =
+          ∑ i ∈ Finset.range k, linearIncrementWeight n i t * increment i +
+            ∑ i ∈ Finset.Ico k n, linearIncrementWeight n i t * increment i := by
+      exact (Finset.sum_range_add_sum_Ico
+        (fun i => linearIncrementWeight n i t * increment i) hk.le).symm
+    rw [hsplit]
+    have hfirst :
+        ∑ i ∈ Finset.range k, linearIncrementWeight n i t * increment i =
+          AdditivePath.displacement k increment := by
+      unfold AdditivePath.displacement
+      apply Finset.sum_congr rfl
+      intro i hi
+      rw [hweight_lt i (Finset.mem_range.mp hi), one_mul]
+    have hsecond :
+        ∑ i ∈ Finset.Ico k n, linearIncrementWeight n i t * increment i =
+          ((n : ℝ) * t - k) * increment k := by
+      rw [Finset.sum_eq_single k]
+      · rw [hweight_eq]
+      · intro i hi hik
+        rw [hweight_gt i (lt_of_le_of_ne (Finset.mem_Ico.mp hi).1 hik.symm), zero_mul]
+      · intro hnot
+        exact (hnot (Finset.mem_Ico.mpr ⟨le_rfl, hk⟩)).elim
+    rw [hfirst, hsecond]
+  simp only [normalizedLinearPath, hsum]
 
 theorem sum_linearIncrementWeight_eq_partialSum_add
     {n : ℕ} {t : ℝ} (ht : 0 ≤ t)

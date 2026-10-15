@@ -28,6 +28,9 @@ The public definitions and theorems in this file are:
   the original and endpoint-based start times agree when $f(1)\ne0$.
 - `ContinuousMap.measurable_firstSignStableStart`:
   Bolthausen's original sign-stable start time is Borel measurable.
+- `ContinuousMap.firstSignStableStart_eq_of_positiveTail`:
+  a path that becomes nonnegative at $a$, is positive later, and
+  approaches $a$ from negative values has sign-stable start time $a$.
 - `ContinuousMap.le_lastZero_of_opposite_sign`: $f(t)f(1)<0$
   implies $t\le g(f)$, where $g(f)$ is the last zero.
 - `ContinuousMap.lastOppositeSign_le_lastZero`: the last opposite-sign
@@ -336,6 +339,29 @@ theorem measurable_firstSignStableStart : Measurable firstSignStableStart := by
     min (lastNegative f) (lastPositive f) from
       funext firstSignStableStart_eq_min]
   exact measurable_lastNegative.min measurable_lastPositive
+
+/-- A zero crossing into a nonnegative final tail identifies the first
+sign-stable start time. The negative values may be arbitrarily close
+to the crossing from the left. -/
+theorem firstSignStableStart_eq_of_positiveTail
+    (f : C(unitInterval, ℝ)) (cut : unitInterval)
+    (hpost : ∀ s : unitInterval, cut ≤ s → 0 ≤ f s)
+    (hprior : ∀ t : unitInterval, t < cut →
+      ∃ s : unitInterval, t ≤ s ∧ s < cut ∧ f s < 0)
+    (hlater : ∃ s : unitInterval, cut ≤ s ∧ 0 < f s) :
+    firstSignStableStart f = cut := by
+  unfold firstSignStableStart
+  apply le_antisymm
+  · exact sInf_le (Or.inl hpost)
+  · apply le_sInf
+    intro t ht
+    by_contra hnot
+    have htc : t < cut := lt_of_not_ge hnot
+    obtain ⟨s, hts, _, hsneg⟩ := hprior t htc
+    rcases ht with hnonneg | hnonpos
+    · exact (not_le_of_gt hsneg) (hnonneg s hts)
+    · obtain ⟨u, hcu, hupos⟩ := hlater
+      exact (not_le_of_gt hupos) (hnonpos u (htc.le.trans hcu))
 
 /-- The last opposite-sign time is continuous at a path where it agrees
 with the last zero. Lower continuity follows from the open opposite-sign
