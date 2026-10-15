@@ -48,6 +48,9 @@ The public definitions and theorems in this file are:
   under an i.i.d. product law, the probability of the intersection in
   (A.5) is the product of the survival probabilities for its gap lengths,
   as in (A.6).
+- `ProbabilityTheory.RandomWalk.measureReal_nonnegative_endpoint_eq_cyclicGap_sum`:
+  $\mathbb P(S_n\ge0)$ equals the alternating sum over nonempty selected
+  starts of the products of their cyclic-gap survival probabilities.
 
 These are the block lengths in M. Bauer, C. Godrèche, and J.-M. Luck,
 *Statistics of persistent events in the binomial random walk: Will the
@@ -558,6 +561,34 @@ theorem measure_pi_cyclicBlockEvent_eq_prod
       apply Finset.prod_congr rfl
       intro j _
       rfl
+
+/-- Bauer--Godrèche--Luck, Appendix A, equation (A.6), with the finite
+subset of selected starts used as the index of the alternating sum. -/
+theorem measureReal_nonnegative_endpoint_eq_cyclicGap_sum
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    {n : ℕ} (hn : 0 < n) :
+    (Measure.pi (fun _ : Fin n => ν)).real
+      {x : Fin n → ℝ | 0 ≤ Fin.partialSum x (Fin.last n)} =
+      ∑ u ∈ (Finset.univ : Finset (Fin n)).powerset with u.Nonempty,
+        (-1 : ℝ) ^ (u.card + 1) *
+          (if hu : u.Nonempty then
+            ∏ j : Fin u.card,
+              (Measure.pi (fun _ : Fin (cyclicGapLength u hu j) => ν)).real
+                {z : Fin (cyclicGapLength u hu j) → ℝ |
+                  ∀ t : Fin (cyclicGapLength u hu j + 1),
+                    0 ≤ Fin.partialSum z t}
+          else 0) := by
+  rw [measureReal_nonnegative_endpoint_eq_cyclicBlock_sum hn
+    (Measure.pi (fun _ : Fin n => ν))]
+  apply Finset.sum_congr rfl
+  intro u hu
+  have hnonempty : u.Nonempty := (Finset.mem_filter.mp hu).2
+  simp only [dite_eq_left hnonempty]
+  congr 1
+  rw [MeasureTheory.measureReal_def,
+    measure_pi_cyclicBlockEvent_eq_prod ν hn u hnonempty,
+    ENNReal.toReal_prod]
+  rfl
 
 end ProbabilityTheory.RandomWalk
 
