@@ -11,9 +11,20 @@ import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Scale.Rate
 /-!
 # Stable source endpoint decay
 
-This module removes the finite-limit assumption on `L*` from the endpoint
-decay step. Slow variation, the two-scale condition, and the stable norming
-are sufficient: Potter bounds make the small-deviation rate vanish, so the
+The public theorems in this file are:
+
+- `tendsto_sourceEndpointCorridor_toReal_zero_of_strictStableDomain_slowVariation`:
+  under strict stable attraction and the two-scale condition,
+  $\mathbb P(E_n)\to0$ for the source endpoint corridor $E_n$.
+- `exists_source_equation34_log_ratio_lower_of_stableDomain_slowVariation`:
+  for every $\delta>0$, eventually
+  $1-\delta\le\log\mathbb P(B_n)/\log\mathbb P(E_n)$, where $B_n$ is the
+  source base corridor and $E_n$ is the endpoint corridor.
+
+This is the endpoint-decay step for equation (34) of Mogul'skii,
+*Small Deviations in a Space of Trajectories*, Theorem 3, Section 4.
+The argument uses slow variation, the two-scale condition, and stable
+norming: Potter bounds make the small-deviation rate vanish, so the
 number of complete stable blocks tends to infinity.
 -/
 
@@ -185,8 +196,9 @@ theorem tendsto_sourceEndpointCorridor_toReal_zero_of_strictStableDomain_slowVar
   · exact Eventually.of_forall fun n => ENNReal.toReal_nonneg
   · exact htargetBound
 
-/-- The source equation-(34) logarithmic comparison under the paper's stable
-domain hypotheses, with no extra finite-limit assumption on `L*`. The bridge
+/-- The equation-(34) logarithmic comparison under the stable-domain
+hypotheses of Mogul'skii, *Small Deviations in a Space of Trajectories*,
+Theorem 3, Section 4, with no extra finite-limit assumption on `L*`. The bridge
 comparison and base-corridor positivity are the existing source-specific
 inputs; this theorem supplies the missing endpoint probability decay from
 slow variation and the two-scale condition. -/

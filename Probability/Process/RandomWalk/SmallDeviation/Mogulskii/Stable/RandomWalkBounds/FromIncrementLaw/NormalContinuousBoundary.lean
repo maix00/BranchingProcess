@@ -301,8 +301,9 @@ theorem rawNormalContinuousBoundaryProbabilityRate_of_rawSource
   rw [hcoefficient] at hrate
   exact hrate
 
-/-- The centered finite-variance continuous-boundary case of Mogul'skii's
-Theorem 3, in the paper's `scale² / n` normalization. The variance enters
+/-- The centered finite-variance continuous-boundary case of Mogul'skii,
+*Small Deviations in a Space of Trajectories*, Theorem 3, Section 4, in its
+`scale² / n` normalization. The variance enters
 through the truncated-second-moment limit; the increment law is not
 standardized. The standard-Gaussian domain-of-attraction input uses the
 norming sequence `sqrt (n * variance)`, while the source-path event still uses
