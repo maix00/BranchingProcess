@@ -12,12 +12,15 @@ public import Probability.Process.Path.FirstPassageRestart
 /-!
 # Restart identity for descending hitting times
 
-The public theorem in this file is:
+The public theorems in this file are:
 
 - `ProbabilityTheory.descendingHittingTime_shiftToZero_eq`:
   for finite $\tau_x,\tau_{x+y}$ and $y>0$,
   $\tau_y(f(\tau_x+\cdot)-f(\tau_x))=\tau_{x+y}(f)-\tau_x(f)$,
   provided $f(0)>-x$.
+- `ProbabilityTheory.descendingHittingTime_freezeAfter_eq_of_le`:
+  freezing a path at its finite passage of level $x$ preserves every
+  earlier passage time $\tau_z$ with $z\le x$.
 
 This is the deterministic increment identity for the descending
 hitting-time process in the Lévy decomposition invoked by Erwin
@@ -31,6 +34,24 @@ Ann. Probab. 4(3) (1976), 480--485, DOI 10.1214/aop/1176996098.
 open scoped NNReal
 
 namespace ProbabilityTheory
+
+/-- A finite passage of level `x` determines all passage times at
+shallower levels. -/
+theorem descendingHittingTime_freezeAfter_eq_of_le
+    (f : C(ℝ≥0, ℝ)) {x z τx : ℝ≥0} (hzx : z ≤ x)
+    (hx : descendingHittingTime f x = τx) :
+    descendingHittingTime (freezeAfter f τx) z =
+      descendingHittingTime f z := by
+  have hle : descendingHittingTime f z ≤ τx := by
+    rw [← hx]
+    exact descendingHittingTime_mono f hzx
+  have hprefix : ∀ u : ℝ≥0, u ≤ τx →
+      f u = (freezeAfter f τx) u := by
+    intro u hu
+    change f u = f (min u τx)
+    rw [min_eq_left hu]
+  exact (firstPassageBelow_eq_of_agreeOn f (freezeAfter f τx)
+    (-(z : ℝ)) τx hprefix hle).symm
 
 /-- A descending hitting-time increment is the first-passage time of
 the path shifted at the first level. -/
