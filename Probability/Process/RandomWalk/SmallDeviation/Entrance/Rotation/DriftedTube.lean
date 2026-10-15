@@ -6,10 +6,22 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Entrance.LinearTubeRotation
+public import Probability.Process.RandomWalk.SmallDeviation.Entrance.Rotation.LinearTube
 
 /-!
 # Cyclic shifts after removing a linear drift
+
+The public definitions and theorems are:
+
+- `removeLinearDrift`: the path $s_j-dj$ associated with a path $s_j$.
+- `cyclicPartialSum_removeLinearDrift`: removing drift commutes with
+  cyclically reindexed partial sums.
+- `cyclicPartialSum_mem_movingOffsetCorridor_of_removeLinearDrift`:
+  membership of the centered path in a static corridor implies
+  membership of the original path in its linearly moving corridor.
+- `exists_movingOffsetCorridor_of_linearTube_lowerEdge` and
+  `exists_movingOffsetCorridor_of_linearTube_upperEdge`: a cyclic shift
+  supplies the moving-corridor inclusion at either edge.
 
 The entrance estimate has a boundary that moves linearly in discrete time.
 Subtracting that drift before choosing the cyclic origin turns it into a
