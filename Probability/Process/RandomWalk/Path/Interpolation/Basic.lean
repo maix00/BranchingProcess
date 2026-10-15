@@ -19,6 +19,9 @@ through the normalized partial sums. Probability laws are added separately.
 The public theorem `ProbabilityTheory.RandomWalk.normalizedLinearPath_on_interval`
 states that for $k<n$ and $k\le nt\le k+1$,
 $X_n(t)=a_n^{-1}(S_k+(nt-k)\xi_k)$.
+The theorem `ProbabilityTheory.RandomWalk.normalizedLinearPath_nonneg_after_grid`
+states that a polygonal path remains nonnegative after a grid time
+if every later grid value is nonnegative.
 -/
 
 open Set
@@ -222,6 +225,65 @@ theorem normalizedLinearPath_on_interval
         exact (hnot (Finset.mem_Ico.mpr ⟨le_rfl, hk⟩)).elim
     rw [hfirst, hsecond]
   simp only [normalizedLinearPath, hsum]
+
+/-- Nonnegative grid values on a final interval imply nonnegativity
+throughout the interpolated final interval. -/
+theorem normalizedLinearPath_nonneg_after_grid
+    (scale : ℕ → ℝ) {n start : ℕ} (hn : 0 < n)
+    (hscale : 0 < scale n) (hstart : start ≤ n)
+    (increment : ℕ → ℝ)
+    (hgrid : ∀ j : ℕ, start ≤ j → j ≤ n →
+      0 ≤ AdditivePath.displacement j increment)
+    (t : unitInterval)
+    (ht : (start : ℝ) ≤ (n : ℝ) * (t : ℝ)) :
+    0 ≤ normalizedLinearPath scale n increment t := by
+  let j := ⌊(n : ℝ) * (t : ℝ)⌋₊
+  have hnt : 0 ≤ (n : ℝ) * (t : ℝ) :=
+    mul_nonneg (Nat.cast_nonneg n) t.property.1
+  have hfloor : (j : ℝ) ≤ (n : ℝ) * (t : ℝ) :=
+    Nat.floor_le hnt
+  have hupper : (n : ℝ) * (t : ℝ) ≤ n := by
+    calc
+      (n : ℝ) * (t : ℝ) ≤ (n : ℝ) * 1 :=
+        mul_le_mul_of_nonneg_left t.property.2 (Nat.cast_nonneg n)
+      _ = n := by ring
+  have hjle : j ≤ n := Nat.floor_le_of_le hupper
+  have hjstart : start ≤ j := by
+    rw [Nat.le_floor_iff hnt]
+    exact ht
+  by_cases hjn : j = n
+  · have ht1 : (t : ℝ) = 1 := by
+      have hnj : (n : ℝ) ≤ (n : ℝ) * (t : ℝ) := by simpa [j, hjn] using hfloor
+      have hnpos : (0 : ℝ) < n := by exact_mod_cast hn
+      nlinarith
+    rw [ht1, normalizedLinearPath_one]
+    exact mul_nonneg (inv_nonneg.mpr hscale.le) (hgrid n (by omega) le_rfl)
+  · have hjlt : j < n := lt_of_le_of_ne hjle hjn
+    have hright : (n : ℝ) * (t : ℝ) ≤ (j + 1 : ℕ) := by
+      have hlt := Nat.lt_floor_add_one ((n : ℝ) * (t : ℝ))
+      push_cast
+      exact le_of_lt (by simpa only [j] using hlt)
+    rw [normalizedLinearPath_on_interval scale hjlt increment (t : ℝ)
+      hfloor hright]
+    let w : ℝ := (n : ℝ) * (t : ℝ) - j
+    have hw0 : 0 ≤ w := sub_nonneg.mpr hfloor
+    have hw1 : w ≤ 1 := by
+      dsimp [w]
+      push_cast at hright
+      linarith
+    have hconvex :
+        AdditivePath.displacement j increment + w * increment j =
+          (1 - w) * AdditivePath.displacement j increment +
+            w * AdditivePath.displacement (j + 1) increment := by
+      rw [AdditivePath.displacement_succ]
+      ring
+    change 0 ≤ (scale n)⁻¹ *
+      (AdditivePath.displacement j increment + w * increment j)
+    rw [hconvex]
+    exact mul_nonneg (inv_nonneg.mpr hscale.le)
+      (add_nonneg
+        (mul_nonneg (by linarith) (hgrid j hjstart hjle))
+        (mul_nonneg hw0 (hgrid (j + 1) (by omega) (by omega))))
 
 theorem sum_linearIncrementWeight_eq_partialSum_add
     {n : ℕ} {t : ℝ} (ht : 0 ≤ t)
