@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Basic
+public import Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.FiniteVarianceLower
 
 /-!
 # Spatial-bin geometry for the finite-variance tilted tube
