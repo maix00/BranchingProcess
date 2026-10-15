@@ -31,7 +31,7 @@ in the translated moving corridor.
 
 @[expose] public section
 
-open MeasureTheory ProbabilityTheory Fin
+open MeasureTheory ProbabilityTheory
 open scoped ENNReal Topology
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Entrance

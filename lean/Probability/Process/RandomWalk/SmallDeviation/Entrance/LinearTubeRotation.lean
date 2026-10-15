@@ -13,7 +13,6 @@ public import Mathlib.Order.Filter.IsBounded
 public import Mathlib.Topology.UnitInterval
 public import Topology.Cadlag.Skorokhod.LinearPath
 public import Probability.ConvergenceInDistribution.Portmanteau
-public import Algebra.BigOperators.PartialSum
 
 /-!
 # Cyclic rotations of a path near an increasing line
@@ -26,12 +25,22 @@ This is the deterministic input to the edge-offset entrance estimate.
 @[expose] public section
 
 open scoped BigOperators
-open MeasureTheory Fin
+open MeasureTheory
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Entrance
 
 noncomputable def normalizedTime {n : ℕ} (j : Fin (n + 1)) : ℝ :=
   (j.val : ℝ) / (n : ℝ)
+
+/-- The partial sum after cyclically starting at `k`, expressed from the
+original partial-sum path. -/
+def cyclicPartialSum {n : ℕ} (s : Fin (n + 1) → ℝ)
+    (k : Fin n) (j : Fin (n + 1)) : ℝ :=
+  if h : k.val + j.val ≤ n then
+    s ⟨k.val + j.val, Nat.lt_succ_of_le h⟩ - s k.castSucc
+  else
+    s (Fin.last n) - s k.castSucc +
+      s ⟨k.val + j.val - n, by omega⟩
 
 /-- The path produced by cyclically rotating the increments encoded by `s`. -/
 def cyclicRotatePath {n : ℕ} (s : Fin (n + 1) → ℝ) (k : Fin n) :
