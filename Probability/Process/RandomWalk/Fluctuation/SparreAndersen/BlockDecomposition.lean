@@ -24,6 +24,19 @@ The public theorems in this file are:
 - `ProbabilityTheory.RandomWalk.mem_two_cyclicSurvivalEvents_iff_twoBlocks`:
   for $a<b$, $B_n^{a+1}\cap B_n^{b+1}$ is exactly survival on the
   disjoint cyclic blocks $[a,b)$ and $[b,n)\cup[0,a)$.
+- `ProbabilityTheory.RandomWalk.cyclicBlockEvent`:
+  the adjacent-block conditions for any nonempty finite set of starts.
+- `ProbabilityTheory.RandomWalk.precedingStarts`:
+  for a time $t$, the selected starts strictly before $t$.
+- `ProbabilityTheory.RandomWalk.mem_cyclicBlockEvent_of_forall_cyclicSurvivalEvent`:
+  survival from every selected start implies every adjacent-block condition.
+- `ProbabilityTheory.RandomWalk.cyclicBlockEvent_selected_partialSum_mono`:
+  the partial sums at selected block starts are nondecreasing in their
+  natural order.
+- `ProbabilityTheory.RandomWalk.forall_cyclicSurvivalEvent_of_mem_cyclicBlockEvent`:
+  adjacent-block survival implies survival from every selected cyclic start.
+- `ProbabilityTheory.RandomWalk.iInter_cyclicSurvivalEvent_eq_cyclicBlockEvent`:
+  the full event identity (A.5) for any nonempty set of selected starts.
 
 These are the two kinds of inequalities in the event $B_n^{k+1}$ of
 M. Bauer, C. Godrèche, and J.-M. Luck, *Statistics of persistent events
@@ -188,6 +201,185 @@ theorem mem_two_cyclicSurvivalEvents_iff_twoBlocks
         have htb' : t.val ≤ b.val := Nat.le_of_lt htb
         have ha := hfirstBlock t hat htb'
         linarith
+
+/-- The selected start positions strictly before time `t`. -/
+def precedingStarts {n : ℕ} (u : Finset (Fin n))
+    (t : Fin (n + 1)) : Finset (Fin n) :=
+  u.filter fun k => k.val < t.val
+
+/-- The adjacent-block event from Bauer--Godrèche--Luck, Appendix A,
+equation (A.5), indexed by a nonempty finite set of cyclic starts. At
+time `t`, the predecessor in `u` gives the current block; before the
+first start, the last block wraps across time `n`. -/
+def cyclicBlockEvent {n : ℕ} (u : Finset (Fin n))
+    (hu : u.Nonempty) : Set (Fin n → ℝ) :=
+  {x | ∀ t : Fin (n + 1),
+    if h : (precedingStarts u t).Nonempty then
+      Fin.partialSum x ((precedingStarts u t).max' h).castSucc ≤
+        Fin.partialSum x t
+    else
+      Fin.partialSum x (u.max' hu).castSucc ≤
+        Fin.partialSum x (Fin.last n) + Fin.partialSum x t}
+
+/-- Each selected cyclic survival event supplies the corresponding
+adjacent-block inequalities. This is the immediate direction of
+Bauer--Godrèche--Luck, Appendix A, equation (A.5). -/
+theorem mem_cyclicBlockEvent_of_forall_cyclicSurvivalEvent
+    {n : ℕ} (x : Fin n → ℝ) (u : Finset (Fin n))
+    (hu : u.Nonempty)
+    (hx : ∀ k ∈ u, x ∈ cyclicSurvivalEvent k) :
+    x ∈ cyclicBlockEvent u hu := by
+  intro t
+  by_cases hpred : (precedingStarts u t).Nonempty
+  · have hp := (precedingStarts u t).max'_mem hpred
+    have hpu : (precedingStarts u t).max' hpred ∈ u :=
+      (Finset.mem_filter.mp hp).1
+    have hpt : ((precedingStarts u t).max' hpred).val < t.val :=
+      (Finset.mem_filter.mp hp).2
+    have hle := cyclicSurvivalEvent_partialSum_le_of_start_le
+      x ((precedingStarts u t).max' hpred) t
+      (Nat.le_of_lt hpt) (hx _ hpu)
+    simpa [cyclicBlockEvent, hpred] using hle
+  · let m := u.max' hu
+    have hmU : m ∈ u := u.max'_mem hu
+    have htm : t.val ≤ m.val := by
+      by_contra hgt
+      have hmPred : m ∈ precedingStarts u t :=
+        Finset.mem_filter.mpr ⟨hmU, by omega⟩
+      exact hpred ⟨m, hmPred⟩
+    have hB := hx m hmU
+    by_cases hlt : t.val < m.val
+    · have hle := cyclicSurvivalEvent_partialSum_le_of_before_start
+        x m t hlt hB
+      simpa [cyclicBlockEvent, hpred, m] using hle
+    · have hEq : t = m.castSucc := Fin.ext (by simp; omega)
+      have hlast := (mem_cyclicSurvivalEvent_iff_partialSum x m).mp hB |>.1
+      have hle : Fin.partialSum x m.castSucc ≤
+          Fin.partialSum x (Fin.last n) + Fin.partialSum x t := by
+        rw [hEq]
+        linarith
+      simpa [cyclicBlockEvent, hpred, m] using hle
+
+/-- Adjacent-block survival makes the partial sums at selected block
+starts nondecreasing. -/
+theorem cyclicBlockEvent_selected_partialSum_mono
+    {n : ℕ} (x : Fin n → ℝ) (u : Finset (Fin n))
+    (hu : u.Nonempty) (hx : x ∈ cyclicBlockEvent u hu)
+    {a b : Fin n} (ha : a ∈ u) (hb : b ∈ u) (hab : a ≤ b) :
+    Fin.partialSum x a.castSucc ≤ Fin.partialSum x b.castSucc := by
+  have hmono (l : Fin n) :
+      ∀ (hl : l ∈ u) (k : Fin n), k ∈ u → k ≤ l →
+        Fin.partialSum x k.castSucc ≤ Fin.partialSum x l.castSucc := by
+    induction l using Fin.strong_induction_on with
+    | h l ih =>
+      intro hl k hk hkl
+      by_cases hEq : k = l
+      · subst k
+        exact le_refl _
+      have hklStrict : k < l := lt_of_le_of_ne hkl hEq
+      have hpred : (precedingStarts u l.castSucc).Nonempty := by
+        refine ⟨k, Finset.mem_filter.mpr ⟨hk, ?_⟩⟩
+        exact hklStrict
+      let p := (precedingStarts u l.castSucc).max' hpred
+      have hpMem := (precedingStarts u l.castSucc).max'_mem hpred
+      have hpU : p ∈ u := (Finset.mem_filter.mp hpMem).1
+      have hpLt : p < l := (Finset.mem_filter.mp hpMem).2
+      have hkp : k ≤ p :=
+        (precedingStarts u l.castSucc).le_max' k
+          (Finset.mem_filter.mpr ⟨hk, hklStrict⟩)
+      have hlocal := hx l.castSucc
+      have hpl : Fin.partialSum x p.castSucc ≤
+          Fin.partialSum x l.castSucc := by
+        simpa [cyclicBlockEvent, hpred, p] using hlocal
+      exact (ih p hpLt hpU k hk hkp).trans hpl
+  exact hmono b hb a ha hab
+
+/-- The adjacent-block conditions imply every selected cyclic survival
+event. The proof sums nonnegative complete blocks before the block
+containing the requested time, as in Bauer--Godrèche--Luck,
+Appendix A, equation (A.5). -/
+theorem forall_cyclicSurvivalEvent_of_mem_cyclicBlockEvent
+    {n : ℕ} (x : Fin n → ℝ) (u : Finset (Fin n))
+    (hu : u.Nonempty) (hx : x ∈ cyclicBlockEvent u hu) :
+    ∀ k ∈ u, x ∈ cyclicSurvivalEvent k := by
+  let first := u.min' hu
+  let last := u.max' hu
+  have hfirstU : first ∈ u := u.min'_mem hu
+  have hlastU : last ∈ u := u.max'_mem hu
+  have hwrapPred : ¬ (precedingStarts u first.castSucc).Nonempty := by
+    rintro ⟨p, hp⟩
+    have hpU : p ∈ u := (Finset.mem_filter.mp hp).1
+    have hpLt : p < first := (Finset.mem_filter.mp hp).2
+    exact (not_lt_of_ge (u.min'_le p hpU)) hpLt
+  have hwrapAtFirst := hx first.castSucc
+  have hlastFirst : Fin.partialSum x last.castSucc ≤
+      Fin.partialSum x (Fin.last n) +
+        Fin.partialSum x first.castSucc := by
+    simpa [cyclicBlockEvent, hwrapPred, first, last] using hwrapAtFirst
+  have hfirstLast : Fin.partialSum x first.castSucc ≤
+      Fin.partialSum x last.castSucc :=
+    cyclicBlockEvent_selected_partialSum_mono x u hu hx
+      hfirstU hlastU (u.min'_le_max' hu)
+  have htotal : 0 ≤ Fin.partialSum x (Fin.last n) := by
+    linarith
+  intro k hk
+  apply (mem_cyclicSurvivalEvent_iff_partialSum x k).mpr
+  refine ⟨htotal, ?_, ?_⟩
+  · intro t hkt
+    by_cases hEq : t.val = k.val
+    · have ht : t = k.castSucc := Fin.ext (by simpa using hEq)
+      rw [ht]
+    have hktStrict : k.val < t.val := by omega
+    have hpred : (precedingStarts u t).Nonempty := by
+      exact ⟨k, Finset.mem_filter.mpr ⟨hk, hktStrict⟩⟩
+    let p := (precedingStarts u t).max' hpred
+    have hpMem := (precedingStarts u t).max'_mem hpred
+    have hpU : p ∈ u := (Finset.mem_filter.mp hpMem).1
+    have hkp : k ≤ p :=
+      (precedingStarts u t).le_max' k
+        (Finset.mem_filter.mpr ⟨hk, hktStrict⟩)
+    have hlocal := hx t
+    have hpt : Fin.partialSum x p.castSucc ≤
+        Fin.partialSum x t := by
+      simpa [cyclicBlockEvent, hpred, p] using hlocal
+    exact (cyclicBlockEvent_selected_partialSum_mono x u hu hx
+      hk hpU hkp).trans hpt
+  · intro t htk
+    have hkLast : Fin.partialSum x k.castSucc ≤
+        Fin.partialSum x last.castSucc :=
+      cyclicBlockEvent_selected_partialSum_mono x u hu hx
+        hk hlastU (u.le_max' k hk)
+    by_cases hpred : (precedingStarts u t).Nonempty
+    · let p := (precedingStarts u t).max' hpred
+      have hpMem := (precedingStarts u t).max'_mem hpred
+      have hpU : p ∈ u := (Finset.mem_filter.mp hpMem).1
+      have hfirstP : Fin.partialSum x first.castSucc ≤
+          Fin.partialSum x p.castSucc :=
+        cyclicBlockEvent_selected_partialSum_mono x u hu hx
+          hfirstU hpU (u.min'_le p hpU)
+      have hlocal := hx t
+      have hpt : Fin.partialSum x p.castSucc ≤
+          Fin.partialSum x t := by
+        simpa [cyclicBlockEvent, hpred, p] using hlocal
+      linarith
+    · have hlocal := hx t
+      have hlt : Fin.partialSum x last.castSucc ≤
+          Fin.partialSum x (Fin.last n) +
+            Fin.partialSum x t := by
+        simpa [cyclicBlockEvent, hpred, last] using hlocal
+      linarith
+
+/-- Bauer--Godrèche--Luck, Appendix A, equation (A.5), for any nonempty
+finite set of selected cyclic starts: the intersection of the cyclic
+survival events equals the adjacent-block event. -/
+theorem iInter_cyclicSurvivalEvent_eq_cyclicBlockEvent
+    {n : ℕ} (u : Finset (Fin n)) (hu : u.Nonempty) :
+    (⋂ k ∈ u, cyclicSurvivalEvent k) = cyclicBlockEvent u hu := by
+  ext x
+  simp only [Set.mem_iInter]
+  constructor
+  · exact mem_cyclicBlockEvent_of_forall_cyclicSurvivalEvent x u hu
+  · exact forall_cyclicSurvivalEvent_of_mem_cyclicBlockEvent x u hu
 
 end ProbabilityTheory.RandomWalk
 
