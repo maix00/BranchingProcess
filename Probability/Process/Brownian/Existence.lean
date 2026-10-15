@@ -13,6 +13,7 @@ public import Probability.Distributions.Stable.Gaussian
 public import Probability.Distributions.Moments.Real
 public import Probability.Distributions.Rademacher
 public import Probability.Process.Stable.Brownian
+public import Probability.Process.Brownian.PreBrownianModification
 
 /-!
 # A pre-Brownian process from the Gaussian random-walk path limit
@@ -22,6 +23,8 @@ The public theorem in this file is:
 - `exists_preBrownianReal_cadlag`: there is a probability space carrying a
   càdlàg process $B$ with independent increments
   $B_t-B_s\sim N(0,t-s)$ for $0\le s\le t$.
+- `exists_brownianReal`: there is a probability space carrying a measurable
+  Brownian process with continuous sample paths.
 
 The construction takes a subsequential path-law limit of the centered
 Rademacher walk through normal-domain tightness and the stable-process
@@ -75,6 +78,21 @@ theorem exists_preBrownianReal_cadlag :
   letI : IsProbabilityMeasure (Q : Measure (ℕ → CadlagPath unitInterval ℝ)) :=
     Q.property
   exact ⟨Q, B, hB.isPreBrownianReal_of_standardGaussian, hB⟩
+
+/-- The Gaussian random-walk limit followed by the fourth-moment
+Kolmogorov–Chentsov construction supplies a genuine Brownian process. -/
+theorem exists_brownianReal :
+    ∃ (Q : ProbabilityMeasure (ℕ → CadlagPath unitInterval ℝ))
+      (B : ℝ≥0 → (ℕ → CadlagPath unitInterval ℝ) → ℝ),
+      IsBrownianReal B (Q : Measure _) ∧
+      (∀ t, Measurable (B t)) ∧ ∀ ω, Continuous (B · ω) := by
+  obtain ⟨Q, B, hB, _⟩ := exists_preBrownianReal_cadlag
+  obtain ⟨Y, hYmeas, hYmod, hYcont⟩ :=
+    hB.exists_continuous_modification_fourthMoment
+  have hY : IsBrownianReal Y (Q : Measure _) :=
+    ⟨hB.congr (fun t => (hYmod t).symm),
+      Filter.Eventually.of_forall hYcont⟩
+  exact ⟨Q, Y, hY, hYmeas, hYcont⟩
 
 end ProbabilityTheory
 
