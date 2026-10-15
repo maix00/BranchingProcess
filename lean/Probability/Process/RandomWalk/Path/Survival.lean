@@ -7,6 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.Path.Skorokhod.Basic
+public import Probability.Process.RandomWalk.Path.Corridor.Interpolation.Basic
 public import Combinatorics.Sequence.Block
 public import Mathlib.MeasureTheory.Constructions.BorelSpace.Order
 
@@ -22,6 +23,9 @@ The public objects and theorems in this file are:
   whenever $n\le m$.
 - `ProbabilityTheory.RandomWalk.SurvivesNonnegative.displacement_nonneg`:
   $C_n$ also gives $S_k\ge0$ for $0\le k\le n$.
+- `ProbabilityTheory.RandomWalk.SurvivesNonnegative.normalizedLinearCadlagPathIcc_nonnegative`:
+  $C_n$ gives $S^{\mathrm{lin}}_n(t)\ge0$ for every $t\in[0,1]$
+  whenever the normalization scale is positive.
 - `ProbabilityTheory.RandomWalk.SurvivesNonnegative.shift_iff`:
   a shifted window survives precisely when $S_{m+j}\ge S_m$ throughout
   that window.
@@ -234,6 +238,26 @@ theorem SurvivesNonnegative.normalizedStepCadlagPathIcc_nonnegative
   change 0 ≤ (scale n)⁻¹ *
     AdditivePath.displacement ⌊(n : ℝ) * (t : ℝ)⌋₊ increment
   exact mul_nonneg (inv_nonneg.mpr hscale.le) hdisp
+
+/-- Nonnegative grid values give a nonnegative polygonal interpolation. -/
+theorem SurvivesNonnegative.normalizedLinearCadlagPathIcc_nonnegative
+    {n : ℕ} {increment : ℕ → ℝ}
+    (h : SurvivesNonnegative n increment)
+    (scale : ℕ → ℝ) (hn : 0 < n) (hscale : 0 < scale n) :
+    ∀ t : unitInterval,
+      0 ≤ normalizedLinearCadlagPathIcc scale n increment t := by
+  have hgrid : ∀ k : Fin n,
+      (scale n)⁻¹ * AdditivePath.displacement (k + 1) increment ∈
+        Set.Ici 0 := by
+    intro k
+    exact mul_nonneg (inv_nonneg.mpr hscale.le) (h k)
+  have hrange : Set.range
+      (normalizedLinearContinuousPathIcc scale n increment) ⊆
+        Set.Ici 0 :=
+    (normalizedLinearContinuousPathIcc_range_subset_iff
+      scale hn (convex_Ici 0) (le_refl 0) increment).2 hgrid
+  intro t
+  exact hrange ⟨t, rfl⟩
 
 end ProbabilityTheory.RandomWalk
 

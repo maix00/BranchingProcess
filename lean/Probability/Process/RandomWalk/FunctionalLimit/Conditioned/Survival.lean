@@ -36,6 +36,9 @@ The public objects and theorems in this file are:
 - `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.ae_nonnegative_normalizedStepCadlagPathIcc`:
   under this conditioned law and a positive normalization, the step path
   is nonnegative at every time in $[0,1]$ almost surely.
+- `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.ae_nonnegative_normalizedLinearCadlagPathIcc`:
+  under the same law, the normalized polygonal path satisfies
+  $S_n^{\mathrm{lin}}(t)\ge0$ for every $t\in[0,1]$ almost surely.
 
 The survival conditioning is the one in Francesco Caravenna and Loïc
 Chaumont, *Invariance principles for random walks conditioned to stay
@@ -143,6 +146,19 @@ theorem ae_nonnegative_normalizedStepCadlagPathIcc
   exact ae_cond_of_forall_mem (measurableSet_survivesNonnegative n)
     (fun increment hsurvival =>
       hsurvival.normalizedStepCadlagPathIcc_nonnegative scale hscale)
+
+/-- Survival conditioning also makes the polygonal interpolation
+nonnegative at every time. -/
+theorem ae_nonnegative_normalizedLinearCadlagPathIcc
+    (ν : Measure ℝ) {n : ℕ} (hn : 0 < n) (scale : ℕ → ℝ)
+    (hscale : 0 < scale n) :
+    ∀ᵐ increment ∂survivalConditionedLaw ν n,
+      ∀ t : unitInterval,
+        0 ≤ normalizedLinearCadlagPathIcc scale n increment t := by
+  unfold survivalConditionedLaw
+  exact ae_cond_of_forall_mem (measurableSet_survivesNonnegative n)
+    (fun increment hsurvival =>
+      hsurvival.normalizedLinearCadlagPathIcc_nonnegative scale hn hscale)
 
 end ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned
 
