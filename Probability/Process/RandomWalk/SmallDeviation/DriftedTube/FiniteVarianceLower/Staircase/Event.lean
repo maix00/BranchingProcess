@@ -19,9 +19,6 @@ The public theorems in this file are:
   a successful horizontal block on
   $[r_{t+n},s_t]$ lies inside the tilted tube
   $[r_j,s_j]$ at every $t\le j\le t+n$ when $r_j$ is increasing.
-- `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.tubeBlockEvent_mem_driftedTube_at_time_of_nonpos`:
-  the same inclusion for a falling tube, whose horizontal block is
-  $[r_t,s_{t+n}]$.
 
 This is the deterministic inclusion of each horizontal staircase step in
 Wang Yiyang, *Asymptotic speed of the $N$-branching random walk with infinite
@@ -124,40 +121,6 @@ theorem tubeBlockEvent_mem_driftedTube_at_time
           (drift * ((start + length : ℕ) : ℝ) / width ^ 2)))
       v₁ v₂ := by
     simpa only [max_eq_right hmono, min_eq_left hmono] using hblock
-  exact tubeBlockEvent_mem_driftedTube_at_time_of_extremeBounds
-    hstart hend hblock'
-
-/-- A falling tilted tube contains the horizontal block between its
-lower boundary at the block start and upper boundary at the block end. -/
-theorem tubeBlockEvent_mem_driftedTube_at_time_of_nonpos
-    {start length j : ℕ} {width drift lower v₁ v₂ : ℝ}
-    (hdrift : drift ≤ 0)
-    (hstart : start ≤ j) (hend : j ≤ start + length)
-    {increment : ℕ → ℝ}
-    (hblock : increment ∈ tubeBlockEvent start length
-      (lower + drift * (start : ℝ) / width ^ 2)
-      ((lower + drift * ((start + length : ℕ) : ℝ) / width ^ 2 + width) -
-        (lower + drift * (start : ℝ) / width ^ 2))
-      v₁ v₂) :
-    lower + drift * (j : ℝ) / width ^ 2 ≤
-        AdditivePath.displacement j increment ∧
-      AdditivePath.displacement j increment ≤
-        lower + drift * (j : ℝ) / width ^ 2 + width := by
-  have htime : (start : ℝ) ≤ ((start + length : ℕ) : ℝ) := by
-    exact_mod_cast (Nat.le_add_right start length)
-  have hmono : drift * ((start + length : ℕ) : ℝ) / width ^ 2 ≤
-      drift * (start : ℝ) / width ^ 2 :=
-    div_le_div_of_nonneg_right
-      (mul_le_mul_of_nonpos_left htime hdrift) (sq_nonneg width)
-  have hblock' : increment ∈ tubeBlockEvent start length
-      (lower + max (drift * (start : ℝ) / width ^ 2)
-        (drift * ((start + length : ℕ) : ℝ) / width ^ 2))
-      ((lower + min (drift * (start : ℝ) / width ^ 2)
-        (drift * ((start + length : ℕ) : ℝ) / width ^ 2) + width) -
-        (lower + max (drift * (start : ℝ) / width ^ 2)
-          (drift * ((start + length : ℕ) : ℝ) / width ^ 2)))
-      v₁ v₂ := by
-    simpa only [max_eq_left hmono, min_eq_right hmono] using hblock
   exact tubeBlockEvent_mem_driftedTube_at_time_of_extremeBounds
     hstart hend hblock'
 
