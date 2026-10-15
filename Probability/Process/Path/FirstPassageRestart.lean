@@ -16,6 +16,8 @@ The public theorem in this file is:
 - `ProbabilityTheory.firstPassageBelow_shiftToZero_eq`:
   if $b<a<f(0)$ and the first passages $\tau_a,\tau_b$ are finite,
   then $\tau_b=\tau_a+\tau_{b-a}(f(\tau_a+\cdot)-f(\tau_a))$.
+- `ProbabilityTheory.firstPassageBelow_freezeAfter_eq`:
+  the first passage can be read from the path frozen at that time.
 
 This deterministic identity is used with the Brownian strong Markov
 property to obtain stationary independent increments of the descending
@@ -31,6 +33,21 @@ DOI 10.1214/aop/1176996098.
 open scoped NNReal
 
 namespace ProbabilityTheory
+
+/-- The first-passage time is unchanged when a path is frozen at its
+finite first passage. -/
+theorem firstPassageBelow_freezeAfter_eq
+    (f : C(ℝ≥0, ℝ)) (a : ℝ) (τ : ℝ≥0)
+    (hτ : firstPassageBelow f a = τ) :
+    firstPassageBelow (freezeAfter f τ) a = τ := by
+  have hprefix (u : ℝ≥0) (hu : u ≤ τ) :
+      f u = (freezeAfter f τ) u := by
+    change f u = f (min u τ)
+    rw [min_eq_left hu]
+  have heq := firstPassageBelow_eq_of_agreeOn f (freezeAfter f τ) a τ
+    hprefix (by rw [hτ])
+  rw [hτ] at heq
+  exact heq.symm
 
 /-- First passage below a deeper level decomposes into the first passage
 of the higher level and the first passage by the restarted increment path. -/
