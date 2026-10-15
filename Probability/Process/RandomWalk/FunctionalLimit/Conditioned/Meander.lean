@@ -8,22 +8,17 @@ module
 
 public import Probability.ConvergenceInDistribution.Portmanteau
 public import Probability.Process.Brownian.Meander.Corridor
-public import Probability.Process.Brownian.Meander.Support
 
 /-!
 # Conditioned random-walk limits at a Brownian meander
 
-The public theorem in this file is:
+The public theorems and definition in this file are:
 
 - `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.exists_eventually_meanderCorridorProbability_ge`:
   if the conditioned path laws $Q_n\circ X_n^{-1}$ converge to a law
   $\mathsf m$ with $t\mapsto7t/(16\sigma)$ in its support, then for
   $0<\rho<1/48$ there exists $q>0$ such that
   $Q_n(X_n\in\mathcal U_{\sigma,\rho})\ge q$ eventually.
-- `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.exists_eventually_meanderCorridorProbability_ge_of_imhofLaw`:
-  the same lower bound when the limiting path law is identified with the
-  Imhof transform of the radial law of three independent Brownian paths;
-  the support point is proved from that concrete representation.
 - `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.normalizedTransitionCorridor`:
   $\{f:0\le f(t)\le 5s/(6\sigma),\
   f(1)\in[5s/(12\sigma),11s/(24\sigma)]\}$.
@@ -48,9 +43,8 @@ R. A. Doney give a later treatment in *Invariance principles for local
 times at the maximum of random walks and Lévy processes*, Theorem 6,
 DOI 10.1214/09-AOP512. The support hypothesis is the one used by
 Wang Yiyang, *Asymptotic speed of the $N$-branching random walk with
-infinite offspring*, Chapter 3, Lemma 3.5, Appendix A.2. Both hypotheses
-are explicit pending formal constructions of the conditioned limit and
-Brownian meander law.
+infinite offspring*, Chapter 3, Lemma 3.5, Appendix A.2. The limit and its support are established in the Brownian meander and
+conditioned random-walk modules.
 -/
 
 @[expose] public section
@@ -85,43 +79,6 @@ theorem exists_eventually_meanderCorridorProbability_ge
       hsigma hrho hrhoSmall hsupport
   exact hlimit.exists_eventually_measure_map_ge_pos_of_isOpen
     (BrownianMeander.isOpen_openCorridor sigma rho) hpositive
-
-/-- The Imhof representation supplies the support input needed by
-Wang Yiyang, *Asymptotic speed of the $N$-branching random walk with
-infinite offspring*, Chapter 3, Lemma 3.5, Appendix A.2. If the limiting
-conditioned path law agrees with the Imhof transform of a BES(3) path law,
-the meander corridor has positive mass and Portmanteau gives an eventual
-positive lower bound. The law identification is stated explicitly so that
-its proof can be formalized independently from this support argument. -/
-theorem exists_eventually_meanderCorridorProbability_ge_of_imhofLaw
-    {Ω Ωm ΩB : Type*} [MeasurableSpace Ω] [MeasurableSpace Ωm]
-    [MeasurableSpace ΩB]
-    {P : ℕ → Measure Ω} [∀ n, IsProbabilityMeasure (P n)]
-    {Pm : Measure Ωm} [IsProbabilityMeasure Pm]
-    {X : ℕ → Ω → CadlagPath unitInterval ℝ}
-    {M : Ωm → CadlagPath unitInterval ℝ}
-    {PB : Measure ΩB} [IsProbabilityMeasure PB]
-    {W : ℝ≥0 → ΩB → ℝ}
-    (hBrownian : IsBrownianReal W PB)
-    (hWmeasurable : ∀ t, Measurable (W t))
-    {sigma rho : ℝ} (hsigma : 0 < sigma)
-    (hrho : 0 < rho) (hrhoSmall : rho < 1 / 48)
-    (hlimit : TendstoInDistribution X atTop M P Pm)
-    (hImhofLaw : Pm.map M = BrownianMeander.imhofTilt
-      (BrownianBessel3.pathLawOfBrownian hBrownian hWmeasurable)) :
-    ∃ q : ℝ≥0∞, 0 < q ∧ ∀ᶠ n : ℕ in atTop,
-      q ≤ (P n).map (X n) (BrownianMeander.openCorridor sigma rho) := by
-  have hsupport : Skorokhod.straightPath ((7 / 16) / sigma) ∈
-      (BrownianMeander.imhofTilt
-        (BrownianBessel3.pathLawOfBrownian hBrownian hWmeasurable)).support := by
-    change Skorokhod.linearPath ((7 / 16) / sigma) ∈
-      (BrownianMeander.imhofTilt
-        (BrownianBessel3.pathLawOfBrownian hBrownian hWmeasurable)).support
-    exact BrownianMeander.linearPath_mem_imhofTilt_support
-      hBrownian hWmeasurable
-      (div_nonneg (by norm_num) hsigma.le)
-  apply exists_eventually_meanderCorridorProbability_ge
-    hsigma hrho hrhoSmall hlimit (by rw [hImhofLaw]; exact hsupport)
 
 /-- The path version of $D_{N,\Delta}^{\theta}$ after normalizing the walk by
 $\sigma\sqrt N$ and writing $s=\Delta/\sqrt N$. This is the transition

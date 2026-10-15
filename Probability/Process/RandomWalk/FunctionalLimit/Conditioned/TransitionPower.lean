@@ -18,13 +18,6 @@ The public theorems in this file are:
 - `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.exists_eventually_diffusiveTransitionProbability_ge_power_of_conditionalBound`:
   combine a conditional transition lower bound and a survival lower bound.
 
-- ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.exists_eventually_diffusiveTransitionProbability_ge_power:
-  for the transition event
-  $D_{N,\Delta}=\{0\le S_j\le5\Delta/6,\ 1\le j\le N;\
-  S_N\in[5\Delta/12,11\Delta/24]\}$ and
-  $N=\lfloor\Delta^2\rfloor-m$, the survival regular variation,
-  conditioned meander limit, and meander support imply
-  $\mathbb P(D_{N,\Delta})\ge C\Delta^{-1-\alpha}$ eventually.
 - `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.exists_eventually_diffusiveTransitionProbability_ge_power_of_centeredSecondMoment`:
   the same bound with the meander limit and its support supplied by the
   centered finite-variance hypotheses; survival regular variation remains
@@ -114,41 +107,6 @@ theorem exists_eventually_diffusiveTransitionProbability_ge_power_of_conditional
   · rw [mul_div_assoc]
   · rw [← ENNReal.toReal_mul,
       ← measure_nonnegativeTransitionEvent_eq_cond_mul_survival]
-
-/-- The probability product bound from an explicitly supplied conditioned
-step-path limit and support point. -/
-theorem exists_eventually_diffusiveTransitionProbability_ge_power
-    {Ωm : Type*} [MeasurableSpace Ωm]
-    {ν : Measure ℝ} [IsProbabilityMeasure ν]
-    [∀ n, IsProbabilityMeasure (survivalConditionedLaw ν (n + 1))]
-    {sigma : ℝ} (hν : IsCenteredSecondMoment ν (sigma ^ 2))
-    (hsigma : 0 < sigma)
-    (hreg : Asymptotics.IsRegularlyVaryingAtTop
-      (survivalProbabilityReal ν) (-(1 / 2 : ℝ)))
-    {alpha : ℝ} (halpha : 0 < alpha)
-    {width : ℕ → ℝ} (hwidth : Tendsto width atTop atTop)
-    (offset : ℕ)
-    [∀ n, IsProbabilityMeasure
-      (survivalConditionedLaw ν (diffusiveTransitionHorizon width offset n))]
-    {Pm : Measure Ωm} [IsProbabilityMeasure Pm]
-    {M : Ωm → CadlagPath unitInterval ℝ}
-    {rho : ℝ} (hrho : 0 < rho) (hrhoSmall : rho < 1 / 48)
-    (hlimit : TendstoInDistribution
-      (fun n increment => normalizedStepCadlagPathIcc
-        (fun j => sigma * Real.sqrt j) (n + 1) increment)
-      atTop M (fun n => survivalConditionedLaw ν (n + 1)) Pm)
-    (hsupport : Skorokhod.straightPath ((7 / 16) / sigma) ∈
-      (Pm.map M).support) :
-    ∃ C : ℝ, 0 < C ∧ ∀ᶠ n : ℕ in atTop,
-      C / width n ^ (1 + alpha) ≤
-        (iidSequenceLaw ν
-          (nonnegativeTransitionEvent
-            (diffusiveTransitionHorizon width offset n) (width n))).toReal := by
-  have htransition :=
-    exists_eventually_diffusiveTransitionConditionalProbability_ge
-      hwidth offset hsigma hrho hrhoSmall hlimit hsupport
-  exact exists_eventually_diffusiveTransitionProbability_ge_power_of_conditionalBound
-    hν hsigma hreg halpha hwidth offset htransition
 
 /-- The probability product bound with the conditioned meander input and
 its support established from centered finite-variance increments. -/
