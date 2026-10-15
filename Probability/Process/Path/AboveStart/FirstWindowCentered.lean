@@ -23,6 +23,9 @@ The public definitions and theorems in this file are:
   both path maps are Borel measurable.
 - `ProbabilityTheory.centeredFirstWindowShiftUpTo_eq_of_finite`:
   when $T^s(f)<\infty$, the finite and unrestricted centered shifts agree.
+- `ProbabilityTheory.eventually_centeredFirstWindowShiftUpTo_eq`:
+  when $T(f)<\infty$, these centered shifts agree for all sufficiently
+  large integer cutoffs.
 - `ProbabilityTheory.continuousAt_centeredFirstWindowShift_of_finite` and
   `ProbabilityTheory.continuousAt_centeredFirstWindowShiftUpTo_of_finite`:
   continuity at paths with finite first-window times and continuous
@@ -97,6 +100,26 @@ theorem centeredFirstWindowShiftUpTo_eq_of_finite
     exact hfinite
   simp [centeredFirstWindowShiftUpTo, centeredFirstWindowShift,
     hfirstfinite, htime]
+
+/-- On a path with a finite first eligible window, every sufficiently
+large finite-horizon centered shift agrees with the unrestricted shift. -/
+theorem eventually_centeredFirstWindowShiftUpTo_eq
+    (f : C(ℝ≥0, ℝ))
+    (hfinite : firstNonnegativeWindowStart f ≠ ⊤) :
+    ∀ᶠ n : ℕ in atTop,
+      centeredFirstWindowShiftUpTo f ((n : ℝ≥0) + 1) =
+        centeredFirstWindowShift f := by
+  obtain ⟨t, ht⟩ := WithTop.ne_top_iff_exists.mp hfinite
+  obtain ⟨N, hN⟩ := exists_nat_ge t
+  filter_upwards [eventually_ge_atTop N] with n hn
+  have hbound : t + 1 ≤ (n : ℝ≥0) + 1 := by
+    gcongr
+    exact hN.trans (by exact_mod_cast hn)
+  have heq := firstNonnegativeWindowStartUpTo_eq_first_of_le
+    f ht.symm hbound
+  apply centeredFirstWindowShiftUpTo_eq_of_finite
+  rw [heq]
+  exact WithTop.coe_ne_top
 
 /-- Continuity of the first-window time at a path with a finite first
 window implies continuity of its centered first-window path. -/

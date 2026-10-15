@@ -25,6 +25,9 @@ The public theorems are:
 - `MeasureTheory.tendstoInDistribution_of_negligible_disagreement`:
   transfer convergence when the probability that two coupled random variables
   differ tends to zero.
+- `MeasureTheory.abs_integral_sub_le_oscillation_mul_disagreement`:
+  bound the difference of two expectations by the disagreement probability
+  times an oscillation bound for the observable.
 -/
 
 open Filter ProbabilityTheory
@@ -185,5 +188,63 @@ theorem tendstoInDistribution_of_negligible_disagreement
   exact tendstoInDistribution_of_error_tendstoInMeasure hXZ
     herror_meas (fun i ω => le_rfl) herror
     (fun i => (hY i).aemeasurable)
+
+/-- The expectation of an observable changes by at most its oscillation
+times the probability that two coupled variables disagree. -/
+theorem abs_integral_sub_le_oscillation_mul_disagreement
+    {E' : Type*} [MeasurableSpace E'] [MeasurableEq E'] [TopologicalSpace E']
+    [OpensMeasurableSpace E']
+    {μ : Measure Ω''} [IsProbabilityMeasure μ]
+    {U V : Ω'' → E'} (hU : Measurable U) (hV : Measurable V)
+    {F : E' → ℝ} (hF : Continuous F)
+    {M : ℝ} (hM : ∀ x y, dist (F x) (F y) ≤ M) :
+    |∫ ω, F (U ω) ∂μ - ∫ ω, F (V ω) ∂μ| ≤
+      M * μ.real {ω | U ω ≠ V ω} := by
+  classical
+  let bad : Set Ω'' := {ω | U ω ≠ V ω}
+  have hbad : MeasurableSet bad :=
+    (measurableSet_eq_fun hU hV).compl
+  let x₀ : E' := U (nonempty_of_isProbabilityMeasure μ).some
+  have hM_nonneg : 0 ≤ M :=
+    (dist_nonneg : 0 ≤ dist (F x₀) (F x₀)).trans (hM x₀ x₀)
+  have hFU : Integrable (fun ω => F (U ω)) μ := by
+    apply Integrable.of_bound (hF.measurable.comp hU).aestronglyMeasurable
+      (‖F x₀‖ + M)
+    filter_upwards [] with ω
+    have h := hM (U ω) x₀
+    rw [Real.dist_eq] at h
+    calc
+      ‖F (U ω)‖ = ‖F x₀ + (F (U ω) - F x₀)‖ := by congr 1; ring
+      _ ≤ ‖F x₀‖ + ‖F (U ω) - F x₀‖ := norm_add_le _ _
+      _ ≤ ‖F x₀‖ + M := by
+        simpa only [Real.norm_eq_abs] using add_le_add_right h ‖F x₀‖
+  have hFV : Integrable (fun ω => F (V ω)) μ := by
+    apply Integrable.of_bound (hF.measurable.comp hV).aestronglyMeasurable
+      (‖F x₀‖ + M)
+    filter_upwards [] with ω
+    have h := hM (V ω) x₀
+    rw [Real.dist_eq] at h
+    calc
+      ‖F (V ω)‖ = ‖F x₀ + (F (V ω) - F x₀)‖ := by congr 1; ring
+      _ ≤ ‖F x₀‖ + ‖F (V ω) - F x₀‖ := norm_add_le _ _
+      _ ≤ ‖F x₀‖ + M := by
+        simpa only [Real.norm_eq_abs] using add_le_add_right h ‖F x₀‖
+  have hnorm : Integrable (fun ω => ‖F (U ω) - F (V ω)‖) μ :=
+    (hFU.sub hFV).norm
+  rw [← integral_sub hFU hFV, ← Real.norm_eq_abs]
+  calc
+    ‖∫ ω, F (U ω) - F (V ω) ∂μ‖ ≤
+        ∫ ω, ‖F (U ω) - F (V ω)‖ ∂μ :=
+      norm_integral_le_integral_norm _
+    _ ≤ ∫ ω, bad.indicator (fun _ => M) ω ∂μ := by
+      apply integral_mono hnorm
+        ((integrable_const M (μ := μ)).integrableOn.integrable_indicator hbad)
+      intro ω
+      by_cases h : U ω = V ω
+      · simp [bad, Set.indicator, h]
+      · simpa [bad, Set.indicator, h, Real.dist_eq] using hM (U ω) (V ω)
+    _ = M * μ.real bad := by
+      rw [integral_indicator hbad, integral_const]
+      simp [smul_eq_mul, mul_comm]
 
 end MeasureTheory
