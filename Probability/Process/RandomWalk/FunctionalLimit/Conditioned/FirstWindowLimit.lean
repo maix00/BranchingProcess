@@ -12,6 +12,7 @@ public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.FiniteW
 public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.FirstWindowSelection
 public import Probability.Process.Brownian.AboveStart.FirstWindowCenteredLimit
 public import Probability.Process.Path.FiniteHorizonScaling
+public import Topology.Cadlag.Skorokhod.ContinuousMap
 
 /-!
 # Functional limit after the first eligible window
@@ -27,6 +28,9 @@ The public theorem in this file is:
 - `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.tendstoInDistribution_survivalConditionedPath`:
   the survival-conditioned polygonal walk converges to the centered
   Brownian first-window path.
+- `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.tendstoInDistribution_survivalConditionedInterpolatedCadlagPath`:
+  the same polygonal paths converge when viewed in the Skorokhod
+  càdlàg space.
 
 This proves the centered path comparison of Erwin Bolthausen,
 *On a functional central limit theorem for random walks conditioned to
@@ -34,7 +38,9 @@ stay positive*, Theorem 3.2, equations (3.3)--(3.8), Ann. Probab. 4(3)
 (1976), 480--485, DOI 10.1214/aop/1176996098. For a fixed finite
 cutoff, Donsker convergence and Lemma 2.5 give the shifted limit;
 equation (3.5) controls the probability that the cutoff is reached;
-the Brownian cutoff error tends to zero.
+the Brownian cutoff error tends to zero. The final weak-convergence
+comparison is expressed with bounded Lipschitz observables in place
+of the article's continuity-set formulation.
 -/
 
 @[expose] public section
@@ -203,6 +209,38 @@ theorem tendstoInDistribution_survivalConditionedPath
   filter_upwards [] with n
   apply Subtype.ext
   exact hLaw n
+
+/-- The survival-conditioned polygonal paths also converge in the
+Skorokhod space used for the step-path formulation. -/
+theorem tendstoInDistribution_survivalConditionedInterpolatedCadlagPath
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (hν : IsCenteredUnitSecondMoment ν)
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+    [IsProbabilityMeasure P] {B : ℝ≥0 → Ω → ℝ}
+    (hB : IsBrownianReal B P)
+    (hcontinuous : ∀ ω, Continuous (B · ω))
+    (hmeasurable : ∀ t, Measurable (B t)) :
+    letI : ∀ n : ℕ, IsProbabilityMeasure
+        (survivalConditionedLaw ν (n + 1)) := fun n =>
+      survivalConditionedLaw_isProbabilityMeasure_of_centeredUnitSecondMoment
+        ν hν (n + 1)
+    TendstoInDistribution
+      (fun (n : ℕ) increment => Skorokhod.ofContinuousMap
+        (normalizedLinearContinuousPathIcc
+          (fun m => Real.sqrt m) (n + 1) increment))
+      atTop
+      (fun ω => Skorokhod.ofContinuousMap
+        (restrictPathToUnitInterval
+          (centeredFirstWindowShift
+            (hB.continuousPathMap hmeasurable ω))))
+      (fun n => survivalConditionedLaw ν (n + 1)) P := by
+  letI : ∀ n : ℕ, IsProbabilityMeasure
+      (survivalConditionedLaw ν (n + 1)) := fun n =>
+    survivalConditionedLaw_isProbabilityMeasure_of_centeredUnitSecondMoment
+      ν hν (n + 1)
+  exact (tendstoInDistribution_survivalConditionedPath
+    ν hν hB hcontinuous hmeasurable).continuous_comp
+      Skorokhod.continuous_ofContinuousMap
 
 end ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned
 
