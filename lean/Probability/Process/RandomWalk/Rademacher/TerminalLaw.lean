@@ -21,6 +21,11 @@ The public theorems in this file are:
   the blocks whose reflected partial sums stay nonnegative.
 - `ProbabilityTheory.RandomWalk.positiveSurvivesBlock_probability_pos`:
   $\mathbb P(C_r^+)>0$ for every finite block length $r$.
+- `ProbabilityTheory.RandomWalk.positiveSurvivesBlock_shift_iff`:
+  survival of the finite block beginning at $m$ is equivalent to
+  survival of the shifted Rademacher increment sequence.
+- `ProbabilityTheory.RandomWalk.negativeSurvivesBlock_shift_iff`:
+  the same equivalence for the reflected increments.
 - `ProbabilityTheory.RandomWalk.measurableSet_rademacher_positiveCrossing_prefix`:
   $\{S_{m-1}<0,S_m=0\}$ is measurable from the first $m$ increments.
 - `ProbabilityTheory.RandomWalk.measurableSet_rademacher_negativeCrossing_prefix`:
@@ -123,7 +128,9 @@ private theorem measurableSet_negativeSurvivesBlock (length : ℕ) :
     (measurable_pi_iff.mpr fun j =>
       (measurable_rademacherOfBool.comp (measurable_pi_apply j)).neg)
 
-private theorem positiveSurvivesBlock_shift_iff
+/-- Boolean finite-block survival agrees with survival of the
+corresponding shifted real Rademacher walk. -/
+theorem positiveSurvivesBlock_shift_iff
     (branch : ℕ → Bool) (start length : ℕ) :
     Combinatorics.Sequence.blockCoordinates start length branch ∈
       positiveSurvivesBlock length ↔
@@ -132,7 +139,8 @@ private theorem positiveSurvivesBlock_shift_iff
   exact finiteSurvivesNonnegative_blockCoordinates_iff
     length start (rademacherIncrementPath branch)
 
-private theorem negativeSurvivesBlock_shift_iff
+/-- The reflected finite-block survival equivalence. -/
+theorem negativeSurvivesBlock_shift_iff
     (branch : ℕ → Bool) (start length : ℕ) :
     Combinatorics.Sequence.blockCoordinates start length branch ∈
       negativeSurvivesBlock length ↔
