@@ -29,6 +29,9 @@ The public theorems in this file are:
    =\mathbb P(S_{m-1}<0,S_m=0)\mathbb P(B_{0,r}\in A)$.
 - `ProbabilityTheory.RandomWalk.measure_rademacher_negativeCrossing_inter_block_eq_mul`:
   the analogous identity for $S_{m-1}>0$.
+- `ProbabilityTheory.RandomWalk.measure_rademacher_crossing_symmetry`:
+  the two crossing-prefix events $\{S_{m-1}<0,S_m=0\}$ and
+  $\{S_{m-1}>0,S_m=0\}$ have equal probability.
 - `ProbabilityTheory.RandomWalk.measure_lastSignChangeIndex_eq_inter_block`:
   the joint mass of $\mu_n=m$ and a terminal block event is the sum
   of the two crossing-prefix masses multiplied by their respective
@@ -45,6 +48,42 @@ stay positive*, Ann. Probab. 4(3) (1976), 480--485.
 open MeasureTheory ProbabilityTheory
 
 namespace ProbabilityTheory.RandomWalk
+
+private theorem map_fairBoolMeasure_not :
+    fairBoolMeasure.map Bool.not = fairBoolMeasure := by
+  let p : unitInterval := ⟨1 / 2, by constructor <;> norm_num⟩
+  have hp : unitInterval.symm p = p := by
+    apply Subtype.ext
+    norm_num [unitInterval.coe_symm_eq, p]
+  unfold fairBoolMeasure
+  rw [map_bernoulliMeasure]
+  simp only [Bool.not_false, Bool.not_true]
+  unfold bernoulliMeasure
+  change unitInterval.toNNReal p • Measure.dirac true +
+      unitInterval.toNNReal (unitInterval.symm p) • Measure.dirac false =
+    unitInterval.toNNReal p • Measure.dirac false +
+      unitInterval.toNNReal (unitInterval.symm p) • Measure.dirac true
+  rw [hp]
+  ac_rfl
+
+private theorem map_iidFairBool_flip :
+    (iidSequenceLaw fairBoolMeasure).map (fun branch n => !branch n) =
+      iidSequenceLaw fairBoolMeasure := by
+  rw [iidSequenceLaw_map_coordinatewise fairBoolMeasure Bool.not
+    (measurable_of_countable _), map_fairBoolMeasure_not]
+
+private theorem measurable_flipBoolSequence :
+    Measurable (fun branch : ℕ → Bool => fun k => !branch k) := by
+  rw [measurable_pi_iff]
+  intro k
+  exact (measurable_of_countable Bool.not).comp (measurable_pi_apply k)
+
+private theorem rademacherIncrementPath_flip (branch : ℕ → Bool) :
+    rademacherIncrementPath (fun k => !branch k) =
+      fun k => -rademacherIncrementPath branch k := by
+  funext k
+  cases h : branch k <;>
+    simp [rademacherIncrementPath, rademacherOfBool, h]
 
 /-- Finite Rademacher blocks with nonnegative partial sums. -/
 def positiveSurvivesBlock (length : ℕ) : Set (Fin length → Bool) :=
@@ -130,6 +169,54 @@ theorem measurableSet_rademacher_negativeCrossing_prefix
     (rademacher_displacement_measurable_prefix (by omega))).inter
     ((measurableSet_singleton (0 : ℝ)).preimage
       (rademacher_displacement_measurable_prefix le_rfl))
+
+/-- Reflection of every Rademacher step exchanges the two possible
+directions of crossing into zero and preserves the IID fair-Boolean law. -/
+theorem measure_rademacher_crossing_symmetry
+    {start : ℕ} (hstart : 0 < start) :
+    (iidSequenceLaw fairBoolMeasure)
+      {branch : ℕ → Bool |
+        AdditivePath.displacement (start - 1)
+          (rademacherIncrementPath branch) < 0 ∧
+        AdditivePath.displacement start
+          (rademacherIncrementPath branch) = 0} =
+    (iidSequenceLaw fairBoolMeasure)
+      {branch : ℕ → Bool |
+        0 < AdditivePath.displacement (start - 1)
+          (rademacherIncrementPath branch) ∧
+        AdditivePath.displacement start
+          (rademacherIncrementPath branch) = 0} := by
+  let flip : (ℕ → Bool) → (ℕ → Bool) := fun branch k => !branch k
+  let negativeCrossing : Set (ℕ → Bool) :=
+    {branch | AdditivePath.displacement (start - 1)
+      (rademacherIncrementPath branch) < 0 ∧
+      AdditivePath.displacement start (rademacherIncrementPath branch) = 0}
+  let positiveCrossing : Set (ℕ → Bool) :=
+    {branch | 0 < AdditivePath.displacement (start - 1)
+      (rademacherIncrementPath branch) ∧
+      AdditivePath.displacement start (rademacherIncrementPath branch) = 0}
+  have hflip : flip ⁻¹' negativeCrossing = positiveCrossing := by
+    ext branch
+    simp only [Set.mem_preimage, Set.mem_ofPred_eq, negativeCrossing,
+      positiveCrossing, flip, rademacherIncrementPath_flip,
+      AdditivePath.displacement_neg]
+    constructor
+    · rintro ⟨hneg, hzero⟩
+      constructor <;> linarith
+    · rintro ⟨hpos, hzero⟩
+      constructor <;> linarith
+  change (iidSequenceLaw fairBoolMeasure) negativeCrossing =
+    (iidSequenceLaw fairBoolMeasure) positiveCrossing
+  calc
+    (iidSequenceLaw fairBoolMeasure) negativeCrossing =
+        ((iidSequenceLaw fairBoolMeasure).map flip) negativeCrossing := by
+      rw [show (iidSequenceLaw fairBoolMeasure).map flip =
+        iidSequenceLaw fairBoolMeasure from map_iidFairBool_flip]
+    _ = (iidSequenceLaw fairBoolMeasure) (flip ⁻¹' negativeCrossing) :=
+      Measure.map_apply measurable_flipBoolSequence
+        ((sequencePrefixFiltration (E := Bool)).le start _
+          (measurableSet_rademacher_positiveCrossing_prefix hstart))
+    _ = (iidSequenceLaw fairBoolMeasure) positiveCrossing := by rw [hflip]
 
 /-- A negative-to-zero prefix crossing is independent of every
 measurable event of the following IID Boolean block. -/
