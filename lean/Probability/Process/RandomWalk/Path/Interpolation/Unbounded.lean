@@ -30,6 +30,9 @@ The public definitions and theorems in this file are:
   the same equality for bundled continuous paths.
 - `ProbabilityTheory.RandomWalk.normalizedLinearPathUnbounded_grid`:
   $X_n(k/n)=a_n^{-1}S_k$ for every integer $k\ge0$.
+- `ProbabilityTheory.RandomWalk.shiftToZero_normalizedLinearContinuousPathUnbounded_grid`:
+  rebasing the path at $j/n$ gives
+  $a_n^{-1}(S_{j+k}-S_j)$ at time $k/n$.
 
 The unbounded-time interpolation is the path $Y_n$ used in Erwin
 Bolthausen, *On a functional central limit theorem for random walks
@@ -190,6 +193,41 @@ theorem normalizedLinearPathUnbounded_grid
   apply Finset.sum_congr rfl
   intro i hi
   rw [linearIncrementWeight_grid_of_lt hn (Finset.mem_range.mp hi), one_mul]
+
+/-- Rebased lattice-time values are exactly the normalized increments
+of the walk from the new starting index. -/
+theorem shiftToZero_normalizedLinearContinuousPathUnbounded_grid
+    (scale : ℕ → ℝ) {n : ℕ} (hn : 0 < n)
+    (start k : ℕ) (increment : ℕ → ℝ) :
+    shiftToZero (normalizedLinearContinuousPathUnbounded scale n increment)
+        (⟨(start : ℝ) / n, div_nonneg (Nat.cast_nonneg start)
+          (Nat.cast_nonneg n)⟩ : ℝ≥0)
+        (⟨(k : ℝ) / n, div_nonneg (Nat.cast_nonneg k)
+          (Nat.cast_nonneg n)⟩ : ℝ≥0) =
+      (scale n)⁻¹ *
+        (AdditivePath.displacement (start + k) increment -
+          AdditivePath.displacement start increment) := by
+  let gridTime (j : ℕ) : ℝ≥0 :=
+    ⟨(j : ℝ) / n, div_nonneg (Nat.cast_nonneg j) (Nat.cast_nonneg n)⟩
+  have hadd : gridTime start + gridTime k = gridTime (start + k) := by
+    apply NNReal.eq
+    change (start : ℝ) / n + (k : ℝ) / n = ((start + k : ℕ) : ℝ) / n
+    push_cast
+    ring
+  change normalizedLinearPathUnbounded scale n increment
+      (gridTime start + gridTime k) -
+      normalizedLinearPathUnbounded scale n increment (gridTime start) = _
+  rw [hadd]
+  have hfirst := normalizedLinearPathUnbounded_grid scale hn
+    (start + k) increment
+  have hbase := normalizedLinearPathUnbounded_grid scale hn
+    start increment
+  change normalizedLinearPathUnbounded scale n increment
+      (gridTime (start + k)) = _ at hfirst
+  change normalizedLinearPathUnbounded scale n increment
+      (gridTime start) = _ at hbase
+  rw [hfirst, hbase]
+  ring
 
 end ProbabilityTheory.RandomWalk
 
