@@ -75,6 +75,9 @@ For theorem-by-theorem formalization status, see
 [`FORMALIZATION_CHECKLIST.md`](FORMALIZATION_CHECKLIST.md).
 For the audit of dense module directories and their entry points, see
 [`docs/architecture/MODULE_DIRECTORY_AUDIT.md`](docs/architecture/MODULE_DIRECTORY_AUDIT.md).
+For the mathematical distinction between Mogulskii corridors, drawdown,
+tilted tubes, and entrance estimates, see
+[`Probability/Process/RandomWalk/SmallDeviation/README.md`](Probability/Process/RandomWalk/SmallDeviation/README.md).
 
 There is no umbrella import. Import the module that owns the required
 definition or theorem. The dependency graph and API are checked by the
