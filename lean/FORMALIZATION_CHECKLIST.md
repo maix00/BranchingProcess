@@ -139,7 +139,7 @@ The order here follows the displayed PDF numbers.
 | 3.2 | `lemma:4.1` | Horizontal-tube upper bound `exp(uΔ^v − dL/Δ²)` for arbitrary `u,v>0`, and the coefficient-one specialization. The proof uses the closed-tube Mogul'skii rate, an equal partition to select one fixed corridor, iteration over full blocks, and a remainder estimate. | **Formalized.** `Mogulskii/RandomWalkBounds/HorizontalTubeUpper.lean` proves the centered-tube bounds `horizontalTubeProbability_le_exp_of_finiteVariance_withRemainder` and `horizontalTubeProbability_le_exp_of_finiteVariance`, and the corresponding translated-interval bounds for IID partial sums. The input rate is the closed horizontal-tube form of Mogul'skii, Theorem 3, Section 4, p. 764. |
 | 3.3 | `lemma:2.3` | No-large-drop plus endpoint bound. Its proof uses the 3.2 horizontal-tube estimate for each nonjump block. | **Formalized.** `Drawdown/Upper.lean` proves `measureReal_noLargeDropEndpointBelowEvent_le_exp_of_finiteVariance`: for a centered law of variance `σ² ∈ (0,∞)`, every `c>0` and `0<d<π²σ²/2` admit one `Δ₀≥1` such that the estimate holds for all `Δ≥Δ₀` and `L≥Δ^(2+c)`. The proof follows Wang Yiyang, *Asymptotic speed of the N-branching random walk with infinite offspring*, Chapter 3, Lemma 3.3, using the rounded running maximum, conditional block estimates, and jump-pattern union. |
 | 3.4 | `lemma:4.2` | Small-drift tilted-tube upper bound. The proof invokes 3.3 at the complete-block estimate, iterates blocks by the Markov property, and absorbs the remainder into `Δ^v`. | **Formalized.** `DriftedTube/FiniteVarianceUpper.lean` proves `exists_driftedTubeProbability_le_exp_of_finiteVariance`: the short-horizon case uses probability at most one; the long-horizon case follows the equal-length block decomposition, conditional-expectation iteration, and final-remainder estimate from Wang Yiyang, Chapter 3, Lemma 3.4. |
-| 3.5 | `lemma:4.3` | Tilted-tube lower bound with either endpoint window. The proof has a diffusive entrance stage, then a staircase of horizontal sub-tubes; Lemma 3.1(ii) supplies one-block endpoint-window rates, and common narrowed-tube events give the uniform block bounds used in the reverse Markov product. | **Partial.** `DriftedTube/FiniteVarianceLower.lean` proves the integer-width block bound, spatial-bin coverage, central-window geometry, and deterministic real-width transfer. `Brownian/Meander/Corridor.lean`, `Brownian/Bessel/{ThreeDimensional,Support}.lean`, and `Brownian/Meander/{Imhof,Support}.lean` construct the radial three-dimensional path law and Imhof tilt and prove positive corridor mass from Brownian path support. `FunctionalLimit/Conditioned/{Meander,Survival,Transition}.lean` formalize the Appendix A.2 open meander corridor and its Portmanteau consequence from explicit conditioned invariance and support inputs, the survival-conditioned finite path, the exact finite-grid event $D_{n,\Delta}$, and an eventual positive lower bound for $\mathbb P(D_{n,\Delta}\mid C_n)$ from explicit conditioned invariance and support inputs. The exact identity $\mathbb P(D_{n,\Delta})=\mathbb P(D_{n,\Delta}\mid C_n)\mathbb P(C_n)$ is proved from event inclusion. Centered positive-variance increments give positive finite-horizon survival probability, its monotonicity in the horizon, and positive-probability bounded increment windows on both sides of zero. `Analysis/Asymptotics/ShiftedFloor.lean` proves $\Delta_n/\sqrt{\lfloor\Delta_n^2\rfloor-m}\to1$ for positive real widths tending to infinity; the standard conditioned limit at integer times is formally reindexed to these exact diffusive horizons. `Analysis/Asymptotics/RegularVariation/LowerPower.lean` proves Potter's inverse-power lower bound; `FunctionalLimit/Conditioned/{SurvivalPower,TransitionPower}.lean` specialize it to the survival probability at $\lfloor\Delta^2\rfloor-m$ and multiply by the conditional transition probability. `Analysis/Asymptotics/PolynomialExponential.lean` proves the exact polynomial-to-exponential entrance-budget comparison for $L\ge\lfloor\Delta^{2+\varepsilon}\rfloor$. `Fluctuation/{RecordLocalTime,LadderTime,DescendingLocalTime,RenewalFunction}.lean` defines strict record local times, ladder times and heights, and the descending ladder-height renewal function of Chaumont--Doney, Section 2, and Caravenna--Chaumont, definition (1.1). It proves finite-time measurability and the exact survival identity $C_n=\{T^-_1>n\}$. `FunctionalLimit/Donsker/{InteriorCorridor,InteriorFinite,InteriorDiffusive}.lean` proves the Brownian middle-start support and compactness step, its exact finite-grid identification, and a uniform positive lower bound for real widths $\Delta\to\infty$ at $n_\Delta=\lfloor\Delta^2\rfloor$. The final theorem constructs the Gaussian path law from the centered finite-variance increment law. `Entrance/MovingInterior.lean` transfers this bound to the exact moving event $\mathcal A_\Delta(x)$ for middle starting points. `FunctionalLimit/Conditioned/TransitionFactorization.lean` proves the independent fixed-prefix / transition-suffix probability product, including the reflected law. `Entrance/Edge/{LowerGeometry,UpperGeometry,Probability,ThreeRegions}.lean` proves both edge event inclusions, their exact product probability lower bounds, and the final three-interval minimum. `Moments/BoundedWindows.lean` derives the positive-mass positive and reflected increment windows from centered nondegenerate finite variance. `Entrance/Edge/PrefixSelection.lean` chooses fixed lengths with $m_+a_+>c+1$ and $m_-a_->c+1$. It proves the eventual geometric width and horizon inequalities for these fixed prefixes. `Entrance/Edge/PowerAssembly.lean` combines the two transition power bounds with the middle Donsker bound into one uniform $C_\alpha\Delta^{-1-\alpha}$ lower bound for the exact moving entrance event; the transition power bounds still depend on the unproved meander and survival inputs. `Probability/Sequence/IID/ConditionalBlocks.lean` proves the prefix/next-block conditional integral, its sectionwise lower bound, and the reverse Markov product recursion; `RandomWalk/Path/Window/Endpoint.lean` provides the measurable finite-block tube and endpoint event. `DriftedTube/FiniteVarianceLower/Blocks/EventBridge.lean` identifies the translated zero-start event with the next block given its starting position and proves the conditional probability estimate in the natural domain filtration. `DriftedTube/FiniteVarianceLower/Blocks/Product.lean` proves the reverse Markov product for successive blocks of variable lengths, including a longer final block, with an initial entrance-event factor. `DriftedTube/FiniteVarianceLower/Blocks/Geometry.lean` proves that each successful block enters the next central window and combines it with the product. `DriftedTube/FiniteVarianceLower/Blocks/Probability.lean` transfers uniform lower bounds from finitely many narrowed tubes to every starting point in the central window; `DriftedTube/FiniteVarianceLower/Blocks/Assembly.lean` combines this transfer with the Markov product. `DriftedTube/FiniteVarianceLower/Binning/{RealWidthLower,FiniteThreshold,Parameters}.lean` and `DriftedTube/FiniteVarianceLower/Staircase/{Rate/BinRate,Product}.lean` transfer Lemma 3.1(ii) from integer to real widths, take a common threshold over finitely many spatial bins, verify their tube parameters, compare narrowed and global exponents, and feed the resulting bounds into the finite staircase product. `DriftedTube/FiniteVarianceLower/Blocks/Exponent.lean` combines the exponential block costs and entrance budget. `DriftedTube/FiniteVarianceLower/Staircase/{Event,Partition,Inclusion}.lean` prove that the entrance and every horizontal block imply the full tilted-tube endpoint event. `DriftedTube/FiniteVarianceLower/Staircase/FiniteLower.lean` combines these results into the first tilted-tube lower bound under explicit entrance and schedule inequalities, with assumptions restricted to the finite set of actual blocks. `Donsker/InteriorCorridor.lean` also identifies the exact Brownian middle-start event printed in Appendix A.2 and the robust subevent used for scale perturbations. The Bolthausen--Iglehart conditioned meander limit, its Brownian support point, and the finite-variance conditional transition estimates are proved in `FunctionalLimit/Conditioned/{MeanderIdentification,MeanderVariance,TransitionFromMeander}.lean`. The survival lower power input, unconditional entrance bound, and final two-sided theorem remain open; regular variation from Caravenna--Chaumont, Lemma 2.1, is a stronger still-open source theorem. Continuous local time and ladder-process convergence are separate source dependencies. |
+| 3.5 | `lemma:4.3` | For every sufficiently large real width `Δ`, every `r₀≤0≤r₀+Δ`, and every `L≥⌊Δ^(2+ε)⌋`, the walk stays in the moving tube and reaches either endpoint window with probability at least `exp(−d′L/Δ²)`. | **Formalized.** `DriftedTube/FiniteVarianceLower/EndpointBounds.lean` proves `exists_uniform_driftedTube_endpoint_bounds` from centered finite variance, `v>0`, `d′>π²σ²/2`, `c≥0`, and `ε>0`. The proof first chooses the intermediate rate `d″`, then the finite spatial bin count and strict windows, takes `ℓ=⌊Δ^(2+η)⌋`, and uses the Brownian-meander entrance, common narrowed-tube block rates, reverse Markov product, and counterexample-sequence argument for one threshold. The finite-variance survival power bound follows from Bauer–Godrèche–Luck, Appendix A, (A.7), the Gaussian endpoint-sign limit, and prefix-sum induction. The theorem compiles without project axioms. |
 
 Thus the lemma dependency chain is 3.1(i) → 3.2 → 3.3 → 3.4, while 3.1(ii) supports the separate lower-bound branch 3.5. The inverse-scale and monotonicity developments remain formalized supporting results, but the revised proof no longer gives them standalone lemma numbers. Do not use a source label as a theorem number, and do not mark a supporting block or drawdown estimate as one of these lemmas.
 
@@ -278,33 +278,19 @@ and assembles the common threshold for the staircase proof.
 tends to $1/(3\beta)$; `StaircaseEventually.lean` takes one common eventual
 threshold for all global conditions. `DriftedTube/FiniteVarianceLower/Staircase/Concrete/AsymptoticLower.lean`
 then proves the eventual tilted-tube lower bound from the robust entrance
-probability budget. The remaining probability-theory input is exactly this
-robust entrance budget, downstream of the source meander and survival
-theorems.
-`DriftedTube/FiniteVarianceLower/Staircase/Concrete/ConditionalLower.lean` composes the Appendix A.2
-polynomial-to-exponential entrance argument with that asymptotic product.
-Its remaining two reflected transition hypotheses are precisely the
-outputs of the conditioned Brownian-meander limit and survival asymptotic
-used in Appendix A.2.
-The Appendix A.2 deduction is now present:
-`Entrance/RobustTransition.lean` transfers the middle Donsker event to the
-robust endpoint window, `RobustEdgeGeometry.lean` proves both fixed-prefix
-and meander-suffix event inclusions after increasing the width threshold,
-`RobustEdgeProbability.lean` proves the corresponding independent-product
-lower bounds, `RobustThreeRegions.lean` takes their minimum with the middle
-bound, and `RobustPowerAssembly.lean` proves the uniform
-$C_\alpha\Delta^{-1-\alpha}$ entrance estimate from the two reflected
-nonnegative transition bounds. The conditioned meander invariance and
-support inputs are established in `FunctionalLimit/Conditioned/MeanderIdentification.lean`,
-`MeanderVariance.lean`, and `TransitionFromMeander.lean`; survival regular
-variation remains the source-level input needed for the transition power
-bound.
-`Entrance/RobustExponentialBudget.lean` combines that conditional power
-bound with the proved polynomial-to-exponential comparison, giving the
-entrance probability budget for every horizon
-$L\ge\lfloor\Delta^{2+\varepsilon}\rfloor$ along arbitrary real-width
-sequences tending to infinity. The source-level probability inputs are
-still needed to obtain the unconditional statement of Lemma 3.5.
+probability budget. The entrance budget is supplied by
+`Entrance/RobustExponentialBudget.lean`. Its conditional transition estimate
+follows from the Bolthausen--Iglehart meander limit, while the finite-variance
+survival power input follows from the Bauer--Godrèche--Luck coefficient
+recurrence and the Gaussian endpoint-sign limit.
+`DriftedTube/FiniteVarianceLower/Staircase/Concrete/ConditionalLower.lean`
+and `ConditionalUpper.lean` compose that entrance budget with the staircase
+product. `Analysis/Asymptotics/IntermediatePowerBlock.lean` verifies the
+paper's choice `ℓ=⌊Δ^(2+η)⌋`; `Concrete/Uniform.lean` converts both sequential
+bounds into one real-width threshold uniform in `L` and `r₀`.
+`DriftedTube/FiniteVarianceLower/EndpointBounds.lean` chooses the strict
+rates and endpoint margins in the paper's order and states the complete
+finite-variance result with both endpoint windows.
 `Analysis/Asymptotics/SequentialEventually.lean` proves that eventual
 validity along every divergent real-width sequence yields a common real
 threshold. `Entrance/RobustUniformBudget.lean` applies this lemma to the
@@ -336,9 +322,10 @@ first-part/tail equivalence and sum decomposition needed to extract the
 finite coefficient recurrence from this formula.
 `Fluctuation/SparreAndersen/CoefficientRecurrence.lean` now proves
 $P_n=nF_n-\sum_{j=1}^{n-1}F_jP_{n-j}$ directly from that decomposition,
-the coefficient form of (A.7). Its generating-function form (A.7)--(A.8),
-the survival asymptotic, and its use in the unconditional
-entrance bound remain open.
+the coefficient form of (A.7). Its generating-function form (A.7)--(A.8)
+and the stronger survival asymptotic remain open. The polynomial lower bound
+needed for the unconditional entrance estimate is proved in
+`Fluctuation/SparreAndersen/FiniteVarianceSurvivalLower.lean`.
 
 | Source component | Lean modules | Verified scope |
 |---|---|---|
@@ -832,15 +819,15 @@ The former `Spectral/Spectrum.lean` aggregate module has been removed.
    hypothesis explicit. The former comparison with $L_{x(n)}$ had the wrong
    direction when the integer scale overshoots its target; it has been
    replaced by the minimality bound $L_{x(n)-1}+1<n$, which is also proved in
-   Lean. `Entrance/CyclicPath.lean` proves the finite IID cyclic-rotation
+   Lean. `Entrance/Rotation/CyclicPath.lean` proves the finite IID cyclic-rotation
    transfer, including the moving-boundary drift identity and factor-`n`
    loss; the all-offset theorem is included in the 24-declaration
    `LinearTubeAxioms.lean` build and axiom audit. `Entrance/NormalDomain.lean`
    derives a uniform `q / floor (Delta²)` entrance lower bound from the raw
    finite centered-second-moment assumption, constructing the Gaussian
    clock-process law internally. This cyclic-rotation estimate is retained
-   for other callers, but the direct entrance theorem for Lemma 3.5 must
-   follow the Brownian-meander argument in Appendix A.2. The separate
+   for other callers; the direct entrance theorem for Lemma 3.5 follows
+   the Brownian-meander argument in Appendix A.2. The separate
    `Analysis/Asymptotics/PolynomialExponential.lean` proves the polynomial
    error comparison needed after that direct entrance theorem. Neither result
    closes the restarted-population comparison.
