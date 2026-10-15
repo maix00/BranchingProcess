@@ -16,7 +16,7 @@ The public theorem in this file is:
 - `MeasureTheory.tendstoInDistribution_of_finite_approximations`:
   if each fixed approximation converges in distribution, its limiting
   laws converge to the target law, and the probabilities of disagreement
-  between the original and approximating variables admit bounds tending
+  between the original and approximating variables have bounds tending
   to zero as the approximation is refined, then the original variables
   converge in distribution.
 
