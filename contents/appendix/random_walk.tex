@@ -136,19 +136,15 @@
         p_-:=\mathbb P(-\xi_1\in[a_-,b_-])>0.
     \end{equation*}
     \bilingual{
-        Fix integers $m_+,m_-$ with $m_+a_+>c+1$ and $m_-a_->c+1$. For $x\le\frac1{12}\Delta$, impose $\xi_i\in[a_+,b_+]$ for $1\le i\le m_+$ and use $D_{n_\Delta-m_+,\Delta}^{1}$ on the independent suffix. Since $h_j\le c$ for $j\le n_\Delta$, on this event, for sufficiently large $\Delta$,
+        Fix integers $m_+,m_-$ with $m_+a_+>c+1$ and $m_-a_->c+1$. For $x\le\frac1{12}\Delta$, impose $\xi_i\in[a_+,b_+]$ for $1\le i\le m_+$ and use $D_{n_\Delta-m_+,\Delta}^{1}$ on the independent suffix. For sufficiently large $\Delta$, the prefix satisfies $h_j<S_j\le\Delta$ for $1\le j\le m_+$, and the suffix satisfies $c<S_{m_+}+Z_j^1\le\Delta$ for $1\le j\le n_\Delta-m_+$. At the endpoint,
     }{
-        固定整数 $m_+,m_-$ 使得 $m_+a_+>c+1$ 且 $m_-a_->c+1$. 对 $x\le\frac1{12}\Delta$, 在 $1\le i\le m_+$ 时要求 $\xi_i\in[a_+,b_+]$, 并在独立后缀上取事件 $D_{n_\Delta-m_+,\Delta}^{1}$. 充分大的 $\Delta$ 下, 该事件蕴含
+        固定整数 $m_+,m_-$ 使得 $m_+a_+>c+1$ 且 $m_-a_->c+1$. 对 $x\le\frac1{12}\Delta$, 在 $1\le i\le m_+$ 时要求 $\xi_i\in[a_+,b_+]$, 并在独立后缀上取事件 $D_{n_\Delta-m_+,\Delta}^{1}$. 对充分大的 $\Delta$, 前缀满足 $h_j<S_j\le\Delta$, $1\le j\le m_+$; 后缀满足 $c<S_{m_+}+Z_j^1\le\Delta$, $1\le j\le n_\Delta-m_+$. 在终点,
     }
     \begin{equation*}
-        \begin{aligned}
-            h_j&<S_j\le\Delta, &&1\le j\le m_+,\\
-            c&<S_{m_+}+Z_j^1\le\Delta, &&1\le j\le n_\Delta-m_+,\\
-            h_{n_\Delta}+\frac13\Delta
-            &\le\frac5{12}\Delta\le S_{n_\Delta}
-            \le\frac{13}{24}\Delta+m_+b_+
-            \le h_{n_\Delta}+\frac23\Delta.
-        \end{aligned}
+        h_{n_\Delta}+\frac13\Delta
+        \le\frac5{12}\Delta\le S_{n_\Delta}
+        \le\frac{13}{24}\Delta+m_+b_+
+        \le h_{n_\Delta}+\frac23\Delta.
     \end{equation*}
     \bilingual{
         Indeed, the upper bound for the suffix is $x+m_+b_++\frac56\Delta\le\frac{11}{12}\Delta+m_+b_+\le\Delta$, while the endpoint lies in $[\frac5{12}\Delta,\frac{13}{24}\Delta+m_+b_+]$. Independence and the meander estimate therefore give
@@ -161,21 +157,15 @@
     \end{equation*}
 
     \bilingual{
-        For $x\ge\frac{11}{12}\Delta$, set $R_j:=\Delta-S_j$ and $y:=\Delta-x$. Require $-\xi_i\in[a_-,b_-]$ for $1\le i\le m_-$, and use $D_{n_\Delta-m_-,\Delta}^{-1}$ on the independent suffix. Since $h_j\le c$ for $j\le n_\Delta$, on this event, for sufficiently large $\Delta$,
+        For $x\ge\frac{11}{12}\Delta$, set $R_j:=\Delta-S_j$ and $y:=\Delta-x$. Require $-\xi_i\in[a_-,b_-]$ for $1\le i\le m_-$, and use $D_{n_\Delta-m_-,\Delta}^{-1}$ on the independent suffix. For sufficiently large $\Delta$, the prefix satisfies $0\le R_j\le\Delta-c$ for $1\le j\le m_-$, and the suffix satisfies $0\le R_{m_-}+Z_j^{-1}\le\Delta-c$ for $1\le j\le n_\Delta-m_-$. Consequently $c\le S_j\le\Delta$ for $1\le j\le n_\Delta$. At the endpoint,
     }{
-        对 $x\ge\frac{11}{12}\Delta$, 令 $R_j:=\Delta-S_j$ 且 $y:=\Delta-x$. 在 $1\le i\le m_-$ 时要求 $-\xi_i\in[a_-,b_-]$, 并在独立后缀上取事件 $D_{n_\Delta-m_-,\Delta}^{-1}$. 充分大的 $\Delta$ 下, 有
+        对 $x\ge\frac{11}{12}\Delta$, 令 $R_j:=\Delta-S_j$ 且 $y:=\Delta-x$. 在 $1\le i\le m_-$ 时要求 $-\xi_i\in[a_-,b_-]$, 并在独立后缀上取事件 $D_{n_\Delta-m_-,\Delta}^{-1}$. 对充分大的 $\Delta$, 前缀满足 $0\le R_j\le\Delta-c$, $1\le j\le m_-$; 后缀满足 $0\le R_{m_-}+Z_j^{-1}\le\Delta-c$, $1\le j\le n_\Delta-m_-$. 因此 $c\le S_j\le\Delta$, $1\le j\le n_\Delta$. 在终点,
     }
     \begin{equation*}
-        \begin{aligned}
-            0&\le R_j\le\Delta-c, &&1\le j\le m_-,\\
-            0&\le R_{m_-}+Z_j^{-1}\le\Delta-c,
-                &&1\le j\le n_\Delta-m_-,\\
-            c&\le S_j\le\Delta, &&1\le j\le n_\Delta,\\
-            h_{n_\Delta}+\frac13\Delta
-            &\le\frac{11}{24}\Delta-m_-b_-
-            \le S_{n_\Delta}\le\frac7{12}\Delta
-            \le h_{n_\Delta}+\frac23\Delta.
-        \end{aligned}
+        h_{n_\Delta}+\frac13\Delta
+        \le\frac{11}{24}\Delta-m_-b_-
+        \le S_{n_\Delta}\le\frac7{12}\Delta
+        \le h_{n_\Delta}+\frac23\Delta.
     \end{equation*}
     \bilingual{
         Here $R_{n_\Delta}\le\frac{13}{24}\Delta+m_-b_-$ gives $S_{n_\Delta}\ge\frac{11}{24}\Delta-m_-b_-$, and $R_{n_\Delta}\ge\frac5{12}\Delta$ gives $S_{n_\Delta}\le\frac7{12}\Delta$. Independence yields
