@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.Path.FiniteHorizon
-public import Mathlib.Topology.UnitInterval
+public import Probability.Process.Path.UnitInterval
 
 /-!
 # Rescaling a unit-time continuous path
@@ -18,6 +18,10 @@ The public definitions and theorems in this file are:
   from $[0,s]$ into $[0,1]$ for $s>0$.
 - `ProbabilityTheory.continuous_unitTimeOfFiniteTime`: this time map
   is continuous.
+- `ProbabilityTheory.restrictPathToUnitInterval`: the restriction of a
+  whole-time path to the real unit interval.
+- `ProbabilityTheory.continuous_restrictPathToUnitInterval`: this
+  restriction is continuous.
 - `ProbabilityTheory.rescaleUnitPath`: for $s>0$ and $a\in\mathbb R$,
   the map $g\mapsto(t\mapsto a g(t/s))$ from
   $C([0,1],\mathbb R)$ to $C([0,s],\mathbb R)$.
@@ -50,6 +54,20 @@ theorem continuous_unitTimeOfFiniteTime (s : ℝ≥0) (hs : 0 < s) :
     Continuous (unitTimeOfFiniteTime s hs) := by
   exact Continuous.subtype_mk
     ((NNReal.continuous_coe.comp continuous_subtype_val).div_const s) _
+
+/-- Restrict a whole-time path to the real unit interval. -/
+noncomputable def restrictPathToUnitInterval (f : C(ℝ≥0, ℝ)) :
+    C(unitInterval, ℝ) :=
+  ⟨fun t => f (UnitInterval.toNNReal t),
+    f.continuous.comp UnitInterval.continuous_toNNReal⟩
+
+/-- Restriction to the real unit interval is continuous. -/
+theorem continuous_restrictPathToUnitInterval :
+    Continuous restrictPathToUnitInterval := by
+  refine ContinuousMap.continuous_of_continuous_uncurry _ ?_
+  exact continuous_eval.comp
+    (continuous_fst.prodMk
+      (UnitInterval.continuous_toNNReal.comp continuous_snd))
 
 /-- Stretch a unit-time path to $[0,s]$ and multiply its values by `a`. -/
 noncomputable def rescaleUnitPath (s : ℝ≥0) (hs : 0 < s)
