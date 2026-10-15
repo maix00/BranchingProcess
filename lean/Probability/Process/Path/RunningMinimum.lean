@@ -20,8 +20,13 @@ The public definitions and theorems in this file are:
 - `ProbabilityTheory.runningMinimum_antitone`: $m_f$ is antitone.
 - `ProbabilityTheory.runningMinimum_le_iff_firstPassageBelow_le`:
   $m_f(t)\le a$ exactly when first passage below $a$ occurs by $t$.
+- `ProbabilityTheory.runningMinimum_eq_of_firstPassageBelow_eq`:
+  when a continuous path first enters $(-\infty,a]$ at positive time
+  $t$, its running minimum at $t$ equals $a$.
 - `ProbabilityTheory.measurable_runningMinimum`:
   $f\mapsto m_f(t)$ is measurable on continuous path space.
+- `ProbabilityTheory.measurable_firstPassageBelow_pair`:
+  first passage is jointly measurable in the path and the level.
 - `ProbabilityTheory.runningMinimum_freezeAfter_eq`:
   for $t\le r$, freezing the path after $r$ preserves $m_f(t)$.
 - `ProbabilityTheory.runningMinimum_shiftToZero_eq_of_record`:
@@ -100,6 +105,40 @@ theorem runningMinimum_le_iff_firstPassageBelow_le
   · rintro ⟨u, hu, hvalue⟩
     exact (runningMinimum_le f hu).trans hvalue
 
+/-- At a positive first-passage time, the running minimum is the
+level reached. -/
+theorem runningMinimum_eq_of_firstPassageBelow_eq
+    (f : C(ℝ≥0, ℝ)) (a : ℝ) {t : ℝ≥0} (ht : 0 < t)
+    (hpass : firstPassageBelow f a = t) :
+    runningMinimum f t = a := by
+  have hhit : ∃ u : ℝ≥0, f u ≤ a := by
+    by_contra h
+    have htop : firstPassageBelow f a = ⊤ :=
+      (firstPassageBelow_eq_top_iff f a).2
+        (fun u => lt_of_not_ge (fun hu => h ⟨u, hu⟩))
+    rw [hpass] at htop
+    exact WithTop.coe_ne_top htop
+  have hinf : (sInf {u : ℝ≥0 | f u ≤ a}) = t := by
+    exact WithTop.coe_eq_coe.mp (by
+      simpa [firstPassageBelow, firstPassageLE, hhit] using hpass)
+  have h0 : a < f 0 := by
+    apply firstPassageBelow_no_earlier f a hhit
+    rw [hinf]
+    exact ht
+  have hvalue : f t = a := by
+    rw [← hinf]
+    exact firstPassageBelow_value_eq f a h0 hhit
+  obtain ⟨u, hu, hmin⟩ := exists_runningMinimum_eq f t
+  have hge : a ≤ runningMinimum f t := by
+    rw [← hmin]
+    by_cases hut : u < t
+    · have hearly := firstPassageBelow_no_earlier f a hhit
+        (show u < sInf {v : ℝ≥0 | f v ≤ a} by rw [hinf]; exact hut)
+      exact hearly.le
+    · have hueq : u = t := le_antisymm hu.2 (le_of_not_gt hut)
+      rw [hueq, hvalue]
+  exact le_antisymm (by simpa [hvalue] using runningMinimum_le f (le_refl t)) hge
+
 /-- Evaluation of the running minimum at a fixed time is measurable.
 Its closed sublevel sets are closed-level first-passage events. -/
 theorem measurable_runningMinimum (t : ℝ≥0) :
@@ -113,6 +152,27 @@ theorem measurable_runningMinimum (t : ℝ≥0) :
   rw [show (fun f : C(ℝ≥0, ℝ) => runningMinimum f t) ⁻¹' Set.Iic a =
     {f | runningMinimum f t ≤ a} from rfl, hset]
   exact (measurable_firstPassageBelow a) measurableSet_Iic
+
+/-- First passage below a level is jointly measurable in the path and
+the level. -/
+theorem measurable_firstPassageBelow_pair :
+    Measurable (fun p : C(ℝ≥0, ℝ) × ℝ =>
+      firstPassageBelow p.1 p.2) := by
+  apply measurable_of_Iic
+  intro t
+  by_cases ht : t = ⊤
+  · subst t
+    simp
+  · obtain ⟨u, rfl⟩ := WithTop.ne_top_iff_exists.mp ht
+    have hset :
+        (fun p : C(ℝ≥0, ℝ) × ℝ => firstPassageBelow p.1 p.2) ⁻¹'
+          Set.Iic (u : WithTop ℝ≥0) =
+        {p | runningMinimum p.1 u ≤ p.2} := by
+      ext p
+      exact (runningMinimum_le_iff_firstPassageBelow_le p.1 u p.2).symm
+    rw [hset]
+    exact measurableSet_le
+      ((measurable_runningMinimum u).comp measurable_fst) measurable_snd
 
 /-- Freezing a path after `r` preserves its running minimum at times
 up to `r`. -/

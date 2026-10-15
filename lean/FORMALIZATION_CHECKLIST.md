@@ -207,6 +207,22 @@ The Brownian hitting-time process has not yet been identified with such a
 Poisson jump family. Equation (2.2), Lemma 2.4, and the conditioned
 invariance principle remain open.
 
+An alternative direct derivation of the fixed-length consequence is now
+under construction without asserting a Poisson representation. The
+deterministic implication $\tau_x=t>0\Rightarrow m(t)=-x$ and the
+reflection-principle nullity of a fixed running-minimum value give an
+atomless law for each fixed Brownian first-passage time in
+`Brownian/Reflection/DescendingHittingTimeLaw.lean`. First passage is
+jointly measurable in the path and level by `Path/RunningMinimum.lean`.
+`Independence/NullSections.lean` proves the product-measure null-section
+principle, and `Brownian/Reflection/RandomLevelFirstPassage.lean` applies
+it to a positive passage level and positive target time selected from a
+deterministic-time stopped Brownian path. The deterministic restart at a
+time before first passage is in `Path/FirstPassageRestart.lean`. To finish
+equation (2.2), the unit excursion straddling a rational observation time
+must still be identified with the resulting random-level first-passage
+equality; the present lemma does not yet make that identification.
+
 The concrete finite staircase now has its own verified schedule and geometry:
 `DriftedTube/FiniteVarianceLower/Staircase/Setup/Schedule.lean` defines
 $q=\lfloor(L-t_1)/\ell\rfloor$ and the final block of length

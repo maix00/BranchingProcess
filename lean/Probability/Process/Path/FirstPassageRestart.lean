@@ -11,13 +11,16 @@ public import Probability.Process.Path.FirstPassage
 /-!
 # Restarting a continuous path at first passage
 
-The public theorem in this file is:
+The public theorems in this file are:
 
 - `ProbabilityTheory.firstPassageBelow_shiftToZero_eq`:
   if $b<a<f(0)$ and the first passages $\tau_a,\tau_b$ are finite,
   then $\tau_b=\tau_a+\tau_{b-a}(f(\tau_a+\cdot)-f(\tau_a))$.
 - `ProbabilityTheory.firstPassageBelow_freezeAfter_eq`:
   the first passage can be read from the path frozen at that time.
+- `ProbabilityTheory.firstPassageBelow_shiftToZero_eq_of_before`:
+  for $q<\tau_a(f)<\infty$, passage after time $q$ occurs at
+  the elapsed time $\tau_a(f)-q$.
 
 This deterministic identity is used with the Brownian strong Markov
 property to obtain stationary independent increments of the descending
@@ -48,6 +51,65 @@ theorem firstPassageBelow_freezeAfter_eq
     hprefix (by rw [hτ])
   rw [hτ] at heq
   exact heq.symm
+
+/-- Restarting at any time strictly before a finite first passage
+subtracts that observation time from the passage time. -/
+theorem firstPassageBelow_shiftToZero_eq_of_before
+    (f : C(ℝ≥0, ℝ)) (a : ℝ) {q t : ℝ≥0}
+    (hqt : q < t) (hpass : firstPassageBelow f a = t) :
+    firstPassageBelow (shiftToZero f q) (a - f q) =
+      ((t - q : ℝ≥0) : WithTop ℝ≥0) := by
+  have hhit : ∃ u : ℝ≥0, f u ≤ a := by
+    by_contra h
+    have htop : firstPassageBelow f a = ⊤ :=
+      (firstPassageBelow_eq_top_iff f a).2
+        (fun u => lt_of_not_ge (fun hu => h ⟨u, hu⟩))
+    rw [hpass] at htop
+    exact WithTop.coe_ne_top htop
+  have hinf : sInf {u : ℝ≥0 | f u ≤ a} = t :=
+    WithTop.coe_eq_coe.mp (by
+      simpa [firstPassageBelow, firstPassageLE, hhit] using hpass)
+  have hft : f t ≤ a := by
+    rw [← hinf]
+    exact firstPassageBelow_attained f a hhit
+  have htime : q + (t - q) = t := add_tsub_cancel_of_le hqt.le
+  have hhitShift : ∃ u : ℝ≥0, (shiftToZero f q) u ≤ a - f q := by
+    refine ⟨t - q, ?_⟩
+    change f (q + (t - q)) - f q ≤ a - f q
+    rw [htime]
+    exact sub_le_sub_right hft _
+  have hupper : firstPassageBelow (shiftToZero f q) (a - f q) ≤
+      (t - q : ℝ≥0) := by
+    apply (firstPassageBelow_le_iff _ _ _).2
+    refine ⟨t - q, le_rfl, ?_⟩
+    change f (q + (t - q)) - f q ≤ a - f q
+    rw [htime]
+    exact sub_le_sub_right hft _
+  have hlower : (t - q : WithTop ℝ≥0) ≤
+      firstPassageBelow (shiftToZero f q) (a - f q) := by
+    by_contra h
+    have hlt : firstPassageBelow (shiftToZero f q) (a - f q) <
+        (t - q : WithTop ℝ≥0) := lt_of_not_ge h
+    obtain ⟨u, hu⟩ := WithTop.ne_top_iff_exists.mp
+      (ne_top_of_lt hlt)
+    have huReal : u < t - q := by
+      rw [← hu] at hlt
+      exact WithTop.coe_lt_coe.mp hlt
+    have huInf : sInf {v : ℝ≥0 | (shiftToZero f q) v ≤ a - f q} = u :=
+      WithTop.coe_eq_coe.mp (by
+        simpa [firstPassageBelow, firstPassageLE, hhitShift] using hu.symm)
+    have huVal : (shiftToZero f q) u ≤ a - f q := by
+      rw [← huInf]
+      exact firstPassageBelow_attained _ _ hhitShift
+    have hqu : q + u < t := by
+      calc
+        q + u < q + (t - q) := by simpa [add_comm] using add_lt_add_left huReal q
+        _ = t := htime
+    have hearly := firstPassageBelow_no_earlier f a hhit
+      (show q + u < sInf {v : ℝ≥0 | f v ≤ a} by rw [hinf]; exact hqu)
+    change f (q + u) - f q ≤ a - f q at huVal
+    linarith
+  exact le_antisymm hupper hlower
 
 /-- First passage below a deeper level decomposes into the first passage
 of the higher level and the first passage by the restarted increment path. -/
