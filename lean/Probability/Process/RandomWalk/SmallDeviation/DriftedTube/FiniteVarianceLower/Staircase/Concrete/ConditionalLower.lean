@@ -14,21 +14,21 @@ public import Probability.Process.RandomWalk.SmallDeviation.Entrance.RobustExpon
 
 The public theorem in this file is:
 
-- `eventually_concreteStaircaseLowerBound_of_regularVariation`:
+- `eventually_concreteStaircaseLowerBound_of_centeredFiniteVariance`:
   for $t_1=\lfloor\Delta^2\rfloor$ and
   $L\ge\lfloor\Delta^{2+\varepsilon}\rfloor$ and
   $r_{0,n}\le 0\le r_{0,n}+\Delta_n$, the two reflected
-  survival regular-variation inputs from Appendix A.2, the paper's
-  block-scale limits, and fixed endpoint and rate margins imply
+  survival power bounds, the thesis's block-scale limits, and fixed endpoint and rate margins imply
   $\mathbb P(E)\ge\exp(-d'L/\Delta^2)$ eventually.
 
 This is the composition of the entrance argument and the staircase
 product in Wang Yiyang, *Asymptotic speed of the $N$-branching random walk
 with infinite offspring*, Chapter 3, proof of Lemma 3.5. The two
 transition estimates follow from the conditioned Brownian-meander limit
-and the survival asymptotic in Caravenna--Chaumont,
-*Invariance principles for random walks conditioned to stay positive*,
-equation (3.3) and Lemma 2.1, respectively.
+and the finite survival recurrence in M. Bauer, C. Godrèche,
+and J.-M. Luck, *Statistics of persistent events in the binomial random
+walk: Will the drunken sailor hit the sober man?*, Appendix A,
+equation (A.7) (arXiv:cond-mat/9905252).
 -/
 
 @[expose] public section
@@ -40,19 +40,13 @@ open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 
-/-- The remaining fluctuation-theory inputs are the survival asymptotics
-for the walk and its reflection. -/
-theorem eventually_concreteStaircaseLowerBound_of_regularVariation
+/-- The survival power inputs for the walk and its reflection follow from
+the finite-variance hypotheses. -/
+theorem eventually_concreteStaircaseLowerBound_of_centeredFiniteVariance
     {ν : Measure ℝ} [IsProbabilityMeasure ν]
     {sigma narrowedRate uInterior vInterior uFinal vFinal : ℝ}
     (hν : IsCenteredSecondMoment ν (sigma ^ 2))
     (hsigma : 0 < sigma)
-    (hregPlus : Asymptotics.IsRegularlyVaryingAtTop
-      (FunctionalLimit.Conditioned.survivalProbabilityReal ν)
-      (-(1 / 2 : ℝ)))
-    (hregMinus : Asymptotics.IsRegularlyVaryingAtTop
-      (FunctionalLimit.Conditioned.survivalProbabilityReal
-        (ν.map fun x : ℝ => -x)) (-(1 / 2 : ℝ)))
     {rho : ℝ} (hrho : 0 < rho) (hrhoSmall : rho < 1 / 48)
     (m : ℕ) (hm : 2 ≤ m)
     (huInterior : 0 < uInterior)
@@ -101,8 +95,8 @@ theorem eventually_concreteStaircaseLowerBound_of_regularVariation
           (driftedTubeEndpointWindowEvent (horizon n) (width n)
             drift (base n) endpointFraction) := by
   have hbudget :=
-    exists_eventually_robustTransitionProbability_ge_exp_of_regularVariation
-      ν hν hsigma hregPlus hregMinus
+    exists_eventually_robustTransitionProbability_ge_exp_of_centeredFiniteVariance
+      ν hν hsigma
       hrho hrhoSmall hwidth hdrift halpha hdelta hepsilon
   have hentrance : ∀ᶠ n : ℕ in atTop,
       Real.exp (-(totalRate - blockRate) * (horizon n : ℝ) /
