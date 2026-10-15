@@ -55,7 +55,6 @@ theorem eventually_concreteStaircaseLowerBound_of_regularVariation
     {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
     [IsProbabilityMeasure P] {B : ℝ≥0 → Ω → ℝ}
     (hB : IsBrownianReal B P)
-    (hcontinuous : ∀ ω, Continuous (B · ω))
     (hmeasurable : ∀ t, Measurable (B t))
     {rho : ℝ} (hrho : 0 < rho) (hrhoSmall : rho < 1 / 48)
     (m : ℕ) (hm : 2 ≤ m)
@@ -103,9 +102,16 @@ theorem eventually_concreteStaircaseLowerBound_of_regularVariation
         (iidSequenceLaw ν).real
           (driftedTubeEndpointWindowEvent (horizon n) (width n)
             drift base endpointFraction) := by
+  let Bc := hB.continuousModification hmeasurable
+  have hBc : IsBrownianReal Bc P :=
+    hB.isBrownianReal_continuousModification hmeasurable
+  have hBcContinuous : ∀ ω, Continuous (Bc · ω) :=
+    hB.continuous_continuousModification hmeasurable
+  have hBcMeasurable : ∀ t, Measurable (Bc t) :=
+    hB.measurable_continuousModification hmeasurable
   have hbudget :=
     exists_eventually_robustTransitionProbability_ge_exp_of_regularVariation
-      ν hν hsigma hregPlus hregMinus hB hcontinuous hmeasurable
+      ν hν hsigma hregPlus hregMinus hBc hBcContinuous hBcMeasurable
       hrho hrhoSmall hwidth hdrift halpha hdelta hepsilon
   have hstart : ∀ᶠ n : ℕ in atTop, -base ∈ Set.Icc 0 (width n) := by
     have hwide := hwidth.eventually (eventually_ge_atTop (-base))
