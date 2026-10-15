@@ -24,6 +24,9 @@ The public theorem in this file is:
   almost every Brownian path.
 - `ProbabilityTheory.IsBrownianReal.ae_continuousAt_firstNonnegativeWindowStartUpTo`:
   the same conclusion for every finite $s\ge0$.
+- `ProbabilityTheory.IsBrownianReal.ae_firstNonnegativeWindowStart_ne_zero`:
+  the first Brownian unit window starts strictly after time zero
+  almost surely.
 
 This is the $s=\infty$ case of Erwin Bolthausen, *On a functional
 central limit theorem for random walks conditioned to stay positive*,
@@ -130,7 +133,7 @@ theorem IsBrownianReal.ae_continuousAt_firstNonnegativeWindowStartUpTo_of_one_lt
 /-- At the shortest possible horizon $s=1$, Brownian motion has a
 strictly negative running minimum, so the cutoff $T=0$ is excluded
 almost surely. -/
-private theorem IsBrownianReal.ae_firstNonnegativeWindowStart_ne_zero
+theorem IsBrownianReal.ae_firstNonnegativeWindowStart_ne_zero
     {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
     [IsProbabilityMeasure P]
     {B : ℝ≥0 → Ω → ℝ} (hB : IsBrownianReal B P)

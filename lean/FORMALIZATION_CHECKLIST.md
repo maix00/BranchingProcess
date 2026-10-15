@@ -211,8 +211,15 @@ short-interval minimizer construction. Equations (2.2) and (2.4)
 make this condition almost sure for Brownian paths. For each finite
 $s>1$, equation (2.3) excludes the sole cutoff $T=s-1$; $s=1$
 uses the strictly negative Brownian running minimum, and $s<1$
-is the constant infinite-time case. Lemma 2.5 and the conditioned
-invariance principle remain open.
+is the constant infinite-time case. Bolthausen's Lemma 2.5 is now
+proved in `Path/AboveStart/FirstWindowShift.lean` and
+`Brownian/AboveStart/FirstWindowShift.lean`: time translation is
+jointly continuous, the shift at a finite continuous first-window
+time is continuous, and the infinite-time branch is locally the
+constant path $-1$ whenever the cutoff is strict. Both unrestricted
+and every fixed finite-horizon shift are measurable and continuous
+at almost every Brownian path. The conditioned invariance principle
+remains open.
 
 The concrete finite staircase now has its own verified schedule and geometry:
 `DriftedTube/FiniteVarianceLower/Staircase/Setup/Schedule.lean` defines
