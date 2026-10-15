@@ -7,25 +7,24 @@ Authors: WANG Yiyang
 module
 
 public import Mathlib.MeasureTheory.Constructions.Pi
-public import Probability.Process.RandomWalk.SmallDeviation.Entrance.Rotation.LinearTube
-public import Probability.Sequence.IID
+public import MeasureTheory.Measure.FiniteCover
 
 /-!
-# Finite exchangeability of an IID prefix
+# Finite coordinate reindexing of an IID product law
 
-The public theorems are:
+The public definitions and theorems in this file are:
 
 - `finiteCoordinateReindex`: the coordinate permutation of `Fin n`
-  induced by cyclic reindexing.
-- `measure_pi_preimage_eq_of_reindex`: an IID product measure is invariant
-  under this permutation.
+  induced by any equivalence of that finite index type.
+- `measure_pi_preimage_eq_of_reindex`: the product measure of identical
+  probability laws is invariant under the permutation.
 - `measure_pi_event_le_card_smul_of_reindexCover`: if $n$ reindexed
-  copies of an event cover another event, its measure is at most $n$
-  times the measure of the original event.
+  copies of a measurable event cover another event, its measure is at most
+  $n$ times the measure of the original event.
 
-Coordinate reindexing by any equivalence of `Fin n` preserves the IID
-finite-prefix product law. This is the measure-theoretic ingredient for the
-cyclic-shift factor in the entrance estimate.
+The last statement combines finite-product invariance with
+`MeasureTheory.measure_le_card_smul_of_finite_cover_invariant`. Its use for
+cyclically reindexed random-walk increments is in the entrance estimates.
 -/
 
 @[expose] public section
@@ -42,8 +41,7 @@ noncomputable def finiteCoordinateReindex
   MeasurableEquiv.piCongrLeft (fun _ : Fin n => E) e.symm
 
 /-- Reindexing a finite product of copies of the same law preserves its
-measure. This is the Mathlib product-measure route to the cyclic-rotation
-invariance used in the entrance estimate. -/
+measure. This is the product-measure input to the cyclic entrance bound. -/
 theorem measure_pi_preimage_eq_of_reindex
     {E : Type*} [MeasurableSpace E] [Nonempty E]
     (ν : Measure E) [IsProbabilityMeasure ν] {n : ℕ}
@@ -64,9 +62,8 @@ theorem measure_pi_preimage_eq_of_reindex
           rw [Measure.map_apply (MeasurableEquiv.piCongrLeft _ e).measurable hA]
     _ = Measure.pi (fun _ : Fin n => ν) A := by rw [hmap]
 
-/-- The cyclic-rotation union bound for a finite IID increment vector. The
-factor `n` comes from the finite union; invariance under each coordinate
-reindexing is discharged by the product-measure theorem above. -/
+/-- A finite coordinate-reindexing cover gives the factor-`n` probability
+bound for an IID product law. -/
 theorem measure_pi_event_le_card_smul_of_reindexCover
     {E : Type*} [MeasurableSpace E] [Nonempty E]
     (ν : Measure E) [IsProbabilityMeasure ν] {n : ℕ}
@@ -75,7 +72,7 @@ theorem measure_pi_event_le_card_smul_of_reindexCover
     (hsafe : MeasurableSet safe) :
     Measure.pi (fun _ : Fin n => ν) event ≤
       n • Measure.pi (fun _ : Fin n => ν) safe := by
-  apply RandomWalk.SmallDeviation.Entrance.measure_le_card_smul_of_finiteRotationCover
+  apply MeasureTheory.measure_le_card_smul_of_finite_cover_invariant
     (μ := Measure.pi (fun _ : Fin n => ν)) event safe
     (fun k => finiteCoordinateReindex (rotate k)) hcover
   intro k

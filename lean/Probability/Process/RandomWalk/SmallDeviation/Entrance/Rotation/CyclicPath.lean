@@ -10,7 +10,8 @@ public import Algebra.BigOperators.AdditivePath
 public import Algebra.BigOperators.PartialSum
 public import Algebra.BigOperators.CyclicReindex
 public import Probability.Process.RandomWalk.SmallDeviation.Entrance.Rotation.DriftedTube
-public import Probability.Process.RandomWalk.SmallDeviation.Entrance.Rotation.Exchangeability
+public import Probability.Sequence.IID.FiniteReindex
+public import Probability.Sequence.IID
 public import Probability.Process.RandomWalk.Path.Skorokhod.Basic
 public import Topology.Cadlag.Skorokhod.Scaling
 public import Topology.Cadlag.Skorokhod.LinearPath
@@ -362,7 +363,7 @@ theorem iidSequenceLaw_measure_linearPathBall_eq_pi
     change finiteNormalizedStepPath scale (fun i : Fin n => x i.val) ∈
         Metric.ball (Skorokhod.linearPath slope) radius ↔ _
     rw [finiteNormalizedStepPath_prefix_eq]
-    simp only [Set.mem_setOf_eq]
+    simp only [Set.mem_ofPred_eq]
   calc
       iidSequenceLaw ν
         {x | RandomWalk.normalizedStepCadlagPathIcc (fun _ => scale) n x ∈
@@ -561,7 +562,7 @@ theorem scalePath_finiteNormalizedStepPath_eq
   ext t
   simp only [Skorokhod.scalePath_apply, finiteNormalizedStepPath,
     RandomWalk.normalizedStepCadlagPathIcc_apply,
-    RandomWalk.normalizedStepPath, Function.const_apply]
+    RandomWalk.normalizedStepPath]
   rw [← hnorm]
   ring
 
