@@ -18,7 +18,8 @@ Write
     \le(1-a)\Delta\ \text{for }1\le j\le L\},\qquad
   \alpha_{m,j}:=\frac{1-j/m}{1+1/m}.
 \]
-Here `S_j` is the partial sum of the IID increments with centered law `ν`.
+Here $S_j=\sum_{i=0}^{j-1}\xi_i$ is the partial sum of the IID increments
+with centered law `ν`.
 
 The proof-specific module-visible declarations are:
 

@@ -13,6 +13,12 @@ public import Mathlib.Topology.Order.LiminfLimsup
 /-!
 # Horizontal lower rate from endpoint-window block bounds
 
+For an increment sequence $\xi=(\xi_i)_{i\ge0}$, set
+$S_j=\sum_{i=0}^{j-1}\xi_i$ and, for a width sequence $x_n$, define
+$T_n=\{\xi:-x_n/2\le S_j\le x_n/2\;(1\le j\le n)\}$.
+Thus $\mathbb P(T_n)$ denotes the centered horizontal-tube probability in
+the declarations below.
+
 This is the logarithmic scale-transfer step for the narrow endpoint windows
 used by the `α = 2` spectral argument. The block probability estimate and the
 asymptotic block-count ratio are explicit hypotheses; this file only composes

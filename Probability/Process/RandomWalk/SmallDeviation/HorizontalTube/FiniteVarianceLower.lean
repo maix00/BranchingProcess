@@ -10,6 +10,12 @@ public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Ran
 /-!
 # Finite-variance horizontal-tube endpoint lower bounds
 
+For increments $\xi=(\xi_i)_{i\ge0}$, let
+$S_j=\sum_{i=0}^{j-1}\xi_i$. At width $\Delta$, tube parameter $a$, and
+endpoint fractions $u,v$, the event whose probability is estimated is
+$E_{a,\Delta,L,u,v}=\{\xi:-a\Delta\le S_j\le(1-a)\Delta\;(1\le j\le L),\;
+S_L\in[(u-a)\Delta,(v-a)\Delta]\}$.
+
 The public theorems in this file are:
 
 - `ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube.eventually_horizontalTubeEndpointWindowProbability_ge_exp_of_centeredSecondMoment`:

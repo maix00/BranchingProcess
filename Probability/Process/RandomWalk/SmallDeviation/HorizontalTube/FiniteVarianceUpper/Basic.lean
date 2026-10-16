@@ -15,6 +15,14 @@ import Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.FiniteVarian
 /-!
 # Finite-variance horizontal-tube upper bound
 
+For an increment sequence $\xi=(\xi_i)_{i\ge0}$, put
+$S_j=\sum_{i=0}^{j-1}\xi_i$. The centered-tube and translated-interval
+events are
+$T_{a,\Delta,L}=\{\xi:-a\Delta\le S_j\le(1-a)\Delta,\;
+1\le j\le L\}$ and
+$I_{r_0,\Delta,L}=\{\xi:r_0\le S_j\le r_0+\Delta,\;
+1\le j\le L\}$.
+
 The public theorems in this file formalize Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.2
 and its following remark. The equal-partition proof follows Elie Aïdékon and
 Yueyun Hu, *Average-weight percolation on the complete graph*, Lemma 4.1

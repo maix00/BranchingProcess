@@ -17,6 +17,9 @@ public import Probability.Process.RandomWalk.Path.Corridor.Horizontal.Basic
 /-!
 # Horizontal tubes with endpoint windows
 
+For increments $\xi=(\xi_i)_{i\ge0}$, write
+$Y_j=\sum_{i=0}^{j-1}\xi_i$.
+
 The public definitions in this file are:
 
 - `ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube.relativeHorizontalTubeEndpointWindowEvent`: for a lower edge $r$, width $\Delta$, horizon $L$, and endpoint fractions $u,v$, it describes paths satisfying $r\le Y_j\le r+\Delta$ for $1\le j\le L$ and $Y_L\in[r+u\Delta,r+v\Delta]$.

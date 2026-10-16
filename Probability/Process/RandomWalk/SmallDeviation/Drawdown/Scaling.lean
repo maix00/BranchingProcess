@@ -16,7 +16,8 @@ import Mathlib.Tactic.FieldSimp
 # Scaling identities for drawdown events
 
 Write
-$B_{L,\Delta,r}=\{\xi:S_i-S_j\le\Delta\ (0\le i\le j\le L),\ S_L\le r\}$
+$B_{L,\Delta,r}=\{\xi:S_i-S_j\le\Delta\ (0\le i\le j\le L),\ S_L\le r\}$,
+where $S_j=\sum_{k=0}^{j-1}\xi_k$,
 for the drawdown endpoint event. The public theorems are:
 
 - `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.measurableSet_noLargeDropEndpointBelowEvent`: $B_{L,\Delta,r}$ is measurable.
