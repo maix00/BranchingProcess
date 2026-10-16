@@ -14,8 +14,8 @@
         \mathcal A_\Delta(x):=
         \left\{
             h_j\le S_j\le\Delta+h_j\ (1\le j\le n_\Delta),\quad
-            S_{n_\Delta}\in\left[h_{n_\Delta}+\frac13\Delta,
-                h_{n_\Delta}+\frac23\Delta\right]
+            S_{n_\Delta}\in\left[h_{n_\Delta}+\frac25\Delta,
+                h_{n_\Delta}+\frac35\Delta\right]
         \right\}.
     \end{equation*}
     \bilingual{Then there are $C>0$ and $\Delta_0>0$ such that}{则存在 $C>0$ 与 $\Delta_0>0$, 使得}
@@ -25,9 +25,9 @@
         \qquad \Delta\ge\Delta_0,
     \end{equation*}
     \bilingual{
-        The same lower bound holds when the endpoint interval in $\mathcal A_\Delta(x)$ is replaced by $[h_{n_\Delta}+\frac25\Delta,h_{n_\Delta}+\frac35\Delta]$, where $\mathbb P_x$ denotes the law with $S_0=x$.
+        Here $\mathbb P_x$ denotes the law with $S_0=x$.
     }{
-        将 $\mathcal A_\Delta(x)$ 中的终点区间替换为 $[h_{n_\Delta}+\frac25\Delta,h_{n_\Delta}+\frac35\Delta]$ 时, 同一下界仍成立, 其中 $\mathbb P_x$ 表示 $S_0=x$ 时的概率律.
+        其中 $\mathbb P_x$ 表示 $S_0=x$ 时的概率律.
     }
 \end{lemma}
 
@@ -144,10 +144,10 @@
         固定整数 $m_+,m_-$ 使得 $m_+a_+>c+1$ 且 $m_-a_->c+1$. 对 $x\le\frac1{12}\Delta$, 在 $1\le i\le m_+$ 时要求 $\xi_i\in[a_+,b_+]$, 并在独立后缀上取事件 $D_{n_\Delta-m_+,\Delta}^{1}$. 对充分大的 $\Delta$, 前缀满足 $h_j<S_j\le\Delta$, $1\le j\le m_+$; 后缀满足 $c<S_{m_+}+Z_j^1\le\Delta$, $1\le j\le n_\Delta-m_+$. 在终点,
     }
     \begin{equation*}
-        h_{n_\Delta}+\frac13\Delta
+        h_{n_\Delta}+\frac25\Delta
         \le\frac5{12}\Delta\le S_{n_\Delta}
         \le\frac{13}{24}\Delta+m_+b_+
-        \le h_{n_\Delta}+\frac23\Delta.
+        \le h_{n_\Delta}+\frac35\Delta.
     \end{equation*}
     \bilingual{
         Indeed, the upper bound for the suffix is $x+m_+b_++\frac56\Delta\le\frac{11}{12}\Delta+m_+b_+\le\Delta$, while the endpoint lies in $[\frac5{12}\Delta,\frac{13}{24}\Delta+m_+b_+]$. Independence and the meander estimate therefore give
@@ -165,10 +165,10 @@
         对 $x\ge\frac{11}{12}\Delta$, 令 $R_j:=\Delta-S_j$ 且 $y:=\Delta-x$. 在 $1\le i\le m_-$ 时要求 $-\xi_i\in[a_-,b_-]$, 并在独立后缀上取事件 $D_{n_\Delta-m_-,\Delta}^{-1}$. 对充分大的 $\Delta$, 前缀满足 $0\le R_j\le\Delta-c$, $1\le j\le m_-$; 后缀满足 $0\le R_{m_-}+Z_j^{-1}\le\Delta-c$, $1\le j\le n_\Delta-m_-$. 因此 $c\le S_j\le\Delta$, $1\le j\le n_\Delta$. 在终点,
     }
     \begin{equation*}
-        h_{n_\Delta}+\frac13\Delta
+        h_{n_\Delta}+\frac25\Delta
         \le\frac{11}{24}\Delta-m_-b_-
         \le S_{n_\Delta}\le\frac7{12}\Delta
-        \le h_{n_\Delta}+\frac23\Delta.
+        \le h_{n_\Delta}+\frac35\Delta.
     \end{equation*}
     \bilingual{
         Here $R_{n_\Delta}\le\frac{13}{24}\Delta+m_-b_-$ gives $S_{n_\Delta}\ge\frac{11}{24}\Delta-m_-b_-$, and $R_{n_\Delta}\ge\frac5{12}\Delta$ gives $S_{n_\Delta}\le\frac7{12}\Delta$. Independence yields
@@ -181,8 +181,8 @@
     \end{equation*}
 
     \bilingual{
-        For the middle interval, $c\le S_j\le\Delta$ implies $h_j\le S_j\le\Delta+h_j$, because $h_j\le c$ for $j\le n_\Delta$. Since $h_{n_\Delta}\le c$, the integers $m_\pm$ are fixed, and $\frac25<\frac5{12}<\frac{11}{24}<\frac{13}{24}<\frac7{12}<\frac35$, the endpoint intervals in all three cases lie in $[h_{n_\Delta}+\frac25\Delta,h_{n_\Delta}+\frac35\Delta]$ for sufficiently large $\Delta$. This interval is contained in the endpoint interval defining $\mathcal A_\Delta(x)$. The three starting-point intervals cover $[0,\Delta]$. Since $\Delta\ge1$, the middle estimate $p_0/2$ also gives a lower bound of $(p_0/2)\Delta^{-2}$. Taking the minimum of the three positive constants proves both bounds.
+        For the middle interval, $c\le S_j\le\Delta$ implies $h_j\le S_j\le\Delta+h_j$, because $h_j\le c$ for $j\le n_\Delta$. Since $h_{n_\Delta}\le c$ and $\frac25<\frac5{12}<\frac7{12}<\frac35$, its endpoint interval lies in the one defining $\mathcal A_\Delta(x)$ for sufficiently large $\Delta$. The displayed endpoint inequalities give the same inclusion for the two edge intervals, since $m_\pm$ are fixed. The three starting-point intervals cover $[0,\Delta]$. Since $\Delta\ge1$, the middle estimate $p_0/2$ also gives a lower bound of $(p_0/2)\Delta^{-2}$. Taking the minimum of the three positive constants proves the claim.
     }{
-        对中间区间, 当 $j\le n_\Delta$ 时有 $h_j\le c$, 故 $c\le S_j\le\Delta$ 蕴含 $h_j\le S_j\le\Delta+h_j$. 由 $h_{n_\Delta}\le c$, 固定的 $m_\pm$ 及 $\frac25<\frac5{12}<\frac{11}{24}<\frac{13}{24}<\frac7{12}<\frac35$, 对充分大的 $\Delta$, 三种情形的终点区间均包含于 $[h_{n_\Delta}+\frac25\Delta,h_{n_\Delta}+\frac35\Delta]$. 此区间又包含于 $\mathcal A_\Delta(x)$ 所定义的终点区间. 三个起点区间覆盖 $[0,\Delta]$. 由于 $\Delta\ge1$, 中间区间的估计 $p_0/2$ 也给出下界 $(p_0/2)\Delta^{-2}$. 取三个正常数的最小值即得两个下界.
+        对中间区间, 当 $j\le n_\Delta$ 时有 $h_j\le c$, 故 $c\le S_j\le\Delta$ 蕴含 $h_j\le S_j\le\Delta+h_j$. 由 $h_{n_\Delta}\le c$ 及 $\frac25<\frac5{12}<\frac7{12}<\frac35$, 对充分大的 $\Delta$, 其中的终点区间包含于 $\mathcal A_\Delta(x)$ 所定义的区间. 对两侧区间, 上述终点不等式及 $m_\pm$ 固定也给出相同的包含关系. 三个起点区间覆盖 $[0,\Delta]$. 由于 $\Delta\ge1$, 中间区间的估计 $p_0/2$ 也给出下界 $(p_0/2)\Delta^{-2}$. 取三个正常数的最小值即得结论.
     }
 \end{proof}
