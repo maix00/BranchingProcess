@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Topology.Cadlag.Skorokhod.EDistance.Logarithmic
+import Topology.Cadlag.Skorokhod.EDistance.Logarithmic.Basic
 import Topology.Cadlag.Skorokhod.EDistance.Logarithmic.AlignedCauchy
 import Topology.Cadlag.Skorokhod.EDistance.Logarithmic.CauchySubsequence
 import Topology.Cadlag.Skorokhod.EDistance.Logarithmic.Separation

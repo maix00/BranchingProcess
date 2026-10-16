@@ -9,9 +9,9 @@ module
 public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.Event
 public import Probability.Process.RandomWalk.Path.Adapted.Filtration
 public import Probability.Process.RandomWalk.Path.Block.Law.FiniteInterval
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.BlockScale
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.Horizontal
-public import Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.FiniteVarianceUpper
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Scale.BlockScale
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.Horizontal.Basic
+public import Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.FiniteVarianceUpper.Basic
 public import Probability.Independence.ConditionalIntegral
 public import Probability.Sequence.IID.ConditionalBlocks
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic

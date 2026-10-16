@@ -55,7 +55,7 @@ Theorems 1.1–1.3:
   (the abstract tilt and
   forward/backward endpoint identities are already formalized in
   `Probability/PointProcess/Tilted.lean` and
-  `Probability/BranchingRandomWalk/Spine/PointMeasureEndpoint.lean`);
+  `Probability/BranchingRandomWalk/Spine/PointMeasure/Endpoint.lean`);
 - the branching property at the exploration/stopping-cell level;
 - the coupling lemma used for the `a = 0` trajectory argument;
 - the probabilistic eventual upper and lower bounds that feed

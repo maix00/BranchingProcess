@@ -11,7 +11,7 @@ public import Combinatorics.BranchingWalk.Step.Selection.Count
 public import Combinatorics.BranchingWalk.Step.Measurability
 public import Mathlib.Basic.Real.ENatENNReal
 public import Mathlib.MeasureTheory.Measure.GiryMonad
-public import MeasureTheory.Measure.DiracSum
+public import MeasureTheory.Measure.Algebra.DiracSum
 
 /-!
 # Dirac sums of a branching step

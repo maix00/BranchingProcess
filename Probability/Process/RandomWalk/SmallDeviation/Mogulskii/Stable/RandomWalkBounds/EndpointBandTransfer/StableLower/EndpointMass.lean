@@ -8,7 +8,7 @@ module
 
 public import Probability.Process.RandomWalk.FunctionalLimit.Stable.PathLimit.Block
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.EndpointBandTransfer.StableRate
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Scale
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Scale.Core
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Scale.Rate
 public import Probability.Process.Stable.SmallDeviation.EscapeRate.PathLaw.Transfer
 

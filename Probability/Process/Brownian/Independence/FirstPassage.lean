@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.Brownian.Independence.FirstPassageGrid
-public import Probability.Process.Brownian.Reflection.UnboundedBelow
+public import Probability.Process.Brownian.Reflection.Path.UnboundedBelow
 public import Probability.Process.Path.TimeGrid.Expanding
 public import Probability.MeasureTheory.Convergence.IndependentLimits
 

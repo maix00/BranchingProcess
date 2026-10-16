@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Combinatorics.BranchingWalk.Basic.Position
+public import Combinatorics.BranchingWalk.Basic.Position.Basic
 public import Combinatorics.BranchingWalk.Cloud.Basic
 
 /-!

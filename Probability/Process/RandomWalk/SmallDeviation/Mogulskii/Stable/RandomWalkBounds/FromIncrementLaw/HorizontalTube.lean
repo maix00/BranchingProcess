@@ -7,8 +7,8 @@ Authors: WANG Yiyang
 module
 
 public import Analysis.Asymptotics.Scale.InverseScale
-public import Probability.Process.RandomWalk.Path.Corridor.Horizontal
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.FromIncrementLaw.NormalContinuousBoundary
+public import Probability.Process.RandomWalk.Path.Corridor.Horizontal.Core
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.FromIncrementLaw.Normal.ContinuousBoundary
 /-!
 # Closed horizontal-tube rates from continuous-boundary rates
 

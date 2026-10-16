@@ -7,10 +7,10 @@ Authors: WANG Yiyang
 import Order.Interval.RationalCoordinate.UnitInterval
 import Topology.Order.UnitInterval.Rational
 import Probability.Process.Stable.JumpModel.IndependentIncrements
-import Probability.Process.Stable.SmallDeviation.Blocks.Lower.FullCorridor
+import Probability.Process.Stable.SmallDeviation.Blocks.Lower.Entrance.FullCorridor
 import Probability.Process.Path.Skorokhod.Corridor.Segment
 import Probability.Process.Path.Skorokhod.RationalTime
-import Probability.Distributions.Stable.LevyMeasure.EntranceWindows
+import Probability.Distributions.Stable.LevyMeasure.Tail.EntranceWindows
 import Probability.Distributions.Stable.LevyMeasure.SignOfJumps
 import Probability.Process.Levy.Jump.Intensity.Entrance.Canonical
 

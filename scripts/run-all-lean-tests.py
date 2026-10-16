@@ -10,7 +10,7 @@ import tempfile
 
 
 AXIOM_EXPECTATIONS = {
-    Path("BranchingProcessTest/Probability/Distributions/Stable/Gaussian.lean"): (
+    Path("BranchingProcessTest/Probability/Distributions/Stable/Gaussian/Basic.lean"): (
         "ProbabilityTheory.IsStrictlyAlphaStable.exists_gaussianReal_zero",
     ),
     Path("BranchingProcessTest/DomainOfAttraction/NormalAttraction.lean"): (
@@ -32,7 +32,7 @@ AXIOM_EXPECTATIONS = {
         "ProbabilityTheory.RandomWalk.FunctionalLimit.Normal.tendsto_normalizedStepPathLaw_of_gaussian_of_brownian",
         "ProbabilityTheory.RandomWalk.FunctionalLimit.Normal.tendsto_normalizedStepCadlagPathIcc_of_centeredUnitSecondMoment_of_brownian",
     ),
-    Path("BranchingProcessTest/Mogulskii/LinearTubeAxioms.lean"): (
+    Path("BranchingProcessTest/Mogulskii/Axiom/LinearTubeAxioms.lean"): (
         "ProbabilityTheory.IsStableClockProcessLaw.measure_linearPathBall_pos",
         "ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.exists_cyclicPartialSum_mem_Icc_of_linearTube",
         "ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.exists_cyclicPartialSum_mem_Icc_of_negativeLinearTube",
@@ -145,7 +145,7 @@ AXIOM_EXPECTATIONS = {
         "ProbabilityTheory.BranchingRandomWalk.Spine.measure_hasEndpointBelowByHorizon_le_sum_exp",
         "ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.eventually_horizontalTubeProbability_le_pow_fixedCover_uniformOffset",
     ),
-    Path("BranchingProcessTest/Probability/Process/RandomWalk/SmallDeviation/Drawdown/FiniteVarianceUpper.lean"): (
+    Path("BranchingProcessTest/Probability/Process/RandomWalk/SmallDeviation/Drawdown/FiniteVarianceUpper/Basic.lean"): (
         "ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.additivePath_le_threshold_add_delta_of_noLargeDrop",
         "ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.neg_delta_le_additivePath_of_noLargeDrop",
         "ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.blockOscillationEvent_of_additiveSegment",
@@ -157,7 +157,7 @@ AXIOM_EXPECTATIONS = {
         "ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.noLargeDropEndpointBelowEvent_preimage_div",
         "ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.iidSequenceLaw_measure_noLargeDropEndpointBelowEvent_eq_map_div",
     ),
-    Path("BranchingProcessTest/Probability/BranchingRandomWalk/Selection/NSelection/EndpointDeviation/SelectedPopulationDrawdown.lean"): (
+    Path("BranchingProcessTest/Probability/BranchingRandomWalk/Selection/NSelection/EndpointDeviation/Drawdown/Population.lean"): (
         "ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.firstNSelectedPopulation_measurable",
         "ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.measurableSet_firstNSelectedNoLargeDropEndpointBelow",
         "ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.firstNSelectedPopulation_depth",
@@ -192,7 +192,7 @@ AXIOM_EXPECTATIONS = {
         "ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_index_two",
         "ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_index_two_of_brownian",
     ),
-    Path("BranchingProcessTest/Mogulskii/SourceAlignment.lean"): (
+    Path("BranchingProcessTest/Mogulskii/Path/SourceAlignment.lean"): (
         "MeasureTheory.CadlagPath.measurable_terminalLeftPath",
         "ProbabilityTheory.RandomWalk.measurable_sourceNormalizedStepCadlagPathIcc",
         "ProbabilityTheory.RandomWalk.sourceNormalizedStepCadlagPathIcc_apply_top",
@@ -607,14 +607,14 @@ AXIOM_EXPECTATIONS = {
         "ProbabilityTheory.RandomWalk.FunctionalLimit.Stable.exists_eventually_compactRange_bound_of_index_one_ennreal",
         "ProbabilityTheory.RandomWalk.FunctionalLimit.Stable.exists_eventually_compactRange_bound_of_index_gt_one_ennreal",
     ),
-    Path("BranchingProcessTest/Mogulskii/RelativeTerminalLeft.lean"): (
+    Path("BranchingProcessTest/Mogulskii/PathClass/RelativeTerminalLeft.lean"): (
         "Skorokhod.terminalLeftPath_eq_self_of_mem_space",
         "Skorokhod.terminalLeftPath_idempotent",
         "ProbabilityTheory.IsStableClockProcessLaw.spatialScale",
         "ProbabilityTheory.HasStableProcessEscapeRate.spatialScale",
         "ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.existsUnique_inner_outer_log_probability_ratio_of_hasRelativeVanishingEnergyGapApproximation_of_sourceDiscretestepCorridorRates",
     ),
-    Path("BranchingProcessTest/Mogulskii/IncrementLawRates.lean"): (
+    Path("BranchingProcessTest/Mogulskii/Rates/IncrementLawRates.lean"): (
         "ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.exists_source_relative_pathClass_rates_of_rawSource",
         "ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.exists_source_continuousBoundary_inner_outer_rates_of_rawSource",
         "ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.exists_source_continuousBoundary_probability_rate_of_rawSource",

@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.DeviationParameters
+import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.Sequence.Parameters
 #print axioms
   ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.exists_endpoint_deviation_parameters
 

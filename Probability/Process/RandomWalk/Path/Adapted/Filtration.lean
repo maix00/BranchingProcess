@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.Path.Basic
-public import Probability.Process.RandomWalk.Path.Block.Law
+public import Probability.Process.RandomWalk.Path.Block.Law.Basic
 public import Probability.Sequence.IID.Filtration
 public import Mathlib.Probability.Process.Adapted
 

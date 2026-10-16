@@ -9,7 +9,7 @@ module
 public import Probability.Process.RandomWalk.FunctionalLimit.Donsker.Entrance.InteriorFinite
 public import Analysis.Asymptotics.Scale.ShiftedFloor
 public import Probability.Process.RandomWalk.FunctionalLimit.Normal.Tightness
-public import Probability.Process.RandomWalk.FunctionalLimit.Stable.ProcessExistence
+public import Probability.Process.RandomWalk.FunctionalLimit.Stable.PathLaw.Process
 
 /-!
 # Diffusive middle-start entrance bound

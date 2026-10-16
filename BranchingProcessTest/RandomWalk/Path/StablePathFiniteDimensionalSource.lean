@@ -1,4 +1,4 @@
-import Probability.Process.RandomWalk.FunctionalLimit.Stable.PathFiniteDimensionalSource
+import Probability.Process.RandomWalk.FunctionalLimit.Stable.PathLaw.EndpointGridSource
 
 open Filter MeasureTheory ProbabilityTheory
 open ProbabilityTheory.RandomWalk.FunctionalLimit.Stable

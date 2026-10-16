@@ -8,7 +8,7 @@ module
 public import Mathlib.Topology.UnitInterval
 public import Topology.Cadlag.Skorokhod.Maps.Continuous
 public import Topology.Cadlag.Skorokhod.Corridor.Basic
-public import Topology.Cadlag.Skorokhod.PathClass.StepCorridor.Boundary
+public import Topology.Cadlag.Skorokhod.PathClass.StepCorridor.Boundary.Basic
 import Mathlib.Topology.Semicontinuity.Michael
 
 /-!
@@ -17,9 +17,10 @@ import Mathlib.Topology.Semicontinuity.Michael
 This file defines strict corridors between finite right-continuous step
 boundaries and the subclass that contains a continuous path. These are
 deterministic subsets of path space. The source is A. A. Mogul'skii,
-“Small deviations in the space of trajectories”, Teor. Veroyatnost. i Primenen.
-19:4 (1974), 755–765; English translation, Theory Probab. Appl. 19:1
-(1975), 726–736, doi:10.1137/1119081. In §1, the corresponding classes
+“Small deviations in the sample function space,” *Teoriya Veroyatnostei i ee
+Primeneniya* 19(4) (1974), 755–765; English translation, “Small Deviations in
+a Space of Trajectories,” *Theory of Probability and Its Applications* 19(4)
+(1975), 726–736, DOI 10.1137/1119081. In §1, the corresponding classes
 are denoted `M₁` and `M₂`; the library uses descriptive names instead. The
 two-sided trace-separation condition corresponding to Mogul'skii's §1
 admissibility definition is proved equivalent to the

@@ -5,7 +5,7 @@ Authors: WANG Yiyang
 -/
 
 import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.PositiveA.PZBudget
-import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.PowerBudget
+import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Rate.PowerBudget
 /-!
 # First-stage PZ power bound
 

@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.BranchingRandomWalk.Population.Processes.Causal
+public import Probability.BranchingRandomWalk.Population.Processes.Causal.Basic
 public import Probability.BranchingRandomWalk.Selection.NSelection.AtRank
 
 /-!

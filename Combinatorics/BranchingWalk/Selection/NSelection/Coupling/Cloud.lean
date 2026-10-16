@@ -6,10 +6,10 @@ Authors: WANG Yiyang
 
 module
 
-public import Combinatorics.BranchingWalk.Basic.Position
+public import Combinatorics.BranchingWalk.Basic.Position.Basic
 public import Combinatorics.BranchingWalk.Cloud.Order.DynamicSelection
 public import Combinatorics.BranchingWalk.Selection.Coupling.PopulationCloud
-public import Combinatorics.BranchingWalk.Selection.NSelection.Matching
+public import Combinatorics.BranchingWalk.Selection.NSelection.Mechanism.Matching
 
 /-!
 # Population clouds for the multi-root spatial coupling

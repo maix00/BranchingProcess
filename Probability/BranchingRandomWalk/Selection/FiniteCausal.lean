@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.BranchingRandomWalk.Selection.Finite
+public import Probability.BranchingRandomWalk.Selection.Finite.Basic
 
 /-!
 # Causal finite-input selection mechanisms

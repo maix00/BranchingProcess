@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.EndpointBands
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.EndpointBands.Basic
 /-!
 # Endpoint windows with separate mesh and width
 

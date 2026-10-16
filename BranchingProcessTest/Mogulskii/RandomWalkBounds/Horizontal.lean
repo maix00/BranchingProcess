@@ -1,4 +1,4 @@
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.Horizontal
+import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.Horizontal.Basic
 #check ProbabilityTheory.RandomWalk.iidSequenceLaw_measure_forall_consecutiveBlockEvent
 #check ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.measurableSet_blockOscillationLTEvent
 #check ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.iidSequenceLaw_measure_forall_blockOscillationLT

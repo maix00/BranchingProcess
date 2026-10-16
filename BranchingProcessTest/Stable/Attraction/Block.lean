@@ -1,5 +1,5 @@
 import Probability.Distributions.DomainOfAttraction.Block
-import Algebra.BigOperators.AdditivePath
+import Algebra.BigOperators.AdditivePath.Basic
 
 open Filter MeasureTheory ProbabilityTheory
 open scoped Topology BigOperators

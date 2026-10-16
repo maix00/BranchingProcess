@@ -9,7 +9,7 @@ module
 public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition.Event
 public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition.DiffusiveFromMeander
 public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition.SurvivalLower
-public import Probability.Process.Brownian.Existence
+public import Probability.Process.Brownian.Construction.Existence
 
 /-!
 # Diffusive entrance bound from survival and the meander limit

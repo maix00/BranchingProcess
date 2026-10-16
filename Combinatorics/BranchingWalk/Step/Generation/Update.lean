@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Combinatorics.BranchingWalk.Basic.Position
+public import Combinatorics.BranchingWalk.Basic.Position.Basic
 
 /-!
 # Updating one generation of a branching step field

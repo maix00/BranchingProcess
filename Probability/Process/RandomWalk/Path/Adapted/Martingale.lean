@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.Path.Basic
-public import Probability.Sequence.IID
+public import Probability.Sequence.IID.Basic
 public import BrownianMotion.Auxiliary.Martingale
 public import Mathlib.Probability.BorelCantelli
 public import Mathlib.Probability.Martingale.Basic

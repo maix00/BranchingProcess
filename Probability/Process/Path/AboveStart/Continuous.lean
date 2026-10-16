@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.Path.Continuous
+public import Probability.Process.Path.Representation.Continuous
 public import Mathlib.Topology.Order.Monotone
 public import Mathlib.Data.NNRat.Encodable
 public import Mathlib.Analysis.SpecificLimits.Basic

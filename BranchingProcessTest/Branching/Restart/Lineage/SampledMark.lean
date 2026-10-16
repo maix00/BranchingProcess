@@ -1,4 +1,4 @@
-import Probability.BranchingRandomWalk.Restart.RootedTrial.SampledMark
+import Probability.BranchingRandomWalk.Restart.RootedTrial.Coupling.SampledMark
 
 /-!
 # Axiom audit for reserve-spine step laws

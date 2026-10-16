@@ -6,12 +6,12 @@ Authors: WANG Yiyang
 
 module
 
-public import Algebra.BigOperators.AdditivePath
+public import Algebra.BigOperators.AdditivePath.Basic
 public import Algebra.BigOperators.PartialSum
 public import Algebra.BigOperators.CyclicReindex
 public import Probability.Process.RandomWalk.SmallDeviation.Entrance.Rotation.DriftedTube
 public import Probability.Sequence.IID.FiniteReindex
-public import Probability.Sequence.IID
+public import Probability.Sequence.IID.Basic
 public import Probability.Process.RandomWalk.Path.Skorokhod.Basic
 public import Topology.Cadlag.Skorokhod.Path.Scaling
 public import Topology.Cadlag.Skorokhod.Path.Linear

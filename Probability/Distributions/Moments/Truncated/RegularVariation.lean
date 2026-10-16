@@ -6,11 +6,11 @@ Authors: Codex
 
 module
 
-public import Analysis.Asymptotics.RegularVariation
+public import Analysis.Asymptotics.RegularVariation.Basic
 public import Mathlib.Analysis.Normed.Group.Tannery
 public import Mathlib.MeasureTheory.Measure.Continuity
 public import Mathlib.MeasureTheory.Measure.Real
-public import Probability.Distributions.Moments.Truncated
+public import Probability.Distributions.Moments.Truncated.Basic
 
 /-!
 # Regular variation of truncated second moments

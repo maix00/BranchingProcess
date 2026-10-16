@@ -1,4 +1,4 @@
-import Probability.BranchingRandomWalk.Restart.RootedTrial.PositivePart
+import Probability.BranchingRandomWalk.Restart.RootedTrial.Reward.PositivePart
 
 /-!
 # Axiom audit for the causal reserve-source positive-part estimate

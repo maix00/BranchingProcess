@@ -6,9 +6,9 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.Horizontal
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.SourcePath
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.FromIncrementLaw.NormalContinuousBoundary
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.Horizontal.Basic
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Path.SourcePath
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.FromIncrementLaw.Normal.ContinuousBoundary
 /-!
 # Finite-variance bounds for block oscillation
 
@@ -23,9 +23,12 @@ The public theorems in this file are:
 - `ProbabilityTheory.RandomWalk.SmallDeviation.Range.eventually_iidSequenceLaw_blockOscillationProbability_le_exp_of_centeredUnitVariance`:
   the source-path rate gives the finite-variance exponential block bound.
 
-The block-oscillation rate follows A. A. Mogul'skii, *Small Deviations in a
-Space of Trajectories*, Theorem 3, Section 4, p. 764 of the 1974 Russian original (English translation,
-DOI 10.1137/1119081). It is a reusable bound for random-walk range events.
+The block-oscillation rate follows Theorem 3, Section 4, p. 764 of the 1974
+Russian original by A. A. Mogul'skii, “Small deviations in the sample function
+space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974), 755–765; English
+translation, “Small Deviations in a Space of Trajectories,” *Theory of
+Probability and Its Applications* 19(4) (1975), 726–736, DOI 10.1137/1119081.
+It is a reusable bound for random-walk range events.
 -/
 
 open Filter MeasureTheory ProbabilityTheory

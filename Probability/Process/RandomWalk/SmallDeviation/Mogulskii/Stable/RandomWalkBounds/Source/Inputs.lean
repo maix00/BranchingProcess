@@ -9,8 +9,8 @@ module
 public import Analysis.Asymptotics.Scale.Scale
 public import Probability.Distributions.Stable.Attraction.Norming.Source
 public import Probability.Distributions.Stable.Attraction.Normal.TruncatedMoment
-public import Probability.Distributions.Stable.Scaling
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Scale
+public import Probability.Distributions.Stable.Operations.Scaling
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Scale.Core
 public import Probability.Process.Stable.Levy
 
 /-!

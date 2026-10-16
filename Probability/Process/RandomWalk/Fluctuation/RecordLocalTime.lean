@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.Path.Survival
+public import Probability.Process.RandomWalk.Path.Survival.Basic
 
 /-!
 # Strict record local time of a random walk

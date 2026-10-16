@@ -8,7 +8,7 @@ module
 
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.Partition.Limit
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Scale.Rate
-public import Probability.Process.RandomWalk.Path.Skorokhod
+public import Probability.Process.RandomWalk.Path.Skorokhod.Core
 public import Probability.Process.Path.PathClass.StepCorridor.Probability.Rate.Approximation
 public import Probability.Process.Stable.SmallDeviation.PathClass.StepCorridor.Rate
 

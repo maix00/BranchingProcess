@@ -7,8 +7,8 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.Path.Adapted.Filtration
-public import Probability.Process.RandomWalk.Path.Survival
-public import Probability.Process.RandomWalk.Path.Block.Law
+public import Probability.Process.RandomWalk.Path.Survival.Basic
+public import Probability.Process.RandomWalk.Path.Block.Law.Basic
 public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Survival.Conditioning
 public import Probability.Sequence.IID.StoppingTime
 public import Algebra.BigOperators.PartialSum

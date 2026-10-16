@@ -5,7 +5,7 @@ Authors: WANG Yiyang
 -/
 module
 
-public import Combinatorics.BranchingWalk.Basic.GenerationSize
+public import Combinatorics.BranchingWalk.Basic.Genealogy.GenerationSize
 public import Probability.BranchingProcess.Offspring.Count
 public import Probability.BranchingProcess.GaltonWatson.Law
 public import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.DomainFlow

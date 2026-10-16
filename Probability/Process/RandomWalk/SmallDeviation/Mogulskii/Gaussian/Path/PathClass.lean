@@ -25,10 +25,12 @@ public path-class limit has the explicit full-width coefficient `-π² / 2`.
 The canonical Brownian path law uses Mathlib's rational-coordinate
 construction, so the theorem only relies on almost-everywhere continuity of
 Brownian paths.
-This identifies the Gaussian coefficient of A. A. Mogul'skii,
-*Small Deviations in a Space of Trajectories*, Theorem 3, Section 4,
-p. 764 of the 1974 Russian original (English translation, *Theory of Probability
-and Its Applications* 19(4) (1975), 726--736, DOI 10.1137/1119081).
+This identifies the Gaussian coefficient in Theorem 3, Section 4, p. 764 of
+the 1974 Russian original by A. A. Mogul'skii, “Small deviations in the sample
+function space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974),
+755–765; English translation, “Small Deviations in a Space of Trajectories,”
+*Theory of Probability and Its Applications* 19(4) (1975), 726–736, DOI
+10.1137/1119081.
 
 
 The original bibliography is A. A. Mogul'skii, “Small deviations in the sample function space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974), 755--765; English translation, “Small Deviations in a Space of Trajectories,” *Theory of Probability and Its Applications* 19(4) (1975), 726--736, DOI 10.1137/1119081. -/
@@ -50,8 +52,8 @@ probability rate has the explicit coefficient `-π² / 2`.
 
 The path input is the canonical càdlàg path law built from the a.e.-continuous
 Brownian process; no everywhere-continuous sample-path hypothesis is needed.
-This is the path-class coefficient in Mogul'skii, *Small Deviations in a
-Space of Trajectories*, Theorem 3, Section 4 (DOI 10.1137/1119081).
+This is the path-class coefficient in Mogul'skii's Theorem 3, Section 4,
+p. 764, cited above.
 -/
 theorem tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_index_two_of_brownian_explicit
     {ν : Measure ℝ} [IsProbabilityMeasure ν]

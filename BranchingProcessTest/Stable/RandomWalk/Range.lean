@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.Process.RandomWalk.FunctionalLimit.Stable.PathRange
+import Probability.Process.RandomWalk.FunctionalLimit.Stable.Tightness.Range
 
 open Filter MeasureTheory ProbabilityTheory
 open ProbabilityTheory.RandomWalk.FunctionalLimit.Stable

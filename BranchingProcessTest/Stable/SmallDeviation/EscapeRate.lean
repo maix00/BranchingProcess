@@ -1,4 +1,4 @@
-import Probability.Process.Stable.SmallDeviation.EscapeRate
+import Probability.Process.Stable.SmallDeviation.EscapeRate.Basic
 import Probability.Process.Stable.SmallDeviation.EscapeRate.Corridor
 import Probability.Process.Stable.SmallDeviation.EscapeRate.Endpoint
 import Probability.Process.Stable.SmallDeviation.EscapeRate.Law

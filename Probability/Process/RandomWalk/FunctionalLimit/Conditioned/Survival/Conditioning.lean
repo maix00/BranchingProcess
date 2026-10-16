@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.Path.Survival.Probability
-public import Probability.Sequence.IID
+public import Probability.Sequence.IID.Basic
 public import Probability.Distributions.Moments.Signs
 public import Mathlib.Probability.ConditionalProbability
 

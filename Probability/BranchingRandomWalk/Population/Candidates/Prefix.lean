@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Field
+public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Field.Basic
 public import Combinatorics.BranchingWalk.Step.Ordering.SlotOrder
 
 /-!

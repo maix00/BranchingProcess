@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.Path.Continuous
+public import Probability.Process.Path.Representation.Continuous
 public import Mathlib.Topology.Maps.Proper.Basic
 public import Mathlib.MeasureTheory.Constructions.BorelSpace.WithTop
 public import Mathlib.MeasureTheory.Constructions.BorelSpace.Order

@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.Fluctuation.LadderTime
-public import Probability.Process.RandomWalk.Path.Survival
+public import Probability.Process.RandomWalk.Path.Survival.Basic
 
 /-!
 # Descending records and nonnegative survival

@@ -7,8 +7,8 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.FirstWindow.Definition
-public import Probability.Process.RandomWalk.Path.Interpolation.FiniteBlock
-public import Probability.Process.RandomWalk.Path.Interpolation.FirstWindow
+public import Probability.Process.RandomWalk.Path.Interpolation.Finite.Block
+public import Probability.Process.RandomWalk.Path.Interpolation.Limit.FirstWindow
 public import Probability.Process.Path.AboveStart.FirstWindow.Centered
 
 /-!

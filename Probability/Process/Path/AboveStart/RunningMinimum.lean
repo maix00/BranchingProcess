@@ -8,7 +8,7 @@ module
 
 public import Probability.Process.Path.AboveStart.Continuous
 public import Probability.Process.Path.FirstPassage.Descending
-public import Probability.Process.Path.RunningMinimum
+public import Probability.Process.Path.Extrema.RunningMinimum
 public import Probability.Process.Path.TimeGrid.NonnegativeRationals
 
 /-!

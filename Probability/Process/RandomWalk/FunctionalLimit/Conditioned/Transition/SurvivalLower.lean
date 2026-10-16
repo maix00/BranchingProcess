@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.Fluctuation.SparreAndersen.RotationProbability
+public import Probability.Process.RandomWalk.Fluctuation.SparreAndersen.Rotation.Probability
 public import Probability.Process.RandomWalk.Fluctuation.FiniteVarianceSignLimit
 public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition.Event
 

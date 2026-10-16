@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.Brownian.Reflection.FirstPassagePrinciple
+public import Probability.Process.Brownian.Reflection.FirstPassage.Principle
 public import Probability.Process.Brownian.TimeReversal.FiniteHorizon
 public import Probability.Process.Path.AboveStart.RunningMinimum
 

@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Analysis.Asymptotics.RegularVariation
+public import Analysis.Asymptotics.RegularVariation.Basic
 
 /-!
 # Polynomial lower bounds for decreasing regularly varying functions

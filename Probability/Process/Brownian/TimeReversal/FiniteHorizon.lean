@@ -9,7 +9,7 @@ module
 public import Mathlib.Probability.BrownianMotion.Basic
 public import Mathlib.Probability.Distributions.Gaussian.IsGaussianProcess.Basic
 public import Mathlib.Probability.Distributions.Gaussian.HasGaussianLaw.Basic
-public import Probability.Process.Brownian.ContinuousPathLaw
+public import Probability.Process.Brownian.PathLaw.ContinuousPathLaw
 public import Probability.Process.Path.TimeReversal.FiniteHorizon
 
 /-!

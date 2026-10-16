@@ -8,7 +8,7 @@ module
 
 public import Probability.Process.Stable.SmallDeviation.Blocks.EntranceFactorization
 public import Probability.Process.Stable.SmallDeviation.Blocks.EntranceScaling
-public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.FullCorridor
+public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.Entrance.FullCorridor
 public import Probability.Process.Stable.SmallDeviation.Blocks.Upper.Shrinking
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.Analysis.SpecialFunctions.Pow.Continuity

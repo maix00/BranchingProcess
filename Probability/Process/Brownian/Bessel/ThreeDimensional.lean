@@ -6,8 +6,8 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.Brownian.Skorokhod
-public import Probability.Process.Brownian.ContinuousModification
+public import Probability.Process.Brownian.PathLaw.Skorokhod
+public import Probability.Process.Brownian.PathLaw.ContinuousModification
 public import Mathlib.MeasureTheory.Measure.Prod
 
 /-!

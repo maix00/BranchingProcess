@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.BranchingRandomWalk.Selection.NSelection.ByValue
-public import Combinatorics.BranchingWalk.Selection.NSelection.ByValue
+public import Combinatorics.BranchingWalk.Selection.NSelection.Mechanism.ByValue
 public import Mathlib.Data.Finset.Sort
 
 /-!

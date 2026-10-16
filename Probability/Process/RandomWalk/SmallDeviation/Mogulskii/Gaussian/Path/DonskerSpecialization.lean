@@ -6,8 +6,8 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.FunctionalLimit.Donsker.Skorokhod
-public import Probability.Process.RandomWalk.FunctionalLimit.NormalizedStep
+public import Probability.Process.RandomWalk.FunctionalLimit.Donsker.Path.Skorokhod
+public import Probability.Process.RandomWalk.FunctionalLimit.NormalizedStep.Basic
 public import Mathlib.Topology.UnitInterval
 
 /-!
@@ -21,9 +21,11 @@ The public theorem in this file is:
   normalization $b_n=\sqrt n$ and the Brownian path law on $[0,1]$.
 
 The theorem is the exponent-two functional-limit specialization used by
-Mogulskii, *Small Deviations in a Space of Trajectories*, Theorem 3, Section 4
-(1974 Russian original, p. 764; English translation, *Theory of Probability
-and Its Applications* 19(4) (1975), 726--736, DOI 10.1137/1119081). The Donsker
+Mogulskii, Theorem 3, Section 4, p. 764 of the 1974 Russian original, “Small
+deviations in the sample function space,” *Teoriya Veroyatnostei i ee
+Primeneniya* 19(4) (1974), 755–765; English translation, “Small Deviations in
+a Space of Trajectories,” *Theory of Probability and Its Applications* 19(4)
+(1975), 726–736, DOI 10.1137/1119081. The Donsker
 invariance theorem used here is Theorem 4.20 in I. Karatzas and S. E. Shreve,
 *Brownian Motion and Stochastic Calculus*, 2nd ed., Graduate Texts in
 Mathematics 113, Springer (1991), DOI 10.1007/978-1-4612-0949-2.

@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.Fluctuation.DescendingLocalTime
-public import Probability.Sequence.IID
+public import Probability.Sequence.IID.Basic
 
 /-!
 # Descending ladder-height renewal function

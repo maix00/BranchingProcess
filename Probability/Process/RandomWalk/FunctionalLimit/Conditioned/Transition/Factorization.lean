@@ -7,9 +7,9 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition.Event
-public import Probability.Process.RandomWalk.Path.Block.Law
+public import Probability.Process.RandomWalk.Path.Block.Law.Basic
 public import Probability.Process.RandomWalk.Path.Block.Partition.Basic
-public import Probability.Sequence.IID
+public import Probability.Sequence.IID.Basic
 public import Topology.Algebra.BigOperators.PartialSum
 
 /-!

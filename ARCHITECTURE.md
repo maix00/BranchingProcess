@@ -17,7 +17,7 @@ than the application that first needs it.
 | `Probability/BranchingRandomWalk` | Random branching models and their bridges to general process and measure interfaces | offspring fields, spines, selection and coupling |
 
 General finite-history drawdown predicates and their measurability belong to
-`Probability/Process/RandomWalk/Path/Drawdown.lean`. Random-walk probability
+`Probability/Process/RandomWalk/Path/Event/Drawdown.lean`. Random-walk probability
 bounds for those paths belong to `Probability/Process/RandomWalk/SmallDeviation/Drawdown/`.
 Generic conditional-probability integration and successive-block product
 bounds belong to `Probability/Process/Filtration/ConditionalBlocks.lean`;

@@ -48,8 +48,8 @@ remain those recorded in `Probability/Process/RandomWalk/SmallDeviation/Mogulski
 - The stable reference process already has a unit-interval path law and a
   stable-process `M₂` path-class rate. See
   `Probability/Process/Stable/PathLaw/UnitInterval.lean`,
-  `Probability/Process/Stable/SmallDeviation/EscapeRate/PathLaw.lean`, and
-  `Probability/Process/Stable/SmallDeviation/PathClass/StepCorridor/Partition/Stable.lean`.
+  `Probability/Process/Stable/SmallDeviation/EscapeRate/PathLaw/Basic.lean` and `Probability/Process/Stable/SmallDeviation/EscapeRate/PathLaw/Transfer.lean`, and
+  `Probability/Process/Stable/SmallDeviation/PathClass/StepCorridor/Partition/Core/Stable.lean`.
   The stable range, endpoint, and inner/outer APIs provide the limit-model
   estimates needed in a block squeeze.
 - The random-walk stable-domain functional limit and `M₂` rates are already

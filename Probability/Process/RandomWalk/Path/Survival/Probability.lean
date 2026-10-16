@@ -6,8 +6,8 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.Path.Survival
-public import Probability.Sequence.IID
+public import Probability.Process.RandomWalk.Path.Survival.Basic
+public import Probability.Sequence.IID.Basic
 
 /-!
 # Probabilities of finite nonnegative survival

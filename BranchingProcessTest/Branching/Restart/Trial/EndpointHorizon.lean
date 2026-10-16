@@ -1,4 +1,4 @@
-import Probability.BranchingRandomWalk.Restart.RootedTrial.EndpointHorizon
+import Probability.BranchingRandomWalk.Restart.RootedTrial.Completion.EndpointHorizon
 
 /-!
 # Axiom audit for the restart endpoint at a random horizon

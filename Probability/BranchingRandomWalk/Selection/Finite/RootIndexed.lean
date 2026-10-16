@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.BranchingRandomWalk.Selection.Finite.ByValue
-public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Measurability
+public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Field.Measurability
 
 /-!
 # Root-indexed random finite selection by position

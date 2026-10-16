@@ -6,9 +6,9 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.FunctionalLimit.Donsker.CLT
+public import Probability.Process.RandomWalk.FunctionalLimit.Donsker.FiniteDimensional.CLT
 public import Probability.Process.RandomWalk.Path.Basic
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.BlockScale
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Scale.BlockScale
 
 /-!
 # Diffusive Gaussian block endpoint adapters for Mogulskii estimates
@@ -25,9 +25,12 @@ theorems in this file are:
   the direct quotient $\frac{S_{b_n}}{x_n}$ converges in law to $\sqrt c Z$.
 
 The central limit theorem itself lives in the Donsker layer. These are the
-single-block inputs used in the proof of Mogul'skii, *Small Deviations in a
-Space of Trajectories*, Theorem 3, Section 4, p. 764 of the 1974 Russian original
-(DOI 10.1137/1119081).
+single-block inputs used in the proof of Theorem 3, Section 4, p. 764 of the
+1974 Russian original by A. A. Mogul'skii, “Small deviations in the sample
+function space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974),
+755–765; English translation, “Small Deviations in a Space of Trajectories,”
+*Theory of Probability and Its Applications* 19(4) (1975), 726–736, DOI
+10.1137/1119081.
 
 
 The original bibliography is A. A. Mogul'skii, “Small deviations in the sample function space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974), 755--765; English translation, “Small Deviations in a Space of Trajectories,” *Theory of Probability and Its Applications* 19(4) (1975), 726--736, DOI 10.1137/1119081. -/

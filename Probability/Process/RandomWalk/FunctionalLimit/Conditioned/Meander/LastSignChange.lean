@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.FunctionalLimit.Donsker.Continuous
+public import Probability.Process.RandomWalk.FunctionalLimit.Donsker.Path.Continuous
 public import Probability.Process.Brownian.Meander.LastSignChange
 public import Probability.ConvergenceInDistribution.Mapping
 

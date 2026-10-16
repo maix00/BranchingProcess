@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.Path.RunningMinimum
+public import Probability.Process.Path.Extrema.RunningMinimum
 
 /-!
 # Reversed increments on a finite time interval

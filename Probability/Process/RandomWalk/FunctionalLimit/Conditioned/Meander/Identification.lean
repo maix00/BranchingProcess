@@ -7,9 +7,9 @@ Authors: WANG Yiyang
 module
 
 public import Probability.ConvergenceInDistribution.EscapingMixture
-public import Probability.Process.RandomWalk.Rademacher.TerminalMixture
-public import Probability.Process.RandomWalk.Rademacher.TerminalLengthLimit
-public import Probability.Process.RandomWalk.Rademacher.TerminalPathLimit
+public import Probability.Process.RandomWalk.Rademacher.Terminal.Mixture
+public import Probability.Process.RandomWalk.Rademacher.Terminal.LengthLimit
+public import Probability.Process.RandomWalk.Rademacher.Terminal.PathLimit
 public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.FirstWindow.Limit
 
 /-!
@@ -30,7 +30,7 @@ Bolthausen, *On a Functional Central Limit Theorem for Random Walks Conditioned 
 DOI 10.1214/aop/1176996098. The terminal Brownian representation is
 that of Donald L. Iglehart, *Functional Central Limit Theorems for Random
 Walks Conditioned to Stay Positive*, Ann. Probab. 2(4) (1974),
-608--619, Section 3, DOI 10.1214/aop/1176996607.
+608--619, Section 3, theorem (3.4), p. 616, DOI 10.1214/aop/1176996607.
 -/
 
 @[expose] public section
@@ -110,8 +110,9 @@ theorem law_centeredFirstWindowShift_eq_lastZeroMeanderPathLaw
 
 /-- The conditioned polygonal path converges to the Brownian meander
 in the last-zero realization of Iglehart, *Functional Central Limit
-Theorems for Random Walks Conditioned to Stay Positive*, Section 3,
-Ann. Probab. 2(4) (1974), 608--619, DOI 10.1214/aop/1176996607.
+Theorems for Random Walks Conditioned to Stay Positive*, Ann. Probab. 2(4)
+(1974), 608--619, DOI 10.1214/aop/1176996607, Section 3, theorem (3.4),
+p. 616.
 The conditional invariance principle and limit-law identification
 follow Bolthausen, *On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*, Theorem 3.2 and page 484,
 Ann. Probab. 4(3) (1976), 480--485,

@@ -11,7 +11,7 @@ public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.FirstWi
 public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.FirstWindow.FiniteTime
 public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.FirstWindow.Selection
 public import Probability.Process.Brownian.AboveStart.FirstWindow.CenteredLimit
-public import Probability.Process.Path.FiniteHorizonScaling
+public import Probability.Process.Path.Scaling.FiniteHorizon
 public import Topology.Cadlag.Skorokhod.Maps.Continuous
 
 /-!
@@ -48,7 +48,7 @@ Theorem 3.2. The identification of
 $\mathcal L(\Phi(W))$ with Brownian meander is a separate step on page
 484 of Bolthausen. Donald L. Iglehart, *Functional Central Limit Theorems
 for Random Walks Conditioned to Stay Positive*, Ann. Probab. 2(4)
-(1974), 608--619, DOI 10.1214/aop/1176996607, Section 3, identifies
+(1974), 608--619, DOI 10.1214/aop/1176996607, Section 3, theorem (3.4), p. 616, identifies
 the meander law through the path after Brownian motion's last zero.
 -/
 

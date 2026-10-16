@@ -37,7 +37,7 @@ The public objects and theorems in this file are:
 The construction is the Brownian representation on pages 616--617 of
 Donald L. Iglehart, *Functional Central Limit Theorems for Random Walks
 Conditioned to Stay Positive*, Ann. Probab. 2(4) (1974), 608--619, DOI 10.1214/aop/1176996607,
-Section 3. Iglehart attributes the finite-dimensional distribution
+Section 3, theorem (3.4), p. 616. Iglehart attributes the finite-dimensional distribution
 identification with the conditioned-walk limit to Barry Belkin,
 *An invariance principle for conditioned recurrent random walk attracted
 to a stable law*, Z. Wahrscheinlichkeitstheorie verw. Gebiete 21 (1972),

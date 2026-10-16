@@ -196,10 +196,11 @@ theorem IsStableLevyProcess.rationalTube_smallWidth_eq_longHorizon
 
 /-- The small-width rate is exactly the long-horizon rate after the
 substitution `T = a ^ (-α)`. This is the scaling reduction for Lemma 1(I),
-equations (18)--(20), of A. A. Mogul'skii, "Small Deviations in a Space of
-Trajectories" (Russian original, 1974; English translation, *Theory of
-Probability and Its Applications* 19(4) (1975), 726--736, DOI
-10.1137/1119081). Existence of the long-time escape rate is a separate
+equations (18)--(20), of A. A. Mogul'skii, “Small deviations in the sample
+function space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974),
+755–765; English translation, “Small Deviations in a Space of Trajectories,”
+*Theory of Probability and Its Applications* 19(4) (1975), 726–736, DOI
+10.1137/1119081. Existence of the long-time escape rate is a separate
 estimate. -/
 theorem IsStableLevyProcess.rationalTube_smallLogRate_eq_longLogRate
     {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
@@ -224,8 +225,11 @@ theorem IsStableLevyProcess.rationalTube_smallLogRate_eq_longLogRate
 
 /-- Once the long-time escape rate has been established, the stable scaling
 change of variables transfers it to the small-width limit in Mogul'skii's
-Lemma 1(I), equations (18)--(20) (A. A. Mogul'skii, "Small Deviations in a
-Space of Trajectories," DOI 10.1137/1119081). This theorem performs the exact
+Lemma 1(I), equations (18)--(20). The source is A. A. Mogul'skii, “Small
+deviations in the sample function space,” *Teoriya Veroyatnostei i ee
+Primeneniya* 19(4) (1974), 755–765; English translation, “Small Deviations in
+a Space of Trajectories,” *Theory of Probability and Its Applications* 19(4)
+(1975), 726–736, DOI 10.1137/1119081. This theorem performs the exact
 reparameterization. -/
 theorem IsStableLevyProcess.tendsto_smallLogRate_of_tendsto_longLogRate
     {α C : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}

@@ -1,4 +1,4 @@
-import Probability.RandomMeasure.Poisson.WindowIntegral
+import Probability.RandomMeasure.Poisson.Integration.WindowIntegral
 
 #check ProbabilityTheory.hasSum_pieceSum_poissonRandomMeasure
 #check ProbabilityTheory.integral_poissonRandomMeasure_eq_tsum_pieceSum

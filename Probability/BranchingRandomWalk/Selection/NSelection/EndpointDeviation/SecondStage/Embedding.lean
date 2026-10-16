@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Population.Embedding
 import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.SecondStage.Roots.Fresh
-import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.LargeDrawdown
+import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Drawdown.Large
 import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.SelectedSubtrees.Position
 
 /-!

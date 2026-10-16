@@ -9,7 +9,7 @@ module
 public import Probability.ConvergenceInDistribution.Portmanteau
 public import Probability.ConvergenceInDistribution.Mapping
 public import Probability.Process.Brownian.AboveStart.FirstWindow.TimeFiniteHorizon
-public import Probability.Process.RandomWalk.FunctionalLimit.Donsker.FiniteHorizon
+public import Probability.Process.RandomWalk.FunctionalLimit.Donsker.Path.FiniteHorizon
 
 /-!
 # Convergence of finite first-window times

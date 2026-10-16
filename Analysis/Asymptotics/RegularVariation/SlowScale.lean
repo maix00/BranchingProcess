@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Analysis.Asymptotics.RegularVariation
+public import Analysis.Asymptotics.RegularVariation.Basic
 public import Analysis.Asymptotics.Scale.SlowDiagonal
 
 /-!

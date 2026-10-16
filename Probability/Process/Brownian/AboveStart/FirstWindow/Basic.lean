@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.Brownian.ContinuousPathLaw
+public import Probability.Process.Brownian.PathLaw.ContinuousPathLaw
 public import Probability.Process.Brownian.AboveStart.NonAntitone
 public import Probability.Process.Path.AboveStart.FirstWindow.Tail
 

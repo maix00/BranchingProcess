@@ -24,7 +24,7 @@ This transports Bolthausen, *On a Functional Central Limit Theorem for Random Wa
 480--485, DOI 10.1214/aop/1176996098, Theorem 3.2, through positive variance
 normalization, with the limit law identified by Iglehart, *Functional Central Limit Theorems for
 Random Walks Conditioned to Stay Positive*, Ann. Probab. 2(4) (1974),
-608--619, DOI 10.1214/aop/1176996607, Section 3. Wang Yiyang, *Asymptotic Speed of the
+608--619, DOI 10.1214/aop/1176996607, Section 3, theorem (3.4), p. 616. Wang Yiyang, *Asymptotic Speed of the
 N-Branching Random Walk with Infinite Offspring* (master's thesis, Fudan
 University, 2026), uses this limit in Appendix A.2, Lemma A.7, and the proof
 of Chapter 3, Lemma 3.5.

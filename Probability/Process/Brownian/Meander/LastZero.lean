@@ -6,9 +6,9 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.Path.FiniteHorizonScaling
-public import Probability.Process.Brownian.ContinuousModification
-public import Probability.Distributions.Stable.Gaussian
+public import Probability.Process.Path.Scaling.FiniteHorizon
+public import Probability.Process.Brownian.PathLaw.ContinuousModification
+public import Probability.Distributions.Stable.Gaussian.Basic
 public import Topology.ContinuousMap.LastZero
 public import Mathlib.Probability.BrownianMotion.Basic
 
@@ -26,7 +26,7 @@ The public theorem in this file is:
 
 This verifies that the normalization $(1-g)^{-1/2}$ in Donald L.
 Iglehart, *Functional Central Limit Theorems for Random Walks Conditioned
-to Stay Positive*, Ann. Probab. 2(4) (1974), 608--619, DOI 10.1214/aop/1176996607, Section 3,
+to Stay Positive*, Ann. Probab. 2(4) (1974), 608--619, DOI 10.1214/aop/1176996607, Section 3, theorem (3.4), p. 616,
 is defined almost surely.
 -/
 

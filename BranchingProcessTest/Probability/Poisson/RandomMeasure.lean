@@ -1,4 +1,4 @@
-import Probability.RandomMeasure.Poisson.Integral
+import Probability.RandomMeasure.Poisson.Integration.Integral
 
 open MeasureTheory
 open scoped ENNReal

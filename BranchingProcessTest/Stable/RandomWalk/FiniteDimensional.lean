@@ -5,7 +5,7 @@ Authors: WANG Yiyang
 -/
 
 import Probability.Process.RandomWalk.FunctionalLimit.Stable.FiniteDimensional
-import Probability.Process.RandomWalk.FunctionalLimit.Stable.PathFiniteDimensional
+import Probability.Process.RandomWalk.FunctionalLimit.Stable.PathLaw.EndpointGrid
 
 #print axioms ProbabilityTheory.RandomWalk.FunctionalLimit.Stable.tendstoInDistribution_endpoints_of_stableClock
 

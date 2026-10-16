@@ -4,10 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.RightTailKilledCapacity
-import Probability.Process.RandomWalk.Path.Block.Law
+import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Drawdown.Spine.Capacity
+import Probability.Process.RandomWalk.Path.Block.Law.Basic
 import Probability.Process.RandomWalk.Path.Block.Partition.Basic
-import Probability.Process.RandomWalk.Path.Window
+import Probability.Process.RandomWalk.Path.Window.Core
 import Probability.Process.RandomWalk.SmallDeviation.Entrance.NormalDomain
 
 /-!

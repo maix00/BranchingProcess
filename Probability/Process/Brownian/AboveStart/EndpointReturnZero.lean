@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.Brownian.AboveStart.EndpointReturn
-public import Probability.Process.Brownian.Reflection.RandomLevelFirstPassage
+public import Probability.Process.Brownian.Reflection.FirstPassage.RandomLevel
 public import Probability.Process.Path.FirstPassage.Restart
 
 /-!

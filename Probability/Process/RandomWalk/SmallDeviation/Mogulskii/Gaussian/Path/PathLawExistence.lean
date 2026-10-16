@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.FunctionalLimit.Normal.Tightness
-public import Probability.Process.RandomWalk.FunctionalLimit.Stable.ProcessExistence
+public import Probability.Process.RandomWalk.FunctionalLimit.Stable.PathLaw.Process
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Gaussian.EscapeConstant
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.CLT
 

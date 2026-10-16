@@ -39,8 +39,9 @@ by author and title, identify the exact theorem/lemma/proposition (and section
 or page when useful), and give its bibliography key or stable identifier (DOI,
 arXiv ID, or URL). For results from a thesis, identify its exact title,
 chapter, and displayed theorem number. Do not use `the paper`, `the thesis`,
-or `the source` as a substitute for a reference. Apply the same rule to Mogul'skii's results;
-for example, identify Theorem 3, Section 4, p. 764 of the 1974 Russian original
+or `the source` as a substitute for a reference. Apply the same rule to
+Mogul'skii's results; for example, identify Theorem 3, Section 4, p. 764 of
+the 1974 Russian original
 by A. A. Mogul'skii, “Small deviations in the sample function space,”
 *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974), 755--765, together
 with its English translation, “Small Deviations in a Space of Trajectories,”
@@ -85,6 +86,21 @@ group the public modules into semantic subdirectories such as `Ordering/`,
 `Selection/`, or `PointMeasure/`. Keep the subject level for shared core
 definitions and direct entry modules. Do not place a reusable public interface
 under `Lemmas/` just to reduce the number of files at the subject level.
+Use filenames relative to their semantic directory: prefer
+`PointMeasure/Basic.lean` or `Tilted/Law.lean` to repeating the full directory
+name in every child filename. Mathlib permits a same-level `Foo.lean` and
+`Foo/` when the file is a substantive entry interface and the directory holds
+its components. In this repository, prefer distinct sibling stems to make
+large trees easier to scan; introduce that Mathlib pattern only when the entry
+module provides a clear mathematical interface, and record the reason in the
+architecture audit. Do not add a same-name file merely to re-export a
+directory.
+Count direct `.lean` files during directory reviews. More than eight is a
+review trigger for semantic grouping, not an automatic move: keep a flat
+directory only when its modules are genuinely peer interfaces for one subject,
+and record that reason in the architecture audit. A large group of independent
+interfaces can still be split by the mathematical objects or operations they
+describe.
 
 Directory placement communicates which files users should read first; it does
 not change Lean declaration visibility. Mark a helper `private` when all its
@@ -107,8 +123,8 @@ Open an issue for a suspected mathematical error, a missing measurability
 argument, a dependency or naming problem, a reproducible build failure, or a
 theorem you would like to formalize. Include the relevant module, Lean and
 Mathlib revisions, the command that fails, and the smallest useful error
-excerpt. Counterexamples and references to the original paper are especially
-helpful.
+excerpt. For mathematical claims, give a complete bibliographic reference and
+the exact theorem, lemma, equation, or page that supports it.
 
 Pull requests are welcome even when they formalize only an intermediate lemma.
 If a proposed statement is not yet proved, label it as an interface or open

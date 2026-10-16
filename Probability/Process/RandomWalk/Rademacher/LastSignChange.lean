@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.Rademacher
+public import Probability.Process.RandomWalk.Rademacher.Basic
 public import Probability.Process.RandomWalk.Path.Event.LastSignChange
 public import Probability.Process.RandomWalk.Path.Interpolation.Basic
 

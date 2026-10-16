@@ -1,4 +1,4 @@
-import Probability.BranchingRandomWalk.Restart.GeometricFirstMoment
+import Probability.BranchingRandomWalk.Restart.Trial.GeometricFirstMoment
 
 /-!
 # Axiom audit for the one-cycle L¹ position estimate

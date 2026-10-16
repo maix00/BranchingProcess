@@ -8,7 +8,7 @@ module
 
 public import Probability.ConvergenceInDistribution.DeterministicParameter
 public import Probability.Process.RandomWalk.FunctionalLimit.NormalizedStep.Block
-public import Probability.Process.RandomWalk.FunctionalLimit.Stable.PathLimit
+public import Probability.Process.RandomWalk.FunctionalLimit.Stable.PathLaw.Convergence
 public import Topology.Cadlag.Skorokhod.Path.Scaling
 
 /-!

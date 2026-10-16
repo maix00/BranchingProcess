@@ -9,7 +9,7 @@ module
 public import Probability.Process.Stable.SmallDeviation.Blocks.ShiftComparison.Core
 public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.Feedback.Entrance
 public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.Feedback.EntranceIndexOne
-public import Probability.Distributions.Stable.Sign
+public import Probability.Distributions.Stable.Operations.Sign
 
 /-!
 # Feedback entrance specializations

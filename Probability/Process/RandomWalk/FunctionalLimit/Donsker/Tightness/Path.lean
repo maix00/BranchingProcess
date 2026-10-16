@@ -7,8 +7,8 @@ Authors: WANG Yiyang
 module
 
 public import Mathlib.Topology.UnitInterval
-public import Probability.Process.RandomWalk.Path.Corridor.Interpolation
-public import Probability.Process.RandomWalk.Path.Interpolation.Oscillation
+public import Probability.Process.RandomWalk.Path.Corridor.Interpolation.Core
+public import Probability.Process.RandomWalk.Path.Interpolation.Path.Oscillation
 public import Probability.Process.RandomWalk.FunctionalLimit.Donsker.Tightness.Maximal
 public import Probability.Process.RandomWalk.FunctionalLimit.Donsker.Tightness.Parameters
 public import MeasureTheory.Measure.ContinuousMap.Tightness.Criteria

@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.Donsker.EndpointWindows
-public import Probability.Process.RandomWalk.FunctionalLimit.Donsker.Skorokhod
+public import Probability.Process.RandomWalk.FunctionalLimit.Donsker.Path.Skorokhod
 
 /-!
 # Endpoint-window Donsker transfer along block lengths

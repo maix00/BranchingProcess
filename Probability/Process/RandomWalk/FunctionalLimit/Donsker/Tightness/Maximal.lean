@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.Path.Block.Maximal
+public import Probability.Process.RandomWalk.Path.Block.Maximal.Basic
 public import Probability.Distributions.Moments.Real
 
 /-!

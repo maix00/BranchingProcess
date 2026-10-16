@@ -5,7 +5,7 @@ Authors: WANG Yiyang
 -/
 
 import Probability.BranchingRandomWalk.Spine.FirstPassage
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Range.BlockBound
+import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Range.Blocks.Bound
 
 /-!
 # Axiom audit for the raw `a = 1` endpoint sublevel input

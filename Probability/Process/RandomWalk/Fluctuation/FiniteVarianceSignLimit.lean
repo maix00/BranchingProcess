@@ -6,11 +6,11 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Distributions.Stable.Attraction.Normal
+public import Probability.Distributions.Stable.Attraction.Normal.Basic
 public import Probability.Distributions.Gaussian.Sign
 public import Probability.Distributions.Moments.Real
 public import Probability.ConvergenceInDistribution.Portmanteau
-public import Algebra.BigOperators.AdditivePath
+public import Algebra.BigOperators.AdditivePath.Basic
 public import Mathlib.Analysis.Asymptotics.SpecificAsymptotics
 
 /-!
@@ -33,7 +33,8 @@ This is the Gaussian positivity-parameter input to R. A. Doney,
 (Probab. Theory Relat. Fields 101 (1995), 577--580, DOI 10.1007/BF01202785), which is one of the
 ladder-variable results cited in Francesco Caravenna and Loïc Chaumont,
 *Invariance principles for random walks conditioned to stay positive*,
-Lemma 2.1 (Ann. Inst. H. Poincaré Probab. Statist. 44 (2008), 170--190, DOI 10.1214/07-AIHP119).
+Lemma 2.1 (Ann. Inst. H. Poincaré Probab. Statist. 44(1) (2008),
+170--190, DOI 10.1214/07-AIHP119).
 -/
 
 @[expose] public section

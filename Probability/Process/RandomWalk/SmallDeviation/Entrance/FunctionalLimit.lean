@@ -7,10 +7,10 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Distributions.Moments.Real
-public import Probability.Distributions.Stable.Attraction.Normal
-public import Probability.Process.RandomWalk.FunctionalLimit.Normal.PathLimit
+public import Probability.Distributions.Stable.Attraction.Normal.Basic
+public import Probability.Process.RandomWalk.FunctionalLimit.Normal.PathLimit.Basic
 public import Probability.Process.RandomWalk.Path.Skorokhod.Basic
-public import Probability.Sequence.IID
+public import Probability.Sequence.IID.Basic
 public import Probability.Process.Stable.PathLaw.LinearTube
 public import Mathlib.Topology.Compactness.Compact
 public import Topology.Cadlag.Skorokhod.Path.Linear

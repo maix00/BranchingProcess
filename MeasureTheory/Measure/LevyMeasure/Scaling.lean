@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import MeasureTheory.Measure.LevyMeasure
+public import MeasureTheory.Measure.Levy.Basic
 import Mathlib.MeasureTheory.Integral.Lebesgue.Add
 import Mathlib.MeasureTheory.Integral.Lebesgue.Map
 

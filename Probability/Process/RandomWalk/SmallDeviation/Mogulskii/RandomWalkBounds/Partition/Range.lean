@@ -6,8 +6,8 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.Horizontal
-public import Probability.Process.RandomWalk.Path.Corridor.Horizontal
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.Horizontal.Basic
+public import Probability.Process.RandomWalk.Path.Corridor.Horizontal.Core
 
 /-!
 # Finite-partition range upper bound

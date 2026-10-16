@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Combinatorics.BranchingWalk.Step.Generation.Update
-public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Field
+public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Field.Basic
 
 /-!
 # Measurability of generation-local step-field updates

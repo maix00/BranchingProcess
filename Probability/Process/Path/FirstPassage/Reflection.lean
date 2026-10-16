@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.Path.FirstPassage.Basic
-public import Probability.Process.Path.Reflection
+public import Probability.Process.Path.Reflection.Basic
 
 /-!
 # First passage under path reflection

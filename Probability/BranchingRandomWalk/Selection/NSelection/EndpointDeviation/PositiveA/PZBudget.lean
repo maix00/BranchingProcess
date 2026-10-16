@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Population.PZInput
 import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Population.LowCount
-import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.PowerBudget
+import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Rate.PowerBudget
 import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 
 /-!

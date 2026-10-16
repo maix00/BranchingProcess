@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.Brownian.LinearPathSupport
+public import Probability.Process.Brownian.Support.LinearPath
 public import Probability.Process.Brownian.Meander.LastZeroLaw
 public import Topology.ContinuousMap.LastSignChange
 public import Topology.Cadlag.Skorokhod.Maps.Continuous
@@ -30,7 +30,7 @@ The public theorems in this file are:
 
 The terminal-excursion representation is from Donald L. Iglehart,
 *Functional Central Limit Theorems for Random Walks Conditioned to Stay
-Positive*, Ann. Probab. 2(4) (1974), 608--619, DOI 10.1214/aop/1176996607, Section 3.
+Positive*, Ann. Probab. 2(4) (1974), 608--619, DOI 10.1214/aop/1176996607, Section 3, theorem (3.4), p. 616.
 -/
 
 @[expose] public section

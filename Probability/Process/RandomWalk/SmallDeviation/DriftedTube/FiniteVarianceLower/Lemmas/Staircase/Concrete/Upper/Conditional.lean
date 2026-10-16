@@ -27,12 +27,15 @@ The module-visible supporting lemmas in this file are:
 
 This is the symmetric endpoint part of Wang Yiyang,
 *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
-Chapter 3, proof of Lemma 3.5. The conditioned limit is stated in Caravenna--Chaumont,
-*Invariance principles for random walks conditioned to stay positive*,
-equation (3.3). The survival input follows from M. Bauer, C. Godrèche, and J.-M. Luck,
-*Statistics of persistent events in the binomial random walk: Will the
-drunken sailor hit the sober man?*, Appendix A, equation (A.7)
-(arXiv:cond-mat/9905252).
+Chapter 3, proof of Lemma 3.5. The conditioned limit is equation (3.3) of
+Francesco Caravenna and Loïc Chaumont, *Invariance principles for random walks
+conditioned to stay positive*, *Annales de l'Institut Henri Poincaré,
+Probabilités et Statistiques* 44(1) (2008), 170–190, DOI 10.1214/07-AIHP119.
+The survival input uses the finite cyclic-rotation cover described immediately
+after equation (A.3) in Appendix A of M. Bauer, C. Godrèche, and J.-M. Luck,
+*Statistics of persistent events in the binomial random walk: Will the drunken
+sailor hit the sober man?*, *Journal of Statistical Physics* 96 (1999),
+963–1019, DOI 10.1023/A:1004636216365, arXiv:cond-mat/9905252.
 -/
 
 @[expose] public section

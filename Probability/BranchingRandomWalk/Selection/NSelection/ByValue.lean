@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Combinatorics.BranchingWalk.Selection.NSelection.ByValue
+public import Combinatorics.BranchingWalk.Selection.NSelection.Mechanism.ByValue
 public import Mathlib.MeasureTheory.Constructions.BorelSpace.Basic
 public import Mathlib.MeasureTheory.Constructions.BorelSpace.Order
 

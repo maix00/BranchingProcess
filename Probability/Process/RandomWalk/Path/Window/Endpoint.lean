@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.Path.Window
+public import Probability.Process.RandomWalk.Path.Window.Core
 
 /-!
 # Finite path windows with a terminal interval

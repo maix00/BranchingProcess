@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.Path.Event.Drawdown
-public import Algebra.BigOperators.AdditivePath
+public import Algebra.BigOperators.AdditivePath.Basic
 
 /-!
 # Drawdown and endpoint event for an increment sequence

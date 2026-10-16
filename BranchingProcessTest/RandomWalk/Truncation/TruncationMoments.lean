@@ -1,4 +1,4 @@
-import Probability.Process.RandomWalk.Path.Truncation.Maximal
+import Probability.Process.RandomWalk.Path.Truncation.Maximal.Basic
 
 open MeasureTheory ProbabilityTheory
 open ProbabilityTheory.RandomWalk

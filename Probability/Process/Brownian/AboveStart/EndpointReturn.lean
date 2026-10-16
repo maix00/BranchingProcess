@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.Brownian.AboveStart.InteriorReturn
-public import Probability.Process.Brownian.Reflection.UnboundedBelow
+public import Probability.Process.Brownian.Reflection.Path.UnboundedBelow
 
 /-!
 # Endpoint returns and descending Brownian hitting times

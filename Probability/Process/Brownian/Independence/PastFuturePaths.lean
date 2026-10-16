@@ -6,10 +6,10 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.Brownian.ContinuousPathLaw
+public import Probability.Process.Brownian.PathLaw.ContinuousPathLaw
 public import Probability.Process.Path.Independence.DenseEvaluation
-public import Probability.Process.Path.Continuous
-public import Probability.Process.Brownian.Reflection.FirstPassagePrinciple
+public import Probability.Process.Path.Representation.Continuous
+public import Probability.Process.Brownian.Reflection.FirstPassage.Principle
 public import Probability.Independence.AtomlessEquality
 
 /-!

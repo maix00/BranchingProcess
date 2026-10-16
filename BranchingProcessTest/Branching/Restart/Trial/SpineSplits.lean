@@ -1,4 +1,4 @@
-import Probability.BranchingRandomWalk.Restart.RootedTrial.SpineSplits
+import Probability.BranchingRandomWalk.Restart.RootedTrial.Spine.Splits
 
 /-!
 # Axiom audit for pre-sampled reserve-spine split completions

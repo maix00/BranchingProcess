@@ -5,14 +5,14 @@ Authors: WANG Yiyang
 -/
 
 import Probability.BranchingRandomWalk.Genealogy.Lineage.MultiRoot
-import Probability.BranchingRandomWalk.Restart.FailureEstimate
-import Probability.BranchingRandomWalk.Restart.FirstSplit
+import Probability.BranchingRandomWalk.Restart.Failure.Estimate
+import Probability.BranchingRandomWalk.Restart.Trial.FirstSplit
 import Probability.BranchingRandomWalk.Restart.FirstSplit.BranchingProperty
-import Probability.BranchingRandomWalk.Restart.ReserveLineage
-import Probability.BranchingRandomWalk.Restart.Trial
+import Probability.BranchingRandomWalk.Restart.Reserve.Lineage
+import Probability.BranchingRandomWalk.Restart.Trial.Basic
 import Probability.BranchingRandomWalk.Restart.RootedTrial.Reserve.Lineage
 import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.StoppingSubtreeVector.Factorization
-import Probability.BranchingRandomWalk.Timing.TimingCounterexample
+import Probability.BranchingRandomWalk.Timing.Trials.Counterexample
 
 /-!
 # Pre-sampled reserve-lineage API checks

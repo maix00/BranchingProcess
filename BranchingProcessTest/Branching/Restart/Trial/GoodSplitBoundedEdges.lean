@@ -1,4 +1,4 @@
-import Probability.BranchingRandomWalk.Restart.GoodSplit
+import Probability.BranchingRandomWalk.Restart.Success.GoodSplit
 
 /-!
 # Axiom audit for bounded edges at reserve splits

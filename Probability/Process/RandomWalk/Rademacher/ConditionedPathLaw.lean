@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.Rademacher.TerminalPathLaw
+public import Probability.Process.RandomWalk.Rademacher.Terminal.PathLaw
 public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Survival.Conditioning
 
 /-!

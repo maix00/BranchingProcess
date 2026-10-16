@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.Partition.Corridor
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.SourcePath
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Path.SourcePath
 
 /-!
 # Floor partitions for the source terminal-left convention

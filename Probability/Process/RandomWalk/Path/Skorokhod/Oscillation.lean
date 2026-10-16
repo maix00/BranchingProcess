@@ -11,7 +11,7 @@ public import Probability.Process.RandomWalk.Path.Representation.Cadlag
 public import Probability.Process.RandomWalk.Path.Block.Law.FirstCrossing
 public import Topology.Cadlag.Skorokhod.Oscillation.Partition.Finite
 public import Topology.Cadlag.Skorokhod.Oscillation.Partition.Measurability
-public import Topology.Cadlag.Skorokhod.Oscillation.DoubleExcursion
+public import Topology.Cadlag.Skorokhod.Oscillation.DoubleExcursion.Basic
 
 /-!
 # Oscillation partitions for finite random-walk paths

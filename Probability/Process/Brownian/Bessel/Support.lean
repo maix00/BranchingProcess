@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.Brownian.Bessel.ThreeDimensional
-public import Probability.Process.Brownian.LinearTube
+public import Probability.Process.Brownian.Support.LinearTube
 public import Topology.Cadlag.Skorokhod.Path.Linear
 public import Mathlib.MeasureTheory.Measure.Support
 

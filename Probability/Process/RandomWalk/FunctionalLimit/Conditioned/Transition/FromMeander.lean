@@ -32,7 +32,7 @@ Erwin Bolthausen, *On a Functional Central Limit Theorem for Random Walks Condit
 Theorem 3.2; its identification with the terminal excursion is due to
 Donald L. Iglehart, *Functional Central Limit Theorems for Random Walks
 Conditioned to Stay Positive*, Ann. Probab. 2(4) (1974), 608--619, DOI 10.1214/aop/1176996607,
-Section 3.
+Section 3, theorem (3.4), p. 616.
 -/
 
 @[expose] public section

@@ -9,7 +9,7 @@ module
 public import Mathlib.MeasureTheory.Measure.OpenPos
 public import Mathlib.MeasureTheory.Measure.Prod
 public import Mathlib.MeasureTheory.Constructions.UnitInterval
-public import MeasureTheory.MeasurableSpace.CadlagPath
+public import MeasureTheory.MeasurableSpace.CadlagPath.Basic
 public import Topology.Cadlag.Jump
 public import Topology.Cadlag.Skorokhod.Evaluation.Basic
 

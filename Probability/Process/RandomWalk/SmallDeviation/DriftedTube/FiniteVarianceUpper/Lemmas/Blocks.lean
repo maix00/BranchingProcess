@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper
+public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Basic
 public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.Event
 public import Probability.Process.Filtration.ConditionalBlocks
 import Analysis.Asymptotics.Scale.IntermediatePowerBlock

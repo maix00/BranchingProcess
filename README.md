@@ -13,7 +13,7 @@ defines or proves it.
 
 | Domain | Core definitions and theorem interfaces | Status |
 | --- | --- | --- |
-| Ulam--Harris trees and branching walks | [`Step`](Combinatorics/BranchingWalk/Step/Basic.lean), [`surviveAlong`](Combinatorics/BranchingWalk/Basic/SurviveAlong.lean), [`RootIndexed.BranchingWalk`](Combinatorics/BranchingWalk/Basic/Definitions.lean), derived parent closure, and the step-level [`IsSiblingClosed`](Combinatorics/BranchingWalk/Basic/SiblingClosed.lean) property used when constructing ordered trees | Reusable foundation |
+| Ulam--Harris trees and branching walks | [`Step`](Combinatorics/BranchingWalk/Step/Basic.lean), [`surviveAlong`](Combinatorics/BranchingWalk/Basic/Survival/SurviveAlong.lean), [`RootIndexed.BranchingWalk`](Combinatorics/BranchingWalk/Basic/Definitions.lean), derived parent closure, and the step-level [`IsSiblingClosed`](Combinatorics/BranchingWalk/Basic/Sibling/Closed.lean) property used when constructing ordered trees | Reusable foundation |
 | Random fields and genealogy | Product laws for step fields, generation filtrations, adapted selections, multi-root marginals, fixed and selected descendant laws | Reusable interfaces; theorem-specific instances continue to grow |
 | Point processes and spines | [`PointProcess`](Probability/PointProcess/Basic.lean), Dirac point measures, exponential tilting, spine laws, and both directions of the many-to-one formulas | Core formulas formalized |
 | Kernels and survival | Markov/sub-Markov kernels, killed and return kernels, corridor survival, block and entrance estimates | Reusable kernel layer |
@@ -118,7 +118,7 @@ There is deliberately no umbrella import. For example:
 
 ```lean
 import Probability.BranchingRandomWalk.Walk.Basic
-import Probability.Process.RandomWalk.FunctionalLimit.Donsker.CLT
+import Probability.Process.RandomWalk.FunctionalLimit.Donsker.FiniteDimensional.CLT
 import Probability.PointProcess.Basic
 ```
 

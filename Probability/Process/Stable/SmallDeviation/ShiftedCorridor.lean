@@ -6,11 +6,11 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.FiniteTimeEntrance
+public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.Entrance.FiniteTime
 public import Probability.Process.Stable.SmallDeviation.Blocks.EntranceFactorization
 public import Probability.Process.Stable.SmallDeviation.Blocks.EntranceScaling
 public import Probability.Process.Stable.SmallDeviation.Blocks.Upper.Shrinking
-public import Probability.Distributions.Stable.Sign
+public import Probability.Distributions.Stable.Operations.Sign
 public import Probability.Process.Path.Skorokhod.Corridor.Segment
 public import Analysis.Asymptotics.Sequence.NegativeRatio
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
@@ -29,10 +29,12 @@ multiplicative comparison after stable scaling.
 
 ## References
 
-The comparison implies Lemma 2(a), equation (21), in A. A. Mogul'skii,
-"Small Deviations in a Space of Trajectories" (Russian original, 1974;
-English translation, *Theory of Probability and Its Applications* 19(4)
-(1975), 726--736, DOI 10.1137/1119081).
+The comparison is the finite-time shifted-corridor estimate in Lemma 2(a),
+equation (21), of A. A. Mogul'skii, “Small deviations in the sample function
+space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974), 755--765; see
+also the English translation, “Small Deviations in a Space of Trajectories,”
+*Theory of Probability and Its Applications* 19(4) (1975), 726--736, DOI
+10.1137/1119081.
 
 This is the light public entry point for shifted-corridor comparisons. It does
 not import the feedback, path-support, or Poisson entrance arguments.
@@ -46,7 +48,10 @@ open MeasureTheory Filter
 open scoped NNReal Topology
 
 /-- A fixed-time entrance, scaled into an initial interval of length
-`T * a ^ α`, gives the finite-scale shifted-corridor inequality. -/
+`T * a ^ α`, gives the finite-scale shifted-corridor inequality from Lemma
+2(a), equation (21), of A. A. Mogul'skii, “Small deviations in the sample
+function space” (1974); see also “Small Deviations in a Space of Trajectories,”
+DOI 10.1137/1119081. -/
 theorem IsStableLevyProcess.measure_shiftedFullCorridor_ge_entrance_mul_finiteTime
     {Ω : Type*} [MeasurableSpace Ω]
     {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}

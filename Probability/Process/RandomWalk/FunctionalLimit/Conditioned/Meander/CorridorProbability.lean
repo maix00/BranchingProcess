@@ -32,8 +32,8 @@ The public theorems and definition in this file are:
 
 The convergence hypothesis is the Brownian-meander functional limit proved
 by Donald L. Iglehart, *Functional Central Limit Theorems for Random Walks
-Conditioned to Stay Positive*, Ann. Probab. 2(4) (1974), 608–619,
-DOI 10.1214/aop/1176996607, and extended by Erwin Bolthausen,
+Conditioned to Stay Positive*, Ann. Probab. 2(4) (1974), 608--619,
+DOI 10.1214/aop/1176996607, Section 3, theorem (3.4), p. 616, and extended by Erwin Bolthausen,
 *On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*, Ann. Probab. 4(3) (1976), 480–485,
 DOI 10.1214/aop/1176996098. Francesco Caravenna and Loïc Chaumont recall
 this limit in *Invariance principles for random walks conditioned to stay
@@ -55,7 +55,9 @@ open scoped ENNReal NNReal Topology
 namespace ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned
 
 /-- The Portmanteau consequence of Iglehart's *Functional Central Limit
-Theorems for Random Walks Conditioned to Stay Positive*, Section 3, and
+Theorems for Random Walks Conditioned to Stay Positive*, Ann. Probab. 2(4)
+(1974), 608--619, DOI 10.1214/aop/1176996607, Section 3, theorem (3.4),
+p. 616, and
 Bolthausen's *On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*, Theorem 3.2, recalled by Caravenna and
 Chaumont in *Invariance principles for random walks conditioned to stay
 positive*, equation (3.3). The support input is used in Wang Yiyang,
@@ -133,7 +135,9 @@ theorem mem_normalizedTransitionCorridor_of_meanderCorridor
 /-- A conditioned random-walk limit with Brownian-meander support gives
 an eventual positive probability for the finite-width transition corridor.
 The convergence input is Iglehart, *Functional Central Limit Theorems for
-Random Walks Conditioned to Stay Positive*, Section 3, and Bolthausen,
+Random Walks Conditioned to Stay Positive*, Ann. Probab. 2(4) (1974),
+608--619, DOI 10.1214/aop/1176996607, Section 3, theorem (3.4), p. 616,
+and Bolthausen,
 *On a Functional Central Limit Theorem for Random Walks Conditioned to Stay
 Positive*, Theorem 3.2, recalled by Caravenna and Chaumont, *Invariance
 principles for random walks conditioned to stay positive*, equation (3.3),

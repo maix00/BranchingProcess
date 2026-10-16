@@ -6,11 +6,11 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.FunctionalLimit.Donsker.Continuous
-public import Probability.Process.RandomWalk.Path.Survival
+public import Probability.Process.RandomWalk.FunctionalLimit.Donsker.Path.Continuous
+public import Probability.Process.RandomWalk.Path.Survival.Basic
 public import Probability.Process.RandomWalk.Fluctuation.DescendingLocalTime
-public import Probability.Process.Brownian.Reflection.NonnegativeUnitPath
-public import Probability.Process.Brownian.Existence
+public import Probability.Process.Brownian.Reflection.Path.NonnegativeUnitPath
+public import Probability.Process.Brownian.Construction.Existence
 public import Probability.Distributions.Moments.Real
 
 /-!

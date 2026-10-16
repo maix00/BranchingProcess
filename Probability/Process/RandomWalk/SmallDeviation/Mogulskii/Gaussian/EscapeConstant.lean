@@ -35,10 +35,12 @@ letting their relative width increase to one identifies the constant.
 The Brownian specialization uses the existing rational-coordinate càdlàg
 path law of `IsBrownianReal`; it only uses the a.e. continuity recorded by
 Mathlib, not an everywhere-continuous sample-path version.
-The constant identifies the Gaussian specialization in A. A. Mogul'skii,
-*Small Deviations in a Space of Trajectories*, Theorem 3, Section 4,
-p. 764 of the 1974 Russian original (English translation, *Theory of Probability
-and Its Applications* 19(4) (1975), 726--736, DOI 10.1137/1119081).
+The constant identifies the Gaussian specialization in Theorem 3, Section 4,
+p. 764 of the 1974 Russian original by A. A. Mogul'skii, “Small deviations in
+the sample function space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4)
+(1974), 755–765; English translation, “Small Deviations in a Space of
+Trajectories,” *Theory of Probability and Its Applications* 19(4) (1975),
+726–736, DOI 10.1137/1119081.
 
 
 The original bibliography is A. A. Mogul'skii, “Small deviations in the sample function space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974), 755--765; English translation, “Small Deviations in a Space of Trajectories,” *Theory of Probability and Its Applications* 19(4) (1975), 726--736, DOI 10.1137/1119081. -/

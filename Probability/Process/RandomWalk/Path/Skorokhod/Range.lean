@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.Path.Block.Law.Excursions
-public import Probability.Process.RandomWalk.Path.Skorokhod
+public import Probability.Process.RandomWalk.Path.Skorokhod.Core
 public import Topology.Cadlag.Skorokhod.Path.Range
 
 /-!

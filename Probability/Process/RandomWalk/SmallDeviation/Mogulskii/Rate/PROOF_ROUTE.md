@@ -1,10 +1,11 @@
 # Mogulskii stable theorem: source-ordered proof and status
 
 This note records the proof route and verified status for the general
-stable-domain theorem of A. A. Mogul'skii, *Small Deviations in a Space of
-Trajectories* (1974 Russian original; 1975 English translation, *Theory of
-Probability and Its Applications* 19(4), 726–736, DOI 10.1137/1119081;
-[original article record and full text](https://www.mathnet.ru/eng/tvp3978)).
+stable-domain theorem of A. A. Mogul'skii, “Small deviations in the sample
+function space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974),
+755–765; English translation, “Small Deviations in a Space of Trajectories,”
+*Theory of Probability and Its Applications* 19(4) (1975), 726–736, DOI
+10.1137/1119081 ([original article record and full text](https://www.mathnet.ru/eng/tvp3978)).
 The Gaussian/`α = 2` calculation in Theorem 3, Section 4 comes only after the
 general stable-process and random-walk theorems; it is a later specialization,
 not the active first proof target. The theorem chains described here are
@@ -206,7 +207,7 @@ For a fixed small-deviation scale `x(n)`, write
    deterministic common partition in `PathClass/Boundary/Partition.lean`, so
    the random-walk proof does not depend on the stable-process geometry layer.
    The exact floor-cell remainder is now covered by a balanced partition:
-   `Analysis/Asymptotics/BlockScale.lean` distributes the remainder over all
+   `Analysis/Asymptotics/Scale/BlockScale.lean` distributes the remainder over all
    blocks, proves their exact sum, and shows both adjacent block lengths are
    asymptotic to the reference length when the block count diverges. The
    stable lower adapter proves that the quotient count diverges for every
@@ -223,7 +224,7 @@ For a fixed small-deviation scale `x(n)`, write
    list of return blocks followed by a final bridge and bounds it by the
    killed walk over the exact sum of their lengths. The endpoint bridge, balanced partition, variable-list kernel composition,
    and finite-cell IID identification are now assembled in
-   `Stable/Discrete/PartitionLower/`. `PartitionLower/EnergyLower.lean`
+   `Stable/RandomWalkBounds/PartitionLower/`. `Stable/RandomWalkBounds/PartitionLower/EnergyLower.lean`
    removes the finite core margins in the exact energy limit.
 5. The process theorem is proved for `M₂`, `M₃`, and `M`. For arbitrary `IsM`
    targets, the API states matching inner and outer probability rates; it does
@@ -256,11 +257,11 @@ calculation.
    entries `Stable/SmallDeviation/{ShiftedCorridor,RangeComparison,
    BlockBounds,EndpointComparison}.lean`. The statements preserve the source's
    strict and half-open event conventions.
-3. Lemma 1 (18)--(20) is proved in `Stable/SmallDeviation/EscapeRate.lean`
+3. Lemma 1 (18)--(20) is proved in `Stable/SmallDeviation/EscapeRate/Basic.lean`
    and its `EscapeRate/{Corridor,Endpoint,Law}` modules. It establishes a
    finite strictly negative escape rate and transfers the same rate to the
    translated and endpoint-constrained events. The unit-interval
-   `CadlagPath` transfer in `EscapeRate/PathLaw.lean` is also proved, by
+   `CadlagPath` transfer in `EscapeRate/PathLaw/Transfer.lean` is also proved, by
    comparison with a reference stable Lévy process having the same increment
    specification; it does not construct a full-time process extension from an
    arbitrary unit-interval law.
@@ -270,7 +271,7 @@ calculation.
    the stable specialization proves (6)--(7) with one coefficient shared by
    all frequencies. The norming-ratio implication (E), compact-frequency
    uniform convergence (I), and continuous small-frequency regular variation
-   (J) are now proved in `Stable/Attraction/NormingRatios/`; the norming-sequence
+   (J) are now proved in `Probability/Distributions/Stable/Attraction/NormingRatios/`; the norming-sequence
    proofs do not assume monotonicity. **The inverse Tauberian chain for
    `0 < α < 2` is now proved.** The exact inverse cosine-kernel identity is in
    `Probability.Distributions.CharacteristicFunction.Tauberian.SecondTail`;
@@ -340,7 +341,7 @@ The inverse-Tauberian implication is complete for `0 < α < 2`: it transfers
 the characteristic-function defect to regular variation of the two-sided
 increment tail and gives the truncated-moment/defect ratio. For `α = 2`, the
 finite-variance branch is formalized in
-`Probability/Distributions/Stable/Attraction/Normal.lean`: a centered
+`Probability/Distributions/Stable/Attraction/Normal/Basic.lean`: a centered
 probability law with integrable square and positive second moment has
 standard-Gaussian attraction and `IsStableNorming` under the canonical
 normalization `sqrt (n * secondMoment)`. For infinite-variance normal
@@ -503,7 +504,7 @@ interval of total width `8m` and a block of length `n`, assume
    its finite Rademacher path event and proves containment in the corresponding
    open tube and displacement-band block event. Thus the seven spectral
    estimates give a common eventual lower bound for the seven Rademacher
-   block probabilities. `Rate/EndpointWindowSelection.lean` passes these
+   block probabilities. `Rate/Endpoint/Selection.lean` passes these
    moving widths and endpoint windows through fixed closed and open Brownian
    corridors using Donsker Portmanteau bounds with explicit scale slack. The
    open-set transfer gives the seven block bounds for every centered
@@ -513,7 +514,7 @@ interval of total width `8m` and a block of length `n`, assume
    scale-transfer theorem at each fixed `C` and take `C → ∞`. The explicit
    choices `p = 1/C`, `q = 1 - 10/C`, and `δ = p/(100√C)` make the lower rate
    converge to `-π²/2`. The construction proves eventual positivity and lower
-   coboundedness; `Rate/EndpointWindowSelection.lean` combines it with the
+   coboundedness; `Rate/Endpoint/Selection.lean` combines it with the
    independent sharp upper limsup to prove the horizontal limit.
 
 The centered-core spectrum alone does not give the lower bound for each of
@@ -576,7 +577,7 @@ The discrete random-walk theorem now has an exact finite-partition proof.
   used for the upper estimate, without choosing a random corridor center.
   `Stable/Corridor.lean` transfers the closed range event by closed-set
   Portmanteau. The endpoint-return construction and seven open endpoint bands
-  give the matching one-block lower estimate; `SourceLower.lean` derives the
+  give the matching one-block lower estimate; `Stable/RandomWalkBounds/Source/Bounds/Lower.lean` derives the
   endpoint masses and J₁ block limit in the three source regimes below index
 two. `BridgeComparison/SourceDecay.lean` proves the equation-(34) comparison
   logarithmic comparison from the finite bridge cover, entrance mass, base
@@ -588,15 +589,15 @@ two. `BridgeComparison/SourceDecay.lean` proves the equation-(34) comparison
   exact floor-indexed IID cells and proves their inclusion in the whole
   right-continuous corridor event. This preserves the endpoint convention at
   partition knots.
-- `Stable/Discrete/EndpointBandTransfer/StableLower/` supplies the open
+- `Stable/RandomWalkBounds/EndpointBandTransfer/StableLower/` supplies the open
   endpoint-mass transfer, cell entrance and exit bridges, and their path-limit
-  bounds. `Stable/Discrete/PartitionLower/` composes these with the balanced
+  bounds. `Stable/RandomWalkBounds/PartitionLower/` composes these with the balanced
   floor partition, obtains eventual positivity, and derives the sharp lower
-  energy rate. `Stable/Discrete/PartitionUpper.lean` proves the matching
-  selected-cell upper rate. `PartitionLimit.lean` combines both sides into the
+  energy rate. `Stable/RandomWalkBounds/Partition/Upper.lean` proves the matching
+  selected-cell upper rate. `Stable/RandomWalkBounds/Partition/Limit.lean` combines both sides into the
   exact logarithmic limit for every admissible `M₂` step corridor.
-- `PathClassRate.lean` passes the exact `M₂` rates through finite `M₃` unions
-  and the approximation class `M`. `PathClassRegimes.lean` supplies the slow
+- `Stable/RandomWalkBounds/PathClass/Rate.lean` passes the exact `M₂` rates through finite `M₃` unions
+  and the approximation class `M`. `Stable/RandomWalkBounds/PathClass/Regimes.lean` supplies the slow
   variation, stable-process escape rate, and base tightness for `0 < α < 1`,
   `α = 1` with the source sine-centering condition, and `1 < α < 2` with
   integrable centered increments. Thus the random-walk rate theorem for

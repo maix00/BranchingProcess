@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.BranchingRandomWalk.Population.Candidates.RootIndexed
+public import Probability.BranchingRandomWalk.Population.Candidates.RootIndexed.Basic
 public import Probability.BranchingRandomWalk.Step.Field.Update
 
 /-!

@@ -9,8 +9,8 @@ module
 public import Mathlib.Algebra.Order.Floor.Semifield
 public import Probability.Process.RandomWalk.Kernel.Killed.Bridge
 public import Probability.Process.RandomWalk.Path.Block.Partition.Basic
-public import Probability.Process.RandomWalk.Path.Corridor.Horizontal
-public import Probability.Process.RandomWalk.Path.Window
+public import Probability.Process.RandomWalk.Path.Corridor.Horizontal.Core
+public import Probability.Process.RandomWalk.Path.Window.Core
 public import Probability.Process.RandomWalk.Path.Block.Corridor.Measure
 
 /-!

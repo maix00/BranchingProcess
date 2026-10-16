@@ -9,8 +9,8 @@ module
 public import Probability.Process.RandomWalk.SmallDeviation.Entrance.NormalDomain
 public import Probability.Process.RandomWalk.SmallDeviation.Entrance.FiniteVariance.StableEndpointBridge
 public import Probability.Process.RandomWalk.FunctionalLimit.Normal.Tightness
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.FromIncrementLaw.PathLaw
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Scale
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.FromIncrementLaw.Path.Law
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Scale.Basic
 public import Probability.Distributions.Gaussian.Interval
 
 /-!

@@ -1,4 +1,4 @@
-import Probability.BranchingRandomWalk.Restart.RootedTrial.PositivePartExpectation
+import Probability.BranchingRandomWalk.Restart.RootedTrial.Reward.Expectation
 
 /-!
 # Axiom audit for the integrated causal reserve-spine bound

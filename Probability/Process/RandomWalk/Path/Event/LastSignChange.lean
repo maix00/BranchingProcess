@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.Path.Survival
+public import Probability.Process.RandomWalk.Path.Survival.Basic
 
 /-!
 # The final one-sided segment of a finite random walk

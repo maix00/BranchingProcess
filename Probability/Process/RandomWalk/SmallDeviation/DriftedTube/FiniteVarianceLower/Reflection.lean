@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.EndpointEvent
-public import Probability.Sequence.IID
+public import Probability.Sequence.IID.Basic
 
 /-!
 # Reflection of the tilted-tube endpoint event

@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.Feedback.Tube
-public import Probability.Distributions.Stable.Sign
+public import Probability.Distributions.Stable.Operations.Sign
 
 /-!
 # The unit-time entrance event in the interval comparison
@@ -17,10 +17,11 @@ prove positivity through a smaller open endpoint window, keeping the strict
 global corridor bounds.
 
 This entrance estimate supplies the positive endpoint-window factor used in
-Lemma 2(a), equation (21), of A. A. Mogul'skii, "Small Deviations in a Space
-of Trajectories" (Russian original, 1974; English translation, *Theory of
-Probability and Its Applications* 19(4) (1975), 726--736, DOI
-10.1137/1119081).
+Lemma 2(a), equation (21), of A. A. Mogul'skii, “Small deviations in the
+sample function space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974),
+755–765; English translation, “Small Deviations in a Space of Trajectories,”
+*Theory of Probability and Its Applications* 19(4) (1975), 726–736, DOI
+10.1137/1119081.
 -/
 
 @[expose] public section

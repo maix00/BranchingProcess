@@ -1,7 +1,7 @@
-import Probability.BranchingRandomWalk.Restart.RootedTrial.SiblingTrial
+import Probability.BranchingRandomWalk.Restart.RootedTrial.Spine.SiblingTrial
 import Probability.BranchingRandomWalk.Restart.RootedTrial.Reserve.Recursive
-import Probability.BranchingRandomWalk.Restart.RootedTrial.FiniteSplitCompletion
-import Probability.BranchingRandomWalk.Restart.GoodSplit
+import Probability.BranchingRandomWalk.Restart.RootedTrial.Completion.FiniteSplit
+import Probability.BranchingRandomWalk.Restart.Success.GoodSplit
 
 /-!
 # Restart sibling trial API checks

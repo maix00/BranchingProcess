@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Algebra.BigOperators.AdditivePath
+public import Algebra.BigOperators.AdditivePath.Basic
 public import Mathlib.Algebra.Order.Floor.Semifield
 public import Mathlib.Analysis.SpecialFunctions.Sqrt
 public import Mathlib.Basic.Real.Basic

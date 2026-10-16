@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.Path.Continuous
+public import Probability.Process.Path.Representation.Continuous
 public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
 
 /-!

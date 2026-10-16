@@ -4,8 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Restart.RootedTrial.SiblingTrial
-import Probability.Sequence.IID
+import Probability.BranchingRandomWalk.Restart.RootedTrial.Spine.SiblingTrial
+import Probability.Sequence.IID.Basic
 import Probability.BranchingRandomWalk.Restart.FirstSplit.BranchingProperty
 import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.StoppingSubtreeVector.Law
 

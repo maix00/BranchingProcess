@@ -7,14 +7,14 @@ Authors: WANG Yiyang
 module
 
 public import Mathlib.Probability.BrownianMotion.Basic
-public import Probability.Process.Stable.Brownian
+public import Probability.Process.Stable.Brownian.Basic
 public import Mathlib.Probability.Distributions.Gaussian.IsGaussianProcess.Independence
 public import Mathlib.Probability.Distributions.Gaussian.Real
 public import Mathlib.MeasureTheory.Measure.OpenPos
 public import Probability.Process.Stable.PathLaw.FullProcess
 public import Probability.Process.Stable.PathLaw.UnitInterval
 public import Probability.Process.Stable.SmallDeviation.EscapeRate.PathLaw.Transfer
-public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.FullCorridor
+public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.Entrance.FullCorridor
 public import Probability.Process.Path.Skorokhod.Corridor.Segment
 public import Probability.Process.Path.Cadlag.MeasurableMap
 public import Topology.Cadlag.Skorokhod.Path.Linear

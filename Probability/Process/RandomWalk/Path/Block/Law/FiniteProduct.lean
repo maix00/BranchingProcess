@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.Path.Block.Law
+public import Probability.Process.RandomWalk.Path.Block.Law.Basic
 
 /-!
 # Product law for a finite vector of variable-length blocks

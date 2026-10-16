@@ -30,7 +30,7 @@ This is the open-set and support step in Wang Yiyang, *Asymptotic Speed of the N
 Lemma 3.5 and Appendix A.2, Lemma A.7. The positive-mass statement for the Brownian
 meander law follows from the last-zero representation of Donald L. Iglehart,
 *Functional Central Limit Theorems for Random Walks Conditioned to Stay
-Positive*, Ann. Probab. 2(4) (1974), 608--619, DOI 10.1214/aop/1176996607, Section 3.
+Positive*, Ann. Probab. 2(4) (1974), 608--619, DOI 10.1214/aop/1176996607, Section 3, theorem (3.4), p. 616.
 -/
 
 @[expose] public section

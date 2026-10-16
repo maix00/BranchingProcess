@@ -7,8 +7,8 @@ Authors: WANG Yiyang
 module
 
 public import Mathlib.Topology.UnitInterval
-public import Probability.Process.RandomWalk.FunctionalLimit.Donsker.Skorokhod
-public import Probability.Process.RandomWalk.Path.Corridor.Horizontal
+public import Probability.Process.RandomWalk.FunctionalLimit.Donsker.Path.Skorokhod
+public import Probability.Process.RandomWalk.Path.Corridor.Horizontal.Core
 public import Probability.Process.RandomWalk.FunctionalLimit.NormalizedStep.Endpoint
 
 /-!

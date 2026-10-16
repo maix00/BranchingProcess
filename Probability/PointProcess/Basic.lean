@@ -6,9 +6,9 @@ Authors: WANG Yiyang
 
 module
 
-public import MeasureTheory.Measure.FiniteOnFamily
+public import MeasureTheory.Measure.Finite.OnFamily
 public import Mathlib.MeasureTheory.Measure.GiryMonad
-public import MeasureTheory.Measure.IntegerValued
+public import MeasureTheory.Measure.Algebra.IntegerValued
 
 public section
 

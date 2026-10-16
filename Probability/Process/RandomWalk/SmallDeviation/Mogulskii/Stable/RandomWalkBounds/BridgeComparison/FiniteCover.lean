@@ -10,7 +10,7 @@ public import Analysis.Asymptotics.Sequence.NegativeRatio
 public import Probability.ConvergenceInDistribution.Portmanteau
 public import Probability.Process.RandomWalk.FunctionalLimit.NormalizedStep.Block
 public import Probability.Process.RandomWalk.Path.Block.Corridor.Comparison
-public import Probability.Sequence.IID
+public import Probability.Sequence.IID.Basic
 
 /-! # Generic finite-cell bridge comparison
 
@@ -127,13 +127,15 @@ theorem eventually_source_finite_bridge_comparison
     (fun i hi => hbridgeN i hi)
     (fun i hi => geometry.bridge_glue n i hi)
 
-/-- Composition form of Mogul'skii's equation (34), Theorem 3, Section 4,
-p. 764 of the 1974 Russian original, in A. A. Mogul'skii, *Small Deviations in a Space of Trajectories*
-(1974 Russian original; 1975 English translation, DOI 10.1137/1119081): open limiting bridge
-events yield the eventual finite-cover comparison, which gives the lower
-logarithmic-ratio bound. The source-specific geometry, positive limiting
-bridge masses, event identification, base-event positivity, and target-event
-decay are hypotheses, not axioms or conclusions of this adapter. -/
+/-- Composition form of equation (34), Theorem 3, Section 4, p. 764 of the
+1974 Russian original by A. A. Mogul'skii, “Small deviations in the sample
+function space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974),
+755--765; English translation, “Small Deviations in a Space of Trajectories,”
+*Theory of Probability and Its Applications* 19(4) (1975), 726--736, DOI
+10.1137/1119081. Open limiting bridge events yield the eventual finite-cover
+comparison and lower logarithmic-ratio bound. The source-specific geometry,
+positive limiting bridge masses, event identification, base-event positivity,
+and target-event decay are hypotheses of this adapter. -/
 theorem eventually_one_sub_le_log_ratio_of_source_bridge_comparison
     {ν : Measure ℝ} [IsProbabilityMeasure ν]
     {ι : Type*} (F : Finset ι) (hF : F.Nonempty)

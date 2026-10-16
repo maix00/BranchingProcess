@@ -8,7 +8,7 @@ module
 
 public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.Event
 public import Probability.Process.RandomWalk.Path.Basic
-public import Probability.Sequence.IID
+public import Probability.Sequence.IID.Basic
 
 import Mathlib.Tactic.FieldSimp
 

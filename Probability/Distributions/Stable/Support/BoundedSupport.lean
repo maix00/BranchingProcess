@@ -7,8 +7,8 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Distributions.Stable.Basic
-public import Probability.Distributions.Stable.Gaussian
-public import Probability.Distributions.Stable.Sign
+public import Probability.Distributions.Stable.Gaussian.Basic
+public import Probability.Distributions.Stable.Operations.Sign
 public import Mathlib.Analysis.SpecificLimits.Basic
 public import Mathlib.Probability.Moments.Variance
 

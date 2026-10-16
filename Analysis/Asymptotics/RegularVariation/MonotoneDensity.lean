@@ -5,7 +5,7 @@ Authors: Codex
 -/
 module
 
-public import Analysis.Asymptotics.RegularVariation
+public import Analysis.Asymptotics.RegularVariation.Basic
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 public import Mathlib.Analysis.SpecialFunctions.Pow.Deriv
 

@@ -8,7 +8,7 @@ module
 
 public import Probability.ConvergenceInDistribution.Mapping
 public import Probability.Process.Brownian.AboveStart.FirstWindow.CenteredFiniteHorizon
-public import Probability.Process.RandomWalk.FunctionalLimit.Donsker.FiniteHorizon
+public import Probability.Process.RandomWalk.FunctionalLimit.Donsker.Path.FiniteHorizon
 
 /-!
 # Donsker convergence after a finite first-window shift

@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.Path.Corridor.Interpolation.Basic
-public import Probability.Process.RandomWalk.Path.Interpolation
+public import Probability.Process.RandomWalk.Path.Interpolation.Core
 public import Topology.Cadlag.Skorokhod.Corridor.Endpoint
 
 /-!

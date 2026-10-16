@@ -9,8 +9,8 @@ module
 public import Probability.BranchingRandomWalk.Selection.NSelection.ByValue
 public import Probability.BranchingRandomWalk.Selection.NSelection.Infinite
 public import Probability.BranchingRandomWalk.Selection.NSelection.Totalized
-public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Measurability
-public import Combinatorics.BranchingWalk.Basic.Position
+public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Field.Measurability
+public import Combinatorics.BranchingWalk.Basic.Position.Basic
 
 /-!
 # Adapted spatial selection in a pre-sampled forest

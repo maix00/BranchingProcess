@@ -1,4 +1,4 @@
-import Probability.BranchingRandomWalk.Restart.RootedTrial.Coupling
+import Probability.BranchingRandomWalk.Restart.RootedTrial.Coupling.Basic
 
 /-!
 # Axiom audit for the causal reserve-source comparison

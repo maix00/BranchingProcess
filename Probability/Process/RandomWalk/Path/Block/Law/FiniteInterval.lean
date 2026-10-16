@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.Path.Block.Law.Coordinates
-public import Probability.Process.RandomWalk.Path.Window
+public import Probability.Process.RandomWalk.Path.Window.Core
 public import Probability.Sequence.IID.StoppingTime
 
 /-!
