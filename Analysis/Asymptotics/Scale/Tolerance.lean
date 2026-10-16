@@ -14,6 +14,10 @@ public import Mathlib.Analysis.SpecificLimits.Basic
 This file contains a deterministic topological selection lemma for real-valued
 error terms represented in `ENNReal`.  It does not depend on a probability law
 or on the random-walk constructions that use it.
+
+Its public result is `Asymptotics.exists_pos_lt_ofReal_mul_sq_div_lt`: for
+`p > 0` and `u > 0`, there is `0 < r < u` such that
+`ENNReal.ofReal (c * (r^2 / d^2)) < p`.
 -/
 
 @[expose] public section

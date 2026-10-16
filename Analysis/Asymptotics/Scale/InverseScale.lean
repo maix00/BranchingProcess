@@ -11,7 +11,7 @@ public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 public import Mathlib.Analysis.SpecificLimits.Basic
 public import Mathlib.Analysis.Real.Sqrt
 public import Mathlib.Order.Interval.Set.Nat
-public import Analysis.Asymptotics.Scale.Scale
+public import Analysis.Asymptotics.Scale.Basic
 import Mathlib.Tactic.Ring
 
 /-!
@@ -21,6 +21,45 @@ This file contains the deterministic inverse operation used when a
 small-deviation estimate is reindexed by an integer tube width.  No
 monotonicity is imposed on the time scale: convergence to infinity is enough
 for every threshold set to be nonempty.
+
+The public declarations are `Asymptotics.IsSuperquadraticScale`,
+`Asymptotics.tendsto_width_sq_div_shiftedScale_of_superquadratic`,
+`Asymptotics.inverseScale`, `Asymptotics.upperInverseScale`,
+`Asymptotics.upperInverseScale_apply`, `Asymptotics.inverseScale_spec`,
+`Asymptotics.inverseScale_le`, `Asymptotics.inverseScale_mono`,
+`Asymptotics.inverseScale_scale_add_one_le`,
+`Asymptotics.lt_inverseScale_scale_add_two`,
+`Asymptotics.inverseScale_le_width_le_upperInverseScale`,
+`Asymptotics.lt_threshold_of_lt_inverseScale`,
+`Asymptotics.levelMultiplicity`,
+`Asymptotics.HasEventuallyBoundedLevelMultiplicity`,
+`Asymptotics.finite_levelSet_of_tendsto_atTop`,
+`Asymptotics.scale_pred_inverseScale_add_one_lt`,
+`Asymptotics.sub_one_le_scale_inverseScale`,
+`Asymptotics.tendsto_inverseScale_atTop`,
+`Asymptotics.tendsto_upperInverseScale_atTop`,
+`Asymptotics.tendsto_width_div_inverseScales_of_boundedLevelMultiplicity`,
+`Asymptotics.eventually_mul_sq_inverseScale_le_four_mul`,
+`Asymptotics.eventually_mul_sq_inverseScale_le_four_mul_of_superquadratic`,
+`Asymptotics.tendsto_sq_inverseScale_div_atTop_zero`,
+`Asymptotics.tendsto_sq_natCast_div_atTop_zero_of_eventually_mul_sq_le`,
+`Asymptotics.eventually_mul_sq_upperInverseScale_le_eight_mul`,
+`Asymptotics.tendsto_sq_upperInverseScale_div_atTop_zero`,
+`Asymptotics.tendsto_div_sqrt_atTop_zero_of_tendsto_sq_div_atTop_zero`,
+`Asymptotics.tendsto_inverseScale_div_sqrt_atTop_zero`,
+`Asymptotics.tendsto_upperInverseScale_div_sqrt_atTop_zero`,
+`Asymptotics.isSmallDeviationScale_inverseScale`, and
+`Asymptotics.isSmallDeviationScale_upperInverseScale`.
+
+For `L : ℕ → ℕ`, `IsSuperquadraticScale L` means that for every `K`,
+eventually `K * δ^2 ≤ L δ`.  `inverseScale L n` is the least `δ` with
+`n ≤ L δ + 1`, and `upperInverseScale L n = inverseScale L (n + 1) - 1`.
+Under `L δ → ∞`, the inverse scales tend to infinity.  If `L` is also
+monotone with eventually bounded level multiplicity, both widths associated
+with `L δ + 1` satisfy `δ / inverseWidth → 1`.  In the superquadratic case,
+both inverse widths satisfy `inverseWidth^2 / n → 0` and hence
+`inverseWidth / √n → 0`; each is packaged as an
+`IsSmallDeviationScale` with normalization `√n`.
 -/
 
 public section

@@ -17,6 +17,19 @@ This file chooses a three-point return cover and discharges the geometric
 hypotheses of the finite-partition lower bound.  The remaining hypothesis is
 the genuinely analytic comparison between the maximal-inequality error and
 the finite Gaussian products.
+
+The public declarations are:
+
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.exists_returnMargin_principal_gaussianProduct`:
+  choose $r>0$ below a prescribed upper bound so that the maximal-inequality
+  error is smaller than the Gaussian return product at centers $-2r,0,2r$.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.exists_lowerRate_horizontalTubeProbability_of_strictInterior_parameters`:
+  under the strict interior geometry and Gaussian-product bounds, there is a
+  positive return constant and $p\in(0,1]$ with
+  $((mC)^{-1})\log p\leq\liminf_n(a_n^2/n)\log\mathbb P(T_n)$.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.exists_lowerRate_horizontalTubeProbability_of_strictInterior`:
+  every fixed horizontal tube with $0<a<1$ has such a finite logarithmic
+  lower rate, with the return parameters chosen internally.
 -/
 
 @[expose] public section

@@ -92,11 +92,13 @@ Use filenames relative to their semantic directory: prefer
 `PointMeasure/Basic.lean` or `Tilted/Law.lean` to repeating the full directory
 name in every child filename. Mathlib permits a same-level `Foo.lean` and
 `Foo/` when the file is a substantive entry interface and the directory holds
-its components. In this repository, prefer distinct sibling stems to make
-large trees easier to scan; introduce that Mathlib pattern only when the entry
-module provides a clear mathematical interface, and record the reason in the
-architecture audit. Do not add a same-name file merely to re-export a
-directory.
+its components. This repository uses a stricter discoverability rule: do not
+place `Foo.lean` beside `Foo/`; put core declarations in `Basic.lean` or
+`Core.lean`, or give child modules names that identify their mathematical
+roles. Also avoid a direct child file whose stem repeats its parent directory,
+such as `Scale/Scale.lean`; use a semantic name such as `Scale/Basic.lean`.
+These path choices do not change Lean declaration namespaces. Do not add a
+same-name file merely to re-export a directory.
 Count direct `.lean` files during directory reviews. More than eight is a
 review trigger for semantic grouping, not an automatic move: keep a flat
 directory only when its modules are genuinely peer interfaces for one subject,

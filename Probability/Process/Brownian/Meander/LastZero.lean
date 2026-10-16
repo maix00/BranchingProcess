@@ -67,7 +67,11 @@ theorem IsBrownianReal.ae_lastZero_restrictPathToUnitInterval_lt_top
     exact hone
 
 /-- Iglehart's terminal-excursion transform starts at zero and stays
-strictly positive at every later time almost surely. -/
+strictly positive at every later time almost surely. This is the positivity
+property of the Brownian transform in Donald L. Iglehart, *Functional
+Central Limit Theorems for Random Walks Conditioned to Stay Positive*,
+Section 3, theorem (3.4), p. 616, Ann. Probab. 2(4) (1974), 608--619,
+DOI 10.1214/aop/1176996607. -/
 theorem IsBrownianReal.ae_lastZeroMeanderTransform_positive
     {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
     [IsProbabilityMeasure P] {B : ℝ≥0 → Ω → ℝ}

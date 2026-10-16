@@ -16,6 +16,12 @@ A centered increment law with second moment `sigma²` is reduced to unit second
 moment by dividing every increment by `sigma`.  This file records the exact
 probability identity and transports any normalized logarithmic limit back to
 the original spatial scale.
+
+The public declaration is:
+
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.tendsto_scaledLog_horizontalTubeProbability_of_map_div`:
+  if the tube limit for increments divided by $\sigma>0$ is $K$, then the
+  original-scale limit is $\sigma^2K$.
 -/
 
 @[expose] public section

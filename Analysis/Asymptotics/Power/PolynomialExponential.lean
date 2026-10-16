@@ -19,8 +19,9 @@ The public theorem in this file is:
   $\exp(-\delta L/\Delta^2)\le C/\Delta^p$.
 
 This is the deterministic comparison following the entrance estimate in
-Wang Yiyang, *Asymptotic speed of the $N$-branching random walk with infinite
-offspring*, Chapter 3, proof of Lemma 3.5.
+Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite
+Offspring* (master's thesis, Fudan University, 2026), Chapter 3, proof of
+Lemma 3.5.
 -/
 
 @[expose] public section
@@ -61,8 +62,9 @@ private theorem eventually_exp_neg_rpow_le_div_rpow
   exact le_of_lt hsmall
 
 /-- The polynomial cost $C\Delta^{-p}$ of the entrance step in Wang Yiyang,
-*Asymptotic speed of the $N$-branching random walk with infinite offspring*,
-Chapter 3, proof of Lemma 3.5, is absorbed by the exponential budget once
+*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*
+(master's thesis, Fudan University, 2026), Chapter 3, proof of Lemma 3.5,
+is absorbed by the exponential budget once
 $L\ge\lfloor\Delta^{2+\varepsilon}\rfloor$. -/
 theorem eventually_exp_neg_horizon_le_polynomial
     {C δ ε p : ℝ} (hC : 0 < C) (hδ : 0 < δ) (hε : 0 < ε) :

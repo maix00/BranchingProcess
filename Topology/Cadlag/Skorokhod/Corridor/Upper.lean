@@ -21,9 +21,9 @@ The public objects and theorems in this file are:
 - `Skorokhod.isOpen_rangeBelowEndsIn`: the combined event is open in $J_1$.
 
 The one-sided form allows paths starting at zero, as required for the
-Brownian meander corridor in Wang Yiyang, *Asymptotic speed of the
-$N$-branching random walk with infinite offspring*, Chapter 3, Lemma 3.5,
-Appendix A.2.
+Brownian meander corridor in Wang Yiyang, *Asymptotic Speed of the
+N-Branching Random Walk with Infinite Offspring* (master's thesis, Fudan
+University, 2026), Chapter 3, Lemma 3.5 and Appendix A.2.
 -/
 
 @[expose] public section

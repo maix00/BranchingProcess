@@ -38,7 +38,14 @@ open Filter MeasureTheory ProbabilityTheory
 open scoped NNReal Topology
 
 /-- The conditioned polygonal-path limit with the original variance
-normalization $\sigma\sqrt n$. -/
+normalization $\sigma\sqrt n$. This is Bolthausen's conditioned invariance
+principle, Theorem 3.2, with variance normalization restored; the limit is
+identified by Donald L. Iglehart, *Functional Central Limit Theorems for
+Random Walks Conditioned to Stay Positive*, Section 3, theorem (3.4),
+p. 616, DOI 10.1214/aop/1176996607. Bolthausen's article is *On a
+Functional Central Limit Theorem for Random Walks Conditioned to Stay
+Positive*, Ann. Probab. 4(3) (1976), 480--485,
+DOI 10.1214/aop/1176996098. -/
 theorem tendstoInDistribution_survivalConditionedPath_meander_of_centeredSecondMoment
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     {sigma : ℝ} (hν : IsCenteredSecondMoment ν (sigma ^ 2))

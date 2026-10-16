@@ -49,7 +49,10 @@ def NoEarlierSurvivingPrefix (n start : ℕ) (increment : ℕ → ℝ) : Prop :=
 
 /-- Bolthausen's first window at $j$ is the intersection of the
 prefix event $B_j^c$ and survival of the independent length-$n$ suffix.
-This is the set identity used in Lemma 3.1, pp. 482--483. -/
+This is the set identity in Erwin Bolthausen, *On a Functional Central
+Limit Theorem for Random Walks Conditioned to Stay Positive*, Lemma 3.1,
+pp. 482--483, Ann. Probab. 4(3) (1976), 480--485,
+DOI 10.1214/aop/1176996098. -/
 lemma isFirstSurvivingWindow_iff_prefixFailure_and_survives
     (n start : ℕ) (increment : ℕ → ℝ) :
     IsFirstSurvivingWindow n start increment ↔

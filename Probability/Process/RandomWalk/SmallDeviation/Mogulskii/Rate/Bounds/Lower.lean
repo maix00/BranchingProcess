@@ -17,6 +17,17 @@ public import Mathlib.Topology.Order.LiminfLimsup
 This file converts a positive uniform return-block estimate into a normalized
 real logarithmic `liminf` bound.  The probabilistic construction and the
 integer block asymptotics remain separate inputs.
+
+The public declarations are:
+
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.mul_log_toReal_le_liminf_normalizedLog_remainingMass_of_return`:
+  if each complete return block has probability at least $p>0$, then from a
+  starting point in the return interval,
+  $((mC)^{-1})\log p\leq\liminf_n(a_n^2/n)\log M_n(x)$, where $M_n(x)$ is
+  the killed-walk remaining mass from $x$.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.mul_log_toReal_le_liminf_normalizedLog_horizontalTubeProbability_of_return`:
+  the corresponding estimate for the horizontal-tube event, when the return
+  interval contains zero and the uniform block bound holds.
 -/
 
 open Filter MeasureTheory Set Topology

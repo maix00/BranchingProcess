@@ -42,8 +42,11 @@ open scoped ENNReal
 
 namespace ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned
 
-/-- A prefixFailure first-window start depends only on the past and therefore
-factors from every event of the following IID increment block. -/
+/-- A prefix-failure first-window start depends only on the past and therefore
+factors from every event of the following IID increment block. This is the
+independent-block factorization in Erwin Bolthausen, *On a Functional Central
+Limit Theorem for Random Walks Conditioned to Stay Positive*, Lemma 3.1,
+pp. 482--483, DOI 10.1214/aop/1176996098. -/
 lemma measure_prefixFailure_inter_block_eq_mul
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (n start : ℕ) (event : Set (Fin n → ℝ))
@@ -85,7 +88,10 @@ lemma measure_prefixFailure_inter_block_eq_mul
     using hfactor
 
 /-- At a fixed starting time, the first surviving-window event factors
-into its prefix prefixFailure event and the finite surviving future block. -/
+into its prefix-failure event and the finite surviving future block. This is
+the fixed-start factorization in Erwin Bolthausen, *On a Functional Central
+Limit Theorem for Random Walks Conditioned to Stay Positive*, Lemma 3.1,
+pp. 482--483, DOI 10.1214/aop/1176996098. -/
 lemma measure_firstWindow_inter_block_eq_mul
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (n start : ℕ) (event : Set (Fin n → ℝ))
@@ -115,8 +121,10 @@ lemma measure_firstWindow_inter_block_eq_mul
     (hevent.inter (measurableSet_finiteSurvivesNonnegative n))
 
 /-- Countable additivity of the disjoint first-window events turns the
-fixed-start factorization into a path-law identity. Almost-sure existence
-of a first window is a separate recurrence step in the argument described by
+fixed-start factorization into the path-law identity used in Erwin
+Bolthausen, *On a Functional Central Limit Theorem for Random Walks
+Conditioned to Stay Positive*, Lemma 3.1, pp. 482--483,
+DOI 10.1214/aop/1176996098. Almost-sure existence of the first window uses
 Vladislav Vysotsky, *Positivity of integrated random walks*, Section 3.1,
 equation (17), DOI 10.1214/12-AIHP487. -/
 lemma measure_firstWindow_block_union_eq_tsum

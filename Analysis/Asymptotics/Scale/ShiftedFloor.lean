@@ -22,8 +22,9 @@ The public theorems in this file are:
   $\Delta_n/\sqrt{\lfloor\Delta_n^2\rfloor-m}\to1$.
 
 The second limit is the time-scale relation for the finite transition
-event in Wang Yiyang, *Asymptotic speed of the $N$-branching random walk
-with infinite offspring*, Chapter 3, Lemma 3.5, Appendix A.2.
+event in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with
+Infinite Offspring* (master's thesis, Fudan University, 2026), Chapter 3,
+Lemma 3.5 and Appendix A.2.
 -/
 
 @[expose] public section
