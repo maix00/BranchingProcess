@@ -240,8 +240,7 @@ theorem exists_uniform_driftedTube_endpoint_bounds
     exact hupperUpper
   obtain ⟨threshold, hthreshold⟩ :=
     exists_uniform_concreteStaircase_bounds_of_powerBlock
-    hν hsigma (rho := (1 / 100 : ℝ)) (by norm_num) (by norm_num)
-    m hm huInterior huvInterior hvInterior huLower huvLower hvLower
+    hν hsigma m hm huInterior huvInterior hvInterior huLower huvLower hvLower
     huUpper huvUpper hvUpper hnarrowedK heta hetaOne hetaEpsilon
     hmargin hdrift (by exact le_of_lt hv) hblockNonneg
     hepsilon hdelta hnarrowedBlock

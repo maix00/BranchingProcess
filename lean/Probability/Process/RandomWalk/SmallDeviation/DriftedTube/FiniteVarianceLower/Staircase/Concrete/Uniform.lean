@@ -43,7 +43,6 @@ theorem exists_uniform_concreteStaircase_bounds_of_powerBlock
       uLower vLower uUpper vUpper : ℝ}
     (hν : IsCenteredSecondMoment ν (sigma ^ 2))
     (hsigma : 0 < sigma)
-    {rho : ℝ} (hrho : 0 < rho) (hrhoSmall : rho < 1 / 48)
     (m : ℕ) (hm : 2 ≤ m)
     (huInterior : 0 < uInterior)
     (huvInterior : uInterior < vInterior)
@@ -114,14 +113,14 @@ theorem exists_uniform_concreteStaircase_bounds_of_powerBlock
       Filter.Eventually.of_forall (fun n => (hadmissible n).2)
     have hlower :=
       eventually_concreteStaircaseLowerBound_of_powerBlock
-        hν hsigma hrho hrhoSmall m hm huInterior huvInterior hvInterior
+        hν hsigma m hm huInterior huvInterior hvInterior
         huLower huvLower hvLower hrateMogulskii hwidth hhorizon
         heta hetaOne hetaEpsilon hmargin hdrift hstart
         hendpoint hblockRate hepsilon hdelta hrate
         hinteriorLower hinteriorUpper hlowerLower hlowerUpper
     have hupper :=
       eventually_concreteStaircaseUpperEndpointLowerBound_of_powerBlock
-        hν hsigma hrho hrhoSmall m hm huInterior huvInterior hvInterior
+        hν hsigma m hm huInterior huvInterior hvInterior
         huUpper huvUpper hvUpper hrateMogulskii hwidth hhorizon
         heta hetaOne hetaEpsilon hmargin hdrift hstart
         hendpoint hblockRate hepsilon hdelta hrate
