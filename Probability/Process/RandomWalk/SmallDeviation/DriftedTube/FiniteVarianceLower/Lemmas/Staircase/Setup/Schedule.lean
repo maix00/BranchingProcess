@@ -11,7 +11,7 @@ import Mathlib.Tactic
 /-!
 # Finite staircase schedule with a longer last block
 
-The public objects and theorems in this file are:
+The public schedule objects and supporting lemmas in this file are:
 
 - `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.staircaseBlockCount`:
   $q=\lfloor(L-t_1)/\ell\rfloor$.
@@ -67,21 +67,21 @@ def staircaseBlockLength (entrance horizon blockLength : ℕ)
 
 /-- A positive block count makes the first block begin at the entrance
 time. -/
-theorem staircaseBlockStart_zero
+lemma staircaseBlockStart_zero
     {entrance horizon blockLength : ℕ}
     (hcount : 0 < staircaseBlockCount entrance horizon blockLength) :
     staircaseBlockStart entrance horizon blockLength 0 = entrance := by
   simp [staircaseBlockStart, hcount]
 
 /-- The last block ends at the prescribed horizon. -/
-theorem staircaseBlockStart_count
+lemma staircaseBlockStart_count
     (entrance horizon blockLength : ℕ) :
     staircaseBlockStart entrance horizon blockLength
       (staircaseBlockCount entrance horizon blockLength) = horizon := by
   simp [staircaseBlockStart]
 
 /-- Every block boundary through the last one is at most the horizon. -/
-theorem staircaseBlockStart_le_horizon
+lemma staircaseBlockStart_le_horizon
     {entrance horizon blockLength : ℕ}
     (hentrance : entrance ≤ horizon)
     {j : ℕ}
@@ -99,7 +99,7 @@ theorem staircaseBlockStart_le_horizon
   · simp [staircaseBlockStart, hjq]
 
 /-- The staircase block boundaries are ordered. -/
-theorem staircaseBlockStart_mono_succ
+lemma staircaseBlockStart_mono_succ
     {entrance horizon blockLength : ℕ}
     (hentrance : entrance ≤ horizon)
     (j : ℕ) :
@@ -119,7 +119,7 @@ theorem staircaseBlockStart_mono_succ
 
 /-- Every successor block boundary is the previous one plus that block's
 length. -/
-theorem staircaseBlockStart_next_eq_add_length
+lemma staircaseBlockStart_next_eq_add_length
     {entrance horizon blockLength : ℕ}
     (hentrance : entrance ≤ horizon)
     (j : ℕ) :
@@ -131,7 +131,7 @@ theorem staircaseBlockStart_next_eq_add_length
     (staircaseBlockStart_mono_succ hentrance j)).symm
 
 /-- Every block before the last one has the common length $\ell$. -/
-theorem staircaseBlockLength_interior
+lemma staircaseBlockLength_interior
     {entrance horizon blockLength j : ℕ}
     (hj : j + 1 < staircaseBlockCount entrance horizon blockLength) :
     staircaseBlockLength entrance horizon blockLength j = blockLength := by
@@ -143,7 +143,7 @@ theorem staircaseBlockLength_interior
 
 /-- The last block is one full block plus the remainder of the division
 of the post-entrance horizon by the common block length. -/
-theorem staircaseBlockLength_last
+lemma staircaseBlockLength_last
     {entrance horizon blockLength : ℕ}
     (hentrance : entrance ≤ horizon)
     (hcount : 0 < staircaseBlockCount entrance horizon blockLength) :
@@ -180,7 +180,7 @@ theorem staircaseBlockLength_last
 
 /-- The last horizontal segment has length at least one full block and
 strictly less than two common block lengths. -/
-theorem staircaseBlockLength_last_bounds
+lemma staircaseBlockLength_last_bounds
     {entrance horizon blockLength : ℕ}
     (hentrance : entrance ≤ horizon)
     (hblockLength : 0 < blockLength)
@@ -196,7 +196,7 @@ theorem staircaseBlockLength_last_bounds
 
 /-- There is at least one horizontal block when the remaining horizon
 contains a full common block length. -/
-theorem staircaseBlockCount_pos_of_entrance_add_blockLength_le
+lemma staircaseBlockCount_pos_of_entrance_add_blockLength_le
     {entrance horizon blockLength : ℕ}
     (hblockLength : 0 < blockLength)
     (hremaining : entrance + blockLength ≤ horizon) :
@@ -207,7 +207,7 @@ theorem staircaseBlockCount_pos_of_entrance_add_blockLength_le
 
 /-- Every block in the finite schedule has length between one and two
 common block lengths. -/
-theorem staircaseBlockLength_bounds
+lemma staircaseBlockLength_bounds
     {entrance horizon blockLength j : ℕ}
     (hentrance : entrance ≤ horizon)
     (hblockLength : 0 < blockLength)

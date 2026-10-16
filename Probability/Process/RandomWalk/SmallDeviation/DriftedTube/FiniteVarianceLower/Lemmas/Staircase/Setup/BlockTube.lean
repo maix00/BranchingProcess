@@ -8,7 +8,7 @@ module
 
 public import Mathlib.Analysis.SpecialFunctions.Exp
 import Mathlib.Tactic
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.BlockSchedule.Basic
+public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.Schedule
 /-!
 # Horizontal sub-tubes of a linearly rising tube
 
