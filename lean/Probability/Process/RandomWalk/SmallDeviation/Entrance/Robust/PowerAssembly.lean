@@ -22,7 +22,7 @@ The public theorem in this file is:
 This is the final minimum-of-three-intervals step in Wang Yiyang,
 *Asymptotic speed of the $N$-branching random walk with infinite offspring*,
 Appendix A.2, proof of the meander transition lemma used in Chapter 3,
-Lemma 3.5. `FunctionalLimit/Conditioned/TransitionLinear.lean` supplies
+Lemma 3.5. `FunctionalLimit/Conditioned/DiffusiveTransitionLower.lean` supplies
 the inverse-square transition bound from the conditioned Brownian-meander
 limit and the cyclic-rotation survival inequality.
 -/

@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.TransitionFromMeander
+public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition.FromMeander
 
 /-!
 # Meander transition at a diffusive entrance horizon
