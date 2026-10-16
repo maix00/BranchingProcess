@@ -35,7 +35,7 @@ namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 
 /-- Four numeric staircase requirements follow uniformly from one pair
 of global width comparisons and the scheduled block-length bounds. -/
-theorem staircaseBlockNumericConditions
+lemma staircaseBlockNumericConditions
     {entrance horizon blockLength m width₀ ratio₀ : ℕ}
     {globalWidth drift margin narrowedRate blockRate : ℝ}
     (hentrance : entrance ≤ horizon)

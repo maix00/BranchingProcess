@@ -37,7 +37,7 @@ namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 
 /-- The rising staircase with a final upper-edge window gives a uniform
 finite-width lower probability bound. -/
-theorem exists_concreteStaircaseUpperEndpointLowerBound
+lemma exists_concreteStaircaseUpperEndpointLowerBound
     {ν : Measure ℝ} [IsProbabilityMeasure ν]
     {sigma narrowedRate uInterior vInterior uFinal vFinal : ℝ}
     (hν : IsCenteredSecondMoment ν (sigma ^ 2))

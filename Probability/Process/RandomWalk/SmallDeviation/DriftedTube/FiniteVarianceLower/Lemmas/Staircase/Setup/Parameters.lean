@@ -50,7 +50,7 @@ noncomputable def staircaseTubeWidth (width drift : ℝ)
 
 /-- The block's lower horizontal edge is the rising lower boundary at its
 ending time. -/
-theorem staircaseLowerEdge_eq_endBoundary
+lemma staircaseLowerEdge_eq_endBoundary
     (base drift width : ℝ) (start length : ℕ → ℕ)
     (hnext : ∀ j, start (j + 1) = start j + length j)
     (j : ℕ) :
@@ -60,7 +60,7 @@ theorem staircaseLowerEdge_eq_endBoundary
 
 /-- The block's upper horizontal edge is the rising upper boundary at its
 starting time. -/
-theorem staircaseLowerEdge_add_staircaseTubeWidth_eq_startUpperBoundary
+lemma staircaseLowerEdge_add_staircaseTubeWidth_eq_startUpperBoundary
     (base drift width : ℝ) (start length : ℕ → ℕ)
     (hnext : ∀ j, start (j + 1) = start j + length j)
     (j : ℕ) :
@@ -74,7 +74,7 @@ theorem staircaseLowerEdge_add_staircaseTubeWidth_eq_startUpperBoundary
 
 /-- A staircase sub-tube has positive width when the drift during the
 block is smaller than the cubic width scale. -/
-theorem staircaseTubeWidth_pos_of_stepCost_lt_cube
+lemma staircaseTubeWidth_pos_of_stepCost_lt_cube
     {width drift : ℝ} {length : ℕ → ℕ} {j : ℕ}
     (hwidth : 0 < width)
     (hcost : drift * (length j : ℝ) < width ^ 3) :
@@ -86,7 +86,7 @@ theorem staircaseTubeWidth_pos_of_stepCost_lt_cube
 
 /-- One upper bound on the common block length ensures positive tube width
 for every actual block, including the longer final block. -/
-theorem staircaseTubeWidth_pos_of_schedule_bound
+lemma staircaseTubeWidth_pos_of_schedule_bound
     {entrance horizon blockLength : ℕ}
     {width drift : ℝ}
     (hentrance : entrance ≤ horizon)
@@ -112,7 +112,7 @@ theorem staircaseTubeWidth_pos_of_schedule_bound
 
 /-- Nonnegative drift narrows each horizontal block relative to the global
 tilted tube. -/
-theorem staircaseTubeWidth_le_globalWidth
+lemma staircaseTubeWidth_le_globalWidth
     {width drift : ℝ} {length : ℕ → ℕ} {j : ℕ}
     (hdrift : 0 ≤ drift) :
     staircaseTubeWidth width drift length j ≤ width := by
@@ -122,7 +122,7 @@ theorem staircaseTubeWidth_le_globalWidth
 
 /-- A common bound on the block length makes all horizontal widths at
 least half of the global tilted-tube width. -/
-theorem staircaseTubeWidth_ge_half_of_schedule_bound
+lemma staircaseTubeWidth_ge_half_of_schedule_bound
     {entrance horizon blockLength : ℕ}
     {width drift : ℝ}
     (hentrance : entrance ≤ horizon)
@@ -154,7 +154,7 @@ theorem staircaseTubeWidth_ge_half_of_schedule_bound
 
 /-- The longest scheduled block loses at most two common block lengths of
 vertical drift from the global width. -/
-theorem staircaseTubeWidth_ge_commonLossBound
+lemma staircaseTubeWidth_ge_commonLossBound
     {entrance horizon blockLength : ℕ}
     {width drift : ℝ}
     (hentrance : entrance ≤ horizon)

@@ -35,7 +35,7 @@ namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 
 /-- The diffusive entrance event satisfies the tilted tube constraints up
 to its terminal time. -/
-theorem robustEntrance_staysInTiltedTube
+lemma robustEntrance_staysInTiltedTube
     {entrance : ℕ} {width drift base : ℝ}
     {increment : ℕ → ℝ}
     (hinc : increment ∈
@@ -53,7 +53,7 @@ theorem robustEntrance_staysInTiltedTube
 
 /-- The robust endpoint of Wang Yiyang's Lemma A.7 lies in the first horizontal
 block's central window. -/
-theorem robustEntrance_entersFirstCentralWindow
+lemma robustEntrance_entersFirstCentralWindow
     {entrance horizon blockLength : ℕ}
     {width drift base : ℝ}
     (hremaining : entrance + 2 * blockLength ≤ horizon)

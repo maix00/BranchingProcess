@@ -36,7 +36,7 @@ namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 
 /-- The upper-endpoint staircase bound holds eventually once its robust
 entrance estimate and fixed endpoint margins are supplied. -/
-theorem eventually_concreteStaircaseUpperEndpointLowerBound_of_robustEntrance
+lemma eventually_concreteStaircaseUpperEndpointLowerBound_of_robustEntrance
     {ν : Measure ℝ} [IsProbabilityMeasure ν]
     {sigma narrowedRate uInterior vInterior uFinal vFinal : ℝ}
     (hν : IsCenteredSecondMoment ν (sigma ^ 2))

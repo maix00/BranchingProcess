@@ -41,7 +41,7 @@ namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 
 /-- The lower endpoint fraction of the next central window approaches
 $1/(3\beta)$ after narrowing the horizontal tube. -/
-theorem tendsto_staircaseInteriorLowerRatio
+lemma tendsto_staircaseInteriorLowerRatio
     {width loss : ℕ → ℝ} {beta : ℝ}
     (hbeta : 0 < beta)
     (hwidth : Tendsto width atTop atTop)
@@ -74,7 +74,7 @@ theorem tendsto_staircaseInteriorLowerRatio
 
 /-- A strict lower endpoint margin remains valid for all sufficiently
 large ordinary staircase blocks. -/
-theorem eventually_staircaseInteriorLowerMargin
+lemma eventually_staircaseInteriorLowerMargin
     {width loss : ℕ → ℝ} {beta margin uInterior : ℝ}
     (hbeta : 0 < beta)
     (hwidth : Tendsto width atTop atTop)
@@ -94,7 +94,7 @@ theorem eventually_staircaseInteriorLowerMargin
 
 /-- The subcubic block-scale condition in Wang Yiyang's Lemma 3.5 gives the ordinary-block
 lower endpoint margin with one common width threshold. -/
-theorem eventually_staircaseInteriorLowerMargin_of_blockScale
+lemma eventually_staircaseInteriorLowerMargin_of_blockScale
     {width : ℕ → ℝ} {blockLength : ℕ → ℕ}
     {drift beta margin uInterior : ℝ}
     (hbeta : 0 < beta)
@@ -128,7 +128,7 @@ theorem eventually_staircaseInteriorLowerMargin_of_blockScale
 /-- The normalized lower endpoint of the final upper-edge window tends
 to $\max(1-v,0)/\beta$ when the block drift is negligible relative to
 the tube width. -/
-theorem eventually_staircaseUpperFinalLowerMargin_of_blockScale
+lemma eventually_staircaseUpperFinalLowerMargin_of_blockScale
     {width : ℕ → ℝ} {blockLength : ℕ → ℕ}
     {drift beta margin endpointFraction uFinal : ℝ}
     (hbeta : 0 < beta)

@@ -38,7 +38,7 @@ namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 
 /-- The exact concrete staircase bound holds eventually once the robust
 entrance estimate from Appendix A.2 is supplied. -/
-theorem eventually_concreteStaircaseLowerBound_of_robustEntrance
+lemma eventually_concreteStaircaseLowerBound_of_robustEntrance
     {ν : Measure ℝ} [IsProbabilityMeasure ν]
     {sigma narrowedRate uInterior vInterior uFinal vFinal : ℝ}
     (hν : IsCenteredSecondMoment ν (sigma ^ 2))

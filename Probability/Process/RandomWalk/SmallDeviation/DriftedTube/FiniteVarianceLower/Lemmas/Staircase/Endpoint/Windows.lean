@@ -61,7 +61,7 @@ noncomputable def staircaseEndpointUpperFraction
 
 /-- A nonfinal block ends exactly in the central window of the following
 horizontal tube. -/
-theorem staircaseEndpointWindow_interior
+lemma staircaseEndpointWindow_interior
     (base width drift endpointFraction : ℝ)
     (start length : ℕ → ℕ)
     (hnext : ∀ j, start (j + 1) = start j + length j)
@@ -106,7 +106,7 @@ theorem staircaseEndpointWindow_interior
   rw [hlower, hupper]
 
 /-- The final block ends exactly in the specified final endpoint window. -/
-theorem staircaseEndpointWindow_last
+lemma staircaseEndpointWindow_last
     (base width drift endpointFraction : ℝ)
     (start length : ℕ → ℕ)
     (q horizon : ℕ) (hq : 0 < q)
@@ -153,7 +153,7 @@ noncomputable def staircaseUpperEndpointUpperFraction
 
 /-- Ordinary endpoint windows of the upper-endpoint staircase agree with
 those of the lower-endpoint staircase. -/
-theorem staircaseUpperEndpointWindow_interior
+lemma staircaseUpperEndpointWindow_interior
     (base width drift endpointFraction : ℝ)
     (start length : ℕ → ℕ)
     (hnext : ∀ j, start (j + 1) = start j + length j)
@@ -180,7 +180,7 @@ theorem staircaseUpperEndpointWindow_interior
 
 /-- The last horizontal upper-endpoint window lies inside both the full
 terminal tube and its upper terminal window. -/
-theorem staircaseUpperEndpointWindow_last_subset
+lemma staircaseUpperEndpointWindow_last_subset
     (base width drift endpointFraction : ℝ)
     (start length : ℕ → ℕ)
     (q horizon : ℕ) (hq : 0 < q)

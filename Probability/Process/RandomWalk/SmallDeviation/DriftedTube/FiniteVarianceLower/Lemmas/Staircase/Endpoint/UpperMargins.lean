@@ -29,7 +29,7 @@ namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 
 /-- Uniform ordinary and final margins for a staircase ending next to
 the upper edge of the target tube. -/
-theorem staircaseUpperEndpointMarginConditions
+lemma staircaseUpperEndpointMarginConditions
     {entrance horizon blockLength m : ℕ}
     {globalWidth drift endpointFraction margin
       uInterior vInterior uFinal vFinal : ℝ}

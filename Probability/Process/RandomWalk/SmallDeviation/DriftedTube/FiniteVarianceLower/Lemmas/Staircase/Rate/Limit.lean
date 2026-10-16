@@ -33,7 +33,7 @@ namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 
 /-- A negligible block-width loss gives the actual-to-global width ratio
 used in the staircase proof. -/
-private theorem tendsto_widthMinusLoss_div_width
+private lemma tendsto_widthMinusLoss_div_width
     {width loss : ℕ → ℝ}
     (hwidth : Tendsto width atTop atTop)
     (hloss : Tendsto (fun n => loss n / width n) atTop (𝓝 0)) :
@@ -50,7 +50,7 @@ private theorem tendsto_widthMinusLoss_div_width
 
 /-- The floor of the narrowed horizontal width has the same asymptotic
 global-width ratio as the unrounded width. -/
-private theorem tendsto_floor_narrowedWidth_div_globalWidth
+private lemma tendsto_floor_narrowedWidth_div_globalWidth
     {width loss : ℕ → ℝ} {beta : ℝ}
     (hbeta : 0 < beta)
     (hwidth : Tendsto width atTop atTop)
@@ -111,7 +111,7 @@ private theorem tendsto_floor_narrowedWidth_div_globalWidth
   simpa only [one_mul] using hproduct.congr' hproductEq
 
 /-- A strict rate margin survives rounding the narrowed width. -/
-private theorem eventually_rateComparison_of_floor_width
+private lemma eventually_rateComparison_of_floor_width
     {width loss : ℕ → ℝ} {beta narrowedRate blockRate : ℝ}
     (hbeta : 0 < beta)
     (hwidth : Tendsto width atTop atTop)
@@ -143,7 +143,7 @@ private theorem eventually_rateComparison_of_floor_width
 
 /-- The block-scale condition supplies the negligible width loss
 and hence the sharp rounded exponent comparison. -/
-theorem eventually_staircaseRateComparison_of_blockScale
+lemma eventually_staircaseRateComparison_of_blockScale
     {width : ℕ → ℝ} {blockLength : ℕ → ℕ}
     {drift beta narrowedRate blockRate : ℝ}
     (hbeta : 0 < beta)

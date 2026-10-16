@@ -46,7 +46,7 @@ namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 
 /-- The inverse-square survival inputs for the walk and its reflection follow from
 the finite-variance hypotheses. -/
-theorem eventually_concreteStaircaseUpperEndpointLowerBound_of_centeredFiniteVariance
+lemma eventually_concreteStaircaseUpperEndpointLowerBound_of_centeredFiniteVariance
     {ν : Measure ℝ} [IsProbabilityMeasure ν]
     {sigma narrowedRate uInterior vInterior uFinal vFinal : ℝ}
     (hν : IsCenteredSecondMoment ν (sigma ^ 2))
@@ -122,7 +122,7 @@ theorem eventually_concreteStaircaseUpperEndpointLowerBound_of_centeredFiniteVar
 $\ell_n=\lfloor\Delta_n^{2+\eta}\rfloor$; its scale conditions and its
 fit inside $L_n\ge\lfloor\Delta_n^{2+\varepsilon}\rfloor$ follow from
 $0<\eta<\min(1,\varepsilon)$. -/
-theorem eventually_concreteStaircaseUpperEndpointLowerBound_of_powerBlock
+lemma eventually_concreteStaircaseUpperEndpointLowerBound_of_powerBlock
     {ν : Measure ℝ} [IsProbabilityMeasure ν]
     {sigma narrowedRate uInterior vInterior uFinal vFinal : ℝ}
     (hν : IsCenteredSecondMoment ν (sigma ^ 2))

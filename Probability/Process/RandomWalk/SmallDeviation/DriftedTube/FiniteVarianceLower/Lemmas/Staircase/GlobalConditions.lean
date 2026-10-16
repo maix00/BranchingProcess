@@ -34,7 +34,7 @@ namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 
 /-- Global inequalities imply the numeric and endpoint conditions for every
 scheduled horizontal block. -/
-theorem staircaseBlockConditions_of_global
+lemma staircaseBlockConditions_of_global
     {entrance horizon blockLength m width₀ ratio₀ : ℕ}
     {globalWidth drift endpointFraction margin narrowedRate blockRate
       uInterior vInterior uFinal vFinal : ℝ}
@@ -118,7 +118,7 @@ theorem staircaseBlockConditions_of_global
 
 /-- The same global block estimates with the terminal window next to the
 upper boundary of the target tube. -/
-theorem staircaseUpperEndpointBlockConditions_of_global
+lemma staircaseUpperEndpointBlockConditions_of_global
     {entrance horizon blockLength m width₀ ratio₀ : ℕ}
     {globalWidth drift endpointFraction margin narrowedRate blockRate
       uInterior vInterior uFinal vFinal : ℝ}

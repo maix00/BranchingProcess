@@ -37,7 +37,7 @@ namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 
 /-- The common large-width threshold in Wang Yiyang's Lemma 3.5 for both endpoint events,
 once its fixed bin fractions and strict margins have been chosen. -/
-theorem exists_uniform_concreteStaircase_bounds_of_powerBlock
+lemma exists_uniform_concreteStaircase_bounds_of_powerBlock
     {ν : Measure ℝ} [IsProbabilityMeasure ν]
     {sigma narrowedRate uInterior vInterior
       uLower vLower uUpper vUpper : ℝ}

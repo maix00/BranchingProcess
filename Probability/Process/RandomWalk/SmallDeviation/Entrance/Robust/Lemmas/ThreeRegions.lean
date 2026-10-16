@@ -31,7 +31,7 @@ namespace ProbabilityTheory.RandomWalk.SmallDeviation.Entrance
 
 /-- The middle, lower-edge and upper-edge estimates give one bound on the
 robust transition event for every allowed start. -/
-theorem measure_robustMovingTransitionEvent_ge_threeRegionMinimum
+lemma measure_robustMovingTransitionEvent_ge_threeRegionMinimum
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     {n mPlus NPlus mMinus NMinus : ℕ}
     {width drift aPlus bPlus aMinus bMinus : ℝ}

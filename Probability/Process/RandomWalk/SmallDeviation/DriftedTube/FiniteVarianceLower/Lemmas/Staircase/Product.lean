@@ -36,7 +36,7 @@ namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 
 /-- Uniform narrowed-tube rates feed directly into the finite staircase
 product under the quantitative block conditions in Wang Yiyang's proof of Lemma 3.5. -/
-theorem exists_uniform_staircaseProbability_ge_product
+lemma exists_uniform_staircaseProbability_ge_product
     {ν : Measure ℝ} [IsProbabilityMeasure ν]
     {sigma d uInterior vInterior uFinal vFinal : ℝ}
     (hν : IsCenteredSecondMoment ν (sigma ^ 2))

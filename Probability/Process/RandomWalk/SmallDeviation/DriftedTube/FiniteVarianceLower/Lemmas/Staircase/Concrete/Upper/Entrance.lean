@@ -34,7 +34,7 @@ namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 
 /-- A robust entrance and the rising staircase yield the upper-endpoint
 finite-width lower bound. -/
-theorem exists_concreteStaircaseUpperEndpointLowerBound_of_robustEntrance
+lemma exists_concreteStaircaseUpperEndpointLowerBound_of_robustEntrance
     {ν : Measure ℝ} [IsProbabilityMeasure ν]
     {sigma narrowedRate uInterior vInterior uFinal vFinal : ℝ}
     (hν : IsCenteredSecondMoment ν (sigma ^ 2))

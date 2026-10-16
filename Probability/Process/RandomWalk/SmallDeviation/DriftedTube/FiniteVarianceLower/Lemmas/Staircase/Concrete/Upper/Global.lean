@@ -33,7 +33,7 @@ open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 
 /-- Global staircase conditions imply the upper-endpoint lower bound. -/
-theorem exists_concreteStaircaseUpperEndpointLowerBound_of_globalConditions
+lemma exists_concreteStaircaseUpperEndpointLowerBound_of_globalConditions
     {ν : Measure ℝ} [IsProbabilityMeasure ν]
     {sigma narrowedRate uInterior vInterior uFinal vFinal : ℝ}
     (hν : IsCenteredSecondMoment ν (sigma ^ 2))

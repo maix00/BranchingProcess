@@ -36,7 +36,7 @@ namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 
 /-- The actual staircase schedule starts after a robust diffusive entrance;
 its finite product then yields the target endpoint-window lower bound. -/
-theorem exists_concreteStaircaseLowerBound_of_robustEntrance
+lemma exists_concreteStaircaseLowerBound_of_robustEntrance
     {ν : Measure ℝ} [IsProbabilityMeasure ν]
     {sigma narrowedRate uInterior vInterior uFinal vFinal : ℝ}
     (hν : IsCenteredSecondMoment ν (sigma ^ 2))
