@@ -13,7 +13,6 @@ public import Mathlib.MeasureTheory.Measure.MeasureSpaceDef
 public import Mathlib.MeasureTheory.Constructions.Pi
 public import Algebra.BigOperators.AdditivePath.Basic
 public import Probability.Process.RandomWalk.Path.Corridor.Horizontal.Basic
-import Probability.Process.RandomWalk.Path.Corridor.Horizontal.Core
 
 /-!
 # Horizontal tubes with endpoint windows
