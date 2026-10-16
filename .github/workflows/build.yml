@@ -1,0 +1,308 @@
+name: Lean build
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Lake build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install Lean and build the package
+        uses: leanprover/lean-action@v1
+        with:
+          use-mathlib-cache: true
+
+      - name: Check stable APIs, proof dependencies, and import boundaries
+        run: |
+          set -o pipefail
+          node scripts/check-visualizer-manifest.mjs
+          lake build \
+            Analysis.Asymptotics.RegularVariation.Basic \
+            Analysis.Asymptotics.RegularVariation.Integral \
+            MeasureTheory.Measure.CadlagPath.RangeCover \
+            Probability.Process.Stable.Corridor.Law \
+            Probability.Process.Stable.SmallDeviation.ShiftedCorridor \
+            Probability.Process.Stable.SmallDeviation.RangeComparison \
+            Probability.Process.Stable.SmallDeviation.BlockBounds \
+            Probability.Process.Stable.SmallDeviation.Blocks.Upper.ArbitraryHorizon \
+            Probability.Process.Stable.SmallDeviation.EndpointComparison \
+            Probability.Process.Stable.SmallDeviation.EscapeRate.Basic \
+            Probability.Process.Stable.SmallDeviation.EscapeRate.Corridor \
+            Probability.Process.Stable.SmallDeviation.EscapeRate.Endpoint \
+            Probability.Process.Stable.SmallDeviation.EscapeRate.Law \
+            Probability.Distributions.Moments.Truncated.Basic \
+            Probability.Distributions.Moments.Truncated.TailIntegral \
+            Analysis.Asymptotics.RegularVariation.AtZero.Potter \
+            Analysis.Fourier.PositiveDefinite \
+            MeasureTheory.Measure.CharacteristicFunction.PositiveDefinite \
+            Analysis.Fourier.Bochner \
+            Analysis.Fourier.CosineTauberian.Kernel \
+            Analysis.Fourier.CosineTauberian.Inversion \
+            Analysis.Fourier.CosineTauberian.Mellin \
+            Analysis.Fourier.CosineTauberian.RegularVariation \
+            Probability.Distributions.CharacteristicFunction.CosineDefect \
+            Probability.Distributions.CharacteristicFunction.Symmetrization.Basic \
+            Probability.Distributions.CharacteristicFunction.Tauberian.SecondTail \
+            Probability.Distributions.Stable.Attraction.NormingRatios.Tauberian \
+            Probability.Distributions.CharacteristicFunction.GaussianSmoothing \
+            MeasureTheory.Measure.CharacteristicFunction.Nondegenerate \
+            Probability.Distributions.DomainOfAttraction.Basic \
+            Probability.Distributions.DomainOfAttraction.CharacteristicFunction \
+            Probability.Distributions.DomainOfAttraction.Block \
+            MeasureTheory.Measure.CharacteristicFunction.Convergence \
+            Probability.Distributions.Stable.Attraction.Norming.Basic \
+            Probability.Distributions.Stable.Attraction.CharacteristicFunction \
+            Probability.Distributions.Stable.Attraction.NormingRatios.Index \
+            Probability.Distributions.Stable.Attraction.NormingRatios.UniformDefect \
+            Probability.Distributions.Stable.Attraction.NormingRatios.RegularVariation \
+            Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.TruncatedMoment \
+            Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.Endpoint.Upper \
+            Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.Endpoint.Return \
+            MeasureTheory.Measure.CadlagPath.PathClass.StepCorridor.Energy \
+            Probability.Process.Path.PathClass.StepCorridor.Probability.Rate.FiniteUnion \
+            Probability.Process.Path.PathClass.StepCorridor.Probability.Rate.Approximation \
+            Topology.Cadlag.Skorokhod.Path.Separable \
+            MeasureTheory.MeasurableSpace.CadlagPath.Basic \
+            Combinatorics.BranchingWalk.Walk.Equiv \
+            Probability.BranchingRandomWalk.Walk.Path.Scaling
+          python3 -m unittest discover -s scripts -p 'test_*.py' -v
+          python3 scripts/run-all-lean-tests.py --output-dir "$RUNNER_TEMP/lean-tests"
+          : > "$RUNNER_TEMP/positive-definite-axioms.txt"
+          cat \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Analysis/PositiveDefinite.lean.log" \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/CharacteristicFunction/PositiveDefinite.lean.log" \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Analysis/Bochner.lean.log" \
+            >> "$RUNNER_TEMP/positive-definite-axioms.txt"
+          python3 scripts/check-lean-axioms.py \
+            "$RUNNER_TEMP/positive-definite-axioms.txt" --expected \
+            IsPositiveDefinite.mul \
+            IsPositiveDefinite.exp_neg_ofReal_mul \
+            IsPositiveDefinite.exp_ofReal_mul \
+            MeasureTheory.ProbabilityMeasure.charFun_sum_eq_integral_normSq \
+            MeasureTheory.ProbabilityMeasure.isPositiveDefinite_charFun \
+            ProbabilityTheory.bochner
+          : > "$RUNNER_TEMP/stable-small-deviation-axioms.txt"
+          cat \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Stable/SmallDeviation/ShiftedCorridor.lean.log" \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Stable/SmallDeviation/RangeComparison.lean.log" \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Stable/SmallDeviation/BlockBounds.lean.log" \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Stable/SmallDeviation/EndpointComparison.lean.log" \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Stable/SmallDeviation/EscapeRate.lean.log" \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Stable/SmallDeviation/EscapeRatePathLaw.lean.log" \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Stable/Attraction/Scale.lean.log" \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/CharacteristicFunction/GaussianSmoothing.lean.log" \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Stable/Attraction/CharacteristicFunction.lean.log" \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Stable/Attraction/Block.lean.log" \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Stable/Attraction/CharacteristicFunctionLimit.lean.log" \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/DomainOfAttraction/NormingRatios.lean.log" \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/DomainOfAttraction/TruncatedTailIntegral.lean.log" \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Analysis/CosineTauberian.lean.log" \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/CharacteristicFunction/Tauberian.lean.log" \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/DomainOfAttraction/InverseTauberian.lean.log" \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Mogulskii/Rates/PathClassRate.lean.log" \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Mogulskii/Stable/RandomWalkBounds/UpperEndpoint.lean.log" \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Mogulskii/Stable/RandomWalkBounds/PathClassRegimes.lean.log" \
+            >> "$RUNNER_TEMP/stable-small-deviation-axioms.txt"
+          python3 scripts/check-lean-axioms.py \
+            "$RUNNER_TEMP/stable-small-deviation-axioms.txt" --expected \
+            ProbabilityTheory.IsStableLevyProcess.eventually_one_sub_le_log_corridor_ratio_of_cdf \
+            ProbabilityTheory.IsStableLevyProcess.eventually_one_sub_le_log_corridor_ratio_of_measure_Iio_zero \
+            ProbabilityTheory.IsStableLevyProcess.eventually_one_le_log_corridor_div_log_range_of_cdf \
+            ProbabilityTheory.IsStableLevyProcess.eventually_one_le_log_corridor_div_log_range_of_measure_Iio_zero \
+            ProbabilityTheory.IsStableLevyProcess.eventually_one_sub_le_log_range_div_log_corridor_of_cdf \
+            ProbabilityTheory.IsStableLevyProcess.eventually_one_sub_le_log_range_div_log_corridor_of_measure_Iio_zero \
+            ProbabilityTheory.IsStableLevyProcess.measure_rationalTube_le_pow_floor_inv_horizon \
+            ProbabilityTheory.IsStableLevyProcess.measure_fullCorridor_le_pow_floor_inv_horizon \
+            ProbabilityTheory.IsStableLevyProcess.iInf_sevenBlockEndpointProbability_pow_le_corridor_of_horizon \
+            ProbabilityTheory.IsStableLevyProcess.eventually_one_sub_le_log_corridor_div_endpointCorridor_of_cdf \
+            ProbabilityTheory.IsStableLevyProcess.eventually_centeredCorridorProbability_le_endpointCorridor_mul_of_cdf \
+            ProbabilityTheory.IsStableLevyProcess.exists_rationalRange_escape_rate \
+            ProbabilityTheory.IsStableClockProcessLaw.hasStableProcessEscapeRate_of_isStableLevyProcess \
+            ProbabilityTheory.IsStableLevyProcess.exists_centeredCorridor_escape_rate \
+            ProbabilityTheory.IsStableLevyProcess.exists_shiftedCorridor_escape_rate \
+            ProbabilityTheory.IsStableLevyProcess.exists_shiftedEndpointCorridor_escape_rate \
+            ProbabilityTheory.IsStableLevyProcess.tendsto_log_shiftedCorridor_div_log_range \
+            ProbabilityTheory.IsStableLevyProcess.tendsto_log_shiftedEndpointCorridor_div_log_shiftedCorridor \
+            ProbabilityTheory.IsStableLevyProcess.rationalRangeProbability_eq_of_same_law \
+            ProbabilityTheory.IsStableLevyProcess.escapeRate_constant_eq_of_same_law \
+            ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.tendsto_stableBlockLength_div_stableScaleTime \
+            ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.tendsto_stableScaleTime_div_nat_mul_stableBlockCount \
+            ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.tendsto_stableBlockNorming_div_scale_of_slowVariation_limit \
+            Asymptotics.IsRegularlyVaryingAtTop.mul \
+            Asymptotics.IsRegularlyVaryingAtTop.inv \
+            Asymptotics.IsRegularlyVaryingAtTop.exists_potter_upper_bound \
+            Asymptotics.isRegularlyVaryingAtTop_rpow_div_of_slowlyVarying \
+            Asymptotics.IsSlowlyVaryingAtTop.of_tendsto_pos \
+            Asymptotics.IsRegularlyVaryingAtTop.tendsto_intervalIntegral_div_mul_of_antitone \
+            ProbabilityTheory.stableScaleTime_isRegularlyVaryingAtTop \
+            ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsStableMogulskiiScale.tendsto_stableSmallDeviationRate_zero_of_slowVariation_limit \
+            ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.tendsto_stableSmallDeviationRate_zero_of_slowVariation \
+            ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.tendsto_stableScaleTime_div_nat_mul_stableBlockCount_of_slowVariation_limit \
+            ProbabilityTheory.tendsto_stableSlowVariation_of_layercake_and_tail \
+            ProbabilityTheory.tendsto_truncatedSecondMoment_scale_of_layercake_and_tail \
+            ProbabilityTheory.tendsto_truncatedSecondMoment_scale_of_twoSidedTail \
+            ProbabilityTheory.tendsto_stableSlowVariation_of_twoSidedTail \
+            ProbabilityTheory.tendsto_truncatedSecondMoment_div_tail_of_regularlyVarying \
+            ProbabilityTheory.stableSlowVariation_isSlowlyVarying_of_regularlyVaryingTail \
+            Asymptotics.tendsto_rpow_mul_intervalIntegral_of_tendsto_rpow_mul \
+            Asymptotics.tendsto_blockCount_mul_blockLength_div_nat \
+            ProbabilityTheory.IsInDomainOfAttractionAlong.tendstoInDistribution_partialSum_div \
+            ProbabilityTheory.iidSequenceLaw_charFun_sum \
+            ProbabilityTheory.charFun_map_normalizedIidSum \
+            ProbabilityTheory.IsInDomainOfAttractionAlong.tendsto_charFun_normalizedIidSum \
+            ProbabilityTheory.IsInDomainOfAttractionAlong.tendsto_norm_charFun_oneStep_pow \
+            MeasureTheory.exists_dirac_of_norm_charFun_eq_one \
+            ProbabilityTheory.IsAlphaStable.norm_charFun_weightedSum \
+            ProbabilityTheory.IsAlphaStable.exists_pos_norm_charFun_eq_exp \
+            ProbabilityTheory.IsInDomainOfAttractionAlong.exists_pos_tendsto_log_norm_charFun_and_norm_defect \
+            ProbabilityTheory.charFun_symmetrizedMeasure \
+            ProbabilityTheory.charFun_symmetrizedMeasure_re \
+            ProbabilityTheory.integral_gaussian_charFunDefect_eq_laplaceDefect \
+            ProbabilityTheory.integral_gaussian_normCharFunDefect_eq_laplaceDefect \
+            MeasureTheory.tendstoUniformlyOn_charFun_of_tendsto \
+            ProbabilityTheory.IsInDomainOfAttractionAlong.tendsto_norming_ratio \
+            ProbabilityTheory.IsInDomainOfAttractionAlong.tendsto_norming_succ_ratio \
+            ProbabilityTheory.IsInDomainOfAttractionAlong.tendsto_scale_atTop \
+            ProbabilityTheory.IsInDomainOfAttractionAlong.exists_tendstoUniformlyOn_normDefect \
+            ProbabilityTheory.IsInDomainOfAttractionAlong.tendsto_normDefect_ratio_nhdsGT_zero \
+            ProbabilityTheory.firstTailIntegral_twoSidedTail_eq_half_truncatedSquareTailIntegral \
+            ProbabilityTheory.secondTailIntegral_twoSidedTail_eq_half_intervalIntegral_truncatedSquareTailIntegral \
+            ProbabilityTheory.IsRegularlyVaryingAtTop.twoSidedTail_iff_integratedTruncatedSquareTail \
+            ProbabilityTheory.truncatedSecondMomentFactor_isSlowlyVarying_of_integratedTruncatedSquareTail \
+            ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.eventually_horizontalTubeProbability_le_pow_stableBlock_endpointMass \
+            ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.horizontalTubeProbability_ge_pow_stableEndpointBands \
+            ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.horizontalTubeProbability_ge_pow_stableEndpointBands_of_quotientBlockCount \
+            Analysis.Fourier.CosineTauberian.integrableOn_cosineTauberianMellinWeight \
+            Analysis.Fourier.CosineTauberian.integrableOn_rpow_mul_abs_cosineTauberianKernel \
+            Analysis.Fourier.CosineTauberian.cosineTauberianMellinMoment_mul_cosineMoment_eq_profileGapMoment \
+            Analysis.Fourier.CosineTauberian.integral_cosineTauberianProfileGapWeight \
+            Analysis.Fourier.CosineTauberian.tendsto_integral_ratio_mul_cosineTauberianKernel \
+            Analysis.Fourier.CosineTauberian.cosineTauberianMellinMoment_pos \
+            Analysis.Fourier.CosineTauberian.cosineTauberianConstant_eq \
+            Analysis.Fourier.CosineTauberian.cosineTauberianConstant_pos \
+            ProbabilityTheory.exists_pos_closedAbsTail_le_cosineDefectFrequencyAverage \
+            ProbabilityTheory.exists_pos_closedAbsTail_le_cosineDefectFrequencyAverage_all \
+            ProbabilityTheory.exists_pos_symmetrizedClosedAbsTail_le_normDefectFrequencyAverage \
+            ProbabilityTheory.intervalIntegral_four_cosineDefect_sub_double \
+            ProbabilityTheory.tendsto_closedAbsTail_div_cosineDefect_atTop \
+            ProbabilityTheory.tendsto_frequencyCancellation_ratio_nhdsGT_zero \
+            ProbabilityTheory.tendsto_symmetrizedClosedAbsTail_div_normDefect_atTop \
+            ProbabilityTheory.secondTailIntegral_twoSidedTail_eq_cappedCubic \
+            ProbabilityTheory.secondTailIntegral_eq_cosineDefect_kernel \
+            ProbabilityTheory.twoSidedTail_div_symmetrized_tendsto_half \
+            ProbabilityTheory.IsInDomainOfAttractionAlong.isRegularlyVarying_symmetrizedCosineDefect \
+            ProbabilityTheory.IsInDomainOfAttractionAlong.exists_potter_bound_symmetrizedCosineDefect \
+            ProbabilityTheory.IsInDomainOfAttractionAlong.exists_potter_envelope_symmetrizedCosineDefect \
+            ProbabilityTheory.IsInDomainOfAttractionAlong.tendsto_secondTailIntegral_ratio \
+            ProbabilityTheory.IsInDomainOfAttractionAlong.isRegularlyVarying_symmetrizedTwoSidedTail \
+            ProbabilityTheory.IsInDomainOfAttractionAlong.isRegularlyVarying_twoSidedTail \
+            ProbabilityTheory.IsInDomainOfAttractionAlong.isSlowlyVarying_stableSlowVariation \
+            ProbabilityTheory.IsInDomainOfAttractionAlong.tendsto_symmetrizedTail_div_cosineDefect \
+            ProbabilityTheory.IsInDomainOfAttractionAlong.tendsto_twoSidedTail_div_cosineDefect \
+            ProbabilityTheory.IsInDomainOfAttractionAlong.tendsto_truncatedSecondMoment_div_scaledCosineDefect \
+            ProbabilityTheory.IsInDomainOfAttractionAlong.exists_pos_tendsto_stableScaleTime_div \
+            ProbabilityTheory.IsInDomainOfAttractionAlong.exists_stableNorming_rescaling \
+            ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability.FiniteCorridorUnion.realEnergy_antitone_of_subset_of_probabilityRate \
+            ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability.FiniteCorridorUnionEnergyLimits.commonEnergy_eq_of_approximation \
+            ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability.existsUnique_commonEnergy_of_hasVanishingEnergyGapApproximation \
+            ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability.tendsto_log_finiteCorridorUnion_preimage_probability_ratio \
+            ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability.tendsto_log_finiteCorridorUnion_preimage_probability_ratio_of_aemeasurable_paths \
+            ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability.tendsto_log_finiteCorridorUnion_preimage_probability_ratio_of_nullMeasurable \
+            ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability.tendsto_log_probability_ratio_of_FiniteCorridorUnionApproximation \
+            ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability.tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation \
+            ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability.tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_stepCorridorRates \
+            ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability.exists_constantCorridor_rate \
+            ProbabilityTheory.cdf_gaussianReal_zero_lt_one \
+            ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_index_two \
+            ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_index_two_of_brownian
+          python3 scripts/check-lean-import-boundaries.py
+          python3 scripts/run-mathlib-lint-style.py
+
+      - name: Check Skorokhod path-space Borel structure and axioms
+        run: |
+          set -o pipefail
+          lake build \
+            Topology.Cadlag.Skorokhod.Path.Separable \
+            MeasureTheory.MeasurableSpace.CadlagPath.Basic
+          : > "$RUNNER_TEMP/skorokhod-path-axioms.txt"
+          cat \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Skorokhod/Borel/Generation.lean.log" \
+            >> "$RUNNER_TEMP/skorokhod-path-axioms.txt"
+          python3 scripts/check-lean-axioms.py \
+            "$RUNNER_TEMP/skorokhod-path-axioms.txt" --expected \
+            IsCadlag.countable_discontinuitySet \
+            Skorokhod.measurable_apply \
+            Skorokhod.continuousAt_integralAlongTimeChange \
+            Skorokhod.instSeparableSpaceCadlagPath \
+            Skorokhod.instIsCompletelyMetrizableSpaceCadlagPath \
+            Skorokhod.measurable_rationalEvaluation \
+            Skorokhod.measurableEmbedding_rationalEvaluation \
+            Skorokhod.borel_eq_comap_rationalEvaluation
+
+      - name: Check Poisson random-measure APIs
+        run: |
+          set -o pipefail
+          lake build \
+            Probability.RandomMeasure.Poisson.Basic \
+            Probability.RandomMeasure.Poisson.Integration.Integral
+          : > "$RUNNER_TEMP/poisson-random-measure-axioms.txt"
+          cat \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Probability/Poisson/RandomMeasure.lean.log" \
+            >> "$RUNNER_TEMP/poisson-random-measure-axioms.txt"
+          python3 scripts/check-lean-axioms.py \
+            "$RUNNER_TEMP/poisson-random-measure-axioms.txt" --expected \
+            ProbabilityTheory.measurable_poissonRandomMeasure \
+            ProbabilityTheory.bind_poissonRandomMeasure_eq_intensity \
+            ProbabilityTheory.lintegral_lintegral_poissonRandomMeasure \
+            ProbabilityTheory.hasSum_pieceSum_poissonRandomMeasure \
+            ProbabilityTheory.aemeasurable_integral_poissonRandomMeasure \
+            ProbabilityTheory.IsPoissonPointFamily.aemeasurable_integral_poissonRandomMeasure
+
+      - name: Check branching-process observations and axioms
+        run: |
+          set -o pipefail
+          lake build \
+            Probability.BranchingProcess.Offspring.FieldLaw \
+            Probability.BranchingProcess.Offspring.Count \
+            Probability.BranchingProcess.GaltonWatson.Generation \
+            Probability.BranchingProcess.GaltonWatson.BranchingProperty \
+            Probability.BranchingRandomWalk.Genealogy.GaltonWatson
+          : > "$RUNNER_TEMP/branching-process-axioms.txt"
+          cat \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Branching/GaltonWatson.lean.log" \
+            >> "$RUNNER_TEMP/branching-process-axioms.txt"
+          python3 scripts/check-lean-axioms.py \
+            "$RUNNER_TEMP/branching-process-axioms.txt" --expected \
+            Combinatorics.Branching.RootIndexed.BranchingWalk.generationSize_one_eq_childCount \
+            ProbabilityTheory.BranchingProcess.GaltonWatson.generationSize_one_law
+
+      - name: Check random-walk full path-law conversion
+        run: |
+          lake build \
+            Probability.BranchingRandomWalk.Walk.Path.Law \
+            Probability.BranchingRandomWalk.Walk.Path.Scaling
+          : > "$RUNNER_TEMP/random-walk-axioms.txt"
+          cat \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Probability/RandomWalk/RandomWalkPathLaw.lean.log" \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Branching/WalkEquiv.lean.log" \
+            >> "$RUNNER_TEMP/random-walk-axioms.txt"
+          python3 scripts/check-lean-axioms.py \
+            "$RUNNER_TEMP/random-walk-axioms.txt" --expected \
+            Combinatorics.Branching.Walk.nodeEquivNat \
+            Combinatorics.Branching.Walk.equivInitialOptionalIncrements \
+            ProbabilityTheory.BranchingRandomWalk.RandomWalk.processPath_ofIncrements \
+            ProbabilityTheory.BranchingRandomWalk.RandomWalk.map_processPath_map_ofIncrements \
+            ProbabilityTheory.BranchingRandomWalk.RandomWalk.map_processPath_ofIncrementLaw \
+            ProbabilityTheory.BranchingRandomWalk.Walk.normalizedStepPath_eq_displaceWith \
+            ProbabilityTheory.BranchingRandomWalk.Walk.normalizedStepPath_eq_discreteTimeCloud_position

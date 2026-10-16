@@ -2,20 +2,22 @@ name: Publish visualizer
 
 on:
   push:
-    branches: [master]
+    branches: [main]
     paths:
-      - "lean/docs/visualizer/**"
-      - "lean/scripts/check-visualizer-manifest.mjs"
+      - "docs/visualizer/**"
+      - "scripts/check-visualizer-manifest.mjs"
       - ".github/workflows/pages.yml"
-      - "lean/Combinatorics/**"
-      - "lean/Probability/**"
-      - "lean/Topology/**"
-      - "lean/MeasureTheory/**"
-      - "lean/Analysis/**"
-      - "lean/Order/**"
-      - "lean/lakefile.toml"
-      - "lean/lake-manifest.json"
-      - "lean/lean-toolchain"
+      - "Combinatorics/**"
+      - "Probability/**"
+      - "Topology/**"
+      - "MeasureTheory/**"
+      - "Analysis/**"
+      - "Algebra/**"
+      - "LinearAlgebra/**"
+      - "Order/**"
+      - "lakefile.toml"
+      - "lake-manifest.json"
+      - "lean-toolchain"
   workflow_dispatch:
 
 permissions:
@@ -33,20 +35,20 @@ jobs:
     steps:
       - name: Check out source
         uses: actions/checkout@v4
+        with:
+          submodules: recursive
       - name: Install Lean and validate selected declarations
         uses: leanprover/lean-action@v1
         with:
           use-mathlib-cache: true
-          lake-package-directory: lean
       - name: Check visualizer manifest
-        working-directory: lean
         run: node scripts/check-visualizer-manifest.mjs
       - name: Configure Pages
         uses: actions/configure-pages@v5
       - name: Upload static site
         uses: actions/upload-pages-artifact@v3
         with:
-          path: lean/docs/visualizer
+          path: docs/visualizer
 
   deploy:
     needs: build

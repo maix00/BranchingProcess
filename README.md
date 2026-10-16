@@ -1,81 +1,136 @@
-The `fduthesis` Class
-=====================
+# BranchingProcess
 
-*LaTeX thesis template for Fudan University, v0.9a*
+`BranchingProcess` is a Lean 4 and Mathlib library for formalizing branching
+processes, branching random walks, random walks, and their path-space limits.
+It is an active research formalization. Contributions, issue reports, theorem
+suggestions, and improvements to the library are welcome.
 
-Overview
---------
+## Mathematical scope
 
-This template supports doctoral or master dissertion and undergraduate
-thesis, both in Chinese or English. With the help of modern LaTeX
-technology, `fduthesis` aims to create a simple interface, a normative
-format, as well as a hackable class for the users.
+The library is organized by mathematical domain. The table names the main
+interfaces and theorem families; each link goes to the narrow module that
+defines or proves it.
 
-At present, `fduthesis` only supports XeTeX and LuaTeX engines.
-Support for pdfTeX and [ApTeX](https://github.com/clerkma/ptex-ng) is
-still under development. `fduthesis` only allows UTF-8 encoding.
+| Domain | Core definitions and theorem interfaces | Status |
+| --- | --- | --- |
+| Ulam--Harris trees and branching walks | [`Step`](Combinatorics/BranchingWalk/Step/Basic.lean), [`surviveAlong`](Combinatorics/BranchingWalk/Basic/Survival/SurviveAlong.lean), [`RootIndexed.BranchingWalk`](Combinatorics/BranchingWalk/Basic/Definitions.lean), derived parent closure, and the step-level [`IsSiblingClosed`](Combinatorics/BranchingWalk/Basic/Sibling/Closed.lean) property used when constructing ordered trees | Reusable foundation |
+| Random fields and genealogy | Product laws for step fields, generation filtrations, adapted selections, multi-root marginals, fixed and selected descendant laws | Reusable interfaces; theorem-specific instances continue to grow |
+| Point processes and spines | [`PointProcess`](Probability/PointProcess/Basic.lean), Dirac point measures, exponential tilting, spine laws, and both directions of the many-to-one formulas | Core formulas formalized |
+| Kernels and survival | Markov/sub-Markov kernels, killed and return kernels, corridor survival, block and entrance estimates | Reusable kernel layer |
+| Functional limits | Independent-increment finite-dimensional laws, Donsker finite-dimensional and path interfaces, tightness criteria, Brownian and Skorokhod adapters | Interfaces and major inputs formalized |
+| Stable processes | [`HasStableClockIncrements`](Probability/Process/Stable/Basic.lean), stable Lévy specializations, finite-dimensional scaling, [`RationalTube`](Probability/Process/Stable/SmallDeviation/RationalTube.lean), path-law interfaces, truncated-variance quantities | The stable-process escape rate, exact step-corridor rate, and path-class rate assembly are proved under the stated source hypotheses; arbitrary `IsM` targets have matching inner/outer rates without an added measurability claim |
+| Mogulskii small deviations | Diffusive and stable scales, Gaussian block limits, killed-interval spectral modes, return estimates, and path-class rates | Stable random-walk M₂/M₃/M rates are proved for both the current `S_n` path and the source `S_(n−1)` path. Arbitrary `IsM` targets have matching inner/outer rates; ordinary probability rates state their measurability premise. The explicit exponent-two escape constant is `−π²/8`, with source full-width coefficient `−π²/2` |
 
-The documentation can be found in
-[fduthesis.pdf](http://mirrors.ctan.org/macros/latex/contrib/fduthesis/fduthesis.pdf)
-(in Chinese) or
-[fduthesis-en.pdf](http://mirrors.ctan.org/macros/latex/contrib/fduthesis/fduthesis-en.pdf)
-(in English).
+The basic deterministic objects are intentionally small:
 
-GitHub repository: <https://github.com/stone-zeng/fduthesis>.
+```lean
+abbrev Combinatorics.Branching.Step (ι X : Type*) := ι → Option X
 
-Installation
-------------
+def Combinatorics.Branching.surviveAlong
+    (step : TreeNode α → Step α X) : TreeNode α → TreeNode α → Prop
 
-To install `fduthesis`, you can use one of the following methods:
+structure Combinatorics.Branching.RootIndexed.BranchingWalk
+    (Root α Mark Position : Type*) where
+  step : Root → StepField α Mark
+  initial : Root → Position
+```
 
-- If you are running TeX Live, the simplest way is to run
+`Option` is part of the model: a step may have no children. Finiteness,
+countability, ordering, and measurability are added only by the modules that
+need them. The root-indexed construction is the common pre-sampled field for
+multiple initial particles; a finite family is obtained by taking a marginal.
+Sibling closure is deliberately a property of a step field rather than a
+field of `RootIndexed.BranchingWalk`: selections and couplings may produce an
+arbitrary raw field, while `Tree.genealogicalTree` accepts
+`IsSiblingClosed (β.step r)` exactly when a Ulam--Harris tree is needed.
+Parent closure is derived for every step field from the prefix property of
+`surviveAlong`; it is not stored as a field of `BranchingWalk`.
 
-      tlmgr install fduthesis
+## What is complete and what is open
 
-- Download
-  [fduthesis.tds.zip](http://mirror.ctan.org/install/macros/latex/contrib/fduthesis.tds.zip)
-  from CTAN, extract it in the root of one of your TDS trees, and
-  update the filename database.
+### Formalized interfaces and theorem families
 
-- Get the source from GitHub:
+- deterministic trees, marked trees, optional child slots, survival, positions,
+  clouds, trajectories, ordering, selection, and domination maps;
+- single-root and arbitrary-root product laws, generation filtrations,
+  adapted/stopped constructions, branching-property interfaces, and selected
+  subtree laws;
+- point-measure and point-process observations, normalized potential laws,
+  spine changes of measure, and the two orientations of endpoint and ancestral
+  path many-to-one formulas;
+- killed and return kernels, kernel iteration, corridor identities, and finite
+  block estimates;
+- central-limit and Donsker inputs, path tightness criteria, Brownian bridges,
+  stable process interfaces, and the finite-state spectral estimates used by
+  the Mogulskii route.
 
-      git clone https://github.com/stone-zeng/fduthesis.git
+### Current research targets
 
-  Run `install-win.bat` (Windows) or `install-unix.sh` (Linux or macOS)
-  to generate the templates and configuration files. These files would
-  be found in a new-created `thesis` folder. You can enjoy `fduthesis`
-  here at once.
+- the final varying-boundary finite-variance Mogulskii asymptotic, including
+  the quantitative entrance estimate and the last blocking step;
+- the remaining quantitative estimates for the selected-walk speed theorems,
+  including the first-moment and cross-term hypotheses in Wang Yiyang's
+  *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
+  Theorem 1.1;
+- the final assembly of Wang Yiyang's Theorems 1.1 and 1.2, including the
+  proposed first-moment version, from the verified interfaces above.
 
-  For permanent installation, you may move the following files into a
-  directory where LaTeX will find them (e.g.
-  `TEXMF/tex/latex/fduthesis/`):
+The detailed dependency graph and proof boundary are kept in
+[`ARCHITECTURE.md`](ARCHITECTURE.md) and
+[`FORMALIZATION_CHECKLIST.md`](FORMALIZATION_CHECKLIST.md). A theorem marked
+as an interface there is not silently treated as a completed asymptotic
+theorem.
 
-  - `fduthesis.cls`
-  - `fduthesis-en.cls`
-  - `fduthesis.def`
-  - `fdudoc.cls`
-  - `fdulogo.sty`
-  - `fudan-emblem.pdf`
-  - `fudan-emblem-new.pdf`
-  - `fudan-name.pdf`
+## Contributing
 
-  Do not forget to update the filename database afterwards.
+Please read [`CONTRIBUTING.md`](CONTRIBUTING.md) before opening a pull request.
+Good contributions include a missing measurability lemma, a reusable
+probability or topology interface, a corrected theorem statement, a smaller
+dependency boundary, and documentation that makes an existing result easier
+to use.
 
-Contributing
-------------
+Use GitHub issues for questions, counterexamples, proof gaps, and proposed
+improvements. Pull requests should import the narrowest module available,
+reuse Mathlib definitions when possible, include the smallest meaningful
+verification target, and update the proof-boundary documentation when a
+theorem changes status.
 
-[Issues](https://github.com/stone-zeng/fduthesis/issues) and
-[pull requests](https://github.com/stone-zeng/fduthesis/pulls)
-are always welcome.
+For questions that do not fit an issue, contact
+**wang_yi_yang@foxmail.com**.
 
-License
--------
+## Build and use
 
-This work may be distributed and/or modified under the conditions of
-the [LaTeX Project Public License](http://www.latex-project.org/lppl.txt),
-either version 1.3c of this license or (at your option) any later
-version.
+The repository pins Lean, Mathlib, and BrownianMotion in
+[`lean-toolchain`](lean-toolchain), [`lakefile.toml`](lakefile.toml), and
+[`lake-manifest.json`](lake-manifest.json). A clean checkout can be built with:
 
------
+```sh
+git submodule update --init --recursive
+lake exe cache get
+lake build
+```
 
-Copyright (C) 2017&ndash;2024 by Xiangdong Zeng <xdzeng96@gmail.com>.
+Run `lake update` only when intentionally refreshing dependency revisions, then
+review the resulting manifest changes and rebuild the package.
+
+Import the narrowest module that provides the needed definition or theorem.
+There is deliberately no umbrella import. For example:
+
+```lean
+import Probability.BranchingRandomWalk.Walk.Basic
+import Probability.Process.RandomWalk.FunctionalLimit.Donsker.FiniteDimensional.CLT
+import Probability.PointProcess.Basic
+```
+
+The standalone library is released from the `lean/` subtree of the repository
+containing Wang Yiyang's *Asymptotic Speed of the N-Branching Random Walk with
+Infinite Offspring*. See [`RELEASE.md`](RELEASE.md) for the reproducible
+release check.
+
+## License
+
+The standalone Lean library in this directory is released under the
+[Apache License 2.0](LICENSE). The surrounding LaTeX thesis template is a
+separate work and remains under the LaTeX Project Public License as stated in
+the repository's root `README.md` and in the source-file headers. Mathlib,
+BrownianMotion, and other external dependencies retain their own licenses.
