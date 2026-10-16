@@ -14,10 +14,11 @@ public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVaria
 The public theorems in this file are:
 
 - `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.measureReal_noLargeDropEndpointBelowEvent_le_exp_of_finiteVariance`:
-  for centered increments of variance $\sigma^2>0$, sufficiently large
-  $\Delta$, and $L\ge\Delta^{2+c}$, the no-large-drop event ending below
-  $\Delta/c$ has probability at most $\exp(-dL/\Delta^2)$ when
-  $0<d<\pi^2\sigma^2/2$.
+  for centered increments of variance $\sigma^2>0$ and
+  $0<d<\pi^2\sigma^2/2$, sufficiently large $\Delta$ and
+  $L\ge\Delta^{2+c}$ give
+  $\mathbb P(\forall i\le j\le L,\ Y_i-Y_j\le\Delta,\ Y_L\le\Delta/c)
+  \le e^{-dL/\Delta^2}$.
 - `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.exists_uniform_iidSequenceLaw_measure_noLargeDropEndpointBelowEvent_le_of_centeredSecondMoment`:
   a uniform version for all large widths and superquadratic horizons.
 

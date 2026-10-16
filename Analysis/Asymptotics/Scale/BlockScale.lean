@@ -30,7 +30,8 @@ The public definitions and theorems are:
   and time intervals.
 - `Asymptotics.tendsto_nat_div_atTop_of_cast_ratio` and
   `Asymptotics.tendsto_nat_div_floorBlockLength_atTop_of_horizonRatio`:
-  divergence of complete block counts.
+  if $a_n\to\infty$ and $H_n/a_n\to\infty$, then
+  $H_n/\lfloor a_n\rfloor\to\infty$.
 - `Asymptotics.tendsto_nat_div_atTop_of_positive_horizonRatio_of_zero_blockRatio`,
   `Asymptotics.eventually_block_le_horizon_of_positive_density`, and
   `Asymptotics.tendsto_nat_sub_div_nat_of_horizon_and_vanishingBlock`:

@@ -16,8 +16,14 @@ The public theorem in this file is:
 - `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.exists_uniform_driftedTube_endpoint_bounds`: if the increment law has
   mean zero and variance $\sigma^2>0$, $v>0$, $c\ge0$,
   $\varepsilon>0$, and $d'>\pi^2\sigma^2/2$, one width threshold
-  controls the two tilted-tube endpoint probabilities for every admissible
+  gives $e^{-d'L/\Delta^2}\le\mathbb P(A^-_{L,\Delta})$ and
+  $e^{-d'L/\Delta^2}\le\mathbb P(A^+_{L,\Delta})$ for every admissible
   initial boundary and horizon $L\ge\lfloor\Delta^{2+\varepsilon}\rfloor$.
+  For $R_j=r+\mu j/\Delta^2$ and partial sums $Y_j$, these events are
+  $A^-_{L,\Delta}=\{R_j\le Y_j\le R_j+\Delta\ (1\le j\le L),\;
+  Y_L\in[R_L,R_L+v\Delta]\}$ and
+  $A^+_{L,\Delta}=\{R_j\le Y_j\le R_j+\Delta\ (1\le j\le L),\;
+  Y_L\in[R_L+(1-v)\Delta,R_L+\Delta]\}$.
 
 This is Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.5. Its parameter selection follows
 that proof: first choose an intermediate exponential rate, then a finite bin
