@@ -132,7 +132,7 @@ private noncomputable def terminalJumpEndpointCorridor (a u v : ℝ)
         dsimp [witness]
         exact ⟨by exact_mod_cast hvalueLow, by exact_mod_cast hvalueHigh⟩
 
-private theorem terminalJumpEndpointCorridor_energy (a u v : ℝ)
+private lemma terminalJumpEndpointCorridor_energy (a u v : ℝ)
     (ha : 0 < a) (haOne : a < 1)
     (hu : 0 < u) (huv : u < v) (hv : v < 1) :
     (terminalJumpEndpointCorridor a u v ha haOne hu huv hv).energy 2 = 1 := by
@@ -196,7 +196,7 @@ private noncomputable def terminalJumpEndpointCorridorUnion (a u v : ℝ)
   rw [henergy]
   norm_num
 
-private theorem terminalJumpEndpointCorridorUnion_toSet (a u v : ℝ)
+private lemma terminalJumpEndpointCorridorUnion_toSet (a u v : ℝ)
     (ha : 0 < a) (haOne : a < 1)
     (hu : 0 < u) (huv : u < v) (hv : v < 1) :
     (terminalJumpEndpointCorridorUnion a u v ha haOne hu huv hv).toSet =
@@ -204,7 +204,7 @@ private theorem terminalJumpEndpointCorridorUnion_toSet (a u v : ℝ)
   ext path
   simp [terminalJumpEndpointCorridorUnion, FiniteCorridorUnion.toSet]
 
-private theorem terminalJumpEndpointCorridorUnion_realEnergy (a u v : ℝ)
+private lemma terminalJumpEndpointCorridorUnion_realEnergy (a u v : ℝ)
     (ha : 0 < a) (haOne : a < 1)
     (hu : 0 < u) (huv : u < v) (hv : v < 1) :
     (terminalJumpEndpointCorridorUnion a u v ha haOne hu huv hv).realEnergy = 1 := by
@@ -217,7 +217,7 @@ private theorem terminalJumpEndpointCorridorUnion_realEnergy (a u v : ℝ)
   rw [hmin, terminalJumpEndpointCorridor_energy]
   norm_num
 
-private theorem sourceTerminalJumpCorridor_subset_endpointWindow
+private lemma sourceTerminalJumpCorridor_subset_endpointWindow
     {n : ℕ} {scale : ℕ → ℝ} {a u v : ℝ}
     (hn : 0 < n) (hscale : 0 < scale n)
     (ha : 0 < a) (haOne : a < 1)

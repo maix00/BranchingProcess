@@ -79,7 +79,7 @@ theorem incrementKernel_comp [MeasurableSingletonClass E]
       (Measure.lintegral_conv (measurable_const.indicator hs)).symm
 
 omit [AddCommMonoid E] [MeasurableAdd₂ E] in
-private theorem kernel_pow_succ_apply (κ : Kernel E E)
+private lemma kernel_pow_succ_apply (κ : Kernel E E)
     [IsSFiniteKernel κ] (n : ℕ) (x : E) :
     (κ ^ (n + 1)) x = κ ∘ₘ ((κ ^ n) x) := by
   ext s hs

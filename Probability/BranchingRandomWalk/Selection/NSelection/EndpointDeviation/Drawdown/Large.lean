@@ -637,7 +637,7 @@ theorem subtreePathPotential_eq_position_sub (m : ℕ)
   rw [hform] at hlocal
   linarith
 
-private theorem take_append_drop_take_eq {α : Type*} (u : List α)
+private lemma take_append_drop_take_eq {α : Type*} (u : List α)
     (k j i : ℕ) (hjk : j ≤ k) (hik : i ≤ k - j) :
     (u.take k).take j ++ ((u.take k).drop j).take i = u.take (j + i) := by
   calc

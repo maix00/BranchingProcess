@@ -65,7 +65,7 @@ open scoped ENNReal
 
 namespace ProbabilityTheory.RandomWalk
 
-private theorem map_fairBoolMeasure_not :
+private lemma map_fairBoolMeasure_not :
     fairBoolMeasure.map Bool.not = fairBoolMeasure := by
   let p : unitInterval := ⟨1 / 2, by constructor <;> norm_num⟩
   have hp : unitInterval.symm p = p := by
@@ -82,19 +82,19 @@ private theorem map_fairBoolMeasure_not :
   rw [hp]
   ac_rfl
 
-private theorem map_iidFairBool_flip :
+private lemma map_iidFairBool_flip :
     (iidSequenceLaw fairBoolMeasure).map (fun branch n => !branch n) =
       iidSequenceLaw fairBoolMeasure := by
   rw [iidSequenceLaw_map_coordinatewise fairBoolMeasure Bool.not
     (measurable_of_countable _), map_fairBoolMeasure_not]
 
-private theorem measurable_flipBoolSequence :
+private lemma measurable_flipBoolSequence :
     Measurable (fun branch : ℕ → Bool => fun k => !branch k) := by
   rw [measurable_pi_iff]
   intro k
   exact (measurable_of_countable Bool.not).comp (measurable_pi_apply k)
 
-private theorem rademacherIncrementPath_flip (branch : ℕ → Bool) :
+private lemma rademacherIncrementPath_flip (branch : ℕ → Bool) :
     rademacherIncrementPath (fun k => !branch k) =
       fun k => -rademacherIncrementPath branch k := by
   funext k
@@ -109,19 +109,19 @@ def positiveSurvivesBlock (length : ℕ) : Set (Fin length → Bool) :=
 def negativeSurvivesBlock (length : ℕ) : Set (Fin length → Bool) :=
   {block | FiniteSurvivesNonnegative (fun j => -rademacherOfBool (block j))}
 
-private theorem measurable_blockRademacher (length : ℕ) :
+private lemma measurable_blockRademacher (length : ℕ) :
     Measurable (fun block : Fin length → Bool =>
       (fun j : Fin length => rademacherOfBool (block j))) := by
   rw [measurable_pi_iff]
   intro j
   exact measurable_rademacherOfBool.comp (measurable_pi_apply j)
 
-private theorem measurableSet_positiveSurvivesBlock (length : ℕ) :
+private lemma measurableSet_positiveSurvivesBlock (length : ℕ) :
     MeasurableSet (positiveSurvivesBlock length) :=
   (measurableSet_finiteSurvivesNonnegative length).preimage
     (measurable_blockRademacher length)
 
-private theorem measurableSet_negativeSurvivesBlock (length : ℕ) :
+private lemma measurableSet_negativeSurvivesBlock (length : ℕ) :
     MeasurableSet (negativeSurvivesBlock length) := by
   exact (measurableSet_finiteSurvivesNonnegative length).preimage
     (measurable_pi_iff.mpr fun j =>
@@ -181,7 +181,7 @@ theorem positiveSurvivesBlock_probability_pos (length : ℕ) :
         ((Combinatorics.Sequence.blockCoordinates 0 length) ⁻¹'
           positiveSurvivesBlock length) := measure_mono hsubset
 
-private theorem positiveSurvivesBlock_flip_iff
+private lemma positiveSurvivesBlock_flip_iff
     {length : ℕ} (block : Fin length → Bool) :
     (fun j => !block j) ∈ positiveSurvivesBlock length ↔
       block ∈ negativeSurvivesBlock length := by
@@ -192,7 +192,7 @@ private theorem positiveSurvivesBlock_flip_iff
   simp only [positiveSurvivesBlock, negativeSurvivesBlock, Set.mem_ofPred_eq,
     hneg]
 
-private theorem lastSignChangeIndex_eq_zero_iff_blockSurvival
+private lemma lastSignChangeIndex_eq_zero_iff_blockSurvival
     (branch : ℕ → Bool) (n : ℕ) :
     lastSignChangeIndex n (rademacherIncrementPath branch) = 0 ↔
       Combinatorics.Sequence.blockCoordinates 0 n branch ∈
@@ -208,7 +208,7 @@ private theorem lastSignChangeIndex_eq_zero_iff_blockSurvival
     ← positiveSurvivesBlock_shift_iff branch 0 n,
     ← negativeSurvivesBlock_shift_iff branch 0 n]
 
-private theorem not_both_blockSurvivals
+private lemma not_both_blockSurvivals
     (branch : ℕ → Bool) {n : ℕ} (hn : 0 < n) :
     ¬ (Combinatorics.Sequence.blockCoordinates 0 n branch ∈
         positiveSurvivesBlock n ∧
@@ -227,7 +227,7 @@ private theorem not_both_blockSurvivals
       rademacherOfBool, h] at hm
     norm_num at hm
 
-private theorem rademacher_displacement_measurable_prefix
+private lemma rademacher_displacement_measurable_prefix
     {k start : ℕ} (hkn : k ≤ start) :
     Measurable[sequencePrefixFiltration (E := Bool) start]
       (fun branch : ℕ → Bool =>

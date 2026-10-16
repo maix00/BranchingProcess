@@ -25,7 +25,7 @@ open scoped Topology
 
 namespace Skorokhod
 
-private theorem OscillationPartition.consecutiveValueDistance_le
+private lemma OscillationPartition.consecutiveValueDistance_le
     {E : Type*} [PseudoMetricSpace E]
     (partition : OscillationPartition) (path : CadlagPath unitInterval E)
     {bound jumpBound : ℝ}
@@ -72,7 +72,7 @@ private theorem OscillationPartition.consecutiveValueDistance_le
       dist_triangle _ _ _
     _ ≤ bound + jumpBound := add_le_add hleft hjump
 
-private theorem jump_le_of_left_eventually_bound
+private lemma jump_le_of_left_eventually_bound
     {E : Type*} [PseudoMetricSpace E] (path : CadlagPath unitInterval E)
     {t : unitInterval} {epsilon : ℝ} (hepsilon : 0 < epsilon)
     (hevent : ∀ᶠ s in 𝓝[<] t, dist (path s) (path t) ≤ epsilon) :
@@ -92,7 +92,7 @@ private theorem jump_le_of_left_eventually_bound
       Metric.isClosed_closedBall.mem_of_tendsto hlim hclosed
     simpa [Metric.mem_closedBall, dist_comm] using hmem
 
-private theorem exists_left_sample_dist_gt
+private lemma exists_left_sample_dist_gt
     {E : Type*} [PseudoMetricSpace E] (path : CadlagPath unitInterval E)
     {t a : unitInterval} {epsilon eta : ℝ}
     (hjump : epsilon <
@@ -125,7 +125,7 @@ private theorem exists_left_sample_dist_gt
   dsimp [margin] at hsvalue'
   linarith
 
-private theorem HasEndpointOscillationBound.leftJump_le
+private lemma HasEndpointOscillationBound.leftJump_le
     {E : Type*} [PseudoMetricSpace E]
     {path : CadlagPath unitInterval E} {delta epsilon : ℝ}
     (hend : HasEndpointOscillationBound path delta epsilon)
@@ -143,7 +143,7 @@ private theorem HasEndpointOscillationBound.leftJump_le
     exact hend.1 s t hs htdelta
   exact jump_le_of_left_eventually_bound path hepsilon hevent
 
-private theorem HasEndpointOscillationBound.rightJump_le
+private lemma HasEndpointOscillationBound.rightJump_le
     {E : Type*} [PseudoMetricSpace E]
     {path : CadlagPath unitInterval E} {delta epsilon : ℝ}
     (hend : HasEndpointOscillationBound path delta epsilon)
@@ -184,7 +184,7 @@ theorem HasEndpointOscillationBound.largeJump_awayFromEndpoints
     have hsmall := hend.rightJump_le hepsilon httop htdelta
     linarith
 
-private theorem exists_right_time_close
+private lemma exists_right_time_close
     {t : unitInterval} {eta : ℝ} (htop : t < ⊤) (heta : 0 < eta) :
     ∃ u : unitInterval, t < u ∧ u < ⊤ ∧ dist t u < eta := by
   obtain ⟨v, htv, hvtop⟩ := exists_between htop
@@ -203,7 +203,7 @@ private theorem exists_right_time_close
     (htime.and hbelow).and self_mem_nhdsWithin |>.exists
   exact ⟨u, hright, hbelow, by simpa [dist_comm] using htime⟩
 
-private theorem largeJumps_separated_of_lt
+private lemma largeJumps_separated_of_lt
     {E : Type*} [PseudoMetricSpace E]
     {path : CadlagPath unitInterval E} {delta epsilon : ℝ}
     (hdouble : HasDoubleExcursionBound path delta epsilon)

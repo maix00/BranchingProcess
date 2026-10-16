@@ -146,7 +146,7 @@ theorem affineCorridorPrefix_prependHistory_iff
 /-- Restricting the full tube indicator to a fixed ancestral address gives
 the prefix test times the shifted continuation test. The continuation path
 starts at the endpoint of that address. -/
-private theorem pathGenerationPrefixTest_zero
+private lemma pathGenerationPrefixTest_zero
     {X : Type*} [MeasurableSpace X]
     (φ : Potential X) (m n : ℕ) (x : ℝ)
     (ω : StepField ℕ X) (u : TreeNode ℕ) :

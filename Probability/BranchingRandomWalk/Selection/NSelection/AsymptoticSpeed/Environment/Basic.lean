@@ -91,7 +91,7 @@ theorem generationEnvironmentLaw_shift_measurePreserving
     exact Measure.map_infinitePi_infinitePi_of_inj
       (P := fun _ : ℕ => generationBatchLaw μ N) Nat.succ_injective
 
-private theorem ae_generationBatch_finiteWeight
+private lemma ae_generationBatch_finiteWeight
     (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
     (hboundary : HasBoundaryNormalization realPotential μ)
     (N : ℕ) (i : Fin N) :
@@ -113,7 +113,7 @@ private theorem ae_generationBatch_finiteWeight
   exact (ae_map_iff (measurable_pi_apply i).aemeasurable
     hset).1 hmapAE
 
-private theorem ae_generationBatch_nonempty
+private lemma ae_generationBatch_nonempty
     (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
     (hnonempty : μ nonemptySupport = 1)
     (N : ℕ) (i : Fin N) :

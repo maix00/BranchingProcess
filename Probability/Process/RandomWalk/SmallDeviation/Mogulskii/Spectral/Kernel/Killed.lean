@@ -59,7 +59,7 @@ instance intervalRademacherKernel_isSubMarkovKernel (interiorCount : ℕ) :
   rw [← ENNReal.ofReal_add (by norm_num : (0 : ℝ) ≤ 1 / 2) (by norm_num)]
   norm_num
 
-private theorem sum_ite_option_eq_elim_ennreal {ι : Type*}
+private lemma sum_ite_option_eq_elim_ennreal {ι : Type*}
     [Fintype ι] [DecidableEq ι] (index : Option ι) (f : ι → ENNReal) :
     (∑ j, (if index = some j then ENNReal.ofReal (1 / 2 : ℝ) else 0) * f j) =
       index.elim 0 (fun j => ENNReal.ofReal (1 / 2 : ℝ) * f j) := by
@@ -67,7 +67,7 @@ private theorem sum_ite_option_eq_elim_ennreal {ι : Type*}
   | none => simp
   | some i => simp
 
-private theorem ofReal_two_half_indicators (p q : Prop)
+private lemma ofReal_two_half_indicators (p q : Prop)
     [Decidable p] [Decidable q] :
     ENNReal.ofReal
         ((if p then (1 / 2 : ℝ) else 0) + if q then (1 / 2 : ℝ) else 0) =

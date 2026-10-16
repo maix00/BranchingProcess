@@ -37,7 +37,7 @@ open scoped NNReal Topology
 
 namespace ProbabilityTheory
 
-private theorem firstNonnegativeWindowStartUpTo_ne_top_iff
+private lemma firstNonnegativeWindowStartUpTo_ne_top_iff
     (f : C(ℝ≥0, ℝ)) (s : ℝ≥0) :
     firstNonnegativeWindowStartUpTo f s ≠ ⊤ ↔
       ∃ t : ℝ≥0, t + 1 ≤ s ∧ IsNonnegativeWindowStart f t := by
@@ -51,7 +51,7 @@ private theorem firstNonnegativeWindowStartUpTo_ne_top_iff
       exact WithTop.coe_ne_top
   · simp [h]
 
-private theorem brownianPathScaling_windowStart_iff
+private lemma brownianPathScaling_windowStart_iff
     (f : C(ℝ≥0, ℝ)) {c : ℝ≥0} (hc : c ≠ 0) (t : ℝ≥0) :
     IsNonnegativeWindowStart (brownianPathScaling c f) t ↔
       IsNonnegativeWindowStartFor f (c * t) c := by
@@ -86,7 +86,7 @@ private theorem brownianPathScaling_windowStart_iff
     rw [htime]
     exact hscaled
 
-private theorem hasNonnegativeWindowBeforeUnit_iff_scaledFirstWindowUpTo_ne_top
+private lemma hasNonnegativeWindowBeforeUnit_iff_scaledFirstWindowUpTo_ne_top
     (f : C(ℝ≥0, ℝ)) {c : ℝ≥0} (hc : c ≠ 0) :
     HasNonnegativeWindowBeforeUnit f c ↔
       firstNonnegativeWindowStartUpTo (brownianPathScaling c f) (1 / c) ≠ ⊤ := by
@@ -124,18 +124,18 @@ private theorem hasNonnegativeWindowBeforeUnit_iff_scaledFirstWindowUpTo_ne_top
 private noncomputable def shrinkingWindowDuration (n : ℕ) : ℝ≥0 :=
   1 / (n + 1)
 
-private theorem shrinkingWindowDuration_pos (n : ℕ) :
+private lemma shrinkingWindowDuration_pos (n : ℕ) :
     0 < shrinkingWindowDuration n := by
   rw [shrinkingWindowDuration]
   exact div_pos zero_lt_one (by positivity)
 
-private theorem shrinkingWindowDuration_anti {n m : ℕ} (hnm : n ≤ m) :
+private lemma shrinkingWindowDuration_anti {n m : ℕ} (hnm : n ≤ m) :
     shrinkingWindowDuration m ≤ shrinkingWindowDuration n := by
   apply one_div_le_one_div_of_le
   · positivity
   · exact_mod_cast Nat.add_le_add_right hnm 1
 
-private theorem hasNonnegativeWindowBeforeUnit_mono_duration
+private lemma hasNonnegativeWindowBeforeUnit_mono_duration
     (f : C(ℝ≥0, ℝ)) {d d' : ℝ≥0} (hdd' : d' ≤ d)
     (h : HasNonnegativeWindowBeforeUnit f d) :
     HasNonnegativeWindowBeforeUnit f d' := by
@@ -148,7 +148,7 @@ private theorem hasNonnegativeWindowBeforeUnit_mono_duration
     intro u
     exact hwindow ⟨u.1, u.property.1, u.property.2.trans hdd'⟩
 
-private theorem exists_shrinkingWindowDuration_le (d : ℝ≥0) (hd : 0 < d) :
+private lemma exists_shrinkingWindowDuration_le (d : ℝ≥0) (hd : 0 < d) :
     ∃ n : ℕ, shrinkingWindowDuration n ≤ d := by
   have hdR : 0 < (d : ℝ) := by exact_mod_cast hd
   obtain ⟨n, hn⟩ := exists_nat_gt ((d : ℝ)⁻¹)

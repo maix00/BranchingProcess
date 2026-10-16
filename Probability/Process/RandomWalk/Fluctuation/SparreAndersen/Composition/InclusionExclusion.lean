@@ -67,7 +67,7 @@ theorem cyclicSurvivalEvent_eq_preimage {n : ℕ} (hn : 0 < n)
         (fun i => x (Fin.cyclicCoordinateReindex hn k i)) j)
   simp_rw [Fin.partialSum_cyclicCoordinateReindex hn x k]
 
-private theorem measurable_finitePartialSum {n : ℕ}
+private lemma measurable_finitePartialSum {n : ℕ}
     (j : Fin (n + 1)) :
     Measurable (fun x : Fin n → ℝ => Fin.partialSum x j) := by
   induction j using Fin.induction with
@@ -80,7 +80,7 @@ private theorem measurable_finitePartialSum {n : ℕ}
     rw [hsum]
     exact ih.add (measurable_pi_apply j)
 
-private theorem measurable_cyclicPartialSum {n : ℕ}
+private lemma measurable_cyclicPartialSum {n : ℕ}
     (k : Fin n) (j : Fin (n + 1)) :
     Measurable (fun x : Fin n → ℝ =>
       Fin.cyclicPartialSum (Fin.partialSum x) k j) := by

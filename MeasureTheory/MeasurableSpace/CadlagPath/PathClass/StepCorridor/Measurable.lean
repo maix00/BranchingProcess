@@ -33,7 +33,7 @@ open scoped Topology
 
 namespace Skorokhod.PathClass.StepCorridor
 
-private theorem strict_between_failure_iff {l x u : EReal} :
+private lemma strict_between_failure_iff {l x u : EReal} :
     (l < x → u ≤ x) ↔ x ≤ l ∨ u ≤ x := by
   constructor
   · intro h

@@ -41,7 +41,7 @@ open scoped NNReal
 
 /-- Every finite first-passage time is approached from above by the
 expanding first-passage observation grids. -/
-private theorem tendsto_expandingGridCeiling_of_finite
+private lemma tendsto_expandingGridCeiling_of_finite
     (a : ℝ) (f : C(ℝ≥0, ℝ)) (τ : ℝ≥0)
     (hτ : firstPassageBelow f a = τ) :
     Filter.Tendsto

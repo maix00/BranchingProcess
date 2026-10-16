@@ -48,7 +48,7 @@ private def brownianEndpointProcess {Ω : Type*}
     (B : ℝ≥0 → Ω → ℝ) (_ : Unit) : Ω → ℝ :=
   fun ω => B 1 ω
 
-private theorem rationalBrownianBridge_indep_endpoint
+private lemma rationalBrownianBridge_indep_endpoint
     {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
     {B : ℝ≥0 → Ω → ℝ} (hB : IsPreBrownianReal B P) :
     IndepFun (fun ω q => rationalBrownianBridge B q ω)
@@ -116,7 +116,7 @@ private theorem rationalBrownianBridge_indep_endpoint
   exact IsGaussianProcess.indepFun_of_covariance_eq_zero
     joint hmBridge hmEnd hcov
 
-private theorem gaussianReal_measure_Ioo_pos
+private lemma gaussianReal_measure_Ioo_pos
     (a radius : ℝ) (hradius : 0 < radius) :
     0 < gaussianReal 0 (1 : ℝ≥0) (Set.Ioo (a - radius) (a + radius)) := by
   have hvolume : (volume : Measure ℝ) ≪ gaussianReal 0 (1 : ℝ≥0) :=

@@ -458,7 +458,7 @@ theorem cyclicBlockEvent_eq_gapSurvival {n : ℕ} (hn : 0 < n)
   · intro hx
     exact cyclicBlockEvent_of_gapSurvival hn u hu x hx
 
-private theorem measurableSet_nonnegativePartialSum (m : ℕ) :
+private lemma measurableSet_nonnegativePartialSum (m : ℕ) :
     MeasurableSet {z : Fin m → ℝ |
       ∀ t : Fin (m + 1), 0 ≤ Fin.partialSum z t} := by
   have hpartial (t : Fin (m + 1)) :

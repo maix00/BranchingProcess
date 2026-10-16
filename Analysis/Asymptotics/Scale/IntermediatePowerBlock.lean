@@ -152,7 +152,7 @@ theorem intermediate_power_block_ratios
     field_simp [hargpos.ne', pow_ne_zero 3 hn.ne']
   exact ⟨hquadratic, hcubic, hblockpos⟩
 
-private theorem tendsto_rpow_div_rpow_zero
+private lemma tendsto_rpow_div_rpow_zero
     {width : ℕ → ℝ} (hwidth : Tendsto width atTop atTop)
     {p q : ℝ} (hpq : p < q) :
     Tendsto (fun n => width n ^ p / width n ^ q) atTop (𝓝 0) := by

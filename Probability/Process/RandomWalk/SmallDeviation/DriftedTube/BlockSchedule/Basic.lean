@@ -6,7 +6,8 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.BlockSchedule.Exponent
+public import Mathlib.Data.Nat.Basic
+import Mathlib.Tactic
 /-!
 # Finite staircase schedule with a longer last block
 
@@ -38,9 +39,10 @@ The public objects and theorems in this file are:
 - `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.staircaseBlockLength_bounds`:
   every actual block has length in $[\ell,2\ell)$.
 
-These are the discrete schedule definitions in Wang Yiyang,
+This finite partition is the staircase schedule used in Wang Yiyang,
 *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
-Chapter 3, proof of Lemma 3.5.
+Chapter 3, proof of Lemma 3.5. Its definition and length properties apply to
+any natural-number entrance time, horizon, and common block length.
 -/
 
 @[expose] public section

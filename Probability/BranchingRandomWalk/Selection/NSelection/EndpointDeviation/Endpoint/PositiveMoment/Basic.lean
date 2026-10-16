@@ -29,7 +29,7 @@ open Combinatorics.Branching
 open Combinatorics.UlamHarris
 open ProbabilityTheory.BranchingRandomWalk.Spine
 
-private theorem rootPosition_eq_pathPotential (m : ℕ)
+private lemma rootPosition_eq_pathPotential (m : ℕ)
     (field : FiniteRootStepField m ℕ ℝ) (r : Fin m) (u : TreeNode ℕ) :
     RootIndexed.position (fun _ : Fin m => (0 : ℝ)) id field r u =
       Spine.pathPotential realPotential (field r) u := by

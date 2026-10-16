@@ -30,7 +30,7 @@ open ProbabilityTheory.BranchingRandomWalk.Spine
 open ProbabilityTheory.RandomWalk
 open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
-private theorem secondStage_subtreePotential_eq_rootPositionDifference
+private lemma secondStage_subtreePotential_eq_rootPositionDifference
     (m : ℕ) (field : RootIndexed.StepField (Fin m) ℕ ℝ)
     (r : Fin m) (u v : List ℕ) :
     Spine.pathPotential realPotential

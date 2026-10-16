@@ -24,7 +24,7 @@ namespace ProbabilityTheory.BranchingProcess.GaltonWatson
 open MeasureTheory
 open scoped ENNReal
 
-private theorem surviveAlong_measurableSet_under_law {ι : Type*}
+private lemma surviveAlong_measurableSet_under_law {ι : Type*}
     (v u : Combinatorics.UlamHarris.TreeNode ι) :
     MeasurableSet {β : Combinatorics.Branching.Process ι |
       Combinatorics.Branching.surviveAlong (β.step PUnit.unit) v u} := by
@@ -74,7 +74,7 @@ theorem childSubtreeVector_measurable {ι : Type*} :
   intro i
   exact ProbabilityTheory.BranchingRandomWalk.subtreeStepField_measurable [i]
 
-private theorem childSubtreeVector_measurable_future {ι : Type*} :
+private lemma childSubtreeVector_measurable_future {ι : Type*} :
     Measurable[ProbabilityTheory.BranchingRandomWalk.stepFutureSpace
       (α := ι) (X := PUnit.{1}) 1]
       (childSubtreeVector (ι := ι)) := by

@@ -241,7 +241,7 @@ theorem sourceNormalizedStepCadlagPathIcc_range_eq_scaledDisplacement
       htval]
     exact normalizedStepPath_grid scale hn increment
 
-private theorem normalizedStepCadlagPathIcc_range_eq_scaledDisplacement
+private lemma normalizedStepCadlagPathIcc_range_eq_scaledDisplacement
     (scale : ℝ) {n : ℕ} (hn : 0 < n) (increment : ℕ → ℝ) :
     Set.range (normalizedStepCadlagPathIcc (fun _ => scale) n increment) =
       Set.range (fun k : Fin (n + 1) =>
@@ -279,7 +279,7 @@ private theorem normalizedStepCadlagPathIcc_range_eq_scaledDisplacement
       rw [normalizedStepCadlagPathIcc_apply, htval,
         normalizedStepPath_grid (fun _ => scale) hn increment]
 
-private theorem mem_rangeInOpenInterval_iff_of_range_eq
+private lemma mem_rangeInOpenInterval_iff_of_range_eq
     {f g : CadlagPath unitInterval ℝ} {lower upper : ℝ}
     (hrange : Set.range f = Set.range g) :
     f ∈ Skorokhod.rangeInOpenInterval lower upper ↔

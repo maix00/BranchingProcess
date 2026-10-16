@@ -31,7 +31,7 @@ private noncomputable def normalizedSumLaw (ν : Measure ℝ) (scale : ℝ)
     (count : ℕ) : Measure ℝ :=
   (iidSequenceLaw ν).map (normalizedIidSum (fun _ => scale) (fun _ => 0) count)
 
-private theorem charFun_normalizedSumLaw {ν : Measure ℝ}
+private lemma charFun_normalizedSumLaw {ν : Measure ℝ}
     [IsProbabilityMeasure ν] (scale : ℝ) (count : ℕ) (t : ℝ) :
     charFun (normalizedSumLaw ν scale count) t =
       charFun ν (scale⁻¹ * t) ^ count := by
@@ -40,7 +40,7 @@ private theorem charFun_normalizedSumLaw {ν : Measure ℝ}
 
 /-- A positive logarithmic defect, scaled by time, determines the asymptotic
 power of the one-step modulus at any asymptotically proportional time index. -/
-private theorem tendsto_pow_two_mul_of_tendsto_negLog
+private lemma tendsto_pow_two_mul_of_tendsto_negLog
     {r : ℕ → ℝ} {m : ℕ → ℕ} {c ratioLimit : ℝ}
     (hr : ∀ᶠ n : ℕ in atTop, 0 < r n)
     (hn : ∀ᶠ n : ℕ in atTop, 0 < n)
@@ -87,7 +87,7 @@ decreasing_by omega
 /-- A positive sequence that grows by a fixed factor under each sufficiently
 large doubling tends to infinity.  The proof uses repeated halving, without
 assuming the sequence is monotone. -/
-private theorem tendsto_atTop_of_halving_growth
+private lemma tendsto_atTop_of_halving_growth
     {b : ℕ → ℝ} (N : ℕ) (hN : 0 < N) (c p : ℝ)
     (hc : 0 < c) (hp : 1 < p)
     (hbase : ∀ n, N ≤ n → n < 2 * N → c ≤ b n)
@@ -559,7 +559,7 @@ theorem IsInDomainOfAttractionAlong.tendsto_norming_succ_ratio
     h.tendsto_norming_ratio hlimit (fun n => n + 1) 1 (by norm_num) hindex
 
 /-- A subsequence on the fixed dyadic scale tends to infinity. -/
-private theorem tendsto_nat_half_atTop :
+private lemma tendsto_nat_half_atTop :
     Tendsto (fun n : ℕ => n / 2) atTop atTop := by
   have hfloor : Tendsto (fun n : ℕ => ⌊(1 / 2 : ℝ) * (n : ℝ)⌋₊) atTop atTop :=
     tendsto_nat_floor_mul_atTop (1 / 2 : ℝ) (by norm_num)

@@ -40,7 +40,7 @@ open scoped ENNReal Topology
 
 namespace ProbabilityTheory.RandomWalk
 
-private theorem partialSum_prefix_eq_displacement
+private lemma partialSum_prefix_eq_displacement
     (n : ℕ) (increment : ℕ → ℝ) (t : Fin (n + 1)) :
     Fin.partialSum (fun i : Fin n => increment i.val) t =
       AdditivePath.displacement t.val increment := by
@@ -50,7 +50,7 @@ private theorem partialSum_prefix_eq_displacement
       rw [Fin.partialSum_succ, ih]
       simp [AdditivePath.displacement, Finset.sum_range_succ]
 
-private theorem finitePartialSum_measurable (n : ℕ) (t : Fin (n + 1)) :
+private lemma finitePartialSum_measurable (n : ℕ) (t : Fin (n + 1)) :
     Measurable (fun z : Fin n → ℝ => Fin.partialSum z t) := by
   induction t using Fin.induction with
   | zero => simp
@@ -59,7 +59,7 @@ private theorem finitePartialSum_measurable (n : ℕ) (t : Fin (n + 1)) :
         (fun z => Fin.partialSum z k.castSucc + z k) by funext z; rw [Fin.partialSum_succ]]
       exact ih.add (measurable_pi_apply k)
 
-private theorem finiteSurvivalEvent_measurable (n : ℕ) :
+private lemma finiteSurvivalEvent_measurable (n : ℕ) :
     MeasurableSet {z : Fin n → ℝ |
       ∀ t : Fin (n + 1), 0 ≤ Fin.partialSum z t} := by
   rw [show {z : Fin n → ℝ | ∀ t : Fin (n + 1), 0 ≤ Fin.partialSum z t} =
@@ -67,7 +67,7 @@ private theorem finiteSurvivalEvent_measurable (n : ℕ) :
   exact MeasurableSet.iInter fun t =>
     measurableSet_Ici.preimage (finitePartialSum_measurable n t)
 
-private theorem finiteSurvivalEvent_eq_infinite
+private lemma finiteSurvivalEvent_eq_infinite
     (n : ℕ) (increment : ℕ → ℝ) :
     (∀ t : Fin (n + 1), 0 ≤ Fin.partialSum
       (fun i : Fin n => increment i.val) t) ↔
@@ -81,7 +81,7 @@ private theorem finiteSurvivalEvent_eq_infinite
     | succ k ih =>
         simpa only [partialSum_prefix_eq_displacement, Fin.val_succ] using h k
 
-private theorem finiteSurvivalProbability_eq_infinite
+private lemma finiteSurvivalProbability_eq_infinite
     (ν : Measure ℝ) [IsProbabilityMeasure ν] (n : ℕ) :
     (Measure.pi (fun _ : Fin n => ν)).real
       {z : Fin n → ℝ | ∀ t : Fin (n + 1), 0 ≤ Fin.partialSum z t} =
@@ -95,7 +95,7 @@ private theorem finiteSurvivalProbability_eq_infinite
   apply congrArg (iidSequenceLaw ν)
   ext increment
   exact finiteSurvivalEvent_eq_infinite n increment
-private theorem finiteEndpointProbability_eq_infinite
+private lemma finiteEndpointProbability_eq_infinite
     (ν : Measure ℝ) [IsProbabilityMeasure ν] (n : ℕ) :
     (Measure.pi (fun _ : Fin n => ν)).real
       {z : Fin n → ℝ | 0 ≤ Fin.partialSum z (Fin.last n)} =
@@ -113,7 +113,7 @@ private theorem finiteEndpointProbability_eq_infinite
   simp only [Set.mem_preimage, Set.mem_ofPred_eq,
     partialSum_prefix_eq_displacement, Fin.val_last]
 
-private theorem finiteSurvivalProbability_zero
+private lemma finiteSurvivalProbability_zero
     (ν : Measure ℝ) [IsProbabilityMeasure ν] :
     (Measure.pi (fun _ : Fin 0 => ν)).real
       {z : Fin 0 → ℝ | ∀ t : Fin 1, 0 ≤ Fin.partialSum z t} = 1 := by
@@ -123,7 +123,7 @@ private theorem finiteSurvivalProbability_zero
   rw [hevent]
   simp
 
-private theorem recurrence_to_convolution
+private lemma recurrence_to_convolution
     (F P : ℕ → ℝ) (hF0 : F 0 = 1)
     (hrec : ∀ n : ℕ, 0 < n →
       P n = (n : ℝ) * F n -
@@ -136,7 +136,7 @@ private theorem recurrence_to_convolution
   have h := hrec (m + 1) (by omega)
   simpa [Nat.succ_eq_add_one, add_comm, add_left_comm, add_assoc] using
     (sub_eq_iff_eq_add.mp h.symm)
-private theorem prefix_bound_of_convolution
+private lemma prefix_bound_of_convolution
     (F P : ℕ → ℝ) (hFnonneg : ∀ k, 0 ≤ F k)
     (hPnonneg : ∀ j, 0 ≤ P j)
     {β : ℝ} (_hβ : 0 ≤ β) (N : ℕ) (_hN : 1 ≤ N)

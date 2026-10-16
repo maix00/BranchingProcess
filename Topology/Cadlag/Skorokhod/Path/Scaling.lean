@@ -145,7 +145,7 @@ theorem dist_scalePath_linearPath_lt
     _ < max 1 |scale| * radius :=
       (mul_lt_mul_of_pos_left hpath hCpos)
 
-private theorem exists_norm_bound (f : CadlagPath unitInterval ℝ) :
+private lemma exists_norm_bound (f : CadlagPath unitInterval ℝ) :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ t, |f t| ≤ C := by
   have hbdd : Bornology.IsBounded (Set.range f) := by
     simpa only [Set.image_univ] using
@@ -159,7 +159,7 @@ private theorem exists_norm_bound (f : CadlagPath unitInterval ℝ) :
   rw [Real.dist_eq, sub_zero] at hdist
   exact hdist.trans (le_max_left _ _)
 
-private theorem uniformEDist_scalePath_scale_le
+private lemma uniformEDist_scalePath_scale_le
     {C : ℝ} (r s : ℝ) (f : CadlagPath unitInterval ℝ)
     (hbound : ∀ t, |f t| ≤ C) :
     uniformEDist (scalePath r f) (scalePath s f) ≤

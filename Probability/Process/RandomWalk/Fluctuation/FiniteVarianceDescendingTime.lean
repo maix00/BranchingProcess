@@ -41,7 +41,7 @@ namespace ProbabilityTheory.RandomWalk
 
 /-- The nonnegative polygonal path event is exactly finite-horizon survival
 when its normalization scale is positive. -/
-private theorem normalizedPath_nonnegative_iff_survives
+private lemma normalizedPath_nonnegative_iff_survives
     (n : ℕ) (hn : 0 < n) (increment : ℕ → ℝ) :
     normalizedLinearContinuousPathIcc (fun n => Real.sqrt n) n increment ∈
       {f : C(unitInterval, ℝ) | ∀ t, 0 ≤ f t} ↔
@@ -108,7 +108,7 @@ theorem tendsto_survivalProbability_zero_of_centeredUnitSecondMoment
 
 /-- A vanishing finite-horizon survival probability makes the first strict
 descending ladder time finite almost surely. -/
-private theorem measure_firstDescendingLadderTime_eq_top_zero_of_tendsto_survival
+private lemma measure_firstDescendingLadderTime_eq_top_zero_of_tendsto_survival
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (hsurvival : Tendsto (fun n : ℕ => (iidSequenceLaw ν)
       {increment | SurvivesNonnegative n increment}) atTop (nhds 0)) :
@@ -129,7 +129,7 @@ private theorem measure_firstDescendingLadderTime_eq_top_zero_of_tendsto_surviva
 
 /-- Positive scaling of the increments preserves the finite-horizon
 nonnegative survival probability. -/
-private theorem measure_survival_map_div
+private lemma measure_survival_map_div
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     {sigma : ℝ} (hsigma : 0 < sigma) (n : ℕ) :
     iidSequenceLaw (ν.map fun x => x / sigma)

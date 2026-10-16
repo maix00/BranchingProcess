@@ -29,7 +29,7 @@ namespace ProbabilityTheory.RandomWalk.FunctionalLimit.Stable
 J1 tightness for the whole family of normalized càdlàg random-walk path laws.
 The three source centering conventions are kept separate in the corollaries
 below. -/
-private theorem isTightMeasureSet_range_normalizedStepPathLaw_of_range_and_oscillation
+private lemma isTightMeasureSet_range_normalizedStepPathLaw_of_range_and_oscillation
     (ν : Measure ℝ) [IsProbabilityMeasure ν] (normalization : ℕ → ℝ)
     (hrange : ∀ {η : ℝ≥0∞}, 0 < η →
       ∃ range : Set ℝ, IsCompact range ∧

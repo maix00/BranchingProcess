@@ -27,12 +27,12 @@ open scoped Topology
 
 namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Speed
 
-private theorem blockIndex_tendsto_atTop (L : ℕ) (hL : 0 < L) :
+private lemma blockIndex_tendsto_atTop (L : ℕ) (hL : 0 < L) :
     Tendsto (fun k : ℕ => k * L) atTop atTop := by
   exact tendsto_atTop_mono
     (fun k => Nat.le_mul_of_pos_right k (by omega)) tendsto_id
 
-private theorem blockCompare_le_of_limits
+private lemma blockCompare_le_of_limits
     {f g : ℕ → ℝ} {a b : ℝ}
     (hf : Tendsto f atTop (𝓝 a)) (hg : Tendsto g atTop (𝓝 b))
     (hfg : ∀ᶠ n : ℕ in atTop, f n ≤ g n) :

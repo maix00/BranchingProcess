@@ -647,7 +647,7 @@ theorem lintegral_generationPrefixChildPairObservable_le
     lintegral_generationPrefixParameterizedObservableSum_le
       φ μ prefixLength A position g hAgen hA hsupport C hbound
 
-private theorem displaceWith_measurable_generation
+private lemma displaceWith_measurable_generation
     {X : Type*} [MeasurableSpace X]
     (φ : Potential X) (n : ℕ) (v p : TreeNode ℕ)
     (hvp : v.length + p.length ≤ n) :
@@ -677,7 +677,7 @@ private theorem displaceWith_measurable_generation
             Combinatorics.Branching.displaceWith φ ω (v ++ [i]) p)
       exact hstep.add htail
 
-private theorem pathHistory_measurable_generation
+private lemma pathHistory_measurable_generation
     {X : Type*} [MeasurableSpace X]
     (φ : Potential X) (n : ℕ) (x : ℝ) (u : TreeNode ℕ)
     (hu : u.length ≤ n) :
@@ -695,7 +695,7 @@ private theorem pathHistory_measurable_generation
     (displaceWith_measurable_generation φ n [] (u.take k)
       (by simpa using htake))
 
-private theorem weightedPathGenerationTerm_measurable_generation
+private lemma weightedPathGenerationTerm_measurable_generation
     {X : Type*} [MeasurableSpace X]
     (φ : Potential X) (n : ℕ)
     {F : (Fin (n + 1) → ℝ) → ℝ≥0∞} (hF : Measurable F)
@@ -1353,7 +1353,7 @@ noncomputable def affineTubeMRCAPairContribution
           (fun _ => (1 : ℝ≥0∞)))
       (initial + pathPotential φ ω u) (ω u) ∂stepFieldLaw μ
 
-private theorem expReciprocalSquareNormalization (x s : ℝ) :
+private lemma expReciprocalSquareNormalization (x s : ℝ) :
     ENNReal.ofReal (Real.exp (-(2 * x))) *
       ((ENNReal.ofReal (Real.exp (-s)) * ENNReal.ofReal (Real.exp (-s))) *
         ENNReal.ofReal (Real.exp (2 * (x + s)))) = 1 := by

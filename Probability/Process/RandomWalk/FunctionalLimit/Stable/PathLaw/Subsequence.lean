@@ -229,7 +229,7 @@ theorem exists_subseq_normalizedStepPathLaw_with_stable_dense_grid_laws_of_zeroC
   intro blocks grid hgrid hstart j
   simp
 
-private theorem tendsto_stableGridPositionLaw_of_tendsto
+private lemma tendsto_stableGridPositionLaw_of_tendsto
     {μ : Measure ℝ} [IsProbabilityMeasure μ] {α : ℝ}
     (hStable : IsStrictlyAlphaStable α μ) {blocks : ℕ}
     (grid : Fin (blocks + 1) → unitInterval)
@@ -344,7 +344,7 @@ private theorem tendsto_stableGridPositionLaw_of_tendsto
   rw [hseq, hpositionPiLimit]
   exact hpositionTID.tendsto
 
-private theorem exists_dense_strictGrid_approximation
+private lemma exists_dense_strictGrid_approximation
     {T : Set unitInterval} (hTdense : Dense T)
     (hTbot : (⊥ : unitInterval) ∈ T) (hTtop : (⊤ : unitInterval) ∈ T)
     {blocks : ℕ} (grid : Fin (blocks + 1) → unitInterval)
@@ -497,7 +497,7 @@ private theorem exists_dense_strictGrid_approximation
   exact ⟨gridSeq, fun n => hgridSeqStrict n, hgridMem, hgridTime,
     hgridGe, hgridBot, hgridTop, hgridAbove⟩
 
-private theorem stable_grid_law_of_dense_grid_laws
+private lemma stable_grid_law_of_dense_grid_laws
     {μ : Measure ℝ} [IsProbabilityMeasure μ] {α : ℝ}
     (hStable : IsStrictlyAlphaStable α μ)
     {P : ProbabilityMeasure (CadlagPath unitInterval ℝ)}

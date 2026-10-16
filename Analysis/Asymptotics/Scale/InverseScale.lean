@@ -118,7 +118,7 @@ called `y(n) = x(n + 1) - 1` in the inverse-scale argument. -/
 @[simp] theorem upperInverseScale_apply (L : ℕ → ℕ) (n : ℕ) :
     upperInverseScale L n = inverseScale L (n + 1) - 1 := rfl
 
-private theorem inverseScale_set_nonempty {L : ℕ → ℕ}
+private lemma inverseScale_set_nonempty {L : ℕ → ℕ}
     (hL : Tendsto L atTop atTop) (n : ℕ) :
     { δ | n ≤ L δ + 1 }.Nonempty := by
   obtain ⟨δ, hδ⟩ := (tendsto_atTop.1 hL n).exists
@@ -210,7 +210,7 @@ theorem finite_levelSet_of_tendsto_atTop {L : ℕ → ℕ}
 
 /-- At the threshold `L δ + 1`, the lower inverse lies in the level set of
 `L δ`. -/
-private theorem inverseScale_level_eq {L : ℕ → ℕ}
+private lemma inverseScale_level_eq {L : ℕ → ℕ}
     (hL : Tendsto L atTop atTop) (hmono : Monotone L) (δ : ℕ) :
     L (inverseScale L (L δ + 1)) = L δ := by
   have hle := inverseScale_scale_add_one_le L δ
@@ -220,7 +220,7 @@ private theorem inverseScale_level_eq {L : ℕ → ℕ}
 
 /-- At the threshold `L δ + 1`, the upper inverse also lies in the level set
 of `L δ`. -/
-private theorem upperInverseScale_level_eq {L : ℕ → ℕ}
+private lemma upperInverseScale_level_eq {L : ℕ → ℕ}
     (hL : Tendsto L atTop atTop) (hmono : Monotone L) (δ : ℕ) :
     L (upperInverseScale L (L δ + 1)) = L δ := by
   have hle := (inverseScale_le_width_le_upperInverseScale hL hmono δ).2
@@ -236,7 +236,7 @@ private theorem upperInverseScale_level_eq {L : ℕ → ℕ}
 
 /-- The lower-inverse-to-width gap is bounded by the cardinality of the
 corresponding level set. -/
-private theorem inverseScale_gap_le_levelMultiplicity {L : ℕ → ℕ}
+private lemma inverseScale_gap_le_levelMultiplicity {L : ℕ → ℕ}
     (hL : Tendsto L atTop atTop) (hmono : Monotone L) (δ : ℕ) :
     δ - inverseScale L (L δ + 1) ≤ levelMultiplicity L δ := by
   have hxle := inverseScale_scale_add_one_le L δ
@@ -262,7 +262,7 @@ private theorem inverseScale_gap_le_levelMultiplicity {L : ℕ → ℕ}
 
 /-- The upper-inverse-to-width gap is bounded by the cardinality of the
 corresponding level set. -/
-private theorem upperInverseScale_gap_le_levelMultiplicity {L : ℕ → ℕ}
+private lemma upperInverseScale_gap_le_levelMultiplicity {L : ℕ → ℕ}
     (hL : Tendsto L atTop atTop) (hmono : Monotone L) (δ : ℕ) :
     upperInverseScale L (L δ + 1) - δ ≤ levelMultiplicity L δ := by
   have hyle := (inverseScale_le_width_le_upperInverseScale hL hmono δ).2

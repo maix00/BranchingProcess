@@ -79,7 +79,7 @@ theorem OscillationPartition.isCompact_stepPath_image
 def zeroPath : CadlagPath unitInterval ℝ :=
   ⟨fun _ => 0, by simp⟩
 
-private theorem TimeChange.act_zeroPath (change : TimeChange) :
+private lemma TimeChange.act_zeroPath (change : TimeChange) :
     change.act zeroPath = zeroPath := by
   ext t
   simp [zeroPath, TimeChange.act_apply]

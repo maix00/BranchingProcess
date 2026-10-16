@@ -244,7 +244,7 @@ theorem exists_commonPartitionCellTime_floor_eq
   · change ⌊(n : ℝ) * z⌋₊ = j
     exact hfloor
 
-private theorem stepBoundary_eval_eq_rightTrace_of_mem_commonPartitionCell
+private lemma stepBoundary_eval_eq_rightTrace_of_mem_commonPartitionCell
     (b upper lower : StepBoundary)
     (hknots : ∀ q ∈ b.knots, q ∈ StepBoundary.commonKnots upper lower)
     (i : Fin ((StepBoundary.commonKnots upper lower).card - 1))

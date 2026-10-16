@@ -149,7 +149,7 @@ theorem finiteSlotOffspringSecondMomentReal_integrable
     mul_nonneg (sub_nonneg.mpr hle) (by positivity)
   nlinarith
 
-private theorem finiteSlotChildCountReal_pair_integral
+private lemma finiteSlotChildCountReal_pair_integral
     {ι : Type*} [Countable ι] [DecidableEq ι]
     (ν : ProbabilityMeasure (Step (Fin 2) PUnit.{1}))
     (rowsLaw : Measure (ι → Step (Fin 2) PUnit.{1}))
@@ -258,7 +258,7 @@ theorem finiteSlotRowCountSum_sq_integral
       intro v hv
       exact finiteSlotChildCountReal_pair_integral ν rowLaw rfl u v
 
-private theorem finiteSlotPairSum_eq_card_formula
+private lemma finiteSlotPairSum_eq_card_formula
     {ι : Type*} [DecidableEq ι] (A : Finset ι) (m q : ℝ) :
     (∑ u ∈ A, ∑ v ∈ A, if u = v then q else m * m) =
       (A.card : ℝ) * q + (A.card : ℝ) * ((A.card : ℝ) - 1) * (m * m) := by
@@ -326,7 +326,7 @@ theorem finiteSlotRowCountSum_integral
       rw [← hmap, heval]
     _ = (A.card : ℝ) * finiteSlotOffspringMeanReal ν := by simp
 
-private theorem finiteSlotOffspringStep_standardBorel :
+private lemma finiteSlotOffspringStep_standardBorel :
     StandardBorelSpace (Step (Fin 2) PUnit.{1}) := by
   letI : MeasurableSingletonClass (Option PUnit.{1}) := by
     refine ⟨fun x => ?_⟩
@@ -340,7 +340,7 @@ private theorem finiteSlotOffspringStep_standardBorel :
   letI : MeasurableSingletonClass (Step (Fin 2) PUnit.{1}) := inferInstance
   infer_instance
 
-private theorem finiteSlotRows_standardBorel (n : ℕ) :
+private lemma finiteSlotRows_standardBorel (n : ℕ) :
     StandardBorelSpace ((Fin n → Fin 2) → Step (Fin 2) PUnit.{1}) := by
   letI : StandardBorelSpace (Step (Fin 2) PUnit.{1}) :=
     finiteSlotOffspringStep_standardBorel

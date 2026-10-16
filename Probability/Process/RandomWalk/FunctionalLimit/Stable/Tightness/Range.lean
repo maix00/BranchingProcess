@@ -78,7 +78,7 @@ theorem eventually_measure_normalizedStepPathLaw_rangeExit_le_of_stableNorming
 regular-variation tail is made small by increasing the truncation radius;
 then the excursion threshold is chosen large enough both for the centering
 bias and for the truncated-moment term. -/
-private theorem exists_stableRangeParameters
+private lemma exists_stableRangeParameters
     {α ε : ℝ} (hα₀ : 0 < α) (hα₂ : α < 2) (hε : 0 < ε)
     (biasBound : ℝ → ℝ) :
     ∃ radiusMultiplier thresholdMultiplier : ℝ,
@@ -297,7 +297,7 @@ theorem exists_eventually_compactRange_bound_of_index_gt_one
       (by norm_num : 0 < (1 : ℝ)) (by simpa [biasBound] using hbiasSmall) hratio
   simpa [biasBound] using hbias
 
-private theorem exists_eventually_compactRange_bound_of_ennrealBudget
+private lemma exists_eventually_compactRange_bound_of_ennrealBudget
     (normalization : ℕ → ℝ) (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (hreal : ∀ ε : ℝ, 0 < ε →
       ∃ range : Set ℝ, IsCompact range ∧

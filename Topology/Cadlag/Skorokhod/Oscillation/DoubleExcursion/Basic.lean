@@ -48,7 +48,7 @@ def HasEndpointOscillationBound {E : Type*} [PseudoMetricSpace E]
       1 - delta < (s : ℝ) → 1 - delta < (t : ℝ) →
       dist (path s) (path t) ≤ epsilon)
 
-private theorem OscillationPartition.mesh_le_coe_of_positive_index
+private lemma OscillationPartition.mesh_le_coe_of_positive_index
     (partition : OscillationPartition) (i : Fin partition.size)
     (hi : 0 < i.val) :
     partition.mesh ≤ (partition.points i.castSucc : ℝ) := by
@@ -70,7 +70,7 @@ private theorem OscillationPartition.mesh_le_coe_of_positive_index
   rw [hfirstPoint, hdist] at hgap
   exact hgap.trans (by exact_mod_cast hpoints)
 
-private theorem OscillationPartition.coe_le_one_sub_mesh
+private lemma OscillationPartition.coe_le_one_sub_mesh
     (partition : OscillationPartition) (i : Fin partition.size) :
     (partition.points i.castSucc : ℝ) ≤ 1 - partition.mesh := by
   let lastCell : Fin partition.size :=
@@ -103,13 +103,13 @@ private theorem OscillationPartition.coe_le_one_sub_mesh
       (partition.points lastCell.castSucc : ℝ) := by exact_mod_cast hpointsLe
   linarith
 
-private theorem unitInterval_ne_top_of_coe_lt_one {t : unitInterval}
+private lemma unitInterval_ne_top_of_coe_lt_one {t : unitInterval}
     (ht : (t : ℝ) < 1) : t ≠ ⊤ := by
   intro heq
   have hval : (t : ℝ) = 1 := by simp [heq]
   linarith
 
-private theorem OscillationPartition.mesh_le_one
+private lemma OscillationPartition.mesh_le_one
     (partition : OscillationPartition) : partition.mesh ≤ 1 := by
   have hsize : 1 ≤ (partition.size : ℝ) := by
     exact_mod_cast partition.size_pos
@@ -117,7 +117,7 @@ private theorem OscillationPartition.mesh_le_one
   have hmesh := partition.mesh_pos
   nlinarith
 
-private theorem OscillationPartition.leftEndpoint_dist_le
+private lemma OscillationPartition.leftEndpoint_dist_le
     {E : Type*} [PseudoMetricSpace E]
     (partition : OscillationPartition) (path : CadlagPath unitInterval E)
     {delta epsilon : ℝ} (hmesh : delta ≤ partition.mesh)
@@ -155,7 +155,7 @@ private theorem OscillationPartition.leftEndpoint_dist_le
     have hδq : delta ≤ (q : ℝ) := hmesh.trans hmeshQ
     linarith
 
-private theorem OscillationPartition.rightEndpoint_dist_le
+private lemma OscillationPartition.rightEndpoint_dist_le
     {E : Type*} [PseudoMetricSpace E]
     (partition : OscillationPartition) (path : CadlagPath unitInterval E)
     {delta epsilon : ℝ} (hmesh : delta ≤ partition.mesh)

@@ -30,7 +30,7 @@ namespace ProbabilityTheory
 
 /-- A deterministic convergent sequence, viewed as constant random variables,
 converges in measure to its limit. -/
-private theorem tendstoInMeasure_const_of_tendsto_real
+private lemma tendstoInMeasure_const_of_tendsto_real
     {ι Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} {l : Filter ι}
     {f : ι → ℝ} {c : ℝ} (hf : Tendsto f l (nhds c)) :
     TendstoInMeasure μ (fun i _ => f i) l (fun _ => c) := by

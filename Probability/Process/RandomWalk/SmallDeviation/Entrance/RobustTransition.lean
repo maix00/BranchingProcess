@@ -59,7 +59,7 @@ theorem robustMovingTransitionEvent_subset_movingTransitionEvent
       movingTransitionEvent n width drift start := by
   exact Set.inter_subset_left
 
-private theorem displacement_measurable_prefix
+private lemma displacement_measurable_prefix
     (n j : ℕ) (hj : j ≤ n) :
     Measurable[sequencePrefixFiltration (E := ℝ) n]
       (AdditivePath.displacement j) := by

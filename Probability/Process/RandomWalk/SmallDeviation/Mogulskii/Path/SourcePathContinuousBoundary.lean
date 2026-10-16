@@ -132,7 +132,7 @@ noncomputable def sourceNormalizedStepCellValue (scale : ℕ → ℝ) (n : ℕ)
     (increment : ℕ → ℝ) (j : Fin n) : ℝ :=
   (scale n)⁻¹ * AdditivePath.displacement (j : ℕ) increment
 
-private theorem sourceNormalizedStepCadlagPathIcc_eq_cellValue_of_mem_cell
+private lemma sourceNormalizedStepCadlagPathIcc_eq_cellValue_of_mem_cell
     (scale : ℕ → ℝ) {n : ℕ} (hn : 0 < n) (increment : ℕ → ℝ)
     (j : Fin n) (m : ℕ) {t : unitInterval}
     (ht : t ∈ Set.Icc (uniformGridTime n hn j.castSucc)
@@ -177,7 +177,7 @@ def sourceContinuousBoundaryCellConditions
     lower t < sourceNormalizedStepCellValue scale n increment j ∧
       sourceNormalizedStepCellValue scale n increment j < upper t
 
-private theorem isOpen_set_strictly_between_on_compact
+private lemma isOpen_set_strictly_between_on_compact
     {K : Set unitInterval} (hK : IsCompact K) (hne : K.Nonempty)
     (lower upper : C(unitInterval, ℝ)) :
     IsOpen {x : ℝ | ∀ t ∈ K, lower t < x ∧ x < upper t} := by
@@ -197,7 +197,7 @@ private theorem isOpen_set_strictly_between_on_compact
   rw [heq]
   exact isOpen_Ioi.inter isOpen_Iio
 
-private theorem measurableSet_sourceContinuousBoundaryCellCondition
+private lemma measurableSet_sourceContinuousBoundaryCellCondition
     (lower upper : C(unitInterval, ℝ)) (scale : ℕ → ℝ)
     (n : ℕ) (hn : 0 < n) (j : Fin n) (m : ℕ) :
     MeasurableSet {increment : ℕ → ℝ |
@@ -241,7 +241,7 @@ theorem measurableSet_sourceContinuousBoundaryCellConditions
   exact MeasurableSet.iInter fun j => MeasurableSet.iInter fun m =>
     measurableSet_sourceContinuousBoundaryCellCondition lower upper scale n hn j m
 
-private theorem measurableSet_sourceContinuousBoundaryTopCondition
+private lemma measurableSet_sourceContinuousBoundaryTopCondition
     (lower upper : C(unitInterval, ℝ)) (scale : ℕ → ℝ)
     {n : ℕ} :
     MeasurableSet {increment : ℕ → ℝ |
@@ -341,7 +341,7 @@ theorem sourceNormalizedStepCadlagPathIcc_mem_relativeContinuousBoundaryCorridor
 of each half-open step cell retain all strict inequalities, including cases
 where a continuous boundary is approached at the excluded right endpoint.
 The terminal endpoint uses the source value `S_(n-1)`. -/
-private theorem measurableSet_sourceNormalizedStepCadlagPathIcc_preimage_relativeContinuousBoundaryCorridorSet_of_pos
+private lemma measurableSet_sourceNormalizedStepCadlagPathIcc_preimage_relativeContinuousBoundaryCorridorSet_of_pos
     (lower upper : C(unitInterval, ℝ)) (scale : ℕ → ℝ)
     {n : ℕ} (hn : 0 < n) :
     MeasurableSet {increment : ℕ → ℝ |
@@ -360,7 +360,7 @@ private theorem measurableSet_sourceNormalizedStepCadlagPathIcc_preimage_relativ
   exact (measurableSet_sourceContinuousBoundaryCellConditions lower upper scale n hn).inter
     (measurableSet_sourceContinuousBoundaryTopCondition lower upper scale)
 
-private theorem sourceNormalizedStepCadlagPathIcc_zero
+private lemma sourceNormalizedStepCadlagPathIcc_zero
     (scale : ℕ → ℝ) (increment : ℕ → ℝ) (t : unitInterval) :
     sourceNormalizedStepCadlagPathIcc scale 0 increment t = 0 := by
   by_cases ht : t = ⊤

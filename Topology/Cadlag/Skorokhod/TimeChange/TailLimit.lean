@@ -27,7 +27,7 @@ namespace Skorokhod
 namespace TimeChange
 
 /-- A uniform limit of functions gives pointwise convergence at every time. -/
-private theorem tendsto_apply_of_tendstoUniformly
+private lemma tendsto_apply_of_tendstoUniformly
     {F : ℕ → unitInterval → unitInterval} {f : unitInterval → unitInterval}
     (h : TendstoUniformly F f atTop) (t : unitInterval) :
     Tendsto (fun n => F n t) atTop (nhds (f t)) := by

@@ -66,7 +66,7 @@ open scoped NNReal
 
 namespace ProbabilityTheory
 
-private theorem earlier_nonnegativeWindowStart_of_runningMinimum_lt
+private lemma earlier_nonnegativeWindowStart_of_runningMinimum_lt
     (f : C(ℝ≥0, ℝ)) {t : ℝ≥0}
     (ht : IsNonnegativeWindowStart f t)
     (hlt : runningMinimum f t < f t) :
@@ -98,7 +98,7 @@ private theorem earlier_nonnegativeWindowStart_of_runningMinimum_lt
       _ ≤ f (t + w) := ht w
       _ = f (u + v) := by rw [htw]
 
-private theorem runningMinimum_add_one_eq_of_windowStart
+private lemma runningMinimum_add_one_eq_of_windowStart
     (f : C(ℝ≥0, ℝ)) {t : ℝ≥0}
     (ht : IsNonnegativeWindowStart f t)
     (hrecord : f t = runningMinimum f t) :
@@ -502,7 +502,7 @@ theorem firstNonnegativeWindowStartUpTo_lastStart_aboveRunningMinimum_eq_zero
   exact (aboveRunningMinimum_eq_zero_iff f t).2
     (firstNonnegativeWindowStartUpTo_runningMinimum f (t + 1) t hfirst).1
 
-private theorem exists_nonnegativeWindowStart_le_of_runningMinimum_eq
+private lemma exists_nonnegativeWindowStart_le_of_runningMinimum_eq
     (f : C(ℝ≥0, ℝ)) {t : ℝ≥0}
     (hflat : runningMinimum f (t + 1) = runningMinimum f t) :
     ∃ u ≤ t, IsNonnegativeWindowStart f u := by
@@ -518,7 +518,7 @@ private theorem exists_nonnegativeWindowStart_le_of_runningMinimum_eq
     _ = runningMinimum f (t + 1) := hflat.symm
     _ ≤ f (u + v) := runningMinimum_le f huv
 
-private theorem firstNonnegativeWindowStartUpTo_le_of_runningMinimum_eq
+private lemma firstNonnegativeWindowStartUpTo_le_of_runningMinimum_eq
     (f : C(ℝ≥0, ℝ)) {s t : ℝ≥0}
     (hts : t + 1 ≤ s)
     (hflat : runningMinimum f (t + 1) = runningMinimum f t) :

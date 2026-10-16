@@ -31,7 +31,7 @@ open scoped NNReal
 
 namespace ProbabilityTheory
 
-private theorem everBelow_brownianPathScaling_iff
+private lemma everBelow_brownianPathScaling_iff
     (f : C(ℝ≥0, ℝ)) {c : ℝ≥0} (hc : 0 < c) (a : ℝ) :
     (∃ t : ℝ≥0, brownianPathScaling c f t < a) ↔
       ∃ t : ℝ≥0, f t < √c * a := by
@@ -47,7 +47,7 @@ private theorem everBelow_brownianPathScaling_iff
     rw [mul_div_cancel₀ _ hc.ne']
     exact (inv_mul_lt_iff₀ hroot).mpr ht
 
-private theorem measurableSet_everBelow (a : ℝ) :
+private lemma measurableSet_everBelow (a : ℝ) :
     MeasurableSet {f : C(ℝ≥0, ℝ) | ∃ t : ℝ≥0, f t < a} := by
   have hset : {f : C(ℝ≥0, ℝ) | ∃ t : ℝ≥0, f t < a} =
       ⋃ t : ℝ≥0, (fun f : C(ℝ≥0, ℝ) => f t) ⁻¹' Set.Iio a := by
@@ -57,7 +57,7 @@ private theorem measurableSet_everBelow (a : ℝ) :
   exact (isOpen_iUnion (fun t =>
     isOpen_Iio.preimage (continuous_eval_const t))).measurableSet
 
-private theorem IsBrownianReal.measure_everBelow_eq_one
+private lemma IsBrownianReal.measure_everBelow_eq_one
     {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
     {B : ℝ≥0 → Ω → ℝ} (hB : IsBrownianReal B P)
     (hBmeasurable : ∀ t, Measurable (B t))

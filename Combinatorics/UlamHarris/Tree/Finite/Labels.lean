@@ -39,7 +39,7 @@ namespace Tree
 
 /-- A list of length at most `n` is determined by its first `n` entries, so
 there are only finitely many of them over a finite alphabet. -/
-private theorem finite_list_length_le {α : Type*} [Finite α] (n : ℕ) :
+private lemma finite_list_length_le {α : Type*} [Finite α] (n : ℕ) :
     Finite {v : List α // v.length ≤ n} := by
   classical
   refine Finite.of_injective

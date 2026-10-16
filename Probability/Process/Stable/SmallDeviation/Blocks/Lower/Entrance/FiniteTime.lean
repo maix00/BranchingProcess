@@ -37,7 +37,7 @@ private def rationalUniformBlockEndpointSet (δ d r R : ℝ) :
   Skorokhod.rationalCoordinateCorridorWithMargin (-δ) δ ∩
     {f | f ⊤ - d ∈ Set.Ioo r R}
 
-private theorem measurableSet_rationalUniformBlockEndpointSet
+private lemma measurableSet_rationalUniformBlockEndpointSet
     (δ d r R : ℝ) :
     MeasurableSet (rationalUniformBlockEndpointSet δ d r R) := by
   exact (Skorokhod.measurableSet_rationalCoordinateCorridorWithMargin
@@ -45,7 +45,7 @@ private theorem measurableSet_rationalUniformBlockEndpointSet
       (measurableSet_Ioo.preimage
         ((measurable_pi_apply ⊤).sub measurable_const))
 
-private theorem measure_firstUniformBlockEndpoint_eq_full
+private lemma measure_firstUniformBlockEndpoint_eq_full
     {Ω : Type*} [MeasurableSpace Ω]
     {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
     {P : Measure Ω} [IsProbabilityMeasure P]
@@ -82,7 +82,7 @@ private theorem measure_firstUniformBlockEndpoint_eq_full
     exact propext (and_congr hcorr.symm Iff.rfl)
   exact measure_congr heq
 
-private theorem rationalUniformPrefixBlockBounds
+private lemma rationalUniformPrefixBlockBounds
     {Ω : Type*} (X : ℝ≥0 → Ω → ℝ) (ω : Ω)
     (blocks : ℕ) (hblocks : 0 < blocks)
     (d R B : ℝ) (hR : 0 ≤ R) (_hB : 0 ≤ B)
@@ -204,7 +204,7 @@ private theorem rationalUniformPrefixBlockBounds
     have hlast := herr blocks le_rfl
     exact hlast
 
-private theorem measure_fullSegmentCorridorReturn_timeSpaceScale_eq
+private lemma measure_fullSegmentCorridorReturn_timeSpaceScale_eq
     {Ω : Type*} [MeasurableSpace Ω]
     {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
     {P : Measure Ω} [IsProbabilityMeasure P]
@@ -266,7 +266,7 @@ private theorem measure_fullSegmentCorridorReturn_timeSpaceScale_eq
     _ = P (fullSegmentCorridorReturnEvent X 0 1
         lower upper coreLower coreUpper) := (measure_congr hfullX).symm
 
-private theorem exists_bounded_unit_endpoint_block
+private lemma exists_bounded_unit_endpoint_block
     {Ω : Type*} [MeasurableSpace Ω]
     {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
     {P : Measure Ω} [IsProbabilityMeasure P]

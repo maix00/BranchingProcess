@@ -44,7 +44,7 @@ theorem measurable_rationalEvaluation :
   intro q
   simpa [rationalEvaluation] using measurable_apply (rationalTimeToUnitInterval q)
 
-private theorem rationalEvaluation_injective :
+private lemma rationalEvaluation_injective :
     Function.Injective (rationalEvaluation :
       CadlagPath unitInterval ℝ → RationalUnitIntervalTime → ℝ) := by
   intro f g hfg

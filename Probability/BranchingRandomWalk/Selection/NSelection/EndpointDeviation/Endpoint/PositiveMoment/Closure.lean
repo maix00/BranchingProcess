@@ -32,7 +32,7 @@ open Combinatorics.UlamHarris
 /-- A scalar sequence with zero initial value and nonnegative one-step
 increments is bounded above, after taking positive part, by the cumulative
 sum of those increments. -/
-private theorem max_iterate_le_range_sum
+private lemma max_iterate_le_range_sum
     (f y : ℕ → ℝ)
     (hzero : f 0 = 0)
     (hstep : ∀ k, f (k + 1) ≤ f k + y k)

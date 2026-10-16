@@ -37,7 +37,7 @@ namespace Branching
 
 /-- An infinite subset of a countably infinite type contains an injective
 copy of the whole type. -/
-private theorem exists_injective_range_subset_of_infinite
+private lemma exists_injective_range_subset_of_infinite
     {ι : Type*} [Countable ι] {T : Set ι} (hT : T.Infinite) :
     ∃ f : ι → ι, Function.Injective f ∧ Set.range f ⊆ T := by
   obtain ⟨g, hg⟩ := (exists_injective_nat ι : ∃ g : ι → ℕ, Function.Injective g)
@@ -48,7 +48,7 @@ private theorem exists_injective_range_subset_of_infinite
 
 /-- An infinite countable slot type can be injectively relabeled outside any
 finite set of forbidden slots. -/
-private theorem exists_injective_notMem_of_finite
+private lemma exists_injective_notMem_of_finite
     {ι : Type*} [Countable ι] [Infinite ι] {S : Finset ι} :
     ∃ ψ : ι → ι, Function.Injective ψ ∧ ∀ i, ψ i ∉ (↑S : Set ι) := by
   obtain ⟨ψ, hψ, hsub⟩ :=

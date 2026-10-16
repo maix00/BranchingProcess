@@ -101,7 +101,7 @@ theorem IsPreBrownianReal.integral_reverseBrownianBefore
     rw [integral_sub (hB.integrable_eval u) (hB.integrable_eval 0),
       hB.integral_eval, hB.integral_eval, sub_self]
 
-private theorem IsPreBrownianReal.covariance_reverseBrownianBefore_inside
+private lemma IsPreBrownianReal.covariance_reverseBrownianBefore_inside
     {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
     {B : ℝ≥0 → Ω → ℝ} (hB : IsPreBrownianReal B P)
     {t s u : ℝ≥0} (hsu : s ≤ u) (hut : u ≤ t) :
@@ -120,7 +120,7 @@ private theorem IsPreBrownianReal.covariance_reverseBrownianBefore_inside
     ring
   all_goals exact (hB.isGaussianProcess.hasGaussianLaw_eval _).memLp_two
 
-private theorem IsPreBrownianReal.covariance_reverseBrownianBefore_cross
+private lemma IsPreBrownianReal.covariance_reverseBrownianBefore_cross
     {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
     {B : ℝ≥0 → Ω → ℝ} (hB : IsPreBrownianReal B P)
     {t s u : ℝ≥0} (hst : s ≤ t) (htu : t < u) :
@@ -137,7 +137,7 @@ private theorem IsPreBrownianReal.covariance_reverseBrownianBefore_cross
     simp
   all_goals exact (hB.isGaussianProcess.hasGaussianLaw_eval _).memLp_two
 
-private theorem IsPreBrownianReal.covariance_reverseBrownianBefore_after
+private lemma IsPreBrownianReal.covariance_reverseBrownianBefore_after
     {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
     {B : ℝ≥0 → Ω → ℝ} (hB : IsPreBrownianReal B P)
     {t s u : ℝ≥0} (hts : t < s) (hsu : s ≤ u) :

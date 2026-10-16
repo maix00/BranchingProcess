@@ -42,7 +42,7 @@ namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 open ProbabilityTheory.RandomWalk
 open ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown
 
-private theorem driftedTubeBlockPosition_eq
+private lemma driftedTubeBlockPosition_eq
     (start length : ℕ) (increment : ℕ → ℝ)
     (k : Fin (length + 1)) :
     (∑ i : Fin start,

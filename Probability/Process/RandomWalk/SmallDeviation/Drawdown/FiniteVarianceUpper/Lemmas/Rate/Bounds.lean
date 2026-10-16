@@ -46,7 +46,7 @@ namespace ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown
 open ProbabilityTheory.RandomWalk
 open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
-private theorem exp_pow_nat (x : ℝ) (n : ℕ) :
+private lemma exp_pow_nat (x : ℝ) (n : ℕ) :
     Real.exp x ^ n = Real.exp ((n : ℝ) * x) := by
   induction n with
   | zero => simp
@@ -137,7 +137,7 @@ lemma jumpPatternProbability_le_exp
             ring
     _ ≤ Real.exp (-d * z) := Real.exp_le_exp.mpr hexponent
 
-private theorem eventually_real_rpow_ge_const
+private lemma eventually_real_rpow_ge_const
     {power bound : ℝ} (hpower : 0 < power) :
     ∀ᶠ x : ℝ in atTop, bound ≤ x ^ power := by
   exact (_root_.tendsto_rpow_atTop hpower).eventually

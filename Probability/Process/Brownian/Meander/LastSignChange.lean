@@ -48,7 +48,7 @@ namespace ProbabilityTheory
 open MeasureTheory
 open scoped NNReal
 
-private theorem lastSignChange_eq_lastZero_of_intervalMinima
+private lemma lastSignChange_eq_lastZero_of_intervalMinima
     (f : C(ℝ≥0, ℝ)) (hf0 : f 0 = 0) (hf1 : f 1 ≠ 0)
     (hmin : ∀ q : ℚ≥0, nonnegativeRationalTime q < 1 →
       intervalMinimum f (nonnegativeRationalTime q) 1 ≠ 0 ∧

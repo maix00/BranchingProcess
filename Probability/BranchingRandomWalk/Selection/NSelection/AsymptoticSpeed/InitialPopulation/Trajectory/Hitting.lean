@@ -39,7 +39,7 @@ attribute [local instance] Classical.propDecidable Classical.decEq
 def offspringSplitSet : Set (Step ℕ ℝ) :=
   {ξ | 2 ≤ Step.childCount ξ}
 
-private theorem offspringSplitSet_eq_nontrivialSupport :
+private lemma offspringSplitSet_eq_nontrivialSupport :
     offspringSplitSet = nontrivialSupport := by
   ext ξ
   change 2 ≤ (support ξ).encard ↔
@@ -63,7 +63,7 @@ private theorem offspringSplitSet_eq_nontrivialSupport :
       have hk' : 2 ≤ k := by omega
       simpa [hencard] using hk'
 
-private theorem measurable_offspringSplitSet : MeasurableSet offspringSplitSet := by
+private lemma measurable_offspringSplitSet : MeasurableSet offspringSplitSet := by
   rw [offspringSplitSet_eq_nontrivialSupport]
   exact nontrivialSupport_measurable
 
@@ -129,7 +129,7 @@ theorem measurable_smallInitialActiveAddress (m N n : ℕ) (hm : 0 < m)
     (Tail.measurable_firstNSelectedEndpointMinAddress m N n hm)
     measurable_const
 
-private theorem smallInitialActiveAddress_fiber_measurable
+private lemma smallInitialActiveAddress_fiber_measurable
     (m N n : ℕ) (hm : 0 < m)
     [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
     [MeasurableSingletonClass (Fin m × TreeNode ℕ)]
@@ -156,7 +156,7 @@ private noncomputable def smallInitialFutureRoots (m N n : ℕ) (hm : 0 < m)
     FiniteRootStepField m ℕ ℝ → PUnit.{1} → Fin m × TreeNode ℕ :=
   fun field _ => smallInitialActiveAddress m N n hm field
 
-private theorem smallInitialFutureRoots_countable (m N n : ℕ) (hm : 0 < m)
+private lemma smallInitialFutureRoots_countable (m N n : ℕ) (hm : 0 < m)
     [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
     [Countable (RootIndexed.TreeNode (Fin m) ℕ)]
     [LinearOrder (RootIndexed.TreeNode (Fin m) ℕ)] :
@@ -177,7 +177,7 @@ private theorem smallInitialFutureRoots_countable (m N n : ℕ) (hm : 0 < m)
   rw [hrange]
   exact haddr.image _
 
-private theorem smallInitialFutureRoots_fiber_measurable
+private lemma smallInitialFutureRoots_fiber_measurable
     (m N n : ℕ) (hm : 0 < m)
     [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
     [MeasurableSingletonClass (Fin m × TreeNode ℕ)]
@@ -213,7 +213,7 @@ private theorem smallInitialFutureRoots_fiber_measurable
   rw [hset]
   exact haddr (measurableSet_singleton p)
 
-private theorem smallInitialFutureRoots_depth (m N n : ℕ) (hm : 0 < m)
+private lemma smallInitialFutureRoots_depth (m N n : ℕ) (hm : 0 < m)
     [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
     [Countable (RootIndexed.TreeNode (Fin m) ℕ)]
     [LinearOrder (RootIndexed.TreeNode (Fin m) ℕ)] :
@@ -221,7 +221,7 @@ private theorem smallInitialFutureRoots_depth (m N n : ℕ) (hm : 0 < m)
   intro field i
   exact smallInitialActiveAddress_depth m N n hm field
 
-private theorem smallInitialFutureRoots_injective (m N n : ℕ) (hm : 0 < m)
+private lemma smallInitialFutureRoots_injective (m N n : ℕ) (hm : 0 < m)
     [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
     [Countable (RootIndexed.TreeNode (Fin m) ℕ)]
     [LinearOrder (RootIndexed.TreeNode (Fin m) ℕ)]
@@ -554,7 +554,7 @@ private noncomputable def smallInitialOneChildSlot
     (p : {p // p ∈ parents}) : ℕ :=
   Classical.choose (hchildren p.1 p.2)
 
-private theorem smallInitialOneChildSlot_survives
+private lemma smallInitialOneChildSlot_survives
     (parents : Finset (RootIndexed.TreeNode (Fin m) ℕ))
     (field : FiniteRootStepField m ℕ ℝ)
     (hchildren : ∀ p ∈ parents,
@@ -574,7 +574,7 @@ private noncomputable def smallInitialOneChildImage
     Combinatorics.Branching.Selection.Coupling.childAddress p.1
       (smallInitialOneChildSlot parents field hchildren p))
 
-private theorem smallInitialOneChildImage_injective
+private lemma smallInitialOneChildImage_injective
     (parents : Finset (RootIndexed.TreeNode (Fin m) ℕ))
     (field : FiniteRootStepField m ℕ ℝ)
     (hchildren : ∀ p ∈ parents,
@@ -590,7 +590,7 @@ private theorem smallInitialOneChildImage_injective
   apply Subtype.ext
   exact congrArg Prod.fst hpair
 
-private theorem smallInitialOneChildImage_card
+private lemma smallInitialOneChildImage_card
     (parents : Finset (RootIndexed.TreeNode (Fin m) ℕ))
     (field : FiniteRootStepField m ℕ ℝ)
     (hchildren : ∀ p ∈ parents,
@@ -601,7 +601,7 @@ private theorem smallInitialOneChildImage_card
     Finset.card_image_of_injective _
       (smallInitialOneChildImage_injective parents field hchildren)]
 
-private theorem smallInitialOneChildImage_subset
+private lemma smallInitialOneChildImage_subset
     (n : ℕ) (parents : Finset (RootIndexed.TreeNode (Fin m) ℕ))
     (field : FiniteRootStepField m ℕ ℝ)
     (hdepth : ∀ p ∈ parents, p.2.length = n)
@@ -615,7 +615,7 @@ private theorem smallInitialOneChildImage_subset
     p.1 p.2 (hdepth p.1 p.2) (smallInitialOneChildSlot parents field
       hchildren p) (smallInitialOneChildSlot_survives parents field hchildren p)
 
-private theorem smallInitialFirstN_card_ge
+private lemma smallInitialFirstN_card_ge
     (N n : ℕ) (parents : Finset (RootIndexed.TreeNode (Fin m) ℕ))
     (field : FiniteRootStepField m ℕ ℝ)
     (value : RootIndexed.TreeNode (Fin m) ℕ → ℝ)
@@ -647,7 +647,7 @@ private theorem smallInitialFirstN_card_ge
   · rw [hfirst.card_infinite hinfinite]
     exact hcapacity
 
-private theorem smallInitialFirstN_card_gt_of_split
+private lemma smallInitialFirstN_card_gt_of_split
     (N n : ℕ) (hm : 0 < m)
     (parents : Finset (RootIndexed.TreeNode (Fin m) ℕ))
     (field : FiniteRootStepField m ℕ ℝ)

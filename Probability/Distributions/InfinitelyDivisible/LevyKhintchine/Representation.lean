@@ -166,7 +166,7 @@ theorem norm_charFun_half_le_of_charFun_eq_zero
 **Proof:** For each `n ≥ 1`, the `n`-th root measure `ν_n` satisfies `charFun ν_n ξ₀ = 0`,
 hence `‖charFun ν_n (ξ₀/2)‖ ≤ 3/4` by `norm_charFun_half_le_of_charFun_eq_zero`.
 Then `‖charFun μ (ξ₀/2)‖ = ‖charFun ν_n (ξ₀/2)‖^n ≤ (3/4)^n → 0`. -/
-private theorem charFun_half_eq_zero_of_charFun_eq_zero
+private lemma charFun_half_eq_zero_of_charFun_eq_zero
     {μ : Measure ℝ} [IsProbabilityMeasure μ] (h : IsInfinitelyDivisible μ)
     {ξ₀ : ℝ} (hξ : charFun μ ξ₀ = 0) :
     charFun μ (ξ₀ / 2) = 0 := by
@@ -304,12 +304,12 @@ def IsConditionallyNegativeDefinite (ψ : ℝ → ℂ) : Prop :=
     0 ≤ (∑ i, ∑ j, starRingEnd ℂ (c i) * c j * ψ (ξ i - ξ j)).re
 
 /-- For a probability measure, `charFun ν 0 = 1`. -/
-private theorem charFun_zero_eq_one {ν : Measure ℝ} [IsProbabilityMeasure ν] :
+private lemma charFun_zero_eq_one {ν : Measure ℝ} [IsProbabilityMeasure ν] :
     charFun ν 0 = 1 := by
   simp [charFun_zero, Measure.real, measure_univ]
 
 /-- When `∑ c = 0`, the constant term `∑ᵢ ∑ⱼ conj(cᵢ) cⱼ` equals zero. -/
-private theorem double_sum_conj_mul_eq_zero {n : ℕ} {c : Fin n → ℂ} (hc : ∑ i, c i = 0) :
+private lemma double_sum_conj_mul_eq_zero {n : ℕ} {c : Fin n → ℂ} (hc : ∑ i, c i = 0) :
     ∑ i : Fin n, ∑ j : Fin n, starRingEnd ℂ (c i) * c j = 0 := by
   simp_rw [← Finset.mul_sum, ← Finset.sum_mul]
   simp [hc]
@@ -579,7 +579,7 @@ theorem hermitian_integral_levyCompensatedIntegrand {ν : Measure ℝ} (ξ : ℝ
 
 /-- PSD of characteristic function: the Hermitian form with charFun values is non-negative.
 This wraps the ProbabilityMeasure-level statement for bare Measures. -/
-private theorem charFun_psd {ν : Measure ℝ} [IsProbabilityMeasure ν]
+private lemma charFun_psd {ν : Measure ℝ} [IsProbabilityMeasure ν]
     {n : ℕ} (ξ : Fin n → ℝ) (c : Fin n → ℂ) :
     0 ≤ (∑ i : Fin n, ∑ j : Fin n,
       starRingEnd ℂ (c i) * c j * charFun ν (ξ i - ξ j)).re := by
@@ -587,7 +587,7 @@ private theorem charFun_psd {ν : Measure ℝ} [IsProbabilityMeasure ν]
     (⟨ν, inferInstance⟩ : ProbabilityMeasure ℝ)).re_nonneg n ξ c
 
 /-- When `∑ c = 0`, PSD implies the "1 minus charFun" form is non-positive. -/
-private theorem one_sub_charFun_form_nonpos {ν : Measure ℝ} [IsProbabilityMeasure ν]
+private lemma one_sub_charFun_form_nonpos {ν : Measure ℝ} [IsProbabilityMeasure ν]
     {n : ℕ} (ξ : Fin n → ℝ) (c : Fin n → ℂ) (hc : ∑ i, c i = 0) :
     (∑ i : Fin n, ∑ j : Fin n,
       starRingEnd ℂ (c i) * c j * (1 - charFun ν (ξ i - ξ j))).re ≤ 0 := by
@@ -608,7 +608,7 @@ then `charFun ν = exp(ψ/m)`.
 This uses the uniqueness of lifts through the exponential covering map:
 both `charFun ν` and `exp(ψ/m)` are continuous, map `0 ↦ 1`, and satisfy
 `f^m = exp(ψ)`. -/
-private theorem charFun_eq_exp_div {ν : Measure ℝ} [IsProbabilityMeasure ν]
+private lemma charFun_eq_exp_div {ν : Measure ℝ} [IsProbabilityMeasure ν]
     {ψ : ℝ → ℂ} (hψ_cont : Continuous ψ) (hψ_zero : ψ 0 = 0)
     {m : ℕ} (hm : 0 < m) (hpow : ∀ ξ, (charFun ν ξ) ^ m = exp (ψ ξ)) :
     ∀ ξ, charFun ν ξ = exp (ψ ξ / ↑m) := by
@@ -678,7 +678,7 @@ private theorem charFun_eq_exp_div {ν : Measure ℝ} [IsProbabilityMeasure ν]
   exact Nat.cast_ne_zero.mpr (by omega)
 
 /-- The complex limit `m * (1 - exp(z / m)) → -z` as `m → ∞`. -/
-private theorem tendsto_mul_one_sub_exp_div (z : ℂ) :
+private lemma tendsto_mul_one_sub_exp_div (z : ℂ) :
     Tendsto (fun m : ℕ => (↑m : ℂ) * (1 - exp (z / ↑m))) atTop (nhds (-z)) := by
   by_cases hz : z = 0
   · -- Case z = 0: everything is zero
@@ -824,7 +824,7 @@ which is `IsPositiveDefinite.mul` (proved in PositiveDefinite.lean). -/
 -- Helper: The CND kernel M_{ij} = ψ(ξᵢ-ξⱼ) - ψ(ξᵢ) - conj(ψ(ξⱼ)) is PD.
 -- Proved by instantiating CND at n+1 points [0, ξ₁, ..., ξₙ] with weight c₀ = -∑ cᵢ.
 -- Requires Hermitian symmetry ψ(-ξ) = conj(ψ(ξ)) to relate ψ(-ξⱼ) → conj(ψ(ξⱼ)).
-private theorem cnd_kernel_pd
+private lemma cnd_kernel_pd
     {ψ : ℝ → ℂ} (hψ_cnd : IsConditionallyNegativeDefinite ψ) (hψ_zero : ψ 0 = 0)
     (hψ_herm : ∀ ξ, ψ (-ξ) = starRingEnd ℂ (ψ ξ))
     (n : ℕ) (ξ : Fin n → ℝ) (c : Fin n → ℂ) :
@@ -932,7 +932,7 @@ private theorem cnd_kernel_pd
 -- Entrywise products of positive-definite kernels are positive definite,
 -- by Mathlib's matrix Schur product theorem.
 open Matrix in
-private theorem pd_kernel_to_posSemidef {n : ℕ} {K : Fin n → Fin n → ℂ}
+private lemma pd_kernel_to_posSemidef {n : ℕ} {K : Fin n → Fin n → ℂ}
     (hK : ∀ c : Fin n → ℂ, 0 ≤ ∑ i, ∑ j, starRingEnd ℂ (c i) * c j * K i j) :
     (Matrix.of K).PosSemidef := by
   rw [Matrix.posSemidef_iff_dotProduct_mulVec]
@@ -1049,7 +1049,7 @@ private theorem pd_kernel_to_posSemidef {n : ℕ} {K : Fin n → Fin n → ℂ}
       congr 1; ext i; rw [Finset.mul_sum]; congr 1; ext j; ring
     rw [key]; exact hK c
 
-private theorem pd_kernel_mul
+private lemma pd_kernel_mul
     {n : ℕ} {M N : Fin n → Fin n → ℂ}
     (hM : ∀ c : Fin n → ℂ, 0 ≤ ∑ i, ∑ j, starRingEnd ℂ (c i) * c j * M i j)
     (hN : ∀ c : Fin n → ℂ, 0 ≤ ∑ i, ∑ j, starRingEnd ℂ (c i) * c j * N i j) :
@@ -1074,7 +1074,7 @@ private theorem pd_kernel_mul
   exact hquad
 
 -- Entrywise k-th power of PD kernel is PD (by iterated Schur product).
-private theorem pd_kernel_pow
+private lemma pd_kernel_pow
     {n : ℕ} {M : Fin n → Fin n → ℂ}
     (hM : ∀ c : Fin n → ℂ, 0 ≤ ∑ i, ∑ j, starRingEnd ℂ (c i) * c j * M i j)
     (k : ℕ) :
@@ -1098,7 +1098,7 @@ private theorem pd_kernel_pow
 -- Helper: entrywise exp of PD kernel is PD.
 -- Proof: (1 + tM/N)^N → exp(tM) entrywise as N → ∞.
 -- Each (1 + tM/N)^N is PD (by pd_kernel_pow + the base case 1 + tM/N is PD).
-private theorem exp_pd_kernel
+private lemma exp_pd_kernel
     {n : ℕ} {M : Fin n → Fin n → ℂ}
     (hM : ∀ c : Fin n → ℂ, 0 ≤ ∑ i, ∑ j, starRingEnd ℂ (c i) * c j * M i j)
     (t : ℝ) (ht : 0 ≤ t) :

@@ -154,7 +154,7 @@ private def singletonTree : Tree α where
     simp only [Set.mem_singleton_iff] at h
     simp at h
 
-private theorem finiteInter_truncationBalls :
+private lemma finiteInter_truncationBalls :
     FiniteInter (insert ∅ {s : Set (Tree α) | ∃ T n, s = Tree.truncationBall T n}) := by
   refine ⟨?_, ?_⟩
   · right
@@ -171,7 +171,7 @@ private theorem finiteInter_truncationBalls :
     · left
       exact Set.not_nonempty_iff_eq_empty.1 hne
 
-private theorem isTopologicalBasis_truncationBalls :
+private lemma isTopologicalBasis_truncationBalls :
     @TopologicalSpace.IsTopologicalBasis (Tree α) treeTruncationTopology
       (insert ∅ {s : Set (Tree α) | ∃ T n, s = Tree.truncationBall T n}) := by
   have hgen : TopologicalSpace.generateFrom
@@ -319,7 +319,7 @@ theorem isOpen_uniformBall (T : RootIndexed.Tree Root α) (n : ℕ) :
     uniformTopology (Root := Root) (α := α)
   exact isOpen_generateFrom_of_mem ⟨T, n, rfl⟩
 
-private theorem isTopologicalBasis_isOpen_truncation :
+private lemma isTopologicalBasis_isOpen_truncation :
     letI : TopologicalSpace (UlamHarris.Tree α) := Tree.treeTruncationTopology (α := α)
     IsTopologicalBasis {s : Set (UlamHarris.Tree α) | IsOpen s} := by
   letI : TopologicalSpace (UlamHarris.Tree α) := Tree.treeTruncationTopology (α := α)

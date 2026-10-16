@@ -52,7 +52,7 @@ namespace ProbabilityTheory
 open MeasureTheory Filter
 open scoped NNReal ENNReal Topology
 
-private theorem exists_finset_open_cover_Icc
+private lemma exists_finset_open_cover_Icc
     {r : ℝ} (hr : 0 < r) :
     ∃ F : Finset {x : ℝ // x ∈ Set.Icc (-1) 1},
       ∀ z ∈ Set.Icc (-1) 1,
@@ -130,7 +130,7 @@ theorem IsStableLevyProcess.measure_scaled_time_fullReturn
   exact hscaled.trans hbase.symm
 
 
-private theorem eventually_fixed_endpoint_bin_le_target
+private lemma eventually_fixed_endpoint_bin_le_target
     {Ω : Type*} [MeasurableSpace Ω]
     {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
     {P : Measure Ω} [IsProbabilityMeasure P]

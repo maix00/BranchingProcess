@@ -24,7 +24,7 @@ open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 open ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown
 open ProbabilityTheory.BranchingRandomWalk.Spine
 
-private theorem eventually_one_add_const_mul_log_cube_le_exp
+private lemma eventually_one_add_const_mul_log_cube_le_exp
     {N : ℕ → ℕ} (hN : Tendsto N atTop atTop) {C eta : ℝ}
     (heta : 0 < eta) :
     ∀ᶠ n : ℕ in atTop,

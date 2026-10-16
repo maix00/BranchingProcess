@@ -24,7 +24,7 @@ namespace ProbabilityTheory
 open Filter MeasureTheory
 open scoped ENNReal NNReal Topology
 
-private theorem centeredCorridorProbability_pos_of_cdf
+private lemma centeredCorridorProbability_pos_of_cdf
     {Ω : Type*} [MeasurableSpace Ω]
     {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
     {P : Measure Ω} [IsProbabilityMeasure P]
@@ -35,7 +35,7 @@ private theorem centeredCorridorProbability_pos_of_cdf
   dsimp [centeredCorridorProbability]
   exact h.measure_fullSegmentCorridor_pos (-a) a (by linarith) ha hpos hneg
 
-private theorem stableCenteredLogRate_le_range
+private lemma stableCenteredLogRate_le_range
     {Ω : Type*} [MeasurableSpace Ω]
     {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
     {P : Measure Ω} [IsProbabilityMeasure P]
@@ -229,7 +229,7 @@ theorem IsStableLevyProcess.exists_centeredCorridor_escape_rate
       exact lt_of_le_of_lt hq hr
   exact ⟨C, hC, by simpa [l] using hRange, by simpa [l] using hlim⟩
 
-private theorem shiftedCorridorProbability_pos_of_cdf
+private lemma shiftedCorridorProbability_pos_of_cdf
     {Ω : Type*} [MeasurableSpace Ω]
     {α d a : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
     {P : Measure Ω} [IsProbabilityMeasure P]
@@ -243,7 +243,7 @@ private theorem shiftedCorridorProbability_pos_of_cdf
   dsimp [shiftedCorridorProbability]
   exact h.measure_fullSegmentCorridor_pos _ _ hlo hhi hpos hneg
 
-private theorem stableShiftedCorridorLogRate_le_range
+private lemma stableShiftedCorridorLogRate_le_range
     {Ω : Type*} [MeasurableSpace Ω]
     {α d a : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
     {P : Measure Ω} [IsProbabilityMeasure P]

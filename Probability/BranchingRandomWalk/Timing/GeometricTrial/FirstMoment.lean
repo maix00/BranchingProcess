@@ -49,7 +49,7 @@ noncomputable def geometricPrefixRewardTerm
   fun ω => R (X n ω) *
     (geometricFailurePrefix X B n).indicator (fun _ => (1 : ℝ)) ω
 
-private theorem indep_geometricFailurePrefix_current
+private lemma indep_geometricFailurePrefix_current
     (μ : Measure Ω) (X : ℕ → Ω → α)
     (hX : ∀ i, Measurable (X i)) (hXi : iIndepFun X μ)
     (B : Set α) (hB : MeasurableSet B) (R : α → ℝ) (hR : Measurable R)
@@ -102,7 +102,7 @@ private theorem indep_geometricFailurePrefix_current
   rw [hpastEq, hcurrentEq] at hcomp
   exact hcomp.symm
 
-private theorem integral_geometricPrefixRewardTerm
+private lemma integral_geometricPrefixRewardTerm
     (μ : Measure Ω) [IsProbabilityMeasure μ]
     (ν : Measure α) [IsProbabilityMeasure ν]
     (X : ℕ → Ω → α) (hX : ∀ i, Measurable (X i))

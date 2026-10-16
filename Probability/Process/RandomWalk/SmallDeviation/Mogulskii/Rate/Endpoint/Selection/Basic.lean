@@ -45,7 +45,7 @@ open Asymptotics
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
 /-- The square-root normalization for a positive quadratic denominator. -/
-private theorem sqrt_div_sq_of_pos {x q : ℝ} (hx : 0 ≤ x) (hq : 0 < q) :
+private lemma sqrt_div_sq_of_pos {x q : ℝ} (hx : 0 ≤ x) (hq : 0 < q) :
     Real.sqrt (x / q ^ 2) = Real.sqrt x / q := by
   rw [Real.sqrt_div hx, Real.sqrt_sq_eq_abs, abs_of_pos hq]
 

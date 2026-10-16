@@ -66,12 +66,12 @@ noncomputable def alphaTwoEndpointWindowRadius (p : ℝ) (q : ℝ)
     (scale : ℕ → ℝ) : ℕ → ℕ :=
   fun n => alphaTwoEndpointSpacing p q scale n + 1
 
-private theorem tendsto_scale_atTop {scale : ℕ → ℝ}
+private lemma tendsto_scale_atTop {scale : ℕ → ℝ}
     (hscale : IsMogulskiiScale scale) : Tendsto scale atTop atTop := by
   change IsSmallDeviationScale scale (fun n => Real.sqrt n) at hscale
   exact IsSmallDeviationScale.tendsto_atTop hscale
 
-private theorem tendsto_latticeArgument_atTop {scale : ℕ → ℝ}
+private lemma tendsto_latticeArgument_atTop {scale : ℕ → ℝ}
     (hscale : IsMogulskiiScale scale) {q : ℝ} (hq : 0 < q) :
     Tendsto (fun n => q * scale n / 8) atTop atTop := by
   have hs := tendsto_scale_atTop hscale
@@ -103,7 +103,7 @@ theorem tendsto_eight_alphaTwoLatticeScale_div {scale : ℕ → ℝ}
     ring_nf
   · field_simp
 
-private theorem tendsto_latticeScale_atTop {scale : ℕ → ℝ}
+private lemma tendsto_latticeScale_atTop {scale : ℕ → ℝ}
     (hscale : IsMogulskiiScale scale) {q : ℝ} (hq : 0 < q) :
     Tendsto (alphaTwoLatticeScale q scale) atTop atTop := by
   have hfloor := Asymptotics.tendsto_floorBlockLength_atTop
@@ -166,7 +166,7 @@ theorem tendsto_alphaTwoEndpointWindowMinusOne_div_eightLattice {scale : ℕ →
 
 /-- The explicit floor spacing and window satisfy the finite spectral fit
 condition at every index, including the initial indices. -/
-private theorem alphaTwoEndpointBands_fit (scale : ℕ → ℝ) {q p : ℝ}
+private lemma alphaTwoEndpointBands_fit (scale : ℕ → ℝ) {q p : ℝ}
     (hp : 0 < p) (hpSmall : p < 1 / 32) (n : ℕ) :
     3 * alphaTwoEndpointSpacing p q scale n +
         alphaTwoEndpointWindowRadius p q scale n ≤
@@ -207,7 +207,7 @@ private theorem alphaTwoEndpointBands_fit (scale : ℕ → ℝ) {q p : ℝ}
       le_of_lt hrealStrict
     exact_mod_cast hreal
 
-private theorem tendsto_sqrtBlock_div_width_of_diffusiveRatio
+private lemma tendsto_sqrtBlock_div_width_of_diffusiveRatio
     {length width : ℕ → ℕ} {c : ℝ}
     (hratio : Tendsto (fun n => (length n : ℝ) / (width n : ℝ) ^ 2)
       atTop (nhds c)) :

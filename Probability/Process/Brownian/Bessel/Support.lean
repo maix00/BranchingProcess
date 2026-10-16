@@ -32,7 +32,7 @@ open scoped ENNReal NNReal Topology
 
 namespace BrownianBessel3
 
-private theorem radial_path_close
+private lemma radial_path_close
     {Ω : Type*} {B : ℝ≥0 → Ω → ℝ}
     (hB : ∀ ω, Continuous (B · ω))
     {a δ r : ℝ} (ha : 0 ≤ a) (hδ : 0 < δ)

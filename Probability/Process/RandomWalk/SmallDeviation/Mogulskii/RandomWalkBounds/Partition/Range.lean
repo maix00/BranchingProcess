@@ -78,7 +78,7 @@ def blockOscillationPrefixLTEvent (width : ℝ) (length : ℕ) :
     |Fin.partialSum increments i.castSucc -
       Fin.partialSum increments j.castSucc| < width}
 
-private theorem measurable_partialSumPrefix {length : ℕ}
+private lemma measurable_partialSumPrefix {length : ℕ}
     (time : Fin (length + 1)) :
     Measurable (fun increments : Fin length → ℝ =>
       Fin.partialSum increments time) := by

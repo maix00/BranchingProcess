@@ -6,7 +6,7 @@ open ProbabilityTheory.BranchingRandomWalk.Selection.NSelection
 
 private def descendingOffspring : Step ℕ ℝ := fun i => some (-(i : ℝ))
 
-private theorem descendingOffspring_not_lowerFinite :
+private lemma descendingOffspring_not_lowerFinite :
     ¬ IsLowerFiniteBy (fun i => value' descendingOffspring i)
       (support descendingOffspring) := by
   intro hlower

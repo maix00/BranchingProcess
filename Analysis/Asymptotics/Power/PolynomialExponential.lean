@@ -33,7 +33,7 @@ namespace Asymptotics
 
 /-- An exponential in a positive power eventually dominates every prescribed
 inverse power. -/
-private theorem eventually_exp_neg_rpow_le_div_rpow
+private lemma eventually_exp_neg_rpow_le_div_rpow
     {a b C p : ℝ} (ha : 0 < a) (hb : 0 < b) (hC : 0 < C) :
     ∀ᶠ x : ℝ in atTop, Real.exp (-a * x ^ b) ≤ C / x ^ p := by
   have hlittleBase :=

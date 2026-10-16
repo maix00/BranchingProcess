@@ -111,12 +111,12 @@ theorem intervalIntegral_four_cosineDefect_sub_double
     _ = 2 * ∫ y, cosineSquareFrequencyAverage (y / x) ∂μ := by
           congr 1
 
-private theorem cosineSquareFrequencyAverage_nonneg (z : ℝ) :
+private lemma cosineSquareFrequencyAverage_nonneg (z : ℝ) :
     0 ≤ cosineSquareFrequencyAverage z := by
   exact intervalIntegral.integral_nonneg_of_forall (by norm_num)
     (fun t => sq_nonneg (1 - Real.cos (t * z)))
 
-private theorem cosineSquareFrequencyAverage_le_four (z : ℝ) :
+private lemma cosineSquareFrequencyAverage_le_four (z : ℝ) :
     cosineSquareFrequencyAverage z ≤ 4 := by
   let f : ℝ → ℝ := fun t => (1 - Real.cos (t * z)) ^ 2
   have hfcont : Continuous f := by fun_prop

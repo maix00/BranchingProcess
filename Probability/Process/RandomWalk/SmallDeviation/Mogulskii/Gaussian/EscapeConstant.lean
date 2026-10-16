@@ -96,7 +96,7 @@ private noncomputable def openCenteredTubeProbability
   openHorizontalTubeProbability (iidSequenceLaw rademacherMeasure)
     (1 / 2) (scale n) n
 
-private theorem centeredLatticeWidth_gt (scale : ℕ → ℝ) (n : ℕ)
+private lemma centeredLatticeWidth_gt (scale : ℕ → ℝ) (n : ℕ)
     (hscale : 0 ≤ scale n) :
     scale n < (2 : ℝ) * (centeredLatticeRadius scale n : ℝ) := by
   have hfloor : (⌊scale n / 2⌋₊ : ℝ) ≤ scale n / 2 :=
@@ -106,7 +106,7 @@ private theorem centeredLatticeWidth_gt (scale : ℕ → ℝ) (n : ℕ)
   simp only [centeredLatticeRadius, Nat.cast_add, Nat.cast_one]
   nlinarith [hfloorLower]
 
-private theorem inOpenTube_subset_inClosedTube
+private lemma inOpenTube_subset_inClosedTube
     {innerWidth outerWidth : ℝ} {n : ℕ}
     (hwidth : innerWidth ≤ outerWidth) :
     {increment : ℕ → ℝ |
@@ -118,7 +118,7 @@ private theorem inOpenTube_subset_inClosedTube
   have hk := hincrement k
   constructor <;> nlinarith [hk.1, hk.2, hwidth]
 
-private theorem inClosedTube_subset_inOpenTube
+private lemma inClosedTube_subset_inOpenTube
     {innerWidth outerWidth : ℝ} {n : ℕ}
     (hwidth : innerWidth < outerWidth) :
     {increment : ℕ → ℝ |
@@ -134,7 +134,7 @@ private theorem inClosedTube_subset_inOpenTube
 Rademacher stable Mogulskii scale.  The rate normalization is the familiar
 `scale n ^ 2 / n`, because the Rademacher truncated second moment is
 eventually one. -/
-private theorem rademacher_openCenteredTube_rate
+private lemma rademacher_openCenteredTube_rate
     {C : ℝ} {P : Measure (CadlagPath unitInterval ℝ)} [IsProbabilityMeasure P]
     (hEscape : HasStableProcessEscapeRate 2 (gaussianReal 0 1) P C)
     {Ω : Type*} [MeasurableSpace Ω]
@@ -198,7 +198,7 @@ private theorem rademacher_openCenteredTube_rate
 /-- For each fixed relative width `q < 1`, the closed tube with rounded
 lattice width `q * scale` lies inside the original strict tube eventually.
 Its spectral limit therefore gives a lower bound for the strict-tube rate. -/
-private theorem fixedNarrowClosedTube_lower_bound
+private lemma fixedNarrowClosedTube_lower_bound
     {C : ℝ} {P : Measure (CadlagPath unitInterval ℝ)} [IsProbabilityMeasure P]
     (hEscape : HasStableProcessEscapeRate 2 (gaussianReal 0 1) P C)
     {Ω : Type*} [MeasurableSpace Ω]

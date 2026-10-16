@@ -24,7 +24,7 @@ namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail
 open ProbabilityTheory.BranchingRandomWalk.Spine
 open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
-private theorem tendsto_rightTailPositiveAFirstCutoff_twoFifths_div_log
+private lemma tendsto_rightTailPositiveAFirstCutoff_twoFifths_div_log
     {N : ℕ → ℕ} (hN : Tendsto N atTop atTop) :
     Tendsto (fun n => logarithmicSmallDeviationScale
       (rightTailPositiveAFirstCutoff N n) /
@@ -63,7 +63,7 @@ private theorem tendsto_rightTailPositiveAFirstCutoff_twoFifths_div_log
     exact hpower.congr' heq.symm
   simpa [cutoff, logarithmicSmallDeviationScale] using hratio
 
-private theorem logarithmicSmallDeviationScale_mul_isMogulskiiScale
+private lemma logarithmicSmallDeviationScale_mul_isMogulskiiScale
     {c : ℝ} (hc : 0 < c) :
     IsMogulskiiScale
       (fun k : ℕ => c * logarithmicSmallDeviationScale k) := by
@@ -233,7 +233,7 @@ theorem eventually_rightTailPositiveA_spineCorridor_lowerBound_of_centeredSecond
       scale, ratio, v₀, b₀] using hquant.trans (measure_mono hsourceSubset)
   simpa only [target, L, ell] using htargetBound
 
-private theorem rightTailPositiveASpineCorridorLowerBound_pos
+private lemma rightTailPositiveASpineCorridorLowerBound_pos
     (ν : Measure ℝ) (b v C amplitude : ℝ) (q : ℝ≥0∞)
     (hq : 0 < q) (horizon : ℕ) :
     0 < rightTailPositiveASpineCorridorLowerBound ν b v C amplitude q horizon := by

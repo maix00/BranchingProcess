@@ -37,7 +37,7 @@ open ProbabilityTheory.BranchingRandomWalk.RootIndexed
 
 attribute [local instance] Classical.propDecidable Classical.decEq
 
-private theorem list_lt_append_of_length_eq
+private lemma list_lt_append_of_length_eq
     {α : Type*} [LinearOrder α] {p q u v : List α}
     (hlen : p.length = q.length) (hpq : p < q) :
     p ++ u < q ++ v := by
@@ -60,7 +60,7 @@ private theorem list_lt_append_of_length_eq
                 exact .cons (ih hlen' ((List.lt_iff_lex_lt p q).mpr htail))
           exact (List.lt_iff_lex_lt ((a :: p) ++ u) ((b :: q) ++ v)).mpr hlex'
 
-private theorem rootedAddress_append_lt
+private lemma rootedAddress_append_lt
     {Root α : Type*} [LinearOrder Root] [LinearOrder α]
     (x y : RootIndexed.TreeNode Root α) (u v : List α)
     (hlen : x.2.length = y.2.length)
@@ -77,7 +77,7 @@ private theorem rootedAddress_append_lt
   · exact Or.inr ⟨hroot,
       list_lt_append_of_length_eq hlen hpath⟩
 
-private theorem isFirstNBy_image
+private lemma isFirstNBy_image
     {ι κ Value : Type*} [LinearOrder ι] [LinearOrder κ] [LinearOrder Value]
     [DecidableEq κ]
     (N : ℕ) (f : ι → κ) (hf : Function.Injective f)
@@ -151,7 +151,7 @@ noncomputable def smallInitialPopulationHitAddress
   let root := smallInitialPopulationHitRoots m N hm field q.1
   (root.1, root.2 ++ q.2)
 
-private theorem smallInitialPopulationHitAddress_strictMono_at_time
+private lemma smallInitialPopulationHitAddress_strictMono_at_time
     (m N n : ℕ) (hm : 0 < m)
     (field : FiniteRootStepField m ℕ ℝ)
     (htime : @smallInitialPopulationCapacityTime m N
@@ -215,7 +215,7 @@ private theorem smallInitialPopulationHitAddress_strictMono_at_time
           (RootIndexed.addressLinearOrder (Fin m) ℕ) field i).1) hij,
       hword'⟩
 
-private theorem smallInitialPopulationHitAddress_injective_at_time
+private lemma smallInitialPopulationHitAddress_injective_at_time
     (m N n : ℕ) (hm : 0 < m)
     (field : FiniteRootStepField m ℕ ℝ)
     (htime : @smallInitialPopulationCapacityTime m N
@@ -279,7 +279,7 @@ noncomputable def smallInitialPopulationHitSubtreePopulation
     (@smallInitialPopulationHitSubtreeField m N hm
       (RootIndexed.addressLinearOrder (Fin m) ℕ) field)
 
-private theorem smallInitialPopulationHitAddress_observedPosition_eq
+private lemma smallInitialPopulationHitAddress_observedPosition_eq
     (m N n j : ℕ) (hm : 0 < m)
     (field : FiniteRootStepField m ℕ ℝ)
     (htime : @smallInitialPopulationCapacityTime m N

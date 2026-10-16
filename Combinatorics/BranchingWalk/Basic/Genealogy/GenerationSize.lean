@@ -22,7 +22,7 @@ definition, and forgetting marks leaves it unchanged.
 
 namespace Combinatorics.Branching
 
-private theorem finite_list_length_eq {α : Type*} [Finite α] (n : ℕ) :
+private lemma finite_list_length_eq {α : Type*} [Finite α] (n : ℕ) :
     Finite {u : List α // u.length = n} := by
   classical
   refine Finite.of_injective

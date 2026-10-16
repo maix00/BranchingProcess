@@ -67,7 +67,7 @@ negative exponential weight and at least one child. -/
 def IsRepairableBatch {N : ℕ} (batch : GenerationBatch N) : Prop :=
   IsGoodInfiniteOffspringBatch batch
 
-private theorem infiniteOffspringCandidate_mem_measurable {N : ℕ}
+private lemma infiniteOffspringCandidate_mem_measurable {N : ℕ}
     (q : InfiniteSlotLabel N) :
     Measurable fun batch : GenerationBatch N =>
       q ∈ infiniteOffspringCandidates batch := by
@@ -78,7 +78,7 @@ private theorem infiniteOffspringCandidate_mem_measurable {N : ℕ}
   exact (survive_measurableSet (ofLex q).2).preimage
     (measurable_pi_apply (ofLex q).1)
 
-private theorem measurable_infiniteOffspringCandidates {N : ℕ} :
+private lemma measurable_infiniteOffspringCandidates {N : ℕ} :
     Measurable (fun batch : GenerationBatch N =>
       infiniteOffspringCandidates batch) := by
   rw [measurable_set_iff]
@@ -138,7 +138,7 @@ noncomputable def totalizedInfiniteOffspringRankOption {N : ℕ}
   particleAtRankBy (infiniteOffspringPosition x.1 x.2)
     (totalizedInfiniteOffspringFirstN x) i.val
 
-private theorem measurable_totalizedInfiniteOffspringRankOption_eq_some
+private lemma measurable_totalizedInfiniteOffspringRankOption_eq_some
     {N : ℕ} (i : Fin N) (q : InfiniteSlotLabel N) :
     MeasurableSet {x : (Fin N → ℝ) × GenerationBatch N |
       totalizedInfiniteOffspringRankOption x i = some q} := by
@@ -162,7 +162,7 @@ private theorem measurable_totalizedInfiniteOffspringRankOption_eq_some
   exact NSelection.measurableSet_particleAtRankBy_eq_some value selected
     hfiber (Set.to_countable _) hkey i.val q
 
-private theorem measurable_totalizedInfiniteOffspringRankOption_eq_none
+private lemma measurable_totalizedInfiniteOffspringRankOption_eq_none
     {N : ℕ} (i : Fin N) :
     MeasurableSet {x : (Fin N → ℝ) × GenerationBatch N |
       totalizedInfiniteOffspringRankOption x i = none} := by
@@ -394,7 +394,7 @@ theorem repairGenerationBatch_eq_of_repairable {N : ℕ}
     repairGenerationBatch batch = batch := by
   simp [repairGenerationBatch, h]
 
-private theorem fallbackOffspringStep_isOrderedBy :
+private lemma fallbackOffspringStep_isOrderedBy :
     fallbackOffspringStep.IsOrderedBy realPotential := by
   change (fallbackOffspringStep.map id) ∈ orderedSteps
   rw [mem_orderedSteps_iff]
@@ -413,7 +413,7 @@ private theorem fallbackOffspringStep_isOrderedBy :
     have hj0 : j = 0 := hjy.1
     omega
 
-private theorem fallbackGenerationBatch_orderedFirst {N : ℕ} :
+private lemma fallbackGenerationBatch_orderedFirst {N : ℕ} :
     ∀ i : Fin N,
       (fallbackGenerationBatch N i).IsOrderedBy realPotential ∧
         survive (fallbackGenerationBatch N i) 0 := by

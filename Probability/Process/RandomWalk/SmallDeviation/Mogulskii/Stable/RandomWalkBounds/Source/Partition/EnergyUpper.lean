@@ -30,7 +30,7 @@ namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete
 open Skorokhod.PathClass.StepCorridor
 open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Discrete
 
-private theorem tendsto_relativeCellUpperRate
+private lemma tendsto_relativeCellUpperRate
     {C α width : ℝ} (hwidth : 0 < width) :
     Tendsto (fun δ : ℝ =>
       C / (((width + δ * width) / 2) ^ α) + 2 * δ)
@@ -61,7 +61,7 @@ private theorem tendsto_relativeCellUpperRate
     simpa using hδ.const_mul (2 : ℝ)
   simpa using hquot.add hslack
 
-private theorem tendsto_finiteCellUpperRateEnvelope
+private lemma tendsto_finiteCellUpperRateEnvelope
     {ι : Type*} [Fintype ι]
     (s : Finset ι) (duration width : ι → ℝ)
     {C α : ℝ} (hwidth : ∀ i ∈ s, 0 < width i) :

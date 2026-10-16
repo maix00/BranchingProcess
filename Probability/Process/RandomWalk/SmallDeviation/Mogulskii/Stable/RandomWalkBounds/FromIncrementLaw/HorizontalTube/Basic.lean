@@ -34,7 +34,7 @@ open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.Horiz
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete
 
-private theorem normalizedSourcePartialSum_bounds_of_horizontalTube
+private lemma normalizedSourcePartialSum_bounds_of_horizontalTube
     {n : ℕ} {scale : ℕ → ℝ} {a : ℝ} {increment : ℕ → ℝ}
     (hscale : 0 < scale n) (_ha0 : 0 ≤ a) (_ha1 : a ≤ 1)
     (htube : InHorizontalTube a (scale n) (n - 1) increment)
@@ -63,7 +63,7 @@ private theorem normalizedSourcePartialSum_bounds_of_horizontalTube
 
 /-- A strict constant source corridor whose boundaries lie inside a closed
 horizontal tube forces the source walk to stay in that tube. -/
-private theorem sourceRelativeConstantCorridor_subset_horizontalTube
+private lemma sourceRelativeConstantCorridor_subset_horizontalTube
     {n : ℕ} {scale : ℕ → ℝ} {a lower upper : ℝ}
     (hn : 0 < n) (hscale : 0 < scale n)
     (hlower : -a < lower) (hupper : upper < 1 - a) :
@@ -105,7 +105,7 @@ private theorem sourceRelativeConstantCorridor_subset_horizontalTube
 
 /-- A closed horizontal tube lies inside any strictly wider constant source
 corridor, including the source path's terminal-left endpoint. -/
-private theorem horizontalTube_subset_sourceRelativeConstantCorridor
+private lemma horizontalTube_subset_sourceRelativeConstantCorridor
     {n : ℕ} {scale : ℕ → ℝ} {a lower upper : ℝ}
     (hn : 0 < n) (hscale : 0 < scale n) (ha0 : 0 ≤ a) (ha1 : a ≤ 1)
     (hlower : lower < -a) (hupper : 1 - a < upper) :

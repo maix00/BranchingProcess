@@ -44,12 +44,12 @@ private noncomputable def excursionTarget (q : ℝ≥0)
     (f : C(ℝ≥0, ℝ)) : ℝ≥0 :=
   (firstPassageBelow f (runningMinimum f q)).untopA + 1 - q
 
-private theorem measurable_excursionGap (q : ℝ≥0) :
+private lemma measurable_excursionGap (q : ℝ≥0) :
     Measurable (excursionGap q) := by
   exact measurable_real_toNNReal.comp
     ((ContinuousMap.measurable_eval q).sub (measurable_runningMinimum q))
 
-private theorem measurable_excursionTarget (q : ℝ≥0) :
+private lemma measurable_excursionTarget (q : ℝ≥0) :
     Measurable (excursionTarget q) := by
   have hpass : Measurable (fun f : C(ℝ≥0, ℝ) =>
       firstPassageBelow f (runningMinimum f q)) :=
@@ -57,13 +57,13 @@ private theorem measurable_excursionTarget (q : ℝ≥0) :
       (measurable_id.prodMk (measurable_runningMinimum q))
   exact (hpass.untopA.add measurable_const).sub measurable_const
 
-private theorem excursionGap_freezeAfter (f : C(ℝ≥0, ℝ)) (q : ℝ≥0) :
+private lemma excursionGap_freezeAfter (f : C(ℝ≥0, ℝ)) (q : ℝ≥0) :
     excursionGap q (freezeAfter f q) = excursionGap q f := by
   unfold excursionGap
   rw [runningMinimum_freezeAfter_eq f (le_refl q)]
   simp [freezeAfter]
 
-private theorem excursionTarget_freezeAfter (f : C(ℝ≥0, ℝ)) (q : ℝ≥0) :
+private lemma excursionTarget_freezeAfter (f : C(ℝ≥0, ℝ)) (q : ℝ≥0) :
     excursionTarget q (freezeAfter f q) = excursionTarget q f := by
   have hprefix (u : ℝ≥0) (hu : u ≤ q) :
       f u = (freezeAfter f q) u := by
@@ -78,7 +78,7 @@ private theorem excursionTarget_freezeAfter (f : C(ℝ≥0, ℝ)) (q : ℝ≥0) 
       (runningMinimum f q) q hprefix hpassLe).symm
   simp [excursionTarget, runningMinimum_freezeAfter_eq f (le_refl q), hpass]
 
-private theorem endpointReturn_rationalFuturePassage
+private lemma endpointReturn_rationalFuturePassage
     (f : C(ℝ≥0, ℝ)) (s t q : ℝ≥0)
     (hfirst : firstNonnegativeWindowStartUpTo f s = t)
     (hend : f (t + 1) = f t)

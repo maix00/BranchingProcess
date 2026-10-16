@@ -259,7 +259,7 @@ and the proof-specific IID block factorization is in
 almost-surely-continuous mapping theorem used after Bolthausen's Lemma 2.5.
 
 The concrete finite staircase now has its own verified schedule and geometry:
-`DriftedTube/FiniteVarianceLower/BlockSchedule.lean` defines
+`DriftedTube/BlockSchedule/Basic.lean` defines
 $q=\lfloor(L-t_1)/\ell\rfloor$ and the final block of length
 $\ell+(L-t_1)\bmod\ell$; `DriftedTube/FiniteVarianceLower/Lemmas/Staircase/Setup/BlockTube.lean` defines the
 horizontal block interval $[r_{t_{j+1}},s_{t_j}]$ and its width

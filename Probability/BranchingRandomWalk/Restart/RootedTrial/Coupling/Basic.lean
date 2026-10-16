@@ -2026,7 +2026,7 @@ theorem selectedReserveSpineRestartEndpointTargetFreshField_factorization_on_fin
 countable-range family of roots. This is the stopped-time counterpart of
 `RootIndexed.selectedSubtreeStepFieldVector_measurable`, whose roots all have
 one fixed generation. -/
-private theorem measurable_subtreeStepFieldVector_of_measurable_roots
+private lemma measurable_subtreeStepFieldVector_of_measurable_roots
     {Root κ α X : Type*} [MeasurableSpace X]
     [MeasurableSpace κ] [MeasurableSpace Root]
     [MeasurableSpace (Combinatorics.UlamHarris.RootIndexed.TreeNode Root α)]
@@ -2242,7 +2242,7 @@ theorem selectedReserveSpineRestartEndpointFixedHorizonObservable_law_on_finite
       future ∘ (fun field => (positions field, fresh field)) by rfl,
     ← Measure.map_map hfuture hpair, hfreshLaw]
 
-private theorem observedPosition_jointInitial_measurable
+private lemma observedPosition_jointInitial_measurable
     {lower : ℕ} {α : Type*} [MeasurableSpace α]
     (n : ℕ) (p : RootIndexed.TreeNode (Fin lower) α) :
     Measurable (fun z : (Fin lower → ℝ) ×
@@ -2281,7 +2281,7 @@ private theorem observedPosition_jointInitial_measurable
             (z.2 p.1) [] p.2 else 0)
     simp [hp]
 
-private theorem measurable_childrenAtGeneration_over_product
+private lemma measurable_childrenAtGeneration_over_product
     {Ω Root α X : Type*} [MeasurableSpace Ω] [MeasurableSpace X]
     [DecidableEq (RootIndexed.TreeNode Root α)]
     (n : ℕ)
@@ -2326,7 +2326,7 @@ private theorem measurable_childrenAtGeneration_over_product
     simpa [RootIndexed.childrenAtGeneration, hdepth, hi] using hparentMem.and hsurvive
   · simp [RootIndexed.childrenAtGeneration, hdepth]
 
-private theorem selectedPopulationTotalized_jointInitial_measurable
+private lemma selectedPopulationTotalized_jointInitial_measurable
     {lower : ℕ} {α : Type*} [MeasurableSpace α] [MeasurableSingletonClass α]
     [LinearOrder α] [OrderBot α]
     [MeasurableSpace (RootIndexed.TreeNode (Fin lower) α)]

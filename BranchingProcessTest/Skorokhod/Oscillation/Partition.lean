@@ -28,7 +28,7 @@ namespace Skorokhod
 private def oneCellPoints : Fin 2 → unitInterval := fun i =>
   if i.val = 0 then ⊥ else ⊤
 
-private theorem oneCellPoints_strict : StrictMono oneCellPoints := by
+private lemma oneCellPoints_strict : StrictMono oneCellPoints := by
   intro i j hij
   have hi : i.val = 0 := by omega
   have hj : j.val = 1 := by omega

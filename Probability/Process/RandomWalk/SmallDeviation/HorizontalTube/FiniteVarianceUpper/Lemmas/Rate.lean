@@ -38,7 +38,7 @@ open scoped ENNReal NNReal Topology
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube
 
-private theorem smallDeviationBlockFactor_mono
+private lemma smallDeviationBlockFactor_mono
     {u v d : ℝ} (hu : 0 < u) (hv : 0 < v) (hd : 0 < d)
     {n₁ n₂ : ℕ} (hn : n₁ ≤ n₂) :
     smallDeviationBlockFactor u v d n₁ ≤ smallDeviationBlockFactor u v d n₂ := by
@@ -51,7 +51,7 @@ private theorem smallDeviationBlockFactor_mono
   dsimp [smallDeviationBlockFactor]
   exact Nat.add_le_add_right (Nat.floor_mono hquot) 1
 
-private theorem smallDeviationBlockFactor_tendsto
+private lemma smallDeviationBlockFactor_tendsto
     {u v d : ℝ} (hu : 0 < u) (hv : 0 < v) (hd : 0 < d) :
     Tendsto (fun n : ℕ => (smallDeviationBlockFactor u v d n : ℝ))
       atTop atTop := by
@@ -69,7 +69,7 @@ private theorem smallDeviationBlockFactor_tendsto
   simpa [smallDeviationBlockFactor, Function.comp_def] using
     (tendsto_natCast_atTop_atTop.comp hfactorNat)
 
-private theorem smallDeviationBlockLength_strictMono
+private lemma smallDeviationBlockLength_strictMono
     {u v d : ℝ} (hu : 0 < u) (hv : 0 < v) (hd : 0 < d) :
     StrictMono (fun k : ℕ => smallDeviationBlockLength u v d (k + 1) + 1) := by
   intro i j hij
@@ -99,7 +99,7 @@ private theorem smallDeviationBlockLength_strictMono
 
 /-- Convert a strict logarithmic rate bound into the corresponding
 probability bound. -/
-private theorem probability_le_exp_of_scaledLogProbability_le
+private lemma probability_le_exp_of_scaledLogProbability_le
     {p : ℝ≥0∞} {width length rate : ℝ}
     (hp : p ≤ 1) (hwidth : 0 < width) (hlength : 0 < length)
     (hrate : 0 < rate)
@@ -133,7 +133,7 @@ private theorem probability_le_exp_of_scaledLogProbability_le
 
 /-- A limiting Mogulskii rate supplies an eventual exponential estimate
 whenever the requested exponent is strictly below the limiting rate. -/
-private theorem eventually_probability_le_exp_of_scaledLogRate
+private lemma eventually_probability_le_exp_of_scaledLogRate
     {probability : ℕ → ℝ≥0∞} {width length : ℕ → ℝ}
     {critical rate : ℝ}
     (hprob : ∀ k, probability k ≤ 1)
@@ -152,7 +152,7 @@ private theorem eventually_probability_le_exp_of_scaledLogRate
     (hwidth k) (hlength k) hratePos hlog
 
 /-- The chosen block length grows faster than the square of its width. -/
-private theorem smallDeviation_widthSq_div_blockLength_tendsto_zero
+private lemma smallDeviation_widthSq_div_blockLength_tendsto_zero
     {u v d c : ℝ} (hu : 0 < u) (hv : 0 < v) (hd : 0 < d) (hc : 0 < c) :
     Tendsto (fun k : ℕ =>
       (c * (k + 2 : ℕ) : ℝ) ^ 2 /
@@ -229,7 +229,7 @@ lemma exists_partition_size_for_rate {d critical : ℝ}
       (eventually_gt_atTop (0 : ℕ)) |>.exists
   exact ⟨m, hmPos, hmBound⟩
 
-private theorem partitionTubeParameter_mem_Ioo {m : ℕ} (hm : 0 < m)
+private lemma partitionTubeParameter_mem_Ioo {m : ℕ} (hm : 0 < m)
     (k : Fin m) :
     0 < partitionTubeParameter m k ∧ partitionTubeParameter m k < 1 := by
   have hmReal : 0 < (m : ℝ) := by exact_mod_cast hm
