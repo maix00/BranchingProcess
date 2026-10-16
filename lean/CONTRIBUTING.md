@@ -54,15 +54,20 @@ measures, filtrations, kernels, point measures, and topological spaces. A
 formalized theorem should compile from a clean checkout with the pinned
 `lean-toolchain` and Lake manifest.
 
-## Entry points and proof modules
+## Entry points and supporting lemmas
 
 Keep a principal theorem in a plainly named entry module at the mathematical
 subject's directory level. When several files serve only that theorem's proof,
-put them under a sibling `Proof/` directory, subdivided by mathematical steps
-such as `Blocks`, `Entrance`, or `Staircase`. Keep genuinely reusable definitions
-and theorems in their own semantic directories instead of moving them into a
-particular result's `Proof/` tree. Avoid a catch-all `Lemmas/` directory whose
-contents have unrelated mathematical roles.
+put them under a sibling `Lemmas/` directory, subdivided by mathematical steps
+such as `Blocks`, `Entrance`, or `Staircase`. **Files in `Lemmas/` must contain
+only helpers that are not independently reusable:** their statements depend on
+the specific event, binning, constants, or assembly of that result. A complete
+reusable theorem, construction, event definition, or proof technique belongs
+in its mathematical subject's directory outside `Lemmas/`, even when the
+current result is its only caller. Before moving a file into `Lemmas/`, review
+each declaration in it against this rule; split mixed files so reusable
+declarations remain outside. A `Lemmas/` directory belongs to one principal
+result or a coherent theorem family; do not collect unrelated results in it.
 
 Directory placement communicates which files users should read first; it does
 not change Lean declaration visibility. Mark a helper `private` when all its
