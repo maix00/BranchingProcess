@@ -32,7 +32,7 @@ class ImportBoundaryCheckTests(unittest.TestCase):
 
     def test_finite_time_entrance_is_allowed(self):
         self.assertIsNone(imports.forbidden_import_reason(
-            "Probability.Process.Stable.SmallDeviation.Blocks.Lower.FiniteTimeEntrance"
+            "Probability.Process.Stable.SmallDeviation.Blocks.Lower.Entrance.FiniteTime"
         ))
 
     def test_unit_time_all_indices_entrance_is_forbidden(self):
@@ -43,7 +43,7 @@ class ImportBoundaryCheckTests(unittest.TestCase):
     def test_escape_rate_layers_are_public_entries(self):
         for name in (
             "Probability.Process.Stable.Corridor.Law",
-            "Probability.Process.Stable.SmallDeviation.EscapeRate",
+            "Probability.Process.Stable.SmallDeviation.EscapeRate.Basic",
             "Probability.Process.Stable.SmallDeviation.EscapeRate.Corridor",
             "Probability.Process.Stable.SmallDeviation.EscapeRate.Endpoint",
             "Probability.Process.Stable.SmallDeviation.EscapeRate.Law",
@@ -53,7 +53,7 @@ class ImportBoundaryCheckTests(unittest.TestCase):
 
     def test_subtree_rule_and_import_parser(self):
         self.assertIsNotNone(imports.forbidden_import_reason(
-            "Probability.Process.Path.Skorokhod.Corridor.Support.Dense"
+            "Probability.Process.Path.Representation.Skorokhod.Corridor.Support.Dense"
         ))
         self.assertEqual(
             imports.imported_modules(
@@ -204,7 +204,7 @@ class ImportBoundaryCheckTests(unittest.TestCase):
 
     def test_generic_mogulskii_path_classes_avoid_random_walk_layer(self):
         modules = (
-            "Topology.Cadlag.Skorokhod.PathClass.StepCorridor.Boundary",
+            "Topology.Cadlag.Skorokhod.PathClass.StepCorridor.Boundary.Basic",
             "Topology.Cadlag.Skorokhod.PathClass.StepCorridor.Basic",
             "MeasureTheory.Measure.CadlagPath.PathClass.StepCorridor.Energy",
             "MeasureTheory.Measure.CadlagPath.PathClass.StepCorridor.Approximation",
@@ -233,10 +233,10 @@ class ImportBoundaryCheckTests(unittest.TestCase):
 
     def test_recently_lowered_measure_and_analysis_layers_are_protected(self):
         expected = {
-            "Analysis.Asymptotics.Scale": ("Probability",),
-            "Analysis.Asymptotics.InverseScale": ("Probability",),
-            "Analysis.Asymptotics.BlockScale": ("Probability",),
-            "MeasureTheory.Measure.LevyMeasure": ("Probability",),
+            "Analysis.Asymptotics.Scale.Scale": ("Probability",),
+            "Analysis.Asymptotics.Scale.InverseScale": ("Probability",),
+            "Analysis.Asymptotics.Scale.BlockScale": ("Probability",),
+            "MeasureTheory.Measure.Levy.Basic": ("Probability",),
             "MeasureTheory.Measure.CharacteristicFunction.Convolution": (
                 "Probability",
             ),
@@ -337,16 +337,16 @@ class ImportBoundaryCheckTests(unittest.TestCase):
 
     def test_stable_characteristic_function_layers_avoid_levy_and_branching(self):
         boundaries = {
-            "Probability.Distributions.Stable.CharacteristicFunction": (
-                "Probability.Distributions.Stable.Exponent",
-                "Probability.Distributions.Stable.LevyKhintchine",
+            "Probability.Distributions.Stable.Exponent.CharacteristicFunction": (
+                "Probability.Distributions.Stable.Exponent.Basic",
+                "Probability.Distributions.Stable.Levy.Khintchine",
                 "Probability.Process.Stable.JumpModel",
                 "Probability.BranchingRandomWalk",
                 "Combinatorics.BranchingWalk",
             ),
             "Probability.Distributions.Stable.Attraction.CharacteristicFunction": (
-                "Probability.Distributions.Stable.Exponent",
-                "Probability.Distributions.Stable.LevyKhintchine",
+                "Probability.Distributions.Stable.Exponent.Basic",
+                "Probability.Distributions.Stable.Levy.Khintchine",
                 "Probability.Process.Stable.JumpModel",
                 "Probability.BranchingRandomWalk",
                 "Combinatorics.BranchingWalk",
@@ -403,7 +403,7 @@ class ImportBoundaryCheckTests(unittest.TestCase):
             "Probability.Distributions.Poisson.Basic",
             "Probability.RandomMeasure.Poisson.PointFamily",
             "Probability.RandomMeasure.Poisson.Basic",
-            "Probability.RandomMeasure.Poisson.Integral",
+            "Probability.RandomMeasure.Poisson.Integration.Integral",
         ):
             with self.subTest(module=module):
                 self.assertIn(module, imports.GENERAL_LAYER_BOUNDARIES)
@@ -411,7 +411,7 @@ class ImportBoundaryCheckTests(unittest.TestCase):
     def test_poisson_boundary_checks_transitive_process_imports(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
-            entry = root / "Probability" / "RandomMeasure" / "Poisson" / "Integral.lean"
+            entry = root / "Probability" / "RandomMeasure" / "Poisson" / "Integration" / "Integral.lean"
             dep = root / "Shared" / "Dep.lean"
             entry.parent.mkdir(parents=True)
             dep.parent.mkdir(parents=True)
@@ -419,7 +419,7 @@ class ImportBoundaryCheckTests(unittest.TestCase):
             dep.write_text("import Probability.Process.Stable.JumpModel\n")
             issues = imports.inspect_general_layer_boundaries(
                 {
-                    "Probability.RandomMeasure.Poisson.Integral": (
+                    "Probability.RandomMeasure.Poisson.Integration.Integral": (
                         "Probability.Process.Stable",
                     ),
                 },

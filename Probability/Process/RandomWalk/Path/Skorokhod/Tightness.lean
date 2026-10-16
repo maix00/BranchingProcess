@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Mathlib.MeasureTheory.Measure.Tight
-public import Probability.Process.RandomWalk.Path.Skorokhod
+public import Probability.Process.RandomWalk.Path.Skorokhod.Core
 public import Probability.Process.RandomWalk.Path.Skorokhod.Basic
 
 /-!

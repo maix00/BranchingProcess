@@ -7,8 +7,8 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Scaling.Power
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.SurvivalBounds
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.UpperBound
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Survival.Bounds
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Survival.Upper
 
 /-!
 # Variable-scale spectral upper bounds

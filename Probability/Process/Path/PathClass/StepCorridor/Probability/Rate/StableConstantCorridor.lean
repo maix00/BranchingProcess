@@ -8,7 +8,7 @@ import Probability.Process.Path.PathClass.StepCorridor.Probability.StableRate
 import Probability.Process.Path.PathClass.StepCorridor.Probability.Rate.FiniteUnionNullMeasurable
 import MeasureTheory.Measure.CadlagPath.PathClass.StepCorridor.Energy
 import Probability.Process.Path.PathClass.StepCorridor.Probability.Rate.FiniteUnionNullMeasurable
-import Topology.Cadlag.Skorokhod.Scaling
+import Topology.Cadlag.Skorokhod.Path.Scaling
 
 /-!
 # The fixed constant-corridor input to the stable rate theorem

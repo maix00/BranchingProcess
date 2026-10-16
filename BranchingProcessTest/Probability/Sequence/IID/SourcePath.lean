@@ -1,4 +1,4 @@
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.SourcePath
+import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Path.SourcePath
 
 open MeasureTheory ProbabilityTheory
 open ProbabilityTheory.RandomWalk

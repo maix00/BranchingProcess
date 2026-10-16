@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Combinatorics.BranchingWalk.Cloud.Basic
-public import MeasureTheory.Measure.DiracSum
+public import MeasureTheory.Measure.Algebra.DiracSum
 
 /-!
 # Dirac sums of a cloud
