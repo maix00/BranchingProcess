@@ -68,7 +68,7 @@ by mathematical subject:
 | `RandomWalk/SmallDeviation/Mogulskii` | `Blocks/`, `Path/`, and `Scale/`; `Partition.lean` remains at the subject root. |
 | `BranchingRandomWalk/Selection/NSelection/AsymptoticSpeed` | `Limit/` and `Selection/` group the main speed argument; `InitialPopulation/Basic.lean` remains the initial-population entry, with `Field/`, `Trajectory/`, and `Speed/` subfamilies. |
 | `Mogulskii/Stable/RandomWalkBounds/FromIncrementLaw` | `Normal/`, `Path/`, `Stable/`, and `HorizontalTube/`; the latter separates the closed-tube core rate, its scale forms, endpoint windows, and their proof lemmas. |
-| `Mogulskii/Stable/RandomWalkBounds/FromIncrementLaw/HorizontalTube` | `Basic.lean` contains the core closed-tube rate, `Scales.lean` its scale specializations, and `EndpointWindow.lean` the endpoint-window rate. The terminal-left source-corridor definitions used only by the closed-tube proof are in `Lemmas/SourceCorridor.lean`; the theorem-specific corridor comparisons remain private in `Basic.lean`. |
+| `Mogulskii/Stable/RandomWalkBounds/FromIncrementLaw/HorizontalTube` | `Basic.lean` contains the core closed-tube rate, `Scales.lean` its scale specializations, `EndpointWindowEvent.lean` defines the endpoint-window event, and `EndpointWindow.lean` proves its rate. The terminal-left source-corridor definitions and closed-tube comparisons used only by this proof are grouped in `Lemmas/SourceCorridor.lean`; the endpoint-window corridor union and source-path inclusion are in `Lemmas/EndpointWindowCorridor.lean`. The reusable unit-tube terminal-window construction is in `Topology/Cadlag/Skorokhod/PathClass/StepCorridor/TerminalWindow.lean`, and its all-exponent energy identity is in the corresponding `MeasureTheory/Measure/CadlagPath/PathClass/StepCorridor/TerminalWindow.lean`. |
 | `Mogulskii/Stable/RandomWalkBounds/Source` | `Bounds/`, `Partition/`, and `PathClass/`; `Inputs.lean`, `Normalization.lean`, and `Realization.lean` remain at the source root. |
 | `RandomWalk/Path/Interpolation` | `Finite/`, `Limit/`, and `Path/`; `Basic.lean` and `Scaling.lean` remain at the subject root. |
 | `RandomWalk/FunctionalLimit/Donsker` | `FiniteDimensional/` and `Path/`; `FiniteDimensional.lean` is the subject entry module. |
@@ -112,7 +112,7 @@ to `Existence.lean`, with sibling `PathClass.lean` renamed `ExplicitRate.lean`.
 These are substantive mathematical modules; their declarations and namespaces
 are unchanged, and callers import the new paths directly.
 
-The final 2026-10-17 scan found 1,428 production modules and 138 test modules.
+The final 2026-10-17 scan found 1,433 production modules and 138 test modules.
 Across both trees there are zero same-stem file/directory collisions, zero
 directories with more than eight direct Lean files, and zero child filenames
 repeating their immediate parent directory name. The vendored Mathlib and
