@@ -249,6 +249,11 @@ Brownian-meander identification in
 `FunctionalLimit/Conditioned/Meander/Identification.lean`. The centered
 finite-variance specialization is in
 `FunctionalLimit/Conditioned/Meander/FiniteVariance.lean`.
+Bolthausen's Lemma 3.1 is formalized by
+`FunctionalLimit/Conditioned/FirstWindow/ConditionedLaw.lean`; its prefix
+event is in `Definition.lean`, almost-sure existence is in `Existence.lean`,
+and the proof-specific IID block factorization is in
+`FirstWindow/Lemmas/BlockFactorization.lean`.
 `Probability/ConvergenceInDistribution/Mapping.lean` supplies the reusable
 almost-surely-continuous mapping theorem used after Bolthausen's Lemma 2.5.
 
