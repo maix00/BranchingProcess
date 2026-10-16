@@ -12,7 +12,8 @@ public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVa
 /-!
 # Horizontal sub-tubes of a linearly rising tube
 
-The public objects and theorems in this file are:
+The horizontal-tube definitions and lemmas used across the Lemma 3.5 proof
+modules are:
 
 - `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.staircaseLowerEdge`: $r_{t_{j+1}}$.
 - `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.staircaseTubeWidth`: $D-c|I_j|/D^2$.

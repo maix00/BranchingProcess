@@ -11,7 +11,8 @@ import Mathlib.Tactic
 /-!
 # Finite staircase schedule with a longer last block
 
-The public schedule objects and supporting lemmas in this file are:
+The schedule definitions and supporting lemmas used by the Lemma 3.5 proof
+modules are:
 
 - `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.staircaseBlockCount`:
   $q=\lfloor(L-t_1)/\ell\rfloor$.

@@ -10,7 +10,8 @@ public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVa
 /-!
 # Terminal windows of the horizontal staircase blocks
 
-The public objects and theorems in this file are:
+The endpoint definitions and lemmas used across the Lemma 3.5 proof modules
+are:
 
 - `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.staircaseEndpointLowerFraction` and `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.staircaseEndpointUpperFraction`:
   the fractions $v_1(k),v_2(k)$ in Wang Yiyang's proof, using the next
