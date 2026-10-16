@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Combinatorics.BranchingWalk.Basic.SiblingClosed
-public import Combinatorics.BranchingWalk.Step.SiblingClosable
+public import Combinatorics.BranchingWalk.Step.Selection.SiblingClosable
 
 /-!
 # Relabelable sibling steps

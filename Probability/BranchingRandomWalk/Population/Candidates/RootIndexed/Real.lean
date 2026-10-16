@@ -8,7 +8,7 @@ module
 
 public import Probability.BranchingRandomWalk.Population.Candidates.RootIndexed
 public import Probability.BranchingRandomWalk.Selection.NSelection.Position
-public import Combinatorics.BranchingWalk.Step.ExponentialWeight
+public import Combinatorics.BranchingWalk.Step.Measure.ExponentialWeight
 
 /-!
 # Real-position admissibility from exponential offspring weight

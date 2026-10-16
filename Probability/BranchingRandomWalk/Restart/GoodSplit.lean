@@ -6,9 +6,9 @@ Authors: WANG Yiyang
 
 import Probability.BranchingRandomWalk.Assumptions.Structural
 import Probability.BranchingProcess.Offspring.Count
-import Probability.BranchingRandomWalk.Step.OrderingLaw
+import Probability.BranchingRandomWalk.Step.Ordering.Law
 import Probability.BranchingRandomWalk.Restart.FirstSplit
-import Combinatorics.BranchingWalk.Step.SlotSelection
+import Combinatorics.BranchingWalk.Step.Selection.Slot
 import Probability.BranchingRandomWalk.Population.Processes.StepSelection.FirstN
 import Probability.BranchingRandomWalk.Population.Processes.StepSelection.Filter
 

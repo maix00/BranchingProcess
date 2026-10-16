@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.BranchingRandomWalk.Population.Candidates.RootIndexed
-public import Probability.BranchingRandomWalk.Step.GenerationUpdate
+public import Probability.BranchingRandomWalk.Step.Field.Update
 
 /-!
 # Generation candidates under local field updates

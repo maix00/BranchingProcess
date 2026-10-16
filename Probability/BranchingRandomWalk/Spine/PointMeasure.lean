@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.BranchingRandomWalk.Spine.TiltedLaw
-public import Probability.BranchingRandomWalk.Step.PointMeasure
+public import Probability.BranchingRandomWalk.Step.PointMeasure.Basic
 public import Probability.PointProcess.Tilted
 
 /-!

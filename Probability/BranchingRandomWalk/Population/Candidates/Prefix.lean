@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Field
-public import Combinatorics.BranchingWalk.Step.SlotOrder
+public import Combinatorics.BranchingWalk.Step.Ordering.SlotOrder
 
 /-!
 # Finite prefixes of children from several roots

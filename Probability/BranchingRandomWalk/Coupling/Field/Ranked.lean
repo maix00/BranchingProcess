@@ -5,7 +5,7 @@ Authors: WANG Yiyang
 -/
 
 import Probability.BranchingRandomWalk.Coupling.Rank.Field
-import Probability.BranchingRandomWalk.Step.GenerationUpdate
+import Probability.BranchingRandomWalk.Step.Field.Update
 import Probability.BranchingRandomWalk.Population.Processes.Selected.GenerationUpdate
 
 /-!

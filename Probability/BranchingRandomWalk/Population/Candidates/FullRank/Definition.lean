@@ -5,7 +5,7 @@ Authors: WANG Yiyang
 -/
 
 import Probability.BranchingRandomWalk.Population.Processes.Selected
-import Combinatorics.BranchingWalk.Step.Monotone
+import Combinatorics.BranchingWalk.Step.Ordering.Monotone
 import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law
 
 /-!

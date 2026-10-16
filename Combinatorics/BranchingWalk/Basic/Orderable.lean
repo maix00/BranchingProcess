@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Combinatorics.BranchingWalk.Basic.Definitions
-public import Combinatorics.BranchingWalk.Step.Orderable
+public import Combinatorics.BranchingWalk.Step.Ordering.Orderable
 
 /-!
 # The orderable form of a step field and of a walk

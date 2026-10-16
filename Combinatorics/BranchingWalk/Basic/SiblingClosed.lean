@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Combinatorics.BranchingWalk.Basic.Definitions
-public import Combinatorics.BranchingWalk.Step.SiblingClosed
+public import Combinatorics.BranchingWalk.Step.Selection.SiblingClosed
 
 /-!
 # Sibling-closed step fields

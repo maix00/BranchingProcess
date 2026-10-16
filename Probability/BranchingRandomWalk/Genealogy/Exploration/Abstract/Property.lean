@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.BranchingRandomWalk.Step.Law
+public import Probability.BranchingRandomWalk.Step.Law.Field
 public import Combinatorics.BranchingWalk.Basic.Displace
 public import Probability.BranchingRandomWalk.Tree.Filtration
 
