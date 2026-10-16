@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Staircase.FirstWindow
+public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Staircase.Setup.FirstWindow
 public import Probability.Process.RandomWalk.SmallDeviation.Entrance.RobustTransition
 
 /-!
@@ -24,7 +24,7 @@ The public theorems in this file are:
 These are the initial event inclusion and first-window geometry in Wang
 Yiyang, *Asymptotic speed of the $N$-branching random walk with infinite
 offspring*, Chapter 3, proof of Lemma 3.5, using the robust terminal
-interval provided by the three constructions in Appendix A.2.
+interval provided by Appendix A.2, Lemma A.7.
 -/
 
 @[expose] public section
@@ -51,7 +51,7 @@ theorem robustEntrance_staysInTiltedTube
   simp only [htimeEq] at hpath
   constructor <;> linarith [hpath.1, hpath.2]
 
-/-- The robust endpoint of Appendix A.2 lies in the first horizontal
+/-- The robust endpoint of Wang Yiyang's Lemma A.7 lies in the first horizontal
 block's central window. -/
 theorem robustEntrance_entersFirstCentralWindow
     {entrance horizon blockLength : ℕ}
