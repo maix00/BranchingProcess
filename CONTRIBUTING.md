@@ -8,7 +8,7 @@ are all useful contributions.
 
 1. Search Mathlib and the existing library before introducing a new definition.
 2. Read [`ARCHITECTURE.md`](ARCHITECTURE.md) and place a result in the lowest
-   layer that does not depend on the thesis-specific construction.
+   layer that does not depend on the specific construction being formalized.
 3. Import narrow modules. Do not add a catch-all aggregate import just to make
    a declaration available.
 4. Check the proof boundary in
