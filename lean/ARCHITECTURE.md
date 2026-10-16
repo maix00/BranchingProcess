@@ -19,6 +19,19 @@ than the application that first needs it.
 General finite-history drawdown predicates and their measurability belong to
 `Probability/Process/RandomWalk/Path/Drawdown.lean`. Random-walk probability
 bounds for those paths belong to `Probability/Process/RandomWalk/SmallDeviation/Drawdown/`.
+Generic conditional-probability integration and successive-block product
+bounds belong to `Probability/Process/Filtration/ConditionalBlocks.lean`;
+IID prefix/next-block conditional integration belongs to
+`Probability/Sequence/IID/ConditionalBlocks.lean`. The law transfer between
+an infinite IID walk and a finite closed-interval block belongs to
+`Probability/Process/RandomWalk/Path/Block/Law/FiniteInterval.lean`, while
+translation of a finite interval by its initial position belongs beside the
+`FiniteInClosedInterval` definition in `Path/Window/Basic.lean`.
+Uniform one-block estimates for a killed interval kernel and their iteration
+to a horizontal-tube bound belong to
+`Probability/Process/RandomWalk/SmallDeviation/HorizontalTube/BlockIteration.lean`;
+the equal-partition and finite-variance rate choices for Wang Yiyang's Lemma
+3.2 remain theorem-specific under `HorizontalTube/FiniteVarianceUpper/Lemmas/`.
 BRW ancestral-path decompositions, including ordered generation-pair counts
 split by most recent common ancestor, live in `Spine/Path/`; affine-tube
 probability estimates and their use in the second-moment argument live in

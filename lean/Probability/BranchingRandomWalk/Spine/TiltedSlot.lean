@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Combinatorics.BranchingWalk.Step.ExponentialWeight
+public import Combinatorics.BranchingWalk.Step.Measure.ExponentialWeight
 public import Combinatorics.BranchingWalk.Step.Measurability
 public import Probability.BranchingRandomWalk.Assumptions.Structural
 public import Probability.BranchingProcess.Offspring.Count

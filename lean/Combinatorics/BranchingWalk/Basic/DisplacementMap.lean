@@ -9,7 +9,7 @@ module
 public import Combinatorics.BranchingWalk.Basic.Displace
 public import Combinatorics.BranchingWalk.Basic.Map
 public import Combinatorics.BranchingWalk.StepField
-public import Combinatorics.BranchingWalk.Step.Potential
+public import Combinatorics.BranchingWalk.Step.Measure.Potential
 
 /-!
 # Separating child marks from accumulated positions

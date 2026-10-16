@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Combinatorics.BranchingWalk.Step.FiniteSelection
+public import Combinatorics.BranchingWalk.Step.Selection.Finite
 public import Probability.BranchingRandomWalk.Timing.Frontier
 
 /-!

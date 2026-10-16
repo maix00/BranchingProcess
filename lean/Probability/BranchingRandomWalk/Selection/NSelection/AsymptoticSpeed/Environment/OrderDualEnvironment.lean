@@ -10,7 +10,7 @@ public import Probability.BranchingRandomWalk.Selection.NSelection.AsymptoticSpe
 public import Probability.BranchingRandomWalk.Assumptions.Structural
 public import Probability.BranchingRandomWalk.Spine.TiltedLaw
 public import Combinatorics.BranchingWalk.Selection.NSelection.OrderDual
-public import Combinatorics.BranchingWalk.Step.ExponentialWeight
+public import Combinatorics.BranchingWalk.Step.Measure.ExponentialWeight
 public import Combinatorics.BranchingWalk.Step.Map
 
 /-!

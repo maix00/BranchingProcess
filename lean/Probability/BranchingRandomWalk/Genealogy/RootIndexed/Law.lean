@@ -10,8 +10,8 @@ public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Positions
 public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Filtration
 public import Combinatorics.BranchingWalk.Step.Measurability
 public import Combinatorics.BranchingWalk.StepField
-public import Probability.BranchingRandomWalk.Step.Law
-public import Combinatorics.BranchingWalk.Step.Monotone
+public import Probability.BranchingRandomWalk.Step.Law.Field
+public import Combinatorics.BranchingWalk.Step.Ordering.Monotone
 public import Mathlib.Probability.Independence.InfinitePi
 public import Combinatorics.BranchingWalk.Step.Basic
 

@@ -194,10 +194,10 @@ def driftedTubePairEvent {start length : ℕ}
     Set ((Fin start → ℝ) × (Fin length → ℝ)) :=
   {pair | ∀ k : Fin (length + 1),
     lower + drift * ((start + (k : ℕ) : ℕ) : ℝ) / width ^ 2 ≤
-        Drawdown.drawdownPrefixSum pair.1 +
-          Drawdown.drawdownPartialBlockSum pair.2 k ∧
-      Drawdown.drawdownPrefixSum pair.1 +
-          Drawdown.drawdownPartialBlockSum pair.2 k ≤
+        (∑ i : Fin start, pair.1 i) +
+          Fin.partialSum pair.2 k ∧
+      (∑ i : Fin start, pair.1 i) +
+          Fin.partialSum pair.2 k ≤
         lower + drift * ((start + (k : ℕ) : ℕ) : ℝ) / width ^ 2 + width}
 
 /-- The measurable event for one tilted-tube block in the full increment
@@ -212,18 +212,17 @@ def driftedTubeBlockEvent (start length : ℕ)
 private theorem measurable_driftedTubePartialBlockSum {length : ℕ}
     (k : Fin (length + 1)) :
     Measurable (fun block : Fin length → ℝ =>
-      Drawdown.drawdownPartialBlockSum block k) := by
+      Fin.partialSum block k) := by
   induction k using Fin.induction with
   | zero => exact measurable_const
   | succ k ih =>
       have hsum := ih.add (measurable_pi_apply k)
       have heq : (fun block : Fin length → ℝ =>
-          Drawdown.drawdownPartialBlockSum block k.succ) =
-        (fun block => Drawdown.drawdownPartialBlockSum block k.castSucc) +
+          Fin.partialSum block k.succ) =
+        (fun block => Fin.partialSum block k.castSucc) +
           (fun block : Fin length → ℝ => block k) := by
         funext block
-        simp only [Drawdown.drawdownPartialBlockSum, Fin.partialSum_succ,
-          Pi.add_apply]
+        simp only [Fin.partialSum_succ, Pi.add_apply]
       exact heq ▸ hsum
 
 /-- The pair event for one tilted-tube block is measurable. -/
@@ -236,10 +235,10 @@ theorem measurableSet_driftedTubePairEvent {start length : ℕ}
       ⋂ k : Fin (length + 1),
         {pair : (Fin start → ℝ) × (Fin length → ℝ) |
           lower + drift * ((start + (k : ℕ) : ℕ) : ℝ) / width ^ 2 ≤
-              Drawdown.drawdownPrefixSum pair.1 +
-                Drawdown.drawdownPartialBlockSum pair.2 k ∧
-            Drawdown.drawdownPrefixSum pair.1 +
-                Drawdown.drawdownPartialBlockSum pair.2 k ≤
+              (∑ i : Fin start, pair.1 i) +
+                Fin.partialSum pair.2 k ∧
+            (∑ i : Fin start, pair.1 i) +
+                Fin.partialSum pair.2 k ≤
               lower + drift * ((start + (k : ℕ) : ℕ) : ℝ) / width ^ 2 + width} by
     ext pair
     simp [driftedTubePairEvent]]
@@ -247,21 +246,21 @@ theorem measurableSet_driftedTubePairEvent {start length : ℕ}
   intro k
   have hpast : Measurable (fun pair :
       (Fin start → ℝ) × (Fin length → ℝ) =>
-        Drawdown.drawdownPrefixSum pair.1) := by
+        (∑ i : Fin start, pair.1 i)) := by
     exact ((Finset.measurable_sum Finset.univ fun i _ =>
       measurable_pi_apply i).comp measurable_fst)
   have hblock : Measurable (fun pair :
       (Fin start → ℝ) × (Fin length → ℝ) =>
-        Drawdown.drawdownPartialBlockSum pair.2 k) := by
+        Fin.partialSum pair.2 k) := by
     exact (measurable_driftedTubePartialBlockSum k).comp measurable_snd
   let pathValue : (Fin start → ℝ) × (Fin length → ℝ) → ℝ := fun pair =>
-    Drawdown.drawdownPrefixSum pair.1 +
-      Drawdown.drawdownPartialBlockSum pair.2 k
+    (∑ i : Fin start, pair.1 i) +
+      Fin.partialSum pair.2 k
   have hvalue : Measurable pathValue := by
     change Measurable (fun pair :
       (Fin start → ℝ) × (Fin length → ℝ) =>
-        Drawdown.drawdownPrefixSum pair.1 +
-          Drawdown.drawdownPartialBlockSum pair.2 k)
+        (∑ i : Fin start, pair.1 i) +
+          Fin.partialSum pair.2 k)
     exact hpast.add hblock
   let boundary : ℝ := lower + drift * ((start + (k : ℕ) : ℕ) : ℝ) / width ^ 2
   have hlower : Measurable (fun pair :
@@ -289,8 +288,8 @@ def finiteDriftedTubeEvent (length : ℕ) (lower width drift : ℝ) :
     Set (Fin length → ℝ) :=
   {block | ∀ j : Fin length,
     lower + drift * ((j : ℕ) + 1 : ℝ) / width ^ 2 ≤
-        Drawdown.drawdownPartialBlockSum block j.succ ∧
-      Drawdown.drawdownPartialBlockSum block j.succ ≤
+        Fin.partialSum block j.succ ∧
+      Fin.partialSum block j.succ ≤
         lower + drift * ((j : ℕ) + 1 : ℝ) / width ^ 2 + width}
 
 /-- The finite-coordinate event has the same probability as the
@@ -310,19 +309,19 @@ theorem iidSequenceLaw_map_blockCoordinates_driftedTubeEvent_le
       ⋂ j : Fin length,
         {block : Fin length → ℝ |
           lower + drift * ((j : ℕ) + 1 : ℝ) / width ^ 2 ≤
-              Drawdown.drawdownPartialBlockSum block j.succ ∧
-            Drawdown.drawdownPartialBlockSum block j.succ ≤
+              Fin.partialSum block j.succ ∧
+            Fin.partialSum block j.succ ≤
               lower + drift * ((j : ℕ) + 1 : ℝ) / width ^ 2 + width} by
       ext block
       simp [finiteDriftedTubeEvent]]
     apply MeasurableSet.iInter
     intro j
     have hsum : Measurable (fun block : Fin length → ℝ =>
-        Drawdown.drawdownPartialBlockSum block j.succ) :=
+        Fin.partialSum block j.succ) :=
       measurable_driftedTubePartialBlockSum j.succ
     let boundary : ℝ := lower + drift * ((j : ℕ) + 1 : ℝ) / width ^ 2
     let pathValue : (Fin length → ℝ) → ℝ := fun block =>
-      Drawdown.drawdownPartialBlockSum block j.succ
+      Fin.partialSum block j.succ
     have hlower : Measurable (fun block : Fin length → ℝ =>
         pathValue block - boundary) := by
       exact hsum.sub measurable_const
@@ -353,11 +352,10 @@ theorem iidSequenceLaw_map_blockCoordinates_driftedTubeEvent_le
       let k : Fin length := ⟨j - 1, hj'⟩
       have hk := h k
       have hsum :
-          Drawdown.drawdownPartialBlockSum
+          Fin.partialSum
               (Combinatorics.Sequence.blockCoordinates 0 length increment)
               k.succ = AdditivePath.displacement j increment := by
-        rw [Drawdown.drawdownPartialBlockSum, partialSum_blockCoordinates,
-          AdditivePath.blockSum_zero_start]
+        rw [partialSum_blockCoordinates, AdditivePath.blockSum_zero_start]
         congr 1
         simp [k]
         omega
@@ -371,11 +369,10 @@ theorem iidSequenceLaw_map_blockCoordinates_driftedTubeEvent_le
       have hjle : (j : ℕ) + 1 ≤ length := by omega
       have hpath := h ((j : ℕ) + 1) hjpos hjle
       have hsum :
-          Drawdown.drawdownPartialBlockSum
+          Fin.partialSum
               (Combinatorics.Sequence.blockCoordinates 0 length increment)
               j.succ = AdditivePath.displacement ((j : ℕ) + 1) increment := by
-        rw [Drawdown.drawdownPartialBlockSum, partialSum_blockCoordinates,
-          AdditivePath.blockSum_zero_start]
+        rw [partialSum_blockCoordinates, AdditivePath.blockSum_zero_start]
         congr 1
       simpa [hsum] using hpath
   change ENNReal.toReal
@@ -418,7 +415,7 @@ theorem iidSequenceLaw_condExp_driftedTubePairEvent_le_of_blockBound
         (Combinatorics.Sequence.blockCoordinates start length)).real
         {block | (past, block) ∈ event} ≤ bound := by
     intro past
-    let initial := Drawdown.drawdownPrefixSum past
+    let initial := (∑ i : Fin start, past i)
     let sectionEvent : Set (Fin length → ℝ) :=
       {block | (past, block) ∈ event}
     by_cases hstart : initial ∈ Set.Icc startLower (startLower + width)
@@ -444,8 +441,8 @@ theorem iidSequenceLaw_condExp_driftedTubePairEvent_le_of_blockBound
           have hk := h j.succ
           change lower + drift *
               ((start + ((j : ℕ) + 1 : ℕ) : ℕ) : ℝ) / width ^ 2 ≤
-                initial + Drawdown.drawdownPartialBlockSum block j.succ ∧
-            initial + Drawdown.drawdownPartialBlockSum block j.succ ≤
+                initial + Fin.partialSum block j.succ ∧
+            initial + Fin.partialSum block j.succ ≤
               lower + drift *
                 ((start + ((j : ℕ) + 1 : ℕ) : ℕ) : ℝ) / width ^ 2 + width
             at hk
@@ -453,18 +450,18 @@ theorem iidSequenceLaw_condExp_driftedTubePairEvent_le_of_blockBound
         · intro h k
           refine Fin.cases ?_ (fun j => ?_) k
           · simpa [event, driftedTubePairEvent, initial,
-              Drawdown.drawdownPrefixSum, Drawdown.drawdownPartialBlockSum,
+              Fin.partialSum,
               startLower] using hstart
           · have hj := h j
             change localLower + drift * ((j : ℕ) + 1 : ℝ) / width ^ 2 ≤
-                Drawdown.drawdownPartialBlockSum block j.succ ∧
-              Drawdown.drawdownPartialBlockSum block j.succ ≤
+                Fin.partialSum block j.succ ∧
+              Fin.partialSum block j.succ ≤
                 localLower + drift * ((j : ℕ) + 1 : ℝ) / width ^ 2 + width
               at hj
             change lower + drift *
                 ((start + ((j : ℕ) + 1 : ℕ) : ℕ) : ℝ) / width ^ 2 ≤
-                  initial + Drawdown.drawdownPartialBlockSum block j.succ ∧
-              initial + Drawdown.drawdownPartialBlockSum block j.succ ≤
+                  initial + Fin.partialSum block j.succ ∧
+              initial + Fin.partialSum block j.succ ≤
                 lower + drift *
                   ((start + ((j : ℕ) + 1 : ℕ) : ℕ) : ℝ) / width ^ 2 + width
             constructor <;> linarith [hj.1, hj.2, hboundary j]
@@ -483,7 +480,7 @@ theorem iidSequenceLaw_condExp_driftedTubePairEvent_le_of_blockBound
           have hzero := h ⟨0, Nat.zero_lt_succ _⟩
           apply hstart
           simpa [sectionEvent, event, driftedTubePairEvent, initial,
-            Drawdown.drawdownPrefixSum, Drawdown.drawdownPartialBlockSum,
+            Fin.partialSum,
             startLower] using hzero
         · simp
       change ((iidSequenceLaw ν).map

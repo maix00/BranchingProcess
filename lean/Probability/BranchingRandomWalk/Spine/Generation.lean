@@ -9,7 +9,7 @@ module
 public import Probability.BranchingRandomWalk.Spine.EndpointManyToOne
 public import Combinatorics.BranchingWalk.Basic.DisplacementMap
 public import Combinatorics.BranchingWalk.Basic.Map
-public import Probability.BranchingRandomWalk.Step.Law
+public import Probability.BranchingRandomWalk.Step.Law.Field
 public import Combinatorics.BranchingWalk.StepField
 
 /-!

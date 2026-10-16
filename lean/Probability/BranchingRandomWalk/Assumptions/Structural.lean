@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Combinatorics.BranchingWalk.Step.ExponentialWeight
+public import Combinatorics.BranchingWalk.Step.Measure.ExponentialWeight
 public import Mathlib.MeasureTheory.Function.L1Space.Integrable
 
 /-!

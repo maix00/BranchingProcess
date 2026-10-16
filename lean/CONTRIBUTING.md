@@ -69,6 +69,21 @@ each declaration in it against this rule; split mixed files so reusable
 declarations remain outside. A `Lemmas/` directory belongs to one principal
 result or a coherent theorem family; do not collect unrelated results in it.
 
+Proof groupings may be nested when a proof step has its own substantial chain,
+including paths such as `FiniteVarianceUpper/Lemmas/JumpPattern/Lemmas/`.
+Each `Lemmas/` level continues to hold only non-reusable steps for its parent
+result or sub-result. Reusable definitions and theorems move outward to their
+semantic owner, even when that means moving them above more than one nested
+`Lemmas/` directory. At any one directory level, use at most one direct
+`Lemmas.lean` file or one `Lemmas/` directory; group the supporting files
+under that single entry rather than creating parallel `Lemmas` groupings.
+
+When a subject directory contains several independent mathematical families,
+group the public modules into semantic subdirectories such as `Ordering/`,
+`Selection/`, or `PointMeasure/`. Keep the subject level for shared core
+definitions and direct entry modules. Do not place a reusable public interface
+under `Lemmas/` just to reduce the number of files at the subject level.
+
 Directory placement communicates which files users should read first; it does
 not change Lean declaration visibility. Mark a helper `private` when all its
 uses are in its defining module. A helper used across proof modules may need

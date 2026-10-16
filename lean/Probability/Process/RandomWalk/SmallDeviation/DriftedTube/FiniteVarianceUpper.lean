@@ -7,6 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceUpper.Blocks
+public import Probability.Process.Filtration.ConditionalBlocks
 
 /-!
 # Finite-variance upper bound for a tilted tube
@@ -40,23 +41,21 @@ open ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown
 private theorem driftedTubeBlockPosition_eq
     (start length : ℕ) (increment : ℕ → ℝ)
     (k : Fin (length + 1)) :
-    Drawdown.drawdownPrefixSum
-        (Combinatorics.Sequence.blockCoordinates 0 start increment) +
-      Drawdown.drawdownPartialBlockSum
+    (∑ i : Fin start,
+      Combinatorics.Sequence.blockCoordinates 0 start increment i) +
+      Fin.partialSum
         (Combinatorics.Sequence.blockCoordinates start length increment) k =
       AdditivePath.displacement (start + (k : ℕ)) increment := by
   have hprefix :
-      Drawdown.drawdownPrefixSum
-          (Combinatorics.Sequence.blockCoordinates 0 start increment) =
+      (∑ i : Fin start,
+        Combinatorics.Sequence.blockCoordinates 0 start increment i) =
         AdditivePath.displacement start increment := by
-    simp [Drawdown.drawdownPrefixSum,
-      Combinatorics.Sequence.blockCoordinates, AdditivePath.displacement,
+    simp [Combinatorics.Sequence.blockCoordinates, AdditivePath.displacement,
       Fin.sum_univ_eq_sum_range]
   calc
     _ = AdditivePath.displacement start increment +
         AdditivePath.blockSum start (k : ℕ) increment := by
-      rw [hprefix, Drawdown.drawdownPartialBlockSum,
-        partialSum_blockCoordinates]
+      rw [hprefix, partialSum_blockCoordinates]
     _ = AdditivePath.displacement (start + (k : ℕ)) increment :=
       (AdditivePath.displacement_add_eq_add_blockSum start (k : ℕ)
         increment).symm
@@ -204,12 +203,20 @@ theorem exists_driftedTubeProbability_le_exp_of_finiteVariance
         ν (j * blockLength) blockLength (by positivity) hblockRate
       filter_upwards [h] with increment hbound
       simpa [filtration, events] using hbound
+    have hconditionalOnPrefix : ∀ j, ∀ᵐ increment ∂iidSequenceLaw ν,
+        increment ∈ ProbabilityTheory.conditionalBlockIntersection events j →
+          condExp (filtration j) (iidSequenceLaw ν)
+            ((events j).indicator (fun _ => (1 : ℝ))) increment ≤ p := by
+      intro j
+      filter_upwards [hconditional j] with increment hbound
+      intro _
+      exact hbound
     have hprobabilityBlocks :
         (iidSequenceLaw ν).real
-          (Drawdown.drawdownConditionalBlockIntersection events q) ≤ p ^ q :=
-      Drawdown.measureReal_drawdownConditionalBlockIntersection_le_pow
+          (ProbabilityTheory.conditionalBlockIntersection events q) ≤ p ^ q :=
+      ProbabilityTheory.measureReal_conditionalBlockIntersection_le_pow
         filtration hfiltrationMono hfiltrationAmbient events heventMeasurable
-        (Real.exp_nonneg _) hconditional q
+        (Real.exp_nonneg _) hconditionalOnPrefix q
     have hblockPath (increment : ℕ → ℝ) (hpath :
         increment ∈ driftedTubeEvent horizon Delta drift lower) :
         ∀ j < q, increment ∈ events j := by
@@ -222,16 +229,14 @@ theorem exists_driftedTubeProbability_le_exp_of_finiteVariance
       change ∀ k : Fin (blockLength + 1),
         lower + drift *
             ((j * blockLength + (k : ℕ) : ℕ) : ℝ) / Delta ^ 2 ≤
-          Drawdown.drawdownPrefixSum
-              (Combinatorics.Sequence.blockCoordinates 0 (j * blockLength)
-                increment) +
-            Drawdown.drawdownPartialBlockSum
+          (∑ i : Fin (j * blockLength),
+            Combinatorics.Sequence.blockCoordinates 0 (j * blockLength) increment i) +
+            Fin.partialSum
               (Combinatorics.Sequence.blockCoordinates (j * blockLength)
                 blockLength increment) k ∧
-        Drawdown.drawdownPrefixSum
-              (Combinatorics.Sequence.blockCoordinates 0 (j * blockLength)
-                increment) +
-            Drawdown.drawdownPartialBlockSum
+        (∑ i : Fin (j * blockLength),
+            Combinatorics.Sequence.blockCoordinates 0 (j * blockLength) increment i) +
+            Fin.partialSum
               (Combinatorics.Sequence.blockCoordinates (j * blockLength)
                 blockLength increment) k ≤
           lower + drift *
@@ -252,10 +257,10 @@ theorem exists_driftedTubeProbability_le_exp_of_finiteVariance
             ((j * blockLength + (k : ℕ) : ℕ) : ℝ) = 0 := by
           exact_mod_cast htimeZero
         have hpositionZero :
-            Drawdown.drawdownPrefixSum
-                (Combinatorics.Sequence.blockCoordinates 0 (j * blockLength)
-                  increment) +
-              Drawdown.drawdownPartialBlockSum
+            (∑ i : Fin (j * blockLength),
+              Combinatorics.Sequence.blockCoordinates 0 (j * blockLength)
+                increment i) +
+              Fin.partialSum
                 (Combinatorics.Sequence.blockCoordinates (j * blockLength)
                   blockLength increment) k = 0 := by
           rw [hposition, htimeZero, AdditivePath.displacement_zero]
@@ -271,24 +276,24 @@ theorem exists_driftedTubeProbability_le_exp_of_finiteVariance
         rw [← hposition] at hpathAt
         exact hpathAt
     have hsubset : driftedTubeEvent horizon Delta drift lower ⊆
-        Drawdown.drawdownConditionalBlockIntersection events q := by
+        ProbabilityTheory.conditionalBlockIntersection events q := by
       intro increment hpath
       have hmembers : ∀ n ≤ q,
-          increment ∈ Drawdown.drawdownConditionalBlockIntersection events n := by
+          increment ∈ ProbabilityTheory.conditionalBlockIntersection events n := by
         intro n
         induction n with
         | zero =>
             intro _
-            simp [Drawdown.drawdownConditionalBlockIntersection]
+            simp [ProbabilityTheory.conditionalBlockIntersection]
         | succ n ih =>
             intro hn
-            rw [Drawdown.drawdownConditionalBlockIntersection]
+            rw [ProbabilityTheory.conditionalBlockIntersection]
             exact ⟨ih (by omega), hblockPath increment hpath n (by omega)⟩
       exact hmembers q le_rfl
     have hprobability :
         (iidSequenceLaw ν).real (driftedTubeEvent horizon Delta drift lower) ≤
           (iidSequenceLaw ν).real
-            (Drawdown.drawdownConditionalBlockIntersection events q) :=
+            (ProbabilityTheory.conditionalBlockIntersection events q) :=
       measureReal_mono hsubset (measure_ne_top (iidSequenceLaw ν) _)
     have hdivision : q * blockLength + horizon % blockLength = horizon := by
       dsimp [q]
@@ -350,7 +355,7 @@ theorem exists_driftedTubeProbability_le_exp_of_finiteVariance
     calc
       (iidSequenceLaw ν).real (driftedTubeEvent horizon Delta drift lower) ≤
           (iidSequenceLaw ν).real
-            (Drawdown.drawdownConditionalBlockIntersection events q) := hprobability
+            (ProbabilityTheory.conditionalBlockIntersection events q) := hprobability
       _ ≤ p ^ q := hprobabilityBlocks
       _ = Real.exp (-d * (((q * blockLength : ℕ) : ℝ) / Delta ^ 2)) := hpower
       _ ≤ Real.exp (Delta ^ v - d * ((horizon : ℝ) / Delta ^ 2)) :=

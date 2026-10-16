@@ -8,8 +8,8 @@ module
 
 public import Probability.BranchingRandomWalk.Assumptions.Structural
 public import Probability.BranchingRandomWalk.Selection.NSelection.AsymptoticSpeed.Selection.Infinite
-public import Probability.BranchingRandomWalk.Step.FiniteWeightField
-public import Probability.BranchingRandomWalk.Step.OrderedSupport
+public import Probability.BranchingRandomWalk.Step.Field.FiniteWeight
+public import Probability.BranchingRandomWalk.Step.Ordering.Support
 public import Mathlib.Probability.Independence.InfinitePi
 
 /-!
