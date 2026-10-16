@@ -22,9 +22,9 @@ The proof-specific declarations are:
   `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.drawdown_discretizedMaximumBlockDecomposition`: the rounded maximum has at
   most the permitted number of jumps, and its increments decompose into the
   blockwise path increments.
-- `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.additivePath_le_threshold_add_delta_of_noLargeDrop` and
-  `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.neg_delta_le_additivePath_of_noLargeDrop`: the no-large-drop condition
-  gives the upper and lower path bounds used in the block construction.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.additivePath_le_threshold_add_delta_of_noLargeDrop`: if the endpoint is at
+  most $b$ and every drawdown is at most $\delta$, then $S_i\le b+\delta$ for
+  every $i$ in the horizon.
 - `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.drawdown_event_discretizedMaximumBlockDecomposition` and
   `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.drawdown_event_goodBlocks_satisfy_tubeCondition`: a path in the drawdown
   event has the required blockwise decomposition and every non-jump block
@@ -159,21 +159,6 @@ lemma additivePath_le_threshold_add_delta_of_noLargeDrop
       AdditivePath.displacement i increment ≤ threshold + delta := by
   intro i hi
   have h := hnoDrop i horizon hi (Nat.le_refl _)
-  linarith
-
-/-- Starting from zero, a no-large-drawdown path cannot descend below minus
-the drawdown allowance. -/
-lemma neg_delta_le_additivePath_of_noLargeDrop
-    {horizon : ℕ} (increment : ℕ → ℝ) (delta : ℝ)
-    (hnoDrop : ∀ i j : ℕ, i ≤ j → j ≤ horizon →
-      AdditivePath.displacement i increment -
-        AdditivePath.displacement j increment ≤ delta)
-    {i : ℕ} (hi : i ≤ horizon) :
-    -delta ≤ AdditivePath.displacement i increment := by
-  have h := hnoDrop 0 i (Nat.zero_le _) hi
-  have hzero : AdditivePath.displacement 0 increment = 0 :=
-    AdditivePath.displacement_zero increment
-  rw [hzero] at h
   linarith
 
 /-- Every path in `noLargeDropEndpointBelowEvent` has the discretized
