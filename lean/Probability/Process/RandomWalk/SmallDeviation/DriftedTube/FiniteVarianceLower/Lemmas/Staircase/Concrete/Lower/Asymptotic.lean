@@ -11,7 +11,7 @@ public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVa
 /-!
 # Asymptotic finite-staircase lower bound
 
-The public theorem in this file is:
+The module-visible supporting lemma in this file is:
 
 - `eventually_concreteStaircaseLowerBound_of_robustEntrance`:
   along widths $\Delta_n\to\infty$ and arbitrary starting boundaries

@@ -12,7 +12,7 @@ public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVa
 /-!
 # Upper-endpoint staircase after a robust entrance
 
-The public theorem in this file is:
+The module-visible supporting lemma in this file is:
 
 - `exists_concreteStaircaseUpperEndpointLowerBound_of_robustEntrance`:
   the robust diffusive entrance event, the shared horizontal-block

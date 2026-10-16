@@ -12,7 +12,7 @@ public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVa
 /-!
 # A common threshold for every staircase block
 
-The public theorem in this file is:
+The module-visible supporting lemma in this file is:
 
 - `eventually_staircaseGlobalConditions`:
   under $\Delta_n\to\infty$,

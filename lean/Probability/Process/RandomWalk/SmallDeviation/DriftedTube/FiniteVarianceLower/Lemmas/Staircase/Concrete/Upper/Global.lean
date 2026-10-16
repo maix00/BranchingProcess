@@ -12,7 +12,7 @@ public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVa
 /-!
 # Upper-endpoint bound from global staircase conditions
 
-The public theorem in this file is:
+The module-visible supporting lemma in this file is:
 
 - `exists_concreteStaircaseUpperEndpointLowerBound_of_globalConditions`:
   global block-width, time, rate, and endpoint inequalities together

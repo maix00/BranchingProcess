@@ -13,7 +13,7 @@ public import Analysis.Asymptotics.IntermediatePowerBlock
 /-!
 # Tilted-tube lower bound from the reflected survival asymptotics
 
-The public theorems in this file are:
+The module-visible supporting lemmas in this file are:
 
 - `eventually_concreteStaircaseLowerBound_of_centeredFiniteVariance`:
   for $t_1=\lfloor\Delta^2\rfloor$ and

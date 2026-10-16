@@ -11,7 +11,7 @@ public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVa
 /-!
 # Uniform exponential bound for narrowed staircase bins
 
-The public theorem in this file is:
+The module-visible supporting lemma in this file is:
 
 - `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.exists_uniform_staircaseBinProbability_ge_exp`:
   after choosing finitely many narrowed tubes, fixed interior terminal

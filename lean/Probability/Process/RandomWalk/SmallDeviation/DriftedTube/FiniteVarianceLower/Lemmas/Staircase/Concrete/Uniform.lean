@@ -13,7 +13,7 @@ public import Analysis.Asymptotics.SequentialEventually
 /-!
 # Uniform tilted-tube bounds with fixed geometric margins
 
-The public theorem in this file is:
+The module-visible supporting lemma in this file is:
 
 - `exists_uniform_concreteStaircase_bounds_of_powerBlock`: for fixed
   interior-window fractions, margins, and rate parameters, a single

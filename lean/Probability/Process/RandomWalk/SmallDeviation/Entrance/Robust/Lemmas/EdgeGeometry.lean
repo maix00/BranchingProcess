@@ -12,7 +12,7 @@ public import Probability.Process.RandomWalk.SmallDeviation.Entrance.Edge.UpperG
 /-!
 # Robust terminal geometry at the two edges
 
-The public theorems in this file are:
+The module-visible supporting lemmas in this file are:
 
 - `prefixPositiveWindow_and_transition_subset_robustMovingTransitionEvent`:
   the lower-edge fixed prefix and nonnegative meander suffix imply the

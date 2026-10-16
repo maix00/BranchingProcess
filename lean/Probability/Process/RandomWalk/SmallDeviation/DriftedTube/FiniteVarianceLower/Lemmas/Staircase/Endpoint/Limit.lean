@@ -11,7 +11,7 @@ public import Analysis.Asymptotics.BlockScale
 /-!
 # Interior endpoint ratio for the staircase blocks
 
-The public theorems in this file are:
+The module-visible supporting lemmas in this file are:
 
 - `tendsto_staircaseInteriorLowerRatio`:
   if $D_n/\Delta_n\to0$, then

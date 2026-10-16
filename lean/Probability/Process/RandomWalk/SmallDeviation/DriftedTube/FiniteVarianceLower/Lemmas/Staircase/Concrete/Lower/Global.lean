@@ -11,7 +11,7 @@ public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVa
 /-!
 # Tilted-tube lower bound from global staircase conditions
 
-The public theorem in this file is:
+The module-visible supporting lemma in this file is:
 
 - `exists_concreteStaircaseLowerBound_of_globalConditions`:
   the robust entrance estimate and the global width, time, rate, and

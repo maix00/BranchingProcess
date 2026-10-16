@@ -12,7 +12,7 @@ public import Probability.Process.RandomWalk.SmallDeviation.Entrance.RobustTrans
 /-!
 # From the diffusive entrance to the first staircase block
 
-The public theorems in this file are:
+The module-visible supporting lemmas in this file are:
 
 - `robustEntrance_staysInTiltedTube`:
   a path in the robust entrance event stays in

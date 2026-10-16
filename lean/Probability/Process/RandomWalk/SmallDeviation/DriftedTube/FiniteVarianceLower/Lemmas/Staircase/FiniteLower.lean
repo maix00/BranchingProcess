@@ -11,7 +11,7 @@ public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVa
 /-!
 # Finite staircase lower bound with a diffusive entrance
 
-The public theorem in this file is:
+The module-visible supporting lemma in this file is:
 
 - `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.exists_uniform_finiteStaircaseLowerBound`:
   if the diffusive entrance probability pays at most
