@@ -21,7 +21,7 @@ The proof-specific declarations are:
   bins change.
 - `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.drawdownJumpPatternTubeEvent`: the intersection of the specified
   non-jump-block tube events for a fixed pattern.
-- `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.drawdownJumpPatternBound`, `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.drawdown_prod_jumpPatternBound_eq_pow`, and
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.drawdownJumpPatternBound` and
   `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.drawdown_prod_jumpPatternBound_le_pow`: the block factor equals $p$ on a
   non-jump and $1$ on a jump, so its product is $p^{q-|J|}$ and is at most
   $p^{q-K}$ when $|J|\le K$ and $0\le p\le1$.
@@ -99,7 +99,7 @@ def drawdownJumpPatternBound {q : ℕ}
 
 /-- The factors for a fixed jump pattern multiply to the tube-bound factor
 raised to the number of indices outside that pattern. -/
-lemma drawdown_prod_jumpPatternBound_eq_pow {q : ℕ}
+private lemma drawdown_prod_jumpPatternBound_eq_pow {q : ℕ}
     (pattern : Finset (Fin q)) (p : ℝ) :
     (∏ j ∈ Finset.range q, drawdownJumpPatternBound pattern p j) =
       p ^ (q - pattern.card) := by

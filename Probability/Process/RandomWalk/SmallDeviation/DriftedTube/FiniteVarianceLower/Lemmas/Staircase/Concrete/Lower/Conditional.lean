@@ -13,14 +13,8 @@ public import Analysis.Asymptotics.Scale.IntermediatePowerBlock
 /-!
 # Tilted-tube lower bound from the reflected survival asymptotics
 
-The module-visible supporting lemmas in this file are:
+The module-visible supporting lemma in this file is:
 
-- `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.eventually_concreteStaircaseLowerBound_of_centeredFiniteVariance`:
-  for $t_1=\lfloor\Delta^2\rfloor$ and
-  $L\ge\lfloor\Delta^{2+\varepsilon}\rfloor$ and
-  $r_{0,n}\le 0\le r_{0,n}+\Delta_n$, the two reflected
-  inverse-square survival bounds, the block-scale limits in Wang Yiyang's Lemma 3.5, and fixed endpoint and rate margins imply
-  $\mathbb P(E)\ge\exp(-d'L/\Delta^2)$ eventually.
 - `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.eventually_concreteStaircaseLowerBound_of_powerBlock`: the same bound
   with $\ell_n=\lfloor\Delta_n^{2+\eta}\rfloor$ and
   $0<\eta<\min(1,\varepsilon)$, so the scale limits and remaining-time
@@ -47,7 +41,7 @@ namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 
 /-- The inverse-square survival inputs for the walk and its reflection follow from
 the finite-variance hypotheses. -/
-lemma eventually_concreteStaircaseLowerBound_of_centeredFiniteVariance
+private lemma eventually_concreteStaircaseLowerBound_of_centeredFiniteVariance
     {ν : Measure ℝ} [IsProbabilityMeasure ν]
     {sigma narrowedRate uInterior vInterior uFinal vFinal : ℝ}
     (hν : IsCenteredSecondMoment ν (sigma ^ 2))

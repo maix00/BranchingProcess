@@ -14,15 +14,9 @@ public import Probability.Sequence.IID.StoppingTime
 /-!
 # First-window block factorization lemmas
 
-The declarations in this module are proof-specific lemmas for the
+The declaration in this module is a proof-specific lemma for the
 finite-dimensional first-window law:
 
-- `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.measure_prefixFailure_inter_block_eq_mul`
-  factors a prefix event from a
-  following IID block.
-- `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.measure_firstWindow_inter_block_eq_mul`
-  gives the fixed-start first-window
-  factorization.
 - `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.measure_firstWindow_block_union_eq_tsum`
   sums the disjoint fixed-start
   probabilities over all possible starts.
@@ -47,7 +41,7 @@ factors from every event of the following IID increment block. This is the
 independent-block factorization in Erwin Bolthausen, *On a Functional Central
 Limit Theorem for Random Walks Conditioned to Stay Positive*, Lemma 3.1,
 pp. 482--483, DOI 10.1214/aop/1176996098. -/
-lemma measure_prefixFailure_inter_block_eq_mul
+private lemma measure_prefixFailure_inter_block_eq_mul
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (n start : ℕ) (event : Set (Fin n → ℝ))
     (hevent : MeasurableSet event) :
@@ -92,7 +86,7 @@ into its prefix-failure event and the finite surviving future block. This is
 the fixed-start factorization in Erwin Bolthausen, *On a Functional Central
 Limit Theorem for Random Walks Conditioned to Stay Positive*, Lemma 3.1,
 pp. 482--483, DOI 10.1214/aop/1176996098. -/
-lemma measure_firstWindow_inter_block_eq_mul
+private lemma measure_firstWindow_inter_block_eq_mul
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (n start : ℕ) (event : Set (Fin n → ℝ))
     (hevent : MeasurableSet event) :

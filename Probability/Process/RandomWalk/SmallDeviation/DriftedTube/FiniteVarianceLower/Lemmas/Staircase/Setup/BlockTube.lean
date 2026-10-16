@@ -19,8 +19,6 @@ The public objects and theorems in this file are:
 - `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.staircaseLowerEdge_eq_endBoundary` and
   `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.staircaseLowerEdge_add_staircaseTubeWidth_eq_startUpperBoundary`:
   the horizontal sub-tube is exactly $[r_{t_{j+1}},s_{t_j}]$.
-- `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.staircaseTubeWidth_pos_of_stepCost_lt_cube`:
-  $c|I_j|<D^3$ gives its positive width.
 - `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.staircaseTubeWidth_pos_of_schedule_bound`:
   the common bound in Wang Yiyang's Lemma 3.5 $2c\ell<D^3$ makes every scheduled
   horizontal sub-tube nonempty.
@@ -76,7 +74,7 @@ lemma staircaseLowerEdge_add_staircaseTubeWidth_eq_startUpperBoundary
 
 /-- A staircase sub-tube has positive width when the drift during the
 block is smaller than the cubic width scale. -/
-lemma staircaseTubeWidth_pos_of_stepCost_lt_cube
+private lemma staircaseTubeWidth_pos_of_stepCost_lt_cube
     {width drift : ℝ} {length : ℕ → ℕ} {j : ℕ}
     (hwidth : 0 < width)
     (hcost : drift * (length j : ℝ) < width ^ 3) :

@@ -23,15 +23,11 @@ Here `S_j` is the partial sum of the IID increments with centered law `ν`.
 The proof-specific module-visible declarations are:
 
 - `ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube.partitionTubeParameter`,
-  `ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube.partitionTubeWidth`, and
-  `ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube.partitionTubeEvent`:
+  and `ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube.partitionTubeWidth`:
   the fixed translated corridors used to cover the offsets $a\in[0,1]$.
 - `ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube.smallDeviationBlockFactor` and
   `ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube.smallDeviationBlockLength`:
   the factor and block length in the finite-width iteration.
-- `ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube.horizontalTube_subset_some_partitionTubeEvent`: for `m≥1`, `a∈[0,1]`,
-  and `Δ>0`, some `j∈{0,…,m−1}` satisfies
-  \(T_{a,\Delta,L}\subseteq T_{\alpha_{m,j},(1+1/m)\Delta,L}\).
 - `ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube.horizontalTubeProbability_le_one_partitionTube`: for the same parameters,
   \(\exists j,\ \mathbb P_\nu(T_{a,\Delta,L})
     \le\mathbb P_\nu(T_{\alpha_{m,j},(1+1/m)\Delta,L})\).
@@ -60,7 +56,7 @@ noncomputable def partitionTubeWidth (m : ℕ) (width : ℝ) : ℝ :=
   (1 + 1 / m) * width
 
 /-- The fixed corridor event associated with one cell of the equal partition. -/
-def partitionTubeEvent (m : ℕ) (k : Fin m) (width : ℝ) (length : ℕ) :
+private def partitionTubeEvent (m : ℕ) (k : Fin m) (width : ℝ) (length : ℕ) :
     Set (ℕ → ℝ) :=
   {increment | InHorizontalTube (partitionTubeParameter m k)
     (partitionTubeWidth m width) length increment}
@@ -115,7 +111,7 @@ private lemma exists_equalPartition_index {m : ℕ} (hm : 0 < m)
 /-- Every horizontal tube whose interval contains zero lies in one of the
 fixed corridors from the equal partition. The corridor boundaries are
 `(-1+k/m) width` and `(k+1) width/m`. -/
-lemma horizontalTube_subset_some_partitionTubeEvent
+private lemma horizontalTube_subset_some_partitionTubeEvent
     {m length : ℕ} (hm : 0 < m) {a width : ℝ}
     (ha0 : 0 ≤ a) (ha1 : a ≤ 1) (hwidth : 0 < width) :
     ∃ k : Fin m,

@@ -13,14 +13,8 @@ public import Analysis.Asymptotics.Scale.IntermediatePowerBlock
 /-!
 # Upper-endpoint tilted-tube bound from conditioned entrance estimates
 
-The module-visible supporting lemmas in this file are:
+The module-visible supporting lemma in this file is:
 
-- `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.eventually_concreteStaircaseUpperEndpointLowerBound_of_centeredFiniteVariance`:
-  for $t_1=\lfloor\Delta_n^2\rfloor$ and
-  $L_n\ge\lfloor\Delta_n^{2+\varepsilon}\rfloor$, the finite-variance
-  survival bounds for the walk and its reflection, the conditioned meander
-  transition estimate, and the staircase scale and margin conditions
-  imply $\mathbb P(E_{\rm upper})\ge\exp(-d'L_n/\Delta_n^2)$.
 - `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.eventually_concreteStaircaseUpperEndpointLowerBound_of_powerBlock`:
   the same estimate with $\ell_n=\lfloor\Delta_n^{2+\eta}\rfloor$ and
   $0<\eta<\min(1,\varepsilon)$.
@@ -49,7 +43,7 @@ namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 
 /-- The inverse-square survival inputs for the walk and its reflection follow from
 the finite-variance hypotheses. -/
-lemma eventually_concreteStaircaseUpperEndpointLowerBound_of_centeredFiniteVariance
+private lemma eventually_concreteStaircaseUpperEndpointLowerBound_of_centeredFiniteVariance
     {ν : Measure ℝ} [IsProbabilityMeasure ν]
     {sigma narrowedRate uInterior vInterior uFinal vFinal : ℝ}
     (hν : IsCenteredSecondMoment ν (sigma ^ 2))

@@ -13,13 +13,6 @@ public import Analysis.Asymptotics.Scale.BlockScale
 
 The module-visible supporting lemmas in this file are:
 
-- `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.tendsto_staircaseInteriorLowerRatio`:
-  if $D_n/\Delta_n\to0$, then
-  $\bigl((\Delta_n/3+2D_n/3)/(\Delta_n-D_n)\bigr)/\beta
-  \to 1/(3\beta)$.
-- `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.eventually_staircaseInteriorLowerMargin`:
-  if $1/(3\beta)+\varepsilon<u$, the ordinary-block endpoint lower
-  margin condition holds eventually.
 - `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.eventually_staircaseInteriorLowerMargin_of_blockScale`:
   the same conclusion follows directly from
   $\ell_n/\Delta_n^3\to0$ for fixed drift $c$.
@@ -41,7 +34,7 @@ namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 
 /-- The lower endpoint fraction of the next central window approaches
 $1/(3\beta)$ after narrowing the horizontal tube. -/
-lemma tendsto_staircaseInteriorLowerRatio
+private lemma tendsto_staircaseInteriorLowerRatio
     {width loss : ℕ → ℝ} {beta : ℝ}
     (hbeta : 0 < beta)
     (hwidth : Tendsto width atTop atTop)
@@ -74,7 +67,7 @@ lemma tendsto_staircaseInteriorLowerRatio
 
 /-- A strict lower endpoint margin remains valid for all sufficiently
 large ordinary staircase blocks. -/
-lemma eventually_staircaseInteriorLowerMargin
+private lemma eventually_staircaseInteriorLowerMargin
     {width loss : ℕ → ℝ} {beta margin uInterior : ℝ}
     (hbeta : 0 < beta)
     (hwidth : Tendsto width atTop atTop)
