@@ -8,7 +8,7 @@ module
 
 public import Analysis.Asymptotics.Scale.InverseScale
 public import Probability.Process.RandomWalk.Path.Corridor.Horizontal.Core
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.FromIncrementLaw.HorizontalTube.Basic
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.FromIncrementLaw.Normal.HorizontalTube.Basic
 import Analysis.Asymptotics.Scale.Sampling
 /-!
 # Sampled and inverse-scale forms of the horizontal-tube rate
