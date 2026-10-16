@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Scale
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Scale.Basic
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Scaling.Centered
 
 /-!

@@ -27,10 +27,97 @@ Include:
 - documentation updates when a theorem moves from an open obligation to a
   verified result, or when a path is renamed.
 
+## Lean module headers and mathematical references
+
+Each Lean module docstring must begin with a list of its public theorem
+declarations, using their exact Lean names and a short description. State the
+mathematical content with a formula whenever the conclusion is quantitative or
+relational; include the essential assumptions in the description. For a
+definition, say what object it defines. Keep private proof helpers out of this
+list. Update it whenever a public declaration is added, removed, or renamed.
+
+When a declaration formalizes or specializes an external result, cite the work
+by author and title, identify the exact theorem/lemma/proposition (and section
+or page when useful), and give its bibliography key or stable identifier (DOI,
+arXiv ID, or URL). For results from a thesis, identify its exact title,
+chapter, and displayed theorem number. Do not use `the paper`, `the thesis`,
+or `the source` as a substitute for a reference. Apply the same rule to
+Mogul'skii's results; for example, identify Theorem 3, Section 4, p. 764 of
+the 1974 Russian original
+by A. A. Mogul'skii, “Small deviations in the sample function space,”
+*Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974), 755--765, together
+with its English translation, “Small Deviations in a Space of Trajectories,”
+*Theory of Probability and Its Applications* 19(4) (1975), 726--736, DOI
+10.1137/1119081. Include the exact Lean theorem name in the module header and
+the exact source result in that theorem's docstring.
+
+Avoid source names such as `paper...` in private declaration identifiers.
+Name helpers for the mathematical object or proof operation they implement.
+
 Prefer explicit assumptions over hidden instances. Reuse Mathlib objects for
 measures, filtrations, kernels, point measures, and topological spaces. A
 formalized theorem should compile from a clean checkout with the pinned
 `lean-toolchain` and Lake manifest.
+
+## Entry points and supporting lemmas
+
+Keep a principal theorem in a plainly named entry module at the mathematical
+subject's directory level. When several files serve only that theorem's proof,
+put them under a sibling `Lemmas/` directory, subdivided by mathematical steps
+such as `Blocks`, `Entrance`, or `Staircase`. **Files in `Lemmas/` must contain
+only helpers that are not independently reusable:** their statements depend on
+the specific event, binning, constants, or assembly of that result. A complete
+reusable theorem, construction, event definition, or proof technique belongs
+in its mathematical subject's directory outside `Lemmas/`, even when the
+current result is its only caller. Before moving a file into `Lemmas/`, review
+each declaration in it against this rule; split mixed files so reusable
+declarations remain outside. A `Lemmas/` directory belongs to one principal
+result or a coherent theorem family; do not collect unrelated results in it.
+
+Proof groupings may be nested when a proof step has its own substantial chain,
+including paths such as `FiniteVarianceUpper/Lemmas/JumpPattern/Lemmas/`.
+Each `Lemmas/` level continues to hold only non-reusable steps for its parent
+result or sub-result. Reusable definitions and theorems move outward to their
+semantic owner, even when that means moving them above more than one nested
+`Lemmas/` directory. At any one directory level, use at most one direct
+`Lemmas.lean` file or one `Lemmas/` directory; group the supporting files
+under that single entry rather than creating parallel `Lemmas` groupings.
+
+When a subject directory contains several independent mathematical families,
+group the public modules into semantic subdirectories such as `Ordering/`,
+`Selection/`, or `PointMeasure/`. Keep the subject level for shared core
+definitions and direct entry modules. Do not place a reusable public interface
+under `Lemmas/` just to reduce the number of files at the subject level.
+Use filenames relative to their semantic directory: prefer
+`PointMeasure/Basic.lean` or `Tilted/Law.lean` to repeating the full directory
+name in every child filename. Mathlib permits a same-level `Foo.lean` and
+`Foo/` when the file is a substantive entry interface and the directory holds
+its components. In this repository, prefer distinct sibling stems to make
+large trees easier to scan; introduce that Mathlib pattern only when the entry
+module provides a clear mathematical interface, and record the reason in the
+architecture audit. Do not add a same-name file merely to re-export a
+directory.
+Count direct `.lean` files during directory reviews. More than eight is a
+review trigger for semantic grouping, not an automatic move: keep a flat
+directory only when its modules are genuinely peer interfaces for one subject,
+and record that reason in the architecture audit. A large group of independent
+interfaces can still be split by the mathematical objects or operations they
+describe.
+
+Directory placement communicates which files users should read first; it does
+not change Lean declaration visibility. Mark a helper `private` when all its
+uses are in its defining module. A helper used across proof modules may need
+module visibility, but that alone does not make it a principal public result.
+Declare supporting results as `lemma`; principal results may be declared as
+`theorem` or `lemma` according to mathematical usage. In Lean, this choice does
+not alter visibility or proof behavior: use `private lemma` for same-module
+helpers, and a module-visible `lemma` when another proof module imports it.
+The declaration keyword alone does not determine reusability or directory
+placement.
+The module docstring lists the public declarations required by the header rule
+above; directory READMEs or architecture documentation identify the intended
+entry modules. When reorganizing a proof tree, update imports and documentation
+and build every affected entry module.
 
 ## Issues and questions
 
@@ -38,15 +125,12 @@ Open an issue for a suspected mathematical error, a missing measurability
 argument, a dependency or naming problem, a reproducible build failure, or a
 theorem you would like to formalize. Include the relevant module, Lean and
 Mathlib revisions, the command that fails, and the smallest useful error
-excerpt. Counterexamples and references to the original paper are especially
-helpful.
+excerpt. For mathematical claims, give a complete bibliographic reference and
+the exact theorem, lemma, equation, or page that supports it.
 
 Pull requests are welcome even when they formalize only an intermediate lemma.
 If a proposed statement is not yet proved, label it as an interface or open
 obligation instead of weakening the assumptions silently.
-
-For private questions or issues that should not be public, email
-**wang_yi_yang@foxmail.com**.
 
 ## Local checks
 

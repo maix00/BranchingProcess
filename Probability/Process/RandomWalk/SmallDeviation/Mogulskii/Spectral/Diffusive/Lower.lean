@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Scaling.Lower
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.PathSurvival
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Survival.Path
 
 /-!
 # Diffusive-scale lower bounds for the centered symmetric walk

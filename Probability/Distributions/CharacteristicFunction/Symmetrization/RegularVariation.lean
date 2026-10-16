@@ -5,7 +5,7 @@ Authors: Codex
 -/
 module
 
-public import Analysis.Asymptotics.RegularVariation
+public import Analysis.Asymptotics.RegularVariation.Basic
 public import Mathlib.Analysis.SpecialFunctions.Pow.Continuity
 public import Mathlib.Analysis.SpecificLimits.Basic
 public import Probability.Distributions.CharacteristicFunction.Symmetrization.Tail

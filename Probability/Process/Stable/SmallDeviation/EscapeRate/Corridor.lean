@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.Stable.SmallDeviation.EscapeRate
+public import Probability.Process.Stable.SmallDeviation.EscapeRate.Basic
 public import Probability.Process.Stable.SmallDeviation.RangeComparison
 public import Probability.Process.Stable.SmallDeviation.ShiftedCorridor
 
