@@ -13,11 +13,11 @@ public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVaria
 
 The public objects and theorem in this file are:
 
-- `ProbabilityTheory.RandomWalk.SmallDeviation.driftedTubeEvent`: for
+- `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.driftedTubeEvent`: for
   $L\in\mathbb N$, width $\Delta$, drift $c$, and initial position $r_0$,
   the event that $r_0+cj/\Delta^2\le Y_j\le r_0+cj/\Delta^2+\Delta$ for
   $1\le j\le L$.
-- `ProbabilityTheory.RandomWalk.SmallDeviation.driftedTubeEvent_subset_noLargeDropEndpointBelowEvent`: for $c\ge0$ and
+- `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.driftedTubeEvent_subset_noLargeDropEndpointBelowEvent`: for $c\ge0$ and
   $-\Delta\le r_0\le0$, this tube event implies the no-large-drop event
   with terminal bound $\Delta+cL/\Delta^2$.
 
@@ -30,7 +30,7 @@ open scoped Topology
 
 @[expose] public section
 
-namespace ProbabilityTheory.RandomWalk.SmallDeviation
+namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 
 open ProbabilityTheory.RandomWalk
 open ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown
@@ -92,6 +92,6 @@ theorem driftedTubeEvent_subset_noLargeDropEndpointBelowEvent
       linarith [hend.2]
 
 
-end ProbabilityTheory.RandomWalk.SmallDeviation
+end ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 
 end
