@@ -36,7 +36,7 @@ namespace ProbabilityTheory.RandomWalk.SmallDeviation.Entrance
 /-- The three entrance regimes yield the inverse-square bound for the
 terminal window of Wang Yiyang, *Asymptotic speed of the $N$-branching
 random walk with infinite offspring*, Appendix A.2, Lemma A.7. -/
-private theorem exists_eventually_robustTransitionProbability_ge_inverse_square_of_centeredFiniteVariance
+private lemma exists_eventually_robustTransitionProbability_ge_inverse_square_of_centeredFiniteVariance
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     {sigma : ℝ} (hν : IsCenteredSecondMoment ν (sigma ^ 2))
     (hsigma : 0 < sigma)
@@ -79,6 +79,60 @@ private theorem exists_eventually_robustTransitionProbability_ge_inverse_square_
       hν hsigma hwidth hdrift (by norm_num : (0 : ℝ) < 1)
       hplus hminus)
 
+/-- The sequence estimate gives the same inverse-square constant for every
+sufficiently large real width and every admissible starting point. -/
+private lemma exists_uniform_robustTransitionProbability_ge_inverse_square_of_centeredFiniteVariance
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    {sigma : ℝ} (hν : IsCenteredSecondMoment ν (sigma ^ 2))
+    (hsigma : 0 < sigma)
+    {drift : ℝ} (hdrift : 0 ≤ drift) :
+    ∃ C : ℝ, 0 < C ∧ ∃ threshold : ℝ, ∀ width ≥ threshold,
+      ∀ start ∈ Set.Icc 0 width,
+        C / width ^ 2 ≤
+          (iidSequenceLaw ν
+            (robustMovingTransitionEvent
+              (Nat.floor (width ^ 2)) width drift start)).toReal := by
+  classical
+  by_contra hnot
+  push Not at hnot
+  have hbad (n : ℕ) : ∃ width : ℝ, (n + 1 : ℕ) ≤ width ∧
+      ∃ start ∈ Set.Icc 0 width,
+        (iidSequenceLaw ν
+          (robustMovingTransitionEvent
+            (Nat.floor (width ^ 2)) width drift start)).toReal <
+              (1 / (n + 1 : ℕ) : ℝ) / width ^ 2 := by
+    have hsmall : (0 : ℝ) < 1 / (n + 1 : ℕ) := by positivity
+    obtain ⟨width, hwidth, start, hstart, hlt⟩ :=
+      hnot (1 / (n + 1 : ℕ)) hsmall (n + 1 : ℕ)
+    exact ⟨width, hwidth, start, hstart, hlt⟩
+  choose width hwidth using hbad
+  choose start hstart hlt using fun n => (hwidth n).2
+  have hwidthLimit : Tendsto width atTop atTop := by
+    rw [tendsto_atTop]
+    intro bound
+    have hnat : ∀ᶠ n : ℕ in atTop, bound ≤ (n : ℝ) :=
+      tendsto_natCast_atTop_atTop.eventually (eventually_ge_atTop bound)
+    filter_upwards [hnat] with n hn
+    have hstep : (n : ℝ) ≤ (n + 1 : ℕ) := by exact_mod_cast (Nat.le_succ n)
+    exact (hn.trans hstep).trans (hwidth n).1
+  obtain ⟨C, hC, hprob⟩ :=
+    exists_eventually_robustTransitionProbability_ge_inverse_square_of_centeredFiniteVariance
+      ν hν hsigma hwidthLimit hdrift
+  have hsmall : ∀ᶠ n : ℕ in atTop, (1 / (n + 1 : ℕ) : ℝ) < C := by
+    have hlimit : Tendsto (fun n : ℕ => (1 / (n + 1 : ℕ) : ℝ)) atTop (𝓝 0) := by
+      simpa only [Nat.cast_add, Nat.cast_one] using
+        (tendsto_one_div_add_atTop_nhds_zero_nat (𝕜 := ℝ))
+    exact hlimit.eventually (eventually_lt_nhds hC)
+  obtain ⟨n, hn⟩ := (hprob.and hsmall).exists
+  have hwpos : 0 < width n := by
+    have : (0 : ℝ) < (n + 1 : ℕ) := by positivity
+    exact this.trans_le (hwidth n).1
+  have hden : 0 < width n ^ 2 := pow_pos hwpos _
+  have hstrict : (1 / (n + 1 : ℕ) : ℝ) / width n ^ 2 < C / width n ^ 2 :=
+    div_lt_div_of_pos_right hn.2 hden
+  exact (lt_irrefl (C / width n ^ 2))
+    ((lt_of_le_of_lt (hn.1 (start n) (hstart n)) (hlt n)).trans hstrict)
+
 
 /-- The robust entrance cost is absorbed by the exponential budget after
 the meander transition has been supplied for both the walk and its
@@ -99,9 +153,18 @@ theorem exists_eventually_robustTransitionProbability_ge_exp_of_centeredFiniteVa
             (robustMovingTransitionEvent
               (Asymptotics.floorBlockLength (fun k => width k ^ 2) n)
               (width n) drift start) := by
-  obtain ⟨C, hC, hpower⟩ :=
-    exists_eventually_robustTransitionProbability_ge_inverse_square_of_centeredFiniteVariance
-      ν hν hsigma hwidth hdrift
+  obtain ⟨C, hC, threshold, hpowerUniform⟩ :=
+    exists_uniform_robustTransitionProbability_ge_inverse_square_of_centeredFiniteVariance
+      ν hν hsigma hdrift
+  have hpower : ∀ᶠ n : ℕ in atTop,
+      ∀ start ∈ Set.Icc 0 (width n),
+        C / width n ^ 2 ≤
+          (iidSequenceLaw ν
+            (robustMovingTransitionEvent
+              (Asymptotics.floorBlockLength (fun k => width k ^ 2) n)
+              (width n) drift start)).toReal := by
+    filter_upwards [hwidth.eventually (eventually_ge_atTop threshold)] with n hn
+    simpa only [Asymptotics.floorBlockLength] using hpowerUniform (width n) hn
   have hbudget := hwidth.eventually
     (Asymptotics.eventually_exp_neg_horizon_le_polynomial
       hC hdelta hepsilon (p := 2))
