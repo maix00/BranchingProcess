@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Basic
+public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.Event
 
 /-!
 # Events for linearly tilted random-walk tubes
