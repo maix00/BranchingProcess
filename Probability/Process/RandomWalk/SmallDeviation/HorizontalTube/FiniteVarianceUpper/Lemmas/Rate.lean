@@ -14,6 +14,10 @@ import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 /-!
 # Rate selection for the horizontal-tube upper bound
 
+For increments $\xi=(\xi_i)_{i\ge0}$, let
+$S_j=\sum_{i=0}^{j-1}\xi_i$ and
+$T_{a,\Delta,L}=\{\xi:-a\Delta\le S_j\le(1-a)\Delta\;(1\le j\le L)\}$.
+
 The proof-specific declarations are:
 
 - `ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube.exists_partition_size_for_rate`: if $d<d_{\rm crit}$, some $m>0$

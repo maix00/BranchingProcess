@@ -12,6 +12,8 @@ public import Probability.Process.RandomWalk.FunctionalLimit.Donsker.Entrance.In
 
 The public declarations in this file are:
 
+For increments $\xi=(\xi_i)_{i\ge0}$, put $S_j=\sum_{i=0}^{j-1}\xi_i$.
+
 - `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.movingCorridorEvent`:
   the paths satisfying $cj/\Delta^2\le x+S_j\le\Delta+cj/\Delta^2$
   for every $1\le j\le n$.
