@@ -21,6 +21,15 @@ public import Topology.Order.UnitInterval.Rational
 Every finite family of rational unit-interval times is projected from one
 common uniform grid.  This converts the uniform-grid limit into the finite
 marginals on a fixed countable dense time family.
+
+The public theorems in this file are:
+
+- `ProbabilityTheory.RandomWalk.tendstoInDistribution_normalizedLinearPath_rationalFinite_brownian`:
+  polygonal paths converge jointly at any fixed finite family of rational
+  times to the corresponding Brownian values.
+- `ProbabilityTheory.RandomWalk.tendstoInDistribution_normalizedLinearPath_rationalFinite_continuousPath`:
+  the same finite-dimensional convergence, with the Brownian limit represented
+  by a continuous path-valued random variable.
 -/
 
 open Filter MeasureTheory ProbabilityTheory

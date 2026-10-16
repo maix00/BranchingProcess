@@ -13,14 +13,14 @@ public import Probability.Distributions.Gaussian.FiniteProduct
 
 The public theorems in this file are:
 
-- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.exists_constant_error_lowerBound_lt_gaussianProduct`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Blocks.exists_constant_error_lowerBound_lt_gaussianProduct`:
   for a fixed positive number of Gaussian blocks, choose $c,\delta,b>0$
   so that $b+k(c/r^2+\delta)$ lies below the product of the $k$
   symmetric Gaussian interval probabilities of radius $R/\sqrt c$.
-- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.exists_constant_error_lowerBound_lt_linearReturn`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Blocks.exists_constant_error_lowerBound_lt_linearReturn`:
   the same positive gap holds uniformly when each Gaussian interval is
   shifted by $-y/k$ with $|y/k|\le R/2$.
-- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.exists_error_lowerBound_gap_finset_gaussianProduct`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Blocks.exists_error_lowerBound_gap_finset_gaussianProduct`:
   a strict gap for each member of a nonempty finite reference family gives
   common $\delta,b>0$ with $b+k(c/r^2+\delta)$ below every product.
 
@@ -39,7 +39,7 @@ The original bibliography is A. A. Mogul'skii, “Small deviations in the sample
 open MeasureTheory
 open scoped Topology
 
-namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian
+namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Blocks
 
 /-- There are explicit positive block and error parameters for which a
 positive numerical lower bound remains after paying the maximal-inequality
@@ -276,4 +276,4 @@ theorem exists_error_lowerBound_gap_finset_gaussianProduct
       _ = product y₀ := ENNReal.ofReal_toReal hproductTop
   exact hsum.trans_le hmin
 
-end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian
+end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Blocks

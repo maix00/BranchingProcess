@@ -358,7 +358,7 @@ theorem exists_eventually_finset_pos_remainingMass_zeroTarget
             (scale n * y) := by
   obtain ⟨constant, hconstant, hconstantOne, error, herror,
       lowerBound, hlowerBound, hgap⟩ :=
-    Gaussian.exists_constant_error_lowerBound_lt_gaussianProduct
+    Gaussian.Blocks.exists_constant_error_lowerBound_lt_gaussianProduct
       hendpointMargin hblockRadius hblocks
   have hcontrol :=
     eventually_normalizedEndpoints_le_corridors_add_explicitError

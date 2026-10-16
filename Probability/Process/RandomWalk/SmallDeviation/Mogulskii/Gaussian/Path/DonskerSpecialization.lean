@@ -6,26 +6,27 @@ Authors: WANG Yiyang
 
 module
 
-public import Mathlib.Analysis.SpecialFunctions.Pow.Real
-public import Mathlib.Probability.Distributions.Gaussian.Real
-public import Mathlib.Topology.UnitInterval
 public import Probability.Process.RandomWalk.FunctionalLimit.Donsker.Skorokhod
 public import Probability.Process.RandomWalk.FunctionalLimit.NormalizedStep
-public import Probability.Distributions.Stable.Attraction.Norming
+public import Mathlib.Topology.UnitInterval
 
 /-!
-# `α = 2`: Donsker's theorem as the Gaussian case of the stable route
+# Donsker input for the Gaussian Mogulskii path theorem
 
-The stable route of Mogulskii's small-deviation theorem assumes that the
-càdlàg step paths normalized by `b n` converge in Skorokhod `J₁` to a limit
-process (`IsNormalizedStepFunctionalLimit`). At `α = 2`, Donsker's invariance
-principle supplies this input through
-`tendstoInDistribution_normalizedStepCadlagPath_brownian`.
+The public theorem in this file is:
 
-The second result connects finite-variance increments with the Brownian
-estimate. For increment law `ν`, `L*ν(u)` tends to `∫ x ^ 2 ∂ν`; together with
-the stable norming condition this gives `b n / √n → σ`, where
-`σ ^ 2 = ∫ x ^ 2 ∂ν`.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Path.isNormalizedStepFunctionalLimit_two`:
+  for centered increments with unit second moment, Donsker's invariance
+  principle gives the stable route's normalized-step functional limit, with
+  normalization $b_n=\sqrt n$ and the Brownian path law on $[0,1]$.
+
+The theorem is the exponent-two functional-limit specialization used by
+Mogulskii, *Small Deviations in a Space of Trajectories*, Theorem 3, Section 4
+(1974 Russian original, p. 764; English translation, *Theory of Probability
+and Its Applications* 19(4) (1975), 726--736, DOI 10.1137/1119081). The Donsker
+invariance theorem used here is Theorem 4.20 in I. Karatzas and S. E. Shreve,
+*Brownian Motion and Stochastic Calculus*, 2nd ed., Graduate Texts in
+Mathematics 113, Springer (1991), DOI 10.1007/978-1-4612-0949-2.
 -/
 
 open Filter MeasureTheory ProbabilityTheory
@@ -33,14 +34,13 @@ open scoped NNReal Topology
 
 @[expose] public section
 
-/-! The Gaussian truncated-variance limit belongs to this Mogulskii adapter:
-the stable-distribution layer only needs the stability law itself. -/
+namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Path
 
-namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
-
-
-/-- At `α = 2` the functional-limit input of the stable route is Donsker's
-invariance principle for the normalized right-continuous step path. -/
+/-- At `α = 2`, the functional-limit input of the stable route is Donsker's
+invariance principle for the normalized right-continuous step path. The
+underlying functional limit is Theorem 4.20 in I. Karatzas and S. E. Shreve,
+*Brownian Motion and Stochastic Calculus*, 2nd ed., Graduate Texts in
+Mathematics 113, Springer (1991), DOI 10.1007/978-1-4612-0949-2. -/
 theorem isNormalizedStepFunctionalLimit_two
     (nu : Measure ℝ) [IsProbabilityMeasure nu]
     (hcentered : ∫ x, x ∂nu = 0) (hsecondMoment : ∫ x, x ^ 2 ∂nu = 1)
@@ -52,45 +52,6 @@ theorem isNormalizedStepFunctionalLimit_two
   tendstoInDistribution_normalizedStepCadlagPath_brownian
     nu hcentered hsecondMoment hB hcontinuous hmeasurable
 
-end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
+end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Path
 
-namespace ProbabilityTheory
-
-/-- The same statement in the normalization actually used by Donsker's theorem. -/
-theorem IsStableNorming.tendsto_div_sqrt_nat
-    {ν : Measure ℝ} (hν : Integrable (fun x : ℝ => x ^ 2) ν)
-    {b : ℕ → ℝ} (h : IsStableNorming 2 ν b) :
-    Tendsto (fun n : ℕ => b n / Real.sqrt n) atTop
-      (nhds (Real.sqrt (∫ x, x ^ 2 ∂ν))) := by
-  have hsq := h.tendsto_sq_div_nat hν
-  have hsqrt : Tendsto (fun n : ℕ => Real.sqrt (b n ^ 2 / (n : ℝ))) atTop
-      (nhds (Real.sqrt (∫ x, x ^ 2 ∂ν))) :=
-    (Real.continuous_sqrt.tendsto _).comp hsq
-  refine hsqrt.congr' ?_
-  filter_upwards [eventually_gt_atTop 0] with n hn
-  have hnpos : (0 : ℝ) < n := by exact_mod_cast hn
-  have hbn : 0 < b n := h.1 n hn
-  have hrewrite : b n ^ 2 / (n : ℝ) = (b n / Real.sqrt n) ^ 2 := by
-    rw [div_pow, Real.sq_sqrt (Nat.cast_nonneg n)]
-  rw [hrewrite, Real.sqrt_sq
-    (div_nonneg hbn.le (Real.sqrt_nonneg n))]
-
-/-- For a centered Gaussian stable law, Mogulskii's `L*` at exponent two
-converges to the variance parameter. -/
-theorem tendsto_stableSlowVariation_two_gaussianReal_zero (v : ℝ≥0) :
-    Tendsto (stableSlowVariation 2 (gaussianReal 0 v)) Filter.atTop
-      (nhds (v : ℝ)) := by
-  have hintegrable : Integrable (fun x : ℝ => x ^ 2) (gaussianReal 0 v) := by
-    simpa [id] using (memLp_id_gaussianReal (μ := 0) (v := v) 2).integrable_sq
-  have hsecond : (∫ x : ℝ, x ^ 2 ∂gaussianReal 0 v) = (v : ℝ) := by
-    have hvariance : variance id (gaussianReal 0 v) = (v : ℝ) :=
-      variance_id_gaussianReal
-    rw [variance_of_integral_eq_zero measurable_id.aemeasurable (by simp)] at hvariance
-    simpa [id] using hvariance
-  have h := tendsto_truncatedSecondMoment (gaussianReal 0 v) hintegrable
-  rw [hsecond] at h
-  convert h using 1
-  funext u
-  exact stableSlowVariation_two _ _
-
-end ProbabilityTheory
+end

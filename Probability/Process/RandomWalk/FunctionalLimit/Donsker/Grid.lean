@@ -19,6 +19,15 @@ The equal-block endpoint limit is transferred to the values of polygonal
 interpolation at the corresponding fixed uniform grid.  The deterministic
 error is bounded by finitely many maximal jumps and hence vanishes in
 probability under a finite second moment.
+
+The public theorems in this file are:
+
+- `ProbabilityTheory.RandomWalk.proportionalBlockLength_one_div`:
+  for $m>0$, $\lfloor n/m\rfloor$ is the proportional block length
+  $\lfloor (1/m)n\rfloor$.
+- `ProbabilityTheory.RandomWalk.tendstoInDistribution_normalizedLinearPath_uniformGrid_brownian`:
+  polygonal random-walk values on a fixed equal partition converge jointly to
+  Brownian values on that partition.
 -/
 
 open Filter MeasureTheory ProbabilityTheory

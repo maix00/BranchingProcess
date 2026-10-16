@@ -9,6 +9,7 @@ module
 public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper
 public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.Event
 public import Probability.Process.Filtration.ConditionalBlocks
+import Analysis.Asymptotics.Scale.IntermediatePowerBlock
 
 /-!
 # Proof lemmas for the finite-variance tilted-tube upper bound
@@ -70,7 +71,8 @@ lemma exists_driftedTubeBlockProbability_le_exp_of_finiteVariance
   obtain ⟨DeltaMain, hDeltaMain, hmain⟩ :=
     Drawdown.measureReal_noLargeDropEndpointBelowEvent_le_exp_of_finiteVariance
       ν hν hsquare hvariance hetaHalf hd hcritical
-  have hfloor := Drawdown.eventually_drawdownFloorBlockLength_bounds heta
+  have hfloor := Asymptotics.eventually_nat_floor_rpow_intermediate_bounds
+    (p := 2 + eta / 2) (q := 2 + eta) (by linarith) (by linarith)
   have hgrowth : ∀ᶠ Delta : ℝ in atTop,
       drift ≤ Delta ^ (1 - eta) :=
     (_root_.tendsto_rpow_atTop (by linarith : 0 < 1 - eta)).eventually

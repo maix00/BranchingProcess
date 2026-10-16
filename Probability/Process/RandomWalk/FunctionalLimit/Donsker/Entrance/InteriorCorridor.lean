@@ -14,35 +14,35 @@ public import Topology.Cadlag.Skorokhod.Path.Linear
 
 The public definitions and theorems in this file are:
 
-- `ProbabilityTheory.RandomWalk.FunctionalLimit.Donsker.brownianMiddlePathEvent`:
+- `ProbabilityTheory.RandomWalk.FunctionalLimit.Donsker.Entrance.brownianMiddlePathEvent`:
   the Brownian event printed in Wang Yiyang, *Asymptotic Speed of the
   N-Branching Random Walk with Infinite Offspring*, Appendix A.2, Lemma A.7,
   with endpoint window $(5/12,7/12)$.
-- `ProbabilityTheory.RandomWalk.FunctionalLimit.Donsker.interiorPathEvent`:
+- `ProbabilityTheory.RandomWalk.FunctionalLimit.Donsker.Entrance.interiorPathEvent`:
   $1/24<z+\sigma f(t)<23/24$ for $0\le t\le1$, with
   $11/24<z+\sigma f(1)<13/24$, a fixed subevent of the endpoint window
   $[5/12,7/12]$ in the same lemma.
-- `ProbabilityTheory.RandomWalk.FunctionalLimit.Donsker.interiorPathEvent_subset_brownianMiddlePathEvent`:
+- `ProbabilityTheory.RandomWalk.FunctionalLimit.Donsker.Entrance.interiorPathEvent_subset_brownianMiddlePathEvent`:
   the robust endpoint subevent belongs to the printed Brownian event.
-- `ProbabilityTheory.RandomWalk.FunctionalLimit.Donsker.scaledInteriorPathEvent`:
+- `ProbabilityTheory.RandomWalk.FunctionalLimit.Donsker.Entrance.scaledInteriorPathEvent`:
   the corridor with spatial ratio $\sqrt n/\Delta$ and boundary offset
   $c/\Delta$.
-- `ProbabilityTheory.RandomWalk.FunctionalLimit.Donsker.interiorPathEvent_subset_scaledInteriorPathEvent`:
+- `ProbabilityTheory.RandomWalk.FunctionalLimit.Donsker.Entrance.interiorPathEvent_subset_scaledInteriorPathEvent`:
   the strict event lies in the scaled finite-width event when these
   parameters are close to $1$ and $0$.
-- `ProbabilityTheory.RandomWalk.FunctionalLimit.Donsker.mem_interiorPathEvent_of_linearApprox`:
+- `ProbabilityTheory.RandomWalk.FunctionalLimit.Donsker.Entrance.mem_interiorPathEvent_of_linearApprox`:
   the line $t\mapsto(1/2-z)t/\sigma$, with a sufficiently small uniform
   error, lies in the interior event for $z\in[1/12,11/12]$.
-- `ProbabilityTheory.RandomWalk.FunctionalLimit.Donsker.linearBall_subset_interiorPathEvent`:
+- `ProbabilityTheory.RandomWalk.FunctionalLimit.Donsker.Entrance.linearBall_subset_interiorPathEvent`:
   a fixed Skorokhod ball around that line is contained in the interior event.
-- `ProbabilityTheory.RandomWalk.FunctionalLimit.Donsker.eventually_interiorPathProbability_pos_uniform`:
+- `ProbabilityTheory.RandomWalk.FunctionalLimit.Donsker.Entrance.eventually_interiorPathProbability_pos_uniform`:
   one positive lower bound for all $z\in[1/12,11/12]$ and all sufficiently
   large walk horizons, by Donsker's theorem and compactness.
-- `ProbabilityTheory.RandomWalk.FunctionalLimit.Donsker.eventually_brownianMiddlePathProbability_pos_uniform`:
+- `ProbabilityTheory.RandomWalk.FunctionalLimit.Donsker.Entrance.eventually_brownianMiddlePathProbability_pos_uniform`:
   the same lower bound for the endpoint window in Wang Yiyang,
   *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
   Appendix A.2, Lemma A.7.
-- `ProbabilityTheory.RandomWalk.FunctionalLimit.Donsker.eventually_scaledInteriorPathProbability_pos_uniform`:
+- `ProbabilityTheory.RandomWalk.FunctionalLimit.Donsker.Entrance.eventually_scaledInteriorPathProbability_pos_uniform`:
   the same lower bound survives the ratios $\sqrt n/\Delta\to1$ and
   $c/\Delta\to0$ in the finite-width corridor.
 
@@ -53,7 +53,7 @@ Appendix A.2, Lemma A.7, used in the proof of Chapter 3, Lemma 3.5.
 
 @[expose] public section
 
-namespace ProbabilityTheory.RandomWalk.FunctionalLimit.Donsker
+namespace ProbabilityTheory.RandomWalk.FunctionalLimit.Donsker.Entrance
 
 open Filter MeasureTheory ProbabilityTheory
 open scoped ENNReal Topology
@@ -305,6 +305,6 @@ theorem eventually_scaledInteriorPathProbability_pos_uniform
     exact interiorPathEvent_subset_scaledInteriorPathEvent
       hz hrlo hrhi ho hinc))
 
-end ProbabilityTheory.RandomWalk.FunctionalLimit.Donsker
+end ProbabilityTheory.RandomWalk.FunctionalLimit.Donsker.Entrance
 
 end

@@ -16,12 +16,12 @@ public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.BlockScale
 Let $b_n=\lfloor c x_n^2\rfloor$ with $c>0$ and $x_n\to\infty$. The public
 theorems in this file are:
 
-- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.tendstoInDistribution_diffusiveBlockEndpoint`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Blocks.tendstoInDistribution_diffusiveBlockEndpoint`:
   the product of $\frac{S_{b_n}}{\sqrt{b_n}}$ and
   $\frac{\sqrt{b_n}}{x_n}$ converges in law to
   $\sqrt c Z$, where $Z$ is standard Gaussian. The separate factors also
   define the expression when $b_n=0$.
-- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.tendstoInDistribution_partialSum_diffusiveBlock_div_scale`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Blocks.tendstoInDistribution_partialSum_diffusiveBlock_div_scale`:
   the direct quotient $\frac{S_{b_n}}{x_n}$ converges in law to $\sqrt c Z$.
 
 The central limit theorem itself lives in the Donsker layer. These are the
@@ -37,12 +37,14 @@ open Filter MeasureTheory
 @[expose] public section
 open scoped BigOperators
 
-namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian
+namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Blocks
 
 /-- The normalized endpoint of a diffusive block converges to a Gaussian
 scaled by the square root of the block constant.  The two displayed factors
 are kept separate so the statement is valid even at the finitely many
-indices where the rounded block length can vanish. -/
+indices where the rounded block length can vanish. This is the single-block
+endpoint limit used in Theorem 3, Section 4, p. 764 of A. A. Mogul'skii,
+*Small Deviations in a Space of Trajectories* (DOI 10.1137/1119081). -/
 theorem tendstoInDistribution_diffusiveBlockEndpoint
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (hcentered : ∫ x, x ∂ν = 0)
@@ -72,7 +74,9 @@ theorem tendstoInDistribution_diffusiveBlockEndpoint
 
 /-- After discarding the finitely many indices where rounding can produce a
 zero block, the preceding product is the usual block endpoint divided by the
-Mogulskii spatial scale. -/
+Mogulskii spatial scale. This is the direct single-block endpoint limit used
+in Theorem 3, Section 4 of A. A. Mogul'skii, *Small Deviations in a Space of
+Trajectories* (DOI 10.1137/1119081). -/
 theorem tendstoInDistribution_partialSum_diffusiveBlock_div_scale
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (hcentered : ∫ x, x ∂ν = 0)
@@ -97,4 +101,4 @@ theorem tendstoInDistribution_partialSum_diffusiveBlock_div_scale
   · intro n
     exact (displacement_measurable _).div_const _ |>.aemeasurable
 
-end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian
+end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Blocks

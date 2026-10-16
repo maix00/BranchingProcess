@@ -18,16 +18,16 @@ Let $b_n=\lfloor c x_n^2\rfloor$ and
 $B_{n,j}=\frac{S_{(j+1)b_n}-S_{jb_n}}{x_n}$ for $j<m$.
 The public theorems are:
 
-- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.tendstoInDistribution_diffusiveBlockSums`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Blocks.tendstoInDistribution_diffusiveBlockSums`:
   $(B_{n,j})_{j<m}$ converges in law to $m$ independent variables
   $\sqrt c Z_j$ with standard Gaussian $Z_j$.
-- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.measure_gaussianBlockBox_le_liminf`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Blocks.measure_gaussianBlockBox_le_liminf`:
   the limiting Gaussian mass of an open box is at most the liminf of the
   corresponding block-vector probabilities.
-- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.measure_gaussianBlockBox_eq_prod`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Blocks.measure_gaussianBlockBox_eq_prod`:
   that Gaussian box mass is
   $\prod_{j<m}\mathbb P(\frac{a_j}{\sqrt c}<Z_j<\frac{b_j}{\sqrt c})$.
-- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.prod_gaussian_Ioo_le_liminf_measure_diffusiveBlockSums`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Blocks.prod_gaussian_Ioo_le_liminf_measure_diffusiveBlockSums`:
   the preceding product is at most
   $\liminf_n\mathbb P(a_j<B_{n,j}<b_j\text{ for every }j<m)$.
 
@@ -43,10 +43,12 @@ open Filter MeasureTheory Set
 
 @[expose] public section
 
-namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian
+namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Blocks
 
 /-- Any fixed finite vector of consecutive diffusive block sums converges to
-independent centered Gaussian increments. -/
+independent centered Gaussian increments. This is the finite-dimensional
+block limit used in Theorem 3, Section 4, p. 764 of A. A. Mogul'skii,
+*Small Deviations in a Space of Trajectories* (DOI 10.1137/1119081). -/
 theorem tendstoInDistribution_diffusiveBlockSums
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (hcentered : ∫ x, x ∂ν = 0)
@@ -108,7 +110,9 @@ theorem tendstoInDistribution_diffusiveBlockSums
 
 /-- The limiting product-Gaussian probability of a finite open box is a
 lower bound for the liminf of the corresponding normalized block-vector
-probabilities. -/
+probabilities. This is the open-set lower bound applied to the finite block
+limit in Theorem 3, Section 4 of A. A. Mogul'skii, *Small Deviations in a
+Space of Trajectories* (DOI 10.1137/1119081). -/
 theorem measure_gaussianBlockBox_le_liminf
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (hcentered : ∫ x, x ∂ν = 0)
@@ -158,7 +162,9 @@ theorem measure_gaussianBlockBox_le_liminf
     hpreimage] using hbound
 
 /-- The product-Gaussian probability in the finite-dimensional lower bound
-factors into the one-dimensional interval probabilities. -/
+factors into the one-dimensional interval probabilities used in Theorem 3,
+Section 4 of A. A. Mogul'skii, *Small Deviations in a Space of Trajectories*
+(DOI 10.1137/1119081). -/
 theorem measure_gaussianBlockBox_eq_prod
     {constant : ℝ} (hconstant : 0 < constant) {blocks : ℕ}
     (lower upper : Fin blocks → ℝ) :
@@ -192,7 +198,9 @@ theorem measure_gaussianBlockBox_eq_prod
     fun h => ⟨(div_lt_iff₀ hsqrt).1 h.1,
       (lt_div_iff₀ hsqrt).1 h.2⟩⟩
 
-/-- Direct product form of the finite-dimensional open-box lower bound. -/
+/-- Direct product form of the finite-dimensional open-box lower bound used
+in Theorem 3, Section 4 of A. A. Mogul'skii, *Small Deviations in a Space of
+Trajectories* (DOI 10.1137/1119081). -/
 theorem prod_gaussian_Ioo_le_liminf_measure_diffusiveBlockSums
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (hcentered : ∫ x, x ∂ν = 0)
@@ -215,4 +223,4 @@ theorem prod_gaussian_Ioo_le_liminf_measure_diffusiveBlockSums
   exact measure_gaussianBlockBox_le_liminf ν hcentered hsecondMoment
     hscale hconstant blocks lower upper
 
-end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian
+end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Blocks

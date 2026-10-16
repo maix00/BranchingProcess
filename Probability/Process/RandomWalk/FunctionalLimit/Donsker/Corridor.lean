@@ -17,6 +17,15 @@ These statements identify the open and closed corridor events of the
 polygonal normalized walk with horizontal-tube events.  They are part of the
 finite-variance functional-limit interface and do not depend on Mogulskii's
 small-deviation proof.
+
+The public theorems in this file are:
+
+- `ProbabilityTheory.RandomWalk.measure_openCorridor_le_liminf_strictTube_of_functionalLimit`:
+  an open limiting corridor event is bounded by the liminf of the discrete
+  strict-tube probabilities.
+- `ProbabilityTheory.RandomWalk.limsup_weakTube_le_measure_closedCorridor_of_functionalLimit`:
+  the limsup of discrete weak-tube probabilities is bounded by the limiting
+  closed-corridor probability.
 -/
 
 open Filter MeasureTheory ProbabilityTheory

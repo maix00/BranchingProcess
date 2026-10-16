@@ -14,16 +14,16 @@ public import Probability.Process.RandomWalk.Path.Skorokhod.Corridor.Endpoint.Cl
 
 The public definitions and theorems in this file are:
 
-- `ProbabilityTheory.RandomWalk.FunctionalLimit.Donsker.finiteInteriorEvent`:
+- `ProbabilityTheory.RandomWalk.FunctionalLimit.Donsker.Entrance.finiteInteriorEvent`:
   $c\le x+S_j\le\Delta$ for $1\le j\le n$, with
   $x+S_n\in[5\Delta/12,7\Delta/12]$.
-- `ProbabilityTheory.RandomWalk.FunctionalLimit.Donsker.scaledInteriorPathEvent_eq_closedCorridor`:
+- `ProbabilityTheory.RandomWalk.FunctionalLimit.Donsker.Entrance.scaledInteriorPathEvent_eq_closedCorridor`:
   the translated and scaled path event is a closed Skorokhod corridor
   with an endpoint interval.
-- `ProbabilityTheory.RandomWalk.FunctionalLimit.Donsker.mem_finiteInteriorEvent_iff_scaledPath`:
+- `ProbabilityTheory.RandomWalk.FunctionalLimit.Donsker.Entrance.mem_finiteInteriorEvent_iff_scaledPath`:
   this event equals the normalized path corridor at
   $z=x/\Delta$, $r=\sqrt n/\Delta$, and $o=c/\Delta$.
-- `ProbabilityTheory.RandomWalk.FunctionalLimit.Donsker.eventually_finiteInteriorProbability_pos_uniform`:
+- `ProbabilityTheory.RandomWalk.FunctionalLimit.Donsker.Entrance.eventually_finiteInteriorProbability_pos_uniform`:
   Donsker's theorem gives one positive lower bound for this finite event,
   uniformly over middle starting points.
 
@@ -36,7 +36,7 @@ interval in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with I
 open Filter MeasureTheory ProbabilityTheory
 open scoped ENNReal Topology
 
-namespace ProbabilityTheory.RandomWalk.FunctionalLimit.Donsker
+namespace ProbabilityTheory.RandomWalk.FunctionalLimit.Donsker.Entrance
 
 /-- The finite random-walk event used for starts in the middle twelfths
 of the entrance corridor. -/
@@ -243,6 +243,6 @@ theorem eventually_finiteInteriorProbability_pos_uniform
     exact (mem_finiteInteriorEvent_iff_scaledPath hlen hsigma hw
       hstartLower hstartUpper increment).2 hscaled))
 
-end ProbabilityTheory.RandomWalk.FunctionalLimit.Donsker
+end ProbabilityTheory.RandomWalk.FunctionalLimit.Donsker.Entrance
 
 end

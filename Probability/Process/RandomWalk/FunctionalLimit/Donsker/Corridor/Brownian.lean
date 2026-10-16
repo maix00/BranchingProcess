@@ -16,6 +16,17 @@ public import Probability.Process.RandomWalk.FunctionalLimit.NormalizedStep
 This file instantiates the abstract Skorokhod corridor consequences with the
 verified Donsker theorem.  The result is a direct interface from centered
 unit-variance increments to Brownian open and closed corridor probabilities.
+
+The public theorems in this file are:
+
+- `ProbabilityTheory.RandomWalk.brownian_skorokhodCorridor_le_liminf_strictTube`:
+  Brownian mass of an open corridor is at most the liminf probability of the
+  matching strict random-walk tubes.
+- `ProbabilityTheory.RandomWalk.brownian_centeredSkorokhodCorridor_le_liminf_strictTube`:
+  the same lower bound for centered corridors of any positive width.
+- `ProbabilityTheory.RandomWalk.limsup_weakTube_le_brownian_skorokhodCorridor`:
+  the limsup probability of weak tubes is at most Brownian closed-corridor
+  mass.
 -/
 
 open Filter MeasureTheory ProbabilityTheory

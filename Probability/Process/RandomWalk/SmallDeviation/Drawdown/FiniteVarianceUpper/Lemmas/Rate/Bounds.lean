@@ -7,6 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.JumpPattern.UnionBound
+import Analysis.Asymptotics.Scale.IntermediatePowerBlock
 import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 
 /-!
@@ -16,11 +17,11 @@ The proof-specific declarations are:
 
 - `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.jumpPatternProbability_le_exp`: $2^q p^{q-K}\le e^{-dz}$ under the
   block-count, entropy, and jump-count bounds used in the union estimate.
-- `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.eventually_drawdownFloorBlockLength_bounds`,
-  `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.eventually_drawdownCeilingBinWidth_bounds`, and
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.eventually_drawdownCeilingBinWidth_bounds` and
   `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.eventually_drawdownTubeBlockExponent_le`: for large $\Delta$, the chosen
-  floor block length and ceiling bin width satisfy the size and exponential
-  rate inequalities required by the proof.
+  ceiling bin width satisfies the size bound, and the block exponent obeys
+  the rate inequality required by the proof. The generic floor estimate is
+  `Asymptotics.eventually_nat_floor_rpow_intermediate_bounds`.
 - `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.drawdownBlockCount_scaledBounds` and `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.drawdownJumpCount_add_one_le`:
   the number of complete blocks and maximum jumps obey the scaled estimates
   used to apply `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.jumpPatternProbability_le_exp`.
@@ -142,56 +143,6 @@ private theorem eventually_real_rpow_ge_const
   exact (_root_.tendsto_rpow_atTop hpower).eventually
     (eventually_ge_atTop bound)
 
-/-- For every positive block exponent, a floor-rounded block length remains
-between the half-exponent and full-exponent powers once the width is large. -/
-lemma eventually_drawdownFloorBlockLength_bounds
-    {eta : ℝ} (heta : 0 < eta) :
-    ∀ᶠ Delta : ℝ in atTop,
-      1 ≤ (⌊Delta ^ (2 + eta)⌋₊ : ℝ) ∧
-      Delta ^ (2 + eta) - Delta ^ (2 + eta / 2) ≤
-        (⌊Delta ^ (2 + eta)⌋₊ : ℝ) ∧
-      Delta ^ (2 + eta / 2) ≤ (⌊Delta ^ (2 + eta)⌋₊ : ℝ) ∧
-      (⌊Delta ^ (2 + eta)⌋₊ : ℝ) ≤ Delta ^ (2 + eta) := by
-  have hlargePower := eventually_real_rpow_ge_const
-    (power := 2 + eta / 2) (bound := 1) (by linarith)
-  have hlargeFactor := eventually_real_rpow_ge_const
-    (power := eta / 2) (bound := 2) (by linarith)
-  filter_upwards [eventually_ge_atTop (1 : ℝ), hlargePower, hlargeFactor] with
-    Delta hDelta hlarge hfactor
-  have hDeltaPos : 0 < Delta := by linarith
-  have hbaseNonneg : 0 ≤ Delta ^ (2 + eta) := by positivity
-  have hfloorUpper : (⌊Delta ^ (2 + eta)⌋₊ : ℝ) ≤ Delta ^ (2 + eta) :=
-    Nat.floor_le hbaseNonneg
-  have hfloorLower : Delta ^ (2 + eta) - 1 <
-      (⌊Delta ^ (2 + eta)⌋₊ : ℝ) := by
-    have hfloor := Nat.lt_floor_add_one (Delta ^ (2 + eta))
-    have hfloorReal : Delta ^ (2 + eta) <
-        (⌊Delta ^ (2 + eta)⌋₊ : ℝ) + 1 := by exact_mod_cast hfloor
-    linarith
-  have hpowerOrder : Delta ^ (2 + eta / 2) ≤ Delta ^ (2 + eta) :=
-    Real.rpow_le_rpow_of_exponent_le hDelta (by linarith)
-  have hpowerSplit : Delta ^ (2 + eta) =
-      Delta ^ (2 + eta / 2) * Delta ^ (eta / 2) := by
-    rw [← Real.rpow_add hDeltaPos (2 + eta / 2) (eta / 2)]
-    congr 1
-    ring
-  have hpowerGap : 1 ≤ Delta ^ (2 + eta) - Delta ^ (2 + eta / 2) := by
-    rw [hpowerSplit]
-    nlinarith [mul_nonneg (sub_nonneg.mpr hlarge) (sub_nonneg.mpr hfactor)]
-  have hhalfPowerLower : Delta ^ (2 + eta / 2) ≤
-      Delta ^ (2 + eta) - 1 := by linarith
-  have hhalfPowerFloor : Delta ^ (2 + eta / 2) ≤
-      (⌊Delta ^ (2 + eta)⌋₊ : ℝ) := by
-    exact hhalfPowerLower.trans hfloorLower.le
-  have hfloorPos : 1 ≤ (⌊Delta ^ (2 + eta)⌋₊ : ℝ) := by
-    have hnat : 1 ≤ ⌊Delta ^ (2 + eta)⌋₊ := by
-      rw [Nat.one_le_floor_iff]
-      exact hlarge.trans hpowerOrder
-    exact_mod_cast hnat
-  refine ⟨?_, ?_, hhalfPowerFloor, hfloorUpper⟩
-  · exact hfloorPos
-  · nlinarith [hlarge, hfloorLower]
-
 lemma eventually_drawdownCeilingBinWidth_bounds
     {eta : ℝ} (heta : 0 < eta) :
     ∀ᶠ Delta : ℝ in atTop,
@@ -230,7 +181,8 @@ lemma eventually_drawdownTubeBlockExponent_le
   have hR : 0 < R := by dsimp [R]; positivity
   have hgrowth := eventually_real_rpow_ge_const
     (power := eta / 2) (bound := A / R) (by linarith)
-  filter_upwards [eventually_drawdownFloorBlockLength_bounds heta,
+  filter_upwards [Asymptotics.eventually_nat_floor_rpow_intermediate_bounds
+      (p := 2 + eta / 2) (q := 2 + eta) (by linarith) (by linarith),
       eventually_drawdownCeilingBinWidth_bounds heta, hgrowth] with
       Delta hfloor hceil hgrowth
   have hDelta : 1 ≤ Delta := hceil.1

@@ -14,6 +14,26 @@ public import Mathlib.Probability.BrownianMotion.Basic
 
 This file identifies cumulative independent Gaussian increments with the
 finite-dimensional laws supplied by mathlib's Brownian-motion interface.
+
+The public definitions and theorems in this file are:
+
+- `ProbabilityTheory.RandomWalk.uniformGridTime`, `ProbabilityTheory.RandomWalk.coe_uniformGridTime`, `ProbabilityTheory.RandomWalk.monotone_uniformGridTime`:
+  $t_j=jh$ on the nonnegative grid, with its real-valued formula and order.
+- `ProbabilityTheory.RandomWalk.IsPreBrownianReal.iIndepFun_uniformGridIncrements`:
+  the increments over consecutive grid intervals are mutually independent.
+- `ProbabilityTheory.RandomWalk.IsPreBrownianReal.hasLaw_uniformGridIncrement`:
+  $B(t_{j+1})-B(t_j)\sim N(0,h)$.
+- `ProbabilityTheory.RandomWalk.IsPreBrownianReal.hasLaw_uniformGridIncrements`:
+  the full increment vector has product law $\prod_jN(0,h)$.
+- `ProbabilityTheory.RandomWalk.IsPreBrownianReal.hasLaw_uniformGrid`:
+  the grid values have the law of cumulative independent $N(0,h)$ increments.
+- `ProbabilityTheory.RandomWalk.map_pi_gaussianReal_mul_sqrt`:
+  scaling product standard Gaussians by $\sqrt h$ gives that product increment law.
+- `ProbabilityTheory.RandomWalk.IsPreBrownianReal.hasLaw_uniformGrid_of_standardGaussian`:
+  cumulative scaled product standard Gaussians realize the Brownian grid law.
+- `ProbabilityTheory.RandomWalk.tendstoInDistribution_proportionalBlockEndpoints_brownian`:
+  equal-partition random-walk endpoints converge jointly to the Brownian grid
+  values.
 -/
 
 open Filter MeasureTheory ProbabilityTheory

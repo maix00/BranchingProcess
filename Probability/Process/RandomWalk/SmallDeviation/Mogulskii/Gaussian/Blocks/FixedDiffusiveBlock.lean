@@ -16,6 +16,13 @@ public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Ran
 Normal-domain path tightness constructs the Gaussian unit-interval path law.
 Its associated Lévy process supplies the stable escape rate, and the variable-
 block path limit transfers the endpoint-band mass to rounded diffusive blocks.
+
+The public theorem in this file is:
+
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Blocks.exists_eventually_diffusiveEndpointBandReturnBlockProbability_lower`:
+  for centered unit-variance increments and any fixed finite family of
+  interior endpoint bands, there is a diffusive block constant for which each
+  band's return probability has a common positive eventual lower bound.
 -/
 
 open Filter MeasureTheory ProbabilityTheory
@@ -24,7 +31,7 @@ open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete
 
 @[expose] public section
 
-namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian
+namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Blocks
 
 /-- A centered unit-variance increment law admits a fixed diffusive block
 constant for which all seven endpoint-return bands have a common positive
@@ -66,7 +73,7 @@ theorem exists_eventually_diffusiveEndpointBandReturnBlockProbability_lower
   have hstable : IsStrictlyAlphaStable 2 (gaussianReal 0 1) :=
     isStrictlyAlphaStable_gaussianReal_zero (by norm_num)
   obtain ⟨P, Q, X, hP, hX, hEscape⟩ :=
-    exists_gaussianStablePathLaw_with_escapeRate ν hν hscale
+    Path.exists_gaussianStablePathLaw_with_escapeRate ν hν hscale
   letI : IsProbabilityMeasure (Q : Measure (ℕ → CadlagPath unitInterval ℝ)) :=
     Q.property
   have hcdf : 0 < cdf (gaussianReal 0 1) 0 ∧
@@ -115,6 +122,6 @@ theorem exists_eventually_diffusiveEndpointBandReturnBlockProbability_lower
   filter_upwards [hdiscrete] with n hn
   simpa [length, lowerBound, C, radius, constant] using hn
 
-end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian
+end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Blocks
 
 end

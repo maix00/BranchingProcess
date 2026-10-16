@@ -20,6 +20,20 @@ This file develops the finite-dimensional input for the functional central
 limit theorem.  The block lengths are proportional to the full time horizon;
 they are therefore distinct from the subdiffusive blocks used in Mogulskii
 estimates.
+
+The public theorems in this file are:
+
+- `ProbabilityTheory.RandomWalk.tendstoInDistribution_proportionalPartialSum`:
+  $S_{\lfloor tn\rfloor}/\sqrt n\Rightarrow\sqrt tZ$ for $t>0$.
+- `ProbabilityTheory.RandomWalk.tendstoInDistribution_proportionalBlockSum`:
+  a shifted block of length $\lfloor tn\rfloor$, divided by $\sqrt n$,
+  converges to $N(0,t)$.
+- `ProbabilityTheory.RandomWalk.tendstoInDistribution_proportionalBlockSums`:
+  a fixed finite vector of consecutive proportional blocks converges to
+  independent Gaussian increments.
+- `ProbabilityTheory.RandomWalk.tendstoInDistribution_proportionalBlockEndpoints`:
+  the normalized positions at a fixed equal partition converge to Brownian
+  grid values.
 -/
 
 open Filter MeasureTheory

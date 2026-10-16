@@ -126,7 +126,7 @@ theorem finiteInteriorEvent_subset_robustMovingTransitionEvent
     (hwidth : 0 < width) (hdrift : 0 ≤ drift)
     (hn : (n : ℝ) ≤ width ^ 2)
     (hlarge : 60 * drift ≤ width) :
-    FunctionalLimit.Donsker.finiteInteriorEvent n width drift start ⊆
+    FunctionalLimit.Donsker.Entrance.finiteInteriorEvent n width drift start ⊆
       robustMovingTransitionEvent n width drift start := by
   intro increment hinc
   have hlargeOld : 12 * drift ≤ width := by nlinarith [hlarge, hdrift]
@@ -155,7 +155,7 @@ theorem eventually_middleRobustTransitionProbability_pos
             (Asymptotics.floorBlockLength (fun k => width k ^ 2) n)
             (width n) drift start) := by
   obtain ⟨q, hq, hmiddle⟩ :=
-    FunctionalLimit.Donsker.eventually_diffusiveInteriorProbability_pos_uniform_of_centeredSecondMoment
+    FunctionalLimit.Donsker.Entrance.eventually_diffusiveInteriorProbability_pos_uniform_of_centeredSecondMoment
       hν hsigma hwidth drift
   refine ⟨q, hq, ?_⟩
   have hwidthPos : ∀ᶠ n : ℕ in atTop, 0 < width n :=

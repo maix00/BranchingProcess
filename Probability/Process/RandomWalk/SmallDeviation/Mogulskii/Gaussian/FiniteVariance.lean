@@ -37,6 +37,7 @@ namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian
 
 open Skorokhod.PathClass.StepCorridor
 open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete
+open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Path
 
 /-- For finite-variance increments in the normal domain, the source-path
 rate has the variance factor of A. A. Mogul'skii, *Small Deviations in a

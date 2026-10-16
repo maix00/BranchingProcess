@@ -11,9 +11,22 @@ public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Ran
 /-!
 # Explicit Gaussian rate for the source path convention
 
+The public theorem in this file is:
+
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Path.tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_source_index_two_of_brownian_explicit`:
+  for a normal-domain random walk and a path class with energy $H_2(G)$,
+  the source-terminal-left path probability has logarithmic rate
+  $-pi^2 H_2(G)/2$ under the exponent-two stable rate normalization.
+
 The Rademacher spectral rate identifies the Brownian escape constant, and the
 source endpoint adapter supplies the matching path-class theorem for all
 zero-centered normal-domain increment laws, including infinite-variance laws.
+
+This is the source-path form of Theorem 3, Section 4, p. 764 of A. A.
+Mogul'skii, “Small deviations in the sample function space,” *Teoriya
+Veroyatnostei i ee Primeneniya* 19(4) (1974), 755--765; English translation,
+“Small Deviations in a Space of Trajectories,” *Theory of Probability and Its
+Applications* 19(4) (1975), 726--736, DOI 10.1137/1119081.
 -/
 
 open Filter MeasureTheory ProbabilityTheory
@@ -21,7 +34,7 @@ open scoped ENNReal NNReal Topology
 
 @[expose] public section
 
-namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian
+namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Path
 
 open Skorokhod.PathClass.StepCorridor
 open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete
@@ -29,7 +42,9 @@ open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete
 /-- The source-terminal-left path-class theorem in the normal domain, with the
 Brownian escape constant and full-width coefficient evaluated explicitly.
 The Brownian input only needs the almost-sure path regularity provided by
-Mathlib's `IsBrownianReal`. -/
+Mathlib's `IsBrownianReal`. This is the source-path form of Theorem 3,
+Section 4, p. 764 of A. A. Mogul'skii, *Small Deviations in a Space of
+Trajectories* (DOI 10.1137/1119081). -/
 theorem tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_source_index_two_of_brownian_explicit
     {ν : Measure ℝ} [IsProbabilityMeasure ν]
     {normalization scale : ℕ → ℝ}
@@ -78,6 +93,6 @@ theorem tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_s
     rw [← hfull] at hrate
     exact hrate
 
-end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian
+end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Path
 
 end

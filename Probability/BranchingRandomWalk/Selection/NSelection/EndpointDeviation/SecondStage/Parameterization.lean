@@ -315,7 +315,7 @@ theorem eventually_iidSequenceLaw_rightTailPositiveASecondStageAffineCorridor_lo
           dsimp [root]
           congr 1
           ring
-    have hdriftPaper : drift n = lambda * ((D n : ℝ) ^ ((-2 : ℝ) / 3)) := by
+    have hdriftFormula : drift n = lambda * ((D n : ℝ) ^ ((-2 : ℝ) / 3)) := by
       dsimp [drift, entranceScale]
       have hscaleSq :
           (α * ((D n : ℝ) ^ ((1 : ℝ) / 3))) ^ 2 =
@@ -329,7 +329,7 @@ theorem eventually_iidSequenceLaw_rightTailPositiveASecondStageAffineCorridor_lo
         ne_of_gt (Real.rpow_pos_of_pos hnDReal _)
       field_simp [hαsq, hDpow]
     have hdriftLength : drift n * (bridgeLength : ℝ) ≤ lambda * root := by
-      rw [hdriftPaper]
+      rw [hdriftFormula]
       calc
         (lambda * ((D n : ℝ) ^ ((-2 : ℝ) / 3))) * (bridgeLength : ℝ) ≤
             (lambda * ((D n : ℝ) ^ ((-2 : ℝ) / 3))) * (D n : ℝ) :=
@@ -360,7 +360,7 @@ theorem eventually_iidSequenceLaw_rightTailPositiveASecondStageAffineCorridor_lo
         (D n - ⌊entranceScale n ^ 2⌋₊) := by
       dsimp [bridgeScale, rightTailPositiveASecondStageBridgeScale]
       positivity
-    have hdriftPaper : drift n = lambda * ((D n : ℝ) ^ ((-2 : ℝ) / 3)) := by
+    have hdriftFormula : drift n = lambda * ((D n : ℝ) ^ ((-2 : ℝ) / 3)) := by
       dsimp [drift, entranceScale]
       have hnDReal : 0 < (D n : ℝ) := hnD
       have hscaleSq :
@@ -375,7 +375,7 @@ theorem eventually_iidSequenceLaw_rightTailPositiveASecondStageAffineCorridor_lo
         ne_of_gt (Real.rpow_pos_of_pos hnDReal _)
       field_simp [hαsq, hDpow]
     have hdriftNonneg : 0 ≤ drift n := by
-      rw [hdriftPaper]
+      rw [hdriftFormula]
       positivity
     dsimp [entranceScale, terminalExtra, root]
     have hterminalScaled :

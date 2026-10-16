@@ -18,6 +18,18 @@ import Topology.Order.UnitInterval.Rational
 
 Tightness of the polygonal path laws and convergence on the dense family of
 rational unit-interval times yield convergence in continuous-path space.
+
+The public theorem in this file is:
+
+- `ProbabilityTheory.RandomWalk.tendstoInDistribution_normalizedLinearContinuousPath_brownian`:
+  centered unit-variance i.i.d. increments, polygonally interpolated and
+  scaled by $1/\sqrt n$, converge in law to any continuous Brownian
+  finite-dimensional realization.
+
+This is Donsker's invariance principle, stated as Theorem 4.20 in I. Karatzas
+and S. E. Shreve, *Brownian Motion and Stochastic Calculus*, 2nd ed.,
+Graduate Texts in Mathematics 113, Springer (1991), DOI
+10.1007/978-1-4612-0949-2.
 -/
 
 open Filter MeasureTheory ProbabilityTheory
@@ -29,7 +41,10 @@ namespace ProbabilityTheory.RandomWalk
 
 /-- Donsker's invariance principle for the canonical IID increment law,
 with an arbitrary measurable everywhere-continuous realization of the
-Brownian finite-dimensional distributions as limit. -/
+Brownian finite-dimensional distributions as limit. This is Theorem 4.20 in
+I. Karatzas and S. E. Shreve, *Brownian Motion and Stochastic Calculus*, 2nd
+ed., Graduate Texts in Mathematics 113, Springer (1991), DOI
+10.1007/978-1-4612-0949-2. -/
 theorem tendstoInDistribution_normalizedLinearContinuousPath_brownian
     (nu : Measure ℝ) [IsProbabilityMeasure nu]
     (hcentered : ∫ x, x ∂nu = 0)

@@ -58,7 +58,7 @@ theorem prod_gaussian_Ioo_le_liminf_measure_partitionEndpoints
                 scale n ∈ Set.Ioo (lower k) (upper k)}) := by
   let lowerBlock : Fin blocks → ℝ := fun j => target j - radius
   let upperBlock : Fin blocks → ℝ := fun j => target j + radius
-  have hbox := Gaussian.prod_gaussian_Ioo_le_liminf_measure_diffusiveBlockSums
+  have hbox := Gaussian.Blocks.prod_gaussian_Ioo_le_liminf_measure_diffusiveBlockSums
     ν hcentered hsecondMoment hscale hconstant blocks lowerBlock upperBlock
   refine hbox.trans (Filter.liminf_le_liminf ?_)
   filter_upwards [] with n

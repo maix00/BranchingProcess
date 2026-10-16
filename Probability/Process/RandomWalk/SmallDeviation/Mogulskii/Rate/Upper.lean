@@ -59,7 +59,7 @@ theorem eventually_uniform_killedBlock_remainingMass_le_of_endpointCLT
     (iidSequenceLaw ν).map
       (fun increment => AdditivePath.displacement (block n) increment / scale n)
       (Set.Icc (-(upper - lower)) (upper - lower))
-  have hclt := Gaussian.tendstoInDistribution_partialSum_diffusiveBlock_div_scale
+  have hclt := Gaussian.Blocks.tendstoInDistribution_partialSum_diffusiveBlock_div_scale
     ν hcentered hsecondMoment hscale hconstant
   have hport : atTop.limsup endpoint ≤
       (gaussianReal 0 1).map (fun z : ℝ => z * Real.sqrt constant)

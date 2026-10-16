@@ -7,6 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.Rate.Bounds
+import Analysis.Asymptotics.Scale.IntermediatePowerBlock
 
 /-!
 # Endpoint and horizon powers for the drawdown estimate
@@ -82,7 +83,9 @@ lemma exists_eventually_measureReal_noLargeDropEvent_le_exp_of_endpointAndHorizo
         Delta ^ (horizonPower - eta) ∧
       Real.log 2 / (d * eta) ≤ Delta ^ (eta / 2) ∧
       tubeWidth₀ ≤ Delta := by
-    filter_upwards [eventually_drawdownFloorBlockLength_bounds hetaPos,
+    filter_upwards [Asymptotics.eventually_nat_floor_rpow_intermediate_bounds
+        (p := 2 + eta / 2) (q := 2 + eta)
+        (by linarith [hetaPos]) (by linarith [hetaPos]),
       eventually_drawdownCeilingBinWidth_bounds hetaPos,
       eventually_drawdownTubeBlockExponent_le hetaPos hd,
       hscaleAbsorptions, eventually_ge_atTop tubeWidth₀] with

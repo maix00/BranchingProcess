@@ -19,6 +19,20 @@ public import MeasureTheory.Measure.ContinuousMap.Tightness.Criteria
 The maximal inequality for the discrete partial sums controls the full
 polygonal interpolation, since a convex interval contains every segment as
 soon as it contains the grid vertices.
+
+The public theorems in this file are:
+
+- `ProbabilityTheory.RandomWalk.eventually_normalizedLinearPathLaw_oscillation`:
+  the normalized polygonal paths satisfy each prescribed one-scale
+  oscillation bound eventually.
+- `ProbabilityTheory.RandomWalk.normalizedLinearPathLaw_compl_uniformBound_le`:
+  the probability of leaving $[-R,R]$ is at most $R^{-2}$.
+- `ProbabilityTheory.RandomWalk.exists_normalizedLinearPathLaw_uniformBound`:
+  the whole family of normalized path laws is uniformly bounded in probability.
+- `ProbabilityTheory.RandomWalk.isTightMeasureSet_normalizedLinearPathLaw_of_eventually_oscillation`:
+  uniform boundedness and one-scale oscillation estimates imply tightness.
+- `ProbabilityTheory.RandomWalk.isTightMeasureSet_normalizedLinearPathLaw`:
+  centered unit-variance normalized polygonal path laws form a tight family.
 -/
 
 open Filter MeasureTheory ProbabilityTheory Set Topology

@@ -11,7 +11,7 @@ import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalk
 
 The public theorem in this file is:
 
-- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_index_two_of_brownian_explicit`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Path.tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_index_two_of_brownian_explicit`:
   the Brownian escape constant is $-\pi^2/8$ and, for a path class $G$
   with energy $H_2(G)$,
   $\log\mathbb P(s_n\in G)/\rho_n\to-\pi^2H_2(G)/2$, where
@@ -38,7 +38,7 @@ open scoped ENNReal NNReal Topology
 
 @[expose] public section
 
-namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian
+namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Path
 
 open Skorokhod.PathClass.StepCorridor
 open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete
@@ -105,6 +105,6 @@ theorem tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_i
     rw [← hfull] at hrate
     exact hrate
 
-end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian
+end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Path
 
 end

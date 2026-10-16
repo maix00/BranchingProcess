@@ -16,13 +16,13 @@ public import Probability.Process.RandomWalk.FunctionalLimit.Stable.ProcessExist
 
 The public theorem in this file is:
 
-- `ProbabilityTheory.RandomWalk.FunctionalLimit.Donsker.eventually_diffusiveInteriorProbability_pos_uniform`:
+- `ProbabilityTheory.RandomWalk.FunctionalLimit.Donsker.Entrance.eventually_diffusiveInteriorProbability_pos_uniform`:
   for $n_\Delta=\lfloor\Delta^2\rfloor$ and every
   $x\in[\Delta/12,11\Delta/12]$, the probability of
   $c\le x+S_j\le\Delta$ for $1\le j\le n_\Delta$, with
   $x+S_{n_\Delta}\in[5\Delta/12,7\Delta/12]$, has one positive
   lower bound for all sufficiently large real widths.
-- `ProbabilityTheory.RandomWalk.FunctionalLimit.Donsker.eventually_diffusiveInteriorProbability_pos_uniform_of_centeredSecondMoment`:
+- `ProbabilityTheory.RandomWalk.FunctionalLimit.Donsker.Entrance.eventually_diffusiveInteriorProbability_pos_uniform_of_centeredSecondMoment`:
   the same statement from the increment law alone, with its Gaussian path
   law constructed internally.
 
@@ -36,10 +36,12 @@ Appendix A.2, Lemma A.7, used in the proof of Chapter 3, Lemma 3.5.
 open Filter MeasureTheory ProbabilityTheory
 open scoped ENNReal Topology
 
-namespace ProbabilityTheory.RandomWalk.FunctionalLimit.Donsker
+namespace ProbabilityTheory.RandomWalk.FunctionalLimit.Donsker.Entrance
 
 /-- The diffusive middle-start finite event has a uniform positive
-probability under centered finite-variance increments. -/
+probability under centered finite-variance increments. This is the middle-
+start estimate in Wang Yiyang, *Asymptotic Speed of the N-Branching Random
+Walk with Infinite Offspring*, Appendix A.2, Lemma A.7. -/
 theorem eventually_diffusiveInteriorProbability_pos_uniform
     {ν : Measure ℝ} [IsProbabilityMeasure ν] {sigma : ℝ}
     (hν : IsCenteredSecondMoment ν (sigma ^ 2)) (hsigma : 0 < sigma)
@@ -79,7 +81,9 @@ theorem eventually_diffusiveInteriorProbability_pos_uniform
 
 /-- The middle-start entrance bound from the centered finite-variance
 increment law alone. The Gaussian clock-process law required by the support
-argument is obtained from the source Donsker limit. -/
+argument is obtained from the source Donsker limit. It is the increment-law
+form of Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with
+Infinite Offspring*, Appendix A.2, Lemma A.7. -/
 theorem eventually_diffusiveInteriorProbability_pos_uniform_of_centeredSecondMoment
     {ν : Measure ℝ} [IsProbabilityMeasure ν] {sigma : ℝ}
     (hν : IsCenteredSecondMoment ν (sigma ^ 2)) (hsigma : 0 < sigma)
@@ -117,6 +121,6 @@ theorem eventually_diffusiveInteriorProbability_pos_uniform_of_centeredSecondMom
   exact eventually_diffusiveInteriorProbability_pos_uniform
     hν hsigma hP hwidth drift
 
-end ProbabilityTheory.RandomWalk.FunctionalLimit.Donsker
+end ProbabilityTheory.RandomWalk.FunctionalLimit.Donsker.Entrance
 
 end

@@ -17,6 +17,18 @@ public import Mathlib.Probability.CentralLimitTheorem
 The canonical increment law is a countable product measure.  This file
 connects its coordinate maps to mathlib's central limit theorem.  The result
 is independent of any corridor or branching construction.
+
+The public theorems in this file are:
+
+- `ProbabilityTheory.RandomWalk.hasLaw_coordinate_iidSequenceLaw`, `ProbabilityTheory.RandomWalk.identDistrib_coordinate_iidSequenceLaw`:
+  the coordinate increments have law $\nu$ and are identically distributed.
+- `ProbabilityTheory.RandomWalk.tendstoInDistribution_normalizedPartialSum`:
+  $S_n/\sqrt n\Rightarrow N(0,1)$ for centered unit-variance increments.
+- `ProbabilityTheory.RandomWalk.gaussianReal_Ioo_le_liminf_normalizedPartialSum`:
+  the Gaussian mass of an open interval is at most the liminf of its
+  normalized-sum probabilities.
+- `ProbabilityTheory.RandomWalk.limsup_normalizedPartialSum_le_gaussianReal_Icc`:
+  the limsup of closed-interval probabilities is at most the Gaussian mass.
 -/
 
 open Filter MeasureTheory

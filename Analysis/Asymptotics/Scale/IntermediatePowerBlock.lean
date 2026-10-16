@@ -23,6 +23,10 @@ The public theorems in this file are:
   $0<\eta<\varepsilon$, then eventually
   $\lfloor\Delta_n^2\rfloor+2\lfloor\Delta_n^{2+\eta}\rfloor
   \le\lfloor\Delta_n^{2+\varepsilon}\rfloor$.
+- `Asymptotics.eventually_nat_floor_rpow_intermediate_bounds`: if
+  $0<p<q$, then for large $x$, the rounded block length
+  $\lfloor x^q\rfloor$ lies between $x^p$ and $x^q$, with the floor error
+  absorbed by the lower power.
 
 These deterministic ratios let a block exceed the diffusive time scale
 while its drift displacement remains small compared with its width.
@@ -34,6 +38,54 @@ open Filter
 open scoped Topology
 
 namespace Asymptotics
+
+/-- For exponents `0 < p < q`, the floor of `x ^ q` eventually lies above
+the lower power `x ^ p`; the floor error is absorbed by that same lower
+power. This is a deterministic estimate for intermediate power block
+lengths. -/
+theorem eventually_nat_floor_rpow_intermediate_bounds
+    {p q : ℝ} (hp : 0 < p) (hpq : p < q) :
+    ∀ᶠ x : ℝ in atTop,
+      1 ≤ (⌊x ^ q⌋₊ : ℝ) ∧
+      x ^ q - x ^ p ≤ (⌊x ^ q⌋₊ : ℝ) ∧
+      x ^ p ≤ (⌊x ^ q⌋₊ : ℝ) ∧
+      (⌊x ^ q⌋₊ : ℝ) ≤ x ^ q := by
+  have hpLarge : ∀ᶠ x : ℝ in atTop, 2 ≤ x ^ p :=
+    (_root_.tendsto_rpow_atTop hp).eventually (eventually_ge_atTop 2)
+  have hgapLarge : ∀ᶠ x : ℝ in atTop, 2 ≤ x ^ (q - p) :=
+    (_root_.tendsto_rpow_atTop (sub_pos.mpr hpq)).eventually
+      (eventually_ge_atTop 2)
+  filter_upwards [eventually_ge_atTop (1 : ℝ), hpLarge, hgapLarge]
+    with x hx hxLarge hgapLarge
+  have hxPos : 0 < x := by linarith
+  have hqSplit : x ^ q = x ^ p * x ^ (q - p) := by
+    rw [← Real.rpow_add hxPos]
+    congr 1
+    ring
+  have hgap : 1 ≤ x ^ q - x ^ p := by
+    rw [hqSplit]
+    have hfactor : 1 ≤ x ^ (q - p) - 1 := by linarith
+    have hproduct : x ^ p ≤ x ^ p * (x ^ (q - p) - 1) :=
+      (le_mul_of_one_le_right (by positivity) hfactor)
+    have hproductEq : x ^ p * (x ^ (q - p) - 1) =
+        x ^ p * x ^ (q - p) - x ^ p := by ring
+    rw [hproductEq] at hproduct
+    exact le_trans (by linarith) hproduct
+  have hfloorLower : x ^ q - 1 < (⌊x ^ q⌋₊ : ℝ) := by
+    have hfloor := Nat.lt_floor_add_one (x ^ q)
+    have hfloorReal : x ^ q < (⌊x ^ q⌋₊ : ℝ) + 1 := by
+      exact_mod_cast hfloor
+    linarith
+  have hfloorPos : 1 ≤ (⌊x ^ q⌋₊ : ℝ) := by
+    exact (by linarith : (1 : ℝ) ≤ x ^ p).trans
+      (le_trans (by linarith : x ^ p ≤ x ^ q - 1) hfloorLower.le)
+  have hgapFloor : x ^ q - x ^ p ≤ (⌊x ^ q⌋₊ : ℝ) := by
+    exact (by linarith : x ^ q - x ^ p ≤ x ^ q - 1).trans hfloorLower.le
+  have hpowerFloor : x ^ p ≤ (⌊x ^ q⌋₊ : ℝ) := by
+    exact (by linarith : x ^ p ≤ x ^ q - 1).trans hfloorLower.le
+  have hfloorUpper : (⌊x ^ q⌋₊ : ℝ) ≤ x ^ q :=
+    Nat.floor_le (Real.rpow_nonneg (le_trans (by norm_num) hx) q)
+  exact ⟨hfloorPos, hgapFloor, hpowerFloor, hfloorUpper⟩
 
 /-- A floor-rounded intermediate power scale lies strictly between the
 quadratic and cubic scales of any divergent positive width sequence. -/

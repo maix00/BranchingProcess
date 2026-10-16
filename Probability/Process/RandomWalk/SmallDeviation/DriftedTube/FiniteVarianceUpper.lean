@@ -8,6 +8,7 @@ module
 
 public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceUpper.Lemmas.Blocks
 public import Probability.Process.Filtration.ConditionalBlocks
+import Analysis.Asymptotics.Scale.IntermediatePowerBlock
 
 /-!
 # Finite-variance upper bound for a tilted tube
@@ -100,7 +101,8 @@ theorem exists_driftedTubeProbability_le_exp_of_finiteVariance
         (⌊Delta ^ (2 + eta)⌋₊ : ℝ) ≤ Delta ^ (2 + eta)) ∧
       d ≤ Delta ^ (v - eta) ∧ DeltaBlock₀ ≤ Delta ∧ 1 ≤ Delta := by
     filter_upwards
-      [Drawdown.eventually_drawdownFloorBlockLength_bounds heta,
+      [Asymptotics.eventually_nat_floor_rpow_intermediate_bounds
+          (p := 2 + eta / 2) (q := 2 + eta) (by linarith) (by linarith),
         hgrowth, eventually_ge_atTop DeltaBlock₀,
         eventually_ge_atTop (1 : ℝ)] with Delta hfloor hgrowthAt hblockWidth hDelta
     exact ⟨hfloor, hgrowthAt, hblockWidth, hDelta⟩

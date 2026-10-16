@@ -16,6 +16,15 @@ public import Probability.Process.RandomWalk.FunctionalLimit.NormalizedStep.Endp
 
 This file specializes the endpoint-constrained Portmanteau bound to the
 verified Donsker theorem for centered unit-variance increments.
+
+The public theorems in this file are:
+
+- `ProbabilityTheory.RandomWalk.brownian_centeredSkorokhodCorridorEndsIn_le_liminf_strictTubeEndsIn`:
+  Brownian mass in an open corridor with an open terminal interval is at most
+  the liminf of the matching discrete event probabilities.
+- `ProbabilityTheory.RandomWalk.limsup_centeredWeakTube_le_brownian_closedCorridor`:
+  the limsup probability of weak centered tubes is at most the Brownian mass
+  of the corresponding closed corridor.
 -/
 
 open Filter MeasureTheory ProbabilityTheory

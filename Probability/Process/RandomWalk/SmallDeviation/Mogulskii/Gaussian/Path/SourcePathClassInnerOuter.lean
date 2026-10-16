@@ -14,9 +14,22 @@ import Probability.Process.Stable.Brownian.PathLaw
 /-!
 # Explicit Gaussian source-convention inner and outer rates
 
+The public theorem in this file is:
+
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Path.existsUnique_inner_outer_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_source_index_two_of_brownian_explicit`:
+  the inner and outer source-path probabilities have the same unique
+  exponent-two logarithmic rate, $-pi^2 H_2(M)/2$, for each path class $M$
+  with a vanishing-energy-gap approximation.
+
 The source-aligned inner/outer theorem applies in the normal domain of
 attraction, including infinite-variance increment laws. The Brownian escape
 constant identifies its explicit full-width coefficient as `-π² / 2`.
+
+The rate is the source-path form of Theorem 3, Section 4, p. 764 of A. A.
+Mogul'skii, “Small deviations in the sample function space,” *Teoriya
+Veroyatnostei i ee Primeneniya* 19(4) (1974), 755--765; English translation,
+“Small Deviations in a Space of Trajectories,” *Theory of Probability and Its
+Applications* 19(4) (1975), 726--736, DOI 10.1137/1119081.
 -/
 
 open Filter MeasureTheory ProbabilityTheory
@@ -24,7 +37,7 @@ open scoped ENNReal NNReal Topology
 
 @[expose] public section
 
-namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian
+namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Path
 
 open ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability
 open Skorokhod.PathClass.StepCorridor
@@ -34,7 +47,9 @@ open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete
 paths have the same unique inner and outer logarithmic rate for every path
 class `M`. The Brownian escape constant is evaluated explicitly, giving the
 full-width coefficient `-π² / 2`. No measurability assumption on the target is
-needed, and the normal-domain input allows infinite variance. -/
+needed, and the normal-domain input allows infinite variance. This is the
+source-path form of Theorem 3, Section 4, p. 764 of A. A. Mogul'skii,
+*Small Deviations in a Space of Trajectories* (DOI 10.1137/1119081). -/
 theorem existsUnique_inner_outer_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_source_index_two_of_brownian_explicit
     {ν : Measure ℝ} [IsProbabilityMeasure ν]
     {normalization scale : ℕ → ℝ}
@@ -132,6 +147,6 @@ theorem existsUnique_inner_outer_log_probability_ratio_of_hasVanishingEnergyGapA
     exact hUnique H' ⟨A', hLimits', hEnergyEq', hInnerPos', hOuterPos',
       hPositive', hEnergyUpper', hInnerRate'', hOuterRate''⟩
 
-end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian
+end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Path
 
 end

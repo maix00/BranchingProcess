@@ -14,6 +14,13 @@ public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.CLT
 /-!
 # Gaussian path-law existence from random-walk tightness
 
+The public theorem in this file is:
+
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Path.exists_gaussianStablePathLaw_with_escapeRate`:
+  a centered unit-variance random walk yields a Gaussian unit-interval path
+  law, a concatenated stable Lévy process, and the exponent-two escape rate
+  $-\pi^2/8$.
+
 The Gaussian unit-interval path law can be obtained as a subsequential limit
 of the Rademacher walk. Its stable clock-law structure and the calibrated
 escape rate then follow from the repo-owned path-law and stable-process
@@ -27,7 +34,7 @@ open ProbabilityTheory.RandomWalk.FunctionalLimit.Stable
 
 @[expose] public section
 
-namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian
+namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Path
 
 /-- The Gaussian unit-interval path law and its exponent-two escape rate can
 be obtained from the Rademacher source by normal-domain tightness. The
@@ -82,6 +89,6 @@ theorem exists_gaussianStablePathLaw_with_escapeRate
   refine ⟨P, ⟨Q, hQ⟩, X, hP, hX, ?_⟩
   simpa [hC] using hEscape
 
-end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian
+end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Path
 
 end
