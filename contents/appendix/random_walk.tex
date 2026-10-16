@@ -24,7 +24,11 @@
         \ge C\Delta^{-2},
         \qquad \Delta\ge\Delta_0,
     \end{equation*}
-    \bilingual{where $\mathbb P_x$ denotes the law with $S_0=x$.}{其中 $\mathbb P_x$ 表示 $S_0=x$ 时的概率律.}
+    \bilingual{
+        The same lower bound holds when the endpoint interval in $\mathcal A_\Delta(x)$ is replaced by $[h_{n_\Delta}+\frac25\Delta,h_{n_\Delta}+\frac35\Delta]$, where $\mathbb P_x$ denotes the law with $S_0=x$.
+    }{
+        将 $\mathcal A_\Delta(x)$ 中的终点区间替换为 $[h_{n_\Delta}+\frac25\Delta,h_{n_\Delta}+\frac35\Delta]$ 时, 同一下界仍成立, 其中 $\mathbb P_x$ 表示 $S_0=x$ 时的概率律.
+    }
 \end{lemma}
 
 \begin{proof}[\bilingual{Proof of \Cref{lemma:meander-transition}}{\Cref{lemma:meander-transition} 的证明}]
@@ -177,8 +181,8 @@
     \end{equation*}
 
     \bilingual{
-        For the middle interval, $c\le S_j\le\Delta$ implies $h_j\le S_j\le\Delta+h_j$, because $h_j\le c$ for $j\le n_\Delta$. For sufficiently large $\Delta$, its endpoint interval $[\frac5{12}\Delta,\frac7{12}\Delta]$ lies in $[h_{n_\Delta}+\frac13\Delta,h_{n_\Delta}+\frac23\Delta]$. The three starting-point intervals cover $[0,\Delta]$. Since $\Delta\ge1$, the middle estimate $p_0/2$ also gives a lower bound of $(p_0/2)\Delta^{-2}$. Taking the minimum of the three positive constants proves the stated bound.
+        For the middle interval, $c\le S_j\le\Delta$ implies $h_j\le S_j\le\Delta+h_j$, because $h_j\le c$ for $j\le n_\Delta$. For sufficiently large $\Delta$, the endpoint intervals in all three cases lie in $[h_{n_\Delta}+\frac25\Delta,h_{n_\Delta}+\frac35\Delta]$, which is contained in the endpoint interval defining $\mathcal A_\Delta(x)$. The three starting-point intervals cover $[0,\Delta]$. Since $\Delta\ge1$, the middle estimate $p_0/2$ also gives a lower bound of $(p_0/2)\Delta^{-2}$. Taking the minimum of the three positive constants proves both bounds.
     }{
-        对中间区间, 当 $j\le n_\Delta$ 时有 $h_j\le c$, 故 $c\le S_j\le\Delta$ 蕴含 $h_j\le S_j\le\Delta+h_j$. 对充分大的 $\Delta$, 其终点区间 $[\frac5{12}\Delta,\frac7{12}\Delta]$ 包含于 $[h_{n_\Delta}+\frac13\Delta,h_{n_\Delta}+\frac23\Delta]$. 三个起点区间覆盖 $[0,\Delta]$. 由于 $\Delta\ge1$, 中间区间的估计 $p_0/2$ 也给出下界 $(p_0/2)\Delta^{-2}$. 取三个正常数的最小值即得所述下界.
+        对中间区间, 当 $j\le n_\Delta$ 时有 $h_j\le c$, 故 $c\le S_j\le\Delta$ 蕴含 $h_j\le S_j\le\Delta+h_j$. 对充分大的 $\Delta$, 三种情形的终点区间均包含于 $[h_{n_\Delta}+\frac25\Delta,h_{n_\Delta}+\frac35\Delta]$, 此区间又包含于 $\mathcal A_\Delta(x)$ 所定义的终点区间. 三个起点区间覆盖 $[0,\Delta]$. 由于 $\Delta\ge1$, 中间区间的估计 $p_0/2$ 也给出下界 $(p_0/2)\Delta^{-2}$. 取三个正常数的最小值即得两个下界.
     }
 \end{proof}
