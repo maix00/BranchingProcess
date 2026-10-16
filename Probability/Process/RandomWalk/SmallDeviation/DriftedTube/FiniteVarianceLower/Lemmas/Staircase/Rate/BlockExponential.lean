@@ -11,7 +11,7 @@ public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 /-!
 # Exponential cost of a finite staircase
 
-The public theorems in this file are:
+The supporting lemmas in this file are:
 
 - `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.sum_blockLengths_add_start`:
   consecutive block lengths satisfy
@@ -31,7 +31,7 @@ namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 
 /-- The lengths of consecutive blocks telescope to the difference of their
 starting and ending times. -/
-theorem sum_blockLengths_add_start
+lemma sum_blockLengths_add_start
     (start length : ℕ → ℕ)
     (hnext : ∀ j, start (j + 1) = start j + length j)
     (q : ℕ) :
@@ -44,7 +44,7 @@ theorem sum_blockLengths_add_start
 
 /-- The finite product of block exponentials is the exponential cost of
 the total block time. -/
-theorem prod_exp_blockLengths
+lemma prod_exp_blockLengths
     (start length : ℕ → ℕ)
     (hnext : ∀ j, start (j + 1) = start j + length j)
     (q : ℕ) (d width : ℝ) :
