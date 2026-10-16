@@ -14,13 +14,18 @@ import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUppe
 /-!
 # Finite-variance drawdown upper bounds
 
+For an increment sequence $\xi=(\xi_i)_{i\ge0}$, write
+$S_j=\sum_{i=0}^{j-1}\xi_i$. The event in the first theorem is
+$B_{L,\Delta,r}=\{\xi:S_i-S_j\le\Delta\;(0\le i\le j\le L),\;
+S_L\le r\}$.
+
 The public theorems in this file are:
 
 - `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.measureReal_noLargeDropEndpointBelowEvent_le_exp_of_finiteVariance`:
   for centered increments of variance $\sigma^2>0$ and
   $0<d<\pi^2\sigma^2/2$, sufficiently large $\Delta$ and
   $L\ge\Delta^{2+c}$ give
-  $\mathbb P(\forall i\le j\le L,\ Y_i-Y_j\le\Delta,\ Y_L\le\Delta/c)
+  $\mathbb P(\forall i\le j\le L,\ S_i-S_j\le\Delta,\ S_L\le\Delta/c)
   \le e^{-dL/\Delta^2}$.
 - `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.exists_uniform_iidSequenceLaw_measure_noLargeDropEndpointBelowEvent_le_of_centeredSecondMoment`:
   a uniform version for all large widths and superquadratic horizons.
@@ -59,8 +64,8 @@ Applications* 19(1) (1975), 726--736, DOI 10.1137/1119081.
 
 For
 \[
-  B_{L,\Delta,c}:=\left\{Y_L\leq\frac{\Delta}{c},\quad
-    \min_{0\leq i\leq j\leq L}(Y_j-Y_i)\geq-\Delta\right\},
+  B_{L,\Delta,c}:=\left\{S_L\leq\frac{\Delta}{c},\quad
+    \min_{0\leq i\leq j\leq L}(S_j-S_i)\geq-\Delta\right\},
 \]
 the conclusion is `P(B_{L,Δ,c}) ≤ exp(-d L / Δ²)` whenever `Δ` is large
 enough and `L ≥ Δ^(2+c)`. -/

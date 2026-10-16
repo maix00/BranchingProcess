@@ -25,7 +25,8 @@ The public declaration is:
   for a Mogul'skii scale $a_n$, if the seven Brownian endpoint-band
   probabilities exceed $p>0$ and their corridor fits inside the tube, then
   $C^{-1}\log p\leq\liminf_n (a_n^2/n)\log\mathbb P(T_n)$, where
-  $T_n=\{\omega:\mathrm{InOpenHorizontalTube}(1/2,a_n,n,\omega)\}$.
+  $S_j(\omega)=\sum_{i=0}^{j-1}\omega_i$ and
+  $T_n=\{\omega:-a_n/2<S_j(\omega)<a_n/2\ (1\le j\le n)\}$.
 
 This is an explicit endpoint-band block lower-bound step for the horizontal
 small-deviation rate in Theorem 3, Section 4, p. 764, of A. A. Mogul'skii,

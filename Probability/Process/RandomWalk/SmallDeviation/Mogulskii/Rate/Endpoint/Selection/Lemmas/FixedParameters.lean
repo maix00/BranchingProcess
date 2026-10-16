@@ -12,6 +12,10 @@ public import Analysis.Asymptotics.Scale.BlockScale
 /-!
 # Fixed-parameter endpoint-window lower bound
 
+For increments $\xi=(\xi_i)_{i\ge0}$, write
+$S_j=\sum_{i=0}^{j-1}\xi_i$. At width $x_n$, let
+$T_n=\{\xi:-x_n/2\le S_j\le x_n/2\;(1\le j\le n)\}$.
+
 This proof-support module chooses explicit natural-number floor parameters for
 the fixed spectral endpoint-window estimate. Its sole cross-module result is
 `one_div_constant_mul_log_toReal_le_liminf_scaledLog_horizontalTubeProbability_of_floorEndpointWindows`:

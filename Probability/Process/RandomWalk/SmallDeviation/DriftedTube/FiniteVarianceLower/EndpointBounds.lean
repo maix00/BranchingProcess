@@ -23,7 +23,8 @@ The public theorem in this file is:
   gives $e^{-d'L/\Delta^2}\le\mathbb P(A^-_{L,\Delta})$ and
   $e^{-d'L/\Delta^2}\le\mathbb P(A^+_{L,\Delta})$ for every admissible
   initial boundary and horizon $L\ge\lfloor\Delta^{2+\varepsilon}\rfloor$.
-  For $R_j=r+\mu j/\Delta^2$ and partial sums $Y_j$, these events are
+  For increments $\xi=(\xi_i)_{i\ge0}$, write
+  $Y_j=\sum_{i=0}^{j-1}\xi_i$ and $R_j=r+\mu j/\Delta^2$. These events are
   $A^-_{L,\Delta}=\{R_j\le Y_j\le R_j+\Delta\ (1\le j\le L),\;
   Y_L\in[R_L,R_L+v\Delta]\}$ and
   $A^+_{L,\Delta}=\{R_j\le Y_j\le R_j+\Delta\ (1\le j\le L),\;

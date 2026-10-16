@@ -15,8 +15,8 @@ The public objects and theorem in this file are:
 
 - `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.driftedTubeEvent`: for
   $L\in\mathbb N$, width $\Delta$, drift $c$, and initial position $r_0$,
-  the event that $r_0+cj/\Delta^2\le Y_j\le r_0+cj/\Delta^2+\Delta$ for
-  $1\le j\le L$.
+  with $Y_j=\sum_{i=0}^{j-1}\xi_i$, the event that
+  $r_0+cj/\Delta^2\le Y_j\le r_0+cj/\Delta^2+\Delta$ for $1\le j\le L$.
 - `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.driftedTubeEvent_subset_noLargeDropEndpointBelowEvent`: for $c\ge0$ and
   $-\Delta\le r_0\le0$, this tube event implies the no-large-drop event
   with terminal bound $\Delta+cL/\Delta^2$.

@@ -26,6 +26,10 @@ The public theorem in this file is:
   \exp(\Delta^v-dL/\Delta^2)$ uniformly in $L\ge0$ and
   $-\Delta\le r_0\le0$.
 
+Here $Y_j=\sum_{i=0}^{j-1}\xi_i$ for increments $\xi$, and
+$T_{L,\Delta,c,r_0}=\{\xi:r_0+cj/\Delta^2\le Y_j\le
+r_0+cj/\Delta^2+\Delta,\;1\le j\le L\}$.
+
 This formalizes Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.4. The proof follows the
 equal-length block decomposition, conditional-expectation iteration, and
 remainder estimate in that lemma. The proof-only block inputs are in

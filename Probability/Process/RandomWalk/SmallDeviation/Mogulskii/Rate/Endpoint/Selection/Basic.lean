@@ -13,6 +13,10 @@ import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Range.Ra
 /-!
 # Sharp normal-domain rate from floor endpoint windows
 
+For increments $\xi=(\xi_i)_{i\ge0}$, write
+$S_j=\sum_{i=0}^{j-1}\xi_i$. At width $x_n$, let
+$T_n=\{\xi:-x_n/2\le S_j\le x_n/2\;(1\le j\le n)\}$.
+
 The fixed-parameter floor construction is kept in the proof-only module
 `Rate/Endpoint/Selection/Lemmas/FixedParameters.lean`. This file selects the
 parameters that approach the Brownian constant and combines the resulting
