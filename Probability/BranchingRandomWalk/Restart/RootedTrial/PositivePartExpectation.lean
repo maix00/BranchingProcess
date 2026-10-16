@@ -14,8 +14,9 @@ import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Measurability
 The pathwise positive-part estimate for the causal reserve spine can be
 integrated using the fixed-generation marginal law of its predictably sampled
 steps.  The result only assumes a first moment for the one-step observable;
-it does not identify that observable with a paper-specific offspring mark, or
-identify the causal reserve source with the retrospective restart process.
+it does not identify that observable with a distinguished raw offspring
+slot, or identify the causal reserve source with the retrospective restart
+process.
 -/
 
 open MeasureTheory ProbabilityTheory

@@ -102,7 +102,7 @@ theorem eventually_floorPower_mul_power_ge
   exact hresult'.le
 
 /-- The lower-tail threshold in the independent-root estimate exceeds
-`n^δ` once the one-root PZ probability has the paper's polynomial lower
+`n^δ` once the one-root PZ probability has the polynomial lower
 rate.  The analytic hypothesis is exactly the output needed from the
 first-stage one-root tube estimate. -/
 theorem eventually_floorPower_mul_ennreal_toReal_ge

@@ -43,7 +43,7 @@ private theorem secondStage_subtreePotential_eq_rootPositionDifference
 /-- If a retained particle at the restart generation has a surviving subtree
 path in the second-stage affine corridor, the concatenated path is retained
 at the terminal generation.  `hweight` is the finite-weight condition used
-by the totalized killed process; under the paper's boundary normalization it
+by the totalized killed process; under the boundary normalization it
 holds simultaneously at all addresses almost surely. -/
 theorem mem_restartedPopulation_of_secondStageCorridor
     (m ell ellN : ℕ) (logN b v c κ : ℝ)

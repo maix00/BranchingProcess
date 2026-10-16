@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.Brownian.Independence.FirstPassage
-public import Probability.Process.Path.DescendingHittingTimeRestart
+public import Probability.Process.Path.FirstPassage.DescendingRestart
 
 /-!
 # Increments of Brownian descending hitting times

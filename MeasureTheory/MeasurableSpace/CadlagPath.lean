@@ -9,8 +9,8 @@ module
 public import Mathlib.MeasureTheory.Constructions.Polish.Basic
 public import Mathlib.MeasureTheory.MeasurableSpace.Constructions
 public import Mathlib.Topology.Instances.Real.Lemmas
-public import Topology.Cadlag.Skorokhod.Integral
-public import Topology.Cadlag.Skorokhod.Separable
+public import Topology.Cadlag.Skorokhod.Evaluation.Integral
+public import Topology.Cadlag.Skorokhod.Path.Separable
 
 /-!
 # The Borel structure on càdlàg Skorokhod path space

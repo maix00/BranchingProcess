@@ -188,7 +188,7 @@ theorem finiteOffspringLaw_isSupercritical
       ENNReal.toReal_one] using hreal
   exact (ENNReal.toReal_lt_toReal ENNReal.one_ne_top hsumTop.ne).mp hreal'
 
-/-- The paper's nonempty and supercritical offspring assumptions produce a
+/-- The nonempty and supercritical offspring assumptions produce a
 finite-slot supercritical Galton--Watson law from the bounded reserve rule.
 This theorem applies the finite-slot growth estimate to that law at every
 target scale. -/

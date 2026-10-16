@@ -24,7 +24,7 @@ The public theorems in this file are:
 These are the exponential consequences of Wang Yiyang, *Asymptotic speed of
  the $N$-branching random walk with infinite offspring*, Chapter 3,
 Lemma 3.1(ii), using A. A. Mogul'skii, *Small Deviations in a Space of
-Trajectories*, Theorem 3, Section 4, p. 764 of the Russian original
+Trajectories*, Theorem 3, Section 4, p. 764 of the 1974 Russian original
 (English translation, *Theory of Probability and Its Applications* 19(4)
 (1975), 726--736, DOI 10.1137/1119081).
 -/
@@ -157,7 +157,7 @@ $N$-branching random walk with infinite offspring*, Chapter 3, Lemma 3.1(ii).
 The endpoint interval is the fixed interval `[u,v]`; this is the block
 estimate used after narrowing each staircase tube in the proof of Chapter 3,
 Lemma 3.5. The rate input is Mogul'skii, "Small Deviations in a Space of
-Trajectories," Theorem 3, Section 4, p. 764 (DOI 10.1137/1119081). -/
+Trajectories," Theorem 3, Section 4, p. 764 of the 1974 Russian original (DOI 10.1137/1119081). -/
 theorem exists_eventually_horizontalTubeEndpointWindowProbability_ge_exp_uniform
     {ν : Measure ℝ} [IsProbabilityMeasure ν] {sigma d a u v : ℝ}
     (hν : IsCenteredSecondMoment ν (sigma ^ 2)) (hsigma : 0 < sigma)

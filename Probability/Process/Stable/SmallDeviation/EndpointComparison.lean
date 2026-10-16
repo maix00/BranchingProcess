@@ -11,7 +11,7 @@ public import Probability.Process.Stable.SmallDeviation.Blocks.EntranceScaling
 public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.FiniteTimeEntrance
 public import Probability.Process.Stable.SmallDeviation.Blocks.Upper.Shrinking
 public import Probability.Process.Corridor.Range
-public import Analysis.Asymptotics.NegativeRatio
+public import Analysis.Asymptotics.Sequence.NegativeRatio
 import Mathlib.Topology.Compactness.Compact
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 import Mathlib.Tactic.FieldSimp

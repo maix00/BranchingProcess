@@ -84,7 +84,7 @@ private theorem eventually_one_add_const_mul_log_cube_le_exp
 
 /-- The first-stage one-root PZ probability has the power rate obtained from
 `lowerMean ≳ N^(-b-epsilon)` and `upperMean + MRCA pairs ≲ N^(-b+2v+epsilon)`.
-The only random-walk input is the paper's centered finite second moment; in
+The only random-walk input is the centered finite second moment; in
 the pair estimate the drawdown sequence is constantly one. -/
 theorem eventually_rightTailPositiveA_pzMean_toReal_ge_power_of_centeredSecondMoment
     {N : ℕ → ℕ} (hN : Tendsto N atTop atTop)

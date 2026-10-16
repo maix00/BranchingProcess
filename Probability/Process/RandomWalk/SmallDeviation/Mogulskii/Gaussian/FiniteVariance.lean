@@ -23,7 +23,7 @@ The normal-domain theorem allows infinite variance.  When the second moment is
 finite, the truncated second moment tends to the variance, giving the familiar
 variance-scaled exponent as a direct consequence of A. A. Mogul'skii,
 *Small Deviations in a Space of Trajectories*, Theorem 3, Section 4,
-p. 764 of the Russian original (English translation, *Theory of Probability
+p. 764 of the 1974 Russian original (English translation, *Theory of Probability
 and Its Applications* 19(4) (1975), 726--736, DOI 10.1137/1119081).
 -/
 

@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Analysis.Asymptotics.InverseScale
+public import Analysis.Asymptotics.Scale.InverseScale
 public import Probability.Process.RandomWalk.Path.Corridor.Horizontal
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.FromIncrementLaw.NormalContinuousBoundary
 /-!
@@ -82,8 +82,7 @@ closed horizontal tubes. The squeeze uses inward and outward constant
 boundaries, as in the proof of Lemma 3.1(i) in Wang Yiyang, *Asymptotic speed
 of the $N$-branching random walk with infinite offspring*, Chapter 3. The rate
 is Mogul'skii, "Small Deviations in a Space of Trajectories," Theorem 3,
-Section 4, p. 764 (Russian original, 1974;
-English translation, *Theory of Probability and Its Applications* 19(4)
+Section 4, p. 764 of the 1974 Russian original; English translation, *Theory of Probability and Its Applications* 19(4)
 (1975), 726–736, DOI 10.1137/1119081).
 -/
 
@@ -487,7 +486,7 @@ private theorem horizontalTube_subset_sourceRelativeConstantCorridor
 /-- Finite-variance form of Wang Yiyang, *Asymptotic speed of the $N$-branching
 random walk with infinite offspring*, Chapter 3, Lemma 3.1(i). The rate input
 is Mogul'skii, "Small Deviations in a Space of Trajectories," Theorem 3,
-Section 4, p. 764 (DOI 10.1137/1119081). The time horizon is `n - 1`, matching
+Section 4, p. 764 of the 1974 Russian original (DOI 10.1137/1119081). The time horizon is `n - 1`, matching
 the terminal-left source path. -/
 theorem centeredFiniteVariance_closedHorizontalTubeProbabilityRate
     {ν : Measure ℝ} [IsProbabilityMeasure ν] {scale : ℕ → ℝ}
@@ -1370,7 +1369,7 @@ theorem inverseScales_closedHorizontalTubeProbabilityRate
 random walk with infinite offspring*, Chapter 3, Lemma 3.1(i). The proof
 interpolates along a subsequence of strictly increasing times. Its rate is
 Mogul'skii, "Small Deviations in a Space of Trajectories," Theorem 3, Section
-4, p. 764 (DOI 10.1137/1119081). -/
+4, p. 764 of the 1974 Russian original (DOI 10.1137/1119081). -/
 theorem centeredFiniteVariance_horizontalTubeProbabilityRate
     {L : ℕ → ℕ} (hL : Tendsto L atTop atTop)
     (hquadratic : Asymptotics.IsSuperquadraticScale L)
@@ -1447,7 +1446,7 @@ theorem centeredFiniteVariance_horizontalTubeProbabilityRate
 random walk with infinite offspring*, Chapter 3, Lemma 3.1(ii). The endpoint
 window eventually contains a fixed interior interval. Its rate input is
 Mogul'skii, "Small Deviations in a Space of Trajectories," Theorem 3, Section
-4, p. 764 (DOI 10.1137/1119081). -/
+4, p. 764 of the 1974 Russian original (DOI 10.1137/1119081). -/
 theorem centeredFiniteVariance_endpointWindowProbabilityRate_along
     {ν : Measure ℝ} [IsProbabilityMeasure ν]
     {time width : ℕ → ℕ} (htime : StrictMono time)
@@ -1609,7 +1608,7 @@ $[u,v]\subset(0,1)$, the endpoint-window logarithmic rate is
 $-\pi^2\sigma^2/2$. The proof uses the same terminal-jump source
 corridor and upper horizontal-tube squeeze as the integer-width form.
 The source rate is A. A. Mogul'skii, *Small Deviations in a Space of
-Trajectories*, Theorem 3, Section 4, p. 764 (DOI 10.1137/1119081). -/
+Trajectories*, Theorem 3, Section 4, p. 764 of the 1974 Russian original (DOI 10.1137/1119081). -/
 theorem centeredFiniteVariance_endpointWindowProbabilityRate_realWidthAlong
     {ν : Measure ℝ} [IsProbabilityMeasure ν]
     {time : ℕ → ℕ} {width : ℕ → ℝ} (htime : StrictMono time)
@@ -1803,7 +1802,7 @@ theorem centeredFiniteVariance_endpointWindowProbabilityRate_realWidth
 random walk with infinite offspring*, Chapter 3, Lemma 3.1(ii). The endpoint
 window eventually contains one fixed nonempty interval strictly inside the
 tube, and the scale condition is `L Δ / Δ² → ∞`. The rate input is Mogul'skii,
-"Small Deviations in a Space of Trajectories," Theorem 3, Section 4, p. 764
+"Small Deviations in a Space of Trajectories," Theorem 3, Section 4, p. 764 of the 1974 Russian original
 (DOI 10.1137/1119081). -/
 theorem centeredFiniteVariance_endpointWindowProbabilityRate
     {L : ℕ → ℕ} (hL : Tendsto L atTop atTop)

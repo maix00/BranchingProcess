@@ -9,7 +9,7 @@ module
 public import Probability.Process.Brownian.Reflection.FirstPassageApproximation
 public import Probability.Process.Brownian.GaussianMarginal
 public import Probability.Distributions.Gaussian.Sign
-public import Probability.Process.Path.FirstPassageReflection
+public import Probability.Process.Path.FirstPassage.Reflection
 public import Probability.Process.Path.RunningMinimum
 
 /-!

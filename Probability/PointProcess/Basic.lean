@@ -24,7 +24,8 @@ the evaluations `ν ↦ ν s`.
 
 The family is a parameter rather than a fixed condition: `compactFamily` gives
 the standard locally-finite point process, while `leftRayFamily` on `ℝ` gives
-the paper's left-half-line condition. The thesis never hardcodes either one.
+finiteness on every left half-line. This interface represents either condition
+without fixing one as part of the abstract definition.
 
 `PointProcess` is the probability-theoretic object, so its abstract core lives
 under `Probability/PointProcess/`; compare Mathlib's `Probability/Kernel/`.

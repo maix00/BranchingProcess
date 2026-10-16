@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Scale
-public import Analysis.Asymptotics.BlockScale
+public import Analysis.Asymptotics.Scale.BlockScale
 
 /-!
 # Diffusive block lengths
@@ -38,7 +38,7 @@ $x_n\to\infty$ with $x_n^2/n\to0$. The public definition and theorems are:
 
 These are the integer-block scaling facts used in the discrete proof of
 Mogul'skii, *Small Deviations in a Space of Trajectories*, Theorem 3,
-Section 4, p. 764 (DOI 10.1137/1119081).
+Section 4, p. 764 of the 1974 Russian original (DOI 10.1137/1119081).
 -/
 
 open Filter Topology

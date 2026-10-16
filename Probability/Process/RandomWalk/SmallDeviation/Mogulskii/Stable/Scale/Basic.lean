@@ -6,9 +6,9 @@ Authors: WANG Yiyang
 
 module
 
-public import Analysis.Asymptotics.BlockScale
+public import Analysis.Asymptotics.Scale.BlockScale
 public import Analysis.Asymptotics.RegularVariation.SlowScale
-public import Analysis.Asymptotics.Scale
+public import Analysis.Asymptotics.Scale.Scale
 public import Probability.Distributions.Stable.Attraction
 public import Probability.Distributions.Stable.Attraction.Norming
 public import Probability.Distributions.Stable.Attraction.Norming.Inverse

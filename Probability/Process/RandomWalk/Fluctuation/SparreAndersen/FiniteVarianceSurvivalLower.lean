@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Analysis.Asymptotics.SequenceLowerPower
+public import Analysis.Asymptotics.Power.SequenceLowerPower
 public import Probability.Distributions.Moments.Signs
 public import Probability.Process.RandomWalk.Fluctuation.SparreAndersen.CoefficientRecurrence
 public import Probability.Process.RandomWalk.Fluctuation.FiniteVarianceSignLimit

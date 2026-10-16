@@ -17,7 +17,7 @@ public import Probability.Process.Stable.SmallDeviation.EscapeRate.PathLaw.Trans
 public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.FullCorridor
 public import Probability.Process.Path.Skorokhod.Corridor.Segment
 public import Probability.Process.Path.Cadlag.MeasurableMap
-public import Topology.Cadlag.Skorokhod.LinearPath
+public import Topology.Cadlag.Skorokhod.Path.Linear
 
 import Mathlib.Probability.Distributions.Gaussian.IsGaussianProcess.Basic
 import Mathlib.Probability.Distributions.Gaussian.HasGaussianLaw.Basic

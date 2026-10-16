@@ -26,7 +26,7 @@ The public theorem in this file is:
 This is the return-probability input for the assertion $\nu_n\to\infty$
 on page 484 of Erwin Bolthausen, *On a functional central limit theorem
 for random walks conditioned to stay positive*, Ann. Probab. 4(3)
-(1976), 480--485.
+(1976), 480--485, DOI 10.1214/aop/1176996098.
 -/
 
 @[expose] public section

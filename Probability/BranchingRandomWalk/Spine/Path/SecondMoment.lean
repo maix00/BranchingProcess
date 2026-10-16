@@ -391,7 +391,7 @@ theorem pathGeneration_sq_eq_self_add_distinctAddressPairCount
 /-- Integrating the zero-one path-count identity separates its first moment
 from its expected ordered distinct-pair count. This is the measurable
 multi-generation interface for supplying the MRCA contribution in the
-paper's corridor second-moment argument. -/
+the corridor second-moment argument. -/
 theorem lintegral_pathGeneration_sq_eq_add_distinctAddressPairCount
     {X : Type*} [MeasurableSpace X]
     (φ : Potential X) (μ : Measure (Step ℕ X)) (n : ℕ)
@@ -420,7 +420,7 @@ theorem lintegral_pathGeneration_sq_eq_add_distinctAddressPairCount
 
 /-- The descendant fields of two distinct first-generation children have the
 product law. This is the subtree-independence input for the off-diagonal
-terms in the paper's second-moment decomposition. -/
+terms in the second-moment decomposition. -/
 theorem distinct_child_subtreeFields_joint_law
     {ι X : Type*} [MeasurableSpace X]
     (μ : Measure (Step ι X)) [IsProbabilityMeasure μ]

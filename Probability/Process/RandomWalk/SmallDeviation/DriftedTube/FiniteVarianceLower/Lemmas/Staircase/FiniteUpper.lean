@@ -32,6 +32,8 @@ open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 
+open ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube
+
 /-- The finite staircase calculation with a final window adjacent to the
 upper edge of the tilted tube. -/
 lemma exists_uniform_finiteStaircaseUpperEndpointLowerBound

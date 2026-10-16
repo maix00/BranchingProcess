@@ -73,8 +73,8 @@ private theorem mgf_eventIndicator
 /-- If each independent initial root has probability `q` of a measurable
 event in its entire descendant field, then the probability that at most a
 quarter of the mean number of roots realize the event is exponentially
-small.  This is the binomial lower-tail step used in the paper after the
-first tube stage. -/
+small. This is the binomial lower-tail estimate applied after the first tube
+stage. -/
 theorem measure_finiteRootEventCount_le_quarter_mean
     {X : Type*} [MeasurableSpace X]
     (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]

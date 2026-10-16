@@ -102,7 +102,7 @@ theorem lintegral_pathGenerationOffDiagonalPairs_eq_distinctAddressPairCount
 
 /-- Pair-moment input for a long corridor can be passed directly to the
 independent-root survival estimate. The only missing probabilistic input is
-the paper's estimate on the expected number of ordered distinct successful
+the estimate on the expected number of ordered distinct successful
 path pairs; this theorem turns that input into the full second moment and
 then applies the existing Paley--Zygmund/root-count adapter. -/
 theorem measure_finiteRootCorridorCount_le_quarter_spineLower_of_pairMoment

@@ -27,7 +27,7 @@ construction, so the theorem only relies on almost-everywhere continuity of
 Brownian paths.
 This identifies the Gaussian coefficient of A. A. Mogul'skii,
 *Small Deviations in a Space of Trajectories*, Theorem 3, Section 4,
-p. 764 of the Russian original (English translation, *Theory of Probability
+p. 764 of the 1974 Russian original (English translation, *Theory of Probability
 and Its Applications* 19(4) (1975), 726--736, DOI 10.1137/1119081).
 -/
 

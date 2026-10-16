@@ -142,7 +142,7 @@ theorem tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_s
   exact tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_sourceStableInputs
     hscale hα₀ (by linarith) hslow hX hcdf hDOA htightBase hG hGmeas
 
-/-- The source theorem below index one from a raw attraction normalization
+/-- The stable-domain rate for `0 < α < 1` from a raw attraction normalization
 and an independent small-deviation scale. Reindexing the norming sequence
 internally gives the canonical time normalization; the limiting law and
 reference process receive the matching spatial rescaling. -/
@@ -316,7 +316,7 @@ theorem tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_s
   exact tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_sourceStableInputs
     hscale (by norm_num) (by norm_num) hslow hX hcdf hDOA htightBase hG hGmeas
 
-/-- The Gaussian-domain source theorem from a raw attraction normalization.
+/-- The Gaussian-domain path-class rate from a raw attraction normalization.
 Only a finite prefix of the normalization is repaired to obtain the strict
 positivity required by `IsStableNorming`; the path event and rate still use
 the caller's original corridor scale. -/
@@ -354,7 +354,7 @@ theorem tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_r
   exact tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_source_index_two
     hscale' hX hDOA' hG hGmeas
 
-/-- The source theorem at index one from a raw attraction normalization.
+/-- The stable-domain path-class rate at index one from a raw attraction normalization.
 Reindexing preserves the source sine-centering condition, and the reference
 stable process receives the matching positive spatial rescaling. -/
 theorem tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_rawSource_index_one
@@ -403,7 +403,7 @@ theorem tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_r
       hscale' hX' hcdf' hDOA' hcenter' hG hGmeas
   exact ⟨q, hq, C, hEscape, hNull, H, hH, hUnique⟩
 
-/-- The source theorem for `1 < α < 2` from a raw attraction normalization.
+/-- The stable-domain path-class rate for `1 < α < 2` from a raw attraction normalization.
 The canonical norming and small-deviation scale are aligned internally, and
 the reference stable process receives the matching spatial rescaling. -/
 theorem tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_rawSource_index_gt_one

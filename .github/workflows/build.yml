@@ -72,7 +72,7 @@ jobs:
             MeasureTheory.Measure.CadlagPath.PathClass.StepCorridor.Energy \
             Probability.Process.Path.PathClass.StepCorridor.Probability.Rate.FiniteUnion \
             Probability.Process.Path.PathClass.StepCorridor.Probability.Rate.Approximation \
-            Topology.Cadlag.Skorokhod.Separable \
+            Topology.Cadlag.Skorokhod.Path.Separable \
             MeasureTheory.MeasurableSpace.CadlagPath \
             Combinatorics.BranchingWalk.Walk.Equiv \
             Probability.BranchingRandomWalk.Walk.Path.Scaling
@@ -94,17 +94,17 @@ jobs:
             ProbabilityTheory.bochner
           : > "$RUNNER_TEMP/stable-small-deviation-axioms.txt"
           cat \
-            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Stable/ShiftedCorridor.lean.log" \
-            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Stable/RangeComparison.lean.log" \
-            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Stable/BlockBounds.lean.log" \
-            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Stable/EndpointComparison.lean.log" \
-            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Stable/EscapeRate.lean.log" \
-            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Stable/EscapeRatePathLaw.lean.log" \
-            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Stable/Scale.lean.log" \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Stable/SmallDeviation/ShiftedCorridor.lean.log" \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Stable/SmallDeviation/RangeComparison.lean.log" \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Stable/SmallDeviation/BlockBounds.lean.log" \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Stable/SmallDeviation/EndpointComparison.lean.log" \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Stable/SmallDeviation/EscapeRate.lean.log" \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Stable/SmallDeviation/EscapeRatePathLaw.lean.log" \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Stable/Attraction/Scale.lean.log" \
             "$RUNNER_TEMP/lean-tests/BranchingProcessTest/CharacteristicFunction/GaussianSmoothing.lean.log" \
-            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Stable/CharacteristicFunction.lean.log" \
-            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Stable/AttractionBlock.lean.log" \
-            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Stable/AttractionCharacteristicFunction.lean.log" \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Stable/Attraction/CharacteristicFunction.lean.log" \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Stable/Attraction/Block.lean.log" \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Stable/Attraction/CharacteristicFunctionLimit.lean.log" \
             "$RUNNER_TEMP/lean-tests/BranchingProcessTest/DomainOfAttraction/NormingRatios.lean.log" \
             "$RUNNER_TEMP/lean-tests/BranchingProcessTest/DomainOfAttraction/TruncatedTailIntegral.lean.log" \
             "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Analysis/CosineTauberian.lean.log" \
@@ -233,11 +233,11 @@ jobs:
         run: |
           set -o pipefail
           lake build \
-            Topology.Cadlag.Skorokhod.Separable \
+            Topology.Cadlag.Skorokhod.Path.Separable \
             MeasureTheory.MeasurableSpace.CadlagPath
           : > "$RUNNER_TEMP/skorokhod-path-axioms.txt"
           cat \
-            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/SkorokhodBorelGeneration.lean.log" \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Skorokhod/Borel/Generation.lean.log" \
             >> "$RUNNER_TEMP/skorokhod-path-axioms.txt"
           python3 scripts/check-lean-axioms.py \
             "$RUNNER_TEMP/skorokhod-path-axioms.txt" --expected \
@@ -258,7 +258,7 @@ jobs:
             Probability.RandomMeasure.Poisson.Integral
           : > "$RUNNER_TEMP/poisson-random-measure-axioms.txt"
           cat \
-            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Probability/PoissonRandomMeasure.lean.log" \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Probability/Poisson/RandomMeasure.lean.log" \
             >> "$RUNNER_TEMP/poisson-random-measure-axioms.txt"
           python3 scripts/check-lean-axioms.py \
             "$RUNNER_TEMP/poisson-random-measure-axioms.txt" --expected \
@@ -294,7 +294,7 @@ jobs:
             Probability.BranchingRandomWalk.Walk.Path.Scaling
           : > "$RUNNER_TEMP/random-walk-axioms.txt"
           cat \
-            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Probability/RandomWalkPathLaw.lean.log" \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Probability/RandomWalk/RandomWalkPathLaw.lean.log" \
             "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Branching/WalkEquiv.lean.log" \
             >> "$RUNNER_TEMP/random-walk-axioms.txt"
           python3 scripts/check-lean-axioms.py \

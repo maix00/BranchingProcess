@@ -7,13 +7,16 @@ Authors: WANG Yiyang
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.BridgeComparison.SourceAsymptotics
 import Probability.Process.Stable.SmallDeviation.Blocks.ShiftComparison.AllIndices
 
-/-! # CDF entrance adapter for source equation (34)
+/-! # CDF entrance adapter for Mogul'skii's equation (34)
 
 The bridge comparison modules use Lean's `module` import discipline. The
 all-index stable entrance theorem still belongs to the legacy import layer,
 because its finite-variation Poisson construction depends on legacy imports.
 This adapter joins those APIs and discharges the `α < 1` entrance input from
-the original CDF sign condition. -/
+the original CDF sign condition. The comparison is Mogul'skii's equation (34),
+Theorem 3, Section 4, p. 764 of the 1974 Russian original, in A. A. Mogul'skii, *Small Deviations in a
+Space of Trajectories* (1974 Russian original; 1975 English translation,
+DOI 10.1137/1119081). -/
 
 open Filter MeasureTheory ProbabilityTheory
 open scoped ENNReal NNReal Topology
@@ -38,8 +41,10 @@ theorem sourceBridgeEntrance_pos_of_cdfAtZero_allIndices
     (by constructor <;> linarith [hy.1, hy.2])
     (by constructor <;> linarith [hx.1, hx.2]) hradius using 1; ring_nf
 
-/-- The source equation (34) lower bound with no auxiliary entrance
-hypothesis: every bridge mass is obtained from the source CDF condition by
+/-- Mogul'skii's equation (34) lower bound, Theorem 3, Section 4, p. 764 of the 1974 Russian original, in
+A. A. Mogul'skii, *Small Deviations in a Space of Trajectories* (1974 Russian
+original; 1975 English translation, DOI 10.1137/1119081), with no auxiliary
+entrance hypothesis: every bridge mass is obtained from the CDF sign condition by
 the centered, index-one, or finite-variation Poisson stable entrance result. -/
 theorem exists_source_equation34_log_ratio_lower_of_stableDomain_of_cdfAtZero
     {ν μ : Measure ℝ} [IsProbabilityMeasure ν] [IsProbabilityMeasure μ]

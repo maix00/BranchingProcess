@@ -2,8 +2,8 @@
 
 ## Scope and source statement
 
-This note audits the process theorem in §5 of Mogul'skii, “Small deviations
-in the sample function space” ([1974 article record and full text](https://www.mathnet.ru/eng/tvp3978), English translation in *Theory of Probability and its Applications* 19 (1975), 726–736).
+This note audits Theorem 4, Section 5, of A. A. Mogul'skii, *Small Deviations
+in a Space of Trajectories* ([1974 article record and full text](https://www.mathnet.ru/eng/tvp3978); English translation in *Theory of Probability and Its Applications* 19(4) (1975), 726–736, DOI 10.1137/1119081).
 The theorem concerns a homogeneous process with independent increments
 `ξ(t)`, `t ≥ 0`, with almost-surely right-continuous paths and zero mean when
 the mean exists. Its one-time laws are in the strict stable domain of
@@ -24,8 +24,9 @@ log P(t ↦ ξ(n t) / x(n) ∈ G)
   ~ C Hα(G) n x(n)^(-α) L*(x(n)),
 ```
 
-with the same coefficient `C < 0` as Theorem 1. The path convention is the
-paper's `D(0,1)` convention: the value at the terminal time is the left limit.
+with the same coefficient `C < 0` as Theorem 1. The path convention is
+Mogul'skii's `D(0,1)` convention: the value at the terminal time is the left
+limit.
 In the repository's normalization, `C = 2^α C₀`, where `C₀` is the stable
 unit-range escape coefficient. The exact event convention and `Hα` definition
 remain those recorded in `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Rate/PROOF_ROUTE.md`.
@@ -93,7 +94,7 @@ The current APIs do not compose to Theorem 4. The missing pieces are:
    process-level `J₁` limit, then take the stable small-width limit. It must
    provide both the range upper estimate and the endpoint-core lower estimate
    needed for `M₂` block concatenation.
-4. **The paper's path regularity and terminal endpoint.** The paper states
+4. **Mogul'skii's path regularity and terminal endpoint.** The theorem states
    almost-sure right continuity, whereas `IsLevyProcess` asks for
    almost-sure càdlàg paths. Either prove left limits from the stated
    independent/stationary-increment and continuity assumptions, or expose the
@@ -176,5 +177,5 @@ càdlàg-path, stable-process escape, and random-walk stable-domain APIs cover
 parts of the dependency chain, but the full-process functional limit and its
 full-path one-block squeeze are not present. The next proof package should
 implement and verify those two interfaces before adding a theorem wrapper;
-the source theorem itself should not be introduced with an unproved path
+Mogul'skii's Theorem 4 should not be introduced with an unproved path
 convergence or a skeleton-probability shortcut.

@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.Rademacher.TerminalPathLaw
-public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Survival
+public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Survival.Conditioning
 
 /-!
 # Boolean and real forms of the conditioned Rademacher path law
@@ -35,8 +35,8 @@ The public theorems in this file are:
 
 These identities connect the simple-symmetric-walk argument on page 484
 of Erwin Bolthausen, *On a functional central limit theorem for random
-walks conditioned to stay positive*, Ann. Probab. 4(3) (1976), 480--485,
-to the nonnegative-survival conditional law used earlier in that article.
+walks conditioned to stay positive*, Ann. Probab. 4(3) (1976), 480--485, DOI 10.1214/aop/1176996098,
+Theorem 3.2, to its nonnegative-survival conditional law.
 -/
 
 @[expose] public section

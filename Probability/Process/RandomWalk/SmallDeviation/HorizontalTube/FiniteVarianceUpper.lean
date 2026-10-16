@@ -46,7 +46,7 @@ $N$-branching random walk with infinite offspring*, Chapter 3, Lemma 3.2 and
 its following remark. The equal-partition iteration is the proof of Aïdékon
 and Hu, *Average-weight percolation on the complete graph*, Lemma 4.1 (2025,
 arXiv:2512.23266); the one-block rate is Mogul'skii, "Small Deviations in a
-Space of Trajectories," Theorem 3, Section 4, p. 764 (DOI 10.1137/1119081). -/
+Space of Trajectories," Theorem 3, Section 4, p. 764 of the 1974 Russian original (DOI 10.1137/1119081). -/
 theorem horizontalTubeProbability_le_exp_of_finiteVariance_withRemainder
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (hcentered : ∫ x, x ∂ν = 0)
@@ -149,7 +149,7 @@ theorem horizontalTubeProbability_le_exp_of_finiteVariance_withRemainder
 random walk with infinite offspring*, Chapter 3, Lemma 3.2. Its equal-partition
 argument is Aïdékon and Hu, *Average-weight percolation on the complete graph*,
 Lemma 4.1 (2025, arXiv:2512.23266); its one-block rate is Mogul'skii, "Small
-Deviations in a Space of Trajectories," Theorem 3, Section 4, p. 764
+Deviations in a Space of Trajectories," Theorem 3, Section 4, p. 764 of the 1974 Russian original
 (DOI 10.1137/1119081). -/
 theorem horizontalTubeProbability_le_exp_of_finiteVariance
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
@@ -173,7 +173,7 @@ its following remark. The event identity transfers the centered-tube estimate;
 the equal-partition iteration is Aïdékon and Hu, *Average-weight percolation on
 the complete graph*, Lemma 4.1 (2025, arXiv:2512.23266). The block rate is
 Mogul'skii, "Small Deviations in a Space of Trajectories," Theorem 3, Section
-4, p. 764 (Russian original, 1974; English translation, *Theory of Probability
+4, p. 764 of the 1974 Russian original (English translation, *Theory of Probability
 and Its Applications* 19(4) (1975), 726–736, DOI 10.1137/1119081). -/
 theorem iidSequenceLaw_intervalProbability_le_exp_of_finiteVariance_withRemainder
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
@@ -220,7 +220,7 @@ theorem iidSequenceLaw_intervalProbability_le_exp_of_finiteVariance_withRemainde
 /-- Wang Yiyang, *Asymptotic speed of the $N$-branching random walk with
 infinite offspring*, Chapter 3, Lemma 3.2, translated-interval form of
 Aïdékon and Hu, Lemma 4.1. The block estimate uses Mogul'skii,
-Theorem 3, Section 4, p. 764 (see the module header for full citations). -/
+Theorem 3, Section 4, p. 764 of the 1974 Russian original (see the module header for full citations). -/
 theorem iidSequenceLaw_intervalProbability_le_exp_of_finiteVariance
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (hcentered : ∫ x, x ∂ν = 0)

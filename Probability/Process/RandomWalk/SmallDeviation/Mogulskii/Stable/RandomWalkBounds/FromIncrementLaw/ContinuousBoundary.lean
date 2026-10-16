@@ -14,7 +14,7 @@ public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.SourcePath
 /-!
 # Continuous-boundary Mogul'skii rates from increment laws
 
-This module specializes the raw-domain-of-attraction source theorem to a
+This module specializes the raw-domain-of-attraction path-class rate to a
 strictly separated continuous corridor. Its energy is the real integral of
 the reciprocal width to the power `α`. The general result is formulated with
 inner and outer measures. The finite-step source event is shown measurable,
@@ -34,7 +34,7 @@ open ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability
 open ProbabilityTheory.RandomWalk.FunctionalLimit.Stable
 open Skorokhod.PathClass.StepCorridor
 
-/-- The raw-source theorem for a continuous corridor, with its limiting
+/-- The continuous-corridor rate from raw domain-of-attraction inputs, with its limiting
 energy identified as the reciprocal-width integral. No measurability of the
 target path set is assumed, so the conclusion records inner and outer rates. -/
 theorem exists_source_continuousBoundary_inner_outer_rates_of_rawSource

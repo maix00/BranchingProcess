@@ -25,7 +25,7 @@ open ProbabilityTheory.BranchingRandomWalk.Spine
 
 @[expose] public section
 
-/-- For the paper's varying first and second stage horizons, terminal
+/-- For the varying first and second stage horizons, terminal
 extinction is bounded by the low-root probability plus the explicit
 second-stage all-failure exponential. The remaining work is to bound the
 first term and combine this killed-process estimate with the capacity event. -/

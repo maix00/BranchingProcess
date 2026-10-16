@@ -224,7 +224,7 @@ theorem stableScaleTime_isRegularlyVaryingAtTop
     stableScaleTime 2 ν u = u ^ 2 / truncatedSecondMoment ν u := by
   simp [stableScaleTime]
 
-/-- Under the paper's asymptotic norming condition, the quadratic norming has
+/-- Under the asymptotic norming condition, the quadratic norming has
 the expected variance scale. The exact identity `B*(B(n)) = n` is not needed:
 the defining asymptotic `B*(B(n))/n → 1` and convergence of truncated second
 moments suffice. -/

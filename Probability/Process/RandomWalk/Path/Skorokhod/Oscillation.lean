@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Order.Interval.UniformGrid
-public import Probability.Process.RandomWalk.Path.Cadlag
+public import Probability.Process.RandomWalk.Path.Representation.Cadlag
 public import Probability.Process.RandomWalk.Path.Block.Law.FirstCrossing
 public import Topology.Cadlag.Skorokhod.Oscillation.Partition.Finite
 public import Topology.Cadlag.Skorokhod.Oscillation.Partition.Measurability

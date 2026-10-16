@@ -213,9 +213,10 @@ theorem horizontalTubeProbability_mono_horizon
   intro increment hlong k
   exact hlong ⟨k, lt_of_lt_of_le k.isLt hshort⟩
 
-/-- The thesis monotonicity lemma for `q(width,n)`, stated with the
-extended-real logarithm so it remains valid when a tube has probability zero.
--/
+/-- Width monotonicity for the logarithmic tube probability, in the form used
+in Wang Yiyang, *Asymptotic speed of the $N$-branching random walk with
+infinite offspring*, Chapter 3, proof of Lemma 3.2. The extended-real
+logarithm keeps the statement valid when a tube has probability zero. -/
 theorem horizontalTubeLogProbability_mono_width
     (incrementLaw : Measure (ℕ → ℝ))
     {a width₁ width₂ : ℝ} {n : ℕ}

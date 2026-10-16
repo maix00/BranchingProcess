@@ -669,7 +669,7 @@ theorem smallInitialPopulationHitSubtreePopulation_image
 /-- Boundary admissibility is enough to discharge the pathwise selector
 conditions in the post-hit trajectory comparison.  This version exposes only
 the one-step finite negative exponential weight property of the pre-sampled
-field; the almost-everywhere theorem below derives it from the paper's
+field; the almost-everywhere theorem below derives it from the
 boundary normalization assumption. -/
 theorem smallInitialPopulationHitSubtreePopulation_image_of_weight
     (m N n : ℕ) (hm : 0 < m)

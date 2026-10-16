@@ -11,10 +11,12 @@ public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Ran
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.UpperEndpointSource
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Partition
 
-/-! # Source equation (34) asymptotics
+/-! # Mogul'skii equation (34) asymptotics
 
 This module proves base-corridor positivity, endpoint-corridor decay, and the
-logarithmic-ratio consequence of the source finite bridge comparison. -/
+logarithmic-ratio consequence of the finite bridge comparison in A. A.
+Mogul'skii, *Small Deviations in a Space of Trajectories* (Theorem 3,
+Section 4, equation (34), p. 764 of the 1974 Russian original; English translation, DOI 10.1137/1119081). -/
 
 open Filter MeasureTheory ProbabilityTheory
 open scoped ENNReal NNReal Topology
@@ -159,7 +161,9 @@ theorem eventually_sourceEndpointCorridorEvent_pos_of_equation34
     exact (not_lt_of_ge hcomp') hleft
   exact ENNReal.toReal_pos htarget.ne' (measure_ne_top _ _)
 
-/-- Once the source equation (34) comparison is known, base-corridor
+/-- Once Mogul'skii's equation (34) comparison (Theorem 3, Section 4, p. 764 of the 1974 Russian original,
+in *Small Deviations in a Space of Trajectories*, DOI 10.1137/1119081) is
+known, base-corridor
 positivity and endpoint-corridor decay give the logarithmic-ratio bound. -/
 theorem eventually_one_sub_le_log_ratio_of_source_equation34
     {ν : Measure ℝ} [IsProbabilityMeasure ν]
@@ -386,7 +390,10 @@ theorem tendsto_sourceEndpointCorridor_toReal_zero_of_strictStableDomain
   · exact Eventually.of_forall fun n => ENNReal.toReal_nonneg
   · exact htargetBound
 
-/-- Source equation (34), followed by the logarithmic-ratio conclusion.
+/-- Mogul'skii's equation (34), Theorem 3, Section 4, p. 764 of the 1974 Russian original, in A. A.
+Mogul'skii, *Small Deviations in a Space of Trajectories* (1974 Russian
+original; 1975 English translation, DOI 10.1137/1119081), followed by the
+logarithmic-ratio conclusion.
 
 The bridge limit is supplied in the existing variable-block stable path-law
 interface. The finite-prefix cover, the source bridge cells, their IID path

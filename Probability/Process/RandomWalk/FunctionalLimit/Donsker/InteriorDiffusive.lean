@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.FunctionalLimit.Donsker.InteriorFinite
-public import Analysis.Asymptotics.ShiftedFloor
+public import Analysis.Asymptotics.Scale.ShiftedFloor
 public import Probability.Process.RandomWalk.FunctionalLimit.Normal.Tightness
 public import Probability.Process.RandomWalk.FunctionalLimit.Stable.ProcessExistence
 

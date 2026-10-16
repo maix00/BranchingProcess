@@ -93,7 +93,7 @@ theorem firstNSelectedEndpointMinimum_zero_eq
     simp [RootIndexed.position]
 
 /-- The positive part of the selected endpoint has a finite-root fourth
-moment bounded by `n^4` times the paper's leftmost positive-step fourth
+moment bounded by `n^4` times the leftmost positive-step fourth
 moment. The only probabilistic assumptions are the left boundary
 normalization, nonempty offspring, and leftmost fourth moment. -/
 theorem finiteRootStepFieldLaw_integrable_pow_four_max_firstNSelectedEndpointMinimum_pos

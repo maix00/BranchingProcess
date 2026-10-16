@@ -8,7 +8,7 @@ module
 
 public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Concrete.Upper.Asymptotic
 public import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.ExponentialBudget
-public import Analysis.Asymptotics.IntermediatePowerBlock
+public import Analysis.Asymptotics.Scale.IntermediatePowerBlock
 
 /-!
 # Upper-endpoint tilted-tube bound from conditioned entrance estimates

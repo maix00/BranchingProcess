@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.Stable.SmallDeviation.PathClass.StepCorridor.Partition.LowerKernel
-public import Topology.Cadlag.Skorokhod.Scaling
+public import Topology.Cadlag.Skorokhod.Path.Scaling
 
 /-!
 # Deterministic geometry for the partition lower bound

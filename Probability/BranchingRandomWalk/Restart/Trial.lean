@@ -12,8 +12,8 @@ public import Probability.BranchingRandomWalk.Restart.ReserveLineage
 /-!
 # Observable first-split growth trials
 
-This module gives the first reserve-lineage candidate the concrete event used
-in the thesis: after the first split, the selected first child starts a finite
+This module gives the first reserve-lineage candidate a concrete event: after
+the first split, the selected first child starts a finite
 growth trial, which stays nonempty and below the cap before its endpoint and
 ends in the prescribed population band.  The split-completion generation is
 used as the trial start, so the trial event is measurable at its actual
@@ -443,7 +443,7 @@ noncomputable def RootIndexed.ReserveLineages.firstGrowthCompletion
   fun ω => lineages.sigma splitMark r i ω + duration
 
 /-- With `duration = ℓ - 1`, the observable candidate endpoint `σ + duration`
-is the thesis's `τ + ℓ`. -/
+is the `τ + ℓ`. -/
 theorem RootIndexed.ReserveLineages.firstGrowthCompletion_eq_tau_add_trialLength
     {Root Trial α X : Type*} [MeasurableSpace X]
     (lineages : RootIndexed.ReserveLineages Root Trial α X)
@@ -554,7 +554,7 @@ theorem RootIndexed.ReserveLineages.firstGrowthCandidatesWithin_measurable
     (fun p => successAtCompletion (completion p) (test p)) hobs
     candidates hcandidates T
 
-/-- The paper's first-split growth event supplies the observable candidate
+/-- The first-split growth event supplies the observable candidate
 family consumed by the existing `L¹` restart estimate. The probability bound
 for candidate failure remains an explicit input, as does freshness of the
 continuation subtree family. -/

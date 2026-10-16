@@ -11,7 +11,7 @@ public import Probability.Process.Path.PathClass.StepCorridor.Probability.Rate.F
 public import Probability.Process.Path.PathClass.StepCorridor.Probability.Rate.Approximation
 public import Probability.Process.Path.PathClass.StepCorridor.Probability.Rate.InnerOuter
 public import Probability.Process.Path.PathClass.StepCorridor.Probability.Normalization
-public import Topology.Cadlag.Skorokhod.Scaling
+public import Topology.Cadlag.Skorokhod.Path.Scaling
 
 /-!
 # Stable-process rates for `M₂` and `M₃`

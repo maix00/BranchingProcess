@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Distributions.Moments.BoundedWindows
-public import Analysis.Asymptotics.ShiftedFloor
+public import Analysis.Asymptotics.Scale.ShiftedFloor
 
 /-!
 # Fixed entrance prefixes for the two edge intervals

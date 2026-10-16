@@ -40,11 +40,13 @@ or page when useful), and give its bibliography key or stable identifier (DOI,
 arXiv ID, or URL). For results from a thesis, identify its exact title,
 chapter, and displayed theorem number. Do not use `the paper`, `the thesis`,
 or `the source` as a substitute for a reference. Apply the same rule to Mogul'skii's results;
-for example, cite Theorem 3, Section 4, p. 764 of A. A. Mogul'skii,
-"Small Deviations in a Space of Trajectories" (Russian original, 1974; English
-translation, *Theory of Probability and Its Applications* 19(4) (1975),
-726–736, DOI 10.1137/1119081). Include the exact Lean theorem name in the
-module header and the exact source result in that theorem's docstring.
+for example, identify Theorem 3, Section 4, p. 764 of the 1974 Russian original
+by A. A. Mogul'skii, “Small deviations in the sample function space,”
+*Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974), 755--765, together
+with its English translation, “Small Deviations in a Space of Trajectories,”
+*Theory of Probability and Its Applications* 19(4) (1975), 726--736, DOI
+10.1137/1119081. Include the exact Lean theorem name in the module header and
+the exact source result in that theorem's docstring.
 
 Avoid source names such as `paper...` in private declaration identifiers.
 Name helpers for the mathematical object or proof operation they implement.

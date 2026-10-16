@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.Brownian.Reflection.FirstPassagePrinciple
-public import Probability.Process.Path.DescendingHittingTime
+public import Probability.Process.Path.FirstPassage.Descending
 
 /-!
 # One-dimensional law of descending Brownian hitting times

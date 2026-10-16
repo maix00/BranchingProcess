@@ -6,8 +6,8 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Binning.FiniteThreshold
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Binning.Parameters
+public import Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.RealWidthLower
+public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Binning.Parameters
 /-!
 # Uniform exponential bound for narrowed staircase bins
 
@@ -30,6 +30,8 @@ open MeasureTheory ProbabilityTheory
 open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
+
+open ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube
 
 /-- The finitely many narrowed horizontal tubes have a common real-width
 threshold, and their probability bounds use the global width exponent. -/

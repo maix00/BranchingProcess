@@ -148,7 +148,7 @@ theorem IsStrictlyAlphaStable.measure_map_rpow_Icc_lt_one_of_lt_two
   exact hinterval
 
 /-- A nondegenerate strictly `2`-stable law has unbounded positive support.
-The source condition `0 < F(0) < 1` gives positive mass above zero; the
+The CDF sign condition `0 < F(0) < 1` gives positive mass above zero; the
 two-copy scaling identity then amplifies every positive tail threshold by a
 factor greater than one. -/
 theorem IsStrictlyAlphaStable.measure_Ioi_pos_indexTwo
@@ -259,7 +259,7 @@ theorem IsStrictlyAlphaStable.measure_Ioi_pos_indexTwo
     exact lt_trans hn hx
   exact lt_of_lt_of_le (hiter n) (measure_mono hsubset)
 
-/-- The source condition `0 < F(0) < 1` makes every bounded interval have
+/-- The CDF sign condition `0 < F(0) < 1` makes every bounded interval have
 strictly less than full mass for a nondegenerate strictly `2`-stable law. -/
 theorem IsStrictlyAlphaStable.measure_Icc_lt_one_indexTwo
     {μ : Measure ℝ} (h : IsStrictlyAlphaStable 2 μ)
@@ -286,7 +286,7 @@ theorem IsStrictlyAlphaStable.measure_Icc_lt_one_indexTwo
     lt_of_lt_of_le htail (measure_mono hsubset)
   exact (ne_of_gt hpositive) hcompl
 
-/-- The source endpoint-mass condition for a positive scale in the strictly
+/-- The endpoint-mass condition for a positive scale in the strictly
 `2`-stable case. -/
 theorem IsStrictlyAlphaStable.measure_map_rpow_Icc_lt_one_indexTwo
     {constant : ℝ} {μ : Measure ℝ} (h : IsStrictlyAlphaStable 2 μ)

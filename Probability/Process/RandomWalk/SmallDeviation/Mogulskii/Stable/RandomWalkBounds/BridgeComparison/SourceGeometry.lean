@@ -15,7 +15,10 @@ public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Ran
 /-! # Source corridor cells and finite bridge geometry
 
 This module defines the source's prefix and bridge cells, identifies them
-with normalized block-path events, and proves their finite cover and gluing. -/
+with normalized block-path events, and proves their finite cover and gluing.
+The concrete cells encode equation (34), Theorem 3, Section 4, p. 764 of the 1974 Russian original, of
+A. A. Mogul'skii, *Small Deviations in a Space of Trajectories* (1974 Russian
+original; 1975 English translation, DOI 10.1137/1119081). -/
 
 open Filter MeasureTheory ProbabilityTheory
 open scoped ENNReal NNReal Topology
@@ -29,8 +32,10 @@ needed because the source's stable entrance estimate is stated for an
 interior starting point. -/
 abbrev SourceBridgeCenter := {x : ℝ // -1 < x ∧ x < 1}
 
-/-- Prefix cells for the source's equation (34): the prefix stays in the unit
-corridor, and its normalized endpoint lies in the bin around `x`. -/
+/-- Prefix cells for Mogul'skii's equation (34), Theorem 3, Section 4, p. 764 of the 1974 Russian original,
+in *Small Deviations in a Space of Trajectories* (DOI 10.1137/1119081): the
+prefix stays in the unit corridor, and its normalized endpoint lies in the
+bin around `x`. -/
 def sourcePrefixCell (length : ℕ) (scale radius x : ℝ) :
     Set (Fin length → ℝ) :=
   {block | InOpenPartialSumCorridor (-scale) scale block ∧

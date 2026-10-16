@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.Event
-public import Probability.Process.RandomWalk.Path.Filtration
+public import Probability.Process.RandomWalk.Path.Adapted.Filtration
 public import Probability.Process.RandomWalk.Path.Block.Law.FiniteInterval
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.BlockScale
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.Horizontal
@@ -57,7 +57,7 @@ offspring*, Chapter 3, proof of Lemma 3.3. The one-block estimate applies
 Wang Yiyang's Lemma 3.2, following Aïdékon and Hu,
 *Average-weight percolation on the complete graph*, Lemma 4.1, and
 Mogul'skii, *Small deviations in a space of trajectories*, Theorem 3,
-Section 4, p. 764 (DOI 10.1137/1119081).
+Section 4, p. 764 of the 1974 Russian original (DOI 10.1137/1119081).
 -/
 
 open Filter MeasureTheory Topology

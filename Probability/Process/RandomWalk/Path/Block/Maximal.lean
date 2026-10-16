@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.Path.Block.Law
-public import Probability.Process.RandomWalk.Path.Martingale
+public import Probability.Process.RandomWalk.Path.Adapted.Martingale
 
 /-!
 # Maximal inequalities on increment blocks

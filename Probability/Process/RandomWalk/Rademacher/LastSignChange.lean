@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.Rademacher
-public import Probability.Process.RandomWalk.Path.LastSignChange
+public import Probability.Process.RandomWalk.Path.Event.LastSignChange
 public import Probability.Process.RandomWalk.Path.Interpolation.Basic
 
 /-!
@@ -38,7 +38,7 @@ The public theorems in this file are:
 The final assertion is the parenthetical remark following the definitions
 of $\mu_n$ and $\nu_n$ on page 484 of Erwin Bolthausen,
 *On a functional central limit theorem for random walks conditioned to
-stay positive*, Ann. Probab. 4(3) (1976), 480--485.
+stay positive*, Ann. Probab. 4(3) (1976), 480--485, DOI 10.1214/aop/1176996098.
 -/
 
 @[expose] public section

@@ -13,7 +13,7 @@ public import Probability.Process.RandomWalk.Path.Skorokhod.Basic
 public import Probability.Sequence.IID
 public import Probability.Process.Stable.PathLaw.LinearTube
 public import Mathlib.Topology.Compactness.Compact
-public import Topology.Cadlag.Skorokhod.LinearPath
+public import Topology.Cadlag.Skorokhod.Path.Linear
 
 /-!
 # Donsker transfer for a linear open tube

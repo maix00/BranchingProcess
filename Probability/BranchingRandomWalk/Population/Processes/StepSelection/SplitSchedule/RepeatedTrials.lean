@@ -19,7 +19,7 @@ same-generation roots, and `SplitSchedule.freshField_law` gives their
 descendant fields the exact product law.
 
 This is a trial-schedule statement. It does not yet identify those trial
-roots with the active particles of the paper's process started from
+roots with the active particles of the process started from
 `N₀ < N` particles. That process-level identification, and the corresponding
 random-time identification with the exact-`N` ranked environment, remain the
 bridge needed before applying the Kingman interface.

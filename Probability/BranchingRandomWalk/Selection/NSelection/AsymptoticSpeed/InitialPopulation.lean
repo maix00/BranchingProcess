@@ -16,7 +16,7 @@ public import Mathlib.MeasureTheory.MeasurableSpace.MeasurablyGenerated
 /-!
 # Filling an initially smaller selected population
 
-The paper's small-initial-population extension has three dependencies:
+The small-initial-population extension has three dependencies:
 
 1. supercriticality implies a positive chance of at least two children;
 2. repeated independent opportunities for this split fill any fixed finite

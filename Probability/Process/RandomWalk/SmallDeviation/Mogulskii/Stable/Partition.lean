@@ -8,7 +8,7 @@ module
 
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Corridor
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Scale.Rate
-public import Analysis.Asymptotics.SlowDiagonal
+public import Analysis.Asymptotics.Scale.SlowDiagonal
 
 /-!
 # Block counts at the stable small-deviation scale

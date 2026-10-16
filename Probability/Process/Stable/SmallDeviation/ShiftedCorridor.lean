@@ -12,7 +12,7 @@ public import Probability.Process.Stable.SmallDeviation.Blocks.EntranceScaling
 public import Probability.Process.Stable.SmallDeviation.Blocks.Upper.Shrinking
 public import Probability.Distributions.Stable.Sign
 public import Probability.Process.Path.Skorokhod.Corridor.Segment
-public import Analysis.Asymptotics.NegativeRatio
+public import Analysis.Asymptotics.Sequence.NegativeRatio
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 
@@ -29,7 +29,10 @@ multiplicative comparison after stable scaling.
 
 ## References
 
-The comparison implies Lemma 2(a), equation (21), in Mogulskii's paper.
+The comparison implies Lemma 2(a), equation (21), in A. A. Mogul'skii,
+"Small Deviations in a Space of Trajectories" (Russian original, 1974;
+English translation, *Theory of Probability and Its Applications* 19(4)
+(1975), 726--736, DOI 10.1137/1119081).
 
 This is the light public entry point for shifted-corridor comparisons. It does
 not import the feedback, path-support, or Poisson entrance arguments.
@@ -328,8 +331,8 @@ theorem IsStableLevyProcess.eventually_one_sub_le_log_corridor_ratio_of_cdf
   exact h.eventually_one_sub_le_log_corridor_ratio_of_entrance
     hpos hneg b c ε hb hε.le T hT hp δ hδ
 
-/-- The source's strict left-half-line condition, expressed directly as
-positive mass on `Iio 0`, implies the shifted-corridor comparison. -/
+/-- Positive mass on `Iio 0`, together with total mass strictly above zero,
+implies the shifted-corridor comparison. -/
 theorem IsStableLevyProcess.eventually_one_sub_le_log_corridor_ratio_of_measure_Iio_zero
     {Ω : Type*} [MeasurableSpace Ω]
     {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}

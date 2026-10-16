@@ -12,7 +12,7 @@ public import Mathlib.MeasureTheory.Function.L1Space.Integrable
 /-!
 # Structural assumptions on the child law
 
-These predicates mirror the structural assumptions stated in the thesis. A
+These predicates express structural assumptions on a branching law. A
 raw law is never assumed to have ordered slots. Indexed children are read from
 the sorted pushforward supplied by `StepLaw.ordering`.
 -/

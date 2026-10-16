@@ -9,8 +9,8 @@ module
 public import Probability.Process.Brownian.LinearPathSupport
 public import Probability.Process.Brownian.Meander.LastZeroLaw
 public import Topology.ContinuousMap.LastSignChange
-public import Topology.Cadlag.Skorokhod.ContinuousMap
-public import Topology.Cadlag.Skorokhod.LinearPath
+public import Topology.Cadlag.Skorokhod.Maps.Continuous
+public import Topology.Cadlag.Skorokhod.Path.Linear
 
 /-!
 # Linear paths in the support of the Brownian terminal excursion
@@ -30,7 +30,7 @@ The public theorems in this file are:
 
 The terminal-excursion representation is from Donald L. Iglehart,
 *Functional Central Limit Theorems for Random Walks Conditioned to Stay
-Positive*, Ann. Probab. 2(4) (1974), 608--619, Section 3.
+Positive*, Ann. Probab. 2(4) (1974), 608--619, DOI 10.1214/aop/1176996607, Section 3.
 -/
 
 @[expose] public section

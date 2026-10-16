@@ -53,8 +53,10 @@ private theorem lintegral_eq_zero_of_eq_zero_off_top {f : unitInterval → ℝ�
   simp
 
 /-- The reciprocal `α`-power of a corridor width. Infinite width contributes
-zero. On finite positive widths this is exactly `(upper - lower) ^ (-α)` as in
-the paper. The definition is total outside admissible corridors as well. -/
+zero. On finite positive widths this is exactly `(upper - lower) ^ (-α)`,
+the integrand defining `Hα` in §1 of A. A. Mogul'skii, "Small Deviations in a
+Space of Trajectories" (DOI 10.1137/1119081). The definition is total outside
+admissible corridors as well. -/
 noncomputable def widthCost (α : ℝ) (upper lower : EReal) : ℝ≥0∞ :=
   if upper = ⊤ ∨ lower = ⊥ then 0
   else if 0 < upper.toReal - lower.toReal then

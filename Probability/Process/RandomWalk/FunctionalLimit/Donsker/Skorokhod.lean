@@ -11,7 +11,7 @@ public import Mathlib.Probability.BrownianMotion.Basic
 public import Probability.Process.RandomWalk.FunctionalLimit.Donsker.Continuous
 public import Probability.Process.RandomWalk.Path.Interpolation.Convergence
 public import Probability.Process.Path.UnitInterval
-public import Topology.Cadlag.Skorokhod.ContinuousMap
+public import Topology.Cadlag.Skorokhod.Maps.Continuous
 
 /-!
 # Skorokhod-space Donsker theorem

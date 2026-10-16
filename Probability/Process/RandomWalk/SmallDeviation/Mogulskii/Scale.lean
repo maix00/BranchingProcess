@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Sequence.IID
-public import Analysis.Asymptotics.Scale
+public import Analysis.Asymptotics.Scale.Scale
 public import Probability.Distributions.Moments.Real
 
 /-!
@@ -29,7 +29,7 @@ The public declarations in this file are:
 This predicate specializes the general small-deviation scale relation to the
 Gaussian normalization `sqrt n` used in A. A. Mogul'skii,
 *Small Deviations in a Space of Trajectories*, Theorem 3, Section 4,
-p. 764 of the Russian original (English translation, *Theory of Probability
+p. 764 of the 1974 Russian original (English translation, *Theory of Probability
 and Its Applications* 19(4) (1975), 726--736, DOI 10.1137/1119081).
 Distributional moment hypotheses live in
 `Probability.Distributions.Moments.Real`.

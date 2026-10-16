@@ -67,8 +67,11 @@ theorem IsStableLevyProcess.measure_rationalTube_le_pow_uniformBlocks
 
 /-- Rational-coordinate counterpart of Lemma 2(c), equation (23): a full
 unit-time range tube is bounded by a power of the short-block tube. The
-paper's statement is on càdlàg path sets and uses `X(0,c) J₁`; that bridge
-is separate. -/
+statement is on càdlàg path sets and uses `X(0,c) J₁`; that bridge is
+separate. This corresponds to Lemma 2(c), equation (23), of A. A. Mogul'skii,
+"Small Deviations in a Space of Trajectories" (Russian original, 1974;
+English translation, *Theory of Probability and Its Applications* 19(4)
+(1975), 726--736, DOI 10.1137/1119081). -/
 theorem IsStableLevyProcess.measure_rationalHorizonTube_le_pow_shortHorizon
     {Ω : Type*} [MeasurableSpace Ω] {α : ℝ} {μ : Measure ℝ}
     {X : ℝ≥0 → Ω → ℝ} {P : Measure Ω} [IsProbabilityMeasure P]

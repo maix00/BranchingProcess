@@ -15,8 +15,8 @@ public import MeasureTheory.Measure.InnerOuter
 # Increment-law rates for arbitrary i.i.d. realizations
 
 This module combines raw stable-domain inputs with the general realization
-transfer. Callers provide the coordinate process, but finite-corridor rates
-are obtained internally from the source theorem.
+transfer. Callers provide the coordinate process, but finite-corridor rates are obtained by applying
+`tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_sourceStableInputs`.
 -/
 
 open Filter MeasureTheory ProbabilityTheory

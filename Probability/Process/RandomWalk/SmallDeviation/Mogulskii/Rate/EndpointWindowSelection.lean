@@ -25,9 +25,12 @@ The public theorems in this file are:
 - `tendsto_scaledLog_horizontalTubeProbability_of_centeredUnitSecondMoment`:
   $(x_n^2/n)\log\mathbb P(T_n)\to-\pi^2/2$ for the same law.
 
-This is an internal spectral derivation of the constant in Mogul'skii,
-*Small Deviations in a Space of Trajectories*, Theorem 3, Section 4,
-used in Wang Yiyang, Chapter 3, Lemma 3.1(i).
+This is an internal spectral derivation of the constant in A. A. Mogul'skii,
+"Small Deviations in a Space of Trajectories," Theorem 3, Section 4, p. 764 of the 1974 Russian original
+(English translation, *Theory of Probability and Its Applications* 19(4)
+(1975), 726--736, DOI 10.1137/1119081), used in Wang Yiyang, *Asymptotic
+speed of the $N$-branching random walk with infinite offspring*, Chapter 3,
+Lemma 3.1(i).
 -/
 
 open Filter MeasureTheory ProbabilityTheory Topology

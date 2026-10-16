@@ -6,8 +6,8 @@ Authors: WANG Yiyang
 
 module
 
-public import Analysis.Asymptotics.BlockScale
-public import Probability.Process.RandomWalk.Path.Cadlag
+public import Analysis.Asymptotics.Scale.BlockScale
+public import Probability.Process.RandomWalk.Path.Representation.Cadlag
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.Partition.Range
 public import Probability.Process.Path.PathClass.StepCorridor.Probability.Partition.Range
 

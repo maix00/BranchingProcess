@@ -38,7 +38,7 @@ $S_{n-1}/x_n$. The public declarations are:
 
 The terminal-left convention is from Mogul'skii,
 *Small Deviations in a Space of Trajectories*, Theorem 3, Section 4,
-p. 764 (DOI 10.1137/1119081).
+p. 764 of the 1974 Russian original (DOI 10.1137/1119081).
 -/
 
 @[expose] public section

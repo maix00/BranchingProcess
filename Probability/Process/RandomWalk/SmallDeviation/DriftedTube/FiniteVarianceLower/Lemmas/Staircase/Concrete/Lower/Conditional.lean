@@ -8,7 +8,7 @@ module
 
 public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Concrete.Lower.Asymptotic
 public import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.ExponentialBudget
-public import Analysis.Asymptotics.IntermediatePowerBlock
+public import Analysis.Asymptotics.Scale.IntermediatePowerBlock
 
 /-!
 # Tilted-tube lower bound from the reflected survival asymptotics

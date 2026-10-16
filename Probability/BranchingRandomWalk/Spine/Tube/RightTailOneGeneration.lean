@@ -893,7 +893,7 @@ theorem measure_ne_zero_ge_lintegral_sq_div_lintegral_sq
     (Or.inl hsecond_pos.ne') (Or.inl hsecond_top)).2
   simpa [mul_comm] using hsq
 
-/-- One generation of the paper's second-moment recursion, with the
+/-- One generation of the second-moment recursion, with the
 off-diagonal MRCA contribution bounded by the cross-child exponential moment.
 The diagonal term remains as the next recursive second moment. -/
 theorem lintegral_pathGeneration_succ_sq_le_diagonal_add_crossWeight
@@ -950,7 +950,7 @@ theorem lintegral_pathGeneration_succ_sq_le_diagonal_add_crossWeight
       apply add_le_add_right
       simpa [F] using hcross
 
-/-- The first-generation second-moment recursion for the paper's affine tube
+/-- The first-generation second-moment recursion for the affine tube
 with a terminal endpoint cutoff. A probability estimate for the uncut tube
 also bounds its endpoint-restricted version by monotonicity. -/
 theorem lintegral_pathGeneration_affineTube_succ_sq_le_diagonal_add_crossWeight
@@ -1117,7 +1117,7 @@ theorem pathGeneration_ne_zero_iff_hasPathHistoryIn
 
 /-- Paley--Zygmund converts first and second moment estimates for the
 generation-`n` corridor path count into a lower bound on one-root tube
-success. This is the probability step used in the paper's long-corridor
+success. This is the probability step used in the long-corridor
 estimate. -/
 theorem measure_hasPathHistoryIn_ge_of_pathGeneration_moments
     {X : Type*} [MeasurableSpace X]

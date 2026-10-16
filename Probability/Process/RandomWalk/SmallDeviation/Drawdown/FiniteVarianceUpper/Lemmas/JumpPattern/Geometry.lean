@@ -106,7 +106,8 @@ lemma drawdown_card_maximumJumpSet_le {q K : ℕ}
     (drawdownMaximumJumpSet bins).card ≤ K + 1 := by
   exact card_spatialBinJumpSet_le bins hmono
 
-/-- On the event in Wang Yiyang, Chapter 3, Lemma 3.3, the running maximum
+/-- On the event in Wang Yiyang, *Asymptotic speed of the $N$-branching
+random walk with infinite offspring*, Chapter 3, Lemma 3.3, the running maximum
 can be rounded to a nondecreasing sequence of finitely many levels. Every
 block with unchanged level is contained in the interval
 `(M_j - width - delta, M_j]`.
@@ -179,7 +180,8 @@ lemma neg_delta_le_additivePath_of_noLargeDrop
   linarith
 
 /-- Every path in `noLargeDropEndpointBelowEvent` has the discretized
-running-maximum decomposition of Wang Yiyang, Chapter 3, Lemma 3.3. The
+running-maximum decomposition of Wang Yiyang, *Asymptotic speed of the
+$N$-branching random walk with infinite offspring*, Chapter 3, Lemma 3.3. The
 endpoint condition supplies the deterministic ceiling `threshold + delta`;
 the drawdown condition supplies the lower side of each unchanged-maximum
 block interval. -/

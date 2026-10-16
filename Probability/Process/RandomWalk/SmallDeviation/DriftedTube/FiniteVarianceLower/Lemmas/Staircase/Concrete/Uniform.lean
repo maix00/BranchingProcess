@@ -8,7 +8,7 @@ module
 
 public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Concrete.Lower.Conditional
 public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Concrete.Upper.Conditional
-public import Analysis.Asymptotics.SequentialEventually
+public import Analysis.Asymptotics.Sequence.SequentialEventually
 
 /-!
 # Uniform tilted-tube bounds with fixed geometric margins

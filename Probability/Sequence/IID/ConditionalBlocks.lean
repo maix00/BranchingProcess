@@ -149,8 +149,8 @@ theorem iidSequenceLaw_condExp_pairEvent_ge_of_sectionProbability
 /-- A uniform bound on every section of a measurable event in
 `prefix × nextBlock` gives the corresponding conditional-probability bound.
 The conditional expectation is evaluated by integrating the next block
-against its IID law, exactly as in the Markov step of Wang Yiyang, Chapter 3,
-Lemma 3.3. -/
+against its IID law, as in Wang Yiyang, *Asymptotic speed of the
+$N$-branching random walk with infinite offspring*, Chapter 3, Lemma 3.3. -/
 theorem iidSequenceLaw_condExp_pairEvent_le_of_sectionProbability
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (start length : ℕ)

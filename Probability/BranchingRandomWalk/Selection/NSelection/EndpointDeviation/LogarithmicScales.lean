@@ -51,7 +51,7 @@ noncomputable def logarithmicBlockCount (N : ℕ → ℕ) (beta b t : ℝ) (n : 
       logarithmicBlockLength N beta b n⌋₊
 
 /-- The number of complete blocks fitting in an arbitrary horizon.  This is
-the version used for the paper's arbitrary sequence `ℓ_N`, whose only
+the version used for the arbitrary sequence `ℓ_N`, whose only
 assumption is its normalized logarithmic-cube limit. -/
 noncomputable def logarithmicBlockCountForHorizon (N : ℕ → ℕ) (beta b : ℝ)
     (horizon : ℕ → ℕ) (n : ℕ) : ℕ :=

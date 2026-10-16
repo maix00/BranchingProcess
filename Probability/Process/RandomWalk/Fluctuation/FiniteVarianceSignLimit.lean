@@ -30,10 +30,10 @@ The public theorems in this file are:
 
 This is the Gaussian positivity-parameter input to R. A. Doney,
 *Spitzer's condition and ladder variables in random walks*, Theorem 2
-(Probab. Theory Relat. Fields 101 (1995), 577--580), which is one of the
+(Probab. Theory Relat. Fields 101 (1995), 577--580, DOI 10.1007/BF01202785), which is one of the
 ladder-variable results cited in Francesco Caravenna and Loïc Chaumont,
 *Invariance principles for random walks conditioned to stay positive*,
-Lemma 2.1 (Ann. Inst. H. Poincaré Probab. Statist. 44 (2008), 170--190).
+Lemma 2.1 (Ann. Inst. H. Poincaré Probab. Statist. 44 (2008), 170--190, DOI 10.1214/07-AIHP119).
 -/
 
 @[expose] public section
