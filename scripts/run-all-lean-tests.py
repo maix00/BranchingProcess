@@ -10,7 +10,7 @@ import tempfile
 
 
 AXIOM_EXPECTATIONS = {
-    Path("BranchingProcessTest/Probability/Distributions/Stable/Gaussian/Basic.lean"): (
+    Path("BranchingProcessTest/Probability/Distributions/Stable/Gaussian.lean"): (
         "ProbabilityTheory.IsStrictlyAlphaStable.exists_gaussianReal_zero",
     ),
     Path("BranchingProcessTest/DomainOfAttraction/NormalAttraction.lean"): (
@@ -145,10 +145,10 @@ AXIOM_EXPECTATIONS = {
         "ProbabilityTheory.BranchingRandomWalk.Spine.measure_hasEndpointBelowByHorizon_le_sum_exp",
         "ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.eventually_horizontalTubeProbability_le_pow_fixedCover_uniformOffset",
     ),
-    Path("BranchingProcessTest/Probability/Process/RandomWalk/SmallDeviation/Drawdown/FiniteVarianceUpper/Basic.lean"): (
+    Path("BranchingProcessTest/Probability/Process/RandomWalk/SmallDeviation/Drawdown/FiniteVarianceUpper.lean"): (
         "ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.additivePath_le_threshold_add_delta_of_noLargeDrop",
         "ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.neg_delta_le_additivePath_of_noLargeDrop",
-        "ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.blockOscillationEvent_of_additiveSegment",
+        "ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.blockOscillationEvent_of_additiveSegment",
         "Asymptotics.tendsto_nat_div_floorBlockLength_atTop_of_horizonRatio",
         "ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.measureReal_noLargeDropEndpointBelowEvent_le_exp_of_finiteVariance",
     ),
@@ -157,7 +157,7 @@ AXIOM_EXPECTATIONS = {
         "ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.noLargeDropEndpointBelowEvent_preimage_div",
         "ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.iidSequenceLaw_measure_noLargeDropEndpointBelowEvent_eq_map_div",
     ),
-    Path("BranchingProcessTest/Probability/BranchingRandomWalk/Selection/NSelection/EndpointDeviation/Drawdown/Population.lean"): (
+    Path("BranchingProcessTest/Probability/BranchingRandomWalk/Selection/NSelection/EndpointDeviation/SelectedPopulationDrawdown.lean"): (
         "ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.firstNSelectedPopulation_measurable",
         "ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.measurableSet_firstNSelectedNoLargeDropEndpointBelow",
         "ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.firstNSelectedPopulation_depth",
@@ -209,7 +209,7 @@ AXIOM_EXPECTATIONS = {
         "ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.existsUnique_inner_outer_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_sourceDiscretestepCorridorRates",
         "ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.existsUnique_inner_outer_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_sourceStableInputs",
         "ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.canonicalMogulskiiScale",
-        "ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_source_index_two_of_brownian_explicit",
+        "ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Path.tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_source_index_two_of_brownian_explicit",
         "ProbabilityTheory.IsStableLevyProcess.unitIntervalPathLaw",
         "ProbabilityTheory.IsStableLevyProcess.isStableClockProcessLaw_unitIntervalPathLaw",
         "MeasureTheory.Measure.innerMeasure_mono",
@@ -678,6 +678,13 @@ def main() -> int:
     tests = working_tree_tests()
     if not tests:
         print("No BranchingProcessTest Lean files found in the working tree.", file=sys.stderr)
+        return 1
+
+    missing_axiom_tests = sorted(set(AXIOM_EXPECTATIONS) - set(tests))
+    if missing_axiom_tests:
+        print("Axiom expectations refer to missing test modules:", file=sys.stderr)
+        for test in missing_axiom_tests:
+            print(f"  {test}", file=sys.stderr)
         return 1
 
     for index, test in enumerate(tests, start=1):
