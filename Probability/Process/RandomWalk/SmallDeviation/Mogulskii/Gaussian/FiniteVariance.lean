@@ -12,9 +12,19 @@ public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Gaussian.S
 /-!
 # Finite-variance specialization of the normal-domain Mogul'skii rate
 
+The public theorem in this file is:
+
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.tendsto_scaledLog_sourceProbability_of_finiteVariance`:
+  for a finite-variance Gaussian-domain walk and a source path class $G$,
+  $x_n^2n^{-1}\log\mathbb P(s_n\in G)\to
+  -\pi^2\sigma^2 H_2(G)/2$.
+
 The normal-domain theorem allows infinite variance.  When the second moment is
 finite, the truncated second moment tends to the variance, giving the familiar
-variance-scaled exponent as a direct consequence.
+variance-scaled exponent as a direct consequence of A. A. Mogul'skii,
+*Small Deviations in a Space of Trajectories*, Theorem 3, Section 4,
+p. 764 of the Russian original (English translation, *Theory of Probability
+and Its Applications* 19(4) (1975), 726--736, DOI 10.1137/1119081).
 -/
 
 open Filter MeasureTheory ProbabilityTheory
@@ -28,8 +38,10 @@ open Skorokhod.PathClass.StepCorridor
 open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete
 
 /-- For finite-variance increments in the normal domain, the source-path
-Mogul'skii rate has the usual variance factor.  The underlying normal-domain
-theorem remains applicable without this finite-moment assumption. -/
+rate has the variance factor of A. A. Mogul'skii, *Small Deviations in a
+Space of Trajectories*, Theorem 3, Section 4 (DOI 10.1137/1119081).
+The underlying normal-domain theorem remains applicable without this
+finite-moment assumption. -/
 theorem tendsto_scaledLog_sourceProbability_of_finiteVariance
     {ν : Measure ℝ} [IsProbabilityMeasure ν]
     {normalization scale : ℕ → ℝ}

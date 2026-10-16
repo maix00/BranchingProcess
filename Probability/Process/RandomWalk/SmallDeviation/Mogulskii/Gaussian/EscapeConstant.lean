@@ -15,6 +15,17 @@ public import Probability.Process.Stable.Brownian.PathLaw
 /-!
 # The Brownian escape constant
 
+The public theorems in this file are:
+
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.canonicalMogulskiiScale`:
+  $x_n=\sqrt{\sqrt n}$ satisfies $x_n\to\infty$ and $x_n/\sqrt n\to0$.
+- `ProbabilityTheory.HasStableProcessEscapeRate.eq_neg_pi_sq_div_eight`:
+  the exponent-two centered Brownian escape constant is $C=-\pi^2/8$.
+- `ProbabilityTheory.HasStableProcessEscapeRate.fullWidthCoefficient_eq_neg_pi_sq_div_two`:
+  the full-width coefficient is $4C=-\pi^2/2$.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.exists_brownian_escapeRate_eq_neg_pi_sq_div_eight`:
+  Brownian path law realizes both coefficients.
+
 The path-class theorem identifies the strict centered Rademacher tube rate
 with four times the exponent-two stable-process escape constant.  The sharp
 spectral theorem gives the rate for closed centered tubes.  Fixed narrower
@@ -24,6 +35,10 @@ letting their relative width increase to one identifies the constant.
 The Brownian specialization uses the existing rational-coordinate càdlàg
 path law of `IsBrownianReal`; it only uses the a.e. continuity recorded by
 Mathlib, not an everywhere-continuous sample-path version.
+The constant identifies the Gaussian specialization in A. A. Mogul'skii,
+*Small Deviations in a Space of Trajectories*, Theorem 3, Section 4,
+p. 764 of the Russian original (English translation, *Theory of Probability
+and Its Applications* 19(4) (1975), 726--736, DOI 10.1137/1119081).
 -/
 
 open Filter MeasureTheory ProbabilityTheory
@@ -310,8 +325,10 @@ private theorem fixedNarrowClosedTube_lower_bound
   rw [hconstant] at hlimit
   exact hlimit
 
-/-- The exponent-two stable-process escape constant is `-π² / 8`.  The
-proof squeezes the strict Rademacher tube between the canonical closed
+/-- The exponent-two stable-process escape constant is `-π² / 8`, the
+Gaussian constant in A. A. Mogul'skii, *Small Deviations in a Space of
+Trajectories*, Theorem 3, Section 4 (DOI 10.1137/1119081). The proof
+squeezes the strict Rademacher tube between the canonical closed
 rounded-width tube and every fixed narrower closed rounded-width tube.
 -/
 theorem _root_.ProbabilityTheory.HasStableProcessEscapeRate.eq_neg_pi_sq_div_eight
@@ -427,7 +444,9 @@ theorem _root_.ProbabilityTheory.HasStableProcessEscapeRate.eq_neg_pi_sq_div_eig
     linarith
   nlinarith [hcoef]
 
-/-- The corresponding full-width exponent-two coefficient is `-π² / 2`. -/
+/-- The full-width exponent-two coefficient is `-π² / 2`, as in
+Mogul'skii, *Small Deviations in a Space of Trajectories*, Theorem 3,
+Section 4 (DOI 10.1137/1119081). -/
 theorem _root_.ProbabilityTheory.HasStableProcessEscapeRate.fullWidthCoefficient_eq_neg_pi_sq_div_two
     {C : ℝ} {P : Measure (CadlagPath unitInterval ℝ)} [IsProbabilityMeasure P]
     (hEscape : HasStableProcessEscapeRate 2 (gaussianReal 0 1) P C)

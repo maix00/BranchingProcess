@@ -26,7 +26,9 @@ The public theorems in this file are:
 
 These quantitative choices occur in the finite-partition lower-bound proof
 of A. A. Mogul'skii, *Small Deviations in a Space of Trajectories*,
-Theorem 3, Section 4, p. 764 (English translation, DOI 10.1137/1119081).
+Theorem 3, Section 4, p. 764 of the Russian original (English translation,
+*Theory of Probability and Its Applications* 19(4) (1975), 726--736,
+DOI 10.1137/1119081).
 Gaussian interval positivity itself belongs to the distribution layer.
 -/
 
