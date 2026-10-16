@@ -11,7 +11,7 @@ public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVa
 /-!
 # Uniform width and time conditions for the staircase blocks
 
-The public theorem in this file is:
+The module-visible supporting lemma in this file is:
 
 - `staircaseBlockNumericConditions`:
   from $\ell\le|I_j|<2\ell$ and

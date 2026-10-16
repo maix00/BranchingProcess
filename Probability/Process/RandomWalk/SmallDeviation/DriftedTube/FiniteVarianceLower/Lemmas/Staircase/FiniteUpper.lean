@@ -12,7 +12,7 @@ public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVa
 /-!
 # Finite staircase lower bound with an upper terminal window
 
-The public theorem in this file is:
+The module-visible supporting lemma in this file is:
 
 - `exists_uniform_finiteStaircaseUpperEndpointLowerBound`:
   the entrance estimate, the same uniform horizontal-block product as

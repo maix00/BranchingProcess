@@ -10,7 +10,7 @@ public import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.Lemm
 /-!
 # Edge probabilities for the robust entrance window
 
-The public theorems in this file are:
+The module-visible supporting lemmas in this file are:
 
 - `measure_robustMovingTransitionEvent_ge_positivePrefix_mul_transition`:
   from $x\in[0,\Delta/12]$, the entrance probability is at least

@@ -11,7 +11,7 @@ public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVa
 /-!
 # Staircase inclusion in the tilted endpoint event
 
-The public theorems in this file are:
+The module-visible supporting lemmas in this file are:
 
 - `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.initialInterTubeBlocks_subset_driftedTubeEndpointWindowEvent_of_extremeBounds`:
   the inclusion for either direction of drift, using the maximum lower

@@ -10,7 +10,7 @@ public import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.Lemm
 /-!
 # Three-region bound for a robust diffusive entrance
 
-The public theorem in this file is:
+The module-visible supporting lemma in this file is:
 
 - `measure_robustMovingTransitionEvent_ge_threeRegionMinimum`:
   the minimum of the middle Donsker bound and the two independent-prefix

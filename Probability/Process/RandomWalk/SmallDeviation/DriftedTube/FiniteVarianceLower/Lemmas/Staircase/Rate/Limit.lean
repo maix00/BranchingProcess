@@ -11,7 +11,7 @@ public import Analysis.Asymptotics.BlockScale
 /-!
 # Rounded width under the staircase block scale
 
-The public theorem in this file is:
+The module-visible supporting lemma in this file is:
 
 - `eventually_staircaseRateComparison_of_blockScale`:
   if $\ell_n/\Delta_n^3\to0$ and $d<d''\beta^2$, then

@@ -10,7 +10,7 @@ public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVa
 /-!
 # First entrance window of the staircase
 
-The public theorems in this file are:
+The module-visible supporting lemmas in this file are:
 
 - `staircaseFirstBlockLength_eq`: if $t_1+2\ell\le L$, the first
   horizontal block has length $\ell$.

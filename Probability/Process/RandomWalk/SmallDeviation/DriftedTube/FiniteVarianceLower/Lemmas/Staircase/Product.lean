@@ -11,7 +11,7 @@ public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVa
 /-!
 # Finite staircase probability from the endpoint-window rate
 
-The public theorem in this file is:
+The module-visible supporting lemma in this file is:
 
 - `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.exists_uniform_staircaseProbability_ge_product`:
   for a fixed finite spatial-bin count, separate interior endpoint

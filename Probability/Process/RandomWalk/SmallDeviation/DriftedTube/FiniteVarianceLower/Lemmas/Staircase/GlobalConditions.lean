@@ -11,7 +11,7 @@ public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVa
 /-!
 # Common global conditions for the staircase blocks
 
-The public theorem in this file is:
+The module-visible supporting lemma in this file is:
 
 - `staircaseBlockConditions_of_global`:
   if $10c\ell<\Delta^3$, the four global width, time, and rate

@@ -11,7 +11,7 @@ public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVa
 /-!
 # Concrete staircase lower bound after a robust entrance
 
-The public theorem in this file is:
+The module-visible supporting lemma in this file is:
 
 - `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.exists_concreteStaircaseLowerBound_of_robustEntrance`:
   with $t_1+2\ell\le L$ and $10c\ell<\Delta^3$, a lower bound
