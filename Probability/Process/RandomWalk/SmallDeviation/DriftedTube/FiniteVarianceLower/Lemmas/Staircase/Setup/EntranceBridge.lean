@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.FirstWindow
-public import Probability.Process.RandomWalk.SmallDeviation.Entrance.RobustTransition
+public import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.Basic
 
 /-!
 # From the diffusive entrance to the first staircase block
