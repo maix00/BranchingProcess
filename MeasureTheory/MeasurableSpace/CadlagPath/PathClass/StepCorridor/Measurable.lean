@@ -8,8 +8,8 @@ module
 
 public import Topology.Cadlag.Skorokhod.PathClass.StepCorridor.Basic
 public import MeasureTheory.MeasurableSpace.CadlagPath.PathClass.StepCorridor.Boundary
-public import Topology.Cadlag.Skorokhod.JointEvaluation
-public import Topology.Cadlag.Skorokhod.Integral
+public import Topology.Cadlag.Skorokhod.Evaluation.Joint
+public import Topology.Cadlag.Skorokhod.Evaluation.Integral
 public import Mathlib.MeasureTheory.Measure.NullMeasurable
 
 /-!

@@ -7,10 +7,10 @@ Authors: WANG Yiyang
 import Order.Interval.RationalCoordinate.UnitInterval
 import Topology.Order.UnitInterval.Rational
 import Probability.Process.Stable.JumpModel.IndependentIncrements
-import Probability.Process.Stable.SmallDeviation.Blocks.Lower.FullCorridor
+import Probability.Process.Stable.SmallDeviation.Blocks.Lower.Entrance.FullCorridor
 import Probability.Process.Path.Skorokhod.Corridor.Segment
 import Probability.Process.Path.Skorokhod.RationalTime
-import Probability.Distributions.Stable.LevyMeasure.EntranceWindows
+import Probability.Distributions.Stable.LevyMeasure.Tail.EntranceWindows
 import Probability.Distributions.Stable.LevyMeasure.SignOfJumps
 import Probability.Process.Levy.Jump.Intensity.Entrance.Canonical
 
@@ -278,8 +278,8 @@ theorem IsStableLevyProcess.measure_fullEntrance_pos_of_cdfAtZero_of_poissonMode
     rw [htargetMeasure] at htargetRationalPos
     exact htargetRationalPos
 
-/-- The positive open endpoint interval implies the source theorem's
-left-open, right-closed endpoint convention. -/
+/-- A positive open endpoint interval implies the corresponding left-open,
+right-closed endpoint condition. -/
 theorem IsStableLevyProcess.measure_sourceEntrance_pos_of_cdfAtZero_of_poissonModel
     {Ω : Type*} [MeasurableSpace Ω]
     {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}

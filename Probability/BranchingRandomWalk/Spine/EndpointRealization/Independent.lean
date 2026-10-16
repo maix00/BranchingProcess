@@ -5,9 +5,9 @@ Authors: WANG Yiyang
 -/
 module
 
-public import Probability.BranchingRandomWalk.Spine.EndpointManyToOne
-public import Probability.BranchingRandomWalk.Spine.IncrementProcess
-public import Probability.Sequence.IID
+public import Probability.BranchingRandomWalk.Spine.ManyToOne.EndpointManyToOne
+public import Probability.BranchingRandomWalk.Spine.RandomWalk.IncrementProcess
+public import Probability.Sequence.IID.Basic
 public import Mathlib.Probability.Independence.Integration
 public import Mathlib.Probability.Independence.InfinitePi
 

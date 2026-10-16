@@ -7,7 +7,7 @@ module
 
 public import Analysis.Fourier.CosineTauberian.FrequencyAverage
 public import Probability.Distributions.CharacteristicFunction.CosineDefect
-public import Probability.Distributions.CharacteristicFunction.Symmetrization
+public import Probability.Distributions.CharacteristicFunction.Symmetrization.Basic
 public import Mathlib.MeasureTheory.Integral.Prod
 
 /-!

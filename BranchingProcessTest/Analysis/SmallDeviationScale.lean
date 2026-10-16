@@ -1,4 +1,4 @@
-import Analysis.Asymptotics.Scale
+import Analysis.Asymptotics.Scale.Scale
 
 open Filter
 open scoped Topology

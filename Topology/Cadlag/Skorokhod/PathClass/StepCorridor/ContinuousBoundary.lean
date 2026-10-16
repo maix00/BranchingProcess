@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Topology.Cadlag.TerminalLeft
-public import Topology.Cadlag.Skorokhod.ContinuousMap
+public import Topology.Cadlag.Skorokhod.Maps.Continuous
 public import Topology.Cadlag.Skorokhod.PathClass.StepCorridor.Basic
 public import Order.Interval.UniformGrid
 public import Mathlib.Topology.ContinuousMap.Basic

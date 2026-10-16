@@ -5,7 +5,7 @@ Authors: WANG Yiyang
 -/
 
 import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.Property
-import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law
+import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law.Basic
 
 open MeasureTheory ProbabilityTheory
 

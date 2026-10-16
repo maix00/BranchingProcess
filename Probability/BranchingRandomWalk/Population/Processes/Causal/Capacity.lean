@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.BranchingRandomWalk.Population.Processes.Causal
+public import Probability.BranchingRandomWalk.Population.Processes.Causal.Basic
 public import Mathlib.MeasureTheory.Integral.Lebesgue.Markov
 public import Mathlib.MeasureTheory.MeasurableSpace.NCard
 
