@@ -44,7 +44,7 @@ open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 
-/-- The survival power inputs for the walk and its reflection follow from
+/-- The inverse-square survival inputs for the walk and its reflection follow from
 the finite-variance hypotheses. -/
 theorem eventually_concreteStaircaseUpperEndpointLowerBound_of_centeredFiniteVariance
     {ν : Measure ℝ} [IsProbabilityMeasure ν]
@@ -63,7 +63,7 @@ theorem eventually_concreteStaircaseUpperEndpointLowerBound_of_centeredFiniteVar
     {horizon blockLength : ℕ → ℕ}
     {width base : ℕ → ℝ}
     {margin drift endpointFraction blockRate totalRate
-      alpha epsilon : ℝ}
+      epsilon : ℝ}
     (hwidth : Tendsto width atTop atTop)
     (hlength : ∀ᶠ n : ℕ in atTop, 0 < blockLength n)
     (hremaining : ∀ᶠ n : ℕ in atTop,
@@ -80,7 +80,6 @@ theorem eventually_concreteStaircaseUpperEndpointLowerBound_of_centeredFiniteVar
       -base n ∈ Set.Icc 0 (width n))
     (hendpoint : 0 ≤ endpointFraction)
     (hblockRate : 0 ≤ blockRate)
-    (halpha : 0 < alpha)
     (hepsilon : 0 < epsilon)
     (hdelta : 0 < totalRate - blockRate)
     (hrate : narrowedRate < blockRate * staircaseBinWidth m ^ 2)
@@ -102,7 +101,7 @@ theorem eventually_concreteStaircaseUpperEndpointLowerBound_of_centeredFiniteVar
   have hbudget :=
     exists_eventually_robustTransitionProbability_ge_exp_of_centeredFiniteVariance
       ν hν hsigma
-      hrho hrhoSmall hwidth hdrift halpha hdelta hepsilon
+      hrho hrhoSmall hwidth hdrift hdelta hepsilon
   have hentrance : ∀ᶠ n : ℕ in atTop,
       Real.exp (-(totalRate - blockRate) * (horizon n : ℝ) /
         width n ^ 2) ≤
@@ -139,7 +138,7 @@ theorem eventually_concreteStaircaseUpperEndpointLowerBound_of_powerBlock
     (hvFinal : vFinal < 1)
     (hrateMogulskii : (Real.pi ^ 2 / 2) * sigma ^ 2 < narrowedRate)
     {horizon : ℕ → ℕ} {width base : ℕ → ℝ}
-    {margin drift endpointFraction blockRate totalRate alpha epsilon eta : ℝ}
+    {margin drift endpointFraction blockRate totalRate epsilon eta : ℝ}
     (hwidth : Tendsto width atTop atTop)
     (hhorizon : ∀ᶠ n : ℕ in atTop,
       Nat.floor (width n ^ (2 + epsilon)) ≤ horizon n)
@@ -149,7 +148,7 @@ theorem eventually_concreteStaircaseUpperEndpointLowerBound_of_powerBlock
       -base n ∈ Set.Icc 0 (width n))
     (hendpoint : 0 ≤ endpointFraction)
     (hblockRate : 0 ≤ blockRate)
-    (halpha : 0 < alpha) (hepsilon : 0 < epsilon)
+    (hepsilon : 0 < epsilon)
     (hdelta : 0 < totalRate - blockRate)
     (hrate : narrowedRate < blockRate * staircaseBinWidth m ^ 2)
     (hinteriorLower : (1 / 3 : ℝ) / staircaseBinWidth m +
@@ -187,7 +186,7 @@ theorem eventually_concreteStaircaseUpperEndpointLowerBound_of_powerBlock
     hν hsigma hrho hrhoSmall m hm huInterior huvInterior hvInterior
     huFinal huvFinal hvFinal hrateMogulskii hwidth hlength
     hremaining hhorizon hquadratic hcubic hmargin hdrift hstart
-    hendpoint hblockRate halpha hepsilon hdelta hrate
+    hendpoint hblockRate hepsilon hdelta hrate
     hinteriorLower hinteriorUpper hfinalLower hfinalUpper
 
 end ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube

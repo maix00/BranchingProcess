@@ -6,9 +6,9 @@
 \begin{lemma}[\bilingual{Meander estimate for the transition event}{基于 Brownian 蜿蜒的过渡事件估计}]
     \label{lemma:meander-transition}
     \bilingual{
-        Let $(\xi_j)_{j\ge1}$ be i.i.d. random variables with mean $0$ and variance $\sigma^2\in(0,\infty)$. Fix $c\ge0$ and $\alpha>0$. For $\Delta>0$, set $n_\Delta:=\lfloor\Delta^2\rfloor$ and $h_j:=cj/\Delta^2$. For $x\in[0,\Delta]$, let $S_0=x$, $S_j:=x+\sum_{i=1}^j\xi_i$, and define
+        Let $(\xi_j)_{j\ge1}$ be i.i.d. random variables with mean $0$ and variance $\sigma^2\in(0,\infty)$. Fix $c\ge0$. For $\Delta>0$, set $n_\Delta:=\lfloor\Delta^2\rfloor$ and $h_j:=cj/\Delta^2$. For $x\in[0,\Delta]$, let $S_0=x$, $S_j:=x+\sum_{i=1}^j\xi_i$, and define
     }{
-        设 $(\xi_j)_{j\ge1}$ 为均值 $0$、方差 $\sigma^2\in(0,\infty)$ 的独立同分布随机变量. 固定 $c\ge0$ 与 $\alpha>0$. 对 $\Delta>0$, 令 $n_\Delta:=\lfloor\Delta^2\rfloor$ 且 $h_j:=cj/\Delta^2$. 对 $x\in[0,\Delta]$, 令 $S_0=x$, $S_j:=x+\sum_{i=1}^j\xi_i$, 并定义
+        设 $(\xi_j)_{j\ge1}$ 为均值 $0$、方差 $\sigma^2\in(0,\infty)$ 的独立同分布随机变量. 固定 $c\ge0$. 对 $\Delta>0$, 令 $n_\Delta:=\lfloor\Delta^2\rfloor$ 且 $h_j:=cj/\Delta^2$. 对 $x\in[0,\Delta]$, 令 $S_0=x$, $S_j:=x+\sum_{i=1}^j\xi_i$, 并定义
     }
     \begin{equation*}
         \mathcal A_\Delta(x):=
@@ -18,10 +18,10 @@
                 h_{n_\Delta}+\frac23\Delta\right]
         \right\}.
     \end{equation*}
-    \bilingual{Then there are $C_\alpha>0$ and $\Delta_0>0$ such that}{则存在 $C_\alpha>0$ 与 $\Delta_0>0$, 使得}
+    \bilingual{Then there are $C>0$ and $\Delta_0>0$ such that}{则存在 $C>0$ 与 $\Delta_0>0$, 使得}
     \begin{equation*}
         \inf_{x\in[0,\Delta]}\mathbb P_x\bigl(\mathcal A_\Delta(x)\bigr)
-        \ge C_\alpha\Delta^{-1-\alpha},
+        \ge C\Delta^{-2},
         \qquad \Delta\ge\Delta_0,
     \end{equation*}
     \bilingual{where $\mathbb P_x$ denotes the law with $S_0=x$.}{其中 $\mathbb P_x$ 表示 $S_0=x$ 时的概率律.}
@@ -70,32 +70,31 @@
         \ge q_*.
     \end{equation*}
     \bilingual{
-        To bound the survival probability, write $F_N^\theta:=\mathbb P(C_N^\theta)$ and $p_N^\theta:=\mathbb P(Z_N^\theta\ge0)$. The finite coefficient form of the Sparre--Andersen identity in Bauer, Godrèche and Luck~\mycite{Bauer_Godreche_Luck_1999}, Appendix A, (A.7), gives $F_0^\theta=1$ and
+        To bound the survival probability, write $F_N^\theta:=\mathbb P(C_N^\theta)$ and $p_N^\theta:=\mathbb P(Z_N^\theta\ge0)$. On $\{Z_N^\theta\ge0\}$, the cyclic rotation cover of Bauer, Godrèche and Luck~\mycite{Bauer_Godreche_Luck_1999}, Appendix A, following (A.3), gives a rotation whose partial sums are nonnegative. The $N$ rotated increment vectors have the same law by the i.i.d. assumption. The union bound therefore gives
     }{
-        为估计存活概率, 令 $F_N^\theta:=\mathbb P(C_N^\theta)$ 与 $p_N^\theta:=\mathbb P(Z_N^\theta\ge0)$. Bauer、Godrèche 与 Luck~\mycite{Bauer_Godreche_Luck_1999} 的附录 A 公式 (A.7) 所对应的 Sparre--Andersen 恒等式的有限系数形式给出 $F_0^\theta=1$ 以及
+        为估计存活概率, 令 $F_N^\theta:=\mathbb P(C_N^\theta)$ 与 $p_N^\theta:=\mathbb P(Z_N^\theta\ge0)$. 在事件 $\{Z_N^\theta\ge0\}$ 上, Bauer、Godrèche 与 Luck~\mycite{Bauer_Godreche_Luck_1999} 附录 A 公式 (A.3) 后的循环移位覆盖保证存在一个所有部分和均非负的移位. 由独立同分布性, $N$ 个移位后的增量向量具有相同的分布. 对这些事件应用并集上界, 得
     }
     \begin{equation*}
-        NF_N^\theta=\sum_{k=0}^{N-1}F_k^\theta p_{N-k}^\theta,
+        p_N^\theta\le NF_N^\theta,
         \qquad N\ge1.
     \end{equation*}
     \bilingual{
-        By the central limit theorem, $p_N^\theta\to\frac12$. Choose $0<\gamma<\beta<\frac12$. For some integer $N_0\ge1$, $p_j^\theta\ge\beta$ when $j\ge N_0$; hence the preceding identity yields
+        By the central limit theorem, $p_N^\theta\to\frac12$. Thus $p_N^\theta\ge\frac14$ for all sufficiently large $N$, and the preceding inequality gives
     }{
-        由中心极限定理, $p_N^\theta\to\frac12$. 取 $0<\gamma<\beta<\frac12$. 存在整数 $N_0\ge1$, 使得 $j\ge N_0$ 时 $p_j^\theta\ge\beta$; 因此上述等式给出
+        由中心极限定理, $p_N^\theta\to\frac12$. 因此充分大的 $N$ 满足 $p_N^\theta\ge\frac14$, 上述不等式给出
     }
     \begin{equation*}
-        \beta\sum_{k=0}^{N-N_0}F_k^\theta\le NF_N^\theta,
-        \qquad N\ge N_0.
+        F_N^\theta\ge\frac{1}{4N}.
     \end{equation*}
     \bilingual{
-        The integral bound $\sum_{k=0}^{M}(k+1)^{\gamma-1}\ge\frac{(M+2)^\gamma-1}{\gamma}$ and $\gamma<\beta$ imply $\frac\beta\gamma((N-N_0+2)^\gamma-1)\ge(N+1)^\gamma$ for all sufficiently large $N$. Since $F_k^\theta>0$, choose $C>0$ small enough to cover the remaining finite set of indices. Strong induction in the preceding inequality now gives $F_N^\theta\ge C(N+1)^{\gamma-1}$ for every $N$. Take $\gamma=\frac1{2(1+\alpha)}$; then $2(1-\gamma)\le1+\alpha$. Since $n_\Delta-m\sim\Delta^2$ for each fixed $m$, the preceding conditional estimate yields a constant $c_{\alpha,m}>0$ such that
+        For each fixed integer $m\ge0$, $N=n_\Delta-m\to\infty$ and $N\le\Delta^2$. Consequently $F_N^\theta\ge\frac{1}{4\Delta^2}$ for all sufficiently large $\Delta$. Since $D_{N,\Delta}^\theta\subseteq C_N^\theta$, the conditional estimate above and $\mathbb P(D_{N,\Delta}^\theta)=\mathbb P(D_{N,\Delta}^\theta\mid C_N^\theta)F_N^\theta$ give $c_m:=q_*/8>0$ such that
     }{
-        由积分比较, $\sum_{k=0}^{M}(k+1)^{\gamma-1}\ge\frac{(M+2)^\gamma-1}{\gamma}$. 再由 $\gamma<\beta$, 充分大的 $N$ 满足 $\frac\beta\gamma((N-N_0+2)^\gamma-1)\ge(N+1)^\gamma$. 因 $F_k^\theta>0$, 可将 $C>0$ 取得充分小, 使余下有限个指标也满足下界. 对上述不等式作强归纳, 即得每个 $N$ 均满足 $F_N^\theta\ge C(N+1)^{\gamma-1}$. 取 $\gamma=\frac1{2(1+\alpha)}$, 则 $2(1-\gamma)\le1+\alpha$. 对每个固定的 $m$, 有 $n_\Delta-m\sim\Delta^2$; 结合上述条件概率估计, 存在 $c_{\alpha,m}>0$ 使得
+        对每个固定整数 $m\ge0$, 有 $N=n_\Delta-m\to\infty$ 且 $N\le\Delta^2$. 因此充分大的 $\Delta$ 满足 $F_N^\theta\ge\frac{1}{4\Delta^2}$. 由 $D_{N,\Delta}^\theta\subseteq C_N^\theta$, 结合上述条件概率估计及 $\mathbb P(D_{N,\Delta}^\theta)=\mathbb P(D_{N,\Delta}^\theta\mid C_N^\theta)F_N^\theta$, 取 $c_m:=q_*/8>0$, 得
     }
     \begin{equation*}
         \min_{\theta\in\{-1,1\}}
         \mathbb P\left(D_{n_\Delta-m,\Delta}^\theta\right)
-        \ge c_{\alpha,m}\Delta^{-1-\alpha}
+        \ge c_m\Delta^{-2}
     \end{equation*}
     \bilingual{for all sufficiently large $\Delta$.}{对充分大的 $\Delta$ 成立.}
 
@@ -153,7 +152,7 @@
     }
     \begin{equation*}
         \inf_{0\le x\le\frac1{12}\Delta}\mathbb P_x(\mathcal A_\Delta(x))
-        \ge p_+^{m_+}c_{\alpha,m_+}\Delta^{-1-\alpha}.
+        \ge p_+^{m_+}c_{m_+}\Delta^{-2}.
     \end{equation*}
 
     \bilingual{
@@ -174,7 +173,7 @@
     }
     \begin{equation*}
         \inf_{\frac{11}{12}\Delta\le x\le\Delta}\mathbb P_x(\mathcal A_\Delta(x))
-        \ge p_-^{m_-}c_{\alpha,m_-}\Delta^{-1-\alpha}.
+        \ge p_-^{m_-}c_{m_-}\Delta^{-2}.
     \end{equation*}
 
     \bilingual{

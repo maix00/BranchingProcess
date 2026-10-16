@@ -244,7 +244,7 @@ theorem exists_uniform_driftedTube_endpoint_bounds
     m hm huInterior huvInterior hvInterior huLower huvLower hvLower
     huUpper huvUpper hvUpper hnarrowedK heta hetaOne hetaEpsilon
     hmargin hdrift (by exact le_of_lt hv) hblockNonneg
-    (by norm_num : (0 : ℝ) < 1) hepsilon hdelta hnarrowedBlock
+    hepsilon hdelta hnarrowedBlock
     hinteriorLower hinteriorUpper hlowerLower hlowerUpper
     hupperLower hupperFinal
   refine ⟨max 1 threshold,
