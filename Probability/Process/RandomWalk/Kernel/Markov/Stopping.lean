@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.Kernel.Markov
+public import Probability.Process.RandomWalk.Kernel.Markov.Basic
 public import Probability.Process.Markov.Stopping.Basic
 
 /-!

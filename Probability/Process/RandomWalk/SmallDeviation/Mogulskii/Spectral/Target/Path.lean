@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.PathSurvival
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Survival.Path
 public import Probability.Kernel.FiniteState.Matrix
 public import Probability.Kernel.Step.Endpoint
 

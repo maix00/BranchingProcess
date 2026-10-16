@@ -6,9 +6,9 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.Path.Block.Partition
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.BlockScale
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Tightness
+public import Probability.Process.RandomWalk.Path.Block.Partition.Core
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Scale.BlockScale
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Path.Tightness
 
 /-!
 # Quantitative finite-partition tightness

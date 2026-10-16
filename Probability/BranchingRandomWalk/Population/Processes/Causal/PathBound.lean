@@ -7,8 +7,8 @@ Authors: WANG Yiyang
 import Probability.BranchingRandomWalk.Population.Processes.Causal.PathWindow
 import Probability.BranchingRandomWalk.Population.Processes.Causal.Capacity
 import Probability.BranchingRandomWalk.Population.Processes.Selected.RootIndexed
-import Probability.BranchingRandomWalk.Genealogy.RootIndexed.FiniteExpectations
-import Probability.BranchingRandomWalk.Spine.Path.ManyToOne
+import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law.FiniteExpectations
+import Probability.BranchingRandomWalk.Spine.Path.ManyToOne.Identity
 
 /-!
 # Pathwise bounds for causal populations

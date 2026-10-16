@@ -6,7 +6,7 @@ Authors: Codex
 module
 
 public import MeasureTheory.Measure.CharacteristicFunction.Convergence
-public import Probability.Distributions.CharacteristicFunction.Symmetrization
+public import Probability.Distributions.CharacteristicFunction.Symmetrization.Basic
 public import Probability.Distributions.Stable.Attraction.CharacteristicFunction
 
 /-!

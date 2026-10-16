@@ -7,8 +7,8 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.Path.Restart.Windows
-public import Probability.Process.RandomWalk.Path.Block.Law
-public import Probability.Process.RandomWalk.Path.Window
+public import Probability.Process.RandomWalk.Path.Block.Law.Basic
+public import Probability.Process.RandomWalk.Path.Window.Core
 
 /-!
 # Laws of restarted walk paths

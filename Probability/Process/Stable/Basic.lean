@@ -9,9 +9,9 @@ module
 public import Mathlib.Probability.HasLaw
 public import Mathlib.Probability.IdentDistrib
 public import Mathlib.Probability.Independence.Process.HasIndepIncrements.Basic
-public import Probability.Process.IndepIncrements
+public import Probability.Process.IndepIncrements.Basic
 public import Probability.Distributions.Stable.Basic
-public import Probability.Distributions.Stable.Scaling
+public import Probability.Distributions.Stable.Operations.Scaling
 
 /-!
 # Stable clock increments

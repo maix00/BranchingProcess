@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.BlockScale
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Scale.BlockScale
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Diffusive.Return
 
 /-!
