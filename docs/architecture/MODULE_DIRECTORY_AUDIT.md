@@ -112,7 +112,7 @@ to `Existence.lean`, with sibling `PathClass.lean` renamed `ExplicitRate.lean`.
 These are substantive mathematical modules; their declarations and namespaces
 are unchanged, and callers import the new paths directly.
 
-The final 2026-10-17 scan found 1,432 production modules and 138 test modules.
+The final 2026-10-17 scan found 1,431 production modules and 138 test modules.
 Across both trees there are zero same-stem file/directory collisions, zero
 directories with more than eight direct Lean files, and zero child filenames
 repeating their immediate parent directory name. The vendored Mathlib and
