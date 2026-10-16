@@ -14,23 +14,7 @@ public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalk
 
 The proof-specific declarations are:
 
-- `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.drawdownBlockTubeCondition` and
-  `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.drawdownBlockTubeCondition_implies_tubeBlockEvent`: on block $j$,
-  $M_j-w-\delta<S_{s_j+k}\le M_j$ implies the corresponding conditional
-  tube event.
-- `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.drawdown_card_maximumJumpSet_le` and
-  `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.drawdown_discretizedMaximumBlockDecomposition`: the rounded maximum has at
-  most the permitted number of jumps, and its increments decompose into the
-  blockwise path increments.
-- `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.additivePath_le_threshold_add_delta_of_noLargeDrop`: if the endpoint is at
-  most $b$ and every drawdown is at most $\delta$, then $S_i\le b+\delta$ for
-  every $i$ in the horizon.
-- `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.drawdown_event_discretizedMaximumBlockDecomposition` and
-  `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.drawdown_event_goodBlocks_satisfy_tubeCondition`: a path in the drawdown
-  event has the required blockwise decomposition and every non-jump block
-  satisfies its rounded-maximum tube condition.
 - `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.drawdownJumpPatternTubeIntersection`, `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.drawdownAdmissibleJumpPatterns`,
-  `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.drawdown_mem_jumpPatternTubeIntersection_of_goodBlocks`, and
   `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.drawdown_noLargeDropEvent_subset_jumpPatternUnion`: the event is covered
   by the finite union of tube intersections indexed by admissible jump
   patterns.
@@ -48,7 +32,7 @@ namespace ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown
 open ProbabilityTheory.RandomWalk
 open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
-def drawdownBlockTubeCondition
+private def drawdownBlockTubeCondition
     (upper width delta : ℝ) (path : ℕ → ℝ)
     (remainder blockLength : ℕ) (j : ℕ) : Prop :=
   ∀ k ≤ blockLength,
@@ -60,7 +44,7 @@ def drawdownBlockTubeCondition
 /-- The deterministic tube condition on a block implies membership in the
 corresponding conditional tube event centered at the rounded running maximum
 of the past. -/
-lemma drawdownBlockTubeCondition_implies_tubeBlockEvent
+private lemma drawdownBlockTubeCondition_implies_tubeBlockEvent
     (increment : ℕ → ℝ) (upper binWidth delta : ℝ)
     (remainder blockLength j : ℕ)
     (hcondition : drawdownBlockTubeCondition upper binWidth delta
@@ -99,7 +83,7 @@ lemma drawdownBlockTubeCondition_implies_tubeBlockEvent
 
 /-- A nonincreasing discretized running maximum has at most `K + 1` jump
 indices when its levels are encoded by `K + 1` possible grid indices. -/
-lemma drawdown_card_maximumJumpSet_le {q K : ℕ}
+private lemma drawdown_card_maximumJumpSet_le {q K : ℕ}
     (bins : Fin (q + 1) → Fin (K + 1))
     (hmono : ∀ i j, i ≤ j → bins j ≤ bins i) :
     (drawdownMaximumJumpSet bins).card ≤ K + 1 := by
@@ -113,7 +97,7 @@ block with unchanged level is contained in the interval
 The sequence is encoded by its grid indices, so `hmono` states that the
 indices are nonincreasing. The last component is the tube inclusion used in
 the conditional-expectation step of Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.3. -/
-lemma drawdown_discretizedMaximumBlockDecomposition
+private lemma drawdown_discretizedMaximumBlockDecomposition
     (increment : ℕ → ℝ) (horizon remainder blocks blockLength : ℕ)
     (upper width delta : ℝ)
     (hzero : AdditivePath.displacement 0 increment = 0)
@@ -147,26 +131,12 @@ lemma drawdown_discretizedMaximumBlockDecomposition
       (AdditivePath.displacement · increment) upper width delta
       hzero hwidth hnoDrop hupper hblocks
 
-/-- A no-large-drawdown path whose endpoint is below a threshold stays below
-that threshold plus one drawdown allowance throughout the finite horizon. -/
-lemma additivePath_le_threshold_add_delta_of_noLargeDrop
-    {horizon : ℕ} (increment : ℕ → ℝ) (delta threshold : ℝ)
-    (hnoDrop : ∀ i j : ℕ, i ≤ j → j ≤ horizon →
-      AdditivePath.displacement i increment -
-        AdditivePath.displacement j increment ≤ delta)
-    (hendpoint : AdditivePath.displacement horizon increment ≤ threshold) :
-    ∀ i ≤ horizon,
-      AdditivePath.displacement i increment ≤ threshold + delta := by
-  intro i hi
-  have h := hnoDrop i horizon hi (Nat.le_refl _)
-  linarith
-
 /-- Every path in `noLargeDropEndpointBelowEvent` has the discretized
 running-maximum decomposition of Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.3. The
 endpoint condition supplies the deterministic ceiling `threshold + delta`;
 the drawdown condition supplies the lower side of each unchanged-maximum
 block interval. -/
-lemma drawdown_event_discretizedMaximumBlockDecomposition
+private lemma drawdown_event_discretizedMaximumBlockDecomposition
     (increment : ℕ → ℝ) (horizon remainder blocks blockLength : ℕ)
     (delta threshold width : ℝ) (hwidth : 0 < width)
     (hblocks : remainder + blocks * blockLength ≤ horizon)
@@ -206,7 +176,7 @@ lemma drawdown_event_discretizedMaximumBlockDecomposition
 every block outside that set satisfies the fixed-interval condition in Wang
 Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.3. This packages the deterministic reduction
 preceding its conditional-expectation iteration. -/
-lemma drawdown_event_goodBlocks_satisfy_tubeCondition
+private lemma drawdown_event_goodBlocks_satisfy_tubeCondition
     (increment : ℕ → ℝ) (horizon remainder blocks blockLength : ℕ)
     (delta threshold width : ℝ) (hwidth : 0 < width)
     (hblocks : remainder + blocks * blockLength ≤ horizon)
@@ -266,7 +236,7 @@ noncomputable def drawdownAdmissibleJumpPatterns (q K : ℕ) :
 /-- If the pattern is the actual jump set of the rounded running maximum,
 every block tube required by that pattern holds whenever its deterministic
 good-block condition holds. -/
-lemma drawdown_mem_jumpPatternTubeIntersection_of_goodBlocks
+private lemma drawdown_mem_jumpPatternTubeIntersection_of_goodBlocks
     {q : ℕ} (increment : ℕ → ℝ)
     (remainder blockLength : ℕ) (upper binWidth delta : ℝ)
     (hbinWidth : 0 < binWidth) (pattern : Finset (Fin q))

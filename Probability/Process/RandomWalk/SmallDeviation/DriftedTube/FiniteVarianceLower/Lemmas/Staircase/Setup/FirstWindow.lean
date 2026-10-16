@@ -10,10 +10,8 @@ public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVa
 /-!
 # First entrance window of the staircase
 
-The module-visible supporting lemmas in this file are:
+The module-visible supporting lemma in this file is:
 
-- `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.staircaseFirstBlockLength_eq`: if $t_1+2\ell\le L$, the first
-  horizontal block has length $\ell$.
 - `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.staircaseFirstInteriorWindow`: if $10c\ell<\Delta^3$, the robust
   entrance endpoint interval
   $[r_{t_1}+2\Delta/5,r_{t_1}+3\Delta/5]$ lies inside the central
@@ -31,7 +29,7 @@ namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 
 /-- With at least two blocks remaining, the first one has the common
 length rather than the extended final length. -/
-lemma staircaseFirstBlockLength_eq
+private lemma staircaseFirstBlockLength_eq
     {entrance horizon blockLength : ℕ}
     (hremaining : entrance + 2 * blockLength ≤ horizon)
     (hblockLength : 0 < blockLength) :

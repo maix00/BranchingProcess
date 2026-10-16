@@ -21,16 +21,8 @@ The proof-specific definitions in this file are:
   `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.staircaseBinEndpointLowerFraction`, and `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.staircaseBinEndpointUpperFraction`:
   horizontal-tube parameters of the common event for one bin.
 
-The module-visible lemmas in this file are:
+The module-visible lemma in this file is:
 
-- `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.exists_staircaseBin_covering_relativeOffset`:
-  the spatial bins cover the allowed range of starting offsets.
-- `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.relativeLowerEdge_mem_staircaseRange_of_centerWindow`:
-  a starting point in the middle endpoint window has an allowed relative offset.
-- `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.horizontalTubeEndpointWindowEvent_subset_relativeHorizontalTubeEndpointWindowEvent`:
-  one narrowed event serves every starting offset within its spatial bin.
-- `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.exists_staircaseBin_commonEvent_subset_relativeTube`:
-  the bin cover selects a common event for every allowed relative offset.
 - `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.exists_staircaseBin_commonEvent_subset_centerWindow`:
   the same selection for every point in the middle endpoint window.
 
@@ -84,7 +76,7 @@ noncomputable def staircaseBinEndpointUpperFraction (m : ℕ) (v₂ : ℝ) : ℝ
 of Lemma 3.5, cover the full range of normalized relative starting
 positions used there: for every $r/\Delta\in[-2/3,-1/3]$, there is
 $0\le l<m$ with $b_l\le r/\Delta\le b_{l+1}$. -/
-lemma exists_staircaseBin_covering_relativeOffset
+private lemma exists_staircaseBin_covering_relativeOffset
     {m : ℕ} (hm : 2 ≤ m) {offset : ℝ}
     (hoffsetLower : -(2 : ℝ) / 3 ≤ offset)
     (hoffsetUpper : offset ≤ -(1 : ℝ) / 3) :
@@ -164,7 +156,7 @@ lemma exists_staircaseBin_covering_relativeOffset
 /-- The central window $[r+D/3,r+2D/3]$ makes the relative lower edge
 $r-y$ lie in $[-2D/3,-D/3]$, as used for each block in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, proof of
 Lemma 3.5. -/
-lemma relativeLowerEdge_mem_staircaseRange_of_centerWindow
+private lemma relativeLowerEdge_mem_staircaseRange_of_centerWindow
     {width lowerEdge position : ℝ} (hwidth : 0 < width)
     (hposition : position ∈
       Set.Icc (lowerEdge + width / 3) (lowerEdge + 2 * width / 3)) :
@@ -192,7 +184,7 @@ lemma relativeLowerEdge_mem_staircaseRange_of_centerWindow
 event is contained in the desired horizontal tube and terminal window.
 This is the deterministic bin-inclusion step in the staircase proof of
 Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.5. -/
-lemma horizontalTubeEndpointWindowEvent_subset_relativeHorizontalTubeEndpointWindowEvent
+private lemma horizontalTubeEndpointWindowEvent_subset_relativeHorizontalTubeEndpointWindowEvent
     {m l horizon : ℕ} {width v₁ v₂ lower : ℝ}
     (hm : 2 ≤ m)
     (hlower : staircaseBinLower m l * width ≤ lower)
@@ -367,7 +359,7 @@ lemma horizontalTubeEndpointWindowEvent_subset_relativeHorizontalTubeEndpointWin
 $[-2/3,-1/3]$, one of the staircase bins supplies a common narrowed-tube
 event contained in the target tube and endpoint window. This packages the
 bin selection and event inclusion used in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, proof of Lemma 3.5. -/
-lemma exists_staircaseBin_commonEvent_subset_relativeTube
+private lemma exists_staircaseBin_commonEvent_subset_relativeTube
     {m horizon : ℕ} {width v₁ v₂ lower : ℝ}
     (hm : 2 ≤ m) (hwidth : 0 < width)
     (hrelativeLower : -(2 : ℝ) / 3 ≤ lower / width)

@@ -28,19 +28,13 @@ proof and are kept under `FiniteVarianceUpper/Lemmas/`.
 - `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.exists_driftedTubeBlockProbability_le_exp_of_finiteVariance`:
   the complete
   block probability bound obtained from Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.3.
-- `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.driftedTubePairEvent`,
-  `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.driftedTubeBlockEvent`,
-  and `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.finiteDriftedTubeEvent`:
-  finite coordinate encodings of a block of the
+- `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.driftedTubePairEvent` and
+  `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.driftedTubeBlockEvent`:
+  the finite coordinate encoding of a block of the
   tilted-tube event.
-- `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.measurableSet_driftedTubePairEvent` and
-  `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.measurableSet_driftedTubeBlockEvent`:
-  measurability of the block events.
-- `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.iidSequenceLaw_map_blockCoordinates_driftedTubeEvent_le`:
-  transfer of a
-  whole-path block bound to finite block coordinates.
-- `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.iidSequenceLaw_condExp_driftedTubePairEvent_le_of_blockBound` and
-  `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.iidSequenceLaw_condExp_driftedTubeBlockEvent_le_of_blockBound`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.measurableSet_driftedTubeBlockEvent`:
+  measurability of the block event.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.iidSequenceLaw_condExp_driftedTubeBlockEvent_le_of_blockBound`:
   the
   conditional probability bound used in the block iteration.
 -/
@@ -174,7 +168,7 @@ private lemma measurable_driftedTubePartialBlockSum {length : ℕ}
       exact heq ▸ hsum
 
 /-- The pair event for one tilted-tube block is measurable. -/
-lemma measurableSet_driftedTubePairEvent {start length : ℕ}
+private lemma measurableSet_driftedTubePairEvent {start length : ℕ}
     (lower width drift : ℝ) :
     MeasurableSet (driftedTubePairEvent (start := start) (length := length)
       lower width drift) := by
@@ -232,7 +226,7 @@ lemma measurableSet_driftedTubePairEvent {start length : ℕ}
     (measurableSet_Iic.preimage hupper)
 
 /-- The finite-coordinate tilted-tube event for a block started at zero. -/
-def finiteDriftedTubeEvent (length : ℕ) (lower width drift : ℝ) :
+private def finiteDriftedTubeEvent (length : ℕ) (lower width drift : ℝ) :
     Set (Fin length → ℝ) :=
   {block | ∀ j : Fin length,
     lower + drift * ((j : ℕ) + 1 : ℝ) / width ^ 2 ≤
@@ -242,7 +236,7 @@ def finiteDriftedTubeEvent (length : ℕ) (lower width drift : ℝ) :
 
 /-- The finite-coordinate event has the same probability as the
 corresponding full-sequence tilted-tube event. -/
-lemma iidSequenceLaw_map_blockCoordinates_driftedTubeEvent_le
+private lemma iidSequenceLaw_map_blockCoordinates_driftedTubeEvent_le
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (length : ℕ) (lower width drift bound : ℝ)
     (hbound : (iidSequenceLaw ν).real
@@ -334,7 +328,7 @@ lemma iidSequenceLaw_map_blockCoordinates_driftedTubeEvent_le
 /-- A uniform tilted-tube probability bound for every admissible relative
 starting position gives the conditional block bound used in the Markov
 iteration in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, proof of Lemma 3.4. -/
-lemma iidSequenceLaw_condExp_driftedTubePairEvent_le_of_blockBound
+private lemma iidSequenceLaw_condExp_driftedTubePairEvent_le_of_blockBound
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (start length : ℕ) {lower width drift bound : ℝ}
     (hboundNonneg : 0 ≤ bound)

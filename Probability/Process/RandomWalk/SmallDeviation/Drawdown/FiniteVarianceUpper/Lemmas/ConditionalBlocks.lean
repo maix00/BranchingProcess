@@ -34,16 +34,13 @@ The proof-specific declarations in this module are:
 - `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.drawdownPastDiscretizedMaximum_eq_runningMaximum`:
   evaluating that center on an infinite increment sequence gives
   $U-w\lfloor(U-\max_{i\le j}S_i)/w\rfloor$.
-- `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.drawdownTubePairEvent`, `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.drawdownTubeBlockEvent`, and
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.drawdownTubePairEvent`,
+  `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.drawdownTubeBlockEvent`, and
   `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.drawdownTubeBlockEvent_iff_path_in_interval`: the condition
   $S_0+\sum_{i<k}\xi_i\in[a-w,a]$ on a finite block is equivalent to the
   corresponding interval condition on the full path.
-- `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.measurableSet_drawdownTubePairEvent` and
-  `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.measurableSet_drawdownTubeBlockEvent`: these finite-block tube events are
-  measurable.
-- `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.iidSequenceLaw_condExp_drawdownTubePairEvent_le_of_intervalBound`,
-  `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.iidSequenceLaw_condExp_drawdownTubePairEvent_le_of_finiteVariance`, and
-  `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.iidSequenceLaw_condExp_drawdownTubeBlockEvent_le_of_finiteVariance`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.measurableSet_drawdownTubeBlockEvent`: the finite-block tube event is measurable.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.iidSequenceLaw_condExp_drawdownTubeBlockEvent_le_of_finiteVariance`:
   the conditional probability of the next tube block is at most
   $\exp(w^v-d\ell/w^2)$ for all sufficiently large $w$.
 
@@ -305,7 +302,7 @@ private lemma blockPrefixPair_blockCoordinates
 
 /-- A measurable choice of the interval center makes the next-block tube
 event measurable in the past prefix and block increments. -/
-lemma measurableSet_drawdownTubePairEvent {start length : ℕ}
+private lemma measurableSet_drawdownTubePairEvent {start length : ℕ}
     (center : (Fin start → ℝ) → ℝ) (hcenter : Measurable center)
     (width : ℝ) : MeasurableSet
       (drawdownTubePairEvent (start := start) (length := length) center width) := by
@@ -391,7 +388,7 @@ conditional probability of the next tube block, even when its upper endpoint
 is selected measurably from the past. The time-zero constraint contributes
 conditional probability zero whenever the current position is outside the
 chosen interval. -/
-lemma iidSequenceLaw_condExp_drawdownTubePairEvent_le_of_intervalBound
+private lemma iidSequenceLaw_condExp_drawdownTubePairEvent_le_of_intervalBound
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (start length : ℕ)
     (center : (Fin start → ℝ) → ℝ) (hcenter : Measurable center)
@@ -479,7 +476,7 @@ lemma iidSequenceLaw_condExp_drawdownTubePairEvent_le_of_intervalBound
 /-- Applying the translated-interval estimate of Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3,
 Lemma 3.2, bounds the conditional probability of each tube block in the
 Lemma 3.3 decomposition. -/
-lemma iidSequenceLaw_condExp_drawdownTubePairEvent_le_of_finiteVariance
+private lemma iidSequenceLaw_condExp_drawdownTubePairEvent_le_of_finiteVariance
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     {variance : ℝ}
     (hν : ProbabilityTheory.IsCenteredSecondMoment ν variance)

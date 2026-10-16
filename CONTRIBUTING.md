@@ -115,12 +115,17 @@ describe.
 
 Directory placement communicates which files users should read first; it does
 not change Lean declaration visibility. Mark a helper `private` when all its
-uses are in its defining module. A helper used across proof modules may need
-module visibility, but that alone does not make it a principal public result.
+uses are in its defining module and it is absent from the type of a
+module-visible declaration and the body of a module-visible definition. A
+private helper may still occur in the proof term of a public theorem. A named
+event or construction used in the body of an exported definition must remain
+module-visible; list it in the module docstring even when it is specific to
+that proof chain. A helper used across proof modules also needs module
+visibility, but that alone does not make it a principal public result.
 Declare supporting results as `lemma`; principal results may be declared as
 `theorem` or `lemma` according to mathematical usage. In Lean, this choice does
 not alter visibility or proof behavior: use `private lemma` for same-module
-helpers, and a module-visible `lemma` when another proof module imports it.
+proof steps, and a module-visible `lemma` when another declaration imports it.
 The declaration keyword alone does not determine reusability or directory
 placement.
 The module docstring lists the public declarations required by the header rule
