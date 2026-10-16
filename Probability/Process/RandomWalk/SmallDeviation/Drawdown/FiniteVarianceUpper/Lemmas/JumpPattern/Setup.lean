@@ -14,9 +14,7 @@ import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 
 The proof-specific declarations are:
 
-- `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.drawdownBlockStart`, `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.drawdownBlockCount`, `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.drawdownBlockRemainder`, and
-  `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.drawdownBlockStart_last_eq_horizon`: $s_j=r+j\ell$, $q=\lfloor L/\ell\rfloor$,
-  $r=L\bmod\ell$, and $s_q=L$.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.drawdownBlockStart`: $s_j=r+j\ell$, the block-start schedule.
 - `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.drawdownDiscretizedMaximum`, `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.drawdownRunningMaximumBins`,
   `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.drawdownRunningMaximumJumpSet`, and `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.drawdownMaximumJumpSet`: the rounded
   running maximum $M_j$, its bin indices, and the block indices where those
@@ -43,21 +41,6 @@ open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
 def drawdownBlockStart (remainder blockLength j : ℕ) : ℕ :=
   remainder + j * blockLength
-
-/-- The number of complete blocks of length `blockLength` in a horizon. -/
-def drawdownBlockCount (horizon blockLength : ℕ) : ℕ :=
-  horizon / blockLength
-
-/-- The initial remainder in the Lemma 3.3 block decomposition. -/
-def drawdownBlockRemainder (horizon blockLength : ℕ) : ℕ :=
-  horizon % blockLength
-
-/-- The remainder and complete blocks end exactly at the horizon. -/
-lemma drawdownBlockStart_last_eq_horizon {horizon blockLength : ℕ} :
-    drawdownBlockStart (drawdownBlockRemainder horizon blockLength)
-      blockLength (drawdownBlockCount horizon blockLength) = horizon := by
-  simp [drawdownBlockStart, drawdownBlockRemainder, drawdownBlockCount,
-    Nat.mod_add_div, Nat.mul_comm]
 
 /-- The rounded running maximum `M_j` from the proof of Wang Yiyang,
 *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,

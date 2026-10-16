@@ -279,7 +279,7 @@ theorem tendsto_log_probability_ratio_of_FiniteCorridorUnionApproximation
 
 /-- The limiting energy attached to a set in class `M` is independent of the
 chosen approximation witness, provided the component `M₃` probability rates
-hold.  This is the probabilistic well-definedness assertion in the source. -/
+hold.  This follows from the stated approximation and rate hypotheses. -/
 theorem existsUnique_commonEnergy_of_hasVanishingEnergyGapApproximation
     {Ω : Type*} [MeasurableSpace Ω]
     (P : Measure Ω) [IsProbabilityMeasure P]

@@ -24,9 +24,6 @@ number of complete blocks under a divergent horizon-to-block ratio.
   ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.additivePath_le_threshold_add_delta_of_noLargeDrop
 
 #print axioms
-  ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.neg_delta_le_additivePath_of_noLargeDrop
-
-#print axioms
   ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.blockOscillationEvent_of_additiveSegment
 
 #print axioms
