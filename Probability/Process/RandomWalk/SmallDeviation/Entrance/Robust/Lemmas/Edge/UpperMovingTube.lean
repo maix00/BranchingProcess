@@ -6,11 +6,11 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Entrance.Edge.LowerGeometry
+public import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.Lemmas.Edge.LowerMovingTube
 /-!
-# Upper-edge reflected prefix and meander-suffix geometry
+# Upper-edge moving-tube step for the robust entrance estimate
 
-The public theorem in this file is:
+The supporting lemma in this file is:
 
 - `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.prefixNegativeWindow_and_reflectedTransition_subset_movingTransitionEvent`:
   for $x\in[11\Delta/12,\Delta]$, a fixed prefix with reflected
@@ -18,9 +18,10 @@ The public theorem in this file is:
   $D_{N,\Delta}$ for the reflected walk is contained in
   $\mathcal A_\Delta(x)$ at time $m+N$.
 
-This is the upper-edge reflection in Wang Yiyang,
+This intermediate wide-window inclusion is used to prove the narrowed
+terminal-window version of Wang Yiyang,
 *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
-Appendix A.2, Lemma A.7, used in the proof of Chapter 3, Lemma 3.5.
+Appendix A.2, Lemma A.7, used in Chapter 3, Lemma 3.5.
 -/
 
 @[expose] public section
@@ -31,7 +32,7 @@ namespace ProbabilityTheory.RandomWalk.SmallDeviation.Entrance
 
 /-- A fixed negative prefix followed by the reflected transition event
 enters the exact moving corridor from the upper edge. -/
-theorem prefixNegativeWindow_and_reflectedTransition_subset_movingTransitionEvent
+lemma prefixNegativeWindow_and_reflectedTransition_subset_movingTransitionEvent
     {m N : ℕ} {width drift start a b : ℝ}
     (hwidth : 0 < width) (hdrift : 0 ≤ drift)
     (ha : 0 < a) (hab : a ≤ b)

@@ -6,7 +6,9 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.Lemmas.EdgeProbability
+public import Probability.Process.RandomWalk.SmallDeviation.Entrance.RobustTransition
+public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition.Event
+import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.Lemmas.EdgeProbability
 /-!
 # Three-region bound for a robust diffusive entrance
 

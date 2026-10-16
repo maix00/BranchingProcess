@@ -17,6 +17,7 @@ public import Probability.Sequence.IID.ConditionalBlocks
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 
 import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
+import Mathlib.MeasureTheory.Function.Floor
 
 /-!
 # Conditional block bounds for bounded drawdown

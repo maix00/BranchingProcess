@@ -6,7 +6,10 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.Rate.Endpoint
+public import Probability.Distributions.Moments.Real
+public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.Event
+public import Probability.Sequence.IID.Basic
+import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.Rate.Endpoint
 
 /-!
 # Finite-variance drawdown upper bounds

@@ -6,7 +6,11 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.FiniteVarianceUpper.Lemmas.Rate
+public import Algebra.BigOperators.AdditivePath.Basic
+public import Probability.Distributions.Moments.Real
+public import Probability.Process.RandomWalk.Path.Corridor.Horizontal.Core
+public import Probability.Sequence.IID.Basic
+import Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.FiniteVarianceUpper.Lemmas.Rate
 
 /-!
 # Finite-variance horizontal-tube upper bound

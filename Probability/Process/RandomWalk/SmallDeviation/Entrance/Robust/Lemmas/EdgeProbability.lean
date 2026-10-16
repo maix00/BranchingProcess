@@ -6,7 +6,9 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.Lemmas.EdgeGeometry
+public import Probability.Process.RandomWalk.SmallDeviation.Entrance.RobustTransition
+public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition.Factorization
+import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.Lemmas.EdgeGeometry
 /-!
 # Edge probabilities for the robust entrance window
 

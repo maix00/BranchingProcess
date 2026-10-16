@@ -74,6 +74,13 @@ each declaration in it against this rule; split mixed files so reusable
 declarations remain outside. A `Lemmas/` directory belongs to one principal
 result or a coherent theorem family; do not collect unrelated results in it.
 
+An entry module may import its proof chain, but it should use ordinary
+`import` for modules under `Lemmas/`; reserve `public import` for mathematical
+dependencies that belong to the entry module's exposed interface. This keeps
+proof-only helper declarations from appearing as re-exported API. A helper
+module may import earlier steps in its own proof chain, but those imports do
+not make the earlier steps independently reusable.
+
 Proof groupings may be nested when a proof step has its own substantial chain,
 including paths such as `FiniteVarianceUpper/Lemmas/JumpPattern/Lemmas/`.
 Each `Lemmas/` level continues to hold only non-reusable steps for its parent
