@@ -9,7 +9,7 @@ module
 public import Analysis.Asymptotics.Scale.InverseScale
 public import Probability.Process.RandomWalk.Path.Corridor.Horizontal.Core
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.FromIncrementLaw.HorizontalTube.Basic
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.FromIncrementLaw.HorizontalTube.Lemmas.TimeScale
+import Analysis.Asymptotics.Scale.Sampling
 /-!
 # Sampled and inverse-scale forms of the horizontal-tube rate
 
@@ -29,11 +29,11 @@ Each result is a scale specialization or subsequence consequence of the core clo
 open Filter MeasureTheory ProbabilityTheory
 open MeasureTheory.Measure
 open ProbabilityTheory.RandomWalk
+open Asymptotics
 open ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability
 open Skorokhod.PathClass.StepCorridor
 open scoped ENNReal NNReal Topology
 
-open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.HorizontalTube.Lemmas
 
 @[expose] public section
 
@@ -59,14 +59,14 @@ theorem centeredFiniteVariance_closedHorizontalTubeProbabilityRate_along
       (fun k : ℕ => (width k : ℝ) ^ 2 / ((time k - 1 : ℕ) : ℝ) * Real.log
         (horizontalTubeProbability (iidSequenceLaw ν) a (width k) (time k - 1)).toReal)
       atTop (𝓝 (-(Real.pi ^ 2) / 2 * (∫ x, x ^ 2 ∂ν))) := by
-  let scale := increasingTimeAuxiliaryScale time width htime
-  have hsmall := increasingTimeAuxiliaryScale_isSmallDeviationScale
+  let scale := sampledIntegerWidthScale time width htime
+  have hsmall := sampledIntegerWidthScale_isSmallDeviationScale
     htime htimePos hwidth hwidthSq
   have hrate := (centeredFiniteVariance_closedHorizontalTubeProbabilityRate
     hsmall hcentered hsquare hvariance ha haOne).comp htime.tendsto_atTop
   have hscaleEq : ∀ k : ℕ, scale (time k) = (width k : ℝ) := by
     intro k
-    simp [scale, increasingTimeAuxiliaryScale, increasingTimeIntervalIndex_at_time htime]
+    simp [scale, sampledIntegerWidthScale, sampledTimeIntervalIndex_at_time htime]
   have hsourceRate : Tendsto
       (fun k : ℕ => (width k : ℝ) ^ 2 / (time k : ℝ) * Real.log
         (horizontalTubeProbability (iidSequenceLaw ν) a (width k) (time k - 1)).toReal)
@@ -133,15 +133,15 @@ theorem centeredFiniteVariance_closedHorizontalTubeProbabilityRate_realWidthAlon
         (horizontalTubeProbability (iidSequenceLaw ν) a (width k)
           (time k - 1)).toReal)
       atTop (𝓝 (-(Real.pi ^ 2) / 2 * (∫ x : ℝ, x ^ 2 ∂ν))) := by
-  let scale := increasingTimeRealAuxiliaryScale time width htime
-  have hsmall := increasingTimeRealAuxiliaryScale_isSmallDeviationScale
+  let scale := sampledRealWidthScale time width htime
+  have hsmall := sampledRealWidthScale_isSmallDeviationScale
     htime htimePos hwidthPos hwidth hwidthSq
   have hrate := (centeredFiniteVariance_closedHorizontalTubeProbabilityRate
     hsmall hcentered hsquare hvariance ha haOne).comp htime.tendsto_atTop
   have hscaleEq : ∀ k : ℕ, scale (time k) = width k := by
     intro k
-    simp [scale, increasingTimeRealAuxiliaryScale,
-      increasingTimeIntervalIndex_at_time htime]
+    simp [scale, sampledRealWidthScale,
+      sampledTimeIntervalIndex_at_time htime]
   have hsourceRate : Tendsto
       (fun k : ℕ => width k ^ 2 / (time k : ℝ) * Real.log
         (horizontalTubeProbability (iidSequenceLaw ν) a (width k)
@@ -237,37 +237,6 @@ theorem centeredUnitVariance_closedHorizontalTubeProbabilityRate
     centeredFiniteVariance_closedHorizontalTubeProbabilityRate
       hsmall hcentered hsquare hvariancePos ha haOne
 
-private theorem tendsto_scaledLog_div_predHorizon
-    {scale logProbability : ℕ → ℝ} {limit : ℝ}
-    (hrate : Tendsto (fun n : ℕ => scale n ^ 2 / (n : ℝ) * logProbability n)
-      atTop (𝓝 limit)) :
-    Tendsto (fun n : ℕ => scale n ^ 2 / ((n - 1 : ℕ) : ℝ) * logProbability n)
-      atTop (𝓝 limit) := by
-  let horizonRatio : ℕ → ℝ := fun n => (n : ℝ) / ((n - 1 : ℕ) : ℝ)
-  have hratioBase : Tendsto (fun n : ℕ => (n : ℝ) / ((n : ℝ) - 1))
-      atTop (𝓝 (1 : ℝ)) := by
-    simpa [sub_eq_add_neg] using tendsto_natCast_div_add_atTop (-1 : ℝ)
-  have hratioEq : horizonRatio =ᶠ[atTop]
-      fun n : ℕ => (n : ℝ) / ((n : ℝ) - 1) := by
-    filter_upwards [eventually_gt_atTop (0 : ℕ)] with n hn
-    have hn1 : 1 ≤ n := by omega
-    simp [horizonRatio, Nat.cast_sub hn1]
-  have hratio : Tendsto horizonRatio atTop (𝓝 (1 : ℝ)) :=
-    hratioBase.congr' hratioEq.symm
-  have hproduct := hratio.mul hrate
-  have hEq : (fun n : ℕ => horizonRatio n *
-      (scale n ^ 2 / (n : ℝ) * logProbability n)) =ᶠ[atTop]
-      (fun n : ℕ => scale n ^ 2 / ((n - 1 : ℕ) : ℝ) * logProbability n) := by
-    filter_upwards [eventually_gt_atTop (1 : ℕ)] with n hn
-    have hnReal : (n : ℝ) ≠ 0 := by
-      exact_mod_cast (Nat.ne_of_gt (by omega : 0 < n))
-    have hpredPos : 0 < ((n - 1 : ℕ) : ℝ) := by
-      exact_mod_cast (by omega : 0 < n - 1)
-    have hpredNe : ((n - 1 : ℕ) : ℝ) ≠ 0 := ne_of_gt hpredPos
-    dsimp [horizonRatio]
-    field_simp [hnReal, hpredNe]
-  simpa only [one_mul] using hproduct.congr' hEq
-
 /-- The generalized inverse width has the closed-tube rate in the normalization
 of Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.1(i): `scale² / (n - 1)`. The source path uses
 the same `n - 1` terminal partial sum. -/
@@ -285,7 +254,7 @@ theorem inverseScale_closedHorizontalTubeProbabilityRate
         (horizontalTubeProbability (iidSequenceLaw ν) a
           (Asymptotics.inverseScale L n) (n - 1)).toReal)
       atTop (𝓝 (-(Real.pi ^ 2) / 2 * (∫ x, x ^ 2 ∂ν))) := by
-  apply tendsto_scaledLog_div_predHorizon
+  apply tendsto_scaledRate_div_predTime (time := fun n : ℕ => n) tendsto_id
   exact centeredFiniteVariance_closedHorizontalTubeProbabilityRate
     (Asymptotics.isSmallDeviationScale_inverseScale hL hquadratic)
     hcentered hsquare hvariance ha haOne
@@ -305,7 +274,7 @@ theorem upperInverseScale_closedHorizontalTubeProbabilityRate
         (horizontalTubeProbability (iidSequenceLaw ν) a
           (Asymptotics.upperInverseScale L n) (n - 1)).toReal)
       atTop (𝓝 (-(Real.pi ^ 2) / 2 * (∫ x, x ^ 2 ∂ν))) := by
-  apply tendsto_scaledLog_div_predHorizon
+  apply tendsto_scaledRate_div_predTime (time := fun n : ℕ => n) tendsto_id
   exact centeredFiniteVariance_closedHorizontalTubeProbabilityRate
     (Asymptotics.isSmallDeviationScale_upperInverseScale hL hquadratic)
     hcentered hsquare hvariance ha haOne

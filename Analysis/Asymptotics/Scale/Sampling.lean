@@ -7,134 +7,125 @@ Authors: WANG Yiyang
 module
 
 public import Analysis.Asymptotics.Scale.InverseScale
-public import Probability.Process.RandomWalk.Path.Corridor.Horizontal.Core
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.FromIncrementLaw.Normal.ContinuousBoundary
+public import Mathlib.Analysis.SpecificLimits.Basic
+public import Mathlib.Topology.Instances.Nat
+import Mathlib.Tactic
+
 /-!
-# Proof lemmas for sampled horizontal-tube scales
+# Sampling along increasing time scales
 
-The proof-support declarations in this module serve the real-width and sampled-width forms of Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.1:
+The public declarations in this module are deterministic scale tools:
 
-- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.HorizontalTube.Lemmas.exists_later_time_index`, `increasingTimeIntervalIndex_spec`, and `increasingTimeIntervalIndex_le_of_mem`: existence of an interval $k$ with $n<t_{k+1}$, the defining inequality for the least such index, and minimality $k(n)\le k$ whenever $n<t_{k+1}$.
-- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.HorizontalTube.Lemmas.increasingTimeIntervalIndex`: the least $k$ with $n< t_{k+1}$ for a strictly increasing time sequence $t$.
-- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.HorizontalTube.Lemmas.increasingTimeIntervalIndex_lower_bound`: if $t_0\le n$, then $t_{k(n)}\le n$.
-- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.HorizontalTube.Lemmas.increasingTimeIntervalIndex_tendsto`: if $t$ is strictly increasing, then $k(n)\to\infty$.
-- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.HorizontalTube.Lemmas.increasingTimeIntervalIndex_at_time`: at a sampled time, the interval index is exact: $k(t_j)=j$.
-- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.HorizontalTube.Lemmas.increasingTimeAuxiliaryScale`: the piecewise-constant integer width $w_{k(n)}$ for integer-valued width sequences.
-- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.HorizontalTube.Lemmas.increasingTimeAuxiliaryScale_isSmallDeviationScale`: if $w_k\to\infty$ and $w_k^2/t_k\to0$, then the integer-width interpolation is a small-deviation scale against $\sqrt n$.
-- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.HorizontalTube.Lemmas.increasingTimeRealAuxiliaryScale`: the piecewise-constant real width $w_{k(n)}$.
-- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.HorizontalTube.Lemmas.increasingTimeRealAuxiliaryScale_isSmallDeviationScale`: if $w_k\to\infty$ and $w_k^2/t_k\to0$, then $w_{k(n)}$ is a small-deviation scale against $\sqrt n$.
-- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.HorizontalTube.Lemmas.tendsto_realWidthRate_of_sampledTime`: convergence of $R(w_k,t_k-1)$ along every increasing sampled pair implies convergence of $R(D,L(D))$ when $L(D)\to\infty$ and $D^2/L(D)\to0$.
-- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.HorizontalTube.Lemmas.tendsto_scaledLog_div_predTime`: replacing the normalization $w_k^2/t_k$ by $w_k^2/(t_k-1)$ preserves a finite limiting rate.
-
-These are theorem-family proof steps, not independent results in the public small-deviation API.
+- `Asymptotics.exists_sampledTimeIntervalIndex`, `Asymptotics.sampledTimeIntervalIndex_spec`, and `Asymptotics.sampledTimeIntervalIndex_le_of_mem`: existence and minimality of the index satisfying n < t[k+1].
+- `Asymptotics.sampledTimeIntervalIndex_lower_bound`, `Asymptotics.sampledTimeIntervalIndex_tendsto`, and `Asymptotics.sampledTimeIntervalIndex_at_time`: when t₀ ≤ n, the selected interval satisfies t[k(n)] ≤ n < t[k(n)+1]; also k(n) → ∞ and k(tⱼ) = j.
+- `Asymptotics.sampledIntegerWidthScale` and `Asymptotics.sampledRealWidthScale`: the piecewise constant width w[k(n)].
+- `Asymptotics.sampledIntegerWidthScale_isSmallDeviationScale` and `Asymptotics.sampledRealWidthScale_isSmallDeviationScale`: if wₖ → ∞ and wₖ²/tₖ → 0, then w[k(n)] → ∞ and w[k(n)]²/n → 0.
+- `Asymptotics.tendsto_realWidthRate_of_sampledTime`: if R(wₖ,tₖ−1) → c along every strictly increasing sampled pair with wₖ → ∞ and wₖ²/tₖ → 0, then R(D,L(D)) → c whenever L(D) → ∞ and D²/L(D) → 0.
+- `Asymptotics.tendsto_scaledRate_div_predTime`: if tₖ → ∞ and wₖ²rₖ/tₖ → c, then wₖ²rₖ/(tₖ−1) → c.
 -/
 
-open Filter MeasureTheory ProbabilityTheory
-open MeasureTheory.Measure
-open ProbabilityTheory.RandomWalk
-open ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability
-open Skorokhod.PathClass.StepCorridor
-open scoped ENNReal NNReal Topology
+open Filter
+open scoped Topology
 
 @[expose] public section
 
-namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.HorizontalTube.Lemmas
+namespace Asymptotics
 
-theorem exists_later_time_index {time : ℕ → ℕ}
+theorem exists_sampledTimeIntervalIndex {time : ℕ → ℕ}
     (htime : StrictMono time) (n : ℕ) : ∃ k, n < time (k + 1) := by
   obtain ⟨k, hk⟩ := (htime.tendsto_atTop.eventually_gt_atTop n).exists
   exact ⟨k, lt_of_lt_of_le hk (Nat.le_of_lt (htime (Nat.lt_succ_self k)))⟩
 
 /-- The index of the half-open time interval `[time k, time (k + 1))`
 containing `n`. -/
-noncomputable def increasingTimeIntervalIndex (time : ℕ → ℕ)
+noncomputable def sampledTimeIntervalIndex (time : ℕ → ℕ)
     (htime : StrictMono time) (n : ℕ) : ℕ :=
-  Nat.find (exists_later_time_index htime n)
+  Nat.find (exists_sampledTimeIntervalIndex htime n)
 
-theorem increasingTimeIntervalIndex_spec {time : ℕ → ℕ}
+theorem sampledTimeIntervalIndex_spec {time : ℕ → ℕ}
     (htime : StrictMono time) (n : ℕ) :
-    n < time (increasingTimeIntervalIndex time htime n + 1) :=
+    n < time (sampledTimeIntervalIndex time htime n + 1) :=
   by
-  change n < time (Nat.find (exists_later_time_index htime n) + 1)
-  exact Nat.find_spec (exists_later_time_index htime n)
+  change n < time (Nat.find (exists_sampledTimeIntervalIndex htime n) + 1)
+  exact Nat.find_spec (exists_sampledTimeIntervalIndex htime n)
 
-theorem increasingTimeIntervalIndex_le_of_mem {time : ℕ → ℕ}
+theorem sampledTimeIntervalIndex_le_of_mem {time : ℕ → ℕ}
     (htime : StrictMono time) (n k : ℕ) (hnk : n < time (k + 1)) :
-    increasingTimeIntervalIndex time htime n ≤ k := by
-  change Nat.find (exists_later_time_index htime n) ≤ k
-  exact Nat.find_min' (exists_later_time_index htime n) hnk
+    sampledTimeIntervalIndex time htime n ≤ k := by
+  change Nat.find (exists_sampledTimeIntervalIndex htime n) ≤ k
+  exact Nat.find_min' (exists_sampledTimeIntervalIndex htime n) hnk
 
-theorem increasingTimeIntervalIndex_lower_bound {time : ℕ → ℕ}
+theorem sampledTimeIntervalIndex_lower_bound {time : ℕ → ℕ}
     (htime : StrictMono time) {n : ℕ} (hstart : time 0 ≤ n) :
-    time (increasingTimeIntervalIndex time htime n) ≤ n := by
+    time (sampledTimeIntervalIndex time htime n) ≤ n := by
   by_contra hnot
-  have hlt : n < time (increasingTimeIntervalIndex time htime n) := Nat.lt_of_not_ge hnot
-  by_cases hzero : increasingTimeIntervalIndex time htime n = 0
+  have hlt : n < time (sampledTimeIntervalIndex time htime n) := Nat.lt_of_not_ge hnot
+  by_cases hzero : sampledTimeIntervalIndex time htime n = 0
   · rw [hzero] at hlt
     exact (not_lt_of_ge hstart) hlt
-  · have hindexPos : 0 < increasingTimeIntervalIndex time htime n :=
+  · have hindexPos : 0 < sampledTimeIntervalIndex time htime n :=
       Nat.pos_of_ne_zero hzero
-    let k := increasingTimeIntervalIndex time htime n - 1
-    have hk : k + 1 = increasingTimeIntervalIndex time htime n := by
+    let k := sampledTimeIntervalIndex time htime n - 1
+    have hk : k + 1 = sampledTimeIntervalIndex time htime n := by
       dsimp [k]
       omega
-    have hmin := increasingTimeIntervalIndex_le_of_mem htime n k (by simpa [hk] using hlt)
+    have hmin := sampledTimeIntervalIndex_le_of_mem htime n k (by simpa [hk] using hlt)
     omega
 
-theorem increasingTimeIntervalIndex_tendsto {time : ℕ → ℕ}
+theorem sampledTimeIntervalIndex_tendsto {time : ℕ → ℕ}
     (htime : StrictMono time) :
-    Tendsto (increasingTimeIntervalIndex time htime) atTop atTop := by
+    Tendsto (sampledTimeIntervalIndex time htime) atTop atTop := by
   rw [tendsto_atTop]
   intro k
   filter_upwards [eventually_ge_atTop (time k)] with n hn
   by_contra hnot
-  have hindex : increasingTimeIntervalIndex time htime n < k := Nat.lt_of_not_ge hnot
-  have hindexTime : time (increasingTimeIntervalIndex time htime n + 1) ≤ time k :=
+  have hindex : sampledTimeIntervalIndex time htime n < k := Nat.lt_of_not_ge hnot
+  have hindexTime : time (sampledTimeIntervalIndex time htime n + 1) ≤ time k :=
     htime.monotone (by omega)
-  have hspec := increasingTimeIntervalIndex_spec htime n
+  have hspec := sampledTimeIntervalIndex_spec htime n
   omega
 
-theorem increasingTimeIntervalIndex_at_time {time : ℕ → ℕ}
+theorem sampledTimeIntervalIndex_at_time {time : ℕ → ℕ}
     (htime : StrictMono time) (k : ℕ) :
-    increasingTimeIntervalIndex time htime (time k) = k := by
+    sampledTimeIntervalIndex time htime (time k) = k := by
   apply le_antisymm
-  · exact increasingTimeIntervalIndex_le_of_mem htime (time k) k
+  · exact sampledTimeIntervalIndex_le_of_mem htime (time k) k
       (htime (Nat.lt_succ_self k))
   · by_contra hnot
-    have hindex : increasingTimeIntervalIndex time htime (time k) < k :=
+    have hindex : sampledTimeIntervalIndex time htime (time k) < k :=
       Nat.lt_of_not_ge hnot
-    have hindexTime : time (increasingTimeIntervalIndex time htime (time k) + 1) ≤ time k :=
+    have hindexTime : time (sampledTimeIntervalIndex time htime (time k) + 1) ≤ time k :=
       htime.monotone (by omega)
-    have hspec := increasingTimeIntervalIndex_spec htime (time k)
+    have hspec := sampledTimeIntervalIndex_spec htime (time k)
     omega
 
-noncomputable def increasingTimeAuxiliaryScale (time width : ℕ → ℕ)
+noncomputable def sampledIntegerWidthScale (time width : ℕ → ℕ)
     (htime : StrictMono time) : ℕ → ℝ := fun n =>
-  (width (increasingTimeIntervalIndex time htime n) : ℝ)
+  (width (sampledTimeIntervalIndex time htime n) : ℝ)
 
-theorem increasingTimeAuxiliaryScale_isSmallDeviationScale
+theorem sampledIntegerWidthScale_isSmallDeviationScale
     {time width : ℕ → ℕ} (htime : StrictMono time)
     (htimePos : ∀ k, 0 < time k)
     (hwidth : Tendsto (fun k : ℕ => (width k : ℝ)) atTop atTop)
     (hwidthSq : Tendsto (fun k : ℕ => (width k : ℝ) ^ 2 / (time k : ℝ))
       atTop (𝓝 0)) :
     Asymptotics.IsSmallDeviationScale
-      (increasingTimeAuxiliaryScale time width htime)
+      (sampledIntegerWidthScale time width htime)
       (fun n => Real.sqrt (n : ℝ)) := by
-  have hindex := increasingTimeIntervalIndex_tendsto htime
-  have hscaleTop : Tendsto (increasingTimeAuxiliaryScale time width htime) atTop atTop :=
+  have hindex := sampledTimeIntervalIndex_tendsto htime
+  have hscaleTop : Tendsto (sampledIntegerWidthScale time width htime) atTop atTop :=
     hwidth.comp hindex
   have hwidthSqComp := hwidthSq.comp hindex
   have hscaleSqNonneg (n : ℕ) :
-      0 ≤ (increasingTimeAuxiliaryScale time width htime n) ^ 2 / (n : ℝ) :=
+      0 ≤ (sampledIntegerWidthScale time width htime n) ^ 2 / (n : ℝ) :=
     div_nonneg (sq_nonneg _) (Nat.cast_nonneg _)
   have hscaleSqUpper :
-      (fun n : ℕ => (increasingTimeAuxiliaryScale time width htime n) ^ 2 / (n : ℝ)) ≤ᶠ[atTop]
-        (fun n => (width (increasingTimeIntervalIndex time htime n) : ℝ) ^ 2 /
-          (time (increasingTimeIntervalIndex time htime n) : ℝ)) := by
+      (fun n : ℕ => (sampledIntegerWidthScale time width htime n) ^ 2 / (n : ℝ)) ≤ᶠ[atTop]
+        (fun n => (width (sampledTimeIntervalIndex time htime n) : ℝ) ^ 2 /
+          (time (sampledTimeIntervalIndex time htime n) : ℝ)) := by
     filter_upwards [eventually_ge_atTop (time 0)] with n hn
-    let k := increasingTimeIntervalIndex time htime n
-    have hkn := increasingTimeIntervalIndex_lower_bound htime hn
+    let k := sampledTimeIntervalIndex time htime n
+    have hkn := sampledTimeIntervalIndex_lower_bound htime hn
     have hkpos : 0 < (time k : ℝ) := by exact_mod_cast htimePos k
     have hnpos : 0 < (n : ℝ) := by
       exact_mod_cast (lt_of_lt_of_le (htimePos 0) hn)
@@ -146,46 +137,46 @@ theorem increasingTimeAuxiliaryScale_isSmallDeviationScale
     have hdiv : (width k : ℝ) ^ 2 / (n : ℝ) ≤
         (width k : ℝ) ^ 2 / (time k : ℝ) :=
       (div_le_div_iff₀ hnpos hkpos).2 (by simpa [mul_comm] using hcross)
-    simpa [k, increasingTimeAuxiliaryScale] using hdiv
+    simpa [k, sampledIntegerWidthScale] using hdiv
   have hscaleSq : Tendsto
-      (fun n : ℕ => (increasingTimeAuxiliaryScale time width htime n) ^ 2 / (n : ℝ))
+      (fun n : ℕ => (sampledIntegerWidthScale time width htime n) ^ 2 / (n : ℝ))
       atTop (𝓝 0) :=
     tendsto_of_tendsto_of_tendsto_of_le_of_le'
       tendsto_const_nhds hwidthSqComp
       (Filter.Eventually.of_forall hscaleSqNonneg) hscaleSqUpper
   have hscaleRatio := Asymptotics.tendsto_div_sqrt_atTop_zero_of_tendsto_sq_div_atTop_zero
-    (fun n => Nat.cast_nonneg (width (increasingTimeIntervalIndex time htime n))) hscaleSq
+    (fun n => Nat.cast_nonneg (width (sampledTimeIntervalIndex time htime n))) hscaleSq
   exact Asymptotics.IsSmallDeviationScale.of_tendsto hscaleTop hscaleRatio
 
-noncomputable def increasingTimeRealAuxiliaryScale
+noncomputable def sampledRealWidthScale
     (time : ℕ → ℕ) (width : ℕ → ℝ) (htime : StrictMono time) : ℕ → ℝ :=
-  fun n => width (increasingTimeIntervalIndex time htime n)
+  fun n => width (sampledTimeIntervalIndex time htime n)
 
-theorem increasingTimeRealAuxiliaryScale_isSmallDeviationScale
+theorem sampledRealWidthScale_isSmallDeviationScale
     {time : ℕ → ℕ} {width : ℕ → ℝ} (htime : StrictMono time)
     (htimePos : ∀ k, 0 < time k) (hwidthPos : ∀ k, 0 < width k)
     (hwidth : Tendsto width atTop atTop)
     (hwidthSq : Tendsto (fun k => width k ^ 2 / (time k : ℝ))
       atTop (𝓝 0)) :
     Asymptotics.IsSmallDeviationScale
-      (increasingTimeRealAuxiliaryScale time width htime)
+      (sampledRealWidthScale time width htime)
       (fun n => Real.sqrt (n : ℝ)) := by
-  have hindex := increasingTimeIntervalIndex_tendsto htime
+  have hindex := sampledTimeIntervalIndex_tendsto htime
   have hscaleTop : Tendsto
-      (increasingTimeRealAuxiliaryScale time width htime) atTop atTop :=
+      (sampledRealWidthScale time width htime) atTop atTop :=
     hwidth.comp hindex
   have hwidthSqComp := hwidthSq.comp hindex
   have hscaleSqNonneg (n : ℕ) :
-      0 ≤ (increasingTimeRealAuxiliaryScale time width htime n) ^ 2 /
+      0 ≤ (sampledRealWidthScale time width htime n) ^ 2 /
         (n : ℝ) := div_nonneg (sq_nonneg _) (Nat.cast_nonneg _)
   have hscaleSqUpper :
       (fun n : ℕ =>
-        (increasingTimeRealAuxiliaryScale time width htime n) ^ 2 / (n : ℝ)) ≤ᶠ[atTop]
-        (fun n => width (increasingTimeIntervalIndex time htime n) ^ 2 /
-          (time (increasingTimeIntervalIndex time htime n) : ℝ)) := by
+        (sampledRealWidthScale time width htime n) ^ 2 / (n : ℝ)) ≤ᶠ[atTop]
+        (fun n => width (sampledTimeIntervalIndex time htime n) ^ 2 /
+          (time (sampledTimeIntervalIndex time htime n) : ℝ)) := by
     filter_upwards [eventually_ge_atTop (time 0)] with n hn
-    let k := increasingTimeIntervalIndex time htime n
-    have hkn := increasingTimeIntervalIndex_lower_bound htime hn
+    let k := sampledTimeIntervalIndex time htime n
+    have hkn := sampledTimeIntervalIndex_lower_bound htime hn
     have hkpos : 0 < (time k : ℝ) := by exact_mod_cast htimePos k
     have hnpos : 0 < (n : ℝ) := by
       exact_mod_cast (lt_of_lt_of_le (htimePos 0) hn)
@@ -195,17 +186,17 @@ theorem increasingTimeRealAuxiliaryScale_isSmallDeviationScale
         width k ^ 2 * (n : ℝ) := mul_le_mul_of_nonneg_left hdenom hnum
     have hdiv : width k ^ 2 / (n : ℝ) ≤ width k ^ 2 / (time k : ℝ) :=
       (div_le_div_iff₀ hnpos hkpos).2 (by simpa [mul_comm] using hcross)
-    simpa [k, increasingTimeRealAuxiliaryScale] using hdiv
+    simpa [k, sampledRealWidthScale] using hdiv
   have hscaleSq : Tendsto
       (fun n : ℕ =>
-        (increasingTimeRealAuxiliaryScale time width htime n) ^ 2 / (n : ℝ))
+        (sampledRealWidthScale time width htime n) ^ 2 / (n : ℝ))
       atTop (𝓝 0) :=
     tendsto_of_tendsto_of_tendsto_of_le_of_le'
       tendsto_const_nhds hwidthSqComp
       (Filter.Eventually.of_forall hscaleSqNonneg) hscaleSqUpper
   have hscaleNonneg (n : ℕ) :
-      0 ≤ increasingTimeRealAuxiliaryScale time width htime n :=
-    (hwidthPos (increasingTimeIntervalIndex time htime n)).le
+      0 ≤ sampledRealWidthScale time width htime n :=
+    (hwidthPos (sampledTimeIntervalIndex time htime n)).le
   have hscaleRatio := Asymptotics.tendsto_div_sqrt_atTop_zero_of_tendsto_sq_div_atTop_zero
     hscaleNonneg hscaleSq
   exact Asymptotics.IsSmallDeviationScale.of_tendsto hscaleTop hscaleRatio
@@ -289,20 +280,16 @@ theorem tendsto_realWidthRate_of_sampledTime
     (Classical.choose_spec (hbad (φ N))).2
   exact (not_lt_of_ge hge) hlt
 
-/-- Real-width form of Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.1(i). For every
-integer horizon $L_D\to\infty$ with $D^2/L_D\to0$, the closed horizontal-tube
-probability has logarithmic rate $-\pi^2\sigma^2/2$ as real $D\to\infty$.
-The rate is A. A. Mogul'skii, “Small deviations in the sample function
-space,” Theorem 3, Section 4, p. 764 (1974); English translation, “Small
-Deviations in a Space of Trajectories,” DOI 10.1137/1119081. -/
-theorem tendsto_scaledLog_div_predTime
-    {time : ℕ → ℕ} {width : ℕ → ℝ} {logProbability : ℕ → ℝ} {limit : ℝ}
-    (htime : StrictMono time) (htimePos : ∀ k, 0 < time k)
+/-- If $w_k^2 r_k/t_k → c$ and $t_k → ∞$, then replacing $t_k$ by
+$t_k-1$ in the denominator preserves the limit. -/
+theorem tendsto_scaledRate_div_predTime
+    {time : ℕ → ℕ} {width value : ℕ → ℝ} {limit : ℝ}
+    (htime : Tendsto time atTop atTop)
     (hrate : Tendsto
-      (fun k : ℕ => width k ^ 2 / (time k : ℝ) * logProbability k)
+      (fun k : ℕ => width k ^ 2 / (time k : ℝ) * value k)
       atTop (𝓝 limit)) :
     Tendsto
-      (fun k : ℕ => width k ^ 2 / ((time k - 1 : ℕ) : ℝ) * logProbability k)
+      (fun k : ℕ => width k ^ 2 / ((time k - 1 : ℕ) : ℝ) * value k)
       atTop (𝓝 limit) := by
   let horizonRatio : ℕ → ℝ := fun k => (time k : ℝ) / ((time k - 1 : ℕ) : ℝ)
   have hratioBase : Tendsto (fun n : ℕ => (n : ℝ) / ((n - 1 : ℕ) : ℝ))
@@ -319,25 +306,21 @@ theorem tendsto_scaledLog_div_predTime
   have hratio : Tendsto horizonRatio atTop (𝓝 (1 : ℝ)) := by
     change Tendsto (fun k : ℕ => (time k : ℝ) / ((time k - 1 : ℕ) : ℝ))
       atTop (𝓝 (1 : ℝ))
-    exact hratioBase.comp htime.tendsto_atTop
+    exact hratioBase.comp htime
   have hproduct := hratio.mul hrate
   have hEq : (fun k : ℕ => horizonRatio k *
-      (width k ^ 2 / (time k : ℝ) * logProbability k)) =ᶠ[atTop]
+      (width k ^ 2 / (time k : ℝ) * value k)) =ᶠ[atTop]
       (fun k : ℕ => width k ^ 2 /
-        ((time k - 1 : ℕ) : ℝ) * logProbability k) := by
-    filter_upwards [eventually_gt_atTop (1 : ℕ)] with k hk
-    have hk' : 1 < k := by omega
-    have htimeStep : time 1 < time k := htime hk'
-    have htimeOne : 0 < time 1 := htimePos 1
-    have hpredNat : 0 < time k - 1 := by omega
-    have htimeNe : (time k : ℝ) ≠ 0 := ne_of_gt (by exact_mod_cast htimePos k)
-    have hpredNe : ((time k - 1 : ℕ) : ℝ) ≠ 0 :=
-      ne_of_gt (by exact_mod_cast hpredNat)
+        ((time k - 1 : ℕ) : ℝ) * value k) := by
+    filter_upwards [htime.eventually (eventually_gt_atTop (1 : ℕ))] with k hk
+    have htimeNe : (time k : ℝ) ≠ 0 := by
+      exact_mod_cast (Nat.ne_of_gt (by omega : 0 < time k))
+    have hpredNe : ((time k - 1 : ℕ) : ℝ) ≠ 0 := by
+      exact_mod_cast (Nat.ne_of_gt (by omega : 0 < time k - 1))
     dsimp [horizonRatio]
     field_simp [htimeNe, hpredNe]
   simpa only [one_mul] using hproduct.congr' hEq
 
-
-end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.HorizontalTube.Lemmas
+end Asymptotics
 
 end

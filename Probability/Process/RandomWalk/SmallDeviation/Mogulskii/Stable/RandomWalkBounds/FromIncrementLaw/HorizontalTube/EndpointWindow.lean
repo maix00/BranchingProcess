@@ -9,7 +9,7 @@ module
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.FromIncrementLaw.HorizontalTube.Basic
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.FromIncrementLaw.HorizontalTube.Scales
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.FromIncrementLaw.HorizontalTube.Lemmas.SourceCorridor
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.FromIncrementLaw.HorizontalTube.Lemmas.TimeScale
+import Analysis.Asymptotics.Scale.Sampling
 /-!
 # Endpoint-window form of the finite-variance horizontal-tube rate
 
@@ -28,6 +28,7 @@ These results formalize Wang Yiyang, *Asymptotic Speed of the N-Branching Random
 open Filter MeasureTheory ProbabilityTheory
 open MeasureTheory.Measure
 open ProbabilityTheory.RandomWalk
+open Asymptotics
 open ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability
 open Skorokhod.PathClass.StepCorridor
 open scoped ENNReal NNReal Topology
@@ -337,7 +338,7 @@ theorem centeredFiniteVariance_endpointWindowProbabilityRate_along
         (horizontalTubeEndpointWindowProbability (iidSequenceLaw ν) a
           (width k : ℝ) (time k - 1) (v₁ (width k)) (v₂ (width k))).toReal)
       atTop (𝓝 (-(Real.pi ^ 2) / 2 * (∫ x, x ^ 2 ∂ν))) := by
-  let scale := increasingTimeAuxiliaryScale time width htime
+  let scale := sampledIntegerWidthScale time width htime
   let corridorUnion := terminalJumpEndpointCorridorUnion a u v ha haOne hu huv hv
   let sourceProbability : ℕ → ℝ≥0∞ := fun n => iidSequenceLaw ν
     {increment : ℕ → ℝ |
@@ -348,11 +349,11 @@ theorem centeredFiniteVariance_endpointWindowProbabilityRate_along
   let tubeProbability : ℕ → ℝ≥0∞ := fun k =>
     horizontalTubeProbability (iidSequenceLaw ν) a (width k : ℝ) (time k - 1)
   let limit : ℝ := -(Real.pi ^ 2) / 2 * (∫ x, x ^ 2 ∂ν)
-  have hsmall := increasingTimeAuxiliaryScale_isSmallDeviationScale
+  have hsmall := sampledIntegerWidthScale_isSmallDeviationScale
     htime htimePos hwidth hwidthSq
   have hscaleEq (k : ℕ) : scale (time k) = (width k : ℝ) := by
-    simp [scale, increasingTimeAuxiliaryScale,
-      increasingTimeIntervalIndex_at_time htime]
+    simp [scale, sampledIntegerWidthScale,
+      sampledTimeIntervalIndex_at_time htime]
   have hsource :=
     centeredFiniteVariance_sourceFiniteCorridorUnionProbabilityRate
       hsmall hcentered hsquare hvariance corridorUnion
@@ -379,7 +380,7 @@ theorem centeredFiniteVariance_endpointWindowProbabilityRate_along
       (fun k : ℕ => (width k : ℝ) ^ 2 / ((time k - 1 : ℕ) : ℝ) *
         Real.log (sourceProbability (time k)).toReal)
       atTop (𝓝 limit) :=
-    tendsto_scaledLog_div_predTime htime htimePos hsourceRateAtTime
+    tendsto_scaledRate_div_predTime htime.tendsto_atTop hsourceRateAtTime
   have htubeRate :=
     centeredFiniteVariance_closedHorizontalTubeProbabilityRate_along
       htime htimePos hwidth hwidthSq hcentered hsquare hvariance ha haOne
@@ -502,7 +503,7 @@ theorem centeredFiniteVariance_endpointWindowProbabilityRate_realWidthAlong
         (horizontalTubeEndpointWindowProbability (iidSequenceLaw ν) a
           (width k) (time k - 1) (v₁ (width k)) (v₂ (width k))).toReal)
       atTop (𝓝 (-(Real.pi ^ 2) / 2 * (∫ x, x ^ 2 ∂ν))) := by
-  let scale := increasingTimeRealAuxiliaryScale time width htime
+  let scale := sampledRealWidthScale time width htime
   let corridorUnion := terminalJumpEndpointCorridorUnion a u v ha haOne hu huv hv
   let sourceProbability : ℕ → ℝ≥0∞ := fun n => iidSequenceLaw ν
     {increment : ℕ → ℝ |
@@ -513,11 +514,11 @@ theorem centeredFiniteVariance_endpointWindowProbabilityRate_realWidthAlong
   let tubeProbability : ℕ → ℝ≥0∞ := fun k =>
     horizontalTubeProbability (iidSequenceLaw ν) a (width k) (time k - 1)
   let limit : ℝ := -(Real.pi ^ 2) / 2 * (∫ x, x ^ 2 ∂ν)
-  have hsmall := increasingTimeRealAuxiliaryScale_isSmallDeviationScale
+  have hsmall := sampledRealWidthScale_isSmallDeviationScale
     htime htimePos hwidthPos hwidth hwidthSq
   have hscaleEq (k : ℕ) : scale (time k) = width k := by
-    simp [scale, increasingTimeRealAuxiliaryScale,
-      increasingTimeIntervalIndex_at_time htime]
+    simp [scale, sampledRealWidthScale,
+      sampledTimeIntervalIndex_at_time htime]
   have hsource :=
     centeredFiniteVariance_sourceFiniteCorridorUnionProbabilityRate
       hsmall hcentered hsquare hvariance corridorUnion
@@ -544,7 +545,7 @@ theorem centeredFiniteVariance_endpointWindowProbabilityRate_realWidthAlong
       (fun k : ℕ => width k ^ 2 / ((time k - 1 : ℕ) : ℝ) *
         Real.log (sourceProbability (time k)).toReal)
       atTop (𝓝 limit) :=
-    tendsto_scaledLog_div_predTime htime htimePos hsourceRateAtTime
+    tendsto_scaledRate_div_predTime htime.tendsto_atTop hsourceRateAtTime
   have htubeRate :=
     centeredFiniteVariance_closedHorizontalTubeProbabilityRate_realWidthAlong
       htime htimePos hwidthPos hwidth hwidthSq hcentered hsquare hvariance ha haOne
