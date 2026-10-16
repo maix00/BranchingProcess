@@ -11,7 +11,7 @@ public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVa
 /-!
 # Endpoint margins for the upper-window staircase
 
-The public theorem in this file is:
+The module-visible supporting lemma in this file is:
 
 - `staircaseUpperEndpointMarginConditions`:
   the ordinary blocks retain the margins of the lower-window

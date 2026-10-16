@@ -10,7 +10,7 @@ public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVa
 /-!
 # Ordinary and final staircase endpoint margins
 
-The public theorem in this file is:
+The module-visible supporting lemma in this file is:
 
 - `staircaseEndpointMarginConditions`:
   with $b=1-1/(3m)$ and $D_*=2c\ell/\Delta^2<\Delta$, four

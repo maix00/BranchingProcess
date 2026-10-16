@@ -11,7 +11,7 @@ public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVa
 /-!
 # Lower bound for Wang Yiyang's Lemma 3.5 staircase schedule
 
-The public theorem in this file is:
+The module-visible supporting lemma in this file is:
 
 - `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.exists_concreteStaircaseLowerBound`:
   for $q=\lfloor(L-t_1)/\ell\rfloor$, horizontal block width

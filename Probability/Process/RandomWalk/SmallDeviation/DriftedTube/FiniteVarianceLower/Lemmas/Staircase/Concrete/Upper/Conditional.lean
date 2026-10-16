@@ -13,7 +13,7 @@ public import Analysis.Asymptotics.IntermediatePowerBlock
 /-!
 # Upper-endpoint tilted-tube bound from conditioned entrance estimates
 
-The public theorems in this file are:
+The module-visible supporting lemmas in this file are:
 
 - `eventually_concreteStaircaseUpperEndpointLowerBound_of_centeredFiniteVariance`:
   for $t_1=\lfloor\Delta_n^2\rfloor$ and

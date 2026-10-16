@@ -12,7 +12,7 @@ public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVa
 /-!
 # Asymptotic upper-endpoint staircase lower bound
 
-The public theorem in this file is:
+The module-visible supporting lemma in this file is:
 
 - `eventually_concreteStaircaseUpperEndpointLowerBound_of_robustEntrance`:
   under the superquadratic and subcubic block scales of Wang Yiyang's Lemma 3.5, fixed

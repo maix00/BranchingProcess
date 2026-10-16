@@ -13,7 +13,7 @@ public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVa
 /-!
 # Upper-endpoint bound for Wang Yiyang's Lemma 3.5 staircase schedule
 
-The public theorem in this file is:
+The module-visible supporting lemma in this file is:
 
 - `exists_concreteStaircaseUpperEndpointLowerBound`:
   the same block schedule and interior windows as in the first part of

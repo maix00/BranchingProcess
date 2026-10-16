@@ -12,7 +12,7 @@ public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVa
 /-!
 # Staircase inclusion for an upper terminal window
 
-The public theorem in this file is:
+The module-visible supporting lemma in this file is:
 
 - `initialInterTubeBlocks_subset_driftedTubeUpperEndpointWindowEvent`:
   if each horizontal block is inside the tilted tube and the last
