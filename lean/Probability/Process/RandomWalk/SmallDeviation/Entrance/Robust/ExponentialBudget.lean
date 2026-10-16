@@ -8,7 +8,7 @@ module
 
 public import Analysis.Asymptotics.PolynomialExponential
 public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.DiffusiveTransitionLower
-public import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.PowerAssembly
+public import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.Proof.PowerAssembly
 
 /-!
 # Exponential budget for the robust entrance event

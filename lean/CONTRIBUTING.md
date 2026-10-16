@@ -54,6 +54,25 @@ measures, filtrations, kernels, point measures, and topological spaces. A
 formalized theorem should compile from a clean checkout with the pinned
 `lean-toolchain` and Lake manifest.
 
+## Entry points and proof modules
+
+Keep a principal theorem in a plainly named entry module at the mathematical
+subject's directory level. When several files serve only that theorem's proof,
+put them under a sibling `Proof/` directory, subdivided by mathematical steps
+such as `Blocks`, `Entrance`, or `Staircase`. Keep genuinely reusable definitions
+and theorems in their own semantic directories instead of moving them into a
+particular result's `Proof/` tree. Avoid a catch-all `Lemmas/` directory whose
+contents have unrelated mathematical roles.
+
+Directory placement communicates which files users should read first; it does
+not change Lean declaration visibility. Mark a helper `private` when all its
+uses are in its defining module. A helper used across proof modules may need
+module visibility, but that alone does not make it a principal public result.
+The module docstring lists the public declarations required by the header rule
+above; directory READMEs or architecture documentation identify the intended
+entry modules. When reorganizing a proof tree, update imports and documentation
+and build every affected entry module.
+
 ## Issues and questions
 
 Open an issue for a suspected mathematical error, a missing measurability

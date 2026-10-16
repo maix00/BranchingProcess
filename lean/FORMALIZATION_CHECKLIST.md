@@ -228,63 +228,63 @@ finite-variance specialization is in
 almost-surely-continuous mapping theorem used after Bolthausen's Lemma 2.5.
 
 The concrete finite staircase now has its own verified schedule and geometry:
-`DriftedTube/FiniteVarianceLower/Staircase/Setup/Schedule.lean` defines
+`DriftedTube/FiniteVarianceLower/BlockSchedule.lean` defines
 $q=\lfloor(L-t_1)/\ell\rfloor$ and the final block of length
-$\ell+(L-t_1)\bmod\ell$; `DriftedTube/FiniteVarianceLower/Staircase/Setup/Parameters.lean` proves that the
+$\ell+(L-t_1)\bmod\ell$; `DriftedTube/FiniteVarianceLower/Proof/Staircase/Setup/Parameters.lean` proves that the
 horizontal block is $[r_{t_{j+1}},s_{t_j}]$ with width
-$\Delta-c|I_j|/\Delta^2$; `DriftedTube/FiniteVarianceLower/Staircase/Endpoint/Windows.lean` identifies the
+$\Delta-c|I_j|/\Delta^2$; `DriftedTube/FiniteVarianceLower/Proof/Staircase/Endpoint/Windows.lean` identifies the
 endpoint fractions $v_1(k),v_2(k)$ in Wang Yiyang's Lemma 3.5 with the next central window and the final endpoint
-window. `DriftedTube/FiniteVarianceLower/Staircase/Concrete/Lower.lean` applies the finite product theorem to
+window. `DriftedTube/FiniteVarianceLower/Proof/Staircase/Concrete/Lower.lean` applies the finite product theorem to
 this exact schedule under explicit numerical and entrance assumptions.
 The finite product now selects separate fixed interior endpoint intervals
 for ordinary blocks and the final block, as in the two cases following the
 uniform-in-$k$ argument of the proof. A single interval would impose an
 impossible overlap when the final endpoint fraction is below $1/3$.
-`DriftedTube/FiniteVarianceLower/Staircase/Setup/FirstWindow.lean` proves that, when the first block has length
+`DriftedTube/FiniteVarianceLower/Proof/Staircase/Setup/FirstWindow.lean` proves that, when the first block has length
 $\ell$ and $10c\ell<\Delta^3$, the robust interval
 $[r_{t_1}+2\Delta/5,r_{t_1}+3\Delta/5]$ in Appendix A.2 lies in the
 central window of the first horizontal block. The entrance probability
 estimate of Lemma A.7 discharges the
 first-block assumption of
-`DriftedTube/FiniteVarianceLower/Staircase/Concrete/Lower.lean`.
+`DriftedTube/FiniteVarianceLower/Proof/Staircase/Concrete/Lower.lean`.
 `Entrance/RobustTransition.lean` defines this event with terminal
 window $[h_{t_1}+2\Delta/5,h_{t_1}+3\Delta/5]$ and proves that it is
-measurable at time $t_1$. `DriftedTube/FiniteVarianceLower/Staircase/Setup/EntranceBridge.lean` proves
+measurable at time $t_1$. `DriftedTube/FiniteVarianceLower/Proof/Staircase/Setup/EntranceBridge.lean` proves
 both its tilted-tube path constraint and its membership in the first
-horizontal central window. `DriftedTube/FiniteVarianceLower/Staircase/Concrete/Lower/Entrance.lean` eliminates
+horizontal central window. `DriftedTube/FiniteVarianceLower/Proof/Staircase/Concrete/Lower/Entrance.lean` eliminates
 the entrance geometry and measurability assumptions from the finite
 staircase theorem; the remaining entrance input is exactly the probability
 lower bound for this robust event. The proof takes the eventual condition
 $10c\ell<\Delta^3$ to obtain the central-window inclusion.
-`DriftedTube/FiniteVarianceLower/Staircase/Setup/Numeric.lean` proves common width and time-ratio bounds, and
+`DriftedTube/FiniteVarianceLower/Proof/Staircase/Setup/Numeric.lean` proves common width and time-ratio bounds, and
 uses the sharp lower width $\Delta-2c\ell/\Delta^2$ for the exponent
 comparison. The latter retains the limiting width ratio $1$ in Wang Yiyang's Lemma 3.5.
-`DriftedTube/FiniteVarianceLower/Staircase/Endpoint/Margins.lean` proves the two separate endpoint-margin
-comparisons for ordinary and final blocks; `DriftedTube/FiniteVarianceLower/Staircase/GlobalConditions.lean`
+`DriftedTube/FiniteVarianceLower/Proof/Staircase/Endpoint/Margins.lean` proves the two separate endpoint-margin
+comparisons for ordinary and final blocks; `DriftedTube/FiniteVarianceLower/Proof/Staircase/GlobalConditions.lean`
 combines them into exactly the six per-block hypotheses of the finite
 product. These results formalize the common-threshold part of Wang Yiyang's
 schedule argument without a varying block-index assumption.
-`DriftedTube/FiniteVarianceLower/Staircase/Concrete/Lower/Global.lean` applies this reduction to the exact
+`DriftedTube/FiniteVarianceLower/Proof/Staircase/Concrete/Lower/Global.lean` applies this reduction to the exact
 finite staircase and robust entrance probability, yielding the target
 exponential lower bound from the global inequalities.
-`DriftedTube/FiniteVarianceLower/Staircase/Rate/Limit.lean` uses private width-ratio and floor-comparison
+`DriftedTube/FiniteVarianceLower/Proof/Staircase/Rate/Limit.lean` uses private width-ratio and floor-comparison
 helpers to obtain the rounded narrowed-width exponent comparison under
 $\ell/\Delta^3\to0$ and the strict margin $d<d''\beta^2$, where
 $\beta=1-1/(3m)$.
-`DriftedTube/FiniteVarianceLower/Staircase/Eventually.lean` keeps its one-use rounded-width threshold,
+`DriftedTube/FiniteVarianceLower/Proof/Staircase/Eventually.lean` keeps its one-use rounded-width threshold,
 margin, superquadratic time ratio, and subcubic cost comparisons private
 and assembles the common threshold for the staircase proof.
-`DriftedTube/FiniteVarianceLower/Staircase/Endpoint/Limit.lean` proves that the ordinary endpoint fraction
-tends to $1/(3\beta)$; `DriftedTube/FiniteVarianceLower/Staircase/Eventually.lean` takes one common eventual
-threshold for all global conditions. `DriftedTube/FiniteVarianceLower/Staircase/Concrete/Lower/Asymptotic.lean`
+`DriftedTube/FiniteVarianceLower/Proof/Staircase/Endpoint/Limit.lean` proves that the ordinary endpoint fraction
+tends to $1/(3\beta)$; `DriftedTube/FiniteVarianceLower/Proof/Staircase/Eventually.lean` takes one common eventual
+threshold for all global conditions. `DriftedTube/FiniteVarianceLower/Proof/Staircase/Concrete/Lower/Asymptotic.lean`
 then proves the eventual tilted-tube lower bound from the robust entrance
 probability budget. The entrance budget is supplied by
 `Entrance/Robust/ExponentialBudget.lean`. Its private fixed-window transition estimate
 follows from the Bolthausen--Iglehart meander limit. The finite-variance
 survival input is $C\Delta^{-2}$, obtained from the Bauer--Godrèche--Luck
 cyclic-rotation cover and the Gaussian endpoint-sign limit.
-`DriftedTube/FiniteVarianceLower/Staircase/Concrete/Lower/Conditional.lean`
-and `DriftedTube/FiniteVarianceLower/Staircase/Concrete/Upper/Conditional.lean`
+`DriftedTube/FiniteVarianceLower/Proof/Staircase/Concrete/Lower/Conditional.lean`
+and `DriftedTube/FiniteVarianceLower/Proof/Staircase/Concrete/Upper/Conditional.lean`
 compose that entrance budget with the staircase
 product. `Analysis/Asymptotics/IntermediatePowerBlock.lean` verifies the
 paper's choice `ℓ=⌊Δ^(2+η)⌋`; `Concrete/Uniform.lean` converts both sequential
@@ -294,7 +294,7 @@ rates and endpoint margins in the paper's order and states the complete
 finite-variance result with both endpoint windows.
 `Analysis/Asymptotics/SequentialEventually.lean` proves that eventual
 validity along every divergent real-width sequence yields a common real
-threshold. `DriftedTube/FiniteVarianceLower/Staircase/Concrete/Uniform.lean`
+threshold. `DriftedTube/FiniteVarianceLower/Proof/Staircase/Concrete/Uniform.lean`
 applies its uniform-parameter form directly to both endpoint conclusions.
 The separate unused entrance-budget adapter has been removed.
 The fluctuation modules now prove $T_k^\pm\le n\iff k\le\ell_n^\pm$,
