@@ -6,8 +6,8 @@ The folders here are organized by the event being estimated.
 | --- | --- |
 | `Mogulskii` | A walk stays in a fixed or time-dependent corridor. The stable-domain framework also contains the finite-variance case. For finite-variance horizontal tubes, start with `Mogulskii/Stable/RandomWalkBounds/FromIncrementLaw/HorizontalTube.lean`. |
 | `Drawdown` | The running maximum minus the current walk stays bounded. This is a small-deviation question for the drawdown process. The finite-variance upper estimate is in `Drawdown/FiniteVarianceUpper.lean`. |
-| `DriftedTube` | A walk stays between linearly moving boundaries. The two finite-variance endpoint lower bounds of Wang Yiyang's Lemma 3.5 are in `DriftedTube/FiniteVarianceLower/EndpointBounds.lean`. The `Staircase`, `Binning`, and `Blocks` directories contain its proof components. |
-| `Entrance` | Transition estimates into a corridor, shared by several small-deviation arguments. `Robust/ExponentialBudget.lean` contains the private fixed-window estimate and supplies the entrance factor used by the tilted-tube endpoint bounds. |
+| `DriftedTube` | A walk stays between linearly moving boundaries. The two finite-variance endpoint lower bounds of Wang Yiyang's Lemma 3.5 are in `DriftedTube/FiniteVarianceLower/EndpointBounds.lean`. Its `Proof/Staircase/` directory holds the lemma-specific staircase assembly. `Binning/` and `Blocks/` retain the reusable real-width and conditional-block estimates; `EndpointEvent.lean`, `Reflection.lean`, and `BlockSchedule.lean` own the reusable events, symmetry, and finite block schedule. |
+| `Entrance` | Transition estimates into a corridor, shared by several small-deviation arguments. `Robust/ExponentialBudget.lean` contains the private fixed-window estimate and supplies the entrance factor used by the tilted-tube endpoint bounds; `Robust/Proof/` holds its three-region assembly. |
 | `HorizontalTube` | Upper bounds for a fixed horizontal corridor and the reusable finite-variance lower bound with an interior endpoint window. |
 
 The conditioned Brownian-meander input to the entrance estimate is in
