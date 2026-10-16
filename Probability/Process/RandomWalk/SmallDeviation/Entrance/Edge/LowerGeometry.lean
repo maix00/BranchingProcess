@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.SmallDeviation.Entrance.MovingInterior
-public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.TransitionFactorization
+public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition.Factorization
 
 /-!
 # Lower-edge prefix and meander-suffix geometry

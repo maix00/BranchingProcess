@@ -8,7 +8,7 @@ module
 
 public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.MeanderIdentification
 public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.MeanderVariance
-public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.TransitionFromFirstWindow
+public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition.FromFirstWindow
 public import Probability.Process.Brownian.Meander.LastZeroSupport
 
 /-!
