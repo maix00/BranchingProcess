@@ -8,9 +8,9 @@ module
 
 public import Mathlib.Data.Set.Basic
 public import Mathlib.Order.OrderDual
-public import Combinatorics.BranchingWalk.Basic.Position
-public import Combinatorics.BranchingWalk.Basic.SurviveAlong
-public import Combinatorics.BranchingWalk.Basic.Survival
+public import Combinatorics.BranchingWalk.Basic.Position.Basic
+public import Combinatorics.BranchingWalk.Basic.Survival.SurviveAlong
+public import Combinatorics.BranchingWalk.Basic.Survival.Basic
 
 /-!
 # Time-indexed particle clouds

@@ -6,9 +6,9 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.FunctionalLimit.Donsker.CLT
-public import Probability.Distributions.Stable.Attraction
-public import Probability.Distributions.Stable.Gaussian
+public import Probability.Process.RandomWalk.FunctionalLimit.Donsker.FiniteDimensional.CLT
+public import Probability.Distributions.Stable.Domain.Attraction
+public import Probability.Distributions.Stable.Gaussian.Basic
 
 /-!
 # Gaussian stable-domain adapters

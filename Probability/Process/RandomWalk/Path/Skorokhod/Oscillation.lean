@@ -7,11 +7,11 @@ Authors: WANG Yiyang
 module
 
 public import Order.Interval.UniformGrid
-public import Probability.Process.RandomWalk.Path.Cadlag
+public import Probability.Process.RandomWalk.Path.Representation.Cadlag
 public import Probability.Process.RandomWalk.Path.Block.Law.FirstCrossing
 public import Topology.Cadlag.Skorokhod.Oscillation.Partition.Finite
 public import Topology.Cadlag.Skorokhod.Oscillation.Partition.Measurability
-public import Topology.Cadlag.Skorokhod.Oscillation.DoubleExcursion
+public import Topology.Cadlag.Skorokhod.Oscillation.DoubleExcursion.Basic
 
 /-!
 # Oscillation partitions for finite random-walk paths
@@ -246,18 +246,6 @@ private theorem existsNatAnchorForWindow {n width i l : ℕ}
   · omega
   · omega
 
-private theorem displacement_natAdd_eq_sub (increment : ℕ → ℝ)
-    {start finish : ℕ} (hstart : start ≤ finish) :
-    AdditivePath.displacement (finish - start)
-        (fun k => increment (start + k)) =
-      AdditivePath.displacement finish increment -
-        AdditivePath.displacement start increment := by
-  have hsplit := AdditivePath.displacement_add start (finish - start) increment
-  have hend : start + (finish - start) = finish := by omega
-  rw [hend] at hsplit
-  rw [hsplit]
-  ring
-
 /-- Distance between two values of a normalized step path, expressed as the
 scaled absolute difference of the corresponding partial sums. -/
 theorem normalizedStepCadlagPathIcc_dist_eq
@@ -416,13 +404,13 @@ theorem normalizedStepCadlagPathIcc_not_hasDoubleExcursionBound_subset_windowGri
     exact (le_of_lt ((lt_div_iff₀ hscale).mp hdiv))
   have hrawFirst := hvalueDist x y i j rfl rfl hfirst
   have hrawSecond := hvalueDist z w k l rfl rfl hsecond
-  have hshiftI := displacement_natAdd_eq_sub increment
+  have hshiftI := AdditivePath.displacement_natAdd_eq_sub increment
     (show anchor * width ≤ i by omega)
-  have hshiftJ := displacement_natAdd_eq_sub increment
+  have hshiftJ := AdditivePath.displacement_natAdd_eq_sub increment
     (show anchor * width ≤ j by omega)
-  have hshiftK := displacement_natAdd_eq_sub increment
+  have hshiftK := AdditivePath.displacement_natAdd_eq_sub increment
     (show anchor * width ≤ k by omega)
-  have hshiftL := displacement_natAdd_eq_sub increment
+  have hshiftL := AdditivePath.displacement_natAdd_eq_sub increment
     (show anchor * width ≤ l by omega)
   have hrawLocalFirst : ε * scale n ≤
       |AdditivePath.displacement localJ
