@@ -35,7 +35,7 @@ namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 
 /-- The finite staircase probability calculation with the actual block
 schedule and endpoint windows from Wang Yiyang's Lemma 3.5. -/
-theorem exists_concreteStaircaseLowerBound
+lemma exists_concreteStaircaseLowerBound
     {ν : Measure ℝ} [IsProbabilityMeasure ν]
     {sigma narrowedRate uInterior vInterior uFinal vFinal : ℝ}
     (hν : IsCenteredSecondMoment ν (sigma ^ 2))

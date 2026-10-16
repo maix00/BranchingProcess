@@ -35,7 +35,7 @@ namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 
 /-- The entrance estimate, finite spatial-bin rate, reverse Markov product,
 and event inclusion yield the tilted-tube endpoint lower bound. -/
-theorem exists_uniform_finiteStaircaseLowerBound
+lemma exists_uniform_finiteStaircaseLowerBound
     {ν : Measure ℝ} [IsProbabilityMeasure ν]
     {sigma narrowedRate uInterior vInterior uFinal vFinal : ℝ}
     (hν : IsCenteredSecondMoment ν (sigma ^ 2))

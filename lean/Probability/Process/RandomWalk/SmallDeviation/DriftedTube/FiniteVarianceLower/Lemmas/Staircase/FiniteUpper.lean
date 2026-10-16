@@ -34,7 +34,7 @@ namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 
 /-- The finite staircase calculation with a final window adjacent to the
 upper edge of the tilted tube. -/
-theorem exists_uniform_finiteStaircaseUpperEndpointLowerBound
+lemma exists_uniform_finiteStaircaseUpperEndpointLowerBound
     {ν : Measure ℝ} [IsProbabilityMeasure ν]
     {sigma narrowedRate uInterior vInterior uFinal vFinal : ℝ}
     (hν : IsCenteredSecondMoment ν (sigma ^ 2))

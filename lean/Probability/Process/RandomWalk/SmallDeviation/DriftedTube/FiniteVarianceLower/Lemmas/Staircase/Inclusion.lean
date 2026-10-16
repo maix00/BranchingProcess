@@ -36,7 +36,7 @@ namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 
 /-- Every time after the entrance stage and through the final block end
 belongs to one of the consecutive block intervals. -/
-private theorem exists_staircaseBlock_covering_time
+private lemma exists_staircaseBlock_covering_time
     (start : ℕ → ℕ) {q time : ℕ}
     (hentrance : start 0 < time) (hfinish : time ≤ start q) :
     ∃ j : ℕ, j < q ∧ start j < time ∧ time ≤ start (j + 1) := by
@@ -50,7 +50,7 @@ private theorem exists_staircaseBlock_covering_time
 
 /-- The entrance and horizontal blocks bounded by the extreme moving
 boundaries imply the full tilted-tube event and final endpoint window. -/
-theorem initialInterTubeBlocks_subset_driftedTubeEndpointWindowEvent_of_extremeBounds
+lemma initialInterTubeBlocks_subset_driftedTubeEndpointWindowEvent_of_extremeBounds
     (start length : ℕ → ℕ)
     (hnext : ∀ j, start (j + 1) = start j + length j)
     (q horizon : ℕ) (hq : 0 < q)
@@ -139,7 +139,7 @@ theorem initialInterTubeBlocks_subset_driftedTubeEndpointWindowEvent_of_extremeB
 
 /-- For nonnegative drift, the maximal lower boundary is at the block end
 and the minimal upper boundary is at the block start. -/
-theorem initialInterTubeBlocks_subset_driftedTubeEndpointWindowEvent
+lemma initialInterTubeBlocks_subset_driftedTubeEndpointWindowEvent
     (start length : ℕ → ℕ)
     (hnext : ∀ j, start (j + 1) = start j + length j)
     (q horizon : ℕ) (hq : 0 < q)

@@ -34,7 +34,7 @@ namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 
 /-- The concrete staircase lower bound with blockwise conditions reduced to
 inequalities at the global scale. -/
-theorem exists_concreteStaircaseLowerBound_of_globalConditions
+lemma exists_concreteStaircaseLowerBound_of_globalConditions
     {ν : Measure ℝ} [IsProbabilityMeasure ν]
     {sigma narrowedRate uInterior vInterior uFinal vFinal : ℝ}
     (hν : IsCenteredSecondMoment ν (sigma ^ 2))

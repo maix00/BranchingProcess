@@ -35,7 +35,7 @@ namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 /-- The common staircase path and a final upper-edge window imply the
 upper-endpoint tilted-tube event. The path inclusion uses the same
 horizontal-block argument as the lower-endpoint case. -/
-theorem initialInterTubeBlocks_subset_driftedTubeUpperEndpointWindowEvent
+lemma initialInterTubeBlocks_subset_driftedTubeUpperEndpointWindowEvent
     (start length : ℕ → ℕ)
     (hnext : ∀ j, start (j + 1) = start j + length j)
     (q horizon : ℕ) (hq : 0 < q)

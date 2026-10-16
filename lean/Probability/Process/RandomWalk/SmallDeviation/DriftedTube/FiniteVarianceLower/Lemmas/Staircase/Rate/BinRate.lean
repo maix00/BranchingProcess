@@ -33,7 +33,7 @@ namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 
 /-- The finitely many narrowed horizontal tubes have a common real-width
 threshold, and their probability bounds use the global width exponent. -/
-theorem exists_uniform_staircaseBinProbability_ge_exp
+lemma exists_uniform_staircaseBinProbability_ge_exp
     {ν : Measure ℝ} [IsProbabilityMeasure ν]
     {sigma d u v : ℝ}
     (hν : IsCenteredSecondMoment ν (sigma ^ 2))

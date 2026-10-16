@@ -38,7 +38,7 @@ open scoped Topology
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 
 /-- The lower rounded half-width passes every fixed integer threshold. -/
-private theorem eventually_floor_half_width_ge
+private lemma eventually_floor_half_width_ge
     {width : ℕ → ℝ} {beta : ℝ}
     (hbeta : 0 < beta)
     (hwidth : Tendsto width atTop atTop)
@@ -56,7 +56,7 @@ private theorem eventually_floor_half_width_ge
 
 /-- A fixed positive endpoint margin fits inside the narrowed half-width
 when the global width tends to infinity. -/
-private theorem eventually_half_width_ge_inverse_margin
+private lemma eventually_half_width_ge_inverse_margin
     {width : ℕ → ℝ} {beta margin : ℝ}
     (hbeta : 0 < beta)
     (hwidth : Tendsto width atTop atTop) :
@@ -72,7 +72,7 @@ private theorem eventually_half_width_ge_inverse_margin
 
 /-- The superquadratic block length eventually dominates every fixed
 integer multiple of the squared rounded narrowed width. -/
-private theorem eventually_floor_width_sq_le_blockLength
+private lemma eventually_floor_width_sq_le_blockLength
     {width : ℕ → ℝ} {blockLength : ℕ → ℕ}
     {beta : ℝ} (hbeta : 0 < beta)
     (hwidth : Tendsto width atTop atTop)
@@ -114,7 +114,7 @@ private theorem eventually_floor_width_sq_le_blockLength
 
 /-- A subcubic block length is eventually smaller than the cube of the
 width after multiplication by any fixed real coefficient. -/
-private theorem eventually_linear_block_cost_lt_width_cubed
+private lemma eventually_linear_block_cost_lt_width_cubed
     {width : ℕ → ℝ} {blockLength : ℕ → ℕ} {coefficient : ℝ}
     (hwidth : Tendsto width atTop atTop)
     (hscale : Tendsto (fun n =>
@@ -139,7 +139,7 @@ private theorem eventually_linear_block_cost_lt_width_cubed
 
 /-- All width, time, rate, and endpoint inequalities used by the finite
 staircase hold under the superquadratic and subcubic block scale of Wang Yiyang's Lemma 3.5. -/
-theorem eventually_staircaseGlobalConditions
+lemma eventually_staircaseGlobalConditions
     {width : ℕ → ℝ} {blockLength : ℕ → ℕ}
     {drift margin endpointFraction narrowedRate blockRate
       uInterior vInterior uFinal vFinal : ℝ}
@@ -210,7 +210,7 @@ theorem eventually_staircaseGlobalConditions
 
 /-- The common staircase threshold also supports a final window next to
 the upper boundary of the rising tube. -/
-theorem eventually_staircaseUpperEndpointGlobalConditions
+lemma eventually_staircaseUpperEndpointGlobalConditions
     {width : ℕ → ℝ} {blockLength : ℕ → ℕ}
     {drift margin endpointFraction narrowedRate blockRate
       uInterior vInterior uFinal vFinal : ℝ}

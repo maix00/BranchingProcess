@@ -34,7 +34,7 @@ namespace ProbabilityTheory.RandomWalk.SmallDeviation.Entrance
 
 /-- A positive fixed prefix and its independent meander suffix yield the
 robust entrance probability at the lower boundary. -/
-theorem measure_robustMovingTransitionEvent_ge_positivePrefix_mul_transition
+lemma measure_robustMovingTransitionEvent_ge_positivePrefix_mul_transition
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     {m N : ℕ} {width drift start a b : ℝ}
     (hwidth : 0 < width) (hdrift : 0 ≤ drift)
@@ -69,7 +69,7 @@ theorem measure_robustMovingTransitionEvent_ge_positivePrefix_mul_transition
 
 /-- A negative fixed prefix and its reflected independent suffix yield
 the robust entrance probability at the upper boundary. -/
-theorem measure_robustMovingTransitionEvent_ge_negativePrefix_mul_reflectedTransition
+lemma measure_robustMovingTransitionEvent_ge_negativePrefix_mul_reflectedTransition
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     {m N : ℕ} {width drift start a b : ℝ}
     (hwidth : 0 < width) (hdrift : 0 ≤ drift)

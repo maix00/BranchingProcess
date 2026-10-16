@@ -35,7 +35,7 @@ namespace ProbabilityTheory.RandomWalk.SmallDeviation.Entrance
 
 /-- The lower-edge prefix and conditioned suffix end in the narrower
 entrance window at a sufficiently large width. -/
-theorem prefixPositiveWindow_and_transition_subset_robustMovingTransitionEvent
+lemma prefixPositiveWindow_and_transition_subset_robustMovingTransitionEvent
     {m N : ℕ} {width drift start a b : ℝ}
     (hwidth : 0 < width) (hdrift : 0 ≤ drift)
     (ha : 0 < a) (hab : a ≤ b)
@@ -92,7 +92,7 @@ theorem prefixPositiveWindow_and_transition_subset_robustMovingTransitionEvent
 
 /-- The upper-edge reflected prefix and conditioned suffix end in the
 narrower entrance window at a sufficiently large width. -/
-theorem prefixNegativeWindow_and_reflectedTransition_subset_robustMovingTransitionEvent
+lemma prefixNegativeWindow_and_reflectedTransition_subset_robustMovingTransitionEvent
     {m N : ℕ} {width drift start a b : ℝ}
     (hwidth : 0 < width) (hdrift : 0 ≤ drift)
     (ha : 0 < a) (hab : a ≤ b)

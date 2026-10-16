@@ -31,7 +31,7 @@ namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 
 /-- With at least two blocks remaining, the first one has the common
 length rather than the extended final length. -/
-theorem staircaseFirstBlockLength_eq
+lemma staircaseFirstBlockLength_eq
     {entrance horizon blockLength : ℕ}
     (hremaining : entrance + 2 * blockLength ≤ horizon)
     (hblockLength : 0 < blockLength) :
@@ -47,7 +47,7 @@ theorem staircaseFirstBlockLength_eq
 
 /-- The endpoint interval already supplied by the three robust entrance
 constructions lies in the first block's central window. -/
-theorem staircaseFirstInteriorWindow
+lemma staircaseFirstInteriorWindow
     {entrance horizon blockLength : ℕ}
     {base width drift : ℝ}
     (hremaining : entrance + 2 * blockLength ≤ horizon)

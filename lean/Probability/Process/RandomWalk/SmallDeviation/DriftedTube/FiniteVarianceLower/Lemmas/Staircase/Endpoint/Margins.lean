@@ -31,7 +31,7 @@ namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 
 /-- Global margin inequalities imply the corresponding margin inequalities
 for every ordinary and final horizontal block. -/
-theorem staircaseEndpointMarginConditions
+lemma staircaseEndpointMarginConditions
     {entrance horizon blockLength m : ℕ}
     {globalWidth drift endpointFraction margin
       uInterior vInterior uFinal vFinal : ℝ}
