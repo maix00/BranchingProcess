@@ -19,18 +19,24 @@ Chapter 3, Lemma 3.4. They encode its complete-block estimate, finite-block
 representation, and conditional-expectation step. They are specific to that
 proof and are kept under `FiniteVarianceUpper/Lemmas/`.
 
-- `exists_driftedTubeBlockProbability_le_exp_of_finiteVariance`: the complete
+- `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.exists_driftedTubeBlockProbability_le_exp_of_finiteVariance`:
+  the complete
   block probability bound obtained from Wang Yiyang, *Asymptotic speed of the
   $N$-branching random walk with infinite offspring*, Chapter 3, Lemma 3.3.
-- `driftedTubePairEvent`, `driftedTubeBlockEvent`, and
-  `finiteDriftedTubeEvent`: finite coordinate encodings of a block of the
+- `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.driftedTubePairEvent`,
+  `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.driftedTubeBlockEvent`,
+  and `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.finiteDriftedTubeEvent`:
+  finite coordinate encodings of a block of the
   tilted-tube event.
-- `measurableSet_driftedTubePairEvent` and
-  `measurableSet_driftedTubeBlockEvent`: measurability of the block events.
-- `iidSequenceLaw_map_blockCoordinates_driftedTubeEvent_le`: transfer of a
+- `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.measurableSet_driftedTubePairEvent` and
+  `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.measurableSet_driftedTubeBlockEvent`:
+  measurability of the block events.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.iidSequenceLaw_map_blockCoordinates_driftedTubeEvent_le`:
+  transfer of a
   whole-path block bound to finite block coordinates.
-- `iidSequenceLaw_condExp_driftedTubePairEvent_le_of_blockBound` and
-  `iidSequenceLaw_condExp_driftedTubeBlockEvent_le_of_blockBound`: the
+- `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.iidSequenceLaw_condExp_driftedTubePairEvent_le_of_blockBound` and
+  `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.iidSequenceLaw_condExp_driftedTubeBlockEvent_le_of_blockBound`:
+  the
   conditional probability bound used in the block iteration.
 -/
 
@@ -39,7 +45,7 @@ open scoped Topology
 
 @[expose] public section
 
-namespace ProbabilityTheory.RandomWalk.SmallDeviation
+namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 
 open ProbabilityTheory.RandomWalk
 open ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown
@@ -527,6 +533,6 @@ lemma iidSequenceLaw_condExp_driftedTubeBlockEvent_le_of_blockBound
   rw [hindicator]
   exact hconditional
 
-end ProbabilityTheory.RandomWalk.SmallDeviation
+end ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 
 end

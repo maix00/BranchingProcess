@@ -14,7 +14,7 @@ public import Probability.Process.Filtration.ConditionalBlocks
 
 The public theorem in this file is:
 
-- `ProbabilityTheory.RandomWalk.SmallDeviation.exists_driftedTubeProbability_le_exp_of_finiteVariance`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.exists_driftedTubeProbability_le_exp_of_finiteVariance`:
   for centered increments of variance $\sigma^2>0$, $v>0$, $c\ge0$,
   and $0<d<\pi^2\sigma^2/2$, sufficiently large widths satisfy
   $\mathbb P(T_{L,\Delta,c,r_0})\le
@@ -33,7 +33,7 @@ open scoped Topology
 
 @[expose] public section
 
-namespace ProbabilityTheory.RandomWalk.SmallDeviation
+namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 
 open ProbabilityTheory.RandomWalk
 open ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown
@@ -362,6 +362,6 @@ theorem exists_driftedTubeProbability_le_exp_of_finiteVariance
       _ ≤ Real.exp (Delta ^ v - d * ((horizon : ℝ) / Delta ^ 2)) :=
         Real.exp_le_exp.mpr hexponent
 
-end ProbabilityTheory.RandomWalk.SmallDeviation
+end ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 
 end
