@@ -11,26 +11,37 @@ public import Probability.Process.RandomWalk.SmallDeviation.Entrance.MovingInter
 /-!
 # Robust endpoint of a diffusive entrance
 
-The public object and theorem in this file are:
+Write $S_j=\sum_{i=0}^{j-1}\xi_i$ for the partial sums of the increments,
+$h_j=cj/\Delta^2$ for the moving-boundary displacement, and $x$ for the
+starting point. The public declarations in this file are:
 
 - `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.robustMovingTransitionEvent`:
-  the moving entrance event with terminal point in
-  $[h_n+2\Delta/5,h_n+3\Delta/5]$.
+  $\mathcal R_{n,\Delta,c}(x)=\{\xi:h_j\le x+S_j\le\Delta+h_j\ (1\le j\le n),\
+  x+S_n\in[h_n+2\Delta/5,h_n+3\Delta/5]\}$.
 - `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.robustMovingTransitionEvent_subset_movingTransitionEvent`:
-  this robust event is contained in $\mathcal A_\Delta(x)$.
+  $\mathcal R_{n,\Delta,c}(x)\subseteq\mathcal A_{n,\Delta,c}(x)$, where
+  $\mathcal A_{n,\Delta,c}(x)$ has the same path bounds and terminal interval
+  $[h_n+\Delta/3,h_n+2\Delta/3]$.
 - `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.measurableSet_robustMovingTransitionEvent`:
-  the robust event belongs to the natural increment domain at time $n$.
+  membership in $\mathcal R_{n,\Delta,c}(x)$ depends only on
+  $\xi_0,\ldots,\xi_{n-1}$.
 - `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.finiteInteriorEvent_subset_robustMovingTransitionEvent`:
-  the fixed Donsker corridor implies the robust moving entrance event once
-  $60c\le\Delta$.
+  if $\Delta>0$, $c\ge0$, $n\le\Delta^2$, and $60c\le\Delta$, then
+  $\mathcal I_{n,\Delta,c}(x)\subseteq\mathcal R_{n,\Delta,c}(x)$, where
+  $\mathcal I_{n,\Delta,c}(x)=\{\xi:c\le x+S_j\le\Delta\ (1\le j\le n),\
+  x+S_n\in[5\Delta/12,7\Delta/12]\}$.
 - `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.eventually_middleRobustTransitionProbability_pos`:
-  the middle starting interval has a uniform positive entrance probability.
+  if $\Delta_n\to\infty$, $c\ge0$, and the centered increment law has
+  variance $\sigma^2>0$, then some $q>0$ satisfies
+  $(\operatorname{iidSequenceLaw}\,\nu)(\mathcal R_{\lfloor\Delta_n^2\rfloor,
+  \Delta_n,c}(x))\ge q$ eventually, uniformly for
+  $x\in[\Delta_n/12,11\Delta_n/12]$.
 
-The middle-start and two edge constructions in Wang Yiyang,
-*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
-Appendix A.2, Lemma A.7. This module strengthens their terminal bounds to
-the robust range for sufficiently large $\Delta$, retaining their printed
-fixed-length endpoint error terms.
+The middle-start and two edge constructions are those in Wang Yiyang,
+*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*
+(master's thesis, Fudan University, 2026), Appendix A.2, Lemma A.7, used in
+Chapter 3, Lemma 3.5. This module uses a narrower terminal interval to supply
+the first horizontal staircase block in that proof.
 -/
 
 @[expose] public section

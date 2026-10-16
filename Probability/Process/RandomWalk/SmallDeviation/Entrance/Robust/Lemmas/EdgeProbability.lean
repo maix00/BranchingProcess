@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Entrance.RobustTransition
+public import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.Basic
 public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition.Factorization
 import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.Lemmas.EdgeGeometry
 /-!
