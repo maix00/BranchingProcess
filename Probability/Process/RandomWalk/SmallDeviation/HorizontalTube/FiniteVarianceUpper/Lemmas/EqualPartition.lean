@@ -115,7 +115,7 @@ private theorem exists_equalPartition_index {m : ℕ} (hm : 0 < m)
 /-- Every horizontal tube whose interval contains zero lies in one of the
 fixed corridors from the equal partition. The corridor boundaries are
 `(-1+k/m) width` and `(k+1) width/m`. -/
-theorem horizontalTube_subset_some_partitionTubeEvent
+lemma horizontalTube_subset_some_partitionTubeEvent
     {m length : ℕ} (hm : 0 < m) {a width : ℝ}
     (ha0 : 0 ≤ a) (ha1 : a ≤ 1) (hwidth : 0 < width) :
     ∃ k : Fin m,
@@ -167,7 +167,7 @@ theorem horizontalTube_subset_some_partitionTubeEvent
 
 /-- A translated tube is contained in one fixed corridor from the finite
 equal partition, with the index depending only on its translation. -/
-theorem horizontalTubeProbability_le_one_partitionTube
+lemma horizontalTubeProbability_le_one_partitionTube
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     {m length : ℕ} (hm : 0 < m) {a width : ℝ}
     (ha0 : 0 ≤ a) (ha1 : a ≤ 1) (hwidth : 0 < width) :
