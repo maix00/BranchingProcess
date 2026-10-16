@@ -8,7 +8,7 @@ module
 
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Bounds
 public import Probability.Distributions.CharacteristicFunction.CosineDefect
-public import Probability.Distributions.Moments.Truncated
+public import Probability.Distributions.Moments.Truncated.Basic
 public import Probability.Distributions.Moments.Truncated.RegularVariation
 
 /-!

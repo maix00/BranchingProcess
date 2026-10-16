@@ -8,7 +8,7 @@ module
 
 public import Probability.Process.Corridor.Range
 public import Probability.Process.Stable.SmallDeviation.ShiftedCorridor
-public import Analysis.Asymptotics.LogSum
+public import Analysis.Asymptotics.Sequence.LogSum
 public import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 
 /-!

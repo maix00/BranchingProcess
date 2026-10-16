@@ -9,11 +9,11 @@ module
 public import Mathlib.Algebra.Group.Defs
 public import Mathlib.MeasureTheory.MeasurableSpace.Defs
 public import Mathlib.MeasureTheory.Group.Arithmetic
-public import Probability.Sequence.IID
+public import Probability.Sequence.IID.Basic
 public import Probability.Process.RandomWalk.Path.Basic
 public import Algebra.BigOperators.AdditivePath.Block
 public import MeasureTheory.Measure.Convolution.Power
-public import Probability.Kernel.Step
+public import Probability.Kernel.Step.Basic
 public import Mathlib.MeasureTheory.Measure.GiryMonad
 public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
 public import Mathlib.Probability.Kernel.Defs

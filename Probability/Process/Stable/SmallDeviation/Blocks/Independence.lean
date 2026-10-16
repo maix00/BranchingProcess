@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Order.Interval.RationalCoordinate.UnitInterval
-public import Probability.Process.Stable.SmallDeviation.Blocks
+public import Probability.Process.Stable.SmallDeviation.Blocks.Basic
 public import Probability.Process.IndepIncrements.DisjointPaths
 
 /-!
