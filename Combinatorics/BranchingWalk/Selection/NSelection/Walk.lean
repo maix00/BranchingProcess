@@ -8,7 +8,7 @@ module
 
 public import Combinatorics.BranchingWalk.Selection.NSelection.OrderDual
 public import Combinatorics.BranchingWalk.Cloud.Basic
-public import Combinatorics.BranchingWalk.Step.PointMeasure
+public import Combinatorics.BranchingWalk.Step.Measure.PointMeasure
 
 /-!
 # The deterministic `N`-branching walk

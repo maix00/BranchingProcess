@@ -7,6 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.Path.Block.Law.Coordinates
+public import Probability.Process.RandomWalk.Path.Block.Law.FiniteInterval
 public import Probability.Independence.Finite
 public import Probability.Sequence.IID
 public import Mathlib.Probability.Independence.Basic

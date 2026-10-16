@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.FiniteVarianceUpper.Proof
+public import Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.FiniteVarianceUpper.Lemmas.Rate
 
 /-!
 # Finite-variance horizontal-tube upper bound
@@ -26,7 +26,11 @@ Chapter 3, Lemma 3.2 and its following remark:
 - `iidSequenceLaw_intervalProbability_le_exp_of_finiteVariance`:
   the translated-interval bound with $u=1$.
 
-The equal-partition and block-iteration proof is in `FiniteVarianceUpper/Proof.lean`.
+The reusable uniform one-block-to-horizon estimate is in
+`HorizontalTube/BlockIteration.lean`. The proof-specific equal-partition and
+rate-assembly steps are in
+`FiniteVarianceUpper/Lemmas/EqualPartition.lean` and
+`FiniteVarianceUpper/Lemmas/Rate.lean`.
 -/
 
 open Filter MeasureTheory ProbabilityTheory

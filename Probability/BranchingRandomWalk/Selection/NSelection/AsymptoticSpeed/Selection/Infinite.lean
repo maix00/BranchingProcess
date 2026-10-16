@@ -7,9 +7,9 @@ Authors: WANG Yiyang
 module
 
 public import Combinatorics.BranchingWalk.Step.Basic
-public import Combinatorics.BranchingWalk.Step.ExponentialWeight
-public import Combinatorics.BranchingWalk.Step.Potential
-public import Combinatorics.BranchingWalk.Step.Monotone
+public import Combinatorics.BranchingWalk.Step.Measure.ExponentialWeight
+public import Combinatorics.BranchingWalk.Step.Measure.Potential
+public import Combinatorics.BranchingWalk.Step.Ordering.Monotone
 public import Combinatorics.BranchingWalk.Selection.NSelection.Hall
 public import Combinatorics.BranchingWalk.Selection.NSelection.Matching
 public import Mathlib.Data.Finset.Sort

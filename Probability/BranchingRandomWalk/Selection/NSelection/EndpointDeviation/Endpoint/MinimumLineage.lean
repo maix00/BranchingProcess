@@ -8,7 +8,7 @@ import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.En
 import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.PositiveMoments
 import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Nonempty
 import Probability.BranchingRandomWalk.Selection.NSelection.Admissible.Real
-import Probability.BranchingRandomWalk.Step.OrderedSupport
+import Probability.BranchingRandomWalk.Step.Ordering.Support
 
 /-!
 # Endpoint-minimizing lineages for fixed-capacity selection

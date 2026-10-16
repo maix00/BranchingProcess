@@ -10,7 +10,7 @@ public import Probability.BranchingRandomWalk.Selection.NSelection.AsymptoticSpe
 public import Probability.BranchingRandomWalk.Selection.NSelection.AtRank
 public import Probability.BranchingRandomWalk.Selection.NSelection.Totalized
 public import Probability.BranchingRandomWalk.Assumptions.Moments
-public import Probability.BranchingRandomWalk.Step.OrderingLaw
+public import Probability.BranchingRandomWalk.Step.Ordering.Law
 public import Probability.Ergodic.Kingman.Core
 public import Combinatorics.BranchingWalk.Selection.NSelection.Speed
 public import Combinatorics.BranchingWalk.Step.Map

@@ -6,8 +6,8 @@ Authors: WANG Yiyang
 
 module
 
-public import Combinatorics.BranchingWalk.Step.ExponentialWeight
-public import Combinatorics.BranchingWalk.Step.SlotOrder
+public import Combinatorics.BranchingWalk.Step.Measure.ExponentialWeight
+public import Combinatorics.BranchingWalk.Step.Ordering.SlotOrder
 
 /-!
 # Finite truncations of a spine weight

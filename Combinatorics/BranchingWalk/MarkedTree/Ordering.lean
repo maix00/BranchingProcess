@@ -9,7 +9,7 @@ module
 public import Combinatorics.BranchingWalk.MarkedTree.Equivalence
 public import Combinatorics.BranchingWalk.Basic.Orderable
 public import Combinatorics.BranchingWalk.Basic.DisplacementMap
-public import Combinatorics.BranchingWalk.Step.Ordering
+public import Combinatorics.BranchingWalk.Step.Ordering.Realization
 
 /-!
 # Transporting marked trees through sibling ordering
