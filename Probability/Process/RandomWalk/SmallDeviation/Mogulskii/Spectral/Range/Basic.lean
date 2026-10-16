@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.Path.Basic
-public import Probability.Process.RandomWalk.Rademacher
+public import Probability.Process.RandomWalk.Rademacher.Basic
 public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 
 /-!

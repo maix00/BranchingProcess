@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Topology.Cadlag.Skorokhod.Oscillation.DoubleExcursion
+public import Topology.Cadlag.Skorokhod.Oscillation.DoubleExcursion.Basic
 import Topology.Cadlag.Skorokhod.Oscillation.Partition.Existence
 
 /-!

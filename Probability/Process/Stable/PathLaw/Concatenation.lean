@@ -9,7 +9,7 @@ module
 public import Mathlib.Probability.Independence.InfinitePi
 public import Mathlib.Data.Finset.Sort
 public import Probability.Process.Stable.PathLaw.UnitInterval
-public import Probability.Process.RandomWalk.FunctionalLimit.Stable.PathFiniteDimensionalSource
+public import Probability.Process.RandomWalk.FunctionalLimit.Stable.PathLaw.EndpointGridSource
 public import Topology.Cadlag.Concatenation
 
 /-!

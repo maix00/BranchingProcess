@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.Path.UnitInterval
+public import Probability.Process.Path.Scaling.UnitInterval
 import Mathlib.Basic.Real.Basic
 import Mathlib.Tactic.Linarith
 

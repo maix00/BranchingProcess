@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import MeasureTheory.Measure.FinitePartition
+public import MeasureTheory.Measure.Finite.Partition
 public import Mathlib.Probability.Independence.Basic
 
 /-!

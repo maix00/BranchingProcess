@@ -16,7 +16,7 @@ import MeasureTheory.Measure.CharacteristicFunction.Convolution
 public import Probability.Distributions.InfinitelyDivisible.Basic
 public import Probability.Distributions.InfinitelyDivisible.LevyKhintchine.Defs
 public import Probability.Distributions.InfinitelyDivisible.LevyKhintchine.Integrand
-public import MeasureTheory.Measure.LevyMeasure
+public import MeasureTheory.Measure.Levy.Basic
 public import Mathlib.MeasureTheory.Measure.ProbabilityMeasure
 import Mathlib.Analysis.Complex.CoveringMap
 import Mathlib.Analysis.Convex.Contractible
