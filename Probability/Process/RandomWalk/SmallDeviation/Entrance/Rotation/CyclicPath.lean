@@ -21,13 +21,14 @@ public import Topology.Cadlag.Skorokhod.Path.Linear
 
 The public definitions and theorem families are:
 
-- `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.finitePrefixExtension`, `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.finitePrefixVector`,
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.finitePrefixExtension`,
   `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.finiteNormalizedStepPath`, `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.finiteNormalizedStepKnots`, and
   `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.normalizedGridPoint`: finite increment vectors, their $n+1$
   partial-sum knots, and the associated normalized step path.
-- `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.measurable_finitePrefixVector`, `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.measurable_finitePrefixExtension`, and
-  `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.iidSequenceLaw_measure_finitePrefix_preimage_eq_pi`:
-  finite-prefix maps are measurable and have the finite IID product law.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.measurable_finitePrefixExtension`:
+  the finite-vector extension to an infinite sequence is measurable. The
+  finite-prefix map and its IID product law use the generic interfaces in
+  `Probability.Sequence.Block` and `Probability.Sequence.IID.Basic`.
 - `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.displacement_finitePrefixExtension`,
   `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.finiteNormalizedStepPath_apply_grid`,
   `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.finiteNormalizedStepPath_prefix_eq`, and
@@ -165,32 +166,6 @@ theorem finiteNormalizedStepPath_prefix_eq {n : ℕ} (scale : ℝ)
     RandomWalk.natFloor_mul_le_of_mem_unitInterval n t
   have hkn : k < n := hkfloor.trans_le hfloor
   simp [finitePrefixExtension, hkn]
-
-/-- The finite-prefix extraction map on the canonical sequence space. -/
-def finitePrefixVector {n : ℕ} (x : ℕ → ℝ) : Fin n → ℝ :=
-  fun i => x i.val
-
-/-- The finite-prefix extraction map is measurable. -/
-theorem measurable_finitePrefixVector {n : ℕ} :
-    Measurable (finitePrefixVector (n := n) : (ℕ → ℝ) → Fin n → ℝ) := by
-  exact Measurable.of_eval fun i => measurable_pi_apply i.val
-
-/-- Any measurable event depending on the first `n` IID coordinates has the
-same probability under the canonical sequence law and the finite product law.
-This is the raw-process bridge used for entrance events. -/
-theorem iidSequenceLaw_measure_finitePrefix_preimage_eq_pi
-    {n : ℕ} (ν : Measure ℝ) [IsProbabilityMeasure ν]
-    (A : Set (Fin n → ℝ)) (hA : MeasurableSet A) :
-    iidSequenceLaw ν (finitePrefixVector (n := n) ⁻¹' A) =
-      Measure.pi (fun _ : Fin n => ν) A := by
-  calc
-    iidSequenceLaw ν (finitePrefixVector (n := n) ⁻¹' A) =
-        (iidSequenceLaw ν).map (finitePrefixVector (n := n)) A := by
-          rw [Measure.map_apply measurable_finitePrefixVector hA]
-    _ = Measure.pi (fun _ : Fin n => ν) A := by
-      change ((iidSequenceLaw ν).map
-        (fun x : ℕ → ℝ => fun i : Fin n => x i.val)) A = _
-      rw [ProbabilityTheory.iidSequenceLaw_map_finPrefix]
 
 /-- The extension map from a finite vector to an infinite sequence is
 measurable. -/
@@ -353,15 +328,19 @@ theorem iidSequenceLaw_measure_linearPathBall_eq_pi
   have hset := measurableSet_finiteLinearPathBallEvent
     (n := n) scale slope radius
   have hpreimage :
-      finitePrefixVector (n := n) ⁻¹'
+      (Combinatorics.Sequence.blockCoordinates 0 n) ⁻¹'
           finiteLinearPathBallEvent (n := n) scale slope radius =
         {x | RandomWalk.normalizedStepCadlagPathIcc (fun _ => scale) n x ∈
           Metric.ball (Skorokhod.linearPath slope) radius} := by
     ext x
-    change finiteNormalizedStepPath scale (finitePrefixVector (n := n) x) ∈
+    have hcoords :
+        Combinatorics.Sequence.blockCoordinates 0 n x =
+          (fun i : Fin n => x i.val) := by
+      funext i
+      simp [Combinatorics.Sequence.blockCoordinates]
+    change finiteNormalizedStepPath scale ((Combinatorics.Sequence.blockCoordinates 0 n) x) ∈
         Metric.ball (Skorokhod.linearPath slope) radius ↔ _
-    change finiteNormalizedStepPath scale (fun i : Fin n => x i.val) ∈
-        Metric.ball (Skorokhod.linearPath slope) radius ↔ _
+    rw [hcoords]
     rw [finiteNormalizedStepPath_prefix_eq]
     simp only [Set.mem_ofPred_eq]
   calc
@@ -369,17 +348,17 @@ theorem iidSequenceLaw_measure_linearPathBall_eq_pi
         {x | RandomWalk.normalizedStepCadlagPathIcc (fun _ => scale) n x ∈
           Metric.ball (Skorokhod.linearPath slope) radius} =
       iidSequenceLaw ν
-        (finitePrefixVector (n := n) ⁻¹'
+        ((Combinatorics.Sequence.blockCoordinates 0 n) ⁻¹'
           finiteLinearPathBallEvent (n := n) scale slope radius) := by
           rw [hpreimage]
-    _ = (iidSequenceLaw ν).map (finitePrefixVector (n := n))
+    _ = (iidSequenceLaw ν).map ((Combinatorics.Sequence.blockCoordinates 0 n))
         (finiteLinearPathBallEvent (n := n) scale slope radius) := by
-          rw [Measure.map_apply measurable_finitePrefixVector hset]
+          rw [Measure.map_apply (measurable_blockCoordinates 0 n) hset]
     _ = Measure.pi (fun _ : Fin n => ν)
         (finiteLinearPathBallEvent (n := n) scale slope radius) := by
-          change ((iidSequenceLaw ν).map
-            (fun x : ℕ → ℝ => fun i : Fin n => x i.val)) _ = _
-          rw [ProbabilityTheory.iidSequenceLaw_map_finPrefix]
+          rw [Measure.map_apply (measurable_blockCoordinates 0 n) hset]
+          exact iidSequenceLaw_measure_blockCoordinates_preimage_eq_pi
+            ν 0 n _ hset
 
 /-- Applying the finite-coordinate reindexing used by exchangeability
 reorders the vector by the supplied equivalence. -/

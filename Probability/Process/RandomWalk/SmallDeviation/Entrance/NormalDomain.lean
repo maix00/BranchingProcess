@@ -359,8 +359,7 @@ theorem exists_eventually_iidSequenceLaw_finiteMovingEntranceEvent_ge_div_of_cen
       ∀ r₀ ∈ Set.Icc (-Delta) 0,
         q / (⌊Delta ^ 2⌋₊ : ℕ) ≤
           iidSequenceLaw ν
-            {increment | finitePrefixVector
-              (n := ⌊Delta ^ 2⌋₊) increment ∈
+            {increment | (Combinatorics.Sequence.blockCoordinates 0 ⌊Delta ^ 2⌋₊) increment ∈
                 finiteMovingEntranceEvent (n := ⌊Delta ^ 2⌋₊)
                   Delta (c / Delta ^ 3) (-r₀ / Delta)} := by
   obtain ⟨q, hq, Delta₀, hbound⟩ :=
@@ -385,12 +384,12 @@ theorem exists_eventually_iidSequenceLaw_finiteMovingEntranceEvent_ge_div_of_cen
         (-r₀ / Delta)) := by
     rw [← hevent]
     exact hsafe
-  have hprefix := iidSequenceLaw_measure_finitePrefix_preimage_eq_pi ν
-    (finiteMovingEntranceEvent (n := n) Delta (c / Delta ^ 3)
+  have hprefix := iidSequenceLaw_measure_blockCoordinates_preimage_eq_pi
+    ν 0 n (finiteMovingEntranceEvent (n := n) Delta (c / Delta ^ 3)
       (-r₀ / Delta)) hmeasurable
   have hpi := hbound Delta hDelta r₀ hr₀
   change q / (n : ℝ≥0∞) ≤ iidSequenceLaw ν
-    (finitePrefixVector (n := n) ⁻¹'
+    ((Combinatorics.Sequence.blockCoordinates 0 n) ⁻¹'
       finiteMovingEntranceEvent (n := n) Delta (c / Delta ^ 3)
         (-r₀ / Delta))
   rw [hprefix]
