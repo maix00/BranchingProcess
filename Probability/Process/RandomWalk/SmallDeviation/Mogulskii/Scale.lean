@@ -13,8 +13,25 @@ public import Probability.Distributions.Moments.Real
 /-!
 # The diffusive scale for Mogulskii's theorem
 
+The public declarations in this file are:
+
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale`:
+  $x_n\to\infty$ and $x_n/\sqrt n\to0$.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.isMogulskiiScale_iff`:
+  identifies this predicate with the general small-deviation scale.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.eventually_pos`:
+  $x_n>0$ eventually.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.tendsto_sq_div_natCast_zero`:
+  $x_n^2/n\to0$.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.tendsto_natCast_div_sq_atTop`:
+  $n/x_n^2\to\infty$.
+
 This predicate specializes the general small-deviation scale relation to the
-Gaussian normalization `sqrt n`.  Distributional moment hypotheses live in
+Gaussian normalization `sqrt n` used in A. A. Mogul'skii,
+*Small Deviations in a Space of Trajectories*, Theorem 3, Section 4,
+p. 764 of the Russian original (English translation, *Theory of Probability
+and Its Applications* 19(4) (1975), 726--736, DOI 10.1137/1119081).
+Distributional moment hypotheses live in
 `Probability.Distributions.Moments.Real`.
 -/
 

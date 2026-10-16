@@ -9,6 +9,14 @@ import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalk
 /-!
 # The explicit Gaussian path-class rate
 
+The public theorem in this file is:
+
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_index_two_of_brownian_explicit`:
+  the Brownian escape constant is $-\pi^2/8$ and, for a path class $G$
+  with energy $H_2(G)$,
+  $\log\mathbb P(s_n\in G)/\rho_n\to-\pi^2H_2(G)/2$, where
+  $\rho_n$ is the exponent-two stable rate normalization.
+
 The normal-domain path-class theorem identifies the exponent-two rate using
 the stable-process escape constant.  The Brownian calibration proves that
 constant is `-π² / 8`; this application file combines the two results so the
@@ -17,6 +25,10 @@ public path-class limit has the explicit full-width coefficient `-π² / 2`.
 The canonical Brownian path law uses Mathlib's rational-coordinate
 construction, so the theorem only relies on almost-everywhere continuity of
 Brownian paths.
+This identifies the Gaussian coefficient of A. A. Mogul'skii,
+*Small Deviations in a Space of Trajectories*, Theorem 3, Section 4,
+p. 764 of the Russian original (English translation, *Theory of Probability
+and Its Applications* 19(4) (1975), 726--736, DOI 10.1137/1119081).
 -/
 
 open Filter MeasureTheory ProbabilityTheory
@@ -36,6 +48,8 @@ probability rate has the explicit coefficient `-π² / 2`.
 
 The path input is the canonical càdlàg path law built from the a.e.-continuous
 Brownian process; no everywhere-continuous sample-path hypothesis is needed.
+This is the path-class coefficient in Mogul'skii, *Small Deviations in a
+Space of Trajectories*, Theorem 3, Section 4 (DOI 10.1137/1119081).
 -/
 theorem tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_index_two_of_brownian_explicit
     {ν : Measure ℝ} [IsProbabilityMeasure ν]
