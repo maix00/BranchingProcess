@@ -89,8 +89,8 @@ directory holds related component modules; for example, the pinned Mathlib
 source has `Tactic/Linarith.lean` beside `Tactic/Linarith/`. This repository
 uses a stricter local organization rule for discoverability: production and
 test source trees contain no same-level `.lean` file and directory with the
-same stem. The initial production-tree inventory had 81 such pairs; the test
-tree had none. Their declarations now
+same stem. The initial production-tree inventory found such pairs only in the
+production tree. Their declarations now
 live in `Foo/Basic.lean` or `Foo/Core.lean`, or in subject-specific children;
 callers import those explicit modules. The moves preserve declaration names
 and proofs while changing import paths. This rule does not prohibit a
@@ -112,7 +112,7 @@ to `Existence.lean`, with sibling `PathClass.lean` renamed `ExplicitRate.lean`.
 These are substantive mathematical modules; their declarations and namespaces
 are unchanged, and callers import the new paths directly.
 
-The final 2026-10-17 scan found 1,432 production modules and 138 test modules.
+The final 2026-10-17 scan found 1,433 production modules and 138 test modules.
 Across both trees there are zero same-stem file/directory collisions, zero
 directories with more than eight direct Lean files, and zero child filenames
 repeating their immediate parent directory name. The vendored Mathlib and
