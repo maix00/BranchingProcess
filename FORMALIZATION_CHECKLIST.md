@@ -282,7 +282,10 @@ probability budget. The entrance budget is supplied by
 `Entrance/Robust/ExponentialBudget.lean`. Its private fixed-window transition estimate
 follows from the Bolthausen--Iglehart meander limit. The finite-variance
 survival input is $C\Delta^{-2}$, obtained from the Bauer--Godrèche--Luck
-cyclic-rotation cover and the Gaussian endpoint-sign limit.
+cyclic-rotation cover and the Gaussian endpoint-sign limit. A private
+counterexample-sequence argument then gives one constant and one real-width
+threshold for every admissible starting point, matching the quantifiers of
+Appendix A.2's Lemma A.7.
 `DriftedTube/FiniteVarianceLower/Lemmas/Staircase/Concrete/Lower/Conditional.lean`
 and `DriftedTube/FiniteVarianceLower/Lemmas/Staircase/Concrete/Upper/Conditional.lean`
 compose that entrance budget with the staircase
