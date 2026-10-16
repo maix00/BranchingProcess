@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Combinatorics.UlamHarris.Split
-public import Probability.BranchingRandomWalk.Timing.DeclaredSplit
+public import Probability.BranchingRandomWalk.Timing.Splits.Declared
 public import Probability.Process.HittingTime.ObservableCandidates
 public import Probability.Process.Adapted.Recursion
 

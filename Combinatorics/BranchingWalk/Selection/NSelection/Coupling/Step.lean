@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Combinatorics.BranchingWalk.Selection.NSelection.Coupling.Offspring
-public import Combinatorics.BranchingWalk.Selection.NSelection.Hall
+public import Combinatorics.BranchingWalk.Selection.NSelection.Mechanism.Hall
 
 /-!
 # One-generation first-N coupling

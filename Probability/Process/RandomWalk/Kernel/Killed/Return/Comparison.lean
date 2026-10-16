@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.Kernel.Killed.Return
+public import Probability.Process.RandomWalk.Kernel.Killed.Return.Basic
 
 /-!
 # Comparison of killed return kernels
