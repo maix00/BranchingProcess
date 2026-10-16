@@ -72,7 +72,7 @@ stated as the limit of `a ^ α * log P(stableProcessTube a)` as `a ↓ 0`.
 The source is A. A. Mogul'skii, “Small deviations in the sample function
 space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974), 755–765;
 English translation, “Small Deviations in a Space of Trajectories,” *Theory
-of Probability and Its Applications* 19(4) (1975), 726–736, DOI
+of Probability and Its Applications* 19(1) (1975), 726–736, DOI
 10.1137/1119081. -/
 def IsStableEscapeRate (α C : ℝ) (tubeProbability : ℝ → ℝ) : Prop :=
   C < 0 ∧

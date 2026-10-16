@@ -22,7 +22,7 @@ This is the endpoint-return step in the discrete lower estimate (equation
 (33)) of A. A. Mogul'skii, “Small deviations in the sample function space,”
 *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974), 755--765; see also
 the English translation, “Small Deviations in a Space of Trajectories,”
-*Theory of Probability and Its Applications* 19(4) (1975), 726--736, DOI
+*Theory of Probability and Its Applications* 19(1) (1975), 726--736, DOI
 10.1137/1119081. The theorem specializes that finite-block gluing step to
 the stable block length. It assumes lower bounds for the seven one-block
 endpoint-band probabilities; deriving those probability bounds from stable

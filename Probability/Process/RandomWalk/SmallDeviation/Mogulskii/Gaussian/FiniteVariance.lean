@@ -25,7 +25,7 @@ variance-scaled exponent as a direct consequence of Theorem 3, Section 4,
 p. 764 of A. A. Mogul'skii, “Small deviations in the sample function space,”
 *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974), 755--765; English
 translation, “Small Deviations in a Space of Trajectories,” *Theory of
-Probability and Its Applications* 19(4) (1975), 726--736, DOI 10.1137/1119081.
+Probability and Its Applications* 19(1) (1975), 726--736, DOI 10.1137/1119081.
 -/
 
 open Filter MeasureTheory ProbabilityTheory
@@ -44,7 +44,7 @@ variance-scaled specialization of Theorem 3, Section 4, p. 764 of A. A.
 Mogul'skii, “Small deviations in the sample function space,” *Teoriya
 Veroyatnostei i ee Primeneniya* 19(4) (1974), 755--765; English translation,
 “Small Deviations in a Space of Trajectories,” *Theory of Probability and Its
-Applications* 19(4) (1975), 726--736, DOI 10.1137/1119081. The underlying
+Applications* 19(1) (1975), 726--736, DOI 10.1137/1119081. The underlying
 normal-domain theorem remains applicable without this finite-moment
 assumption. -/
 theorem tendsto_scaledLog_sourceProbability_of_finiteVariance

@@ -31,6 +31,13 @@ the random-walk domain-of-attraction limit. Tightness and finite-dimensional law
 unit-interval stable path law; iid concatenation then supplies the full-time
 stable Lévy process needed by the corridor-rate argument. Callers provide no
 process witness or path-law witness.
+
+The resulting stable-domain path rate specializes A. A. Mogul'skii,
+Theorem 3, Section 4, p. 764, “Small deviations in the sample function
+space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974), 755--765;
+English translation, “Small Deviations in a Space of Trajectories,” *Theory
+of Probability and Its Applications* 19(1) (1975), 726--736, DOI
+10.1137/1119081.
 -/
 
 open Filter MeasureTheory ProbabilityTheory

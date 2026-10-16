@@ -16,6 +16,12 @@ This is the stable random-walk specialization of the generic realization
 transfer. It derives each finite-corridor rate from the source-path
 Mogul'skii estimate, so callers provide the process and domain-of-attraction
 inputs instead of a separate finite-union rate family.
+
+The source-path estimate is A. A. Mogul'skii, Theorem 3, Section 4, p. 764,
+“Small deviations in the sample function space,” *Teoriya Veroyatnostei i ee
+Primeneniya* 19(4) (1974), 755--765; English translation, “Small Deviations
+in a Space of Trajectories,” *Theory of Probability and Its Applications*
+19(1) (1975), 726--736, DOI 10.1137/1119081.
 -/
 
 open Filter MeasureTheory

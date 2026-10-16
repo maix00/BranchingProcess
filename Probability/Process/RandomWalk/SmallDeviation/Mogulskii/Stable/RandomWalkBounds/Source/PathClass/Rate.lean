@@ -16,6 +16,12 @@ public import Probability.Process.Path.PathClass.StepCorridor.Probability.Rate.A
 The source path records the partial sums through `n - 1`. This file transfers
 the exact source-normalized `M₂` corridor rates to the general `M` class using
 the shared finite-union and approximation theorems.
+
+The source rate is A. A. Mogul'skii, Theorem 3, Section 4, p. 764,
+“Small deviations in the sample function space,” *Teoriya Veroyatnostei i ee
+Primeneniya* 19(4) (1974), 755--765; English translation, “Small Deviations
+in a Space of Trajectories,” *Theory of Probability and Its Applications*
+19(1) (1975), 726--736, DOI 10.1137/1119081.
 -/
 
 open Filter MeasureTheory
