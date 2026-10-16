@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Distributions.Stable.LevyMeasure.Tail.Tails
+public import Probability.Distributions.Stable.LevyMeasure.Tail.Homogeneous
 import Mathlib.Analysis.SpecialFunctions.Integrability.Basic
 import Mathlib.MeasureTheory.Integral.Layercake
 

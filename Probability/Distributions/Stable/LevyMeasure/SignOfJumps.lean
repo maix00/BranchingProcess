@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 import Probability.Distributions.Stable.Operations.Sign
 import Probability.Distributions.Stable.LevyMeasure.Tail.EndpointLaw
 import Probability.Process.Levy.Jump.PoissonConfiguration.Entrance.Basic
-import Probability.Distributions.Stable.LevyMeasure.Tail.Tails
+import Probability.Distributions.Stable.LevyMeasure.Tail.Homogeneous
 import Probability.Distributions.Stable.LevyMeasure.Tail.Windows
 import Probability.Distributions.Stable.LevyMeasure.Tail.EntranceWindows
 

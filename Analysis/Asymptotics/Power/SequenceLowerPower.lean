@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Analysis.Asymptotics.Power.PowerSumLower
+public import Analysis.Asymptotics.Power.SumLower
 public import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 
 /-!

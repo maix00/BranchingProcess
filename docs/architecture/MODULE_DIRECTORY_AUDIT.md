@@ -99,7 +99,16 @@ directory. Four import-only facades were removed:
 `Processes/StepSelection.lean`, and `StepSelection/SplitSchedule.lean`.
 Child filenames in the new `Spine/PointMeasure/`, `Spine/Tilted/`, and
 branching-walk families use short subject-relative names instead of repeating
-their parent directory.
+their parent directory. A repository-wide follow-up scan also normalized
+`Analysis/Asymptotics/Power/PowerTailIntegral.lean` and
+`Analysis/Asymptotics/Power/PowerSumLower.lean` to `TailIntegral.lean` and
+`SumLower.lean`; `Probability/BranchingRandomWalk/Genealogy/Lineage/Lineages.lean`
+to `PreSampled.lean`; `Probability/Distributions/Stable/LevyMeasure/Tail/Tails.lean`
+to `Homogeneous.lean`; and
+`Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Gaussian/Path/PathLawExistence.lean`
+to `Existence.lean`, with sibling `PathClass.lean` renamed `ExplicitRate.lean`.
+These are substantive mathematical modules; their declarations and namespaces
+are unchanged, and callers import the new paths directly.
 
 `BranchingProcessTest` mirrors production module names where it has
 corresponding tests. Its larger `Stable` and `Branching` directories are test
