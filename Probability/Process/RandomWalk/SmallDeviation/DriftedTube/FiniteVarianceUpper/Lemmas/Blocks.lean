@@ -9,6 +9,11 @@ module
 public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Basic
 public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.Event
 public import Probability.Process.Filtration.ConditionalBlocks
+public import Combinatorics.Sequence.Block
+public import Probability.Process.RandomWalk.Path.Block.Partition.Basic
+public import Probability.Sequence.Filtration
+public import Probability.Sequence.IID.ConditionalBlocks
+public import Probability.Sequence.IID.StoppingTime
 import Analysis.Asymptotics.Scale.IntermediatePowerBlock
 
 /-!
@@ -52,7 +57,8 @@ open ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown
 
 /-- The single complete-block estimate in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, proof of
 Lemma 3.4. Its inclusion in the no-large-drop event uses Chapter 3, Lemma 3.3
-of the same work with endpoint parameter `η/2`. -/
+of Wang Yiyang's *Asymptotic Speed of the N-Branching Random Walk with Infinite
+Offspring* thesis with endpoint parameter `η/2`. -/
 lemma exists_driftedTubeBlockProbability_le_exp_of_finiteVariance
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     {variance drift eta d : ℝ}

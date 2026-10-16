@@ -10,9 +10,9 @@ public import Probability.Process.RandomWalk.SmallDeviation.Entrance.MovingInter
 public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition.Factorization
 
 /-!
-# Lower-edge prefix and meander-suffix geometry
+# Lower-edge moving-tube step for the robust entrance estimate
 
-The public theorem in this file is:
+The supporting lemma in this file is:
 
 - `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.prefixPositiveWindow_and_transition_subset_movingTransitionEvent`:
   for $x\in[0,\Delta/12]$, a fixed prefix of increments in
@@ -20,9 +20,10 @@ The public theorem in this file is:
   $D_{N,\Delta}$ is contained in the moving corridor event
   $\mathcal A_\Delta(x)$ at time $m+N$.
 
-This is the lower-edge event inclusion in Wang Yiyang,
+This intermediate wide-window inclusion is used to prove the narrowed
+terminal-window version of Wang Yiyang,
 *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
-Appendix A.2, Lemma A.7, used in the proof of Chapter 3, Lemma 3.5.
+Appendix A.2, Lemma A.7, used in Chapter 3, Lemma 3.5.
 -/
 
 @[expose] public section
@@ -33,7 +34,7 @@ namespace ProbabilityTheory.RandomWalk.SmallDeviation.Entrance
 
 /-- The positive fixed prefix and independent transition suffix produce
 the exact moving entrance event from the lower edge. -/
-theorem prefixPositiveWindow_and_transition_subset_movingTransitionEvent
+lemma prefixPositiveWindow_and_transition_subset_movingTransitionEvent
     {m N : ℕ} {width drift start a b : ℝ}
     (hwidth : 0 < width) (hdrift : 0 ≤ drift)
     (ha : 0 < a) (hab : a ≤ b)

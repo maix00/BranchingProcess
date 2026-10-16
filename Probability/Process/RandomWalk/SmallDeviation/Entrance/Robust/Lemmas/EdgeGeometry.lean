@@ -7,8 +7,9 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.SmallDeviation.Entrance.RobustTransition
-public import Probability.Process.RandomWalk.SmallDeviation.Entrance.Edge.LowerGeometry
-public import Probability.Process.RandomWalk.SmallDeviation.Entrance.Edge.UpperGeometry
+public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition.Event
+import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.Lemmas.Edge.LowerMovingTube
+import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.Lemmas.Edge.UpperMovingTube
 /-!
 # Robust terminal geometry at the two edges
 

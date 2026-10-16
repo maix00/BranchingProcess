@@ -8,7 +8,6 @@ module
 
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.FromIncrementLaw.HorizontalTube.Basic
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.FromIncrementLaw.HorizontalTube.Scales
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.FromIncrementLaw.HorizontalTube.Lemmas.SourceCorridor
 import Analysis.Asymptotics.Scale.Sampling
 /-!
 # Endpoint-window form of the finite-variance horizontal-tube rate
@@ -32,8 +31,6 @@ open Asymptotics
 open ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability
 open Skorokhod.PathClass.StepCorridor
 open scoped ENNReal NNReal Topology
-
-open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.HorizontalTube.Lemmas
 
 @[expose] public section
 

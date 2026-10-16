@@ -8,7 +8,7 @@ module
 
 public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.FirstWindow.Definition
 public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.FirstWindow.Existence
-public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.FirstWindow.Lemmas.BlockFactorization
+import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.FirstWindow.Lemmas.BlockFactorization
 public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Survival.Conditioning
 public import Algebra.BigOperators.PartialSum
 

@@ -11,18 +11,19 @@ public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transit
 public import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.PowerAssembly
 
 /-!
-# Exponential budget for the robust entrance event
+# Lemma 3.5 entrance exponential budget
 
-The public theorem in this file is:
+The supporting lemma in this file is:
 
 - `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.exists_eventually_robustTransitionProbability_ge_exp_of_centeredFiniteVariance`:
   for $L\ge\lfloor\Delta^{2+\varepsilon}\rfloor$, the uniform entrance bound
   $C\Delta^{-2}$ from the private entrance estimate pays an exponential cost
   at most $\exp(-\delta L/\Delta^2)$.
 
-This is the polynomial-to-exponential comparison following the entrance
-construction in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, proof of Lemma 3.5. The
-`Robust` support modules contain the three-region entrance construction.
+This is the polynomial-to-exponential comparison used in Wang Yiyang,
+*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
+Chapter 3, Lemma 3.5. The general power-bound assembly remains in
+`Entrance/Robust/PowerAssembly.lean`.
 -/
 
 @[expose] public section
@@ -135,7 +136,7 @@ private lemma exists_uniform_robustTransitionProbability_ge_inverse_square_of_ce
 /-- The robust entrance cost is absorbed by the exponential budget after
 the meander transition has been supplied for both the walk and its
 reflection. -/
-theorem exists_eventually_robustTransitionProbability_ge_exp_of_centeredFiniteVariance
+lemma exists_eventually_robustTransitionProbability_ge_exp_of_centeredFiniteVariance
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     {sigma : ℝ} (hν : IsCenteredSecondMoment ν (sigma ^ 2))
     (hsigma : 0 < sigma)

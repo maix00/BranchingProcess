@@ -35,8 +35,9 @@ The module-visible lemmas in this file are:
   the same selection for every point in the middle endpoint window.
 
 These are the spatial bins in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, proof of
-Lemma 3.5. The horizontal-tube rate used with these bins is given in
-Chapter 3, Lemma 3.1(ii) of the same work.
+Lemma 3.5. The horizontal-tube rate used with these bins is given in Wang
+Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite
+Offspring*, Chapter 3, Lemma 3.1(ii).
 -/
 
 open Filter MeasureTheory ProbabilityTheory
