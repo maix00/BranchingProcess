@@ -13,7 +13,7 @@ public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.R
 # Sharp normal-domain rate from floor endpoint windows
 
 The fixed-parameter spectral lower bound is proved in
-`EndpointWindowSelection/FixedParameters.lean`. This file selects the
+`Rate/Endpoint/Selection/FixedParameters.lean`. This file selects the
 parameters that approach the Brownian constant and combines the resulting
 lower rate with the independent finite-cover upper rate.
 
@@ -33,9 +33,7 @@ Trajectories,” *Theory of Probability and Its Applications* 19(1) (1975),
 726–736, DOI 10.1137/1119081. This is the rate input used in Wang Yiyang,
 *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
 Chapter 3, Lemma 3.1(i).
-
-
-The original bibliography is A. A. Mogul'skii, “Small deviations in the sample function space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974), 755--765; English translation, “Small Deviations in a Space of Trajectories,” *Theory of Probability and Its Applications* 19(1) (1975), 726--736, DOI 10.1137/1119081. -/
+-/
 
 open Filter MeasureTheory ProbabilityTheory Topology
 open Asymptotics

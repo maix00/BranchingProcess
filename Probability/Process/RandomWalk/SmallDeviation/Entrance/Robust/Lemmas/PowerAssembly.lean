@@ -8,14 +8,15 @@ module
 
 public import Analysis.Asymptotics.Scale.BlockScale
 public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition.Event
-public import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.Basic
+public import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.Lemmas.Event
 import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.Lemmas.MiddleProbability
 import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.Lemmas.ThreeRegions
 import Probability.Process.RandomWalk.SmallDeviation.Entrance.Edge.PrefixSelection
+import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.Lemmas.Edge.PrefixGeometry
 /-!
 # Assembly of the three robust diffusive entrance bounds
 
-The public theorem in this file is:
+The proof-specific assembly lemma in this file is:
 
 - `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.exists_eventually_robustTransitionProbability_ge_power_of_transitionBounds`:
   if each reflected transition event at
@@ -39,7 +40,7 @@ namespace ProbabilityTheory.RandomWalk.SmallDeviation.Entrance
 
 /-- The middle Donsker bound and the two meander-transition bounds combine
 to give the power lower bound for the robust moving entrance event. -/
-theorem exists_eventually_robustTransitionProbability_ge_power_of_transitionBounds
+lemma exists_eventually_robustTransitionProbability_ge_power_of_transitionBounds
     {ν : Measure ℝ} [IsProbabilityMeasure ν]
     {sigma : ℝ} (hν : IsCenteredSecondMoment ν (sigma ^ 2))
     (hsigma : 0 < sigma)
