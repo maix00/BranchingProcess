@@ -12,6 +12,17 @@ public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Tightness
 /-!
 # One-block corridor approximation
 
+The public theorems in this file are:
+
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.measure_startMargin_le_blockCorridor_add_error`:
+  for a block of length $b$ and margin $r>0$, the probability of starting
+  in the $r$-interior is at most the probability of remaining in the full
+  corridor plus $(b+1)/r^2$.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.exists_diffusiveBlockConstant_eventually_startMargin_le_corridor_add`:
+  for $b_n=\lfloor c x_n^2\rfloor$, one common $c>0$ makes the preceding
+  error at most any prescribed positive tolerance for all large $n$,
+  uniformly in the block start and corridor endpoints.
+
 Endpoint control in a corridor shrunk by a positive margin controls the whole
 block, up to an error bounded by the centered unit-variance maximal
 inequality.

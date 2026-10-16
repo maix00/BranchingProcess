@@ -240,25 +240,22 @@ The finite product now selects separate fixed interior endpoint intervals
 for ordinary blocks and the final block, as in the two cases following the
 uniform-in-$k$ argument of the proof. A single interval would impose an
 impossible overlap when the final endpoint fraction is below $1/3$.
-`DriftedTube/FiniteVarianceLower/Staircase/FirstWindow.lean` proves that, when the first block has length
+`DriftedTube/FiniteVarianceLower/Staircase/Setup/FirstWindow.lean` proves that, when the first block has length
 $\ell$ and $10c\ell<\Delta^3$, the robust interval
-$[r_{t_1}+2\Delta/5,r_{t_1}+3\Delta/5]$ implied for large widths by the three
-constructions in Appendix A.2 lies in the central window of the first
-horizontal block. The published entrance window
-$[r_{t_1}+\Delta/3,r_{t_1}+2\Delta/3]$ is wider than this central window;
-the robust entrance probability estimate from Appendix A.2 discharges the
+$[r_{t_1}+2\Delta/5,r_{t_1}+3\Delta/5]$ in Appendix A.2 lies in the
+central window of the first horizontal block. The entrance probability
+estimate of Lemma A.7 discharges the
 first-block assumption of
 `DriftedTube/FiniteVarianceLower/Staircase/Concrete/Lower.lean`.
-`Entrance/RobustTransition.lean` defines this narrower event with terminal
+`Entrance/RobustTransition.lean` defines this event with terminal
 window $[h_{t_1}+2\Delta/5,h_{t_1}+3\Delta/5]$ and proves that it is
-measurable at time $t_1$. `DriftedTube/FiniteVarianceLower/Staircase/EntranceBridge.lean` proves
+measurable at time $t_1$. `DriftedTube/FiniteVarianceLower/Staircase/Setup/EntranceBridge.lean` proves
 both its tilted-tube path constraint and its membership in the first
 horizontal central window. `DriftedTube/FiniteVarianceLower/Staircase/Concrete/Lower/Entrance.lean` eliminates
 the entrance geometry and measurability assumptions from the finite
 staircase theorem; the remaining entrance input is exactly the probability
-lower bound for this robust event. The printed $8c\ell<\Delta^3$ is used for the broader
-first-window inclusion; $10c\ell<\Delta^3$ is an eventual strengthening
-for the robust central-window inclusion in this formalization.
+lower bound for this robust event. The proof takes the eventual condition
+$10c\ell<\Delta^3$ to obtain the central-window inclusion.
 `DriftedTube/FiniteVarianceLower/Staircase/Setup/Numeric.lean` proves common width and time-ratio bounds, and
 uses the sharp lower width $\Delta-2c\ell/\Delta^2$ for the exponent
 comparison. The latter retains the limiting width ratio $1$ in Wang Yiyang's Lemma 3.5.
@@ -282,7 +279,7 @@ tends to $1/(3\beta)$; `DriftedTube/FiniteVarianceLower/Staircase/Eventually.lea
 threshold for all global conditions. `DriftedTube/FiniteVarianceLower/Staircase/Concrete/Lower/Asymptotic.lean`
 then proves the eventual tilted-tube lower bound from the robust entrance
 probability budget. The entrance budget is supplied by
-`Entrance/RobustExponentialBudget.lean`. Its conditional transition estimate
+`Entrance/Robust/ExponentialBudget.lean`. Its private fixed-window transition estimate
 follows from the Bolthausen--Iglehart meander limit. The finite-variance
 survival input is $C\Delta^{-2}$, obtained from the Bauer--Godrèche--Luck
 cyclic-rotation cover and the Gaussian endpoint-sign limit.

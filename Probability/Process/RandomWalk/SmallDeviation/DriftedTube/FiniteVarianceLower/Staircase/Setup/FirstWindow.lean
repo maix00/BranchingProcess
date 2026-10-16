@@ -21,10 +21,8 @@ The public theorems in this file are:
 
 This is the first-window geometry in Wang Yiyang,
 *Asymptotic speed of the $N$-branching random walk with infinite offspring*,
-Chapter 3, proof of Lemma 3.5. Appendix A.2, Lemma A.7 supplies the
-displayed robust interval through its narrower endpoint conclusion;
-its broader endpoint conclusion uses
-$[r_{t_1}+\Delta/3,r_{t_1}+2\Delta/3]$.
+Chapter 3, proof of Lemma 3.5. Appendix A.2, Lemma A.7 gives the
+probability lower bound for the displayed entrance interval.
 -/
 
 @[expose] public section

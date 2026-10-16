@@ -14,6 +14,28 @@ public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Gaussian.P
 /-!
 # Uniform finite-reference Mogulskii bounds
 
+The public theorems in this file are:
+
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.gaussianProduct_le_liminf_remainingMass_add_of_eventually_control`:
+  under a common within-block control, a product of Gaussian target-window
+  masses is at most the lower limit of killed-kernel survival plus the
+  prescribed error.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.exists_diffusiveBlockConstant_finset_gaussianProduct_le_liminf_remainingMass_add`:
+  one diffusive block constant $c>0$ gives this inequality for every
+  starting point in a finite reference set.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.exists_pos_le_finset_gaussianProduct`:
+  finitely many positive Gaussian block products have a common lower
+  bound $p>0$.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.exists_diffusiveBlockConstant_pos_le_finset_liminf_remainingMass_add`:
+  one pair $(c,p)$ with $c,p>0$ bounds all finite-reference Gaussian
+  products below and all corresponding killed-kernel lower limits above.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.exists_diffusiveBlockConstant_eventually_uniform_remainingMass_of_finset`:
+  a finite spatial cover and a strict Gaussian-product margin yield an
+  eventual killed-kernel survival bound uniform over the initial interval.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.exists_eventually_finset_pos_remainingMass_zeroTarget`:
+  for finitely many interior starts, some $c,p>0$ give survival mass
+  at least $p$ for $\lfloor c x_n^2\rfloor$-length blocks eventually.
+
 The diffusive block length used in the finite-dimensional lower bound is
 chosen before the reference point.  Consequently a finite family of initial
 positions can share one block scale, as required by the uniform killed-kernel

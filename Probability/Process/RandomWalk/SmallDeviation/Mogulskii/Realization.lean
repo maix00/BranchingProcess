@@ -15,6 +15,20 @@ public import Mathlib.MeasureTheory.Measure.QuasiMeasurePreserving
 /-!
 # Mogul'skii rates under arbitrary i.i.d. realizations
 
+The public theorems in this file are:
+
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.measure_sourceFiniteCorridorUnionEvent_eq_of_iid`:
+  for i.i.d. coordinates with law $\nu$, the probability of a finite
+  source-path corridor event equals its probability under
+  `iidSequenceLaw ν`.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.existsUnique_inner_outer_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_iid`:
+  if finite corridor unions have rate $\kappa E(C)$ under the canonical
+  law, an $M_3$ path class has a unique energy $H$ and both realized
+  inner and outer logarithmic rates equal $\kappa H$.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.existsUnique_inner_outer_log_probability_ratio_of_hasRelativeVanishingEnergyGapApproximation_of_iid`:
+  the same conclusion holds for a relative $M_3$ class in the source
+  terminal-left path domain.
+
 The exact target in class M need not be measurable. We transfer the
 probabilities only for its M₃ approximants, whose path events are
 null-measurable under the induced path law, and then apply the existing

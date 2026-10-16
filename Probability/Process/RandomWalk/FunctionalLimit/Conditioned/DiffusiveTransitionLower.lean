@@ -14,18 +14,14 @@ public import Probability.Process.Brownian.Existence
 /-!
 # Diffusive entrance bound from survival and the meander limit
 
-The public theorems in this file are:
+The public theorem in this file is:
 
-- `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.exists_eventually_diffusiveTransitionProbability_ge_inverse_square_of_conditionalBound`:
-  from $\mathbb P(D_{N,\Delta}\mid C_N)\ge q>0$ and
-  $\mathbb P(C_N)\ge C\Delta^{-2}$, derive
-  $\mathbb P(D_{N,\Delta})\ge qC\Delta^{-2}$ eventually.
-- `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.exists_eventually_diffusiveTransitionProbability_ge_inverse_square_of_centeredSecondMoment`:
-  centered finite-variance increments and a Brownian witness imply
-  $\mathbb P(D_{N,\Delta})\ge C\Delta^{-2}$ eventually.
 - `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.exists_eventually_diffusiveTransitionProbability_ge_inverse_square_of_centeredFiniteVariance`:
-  the same $C\Delta^{-2}$ estimate with a Brownian witness constructed
+  a $C\Delta^{-2}$ estimate with a Brownian witness constructed
   from the Gaussian random-walk functional limit.
+
+The conditional-product step and the version with an explicit Brownian
+witness are private proof helpers.
 
 This is the multiplication step in Wang Yiyang,
 *Asymptotic speed of the $N$-branching random walk with infinite offspring*,
@@ -54,7 +50,7 @@ $\mathbb P(D_{N,\Delta})
  =\mathbb P(D_{N,\Delta}\mid C_N)\mathbb P(C_N)$
 at the diffusive horizon. This implements the corresponding step in
 Wang Yiyang, Appendix A.2, Lemma A.7. -/
-theorem exists_eventually_diffusiveTransitionProbability_ge_inverse_square_of_conditionalBound
+private theorem exists_eventually_diffusiveTransitionProbability_ge_inverse_square_of_conditionalBound
     {ν : Measure ℝ} [IsProbabilityMeasure ν]
     {sigma : ℝ} (hν : IsCenteredSecondMoment ν (sigma ^ 2))
     (hsigma : 0 < sigma)
@@ -116,7 +112,7 @@ theorem exists_eventually_diffusiveTransitionProbability_ge_inverse_square_of_co
 
 /-- The probability product bound with the conditioned meander input and
 its support established from centered finite-variance increments. -/
-theorem exists_eventually_diffusiveTransitionProbability_ge_inverse_square_of_centeredSecondMoment
+private theorem exists_eventually_diffusiveTransitionProbability_ge_inverse_square_of_centeredSecondMoment
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     {sigma : ℝ} (hν : IsCenteredSecondMoment ν (sigma ^ 2))
     (hsigma : 0 < sigma)
