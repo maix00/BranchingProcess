@@ -54,6 +54,36 @@ measures, filtrations, kernels, point measures, and topological spaces. A
 formalized theorem should compile from a clean checkout with the pinned
 `lean-toolchain` and Lake manifest.
 
+## Entry points and supporting lemmas
+
+Keep a principal theorem in a plainly named entry module at the mathematical
+subject's directory level. When several files serve only that theorem's proof,
+put them under a sibling `Lemmas/` directory, subdivided by mathematical steps
+such as `Blocks`, `Entrance`, or `Staircase`. **Files in `Lemmas/` must contain
+only helpers that are not independently reusable:** their statements depend on
+the specific event, binning, constants, or assembly of that result. A complete
+reusable theorem, construction, event definition, or proof technique belongs
+in its mathematical subject's directory outside `Lemmas/`, even when the
+current result is its only caller. Before moving a file into `Lemmas/`, review
+each declaration in it against this rule; split mixed files so reusable
+declarations remain outside. A `Lemmas/` directory belongs to one principal
+result or a coherent theorem family; do not collect unrelated results in it.
+
+Directory placement communicates which files users should read first; it does
+not change Lean declaration visibility. Mark a helper `private` when all its
+uses are in its defining module. A helper used across proof modules may need
+module visibility, but that alone does not make it a principal public result.
+Declare supporting results as `lemma`; principal results may be declared as
+`theorem` or `lemma` according to mathematical usage. In Lean, this choice does
+not alter visibility or proof behavior: use `private lemma` for same-module
+helpers, and a module-visible `lemma` when another proof module imports it.
+The declaration keyword alone does not determine reusability or directory
+placement.
+The module docstring lists the public declarations required by the header rule
+above; directory READMEs or architecture documentation identify the intended
+entry modules. When reorganizing a proof tree, update imports and documentation
+and build every affected entry module.
+
 ## Issues and questions
 
 Open an issue for a suspected mathematical error, a missing measurability
