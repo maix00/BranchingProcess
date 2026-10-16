@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.PowerAssembly
-public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.TransitionPower
+public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.TransitionLinear
 public import Analysis.Asymptotics.PolynomialExponential
 
 /-!
@@ -22,10 +22,10 @@ The public theorems in this file are:
 - `exists_eventually_robustTransitionProbability_ge_exp_of_centeredFiniteVariance`:
   the same bound with the Brownian motion, conditioned meander limit,
   and support supplied by the centered finite-variance increment law;
-  the survival power bounds follow from the finite coefficient recurrence
+  the inverse-square survival bound follows from the cyclic rotation cover
   in M. Bauer, C. Godrèche, and J.-M. Luck, *Statistics of persistent events
   in the binomial random walk: Will the drunken sailor hit the sober man?*,
-  Appendix A, equation (A.7) (arXiv:cond-mat/9905252).
+  Appendix A, immediately after (A.3) (arXiv:cond-mat/9905252).
 
 This is the polynomial-to-exponential comparison following the entrance
 construction in Wang Yiyang, *Asymptotic speed of the $N$-branching random
@@ -93,8 +93,8 @@ theorem exists_eventually_robustTransitionProbability_ge_exp_of_centeredFiniteVa
     (hsigma : 0 < sigma)
     {rho : ℝ} (hrho : 0 < rho) (hrhoSmall : rho < 1 / 48)
     {width : ℕ → ℝ} (hwidth : Tendsto width atTop atTop)
-    {drift alpha delta epsilon : ℝ}
-    (hdrift : 0 ≤ drift) (halpha : 0 < alpha)
+    {drift delta epsilon : ℝ}
+    (hdrift : 0 ≤ drift)
     (hdelta : 0 < delta) (hepsilon : 0 < epsilon) :
     ∀ᶠ n : ℕ in atTop,
       ∀ start ∈ Set.Icc 0 (width n), ∀ L : ℕ,
@@ -107,24 +107,31 @@ theorem exists_eventually_robustTransitionProbability_ge_exp_of_centeredFiniteVa
   have hνneg : IsCenteredSecondMoment (ν.map fun x : ℝ => -x)
       (sigma ^ 2) := hν.map_neg
   have hplus (m : ℕ) : ∃ C : ℝ, 0 < C ∧ ∀ᶠ n : ℕ in atTop,
-      C / width n ^ (1 + alpha) ≤
+      C / width n ^ (1 + (1 : ℝ)) ≤
         (iidSequenceLaw ν
           (FunctionalLimit.Conditioned.nonnegativeTransitionEvent
             (Asymptotics.floorBlockLength (fun k => width k ^ 2) n - m)
             (width n))).toReal :=
-    FunctionalLimit.Conditioned.exists_eventually_diffusiveTransitionProbability_ge_power_of_centeredFiniteVariance
-      ν hν hsigma halpha hrho hrhoSmall hwidth m
+    by
+      simpa only [show (1 : ℝ) + 1 = 2 by norm_num, Real.rpow_two,
+        FunctionalLimit.Conditioned.diffusiveTransitionHorizon] using
+        (FunctionalLimit.Conditioned.exists_eventually_diffusiveTransitionProbability_ge_inverse_square_of_centeredFiniteVariance
+          ν hν hsigma hrho hrhoSmall hwidth m)
   have hminus (m : ℕ) : ∃ C : ℝ, 0 < C ∧ ∀ᶠ n : ℕ in atTop,
-      C / width n ^ (1 + alpha) ≤
+      C / width n ^ (1 + (1 : ℝ)) ≤
         (iidSequenceLaw (ν.map fun x : ℝ => -x)
           (FunctionalLimit.Conditioned.nonnegativeTransitionEvent
             (Asymptotics.floorBlockLength (fun k => width k ^ 2) n - m)
             (width n))).toReal :=
-    FunctionalLimit.Conditioned.exists_eventually_diffusiveTransitionProbability_ge_power_of_centeredFiniteVariance
-      (ν.map fun x : ℝ => -x) hνneg hsigma halpha
-      hrho hrhoSmall hwidth m
+    by
+      simpa only [show (1 : ℝ) + 1 = 2 by norm_num, Real.rpow_two,
+        FunctionalLimit.Conditioned.diffusiveTransitionHorizon] using
+        (FunctionalLimit.Conditioned.exists_eventually_diffusiveTransitionProbability_ge_inverse_square_of_centeredFiniteVariance
+          (ν.map fun x : ℝ => -x) hνneg hsigma
+          hrho hrhoSmall hwidth m)
   exact exists_eventually_robustTransitionProbability_ge_exp_of_transitionBounds
-    hν hsigma hwidth hdrift halpha hdelta hepsilon hplus hminus
+    hν hsigma hwidth hdrift (by norm_num : (0 : ℝ) < 1)
+      hdelta hepsilon hplus hminus
 
 end ProbabilityTheory.RandomWalk.SmallDeviation.Entrance
 
