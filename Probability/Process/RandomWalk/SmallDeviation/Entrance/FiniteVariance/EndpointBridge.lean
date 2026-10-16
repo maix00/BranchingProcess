@@ -45,7 +45,7 @@ theorem iidSequenceLaw_measure_mul_of_finiteMovingEntranceEvent_bridge
     (entryLower bridgeLower : ℝ≥0∞)
     (hentry : entryLower ≤ iidSequenceLaw ν
       {increment : ℕ → ℝ |
-        finitePrefixVector (n := prefixLength) increment ∈
+        (Combinatorics.Sequence.blockCoordinates 0 prefixLength) increment ∈
           finiteMovingEntranceEvent (n := prefixLength) D 0 1})
     (hbridge : bridgeLower ≤ iidSequenceLaw ν
       {increment : ℕ → ℝ |
@@ -91,15 +91,11 @@ theorem iidSequenceLaw_measure_mul_of_finiteMovingEntranceEvent_bridge
   have hentrySequence : entryLower ≤ iidSequenceLaw ν entranceSequence := by
     have hset : entranceSequence =
         {increment : ℕ → ℝ |
-          finitePrefixVector (n := prefixLength) increment ∈ entrance} := by
+          (Combinatorics.Sequence.blockCoordinates 0 prefixLength) increment ∈ entrance} := by
       ext increment
       change Combinatorics.Sequence.blockCoordinates 0 prefixLength increment ∈ entrance ↔
-        finitePrefixVector (n := prefixLength) increment ∈ entrance
-      have heq : Combinatorics.Sequence.blockCoordinates 0 prefixLength increment =
-          finitePrefixVector (n := prefixLength) increment := by
-        funext i
-        simp [Combinatorics.Sequence.blockCoordinates, finitePrefixVector]
-      rw [heq]
+        (Combinatorics.Sequence.blockCoordinates 0 prefixLength) increment ∈ entrance
+      rfl
     rw [hset]
     simpa [entrance] using hentry
   have hbridgeGeometry (increment : ℕ → ℝ)

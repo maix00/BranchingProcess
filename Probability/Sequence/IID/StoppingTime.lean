@@ -20,6 +20,31 @@ discrete stopping time has the same conditional probability on every finite
 stopping-time cell. Summing the cells gives an exact bounded-stopping-time
 factorization. This layer is about IID sequences and does not assume that
 coordinates are increments of a random walk.
+Write $\mu=\texttt{iidSequenceLaw}\,\nu$ and $X_k(\omega)=\omega(k)$.
+
+The public declarations are:
+
+- `ProbabilityTheory.indepFun_blockCoordinates_blockCoordinates`: if
+  $m,n\in\mathbb N$, then the coordinate blocks $[s,s+m)$ and
+  $[s+m,s+m+n)$ are independent under `iidSequenceLaw ν`.
+- `ProbabilityTheory.iidBlockEventAfter`: the event
+  $\bigcup_{k\in\mathbb N}\{\tau=k\}\cap
+  \{(X_k,\ldots,X_{k+\ell-1})\in A\}$ for a finite block event $A$.
+- `ProbabilityTheory.iidSequenceLaw_measure_stoppingTimeCell_inter_blockEvent_eq_mul`:
+  for measurable $A\subseteq(\texttt{Fin}\,\ell\to E)$,
+  $\mu(\{\omega:\tau(\omega)=k\}\cap
+  (\texttt{blockCoordinates}\,k\,\ell)^{-1}(A))
+  =\mu\{\omega:\tau(\omega)=k\}\,
+  \mu((\texttt{blockCoordinates}\,0\,\ell)^{-1}(A))$.
+- `ProbabilityTheory.iidSequenceLaw_measure_boundedStoppingTime_iidBlockEventAfter_eq_mul`:
+  for $\tau$ bounded by $N$,
+  $\mu(\{\omega:\tau(\omega)\le N\}\cap
+  \texttt{iidBlockEventAfter}(\tau,A))
+  =\mu\{\omega:\tau(\omega)\le N\}\,
+  \mu((\texttt{blockCoordinates}\,0\,\ell)^{-1}(A))$.
+- `ProbabilityTheory.iidSequenceLaw_measure_iidBlockEventAfter_le`:
+  $\mu(\texttt{iidBlockEventAfter}(\tau,A))
+  \leq\mu((\texttt{blockCoordinates}\,0\,\ell)^{-1}(A))$.
 -/
 
 open MeasureTheory
@@ -29,26 +54,6 @@ open MeasureTheory
 namespace ProbabilityTheory
 
 variable {E : Type*} [MeasurableSpace E]
-
-/-- A finite block of IID coordinates has the same law after deterministic
-translation of its starting index. -/
-theorem iidSequenceLaw_map_blockCoordinates
-    (ν : Measure E) [IsProbabilityMeasure ν]
-    (start length : ℕ) :
-    (iidSequenceLaw ν).map (Combinatorics.Sequence.blockCoordinates (E := E) start length) =
-      (iidSequenceLaw ν).map (Combinatorics.Sequence.blockCoordinates 0 length) := by
-  rw [show Combinatorics.Sequence.blockCoordinates (E := E) start length =
-      Combinatorics.Sequence.blockCoordinates 0 length ∘
-        (fun sequence : ℕ → E => fun k => sequence (start + k)) by
-    funext sequence k
-    simp [Combinatorics.Sequence.blockCoordinates]]
-  have hshift : Measurable
-      (fun sequence : ℕ → E => fun k => sequence (start + k)) := by
-    rw [measurable_pi_iff]
-    exact fun k => measurable_pi_apply (start + k)
-  rw [← Measure.map_map (measurable_blockCoordinates 0 length)
-    hshift]
-  rw [iidSequenceLaw_map_natAdd]
 
 /-- Two consecutive finite coordinate blocks of an IID sequence are
 independent. -/

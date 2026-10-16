@@ -27,6 +27,11 @@ an infinite IID walk and a finite closed-interval block belongs to
 `Probability/Process/RandomWalk/Path/Block/Law/FiniteInterval.lean`, while
 translation of a finite interval by its initial position belongs beside the
 `FiniteInClosedInterval` definition in `Path/Window/Basic.lean`.
+Generic finite block coordinates and their measurability belong to
+`Probability/Sequence/Block.lean`; their product-law interface for canonical
+IID sequences belongs to `Probability/Sequence/IID/Basic.lean`. These
+sequence-level facts are independent of stopping times and random-walk
+applications.
 Uniform one-block estimates for a killed interval kernel and their iteration
 to a horizontal-tube bound belong to
 `Probability/Process/RandomWalk/SmallDeviation/HorizontalTube/BlockIteration.lean`;

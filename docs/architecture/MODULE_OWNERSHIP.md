@@ -16,7 +16,7 @@ identify misplaced application-specific assumptions.
 | Measure operations, integral limits, and measure properties | `MeasureTheory` | `Measure/Convolution/Power`, `Measure/DiracSum`, `Integral/Lebesgue/RestrictLimit` |
 | Measurable counting-measure processes | `Probability/PointProcess` | `PointProcess` bundles a measurable map into Mathlib `Measure` with integer-valuedness and the chosen finite-on-family condition |
 | Path-space geometry and generic tightness criteria | `Topology` and `Probability/Process/Path` | `CadlagPath`, Skorokhod oscillation and tightness modules |
-| IID sequence laws, filtrations, and independence | `Probability/Sequence` | `iidSequenceLaw`, prefix filtrations, block independence |
+| IID sequence laws, filtrations, and independence | `Probability/Sequence` | `Sequence/Block` owns measurable finite-block coordinates; `Sequence/IID/Basic` owns `iidSequenceLaw`, its finite-block product-law interface, and coordinate independence; stopping-time factorization remains in `Sequence/IID/StoppingTime` |
 | General random-walk process laws and paths | `Probability/Process/RandomWalk` | path maps, kernels, Donsker and small-deviation interfaces |
 | Stable-law and stable-process semantics | `Probability/Distributions/Stable` and `Probability/Process/Stable` | stable distributions, clock increments, Lévy processes |
 | Branching random-walk models and thesis-specific coupling | `Probability/BranchingRandomWalk` | offspring fields, spine, selected populations, restart coupling |
@@ -52,7 +52,13 @@ N-BRW selection statements; the latter belong under `Selection/NSelection`.
   walk layer.
 - Countable independent product laws use `Measure.infinitePi` and the
   `iIndepFun` results in Mathlib. `iidSequenceLaw` names the homogeneous
-  sequence specialization used throughout the library.
+  sequence specialization used throughout the library. Generic finite block
+  coordinates and their measurability belong to `Probability/Sequence/Block`;
+  the law of every such block and the probability of a measurable block event
+  belong to `Probability/Sequence/IID/Basic`. These interfaces require only an
+  IID sequence law and do not belong in random-walk entrance or stopping-time
+  modules. Stopping-time-specific factorization stays in
+  `Probability/Sequence/IID/StoppingTime`.
 - Transition mechanisms use Mathlib's `Kernel`/`MarkovKernel` interfaces.
   Killed kernels in the random-walk layer are restrictions of those kernels.
 - Filtrations and stopping times use Mathlib's `Filtration` and stopping-time

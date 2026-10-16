@@ -201,7 +201,7 @@ theorem eventually_iidSequenceLaw_affineCorridorThrough_lowerBound_of_centeredSe
       (by simp [Set.mem_Icc, hEpos.le])
     have hset :
         {increment : ℕ → ℝ |
-          finitePrefixVector (n := prefixLength) increment ∈
+          (Combinatorics.Sequence.blockCoordinates 0 prefixLength) increment ∈
             finiteMovingEntranceEvent (n := prefixLength) (entranceScale n)
               (entryDrift / (entranceScale n) ^ 3) 0} =
         {increment : ℕ → ℝ |
@@ -210,22 +210,11 @@ theorem eventually_iidSequenceLaw_affineCorridorThrough_lowerBound_of_centeredSe
               (drift n / entranceScale n) 0} := by
       ext increment
       simp only [Set.mem_ofPred_eq]
-      have hvec :
-          finitePrefixVector (n := prefixLength) increment =
-            Combinatorics.Sequence.blockCoordinates 0 prefixLength increment := by
-        funext i
-        simp [finitePrefixVector, Combinatorics.Sequence.blockCoordinates]
-      change finitePrefixVector (n := prefixLength) increment ∈
-          finiteMovingEntranceEvent (entranceScale n)
-            (entryDrift / entranceScale n ^ 3) 0 ↔
-        Combinatorics.Sequence.blockCoordinates 0 prefixLength increment ∈
-          finiteMovingEntranceEvent (entranceScale n)
-            (drift n / entranceScale n) 0
-      rw [hvec, hcoeff]
+      rw [hcoeff]
     have hentryZero : entryQ / (prefixLength : ℝ≥0∞) ≤
         iidSequenceLaw ν
           {increment : ℕ → ℝ |
-            finitePrefixVector (n := prefixLength) increment ∈
+            (Combinatorics.Sequence.blockCoordinates 0 prefixLength) increment ∈
               finiteMovingEntranceEvent (n := prefixLength) (entranceScale n)
                 (entryDrift / (entranceScale n) ^ 3) 0} := by
       simpa using h
@@ -233,7 +222,7 @@ theorem eventually_iidSequenceLaw_affineCorridorThrough_lowerBound_of_centeredSe
       entryQ / (prefixLength : ℝ≥0∞) ≤
           iidSequenceLaw ν
             {increment : ℕ → ℝ |
-              finitePrefixVector (n := prefixLength) increment ∈
+              (Combinatorics.Sequence.blockCoordinates 0 prefixLength) increment ∈
                 finiteMovingEntranceEvent (n := prefixLength) (entranceScale n)
                   (entryDrift / (entranceScale n) ^ 3) 0} := hentryZero
       _ = iidSequenceLaw ν

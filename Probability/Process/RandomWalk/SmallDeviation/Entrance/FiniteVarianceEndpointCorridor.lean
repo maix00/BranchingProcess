@@ -212,8 +212,8 @@ theorem exists_eventually_iidSequenceLaw_endpointCorridor_lowerBound_of_centered
     have hentryN' : q / (finiteVarianceEntranceLength scale n : ℝ≥0∞) ≤
         iidSequenceLaw ν
           {increment : ℕ → ℝ |
-            finitePrefixVector
-                (n := finiteVarianceEntranceLength scale n) increment ∈
+            (Combinatorics.Sequence.blockCoordinates 0
+              (finiteVarianceEntranceLength scale n)) increment ∈
               finiteMovingEntranceEvent (n := finiteVarianceEntranceLength scale n)
                 (scale n) 0 1} := by
       have h := hentry (scale n) hentryN (-scale n) ⟨le_rfl, by linarith⟩
@@ -221,7 +221,8 @@ theorem exists_eventually_iidSequenceLaw_endpointCorridor_lowerBound_of_centered
         rw [neg_neg, div_self hscaleN.ne']
       change q / (⌊(scale n) ^ 2⌋₊ : ℝ≥0∞) ≤ iidSequenceLaw ν
         {increment : ℕ → ℝ |
-          finitePrefixVector (n := ⌊(scale n) ^ 2⌋₊) increment ∈
+          (Combinatorics.Sequence.blockCoordinates 0
+            ⌊(scale n) ^ 2⌋₊) increment ∈
             finiteMovingEntranceEvent (n := ⌊(scale n) ^ 2⌋₊) (scale n) 0 1}
       simpa only [hratio, zero_div] using h
     let entryLower : ℝ≥0∞ := q / (finiteVarianceEntranceLength scale n : ℝ≥0∞)
