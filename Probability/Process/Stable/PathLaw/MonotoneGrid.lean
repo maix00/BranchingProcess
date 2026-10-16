@@ -6,8 +6,8 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.FunctionalLimit.Stable.PathFiniteDimensionalSource
-public import Probability.Process.Stable.PathLaw
+public import Probability.Process.RandomWalk.FunctionalLimit.Stable.PathLaw.EndpointGridSource
+public import Probability.Process.Stable.PathLaw.Basic
 public import Probability.ConvergenceInDistribution.CadlagPath.FiniteDimensional
 public import Mathlib.MeasureTheory.Constructions.Pi
 

@@ -8,7 +8,7 @@ module
 
 public import Probability.Sequence.Block
 public import Probability.Sequence.Filtration
-public import Probability.Sequence.IID
+public import Probability.Sequence.IID.Basic
 public import Mathlib.Probability.Independence.Basic
 public import Mathlib.Probability.Process.Stopping
 

@@ -7,7 +7,7 @@ module
 
 public import Probability.Distributions.Stable.Attraction.NormingRatios.Index
 public import Probability.Distributions.Stable.Attraction.NormingRatios.UniformDefect
-public import Analysis.Asymptotics.RegularVariation.AtZero
+public import Analysis.Asymptotics.RegularVariation.AtZero.Basic
 
 /-!
 # Continuous-frequency regular variation from norming ratios

@@ -8,7 +8,7 @@ module
 
 public import Order.Interval.RationalCoordinate.UnitInterval
 public import Probability.Process.Stable.SmallDeviation.Blocks.EntranceScaling
-public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.Return
+public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.Return.Basic
 public import Probability.Process.Stable.SmallDeviation.Blocks.Upper.ArbitraryHorizon
 public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Cover
 public import Probability.Process.Path.Skorokhod.Corridor.Segment

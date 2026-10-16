@@ -5,7 +5,7 @@ Authors: WANG Yiyang
 -/
 module
 
-public import MeasureTheory.Measure.InnerOuter
+public import MeasureTheory.Measure.Limits.InnerOuter
 public import Probability.Process.Path.PathClass.StepCorridor.Probability.Rate.Approximation
 
 import Topology.Order.Limit

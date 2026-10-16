@@ -6,7 +6,7 @@ Authors: Codex
 module
 
 public import Mathlib.Analysis.SpecialFunctions.Gaussian.FourierTransform
-public import Probability.Distributions.CharacteristicFunction.Symmetrization
+public import Probability.Distributions.CharacteristicFunction.Symmetrization.Basic
 
 /-!
 # Gaussian smoothing of characteristic-function defects
