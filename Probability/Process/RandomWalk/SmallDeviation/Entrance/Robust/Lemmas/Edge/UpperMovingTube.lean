@@ -6,20 +6,20 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.Lemmas.Edge.LowerMovingTube
+public import Probability.Process.RandomWalk.SmallDeviation.Entrance.MovingCorridor
+public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition.Factorization
 /-!
 # Upper-edge moving-tube step for the robust entrance estimate
 
 The supporting lemma in this file is:
 
-- `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.prefixNegativeWindow_and_reflectedTransition_subset_movingTransitionEvent`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.prefixNegativeWindow_and_reflectedTransition_subset_movingCorridorEvent`:
   for $x\in[11\Delta/12,\Delta]$, a fixed prefix with reflected
   increments in $[a,b]\subset(0,\infty)$ followed by
-  $D_{N,\Delta}$ for the reflected walk is contained in
-  $\mathcal A_\Delta(x)$ at time $m+N$.
+  $D_{N,\Delta}$ for the reflected walk satisfies the moving-corridor path
+  constraints at time $m+N$.
 
-This intermediate wide-window inclusion is used to prove the narrowed
-terminal-window version of Wang Yiyang,
+This path inclusion is used to prove the narrowed terminal-window version of Wang Yiyang,
 *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
 Appendix A.2, Lemma A.7, used in Chapter 3, Lemma 3.5.
 -/
@@ -31,8 +31,8 @@ open MeasureTheory ProbabilityTheory
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Entrance
 
 /-- A fixed negative prefix followed by the reflected transition event
-enters the exact moving corridor from the upper edge. -/
-lemma prefixNegativeWindow_and_reflectedTransition_subset_movingTransitionEvent
+satisfies the moving-corridor path constraints from the upper edge. -/
+lemma prefixNegativeWindow_and_reflectedTransition_subset_movingCorridorEvent
     {m N : ℕ} {width drift start a b : ℝ}
     (hwidth : 0 < width) (hdrift : 0 ≤ drift)
     (ha : 0 < a) (hab : a ≤ b)
@@ -44,7 +44,7 @@ lemma prefixNegativeWindow_and_reflectedTransition_subset_movingTransitionEvent
       (∀ k < m, -increment k ∈ Set.Icc a b) ∧
       (fun k => -increment (m + k)) ∈
         FunctionalLimit.Conditioned.nonnegativeTransitionEvent N width} ⊆
-      movingTransitionEvent (m + N) width drift start := by
+      movingCorridorEvent (m + N) width drift start := by
   intro increment hinc
   let reflected : ℕ → ℝ := fun k => -increment k
   let tail : ℕ → ℝ := fun k => reflected (m + k)
@@ -112,36 +112,15 @@ lemma prefixNegativeWindow_and_reflectedTransition_subset_movingTransitionEvent
           ha.le, hmNonneg]
       · nlinarith [hprefixAtM.2, htail.2, hstartR.2,
           hprefixUpper, hsmallDrift]
-  unfold movingTransitionEvent
+  unfold movingCorridorEvent
+  intro k
+  let j := k.val + 1
+  have hj : j ≤ m + N := Nat.succ_le_of_lt k.isLt
+  have hr := hreflectedBounds j hj
+  have hp := hrelate j
   constructor
-  · intro k
-    let j := k.val + 1
-    have hj : j ≤ m + N := Nat.succ_le_of_lt k.isLt
-    have hr := hreflectedBounds j hj
-    have hp := hrelate j
-    constructor
-    · nlinarith [hr.2, hp, hshiftLe j hj]
-    · nlinarith [hr.1, hp, hshiftNonneg j]
-  · have hposition := hsplit (m + N) (Nat.le_add_right m N)
-    have hsub : m + N - m = N := Nat.add_sub_cancel_left m N
-    rw [hsub] at hposition
-    have hend := hinc.2.2
-    have hmNonneg : (0 : ℝ) ≤ (m : ℝ) := Nat.cast_nonneg _
-    have hRlower : 5 / 12 * width ≤
-        reflectedStart + AdditivePath.displacement (m + N) reflected := by
-      rw [hposition]
-      nlinarith [hprefixAtM.1, hend.1, hstartR.1,
-        ha.le, hmNonneg]
-    have hRupper :
-        reflectedStart + AdditivePath.displacement (m + N) reflected ≤
-          7 / 12 * width := by
-      rw [hposition]
-      nlinarith [hprefixAtM.2, hend.2, hstartR.2, hprefixUpper]
-    have hp := hrelate (m + N)
-    constructor
-    · nlinarith [hRupper, hp, hshiftLe (m + N) le_rfl,
-        hsmallDrift]
-    · nlinarith [hRlower, hp, hshiftNonneg (m + N)]
+  · nlinarith [hr.2, hp, hshiftLe j hj]
+  · nlinarith [hr.1, hp, hshiftNonneg j]
 
 end ProbabilityTheory.RandomWalk.SmallDeviation.Entrance
 

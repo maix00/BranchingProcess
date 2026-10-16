@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Entrance.MovingInterior
+public import Probability.Process.RandomWalk.SmallDeviation.Entrance.MovingCorridor
 public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition.Factorization
 
 /-!
@@ -14,14 +14,13 @@ public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transit
 
 The supporting lemma in this file is:
 
-- `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.prefixPositiveWindow_and_transition_subset_movingTransitionEvent`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.prefixPositiveWindow_and_transition_subset_movingCorridorEvent`:
   for $x\in[0,\Delta/12]$, a fixed prefix of increments in
   $[a,b]\subset(0,\infty)$ followed by the independent event
-  $D_{N,\Delta}$ is contained in the moving corridor event
-  $\mathcal A_\Delta(x)$ at time $m+N$.
+  $D_{N,\Delta}$ satisfies the moving-corridor path constraints at time
+  $m+N$.
 
-This intermediate wide-window inclusion is used to prove the narrowed
-terminal-window version of Wang Yiyang,
+This path inclusion is used to prove the narrowed terminal-window version of Wang Yiyang,
 *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
 Appendix A.2, Lemma A.7, used in Chapter 3, Lemma 3.5.
 -/
@@ -32,9 +31,9 @@ open MeasureTheory ProbabilityTheory
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Entrance
 
-/-- The positive fixed prefix and independent transition suffix produce
-the exact moving entrance event from the lower edge. -/
-lemma prefixPositiveWindow_and_transition_subset_movingTransitionEvent
+/-- The positive fixed prefix and independent transition suffix satisfy
+the moving-corridor path constraints from the lower edge. -/
+lemma prefixPositiveWindow_and_transition_subset_movingCorridorEvent
     {m N : ℕ} {width drift start a b : ℝ}
     (hwidth : 0 < width) (hdrift : 0 ≤ drift)
     (ha : 0 < a) (hab : a ≤ b)
@@ -47,7 +46,7 @@ lemma prefixPositiveWindow_and_transition_subset_movingTransitionEvent
       (∀ k < m, increment k ∈ Set.Icc a b) ∧
       (fun k => increment (m + k)) ∈
         FunctionalLimit.Conditioned.nonnegativeTransitionEvent N width} ⊆
-      movingTransitionEvent (m + N) width drift start := by
+      movingCorridorEvent (m + N) width drift start := by
   intro increment hinc
   let tail : ℕ → ℝ := fun k => increment (m + k)
   have hprefixSum (j : ℕ) (hj : j ≤ m) :
@@ -80,56 +79,44 @@ lemma prefixPositiveWindow_and_transition_subset_movingTransitionEvent
     conv_lhs => rw [← Nat.add_sub_of_le hj,
       AdditivePath.displacement_add]
   have hprefixAtM := hprefixSum m le_rfl
-  unfold movingTransitionEvent
-  constructor
-  · intro k
-    let j := k.val + 1
-    have hj : j ≤ m + N := Nat.succ_le_of_lt k.isLt
-    by_cases hjPrefix : j ≤ m
-    · have hp := hprefixSum j hjPrefix
-      have hjNonneg : 0 ≤ (j : ℝ) := Nat.cast_nonneg _
-      have hstepJ : drift * (j : ℝ) ≤
-          a * width ^ 2 * (j : ℝ) :=
-        mul_le_mul_of_nonneg_right hstep hjNonneg
-      have hmoveLower : drift * (j : ℝ) / width ^ 2 ≤ (j : ℝ) * a := by
-        apply (div_le_iff₀ hwidthSq).2
-        nlinarith [hstepJ]
-      have hpos : 0 ≤ (j : ℝ) * a := mul_nonneg hjNonneg ha.le
-      have hupper : start + AdditivePath.displacement j increment ≤ width := by
-        have hjCast : (j : ℝ) ≤ (m : ℝ) := Nat.cast_le.mpr hjPrefix
-        nlinarith [hp.2, hstart.2, hprefixUpper,
-          mul_le_mul_of_nonneg_right hjCast (le_trans ha.le hab)]
-      exact ⟨by nlinarith [hp.1, hstart.1],
-        hupper.trans (le_add_of_nonneg_right (hshiftNonneg j))⟩
-    · have hmj : m < j := Nat.lt_of_not_ge hjPrefix
-      let r := j - m
-      have hrpos : 0 < r := Nat.sub_pos_iff_lt.mpr hmj
-      have hrle : r ≤ N := by omega
-      have htail := hinc.2.1 ⟨r - 1, by omega⟩
-      have hrSucc : r - 1 + 1 = r := Nat.sub_add_cancel hrpos
-      rw [hrSucc] at htail
-      have hposition := hsplit j hmj.le
-      have hupper : start + AdditivePath.displacement j increment ≤ width := by
-        rw [hposition]
-        nlinarith [hprefixAtM.2, htail.2, hstart.2, hprefixUpper]
-      have hlower : drift * (j : ℝ) / width ^ 2 ≤
-          start + AdditivePath.displacement j increment := by
-        rw [hposition]
-        nlinarith [hprefixAtM.1, htail.1, hstart.1,
-          hprefixHeight, hshiftLe j hj]
-      exact ⟨hlower,
-        hupper.trans (le_add_of_nonneg_right (hshiftNonneg j))⟩
-  · have hposition := hsplit (m + N) (Nat.le_add_right m N)
-    have hsub : m + N - m = N := Nat.add_sub_cancel_left m N
-    rw [hsub] at hposition
-    have hend := hinc.2.2
-    constructor
-    · rw [hposition]
-      nlinarith [hprefixAtM.1, hend.1, hstart.1,
-        hshiftLe (m + N) le_rfl, hprefixHeight]
-    · rw [hposition]
-      nlinarith [hprefixAtM.2, hend.2, hstart.2,
-        hprefixUpper, hshiftNonneg (m + N)]
+  unfold movingCorridorEvent
+  intro k
+  let j := k.val + 1
+  have hj : j ≤ m + N := Nat.succ_le_of_lt k.isLt
+  by_cases hjPrefix : j ≤ m
+  · have hp := hprefixSum j hjPrefix
+    have hjNonneg : 0 ≤ (j : ℝ) := Nat.cast_nonneg _
+    have hstepJ : drift * (j : ℝ) ≤
+        a * width ^ 2 * (j : ℝ) :=
+      mul_le_mul_of_nonneg_right hstep hjNonneg
+    have hmoveLower : drift * (j : ℝ) / width ^ 2 ≤ (j : ℝ) * a := by
+      apply (div_le_iff₀ hwidthSq).2
+      nlinarith [hstepJ]
+    have hpos : 0 ≤ (j : ℝ) * a := mul_nonneg hjNonneg ha.le
+    have hupper : start + AdditivePath.displacement j increment ≤ width := by
+      have hjCast : (j : ℝ) ≤ (m : ℝ) := Nat.cast_le.mpr hjPrefix
+      nlinarith [hp.2, hstart.2, hprefixUpper,
+        mul_le_mul_of_nonneg_right hjCast (le_trans ha.le hab)]
+    exact ⟨by nlinarith [hp.1, hstart.1],
+      hupper.trans (le_add_of_nonneg_right (hshiftNonneg j))⟩
+  · have hmj : m < j := Nat.lt_of_not_ge hjPrefix
+    let r := j - m
+    have hrpos : 0 < r := Nat.sub_pos_iff_lt.mpr hmj
+    have hrle : r ≤ N := by omega
+    have htail := hinc.2.1 ⟨r - 1, by omega⟩
+    have hrSucc : r - 1 + 1 = r := Nat.sub_add_cancel hrpos
+    rw [hrSucc] at htail
+    have hposition := hsplit j hmj.le
+    have hupper : start + AdditivePath.displacement j increment ≤ width := by
+      rw [hposition]
+      nlinarith [hprefixAtM.2, htail.2, hstart.2, hprefixUpper]
+    have hlower : drift * (j : ℝ) / width ^ 2 ≤
+        start + AdditivePath.displacement j increment := by
+      rw [hposition]
+      nlinarith [hprefixAtM.1, htail.1, hstart.1,
+        hprefixHeight, hshiftLe j hj]
+    exact ⟨hlower,
+      hupper.trans (le_add_of_nonneg_right (hshiftNonneg j))⟩
 
 end ProbabilityTheory.RandomWalk.SmallDeviation.Entrance
 

@@ -46,7 +46,7 @@ lemma robustEntrance_staysInTiltedTube
         base + drift * (time : ℝ) / width ^ 2 + width := by
   intro time htime hle
   have htimeEq : time - 1 + 1 = time := by omega
-  have hpath := hinc.1.1 ⟨time - 1, by omega⟩
+  have hpath := hinc.1 ⟨time - 1, by omega⟩
   simp only [htimeEq] at hpath
   constructor <;> linarith [hpath.1, hpath.2]
 

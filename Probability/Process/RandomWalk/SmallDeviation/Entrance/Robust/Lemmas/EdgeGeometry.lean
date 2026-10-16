@@ -53,7 +53,7 @@ lemma prefixPositiveWindow_and_transition_subset_robustMovingTransitionEvent
       robustMovingTransitionEvent (m + N) width drift start := by
   intro increment hinc
   have hmove :=
-    prefixPositiveWindow_and_transition_subset_movingTransitionEvent
+    prefixPositiveWindow_and_transition_subset_movingCorridorEvent
       hwidth hdrift ha hab hstart hprefixHeight hprefixUpper
       hstep htotal hinc
   have hprefixLower : (m : ℝ) * a ≤
@@ -109,7 +109,7 @@ lemma prefixNegativeWindow_and_reflectedTransition_subset_robustMovingTransition
       robustMovingTransitionEvent (m + N) width drift start := by
   intro increment hinc
   have hmove :=
-    prefixNegativeWindow_and_reflectedTransition_subset_movingTransitionEvent
+    prefixNegativeWindow_and_reflectedTransition_subset_movingCorridorEvent
       hwidth hdrift ha hab hstart hprefixUpper hsmallDrift htotal hinc
   let reflected : ℕ → ℝ := fun k => -increment k
   have hprefixLower : (m : ℝ) * a ≤
