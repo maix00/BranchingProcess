@@ -149,7 +149,7 @@ AXIOM_EXPECTATIONS = {
         "ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.additivePath_le_threshold_add_delta_of_noLargeDrop",
         "ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.neg_delta_le_additivePath_of_noLargeDrop",
         "ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.blockOscillationEvent_of_additiveSegment",
-        "ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.tendsto_diffusiveBlockCount_atTop_of_horizonRatio",
+        "Asymptotics.tendsto_nat_div_floorBlockLength_atTop_of_horizonRatio",
         "ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.measureReal_noLargeDropEndpointBelowEvent_le_exp_of_finiteVariance",
     ),
     Path("BranchingProcessTest/Probability/Process/RandomWalk/SmallDeviation/Drawdown/Scaling.lean"): (
