@@ -15,12 +15,12 @@ import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 
 The proof-specific declarations are:
 
-- `exists_partition_size_for_rate`: if $d<d_{\rm crit}$, some $m>0$
+- `ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube.exists_partition_size_for_rate`: if $d<d_{\rm crit}$, some $m>0$
   satisfies $d(1+1/m)^2<d_{\rm crit}$.
-- `eventually_uniform_partitionTube_rateBound`: for a fixed partition and
+- `ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube.eventually_uniform_partitionTube_rateBound`: for a fixed partition and
   $d_{\rm rate}<\pi^2\sigma^2/2$, every corridor in the partition has
   the required one-block exponential bound for all sufficiently large widths.
-- `horizontalTubeProbability_le_exp_of_partitionIndex`: combining the
+- `ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube.horizontalTubeProbability_le_exp_of_partitionIndex`: combining the
   selected corridor, block rate, and remainder gives
   $\mathbb P(T_{a,\Delta,L})\le
   \exp(u\Delta^v-dL/\Delta^2)$.
@@ -36,7 +36,7 @@ open scoped ENNReal NNReal Topology
 
 @[expose] public section
 
-namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
+namespace ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube
 
 private theorem smallDeviationBlockFactor_mono
     {u v d : ℝ} (hu : 0 < u) (hv : 0 < v) (hd : 0 < d)
@@ -482,6 +482,6 @@ theorem horizontalTubeProbability_le_exp_of_partitionIndex
     hΔ hd block horizon hblockPos
     hblockRemainder hblockProbability
 
-end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
+end ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube
 
 end

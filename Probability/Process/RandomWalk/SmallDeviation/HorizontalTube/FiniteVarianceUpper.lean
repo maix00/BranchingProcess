@@ -15,15 +15,15 @@ The public theorems in this file formalize Wang Yiyang,
 *Asymptotic speed of the $N$-branching random walk with infinite offspring*,
 Chapter 3, Lemma 3.2 and its following remark:
 
-- `horizontalTubeProbability_le_exp_of_finiteVariance_withRemainder`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube.horizontalTubeProbability_le_exp_of_finiteVariance_withRemainder`:
   $\mathbb P(T_{a,\Delta,L})\le
   \exp(u\Delta^v-dL/\Delta^2)$ for $u,v>0$ and
   $0<d<\pi^2\sigma^2/2$, uniformly over $a\in[0,1]$.
-- `horizontalTubeProbability_le_exp_of_finiteVariance`: the same bound
+- `ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube.horizontalTubeProbability_le_exp_of_finiteVariance`: the same bound
   with $u=1$.
-- `iidSequenceLaw_intervalProbability_le_exp_of_finiteVariance_withRemainder`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube.iidSequenceLaw_intervalProbability_le_exp_of_finiteVariance_withRemainder`:
   the corresponding bound for a translated interval $[r_0,r_0+\Delta]$.
-- `iidSequenceLaw_intervalProbability_le_exp_of_finiteVariance`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube.iidSequenceLaw_intervalProbability_le_exp_of_finiteVariance`:
   the translated-interval bound with $u=1$.
 
 The reusable uniform one-block-to-horizon estimate is in
@@ -39,7 +39,7 @@ open scoped ENNReal NNReal Topology
 
 @[expose] public section
 
-namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
+namespace ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube
 
 /-- The arbitrary-remainder form of Wang Yiyang, *Asymptotic speed of the
 $N$-branching random walk with infinite offspring*, Chapter 3, Lemma 3.2 and
@@ -240,6 +240,6 @@ theorem iidSequenceLaw_intervalProbability_le_exp_of_finiteVariance
     (iidSequenceLaw_intervalProbability_le_exp_of_finiteVariance_withRemainder
       (u := 1) ν hcentered hsquare hvariance one_pos hv hd hcritical)
 
-end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
+end ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube
 
 end

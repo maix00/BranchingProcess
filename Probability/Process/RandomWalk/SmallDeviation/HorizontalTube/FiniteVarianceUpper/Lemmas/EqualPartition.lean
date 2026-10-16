@@ -23,14 +23,17 @@ Here `S_j` is the partial sum of the IID increments with centered law `ν`.
 
 The proof-specific module-visible declarations are:
 
-- `partitionTubeParameter`, `partitionTubeWidth`, and `partitionTubeEvent`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube.partitionTubeParameter`,
+  `ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube.partitionTubeWidth`, and
+  `ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube.partitionTubeEvent`:
   the fixed translated corridors used to cover the offsets $a\in[0,1]$.
-- `smallDeviationBlockFactor` and `smallDeviationBlockLength`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube.smallDeviationBlockFactor` and
+  `ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube.smallDeviationBlockLength`:
   the factor and block length in the finite-width iteration.
-- `horizontalTube_subset_some_partitionTubeEvent`: for `m≥1`, `a∈[0,1]`,
+- `ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube.horizontalTube_subset_some_partitionTubeEvent`: for `m≥1`, `a∈[0,1]`,
   and `Δ>0`, some `j∈{0,…,m−1}` satisfies
   \(T_{a,\Delta,L}\subseteq T_{\alpha_{m,j},(1+1/m)\Delta,L}\).
-- `horizontalTubeProbability_le_one_partitionTube`: for the same parameters,
+- `ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube.horizontalTubeProbability_le_one_partitionTube`: for the same parameters,
   \(\exists j,\ \mathbb P_\nu(T_{a,\Delta,L})
     \le\mathbb P_\nu(T_{\alpha_{m,j},(1+1/m)\Delta,L})\).
 These are the proof inputs for Wang Yiyang, *Asymptotic speed of the
@@ -47,7 +50,7 @@ open scoped ENNReal NNReal Topology
 
 @[expose] public section
 
-namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
+namespace ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube
 
 /-- Parameter of the `k`-th fixed corridor in an equal partition. -/
 noncomputable def partitionTubeParameter (m : ℕ) (k : Fin m) : ℝ :=
@@ -185,6 +188,6 @@ theorem horizontalTubeProbability_le_one_partitionTube
       simp [partitionTubeEvent, horizontalTubeProbability]
 
 
-end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
+end ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube
 
 end

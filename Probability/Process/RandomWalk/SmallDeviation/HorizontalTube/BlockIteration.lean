@@ -17,16 +17,16 @@ its killed-walk survival probability with a horizontal-tube probability. A
 uniform one-block bound therefore gives a uniform bound for the killed kernel.
 Iterating that kernel estimate yields a finite-horizon horizontal-tube bound.
 
-The reusable results in this module are:
+The public theorems in this module are:
 
-- `killedIntervalBlockProbability_eq_shiftedHorizontalTube`: for
+- `ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube.killedIntervalBlockProbability_eq_shiftedHorizontalTube`: for
   `x∈[-aΔ,(1-a)Δ]`, the killed-interval survival probability from `x` over
   `L` steps equals the horizontal-tube probability with offset `a+x/Δ`.
-- `killedIntervalBlockProbability_le_of_uniformTubeBound`: if every
+- `ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube.killedIntervalBlockProbability_le_of_uniformTubeBound`: if every
   translated tube with offset in `[0,1]` has one-block probability at most
   `q`, then every starting point in the interval has killed-kernel mass at
   most `q` after that block.
-- `horizontalTubeProbability_le_exp_of_uniformTubeBlockBound`: if every
+- `ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube.horizontalTubeProbability_le_exp_of_uniformTubeBlockBound`: if every
   translated block of length `ℓ` has probability at most
   `exp(-dℓ/Δ²)` and `dℓ/Δ²≤r`, then the `L`-step tube probability is at most
   `exp(r-dL/Δ²)`.
@@ -38,7 +38,7 @@ open scoped ENNReal NNReal Topology
 
 @[expose] public section
 
-namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
+namespace ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube
 
 /-- A killed interval walk started at `x` is the centered tube walk whose
 left endpoint is shifted by `x`. -/
@@ -205,6 +205,6 @@ theorem horizontalTubeProbability_le_exp_of_uniformTubeBlockBound
         (remainder - d * ((horizon : ℝ) / width ^ 2))) := hfinal
 
 
-end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
+end ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube
 
 end
