@@ -8,7 +8,7 @@ module
 
 public import Probability.Process.RandomWalk.Path.Block.Partition.Basic
 public import Probability.Process.RandomWalk.Path.Corridor.Horizontal.Basic
-public import Probability.Process.RandomWalk.Path.Oscillation
+public import Probability.Process.RandomWalk.Path.Event.Oscillation
 public import Probability.Process.RandomWalk.Path.Block.Law
 public import Probability.Process.RandomWalk.Kernel.Killed.Return
 public import Probability.Process.RandomWalk.Kernel.Killed.Blocking

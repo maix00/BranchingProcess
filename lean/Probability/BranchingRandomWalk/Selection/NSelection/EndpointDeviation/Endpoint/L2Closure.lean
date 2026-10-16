@@ -11,7 +11,7 @@ import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Co
 # Two-sided endpoint fourth moments on the common root forest
 
 The positive and negative endpoint parts have separate estimates under the
-paper's assumptions. This module combines them on the common countable-root
+the assumptions. This module combines them on the common countable-root
 environment, which is the probability space used for the varying-
 initial-population trajectory.
 -/

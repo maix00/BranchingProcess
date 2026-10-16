@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.Kernel.Basic
-public import Probability.Process.RandomWalk.Path.Filtration
+public import Probability.Process.RandomWalk.Path.Adapted.Filtration
 public import Probability.Independence.ConditionalIntegral
 public import Probability.Process.Markov.Basic
 

@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Analysis.Asymptotics.RegularVariation
-public import Analysis.Asymptotics.SlowDiagonal
+public import Analysis.Asymptotics.Scale.SlowDiagonal
 
 /-!
 # Slowly growing multipliers for regularly varying functions

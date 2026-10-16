@@ -10,7 +10,7 @@ public import Probability.BranchingRandomWalk.Spine.GenerationManyToOne
 public import Probability.BranchingRandomWalk.Spine.Path.ManyToOne
 public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law
 public import Probability.BranchingRandomWalk.Step.Law.Field
-public import Probability.Process.RandomWalk.Path.Drawdown
+public import Probability.Process.RandomWalk.Path.Event.Drawdown
 public import Mathlib.MeasureTheory.Integral.Lebesgue.Basic
 
 /-!

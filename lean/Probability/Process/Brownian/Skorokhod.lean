@@ -11,7 +11,7 @@ public import Mathlib.Topology.UnitInterval
 public import Probability.Process.Path.UnitInterval
 public import Probability.Process.Path.Skorokhod
 public import Probability.ConvergenceInDistribution.ContinuousMap.FiniteDimensional
-public import Topology.Cadlag.Skorokhod.ContinuousMap
+public import Topology.Cadlag.Skorokhod.Maps.Continuous
 
 /-!
 # Brownian processes in Skorokhod space

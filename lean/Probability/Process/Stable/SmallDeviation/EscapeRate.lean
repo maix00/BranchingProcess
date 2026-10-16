@@ -38,7 +38,7 @@ noncomputable def stableRangeLogRate
   a ^ α * Real.log ((rationalRangeProbability P X a).toReal)
 
 /-- The rational range event has positive probability at every positive width
-under the source's two-sided stable-law condition. -/
+when the increment law assigns positive mass to both half-lines. -/
 theorem IsStableLevyProcess.rationalRangeProbability_pos_of_cdf
     {Ω : Type*} [MeasurableSpace Ω]
     {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}

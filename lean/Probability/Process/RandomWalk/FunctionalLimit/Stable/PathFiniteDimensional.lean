@@ -8,7 +8,7 @@ module
 
 public import Probability.Process.Path.UnitInterval
 public import Probability.Process.RandomWalk.FunctionalLimit.Stable.FiniteDimensional
-public import Probability.Process.RandomWalk.Path.Scaling
+public import Probability.Process.RandomWalk.Path.Representation.Scaling
 
 /-!
 # Finite-dimensional limits of stable random-walk paths

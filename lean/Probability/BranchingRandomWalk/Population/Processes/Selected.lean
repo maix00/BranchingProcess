@@ -120,7 +120,7 @@ theorem selectedPopulation_card_le {m : ℕ}
 
 /-- Nonextinction holds on the pathwise event that every reproduction mark
 encountered in the pre-sampled forest has a realized slot-zero child. Under
-ordered support, the thesis's almost-sure at-least-one-child assumption gives
+ordered support, the almost-sure at-least-one-child assumption gives
 this event almost surely. -/
 theorem selectedPopulation_nonempty_of_first_child {m : ℕ}
     (hm : 0 < m) (N : ℕ) (hN : 0 < N)

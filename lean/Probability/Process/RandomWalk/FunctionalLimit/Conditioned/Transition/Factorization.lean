@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition
+public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition.Event
 public import Probability.Process.RandomWalk.Path.Block.Law
 public import Probability.Process.RandomWalk.Path.Block.Partition.Basic
 public import Probability.Sequence.IID

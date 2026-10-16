@@ -277,7 +277,7 @@ theorem finiteRootStepFieldLaw_predictableStep_measurable
       (Root := Fin m) (α := ℕ) (X := ℝ)).le (n + 1))
     le_rfl
 
-/-- The fourth-moment hypothesis on the paper's ordered leftmost step is
+/-- The fourth-moment hypothesis on the ordered leftmost step is
 exactly the fourth moment of slot zero after sorting and applying the
 potential. -/
 theorem integrable_sortedPotentialImage_positiveSlotZero_pow_four
@@ -399,7 +399,7 @@ theorem integral_pow_four_sum_le_of_uniform_moments
   exact ⟨hFIntegrable, by simpa [F] using hIntegralBound⟩
 
 /-- For any generation-by-generation predictable lineage, the sum of its
-positive slot-zero increments has fourth moment at most n⁴ times the paper's
+positive slot-zero increments has fourth moment at most n⁴ times the
 leftmost-step fourth moment. This isolates the probabilistic and moment
 assembly part of the endpoint argument; selecting the endpoint-minimizing
 address and proving the one-step comparison are separate pathwise lemmas. -/

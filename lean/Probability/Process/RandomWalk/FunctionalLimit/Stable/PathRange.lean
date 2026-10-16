@@ -238,7 +238,9 @@ theorem exists_eventually_compactRange_bound_of_index_lt_one
   simpa [biasBound] using hbias
 
 /-- Compact-range control at stable index one under the sine-centering
-condition from Mogulskii's source theorem. -/
+condition in Theorem 3, Section 4 of A. A. Mogul'skii, *Small Deviations in
+a Space of Trajectories* (1974 Russian original; 1975 English translation,
+DOI 10.1137/1119081). -/
 theorem exists_eventually_compactRange_bound_of_index_one
     {ε : ℝ} {ν : Measure ℝ} [IsProbabilityMeasure ν]
     {normalization : ℕ → ℝ} (hnorm : IsStableNorming 1 ν normalization)

@@ -48,8 +48,8 @@ theorem rationalUniformPrefixCorridorReturnEvent_subset_rationalHorizonTubeEvent
   simpa using hraw
 
 /-- The completed finite-block lower chain, conditional on the concrete
-per-bin short-block probabilities. The remaining original-paper estimate is
-to lower-bound those probabilities uniformly at the stable scale. -/
+per-bin short-block probabilities. The remaining input is a uniform lower
+bound for those probabilities at the stable scale. -/
 theorem IsStableLevyProcess.pow_le_measure_rationalHorizonTube_of_return_bins
     {Ω ι : Type*} [MeasurableSpace Ω] [Fintype ι]
     {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}

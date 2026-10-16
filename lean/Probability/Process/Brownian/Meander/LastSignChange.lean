@@ -34,11 +34,12 @@ The public theorem in this file is:
 
 The proof uses atomlessness of interval minima at countably many
 rational starts. This identifies the two path transforms appearing on
-page 484 of Erwin Bolthausen, *On a functional central limit theorem
-for random walks conditioned to stay positive*, Ann. Probab. 4(3)
-(1976), 480--485, and Section 3 of Donald L. Iglehart,
+page 484 and Theorem 3.2 of Erwin Bolthausen, *On a functional central
+limit theorem for random walks conditioned to stay positive*, Ann. Probab.
+4(3) (1976), 480--485, DOI 10.1214/aop/1176996098, and Section 3 of Donald L. Iglehart,
 *Functional Central Limit Theorems for Random Walks Conditioned to
-Stay Positive*, Ann. Probab. 2(4) (1974), 608--619.
+Stay Positive*, Ann. Probab. 2(4) (1974), 608--619, Section 3,
+DOI 10.1214/aop/1176996607.
 -/
 
 @[expose] public section
@@ -246,10 +247,12 @@ theorem IsBrownianReal.ae_continuousAt_lastSignChangeMeanderTransform
   exact ContinuousMap.continuousAt_lastSignChangeMeanderTransform_of_eq_lastZero
     _ heq hlt
 
-/-- The source transform agrees locally with the endpoint-sign version
-at every Brownian path whose endpoint is nonzero. Consequently the
-source transform is continuous almost surely as asserted on page 484
-of Bolthausen's article. -/
+/-- Bolthausen's original sign-stable transform agrees locally with the
+endpoint-sign transform at every Brownian path whose endpoint is nonzero.
+It is therefore continuous almost surely, as asserted on page 484 of Erwin
+Bolthausen, *On a Functional Central Limit Theorem for Random Walks
+Conditioned to Stay Positive*, Theorem 3.2, Ann. Probab. 4(3) (1976),
+480--485, DOI 10.1214/aop/1176996098. -/
 theorem IsBrownianReal.ae_continuousAt_signStableMeanderTransform
     {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
     [IsProbabilityMeasure P] {B : ℝ≥0 → Ω → ℝ}

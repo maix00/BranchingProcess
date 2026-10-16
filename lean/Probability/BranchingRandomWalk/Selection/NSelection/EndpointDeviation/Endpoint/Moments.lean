@@ -38,7 +38,7 @@ private theorem rootPosition_eq_pathPotential (m : ℕ)
 
 /-- The negative exponential moment of the totalized selected endpoint is at
 most the number of initial roots.  The empty-population value is irrelevant:
-under the paper's nonempty-offspring hypothesis, the selected population is
+under the nonempty-offspring hypothesis, the selected population is
 nonempty almost surely at every fixed generation. -/
 theorem finiteRootStepFieldLaw_lintegral_exp_neg_firstNSelectedEndpointMinimum_le
     (m N H : ℕ) (hm : 0 < m) (hN : 0 < N)
@@ -146,7 +146,7 @@ theorem finiteRootStepFieldLaw_lintegral_exp_neg_firstNSelectedEndpointMinimum_l
     _ = ENNReal.ofReal (m : ℝ) := hsumIntegral
 
 /-- The selected endpoint's negative part has a logarithmic fourth-moment
-bound. This is the negative-side moment estimate needed by the paper's
+bound. This is the negative-side moment estimate needed by the
 trajectory `L²` argument; the positive-side fourth-moment estimate is a
 separate adapter. -/
 theorem finiteRootStepFieldLaw_integrable_pow_four_max_neg_firstNSelectedEndpointMinimum

@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.Brownian.Bessel.ThreeDimensional
-public import Topology.Cadlag.Skorokhod.Endpoint
+public import Topology.Cadlag.Skorokhod.Path.Endpoint
 
 /-!
 # The endpoint of a three-dimensional Bessel path

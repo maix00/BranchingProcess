@@ -26,7 +26,7 @@ theorems in this file are:
 
 The central limit theorem itself lives in the Donsker layer. These are the
 single-block inputs used in the proof of Mogul'skii, *Small Deviations in a
-Space of Trajectories*, Theorem 3, Section 4, p. 764
+Space of Trajectories*, Theorem 3, Section 4, p. 764 of the 1974 Russian original
 (DOI 10.1137/1119081).
 -/
 

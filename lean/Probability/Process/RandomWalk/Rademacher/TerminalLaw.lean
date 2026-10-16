@@ -8,7 +8,7 @@ module
 
 public import Probability.Process.RandomWalk.Rademacher.LastSignChange
 public import Probability.Sequence.IID.PrefixBlock
-public import Probability.Process.RandomWalk.Path.Filtration
+public import Probability.Process.RandomWalk.Path.Adapted.Filtration
 
 /-!
 # Prefix and terminal-block independence for the simple symmetric walk
@@ -56,7 +56,7 @@ The public theorems in this file are:
 These are the prefix/suffix independence steps behind the final
 simple-symmetric-walk argument on page 484 of Erwin Bolthausen,
 *On a functional central limit theorem for random walks conditioned to
-stay positive*, Ann. Probab. 4(3) (1976), 480--485.
+stay positive*, Ann. Probab. 4(3) (1976), 480--485, DOI 10.1214/aop/1176996098.
 -/
 
 @[expose] public section

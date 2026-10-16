@@ -33,7 +33,7 @@ The public theorems are:
 
 These are finite-dimensional inputs for the block argument of Mogul'skii,
 *Small Deviations in a Space of Trajectories*, Theorem 3, Section 4,
-p. 764 (DOI 10.1137/1119081). The endpoint CLT comes from the Donsker
+p. 764 of the 1974 Russian original (DOI 10.1137/1119081). The endpoint CLT comes from the Donsker
 layer; this file does not assert tightness in path space.
 -/
 

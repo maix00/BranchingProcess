@@ -32,7 +32,7 @@ The public theorems are:
 The non-strict range-oscillation event is covered by finitely many constant
 corridors. The resulting Gaussian range estimate is a reusable consequence
 of A. A. Mogul'skii, *Small Deviations in a Space of Trajectories*,
-Theorem 3, Section 4, p. 764 (DOI 10.1137/1119081).
+Theorem 3, Section 4, p. 764 of the 1974 Russian original (DOI 10.1137/1119081).
 -/
 
 open Filter MeasureTheory ProbabilityTheory

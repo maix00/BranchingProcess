@@ -6,8 +6,8 @@ Authors: WANG Yiyang
 
 module
 
-public import Analysis.Asymptotics.PolynomialExponential
-public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.DiffusiveTransitionLower
+public import Analysis.Asymptotics.Power.PolynomialExponential
+public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition.DiffusiveLower
 public import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.PowerAssembly
 
 /-!

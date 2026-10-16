@@ -12,11 +12,13 @@ public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.Feedback.En
 public import Probability.Distributions.Stable.Sign
 public import Probability.Process.Stable.SmallDeviation.EscapeRate.PathLaw.Transfer
 
-/-! # Stable bridge probabilities for source equation (34)
+/-! # Stable bridge probabilities for Mogul'skii's equation (34)
 
-The source entrance estimate gives positive limiting bridge masses. Portmanteau
+The entrance estimate gives positive limiting bridge masses. Portmanteau
 then yields a uniform finite-family bridge bound, which combines with the
-source-specific cells to prove the finite probability comparison. -/
+finite-cell geometry to prove the probability comparison in equation (34),
+Theorem 3, Section 4 of A. A. Mogul'skii, *Small Deviations in a Space of
+Trajectories* (DOI 10.1137/1119081). -/
 
 open Filter MeasureTheory ProbabilityTheory
 open scoped ENNReal NNReal Topology

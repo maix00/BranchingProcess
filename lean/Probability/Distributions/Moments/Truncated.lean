@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Analysis.Asymptotics.PowerTailIntegral
+public import Analysis.Asymptotics.Power.PowerTailIntegral
 public import Analysis.Asymptotics.RegularVariation.Integral
 public import Mathlib.MeasureTheory.Integral.Layercake
 public import Mathlib.MeasureTheory.Integral.Bochner.Set

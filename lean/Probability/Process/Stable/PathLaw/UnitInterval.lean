@@ -10,7 +10,7 @@ public import Probability.Process.Path.Cadlag.MeasurableMap
 public import Probability.Process.Stable.FiniteDimensional
 public import Probability.Process.Stable.Levy
 public import Probability.Process.Stable.PathLaw
-public import Topology.Cadlag.Skorokhod.Scaling
+public import Topology.Cadlag.Skorokhod.Path.Scaling
 
 /-!
 # Unit-interval path law of a stable Lévy process

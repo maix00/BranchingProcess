@@ -8,7 +8,7 @@ module
 
 public import Mathlib.Probability.HasLaw
 public import Probability.Process.Path.UnitInterval
-public import Topology.Cadlag.Skorokhod.ContinuousMap
+public import Topology.Cadlag.Skorokhod.Maps.Continuous
 
 /-!
 # Càdlàg path-space interfaces

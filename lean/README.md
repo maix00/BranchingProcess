@@ -69,9 +69,11 @@ Parent closure is derived for every step field from the prefix property of
 - the final varying-boundary finite-variance Mogulskii asymptotic, including
   the quantitative entrance estimate and the last blocking step;
 - the remaining quantitative estimates for the selected-walk speed theorems,
-  including the first-moment and cross-term hypotheses needed by the thesis;
-- the final assembly of the thesis statements (including the proposed
-  first-moment version) from the verified interfaces above.
+  including the first-moment and cross-term hypotheses in Wang Yiyang's
+  *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
+  Theorem 1.1;
+- the final assembly of Wang Yiyang's Theorems 1.1 and 1.2, including the
+  proposed first-moment version, from the verified interfaces above.
 
 The detailed dependency graph and proof boundary are kept in
 [`ARCHITECTURE.md`](ARCHITECTURE.md) and
@@ -120,8 +122,10 @@ import Probability.Process.RandomWalk.FunctionalLimit.Donsker.CLT
 import Probability.PointProcess.Basic
 ```
 
-The standalone library is released from the `lean/` subtree of the thesis
-checkout. See [`RELEASE.md`](RELEASE.md) for the reproducible release check.
+The standalone library is released from the `lean/` subtree of the repository
+containing Wang Yiyang's *Asymptotic Speed of the N-Branching Random Walk with
+Infinite Offspring*. See [`RELEASE.md`](RELEASE.md) for the reproducible
+release check.
 
 ## License
 

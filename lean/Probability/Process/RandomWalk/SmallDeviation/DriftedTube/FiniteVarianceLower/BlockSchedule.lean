@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Blocks.Exponent
+public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.BlockSchedule.Exponent
 /-!
 # Finite staircase schedule with a longer last block
 

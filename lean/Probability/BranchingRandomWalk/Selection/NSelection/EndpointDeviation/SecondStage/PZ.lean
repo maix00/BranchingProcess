@@ -62,7 +62,7 @@ private theorem rightTailPositiveASecondStageSpineLowerBound_pos
   exact ENNReal.mul_pos
     (ne_of_gt (ENNReal.mul_pos hentryDiv.ne' hpower.ne')) hbridgeDiv.ne'
 
-/-- For the paper's second-stage parameter scales, the probability that all
+/-- For the second-stage parameter scales, the probability that all
 independent initial roots fail to produce a path through the second-stage
 corridor is bounded by the PZ/Chernoff exponential.  The PZ mean is left
 explicit so the polynomial budget can be checked separately.  No extra

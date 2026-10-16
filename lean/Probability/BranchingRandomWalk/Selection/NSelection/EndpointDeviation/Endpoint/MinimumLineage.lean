@@ -14,7 +14,7 @@ import Probability.BranchingRandomWalk.Step.Ordering.Support
 # Endpoint-minimizing lineages for fixed-capacity selection
 
 The endpoint-minimizing particle in one generation has a leftmost child in
-the next candidate population, almost surely under the paper's nonempty
+the next candidate population, almost surely under the nonempty
 offspring assumption. That child need not itself survive the global
 selection step. The first-`N` property instead implies that the next selected
 endpoint minimum is no larger than its endpoint. This is the pathwise bridge
@@ -68,7 +68,7 @@ private theorem exists_mem_le_of_isFirstNBy
   exact (not_lt_of_ge (hpmin q hqselected)) hq_lt
 
 /-- If the previous generation contains `p`, its slot-zero child survives,
-and the next-generation candidate set satisfies the paper's lower-finiteness
+and the next-generation candidate set satisfies the lower-finiteness
 condition, then the next selected endpoint minimum is at most the endpoint
 of that child. -/
 theorem firstNSelectedEndpointMinimum_succ_le_of_slotZero_candidate
@@ -252,7 +252,7 @@ theorem finiteRootStepFieldLaw_integral_pow_four_sum_endpointMinAddressPositiveS
 /-- Almost surely, every one-step increase of the selected endpoint minimum
 is bounded by the positive part of the fresh slot-zero increment read at the
 previous generation's endpoint-minimizing address. The law conditions are
-the paper's boundary normalization and nonempty-offspring assumptions.
+the boundary normalization and nonempty-offspring assumptions.
 -/
 theorem finiteRootStepFieldLaw_endpointMinimum_succ_le_predictablePositiveSlotZero_ae
     (m N : ℕ) (hm : 0 < m) (hN : 0 < N)

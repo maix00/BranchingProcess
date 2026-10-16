@@ -46,7 +46,7 @@ declarations are:
 
 The centered finite-variance formulas specialize Mogul'skii,
 *Small Deviations in a Space of Trajectories*, Theorem 3, Section 4,
-p. 764 (Russian original, 1974; English translation, *Theory of
+p. 764 of the 1974 Russian original (English translation, *Theory of
 Probability and Its Applications* 19(4) (1975), 726–736,
 DOI 10.1137/1119081). Ordinary probability is identified from inner and
 outer rates when the corridor preimages are null-measurable.

@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.Path.Drawdown
+public import Probability.Process.RandomWalk.Path.Event.Drawdown
 public import Algebra.BigOperators.AdditivePath
 
 /-!

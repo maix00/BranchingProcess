@@ -6,8 +6,8 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.MeanderIdentification
-public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.MeanderVariance
+public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Meander.Identification
+public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Meander.FiniteVariance
 public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition.FromFirstWindow
 public import Probability.Process.Brownian.Meander.LastZeroSupport
 
@@ -29,10 +29,10 @@ This is the conditioned Brownian-meander transition step in Wang Yiyang,
 *Asymptotic speed of the $N$-branching random walk with infinite offspring*,
 Appendix A.2, used in the proof of Lemma 3.5. The functional limit follows
 Erwin Bolthausen, *On a functional central limit theorem for random walks
-conditioned to stay positive*, Ann. Probab. 4(3) (1976), 480--485,
+conditioned to stay positive*, Ann. Probab. 4(3) (1976), 480--485, DOI 10.1214/aop/1176996098,
 Theorem 3.2; its identification with the terminal excursion is due to
 Donald L. Iglehart, *Functional Central Limit Theorems for Random Walks
-Conditioned to Stay Positive*, Ann. Probab. 2(4) (1974), 608--619,
+Conditioned to Stay Positive*, Ann. Probab. 2(4) (1974), 608--619, DOI 10.1214/aop/1176996607,
 Section 3.
 -/
 

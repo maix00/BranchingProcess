@@ -363,7 +363,7 @@ theorem finiteRootStepFieldLaw_all_nonempty
   finiteRootStepFieldLaw_ae_all_of_measure_one
     nonemptySupport_measurable μ hμ m
 
-/-- Ordered support together with the thesis's at-least-one-child assumption
+/-- Ordered support together with the at-least-one-child assumption
 forces slot zero at every address of every initial root, simultaneously. -/
 theorem finiteRootStepFieldLaw_all_first_child
     (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]

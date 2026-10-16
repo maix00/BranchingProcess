@@ -13,8 +13,8 @@ public import Probability.Process.RandomWalk.SmallDeviation.Entrance.Rotation.Dr
 public import Probability.Sequence.IID.FiniteReindex
 public import Probability.Sequence.IID
 public import Probability.Process.RandomWalk.Path.Skorokhod.Basic
-public import Topology.Cadlag.Skorokhod.Scaling
-public import Topology.Cadlag.Skorokhod.LinearPath
+public import Topology.Cadlag.Skorokhod.Path.Scaling
+public import Topology.Cadlag.Skorokhod.Path.Linear
 
 /-!
 # Cyclic rotations of finite random-walk paths

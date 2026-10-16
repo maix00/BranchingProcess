@@ -75,9 +75,10 @@ The endpoint-sign version differs only on paths ending at zero. The
 functional is used in the sketch at the end of Erwin Bolthausen,
 *On a functional central limit theorem for
 random walks conditioned to stay positive*, Ann. Probab. 4(3) (1976),
-480--485, page 484. The last-zero time is the one used in Donald L.
-Iglehart, *Functional Central Limit Theorems for Random Walks Conditioned
-to Stay Positive*, Ann. Probab. 2(4) (1974), 608--619, Section 3.
+480--485, page 484, DOI 10.1214/aop/1176996098. The last-zero time is the one
+used in Donald L. Iglehart, *Functional Central Limit Theorems for Random
+Walks Conditioned to Stay Positive*, Ann. Probab. 2(4) (1974), 608--619,
+Section 3, DOI 10.1214/aop/1176996607.
 -/
 
 @[expose] public section
@@ -92,8 +93,10 @@ noncomputable def lastOppositeSign (f : C(unitInterval, ℝ)) : unitInterval :=
   sSup {t : unitInterval | f t * f ⊤ < 0}
 
 /-- Earliest time from which the path never again takes sign opposite
-to its endpoint. When the endpoint is nonzero this agrees with the
-sign-stable tail time on page 484 of Bolthausen's article. -/
+to its endpoint. When the endpoint is nonzero this agrees with the sign-stable tail time in
+Erwin Bolthausen, *On a Functional Central Limit Theorem for Random Walks
+Conditioned to Stay Positive*, page 484, Ann. Probab. 4(3) (1976), 480--485,
+DOI 10.1214/aop/1176996098. -/
 noncomputable def firstNoSignChangeStart
     (f : C(unitInterval, ℝ)) : unitInterval :=
   sInf {t : unitInterval | ∀ s : unitInterval,

@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Analysis.Asymptotics.Scale
+public import Analysis.Asymptotics.Scale.Scale
 public import Probability.Distributions.Stable.Attraction.Norming.Source
 public import Probability.Distributions.Stable.Attraction.Normal.TruncatedMoment
 public import Probability.Distributions.Stable.Scaling

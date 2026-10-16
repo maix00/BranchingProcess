@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.Rademacher.TerminalTransform
-public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.LastSignChangeLimit
+public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Meander.LastSignChange
 
 /-!
 # Weak limit of the terminal path of a simple symmetric walk
@@ -24,7 +24,7 @@ The public theorem in this file is:
 
 This is the continuous-mapping step on page 484 of Erwin Bolthausen,
 *On a functional central limit theorem for random walks conditioned to
-stay positive*, Ann. Probab. 4(3) (1976), 480--485. The equality
+stay positive*, Ann. Probab. 4(3) (1976), 480--485, DOI 10.1214/aop/1176996098. The equality
 $\Psi(X_n)=\widetilde Y_n$ is proved in `TerminalTransform`.
 -/
 

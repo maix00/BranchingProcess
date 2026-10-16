@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.Path.Continuous
-public import Probability.Process.Path.FirstPassage
+public import Probability.Process.Path.FirstPassage.Basic
 
 /-!
 # Running minimum of a continuous path

@@ -12,11 +12,21 @@ public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Sca
 /-!
 # Stable-block endpoint return lower bound
 
-This is the endpoint-return part of Mogulskii's discrete lower estimate (33),
-specialized to the stable block length.  It assumes explicit lower bounds for
-the seven one-block endpoint-band probabilities.  It does not derive those
-probability bounds from stable path convergence; that analytic input remains
-separate.
+The public theorem in this file is:
+
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.horizontalTubeProbability_ge_pow_stableEndpointBands`:
+  seven one-block endpoint-band lower bounds imply the corresponding
+  finite-block horizontal-tube lower bound.
+
+This is the endpoint-return step in the discrete lower estimate (equation
+(33)) of A. A. Mogul'skii, “Small deviations in the sample function space,”
+*Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974), 755--765; see also
+the English translation, “Small Deviations in a Space of Trajectories,”
+*Theory of Probability and Its Applications* 19(4) (1975), 726--736, DOI
+10.1137/1119081. The theorem specializes that finite-block gluing step to
+the stable block length. It assumes lower bounds for the seven one-block
+endpoint-band probabilities; deriving those probability bounds from stable
+path convergence is a separate analytic input.
 -/
 
 open MeasureTheory

@@ -13,7 +13,7 @@ public import Probability.Process.Stable.SmallDeviation.Blocks.Upper.Shrinking
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.Analysis.SpecialFunctions.Pow.Continuity
 public import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
-public import Analysis.Asymptotics.NegativeRatio
+public import Analysis.Asymptotics.Sequence.NegativeRatio
 public import Mathlib.MeasureTheory.Constructions.BorelSpace.Real
 
 /-!

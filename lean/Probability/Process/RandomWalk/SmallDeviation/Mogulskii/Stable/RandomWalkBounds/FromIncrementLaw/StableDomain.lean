@@ -26,8 +26,8 @@ public import Probability.Distributions.Stable.Gaussian
 /-!
 # Stable Mogul'skii interface from increment laws
 
-The path law used by the source theorem is obtained from the random-walk
-domain-of-attraction limit. Tightness and finite-dimensional laws construct a
+The stable-process path law used by the rate construction is obtained from
+the random-walk domain-of-attraction limit. Tightness and finite-dimensional laws construct a
 unit-interval stable path law; iid concatenation then supplies the full-time
 stable Lévy process needed by the corridor-rate argument. Callers provide no
 process witness or path-law witness.

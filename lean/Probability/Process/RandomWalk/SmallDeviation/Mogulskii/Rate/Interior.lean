@@ -8,7 +8,7 @@ module
 
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Rate.FinitePartition
 public import Probability.Distributions.Gaussian.Interval
-public import Analysis.Asymptotics.Tolerance
+public import Analysis.Asymptotics.Scale.Tolerance
 
 /-!
 # Mogulskii lower rate for a strict interior horizontal tube

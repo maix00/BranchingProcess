@@ -10,7 +10,7 @@ public import Probability.Distributions.Stable.Attraction.NormingRatios.Index
 public import Probability.Distributions.Stable.Convolution
 public import Probability.Process.Path.UnitInterval
 public import Probability.Process.RandomWalk.FunctionalLimit.FiniteDimensional.IndependentBlocks
-public import Probability.Process.RandomWalk.Path.Scaling
+public import Probability.Process.RandomWalk.Path.Representation.Scaling
 
 /-!
 # Source finite-dimensional limits on stable random-walk grids

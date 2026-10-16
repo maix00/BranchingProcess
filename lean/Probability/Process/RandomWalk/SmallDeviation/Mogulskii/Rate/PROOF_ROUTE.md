@@ -1,9 +1,11 @@
 # Mogulskii stable theorem: source-ordered proof and status
 
 This note records the proof route and verified status for the general
-stable-domain Mogul'skii theorem. It follows the dependency order in the 1974 paper
-([original article record and full text](https://www.mathnet.ru/eng/tvp3978)).
-The Gaussian/`α = 2` calculation in the paper's §4 comes only after the
+stable-domain theorem of A. A. Mogul'skii, *Small Deviations in a Space of
+Trajectories* (1974 Russian original; 1975 English translation, *Theory of
+Probability and Its Applications* 19(4), 726–736, DOI 10.1137/1119081;
+[original article record and full text](https://www.mathnet.ru/eng/tvp3978)).
+The Gaussian/`α = 2` calculation in Theorem 3, Section 4 comes only after the
 general stable-process and random-walk theorems; it is a later specialization,
 not the active first proof target. The theorem chains described here are
 kernel-checked under their stated hypotheses and probability semantics.
@@ -11,7 +13,7 @@ kernel-checked under their stated hypotheses and probability semantics.
 ## The general stable theorem
 
 Let `Fα` be a strictly `α`-stable law with `0 < Fα(0) < 1`, and let the
-increment law lie in its domain of attraction with norming `B(n)`. The paper
+increment law lie in its domain of attraction with norming `B(n)`. Mogul'skii
 uses
 
 ```text
@@ -24,14 +26,14 @@ and a small-deviation scale `x(n) → ∞` with `x(n) / B(n) → 0`. The main
 target is the random-walk Theorem 1,
 `log P(sₙ(·) ∈ G) ~ C Hα(G) n x(n)⁻α L*(x(n))`. Its companion process
 Theorem 2 states `log P(x⁻¹ ξ(·) ∈ G) ~ C Hα(G) x⁻α`. Here `C < 0` is the
-theorem coefficient and `Hα` is the paper's path-set functional. To keep the
+theorem coefficient and `Hα` is Mogul'skii's path-set functional. To keep the
 normalization unambiguous, write `C₀ < 0` for the Lemma 1(I) escape constant
 of the base corridor `a I₋₁¹`; since `Hα(I₋₁¹) = 2⁻α`, the coefficient in
 Theorems 1 and 2 is `C = 2^α C₀`. Lean's positive rate coefficient is
 `κ = -C = -2^α C₀`. Both general-α results precede computing the coefficient
 for `α=2`.
 
-The proof follows the source's sections and dependency order. The stable
+The proof follows Mogul'skii's sections and dependency order. The stable
 process theorem and the random-walk theorem for `0 < α < 2` are now assembled
 under the source regimes recorded below. The normal-attraction endpoint has
 the truncated-moment norming, infinite-variance `J₁` tightness, and
@@ -47,8 +49,8 @@ relations (18)--(20), are formalized.
 
 ## Fixed mathematical proof scheme
 
-The target is Mogul'skii's source theorem for the path classes `M₂`, `M₃`,
-and `M`, with the paper's strict path-set convention and normalization. The
+The target is Mogul'skii's Theorems 1 and 2 for the path classes `M₂`, `M₃`,
+and `M`, with the strict path-set convention and normalization stated there. The
 later continuous-boundary formulation in modern references is a useful
 corollary, but it is not a substitute for this theorem or its proof. The proof
 will follow the original discrete comparison lemmas and will not assume
@@ -576,7 +578,7 @@ The discrete random-walk theorem now has an exact finite-partition proof.
   Portmanteau. The endpoint-return construction and seven open endpoint bands
   give the matching one-block lower estimate; `SourceLower.lean` derives the
   endpoint masses and J₁ block limit in the three source regimes below index
-  two. `BridgeComparison/SourceDecay.lean` proves the source equation-(34)
+two. `BridgeComparison/SourceDecay.lean` proves the equation-(34) comparison
   logarithmic comparison from the finite bridge cover, entrance mass, base
   positivity, and endpoint decay.
 - For a finite-partition `M₂` corridor, `Discrete/PartitionEndpoint.lean`

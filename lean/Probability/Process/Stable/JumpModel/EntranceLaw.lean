@@ -278,8 +278,8 @@ theorem IsStableLevyProcess.measure_fullEntrance_pos_of_cdfAtZero_of_poissonMode
     rw [htargetMeasure] at htargetRationalPos
     exact htargetRationalPos
 
-/-- The positive open endpoint interval implies the source theorem's
-left-open, right-closed endpoint convention. -/
+/-- A positive open endpoint interval implies the corresponding left-open,
+right-closed endpoint condition. -/
 theorem IsStableLevyProcess.measure_sourceEntrance_pos_of_cdfAtZero_of_poissonModel
     {Ω : Type*} [MeasurableSpace Ω]
     {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}

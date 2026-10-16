@@ -8,7 +8,7 @@ module
 
 public import Mathlib.Topology.UnitInterval
 public import Probability.ConvergenceInDistribution.Portmanteau
-public import Topology.Cadlag.Skorokhod.Corridor
+public import Topology.Cadlag.Skorokhod.Corridor.Basic
 public import Topology.Cadlag.Skorokhod.Corridor.Endpoint
 
 public section

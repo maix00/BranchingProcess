@@ -28,7 +28,7 @@ Duncan Wright, *A direct proof of the reflection principle for Brownian
 motion*, Theory Stoch. Process. 21(37):2 (2016), 1--3. That reflection
 principle supplies Lévy's running-minimum identity cited in Lemma 2.3 of
 Erwin Bolthausen, *On a functional central limit theorem for random walks
-conditioned to stay positive*, Ann. Probab. 4(3) (1976), 480--485.
+conditioned to stay positive*, Ann. Probab. 4(3) (1976), 480--485, DOI 10.1214/aop/1176996098.
 -/
 
 @[expose] public section

@@ -30,7 +30,7 @@ bounded fixed-slot transition, input monotonicity, translation covariance,
 and spatial ordering are proved. Measurability of the ranked output remains
 open. The fixed-slot model gives every parent exactly `K` child slots, so it
 does not represent empty or variable offspring counts and is not identified
-with the paper's general offspring point-process model.
+with the general offspring point-process model.
 -/
 
 open MeasureTheory

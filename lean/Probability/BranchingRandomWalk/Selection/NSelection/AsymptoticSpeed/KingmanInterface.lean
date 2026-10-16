@@ -749,7 +749,7 @@ theorem repairedInfiniteSelectionSubadditiveArray_ae_abs_le_envelope
       horderedRepair hfirstRepair n
   exact hpoint
 
-/-- The block endpoint array is integrable under the paper's one-step
+/-- The block endpoint array is integrable under the one-step
 leftmost-child moment condition and the ordered, nonempty offspring support.
 The proof uses the deterministic sup-norm recursion, then integrates its
 finite sum of generation envelopes. -/
@@ -1014,7 +1014,7 @@ uniform-integrability API, and applies Vitali convergence to the almost-sure
 Kingman limit.
 
 This is still the speed result for exactly `N` particles. It does not include
-the paper's extension from an initial population of size `N₀ ≤ N` to size
+the extension from an initial population of size `N₀ ≤ N` to size
 `N`; that extension needs a finite-time saturation/restart argument for the
 root-indexed selected-population process. -/
 theorem repairedInfiniteSelection_tendsto_constant_L1_of_leftmostMoment
@@ -1222,7 +1222,7 @@ theorem infiniteOffspringRun_leftmost_ae_hasAsymptoticSpeed {N : ℕ}
   simp [infiniteSelectionSubadditiveArray, infiniteSelectionBlockMinimum]
 
 /-- The ordered, potential-projected realization has an almost-sure
-leftmost speed under the paper's separate boundary, nonempty-offspring, and
+leftmost speed under the separate boundary, nonempty-offspring, and
 leftmost first-moment assumptions. The integrability and normalized lower
 bound required by Kingman are derived internally from those assumptions. -/
 theorem infiniteOffspringRun_leftmost_ae_hasAsymptoticSpeed_of_stepLaw
@@ -1267,7 +1267,7 @@ theorem infiniteOffspringRun_leftmost_ae_hasAsymptoticSpeed_of_stepLaw
   exact infiniteOffspringRun_leftmost_ae_hasAsymptoticSpeed
     hN μ hboundaryμ hnonemptyμ hint hbdd
 
-/-! The speed and `L¹` conclusions for exactly `N` particles, in the paper's
+/-! The speed and `L¹` conclusions for exactly `N` particles, in the
 `StepLaw` assumptions, are packaged together here. The rightmost result is
 obtained by applying this theorem to the OrderDual/reflected law, with its own
 right-side moment assumptions; no reflection invariance is required. -/

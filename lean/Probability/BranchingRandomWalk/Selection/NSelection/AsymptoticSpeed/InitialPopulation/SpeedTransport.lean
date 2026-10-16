@@ -333,7 +333,7 @@ private theorem ae_selectedPopulationEndpointTrajectoryWithParameter_sections_of
   simpa [fieldLaw] using hsections
 
 set_option maxHeartbeats 3000000
-/-- Under the paper's boundary, nonempty-offspring, and leftmost first
+/-- Under the boundary, nonempty-offspring, and leftmost first
 moment assumptions, the exact-capacity endpoint has its almost-sure speed
 uniformly over deterministic initial position vectors. Hence an independent
 random initial vector has the same speed under the product law. -/

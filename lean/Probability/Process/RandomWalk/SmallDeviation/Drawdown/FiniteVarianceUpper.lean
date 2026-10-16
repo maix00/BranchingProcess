@@ -49,7 +49,7 @@ arXiv:2512.23266). The block proof follows Wang Yiyang's Lemma 3.3:
 discretize the running maximum, encode its jump blocks, and apply the uniform
 block estimate of Chapter 3, Lemma 3.2. The one-block rate follows Aïdékon
 and Hu, Lemma 4.1, together with Mogul'skii, *Small deviations in a space of
-trajectories*, Theorem 3, Section 4, p. 764.
+trajectories*, Theorem 3, Section 4, p. 764 of the 1974 Russian original.
 
 For
 \[
@@ -137,9 +137,10 @@ theorem measureReal_noLargeDropEndpointBelowEvent_le_exp_of_finiteVariance
 
 /-- The finite-variance endpoint estimate is uniform over all horizons that
 dominate a prescribed power of the width. This is a direct scaling of the
-finite-variance form of Wang Yiyang, Chapter 3, Lemma 3.3: choose the smaller
-of the requested horizon exponent and the endpoint exponent, then apply the
-drawdown estimate above. -/
+finite-variance form of Wang Yiyang, *Asymptotic speed of the $N$-branching
+random walk with infinite offspring*, Chapter 3, Lemma 3.3: choose the
+smaller of the requested horizon exponent and the endpoint exponent, then
+apply the drawdown estimate above. -/
 theorem exists_uniform_iidSequenceLaw_measure_noLargeDropEndpointBelowEvent_le_of_centeredSecondMoment
     (ν : Measure ℝ) [IsProbabilityMeasure ν] {sigma : ℝ}
     (hν : ProbabilityTheory.IsCenteredSecondMoment ν (sigma ^ 2))

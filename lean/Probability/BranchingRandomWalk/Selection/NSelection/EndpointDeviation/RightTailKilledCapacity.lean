@@ -104,7 +104,7 @@ theorem tendsto_rightTailPositiveAFirstCutoff_atTop
     ext n <;> simp [rightTailPositiveAFirstCutoff, L, logarithmOfSampleSize]
 
 /-- The first-stage cutoff dominates the superdiffusive Aïdékon--Hu power of
-the corridor width when `p < 1/2`, as required by the paper's
+the corridor width when `p < 1/2`, as required by the
 `floor((log N)^(5/2))` choice. -/
 theorem eventually_rightTailPositiveAFirstStageAHScale
     {N : ℕ → ℕ} (hN : Tendsto N atTop atTop) {b p delta0 : ℝ}
@@ -2048,7 +2048,7 @@ theorem exists_uniform_iidSequenceLaw_firstStageCorridor_le_ah
   have hbound := hdrawdown width hscale horizon hlength
   exact (measure_mono (hinterval'.trans hcutoff)).trans hbound
 
-/-- For the paper's `log^(5/2) N` first cutoff, the uniform finite-variance
+/-- For the `log^(5/2) N` first cutoff, the uniform finite-variance
 Aïdékon--Hu estimate gives the required first-stage corridor probability
 eventually. The restriction `p < 1/2` is precisely the scale comparison
 `(b log N)^(2+p) = o((log N)^(5/2))`. -/
@@ -2312,7 +2312,7 @@ theorem tendsto_rightTailPositiveASpan_atTop_of_stageCubicRatios
   exact tendsto_rightTailPositiveASpan_cubicRatio_of_stageRatios
     hL hEll hEllN hellN
 
-/-- The paper's choices `ell = floor((log N)^(5/2))` and
+/-- The choices `ell = floor((log N)^(5/2))` and
 `ellN = floor(t (log N)^3) + 1` have a diverging second-stage span. -/
 theorem tendsto_rightTailPositiveASpan_atTop_of_logarithmicScales
     {N : ℕ → ℕ} (hN : Tendsto N atTop atTop) {t : ℝ} (ht : 0 < t) :
@@ -2458,7 +2458,7 @@ theorem tendsto_rightTailPositiveASpan_sublinearPower_div_log
       _ = ((D n : ℝ) / L n ^ 3) ^ q * L n ^ (p - 1) := by rw [hr]
   simpa [q] using hprod.congr' heq.symm
 
-/-- On the paper's logarithmic scales, the exponent in the long-prefix
+/-- On the logarithmic scales, the exponent in the long-prefix
 capacity contribution has the limiting rate `-b + v + c t^(1/3)`. The
 additional `κ c^p L^(p/3)` term vanishes after division by `log N`. -/
 theorem tendsto_rightTailPositiveAAHExponent_div_log_of_logarithmicScales
@@ -2624,7 +2624,7 @@ theorem eventually_iidSequenceLaw_rightTailPositiveASecondStageTube_le_ah
   exact rightTailPositiveASecondStageTubeEvent_subset_drawdownEvent
     (ell n) (ellN n) κ c v horder hκ hc hvc
 
-/-- The paper's logarithmic cutoff and terminal horizon satisfy the hypotheses
+/-- The logarithmic cutoff and terminal horizon satisfy the hypotheses
 of the uniform second-stage tube estimate, so the full restarted tube inherits
 the terminal Aïdékon--Hu bound eventually. -/
 theorem eventually_iidSequenceLaw_rightTailPositiveASecondStageTube_le_ah_of_logarithmicScales
@@ -3385,7 +3385,7 @@ theorem eventually_probability_le_polynomial_of_canceledAH_capacity_bound
     _ ≤ ENNReal.ofReal (Real.exp (-epsilon * Real.log (N n : ℝ))) := by
       simpa [L] using hquotient
 
-/-- The failure probability for the paper's two-stage killed population. -/
+/-- The failure probability for the two-stage killed population. -/
 noncomputable def rightTailPositiveAKilledCapacityFailureProbability
     (m ell ellN horizon : ℕ) (logN b v c κ : ℝ)
     (μ : Measure (Step ℕ ℝ)) : ℝ≥0∞ := by
@@ -3404,9 +3404,11 @@ noncomputable def rightTailPositiveAKilledCapacityFailureProbability
   exact (RootIndexed.stepFieldLaw (Root := Fin m) μ)
     (population.capacityEvent horizon ellN)ᶜ
 
-/-- Under the logarithmic cutoffs used in the paper, the first term in
-(4.15) has polynomial decay whenever its two exponent margins are positive.
-The uniform Aïdékon--Hu threshold is chosen once and then used for every `N`. -/
+/-- Under logarithmic cutoffs, the first term in Wang Yiyang,
+*Asymptotic speed of the $N$-branching random walk with infinite offspring*,
+Chapter 4, equation (4.15), has polynomial decay whenever its two exponent
+margins are positive. The uniform threshold is chosen once and then used for
+every `N`. -/
 theorem eventually_rightTailPositiveAKilledCapacityFailure_le_polynomial_of_logarithmicScales
     {N : ℕ → ℕ} (hN : Tendsto N atTop atTop)
     (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
@@ -3516,7 +3518,7 @@ theorem eventually_rightTailPositiveAKilledCapacityFailure_le_polynomial_of_loga
     (by simpa [L, D, logarithmOfSampleSize] using hspanCountLog)
     (by simpa [L, logarithmOfSampleSize] using hERate) ha1 hmargin hm hraw
 
-/-- Choose the corridor parameters from the paper's endpoint gap and apply
+/-- Choose the corridor parameters from the endpoint gap and apply
 the logarithmic-scale killed-capacity estimate. -/
 theorem exists_rightTailPositiveAKilledCapacityFailure_le_polynomial_of_endpointGap
     {N : ℕ → ℕ} (hN : Tendsto N atTop atTop)
@@ -3668,7 +3670,7 @@ theorem measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhaseOfAHDraw
   intro hscale
   simpa using hcapacity hscale
 
-/-- Both phases of the paper's killed-capacity estimate can be supplied by
+/-- Both phases of the killed-capacity estimate can be supplied by
 the uniform Aïdékon--Hu bound.  The first phase uses its actual prefix
 generation, while the restarted phase uses its actual post-cutoff length. -/
 theorem exists_measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhaseOfAHBothStages
@@ -3834,7 +3836,7 @@ theorem measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhaseOfHorizo
 
 /-- The affine-corridor first-stage count estimate with its second moment
 derived from the actual distinct-pair count.  The pair estimate uses the
-paper's finite cross-weight condition and the stated tilted-walk drawdown
+the finite cross-weight condition and the stated tilted-walk drawdown
 bounds; callers do not supply a second-moment bound for the path count. -/
 theorem measure_rightTailPositiveAFirstStageLowCount_le_of_affineCorridorDrawdown
     (m horizon : ℕ) (hm : 0 < m) (initial lower drift width endpointUpper : ℝ)

@@ -55,7 +55,7 @@ noncomputable def firstOnlySelectedChild {α X : Type*} [LinearOrder α]
     Step.FiniteSelection α X :=
   R.filter fun ξ i => i = firstSelectedSlot R ξ
 
-/-- The thesis reserve rule: retain the first selected child whenever it
+/-- The reserve rule: retain the first selected child whenever it
 exists, and retain any other selected child only when its potential is below
 the cutoff. When `R` has capacity two, this is the first child plus the
 bounded second child. -/
@@ -371,7 +371,7 @@ def boundedSelectedSplitStepEvent
   {ξ | 2 ≤ (R ξ).card ∧
     ξ.potentialValue' φ (secondSelectedSlot R ξ) ≤ M}
 
-/-- When the base rule has capacity two, the thesis reserve selector splits
+/-- When the base rule has capacity two, the reserve selector splits
 exactly when the base rule selects two children and its second selected
 child is below the cutoff. The ordered-step hypothesis is not needed for this
 event identity; it is needed below to bound the first selected child's mark. -/
@@ -669,7 +669,7 @@ theorem exists_nat_cutoff_positive_bounded_firstTwoBySlotOrder
     (exists_nat_cutoff_positive_boundedSelectedSplit L hnonempty
       hsupercritical R hR hadequate)
 
-/-- Positive mass of a split by the thesis reserve selector. Its base rule
+/-- Positive mass of a split by the reserve selector. Its base rule
 keeps the first two surviving slots in the ordered realization, and the
 reserve rule keeps the first child plus the second whenever the second
 potential is below the finite cutoff. -/

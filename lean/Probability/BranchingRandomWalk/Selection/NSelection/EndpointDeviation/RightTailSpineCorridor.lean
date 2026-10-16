@@ -11,7 +11,7 @@ import Probability.BranchingRandomWalk.Spine.Tube.FiniteVarianceCorridor
 # Positive probability for the first right-tail corridor
 
 Finite variance supplies a quantitative spine-corridor lower bound along the
-paper's logarithmic first-stage horizon.  A slightly narrower terminal window
+the logarithmic first-stage horizon.  A slightly narrower terminal window
 absorbs the floor in `floor ((log N)^(5/2))` and lies inside the corridor used
 by the first-stage population estimate.
 -/

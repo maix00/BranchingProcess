@@ -61,13 +61,13 @@ GENERAL_LAYER_BOUNDARIES = {
         "Probability.BranchingProcess",
         "Probability.BranchingRandomWalk",
     ),
-    "Analysis.Asymptotics.Scale": (
+    "Analysis.Asymptotics.Scale.Scale": (
         "Probability",
     ),
-    "Analysis.Asymptotics.InverseScale": (
+    "Analysis.Asymptotics.Scale.InverseScale": (
         "Probability",
     ),
-    "Analysis.Asymptotics.BlockScale": (
+    "Analysis.Asymptotics.Scale.BlockScale": (
         "Probability",
     ),
     "MeasureTheory.Measure.LevyMeasure": (

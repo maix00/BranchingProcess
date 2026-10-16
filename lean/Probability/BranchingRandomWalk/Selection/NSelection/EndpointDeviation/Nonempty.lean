@@ -9,7 +9,7 @@ import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Se
 /-!
 # Nonempty selected generations
 
-Under the paper's nonempty-offspring and boundary-normalization assumptions,
+Under the nonempty-offspring and boundary-normalization assumptions,
 the totalized first-`N` population is nonempty at every generation almost
 surely, provided the initial population and selection capacity are nonempty.
 -/

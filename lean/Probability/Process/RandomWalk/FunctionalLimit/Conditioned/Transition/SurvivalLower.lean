@@ -8,7 +8,7 @@ module
 
 public import Probability.Process.RandomWalk.Fluctuation.SparreAndersen.RotationProbability
 public import Probability.Process.RandomWalk.Fluctuation.FiniteVarianceSignLimit
-public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition
+public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition.Event
 
 /-!
 # Finite-variance survival at a diffusive horizon

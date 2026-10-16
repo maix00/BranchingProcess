@@ -199,7 +199,7 @@ theorem selectedReserveSpinePath_edges_selected
 
 /-- A recursive reserve spine is a pre-sampled lineage. It makes the
 first/second-child choice from each local selected step and totalizes empty
-offspring; under the thesis nonempty-a.s. premise its edges are actual
+offspring; under the almost-sure nonempty-offspring premise its edges are actual
 selected children almost surely. -/
 noncomputable def selectedReserveSpineLineages
     {Root α X : Type*} [Countable α] [MeasurableSpace α]

@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.EndpointEvent
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Blocks.MovingTubeInclusion
+public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.BlockInclusion
 /-!
 # Staircase inclusion in the tilted endpoint event
 
@@ -33,6 +33,8 @@ open ProbabilityTheory
 open ProbabilityTheory.RandomWalk.SmallDeviation
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
+
+open ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube
 
 /-- Every time after the entrance stage and through the final block end
 belongs to one of the consecutive block intervals. -/

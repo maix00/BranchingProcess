@@ -11,7 +11,7 @@ public import Mathlib.Algebra.Order.Floor.Semiring
 public import Mathlib.MeasureTheory.Measure.Basic
 public import Mathlib.Order.Filter.IsBounded
 public import Mathlib.Topology.UnitInterval
-public import Topology.Cadlag.Skorokhod.LinearPath
+public import Topology.Cadlag.Skorokhod.Path.Linear
 public import Algebra.BigOperators.PartialSum
 
 /-!

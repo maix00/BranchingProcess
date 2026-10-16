@@ -24,7 +24,7 @@ The public theorems in this file are:
   the source-path rate gives the finite-variance exponential block bound.
 
 The block-oscillation rate follows A. A. Mogul'skii, *Small Deviations in a
-Space of Trajectories*, Theorem 3, Section 4, p. 764 (English translation,
+Space of Trajectories*, Theorem 3, Section 4, p. 764 of the 1974 Russian original (English translation,
 DOI 10.1137/1119081). It is a reusable bound for random-walk range events.
 -/
 

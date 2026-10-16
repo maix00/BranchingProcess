@@ -403,7 +403,7 @@ theorem smallInitialActiveMark_iIndepFun
   rw [heq]
   exact hsmall'
 
-/-- Under the paper's supercriticality hypothesis, the actual predictable
+/-- Under the supercriticality hypothesis, the actual predictable
 selected address has a strictly positive one-generation chance to split. -/
 theorem smallInitialActiveMark_split_measure_pos
     (m N n : ℕ) (hm : 0 < m)
@@ -473,7 +473,7 @@ theorem smallInitialActiveMark_split_measure_pos
   exact hsplit
 
 /-- The actual selected population's predictable active address splits at
-infinitely many generations almost surely under the paper's supercriticality
+infinitely many generations almost surely under the supercriticality
 assumption. This uses the adaptive fresh-mark law, rather than a fixed-root
 trial schedule. -/
 theorem ae_frequently_smallInitialActiveSplitEvent

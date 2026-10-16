@@ -6,8 +6,8 @@ Authors: WANG Yiyang
 module
 
 public import Mathlib.Topology.UnitInterval
-public import Topology.Cadlag.Skorokhod.ContinuousMap
-public import Topology.Cadlag.Skorokhod.Corridor
+public import Topology.Cadlag.Skorokhod.Maps.Continuous
+public import Topology.Cadlag.Skorokhod.Corridor.Basic
 public import Topology.Cadlag.Skorokhod.PathClass.StepCorridor.Boundary
 import Mathlib.Topology.Semicontinuity.Michael
 
@@ -21,7 +21,8 @@ deterministic subsets of path space. The source is A. A. Mogul'skii,
 19:4 (1974), 755–765; English translation, Theory Probab. Appl. 19:1
 (1975), 726–736, doi:10.1137/1119081. In §1, the corresponding classes
 are denoted `M₁` and `M₂`; the library uses descriptive names instead. The
-source's two-sided trace-separation condition is proved equivalent to the
+two-sided trace-separation condition corresponding to Mogul'skii's §1
+admissibility definition is proved equivalent to the
 continuous-path witness, with a separate start condition because paths are
 pinned to zero. Endpoint traces use the convention defined in
 `PathClass.Boundary`.
@@ -40,7 +41,7 @@ namespace Skorokhod.PathClass.StepCorridor
 
 /-- The path set determined by an upper and a lower finite-step boundary.
 Paths start at zero and satisfy the strict strip constraints on the entire
-closed time interval, matching class `M₁` in the source. -/
+closed time interval, matching class `M₁` in Mogul'skii's §1. -/
 def corridorSet (upper lower : StepBoundary) : Set (CadlagPath unitInterval ℝ) :=
   {f | f ⊥ = 0 ∧ ∀ t : unitInterval,
     lower.eval t < (f t : EReal) ∧ (f t : EReal) < upper.eval t}
@@ -62,7 +63,7 @@ structure FiniteStepCorridor where
 def FiniteStepCorridor.toSet (c : FiniteStepCorridor) : Set (CadlagPath unitInterval ℝ) :=
   corridorSet c.upper c.lower
 
-/-- A path set belongs to the source's class `M₁` when it is a strict corridor
+/-- A path set belongs to Mogul'skii's class `M₁` from §1 when it is a strict corridor
 on `[0,1]` with finite step boundaries, allowing either boundary to take
 infinite values. -/
 def IsStepCorridor (G : Set (CadlagPath unitInterval ℝ)) : Prop :=
@@ -76,13 +77,13 @@ def StartAdmissible (upper lower : StepBoundary) : Prop :=
 
 /-- At every time the left and right traces of the lower boundary lie strictly
 below both traces of the upper boundary. This is the order-theoretic form of
-the source's two-sided trace separation condition. -/
+the two-sided trace separation condition in Mogul'skii's §1. -/
 def TraceSeparated (upper lower : StepBoundary) : Prop :=
   ∀ t : unitInterval,
     max (lower.leftTrace t) (lower.rightTrace t) <
       min (upper.leftTrace t) (upper.rightTrace t)
 
-/-- A corridor together with the source's admissibility condition that its
+/-- A corridor together with the `M₂` admissibility condition that its
 intersection with continuous paths is nonempty. -/
 structure ContinuousAdmissibleStepCorridor extends FiniteStepCorridor where
   hasContinuousAdmissiblePath : HasContinuousAdmissiblePath upper lower

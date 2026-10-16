@@ -19,7 +19,8 @@ linear cutoff term plus the positive parts of the original first-child marks
 sampled along that spine.
 
 This is a pathwise estimate for `selectedReserveSpineRestartSourceSlice`.  It
-does not identify that causal source with the retrospective thesis process,
+does not identify that causal source with the retrospectively restarted
+process,
 and it does not assert that the adaptively sampled marks have the iid
 `Xi₁` law.
 -/
@@ -222,8 +223,8 @@ theorem selectedReserveSpineRestartSourceMinPosition_le_live_spine
 
 /-- The implemented causal source has the same positive-part estimate as its
 live reserve spine. This bound is pathwise; it makes no iid claim about the
-adaptive first-child marks and does not identify the source with the thesis
-restart process. -/
+adaptive first-child marks and does not identify the source with the
+retrospectively restarted process. -/
 theorem selectedReserveSpineRestartSourceMinPosition_positivePart_le
     (R growth : Step.FiniteSelection α X) (hR : Measurable R.select)
     (hRcap : R.IsBoundedBy 2) (φ : Potential X) (M : ℝ) (hM : 0 ≤ M)

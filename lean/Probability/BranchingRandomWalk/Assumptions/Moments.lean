@@ -124,7 +124,7 @@ theorem StepLaw.integrable_sortedLeftmostDisplacement
     (Step.potentialValue'_measurable L.potential ⊥).aestronglyMeasurable
     L.ordering.measurable_ordered.aemeasurable).mpr hraw
 
-/-- The paper's positive first moment, together with boundary normalization,
+/-- The positive first moment, together with boundary normalization,
 gives an integrable absolute first slot after sorting and projecting marks
 through the potential. This is the one-step input for the Kingman argument. -/
 theorem StepLaw.integrable_sortedPotentialImage_firstSlot_abs

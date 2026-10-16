@@ -28,7 +28,7 @@ and let $x_n$ be a small-deviation width. The public declarations are:
   $\frac{x_n^2}{n}\log\mathbb P_\nu(G)\to-\frac{\pi^2}{2}H$.
 
 These results use Mogul'skii, *Small Deviations in a Space of Trajectories*,
-Theorem 3, Section 4, p. 764 (Russian original, 1974; English translation,
+Theorem 3, Section 4, p. 764 of the 1974 Russian original (English translation,
 *Theory of Probability and Its Applications* 19(4) (1975), 726–736,
 DOI 10.1137/1119081). The ordinary-probability form identifies the inner
 measure with the event measure using the stated null-measurability premise.
@@ -234,8 +234,8 @@ noncomputable def sourceScaledInnerOuterLogRate_of_centered_unitVariance
     innerRate := hInnerScaled
     outerRate := hOuterScaled }
 
-/-- Null-measurability turns the source theorem's inner-measure limit into
-an ordinary probability limit. -/
+/-- Null-measurability turns Mogul'skii's finite-variance inner-measure
+limit into an ordinary probability limit. -/
 theorem HasSourceFiniteVarianceScaledRelativeRate.probabilityRate
     {ν : Measure ℝ} [IsProbabilityMeasure ν] {scale : ℕ → ℝ}
     {G : Set (CadlagPath unitInterval ℝ)}

@@ -12,9 +12,15 @@ public import Probability.Distributions.Stable.Sign
 /-!
 # The unit-time entrance event in the interval comparison
 
-The source's endpoint condition is left-open and right-closed. We prove
-positivity through the smaller open endpoint window, keeping the source
-corridor's strict global upper and lower bounds.
+The return event uses a left-open and right-closed endpoint interval. We
+prove positivity through a smaller open endpoint window, keeping the strict
+global corridor bounds.
+
+This entrance estimate supplies the positive endpoint-window factor used in
+Lemma 2(a), equation (21), of A. A. Mogul'skii, "Small Deviations in a Space
+of Trajectories" (Russian original, 1974; English translation, *Theory of
+Probability and Its Applications* 19(4) (1975), 726--736, DOI
+10.1137/1119081).
 -/
 
 @[expose] public section
@@ -108,8 +114,8 @@ theorem IsStableLevyProcess.measure_fullEntrance_pos_of_linearTube
   rw [measure_congr hae] at htube
   exact htube.trans_le (measure_mono Set.inter_subset_right)
 
-/-- Under the paper's `|b|,|c|<1` conditions, the stable-process entrance
-factor is positive for every positive endpoint tolerance when `α>1`. -/
+/-- When `|b|, |c| < 1`, the stable-process entrance factor is positive for
+every positive endpoint tolerance when `α > 1`. -/
 theorem IsStableLevyProcess.measure_fullEntrance_pos
     {Ω : Type*} [MeasurableSpace Ω]
     {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
@@ -149,8 +155,8 @@ theorem IsStableLevyProcess.measure_fullEntrance_pos
     (by linarith) (by linarith) (by linarith) (by linarith)
     (by linarith)
 
-/-- The source CDF hypothesis supplies the two sign masses used by the
-feedback construction. No path-space support or atomlessness is assumed. -/
+/-- The strict CDF inequalities at zero supply positive increment mass on
+both half-lines, as required by the feedback construction. -/
 theorem IsStableLevyProcess.measure_fullEntrance_pos_of_cdfAtZero
     {Ω : Type*} [MeasurableSpace Ω]
     {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
@@ -165,8 +171,9 @@ theorem IsStableLevyProcess.measure_fullEntrance_pos_of_cdfAtZero
     h.increments.strictlyStable.twoSidedMass_of_cdfAtZero hcdf
   exact h.measure_fullEntrance_pos hα hpos hneg b c ε hb hc hε
 
-/-- Positivity for the source's left-open, right-closed endpoint convention.
-The open endpoint event proved above is a measurable subset of this one. -/
+/-- Positivity for the endpoint condition
+`c - b - ε < X(1) - X(0) ≤ c - b + ε`. The open endpoint event proved above
+is a measurable subset of this one. -/
 theorem IsStableLevyProcess.measure_sourceEntrance_pos_of_cdfAtZero
     {Ω : Type*} [MeasurableSpace Ω]
     {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}

@@ -32,6 +32,8 @@ open ProbabilityTheory.RandomWalk.SmallDeviation
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 
+open ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube
+
 /-- The common staircase path and a final upper-edge window imply the
 upper-endpoint tilted-tube event. The path inclusion uses the same
 horizontal-block argument as the lower-endpoint case. -/

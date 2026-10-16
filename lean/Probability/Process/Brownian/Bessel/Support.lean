@@ -8,7 +8,7 @@ module
 
 public import Probability.Process.Brownian.Bessel.ThreeDimensional
 public import Probability.Process.Brownian.LinearTube
-public import Topology.Cadlag.Skorokhod.LinearPath
+public import Topology.Cadlag.Skorokhod.Path.Linear
 public import Mathlib.MeasureTheory.Measure.Support
 
 /-!

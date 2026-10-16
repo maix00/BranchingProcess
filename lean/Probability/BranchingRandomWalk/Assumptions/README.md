@@ -1,4 +1,4 @@
-# Thesis assumption map
+# Assumption map for *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*
 
 The Lean predicates are split by mathematical role:
 
@@ -45,11 +45,14 @@ The following items are formalized and compile without axioms:
   eventual two-sided bounds to the speed limit;
 - the first-moment implication from the fourth-moment assumption.
 
-The following items are still proof obligations for the thesis' main theorems:
+The following items are still proof obligations for Wang Yiyang,
+*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
+Theorems 1.1–1.3:
 
 - the Mogul'skii small-deviation estimate for the centered spine walk;
-- the thesis-specific many-to-one identity after identifying the spine law
-  with the centered point-process offspring model (the abstract tilt and
+- the many-to-one identity needed for Wang Yiyang's Theorem 1.1 after
+  identifying the spine law with the centered point-process offspring model
+  (the abstract tilt and
   forward/backward endpoint identities are already formalized in
   `Probability/PointProcess/Tilted.lean` and
   `Probability/BranchingRandomWalk/Spine/PointMeasureEndpoint.lean`);
@@ -57,7 +60,7 @@ The following items are still proof obligations for the thesis' main theorems:
 - the coupling lemma used for the `a = 0` trajectory argument;
 - the probabilistic eventual upper and lower bounds that feed
   `speed_limit_of_eventual_bounds`;
-- the full statements of thesis Theorems 1.1 and 1.2, and the one-sided L1
+- the full statements of Theorems 1.1 and 1.2, and the one-sided L1
   Theorem 1.3.
 
 The analytic file proves only the final deterministic limit once the

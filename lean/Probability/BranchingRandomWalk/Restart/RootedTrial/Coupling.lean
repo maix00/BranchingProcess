@@ -1939,8 +1939,8 @@ theorem selectedReserveSpineRestartEndpointFreshField_factorization_on_finite
 
 /-- On a finite first-success event, the actual rank-installed endpoint roots
 have fresh descendant fields with product law, independently of the stopped
-domain past. This is the thesis-facing form of the mixed-root factorization:
-the latter's totalized source fallback is removed using the a.e. endpoint
+domain past. This is the mixed-root factorization for populations started from
+multiple roots: the totalized source fallback is removed using the a.e. endpoint
 population comparison. -/
 theorem selectedReserveSpineRestartEndpointTargetFreshField_factorization_on_finite
     {Root α : Type*} [Countable α] [MeasurableSpace α]
@@ -2426,7 +2426,7 @@ theorem selectedReserveSpineRestartEndpointFixedHorizonPopulation_law_on_finite
     hselected
   simpa using hpop
 
-/-- Concrete fixed-horizon population law at the successful thesis endpoint.
+/-- Concrete fixed-horizon population law at the successful endpoint.
 The endpoint positions need only be measurable in the stopping-time domain
 flow. On the finite endpoint event, the first-`N` population grown for a
 fixed number of generations from the actual rank-installed endpoint roots has

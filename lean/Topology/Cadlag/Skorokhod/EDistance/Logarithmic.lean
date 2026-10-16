@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Topology.Cadlag.Skorokhod.EDistance
+public import Topology.Cadlag.Skorokhod.EDistance.Basic
 public import Topology.Cadlag.Skorokhod.TimeChange.LogDistortion
 
 /-!

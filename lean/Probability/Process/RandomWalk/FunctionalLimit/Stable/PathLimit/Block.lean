@@ -9,7 +9,7 @@ module
 public import Probability.ConvergenceInDistribution.DeterministicParameter
 public import Probability.Process.RandomWalk.FunctionalLimit.NormalizedStep.Block
 public import Probability.Process.RandomWalk.FunctionalLimit.Stable.PathLimit
-public import Topology.Cadlag.Skorokhod.Scaling
+public import Topology.Cadlag.Skorokhod.Path.Scaling
 
 /-!
 # Functional limits for variable-length blocks

@@ -21,7 +21,7 @@ The point measure of a branching step is the Dirac sum of its realized children,
 `Combinatorics/BranchingWalk/Step/Measure/PointMeasure.lean` together with their measurability in the step. This file
 records what the child-slot reading of it says: the mass counts slots, so equal positions keep their
 multiplicity, and the mass is zero exactly for a step with no child. The statements are generic in the slot
-type and in the mark type; the exponential integral at the end is the thesis's boundary weight and needs real
+type and in the mark type; the exponential integral at the end is the boundary weight and needs real
 marks.
 -/
 
@@ -150,8 +150,8 @@ theorem stepPointMeasure_eq_zero_iff {ι X : Type*} [MeasurableSpace X]
       | some x => exact (habsent i ⟨x, h⟩).elim
     simp [hterm]
 
-/-- Integration of the exponential test against the point measure is exactly the slotwise total exponential
-weight used in the thesis — the paper's `ψ` at real marks. -/
+/-- Integration of the exponential test against the point measure is exactly
+the slotwise total exponential boundary weight `ψ` for real marks. -/
 theorem lintegral_stepPointMeasure_exp {ι : Type*} (ξ : Step ι ℝ) :
     (∫⁻ x, ENNReal.ofReal (Real.exp (-x))
       ∂stepPointMeasure ξ) = totalChildWeight ξ := by

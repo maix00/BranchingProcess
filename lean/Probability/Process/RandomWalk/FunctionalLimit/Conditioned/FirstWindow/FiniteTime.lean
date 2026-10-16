@@ -8,7 +8,7 @@ module
 
 public import Probability.ConvergenceInDistribution.Portmanteau
 public import Probability.ConvergenceInDistribution.Mapping
-public import Probability.Process.Brownian.AboveStart.FirstWindowTimeFiniteHorizon
+public import Probability.Process.Brownian.AboveStart.FirstWindow.TimeFiniteHorizon
 public import Probability.Process.RandomWalk.FunctionalLimit.Donsker.FiniteHorizon
 
 /-!

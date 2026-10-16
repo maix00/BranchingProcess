@@ -660,7 +660,7 @@ def rawFirstNSelectedLargeDrop (m N H : ℕ) (B : ℝ)
           RootIndexed.position (fun _ : Fin m => (0 : ℝ)) id field p.1 p.2 > B}
 
 /-- A large drawdown along a first-`N` selected address, recorded at its
-first crossing.  The intermediate-prefix clause is the paper's first-crossing
+first crossing.  The intermediate-prefix clause is the first-crossing
 normalization; the ancestor is recovered from the selected endpoint by
 `largeDrawdownPopulation_prefix_mem`. -/
 def firstNSelectedLargeDrawdown (m N H : ℕ) (B : ℝ)
@@ -863,7 +863,7 @@ theorem firstNSelectedLargeDrawdown_subset_selectedFirstPassageBelowByHorizon
   change q ∈ largeDrawdownPopulation m N j field ∧ _
   exact ⟨by simpa [q] using qmem, hlocalEvent⟩
 
-/-- The thesis's first-`N` large-drawdown witness is bounded by the
+/-- The first-`N` large-drawdown witness is bounded by the
 finite-horizon first-passage estimate.  This combines the pathwise witness
 inclusion with branching at each selected ancestor. -/
 theorem measure_firstNSelectedLargeDrawdown_le

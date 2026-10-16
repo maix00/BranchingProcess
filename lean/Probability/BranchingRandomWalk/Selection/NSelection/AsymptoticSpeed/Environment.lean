@@ -17,7 +17,7 @@ public import Mathlib.Probability.Independence.InfinitePi
 
 Each generation consists of one independent offspring mark for each current
 rank. Generations themselves form an i.i.d. sequence. The one-sided shift is
-measure-preserving, and the paper's normalization and nonempty-offspring
+measure-preserving, and the normalization and nonempty-offspring
 assumptions make every generation a good transition almost surely.
 -/
 

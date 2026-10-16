@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.Brownian.Reflection.FiniteStoppingTime
-public import Probability.Process.Path.FirstPassage
+public import Probability.Process.Path.FirstPassage.Basic
 public import Probability.Process.Path.TimeGrid.UnitInterval
 public import Probability.MeasureTheory.Convergence.InvariantLaw
 public import Mathlib.Probability.Process.HittingTime

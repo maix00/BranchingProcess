@@ -104,7 +104,7 @@ theorem integrable_continuousBoundaryDensity (α : ℝ)
 
 /-- The continuous-boundary energy is exactly the `ofReal` of the usual
 Lebesgue integral. This puts the path-class energy in the same normalization
-as the integral functional in the source theorem. -/
+as the reciprocal-width functional in `continuousBoundaryRealEnergy`. -/
 theorem continuousBoundaryEnergy_eq_ofReal_realEnergy (α : ℝ)
     (lower upper : C(unitInterval, ℝ))
     (hwidth : ∀ t, 0 < upper t - lower t) :

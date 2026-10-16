@@ -381,7 +381,7 @@ private theorem eventually_rightTailPositiveAEntranceLength_le_log_sq
     _ ≤ (v * L n) ^ 2 := hscaleSq
     _ = v ^ 2 * L n ^ 2 := by ring
 
-/-- Under the paper's finite-variance hypothesis, the explicit first-stage
+/-- Under the finite-variance hypothesis, the explicit first-stage
 spine corridor estimate is at least `N ^ (-epsilon)` for every positive
 epsilon, eventually. This turns the retained `exp(-O(sqrt(log N)))` bridge
 factor into the polynomial-scale input required by the MRCA/PZ estimate. -/

@@ -386,7 +386,7 @@ theorem affineTubeRootMRCAPairMean_le_of_mogulskiiSegmentBound
     (ENNReal.ofReal (Real.exp (width ^ v - d * (n : ℝ) / width ^ 2)))
     hsegment
 
-/-- Finiteness of the cross-child moment lets the paper's fixed constant be
+/-- Finiteness of the cross-child moment lets the fixed constant be
 absorbed into `exp(width ^ v)` for all sufficiently large tube widths. This
 is the only use of the large-width threshold in the root-split contribution
 estimate. -/
@@ -446,7 +446,7 @@ theorem affineTubeRootMRCAPairMean_le_of_mogulskiiSegmentBound_of_crossAbsorptio
       gcongr
 
 /-- In particular, the root-split MRCA pair contribution is finite under the
-paper's finite cross-child condition whenever the segment-probability bound
+the finite cross-child condition whenever the segment-probability bound
 is finite. This is a derived finiteness result, not a pair-moment assumption. -/
 theorem affineTubeRootMRCAPairMean_ne_top_of_segmentProbability
     {X : Type*} [MeasurableSpace X]
@@ -474,7 +474,7 @@ theorem affineTubeRootMRCAPairMean_ne_top_of_segmentProbability
     ENNReal.mul_ne_top hsquare hcross
   exact ne_of_lt (lt_of_le_of_lt hbound (lt_top_iff_ne_top.mpr hright))
 
-/-- Under the paper's finite cross-weight condition, the explicit
+/-- Under the finite cross-weight condition, the explicit
 Mogulskii-controlled root-split contribution is finite. -/
 theorem affineTubeRootMRCAPairMean_ne_top_of_mogulskiiSegmentBound
     {X : Type*} [MeasurableSpace X]
@@ -734,7 +734,7 @@ private theorem weightedPathGenerationTerm_measurable_generation
     exact measurable_const
 
 /-- Exact factorization of the square-weighted prefix observable.  Its
-cross-child instance is the ancestor-side term in the paper's positive-depth
+cross-child instance is the ancestor-side term in the positive-depth
 MRCA sum. -/
 theorem lintegral_weightedPrefixSquareObservableSum_eq_mul
     {X : Type*} [MeasurableSpace X]

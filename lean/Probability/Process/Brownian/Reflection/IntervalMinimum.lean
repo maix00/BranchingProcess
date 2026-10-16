@@ -26,7 +26,7 @@ principle. This is the fixed-interval regularity needed to compare the
 last sign change and last zero in the sketch following Theorem 3.2 of
 Erwin Bolthausen, *On a functional central limit theorem for random
 walks conditioned to stay positive*, Ann. Probab. 4(3) (1976),
-480--485, page 484.
+480--485, DOI 10.1214/aop/1176996098, page 484.
 -/
 
 @[expose] public section

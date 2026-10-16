@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceUpper.Blocks
+public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceUpper.Lemmas.Blocks
 public import Probability.Process.Filtration.ConditionalBlocks
 
 /-!
@@ -24,8 +24,8 @@ The public theorem in this file is:
 This formalizes Wang Yiyang, *Asymptotic speed of the $N$-branching random
 walk with infinite offspring*, Chapter 3, Lemma 3.4. The proof follows the
 equal-length block decomposition, conditional-expectation iteration, and
-remainder estimate in that lemma. The block inputs are in
-`FiniteVarianceUpper/Blocks.lean`.
+remainder estimate in that lemma. The proof-only block inputs are in
+`FiniteVarianceUpper/Lemmas/Blocks.lean`.
 -/
 
 open Filter MeasureTheory
@@ -60,8 +60,9 @@ private theorem driftedTubeBlockPosition_eq
       (AdditivePath.displacement_add_eq_add_blockSum start (k : ℕ)
         increment).symm
 
-/-- The full small-drift upper estimate in Wang Yiyang, Chapter 3,
-Lemma 3.4. The proof follows its equal-length block decomposition,
+/-- The full small-drift upper estimate in Wang Yiyang, *Asymptotic speed of
+the $N$-branching random walk with infinite offspring*, Chapter 3, Lemma 3.4.
+The proof follows its equal-length block decomposition,
 conditional-expectation iteration, and final-remainder estimate. -/
 theorem exists_driftedTubeProbability_le_exp_of_finiteVariance
     (ν : Measure ℝ) [IsProbabilityMeasure ν]

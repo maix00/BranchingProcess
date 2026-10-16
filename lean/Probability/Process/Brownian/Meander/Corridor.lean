@@ -31,7 +31,7 @@ the $N$-branching random walk with infinite offspring*, Chapter 3,
 Lemma 3.5, Appendix A.2. The positive-mass statement for the Brownian
 meander law follows from the last-zero representation of Donald L. Iglehart,
 *Functional Central Limit Theorems for Random Walks Conditioned to Stay
-Positive*, Ann. Probab. 2(4) (1974), 608--619, Section 3.
+Positive*, Ann. Probab. 2(4) (1974), 608--619, DOI 10.1214/aop/1176996607, Section 3.
 -/
 
 @[expose] public section
@@ -89,7 +89,8 @@ theorem straightPath_mem_openCorridor {sigma rho : ℝ}
 
 /-- Any path law with the straight path $t\mapsto7t/(16\sigma)$ in its
 support assigns positive mass to the meander corridor. This isolates the
-support input in Wang Yiyang, Chapter 3, Lemma 3.5, Appendix A.2. -/
+support input in Wang Yiyang, *Asymptotic speed of the $N$-branching random
+walk with infinite offspring*, Chapter 3, Lemma 3.5, Appendix A.2. -/
 theorem measure_openCorridor_pos_of_straightPath_mem_support
     {mu : Measure (CadlagPath unitInterval ℝ)} {sigma rho : ℝ}
     (hsigma : 0 < sigma) (hrho : 0 < rho) (hrhoSmall : rho < 1 / 48)

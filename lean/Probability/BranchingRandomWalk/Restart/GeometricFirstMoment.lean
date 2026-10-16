@@ -15,11 +15,11 @@ import Probability.BranchingProcess.Offspring.Count
 The restart proof's cycle increment accumulates the first-child displacement
 only on generations where the reserve step does not split.  The split edge is
 bounded separately by the cutoff.  This module specializes the geometric
-first-moment estimate to the thesis `StepLaw` and its leftmost positive-part
+first-moment estimate to the `StepLaw` interface and its leftmost positive-part
 assumption.  It gives an expected positive-variation bound for the failed
 portion of one reserve cycle, with no second moment.
 
-This is a one-cycle estimate.  It does not identify the thesis's random
+This is a one-cycle estimate.  It does not identify the random
 restart frontier or prove that the cycle samples are fresh after earlier
 candidate outcomes.
 -/
@@ -38,7 +38,7 @@ open ProbabilityTheory.BranchingProcess
 leftmost displacement accumulated over failed reserve generations, up to the
 first bounded split, is at most the one-step leftmost first moment divided by
 the split probability.  The selected split event is the same bounded-second-
-child event used by the thesis reserve rule. -/
+child event used by the reserve rule. -/
 theorem iidGeometricFailureLeftmostPositiveDisplacement_le
     {Ω ι : Type*} [MeasurableSpace Ω] [MeasurableSpace ι] [Countable ι]
     [MeasurableSingletonClass ι]
@@ -86,7 +86,7 @@ theorem iidGeometricFailureLeftmostPositiveDisplacement_le
   rw [hEq]
   apply (div_le_div_of_nonneg_right hnum hp.le)
 
-/-- Under the thesis's nonempty supercritical base assumptions, a capacity-
+/-- Under the nonempty supercritical base assumptions, a capacity-
 two selection has some finite second-child cutoff with positive split
 probability.  The preceding theorem then supplies a finite first-moment
 bound on the failed first-child displacement accumulated before that split.
