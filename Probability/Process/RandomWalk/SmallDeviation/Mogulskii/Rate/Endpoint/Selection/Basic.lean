@@ -6,14 +6,15 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Rate.Endpoint.Selection.FixedParameters
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Range.Rate.SharpUpper
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Rate.Endpoint.Windows
+import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Rate.Endpoint.Selection.Lemmas.FixedParameters
+import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Range.Rate.SharpUpper
 
 /-!
 # Sharp normal-domain rate from floor endpoint windows
 
-The fixed-parameter spectral lower bound is proved in
-`Rate/Endpoint/Selection/FixedParameters.lean`. This file selects the
+The fixed-parameter floor construction is kept in the proof-only module
+`Rate/Endpoint/Selection/Lemmas/FixedParameters.lean`. This file selects the
 parameters that approach the Brownian constant and combines the resulting
 lower rate with the independent finite-cover upper rate.
 

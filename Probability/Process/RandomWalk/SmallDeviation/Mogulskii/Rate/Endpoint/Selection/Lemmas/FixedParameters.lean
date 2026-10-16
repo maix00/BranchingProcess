@@ -10,32 +10,23 @@ public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Rate.Endpo
 public import Analysis.Asymptotics.Scale.BlockScale
 
 /-!
-# Explicit floor grids for the normal-domain lower bound
+# Fixed-parameter endpoint-window lower bound
 
-For a spatial width $x_n$, let $a_n$, $s_n$, and $w_n$ be the lattice
-half-scale, return spacing, and terminal-window radius. The public
-declarations are:
-
-- `alphaTwoLatticeScale`, `alphaTwoEndpointSpacing`, and
-  `alphaTwoEndpointWindowRadius`:
-  $a_n=\lfloor qx_n/8\rfloor_++3$,
-  $s_n=\lfloor 8pa_n\rfloor_++1$, and $w_n=s_n+1$, where
-  $\lfloor\cdot\rfloor_+$ is the natural-number floor.
-- `tendsto_eight_alphaTwoLatticeScale_div`:
-  $8a_n/x_n\to q$.
-- `tendsto_alphaTwoEndpointSpacing_div_eightLattice` and
-  `tendsto_alphaTwoEndpointWindowMinusOne_div_eightLattice`:
-  $s_n/(8a_n)\to p$ and $(w_n-1)/(8a_n)\to p$.
-- `one_div_constant_mul_log_toReal_le_liminf_scaledLog_horizontalTubeProbability_of_floorEndpointWindows`:
-  with fixed admissible spectral parameters and return probability $A>0$,
-  $(1/c)\log A\le\liminf_n(x_n^2/n)\log\mathbb P(T_n)$, together with
-  eventual positivity and a lower bound for this logarithmic rate.
-The floor choices keep the finite spectral and endpoint-window hypotheses
-valid. This is the fixed-parameter part of an internal spectral route to the
-horizontal-tube constant in Mogul'skii, *Small Deviations in a Space of
-Trajectories*, Theorem 3, Section 4; Wang Yiyang, *Asymptotic Speed of the
-N-Branching Random Walk with Infinite Offspring* (master's thesis, Fudan
-University, 2026), Chapter 3, Lemma 3.1(i), uses that constant.
+This proof-support module chooses explicit natural-number floor parameters for
+the fixed spectral endpoint-window estimate. Its sole cross-module result is
+`one_div_constant_mul_log_toReal_le_liminf_scaledLog_horizontalTubeProbability_of_floorEndpointWindows`:
+for fixed admissible spectral parameters and return probability $A>0$, it gives
+$(1/c)\log A\le\liminf_n(x_n^2/n)\log\mathbb P(T_n)$, together with eventual
+positivity and a lower bound for this logarithmic rate. The floor parameters
+and their convergence calculations are local to this proof and remain
+private. This is an internal step toward the horizontal-tube constant in
+A. A. Mogul'skii, “Small deviations in the sample function space,” Theorem 3,
+Section 4, p. 764, *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974),
+755--765; see also the English translation, “Small Deviations in a Space of
+Trajectories,” *Theory of Probability and Its Applications* 19(1) (1975),
+726--736, DOI 10.1137/1119081. The conclusion is used for Wang Yiyang,
+*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*
+(master's thesis, Fudan University, 2026), Chapter 3, Lemma 3.1(i).
 -/
 
 open Filter MeasureTheory ProbabilityTheory Topology
@@ -48,19 +39,19 @@ namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 /-- The integer spectral half-scale approximating a fraction `q` of the
 outer horizontal-tube width. The additive three-site offset makes the finite
 spectral hypotheses valid even at the first indices. -/
-noncomputable def alphaTwoLatticeScale (q : ℝ) (scale : ℕ → ℝ) : ℕ → ℕ :=
+private noncomputable def alphaTwoLatticeScale (q : ℝ) (scale : ℕ → ℝ) : ℕ → ℕ :=
   fun n => Asymptotics.floorBlockLength (fun k => q * scale k / 8) n + 3
 
 /-- The return-mesh spacing, rounded with a one-site offset so it is positive
 at every index. -/
-noncomputable def alphaTwoEndpointSpacing (p : ℝ) (q : ℝ)
+private noncomputable def alphaTwoEndpointSpacing (p : ℝ) (q : ℝ)
     (scale : ℕ → ℝ) : ℕ → ℕ :=
   fun n => Asymptotics.floorBlockLength
     (fun k => p * (8 * (alphaTwoLatticeScale q scale k : ℝ))) n + 1
 
 /-- The endpoint-window half-width is one lattice site wider than the mesh
 spacing. In particular it is always positive and at most twice the spacing. -/
-noncomputable def alphaTwoEndpointWindowRadius (p : ℝ) (q : ℝ)
+private noncomputable def alphaTwoEndpointWindowRadius (p : ℝ) (q : ℝ)
     (scale : ℕ → ℝ) : ℕ → ℕ :=
   fun n => alphaTwoEndpointSpacing p q scale n + 1
 
@@ -79,7 +70,7 @@ private lemma tendsto_latticeArgument_atTop {scale : ℕ → ℝ}
     ring
 
 /-- The rounded lattice scale has the prescribed asymptotic proportion. -/
-theorem tendsto_eight_alphaTwoLatticeScale_div {scale : ℕ → ℝ}
+private lemma tendsto_eight_alphaTwoLatticeScale_div {scale : ℕ → ℝ}
     (hscale : IsMogulskiiScale scale) {q : ℝ} (hq : 0 < q) :
     Tendsto (fun n => ((8 * alphaTwoLatticeScale q scale n : ℕ) : ℝ) /
       scale n) atTop (nhds q) := by
@@ -114,7 +105,7 @@ private lemma tendsto_latticeScale_atTop {scale : ℕ → ℝ}
 
 /-- The mesh spacing has the same positive asymptotic proportion `p` as the
 endpoint-window radius minus one. -/
-theorem tendsto_alphaTwoEndpointSpacing_div_eightLattice {scale : ℕ → ℝ}
+private lemma tendsto_alphaTwoEndpointSpacing_div_eightLattice {scale : ℕ → ℝ}
     (hscale : IsMogulskiiScale scale) {q p : ℝ}
     (hq : 0 < q) (hp : 0 < p) :
     Tendsto (fun n => (alphaTwoEndpointSpacing p q scale n : ℝ) /
@@ -145,8 +136,8 @@ theorem tendsto_alphaTwoEndpointSpacing_div_eightLattice {scale : ℕ → ℝ}
     simp [alphaTwoEndpointSpacing, argument, width,
       Asymptotics.floorBlockLength]
 
-theorem tendsto_alphaTwoEndpointWindowMinusOne_div_eightLattice {scale : ℕ → ℝ}
-    (hscale : IsMogulskiiScale scale) {q p : ℝ}
+private lemma tendsto_alphaTwoEndpointWindowMinusOne_div_eightLattice
+    {scale : ℕ → ℝ} (hscale : IsMogulskiiScale scale) {q p : ℝ}
     (hq : 0 < q) (hp : 0 < p) :
     Tendsto (fun n =>
       ((alphaTwoEndpointWindowRadius p q scale n - 1 : ℕ) : ℝ) /
@@ -222,7 +213,7 @@ private lemma tendsto_sqrtBlock_div_width_of_diffusiveRatio
 choices of lattice scale, endpoint spacing, and endpoint-window radius. The
 strict hypotheses are precisely the spectral, Portmanteau, and outer-tube
 slacks; their asymptotic selection is a separate real-variable step. -/
-theorem one_div_constant_mul_log_toReal_le_liminf_scaledLog_horizontalTubeProbability_of_floorEndpointWindows
+lemma one_div_constant_mul_log_toReal_le_liminf_scaledLog_horizontalTubeProbability_of_floorEndpointWindows
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (hν : IsCenteredUnitSecondMoment ν)
     {scale : ℕ → ℝ} (hscale : IsMogulskiiScale scale)
