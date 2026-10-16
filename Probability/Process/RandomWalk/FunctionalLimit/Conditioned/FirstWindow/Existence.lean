@@ -36,7 +36,10 @@ namespace ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned
 
 /-- The first length-$n$ surviving window exists almost surely. This
 supplies the $T_n<\infty$ step preceding Lemma 3.1 in Erwin Bolthausen,
-*On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*, p. 482, DOI 10.1214/aop/1176996098. -/
+*On a Functional Central Limit Theorem for Random Walks Conditioned to Stay
+Positive*, p. 482, DOI 10.1214/aop/1176996098. The recurrence input is
+Vladislav Vysotsky, *Positivity of integrated random walks*, Section 3.1,
+equation (17), DOI 10.1214/12-AIHP487. -/
 theorem measure_exists_firstSurvivingWindow_eq_one
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (hpositive : 0 < ν (Set.Ioi 0)) (n : ℕ) :

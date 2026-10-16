@@ -13,11 +13,29 @@ public import Mathlib.Topology.Order.LiminfLimsup
 /-!
 # Mogulskii lower rate from the endpoint-band block comparison
 
-This composes the fixed diffusive-block Donsker estimate with the original
-endpoint-band return argument at block length `⌊c * aₙ²⌋`.  The only
+This composes the fixed diffusive-block Donsker estimate with the seven-band
+return construction at block length `⌊c * aₙ²⌋`. The only
 probabilistic input left open here is the explicit Brownian mass of the seven
 endpoint-band events; scale transfer and the logarithmic normalization are
 proved in this file.
+
+The public declaration is:
+
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.one_div_constant_mul_log_toReal_le_liminf_scaledLog_horizontalTubeProbability_of_endpointBands`:
+  for a Mogul'skii scale $a_n$, if the seven Brownian endpoint-band
+  probabilities exceed $p>0$ and their corridor fits inside the tube, then
+  $C^{-1}\log p\leq\liminf_n (a_n^2/n)\log\mathbb P(T_n)$, where
+  $T_n=\{\omega:\mathrm{InOpenHorizontalTube}(1/2,a_n,n,\omega)\}$.
+
+This is an explicit endpoint-band block lower-bound step for the horizontal
+small-deviation rate in Theorem 3, Section 4, p. 764, of A. A. Mogul'skii,
+“Small deviations in the sample function space,” *Teoriya Veroyatnostei i ee
+Primeneniya* 19(4) (1974), 755--765; see also the English translation,
+“Small Deviations in a Space of Trajectories,” *Theory of Probability and Its
+Applications* 19(4) (1975), 726--736, DOI 10.1137/1119081. The resulting
+finite-variance horizontal-tube rate is formalized in Wang Yiyang,
+*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*
+(master's thesis, Fudan University, 2026), Chapter 3, Lemma 3.1(i).
 -/
 
 open Filter MeasureTheory Set Topology
@@ -33,9 +51,16 @@ lower bound along every subdiffusive scale.  The outer corridor is required
 to fit inside the target tube; the coefficient `1 / constant` is the limit
 of the number of blocks multiplied by `aₙ² / n`.
 
-This is the scale-transfer step in the original lower-bound route.  The
-Brownian endpoint-band masses are explicit hypotheses, not hidden in a
-support or positivity axiom. -/
+For $a_n=\mathrm{scale}(n)$, the Brownian endpoint-band masses are explicit
+hypotheses. This is the
+endpoint-band block lower-bound step for Theorem 3, Section 4, p. 764, of
+A. A. Mogul'skii, “Small deviations in the sample function space,” *Teoriya
+Veroyatnostei i ee Primeneniya* 19(4) (1974), 755--765; English translation,
+“Small Deviations in a Space of Trajectories,” *Theory of Probability and Its
+Applications* 19(4) (1975), 726--736, DOI 10.1137/1119081. The resulting
+finite-variance horizontal-tube rate is formalized in Wang Yiyang,
+*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*
+(master's thesis, Fudan University, 2026), Chapter 3, Lemma 3.1(i). -/
 theorem one_div_constant_mul_log_toReal_le_liminf_scaledLog_horizontalTubeProbability_of_endpointBands
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (hν : IsCenteredUnitSecondMoment ν)

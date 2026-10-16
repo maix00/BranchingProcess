@@ -21,9 +21,23 @@ strictly subunit upper bound for one block whenever the limiting Gaussian
 puts less mass on that displacement interval than the chosen bound.  Kernel
 blocking then gives an exponential upper bound over arbitrary durations.
 
-This is a non-sharp upper estimate.  The sharp Mogulskii constant requires a
-path-level killed-block estimate; endpoint control alone cannot give that
-constant.
+This endpoint estimate gives a strict exponential upper rate. The sharp
+constant uses the path-level small-deviation rate in Theorem 3, Section 4,
+p. 764, of A. A. Mogul'skii, “Small deviations in the sample function
+space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974), 755--765;
+English translation, “Small Deviations in a Space of Trajectories,” *Theory
+of Probability and Its Applications* 19(4) (1975), 726--736, DOI
+10.1137/1119081.
+
+The public declarations are:
+
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.eventually_uniform_killedBlock_remainingMass_le_of_endpointCLT`:
+  a strict Gaussian endpoint-mass bound by $q<1$ yields an eventual uniform
+  $q$ upper bound for every row of the diffusive-block killed kernel.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.eventually_horizontalTubeProbability_le_pow_diffusiveBlockCount`:
+  for centered unit-variance increments and $0<a<1$, the horizontal-tube
+  probability is eventually at most $q^{\lfloor n/b_n\rfloor}$, where $b_n$
+  is the diffusive block length.
 -/
 
 @[expose] public section

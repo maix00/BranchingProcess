@@ -23,6 +23,36 @@ public import Probability.Process.Stable.Levy
 This file assembles the source terminal-left random-walk path convention from
 the proved stable-domain inputs. The reference path law is induced from the
 actual stable Lévy process, so callers do not supply a second path-law witness.
+
+The public theorems in this module are:
+
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_sourceStableInputs`:
+  the source-path rate when the scale, tightness, and escape-rate inputs are
+  given.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_source_index_lt_one`,
+  `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_source_index_one`,
+  `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_source_index_gt_one`, and
+  `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_source_index_two`:
+  the rate derived in the four stable-index regimes.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_rawSource_index_lt_one`,
+  `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_rawSource_index_one`,
+  `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_rawSource_index_gt_one`, and
+  `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_rawSource_index_two`:
+  the same conclusions from a raw attraction normalization.
+
+For each result, the finite-step source path event has the rate
+$\frac{\log\mathbb P_{\nu^{\otimes\mathbb N}}\{\omega:
+\mathrm{sourceNormalizedStepCadlagPathIcc}(\mathrm{scale},n,\omega)\in G\}}
+{\mathrm{stableRateNormalization}(\alpha,\nu,\mathrm{scale},n)}
+\to C2^\alpha H$, with a unique corridor energy $H$. The raw-normalization
+results also provide the positive spatial rescaling of the reference stable
+process.
+
+These are stable-domain forms of A. A. Mogul'skii, “Small deviations in the
+sample function space,” Theorem 3, Section 4, p. 764, *Teoriya
+Veroyatnostei i ee Primeneniya* 19(4) (1974), 755--765; English translation,
+“Small Deviations in a Space of Trajectories,” *Theory of Probability and
+Its Applications* 19(4) (1975), 726--736, DOI 10.1137/1119081.
 -/
 
 open Filter MeasureTheory ProbabilityTheory

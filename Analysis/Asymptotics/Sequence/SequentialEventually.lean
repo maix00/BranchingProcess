@@ -24,9 +24,9 @@ The public theorem in this file is:
   one threshold works for all $x$ satisfying $D(\Delta,x)$.
 
 This general compactness step converts the sequential probability bounds
-used in Wang Yiyang, *Asymptotic speed of the $N$-branching random walk
-with infinite offspring*, Chapter 3, proof of Lemma 3.5, to the uniform
-real-width quantifier in that lemma.
+used in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with
+Infinite Offspring* (master's thesis, Fudan University, 2026), Chapter 3,
+proof of Lemma 3.5, to the uniform real-width quantifier in that lemma.
 -/
 
 @[expose] public section

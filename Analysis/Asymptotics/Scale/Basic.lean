@@ -14,6 +14,16 @@ This deterministic predicate isolates the scale relation shared by Gaussian
 and stable small-deviation theorems.  The reference normalization is supplied
 by the relevant domain-of-attraction theorem; no stability exponent or
 specific probability law belongs in this layer.
+
+The public declarations are `Asymptotics.IsSmallDeviationScale` and the
+constructors and consequences
+`Asymptotics.IsSmallDeviationScale.of_tendsto`, `.tendsto_atTop`,
+`.tendsto_div`, `.eventually_pos`, `.div_const`,
+`.of_tendsto_normalization_ratio`, and `.of_eventually_const_mul`.  The
+predicate means
+`scale n → ∞` and `scale n / normalization n → 0`; the latter results show
+that this relation is preserved under fixed spatial rescaling and under
+asymptotically proportional positive normalizations.
 -/
 
 public section

@@ -33,8 +33,9 @@ declarations are:
 The floor choices keep the finite spectral and endpoint-window hypotheses
 valid. This is the fixed-parameter part of an internal spectral route to the
 horizontal-tube constant in Mogul'skii, *Small Deviations in a Space of
-Trajectories*, Theorem 3, Section 4; Wang Yiyang's Chapter 3,
-Lemma 3.1(i), uses that constant.
+Trajectories*, Theorem 3, Section 4; Wang Yiyang, *Asymptotic Speed of the
+N-Branching Random Walk with Infinite Offspring* (master's thesis, Fudan
+University, 2026), Chapter 3, Lemma 3.1(i), uses that constant.
 
 
 The original bibliography is A. A. Mogul'skii, “Small deviations in the sample function space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974), 755--765; English translation, “Small Deviations in a Space of Trajectories,” *Theory of Probability and Its Applications* 19(4) (1975), 726--736, DOI 10.1137/1119081. -/

@@ -15,7 +15,24 @@ public import Probability.Distributions.Stable.Operations.Sign
 
 The finite two-bin return construction yields a positive range tube. A
 smaller range tube forces the centered complete path into any corridor that
-contains zero. The CDF hypothesis is the one used in Mogulskii's lemma.
+contains zero. The public declarations in this module are:
+
+- `ProbabilityTheory.IsStableLevyProcess.measure_fullSegmentCorridor_pos`:
+  if the increment law has positive mass on both half-lines, then
+  $\mathbb P\{\exists\eta>0,\ \forall t\in[0,1],\ a+\eta\le
+  X_t-X_0\le b-\eta\}>0$ whenever $a<0<b$.
+- `ProbabilityTheory.IsStableLevyProcess.measure_fullSegmentCorridor_pos_of_cdfAtZero`:
+  the same conclusion follows from $0<F(0)<1$.
+- `ProbabilityTheory.IsStableLevyProcess.measure_fullSegmentCorridorReturn_pos_of_zero_mem`:
+  the path event and a terminal interval containing zero have positive
+  joint probability.
+
+The positive short-block corridor probability is an input to the rational
+coordinate form of Lemma 2(c), equation (23), in A. A. Mogul'skii, “Small
+deviations in the sample function space,” *Teoriya Veroyatnostei i ee
+Primeneniya* 19(4) (1974), 755--765; English translation, “Small Deviations
+in a Space of Trajectories,” *Theory of Probability and Its Applications*
+19(4) (1975), 726--736, DOI 10.1137/1119081.
 -/
 
 @[expose] public section
@@ -67,7 +84,10 @@ theorem IsStableLevyProcess.measure_fullSegmentCorridor_pos_of_cdfAtZero
     lower upper hlower hupper hpos hneg
 
 /-- If both the path corridor and endpoint window contain zero, two-sided
-increment mass makes the complete entrance event positive. -/
+increment mass makes the complete entrance event positive. This is the
+positive-corridor input used in the rational-coordinate form of Lemma 2(c),
+equation (23), of A. A. Mogul'skii, “Small deviations in the sample function
+space,” DOI 10.1137/1119081 (English translation). -/
 theorem IsStableLevyProcess.measure_fullSegmentCorridorReturn_pos_of_zero_mem
     {Ω : Type*} [MeasurableSpace Ω]
     {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}

@@ -16,6 +16,13 @@ The finite reference family used by the return-kernel comparison is an
 internal compactness device.  This file constructs it from the return
 interval, so public rate statements need only geometric conditions on that
 interval and a Gaussian-product inequality throughout its shrunken interior.
+
+The public declaration is:
+
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.exists_lowerRate_horizontalTubeProbability_of_IccCover`:
+  a strict Gaussian-product bound throughout a shrunken return interval gives
+  $p\in(0,1]$ and $C>0$ with
+  $((mC)^{-1})\log p\leq\liminf_n(a_n^2/n)\log\mathbb P(T_n)$.
 -/
 
 @[expose] public section

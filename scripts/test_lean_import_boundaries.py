@@ -233,7 +233,7 @@ class ImportBoundaryCheckTests(unittest.TestCase):
 
     def test_recently_lowered_measure_and_analysis_layers_are_protected(self):
         expected = {
-            "Analysis.Asymptotics.Scale.Scale": ("Probability",),
+            "Analysis.Asymptotics.Scale.Basic": ("Probability",),
             "Analysis.Asymptotics.Scale.InverseScale": ("Probability",),
             "Analysis.Asymptotics.Scale.BlockScale": ("Probability",),
             "MeasureTheory.Measure.Levy.Basic": ("Probability",),

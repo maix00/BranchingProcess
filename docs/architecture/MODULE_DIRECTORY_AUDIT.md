@@ -38,10 +38,12 @@ when the move only clarifies module organization.
 | `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Rate` | Public normal-domain small-deviation rate results | `Endpoint/` groups endpoint bands, windows, and parameter selection; `Partition/` groups finite covers and partitions; `Bounds/` groups interior, lower, upper, and variance estimates. The declarations keep their existing Mogulskii namespace because their mathematical ownership is unchanged. |
 | `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Spectral` | Public spectral estimates for killed random walks | `Decomposition/` groups basis, modes, and expansion; `Kernel/` groups interval and killed transitions; `Survival/` groups path-survival bounds; `Rate/` groups asymptotics. `Basic.lean` remains the core interface, and all declarations retain the Mogulskii spectral namespace. |
 | `Probability/Process/RandomWalk/Fluctuation/SparreAndersen` | Reusable finite IID fluctuation identities and survival estimates | `Rotation/` contains the cyclic cover and probability inequality; `Composition/` contains block factorization and the finite composition identity; `Survival/` contains the coefficient recurrence and finite-variance lower bound. These are general mathematical results and remain outside `Lemmas/`. |
+| `Probability/Process/RandomWalk/Rademacher` | Results for the simple symmetric random walk | `Basic.lean`, `ConditionedPathLaw.lean`, and `LastSignChange.lean` are peer interfaces for the walk, its conditioned path law, and its last-sign-change index; `Terminal/` groups the terminal-path construction and convergence steps. |
+| `BranchingRandomWalk/Selection/NSelection/AsymptoticSpeed/InitialPopulation` | Initial-population inputs to selected-walk speed estimates | `Basic.lean` is the entry interface; `Field/`, `Speed/`, and `Trajectory/` group the source field, speed estimates, and pathwise trajectory results. |
 | `Selection/NSelection/EndpointDeviation` | Endpoint deviations of the selected population, including estimates that admit reflection | `Endpoint/` separates minimum, positive-moment, and sequence results. `Roots/`, `Drawdown/`, and `Rate/` group root estimates, population/spine drawdown bounds, and rate budgets. `Population/`, `PositiveA/`, and `SecondStage/` retain their theorem families; the directory name does not impose a right-hand orientation. |
 | `Selection/NSelection/AsymptoticSpeed` | Speed-limit statements and the selected-population speed proof | `Limit/` groups the almost-sure product and subadditive limit results; `Selection/BlockComparison.lean` and `InitialPopulation/Speed/Basic.lean` state their respective public conclusions. `Environment/` and `Selection/` hold supporting constructions. |
 | `Mogulskii/RandomWalkBounds` and `Mogulskii/Stable/RandomWalkBounds` | Random-walk finite-block bounds and stable-domain random-walk rates | The normal-domain root separates Donsker endpoint, endpoint-band geometry, horizontal tubes, and source-partition arguments. Stable random-walk bounds group `Bridge/`, `Endpoint/`, `Partition/`, `PathClass/`, and `Source/`; the stable-process estimates remain in their own owner directory. `Stable/RandomWalkBounds/FromIncrementLaw/` separates `Normal/`, `Path/`, and `Stable/` adapters, with `HorizontalTube/` holding the finite-variance tube interfaces. `Stable/Scale/Basic.lean` owns the two-scale condition and rate consequences; `Stable/Scale/Rate.lean` owns block-length asymptotics. Gaussian modules remain divided into `Gaussian/Blocks/` and `Gaussian/Path/`. `FunctionalLimit/Donsker/Entrance/` owns the Brownian middle-start corridor and uniform diffusive entrance estimates. |
-| `Analysis/Asymptotics/Scale` | Reusable deterministic scale tools | `Sampling.lean` provides interval-index selection for increasing time sequences, piecewise-constant sampled-width scales, and the sequential transfer of real-width rates. |
+| `Analysis/Asymptotics/Scale` | Reusable deterministic scale tools | `Basic.lean` defines the common small-deviation scale relation; `InverseScale.lean` handles generalized inverses and their subdiffusive rates; `BlockScale.lean`, `ShiftedFloor.lean`, and `IntermediatePowerBlock.lean` cover integer block rounding and intermediate block scales; `Sampling.lean` transfers rates along selected time intervals; `SlowDiagonal.lean` and `Tolerance.lean` provide real-valued diagonal and error-threshold selections. All eight direct modules are distinct reusable interfaces, so they remain as peers at this level. |
 | `Stable/SmallDeviation/Blocks/Lower` | Lower block estimates | `Assembly/`, `Binning/`, `Bounds/`, `Entrance/`, and `Return/` group the distinct construction steps. The reusable feedback construction remains in `Feedback/`. |
 | `BranchingRandomWalk/Restart/RootedTrial` | Rooted-trial restart and coupling | Finite-slot and reserve arguments have their own subdirectories. |
 | `Combinatorics/BranchingWalk/Step` | Deterministic branching-step operations | The root keeps `Basic`, `Map`, `Measurability`, and `Relation`. Ordering properties and ranks are under `Ordering/`; slot selection and sibling closure are under `Selection/`; potential and point-measure operations are under `Measure/`; generation-local updates are under `Generation/`. |
@@ -110,6 +112,16 @@ to `Existence.lean`, with sibling `PathClass.lean` renamed `ExplicitRate.lean`.
 These are substantive mathematical modules; their declarations and namespaces
 are unchanged, and callers import the new paths directly.
 
+The final 2026-10-17 scan found 1,428 production modules and 138 test modules.
+Across both trees there are zero same-stem file/directory collisions, zero
+directories with more than eight direct Lean files, and zero child filenames
+repeating their immediate parent directory name. The vendored Mathlib and
+BrownianMotion trees are excluded from these project-layout counts. The
+`InitialPopulation/` and `Rademacher/` groupings above were checked separately:
+their remaining direct files are distinct entry interfaces, while their
+larger proof families are grouped by mathematical role. The scan also caught
+and fixed `Analysis/Asymptotics/Scale/Scale.lean`, now `Scale/Basic.lean`.
+
 `BranchingProcessTest` mirrors production module names where it has
 corresponding tests. Its larger `Stable` and `Branching` directories are test
 collections, not public theorem layers. Test modules are grouped by the
@@ -140,6 +152,22 @@ factorization is (A.5)--(A.6), the generating-function derivation is
 (A.7)--(A.8), and the finite coefficient recurrence is equation (2.2) in
 Section 2. The Lean comments no longer cite (A.7) as the cyclic-cover
 argument or as the finite recurrence.
+The stable path-class regime modules now list their public declarations and
+identify their shared logarithmic rate with Mogul'skii's Theorem 3, Section 4,
+p. 764; the source-normalized and finite-partition versions give the same
+specific citation. Thesis-based scale, Potter-bound, and corridor modules
+name Wang Yiyang's full thesis title, institution and year, and the exact
+chapter or Appendix A.2 lemma they use.
+
+The audit also added full module-level declaration lists and mathematics to
+the endpoint-constrained comparison, range comparison, stable path-class rate,
+endpoint-band lower-rate, and normal-domain return-block modules. Their theorem
+docstrings now identify Mogul'skii's exact Lemma 2(a), relation (21), Lemma
+2(b), equation (23), or Theorem 3, Section 4, p. 764, as applicable. The
+finite-variance endpoint-window route also names Wang Yiyang's thesis and
+Chapter 3, Lemma 3.1(i); the generic Gaussian return-block bounds list their
+quantitative interfaces without attributing an internal estimate to an
+external lemma.
 
 The corresponding works are Elie Aïdékon and Yueyun Hu, *Average-weight
 percolation on the complete graph*, Lemma 4.1 and Proposition 3.1; Francesco

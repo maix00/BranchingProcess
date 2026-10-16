@@ -17,6 +17,25 @@ This is the logarithmic scale-transfer step for the narrow endpoint windows
 used by the `α = 2` spectral argument. The block probability estimate and the
 asymptotic block-count ratio are explicit hypotheses; this file only composes
 the return kernel and passes to the Mogulskii normalization.
+
+The public declarations are:
+
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.one_div_constant_mul_log_toReal_le_liminf_scaledLog_horizontalTubeProbability_of_endpointWindowBlocks`:
+  uniform lower bounds $p>0$ on the seven endpoint-window block probabilities
+  give $C^{-1}\log p\leq\liminf_n(a_n^2/n)\log\mathbb P(T_n)$.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.one_div_constant_mul_log_toReal_le_liminf_scaledLog_horizontalTubeProbability_of_spectralEndpointWindows`:
+  the spectral and Donsker/Portmanteau endpoint-window estimates give the same
+  horizontal-tube lower-rate bound with the required endpoint hypotheses
+  stated explicitly.
+
+This is a block lower-rate step for the finite-variance horizontal-tube
+conclusion in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk
+with Infinite Offspring* (master's thesis, Fudan University, 2026), Chapter 3,
+Lemma 3.1(i). Its sharp rate constant is given by Theorem 3, Section 4,
+p. 764, of A. A. Mogul'skii, “Small deviations in the sample function space,”
+*Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974), 755--765; see also the
+English translation, “Small Deviations in a Space of Trajectories,” *Theory of
+Probability and Its Applications* 19(4) (1975), 726--736, DOI 10.1137/1119081.
 -/
 
 open Filter MeasureTheory Set Topology

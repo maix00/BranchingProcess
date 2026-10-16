@@ -25,6 +25,10 @@ The public theorem in this file is:
 This is the continuous-mapping step on page 484 of Erwin Bolthausen,
 *On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*, Ann. Probab. 4(3) (1976), 480--485, DOI 10.1214/aop/1176996098. The equality
 $\Psi(X_n)=\widetilde Y_n$ is proved in `TerminalTransform`.
+The last-zero realization of the limiting Brownian path is Donald L.
+Iglehart, *Functional Central Limit Theorems for Random Walks Conditioned
+to Stay Positive*, Section 3, theorem (3.4), p. 616, Ann. Probab. 2(4)
+(1974), 608--619, DOI 10.1214/aop/1176996607.
 -/
 
 @[expose] public section
@@ -111,7 +115,9 @@ theorem tendstoInDistribution_rademacherTerminalAbsolutePath
     exact (hX n).aemeasurable
 
 /-- The same terminal-path limit with Iglehart's last-zero Brownian
-path as the limit realization. -/
+path as the limit realization, identified in Donald L. Iglehart,
+*Functional Central Limit Theorems for Random Walks Conditioned to Stay
+Positive*, Section 3, theorem (3.4), p. 616, DOI 10.1214/aop/1176996607. -/
 theorem tendstoInDistribution_rademacherTerminalAbsolutePath_lastZero
     {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
     [IsProbabilityMeasure P] {B : ℝ≥0 → Ω → ℝ}

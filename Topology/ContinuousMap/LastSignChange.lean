@@ -104,7 +104,9 @@ noncomputable def firstNoSignChangeStart
 
 /-- The earliest time from which every later path value has one weak
 sign. This is Bolthausen's original definition, including paths with
-zero endpoint. -/
+zero endpoint; see Erwin Bolthausen, *On a Functional Central Limit Theorem
+for Random Walks Conditioned to Stay Positive*, p. 484, Ann. Probab. 4(3)
+(1976), 480--485, DOI 10.1214/aop/1176996098. -/
 noncomputable def firstSignStableStart
     (f : C(unitInterval, ℝ)) : unitInterval :=
   sInf {t : unitInterval |
@@ -457,7 +459,10 @@ noncomputable def lastSignChangeMeanderTransform
         (continuous_tailAffineTime (firstNoSignChangeStart f))).abs).div_const _⟩
 
 /-- Bolthausen's original terminal-sign-stable transform. Its start
-time observes both possible weak signs, including paths ending at zero. -/
+time observes both possible weak signs, including paths ending at zero. It is
+the terminal-segment transform in Erwin Bolthausen, *On a Functional Central
+Limit Theorem for Random Walks Conditioned to Stay Positive*, p. 484,
+Ann. Probab. 4(3) (1976), 480--485, DOI 10.1214/aop/1176996098. -/
 noncomputable def signStableMeanderTransform
     (f : C(unitInterval, ℝ)) : C(unitInterval, ℝ) :=
   ⟨(fun t => if firstSignStableStart f = ⊤ then 0 else

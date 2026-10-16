@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Sequence.IID.Basic
-public import Analysis.Asymptotics.Scale.Scale
+public import Analysis.Asymptotics.Scale.Basic
 public import Probability.Distributions.Moments.Real
 
 /-!

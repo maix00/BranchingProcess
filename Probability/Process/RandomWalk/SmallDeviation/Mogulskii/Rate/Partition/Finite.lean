@@ -16,6 +16,18 @@ This file closes the interface between the finite-dimensional Gaussian
 partition argument and the arbitrary-duration logarithmic rate.  Its
 hypotheses are purely geometric and numerical; the intermediate uniform
 return-block estimate is constructed internally.
+
+The public declarations are:
+
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.mul_log_toReal_le_liminf_horizontalTubeProbability_of_finset_gaussianProduct`:
+  a strict Gaussian-product bound on a finite reference set gives the lower
+  rate $((mC)^{-1})\log p\leq\liminf_n(a_n^2/n)\log\mathbb P(T_n)$.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.mul_log_toReal_le_liminf_horizontalTubeProbability_of_linearReturn`:
+  the same lower rate follows when each reference point follows a linear
+  return path.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.exists_lowerRate_horizontalTubeProbability_of_linearReturn`:
+  under the corresponding strict interior conditions, there are $p>0$ and
+  $C>0$ giving a finite horizontal-tube logarithmic lower rate.
 -/
 
 @[expose] public section
