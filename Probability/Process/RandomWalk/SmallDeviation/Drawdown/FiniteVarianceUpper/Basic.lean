@@ -20,9 +20,6 @@ The public theorems in this file are:
   $0<d<\pi^2\sigma^2/2$.
 - `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.exists_uniform_iidSequenceLaw_measure_noLargeDropEndpointBelowEvent_le_of_centeredSecondMoment`:
   a uniform version for all large widths and superquadratic horizons.
-- `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.tendsto_diffusiveBlockCount_atTop_of_horizonRatio`:
-  $L_n/\Delta_n^2\to\infty$ implies
-  $L_n/\lfloor A\Delta_n^2\rfloor\to\infty$ for $A>0$.
 
 The probability estimate formalizes Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.3,
 following its discretized-maximum and conditional-block proof. It extends
@@ -229,72 +226,6 @@ theorem exists_uniform_iidSequenceLaw_measure_noLargeDropEndpointBelowEvent_le_o
     (Real.exp (-target * sigma ^ 2 * (horizon : ℝ) / delta ^ 2))
   rw [← ENNReal.ofReal_toReal hqtop]
   exact (ENNReal.ofReal_le_ofReal_iff (Real.exp_nonneg _)).2 hrealQ
-
-/-- The quotient by a floor-rounded diffusive block length diverges whenever
-the horizon is large compared with the square of the spatial scale. The
-statement is phrased for a real scale, so the deterministic result can be
-used with any positive diffusive block constant. -/
-theorem tendsto_diffusiveBlockCount_atTop_of_horizonRatio
-    {horizon : ℕ → ℕ} {delta : ℕ → ℝ} {A : ℝ}
-    (hdelta : Tendsto delta atTop atTop) (hA : 0 < A)
-    (hratio : Tendsto (fun n => (horizon n : ℝ) / delta n ^ 2)
-      atTop atTop) :
-    Tendsto (fun n => horizon n / ⌊A * delta n ^ 2⌋₊) atTop atTop := by
-  let length : ℕ → ℕ := fun n => ⌊A * delta n ^ 2⌋₊
-  let blocks : ℕ → ℕ := fun n => horizon n / length n
-  have hdeltaPos : ∀ᶠ n : ℕ in atTop, 0 < delta n :=
-    hdelta.eventually_gt_atTop 0
-  have hlengthTop : Tendsto length atTop atTop := by
-    apply Asymptotics.tendsto_floorBlockLength_atTop
-    have hsquare : Tendsto (fun n => delta n * delta n) atTop atTop :=
-      hdelta.atTop_mul_atTop₀ hdelta
-    simpa [length, Asymptotics.floorBlockLength, pow_two, mul_comm] using
-      hsquare.const_mul_atTop hA
-  have hlengthPos : ∀ᶠ n : ℕ in atTop, 0 < length n :=
-    hlengthTop.eventually_gt_atTop 0
-  have hlengthLe : ∀ᶠ n : ℕ in atTop,
-      (length n : ℝ) ≤ A * delta n ^ 2 := by
-    filter_upwards [hdeltaPos] with n hδ
-    exact Nat.floor_le (mul_nonneg hA.le (sq_nonneg (delta n)))
-  have hratioLower : ∀ᶠ n : ℕ in atTop,
-      (horizon n : ℝ) / (length n : ℝ) ≥
-        ((horizon n : ℝ) / delta n ^ 2) / A := by
-    filter_upwards [hdeltaPos, hlengthPos, hlengthLe] with n hδ hm hle
-    have hδsq : 0 < delta n ^ 2 := sq_pos_of_pos hδ
-    have hlenReal : 0 < (length n : ℝ) := by exact_mod_cast hm
-    have hAδ : 0 < A * delta n ^ 2 := mul_pos hA hδsq
-    calc
-      ((horizon n : ℝ) / delta n ^ 2) / A =
-          (horizon n : ℝ) / (A * delta n ^ 2) := by
-            field_simp [hA.ne', hδsq.ne']
-      _ ≤ (horizon n : ℝ) / (length n : ℝ) :=
-        div_le_div_of_nonneg_left (Nat.cast_nonneg _) hlenReal hle
-  have hratioLowerTop : Tendsto
-      (fun n => ((horizon n : ℝ) / delta n ^ 2) / A) atTop atTop :=
-    by
-      simpa [div_eq_mul_inv, mul_assoc, mul_comm] using
-        hratio.const_mul_atTop (inv_pos.mpr hA)
-  have hratioBlocks : Tendsto (fun n =>
-      (horizon n : ℝ) / (length n : ℝ)) atTop atTop :=
-    Filter.tendsto_atTop_mono' atTop hratioLower hratioLowerTop
-  have hblocks : Tendsto blocks atTop atTop := by
-    refine tendsto_atTop.2 fun k => ?_
-    have hkraw : ∀ᶠ n : ℕ in atTop,
-        ((k + 1 : ℕ) : ℝ) ≤ (horizon n : ℝ) / (length n : ℝ) :=
-      hratioBlocks.eventually
-        (eventually_ge_atTop ((k + 1 : ℕ) : ℝ))
-    have hk : ∀ᶠ n : ℕ in atTop,
-        ((k + 1 : ℕ) : ℝ) ≤ (horizon n : ℝ) / (length n : ℝ) := by
-      simpa only [Nat.cast_add, Nat.cast_one] using hkraw
-    filter_upwards [hk, hlengthPos] with n hk hm
-    have hmul : ((k + 1 : ℕ) : ℝ) * (length n : ℝ) ≤ (horizon n : ℝ) :=
-      (le_div_iff₀ (by exact_mod_cast hm)).1 hk
-    have hmulNat : (k + 1) * length n ≤ horizon n := by exact_mod_cast hmul
-    have hdiv : k + 1 ≤ horizon n / length n :=
-      (Nat.le_div_iff_mul_le hm).2 (by simpa [Nat.succ_mul] using hmulNat)
-    dsimp [blocks, length] at hdiv ⊢
-    omega
-  simpa [blocks, length] using hblocks
 
 end ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown
 

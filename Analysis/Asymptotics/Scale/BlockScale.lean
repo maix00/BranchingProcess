@@ -15,6 +15,44 @@ This file contains the rounding and quotient facts shared by the diffusive
 and stable small-deviation constructions.  The probabilistic scale
 parameters remain in their respective modules; only the common floor
 operation and its asymptotic interface live here.
+
+The public definitions and theorems are:
+
+- `Asymptotics.floorBlockLength`, `Asymptotics.floorBlockLength_le`,
+  `Asymptotics.tendsto_floorBlockLength_atTop`,
+  `Asymptotics.eventually_floorBlockLength_pos`, and
+  `Asymptotics.tendsto_floorBlockLength_div_argument`: floor rounding and
+  its limit behavior.
+- `Asymptotics.tendsto_floorBlockLength_add_nat_div_of_argument_ratio`,
+  `Asymptotics.tendsto_floorTime_div_nat`,
+  `Asymptotics.tendsto_floorSegmentLength_div_nat`, and
+  `Asymptotics.tendsto_floorSegmentLength_sub_one_div_nat`: rounded spatial
+  and time intervals.
+- `Asymptotics.tendsto_nat_div_atTop_of_cast_ratio` and
+  `Asymptotics.tendsto_nat_div_floorBlockLength_atTop_of_horizonRatio`:
+  divergence of complete block counts.
+- `Asymptotics.tendsto_nat_div_atTop_of_positive_horizonRatio_of_zero_blockRatio`,
+  `Asymptotics.eventually_block_le_horizon_of_positive_density`, and
+  `Asymptotics.tendsto_nat_sub_div_nat_of_horizon_and_vanishingBlock`:
+  quotient and remainder limits for a positive-density horizon and a
+  vanishing-density block.
+- `Asymptotics.balancedBlockCount`,
+  `Asymptotics.balancedBlockShortLength`,
+  `Asymptotics.balancedBlockRemainder`,
+  `Asymptotics.balancedBlockLongCount`, and
+  `Asymptotics.balancedBlockLengths`: the balanced integer partition, with
+  `Asymptotics.balancedBlockLengths_length`,
+  `Asymptotics.balancedBlockLengths_sum`,
+  `Asymptotics.mem_balancedBlockLengths`,
+  `Asymptotics.tendsto_balancedBlockShortLength_div_referenceLength`, and
+  `Asymptotics.tendsto_balancedBlockLongLength_div_referenceLength`.
+- `Asymptotics.blockCount`, `Asymptotics.blockCount_mul_blockLength_le`,
+  `Asymptotics.blockCount_mul_blockLength_le_lt_succ`,
+  `Asymptotics.sub_blockLength_lt_blockCount_mul_blockLength`,
+  `Asymptotics.blockCount_mul_blockLength_div_sub_one_abs_le`,
+  `Asymptotics.tendsto_blockCount_mul_blockLength_div_nat`, and
+  `Asymptotics.tendsto_quotientBlockCount_mul_blockLength_div_nat`:
+  complete-block and remainder bounds.
 -/
 
 public section
@@ -227,6 +265,34 @@ theorem tendsto_nat_div_atTop_of_cast_ratio
   have hmulLower : (k : ℝ) * (b n : ℝ) ≤ (a n : ℝ) :=
     (le_div_iff₀ (by exact_mod_cast hb)).1 hratioK
   linarith
+
+/-- If the horizon dominates a positive divergent real block scale, then the
+number of complete blocks obtained by rounding that scale down tends to
+infinity. -/
+theorem tendsto_nat_div_floorBlockLength_atTop_of_horizonRatio
+    {horizon : ℕ → ℕ} {argument : ℕ → ℝ}
+    (hargument : Tendsto argument atTop atTop)
+    (hratio : Tendsto (fun n => (horizon n : ℝ) / argument n)
+      atTop atTop) :
+    Tendsto (fun n => horizon n / floorBlockLength argument n)
+      atTop atTop := by
+  let length : ℕ → ℕ := floorBlockLength argument
+  have hlengthTop : Tendsto length atTop atTop :=
+    tendsto_floorBlockLength_atTop hargument
+  have hlengthPos : ∀ᶠ n : ℕ in atTop, 0 < length n :=
+    hlengthTop.eventually_gt_atTop 0
+  have hratioLower : ∀ᶠ n : ℕ in atTop,
+      (horizon n : ℝ) / argument n ≤
+        (horizon n : ℝ) / (length n : ℝ) := by
+    filter_upwards [hargument.eventually_gt_atTop 0, hlengthPos] with
+      n harg hlength
+    have hlengthReal : 0 < (length n : ℝ) := by exact_mod_cast hlength
+    exact div_le_div_of_nonneg_left (Nat.cast_nonneg _) hlengthReal
+      (floorBlockLength_le (le_of_lt harg))
+  have hratioBlocks : Tendsto
+      (fun n => (horizon n : ℝ) / (length n : ℝ)) atTop atTop :=
+    Filter.tendsto_atTop_mono' atTop hratioLower hratio
+  exact tendsto_nat_div_atTop_of_cast_ratio hlengthPos hratioBlocks
 
 /-- If a horizon has positive asymptotic density while a positive reference
 block has vanishing density, the number of reference blocks in the horizon
