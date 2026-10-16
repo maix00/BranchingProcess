@@ -6,7 +6,6 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Meander.CorridorProbability
 public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Survival.Conditioning
 public import Probability.Process.RandomWalk.Path.Skorokhod.Corridor.Endpoint.Closed
 public import Probability.Process.RandomWalk.Path.Skorokhod.Corridor.Endpoint.Interpolation
@@ -17,12 +16,16 @@ public import Analysis.Asymptotics.Scale.ShiftedFloor
 
 The public objects and theorems in this file are:
 
-- `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.measure_nonnegativeTransitionEvent_eq_cond_mul_survival`:
-  $\mathbb P(D_{n,\Delta})=
-  \mathbb P(D_{n,\Delta}\mid C_n)\mathbb P(C_n)$.
 - `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.nonnegativeTransitionEvent`:
   $D_{n,\Delta}=\{0\le S_j\le5\Delta/6\ (1\le j\le n),\
   S_n\in[5\Delta/12,11\Delta/24]\}$.
+- `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.normalizedTransitionCorridor`:
+  the path event $\{f:\forall t\in[0,1],\ 0\le f(t)\le5s/(6\sigma),\
+  f(1)\in[5s/(12\sigma),11s/(24\sigma)]\}$.
+- `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.measure_nonnegativeTransitionEvent_eq_cond_mul_survival`:
+  $\mathbb P(D_{n,\Delta})=
+  \mathbb P(D_{n,\Delta}\mid C_n)\mathbb P(C_n)$, where
+  $C_n=\{S_j\ge0:1\le j\le n\}$.
 - `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.mem_nonnegativeTransitionEvent_iff_normalizedTransitionCorridor`:
   for $n>0$ and $\sigma>0$, membership in $D_{n,\Delta}$ equals
   membership of $S_{\lfloor nt\rfloor}/(\sigma\sqrt n)$ in the
@@ -30,10 +33,6 @@ The public objects and theorems in this file are:
 - `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.mem_nonnegativeTransitionEvent_iff_normalizedInterpolatedTransitionCorridor`:
   the same grid event is the closed endpoint corridor event of the
   polygonal interpolation, whose values between grid points are affine.
-- `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.exists_eventually_interpolatedTransitionConditionalProbability_ge`:
-  from a conditioned polygonal-path limit with support at
-  $t\mapsto7t/(16\sigma)$, some $q>0$ satisfies
-  $\mathbb P(D_{n+1,\Delta_n}\mid C_{n+1})\ge q$ eventually.
 - `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.diffusiveTransitionHorizon`:
   $N_{\Delta_n,m}=\lfloor\Delta_n^2\rfloor-m$ for real widths $\Delta_n$.
 
@@ -48,6 +47,17 @@ open Filter MeasureTheory ProbabilityTheory
 open scoped ENNReal NNReal Topology
 
 namespace ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned
+
+/-- The path version of $D_{N,\Delta}$ after normalizing the walk by
+$\sigma\sqrt N$ and writing $s=\Delta/\sqrt N$. This is the transition
+event in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with
+Infinite Offspring*, Chapter 3, Lemma 3.5, and Appendix A.2, Lemma A.7. -/
+def normalizedTransitionCorridor (sigma scale : ℝ) :
+    Set (CadlagPath unitInterval ℝ) :=
+  Skorokhod.rangeInClosedIntervalEndsIn
+    0 ((5 / 6 * scale) / sigma)
+      ((5 / 12 * scale) / sigma) ((11 / 24 * scale) / sigma)
+
 
 /-- The nonnegative finite-width transition event in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3,
 Lemma 3.5 and Appendix A.2, Lemma A.7. -/
@@ -176,69 +186,6 @@ theorem mem_nonnegativeTransitionEvent_iff_normalizedInterpolatedTransitionCorri
         _ hn (le_refl 0) hupper]
   exact (mem_nonnegativeTransitionEvent_iff_normalizedTransitionCorridor
     hn hsigma hwidth increment).trans hpathEq.symm
-
-/-- The conditional transition bound follows directly from convergence
-of the polygonal paths and the support point of the limiting law. -/
-theorem exists_eventually_interpolatedTransitionConditionalProbability_ge
-    {Ωm : Type*} [MeasurableSpace Ωm]
-    {ν : Measure ℝ} [IsProbabilityMeasure ν]
-    [∀ n, IsProbabilityMeasure (survivalConditionedLaw ν (n + 1))]
-    {Pm : Measure Ωm} [IsProbabilityMeasure Pm]
-    {M : Ωm → CadlagPath unitInterval ℝ}
-    {sigma rho : ℝ} (hsigma : 0 < sigma)
-    (hrho : 0 < rho) (hrhoSmall : rho < 1 / 48)
-    (hlimit : TendstoInDistribution
-      (fun n increment => normalizedLinearCadlagPathIcc
-        (fun j => sigma * Real.sqrt j) (n + 1) increment)
-      atTop M (fun n => survivalConditionedLaw ν (n + 1)) Pm)
-    (hsupport : Skorokhod.straightPath ((7 / 16) / sigma) ∈
-      (Pm.map M).support)
-    {width : ℕ → ℝ} (hwidth : ∀ n, 0 ≤ width n)
-    (hratio : Tendsto (fun n => width n / Real.sqrt (n + 1))
-      atTop (𝓝 1)) :
-    ∃ q : ℝ≥0∞, 0 < q ∧ ∀ᶠ n : ℕ in atTop,
-      q ≤ survivalConditionedLaw ν (n + 1)
-        (nonnegativeTransitionEvent (n + 1) (width n)) := by
-  have hnonnegative (n : ℕ) :
-      ∀ᵐ increment ∂survivalConditionedLaw ν (n + 1),
-        ∀ t : unitInterval,
-          0 ≤ normalizedLinearCadlagPathIcc
-            (fun j => sigma * Real.sqrt j) (n + 1) increment t := by
-    exact ae_nonnegative_normalizedLinearCadlagPathIcc ν (Nat.succ_pos n)
-      (fun j => sigma * Real.sqrt j)
-      (mul_pos hsigma
-        (Real.sqrt_pos.2 (Nat.cast_pos.mpr (Nat.succ_pos n))))
-  obtain ⟨q, hq, hevent⟩ :=
-    exists_eventually_normalizedTransitionCorridorProbability_ge
-      hsigma hrho hrhoSmall hlimit hsupport hratio hnonnegative
-  refine ⟨q, hq, ?_⟩
-  filter_upwards [hevent] with n hn
-  have hmeas : MeasurableSet
-      (normalizedTransitionCorridor sigma
-        (width n / Real.sqrt (n + 1))) :=
-    (Skorokhod.isClosed_rangeInClosedIntervalEndsIn _ _ _ _).measurableSet
-  rw [Measure.map_apply_of_aemeasurable
-    (hlimit.forall_aemeasurable n) hmeas] at hn
-  have heventEq :
-      {increment : ℕ → ℝ |
-        normalizedLinearCadlagPathIcc
-          (fun j => sigma * Real.sqrt j) (n + 1) increment ∈
-        normalizedTransitionCorridor sigma
-          (width n / Real.sqrt (n + 1))} =
-      nonnegativeTransitionEvent (n + 1) (width n) := by
-    ext increment
-    simpa only [Set.mem_ofPred_eq, Nat.succ_eq_add_one, Nat.cast_add,
-      Nat.cast_one] using
-      (mem_nonnegativeTransitionEvent_iff_normalizedInterpolatedTransitionCorridor
-        (Nat.succ_pos n) hsigma (hwidth n) increment).symm
-  change q ≤ survivalConditionedLaw ν (n + 1)
-    {increment : ℕ → ℝ |
-      normalizedLinearCadlagPathIcc
-        (fun j => sigma * Real.sqrt j) (n + 1) increment ∈
-      normalizedTransitionCorridor sigma
-        (width n / Real.sqrt (n + 1))} at hn
-  rw [heventEq] at hn
-  exact hn
 
 /-- The diffusive transition horizon after a fixed finite entrance segment
 in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.5, and Appendix A.2, Lemma A.7. -/

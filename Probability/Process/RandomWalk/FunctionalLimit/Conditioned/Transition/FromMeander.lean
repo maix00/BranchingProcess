@@ -11,6 +11,8 @@ public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Meander
 public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition.FromFirstWindow
 public import Probability.Process.Brownian.Meander.LastZeroSupport
 
+import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition.Lemmas.CorridorProbability
+
 /-!
 # Conditional transition probability from Brownian meander
 
