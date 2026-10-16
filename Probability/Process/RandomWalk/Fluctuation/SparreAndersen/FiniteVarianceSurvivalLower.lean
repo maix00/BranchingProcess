@@ -7,9 +7,10 @@ Authors: WANG Yiyang
 module
 
 public import Analysis.Asymptotics.SequenceLowerPower
+public import Probability.Distributions.Moments.Signs
 public import Probability.Process.RandomWalk.Fluctuation.SparreAndersen.CoefficientRecurrence
 public import Probability.Process.RandomWalk.Fluctuation.FiniteVarianceSignLimit
-public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Survival
+public import Probability.Process.RandomWalk.Path.Survival.Probability
 
 /-!
 # Finite-variance survival lower bound
@@ -189,7 +190,7 @@ theorem exists_nonnegativeSurvivalProbability_ge_power_of_centeredSecondMoment
       {increment | SurvivesNonnegative n increment}).toReal from
       finiteSurvivalProbability_eq_infinite ν n]
     exact ENNReal.toReal_pos
-      (FunctionalLimit.Conditioned.survivalProbability_pos_of_positiveIncrement
+      (survivalProbability_pos_of_positiveIncrement
         ν (hν.measure_Ioi_zero_pos hsigma) n).ne'
       (measure_ne_top _ _)
   have hPnonneg (n : ℕ) : 0 ≤ P n := ENNReal.toReal_nonneg

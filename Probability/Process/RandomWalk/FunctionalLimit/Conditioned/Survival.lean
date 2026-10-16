@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.Path.Survival
+public import Probability.Process.RandomWalk.Path.Survival.Probability
 public import Probability.Sequence.IID
 public import Probability.Distributions.Moments.Signs
 public import Mathlib.Probability.ConditionalProbability
@@ -19,10 +19,6 @@ The public objects and theorems in this file are:
 - `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.survivalConditionedLaw`:
   the i.i.d. increment law conditioned on
   $C_n=\{S_j\ge0:1\le j\le n\}$.
-- `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.survivalProbability_pos_of_positiveIncrement`:
-  $\nu((0,\infty))>0$ implies $\mathbb P(C_n)>0$ for every $n$.
-- `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.survivalProbability_antitone`:
-  $n\le m$ implies $\mathbb P(C_m)\le\mathbb P(C_n)$.
 - `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.survivalConditionedLaw_isProbabilityMeasure`:
   $\mathbb P(C_n)>0$ makes the conditioned law a probability measure.
 - `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.survivalConditionedLaw_isProbabilityMeasure_of_positiveIncrement`:
@@ -58,41 +54,6 @@ This is the conditional law in Caravenna--Chaumont, equation (3.3). -/
 noncomputable def survivalConditionedLaw (ν : Measure ℝ) (n : ℕ) :
     Measure (ℕ → ℝ) :=
   (iidSequenceLaw ν)[|{increment | SurvivesNonnegative n increment}]
-
-/-- Positive increments at every step form a positive-probability event
-contained in survival through time `n`. -/
-theorem survivalProbability_pos_of_positiveIncrement
-    (ν : Measure ℝ) [IsProbabilityMeasure ν]
-    (hpositive : 0 < ν (Set.Ioi 0)) (n : ℕ) :
-    0 < (iidSequenceLaw ν)
-      {increment | SurvivesNonnegative n increment} := by
-  have hsubset :
-      {increment : ℕ → ℝ | ∀ k < n, increment k ∈ Set.Ioi 0} ⊆
-      {increment | SurvivesNonnegative n increment} := by
-    intro increment hinc k
-    rw [AdditivePath.displacement]
-    exact Finset.sum_nonneg fun i hi =>
-      (hinc i (lt_of_lt_of_le (Finset.mem_range.mp hi)
-        (Nat.succ_le_of_lt k.isLt))).le
-  have hmass := iidSequenceLaw_measure_forall_lt ν (Set.Ioi 0)
-    measurableSet_Ioi n
-  calc
-    0 < (ν (Set.Ioi 0)) ^ n :=
-      (pos_iff_ne_zero).2 (pow_ne_zero n (ne_of_gt hpositive))
-    _ = (iidSequenceLaw ν)
-        {increment | ∀ k < n, increment k ∈ Set.Ioi 0} := hmass.symm
-    _ ≤ (iidSequenceLaw ν)
-        {increment | SurvivesNonnegative n increment} :=
-      measure_mono hsubset
-
-/-- The probability of surviving through time `n` decreases with the
-horizon. This is the monotonicity used alongside the survival asymptotic
-in Caravenna--Chaumont, Lemma 2.1. -/
-theorem survivalProbability_antitone
-    (ν : Measure ℝ) {n m : ℕ} (hnm : n ≤ m) :
-    (iidSequenceLaw ν) {increment | SurvivesNonnegative m increment} ≤
-      (iidSequenceLaw ν) {increment | SurvivesNonnegative n increment} :=
-  measure_mono fun _ h => h.mono hnm
 
 /-- Positive survival probability normalizes the conditional law. -/
 theorem survivalConditionedLaw_isProbabilityMeasure

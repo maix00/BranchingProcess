@@ -7,8 +7,8 @@ Authors: WANG Yiyang
 module
 
 public import Probability.ConvergenceInDistribution.FiniteApproximation
-public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.FiniteWindowLimit
-public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.FiniteWindowTime
+public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.FirstWindow.FinitePathLimit
+public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.FirstWindow.FiniteTime
 public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.FirstWindowSelection
 public import Probability.Process.Brownian.AboveStart.FirstWindowCenteredLimit
 public import Probability.Process.Path.FiniteHorizonScaling

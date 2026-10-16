@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.FiniteWindowTime
+public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.FirstWindow.FiniteTime
 public import Probability.Process.Brownian.AboveStart.FirstWindow
 
 /-!
