@@ -279,7 +279,7 @@ tends to $1/(3\beta)$; `DriftedTube/FiniteVarianceLower/Staircase/Eventually.lea
 threshold for all global conditions. `DriftedTube/FiniteVarianceLower/Staircase/Concrete/Lower/Asymptotic.lean`
 then proves the eventual tilted-tube lower bound from the robust entrance
 probability budget. The entrance budget is supplied by
-`Entrance/RobustExponentialBudget.lean`. Its conditional transition estimate
+`Entrance/Robust/ExponentialBudget.lean`. Its private fixed-window transition estimate
 follows from the Bolthausen--Iglehart meander limit. The finite-variance
 survival input is $C\Delta^{-2}$, obtained from the Bauer--Godrèche--Luck
 cyclic-rotation cover and the Gaussian endpoint-sign limit.

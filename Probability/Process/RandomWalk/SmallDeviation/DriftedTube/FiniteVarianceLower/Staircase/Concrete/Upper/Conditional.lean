@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Staircase.Concrete.Upper.Asymptotic
-public import Probability.Process.RandomWalk.SmallDeviation.Entrance.RobustExponentialBudget
+public import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.ExponentialBudget
 public import Analysis.Asymptotics.IntermediatePowerBlock
 
 /-!
@@ -51,7 +51,6 @@ theorem eventually_concreteStaircaseUpperEndpointLowerBound_of_centeredFiniteVar
     {sigma narrowedRate uInterior vInterior uFinal vFinal : ℝ}
     (hν : IsCenteredSecondMoment ν (sigma ^ 2))
     (hsigma : 0 < sigma)
-    {rho : ℝ} (hrho : 0 < rho) (hrhoSmall : rho < 1 / 48)
     (m : ℕ) (hm : 2 ≤ m)
     (huInterior : 0 < uInterior)
     (huvInterior : uInterior < vInterior)
@@ -101,7 +100,7 @@ theorem eventually_concreteStaircaseUpperEndpointLowerBound_of_centeredFiniteVar
   have hbudget :=
     exists_eventually_robustTransitionProbability_ge_exp_of_centeredFiniteVariance
       ν hν hsigma
-      hrho hrhoSmall hwidth hdrift hdelta hepsilon
+      hwidth hdrift hdelta hepsilon
   have hentrance : ∀ᶠ n : ℕ in atTop,
       Real.exp (-(totalRate - blockRate) * (horizon n : ℝ) /
         width n ^ 2) ≤
@@ -128,7 +127,6 @@ theorem eventually_concreteStaircaseUpperEndpointLowerBound_of_powerBlock
     {sigma narrowedRate uInterior vInterior uFinal vFinal : ℝ}
     (hν : IsCenteredSecondMoment ν (sigma ^ 2))
     (hsigma : 0 < sigma)
-    {rho : ℝ} (hrho : 0 < rho) (hrhoSmall : rho < 1 / 48)
     (m : ℕ) (hm : 2 ≤ m)
     (huInterior : 0 < uInterior)
     (huvInterior : uInterior < vInterior)
@@ -183,7 +181,7 @@ theorem eventually_concreteStaircaseUpperEndpointLowerBound_of_powerBlock
     filter_upwards [hfit, hhorizon] with n hnfit hnHorizon
     exact hnfit.trans hnHorizon
   exact eventually_concreteStaircaseUpperEndpointLowerBound_of_centeredFiniteVariance
-    hν hsigma hrho hrhoSmall m hm huInterior huvInterior hvInterior
+    hν hsigma m hm huInterior huvInterior hvInterior
     huFinal huvFinal hvFinal hrateMogulskii hwidth hlength
     hremaining hhorizon hquadratic hcubic hmargin hdrift hstart
     hendpoint hblockRate hepsilon hdelta hrate
