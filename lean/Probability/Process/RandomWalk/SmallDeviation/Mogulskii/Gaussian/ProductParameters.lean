@@ -11,9 +11,23 @@ public import Probability.Distributions.Gaussian.FiniteProduct
 /-!
 # Gaussian products for finite Mogulskii partitions
 
-Scale monotonicity and a compatible quantitative parameter choice for the finite
-Gaussian products used in the partition lower bound.  Gaussian interval
-positivity itself lives in the distribution layer.
+The public theorems in this file are:
+
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.exists_constant_error_lowerBound_lt_gaussianProduct`:
+  for a fixed positive number of Gaussian blocks, choose $c,\delta,b>0$
+  so that $b+k(c/r^2+\delta)$ lies below the product of the $k$
+  symmetric Gaussian interval probabilities of radius $R/\sqrt c$.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.exists_constant_error_lowerBound_lt_linearReturn`:
+  the same positive gap holds uniformly when each Gaussian interval is
+  shifted by $-y/k$ with $|y/k|\le R/2$.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.exists_error_lowerBound_gap_finset_gaussianProduct`:
+  a strict gap for each member of a nonempty finite reference family gives
+  common $\delta,b>0$ with $b+k(c/r^2+\delta)$ below every product.
+
+These quantitative choices occur in the finite-partition lower-bound proof
+of A. A. Mogul'skii, *Small Deviations in a Space of Trajectories*,
+Theorem 3, Section 4, p. 764 (English translation, DOI 10.1137/1119081).
+Gaussian interval positivity itself belongs to the distribution layer.
 -/
 
 @[expose] public section
@@ -21,7 +35,7 @@ positivity itself lives in the distribution layer.
 open MeasureTheory
 open scoped Topology
 
-namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
+namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian
 
 /-- There are explicit positive block and error parameters for which a
 positive numerical lower bound remains after paying the maximal-inequality
@@ -258,4 +272,4 @@ theorem exists_error_lowerBound_gap_finset_gaussianProduct
       _ = product y₀ := ENNReal.ofReal_toReal hproductTop
   exact hsum.trans_le hmin
 
-end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
+end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian

@@ -139,7 +139,7 @@ The order here follows the displayed PDF numbers.
 | 3.2 | `lemma:4.1` | Horizontal-tube upper bound `exp(uΔ^v − dL/Δ²)` for arbitrary `u,v>0`, and the coefficient-one specialization. The proof uses the closed-tube Mogul'skii rate, an equal partition to select one fixed corridor, iteration over full blocks, and a remainder estimate. | **Formalized.** `HorizontalTube/FiniteVarianceUpper.lean` proves the centered-tube bounds `horizontalTubeProbability_le_exp_of_finiteVariance_withRemainder` and `horizontalTubeProbability_le_exp_of_finiteVariance`, and the corresponding translated-interval bounds for IID partial sums. `HorizontalTube/FiniteVarianceUpper/Proof.lean` holds the equal-partition and block-iteration inputs. The input rate is the closed horizontal-tube form of Mogul'skii, Theorem 3, Section 4, p. 764. |
 | 3.3 | `lemma:2.3` | No-large-drop plus endpoint bound. Its proof uses the 3.2 horizontal-tube estimate for each nonjump block. | **Formalized.** `Drawdown/FiniteVarianceUpper.lean` proves `measureReal_noLargeDropEndpointBelowEvent_le_exp_of_finiteVariance`: for a centered law of variance `σ² ∈ (0,∞)`, every `c>0` and `0<d<π²σ²/2` admit one `Δ₀≥1` such that the estimate holds for all `Δ≥Δ₀` and `L≥Δ^(2+c)`. The conditional block estimates are in `Drawdown/FiniteVarianceUpper/ConditionalBlocks.lean`; the rounded running maximum and jump-pattern union from Wang Yiyang, *Asymptotic speed of the N-branching random walk with infinite offspring*, Chapter 3, Lemma 3.3, are in `Drawdown/FiniteVarianceUpper/Proof.lean`. |
 | 3.4 | `lemma:4.2` | Small-drift tilted-tube upper bound. The proof invokes 3.3 at the complete-block estimate, iterates blocks by the Markov property, and absorbs the remainder into `Δ^v`. | **Formalized.** `DriftedTube/FiniteVarianceUpper.lean` proves `exists_driftedTubeProbability_le_exp_of_finiteVariance`: the short-horizon case uses probability at most one; the long-horizon case follows the equal-length block decomposition, conditional-expectation iteration, and final-remainder estimate from Wang Yiyang, Chapter 3, Lemma 3.4. |
-| 3.5 | `lemma:4.3` | For every sufficiently large real width `Δ`, every `r₀≤0≤r₀+Δ`, and every `L≥⌊Δ^(2+ε)⌋`, the walk stays in the moving tube and reaches either endpoint window with probability at least `exp(−d′L/Δ²)`. | **Formalized.** `DriftedTube/FiniteVarianceLower/EndpointBounds.lean` proves `exists_uniform_driftedTube_endpoint_bounds` from centered finite variance, `v>0`, `d′>π²σ²/2`, `c≥0`, and `ε>0`. The proof first chooses the intermediate rate `d″`, then the finite spatial bin count and strict windows, takes `ℓ=⌊Δ^(2+η)⌋`, and uses the Brownian-meander entrance, common narrowed-tube block rates, reverse Markov product, and counterexample-sequence argument for one threshold. The finite-variance survival power bound follows from Bauer–Godrèche–Luck, Appendix A, (A.7), the Gaussian endpoint-sign limit, and prefix-sum induction. The theorem compiles without project axioms. |
+| 3.5 | `lemma:4.3` | For every sufficiently large real width `Δ`, every `r₀≤0≤r₀+Δ`, and every `L≥⌊Δ^(2+ε)⌋`, the walk stays in the moving tube and reaches either endpoint window with probability at least `exp(−d′L/Δ²)`. | **Formalized.** `DriftedTube/FiniteVarianceLower/EndpointBounds.lean` proves `exists_uniform_driftedTube_endpoint_bounds` from centered finite variance, `v>0`, `d′>π²σ²/2`, `c≥0`, and `ε>0`. The proof first chooses the intermediate rate `d″`, then the finite spatial bin count and strict windows, takes `ℓ=⌊Δ^(2+η)⌋`, and uses the Brownian-meander entrance, common narrowed-tube block rates, reverse Markov product, and counterexample-sequence argument for one threshold. The entrance survival bound is `CΔ⁻²`: the finite-horizon i.i.d. cyclic-rotation inequality from Bauer–Godrèche–Luck, Appendix A, after (A.3), and the Gaussian endpoint-sign limit give `P(C_N)≥c/N`. The theorem compiles without project axioms. |
 
 Thus the lemma dependency chain is 3.1(i) → 3.2 → 3.3 → 3.4, while 3.1(ii) supports the separate lower-bound branch 3.5. The inverse-scale and monotonicity developments remain formalized supporting results, but the revised proof no longer gives them standalone lemma numbers. Do not use a source label as a theorem number, and do not mark a supporting block or drawdown estimate as one of these lemmas.
 
@@ -283,11 +283,12 @@ threshold for all global conditions. `DriftedTube/FiniteVarianceLower/Staircase/
 then proves the eventual tilted-tube lower bound from the robust entrance
 probability budget. The entrance budget is supplied by
 `Entrance/RobustExponentialBudget.lean`. Its conditional transition estimate
-follows from the Bolthausen--Iglehart meander limit, while the finite-variance
-survival power input follows from the Bauer--Godrèche--Luck coefficient
-recurrence and the Gaussian endpoint-sign limit.
+follows from the Bolthausen--Iglehart meander limit. The finite-variance
+survival input is $C\Delta^{-2}$, obtained from the Bauer--Godrèche--Luck
+cyclic-rotation cover and the Gaussian endpoint-sign limit.
 `DriftedTube/FiniteVarianceLower/Staircase/Concrete/Lower/Conditional.lean`
-and `ConditionalUpper.lean` compose that entrance budget with the staircase
+and `DriftedTube/FiniteVarianceLower/Staircase/Concrete/Upper/Conditional.lean`
+compose that entrance budget with the staircase
 product. `Analysis/Asymptotics/IntermediatePowerBlock.lean` verifies the
 paper's choice `ℓ=⌊Δ^(2+η)⌋`; `Concrete/Uniform.lean` converts both sequential
 bounds into one real-width threshold uniform in `L` and `r₀`.
@@ -310,8 +311,9 @@ the expected number of ladder heights at most $x$, as in
 Caravenna--Chaumont, definition (1.1). These are foundational steps toward the cited
 renewal and local-time limit theorems. The conditioned meander convergence
 is proved separately. The general finite-variance survival
-regular-variation theorem is still open, while Lemma 3.5 uses the proved
-Sparre--Andersen finite recurrence instead. The unused
+regular-variation theorem is still open. Lemma 3.5 uses the finite i.i.d.
+cyclic-rotation inequality and the Gaussian endpoint-sign limit to obtain
+the inverse-square width entrance bound. The unused
 `FunctionalLimit/Conditioned/SurvivalPower.lean` Potter adapter was removed;
 the independently reusable descending ladder-time results remain in
 `Fluctuation/`.
@@ -329,9 +331,10 @@ finite coefficient recurrence from this formula.
 `Fluctuation/SparreAndersen/CoefficientRecurrence.lean` now proves
 $P_n=nF_n-\sum_{j=1}^{n-1}F_jP_{n-j}$ directly from that decomposition,
 the coefficient form of (A.7). Its generating-function form (A.7)--(A.8)
-and the stronger survival asymptotic remain open. The polynomial lower bound
-needed for the unconditional entrance estimate is proved in
-`Fluctuation/SparreAndersen/FiniteVarianceSurvivalLower.lean`.
+and the stronger survival asymptotic remain open. The independent finite-variance
+polynomial survival bound obtained from the recurrence is retained in
+`Fluctuation/SparreAndersen/FiniteVarianceSurvivalLower.lean`; it is not a
+dependency of the Lemma 3.5 entrance estimate.
 
 | Source component | Lean modules | Verified scope |
 |---|---|---|
