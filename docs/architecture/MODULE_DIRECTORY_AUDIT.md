@@ -64,7 +64,8 @@ by mathematical subject:
 | `Stable/SmallDeviation/Blocks/Lower` | `Assembly/`, `Binning/`, `Bounds/`, `Entrance/`, and `Return/`. |
 | `RandomWalk/SmallDeviation/Mogulskii` | `Blocks/`, `Path/`, and `Scale/`; `Partition.lean` remains at the subject root. |
 | `BranchingRandomWalk/Selection/NSelection/AsymptoticSpeed` | `Limit/`, `Selection/`, and `InitialPopulation/Speed/`. |
-| `Mogulskii/Stable/RandomWalkBounds/FromIncrementLaw` | `Normal/`, `Path/`, and `Stable/`; `HorizontalTube.lean` is the direct interface. |
+| `Mogulskii/Stable/RandomWalkBounds/FromIncrementLaw` | `Normal/`, `Path/`, `Stable/`, and `HorizontalTube/`; the latter separates the closed-tube core rate, its scale forms, endpoint windows, and their proof lemmas. |
+| `Mogulskii/Stable/RandomWalkBounds/FromIncrementLaw/HorizontalTube` | `Basic.lean` contains the core closed-tube rate, `Scales.lean` its scale specializations, and `EndpointWindow.lean` the endpoint-window rate. Non-reusable corridor and time-scale proof details are in `Lemmas/`. |
 | `Mogulskii/Stable/RandomWalkBounds/Source` | `Bounds/`, `Partition/`, and `PathClass/`; `Inputs.lean`, `Normalization.lean`, and `Realization.lean` remain at the source root. |
 | `RandomWalk/Path/Interpolation` | `Finite/`, `Limit/`, and `Path/`; `Basic.lean` and `Scaling.lean` remain at the subject root. |
 | `RandomWalk/FunctionalLimit/Donsker` | `FiniteDimensional/` and `Path/`; `FiniteDimensional.lean` is the subject entry module. |
