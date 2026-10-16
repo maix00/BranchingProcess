@@ -12,6 +12,10 @@ import Analysis.Asymptotics.Scale.IntermediatePowerBlock
 /-!
 # Endpoint and horizon powers for the drawdown estimate
 
+For increments $\xi=(\xi_i)_{i\ge0}$, let
+$S_j=\sum_{i=0}^{j-1}\xi_i$ and
+$B_{L,\Delta,r}=\{\xi:S_i-S_j\le\Delta\;(0\le i\le j\le L),\;S_L\le r\}$.
+
 The proof-specific declaration is
 `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.exists_eventually_measureReal_noLargeDropEvent_le_exp_of_endpointAndHorizonPowers`:
 for positive endpoint and horizon powers, centered increments with finite
