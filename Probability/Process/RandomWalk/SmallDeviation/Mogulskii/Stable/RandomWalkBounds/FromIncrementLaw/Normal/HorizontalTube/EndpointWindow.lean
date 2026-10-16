@@ -8,7 +8,7 @@ module
 
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.FromIncrementLaw.Normal.HorizontalTube.Basic
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.FromIncrementLaw.Normal.HorizontalTube.Scales
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.FromIncrementLaw.Normal.HorizontalTube.EndpointWindowEvent
+public import Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.EndpointWindow
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.FromIncrementLaw.Normal.HorizontalTube.Lemmas.EndpointWindowCorridor
 import Analysis.Asymptotics.Scale.Sampling
 /-!
@@ -27,6 +27,7 @@ These results formalize Wang Yiyang, *Asymptotic Speed of the N-Branching Random
 open Filter MeasureTheory ProbabilityTheory
 open MeasureTheory.Measure
 open ProbabilityTheory.RandomWalk
+open ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube
 open Asymptotics
 open ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability
 open Skorokhod.PathClass.StepCorridor

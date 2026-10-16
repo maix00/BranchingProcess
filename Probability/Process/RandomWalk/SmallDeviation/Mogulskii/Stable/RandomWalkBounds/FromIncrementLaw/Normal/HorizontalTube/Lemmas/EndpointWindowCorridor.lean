@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.FromIncrementLaw.Normal.HorizontalTube.EndpointWindowEvent
+public import Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.EndpointWindow
 public import MeasureTheory.Measure.CadlagPath.PathClass.StepCorridor.TerminalWindow
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Path.SourcePath
 
@@ -35,6 +35,7 @@ Trajectories,” *Theory of Probability and Its Applications* 19(1) (1975),
 
 open MeasureTheory ProbabilityTheory
 open ProbabilityTheory.RandomWalk
+open ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube
 open Skorokhod.PathClass.StepCorridor
 open scoped ENNReal
 
