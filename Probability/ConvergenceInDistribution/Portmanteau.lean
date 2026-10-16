@@ -13,11 +13,24 @@ public section
 /-!
 # Event probabilities under convergence in distribution
 
-Portmanteau bounds exposed directly for `TendstoInDistribution`.
+The public theorems are:
+
+- `MeasureTheory.TendstoInDistribution.measure_map_le_liminf_of_isOpen`:
+  $\mu'(Z\in G)\le\liminf_i\mu_i(X_i\in G)$ for open $G$.
+- `MeasureTheory.TendstoInDistribution.exists_eventually_measure_map_ge_pos_of_isOpen`:
+  $\mu'(Z\in G)>0$ for open $G$ gives some $q>0$ with
+  $\mu_i(X_i\in G)\ge q$ eventually.
+- `MeasureTheory.TendstoInDistribution.lintegral_map_le_liminf_of_continuous_nonneg`:
+  the lower Portmanteau bound for a nonnegative continuous test function.
+- `MeasureTheory.TendstoInDistribution.limsup_measure_map_le_of_isClosed`:
+  $\limsup_i\mu_i(X_i\in F)\le\mu'(Z\in F)$ for closed $F$.
+- `MeasureTheory.TendstoInDistribution.tendsto_measure_map_of_null_frontier`:
+  $\mu_i(X_i\in A)\to\mu'(Z\in A)$ when the limiting law gives
+  zero mass to the frontier of $A$.
 -/
 
 open Filter ProbabilityTheory Set
-open scoped Topology
+open scoped ENNReal Topology
 
 namespace MeasureTheory
 
@@ -36,6 +49,42 @@ theorem TendstoInDistribution.measure_map_le_liminf_of_isOpen
     {G : Set E} (hG : IsOpen G) :
     μ'.map Z G ≤ l.liminf (fun i => (μ i).map (X i) G) := by
   exact ProbabilityMeasure.le_liminf_measure_open_of_tendsto h.tendsto hG
+
+/-- Positive mass of an open limiting event gives one positive lower bound
+for its probabilities under all sufficiently late approximating laws. -/
+theorem TendstoInDistribution.exists_eventually_measure_map_ge_pos_of_isOpen
+    {E Ω Ω' : Type*} [MeasurableSpace E] [TopologicalSpace E]
+    [OpensMeasurableSpace E] [HasOuterApproxClosed E]
+    [MeasurableSpace Ω] [MeasurableSpace Ω']
+    {P : ℕ → Measure Ω} [∀ n, IsProbabilityMeasure (P n)]
+    {P' : Measure Ω'} [IsProbabilityMeasure P']
+    {X : ℕ → Ω → E} {Z : Ω' → E}
+    (h : TendstoInDistribution X atTop Z P P')
+    {G : Set E} (hG : IsOpen G) (hpos : 0 < P'.map Z G) :
+    ∃ q : ℝ≥0∞, 0 < q ∧ ∀ᶠ n : ℕ in atTop,
+      q ≤ (P n).map (X n) G := by
+  let mass : ℝ≥0∞ := P'.map Z G
+  let probability : ℕ → ℝ≥0∞ := fun n => (P n).map (X n) G
+  have hportmanteau : mass ≤ atTop.liminf probability := by
+    simpa [mass, probability] using h.measure_map_le_liminf_of_isOpen hG
+  let q : ℝ≥0∞ := (1 / 2) * mass
+  have hmassPositive : 0 < mass := by simpa [mass] using hpos
+  have hqPositive : 0 < q := by
+    simpa [q] using
+      (ENNReal.mul_pos (by norm_num : (1 / 2 : ℝ≥0∞) ≠ 0) hmassPositive.ne')
+  have hmassNeTop : mass ≠ ⊤ := measure_ne_top _ _
+  have hqStrict : q < mass := by
+    have hmul := ENNReal.mul_lt_mul_right (ne_of_gt hmassPositive) hmassNeTop
+      (by norm_num : (1 / 2 : ℝ≥0∞) < 1)
+    simpa [q, mul_comm] using hmul
+  have hqLiminf : q < atTop.liminf probability := hqStrict.trans_le hportmanteau
+  have hprobabilityBounded : Filter.IsBoundedUnder (· ≥ ·) atTop probability :=
+    Filter.isBoundedUnder_of_eventually_ge
+      (Eventually.of_forall fun _ => bot_le)
+  refine ⟨q, hqPositive, ?_⟩
+  filter_upwards [eventually_lt_of_lt_liminf hqLiminf hprobabilityBounded]
+    with n hn
+  exact hn.le
 
 /-- Portmanteau also transfers expectations of nonnegative continuous
 real-valued test functions. This is the integral form needed when a killed

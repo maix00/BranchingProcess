@@ -6,8 +6,8 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Asymptotics
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Modes
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Rate.Asymptotics
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Decomposition.Modes
 
 /-!
 # Principal spectral scale
