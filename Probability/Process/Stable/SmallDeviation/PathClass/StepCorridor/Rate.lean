@@ -6,12 +6,12 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.Stable.SmallDeviation.PathClass.StepCorridor.Partition.UpperEnergyRate
+public import Probability.Process.Stable.SmallDeviation.PathClass.StepCorridor.Partition.Upper.EnergyRate
 public import Probability.Process.Path.PathClass.StepCorridor.Probability.Rate.FiniteUnionNullMeasurable
 public import Probability.Process.Path.PathClass.StepCorridor.Probability.Rate.Approximation
 public import Probability.Process.Path.PathClass.StepCorridor.Probability.Rate.InnerOuter
 public import Probability.Process.Path.PathClass.StepCorridor.Probability.Normalization
-public import Topology.Cadlag.Skorokhod.Scaling
+public import Topology.Cadlag.Skorokhod.Path.Scaling
 
 /-!
 # Stable-process rates for `M₂` and `M₃`

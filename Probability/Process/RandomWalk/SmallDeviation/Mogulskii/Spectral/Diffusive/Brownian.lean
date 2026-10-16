@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Mathlib.Topology.UnitInterval
-public import Probability.Process.RandomWalk.FunctionalLimit.Donsker.Corridor.Brownian
+public import Probability.Process.RandomWalk.FunctionalLimit.Donsker.Corridor.Brownian.Basic
 public import Probability.Process.RandomWalk.FunctionalLimit.Donsker.Corridor.Brownian.Endpoint
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Diffusive.Lower
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Scaling.Discretization

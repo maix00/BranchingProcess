@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Analysis.Asymptotics.BlockScale
+public import Analysis.Asymptotics.Scale.BlockScale
 public import Probability.Distributions.Stable.Attraction.Norming.Compatibility
 public import Probability.Distributions.Stable.Attraction.NormingRatios.Index
 public import Probability.Process.RandomWalk.FunctionalLimit.Stable.Centering

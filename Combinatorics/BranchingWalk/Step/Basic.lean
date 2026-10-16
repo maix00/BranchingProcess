@@ -24,7 +24,7 @@ it needs a `Zero X` instance and is not part of the type of a step.  The
 relabeling are in `Step/SiblingClosed.lean` and `Step/SiblingClosable.lean`.
 The ordered layer is in `Step/Monotone.lean`, and the slot vocabulary in
 `Step/Measurability.lean`. Path displacements are in
-`Basic/Displace.lean` and `Basic/DisplacementMap.lean`; realized and marked
+`Basic/Position/Displace.lean` and `Basic/Position/DisplacementMap.lean`; realized and marked
 tree conversions are in `BranchingWalk/MarkedTree/`.
 -/
 

@@ -20,11 +20,26 @@ identify misplaced application-specific assumptions.
 | General random-walk process laws and paths | `Probability/Process/RandomWalk` | path maps, kernels, Donsker and small-deviation interfaces |
 | Stable-law and stable-process semantics | `Probability/Distributions/Stable` and `Probability/Process/Stable` | stable distributions, clock increments, Lévy processes |
 | Branching random-walk models and thesis-specific coupling | `Probability/BranchingRandomWalk` | offspring fields, spine, selected populations, restart coupling |
+| BRW ancestral-path second moments and MRCA pair decomposition | `Probability/BranchingRandomWalk/Spine/Path` | `SecondMoment`; independent of corridor geometry and selection |
+| Selection mechanisms, including random rules | `Probability/BranchingRandomWalk/Selection` | random and causal selection interfaces |
+| Deterministic first-`N` selection, speed, and tail estimates | `Probability/BranchingRandomWalk/Selection/NSelection` | `NSelection`, selected-population endpoint/drawdown bounds, and speed proof |
 
 Directory names should follow the owning concept. A declaration is not moved
 to a theorem-specific directory merely because that theorem currently uses it.
 Conversely, a general-looking name does not justify a generic module if its
 definition relies on stable, branching, or other model-specific hypotheses.
+The `Selection` namespace is mechanism-neutral and can describe random or
+deterministic rules. `NSelection` is the deterministic first-`N` specialization;
+results about its selected population belong under `Selection/NSelection`, not
+the generic `Selection` subtree. Position observation on a root-indexed field
+is owned by `Genealogy/RootIndexed/Measurability`, independently of whichever
+selection mechanism consumes it. BRW path-count identities and pair decompositions
+by most recent common ancestor belong under `Spine/Path`; they describe the
+genealogy underlying path correlations and do not depend on a corridor. The
+random-walk small-deviation estimates used for corridors stay under
+`Probability/Process/RandomWalk`, while their affine-tube application and
+second-moment bounds stay under `Spine/Tube`. These are BRW results, not
+N-BRW selection statements; the latter belong under `Selection/NSelection`.
 
 ## Mathlib reuse
 

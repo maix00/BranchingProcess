@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.Path.Block.Partition.Basic
-public import Probability.Process.RandomWalk.Kernel.Killed
+public import Probability.Process.RandomWalk.Kernel.Killed.Basic
 
 /-!
 # Equal-block representation of killed-walk survival
