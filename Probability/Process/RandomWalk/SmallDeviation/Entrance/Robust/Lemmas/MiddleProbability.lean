@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.Basic
+public import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.Lemmas.Event
 import Probability.Process.RandomWalk.FunctionalLimit.Donsker.Entrance.InteriorDiffusive
 /-!
 # Middle-start probability for the robust entrance event

@@ -13,7 +13,7 @@ public import Probability.Process.RandomWalk.SmallDeviation.Entrance.MovingCorri
 
 Write $S_j=\sum_{i=0}^{j-1}\xi_i$ for the partial sums of the increments,
 $h_j=cj/\Delta^2$ for the moving-boundary displacement, and $x$ for the
-starting point. The public declarations in this file are:
+starting point. The supporting declarations in this file are:
 
 - `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.robustMovingTransitionEvent`:
   $\mathcal R_{n,\Delta,c}(x)=\{\xi:h_j\le x+S_j\le\Delta+h_j\ (1\le j\le n),\
@@ -63,7 +63,7 @@ private lemma displacement_measurable_prefix
 
 /-- All constraints of the robust event depend only on the first `n`
 increments. -/
-theorem measurableSet_robustMovingTransitionEvent
+lemma measurableSet_robustMovingTransitionEvent
     (n : ℕ) (width drift start : ℝ) :
     MeasurableSet[sequencePrefixFiltration (E := ℝ) n]
       (robustMovingTransitionEvent n width drift start) := by
@@ -101,7 +101,7 @@ theorem measurableSet_robustMovingTransitionEvent
 
 /-- The Brownian interior-corridor event fits the stronger endpoint window
 when the drift over the diffusive entrance is small compared with its width. -/
-theorem finiteInteriorEvent_subset_robustMovingTransitionEvent
+lemma finiteInteriorEvent_subset_robustMovingTransitionEvent
     {n : ℕ} {width drift start : ℝ}
     (hwidth : 0 < width) (hdrift : 0 ≤ drift)
     (hn : (n : ℝ) ≤ width ^ 2)
