@@ -7,7 +7,6 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.Horizontal.Basic
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.FromIncrementLaw.HorizontalTube
 public import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 
 /-!
@@ -44,7 +43,7 @@ iterates the uniform one-block bound.
 -/
 
 open Filter MeasureTheory ProbabilityTheory
-open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete
+open ProbabilityTheory.RandomWalk
 open scoped ENNReal NNReal Topology
 
 @[expose] public section

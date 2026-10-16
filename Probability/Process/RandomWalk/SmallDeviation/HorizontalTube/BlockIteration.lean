@@ -7,7 +7,6 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.Horizontal.Basic
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.FromIncrementLaw.HorizontalTube
 
 /-!
 # Uniform block bounds for horizontal tubes
@@ -33,7 +32,7 @@ The public theorems in this module are:
 -/
 
 open Filter MeasureTheory ProbabilityTheory
-open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete
+open ProbabilityTheory.RandomWalk
 open scoped ENNReal NNReal Topology
 
 @[expose] public section

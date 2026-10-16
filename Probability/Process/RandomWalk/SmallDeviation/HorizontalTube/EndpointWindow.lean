@@ -6,7 +6,10 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.FromIncrementLaw.HorizontalTube
+public import Mathlib.Basic.Real.Basic
+public import Mathlib.Data.Set.Defs
+public import Algebra.BigOperators.AdditivePath.Basic
+import Probability.Process.RandomWalk.Path.Corridor.Horizontal.Core
 
 /-!
 # Horizontal tubes with endpoint windows
@@ -19,7 +22,7 @@ The public definition in this file is
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube
 
-open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete
+open ProbabilityTheory.RandomWalk
 
 /-- A horizontal tube with a specified lower edge and endpoint window. -/
 def relativeHorizontalTubeEndpointWindowEvent (lower width : ℝ)
