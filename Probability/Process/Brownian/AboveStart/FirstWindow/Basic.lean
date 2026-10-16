@@ -121,16 +121,16 @@ private theorem hasNonnegativeWindowBeforeUnit_iff_scaledFirstWindowUpTo_ne_top
     · rw [← brownianPathScaling_windowStart_iff f hc t]
       simpa [s] using hwindow
 
-private noncomputable def bolthausenWindowDuration (n : ℕ) : ℝ≥0 :=
+private noncomputable def shrinkingWindowDuration (n : ℕ) : ℝ≥0 :=
   1 / (n + 1)
 
-private theorem bolthausenWindowDuration_pos (n : ℕ) :
-    0 < bolthausenWindowDuration n := by
-  rw [bolthausenWindowDuration]
+private theorem shrinkingWindowDuration_pos (n : ℕ) :
+    0 < shrinkingWindowDuration n := by
+  rw [shrinkingWindowDuration]
   exact div_pos zero_lt_one (by positivity)
 
-private theorem bolthausenWindowDuration_anti {n m : ℕ} (hnm : n ≤ m) :
-    bolthausenWindowDuration m ≤ bolthausenWindowDuration n := by
+private theorem shrinkingWindowDuration_anti {n m : ℕ} (hnm : n ≤ m) :
+    shrinkingWindowDuration m ≤ shrinkingWindowDuration n := by
   apply one_div_le_one_div_of_le
   · positivity
   · exact_mod_cast Nat.add_le_add_right hnm 1
@@ -148,8 +148,8 @@ private theorem hasNonnegativeWindowBeforeUnit_mono_duration
     intro u
     exact hwindow ⟨u.1, u.property.1, u.property.2.trans hdd'⟩
 
-private theorem exists_bolthausenWindowDuration_le (d : ℝ≥0) (hd : 0 < d) :
-    ∃ n : ℕ, bolthausenWindowDuration n ≤ d := by
+private theorem exists_shrinkingWindowDuration_le (d : ℝ≥0) (hd : 0 < d) :
+    ∃ n : ℕ, shrinkingWindowDuration n ≤ d := by
   have hdR : 0 < (d : ℝ) := by exact_mod_cast hd
   obtain ⟨n, hn⟩ := exists_nat_gt ((d : ℝ)⁻¹)
   have hn' : (d : ℝ)⁻¹ < (n : ℝ) + 1 := by
@@ -159,7 +159,7 @@ private theorem exists_bolthausenWindowDuration_le (d : ℝ≥0) (hd : 0 < d) :
     have h := one_div_lt_one_div_of_lt hpos hn'
     simpa [one_div, inv_inv] using h
   refine ⟨n, ?_⟩
-  have hsmall' : bolthausenWindowDuration n < d := by
+  have hsmall' : shrinkingWindowDuration n < d := by
     change (1 : ℝ≥0) / (n + 1) < d
     exact_mod_cast hsmall
   exact hsmall'.le
@@ -181,7 +181,7 @@ theorem IsBrownianReal.measure_firstNonnegativeWindowStart_ne_top_eq_one
   let path : Ω → C(ℝ≥0, ℝ) := hB.continuousPathMap hBmeasurable
   let A : ℕ → Set Ω := fun n =>
     {ω | HasNonnegativeWindowBeforeUnit (path ω)
-      (bolthausenWindowDuration n)}
+      (shrinkingWindowDuration n)}
   let E : Set C(ℝ≥0, ℝ) :=
     {f | firstNonnegativeWindowStart f ≠ ⊤}
   let EΩ : Set Ω := {ω | path ω ∈ E}
@@ -197,8 +197,8 @@ theorem IsBrownianReal.measure_firstNonnegativeWindowStart_ne_top_eq_one
     exact (WithTop.lt_top_iff_ne_top
       (x := firstNonnegativeWindowStart f)).symm
   have hAmeas (n : ℕ) : MeasurableSet (A n) := by
-    let c := bolthausenWindowDuration n
-    have hc : c ≠ 0 := (bolthausenWindowDuration_pos n).ne'
+    let c := shrinkingWindowDuration n
+    have hc : c ≠ 0 := (shrinkingWindowDuration_pos n).ne'
     have hscaled : Measurable (fun ω =>
         firstNonnegativeWindowStartUpTo
           (brownianPathScaling c (path ω)) (1 / c)) :=
@@ -220,7 +220,7 @@ theorem IsBrownianReal.measure_firstNonnegativeWindowStart_ne_top_eq_one
   have hAmono : Monotone A := by
     intro n m hnm ω hω
     exact hasNonnegativeWindowBeforeUnit_mono_duration (path ω)
-      (bolthausenWindowDuration_anti hnm) hω
+      (shrinkingWindowDuration_anti hnm) hω
   have hUnionAE : ∀ᵐ ω ∂P, ω ∈ ⋃ n, A n := by
     filter_upwards [hB.ae_exists_positiveWindowBeforeUnit,
       hB.continuousPathMap_ae_eq hBmeasurable] with ω hwindow hpathEq
@@ -228,9 +228,9 @@ theorem IsBrownianReal.measure_firstNonnegativeWindowStart_ne_top_eq_one
     have hfeq : f = path ω := by
       ext t
       rw [hf t, hpathEq t]
-    obtain ⟨n, hn⟩ := exists_bolthausenWindowDuration_le d hd
+    obtain ⟨n, hn⟩ := exists_shrinkingWindowDuration_le d hd
     have hshort : HasNonnegativeWindowBeforeUnit (path ω)
-        (bolthausenWindowDuration n) := by
+        (shrinkingWindowDuration n) := by
       rw [← hfeq]
       exact hasNonnegativeWindowBeforeUnit_mono_duration f hn hfd
     exact Set.mem_iUnion.mpr ⟨n, hshort⟩
@@ -244,10 +244,10 @@ theorem IsBrownianReal.measure_firstNonnegativeWindowStart_ne_top_eq_one
     exact hlimit
   have hscaledEvent (n : ℕ) :
       P {ω | firstNonnegativeWindowStart
-          (brownianPathScaling (bolthausenWindowDuration n) (path ω)) ≠ ⊤} =
+          (brownianPathScaling (shrinkingWindowDuration n) (path ω)) ≠ ⊤} =
         P EΩ := by
-    let c := bolthausenWindowDuration n
-    have hc : c ≠ 0 := (bolthausenWindowDuration_pos n).ne'
+    let c := shrinkingWindowDuration n
+    have hc : c ≠ 0 := (shrinkingWindowDuration_pos n).ne'
     have hscalemeas : Measurable (brownianPathScaling c ∘ path) :=
       (measurable_brownianPathScaling c).comp hpath
     have hscalelaw := hB.measure_continuousPathMap_scale_eq
@@ -263,21 +263,21 @@ theorem IsBrownianReal.measure_firstNonnegativeWindowStart_ne_top_eq_one
             rw [Measure.map_apply hpath hE]
             rfl
   have hsubset (n : ℕ) : A n ⊆ {ω | firstNonnegativeWindowStart
-      (brownianPathScaling (bolthausenWindowDuration n) (path ω)) ≠ ⊤} := by
+      (brownianPathScaling (shrinkingWindowDuration n) (path ω)) ≠ ⊤} := by
     intro ω hω
-    have hc : bolthausenWindowDuration n ≠ 0 :=
-      (bolthausenWindowDuration_pos n).ne'
+    have hc : shrinkingWindowDuration n ≠ 0 :=
+      (shrinkingWindowDuration_pos n).ne'
     have hfinite :=
       (hasNonnegativeWindowBeforeUnit_iff_scaledFirstWindowUpTo_ne_top
         (path ω) hc).mp hω
     obtain ⟨t, ht, hwindow⟩ :=
       (firstNonnegativeWindowStartUpTo_ne_top_iff
-        (brownianPathScaling (bolthausenWindowDuration n) (path ω))
-        (1 / bolthausenWindowDuration n)).mp hfinite
+        (brownianPathScaling (shrinkingWindowDuration n) (path ω))
+        (1 / shrinkingWindowDuration n)).mp hfinite
     have hexists : ∃ t : ℝ≥0, IsNonnegativeWindowStart
-        (brownianPathScaling (bolthausenWindowDuration n) (path ω)) t :=
+        (brownianPathScaling (shrinkingWindowDuration n) (path ω)) t :=
       ⟨t, hwindow⟩
-    let f := brownianPathScaling (bolthausenWindowDuration n) (path ω)
+    let f := brownianPathScaling (shrinkingWindowDuration n) (path ω)
     obtain ⟨t₀, ht₀, hmin⟩ := exists_earliestNonnegativeWindowStart f hexists
     have heq : firstNonnegativeWindowStart f = t₀ :=
       (firstNonnegativeWindowStart_eq_coe_iff f t₀).mpr ⟨ht₀, hmin⟩
@@ -289,7 +289,7 @@ theorem IsBrownianReal.measure_firstNonnegativeWindowStart_ne_top_eq_one
     intro n
     calc
       P (A n) ≤ P {ω | firstNonnegativeWindowStart
-          (brownianPathScaling (bolthausenWindowDuration n) (path ω)) ≠ ⊤} :=
+          (brownianPathScaling (shrinkingWindowDuration n) (path ω)) ≠ ⊤} :=
         measure_mono (hsubset n)
       _ = P EΩ := hscaledEvent n
   apply le_antisymm ?_ hprobLower
