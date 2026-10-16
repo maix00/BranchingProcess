@@ -55,12 +55,12 @@ theorem exists_uniform_concreteStaircase_bounds_of_powerBlock
     (huvUpper : uUpper < vUpper)
     (hvUpper : vUpper < 1)
     (hrateMogulskii : (Real.pi ^ 2 / 2) * sigma ^ 2 < narrowedRate)
-    {margin drift endpointFraction blockRate totalRate alpha epsilon eta : ℝ}
+    {margin drift endpointFraction blockRate totalRate epsilon eta : ℝ}
     (heta : 0 < eta) (hetaOne : eta < 1) (hetaEpsilon : eta < epsilon)
     (hmargin : 0 < margin) (hdrift : 0 ≤ drift)
     (hendpoint : 0 ≤ endpointFraction)
     (hblockRate : 0 ≤ blockRate)
-    (halpha : 0 < alpha) (hepsilon : 0 < epsilon)
+    (hepsilon : 0 < epsilon)
     (hdelta : 0 < totalRate - blockRate)
     (hrate : narrowedRate < blockRate * staircaseBinWidth m ^ 2)
     (hinteriorLower : (1 / 3 : ℝ) / staircaseBinWidth m +
@@ -117,14 +117,14 @@ theorem exists_uniform_concreteStaircase_bounds_of_powerBlock
         hν hsigma hrho hrhoSmall m hm huInterior huvInterior hvInterior
         huLower huvLower hvLower hrateMogulskii hwidth hhorizon
         heta hetaOne hetaEpsilon hmargin hdrift hstart
-        hendpoint hblockRate halpha hepsilon hdelta hrate
+        hendpoint hblockRate hepsilon hdelta hrate
         hinteriorLower hinteriorUpper hlowerLower hlowerUpper
     have hupper :=
       eventually_concreteStaircaseUpperEndpointLowerBound_of_powerBlock
         hν hsigma hrho hrhoSmall m hm huInterior huvInterior hvInterior
         huUpper huvUpper hvUpper hrateMogulskii hwidth hhorizon
         heta hetaOne hetaEpsilon hmargin hdrift hstart
-        hendpoint hblockRate halpha hepsilon hdelta hrate
+        hendpoint hblockRate hepsilon hdelta hrate
         hinteriorLower hinteriorUpper hupperLower hupperUpper
     filter_upwards [hlower, hupper] with n hnLower hnUpper
     exact ⟨hnLower, hnUpper⟩

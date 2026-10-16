@@ -19,7 +19,7 @@ The public theorems in this file are:
   for $t_1=\lfloor\Delta^2\rfloor$ and
   $L\ge\lfloor\Delta^{2+\varepsilon}\rfloor$ and
   $r_{0,n}\le 0\le r_{0,n}+\Delta_n$, the two reflected
-  survival power bounds, the block-scale limits in Wang Yiyang's Lemma 3.5, and fixed endpoint and rate margins imply
+  inverse-square survival bounds, the block-scale limits in Wang Yiyang's Lemma 3.5, and fixed endpoint and rate margins imply
   $\mathbb P(E)\ge\exp(-d'L/\Delta^2)$ eventually.
 - `eventually_concreteStaircaseLowerBound_of_powerBlock`: the same bound
   with $\ell_n=\lfloor\Delta_n^{2+\eta}\rfloor$ and
@@ -31,10 +31,10 @@ This is the composition of the entrance argument and the staircase
 product in Wang Yiyang, *Asymptotic speed of the $N$-branching random walk
 with infinite offspring*, Chapter 3, proof of Lemma 3.5. The two
 transition estimates follow from the conditioned Brownian-meander limit
-and the finite survival recurrence in M. Bauer, C. Godrèche,
+and the cyclic rotation cover in M. Bauer, C. Godrèche,
 and J.-M. Luck, *Statistics of persistent events in the binomial random
 walk: Will the drunken sailor hit the sober man?*, Appendix A,
-equation (A.7) (arXiv:cond-mat/9905252).
+immediately after (A.3) (arXiv:cond-mat/9905252).
 -/
 
 @[expose] public section
@@ -46,7 +46,7 @@ open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 
-/-- The survival power inputs for the walk and its reflection follow from
+/-- The inverse-square survival inputs for the walk and its reflection follow from
 the finite-variance hypotheses. -/
 theorem eventually_concreteStaircaseLowerBound_of_centeredFiniteVariance
     {ν : Measure ℝ} [IsProbabilityMeasure ν]
@@ -65,7 +65,7 @@ theorem eventually_concreteStaircaseLowerBound_of_centeredFiniteVariance
     {horizon blockLength : ℕ → ℕ}
     {width base : ℕ → ℝ}
     {margin drift endpointFraction blockRate totalRate
-      alpha epsilon : ℝ}
+      epsilon : ℝ}
     (hwidth : Tendsto width atTop atTop)
     (hlength : ∀ᶠ n : ℕ in atTop, 0 < blockLength n)
     (hremaining : ∀ᶠ n : ℕ in atTop,
@@ -82,7 +82,6 @@ theorem eventually_concreteStaircaseLowerBound_of_centeredFiniteVariance
       -base n ∈ Set.Icc 0 (width n))
     (hendpoint : 0 ≤ endpointFraction)
     (hblockRate : 0 ≤ blockRate)
-    (halpha : 0 < alpha)
     (hepsilon : 0 < epsilon)
     (hdelta : 0 < totalRate - blockRate)
     (hrate : narrowedRate < blockRate * staircaseBinWidth m ^ 2)
@@ -103,7 +102,7 @@ theorem eventually_concreteStaircaseLowerBound_of_centeredFiniteVariance
   have hbudget :=
     exists_eventually_robustTransitionProbability_ge_exp_of_centeredFiniteVariance
       ν hν hsigma
-      hrho hrhoSmall hwidth hdrift halpha hdelta hepsilon
+      hrho hrhoSmall hwidth hdrift hdelta hepsilon
   have hentrance : ∀ᶠ n : ℕ in atTop,
       Real.exp (-(totalRate - blockRate) * (horizon n : ℝ) /
         width n ^ 2) ≤
@@ -140,7 +139,7 @@ theorem eventually_concreteStaircaseLowerBound_of_powerBlock
     (hvFinal : vFinal < 1)
     (hrateMogulskii : (Real.pi ^ 2 / 2) * sigma ^ 2 < narrowedRate)
     {horizon : ℕ → ℕ} {width base : ℕ → ℝ}
-    {margin drift endpointFraction blockRate totalRate alpha epsilon eta : ℝ}
+    {margin drift endpointFraction blockRate totalRate epsilon eta : ℝ}
     (hwidth : Tendsto width atTop atTop)
     (hhorizon : ∀ᶠ n : ℕ in atTop,
       Nat.floor (width n ^ (2 + epsilon)) ≤ horizon n)
@@ -150,7 +149,7 @@ theorem eventually_concreteStaircaseLowerBound_of_powerBlock
       -base n ∈ Set.Icc 0 (width n))
     (hendpoint : 0 ≤ endpointFraction)
     (hblockRate : 0 ≤ blockRate)
-    (halpha : 0 < alpha) (hepsilon : 0 < epsilon)
+    (hepsilon : 0 < epsilon)
     (hdelta : 0 < totalRate - blockRate)
     (hrate : narrowedRate < blockRate * staircaseBinWidth m ^ 2)
     (hinteriorLower : (1 / 3 : ℝ) / staircaseBinWidth m +
@@ -187,7 +186,7 @@ theorem eventually_concreteStaircaseLowerBound_of_powerBlock
     hν hsigma hrho hrhoSmall m hm huInterior huvInterior hvInterior
     huFinal huvFinal hvFinal hrateMogulskii hwidth hlength
     hremaining hhorizon hquadratic hcubic hmargin hdrift hstart
-    hendpoint hblockRate halpha hepsilon hdelta hrate
+    hendpoint hblockRate hepsilon hdelta hrate
     hinteriorLower hinteriorUpper hfinalLower hfinalUpper
 
 end ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
