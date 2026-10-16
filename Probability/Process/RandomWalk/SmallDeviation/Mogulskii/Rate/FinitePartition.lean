@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Rate.Lower
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.GaussianProduct
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Gaussian.ProductParameters
 
 /-!
 # Mogulskii lower rate from a finite Gaussian partition
@@ -251,7 +251,7 @@ theorem exists_lowerRate_horizontalTubeProbability_of_linearReturn
               Real.log (horizontalTubeProbability
                 (iidSequenceLaw ν) a (scale n) n).toReal) := by
   obtain ⟨error, herror, lowerBound, hlowerBound, hlowerBoundOne, hgap⟩ :=
-    exists_error_lowerBound_gap_finset_gaussianProduct
+    Gaussian.exists_error_lowerBound_gap_finset_gaussianProduct
       hconstant hendpointMargin hblocks references hreferences
       (fun y _ => -y / (blocks : ℝ)) hprincipal
   refine ⟨lowerBound, hlowerBound, hlowerBoundOne, ?_⟩
