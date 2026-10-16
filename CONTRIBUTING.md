@@ -30,9 +30,11 @@ Include:
 ## Lean module headers and mathematical references
 
 Each Lean module docstring must begin with a list of its public theorem
-declarations, using their exact Lean names and a short description. Keep private
-proof helpers out of this list. Update it whenever a public declaration is
-added, removed, or renamed.
+declarations, using their exact Lean names and a short description. State the
+mathematical content with a formula whenever the conclusion is quantitative or
+relational; include the essential assumptions in the description. For a
+definition, say what object it defines. Keep private proof helpers out of this
+list. Update it whenever a public declaration is added, removed, or renamed.
 
 When a declaration formalizes or specializes an external result, cite the work
 by author and title, identify the exact theorem/lemma/proposition (and section
