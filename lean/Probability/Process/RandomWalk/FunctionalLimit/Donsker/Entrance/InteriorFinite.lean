@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.FunctionalLimit.Donsker.InteriorCorridor
+public import Probability.Process.RandomWalk.FunctionalLimit.Donsker.Entrance.InteriorCorridor
 public import Probability.Process.RandomWalk.Path.Skorokhod.Corridor.Endpoint.Closed
 
 /-!
@@ -28,9 +28,7 @@ The public definitions and theorems in this file are:
   uniformly over middle starting points.
 
 This is the exact finite-grid identification for the middle starting
-interval in Wang Yiyang, *Asymptotic speed of the $N$-branching random walk
-with infinite offspring*, Appendix A.2, proof of the meander transition
-lemma used in Chapter 3, Lemma 3.5.
+interval in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Appendix A.2, Lemma A.7, used in the proof of Chapter 3, Lemma 3.5.
 -/
 
 @[expose] public section
@@ -182,7 +180,7 @@ theorem mem_finiteInteriorEvent_iff_scaledPath
 
 /-- The middle-start finite event has one positive lower bound for all
 sufficiently large diffusive horizons. The scale and boundary limits are
-the ones used in Wang Yiyang, Appendix A.2. -/
+the ones used in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Appendix A.2, Lemma A.7. -/
 theorem eventually_finiteInteriorProbability_pos_uniform
     {ν : Measure ℝ} [IsProbabilityMeasure ν] {sigma : ℝ}
     (hν : IsCenteredSecondMoment ν (sigma ^ 2)) (hsigma : 0 < sigma)

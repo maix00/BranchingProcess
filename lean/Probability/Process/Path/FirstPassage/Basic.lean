@@ -50,8 +50,7 @@ The public definitions and theorems in this file are:
   to $[0,\infty]$ is Borel measurable.
 
 The first-passage time $\tau_x=\inf\{t:W(t)=-x\}$ appears in the proof of
-Lemma 2.3 of Erwin Bolthausen, *On a functional central limit theorem for
-random walks conditioned to stay positive*, Ann. Probab. 4(3) (1976),
+Lemma 2.3 of Erwin Bolthausen, *On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*, Ann. Probab. 4(3) (1976),
 480--485, DOI 10.1214/aop/1176996098. These deterministic lemmas use the
 closed sublevel set of a continuous path.
 -/
@@ -70,8 +69,7 @@ noncomputable def firstPassageLE {α : Type*} [TopologicalSpace α] [LE α]
 
 /-- The first time a continuous real path falls at or below `a`, with
 `⊤` when the path never does so. This is the pathwise first-passage time
-used in Bolthausen's Lemma 2.3, *On a functional central limit theorem
-for random walks conditioned to stay positive*, DOI 10.1214/aop/1176996098. -/
+used in Bolthausen's Lemma 2.3, *On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*, DOI 10.1214/aop/1176996098. -/
 noncomputable def firstPassageBelow (f : C(ℝ≥0, ℝ)) (a : ℝ) : WithTop ℝ≥0 :=
   firstPassageLE f a
 
@@ -123,8 +121,7 @@ theorem firstPassageBelow_no_earlier (f : C(ℝ≥0, ℝ)) (a : ℝ)
 
 /-- A continuous path starting above `a` meets `a` exactly at its first
 passage below `a`. Thus the sublevel-set definition agrees with the
-level-hitting time in Bolthausen's Lemma 2.3, *On a functional central
-limit theorem for random walks conditioned to stay positive*,
+level-hitting time in Bolthausen's Lemma 2.3, *On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*,
 DOI 10.1214/aop/1176996098. -/
 theorem firstPassageBelow_value_eq (f : C(ℝ≥0, ℝ)) (a : ℝ)
     (h0 : a < f 0) (h : ∃ t : ℝ≥0, f t ≤ a) :

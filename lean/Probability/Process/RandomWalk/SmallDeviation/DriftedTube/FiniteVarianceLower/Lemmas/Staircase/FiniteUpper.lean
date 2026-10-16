@@ -14,13 +14,13 @@ public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVa
 
 The module-visible supporting lemma in this file is:
 
-- `exists_uniform_finiteStaircaseUpperEndpointLowerBound`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.exists_uniform_finiteStaircaseUpperEndpointLowerBound`:
   the entrance estimate, the same uniform horizontal-block product as
   for the lower terminal window, and upper-window inclusion imply
   $\mathbb P(E_{\rm upper})\ge\exp(-d'L/\Delta^2)$.
 
 This is the symmetric endpoint construction in Wang Yiyang,
-*Asymptotic speed of the $N$-branching random walk with infinite offspring*,
+*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
 Chapter 3, proof of Lemma 3.5. The horizontal-block probability estimate
 is reused through `exists_uniform_staircaseProbability_ge_product`.
 -/

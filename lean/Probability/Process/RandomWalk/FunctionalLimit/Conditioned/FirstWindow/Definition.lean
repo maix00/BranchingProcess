@@ -50,8 +50,7 @@ The public definitions and theorems in this file are:
   corresponding conditional probability for $S_1,\ldots,S_n$.
 
 This follows the prefix event $B_j$ in Lemma 3.1 of Erwin
-Bolthausen, *On a functional central limit theorem for random walks
-conditioned to stay positive*, Ann. Probab. 4(3) (1976), 480–485,
+Bolthausen, *On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*, Ann. Probab. 4(3) (1976), 480–485,
 DOI 10.1214/aop/1176996098. The path-transform interpretation is also
 given by Vladislav Vysotsky, *Positivity of integrated random walks*,
 Ann. Inst. H. Poincaré Probab. Stat. 50(1) (2014), Section 3.1,
@@ -68,8 +67,7 @@ namespace ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned
 /-- The complement of Bolthausen's prefix event $B_j$: every earlier
 start $s<j$ has already fallen strictly below $S_s$ by time
 $\min(j,s+n)$. This depends only on the first $j$ increments.
-See Erwin Bolthausen, *On a functional central limit theorem for random
-walks conditioned to stay positive*, Lemma 3.1, p. 482,
+See Erwin Bolthausen, *On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*, Lemma 3.1, p. 482,
 DOI 10.1214/aop/1176996098. -/
 def NoEarlierSurvivingPrefix (n start : ℕ) (increment : ℕ → ℝ) : Prop :=
   ¬ ∃ s : Fin start, ∀ r : ℕ,
@@ -307,8 +305,7 @@ theorem measure_firstWindow_block_union_eq_tsum
 
 /-- The first length-$n$ surviving window exists almost surely. This
 supplies the $T_n<\infty$ step preceding Lemma 3.1 in Erwin Bolthausen,
-*On a functional central limit theorem for random walks conditioned to stay
-positive*, p. 482, DOI 10.1214/aop/1176996098. -/
+*On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*, p. 482, DOI 10.1214/aop/1176996098. -/
 theorem measure_exists_firstSurvivingWindow_eq_one
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (hpositive : 0 < ν (Set.Ioi 0)) (n : ℕ) :
@@ -394,8 +391,7 @@ theorem measure_exists_firstSurvivingWindow_eq_one
 
 /-- The law of the first surviving length-$n$ increment block is the
 law of the initial block conditioned to survive. This is the measurable
-finite-block form of Lemma 3.1 in Erwin Bolthausen, *On a functional
-central limit theorem for random walks conditioned to stay positive*,
+finite-block form of Lemma 3.1 in Erwin Bolthausen, *On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*,
 pp. 482--483, DOI 10.1214/aop/1176996098. -/
 theorem measure_firstWindow_block_union_eq_conditionalBlock
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
@@ -457,8 +453,7 @@ theorem measure_firstWindow_block_union_eq_conditionalBlock
 /-- Bolthausen's Lemma 3.1 in its displayed finite-dimensional form:
 the partial sums of the first surviving length-`n` block have the law
 of the original partial sums conditioned on nonnegative survival.
-See Erwin Bolthausen, *On a functional central limit theorem for random
-walks conditioned to stay positive*, Lemma 3.1, p. 482,
+See Erwin Bolthausen, *On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*, Lemma 3.1, p. 482,
 DOI 10.1214/aop/1176996098. -/
 theorem measure_firstWindow_partialSums_bounded_eq_conditional
     (ν : Measure ℝ) [IsProbabilityMeasure ν]

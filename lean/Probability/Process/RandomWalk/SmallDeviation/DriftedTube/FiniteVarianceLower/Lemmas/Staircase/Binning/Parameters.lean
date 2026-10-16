@@ -21,8 +21,7 @@ The module-visible lemmas in this file are:
   the same parameter is less than one.
 
 These are the parameter checks preceding the application of Lemma 3.1(ii)
-in Wang Yiyang, *Asymptotic speed of the $N$-branching random walk with
-infinite offspring*, Chapter 3, proof of Lemma 3.5.
+in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, proof of Lemma 3.5.
 -/
 
 @[expose] public section

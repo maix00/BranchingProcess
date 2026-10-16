@@ -14,15 +14,15 @@ public import Probability.Process.RandomWalk.SmallDeviation.Entrance.Edge.UpperG
 
 The module-visible supporting lemmas in this file are:
 
-- `prefixPositiveWindow_and_transition_subset_robustMovingTransitionEvent`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.prefixPositiveWindow_and_transition_subset_robustMovingTransitionEvent`:
   the lower-edge fixed prefix and nonnegative meander suffix imply the
   moving corridor with endpoint in $[h_n+2\Delta/5,h_n+3\Delta/5]$.
-- `prefixNegativeWindow_and_reflectedTransition_subset_robustMovingTransitionEvent`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.prefixNegativeWindow_and_reflectedTransition_subset_robustMovingTransitionEvent`:
   the reflected upper-edge construction gives the same terminal interval.
 
 These are the two fixed-prefix constructions of Wang Yiyang,
-*Asymptotic speed of the $N$-branching random walk with infinite offspring*,
-Appendix A.2, proof of the meander transition lemma. Their printed
+*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
+Appendix A.2, Lemma A.7. Their printed
 terminal bounds are strengthened to the displayed robust interval by
 increasing the width threshold, with each prefix length fixed.
 -/

@@ -14,17 +14,16 @@ public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVaria
 
 The proof-specific declarations are:
 
-- `measureReal_noLargeDropEvent_le_sum_jumpPatternProducts_of_uniformBlockBound`
-  and `measureReal_noLargeDropEvent_le_sum_jumpPatternProducts`: the
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.measureReal_noLargeDropEvent_le_sum_jumpPatternProducts_of_uniformBlockBound`
+  and `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.measureReal_noLargeDropEvent_le_sum_jumpPatternProducts`: the
   no-large-drop event probability is bounded by the sum of the fixed-pattern
   block products over admissible patterns.
-- `measureReal_noLargeDropEvent_le_jumpPatternCount_mul_pow_of_sumBound` and
-  `measureReal_noLargeDropEvent_le_jumpPatternCount_mul_pow`: bounding the
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.measureReal_noLargeDropEvent_le_jumpPatternCount_mul_pow_of_sumBound` and
+  `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.measureReal_noLargeDropEvent_le_jumpPatternCount_mul_pow`: bounding the
   number of admissible patterns and each product gives the factor
   $2^q p^{q-K}$.
 
-These steps follow Wang Yiyang, *Asymptotic speed of the $N$-branching random
-walk with infinite offspring*, Chapter 3, Lemma 3.3.
+These steps follow Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.3.
 -/
 
 open Filter MeasureTheory Topology
@@ -103,8 +102,7 @@ lemma measureReal_noLargeDropEvent_le_sum_jumpPatternProducts_of_uniformBlockBou
 /-- The probability of the drawdown event is bounded by the sum of the
 conditional-expectation products over all admissible rounded-maximum jump
 patterns. This is the finite-horizon estimate obtained by the Markov
-iteration in Wang Yiyang, *Asymptotic speed of the $N$-branching random walk
-with infinite offspring*, Chapter 3, proof of Lemma 3.3. -/
+iteration in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, proof of Lemma 3.3. -/
 lemma measureReal_noLargeDropEvent_le_sum_jumpPatternProducts
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     {variance : ℝ}
@@ -138,8 +136,7 @@ lemma measureReal_noLargeDropEvent_le_sum_jumpPatternProducts
 
 /-- Counting the admissible jump patterns and using at least `q-K` nonjump
 blocks gives the exponential-count times one-block-power estimate from the
-proof of Wang Yiyang, *Asymptotic speed of the $N$-branching random walk with
-infinite offspring*, Chapter 3, Lemma 3.3. -/
+proof of Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.3. -/
 lemma measureReal_noLargeDropEvent_le_jumpPatternCount_mul_pow_of_sumBound
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     {v d : ℝ}

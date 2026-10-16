@@ -14,24 +14,24 @@ import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 
 The proof-specific declarations are:
 
-- `jumpPatternProbability_le_exp`: $2^q p^{q-K}\le e^{-dz}$ under the
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.jumpPatternProbability_le_exp`: $2^q p^{q-K}\le e^{-dz}$ under the
   block-count, entropy, and jump-count bounds used in the union estimate.
-- `eventually_drawdownFloorBlockLength_bounds`,
-  `eventually_drawdownCeilingBinWidth_bounds`, and
-  `eventually_drawdownTubeBlockExponent_le`: for large $\Delta$, the chosen
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.eventually_drawdownFloorBlockLength_bounds`,
+  `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.eventually_drawdownCeilingBinWidth_bounds`, and
+  `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.eventually_drawdownTubeBlockExponent_le`: for large $\Delta$, the chosen
   floor block length and ceiling bin width satisfy the size and exponential
   rate inequalities required by the proof.
-- `drawdownBlockCount_scaledBounds` and `drawdownJumpCount_add_one_le`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.drawdownBlockCount_scaledBounds` and `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.drawdownJumpCount_add_one_le`:
   the number of complete blocks and maximum jumps obey the scaled estimates
-  used to apply `jumpPatternProbability_le_exp`.
-- `measureReal_noLargeDropEvent_le_exp_of_blockParameters`: fixed block and
+  used to apply `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.jumpPatternProbability_le_exp`.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.measureReal_noLargeDropEvent_le_exp_of_blockParameters`: fixed block and
   bin parameters give the exponential drawdown bound.
-- `exists_drawdownBlockExponent` and
-  `eventually_drawdownScaleAbsorptions`: choose the auxiliary exponent and
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.exists_drawdownBlockExponent` and
+  `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.eventually_drawdownScaleAbsorptions`: choose the auxiliary exponent and
   absorb the remaining powers of $\Delta$ into the final rate.
 
 These estimates assemble the asymptotic parameter choices in Wang Yiyang,
-*Asymptotic speed of the $N$-branching random walk with infinite offspring*,
+*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
 Chapter 3, Lemma 3.3.
 -/
 
@@ -434,7 +434,7 @@ lemma drawdownJumpCount_add_one_le
     _ ≤ 2 * (1 / c + 2) / eta := hconstant
 
 /-- The final entropy and jump-count estimates in Wang Yiyang,
-*Asymptotic speed of the $N$-branching random walk with infinite offspring*,
+*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
 Chapter 3, proof of Lemma 3.3, turn the finite jump-pattern bound into the
 desired exponential rate. Here `z = L / Δ^2`, `t = Δ^η`, and `K` bounds the
 number of jumps. The one-block rate is assumed in the explicit form

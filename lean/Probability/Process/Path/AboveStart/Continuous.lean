@@ -78,8 +78,7 @@ The public definition and theorems in this file are:
   $T^s(f)<\infty$ implies $T^s(f)=T(f)$.
 
 These are deterministic ingredients of the first-window time $T^s$ in
-Erwin Bolthausen, *On a functional central limit theorem for random walks
-conditioned to stay positive*, Section 2, definition (2.1),
+Erwin Bolthausen, *On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*, Section 2, definition (2.1),
 Ann. Probab. 4(3) (1976), 480--485, DOI 10.1214/aop/1176996098.
 -/
 

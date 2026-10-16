@@ -28,10 +28,11 @@ The public theorems in this file are:
 This is an internal spectral derivation of the constant in A. A. Mogul'skii,
 "Small Deviations in a Space of Trajectories," Theorem 3, Section 4, p. 764 of the 1974 Russian original
 (English translation, *Theory of Probability and Its Applications* 19(4)
-(1975), 726--736, DOI 10.1137/1119081), used in Wang Yiyang, *Asymptotic
-speed of the $N$-branching random walk with infinite offspring*, Chapter 3,
+(1975), 726--736, DOI 10.1137/1119081), used in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3,
 Lemma 3.1(i).
--/
+
+
+The original bibliography is A. A. Mogul'skii, “Small deviations in the sample function space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974), 755--765; English translation, “Small Deviations in a Space of Trajectories,” *Theory of Probability and Its Applications* 19(4) (1975), 726--736, DOI 10.1137/1119081. -/
 
 open Filter MeasureTheory ProbabilityTheory Topology
 open Asymptotics

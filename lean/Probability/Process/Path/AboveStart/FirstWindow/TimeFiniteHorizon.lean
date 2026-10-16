@@ -28,8 +28,7 @@ The public definition and theorems in this file are:
   path space at the restriction of the reference path.
 
 These are the finite-path $T^s$ and restriction $\Pi_s$ in Erwin
-Bolthausen, *On a functional central limit theorem for random walks
-conditioned to stay positive*, Lemma 2.4 and Theorem 3.2,
+Bolthausen, *On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*, Lemma 2.4 and Theorem 3.2,
 Ann. Probab. 4(3) (1976), 480--485, DOI 10.1214/aop/1176996098.
 -/
 

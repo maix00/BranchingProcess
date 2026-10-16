@@ -24,8 +24,7 @@ The public definitions and theorems in this file are:
 
 The time-shift representation of the interval minimum supports the
 fixed-interval Brownian reflection calculations used in Erwin
-Bolthausen, *On a functional central limit theorem for random walks
-conditioned to stay positive*, Ann. Probab. 4(3) (1976), 480--485, DOI 10.1214/aop/1176996098,
+Bolthausen, *On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*, Ann. Probab. 4(3) (1976), 480--485, DOI 10.1214/aop/1176996098,
 page 484.
 -/
 

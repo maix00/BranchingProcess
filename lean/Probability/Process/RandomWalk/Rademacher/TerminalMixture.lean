@@ -20,8 +20,7 @@ The public theorem in this file is:
   \mathbb P(\nu_n=r)\,\mathcal L(Y_r^+)$.
 
 This is the distributional identity in the final paragraph of page 484
-of Erwin Bolthausen, *On a functional central limit theorem for random
-walks conditioned to stay positive*, Ann. Probab. 4(3) (1976),
+of Erwin Bolthausen, *On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*, Ann. Probab. 4(3) (1976),
 480--485, DOI 10.1214/aop/1176996098. The fixed-length identity is
 proved in `ConditionedPathLaw`.
 -/
@@ -36,8 +35,7 @@ open FunctionalLimit.Conditioned
 /-- The terminal path law is the finite mixture of positive-survival
 conditioned path laws, weighted by the terminal length. This is the
 distributional identity on page 484 of Erwin Bolthausen,
-*On a functional central limit theorem for random walks conditioned to
-stay positive*, Ann. Probab. 4(3) (1976), 480--485,
+*On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*, Ann. Probab. 4(3) (1976), 480--485,
 DOI 10.1214/aop/1176996098. -/
 theorem measure_rademacherTerminalAbsolutePath_eq_mixture
     {n : ℕ} (hn : 0 < n)

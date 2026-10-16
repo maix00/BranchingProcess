@@ -21,8 +21,7 @@ The public theorem in this file is:
   projected Brownian path law $P^s$.
 
 This is the finite-path form of Erwin Bolthausen,
-*On a functional central limit theorem for random walks conditioned to
-stay positive*, Lemma 2.4, Ann. Probab. 4(3) (1976), 480--485,
+*On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*, Lemma 2.4, Ann. Probab. 4(3) (1976), 480--485,
 DOI 10.1214/aop/1176996098.
 -/
 

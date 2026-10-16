@@ -14,14 +14,13 @@ public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVa
 
 The module-visible supporting lemma in this file is:
 
-- `exists_concreteStaircaseUpperEndpointLowerBound_of_globalConditions`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.exists_concreteStaircaseUpperEndpointLowerBound_of_globalConditions`:
   global block-width, time, rate, and endpoint inequalities together
   with the entrance bound imply
   $\mathbb P(E_{\rm upper})\ge\exp(-d'L/\Delta^2)$.
 
 This is the common-threshold form of the symmetric construction in
-Wang Yiyang, *Asymptotic speed of the $N$-branching random walk with
-infinite offspring*, Chapter 3, proof of Lemma 3.5.
+Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, proof of Lemma 3.5.
 -/
 
 @[expose] public section

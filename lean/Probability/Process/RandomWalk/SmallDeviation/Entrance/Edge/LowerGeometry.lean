@@ -21,9 +21,8 @@ The public theorem in this file is:
   $\mathcal A_\Delta(x)$ at time $m+N$.
 
 This is the lower-edge event inclusion in Wang Yiyang,
-*Asymptotic speed of the $N$-branching random walk with infinite offspring*,
-Appendix A.2, proof of the meander transition lemma used in Chapter 3,
-Lemma 3.5.
+*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
+Appendix A.2, Lemma A.7, used in the proof of Chapter 3, Lemma 3.5.
 -/
 
 @[expose] public section

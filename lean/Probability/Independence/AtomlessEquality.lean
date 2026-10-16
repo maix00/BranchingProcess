@@ -21,8 +21,7 @@ The public theorem in this file is:
 The proof identifies the joint law with the product law and integrates
 the zero mass of each singleton section of the diagonal. This is the
 probability step for the rational-interval argument in Lemma 2.3 of
-Erwin Bolthausen, *On a functional central limit theorem for random walks
-conditioned to stay positive*, Ann. Probab. 4(3) (1976), 480--485,
+Erwin Bolthausen, *On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*, Ann. Probab. 4(3) (1976), 480--485,
 DOI 10.1214/aop/1176996098.
 -/
 

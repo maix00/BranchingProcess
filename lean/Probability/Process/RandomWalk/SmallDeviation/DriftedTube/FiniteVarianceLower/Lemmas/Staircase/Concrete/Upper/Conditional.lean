@@ -15,18 +15,18 @@ public import Analysis.Asymptotics.Scale.IntermediatePowerBlock
 
 The module-visible supporting lemmas in this file are:
 
-- `eventually_concreteStaircaseUpperEndpointLowerBound_of_centeredFiniteVariance`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.eventually_concreteStaircaseUpperEndpointLowerBound_of_centeredFiniteVariance`:
   for $t_1=\lfloor\Delta_n^2\rfloor$ and
   $L_n\ge\lfloor\Delta_n^{2+\varepsilon}\rfloor$, the finite-variance
   survival bounds for the walk and its reflection, the conditioned meander
   transition estimate, and the staircase scale and margin conditions
   imply $\mathbb P(E_{\rm upper})\ge\exp(-d'L_n/\Delta_n^2)$.
-- `eventually_concreteStaircaseUpperEndpointLowerBound_of_powerBlock`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.eventually_concreteStaircaseUpperEndpointLowerBound_of_powerBlock`:
   the same estimate with $\ell_n=\lfloor\Delta_n^{2+\eta}\rfloor$ and
   $0<\eta<\min(1,\varepsilon)$.
 
 This is the symmetric endpoint part of Wang Yiyang,
-*Asymptotic speed of the $N$-branching random walk with infinite offspring*,
+*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
 Chapter 3, proof of Lemma 3.5. The conditioned limit is stated in Caravenna--Chaumont,
 *Invariance principles for random walks conditioned to stay positive*,
 equation (3.3). The survival input follows from M. Bauer, C. Godrèche, and J.-M. Luck,

@@ -13,16 +13,15 @@ public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVaria
 
 The proof-specific declarations are:
 
-- `measureReal_drawdownJumpPatternTubeIntersection_le_prod_of_uniformBlockBound`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.measureReal_drawdownJumpPatternTubeIntersection_le_prod_of_uniformBlockBound`:
   if every non-jump block has conditional probability at most $p$, then the
   probability of the fixed-pattern tube intersection is at most the product
   of its factors $1$ on jumps and $p$ on non-jumps.
-- `measureReal_drawdownJumpPatternTubeIntersection_le_prod`: the same product
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.measureReal_drawdownJumpPatternTubeIntersection_le_prod`: the same product
   estimate when $p=\exp(w^v-d\ell/w^2)$ is supplied by the conditional
   finite-variance tube bound.
 
-These are the conditional block steps in Wang Yiyang, *Asymptotic speed of
-the $N$-branching random walk with infinite offspring*, Chapter 3, proof of
+These are the conditional block steps in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, proof of
 Lemma 3.3, using its Lemma 3.2.
 -/
 
@@ -164,8 +163,7 @@ lemma measureReal_drawdownJumpPatternTubeIntersection_le_prod_of_uniformBlockBou
     filtration hfiltrationMono hfiltrationAmbient events heventMeasurable
     bounds hboundNonneg hconditionalOnPrefix q
 
-/-- Conditional block estimates from Wang Yiyang, *Asymptotic speed of the
-$N$-branching random walk with infinite offspring*, Chapter 3, Lemma 3.3,
+/-- Conditional block estimates from Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.3,
 give a uniform tube-width threshold for each fixed finite block decomposition. -/
 lemma measureReal_drawdownJumpPatternTubeIntersection_le_prod
     (ν : Measure ℝ) [IsProbabilityMeasure ν]

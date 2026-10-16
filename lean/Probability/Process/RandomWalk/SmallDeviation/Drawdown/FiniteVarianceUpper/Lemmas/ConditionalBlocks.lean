@@ -23,26 +23,26 @@ import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 
 The proof-specific declarations in this module are:
 
-- `drawdownPrefixPath`: $S_j=\sum_{i<j}\xi_i$ through the observed prefix,
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.drawdownPrefixPath`: $S_j=\sum_{i<j}\xi_i$ through the observed prefix,
   extended by zero after its endpoint for the finite running-maximum
   calculation.
-- `drawdownPastDiscretizedMaximum` and
-  `measurable_drawdownPastDiscretizedMaximum`: the rounded past maximum
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.drawdownPastDiscretizedMaximum` and
+  `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.measurable_drawdownPastDiscretizedMaximum`: the rounded past maximum
   $M_j=U-w\lfloor(U-M_j^{\max})/w\rfloor$ is measurable with respect to the
   increments before the current block.
-- `drawdownPastDiscretizedMaximum_eq_runningMaximum`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.drawdownPastDiscretizedMaximum_eq_runningMaximum`:
   evaluating that center on an infinite increment sequence gives
   $U-w\lfloor(U-\max_{i\le j}S_i)/w\rfloor$.
-- `drawdownTubePairEvent`, `drawdownTubeBlockEvent`, and
-  `drawdownTubeBlockEvent_iff_path_in_interval`: the condition
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.drawdownTubePairEvent`, `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.drawdownTubeBlockEvent`, and
+  `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.drawdownTubeBlockEvent_iff_path_in_interval`: the condition
   $S_0+\sum_{i<k}\xi_i\in[a-w,a]$ on a finite block is equivalent to the
   corresponding interval condition on the full path.
-- `measurableSet_drawdownTubePairEvent` and
-  `measurableSet_drawdownTubeBlockEvent`: these finite-block tube events are
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.measurableSet_drawdownTubePairEvent` and
+  `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.measurableSet_drawdownTubeBlockEvent`: these finite-block tube events are
   measurable.
-- `iidSequenceLaw_condExp_drawdownTubePairEvent_le_of_intervalBound`,
-  `iidSequenceLaw_condExp_drawdownTubePairEvent_le_of_finiteVariance`, and
-  `iidSequenceLaw_condExp_drawdownTubeBlockEvent_le_of_finiteVariance`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.iidSequenceLaw_condExp_drawdownTubePairEvent_le_of_intervalBound`,
+  `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.iidSequenceLaw_condExp_drawdownTubePairEvent_le_of_finiteVariance`, and
+  `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.iidSequenceLaw_condExp_drawdownTubeBlockEvent_le_of_finiteVariance`:
   the conditional probability of the next tube block is at most
   $\exp(w^v-d\ell/w^2)$ for all sufficiently large $w$.
 
@@ -52,12 +52,14 @@ $\mathbb E[f(X,Y)\mid X]=\int f(X,y)\,d\nu^{\otimes\ell}(y)$.
 Its upper-section consequence is
 `ProbabilityTheory.iidSequenceLaw_condExp_pairEvent_le_of_sectionProbability`.
 These are the conditional-expectation and Markov-property steps in Wang
-Yiyang, *Asymptotic speed of the $N$-branching random walk with infinite
-offspring*, Chapter 3, proof of Lemma 3.3. The one-block estimate applies
-Wang Yiyang's Lemma 3.2, following Aïdékon and Hu,
-*Average-weight percolation on the complete graph*, Lemma 4.1, and
-Mogul'skii, *Small deviations in a space of trajectories*, Theorem 3,
-Section 4, p. 764 of the 1974 Russian original (DOI 10.1137/1119081).
+Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, proof of Lemma 3.3. The one-block estimate applies
+Chapter 3, Lemma 3.2, following Elie Aïdékon and Yueyun Hu,
+*Average-weight percolation on the complete graph*, Lemma 4.1 (2025,
+arXiv:2512.23266), and Theorem 3, Section 4, p. 764 of A. A. Mogul'skii,
+“Small deviations in the sample function space,” *Teoriya Veroyatnostei i ee
+Primeneniya* 19(4) (1974), 755--765; English translation, “Small Deviations
+in a Space of Trajectories,” *Theory of Probability and Its Applications*
+19(4) (1975), 726--736, DOI 10.1137/1119081.
 -/
 
 open Filter MeasureTheory Topology
@@ -473,8 +475,7 @@ lemma iidSequenceLaw_condExp_drawdownTubePairEvent_le_of_intervalBound
   exact ProbabilityTheory.iidSequenceLaw_condExp_pairEvent_le_of_sectionProbability
     ν start length (drawdownTubePairEvent center width) hE hsections
 
-/-- Applying the translated-interval estimate of Wang Yiyang, *Asymptotic
-speed of the $N$-branching random walk with infinite offspring*, Chapter 3,
+/-- Applying the translated-interval estimate of Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3,
 Lemma 3.2, bounds the conditional probability of each tube block in the
 Lemma 3.3 decomposition. -/
 lemma iidSequenceLaw_condExp_drawdownTubePairEvent_le_of_finiteVariance

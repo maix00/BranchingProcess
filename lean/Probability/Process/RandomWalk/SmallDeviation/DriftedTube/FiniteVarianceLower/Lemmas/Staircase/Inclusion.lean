@@ -23,7 +23,7 @@ The module-visible supporting lemmas in this file are:
 
 This is the deterministic event inclusion at the start and end of the
 reverse Markov product in Wang Yiyang,
-*Asymptotic speed of the $N$-branching random walk with infinite offspring*,
+*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
 Chapter 3, proof of Lemma 3.5.
 -/
 

@@ -14,15 +14,14 @@ public import Probability.Process.Filtration.ConditionalBlocks
 # Proof lemmas for the finite-variance tilted-tube upper bound
 
 These declarations support the equal-length block proof of Wang Yiyang,
-*Asymptotic speed of the $N$-branching random walk with infinite offspring*,
+*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
 Chapter 3, Lemma 3.4. They encode its complete-block estimate, finite-block
 representation, and conditional-expectation step. They are specific to that
 proof and are kept under `FiniteVarianceUpper/Lemmas/`.
 
 - `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.exists_driftedTubeBlockProbability_le_exp_of_finiteVariance`:
   the complete
-  block probability bound obtained from Wang Yiyang, *Asymptotic speed of the
-  $N$-branching random walk with infinite offspring*, Chapter 3, Lemma 3.3.
+  block probability bound obtained from Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.3.
 - `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.driftedTubePairEvent`,
   `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.driftedTubeBlockEvent`,
   and `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.finiteDriftedTubeEvent`:
@@ -50,8 +49,7 @@ namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 open ProbabilityTheory.RandomWalk
 open ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown
 
-/-- The single complete-block estimate in Wang Yiyang, *Asymptotic speed of
-the $N$-branching random walk with infinite offspring*, Chapter 3, proof of
+/-- The single complete-block estimate in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, proof of
 Lemma 3.4. Its inclusion in the no-large-drop event uses Chapter 3, Lemma 3.3
 of the same work with endpoint parameter `η/2`. -/
 lemma exists_driftedTubeBlockProbability_le_exp_of_finiteVariance
@@ -327,8 +325,7 @@ lemma iidSequenceLaw_map_blockCoordinates_driftedTubeEvent_le
 
 /-- A uniform tilted-tube probability bound for every admissible relative
 starting position gives the conditional block bound used in the Markov
-iteration in Wang Yiyang, *Asymptotic speed of the $N$-branching random walk
-with infinite offspring*, Chapter 3, proof of Lemma 3.4. -/
+iteration in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, proof of Lemma 3.4. -/
 lemma iidSequenceLaw_condExp_driftedTubePairEvent_le_of_blockBound
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (start length : ℕ) {lower width drift bound : ℝ}

@@ -12,25 +12,25 @@ public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVa
 
 The public objects and theorems in this file are:
 
-- `staircaseLowerEdge`: $r_{t_{j+1}}$.
-- `staircaseTubeWidth`: $D-c|I_j|/D^2$.
-- `staircaseLowerEdge_eq_endBoundary` and
-  `staircaseLowerEdge_add_staircaseTubeWidth_eq_startUpperBoundary`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.staircaseLowerEdge`: $r_{t_{j+1}}$.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.staircaseTubeWidth`: $D-c|I_j|/D^2$.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.staircaseLowerEdge_eq_endBoundary` and
+  `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.staircaseLowerEdge_add_staircaseTubeWidth_eq_startUpperBoundary`:
   the horizontal sub-tube is exactly $[r_{t_{j+1}},s_{t_j}]$.
-- `staircaseTubeWidth_pos_of_stepCost_lt_cube`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.staircaseTubeWidth_pos_of_stepCost_lt_cube`:
   $c|I_j|<D^3$ gives its positive width.
-- `staircaseTubeWidth_pos_of_schedule_bound`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.staircaseTubeWidth_pos_of_schedule_bound`:
   the common bound in Wang Yiyang's Lemma 3.5 $2c\ell<D^3$ makes every scheduled
   horizontal sub-tube nonempty.
-- `staircaseTubeWidth_le_globalWidth`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.staircaseTubeWidth_le_globalWidth`:
   for $c\ge0$, every horizontal width is at most $D$.
-- `staircaseTubeWidth_ge_half_of_schedule_bound`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.staircaseTubeWidth_ge_half_of_schedule_bound`:
   $4c\ell\le D^3$ makes every horizontal width at least $D/2$.
-- `staircaseTubeWidth_ge_commonLossBound`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.staircaseTubeWidth_ge_commonLossBound`:
   for every actual block, $\Delta(j)\ge D-2c\ell/D^2$.
 
 These are the horizontal sub-tubes $H_j$ in Wang Yiyang,
-*Asymptotic speed of the $N$-branching random walk with infinite offspring*,
+*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
 Chapter 3, proof of Lemma 3.5.
 -/
 

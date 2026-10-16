@@ -12,24 +12,24 @@ public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVa
 
 The public objects and theorems in this file are:
 
-- `staircaseEndpointLowerFraction` and `staircaseEndpointUpperFraction`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.staircaseEndpointLowerFraction` and `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.staircaseEndpointUpperFraction`:
   the fractions $v_1(k),v_2(k)$ in Wang Yiyang's proof, using the next
   central window for nonfinal blocks and $[r_L,r_L+vD]$ for the last block.
-- `staircaseEndpointWindow_interior`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.staircaseEndpointWindow_interior`:
   an interior block's terminal interval equals the next central window.
-- `staircaseEndpointWindow_last`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.staircaseEndpointWindow_last`:
   the last block's terminal interval equals $[r_L,r_L+vD]$.
-- `staircaseUpperEndpointLowerFraction` and
-  `staircaseUpperEndpointUpperFraction`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.staircaseUpperEndpointLowerFraction` and
+  `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.staircaseUpperEndpointUpperFraction`:
   the same ordinary windows, with the final interval adjacent to the
   upper edge of the last horizontal block.
-- `staircaseUpperEndpointWindow_interior` and
-  `staircaseUpperEndpointWindow_last_subset`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.staircaseUpperEndpointWindow_interior` and
+  `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.staircaseUpperEndpointWindow_last_subset`:
   the ordinary windows still match the following central window, and
   the last window lies in both $[r_L,s_L]$ and $[s_L-vD,s_L]$.
 
 These are the endpoint definitions and equalities in Wang Yiyang,
-*Asymptotic speed of the $N$-branching random walk with infinite offspring*,
+*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
 Chapter 3, proof of Lemma 3.5.
 -/
 

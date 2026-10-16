@@ -8,7 +8,7 @@ module
 
 public import Probability.Process.RandomWalk.Kernel.Killed
 public import Probability.Process.RandomWalk.Kernel.Killed.Blocking
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Gaussian.BlockEndpoint
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Blocks.BlockEndpoint
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.BlockScale
 
 /-!

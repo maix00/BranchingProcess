@@ -24,8 +24,7 @@ The proof applies the Kolmogorov–Chentsov theorem
 `ProbabilityTheory.exists_modification_holder'` of Rémy Degenne et al.,
 *Formalization of Brownian motion in Lean*, arXiv:2511.20118, to the
 fourth-moment increment bound. It provides the continuous Brownian motion
-used in Wang Yiyang, *Asymptotic speed of the $N$-branching random walk with
-infinite offspring*, Chapter 3, Lemma 3.5.
+used in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.5.
 -/
 
 @[expose] public section

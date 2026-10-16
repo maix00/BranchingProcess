@@ -12,15 +12,15 @@ public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVa
 
 The module-visible supporting lemmas in this file are:
 
-- `staircaseFirstBlockLength_eq`: if $t_1+2\ell\le L$, the first
+- `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.staircaseFirstBlockLength_eq`: if $t_1+2\ell\le L$, the first
   horizontal block has length $\ell$.
-- `staircaseFirstInteriorWindow`: if $10c\ell<\Delta^3$, the robust
+- `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.staircaseFirstInteriorWindow`: if $10c\ell<\Delta^3$, the robust
   entrance endpoint interval
   $[r_{t_1}+2\Delta/5,r_{t_1}+3\Delta/5]$ lies inside the central
   window of the first horizontal sub-tube.
 
 This is the first-window geometry in Wang Yiyang,
-*Asymptotic speed of the $N$-branching random walk with infinite offspring*,
+*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
 Chapter 3, proof of Lemma 3.5. Appendix A.2, Lemma A.7 gives the
 probability lower bound for the displayed entrance interval.
 -/

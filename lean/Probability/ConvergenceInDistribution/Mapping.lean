@@ -24,8 +24,7 @@ The public theorems in this file are:
 
 The proof uses the open-set form of the Portmanteau theorem. The
 random-variable form is used for the first-window path shift in
-Erwin Bolthausen, *On a functional central limit theorem for random
-walks conditioned to stay positive*, Theorem 3.2, Ann. Probab. 4(3)
+Erwin Bolthausen, *On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*, Theorem 3.2, Ann. Probab. 4(3)
 (1976), 480--485, DOI 10.1214/aop/1176996098.
 -/
 

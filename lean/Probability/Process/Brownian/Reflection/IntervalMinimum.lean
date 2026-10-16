@@ -24,8 +24,7 @@ The proof combines independence of the path before and after a fixed
 time with the atomless running-minimum law from the Brownian reflection
 principle. This is the fixed-interval regularity needed to compare the
 last sign change and last zero in the sketch following Theorem 3.2 of
-Erwin Bolthausen, *On a functional central limit theorem for random
-walks conditioned to stay positive*, Ann. Probab. 4(3) (1976),
+Erwin Bolthausen, *On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*, Ann. Probab. 4(3) (1976),
 480--485, DOI 10.1214/aop/1176996098, page 484.
 -/
 

@@ -12,17 +12,18 @@ public import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.Lemm
 
 The module-visible supporting lemmas in this file are:
 
-- `measure_robustMovingTransitionEvent_ge_positivePrefix_mul_transition`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.measure_robustMovingTransitionEvent_ge_positivePrefix_mul_transition`:
   from $x\in[0,\Delta/12]$, the entrance probability is at least
   $\nu([a,b])^m\mathbb P(D_{N,\Delta})$.
-- `measure_robustMovingTransitionEvent_ge_negativePrefix_mul_reflectedTransition`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.measure_robustMovingTransitionEvent_ge_negativePrefix_mul_reflectedTransition`:
   from $x\in[11\Delta/12,\Delta]$, the reflected increment law gives the
   analogous product lower bound.
 
-These are the independent-prefix products in Wang Yiyang,
-*Asymptotic speed of the $N$-branching random walk with infinite offspring*,
-Appendix A.2, proof of the meander transition lemma, with the robust
-terminal interval needed by the first staircase block.
+These are the independent-prefix products used in the proof of Wang
+Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite
+Offspring*, Chapter 3, Lemma 3.5, using the transition estimate in Appendix
+A.2, Lemma A.7 and the robust terminal interval required by the first
+staircase block.
 -/
 
 @[expose] public section

@@ -27,8 +27,7 @@ The public theorems in this file are:
   the complementary finite-window probabilities also converge.
 
 The second statement is equation (3.5) in Erwin Bolthausen,
-*On a functional central limit theorem for random walks conditioned to
-stay positive*, Theorem 3.2, Ann. Probab. 4(3) (1976), 480--485,
+*On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*, Theorem 3.2, Ann. Probab. 4(3) (1976), 480--485,
 DOI 10.1214/aop/1176996098. It uses Donsker convergence and the
 almost-sure continuity in Lemma 2.4.
 -/

@@ -21,8 +21,7 @@ The public theorem in this file is:
   at most $\exp(-\delta L/\Delta^2)$.
 
 This is the polynomial-to-exponential comparison following the entrance
-construction in Wang Yiyang, *Asymptotic speed of the $N$-branching random
-walk with infinite offspring*, Chapter 3, proof of Lemma 3.5. The
+construction in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, proof of Lemma 3.5. The
 `Robust` support modules contain the three-region entrance construction.
 -/
 
@@ -34,8 +33,7 @@ open scoped ENNReal NNReal Topology
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Entrance
 
 /-- The three entrance regimes yield the inverse-square bound for the
-terminal window of Wang Yiyang, *Asymptotic speed of the $N$-branching
-random walk with infinite offspring*, Appendix A.2, Lemma A.7. -/
+terminal window of Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Appendix A.2, Lemma A.7. -/
 private lemma exists_eventually_robustTransitionProbability_ge_inverse_square_of_centeredFiniteVariance
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     {sigma : ℝ} (hν : IsCenteredSecondMoment ν (sigma ^ 2))

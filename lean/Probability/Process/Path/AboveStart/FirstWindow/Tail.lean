@@ -19,8 +19,7 @@ The public theorem in this file is:
   almost surely, the probability of $T^{n+1}<\infty$ tends to one.
 
 This is the monotone-exhaustion step used to choose the cutoff $c$ in
-Erwin Bolthausen, *On a functional central limit theorem for random
-walks conditioned to stay positive*, Theorem 3.2, equation (3.5),
+Erwin Bolthausen, *On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*, Theorem 3.2, equation (3.5),
 Ann. Probab. 4(3) (1976), 480--485, DOI 10.1214/aop/1176996098.
 -/
 

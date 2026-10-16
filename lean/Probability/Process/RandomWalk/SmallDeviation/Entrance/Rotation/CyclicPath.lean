@@ -21,57 +21,57 @@ public import Topology.Cadlag.Skorokhod.Path.Linear
 
 The public definitions and theorem families are:
 
-- `finitePrefixExtension`, `finitePrefixVector`,
-  `finiteNormalizedStepPath`, `finiteNormalizedStepKnots`, and
-  `normalizedGridPoint`: finite increment vectors, their $n+1$
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.finitePrefixExtension`, `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.finitePrefixVector`,
+  `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.finiteNormalizedStepPath`, `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.finiteNormalizedStepKnots`, and
+  `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.normalizedGridPoint`: finite increment vectors, their $n+1$
   partial-sum knots, and the associated normalized step path.
-- `measurable_finitePrefixVector`, `measurable_finitePrefixExtension`, and
-  `iidSequenceLaw_measure_finitePrefix_preimage_eq_pi`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.measurable_finitePrefixVector`, `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.measurable_finitePrefixExtension`, and
+  `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.iidSequenceLaw_measure_finitePrefix_preimage_eq_pi`:
   finite-prefix maps are measurable and have the finite IID product law.
-- `displacement_finitePrefixExtension`,
-  `finiteNormalizedStepPath_apply_grid`,
-  `finiteNormalizedStepPath_prefix_eq`, and
-  `scalePath_finiteNormalizedStepPath_eq`: the exact path and scaling
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.displacement_finitePrefixExtension`,
+  `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.finiteNormalizedStepPath_apply_grid`,
+  `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.finiteNormalizedStepPath_prefix_eq`, and
+  `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.scalePath_finiteNormalizedStepPath_eq`: the exact path and scaling
   identities for those constructions.
-- `finiteLinearPathBallEvent`,
-  `finiteDriftRemovedOffsetCorridorEvent`, and
-  `movingOffsetCorridorPath`: the line-ball, static corridor, and
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.finiteLinearPathBallEvent`,
+  `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.finiteDriftRemovedOffsetCorridorEvent`, and
+  `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.movingOffsetCorridorPath`: the line-ball, static corridor, and
   moving corridor events; the adjacent measurability and finite-prefix
   law theorems identify their probabilities under IID increments.
-- `measurableSet_finiteDriftRemovedOffsetCorridorEvent`,
-  `offsetCorridorPath_removeLinearDrift_iff_moving`,
-  `measurableSet_finiteLinearPathBallEvent`, and
-  `iidSequenceLaw_measure_linearPathBall_eq_pi`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.measurableSet_finiteDriftRemovedOffsetCorridorEvent`,
+  `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.offsetCorridorPath_removeLinearDrift_iff_moving`,
+  `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.measurableSet_finiteLinearPathBallEvent`, and
+  `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.iidSequenceLaw_measure_linearPathBall_eq_pi`:
   the corridor and line-ball events are measurable, drift removal identifies
   the moving corridor, and their infinite-IID and finite-product probabilities
   coincide.
-- `finiteCoordinateReindex_apply`,
-  `IsCyclicPartialSumReindex`,
-  `cyclicCoordinateReindex_isCyclicPartialSumReindex`, and
-  `cyclicPartialSum_smul`: cyclic reindexing of $n$ coordinates and
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.finiteCoordinateReindex_apply`,
+  `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.IsCyclicPartialSumReindex`,
+  `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.cyclicCoordinateReindex_isCyclicPartialSumReindex`, and
+  `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.cyclicPartialSum_smul`: cyclic reindexing of $n$ coordinates and
   its partial-sum identities.
-- `finiteLinearBall_subset_cyclicOffsetCover_allOffsets` and its
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.finiteLinearBall_subset_cyclicOffsetCover_allOffsets` and its
   modular and normalization-ratio versions: the line-ball event is
   covered by $n$ cyclic images of the offset corridor.
-- `finiteLinearPathBall_knots_in_tube`,
-  `finiteLinearBall_subset_cyclicOffsetCover_allOffsets_modular`, and
-  `finiteLinearBall_subset_cyclicOffsetCover_allOffsets_of_normalizationRatio`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.finiteLinearPathBall_knots_in_tube`,
+  `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.finiteLinearBall_subset_cyclicOffsetCover_allOffsets_modular`, and
+  `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.finiteLinearBall_subset_cyclicOffsetCover_allOffsets_of_normalizationRatio`:
   a path ball controls every knot and has the same cyclic cover after the
   scale ratio is changed.
-- `measure_pi_offsetCorridor_ge_div_of_linearTube_allOffsets`
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.measure_pi_offsetCorridor_ge_div_of_linearTube_allOffsets`
   and its modular and normalization-ratio versions: the corresponding
   corridor probability is at least the line-ball probability divided
   by $n$.
-- `measure_pi_offsetCorridor_ge_div_of_linearTube_allOffsets_modular` and
-  `measure_pi_offsetCorridor_ge_div_of_linearTube_allOffsets_of_normalizationRatio`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.measure_pi_offsetCorridor_ge_div_of_linearTube_allOffsets_modular` and
+  `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.measure_pi_offsetCorridor_ge_div_of_linearTube_allOffsets_of_normalizationRatio`:
   the finite-product lower bound retains its $1/n$ factor under those
   changes of scale.
-- `finiteLinearBall_subset_cyclicOffsetCover_lowerEdge` and
-  `measure_pi_offsetCorridor_ge_div_of_linearTube`, together with
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.finiteLinearBall_subset_cyclicOffsetCover_lowerEdge` and
+  `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.measure_pi_offsetCorridor_ge_div_of_linearTube`, together with
   their modular versions: the same cover and probability bound for
   a boundary starting position.
-- `finiteLinearBall_subset_cyclicOffsetCover_lowerEdge_modular` and
-  `measure_pi_offsetCorridor_ge_div_of_linearTube_modular`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.finiteLinearBall_subset_cyclicOffsetCover_lowerEdge_modular` and
+  `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.measure_pi_offsetCorridor_ge_div_of_linearTube_modular`:
   the corresponding boundary-position statements after modular rotation.
 
 This file connects a vector of `n` increments to its `n + 1` partial-sum

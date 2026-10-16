@@ -16,8 +16,7 @@ The public definition in this file is:
 - `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.driftedTubeEndpointWindowEvent`:
   the linearly moving tube with a terminal window measured from its lower edge.
 
-This event is used in Wang Yiyang, *Asymptotic speed of the $N$-branching random
-walk with infinite offspring*, Chapter 3, Lemma 3.5.
+This event is used in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.5.
 -/
 
 @[expose] public section

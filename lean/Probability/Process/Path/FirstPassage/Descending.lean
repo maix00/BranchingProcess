@@ -22,8 +22,7 @@ The public definitions and theorems in this file are:
 
 For a Brownian path this is the descending hitting-time process
 $\{T_{-x}:x\ge0\}$ used in Lemma 2.3, equation (2.2), of Erwin
-Bolthausen, *On a functional central limit theorem for random walks
-conditioned to stay positive*, Ann. Probab. 4(3) (1976), 480--485,
+Bolthausen, *On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*, Ann. Probab. 4(3) (1976), 480--485,
 DOI 10.1214/aop/1176996098. Bolthausen cites the Lévy decomposition
 in Section 1.7 of K. Itô and H. P. McKean, *Diffusion Processes and
 Their Sample Paths*, Springer, 1965, for its jump lengths.

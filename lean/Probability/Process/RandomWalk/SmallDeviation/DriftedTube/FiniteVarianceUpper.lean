@@ -21,8 +21,7 @@ The public theorem in this file is:
   \exp(\Delta^v-dL/\Delta^2)$ uniformly in $L\ge0$ and
   $-\Delta\le r_0\le0$.
 
-This formalizes Wang Yiyang, *Asymptotic speed of the $N$-branching random
-walk with infinite offspring*, Chapter 3, Lemma 3.4. The proof follows the
+This formalizes Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.4. The proof follows the
 equal-length block decomposition, conditional-expectation iteration, and
 remainder estimate in that lemma. The proof-only block inputs are in
 `FiniteVarianceUpper/Lemmas/Blocks.lean`.
@@ -60,8 +59,7 @@ private theorem driftedTubeBlockPosition_eq
       (AdditivePath.displacement_add_eq_add_blockSum start (k : ℕ)
         increment).symm
 
-/-- The full small-drift upper estimate in Wang Yiyang, *Asymptotic speed of
-the $N$-branching random walk with infinite offspring*, Chapter 3, Lemma 3.4.
+/-- The full small-drift upper estimate in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.4.
 The proof follows its equal-length block decomposition,
 conditional-expectation iteration, and final-remainder estimate. -/
 theorem exists_driftedTubeProbability_le_exp_of_finiteVariance

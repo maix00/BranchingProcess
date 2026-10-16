@@ -26,8 +26,7 @@ The public theorems in this file are:
   finite-dimensional laws and independent increments.
 
 The converse identifies the Gaussian process used in the proof of corridor
-positivity in Wang Yiyang, *Asymptotic speed of the $N$-branching random walk
-with infinite offspring*, Chapter 3, Lemma 3.5.
+positivity in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.5.
 -/
 
 open MeasureTheory

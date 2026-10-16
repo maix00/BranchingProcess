@@ -12,8 +12,7 @@ import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUppe
 
 This file supplies the quantitative drawdown sequence needed by the
 first-stage corridor pair estimate. It uses the increment-law form of Wang
-Yiyang, *Asymptotic speed of the N-branching random walk with infinite
-offspring*, Chapter 3, Lemma 3.3, with short-prefix terms bounded by one.
+Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.3, with short-prefix terms bounded by one.
 -/
 
 open MeasureTheory

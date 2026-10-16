@@ -26,8 +26,7 @@ The public objects and theorems in this file are:
   measurable function of a preceding block.
 
 The endpoint-window event is the reusable finite-path version of the
-horizontal sub-tubes in Wang Yiyang, *Asymptotic speed of the $N$-branching
-random walk with infinite offspring*, Chapter 3, proof of Lemma 3.5.
+horizontal sub-tubes in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, proof of Lemma 3.5.
 -/
 
 @[expose] public section

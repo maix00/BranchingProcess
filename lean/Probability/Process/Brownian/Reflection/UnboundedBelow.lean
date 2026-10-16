@@ -20,8 +20,7 @@ The public theorem in this file is:
 The proof combines the reflection-principle consequence
 $\mathbb P(\min_{[0,1]}B<0)=1$ with Brownian scaling. This supplies the
 eventual-descent path property used with the Lévy decomposition in
-Lemma 2.3, equation (2.2), of Erwin Bolthausen, *On a functional central
-limit theorem for random walks conditioned to stay positive*,
+Lemma 2.3, equation (2.2), of Erwin Bolthausen, *On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*,
 Ann. Probab. 4(3) (1976), 480--485, DOI 10.1214/aop/1176996098.
 -/
 

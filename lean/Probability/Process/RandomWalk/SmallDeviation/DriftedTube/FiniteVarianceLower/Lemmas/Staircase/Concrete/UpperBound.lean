@@ -15,14 +15,14 @@ public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVa
 
 The module-visible supporting lemma in this file is:
 
-- `exists_concreteStaircaseUpperEndpointLowerBound`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.exists_concreteStaircaseUpperEndpointLowerBound`:
   the same block schedule and interior windows as in the first part of
   Wang Yiyang's Lemma 3.5, with the last endpoint window placed near
   $s_L$, give $\mathbb P(E_{\rm upper})\ge\exp(-d'L/\Delta^2)$ once
   the explicit block inequalities and entrance bound hold.
 
 This is the symmetric construction in Wang Yiyang,
-*Asymptotic speed of the $N$-branching random walk with infinite offspring*,
+*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
 Chapter 3, proof of Lemma 3.5. The Markov multiplication is the same
 `exists_uniform_staircaseProbability_ge_product` theorem as for the
 lower endpoint.

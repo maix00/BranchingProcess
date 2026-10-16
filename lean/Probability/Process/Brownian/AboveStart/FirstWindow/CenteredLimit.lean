@@ -21,8 +21,7 @@ The public theorem in this file is:
   to $[0,1]$, converge to the law of the path shifted at $T$.
 
 This is the Brownian cutoff removal in equations (3.6)--(3.8) of
-Erwin Bolthausen, *On a functional central limit theorem for random walks
-conditioned to stay positive*, Theorem 3.2, Ann. Probab. 4(3) (1976),
+Erwin Bolthausen, *On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*, Theorem 3.2, Ann. Probab. 4(3) (1976),
 480--485, DOI 10.1214/aop/1176996098. Almost surely $T<\infty$,
 and every sufficiently large cutoff gives the same shifted path.
 -/

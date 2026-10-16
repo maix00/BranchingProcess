@@ -13,18 +13,18 @@ public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVa
 
 The module-visible supporting lemma in this file is:
 
-- `staircaseBlockConditions_of_global`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.staircaseBlockConditions_of_global`:
   if $10c\ell<\Delta^3$, the four global width, time, and rate
   inequalities together with four ordinary/final endpoint inequalities
   imply all six requirements for every staircase block. The endpoint
   interval for the final block is allowed to differ from that for the
   ordinary blocks.
-- `staircaseUpperEndpointBlockConditions_of_global`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.staircaseUpperEndpointBlockConditions_of_global`:
   the same numeric conditions and ordinary-block margins, with the
   final endpoint margin placed near the upper tube boundary.
 
 This is the common-threshold step in Wang Yiyang,
-*Asymptotic speed of the $N$-branching random walk with infinite offspring*,
+*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
 Chapter 3, proof of Lemma 3.5.
 -/
 

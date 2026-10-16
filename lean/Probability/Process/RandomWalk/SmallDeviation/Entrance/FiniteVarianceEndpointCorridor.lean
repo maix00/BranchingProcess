@@ -18,10 +18,10 @@ public import Probability.Distributions.Gaussian.Interval
 
 The public definitions and theorem are:
 
-- `finiteVarianceEntranceLength` and `finiteVarianceBridgeLength`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.finiteVarianceEntranceLength` and `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.finiteVarianceBridgeLength`:
   $\lfloor\Delta_n^2\rfloor$ and the remaining horizon
   $n-\lfloor\Delta_n^2\rfloor$.
-- `exists_eventually_iidSequenceLaw_endpointCorridor_lowerBound_of_centeredSecondMoment`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.exists_eventually_iidSequenceLaw_endpointCorridor_lowerBound_of_centeredSecondMoment`:
   for a centered increment law with positive finite variance, the
   entrance probability times the stable endpoint-bridge probability
   bounds below the chance of remaining in the enlarged corridor and

@@ -13,7 +13,7 @@ public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVa
 
 The module-visible supporting lemma in this file is:
 
-- `eventually_concreteStaircaseLowerBound_of_robustEntrance`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.eventually_concreteStaircaseLowerBound_of_robustEntrance`:
   along widths $\Delta_n\to\infty$ and arbitrary starting boundaries
   $r_{0,n}$, with
   $\Delta_n^2/\ell_n\to0$ and $\ell_n/\Delta_n^3\to0$,
@@ -22,9 +22,9 @@ The module-visible supporting lemma in this file is:
   $\mathbb P(E_n)\ge\exp(-d'L_n/\Delta_n^2)$.
 
 This is the staircase multiplication in Wang Yiyang,
-*Asymptotic speed of the $N$-branching random walk with infinite offspring*,
+*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
 Chapter 3, proof of Lemma 3.5. The entrance probability is the one
-established in Appendix A.2 by the Brownian-meander argument.
+established in Appendix A.2, Lemma A.7, by the Brownian-meander argument.
 -/
 
 @[expose] public section
@@ -37,7 +37,8 @@ open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 
 /-- The exact concrete staircase bound holds eventually once the robust
-entrance estimate from Appendix A.2 is supplied. -/
+entrance estimate from Wang Yiyang, *Asymptotic Speed of the N-Branching
+Random Walk with Infinite Offspring*, Appendix A.2, Lemma A.7, is supplied. -/
 lemma eventually_concreteStaircaseLowerBound_of_robustEntrance
     {ν : Measure ℝ} [IsProbabilityMeasure ν]
     {sigma narrowedRate uInterior vInterior uFinal vFinal : ℝ}

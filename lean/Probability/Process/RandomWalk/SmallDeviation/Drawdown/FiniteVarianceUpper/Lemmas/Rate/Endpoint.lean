@@ -12,7 +12,7 @@ public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVaria
 # Endpoint and horizon powers for the drawdown estimate
 
 The proof-specific declaration is
-`exists_eventually_measureReal_noLargeDropEvent_le_exp_of_endpointAndHorizonPowers`:
+`ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.exists_eventually_measureReal_noLargeDropEvent_le_exp_of_endpointAndHorizonPowers`:
 for positive endpoint and horizon powers, centered increments with finite
 positive variance, and $0<d<\pi^2\sigma^2/2$, sufficiently large widths and
 horizons $L\ge\Delta^{2+\text{horizonPower}}$ satisfy
@@ -22,8 +22,7 @@ horizons $L\ge\Delta^{2+\text{horizonPower}}$ satisfy
 \]
 
 This assembles the rounded-maximum decomposition, fixed-pattern block
-probabilities, and asymptotic block bounds in Wang Yiyang, *Asymptotic speed
-of the $N$-branching random walk with infinite offspring*, Chapter 3,
+probabilities, and asymptotic block bounds in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3,
 Lemma 3.3.
 -/
 

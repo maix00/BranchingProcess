@@ -15,10 +15,10 @@ public import Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.Endpo
 The proof-specific definitions in this file are:
 
 - `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.staircaseBinLower`,
-  `staircaseBinUpper`, and `staircaseBinWidth`: spatial-bin edges and the
+  `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.staircaseBinUpper`, and `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.staircaseBinWidth`: spatial-bin edges and the
   common narrowed width factor.
 - `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.staircaseBinTubeParameter`,
-  `staircaseBinEndpointLowerFraction`, and `staircaseBinEndpointUpperFraction`:
+  `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.staircaseBinEndpointLowerFraction`, and `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.staircaseBinEndpointUpperFraction`:
   horizontal-tube parameters of the common event for one bin.
 
 The module-visible lemmas in this file are:
@@ -34,8 +34,7 @@ The module-visible lemmas in this file are:
 - `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.exists_staircaseBin_commonEvent_subset_centerWindow`:
   the same selection for every point in the middle endpoint window.
 
-These are the spatial bins in Wang Yiyang, *Asymptotic speed of the
-$N$-branching random walk with infinite offspring*, Chapter 3, proof of
+These are the spatial bins in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, proof of
 Lemma 3.5. The horizontal-tube rate used with these bins is given in
 Chapter 3, Lemma 3.1(ii) of the same work.
 -/
@@ -52,12 +51,12 @@ open ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube
 open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete
 
 /-- The lower endpoint of the l-th spatial bin in the staircase
-construction of Wang Yiyang, *Asymptotic speed of the $N$-branching random walk with infinite offspring*, Chapter 3, proof of Lemma 3.5. -/
+construction of Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, proof of Lemma 3.5. -/
 noncomputable def staircaseBinLower (m l : ℕ) : ℝ :=
   -(2 : ℝ) / 3 + (l : ℝ) / (3 * (m : ℝ))
 
 /-- The upper endpoint of the l-th spatial bin in the staircase
-construction of Wang Yiyang, *Asymptotic speed of the $N$-branching random walk with infinite offspring*, Chapter 3, proof of Lemma 3.5. -/
+construction of Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, proof of Lemma 3.5. -/
 noncomputable def staircaseBinUpper (m l : ℕ) : ℝ :=
   staircaseBinLower m l + 1 / (3 * (m : ℝ))
 
@@ -80,8 +79,7 @@ narrowed staircase tube. -/
 noncomputable def staircaseBinEndpointUpperFraction (m : ℕ) (v₂ : ℝ) : ℝ :=
   (v₂ - 1 / (3 * (m : ℝ))) / staircaseBinWidth m
 
-/-- The bins in the staircase construction of Wang Yiyang, *Asymptotic speed
-of the $N$-branching random walk with infinite offspring*, Chapter 3, proof
+/-- The bins in the staircase construction of Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, proof
 of Lemma 3.5, cover the full range of normalized relative starting
 positions used there: for every $r/\Delta\in[-2/3,-1/3]$, there is
 $0\le l<m$ with $b_l\le r/\Delta\le b_{l+1}$. -/
@@ -163,8 +161,7 @@ lemma exists_staircaseBin_covering_relativeOffset
     linarith [hscaleDivUpper, hsuccessor]
 
 /-- The central window $[r+D/3,r+2D/3]$ makes the relative lower edge
-$r-y$ lie in $[-2D/3,-D/3]$, as used for each block in Wang Yiyang, *Asymptotic speed of the
-$N$-branching random walk with infinite offspring*, Chapter 3, proof of
+$r-y$ lie in $[-2D/3,-D/3]$, as used for each block in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, proof of
 Lemma 3.5. -/
 lemma relativeLowerEdge_mem_staircaseRange_of_centerWindow
     {width lowerEdge position : ℝ} (hwidth : 0 < width)
@@ -193,8 +190,7 @@ lemma relativeLowerEdge_mem_staircaseRange_of_centerWindow
 /-- For a starting offset in one spatial bin, the common narrowed-tube
 event is contained in the desired horizontal tube and terminal window.
 This is the deterministic bin-inclusion step in the staircase proof of
-Wang Yiyang, *Asymptotic speed of the $N$-branching random walk with infinite
-offspring*, Chapter 3, Lemma 3.5. -/
+Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.5. -/
 lemma horizontalTubeEndpointWindowEvent_subset_relativeHorizontalTubeEndpointWindowEvent
     {m l horizon : ℕ} {width v₁ v₂ lower : ℝ}
     (hm : 2 ≤ m)
@@ -369,8 +365,7 @@ lemma horizontalTubeEndpointWindowEvent_subset_relativeHorizontalTubeEndpointWin
 /-- For every positive tube width and every relative lower edge in
 $[-2/3,-1/3]$, one of the staircase bins supplies a common narrowed-tube
 event contained in the target tube and endpoint window. This packages the
-bin selection and event inclusion used in Wang Yiyang, *Asymptotic speed of the $N$-branching random walk with
-infinite offspring*, Chapter 3, proof of Lemma 3.5. -/
+bin selection and event inclusion used in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, proof of Lemma 3.5. -/
 lemma exists_staircaseBin_commonEvent_subset_relativeTube
     {m horizon : ℕ} {width v₁ v₂ lower : ℝ}
     (hm : 2 ≤ m) (hwidth : 0 < width)
@@ -402,8 +397,7 @@ lemma exists_staircaseBin_commonEvent_subset_relativeTube
 /-- At every point of the central window used in the staircase proof, a
 common narrowed-tube event is contained in the corresponding target event.
 This combines the central-window geometry with the bin selection in Wang
-Yiyang, *Asymptotic speed of the $N$-branching random walk with infinite
-offspring*, Chapter 3, proof of Lemma 3.5. -/
+Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, proof of Lemma 3.5. -/
 lemma exists_staircaseBin_commonEvent_subset_centerWindow
     {m horizon : ℕ} {width v₁ v₂ lowerEdge position : ℝ}
     (hm : 2 ≤ m) (hwidth : 0 < width)

@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.Path.Block.Law
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Gaussian.BlockEndpoint
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Blocks.BlockEndpoint
 public import Probability.ConvergenceInDistribution.Independence
 public import Probability.ConvergenceInDistribution.Portmanteau
 
@@ -35,7 +35,9 @@ These are finite-dimensional inputs for the block argument of Mogul'skii,
 *Small Deviations in a Space of Trajectories*, Theorem 3, Section 4,
 p. 764 of the 1974 Russian original (DOI 10.1137/1119081). The endpoint CLT comes from the Donsker
 layer; this file does not assert tightness in path space.
--/
+
+
+The original bibliography is A. A. Mogul'skii, “Small deviations in the sample function space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974), 755--765; English translation, “Small Deviations in a Space of Trajectories,” *Theory of Probability and Its Applications* 19(4) (1975), 726--736, DOI 10.1137/1119081. -/
 
 open Filter MeasureTheory Set
 

@@ -24,9 +24,11 @@ The public theorems in this file are:
   the same bound for a continuous admissible step corridor, with eventual
   positivity and logarithmic lower boundedness supplied by its energy bound.
 
-These are the finite-cell upper estimates in the proof of A. A. Mogul'skii,
-*Small Deviations in a Space of Trajectories*, Theorem 3, Section 4
-(1974 Russian original; 1975 English translation, DOI 10.1137/1119081).
+These are the finite-cell upper estimates in the proof of Theorem 3, Section 4
+of A. A. Mogul'skii, “Small deviations in the sample function space,”
+*Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974), 755--765; English
+translation, “Small Deviations in a Space of Trajectories,” *Theory of
+Probability and Its Applications* 19(4) (1975), 726--736, DOI 10.1137/1119081.
 -/
 
 @[expose] public section

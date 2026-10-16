@@ -50,7 +50,9 @@ open MeasureTheory ProbabilityTheory
 namespace ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned
 
 /-- The i.i.d. real-increment law conditioned to survive through time `n`.
-This is the conditional law in Caravenna--Chaumont, equation (3.3). -/
+This is the conditional law in Francesco Caravenna and Loïc Chaumont,
+*Invariance principles for random walks conditioned to stay positive*,
+equation (3.3), DOI 10.1214/07-AIHP119. -/
 noncomputable def survivalConditionedLaw (ν : Measure ℝ) (n : ℕ) :
     Measure (ℕ → ℝ) :=
   (iidSequenceLaw ν)[|{increment | SurvivesNonnegative n increment}]
@@ -95,8 +97,7 @@ theorem survivalConditionedLaw_isProbabilityMeasure_of_centeredSecondMoment
 
 /-- Survival conditioning makes the normalized random-walk step path
 nonnegative almost surely, as required for the transition event in
-Wang Yiyang, *Asymptotic speed of the $N$-branching random walk with
-infinite offspring*, Chapter 3, Lemma 3.5, Appendix A.2. -/
+Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.5, and Appendix A.2, Lemma A.7. -/
 theorem ae_nonnegative_normalizedStepCadlagPathIcc
     (ν : Measure ℝ) (n : ℕ) (scale : ℕ → ℝ)
     (hscale : 0 < scale n) :

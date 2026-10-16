@@ -26,8 +26,7 @@ The public theorems in this file are:
   Brownian-meander path law.
 
 The first theorem follows the final paragraph of page 484 of Erwin
-Bolthausen, *On a functional central limit theorem for random walks
-conditioned to stay positive*, Ann. Probab. 4(3) (1976), 480--485,
+Bolthausen, *On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*, Ann. Probab. 4(3) (1976), 480--485,
 DOI 10.1214/aop/1176996098. The terminal Brownian representation is
 that of Donald L. Iglehart, *Functional Central Limit Theorems for Random
 Walks Conditioned to Stay Positive*, Ann. Probab. 2(4) (1974),
@@ -43,8 +42,7 @@ open scoped NNReal ENNReal Topology
 
 /-- Bolthausen's Brownian first-window limit has Iglehart's
 Brownian-meander law. The finite-mixture argument is the final
-paragraph on page 484 of Erwin Bolthausen, *On a functional central
-limit theorem for random walks conditioned to stay positive*,
+paragraph on page 484 of Erwin Bolthausen, *On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*,
 Ann. Probab. 4(3) (1976), 480--485,
 DOI 10.1214/aop/1176996098. -/
 theorem law_centeredFirstWindowShift_eq_lastZeroMeanderPathLaw
@@ -115,8 +113,7 @@ in the last-zero realization of Iglehart, *Functional Central Limit
 Theorems for Random Walks Conditioned to Stay Positive*, Section 3,
 Ann. Probab. 2(4) (1974), 608--619, DOI 10.1214/aop/1176996607.
 The conditional invariance principle and limit-law identification
-follow Bolthausen, *On a functional central limit theorem for random
-walks conditioned to stay positive*, Theorem 3.2 and page 484,
+follow Bolthausen, *On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*, Theorem 3.2 and page 484,
 Ann. Probab. 4(3) (1976), 480--485,
 DOI 10.1214/aop/1176996098. -/
 theorem tendstoInDistribution_survivalConditionedPath_meander

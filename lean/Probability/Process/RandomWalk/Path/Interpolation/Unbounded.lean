@@ -44,8 +44,7 @@ The public definitions and theorems in this file are:
   of the shifted increment sequence.
 
 The unbounded-time interpolation is the path $Y_n$ used in Erwin
-Bolthausen, *On a functional central limit theorem for random walks
-conditioned to stay positive*, Section 3, Ann. Probab. 4(3) (1976),
+Bolthausen, *On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*, Section 3, Ann. Probab. 4(3) (1976),
 480--485, DOI 10.1214/aop/1176996098. Its restriction to $[0,1]$
 matches the existing bounded interpolation in `Interpolation.Basic`.
 -/

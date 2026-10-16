@@ -56,8 +56,7 @@ The public definitions and theorems in this file are:
   which $m_f(t+1)=m_f(t)$.
 
 The last equality is the deterministic observation at the beginning of the
-proof of Lemma 2.3 in Erwin Bolthausen, *On a functional central limit
-theorem for random walks conditioned to stay positive*, Ann. Probab. 4(3)
+proof of Lemma 2.3 in Erwin Bolthausen, *On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*, Ann. Probab. 4(3)
 (1976), 480--485, DOI 10.1214/aop/1176996098.
 -/
 

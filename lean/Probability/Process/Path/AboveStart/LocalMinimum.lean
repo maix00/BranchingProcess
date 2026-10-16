@@ -25,8 +25,7 @@ The public definitions and theorems in this file are:
   antitone on $[0,1]$.
 
 The minimum-on-an-interval argument supplies the deterministic
-implication used in Erwin Bolthausen, *On a functional central limit
-theorem for random walks conditioned to stay positive*, Lemma 2.2,
+implication used in Erwin Bolthausen, *On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*, Lemma 2.2,
 p. 481, Ann. Probab. 4(3) (1976), 480--485,
 DOI 10.1214/aop/1176996098.
 -/

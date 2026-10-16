@@ -21,7 +21,7 @@ The public theorems in this file are:
   yield the product lower bound with the entrance-event factor.
 
 This is the window-containment step in Wang Yiyang,
-*Asymptotic speed of the $N$-branching random walk with infinite offspring*,
+*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
 Chapter 3, proof of Lemma 3.5.
 -/
 
@@ -72,8 +72,9 @@ theorem tubeBlockIntersection_enters_next
       rw [hnext k]
       exact hwindow k hjq hend
 
-/-- The reverse Markov multiplication in Wang Yiyang's Lemma 3.5 for successive horizontal
-tubes, including the entrance event and unequal block lengths. -/
+/-- The reverse Markov multiplication in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.5, for
+successive horizontal tubes, including the entrance event and unequal block
+lengths. -/
 theorem measureReal_tubeBlockIntersection_ge_prod_of_endpointWindows
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (start length : ℕ → ℕ)

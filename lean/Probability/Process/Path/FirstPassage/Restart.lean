@@ -28,8 +28,7 @@ The public theorems in this file are:
 This deterministic identity is used with the Brownian strong Markov
 property to obtain stationary independent increments of the descending
 hitting-time process. It is the pathwise component of the Lévy
-decomposition invoked by Erwin Bolthausen, *On a functional central
-limit theorem for random walks conditioned to stay positive*,
+decomposition invoked by Erwin Bolthausen, *On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*,
 Lemma 2.3, equation (2.2), Ann. Probab. 4(3) (1976), 480--485,
 DOI 10.1214/aop/1176996098.
 -/

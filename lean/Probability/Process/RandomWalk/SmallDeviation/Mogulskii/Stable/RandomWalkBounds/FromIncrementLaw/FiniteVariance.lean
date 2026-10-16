@@ -14,24 +14,26 @@ public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Ran
 Let $G$ be a path class relative to the source's terminal-left path space,
 and let $x_n$ be a small-deviation width. The public declarations are:
 
-- `centeredUnitVariance_sourceRelativePathClassRate`: under centered
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.centeredUnitVariance_sourceRelativePathClassRate`: under centered
   unit variance, the relative inner and outer logarithmic rates have a
   unique common energy $H$, with coefficient $-\pi^2H/2$ after scaling
   by $x_n^2/n$.
-- `HasSourceFiniteVarianceScaledRelativeRate`: records this energy, the
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.HasSourceFiniteVarianceScaledRelativeRate`: records this energy, the
   relative corridor approximation, positivity, and both limits
   $\frac{x_n^2}{n}\log P_n^{\rm in/out}(G)\to-\frac{\pi^2}{2}H$.
-- `sourceScaledInnerOuterLogRate_of_centered_unitVariance`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.sourceScaledInnerOuterLogRate_of_centered_unitVariance`:
   constructs that record from the centered unit-variance increment law.
 - `HasSourceFiniteVarianceScaledRelativeRate.probabilityRate`:
   if every source-path preimage of $G$ is null-measurable, then
   $\frac{x_n^2}{n}\log\mathbb P_\nu(G)\to-\frac{\pi^2}{2}H$.
 
-These results use Mogul'skii, *Small Deviations in a Space of Trajectories*,
-Theorem 3, Section 4, p. 764 of the 1974 Russian original (English translation,
-*Theory of Probability and Its Applications* 19(4) (1975), 726–736,
-DOI 10.1137/1119081). The ordinary-probability form identifies the inner
-measure with the event measure using the stated null-measurability premise.
+These results formalize Theorem 3, Section 4, p. 764 of A. A. Mogul'skii,
+“Small deviations in the sample function space,” *Teoriya Veroyatnostei i ee
+Primeneniya* 19(4) (1974), 755–765; its English translation is “Small
+Deviations in a Space of Trajectories,” *Theory of Probability and Its
+Applications* 19(4) (1975), 726–736, DOI 10.1137/1119081. The
+ordinary-probability form identifies the inner measure with the event measure
+using the stated null-measurability premise.
 -/
 
 open Filter MeasureTheory ProbabilityTheory
@@ -46,8 +48,10 @@ open ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability
 open Skorokhod.PathClass.StepCorridor
 
 /-- The centered finite-variance unit-variance specialization has the exact
-standard-normal rate coefficient in Mogul'skii, *Small Deviations in a Space
-of Trajectories*, Theorem 3, Section 4. -/
+standard-normal rate coefficient in Theorem 3, Section 4, p. 764 of A. A.
+Mogul'skii, “Small deviations in the sample function space,” *Teoriya
+Veroyatnostei i ee Primeneniya* 19(4) (1974), 755–765; English translation,
+“Small Deviations in a Space of Trajectories,” DOI 10.1137/1119081. -/
 theorem centeredUnitVariance_sourceRelativePathClassRate
     {ν : Measure ℝ} [IsProbabilityMeasure ν] {scale : ℕ → ℝ}
     (hsmall : Asymptotics.IsSmallDeviationScale scale (fun n => Real.sqrt n))
@@ -234,8 +238,11 @@ noncomputable def sourceScaledInnerOuterLogRate_of_centered_unitVariance
     innerRate := hInnerScaled
     outerRate := hOuterScaled }
 
-/-- Null-measurability turns Mogul'skii's finite-variance inner-measure
-limit into an ordinary probability limit. -/
+/-- Null-measurability turns the finite-variance inner-measure limit in
+Mogul'skii, Theorem 3, Section 4, p. 764 of “Small deviations in the sample
+function space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974),
+755–765 (English translation, DOI 10.1137/1119081), into an ordinary
+probability limit. -/
 theorem HasSourceFiniteVarianceScaledRelativeRate.probabilityRate
     {ν : Measure ℝ} [IsProbabilityMeasure ν] {scale : ℕ → ℝ}
     {G : Set (CadlagPath unitInterval ℝ)}

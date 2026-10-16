@@ -24,8 +24,7 @@ The public theorem in this file is:
   for $n>0$, the map $\omega\mapsto\widetilde Y_n(\omega)$ is Borel measurable.
 
 This is the discrete path identification used on page 484 of Erwin Bolthausen,
-*On a functional central limit theorem for random walks conditioned
-to stay positive*, Ann. Probab. 4(3) (1976), 480--485, DOI 10.1214/aop/1176996098.
+*On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*, Ann. Probab. 4(3) (1976), 480--485, DOI 10.1214/aop/1176996098.
 -/
 
 @[expose] public section
@@ -359,8 +358,7 @@ theorem rademacher_signStableMeanderTransform_eq_terminalAbsolutePath
 
 /-- The terminal polygonal path of the simple symmetric walk is a
 measurable continuous-path-valued random variable. This is the path
-used on page 484 of Erwin Bolthausen, *On a functional central limit
-theorem for random walks conditioned to stay positive*, Ann. Probab.
+used on page 484 of Erwin Bolthausen, *On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*, Ann. Probab.
 4(3) (1976), 480--485, DOI 10.1214/aop/1176996098. -/
 theorem measurable_rademacherTerminalAbsolutePath
     {n : ℕ} (hn : 0 < n) :

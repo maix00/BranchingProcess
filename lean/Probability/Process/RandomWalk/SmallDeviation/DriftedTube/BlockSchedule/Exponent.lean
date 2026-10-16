@@ -24,8 +24,7 @@ The public theorems in this file are:
   rate $d''$ together dominate $\exp(-d'L/D^2)$.
 
 This is the deterministic exponential calculation after the reverse Markov
-product in Wang Yiyang, *Asymptotic speed of the $N$-branching random walk
-with infinite offspring*, Chapter 3, proof of Lemma 3.5.
+product in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, proof of Lemma 3.5.
 -/
 
 @[expose] public section

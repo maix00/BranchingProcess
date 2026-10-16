@@ -13,7 +13,7 @@ public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalk
 # Entrance followed by a robust endpoint bridge
 
 The public theorem is
-`iidSequenceLaw_measure_mul_of_finiteMovingEntranceEvent_bridge`:
+`ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.iidSequenceLaw_measure_mul_of_finiteMovingEntranceEvent_bridge`:
 if the entrance event has probability at least $q$ and the subsequent
 endpoint bridge has probability at least $p$, then the entire path lies
 in $[-r\Delta,0]$, ends in $[-r\Delta,(1-r)\Delta]$, and has probability

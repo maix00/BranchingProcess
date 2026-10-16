@@ -40,8 +40,7 @@ This is the event form of the reflection principle in Theorem 2.1 of
 S. J. Dilworth and Duncan Wright, *A direct proof of the reflection
 principle for Brownian motion*, Theory Stoch. Process. 21(37):2 (2016),
 1--3, arXiv:1810.01783. The same reflection principle underlies the
-Lévy identity cited in Lemma 2.3 of Erwin Bolthausen, *On a functional
-central limit theorem for random walks conditioned to stay positive*,
+Lévy identity cited in Lemma 2.3 of Erwin Bolthausen, *On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*,
 Ann. Probab. 4(3) (1976), 480--485, DOI 10.1214/aop/1176996098.
 -/
 
