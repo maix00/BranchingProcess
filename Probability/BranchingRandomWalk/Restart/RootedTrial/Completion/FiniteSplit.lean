@@ -112,7 +112,7 @@ theorem selectedPopulationNoSplitPrefix_measurable
     simpa [hk] using (generationFiltration (M := Step α X)).mono hle _ hset
   · simp [hk]
 
-private theorem selectedChildren_card_eq
+private lemma selectedChildren_card_eq
     [LinearOrder α]
     (R : Step.FiniteSelection α X) (ω : Mark α (Step α X)) (p : TreeNode α) :
     (StepSelection.children R ω p).card = (R (ω p)).card := by
@@ -123,7 +123,7 @@ private theorem selectedChildren_card_eq
     have hsingleton : [i] = [j] := List.append_cancel_left hij
     simpa using hsingleton)
 
-private theorem selectedPopulationNoSplitPrefix_succ_iff
+private lemma selectedPopulationNoSplitPrefix_succ_iff
     [DecidableEq α] [LinearOrder α] [OrderBot α]
     (R : Step.FiniteSelection α X) (n : ℕ) (ω : Mark α (Step α X))
     (hnonempty : ∀ k, (StepSelection.population R k ω).Nonempty) :
@@ -210,7 +210,7 @@ private theorem selectedPopulationNoSplitPrefix_succ_iff
       exact hroot'
     · exact hprev k (by omega)
 
-private theorem selectedPopulation_all_nonempty_ae
+private lemma selectedPopulation_all_nonempty_ae
     [Countable α] [MeasurableSpace α] [MeasurableSingletonClass α]
     [LinearOrder α] [OrderBot α] [MeasurableSpace X]
     (μ : Measure (Step α X)) [IsProbabilityMeasure μ]

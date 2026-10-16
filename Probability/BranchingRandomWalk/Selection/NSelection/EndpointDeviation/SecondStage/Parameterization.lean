@@ -67,7 +67,7 @@ noncomputable def rightTailPositiveASecondStageSpineLowerBound
             (stableBlockLength 2 ν (amplitude ^ (2 : ℝ)) scale bridgeLength) + 1)) *
         (bridgeQ / (finiteVarianceEntranceLength scale bridgeLength : ℝ≥0∞))
 
-private theorem rightTailPositiveASecondStageBridgeScale_isMogulskiiScale
+private lemma rightTailPositiveASecondStageBridgeScale_isMogulskiiScale
     {κ c v : ℝ} (hLambdaV : κ / c ^ 2 < v) :
     IsMogulskiiScale (rightTailPositiveASecondStageBridgeScale κ c v) := by
   let β : ℝ := (v - κ / c ^ 2) / 24
@@ -118,7 +118,7 @@ private theorem rightTailPositiveASecondStageBridgeScale_isMogulskiiScale
   rw [isMogulskiiScale_iff]
   exact ⟨hscale, hratio⟩
 
-private theorem rightTailPositiveA_rpow_third_sq {x : ℝ} (hx : 0 < x) :
+private lemma rightTailPositiveA_rpow_third_sq {x : ℝ} (hx : 0 < x) :
     (x ^ ((1 : ℝ) / 3)) ^ 2 = x ^ ((2 : ℝ) / 3) := by
   calc
     (x ^ ((1 : ℝ) / 3)) ^ 2 =
@@ -126,7 +126,7 @@ private theorem rightTailPositiveA_rpow_third_sq {x : ℝ} (hx : 0 < x) :
     _ = x ^ (((1 : ℝ) / 3) * 2) := by rw [← Real.rpow_mul hx.le]
     _ = x ^ ((2 : ℝ) / 3) := by congr 1; norm_num
 
-private theorem rightTailPositiveA_rpow_third_cube {x : ℝ} (hx : 0 < x) :
+private lemma rightTailPositiveA_rpow_third_cube {x : ℝ} (hx : 0 < x) :
     (x ^ ((1 : ℝ) / 3)) ^ 3 = x := by
   calc
     (x ^ ((1 : ℝ) / 3)) ^ 3 =
@@ -136,7 +136,7 @@ private theorem rightTailPositiveA_rpow_third_cube {x : ℝ} (hx : 0 < x) :
 
 /-- The scaled entrance block is asymptotically shorter than the full
 second-stage horizon, leaving a diverging bridge interval. -/
-private theorem tendsto_secondStageRemainingLength_atTop
+private lemma tendsto_secondStageRemainingLength_atTop
     {D : ℕ → ℕ} (hD : Tendsto (fun n => (D n : ℝ)) atTop atTop)
     {α : ℝ} :
     Tendsto (fun n =>

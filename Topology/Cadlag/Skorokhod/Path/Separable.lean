@@ -29,7 +29,7 @@ private abbrev StepParameterSpace {E : Type*} [TopologicalSpace E]
     StepPathParameters gap Set.univ p}
 
 set_option linter.style.haveILetI false in
-private theorem stepParameterSpace_secondCountable {E : Type*} [PseudoMetricSpace E]
+private lemma stepParameterSpace_secondCountable {E : Type*} [PseudoMetricSpace E]
     [TopologicalSpace.SeparableSpace E] (n : ℕ) (gap : ℝ) :
     SecondCountableTopology (StepParameterSpace (E := E) n gap) := by
   letI : SecondCountableTopology E := UniformSpace.secondCountable_of_separable E
@@ -37,7 +37,7 @@ private theorem stepParameterSpace_secondCountable {E : Type*} [PseudoMetricSpac
 
 private noncomputable def stepGap (k : ℕ) : ℝ := ((k : ℝ) + 1)⁻¹
 
-private theorem stepGap_pos (k : ℕ) : 0 < stepGap k := by
+private lemma stepGap_pos (k : ℕ) : 0 < stepGap k := by
   dsimp [stepGap]
   positivity
 
@@ -53,7 +53,7 @@ private noncomputable def denseStepParameters {E : Type*} [PseudoMetricSpace E]
   exact Classical.choose <| TopologicalSpace.exists_countable_dense _
 
 set_option linter.style.haveILetI false in
-private theorem countable_denseStepParameters {E : Type*} [PseudoMetricSpace E]
+private lemma countable_denseStepParameters {E : Type*} [PseudoMetricSpace E]
     [TopologicalSpace.SeparableSpace E] (n : ℕ) (k : ℕ) :
     (denseStepParameters (E := E) n k).Countable := by
   letI : SecondCountableTopology E := UniformSpace.secondCountable_of_separable E
@@ -65,7 +65,7 @@ private theorem countable_denseStepParameters {E : Type*} [PseudoMetricSpace E]
     (StepParameterSpace (E := E) n (stepGap k))).1
 
 set_option linter.style.haveILetI false in
-private theorem dense_denseStepParameters {E : Type*} [PseudoMetricSpace E]
+private lemma dense_denseStepParameters {E : Type*} [PseudoMetricSpace E]
     [TopologicalSpace.SeparableSpace E] (n : ℕ) (k : ℕ) :
     Dense (denseStepParameters (E := E) n k) := by
   letI : SecondCountableTopology E := UniformSpace.secondCountable_of_separable E
@@ -82,13 +82,13 @@ private noncomputable def denseStepPathFamily {E : Type*} [PseudoMetricSpace E]
     (fun p : StepParameterSpace (E := E) n.1 (stepGap k) =>
       stepPathOfParameters n.2 Set.univ (stepGap_pos k) p) '' denseStepParameters n.1 k
 
-private theorem countable_denseStepPathFamily {E : Type*} [PseudoMetricSpace E]
+private lemma countable_denseStepPathFamily {E : Type*} [PseudoMetricSpace E]
     [TopologicalSpace.SeparableSpace E] : denseStepPathFamily (E := E).Countable := by
   unfold denseStepPathFamily
   refine Set.countable_iUnion fun n => Set.countable_iUnion fun k => ?_
   exact (countable_denseStepParameters (E := E) n.1 k).image _
 
-private theorem exists_stepGap_lt {δ : ℝ} (hδ : 0 < δ) :
+private lemma exists_stepGap_lt {δ : ℝ} (hδ : 0 < δ) :
     ∃ k : ℕ, stepGap k < δ := by
   have hden : Tendsto (fun n : ℕ => (n : ℝ) + 1) atTop atTop := by
     apply tendsto_atTop.2
@@ -105,7 +105,7 @@ private theorem exists_stepGap_lt {δ : ℝ} (hδ : 0 < δ) :
   obtain ⟨k, hk⟩ := (eventually_atTop.1 hev)
   exact ⟨k, hk k le_rfl⟩
 
-private theorem dense_denseStepPathFamily {E : Type*} [MetricSpace E]
+private lemma dense_denseStepPathFamily {E : Type*} [MetricSpace E]
     [TopologicalSpace.SeparableSpace E] : Dense (denseStepPathFamily (E := E)) := by
   rw [Metric.dense_iff]
   intro path ε hε

@@ -27,7 +27,7 @@ open ProbabilityTheory.RandomWalk
 open Skorokhod.PathClass.StepCorridor
 open Skorokhod.PathClass.StepCorridor
 
-private theorem stepBoundary_eval_eq_rightTrace_of_mem_sourceCell
+private lemma stepBoundary_eval_eq_rightTrace_of_mem_sourceCell
     (b upper lower : StepBoundary)
     (hknots : ∀ q ∈ b.knots, q ∈ StepBoundary.commonKnots upper lower)
     (i : Fin ((StepBoundary.commonKnots upper lower).card - 1))

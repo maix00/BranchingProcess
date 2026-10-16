@@ -23,7 +23,7 @@ open ProbabilityTheory.RandomWalk
 open ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown
 open ProbabilityTheory.BranchingRandomWalk.Spine
 
-private theorem tendsto_log_add_one_div_log_of_cubic_scale
+private lemma tendsto_log_add_one_div_log_of_cubic_scale
     {u L : ℕ → ℝ} {t : ℝ}
     (hL : Tendsto L atTop atTop)
     (hu : ∀ n, 0 ≤ u n)
@@ -68,7 +68,7 @@ private theorem tendsto_log_add_one_div_log_of_cubic_scale
     ring
   simpa using hsum.congr' heq.symm
 
-private theorem tendsto_horizon_div_square_div_log
+private lemma tendsto_horizon_div_square_div_log
     {H B L : ℕ → ℝ} {t b : ℝ}
     (hL : Tendsto L atTop atTop)
     (hH : Tendsto (fun n => H n / L n ^ 3) atTop (𝓝 t))

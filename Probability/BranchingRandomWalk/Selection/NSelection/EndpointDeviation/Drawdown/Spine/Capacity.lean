@@ -2358,7 +2358,7 @@ theorem tendsto_rightTailPositiveASpan_root_div_log
 
 /-- A sequence with cubic logarithmic size has only a subexponential
 logarithmic count: `log (u + 1) = o(log N)`. -/
-private theorem tendsto_rightTailPositiveA_log_add_one_div_log_of_cubic_scale
+private lemma tendsto_rightTailPositiveA_log_add_one_div_log_of_cubic_scale
     {u L : ℕ → ℝ} {t : ℝ}
     (hL : Tendsto L atTop atTop)
     (hu : ∀ n, 0 ≤ u n)

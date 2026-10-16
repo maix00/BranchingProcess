@@ -180,7 +180,7 @@ theorem IsBrownianReal.measure_runningMinimum_le_one
   rw [hset]
   exact hB.measure_firstPassageBelow_le_one hBmeasurable ha
 
-private theorem runningMinimum_le_brownianPathScaling_iff
+private lemma runningMinimum_le_brownianPathScaling_iff
     (f : C(ℝ≥0, ℝ)) {t : ℝ≥0} (ht : 0 < t) (a : ℝ) :
     runningMinimum (brownianPathScaling t f) 1 ≤ (√t)⁻¹ * a ↔
       runningMinimum f t ≤ a := by

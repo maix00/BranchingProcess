@@ -101,7 +101,7 @@ theorem isStrictlyAlphaStable_gaussianReal_zero {v : ℝ≥0} (hv : v ≠ 0) :
   simpa using gaussianReal_map_const_mul (μ := 0) (v := v)
     (alphaStableScale 2 a b)
 
-private theorem memLp_id_two_of_gaussianDifference
+private lemma memLp_id_two_of_gaussianDifference
     {μ : Measure ℝ} [IsProbabilityMeasure μ] {v : ℝ≥0}
     (hD : (μ.prod μ).map (fun p : ℝ × ℝ => p.1 - p.2) =
       gaussianReal 0 v) : MemLp id 2 μ := by
@@ -130,7 +130,7 @@ private theorem memLp_id_two_of_gaussianDifference
     nlinarith [sq_nonneg (x - 2 * y)]
   exact (memLp_two_iff_integrable_sq (by fun_prop)).2 hsqInt
 
-private theorem difference_gaussian_of_strictlyStable_two
+private lemma difference_gaussian_of_strictlyStable_two
     {μ : Measure ℝ} [IsProbabilityMeasure μ]
     (h : IsStrictlyAlphaStable 2 μ) :
     ∃ v : ℝ≥0, v ≠ 0 ∧
@@ -181,7 +181,7 @@ private theorem difference_gaussian_of_strictlyStable_two
         ring
   exact ⟨v, hv, Measure.ext_of_charFun (funext hchar)⟩
 
-private theorem strictlyStable_two_mean_zero
+private lemma strictlyStable_two_mean_zero
     {μ : Measure ℝ} [IsProbabilityMeasure μ]
     (h : IsStrictlyAlphaStable 2 μ) (hL2 : MemLp id 2 μ) :
     ∫ x, x ∂μ = 0 := by

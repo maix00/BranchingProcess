@@ -23,15 +23,15 @@ namespace ProbabilityTheory
 
 open MeasureTheory Set ENNReal
 
-private theorem integrable_rpow_neg_on_unit {α : ℝ} (hα : α < 1) :
+private lemma integrable_rpow_neg_on_unit {α : ℝ} (hα : α < 1) :
     IntegrableOn (fun t : ℝ => t ^ (-α)) (Ioo 0 1) := by
   exact (intervalIntegral.integrableOn_Ioo_rpow_iff zero_lt_one).2 (by linarith)
 
-private theorem lintegral_rpow_neg_on_unit_lt_top {α : ℝ} (hα : α < 1) :
+private lemma lintegral_rpow_neg_on_unit_lt_top {α : ℝ} (hα : α < 1) :
     (∫⁻ t in Ioo (0 : ℝ) 1, ENNReal.ofReal (t ^ (-α)) ∂volume) < ⊤ := by
   exact (integrable_rpow_neg_on_unit hα).lintegral_lt_top
 
-private theorem smallJumpMoment_eq_tailIntegral (ν : Measure ℝ) :
+private lemma smallJumpMoment_eq_tailIntegral (ν : Measure ℝ) :
     (∫⁻ x, ENNReal.ofReal (min 1 |x|) ∂ν) =
       ∫⁻ t in Ioi (0 : ℝ), ν {x : ℝ | t < min 1 |x|} := by
   apply lintegral_eq_lintegral_meas_lt

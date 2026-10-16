@@ -34,7 +34,7 @@ namespace BrownianBessel3
 
 /-- The first coordinate of a three-dimensional Brownian sample is
 nonzero at time one almost surely. -/
-private theorem ae_first_coordinate_ne_zero
+private lemma ae_first_coordinate_ne_zero
     {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
     [IsProbabilityMeasure P] {B : ℝ≥0 → Ω → ℝ}
     (hBrownian : IsBrownianReal B P) :

@@ -38,7 +38,7 @@ private def rightGridValue (n : ℕ) (t : unitInterval) : ℝ :=
     ((Nat.floor (((n + 1 : ℕ) : ℝ) * (t : ℝ)) + 1 : ℕ) : ℝ) /
       ((n + 1 : ℕ) : ℝ)
 
-private theorem rightGridValue_mem (n : ℕ) (t : unitInterval) :
+private lemma rightGridValue_mem (n : ℕ) (t : unitInterval) :
     rightGridValue n t ∈ Set.Icc (0 : ℝ) 1 := by
   by_cases ht : t = ⊤
   · simp [rightGridValue, ht]
@@ -65,7 +65,7 @@ private theorem rightGridValue_mem (n : ℕ) (t : unitInterval) :
 private def rightGridTime (n : ℕ) (t : unitInterval) : unitInterval :=
   ⟨rightGridValue n t, rightGridValue_mem n t⟩
 
-private theorem measurable_rightGridTime (n : ℕ) : Measurable (rightGridTime n) := by
+private lemma measurable_rightGridTime (n : ℕ) : Measurable (rightGridTime n) := by
   have hmul : Measurable (fun t : unitInterval =>
       ((n + 1 : ℕ) : ℝ) * (t : ℝ)) := by fun_prop
   have hfloor : Measurable (fun t : unitInterval =>
@@ -78,7 +78,7 @@ private theorem measurable_rightGridTime (n : ℕ) : Measurable (rightGridTime n
     exact Measurable.ite htop measurable_const hbase
   exact hval.subtype_mk (h := rightGridValue_mem n)
 
-private theorem rightGridTime_bounds (n : ℕ) (t : unitInterval) (ht : t ≠ ⊤) :
+private lemma rightGridTime_bounds (n : ℕ) (t : unitInterval) (ht : t ≠ ⊤) :
     (t : ℝ) < (rightGridTime n t : ℝ) ∧
       (rightGridTime n t : ℝ) ≤ (t : ℝ) + 1 / ((n + 1 : ℕ) : ℝ) := by
   have htlt : (t : ℝ) < 1 := lt_of_le_of_ne t.property.2 (by
@@ -126,7 +126,7 @@ private theorem rightGridTime_bounds (n : ℕ) (t : unitInterval) (ht : t ≠ �
           div_le_div_of_nonneg_right hhi' hNpos.le
       _ = (t : ℝ) + 1 / ((n + 1 : ℕ) : ℝ) := by field_simp
 
-private theorem rightGridTime_tendsto (t : unitInterval) :
+private lemma rightGridTime_tendsto (t : unitInterval) :
     Tendsto (fun n => rightGridTime n t) atTop (𝓝 t) := by
   by_cases ht : t = ⊤
   · subst t
@@ -162,7 +162,7 @@ private theorem rightGridTime_tendsto (t : unitInterval) :
         _ < ε := hn
     exact tendsto_subtype_rng.2 hreal
 
-private theorem rightGridTime_tendstoWithin (t : unitInterval) (ht : t ≠ ⊤) :
+private lemma rightGridTime_tendstoWithin (t : unitInterval) (ht : t ≠ ⊤) :
     Tendsto (fun n => rightGridTime n t) atTop (𝓝[Set.Ioi t] t) := by
   apply tendsto_nhdsWithin_iff.2
   refine ⟨rightGridTime_tendsto t, Filter.Eventually.of_forall ?_⟩
@@ -172,7 +172,7 @@ private theorem rightGridTime_tendstoWithin (t : unitInterval) (ht : t ≠ ⊤) 
 private def gridEvaluation (n : ℕ) (p : CadlagPath unitInterval ℝ × unitInterval) : ℝ :=
   p.1 (rightGridTime n p.2)
 
-private theorem measurable_gridEvaluation (n : ℕ) : Measurable (gridEvaluation n) := by
+private lemma measurable_gridEvaluation (n : ℕ) : Measurable (gridEvaluation n) := by
   let T := {t : unitInterval // t ∈ Set.range (rightGridTime n)}
   have hTcount : Countable T := by
     let f : ℕ → unitInterval := fun k => rightGridPoint n k

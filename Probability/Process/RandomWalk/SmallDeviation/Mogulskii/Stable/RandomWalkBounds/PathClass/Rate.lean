@@ -125,7 +125,7 @@ theorem tendsto_log_div_probabilityRateDenominator_of_stableRateNormalization
     field_simp [hn']
   exact h.neg.congr' heq.symm
 
-private theorem probabilityRateDenominator_tendsto_atBot
+private lemma probabilityRateDenominator_tendsto_atBot
     {α : ℝ} {ν : Measure ℝ} [IsProbabilityMeasure ν]
     {normalization scale : ℕ → ℝ}
     (hscale : IsStableMogulskiiScale α ν normalization scale)

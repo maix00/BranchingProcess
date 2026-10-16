@@ -48,7 +48,7 @@ open Skorokhod.PathClass.StepCorridor
 J₁ tightness required by the subsequential path-law construction. The index
 one condition is supplied in the original raw normalization and transferred
 through the same reindexing used below. -/
-private theorem exists_rawSource_reindexed_tightInputs
+private lemma exists_rawSource_reindexed_tightInputs
     {ν μ : Measure ℝ} [IsProbabilityMeasure ν] [IsProbabilityMeasure μ]
     {α : ℝ} {normalization scale : ℕ → ℝ}
     (hsmall : Asymptotics.IsSmallDeviationScale scale normalization)
@@ -107,7 +107,7 @@ private theorem exists_rawSource_reindexed_tightInputs
 domain-of-attraction assumptions generate the path law, its full-time stable
 process, and the escape rate. The index-one sine-centering condition is the
 only regime-specific input. -/
-private theorem exists_source_relative_pathClass_rates_with_generated_witness
+private lemma exists_source_relative_pathClass_rates_with_generated_witness
     {ν μ : Measure ℝ} [IsProbabilityMeasure ν] [IsProbabilityMeasure μ]
     {α : ℝ} {normalization scale : ℕ → ℝ}
     (hsmall : Asymptotics.IsSmallDeviationScale scale normalization)

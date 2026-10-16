@@ -30,7 +30,7 @@ open ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown
 open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete
 
-private theorem rightTailPositiveASecondStageSpineLowerBound_pos
+private lemma rightTailPositiveASecondStageSpineLowerBound_pos
     (ν : Measure ℝ) (κ c v : ℝ) (entryQ : ℝ≥0∞) (C : ℝ)
     (bridgeQ : ℝ≥0∞) (amplitude : ℝ) (D : ℕ)
     (hentryQ : 0 < entryQ) (hbridgeQ : 0 < bridgeQ) :

@@ -31,7 +31,7 @@ open scoped ENNReal Topology
 
 namespace Skorokhod
 
-private theorem norm_arctan_le_pi (x : ℝ) : ‖Real.arctan x‖ ≤ Real.pi := by
+private lemma norm_arctan_le_pi (x : ℝ) : ‖Real.arctan x‖ ≤ Real.pi := by
   rw [Real.norm_eq_abs, abs_le]
   constructor
   · have h := Real.arctan_lt_pi_div_two (-x)

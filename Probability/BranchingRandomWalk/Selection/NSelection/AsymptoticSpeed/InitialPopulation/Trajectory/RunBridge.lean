@@ -41,7 +41,7 @@ private noncomputable def rankedRoots
     Fin N → RootIndexed.TreeNode (Fin N) ℕ :=
   selectedPopulationRankRoots N initial n field
 
-private theorem rankedRoots_image_eq_of_card
+private lemma rankedRoots_image_eq_of_card
     (N n : ℕ) (initial : Fin N → ℝ)
     [LinearOrder (RootIndexed.TreeNode (Fin N) ℕ)]
     (field : RootIndexed.StepField (Fin N) ℕ ℝ)
@@ -67,7 +67,7 @@ private noncomputable def rankedChildAddress
   let p := rankedRoots N n initial field slot.1
   (p.1, p.2 ++ [slot.2])
 
-private theorem rankedRoot_batch_value
+private lemma rankedRoot_batch_value
     (N n : ℕ) (initial : Fin N → ℝ)
     [LinearOrder (RootIndexed.TreeNode (Fin N) ℕ)]
     (field : RootIndexed.StepField (Fin N) ℕ ℝ)
@@ -80,7 +80,7 @@ private theorem rankedRoot_batch_value
     RootIndexed.subtreeStepFieldVector, rankedRoots,
     selectedPopulationRankRoots]
 
-private theorem rankedChildAddress_candidateImage
+private lemma rankedChildAddress_candidateImage
     (N n : ℕ) (initial : Fin N → ℝ)
     [LinearOrder (RootIndexed.TreeNode (Fin N) ℕ)]
     (field : RootIndexed.StepField (Fin N) ℕ ℝ)
@@ -126,7 +126,7 @@ private theorem rankedChildAddress_candidateImage
       exact congrArg (fun x : RootIndexed.TreeNode (Fin N) ℕ =>
         (x.1, x.2 ++ [j])) hroot
 
-private theorem rankedChildAddress_injective
+private lemma rankedChildAddress_injective
     (N n : ℕ) (initial : Fin N → ℝ)
     [LinearOrder (RootIndexed.TreeNode (Fin N) ℕ)]
     (field : RootIndexed.StepField (Fin N) ℕ ℝ) :
@@ -147,7 +147,7 @@ private theorem rankedChildAddress_injective
   have hslot : (ofLex q).2 = (ofLex r).2 := by simpa using hslotList
   exact ofLex.injective (Prod.ext hindex hslot)
 
-private theorem firstNBy_card_eq_of_hasEnoughCandidates
+private lemma firstNBy_card_eq_of_hasEnoughCandidates
     {ι Value : Type*} [LinearOrder ι] [LinearOrder Value]
     {N : ℕ} (value : ι → Value) (candidates : Set ι)
     (selected : Finset ι)
@@ -165,7 +165,7 @@ private theorem firstNBy_card_eq_of_hasEnoughCandidates
     rw [hselected.card_finite hfinite, min_eq_left hN]
   · exact hselected.card_infinite hinfinite
 
-private theorem rankedPopulation_succ_card_of_good
+private lemma rankedPopulation_succ_card_of_good
     (N n : ℕ) (initial : Fin N → ℝ)
     [LinearOrder (RootIndexed.TreeNode (Fin N) ℕ)]
     (field : RootIndexed.StepField (Fin N) ℕ ℝ)
@@ -260,7 +260,7 @@ theorem selectedPopulationTotalized_card_eq_of_rankedBatches_good
   simpa [rankedPopulation] using
     rankedPopulation_card_eq_of_rankedBatches_good N initial field hgood
 
-private theorem rankedPosition_succ_eq_transition
+private lemma rankedPosition_succ_eq_transition
     (N n : ℕ) (initial : Fin N → ℝ)
     [LinearOrder (RootIndexed.TreeNode (Fin N) ℕ)]
     (field : RootIndexed.StepField (Fin N) ℕ ℝ)

@@ -6,6 +6,8 @@ Authors: WANG Yiyang
 
 module
 
+import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.BlockSchedule.Exponent
+import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Cost
 public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.FiniteLower
 public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Endpoint.UpperInclusion
 

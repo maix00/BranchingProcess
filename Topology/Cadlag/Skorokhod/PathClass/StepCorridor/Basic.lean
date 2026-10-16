@@ -497,7 +497,7 @@ private lemma selValues_eval_subset {upper lower : StepBoundary} {t : unitInterv
   exact ⟨by simpa [StepBoundary.rightTrace] using hf.2.1,
     by simpa [StepBoundary.rightTrace] using hf.2.2.2⟩
 
-private theorem hcont_admissible {upper lower : StepBoundary}
+private lemma hcont_admissible {upper lower : StepBoundary}
     (hstart : StartAdmissible upper lower) (hsep : TraceSeparated upper lower) :
     HasContinuousAdmissiblePath upper lower := by
   obtain ⟨g, hg, hgsel⟩ := selValues_openLowerSections.exists_continuous_selection

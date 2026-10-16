@@ -196,7 +196,7 @@ theorem sourceNormalizedStepCadlagPathIcc_commonPartitionGrid_mem_core_of_blockE
   exact hcore j.val j.isLt
 
 
-private theorem stepBoundary_eval_eq_rightTrace_of_mem_sourcePartitionCell
+private lemma stepBoundary_eval_eq_rightTrace_of_mem_sourcePartitionCell
     (b upper lower : StepBoundary)
     (hknots : ∀ q ∈ b.knots, q ∈ StepBoundary.commonKnots upper lower)
     (i : Fin ((StepBoundary.commonKnots upper lower).card - 1))

@@ -34,7 +34,7 @@ theorem uniformEDist_eq_edist {T E : Type*} [PseudoEMetricSpace E]
     (f g : T → E) :
     uniformEDist f g = edist (UniformFun.ofFun f) (UniformFun.ofFun g) := rfl
 
-private theorem uniformEDist_eq_iSup {T E : Type*} [PseudoEMetricSpace E]
+private lemma uniformEDist_eq_iSup {T E : Type*} [PseudoEMetricSpace E]
     (f g : T → E) : uniformEDist f g = ⨆ t, edist (f t) (g t) := by
   rw [uniformEDist_eq_edist, UniformFun.edist_def]
   rfl

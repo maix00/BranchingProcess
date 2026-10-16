@@ -49,7 +49,7 @@ theorem affineCorridorThrough_succ_eq_endpointCutoff
   simp [affineCorridorThrough, affineCorridorHistoryEndpointCutoff,
     affineCorridorHistory]
 
-private theorem pathGenerationMRCAContribution_zeroTest
+private lemma pathGenerationMRCAContribution_zeroTest
     {X : Type*} [MeasurableSpace X]
     (φ : Potential X) (n : ℕ) (x : ℝ) (ω : StepField ℕ X) :
     pathGenerationMRCAContribution φ 0 (n + 1)
@@ -57,7 +57,7 @@ private theorem pathGenerationMRCAContribution_zeroTest
   simp [pathGenerationMRCAContribution, pathGenerationChildObservable,
     survivingPotentialTest, Spine.pathGeneration, pathGenerationTerm]
 
-private theorem pathGenerationChildObservable_congr_prependHistory
+private lemma pathGenerationChildObservable_congr_prependHistory
     {X : Type*} [MeasurableSpace X]
     (φ : Potential X) (n : ℕ)
     (F G : (Fin (n + 2) → ℝ) → ℝ≥0∞) (x : ℝ)
@@ -71,7 +71,7 @@ private theorem pathGenerationChildObservable_congr_prependHistory
   unfold pathGenerationChildObservable
   rw [htest]
 
-private theorem pathGenerationMRCAContribution_congr_prependHistory
+private lemma pathGenerationMRCAContribution_congr_prependHistory
     {X : Type*} [MeasurableSpace X]
     (φ : Potential X) (n : ℕ)
     (F G : (Fin (n + 2) → ℝ) → ℝ≥0∞) (x : ℝ)
@@ -93,7 +93,7 @@ private theorem pathGenerationMRCAContribution_congr_prependHistory
         φ n F G x hFG j (ω []) (subtreeStepField [j] ω)]
   · simp [hij]
 
-private theorem pathGenerationMRCAContribution_ifTest
+private lemma pathGenerationMRCAContribution_ifTest
     {X : Type*} [MeasurableSpace X]
     (φ : Potential X) (n : ℕ) (F : (Fin (n + 2) → ℝ) → ℝ≥0∞)
     (p : Prop) [Decidable p] (x : ℝ) (ω : StepField ℕ X) :
@@ -104,7 +104,7 @@ private theorem pathGenerationMRCAContribution_ifTest
   · simp [hp]
   · simp [hp, pathGenerationMRCAContribution_zeroTest]
 
-private theorem displaceWith_measurable_generation_actual
+private lemma displaceWith_measurable_generation_actual
     {X : Type*} [MeasurableSpace X]
     (φ : Potential X) (n : ℕ) (v p : TreeNode ℕ)
     (hvp : v.length + p.length ≤ n) :
@@ -134,7 +134,7 @@ private theorem displaceWith_measurable_generation_actual
             Combinatorics.Branching.displaceWith φ ω (v ++ [i]) p)
       exact hstep.add htail
 
-private theorem pathHistory_measurable_generation_actual
+private lemma pathHistory_measurable_generation_actual
     {X : Type*} [MeasurableSpace X]
     (φ : Potential X) (n : ℕ) (x : ℝ) (u : TreeNode ℕ)
     (hu : u.length ≤ n) :
@@ -152,7 +152,7 @@ private theorem pathHistory_measurable_generation_actual
     (displaceWith_measurable_generation_actual φ n [] (u.take k)
       (by simpa using htake))
 
-private theorem pathGenerationTerm_measurable_generation_actual
+private lemma pathGenerationTerm_measurable_generation_actual
     {X : Type*} [MeasurableSpace X]
     (φ : Potential X) (n : ℕ)
     {F : (Fin (n + 1) → ℝ) → ℝ≥0∞} (hF : Measurable F)

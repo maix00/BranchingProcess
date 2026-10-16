@@ -64,18 +64,18 @@ noncomputable def logarithmicRateBeta (factor eta : ℝ) : ℝ := factor * (1 + 
 noncomputable def logarithmicEndpointThreshold (N : ℕ → ℕ) (zeta : ℝ) (n : ℕ) : ℝ :=
   zeta * logarithmOfSampleSize N n
 
-private theorem tendsto_logarithmOfSampleSize_atTop {N : ℕ → ℕ}
+private lemma tendsto_logarithmOfSampleSize_atTop {N : ℕ → ℕ}
     (hN : Tendsto N atTop atTop) :
     Tendsto (logarithmOfSampleSize N) atTop atTop := by
   exact Real.tendsto_log_atTop.comp
     (tendsto_natCast_atTop_atTop.comp hN)
 
-private theorem eventually_logarithmOfSampleSize_pos {N : ℕ → ℕ}
+private lemma eventually_logarithmOfSampleSize_pos {N : ℕ → ℕ}
     (hN : Tendsto N atTop atTop) :
     ∀ᶠ n : ℕ in atTop, 0 < logarithmOfSampleSize N n :=
   (tendsto_logarithmOfSampleSize_atTop hN).eventually_gt_atTop 0
 
-private theorem tendsto_logarithmicBlockRoot_div_sqrtLog
+private lemma tendsto_logarithmicBlockRoot_div_sqrtLog
     {N : ℕ → ℕ} (hN : Tendsto N atTop atTop)
     {beta b : ℝ} (hbeta : 0 < beta) (hb : 0 < b) :
     Tendsto (fun n => (logarithmicBlockRoot N beta b n : ℝ) /
@@ -122,7 +122,7 @@ private theorem tendsto_logarithmicBlockRoot_div_sqrtLog
     field_simp [hargPos.ne', hden]
   simpa [L, arg] using hprod.congr' heq.symm
 
-private theorem tendsto_logarithmicBlockRoot_atTop
+private lemma tendsto_logarithmicBlockRoot_atTop
     {N : ℕ → ℕ} (hN : Tendsto N atTop atTop)
     {beta b : ℝ} (hbeta : 0 < beta) (hb : 0 < b) :
     Tendsto (logarithmicBlockRoot N beta b) atTop atTop := by
@@ -145,7 +145,7 @@ private theorem tendsto_logarithmicBlockRoot_atTop
       atTop atTop := hmul.congr' heq
   exact (tendsto_natCast_atTop_iff).mp hcast
 
-private theorem eventually_logarithmicBlockLength_succ
+private lemma eventually_logarithmicBlockLength_succ
     {N : ℕ → ℕ} (hN : Tendsto N atTop atTop)
     {beta b : ℝ} (hbeta : 0 < beta) (hb : 0 < b) :
     ∀ᶠ n : ℕ in atTop,
@@ -159,7 +159,7 @@ private theorem eventually_logarithmicBlockLength_succ
   simp [logarithmicBlockLength, hn, Nat.sub_add_cancel hqpow]
 
 /-- The fifth-root construction makes the Gaussian exponent `2/5` exact. -/
-private theorem rpow_fifthPower_two_fifths (q : ℕ) :
+private lemma rpow_fifthPower_two_fifths (q : ℕ) :
     ((q : ℝ) ^ 5) ^ ((2 : ℝ) / 5) = (q : ℝ) ^ 2 := by
   rw [← Real.rpow_natCast (q : ℝ) 5,
     ← Real.rpow_mul (by positivity : 0 ≤ (q : ℝ))]
@@ -188,7 +188,7 @@ theorem logarithmicSmallDeviationScale_isSmallDeviationScale :
       norm_num
     exact hpow.congr' heq.symm
 
-private theorem tendsto_logarithmicBlockRoot_sq_div_log
+private lemma tendsto_logarithmicBlockRoot_sq_div_log
     {N : ℕ → ℕ} (hN : Tendsto N atTop atTop)
     {beta b : ℝ} (hbeta : 0 < beta) (hb : 0 < b) :
     Tendsto (fun n => (logarithmicBlockRoot N beta b n : ℝ) ^ 2 /
@@ -211,7 +211,7 @@ private theorem tendsto_logarithmicBlockRoot_sq_div_log
     Real.sq_sqrt (le_of_lt (mul_pos hbeta hb))
   simpa [L, hlimit] using hpow.congr' heq.symm
 
-private theorem tendsto_logarithmicDrawdown_div_log
+private lemma tendsto_logarithmicDrawdown_div_log
     {N : ℕ → ℕ} (hN : Tendsto N atTop atTop)
     {beta b : ℝ} (hbeta : 0 < beta) (hb : 0 < b) :
     Tendsto (fun n => logarithmicDrawdown N beta b n /
@@ -241,7 +241,7 @@ theorem logarithmicDrawdown_div_log_tendsto
       logarithmOfSampleSize N n) atTop (𝓝 b) :=
   tendsto_logarithmicDrawdown_div_log hN hbeta hb
 
-private theorem tendsto_logarithmicHorizon_div_log_cube
+private lemma tendsto_logarithmicHorizon_div_log_cube
     {N : ℕ → ℕ} (hN : Tendsto N atTop atTop)
     {t : ℝ} (ht : 0 < t) :
     Tendsto (fun n => (logarithmicHorizon N t n : ℝ) /
@@ -284,7 +284,7 @@ theorem logarithmicHorizon_div_logCube_tendsto
       logarithmOfSampleSize N n ^ 3) atTop (𝓝 t) :=
   tendsto_logarithmicHorizon_div_log_cube hN ht
 
-private theorem tendsto_logarithmicLengthSucc_div_log_two_sqrt
+private lemma tendsto_logarithmicLengthSucc_div_log_two_sqrt
     {N : ℕ → ℕ} (hN : Tendsto N atTop atTop)
     {beta b : ℝ} (hbeta : 0 < beta) (hb : 0 < b) :
     Tendsto (fun n => ((logarithmicBlockLength N beta b n + 1 : ℕ) : ℝ) /
@@ -314,7 +314,7 @@ private theorem tendsto_logarithmicLengthSucc_div_log_two_sqrt
     field_simp [hrootne]
   simpa [L, root] using hpow.congr' heq.symm
 
-private theorem logarithmicBlockLength_pos
+private lemma logarithmicBlockLength_pos
     (N : ℕ → ℕ) (beta b : ℝ) (n : ℕ) :
     0 < logarithmicBlockLength N beta b n := by
   dsimp [logarithmicBlockLength]
@@ -325,7 +325,7 @@ private theorem logarithmicBlockLength_pos
     omega
   · omega
 
-private theorem tendsto_logarithmicBlockLength_succ_atTop
+private lemma tendsto_logarithmicBlockLength_succ_atTop
     {N : ℕ → ℕ} (hN : Tendsto N atTop atTop)
     {beta b : ℝ} (hbeta : 0 < beta) (hb : 0 < b) :
     Tendsto (fun n => logarithmicBlockLength N beta b n + 1) atTop atTop := by
@@ -342,7 +342,7 @@ private theorem tendsto_logarithmicBlockLength_succ_atTop
       atTop atTop := hpow.congr' heq.symm
   exact (tendsto_natCast_atTop_iff).mp hsucc
 
-private theorem tendsto_logarithmicBlockLength_atTop
+private lemma tendsto_logarithmicBlockLength_atTop
     {N : ℕ → ℕ} (hN : Tendsto N atTop atTop)
     {beta b : ℝ} (hbeta : 0 < beta) (hb : 0 < b) :
     Tendsto (logarithmicBlockLength N beta b) atTop atTop := by
@@ -352,7 +352,7 @@ private theorem tendsto_logarithmicBlockLength_atTop
   filter_upwards [hsucc.eventually_gt_atTop (k + 1)] with n hn
   omega
 
-private theorem tendsto_logarithmicBlockLength_div_log_two_sqrt
+private lemma tendsto_logarithmicBlockLength_div_log_two_sqrt
     {N : ℕ → ℕ} (hN : Tendsto N atTop atTop)
     {beta b : ℝ} (hbeta : 0 < beta) (hb : 0 < b) :
     Tendsto (fun n => (logarithmicBlockLength N beta b n : ℝ) /
@@ -393,7 +393,7 @@ private theorem tendsto_logarithmicBlockLength_div_log_two_sqrt
     field_simp
   simpa [L, root] using hmul.congr' heq.symm
 
-private theorem tendsto_logarithmicBlockCost_atTop
+private lemma tendsto_logarithmicBlockCost_atTop
     {N : ℕ → ℕ} (hN : Tendsto N atTop atTop)
     {beta b : ℝ} (hbeta : 0 < beta) (hb : 0 < b) :
     Tendsto (fun n => ((logarithmicBlockLength N beta b n + 1 : ℕ) : ℝ) /
@@ -420,7 +420,7 @@ private theorem tendsto_logarithmicBlockCost_atTop
     field_simp [hbeta.ne', hqne]
   exact htarget.congr' heq.symm
 
-private theorem eventually_logarithmicDrawdown_pos
+private lemma eventually_logarithmicDrawdown_pos
     {N : ℕ → ℕ} (hN : Tendsto N atTop atTop)
     {beta b : ℝ} (hbeta : 0 < beta) (hb : 0 < b) :
     ∀ᶠ n : ℕ in atTop, 0 < logarithmicDrawdown N beta b n := by
@@ -437,7 +437,7 @@ private theorem eventually_logarithmicDrawdown_pos
   rw [heq] at hprod
   exact hprod
 
-private theorem tendsto_logarithmicTotalCost_atTop
+private lemma tendsto_logarithmicTotalCost_atTop
     {N : ℕ → ℕ} (hN : Tendsto N atTop atTop)
     {beta b t : ℝ} (hbeta : 0 < beta) (hb : 0 < b) (ht : 0 < t) :
     Tendsto (fun n => (logarithmicHorizon N t n : ℝ) /
@@ -468,7 +468,7 @@ private theorem tendsto_logarithmicTotalCost_atTop
     field_simp [hLne, hδne]
   exact hscaled.congr' heq.symm
 
-private theorem tendsto_logarithmicHorizon_div_length_atTop
+private lemma tendsto_logarithmicHorizon_div_length_atTop
     {N : ℕ → ℕ} (hN : Tendsto N atTop atTop)
     {beta b t : ℝ} (hbeta : 0 < beta) (hb : 0 < b) (ht : 0 < t) :
     Tendsto (fun n => (logarithmicHorizon N t n : ℝ) /
@@ -518,7 +518,7 @@ private theorem tendsto_logarithmicHorizon_div_length_atTop
     ring
   simpa [L, root, gamma] using hscaled.congr' heq
 
-private theorem logarithmicBlockCount_complete
+private lemma logarithmicBlockCount_complete
     (N : ℕ → ℕ) (beta b t : ℝ) (n : ℕ) :
     logarithmicBlockCount N beta b t n * logarithmicBlockLength N beta b n ≤
       logarithmicHorizon N t n := by
@@ -536,7 +536,7 @@ private theorem logarithmicBlockCount_complete
     nlinarith [h]
   exact_mod_cast hcast
 
-private theorem tendsto_logarithmicBlockCount_atTop
+private lemma tendsto_logarithmicBlockCount_atTop
     {N : ℕ → ℕ} (hN : Tendsto N atTop atTop)
     {beta b t : ℝ} (hbeta : 0 < beta) (hb : 0 < b) (ht : 0 < t) :
     Tendsto (logarithmicBlockCount N beta b t) atTop atTop := by
@@ -546,7 +546,7 @@ private theorem tendsto_logarithmicBlockCount_atTop
       (logarithmicBlockLength N beta b n : ℝ))) atTop atTop
   exact tendsto_nat_floor_atTop.comp hquot
 
-private theorem tendsto_logarithmicBlockCount_div_quotient
+private lemma tendsto_logarithmicBlockCount_div_quotient
     {N : ℕ → ℕ} (hN : Tendsto N atTop atTop)
     {beta b t : ℝ} (hbeta : 0 < beta) (hb : 0 < b) (ht : 0 < t) :
     Tendsto (fun n => (logarithmicBlockCount N beta b t n : ℝ) /
@@ -560,7 +560,7 @@ private theorem tendsto_logarithmicBlockCount_div_quotient
           (logarithmicBlockLength N beta b n : ℝ))) atTop (𝓝 1)
   exact tendsto_nat_floor_div_atTop.comp hquot
 
-private theorem tendsto_logarithmicLengthSucc_div_length
+private lemma tendsto_logarithmicLengthSucc_div_length
     {N : ℕ → ℕ} (hN : Tendsto N atTop atTop)
     {beta b : ℝ} (hbeta : 0 < beta) (hb : 0 < b) :
     Tendsto (fun n => ((logarithmicBlockLength N beta b n + 1 : ℕ) : ℝ) /
@@ -584,7 +584,7 @@ private theorem tendsto_logarithmicLengthSucc_div_length
     ring
   simpa using hlimit.congr' heq.symm
 
-private theorem tendsto_logarithmicCoverage
+private lemma tendsto_logarithmicCoverage
     {N : ℕ → ℕ} (hN : Tendsto N atTop atTop)
     {beta b t : ℝ} (hbeta : 0 < beta) (hb : 0 < b) (ht : 0 < t) :
     Tendsto (fun n => (logarithmicBlockCount N beta b t n : ℝ) *
@@ -617,7 +617,7 @@ private theorem tendsto_logarithmicCoverage
     field_simp [hδne, hlenNe, ne_of_gt hHpos]
   simpa using hprod.congr' heq.symm
 
-private theorem eventually_natFloor_eq_of_tendsto_of_not_nat
+private lemma eventually_natFloor_eq_of_tendsto_of_not_nat
     {x : ℕ → ℝ} {c : ℝ}
     (hx : Tendsto x atTop (𝓝 c))
     (hc : ¬ ∃ k : ℕ, c = (k : ℝ)) :
@@ -639,7 +639,7 @@ private theorem eventually_natFloor_eq_of_tendsto_of_not_nat
     apply (Nat.floor_eq_iff (le_trans (Nat.cast_nonneg _) hn.1.le)).2
     exact ⟨hn.1.le, hn.2⟩
 
-private theorem tendsto_logarithmicThresholdRatio
+private lemma tendsto_logarithmicThresholdRatio
     {N : ℕ → ℕ} (hN : Tendsto N atTop atTop)
     {beta b eta zeta : ℝ} (hbeta : 0 < beta) (hb : 0 < b) (heta : 0 < eta) :
     Tendsto (fun n =>
@@ -677,7 +677,7 @@ private theorem tendsto_logarithmicThresholdRatio
   rw [hlimit] at hquot
   exact hquot.congr' heq.symm
 
-private theorem eventually_logarithmicBlockScale_aligned
+private lemma eventually_logarithmicBlockScale_aligned
     {N : ℕ → ℕ} (hN : Tendsto N atTop atTop)
     {factor eta b : ℝ} (hfactor : 1 < factor) (heta : 0 < eta) (hb : 0 < b) :
     ∀ᶠ n : ℕ in atTop,
@@ -699,7 +699,7 @@ private theorem eventually_logarithmicBlockScale_aligned
   field_simp [ne_of_gt hbeta']
   simp [beta]
 
-private theorem eventually_logarithmicThreshold_floor
+private lemma eventually_logarithmicThreshold_floor
     {N : ℕ → ℕ} (hN : Tendsto N atTop atTop)
     {factor eta b zeta : ℝ}
     (hfactor : 1 < factor) (heta : 0 < eta) (hb : 0 < b)
@@ -790,7 +790,7 @@ theorem logarithmicRawRateParameters
 
 /-! ## Arbitrary horizons -/
 
-private theorem tendsto_horizon_div_length_atTop_of_logCube_limit
+private lemma tendsto_horizon_div_length_atTop_of_logCube_limit
     {N horizon : ℕ → ℕ} (hN : Tendsto N atTop atTop)
     {beta b t : ℝ} (hbeta : 0 < beta) (hb : 0 < b) (ht : 0 < t)
     (hH : Tendsto (fun n => (horizon n : ℝ) /
@@ -841,7 +841,7 @@ private theorem tendsto_horizon_div_length_atTop_of_logCube_limit
     ring
   simpa [L, root, gamma] using hscaled.congr' heq
 
-private theorem tendsto_logarithmicBlockCountForHorizon_atTop
+private lemma tendsto_logarithmicBlockCountForHorizon_atTop
     {N horizon : ℕ → ℕ} (hN : Tendsto N atTop atTop)
     {beta b t : ℝ} (hbeta : 0 < beta) (hb : 0 < b) (ht : 0 < t)
     (hH : Tendsto (fun n => (horizon n : ℝ) /
@@ -854,7 +854,7 @@ private theorem tendsto_logarithmicBlockCountForHorizon_atTop
       (logarithmicBlockLength N beta b n : ℝ))) atTop atTop
   exact tendsto_nat_floor_atTop.comp hquot
 
-private theorem tendsto_logarithmicBlockCountForHorizon_div_quotient
+private lemma tendsto_logarithmicBlockCountForHorizon_div_quotient
     {N horizon : ℕ → ℕ} (hN : Tendsto N atTop atTop)
     {beta b t : ℝ} (hbeta : 0 < beta) (hb : 0 < b) (ht : 0 < t)
     (hH : Tendsto (fun n => (horizon n : ℝ) /
@@ -871,7 +871,7 @@ private theorem tendsto_logarithmicBlockCountForHorizon_div_quotient
           (logarithmicBlockLength N beta b n : ℝ))) atTop (𝓝 1)
   exact tendsto_nat_floor_div_atTop.comp hquot
 
-private theorem tendsto_logarithmicTotalCost_atTop_of_horizon
+private lemma tendsto_logarithmicTotalCost_atTop_of_horizon
     {N horizon : ℕ → ℕ} (hN : Tendsto N atTop atTop)
     {beta b t : ℝ} (hbeta : 0 < beta) (hb : 0 < b) (ht : 0 < t)
     (hH : Tendsto (fun n => (horizon n : ℝ) /
@@ -904,7 +904,7 @@ private theorem tendsto_logarithmicTotalCost_atTop_of_horizon
     field_simp [hLne, hδne]
   exact hscaled.congr' heq.symm
 
-private theorem logarithmicBlockCountForHorizon_complete
+private lemma logarithmicBlockCountForHorizon_complete
     (N horizon : ℕ → ℕ) (beta b : ℝ) (n : ℕ) :
     logarithmicBlockCountForHorizon N beta b horizon n *
       logarithmicBlockLength N beta b n ≤ horizon n := by
@@ -923,7 +923,7 @@ private theorem logarithmicBlockCountForHorizon_complete
     nlinarith [h]
   exact_mod_cast hcast
 
-private theorem tendsto_logarithmicCoverageForHorizon
+private lemma tendsto_logarithmicCoverageForHorizon
     {N horizon : ℕ → ℕ} (hN : Tendsto N atTop atTop)
     {beta b t : ℝ} (hbeta : 0 < beta) (hb : 0 < b) (ht : 0 < t)
     (hH : Tendsto (fun n => (horizon n : ℝ) /

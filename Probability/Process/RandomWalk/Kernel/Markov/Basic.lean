@@ -35,14 +35,14 @@ private def positionFromPrefix (initial : E) {n : ℕ} (increments : Fin n → E
   initial + ∑ k, increments k
 
 omit [StandardBorelSpace E] [Nonempty E] in
-private theorem positionFromPrefix_measurable (initial : E) (n : ℕ) :
+private lemma positionFromPrefix_measurable (initial : E) (n : ℕ) :
     Measurable (positionFromPrefix initial : (Fin n → E) → E) := by
   exact measurable_const.add
     (Finset.measurable_sum Finset.univ fun k _ ↦ measurable_pi_apply k)
 
 omit [MeasurableSpace E] [MeasurableAdd₂ E] [StandardBorelSpace E]
     [Nonempty E] in
-@[simp] private theorem positionFromPrefix_blockCoordinates_zero
+@[simp] private lemma positionFromPrefix_blockCoordinates_zero
     (initial : E) (n : ℕ) (increment : ℕ → E) :
     positionFromPrefix initial (Combinatorics.Sequence.blockCoordinates 0 n increment) =
       positionProcess initial n increment := by
@@ -52,7 +52,7 @@ omit [MeasurableSpace E] [MeasurableAdd₂ E] [StandardBorelSpace E]
 
 omit [MeasurableSpace E] [MeasurableAdd₂ E] [StandardBorelSpace E]
     [Nonempty E] in
-private theorem positionProcess_eq_prefix_add_blockSum
+private lemma positionProcess_eq_prefix_add_blockSum
     (initial : E) {m n : ℕ} (hmn : m ≤ n) (increment : ℕ → E) :
     positionProcess initial n increment =
       positionFromPrefix initial (Combinatorics.Sequence.blockCoordinates 0 m increment) +

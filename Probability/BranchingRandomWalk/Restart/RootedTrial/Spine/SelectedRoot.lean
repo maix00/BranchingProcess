@@ -24,7 +24,7 @@ namespace ProbabilityTheory.BranchingRandomWalk
 
 open Combinatorics.Branching Combinatorics.UlamHarris MeasureTheory
 
-private theorem nat_add_withTop_le_iff
+private lemma nat_add_withTop_le_iff
     (start age n : ℕ) (hsum : start + age = n) (m : WithTop ℕ) :
     (start : WithTop ℕ) + m ≤ n ↔ m ≤ age := by
   cases m with
@@ -47,7 +47,7 @@ private theorem nat_add_withTop_le_iff
         convert h' using 1
         exact WithTop.coe_add start k
 
-private theorem nat_of_withTop_add_le
+private lemma nat_of_withTop_add_le
     {start n : ℕ} {m : WithTop ℕ}
     (h : (start : WithTop ℕ) + m ≤ n) : start ≤ n := by
   cases m with

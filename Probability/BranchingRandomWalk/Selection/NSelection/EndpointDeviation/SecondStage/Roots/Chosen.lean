@@ -182,7 +182,7 @@ theorem rightTailSecondStageRoots_countable
     ∀ n, (Set.range (rightTailSecondStageRoots hKm P hP generation n)).Countable :=
   fun _ => Set.to_countable _
 
-private theorem measurableSet_rightTailSecondStageRankRoot_eq
+private lemma measurableSet_rightTailSecondStageRankRoot_eq
     {m K : ℕ} (hKm : K ≤ m) (P : RestartedPopulation m)
     (hP : P.FiniteSlices) (generation : ℕ)
     [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]

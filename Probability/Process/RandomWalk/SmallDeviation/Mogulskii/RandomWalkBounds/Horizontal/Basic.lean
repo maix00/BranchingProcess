@@ -69,7 +69,7 @@ def blockOscillationEvent (width : ℝ) (length : ℕ) :
   {increments | OscillationBounded
     (fun time : Fin (length + 1) => Fin.partialSum increments time) width}
 
-private theorem measurable_partialSum {length : ℕ}
+private lemma measurable_partialSum {length : ℕ}
     (time : Fin (length + 1)) :
     Measurable (fun increments : Fin length → ℝ =>
       Fin.partialSum increments time) := by

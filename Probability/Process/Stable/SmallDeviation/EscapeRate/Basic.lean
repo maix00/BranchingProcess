@@ -57,7 +57,7 @@ theorem IsStableLevyProcess.rationalRangeProbability_pos_of_cdf
     exact h.measure_fullSegmentCorridor_pos (-a) a (by linarith) ha hpos hneg
   exact hcenter.trans_le (centeredCorridorProbability_le_rationalRangeProbability P X a)
 
-private theorem rationalRangeProbability_le_one
+private lemma rationalRangeProbability_le_one
     {Ω : Type*} [MeasurableSpace Ω]
     (P : Measure Ω) [IsProbabilityMeasure P]
     (X : ℝ≥0 → Ω → ℝ) (a : ℝ) :
@@ -68,7 +68,7 @@ private theorem rationalRangeProbability_le_one
       measure_mono (Set.subset_univ _)
     _ = 1 := measure_univ
 
-private theorem stableRangeLogRate_nonpos
+private lemma stableRangeLogRate_nonpos
     {Ω : Type*} [MeasurableSpace Ω]
     (P : Measure Ω) [IsProbabilityMeasure P]
     (X : ℝ≥0 → Ω → ℝ) {α a : ℝ}
@@ -82,7 +82,7 @@ private theorem stableRangeLogRate_nonpos
   exact mul_nonpos_of_nonneg_of_nonpos (Real.rpow_nonneg ha α)
     (Real.log_nonpos (ENNReal.toReal_nonneg) hreal)
 
-private theorem tendsto_of_fixed_reference_scale
+private lemma tendsto_of_fixed_reference_scale
     {g : ℝ → ℝ} {S : Set ℝ} {l : Filter ℝ} {scale : ℝ → ℝ → ℝ}
     (hne : (g '' S).Nonempty) (hbounded : BddBelow (g '' S))
     (hdomain : ∀ᶠ a in l, a ∈ S)
@@ -127,7 +127,7 @@ noncomputable def stableShiftedCorridorLogRate
     (P : Measure Ω) (X : ℝ≥0 → Ω → ℝ) (α d a : ℝ) : ℝ :=
   a ^ α * Real.log ((shiftedCorridorProbability P X d a).toReal)
 
-private theorem tendsto_rangeScaleFactor
+private lemma tendsto_rangeScaleFactor
     {α b : ℝ} (hα : 0 < α) (hb : 0 < b) :
     Tendsto (rangeScaleFactor α b) (𝓝[>] (0 : ℝ)) (𝓝 1) := by
   let l := 𝓝[>] (0 : ℝ)
@@ -180,7 +180,7 @@ private noncomputable def stableEndpointBase
    referenceEndpointProbability P X β ⟨5, by omega⟩ ⊓
    referenceEndpointProbability P X β ⟨6, by omega⟩) ⊓ (1 / 2 : ℝ≥0∞)
 
-private theorem stableEndpointBase_pos
+private lemma stableEndpointBase_pos
     {Ω : Type*} [MeasurableSpace Ω]
     {X : ℝ≥0 → Ω → ℝ}
     {P : Measure Ω} [IsProbabilityMeasure P]
@@ -322,7 +322,7 @@ theorem IsStableLevyProcess.exists_finite_endpointCorridorIoc_lowerBound
   · intro i
     simpa [endpointProbability] using hqle i
 
-private theorem exists_stableEndpointBase_pos
+private lemma exists_stableEndpointBase_pos
     {Ω : Type*} [MeasurableSpace Ω]
     {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
     {P : Measure Ω} [IsProbabilityMeasure P]
@@ -606,7 +606,7 @@ theorem IsStableLevyProcess.exists_centeredCorridor_exponential_lower_bound
       (hlargeBound a ha ha1 (le_of_not_ge hsmall))
 
 
-private theorem stableRangeLogRate_lower_bound
+private lemma stableRangeLogRate_lower_bound
     {Ω : Type*} [MeasurableSpace Ω]
     {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
     {P : Measure Ω} [IsProbabilityMeasure P]
@@ -689,7 +689,7 @@ theorem IsStableLevyProcess.measure_rationalRangeProbability_le_pow_of_le
   rw [hwidth] at h23
   simpa [rationalRangeProbability] using h23
 
-private theorem stableRangeLogRate_le_scale_mul
+private lemma stableRangeLogRate_le_scale_mul
     {Ω : Type*} [MeasurableSpace Ω]
     {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
     {P : Measure Ω} [IsProbabilityMeasure P]

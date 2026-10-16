@@ -96,7 +96,7 @@ theorem positive_measure_childCount_ge_two
   rw [hexpect] at hsupercritical
   exact (lt_irrefl 1) hsupercritical
 
-private theorem childCount_le_one_of_not_split
+private lemma childCount_le_one_of_not_split
     {ι X : Type*} (ξ : Step ι X)
     (hnoSplit : ¬ 2 ≤ Step.childCount ξ) : Step.childCount ξ ≤ 1 := by
   cases hcount : Step.childCount ξ with
@@ -132,7 +132,7 @@ theorem positive_raw_measure_childCount_ge_two
       _ = 1 := by simp
   exact (not_lt_of_ge hle) hsupercritical
 
-private theorem measurable_childCount_ge_two
+private lemma measurable_childCount_ge_two
     {ι X : Type*} [Countable ι] [MeasurableSpace X] :
     MeasurableSet {ξ : Step ι X | 2 ≤ Step.childCount ξ} := by
   have heq : {ξ : Step ι X | 2 ≤ Step.childCount ξ} = nontrivialSupport := by
@@ -171,7 +171,7 @@ private def batchFirstRankSplitEvent {N : ℕ} (hN : 0 < N) :
     Set (GenerationBatch N) :=
   {batch | 2 ≤ Step.childCount (batch (⟨0, hN⟩ : Fin N))}
 
-private theorem measurable_batchFirstRankSplitEvent {N : ℕ} (hN : 0 < N) :
+private lemma measurable_batchFirstRankSplitEvent {N : ℕ} (hN : 0 < N) :
     MeasurableSet (batchFirstRankSplitEvent hN) := by
   change MeasurableSet
     {batch : GenerationBatch N |

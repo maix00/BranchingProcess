@@ -95,7 +95,7 @@ theorem mem_driftedTubeUpperEndpointWindowEvent_iff_reflected
       · convert neg_le_neg hend.1 using 1 <;> ring
 
 /-- The lower-endpoint tilted-tube event is measurable. -/
-private theorem measurableSet_driftedTubeEndpointWindowEvent
+private lemma measurableSet_driftedTubeEndpointWindowEvent
     (horizon : ℕ) (width drift base endpointFraction : ℝ) :
     MeasurableSet (driftedTubeEndpointWindowEvent
       horizon width drift base endpointFraction) := by

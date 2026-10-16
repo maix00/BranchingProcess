@@ -115,7 +115,7 @@ theorem measurable_selectedPopulationEndpointTrajectoryWithParameter
   simpa [selectedPopulationEndpointTrajectoryWithParameter] using
     measurable_selectedPopulationEndpointWithParameter N n
 
-private theorem ae_selectedPopulationEndpointTrajectoryWithParameter_sections
+private lemma ae_selectedPopulationEndpointTrajectoryWithParameter_sections
     {N : ℕ} (hN : 0 < N)
     (envLaw : Measure (GenerationEnvironment N))
     (fieldLaw : Measure (RootIndexed.StepField (Fin N) ℕ ℝ))
@@ -228,7 +228,7 @@ private theorem ae_selectedPopulationEndpointTrajectoryWithParameter_sections
   simp [selectedPopulationEndpointTrajectoryWithParameter, hendpoint n]
 
 set_option maxHeartbeats 3000000
-private theorem ae_selectedPopulationEndpointTrajectoryWithParameter_sections_of_stepLaw
+private lemma ae_selectedPopulationEndpointTrajectoryWithParameter_sections_of_stepLaw
     {ι X : Type*} [Countable ι] [MeasurableSpace X]
     {N : ℕ} (hN : 0 < N) (L : StepLaw ι ℕ X)
     [IsProbabilityMeasure L.raw]

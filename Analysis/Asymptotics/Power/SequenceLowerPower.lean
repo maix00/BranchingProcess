@@ -29,7 +29,7 @@ open scoped Topology
 
 namespace Asymptotics
 
-private theorem initial_lower
+private lemma initial_lower
     (F : ℕ → ℝ) (hF : ∀ n, 0 < F n) (γ : ℝ) (N : ℕ) :
     ∃ C : ℝ, 0 < C ∧ ∀ k < N,
       C * (((k + 1 : ℕ) : ℝ) ^ (γ - 1)) ≤ F k := by
@@ -53,7 +53,7 @@ private theorem initial_lower
                 exact mul_le_mul_of_nonneg_right (min_le_right _ _) (by positivity)
           _ = F N := by dsimp [w]; field_simp [ne_of_gt hw]
 
-private theorem eventual_margin {β γ : ℝ} (hβ : 0 < β) (hγ : 0 < γ)
+private lemma eventual_margin {β γ : ℝ} (hβ : 0 < β) (hγ : 0 < γ)
     (hγβ : γ < β) (hγ1 : γ ≤ 1) (N : ℕ) :
     ∀ᶠ n : ℕ in atTop,
       γ * (((n + 1 : ℕ) : ℝ) ^ γ) ≤

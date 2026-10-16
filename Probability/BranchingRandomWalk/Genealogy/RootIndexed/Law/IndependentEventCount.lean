@@ -31,7 +31,7 @@ open Combinatorics.Branching
 open Combinatorics.UlamHarris
 open ProbabilityTheory
 
-private theorem mgf_eventIndicator
+private lemma mgf_eventIndicator
     {Ω : Type*} [MeasurableSpace Ω]
     (μ : Measure Ω) [IsProbabilityMeasure μ]
     (E : Set Ω) (hE : MeasurableSet E) :

@@ -29,7 +29,7 @@ namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete
 open ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability
 open Skorokhod.PathClass.StepCorridor
 
-private theorem probabilityRateDenominator_tendsto_atBot_local
+private lemma probabilityRateDenominator_tendsto_atBot_local
     {α : ℝ} {ν : Measure ℝ} [IsProbabilityMeasure ν]
     {normalization scale : ℕ → ℝ}
     (hscale : IsStableMogulskiiScale α ν normalization scale)

@@ -200,7 +200,7 @@ private def tubePrefixBlockPair (start length : ℕ) :
     (fun i : Fin start => whole ⟨(i : ℕ), by omega⟩,
       fun j : Fin length => whole ⟨start + (j : ℕ), by omega⟩)
 
-private theorem measurable_tubePrefixBlockPair (start length : ℕ) :
+private lemma measurable_tubePrefixBlockPair (start length : ℕ) :
     Measurable (tubePrefixBlockPair start length) := by
   apply Measurable.prodMk
   · rw [measurable_pi_iff]
@@ -212,7 +212,7 @@ private theorem measurable_tubePrefixBlockPair (start length : ℕ) :
     exact measurable_pi_apply
       (⟨start + (j : ℕ), by omega⟩ : Fin (start + length))
 
-private theorem tubePrefixBlockPair_blockCoordinates
+private lemma tubePrefixBlockPair_blockCoordinates
     (start length : ℕ) (increment : ℕ → ℝ) :
     tubePrefixBlockPair start length
       (Combinatorics.Sequence.blockCoordinates 0 (start + length) increment) =

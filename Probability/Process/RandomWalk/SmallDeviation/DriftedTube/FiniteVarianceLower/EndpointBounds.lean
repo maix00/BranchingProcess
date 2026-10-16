@@ -46,7 +46,7 @@ open scoped NNReal Topology
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 
-private theorem exists_staircase_bin_count
+private lemma exists_staircase_bin_count
     {sigma d v : ℝ}
     (hrate : (Real.pi ^ 2 / 2) * sigma ^ 2 < d)
     (hv : 0 < v) :
@@ -79,7 +79,7 @@ private theorem exists_staircase_bin_count
   exact ⟨m, hm.1.1, hm.1.2, hm.2⟩
 
 
-private theorem exists_staircase_windows
+private lemma exists_staircase_windows
     {a b A U : ℝ} (ha : 0 < a) (hab : a < b) (hb : b < 1)
     (hA : 0 ≤ A) (hA1 : A < 1) (hU : 0 < U) :
     ∃ margin uInterior vInterior uLower vLower uUpper vUpper : ℝ,
@@ -122,7 +122,7 @@ private theorem exists_staircase_windows
   all_goals linarith
 
 
-private theorem exists_staircase_geometric_margins
+private lemma exists_staircase_geometric_margins
     {m : ℕ} (hm : 2 ≤ m) {v : ℝ}
     (hv : 1 / (3 * (m : ℝ)) < v) :
     ∃ margin uInterior vInterior uLower vLower uUpper vUpper : ℝ,

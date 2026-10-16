@@ -69,7 +69,7 @@ theorem measurable_absoluteRademacherBlockPath (length : ℕ) :
     Measurable (absoluteRademacherBlockPath length) :=
   measurable_of_countable _
 
-private theorem normalizedLinearContinuousPathFromBlock_neg
+private lemma normalizedLinearContinuousPathFromBlock_neg
     (scale : ℕ → ℝ) (length : ℕ) (block : Fin length → ℝ) :
     normalizedLinearContinuousPathFromBlock scale length
         (fun j => -block j) =

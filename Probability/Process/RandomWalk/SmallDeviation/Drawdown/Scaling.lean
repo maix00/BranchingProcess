@@ -36,7 +36,7 @@ open scoped ENNReal
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown
 
-private theorem displacement_div_const (n : ℕ) (increment : ℕ → ℝ)
+private lemma displacement_div_const (n : ℕ) (increment : ℕ → ℝ)
     (sigma : ℝ) :
     AdditivePath.displacement n (fun k => increment k / sigma) =
       AdditivePath.displacement n increment / sigma := by

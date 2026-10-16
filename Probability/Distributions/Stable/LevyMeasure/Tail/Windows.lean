@@ -18,7 +18,7 @@ namespace ProbabilityTheory
 
 open MeasureTheory Set
 
-private theorem measure_Ioo_pos_of_tail_gt (ν : Measure ℝ)
+private lemma measure_Ioo_pos_of_tail_gt (ν : Measure ℝ)
     {r s R : ℝ} (hsR : s < R)
     (htail : ν (Ioi s) < ν (Ioi r)) :
     0 < ν (Ioo r R) := by
@@ -34,7 +34,7 @@ private theorem measure_Ioo_pos_of_tail_gt (ν : Measure ℝ)
   rw [hzero', zero_add] at hle
   exact (not_lt_of_ge hle) htail
 
-private theorem measure_neg_Ioo_pos_of_tail_gt (ν : Measure ℝ)
+private lemma measure_neg_Ioo_pos_of_tail_gt (ν : Measure ℝ)
     {r s R : ℝ} (hsR : s < R)
     (htail : ν (Iio (-s)) < ν (Iio (-r))) :
     0 < ν (Ioo (-R) (-r)) := by

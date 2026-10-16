@@ -75,7 +75,7 @@ noncomputable def smallDeviationBlockLength (u v d : ℝ) (n : ℕ) : ℕ :=
   n ^ 2 * smallDeviationBlockFactor u v d n
 
 /-- A point of `[0,1]` lies in one of the `m` closed equal subintervals. -/
-private theorem exists_equalPartition_index {m : ℕ} (hm : 0 < m)
+private lemma exists_equalPartition_index {m : ℕ} (hm : 0 < m)
     {x : ℝ} (hx0 : 0 ≤ x) (hx1 : x ≤ 1) :
     ∃ k : Fin m, (k : ℝ) / m ≤ x ∧ x ≤ ((k : ℝ) + 1) / m := by
   let q := Nat.floor ((m : ℝ) * x)

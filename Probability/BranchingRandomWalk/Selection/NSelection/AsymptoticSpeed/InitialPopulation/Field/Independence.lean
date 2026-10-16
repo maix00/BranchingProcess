@@ -26,7 +26,7 @@ open ProbabilityTheory.BranchingRandomWalk.RootIndexed
 
 attribute [local instance] Classical.propDecidable Classical.decEq
 
-private theorem measurableSet_smallInitialPopulationHitInitialPosition_preimage_at
+private lemma measurableSet_smallInitialPopulationHitInitialPosition_preimage_at
     (m N n : ℕ) (hm : 0 < m)
     [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
     [MeasurableSingletonClass (RootIndexed.TreeNode (Fin m) ℕ)]

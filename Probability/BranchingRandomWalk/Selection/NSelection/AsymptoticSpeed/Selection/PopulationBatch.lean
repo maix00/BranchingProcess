@@ -54,7 +54,7 @@ noncomputable def selectedPopulationRankRoots
       Fin N → Fin N × TreeNode ℕ :=
   fun n field i => selectedPopulationRankRoot N n initial field i
 
-private theorem selectedPopulationRankRoot_eq_ranked_of_card
+private lemma selectedPopulationRankRoot_eq_ranked_of_card
     (N n : ℕ) (initial : Fin N → ℝ)
     [LinearOrder (RootIndexed.TreeNode (Fin N) ℕ)]
     (field : RootIndexed.StepField (Fin N) ℕ ℝ) (i : Fin N)
@@ -199,7 +199,7 @@ theorem selectedPopulationRankRoots_range_card
         Fintype.card (Fin N) := Fintype.card_congr e.symm
     _ = N := Fintype.card_fin N
 
-private theorem measurableSet_selectedPopulationRankRoot_eq
+private lemma measurableSet_selectedPopulationRankRoot_eq
     (N n : ℕ) (initial : Fin N → ℝ)
     [MeasurableSpace (RootIndexed.TreeNode (Fin N) ℕ)]
     [Countable (RootIndexed.TreeNode (Fin N) ℕ)]

@@ -24,7 +24,7 @@ namespace ProbabilityTheory
 
 open MeasureTheory
 
-private theorem one_sub_lt_one_of_pos {x : ENNReal}
+private lemma one_sub_lt_one_of_pos {x : ENNReal}
     (hx : 0 < x) (hxle : x ≤ 1) : 1 - x < 1 := by
   have hxfinite : x ≠ ⊤ := ne_top_of_le_ne_top (by simp) hxle
   have hsubfinite : 1 - x ≠ ⊤ := by finiteness
@@ -137,7 +137,7 @@ theorem IsStrictlyAlphaStable.twoSidedMass_of_cdfAtZero
   nlinarith [mul_pos hθrealpos (sub_pos.mpr hθreallt)]
 
 /-- Negating a strictly stable law preserves strict stability. -/
-private theorem IsStrictlyAlphaStable.map_neg
+private lemma IsStrictlyAlphaStable.map_neg
     {α : ℝ} {μ : Measure ℝ} (h : IsStrictlyAlphaStable α μ) :
     IsStrictlyAlphaStable α (μ.map Neg.neg) := by
   let ν : Measure ℝ := μ.map Neg.neg

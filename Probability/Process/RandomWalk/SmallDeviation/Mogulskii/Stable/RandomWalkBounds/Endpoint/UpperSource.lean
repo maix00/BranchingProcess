@@ -24,7 +24,7 @@ open scoped ENNReal
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete
 
-private theorem eventually_horizontalTubeProbability_le_pow_of_endpointMass
+private lemma eventually_horizontalTubeProbability_le_pow_of_endpointMass
     (ν μ : Measure ℝ) [IsProbabilityMeasure ν] [IsProbabilityMeasure μ]
     {α constant : ℝ} (hα : 0 < α) (hα₂ : α ≤ 2)
     (hconstant : 0 < constant)

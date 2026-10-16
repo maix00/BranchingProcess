@@ -53,7 +53,7 @@ def endpointWindowReturnBlockEvent (lower upper spacing windowRadius : ℝ)
         ((i : ℝ) * spacing - windowRadius)
         ((i : ℝ) * spacing + windowRadius)}
 
-private theorem endpointWindowBlockEvent_subset_returnEvent
+private lemma endpointWindowBlockEvent_subset_returnEvent
     {radius spacing windowRadius x : ℝ} {length : ℕ}
     (hspacing : 0 < spacing) (hwindow : 0 < windowRadius)
     (hwindowLe : windowRadius ≤ 2 * spacing)

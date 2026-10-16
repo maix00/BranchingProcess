@@ -45,7 +45,7 @@ open scoped NNReal
 
 /-- An eligible unit window can be moved left across a segment on which
 the path is nondecreasing. -/
-private theorem isNonnegativeWindowStart_of_leftSegment
+private lemma isNonnegativeWindowStart_of_leftSegment
     (f : C(ℝ≥0, ℝ)) (a t : ℝ≥0)
     (hat : a ≤ t)
     (hmono : ∀ x : ℝ≥0, a ≤ x → x ≤ t → f a ≤ f x)

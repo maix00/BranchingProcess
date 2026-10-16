@@ -39,11 +39,11 @@ private def returnBinUpper (coreUpper : ℝ) : Bool → ℝ
   | false => 0
   | true => coreUpper
 
-private theorem returnBin_measurable (coreLower coreUpper : ℝ) (i : Bool) :
+private lemma returnBin_measurable (coreLower coreUpper : ℝ) (i : Bool) :
     MeasurableSet (returnBin coreLower coreUpper i) := by
   cases i <;> simp [returnBin, measurableSet_Ioo, measurableSet_Ico]
 
-private theorem returnBin_disjoint (coreLower coreUpper : ℝ) :
+private lemma returnBin_disjoint (coreLower coreUpper : ℝ) :
     Pairwise (fun i k => Disjoint (returnBin coreLower coreUpper i)
       (returnBin coreLower coreUpper k)) := by
   intro i k hik
@@ -57,7 +57,7 @@ private theorem returnBin_disjoint (coreLower coreUpper : ℝ) :
     exact (not_lt_of_ge hx.1) hy.2
   · exact (hik rfl).elim
 
-private theorem returnBin_bounds (coreLower coreUpper : ℝ) (i : Bool)
+private lemma returnBin_bounds (coreLower coreUpper : ℝ) (i : Bool)
     (b : ℝ) (hb : b ∈ returnBin coreLower coreUpper i) :
     returnBinLower coreLower i ≤ b ∧ b ≤ returnBinUpper coreUpper i := by
   cases i with
@@ -68,7 +68,7 @@ private theorem returnBin_bounds (coreLower coreUpper : ℝ) (i : Bool)
       simp only [returnBin, Set.mem_Ico, returnBinLower, returnBinUpper] at *
       exact ⟨hb.1, le_of_lt hb.2⟩
 
-private theorem returnBin_cover (coreLower coreUpper : ℝ) :
+private lemma returnBin_cover (coreLower coreUpper : ℝ) :
     Set.Ioo coreLower coreUpper ⊆ ⋃ i : Bool, returnBin coreLower coreUpper i := by
   intro b hb
   by_cases h : b < 0

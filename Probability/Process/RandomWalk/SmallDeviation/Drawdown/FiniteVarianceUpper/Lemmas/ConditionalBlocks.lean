@@ -83,7 +83,7 @@ def drawdownPrefixPath {start : ℕ} (past : Fin start → ℝ) : ℕ → ℝ :=
       Fin.partialSum past ⟨time, Nat.lt_succ_of_le htime⟩
     else 0
 
-private theorem partialSum_eq_prefixSum {length : ℕ}
+private lemma partialSum_eq_prefixSum {length : ℕ}
     (block : Fin length → ℝ) (k : Fin (length + 1)) :
     Fin.partialSum block k =
       ∑ j : Fin k, block
@@ -102,7 +102,7 @@ private theorem partialSum_eq_prefixSum {length : ℕ}
       rw [Fin.sum_univ_castSucc]
       congr 1
 
-private theorem measurable_partialSum {length : ℕ}
+private lemma measurable_partialSum {length : ℕ}
     (k : Fin (length + 1)) :
     Measurable (fun block : Fin length → ℝ =>
       Fin.partialSum block k) := by
@@ -118,7 +118,7 @@ private theorem measurable_partialSum {length : ℕ}
         simp only [Fin.partialSum_succ, Pi.add_apply]
       exact heq ▸ hsum
 
-private theorem measurable_prefixPath_coordinate {start : ℕ}
+private lemma measurable_prefixPath_coordinate {start : ℕ}
     (time : ℕ) :
     Measurable (fun past : Fin start → ℝ => drawdownPrefixPath past time) := by
   by_cases htime : time ≤ start
@@ -157,7 +157,7 @@ lemma measurable_drawdownPastDiscretizedMaximum {start : ℕ}
         width) : ℝ))
   exact measurable_const.sub (measurable_const.mul hfloor)
 
-private theorem prefixPath_blockCoordinates_eq
+private lemma prefixPath_blockCoordinates_eq
     {start : ℕ} (increment : ℕ → ℝ) {time : ℕ} (htime : time ≤ start) :
     drawdownPrefixPath
         (Combinatorics.Sequence.blockCoordinates 0 start increment) time =
@@ -173,7 +173,7 @@ private theorem prefixPath_blockCoordinates_eq
     _ = AdditivePath.displacement time increment := by
       simp [AdditivePath.blockSum_eq_displacement_natAdd]
 
-private theorem prefixMaximum_blockCoordinates_eq
+private lemma prefixMaximum_blockCoordinates_eq
     (start : ℕ) (increment : ℕ → ℝ) :
     prefixMaximum
         (drawdownPrefixPath
@@ -195,7 +195,7 @@ lemma drawdownPastDiscretizedMaximum_eq_runningMaximum
   simp only [drawdownPastDiscretizedMaximum, spatialBinLevel, spatialBinIndex]
   rw [prefixMaximum_blockCoordinates_eq start increment]
 
-private theorem prefixSum_blockCoordinates_eq
+private lemma prefixSum_blockCoordinates_eq
     (start : ℕ) (increment : ℕ → ℝ) :
     (∑ i : Fin start,
       Combinatorics.Sequence.blockCoordinates 0 start increment i) =
@@ -203,7 +203,7 @@ private theorem prefixSum_blockCoordinates_eq
   simp [Combinatorics.Sequence.blockCoordinates,
     AdditivePath.displacement, Fin.sum_univ_eq_sum_range]
 
-private theorem tubeBlockPosition_eq
+private lemma tubeBlockPosition_eq
     (start length : ℕ) (increment : ℕ → ℝ)
     (k : Fin (length + 1)) :
     (∑ i : Fin start,
@@ -273,7 +273,7 @@ private def blockPrefixPair (start length : ℕ) :
       fun j : Fin length =>
         whole (⟨start + (j : ℕ), by omega⟩ : Fin (start + length)))
 
-private theorem measurable_blockPrefixPair (start length : ℕ) :
+private lemma measurable_blockPrefixPair (start length : ℕ) :
     Measurable (blockPrefixPair start length) := by
   have hpast : Measurable
       (fun whole : Fin (start + length) → ℝ =>
@@ -291,7 +291,7 @@ private theorem measurable_blockPrefixPair (start length : ℕ) :
       (⟨start + (j : ℕ), by omega⟩ : Fin (start + length))
   exact hpast.prodMk hblock
 
-private theorem blockPrefixPair_blockCoordinates
+private lemma blockPrefixPair_blockCoordinates
     (start length : ℕ) (increment : ℕ → ℝ) :
     blockPrefixPair start length
         (Combinatorics.Sequence.blockCoordinates 0 (start + length) increment) =

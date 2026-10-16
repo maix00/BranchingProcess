@@ -29,18 +29,18 @@ namespace ProbabilityTheory
 open MeasureTheory
 open scoped NNReal
 
-private theorem monotone_rationalUnitCoe :
+private lemma monotone_rationalUnitCoe :
     Monotone (RationalCoordinate.toUnitInterval : RationalCoordinate.UnitInterval → unitInterval) := by
   intro p q hpq
   change ((p : ℚ) : ℝ) ≤ ((q : ℚ) : ℝ)
   exact_mod_cast hpq
 
-private theorem rationalUnitCoe_bot :
+private lemma rationalUnitCoe_bot :
     RationalCoordinate.toUnitInterval ⊥ = (⊥ : unitInterval) := by
   apply Subtype.ext
   norm_num [RationalCoordinate.toUnitInterval]
 
-private theorem rationalUnitCoe_top :
+private lemma rationalUnitCoe_top :
     RationalCoordinate.toUnitInterval ⊤ = (⊤ : unitInterval) := by
   apply Subtype.ext
   norm_num [RationalCoordinate.toUnitInterval]

@@ -34,7 +34,7 @@ private noncomputable def oscillationWindowWidth (δ : ℝ) (n : ℕ) : ℕ :=
 
 /-- The window length has the lower coverage bound and the asymptotic upper
 fraction needed by both stable excursion estimates. -/
-private theorem eventually_oscillationWindowGeometry {δ : ℝ}
+private lemma eventually_oscillationWindowGeometry {δ : ℝ}
     (hδ : 0 < δ) (hδsmall : δ ≤ 1 / 16) :
     ∀ᶠ n : ℕ in atTop,
       0 < n ∧

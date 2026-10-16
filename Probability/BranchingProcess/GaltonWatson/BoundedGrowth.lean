@@ -23,7 +23,7 @@ open scoped ENNReal
 
 namespace ProbabilityTheory.BranchingProcess.GaltonWatson
 
-private theorem offspringSlotWeight_le_one {ι : Type*}
+private lemma offspringSlotWeight_le_one {ι : Type*}
     (μ : ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw
       ι PUnit.{1}) (i : ι) : offspringSlotWeight μ i ≤ 1 := by
   classical
@@ -36,7 +36,7 @@ private theorem offspringSlotWeight_le_one {ι : Type*}
       by_cases hi : Combinatorics.Branching.survive ξ i <;> simp [hi]
     _ = 1 := by simp
 
-private theorem offspringSlotPairWeight_le_one {ι : Type*}
+private lemma offspringSlotPairWeight_le_one {ι : Type*}
     (μ : ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw
       ι PUnit.{1}) (i j : ι) : offspringSlotPairWeight μ i j ≤ 1 := by
   classical
@@ -50,14 +50,14 @@ private theorem offspringSlotPairWeight_le_one {ι : Type*}
         by_cases hj : Combinatorics.Branching.survive ξ j <;> simp [hi, hj]
     _ = 1 := by simp
 
-private theorem offspringMean_lt_top {ι : Type*} [Fintype ι]
+private lemma offspringMean_lt_top {ι : Type*} [Fintype ι]
     (μ : ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw
       ι PUnit.{1}) : offspringMean μ < ∞ := by
   rw [offspringMean]
   refine ENNReal.sum_lt_top.mpr fun i hi => ?_
   exact lt_of_le_of_lt (offspringSlotWeight_le_one μ i) (by simp)
 
-private theorem offspringSecondFactorialMoment_lt_top {ι : Type*}
+private lemma offspringSecondFactorialMoment_lt_top {ι : Type*}
     [Fintype ι] [DecidableEq ι]
     (μ : ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw
       ι PUnit.{1}) : offspringSecondFactorialMoment μ < ∞ := by
@@ -69,7 +69,7 @@ private theorem offspringSecondFactorialMoment_lt_top {ι : Type*}
   · simpa [hij] using
       (lt_of_le_of_lt (offspringSlotPairWeight_le_one μ i j) (by simp))
 
-private theorem generationSecondMoment_zero {ι : Type*}
+private lemma generationSecondMoment_zero {ι : Type*}
     (μ : ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw
       ι PUnit.{1}) : generationSecondMoment μ 0 = 1 := by
   rw [generationSecondMoment]

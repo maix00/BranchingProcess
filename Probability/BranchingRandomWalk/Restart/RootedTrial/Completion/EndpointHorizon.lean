@@ -23,7 +23,7 @@ namespace ProbabilityTheory.BranchingRandomWalk
 
 open Combinatorics.Branching Combinatorics.UlamHarris
 
-private theorem measurable_subtreeStepFieldVector_of_measurable_roots
+private lemma measurable_subtreeStepFieldVector_of_measurable_roots
     {Root κ α X : Type*} [MeasurableSpace X]
     [MeasurableSpace κ] [MeasurableSpace Root]
     [MeasurableSpace (RootIndexed.TreeNode Root α)]

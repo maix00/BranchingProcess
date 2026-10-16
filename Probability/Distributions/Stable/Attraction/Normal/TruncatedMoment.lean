@@ -30,7 +30,7 @@ open scoped Topology
 
 namespace ProbabilityTheory
 
-private theorem one_sub_norm_charFun_sq_eq_two_cosineDefect_sub_norm_sq
+private lemma one_sub_norm_charFun_sq_eq_two_cosineDefect_sub_norm_sq
     (ν : Measure ℝ) [IsProbabilityMeasure ν] (t : ℝ) :
     1 - ‖charFun ν t‖ ^ 2 =
       2 * cosineDefectIntegral ν t - ‖charFun ν t - 1‖ ^ 2 := by
@@ -42,7 +42,7 @@ private theorem one_sub_norm_charFun_sq_eq_two_cosineDefect_sub_norm_sq
     Complex.sq_norm_sub_sq_im z
   nlinarith [h₁, h₂]
 
-private theorem normDefect_le_truncatedSecondMoment_add_closedTail
+private lemma normDefect_le_truncatedSecondMoment_add_closedTail
     (ν : Measure ℝ) [IsProbabilityMeasure ν] {x : ℝ} (hx : 0 < x) :
     1 - ‖charFun ν x⁻¹‖ ^ 2 ≤
       truncatedSecondMoment ν x / x ^ 2 +
@@ -74,7 +74,7 @@ private theorem normDefect_le_truncatedSecondMoment_add_closedTail
 finite variance assumption. The argument compares the cosine defect with the
 truncated second moment and the closed tail, then uses the characteristic-tail
 estimate. -/
-private theorem gaussian_truncatedSecondMoment_data
+private lemma gaussian_truncatedSecondMoment_data
     {ν : Measure ℝ} [IsProbabilityMeasure ν]
     {scale center : ℕ → ℝ}
     (h : IsInDomainOfAttractionAlong ν (gaussianReal 0 1) scale center) :
@@ -210,7 +210,7 @@ theorem IsInDomainOfAttractionAlong.stableSlowVariation_two_isSlowlyVarying_of_g
 /-- Feller's condition and Potter's bound make the integrated tail beyond a
 large cutoff negligible compared with `V(x) / x`. The exponent `1/2` in
 Potter's envelope is chosen only to make the resulting power integrable. -/
-private theorem tendsto_tailIntegral_div_truncatedSecondMoment_mul_radius_zero
+private lemma tendsto_tailIntegral_div_truncatedSecondMoment_mul_radius_zero
     {ν : Measure ℝ} [IsProbabilityMeasure ν]
     (habsolute : Integrable (fun x : ℝ => |x|) ν)
     (hVslow : Asymptotics.IsSlowlyVaryingAtTop (truncatedSecondMoment ν))

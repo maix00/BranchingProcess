@@ -47,7 +47,7 @@ noncomputable def continuousBoundaryRealEnergy (α : ℝ)
     (lower upper : C(unitInterval, ℝ)) : ℝ :=
   ∫ t : unitInterval, continuousBoundaryDensity α lower upper t ∂volume
 
-private theorem exists_rpow_uniform_width_modulus (α m M η : ℝ)
+private lemma exists_rpow_uniform_width_modulus (α m M η : ℝ)
     (hm : 0 < m) (hη : 0 < η) :
     ∃ δ > 0, ∀ x y : ℝ, m ≤ x → x ≤ M → m / 2 ≤ y → y ≤ M + m →
       |x - y| < δ → |x ^ (-α) - y ^ (-α)| < η := by
@@ -128,7 +128,7 @@ noncomputable def stepCorridorRealDensity (α : ℝ)
     (c : ContinuousAdmissibleStepCorridor) (t : unitInterval) : ℝ :=
   (widthCost α (c.upper.eval t) (c.lower.eval t)).toReal
 
-private theorem stepCorridorRealDensity_eq_rpow_of_values
+private lemma stepCorridorRealDensity_eq_rpow_of_values
     (α : ℝ) (c : ContinuousAdmissibleStepCorridor) (t : unitInterval)
     (u l : ℝ) (hu : c.upper.eval t = (u : EReal))
     (hl : c.lower.eval t = (l : EReal)) (hwidth : 0 < u - l) :
@@ -137,7 +137,7 @@ private theorem stepCorridorRealDensity_eq_rpow_of_values
     widthCost_coe_sub α u l hwidth,
     le_of_lt (Real.rpow_pos_of_pos hwidth _)]
 
-private theorem abs_sample_add_offset_sub_le {s t offset ε : ℝ}
+private lemma abs_sample_add_offset_sub_le {s t offset ε : ℝ}
     (hsample : |t - s| < ε) :
     |s + offset - t| ≤ |offset| + ε := by
   have htri := abs_sub_le (s + offset) s t
@@ -148,7 +148,7 @@ private theorem abs_sample_add_offset_sub_le {s t offset ε : ℝ}
     simpa [abs_sub_comm] using this
   exact htri.trans (add_le_add_right hsample' _)
 
-private theorem abs_step_width_error_le {uS lS u l ε : ℝ}
+private lemma abs_step_width_error_le {uS lS u l ε : ℝ}
     (hu : |uS - u| ≤ 3 * ε) (hl : |lS - l| ≤ 3 * ε) :
     |(uS - lS) - (u - l)| ≤ 6 * ε := by
   have htri := abs_sub_le (uS - u) 0 (lS - l)
@@ -164,7 +164,7 @@ private theorem abs_step_width_error_le {uS lS u l ε : ℝ}
     _ ≤ 3 * ε + 3 * ε := add_le_add hu hl
     _ = 6 * ε := by ring
 
-private theorem exists_continuous_width_bounds
+private lemma exists_continuous_width_bounds
     (lower upper : C(unitInterval, ℝ))
     (hwidth : ∀ t, 0 < upper t - lower t) :
     ∃ m M : ℝ, 0 < m ∧ m ≤ M ∧
@@ -182,7 +182,7 @@ private theorem exists_continuous_width_bounds
   · intro t
     exact ⟨hmin (Set.mem_univ t), hmax (Set.mem_univ t)⟩
 
-private theorem exists_continuous_density_lower_bound
+private lemma exists_continuous_density_lower_bound
     (α : ℝ) (lower upper : C(unitInterval, ℝ))
     (hwidth : ∀ t, 0 < upper t - lower t) :
     ∃ d : ℝ, 0 < d ∧ ∀ t, d ≤ continuousBoundaryDensity α lower upper t := by
@@ -196,7 +196,7 @@ private theorem exists_continuous_density_lower_bound
   · intro t
     exact hmin (Set.mem_univ t)
 
-private theorem stepCorridor_density_close_of_width_error
+private lemma stepCorridor_density_close_of_width_error
     (α : ℝ) (c : ContinuousAdmissibleStepCorridor)
     (lower upper : C(unitInterval, ℝ)) (t : unitInterval)
     (u l m M ε δ η : ℝ)
@@ -567,13 +567,13 @@ private noncomputable def singletonFiniteCorridorUnion (α : ℝ)
   rw [henergy]
   exact hpos
 
-private theorem singletonFiniteCorridorUnion_toSet (α : ℝ)
+private lemma singletonFiniteCorridorUnion_toSet (α : ℝ)
     (c : ContinuousAdmissibleStepCorridor) (hpos : 0 < c.energy α) :
     FiniteCorridorUnion.toSet (singletonFiniteCorridorUnion α c hpos) = c.toSet := by
   ext path
   simp [singletonFiniteCorridorUnion, FiniteCorridorUnion.toSet]
 
-private theorem singletonFiniteCorridorUnion_realEnergy (α : ℝ)
+private lemma singletonFiniteCorridorUnion_realEnergy (α : ℝ)
     (c : ContinuousAdmissibleStepCorridor) (hpos : 0 < c.energy α) :
     (singletonFiniteCorridorUnion α c hpos).realEnergy = (c.energy α).toReal := by
   change (finiteMinimumEnergy α 1 (by norm_num) (fun _ : Fin 1 => c)).toReal = _

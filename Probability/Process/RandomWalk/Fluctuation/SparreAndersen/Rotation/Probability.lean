@@ -33,7 +33,7 @@ open scoped ENNReal
 
 namespace ProbabilityTheory.RandomWalk
 
-private theorem partialSum_prefix_eq_displacement
+private lemma partialSum_prefix_eq_displacement
     (n : ℕ) (increment : ℕ → ℝ) (t : Fin (n + 1)) :
     Fin.partialSum (fun i : Fin n => increment i.val) t =
       AdditivePath.displacement t.val increment := by
@@ -43,7 +43,7 @@ private theorem partialSum_prefix_eq_displacement
       rw [Fin.partialSum_succ, ih]
       simp [AdditivePath.displacement, Finset.sum_range_succ]
 
-private theorem measurable_finitePartialSum {n : ℕ}
+private lemma measurable_finitePartialSum {n : ℕ}
     (t : Fin (n + 1)) :
     Measurable (fun z : Fin n → ℝ => Fin.partialSum z t) := by
   induction t using Fin.induction with
@@ -55,7 +55,7 @@ private theorem measurable_finitePartialSum {n : ℕ}
           rw [Fin.partialSum_succ]]
       exact ih.add (measurable_pi_apply k)
 
-private theorem finiteSurvivalEvent_eq_infinite
+private lemma finiteSurvivalEvent_eq_infinite
     (n : ℕ) (increment : ℕ → ℝ) :
     (∀ t : Fin (n + 1), 0 ≤ Fin.partialSum
       (fun i : Fin n => increment i.val) t) ↔

@@ -124,14 +124,14 @@ theorem unorderedExample_not_ordered :
 
 /-- A condition on two slots that only forbids a later survive slot before an
 earlier absent one is measurable. -/
-private theorem coord_none_measurable {ι X : Type*} [MeasurableSpace X]
+private lemma coord_none_measurable {ι X : Type*} [MeasurableSpace X]
     (i : ι) :
     MeasurableSet {ξ : Step ι X | ξ i = none} := by
   rw [show {ξ : Step ι X | ξ i = none} =
       (fun ξ : Step ι X => ξ i) ⁻¹' ({none} : Set (Option X)) from rfl]
   exact (measurable_pi_apply i) measurableSet_option_none
 
-private theorem siblingClosedPair_measurable {ι X : Type*} [MeasurableSpace X]
+private lemma siblingClosedPair_measurable {ι X : Type*} [MeasurableSpace X]
     (i j : ι) :
     MeasurableSet {ξ : Step ι X | ξ i = none → ξ j = none} := by
   have hi := coord_none_measurable (X := X) i
@@ -146,7 +146,7 @@ private theorem siblingClosedPair_measurable {ι X : Type*} [MeasurableSpace X]
 
 /-- The pairwise monotonicity condition is measurable as soon as the
 comparison graph on the optional slot values is measurable. -/
-private theorem siblingRelGraph_measurable_of {ι X : Type*} [MeasurableSpace X]
+private lemma siblingRelGraph_measurable_of {ι X : Type*} [MeasurableSpace X]
     (rel : X → X → Prop)
     (hgraph : MeasurableSet {p : Option X × Option X |
       ∀ x y, p.1 = some x → p.2 = some y → rel x y}) (i j : ι) :
@@ -157,7 +157,7 @@ private theorem siblingRelGraph_measurable_of {ι X : Type*} [MeasurableSpace X]
   simpa only [Set.preimage_ofPred_eq] using hpair hgraph
 
 /-- The comparison graph of the real order is measurable. -/
-private theorem optionGraph_le_measurable :
+private lemma optionGraph_le_measurable :
     MeasurableSet {p : Option ℝ × Option ℝ |
       ∀ x y, p.1 = some x → p.2 = some y → x ≤ y} := by
   have hnone : MeasurableSet ({none} : Set (Option ℝ)) :=
@@ -204,7 +204,7 @@ private theorem optionGraph_le_measurable :
     (MeasurableSet.univ.prod hnone)).union hle
 
 /-- The comparison graph for the reverse order of `ℝ` is measurable. -/
-private theorem optionGraph_ge_measurable :
+private lemma optionGraph_ge_measurable :
     MeasurableSet {p : Option ℝ × Option ℝ |
       ∀ x y, p.1 = some x → p.2 = some y → y ≤ x} := by
   have hswap : Measurable (fun p : Option ℝ × Option ℝ => (p.2, p.1)) :=

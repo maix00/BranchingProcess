@@ -38,7 +38,7 @@ open scoped NNReal
 
 namespace ProbabilityTheory
 
-private theorem measure_piecewise_reflection_eq
+private lemma measure_piecewise_reflection_eq
     {ι : Type*} [MeasurableSpace ι] [MeasurableSingletonClass ι]
     [Fintype ι] [DecidableEq ι]
     (μ : Measure C(ℝ≥0, ℝ))

@@ -30,7 +30,7 @@ open ProbabilityTheory.RandomWalk
 open ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown
 open ProbabilityTheory.BranchingRandomWalk.Spine
 
-private theorem history_coordinate_eq_displacement (n : ℕ)
+private lemma history_coordinate_eq_displacement (n : ℕ)
     (increment : ℕ → ℝ) (i : Fin (n + 1)) :
     ProbabilityTheory.RandomWalk.history n 0 increment i =
       AdditivePath.displacement i.val increment := by
@@ -39,7 +39,7 @@ private theorem history_coordinate_eq_displacement (n : ℕ)
 
 /-- The spine's finite-history definition agrees with the natural-time
 drawdown event used by the block estimate. -/
-private theorem spineNoLargeDropEndpointBelowEvent_eq_randomWalkEvent
+private lemma spineNoLargeDropEndpointBelowEvent_eq_randomWalkEvent
     (n : ℕ) (delta threshold : ℝ) :
     spineNoLargeDropEndpointBelowEvent n delta threshold =
       noLargeDropEndpointBelowEvent n delta threshold := by

@@ -242,7 +242,7 @@ theorem rawSplitEvent_measurable {ι X : Type*} [Countable ι]
   rw [heq]
   exact nontrivialSupport_measurable
 
-private theorem childCount_eq_one_of_nonempty_not_split
+private lemma childCount_eq_one_of_nonempty_not_split
     {ι X : Type*} (ξ : Step ι X)
     (hne : ξ ∈ nonemptySupport)
     (hsplit : ¬ rawSplitEvent ξ) :

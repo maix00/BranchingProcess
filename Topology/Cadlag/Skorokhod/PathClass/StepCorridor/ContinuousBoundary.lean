@@ -154,7 +154,7 @@ theorem uniformGridStepBoundary_eval_eq_sample (blocks : ℕ) (hblocks : 0 < blo
     b.eval t = ((f (uniformGridTime blocks hblocks i) + offset : ℝ) : EReal) := by
   exact uniformGridStepBoundary_eval blocks hblocks f offset t
 
-private theorem card_filter_antitone_index {n : ℕ} (P : Fin n → Prop)
+private lemma card_filter_antitone_index {n : ℕ} (P : Fin n → Prop)
     [DecidablePred P] (hP : ∀ i j, i ≤ j → P j → P i) (k : ℕ)
     (hk : (Finset.univ.filter P).card = k) :
     ∀ i : Fin n, (i.val < k → P i) ∧ (k ≤ i.val → ¬ P i) := by
@@ -190,7 +190,7 @@ private theorem card_filter_antitone_index {n : ℕ} (P : Fin n → Prop)
     rw [hIic, hk] at hcard
     omega
 
-private theorem uniformGridStepBoundary_levelIndex_card (blocks : ℕ)
+private lemma uniformGridStepBoundary_levelIndex_card (blocks : ℕ)
     (hblocks : 0 < blocks) (f : C(unitInterval, ℝ)) (offset : ℝ)
     (t : unitInterval) :
     ((uniformGridStepBoundary blocks hblocks f offset).levelIndex t).val =
@@ -570,12 +570,12 @@ theorem exists_mem_relativeContinuousBoundaryCorridorSet
       · exact lt_of_lt_of_le (lt_add_of_pos_right _ hmargin) ht.1
       · exact lt_of_lt_of_le (lt_add_of_pos_right _ hmargin) ht.2
 
-private theorem sample_lt_add_two_of_abs {x y ε : ℝ} (hε : 0 < ε)
+private lemma sample_lt_add_two_of_abs {x y ε : ℝ} (hε : 0 < ε)
     (h : |x - y| < ε) : x < y + 2 * ε := by
   have hxy := (abs_lt.mp h).2
   linarith
 
-private theorem sub_two_lt_sample_of_abs {x y ε : ℝ} (hε : 0 < ε)
+private lemma sub_two_lt_sample_of_abs {x y ε : ℝ} (hε : 0 < ε)
     (h : |x - y| < ε) : y - 2 * ε < x := by
   have hxy := (abs_lt.mp h).1
   linarith

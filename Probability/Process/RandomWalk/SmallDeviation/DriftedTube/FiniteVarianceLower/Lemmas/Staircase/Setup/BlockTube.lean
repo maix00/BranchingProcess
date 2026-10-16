@@ -6,7 +6,9 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.BlockSchedule
+public import Mathlib.Analysis.SpecialFunctions.Exp
+import Mathlib.Tactic
+public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.BlockSchedule.Basic
 /-!
 # Horizontal sub-tubes of a linearly rising tube
 

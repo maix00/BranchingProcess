@@ -24,7 +24,7 @@ namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail
 
 /-- Choose the small endpoint ratio used to compare the target height with the
 positive endpoint window of the random-walk drawdown estimate. -/
-private theorem exists_small_positive_ratio (b r : ℝ) (hb : 0 < b) :
+private lemma exists_small_positive_ratio (b r : ℝ) (hb : 0 < b) :
     ∃ c : ℝ, 0 < c ∧ c < 1 / 2 ∧ r < b / c := by
   let c : ℝ := min (1 / 4) (b / (2 * (max r 0 + 1)))
   have hdenom : 0 < 2 * (max r 0 + 1) := by positivity

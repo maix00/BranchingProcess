@@ -41,19 +41,19 @@ private noncomputable def reflectedProcessAtTime {Ω : Type*}
     (B : ℝ≥0 → Ω → ℝ) (r : ℝ≥0) : ℝ≥0 → Ω → ℝ :=
   fun t ω => if t ≤ r then B t ω else 2 * B r ω - B t ω
 
-private theorem reflectedProcessAtTime_eq_of_le {Ω : Type*}
+private lemma reflectedProcessAtTime_eq_of_le {Ω : Type*}
     (B : ℝ≥0 → Ω → ℝ) {r t : ℝ≥0} (ht : t ≤ r) :
     reflectedProcessAtTime B r t = B t := by
   funext ω
   simp [reflectedProcessAtTime, ht]
 
-private theorem reflectedProcessAtTime_eq_of_lt {Ω : Type*}
+private lemma reflectedProcessAtTime_eq_of_lt {Ω : Type*}
     (B : ℝ≥0 → Ω → ℝ) {r t : ℝ≥0} (ht : r < t) :
     reflectedProcessAtTime B r t = fun ω => 2 * B r ω - B t ω := by
   funext ω
   simp [reflectedProcessAtTime, not_le.mpr ht]
 
-private theorem IsPreBrownianReal.reflectedProcessAtTime_isGaussianProcess
+private lemma IsPreBrownianReal.reflectedProcessAtTime_isGaussianProcess
     {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
     {B : ℝ≥0 → Ω → ℝ} (hB : IsPreBrownianReal B P) (r : ℝ≥0) :
     IsGaussianProcess (reflectedProcessAtTime B r) P := by
@@ -74,7 +74,7 @@ private theorem IsPreBrownianReal.reflectedProcessAtTime_isGaussianProcess
     intro ω
     simp [reflectedProcessAtTime, ht]
 
-private theorem IsPreBrownianReal.reflectedProcessAtTime_isPreBrownianReal
+private lemma IsPreBrownianReal.reflectedProcessAtTime_isPreBrownianReal
     {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
     {B : ℝ≥0 → Ω → ℝ} (hB : IsPreBrownianReal B P) (r : ℝ≥0) :
     IsPreBrownianReal (reflectedProcessAtTime B r) P := by

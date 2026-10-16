@@ -251,7 +251,7 @@ theorem measurable_firstNoSignChangeStart :
   intro c
   exact (isOpen_setOf_lt_lastOppositeSign c).measurableSet
 
-private theorem firstAvoidanceStart_eq_lastOccurrence
+private lemma firstAvoidanceStart_eq_lastOccurrence
     (P : unitInterval → Prop) :
     sInf {t : unitInterval | ∀ s : unitInterval, t ≤ s → ¬ P s} =
       sSup {t : unitInterval | P t} := by
@@ -279,7 +279,7 @@ private noncomputable def lastNegative (f : C(unitInterval, ℝ)) : unitInterval
 private noncomputable def lastPositive (f : C(unitInterval, ℝ)) : unitInterval :=
   sSup {t : unitInterval | 0 < f t}
 
-private theorem firstSignStableStart_eq_min (f : C(unitInterval, ℝ)) :
+private lemma firstSignStableStart_eq_min (f : C(unitInterval, ℝ)) :
     firstSignStableStart f = min (lastNegative f) (lastPositive f) := by
   have hset : {t : unitInterval |
       (∀ s : unitInterval, t ≤ s → 0 ≤ f s) ∨
@@ -300,7 +300,7 @@ private theorem firstSignStableStart_eq_min (f : C(unitInterval, ℝ)) :
     firstAvoidanceStart_eq_lastOccurrence]
   rfl
 
-private theorem isOpen_setOf_lt_lastOccurrence
+private lemma isOpen_setOf_lt_lastOccurrence
     (c : unitInterval) (Z : Set (C(unitInterval, ℝ) × unitInterval))
     (hZ : IsOpen Z) :
     IsOpen {f : C(unitInterval, ℝ) |
@@ -322,7 +322,7 @@ private theorem isOpen_setOf_lt_lastOccurrence
   rw [himage]
   exact isOpenMap_fst U hU
 
-private theorem measurable_lastNegative : Measurable lastNegative := by
+private lemma measurable_lastNegative : Measurable lastNegative := by
   apply measurable_of_Ioi
   intro c
   have hZ : IsOpen {p : C(unitInterval, ℝ) × unitInterval |
@@ -334,7 +334,7 @@ private theorem measurable_lastNegative : Measurable lastNegative := by
     simp only [Set.mem_preimage, Set.mem_Iio, Set.mem_ofPred_eq]
   exact (isOpen_setOf_lt_lastOccurrence c _ hZ).measurableSet
 
-private theorem measurable_lastPositive : Measurable lastPositive := by
+private lemma measurable_lastPositive : Measurable lastPositive := by
   apply measurable_of_Ioi
   intro c
   have hZ : IsOpen {p : C(unitInterval, ℝ) × unitInterval |
@@ -558,7 +558,7 @@ private noncomputable def rescaledTailAt
     Real.sqrt (1 - (start.1 : ℝ)),
     ((f.continuous.comp (continuous_tailAffineTime start.1)).abs).div_const _⟩
 
-private theorem continuous_tailAffineTime_pair :
+private lemma continuous_tailAffineTime_pair :
     Continuous (fun p : unitInterval × unitInterval =>
       tailAffineTime p.1 p.2) := by
   apply Continuous.subtype_mk
@@ -566,7 +566,7 @@ private theorem continuous_tailAffineTime_pair :
     (p.1 : ℝ) + (1 - (p.1 : ℝ)) * (p.2 : ℝ))
   fun_prop
 
-private theorem continuous_rescaledTailAt :
+private lemma continuous_rescaledTailAt :
     Continuous (fun p : C(unitInterval, ℝ) × nonterminalStart =>
       rescaledTailAt p.1 p.2) := by
   apply ContinuousMap.continuous_of_continuous_uncurry

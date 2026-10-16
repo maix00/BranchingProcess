@@ -66,7 +66,7 @@ private noncomputable def generationPairTerm {ι : Type*}
   (offspringActiveSlot (field []) j *
     generationFieldValue n (childSubtreeField field j))
 
-private theorem childCount_le_slotCard {ι : Type*} [Fintype ι]
+private lemma childCount_le_slotCard {ι : Type*} [Fintype ι]
     (ξ : Combinatorics.Branching.Step ι PUnit.{1}) :
     ξ.childCount ≤ (Fintype.card ι : ℕ∞) := by
   unfold Combinatorics.Branching.Step.childCount
@@ -74,7 +74,7 @@ private theorem childCount_le_slotCard {ι : Type*} [Fintype ι]
     (Combinatorics.Branching.support ξ).encard ≤ ENat.card ι := Set.encard_le_card
     _ = (Fintype.card ι : ℕ∞) := by simp
 
-private theorem generationSize_le_slotCard_pow {ι : Type*} [Fintype ι]
+private lemma generationSize_le_slotCard_pow {ι : Type*} [Fintype ι]
     (β : Combinatorics.Branching.Process ι) (n : ℕ) :
     β.generationSize n ≤ (Fintype.card ι : ℕ∞) ^ n := by
   induction n with
@@ -127,7 +127,7 @@ noncomputable def generationSizeReal {ι : Type*}
     (n : ℕ) (β : Combinatorics.Branching.Process ι) : ℝ :=
   (ENat.toENNReal (β.generationSize n)).toReal
 
-private theorem generationSizeENNReal_le_slotCard_pow {ι : Type*} [Fintype ι]
+private lemma generationSizeENNReal_le_slotCard_pow {ι : Type*} [Fintype ι]
     (β : Combinatorics.Branching.Process ι) (n : ℕ) :
     ENat.toENNReal (β.generationSize n) ≤ (Fintype.card ι : ℝ≥0∞) ^ n := by
   calc
@@ -136,12 +136,12 @@ private theorem generationSizeENNReal_le_slotCard_pow {ι : Type*} [Fintype ι]
       ENat.toENNReal_mono (generationSize_le_slotCard_pow β n)
     _ = (Fintype.card ι : ℝ≥0∞) ^ n := by simp [ENat.toENNReal_coe]
 
-private theorem generationSizeENNReal_lt_top {ι : Type*} [Fintype ι]
+private lemma generationSizeENNReal_lt_top {ι : Type*} [Fintype ι]
     (β : Combinatorics.Branching.Process ι) (n : ℕ) :
     ENat.toENNReal (β.generationSize n) < ∞ := by
   exact lt_of_le_of_lt (generationSizeENNReal_le_slotCard_pow β n) (by simp)
 
-private theorem generationFirstMoment_lt_top {ι : Type*} [Fintype ι]
+private lemma generationFirstMoment_lt_top {ι : Type*} [Fintype ι]
     (μ : ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw
       ι PUnit.{1}) (n : ℕ) : generationFirstMoment μ n < ∞ := by
   rw [generationFirstMoment]
@@ -159,7 +159,7 @@ private theorem generationFirstMoment_lt_top {ι : Type*} [Fintype ι]
       _ = (Fintype.card ι : ℝ≥0∞) ^ n := by simp
   exact lt_of_le_of_lt hlin (by simp)
 
-private theorem generationSecondMoment_lt_top {ι : Type*} [Fintype ι]
+private lemma generationSecondMoment_lt_top {ι : Type*} [Fintype ι]
     (μ : ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw
       ι PUnit.{1}) (n : ℕ) : generationSecondMoment μ n < ∞ := by
   rw [generationSecondMoment]
@@ -183,11 +183,11 @@ theorem generationSizeReal_measurable {ι : Type*} [Countable ι]
   exact ENNReal.measurable_toReal.comp
     ((measurable_of_countable _).comp (generationSize_measurable n))
 
-private theorem generationSizeReal_nonneg {ι : Type*} [Fintype ι]
+private lemma generationSizeReal_nonneg {ι : Type*} [Fintype ι]
     (n : ℕ) (β : Combinatorics.Branching.Process ι) :
     0 ≤ generationSizeReal n β := ENNReal.toReal_nonneg
 
-private theorem generationSizeReal_le_slotCard_pow {ι : Type*} [Fintype ι]
+private lemma generationSizeReal_le_slotCard_pow {ι : Type*} [Fintype ι]
     (n : ℕ) (β : Combinatorics.Branching.Process ι) :
     generationSizeReal n β ≤ (Fintype.card ι : ℝ) ^ n := by
   have htop : (Fintype.card ι : ℝ≥0∞) ^ n ≠ ∞ := by simp
@@ -283,7 +283,7 @@ noncomputable def offspringSecondFactorialMoment {ι : Type*} [Fintype ι]
       ι PUnit.{1}) : ℝ≥0∞ :=
   ∑ i, ∑ j, if i = j then 0 else offspringSlotPairWeight μ i j
 
-private theorem offspringSlotPairWeight_le_one {ι : Type*}
+private lemma offspringSlotPairWeight_le_one {ι : Type*}
     (μ : ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw
       ι PUnit.{1}) (i j : ι) : offspringSlotPairWeight μ i j ≤ 1 := by
   classical
@@ -298,12 +298,12 @@ private theorem offspringSlotPairWeight_le_one {ι : Type*}
         simp [hi, hj]
     _ = 1 := by simp
 
-private theorem offspringSlotPairWeight_ne_top {ι : Type*}
+private lemma offspringSlotPairWeight_ne_top {ι : Type*}
     (μ : ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw
       ι PUnit.{1}) (i j : ι) : offspringSlotPairWeight μ i j ≠ ∞ :=
   ne_of_lt (lt_of_le_of_lt (offspringSlotPairWeight_le_one μ i j) (by simp))
 
-private theorem offspringSlotPairWeight_self {ι : Type*}
+private lemma offspringSlotPairWeight_self {ι : Type*}
     (μ : ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw
       ι PUnit.{1}) (i : ι) :
     offspringSlotPairWeight μ i i = offspringSlotWeight μ i := by
@@ -313,7 +313,7 @@ private theorem offspringSlotPairWeight_self {ι : Type*}
   filter_upwards [] with ξ
   by_cases hs : Combinatorics.Branching.survive ξ i <;> simp [hs]
 
-private theorem generationFieldValue_measurable {ι : Type*} [Countable ι]
+private lemma generationFieldValue_measurable {ι : Type*} [Countable ι]
     (n : ℕ) :
     Measurable (generationFieldValue (ι := ι) n) := by
   have hcast : Measurable (fun x : ℕ∞ => ENat.toENNReal x) :=
@@ -321,14 +321,14 @@ private theorem generationFieldValue_measurable {ι : Type*} [Countable ι]
   exact hcast.comp ((generationSize_measurable n).comp
     Combinatorics.Branching.measurable_branchingOfStepField)
 
-private theorem offspringActiveSlot_measurable {ι : Type*} (i : ι) :
+private lemma offspringActiveSlot_measurable {ι : Type*} (i : ι) :
     Measurable (offspringActiveSlot (ι := ι) · i) := by
   classical
   unfold offspringActiveSlot
   exact Measurable.ite (Combinatorics.Branching.survive_measurableSet i)
     measurable_const measurable_const
 
-private theorem generationSingleTerm_measurable {ι : Type*} [Countable ι]
+private lemma generationSingleTerm_measurable {ι : Type*} [Countable ι]
     (n : ℕ) (i : ι) : Measurable (generationSingleTerm (ι := ι) n i) := by
   unfold generationSingleTerm
   have hroot : Measurable
@@ -342,7 +342,7 @@ private theorem generationSingleTerm_measurable {ι : Type*} [Countable ι]
       (ProbabilityTheory.BranchingRandomWalk.subtreeStepField_measurable [i])
   exact hroot.mul hchild
 
-private theorem generationPairTerm_measurable {ι : Type*} [Countable ι]
+private lemma generationPairTerm_measurable {ι : Type*} [Countable ι]
     (n : ℕ) (i j : ι) :
     Measurable (generationPairTerm (ι := ι) n i j) := by
   unfold generationPairTerm
@@ -385,7 +385,7 @@ theorem generationSecondMoment_eq_fieldLaw {ι : Type*} [Countable ι]
   rw [generationSecondMoment, law, ProbabilityMeasure.toMeasure_map]
   exact lintegral_map hgen Combinatorics.Branching.measurable_branchingOfStepField
 
-private theorem lintegral_generationSingleTerm {ι : Type*} [Countable ι]
+private lemma lintegral_generationSingleTerm {ι : Type*} [Countable ι]
     (μ : ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw
       ι PUnit.{1}) (n : ℕ) (i : ι) :
     ∫⁻ field : Combinatorics.Branching.StepField ι PUnit.{1},
@@ -461,7 +461,7 @@ private theorem lintegral_generationSingleTerm {ι : Type*} [Countable ι]
 
 /-- Under the independent child-subtree field, a single generation value has
 the actual Galton--Watson generation moment. -/
-private theorem lintegral_childSubtree_pair {ι : Type*} [Countable ι]
+private lemma lintegral_childSubtree_pair {ι : Type*} [Countable ι]
     [DecidableEq ι]
     (μ : ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw
       ι PUnit.{1}) (n : ℕ) (i j : ι) :
@@ -537,7 +537,7 @@ private theorem lintegral_childSubtree_pair {ι : Type*} [Countable ι]
             rw [← generationFirstMoment_eq_fieldLaw μ n]
       _ = if i = j then _ else _ := by simp [hij]
 
-private theorem lintegral_generationPairTerm {ι : Type*} [Countable ι]
+private lemma lintegral_generationPairTerm {ι : Type*} [Countable ι]
     [DecidableEq ι]
     (μ : ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw
       ι PUnit.{1}) (n : ℕ) (i j : ι) :
@@ -617,7 +617,7 @@ private theorem lintegral_generationPairTerm {ι : Type*} [Countable ι]
           generationFirstMoment μ n * generationFirstMoment μ n) := by
       rw [lintegral_childSubtree_pair]
 
-private theorem enat_toENNReal_fintype_sum {ι : Type*} [Fintype ι]
+private lemma enat_toENNReal_fintype_sum {ι : Type*} [Fintype ι]
     (f : ι → ℕ∞) :
     ENat.toENNReal (∑ i, f i) = ∑ i, ENat.toENNReal (f i) := by
   classical
@@ -631,7 +631,7 @@ private theorem enat_toENNReal_fintype_sum {ι : Type*} [Fintype ι]
         simp [Finset.sum_insert, hi, ENat.toENNReal_add, ih]
   exact hsum Finset.univ
 
-private theorem generationFieldValue_succ_eq_sum {ι : Type*} [Fintype ι]
+private lemma generationFieldValue_succ_eq_sum {ι : Type*} [Fintype ι]
     (field : Combinatorics.Branching.StepField ι PUnit.{1}) (n : ℕ) :
     generationFieldValue (n + 1) field =
       ∑ i, offspringActiveSlot (field []) i *
@@ -647,7 +647,7 @@ private theorem generationFieldValue_succ_eq_sum {ι : Type*} [Fintype ι]
   · simp [offspringActiveSlot, hs, generationFieldValue]
   · simp [offspringActiveSlot, hs]
 
-private theorem lintegral_fintype_sum {Ω ι : Type*} [MeasurableSpace Ω]
+private lemma lintegral_fintype_sum {Ω ι : Type*} [MeasurableSpace Ω]
     [Fintype ι] (ν : Measure Ω) (f : ι → Ω → ℝ≥0∞)
     (hf : ∀ i, Measurable (f i)) :
     ∫⁻ x, ∑ i, f i x ∂ν = ∑ i, ∫⁻ x, f i x ∂ν := by

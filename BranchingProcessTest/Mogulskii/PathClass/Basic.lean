@@ -8,7 +8,7 @@ namespace Skorokhod.PathClass.StepCorridorTest
 
 private noncomputable def halfTime : unitInterval := ⟨(1 / 2 : ℝ), by norm_num⟩
 
-private theorem halfTime_ne_bot : halfTime ≠ ⊥ := by
+private lemma halfTime_ne_bot : halfTime ≠ ⊥ := by
   intro h
   have := congrArg Subtype.val h
   norm_num [halfTime] at this
@@ -31,7 +31,7 @@ private noncomputable def interiorLower : StepBoundary :=
 private noncomputable def interiorCrossingLower : StepBoundary :=
   StepBoundary.singleJump halfTime halfTime_ne_bot (-2) 3
 
-private theorem terminalStartAdmissible :
+private lemma terminalStartAdmissible :
     StartAdmissible terminalUpper terminalLower := by
   have hl : terminalLower.eval ⊥ = -2 := by
     simp [terminalLower, StepBoundary.singleJump, StepBoundary.eval, StepBoundary.levelIndex]
@@ -41,7 +41,7 @@ private theorem terminalStartAdmissible :
   exact ⟨EReal.coe_lt_coe (by norm_num : (-2 : ℝ) < 0),
     EReal.coe_lt_coe (by norm_num : (0 : ℝ) < 2)⟩
 
-private theorem terminalTraceSeparated : TraceSeparated terminalUpper terminalLower := by
+private lemma terminalTraceSeparated : TraceSeparated terminalUpper terminalLower := by
   intro t
   by_cases ht : t = ⊤
   · subst t
@@ -86,7 +86,7 @@ private theorem terminalTraceSeparated : TraceSeparated terminalUpper terminalLo
     change ((-2 : ℝ) : EReal) < ((2 : ℝ) : EReal)
     exact EReal.coe_lt_coe (by norm_num : (-2 : ℝ) < 2)
 
-private theorem terminalCrossing_notTraceSeparated :
+private lemma terminalCrossing_notTraceSeparated :
     ¬ TraceSeparated terminalUpper terminalCrossingLower := by
   intro h
   have htop := h ⊤
@@ -115,7 +115,7 @@ private theorem terminalCrossing_notTraceSeparated :
     exact EReal.coe_le_coe (by norm_num : (1 : ℝ) ≤ 3)
   exact (not_lt_of_ge hge) htop
 
-private theorem interiorTraceSeparated : TraceSeparated interiorUpper interiorLower := by
+private lemma interiorTraceSeparated : TraceSeparated interiorUpper interiorLower := by
   intro t
   by_cases ht : t = halfTime
   · subst t
@@ -170,7 +170,7 @@ private theorem interiorTraceSeparated : TraceSeparated interiorUpper interiorLo
       rw [max_self, min_self]
       exact EReal.coe_lt_coe (by norm_num : (-1 : ℝ) < 1)
 
-private theorem interiorCrossing_notTraceSeparated :
+private lemma interiorCrossing_notTraceSeparated :
     ¬ TraceSeparated interiorUpper interiorCrossingLower := by
   intro h
   have hmid := h halfTime

@@ -154,7 +154,7 @@ theorem iidSequenceLaw_staysIn_endsIn_ge_of_endpointCorridorBridgeEvents
       measurableSet_Icc measurableSet_Icc returnLengths exitLength
       lowerBound lowerBound hreturn hexit x
 
-private theorem endpointBandReturnBlockEvent_subset_returnEvent
+private lemma endpointBandReturnBlockEvent_subset_returnEvent
     {lower upper ε x : ℝ} {length : ℕ} (hε : 0 < ε)
     (hx : x ∈ Set.Icc (-3 * ε) (3 * ε))
     {i : ℤ}
@@ -324,7 +324,7 @@ theorem iidSequenceLaw_staysIn_ge_pow_of_balancedEndpointBandBlocks
 
 /-- The seven endpoint-band estimates in Mogulskii's lower block comparison
 give a uniform one-block transition from the return core back to itself. -/
-private theorem endpointBandBlockEvent_subset_returnEvent
+private lemma endpointBandBlockEvent_subset_returnEvent
     {radius ε x : ℝ} {length : ℕ} (hε : 0 < ε)
     (hx : x ∈ Set.Icc (-3 * ε) (3 * ε))
     {i : ℤ}

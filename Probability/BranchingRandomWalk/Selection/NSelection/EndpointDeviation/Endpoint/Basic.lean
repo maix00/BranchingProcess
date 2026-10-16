@@ -86,14 +86,14 @@ theorem measurableSet_firstNSelectedEndpointBelow (m N H : ℕ)
     simp only [Set.mem_ofPred_eq, Set.mem_inter_iff]]
   exact hmem.inter hendpoint
 
-private theorem rootPosition_eq_pathPotential (m : ℕ)
+private lemma rootPosition_eq_pathPotential (m : ℕ)
     (field : FiniteRootStepField m ℕ ℝ) (r : Fin m) (u : TreeNode ℕ) :
     RootIndexed.position (fun _ : Fin m => (0 : ℝ)) id field r u =
       Spine.pathPotential realPotential (field r) u := by
   simp [RootIndexed.position, RootIndexed.displace, Spine.pathPotential,
     realPotential]
 
-private theorem pathHistory_coordinate_eq_rootPosition (m H : ℕ)
+private lemma pathHistory_coordinate_eq_rootPosition (m H : ℕ)
     (field : FiniteRootStepField m ℕ ℝ) (p : RootIndexed.TreeNode (Fin m) ℕ)
     (k : Fin (H + 1)) :
     Spine.pathHistory realPotential H 0 (field p.1) p.2 k =

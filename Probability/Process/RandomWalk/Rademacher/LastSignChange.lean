@@ -56,12 +56,12 @@ theorem rademacher_displacement_int (branch : ℕ → Bool) (n : ℕ) :
       cases h : branch n <;>
         simp [rademacherIncrementPath, rademacherOfBool, h]
 
-private theorem adjacent_integer_steps_same_weak_sign (z : ℤ) (step : Bool) :
+private lemma adjacent_integer_steps_same_weak_sign (z : ℤ) (step : Bool) :
     ((0 : ℤ) ≤ z ∧ 0 ≤ z + (if step then 1 else -1)) ∨
       (z ≤ 0 ∧ z + (if step then 1 else -1) ≤ 0) := by
   cases step <;> simp_all <;> omega
 
-private theorem first_branch_true_of_survival (branch : ℕ → Bool)
+private lemma first_branch_true_of_survival (branch : ℕ → Bool)
     {length : ℕ} (hlength : 0 < length)
     (h : SurvivesNonnegative length (rademacherIncrementPath branch)) :
     branch 0 = true := by
@@ -72,7 +72,7 @@ private theorem first_branch_true_of_survival (branch : ℕ → Bool)
     norm_num at hfirst
   · rfl
 
-private theorem first_branch_false_of_reflectedSurvival (branch : ℕ → Bool)
+private lemma first_branch_false_of_reflectedSurvival (branch : ℕ → Bool)
     {length : ℕ} (hlength : 0 < length)
     (h : SurvivesNonnegative length
       (fun k => -rademacherIncrementPath branch k)) :
@@ -226,7 +226,7 @@ theorem rademacherTerminalAbsolutePath_grid
   rw [AdditivePath.displacement_add μ k (rademacherIncrementPath branch), hzero]
   simp only [zero_add, ν]
 
-private theorem lastSignChangeIndex_eq_of_positiveCrossing
+private lemma lastSignChangeIndex_eq_of_positiveCrossing
     (branch : ℕ → Bool) (n start : ℕ) (hstart : 0 < start)
     (hbefore : start < n)
     (hprevious : AdditivePath.displacement (start - 1)
@@ -262,7 +262,7 @@ private theorem lastSignChangeIndex_eq_of_positiveCrossing
   · have h := hnonpos (start + 1) (by omega) (by omega)
     linarith
 
-private theorem lastSignChangeIndex_eq_of_negativeCrossing
+private lemma lastSignChangeIndex_eq_of_negativeCrossing
     (branch : ℕ → Bool) (n start : ℕ) (hstart : 0 < start)
     (hbefore : start < n)
     (hprevious : 0 < AdditivePath.displacement (start - 1)

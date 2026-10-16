@@ -33,7 +33,7 @@ noncomputable def selectedPopulationWithParameter
       Finset (RootIndexed.TreeNode (Fin N) ℕ) :=
   fun p => RootIndexed.selectedPopulationTotalized N Finset.univ p.1 id id n p.2
 
-private theorem measurable_observedPositionWithParameter
+private lemma measurable_observedPositionWithParameter
     (N n : ℕ)
     [MeasurableSpace (RootIndexed.TreeNode (Fin N) ℕ)]
     [LinearOrder (RootIndexed.TreeNode (Fin N) ℕ)]
@@ -67,7 +67,7 @@ private theorem measurable_observedPositionWithParameter
       RootIndexed.positionAtGeneration p.1 id n q.1 q.2 p.2)
     simp [RootIndexed.positionAtGeneration, hdepth]
 
-private theorem measurable_childrenAtGenerationWithParameter
+private lemma measurable_childrenAtGenerationWithParameter
     (N n : ℕ)
     [MeasurableSpace (RootIndexed.TreeNode (Fin N) ℕ)]
     [Countable (RootIndexed.TreeNode (Fin N) ℕ)]

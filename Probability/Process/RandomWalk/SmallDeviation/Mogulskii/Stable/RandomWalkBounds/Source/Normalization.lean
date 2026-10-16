@@ -25,7 +25,7 @@ open scoped NNReal Topology
 
 namespace ProbabilityTheory
 
-private theorem pathMap_eq_of_cadlag {Ω : Type*} [MeasurableSpace Ω]
+private lemma pathMap_eq_of_cadlag {Ω : Type*} [MeasurableSpace Ω]
     (Y : unitInterval → Ω → ℝ) (ω : Ω)
     (hω : IsCadlag (fun t => Y t ω)) :
     Process.Path.Cadlag.pathMap Y ω = ⟨fun t => Y t ω, hω⟩ := by

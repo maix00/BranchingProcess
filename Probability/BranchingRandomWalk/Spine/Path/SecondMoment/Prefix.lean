@@ -24,7 +24,7 @@ open Combinatorics.UlamHarris
 open ProbabilityTheory.BranchingRandomWalk
 open ProbabilityTheory.RandomWalk
 
-private theorem pathGenerationChildObservable_joint_measurable
+private lemma pathGenerationChildObservable_joint_measurable
     {X : Type*} [MeasurableSpace X]
     (φ : Potential X) (n : ℕ) (F : (Fin (n + 2) → ℝ) → ℝ≥0∞)
     (hF : Measurable F) (i : ℕ) :
@@ -84,7 +84,7 @@ private theorem pathGenerationChildObservable_joint_measurable
     (measurable_fst.comp measurable_snd)
   exact measurable_const
 
-private theorem pathGenerationChildMeanOffDiagonal_joint_measurable
+private lemma pathGenerationChildMeanOffDiagonal_joint_measurable
     {X : Type*} [MeasurableSpace X]
     (φ : Potential X) (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
     (n : ℕ) (F : (Fin (n + 2) → ℝ) → ℝ≥0∞)
@@ -125,7 +125,7 @@ private theorem pathGenerationChildMeanOffDiagonal_joint_measurable
   intro j
   exact hterm i j
 
-private theorem pathGenerationRootMRCAContribution_joint_measurable
+private lemma pathGenerationRootMRCAContribution_joint_measurable
     {X : Type*} [MeasurableSpace X]
     (φ : Potential X) (n : ℕ)
     (F : (Fin (n + 2) → ℝ) → ℝ≥0∞) (hF : Measurable F) :

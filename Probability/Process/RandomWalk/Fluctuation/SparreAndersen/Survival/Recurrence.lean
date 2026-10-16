@@ -43,7 +43,7 @@ private def signedLastPartWeight (F : ℕ → ℝ) {n : ℕ} (c : Composition n)
 private def compositionCoefficient (F : ℕ → ℝ) (n : ℕ) : ℝ :=
   ∑ c : Composition n, signedLastPartWeight F c
 
-private theorem weight_prepend_nonempty (F : ℕ → ℝ) {n : ℕ} (hn : 0 < n)
+private lemma weight_prepend_nonempty (F : ℕ → ℝ) {n : ℕ} (hn : 0 < n)
     (r : Fin n) (d : Composition (n - (r.val + 1)))
     (h : d.blocks ≠ []) :
     signedLastPartWeight F (prependPositive hn r d) =
@@ -57,7 +57,7 @@ private theorem weight_prepend_nonempty (F : ℕ → ℝ) {n : ℕ} (hn : 0 < n)
     List.map_cons, List.prod_cons, hlast]
   ring
 
-private theorem weight_prepend_empty (F : ℕ → ℝ) {n : ℕ} (hn : 0 < n)
+private lemma weight_prepend_empty (F : ℕ → ℝ) {n : ℕ} (hn : 0 < n)
     (r : Fin n) (d : Composition (n - (r.val + 1)))
     (h : d.blocks = []) :
     signedLastPartWeight F (prependPositive hn r d) = (n : ℝ) * F n := by
@@ -67,7 +67,7 @@ private theorem weight_prepend_empty (F : ℕ → ℝ) {n : ℕ} (hn : 0 < n)
   simp [Composition.prependPositive, Composition.length, h, hr,
     List.getLastI_eq_getLast?_getD]
 
-private theorem sum_weight_prepend (F : ℕ → ℝ) {n : ℕ} (hn : 0 < n)
+private lemma sum_weight_prepend (F : ℕ → ℝ) {n : ℕ} (hn : 0 < n)
     (r : Fin n) :
     (∑ d : Composition (n - (r.val + 1)), signedLastPartWeight F (prependPositive hn r d)) =
       if n - (r.val + 1) = 0 then (n : ℝ) * F n
@@ -93,7 +93,7 @@ private theorem sum_weight_prepend (F : ℕ → ℝ) {n : ℕ} (hn : 0 < n)
         rw [← Finset.mul_sum]
         rfl
 
-private theorem compositionCoefficient_eq_firstPart_sum (F : ℕ → ℝ) {n : ℕ} (hn : 0 < n) :
+private lemma compositionCoefficient_eq_firstPart_sum (F : ℕ → ℝ) {n : ℕ} (hn : 0 < n) :
     compositionCoefficient F n = ∑ r : Fin n,
       if n - (r.val + 1) = 0 then (n : ℝ) * F n
       else - F (r.val + 1) * compositionCoefficient F (n - (r.val + 1)) := by
@@ -101,7 +101,7 @@ private theorem compositionCoefficient_eq_firstPart_sum (F : ℕ → ℝ) {n : �
   rw [Composition.sum_firstPart hn]
   simp_rw [sum_weight_prepend F hn]
 
-private theorem compositionCoefficient_recurrence (F : ℕ → ℝ) {n : ℕ} (hn : 0 < n) :
+private lemma compositionCoefficient_recurrence (F : ℕ → ℝ) {n : ℕ} (hn : 0 < n) :
     compositionCoefficient F n = (n : ℝ) * F n -
       ∑ r : Fin (n - 1), F (r.val + 1) * compositionCoefficient F (n - (r.val + 1)) := by
   obtain ⟨m, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (by omega : n ≠ 0)
@@ -112,7 +112,7 @@ private theorem compositionCoefficient_recurrence (F : ℕ → ℝ) {n : ℕ} (h
   simp
   ring
 
-private theorem last_eq_blocksFun {n : ℕ} (hn : 0 < n) (c : Composition n) :
+private lemma last_eq_blocksFun {n : ℕ} (hn : 0 < n) (c : Composition n) :
     c.blocks.getLastI = c.blocksFun
       ⟨c.length - 1, Nat.sub_lt (c.length_pos_of_pos hn) (by omega)⟩ := by
   have hne : c.blocks ≠ [] := by
@@ -125,7 +125,7 @@ private theorem last_eq_blocksFun {n : ℕ} (hn : 0 < n) (c : Composition n) :
   exact (List.get_length_sub_one
     (by simpa [Composition.length] using c.length_pos_of_pos hn)).symm
 
-private theorem prod_eq_blocksFun (F : ℕ → ℝ) {n : ℕ} (c : Composition n) :
+private lemma prod_eq_blocksFun (F : ℕ → ℝ) {n : ℕ} (c : Composition n) :
     (c.blocks.map F).prod = ∏ j : Fin c.length, F (c.blocksFun j) := by
   rw [← c.ofFn_blocksFun, List.map_ofFn, List.prod_ofFn]
   rfl
@@ -138,7 +138,7 @@ private noncomputable def nonnegativeEndpointProbability (ν : Measure ℝ) (n :
   (Measure.pi (fun _ : Fin n => ν)).real
     {x : Fin n → ℝ | 0 ≤ Fin.partialSum x (Fin.last n)}
 
-private theorem nonnegativeEndpointProbability_eq_compositionCoefficient
+private lemma nonnegativeEndpointProbability_eq_compositionCoefficient
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     {n : ℕ} (hn : 0 < n) :
     nonnegativeEndpointProbability ν n =
@@ -155,7 +155,7 @@ private theorem nonnegativeEndpointProbability_eq_compositionCoefficient
   rw [← last_eq_blocksFun hn c, ← prod_eq_blocksFun]
   rfl
 
-private theorem nonnegativeEndpointProbability_recurrence
+private lemma nonnegativeEndpointProbability_recurrence
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     {n : ℕ} (hn : 0 < n) :
     nonnegativeEndpointProbability ν n = (n : ℝ) * nonnegativeSurvivalProbability ν n -

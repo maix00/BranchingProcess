@@ -46,7 +46,7 @@ private abbrev endpointPosition (m k : ℕ)
 /-- A nonempty first-`N` segment contains a point no higher than any given
 candidate. This is the order-theoretic content of first-`N` selection needed
 for endpoint comparison. -/
-private theorem exists_mem_le_of_isFirstNBy
+private lemma exists_mem_le_of_isFirstNBy
     {ι V : Type*} [LinearOrder ι] [LinearOrder V]
     {N : ℕ} {value : ι → V} {candidates : Set ι}
     {selected : Finset ι}

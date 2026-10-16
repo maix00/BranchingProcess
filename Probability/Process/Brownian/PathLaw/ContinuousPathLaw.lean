@@ -41,7 +41,7 @@ open scoped NNReal
 
 namespace ProbabilityTheory
 
-private theorem continuousPath_standardBorel :
+private lemma continuousPath_standardBorel :
     StandardBorelSpace C(ℝ≥0, ℝ) := by infer_instance
 
 /-- Apply the Brownian time and amplitude scaling to a continuous path. -/

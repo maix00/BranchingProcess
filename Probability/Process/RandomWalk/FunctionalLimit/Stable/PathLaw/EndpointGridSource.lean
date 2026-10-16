@@ -92,7 +92,7 @@ noncomputable def stableTimeLawProductProbability {blocks : ℕ}
   letI : ∀ j : Fin blocks, IsProbabilityMeasure (coordinateLaw j) := hcoordinate
   exact ⟨Measure.pi coordinateLaw, inferInstance⟩
 
-private theorem tendsto_natFloor_mul_div_unitInterval (t : unitInterval) :
+private lemma tendsto_natFloor_mul_div_unitInterval (t : unitInterval) :
     Tendsto (fun n : ℕ =>
       (⌊(n : ℝ) * (t : ℝ)⌋₊ : ℝ) / (n : ℝ)) atTop (𝓝 (t : ℝ)) := by
   by_cases ht : (t : ℝ) = 0

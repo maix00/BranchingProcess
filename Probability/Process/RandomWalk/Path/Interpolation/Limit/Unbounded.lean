@@ -66,7 +66,7 @@ noncomputable def normalizedLinearPathUnbounded
     ∑ k ∈ Finset.range (⌊(n : ℝ) * (t : ℝ)⌋₊ + 1),
       linearIncrementWeight n k t * increment k
 
-private theorem sum_linearIncrementWeight_eq_range_of_floor_le
+private lemma sum_linearIncrementWeight_eq_range_of_floor_le
     (n : ℕ) (increment : ℕ → ℝ) (t : ℝ≥0) {N : ℕ}
     (hN : ⌊(n : ℝ) * (t : ℝ)⌋₊ + 1 ≤ N) :
     ∑ k ∈ Finset.range (⌊(n : ℝ) * (t : ℝ)⌋₊ + 1),

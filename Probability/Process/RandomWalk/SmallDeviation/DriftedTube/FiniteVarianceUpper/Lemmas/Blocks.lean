@@ -57,8 +57,8 @@ open ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown
 
 /-- The single complete-block estimate in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, proof of
 Lemma 3.4. Its inclusion in the no-large-drop event uses Chapter 3, Lemma 3.3
-of Wang Yiyang's *Asymptotic Speed of the N-Branching Random Walk with Infinite
-Offspring* thesis with endpoint parameter `η/2`. -/
+of Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite
+Offspring*, with endpoint parameter `η/2`. -/
 lemma exists_driftedTubeBlockProbability_le_exp_of_finiteVariance
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     {variance drift eta d : ℝ}
@@ -157,7 +157,7 @@ def driftedTubeBlockEvent (start length : ℕ)
       Combinatorics.Sequence.blockCoordinates start length increment) ∈
       driftedTubePairEvent lower width drift}
 
-private theorem measurable_driftedTubePartialBlockSum {length : ℕ}
+private lemma measurable_driftedTubePartialBlockSum {length : ℕ}
     (k : Fin (length + 1)) :
     Measurable (fun block : Fin length → ℝ =>
       Fin.partialSum block k) := by
@@ -446,7 +446,7 @@ private def driftedTubePrefixBlockPair (start length : ℕ) :
     (fun i : Fin start => whole ⟨(i : ℕ), by omega⟩,
       fun j : Fin length => whole ⟨start + (j : ℕ), by omega⟩)
 
-private theorem measurable_driftedTubePrefixBlockPair (start length : ℕ) :
+private lemma measurable_driftedTubePrefixBlockPair (start length : ℕ) :
     Measurable (driftedTubePrefixBlockPair start length) := by
   have hpast : Measurable
       (fun whole : Fin (start + length) → ℝ =>
@@ -465,7 +465,7 @@ private theorem measurable_driftedTubePrefixBlockPair (start length : ℕ) :
       (⟨start + (j : ℕ), by omega⟩ : Fin (start + length))
   exact hpast.prodMk hblock
 
-private theorem driftedTubePrefixBlockPair_blockCoordinates
+private lemma driftedTubePrefixBlockPair_blockCoordinates
     (start length : ℕ) (increment : ℕ → ℝ) :
     driftedTubePrefixBlockPair start length
         (Combinatorics.Sequence.blockCoordinates 0 (start + length) increment) =

@@ -27,13 +27,13 @@ open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete
 open ProbabilityTheory.BranchingRandomWalk.Spine
 
-private theorem history_coordinate_eq_displacement (n : ℕ)
+private lemma history_coordinate_eq_displacement (n : ℕ)
     (increment : ℕ → ℝ) (i : Fin (n + 1)) :
     RandomWalk.history n 0 increment i = AdditivePath.displacement i.val increment := by
   rw [RandomWalk.history_eq_fromIncrements]
   simp [AdditivePath.fromIncrements, AdditivePath.displacement]
 
-private theorem partialSum_prefixBlock_eq_displacement
+private lemma partialSum_prefixBlock_eq_displacement
     {prefixLength : ℕ} (increment : ℕ → ℝ)
     (j : Fin (prefixLength + 1)) :
     Fin.partialSum (Combinatorics.Sequence.blockCoordinates 0 prefixLength increment) j =
@@ -42,13 +42,13 @@ private theorem partialSum_prefixBlock_eq_displacement
     AdditivePath.blockSum_eq_displacement_natAdd]
   simp
 
-private theorem history_eq_partialSum_prefixBlock
+private lemma history_eq_partialSum_prefixBlock
     {n : ℕ} (increment : ℕ → ℝ) (j : Fin (n + 1)) :
     RandomWalk.history n 0 increment j =
       Fin.partialSum (Combinatorics.Sequence.blockCoordinates 0 n increment) j := by
   rw [history_coordinate_eq_displacement, ← partialSum_prefixBlock_eq_displacement]
 
-private theorem endpointCorridorEvent_subset_finiteCorridorBridgeEvent
+private lemma endpointCorridorEvent_subset_finiteCorridorBridgeEvent
     (n : ℕ) (D : ℝ) :
     {increment : ℕ → ℝ |
       InClosedInterval (-2 * D) 0 n 0 increment ∧

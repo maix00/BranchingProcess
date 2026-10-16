@@ -50,7 +50,7 @@ $\mathbb P(D_{N,\Delta})
  =\mathbb P(D_{N,\Delta}\mid C_N)\mathbb P(C_N)$
 at the diffusive horizon. This implements the corresponding step in
 Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Appendix A.2, Lemma A.7. -/
-private theorem exists_eventually_diffusiveTransitionProbability_ge_inverse_square_of_conditionalBound
+private lemma exists_eventually_diffusiveTransitionProbability_ge_inverse_square_of_conditionalBound
     {ν : Measure ℝ} [IsProbabilityMeasure ν]
     {sigma : ℝ} (hν : IsCenteredSecondMoment ν (sigma ^ 2))
     (hsigma : 0 < sigma)
@@ -112,7 +112,7 @@ private theorem exists_eventually_diffusiveTransitionProbability_ge_inverse_squa
 
 /-- The probability product bound with the conditioned meander input and
 its support established from centered finite-variance increments. -/
-private theorem exists_eventually_diffusiveTransitionProbability_ge_inverse_square_of_centeredSecondMoment
+private lemma exists_eventually_diffusiveTransitionProbability_ge_inverse_square_of_centeredSecondMoment
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     {sigma : ℝ} (hν : IsCenteredSecondMoment ν (sigma ^ 2))
     (hsigma : 0 < sigma)

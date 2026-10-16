@@ -24,7 +24,7 @@ namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail
 open Combinatorics.Branching
 open Combinatorics.UlamHarris
 
-private theorem fourth_eq_positive_fourth_add_negative_fourth (x : ℝ) :
+private lemma fourth_eq_positive_fourth_add_negative_fourth (x : ℝ) :
     x ^ 4 = (max x 0) ^ 4 + (max (-x) 0) ^ 4 := by
   by_cases hx : 0 ≤ x
   · simp [max_eq_left hx, max_eq_right (neg_nonpos.mpr hx)]
@@ -36,7 +36,7 @@ private theorem fourth_eq_positive_fourth_add_negative_fourth (x : ℝ) :
         rw [max_eq_right hx'.le, max_eq_left hneg]
         simp
 
-private theorem fourth_sub_le_eight_add_fourths (x c : ℝ) :
+private lemma fourth_sub_le_eight_add_fourths (x c : ℝ) :
     (x - c) ^ 4 ≤ 8 * (x ^ 4 + c ^ 4) := by
   have habs (y : ℝ) : |y| ^ 4 = y ^ 4 := by
     rw [pow_abs]

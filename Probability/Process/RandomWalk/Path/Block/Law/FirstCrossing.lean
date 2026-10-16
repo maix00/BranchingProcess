@@ -145,13 +145,13 @@ def twoOrderedPrefixExcursions (length : ℕ) (threshold : ℝ) : Set (ℕ → �
       threshold ≤ |AdditivePath.displacement l path -
         AdditivePath.displacement k path|}
 
-private theorem abs_sub_le_sum_abs (x y : ℝ) :
+private lemma abs_sub_le_sum_abs (x y : ℝ) :
     |x - y| ≤ |x| + |y| := by
   rw [abs_sub_le_iff]
   constructor <;> nlinarith [le_abs_self x, neg_le_abs x,
     le_abs_self y, neg_le_abs y]
 
-private theorem split_abs_sub_le {threshold x y : ℝ}
+private lemma split_abs_sub_le {threshold x y : ℝ}
     (hlarge : 2 * threshold ≤ |x - y|) :
     threshold ≤ |x| ∨ threshold ≤ |y| := by
   by_contra h
@@ -188,7 +188,7 @@ theorem blockPrefixExceedance_of_displacementDifference
   rw [← hdiff]
   exact hlarge
 
-private theorem twoOrderedPrefixExcursions_subset_firstCrossing
+private lemma twoOrderedPrefixExcursions_subset_firstCrossing
     (length : ℕ) {threshold : ℝ} (hthreshold : 0 < threshold) :
     twoOrderedPrefixExcursions length (2 * threshold) ⊆
       blockPrefixExceedance 0 length threshold ∩

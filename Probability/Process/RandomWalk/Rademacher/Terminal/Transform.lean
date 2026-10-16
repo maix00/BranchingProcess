@@ -31,7 +31,7 @@ This is the discrete path identification used on page 484 of Erwin Bolthausen,
 
 namespace ProbabilityTheory.RandomWalk
 
-private theorem negativePolygonalValues_before_return
+private lemma negativePolygonalValues_before_return
     (branch : ℕ → Bool) {n m : ℕ}
     (hn : 0 < n) (hmpos : 0 < m) (hmle : m ≤ n)
     (hzero : AdditivePath.displacement m
@@ -89,7 +89,7 @@ private theorem negativePolygonalValues_before_return
   exact mul_neg_of_pos_of_neg
     (mul_pos hsqrt hfactor) hprevious
 
-private theorem positivePolygonalValues_before_return
+private lemma positivePolygonalValues_before_return
     (branch : ℕ → Bool) {n m : ℕ}
     (hn : 0 < n) (hmpos : 0 < m) (hmle : m ≤ n)
     (hzero : AdditivePath.displacement m
@@ -146,7 +146,7 @@ private theorem positivePolygonalValues_before_return
   rw [normalizedLinearContinuousPathIcc_apply, hformula]
   exact mul_pos (mul_pos hsqrt hfactor) hprevious
 
-private theorem normalizedPolygonalValue_after_return_ne_zero
+private lemma normalizedPolygonalValue_after_return_ne_zero
     (branch : ℕ → Bool) {n m : ℕ}
     (hn : 0 < n) (hm : m < n)
     (hzero : AdditivePath.displacement m

@@ -88,7 +88,7 @@ noncomputable def selectedRankValue
   value ((Combinatorics.Branching.Selection.NSelection.particleAtRankBy
     value selected k).getD fallback)
 
-private theorem selectedRankValue_threshold_bounds
+private lemma selectedRankValue_threshold_bounds
     {ι Value : Type*} [LinearOrder ι] [LinearOrder Value]
     (value : ι → Value) (selected : Finset ι) (fallback : ι)
     {N k : ℕ} (hcard : selected.card = N) (hk : k < N) :
