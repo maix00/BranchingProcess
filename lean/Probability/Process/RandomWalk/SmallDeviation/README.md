@@ -12,7 +12,9 @@ The folders here are organized by the event being estimated.
 
 The conditioned Brownian-meander input to the entrance estimate is in
 `Probability/Process/RandomWalk/FunctionalLimit/Conditioned`. Its finite-variance
-survival factor uses the coefficient recurrence in
-`Probability/Process/RandomWalk/Fluctuation/SparreAndersen`.
+survival factor uses the finite IID cyclic-rotation inequality in
+`Probability/Process/RandomWalk/Fluctuation/SparreAndersen/RotationProbability.lean`.
+The separate coefficient recurrence in that directory gives a stronger general
+survival-power estimate and is not an input to the Lemma 3.5 entrance bound.
 `Entrance/Rotation` groups a separate reusable cyclic-rotation method used by
 `Entrance/NormalDomain.lean`.

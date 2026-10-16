@@ -14,6 +14,16 @@ public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Partition.
 /-!
 # Finite-partition lower bounds for corridor return kernels
 
+The public theorems in this file are:
+
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.gaussianProduct_le_liminf_returnKernel_add_of_eventually_control`:
+  a product of $m$ Gaussian target-window probabilities is at most the
+  lower limit of the $m$-block return-kernel mass plus a prescribed
+  within-block error.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.gaussianProduct_le_liminf_returnKernel_add`:
+  with centered unit second moment, the error can be taken as
+  $m(c/r^2+e)$ for block constant $c$, endpoint margin $r$, and $e>0$.
+
 The finite-dimensional Gaussian endpoint estimate is combined with the
 quantitative within-block error while retaining a final endpoint constraint.
 The resulting event is identified with one transition of the outer-killed,
