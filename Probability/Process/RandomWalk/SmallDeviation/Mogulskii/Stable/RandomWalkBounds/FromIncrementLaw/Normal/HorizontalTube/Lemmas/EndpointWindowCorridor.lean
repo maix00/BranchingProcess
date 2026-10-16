@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.FromIncrementLaw.HorizontalTube.EndpointWindowEvent
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.FromIncrementLaw.Normal.HorizontalTube.EndpointWindowEvent
 public import MeasureTheory.Measure.CadlagPath.PathClass.StepCorridor.TerminalWindow
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Path.SourcePath
 
