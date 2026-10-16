@@ -8,6 +8,33 @@ module
 
 public import Combinatorics.BranchingWalk.StepField
 
+/-!
+# Survival along a finite address
+
+The public definition `Combinatorics.Branching.surviveAlong step v p` means
+that every child edge in the finite address `p` survives, starting at `v`.
+Its finite-coordinate characterization is
+$\operatorname{surviveAlong}(step, [], u) \iff
+  \forall j < |u|,\ \operatorname{survive}(step(u.take(j)),u[j])$.
+
+The public declarations give the empty and cons cases, concatenation and
+rebasing identities, the root-address characterization, and prefix closure:
+
+- `Combinatorics.Branching.surviveAlong_nil` and
+  `Combinatorics.Branching.surviveAlong_cons` give the base and one-edge cases.
+- `Combinatorics.Branching.surviveAlong_append_singleton` and
+  `Combinatorics.Branching.surviveAlong_append` split survival across
+  concatenated addresses.
+- `Combinatorics.Branching.surviveAlong_rebase` identifies survival in a
+  subtree with survival from the corresponding extended address.
+- `Combinatorics.Branching.surviveAlong_root_append_singleton_iff` and
+  `Combinatorics.Branching.surviveAlong_root_iff_forall_fin` give the root
+  forms, including the finite-coordinate characterization above.
+- `Combinatorics.Branching.surviveAlong_prefix` states that survival along
+  `u ++ v` implies survival along `u`.
+- `Combinatorics.Branching.surviveAlong` defines this finite-path predicate.
+-/
+
 @[expose] public section
 
 namespace Combinatorics.Branching

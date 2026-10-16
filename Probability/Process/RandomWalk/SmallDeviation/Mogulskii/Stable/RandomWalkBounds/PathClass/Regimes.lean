@@ -44,7 +44,7 @@ These are domain-of-attraction forms of A. A. Mogul'skii, “Small deviations
 in the sample function space,” Theorem 3, Section 4, p. 764, *Teoriya
 Veroyatnostei i ee Primeneniya* 19(4) (1974), 755--765; English translation,
 “Small Deviations in a Space of Trajectories,” *Theory of Probability and
-Its Applications* 19(4) (1975), 726--736, DOI 10.1137/1119081.
+Its Applications* 19(1) (1975), 726--736, DOI 10.1137/1119081.
 -/
 
 open Filter MeasureTheory ProbabilityTheory
@@ -64,7 +64,7 @@ measurable because `G` is Borel and every finite-step path map is measurable.
 This is the rate conclusion of A. A. Mogul'skii, “Small deviations in the
 sample function space,” Theorem 3, Section 4, p. 764 of the Russian
 original; English translation, “Small Deviations in a Space of
-Trajectories,” *Theory of Probability and Its Applications* 19(4) (1975),
+Trajectories,” *Theory of Probability and Its Applications* 19(1) (1975),
 726--736, DOI 10.1137/1119081.
 -/
 theorem tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_stableInputs
@@ -140,7 +140,7 @@ This is the domain-of-attraction specialization of A. A. Mogul'skii,
 “Small deviations in the sample function space,” Theorem 3, Section 4,
 p. 764 of the Russian original; English translation, “Small Deviations in
 a Space of Trajectories,” *Theory of Probability and Its Applications*
-19(4) (1975), 726--736, DOI 10.1137/1119081.
+19(1) (1975), 726--736, DOI 10.1137/1119081.
 -/
 theorem tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_index_lt_one
     {ν μ : Measure ℝ} [IsProbabilityMeasure ν] [IsProbabilityMeasure μ]
@@ -188,7 +188,7 @@ additional sine-centering condition. This is the index-one case of A. A.
 Mogul'skii, “Small deviations in the sample function space,” Theorem 3,
 Section 4, p. 764 of the Russian original; English translation, “Small
 Deviations in a Space of Trajectories,” *Theory of Probability and Its
-Applications* 19(4) (1975), 726--736, DOI 10.1137/1119081. -/
+Applications* 19(1) (1975), 726--736, DOI 10.1137/1119081. -/
 theorem tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_index_one
     {ν μ : Measure ℝ} [IsProbabilityMeasure ν] [IsProbabilityMeasure μ]
     {normalization scale : ℕ → ℝ}
@@ -236,7 +236,7 @@ This is the domain-of-attraction specialization of A. A. Mogul'skii,
 “Small deviations in the sample function space,” Theorem 3, Section 4,
 p. 764 of the Russian original; English translation, “Small Deviations in
 a Space of Trajectories,” *Theory of Probability and Its Applications*
-19(4) (1975), 726--736, DOI 10.1137/1119081.
+19(1) (1975), 726--736, DOI 10.1137/1119081.
 -/
 theorem tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_index_gt_one
     {ν μ : Measure ℝ} [IsProbabilityMeasure ν] [IsProbabilityMeasure μ]
@@ -289,7 +289,7 @@ normal-domain `J₁` criterion supplies tightness. This is the `α = 2` case of
 A. A. Mogul'skii, “Small deviations in the sample function space,” Theorem 3,
 Section 4, p. 764 of the Russian original; English translation, “Small
 Deviations in a Space of Trajectories,” *Theory of Probability and Its
-Applications* 19(4) (1975), 726--736, DOI 10.1137/1119081. -/
+Applications* 19(1) (1975), 726--736, DOI 10.1137/1119081. -/
 theorem tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_index_two
     {ν : Measure ℝ} [IsProbabilityMeasure ν]
     {normalization scale : ℕ → ℝ}
@@ -338,7 +338,7 @@ of-attraction hypotheses, including laws with infinite variance. It is the
 Brownian specialization of A. A. Mogul'skii, “Small deviations in the sample
 function space,” Theorem 3, Section 4, p. 764 of the Russian original;
 English translation, “Small Deviations in a Space of Trajectories,” *Theory
-of Probability and Its Applications* 19(4) (1975), 726--736,
+of Probability and Its Applications* 19(1) (1975), 726--736,
 DOI 10.1137/1119081. -/
 theorem tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_index_two_of_brownian
     {ν : Measure ℝ} [IsProbabilityMeasure ν]

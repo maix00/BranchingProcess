@@ -24,7 +24,7 @@ The theorem is the exponent-two functional-limit specialization used by
 Mogulskii, Theorem 3, Section 4, p. 764 of the 1974 Russian original, “Small
 deviations in the sample function space,” *Teoriya Veroyatnostei i ee
 Primeneniya* 19(4) (1974), 755–765; English translation, “Small Deviations in
-a Space of Trajectories,” *Theory of Probability and Its Applications* 19(4)
+a Space of Trajectories,” *Theory of Probability and Its Applications* 19(1)
 (1975), 726–736, DOI 10.1137/1119081. The Donsker
 invariance theorem used here is Theorem 4.20 in I. Karatzas and S. E. Shreve,
 *Brownian Motion and Stochastic Calculus*, 2nd ed., Graduate Texts in

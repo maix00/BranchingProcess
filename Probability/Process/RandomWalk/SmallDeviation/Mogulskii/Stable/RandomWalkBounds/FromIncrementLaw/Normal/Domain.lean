@@ -21,6 +21,12 @@ The variance of the strict two-stable limit and the raw norming time constant
 are exposed separately. Rescaling by the reciprocal standard deviation turns
 the limit into the standard Gaussian used by the normal-domain tightness and
 escape-rate theorems.
+
+This is the index-two specialization of A. A. Mogul'skii, Theorem 3,
+Section 4, p. 764, “Small deviations in the sample function space,”
+*Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974), 755--765; English
+translation, “Small Deviations in a Space of Trajectories,” *Theory of
+Probability and Its Applications* 19(1) (1975), 726--736, DOI 10.1137/1119081.
 -/
 
 open Filter MeasureTheory ProbabilityTheory

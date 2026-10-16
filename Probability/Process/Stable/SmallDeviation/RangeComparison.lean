@@ -38,7 +38,7 @@ The logarithmic comparisons formalize Lemma 2(b) of A. A. Mogul'skii, “Small
 deviations in the sample function space,” *Teoriya Veroyatnostei i ee
 Primeneniya* 19(4) (1974), 755--765; see also the English translation, “Small
 Deviations in a Space of Trajectories,” *Theory of Probability and Its
-Applications* 19(4) (1975), 726--736, DOI 10.1137/1119081.
+Applications* 19(1) (1975), 726--736, DOI 10.1137/1119081.
 -/
 
 @[expose] public section
@@ -78,7 +78,7 @@ theorem rationalRangeProbability_le_centeredCorridorProbability_double
 deviations in the sample function space,” *Teoriya Veroyatnostei i ee
 Primeneniya* 19(4) (1974), 755--765; English translation, “Small Deviations
 in a Space of Trajectories,” *Theory of Probability and Its Applications*
-19(4) (1975), 726--736, DOI 10.1137/1119081. Its logarithmic ratio is
+19(1) (1975), 726--736, DOI 10.1137/1119081. Its logarithmic ratio is
 eventually at least one. -/
 theorem IsStableLevyProcess.eventually_one_le_log_corridor_div_log_range_of_cdf
     {Ω : Type*} [MeasurableSpace Ω]
@@ -152,7 +152,7 @@ theorem IsStableLevyProcess.eventually_one_le_log_corridor_div_log_range_of_cdf
 deviations in the sample function space,” *Teoriya Veroyatnostei i ee
 Primeneniya* 19(4) (1974), 755--765; English translation, “Small Deviations
 in a Space of Trajectories,” *Theory of Probability and Its Applications*
-19(4) (1975), 726--736, DOI 10.1137/1119081. The finite translated cover is
+19(1) (1975), 726--736, DOI 10.1137/1119081. The finite translated cover is
 normalized to the half-width-one form required by relation (21), then the
 fixed finite-sum cost is absorbed at the diverging logarithmic scale. -/
 theorem IsStableLevyProcess.eventually_one_sub_le_log_range_div_log_corridor_of_cdf
@@ -363,7 +363,7 @@ public entry for the right range comparison in Lemma 2(b) of A. A. Mogul'skii,
 “Small deviations in the sample function space,” *Teoriya Veroyatnostei i ee
 Primeneniya* 19(4) (1974), 755--765; English translation, “Small Deviations
 in a Space of Trajectories,” *Theory of Probability and Its Applications*
-19(4) (1975), 726--736, DOI 10.1137/1119081. -/
+19(1) (1975), 726--736, DOI 10.1137/1119081. -/
 theorem IsStableLevyProcess.eventually_one_sub_le_log_range_div_log_corridor_of_measure_Iio_zero
     {Ω : Type*} [MeasurableSpace Ω]
     {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
@@ -381,7 +381,7 @@ theorem IsStableLevyProcess.eventually_one_sub_le_log_range_div_log_corridor_of_
 /-- The left comparison in Lemma 2(b) of A. A. Mogul'skii, “Small deviations
 in the sample function space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4)
 (1974), 755--765; English translation, “Small Deviations in a Space of
-Trajectories,” *Theory of Probability and Its Applications* 19(4) (1975),
+Trajectories,” *Theory of Probability and Its Applications* 19(1) (1975),
 726--736, DOI 10.1137/1119081, also accepts the strict left-half-line mass
 condition directly. -/
 theorem IsStableLevyProcess.eventually_one_le_log_corridor_div_log_range_of_measure_Iio_zero

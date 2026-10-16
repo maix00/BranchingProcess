@@ -11,6 +11,17 @@ public import Combinatorics.BranchingWalk.Step.Measurability
 public import Probability.Process.HittingTime.Declarations
 public import Probability.BranchingRandomWalk.Timing.Splits.Declared
 
+/-!
+# First declared bifurcation time
+
+`ProbabilityTheory.BranchingRandomWalk.first_bifurcation_isStoppingTime`
+states that the first generation at which the selected lineage declares a
+bifurcation is a stopping time for the generation domain flow. If `τ` is
+that first-declaration time and `\mathcal F_n` is the generation domain
+flow, the conclusion is
+$\{\omega \mid \tau(\omega) \le n\} \in \mathcal F_n$ for every $n$.
+-/
+
 open MeasureTheory
 
 @[expose] public section

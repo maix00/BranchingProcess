@@ -143,7 +143,11 @@ the exact source result, and thesis references identify the exact title,
 chapter, and displayed theorem or lemma number. Mogul'skii citations use the
 Russian original's title and publication details from MathNet, together with
 the English translation title and DOI; the translation volume and issue
-follow SIAM's publisher record. The source-by-source check confirms
+follow SIAM's publisher record. The 2026-10-17 source-record check confirmed
+the Russian article as volume 19, issue 4 (1974), and its English translation
+as volume 19, issue 1 (1975). It corrected 119 English-translation citations
+across 77 Lean and documentation files that had copied the Russian issue
+number. The source-by-source check confirms
 Aïdékon--Hu's Lemma 4.1 and Proposition 3.1, equations (4.15)--(4.16);
 Caravenna--Chaumont's Lemma 2.1 and equations (2.3), (3.3); and the relevant
 formulas of Bauer--Godrèche--Luck. Their locations are now distinguished

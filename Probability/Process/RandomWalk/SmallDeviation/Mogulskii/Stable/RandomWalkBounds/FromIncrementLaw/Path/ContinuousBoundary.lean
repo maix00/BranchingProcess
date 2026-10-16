@@ -20,6 +20,12 @@ the reciprocal width to the power `α`. The general result is formulated with
 inner and outer measures. The finite-step source event is shown measurable,
 so the ordinary-probability corollary needs no caller-supplied measurability
 condition.
+
+The source stable path rate is A. A. Mogul'skii, Theorem 3, Section 4,
+p. 764, “Small deviations in the sample function space,” *Teoriya
+Veroyatnostei i ee Primeneniya* 19(4) (1974), 755--765; English translation,
+“Small Deviations in a Space of Trajectories,” *Theory of Probability and Its
+Applications* 19(1) (1975), 726--736, DOI 10.1137/1119081.
 -/
 
 open Filter MeasureTheory ProbabilityTheory

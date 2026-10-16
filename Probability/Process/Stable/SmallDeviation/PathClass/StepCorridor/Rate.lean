@@ -20,6 +20,13 @@ The exact partition estimate gives the source-normalized rate for every
 admissible `M₂` corridor. This file converts the scale-parameter limit to the
 negative normalization used by the finite-union and approximation theorems,
 then applies the existing finite-union argument to `M₃`.
+
+The corridor rates are the stable-process form of A. A. Mogul'skii,
+Theorem 3, Section 4, p. 764, “Small deviations in the sample function
+space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974), 755--765;
+English translation, “Small Deviations in a Space of Trajectories,” *Theory
+of Probability and Its Applications* 19(1) (1975), 726--736, DOI
+10.1137/1119081.
 -/
 
 open Filter MeasureTheory

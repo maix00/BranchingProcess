@@ -43,7 +43,7 @@ noncomputable def discardedTailBiasConstant (α radiusMultiplier : ℝ) : ℝ :=
 Theorem 3, Section 4 of A. A. Mogul'skii, “Small deviations in the sample
 function space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974),
 755--765; English translation, “Small Deviations in a Space of Trajectories,”
-*Theory of Probability and Its Applications* 19(4) (1975), 726--736, DOI
+*Theory of Probability and Its Applications* 19(1) (1975), 726--736, DOI
 10.1137/1119081. It is stated here for a specified norming sequence. -/
 def IsMogulskiiIndexOneCentered (ν : Measure ℝ) (normalization : ℕ → ℝ) : Prop :=
   Tendsto (fun n : ℕ => (n : ℝ) *

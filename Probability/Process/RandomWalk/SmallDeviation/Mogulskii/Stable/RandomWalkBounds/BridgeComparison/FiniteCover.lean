@@ -131,7 +131,7 @@ theorem eventually_source_finite_bridge_comparison
 1974 Russian original by A. A. Mogul'skii, “Small deviations in the sample
 function space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974),
 755--765; English translation, “Small Deviations in a Space of Trajectories,”
-*Theory of Probability and Its Applications* 19(4) (1975), 726--736, DOI
+*Theory of Probability and Its Applications* 19(1) (1975), 726--736, DOI
 10.1137/1119081. Open limiting bridge events yield the eventual finite-cover
 comparison and lower logarithmic-ratio bound. The source-specific geometry,
 positive limiting bridge masses, event identification, base-event positivity,

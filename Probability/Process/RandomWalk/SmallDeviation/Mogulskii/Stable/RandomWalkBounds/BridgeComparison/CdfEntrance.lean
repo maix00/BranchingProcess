@@ -17,10 +17,10 @@ the original CDF sign condition. The comparison is equation (34), Theorem 3,
 Section 4, p. 764 of the 1974 Russian original by A. A. Mogul'skii, “Small
 deviations in the sample function space,” *Teoriya Veroyatnostei i ee
 Primeneniya* 19(4) (1974), 755–765; English translation, “Small Deviations in
-a Space of Trajectories,” *Theory of Probability and Its Applications* 19(4)
+a Space of Trajectories,” *Theory of Probability and Its Applications* 19(1)
 (1975), 726–736, DOI 10.1137/1119081.
 
-The original bibliography is A. A. Mogul'skii, “Small deviations in the sample function space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974), 755--765; English translation, “Small Deviations in a Space of Trajectories,” *Theory of Probability and Its Applications* 19(4) (1975), 726--736, DOI 10.1137/1119081. -/
+The original bibliography is A. A. Mogul'skii, “Small deviations in the sample function space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974), 755--765; English translation, “Small Deviations in a Space of Trajectories,” *Theory of Probability and Its Applications* 19(1) (1975), 726--736, DOI 10.1137/1119081. -/
 
 open Filter MeasureTheory ProbabilityTheory
 open scoped ENNReal NNReal Topology
@@ -49,7 +49,7 @@ theorem sourceBridgeEntrance_pos_of_cdfAtZero_allIndices
 the 1974 Russian original, “Small deviations in the sample function space,”
 *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974), 755–765; English
 translation, “Small Deviations in a Space of Trajectories,” *Theory of
-Probability and Its Applications* 19(4) (1975), 726–736, DOI 10.1137/1119081.
+Probability and Its Applications* 19(1) (1975), 726–736, DOI 10.1137/1119081.
 It uses no auxiliary entrance hypothesis: every bridge mass is obtained from
 the CDF sign condition by the centered, index-one, or finite-variation
 Poisson stable entrance result. -/

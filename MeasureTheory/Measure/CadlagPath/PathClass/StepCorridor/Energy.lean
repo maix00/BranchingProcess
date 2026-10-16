@@ -17,7 +17,7 @@ This file defines an integrated reciprocal-power cost for extended-real step
 corridors and its minimum over a finite union. The source is A. A. Mogul'skii,
 “Small deviations in the sample function space,” *Teoriya Veroyatnostei i ee
 Primeneniya* 19(4) (1974), 755–765; English translation, “Small Deviations in
-a Space of Trajectories,” *Theory of Probability and Its Applications* 19(4)
+a Space of Trajectories,” *Theory of Probability and Its Applications* 19(1)
 (1975), 726–736, DOI 10.1137/1119081. In §1, the corridor cost is
 denoted `Hα`, single corridors form `M₂`, and finite unions form `M₃`. The
 library uses names that describe these objects' structure. Infinite corridor
@@ -58,7 +58,7 @@ zero. On finite positive widths this is exactly `(upper - lower) ^ (-α)`,
 the integrand defining `Hα` in §1 of A. A. Mogul'skii, “Small deviations in
 the sample function space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4)
 (1974), 755–765; English translation, “Small Deviations in a Space of
-Trajectories,” *Theory of Probability and Its Applications* 19(4) (1975),
+Trajectories,” *Theory of Probability and Its Applications* 19(1) (1975),
 726–736, DOI 10.1137/1119081. The definition is total outside
 admissible corridors as well. -/
 noncomputable def widthCost (α : ℝ) (upper lower : EReal) : ℝ≥0∞ :=

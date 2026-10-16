@@ -10,6 +10,27 @@ public import Probability.BranchingRandomWalk.Step.Law.Field
 public import Combinatorics.BranchingWalk.Basic.Position.Displace
 public import Probability.BranchingRandomWalk.Tree.Filtration
 
+/-!
+# Measurable subtree fields and their law
+
+`ProbabilityTheory.BranchingRandomWalk.subtreeStepField u ω` is the subtree
+field `v ↦ ω (u ++ v)`. The public declarations establish its measurability,
+preservation of the IID step-field law, and the displacement decomposition
+$\operatorname{displace}(\omega,[],u{++}v)=
+  \operatorname{displace}(\omega,[],u)+
+  \operatorname{displace}(\operatorname{subtreeStepField}(u,\omega),[],v)$.
+
+- `ProbabilityTheory.BranchingRandomWalk.subtreeStepField` defines the
+  subtree restriction.
+- `ProbabilityTheory.BranchingRandomWalk.subtreeStepField_measurable` proves
+  it is measurable.
+- `ProbabilityTheory.BranchingRandomWalk.subtreeStepField_law` proves
+  `(stepFieldLaw μ).map (subtreeStepField u) = stepFieldLaw μ` for a
+  probability step law.
+- `ProbabilityTheory.BranchingRandomWalk.subtreeStepField_position_decomposition`
+  gives the displacement identity above.
+-/
+
 open MeasureTheory ProbabilityTheory
 
 @[expose] public section

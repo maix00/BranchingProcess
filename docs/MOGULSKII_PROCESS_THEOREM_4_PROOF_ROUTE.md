@@ -3,7 +3,7 @@
 ## Scope and source statement
 
 This note audits Theorem 4, Section 5, of A. A. Mogul'skii, *Small Deviations
-in a Space of Trajectories* ([1974 article record and full text](https://www.mathnet.ru/eng/tvp3978); English translation in *Theory of Probability and Its Applications* 19(4) (1975), 726–736, DOI 10.1137/1119081).
+in a Space of Trajectories* ([1974 article record and full text](https://www.mathnet.ru/eng/tvp3978); English translation in *Theory of Probability and Its Applications* 19(1) (1975), 726–736, DOI 10.1137/1119081).
 The theorem concerns a homogeneous process with independent increments
 `ξ(t)`, `t ≥ 0`, with almost-surely right-continuous paths and zero mean when
 the mean exists. Its one-time laws are in the strict stable domain of
