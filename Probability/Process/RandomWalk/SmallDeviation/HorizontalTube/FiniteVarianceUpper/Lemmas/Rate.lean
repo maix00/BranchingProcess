@@ -214,7 +214,7 @@ private theorem smallDeviation_widthSq_div_blockLength_tendsto_zero
     tendsto_const_nhds hbound (Filter.Eventually.of_forall hwidth)
     (Filter.Eventually.of_forall hle)
 
-theorem exists_partition_size_for_rate {d critical : ℝ}
+lemma exists_partition_size_for_rate {d critical : ℝ}
     (hcritical : d < critical) :
     ∃ m : ℕ, 0 < m ∧ d * (1 + 1 / (m : ℝ)) ^ 2 < critical := by
   have hinv : Tendsto (fun m : ℕ => 1 / (m : ℝ)) atTop (𝓝 0) :=
@@ -245,7 +245,7 @@ private theorem partitionTubeParameter_mem_Ioo {m : ℕ} (hm : 0 < m)
     have hfracPos : 0 < 1 / (m : ℝ) := by positivity
     linarith
 
-theorem eventually_uniform_partitionTube_rateBound
+lemma eventually_uniform_partitionTube_rateBound
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (hcentered : ∫ x, x ∂ν = 0)
     (hsquare : Integrable (fun x : ℝ => x ^ 2) ν)
@@ -334,7 +334,7 @@ theorem eventually_uniform_partitionTube_rateBound
   filter_upwards [hfinite] with k hk j
   simpa [width, block, lengthReal] using hk j
 
-theorem horizontalTubeProbability_le_exp_of_partitionIndex
+lemma horizontalTubeProbability_le_exp_of_partitionIndex
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     {u v d : ℝ} (hu : 0 < u) (hv : 0 < v) (hd : 0 < d)
     {m n : ℕ} (hm : 0 < m) {rate : ℝ}
