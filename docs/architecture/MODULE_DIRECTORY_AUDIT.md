@@ -87,7 +87,8 @@ directory holds related component modules; for example, the pinned Mathlib
 source has `Tactic/Linarith.lean` beside `Tactic/Linarith/`. This repository
 uses a stricter local organization rule for discoverability: production and
 test source trees contain no same-level `.lean` file and directory with the
-same stem. The initial inventory had 81 such pairs. Their declarations now
+same stem. The initial production-tree inventory had 81 such pairs; the test
+tree had none. Their declarations now
 live in `Foo/Basic.lean` or `Foo/Core.lean`, or in subject-specific children;
 callers import those explicit modules. The moves preserve declaration names
 and proofs while changing import paths. This rule does not prohibit a
