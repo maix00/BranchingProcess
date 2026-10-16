@@ -23,8 +23,7 @@ The public theorem in this file is:
 - `ProbabilityTheory.IsBrownianReal.tendsto_measure_firstNonnegativeWindowStartUpTo_eq_top`:
   the complementary probability tends to zero.
 
-This is Erwin Bolthausen, *On a functional central limit theorem for random
-walks conditioned to stay positive*, Lemma 2.2, Ann. Probab. 4(3) (1976),
+This is Erwin Bolthausen, *On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*, Lemma 2.2, Ann. Probab. 4(3) (1976),
 480--485, DOI 10.1214/aop/1176996098. Its proof uses Brownian scaling,
 cited there to Paul Lévy, *Processus Stochastique et Mouvement Brownien*
 (1945), p. 246.

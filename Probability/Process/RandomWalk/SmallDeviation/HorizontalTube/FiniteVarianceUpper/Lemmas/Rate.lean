@@ -25,8 +25,7 @@ The proof-specific declarations are:
   $\mathbb P(T_{a,\Delta,L})\le
   \exp(u\Delta^v-dL/\Delta^2)$.
 
-These choices complete Wang Yiyang, *Asymptotic speed of the $N$-branching
-random walk with infinite offspring*, Chapter 3, Lemma 3.2 and its following
+These choices complete Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.2 and its following
 remark.
 -/
 

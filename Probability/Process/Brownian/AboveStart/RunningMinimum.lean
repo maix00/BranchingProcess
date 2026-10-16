@@ -21,8 +21,7 @@ The public theorem in this file is:
   for $s>1$, the probability that $T^s=s-1$ is zero.
 
 This is the fixed-time non-atom step in equation (2.3) of Lemma 2.3 in
-Erwin Bolthausen, *On a functional central limit theorem for random walks
-conditioned to stay positive*, Ann. Probab. 4(3) (1976), 480--485,
+Erwin Bolthausen, *On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*, Ann. Probab. 4(3) (1976), 480--485,
 DOI 10.1214/aop/1176996098. The proof uses the Brownian time reversal
 and reflection principle underlying the Lévy identity cited there.
 -/

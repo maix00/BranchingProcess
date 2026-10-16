@@ -21,12 +21,12 @@ The public theorems in this file are:
   the same lower bound with common width and time-ratio thresholds for all
   integer widths and horizons.
 
-These are the exponential consequences of Wang Yiyang, *Asymptotic speed of
- the $N$-branching random walk with infinite offspring*, Chapter 3,
-Lemma 3.1(ii), using A. A. Mogul'skii, *Small Deviations in a Space of
-Trajectories*, Theorem 3, Section 4, p. 764 of the 1974 Russian original
-(English translation, *Theory of Probability and Its Applications* 19(4)
-(1975), 726--736, DOI 10.1137/1119081).
+These are the exponential consequences of Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.1(ii).
+The rate input is Theorem 3, Section 4, p. 764 of A. A. Mogul'skii,
+“Small deviations in the sample function space,” *Teoriya Veroyatnostei i ee
+Primeneniya* 19(4) (1974), 755--765; English translation, “Small Deviations
+in a Space of Trajectories,” *Theory of Probability and Its Applications*
+19(4) (1975), 726--736, DOI 10.1137/1119081.
 -/
 
 open Filter MeasureTheory ProbabilityTheory
@@ -38,12 +38,15 @@ namespace ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube
 
 open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete
 
-/-- The endpoint-window rate from Wang Yiyang, *Asymptotic speed of the
-$N$-branching random walk with infinite offspring*, Chapter 3, Lemma 3.1(ii),
-implies this exponential lower bound along any diverging sequence
-of integer tube widths. The endpoint fractions may vary with the width as
-long as they eventually contain one fixed interval strictly inside the tube.
--/
+/-- The endpoint-window rate in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.1(ii),
+implies this exponential lower bound along any diverging sequence of integer
+tube widths. The endpoint fractions may vary with the width provided they
+eventually contain one fixed interval strictly inside the tube. The rate input
+is Theorem 3, Section 4, p. 764 of A. A. Mogul'skii, “Small deviations in the
+sample function space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974),
+755--765; English translation, “Small Deviations in a Space of Trajectories,”
+*Theory of Probability and Its Applications* 19(4) (1975), 726--736, DOI
+10.1137/1119081. -/
 theorem eventually_horizontalTubeEndpointWindowProbability_ge_exp_of_centeredSecondMoment
     {ν : Measure ℝ} [IsProbabilityMeasure ν] {sigma d a u v : ℝ}
     (hν : IsCenteredSecondMoment ν (sigma ^ 2)) (hsigma : 0 < sigma)
@@ -152,12 +155,14 @@ theorem eventually_horizontalTubeEndpointWindowProbability_ge_exp_of_centeredSec
   exact (ENNReal.ofReal_le_ofReal_iff ENNReal.toReal_nonneg).2 hexp
 
 /-- Uniformity in the integer tube width and horizon follows from the
-sequential endpoint-window rate in Wang Yiyang, *Asymptotic speed of the
-$N$-branching random walk with infinite offspring*, Chapter 3, Lemma 3.1(ii).
+sequential endpoint-window rate in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.1(ii).
 The endpoint interval is the fixed interval `[u,v]`; this is the block
-estimate used after narrowing each staircase tube in the proof of Chapter 3,
-Lemma 3.5. The rate input is Mogul'skii, "Small Deviations in a Space of
-Trajectories," Theorem 3, Section 4, p. 764 of the 1974 Russian original (DOI 10.1137/1119081). -/
+estimate used after narrowing each staircase tube in Chapter 3, Lemma 3.5.
+The rate input is Theorem 3, Section 4, p. 764 of A. A. Mogul'skii, “Small
+deviations in the sample function space,” *Teoriya Veroyatnostei i ee
+Primeneniya* 19(4) (1974), 755--765; English translation, “Small Deviations
+in a Space of Trajectories,” *Theory of Probability and Its Applications*
+19(4) (1975), 726--736, DOI 10.1137/1119081. -/
 theorem exists_eventually_horizontalTubeEndpointWindowProbability_ge_exp_uniform
     {ν : Measure ℝ} [IsProbabilityMeasure ν] {sigma d a u v : ℝ}
     (hν : IsCenteredSecondMoment ν (sigma ^ 2)) (hsigma : 0 < sigma)

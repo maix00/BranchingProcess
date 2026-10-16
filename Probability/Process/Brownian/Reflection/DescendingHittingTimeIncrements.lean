@@ -29,8 +29,7 @@ The public theorems in this file are:
 The proof combines the first-passage strong Markov property with the
 pathwise restart identity. This is the independent-increment step of
 the Lévy decomposition invoked in Erwin Bolthausen,
-*On a functional central limit theorem for random walks conditioned
-to stay positive*, Lemma 2.3, equation (2.2),
+*On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*, Lemma 2.3, equation (2.2),
 Ann. Probab. 4(3) (1976), 480--485, DOI 10.1214/aop/1176996098.
 -/
 

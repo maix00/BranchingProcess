@@ -13,17 +13,20 @@ public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVa
 
 The public theorem in this file is:
 
-- `exists_uniform_driftedTube_endpoint_bounds`: if the increment law has
+- `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.exists_uniform_driftedTube_endpoint_bounds`: if the increment law has
   mean zero and variance $\sigma^2>0$, $v>0$, $c\ge0$,
   $\varepsilon>0$, and $d'>\pi^2\sigma^2/2$, one width threshold
   controls the two tilted-tube endpoint probabilities for every admissible
   initial boundary and horizon $L\ge\lfloor\Delta^{2+\varepsilon}\rfloor$.
 
-This is Wang Yiyang, *Asymptotic speed of the $N$-branching random walk
-with infinite offspring*, Chapter 3, Lemma 3.5. Its parameter selection
-follows the proof there: first choose an intermediate exponential rate,
-then a finite bin count, strict window margins, and an intermediate power
-block length.
+This is Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.5. Its parameter selection follows
+that proof: first choose an intermediate exponential rate, then a finite bin
+count, strict window margins, and an intermediate power block length. The
+block-rate input is Chapter 3, Lemma 3.1(ii), based on Theorem 3, Section 4,
+p. 764 of A. A. Mogul'skii, “Small deviations in the sample function space,”
+*Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974), 755--765; English
+translation, “Small Deviations in a Space of Trajectories,” *Theory of
+Probability and Its Applications* 19(4) (1975), 726--736, DOI 10.1137/1119081.
 -/
 
 @[expose] public section
@@ -165,8 +168,8 @@ private theorem exists_staircase_geometric_margins
   exact exists_staircase_windows ha hab hb hA hA1 hU
 
 
-/-- The two endpoint forms of Wang Yiyang's Lemma 3.5, with one real-width
-threshold uniform in the horizon and the initial tube position. -/
+/-- The two endpoint conclusions in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.5, share
+one real-width threshold uniform in the horizon and initial tube position. -/
 theorem exists_uniform_driftedTube_endpoint_bounds
     {ν : Measure ℝ} [IsProbabilityMeasure ν]
     {sigma v d drift epsilon : ℝ}

@@ -27,10 +27,11 @@ The public declarations in this file are:
   $n/x_n^2\to\infty$.
 
 This predicate specializes the general small-deviation scale relation to the
-Gaussian normalization `sqrt n` used in A. A. Mogul'skii,
-*Small Deviations in a Space of Trajectories*, Theorem 3, Section 4,
-p. 764 of the 1974 Russian original (English translation, *Theory of Probability
-and Its Applications* 19(4) (1975), 726--736, DOI 10.1137/1119081).
+Gaussian normalization `sqrt n` used in Theorem 3, Section 4, p. 764 of A. A.
+Mogul'skii, “Small deviations in the sample function space,” *Teoriya
+Veroyatnostei i ee Primeneniya* 19(4) (1974), 755--765; English translation,
+“Small Deviations in a Space of Trajectories,” *Theory of Probability and Its
+Applications* 19(4) (1975), 726--736, DOI 10.1137/1119081.
 Distributional moment hypotheses live in
 `Probability.Distributions.Moments.Real`.
 -/

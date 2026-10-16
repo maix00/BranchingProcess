@@ -16,7 +16,9 @@ This adapter joins those APIs and discharges the `α < 1` entrance input from
 the original CDF sign condition. The comparison is Mogul'skii's equation (34),
 Theorem 3, Section 4, p. 764 of the 1974 Russian original, in A. A. Mogul'skii, *Small Deviations in a
 Space of Trajectories* (1974 Russian original; 1975 English translation,
-DOI 10.1137/1119081). -/
+DOI 10.1137/1119081).
+
+The original bibliography is A. A. Mogul'skii, “Small deviations in the sample function space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974), 755--765; English translation, “Small Deviations in a Space of Trajectories,” *Theory of Probability and Its Applications* 19(4) (1975), 726--736, DOI 10.1137/1119081. -/
 
 open Filter MeasureTheory ProbabilityTheory
 open scoped ENNReal NNReal Topology

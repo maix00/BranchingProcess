@@ -34,8 +34,7 @@ The public theorems in this file are:
    =\mathbb P(\nu_n=r)\mathbb P(Y_r^{+}\in A)$.
 
 These identities connect the simple-symmetric-walk argument on page 484
-of Erwin Bolthausen, *On a functional central limit theorem for random
-walks conditioned to stay positive*, Ann. Probab. 4(3) (1976), 480--485, DOI 10.1214/aop/1176996098,
+of Erwin Bolthausen, *On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*, Ann. Probab. 4(3) (1976), 480--485, DOI 10.1214/aop/1176996098,
 Theorem 3.2, to its nonnegative-survival conditional law.
 -/
 

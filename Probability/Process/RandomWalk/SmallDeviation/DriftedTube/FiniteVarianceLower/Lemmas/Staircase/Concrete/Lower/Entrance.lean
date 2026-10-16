@@ -20,9 +20,9 @@ The module-visible supporting lemma in this file is:
   $\mathbb P(E)\ge\exp(-d'L/\Delta^2)$.
 
 This is the final finite-block multiplication in Wang Yiyang,
-*Asymptotic speed of the $N$-branching random walk with infinite offspring*,
+*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
 Chapter 3, proof of Lemma 3.5. The robust entrance event is a subevent of
-the Appendix A.2 transition event with terminal interval contained in the
+the transition event in Appendix A.2, Lemma A.7, with terminal interval contained in the
 first horizontal block's central window.
 -/
 

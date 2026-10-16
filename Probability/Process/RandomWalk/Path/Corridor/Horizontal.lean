@@ -214,8 +214,7 @@ theorem horizontalTubeProbability_mono_horizon
   exact hlong ⟨k, lt_of_lt_of_le k.isLt hshort⟩
 
 /-- Width monotonicity for the logarithmic tube probability, in the form used
-in Wang Yiyang, *Asymptotic speed of the $N$-branching random walk with
-infinite offspring*, Chapter 3, proof of Lemma 3.2. The extended-real
+in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, proof of Lemma 3.2. The extended-real
 logarithm keeps the statement valid when a tube has probability zero. -/
 theorem horizontalTubeLogProbability_mono_width
     (incrementLaw : Measure (ℕ → ℝ))

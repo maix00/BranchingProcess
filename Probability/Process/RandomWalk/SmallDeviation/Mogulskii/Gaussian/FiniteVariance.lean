@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Distributions.Moments.Truncated
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Gaussian.SourcePathClass
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Path.SourcePathClass
 
 /-!
 # Finite-variance specialization of the normal-domain Mogul'skii rate
@@ -21,10 +21,11 @@ The public theorem in this file is:
 
 The normal-domain theorem allows infinite variance.  When the second moment is
 finite, the truncated second moment tends to the variance, giving the familiar
-variance-scaled exponent as a direct consequence of A. A. Mogul'skii,
-*Small Deviations in a Space of Trajectories*, Theorem 3, Section 4,
-p. 764 of the 1974 Russian original (English translation, *Theory of Probability
-and Its Applications* 19(4) (1975), 726--736, DOI 10.1137/1119081).
+variance-scaled exponent as a direct consequence of Theorem 3, Section 4,
+p. 764 of A. A. Mogul'skii, “Small deviations in the sample function space,”
+*Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974), 755--765; English
+translation, “Small Deviations in a Space of Trajectories,” *Theory of
+Probability and Its Applications* 19(4) (1975), 726--736, DOI 10.1137/1119081.
 -/
 
 open Filter MeasureTheory ProbabilityTheory

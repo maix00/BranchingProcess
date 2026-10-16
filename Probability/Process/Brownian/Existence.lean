@@ -29,8 +29,7 @@ The public theorem in this file is:
 The construction takes a subsequential path-law limit of the centered
 Rademacher walk through normal-domain tightness and the stable-process
 existence theorem. This is the Gaussian functional limit used in the proof
-of Wang Yiyang, *Asymptotic speed of the $N$-branching random walk with
-infinite offspring*, Chapter 3, Lemma 3.5. Path continuity is a separate
+of Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.5. Path continuity is a separate
 assertion from these finite-dimensional laws.
 -/
 

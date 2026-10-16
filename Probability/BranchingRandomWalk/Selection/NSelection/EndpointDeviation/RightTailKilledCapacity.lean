@@ -3405,7 +3405,7 @@ noncomputable def rightTailPositiveAKilledCapacityFailureProbability
     (population.capacityEvent horizon ellN)ᶜ
 
 /-- Under logarithmic cutoffs, the first term in Wang Yiyang,
-*Asymptotic speed of the $N$-branching random walk with infinite offspring*,
+*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
 Chapter 4, equation (4.15), has polynomial decay whenever its two exponent
 margins are positive. The uniform threshold is chosen once and then used for
 every `N`. -/

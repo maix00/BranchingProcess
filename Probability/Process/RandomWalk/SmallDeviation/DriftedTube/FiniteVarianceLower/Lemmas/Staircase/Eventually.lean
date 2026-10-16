@@ -14,18 +14,18 @@ public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVa
 
 The module-visible supporting lemma in this file is:
 
-- `eventually_staircaseGlobalConditions`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.eventually_staircaseGlobalConditions`:
   under $\Delta_n\to\infty$,
   $\Delta_n^2/\ell_n\to0$, and
   $\ell_n/\Delta_n^3\to0$, the strict fixed rate and endpoint margins
   imply all global numeric inequalities for the concrete staircase at
   sufficiently large $n$.
-- `eventually_staircaseUpperEndpointGlobalConditions`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.eventually_staircaseUpperEndpointGlobalConditions`:
   the same width, time, and rate conditions with the final endpoint
   interval adjacent to the upper edge.
 
 This is the common-threshold assertion in Wang Yiyang,
-*Asymptotic speed of the $N$-branching random walk with infinite offspring*,
+*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
 Chapter 3, proof of Lemma 3.5. The two endpoint intervals correspond to
 the ordinary and final block cases in that proof.
 -/
@@ -138,7 +138,8 @@ private lemma eventually_linear_block_cost_lt_width_cubed
     (div_lt_iff₀ (pow_pos hwidthN _)).1 hsmallN
 
 /-- All width, time, rate, and endpoint inequalities used by the finite
-staircase hold under the superquadratic and subcubic block scale of Wang Yiyang's Lemma 3.5. -/
+staircase hold under the superquadratic and subcubic block scales in Wang
+Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.5. -/
 lemma eventually_staircaseGlobalConditions
     {width : ℕ → ℝ} {blockLength : ℕ → ℕ}
     {drift margin endpointFraction narrowedRate blockRate

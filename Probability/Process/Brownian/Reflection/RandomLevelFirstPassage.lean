@@ -24,8 +24,7 @@ The proof uses independence of the stopped past and future Brownian
 path, the atomless fixed-level first-passage law, and Fubini's theorem.
 This provides a direct proof of the fixed-excursion-length consequence
 of the Lévy decomposition cited by Erwin Bolthausen,
-*On a functional central limit theorem for random walks conditioned
-to stay positive*, Lemma 2.3, equation (2.2), Ann. Probab. 4(3)
+*On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*, Lemma 2.3, equation (2.2), Ann. Probab. 4(3)
 (1976), 480--485, DOI 10.1214/aop/1176996098.
 -/
 

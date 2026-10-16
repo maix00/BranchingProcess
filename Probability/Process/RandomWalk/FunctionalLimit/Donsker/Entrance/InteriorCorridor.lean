@@ -15,13 +15,13 @@ public import Topology.Cadlag.Skorokhod.Path.Linear
 The public definitions and theorems in this file are:
 
 - `ProbabilityTheory.RandomWalk.FunctionalLimit.Donsker.brownianMiddlePathEvent`:
-  the Brownian event printed in Wang Yiyang, Appendix A.2, with the
-  endpoint window $(5/12,7/12)$.
+  the Brownian event printed in Wang Yiyang, *Asymptotic Speed of the
+  N-Branching Random Walk with Infinite Offspring*, Appendix A.2, Lemma A.7,
+  with endpoint window $(5/12,7/12)$.
 - `ProbabilityTheory.RandomWalk.FunctionalLimit.Donsker.interiorPathEvent`:
   $1/24<z+\sigma f(t)<23/24$ for $0\le t\le1$, with
   $11/24<z+\sigma f(1)<13/24$, a fixed subevent of the endpoint window
-  $[5/12,7/12]$ in Wang Yiyang, Appendix A.2, proof of the meander
-  transition lemma.
+  $[5/12,7/12]$ in the same lemma.
 - `ProbabilityTheory.RandomWalk.FunctionalLimit.Donsker.interiorPathEvent_subset_brownianMiddlePathEvent`:
   the robust endpoint subevent belongs to the printed Brownian event.
 - `ProbabilityTheory.RandomWalk.FunctionalLimit.Donsker.scaledInteriorPathEvent`:
@@ -40,15 +40,15 @@ The public definitions and theorems in this file are:
   large walk horizons, by Donsker's theorem and compactness.
 - `ProbabilityTheory.RandomWalk.FunctionalLimit.Donsker.eventually_brownianMiddlePathProbability_pos_uniform`:
   the same lower bound for the endpoint window in Wang Yiyang,
-  Appendix A.2, proof of the meander transition lemma.
+  *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
+  Appendix A.2, Lemma A.7.
 - `ProbabilityTheory.RandomWalk.FunctionalLimit.Donsker.eventually_scaledInteriorPathProbability_pos_uniform`:
   the same lower bound survives the ratios $\sqrt n/\Delta\to1$ and
   $c/\Delta\to0$ in the finite-width corridor.
 
 This is the Brownian support and compactness step in Wang Yiyang,
-*Asymptotic speed of the $N$-branching random walk with infinite offspring*,
-Appendix A.2, proof of the meander transition lemma used in Chapter 3,
-Lemma 3.5.
+*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
+Appendix A.2, Lemma A.7, used in the proof of Chapter 3, Lemma 3.5.
 -/
 
 @[expose] public section
@@ -59,7 +59,8 @@ open Filter MeasureTheory ProbabilityTheory
 open scoped ENNReal Topology
 
 /-- The Brownian middle-start event printed in Wang Yiyang,
-Appendix A.2. -/
+*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
+Appendix A.2, Lemma A.7. -/
 def brownianMiddlePathEvent (sigma z : ℝ) :
     Set (CadlagPath unitInterval ℝ) :=
   {path | (∀ t, 1 / 24 < z + sigma * path t ∧
@@ -76,8 +77,9 @@ def interiorPathEvent (sigma z : ℝ) : Set (CadlagPath unitInterval ℝ) :=
     11 / 24 < z + sigma * path ⊤ ∧
       z + sigma * path ⊤ < 13 / 24}
 
-/-- The robust event is a subevent of the Brownian event in the printed
-proof of Wang Yiyang, Appendix A.2. -/
+/-- The robust event is a subevent of the Brownian event in Wang Yiyang,
+*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
+Appendix A.2, Lemma A.7. -/
 theorem interiorPathEvent_subset_brownianMiddlePathEvent
     (sigma z : ℝ) :
     interiorPathEvent sigma z ⊆ brownianMiddlePathEvent sigma z := by
@@ -196,7 +198,7 @@ theorem linearBall_subset_interiorPathEvent
 
 /-- Donsker's theorem and the Brownian path support give a positive lower
 bound uniform over the middle starting interval. This is the `p₀>0` and
-compactness step in Wang Yiyang, Appendix A.2. -/
+compactness step in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Appendix A.2, Lemma A.7. -/
 theorem eventually_interiorPathProbability_pos_uniform
     {ν : Measure ℝ} [IsProbabilityMeasure ν] {sigma : ℝ}
     (hν : IsCenteredSecondMoment ν (sigma ^ 2)) (hsigma : 0 < sigma)
@@ -238,7 +240,8 @@ theorem eventually_interiorPathProbability_pos_uniform
   exact (hn ((1 / 2 - z) / sigma) hslope).le.trans (measure_mono hsubset)
 
 /-- The exact Brownian middle-start event printed in Wang Yiyang,
-Appendix A.2, inherits the uniform Donsker lower bound from its robust
+*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
+Appendix A.2, Lemma A.7, inherits the uniform Donsker lower bound from its robust
 subevent. -/
 theorem eventually_brownianMiddlePathProbability_pos_uniform
     {ν : Measure ℝ} [IsProbabilityMeasure ν] {sigma : ℝ}
@@ -263,7 +266,7 @@ theorem eventually_brownianMiddlePathProbability_pos_uniform
 
 /-- The uniform Brownian interior estimate transfers to the finite-width
 middle-start corridor as the scale ratio approaches one. This is the
-compactness and Donsker step of Wang Yiyang, Appendix A.2. -/
+compactness and Donsker step of Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Appendix A.2, Lemma A.7. -/
 theorem eventually_scaledInteriorPathProbability_pos_uniform
     {ν : Measure ℝ} [IsProbabilityMeasure ν] {sigma : ℝ}
     (hν : IsCenteredSecondMoment ν (sigma ^ 2)) (hsigma : 0 < sigma)

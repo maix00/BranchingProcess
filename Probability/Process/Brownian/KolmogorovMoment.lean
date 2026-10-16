@@ -22,8 +22,7 @@ The public theorem in this file is:
 This is the $n=2$ case of the moment step in Rémy Degenne et al.,
 *Brownian Motion in Lean*, `BrownianMotion.Gaussian.BrownianMotion`, theorem
 `IsPreBrownianReal.isAEKolmogorovProcess`. It is the continuity input for
-the Brownian motion used in Wang Yiyang, *Asymptotic speed of the
-$N$-branching random walk with infinite offspring*, Chapter 3, Lemma 3.5.
+the Brownian motion used in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.5.
 -/
 
 @[expose] public section

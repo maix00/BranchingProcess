@@ -13,7 +13,7 @@ public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVa
 
 The module-visible supporting lemma in this file is:
 
-- `staircaseBlockNumericConditions`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.staircaseBlockNumericConditions`:
   from $\ell\le|I_j|<2\ell$ and
   $\Delta/2\le\Delta(j)\le\Delta$ and
   $\Delta(j)\ge\Delta-2c\ell/\Delta^2$, common conditions at
@@ -24,8 +24,7 @@ The module-visible supporting lemma in this file is:
   required by the staircase product.
 
 These are the estimates following the two block-length bounds in Wang
-Yiyang, *Asymptotic speed of the $N$-branching random walk with infinite
-offspring*, Chapter 3, proof of Lemma 3.5. Endpoint fractions for ordinary
+Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, proof of Lemma 3.5. Endpoint fractions for ordinary
 and final blocks are treated separately in the product theorem.
 -/
 

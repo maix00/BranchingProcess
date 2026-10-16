@@ -39,7 +39,7 @@ The public objects and theorems in this file are:
   every actual block has length in $[\ell,2\ell)$.
 
 These are the discrete schedule definitions in Wang Yiyang,
-*Asymptotic speed of the $N$-branching random walk with infinite offspring*,
+*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
 Chapter 3, proof of Lemma 3.5.
 -/
 

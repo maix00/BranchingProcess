@@ -12,7 +12,7 @@ public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVa
 
 The module-visible supporting lemma in this file is:
 
-- `staircaseEndpointMarginConditions`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.staircaseEndpointMarginConditions`:
   with $b=1-1/(3m)$ and $D_*=2c\ell/\Delta^2<\Delta$, four
   inequalities at the global scales $\Delta$ and $\Delta-D_*$ imply the
   endpoint-window margin inequalities for every horizontal block.
@@ -20,7 +20,7 @@ The module-visible supporting lemma in this file is:
   the final block uses a separate interval $(u_{\rm fin},v_{\rm fin})$.
 
 This is the two-case endpoint comparison in Wang Yiyang,
-*Asymptotic speed of the $N$-branching random walk with infinite offspring*,
+*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
 Chapter 3, proof of Lemma 3.5, immediately before the common-threshold
 contradiction argument.
 -/

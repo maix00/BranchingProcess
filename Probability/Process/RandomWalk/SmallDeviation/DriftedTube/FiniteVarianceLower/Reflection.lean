@@ -25,8 +25,7 @@ The public objects and theorems in this file are:
   equals $\mathbb P_{-\nu}(E_{\mathrm{lower}}(-c,-r_0-\Delta))$.
 
 This is the deterministic reflection in the symmetric construction of
-Wang Yiyang, *Asymptotic speed of the $N$-branching random walk with infinite
-offspring*, Chapter 3, proof of Lemma 3.5.
+Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, proof of Lemma 3.5.
 -/
 
 @[expose] public section

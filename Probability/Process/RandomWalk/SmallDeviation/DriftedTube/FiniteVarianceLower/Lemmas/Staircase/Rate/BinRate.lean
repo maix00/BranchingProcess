@@ -20,7 +20,7 @@ The module-visible supporting lemma in this file is:
   width with the global width gives the exponential bound at the latter.
 
 This is the fixed-spatial-bin application of Wang Yiyang,
-*Asymptotic speed of the $N$-branching random walk with infinite offspring*,
+*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
 Chapter 3, Lemma 3.1(ii), inside the proof of Lemma 3.5.
 -/
 

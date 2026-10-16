@@ -28,8 +28,7 @@ The public theorem in this file is:
   the first Brownian unit window starts strictly after time zero
   almost surely.
 
-This is the $s=\infty$ case of Erwin Bolthausen, *On a functional
-central limit theorem for random walks conditioned to stay positive*,
+This is the $s=\infty$ case of Erwin Bolthausen, *On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*,
 Lemma 2.4, Ann. Probab. 4(3) (1976), 480--485,
 DOI 10.1214/aop/1176996098. It uses equations (2.2) and (2.4)
 of Lemma 2.3 and the almost-sure finiteness from Lemma 2.2.

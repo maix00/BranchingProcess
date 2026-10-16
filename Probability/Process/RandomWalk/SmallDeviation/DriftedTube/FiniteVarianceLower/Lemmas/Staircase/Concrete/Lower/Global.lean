@@ -13,15 +13,14 @@ public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVa
 
 The module-visible supporting lemma in this file is:
 
-- `exists_concreteStaircaseLowerBound_of_globalConditions`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.exists_concreteStaircaseLowerBound_of_globalConditions`:
   the robust entrance estimate and the global width, time, rate, and
   endpoint-margin inequalities imply
   $\mathbb P(E)\ge\exp(-d'L/\Delta^2)$.
   The ordinary and final blocks use their respective endpoint intervals.
 
 This is the finite-block multiplication and common-threshold step in
-Wang Yiyang, *Asymptotic speed of the $N$-branching random walk with infinite
-offspring*, Chapter 3, proof of Lemma 3.5.
+Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, proof of Lemma 3.5.
 -/
 
 @[expose] public section

@@ -20,9 +20,9 @@ The public theorem in this file is:
   every $a\ge0$, the path $t\mapsto at$ belongs to the support of the
   law of the radius of three independent copies.
 
-This is the support input for the Imhof proof of the Brownian-meander
-corridor used by Wang Yiyang, *Asymptotic speed of the $N$-branching random
-walk with infinite offspring*, Chapter 3, Lemma 3.5, Appendix A.2.
+This is a reusable support theorem for the radial path of three independent
+Brownian motions. It supplies the path-space support input for Bessel-based
+Brownian-meander arguments in this library.
 -/
 
 @[expose] public section

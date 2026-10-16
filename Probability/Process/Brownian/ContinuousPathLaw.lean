@@ -28,8 +28,7 @@ The public theorem in this file is:
 The proof identifies finite-dimensional distributions on nonnegative
 rational times, a countable dense subset. This path-law uniqueness is used
 to formalize the Brownian scaling invariance cited by Erwin Bolthausen in
-Lemma 2.2 of *On a functional central limit theorem for random walks
-conditioned to stay positive*, Ann. Probab. 4(3) (1976), 480--485,
+Lemma 2.2 of *On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*, Ann. Probab. 4(3) (1976), 480--485,
 DOI 10.1214/aop/1176996098. Bolthausen cites Paul Lévy, *Processus
 Stochastique et Mouvement Brownien* (Gauthier-Villars, Paris, 1945), p. 246,
 for that invariance.
@@ -136,8 +135,7 @@ theorem IsBrownianReal.measure_continuousPathMap_eq
 /-- Brownian path measure is invariant under the scaling cited by
 Paul Lévy, *Processus Stochastique et Mouvement Brownien* (1945), p. 246,
 published by Gauthier-Villars, Paris, and used by Erwin Bolthausen in
-Lemma 2.2 of *On a functional central limit theorem for random walks
-conditioned to stay positive*. -/
+Lemma 2.2 of *On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*. -/
 theorem IsBrownianReal.measure_continuousPathMap_scale_eq
     {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
     {B : ℝ≥0 → Ω → ℝ} (hB : IsBrownianReal B P)

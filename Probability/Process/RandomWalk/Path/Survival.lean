@@ -171,8 +171,7 @@ theorem SurvivesNonnegative.shift_iff
 /-- The first length-`n` surviving window starts at `start`: the window at
 `start` survives, and every earlier window fails. This is the discrete
 first-window event in the path transform of Erwin Bolthausen,
-*On a functional central limit theorem for random walks conditioned to stay
-positive*, Ann. Probab. 4(3) (1976), 480–485, DOI 10.1214/aop/1176996098;
+*On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*, Ann. Probab. 4(3) (1976), 480–485, DOI 10.1214/aop/1176996098;
 see also Vladislav Vysotsky, *Positivity of integrated random walks*,
 Section 3.1, equation (17), DOI 10.1214/12-AIHP487. -/
 def IsFirstSurvivingWindow (n start : ℕ) (increment : ℕ → ℝ) : Prop :=

@@ -22,8 +22,7 @@ The public theorems in this file are:
   the same assertion for the unrestricted first window.
 
 These are equation (2.2) of Lemma 2.3 in Erwin Bolthausen,
-*On a functional central limit theorem for random walks conditioned
-to stay positive*, Ann. Probab. 4(3) (1976), 480--485,
+*On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*, Ann. Probab. 4(3) (1976), 480--485,
 DOI 10.1214/aop/1176996098. Bolthausen cites the Lévy decomposition
 of descending hitting times to exclude a fixed excursion length.
 Here that consequence is derived by conditioning at a rational time

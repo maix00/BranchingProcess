@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.FunctionalLimit.Donsker.InteriorDiffusive
+public import Probability.Process.RandomWalk.FunctionalLimit.Donsker.Entrance.InteriorDiffusive
 
 /-!
 # Middle-start estimate for the moving entrance corridor
@@ -24,9 +24,8 @@ The public definitions and theorems in this file are:
   uniform positive lower bound over $x\in[\Delta/12,11\Delta/12]$.
 
 This is the middle starting interval in Wang Yiyang,
-*Asymptotic speed of the $N$-branching random walk with infinite offspring*,
-Appendix A.2, proof of the meander transition lemma used in Chapter 3,
-Lemma 3.5.
+*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
+Appendix A.2, Lemma A.7, used in the proof of Chapter 3, Lemma 3.5.
 -/
 
 @[expose] public section
@@ -50,8 +49,8 @@ def movingTransitionEvent (n : ℕ) (width drift start : ℝ) :
     start + AdditivePath.displacement n increment ≤
       drift * (n : ℝ) / width ^ 2 + 2 * width / 3}
 
-/-- The constant interior corridor used in the middle-start Donsker
-argument lies inside the moving corridor of Wang Yiyang, Appendix A.2. -/
+/-- The constant interior corridor used in the middle-start Donsker argument
+lies inside the moving corridor in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Appendix A.2, Lemma A.7. -/
 theorem finiteInteriorEvent_subset_movingTransitionEvent
     {n : ℕ} {width drift start : ℝ}
     (hwidth : 0 < width) (hdrift : 0 ≤ drift)

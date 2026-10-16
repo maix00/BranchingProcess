@@ -20,7 +20,7 @@ The module-visible supporting lemma in this file is:
   block conditions give the lower bound $\exp(-d'L/\Delta^2)$.
 
 This instantiates the finite staircase argument in Wang Yiyang,
-*Asymptotic speed of the $N$-branching random walk with infinite offspring*,
+*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
 Chapter 3, proof of Lemma 3.5. The remaining conditions are precisely the
 entrance probability and the quantitative estimates obtained there by taking
 $\Delta$ sufficiently large.
@@ -33,8 +33,8 @@ open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 
-/-- The finite staircase probability calculation with the actual block
-schedule and endpoint windows from Wang Yiyang's Lemma 3.5. -/
+/-- The finite staircase probability calculation with the block schedule and
+endpoint windows in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.5. -/
 lemma exists_concreteStaircaseLowerBound
     {ν : Measure ℝ} [IsProbabilityMeasure ν]
     {sigma narrowedRate uInterior vInterior uFinal vFinal : ℝ}

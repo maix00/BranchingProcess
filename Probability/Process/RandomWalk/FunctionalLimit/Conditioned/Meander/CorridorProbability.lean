@@ -34,17 +34,17 @@ The convergence hypothesis is the Brownian-meander functional limit proved
 by Donald L. Iglehart, *Functional Central Limit Theorems for Random Walks
 Conditioned to Stay Positive*, Ann. Probab. 2(4) (1974), 608–619,
 DOI 10.1214/aop/1176996607, and extended by Erwin Bolthausen,
-*On a Functional Central Limit Theorem for Random Walks Conditioned to Stay
-Positive*, Ann. Probab. 4(3) (1976), 480–485,
+*On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*, Ann. Probab. 4(3) (1976), 480–485,
 DOI 10.1214/aop/1176996098. Francesco Caravenna and Loïc Chaumont recall
 this limit in *Invariance principles for random walks conditioned to stay
 positive*, equation (3.3), DOI 10.1214/07-AIHP119. Loïc Chaumont and
 R. A. Doney give a later treatment in *Invariance principles for local
 times at the maximum of random walks and Lévy processes*, Theorem 6,
-DOI 10.1214/09-AOP512. The support hypothesis is the one used by
-Wang Yiyang, *Asymptotic speed of the $N$-branching random walk with
-infinite offspring*, Chapter 3, Lemma 3.5, Appendix A.2. The limit and its support are established in the Brownian meander and
-conditioned random-walk modules.
+DOI 10.1214/09-AOP512. The support hypothesis is used in Wang Yiyang,
+*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
+Chapter 3, Lemma 3.5, and Appendix A.2, Lemma A.7. The limit and its
+support are established in the Brownian-meander and conditioned
+random-walk modules.
 -/
 
 @[expose] public section
@@ -54,12 +54,14 @@ open scoped ENNReal NNReal Topology
 
 namespace ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned
 
-/-- The Portmanteau consequence of the Iglehart--Bolthausen Brownian-meander
-limit, recalled by Caravenna--Chaumont in equation (3.3), and used in
-Wang Yiyang, *Asymptotic speed of the
-$N$-branching random walk with infinite offspring*, Chapter 3, Lemma 3.5,
-Appendix A.2. The distributional convergence and the support of the
-Brownian meander law are explicit inputs. -/
+/-- The Portmanteau consequence of Iglehart's *Functional Central Limit
+Theorems for Random Walks Conditioned to Stay Positive*, Section 3, and
+Bolthausen's *On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*, Theorem 3.2, recalled by Caravenna and
+Chaumont in *Invariance principles for random walks conditioned to stay
+positive*, equation (3.3). The support input is used in Wang Yiyang,
+*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
+Chapter 3, Lemma 3.5, and Appendix A.2, Lemma A.7. The distributional
+convergence and the support of the Brownian meander law are explicit inputs. -/
 theorem exists_eventually_meanderCorridorProbability_ge
     {Ω Ωm : Type*} [MeasurableSpace Ω] [MeasurableSpace Ωm]
     {P : ℕ → Measure Ω} [∀ n, IsProbabilityMeasure (P n)]
@@ -82,8 +84,7 @@ theorem exists_eventually_meanderCorridorProbability_ge
 
 /-- The path version of $D_{N,\Delta}^{\theta}$ after normalizing the walk by
 $\sigma\sqrt N$ and writing $s=\Delta/\sqrt N$. This is the transition
-event in Wang Yiyang, *Asymptotic speed of the $N$-branching random walk
-with infinite offspring*, Chapter 3, Lemma 3.5, Appendix A.2. -/
+event in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.5, and Appendix A.2, Lemma A.7. -/
 def normalizedTransitionCorridor (sigma scale : ℝ) :
     Set (CadlagPath unitInterval ℝ) :=
   Skorokhod.rangeInClosedIntervalEndsIn
@@ -92,9 +93,8 @@ def normalizedTransitionCorridor (sigma scale : ℝ) :
 
 /-- The fixed meander open set fits inside the normalized transition event
 when $\Delta/\sqrt N$ is within $\rho$ of one and the conditioned path is
-nonnegative. This is the margin comparison in Wang Yiyang, *Asymptotic speed
-of the $N$-branching random walk with infinite offspring*, Chapter 3,
-Lemma 3.5, Appendix A.2. -/
+nonnegative. This is the margin comparison in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3,
+Lemma 3.5, and Appendix A.2, Lemma A.7. -/
 theorem mem_normalizedTransitionCorridor_of_meanderCorridor
     {sigma rho scale : ℝ} (hsigma : 0 < sigma) (hrho : 0 < rho)
     (hscale : |scale - 1| < rho)
@@ -132,11 +132,15 @@ theorem mem_normalizedTransitionCorridor_of_meanderCorridor
 
 /-- A conditioned random-walk limit with Brownian-meander support gives
 an eventual positive probability for the finite-width transition corridor.
-The convergence input is the Iglehart--Bolthausen Brownian-meander limit,
-recalled by Caravenna--Chaumont in equation (3.3); the support input is used
-by Wang Yiyang, *Asymptotic speed of the $N$-branching random walk with
-infinite offspring*, Chapter 3, Lemma 3.5, Appendix A.2.
-The scale input represents $\Delta/\sqrt{n_\Delta-m}\to1$. -/
+The convergence input is Iglehart, *Functional Central Limit Theorems for
+Random Walks Conditioned to Stay Positive*, Section 3, and Bolthausen,
+*On a Functional Central Limit Theorem for Random Walks Conditioned to Stay
+Positive*, Theorem 3.2, recalled by Caravenna and Chaumont, *Invariance
+principles for random walks conditioned to stay positive*, equation (3.3),
+DOI 10.1214/07-AIHP119. The support input is used by Wang Yiyang,
+*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
+Chapter 3, Lemma 3.5, and Appendix A.2, Lemma A.7. The scale input
+represents $\Delta/\sqrt{n_\Delta-m}\to1$. -/
 theorem exists_eventually_normalizedTransitionCorridorProbability_ge
     {Ω Ωm : Type*} [MeasurableSpace Ω] [MeasurableSpace Ωm]
     {P : ℕ → Measure Ω} [∀ n, IsProbabilityMeasure (P n)]

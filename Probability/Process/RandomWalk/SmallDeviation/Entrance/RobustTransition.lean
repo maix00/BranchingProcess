@@ -27,10 +27,10 @@ The public object and theorem in this file are:
   the middle starting interval has a uniform positive entrance probability.
 
 The middle-start and two edge constructions in Wang Yiyang,
-*Asymptotic speed of the $N$-branching random walk with infinite offspring*,
-Appendix A.2, proof of the meander transition lemma, have terminal
-  intervals within this robust range for sufficiently large $\Delta$;
-  their printed endpoint bounds retain fixed-length error terms.
+*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
+Appendix A.2, Lemma A.7. This module strengthens their terminal bounds to
+the robust range for sufficiently large $\Delta$, retaining their printed
+fixed-length endpoint error terms.
 -/
 
 @[expose] public section

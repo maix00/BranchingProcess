@@ -24,7 +24,7 @@ The conditional-product step and the version with an explicit Brownian
 witness are private proof helpers.
 
 This is the multiplication step in Wang Yiyang,
-*Asymptotic speed of the $N$-branching random walk with infinite offspring*,
+*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
 Appendix A.2, Lemma A.7. The survival bound follows from the cyclic
 rotation cover in M. Bauer,
 C. Godrèche, and J.-M. Luck, *Statistics of persistent events in the
@@ -49,7 +49,7 @@ namespace ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned
 $\mathbb P(D_{N,\Delta})
  =\mathbb P(D_{N,\Delta}\mid C_N)\mathbb P(C_N)$
 at the diffusive horizon. This implements the corresponding step in
-Wang Yiyang, Appendix A.2, Lemma A.7. -/
+Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Appendix A.2, Lemma A.7. -/
 private theorem exists_eventually_diffusiveTransitionProbability_ge_inverse_square_of_conditionalBound
     {ν : Measure ℝ} [IsProbabilityMeasure ν]
     {sigma : ℝ} (hν : IsCenteredSecondMoment ν (sigma ^ 2))

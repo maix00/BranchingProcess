@@ -13,13 +13,13 @@ public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVa
 
 The module-visible supporting lemma in this file is:
 
-- `staircaseUpperEndpointMarginConditions`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.staircaseUpperEndpointMarginConditions`:
   the ordinary blocks retain the margins of the lower-window
   staircase; the final block uses the normalized window
   $[\max(1-v,0)\Delta/\Delta(q),1]$.
 
 This is the symmetric final-window choice in Wang Yiyang,
-*Asymptotic speed of the $N$-branching random walk with infinite offspring*,
+*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
 Chapter 3, proof of Lemma 3.5.
 -/
 

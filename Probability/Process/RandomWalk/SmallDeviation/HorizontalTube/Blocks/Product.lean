@@ -20,7 +20,7 @@ The public theorem in this file is:
   \mathbb P(E_0)\prod_{j<q}p_j$.
 
 This is the reverse Markov product in Wang Yiyang,
-*Asymptotic speed of the $N$-branching random walk with infinite offspring*,
+*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
 Chapter 3, proof of Lemma 3.5. The next-tube inclusion is supplied by the
 staircase geometry in the same proof.
 -/

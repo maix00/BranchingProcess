@@ -21,35 +21,36 @@ $E(l,u)=\int_0^1(u(t)-l(t))^{-2}\,dt$. Write $P_n(l,u)$ for the probability
 that the normalized source path lies between these boundaries. The public
 declarations are:
 
-- `RawNormalContinuousBoundaryRateData`: the positive inner and outer
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.RawNormalContinuousBoundaryRateData`: the positive inner and outer
   source-path probabilities with the common logarithmic energy $E(l,u)$.
 - `RawNormalSourceRateData.continuousBoundaryRates`:
   constructs those rates from a raw normal-source rate record.
-- `rawNormalContinuousBoundaryRateData_of_rawSource` and
-  `rawNormalContinuousBoundaryRateData_of_centered_unitVariance`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.rawNormalContinuousBoundaryRateData_of_rawSource` and
+  `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.rawNormalContinuousBoundaryRateData_of_centered_unitVariance`:
   construct that record from respectively normal attraction and centered
   unit variance.
 - `RawNormalContinuousBoundaryRateData.probabilityRate`:
   the ordinary probability rate follows from the inner and outer rates.
-- `rawNormalContinuousBoundaryProbabilityRate_of_rawSource`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.rawNormalContinuousBoundaryProbabilityRate_of_rawSource`:
   $\log P_n(l,u)/D_n\to c_2E(l,u)$ for the raw normal-domain scale,
   where $D_n$ is `probabilityRateDenominator 2 ν scale n` and
   $c_2$ is `rateCoefficient 2 (-(Real.pi ^ 2) / 8)`.
-- `centeredFiniteVariance_sourceRelativeContinuousBoundaryProbabilityRate`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.centeredFiniteVariance_sourceRelativeContinuousBoundaryProbabilityRate`:
   if $\operatorname{Var}(\nu)=\sigma^2>0$, then
   $x_n^2\log P_n(l,u)/n\to-\pi^2\sigma^2E(l,u)/2$.
-- `centeredFiniteVariance_sourceFiniteCorridorUnionProbabilityRate`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.centeredFiniteVariance_sourceFiniteCorridorUnionProbabilityRate`:
   for a finite corridor union $C$, the same rate is
   $-\pi^2\sigma^2H_2(C)/2$.
-- `centeredUnitVariance_sourceRelativeContinuousBoundaryProbabilityRate`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.centeredUnitVariance_sourceRelativeContinuousBoundaryProbabilityRate`:
   the continuous-boundary formula with $\sigma^2=1$.
 
-The centered finite-variance formulas specialize Mogul'skii,
-*Small Deviations in a Space of Trajectories*, Theorem 3, Section 4,
-p. 764 of the 1974 Russian original (English translation, *Theory of
-Probability and Its Applications* 19(4) (1975), 726–736,
-DOI 10.1137/1119081). Ordinary probability is identified from inner and
-outer rates when the corridor preimages are null-measurable.
+The centered finite-variance formulas specialize Theorem 3, Section 4,
+p. 764 of A. A. Mogul'skii, “Small deviations in the sample function space,”
+*Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974), 755--765; English
+translation, “Small Deviations in a Space of Trajectories,” *Theory of
+Probability and Its Applications* 19(4) (1975), 726--736, DOI 10.1137/1119081.
+Ordinary probability is identified from inner and outer rates when the
+corridor preimages are null-measurable.
 -/
 
 open Filter MeasureTheory ProbabilityTheory

@@ -19,71 +19,46 @@ For a law `ν` of mean zero and variance \(\sigma^2\in(0,\infty)\), write
     \text{ for }1\le j\le L\right\}.
 \]
 
-The public theorems are:
+The public declarations are:
 
-- `horizontalTubeEndpointWindowEvent`: the event
-  $T_{a,\Delta,L}\cap\{(u-a)\Delta\le S_L\le(v-a)\Delta\}$.
-- `horizontalTubeEndpointWindowProbability`: the probability of this event
-  under the specified increment law.
-- `centeredFiniteVariance_closedHorizontalTubeProbabilityRate`: if
-  \(x_n\to\infty\) and \(x_n^2/n\to0\), then
-  \(\frac{x_n^2}{n}\log\mathbb P_\nu(T_{a,x_n,n-1})
-    \to-\frac{\pi^2}{2}\sigma^2\).
-- `centeredFiniteVariance_closedHorizontalTubeProbabilityRate_along`: for
-  strictly increasing times \(t_k\), widths \(x_k\to\infty\), and
-  \(x_k^2/t_k\to0\),
-  \(\frac{x_k^2}{t_k-1}\log\mathbb P_\nu(T_{a,x_k,t_k-1})
-    \to-\frac{\pi^2}{2}\sigma^2\).
-- `centeredFiniteVariance_closedHorizontalTubeProbabilityRate_realWidthAlong`:
-  for real widths \(x_k\to\infty\) and \(x_k^2/t_k\to0\), the same sampled
-  limit \(\frac{x_k^2}{t_k-1}\log\mathbb P_\nu(T_{a,x_k,t_k-1})
-    \to-\frac{\pi^2}{2}\sigma^2\) holds.
-- `centeredFiniteVariance_closedHorizontalTubeProbabilityRate_realWidth`:
-  for a real width $D\to\infty$ and integer horizon $L_D$ satisfying
-  $D^2/L_D\to0$,
-  $\frac{D^2}{L_D}\log\mathbb P_\nu(T_{a,D,L_D})
-    \to-\frac{\pi^2}{2}\sigma^2$.
-- `centeredUnitVariance_closedHorizontalTubeProbabilityRate`: under
-  \(\sigma^2=1\),
-  \(\frac{x_n^2}{n}\log\mathbb P_\nu(T_{a,x_n,n-1})
-    \to-\frac{\pi^2}{2}\).
-- `inverseScale_closedHorizontalTubeProbabilityRate`: for a superquadratic
-  time scale \(L_n\), with \(x_n=\operatorname{inverseScale}(L,n)\),
-  \(\frac{x_n^2}{n-1}\log\mathbb P_\nu(T_{a,x_n,n-1})
-    \to-\frac{\pi^2}{2}\sigma^2\).
-- `upperInverseScale_closedHorizontalTubeProbabilityRate`: with
-  \(x_n=\operatorname{upperInverseScale}(L,n)\), the same limit holds.
-- `inverseScales_closedHorizontalTubeProbabilityRate`: the conjunction of the
-  preceding limits for both inverse widths.
-- `centeredFiniteVariance_horizontalTubeProbabilityRate`: if
-  \(L_\Delta/\Delta^2\to\infty\), then
-  \(\frac{\Delta^2}{L_\Delta}\log\mathbb P_\nu
-    (T_{a,\Delta,L_\Delta})\to-\frac{\pi^2}{2}\sigma^2\).
-- `centeredFiniteVariance_endpointWindowProbabilityRate_along`: if the
-  scaled terminal window \([v_1(x_k),v_2(x_k)]\) eventually contains a fixed
-  \([u,v]\subset(0,1)\), then
-  \(\frac{x_k^2}{t_k-1}\log\mathbb P_\nu(T_{a,x_k,t_k-1},
-  (v_1(x_k)-a)x_k\le S_{t_k-1}\le(v_2(x_k)-a)x_k)
-  \to-\frac{\pi^2}{2}\sigma^2\).
-- `centeredFiniteVariance_endpointWindowProbabilityRate_realWidthAlong`:
-  the same sampled endpoint-window rate for positive real widths tending
-  to infinity and squared-width/time ratio tending to zero.
-- `centeredFiniteVariance_endpointWindowProbabilityRate_realWidth`:
-  the full real-width form of Wang Yiyang's Lemma 3.1(ii), with a
-  width-indexed integer horizon and a fixed interior endpoint interval.
-- `centeredFiniteVariance_endpointWindowProbabilityRate`: for integer widths
-  \(\Delta\), the corresponding limit is
-  \(\frac{\Delta^2}{L_\Delta}\log\mathbb P_\nu(T_{a,\Delta,L_\Delta},
-  (v_1(\Delta)-a)\Delta\le S_{L_\Delta}\le
-  (v_2(\Delta)-a)\Delta)\to-\frac{\pi^2}{2}\sigma^2\).
-
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.horizontalTubeEndpointWindowEvent`:
+  the event $T_{a,\Delta,L}\cap\{(u-a)\Delta\le S_L\le(v-a)\Delta\}$.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.horizontalTubeEndpointWindowProbability`:
+  the probability of this event under the specified increment law.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.centeredFiniteVariance_closedHorizontalTubeProbabilityRate`:
+  if $x_n\to\infty$ and $x_n^2/n\to0$, then the closed-tube logarithmic rate is $-\pi^2\sigma^2/2$.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.centeredFiniteVariance_closedHorizontalTubeProbabilityRate_along`:
+  the same rate along strictly increasing time indices and sampled widths.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.centeredFiniteVariance_closedHorizontalTubeProbabilityRate_realWidthAlong`:
+  the same sampled rate for positive real widths.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.centeredFiniteVariance_closedHorizontalTubeProbabilityRate_realWidth`:
+  the full real-width rate for integer horizons $L_D$ with $D^2/L_D\to0$.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.centeredUnitVariance_closedHorizontalTubeProbabilityRate`:
+  the unit-variance specialization of the closed-tube rate.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.inverseScale_closedHorizontalTubeProbabilityRate`:
+  the rate for the generalized inverse of a superquadratic time scale.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.upperInverseScale_closedHorizontalTubeProbabilityRate`:
+  the corresponding rate for its upper inverse.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.inverseScales_closedHorizontalTubeProbabilityRate`:
+  the conjunction of both inverse-scale rates.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.centeredFiniteVariance_horizontalTubeProbabilityRate`:
+  the rate when integer widths index a superquadratic horizon.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.centeredFiniteVariance_endpointWindowProbabilityRate_along`:
+  the endpoint-window rate along sampled integer widths when the scaled terminal window contains a fixed interior interval.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.centeredFiniteVariance_endpointWindowProbabilityRate_realWidthAlong`:
+  the endpoint-window rate along sampled positive real widths.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.centeredFiniteVariance_endpointWindowProbabilityRate_realWidth`:
+  the real-width endpoint-window rate for a width-indexed integer horizon.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.centeredFiniteVariance_endpointWindowProbabilityRate`:
+  the endpoint-window rate when integer widths index a superquadratic horizon.
 This module transfers the source-path rate for strict continuous corridors to
 closed horizontal tubes. The squeeze uses inward and outward constant
-boundaries, as in the proof of Lemma 3.1(i) in Wang Yiyang, *Asymptotic speed
-of the $N$-branching random walk with infinite offspring*, Chapter 3. The rate
-is Mogul'skii, "Small Deviations in a Space of Trajectories," Theorem 3,
-Section 4, p. 764 of the 1974 Russian original; English translation, *Theory of Probability and Its Applications* 19(4)
-(1975), 726–736, DOI 10.1137/1119081).
+boundaries, as in the proof of Lemma 3.1(i) in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3. The rate
+input is Theorem 3, Section 4, p. 764 of A. A. Mogul'skii, “Small deviations
+in the sample function space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4)
+(1974), 755–765; English translation, “Small Deviations in a Space of
+Trajectories,” *Theory of Probability and Its Applications* 19(4) (1975),
+726–736, DOI 10.1137/1119081.
 -/
 
 open Filter MeasureTheory ProbabilityTheory
@@ -483,11 +458,13 @@ private theorem horizontalTube_subset_sourceRelativeConstantCorridor
   exact ⟨lt_of_lt_of_le hlower hboundsPath.1,
     lt_of_le_of_lt hboundsPath.2 hupper⟩
 
-/-- Finite-variance form of Wang Yiyang, *Asymptotic speed of the $N$-branching
-random walk with infinite offspring*, Chapter 3, Lemma 3.1(i). The rate input
-is Mogul'skii, "Small Deviations in a Space of Trajectories," Theorem 3,
-Section 4, p. 764 of the 1974 Russian original (DOI 10.1137/1119081). The time horizon is `n - 1`, matching
-the terminal-left source path. -/
+/-- Finite-variance form of Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.1(i). Its rate input
+is A. A. Mogul'skii, Theorem 3, Section 4, p. 764, in “Small deviations in the
+sample function space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974),
+755–765; English translation, “Small Deviations in a Space of Trajectories,”
+*Theory of Probability and Its Applications* 19(4) (1975), 726–736, DOI
+10.1137/1119081. The time horizon is `n - 1`, matching the terminal-left
+source path. -/
 theorem centeredFiniteVariance_closedHorizontalTubeProbabilityRate
     {ν : Measure ℝ} [IsProbabilityMeasure ν] {scale : ℕ → ℝ}
     (hsmall : Asymptotics.IsSmallDeviationScale scale (fun n => Real.sqrt n))
@@ -889,9 +866,11 @@ private theorem increasingTimeAuxiliaryScale_isSmallDeviationScale
     (fun n => Nat.cast_nonneg (width (increasingTimeIntervalIndex time htime n))) hscaleSq
   exact Asymptotics.IsSmallDeviationScale.of_tendsto hscaleTop hscaleRatio
 
-/-- Sampling consequence of Wang Yiyang, *Asymptotic speed of the $N$-branching
-random walk with infinite offspring*, Chapter 3, Lemma 3.1(i), under its
-width-time relation. -/
+/-- Sampling consequence of Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.1(i), under its
+width-time relation. The sampled statement follows from the real-width rate
+proved above. Its rate input is A. A. Mogul'skii, “Small deviations in the
+sample function space,” Theorem 3, Section 4, p. 764 (1974); English
+translation, “Small Deviations in a Space of Trajectories,” DOI 10.1137/1119081. -/
 theorem centeredFiniteVariance_closedHorizontalTubeProbabilityRate_along
     {ν : Measure ℝ} [IsProbabilityMeasure ν]
     {time width : ℕ → ℕ} (htime : StrictMono time)
@@ -1016,10 +995,12 @@ private theorem increasingTimeRealAuxiliaryScale_isSmallDeviationScale
     hscaleNonneg hscaleSq
   exact Asymptotics.IsSmallDeviationScale.of_tendsto hscaleTop hscaleRatio
 
-/-- Real-width form of Wang Yiyang, *Asymptotic speed of the $N$-branching
-random walk with infinite offspring*, Chapter 3, Lemma 3.1(i); its sampled
+/-- Real-width form of Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.1(i); its sampled
 widths satisfy the lemma's width-time relation. This form supplies the
-one-block input in the equal-partition proof of Lemma 3.2. -/
+one-block input in the equal-partition proof of Chapter 3, Lemma 3.2. Its
+small-deviation input is A. A. Mogul'skii, “Small deviations in the sample
+function space,” Theorem 3, Section 4, p. 764 (1974); English translation,
+“Small Deviations in a Space of Trajectories,” DOI 10.1137/1119081. -/
 theorem centeredFiniteVariance_closedHorizontalTubeProbabilityRate_realWidthAlong
     {ν : Measure ℝ} [IsProbabilityMeasure ν]
     {time : ℕ → ℕ} {width : ℕ → ℝ} (htime : StrictMono time)
@@ -1175,10 +1156,12 @@ private theorem tendsto_realWidthRate_of_sampledTime
     (Classical.choose_spec (hbad (φ N))).2
   exact (not_lt_of_ge hge) hlt
 
-/-- Real-width form of Wang Yiyang, *Asymptotic speed of the $N$-branching
-random walk with infinite offspring*, Chapter 3, Lemma 3.1(i). For every
+/-- Real-width form of Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.1(i). For every
 integer horizon $L_D\to\infty$ with $D^2/L_D\to0$, the closed horizontal-tube
-probability has logarithmic rate $-\pi^2\sigma^2/2$ as real $D\to\infty$. -/
+probability has logarithmic rate $-\pi^2\sigma^2/2$ as real $D\to\infty$.
+The rate is A. A. Mogul'skii, “Small deviations in the sample function
+space,” Theorem 3, Section 4, p. 764 (1974); English translation, “Small
+Deviations in a Space of Trajectories,” DOI 10.1137/1119081. -/
 theorem centeredFiniteVariance_closedHorizontalTubeProbabilityRate_realWidth
     {L : ℝ → ℕ} (hL : Tendsto L atTop atTop)
     (hquadratic : Tendsto (fun D : ℝ => D ^ 2 / (L D : ℝ)) atTop (𝓝 0))
@@ -1201,8 +1184,10 @@ theorem centeredFiniteVariance_closedHorizontalTubeProbabilityRate_realWidth
       htime htimePos hwidthPos hwidth hwidthSq
       hcentered hsquare hvariance ha haOne
 
-/-- Unit-variance specialization of Wang Yiyang, *Asymptotic speed of the
-$N$-branching random walk with infinite offspring*, Chapter 3, Lemma 3.1(i). -/
+/-- Unit-variance specialization of Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.1(i).
+The underlying rate is A. A. Mogul'skii, “Small deviations in the sample
+function space,” Theorem 3, Section 4, p. 764 (1974); English translation,
+“Small Deviations in a Space of Trajectories,” DOI 10.1137/1119081. -/
 theorem centeredUnitVariance_closedHorizontalTubeProbabilityRate
     {ν : Measure ℝ} [IsProbabilityMeasure ν] {scale : ℕ → ℝ}
     (hsmall : Asymptotics.IsSmallDeviationScale scale (fun n => Real.sqrt n))
@@ -1295,9 +1280,8 @@ private theorem tendsto_scaledLog_div_predTime
   simpa only [one_mul] using hproduct.congr' hEq
 
 /-- The generalized inverse width has the closed-tube rate in the normalization
-of Wang Yiyang, *Asymptotic speed of the $N$-branching random walk with
-infinite offspring*, Chapter 3, Lemma 3.1(i): `scale² / (n - 1)`. The source path uses the same
-`n - 1` terminal partial sum. -/
+of Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.1(i): `scale² / (n - 1)`. The source path uses
+the same `n - 1` terminal partial sum. -/
 theorem inverseScale_closedHorizontalTubeProbabilityRate
     {L : ℕ → ℕ}
     (hL : Tendsto L atTop atTop)
@@ -1317,8 +1301,7 @@ theorem inverseScale_closedHorizontalTubeProbabilityRate
     (Asymptotics.isSmallDeviationScale_inverseScale hL hquadratic)
     hcentered hsquare hvariance ha haOne
 
-/-- Upper-inverse-scale consequence of Wang Yiyang, *Asymptotic speed of the
-$N$-branching random walk with infinite offspring*, Chapter 3, Lemma 3.1(i). -/
+/-- Upper-inverse-scale consequence of Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.1(i). -/
 theorem upperInverseScale_closedHorizontalTubeProbabilityRate
     {L : ℕ → ℕ}
     (hL : Tendsto L atTop atTop)
@@ -1339,7 +1322,7 @@ theorem upperInverseScale_closedHorizontalTubeProbabilityRate
     hcentered hsquare hvariance ha haOne
 
 /-- Both generalized inverse widths satisfy the consequence of Wang Yiyang,
-*Asymptotic speed of the $N$-branching random walk with infinite offspring*,
+*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
 Chapter 3, Lemma 3.1(i), under the superquadratic scale assumption. -/
 theorem inverseScales_closedHorizontalTubeProbabilityRate
     {L : ℕ → ℕ}
@@ -1365,11 +1348,13 @@ theorem inverseScales_closedHorizontalTubeProbabilityRate
     upperInverseScale_closedHorizontalTubeProbabilityRate hL hquadratic
       hcentered hsquare hvariance ha haOne⟩
 
-/-- Integer-width form of Wang Yiyang, *Asymptotic speed of the $N$-branching
-random walk with infinite offspring*, Chapter 3, Lemma 3.1(i). The proof
+/-- Integer-width form of Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.1(i). The proof
 interpolates along a subsequence of strictly increasing times. Its rate is
-Mogul'skii, "Small Deviations in a Space of Trajectories," Theorem 3, Section
-4, p. 764 of the 1974 Russian original (DOI 10.1137/1119081). -/
+Mogul'skii, Theorem 3, Section 4, p. 764, in “Small deviations in the sample
+function space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974),
+755–765; English translation, “Small Deviations in a Space of Trajectories,”
+*Theory of Probability and Its Applications* 19(4) (1975), 726–736, DOI
+10.1137/1119081. -/
 theorem centeredFiniteVariance_horizontalTubeProbabilityRate
     {L : ℕ → ℕ} (hL : Tendsto L atTop atTop)
     (hquadratic : Asymptotics.IsSuperquadraticScale L)
@@ -1442,11 +1427,13 @@ theorem centeredFiniteVariance_horizontalTubeProbabilityRate
   have hge : ε ≤ dist (rate (widthSub N)) c := hwidthBad (φ N)
   exact (not_lt_of_ge hge) hlt
 
-/-- Sampled-width form of Wang Yiyang, *Asymptotic speed of the $N$-branching
-random walk with infinite offspring*, Chapter 3, Lemma 3.1(ii). The endpoint
+/-- Sampled-width form of Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.1(ii). The endpoint
 window eventually contains a fixed interior interval. Its rate input is
-Mogul'skii, "Small Deviations in a Space of Trajectories," Theorem 3, Section
-4, p. 764 of the 1974 Russian original (DOI 10.1137/1119081). -/
+Mogul'skii, Theorem 3, Section 4, p. 764, in “Small deviations in the sample
+function space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974),
+755–765; English translation, “Small Deviations in a Space of Trajectories,”
+*Theory of Probability and Its Applications* 19(4) (1975), 726–736, DOI
+10.1137/1119081. -/
 theorem centeredFiniteVariance_endpointWindowProbabilityRate_along
     {ν : Measure ℝ} [IsProbabilityMeasure ν]
     {time width : ℕ → ℕ} (htime : StrictMono time)
@@ -1600,15 +1587,17 @@ theorem centeredFiniteVariance_endpointWindowProbabilityRate_along
       exact hk.2
   simpa [targetProbability, limit] using hrate
 
-/-- Real-width sampled form of Wang Yiyang, *Asymptotic speed of the
-$N$-branching random walk with infinite offspring*, Chapter 3, Lemma 3.1(ii).
+/-- Real-width sampled form of Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.1(ii).
 For positive real widths $D_k\to\infty$, time scales $t_k$ with
 $D_k^2/t_k\to0$, and a terminal window eventually containing a fixed
 $[u,v]\subset(0,1)$, the endpoint-window logarithmic rate is
 $-\pi^2\sigma^2/2$. The proof uses the same terminal-jump source
 corridor and upper horizontal-tube squeeze as the integer-width form.
-The source rate is A. A. Mogul'skii, *Small Deviations in a Space of
-Trajectories*, Theorem 3, Section 4, p. 764 of the 1974 Russian original (DOI 10.1137/1119081). -/
+The source rate is A. A. Mogul'skii, Theorem 3, Section 4, p. 764, in “Small
+deviations in the sample function space,” *Teoriya Veroyatnostei i ee
+Primeneniya* 19(4) (1974), 755–765; English translation, “Small Deviations in
+a Space of Trajectories,” *Theory of Probability and Its Applications* 19(4)
+(1975), 726–736, DOI 10.1137/1119081. -/
 theorem centeredFiniteVariance_endpointWindowProbabilityRate_realWidthAlong
     {ν : Measure ℝ} [IsProbabilityMeasure ν]
     {time : ℕ → ℕ} {width : ℕ → ℝ} (htime : StrictMono time)
@@ -1763,12 +1752,14 @@ theorem centeredFiniteVariance_endpointWindowProbabilityRate_realWidthAlong
       exact hk.2
   simpa [targetProbability, limit] using hrate
 
-/-- Real-width form of Wang Yiyang, *Asymptotic speed of the $N$-branching
-random walk with infinite offspring*, Chapter 3, Lemma 3.1(ii). For
+/-- Real-width form of Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.1(ii). For
 $L_D/D^2\to\infty$ and endpoint windows containing a fixed interval
 $[u,v]\subset(0,1)$ eventually, the logarithmic endpoint-window probability
 has rate $-\pi^2\sigma^2/2$. The proof reduces a counterexample real-width
-sequence to the sampled-width form above. -/
+sequence to the sampled-width form above. The rate input is A. A. Mogul'skii,
+“Small deviations in the sample function space,” Theorem 3, Section 4, p. 764
+(1974); English translation, “Small Deviations in a Space of Trajectories,”
+DOI 10.1137/1119081. -/
 theorem centeredFiniteVariance_endpointWindowProbabilityRate_realWidth
     {L : ℝ → ℕ} (hL : Tendsto L atTop atTop)
     (hquadratic : Tendsto (fun D : ℝ => D ^ 2 / (L D : ℝ)) atTop (𝓝 0))
@@ -1798,12 +1789,13 @@ theorem centeredFiniteVariance_endpointWindowProbabilityRate_realWidth
     htime htimePos hwidthPos hwidth hwidthSq ha haOne hu huv hv
     hwindowSample hcentered hsquare hvariance
 
-/-- Integer-width form of Wang Yiyang, *Asymptotic speed of the $N$-branching
-random walk with infinite offspring*, Chapter 3, Lemma 3.1(ii). The endpoint
+/-- Integer-width form of Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.1(ii). The endpoint
 window eventually contains one fixed nonempty interval strictly inside the
 tube, and the scale condition is `L Δ / Δ² → ∞`. The rate input is Mogul'skii,
-"Small Deviations in a Space of Trajectories," Theorem 3, Section 4, p. 764 of the 1974 Russian original
-(DOI 10.1137/1119081). -/
+Theorem 3, Section 4, p. 764, in “Small deviations in the sample function
+space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974), 755–765;
+English translation, “Small Deviations in a Space of Trajectories,” *Theory
+of Probability and Its Applications* 19(4) (1975), 726–736, DOI 10.1137/1119081. -/
 theorem centeredFiniteVariance_endpointWindowProbabilityRate
     {L : ℕ → ℕ} (hL : Tendsto L atTop atTop)
     (hquadratic : Asymptotics.IsSuperquadraticScale L)

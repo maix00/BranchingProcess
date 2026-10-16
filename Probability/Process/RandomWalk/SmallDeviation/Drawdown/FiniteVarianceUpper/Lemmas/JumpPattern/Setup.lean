@@ -14,22 +14,21 @@ import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 
 The proof-specific declarations are:
 
-- `drawdownBlockStart`, `drawdownBlockCount`, `drawdownBlockRemainder`, and
-  `drawdownBlockStart_last_eq_horizon`: $s_j=r+j\ell$, $q=\lfloor L/\ell\rfloor$,
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.drawdownBlockStart`, `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.drawdownBlockCount`, `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.drawdownBlockRemainder`, and
+  `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.drawdownBlockStart_last_eq_horizon`: $s_j=r+j\ell$, $q=\lfloor L/\ell\rfloor$,
   $r=L\bmod\ell$, and $s_q=L$.
-- `drawdownDiscretizedMaximum`, `drawdownRunningMaximumBins`,
-  `drawdownRunningMaximumJumpSet`, and `drawdownMaximumJumpSet`: the rounded
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.drawdownDiscretizedMaximum`, `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.drawdownRunningMaximumBins`,
+  `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.drawdownRunningMaximumJumpSet`, and `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.drawdownMaximumJumpSet`: the rounded
   running maximum $M_j$, its bin indices, and the block indices where those
   bins change.
-- `drawdownJumpPatternTubeEvent`: the intersection of the specified
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.drawdownJumpPatternTubeEvent`: the intersection of the specified
   non-jump-block tube events for a fixed pattern.
-- `drawdownJumpPatternBound`, `drawdown_prod_jumpPatternBound_eq_pow`, and
-  `drawdown_prod_jumpPatternBound_le_pow`: the block factor equals $p$ on a
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.drawdownJumpPatternBound`, `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.drawdown_prod_jumpPatternBound_eq_pow`, and
+  `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.drawdown_prod_jumpPatternBound_le_pow`: the block factor equals $p$ on a
   non-jump and $1$ on a jump, so its product is $p^{q-|J|}$ and is at most
   $p^{q-K}$ when $|J|\le K$ and $0\le p\le1$.
 
-These declarations support Wang Yiyang, *Asymptotic speed of the $N$-branching
-random walk with infinite offspring*, Chapter 3, Lemma 3.3.
+These declarations support Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.3.
 -/
 
 open Filter MeasureTheory Topology
@@ -61,6 +60,7 @@ lemma drawdownBlockStart_last_eq_horizon {horizon blockLength : ℕ} :
     Nat.mod_add_div, Nat.mul_comm]
 
 /-- The rounded running maximum `M_j` from the proof of Wang Yiyang,
+*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
 Chapter 3, Lemma 3.3, at the start time of block `j`. -/
 noncomputable def drawdownDiscretizedMaximum
     (upper width : ℝ) (path : ℕ → ℝ)

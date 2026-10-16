@@ -9,7 +9,7 @@ module
 public import Probability.Process.RandomWalk.Path.Block.Partition.Normalized
 public import Probability.Process.RandomWalk.Path.Block.Partition
 public import Probability.Process.RandomWalk.Kernel.Killed.Partition
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Gaussian.BlockVector
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Blocks.BlockVector
 public import Probability.Process.RandomWalk.FunctionalLimit.Donsker.Tightness.Maximal
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Tightness
 

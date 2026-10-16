@@ -21,8 +21,7 @@ The public theorems in this file are:
   the same assertion for $T^s$ at each finite $s$.
 
 The continuity argument follows Erwin Bolthausen,
-*On a functional central limit theorem for random walks conditioned to
-stay positive*, Lemmas 2.4 and 2.5, Ann. Probab. 4(3) (1976), 480--485,
+*On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*, Lemmas 2.4 and 2.5, Ann. Probab. 4(3) (1976), 480--485,
 DOI 10.1214/aop/1176996098. The subtraction of the value at $T^s$
 matches the centered block $Z_k$ of Lemma 3.1 and the limit path
 stated on p. 484.

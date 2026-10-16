@@ -7,7 +7,7 @@ import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalk
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.Source.PathClassRegimes
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.Source.PathClassInnerOuter
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Gaussian.EscapeConstant
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Gaussian.SourcePathClass
+import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Path.SourcePathClass
 import Probability.Process.Stable.PathLaw.UnitInterval
 
 open scoped NNReal

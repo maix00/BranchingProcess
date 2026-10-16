@@ -12,7 +12,7 @@ public import Algebra.BigOperators.AdditivePath
 /-!
 # Drawdown and endpoint event for an increment sequence
 
-The public definition `noLargeDropEndpointBelowEvent` is
+The public definition `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.noLargeDropEndpointBelowEvent` is
 $B_{L,\Delta,r}=\{\xi:S_i-S_j\le\Delta\ (0\le i\le j\le L),\ S_L\le r\}$,
 where $S_j$ is the partial sum of the increments. This event is shared by
 the finite-variance upper estimate and branching-random-walk applications.

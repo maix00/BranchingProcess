@@ -19,8 +19,7 @@ The public theorems in this file are:
 - `ProbabilityTheory.IsBrownianReal.ae_continuousAt_shiftAtFirstNonnegativeWindowStartUpTo`:
   the same assertion for $\Phi_s$ at every fixed finite horizon $s$.
 
-These are Erwin Bolthausen, *On a functional central limit theorem for
-random walks conditioned to stay positive*, Lemma 2.5,
+These are Erwin Bolthausen, *On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*, Lemma 2.5,
 Ann. Probab. 4(3) (1976), 480--485, DOI 10.1214/aop/1176996098.
 The proof invokes Lemma 2.4 and continuity of time translation of
 continuous paths.

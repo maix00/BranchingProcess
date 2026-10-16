@@ -14,14 +14,14 @@ public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVa
 
 The module-visible supporting lemma in this file is:
 
-- `initialInterTubeBlocks_subset_driftedTubeUpperEndpointWindowEvent`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.initialInterTubeBlocks_subset_driftedTubeUpperEndpointWindowEvent`:
   if each horizontal block is inside the tilted tube and the last
   endpoint window is contained in both the full terminal tube and
   $[s_L-v\Delta,s_L]$, then the staircase event is contained in the
   upper-endpoint event.
 
 This is the symmetric terminal-window inclusion in Wang Yiyang,
-*Asymptotic speed of the $N$-branching random walk with infinite offspring*,
+*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
 Chapter 3, proof of Lemma 3.5.
 -/
 

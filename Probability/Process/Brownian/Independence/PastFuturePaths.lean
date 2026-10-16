@@ -38,8 +38,7 @@ The public theorem in this file is:
 This is the path-valued form of the weak Markov property in mathlib's
 `IsPreBrownianReal.indepFun_shift`. It supplies the independence used
 for the rational-interval event in Lemma 2.3 of Erwin Bolthausen,
-*On a functional central limit theorem for random walks conditioned to
-stay positive*, Ann. Probab. 4(3) (1976), 480--485,
+*On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*, Ann. Probab. 4(3) (1976), 480--485,
 DOI 10.1214/aop/1176996098.
 -/
 

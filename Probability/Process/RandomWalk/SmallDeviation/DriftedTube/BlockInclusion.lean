@@ -21,8 +21,7 @@ The public theorems in this file are:
   $[r_j,s_j]$ at every $t\le j\le t+n$ when $r_j$ is increasing.
 
 This is the deterministic inclusion of each horizontal staircase step in
-Wang Yiyang, *Asymptotic speed of the $N$-branching random walk with infinite
-offspring*, Chapter 3, proof of Lemma 3.5.
+Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, proof of Lemma 3.5.
 -/
 
 @[expose] public section

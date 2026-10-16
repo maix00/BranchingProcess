@@ -22,8 +22,7 @@ The public theorem in this file is:
 This is the deterministic-prefix specialization of independent IID
 coordinate blocks. It is used when factoring the last-sign-change
 events on page 484 of Erwin Bolthausen,
-*On a functional central limit theorem for random walks conditioned to
-stay positive*, Ann. Probab. 4(3) (1976), 480--485, DOI 10.1214/aop/1176996098.
+*On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*, Ann. Probab. 4(3) (1976), 480--485, DOI 10.1214/aop/1176996098.
 -/
 
 @[expose] public section

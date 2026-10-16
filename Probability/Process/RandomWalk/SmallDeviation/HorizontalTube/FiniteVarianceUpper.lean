@@ -11,9 +11,14 @@ public import Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.Finit
 /-!
 # Finite-variance horizontal-tube upper bound
 
-The public theorems in this file formalize Wang Yiyang,
-*Asymptotic speed of the $N$-branching random walk with infinite offspring*,
-Chapter 3, Lemma 3.2 and its following remark:
+The public theorems in this file formalize Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.2
+and its following remark. The equal-partition proof follows Elie Aïdékon and
+Yueyun Hu, *Average-weight percolation on the complete graph*, Lemma 4.1
+(2025, arXiv:2512.23266). The one-block rate is Theorem 3, Section 4,
+p. 764 of A. A. Mogul'skii, “Small deviations in the sample function space,”
+*Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974), 755--765; English
+translation, “Small Deviations in a Space of Trajectories,” *Theory of
+Probability and Its Applications* 19(4) (1975), 726--736, DOI 10.1137/1119081.
 
 - `ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube.horizontalTubeProbability_le_exp_of_finiteVariance_withRemainder`:
   $\mathbb P(T_{a,\Delta,L})\le
@@ -41,12 +46,15 @@ open scoped ENNReal NNReal Topology
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube
 
-/-- The arbitrary-remainder form of Wang Yiyang, *Asymptotic speed of the
-$N$-branching random walk with infinite offspring*, Chapter 3, Lemma 3.2 and
-its following remark. The equal-partition iteration is the proof of Aïdékon
-and Hu, *Average-weight percolation on the complete graph*, Lemma 4.1 (2025,
-arXiv:2512.23266); the one-block rate is Mogul'skii, "Small Deviations in a
-Space of Trajectories," Theorem 3, Section 4, p. 764 of the 1974 Russian original (DOI 10.1137/1119081). -/
+/-- The arbitrary-remainder form of Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.2 and
+its following remark. The equal-partition iteration is the proof of Elie
+Aïdékon and Yueyun Hu, *Average-weight percolation on the complete graph*,
+Lemma 4.1 (2025, arXiv:2512.23266). The one-block rate is Theorem 3,
+Section 4, p. 764 of A. A. Mogul'skii, “Small deviations in the sample
+function space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974),
+755--765; English translation, “Small Deviations in a Space of Trajectories,”
+*Theory of Probability and Its Applications* 19(4) (1975), 726--736, DOI
+10.1137/1119081. -/
 theorem horizontalTubeProbability_le_exp_of_finiteVariance_withRemainder
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (hcentered : ∫ x, x ∂ν = 0)
@@ -145,12 +153,14 @@ theorem horizontalTubeProbability_le_exp_of_finiteVariance_withRemainder
     hΔpos hnPos hnFloor hΔFloor
     hcoeffN' hroundN hrateN a ha L
 
-/-- Coefficient-one case of Wang Yiyang, *Asymptotic speed of the $N$-branching
-random walk with infinite offspring*, Chapter 3, Lemma 3.2. Its equal-partition
+/-- Coefficient-one case of Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.2. Its equal-partition
 argument is Aïdékon and Hu, *Average-weight percolation on the complete graph*,
-Lemma 4.1 (2025, arXiv:2512.23266); its one-block rate is Mogul'skii, "Small
-Deviations in a Space of Trajectories," Theorem 3, Section 4, p. 764 of the 1974 Russian original
-(DOI 10.1137/1119081). -/
+Lemma 4.1 (2025, arXiv:2512.23266); its one-block rate is Theorem 3, Section 4,
+p. 764 of A. A. Mogul'skii, “Small deviations in the sample function space,”
+*Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974), 755--765; English
+translation, “Small Deviations in a Space of Trajectories,” *Theory of
+Probability and Its Applications* 19(4) (1975), 726--736, DOI 10.1137/1119081.
+-/
 theorem horizontalTubeProbability_le_exp_of_finiteVariance
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (hcentered : ∫ x, x ∂ν = 0)
@@ -167,14 +177,15 @@ theorem horizontalTubeProbability_le_exp_of_finiteVariance
     (horizontalTubeProbability_le_exp_of_finiteVariance_withRemainder
       (u := 1) ν hcentered hsquare hvariance one_pos hv hd hcritical)
 
-/-- The translated-interval form of Wang Yiyang, *Asymptotic speed of the
-$N$-branching random walk with infinite offspring*, Chapter 3, Lemma 3.2 and
+/-- The translated-interval form of Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.2 and
 its following remark. The event identity transfers the centered-tube estimate;
 the equal-partition iteration is Aïdékon and Hu, *Average-weight percolation on
 the complete graph*, Lemma 4.1 (2025, arXiv:2512.23266). The block rate is
-Mogul'skii, "Small Deviations in a Space of Trajectories," Theorem 3, Section
-4, p. 764 of the 1974 Russian original (English translation, *Theory of Probability
-and Its Applications* 19(4) (1975), 726–736, DOI 10.1137/1119081). -/
+Theorem 3, Section 4, p. 764 of A. A. Mogul'skii, “Small deviations in the
+sample function space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974),
+755--765; English translation, “Small Deviations in a Space of Trajectories,”
+*Theory of Probability and Its Applications* 19(4) (1975), 726--736, DOI
+10.1137/1119081. -/
 theorem iidSequenceLaw_intervalProbability_le_exp_of_finiteVariance_withRemainder
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (hcentered : ∫ x, x ∂ν = 0)
@@ -217,10 +228,14 @@ theorem iidSequenceLaw_intervalProbability_le_exp_of_finiteVariance_withRemainde
       hbound Δ hΔ (-r₀ / Δ)
         ⟨(hbridge (fun _ : ℕ => 0)).1, (hbridge (fun _ : ℕ => 0)).2.1⟩ L hL
 
-/-- Wang Yiyang, *Asymptotic speed of the $N$-branching random walk with
-infinite offspring*, Chapter 3, Lemma 3.2, translated-interval form of
-Aïdékon and Hu, Lemma 4.1. The block estimate uses Mogul'skii,
-Theorem 3, Section 4, p. 764 of the 1974 Russian original (see the module header for full citations). -/
+/-- Translated-interval, coefficient-one form of Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3,
+Lemma 3.2 and its following remark. The block iteration follows Aïdékon and
+Hu, *Average-weight percolation on the complete graph*, Lemma 4.1 (2025,
+arXiv:2512.23266); the rate is Theorem 3, Section 4, p. 764 of A. A.
+Mogul'skii, “Small deviations in the sample function space,” *Teoriya
+Veroyatnostei i ee Primeneniya* 19(4) (1974), 755--765; English translation,
+“Small Deviations in a Space of Trajectories,” *Theory of Probability and Its
+Applications* 19(4) (1975), 726--736, DOI 10.1137/1119081. -/
 theorem iidSequenceLaw_intervalProbability_le_exp_of_finiteVariance
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (hcentered : ∫ x, x ∂ν = 0)

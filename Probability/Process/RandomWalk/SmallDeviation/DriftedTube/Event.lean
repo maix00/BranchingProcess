@@ -22,7 +22,7 @@ The public objects and theorem in this file are:
   with terminal bound $\Delta+cL/\Delta^2$.
 
 These are the event and geometric inclusion used in Wang Yiyang,
-*Asymptotic speed of the $N$-branching random walk with infinite offspring*,
+*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
 Chapter 3, Lemma 3.4.
 -/
 
@@ -36,8 +36,7 @@ open ProbabilityTheory.RandomWalk
 open ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown
 
 /-- The path event for a linearly rising tube of width `width`, corresponding
-to the tilted-tube event in Wang Yiyang, *Asymptotic speed of the $N$-branching
-random walk with infinite offspring*, Chapter 3, Lemma 3.4. -/
+to the tilted-tube event in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.4. -/
 def driftedTubeEvent (horizon : ℕ) (width drift lower : ℝ) :
     Set (ℕ → ℝ) :=
   {increment | ∀ j : ℕ, 1 ≤ j → j ≤ horizon →

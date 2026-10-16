@@ -18,7 +18,12 @@ The public declarations in this file are:
 - `ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube.exists_uniform_finiteRealWidthTubeProbability_ge_exp`: one pair of width and time-ratio thresholds works for every member of a finite parameter family.
 - `ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube.realWidthTubeProbability_ge_exp_globalScale`: compares the rounded-width exponent with a prescribed global width exponent.
 
-The exponential rate specializes Wang Yiyang, *Asymptotic speed of the $N$-branching random walk with infinite offspring*, Chapter 3, Lemma 3.1(ii), using A. A. Mogul'skii, "Small Deviations in a Space of Trajectories," Theorem 3, Section 4, p. 764 of the 1974 Russian original (English translation, *Theory of Probability and Its Applications* 19(4) (1975), 726--736, DOI 10.1137/1119081).
+The exponential rate specializes Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.1(ii),
+using Theorem 3, Section 4, p. 764 of A. A. Mogul'skii, “Small deviations in
+the sample function space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4)
+(1974), 755--765; English translation, “Small Deviations in a Space of
+Trajectories,” *Theory of Probability and Its Applications* 19(4) (1975),
+726--736, DOI 10.1137/1119081.
 -/
 
 open MeasureTheory ProbabilityTheory
@@ -34,8 +39,7 @@ open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete
 contained in the real-width tube at width $D$. If the endpoint window
 $[u,v]$ has margin $\gamma$ inside $[U,V]$ and $D\ge1/\gamma$, its absolute
 endpoint interval is contained as well. This lets the integer-width form of
-Wang Yiyang, *Asymptotic speed of the $N$-branching random walk with infinite
-offspring*, Chapter 3, Lemma 3.1(ii), supply block estimates at the real
+Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.1(ii), supply block estimates at the real
 widths in the proof of Lemma 3.5. -/
 theorem horizontalTubeEndpointWindowEvent_floor_subset_of_endpointMargins
     {horizon : ℕ} {a u v U V margin width : ℝ}
@@ -147,7 +151,7 @@ theorem exists_uniform_realWidthHorizontalTubeEndpointWindowProbability_ge_exp
   exact hsource.trans (measure_mono hsubset)
 
 /-- Compare the narrowed tube's rounded-width exponent with the global
-staircase width, as in Wang Yiyang, *Asymptotic speed of the $N$-branching random walk with infinite offspring*, Chapter 3, proof of Lemma 3.5. -/
+staircase width, as in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, proof of Lemma 3.5. -/
 theorem realWidthTubeProbability_ge_exp_globalScale
     {ν : Measure ℝ} [IsProbabilityMeasure ν]
     {a width U V globalWidth d target : ℝ} {horizon : ℕ}

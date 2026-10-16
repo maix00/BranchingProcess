@@ -47,8 +47,7 @@ The public theorems in this file are:
   $s<1$ leaves no time for a full unit window.
 
 These are the deterministic lower-semicontinuity ingredients of
-Erwin Bolthausen, *On a functional central limit theorem for random
-walks conditioned to stay positive*, Lemma 2.4, Ann. Probab. 4(3)
+Erwin Bolthausen, *On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*, Lemma 2.4, Ann. Probab. 4(3)
 (1976), 480--485, DOI 10.1214/aop/1176996098.
 -/
 

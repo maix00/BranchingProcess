@@ -18,8 +18,7 @@ The public theorem in this file is:
 
 The Gaussian marginal fact is the final step after Lévy's reflected-process
 identity in the proof of equation (2.3) of Lemma 2.3 in Erwin Bolthausen,
-*On a functional central limit theorem for random walks conditioned to stay
-positive*, Ann. Probab. 4(3) (1976), 480--485,
+*On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*, Ann. Probab. 4(3) (1976), 480--485,
 DOI 10.1214/aop/1176996098.
 -/
 

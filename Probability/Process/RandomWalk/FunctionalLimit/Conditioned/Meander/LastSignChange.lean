@@ -22,8 +22,7 @@ The public theorem in this file is:
   $C([0,1],\mathbb R)$.
 
 This formalizes the continuous-mapping step in the final paragraph of
-Erwin Bolthausen, *On a functional central limit theorem for random walks
-conditioned to stay positive*, Ann. Probab. 4(3) (1976), 480--485, DOI 10.1214/aop/1176996098,
+Erwin Bolthausen, *On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*, Ann. Probab. 4(3) (1976), 480--485, DOI 10.1214/aop/1176996098,
 page 484. The almost-sure continuity of $\Psi$ is proved in
 `Probability.Process.Brownian.Meander.LastSignChange`.
 -/

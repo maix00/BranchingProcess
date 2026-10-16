@@ -21,8 +21,7 @@ The module-visible lemma in this file is:
   \mathbb P(E_0)\prod_{j<q}p_j$.
 
 This is the finite-bin selection followed by reverse Markov multiplication
-in Wang Yiyang, *Asymptotic speed of the $N$-branching random walk with
-infinite offspring*, Chapter 3, proof of Lemma 3.5. The fixed-bin bounds
+in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, proof of Lemma 3.5. The fixed-bin bounds
 are the precise remaining rate input from Lemma 3.1(ii).
 -/
 

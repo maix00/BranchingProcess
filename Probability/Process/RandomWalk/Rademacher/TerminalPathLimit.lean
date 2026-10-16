@@ -23,8 +23,7 @@ The public theorem in this file is:
   excursion as the limit realization.
 
 This is the continuous-mapping step on page 484 of Erwin Bolthausen,
-*On a functional central limit theorem for random walks conditioned to
-stay positive*, Ann. Probab. 4(3) (1976), 480--485, DOI 10.1214/aop/1176996098. The equality
+*On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*, Ann. Probab. 4(3) (1976), 480--485, DOI 10.1214/aop/1176996098. The equality
 $\Psi(X_n)=\widetilde Y_n$ is proved in `TerminalTransform`.
 -/
 

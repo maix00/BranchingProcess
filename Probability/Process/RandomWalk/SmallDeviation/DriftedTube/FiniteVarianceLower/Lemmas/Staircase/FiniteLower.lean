@@ -22,7 +22,7 @@ The module-visible supporting lemma in this file is:
   $\exp(-d'L/D^2)$.
 
 This is the finite-stage probability calculation in Wang Yiyang,
-*Asymptotic speed of the $N$-branching random walk with infinite offspring*,
+*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
 Chapter 3, proof of Lemma 3.5. The theorem exposes the concrete schedule
 inequalities and entrance estimate that must be verified for Wang Yiyang's Lemma 3.5
 parameters; it does not replace the conditioned Brownian-meander input.

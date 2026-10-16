@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.FunctionalLimit.Donsker.InteriorFinite
+public import Probability.Process.RandomWalk.FunctionalLimit.Donsker.Entrance.InteriorFinite
 public import Analysis.Asymptotics.Scale.ShiftedFloor
 public import Probability.Process.RandomWalk.FunctionalLimit.Normal.Tightness
 public import Probability.Process.RandomWalk.FunctionalLimit.Stable.ProcessExistence
@@ -27,9 +27,8 @@ The public theorem in this file is:
   law constructed internally.
 
 This is the middle starting interval in Wang Yiyang,
-*Asymptotic speed of the $N$-branching random walk with infinite offspring*,
-Appendix A.2, proof of the meander transition lemma used in Chapter 3,
-Lemma 3.5.
+*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
+Appendix A.2, Lemma A.7, used in the proof of Chapter 3, Lemma 3.5.
 -/
 
 @[expose] public section

@@ -22,11 +22,9 @@ The public theorems in this file are:
   of the conditioned law of $(X_j)$.
 
 This is the variance-normalization step in the conditioned invariance
-principle of Erwin Bolthausen, *On a functional central limit theorem
-for random walks conditioned to stay positive*, Ann. Probab. 4(3)
-(1976), 480--485, DOI 10.1214/aop/1176996098, Theorem 3.2, used in Wang Yiyang, *Asymptotic speed of
-the $N$-branching random walk with infinite offspring*, Chapter 3, proof of
-Lemma 3.5, Appendix A.2.
+principle of Erwin Bolthausen, *On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*, Ann. Probab. 4(3)
+(1976), 480--485, DOI 10.1214/aop/1176996098, Theorem 3.2, used in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, proof of
+Lemma 3.5, and Appendix A.2, Lemma A.7.
 -/
 
 @[expose] public section

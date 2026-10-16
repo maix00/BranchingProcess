@@ -37,15 +37,13 @@ The public theorems in this file are:
 
 The first three statements formalize the centered path comparison of
 Erwin Bolthausen,
-*On a functional central limit theorem for random walks conditioned to
-stay positive*, Theorem 3.2, equations (3.3)--(3.8), Ann. Probab. 4(3)
+*On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*, Theorem 3.2, equations (3.3)--(3.8), Ann. Probab. 4(3)
 (1976), 480--485, DOI 10.1214/aop/1176996098. For a fixed finite
 cutoff, Donsker convergence and Lemma 2.5 give the shifted limit;
 equation (3.5) controls the probability that the cutoff is reached;
 the Brownian cutoff error tends to zero. The final weak-convergence
 comparison is expressed with bounded Lipschitz observables in place
-of the continuity-set formulation in Erwin Bolthausen, *On a functional
-central limit theorem for random walks conditioned to stay positive*,
+of the continuity-set formulation in Erwin Bolthausen, *On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*,
 Theorem 3.2. The identification of
 $\mathcal L(\Phi(W))$ with Brownian meander is a separate step on page
 484 of Bolthausen. Donald L. Iglehart, *Functional Central Limit Theorems

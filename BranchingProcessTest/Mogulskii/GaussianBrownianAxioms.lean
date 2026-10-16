@@ -1,4 +1,4 @@
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Gaussian.SourcePathClass
+import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Path.SourcePathClass
 
 /-!
 # Axiom audit for the Gaussian stable-process bridge
