@@ -16,6 +16,26 @@ The finite-cover block estimate has a fixed multiplicative prefactor and a
 spectral exponent. This file isolates the elementary real-analysis step that
 chooses cover count, Donsker slack, and diffusive block constant in the order
 required by the proof.
+The public declarations are:
+
+* `finiteCoverCorridorExponential_diffusive` proves the identity
+  \[
+    E_m\!\left(\frac{1+\varepsilon}{\sqrt C}\right)
+    =\exp\!\left(-\frac{\pi^2 C}
+      {2((1+3/m)(1+\varepsilon))^2}\right),
+  \]
+  where $E_m(u)=\texttt{finiteCoverCorridorExponential}(m,u)$.
+* `scaledLog_two_finiteCoverRangeBound_diffusive` gives
+  \[
+    \frac1C\log\!\left(2\,\texttt{finiteCoverRangeBound}
+      \left(m,\frac{1+\varepsilon}{\sqrt C}\right)\right)
+    =\frac{\log(16m)}C-
+      \frac{\pi^2}{2((1+3/m)(1+\varepsilon))^2}.
+  \]
+* `exists_finiteCover_parameters_for_sharp_rate` proves that for every
+  $\eta>0$ one can choose $m,\varepsilon,C>0$ so the spectral and range
+  factors are below $1/2$ and the displayed logarithmic rate is less than
+  $-\pi^2/2+\eta$.
 -/
 
 open Filter
