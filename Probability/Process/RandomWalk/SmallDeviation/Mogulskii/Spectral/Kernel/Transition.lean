@@ -13,7 +13,16 @@ public import Probability.Distributions.Rademacher
 # Rademacher transition and the sine ground state
 
 This file identifies the analytic symmetric averaging operator with the
-one-step transition of the Rademacher random walk.
+one-step transition of the Rademacher random walk.  Its public declarations
+are:
+
+* `integral_add_rademacherMeasure` proves
+  $\mathbb E[f(x+X_1)]=\frac12(f(x-1)+f(x+1))$ for a fair Rademacher
+  increment $X_1$.
+* `integral_dirichletSine_add_rademacherMeasure` proves that the translated
+  Dirichlet sine profile is an eigenfunction of this transition:
+  $\mathbb E[\sin(\pi(x+X_1)/L)]=
+  \cos(\pi/L)\sin(\pi x/L)$.
 -/
 
 open MeasureTheory
