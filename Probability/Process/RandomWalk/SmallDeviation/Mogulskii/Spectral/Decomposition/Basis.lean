@@ -13,7 +13,24 @@ public import Analysis.SpecialFunctions.Trigonometric.FiniteSum
 # Coordinates in the Dirichlet sine basis
 
 This file contains the dot-product formulas and uniform coefficient bounds
-used by the killed-kernel spectral estimates.
+used by the killed-kernel spectral estimates.  Let $N$ be the number of
+interior sites, let $v_k$ be the $k$th discrete sine mode, and let
+$c_k(f)$ be the coordinate of $f$ in the orthogonal sine basis.  The public
+declarations are:
+
+* `intervalSineBasis_repr_mul_selfDot` proves
+  $c_k(f)\langle v_k,v_k\rangle=\langle v_k,f\rangle$;
+  `intervalSineMode_selfDot_pos` proves $\langle v_k,v_k\rangle>0$;
+  `intervalSineMode_selfDot` gives
+  $\langle v_k,v_k\rangle=(N+1)/2$.
+* `intervalSineBasis_repr_eq_dotProduct_div` and
+  `intervalSineBasis_repr_eq_two_mul_dotProduct_div` give respectively
+  $c_k(f)=\langle v_k,f\rangle/\langle v_k,v_k\rangle$ and
+  $c_k(f)=2\langle v_k,f\rangle/(N+1)$.
+* `abs_intervalSineMode_dotProduct_one_le` proves
+  $|\langle v_k,\mathbf1\rangle|\le N$;
+  `abs_intervalSineBasis_repr_one_le_two` gives the width-uniform bound
+  $|c_k(\mathbf1)|\le2$.
 -/
 
 open scoped Matrix
