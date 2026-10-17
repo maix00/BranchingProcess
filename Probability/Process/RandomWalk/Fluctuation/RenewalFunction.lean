@@ -42,8 +42,9 @@ The public definitions and theorems in this file are:
 The renewal function is the one used by Francesco Caravenna and Loïc
 Chaumont, *Invariance principles for random walks conditioned to stay
 positive*, definition (1.1) and Lemma 2.1, DOI 10.1214/07-AIHP119.
-Chaumont and Doney, *Invariance principles for local times at the maximum
-of random walks and Lévy processes*, Lemma 5, use the analogous renewal
+L. Chaumont and R. A. Doney, *Invariance principles for local times at the
+maximum of random walks and Lévy processes*, Ann. Probab. 38(4) (2010),
+1368--1389, Lemma 5, DOI 10.1214/09-AOP512, use the analogous renewal
 function for the descending ladder process.
 -/
 

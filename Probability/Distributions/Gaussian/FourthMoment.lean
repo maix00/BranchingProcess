@@ -21,8 +21,8 @@ The public theorem in this file is:
 
 This moment input is used in the Kolmogorov--Chentsov continuity argument
 for Brownian motion in Rémy Degenne et al., *Brownian Motion in Lean*,
-`BrownianMotion.Gaussian.BrownianMotion`, proof of the pre-Brownian
-Kolmogorov estimate. The finite-moment theorem itself comes from Mathlib's
+arXiv:2511.20118, `BrownianMotion.Gaussian.BrownianMotion`, theorem
+`IsPreBrownianReal.isAEKolmogorovProcess`. The finite-moment theorem itself comes from Mathlib's
 Gaussian Fernique theorem.
 -/
 
