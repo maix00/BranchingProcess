@@ -116,7 +116,7 @@ are unchanged, and callers import the new paths directly.
 The final 2026-10-17 scan after grouping the Lemma 3.2 partition parameters,
 the Lemma 3.3 jump-pattern and spatial-bin setup, the Lemma 3.5 staircase
 parameters under their corresponding `Lemmas/` trees, and moving the generic
-tail-merged schedule to the path-partition module found 1,444
+tail-merged schedule to the path-partition module found 1,445
 production modules and 138 test modules.
 Across both trees there are zero same-stem file/directory collisions, zero
 directories with more than eight direct Lean files, and zero child filenames
@@ -146,14 +146,16 @@ Targeted declaration-list checks found every public declaration in these
 modules represented in its module docstring. The corresponding modules build
 with the pinned Lean toolchain.
 
-A broader lexical scan of the 1,444 production modules found 8,514 top-level
-declarations matching its declaration patterns and 1,123 modules with at
-least one matched declaration name absent from the module docstring. This is
-a candidate count rather than a completed audit: the scanner does not parse
-Lean syntax, can miss declarations introduced through attributes or commands,
-and cannot assess whether a mathematical formula and its assumptions are
-described accurately. The first manually reviewed batch adds formula-bearing
-lists to `Combinatorics/Sequence/Block.lean`,
+A revised lexical scan of the 1,445 production modules found 8,580 top-level
+declaration patterns and 1,065 modules whose module docstrings may omit at
+least one declaration name. The revised scan accepts a fully qualified name
+as well as its short name; the earlier count treated some fully qualified
+names as missing. This remains a candidate count rather than a completed
+audit: the scanner does not parse Lean syntax, can count declarations inside
+`private section`s, can miss declarations introduced through attributes or
+commands, and cannot assess whether a mathematical formula and its assumptions
+are described accurately. The first manually reviewed batch adds
+formula-bearing lists to `Combinatorics/Sequence/Block.lean`,
 `Algebra/BigOperators/AdditivePath/Block.lean`,
 `Algebra/Order/BigOperators/AdditivePath.lean`,
 `Algebra/Order/BigOperators/WeightedSum.lean`, and
