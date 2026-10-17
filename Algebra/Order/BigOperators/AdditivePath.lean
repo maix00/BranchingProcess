@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Algebra.BigOperators.AdditivePath
+public import Algebra.BigOperators.AdditivePath.Basic
 public import Mathlib.Algebra.Order.Monoid.Unbundled.Defs
 
 import Mathlib.Algebra.Order.BigOperators.Group.Finset

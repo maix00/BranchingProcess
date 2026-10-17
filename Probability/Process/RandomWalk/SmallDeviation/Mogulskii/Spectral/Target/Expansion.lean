@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.UpperBound
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Survival.Upper
 
 /-!
 # Spectral expansion with a terminal target

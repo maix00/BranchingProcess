@@ -1,0 +1,858 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
+module
+
+public import Algebra.BigOperators.AdditivePath.Basic
+public import Algebra.BigOperators.PartialSum
+public import Algebra.BigOperators.CyclicReindex
+public import Probability.Process.RandomWalk.SmallDeviation.Entrance.Rotation.DriftedTube
+public import Probability.Sequence.IID.FiniteReindex
+public import Probability.Sequence.IID.Basic
+public import Probability.Process.RandomWalk.Path.Skorokhod.Basic
+public import Topology.Cadlag.Skorokhod.Path.Scaling
+public import Topology.Cadlag.Skorokhod.Path.Linear
+
+/-!
+# Cyclic rotations of finite random-walk paths
+
+The public definitions and theorem families are:
+
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.finitePrefixExtension`,
+  `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.finiteNormalizedStepPath`, `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.finiteNormalizedStepKnots`, and
+  `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.normalizedGridPoint`: finite increment vectors, their $n+1$
+  partial-sum knots, and the associated normalized step path.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.measurable_finitePrefixExtension`:
+  the finite-vector extension to an infinite sequence is measurable. The
+  finite-prefix map and its IID product law use the generic interfaces in
+  `Probability.Sequence.Block` and `Probability.Sequence.IID.Basic`.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.displacement_finitePrefixExtension`,
+  `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.finiteNormalizedStepPath_apply_grid`,
+  `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.finiteNormalizedStepPath_prefix_eq`, and
+  `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.scalePath_finiteNormalizedStepPath_eq`: the exact path and scaling
+  identities for those constructions.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.finiteLinearPathBallEvent`,
+  `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.finiteDriftRemovedOffsetCorridorEvent`, and
+  `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.movingOffsetCorridorPath`: the line-ball, static corridor, and
+  moving corridor events; the adjacent measurability and finite-prefix
+  law theorems identify their probabilities under IID increments.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.measurableSet_finiteDriftRemovedOffsetCorridorEvent`,
+  `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.offsetCorridorPath_removeLinearDrift_iff_moving`,
+  `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.measurableSet_finiteLinearPathBallEvent`, and
+  `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.iidSequenceLaw_measure_linearPathBall_eq_pi`:
+  the corridor and line-ball events are measurable, drift removal identifies
+  the moving corridor, and their infinite-IID and finite-product probabilities
+  coincide.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.finiteCoordinateReindex_apply`,
+  `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.IsCyclicPartialSumReindex`,
+  `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.cyclicCoordinateReindex_isCyclicPartialSumReindex`, and
+  `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.cyclicPartialSum_smul`: cyclic reindexing of $n$ coordinates and
+  its partial-sum identities.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.finiteLinearBall_subset_cyclicOffsetCover_allOffsets` and its
+  modular and normalization-ratio versions: the line-ball event is
+  covered by $n$ cyclic images of the offset corridor.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.finiteLinearPathBall_knots_in_tube`,
+  `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.finiteLinearBall_subset_cyclicOffsetCover_allOffsets_modular`, and
+  `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.finiteLinearBall_subset_cyclicOffsetCover_allOffsets_of_normalizationRatio`:
+  a path ball controls every knot and has the same cyclic cover after the
+  scale ratio is changed.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.measure_pi_offsetCorridor_ge_div_of_linearTube_allOffsets`
+  and its modular and normalization-ratio versions: the corresponding
+  corridor probability is at least the line-ball probability divided
+  by $n$.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.measure_pi_offsetCorridor_ge_div_of_linearTube_allOffsets_modular` and
+  `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.measure_pi_offsetCorridor_ge_div_of_linearTube_allOffsets_of_normalizationRatio`:
+  the finite-product lower bound retains its $1/n$ factor under those
+  changes of scale.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.finiteLinearBall_subset_cyclicOffsetCover_lowerEdge` and
+  `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.measure_pi_offsetCorridor_ge_div_of_linearTube`, together with
+  their modular versions: the same cover and probability bound for
+  a boundary starting position.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.finiteLinearBall_subset_cyclicOffsetCover_lowerEdge_modular` and
+  `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.measure_pi_offsetCorridor_ge_div_of_linearTube_modular`:
+  the corresponding boundary-position statements after modular rotation.
+
+This file connects a vector of `n` increments to its `n + 1` partial-sum
+knots and to the normalized càdlàg step path. Cyclic reindexing acts on the
+`n` increments; its partial-sum path has `n + 1` knots. The finite-product
+measure estimate then loses a factor `n`, not `n + 1`.
+
+The drift-removal identity is imported from `Rotation/DriftedTube.lean`. This is
+important for entrance events with moving boundaries: the static corridor is
+imposed on the drift-removed path, and the corresponding original path lies
+in the translated moving corridor.
+-/
+
+@[expose] public section
+
+open MeasureTheory ProbabilityTheory Fin
+open scoped ENNReal Topology
+
+namespace ProbabilityTheory.RandomWalk.SmallDeviation.Entrance
+
+/-- Extend a finite vector of `n` increments to an infinite sequence. The
+values after the first `n` increments are immaterial to the length-`n` walk. -/
+def finitePrefixExtension {n : ℕ} (x : Fin n → ℝ) : ℕ → ℝ :=
+  fun m => if h : m < n then x ⟨m, h⟩ else 0
+
+/-- The normalized càdlàg path generated by a finite vector of increments. -/
+noncomputable def finiteNormalizedStepPath (scale : ℝ) {n : ℕ}
+    (x : Fin n → ℝ) : CadlagPath unitInterval ℝ :=
+  RandomWalk.normalizedStepCadlagPathIcc (fun _ => scale) n
+    (finitePrefixExtension x)
+
+/-- The `n + 1` normalized partial-sum knots generated by `n` increments. -/
+noncomputable def finiteNormalizedStepKnots (scale : ℝ) {n : ℕ}
+    (x : Fin n → ℝ) :
+    Fin (n + 1) → ℝ :=
+  fun j => scale⁻¹ * Fin.partialSum x j
+
+/-- The grid point `j / n` in the compact time interval, including the last
+knot `j = n`. -/
+noncomputable def normalizedGridPoint {n : ℕ} (hn : 0 < n) (j : Fin (n + 1)) :
+    unitInterval :=
+  ⟨(j.val : ℝ) / n,
+    ⟨div_nonneg (Nat.cast_nonneg _) (by positivity),
+      (div_le_one (by positivity)).2 (by exact_mod_cast Nat.le_of_lt_succ j.isLt)⟩⟩
+
+/-- The first `m` increments of the finite extension sum to the corresponding
+Mathlib `Fin.partialSum` knot. -/
+theorem displacement_finitePrefixExtension {n : ℕ} (x : Fin n → ℝ)
+    (j : Fin (n + 1)) :
+    AdditivePath.displacement j.val (finitePrefixExtension x) =
+      Fin.partialSum x j := by
+  have h := congrFun
+    (AdditivePath.finitePrefix_restrict_eq_fromIncrements
+      (0 : ℝ) (finitePrefixExtension x)) j
+  simpa [AdditivePath.finitePrefix, AdditivePath.fromIncrements,
+    finitePrefixExtension] using h.symm
+
+/-- At each of its `n + 1` grid knots, the finite normalized step path is the
+corresponding scaled finite partial sum. -/
+theorem finiteNormalizedStepPath_apply_grid {n : ℕ} (hn : 0 < n)
+    (scale : ℝ) (x : Fin n → ℝ) (j : Fin (n + 1)) :
+    finiteNormalizedStepPath scale x (normalizedGridPoint hn j) =
+      finiteNormalizedStepKnots scale x j := by
+  rw [finiteNormalizedStepPath,
+    RandomWalk.normalizedStepCadlagPathIcc_apply]
+  change RandomWalk.normalizedStepPath (fun _ => scale) n
+    (finitePrefixExtension x) ((j.val : ℝ) / n) = _
+  rw [RandomWalk.normalizedStepPath_grid (fun _ => scale) hn
+    (finitePrefixExtension x)]
+  rw [displacement_finitePrefixExtension]
+  rfl
+
+/-- The finite path depends only on the first `n` coordinates of an infinite
+increment sequence. This is the path-level bridge used to transfer Donsker's
+linear-ball lower bound to the finite product law. -/
+theorem finiteNormalizedStepPath_prefix_eq {n : ℕ} (scale : ℝ)
+    (x : ℕ → ℝ) :
+    finiteNormalizedStepPath scale (fun i : Fin n => x i.val) =
+      RandomWalk.normalizedStepCadlagPathIcc (fun _ => scale) n x := by
+  ext t
+  change RandomWalk.normalizedStepPath (fun _ => scale) n
+      (finitePrefixExtension (fun i : Fin n => x i.val)) t =
+    RandomWalk.normalizedStepPath (fun _ => scale) n x t
+  rw [RandomWalk.normalizedStepPath]
+  congr 1
+  unfold AdditivePath.displacement
+  apply Finset.sum_congr rfl
+  intro k hk
+  have hkfloor : k < ⌊(n : ℝ) * (t : ℝ)⌋₊ := Finset.mem_range.mp hk
+  have hfloor : ⌊(n : ℝ) * (t : ℝ)⌋₊ ≤ n :=
+    RandomWalk.natFloor_mul_le_of_mem_unitInterval n t
+  have hkn : k < n := hkfloor.trans_le hfloor
+  simp [finitePrefixExtension, hkn]
+
+/-- The extension map from a finite vector to an infinite sequence is
+measurable. -/
+theorem measurable_finitePrefixExtension {n : ℕ} :
+    Measurable (finitePrefixExtension : (Fin n → ℝ) → ℕ → ℝ) := by
+  exact Measurable.of_eval fun m => by
+    by_cases hm : m < n
+    · simpa [finitePrefixExtension, hm] using
+        (measurable_pi_apply (⟨m, hm⟩ : Fin n))
+    · simp [finitePrefixExtension, hm]
+
+/-- The event that the finite normalized path lies in a `J₁` ball around a
+specified linear reference path. -/
+def finiteLinearPathBallEvent (scale slope radius : ℝ) {n : ℕ} :
+    Set (Fin n → ℝ) :=
+  {x | finiteNormalizedStepPath scale x ∈
+    Metric.ball (Skorokhod.linearPath slope) radius}
+
+/-- A static offset corridor imposed after removing a constant drift per
+increment from the normalized finite partial-sum path. -/
+def finiteDriftRemovedOffsetCorridorEvent (scale drift u : ℝ) {n : ℕ} :
+    Set (Fin n → ℝ) :=
+  {x | offsetCorridorPath u
+    (removeLinearDrift drift (finiteNormalizedStepKnots scale x))}
+
+/-- The static offset-corridor event is measurable in the finite product
+sigma-algebra. It is a finite conjunction of linear inequalities in partial
+sums. -/
+theorem measurableSet_finiteDriftRemovedOffsetCorridorEvent
+    {n : ℕ} (scale drift u : ℝ) :
+    MeasurableSet (finiteDriftRemovedOffsetCorridorEvent
+      (n := n) scale drift u) := by
+  have hpartial (j : Fin (n + 1)) :
+      Measurable (fun x : Fin n → ℝ => Fin.partialSum x j) := by
+    induction j using Fin.induction with
+    | zero => simp
+    | succ j ih =>
+        have hsum :
+            (fun x : Fin n → ℝ => Fin.partialSum x j.succ) =
+              fun x => Fin.partialSum x j.castSucc + x j :=
+          funext fun x => Fin.partialSum_succ x j
+        rw [hsum]
+        exact ih.add (measurable_pi_apply j)
+  have hknots (j : Fin (n + 1)) :
+      Measurable (fun x : Fin n → ℝ =>
+        finiteNormalizedStepKnots scale x j) := by
+    dsimp [finiteNormalizedStepKnots]
+    exact measurable_const.mul (hpartial j)
+  have hremoved (j : Fin (n + 1)) :
+      Measurable (fun x : Fin n → ℝ =>
+        finiteNormalizedStepKnots scale x j - drift * (j.val : ℝ)) := by
+    exact (hknots j).sub measurable_const
+  unfold finiteDriftRemovedOffsetCorridorEvent
+  change MeasurableSet {x : Fin n → ℝ |
+    (∀ j, finiteNormalizedStepKnots scale x j - drift * (j.val : ℝ) ∈
+      Set.Icc (-u) (1 - u)) ∧
+      finiteNormalizedStepKnots scale x (Fin.last n) - drift * (n : ℝ) ∈
+        Set.Icc (1 / 3 - u) (2 / 3 - u)}
+  apply MeasurableSet.inter
+  · have hEq :
+        {x : Fin n → ℝ |
+          ∀ j : Fin (n + 1),
+            finiteNormalizedStepKnots scale x j - drift * (j.val : ℝ) ∈
+              Set.Icc (-u) (1 - u)} =
+          ⋂ j : Fin (n + 1),
+            {x : Fin n → ℝ |
+              finiteNormalizedStepKnots scale x j - drift * (j.val : ℝ) ∈
+                Set.Icc (-u) (1 - u)} := by
+      ext x
+      simp
+    have hI : MeasurableSet (⋂ j : Fin (n + 1),
+        {x : Fin n → ℝ |
+          finiteNormalizedStepKnots scale x j - drift * (j.val : ℝ) ∈
+            Set.Icc (-u) (1 - u)}) :=
+      MeasurableSet.iInter fun j =>
+        measurableSet_Icc.preimage (hremoved j)
+    rw [← hEq] at hI
+    exact hI
+  · exact measurableSet_Icc.preimage (hremoved (Fin.last n))
+
+/-- The moving corridor corresponding to a static offset corridor after
+subtracting a per-step drift. Its endpoint band is translated by the total
+drift `drift * n`; no zero-total-increment assumption is made. -/
+def movingOffsetCorridorPath {n : ℕ} (drift u : ℝ)
+    (s : Fin (n + 1) → ℝ) (k : Fin n) : Prop :=
+  (∀ j, cyclicPartialSum s k j ∈
+      Set.Icc (-u + drift * (j.val : ℝ))
+        (1 - u + drift * (j.val : ℝ))) ∧
+    cyclicPartialSum s k (Fin.last n) ∈
+      Set.Icc (1 / 3 - u + drift * (n : ℝ))
+        (2 / 3 - u + drift * (n : ℝ))
+
+/-- Static survival for the drift-removed cyclic path is exactly survival in
+the translated moving corridor for the original cyclic path. -/
+theorem offsetCorridorPath_removeLinearDrift_iff_moving
+    {n : ℕ} (drift u : ℝ) (s : Fin (n + 1) → ℝ) (k : Fin n) :
+    offsetCorridorPath u (cyclicRotatePath (removeLinearDrift drift s) k) ↔
+      movingOffsetCorridorPath drift u s k := by
+  constructor
+  · rintro ⟨hpath, hend⟩
+    refine ⟨?_, ?_⟩
+    · intro j
+      have hj := hpath j
+      change cyclicPartialSum (removeLinearDrift drift s) k j ∈
+        Set.Icc (-u) (1 - u) at hj
+      rw [cyclicPartialSum_removeLinearDrift s drift k j] at hj
+      rcases hj with ⟨hlo, hhi⟩
+      constructor <;> linarith
+    · have hlast := hend
+      change cyclicPartialSum (removeLinearDrift drift s) k (Fin.last n) ∈
+        Set.Icc (1 / 3 - u) (2 / 3 - u) at hlast
+      rw [cyclicPartialSum_removeLinearDrift s drift k (Fin.last n)] at hlast
+      rw [Fin.val_last] at hlast
+      rcases hlast with ⟨hlo, hhi⟩
+      constructor <;> linarith
+  · rintro ⟨hpath, hend⟩
+    refine ⟨?_, ?_⟩
+    · intro j
+      have hj := hpath j
+      change cyclicPartialSum s k j ∈
+        Set.Icc (-u + drift * (j.val : ℝ))
+          (1 - u + drift * (j.val : ℝ)) at hj
+      change cyclicPartialSum (removeLinearDrift drift s) k j ∈
+        Set.Icc (-u) (1 - u)
+      rw [cyclicPartialSum_removeLinearDrift s drift k j]
+      rcases hj with ⟨hlo, hhi⟩
+      constructor <;> linarith
+    · have hlast := hend
+      change cyclicPartialSum s k (Fin.last n) ∈
+        Set.Icc (1 / 3 - u + drift * (n : ℝ))
+          (2 / 3 - u + drift * (n : ℝ)) at hlast
+      change cyclicPartialSum (removeLinearDrift drift s) k (Fin.last n) ∈
+        Set.Icc (1 / 3 - u) (2 / 3 - u)
+      rw [cyclicPartialSum_removeLinearDrift s drift k (Fin.last n)]
+      rw [Fin.val_last]
+      rcases hlast with ⟨hlo, hhi⟩
+      constructor <;> linarith
+
+/-- The finite linear-path-ball event is measurable in the finite product
+sigma-algebra. -/
+theorem measurableSet_finiteLinearPathBallEvent
+    (scale slope radius : ℝ) {n : ℕ} :
+    MeasurableSet (finiteLinearPathBallEvent (n := n) scale slope radius) := by
+  have hpath : Measurable (finiteNormalizedStepPath scale :
+      (Fin n → ℝ) → CadlagPath unitInterval ℝ) :=
+    (RandomWalk.measurable_normalizedStepCadlagPathIcc
+      (fun _ => scale) n).comp measurable_finitePrefixExtension
+  exact Metric.isOpen_ball.measurableSet.preimage hpath
+
+/-- The finite product probability of a linear-path-ball event agrees with
+the probability of the corresponding event for the canonical IID sequence. -/
+theorem iidSequenceLaw_measure_linearPathBall_eq_pi
+    {n : ℕ} (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (scale slope radius : ℝ) :
+    iidSequenceLaw ν
+        {x | RandomWalk.normalizedStepCadlagPathIcc (fun _ => scale) n x ∈
+          Metric.ball (Skorokhod.linearPath slope) radius} =
+      Measure.pi (fun _ : Fin n => ν)
+        (finiteLinearPathBallEvent (n := n) scale slope radius) := by
+  have hset := measurableSet_finiteLinearPathBallEvent
+    (n := n) scale slope radius
+  have hpreimage :
+      (Combinatorics.Sequence.blockCoordinates 0 n) ⁻¹'
+          finiteLinearPathBallEvent (n := n) scale slope radius =
+        {x | RandomWalk.normalizedStepCadlagPathIcc (fun _ => scale) n x ∈
+          Metric.ball (Skorokhod.linearPath slope) radius} := by
+    ext x
+    have hcoords :
+        Combinatorics.Sequence.blockCoordinates 0 n x =
+          (fun i : Fin n => x i.val) := by
+      funext i
+      simp [Combinatorics.Sequence.blockCoordinates]
+    change finiteNormalizedStepPath scale ((Combinatorics.Sequence.blockCoordinates 0 n) x) ∈
+        Metric.ball (Skorokhod.linearPath slope) radius ↔ _
+    rw [hcoords]
+    rw [finiteNormalizedStepPath_prefix_eq]
+    simp only [Set.mem_ofPred_eq]
+  calc
+      iidSequenceLaw ν
+        {x | RandomWalk.normalizedStepCadlagPathIcc (fun _ => scale) n x ∈
+          Metric.ball (Skorokhod.linearPath slope) radius} =
+      iidSequenceLaw ν
+        ((Combinatorics.Sequence.blockCoordinates 0 n) ⁻¹'
+          finiteLinearPathBallEvent (n := n) scale slope radius) := by
+          rw [hpreimage]
+    _ = (iidSequenceLaw ν).map ((Combinatorics.Sequence.blockCoordinates 0 n))
+        (finiteLinearPathBallEvent (n := n) scale slope radius) := by
+          rw [Measure.map_apply (measurable_blockCoordinates 0 n) hset]
+    _ = Measure.pi (fun _ : Fin n => ν)
+        (finiteLinearPathBallEvent (n := n) scale slope radius) := by
+          rw [Measure.map_apply (measurable_blockCoordinates 0 n) hset]
+          exact iidSequenceLaw_measure_blockCoordinates_preimage_eq_pi
+            ν 0 n _ hset
+
+/-- Applying the finite-coordinate reindexing used by exchangeability
+reorders the vector by the supplied equivalence. -/
+@[simp]
+theorem finiteCoordinateReindex_apply
+    {n : ℕ} (e : Fin n ≃ Fin n) (x : Fin n → ℝ) (i : Fin n) :
+    ProbabilityTheory.finiteCoordinateReindex e x i = x (e i) := by
+  simpa [ProbabilityTheory.finiteCoordinateReindex,
+    MeasurableEquiv.coe_piCongrLeft] using
+    (Equiv.piCongrLeft_apply_apply (P := fun _ : Fin n => ℝ)
+      e.symm x (e i))
+
+/-- Compatibility condition between cyclic coordinate rotation and the
+`n + 1` partial-sum knot path. This is stated separately so that the arithmetic
+bridge can be reused independently of any probability law. -/
+def IsCyclicPartialSumReindex {n : ℕ} (rotate : Fin n → Fin n ≃ Fin n) :
+    Prop :=
+  ∀ (x : Fin n → ℝ) (k : Fin n) (j : Fin (n + 1)),
+    Fin.partialSum (fun i => x (rotate k i)) j =
+      cyclicPartialSum (Fin.partialSum x) k j
+
+/-- The generic cyclic-coordinate identity supplies the compatibility
+condition used by the entrance estimate. -/
+theorem cyclicCoordinateReindex_isCyclicPartialSumReindex {n : ℕ}
+    (hn : 0 < n) :
+    IsCyclicPartialSumReindex (fun k => cyclicCoordinateReindex hn k) := by
+  intro x k j
+  exact Fin.partialSum_cyclicCoordinateReindex hn x k j
+
+/-- Scaling a finite partial-sum path commutes with taking a cyclic rotation. -/
+theorem cyclicPartialSum_smul {n : ℕ} (s : Fin (n + 1) → ℝ)
+    (c : ℝ) (k : Fin n) (j : Fin (n + 1)) :
+    cyclicPartialSum (fun i => c * s i) k j =
+      c * cyclicPartialSum s k j := by
+  unfold cyclicPartialSum
+  split_ifs <;> ring
+
+/-- A path in the linear open ball has its finite knots in a linear tube. -/
+theorem finiteLinearPathBall_knots_in_tube {n : ℕ} (hn : 0 < n)
+    (scale slope radius : ℝ) (hslopesmall : |slope| ≤ 1)
+    (hradius : 0 < radius)
+    (x : Fin n → ℝ)
+    (hx : x ∈ finiteLinearPathBallEvent (n := n) scale slope radius) :
+    ∀ j : Fin (n + 1),
+      |finiteNormalizedStepKnots scale x j -
+        slope * normalizedTime j| < 2 * radius := by
+  have hdist : dist (finiteNormalizedStepPath scale x)
+      (Skorokhod.linearPath slope) < radius := by
+    simpa [finiteLinearPathBallEvent, Metric.mem_ball] using hx
+  have htube := Skorokhod.abs_sub_linear_lt_two_mul_of_dist_lt
+    hradius hslopesmall hdist
+  intro j
+  have hj := htube (normalizedGridPoint hn j)
+  rw [finiteNormalizedStepPath_apply_grid hn scale x j] at hj
+  simpa [normalizedGridPoint, normalizedTime, div_eq_mul_inv,
+    mul_comm, mul_left_comm, mul_assoc] using hj
+
+/-- A finite path in a narrow `J₁` ball around the offset-dependent line has
+a cyclic reindexing whose drift-removed knots lie in the static offset
+corridor. The deterministic rotation works for every fixed `u ∈ [0,1]`;
+the finite-product probability estimate below then loses a factor `n`. -/
+theorem finiteLinearBall_subset_cyclicOffsetCover_allOffsets
+    {n : ℕ} (hn : 0 < n) (scale drift radius u : ℝ)
+    (hradius : 0 < radius)
+    (hsmall : 2 * radius + |drift| * (n : ℝ) < 1 / 16)
+    (hu : u ∈ Set.Icc 0 1)
+    (rotate : Fin n → Fin n ≃ Fin n)
+    (hrotate : IsCyclicPartialSumReindex rotate) :
+    finiteLinearPathBallEvent (n := n) scale (1 / 2 - u) radius ⊆
+      ⋃ k, (ProbabilityTheory.finiteCoordinateReindex (rotate k)) ⁻¹'
+        finiteDriftRemovedOffsetCorridorEvent (n := n) scale drift u := by
+  intro x hx
+  have hslopesmall : |(1 / 2 - u)| ≤ 1 := by
+    rw [abs_le]
+    rcases hu with ⟨hu0, hu1⟩
+    constructor <;> linarith
+  have htube := finiteLinearPathBall_knots_in_tube hn scale (1 / 2 - u)
+    radius hslopesmall hradius x hx
+  let s : Fin (n + 1) → ℝ := finiteNormalizedStepKnots scale x
+  have hs0 : s 0 = 0 := by simp [s, finiteNormalizedStepKnots]
+  have hremove0 : removeLinearDrift drift s 0 = 0 := by
+    simp [removeLinearDrift, hs0]
+  let ε := 2 * radius + |drift| * (n : ℝ)
+  have hε : 0 < ε := by dsimp [ε]; positivity
+  have hε16 : ε < 1 / 16 := by simpa [ε] using hsmall
+  have htube' : ∀ j,
+      |removeLinearDrift drift s j - (1 / 2 - u) * normalizedTime j| < ε := by
+    intro j
+    have hbase := htube j
+    have hjle : (j.val : ℝ) ≤ (n : ℝ) := by
+      exact_mod_cast Nat.le_of_lt_succ j.isLt
+    have hdrift : |drift * (j.val : ℝ)| ≤ |drift| * (n : ℝ) := by
+      have hjval : 0 ≤ (j.val : ℝ) := Nat.cast_nonneg _
+      rw [abs_mul, abs_of_nonneg hjval]
+      exact mul_le_mul_of_nonneg_left hjle (abs_nonneg _)
+    have htriangle :
+        |(s j - drift * (j.val : ℝ)) - (1 / 2 - u) * normalizedTime j| ≤
+          |s j - (1 / 2 - u) * normalizedTime j| +
+            |drift * (j.val : ℝ)| := by
+      calc
+        |(s j - drift * (j.val : ℝ)) -
+            (1 / 2 - u) * normalizedTime j| =
+            |(s j - (1 / 2 - u) * normalizedTime j) -
+              drift * (j.val : ℝ)| := by ring_nf
+        _ ≤ |s j - (1 / 2 - u) * normalizedTime j| +
+            |drift * (j.val : ℝ)| := abs_sub _ _
+    rw [removeLinearDrift]
+    dsimp [ε]
+    linarith
+  obtain ⟨k, hcorridor⟩ :=
+    exists_offsetCorridorPath_of_linearTube_allOffsets hn hu
+      (removeLinearDrift drift s) hremove0 hε16 htube'
+  refine Set.mem_iUnion.mpr ⟨k, ?_⟩
+  change finiteDriftRemovedOffsetCorridorEvent (n := n) scale drift u
+    (ProbabilityTheory.finiteCoordinateReindex (rotate k) x)
+  change offsetCorridorPath u
+    (removeLinearDrift drift
+      (finiteNormalizedStepKnots scale
+        (ProbabilityTheory.finiteCoordinateReindex (rotate k) x)))
+  have hpath :
+      removeLinearDrift drift
+        (finiteNormalizedStepKnots scale
+          (ProbabilityTheory.finiteCoordinateReindex (rotate k) x)) =
+        cyclicRotatePath (removeLinearDrift drift s) k := by
+    have hcoord : ProbabilityTheory.finiteCoordinateReindex (rotate k) x =
+        fun i => x (rotate k i) := by
+      funext i
+      exact finiteCoordinateReindex_apply (rotate k) x i
+    rw [hcoord]
+    funext j
+    change scale⁻¹ * Fin.partialSum (fun i => x (rotate k i)) j -
+        drift * (j.val : ℝ) =
+      cyclicPartialSum (removeLinearDrift drift s) k j
+    calc
+      scale⁻¹ * Fin.partialSum (fun i => x (rotate k i)) j -
+          drift * (j.val : ℝ) =
+        scale⁻¹ * cyclicPartialSum (Fin.partialSum x) k j -
+          drift * (j.val : ℝ) := by rw [hrotate x k j]
+      _ = cyclicPartialSum (removeLinearDrift drift s) k j := by
+        rw [cyclicPartialSum_removeLinearDrift]
+        change scale⁻¹ * cyclicPartialSum (Fin.partialSum x) k j -
+            drift * (j.val : ℝ) =
+          cyclicPartialSum (fun i => scale⁻¹ * Fin.partialSum x i) k j -
+            drift * (j.val : ℝ)
+        congr 1
+        exact (cyclicPartialSum_smul (Fin.partialSum x) scale⁻¹ k j).symm
+  rw [hpath]
+  exact hcorridor
+
+/-- The all-offset finite linear-ball cover for the concrete modular cyclic
+rotations. -/
+theorem finiteLinearBall_subset_cyclicOffsetCover_allOffsets_modular
+    {n : ℕ} (hn : 0 < n) (scale drift radius u : ℝ)
+    (hradius : 0 < radius)
+    (hsmall : 2 * radius + |drift| * (n : ℝ) < 1 / 16)
+    (hu : u ∈ Set.Icc 0 1) :
+    finiteLinearPathBallEvent (n := n) scale (1 / 2 - u) radius ⊆
+      ⋃ k, (ProbabilityTheory.finiteCoordinateReindex
+          (cyclicCoordinateReindex hn k)) ⁻¹'
+        finiteDriftRemovedOffsetCorridorEvent (n := n) scale drift u := by
+  exact finiteLinearBall_subset_cyclicOffsetCover_allOffsets
+    hn scale drift radius u hradius hsmall hu
+    (fun k => cyclicCoordinateReindex hn k)
+    (cyclicCoordinateReindex_isCyclicPartialSumReindex hn)
+
+/-- Changing the spatial normalization of a finite step path is exactly
+pointwise spatial scaling. The ratio is `sourceScale / targetScale`: the
+source path is divided by `sourceScale`, and multiplying it by this ratio
+produces the path divided by `targetScale`. -/
+theorem scalePath_finiteNormalizedStepPath_eq
+    {n : ℕ} (targetScale sourceScale ratio : ℝ)
+    (htarget : targetScale ≠ 0) (hsource : sourceScale ≠ 0)
+    (hratio : ratio = sourceScale / targetScale)
+    (x : Fin n → ℝ) :
+    Skorokhod.scalePath ratio (finiteNormalizedStepPath sourceScale x) =
+      finiteNormalizedStepPath targetScale x := by
+  have hnorm : ratio * sourceScale⁻¹ = targetScale⁻¹ := by
+    rw [hratio, div_eq_mul_inv]
+    field_simp [htarget, hsource]
+  ext t
+  simp only [Skorokhod.scalePath_apply, finiteNormalizedStepPath,
+    RandomWalk.normalizedStepCadlagPathIcc_apply,
+    RandomWalk.normalizedStepPath]
+  rw [← hnorm]
+  ring
+
+/-- A linear ball at the source normalization is mapped into a linear ball at
+the target normalization. This is the finite-path adapter for the generic
+J₁ spatial-scaling estimate. -/
+theorem finiteLinearBall_subset_cyclicOffsetCover_allOffsets_of_normalizationRatio
+    {n : ℕ} (hn : 0 < n) (targetScale sourceScale ratio drift sourceSlope
+      radius u : ℝ)
+    (htargetScale : targetScale ≠ 0) (hsourceScale : sourceScale ≠ 0)
+    (hratio : ratio = sourceScale / targetScale)
+    (hcenter : ratio * sourceSlope = 1 / 2 - u)
+    (hradius : 0 < radius)
+    (hsmall : 2 * (max 1 |ratio| * radius) +
+      |drift| * (n : ℝ) < 1 / 16)
+    (hu : u ∈ Set.Icc 0 1)
+    (rotate : Fin n → Fin n ≃ Fin n)
+    (hrotate : IsCyclicPartialSumReindex rotate) :
+    finiteLinearPathBallEvent (n := n) sourceScale sourceSlope radius ⊆
+      ⋃ k, (ProbabilityTheory.finiteCoordinateReindex (rotate k)) ⁻¹'
+        finiteDriftRemovedOffsetCorridorEvent (n := n) targetScale drift u := by
+  have htargetRadius : 0 < max 1 |ratio| * radius :=
+    mul_pos (lt_of_lt_of_le zero_lt_one (le_max_left _ _)) hradius
+  have hcover := finiteLinearBall_subset_cyclicOffsetCover_allOffsets
+    hn targetScale drift (max 1 |ratio| * radius) u htargetRadius hsmall hu
+    rotate hrotate
+  intro x hx
+  have hsource : finiteNormalizedStepPath sourceScale x ∈
+      Metric.ball (Skorokhod.linearPath sourceSlope) radius := hx
+  have htarget : finiteNormalizedStepPath targetScale x ∈
+      Metric.ball (Skorokhod.linearPath (1 / 2 - u))
+        (max 1 |ratio| * radius) := by
+    rw [Metric.mem_ball] at hsource ⊢
+    rw [← scalePath_finiteNormalizedStepPath_eq targetScale sourceScale ratio
+      htargetScale hsourceScale hratio x]
+    have hscaled := Skorokhod.dist_scalePath_linearPath_lt
+      (scale := ratio) (slope := sourceSlope) hsource
+    simpa [hcenter] using hscaled
+  exact hcover htarget
+
+/-- A finite IID prefix has the factor-`n` all-offset entrance estimate. -/
+theorem measure_pi_offsetCorridor_ge_div_of_linearTube_allOffsets
+    {n : ℕ} (hn : 0 < n) (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (scale drift radius u : ℝ)
+    (hradius : 0 < radius)
+    (hsmall : 2 * radius + |drift| * (n : ℝ) < 1 / 16)
+    (hu : u ∈ Set.Icc 0 1)
+    (rotate : Fin n → Fin n ≃ Fin n)
+    (hrotate : IsCyclicPartialSumReindex rotate)
+    (hsafe : MeasurableSet
+      (finiteDriftRemovedOffsetCorridorEvent (n := n) scale drift u))
+    {q : ℝ≥0∞}
+    (hq : q ≤ iidSequenceLaw ν
+      {x | RandomWalk.normalizedStepCadlagPathIcc (fun _ => scale) n x ∈
+        Metric.ball (Skorokhod.linearPath (1 / 2 - u)) radius}) :
+    q / n ≤ Measure.pi (fun _ : Fin n => ν)
+      (finiteDriftRemovedOffsetCorridorEvent (n := n) scale drift u) := by
+  have hqPi : q ≤ Measure.pi (fun _ : Fin n => ν)
+      (finiteLinearPathBallEvent (n := n) scale (1 / 2 - u) radius) :=
+    hq.trans_eq (iidSequenceLaw_measure_linearPathBall_eq_pi
+      (n := n) ν scale (1 / 2 - u) radius)
+  have hcover := finiteLinearBall_subset_cyclicOffsetCover_allOffsets
+    hn scale drift radius u hradius hsmall hu rotate hrotate
+  have hbound := ProbabilityTheory.measure_pi_event_le_card_smul_of_reindexCover
+    ν (finiteLinearPathBallEvent (n := n) scale (1 / 2 - u) radius)
+    (finiteDriftRemovedOffsetCorridorEvent (n := n) scale drift u)
+    rotate hcover hsafe
+  have hqbound : q ≤ n • Measure.pi (fun _ : Fin n => ν)
+      (finiteDriftRemovedOffsetCorridorEvent (n := n) scale drift u) :=
+    hqPi.trans hbound
+  rw [ENNReal.div_le_iff_le_mul (Or.inl (by exact_mod_cast hn.ne'))
+    (Or.inl (by simp))]
+  calc
+    q ≤ n • Measure.pi (fun _ : Fin n => ν)
+        (finiteDriftRemovedOffsetCorridorEvent (n := n) scale drift u) := hqbound
+    _ = Measure.pi (fun _ : Fin n => ν)
+        (finiteDriftRemovedOffsetCorridorEvent (n := n) scale drift u) * n := by
+          rw [nsmul_eq_mul']
+
+/-- The all-offset cyclic factor-`n` estimate for a source linear ball whose
+path normalization differs from the target corridor normalization. -/
+theorem measure_pi_offsetCorridor_ge_div_of_linearTube_allOffsets_of_normalizationRatio
+    {n : ℕ} (hn : 0 < n) (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (targetScale sourceScale ratio drift sourceSlope radius u : ℝ)
+    (htargetScale : targetScale ≠ 0) (hsourceScale : sourceScale ≠ 0)
+    (hratio : ratio = sourceScale / targetScale)
+    (hcenter : ratio * sourceSlope = 1 / 2 - u)
+    (hradius : 0 < radius)
+    (hsmall : 2 * (max 1 |ratio| * radius) +
+      |drift| * (n : ℝ) < 1 / 16)
+    (hu : u ∈ Set.Icc 0 1)
+    (rotate : Fin n → Fin n ≃ Fin n)
+    (hrotate : IsCyclicPartialSumReindex rotate)
+    (hsafe : MeasurableSet
+      (finiteDriftRemovedOffsetCorridorEvent (n := n) targetScale drift u))
+    {q : ℝ≥0∞}
+    (hq : q ≤ iidSequenceLaw ν
+      {x | RandomWalk.normalizedStepCadlagPathIcc
+        (fun _ => sourceScale) n x ∈
+          Metric.ball (Skorokhod.linearPath sourceSlope) radius}) :
+    q / n ≤ Measure.pi (fun _ : Fin n => ν)
+      (finiteDriftRemovedOffsetCorridorEvent (n := n) targetScale drift u) := by
+  have hqPi : q ≤ Measure.pi (fun _ : Fin n => ν)
+      (finiteLinearPathBallEvent (n := n) sourceScale sourceSlope radius) :=
+    hq.trans_eq (iidSequenceLaw_measure_linearPathBall_eq_pi
+      (n := n) ν sourceScale sourceSlope radius)
+  have hcover :=
+    finiteLinearBall_subset_cyclicOffsetCover_allOffsets_of_normalizationRatio
+      hn targetScale sourceScale ratio drift sourceSlope radius u
+      htargetScale hsourceScale hratio hcenter hradius hsmall hu rotate hrotate
+  have hbound := ProbabilityTheory.measure_pi_event_le_card_smul_of_reindexCover
+    ν (finiteLinearPathBallEvent (n := n) sourceScale sourceSlope radius)
+    (finiteDriftRemovedOffsetCorridorEvent (n := n) targetScale drift u)
+    rotate hcover hsafe
+  have hqbound : q ≤ n • Measure.pi (fun _ : Fin n => ν)
+      (finiteDriftRemovedOffsetCorridorEvent (n := n) targetScale drift u) :=
+    hqPi.trans hbound
+  rw [ENNReal.div_le_iff_le_mul (Or.inl (by exact_mod_cast hn.ne'))
+    (Or.inl (by simp))]
+  calc
+    q ≤ n • Measure.pi (fun _ : Fin n => ν)
+        (finiteDriftRemovedOffsetCorridorEvent (n := n) targetScale drift u) :=
+      hqbound
+    _ = Measure.pi (fun _ : Fin n => ν)
+        (finiteDriftRemovedOffsetCorridorEvent (n := n) targetScale drift u) * n :=
+      by rw [nsmul_eq_mul']
+
+/-- The all-offset finite IID estimate with modular cyclic rotations. -/
+theorem measure_pi_offsetCorridor_ge_div_of_linearTube_allOffsets_modular
+    {n : ℕ} (hn : 0 < n) (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (scale drift radius u : ℝ)
+    (hradius : 0 < radius)
+    (hsmall : 2 * radius + |drift| * (n : ℝ) < 1 / 16)
+    (hu : u ∈ Set.Icc 0 1)
+    (hsafe : MeasurableSet
+      (finiteDriftRemovedOffsetCorridorEvent (n := n) scale drift u))
+    {q : ℝ≥0∞}
+    (hq : q ≤ iidSequenceLaw ν
+      {x | RandomWalk.normalizedStepCadlagPathIcc (fun _ => scale) n x ∈
+        Metric.ball (Skorokhod.linearPath (1 / 2 - u)) radius}) :
+    q / n ≤ Measure.pi (fun _ : Fin n => ν)
+      (finiteDriftRemovedOffsetCorridorEvent (n := n) scale drift u) := by
+  exact measure_pi_offsetCorridor_ge_div_of_linearTube_allOffsets
+    hn ν scale drift radius u hradius hsmall hu
+    (fun k => cyclicCoordinateReindex hn k)
+    (cyclicCoordinateReindex_isCyclicPartialSumReindex hn) hsafe hq
+
+/-- Any finite path in a sufficiently narrow linear `J₁` ball has a cyclic
+reindexing whose drift-removed knots lie in the static offset corridor. The
+drift allowance is explicit: its total displacement over `n` steps is bounded
+by `|drift| * n`. -/
+theorem finiteLinearBall_subset_cyclicOffsetCover_lowerEdge
+    {n : ℕ} (hn : 0 < n) (scale drift radius u : ℝ)
+    (hradius : 0 < radius)
+    (hsmall : 2 * radius + |drift| * (n : ℝ) < 1 / 16)
+    (hu : u ∈ Set.Icc 0 (1 / 10))
+    (rotate : Fin n → Fin n ≃ Fin n)
+    (hrotate : IsCyclicPartialSumReindex rotate) :
+    finiteLinearPathBallEvent (n := n) scale (1 / 2) radius ⊆
+      ⋃ k, (ProbabilityTheory.finiteCoordinateReindex (rotate k)) ⁻¹'
+        finiteDriftRemovedOffsetCorridorEvent (n := n) scale drift u := by
+  intro x hx
+  have htube := finiteLinearPathBall_knots_in_tube hn scale (1 / 2) radius
+    (by norm_num : |(1 / 2 : ℝ)| ≤ 1) hradius x hx
+  let s : Fin (n + 1) → ℝ := finiteNormalizedStepKnots scale x
+  have hs0 : s 0 = 0 := by simp [s, finiteNormalizedStepKnots]
+  have hremove0 : removeLinearDrift drift s 0 = 0 := by
+    simp [removeLinearDrift, hs0]
+  let ε := 2 * radius + |drift| * (n : ℝ)
+  have hε : 0 < ε := by dsimp [ε]; positivity
+  have hε16 : ε < 1 / 16 := by simpa [ε] using hsmall
+  have htube : ∀ j,
+      |removeLinearDrift drift s j - (1 / 2) * normalizedTime j| < ε := by
+    intro j
+    have hbase := htube j
+    have hjle : (j.val : ℝ) ≤ (n : ℝ) := by
+      exact_mod_cast Nat.le_of_lt_succ j.isLt
+    have hdrift : |drift * (j.val : ℝ)| ≤ |drift| * (n : ℝ) := by
+      have hjval : 0 ≤ (j.val : ℝ) := Nat.cast_nonneg _
+      rw [abs_mul, abs_of_nonneg hjval]
+      exact mul_le_mul_of_nonneg_left hjle (abs_nonneg _)
+    have htriangle :
+        |(s j - drift * (j.val : ℝ)) - (1 / 2) * normalizedTime j| ≤
+          |s j - (1 / 2) * normalizedTime j| + |drift * (j.val : ℝ)| := by
+      calc
+        |(s j - drift * (j.val : ℝ)) - (1 / 2) * normalizedTime j| =
+            |(s j - (1 / 2) * normalizedTime j) - drift * (j.val : ℝ)| := by ring_nf
+        _ ≤ |s j - (1 / 2) * normalizedTime j| +
+            |drift * (j.val : ℝ)| := abs_sub _ _
+    rw [removeLinearDrift]
+    dsimp [ε]
+    linarith
+  have htube' : ∀ j,
+      |removeLinearDrift drift s j - normalizedTime j / 2| < ε := by
+    intro j
+    simpa [div_eq_mul_inv, mul_comm] using htube j
+  obtain ⟨k, hcorridor⟩ :=
+    exists_offsetCorridorPath_of_linearTube_lowerEdge hn hu
+      (removeLinearDrift drift s) hremove0 hε hε16 htube'
+  refine Set.mem_iUnion.mpr ⟨k, ?_⟩
+  change finiteDriftRemovedOffsetCorridorEvent (n := n) scale drift u
+    (ProbabilityTheory.finiteCoordinateReindex (rotate k) x)
+  change offsetCorridorPath u
+    (removeLinearDrift drift
+      (finiteNormalizedStepKnots scale
+        (ProbabilityTheory.finiteCoordinateReindex (rotate k) x)))
+  have hpath :
+      removeLinearDrift drift
+        (finiteNormalizedStepKnots scale
+        (ProbabilityTheory.finiteCoordinateReindex (rotate k) x)) =
+        cyclicRotatePath (removeLinearDrift drift s) k := by
+    have hcoord : ProbabilityTheory.finiteCoordinateReindex (rotate k) x =
+        fun i => x (rotate k i) := by
+      funext i
+      exact finiteCoordinateReindex_apply (rotate k) x i
+    rw [hcoord]
+    funext j
+    change scale⁻¹ * Fin.partialSum (fun i => x (rotate k i)) j -
+        drift * (j.val : ℝ) =
+      cyclicPartialSum (removeLinearDrift drift s) k j
+    calc
+      scale⁻¹ * Fin.partialSum (fun i => x (rotate k i)) j -
+          drift * (j.val : ℝ) =
+        scale⁻¹ * cyclicPartialSum (Fin.partialSum x) k j -
+          drift * (j.val : ℝ) := by rw [hrotate x k j]
+      _ = cyclicPartialSum (removeLinearDrift drift s) k j := by
+        rw [cyclicPartialSum_removeLinearDrift]
+        change scale⁻¹ * cyclicPartialSum (Fin.partialSum x) k j -
+            drift * (j.val : ℝ) =
+          cyclicPartialSum (fun i => scale⁻¹ * Fin.partialSum x i) k j -
+            drift * (j.val : ℝ)
+        congr 1
+        exact (cyclicPartialSum_smul (Fin.partialSum x) scale⁻¹ k j).symm
+  rw [hpath]
+  exact hcorridor
+
+/-- The linear-ball cover using the concrete modular cyclic rotations. -/
+theorem finiteLinearBall_subset_cyclicOffsetCover_lowerEdge_modular
+    {n : ℕ} (hn : 0 < n) (scale drift radius u : ℝ)
+    (hradius : 0 < radius)
+    (hsmall : 2 * radius + |drift| * (n : ℝ) < 1 / 16)
+    (hu : u ∈ Set.Icc 0 (1 / 10)) :
+    finiteLinearPathBallEvent (n := n) scale (1 / 2) radius ⊆
+      ⋃ k, (ProbabilityTheory.finiteCoordinateReindex
+          (cyclicCoordinateReindex hn k)) ⁻¹'
+        finiteDriftRemovedOffsetCorridorEvent (n := n) scale drift u := by
+  exact finiteLinearBall_subset_cyclicOffsetCover_lowerEdge
+    hn scale drift radius u hradius hsmall hu
+    (fun k => cyclicCoordinateReindex hn k)
+    (cyclicCoordinateReindex_isCyclicPartialSumReindex hn)
+
+/-- A finite IID prefix has the factor-`n` cyclic-rotation estimate. -/
+theorem measure_pi_offsetCorridor_ge_div_of_linearTube
+    {n : ℕ} (hn : 0 < n) (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (scale drift radius u : ℝ)
+    (hradius : 0 < radius)
+    (hsmall : 2 * radius + |drift| * (n : ℝ) < 1 / 16)
+    (hu : u ∈ Set.Icc 0 (1 / 10))
+    (rotate : Fin n → Fin n ≃ Fin n)
+    (hrotate : IsCyclicPartialSumReindex rotate)
+    (hsafe : MeasurableSet
+      (finiteDriftRemovedOffsetCorridorEvent (n := n) scale drift u))
+    {q : ℝ≥0∞}
+    (hq : q ≤ iidSequenceLaw ν
+      {x | RandomWalk.normalizedStepCadlagPathIcc (fun _ => scale) n x ∈
+        Metric.ball (Skorokhod.linearPath (1 / 2)) radius}) :
+    q / n ≤ Measure.pi (fun _ : Fin n => ν)
+      (finiteDriftRemovedOffsetCorridorEvent (n := n) scale drift u) := by
+  have hqPi : q ≤ Measure.pi (fun _ : Fin n => ν)
+      (finiteLinearPathBallEvent (n := n) scale (1 / 2) radius) :=
+    hq.trans_eq (iidSequenceLaw_measure_linearPathBall_eq_pi
+      (n := n) ν scale (1 / 2) radius)
+  have hcover := finiteLinearBall_subset_cyclicOffsetCover_lowerEdge
+    hn scale drift radius u hradius hsmall hu rotate hrotate
+  have hbound := ProbabilityTheory.measure_pi_event_le_card_smul_of_reindexCover
+    ν (finiteLinearPathBallEvent (n := n) scale (1 / 2) radius)
+    (finiteDriftRemovedOffsetCorridorEvent (n := n) scale drift u)
+    rotate hcover hsafe
+  have hqbound : q ≤ n • Measure.pi (fun _ : Fin n => ν)
+      (finiteDriftRemovedOffsetCorridorEvent (n := n) scale drift u) :=
+    hqPi.trans hbound
+  rw [ENNReal.div_le_iff_le_mul (Or.inl (by exact_mod_cast hn.ne'))
+    (Or.inl (by simp))]
+  calc
+    q ≤ n • Measure.pi (fun _ : Fin n => ν)
+        (finiteDriftRemovedOffsetCorridorEvent (n := n) scale drift u) := hqbound
+    _ = Measure.pi (fun _ : Fin n => ν)
+        (finiteDriftRemovedOffsetCorridorEvent (n := n) scale drift u) * n := by
+          rw [nsmul_eq_mul']
+
+/-- The finite IID lower bound with the concrete modular cyclic rotation.
+There are `n` coordinate rotations and `n + 1` path knots. -/
+theorem measure_pi_offsetCorridor_ge_div_of_linearTube_modular
+    {n : ℕ} (hn : 0 < n) (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (scale drift radius u : ℝ)
+    (hradius : 0 < radius)
+    (hsmall : 2 * radius + |drift| * (n : ℝ) < 1 / 16)
+    (hu : u ∈ Set.Icc 0 (1 / 10))
+    (hsafe : MeasurableSet
+      (finiteDriftRemovedOffsetCorridorEvent (n := n) scale drift u))
+    {q : ℝ≥0∞}
+    (hq : q ≤ iidSequenceLaw ν
+      {x | RandomWalk.normalizedStepCadlagPathIcc (fun _ => scale) n x ∈
+        Metric.ball (Skorokhod.linearPath (1 / 2)) radius}) :
+    q / n ≤ Measure.pi (fun _ : Fin n => ν)
+      (finiteDriftRemovedOffsetCorridorEvent (n := n) scale drift u) := by
+  exact measure_pi_offsetCorridor_ge_div_of_linearTube
+    hn ν scale drift radius u hradius hsmall hu
+    (fun k => cyclicCoordinateReindex hn k)
+    (cyclicCoordinateReindex_isCyclicPartialSumReindex hn) hsafe hq
+
+end ProbabilityTheory.RandomWalk.SmallDeviation.Entrance
+
+end

@@ -8,10 +8,10 @@ module
 
 public import Probability.Process.Stable.SmallDeviation.Blocks.EntranceFactorization
 public import Probability.Process.Stable.SmallDeviation.Blocks.EntranceScaling
-public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.FiniteTimeEntrance
+public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.Entrance.FiniteTime
 public import Probability.Process.Stable.SmallDeviation.Blocks.Upper.Shrinking
 public import Probability.Process.Corridor.Range
-public import Analysis.Asymptotics.NegativeRatio
+public import Analysis.Asymptotics.Sequence.NegativeRatio
 import Mathlib.Topology.Compactness.Compact
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 import Mathlib.Tactic.FieldSimp
@@ -22,6 +22,27 @@ import Mathlib.Tactic.Linarith
 
 Finite covers of possible prefixH endpoints reduce the endpoint-constrained
 comparison to fixed-time entrance probabilities and independent increments.
+
+The public declarations are:
+
+- `ProbabilityTheory.IsStableLevyProcess.measure_scaled_time_fullReturn`:
+  stable time-space scaling preserves the probability of a full
+  corridor-return event.
+- `ProbabilityTheory.IsStableLevyProcess.eventually_centeredCorridorProbability_le_endpointCorridor_mul_of_cdf`:
+  under strict stability, $0<F(0)<1$, and $-1\leq c<b\leq1$, there is $D>0$
+  such that, for all sufficiently small $a>0$, the centered-corridor
+  probability is at most $D$ times the probability of staying in the wider
+  corridor and ending in $(ac,ab]$.
+- `ProbabilityTheory.IsStableLevyProcess.eventually_one_sub_le_log_corridor_div_endpointCorridor_of_cdf`:
+  for every $\delta>0$, the logarithmic ratio of those probabilities is at
+  least $1-\delta$ for all sufficiently small $a>0$.
+
+The finite-time entrance comparison used here is Mogul'skii's Lemma 2(a),
+relation (21), in A. A. Mogul'skii, “Small deviations in the sample function
+space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974), 755--765; see
+also the English translation, “Small Deviations in a Space of Trajectories,”
+*Theory of Probability and Its Applications* 19(1) (1975), 726--736, DOI
+10.1137/1119081.
 -/
 
 @[expose] public section
@@ -31,7 +52,7 @@ namespace ProbabilityTheory
 open MeasureTheory Filter
 open scoped NNReal ENNReal Topology
 
-private theorem exists_finset_open_cover_Icc
+private lemma exists_finset_open_cover_Icc
     {r : ℝ} (hr : 0 < r) :
     ∃ F : Finset {x : ℝ // x ∈ Set.Icc (-1) 1},
       ∀ z ∈ Set.Icc (-1) 1,
@@ -109,7 +130,7 @@ theorem IsStableLevyProcess.measure_scaled_time_fullReturn
   exact hscaled.trans hbase.symm
 
 
-private theorem eventually_fixed_endpoint_bin_le_target
+private lemma eventually_fixed_endpoint_bin_le_target
     {Ω : Type*} [MeasurableSpace Ω]
     {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
     {P : Measure Ω} [IsProbabilityMeasure P]
@@ -446,6 +467,9 @@ private theorem eventually_fixed_endpoint_bin_le_target
 /-- A probability-level form of the endpoint comparison. The finite-cover
 argument gives a fixed multiplicative constant between the centered corridor
 probability and the endpoint-constrained, slightly wider corridor probability.
+This derives the endpoint form from Mogul'skii's Lemma 2(a), relation (21), in
+“Small deviations in the sample function space” (1974); English translation,
+“Small Deviations in a Space of Trajectories,” DOI 10.1137/1119081.
 -/
 theorem IsStableLevyProcess.eventually_centeredCorridorProbability_le_endpointCorridor_mul_of_cdf
     {Ω : Type*} [MeasurableSpace Ω]
@@ -643,11 +667,16 @@ theorem IsStableLevyProcess.eventually_centeredCorridorProbability_le_endpointCo
   exact ⟨D, hD, by
     simpa [q, e, endpointTargetEvent] using hbound⟩
 
-/-- The endpoint-constrained comparison in Mogulskii's Lemma 2. For any
+/-- The endpoint-constrained comparison derived from Mogul'skii's Lemma 2(a),
+relation (21). For any
 `-1 ≤ c < b ≤ 1`, the logarithm of the centered corridor probability is no
 larger than the endpoint-constrained, slightly wider corridor logarithm up
-to a fixed additive constant. The endpoint window retains the source's
-left-open, right-closed convention. -/
+to a fixed additive constant. The endpoint window retains the left-open,
+right-closed convention. See A. A. Mogul'skii, “Small deviations in the
+sample function space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974),
+755--765; English translation, “Small Deviations in a Space of Trajectories,”
+*Theory of Probability and Its Applications* 19(1) (1975), 726--736, DOI
+10.1137/1119081. -/
 theorem IsStableLevyProcess.eventually_one_sub_le_log_corridor_div_endpointCorridor_of_cdf
     {Ω : Type*} [MeasurableSpace Ω]
     {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}

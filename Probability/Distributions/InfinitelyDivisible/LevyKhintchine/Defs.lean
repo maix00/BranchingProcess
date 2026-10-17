@@ -10,7 +10,7 @@ module
 
 public import Probability.Distributions.InfinitelyDivisible.Basic
 public import Probability.Distributions.InfinitelyDivisible.LevyKhintchine.Integrand
-public import MeasureTheory.Measure.LevyMeasure
+public import MeasureTheory.Measure.Levy.Basic
 
 /-!
 # Lévy-Khintchine Data

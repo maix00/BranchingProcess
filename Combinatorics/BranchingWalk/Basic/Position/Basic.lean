@@ -1,0 +1,80 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
+module
+
+public import Combinatorics.BranchingWalk.Basic.Position.DisplacementMap
+public import Combinatorics.BranchingWalk.StepField
+
+/-!
+# Positions
+
+The position of an address in a walk is the initial position of its root plus
+the displacement along the address, so it is read off the walk's own data:
+`RootIndexed.BranchingWalk.position β r u`. The displacement itself is the
+address-carrying recursion of `Basic/Position/Displace.lean`, which carries the current
+address instead of reconstructing it from a list index.
+-/
+
+@[expose] public section
+
+namespace Combinatorics
+
+namespace Branching
+
+open Combinatorics.UlamHarris
+
+namespace RootIndexed
+
+/-- The position of an address: start in `Position`, map every edge mark
+through `d`, and add the resulting increments. The mark space needs no
+algebraic structure. -/
+def BranchingWalk.position {Root α Mark Position : Type*}
+    [AddCommMonoid Position] (d : Mark → Position)
+    (β : RootIndexed.BranchingWalk Root α Mark Position)
+    (r : Root) (u : TreeNode α) : Position :=
+  β.initial r + displaceWith d (β.step r) [] u
+
+/-- Position recursion at one child.  The increment is read from the mapped
+step, so this statement does not require any algebraic structure on the raw
+mark type or require an arbitrary mark map to preserve a distinguished zero. -/
+theorem BranchingWalk.position_child {Root α Mark Position : Type*}
+    [AddCommMonoid Position] (d : Mark → Position)
+    (β : RootIndexed.BranchingWalk Root α Mark Position)
+    (r : Root) (u : TreeNode α) (i : α) :
+    β.position d r (u ++ [i]) =
+      β.position d r u + value' ((β.step r u).map d) i := by
+  simp only [BranchingWalk.position, displaceWith]
+  rw [displace_append_singleton, add_assoc]
+  simp only [StepField.map_apply]
+
+@[simp] theorem BranchingWalk.position_id
+    {Root α X : Type*} [AddCommMonoid X]
+    (β : RootIndexed.BranchingWalk Root α X X)
+    (r : Root) (u : TreeNode α) :
+    β.position id r u = β.initial r + displace (β.step r) [] u := by
+  simp [BranchingWalk.position]
+
+/-- An additive scalar potential may be applied after constructing an
+abstract position, or to the initial position and every raw edge mark before
+the path is accumulated. -/
+theorem BranchingWalk.potential_position
+    {Root α Mark Position : Type*} [MeasurableSpace Position]
+    [AddCommMonoid Position]
+    (φ : AdditivePotential Position) (d : Mark → Position)
+    (β : RootIndexed.BranchingWalk Root α Mark Position)
+    (r : Root) (u : TreeNode α) :
+    φ (β.position d r u) =
+      φ (β.initial r) + displaceWith (φ ∘ d) (β.step r) [] u := by
+  rw [BranchingWalk.position, φ.map_add, φ.map_displaceWith]
+
+end RootIndexed
+
+end Branching
+
+end Combinatorics
+
+end

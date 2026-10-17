@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Analysis.Asymptotics.RegularVariation
+public import Analysis.Asymptotics.RegularVariation.Basic
 public import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
 public import Mathlib.MeasureTheory.Integral.DominatedConvergence
 public import Mathlib.MeasureTheory.Constructions.BorelSpace.Order
@@ -277,7 +277,7 @@ theorem IsRegularlyVaryingAtTop.tendsto_intervalIntegral_div_mul_of_antitone
     exact (hchange U hU).symm
   exact hlimitIntegral.congr' heq.symm
 
-private theorem exists_pow_two_bracket (s : ℝ) (hs : 1 ≤ s) :
+private lemma exists_pow_two_bracket (s : ℝ) (hs : 1 ≤ s) :
     ∃ k : ℕ, (2 : ℝ) ^ k ≤ s ∧ s < (2 : ℝ) ^ (k + 1) := by
   have hpow : Tendsto (fun n : ℕ => (2 : ℝ) ^ n) atTop atTop :=
     tendsto_pow_atTop_atTop_of_one_lt (by norm_num)

@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.Kernel.Killed
+public import Probability.Process.RandomWalk.Kernel.Killed.Basic
 
 /-!
 # Comparison of killed-walk survival masses

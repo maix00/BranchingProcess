@@ -28,7 +28,7 @@ namespace Skorokhod
 
 namespace TimeChange
 
-private theorem cumulative_dist_le_exp_tail
+private lemma cumulative_dist_le_exp_tail
     (clocks : ℕ → TimeChange) (error : ℕ → ℝ≥0)
     (hstep : ∀ n, (clocks n).logDistortion ≤ error n)
     (herror : Summable error)

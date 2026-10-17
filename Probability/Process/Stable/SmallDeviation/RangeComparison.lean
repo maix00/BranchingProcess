@@ -8,7 +8,7 @@ module
 
 public import Probability.Process.Corridor.Range
 public import Probability.Process.Stable.SmallDeviation.ShiftedCorridor
-public import Analysis.Asymptotics.LogSum
+public import Analysis.Asymptotics.Sequence.LogSum
 public import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 
 /-!
@@ -17,6 +17,28 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 This module proves the two logarithmic comparisons in Mogulskii's range
 comparison. The range event is the rational-coordinate event of the original
 process; almost-sure càdlàg paths connect it to full-segment corridors.
+
+The public declarations are:
+
+- `ProbabilityTheory.centeredCorridorProbability_le_rationalRangeProbability`
+  and `ProbabilityTheory.rationalRangeProbability_le_centeredCorridorProbability_double`:
+  the centered-corridor and rational-range events give the corresponding
+  probability comparisons, with the second using càdlàg paths.
+- `ProbabilityTheory.IsStableLevyProcess.eventually_one_le_log_corridor_div_log_range_of_cdf`
+  and `ProbabilityTheory.IsStableLevyProcess.eventually_one_le_log_corridor_div_log_range_of_measure_Iio_zero`:
+  for small $a>0$, $1\leq \log q(a)/\log r(a)$, where $q(a)$ is the centered
+  corridor probability and $r(a)$ the rational-range probability.
+- `ProbabilityTheory.IsStableLevyProcess.eventually_one_sub_le_log_range_div_log_corridor_of_cdf`
+  and `ProbabilityTheory.IsStableLevyProcess.eventually_one_sub_le_log_range_div_log_corridor_of_measure_Iio_zero`:
+  for every $\delta>0$, $1-\delta\leq \log r(a)/\log q_{1+\varepsilon}(a)$
+  for sufficiently small $a>0$, where $q_{1+\varepsilon}(a)$ is the
+  probability of staying in $[-(1+\varepsilon)a,(1+\varepsilon)a]$.
+
+The logarithmic comparisons formalize Lemma 2(b) of A. A. Mogul'skii, “Small
+deviations in the sample function space,” *Teoriya Veroyatnostei i ee
+Primeneniya* 19(4) (1974), 755--765; see also the English translation, “Small
+Deviations in a Space of Trajectories,” *Theory of Probability and Its
+Applications* 19(1) (1975), 726--736, DOI 10.1137/1119081.
 -/
 
 @[expose] public section
@@ -52,7 +74,11 @@ theorem rationalRangeProbability_le_centeredCorridorProbability_double
   exact mem_rationalHorizonTubeEvent_imp_fullSegmentCorridorEvent
     X (2 * a) ω hω
 
-/-- The left range comparison in Lemma 2(b): its logarithmic ratio is
+/-- The left range comparison in Lemma 2(b) of A. A. Mogul'skii, “Small
+deviations in the sample function space,” *Teoriya Veroyatnostei i ee
+Primeneniya* 19(4) (1974), 755--765; English translation, “Small Deviations
+in a Space of Trajectories,” *Theory of Probability and Its Applications*
+19(1) (1975), 726--736, DOI 10.1137/1119081. Its logarithmic ratio is
 eventually at least one. -/
 theorem IsStableLevyProcess.eventually_one_le_log_corridor_div_log_range_of_cdf
     {Ω : Type*} [MeasurableSpace Ω]
@@ -122,7 +148,11 @@ theorem IsStableLevyProcess.eventually_one_le_log_corridor_div_log_range_of_cdf
   have hlogle := Real.log_le_log hqpos' (by exact_mod_cast hqle : (q a).toReal ≤ (r a).toReal)
   exact (le_div_iff_of_neg hlogneg).2 (by simpa using hlogle)
 
-/-- The right range comparison in Lemma 2(b). The finite translated cover is
+/-- The right range comparison in Lemma 2(b) of A. A. Mogul'skii, “Small
+deviations in the sample function space,” *Teoriya Veroyatnostei i ee
+Primeneniya* 19(4) (1974), 755--765; English translation, “Small Deviations
+in a Space of Trajectories,” *Theory of Probability and Its Applications*
+19(1) (1975), 726--736, DOI 10.1137/1119081. The finite translated cover is
 normalized to the half-width-one form required by relation (21), then the
 fixed finite-sum cost is absorbed at the diverging logarithmic scale. -/
 theorem IsStableLevyProcess.eventually_one_sub_le_log_range_div_log_corridor_of_cdf
@@ -328,8 +358,12 @@ theorem IsStableLevyProcess.eventually_one_sub_le_log_range_div_log_corridor_of_
     linarith
   simpa [q, w] using ha'
 
-/-- The source's strict left-half-line mass condition is an equivalent public
-entry for the right range comparison. -/
+/-- Mogul'skii's strict left-half-line mass condition gives an equivalent
+public entry for the right range comparison in Lemma 2(b) of A. A. Mogul'skii,
+“Small deviations in the sample function space,” *Teoriya Veroyatnostei i ee
+Primeneniya* 19(4) (1974), 755--765; English translation, “Small Deviations
+in a Space of Trajectories,” *Theory of Probability and Its Applications*
+19(1) (1975), 726--736, DOI 10.1137/1119081. -/
 theorem IsStableLevyProcess.eventually_one_sub_le_log_range_div_log_corridor_of_measure_Iio_zero
     {Ω : Type*} [MeasurableSpace Ω]
     {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
@@ -344,7 +378,11 @@ theorem IsStableLevyProcess.eventually_one_sub_le_log_range_div_log_corridor_of_
     (h.increments.strictlyStable.cdfAtZero_condition_of_strictLeftMass hleft)
     ε hε δ hδ
 
-/-- The left comparison also accepts the source's strict left-half-line mass
+/-- The left comparison in Lemma 2(b) of A. A. Mogul'skii, “Small deviations
+in the sample function space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4)
+(1974), 755--765; English translation, “Small Deviations in a Space of
+Trajectories,” *Theory of Probability and Its Applications* 19(1) (1975),
+726--736, DOI 10.1137/1119081, also accepts the strict left-half-line mass
 condition directly. -/
 theorem IsStableLevyProcess.eventually_one_le_log_corridor_div_log_range_of_measure_Iio_zero
     {Ω : Type*} [MeasurableSpace Ω]

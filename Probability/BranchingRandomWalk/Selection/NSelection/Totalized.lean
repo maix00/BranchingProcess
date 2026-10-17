@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.BranchingRandomWalk.Selection.NSelection.Admissible
+public import Probability.BranchingRandomWalk.Selection.NSelection.Admissible.Basic
 
 /-!
 # Totalized first-N selection

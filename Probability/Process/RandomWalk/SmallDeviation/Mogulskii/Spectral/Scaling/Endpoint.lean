@@ -6,8 +6,8 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Asymptotics
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.SurvivalBounds
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Rate.Asymptotics
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Survival.Bounds
 
 /-!
 # Endpoint-prefactor spectral limits
