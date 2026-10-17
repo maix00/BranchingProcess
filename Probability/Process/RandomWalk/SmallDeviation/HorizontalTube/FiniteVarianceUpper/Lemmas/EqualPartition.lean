@@ -8,7 +8,7 @@ module
 
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.Horizontal.Basic
 public import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
-public import Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.FiniteVarianceUpper.Partition.Parameters
+public import Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.FiniteVarianceUpper.Lemmas.Partition.Parameters
 
 /-!
 # Equal-partition inputs for the horizontal-tube upper bound

@@ -13,7 +13,7 @@ public import Mathlib.Analysis.Complex.Exponential
 public import Probability.Process.Filtration.ConditionalBlocks
 public import Probability.Sequence.IID.Basic
 public import Probability.Process.RandomWalk.Path.Adapted.Filtration
-public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.JumpPattern.Basic
+public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.JumpPattern.Basic
 import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.JumpPattern.Setup
 import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.ConditionalBlocks
 

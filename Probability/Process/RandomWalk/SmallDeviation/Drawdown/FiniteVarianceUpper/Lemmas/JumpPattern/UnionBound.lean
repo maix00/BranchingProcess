@@ -12,7 +12,7 @@ public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
 public import Probability.Process.Filtration.ConditionalBlocks
 public import Probability.Sequence.IID.Basic
 public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.Event
-public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.JumpPattern.Basic
+public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.JumpPattern.Basic
 import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.JumpPattern.Geometry
 import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.JumpPattern.Probability
 import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.JumpPattern.Setup

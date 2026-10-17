@@ -9,9 +9,9 @@ module
 public import Mathlib.Basic.Real.Basic
 public import Mathlib.Data.Finset.Defs
 public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
-public import Probability.Process.RandomWalk.Path.Event.Drawdown
-public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.DiscretizedMaximum
-public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.JumpPattern.Basic
+public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.JumpPattern.SpatialBins
+public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.JumpPattern.DiscretizedMaximum
+public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.JumpPattern.Basic
 public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.TubeEvent
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.Horizontal.Basic
 import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.ConditionalBlocks

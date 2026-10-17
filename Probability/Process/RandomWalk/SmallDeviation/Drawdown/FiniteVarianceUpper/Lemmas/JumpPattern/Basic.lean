@@ -9,23 +9,23 @@ module
 public import Mathlib.Basic.Real.Basic
 public import Mathlib.Data.Finset.Defs
 public import Probability.Process.Filtration.ConditionalBlocks
-public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.DiscretizedMaximum
+public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.JumpPattern.DiscretizedMaximum
 public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.TubeEvent
 
 /-!
-# Events and factors for a fixed drawdown jump pattern
+# Jump-pattern constructions for the Lemma 3.3 proof
 
-The public constructions are:
+The internal constructions used by the proof are:
 
 - `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.drawdownJumpPatternTubeIntersection`:
-  the intersection of the selected block events over a finite horizon.
+  $\bigcap_{n<q}E_{J,n}$, the intersection over all blocks.
 - `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.drawdownAdmissibleJumpPatterns`:
-  the finite family of subsets of block indices with at most $K$ jumps.
+  $\{J\subseteq\operatorname{Fin}(q):|J|\le K\}$.
 - `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.drawdownJumpPatternTubeEvent`:
-  on each non-jump block, the path stays in the tube centered at the rounded
-  running maximum; jump blocks are unrestricted.
+  $E_{J,n}=\Omega$ for $n\in J$ and the rounded-maximum tube event for
+  $n<q$ with $n\notin J$; $E_{J,n}=\Omega$ for $n\ge q$.
 - `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.drawdownJumpPatternBound`:
-  the factor is $p$ on each non-jump block and $1$ on each jump block.
+  $b_{J,n}=1$ for $n\in J$ and $b_{J,n}=p$ otherwise.
 
 These constructions encode the discretized-maximum decomposition in Wang
 Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite

@@ -11,9 +11,9 @@ public import Mathlib.Algebra.Order.Floor.Semiring
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
 /-!
-# Equal-partition parameters
+# Parameters for the Lemma 3.2 partition proof
 
-The public definitions in this file are:
+The definitions used by the internal equal-partition proof are:
 
 - `ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube.partitionTubeParameter`:
   $\alpha_{m,k}=(1-k/m)/(1+1/m)$.
