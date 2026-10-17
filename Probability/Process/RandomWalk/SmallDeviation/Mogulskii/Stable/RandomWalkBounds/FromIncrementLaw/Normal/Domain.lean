@@ -22,8 +22,10 @@ The public declarations in this module are:
 - `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.RawNormalSourceRateData`:
   packages a Gaussian limit variance $v>0$, spatial factor $q>0$ and time
   factor $d=q^2=v^{-1}$ with $q^2v=1$ and $dC_{\mathrm{source}}=-\pi^2/8$;
-  for every finite corridor union $C_3$, it records the corresponding
-  logarithmic probability rate $\kappa\,\mathcal E(C_3)$, where
+  for every finite corridor union $C_3$, it records
+  $\frac{\log\mathbb P_\nu(X_n\in C_3)}{D_n}\to
+  \kappa\,\mathcal E(C_3)$, where $X_n$ is the source-normalized step path,
+  $D_n=\operatorname{probabilityRateDenominator}(2,\nu,\mathrm{scale},n)$, and
   $\kappa=\operatorname{rateCoefficient}(2,dC_{\mathrm{source}})$.
 - `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.rawNormalSourceRateData_of_rawSource`:
   constructs this rate data from a strictly $2$-stable Gaussian limit and
@@ -32,8 +34,9 @@ The public declarations in this module are:
 - `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.RawNormalSourceRateData.relativePathClassRate`:
   if a path class $G$ has a relative vanishing-energy-gap approximation, then
   there is a unique $H\in\mathbb R$ equal to its path-class energy for which
-  the inner measure and probability of the source-normalized path class both
-  have logarithmic rate $\kappa H$.
+  $\frac{\log\mathbb P_\nu(X_n\in G)}{D_n}\to\kappa H$ and
+  $\frac{\log\mathbb P_{\nu,*}(X_n\in G)}{D_n}\to\kappa H$, where
+  $\mathbb P_{\nu,*}$ denotes inner measure under $\mathbb P_\nu$.
 - `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.rawNormalSourceRateData_of_centered_unitVariance`:
   specializes the construction to centered unit-variance increments with
   norming scale $\sqrt n$.
