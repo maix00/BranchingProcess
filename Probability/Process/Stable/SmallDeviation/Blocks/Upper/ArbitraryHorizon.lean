@@ -16,6 +16,21 @@ import Mathlib.Analysis.SpecialFunctions.Pow.Real
 The uniform partition theorem uses blocks of length `1 / n`. Stable scaling
 compares that block with any shorter prescribed horizon, so the bound applies
 to the stated exponent `⌊1 / c⌋₊` without identifying `c` with `1 / n`.
+
+The public declarations are:
+
+- `ProbabilityTheory.IsStableLevyProcess.measure_rationalTube_le_pow_shorterHorizon`:
+  if $t\leq 1/m$, then $P(T_1(w))\leq P(T_t(w))^m$.
+- `ProbabilityTheory.IsStableLevyProcess.measure_rationalTube_le_pow_floor_inv_horizon`:
+  for $0<c\leq1$, $P(T_1(2a))\leq P(T_c(2a))^{\lfloor1/c\rfloor}$.
+- `ProbabilityTheory.IsStableLevyProcess.measure_fullCorridor_le_pow_floor_inv_horizon`:
+  the same power bound holds for a complete-path corridor event at unit time.
+
+The rational-coordinate power bound is Lemma 2(c), equation (23), of A. A. Mogul'skii,
+“Small deviations in the sample function space,” *Teoriya Veroyatnostei i ee
+Primeneniya* 19(4) (1974), 755--765; see also the English translation,
+“Small Deviations in a Space of Trajectories,” *Theory of Probability and Its
+Applications* 19(1) (1975), 726--736, DOI 10.1137/1119081.
 -/
 
 @[expose] public section
@@ -85,8 +100,11 @@ theorem IsStableLevyProcess.measure_rationalTube_le_pow_shorterHorizon
     exact measure_mono hmono
   exact hupper'.trans (pow_le_pow_left' hprob blocks)
 
-/-- Lemma 2(c), equation (23), with its stated exponent
-`⌊1 / c⌋₊`. -/
+/-- Lemma 2(c), equation (23), with its stated exponent `⌊1 / c⌋₊`, in
+A. A. Mogul'skii, “Small deviations in the sample function space,” *Teoriya
+Veroyatnostei i ee Primeneniya* 19(4) (1974), 755--765; English translation,
+“Small Deviations in a Space of Trajectories,” *Theory of Probability and Its
+Applications* 19(1) (1975), 726--736, DOI 10.1137/1119081. -/
 theorem IsStableLevyProcess.measure_rationalTube_le_pow_floor_inv_horizon
     {Ω : Type*} [MeasurableSpace Ω]
     {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
@@ -122,8 +140,12 @@ theorem IsStableLevyProcess.measure_rationalTube_le_pow_floor_inv_horizon
   simpa [blocks] using h.measure_rationalTube_le_pow_shorterHorizon
     blocks hblocks ⟨c, hc.le⟩ hc hshorter (2 * a) (by positivity)
 
-/-- The complete-path left corridor in (23) is bounded by the short-horizon
-range event with the original path-set semantics. -/
+/-- The complete-path left corridor is bounded by the short-horizon
+rational-coordinate event. This follows from Lemma 2(c), equation (23), of
+A. A. Mogul'skii, “Small deviations in the sample function space,” *Teoriya
+Veroyatnostei i ee Primeneniya* 19(4) (1974), 755--765; English translation,
+“Small Deviations in a Space of Trajectories,” *Theory of Probability and Its
+Applications* 19(1) (1975), 726--736, DOI 10.1137/1119081. -/
 theorem IsStableLevyProcess.measure_fullCorridor_le_pow_floor_inv_horizon
     {Ω : Type*} [MeasurableSpace Ω]
     {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}

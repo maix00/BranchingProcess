@@ -5,7 +5,7 @@ Authors: Codex
 -/
 module
 
-public import Analysis.Asymptotics.RegularVariation
+public import Analysis.Asymptotics.RegularVariation.Basic
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 public import Mathlib.Analysis.SpecialFunctions.Pow.Deriv
 
@@ -24,7 +24,7 @@ open scoped Topology
 
 namespace Asymptotics
 
-private theorem rpow_slope_right_one (ρ : ℝ) :
+private lemma rpow_slope_right_one (ρ : ℝ) :
     Tendsto (fun δ : ℝ => ((1 + δ) ^ ρ - 1) / δ)
       (𝓝[>] (0 : ℝ)) (nhds ρ) := by
   have hderiv : HasDerivAt (fun x : ℝ => x ^ ρ) ρ 1 := by
