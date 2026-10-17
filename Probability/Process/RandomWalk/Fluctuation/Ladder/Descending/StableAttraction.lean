@@ -19,7 +19,6 @@ under the finite-time hypothesis this exceptional value has probability
 zero. For a probability measure $\mu$ on increment paths, write
 $\mathbb P_\mu$ for path probabilities. The public definitions and theorems
 in this file are:
-The public definitions and theorems in this file are:
 
 - `ProbabilityTheory.RandomWalk.firstDescendingLadderTimeValue`:
   the real value of $T^-_1$, with the exceptional value $\infty$ sent to zero.
