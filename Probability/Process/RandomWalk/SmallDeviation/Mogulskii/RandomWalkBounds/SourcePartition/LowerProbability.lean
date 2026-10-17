@@ -6,9 +6,36 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.SourcePartition.LowerGeometry
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.SourcePartition.Events
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.Partition.LowerProbability
-/-! # Lower probability bounds for source-convention corridors -/
+import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.SourcePartition.Lemmas.LowerGeometry
+/-!
+# Lower probability bounds for source-convention corridors
+
+For a finite common partition, write $\mathbb P_\nu=\operatorname{iidSequenceLaw}(\nu)$,
+let $\ell_i(n)$ be the source cell length, and put
+$p_i(n)=\sum_{j<i}\ell_j(n)$. Let $\mathcal E_{i,n}$ be the
+`partitionCellCoreReturnBlockEvent` for source cell $i$ with the boundary and
+core parameters scaled by $s_n$, and set
+$E_{i,n}=\{\xi:(\xi_{p_i(n)+r})_{r<\ell_i(n)}\in\mathcal E_{i,n}\}$.
+The declarations in
+`ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Discrete` are:
+
+- `iidSequenceLaw_sourceNormalizedStepCorridor_ge_prod_partitionCellCoreReturnProbability`:
+  the product of the one-cell probabilities bounds the probability of the
+  full source-convention strict corridor from below:
+  $\prod_i\mathbb P_\nu(E_{i,n})\le
+  \mathbb P_\nu(Y_n^{\mathrm{src}}\in\operatorname{corridorSet}(U,L))$.
+- `eventually_iidSequenceLaw_sourceNormalizedStepCorridor_ge_prod_of_partitionCellCoreReturnBounds`:
+  if each local probability has an eventual lower bound $p_{i,n}$ and the
+  scale is eventually positive, then eventually
+  $\prod_i p_{i,n}\le
+  \mathbb P_\nu(Y_n^{\mathrm{src}}\in\operatorname{corridorSet}(U,L))$.
+
+The definitions of $E_{i,n}$ and the conditions on the knot cores and local
+corridors are those in the sibling `Endpoint.lean` and `LowerGeometry.lean`
+modules.
+-/
 
 @[expose] public section
 
