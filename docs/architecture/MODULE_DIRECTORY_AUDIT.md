@@ -146,6 +146,20 @@ Targeted declaration-list checks found every public declaration in these
 modules represented in its module docstring. The corresponding modules build
 with the pinned Lean toolchain.
 
+A broader lexical scan of the 1,444 production modules found 8,514 top-level
+declarations matching its declaration patterns and 1,123 modules with at
+least one matched declaration name absent from the module docstring. This is
+a candidate count rather than a completed audit: the scanner does not parse
+Lean syntax, can miss declarations introduced through attributes or commands,
+and cannot assess whether a mathematical formula and its assumptions are
+described accurately. The first manually reviewed batch adds formula-bearing
+lists to `Combinatorics/Sequence/Block.lean`,
+`Algebra/BigOperators/AdditivePath/Block.lean`,
+`Algebra/Order/BigOperators/AdditivePath.lean`,
+`Algebra/Order/BigOperators/WeightedSum.lean`, and
+`Order/SetDissipate.lean`. The rest of the candidate modules remain to be
+reviewed by semantic family.
+
 ## Citation audit
 
 The production Lean source scan found no generic `the paper` or `the thesis`
