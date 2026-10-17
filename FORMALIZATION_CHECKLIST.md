@@ -13,7 +13,7 @@ The LaTeX proof is not counted as a Lean proof.
   original, and Theorem 4, Section 5, in “Small deviations in the sample
   function space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974),
   755–765; English translation, “Small Deviations in a Space of Trajectories,”
-  *Theory of Probability and Its Applications* 19(1) (1975), 726–736, DOI
+  *Theory of Probability and Its Applications* 19(4) (1975), 726–736, DOI
   10.1137/1119081.
 - E. Bolthausen, *On a Functional Central Limit Theorem for Random Walks
   Conditioned to Stay Positive*, Theorem 3.2 and Lemma 2.3, *The Annals of

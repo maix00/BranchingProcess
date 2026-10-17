@@ -30,7 +30,7 @@ Yueyun Hu, *Average-weight percolation on the complete graph*, Lemma 4.1
 p. 764 of A. A. Mogul'skii, “Small deviations in the sample function space,”
 *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974), 755--765; English
 translation, “Small Deviations in a Space of Trajectories,” *Theory of
-Probability and Its Applications* 19(1) (1975), 726--736, DOI 10.1137/1119081.
+Probability and Its Applications* 19(4) (1975), 726--736, DOI 10.1137/1119081.
 
 - `ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube.horizontalTubeProbability_le_exp_of_finiteVariance_withRemainder`:
   $\mathbb P(T_{a,\Delta,L})\le
@@ -65,7 +65,7 @@ Lemma 4.1 (2025, arXiv:2512.23266). The one-block rate is Theorem 3,
 Section 4, p. 764 of A. A. Mogul'skii, “Small deviations in the sample
 function space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974),
 755--765; English translation, “Small Deviations in a Space of Trajectories,”
-*Theory of Probability and Its Applications* 19(1) (1975), 726--736, DOI
+*Theory of Probability and Its Applications* 19(4) (1975), 726--736, DOI
 10.1137/1119081. -/
 theorem horizontalTubeProbability_le_exp_of_finiteVariance_withRemainder
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
@@ -171,7 +171,7 @@ Lemma 4.1 (2025, arXiv:2512.23266); its one-block rate is Theorem 3, Section 4,
 p. 764 of A. A. Mogul'skii, “Small deviations in the sample function space,”
 *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974), 755--765; English
 translation, “Small Deviations in a Space of Trajectories,” *Theory of
-Probability and Its Applications* 19(1) (1975), 726--736, DOI 10.1137/1119081.
+Probability and Its Applications* 19(4) (1975), 726--736, DOI 10.1137/1119081.
 -/
 theorem horizontalTubeProbability_le_exp_of_finiteVariance
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
@@ -196,7 +196,7 @@ the complete graph*, Lemma 4.1 (2025, arXiv:2512.23266). The block rate is
 Theorem 3, Section 4, p. 764 of A. A. Mogul'skii, “Small deviations in the
 sample function space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974),
 755--765; English translation, “Small Deviations in a Space of Trajectories,”
-*Theory of Probability and Its Applications* 19(1) (1975), 726--736, DOI
+*Theory of Probability and Its Applications* 19(4) (1975), 726--736, DOI
 10.1137/1119081. -/
 theorem iidSequenceLaw_intervalProbability_le_exp_of_finiteVariance_withRemainder
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
@@ -247,7 +247,7 @@ arXiv:2512.23266); the rate is Theorem 3, Section 4, p. 764 of A. A.
 Mogul'skii, “Small deviations in the sample function space,” *Teoriya
 Veroyatnostei i ee Primeneniya* 19(4) (1974), 755--765; English translation,
 “Small Deviations in a Space of Trajectories,” *Theory of Probability and Its
-Applications* 19(1) (1975), 726--736, DOI 10.1137/1119081. -/
+Applications* 19(4) (1975), 726--736, DOI 10.1137/1119081. -/
 theorem iidSequenceLaw_intervalProbability_le_exp_of_finiteVariance
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (hcentered : ∫ x, x ∂ν = 0)

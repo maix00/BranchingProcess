@@ -27,7 +27,7 @@ private. This is an internal step toward the horizontal-tube constant in
 A. A. Mogul'skii, “Small deviations in the sample function space,” Theorem 3,
 Section 4, p. 764, *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974),
 755--765; see also the English translation, “Small Deviations in a Space of
-Trajectories,” *Theory of Probability and Its Applications* 19(1) (1975),
+Trajectories,” *Theory of Probability and Its Applications* 19(4) (1975),
 726--736, DOI 10.1137/1119081. The conclusion is used for Wang Yiyang,
 *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*
 (master's thesis, Fudan University, 2026), Chapter 3, Lemma 3.1(i).

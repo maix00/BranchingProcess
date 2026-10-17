@@ -30,7 +30,7 @@ The rational-coordinate power bound is Lemma 2(c), equation (23), of A. A. Mogul
 “Small deviations in the sample function space,” *Teoriya Veroyatnostei i ee
 Primeneniya* 19(4) (1974), 755--765; see also the English translation,
 “Small Deviations in a Space of Trajectories,” *Theory of Probability and Its
-Applications* 19(1) (1975), 726--736, DOI 10.1137/1119081.
+Applications* 19(4) (1975), 726--736, DOI 10.1137/1119081.
 -/
 
 @[expose] public section
@@ -104,7 +104,7 @@ theorem IsStableLevyProcess.measure_rationalTube_le_pow_shorterHorizon
 A. A. Mogul'skii, “Small deviations in the sample function space,” *Teoriya
 Veroyatnostei i ee Primeneniya* 19(4) (1974), 755--765; English translation,
 “Small Deviations in a Space of Trajectories,” *Theory of Probability and Its
-Applications* 19(1) (1975), 726--736, DOI 10.1137/1119081. -/
+Applications* 19(4) (1975), 726--736, DOI 10.1137/1119081. -/
 theorem IsStableLevyProcess.measure_rationalTube_le_pow_floor_inv_horizon
     {Ω : Type*} [MeasurableSpace Ω]
     {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
@@ -145,7 +145,7 @@ rational-coordinate event. This follows from Lemma 2(c), equation (23), of
 A. A. Mogul'skii, “Small deviations in the sample function space,” *Teoriya
 Veroyatnostei i ee Primeneniya* 19(4) (1974), 755--765; English translation,
 “Small Deviations in a Space of Trajectories,” *Theory of Probability and Its
-Applications* 19(1) (1975), 726--736, DOI 10.1137/1119081. -/
+Applications* 19(4) (1975), 726--736, DOI 10.1137/1119081. -/
 theorem IsStableLevyProcess.measure_fullCorridor_le_pow_floor_inv_horizon
     {Ω : Type*} [MeasurableSpace Ω]
     {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}

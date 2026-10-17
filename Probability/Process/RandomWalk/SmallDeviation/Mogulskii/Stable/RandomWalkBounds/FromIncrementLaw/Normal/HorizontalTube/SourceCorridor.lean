@@ -26,7 +26,7 @@ Lemma 3.1(ii). Mogul'skii's article is
 “Small deviations in the sample function space,” *Teoriya Veroyatnostei i ee
 Primeneniya* 19(4) (1974), 755--765; its English translation is “Small
 Deviations in a Space of Trajectories,” *Theory of Probability and Its
-Applications* 19(1) (1975), 726--736, DOI 10.1137/1119081.
+Applications* 19(4) (1975), 726--736, DOI 10.1137/1119081.
 -/
 
 open Filter MeasureTheory ProbabilityTheory

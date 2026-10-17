@@ -35,7 +35,7 @@ of A. A. Mogul'skii, Theorem 3, Section 4, p. 764 of the 1974 Russian
 original, “Small deviations in the sample function space,” *Teoriya
 Veroyatnostei i ee Primeneniya* 19(4) (1974), 755–765; English translation,
 “Small Deviations in a Space of Trajectories,” *Theory of Probability and Its
-Applications* 19(1) (1975), 726–736, DOI 10.1137/1119081.
+Applications* 19(4) (1975), 726–736, DOI 10.1137/1119081.
 -/
 
 open Filter MeasureTheory ProbabilityTheory

@@ -34,7 +34,7 @@ This is an internal spectral derivation of the constant in A. A. Mogul'skii,
 Theorem 3, Section 4, p. 764 of the 1974 Russian original, “Small deviations
 in the sample function space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4)
 (1974), 755–765; English translation, “Small Deviations in a Space of
-Trajectories,” *Theory of Probability and Its Applications* 19(1) (1975),
+Trajectories,” *Theory of Probability and Its Applications* 19(4) (1975),
 726–736, DOI 10.1137/1119081. This is the rate input used in Wang Yiyang,
 *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
 Chapter 3, Lemma 3.1(i).
