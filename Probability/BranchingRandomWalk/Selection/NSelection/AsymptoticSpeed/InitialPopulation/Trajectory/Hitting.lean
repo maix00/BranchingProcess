@@ -4,7 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Selection.NSelection.AsymptoticSpeed.InitialPopulation.Basic
+import Probability.BranchingProcess.Offspring.Count
+import Mathlib.Probability.BorelCantelli
 import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.Minimum.Address
 import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Roots.Nonempty
 import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.SelectedSubtrees.SelectedFamily
@@ -18,6 +19,39 @@ population. Its offspring mark is therefore an adaptive, predictable sample
 from the root-indexed environment. The fresh-mark law and positive split
 probability combine with a pathwise cardinality argument to prove that the
 actual selected population reaches capacity in finite time almost surely.
+
+The public declarations are:
+
+- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Speed.smallInitialPopulation`:
+  the first-$N$ selected particles among $m$ initial roots at generation $n$.
+- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Speed.smallInitialActiveAddress`:
+  an address chosen from the nonempty population, with a depth-$n$ fallback
+  otherwise.
+- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Speed.smallInitialActiveAddress_depth`:
+  the chosen address has generation depth $n$.
+- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Speed.measurable_smallInitialActiveAddress`:
+  the chosen address is measurable with respect to the generation-$n$ field.
+- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Speed.smallInitialActiveMark`:
+  the offspring mark sampled at that selected address.
+- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Speed.measurable_smallInitialActiveMark_at_succ`:
+  this mark is measurable after generation $n$ is revealed.
+- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Speed.smallInitialActiveSplitEvent`:
+  for $h_m:0<m$, the event
+  $\{\omega:2\le\operatorname{childCount}(\operatorname{smallInitialActiveMark}(m,N,n,h_m,\omega))\}$.
+- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Speed.measurableSet_smallInitialActiveSplitEvent`:
+  measurability of the selected-mark split event.
+- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Speed.smallInitialActiveMark_independent_and_law`:
+  the selected mark is independent of the generation-$n$ past and has law $\mu$.
+- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Speed.smallInitialActiveMark_iIndepFun`:
+  the sequence of selected marks is independent under the root-indexed field law.
+- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Speed.smallInitialActiveMark_split_measure_pos`:
+  if $\mathbb E_\mu[\operatorname{childCount}]>1$, the selected mark splits with positive probability.
+- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Speed.ae_frequently_smallInitialActiveSplitEvent`:
+  under supercriticality, selected-mark split events occur infinitely often almost surely.
+- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Speed.finiteRootStepFieldLaw_ae_smallInitialPopulation_hits_capacity`:
+  under supercriticality, almost-surely nonempty offspring, and boundary
+  normalization, $0<m\le N$ implies the selected population reaches size $N$
+  in finite time almost surely.
 -/
 
 open MeasureTheory ProbabilityTheory
@@ -31,44 +65,10 @@ namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Speed
 open Combinatorics.Branching
 open Combinatorics.UlamHarris
 open Combinatorics.Branching.Selection.NSelection
-open ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw
+open ProbabilityTheory.BranchingProcess.Offspring
 
 attribute [local instance] Classical.propDecidable Classical.decEq
 
-/-- One offspring configuration splits when it has at least two children. -/
-def offspringSplitSet : Set (Step ℕ ℝ) :=
-  {ξ | 2 ≤ Step.childCount ξ}
-
-private lemma offspringSplitSet_eq_nontrivialSupport :
-    offspringSplitSet = nontrivialSupport := by
-  ext ξ
-  change 2 ≤ (support ξ).encard ↔
-    ∃ i j, i ≠ j ∧ survive ξ i ∧ survive ξ j
-  constructor
-  · intro hcount
-    have hcard : 1 < (support ξ).encard :=
-      lt_of_lt_of_le (by norm_num : (1 : ℕ∞) < 2) hcount
-    obtain ⟨i, j, hi, hj, hij⟩ := Set.one_lt_encard_iff.mp hcard
-    exact ⟨i, j, hij, by simpa [support] using hi,
-      by simpa [support] using hj⟩
-  · rintro ⟨i, j, hij, hi, hj⟩
-    have hcard : 1 < (support ξ).encard :=
-      Set.one_lt_encard_iff.mpr
-        ⟨i, j, by simpa [support] using hi,
-          by simpa [support] using hj, hij⟩
-    cases hencard : (support ξ).encard with
-    | top => simp
-    | coe k =>
-      have hk : 1 < k := by simpa [hencard] using hcard
-      have hk' : 2 ≤ k := by omega
-      simpa [hencard] using hk'
-
-private lemma measurable_offspringSplitSet : MeasurableSet offspringSplitSet := by
-  rw [offspringSplitSet_eq_nontrivialSupport]
-  exact nontrivialSupport_measurable
-
-/-- The actual root-indexed selected population from `m` initial roots,
-viewed at generation `n`. -/
 noncomputable def smallInitialPopulation (m N n : ℕ)
     [LinearOrder (RootIndexed.TreeNode (Fin m) ℕ)]
     (field : FiniteRootStepField m ℕ ℝ) :
@@ -260,8 +260,7 @@ generation. -/
 def smallInitialActiveSplitEvent (m N n : ℕ) (hm : 0 < m)
     [LinearOrder (RootIndexed.TreeNode (Fin m) ℕ)] :
     Set (FiniteRootStepField m ℕ ℝ) :=
-  {field | field ∈ offspringSplitSet.preimage
-    (smallInitialActiveMark m N n hm)}
+  {field | 2 ≤ Step.childCount (smallInitialActiveMark m N n hm field)}
 
 theorem measurableSet_smallInitialActiveSplitEvent
     (m N n : ℕ) (hm : 0 < m)
@@ -272,7 +271,7 @@ theorem measurableSet_smallInitialActiveSplitEvent
     MeasurableSet (smallInitialActiveSplitEvent m N n hm) := by
   change MeasurableSet
     (smallInitialActiveMark m N n hm ⁻¹' offspringSplitSet)
-  exact measurable_offspringSplitSet.preimage
+  exact measurableSet_offspringSplitSet.preimage
     ((measurable_smallInitialActiveMark_at_succ m N n hm).mono
       ((RootIndexed.stepFiltration
         (Root := Fin m) (α := ℕ) (X := ℝ)).le (n + 1)) le_rfl)
@@ -416,7 +415,8 @@ theorem smallInitialActiveMark_split_measure_pos
       ∫⁻ ξ, (Step.childCount ξ : ℝ≥0∞) ∂μ) :
     0 < finiteRootStepFieldLaw μ m
       {field | 2 ≤ Step.childCount (smallInitialActiveMark m N n hm field)} := by
-  have hsplit := positive_raw_measure_childCount_ge_two μ hsupercritical
+  have hsplit :=
+    measure_pos_childCount_ge_two_of_expectedChildCount_gt_one μ hsupercritical
   have hmark := smallInitialActiveMark_independent_and_law m N n hm μ
   let split : Set (Step ℕ ℝ) := {ξ | 2 ≤ Step.childCount ξ}
   have hsplitEq : split = nontrivialSupport := by
@@ -504,7 +504,7 @@ theorem ae_frequently_smallInitialActiveSplitEvent
     change MeasurableSet[
       MeasurableSpace.comap (smallInitialActiveMark m N n hm) inferInstance]
       ((smallInitialActiveMark m N n hm) ⁻¹' offspringSplitSet)
-    exact ⟨offspringSplitSet, measurable_offspringSplitSet, rfl⟩
+    exact ⟨offspringSplitSet, measurableSet_offspringSplitSet, rfl⟩
   have heventsMeasurable : ∀ n, MeasurableSet (events n) := by
     intro n
     exact measurableSet_smallInitialActiveSplitEvent m N n hm
@@ -516,7 +516,8 @@ theorem ae_frequently_smallInitialActiveSplitEvent
       have hs' : s = events n := by simpa using hs
       rw [hs']
       exact heventMeasurable n
-  have hsplit := positive_raw_measure_childCount_ge_two μ hsupercritical
+  have hsplit :=
+    measure_pos_childCount_ge_two_of_expectedChildCount_gt_one μ hsupercritical
   have hprob : ∀ n, ν (events n) = μ offspringSplitSet := by
     intro n
     have hmark := smallInitialActiveMark_independent_and_law m N n hm μ
@@ -526,7 +527,7 @@ theorem ae_frequently_smallInitialActiveSplitEvent
           (Root := Fin m) (α := ℕ) (X := ℝ)).le (n + 1)) le_rfl
     change ν ((smallInitialActiveMark m N n hm) ⁻¹' offspringSplitSet) =
       μ offspringSplitSet
-    rw [← Measure.map_apply hmarkMeas measurable_offspringSplitSet, hmark.2]
+    rw [← Measure.map_apply hmarkMeas measurableSet_offspringSplitSet, hmark.2]
   have hsum : (∑' n : ℕ, ν (events n)) = ∞ := by
     rw [show (∑' n : ℕ, ν (events n)) =
       ∑' _n : ℕ, μ offspringSplitSet by
@@ -745,6 +746,51 @@ private lemma smallInitialFirstN_card_gt_of_split
     omega
   · rw [hfirst.card_infinite hinfinite]
     omega
+
+private lemma exists_eq_capacity_of_frequently_growing
+    {N : ℕ} (populationSize : ℕ → ℕ) (split : ℕ → Prop)
+    (hinitial : 0 < populationSize 0)
+    (hcapacity : ∀ n, populationSize n ≤ N)
+    (hmonotone : ∀ n, populationSize n ≤ populationSize (n + 1))
+    (hgrowth : ∀ n, 0 < populationSize n → populationSize n < N →
+      split n → populationSize n < populationSize (n + 1))
+    (hfrequently : ∃ᶠ n in atTop, split n) :
+    ∃ n, populationSize n = N := by
+  have hmono : ∀ {m n}, m ≤ n → populationSize m ≤ populationSize n := by
+    intro m n hmn
+    induction hmn with
+    | refl => exact le_rfl
+    | @step n hmn ih =>
+        exact le_trans ih (hmonotone n)
+  have hpositive : ∀ n, 0 < populationSize n := by
+    intro n
+    exact lt_of_lt_of_le hinitial (hmono (Nat.zero_le n))
+  have hreach : ∀ q, q ≤ N → ∃ n, q ≤ populationSize n := by
+    intro q
+    induction q with
+    | zero =>
+        intro _
+        exact ⟨0, Nat.zero_le _⟩
+    | succ q ih =>
+        intro hq
+        have hqN : q ≤ N := Nat.le_trans (Nat.le_succ q) hq
+        obtain ⟨n, hn⟩ := ih hqN
+        by_cases htarget : q + 1 ≤ populationSize n
+        · exact ⟨n, htarget⟩
+        · have hcurrent : populationSize n = q := by omega
+          obtain ⟨m, hsplit, hnm⟩ :=
+            (hfrequently.and_eventually (eventually_ge_atTop n)).exists
+          have hge : q ≤ populationSize m := by
+            exact hn.trans (hmono hnm)
+          by_cases htargetAtM : q + 1 ≤ populationSize m
+          · exact ⟨m, htargetAtM⟩
+          · have hcurrentAtM : populationSize m = q := by omega
+            have hqLtN : q < N := by omega
+            have hnext := hgrowth m (hpositive m) (by omega) hsplit
+            refine ⟨m + 1, ?_⟩
+            omega
+  obtain ⟨n, hn⟩ := hreach N le_rfl
+  exact ⟨n, le_antisymm (hcapacity n) hn⟩
 
 /-- Starting from any nonempty population of size at most N, the actual
 root-indexed N-selection population reaches size N in finite time almost

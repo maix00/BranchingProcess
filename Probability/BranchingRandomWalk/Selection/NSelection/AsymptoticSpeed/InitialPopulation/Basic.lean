@@ -6,11 +6,11 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.BranchingProcess.Offspring.Count
 public import Probability.BranchingRandomWalk.Selection.NSelection.AsymptoticSpeed.Limit.KingmanInterface
 public import Combinatorics.BranchingWalk.Step.Measurability
 public import Mathlib.Probability.BorelCantelli
 public import Mathlib.Order.LiminfLimsup
+import Probability.BranchingProcess.Offspring.Count
 public import Mathlib.MeasureTheory.MeasurableSpace.MeasurablyGenerated
 
 /-!
@@ -24,23 +24,14 @@ The small-initial-population extension has three dependencies:
 3. the process after the filling time has the law of an exact-`N` process,
    so its asymptotic speed is the one obtained from the Kingman interface.
 
-This file begins with the offspring-count implication. The current speed
-environment is indexed by exactly `N` active parents per generation, while
-the pre-sampled root-indexed selection process can have a random smaller
-population before it fills. The stopping-time identification in item 3 must
-be proved against that root-indexed field before the exact-`N` speed theorem
-can be applied; no restart hypothesis is introduced here in place of that
-proof.
+This file records the independent split events in the exact-`N` generation
+environment and transports the rank-zero speed from the origin to any finite
+initial vector. The actual smaller root-indexed population and its capacity
+hitting argument are developed in the sibling `Trajectory/` modules; their
+fresh-field law is then connected to the ranked-batch speed interface.
 
 The public declarations are:
 
-- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Speed.positive_measure_childCount_ge_two`:
-  if $\mu$ is supercritical and nonempty almost surely, then
-  $(\mu.\operatorname{childCountLaw})(\{k\in\mathbb N_\infty:2\le k\})>0$.
-- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Speed.positive_raw_measure_childCount_ge_two`:
-  if $\mu$ is a probability law and
-  $\int \operatorname{childCount}(\xi)\,d\mu(\xi)>1$, then
-  $\mu(\{\xi:2\le\operatorname{childCount}(\xi)\})>0$.
 - `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Speed.firstRankSplitEvent`:
   for $h_N:0<N$, the generation-$n$ event
   $\{\omega:2\le\operatorname{childCount}(\omega_n(\langle0,h_N\rangle))\}$.
@@ -51,9 +42,6 @@ The public declarations are:
 - `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Speed.ae_frequently_firstRankSplitEvent`:
   if $\mu$ is supercritical, then the limsup of the rank-zero split events
   has probability one under $\operatorname{generationEnvironmentLaw}(\mu,N)$.
-- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Speed.exists_eq_capacity_of_frequently_growing`:
-  if $0<X_0\le X_n\le N$ and every split with $X_n<N$ increases $X_n$,
-  then frequent splits imply $X_n=N$ for some $n$.
 - `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Speed.infiniteOffspringRun_rankZero_hasAsymptoticSpeed_of_initial`:
   if the origin-start rank-zero run has asymptotic speed $c$, then so does
   the run from every finite initial position vector.
@@ -66,125 +54,10 @@ open scoped ENNReal
 
 namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Speed
 
-open ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw
 open Combinatorics.Branching
 open Filter ProbabilityTheory
+open ProbabilityTheory.BranchingProcess.Offspring
 open scoped Topology
-
-/-- Under supercriticality and almost-surely nonempty offspring, one parent
-has positive probability of producing at least two children. -/
-theorem positive_measure_childCount_ge_two
-    {ι Mark : Type*} [Countable ι] [MeasurableSpace Mark]
-    (μ : ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw ι Mark)
-    (hsupercritical : μ.IsSupercritical)
-    (hnonempty : μ.HasAtLeastOneChild) :
-    0 < μ.childCountLaw {n | 2 ≤ n} := by
-  let ν : Measure ℕ∞ := μ.childCountLaw
-  have hnonemptyAE : ∀ᵐ ξ ∂(μ : Measure (Step ι Mark)),
-      ξ ∈ nonemptySupport := hasAtLeastOneChild_ae μ hnonempty
-  have hcountPos : ∀ᵐ n ∂ν, n ≠ 0 := by
-    have hsource : ∀ᵐ ξ ∂(μ : Measure (Step ι Mark)),
-        Step.childCount ξ ≠ 0 := by
-      filter_upwards [hnonemptyAE] with ξ hξ
-      have hsupport : (support ξ).Nonempty := by
-        rcases hξ with ⟨i, hi⟩
-        exact ⟨i, hi⟩
-      change (support ξ).encard ≠ 0
-      exact (Set.encard_pos.mpr hsupport).ne'
-    have hmap := ae_map_iff (μ := (μ : Measure (Step ι Mark)))
-      (Step.childCount_measurable (ι := ι) (X := Mark)).aemeasurable
-      (MeasurableSet.singleton (0 : ℕ∞)).compl
-    have hsource' : ∀ᵐ ξ ∂(μ : Measure (Step ι Mark)),
-        Step.childCount ξ ∈ ({0}ᶜ : Set ℕ∞) := by
-      exact hsource.mono fun ξ hξ => by simpa using hξ
-    change ∀ᵐ n ∂((μ : Measure (Step ι Mark)).map Step.childCount), n ≠ 0
-    simpa only [Set.mem_compl_iff, Set.mem_singleton_iff, ne_eq] using
-      hmap.mpr hsource'
-  by_contra hnotpos
-  have hnotpos' : ¬ (0 : ℝ≥0∞) < ν {n | 2 ≤ n} := by
-    simpa [ν] using hnotpos
-  have hzero : ν {n | 2 ≤ n} = 0 := by
-    exact le_antisymm (le_of_not_gt hnotpos') bot_le
-  have hsmall : ∀ᵐ n ∂ν, n < 2 := by
-    rw [ae_iff]
-    simpa only [not_lt] using hzero
-  have hone : ∀ᵐ n ∂ν, n = 1 := by
-    filter_upwards [hcountPos, hsmall] with n hn hp
-    have hle : n ≤ 1 := by simpa using hp
-    exact le_antisymm hle (Order.one_le_iff_ne_zero.mpr hn)
-  have hexpect : μ.expectedChildCount = 1 := by
-    change (∫⁻ n : ℕ∞, (n : ℝ≥0∞) ∂ν) = 1
-    have hone' : ∀ᵐ n : ℕ∞ ∂ν, (n : ℝ≥0∞) = 1 := by
-      exact hone.mono fun n hn => by simp [hn]
-    rw [lintegral_congr_ae hone']
-    simp
-  change 1 < μ.expectedChildCount at hsupercritical
-  rw [hexpect] at hsupercritical
-  exact (lt_irrefl 1) hsupercritical
-
-private lemma childCount_le_one_of_not_split
-    {ι X : Type*} (ξ : Step ι X)
-    (hnoSplit : ¬ 2 ≤ Step.childCount ξ) : Step.childCount ξ ≤ 1 := by
-  cases hcount : Step.childCount ξ with
-  | top => exact (hnoSplit (by simp [hcount])).elim
-  | coe n =>
-    have hnnot : ¬ 2 ≤ n := by simpa [hcount] using hnoSplit
-    have hn : n ≤ 1 := by omega
-    simpa [hcount] using hn
-
-/-- Direct raw-law form of the supercritical splitting implication. No
-nonemptiness assumption is needed: an expected child count above one forces
-positive mass on configurations with at least two children. -/
-theorem positive_raw_measure_childCount_ge_two
-    {ι X : Type*} [Countable ι] [MeasurableSpace X]
-    (μ : Measure (Step ι X)) [IsProbabilityMeasure μ]
-    (hsupercritical : (1 : ℝ≥0∞) <
-      ∫⁻ ξ, (Step.childCount ξ : ℝ≥0∞) ∂μ) :
-    0 < μ {ξ | 2 ≤ Step.childCount ξ} := by
-  by_contra hpos
-  have hzero : μ {ξ | 2 ≤ Step.childCount ξ} = 0 :=
-    nonpos_iff_eq_zero.mp (le_of_not_gt hpos)
-  have haeNotSplit : ∀ᵐ ξ ∂μ, ¬ 2 ≤ Step.childCount ξ := by
-    simpa only [Set.mem_ofPred_eq] using
-      (measure_eq_zero_iff_ae_notMem.mp hzero)
-  have haeCountLeOne : ∀ᵐ ξ ∂μ,
-      (Step.childCount ξ : ℝ≥0∞) ≤ 1 := by
-    filter_upwards [haeNotSplit] with ξ hξ
-    exact_mod_cast childCount_le_one_of_not_split ξ hξ
-  have hle : (∫⁻ ξ, (Step.childCount ξ : ℝ≥0∞) ∂μ) ≤ 1 := by
-    calc
-      (∫⁻ ξ, (Step.childCount ξ : ℝ≥0∞) ∂μ) ≤
-          ∫⁻ _ξ, (1 : ℝ≥0∞) ∂μ := lintegral_mono_ae haeCountLeOne
-      _ = 1 := by simp
-  exact (not_lt_of_ge hle) hsupercritical
-
-private lemma measurable_childCount_ge_two
-    {ι X : Type*} [Countable ι] [MeasurableSpace X] :
-    MeasurableSet {ξ : Step ι X | 2 ≤ Step.childCount ξ} := by
-  have heq : {ξ : Step ι X | 2 ≤ Step.childCount ξ} = nontrivialSupport := by
-    ext ξ
-    change 2 ≤ (support ξ).encard ↔
-      ∃ i j, i ≠ j ∧ survive ξ i ∧ survive ξ j
-    constructor
-    · intro hcount
-      have hcard : 1 < (support ξ).encard :=
-        lt_of_lt_of_le (by norm_num : (1 : ℕ∞) < 2) hcount
-      obtain ⟨i, j, hi, hj, hij⟩ := Set.one_lt_encard_iff.mp hcard
-      exact ⟨i, j, hij, by simpa [support] using hi,
-        by simpa [support] using hj⟩
-    · rintro ⟨i, j, hij, hi, hj⟩
-      have hcard : 1 < (support ξ).encard :=
-        Set.one_lt_encard_iff.mpr
-          ⟨i, j, by simpa [support] using hi,
-            by simpa [support] using hj, hij⟩
-      cases hencard : (support ξ).encard with
-      | top => simp
-      | coe n =>
-        have hn : 1 < n := by simpa [hencard] using hcard
-        have hn' : 2 ≤ n := by omega
-        simpa [hencard] using hn'
-  rw [heq]
-  exact nontrivialSupport_measurable
 
 /-- A split at the first active rank in generation `n`. The sequence of
 these events is independent because it reads disjoint generation coordinates
@@ -202,8 +75,9 @@ private lemma measurable_batchFirstRankSplitEvent {N : ℕ} (hN : 0 < N) :
   change MeasurableSet
     {batch : GenerationBatch N |
       2 ≤ Step.childCount (batch (⟨0, hN⟩ : Fin N))}
-  exact measurable_childCount_ge_two.preimage
-    (measurable_pi_apply (⟨0, hN⟩ : Fin N))
+  simpa [offspringSplitSet] using
+    (measurableSet_offspringSplitSet (ι := ℕ) (X := ℝ)).preimage
+      (measurable_pi_apply (⟨0, hN⟩ : Fin N))
 
 /-- The first-rank split event has the same positive probability in every
 generation. -/
@@ -233,7 +107,8 @@ theorem firstRankSplitEvent_measure_eq
         μ {ξ | 2 ≤ Step.childCount ξ} := by
     have hrawEvent : MeasurableSet
         {ξ : Step ℕ ℝ | 2 ≤ Step.childCount ξ} := by
-      exact measurable_childCount_ge_two
+      simpa [offspringSplitSet] using
+        (measurableSet_offspringSplitSet (ι := ℕ) (X := ℝ))
     have heq : E = evalRank ⁻¹' {ξ : Step ℕ ℝ |
         2 ≤ Step.childCount ξ} := by
       ext batch
@@ -253,7 +128,10 @@ theorem ae_frequently_firstRankSplitEvent
       ∫⁻ ξ, (Step.childCount ξ : ℝ≥0∞) ∂μ) :
     ∀ᵐ ω ∂generationEnvironmentLaw μ N,
       ∃ᶠ n in atTop, ω ∈ firstRankSplitEvent hN n := by
-  have hsplitRaw := positive_raw_measure_childCount_ge_two μ hsupercritical
+  have hsplitRaw :=
+    measure_pos_childCount_ge_two_of_expectedChildCount_gt_one μ hsupercritical
+  have hsplitRaw' : 0 < μ {ξ | 2 ≤ Step.childCount ξ} := by
+    simpa [offspringSplitSet] using hsplitRaw
   let ν := generationEnvironmentLaw μ N
   have hν : IsProbabilityMeasure ν := generationEnvironmentLaw_isProbability μ N
   let events : ℕ → Set (GenerationEnvironment N) :=
@@ -283,9 +161,10 @@ theorem ae_frequently_firstRankSplitEvent
     change MeasurableSet
       {ω : GenerationEnvironment N |
         2 ≤ Step.childCount (ω n (⟨0, hN⟩ : Fin N))}
-    exact measurable_childCount_ge_two.preimage
-      ((measurable_pi_apply (⟨0, hN⟩ : Fin N)).comp
-        (measurable_pi_apply n))
+    simpa [offspringSplitSet] using
+      (measurableSet_offspringSplitSet (ι := ℕ) (X := ℝ)).preimage
+        ((measurable_pi_apply (⟨0, hN⟩ : Fin N)).comp
+          (measurable_pi_apply n))
   have heventsIndep : iIndepSet events ν := by
     rw [iIndepSet_iff_iIndep]
     apply iIndep_of_iIndep_of_le hcoordinateIndep
@@ -298,7 +177,7 @@ theorem ae_frequently_firstRankSplitEvent
     firstRankSplitEvent_measure_eq hN μ
   have hsum : (∑' n : ℕ, ν (events n)) = ∞ := by
     simpa only [hprob] using
-      (ENNReal.tsum_const_eq_top_of_ne_zero hsplitRaw.ne')
+      (ENNReal.tsum_const_eq_top_of_ne_zero hsplitRaw'.ne')
   have hBC := ProbabilityTheory.measure_limsup_eq_one
     heventsMeasurable heventsIndep hsum
   have hlimsupMeasurable : MeasurableSet (Filter.limsup events atTop) := by
@@ -311,56 +190,6 @@ theorem ae_frequently_firstRankSplitEvent
         simpa using hBC)
   filter_upwards [hae] with ω hω
   simpa [events, Filter.mem_limsup_iff_frequently_mem] using hω
-
-/-- A bounded nondecreasing population count reaches its finite capacity if
-each split at a time with fewer than `N` particles strictly increases the
-count, and splits occur frequently. This is the deterministic saturation
-step needed after identifying the rank-zero split events with those of the
-actual selected population. -/
-theorem exists_eq_capacity_of_frequently_growing
-    {N : ℕ} (populationSize : ℕ → ℕ) (split : ℕ → Prop)
-    (hinitial : 0 < populationSize 0)
-    (hcapacity : ∀ n, populationSize n ≤ N)
-    (hmonotone : ∀ n, populationSize n ≤ populationSize (n + 1))
-    (hgrowth : ∀ n, 0 < populationSize n → populationSize n < N →
-      split n → populationSize n < populationSize (n + 1))
-    (hfrequently : ∃ᶠ n in atTop, split n) :
-    ∃ n, populationSize n = N := by
-  have hmono : ∀ {m n}, m ≤ n → populationSize m ≤ populationSize n := by
-    intro m n hmn
-    induction hmn with
-    | refl => exact le_rfl
-    | @step n hmn ih =>
-        exact le_trans ih (hmonotone n)
-  have hpositive : ∀ n, 0 < populationSize n := by
-    intro n
-    exact lt_of_lt_of_le hinitial (hmono (Nat.zero_le n))
-  have hreach : ∀ q, q ≤ N → ∃ n, q ≤ populationSize n := by
-    intro q
-    induction q with
-    | zero =>
-        intro _
-        exact ⟨0, Nat.zero_le _⟩
-    | succ q ih =>
-        intro hq
-        have hqN : q ≤ N := Nat.le_trans (Nat.le_succ q) hq
-        obtain ⟨n, hn⟩ := ih hqN
-        by_cases htarget : q + 1 ≤ populationSize n
-        · exact ⟨n, htarget⟩
-        · have hcurrent : populationSize n = q := by omega
-          obtain ⟨m, hsplit, hnm⟩ :=
-            (hfrequently.and_eventually (eventually_ge_atTop n)).exists
-          have hge : q ≤ populationSize m := by
-            exact hn.trans (hmono hnm)
-          by_cases htargetAtM : q + 1 ≤ populationSize m
-          · exact ⟨m, htargetAtM⟩
-          · have hcurrentAtM : populationSize m = q := by omega
-            have hqLtN : q < N := by omega
-            have hnext := hgrowth m (hpositive m) (by omega) hsplit
-            refine ⟨m + 1, ?_⟩
-            omega
-  obtain ⟨n, hn⟩ := hreach N le_rfl
-  exact ⟨n, le_antisymm (hcapacity n) hn⟩
 
 /-- For a fixed good `N`-slot environment, the leftmost rank has the same
 asymptotic speed from every finite initial position vector as from the
