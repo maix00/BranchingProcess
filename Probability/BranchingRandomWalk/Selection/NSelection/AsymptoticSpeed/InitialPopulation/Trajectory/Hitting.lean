@@ -24,30 +24,6 @@ The public declarations are:
 
 - `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Speed.smallInitialPopulation`:
   the first-$N$ selected particles among $m$ initial roots at generation $n$.
-- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Speed.smallInitialActiveAddress`:
-  an address chosen from the nonempty population, with a depth-$n$ fallback
-  otherwise.
-- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Speed.smallInitialActiveAddress_depth`:
-  the chosen address has generation depth $n$.
-- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Speed.measurable_smallInitialActiveAddress`:
-  the chosen address is measurable with respect to the generation-$n$ field.
-- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Speed.smallInitialActiveMark`:
-  the offspring mark sampled at that selected address.
-- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Speed.measurable_smallInitialActiveMark_at_succ`:
-  this mark is measurable after generation $n$ is revealed.
-- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Speed.smallInitialActiveSplitEvent`:
-  for $h_m:0<m$, the event
-  $\{\omega:2\le\operatorname{childCount}(\operatorname{smallInitialActiveMark}(m,N,n,h_m,\omega))\}$.
-- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Speed.measurableSet_smallInitialActiveSplitEvent`:
-  measurability of the selected-mark split event.
-- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Speed.smallInitialActiveMark_independent_and_law`:
-  the selected mark is independent of the generation-$n$ past and has law $\mu$.
-- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Speed.smallInitialActiveMark_iIndepFun`:
-  the sequence of selected marks is independent under the root-indexed field law.
-- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Speed.smallInitialActiveMark_split_measure_pos`:
-  if $\mathbb E_\mu[\operatorname{childCount}]>1$, the selected mark splits with positive probability.
-- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Speed.ae_frequently_smallInitialActiveSplitEvent`:
-  under supercriticality, selected-mark split events occur infinitely often almost surely.
 - `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Speed.finiteRootStepFieldLaw_ae_smallInitialPopulation_hits_capacity`:
   under supercriticality, almost-surely nonempty offspring, and boundary
   normalization, $0<m\le N$ implies the selected population reaches size $N$
@@ -79,7 +55,7 @@ noncomputable def smallInitialPopulation (m N n : ℕ)
 /-- A predictable representative of the actual selected population. The
 endpoint-minimizing address is used only to make the choice measurable; any
 selected address would have the same fresh-mark law. -/
-noncomputable def smallInitialActiveAddress (m N n : ℕ) (hm : 0 < m)
+private noncomputable def smallInitialActiveAddress (m N n : ℕ) (hm : 0 < m)
     [LinearOrder (RootIndexed.TreeNode (Fin m) ℕ)] :
     FiniteRootStepField m ℕ ℝ → RootIndexed.TreeNode (Fin m) ℕ := fun field =>
   if _hpop : (Tail.firstNSelectedPopulation m N n field).Nonempty then
@@ -87,7 +63,7 @@ noncomputable def smallInitialActiveAddress (m N n : ℕ) (hm : 0 < m)
   else
     ((⟨0, hm⟩ : Fin m), List.replicate n 0)
 
-theorem smallInitialActiveAddress_depth (m N n : ℕ) (hm : 0 < m)
+private theorem smallInitialActiveAddress_depth (m N n : ℕ) (hm : 0 < m)
     [LinearOrder (RootIndexed.TreeNode (Fin m) ℕ)]
     (field : FiniteRootStepField m ℕ ℝ) :
     (smallInitialActiveAddress m N n hm field).2.length = n := by
@@ -101,7 +77,7 @@ theorem smallInitialActiveAddress_depth (m N n : ℕ) (hm : 0 < m)
     exact Tail.firstNSelectedPopulation_depth m N n field _ hmem'
   · simp [smallInitialActiveAddress, hpop]
 
-theorem measurable_smallInitialActiveAddress (m N n : ℕ) (hm : 0 < m)
+private theorem measurable_smallInitialActiveAddress (m N n : ℕ) (hm : 0 < m)
     [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
     [Countable (RootIndexed.TreeNode (Fin m) ℕ)]
     [LinearOrder (RootIndexed.TreeNode (Fin m) ℕ)] :
@@ -143,7 +119,7 @@ private lemma smallInitialActiveAddress_fiber_measurable
     (measurableSet_singleton p)
 
 /-- The mark at the actual selected address in generation `n`. -/
-noncomputable def smallInitialActiveMark (m N n : ℕ) (hm : 0 < m)
+private noncomputable def smallInitialActiveMark (m N n : ℕ) (hm : 0 < m)
     [LinearOrder (RootIndexed.TreeNode (Fin m) ℕ)]
     (field : FiniteRootStepField m ℕ ℝ) : Step ℕ ℝ :=
   field (smallInitialActiveAddress m N n hm field).1
@@ -231,7 +207,7 @@ private lemma smallInitialFutureRoots_injective (m N n : ℕ) (hm : 0 < m)
   exact Subsingleton.elim _ _
 
 /-- The actual adaptive mark is measurable when generation `n` is revealed. -/
-theorem measurable_smallInitialActiveMark_at_succ
+private theorem measurable_smallInitialActiveMark_at_succ
     (m N n : ℕ) (hm : 0 < m)
     [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
     [MeasurableSingletonClass (Fin m × TreeNode ℕ)]
@@ -257,12 +233,12 @@ theorem measurable_smallInitialActiveMark_at_succ
 
 /-- The split event for the parent chosen from the actual selected
 generation. -/
-def smallInitialActiveSplitEvent (m N n : ℕ) (hm : 0 < m)
+private def smallInitialActiveSplitEvent (m N n : ℕ) (hm : 0 < m)
     [LinearOrder (RootIndexed.TreeNode (Fin m) ℕ)] :
     Set (FiniteRootStepField m ℕ ℝ) :=
   {field | 2 ≤ Step.childCount (smallInitialActiveMark m N n hm field)}
 
-theorem measurableSet_smallInitialActiveSplitEvent
+private theorem measurableSet_smallInitialActiveSplitEvent
     (m N n : ℕ) (hm : 0 < m)
     [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
     [MeasurableSingletonClass (Fin m × TreeNode ℕ)]
@@ -281,7 +257,7 @@ offspring mark with the original law, independent of the revealed past.
 The fallback address is only reached if the selected population is empty;
 its depth is still `n`, so the probabilistic statement is valid on the full
 sample space. -/
-theorem smallInitialActiveMark_independent_and_law
+private theorem smallInitialActiveMark_independent_and_law
     (m N n : ℕ) (hm : 0 < m)
     [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
     [MeasurableSingletonClass (Fin m × TreeNode ℕ)]
@@ -332,7 +308,7 @@ theorem smallInitialActiveMark_independent_and_law
 form an i.i.d. sequence. At time `n`, the chosen address depends only on the
 previous generations, so the new mark is independent of the finite vector of
 earlier sampled marks. -/
-theorem smallInitialActiveMark_iIndepFun
+private theorem smallInitialActiveMark_iIndepFun
     (m N : ℕ) (hm : 0 < m)
     [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
     [MeasurableSingletonClass (Fin m × TreeNode ℕ)]
@@ -404,7 +380,7 @@ theorem smallInitialActiveMark_iIndepFun
 
 /-- Under the supercriticality hypothesis, the actual predictable
 selected address has a strictly positive one-generation chance to split. -/
-theorem smallInitialActiveMark_split_measure_pos
+private theorem smallInitialActiveMark_split_measure_pos
     (m N n : ℕ) (hm : 0 < m)
     [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
     [MeasurableSingletonClass (Fin m × TreeNode ℕ)]
@@ -476,7 +452,7 @@ theorem smallInitialActiveMark_split_measure_pos
 infinitely many generations almost surely under the supercriticality
 assumption. This uses the adaptive fresh-mark law, rather than a fixed-root
 trial schedule. -/
-theorem ae_frequently_smallInitialActiveSplitEvent
+private theorem ae_frequently_smallInitialActiveSplitEvent
     (m N : ℕ) (hm : 0 < m)
     [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
     [MeasurableSingletonClass (Fin m × TreeNode ℕ)]

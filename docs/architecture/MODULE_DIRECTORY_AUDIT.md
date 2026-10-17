@@ -93,10 +93,14 @@ uses this shared event measurability result instead of carrying a duplicate
 proof. The unused nonempty-offspring
 specialization was removed from `InitialPopulation/Basic.lean`. Its generic
 bounded-growth saturation step now lives as a private lemma beside the
-capacity-hitting proof in `InitialPopulation/Trajectory/Hitting.lean`. That
-module imports the offspring-count API directly; `RunBridge.lean` now imports
-the speed-transport theorem it uses directly rather than receiving it through
-the hitting-time module.
+capacity-hitting proof in `InitialPopulation/Trajectory/Hitting.lean`. A
+declaration-use audit also made the selected-address, selected-mark,
+measurability, independence, and split-frequency steps private there: no
+other module uses those intermediate APIs. The file's public interface is now
+the population construction and its almost-sure capacity-hitting theorem.
+That module imports the offspring-count API directly; `RunBridge.lean` now
+imports the speed-transport theorem it uses directly rather than receiving it
+through the hitting-time module.
 
 ## Same-stem files and directories
 
@@ -180,8 +184,10 @@ capacity-hitting, and speed-transport interfaces in
 The offspring-count API now lists its child-count law, splitting event,
 measurability, and positive-splitting-probability declarations in
 `Probability/BranchingProcess/Offspring/Count.lean`; the trajectory-level
-capacity-hitting module lists its public event, independence, and almost-sure
-capacity conclusions in `InitialPopulation/Trajectory/Hitting.lean`.
+capacity-hitting module lists its public selected-population construction and
+almost-sure capacity conclusion in
+`InitialPopulation/Trajectory/Hitting.lean`; its selected-address and
+selected-mark proof chain remains private to that module.
 These headers state the exact
 declaration identifiers in their Lean namespace, the mathematical object or
 estimate, and the assumptions that control each bound. The private path
