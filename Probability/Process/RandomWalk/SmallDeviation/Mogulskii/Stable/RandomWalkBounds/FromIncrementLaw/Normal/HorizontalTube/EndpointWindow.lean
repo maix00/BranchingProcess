@@ -21,7 +21,7 @@ The public declarations in this module are:
 - `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.centeredFiniteVariance_endpointWindowProbabilityRate_realWidth`: the rate as $D\to\infty$ for real-width indexed integer horizons.
 - `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.centeredFiniteVariance_endpointWindowProbabilityRate`: the rate for integer widths and superquadratic horizons.
 
-These results formalize Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.1(ii). The source-path rate is A. A. Mogul'skii, Theorem 3, Section 4, p. 764, in “Small deviations in the sample function space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974), 755–765; English translation, “Small Deviations in a Space of Trajectories,” *Theory of Probability and Its Applications* 19(1) (1975), 726–736, DOI 10.1137/1119081.
+These results formalize Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.1(ii). The source-path rate is A. A. Mogul'skii, Theorem 3, Section 4, p. 764, in “Small deviations in the sample function space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974), 755–765; English translation, “Small Deviations in a Space of Trajectories,” *Theory of Probability and Its Applications* 19(4) (1975), 726–736, DOI 10.1137/1119081.
 -/
 
 open Filter MeasureTheory ProbabilityTheory
@@ -42,7 +42,7 @@ window eventually contains a fixed interior interval. Its rate input is
 Mogul'skii, Theorem 3, Section 4, p. 764, in “Small deviations in the sample
 function space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974),
 755–765; English translation, “Small Deviations in a Space of Trajectories,”
-*Theory of Probability and Its Applications* 19(1) (1975), 726–736, DOI
+*Theory of Probability and Its Applications* 19(4) (1975), 726–736, DOI
 10.1137/1119081. -/
 theorem centeredFiniteVariance_endpointWindowProbabilityRate_along
     {ν : Measure ℝ} [IsProbabilityMeasure ν]
@@ -405,7 +405,7 @@ tube, and the scale condition is `L Δ / Δ² → ∞`. The rate input is Mogul'
 Theorem 3, Section 4, p. 764, in “Small deviations in the sample function
 space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974), 755–765;
 English translation, “Small Deviations in a Space of Trajectories,” *Theory
-of Probability and Its Applications* 19(1) (1975), 726–736, DOI 10.1137/1119081. -/
+of Probability and Its Applications* 19(4) (1975), 726–736, DOI 10.1137/1119081. -/
 theorem centeredFiniteVariance_endpointWindowProbabilityRate
     {L : ℕ → ℕ} (hL : Tendsto L atTop atTop)
     (hquadratic : Asymptotics.IsSuperquadraticScale L)

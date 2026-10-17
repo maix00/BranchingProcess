@@ -311,7 +311,7 @@ interpolates along a subsequence of strictly increasing times. Its rate is
 Mogul'skii, Theorem 3, Section 4, p. 764, in “Small deviations in the sample
 function space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974),
 755–765; English translation, “Small Deviations in a Space of Trajectories,”
-*Theory of Probability and Its Applications* 19(1) (1975), 726–736, DOI
+*Theory of Probability and Its Applications* 19(4) (1975), 726–736, DOI
 10.1137/1119081. -/
 theorem centeredFiniteVariance_horizontalTubeProbabilityRate
     {L : ℕ → ℕ} (hL : Tendsto L atTop atTop)

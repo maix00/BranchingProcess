@@ -43,7 +43,7 @@ The last declaration is the stable-domain path-class form of Theorem 3,
 Section 4, p. 764, in A. A. Mogul'skii, “Small deviations in the sample
 function space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974),
 755--765; see also the English translation, “Small Deviations in a Space of
-Trajectories,” *Theory of Probability and Its Applications* 19(1) (1975),
+Trajectories,” *Theory of Probability and Its Applications* 19(4) (1975),
 726--736, DOI 10.1137/1119081.
 -/
 
@@ -154,7 +154,7 @@ private lemma probabilityRateDenominator_tendsto_atBot
 Theorem 3, Section 4, p. 764, in A. A. Mogul'skii, “Small deviations in the
 sample function space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4)
 (1974), 755--765; English translation, “Small Deviations in a Space of
-Trajectories,” *Theory of Probability and Its Applications* 19(1) (1975),
+Trajectories,” *Theory of Probability and Its Applications* 19(4) (1975),
 726--736, DOI 10.1137/1119081. This holds for every
 null-measurable path set in the source class `M`.  The hypotheses before
 `hG` are precisely the stable-process escape estimate, attraction input, and

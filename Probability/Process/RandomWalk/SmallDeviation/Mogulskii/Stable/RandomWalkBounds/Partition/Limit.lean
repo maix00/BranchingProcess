@@ -25,7 +25,7 @@ This is the finite-partition random-walk rate in A. A. Mogul'skii, “Small
 deviations in the sample function space,” Theorem 3, Section 4, p. 764,
 *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974), 755--765; English
 translation, “Small Deviations in a Space of Trajectories,” *Theory of
-Probability and Its Applications* 19(1) (1975), 726--736,
+Probability and Its Applications* 19(4) (1975), 726--736,
 DOI 10.1137/1119081.
 -/
 
@@ -46,7 +46,7 @@ all sufficiently large horizons. This is the discrete random-walk rate in
 A. A. Mogul'skii, “Small deviations in the sample function space,” Theorem 3,
 Section 4, p. 764 of the Russian original; English translation, “Small
 Deviations in a Space of Trajectories,” *Theory of Probability and Its
-Applications* 19(1) (1975), 726--736, DOI 10.1137/1119081. -/
+Applications* 19(4) (1975), 726--736, DOI 10.1137/1119081. -/
 theorem tendsto_scaledLog_normalizedStepCorridor_eq_energyRate
     {ν μ : Measure ℝ} [IsProbabilityMeasure ν] [IsProbabilityMeasure μ]
     {α C : ℝ} {normalization scale : ℕ → ℝ}
