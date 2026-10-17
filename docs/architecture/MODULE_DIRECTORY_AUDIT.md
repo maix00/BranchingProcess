@@ -137,10 +137,17 @@ Across both trees there are zero same-stem file/directory collisions, zero
 directories with more than eight direct Lean files, and zero child filenames
 repeating their immediate parent directory name. The vendored Mathlib and
 BrownianMotion trees are excluded from these project-layout counts. The
-`InitialPopulation/` and `Rademacher/` groupings above were checked separately:
-their remaining direct files are distinct entry interfaces, while their
-larger proof families are grouped by mathematical role. The scan also caught
-and fixed `Analysis/Asymptotics/Scale/Scale.lean`, now `Scale/Basic.lean`.
+`InitialPopulation/` and `Rademacher/` groupings above were checked separately.
+In `InitialPopulation/`, `Basic.lean` exposes the exact-$N$ split-event and
+speed-transport interfaces, while actual-population field, trajectory, and
+speed proofs have their own subfamilies. In `Rademacher/`, `Basic.lean` gives
+the Boolean-to-real increment encoding, `LastSignChange.lean` gives the
+discrete terminal-segment construction, and `ConditionedPathLaw.lean` relates
+the Boolean and real conditioned laws; `Terminal/` groups the terminal-path
+law, mixture, and limit. These are distinct subject interfaces, not files
+duplicating the `InitialPopulation` or `Rademacher` directory names. The scan
+also caught and fixed `Analysis/Asymptotics/Scale/Scale.lean`, now
+`Scale/Basic.lean`.
 
 `BranchingProcessTest` mirrors production module names where it has
 corresponding tests. Its larger `Stable` and `Branching` directories are test
