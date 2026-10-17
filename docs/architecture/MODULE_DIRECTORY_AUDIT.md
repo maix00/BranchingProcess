@@ -147,7 +147,7 @@ modules represented in its module docstring. The corresponding modules build
 with the pinned Lean toolchain.
 
 A revised lexical scan of the 1,445 production modules found 8,580 top-level
-declaration patterns and 1,065 modules whose module docstrings may omit at
+declaration patterns and 1,062 modules whose module docstrings may omit at
 least one declaration name. The revised scan accepts a fully qualified name
 as well as its short name; the earlier count treated some fully qualified
 names as missing. This remains a candidate count rather than a completed
@@ -160,7 +160,9 @@ formula-bearing lists to `Combinatorics/Sequence/Block.lean`,
 `Algebra/Order/BigOperators/AdditivePath.lean`,
 `Algebra/Order/BigOperators/WeightedSum.lean`, and
 `Order/SetDissipate.lean`. The rest of the candidate modules remain to be
-reviewed by semantic family.
+reviewed by semantic family. The next reviewed batch adds formula-bearing
+lists to `Mogulskii/Partition/{Basic,Quantitative}.lean` and
+`Mogulskii/Path/Tightness.lean`; their three module targets build successfully.
 
 ## Citation audit
 

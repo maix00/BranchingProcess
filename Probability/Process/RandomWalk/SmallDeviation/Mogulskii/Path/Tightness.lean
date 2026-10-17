@@ -12,10 +12,30 @@ public import Probability.Process.RandomWalk.FunctionalLimit.Donsker.Tightness.M
 /-!
 # Within-block tightness estimates
 
-Diffusive blocks have length asymptotic to `constant * scale n ^ 2`.
-Combining this with the block maximal inequality controls oscillations on the
-same spatial scale.  Sending the block constant to zero is the tightness step
-used in corridor approximation.
+Write $q_n=\operatorname{diffusiveBlockLength}(C,s,n)$ and, for a probability
+measure $\nu$, $\mathbb P_\nu=(\operatorname{iidSequenceLaw}\,\nu)$. The
+public declarations in `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii`
+and its `IsMogulskiiScale` namespace are:
+
+- `tendsto_succ_diffusiveBlockLength_div_scaledRadius_sq`: for a Mogulskii
+  scale $s$, $C>0$, and $\rho>0$,
+  $(q_n+1)/(\rho s_n)^2\to C/\rho^2$.
+- `measure_diffusiveBlockMaximum_le`: for centered unit-second-moment
+  increments, $s_n>0$, and a deterministic start $r$, the probability that
+  some block sum $B_r(\ell)=\sum_{i=r}^{r+\ell-1}\xi_i$ with
+  $1\le\ell\le q_n+1$ has absolute value at least $\rho s_n$ is at most
+  $\operatorname{ofReal}((q_n+1)/(\rho s_n)^2)$.
+- `eventually_measure_diffusiveBlockMaximum_le`: when also $C,\rho,e>0$ and
+  $s$ is a Mogulskii scale, that bound is eventually at most
+  $\operatorname{ofReal}(C/\rho^2+e)$, uniformly over the deterministic
+  start $r$.
+- `exists_diffusiveBlockConstant_eventually_measure_max_le`: for centered
+  unit-second-moment increments, a Mogulskii scale, and $\rho,\epsilon>0$,
+  there is $C>0$ such that eventually in $n$, uniformly in $r$, the same
+  oscillation probability is at most $\operatorname{ofReal}(\epsilon)$.
+
+These estimates combine the finite-block maximal inequality with the
+diffusive block-length asymptotic used in corridor approximation.
 -/
 
 open Filter MeasureTheory ProbabilityTheory Topology
