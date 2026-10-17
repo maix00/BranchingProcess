@@ -2,7 +2,7 @@ import Probability.Process.Stable.PathLaw.LinearTube
 import Probability.Sequence.IID.FiniteReindex
 import Probability.Process.RandomWalk.SmallDeviation.Entrance.FunctionalLimit
 import Probability.Process.RandomWalk.SmallDeviation.Entrance.Rotation.LinearTube
-import Probability.Process.RandomWalk.SmallDeviation.Entrance.Rotation.CyclicPath
+import Probability.Process.RandomWalk.SmallDeviation.Entrance.Rotation.FiniteProduct
 import Probability.Process.RandomWalk.SmallDeviation.Entrance.NormalDomain
 
 /-!

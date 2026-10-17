@@ -867,7 +867,7 @@ The former `Spectral/Spectrum.lean` aggregate module has been removed.
    hypothesis explicit. The former comparison with $L_{x(n)}$ had the wrong
    direction when the integer scale overshoots its target; it has been
    replaced by the minimality bound $L_{x(n)-1}+1<n$, which is also proved in
-   Lean. `Entrance/Rotation/CyclicPath.lean` proves the finite IID cyclic-rotation
+   Lean. `Entrance/Rotation/FiniteProduct.lean` proves the finite IID cyclic-rotation
    transfer, including the moving-boundary drift identity and factor-`n`
    loss; the all-offset theorem is included in the 24-declaration
    `LinearTubeAxioms.lean` build and axiom audit. `Entrance/NormalDomain.lean`

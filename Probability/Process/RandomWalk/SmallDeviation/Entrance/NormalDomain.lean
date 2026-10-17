@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Entrance.Rotation.CyclicPath
+public import Probability.Process.RandomWalk.SmallDeviation.Entrance.Rotation.FiniteProduct
 public import Probability.Process.RandomWalk.SmallDeviation.Entrance.FunctionalLimit
 public import Probability.Process.RandomWalk.FunctionalLimit.Normal.Tightness
 public import Probability.Process.RandomWalk.FunctionalLimit.Stable.PathLaw.Process
