@@ -10,9 +10,8 @@ public import Mathlib.Basic.Real.Basic
 public import Mathlib.Order.Interval.Set.Defs
 public import Mathlib.Tactic.SetNotationForOrder
 public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.BlockTube
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Staircase.Schedule
+public import Probability.Process.RandomWalk.Path.Block.Partition.TailMerged
 import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.BlockTube
-import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.Schedule
 /-!
 # First entrance window of the staircase
 
@@ -39,15 +38,15 @@ private lemma staircaseFirstBlockLength_eq
     {entrance horizon blockLength : ℕ}
     (hremaining : entrance + 2 * blockLength ≤ horizon)
     (hblockLength : 0 < blockLength) :
-    staircaseBlockLength entrance horizon blockLength 0 = blockLength := by
+    tailMergedBlockLength entrance horizon blockLength 0 = blockLength := by
   have htwo : 0 + 1 <
-      staircaseBlockCount entrance horizon blockLength := by
-    unfold staircaseBlockCount
+      tailMergedBlockCount entrance horizon blockLength := by
+    unfold tailMergedBlockCount
     have htwo' : 2 * blockLength ≤ horizon - entrance := by omega
     have hdiv : 2 ≤ (horizon - entrance) / blockLength := by
       exact (Nat.le_div_iff_mul_le hblockLength).2 (by omega)
     omega
-  exact staircaseBlockLength_interior htwo
+  exact tailMergedBlockLength_interior htwo
 
 /-- The endpoint interval already supplied by the three robust entrance
 constructions lies in the first block's central window. -/
@@ -63,26 +62,26 @@ lemma staircaseFirstInteriorWindow
       (base + drift * (entrance : ℝ) / width ^ 2 + 3 * width / 5) ⊆
     Set.Icc
       (staircaseLowerEdge base drift width
-        (staircaseBlockStart entrance horizon blockLength) 0 +
+        (tailMergedBlockStart entrance horizon blockLength) 0 +
         staircaseTubeWidth width drift
-          (staircaseBlockLength entrance horizon blockLength) 0 / 3)
+          (tailMergedBlockLength entrance horizon blockLength) 0 / 3)
       (staircaseLowerEdge base drift width
-        (staircaseBlockStart entrance horizon blockLength) 0 +
+        (tailMergedBlockStart entrance horizon blockLength) 0 +
         2 * staircaseTubeWidth width drift
-          (staircaseBlockLength entrance horizon blockLength) 0 / 3) := by
-  have htwo : 0 < staircaseBlockCount entrance horizon blockLength :=
-    staircaseBlockCount_pos_of_entrance_add_blockLength_le
+          (tailMergedBlockLength entrance horizon blockLength) 0 / 3) := by
+  have htwo : 0 < tailMergedBlockCount entrance horizon blockLength :=
+    tailMergedBlockCount_pos_of_start_add_blockLength_le
       hblockLength (by omega)
   have hfirstLength := staircaseFirstBlockLength_eq hremaining hblockLength
   have hstartZero :
-      staircaseBlockStart entrance horizon blockLength 0 = entrance :=
-    staircaseBlockStart_zero htwo
-  have hstartOne : staircaseBlockStart entrance horizon blockLength 1 =
+      tailMergedBlockStart entrance horizon blockLength 0 = entrance :=
+    tailMergedBlockStart_zero htwo
+  have hstartOne : tailMergedBlockStart entrance horizon blockLength 1 =
       entrance + blockLength := by
-    have hnext : staircaseBlockStart entrance horizon blockLength 1 =
-        staircaseBlockStart entrance horizon blockLength 0 +
-          staircaseBlockLength entrance horizon blockLength 0 :=
-      staircaseBlockStart_next_eq_add_length
+    have hnext : tailMergedBlockStart entrance horizon blockLength 1 =
+        tailMergedBlockStart entrance horizon blockLength 0 +
+          tailMergedBlockLength entrance horizon blockLength 0 :=
+      tailMergedBlockStart_next_eq_add_length
         (by omega : entrance ≤ horizon) 0
     simpa [hstartZero, hfirstLength] using hnext
   have hsq : 0 < width ^ 2 := sq_pos_of_pos hwidth

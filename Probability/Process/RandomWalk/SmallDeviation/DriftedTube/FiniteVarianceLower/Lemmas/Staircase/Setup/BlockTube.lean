@@ -7,9 +7,8 @@ Authors: WANG Yiyang
 module
 
 public import Mathlib.Analysis.SpecialFunctions.Exp
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Staircase.Schedule
+public import Probability.Process.RandomWalk.Path.Block.Partition.TailMerged
 import Mathlib.Tactic
-import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.Schedule
 /-!
 # Horizontal sub-tubes of a linearly rising tube
 
@@ -97,17 +96,17 @@ lemma staircaseTubeWidth_pos_of_schedule_bound
     (hwidth : 0 < width) (hdrift : 0 ≤ drift)
     (hcost : 2 * drift * (blockLength : ℝ) < width ^ 3)
     {j : ℕ}
-    (hj : j < staircaseBlockCount entrance horizon blockLength) :
+    (hj : j < tailMergedBlockCount entrance horizon blockLength) :
     0 < staircaseTubeWidth width drift
-      (staircaseBlockLength entrance horizon blockLength) j := by
-  have hlength := (staircaseBlockLength_bounds
+      (tailMergedBlockLength entrance horizon blockLength) j := by
+  have hlength := (tailMergedBlockLength_bounds
     hentrance hblockLength hj).2
   have hlengthReal :
-      ((staircaseBlockLength entrance horizon blockLength j : ℕ) : ℝ) ≤
+      ((tailMergedBlockLength entrance horizon blockLength j : ℕ) : ℝ) ≤
         2 * (blockLength : ℝ) := by
     exact_mod_cast (Nat.le_of_lt hlength)
   have hmul : drift *
-      ((staircaseBlockLength entrance horizon blockLength j : ℕ) : ℝ) ≤
+      ((tailMergedBlockLength entrance horizon blockLength j : ℕ) : ℝ) ≤
         drift * (2 * (blockLength : ℝ)) :=
     mul_le_mul_of_nonneg_left hlengthReal hdrift
   apply staircaseTubeWidth_pos_of_stepCost_lt_cube hwidth
@@ -133,22 +132,22 @@ lemma staircaseTubeWidth_ge_half_of_schedule_bound
     (hwidth : 0 < width) (hdrift : 0 ≤ drift)
     (hcost : 4 * drift * (blockLength : ℝ) ≤ width ^ 3)
     {j : ℕ}
-    (hj : j < staircaseBlockCount entrance horizon blockLength) :
+    (hj : j < tailMergedBlockCount entrance horizon blockLength) :
     width / 2 ≤ staircaseTubeWidth width drift
-      (staircaseBlockLength entrance horizon blockLength) j := by
-  have hlength := (staircaseBlockLength_bounds
+      (tailMergedBlockLength entrance horizon blockLength) j := by
+  have hlength := (tailMergedBlockLength_bounds
     hentrance hblockLength hj).2
   have hlengthReal :
-      ((staircaseBlockLength entrance horizon blockLength j : ℕ) : ℝ) ≤
+      ((tailMergedBlockLength entrance horizon blockLength j : ℕ) : ℝ) ≤
         2 * (blockLength : ℝ) := by
     exact_mod_cast (Nat.le_of_lt hlength)
   have hmul : drift *
-      ((staircaseBlockLength entrance horizon blockLength j : ℕ) : ℝ) ≤
+      ((tailMergedBlockLength entrance horizon blockLength j : ℕ) : ℝ) ≤
         drift * (2 * (blockLength : ℝ)) :=
     mul_le_mul_of_nonneg_left hlengthReal hdrift
   have hsq : 0 < width ^ 2 := sq_pos_of_pos hwidth
   have hquot : drift *
-      ((staircaseBlockLength entrance horizon blockLength j : ℕ) : ℝ) /
+      ((tailMergedBlockLength entrance horizon blockLength j : ℕ) : ℝ) /
         width ^ 2 ≤ width / 2 := by
     apply (div_le_iff₀ hsq).2
     nlinarith [hmul, hcost]
@@ -164,18 +163,18 @@ lemma staircaseTubeWidth_ge_commonLossBound
     (hblockLength : 0 < blockLength)
     (hwidth : 0 < width) (hdrift : 0 ≤ drift)
     {j : ℕ}
-    (hj : j < staircaseBlockCount entrance horizon blockLength) :
+    (hj : j < tailMergedBlockCount entrance horizon blockLength) :
     width - 2 * drift * (blockLength : ℝ) / width ^ 2 ≤
       staircaseTubeWidth width drift
-        (staircaseBlockLength entrance horizon blockLength) j := by
-  have hlength := (staircaseBlockLength_bounds
+        (tailMergedBlockLength entrance horizon blockLength) j := by
+  have hlength := (tailMergedBlockLength_bounds
     hentrance hblockLength hj).2
   have hlengthReal :
-      ((staircaseBlockLength entrance horizon blockLength j : ℕ) : ℝ) ≤
+      ((tailMergedBlockLength entrance horizon blockLength j : ℕ) : ℝ) ≤
         2 * (blockLength : ℝ) := by
     exact_mod_cast (Nat.le_of_lt hlength)
   have hmul : drift *
-      ((staircaseBlockLength entrance horizon blockLength j : ℕ) : ℝ) ≤
+      ((tailMergedBlockLength entrance horizon blockLength j : ℕ) : ℝ) ≤
         2 * drift * (blockLength : ℝ) := by
     nlinarith [mul_le_mul_of_nonneg_left hlengthReal hdrift]
   have hquot := div_le_div_of_nonneg_right hmul

@@ -8,7 +8,7 @@ module
 
 public import Mathlib.Basic.Real.Basic
 public import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.Event
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Staircase.Schedule
+public import Probability.Process.RandomWalk.Path.Block.Partition.TailMerged
 public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.BlockTube
 import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.FirstWindow
 
@@ -68,13 +68,13 @@ lemma robustEntrance_entersFirstCentralWindow
     AdditivePath.displacement entrance increment ∈
       Set.Icc
         (staircaseLowerEdge base drift width
-          (staircaseBlockStart entrance horizon blockLength) 0 +
+          (tailMergedBlockStart entrance horizon blockLength) 0 +
           staircaseTubeWidth width drift
-            (staircaseBlockLength entrance horizon blockLength) 0 / 3)
+            (tailMergedBlockLength entrance horizon blockLength) 0 / 3)
         (staircaseLowerEdge base drift width
-          (staircaseBlockStart entrance horizon blockLength) 0 +
+          (tailMergedBlockStart entrance horizon blockLength) 0 +
           2 * staircaseTubeWidth width drift
-            (staircaseBlockLength entrance horizon blockLength) 0 / 3) := by
+            (tailMergedBlockLength entrance horizon blockLength) 0 / 3) := by
   apply staircaseFirstInteriorWindow hremaining hblockLength hwidth
     hdrift hcost
   exact ⟨by linarith [hinc.2.1], by linarith [hinc.2.2]⟩
