@@ -15,6 +15,35 @@ public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.S
 /-!
 # A quantitative Brownian corridor lower bound
 
+The public declarations in this module are:
+
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.ofReal_exp_neg_pi_sq_div_two_rho_sq_le_brownian_closedCorridor`:
+  for $0<\rho<1$, a Brownian motion started at zero stays in the closed
+  unit corridor with probability at least $\exp(-\pi^2/(2\rho^2))$.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.ofReal_exp_neg_pi_sq_div_two_rho_sq_width_sq_le_brownian_closedCorridor`:
+  for $0<\rho<1$ and $w>0$, the closed corridor of width $w$ has probability
+  at least $\exp(-\pi^2/(2\rho^2w^2))$.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.ofReal_exp_neg_pi_sq_div_two_rho_sq_innerWidth_sq_le_liminf_centeredStrictTube`:
+  for centered unit-variance increments and $0<\rho<1$ with
+  $0<w_{\rm in}<w$, the strict discrete tube of width $w\sqrt n$ has
+  $\liminf$ probability at least
+  $\exp(-\pi^2/(2\rho^2w_{\rm in}^2))$.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.ofReal_exp_neg_pi_sq_div_two_le_brownian_closedCorridor`:
+  the closed unit Brownian corridor has probability at least
+  $\exp(-\pi^2/2)$.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.ofReal_exp_neg_pi_sq_div_two_le_brownian_openCorridor`:
+  for $w>1$, the open Brownian corridor of width $w$ has probability at least
+  $\exp(-\pi^2/2)$.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.ofReal_exp_neg_pi_sq_div_two_le_liminf_centeredStrictTube`:
+  for centered unit-variance increments and $w>1$, the strict tube of width
+  $w\sqrt n$ has $\liminf$ probability at least $\exp(-\pi^2/2)$.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.ofReal_exp_neg_two_pi_sq_le_brownian_closedCorridor` and
+  `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.ofReal_exp_neg_two_pi_sq_sub_one_le_brownian_closedCorridor`:
+  explicit weaker lower bounds for the closed unit corridor are
+  $\exp(-2\pi^2)$ and $\exp(-2\pi^2-1)$.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.brownian_closedCorridor_ne_zero`:
+  the probability of the closed unit Brownian corridor is positive.
+
 The centered finite-interval spectrum supplies a positive lower bound for a
 strictly smaller discrete tube.  Monotonicity and the closed-event half of
 Donsker--Portmanteau then transfer that bound to the closed Brownian unit
