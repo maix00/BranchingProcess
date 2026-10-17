@@ -113,9 +113,9 @@ These are substantive mathematical modules; their declarations and namespaces
 are unchanged, and callers import the new paths directly.
 
 The final 2026-10-17 scan after grouping the Lemma 3.2 partition parameters,
-the Lemma 3.3 jump-pattern and spatial-bin setup, and the Lemma 3.5 staircase parameters
-under their corresponding `Lemmas/` trees found 1,445 production modules and
-138 test modules.
+the Lemma 3.3 jump-pattern and spatial-bin setup, and the Lemma 3.5
+staircase parameters under their corresponding `Lemmas/` trees found 1,445
+production modules and 138 test modules.
 Across both trees there are zero same-stem file/directory collisions, zero
 directories with more than eight direct Lean files, and zero child filenames
 repeating their immediate parent directory name. The vendored Mathlib and

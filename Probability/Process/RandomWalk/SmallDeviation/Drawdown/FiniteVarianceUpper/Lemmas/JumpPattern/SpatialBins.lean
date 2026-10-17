@@ -19,18 +19,18 @@ import Mathlib.Tactic.FieldSimp
 /-!
 # Spatial-bin lemmas for the Lemma 3.3 drawdown proof
 
-For a path $S$, let $M_n=\max_{j\le n}S_j$,
-$k_n=\lfloor(U-M_n)/w\rfloor$, and $b_n=U-wk_n$. The following declarations
-in `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown` are internal proof
-steps:
+For a path $S$, write $M_n=\max_{j\le n}S_j$,
+$k_n=\lfloor(U-M_n)/w\rfloor_{\mathbb N}$, and $b_n=U-wk_n$. The declarations
+in `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown` form the internal
+deterministic proof chain:
 
-- `prefixMaximum` defines $M_n$; `le_prefixMaximum` states $S_i\le M_n$ for $i\le n$; `prefixMaximum_le_of_forall` bounds $M_n$ by a common upper bound; `prefixMaximum_mono` states that $M_n$ is nondecreasing.
+- `prefixMaximum` defines $M_n$; `le_prefixMaximum` states $i\le n\Rightarrow S_i\le M_n$; `prefixMaximum_le_of_forall` states $(\forall i\le n,\ S_i\le u)\Rightarrow M_n\le u$; `prefixMaximum_mono` states $s\le t\Rightarrow M_s\le M_t$.
 - `spatialBinIndex` defines $k_n$, and `spatialBinLevel` defines $b_n$.
 - `prefixMaximum_le_spatialBinLevel` and `spatialBinLevel_lt_prefixMaximum_add_width` state $M_n\le b_n<M_n+w$.
-- `spatialBinIndex_antitone` and `spatialBinLevel_mono` give the monotonicity of $k_n$ and $b_n$; `spatialBinIndex_le_of_zero` bounds $k_n$ when $S_0=0$.
-- `values_between_on_constantSpatialBin` confines a no-large-drop path on a block with unchanged endpoint bin to an interval of width $w+\delta$; `oscillationBounded_on_constantSpatialBin` gives the corresponding oscillation bound.
-- `spatialBinJumpSet` and `spatialBinGoodBlockSet` define the changing-bin and unchanged-bin block indices; `card_spatialBinJumpSet_le` and `card_spatialBinGoodBlockSet_add_jumpSet_card` give their counting identities, and `card_spatialBinGoodBlockSet_ge` gives the lower bound on unchanged blocks.
-- `exists_spatialBinSequence_for_noLargeDrop` constructs the finite bin sequence and its unchanged-block interval bounds.
+- `spatialBinIndex_antitone` and `spatialBinLevel_mono` state $s\le t\Rightarrow k_t\le k_s$ and $b_s\le b_t$; `spatialBinIndex_le_of_zero` states $S_0=0\Rightarrow k_n\le\lfloor U/w\rfloor_{\mathbb N}$.
+- `values_between_on_constantSpatialBin` confines each block value to $b_s-w-\delta<S_j\le b_s$ when the endpoint bins agree; `oscillationBounded_on_constantSpatialBin` gives oscillation at most $w+\delta$ on that block.
+- `spatialBinJumpSet` and `spatialBinGoodBlockSet` define the indices with unequal and equal consecutive bins. For a nonincreasing sequence in `Fin (K+1)`, `card_spatialBinJumpSet_le` gives $|J|\le K+1$; `card_spatialBinGoodBlockSet_add_jumpSet_card` gives $|G|+|J|=q$; `card_spatialBinGoodBlockSet_ge` gives $q\le|G|+K+1$.
+- `exists_spatialBinSequence_for_noLargeDrop` constructs a nonincreasing finite bin sequence $k_j$ with $k_j=\lfloor(U-M_{r+j\ell})/w\rfloor_{\mathbb N}$; each unchanged-bin block satisfies the interval bound above.
 
 These declarations support the discretized-maximum proof of Wang Yiyang,
 *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
