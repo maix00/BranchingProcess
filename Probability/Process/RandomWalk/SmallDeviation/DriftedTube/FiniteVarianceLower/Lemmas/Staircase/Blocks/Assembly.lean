@@ -8,7 +8,7 @@ module
 
 import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Blocks.Probability
 public import Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.Blocks.Geometry
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Staircase.Binning.Basic
+public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.Binning
 /-!
 # Staircase block probability assembly
 

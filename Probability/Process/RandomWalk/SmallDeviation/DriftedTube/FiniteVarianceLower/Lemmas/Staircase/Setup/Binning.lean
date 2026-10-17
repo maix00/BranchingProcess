@@ -9,9 +9,9 @@ module
 public import Mathlib.Basic.Real.Basic
 
 /-!
-# Narrowed staircase bins
+# Binning parameters in the Lemma 3.5 proof
 
-The public definitions in this file are:
+The definitions used by the internal staircase proof are:
 
 - `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.staircaseBinLower`:
   the lower edge $b_l=-2/3+l/(3m)$ of bin $l$.
@@ -26,7 +26,7 @@ The public definitions in this file are:
   the terminal interval fractions $v_1/\beta_m$ and
   $(v_2-1/(3m))/\beta_m$.
 
-These definitions give the finite spatial bins in the proof of Lemma 3.5,
+These parameters encode the finite spatial bins in the proof of Lemma 3.5,
 Chapter 3 of Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk
 with Infinite Offspring*.
 -/
