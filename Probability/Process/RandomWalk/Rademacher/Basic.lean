@@ -14,6 +14,15 @@ public import Probability.Distributions.Rademacher
 
 This file realizes the canonical IID Rademacher increment law as a
 process-level random walk, independently of any branching-walk realization.
+
+The public declarations are:
+
+- `ProbabilityTheory.RandomWalk.rademacherIncrementPath`: the pointwise map
+  $\omega\mapsto(\operatorname{rademacherOfBool}(\omega_n))_{n\ge0}$.
+- `ProbabilityTheory.RandomWalk.measurable_rademacherIncrementPath`:
+  measurability of this map from Boolean sequences to real increment paths.
+- `ProbabilityTheory.RandomWalk.map_iidSequenceLaw_rademacherIncrementPath`:
+  pushing forward the fair-Boolean IID law gives the real Rademacher IID law.
 -/
 
 open MeasureTheory
