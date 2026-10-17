@@ -16,6 +16,22 @@ import Topology.Order.Limit
 The endpoint-core product lower bound and the selected-cell range upper bound
 give the exact stable logarithmic rate for every admissible `M₂` step
 corridor.
+
+Write $Y_n^\xi=\texttt{sourceNormalizedStepCadlagPathIcc}(s,n,\xi)$,
+$P_n(c)=(\operatorname{iidSequenceLaw}\nu)\{\xi:Y_n^\xi\in
+\operatorname{corridorSet}(c.\texttt{upper},c.\texttt{lower})\}$, and
+$\rho_n$ for the stable small-deviation rate. The declaration in
+`ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete` is:
+
+- `tendsto_scaledLog_sourceNormalizedStepCorridor_eq_energyRate`: for every
+  continuous admissible step corridor $c$, $P_n(c)>0$ eventually and
+  $\rho_n\log P_n(c)\to C2^\alpha(c.\operatorname{energy}(\alpha)).\operatorname{toReal}$.
+
+This is the finite-partition rate step in A. A. Mogul'skii, “Small deviations
+in the sample function space,” Theorem 3, Section 4, p. 764, *Teoriya
+Veroyatnostei i ee Primeneniya* 19(4) (1974), 755--765; English translation,
+“Small Deviations in a Space of Trajectories,” *Theory of Probability and Its
+Applications* 19(4) (1975), 726--736, DOI 10.1137/1119081.
 -/
 
 open Filter MeasureTheory
