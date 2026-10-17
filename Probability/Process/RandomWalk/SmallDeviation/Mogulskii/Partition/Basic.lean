@@ -16,8 +16,61 @@ public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Path.Tight
 /-!
 # Finite-partition endpoint bounds
 
-Finite-dimensional Gaussian block estimates are transferred to simultaneous
-corridor constraints at all endpoints of an equal-length partition.
+Write $D_m(\xi)=\sum_{i<m}\xi_i$,
+$q_n=\operatorname{diffusiveBlockLength}(C,s,n)$, and, for a probability
+measure $\nu$, $\mathbb P_\nu=(\operatorname{iidSequenceLaw}\,\nu)$. The
+public declarations in `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii`
+are:
+
+- `prod_gaussian_Ioo_le_liminf_measure_partitionEndpoints`: for centered
+  unit-variance increments, a Mogulskii scale $s$, $C,\rho>0$, and target
+  increments $(y_j)$ satisfying
+  $a_k+m\rho<\sum_{j<k}y_j<b_k-m\rho$ for every $k\le m$,
+  $\prod_{j<m}\mathbb P(Z\in((y_j-\rho)/\sqrt C,
+  (y_j+\rho)/\sqrt C))$ is at most
+  $\liminf_n\mathbb P_\nu(\forall k\le m,\ D_{kq_n}/s_n\in(a_k,b_k))$,
+  where $Z\sim N(0,1)$.
+- `measure_partitionStartMargins_le_corridors_add_error`: for centered
+  unit-second-moment increments, $\rho>0$, and block length $\ell$,
+  $\mathbb P_\nu(\forall j<m,\ D_{j\ell}\in[a_j+\rho,b_j-\rho])$
+  is at most
+  $\mathbb P_\nu(\forall j<m,\forall k\le\ell,
+  D_{j\ell+k}\in[a_j,b_j])+\sum_{j<m}\operatorname{ofReal}((\ell+1)/\rho^2)$.
+- `measure_normalizedEndpoints_le_corridors_add_error`: for centered
+  unit-second-moment increments, $\lambda,\rho>0$, and block length $\ell$,
+  $\mathbb P_\nu(\forall j<m,\ D_{j\ell}/\lambda\in
+  (a_j+\rho,b_j-\rho))$ is at most
+  $\mathbb P_\nu(\forall j<m,\forall k\le\ell,
+  D_{j\ell+k}\in[\lambda a_j,\lambda b_j])$
+  plus $\sum_{j<m}\operatorname{ofReal}((\ell+1)/(\lambda\rho)^2)$.
+- `exists_diffusiveBlockConstant_eventually_normalizedEndpoints_le_corridors_add`:
+  given $m>0$, $\rho,\epsilon>0$, centered unit-second-moment increments,
+  and a Mogulskii scale $s$, there is $C>0$ such that eventually in $n$,
+  uniformly over endpoint sequences $(a_j),(b_j)$,
+  $\mathbb P_\nu(\forall j<m,\ D_{j q_n}/s_n\in
+  (a_j+\rho,b_j-\rho))$ is at most
+  $\mathbb P_\nu(\forall j<m,\forall k\le q_n,
+  D_{j q_n+k}\in[s_n a_j,s_n b_j])+\operatorname{ofReal}(\epsilon)$.
+- `exists_diffusiveBlockConstant_gaussianProduct_le_liminf_corridors_add`:
+  for centered unit-second-moment increments, a Mogulskii scale $s$,
+  $m>0$, endpoint margin $\eta>0$, block radius $\rho>0$, and tolerance
+  $\epsilon>0$, target increments $(y_j)$ satisfying
+  $a_k+\eta+m\rho<\sum_{j<k}y_j<b_k-\eta-m\rho$ for every $k\le m$,
+  some $C>0$ makes the Gaussian product in the first item at most
+  $\liminf_n\mathbb P_\nu(\forall j<m,\forall k\le q_n,
+  D_{j q_n+k}/s_n\in[a_j,b_j])+\operatorname{ofReal}(\epsilon)$.
+- `exists_diffusiveBlockConstant_gaussianProduct_le_liminf_remainingMass_add`:
+  for centered unit-second-moment increments, a Mogulskii scale $s$,
+  $m>0$, $\eta,\rho,\epsilon>0$, if the normalized initial point $x$ belongs
+  to $[a,b]$ and
+  $a-x+\eta+m\rho<\sum_{j<k}y_j<b-x-\eta-m\rho$ for every $k\le m$,
+  the same Gaussian product is at most
+  $\liminf_n\operatorname{remainingMass}
+  (K_{[s_n a,s_n b]}^{m q_n},s_nx)+\operatorname{ofReal}(\epsilon)$,
+  where $K_{[s_n a,s_n b]}$ is the killed increment kernel.
+
+The estimates transfer finite-dimensional Gaussian block bounds to
+simultaneous full-corridor constraints on an equal-length partition.
 -/
 
 open Filter MeasureTheory Set
