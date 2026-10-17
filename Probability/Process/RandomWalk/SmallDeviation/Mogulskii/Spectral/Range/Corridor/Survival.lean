@@ -20,6 +20,38 @@ public import Probability.Kernel.Survival.Basic
 An open corridor containing the origin is embedded into an integer interval
 by rounding its two scaled endpoints outwards.  The integer-valued
 Rademacher path then survives in the corresponding finite killed interval.
+For $\ell<0<u$ and time $n$, put
+\[
+  L_n=\lceil-\ell\sqrt n\rceil,
+  \quad U_n=\lceil u\sqrt n\rceil,
+  \quad D_n=L_n+U_n-1.
+\]
+Write $K_D=\texttt{intervalRademacherKernel}(D)$ and
+$M_D(n,i)=\texttt{Kernel.remainingMass}(K_D,n,i)$.
+The public declarations are:
+
+* `corridorLeftCeil`, `corridorRightCeil`, and
+  `corridorInteriorCount` define $L_n$, $U_n$, and $D_n$;
+  `corridorStart` is the translated origin at site $L_n-1$ in the
+  $D_n$-site interval.  `corridorLeftCeil_pos` and
+  `corridorRightCeil_pos` prove $L_n,U_n>0$ for $n>0$.
+* `normalizedRademacherPath_openCorridor_implies_survival` proves that if
+  the normalized polygonal path stays in $(\ell,u)$, then its lattice path
+  survives in the rounded $D_n$-site interval.
+  `normalizedRademacherPath_openCorridor_probability_le_survival` gives the
+  corresponding inequality between the path-law probability and the killed
+  kernel's remaining mass.
+* `intervalRademacherKernel_remainingMass_le_geometric` proves, for $D>0$
+  and $n>0$,
+  \[
+    M_D(n,i)\le
+    4\frac{\cos^n(\pi/(D+1))}{1-\cos^n(\pi/(D+1))}.
+  \]
+  `normalizedRademacherPath_openCorridor_probability_le_geometric`
+  applies this with $D=D_n$.
+* `normalizedRademacherPath_openCorridor_probability_le_widthGeometric`
+  replaces the rounded width by the deterministic bound
+  $(u-\ell)\sqrt n+3$ in the same cosine-geometric expression.
 -/
 
 open MeasureTheory Set

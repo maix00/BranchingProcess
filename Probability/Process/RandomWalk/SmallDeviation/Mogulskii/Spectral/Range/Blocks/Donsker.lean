@@ -20,6 +20,31 @@ This is the corrected route from the discrete block comparison to Brownian
 spectral decay. A finite increment block is first identified with the grid
 vertices of its polygonal interpolation. The closed range-oscillation event
 then transfers through Donsker without taking a union over individual times.
+The public declarations are:
+
+Write $J_{u,L}=\texttt{blockOscillationEvent}(u,L)$ for the event that
+partial sums in a block of length $L$ have pairwise differences at most $u$.
+
+* `normalizedLinearContinuousPathIcc_mem_rangeOscillationSet_of_grid`
+  extends a bound $|x_i-x_j|\le u$ at every pair of grid vertices to the
+  entire linear interpolation.
+* `blockOscillationEvent_subset_normalizedPath_rangeOscillation` proves
+  $J_{u,L}\subseteq\{\text{normalized path has range diameter}\le u/s\}$
+  for a positive spatial normalization $s$.
+* `iidSequenceLaw_blockOscillation_le_normalizedPathLaw` transfers this
+  inclusion to the corresponding probability inequality.
+* `limsup_iidSequenceLaw_blockOscillation_le_brownianRangeOscillationMass`
+  proves that if $L_n\to\infty$ and the normalized block widths are
+  eventually at most $u$, then
+  $\limsup_n\mathbb P(J_{w_n,L_n})\le
+  \mathbb P\{\operatorname{diam}(B([0,1]))\le u\}$ for a centered,
+  unit-variance increment law.
+
+The convergence input is the continuous-path Donsker theorem formalized as
+`ProbabilityTheory.RandomWalk.tendstoInDistribution_normalizedLinearContinuousPath_brownian`,
+corresponding to Theorem 4.20 in I. Karatzas and S. E. Shreve,
+*Brownian Motion and Stochastic Calculus*, 2nd ed., Graduate Texts in
+Mathematics 113, Springer (1991), DOI 10.1007/978-1-4612-0949-2.
 -/
 
 open Filter MeasureTheory ProbabilityTheory

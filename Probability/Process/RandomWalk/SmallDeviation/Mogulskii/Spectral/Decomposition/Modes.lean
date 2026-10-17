@@ -57,8 +57,11 @@ The public declarations are:
   `sum_two_mul_abs_intervalModeEigenvalue_pow_le_geometric` gives
   $\sum_k2|\lambda_{N,k}|^n\le4\sum_k(\lambda_{N,0}^n)^{k+1}$.
 * `intervalLeftNeighbor_sineMode` and
-  `intervalRightNeighbor_sineMode` evaluate $v_{N,k}$ at the available
-  neighboring sites; `intervalKernel_mulVec_sineMode` proves
+  `intervalRightNeighbor_sineMode` give
+  $(\mathrm{left}(i)).\operatorname{elim}(0,v_{N,k})=
+  \sin(\theta_{N,k}i)$ and
+  $(\mathrm{right}(i)).\operatorname{elim}(0,v_{N,k})=
+  \sin(\theta_{N,k}(i+2))$; `intervalKernel_mulVec_sineMode` proves
   $K_Nv_{N,k}=\lambda_{N,k}v_{N,k}$.
   `intervalSineMode_ne_zero` proves each $v_{N,k}\ne0$, and
   `intervalSineMode_dotProduct_eq_zero` proves
