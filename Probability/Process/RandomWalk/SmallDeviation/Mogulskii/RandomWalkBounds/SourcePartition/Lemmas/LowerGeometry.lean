@@ -8,7 +8,26 @@ module
 
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.SourcePartition.Events
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.Partition.Endpoint
-/-! # Endpoint-core gluing for the source terminal-left path -/
+/-!
+# Endpoint-core gluing for the source terminal-left path
+
+For increasing knot radii $r_j$, centers $c_j$, and local core-return block
+events on source cell lengths, the declarations in
+`ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Discrete` are:
+
+- `sourceNormalizedStepCadlagPathIcc_commonPartitionGrid_mem_core_of_blockEvents`:
+  if $c_0=r_0=0$, each block moves from the core at knot $t_i$ into the core
+  at $t_{i+1}$, and $r_i<r_{i+1}$, then
+  $Y_n^{\mathrm{src}}(t_j)\in[c_j-r_j,c_j+r_j]$ at every knot.
+- `sourceNormalizedStepCadlagPathIcc_mem_corridorSet_of_partitionCellCoreReturnBlockEvents`:
+  if those knot cores lie in the selected corridor and each local contracted
+  corridor is strictly inside the cell's right-trace bounds, the intersection
+  of the source-cell core-return events is contained in
+  $\{\xi:Y_n^{\mathrm{src}}\in\operatorname{corridorSet}(U,L)\}$.
+
+The local core-return event and its IID product law are defined in the
+semantic sibling module `Partition/Endpoint.lean`.
+-/
 
 @[expose] public section
 

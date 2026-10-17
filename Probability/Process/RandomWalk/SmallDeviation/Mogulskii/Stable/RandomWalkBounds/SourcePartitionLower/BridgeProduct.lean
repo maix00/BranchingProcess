@@ -185,8 +185,7 @@ theorem exists_eventually_iidSequenceLaw_sourceNormalizedStepCorridor_lowerBound
           intro i
           have hlength (n : ℕ) :
               sourcePartitionCellStepLengths n upper lower i.val = total i n := by
-            simp [total, commonPartitionCellStepLengths,
-              commonPartitionCellStepLength, commonPartitionFloorTimeIndex, i.isLt]
+            simp [total, sourcePartitionCellStepLengths]
           filter_upwards [hlocal i] with n hn
           rw [hlength n]
           exact hn)
