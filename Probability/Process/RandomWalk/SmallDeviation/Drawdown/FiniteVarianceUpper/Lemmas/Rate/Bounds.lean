@@ -6,7 +6,14 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.JumpPattern.UnionBound
+public import Mathlib.Basic.Real.Basic
+public import Mathlib.Algebra.Order.Archimedean.Real.Basic
+public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
+public import Mathlib.Analysis.SpecialFunctions.Pow.Real
+public import Mathlib.Analysis.SpecialFunctions.Log.Basic
+public import Mathlib.Analysis.Complex.Exponential
+public import Mathlib.Order.Filter.Defs
+import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.JumpPattern.UnionBound
 import Analysis.Asymptotics.Scale.IntermediatePowerBlock
 import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 
@@ -42,7 +49,6 @@ open scoped ENNReal
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown
 
 open ProbabilityTheory.RandomWalk
-open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
 private lemma exp_pow_nat (x : ℝ) (n : ℕ) :
     Real.exp x ^ n = Real.exp ((n : ℝ) * x) := by

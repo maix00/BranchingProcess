@@ -8,26 +8,19 @@ module
 
 public import Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.FiniteVarianceLower
 public import Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.EndpointWindow
+public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Staircase.Binning.Basic
 
 /-!
-# Spatial-bin geometry for the finite-variance tilted tube
-
-The proof-specific definitions in this file are:
-
-- `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.staircaseBinLower`,
-  `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.staircaseBinUpper`, and `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.staircaseBinWidth`: spatial-bin edges and the
-  common narrowed width factor.
-- `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.staircaseBinTubeParameter`,
-  `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.staircaseBinEndpointLowerFraction`, and `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.staircaseBinEndpointUpperFraction`:
-  horizontal-tube parameters of the common event for one bin.
+# Spatial-bin coverage for the finite-variance tilted tube
 
 The module-visible lemma in this file is:
 
 - `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.exists_staircaseBin_commonEvent_subset_centerWindow`:
   the same selection for every point in the middle endpoint window.
 
-These are the spatial bins in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, proof of
-Lemma 3.5. The horizontal-tube rate used with these bins is given in Wang
+This is the bin-coverage step in Wang Yiyang, *Asymptotic Speed of the
+N-Branching Random Walk with Infinite Offspring*, Chapter 3, proof of Lemma
+3.5. The horizontal-tube rate used with these bins is given in Wang
 Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite
 Offspring*, Chapter 3, Lemma 3.1(ii).
 -/
@@ -41,36 +34,6 @@ namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 
 open ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube
 
-open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete
-
-/-- The lower endpoint of the l-th spatial bin in the staircase
-construction of Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, proof of Lemma 3.5. -/
-noncomputable def staircaseBinLower (m l : ℕ) : ℝ :=
-  -(2 : ℝ) / 3 + (l : ℝ) / (3 * (m : ℝ))
-
-/-- The upper endpoint of the l-th spatial bin in the staircase
-construction of Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, proof of Lemma 3.5. -/
-noncomputable def staircaseBinUpper (m l : ℕ) : ℝ :=
-  staircaseBinLower m l + 1 / (3 * (m : ℝ))
-
-/-- The width factor of the common narrowed tube in one staircase bin. -/
-noncomputable def staircaseBinWidth (m : ℕ) : ℝ :=
-  1 - 1 / (3 * (m : ℝ))
-
-/-- The horizontal-tube parameter whose lower edge is b_{l+1} and whose
-width is 1 - 1/(3m). -/
-noncomputable def staircaseBinTubeParameter (m l : ℕ) : ℝ :=
-  -staircaseBinUpper m l / staircaseBinWidth m
-
-/-- The lower endpoint fraction of the common terminal interval in the
-narrowed staircase tube. -/
-noncomputable def staircaseBinEndpointLowerFraction (m : ℕ) (v₁ : ℝ) : ℝ :=
-  v₁ / staircaseBinWidth m
-
-/-- The upper endpoint fraction of the common terminal interval in the
-narrowed staircase tube. -/
-noncomputable def staircaseBinEndpointUpperFraction (m : ℕ) (v₂ : ℝ) : ℝ :=
-  (v₂ - 1 / (3 * (m : ℝ))) / staircaseBinWidth m
 
 /-- The bins in the staircase construction of Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, proof
 of Lemma 3.5, cover the full range of normalized relative starting

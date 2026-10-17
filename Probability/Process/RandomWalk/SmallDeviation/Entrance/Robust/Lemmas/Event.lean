@@ -6,18 +6,15 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Entrance.MovingCorridor
+public import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.Event
 
 /-!
-# Robust endpoint of a diffusive entrance
+# Measurability and interior inclusion for the robust entrance event
 
 Write $S_j=\sum_{i=0}^{j-1}\xi_i$ for the partial sums of the increments,
 $h_j=cj/\Delta^2$ for the moving-boundary displacement, and $x$ for the
-starting point. The supporting declarations in this file are:
+starting point. The module-visible lemmas in this file are:
 
-- `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.robustMovingTransitionEvent`:
-  $\mathcal R_{n,\Delta,c}(x)=\{\xi:h_j\le x+S_j\le\Delta+h_j\ (1\le j\le n),\
-  x+S_n\in[h_n+2\Delta/5,h_n+3\Delta/5]\}$.
 - `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.measurableSet_robustMovingTransitionEvent`:
   membership in $\mathcal R_{n,\Delta,c}(x)$ depends only on
   $\xi_0,\ldots,\xi_{n-1}$.
@@ -27,11 +24,9 @@ starting point. The supporting declarations in this file are:
   $\mathcal I_{n,\Delta,c}(x)=\{\xi:c\le x+S_j\le\Delta\ (1\le j\le n),\
   x+S_n\in[5\Delta/12,7\Delta/12]\}$.
 
-The narrow terminal interval is the first horizontal staircase window used
-in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite
-Offspring* (master's thesis, Fudan University, 2026), Chapter 3, Lemma 3.5.
-The middle-start and edge probability estimates are grouped under
-`Robust/Lemmas/` and follow Appendix A.2, Lemma A.7.
+The proofs support Wang Yiyang, *Asymptotic Speed of the N-Branching Random
+Walk with Infinite Offspring* (master's thesis, Fudan University, 2026),
+Chapter 3, Lemma 3.5, and use the fixed window in Appendix A.2, Lemma A.7.
 -/
 
 @[expose] public section
@@ -39,17 +34,6 @@ The middle-start and edge probability estimates are grouped under
 open MeasureTheory ProbabilityTheory
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Entrance
-
-/-- The entrance corridor with the smaller terminal window needed for the
-first horizontal staircase block. -/
-def robustMovingTransitionEvent (n : ℕ) (width drift start : ℝ) :
-    Set (ℕ → ℝ) :=
-  movingCorridorEvent n width drift start ∩
-    {increment |
-      drift * (n : ℝ) / width ^ 2 + 2 * width / 5 ≤
-        start + AdditivePath.displacement n increment ∧
-      start + AdditivePath.displacement n increment ≤
-        drift * (n : ℝ) / width ^ 2 + 3 * width / 5}
 
 private lemma displacement_measurable_prefix
     (n j : ℕ) (hj : j ≤ n) :
