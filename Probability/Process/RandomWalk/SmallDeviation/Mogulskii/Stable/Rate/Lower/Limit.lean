@@ -13,17 +13,19 @@ public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Rat
 /-!
 # Stable horizontal-tube rate limit
 
-Let $s_n=\mathrm{scale}(n)$,
+Let $(\xi_i)_{i\geq1}$ be i.i.d. with law $\nu$, put
+$S_j=\sum_{i=1}^j\xi_i$, and let $\mathbb P_\nu$ denote their product law.
+Write $s_n=\mathrm{scale}(n)$,
 $L^*(x)=\mathrm{stableSlowVariation}(\alpha,\nu)(x)$,
-$a_n=s_n^\alpha/(nL^*(s_n))$, and
-$T_n=\{|S_j|<s_n/2\text{ for }1\leq j\leq n\}$ for partial sums of
-i.i.d. increments with law $\nu$. Assume $0<\alpha\leq2$, a stable
-Mogulskii scale, $a_n\to0$, slow variation of $L^*$, the stable-process
-escape-rate hypothesis with constant $C$, and the stated domain-of-attraction,
-tightness, and endpoint-sign conditions. The public declaration is:
+$a_n=\frac{s_n^\alpha}{nL^*(s_n)}$, and
+$T_n=\{|S_j|<s_n/2\text{ for }1\leq j\leq n\}$.
+Assume $0<\alpha\leq2$, a stable Mogulskii scale, $a_n\to0$, slow variation
+of $L^*$, the stable-process escape-rate hypothesis with constant $C$, and the
+stated domain-of-attraction, tightness, and endpoint-sign conditions. The
+public declaration is:
 
 - `tendsto_stableSmallDeviationRate_mul_log_openHorizontalTubeProbability_of_escapeRate`:
-  $a_n\log\mathbb P(T_n)\to C/(1/2)^\alpha$.
+  $a_n\log\mathbb P_\nu(T_n)\to\frac{C}{(1/2)^\alpha}$.
 
 This is the stable horizontal-tube limit in Theorem 3, Section 4 of
 A. A. Mogul'skii, “Small deviations in the sample function space,”

@@ -12,18 +12,20 @@ public import Mathlib.Topology.Order.LiminfLimsup
 /-!
 # Positivity and logarithmic bounds for stable tube probabilities
 
-Let $s_n=\mathrm{scale}(n)$,
+Let $(\xi_i)_{i\geq1}$ be i.i.d. with law $\nu$, put
+$S_j=\sum_{i=1}^j\xi_i$, and let $\mathbb P_\nu$ denote their product law.
+Write $s_n=\mathrm{scale}(n)$,
 $L^*(x)=\mathrm{stableSlowVariation}(\alpha,\nu)(x)$,
-$a_n=s_n^\alpha/(nL^*(s_n))$, and
-$T_n=\{|S_j|<s_n/2\text{ for }1\leq j\leq n\}$ for partial sums of
-i.i.d. increments with law $\nu$. Assume $0<\alpha\leq2$, a stable
-Mogulskii scale, $a_n\to0$, slow variation of $L^*$, the stable-process
-escape-rate hypothesis, and the domain-of-attraction, tightness, and
-endpoint-sign conditions. The public declaration is:
+$a_n=\frac{s_n^\alpha}{nL^*(s_n)}$, and
+$T_n=\{|S_j|<s_n/2\text{ for }1\leq j\leq n\}$.
+Assume $0<\alpha\leq2$, a stable Mogulskii scale, $a_n\to0$, slow variation
+of $L^*$, the stable-process escape-rate hypothesis, and the
+domain-of-attraction, tightness, and endpoint-sign conditions. The public
+declaration is:
 
 - `stableEscapeRate_eventually_positive_and_log_cobounded`: eventually
-  $\mathbb P(T_n)>0$; moreover $a_n\log\mathbb P(T_n)$ is eventually bounded
-  above and below and is cobounded under $\leq$.
+  $\mathbb P_\nu(T_n)>0$; moreover $a_n\log\mathbb P_\nu(T_n)$ is
+  eventually bounded above and below and is cobounded under $\leq$.
 
 This is an auxiliary consequence of the endpoint-return lower estimate in
 Theorem 3, Section 4 of A. A. Mogul'skii, “Small deviations in the sample
