@@ -8,7 +8,7 @@ module
 
 public import Probability.Process.RandomWalk.FunctionalLimit.Donsker.Path.Continuous
 public import Probability.Process.RandomWalk.Path.Survival.Basic
-public import Probability.Process.RandomWalk.Fluctuation.DescendingLocalTime
+public import Probability.Process.RandomWalk.Fluctuation.Ladder.Descending.LocalTime
 public import Probability.Process.Brownian.Reflection.Path.NonnegativeUnitPath
 public import Probability.Process.Brownian.Construction.Existence
 public import Probability.Distributions.Moments.Real
@@ -16,20 +16,26 @@ public import Probability.Distributions.Moments.Real
 /-!
 # Finiteness of the first descending ladder time
 
-The public theorems in this file are:
+Let $(\xi_i)_{i\geq1}$ be i.i.d. with law $\nu$, set
+$S_0=0$ and $S_n=\sum_{i=1}^n\xi_i$, and write $\mathbb P_\nu$ for the
+product-law probability. Let $T^-_1$ be the first strict descending record
+time, as defined in `Ladder/Descending/LocalTime.lean`. The public theorems
+in this file are:
 
 - `ProbabilityTheory.RandomWalk.tendsto_survivalProbability_zero_of_centeredUnitSecondMoment`:
-  for centered, unit-variance increments,
-  $\mathbb P(S_j\ge0\text{ for }1\le j\le n)\to0$.
+  if $\mathbb E_\nu[\xi_1]=0$ and $\mathbb E_\nu[\xi_1^2]=1$, then
+  $\mathbb P_\nu(S_j\ge0\text{ for every }1\leq j\leq n)\to0$.
 - `ProbabilityTheory.RandomWalk.measure_firstDescendingLadderTime_eq_top_zero_of_centeredSecondMoment`:
-  for every centered variance $\sigma^2>0$,
-  $\mathbb P(T^-_1=\infty)=0$.
+  if $\mathbb E_\nu[\xi_1]=0$ and
+  $\mathbb E_\nu[\xi_1^2]=\sigma^2>0$, then
+  $\mathbb P_\nu(T^-_1=\infty)=0$.
 
 The proof combines Donsker's functional central limit theorem with the
 zero probability of a nonnegative Brownian path on $[0,1]$. This supplies
-the almost-sure finiteness premise for the first ladder-time law in
-Francesco Caravenna and Loïc Chaumont, *Invariance principles for random
-walks conditioned to stay positive*, Lemma 2.1, DOI 10.1214/07-AIHP119.
+the almost-sure finiteness premise for the first ladder-time law in Lemma 2.1
+of Francesco Caravenna and Loïc Chaumont, *Invariance principles for random
+walks conditioned to stay positive*, Ann. Inst. H. Poincaré Probab. Statist.
+44(1) (2008), 170--190, DOI 10.1214/07-AIHP119.
 -/
 
 @[expose] public section

@@ -33,9 +33,12 @@ The public definitions and theorems in this file are:
   $\mathbb P(S_n\ge0)$ is the alternating sum of probabilities of nonempty
   intersections of cyclic survival events.
 
-This is equation (A.4) in M. Bauer, C. Godrèche, and J.-M. Luck,
-*Statistics of persistent events in the binomial random walk: Will the
-drunken sailor hit the sober man?*, Appendix A (arXiv:cond-mat/9905252).
+These are the cyclic-event and inclusion--exclusion steps in M. Bauer,
+C. Godrèche, and J.-M. Luck, *Statistics of persistent events in the
+binomial random walk: Will the drunken sailor hit the sober man?*,
+Appendix A, equations (A.3)--(A.4), *Journal of Statistical Physics* 96
+(1999), 963--1019, DOI 10.1023/A:1004636216365,
+arXiv:cond-mat/9905252.
 -/
 
 @[expose] public section

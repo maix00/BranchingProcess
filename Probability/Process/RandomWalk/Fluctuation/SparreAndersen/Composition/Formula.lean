@@ -7,6 +7,9 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.Fluctuation.SparreAndersen.Composition.Cyclic
+public import Probability.Process.RandomWalk.Fluctuation.SparreAndersen.Composition.CyclicReindex
+public import Probability.Process.RandomWalk.Fluctuation.SparreAndersen.Composition.Lemmas.BlockProbability
+public import Mathlib.MeasureTheory.Constructions.Pi
 
 /-!
 # Composition formula for endpoint probabilities
