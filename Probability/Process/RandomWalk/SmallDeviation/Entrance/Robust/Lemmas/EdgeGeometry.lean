@@ -7,7 +7,6 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.Event
-import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.Lemmas.Event
 public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition.Event
 import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.Lemmas.Edge.LowerMovingTube
 import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.Lemmas.Edge.UpperMovingTube

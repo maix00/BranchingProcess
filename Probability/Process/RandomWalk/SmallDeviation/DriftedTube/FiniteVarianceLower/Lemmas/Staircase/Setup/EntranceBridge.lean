@@ -11,7 +11,6 @@ public import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.Even
 public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Staircase.Schedule
 public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.BlockTube
 import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.FirstWindow
-import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.Lemmas.Event
 
 /-!
 # From the diffusive entrance to the first staircase block
