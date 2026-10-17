@@ -8,7 +8,7 @@ module
 
 public import Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.FiniteVarianceLower
 public import Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.EndpointWindow
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Staircase.Binning.Basic
+public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.Binning
 
 /-!
 # Spatial-bin coverage for the finite-variance tilted tube

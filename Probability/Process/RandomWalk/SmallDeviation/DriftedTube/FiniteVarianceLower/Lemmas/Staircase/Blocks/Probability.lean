@@ -8,7 +8,7 @@ module
 
 public import Probability.Process.Filtration.ConditionalBlocks
 public import Probability.Sequence.IID.Basic
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Staircase.Binning.Basic
+public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.Binning
 public import Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.EndpointWindow
 import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Binning.Geometry
 /-!

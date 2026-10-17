@@ -8,14 +8,17 @@ module
 
 public import Mathlib.Analysis.SpecialFunctions.Exp
 public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Staircase.Schedule
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Staircase.BlockTube
 import Mathlib.Tactic
 import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.Schedule
 /-!
 # Horizontal sub-tubes of a linearly rising tube
 
-The module-visible lemmas in this file are:
+The definitions and module-visible lemmas in this file are:
 
+- `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.staircaseLowerEdge`:
+  $r_{t_{j+1}}=r+c t_{j+1}/\Delta^2$.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.staircaseTubeWidth`:
+  $\Delta(j)=\Delta-c|I_j|/\Delta^2$.
 - `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.staircaseLowerEdge_eq_endBoundary` and
   `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.staircaseLowerEdge_add_staircaseTubeWidth_eq_startUpperBoundary`:
   the horizontal sub-tube is exactly $[r_{t_{j+1}},s_{t_j}]$.
@@ -37,6 +40,16 @@ Chapter 3, proof of Lemma 3.5.
 @[expose] public section
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
+
+/-- Lower edge of one horizontal sub-tube in the rising staircase. -/
+noncomputable def staircaseLowerEdge (base drift width : ℝ)
+    (start : ℕ → ℕ) (j : ℕ) : ℝ :=
+  base + drift * (start (j + 1) : ℝ) / width ^ 2
+
+/-- Width of one horizontal sub-tube in the rising staircase. -/
+noncomputable def staircaseTubeWidth (width drift : ℝ)
+    (length : ℕ → ℕ) (j : ℕ) : ℝ :=
+  width - drift * (length j : ℝ) / width ^ 2
 
 /-- The block's lower horizontal edge is the rising lower boundary at its
 ending time. -/

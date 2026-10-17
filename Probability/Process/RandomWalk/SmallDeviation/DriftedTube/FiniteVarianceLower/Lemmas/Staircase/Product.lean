@@ -13,7 +13,7 @@ public import Probability.Distributions.Moments.Real
 public import Probability.Process.Filtration.ConditionalBlocks
 public import Probability.Process.RandomWalk.Path.Adapted.Filtration
 public import Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.Blocks.EventBridge
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Staircase.Binning.Basic
+public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.Binning
 import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Blocks.Assembly
 import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Binning.Parameters
 import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Rate.BinRate

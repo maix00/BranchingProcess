@@ -9,7 +9,7 @@ module
 public import Mathlib.Basic.Real.Basic
 public import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.Event
 public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Staircase.Schedule
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Staircase.BlockTube
+public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.BlockTube
 import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.FirstWindow
 import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.Lemmas.Event
 

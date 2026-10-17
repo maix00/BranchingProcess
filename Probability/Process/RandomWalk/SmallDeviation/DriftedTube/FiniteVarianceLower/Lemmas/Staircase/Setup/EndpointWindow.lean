@@ -7,19 +7,22 @@ Authors: WANG Yiyang
 module
 
 public import Mathlib.Basic.Real.Basic
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Staircase.BlockTube
+public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.BlockTube
 
 /-!
-# Endpoint fractions for the staircase blocks
+# Endpoint fractions in the Lemma 3.5 proof
 
-The public endpoint parameters are:
+The endpoint parameters used by the internal staircase proof are:
 
 - `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.staircaseEndpointLowerFraction`
-  and `staircaseEndpointUpperFraction`: the fractions locating the next
-  central window, with the final interval $[r_L,r_L+v\Delta]$.
+  and `staircaseEndpointUpperFraction`: for $j+1<q$, these are
+  $(\Delta/3+2c|I_{j+1}|/(3\Delta^2))/\Delta(j)$ and
+  $(2\Delta/3+c|I_{j+1}|/(3\Delta^2))/\Delta(j)$; on the final block the
+  lower fraction is $0$ and the upper fraction is $v\Delta/\Delta(j)$.
 - `staircaseUpperEndpointLowerFraction` and
-  `staircaseUpperEndpointUpperFraction`: the corresponding fractions when
-  the final interval is adjacent to the upper edge of the tube.
+  `staircaseUpperEndpointUpperFraction`: the same interior fractions, with
+  final-block fractions $\max(1-v,0)\Delta/\Delta(j)$ and $1$ for the
+  endpoint interval adjacent to the tube's upper edge.
 
 These parameters encode the ordinary and final block windows in Wang
 Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite
