@@ -147,7 +147,10 @@ the mirrored source-convention modules
 `RandomWalkBounds/SourcePartition/Lemmas/LowerGeometry.lean` now do the same. The sibling
 `Partition/Lemmas/LowerGeometry.lean` and
 `SourcePartition/Lemmas/LowerGeometry.lean` each document their single
-proof-specific lemma. These headers state the exact
+proof-specific lemma. The stable finite-partition probability chain now also
+lists its rate conclusions in `Stable/RandomWalkBounds/Partition/Probability.lean`
+and `Stable/RandomWalkBounds/PartitionLower/{BridgeProduct,EnergyLower,FiniteProduct,Positivity,WidthRate}.lean`.
+These headers state the exact
 declaration identifiers in their Lean namespace, the mathematical object or
 estimate, and the assumptions that control each bound. The private path
 equivalence helpers in `Target/Path.lean` remain outside the public list.

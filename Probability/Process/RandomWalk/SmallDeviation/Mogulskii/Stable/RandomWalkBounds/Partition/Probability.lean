@@ -17,6 +17,14 @@ The source endpoint-return lower bound gives positivity and a logarithmic
 lower bound for a centered tube at the full horizon. A fixed spatial rescaling
 converts it to any positive cell width; horizon monotonicity then supplies the
 same lower bound for each shorter half-open partition cell.
+
+For $P_n(w,m)=\mathbb P_\nu(\max_{i,j\le m}|D_i-D_j|<w)$ and
+$\rho_n$ the stable small-deviation rate, the declaration in
+`ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete` is:
+
+- `eventually_partialSumRangeOscillationLTProbability_pos_and_rateLog_cobounded`:
+  if $w>0$ and $m_n\le n$ eventually, then $P_n(w s_n,m_n)>0$ eventually
+  and $\bigl(\rho_n\log P_n(w s_n,m_n)\bigr)_n$ is cobounded under $\le$.
 -/
 
 @[expose] public section
