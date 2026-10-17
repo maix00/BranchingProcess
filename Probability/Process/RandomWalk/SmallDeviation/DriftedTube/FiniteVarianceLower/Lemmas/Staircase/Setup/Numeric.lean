@@ -9,12 +9,11 @@ module
 public import Mathlib.Basic.Real.Basic
 public import Mathlib.Algebra.Order.Archimedean.Real.Basic
 public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.Binning
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Staircase.Schedule
+public import Probability.Process.RandomWalk.Path.Block.Partition.TailMerged
 public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.BlockTube
 import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Endpoint.Windows
 import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Binning.Parameters
 import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.BlockTube
-import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.Schedule
 /-!
 # Uniform width and time conditions for the staircase blocks
 
@@ -62,18 +61,18 @@ lemma staircaseBlockNumericConditions
           (globalWidth - 2 * drift * (blockLength : ℝ) /
             globalWidth ^ 2)⌋₊ : ℝ) ^ 2)
     {j : ℕ}
-    (hj : j < staircaseBlockCount entrance horizon blockLength) :
+    (hj : j < tailMergedBlockCount entrance horizon blockLength) :
     let actualWidth := staircaseTubeWidth globalWidth drift
-      (staircaseBlockLength entrance horizon blockLength) j
+      (tailMergedBlockLength entrance horizon blockLength) j
     let narrowedWidth := staircaseBinWidth m * actualWidth
     width₀ ≤ ⌊narrowedWidth⌋₊ ∧
     1 / margin ≤ narrowedWidth ∧
     ratio₀ * ⌊narrowedWidth⌋₊ ^ 2 ≤
-      staircaseBlockLength entrance horizon blockLength j ∧
+      tailMergedBlockLength entrance horizon blockLength j ∧
     narrowedRate * globalWidth ^ 2 ≤
       blockRate * (⌊narrowedWidth⌋₊ : ℝ) ^ 2 := by
   let actualWidth := staircaseTubeWidth globalWidth drift
-    (staircaseBlockLength entrance horizon blockLength) j
+    (tailMergedBlockLength entrance horizon blockLength) j
   let narrowedWidth := staircaseBinWidth m * actualWidth
   have hhalf : globalWidth / 2 ≤ actualWidth :=
     staircaseTubeWidth_ge_half_of_schedule_bound hentrance
@@ -102,10 +101,10 @@ lemma staircaseBlockNumericConditions
           (globalWidth - 2 * drift * (blockLength : ℝ) /
             globalWidth ^ 2)⌋₊ ≤ ⌊narrowedWidth⌋₊ :=
     Nat.floor_mono (mul_le_mul_of_nonneg_left hcommon hβ)
-  have hlength := (staircaseBlockLength_bounds
+  have hlength := (tailMergedBlockLength_bounds
     hentrance hblockLength hj).1
   have htime' : ratio₀ * ⌊narrowedWidth⌋₊ ^ 2 ≤
-      staircaseBlockLength entrance horizon blockLength j := by
+      tailMergedBlockLength entrance horizon blockLength j := by
     have hsquare : ⌊narrowedWidth⌋₊ ^ 2 ≤
         ⌊staircaseBinWidth m * globalWidth⌋₊ ^ 2 := by
       exact pow_le_pow_left₀ (Nat.zero_le _) hfloorHigh _

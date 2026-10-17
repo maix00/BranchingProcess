@@ -14,7 +14,7 @@ public import Probability.Distributions.Moments.Real
 public import Probability.Sequence.Filtration
 public import Probability.Sequence.IID.Basic
 public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.Binning
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Staircase.Schedule
+public import Probability.Process.RandomWalk.Path.Block.Partition.TailMerged
 public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.BlockTube
 public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.EndpointWindow
 public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.EndpointEvent
@@ -69,30 +69,30 @@ lemma exists_concreteStaircaseUpperEndpointLowerBound_of_robustEntrance
         0 < blockLength → 0 < globalWidth → 0 < margin →
         0 ≤ drift → 0 ≤ blockRate →
         10 * drift * (blockLength : ℝ) < globalWidth ^ 3 →
-        (∀ j, j < staircaseBlockCount entrance horizon blockLength →
+        (∀ j, j < tailMergedBlockCount entrance horizon blockLength →
           let width := staircaseTubeWidth globalWidth drift
-            (staircaseBlockLength entrance horizon blockLength) j
+            (tailMergedBlockLength entrance horizon blockLength) j
           let v₁ := staircaseUpperEndpointLowerFraction
-            (staircaseBlockCount entrance horizon blockLength)
+            (tailMergedBlockCount entrance horizon blockLength)
             globalWidth drift endpointFraction
-            (staircaseBlockLength entrance horizon blockLength) j
+            (tailMergedBlockLength entrance horizon blockLength) j
           let v₂ := staircaseUpperEndpointUpperFraction
-            (staircaseBlockCount entrance horizon blockLength)
+            (tailMergedBlockCount entrance horizon blockLength)
             globalWidth drift endpointFraction
-            (staircaseBlockLength entrance horizon blockLength) j
+            (tailMergedBlockLength entrance horizon blockLength) j
           let narrowedWidth := staircaseBinWidth m * width
           width₀ ≤ ⌊narrowedWidth⌋₊ ∧
           1 / margin ≤ narrowedWidth ∧
           ratio₀ * (⌊narrowedWidth⌋₊) ^ 2 ≤
-            staircaseBlockLength entrance horizon blockLength j ∧
+            tailMergedBlockLength entrance horizon blockLength j ∧
           narrowedRate * globalWidth ^ 2 ≤
             blockRate * (⌊narrowedWidth⌋₊ : ℝ) ^ 2 ∧
-          (j + 1 < staircaseBlockCount entrance horizon blockLength →
+          (j + 1 < tailMergedBlockCount entrance horizon blockLength →
             staircaseBinEndpointLowerFraction m v₁ + margin ≤
               uInterior ∧
             vInterior + margin ≤
               staircaseBinEndpointUpperFraction m v₂) ∧
-          (¬j + 1 < staircaseBlockCount entrance horizon blockLength →
+          (¬j + 1 < tailMergedBlockCount entrance horizon blockLength →
             staircaseBinEndpointLowerFraction m v₁ + margin ≤
               uFinal ∧
             vFinal + margin ≤

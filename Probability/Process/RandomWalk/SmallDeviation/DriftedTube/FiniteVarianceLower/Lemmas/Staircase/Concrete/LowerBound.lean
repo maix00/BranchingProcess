@@ -14,15 +14,14 @@ public import Probability.Sequence.Filtration
 public import Probability.Sequence.IID.Basic
 public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.EndpointWindow
 public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.Binning
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Staircase.Schedule
+public import Probability.Process.RandomWalk.Path.Block.Partition.TailMerged
 public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.BlockTube
 public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.EndpointEvent
 import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.FiniteLower
 import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Endpoint.Windows
-import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.Schedule
 import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.BlockTube
 import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.Binning
-import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Staircase.Schedule
+import Probability.Process.RandomWalk.Path.Block.Partition.TailMerged
 import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.BlockTube
 /-!
 # Lower bound for Wang Yiyang's Lemma 3.5 staircase schedule
@@ -77,37 +76,37 @@ lemma exists_concreteStaircaseLowerBound
           AdditivePath.displacement entrance increment ∈
             Set.Icc
               (staircaseLowerEdge base drift globalWidth
-                (staircaseBlockStart entrance horizon blockLength) 0 +
+                (tailMergedBlockStart entrance horizon blockLength) 0 +
                 staircaseTubeWidth globalWidth drift
-                  (staircaseBlockLength entrance horizon blockLength) 0 / 3)
+                  (tailMergedBlockLength entrance horizon blockLength) 0 / 3)
               (staircaseLowerEdge base drift globalWidth
-                (staircaseBlockStart entrance horizon blockLength) 0 +
+                (tailMergedBlockStart entrance horizon blockLength) 0 +
                 2 * staircaseTubeWidth globalWidth drift
-                  (staircaseBlockLength entrance horizon blockLength) 0 / 3)) →
-        (∀ j, j < staircaseBlockCount entrance horizon blockLength →
+                  (tailMergedBlockLength entrance horizon blockLength) 0 / 3)) →
+        (∀ j, j < tailMergedBlockCount entrance horizon blockLength →
           let width := staircaseTubeWidth globalWidth drift
-            (staircaseBlockLength entrance horizon blockLength) j
+            (tailMergedBlockLength entrance horizon blockLength) j
           let v₁ := staircaseEndpointLowerFraction
-            (staircaseBlockCount entrance horizon blockLength)
+            (tailMergedBlockCount entrance horizon blockLength)
             globalWidth drift
-            (staircaseBlockLength entrance horizon blockLength) j
+            (tailMergedBlockLength entrance horizon blockLength) j
           let v₂ := staircaseEndpointUpperFraction
-            (staircaseBlockCount entrance horizon blockLength)
+            (tailMergedBlockCount entrance horizon blockLength)
             globalWidth drift endpointFraction
-            (staircaseBlockLength entrance horizon blockLength) j
+            (tailMergedBlockLength entrance horizon blockLength) j
           let narrowedWidth := staircaseBinWidth m * width
           width₀ ≤ ⌊narrowedWidth⌋₊ ∧
           1 / margin ≤ narrowedWidth ∧
           ratio₀ * (⌊narrowedWidth⌋₊) ^ 2 ≤
-            staircaseBlockLength entrance horizon blockLength j ∧
+            tailMergedBlockLength entrance horizon blockLength j ∧
           narrowedRate * globalWidth ^ 2 ≤
             blockRate * (⌊narrowedWidth⌋₊ : ℝ) ^ 2 ∧
-          (j + 1 < staircaseBlockCount entrance horizon blockLength →
+          (j + 1 < tailMergedBlockCount entrance horizon blockLength →
             staircaseBinEndpointLowerFraction m v₁ + margin ≤
               uInterior ∧
             vInterior + margin ≤
               staircaseBinEndpointUpperFraction m v₂) ∧
-          (¬j + 1 < staircaseBlockCount entrance horizon blockLength →
+          (¬j + 1 < tailMergedBlockCount entrance horizon blockLength →
             staircaseBinEndpointLowerFraction m v₁ + margin ≤
               uFinal ∧
             vFinal + margin ≤
@@ -134,22 +133,22 @@ lemma exists_concreteStaircaseLowerBound
     endpointFraction blockRate totalRate hentrance hblockLength hremaining
     hinitial hglobalWidth hmargin hdrift hblockRate hcost hfirst
     hparameters hentranceTube hentranceProbability
-  let start := staircaseBlockStart entrance horizon blockLength
-  let length := staircaseBlockLength entrance horizon blockLength
-  let q := staircaseBlockCount entrance horizon blockLength
+  let start := tailMergedBlockStart entrance horizon blockLength
+  let length := tailMergedBlockLength entrance horizon blockLength
+  let q := tailMergedBlockCount entrance horizon blockLength
   let lower := staircaseLowerEdge base drift globalWidth start
   let width := staircaseTubeWidth globalWidth drift length
   let v₁ := staircaseEndpointLowerFraction q globalWidth drift length
   let v₂ := staircaseEndpointUpperFraction q globalWidth drift
     endpointFraction length
   have hq : 0 < q :=
-    staircaseBlockCount_pos_of_entrance_add_blockLength_le
+    tailMergedBlockCount_pos_of_start_add_blockLength_le
       hblockLength hremaining
   have hnext : ∀ j, start (j + 1) = start j + length j :=
-    staircaseBlockStart_next_eq_add_length hentrance
-  have hstart : start 0 = entrance := staircaseBlockStart_zero hq
+    tailMergedBlockStart_next_eq_add_length hentrance
+  have hstart : start 0 = entrance := tailMergedBlockStart_zero hq
   have hfinish : start q = horizon :=
-    staircaseBlockStart_count entrance horizon blockLength
+    tailMergedBlockStart_count entrance horizon blockLength
   have hwidth : ∀ j, j < q → 0 < width j := by
     intro j hj
     exact staircaseTubeWidth_pos_of_schedule_bound hentrance

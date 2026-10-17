@@ -8,7 +8,7 @@ module
 
 public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Reflection
 public import Probability.Process.Filtration.ConditionalBlocks
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Staircase.Schedule
+public import Probability.Process.RandomWalk.Path.Block.Partition.TailMerged
 public import Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.Blocks.EventBridge
 import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Inclusion
 

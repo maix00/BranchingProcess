@@ -19,7 +19,7 @@ boundaries and the subclass that contains a continuous path. These are
 deterministic subsets of path space. The source is A. A. Mogul'skii,
 “Small deviations in the sample function space,” *Teoriya Veroyatnostei i ee
 Primeneniya* 19(4) (1974), 755–765; English translation, “Small Deviations in
-a Space of Trajectories,” *Theory of Probability and Its Applications* 19(1)
+a Space of Trajectories,” *Theory of Probability and Its Applications* 19(4)
 (1975), 726–736, DOI 10.1137/1119081. In §1, the corresponding classes
 are denoted `M₁` and `M₂`; the library uses descriptive names instead. The
 two-sided trace-separation condition corresponding to Mogul'skii's §1

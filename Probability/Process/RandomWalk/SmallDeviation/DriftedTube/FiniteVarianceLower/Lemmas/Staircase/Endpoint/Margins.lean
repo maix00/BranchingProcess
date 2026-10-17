@@ -8,13 +8,12 @@ module
 
 public import Mathlib.Basic.Real.Basic
 public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.Binning
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Staircase.Schedule
+public import Probability.Process.RandomWalk.Path.Block.Partition.TailMerged
 public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.BlockTube
 public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.EndpointWindow
 import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.Numeric
 import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Binning.Parameters
 import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.BlockTube
-import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.Schedule
 /-!
 # Ordinary and final staircase endpoint margins
 
@@ -64,9 +63,9 @@ lemma staircaseEndpointMarginConditions
       (endpointFraction - 1 / (3 * (m : ℝ))) /
         staircaseBinWidth m)
     {j : ℕ}
-    (hj : j < staircaseBlockCount entrance horizon blockLength) :
-    let q := staircaseBlockCount entrance horizon blockLength
-    let length := staircaseBlockLength entrance horizon blockLength
+    (hj : j < tailMergedBlockCount entrance horizon blockLength) :
+    let q := tailMergedBlockCount entrance horizon blockLength
+    let length := tailMergedBlockLength entrance horizon blockLength
     let v₁ := staircaseEndpointLowerFraction q globalWidth drift length j
     let v₂ := staircaseEndpointUpperFraction q globalWidth drift
       endpointFraction length j
@@ -76,8 +75,8 @@ lemma staircaseEndpointMarginConditions
     (¬j + 1 < q →
       staircaseBinEndpointLowerFraction m v₁ + margin ≤ uFinal ∧
       vFinal + margin ≤ staircaseBinEndpointUpperFraction m v₂) := by
-  let q := staircaseBlockCount entrance horizon blockLength
-  let length := staircaseBlockLength entrance horizon blockLength
+  let q := tailMergedBlockCount entrance horizon blockLength
+  let length := tailMergedBlockLength entrance horizon blockLength
   let actualWidth := staircaseTubeWidth globalWidth drift length j
   let loss := 2 * drift * (blockLength : ℝ) / globalWidth ^ 2
   have hsq : 0 < globalWidth ^ 2 := sq_pos_of_pos hwidth

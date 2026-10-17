@@ -19,9 +19,14 @@ public import Mathlib.Topology.Order.LiminfLimsup
 At a stable block length, convergence of the block endpoint gives a uniform
 upper bound on the probability of surviving one corridor block, uniformly
 over every allowed starting point.  The killed-kernel blocking inequality
-then raises this bound to the number of complete blocks.  This is a
+then raises this bound to the number of complete blocks. This is a
 non-sharp, endpoint-based subcase of the discrete upper comparison in
-Mogulskii's Lemma 3; it does not require a path-space functional limit.
+Lemma 3 of A. A. Mogul'skii, “Small deviations in the sample function
+space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974), 755--765;
+English translation, “Small Deviations in a Space of Trajectories,”
+*Theory of Probability and Its Applications* 19(4) (1975), 726--736,
+DOI 10.1137/1119081, Section 4, p. 764. It does not require a path-space
+functional limit.
 
 The strict endpoint-mass inequality is an explicit input.  It is the only
 distributional estimate on the stable limit used here.

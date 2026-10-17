@@ -71,7 +71,7 @@ statement is on càdlàg path sets and uses `X(0,c) J₁`; that bridge is
 separate. This corresponds to Lemma 2(c), equation (23), of A. A. Mogul'skii,
 “Small deviations in the sample function space,” *Teoriya Veroyatnostei i ee
 Primeneniya* 19(4) (1974), 755–765; English translation, “Small Deviations in
-a Space of Trajectories,” *Theory of Probability and Its Applications* 19(1)
+a Space of Trajectories,” *Theory of Probability and Its Applications* 19(4)
 (1975), 726–736, DOI 10.1137/1119081. -/
 theorem IsStableLevyProcess.measure_rationalHorizonTube_le_pow_shortHorizon
     {Ω : Type*} [MeasurableSpace Ω] {α : ℝ} {μ : Measure ℝ}

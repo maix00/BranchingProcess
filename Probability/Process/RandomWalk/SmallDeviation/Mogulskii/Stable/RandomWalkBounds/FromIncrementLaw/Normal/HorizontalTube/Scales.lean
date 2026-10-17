@@ -23,7 +23,15 @@ The public declarations in this module are:
 - `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.inverseScales_closedHorizontalTubeProbabilityRate`: the conjunction of those two inverse-scale conclusions.
 - `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.centeredFiniteVariance_horizontalTubeProbabilityRate`: the rate when integer widths index a superquadratic horizon.
 
-Each result is a scale specialization or subsequence consequence of the core closed-tube rate in `HorizontalTube.Basic.lean`, formalizing Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.1(i), with the small-deviation input of A. A. Mogul'skii, Theorem 3, Section 4, p. 764; English translation DOI 10.1137/1119081.
+Each result is a scale specialization or subsequence consequence of the
+core closed-tube rate in `HorizontalTube.Basic.lean`, formalizing Wang
+Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite
+Offspring*, Chapter 3, Lemma 3.1(i). Its small-deviation input is Theorem 3,
+Section 4, p. 764 of A. A. Mogul'skii, “Small deviations in the sample
+function space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974),
+755--765; English translation, “Small Deviations in a Space of
+Trajectories,” *Theory of Probability and Its Applications* 19(4) (1975),
+726--736, DOI 10.1137/1119081.
 -/
 
 open Filter MeasureTheory ProbabilityTheory

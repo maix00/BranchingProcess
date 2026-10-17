@@ -23,8 +23,8 @@ The public theorem in this file is:
 
 This is the Brownian-meander transition step in Wang Yiyang,
 *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
-Appendix A.2, Lemma A.7, used in the proof of Chapter 3, Lemma 3.5. The conditional limit is
-Bolthausen, *On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*, Ann. Probab. 4(3) (1976), 480--485, DOI 10.1214/aop/1176996098,
+Appendix A.2, Lemma A.7, used in the proof of Chapter 3, Lemma 3.5. The conditional limit is Erwin Bolthausen,
+*On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*, Ann. Probab. 4(3) (1976), 480--485, DOI 10.1214/aop/1176996098,
 Theorem 3.2; the meander identification follows Iglehart,
 *Functional Central Limit Theorems for Random Walks Conditioned to Stay
 Positive*, Ann. Probab. 2(4) (1974), 608--619, DOI 10.1214/aop/1176996607, Section 3, theorem (3.4), p. 616.

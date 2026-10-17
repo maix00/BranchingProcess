@@ -20,7 +20,8 @@ The public theorem in this file is:
   $\mathbb E|Y_t-Y_s|^4\le M|t-s|^2$ for one finite constant $M$.
 
 This is the $n=2$ case of the moment step in Rémy Degenne et al.,
-*Brownian Motion in Lean*, `BrownianMotion.Gaussian.BrownianMotion`, theorem
+*Brownian Motion in Lean*, arXiv:2511.20118,
+`BrownianMotion.Gaussian.BrownianMotion`, theorem
 `IsPreBrownianReal.isAEKolmogorovProcess`. It is the continuity input for
 the Brownian motion used in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.5.
 -/
