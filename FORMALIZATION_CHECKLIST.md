@@ -571,10 +571,13 @@ process and Gaussian-law APIs, not a general point-process representation.
   `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Spectral/Range/Blocks/Bound.lean`
   also builds and passes its focused audit. These pieces are inputs, not by
   themselves the BRW estimate (4.16): the
-  deterministic running-maximum binning, exact fixed-pattern IID block
-  product, finite union over bin patterns, and parameter selection are built
-  and audited in `Probability/Process/RandomWalk/Path/Event/Drawdown.lean` and
-  `Probability/Process/RandomWalk/SmallDeviation/Drawdown/FiniteVarianceUpper/Basic.lean`. In particular,
+  generic finite-history drawdown events and their measurability are in
+  `Probability/Process/RandomWalk/Path/Event/Drawdown.lean`. The deterministic
+  running-maximum bins, fixed-pattern IID block product, finite union over
+  bin patterns, and parameter selection are grouped under
+  `Probability/Process/RandomWalk/SmallDeviation/Drawdown/FiniteVarianceUpper/Lemmas/JumpPattern/`
+  and `Lemmas/Rate/`, with the main estimate in
+  `Drawdown/FiniteVarianceUpper/Basic.lean`. In particular,
   `measureReal_noLargeDropEndpointBelowEvent_le_exp_of_finiteVariance`
   proves the uniform no-large-drawdown estimate for centered increments of
   arbitrary positive finite variance. The estimate is direct at that variance;
