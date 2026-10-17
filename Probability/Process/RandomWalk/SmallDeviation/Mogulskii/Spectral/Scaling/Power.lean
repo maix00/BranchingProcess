@@ -12,6 +12,16 @@ public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.D
 /-!
 # Principal spectral scale
 
+The public declarations in this module are:
+
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.tendsto_principalEigenvalue_pow_zero`:
+  if $W_n=N_n+1\to\infty$ and $W_n^2/t_n\to0$, then
+  $\cos^{t_n}(\frac{\pi}{W_n})\to0$.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.tendsto_scaledLog_geometricCorrection`:
+  under the same assumptions, the geometric remainder satisfies
+  $\frac{W_n^2}{t_n}\log(\frac{4}{1-
+  \cos^{t_n}(\frac{\pi}{W_n})})\to0$.
+
 These lemmas isolate the two scale corrections used by the variable-scale
 spectral bounds: the principal eigenvalue power and the geometric tail
 prefactor.
