@@ -12,6 +12,32 @@ public import Mathlib.Algebra.BigOperators.Intervals
 /-!
 # Blocks of additive paths
 
+The public declarations in `AdditivePath` are:
+
+For increments $\xi$, write
+$D_n(\xi)=\operatorname{displacement}(n,\xi)=\sum_{k<n}\xi_k$.
+
+- `blockSum`: $B(s,\ell,\xi)=\sum_{k\in[s,s+\ell)}\xi_k$;
+  `blockStart`: $b_j=\sum_{i<j}\ell_i$.
+- `blockStart_zero`, `blockStart_succ`, `blockStart_const`, and
+  `blockStart_mono` give $b_0=0$, $b_{j+1}=b_j+\ell_j$,
+  $b_j=j\ell$ for a constant block length, and monotonicity in $j$.
+- `blockSum_zero` and `blockSum_zero_start` give $B(s,0,\xi)=0$ and
+  $B(0,\ell,\xi)=\operatorname{displacement}(\ell,\xi)$.
+- `blockSum_eq_displacement_natAdd` and
+  `partialSum_block_eq_displacement` give
+  $B(s,\ell,\xi)=D_\ell(k\mapsto\xi_{s+k})$ and
+  $\operatorname{partialSum}(k\mapsto\xi_{s+k},i)=D_{i.val}(k\mapsto\xi_{s+k})$.
+- `blockSum_add` and `displacement_add_eq_add_blockSum` give the consecutive
+  concatenation identities
+  $B(s,m+n,\xi)=B(s,m,\xi)+B(s+m,n,\xi)$ and
+  $D(s+\ell,\xi)=D(s,\xi)+B(s,\ell,\xi)$.
+- `displacement_blockStart_eq_sum_blockSum` reconstructs the displacement
+  through $j$ variable-length blocks as
+  $D(b_j,\xi)=\sum_{i<j}B(b_i,\ell_i,\xi)$.
+- `blockSum_sub_const` states
+  $B(s,\ell,k\mapsto\xi_k-c)=B(s,\ell,\xi)-\ell\,c$ in an additive group.
+
 This file provides finite coordinate and consecutive-sum operations for an
 increment sequence.
 -/
