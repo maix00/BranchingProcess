@@ -19,6 +19,37 @@ For a fixed finite Brownian corridor cover, Donsker bounds the probability of
 one discrete oscillation block. This is the one-block input for the later
 independent-block product estimate; all cover and enlargement parameters are
 fixed before the small-deviation index tends to infinity.
+For a centered unit-variance increment law and a continuous Brownian
+realization, write $J_{w,\ell}$ for the finite-block event that all partial
+sums have pairwise differences at most $w$.  For $u>0$ and a cover count
+$m>0$, the public declarations are:
+
+* `eventually_blockOscillationProbability_le_of_fixedCover` states that if
+  $\ell_n\to\infty$, $w_n/\sqrt{\ell_n}\le u$ eventually, and
+  $\texttt{finiteCoverCorridorExponential}(m,u)<1/2$, then
+  $\mathbb P(J_{w_n,\ell_n})\le
+  2\,\texttt{finiteCoverRangeBound}(m,u)$ eventually.
+* `eventually_diffusiveBlockOscillationProbability_le_of_fixedCover` and
+  `eventually_diffusiveBlockOscillationProbability_le_of_fixedCover_of_tendsto_atTop`
+  specialize this to $L_n=\lfloor c s_n^2\rfloor$ and $w_n=s_n$;
+  the latter assumes only $s_n\to\infty$, while the former assumes an
+  `IsMogulskiiScale` scale.  Both use
+  $u=(1+\varepsilon)/\sqrt c$ and the same eventual one-block bound.
+* `eventually_horizontalTubeProbability_le_pow_fixedCover` iterates the
+  one-block estimate over complete blocks to give
+  $\texttt{horizontalTubeProbability}(\texttt{iidSequenceLaw}(\nu),
+  1/2,s_n,n)\le
+  (2\,\texttt{finiteCoverRangeBound}(m,u))^{\lfloor n/L_n\rfloor}$,
+  where $L_n=\lfloor c s_n^2\rfloor$ and
+  $u=(1+\varepsilon)/\sqrt c$.
+  `eventually_horizontalTubeProbability_le_pow_fixedCover_uniformOffset`
+  gives the same bound uniformly for every tube offset $a\in[0,1]$.
+
+The convergence input is the continuous-path Donsker theorem formalized as
+`ProbabilityTheory.RandomWalk.tendstoInDistribution_normalizedLinearContinuousPath_brownian`,
+corresponding to Theorem 4.20 in I. Karatzas and S. E. Shreve,
+*Brownian Motion and Stochastic Calculus*, 2nd ed., Graduate Texts in
+Mathematics 113, Springer (1991), DOI 10.1007/978-1-4612-0949-2.
 -/
 
 open Filter MeasureTheory ProbabilityTheory

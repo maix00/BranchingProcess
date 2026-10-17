@@ -20,7 +20,56 @@ public import Mathlib.Data.Fin.Rev
 
 This file defines the full discrete sine family, proves the eigenfunction
 identities, and constructs the orthogonal sine basis.  Spectral expansions and
-row-mass estimates are kept in the dependent files.
+row-mass estimates are kept in the dependent files.  For $N$ interior sites
+and $k\in\{0,\ldots,N-1\}$, write
+\[
+  \theta_{N,k}=\frac{\pi(k+1)}{N+1},\qquad
+  v_{N,k}(i)=\sin(\theta_{N,k}(i+1)),\qquad
+  \lambda_{N,k}=\cos\theta_{N,k}.
+\]
+The public declarations are:
+
+* `intervalModeFrequency`, `intervalSineMode`, `intervalModeEigenvalue`,
+  and `intervalKernelEnd` define $\theta_{N,k}$, $v_{N,k}$, $\lambda_{N,k}$,
+  and the endomorphism associated with the killed matrix.  The corresponding
+  first-mode identities are `intervalModeFrequency_zero`,
+  `intervalSineMode_zero`, and `intervalModeEigenvalue_zero`;
+  `intervalEigenvalue_pos` and `intervalEigenvalue_lt_one` give
+  $0<\lambda_{N,0}<1$ for $N>1$.
+* `intervalModeFrequency_mem_Ioo` and
+  `strictMono_intervalModeFrequency` give
+  $0<\theta_{N,k}<\pi$ and strict increase in $k$;
+  `injective_intervalModeEigenvalue` proves distinct modes have distinct
+  eigenvalues.  Reversal satisfies
+  $\theta_{N,k^{\mathrm{rev}}}=\pi-\theta_{N,k}$ by
+  `intervalModeFrequency_rev`, hence
+  $\lambda_{N,k^{\mathrm{rev}}}=-\lambda_{N,k}$ by
+  `intervalModeEigenvalue_rev` and equality of absolute values by
+  `abs_intervalModeEigenvalue_rev`.
+* `abs_intervalModeEigenvalue_le_pow_first` proves
+  $|\lambda_{N,k}|\le\lambda_{N,0}^{k+1}$ when $2(k+1)\le N+1$.
+  `intervalModeDepth` defines
+  $d(k)=\min(k+1,k^{\mathrm{rev}}+1)$, and
+  `abs_intervalModeEigenvalue_le_pow_depth` proves
+  $|\lambda_{N,k}|\le\lambda_{N,0}^{d(k)}$ for every mode.
+  For $q\ge0$, `sum_pow_intervalModeDepth_le_two_mul_sum` gives
+  $\sum_kq^{d(k)}\le2\sum_kq^{k+1}$, and
+  `sum_two_mul_abs_intervalModeEigenvalue_pow_le_geometric` gives
+  $\sum_k2|\lambda_{N,k}|^n\le4\sum_k(\lambda_{N,0}^n)^{k+1}$.
+* `intervalLeftNeighbor_sineMode` and
+  `intervalRightNeighbor_sineMode` give
+  $(\mathrm{left}(i)).\operatorname{elim}(0,v_{N,k})=
+  \sin(\theta_{N,k}i)$ and
+  $(\mathrm{right}(i)).\operatorname{elim}(0,v_{N,k})=
+  \sin(\theta_{N,k}(i+2))$; `intervalKernel_mulVec_sineMode` proves
+  $K_Nv_{N,k}=\lambda_{N,k}v_{N,k}$.
+  `intervalSineMode_ne_zero` proves each $v_{N,k}\ne0$, and
+  `intervalSineMode_dotProduct_eq_zero` proves
+  $\langle v_{N,k},v_{N,l}\rangle=0$ for $k\ne l$.
+  `hasEigenvector_intervalSineMode` records each eigenpair,
+  `linearIndependent_intervalSineMode` proves linear independence, and
+  `intervalSineBasis` together with `intervalSineBasis_apply` gives a basis
+  whose $k$th vector is exactly $v_{N,k}$.
 -/
 
 open scoped Matrix
