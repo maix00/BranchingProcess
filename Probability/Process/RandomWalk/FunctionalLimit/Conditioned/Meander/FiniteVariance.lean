@@ -20,7 +20,7 @@ The public theorem in this file is:
   polygonal interpolation of $S$ divided by $\sigma\sqrt n$ conditioned
   on nonnegative survival converges to the Brownian meander.
 
-This transports Bolthausen, *On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*, Ann. Probab. 4(3) (1976),
+This transports Erwin Bolthausen, *On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*, Ann. Probab. 4(3) (1976),
 480--485, DOI 10.1214/aop/1176996098, Theorem 3.2, through positive variance
 normalization, with the limit law identified by Iglehart, *Functional Central Limit Theorems for
 Random Walks Conditioned to Stay Positive*, Ann. Probab. 2(4) (1974),

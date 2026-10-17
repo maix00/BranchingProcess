@@ -228,7 +228,7 @@ change of variables transfers it to the small-width limit in Mogul'skii's
 Lemma 1(I), equations (18)--(20). The source is A. A. Mogul'skii, “Small
 deviations in the sample function space,” *Teoriya Veroyatnostei i ee
 Primeneniya* 19(4) (1974), 755–765; English translation, “Small Deviations in
-a Space of Trajectories,” *Theory of Probability and Its Applications* 19(1)
+a Space of Trajectories,” *Theory of Probability and Its Applications* 19(4)
 (1975), 726–736, DOI 10.1137/1119081. This theorem performs the exact
 reparameterization. -/
 theorem IsStableLevyProcess.tendsto_smallLogRate_of_tendsto_longLogRate

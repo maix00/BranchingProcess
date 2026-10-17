@@ -25,7 +25,7 @@ The public theorems in this module are:
   satisfy $S_k\le x_k$ with the same conditional probability as the initial
   block given survival.
 
-The second statement is Bolthausen's Lemma 3.1 in its displayed
+The second statement is Erwin Bolthausen's Lemma 3.1 in its displayed
 finite-dimensional form, p. 482, in *On a Functional Central Limit Theorem
 for Random Walks Conditioned to Stay Positive*, Ann. Probab. 4(3) (1976),
 480--485, DOI 10.1214/aop/1176996098.

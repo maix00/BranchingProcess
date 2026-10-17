@@ -34,7 +34,7 @@ The proof-specific module-visible declarations are:
   \(\exists j,\ \mathbb P_\nu(T_{a,\Delta,L})
     \le\mathbb P_\nu(T_{\alpha_{m,j},(1+1/m)\Delta,L})\).
 These are the proof inputs for Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.2 and
-its following remark. The finite-width argument follows Aïdékon and Hu, *Average-weight
+its following remark. The finite-width argument follows Elie Aïdékon and Yueyun Hu, *Average-weight
 percolation on the complete graph*, Lemma 4.1 (arXiv:2512.23266): it partitions
 the translations into equal intervals, selects one fixed corridor, and
 iterates the uniform one-block bound.
