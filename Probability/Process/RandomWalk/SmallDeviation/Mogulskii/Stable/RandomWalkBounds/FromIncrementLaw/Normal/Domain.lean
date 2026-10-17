@@ -17,6 +17,27 @@ public import Probability.Distributions.Stable.Attraction.Normal.Basic
 /-!
 # Normal-domain Mogul'skii rates from increment laws
 
+The public declarations in this module are:
+
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.RawNormalSourceRateData`:
+  packages a Gaussian limit variance $v>0$, spatial factor $q>0$ and time
+  factor $d=q^2=v^{-1}$ with $q^2v=1$ and $dC_{\mathrm{source}}=-\pi^2/8$;
+  for every finite corridor union $C_3$, it records the corresponding
+  logarithmic probability rate $\kappa\,\mathcal E(C_3)$, where
+  $\kappa=\operatorname{rateCoefficient}(2,dC_{\mathrm{source}})$.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.rawNormalSourceRateData_of_rawSource`:
+  constructs this rate data from a strictly $2$-stable Gaussian limit and
+  convergence of the increment law to that limit along a small-deviation
+  scale.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.RawNormalSourceRateData.relativePathClassRate`:
+  if a path class $G$ has a relative vanishing-energy-gap approximation, then
+  there is a unique $H\in\mathbb R$ equal to its path-class energy for which
+  the inner measure and probability of the source-normalized path class both
+  have logarithmic rate $\kappa H$.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.rawNormalSourceRateData_of_centered_unitVariance`:
+  specializes the construction to centered unit-variance increments with
+  norming scale $\sqrt n$.
+
 The variance of the strict two-stable limit and the raw norming time constant
 are exposed separately. Rescaling by the reciprocal standard deviation turns
 the limit into the standard Gaussian used by the normal-domain tightness and
