@@ -12,7 +12,16 @@ public import Probability.Process.Stable.SmallDeviation.PathClass.StepCorridor.P
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Partition
 
 /-!
-# Positivity and logarithmic coboundedness for finite corridors.
+# Positivity and logarithmic coboundedness for finite corridors
+
+Write $P_n=\mathbb P_\nu(Y_n\in\operatorname{corridorSet}(U,L))$ and let
+$\rho_n$ be the stable small-deviation rate. The declaration in
+`ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete` is:
+
+- `eventually_iidSequenceLaw_normalizedStepCorridor_pos`: under the stable
+  domain-of-attraction, process escape-rate, path tightness, start-admissibility,
+  and trace-separation hypotheses, $P_n>0$ eventually and
+  $(\rho_n\log P_n)_n$ is cobounded under $\le$.
 -/
 
 @[expose] public section
