@@ -21,7 +21,7 @@ namespace ProbabilityTheory.BranchingRandomWalk
 open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 
 
-/-- The stopped selected population of the thesis satisfies the abstract
+/-- The stopped selected population satisfies the abstract
 cellwise branching theorem.  This is the concrete interface used by later
 coupling arguments. -/
 theorem selectedPopulation_stopped_cell_branches

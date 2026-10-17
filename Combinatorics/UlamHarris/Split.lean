@@ -15,7 +15,7 @@ public import Combinatorics.UlamHarris.Basic
 whenever the mark at the parent `path n` lies in `splitMark`; generation zero
 never declares a split. The first declared split generation is proved to be a
 stopping time for the generation filtration in
-`Probability/BranchingRandomWalk/Timing/DeclaredSplit.lean`.
+`Probability/BranchingRandomWalk/Timing/Splits/Declared.lean`.
 -/
 
 @[expose] public section

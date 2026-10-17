@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Scale
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Scale.Basic
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Scaling.Centered
 
 /-!
@@ -33,7 +33,7 @@ noncomputable def centeredLatticeRadius (scale : ℕ → ℝ) (n : ℕ) : ℕ :=
     0 < centeredLatticeRadius scale n := by
   simp [centeredLatticeRadius]
 
-private theorem tendsto_half_scale_atTop {scale : ℕ → ℝ}
+private lemma tendsto_half_scale_atTop {scale : ℕ → ℝ}
     (hscale : Tendsto scale atTop atTop) :
     Tendsto (fun n => scale n / 2) atTop atTop := by
   simpa [div_eq_mul_inv, mul_comm] using
