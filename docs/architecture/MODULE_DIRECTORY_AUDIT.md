@@ -116,7 +116,7 @@ are unchanged, and callers import the new paths directly.
 The final 2026-10-17 scan after grouping the Lemma 3.2 partition parameters,
 the Lemma 3.3 jump-pattern and spatial-bin setup, the Lemma 3.5 staircase
 parameters under their corresponding `Lemmas/` trees, and moving the generic
-tail-merged schedule to the path-partition module found 1,445
+tail-merged schedule to the path-partition module found 1,444
 production modules and 138 test modules.
 Across both trees there are zero same-stem file/directory collisions, zero
 directories with more than eight direct Lean files, and zero child filenames
@@ -132,6 +132,19 @@ corresponding tests. Its larger `Stable` and `Branching` directories are test
 collections, not public theorem layers. Test modules are grouped by the
 mathematical API they exercise; this keeps test-only files out of production
 `Lemmas/` trees while avoiding a large flat test directory.
+
+## Public declaration headers
+
+The 2026-10-17 interface pass added formula-bearing public declaration lists
+to the reviewed modules in `Mogulskii/Spectral/Range/Rate/` and to
+`Mogulskii/Spectral/Target/{Central,Coefficient,Expansion,ExtremalPair,LowerBound,Path}.lean`
+and `Mogulskii/Spectral/Survival/Path.lean`. These headers state the exact
+declaration identifiers in their Lean namespace, the mathematical object or
+estimate, and the assumptions that control each bound. The private path
+equivalence helpers in `Target/Path.lean` remain outside the public list.
+Targeted declaration-list checks found every public declaration in these
+modules represented in its module docstring. The corresponding modules build
+with the pinned Lean toolchain.
 
 ## Citation audit
 

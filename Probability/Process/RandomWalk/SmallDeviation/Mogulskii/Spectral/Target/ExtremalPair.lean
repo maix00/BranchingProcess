@@ -12,6 +12,46 @@ public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.S
 /-!
 # The extremal spectral pair
 
+The public declarations in this module are:
+
+All names below are declarations in
+`ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii`.
+
+Let $N=\texttt{interiorCount}$, $K_N=\texttt{intervalKernel}(N)$,
+$q_N=\cos(\pi/(N+1))$, $\phi_0(x)=\texttt{intervalSineWeight}(N,x)$,
+and $d_k=\texttt{intervalModeDepth}(k)$.
+
+- `intervalFirstMode_rev_ne` proves that the first and reflected-first modes
+  are distinct when $N>1$.
+- `intervalSineMode_rev_first_apply` and
+  `intervalSineBasis_repr_targetIndicator_rev_first` give the reflected-mode
+  identities $\phi_{N-1}(i)=(-1)^{i.val}\phi_0(i)$ and
+  $c_{N-1}(1_T)=\frac{2}{N+1}\sum_{i\in T}(-1)^{i.val}\phi_0(i)$.
+- `intervalExtremalPair_factor`, `intervalParityCompatibleTarget`, and
+  `sum_extremalFactor_mul_eq_two_mul_parityFilter` identify the parity
+  selector: $1+(-1)^{n+x+y}=2\mathbf 1_{n+x+y\text{ even}}$.
+- `intervalKernel_extremalPair_eq_parityTargetMass` identifies the sum of
+  the two extremal spectral terms with
+  $\frac{4q_N^n}{N+1}\phi_0(x)\sum_{y\in T,\ n+x.val+y.val\text{ even}}\phi_0(y)$.
+- `intervalKernel_pow_targetMass_eq_extremalPair_add_remainder` separates
+  those two modes from all others, while
+  `abs_intervalKernel_targetExtremalRemainder_le` bounds the remainder by
+  the sum of absolute eigenvalue powers.
+- `intervalKernel_pow_targetMass_ge_extremalPair_sub_tail` gives the
+  corresponding lower bound. The declarations
+  `sum_extremalFactor_mul_eq_two_mul_parityFilter`,
+  `two_mul_add_sum_pow_intervalModeDepth_erase_extremal` and
+  `sum_pow_intervalModeDepth_erase_extremal_le` identify and bound the
+  depth-weighted tail after deleting the two extremal modes:
+  $2q+\sum_{k\notin\{0,N-1\}}q^{d_k}=\sum_kq^{d_k}$ and
+  $\sum_{k\notin\{0,N-1\}}q^{d_k}\le
+  2(\sum_{j=1}^{N}q^j-q)$ for $q\ge0$,
+  `sum_two_mul_abs_intervalModeEigenvalue_pow_erase_extremal_le`, and
+  `sum_two_mul_abs_intervalModeEigenvalue_pow_erase_extremal_le_div` give
+  the parity and geometric-tail estimates used to prove
+  `intervalKernel_pow_targetMass_ge_extremalPair_sub_geometricError`, whose
+  error term is $4q_N^{2n}/(1-q_N^n)$.
+
 The killed Rademacher kernel has period two.  Its first and last Dirichlet
 modes have eigenvalues of equal absolute value and opposite sign.  Sharp
 terminal-target estimates must keep this pair together and bound only the
