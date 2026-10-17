@@ -47,13 +47,13 @@ noncomputable def prefixMaximum (path : ℕ → ℝ) (time : ℕ) : ℝ :=
   (Finset.range (time + 1)).sup'
     (by exact ⟨0, Finset.mem_range.mpr (Nat.zero_lt_succ _)⟩) path
 
-theorem le_prefixMaximum (path : ℕ → ℝ) {i time : ℕ} (hi : i ≤ time) :
+lemma le_prefixMaximum (path : ℕ → ℝ) {i time : ℕ} (hi : i ≤ time) :
     path i ≤ prefixMaximum path time := by
   unfold prefixMaximum
   exact Finset.le_sup' path
     (Finset.mem_range.mpr (Nat.lt_succ_of_le hi))
 
-theorem prefixMaximum_le_of_forall (path : ℕ → ℝ) (time : ℕ) (upper : ℝ)
+lemma prefixMaximum_le_of_forall (path : ℕ → ℝ) (time : ℕ) (upper : ℝ)
     (hupper : ∀ i ≤ time, path i ≤ upper) :
     prefixMaximum path time ≤ upper := by
   unfold prefixMaximum
@@ -64,7 +64,7 @@ theorem prefixMaximum_le_of_forall (path : ℕ → ℝ) (time : ℕ) (upper : �
   have hi' : i < time + 1 := Finset.mem_range.mp hi
   exact hupper i (Nat.le_of_lt_succ hi')
 
-theorem prefixMaximum_mono (path : ℕ → ℝ) {s t : ℕ} (hst : s ≤ t) :
+lemma prefixMaximum_mono (path : ℕ → ℝ) {s t : ℕ} (hst : s ≤ t) :
     prefixMaximum path s ≤ prefixMaximum path t := by
   unfold prefixMaximum
   apply (Finset.sup'_le_iff
@@ -85,7 +85,7 @@ noncomputable def spatialBinIndex (upper width : ℝ) (path : ℕ → ℝ) (time
 noncomputable def spatialBinLevel (upper width : ℝ) (path : ℕ → ℝ) (time : ℕ) : ℝ :=
   upper - width * (spatialBinIndex upper width path time : ℝ)
 
-theorem prefixMaximum_le_spatialBinLevel
+lemma prefixMaximum_le_spatialBinLevel
     (upper width : ℝ) (path : ℕ → ℝ) (time : ℕ)
     (hwidth : 0 < width) (hmax : prefixMaximum path time ≤ upper) :
     prefixMaximum path time ≤ spatialBinLevel upper width path time := by
@@ -100,7 +100,7 @@ theorem prefixMaximum_le_spatialBinLevel
   rw [hcancel] at hmul
   linarith
 
-theorem spatialBinLevel_lt_prefixMaximum_add_width
+lemma spatialBinLevel_lt_prefixMaximum_add_width
     (upper width : ℝ) (path : ℕ → ℝ) (time : ℕ)
     (hwidth : 0 < width) (hmax : prefixMaximum path time ≤ upper) :
     spatialBinLevel upper width path time <
@@ -117,7 +117,7 @@ theorem spatialBinLevel_lt_prefixMaximum_add_width
   rw [hcancel] at hmul
   nlinarith
 
-theorem spatialBinIndex_antitone
+lemma spatialBinIndex_antitone
     (upper width : ℝ) (path : ℕ → ℝ) {s t : ℕ}
     (hwidth : 0 < width) (hst : s ≤ t) :
     spatialBinIndex upper width path t ≤ spatialBinIndex upper width path s := by
@@ -127,7 +127,7 @@ theorem spatialBinIndex_antitone
   apply div_le_div_of_nonneg_right _ hwidth.le
   exact sub_le_sub_left (prefixMaximum_mono path hst) upper
 
-theorem spatialBinLevel_mono
+lemma spatialBinLevel_mono
     (upper width : ℝ) (path : ℕ → ℝ) {s t : ℕ}
     (hwidth : 0 < width) (hst : s ≤ t) :
     spatialBinLevel upper width path s ≤ spatialBinLevel upper width path t := by
@@ -139,7 +139,7 @@ theorem spatialBinLevel_mono
   have hmul := mul_le_mul_of_nonneg_left hbinCast hwidth.le
   linarith
 
-theorem spatialBinIndex_le_of_zero
+lemma spatialBinIndex_le_of_zero
     (upper width : ℝ) (path : ℕ → ℝ) (time : ℕ)
     (hwidth : 0 < width) (hzero : path 0 = 0) :
     spatialBinIndex upper width path time ≤ ⌊upper / width⌋₊ := by
@@ -156,7 +156,7 @@ theorem spatialBinIndex_le_of_zero
 /-- On a block where the rounded running maximum is constant, a path with
 drawdown at most `delta` is trapped in an interval of width
 `width + delta`. -/
-theorem values_between_on_constantSpatialBin
+lemma values_between_on_constantSpatialBin
     (path : ℕ → ℝ) (upper width delta : ℝ)
     (hwidth : 0 < width)
     {horizon start finish : ℕ} (hstart : start ≤ finish)
@@ -205,7 +205,7 @@ theorem values_between_on_constantSpatialBin
 /-- A constant spatial bin also bounds the translation-invariant oscillation
 of the path segment. This is the deterministic event consumed by independent
 block estimates. -/
-theorem oscillationBounded_on_constantSpatialBin
+lemma oscillationBounded_on_constantSpatialBin
     (path : ℕ → ℝ) (upper width delta : ℝ)
     {horizon start length : ℕ}
     (hwidth : 0 < width)
@@ -244,7 +244,7 @@ def spatialBinJumpSet {q K : ℕ} (bins : Fin (q + 1) → Fin (K + 1)) :
 /-- A nonincreasing sequence with `K+1` possible bin values can jump at most
 `K+1` times. The bound controls the exceptional indices in the running-
 maximum decomposition. -/
-theorem card_spatialBinJumpSet_le
+lemma card_spatialBinJumpSet_le
     {q K : ℕ} (bins : Fin (q + 1) → Fin (K + 1))
     (hmono : ∀ i j, i ≤ j → bins j ≤ bins i) :
     (spatialBinJumpSet bins).card ≤ K + 1 := by
@@ -292,7 +292,7 @@ def spatialBinGoodBlockSet {q K : ℕ}
   Finset.univ.filter fun j => bins j.castSucc = bins j.succ
 
 /-- Good blocks and jump blocks partition the finite block index set. -/
-theorem card_spatialBinGoodBlockSet_add_jumpSet_card
+lemma card_spatialBinGoodBlockSet_add_jumpSet_card
     {q K : ℕ} (bins : Fin (q + 1) → Fin (K + 1)) :
     (spatialBinGoodBlockSet bins).card + (spatialBinJumpSet bins).card = q := by
   classical
@@ -303,7 +303,7 @@ theorem card_spatialBinGoodBlockSet_add_jumpSet_card
 
 /-- A nonincreasing path through `K+1` spatial bins has at least `q-K-1`
 unchanged-bin blocks. -/
-theorem card_spatialBinGoodBlockSet_ge
+lemma card_spatialBinGoodBlockSet_ge
     {q K : ℕ} (bins : Fin (q + 1) → Fin (K + 1))
     (hmono : ∀ i j, i ≤ j → bins j ≤ bins i) :
     q ≤ (spatialBinGoodBlockSet bins).card + (K + 1) := by
@@ -316,7 +316,7 @@ partition.  The bin indices are nonincreasing, and on each block where the
 bin is unchanged the path stays in a deterministic interval of width
 `delta + width`.  The finite range follows from the path starting at zero
 and the deterministic upper bound. -/
-theorem exists_spatialBinSequence_for_noLargeDrop
+lemma exists_spatialBinSequence_for_noLargeDrop
     (path : ℕ → ℝ) (upper width delta : ℝ)
     {horizon remainder blocks blockLength : ℕ}
     (hzero : path 0 = 0)
