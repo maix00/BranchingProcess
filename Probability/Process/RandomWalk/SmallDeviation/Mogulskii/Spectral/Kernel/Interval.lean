@@ -18,7 +18,50 @@ public import Mathlib.LinearAlgebra.Matrix.Symmetric
 
 `Fin interiorCount` represents the interior sites `1, ..., interiorCount`.
 A step that would reach either exterior Dirichlet boundary is omitted, so the
-matrix is substochastic at the two edge sites.
+matrix is substochastic at the two edge sites.  The public declarations are:
+
+* `intervalLeftNeighbor` and `intervalRightNeighbor` select the available
+  predecessor and successor of a site; `intervalKernel` is the matrix
+  $K_N(i,j)=\frac12\mathbf 1_{j=i-1}+\frac12\mathbf 1_{j=i+1}$, with terms
+  omitted at the exterior boundaries.
+* `sum_ite_option_eq_elim` and `option_elim_mul` give the identities
+  $\sum_j\mathbf 1_{o=\operatorname{some}(j)}c f(j)=
+  o.\operatorname{elim}(0,\lambda j,c f(j))$ and
+  $o.\operatorname{elim}(0,\lambda j,c f(j))=
+  c\,o.\operatorname{elim}(0,f)$.
+  `intervalKernel_mulVec` states that $K_Nf(i)$ is the average of $f$ over
+  the available neighbors.
+* `intervalSineWeight` defines
+  $\phi_N(i)=\sin(\pi(i+1)/(N+1))$;
+  `intervalSineWeight_center` gives $\phi_{2r+1}(r)=1$.
+  `intervalLeftNeighbor_sine` and `intervalRightNeighbor_sine` give
+  $(\mathrm{left}(i)).\operatorname{elim}(0,\phi_N)=
+  \sin(\pi i/(N+1))$ and
+  $(\mathrm{right}(i)).\operatorname{elim}(0,\phi_N)=
+  \sin(\pi(i+2)/(N+1))$, and
+  `intervalKernel_mulVec_sine` proves
+  $K_N\phi_N=\cos(\pi/(N+1))\,\phi_N$.
+* `intervalKernel_nonneg` proves entrywise nonnegativity.
+  `intervalLeftNeighbor_eq_some_val_iff` and
+  `intervalRightNeighbor_eq_some_val_iff` characterize the two neighbor
+  relations by $j+1=i$ and $i+1=j$.
+  `intervalKernel_isSymm` proves $K_N(i,j)=K_N(j,i)$;
+  `intervalKernel_isRowSubstochastic` proves its entries are nonnegative and
+  every row sum is at most one.  The instance
+  `intervalKernel_isSubMarkovKernel` equips the corresponding measure-valued
+  kernel with the sub-Markov property.
+* `intervalKernel_pow_apply_univ` identifies the mass after $t$ killed
+  steps with the row sum:
+  $(K_N^{\mathrm{kernel}})^t(i,\mathrm{univ})=
+  \operatorname{ofReal}(\sum_j K_N^t(i,j))$.
+* `intervalSineWeight_pos` and `intervalSineWeight_le_one` bound the profile
+  by $0<\phi_N(i)\le1$ on a nonempty interval;
+  `exists_pos_le_intervalSineWeight` supplies a positive uniform lower bound
+  $c_N\le\phi_N(i)$.
+  `intervalKernel_pow_rowSum_bounds` then gives, for some $c_N>0$,
+  $\lambda_N^t\phi_N(i)\le\sum_jK_N^t(i,j)
+  \le\lambda_N^t\phi_N(i)/c_N$, where
+  $\lambda_N=\cos(\pi/(N+1))$.
 -/
 
 open scoped BigOperators Matrix
