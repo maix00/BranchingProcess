@@ -19,7 +19,42 @@ public import Mathlib.Analysis.SpecialFunctions.Log.ENNRealLog
 The corrected fixed finite corridor cover gives the Brownian range event a
 finite sum of full-spectrum corridor bounds.  This file extracts its
 small-width exponential rate without introducing a minimum over the
-approximating lattice walk.
+approximating lattice walk.  For a cover count $m$ and width $u$, define
+\[
+  E_m(u)=\exp\!\left(-\frac{\pi^2}
+    {2((1+3/m)u)^2}\right),
+  \qquad B_m(u)=8mE_m(u).
+\]
+The public declarations are:
+
+* `finiteCoverCorridorExponential` and `finiteCoverRangeBound` define
+  $E_m(u)$ and $B_m(u)$.
+* `brownianRangeOscillationMass_le_fixedSpectralSum` bounds the Brownian
+  range-oscillation mass by the sum of $m$ copies of
+  $4E_m(u)/(1-E_m(u))$.
+  `brownianRangeOscillationMass_le_smallWidthExponential` improves this to
+  $B_m(u)$ when $E_m(u)<1/2$.
+* `brownianRangeOscillationMass_ne_zero` proves positive mass for every
+  positive corridor width, and
+  `tendsto_corridorExponential_nhdsGT_zero` proves
+  $\exp(-\pi^2/(2(cu)^2))\to0$ as $u\downarrow0$ for each $c>0$.
+* `eventually_scaledLog_brownianRangeOscillationMass_le_fixedCover` proves
+  for every fixed $m>0$ and $\eta>0$ that, whenever $u_n\to0$ through
+  positive values,
+  \[
+    u_n^2\log\mathbb P\{\operatorname{diam}(B([0,1]))\le u_n\}
+    \le -\frac{\pi^2}{2(1+3/m)^2}+\eta
+  \]
+  eventually.  `eventually_scaledLog_brownianRangeOscillationMass_le`
+  lets $m$ increase after this fixed-cover estimate and gives the bound
+  $-\pi^2/2+\eta$.
+
+The fixed-cover probability estimate uses the continuous-path Donsker
+theorem formalized as
+`ProbabilityTheory.RandomWalk.tendstoInDistribution_normalizedLinearContinuousPath_brownian`,
+corresponding to Theorem 4.20 in I. Karatzas and S. E. Shreve,
+*Brownian Motion and Stochastic Calculus*, 2nd ed., Graduate Texts in
+Mathematics 113, Springer (1991), DOI 10.1007/978-1-4612-0949-2.
 -/
 
 open Filter MeasureTheory ProbabilityTheory

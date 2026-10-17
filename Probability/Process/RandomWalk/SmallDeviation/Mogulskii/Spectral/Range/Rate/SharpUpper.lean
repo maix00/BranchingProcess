@@ -14,7 +14,24 @@ public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.R
 
 This file composes the fixed-parameter block estimate with the explicit
 parameter selection. Positivity and lower coboundedness remain hypotheses
-until the matching lower-rate proof supplies them.
+until the matching lower-rate proof supplies them.  The public declaration
+`limsup_scaledLog_horizontalTubeProbability_le_sharp` states that for
+centered unit-variance increments with a continuous Brownian realization,
+an `IsMogulskiiScale` $s_n$, eventually positive tube probabilities $p_n$,
+and a lower-cobounded normalized logarithm,
+\[
+  \limsup_{n\to\infty}\frac{s_n^2}{n}\log p_n
+  \le -\frac{\pi^2}{2},
+  \qquad
+  p_n=\texttt{horizontalTubeProbability}
+    (\texttt{iidSequenceLaw}(\nu),1/2,s_n,n).
+\]
+The fixed-cover block step uses the continuous-path Donsker theorem
+formalized as
+`ProbabilityTheory.RandomWalk.tendstoInDistribution_normalizedLinearContinuousPath_brownian`,
+corresponding to Theorem 4.20 in I. Karatzas and S. E. Shreve,
+*Brownian Motion and Stochastic Calculus*, 2nd ed., Graduate Texts in
+Mathematics 113, Springer (1991), DOI 10.1007/978-1-4612-0949-2.
 -/
 
 open Filter MeasureTheory ProbabilityTheory

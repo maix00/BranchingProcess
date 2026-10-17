@@ -16,7 +16,29 @@ public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.S
 
 For a corridor of fixed width, outward rounding changes the lattice width by
 only a bounded additive amount.  The complete spectral geometric bound
-therefore converges to its Brownian counterpart at diffusive scale.
+therefore converges to its Brownian counterpart at diffusive scale.  For
+$w>0$, put $D_n=w\sqrt n+3$, $q_n=\cos(\pi/D_n)$, and
+$G_n=4q_n^n/(1-q_n^n)$.  The public declarations are:
+
+* `corridorDiffusiveWidth`, `corridorEigenvalue`, and
+  `corridorGeometricFactor` define $D_n$, $q_n$, and $G_n$;
+  `tendsto_corridorEigenvalue_pow` proves
+  $q_n^n\to e^{-\pi^2/(2w^2)}$ and
+  `tendsto_corridorGeometricFactor` proves
+  $G_n\to4e^{-\pi^2/(2w^2)}/(1-e^{-\pi^2/(2w^2)})$.
+* `liminf_normalizedRademacherPath_openCorridor_le` bounds the `liminf` of
+  the normalized Rademacher path's probability of staying in $(\ell,u)$ by
+  $4r/(1-r)$, where $r=e^{-\pi^2/(2(u-\ell)^2)}$.
+* `brownianRangeOscillation_le_fixedSpectralCover` bounds the Brownian
+  range-oscillation probability at width $w$ by the sum of $m$ copies of
+  $4r/(1-r)$ with
+  $r=e^{-\pi^2/(2(w+3w/m)^2)}$.
+
+The convergence input is the continuous-path Donsker theorem formalized as
+`ProbabilityTheory.RandomWalk.tendstoInDistribution_normalizedLinearContinuousPath_brownian`,
+corresponding to Theorem 4.20 in I. Karatzas and S. E. Shreve,
+*Brownian Motion and Stochastic Calculus*, 2nd ed., Graduate Texts in
+Mathematics 113, Springer (1991), DOI 10.1007/978-1-4612-0949-2.
 -/
 
 open Filter MeasureTheory ProbabilityTheory

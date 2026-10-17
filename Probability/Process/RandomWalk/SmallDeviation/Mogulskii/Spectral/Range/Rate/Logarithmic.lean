@@ -16,6 +16,26 @@ The block estimate is converted to the Mogulskii normalization with the
 complete-block count. A lower coboundedness hypothesis is kept explicit here;
 the matching lower-bound argument is responsible for discharging it in the
 two-sided theorem.
+The public declaration `limsup_scaledLog_horizontalTubeProbability_le_of_fixedCover`
+states the following.  If the increments are centered with second moment one
+and admit the continuous Brownian realization in the theorem, the scale is
+an `IsMogulskiiScale`, $c,\varepsilon>0$, the finite-cover
+spectral and range factors at $u=(1+\varepsilon)/\sqrt c$ are both below
+$1/2$, the tube probabilities $p_n$ are eventually positive, and
+$\frac{s_n^2}{n}\log p_n$ is lower-cobounded, then
+\[
+  \limsup_{n\to\infty}\frac{s_n^2}{n}\log p_n
+  \le \frac1c\log\!\left(2\,\texttt{finiteCoverRangeBound}
+    \left(m,\frac{1+\varepsilon}{\sqrt c}\right)\right),
+  \qquad
+  p_n=\texttt{horizontalTubeProbability}
+    (\texttt{iidSequenceLaw}(\nu),1/2,s_n,n).
+\]
+Its block estimate uses the continuous-path Donsker theorem formalized as
+`ProbabilityTheory.RandomWalk.tendstoInDistribution_normalizedLinearContinuousPath_brownian`,
+corresponding to Theorem 4.20 in I. Karatzas and S. E. Shreve,
+*Brownian Motion and Stochastic Calculus*, 2nd ed., Graduate Texts in
+Mathematics 113, Springer (1991), DOI 10.1007/978-1-4612-0949-2.
 -/
 
 open Filter MeasureTheory ProbabilityTheory
