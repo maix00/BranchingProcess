@@ -10,8 +10,19 @@ public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalk
 /-!
 # Deterministic lower gluing for a floor-partitioned random walk
 
-This module shows that local contracted-corridor and endpoint-core events on
-the floor-rounded cells imply the global strict step-corridor event.
+The parent lower-probability proof uses the following helper lemma:
+
+- `normalizedStepCadlagPathIcc_mem_corridorSet_of_partitionCellCoreReturnBlockEvents`:
+  for a positive spatial scale, initial center and radius zero, increasing
+  knot-core radii contained in the selected corridor, and a strictly interior
+  contracted corridor on every floor-rounded cell, the local core-return
+  block events imply
+  $Y_n\in\operatorname{corridorSet}(U,L)$ for the normalized step path
+  $Y_n(t)=s_n^{-1}\sum_{j<\lfloor nt\rfloor}\xi_j$.
+
+This is a proof-specific deterministic gluing step for the finite-partition
+lower probability bound; the reusable step-boundary and cell interfaces are
+defined in the parent `Partition/` modules.
 -/
 
 @[expose] public section
@@ -43,7 +54,7 @@ private lemma stepBoundary_eval_eq_rightTrace_of_mem_commonPartitionCell
 core-return events hold, then the normalized step path lies in the strict
 global corridor. The half-open cells use the right trace at their left knot;
 the endpoint-core induction handles the finitely many knot values. -/
-theorem normalizedStepCadlagPathIcc_mem_corridorSet_of_partitionCellCoreReturnBlockEvents
+lemma normalizedStepCadlagPathIcc_mem_corridorSet_of_partitionCellCoreReturnBlockEvents
     {n : ℕ} {scale : ℕ → ℝ} (hscale : 0 < scale n)
     (upper lower : StepBoundary)
     (center radius : Fin (StepBoundary.commonKnots upper lower).card → ℝ)

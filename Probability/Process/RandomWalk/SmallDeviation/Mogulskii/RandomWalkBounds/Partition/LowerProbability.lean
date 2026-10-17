@@ -6,12 +6,37 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.Partition.LowerGeometry
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.Partition.Endpoint
+import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.Partition.Lemmas.LowerGeometry
 /-!
 # Finite-partition lower probability bound
 
-The deterministic lower gluing and independence of adjacent IID blocks give
-a product lower bound for the full discrete corridor probability.
+The public declarations in
+`ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Discrete` are:
+
+- `iidSequenceLaw_partitionCellCoreReturnBlocks_ge_of_subset`: for IID
+  increments and any finite family of consecutive blocks with lengths
+  $\ell_i$, if the intersection of their translated local core-return events
+  is contained in an event $A$, then
+  $\prod_{i<m}\mathbb P_\nu(E_i)\le\mathbb P_\nu(A)$.
+- `iidSequenceLaw_normalizedStepCorridor_ge_prod_partitionCellCoreReturnProbability`:
+  for a positive scale, knot cores starting at center and radius zero,
+  strictly increasing core radii contained in the selected corridor, and
+  local corridors strictly inside each cell, the probability that the
+  normalized step path lies in the strict global corridor is at least the
+  product of the local core-return probabilities:
+  $\prod_{i<m}\mathbb P_\nu(E_i)\le
+  \mathbb P_\nu(Y_n\in\operatorname{corridorSet}(U,L))$.
+- `eventually_iidSequenceLaw_normalizedStepCorridor_ge_prod_of_partitionCellCoreReturnBounds`:
+  under the same finite-partition geometry and eventually positive scale, if
+  each local event has an eventual lower bound $p_{i,n}$, then eventually
+  $\prod_{i<m}p_{i,n}\le
+  \mathbb P_\nu(Y_n\in\operatorname{corridorSet}(U,L))$.
+
+Here $\mathbb P_\nu$ is the IID increment law and
+$Y_n(t)=s_n^{-1}\sum_{j<\lfloor nt\rfloor}\xi_j$. The deterministic
+core-to-corridor gluing step is in the sibling `Lemmas/` module; the event,
+cell, and IID product interfaces remain in their semantic modules.
 -/
 
 @[expose] public section
@@ -21,7 +46,6 @@ open MeasureTheory
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Discrete
 
 open ProbabilityTheory.RandomWalk
-open Skorokhod.PathClass.StepCorridor
 open Skorokhod.PathClass.StepCorridor
 
 /-- Independent endpoint-core events on any finite family of consecutive
