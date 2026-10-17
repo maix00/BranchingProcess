@@ -22,7 +22,7 @@ public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVa
 public import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.Event
 import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Concrete.UpperBound
 import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.EntranceBridge
-import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.Lemmas.Event
+import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.Measurability
 
 /-!
 # Upper-endpoint staircase after a robust entrance

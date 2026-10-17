@@ -9,7 +9,6 @@ module
 public import Analysis.Asymptotics.Scale.BlockScale
 public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition.Event
 public import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.Event
-import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.Lemmas.Event
 import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.Lemmas.MiddleProbability
 import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.Lemmas.ThreeRegions
 import Probability.Process.RandomWalk.SmallDeviation.Entrance.Edge.PrefixSelection
