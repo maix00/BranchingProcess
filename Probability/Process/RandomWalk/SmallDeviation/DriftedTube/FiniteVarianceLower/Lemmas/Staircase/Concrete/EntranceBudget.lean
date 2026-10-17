@@ -8,7 +8,8 @@ module
 
 public import Analysis.Asymptotics.Power.PolynomialExponential
 public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition.DiffusiveLower
-public import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.Lemmas.PowerAssembly
+public import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.Event
+import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.Lemmas.PowerAssembly
 
 /-!
 # Lemma 3.5 entrance exponential budget

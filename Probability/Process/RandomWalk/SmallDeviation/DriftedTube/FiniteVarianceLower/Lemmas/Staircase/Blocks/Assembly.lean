@@ -6,8 +6,9 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Blocks.Probability
+import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Blocks.Probability
 public import Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.Blocks.Geometry
+public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Staircase.Binning.Basic
 /-!
 # Staircase block probability assembly
 
@@ -32,8 +33,6 @@ open MeasureTheory ProbabilityTheory
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 
 open ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube
-
-open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete
 
 /-- Finitely many narrowed-tube probability bounds and the central endpoint
 windows give the complete finite staircase probability product. -/

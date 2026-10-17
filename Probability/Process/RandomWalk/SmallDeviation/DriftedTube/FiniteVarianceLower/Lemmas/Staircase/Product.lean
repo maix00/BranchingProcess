@@ -6,8 +6,17 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Blocks.Assembly
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Rate.BinRate
+public import Mathlib.Basic.Real.Basic
+public import Mathlib.MeasureTheory.Measure.MeasureSpaceDef
+public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
+public import Probability.Distributions.Moments.Real
+public import Probability.Process.Filtration.ConditionalBlocks
+public import Probability.Process.RandomWalk.Path.Adapted.Filtration
+public import Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.Blocks.EventBridge
+public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Staircase.Binning.Basic
+import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Blocks.Assembly
+import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Binning.Parameters
+import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Rate.BinRate
 /-!
 # Finite staircase probability from the endpoint-window rate
 
@@ -30,7 +39,6 @@ varying temporal blocks.
 @[expose] public section
 
 open MeasureTheory ProbabilityTheory
-open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 

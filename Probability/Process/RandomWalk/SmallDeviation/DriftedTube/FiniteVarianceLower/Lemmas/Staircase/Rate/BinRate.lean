@@ -7,7 +7,8 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.RealWidthLower
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Binning.Parameters
+import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Binning.Parameters
+public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Staircase.Binning.Basic
 /-!
 # Uniform exponential bound for narrowed staircase bins
 
@@ -27,7 +28,6 @@ Chapter 3, Lemma 3.1(ii), inside the proof of Lemma 3.5.
 @[expose] public section
 
 open MeasureTheory ProbabilityTheory
-open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 

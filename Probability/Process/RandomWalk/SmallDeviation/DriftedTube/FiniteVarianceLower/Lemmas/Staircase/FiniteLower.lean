@@ -6,11 +6,19 @@ Authors: WANG Yiyang
 
 module
 
+public import Mathlib.MeasureTheory.Measure.MeasureSpaceDef
+public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
+public import Algebra.BigOperators.AdditivePath.Basic
+public import Probability.Distributions.Moments.Real
+public import Probability.Sequence.Filtration
+public import Probability.Sequence.IID.Basic
+public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Staircase.Binning.Basic
+public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.EndpointEvent
 import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Rate.BlockExponential
 import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Cost
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Inclusion
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Binning.Parameters
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Product
+import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Inclusion
+import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Binning.Parameters
+import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Product
 /-!
 # Finite staircase lower bound with a diffusive entrance
 
@@ -32,7 +40,6 @@ parameters; it does not replace the conditioned Brownian-meander input.
 @[expose] public section
 
 open MeasureTheory ProbabilityTheory
-open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 

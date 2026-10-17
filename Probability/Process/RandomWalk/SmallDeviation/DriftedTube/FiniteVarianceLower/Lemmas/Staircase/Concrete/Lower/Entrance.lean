@@ -6,8 +6,24 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Concrete.LowerBound
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.EntranceBridge
+public import Mathlib.MeasureTheory.Measure.MeasureSpaceDef
+public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
+public import Algebra.BigOperators.AdditivePath.Basic
+public import Probability.Distributions.Moments.Real
+public import Probability.Sequence.Filtration
+public import Probability.Sequence.IID.Basic
+public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Staircase.EndpointWindow
+public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Staircase.Binning.Basic
+public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Staircase.Schedule
+public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Staircase.BlockTube
+public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.EndpointEvent
+public import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.Event
+import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Concrete.LowerBound
+import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.EntranceBridge
+import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.Lemmas.Event
+import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Staircase.Binning.Basic
+import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Staircase.Schedule
+import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Staircase.BlockTube
 /-!
 # Concrete staircase lower bound after a robust entrance
 
@@ -30,7 +46,6 @@ first horizontal block's central window.
 
 open MeasureTheory ProbabilityTheory
 open ProbabilityTheory.RandomWalk.SmallDeviation.Entrance
-open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 

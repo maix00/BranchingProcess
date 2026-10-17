@@ -6,18 +6,23 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.JumpPattern.Setup
+public import Probability.Process.Filtration.ConditionalBlocks
+public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.Event
+public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.DiscretizedMaximum
+public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.JumpPattern.Basic
+public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.TubeEvent
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.Horizontal.PathSegment
+import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.JumpPattern.Setup
+import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.ConditionalBlocks
 
 /-!
 # Geometry of the rounded-maximum decomposition
 
-The proof-specific declarations are:
+The proof-specific declaration is:
 
-- `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.drawdownJumpPatternTubeIntersection`, `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.drawdownAdmissibleJumpPatterns`,
-  `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.drawdown_noLargeDropEvent_subset_jumpPatternUnion`: the event is covered
-  by the finite union of tube intersections indexed by admissible jump
-  patterns.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.drawdown_noLargeDropEvent_subset_jumpPatternUnion`:
+  the no-large-drop event is covered by the finite union of tube intersections
+  indexed by admissible jump patterns.
 
 These steps follow Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.3.
 -/
@@ -218,20 +223,6 @@ private lemma drawdown_event_goodBlocks_satisfy_tubeCondition
       apply hj'
       simp [drawdownMaximumJumpSet, spatialBinJumpSet, hne]
     simpa [drawdownBlockTubeCondition] using htube j hsame
-
-/-- The tube events selected by a fixed jump pattern, intersected over the
-first `q` blocks. -/
-def drawdownJumpPatternTubeIntersection {q : ℕ}
-    (remainder blockLength : ℕ) (pattern : Finset (Fin q))
-    (upper binWidth tubeWidth : ℝ) : Set (ℕ → ℝ) :=
-  ProbabilityTheory.conditionalBlockIntersection
-    (drawdownJumpPatternTubeEvent remainder blockLength pattern
-      upper binWidth tubeWidth) q
-
-/-- The finite family of jump patterns with at most `K` jump indices. -/
-noncomputable def drawdownAdmissibleJumpPatterns (q K : ℕ) :
-    Finset (Finset (Fin q)) :=
-  Finset.univ.filter fun pattern => pattern.card ≤ K
 
 /-- If the pattern is the actual jump set of the rounded running maximum,
 every block tube required by that pattern holds whenever its deterministic

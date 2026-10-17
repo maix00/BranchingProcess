@@ -6,7 +6,16 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.JumpPattern.Setup
+public import Mathlib.MeasureTheory.Measure.MeasureSpaceDef
+public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
+public import Mathlib.MeasureTheory.Function.ConditionalExpectation.Basic
+public import Mathlib.Analysis.Complex.Exponential
+public import Probability.Process.Filtration.ConditionalBlocks
+public import Probability.Sequence.IID.Basic
+public import Probability.Process.RandomWalk.Path.Adapted.Filtration
+public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.JumpPattern.Basic
+import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.JumpPattern.Setup
+import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.ConditionalBlocks
 
 /-!
 # Conditional probability of a fixed jump pattern

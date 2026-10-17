@@ -6,7 +6,22 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Concrete.Upper.Asymptotic
+public import Mathlib.Basic.Real.Basic
+public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
+public import Mathlib.MeasureTheory.Measure.MeasureSpaceDef
+public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
+public import Algebra.BigOperators.AdditivePath.Basic
+public import Probability.Distributions.Moments.Real
+public import Probability.Sequence.Filtration
+public import Probability.Sequence.IID.Basic
+public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Staircase.Binning.Basic
+public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Staircase.Schedule
+public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Staircase.BlockTube
+public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Staircase.EndpointWindow
+public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.EndpointEvent
+public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Reflection
+public import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.Event
+import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Concrete.Upper.Asymptotic
 import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Concrete.EntranceBudget
 public import Analysis.Asymptotics.Scale.IntermediatePowerBlock
 
@@ -37,7 +52,6 @@ sailor hit the sober man?*, *Journal of Statistical Physics* 96 (1999),
 open Filter MeasureTheory ProbabilityTheory
 open scoped NNReal Topology
 open ProbabilityTheory.RandomWalk.SmallDeviation.Entrance
-open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 

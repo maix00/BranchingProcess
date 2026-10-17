@@ -6,8 +6,20 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Concrete.Lower.Entrance
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.GlobalConditions
+public import Mathlib.MeasureTheory.Measure.MeasureSpaceDef
+public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
+public import Algebra.BigOperators.AdditivePath.Basic
+public import Probability.Distributions.Moments.Real
+public import Probability.Sequence.Filtration
+public import Probability.Sequence.IID.Basic
+public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Staircase.Binning.Basic
+public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Staircase.Schedule
+public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Staircase.BlockTube
+public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.EndpointEvent
+public import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.Event
+import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Concrete.Lower.Entrance
+import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.GlobalConditions
+import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Staircase.Binning.Basic
 /-!
 # Tilted-tube lower bound from global staircase conditions
 
@@ -27,7 +39,6 @@ Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offs
 
 open MeasureTheory ProbabilityTheory
 open ProbabilityTheory.RandomWalk.SmallDeviation.Entrance
-open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 

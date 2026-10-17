@@ -8,6 +8,7 @@ module
 
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.Horizontal.Basic
 public import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
+public import Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.FiniteVarianceUpper.Partition.Parameters
 
 /-!
 # Equal-partition inputs for the horizontal-tube upper bound
@@ -47,29 +48,11 @@ open scoped ENNReal NNReal Topology
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube
 
-/-- Parameter of the `k`-th fixed corridor in an equal partition. -/
-noncomputable def partitionTubeParameter (m : ℕ) (k : Fin m) : ℝ :=
-  (1 - (k : ℝ) / m) / (1 + 1 / m)
-
-/-- Width of the fixed corridor obtained by enlarging a tube by the factor
-`1 + 1/m`. -/
-noncomputable def partitionTubeWidth (m : ℕ) (width : ℝ) : ℝ :=
-  (1 + 1 / m) * width
-
 /-- The fixed corridor event associated with one cell of the equal partition. -/
 private def partitionTubeEvent (m : ℕ) (k : Fin m) (width : ℝ) (length : ℕ) :
     Set (ℕ → ℝ) :=
   {increment | InHorizontalTube (partitionTubeParameter m k)
     (partitionTubeWidth m width) length increment}
-
-/-- Integer block length at width index `n` and remainder coefficient `u`.
-The factor `1/2` leaves room for the floor rounding while retaining the
-remainder `u * Δ^v`. -/
-noncomputable def smallDeviationBlockFactor (u v d : ℝ) (n : ℕ) : ℕ :=
-  ⌊u * (n : ℝ) ^ v / (2 * d)⌋₊ + 1
-
-noncomputable def smallDeviationBlockLength (u v d : ℝ) (n : ℕ) : ℕ :=
-  n ^ 2 * smallDeviationBlockFactor u v d n
 
 /-- A point of `[0,1]` lies in one of the `m` closed equal subintervals. -/
 private lemma exists_equalPartition_index {m : ℕ} (hm : 0 < m)

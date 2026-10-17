@@ -6,8 +6,9 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.FiniteVarianceUpper.Lemmas.EqualPartition
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.FromIncrementLaw.Normal.HorizontalTube.Scales
+public import Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.FiniteVarianceUpper.Partition.Parameters
+import Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.FiniteVarianceUpper.Lemmas.EqualPartition
 import Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.BlockIteration
 import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 

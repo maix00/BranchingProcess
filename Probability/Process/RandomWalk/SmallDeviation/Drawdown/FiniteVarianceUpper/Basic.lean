@@ -6,6 +6,8 @@ Authors: WANG Yiyang
 
 module
 
+public import Mathlib.MeasureTheory.Measure.MeasureSpaceDef
+public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
 public import Probability.Distributions.Moments.Real
 public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.Event
 public import Probability.Sequence.IID.Basic
@@ -49,7 +51,6 @@ open scoped ENNReal
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown
 
 open ProbabilityTheory.RandomWalk
-open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
 /-- Finite-variance no-large-drawdown estimate in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3,
 Lemma 3.3. It extends Elie Aïdékon and Yueyun Hu, *Average-weight percolation

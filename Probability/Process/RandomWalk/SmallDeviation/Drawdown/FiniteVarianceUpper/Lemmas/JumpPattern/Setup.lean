@@ -6,27 +6,32 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.ConditionalBlocks
+public import Mathlib.Basic.Real.Basic
+public import Mathlib.Data.Finset.Defs
+public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
+public import Probability.Process.RandomWalk.Path.Event.Drawdown
+public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.DiscretizedMaximum
+public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.JumpPattern.Basic
+public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.TubeEvent
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.Horizontal.Basic
+import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.ConditionalBlocks
 import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 
 /-!
 # Rounded maxima and jump-pattern data
 
-The proof-specific declarations are:
+The module-visible supporting declarations are:
 
 - `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.drawdownBlockStart`: $s_j=r+j\ell$, the block-start schedule.
 - `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.drawdownDiscretizedMaximum`, `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.drawdownRunningMaximumBins`,
   `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.drawdownRunningMaximumJumpSet`, and `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.drawdownMaximumJumpSet`: the rounded
   running maximum $M_j$, its bin indices, and the block indices where those
   bins change.
-- `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.drawdownJumpPatternTubeEvent`: the intersection of the specified
-  non-jump-block tube events for a fixed pattern.
-- `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.drawdownJumpPatternBound` and
-  `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.drawdown_prod_jumpPatternBound_le_pow`: the block factor equals $p$ on a
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.drawdown_prod_jumpPatternBound_le_pow`: the block factor equals $p$ on a
   non-jump and $1$ on a jump, so its product is $p^{q-|J|}$ and is at most
   $p^{q-K}$ when $|J|\le K$ and $0\le p\le1$.
 
-These declarations support Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.3.
+These proof steps support Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.3.
 -/
 
 open Filter MeasureTheory Topology
@@ -77,25 +82,6 @@ noncomputable def drawdownRunningMaximumJumpSet {q : ℕ}
     (hwidth : 0 < width) (increment : ℕ → ℝ) : Finset (Fin q) :=
   spatialBinJumpSet
     (drawdownRunningMaximumBins upper width starts hwidth increment)
-
-/-- For a fixed candidate jump set, impose the rounded-maximum tube on each
-block outside that set and leave the jump blocks unrestricted. -/
-def drawdownJumpPatternTubeEvent {q : ℕ}
-    (remainder blockLength : ℕ) (pattern : Finset (Fin q))
-    (upper binWidth tubeWidth : ℝ) (n : ℕ) : Set (ℕ → ℝ) :=
-  if hn : n < q then
-    if (⟨n, hn⟩ : Fin q) ∈ pattern then Set.univ
-    else drawdownTubeBlockEvent (remainder + n * blockLength) blockLength
-      (drawdownPastDiscretizedMaximum
-        (start := remainder + n * blockLength) upper binWidth) tubeWidth
-  else Set.univ
-
-/-- The conditional factor attached to a block for a fixed jump pattern. -/
-def drawdownJumpPatternBound {q : ℕ}
-    (pattern : Finset (Fin q)) (p : ℝ) (n : ℕ) : ℝ :=
-  if hn : n < q then
-    if (⟨n, hn⟩ : Fin q) ∈ pattern then 1 else p
-  else 1
 
 /-- The factors for a fixed jump pattern multiply to the tube-bound factor
 raised to the number of indices outside that pattern. -/
