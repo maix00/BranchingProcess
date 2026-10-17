@@ -9,7 +9,7 @@ module
 public import Analysis.Asymptotics.Scale.InverseScale
 public import Probability.Process.RandomWalk.Path.Corridor.Horizontal.Core
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.FromIncrementLaw.Normal.ContinuousBoundary
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.FromIncrementLaw.Normal.HorizontalTube.Lemmas.SourceCorridor
+import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.FromIncrementLaw.Normal.HorizontalTube.SourceCorridor
 /-!
 # Finite-variance closed horizontal-tube rate
 
@@ -26,9 +26,6 @@ open ProbabilityTheory.RandomWalk
 open ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability
 open Skorokhod.PathClass.StepCorridor
 open scoped ENNReal NNReal Topology
-
-open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.HorizontalTube
-open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.HorizontalTube.Lemmas
 
 @[expose] public section
 
