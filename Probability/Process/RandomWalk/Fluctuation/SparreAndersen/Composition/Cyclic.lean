@@ -6,7 +6,10 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.Fluctuation.SparreAndersen.Composition.Probability
+public import Algebra.BigOperators.AdditivePath.Basic
+public import Algebra.BigOperators.AdditivePath.Block
+public import Algebra.BigOperators.PartialSum
+public import Algebra.BigOperators.CyclicReindex
 public import Mathlib.Combinatorics.Enumerative.Composition
 
 /-!
@@ -14,61 +17,295 @@ public import Mathlib.Combinatorics.Enumerative.Composition
 
 The public definitions and theorems in this file are:
 
-- `ProbabilityTheory.RandomWalk.cyclicGapComposition`: the ordered positive
-  cyclic gaps determined by a nonempty set of selected starts, as a
-  composition of the path length.
-- `ProbabilityTheory.RandomWalk.cyclicGapComposition_length`: the number of
-  parts is the number of selected starts.
-- `ProbabilityTheory.RandomWalk.cyclicGapComposition_blocksFun`: each part is
-  the corresponding cyclic gap length.
-- `ProbabilityTheory.RandomWalk.compositionSelectedStart`: the selected start
-  at one composition boundary after a cyclic offset.
-- `ProbabilityTheory.RandomWalk.compositionSelectedStart_strictMono`: the
-  selected starts increase with their composition-boundary indices.
-- `ProbabilityTheory.RandomWalk.compositionSelectedStarts`: a composition of
-  $n$ and an offset smaller than its last part determine a set of starts in
-  the cyclic interval of length $n$.
-- `ProbabilityTheory.RandomWalk.compositionSelectedStarts_card`: the number of
-  selected starts is the number of parts.
-- `ProbabilityTheory.RandomWalk.compositionSelectedStarts_nonempty`: the
-  selected-start set contains the first translated boundary.
-- `ProbabilityTheory.RandomWalk.compositionSelectedStarts_orderEmbOfFin`:
-  the increasing enumeration of the selected starts is the translated
-  sequence of composition boundaries.
-- `ProbabilityTheory.RandomWalk.compositionSelectedStarts_first_val`: the
-  least selected start is the chosen offset.
-- `ProbabilityTheory.RandomWalk.cyclicGapLength_compositionSelectedStarts`:
-  the cyclic gaps of these starts are the original composition parts.
-- `ProbabilityTheory.RandomWalk.cyclicGapComposition_compositionSelectedStarts`:
-  reconstructing the cyclic-gap composition from its selected starts gives
-  the original composition.
-- `ProbabilityTheory.RandomWalk.cyclicFirstStart_lt_lastGap`: the least
-  selected start lies within the last cyclic gap, so it is a valid offset.
-- `ProbabilityTheory.RandomWalk.cyclicGapComposition_sizeUpTo`: the partial
-  sums of the cyclic composition are the cyclic block starts.
+- `ProbabilityTheory.RandomWalk.cyclicGapLengthAt` and
+  `ProbabilityTheory.RandomWalk.cyclicGapLength`: the consecutive positive
+  gaps between selected cyclic starts, with the final gap returning to the
+  first start.
+- `ProbabilityTheory.RandomWalk.cyclicGapLength_pos`: each gap contains at
+  least one increment.
+- `ProbabilityTheory.RandomWalk.blockStart_cyclicGapLength_eq`:
+  the cumulative length before a selected start is its distance from the
+  first selected start.
+- `ProbabilityTheory.RandomWalk.blockStart_cyclicGapLength_card`:
+  the cyclic gaps partition all $n$ increments.
+- `ProbabilityTheory.RandomWalk.blockStart_add_cyclicGapLength_le`:
+  each selected block stays inside the length-$n$ rotated path.
+- `ProbabilityTheory.RandomWalk.cyclicCoordinateReindex_block_eq`:
+  rotating at the first selected start and taking a block agrees with
+  rotating directly at that block's start.
+- `ProbabilityTheory.RandomWalk.cyclicGapCoordinates` and
+  `ProbabilityTheory.RandomWalk.partialSum_cyclicGapCoordinates`:
+  the block's coordinate vector and its partial sums as a restarted path.
+- `ProbabilityTheory.RandomWalk.cyclicGapComposition`:
+  the ordered gaps form a positive composition of $n$.
+- `ProbabilityTheory.RandomWalk.cyclicGapComposition_length` and
+  `ProbabilityTheory.RandomWalk.cyclicGapComposition_blocksFun`:
+  the number of parts equals the number of starts, and each part is its gap
+  length.
+- `ProbabilityTheory.RandomWalk.compositionSelectedStart` and
+  `ProbabilityTheory.RandomWalk.compositionSelectedStart_strictMono`:
+  the selected starts at composition boundaries and their strict ordering.
+- `ProbabilityTheory.RandomWalk.compositionSelectedStarts`:
+  a composition and an offset into its last part determine a set of cyclic
+  starts.
+- `ProbabilityTheory.RandomWalk.compositionSelectedStarts_card`,
+  `ProbabilityTheory.RandomWalk.compositionSelectedStarts_nonempty`,
+  `ProbabilityTheory.RandomWalk.compositionSelectedStarts_orderEmbOfFin`,
+  and `ProbabilityTheory.RandomWalk.compositionSelectedStarts_first_val`:
+  its cardinality, nonemptiness, increasing enumeration, and first start.
+- `ProbabilityTheory.RandomWalk.cyclicGapLength_compositionSelectedStarts`
+  and `ProbabilityTheory.RandomWalk.cyclicGapComposition_compositionSelectedStarts`:
+  the selected starts recover the original gap lengths and composition.
+- `ProbabilityTheory.RandomWalk.cyclicFirstStart_lt_lastGap` and
+  `ProbabilityTheory.RandomWalk.cyclicGapComposition_sizeUpTo`:
+  the first start is an allowed offset, and partial sums recover the block
+  starts.
 - `ProbabilityTheory.RandomWalk.exists_compositionSelectedStarts_cyclicGapComposition`:
-  every nonempty selected-start set is reconstructed from its cyclic-gap
-  composition and the offset given by its least start.
-- `ProbabilityTheory.RandomWalk.cyclicGapCompositionEquiv`: a nonempty set of
-  cyclic starts is equivalent to a composition and an offset into its last
-  part.
-- `ProbabilityTheory.RandomWalk.sum_cyclicGap_products_eq_composition_sum`:
-  the finite sum of gap-product weights over nonempty selected starts equals
-  the composition sum weighted by the size of the last gap.
+  every nonempty set of cyclic starts is represented by a composition and
+  an offset into its last part.
 
-This is the composition of $n$ used to regroup the products in equations
-(A.6)--(A.7) of Appendix A of M. Bauer, C. Godrèche, and J.-M. Luck,
-*Statistics of persistent events in the binomial random walk: Will the
-drunken sailor hit the sober man?*, *Journal of Statistical Physics* 96
-(1999), 963–1019, DOI 10.1023/A:1004636216365,
-arXiv:cond-mat/9905252. Equation (A.6) is the finite composition sum; the
-cyclic-gap reindexing is used in the generating-function calculation leading
-to equation (A.7).
+These constructions formalize the cyclic-gap decomposition in
+M. Bauer, C. Godrèche, and J.-M. Luck, *Statistics of persistent events in
+the binomial random walk: Will the drunken sailor hit the sober man?*,
+Appendix A, equations (A.5)--(A.6), *Journal of Statistical Physics* 96
+(1999), 963--1019, DOI 10.1023/A:1004636216365,
+arXiv:cond-mat/9905252.
 -/
 
 @[expose] public section
 
 namespace ProbabilityTheory.RandomWalk
+
+/-- The sequence of cyclic block lengths, extended by zero after the
+last selected start. -/
+def cyclicGapLengthAt {n : ℕ} (u : Finset (Fin n)) (hu : u.Nonempty)
+    (i : ℕ) : ℕ :=
+  if h : i < u.card then
+    let starts := u.orderEmbOfFin rfl
+    if hnext : i + 1 < u.card then
+      (starts ⟨i + 1, hnext⟩).val - (starts ⟨i, h⟩).val
+    else
+      n - (starts ⟨i, h⟩).val +
+        (starts ⟨0, Finset.card_pos.mpr hu⟩).val
+  else 0
+
+/-- The cyclic length from a selected start to the next one, with the
+last block wrapping from the largest start back to the smallest. -/
+def cyclicGapLength {n : ℕ} (u : Finset (Fin n)) (hu : u.Nonempty)
+    (j : Fin u.card) : ℕ :=
+  cyclicGapLengthAt u hu j.val
+
+/-- Every block in the cyclic partition contains at least one increment. -/
+theorem cyclicGapLength_pos {n : ℕ} (u : Finset (Fin n))
+    (hu : u.Nonempty) (j : Fin u.card) :
+    0 < cyclicGapLength u hu j := by
+  let starts := u.orderEmbOfFin rfl
+  unfold cyclicGapLength
+  simp only [cyclicGapLengthAt, dite_eq_left j.isLt]
+  by_cases h : j.val + 1 < u.card
+  · simp only [dite_eq_left h]
+    have hlt : j < (⟨j.val + 1, h⟩ : Fin u.card) := by
+      exact Fin.lt_def.mpr (Nat.lt_succ_self _)
+    have hstarts := starts.strictMono hlt
+    exact Nat.sub_pos_of_lt hstarts
+  · simp only [dite_eq_right h]
+    have hlt := (starts j).isLt
+    omega
+
+/-- Before block `j`, the cyclic partition has traversed the distance
+from its first selected start to its `j`-th selected start. -/
+theorem blockStart_cyclicGapLength_eq {n : ℕ}
+    (u : Finset (Fin n)) (hu : u.Nonempty)
+    (j : Fin u.card) :
+    AdditivePath.blockStart
+      (cyclicGapLengthAt u hu)
+      j.val =
+      (u.orderEmbOfFin rfl j).val -
+        (u.orderEmbOfFin rfl ⟨0, Finset.card_pos.mpr hu⟩).val := by
+  let starts := u.orderEmbOfFin rfl
+  have hmain (m : ℕ) (hm : m < u.card) :
+      AdditivePath.blockStart
+        (cyclicGapLengthAt u hu)
+        m =
+        (starts ⟨m, hm⟩).val -
+          (starts ⟨0, Finset.card_pos.mpr hu⟩).val := by
+    induction m with
+    | zero => simp [AdditivePath.blockStart_zero]
+    | succ m ih =>
+        have hm' : m < u.card := by omega
+        have hih := ih hm'
+        rw [AdditivePath.blockStart_succ, hih]
+        have hgap : cyclicGapLength u hu ⟨m, hm'⟩ =
+            (starts ⟨m + 1, hm⟩).val - (starts ⟨m, hm'⟩).val := by
+          simp only [cyclicGapLength, cyclicGapLengthAt,
+            dite_eq_left hm', dite_eq_left hm]
+          rfl
+        change (starts ⟨m, hm'⟩).val -
+            (starts ⟨0, Finset.card_pos.mpr hu⟩).val +
+              cyclicGapLength u hu ⟨m, hm'⟩ = _
+        rw [hgap]
+        have h0m :
+            (starts ⟨0, Finset.card_pos.mpr hu⟩).val ≤
+              (starts ⟨m, hm'⟩).val := by
+          exact (starts.monotone (Fin.le_def.mpr (Nat.zero_le m)))
+        have hmnext :
+            (starts ⟨m, hm'⟩).val <
+              (starts ⟨m + 1, hm⟩).val := by
+          exact starts.strictMono (Fin.lt_def.mpr (Nat.lt_succ_self m))
+        omega
+  exact hmain j.val j.isLt
+
+/-- The consecutive cyclic gaps partition all `n` increments. -/
+theorem blockStart_cyclicGapLength_card {n : ℕ}
+    (u : Finset (Fin n)) (hu : u.Nonempty) :
+    AdditivePath.blockStart
+      (cyclicGapLengthAt u hu)
+      u.card = n := by
+  have hcard : 0 < u.card := Finset.card_pos.mpr hu
+  let last : Fin u.card :=
+    ⟨u.card - 1, Nat.sub_lt hcard (Nat.succ_pos 0)⟩
+  let first : Fin u.card := ⟨0, hcard⟩
+  have hlast : last.val + 1 = u.card := by
+    dsimp [last]
+    omega
+  let length : ℕ → ℕ :=
+    cyclicGapLengthAt u hu
+  change AdditivePath.blockStart length u.card = n
+  have hrewrite : AdditivePath.blockStart length u.card =
+      AdditivePath.blockStart length (last.val + 1) :=
+    congrArg (AdditivePath.blockStart length) hlast.symm
+  rw [hrewrite, AdditivePath.blockStart_succ,
+    blockStart_cyclicGapLength_eq u hu last]
+  simp only [length]
+  have hfinal : cyclicGapLength u hu last =
+      n - (u.orderEmbOfFin rfl last).val +
+        (u.orderEmbOfFin rfl first).val := by
+    simp only [cyclicGapLength, cyclicGapLengthAt,
+      dite_eq_left last.isLt,
+      dite_eq_right (by omega : ¬ last.val + 1 < u.card)]
+    rfl
+  change (u.orderEmbOfFin rfl last).val -
+      (u.orderEmbOfFin rfl ⟨0, Finset.card_pos.mpr hu⟩).val +
+        cyclicGapLength u hu last = n
+  rw [hfinal]
+  change (u.orderEmbOfFin rfl last).val -
+      (u.orderEmbOfFin rfl first).val +
+        (n - (u.orderEmbOfFin rfl last).val +
+          (u.orderEmbOfFin rfl first).val) = n
+  have hfirstLast :
+      (u.orderEmbOfFin rfl first).val ≤
+        (u.orderEmbOfFin rfl last).val := by
+    exact (u.orderEmbOfFin rfl).monotone (Fin.le_def.mpr (by
+      dsimp [first, last]
+      omega))
+  have hlastN := (u.orderEmbOfFin rfl last).isLt
+  omega
+
+/-- Every selected cyclic block lies inside the reindexed vector of
+length `n`. -/
+theorem blockStart_add_cyclicGapLength_le {n : ℕ}
+    (u : Finset (Fin n)) (hu : u.Nonempty) (j : Fin u.card) :
+    AdditivePath.blockStart
+      (cyclicGapLengthAt u hu)
+      j.val + cyclicGapLength u hu j ≤ n := by
+  let length : ℕ → ℕ :=
+    cyclicGapLengthAt u hu
+  have hmono := AdditivePath.blockStart_mono length
+    (Nat.succ_le_of_lt j.isLt)
+  rw [AdditivePath.blockStart_succ] at hmono
+  have htotal := blockStart_cyclicGapLength_card u hu
+  change AdditivePath.blockStart length u.card = n at htotal
+  have hlen : length j.val = cyclicGapLength u hu j := by
+    rfl
+  rw [hlen, htotal] at hmono
+  exact hmono
+
+/-- Reindexing the whole vector from the first selected start agrees,
+inside block `j`, with reindexing directly from that block's start. -/
+theorem cyclicCoordinateReindex_block_eq {n : ℕ} (hn : 0 < n)
+    (u : Finset (Fin n)) (hu : u.Nonempty)
+    (j : Fin u.card) (i : Fin (cyclicGapLength u hu j)) :
+    Fin.cyclicCoordinateReindex hn
+      (u.orderEmbOfFin rfl ⟨0, Finset.card_pos.mpr hu⟩)
+      ⟨AdditivePath.blockStart
+        (cyclicGapLengthAt u hu)
+        j.val + i.val, by
+          have hbound := blockStart_add_cyclicGapLength_le u hu j
+          omega⟩ =
+    Fin.cyclicCoordinateReindex hn (u.orderEmbOfFin rfl j)
+      ⟨i.val, by
+        have hbound := blockStart_add_cyclicGapLength_le u hu j
+        omega⟩ := by
+  let first := u.orderEmbOfFin rfl ⟨0, Finset.card_pos.mpr hu⟩
+  let current := u.orderEmbOfFin rfl j
+  have hfirstCurrent : first.val ≤ current.val := by
+    exact (u.orderEmbOfFin rfl).monotone
+      (Fin.le_def.mpr (Nat.zero_le _))
+  have hstart := blockStart_cyclicGapLength_eq u hu j
+  have hsum :
+      first.val + AdditivePath.blockStart
+        (cyclicGapLengthAt u hu)
+        j.val = current.val := by
+    dsimp [first, current]
+    omega
+  apply Fin.ext
+  rw [Fin.cyclicCoordinateReindex_val,
+    Fin.cyclicCoordinateReindex_val]
+  dsimp [first, current] at hsum ⊢
+  exact congrArg (fun m : ℕ => m % n) (by omega)
+
+/-- The `j`-th block of the finite increment vector after rotating at
+the first selected start. -/
+noncomputable def cyclicGapCoordinates {n : ℕ} (hn : 0 < n)
+    (u : Finset (Fin n)) (hu : u.Nonempty)
+    (x : Fin n → ℝ) (j : Fin u.card) :
+    Fin (cyclicGapLength u hu j) → ℝ :=
+  fun i => x (Fin.cyclicCoordinateReindex hn
+    (u.orderEmbOfFin rfl ⟨0, Finset.card_pos.mpr hu⟩)
+    ⟨AdditivePath.blockStart
+      (cyclicGapLengthAt u hu)
+      j.val + i.val, by
+        have hbound := blockStart_add_cyclicGapLength_le u hu j
+        omega⟩)
+
+/-- The path within the `j`-th block is the cyclically restarted path
+at that block's selected start. -/
+theorem partialSum_cyclicGapCoordinates {n : ℕ} (hn : 0 < n)
+    (u : Finset (Fin n)) (hu : u.Nonempty)
+    (x : Fin n → ℝ) (j : Fin u.card)
+    (t : Fin (cyclicGapLength u hu j + 1)) :
+    Fin.partialSum (cyclicGapCoordinates hn u hu x j) t =
+      Fin.cyclicPartialSum (Fin.partialSum x) (u.orderEmbOfFin rfl j)
+        ⟨t.val, by
+          have hbound := blockStart_add_cyclicGapLength_le u hu j
+          omega⟩ := by
+  have hgap : cyclicGapLength u hu j ≤ n := by
+    have hbound := blockStart_add_cyclicGapLength_le u hu j
+    omega
+  induction t using Fin.induction with
+  | zero =>
+      have hk : (u.orderEmbOfFin rfl j).val ≤ n :=
+        Nat.le_of_lt (u.orderEmbOfFin rfl j).isLt
+      have hidx :
+          (⟨(u.orderEmbOfFin rfl j).val, Nat.lt_succ_of_le hk⟩ : Fin (n + 1)) =
+            (u.orderEmbOfFin rfl j).castSucc := Fin.ext rfl
+      simp [Fin.partialSum_zero, Fin.cyclicPartialSum, hk, hidx]
+  | succ t ih =>
+      rw [Fin.partialSum_succ, ih]
+      have hstep := Fin.cyclicPartialSum_succ_eq_add_reindexedIncrement
+        hn x (u.orderEmbOfFin rfl j)
+        (⟨t.val, by omega⟩ : Fin n)
+      have hleft :
+          (⟨t.succ.val, by omega⟩ : Fin (n + 1)) =
+            (⟨t.val, by omega⟩ : Fin n).succ := Fin.ext rfl
+      have hright :
+          (⟨t.castSucc.val, by omega⟩ : Fin (n + 1)) =
+            (⟨t.val, by omega⟩ : Fin n).castSucc := Fin.ext rfl
+      rw [hleft, hright, hstep]
+      congr 1
+      exact congrArg x (cyclicCoordinateReindex_block_eq hn u hu j t)
+
+
 
 /-- The positive cyclic gap lengths, ordered from the least selected start,
 form a composition of the length of the increment vector. -/
@@ -427,129 +664,6 @@ theorem exists_compositionSelectedStarts_cyclicGapComposition {n : ℕ}
     exact Finset.orderEmbOfFin_mem u rfl _
   · rw [compositionSelectedStarts_card, hlen]
 
-/-- Reindex the nonempty cyclic start sets by their positive gap
-compositions and the position of their first start in the terminal gap.
-For fixed gap lengths, the last gap determines the number of offsets. -/
-noncomputable def cyclicGapCompositionEquiv {n : ℕ} (hn : 0 < n) :
-    (Σ c : Composition n,
-      Fin (c.blocksFun
-        ⟨c.length - 1, Nat.sub_lt (c.length_pos_of_pos hn) (by omega)⟩)) ≃
-      {u : Finset (Fin n) // u.Nonempty} := by
-  let f : (Σ c : Composition n,
-      Fin (c.blocksFun
-        ⟨c.length - 1, Nat.sub_lt (c.length_pos_of_pos hn) (by omega)⟩)) →
-      {u : Finset (Fin n) // u.Nonempty} :=
-    fun p => ⟨compositionSelectedStarts p.1 hn p.2,
-      compositionSelectedStarts_nonempty p.1 hn p.2⟩
-  apply Equiv.ofBijective f
-  constructor
-  · intro p q hp
-    rcases p with ⟨c, a⟩
-    rcases q with ⟨d, b⟩
-    have hc : c = d := by
-      have h := congrArg
-        (fun s : {u : Finset (Fin n) // u.Nonempty} =>
-          cyclicGapComposition s.val s.property) hp
-      simpa only [f, cyclicGapComposition_compositionSelectedStarts] using h
-    subst d
-    have hu : compositionSelectedStarts c hn a =
-        compositionSelectedStarts c hn b :=
-      congrArg Subtype.val hp
-    have ha : a = b := by
-      apply Fin.ext
-      let firstValue : Finset (Fin n) → ℕ := fun s =>
-        if h : s.Nonempty then (s.min' h).val else 0
-      have hfirstA := compositionSelectedStarts_first_val c hn a
-      have hfirstB := compositionSelectedStarts_first_val c hn b
-      rw [Finset.orderEmbOfFin_zero rfl
-        (Finset.card_pos.mpr
-          (compositionSelectedStarts_nonempty c hn a))] at hfirstA
-      rw [Finset.orderEmbOfFin_zero rfl
-        (Finset.card_pos.mpr
-          (compositionSelectedStarts_nonempty c hn b))] at hfirstB
-      have hfirstA' : firstValue (compositionSelectedStarts c hn a) = a.val := by
-        simpa [firstValue,
-          compositionSelectedStarts_nonempty c hn a] using hfirstA
-      have hfirstB' : firstValue (compositionSelectedStarts c hn b) = b.val := by
-        simpa [firstValue,
-          compositionSelectedStarts_nonempty c hn b] using hfirstB
-      exact hfirstA'.symm.trans
-        ((congrArg firstValue hu).trans hfirstB')
-    cases ha
-    rfl
-  · intro s
-    rcases s with ⟨u, hu⟩
-    obtain ⟨hn', a, ha⟩ :=
-      exists_compositionSelectedStarts_cyclicGapComposition u hu
-    refine ⟨⟨cyclicGapComposition u hu, a⟩, ?_⟩
-    apply Subtype.ext
-    exact ha
-
-/-- Reindex any product weight on cyclic gaps by positive compositions.
-The last part contributes its length as a multiplicity, as in the
-reindexing of Bauer--Godrèche--Luck, Appendix A, equation (A.6), used in the
-derivation of equation (A.7). -/
-theorem sum_cyclicGap_products_eq_composition_sum {n : ℕ} (hn : 0 < n)
-    (g w : ℕ → ℝ) :
-    ∑ u : {u : Finset (Fin n) // u.Nonempty},
-      g u.val.card *
-        ∏ j : Fin u.val.card,
-          w (cyclicGapLength u.val u.property j) =
-      ∑ c : Composition n,
-        (c.blocksFun
-          ⟨c.length - 1, Nat.sub_lt (c.length_pos_of_pos hn) (by omega)⟩ : ℝ) *
-          (g c.length * ∏ j : Fin c.length, w (c.blocksFun j)) := by
-  let e := cyclicGapCompositionEquiv hn
-  have hchange := Fintype.sum_equiv e
-    (fun p =>
-      g p.1.length * ∏ j : Fin p.1.length, w (p.1.blocksFun j))
-    (fun u : {u : Finset (Fin n) // u.Nonempty} =>
-      g u.val.card *
-        ∏ j : Fin u.val.card,
-          w (cyclicGapLength u.val u.property j))
-    (by
-      intro p
-      rcases p with ⟨c, a⟩
-      change g c.length * ∏ j : Fin c.length, w (c.blocksFun j) =
-        g (compositionSelectedStarts c hn a).card *
-          ∏ j : Fin (compositionSelectedStarts c hn a).card,
-            w (cyclicGapLength (compositionSelectedStarts c hn a)
-              (compositionSelectedStarts_nonempty c hn a) j)
-      let u := compositionSelectedStarts c hn a
-      have hcard : u.card = c.length := compositionSelectedStarts_card c hn a
-      have hprod :
-          (∏ j : Fin u.card,
-            w (cyclicGapLength u
-              (compositionSelectedStarts_nonempty c hn a) j)) =
-            ∏ j : Fin c.length, w (c.blocksFun j) := by
-        apply Fintype.prod_equiv (finCongr hcard)
-        intro j
-        have hgap := cyclicGapLength_compositionSelectedStarts c hn a
-          (finCongr hcard j)
-        have hidx : (finCongr hcard j).cast hcard.symm = j := by
-          apply Fin.ext
-          rfl
-        rw [hidx] at hgap
-        exact congrArg w hgap
-      calc
-        g c.length * ∏ j : Fin c.length, w (c.blocksFun j) =
-            g u.card * ∏ j : Fin c.length, w (c.blocksFun j) := by
-          exact congrArg (fun t : ℝ =>
-            t * ∏ j : Fin c.length, w (c.blocksFun j))
-              (congrArg g hcard.symm)
-        _ = g u.card * ∏ j : Fin u.card,
-            w (cyclicGapLength u
-              (compositionSelectedStarts_nonempty c hn a) j) := by
-          exact (congrArg (fun t : ℝ => g u.card * t) hprod).symm)
-  rw [← hchange]
-  rw [Fintype.sum_sigma]
-  apply Finset.sum_congr rfl
-  intro c _
-  change (∑ _ : Fin (c.blocksFun
-      ⟨c.length - 1, Nat.sub_lt (c.length_pos_of_pos hn) (by omega)⟩),
-        g c.length * ∏ j : Fin c.length, w (c.blocksFun j)) = _
-  simp only [Finset.sum_const, Finset.card_univ, Fintype.card_fin,
-    nsmul_eq_mul]
 
 end ProbabilityTheory.RandomWalk
 

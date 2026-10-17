@@ -16,16 +16,19 @@ public import Mathlib.Analysis.Asymptotics.SpecificAsymptotics
 /-!
 # The positivity parameter of a finite-variance random walk
 
-The public theorems in this file are:
+Let $(\xi_i)_{i\geq1}$ be i.i.d. with law $\nu$, set
+$S_0=0$ and $S_n=\sum_{i=1}^n\xi_i$, and write $\mathbb P_\nu$ and
+$\mathbb E_\nu$ for the product-law probability and expectation. Assume
+$\mathbb E_\nu[\xi_1]=0$ and $\mathbb E_\nu[\xi_1^2]=\sigma^2>0$. The public
+theorems in this file are:
 
 - `ProbabilityTheory.RandomWalk.tendsto_positivePartialSumProbability_half`:
-  for centered increments with variance $\sigma^2>0$,
-  $\mathbb P(S_n>0)\to 1/2$.
+  $\mathbb P_\nu(S_n>0)\to\frac12$.
 - `ProbabilityTheory.RandomWalk.tendsto_cesaro_positivePartialSumProbability_half`:
-  $n^{-1}\sum_{m=1}^n\mathbb P(S_m>0)\to 1/2$, the Spitzer
+  $\frac{1}{n}\sum_{m=1}^n\mathbb P_\nu(S_m>0)\to\frac12$, the Spitzer
   condition used for the ascending ladder epoch.
 - `ProbabilityTheory.RandomWalk.tendsto_nonnegativePartialSumProbability_half`:
-  $\mathbb P(S_n\ge0)\to 1/2$, the endpoint convention in the
+  $\mathbb P_\nu(S_n\ge0)\to\frac12$, the endpoint convention in the
   nonnegative-survival Sparre--Andersen identity.
 
 This is the Gaussian positivity-parameter input to R. A. Doney,

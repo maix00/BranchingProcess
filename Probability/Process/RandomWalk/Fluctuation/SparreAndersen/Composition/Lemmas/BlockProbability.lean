@@ -7,56 +7,39 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.Fluctuation.SparreAndersen.Composition.InclusionExclusion
+public import Probability.Process.RandomWalk.Fluctuation.SparreAndersen.Composition.Cyclic
+public import Probability.Process.RandomWalk.Path.Block.Law.FiniteProduct
+public import Mathlib.MeasureTheory.Constructions.Pi
 
 /-!
-# Prefix inequalities for cyclic survival blocks
+# Proof lemmas for the cyclic composition formula
 
-The public theorems in this file are:
+The public theorem in this file is:
 
-- `ProbabilityTheory.RandomWalk.cyclicSurvivalEvent_partialSum_le_of_start_le`:
-  if the rotation at $k$ survives and $k\le t\le n$, then $S_k\le S_t$.
-- `ProbabilityTheory.RandomWalk.cyclicSurvivalEvent_partialSum_le_of_before_start`:
-  if the rotation at $k$ survives and $0\le t<k$, then
-  $S_k\le S_n+S_t$.
-- `ProbabilityTheory.RandomWalk.mem_cyclicSurvivalEvent_iff_partialSum`:
-  the endpoint condition $S_n\ge0$ and these two families of prefix
-  inequalities characterize $B_n^{k+1}$.
-- `ProbabilityTheory.RandomWalk.mem_two_cyclicSurvivalEvents_iff_twoBlocks`:
-  for $a<b$, $B_n^{a+1}\cap B_n^{b+1}$ is exactly survival on the
-  disjoint cyclic blocks $[a,b)$ and $[b,n)\cup[0,a)$.
-- `ProbabilityTheory.RandomWalk.cyclicBlockEvent`:
-  the adjacent-block conditions for any nonempty finite set of starts.
-- `ProbabilityTheory.RandomWalk.precedingStarts`:
-  for a time $t$, the selected starts strictly before $t$.
-- `ProbabilityTheory.RandomWalk.mem_cyclicBlockEvent_of_forall_cyclicSurvivalEvent`:
-  survival from every selected start implies every adjacent-block condition.
-- `ProbabilityTheory.RandomWalk.cyclicBlockEvent_selected_partialSum_mono`:
-  the partial sums at selected block starts are nondecreasing in their
-  natural order.
-- `ProbabilityTheory.RandomWalk.forall_cyclicSurvivalEvent_of_mem_cyclicBlockEvent`:
-  adjacent-block survival implies survival from every selected cyclic start.
-- `ProbabilityTheory.RandomWalk.iInter_cyclicSurvivalEvent_eq_cyclicBlockEvent`:
-  the full event identity (A.5) for any nonempty set of selected starts.
-- `ProbabilityTheory.RandomWalk.measurableSet_cyclicBlockEvent`:
-  the adjacent-block event is measurable under every finite product law.
-- `ProbabilityTheory.RandomWalk.measureReal_nonnegative_endpoint_eq_cyclicBlock_sum`:
-  $\mathbb P(S_n\ge0)$ is the alternating sum of the probabilities of
-  adjacent-block events indexed by nonempty subsets of starts.
+- `ProbabilityTheory.RandomWalk.measureReal_nonnegative_endpoint_eq_cyclicGap_sum`:
+  for an i.i.d. increment law and $n>0$, the endpoint probability
+  $\mathbb P(S_n\ge0)$ equals the alternating sum over nonempty sets of
+  cyclic starts, with each intersection contribution given by the product
+  of its consecutive gap survival probabilities.
 
-These are the two kinds of inequalities in the event $B_n^{k+1}$ of
-M. Bauer, C. Godrèche, and J.-M. Luck, *Statistics of persistent events
-in the binomial random walk: Will the drunken sailor hit the sober man?*,
-Appendix A, equation (A.3) (arXiv:cond-mat/9905252). They are the
-pointwise ingredients of the block decomposition in equation (A.5).
+The cyclic event decomposition and block factorization used to prove this
+identity are private to this module. Together with the reindexing theorem
+in `CyclicReindex.lean`, this gives the composition formula (A.6) of
+M. Bauer, C. Godrèche, and J.-M. Luck, *Statistics of persistent events in
+the binomial random walk: Will the drunken sailor hit the sober man?*,
+Appendix A, *Journal of Statistical Physics* 96 (1999), 963--1019, DOI
+10.1023/A:1004636216365, arXiv:cond-mat/9905252.
 -/
 
 @[expose] public section
+
+open MeasureTheory
 
 namespace ProbabilityTheory.RandomWalk
 
 /-- A surviving rotation has nonnegative partial sums from its start
 up to every later time before the end of the original vector. -/
-theorem cyclicSurvivalEvent_partialSum_le_of_start_le
+private theorem cyclicSurvivalEvent_partialSum_le_of_start_le
     {n : ℕ} (x : Fin n → ℝ) (k : Fin n) (t : Fin (n + 1))
     (hkt : k.val ≤ t.val) (hx : x ∈ cyclicSurvivalEvent k) :
     Fin.partialSum x k.castSucc ≤ Fin.partialSum x t := by
@@ -74,7 +57,7 @@ theorem cyclicSurvivalEvent_partialSum_le_of_start_le
 
 /-- A surviving rotation has nonnegative wrapped partial sums after
 reaching the end of the original vector. -/
-theorem cyclicSurvivalEvent_partialSum_le_of_before_start
+private theorem cyclicSurvivalEvent_partialSum_le_of_before_start
     {n : ℕ} (x : Fin n → ℝ) (k : Fin n) (t : Fin (n + 1))
     (htk : t.val < k.val) (hx : x ∈ cyclicSurvivalEvent k) :
     Fin.partialSum x k.castSucc ≤
@@ -99,7 +82,7 @@ theorem cyclicSurvivalEvent_partialSum_le_of_before_start
 
 /-- The explicit two-part description of the cyclic event $B_n^{k+1}$
 in Bauer--Godrèche--Luck, Appendix A, equation (A.3). -/
-theorem mem_cyclicSurvivalEvent_iff_partialSum
+private theorem mem_cyclicSurvivalEvent_iff_partialSum
     {n : ℕ} (x : Fin n → ℝ) (k : Fin n) :
     x ∈ cyclicSurvivalEvent k ↔
       0 ≤ Fin.partialSum x (Fin.last n) ∧
@@ -155,7 +138,7 @@ theorem mem_cyclicSurvivalEvent_iff_partialSum
 /-- The two-start case of Bauer--Godrèche--Luck, Appendix A,
 equation (A.5): the intersection of two cyclic survival events is the
 product condition on the two consecutive cyclic blocks. -/
-theorem mem_two_cyclicSurvivalEvents_iff_twoBlocks
+private theorem mem_two_cyclicSurvivalEvents_iff_twoBlocks
     {n : ℕ} (x : Fin n → ℝ) (a b : Fin n) (hab : a < b) :
     x ∈ cyclicSurvivalEvent a ∧ x ∈ cyclicSurvivalEvent b ↔
       (∀ t : Fin (n + 1), a.val ≤ t.val → t.val ≤ b.val →
@@ -208,7 +191,7 @@ theorem mem_two_cyclicSurvivalEvents_iff_twoBlocks
         linarith
 
 /-- The selected start positions strictly before time `t`. -/
-def precedingStarts {n : ℕ} (u : Finset (Fin n))
+private def precedingStarts {n : ℕ} (u : Finset (Fin n))
     (t : Fin (n + 1)) : Finset (Fin n) :=
   u.filter fun k => k.val < t.val
 
@@ -216,7 +199,7 @@ def precedingStarts {n : ℕ} (u : Finset (Fin n))
 equation (A.5), indexed by a nonempty finite set of cyclic starts. At
 time `t`, the predecessor in `u` gives the current block; before the
 first start, the last block wraps across time `n`. -/
-def cyclicBlockEvent {n : ℕ} (u : Finset (Fin n))
+private def cyclicBlockEvent {n : ℕ} (u : Finset (Fin n))
     (hu : u.Nonempty) : Set (Fin n → ℝ) :=
   {x | ∀ t : Fin (n + 1),
     if h : (precedingStarts u t).Nonempty then
@@ -229,7 +212,7 @@ def cyclicBlockEvent {n : ℕ} (u : Finset (Fin n))
 /-- Each selected cyclic survival event supplies the corresponding
 adjacent-block inequalities. This is the immediate direction of
 Bauer--Godrèche--Luck, Appendix A, equation (A.5). -/
-theorem mem_cyclicBlockEvent_of_forall_cyclicSurvivalEvent
+private theorem mem_cyclicBlockEvent_of_forall_cyclicSurvivalEvent
     {n : ℕ} (x : Fin n → ℝ) (u : Finset (Fin n))
     (hu : u.Nonempty)
     (hx : ∀ k ∈ u, x ∈ cyclicSurvivalEvent k) :
@@ -267,7 +250,7 @@ theorem mem_cyclicBlockEvent_of_forall_cyclicSurvivalEvent
 
 /-- Adjacent-block survival makes the partial sums at selected block
 starts nondecreasing. -/
-theorem cyclicBlockEvent_selected_partialSum_mono
+private theorem cyclicBlockEvent_selected_partialSum_mono
     {n : ℕ} (x : Fin n → ℝ) (u : Finset (Fin n))
     (hu : u.Nonempty) (hx : x ∈ cyclicBlockEvent u hu)
     {a b : Fin n} (ha : a ∈ u) (hb : b ∈ u) (hab : a ≤ b) :
@@ -303,7 +286,7 @@ theorem cyclicBlockEvent_selected_partialSum_mono
 event. The proof sums nonnegative complete blocks before the block
 containing the requested time, as in Bauer--Godrèche--Luck,
 Appendix A, equation (A.5). -/
-theorem forall_cyclicSurvivalEvent_of_mem_cyclicBlockEvent
+private theorem forall_cyclicSurvivalEvent_of_mem_cyclicBlockEvent
     {n : ℕ} (x : Fin n → ℝ) (u : Finset (Fin n))
     (hu : u.Nonempty) (hx : x ∈ cyclicBlockEvent u hu) :
     ∀ k ∈ u, x ∈ cyclicSurvivalEvent k := by
@@ -377,7 +360,7 @@ theorem forall_cyclicSurvivalEvent_of_mem_cyclicBlockEvent
 /-- Bauer--Godrèche--Luck, Appendix A, equation (A.5), for any nonempty
 finite set of selected cyclic starts: the intersection of the cyclic
 survival events equals the adjacent-block event. -/
-theorem iInter_cyclicSurvivalEvent_eq_cyclicBlockEvent
+private theorem iInter_cyclicSurvivalEvent_eq_cyclicBlockEvent
     {n : ℕ} (u : Finset (Fin n)) (hu : u.Nonempty) :
     (⋂ k ∈ u, cyclicSurvivalEvent k) = cyclicBlockEvent u hu := by
   ext x
@@ -388,7 +371,7 @@ theorem iInter_cyclicSurvivalEvent_eq_cyclicBlockEvent
 
 /-- The adjacent-block event is measurable because it is a finite
 intersection of measurable cyclic survival events. -/
-theorem measurableSet_cyclicBlockEvent
+private theorem measurableSet_cyclicBlockEvent
     {n : ℕ} (u : Finset (Fin n)) (hu : u.Nonempty) :
     MeasurableSet (cyclicBlockEvent u hu) := by
   rw [← iInter_cyclicSurvivalEvent_eq_cyclicBlockEvent u hu]
@@ -398,7 +381,7 @@ theorem measurableSet_cyclicBlockEvent
 /-- Substituting the block decomposition (A.5) into the finite
 inclusion--exclusion identity (A.4) of Bauer--Godrèche--Luck,
 Appendix A. -/
-theorem measureReal_nonnegative_endpoint_eq_cyclicBlock_sum
+private theorem measureReal_nonnegative_endpoint_eq_cyclicBlock_sum
     {n : ℕ} (hn : 0 < n) (μ : MeasureTheory.Measure (Fin n → ℝ))
     [MeasureTheory.IsFiniteMeasure μ] :
     μ.real {x : Fin n → ℝ | 0 ≤ Fin.partialSum x (Fin.last n)} =
@@ -411,6 +394,304 @@ theorem measureReal_nonnegative_endpoint_eq_cyclicBlock_sum
   have hnonempty : u.Nonempty := (Finset.mem_filter.mp hu).2
   simp only [dite_eq_left hnonempty]
   rw [iInter_cyclicSurvivalEvent_eq_cyclicBlockEvent u hnonempty]
+
+
+/-- Each block in the adjacent-block event is a surviving walk segment.
+This is the forward direction in the probability factorization (A.6). -/
+private theorem cyclicBlockEvent_gapSurvival {n : ℕ} (hn : 0 < n)
+    (u : Finset (Fin n)) (hu : u.Nonempty)
+    (x : Fin n → ℝ) (hx : x ∈ cyclicBlockEvent u hu)
+    (j : Fin u.card) (t : Fin (cyclicGapLength u hu j + 1)) :
+    0 ≤ Fin.partialSum (cyclicGapCoordinates hn u hu x j) t := by
+  rw [partialSum_cyclicGapCoordinates hn u hu x j t]
+  have hselected := forall_cyclicSurvivalEvent_of_mem_cyclicBlockEvent x u hu hx
+    (u.orderEmbOfFin rfl j) (u.orderEmbOfFin_mem rfl j)
+  exact hselected ⟨t.val, by
+    have hbound := blockStart_add_cyclicGapLength_le u hu j
+    omega⟩
+
+/-- If every adjacent cyclic block survives, the original prefix path
+satisfies the adjacent-block inequalities of (A.5). -/
+private theorem cyclicBlockEvent_of_gapSurvival {n : ℕ} (hn : 0 < n)
+    (u : Finset (Fin n)) (hu : u.Nonempty)
+    (x : Fin n → ℝ)
+    (hx : ∀ j : Fin u.card,
+      ∀ t : Fin (cyclicGapLength u hu j + 1),
+        0 ≤ Fin.partialSum (cyclicGapCoordinates hn u hu x j) t) :
+    x ∈ cyclicBlockEvent u hu := by
+  let starts := u.orderEmbOfFin rfl
+  let first : Fin u.card := ⟨0, Finset.card_pos.mpr hu⟩
+  let last : Fin u.card :=
+    ⟨u.card - 1, Nat.sub_lt (Finset.card_pos.mpr hu) (Nat.succ_pos 0)⟩
+  have hfirst : starts first = u.min' hu := by
+    simpa [starts, first] using
+      (Finset.orderEmbOfFin_zero (s := u) rfl (Finset.card_pos.mpr hu))
+  have hlast : starts last = u.max' hu := by
+    simpa [starts, last] using
+      (Finset.orderEmbOfFin_last (s := u) rfl (Finset.card_pos.mpr hu))
+  intro t
+  by_cases hpred : (precedingStarts u t).Nonempty
+  · let p := (precedingStarts u t).max' hpred
+    have hpMem : p ∈ u :=
+      (Finset.mem_filter.mp ((precedingStarts u t).max'_mem hpred)).1
+    have hpt : p.val < t.val :=
+      (Finset.mem_filter.mp ((precedingStarts u t).max'_mem hpred)).2
+    let j : Fin u.card := (u.orderIsoOfFin rfl).symm ⟨p, hpMem⟩
+    have hj : starts j = p := by
+      dsimp [starts, j]
+      exact congrArg Subtype.val
+        ((u.orderIsoOfFin rfl).apply_symm_apply ⟨p, hpMem⟩)
+    have hdistance : t.val - p.val ≤ cyclicGapLength u hu j := by
+      by_cases hnext : j.val + 1 < u.card
+      · let next : Fin u.card := ⟨j.val + 1, hnext⟩
+        have hjnext : p < starts next := by
+          rw [← hj]
+          exact starts.strictMono (Fin.lt_def.mpr (Nat.lt_succ_self _))
+        have htNext : t.val ≤ (starts next).val := by
+          by_contra h
+          have hnextMem : starts next ∈ precedingStarts u t :=
+            Finset.mem_filter.mpr
+              ⟨u.orderEmbOfFin_mem rfl next, by omega⟩
+          have hpMax := (precedingStarts u t).le_max' _ hnextMem
+          exact (not_lt_of_ge hpMax) hjnext
+        have hgap : cyclicGapLength u hu j =
+            (starts next).val - p.val := by
+          rw [← hj]
+          simp only [cyclicGapLength, cyclicGapLengthAt,
+            dite_eq_left j.isLt, dite_eq_left hnext]
+          rfl
+        rw [hgap]
+        omega
+      · have hgap : cyclicGapLength u hu j =
+            n - p.val + (starts first).val := by
+          rw [← hj]
+          simp only [cyclicGapLength, cyclicGapLengthAt,
+            dite_eq_left j.isLt, dite_eq_right hnext]
+          rfl
+        rw [hgap]
+        have hpN := p.isLt
+        have htN := Nat.le_of_lt_succ t.isLt
+        omega
+    let d : Fin (cyclicGapLength u hu j + 1) :=
+      ⟨t.val - p.val, Nat.lt_succ_of_le hdistance⟩
+    have hlocal := hx j d
+    rw [partialSum_cyclicGapCoordinates hn u hu x j d, hj] at hlocal
+    have hsum : p.val + d.val ≤ n := by
+      dsimp [d]
+      have htN := Nat.le_of_lt_succ t.isLt
+      omega
+    have hindex :
+        (⟨p.val + d.val, Nat.lt_succ_of_le hsum⟩ : Fin (n + 1)) = t := by
+      apply Fin.ext
+      dsimp [d]
+      omega
+    have hineq : Fin.partialSum x p.castSucc ≤ Fin.partialSum x t := by
+      simp only [Fin.cyclicPartialSum, dite_eq_left hsum, hindex] at hlocal
+      linarith
+    simpa [cyclicBlockEvent, hpred, p] using hineq
+  · have htFirst : t.val ≤ (starts first).val := by
+      by_contra h
+      have hmem : starts first ∈ precedingStarts u t :=
+        Finset.mem_filter.mpr
+          ⟨u.orderEmbOfFin_mem rfl first, by omega⟩
+      exact hpred ⟨starts first, hmem⟩
+    have hgap : cyclicGapLength u hu last =
+        n - (starts last).val + (starts first).val := by
+      simp only [cyclicGapLength, cyclicGapLengthAt,
+        dite_eq_left last.isLt,
+        dite_eq_right (by dsimp [last]; omega : ¬ last.val + 1 < u.card)]
+      rfl
+    have hd : n - (starts last).val + t.val ≤
+        cyclicGapLength u hu last := by
+      rw [hgap]
+      omega
+    let d : Fin (cyclicGapLength u hu last + 1) :=
+      ⟨n - (starts last).val + t.val, Nat.lt_succ_of_le hd⟩
+    have hlocal := hx last d
+    rw [partialSum_cyclicGapCoordinates hn u hu x last d] at hlocal
+    change 0 ≤ Fin.cyclicPartialSum (Fin.partialSum x) (starts last)
+      (⟨d.val, by
+        have hbound := blockStart_add_cyclicGapLength_le u hu last
+        omega⟩ : Fin (n + 1)) at hlocal
+    have hlastN := (starts last).isLt
+    have htarget : Fin.partialSum x (u.max' hu).castSucc ≤
+        Fin.partialSum x (Fin.last n) + Fin.partialSum x t := by
+      rw [← hlast]
+      by_cases htZero : t.val = 0
+      · have ht : t = 0 := Fin.ext htZero
+        subst t
+        have hsum : (starts last).val + d.val ≤ n := by
+          dsimp [d]
+          omega
+        have hindex :
+            (⟨(starts last).val + d.val, Nat.lt_succ_of_le hsum⟩ : Fin (n + 1)) =
+              Fin.last n := by
+          apply Fin.ext
+          dsimp [d]
+          omega
+        simp only [Fin.cyclicPartialSum, dite_eq_left hsum, hindex,
+          Fin.partialSum_zero, add_zero] at hlocal ⊢
+        linarith
+      · have hsum : ¬ (starts last).val + d.val ≤ n := by
+          dsimp [d]
+          omega
+        have hindex :
+            (⟨(starts last).val + d.val - n, by omega⟩ : Fin (n + 1)) =
+              t := by
+          apply Fin.ext
+          dsimp [d]
+          omega
+        simp only [Fin.cyclicPartialSum, dite_eq_right hsum, hindex] at hlocal
+        linarith
+    simpa [cyclicBlockEvent, hpred, hlast] using htarget
+
+/-- The event identity behind Bauer--Godrèche--Luck, Appendix A,
+equation (A.6): the intersection of selected cyclic survival events is
+the survival event of every disjoint consecutive block after one rotation. -/
+private theorem cyclicBlockEvent_eq_gapSurvival {n : ℕ} (hn : 0 < n)
+    (u : Finset (Fin n)) (hu : u.Nonempty) :
+    cyclicBlockEvent u hu =
+      {x : Fin n → ℝ | ∀ j : Fin u.card,
+        ∀ t : Fin (cyclicGapLength u hu j + 1),
+          0 ≤ Fin.partialSum (cyclicGapCoordinates hn u hu x j) t} := by
+  ext x
+  constructor
+  · intro hx j t
+    exact cyclicBlockEvent_gapSurvival hn u hu x hx j t
+  · intro hx
+    exact cyclicBlockEvent_of_gapSurvival hn u hu x hx
+
+private lemma measurableSet_nonnegativePartialSum (m : ℕ) :
+    MeasurableSet {z : Fin m → ℝ |
+      ∀ t : Fin (m + 1), 0 ≤ Fin.partialSum z t} := by
+  have hpartial (t : Fin (m + 1)) :
+      Measurable (fun z : Fin m → ℝ => Fin.partialSum z t) := by
+    induction t using Fin.induction with
+    | zero => simp
+    | succ t ih =>
+        have heq :
+            (fun z : Fin m → ℝ => Fin.partialSum z t.succ) =
+              fun z => Fin.partialSum z t.castSucc + z t := by
+          funext z
+          exact Fin.partialSum_succ z t
+        rw [heq]
+        exact ih.add (measurable_pi_apply t)
+  have h : MeasurableSet (⋂ t : Fin (m + 1),
+      {z : Fin m → ℝ | 0 ≤ Fin.partialSum z t}) :=
+    MeasurableSet.iInter fun t =>
+      measurableSet_Ici.preimage (hpartial t)
+  simpa only [Set.iInter_ofPred] using h
+
+/-- Bauer--Godrèche--Luck, Appendix A, equation (A.6): the selected cyclic
+survival intersection factors into the survival probabilities of its
+disjoint cyclic blocks under an IID finite product law. -/
+private theorem measure_pi_cyclicBlockEvent_eq_prod
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    {n : ℕ} (hn : 0 < n)
+    (u : Finset (Fin n)) (hu : u.Nonempty) :
+    Measure.pi (fun _ : Fin n => ν) (cyclicBlockEvent u hu) =
+      ∏ j : Fin u.card,
+        Measure.pi (fun _ : Fin (cyclicGapLength u hu j) => ν)
+          {z : Fin (cyclicGapLength u hu j) → ℝ |
+            ∀ t : Fin (cyclicGapLength u hu j + 1),
+              0 ≤ Fin.partialSum z t} := by
+  let length : ℕ → ℕ :=
+    cyclicGapLengthAt u hu
+  let event : ∀ j : Fin u.card, Set (Fin (length j.val) → ℝ) :=
+    fun j => {z | ∀ t : Fin (length j.val + 1), 0 ≤ Fin.partialSum z t}
+  have hmeas (j : Fin u.card) : MeasurableSet (event j) :=
+    measurableSet_nonnegativePartialSum (length j.val)
+  have htotal : AdditivePath.blockStart length u.card = n :=
+    blockStart_cyclicGapLength_card u hu
+  have hproduct := measure_pi_forall_variableConsecutiveBlockEvent_of_sum
+    ν length u.card n htotal event hmeas
+  let e := Fin.cyclicCoordinateReindex hn
+    (u.orderEmbOfFin rfl ⟨0, Finset.card_pos.mpr hu⟩)
+  let T : (Fin n → ℝ) ≃ᵐ (Fin n → ℝ) :=
+    MeasurableEquiv.piCongrLeft (fun _ : Fin n => ℝ) e.symm
+  have hmap : (Measure.pi (fun _ : Fin n => ν)).map T =
+      Measure.pi (fun _ : Fin n => ν) := by
+    simpa [T] using Measure.pi_map_piCongrLeft e.symm
+      (fun _ : Fin n => ν)
+  have hT (x : Fin n → ℝ) (i : Fin n) : T x i = x (e i) := by
+    simpa [T, MeasurableEquiv.coe_piCongrLeft] using
+      (Equiv.piCongrLeft_apply_apply (P := fun _ : Fin n => ℝ)
+        e.symm x (e i))
+  let blockEvent : Set (Fin n → ℝ) :=
+    {y | ∀ j : Fin u.card,
+      (fun i : Fin (length j.val) =>
+        y ⟨AdditivePath.blockStart length j.val + i.val, by
+          have hbound := blockStart_add_cyclicGapLength_le u hu j
+          have hi : i.val < cyclicGapLength u hu j := by
+            exact i.isLt
+          change AdditivePath.blockStart length j.val +
+            cyclicGapLength u hu j ≤ n at hbound
+          omega⟩) ∈ event j}
+  have hevent : cyclicBlockEvent u hu = T ⁻¹' blockEvent := by
+    rw [cyclicBlockEvent_eq_gapSurvival hn u hu]
+    ext x
+    simp only [Set.mem_ofPred_eq, Set.mem_preimage, blockEvent]
+    apply forall_congr'
+    intro j
+    have hvec :
+        cyclicGapCoordinates hn u hu x j =
+          (fun i : Fin (cyclicGapLength u hu j) =>
+            T x ⟨AdditivePath.blockStart length j.val + i.val, by
+              have hbound := blockStart_add_cyclicGapLength_le u hu j
+              change AdditivePath.blockStart length j.val +
+                cyclicGapLength u hu j ≤ n at hbound
+              omega⟩) := by
+      funext i
+      exact (hT x _).symm
+    rcases j with ⟨j, hj⟩
+    simp only [event, length, hvec]
+    rfl
+  have hblockMeas : MeasurableSet blockEvent := by
+    have heq : blockEvent = T.symm ⁻¹' cyclicBlockEvent u hu := by
+      rw [hevent]
+      ext y
+      simp
+    rw [heq]
+    exact (measurableSet_cyclicBlockEvent u hu).preimage T.symm.measurable
+  rw [hevent, ← Measure.map_apply T.measurable hblockMeas, hmap]
+  change (Measure.pi (fun _ : Fin n => ν)) blockEvent = _
+  calc
+    (Measure.pi (fun _ : Fin n => ν)) blockEvent =
+        ∏ j : Fin u.card,
+          Measure.pi (fun _ : Fin (length j.val) => ν) (event j) := by
+      simpa only [blockEvent] using hproduct
+    _ = _ := by
+      apply Finset.prod_congr rfl
+      intro j _
+      rfl
+
+/-- Bauer--Godrèche--Luck, Appendix A, equation (A.6), with the finite
+subset of selected starts used as the index of the alternating sum. -/
+theorem measureReal_nonnegative_endpoint_eq_cyclicGap_sum
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    {n : ℕ} (hn : 0 < n) :
+    (Measure.pi (fun _ : Fin n => ν)).real
+      {x : Fin n → ℝ | 0 ≤ Fin.partialSum x (Fin.last n)} =
+      ∑ u ∈ (Finset.univ : Finset (Fin n)).powerset with u.Nonempty,
+        (-1 : ℝ) ^ (u.card + 1) *
+          (if hu : u.Nonempty then
+            ∏ j : Fin u.card,
+              (Measure.pi (fun _ : Fin (cyclicGapLength u hu j) => ν)).real
+                {z : Fin (cyclicGapLength u hu j) → ℝ |
+                  ∀ t : Fin (cyclicGapLength u hu j + 1),
+                    0 ≤ Fin.partialSum z t}
+          else 0) := by
+  rw [measureReal_nonnegative_endpoint_eq_cyclicBlock_sum hn
+    (Measure.pi (fun _ : Fin n => ν))]
+  apply Finset.sum_congr rfl
+  intro u hu
+  have hnonempty : u.Nonempty := (Finset.mem_filter.mp hu).2
+  simp only [dite_eq_left hnonempty]
+  congr 1
+  rw [MeasureTheory.measureReal_def,
+    measure_pi_cyclicBlockEvent_eq_prod ν hn u hnonempty,
+    ENNReal.toReal_prod]
+  rfl
 
 end ProbabilityTheory.RandomWalk
 

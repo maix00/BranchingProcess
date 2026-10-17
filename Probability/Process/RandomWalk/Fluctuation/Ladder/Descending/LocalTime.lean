@@ -6,18 +6,27 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.Fluctuation.LadderTime
+public import Probability.Process.RandomWalk.Fluctuation.Ladder.Ascending
 public import Probability.Process.RandomWalk.Path.Survival.Basic
 
 /-!
 # Descending records and nonnegative survival
 
-The public definitions and theorems in this file are:
+For an increment path $\xi$, write $S_j=\sum_{i=1}^j\xi_i$ and $S_0=0$.
+Set $\ell_n^-=\#\{1\leq j\leq n:S_j<\min_{0\leq i<j}S_i\}$,
+$T_k^-=\inf\{n:\ell_n^-\geq k\}$ (with $T_k^-=\infty$ if the set is
+empty), and $C_n=\{S_j\geq0\text{ for }1\leq j\leq n\}$. The public
+definitions and theorems in this file are:
 
 - ProbabilityTheory.RandomWalk.IsStrictDescendingRecord:
   $S_j<\min_{0\le i<j}S_i$ at a positive time $j$.
 - ProbabilityTheory.RandomWalk.strictDescendingLocalTime:
-  the number of strict descending records through time $n$.
+  $\ell_n^-$, the number of strict descending records through time $n$.
+- ProbabilityTheory.RandomWalk.isStrictDescendingRecord_iff_ascending_neg:
+  a strict descending record of $\xi$ is a strict ascending record of
+  $-\xi$.
+- ProbabilityTheory.RandomWalk.strictDescendingLocalTime_eq_card:
+  $\ell_n^-=\#\{1\leq j\leq n:S_j<\min_{0\leq i<j}S_i\}$.
 - ProbabilityTheory.RandomWalk.strictDescendingLadderTime:
   the first time at which the descending record count reaches $k$.
 - ProbabilityTheory.RandomWalk.strictDescendingLocalTime_mono:
@@ -28,25 +37,28 @@ The public definitions and theorems in this file are:
   $T_k^-\le n$ if and only if $k\le\ell_n^-$.
 - ProbabilityTheory.RandomWalk.measurableSet_strictDescendingLadderTime_le:
   the finite-horizon descending ladder-time event is measurable.
+- ProbabilityTheory.RandomWalk.measurableSet_firstDescendingLadderTime_gt:
+  the event $\{T^-_1>n\}$ is measurable.
 - ProbabilityTheory.RandomWalk.strictDescendingLadderTime_measurable:
   the extended-natural-valued descending ladder time is measurable.
 - ProbabilityTheory.RandomWalk.survivesNonnegative_iff_strictDescendingLocalTime_eq_zero:
-  $S_j\ge0$ for $1\le j\le n$ if and only if the descending record
-  count through $n$ is zero.
+  $C_n$ holds if and only if $\ell_n^-=0$.
 - ProbabilityTheory.RandomWalk.survivesNonnegative_iff_firstDescendingLadderTime_gt:
-  $C_n=\{T^-_1>n\}$.
+  $C_n$ if and only if $T^-_1>n$.
 - ProbabilityTheory.RandomWalk.measure_survival_eq_firstDescendingLadderTime_gt:
-  $\mathbb P(C_n)=\mathbb P(T^-_1>n)$ for any measure on increment paths.
+  $\mu(C_n)=\mu\{T^-_1>n\}$ for any measure $\mu$ on increment paths.
 - ProbabilityTheory.RandomWalk.firstDescendingLadderTimeTailReal:
-  $x\mapsto\mathbb P(T^-_1>\lfloor x\rfloor)$ for a measure on increment paths.
+  $x\mapsto(\mu\{T^-_1>\lfloor x\rfloor\}).\mathrm{toReal}$ for a measure
+  $\mu$ on increment paths.
 
-The descending ladder-time interpretation of survival is used in
-Francesco Caravenna and Loïc Chaumont, *Invariance principles for random
-walks conditioned to stay positive*, Lemma 2.1, DOI 10.1214/07-AIHP119.
-The strict local-time construction follows Chaumont--Doney,
+The descending ladder-time interpretation of survival is used in Lemma 2.1
+of Francesco Caravenna and Loïc Chaumont, *Invariance principles for random
+walks conditioned to stay positive*, Ann. Inst. H. Poincaré Probab. Statist.
+44(1) (2008), 170--190, DOI 10.1214/07-AIHP119. The strict local-time
+construction follows Section 2 of Loïc Chaumont and R. A. Doney,
 *Invariance principles for local times at the maximum of random walks and
-Lévy processes*, Section 2, DOI 10.1214/09-AOP512, applied to the
-reflected increment sequence.
+Lévy processes*, Ann. Probab. 38(4) (2010), 1368--1389, DOI 10.1214/09-AOP512,
+applied to the reflected increment sequence.
 -/
 
 @[expose] public section

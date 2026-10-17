@@ -19,11 +19,13 @@ The public theorem in this file is:
   for every $N\ge1$ and any i.i.d. real increments,
   $\mathbb P(S_N\ge0)\le N\mathbb P(S_j\ge0\text{ for }1\le j\le N)$.
 
-The proof uses the finite-path rotation cover in Bauer--Godrèche--Luck,
-*Statistics of persistent events in the binomial random walk: Will the
-drunken sailor hit the sober man?*, Appendix A, immediately after (A.3)
-(arXiv:cond-mat/9905252), and invariance of the finite IID product law
-under a cyclic coordinate permutation.
+The proof uses the finite-path rotation cover in M. Bauer, C. Godrèche,
+and J.-M. Luck, *Statistics of persistent events in the binomial random
+walk: Will the drunken sailor hit the sober man?*, Appendix A, immediately
+after equation (A.3), *Journal of Statistical Physics* 96 (1999),
+963--1019, DOI 10.1023/A:1004636216365, arXiv:cond-mat/9905252, and
+invariance of the finite IID product law under a cyclic coordinate
+permutation.
 -/
 
 @[expose] public section

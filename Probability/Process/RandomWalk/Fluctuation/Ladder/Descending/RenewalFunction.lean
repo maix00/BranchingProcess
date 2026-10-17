@@ -6,11 +6,20 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.Fluctuation.DescendingLocalTime
+public import Probability.Process.RandomWalk.Fluctuation.Ladder.Descending.LocalTime
 public import Probability.Sequence.IID.Basic
 
 /-!
 # Descending ladder-height renewal function
+
+Let $(\xi_i)_{i\geq1}$ be i.i.d. with law $\nu$, set
+$S_0=0$, $S_n=\sum_{i=1}^n\xi_i$, and write $\mathbb P_\nu$ and
+$\mathbb E_\nu$ for the product-law probability and expectation. Define
+$T_k^-=\inf\{n:\ell_n^-\geq k\}$, where
+$\ell_n^-=\#\{1\leq j\leq n:S_j<\min_{0\leq i<j}S_i\}$, and put
+$H_k^-=-S_{T_k^-}$ when $T_k^-<\infty$ and
+$H_k^-=\infty$ otherwise. The renewal function is
+$V_\nu(x)=\sum_{k\geq0}\mathbb P_\nu(H_k^-\leq x)$.
 
 The public definitions and theorems in this file are:
 
@@ -39,9 +48,10 @@ The public definitions and theorems in this file are:
 - ProbabilityTheory.RandomWalk.descendingLadderRenewalFunction_eq_zero_of_neg:
   $V_\nu(x)=0$ for $x<0$.
 
-The renewal function is the one used by Francesco Caravenna and Loïc
-Chaumont, *Invariance principles for random walks conditioned to stay
-positive*, definition (1.1) and Lemma 2.1, DOI 10.1214/07-AIHP119.
+The renewal function is the one used in definition (1.1) and Lemma 2.1 of
+Francesco Caravenna and Loïc Chaumont, *Invariance principles for random
+walks conditioned to stay positive*, Ann. Inst. H. Poincaré Probab. Statist.
+44(1) (2008), 170--190, DOI 10.1214/07-AIHP119.
 L. Chaumont and R. A. Doney, *Invariance principles for local times at the
 maximum of random walks and Lévy processes*, Ann. Probab. 38(4) (2010),
 1368--1389, Lemma 5, DOI 10.1214/09-AOP512, use the analogous renewal

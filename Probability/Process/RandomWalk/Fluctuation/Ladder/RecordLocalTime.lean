@@ -11,7 +11,10 @@ public import Probability.Process.RandomWalk.Path.Survival.Basic
 /-!
 # Strict record local time of a random walk
 
-The public definitions and theorems in this file are:
+Let $(\xi_i)_{i\geq1}$ be a sequence of increments and set
+$S_0=0$ and $S_n=\sum_{i=1}^n\xi_i$. The strict ascending record count is
+$\ell_n=\#\{1\leq j\leq n:S_j>\max_{0\leq i<j}S_i\}$. The public
+definitions and theorems in this file are:
 
 - ProbabilityTheory.RandomWalk.IsStrictAscendingRecord:
   $S_n>\max_{0\le j<n}S_j$ for $n\ge1$.
@@ -30,8 +33,7 @@ The public definitions and theorems in this file are:
 
 The definition is equation (2.2) of Loïc Chaumont and R. A. Doney,
 *Invariance principles for local times at the maximum of random walks and
-Lévy processes*, Ann. Probab. 38(4) (2010), 1368–1389,
-DOI 10.1214/09-AOP512.
+Lévy processes*, Ann. Probab. 38(4) (2010), 1368--1389, DOI 10.1214/09-AOP512.
 -/
 
 @[expose] public section

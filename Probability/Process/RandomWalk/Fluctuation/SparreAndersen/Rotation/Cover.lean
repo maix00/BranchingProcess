@@ -24,9 +24,10 @@ The public theorem in this file is:
 This is the event equality $A_n=\bigcup_{i=1}^n B_n^i$ in M. Bauer,
 C. Godrèche, and J.-M. Luck, *Statistics of persistent events in the
 binomial random walk: Will the drunken sailor hit the sober man?*,
-Appendix A, immediately after equation (A.3) (arXiv:cond-mat/9905252).
-It is the first combinatorial step of their proof of the Sparre--Andersen
-identity (A.2).
+Appendix A, immediately after equation (A.3), *Journal of Statistical
+Physics* 96 (1999), 963--1019, DOI 10.1023/A:1004636216365,
+arXiv:cond-mat/9905252. It is the first combinatorial step of their proof
+of the Sparre--Andersen identity (A.2).
 -/
 
 @[expose] public section

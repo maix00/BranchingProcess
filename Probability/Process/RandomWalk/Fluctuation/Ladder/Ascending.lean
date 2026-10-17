@@ -6,13 +6,18 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.Fluctuation.RecordLocalTime
+public import Probability.Process.RandomWalk.Fluctuation.Ladder.RecordLocalTime
 public import Mathlib.MeasureTheory.Constructions.BorelSpace.WithTop
 
 /-!
 # Strict ascending ladder times and heights
 
-The public definitions and theorems in this file are:
+Let $(\xi_i)_{i\geq1}$ be increments, $S_0=0$, and
+$S_n=\sum_{i=1}^n\xi_i$. Write
+$\ell_n=\#\{1\leq j\leq n:S_j>\max_{0\leq i<j}S_i\}$ and define
+$T_k=\inf\{n:\ell_n\geq k\}$, with $T_k=\infty$ if the set is empty.
+Set $H_k=S_{T_k}$ when $T_k<\infty$ and $H_k=\infty$ otherwise. The
+public definitions and theorems in this file are:
 
 - ProbabilityTheory.RandomWalk.strictAscendingLadderTime:
   $T_k=\inf\{n\ge0:\ell_n\ge k\}$, with $T_k=\infty$ if the set is empty.
@@ -45,10 +50,10 @@ The public definitions and theorems in this file are:
 - ProbabilityTheory.RandomWalk.strictAscendingLadderHeight_measurable:
   $H_k:\mathbb R^{\mathbb N}\to\mathbb R\cup\{\infty\}$ is measurable.
 
-These objects are the strict ascending ladder time and height in
-Loïc Chaumont and R. A. Doney, *Invariance principles for local times at
-the maximum of random walks and Lévy processes*, Section 2, after
-equation (2.2), DOI 10.1214/09-AOP512.
+These objects are the strict ascending ladder time and height in Section 2,
+after equation (2.2), of Loïc Chaumont and R. A. Doney, *Invariance
+principles for local times at the maximum of random walks and Lévy
+processes*, Ann. Probab. 38(4) (2010), 1368--1389, DOI 10.1214/09-AOP512.
 -/
 
 @[expose] public section

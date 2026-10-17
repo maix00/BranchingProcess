@@ -6,34 +6,45 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.Fluctuation.DescendingLocalTime
+public import Probability.Process.RandomWalk.Fluctuation.Ladder.Descending.LocalTime
 public import Probability.Distributions.Stable.Attraction.NormingRatios.PositiveTail
 
 /-!
-# The first descending ladder-time law and its tail
+# Stable-attraction tail of the first descending ladder time
 
+For an increment path $\xi$, write $S_j=\sum_{i=1}^j\xi_i$, and let
+$T^-_1=\inf\{j\geq1:S_j<\min_{0\leq i<j}S_i\}$, with $T^-_1=\infty$ if
+the set is empty. The real-valued map below sends $T^-_1=\infty$ to $0$;
+under the finite-time hypothesis this exceptional value has probability
+zero. For a probability measure $\mu$ on increment paths, write
+$\mathbb P_\mu$ for path probabilities. The public definitions and theorems
+in this file are:
 The public definitions and theorems in this file are:
 
 - `ProbabilityTheory.RandomWalk.firstDescendingLadderTimeValue`:
   the real value of $T^-_1$, with the exceptional value $\infty$ sent to zero.
 - `ProbabilityTheory.RandomWalk.firstDescendingLadderTimeLaw`:
   the law of this real value under a measure on increment paths.
+- `ProbabilityTheory.RandomWalk.measurable_firstDescendingLadderTimeValue`:
+  the map from increment paths to the real-valued first ladder time is
+  measurable.
 - `ProbabilityTheory.RandomWalk.firstDescendingLadderTimeLaw_isProbabilityMeasure`:
   a probability law on paths gives a probability law for $T^-_1$.
 - `ProbabilityTheory.RandomWalk.firstDescendingLadderTimeLaw_Iio_zero`:
   this law assigns zero mass to $(-\infty,0)$.
 - `ProbabilityTheory.RandomWalk.firstDescendingLadderTimeTailReal_eq_law_tail`:
   if $T^-_1<\infty$ almost surely, then for $x\ge0$,
-  $\mathbb P(T^-_1>\lfloor x\rfloor)=\mathbb P(T^-_1>x)$.
+  `firstDescendingLadderTimeTailReal μ x` equals
+  `(firstDescendingLadderTimeLaw μ).real (Set.Ioi x)`.
 - `ProbabilityTheory.RandomWalk.firstDescendingLadderTimeTailReal_regularVariation_of_stableAttraction`:
-  a positive $\alpha$-stable attraction law for $T^-_1$ gives regular
-  variation of its tail with index $-\alpha$.
+  if $T^-_1<\infty$ almost surely and its law belongs to the domain of
+  attraction of an $\alpha$-stable law with $0<\alpha<2$, then
+  $x\mapsto\mathbb P_\mu(T^-_1>x)$ is regularly varying with index $-\alpha$.
 
-This is the distributional-to-tail step cited in Francesco Caravenna and
-Loïc Chaumont, *Invariance principles for random walks conditioned to stay
-positive*, Lemma 2.1, equation (2.3), DOI 10.1214/07-AIHP119. The
-stable-attraction premise there comes from the ladder-variable results of
-Doney--Greenwood, Doney, and Greenwood--Omey--Teugels cited in its proof.
+This is the distributional-to-tail step in Lemma 2.1, equation (2.3), of
+Francesco Caravenna and Loïc Chaumont, *Invariance principles for random walks
+conditioned to stay positive*, Ann. Inst. H. Poincaré Probab. Statist. 44(1)
+(2008), 170--190, DOI 10.1214/07-AIHP119.
 -/
 
 @[expose] public section
