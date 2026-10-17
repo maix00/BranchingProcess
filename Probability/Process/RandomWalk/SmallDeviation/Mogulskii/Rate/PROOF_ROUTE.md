@@ -314,7 +314,9 @@ Lemma 3(c)'s independent-block power estimate. The generic stable escape-rate
 module now also converts the small-radius limit to the large block-parameter
 scale `c⁻ᵅ log P(tube (r / c)) → C / r^α`. The exact rate for a centered
 constant-width random-walk tube is now proved from both sides in
-`Stable/Rate/Upper.lean` and `Stable/Rate/Lower.lean`. The upper proof uses
+`Stable/Rate/Upper.lean` and `Stable/Rate/Lower/`. Its lower modules expose
+the block endpoint-return estimate, logarithmic liminf consequences, eventual
+positivity, and the final rate limit as separate mathematical interfaces. The upper proof uses
 closed-set Portmanteau and shrinking outer corridors; the lower proof uses
 the source's seven endpoint-return bands, open-set Portmanteau, and the
 source block count. Both now require slow variation of `L*` but no upper

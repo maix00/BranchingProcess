@@ -8,7 +8,7 @@ module
 
 public import Probability.Process.RandomWalk.Path.Corridor.Horizontal.Core
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.Partition.Corridor
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Rate.Lower
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Rate.Lower.Positivity
 
 /-!
 # Lower probability inputs for partition cells
