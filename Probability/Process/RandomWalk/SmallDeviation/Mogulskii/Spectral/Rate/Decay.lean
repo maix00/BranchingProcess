@@ -13,7 +13,17 @@ public import Mathlib.Analysis.SpecificLimits.Basic
 # Long-time decay in a fixed interval
 
 The uniform ground-state bounds identify the exponential decay rate of the
-survival probability in every fixed finite interval.
+survival probability in every fixed finite interval.  For fixed $N>1$, put
+$\lambda_N=\cos(\pi/(N+1))$.  The public declarations are:
+
+* `tendsto_log_intervalKernel_pow_rowSum_div` proves, for every interior
+  start $i$,
+  $\frac1t\log\bigl(\sum_jK_N^t(i,j)\bigr)\to\log\lambda_N$ as
+  $t\to\infty$.
+* `tendsto_log_rademacherIncrement_intervalProbability_div` proves the
+  same limit for the logarithm of the probability that the Rademacher walk
+  started at the corresponding lattice site stays in the interval through
+  time $t$.
 -/
 
 open Filter Topology

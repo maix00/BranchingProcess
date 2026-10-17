@@ -29,10 +29,10 @@ where $(S_j)$ is the simple symmetric walk.  The public declarations are:
 * `tendsto_scaledLog_centeredHorizontalTubeProbability_of_scale` proves
   $\frac{s_n^2}{t_n}\log p_n\to-\frac{\pi^2}{2}$ when
   $s_n\to\infty$, $t_n>0$, and $s_n^2/t_n\to0$.
-* `IsMogulskiiScale.tendsto_scaledLog_centeredHorizontalTubeProbability_succ`
+* `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.tendsto_scaledLog_centeredHorizontalTubeProbability_succ`
   proves the same conclusion at the successor indices $s_{n+1}$ and time
   $n+1$;
-  `IsMogulskiiScale.tendsto_scaledLog_centeredHorizontalTubeProbability`
+  `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.tendsto_scaledLog_centeredHorizontalTubeProbability`
   gives the conclusion at the original indices $s_n,t_n=n$ for every
   `IsMogulskiiScale` scale.
 -/
