@@ -42,7 +42,7 @@ The public declarations are:
   $\int \operatorname{childCount}(\xi)\,d\mu(\xi)>1$, then
   $\mu(\{\xi:2\le\operatorname{childCount}(\xi)\})>0$.
 - `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Speed.firstRankSplitEvent`:
-  the generation-$n$ event
+  for $h_N:0<N$, the generation-$n$ event
   $\{\omega:2\le\operatorname{childCount}(\omega_n(\langle0,h_N\rangle))\}$.
 - `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Speed.firstRankSplitEvent_measure_eq`:
   $\operatorname{generationEnvironmentLaw}(\mu,N)
