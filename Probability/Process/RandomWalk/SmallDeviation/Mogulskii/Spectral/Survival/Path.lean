@@ -14,6 +14,42 @@ public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.K
 /-!
 # Path interpretation of killed Rademacher transitions
 
+The public declarations in this module are:
+
+All names below are declarations in
+`ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii`.
+
+Let $N=\texttt{interiorCount}$, $x=\texttt{intervalSite}(i)=i.val+1$,
+and $S_j$ be the sum of the first $j$ Rademacher increments.
+
+- `intervalSite` maps a finite state $i\in\operatorname{Fin}(N)$ to its
+  physical lattice coordinate $i.val+1$.
+- `intervalLeftNeighbor_eq_some_iff`,
+  `intervalRightNeighbor_eq_some_iff`, and
+  `intervalRademacherStep_eq_some_iff` characterize the two neighboring
+  transitions by coordinate changes $-1$ and $+1$.
+- `intervalRademacherStep_isSome_iff` says the next transition is defined
+  exactly when its coordinate lies in $[1,N]$.
+- `rademacherStaysInInterval` defines survival for every partial sum through
+  time $n$; `rademacherStaysInInterval_iff_inWindows` and
+  `rademacherStaysInInterval_iff_inClosedInterval` identify it with the
+  corresponding lattice-window and closed-interval conditions, namely
+  $\forall 1\le j\le n,\ 1\le x+S_j\le N$ for an initial state
+  $x\in[1,N]$.
+- `intervalSite_mem_Icc` places each state coordinate in $[1,N]$.
+- `runPartialSteps_isSome_iff_staysInInterval` and
+  `survivingHistories_preimage_eq_staysInInterval` identify defined finite
+  paths and surviving histories with that pathwise event.
+- `intervalRademacherKernel_pow_apply_univ_eq_pathSurvival` and
+  `intervalRademacherKernel_pow_apply_univ_eq_randomWalkInterval` identify
+  the killed-kernel survival mass with the corresponding IID path
+  probability:
+  $K_N^n(x,\operatorname{univ})=
+  \mathbb P(\forall 1\le j\le n,\ 1\le x+S_j\le N)$.
+- `centeredIntervalRademacherKernel_pow_apply_univ_eq_horizontalTubeProbability`
+  gives the centered form: the kernel mass on $[-r,r]$ equals the probability
+  that all partial sums through time $n$ remain in that closed interval.
+
 The finite-state killed transition survives exactly when every partial sum of
 the corresponding Rademacher increment path remains at an interior lattice
 site.  This file is the path-level bridge between the spectral kernel and the

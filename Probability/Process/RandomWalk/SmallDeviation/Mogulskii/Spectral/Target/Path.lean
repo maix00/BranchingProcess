@@ -13,6 +13,33 @@ public import Probability.Kernel.Step.Endpoint
 /-!
 # Path interpretation of finite spectral target masses
 
+The public declarations in this module are:
+
+All names below are declarations in
+`ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii`.
+
+For $T\subseteq\operatorname{Fin}(N)$, write
+$T_{\mathrm{site}}=\{i.val+1:i\in T\}$,
+$P_N=\texttt{intervalRademacherKernel}(N)$,
+$K_N=\texttt{intervalKernel}(N)$, $x=start.val+1$, and
+$S_j=\texttt{AdditivePath.displacement}(j,\texttt{rademacherIncrementPath}(\omega))$.
+
+- `intervalRademacher_endsInPrefix_iff_pathEvent` identifies a finite
+  killed path ending in a target after $n$ steps with survival of all its
+  partial sums and membership of its terminal coordinate in that target:
+  $\mathrm{EndsInPrefix}(start,T,n,\omega)\iff
+  (\forall j\le n,\ 1\le x+S_j\le N)\land x+S_n\in T_{\mathrm{site}}$.
+- `intervalRademacherKernel_pow_apply_finset_eq_iidPathEvent` states that
+  the killed-kernel mass of a finite target equals the IID Rademacher
+  probability of staying in the interval and ending in that target:
+  $P_N^n(start,T)=\mathbb P(\forall j\le n,\ 1\le x+S_j\le N,
+  \ x+S_n\in T_{\mathrm{site}})$.
+- `ofReal_intervalKernel_pow_apply_finset_eq_iidPathEvent` gives the same
+  equality for the real-valued interval matrix, after applying
+  $\operatorname{ENNReal.ofReal}$ to its finite mass:
+  $\operatorname{ENNReal.ofReal}(\sum_{y\in T}K_N^n(start,y))=
+  \mathbb P(\forall j\le n,\ 1\le x+S_j\le N,\ x+S_n\in T_{\mathrm{site}})$.
+
 A target mass of the killed interval matrix is exactly the Rademacher
 probability of staying in the finite interval and ending in the target.
 This is the bridge needed before applying the closed-event Portmanteau
