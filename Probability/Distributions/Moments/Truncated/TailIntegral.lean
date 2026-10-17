@@ -7,7 +7,7 @@ module
 
 public import Analysis.Asymptotics.RegularVariation.TailIntegral
 public import Mathlib.MeasureTheory.Integral.Layercake
-public import Probability.Distributions.Moments.Truncated
+public import Probability.Distributions.Moments.Truncated.Basic
 
 /-!
 # Integrated tails of truncated second moments

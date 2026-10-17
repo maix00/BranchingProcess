@@ -6,8 +6,8 @@ Authors: WANG Yiyang
 
 import Probability.BranchingRandomWalk.Population.Processes.Causal.Capacity
 import Probability.BranchingRandomWalk.Population.Processes.Causal.PathBound
-import Probability.BranchingRandomWalk.Genealogy.RootIndexed.FiniteExpectations
-import Probability.BranchingRandomWalk.Spine.Path.ManyToOne
+import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law.FiniteExpectations
+import Probability.BranchingRandomWalk.Spine.Path.ManyToOne.Identity
 
 /-!
 # First moments of causal killed populations

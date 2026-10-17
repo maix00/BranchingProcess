@@ -8,24 +8,50 @@ module
 
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Corridor
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Scale.Rate
-public import Analysis.Asymptotics.SlowDiagonal
+public import Analysis.Asymptotics.Scale.SlowDiagonal
 
 /-!
 # Block counts at the stable small-deviation scale
 
-The partition step of Mogulskii's stable proof splits `[0, 1]` into finitely
-many intervals and compares the two-sided corridor probability with the
-product of the per-block corridor probabilities. The comparison itself is
-scale-free and lives in `Walk/Path/Block/Partition/Basic.lean` and
-`Walk/Path/Block/Partition/Normalized.lean`; this module only supplies the stable block-length
-bookkeeping that turns the block length into the block count those statements take as a parameter.
+Write $b_n$ for `stableBlockLength α ν constant scale n`, $q_n$ for its
+complete-block count, $T_n$ for `stableScaleTime α ν (scale n)`, and $r_n$
+for `stableSmallDeviationRate α ν scale n`. The public declarations are:
 
-The count is the largest number of complete blocks of the stable block length
-that fit in `n` steps. Its asymptotic form, which is what the rate statement
-consumes, additionally needs the stable block length to vanish relative to
-`n`, and
-`tendsto_stableBlockCount_mul_stableBlockLength_div_nat` derives it from that single hypothesis.
--/
+- `stableBlockCount`: the natural quotient $q_n=n\mathbin{/}b_n$,
+  equal to $\lfloor n/b_n\rfloor$ when $b_n>0$.
+- `stableBlockCount_mul_stableBlockLength_le`,
+  `stableBlockCount_pos_of_stableBlockLength_le`,
+  `stableBlockCount_mul_stableBlockLength_le_lt_succ`, and
+  `sub_stableBlockLength_lt_stableBlockCount_mul_stableBlockLength`:
+  $q_nb_n\le n<(q_n+1)b_n$ for $b_n>0$, with the resulting positivity
+  and lower bound $n-b_n<q_nb_n$.
+- `exists_slowDiagonal_within_stableScale`: a diagonal $d_n\to\infty$
+  preserves fixed-parameter eventual properties and satisfies
+  $d_n\operatorname{scale}(n)/\operatorname{normalization}(n)\to0$.
+- `stableBlockCount_mul_stableBlockLength_div_sub_one_abs_le` and
+  `tendsto_stableBlockCount_mul_stableBlockLength_div_nat`:
+  $|q_nb_n/n-1|\le b_n/n$, hence $q_nb_n/n\to1$ when $b_n/n\to0$.
+- `tendsto_stableScaleTime_div_nat_mul_stableBlockCount`,
+  `tendsto_stableScaleTime_div_nat_mul_stableBlockCount_of_slowVariation_limit`,
+  and `tendsto_stableScaleTime_div_nat_mul_stableBlockCount_of_slowVariation`:
+  $T_nq_n/n\to1/\operatorname{constant}$ under their respective stable
+  scale and slow-variation hypotheses.
+- `tendsto_stableScaleTime_div_nat_mul_segmentBlockCount` and
+  `tendsto_stableSmallDeviationRate_mul_partitionCellBlockCount`:
+  a segment of relative duration $\tau$ has block cost
+  $r_n\lfloor\operatorname{length}_n/b_n\rfloor\to\tau/\operatorname{constant}$;
+  for a partition cell, $\tau=\operatorname{right}-\operatorname{left}$.
+- `tendsto_stableSmallDeviationRate_mul_balancedCoreBridgeCount`:
+  reserving one bridge block in a core of relative duration $\tau$ gives
+  cost $r_n(q_n^{\mathrm{core}}+1)\to\tau/\operatorname{amplitude}^{\alpha}$.
+
+These are the block-length relations in Mogul'skii, *Small Deviations in a
+Space of Trajectories*, Theorem 3, Section 4. The path-event partition
+comparison is scale-free and lives in `Walk/Path/Block/Partition/Basic.lean`
+and `Walk/Path/Block/Partition/Normalized.lean`.
+
+
+The original bibliography is A. A. Mogul'skii, “Small deviations in the sample function space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974), 755--765; English translation, “Small Deviations in a Space of Trajectories,” *Theory of Probability and Its Applications* 19(1) (1975), 726--736, DOI 10.1137/1119081. -/
 
 @[expose] public section
 
@@ -200,8 +226,9 @@ theorem tendsto_stableScaleTime_div_nat_mul_stableBlockCount
   have hres := hproduct.congr' heq.symm
   simpa using hres
 
-/-- The block-count scale relation follows from the paper's two-scale
-condition once `L*` is known to converge to a positive finite limit.  This
+/-- The block-count scale relation follows from the two-scale hypothesis in
+Mogul'skii, *Small Deviations in a Space of Trajectories*, Theorem 3,
+Section 4, once `L*` is known to converge to a positive finite limit. This
 packages the rate and boundedness consequences without adding them as separate
 assumptions. -/
 theorem tendsto_stableScaleTime_div_nat_mul_stableBlockCount_of_slowVariation_limit

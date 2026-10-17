@@ -1,4 +1,4 @@
-# Thesis assumption map
+# Assumption map for *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*
 
 The Lean predicates are split by mathematical role:
 
@@ -10,8 +10,11 @@ The Lean predicates are split by mathematical role:
 - `Moments.lean`: the leftmost first, fourth, and positive exponential
   moments;
 - `CrossWeight.lean`: the permutation-invariant pair-weight integrability
-  condition on the raw optional-slot law;
-- `Bundles.lean`: small named collections used by the main theorems.
+  condition on the raw optional-slot law.
+
+The predicates above remain reusable abstractions for individual mathematical
+conditions. The theorem interfaces pass the conditions they use as separate
+hypotheses; they are not combined into assumption structures.
 
 The centered and finite-variance spine assumptions will be stated on the
 spine probability law once that law has been constructed. Writing them now as
@@ -24,11 +27,12 @@ branching law is assumed to arrive ordered. The boundary and cross-weight sums
 remain on the raw law because they are invariant under slot permutations. No
 general point process is silently assumed to contain a child.
 
-The sorted slot type is abstract. Assumption bundles require a linear locally
-finite order with a least element and no greatest element. Mathlib proves that
-such an order is order-isomorphic to `ℕ`; `Step/SlotOrder.lean` reuses that
-isomorphism to define finite prefixes `firstSlots α N`, proves they contain
-exactly `N` slots, and proves that their union exhausts `α`.
+The sorted slot type is abstract. The relevant theorem interfaces require a
+linear locally finite order with a least element and no greatest element.
+Mathlib proves that such an order is order-isomorphic to `ℕ`;
+`Step/SlotOrder.lean` reuses that isomorphism to define finite prefixes
+`firstSlots α N`, proves they contain exactly `N` slots, and proves that their
+union exhausts `α`.
 
 ## Formalization boundary
 
@@ -41,25 +45,27 @@ The following items are formalized and compile without axioms:
   eventual two-sided bounds to the speed limit;
 - the first-moment implication from the fourth-moment assumption.
 
-The following items are still proof obligations for the thesis' main theorems:
+The following items are still proof obligations for Wang Yiyang,
+*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
+Theorems 1.1–1.3:
 
 - the Mogul'skii small-deviation estimate for the centered spine walk;
-- the thesis-specific many-to-one identity after identifying the spine law
-  with the centered point-process offspring model (the abstract tilt and
+- the many-to-one identity needed for Wang Yiyang's Theorem 1.1 after
+  identifying the spine law with the centered point-process offspring model
+  (the abstract tilt and
   forward/backward endpoint identities are already formalized in
   `Probability/PointProcess/Tilted.lean` and
-  `Probability/BranchingRandomWalk/Spine/PointMeasureEndpoint.lean`);
+  `Probability/BranchingRandomWalk/Spine/PointMeasure/Endpoint.lean`);
 - the branching property at the exploration/stopping-cell level;
 - the coupling lemma used for the `a = 0` trajectory argument;
 - the probabilistic eventual upper and lower bounds that feed
   `speed_limit_of_eventual_bounds`;
-- the full statements of thesis Theorems 1.1 and 1.2, and the one-sided L1
+- the full statements of Theorems 1.1 and 1.2, and the one-sided L1
   Theorem 1.3.
 
-Consequently, `BasicBranchingAssumptions`, `TrajectoryMomentAssumptions`, and
-`SpeedL1MomentAssumption` are assumption bundles, not theorem proofs. The
-analytic file proves only the final deterministic limit once the probabilistic
-bounds above are supplied.
+The analytic file proves only the final deterministic limit once the
+probabilistic bounds above are supplied. Its intermediate estimates do not
+change the assumption list in the main theorem statements.
 
 
 ## Abstract marks and the real displacement potential

@@ -33,7 +33,7 @@ private noncomputable def chosenLeftOscillationRadius
     (hepsilon : 0 < epsilon) (t : unitInterval) : ℝ :=
   Classical.choose (hf.exists_left_oscillation_radius t hepsilon)
 
-private theorem chosenLeftOscillationRadius_pos
+private lemma chosenLeftOscillationRadius_pos
     {E : Type*} [PseudoMetricSpace E] {f : unitInterval → E}
     (hf : IsCadlag f) {epsilon : ℝ}
     (hepsilon : 0 < epsilon) (t : unitInterval) :
@@ -41,7 +41,7 @@ private theorem chosenLeftOscillationRadius_pos
   exact (Classical.choose_spec
     (hf.exists_left_oscillation_radius t hepsilon)).1
 
-private theorem chosenLeftOscillationRadius_spec
+private lemma chosenLeftOscillationRadius_spec
     {E : Type*} [PseudoMetricSpace E] {f : unitInterval → E}
     (hf : IsCadlag f) {epsilon : ℝ}
     (hepsilon : 0 < epsilon) (t s u : unitInterval)
@@ -60,7 +60,7 @@ private noncomputable def chosenRightOscillationRadius
     (hepsilon : 0 < epsilon) (t : unitInterval) : ℝ :=
   Classical.choose (hf.exists_right_oscillation_radius t hepsilon)
 
-private theorem chosenRightOscillationRadius_pos
+private lemma chosenRightOscillationRadius_pos
     {E : Type*} [PseudoMetricSpace E] {f : unitInterval → E}
     (hf : IsCadlag f) {epsilon : ℝ}
     (hepsilon : 0 < epsilon) (t : unitInterval) :
@@ -68,7 +68,7 @@ private theorem chosenRightOscillationRadius_pos
   exact (Classical.choose_spec
     (hf.exists_right_oscillation_radius t hepsilon)).1
 
-private theorem chosenRightOscillationRadius_spec
+private lemma chosenRightOscillationRadius_spec
     {E : Type*} [PseudoMetricSpace E] {f : unitInterval → E}
     (hf : IsCadlag f) {epsilon : ℝ}
     (hepsilon : 0 < epsilon) (t s u : unitInterval)
@@ -88,7 +88,7 @@ private noncomputable def localOscillationRadius
   min (chosenLeftOscillationRadius hf epsilon hepsilon t)
     (chosenRightOscillationRadius hf epsilon hepsilon t)
 
-private theorem localOscillationRadius_pos
+private lemma localOscillationRadius_pos
     {E : Type*} [PseudoMetricSpace E] {f : unitInterval → E}
     (hf : IsCadlag f) {epsilon : ℝ}
     (hepsilon : 0 < epsilon) (t : unitInterval) :

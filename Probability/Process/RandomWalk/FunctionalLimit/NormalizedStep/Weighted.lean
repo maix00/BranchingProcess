@@ -7,8 +7,8 @@ Authors: WANG Yiyang
 module
 
 public import Mathlib.Topology.UnitInterval
-public import Probability.Process.RandomWalk.Path.Skorokhod
-public import Probability.Process.RandomWalk.Path.Skorokhod.Corridor.Endpoint
+public import Probability.Process.RandomWalk.Path.Skorokhod.Core
+public import Probability.Process.RandomWalk.Path.Skorokhod.Corridor.Endpoint.Core
 public import MeasureTheory.Measure.CadlagPath.Corridor.Weight
 public import Probability.ConvergenceInDistribution.Portmanteau
 

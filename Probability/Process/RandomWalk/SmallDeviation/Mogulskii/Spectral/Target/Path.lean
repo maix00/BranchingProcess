@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.PathSurvival
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Survival.Path
 public import Probability.Kernel.FiniteState.Matrix
 public import Probability.Kernel.Step.Endpoint
 
@@ -27,7 +27,7 @@ open scoped BigOperators ENNReal
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
 
-private theorem intervalRademacher_runPartialSteps_eq_some_iff
+private lemma intervalRademacher_runPartialSteps_eq_some_iff
     {interiorCount n : ℕ} (start finish : Fin interiorCount)
     (branch : ℕ → Bool) :
     Kernel.runPartialSteps intervalRademacherStep n start
@@ -121,7 +121,7 @@ private theorem intervalRademacher_runPartialSteps_eq_some_iff
                     AdditivePath.displacement n (rademacherIncrementPath fun k => branch (k + 1)) := by
                   rw [← add_assoc, hsite]
 
-private theorem runPartialSteps_endsIn_iff_exists_eq
+private lemma runPartialSteps_endsIn_iff_exists_eq
     {α ξ : Type*} (step : α → ξ → Option α)
     {target : Set α} {n : ℕ} {start : α} {history : Fin n → ξ} :
     Kernel.EndsIn step target n start history ↔
@@ -157,7 +157,7 @@ theorem intervalRademacher_endsInPrefix_iff_pathEvent
     exact (intervalRademacher_runPartialSteps_eq_some_iff
       start finish branch).mpr ⟨hstay, hend⟩
 
-private theorem measurableSet_intervalRademacherPathTarget
+private lemma measurableSet_intervalRademacherPathTarget
     {interiorCount n : ℕ} (start : Fin interiorCount)
     (target : Finset (Fin interiorCount)) :
     MeasurableSet {increment : ℕ → ℝ |

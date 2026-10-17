@@ -15,9 +15,10 @@ public import MeasureTheory.MeasurableSpace.CadlagPath.PathClass.StepCorridor.Bo
 
 This file defines an integrated reciprocal-power cost for extended-real step
 corridors and its minimum over a finite union. The source is A. A. Mogul'skii,
-“Small deviations in the space of trajectories”, Teor. Veroyatnost. i Primenen.
-19:4 (1974), 755–765; English translation, Theory Probab. Appl. 19:1
-(1975), 726–736, doi:10.1137/1119081. In §1, the corridor cost is
+“Small deviations in the sample function space,” *Teoriya Veroyatnostei i ee
+Primeneniya* 19(4) (1974), 755–765; English translation, “Small Deviations in
+a Space of Trajectories,” *Theory of Probability and Its Applications* 19(1)
+(1975), 726–736, DOI 10.1137/1119081. In §1, the corridor cost is
 denoted `Hα`, single corridors form `M₂`, and finite unions form `M₃`. The
 library uses names that describe these objects' structure. Infinite corridor
 width has zero cost. Continuous admissibility ensures positive width at every
@@ -34,7 +35,7 @@ open Skorokhod.PathClass.StepCorridor
 
 namespace Skorokhod.PathClass.StepCorridor
 
-private theorem lintegral_congr_off_top {f g : unitInterval → ℝ≥0∞}
+private lemma lintegral_congr_off_top {f g : unitInterval → ℝ≥0∞}
     (hfg : ∀ t, t ≠ ⊤ → f t = g t) :
     ∫⁻ t : unitInterval, f t ∂volume = ∫⁻ t : unitInterval, g t ∂volume := by
   apply lintegral_congr_ae
@@ -46,15 +47,20 @@ private theorem lintegral_congr_off_top {f g : unitInterval → ℝ≥0∞}
 /-- A nonnegative integrand supported only at the right endpoint has zero
 Lebesgue integral. This is the measure-theoretic reason a terminal boundary
 knot changes no `Hα` energy. -/
-private theorem lintegral_eq_zero_of_eq_zero_off_top {f : unitInterval → ℝ≥0∞}
+private lemma lintegral_eq_zero_of_eq_zero_off_top {f : unitInterval → ℝ≥0∞}
     (hf : ∀ t, t ≠ ⊤ → f t = 0) :
     ∫⁻ t : unitInterval, f t ∂volume = 0 := by
   rw [lintegral_congr_off_top hf]
   simp
 
 /-- The reciprocal `α`-power of a corridor width. Infinite width contributes
-zero. On finite positive widths this is exactly `(upper - lower) ^ (-α)` as in
-the paper. The definition is total outside admissible corridors as well. -/
+zero. On finite positive widths this is exactly `(upper - lower) ^ (-α)`,
+the integrand defining `Hα` in §1 of A. A. Mogul'skii, “Small deviations in
+the sample function space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4)
+(1974), 755–765; English translation, “Small Deviations in a Space of
+Trajectories,” *Theory of Probability and Its Applications* 19(1) (1975),
+726–736, DOI 10.1137/1119081. The definition is total outside
+admissible corridors as well. -/
 noncomputable def widthCost (α : ℝ) (upper lower : EReal) : ℝ≥0∞ :=
   if upper = ⊤ ∨ lower = ⊥ then 0
   else if 0 < upper.toReal - lower.toReal then
