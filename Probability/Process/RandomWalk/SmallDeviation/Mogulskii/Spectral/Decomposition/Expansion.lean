@@ -14,7 +14,20 @@ public import LinearAlgebra.Spectrum.DiagonalBasis
 
 This file turns the sine basis into matrix-power and surviving-row-mass
 identities.  Geometric tail estimates are kept in the dependent file
-UpperBound.lean.
+UpperBound.lean.  For each mode $k$, let $v_k$ and $\lambda_k$ be its sine
+eigenvector and eigenvalue, and let $c_k(f)$ be its sine-basis coordinate.
+The public declarations are:
+
+* `intervalKernelEnd_pow_apply_eq_sum` proves the exact expansion
+  $K_N^n f=\sum_k c_k(f)\lambda_k^n v_k$ for the associated endomorphism;
+  `intervalKernel_pow_mulVecLin` identifies the $n$th matrix `mulVecLin`
+  with that endomorphism power; `intervalKernel_pow_mulVec_eq_sum` states the
+  same expansion in matrix-vector notation.
+* `intervalKernel_pow_rowSum_eq_spectralSum` gives
+  $\sum_jK_N^n(i,j)=\sum_k c_k(\mathbf1)\lambda_k^n v_k(i)$.
+* `intervalKernel_pow_rowSum_le_two_mul_sum_absEigenvaluePow` gives the
+  uniform coefficient estimate
+  $\sum_jK_N^n(i,j)\le2\sum_k|\lambda_k|^n$.
 -/
 
 open scoped Matrix
