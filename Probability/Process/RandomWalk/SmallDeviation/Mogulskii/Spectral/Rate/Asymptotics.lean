@@ -13,6 +13,17 @@ public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
 
 /-!
 # Asymptotics of the symmetric-walk ground-state eigenvalue
+
+The public limits are:
+
+* `tendsto_sin_div_self` and `tendsto_tan_div_self`:
+  $\sin x/x\to1$ and $\tan x/x\to1$ as $x\to0$, with $x\ne0$.
+* `tendsto_log_cos_div_sq`:
+  $\log(\cos x)/x^2\to-1/2$ as $x\to0$, with $x\ne0$.
+* `tendsto_sq_mul_log_cos_pi_div`:
+  $L^2\log\cos(\pi/L)\to-\pi^2/2$ as $L\to\infty$.
+* `tendsto_log_sin_pi_div_add_log`:
+  $\log\sin(\pi/L)+\log L\to\log\pi$ as $L\to\infty$.
 -/
 
 open Filter Set

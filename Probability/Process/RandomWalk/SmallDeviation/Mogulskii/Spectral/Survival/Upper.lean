@@ -14,6 +14,13 @@ public import Analysis.SpecificLimits.Geometric
 
 This file combines the finite spectral expansion with the mode-depth estimate
 to obtain the width-uniform geometric row-mass bound used by corridor proofs.
+For $N>0$, let $K_N$ be the killed simple symmetric transition matrix and
+$q_N=\cos(\pi/(N+1))$.  The public declarations are:
+
+* `intervalKernel_pow_rowSum_le_geometric` proves, for every $t$ and start
+  $i$, $\sum_j K_N^t(i,j)\le4\sum_{k=0}^{N-1}(q_N^t)^{k+1}$.
+* `intervalKernel_pow_rowSum_le_four_mul_div_one_sub` proves, when $t>0$,
+  $\sum_j K_N^t(i,j)\le4q_N^t/(1-q_N^t)$.
 -/
 
 open scoped Matrix

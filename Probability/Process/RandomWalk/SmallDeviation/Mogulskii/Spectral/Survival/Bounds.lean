@@ -15,7 +15,22 @@ public import Probability.Kernel.Survival.Basic
 
 The positive ground state gives bounds uniform in both the starting state and
 the elapsed time.  This is the finite-interval input required by the abstract
-kernel blocking lemmas.
+kernel blocking lemmas.  For $N>1$, write $K_N$ for the simple symmetric
+walk transition matrix killed outside $\{0,\ldots,N-1\}$, and put
+$\lambda_N=\cos(\pi/(N+1))$ and $s_N=\sin(\pi/(N+1))$.  The public
+declarations are:
+
+* `intervalSineWeight_endpoint_le` proves
+  $s_N\le\sin(\pi(i+1)/(N+1))$ for every $N>0$ and interior site $i$.
+* `intervalKernel_pow_rowSum_uniform_bounds` proves, for every time $t$ and
+  interior site $i$,
+  $s_N\lambda_N^t\le\sum_j K_N^t(i,j)\le\lambda_N^t/s_N$.
+* `intervalRademacherKernel_remainingMass_uniform_bounds` gives the same
+  bounds for the killed kernel's remaining mass, with both endpoints mapped
+  through `ENNReal.ofReal`.
+* `rademacherIncrement_intervalProbability_uniform_bounds` gives these
+  bounds for the probability that the Rademacher walk started at $i$ stays
+  in the interval through time $t$.
 -/
 
 open MeasureTheory Set
