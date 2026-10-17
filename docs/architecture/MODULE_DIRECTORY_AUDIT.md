@@ -153,6 +153,10 @@ and `Stable/RandomWalkBounds/PartitionLower/{BridgeProduct,EnergyLower,FinitePro
 The source-convention rate entries now state the finite-partition and path-class
 limits in `Stable/RandomWalkBounds/Source/Partition/Limit.lean` and
 `Stable/RandomWalkBounds/Source/PathClass/Rate.lean`.
+This pass also documents the pointwise encoding and pushforward law in
+`Probability/Process/RandomWalk/Rademacher/Basic.lean`, and the offspring-split,
+capacity-hitting, and speed-transport interfaces in
+`Probability/BranchingRandomWalk/Selection/NSelection/AsymptoticSpeed/InitialPopulation/Basic.lean`.
 These headers state the exact
 declaration identifiers in their Lean namespace, the mathematical object or
 estimate, and the assumptions that control each bound. The private path

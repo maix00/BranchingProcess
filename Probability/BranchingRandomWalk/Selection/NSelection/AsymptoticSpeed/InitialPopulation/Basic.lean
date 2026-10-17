@@ -31,6 +31,32 @@ population before it fills. The stopping-time identification in item 3 must
 be proved against that root-indexed field before the exact-`N` speed theorem
 can be applied; no restart hypothesis is introduced here in place of that
 proof.
+
+The public declarations are:
+
+- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Speed.positive_measure_childCount_ge_two`:
+  if $\mu$ is supercritical and nonempty almost surely, then
+  $(\mu.\operatorname{childCountLaw})(\{k\in\mathbb N_\infty:2\le k\})>0$.
+- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Speed.positive_raw_measure_childCount_ge_two`:
+  if $\mu$ is a probability law and
+  $\int \operatorname{childCount}(\xi)\,d\mu(\xi)>1$, then
+  $\mu(\{\xi:2\le\operatorname{childCount}(\xi)\})>0$.
+- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Speed.firstRankSplitEvent`:
+  the generation-$n$ event
+  $\{\omega:2\le\operatorname{childCount}(\omega_n(\langle0,h_N\rangle))\}$.
+- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Speed.firstRankSplitEvent_measure_eq`:
+  $\operatorname{generationEnvironmentLaw}(\mu,N)
+  (\operatorname{firstRankSplitEvent}(h_N,n))
+   =\mu(\{\xi:2\le\operatorname{childCount}(\xi)\})$ for every $n$.
+- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Speed.ae_frequently_firstRankSplitEvent`:
+  if $\mu$ is supercritical, then the limsup of the rank-zero split events
+  has probability one under $\operatorname{generationEnvironmentLaw}(\mu,N)$.
+- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Speed.exists_eq_capacity_of_frequently_growing`:
+  if $0<X_0\le X_n\le N$ and every split with $X_n<N$ increases $X_n$,
+  then frequent splits imply $X_n=N$ for some $n$.
+- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Speed.infiniteOffspringRun_rankZero_hasAsymptoticSpeed_of_initial`:
+  if the origin-start rank-zero run has asymptotic speed $c$, then so does
+  the run from every finite initial position vector.
 -/
 
 open MeasureTheory
