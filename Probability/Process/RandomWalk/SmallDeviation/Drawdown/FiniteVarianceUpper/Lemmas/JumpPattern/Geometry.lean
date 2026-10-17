@@ -8,8 +8,8 @@ module
 
 public import Probability.Process.Filtration.ConditionalBlocks
 public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.Event
-public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.DiscretizedMaximum
-public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.JumpPattern.Basic
+public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.JumpPattern.DiscretizedMaximum
+public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.JumpPattern.Basic
 public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.TubeEvent
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.Horizontal.PathSegment
 import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.JumpPattern.Setup

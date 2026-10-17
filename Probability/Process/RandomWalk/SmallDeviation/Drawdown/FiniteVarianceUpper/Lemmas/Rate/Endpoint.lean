@@ -12,7 +12,7 @@ public import Probability.Distributions.Moments.Real
 public import Probability.Sequence.IID.Basic
 public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.TubeEvent
 public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.Event
-public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.JumpPattern.Basic
+public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.JumpPattern.Basic
 import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.Rate.Bounds
 import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.ConditionalBlocks
 import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.JumpPattern.Probability

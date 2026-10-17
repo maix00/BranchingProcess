@@ -15,7 +15,7 @@ public import Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.Finit
 public import Probability.Independence.ConditionalIntegral
 public import Probability.Sequence.IID.ConditionalBlocks
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
-public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.DiscretizedMaximum
+public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.JumpPattern.DiscretizedMaximum
 public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.TubeEvent
 
 import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
