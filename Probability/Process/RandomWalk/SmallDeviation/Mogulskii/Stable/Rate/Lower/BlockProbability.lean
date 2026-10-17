@@ -16,20 +16,22 @@ public import Probability.Process.Stable.SmallDeviation.EscapeRate.PathLaw.Trans
 /-!
 # Stable endpoint-return lower bound for horizontal tubes
 
+Let $(\xi_i)_{i\geq1}$ be i.i.d. with law $\nu$, put
+$S_j=\sum_{i=1}^j\xi_i$, and let $\mathbb P_\nu$ denote their product law.
 Write $s_n=\mathrm{scale}(n)$,
 $L^*(x)=\mathrm{stableSlowVariation}(\alpha,\nu)(x)$,
-$a_n=s_n^\alpha/(nL^*(s_n))$, and
-$T_n=\{|S_j|<s_n/2\text{ for }1\leq j\leq n\}$ for partial sums of
-i.i.d. increments with law $\nu$. Under the stable scale, slowly varying,
-stable escape-rate, domain-of-attraction, tightness, and endpoint-sign
-hypotheses, the public declaration is:
+$a_n=\frac{s_n^\alpha}{nL^*(s_n)}$, and
+$T_n=\{|S_j|<s_n/2\text{ for }1\leq j\leq n\}$.
+Under the stable scale, slow-variation, stable escape-rate,
+domain-of-attraction, tightness, and endpoint-sign hypotheses, the public
+declaration is:
 
 - `eventually_openHorizontalTubeProbability_ge_exp_of_stableEscapeRate`:
   under the stable escape-rate, domain-of-attraction, scale, and tightness
   assumptions, for fixed $r>0$, $\varepsilon>0$, $4\varepsilon<r$,
   $2(r+4\varepsilon)<1$, and $\delta>0$, there is $c>0$ such that eventually
-  $\bigl(\exp((C/r^\alpha-\delta)c^\alpha)\bigr)^{\lfloor n/\ell_n\rfloor+1}
-  \leq \mathbb P(T_n)$, where $T_n$ is the centered open horizontal tube and
+  $\bigl(\exp((\frac{C}{r^\alpha}-\delta)c^\alpha)\bigr)^{\lfloor n/\ell_n\rfloor+1}
+  \leq \mathbb P_\nu(T_n)$, where $T_n$ is the centered open horizontal tube and
   $\ell_n=\mathrm{stableBlockLength}(\alpha,\nu,c^\alpha,\mathrm{scale},n)$.
 
 This is the block-level endpoint-return lower estimate in Theorem 3,
