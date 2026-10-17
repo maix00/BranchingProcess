@@ -150,6 +150,9 @@ the mirrored source-convention modules
 proof-specific lemma. The stable finite-partition probability chain now also
 lists its rate conclusions in `Stable/RandomWalkBounds/Partition/Probability.lean`
 and `Stable/RandomWalkBounds/PartitionLower/{BridgeProduct,EnergyLower,FiniteProduct,Positivity,WidthRate}.lean`.
+The source-convention rate entries now state the finite-partition and path-class
+limits in `Stable/RandomWalkBounds/Source/Partition/Limit.lean` and
+`Stable/RandomWalkBounds/Source/PathClass/Rate.lean`.
 These headers state the exact
 declaration identifiers in their Lean namespace, the mathematical object or
 estimate, and the assumptions that control each bound. The private path

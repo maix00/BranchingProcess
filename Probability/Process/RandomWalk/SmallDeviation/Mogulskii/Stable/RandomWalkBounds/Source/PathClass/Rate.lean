@@ -22,6 +22,23 @@ The source rate is A. A. Mogul'skii, Theorem 3, Section 4, p. 764,
 Primeneniya* 19(4) (1974), 755--765; English translation, “Small Deviations
 in a Space of Trajectories,” *Theory of Probability and Its Applications*
 19(4) (1975), 726--736, DOI 10.1137/1119081.
+
+Let $Y_n^\xi=\texttt{sourceNormalizedStepCadlagPathIcc}(s,n,\xi)$,
+$d_n=-1/\rho_n$ for the stable small-deviation rate $\rho_n$, and
+$P_n(G)=(\operatorname{iidSequenceLaw}\nu)\{\xi:Y_n^\xi\in G\}$. The
+declarations in `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete`
+are:
+
+- `sourceProbabilityRateDenominator_tendsto_atBot`: $d_n\to-\infty$.
+- `sourceNormalizedStepCorridor_admissibleStepCorridor_rate`: for a
+  continuous admissible step corridor $c$, its source-path event is
+  null-measurable, has positive probability eventually, and
+  $\log P_n(c.\texttt{toSet})/d_n\to
+  \operatorname{rateCoefficient}(\alpha,C)(c.\operatorname{energy}(\alpha)).\operatorname{toReal}$.
+- `tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_sourceDiscretestepCorridorRates`:
+  for a null-measurable source-class target $G$ with a vanishing energy-gap
+  approximation, there is a unique common approximation energy $H$ and
+  $\log P_n(G)/d_n\to\operatorname{rateCoefficient}(\alpha,C)H$.
 -/
 
 open Filter MeasureTheory
