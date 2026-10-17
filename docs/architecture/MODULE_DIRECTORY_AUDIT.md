@@ -41,7 +41,7 @@ when the move only clarifies module organization.
 | `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Spectral` | Spectral estimates for the killed symmetric walk, including diffusive Brownian corridor and endpoint-window bounds | `Kernel/` defines the finite killed transition; `Decomposition/` gives its sine basis, modes, and target-set expansion; `Target/` owns parity-compatible central targets, their principal-mode mass bounds, and the path-event interpretation. These target estimates are parameterized by the target set, interval width, and block scale, so they remain reusable interfaces. `Survival/` groups path-survival bounds; `Scaling/` and `Rate/` contain the diffusive logarithmic limits and analytic asymptotics; `Diffusive/` transfers the spectral lower bound through Donsker convergence to Brownian corridors and return kernels. The finite-cover range upper bound remains in the separate `Range/` family. `Basic.lean` is the core interface, and declarations retain the Mogulskii spectral namespace. |
 | `Probability/Process/RandomWalk/Fluctuation/SparreAndersen` | Reusable finite IID fluctuation identities and survival estimates | `Rotation/` contains the cyclic cover and probability inequality; `Composition/` contains block factorization and the finite composition identity; `Survival/` contains the coefficient recurrence and finite-variance lower bound. These are general mathematical results and remain outside `Lemmas/`. |
 | `Probability/Process/RandomWalk/Rademacher` | Results for the simple symmetric random walk | `Basic.lean`, `ConditionedPathLaw.lean`, and `LastSignChange.lean` are peer interfaces for the walk, its conditioned path law, and its last-sign-change index; `Terminal/` groups the terminal-path construction and convergence steps. |
-| `BranchingRandomWalk/Selection/NSelection/AsymptoticSpeed/InitialPopulation` | Initial-population inputs to selected-walk speed estimates | `Basic.lean` is the entry interface; `Field/`, `Speed/`, and `Trajectory/` group the source field, speed estimates, and pathwise trajectory results. |
+| `BranchingRandomWalk/Selection/NSelection/AsymptoticSpeed/InitialPopulation` | Initial-population inputs to selected-walk speed estimates | `Basic.lean` is the exact-$N$ split-event and speed-transport interface; `Field/` and `Speed/` group the source field and speed estimates. In `Trajectory/`, `Population.lean` owns the selected-population construction, `Hitting.lean` is the capacity-hitting entry theorem, and `Lemmas/CapacityHit/{Mark,Growth}.lean` contains its proof-specific mark and cardinality-growth chain. |
 | `Selection/NSelection/EndpointDeviation` | Endpoint deviations of the selected population, including estimates that admit reflection | `Endpoint/` separates minimum, positive-moment, and sequence results. `Roots/`, `Drawdown/`, and `Rate/` group root estimates, population/spine drawdown bounds, and rate budgets. `Population/`, `PositiveA/`, and `SecondStage/` retain their theorem families; the directory name does not impose a right-hand orientation. |
 | `Selection/NSelection/AsymptoticSpeed` | Speed-limit statements and the selected-population speed proof | `Limit/` groups the almost-sure product and subadditive limit results; `Selection/BlockComparison.lean` and `InitialPopulation/Speed/Basic.lean` state their respective public conclusions. `InitialPopulation/Basic.lean` is the entry module for the initial-population argument; `Field/`, `Trajectory/`, and `Speed/` group its field, hitting-time, and speed-transfer interfaces. `Environment/` and `Selection/` hold the remaining supporting constructions. |
 | `Mogulskii/RandomWalkBounds` and `Mogulskii/Stable/RandomWalkBounds` | Random-walk finite-block bounds and stable-domain random-walk rates | The normal-domain root separates Donsker endpoint, endpoint-band geometry, horizontal tubes, and source-partition arguments. Stable random-walk bounds group `Bridge/`, `Endpoint/`, `Partition/`, `PathClass/`, and `Source/`; the stable-process estimates remain in their own owner directory. `Stable/RandomWalkBounds/FromIncrementLaw/` separates `Normal/`, `Path/`, and `Stable/` adapters, with `HorizontalTube/` holding the finite-variance tube interfaces. `Stable/Scale/Basic.lean` owns the two-scale condition and rate consequences; `Stable/Scale/Rate.lean` owns block-length asymptotics. Gaussian modules remain divided into `Gaussian/Blocks/` and `Gaussian/Path/`. `FunctionalLimit/Donsker/Entrance/` owns the Brownian middle-start corridor and uniform diffusive entrance estimates. |
@@ -91,16 +91,17 @@ The offspring-count module now owns the reusable splitting event
 expected child count greater than one. The exact-`N` initial-population entry
 uses this shared event measurability result instead of carrying a duplicate
 proof. The unused nonempty-offspring
-specialization was removed from `InitialPopulation/Basic.lean`. Its generic
-bounded-growth saturation step now lives as a private lemma beside the
-capacity-hitting proof in `InitialPopulation/Trajectory/Hitting.lean`. A
-declaration-use audit also made the selected-address, selected-mark,
-measurability, independence, and split-frequency steps private there: no
-other module uses those intermediate APIs. The file's public interface is now
-the population construction and its almost-sure capacity-hitting theorem.
-That module imports the offspring-count API directly; `RunBridge.lean` now
-imports the speed-transport theorem it uses directly rather than receiving it
-through the hitting-time module.
+specialization was removed from `InitialPopulation/Basic.lean`. The reusable
+selected-population construction now lives in `Trajectory/Population.lean`.
+The capacity-hitting proof has a dedicated `Trajectory/Lemmas/CapacityHit/`
+chain: `Mark.lean` handles the selected address, fresh mark, and recurring
+split event; `Growth.lean` handles the one-step cardinality bounds. The
+generic bounded-growth saturation step remains private beside the principal
+capacity-hitting theorem in `Trajectory/Hitting.lean`. A declaration-use
+audit confirmed that the proof-chain modules are only imported within this
+trajectory argument. `Hitting.lean` imports the offspring-count API directly;
+`RunBridge.lean` imports the speed-transport theorem it uses directly rather
+than receiving it through the hitting-time module.
 
 ## Same-stem files and directories
 
@@ -178,16 +179,17 @@ The source-convention rate entries now state the finite-partition and path-class
 limits in `Stable/RandomWalkBounds/Source/Partition/Limit.lean` and
 `Stable/RandomWalkBounds/Source/PathClass/Rate.lean`.
 This pass also documents the pointwise encoding and pushforward law in
-`Probability/Process/RandomWalk/Rademacher/Basic.lean`, and the offspring-split,
+`Probability/Process/RandomWalk/Rademacher/Basic.lean`, the root-indexed
+selected-population construction in
+`InitialPopulation/Trajectory/Population.lean`, and the offspring-split,
 capacity-hitting, and speed-transport interfaces in
 `Probability/BranchingRandomWalk/Selection/NSelection/AsymptoticSpeed/InitialPopulation/Basic.lean`.
 The offspring-count API now lists its child-count law, splitting event,
 measurability, and positive-splitting-probability declarations in
 `Probability/BranchingProcess/Offspring/Count.lean`; the trajectory-level
-capacity-hitting module lists its public selected-population construction and
-almost-sure capacity conclusion in
-`InitialPopulation/Trajectory/Hitting.lean`; its selected-address and
-selected-mark proof chain remains private to that module.
+capacity-hitting entry lists its almost-sure capacity conclusion, while the
+supporting selected-mark and cardinality-growth declarations are documented
+in `InitialPopulation/Trajectory/Lemmas/CapacityHit/{Mark,Growth}.lean`.
 These headers state the exact
 declaration identifiers in their Lean namespace, the mathematical object or
 estimate, and the assumptions that control each bound. The private path
