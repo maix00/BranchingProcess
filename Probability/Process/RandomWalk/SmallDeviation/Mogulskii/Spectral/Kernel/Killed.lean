@@ -17,7 +17,27 @@ public import Probability.Kernel.Step.IID
 
 The two Boolean branches represent the increments `-1` and `+1`, each with
 mass `1/2`.  A branch whose endpoint lies outside the finite interval is
-`none`, so its mass is killed.
+`none`, so its mass is killed.  The public declarations are:
+
+* `intervalRademacherStep` sends a site to its left or right neighbor
+  according to the Boolean increment, with `none` at an exiting step;
+  `intervalRademacherKernel` is the resulting killed Markov kernel.
+* `intervalRademacherKernel_eq_ofPartialStep` identifies this kernel with
+  the fair-Boolean partial-step kernel, and the instance
+  `intervalRademacherKernel_isSubMarkovKernel` proves its total mass is at
+  most one.
+* `intervalRademacherKernel_eq_ofRealMatrix` identifies its entries with
+  the real matrix kernel: $K_N(i,j)=\frac12$ for each available nearest
+  neighbor, and $0$ otherwise.
+* `intervalRademacherKernel_pow_apply_univ` identifies the mass after $n$
+  steps with `Kernel.partialStepSurvivalWeight` for surviving histories;
+  `intervalRademacherKernel_pow_apply_univ_eq_iid` identifies it with the
+  fair IID probability of the preimage of
+  `Kernel.survivingPartialStepHistories` under the first-$n$-coordinate map.
+* `intervalKernel_pow_rowSum_eq_survivalWeight` identifies the matrix row
+  sum with that same survival weight:
+  $\operatorname{ofReal}(\sum_jK_N^n(i,j))=
+  \operatorname{partialStepSurvivalWeight}(n,i)$.
 -/
 
 open MeasureTheory Set
