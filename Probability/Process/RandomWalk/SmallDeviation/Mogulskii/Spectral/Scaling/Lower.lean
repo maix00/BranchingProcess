@@ -13,6 +13,28 @@ public import Mathlib.Topology.Order.LiminfLimsup
 /-!
 # Variable-scale spectral lower bound
 
+The public declarations in this module are:
+
+For $N\ge2$, let $K_N$ be the transition matrix on
+$\{0,\ldots,N-1\}$ with $K_N(x,y)=\frac12$ when $|x-y|=1$ and $0$
+otherwise, and define the killed row sum
+$R_{N,t}(x)=\sum_{y=0}^{N-1}K_N^t(x,y)$.
+
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.main_add_logSineWeight_le_scaledLog_remainingMass`:
+  for $N>1$, $t>0$, and a starting site $x$, put $W=N+1$ and
+  $\phi_N(x)=\sin(\frac{\pi(x+1)}{W})$. Then
+  $W^2\log\cos(\frac{\pi}{W})+
+  \frac{W^2}{t}\log\phi_N(x)\le\frac{W^2}{t}\log R_{N,t}(x)$.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.neg_pi_sq_div_two_le_liminf_scaledLog_remainingMass`:
+  if $W_n\to\infty$, $W_n^2/t_n\to0$, and $\phi_{N_n}(x_n)\ge c>0$,
+  then $-\pi^2/2\le\liminf_n\frac{W_n^2}{t_n}\log R_{N_n,t_n}(x_n)$.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.neg_pi_sq_div_two_le_liminf_scaledLog_rademacherIncrement`:
+  the same lower rate holds for the IID Rademacher probability that the walk
+  stays in the interval through time $t_n$.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.neg_pi_sq_div_two_le_liminf_scaledLog_centeredRademacherProcess`:
+  for odd intervals started at their center, $\phi_{N_n}(x_n)=1$, so the
+  same process-level lower rate requires no additional starting-weight bound.
+
 The finite-interval sine eigenfunction gives the exact `-π² / 2` lower
 rate when both the interval width and elapsed time vary.  The starting sites
 are abstract; only a uniform positive lower bound on their ground-state
