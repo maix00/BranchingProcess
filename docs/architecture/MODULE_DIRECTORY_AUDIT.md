@@ -85,6 +85,19 @@ by mathematical subject:
 | `Selection/NSelection/EndpointDeviation/Endpoint` | `Minimum/`, `PositiveMoment/`, and `Sequence/`. |
 | `Distributions/Stable/Attraction/Norming` | `Basic.lean`, `Inverse.lean`, `Compatibility.lean`, `Centering.lean`, `Source.lean`, `Tail.lean`, and `UniformTail.lean` remain at the subject root; Gaussian and index-two specializations are under `SpecialCases/`. |
 
+The offspring-count module now owns the reusable splitting event
+`offspringSplitSet := {ξ | 2 ≤ Step.childCount ξ}`, its identification with
+`nontrivialSupport`, measurability, and the positive-mass consequence of an
+expected child count greater than one. The exact-`N` initial-population entry
+uses this shared event measurability result instead of carrying a duplicate
+proof. The unused nonempty-offspring
+specialization was removed from `InitialPopulation/Basic.lean`. Its generic
+bounded-growth saturation step now lives as a private lemma beside the
+capacity-hitting proof in `InitialPopulation/Trajectory/Hitting.lean`. That
+module imports the offspring-count API directly; `RunBridge.lean` now imports
+the speed-transport theorem it uses directly rather than receiving it through
+the hitting-time module.
+
 ## Same-stem files and directories
 
 Mathlib permits a substantive `Foo.lean` interface beside `Foo/` when the
@@ -157,6 +170,11 @@ This pass also documents the pointwise encoding and pushforward law in
 `Probability/Process/RandomWalk/Rademacher/Basic.lean`, and the offspring-split,
 capacity-hitting, and speed-transport interfaces in
 `Probability/BranchingRandomWalk/Selection/NSelection/AsymptoticSpeed/InitialPopulation/Basic.lean`.
+The offspring-count API now lists its child-count law, splitting event,
+measurability, and positive-splitting-probability declarations in
+`Probability/BranchingProcess/Offspring/Count.lean`; the trajectory-level
+capacity-hitting module lists its public event, independence, and almost-sure
+capacity conclusions in `InitialPopulation/Trajectory/Hitting.lean`.
 These headers state the exact
 declaration identifiers in their Lean namespace, the mathematical object or
 estimate, and the assumptions that control each bound. The private path
