@@ -8,6 +8,7 @@ module
 
 public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Basic
 public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.Event
+public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.BlockEvent
 public import Probability.Process.Filtration.ConditionalBlocks
 public import Combinatorics.Sequence.Block
 public import Probability.Process.RandomWalk.Path.Block.Partition.Basic
@@ -28,10 +29,6 @@ proof and are kept under `FiniteVarianceUpper/Lemmas/`.
 - `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.exists_driftedTubeBlockProbability_le_exp_of_finiteVariance`:
   the complete
   block probability bound obtained from Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.3.
-- `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.driftedTubePairEvent` and
-  `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.driftedTubeBlockEvent`:
-  the finite coordinate encoding of a block of the
-  tilted-tube event.
 - `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.measurableSet_driftedTubeBlockEvent`:
   measurability of the block event.
 - `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.iidSequenceLaw_condExp_driftedTubeBlockEvent_le_of_blockBound`:
@@ -125,31 +122,6 @@ lemma exists_driftedTubeBlockProbability_le_exp_of_finiteVariance
     exact ⟨hbasic.1, hbasic.2.trans hthreshold⟩
   have hmainAt := hmain Delta hDeltaMain' length hlengthLower
   exact (measureReal_mono hsubset (measure_ne_top (iidSequenceLaw ν) _)).trans hmainAt
-
-/-- The path event for one block of a linearly rising tube, expressed in
-terms of the increment prefix before the block and the increments in the
-block. At block time `k`, the global interval is
-`[lower + drift * (start + k) / width^2, lower + drift * (start + k) / width^2 + width]`.
--/
-def driftedTubePairEvent {start length : ℕ}
-    (lower width drift : ℝ) :
-    Set ((Fin start → ℝ) × (Fin length → ℝ)) :=
-  {pair | ∀ k : Fin (length + 1),
-    lower + drift * ((start + (k : ℕ) : ℕ) : ℝ) / width ^ 2 ≤
-        (∑ i : Fin start, pair.1 i) +
-          Fin.partialSum pair.2 k ∧
-      (∑ i : Fin start, pair.1 i) +
-          Fin.partialSum pair.2 k ≤
-        lower + drift * ((start + (k : ℕ) : ℕ) : ℝ) / width ^ 2 + width}
-
-/-- The measurable event for one tilted-tube block in the full increment
-sequence. -/
-def driftedTubeBlockEvent (start length : ℕ)
-    (lower width drift : ℝ) : Set (ℕ → ℝ) :=
-  {increment |
-    (Combinatorics.Sequence.blockCoordinates 0 start increment,
-      Combinatorics.Sequence.blockCoordinates start length increment) ∈
-      driftedTubePairEvent lower width drift}
 
 private lemma measurable_driftedTubePartialBlockSum {length : ℕ}
     (k : Fin (length + 1)) :

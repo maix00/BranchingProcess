@@ -9,14 +9,14 @@ module
 public import Probability.Process.RandomWalk.Path.Corridor.Horizontal.Core
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.FromIncrementLaw.Normal.ContinuousBoundary
 /-!
-# Source-normalized constant corridor events
+# Source-normalized constant corridor interface
 
-The proof-specific declarations in this module are:
+The public declarations in this module are:
 
-- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.HorizontalTube.Lemmas.constantBoundary`: the constant path $t\mapsto c$ in $C([0,1],\mathbb R)$ used in the closed-tube proof.
-- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.HorizontalTube.Lemmas.sourceRelativeConstantCorridorEvent`: the event $\{\omega: W_{n,\mathrm{left}}(\omega)\in\mathcal C(c_-,c_+)\}$ for the terminal-left normalized walk path used in the rate comparison.
-- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.HorizontalTube.Lemmas.sourceRelativeConstantCorridor_subset_horizontalTube`: a strict source corridor strictly inside $[-a,1-a]$ implies membership in the closed horizontal tube.
-- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.HorizontalTube.Lemmas.horizontalTube_subset_sourceRelativeConstantCorridor`: the closed horizontal tube lies in every strictly wider source corridor.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.constantBoundary`: the constant path $t\mapsto c$ in $C([0,1],\mathbb R)$.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.sourceRelativeConstantCorridorEvent`: the event $\{\omega: W_{n,\mathrm{left}}(\omega)\in\mathcal C(c_-,c_+)\}$ for the terminal-left normalized walk path.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.sourceRelativeConstantCorridor_subset_horizontalTube`: a strict source corridor inside $(-a,1-a)$ implies membership in the closed horizontal tube.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.horizontalTube_subset_sourceRelativeConstantCorridor`: the closed horizontal tube lies inside every strictly wider source corridor.
 
 The event packages the strict source-path corridor used to transfer A. A.
 Mogul'skii, Theorem 3, Section 4, p. 764, to the closed-tube and endpoint-window
@@ -38,7 +38,7 @@ open scoped ENNReal NNReal Topology
 
 @[expose] public section
 
-namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.HorizontalTube.Lemmas
+namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete
 
 /-- The constant corridor boundary at height `value`. -/
 def constantBoundary (value : ℝ) : C(unitInterval, ℝ) :=
@@ -159,6 +159,6 @@ lemma horizontalTube_subset_sourceRelativeConstantCorridor
   exact ⟨lt_of_lt_of_le hlower hboundsPath.1,
     lt_of_le_of_lt hboundsPath.2 hupper⟩
 
-end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.HorizontalTube.Lemmas
+end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete
 
 end

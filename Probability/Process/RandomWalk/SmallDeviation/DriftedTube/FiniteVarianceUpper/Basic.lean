@@ -8,6 +8,7 @@ module
 
 public import Probability.Distributions.Moments.Real
 public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.Event
+import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.BlockEvent
 public import Probability.Sequence.IID.Basic
 import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Basic
 import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceUpper.Lemmas.Blocks
