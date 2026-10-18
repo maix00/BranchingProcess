@@ -8,6 +8,7 @@ module
 
 public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Field.Basic
 public import Probability.BranchingRandomWalk.Tree.Filtration
+public import Probability.Process.Filtration.GeneratedByCoordinates
 
 import MeasureTheory.MeasurableSpace.CountableEvaluation
 
@@ -70,51 +71,44 @@ open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
   MeasurableSpace.comap (fun ω => ω p.1 p.2) inferInstance
 
 
-@[instance_reducible] def RootIndexed.stepGenerationSpace
-    {Root α X : Type*} [MeasurableSpace X] (n : ℕ) :
-    MeasurableSpace (RootIndexed.StepField Root α X) :=
-  MeasurableSpace.generateFrom
-    {s | ∃ r : Root, ∃ u : TreeNode α, u.length < n ∧
-      ∃ t : Set (Step α X), MeasurableSet t ∧
-        s = {ω : RootIndexed.StepField Root α X | ω r u ∈ t}}
-
 def RootIndexed.stepFiltration
     {Root α X : Type*} [MeasurableSpace X] :
     Filtration ℕ
-      (inferInstance : MeasurableSpace (RootIndexed.StepField Root α X)) where
-  seq := RootIndexed.stepGenerationSpace
-  mono' := by
-    intro n k hnk
-    apply MeasurableSpace.generateFrom_mono
-    rintro s ⟨r, u, hu, t, ht, rfl⟩
-    exact ⟨r, u, lt_of_lt_of_le hu hnk, t, ht, rfl⟩
-  le' := by
-    intro n
-    apply MeasurableSpace.generateFrom_le
-    rintro s ⟨r, u, hu, t, ht, rfl⟩
-    exact ((measurable_pi_apply u).comp (measurable_pi_apply r)) ht
+      (inferInstance : MeasurableSpace (RootIndexed.StepField Root α X)) :=
+  Filtration.generatedByCoordinates
+    (fun p : Root × TreeNode α => p.2.length + 1)
+    (fun p (ω : RootIndexed.StepField Root α X) => ω p.1 p.2)
+    (fun p => (measurable_pi_apply p.2).comp (measurable_pi_apply p.1))
+
+@[instance_reducible] def RootIndexed.stepGenerationSpace
+    {Root α X : Type*} [MeasurableSpace X] (n : ℕ) :
+    MeasurableSpace (RootIndexed.StepField Root α X) :=
+  RootIndexed.stepFiltration (Root := Root) (α := α) (X := X) n
 
 theorem RootIndexed.stepGenerationSpace_zero
     {Root α X : Type*} [MeasurableSpace X] :
     RootIndexed.stepGenerationSpace (Root := Root) (α := α) (X := X) 0 = ⊥ := by
-  unfold RootIndexed.stepGenerationSpace
-  have hgen :
-      {s : Set (RootIndexed.StepField Root α X) |
-        ∃ r : Root, ∃ u : TreeNode α, u.length < 0 ∧
-          ∃ t : Set (Step α X), MeasurableSet t ∧
-            s = {ω : RootIndexed.StepField Root α X | ω r u ∈ t}} = ∅ := by
-    ext s
-    simp
-  rw [hgen, MeasurableSpace.generateFrom_empty]
+  change (⨆ p : Root × TreeNode α, ⨆ (_ : p.2.length + 1 ≤ 0),
+    MeasurableSpace.comap
+      (fun ω : RootIndexed.StepField Root α X => ω p.1 p.2) inferInstance) = ⊥
+  apply le_antisymm
+  · apply iSup_le
+    intro p
+    apply iSup_le
+    intro hp
+    simp at hp
+  · exact bot_le
 
 theorem RootIndexed.step_measurable
     {Root α X : Type*} {n : ℕ} [MeasurableSpace X]
     (r : Root) (u : TreeNode α) (hu : u.length < n) :
     Measurable[RootIndexed.stepFiltration (Root := Root) (α := α) (X := X) n]
       (fun ω : RootIndexed.StepField Root α X => ω r u) := by
-  intro t ht
-  exact MeasurableSpace.measurableSet_generateFrom
-    ⟨r, u, hu, t, ht, rfl⟩
+  exact Filtration.measurable_coordinate_generatedByCoordinates
+    (fun p : Root × TreeNode α => p.2.length + 1)
+    (fun p (ω : RootIndexed.StepField Root α X) => ω p.1 p.2)
+    (fun p => (measurable_pi_apply p.2).comp (measurable_pi_apply p.1))
+    (r, u) n (Nat.succ_le_iff.mpr hu)
 
 /-- The coordinates revealed at or after generation `n`. -/
 @[instance_reducible] def RootIndexed.stepFutureSpace
@@ -128,20 +122,8 @@ theorem RootIndexed.stepGenerationSpace_eq_coordinate_iSup
     RootIndexed.stepGenerationSpace (Root := Root) (α := α) (X := X) n =
       ⨆ p ∈ {p : Root × TreeNode α | p.2.length < n},
         RootIndexed.stepCoordinateSpace (X := X) p := by
-  apply le_antisymm
-  · apply MeasurableSpace.generateFrom_le
-    rintro s ⟨r, u, hu, t, ht, rfl⟩
-    have hle : RootIndexed.stepCoordinateSpace (X := X) (r, u) ≤
-        ⨆ p ∈ {p : Root × TreeNode α | p.2.length < n},
-          RootIndexed.stepCoordinateSpace (X := X) p :=
-      le_iSup_of_le (r, u) (le_iSup_of_le hu le_rfl)
-    apply hle
-    exact ⟨t, ht, rfl⟩
-  · apply iSup_le
-    intro p
-    apply iSup_le
-    intro hp
-    exact (RootIndexed.step_measurable (X := X) p.1 p.2 hp).comap_le
+  simp [RootIndexed.stepGenerationSpace, RootIndexed.stepFiltration,
+    Filtration.generatedByCoordinates, RootIndexed.stepCoordinateSpace]
 
 
 /-- Restricting a root-indexed field to one fixed root preserves the
@@ -157,10 +139,15 @@ theorem RootIndexed.field_measurable
       (fun ω => ω r) := by
   let _ : MeasurableSpace (RootIndexed.StepField Root α X) :=
     RootIndexed.stepFiltration (Root := Root) (α := α) (X := X) n
-  apply measurable_generateFrom
-  intro s hs
-  obtain ⟨u, hu, t, ht, rfl⟩ := hs
-  exact (RootIndexed.step_measurable (X := X) r u hu) ht
+  exact Filtration.measurable_to_generatedByCoordinates
+    (fun u : TreeNode α => u.length + 1)
+    (fun u (ω : Mark α (Step α X)) => ω u)
+    (fun u => measurable_pi_apply u)
+    (fun ω : RootIndexed.StepField Root α X => ω r) n
+    (fun u hu => by
+      have hdepth : u.length < n := Nat.succ_le_iff.mp hu
+      simpa [Function.comp_def] using
+        RootIndexed.step_measurable (X := X) r u hdepth)
 
 /-- Reindexing roots is measurable between generation domains.  No
 injectivity, finiteness, or countability assumption on either root type is
@@ -178,13 +165,15 @@ theorem RootIndexed.StepField.reindex_filtration_measurable
       (RootIndexed.StepField.reindex f) := by
   let _ : MeasurableSpace (RootIndexed.StepField Root α X) :=
     RootIndexed.stepFiltration n
-  let _ : MeasurableSpace (RootIndexed.StepField NewRoot α X) :=
-    RootIndexed.stepFiltration n
-  change Measurable (RootIndexed.StepField.reindex f)
-  apply measurable_generateFrom
-  intro s hs
-  obtain ⟨r, u, hu, t, ht, rfl⟩ := hs
-  exact (RootIndexed.step_measurable (X := X) (f r) u hu) ht
+  exact Filtration.measurable_to_generatedByCoordinates
+    (fun p : NewRoot × TreeNode α => p.2.length + 1)
+    (fun p (ω : RootIndexed.StepField NewRoot α X) => ω p.1 p.2)
+    (fun p => (measurable_pi_apply p.2).comp (measurable_pi_apply p.1))
+    (RootIndexed.StepField.reindex f) n
+    (fun p hp => by
+      have hdepth : p.2.length < n := Nat.succ_le_iff.mp hp
+      simpa [RootIndexed.StepField.reindex, Function.comp_def] using
+        RootIndexed.step_measurable (X := X) (f p.1) p.2 hdepth)
 
 /-- A random root/address coordinate can be read from the generation domain
 flow when its choice is domain-measurable, lies below the generation, and has
