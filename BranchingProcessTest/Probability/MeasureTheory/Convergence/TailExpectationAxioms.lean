@@ -1,6 +1,5 @@
 import Probability.MeasureTheory.Convergence.TailExpectation
 
-#print axioms ProbabilityTheory.neg_exp_neg_le_self
 
 #print axioms
   ProbabilityTheory.integral_ge_of_lower_bound_off_event_exp_neg
