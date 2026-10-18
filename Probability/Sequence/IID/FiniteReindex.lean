@@ -17,9 +17,10 @@ The public definitions and theorems in this file are:
 - `finiteCoordinateReindex`: the coordinate permutation of `Fin n`
   induced by any equivalence of that finite index type.
 - `measure_pi_event_le_card_smul_of_reindexCover`: if $n$ reindexed
-  copies of a measurable event cover another event, its measure is at most
-  $n$ times the measure of the original event, for a σ-finite measure
-  repeated across the coordinates.
+  copies of a measurable set `safe` cover `event`, then for the product
+  measure `μₙ = Measure.pi (fun _ : Fin n => ν)`,
+  `μₙ(event) ≤ n · μₙ(safe)`, for a σ-finite measure `ν` repeated across the
+  coordinates.
 
 The estimate combines Mathlib's finite-product reindexing theorem with
 `MeasureTheory.measure_le_card_smul_of_finite_cover_invariant`. Its use for

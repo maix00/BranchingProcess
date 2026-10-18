@@ -15,20 +15,23 @@ public import Mathlib.MeasureTheory.Integral.Bochner.Set
 The public declarations in this file are:
 
 - `ProbabilityTheory.measureReal_inter_ge_of_condExp_indicator_ge` and
-  `ProbabilityTheory.measureReal_inter_le_of_condExp_indicator_le`: integrate
-  lower and upper conditional-probability bounds over a measurable past event.
+  `ProbabilityTheory.measureReal_inter_le_of_condExp_indicator_le`: if `A` is
+  measurable in `𝓕` and `p ≤ 𝔼[1_E | 𝓕] ≤ q` almost everywhere on `A`, then
+  `p · P(A) ≤ P(A ∩ E) ≤ q · P(A)`.
 - `ProbabilityTheory.conditionalBlockIntersection` and
   `ProbabilityTheory.mem_conditionalBlockIntersection_iff`: define the event
-  that the first `n` successive block events all hold.
+  `Bₙ = ⋂_{j < n} Eⱼ` that the first `n` successive block events all hold.
 - `ProbabilityTheory.measureReal_conditionalBlockIntersection_ge_prod` and
   `ProbabilityTheory.measureReal_conditionalBlockIntersection_le_prod`:
-  iterate lower and upper conditional bounds to obtain a product estimate.
+  conditional bounds `pⱼ ≤ 𝔼[1_{Eⱼ} | 𝓕ⱼ] ≤ qⱼ` almost everywhere on `Bⱼ`
+  imply `∏_{j < n} pⱼ ≤ P(Bₙ) ≤ ∏_{j < n} qⱼ`.
 - `ProbabilityTheory.measureReal_conditionalBlockIntersection_le_pow`:
-  the uniform upper-bound specialization.
+  the uniform upper-bound specialization `𝔼[1_{Eⱼ} | 𝓕ⱼ] ≤ p` almost
+  everywhere on `Bⱼ` implies `P(Bₙ) ≤ pⁿ`.
 - `ProbabilityTheory.measureReal_initialInterConditionalBlockIntersection_ge_mul_prod`
   and
   `ProbabilityTheory.measureReal_initialInterConditionalBlockIntersection_ge_mul_prod_prefix`:
-  the lower product estimate with an initial event measurable before the first block.
+  if `A ∈ 𝓕₀`, then `P(A) · ∏_{j < n} pⱼ ≤ P(A ∩ Bₙ)`.
 -/
 
 open MeasureTheory
