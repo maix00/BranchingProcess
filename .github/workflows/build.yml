@@ -29,7 +29,8 @@ jobs:
           node scripts/check-visualizer-manifest.mjs
           lake build \
             Analysis.Asymptotics.RegularVariation.Basic \
-            Analysis.Asymptotics.RegularVariation.Integral \
+            Analysis.Asymptotics.RegularVariation.Integral.Basic \
+            Analysis.Asymptotics.RegularVariation.Integral.Tail \
             MeasureTheory.Measure.CadlagPath.RangeCover \
             Probability.Process.Stable.Corridor.Law \
             Probability.Process.Stable.SmallDeviation.ShiftedCorridor \
