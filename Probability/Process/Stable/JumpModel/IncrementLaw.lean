@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.Distributions.Stable.LevyMeasure.EndpointLaw
+import Probability.Distributions.Stable.LevyMeasure.Tail.EndpointLaw
 import Probability.Process.Levy.Jump.PoissonConfiguration.Increment
 
 /-!

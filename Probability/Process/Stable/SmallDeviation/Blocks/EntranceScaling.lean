@@ -6,8 +6,11 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.Stable.SmallDeviation.Blocks.ReturnScale
+public import Probability.Process.Stable.Levy
+public import Probability.Process.Path.Skorokhod.RationalTime
 public import Probability.Process.Path.Skorokhod.Corridor.Segment
+public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Gluing
+import Probability.Process.Stable.SmallDeviation.Blocks.ReturnScale
 
 /-!
 # The stable short entrance block
@@ -15,6 +18,26 @@ public import Probability.Process.Path.Skorokhod.Corridor.Segment
 At duration `a ^ α`, a corridor and endpoint window scaled by `a` have the
 same probability as the unscaled unit-time event. This is the scaling step
 in the entrance factor of the shifted-corridor comparison.
+
+The public declarations are:
+
+* `stableEntranceHorizon α a = Real.toNNReal (a ^ α)`, the time associated
+  with spatial scale `a` for a stable process of index `α`.
+* `IsStableLevyProcess.corridorReturnWithMargin_timeSpaceScale_inv`: the
+  rational-time positive-margin return-corridor probability at horizon `T`
+  equals the unit-time probability after multiplying all spatial bounds by
+  `T ^ (-1 / α)`.
+* `IsStableLevyProcess.measure_fullSegmentCorridorReturn_scale`: the same
+  scaling identity for the complete càdlàg segment event.
+* `IsStableLevyProcess.shortEntrance_corridorReturn_probability` and
+  `IsStableLevyProcess.shortEntrance_fullCorridorReturn_probability`: at
+  `T = a ^ α`, scaling every corridor and return bound by `a` leaves the
+  rational-time and complete-path probabilities unchanged.
+* `IsStableLevyProcess.corridorIocReturn_timeSpaceScale` and
+  `IsStableLevyProcess.measure_fullSegmentCorridorIocReturn_scale`: the
+  corresponding identities for a left-open, right-closed endpoint window.
+* `IsStableLevyProcess.shortEntrance_fullSegmentCorridorIocReturn_probability`:
+  the complete-path left-open, right-closed version at time `a ^ α`.
 -/
 
 @[expose] public section
@@ -27,12 +50,6 @@ open scoped NNReal
 /-- The short entrance time corresponding to spatial scale `a`. -/
 noncomputable def stableEntranceHorizon (α a : ℝ) : ℝ≥0 :=
   Real.toNNReal (a ^ α)
-
-theorem stableEntranceHorizon_lt_one
-    {α a : ℝ} (ha : 0 < a) (ha1 : a < 1) (hα : 0 < α) :
-    stableEntranceHorizon α a < 1 := by
-  rw [stableEntranceHorizon, Real.toNNReal_lt_one]
-  exact Real.rpow_lt_one ha.le ha1 hα
 
 /-- The positive-margin version of stable corridor scaling. This is the
 countable-coordinate calculation used to prove the full-path statement. -/
@@ -128,6 +145,8 @@ theorem IsStableLevyProcess.measure_fullSegmentCorridorReturn_scale
   rw [measure_congr haeShort, measure_congr haeUnit] at hs
   exact hs
 
+/-- At time `a ^ α`, scaling the spatial corridor and return bounds by `a`
+preserves the probability of the rational-coordinate return event. -/
 theorem IsStableLevyProcess.shortEntrance_corridorReturn_probability
     {Ω : Type*} [MeasurableSpace Ω]
     {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
@@ -241,80 +260,6 @@ theorem IsStableLevyProcess.corridorIocReturn_timeSpaceScale
   rw [hevent] at hprob
   simpa [scale] using hprob
 
-/-- A first uniform block obeys stable scaling with a left-open,
-right-closed endpoint window. -/
-theorem IsStableLevyProcess.firstBlock_corridorIocReturn_scale_inv
-    {Ω : Type*} [MeasurableSpace Ω]
-    {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
-    {P : Measure Ω} [IsProbabilityMeasure P]
-    (h : IsStableLevyProcess α μ X P)
-    (blocks : ℕ) (hblocks : 0 < blocks)
-    (lower upper coreLower coreUpper : ℝ) :
-    P ((fun ω q => rationalUniformBlockProcessFromTime X hblocks
-        ⟨0, hblocks⟩ q ω) ⁻¹'
-      Skorokhod.rationalCoordinateCorridorIocReturnWithMargin
-        lower upper coreLower coreUpper) =
-    P ((fun ω q => X (RationalCoordinate.toNNReal q) ω - X 0 ω) ⁻¹'
-      Skorokhod.rationalCoordinateCorridorIocReturnWithMargin
-        (lower * ((rationalUniformBlockBoundary blocks 1 hblocks : ℝ≥0) : ℝ) ^
-          (-(1 / α)))
-        (upper * ((rationalUniformBlockBoundary blocks 1 hblocks : ℝ≥0) : ℝ) ^
-          (-(1 / α)))
-        (coreLower * ((rationalUniformBlockBoundary blocks 1 hblocks : ℝ≥0) : ℝ) ^
-          (-(1 / α)))
-        (coreUpper * ((rationalUniformBlockBoundary blocks 1 hblocks : ℝ≥0) : ℝ) ^
-          (-(1 / α)))) := by
-  have ht : 0 < rationalUniformBlockBoundary blocks 1 hblocks := by
-    apply NNReal.coe_pos.mp
-    simp only [rationalUniformBlockBoundary, Nat.cast_one]
-    have hb : 0 < (blocks : ℝ) := by exact_mod_cast hblocks
-    change 0 < (1 : ℝ) / (blocks : ℝ)
-    positivity
-  let scale : ℝ :=
-    ((rationalUniformBlockBoundary blocks 1 hblocks : ℝ≥0) : ℝ) ^ (-(1 / α))
-  have hscale : 0 < scale := Real.rpow_pos_of_pos ht _
-  have hprob := h.corridorIocReturn_timeSpaceScale
-    (rationalUniformBlockBoundary blocks 1 hblocks) ht
-    (lower * scale) (upper * scale) (coreLower * scale) (coreUpper * scale)
-  have hcancel (x : ℝ) : x * scale / scale = x := mul_div_cancel_right₀ x hscale.ne'
-  have hprob' :
-      P ((fun ω q => X (RationalCoordinate.toNNReal q) ω - X 0 ω) ⁻¹'
-        Skorokhod.rationalCoordinateCorridorIocReturnWithMargin
-          (lower * scale) (upper * scale) (coreLower * scale) (coreUpper * scale)) =
-      P ((fun ω q => X (rationalUniformBlockBoundary blocks 1 hblocks *
-          RationalCoordinate.toNNReal q) ω - X 0 ω) ⁻¹'
-        Skorokhod.rationalCoordinateCorridorIocReturnWithMargin
-          lower upper coreLower coreUpper) := by
-    rw [show (lower * scale) /
-        ((rationalUniformBlockBoundary blocks 1 hblocks : ℝ) ^ (-(1 / α))) = lower
-      from by simpa [scale] using hcancel lower,
-      show (upper * scale) /
-        ((rationalUniformBlockBoundary blocks 1 hblocks : ℝ) ^ (-(1 / α))) = upper
-      from by simpa [scale] using hcancel upper,
-      show (coreLower * scale) /
-        ((rationalUniformBlockBoundary blocks 1 hblocks : ℝ) ^ (-(1 / α))) = coreLower
-      from by simpa [scale] using hcancel coreLower,
-      show (coreUpper * scale) /
-        ((rationalUniformBlockBoundary blocks 1 hblocks : ℝ) ^ (-(1 / α))) = coreUpper
-      from by simpa [scale] using hcancel coreUpper] at hprob
-    exact hprob
-  have hfirst := rationalUniformBlockProcess_zero_eq_initial X hblocks
-  have hevent :
-      (fun ω q => rationalUniformBlockProcessFromTime X hblocks
-        ⟨0, hblocks⟩ q ω) ⁻¹'
-        Skorokhod.rationalCoordinateCorridorIocReturnWithMargin
-          lower upper coreLower coreUpper =
-      (fun ω q => X (rationalUniformBlockBoundary blocks 1 hblocks *
-        RationalCoordinate.toNNReal q) ω - X 0 ω) ⁻¹'
-        Skorokhod.rationalCoordinateCorridorIocReturnWithMargin
-          lower upper coreLower coreUpper := by
-    ext ω
-    have hpath := congrFun hfirst ω
-    simp only [Set.mem_preimage] at ⊢
-    rw [hpath]
-  rw [hevent]
-  exact hprob'.symm
-
 /-- Stable scaling for the complete-path corridor with a left-open,
 right-closed endpoint window. -/
 theorem IsStableLevyProcess.measure_fullSegmentCorridorIocReturn_scale
@@ -398,24 +343,6 @@ theorem IsStableLevyProcess.shortEntrance_fullSegmentCorridorIocReturn_probabili
   have hcancel (x : ℝ) : a * x * a⁻¹ = x := by field_simp
   rw [hcancel lower, hcancel upper, hcancel coreLower, hcancel coreUpper] at hs
   simpa [horizon] using hs
-
-/-- A positive unit-time corridor-and-endpoint probability gives the same
-positive lower bound at every spatial scale. -/
-theorem IsStableLevyProcess.shortEntrance_corridorReturn_pos
-    {Ω : Type*} [MeasurableSpace Ω]
-    {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
-    {P : Measure Ω} [IsProbabilityMeasure P]
-    (h : IsStableLevyProcess α μ X P)
-    (lower upper coreLower coreUpper : ℝ)
-    (hpositive : 0 < P ((fun ω q => X (RationalCoordinate.toNNReal q) ω - X 0 ω) ⁻¹'
-      rationalCoordinateCorridorReturn lower upper coreLower coreUpper))
-    (a : ℝ) (ha : 0 < a) :
-    0 < P ((fun ω q => X (stableEntranceHorizon α a *
-        RationalCoordinate.toNNReal q) ω - X 0 ω) ⁻¹'
-      rationalCoordinateCorridorReturn
-        (a * lower) (a * upper) (a * coreLower) (a * coreUpper)) := by
-  rw [h.shortEntrance_corridorReturn_probability a ha]
-  exact hpositive
 
 end ProbabilityTheory
 
