@@ -6,11 +6,23 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.BlockScale
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Scale.BlockScale
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Diffusive.Return
 
 /-!
 # Uniform return estimates at a Mogulskii block scale
+
+The public declaration in this module is
+`ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.eventually_uniform_centeredReturnKernel_diffusiveBlockLength`.
+For a centered unit-variance increment law, let $L_n=\lfloor c s_n^2\rfloor$
+with $c>0$ and a Mogulskii scale $s_n$. If
+$0<w_{\rm in}<w_{\rm path}$ and
+$w_{\rm init}+w_{\rm path}\sqrt c<\min(w_{\rm out},w_{\rm ret})$, then every
+fixed $b<\exp(-\pi^2/(2\rho^2w_{\rm in}^2))$, with $0<\rho<1$, is an
+eventual lower bound for the killed return-kernel mass from every starting
+point in $[-w_{\rm init}s_n/2,w_{\rm init}s_n/2]$ into
+$[-w_{\rm ret}s_n/2,w_{\rm ret}s_n/2]$, with killing outside
+$[-w_{\rm out}s_n/2,w_{\rm out}s_n/2]$.
 
 The diffusive return estimate is sampled at the integer block length
 `⌊c * scale n ^ 2⌋`.  Its square-root normalization converges to `sqrt c`,

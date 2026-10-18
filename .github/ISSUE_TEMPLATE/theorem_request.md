@@ -14,7 +14,9 @@ processes, kernels, Donsker limits, stable processes, or Mogulskii estimates.
 ## Proposed result
 
 State the definition, theorem, or refactor as precisely as possible. Include a
-reference to the paper or a Mathlib theorem when available.
+full bibliographic reference with the exact theorem, lemma, or proposition
+number and a DOI, arXiv identifier, or stable URL, or to a Mathlib declaration
+when available.
 
 ## Suggested location
 
