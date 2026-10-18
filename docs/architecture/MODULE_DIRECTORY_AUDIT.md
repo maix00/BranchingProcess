@@ -749,3 +749,21 @@ process statement without adding a stable-law assumption. The
 [`Mathlib independence documentation`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Probability/Independence/Basic.html)
 and [`independent-increments documentation`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Probability/Independence/Process/HasIndepIncrements/Basic.html)
 confirm the semantics and scope of those interfaces.
+
+## Abstraction review: stable uniform-block upper bound (2026-10-19)
+
+`Stable/SmallDeviation/Blocks/Upper/Basic.lean` had an unused public theorem
+`IsStableLevyProcess.measure_rationalPrefixTube_eq_prod`; a repository-wide
+source search found no callers. Its proof recursively factored each prefix
+tube event from the next block using
+`HasIndepIncrements.indepFun_rationalPrefix_nextBlock` and
+`IndepFun.measure_inter_preimage_eq_mul`. The pinned Mathlib API provides the
+more general finite-family product formula
+[`iIndepFun.measure_inter_preimage_eq_mul`](https://github.com/leanprover-community/mathlib4/blob/380f2aafb622cb2c1c93dac545b6389083c68c51/Mathlib/Probability/Independence/Basic.lean);
+the repository already derives mutual independence of the rational block
+paths and exposes the exact tube-event product in
+`Probability/Process/Path/Skorokhod/Corridor/UniformBlocks/Probability.lean`.
+The unused stable-specific recurrence was therefore removed rather than
+promoted as another wrapper. The complete stable-process power bound and the
+rational form of Mogulskii's equation (23) remain in `Upper/Basic.lean`, where
+their process law and scaling assumptions belong.
