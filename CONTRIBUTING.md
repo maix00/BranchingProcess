@@ -65,18 +65,20 @@ formalized theorem should compile from a clean checkout with the pinned
 `lean-toolchain` and Lake manifest.
 
 Cross-module use alone does not justify moving a declaration to a more general
-public layer. Search Mathlib and the repository for an interface with weaker
-assumptions and broader semantics, and use that interface when it matches the
-proof. Add a public abstraction only when it states a meaningful reusable
-mathematical operation or theorem beyond a thin restatement of an existing
-API. A module having several clients is a reason to audit its abstraction, not
-evidence by itself that the declaration belongs at a higher level. For an
-abstraction change, record the best candidate interface found, compare its
-assumptions and semantics with the actual use sites, and explain why the chosen
-statement is the most general useful one. If the decision depends on an API
-outside the pinned source, cite the official documentation or source examined
-and identify the pinned revision checked. Keep model-specific names and
-corollaries with their owning subject.
+public layer. It triggers an abstraction review. For every proposed promotion
+or outward move, search the pinned Mathlib source and repository, inspect the
+official Mathlib documentation and relevant dependencies online, and consult
+the mathematical literature when it can identify a more general statement.
+Compare the weakest natural assumptions and the exact semantics, not just
+similar names. Add a public abstraction only when it states a meaningful
+reusable mathematical operation or theorem beyond a thin restatement of an
+existing API. A module having several clients is a reason to audit its
+abstraction, not evidence by itself that the declaration belongs at a higher
+level. Record the sources and exact candidate statements examined, compare
+their assumptions and conclusions with the actual use sites, and explain why
+the chosen statement is the most general useful one and belongs at that
+semantic layer. Identify the pinned revision for every dependency API checked.
+Keep model-specific names and corollaries with their owning subject.
 
 ## Entry points and supporting lemmas
 
