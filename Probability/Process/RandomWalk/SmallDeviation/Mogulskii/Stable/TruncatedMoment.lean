@@ -6,8 +6,8 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Distributions.Stable.Attraction.Norming
-public import Probability.Distributions.Moments.Truncated
+public import Probability.Distributions.Stable.Attraction.Norming.Basic
+public import Probability.Distributions.Moments.Truncated.Basic
 
 /-!
 # Stable-domain specialization of the truncated-moment tail theorem

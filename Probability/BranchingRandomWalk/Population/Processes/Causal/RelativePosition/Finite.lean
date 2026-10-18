@@ -5,7 +5,7 @@ Authors: WANG Yiyang
 -/
 
 import Probability.BranchingRandomWalk.Population.Processes.Causal.RelativePosition.Basic
-import Combinatorics.BranchingWalk.Step.ExponentialWeight
+import Combinatorics.BranchingWalk.Step.Measure.ExponentialWeight
 
 /-!
 # Finiteness adapters for causal relative-position populations

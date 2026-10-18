@@ -7,8 +7,8 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Distributions.Stable.Attraction.Norming.Centering
-public import Probability.Process.RandomWalk.FunctionalLimit.Stable.PathLimit
-public import Probability.Process.RandomWalk.FunctionalLimit.Stable.Tightness
+public import Probability.Process.RandomWalk.FunctionalLimit.Stable.PathLaw.Convergence
+public import Probability.Process.RandomWalk.FunctionalLimit.Stable.Tightness.Result
 
 /-!
 # Stable random-walk functional limits under source centering conventions
