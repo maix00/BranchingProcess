@@ -5,7 +5,7 @@ Authors: WANG Yiyang
 -/
 
 import Probability.BranchingRandomWalk.Population.Processes.Causal.RelativePosition.Finite
-import Combinatorics.BranchingWalk.Step.ExponentialWeight
+import Combinatorics.BranchingWalk.Step.Measure.ExponentialWeight
 
 /-!
 # Real-valued restarted relative-position populations

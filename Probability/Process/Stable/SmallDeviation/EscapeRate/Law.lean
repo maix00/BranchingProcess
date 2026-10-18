@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.Process.Stable.SmallDeviation.EscapeRate
+import Probability.Process.Stable.SmallDeviation.EscapeRate.Basic
 import Probability.Process.Stable.Corridor.Law
 
 /-!

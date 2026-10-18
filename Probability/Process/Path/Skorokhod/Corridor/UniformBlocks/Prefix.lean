@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Order.Interval.RationalCoordinate.UnitInterval
-public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks
+public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Basic
 import Topology.Order.UnitInterval.Rational
 
 /-!
