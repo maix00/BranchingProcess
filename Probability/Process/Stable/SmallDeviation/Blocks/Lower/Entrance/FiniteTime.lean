@@ -11,6 +11,7 @@ public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.Entrance.Sh
 public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.Entrance.FullCorridor
 public import Probability.Process.Stable.SmallDeviation.Blocks.Factorization
 public import Probability.Process.Stable.SmallDeviation.Blocks.EntranceScaling
+import Probability.Process.Stable.SmallDeviation.Blocks.ReturnScale
 public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Gluing
 public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Cover
 public import Probability.Process.Path.Skorokhod.Corridor.Segment
