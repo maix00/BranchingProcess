@@ -15,11 +15,19 @@ import Probability.Distributions.Stable.LevyMeasure.SignOfJumps
 import Probability.Process.Levy.Jump.Intensity.Entrance.Canonical
 
 /-!
-# Transfer of a Poisson entrance event to a stable process
+# Stable entrance from the finite-variation jump model
 
-For stable index below one, a finite-variation Poisson jump model provides a
-positive entrance event. Its rational-coordinate law identifies the event
-for the given stable process, and càdlàg paths recover the full corridor.
+Public theorem:
+
+- `ProbabilityTheory.IsStableLevyProcess.measure_fullEntrance_pos_indexLTOne`:
+  if `0 < α < 1`, `0 < F_μ(0) < 1`, `-1 < b,c < 1`, and `ε > 0`, then the
+  probability of the unit-time corridor event with terminal window
+  `(c-b-ε,c-b+ε)` is positive.
+
+The proof uses a finite-variation Poisson construction and rational-coordinate
+law identification. The public statement depends only on the stable process
+and the CDF condition; the Lévy--Khintchine representation is selected inside
+the proof.
 -/
 
 @[expose] public section
@@ -45,11 +53,12 @@ private lemma rationalUnitCoe_top :
   apply Subtype.ext
   norm_num [RationalCoordinate.toUnitInterval]
 
-/-- For 0 < α < 1, the CDF sign condition gives positive probability to a
+/-- Given a finite-variation Poisson jump model, for 0 < α < 1 the CDF sign
+condition gives positive probability to a
 complete fixed-corridor event with a prescribed endpoint window. A nonzero
 endpoint uses the finite-variation Poisson jump model; the zero endpoint is
 covered by the centered-corridor theorem. -/
-theorem IsStableLevyProcess.measure_fullEntrance_pos_of_cdfAtZero_of_poissonModel
+private lemma IsStableLevyProcess.measure_fullEntrance_pos_of_cdfAtZero_of_poissonModel
     {Ω : Type*} [MeasurableSpace Ω]
     {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
     {P : Measure Ω} [IsProbabilityMeasure P]
@@ -278,27 +287,25 @@ theorem IsStableLevyProcess.measure_fullEntrance_pos_of_cdfAtZero_of_poissonMode
     rw [htargetMeasure] at htargetRationalPos
     exact htargetRationalPos
 
-/-- A positive open endpoint interval implies the corresponding left-open,
-right-closed endpoint condition. -/
-theorem IsStableLevyProcess.measure_sourceEntrance_pos_of_cdfAtZero_of_poissonModel
+/-- For `0 < α < 1`, the CDF sign condition gives positive probability to a
+complete unit-time corridor event with a prescribed terminal window. The
+Lévy--Khintchine triple used by the finite-variation Poisson construction is
+chosen internally. -/
+theorem IsStableLevyProcess.measure_fullEntrance_pos_indexLTOne
     {Ω : Type*} [MeasurableSpace Ω]
     {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
     {P : Measure Ω} [IsProbabilityMeasure P]
     (h : IsStableLevyProcess α μ X P) (hα : α < 1)
-    (T : LevyKhintchineTriple) [SigmaFinite T.levyMeasure]
-    (hT : ∀ ξ : ℝ, charFun μ ξ = Complex.exp (T.exponent ξ))
     (hcdf : 0 < cdf μ 0 ∧ cdf μ 0 < 1)
     (b c ε : ℝ) (hb : -1 < b ∧ b < 1)
     (hc : -1 < c ∧ c < 1) (hε : 0 < ε) :
-    0 < P (fullSegmentCorridorEvent X 0 1 (c - 1) (c + 1) ∩
-      {ω | c - b - ε < segmentIncrement X 0 1 ω ⊤ ∧
-        segmentIncrement X 0 1 ω ⊤ ≤ c - b + ε}) := by
-  have hp := h.measure_fullEntrance_pos_of_cdfAtZero_of_poissonModel
+    0 < P (fullSegmentCorridorReturnEvent X 0 1
+      (c - 1) (c + 1) (c - b - ε) (c - b + ε)) := by
+  obtain ⟨T, hT, _⟩ :=
+    h.increments.strictlyStable.existsUnique_levyKhintchineTriple
+  let : SigmaFinite T.levyMeasure := T.isLevyMeasure.sigmaFinite
+  exact h.measure_fullEntrance_pos_of_cdfAtZero_of_poissonModel
     hα T hT hcdf b c ε hb hc hε
-  apply hp.trans_le
-  apply measure_mono
-  rintro ω ⟨hcorridor, hend⟩
-  exact ⟨hcorridor, hend.1, hend.2.le⟩
 
 end ProbabilityTheory
 
