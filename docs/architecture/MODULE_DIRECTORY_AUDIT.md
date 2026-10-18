@@ -487,3 +487,40 @@ real-valued positive-composition identity remains a specialization in
 steps stay under `Composition/Lemmas/`, because their statements encode the
 particular cyclic events and the assembly of this expansion. Their use by the
 public theorem is not, by itself, a reason to externalize them.
+
+## Abstraction research: finite consecutive-block product laws
+
+The public declarations in
+`Probability/Process/RandomWalk/Path/Block/Law/FiniteProduct.lean` package the
+finite product law of an i.i.d. increment measure across consecutive blocks
+of variable lengths. The exact statement allows each block to have its own
+measurable event and identifies the joint event measure with the product of
+the block event measures. Its hypotheses are an i.i.d. probability law and
+measurability of those block events; no path regularity or moment assumption
+is used.
+
+The pinned Mathlib revision is
+`380f2aafb622cb2c1c93dac545b6389083c68c51`. Its
+[`Measure.pi_pi`](https://github.com/leanprover-community/mathlib4/blob/380f2aafb622cb2c1c93dac545b6389083c68c51/Mathlib/MeasureTheory/Constructions/Pi.lean)
+computes the measure of a measurable product rectangle for a finite product
+of sigma-finite measures. The same file provides
+`measurePreserving_piEquivPiSubtypeProd` for splitting coordinates into two
+subfamilies and `measurePreserving_pi` for coordinatewise measure-preserving
+maps. These are more general measure-theoretic primitives than the local
+probability statement. The pinned source has no single theorem that packages
+the ordered, variable-length consecutive-block event used here; the local
+statement supplies that block-indexing adapter and obtains its law from
+`iidSequenceLaw`.
+
+A still broader theorem could allow a different sigma-finite measure at
+each coordinate and express the block decomposition through a measurable
+equivalence between `Fin n` and the dependent sum of the block index types.
+That formulation is a finite-product measure decomposition, rather than a
+random-walk probability result. The Mathlib coordinate-splitting and product
+rectangle APIs already provide its general measure-theoretic ingredients;
+adding another public wrapper solely to restate those APIs would duplicate
+their abstraction. The current result therefore remains at the random-walk
+block-law layer: it is a complete i.i.d. probability theorem with arbitrary
+measurable block events, while its finite-coordinate geometry is supplied by
+Mathlib. Its single current downstream use prompted this review but did not
+determine its placement.
