@@ -18,7 +18,6 @@ and the deterministic cyclic-rotation estimate.
 #print axioms MeasureTheory.measure_le_card_smul_of_finite_cover_invariant
 #print axioms ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.eventually_measure_normalizedStep_linearBall_pos
 #print axioms ProbabilityTheory.iidSequenceLaw_map_finPrefix
-#print axioms ProbabilityTheory.measure_pi_preimage_eq_of_reindex
 #print axioms ProbabilityTheory.measure_pi_event_le_card_smul_of_reindexCover
 #print axioms ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.cyclicPartialSum_removeLinearDrift
 #print axioms ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.offsetCorridorPath_removeLinearDrift_iff_moving
