@@ -788,8 +788,10 @@ namespace were narrower than its assumptions and conclusion. It is now exposed
 from `Probability/MeasureTheory/Moments/PaleyZygmund.lean` as
 `ProbabilityTheory.measure_ge_threshold_of_moments`: for `X ≥ 0` almost
 everywhere, `X ∈ L¹ ∩ L²`, `𝔼[X] = m`, `𝔼[X²] = s > 0`, and `0 ≤ t < m`,
-`(m - t)² / s ≤ ℙ(t ≤ X)`. The module also contains the general corollary
-`measure_ge_threshold_of_secondMoment_le`. The Galton--Watson moment
+`(m - t)² / s ≤ ℙ(t ≤ X)`. This is the random-variable form of Paley and
+Zygmund, [*On some series of functions, (3)*, Lemma 19, p. 192
+(1932)](https://doi.org/10.1017/S0305004100010860). The module also contains
+the general corollary `measure_ge_threshold_of_secondMoment_le`. The Galton--Watson moment
 recurrences and finite-generation specializations remain in `Growth.lean`.
 
 The API review compared this statement with Mathlib's general
