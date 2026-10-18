@@ -8,7 +8,11 @@ module
 
 public import Probability.Process.RandomWalk.Path.Window.Endpoint
 public import Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.EndpointWindow
-public import Probability.Sequence.IID.ConditionalBlocks
+public import Probability.Sequence.Filtration
+public import Probability.Sequence.IID.Basic
+public import Mathlib.MeasureTheory.Function.ConditionalExpectation.Basic
+
+import Probability.Sequence.IID.Blocks.Conditional
 
 /-!
 # Finite-block form of a horizontal tube with endpoint window

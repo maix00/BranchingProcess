@@ -9,7 +9,7 @@ module
 public import Mathlib.Topology.UnitInterval
 public import Probability.Process.RandomWalk.Path.Interpolation.Path.MaximalJump
 public import Probability.Process.RandomWalk.Path.Skorokhod.Core
-public import Probability.ConvergenceInDistribution.AsymptoticEquivalence
+public import Probability.ConvergenceInDistribution.Approximation.AsymptoticEquivalence
 
 /-!
 # Distributional transfer between random-walk path realizations

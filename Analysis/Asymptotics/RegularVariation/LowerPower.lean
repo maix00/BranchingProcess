@@ -23,7 +23,9 @@ Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite
 Offspring* (master's thesis, Fudan University, 2026), Appendix A.2,
 Lemma A.7. The analytic input is the monotone
 Potter bound in Bingham, Goldie and Teugels, *Regular Variation*,
-Theorem 1.5.6 (Cambridge University Press, 1989, MR1015093).
+Theorem 1.5.6 in N. H. Bingham, C. M. Goldie, and J. L. Teugels,
+*Regular Variation*, Encyclopedia of Mathematics and its Applications 27,
+Cambridge University Press (1987), DOI 10.1017/CBO9780511721434.
 -/
 
 @[expose] public section
@@ -37,7 +39,11 @@ namespace Asymptotics.IsRegularlyVaryingAtTop
 $-\rho$ dominates every lower power $x^{-\rho-\varepsilon}$. This is the
 Potter step used for the survival probability in Wang Yiyang,
 *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*
-(master's thesis, Fudan University, 2026), Appendix A.2, Lemma A.7. -/
+(master's thesis, Fudan University, 2026), Appendix A.2, Lemma A.7. The
+analytic input is Theorem 1.5.6 in N. H. Bingham, C. M. Goldie, and J. L.
+Teugels, *Regular Variation*, Encyclopedia of Mathematics and its
+Applications 27, Cambridge University Press (1987), DOI
+10.1017/CBO9780511721434. -/
 theorem exists_eventually_lower_power_of_inverse_monotone
     {f : ℝ → ℝ} {ρ : ℝ}
     (hreg : IsRegularlyVaryingAtTop f (-ρ))

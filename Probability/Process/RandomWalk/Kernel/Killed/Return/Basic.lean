@@ -13,10 +13,31 @@ public import Probability.Kernel.Survival.Return
 /-!
 # Killed block kernels returning to an interior set
 
-One transition of `returnKernel` runs a killed kernel for a prescribed number
-of steps and retains only endpoints in a measurable return set.  Iterating
-this kernel is the natural blocking device for corridor lower bounds: every
-new block starts in the strict interior state space.
+Let $\kappa_A$ be the additive kernel killed outside a measurable set $A$,
+and let $R$ be any measurable return set. `returnKernel` runs $\ell$ steps
+of $\kappa_A$ and retains endpoints in $R$. The public declarations are:
+
+- `returnKernel`: the resulting transition kernel on the state space $R$.
+- `returnKernel_apply_univ`:
+  $\rho_\ell(x,R)=(\kappa_A^\ell)(x,R)$ for $x\in R$.
+- `returnKernel_apply_univ_eq_iidSequenceLaw`: a one-block row mass equals
+  the IID probability of surviving in $A$ and ending in $R$.
+- `runPartialSteps_killedStep_sequencePrefix_eq_some` and
+  `runPartialSteps_killedStep_sequencePrefix_eq_none`: the direct killed-step
+  execution returns the usual partial-sum endpoint on survival and `none`
+  after an exit.
+- `endsInPrefix_killedStep_iff`: a killed partial-step path ends in a target
+  iff it stays in $A$ and its partial-sum endpoint belongs to that target.
+- `killedIncrementKernel_pow_apply_eq_staysIn_endsIn`: an $n$-step killed
+  transition to a measurable target equals the IID probability of survival
+  and endpoint membership.
+- `returnKernel_apply_univ_eq_staysIn_endsIn`: the same identity for a return
+  block starting in $R$ and ending in $R$.
+- `pow_le_remainingMass_returnKernel`: if every one-block row mass is at
+  least $p$, then $p^m$ bounds below the remaining mass after $m$ blocks.
+- `remainingMass_returnKernel_le_killedIncrementKernel`: requiring each
+  block endpoint to return to $R$ gives a lower event, so the return-kernel
+  mass is at most the ambient survival mass over the same total duration.
 -/
 
 open MeasureTheory Set

@@ -13,8 +13,8 @@ public import Probability.Process.Filtration.ConditionalBlocks
 public import Combinatorics.Sequence.Block
 public import Probability.Process.RandomWalk.Path.Block.Partition.Basic
 public import Probability.Sequence.Filtration
-public import Probability.Sequence.IID.ConditionalBlocks
-public import Probability.Sequence.IID.StoppingTime
+import Probability.Sequence.IID.Blocks.Conditional
+import Probability.Sequence.IID.Blocks.StoppingTime
 import Analysis.Asymptotics.Scale.IntermediatePowerBlock
 
 /-!

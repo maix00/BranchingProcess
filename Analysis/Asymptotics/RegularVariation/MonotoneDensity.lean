@@ -12,6 +12,17 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Deriv
 /-!
 # Monotone density for regularly varying primitives
 
+## Public declarations
+
+* `Asymptotics.IsRegularlyVaryingAtTop.of_monotone_intervalIntegral`: if
+  `F x = ∫₀ˣ g(t) dt` is regularly varying with index `ρ > 0` and `g` is
+  locally integrable, eventually positive, and monotone in either direction,
+  then `g` is regularly varying with index `ρ - 1`. This is the monotone
+  density theorem, Theorem 1.7.2 in N. H. Bingham, C. M. Goldie, and J. L.
+  Teugels, *Regular Variation*, Encyclopedia of Mathematics and its
+  Applications 27, Cambridge University Press (1987), DOI
+  `10.1017/CBO9780511721434`.
+
 If a positive antitone function has a regularly varying primitive with positive
 index, then the density is regularly varying with index one less. This is the
 monotone-density step used when recovering a tail from an integrated tail.
@@ -36,7 +47,10 @@ private lemma rpow_slope_right_one (ρ : ℝ) :
 /-- A monotone density is regularly varying when its interval primitive is.
 The local integrability assumption makes the primitive a genuine interval
 integral; the proof squeezes its density between two difference quotients and
-then lets their fixed multiplier decrease to one. -/
+then lets their fixed multiplier decrease to one. This is Theorem 1.7.2
+(Monotone Density Theorem) in N. H. Bingham, C. M. Goldie, and J. L. Teugels,
+*Regular Variation*, Encyclopedia of Mathematics and its Applications 27,
+Cambridge University Press (1987), DOI 10.1017/CBO9780511721434. -/
 theorem IsRegularlyVaryingAtTop.of_monotone_intervalIntegral
     {g : ℝ → ℝ} {ρ : ℝ}
     (hρ : 0 < ρ)

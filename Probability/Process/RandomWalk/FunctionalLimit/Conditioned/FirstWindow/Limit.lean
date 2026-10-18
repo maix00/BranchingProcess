@@ -6,11 +6,11 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.ConvergenceInDistribution.FiniteApproximation
+public import Probability.ConvergenceInDistribution.Approximation.Finite
 public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.FirstWindow.FinitePathLimit
 public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.FirstWindow.FiniteTime
 public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.FirstWindow.Selection
-public import Probability.Process.Brownian.AboveStart.FirstWindow.CenteredLimit
+public import Probability.Process.Brownian.AboveStart.FirstWindow.Shift.CenteredLimit
 public import Probability.Process.Path.Scaling.FiniteHorizon
 public import Topology.Cadlag.Skorokhod.Maps.Continuous
 

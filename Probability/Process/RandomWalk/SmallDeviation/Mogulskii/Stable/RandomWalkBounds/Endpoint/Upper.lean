@@ -8,7 +8,7 @@ module
 
 public import Probability.Distributions.DomainOfAttraction.Block
 public import Probability.Distributions.Stable.Attraction.Norming.Inverse
-public import Probability.Process.RandomWalk.Kernel.Killed.Blocking
+public import Probability.Process.RandomWalk.Kernel.Killed.Survival.Blocking
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Scale.Core
 public import Probability.ConvergenceInDistribution.Portmanteau
 public import Mathlib.Topology.Order.LiminfLimsup

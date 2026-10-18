@@ -9,7 +9,8 @@ module
 public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.FirstWindow.Definition
 public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Survival.Conditioning
 public import Probability.Process.RandomWalk.Path.Block.Law.Basic
-public import Probability.Sequence.IID.StoppingTime
+public import Probability.Sequence.IID.Basic
+import Probability.Sequence.IID.Blocks.StoppingTime
 
 /-!
 # First-window block factorization lemmas

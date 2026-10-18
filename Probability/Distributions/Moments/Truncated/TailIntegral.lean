@@ -5,7 +5,7 @@ Authors: Codex
 -/
 module
 
-public import Analysis.Asymptotics.RegularVariation.TailIntegral
+public import Analysis.Asymptotics.RegularVariation.Integral.Tail
 public import Mathlib.MeasureTheory.Integral.Layercake
 public import Probability.Distributions.Moments.Truncated.Basic
 

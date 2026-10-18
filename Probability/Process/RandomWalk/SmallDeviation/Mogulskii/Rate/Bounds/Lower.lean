@@ -8,7 +8,7 @@ module
 
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Scale.BlockScale
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Return.Uniform
-public import Probability.Process.RandomWalk.Kernel.Killed.Blocking
+public import Probability.Process.RandomWalk.Kernel.Killed.Survival.Blocking
 public import Mathlib.Topology.Order.LiminfLimsup
 
 /-!

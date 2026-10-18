@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Drawdown.Spine.Capacity
 import Probability.BranchingRandomWalk.Selection.NSelection.Admissible.Real
-import Probability.BranchingRandomWalk.Population.Processes.Causal.PathWindow
+import Probability.BranchingRandomWalk.Population.Processes.Causal.Path.Window
 
 /-!
 # Embedding first-stage corridor successes into the killed population

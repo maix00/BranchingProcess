@@ -14,6 +14,27 @@ public import Mathlib.Order.Filter.AtTopBot.Field
 /-!
 # Regular variation at infinity
 
+## Public declarations
+
+* `Asymptotics.IsRegularlyVaryingAtTop f ρ` means `f` is eventually positive and
+  `f (c * x) / f x → c ^ ρ` for every `c > 0`;
+  `Asymptotics.IsSlowlyVaryingAtTop f` is the case `ρ = 0`, and
+  `Asymptotics.IsEventuallyMonotoneAtTop f` records eventual monotonicity.
+* `Asymptotics.IsRegularlyVaryingAtTop.eventually_pos`, `Asymptotics.IsRegularlyVaryingAtTop.ratio_tendsto`, and `Asymptotics.IsRegularlyVaryingAtTop.congr` give positivity, the ratio
+  limit, and invariance under eventual equality.
+* `Asymptotics.IsRegularlyVaryingAtTop.rpow`, `Asymptotics.IsRegularlyVaryingAtTop.comp_rpow`, `Asymptotics.IsRegularlyVaryingAtTop.mul`, and `Asymptotics.IsRegularlyVaryingAtTop.inv` give the power, composition, product,
+  and reciprocal rules for regular variation; `Asymptotics.IsSlowlyVaryingAtTop.of_tendsto_pos`, `Asymptotics.IsSlowlyVaryingAtTop.mul`, and
+  `Asymptotics.IsSlowlyVaryingAtTop.inv` give the finite-positive-limit, product, and reciprocal rules for
+  slow variation.
+* `Asymptotics.IsRegularlyVaryingAtTop.exists_potter_upper_bound`: if `f` is eventually nondecreasing and has
+  index `ρ ≥ 0`, then for each `ε > 0` there is `R > 0` such that
+  `f y / f x ≤ 2 ^ (ρ + ε) * (y / x) ^ (ρ + ε)` whenever `R ≤ x ≤ y`.
+  This is the monotone form of Potter's bound, Theorem 1.5.6 of Bingham,
+  Goldie, and Teugels, *Regular Variation* (1987), DOI
+  `10.1017/CBO9780511721434`.
+* `Asymptotics.isRegularlyVaryingAtTop_rpow_div_of_slowlyVarying`: if `L` is slowly
+  varying, then `x ^ α / L x` has regular-variation index `α`.
+
 This file provides the ratio-limit interface for regularly varying real
 functions, together with product, reciprocal, and monotone Potter upper-bound
 results.  It is independent of probability.  The Potter theorem states its
@@ -178,7 +199,10 @@ end IsSlowlyVaryingAtTop
 function of nonnegative index. For every positive `ε`, the function grows at
 most like the power with index `ρ + ε`, uniformly for `R ≤ x ≤ y`. The
 monotonicity hypothesis is explicit; this theorem does not claim that an
-arbitrary regularly varying function is monotone. -/
+arbitrary regularly varying function is monotone. This is the monotone form of
+Theorem 1.5.6 in N. H. Bingham, C. M. Goldie, and J. L. Teugels,
+*Regular Variation*, Encyclopedia of Mathematics and its Applications 27,
+Cambridge University Press (1987), DOI 10.1017/CBO9780511721434. -/
 theorem IsRegularlyVaryingAtTop.exists_potter_upper_bound
     {f : ℝ → ℝ} {ρ : ℝ}
     (hreg : IsRegularlyVaryingAtTop f ρ)

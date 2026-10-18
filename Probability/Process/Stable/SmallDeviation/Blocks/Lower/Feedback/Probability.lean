@@ -9,7 +9,7 @@ module
 public import Order.Interval.RationalCoordinate.UnitInterval
 public import Probability.Process.Stable.SmallDeviation.Blocks.Factorization
 public import Probability.Independence.Feedback
-public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Feedback
+public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Feedback.Basic
 public import Probability.Process.Path.Skorokhod.Corridor.Segment
 
 /-!

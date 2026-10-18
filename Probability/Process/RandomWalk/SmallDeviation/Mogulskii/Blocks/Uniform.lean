@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.Kernel.Killed.Uniform
+public import Probability.Process.RandomWalk.Kernel.Killed.Survival.Uniform
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Partition.Basic
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Partition.Quantitative
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Blocks.ProductParameters

@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.ConvergenceInDistribution.Mapping
-public import Probability.Process.Brownian.AboveStart.FirstWindow.CenteredFiniteHorizon
+public import Probability.Process.Brownian.AboveStart.FirstWindow.Shift.CenteredFiniteHorizon
 public import Probability.Process.RandomWalk.FunctionalLimit.Donsker.Path.FiniteHorizon
 
 /-!

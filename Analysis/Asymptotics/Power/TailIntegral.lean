@@ -12,10 +12,23 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 /-!
 # Integrals of power-tailed functions
 
+## Public declarations
+
+* `Asymptotics.tendsto_rpow_mul_intervalIntegral_of_tendsto_rpow_mul`: if
+  `t ^ β * g(t) → C > 0`, `g` is antitone, nonnegative, and bounded by one,
+  and `β < 1`, then
+  `U ^ (β - 1) * ∫₀ᵁ g(t) dt → C / (1 - β)`. This is the power-tail case of
+  Theorem 1.5.11(i) in N. H. Bingham, C. M. Goldie, and J. L. Teugels,
+  *Regular Variation*, Encyclopedia of Mathematics and its Applications 27,
+  Cambridge University Press (1987), DOI `10.1017/CBO9780511721434`.
+
 This file proves the integral form of Karamata's theorem for a nonnegative,
 antitone function bounded by one. The assumptions are stated directly in terms
 of a power-tail limit, without introducing a separate regular-variation
-structure.
+structure. It is a power-tail specialization of Theorem 1.5.11(i) in N. H.
+Bingham, C. M. Goldie, and J. L. Teugels, *Regular Variation*, Encyclopedia
+of Mathematics and its Applications 27, Cambridge University Press (1987),
+DOI 10.1017/CBO9780511721434.
 -/
 
 @[expose] public section
@@ -25,8 +38,12 @@ open scoped Interval
 
 namespace Asymptotics
 
-/-- A bounded monotone function with tail `g(t) ~ C t⁻ᵝ`, for `0 < β < 1`, has
-integral asymptotic `∫₀ᵁ g(t) dt ~ C U^(1-β) / (1-β)`. -/
+/-- A bounded antitone function with tail `g(t) ~ C t⁻ᵝ`, for `β < 1`, has
+integral asymptotic `∫₀ᵁ g(t) dt ~ C U^(1-β) / (1-β)`. This is a power-tail
+specialization of Theorem 1.5.11(i) in N. H. Bingham, C. M. Goldie, and J. L.
+Teugels, *Regular Variation*, Encyclopedia of Mathematics and its
+Applications 27, Cambridge University Press (1987), DOI
+10.1017/CBO9780511721434. -/
 theorem tendsto_rpow_mul_intervalIntegral_of_tendsto_rpow_mul
     {g : ℝ → ℝ} {β C : ℝ}
     (hβ₁ : β < 1) (hC : 0 < C)
