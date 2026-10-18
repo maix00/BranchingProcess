@@ -10,6 +10,7 @@ public import Order.Interval.RationalCoordinate.UnitInterval
 public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.Binning.Basic
 public import Probability.Process.Corridor.CoreReturn
 public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Gluing
+import Probability.Process.Stable.FiniteDimensional
 
 /-!
 # One-block lower corridor recurrence
@@ -77,8 +78,11 @@ theorem IsStableLevyProcess.measure_prefixCorridor_succ_ge_mul
         exact hprefix
       obtain ⟨i, hi⟩ := hcover ω hprefixEvent
       exact ⟨i, hprefix, hi⟩
-  have hfactor := h.measure_prefixBin_nextBlock_ge_mul blocks hblocks j U V c
-    hU hV hUdisj hc
+  have hfactor :=
+    ProbabilityTheory.HasIndepIncrements.measure_rationalPrefixFiniteChoiceNextBlock_ge_mul
+      h.increments.indepIncrements
+      (fun t => h.increments.aemeasurable_eval t)
+      blocks hblocks j U V c hU hV hUdisj hc
   rw [hunion] at hfactor
   have hglue :
       (⋃ i, (rationalUniformPrefixPath X blocks j.val hblocks ⁻¹' U i) ∩

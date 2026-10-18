@@ -9,6 +9,7 @@ module
 public import Order.Interval.RationalCoordinate.UnitInterval
 public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.Assembly.Concatenation
 public import Probability.Process.Corridor.CoreReturn
+import Probability.Process.Stable.FiniteDimensional
 
 /-!
 # Corridor blocks returning to an interior core
@@ -86,8 +87,11 @@ theorem IsStableLevyProcess.measure_prefixCorridorReturn_succ_ge_mul
           hcore⟩
       obtain ⟨i, hi⟩ := hcover ω hpast
       exact ⟨i, ⟨hprefix, hcore⟩, hi⟩
-  have hfactor := h.measure_prefixBin_nextBlock_ge_mul blocks hblocks j U V c
-    hU hV hUdisj hc
+  have hfactor :=
+    ProbabilityTheory.HasIndepIncrements.measure_rationalPrefixFiniteChoiceNextBlock_ge_mul
+      h.increments.indepIncrements
+      (fun t => h.increments.aemeasurable_eval t)
+      blocks hblocks j U V c hU hV hUdisj hc
   rw [hunion] at hfactor
   have hglue :
       (⋃ i, (rationalUniformPrefixPath X blocks j.val hblocks ⁻¹' U i) ∩
@@ -197,8 +201,11 @@ theorem IsStableLevyProcess.measure_prefixCorridorReturn_succ_ge_mul_of_glue
           hcore⟩
       obtain ⟨i, hi⟩ := hcover ω hpast
       exact ⟨i, ⟨⟨hprefix, hcore⟩, hi⟩⟩
-  have hfactor := h.measure_prefixBin_nextBlock_ge_mul blocks hblocks j U V c
-    hU hV hUdisj hc
+  have hfactor :=
+    ProbabilityTheory.HasIndepIncrements.measure_rationalPrefixFiniteChoiceNextBlock_ge_mul
+      h.increments.indepIncrements
+      (fun t => h.increments.aemeasurable_eval t)
+      blocks hblocks j U V c hU hV hUdisj hc
   rw [hunion] at hfactor
   apply hfactor.trans
   apply measure_mono

@@ -28,6 +28,11 @@ one-block lower bound. The process need not be stable.
   `q * P(prefix ∈ U) ≤ P((prefix ∈ U ∩ S ∧ next ∈ V₋) ∨
   (prefix ∈ U ∩ Sᶜ ∧ next ∈ V₊))` from independent increments and
   coordinate measurability.
+* `HasIndepIncrements.measure_rationalPrefixFiniteChoiceNextBlock_ge_mul`
+  proves the finite-choice version: a pairwise disjoint measurable family of
+  prefix cells selects measurable next-block events, each with probability
+  at least `c`, and the union of successful choices has probability at least
+  `c` times the probability of the union of prefix cells.
 * `HasIndepIncrements.pow_le_measure_feedbackPrefix` proves
   `q ^ blocks ≤ P(rationalUniformPrefixPath X blocks blocks hblocks ∈
   rationalFeedbackPrefixSet hblocks blocks target V₊ V₋)` when each of the two
@@ -98,6 +103,50 @@ theorem HasIndepIncrements.measure_feedbackNextBlock_ge_mul
   exact measure_adaptiveChoice_ge_mul P past next
     (h.indepFun_rationalPrefix_nextBlock hXmeas blocks hblocks j)
     hpast hnext U S Vplus Vminus hU hS hVplus hVminus q hqplus hqminus
+
+/-- A finite disjoint family of admissible prefix cells can select the
+next-block event according to the cell containing the prefix. If each selected
+event has probability at least `c`, then the probability of a successful
+choice is at least `c` times the probability of the union of the prefix cells.
+The independent-increment hypothesis is the only process-law assumption. -/
+theorem HasIndepIncrements.measure_rationalPrefixFiniteChoiceNextBlock_ge_mul
+    {Ω ι : Type*} [MeasurableSpace Ω] [Fintype ι]
+    {X : ℝ≥0 → Ω → ℝ}
+    {P : Measure Ω} [IsProbabilityMeasure P]
+    (h : HasIndepIncrements X P)
+    (hXmeas : ∀ t : ℝ≥0, AEMeasurable (fun ω => X t ω) P)
+    (blocks : ℕ) (hblocks : 0 < blocks) (j : Fin blocks)
+    (U V : ι → Set (↑RationalCoordinate.UnitInterval → ℝ)) (c : ENNReal)
+    (hU : ∀ i, MeasurableSet (U i))
+    (hV : ∀ i, MeasurableSet (V i))
+    (hdisj : Pairwise (fun i k => Disjoint (U i) (U k)))
+    (hc : ∀ i, c ≤ P ((fun ω q =>
+      rationalUniformBlockProcessFromTime X hblocks j q ω) ⁻¹' V i)) :
+    c * P (⋃ i, rationalUniformPrefixPath X blocks j.val hblocks ⁻¹' U i) ≤
+      P (⋃ i, (rationalUniformPrefixPath X blocks j.val hblocks ⁻¹' U i) ∩
+        ((fun ω q => rationalUniformBlockProcessFromTime X hblocks j q ω) ⁻¹'
+          V i)) := by
+  let past := rationalUniformPrefixPath X blocks j.val hblocks
+  let next : Ω → ↑RationalCoordinate.UnitInterval → ℝ :=
+    fun ω q => rationalUniformBlockProcessFromTime X hblocks j q ω
+  have hindep : past ⟂ᵢ[P] next :=
+    h.indepFun_rationalPrefix_nextBlock hXmeas blocks hblocks j
+  have hpast : AEMeasurable past P := by
+    rw [aemeasurable_pi_iff]
+    intro q
+    change AEMeasurable (fun ω =>
+      X (min (RationalCoordinate.toNNReal q)
+        (rationalUniformBlockBoundary blocks j.val hblocks)) ω - X 0 ω) P
+    exact (hXmeas _).sub (hXmeas 0)
+  have hnext : AEMeasurable next P := by
+    rw [aemeasurable_pi_iff]
+    intro q
+    change AEMeasurable (fun ω =>
+      X (rationalUniformBlockAbsoluteTime hblocks j q) ω -
+        X (rationalUniformBlockAbsoluteTime hblocks j ⊥) ω) P
+    exact (hXmeas _).sub (hXmeas _)
+  exact measure_finiteAdaptiveChoice_ge_mul P past next hindep hpast hnext
+    U V c hU hV hdisj hc
 
 /-- The measurable sign rule chooses a negative correction when the endpoint
 is nonnegative and a positive correction otherwise. This gives the exact
