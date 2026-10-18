@@ -165,7 +165,7 @@ theorem isTightMeasureSet_of_eventually_singleOscillationBound
 /-- A finite family of finite measures on a Polish continuous-path space is
 tight.  This local form is used to absorb the finitely many indices preceding
 an asymptotic tightness estimate. -/
-private theorem isTightMeasureSet_of_finite
+private lemma isTightMeasureSet_of_finite
     {T E : Type*} [PseudoMetricSpace T] [CompactSpace T]
     [SecondCountableTopology T] [MetricSpace E] [CompleteSpace E]
     [SecondCountableTopology E]

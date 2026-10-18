@@ -7,10 +7,33 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Scaling.Lower
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.PathSurvival
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Survival.Path
 
 /-!
 # Diffusive-scale lower bounds for the centered symmetric walk
+
+The public declarations in this module are:
+
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.ofReal_centeredPrincipalPower_le_remainingMass`:
+  if $K_r$ is the transition matrix of the simple symmetric walk killed
+  outside $\{0,\ldots,2r\}$, then
+  $\cos^t(\frac{\pi}{2r+2})\le\sum_{j=0}^{2r}K_r^t(r,j)$.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.tendsto_centeredPrincipalPower_of_diffusiveRatio`:
+  if $W_n=2(r_n+1)\to\infty$ and $t_n/W_n^2\to c$, then
+  $\cos^{t_n}(\frac{\pi}{W_n})\to e^{-c\pi^2/2}$.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.time_mul_logCos_le_log_centeredRemainingMass`:
+  for positive $r,t$, the logarithm of the same row sum satisfies
+  $t\log\cos(\frac{\pi}{2r+2})\le
+  \log(\sum_{j=0}^{2r}K_r^t(r,j))$.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.neg_pi_sq_mul_ratio_div_two_le_liminf_log_centeredRemainingMass`:
+  under the same diffusive scaling and positive radii and times,
+  $-c\pi^2/2\le\liminf_n\log(\sum_{j=0}^{2r_n}
+  K_{r_n}^{t_n}(r_n,j))$.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.neg_pi_sq_mul_ratio_div_two_le_liminf_log_centeredHorizontalTubeProbability`:
+  for Rademacher increments, $S_j=\sum_{i=1}^jX_i$, the centered tube
+  probabilities satisfy
+  $-c\pi^2/2\le\liminf_n\log\mathbb P(|S_j|\le r_n
+  \text{ for }1\le j\le t_n)$.
 
 The principal Dirichlet eigenfunction has value one at the center of an odd
 interval.  Consequently its lower bound has no boundary prefactor.  This file
