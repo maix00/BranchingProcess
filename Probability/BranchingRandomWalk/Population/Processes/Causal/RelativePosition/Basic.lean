@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 import Probability.BranchingRandomWalk.Population.Processes.Causal.Predicate
 import Probability.BranchingRandomWalk.Population.Processes.Causal.Genealogy
-import Probability.BranchingRandomWalk.Genealogy.RootIndexed.RelativePosition
+import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Field.RelativePosition
 
 /-!
 # Basic causal relative-position constructions

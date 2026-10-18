@@ -6,8 +6,8 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.FunctionalLimit.Stable.PathFiniteDimensionalSource
-public import Probability.Process.Stable.PathLaw
+public import Probability.Process.RandomWalk.FunctionalLimit.Stable.PathLaw.EndpointGridSource
+public import Probability.Process.Stable.PathLaw.Basic
 public import Probability.ConvergenceInDistribution.CadlagPath.FiniteDimensional
 public import Mathlib.MeasureTheory.Constructions.Pi
 
@@ -120,18 +120,18 @@ def deleteRepeatedPointGrid {n : ℕ} (i : Fin (n + 1))
     (grid : Fin (n + 2) → unitInterval) : Fin (n + 1) → unitInterval :=
   fun j => grid ((i.succ).succAbove j)
 
-private theorem deleteRepeatedPointGrid_monotone {n : ℕ} (i : Fin (n + 1))
+private lemma deleteRepeatedPointGrid_monotone {n : ℕ} (i : Fin (n + 1))
     (grid : Fin (n + 2) → unitInterval) (hgrid : Monotone grid) :
     Monotone (deleteRepeatedPointGrid i grid) := by
   exact hgrid.comp (i.succ).succAboveOrderEmb.monotone
 
-private theorem deleteRepeatedPointGrid_start {n : ℕ} (i : Fin (n + 1))
+private lemma deleteRepeatedPointGrid_start {n : ℕ} (i : Fin (n + 1))
     (grid : Fin (n + 2) → unitInterval) (hstart : grid 0 = ⊥) :
     deleteRepeatedPointGrid i grid 0 = ⊥ := by
   change grid ((i.succ).succAbove 0) = ⊥
   rw [Fin.succAbove_ne_zero_zero (Fin.succ_ne_zero i), hstart]
 
-private theorem denseEvaluation_insertRepeatedPoint {n : ℕ}
+private lemma denseEvaluation_insertRepeatedPoint {n : ℕ}
     (i : Fin (n + 1)) (grid : Fin (n + 2) → unitInterval)
     (hrep : grid i.castSucc = grid i.succ) (f : CadlagPath unitInterval ℝ) :
     denseEvaluation grid f =
@@ -141,7 +141,7 @@ private theorem denseEvaluation_insertRepeatedPoint {n : ℕ}
   · simp [denseEvaluation, insertRepeatedPosition, deleteRepeatedPointGrid, hrep]
   · simp [denseEvaluation, insertRepeatedPosition, deleteRepeatedPointGrid]
 
-private theorem deleteRepeatedPointGrid_increment_interval {n : ℕ}
+private lemma deleteRepeatedPointGrid_increment_interval {n : ℕ}
     (i : Fin (n + 1)) (grid : Fin (n + 2) → unitInterval)
     (hrep : grid i.castSucc = grid i.succ) (j : Fin n) :
     ((deleteRepeatedPointGrid i grid j.succ : unitInterval) : ℝ) -
@@ -188,7 +188,7 @@ private theorem deleteRepeatedPointGrid_increment_interval {n : ℕ}
     simp [deleteRepeatedPointGrid, Fin.succ_succAbove_succ]
   rw [hupper, hlower]
 
-private theorem contractNth_insertZeroCoordinate {n : ℕ} (i : Fin (n + 1))
+private lemma contractNth_insertZeroCoordinate {n : ℕ} (i : Fin (n + 1))
     (x : Fin n → ℝ) :
     Fin.contractNth i (· + ·) (insertZeroCoordinate i x) = x := by
   ext j

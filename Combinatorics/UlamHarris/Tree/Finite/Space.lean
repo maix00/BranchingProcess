@@ -7,8 +7,8 @@ Authors: WANG Yiyang
 module
 
 public import Combinatorics.UlamHarris.Tree.Finite.Basic
-public import Combinatorics.UlamHarris.Tree.Metric
-public import Combinatorics.UlamHarris.Tree.MeasurableSpace
+public import Combinatorics.UlamHarris.Tree.Topology.Metric
+public import Combinatorics.UlamHarris.Tree.Topology.MeasurableSpace
 
 /-!
 # The space of finite trees
