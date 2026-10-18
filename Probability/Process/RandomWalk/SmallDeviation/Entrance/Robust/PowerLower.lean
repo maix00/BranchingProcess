@@ -7,8 +7,10 @@ Authors: WANG Yiyang
 module
 
 public import Analysis.Asymptotics.Scale.BlockScale
+public import Probability.Distributions.Moments.Real
 public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition.Event
 public import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.Event
+public import Probability.Sequence.IID.Basic
 import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.Lemmas.MiddleProbability
 import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.Lemmas.ThreeRegions
 import Probability.Process.RandomWalk.SmallDeviation.Entrance.Edge.PrefixSelection
