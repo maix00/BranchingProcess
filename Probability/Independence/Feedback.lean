@@ -10,10 +10,20 @@ public import MeasureTheory.Measure.Finite.Partition
 public import Mathlib.Probability.Independence.Basic
 
 /-!
-# A binary choice based on independent past information
+# Finite choices based on independent past information
 
-The choice of one of two future events can depend on the past. Independence
-is applied separately on the two measurable cells of the past.
+Finite measurable cells of the past can select corresponding future events.
+Independence supplies a product formula on each cell, and a uniform lower
+bound for the selected future events transfers to their union.
+
+* `measure_finiteAdaptiveChoice_ge_mul` states
+  `c * P(past ∈ ⋃ i, U i) ≤ P(∃ i, past ∈ U i ∧ next ∈ V i)` for a finite
+  pairwise-disjoint family `U`, with `past` independent of `next` and each
+  future event `V i` having probability at least `c`.
+* `measure_adaptiveChoice_ge_mul` is the binary version where the choice
+  between two future events is determined by a measurable set `S` of pasts.
+* `measure_adaptiveSuccess_ge_pow` iterates binary feedback over `n` steps
+  and gives `q ^ n ≤ P(past n ∈ U n)`.
 -/
 
 @[expose] public section
@@ -21,6 +31,42 @@ is applied separately on the two measurable cells of the past.
 namespace ProbabilityTheory
 
 open MeasureTheory
+
+/-- A finite pairwise-disjoint family of admissible past events selects the
+corresponding future event. If past and future are independent, and each
+selected future event has probability at least `c`, then the probability of a
+successful selection is at least `c` times the probability of the union of
+the past cells. -/
+theorem measure_finiteAdaptiveChoice_ge_mul
+    {Ω Past Future ι : Type*} [MeasurableSpace Ω]
+    [MeasurableSpace Past] [MeasurableSpace Future] [Fintype ι]
+    (P : Measure Ω) (past : Ω → Past) (next : Ω → Future)
+    (hindep : past ⟂ᵢ[P] next)
+    (hpast : AEMeasurable past P) (hnext : AEMeasurable next P)
+    (U : ι → Set Past) (V : ι → Set Future) (c : ENNReal)
+    (hU : ∀ i, MeasurableSet (U i))
+    (hV : ∀ i, MeasurableSet (V i))
+    (hdisj : Pairwise (fun i j => Disjoint (U i) (U j)))
+    (hc : ∀ i, c ≤ P (next ⁻¹' V i)) :
+    c * P (⋃ i, past ⁻¹' U i) ≤
+      P (⋃ i, past ⁻¹' U i ∩ next ⁻¹' V i) := by
+  let A : ι → Set Ω := fun i => past ⁻¹' U i
+  let B : ι → Set Ω := fun i => next ⁻¹' V i
+  have hA : ∀ i, NullMeasurableSet (A i) P := by
+    intro i
+    exact hpast.nullMeasurableSet_preimage (hU i)
+  have hB : ∀ i, NullMeasurableSet (B i) P := by
+    intro i
+    exact hnext.nullMeasurableSet_preimage (hV i)
+  have hdisj' : Pairwise (fun i j => Disjoint (A i) (A j)) := by
+    intro i j hij
+    exact (hdisj hij).preimage past
+  have hfactor : ∀ i, P (A i ∩ B i) = P (A i) * P (B i) := by
+    intro i
+    exact hindep.measure_inter_preimage_eq_mul _ _ (hU i) (hV i)
+  have hlower : ∀ i, c ≤ P (B i) := hc
+  exact measure_iUnion_inter_ge_mul_of_finite_partition P A B c
+    hA hB hdisj' hfactor hlower
 
 /-- A past-measurable binary choice between two independent future events
 has at least the smaller of their probabilities, conditional on an admissible

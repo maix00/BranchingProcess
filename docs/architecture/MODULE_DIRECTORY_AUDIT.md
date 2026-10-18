@@ -709,3 +709,43 @@ stable-specific public facade. The repository's generic
 inequality for arbitrary independent past and future maps; the path-level
 feedback module applies it to rational block paths, and its public interface
 now assumes only independent increments and coordinate measurability.
+
+## Abstraction review: finite-choice block feedback (2026-10-19)
+
+`Stable/SmallDeviation/Blocks/Lower/Binning/Basic.lean` also contained the
+one-step estimate `IsStableLevyProcess.measure_prefixBin_nextBlock_ge_mul`.
+Its proof used only the finite-partition measure inequality,
+`HasIndepIncrements.indepFun_rationalPrefix_nextBlock`, and coordinate
+measurability. The stable-law assumption supplied only the last item. The
+three lower-block consumers in `Return/Basic.lean` and
+`Assembly/Concatenation.lean` now call
+`HasIndepIncrements.measure_rationalPrefixFiniteChoiceNextBlock_ge_mul` in the
+uniform-block feedback module. Its hypotheses are independent increments,
+almost-everywhere measurable coordinates, measurable prefix and next-block
+events, pairwise disjoint prefix cells, and a common lower bound for each
+cell's next-block event. Its conclusion is the full finite-choice inequality
+for rational uniform-block paths; no stationary or stable increment law is
+needed. The tube-covering specialization remains in the stable small-deviation
+layer because it additionally uses the stable application’s endpoint bins
+and coverage statement.
+
+The comparison used pinned Mathlib revision
+`380f2aafb622cb2c1c93dac545b6389083c68c51`. Mathlib's
+[`IndepFun.measure_inter_preimage_eq_mul`](https://github.com/leanprover-community/mathlib4/blob/380f2aafb622cb2c1c93dac545b6389083c68c51/Mathlib/Probability/Independence/Basic.lean)
+is the general factorization theorem for two independent random variables
+and measurable coordinate events. The repository's
+`MeasureTheory.measure_iUnion_inter_ge_mul_of_finite_partition` already
+states the measure inequality for arbitrary finite disjoint families, without
+assuming independence. Their combination now gives the separate public
+`measure_finiteAdaptiveChoice_ge_mul` in `Probability/Independence/Feedback.lean`:
+for arbitrary measurable past and future spaces, an independent pair of random
+variables, a finite disjoint family of past events, and one future event per
+cell, the lower bound follows from a common lower bound on the selected future
+probabilities. This is a finite-choice theorem with independent use beyond
+the path application, and it strictly generalizes the existing binary
+feedback principle. The path-level result then applies it to uniform
+prefix/next-block maps using `HasIndepIncrements`; it retains the richer
+process statement without adding a stable-law assumption. The
+[`Mathlib independence documentation`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Probability/Independence/Basic.html)
+and [`independent-increments documentation`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Probability/Independence/Process/HasIndepIncrements/Basic.html)
+confirm the semantics and scope of those interfaces.
