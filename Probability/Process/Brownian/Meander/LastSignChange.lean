@@ -8,7 +8,7 @@ module
 
 public import Probability.Process.Brownian.Meander.LastZeroLaw
 public import Probability.Process.Brownian.Reflection.Path.IntervalMinimum
-public import Probability.Process.Path.TimeGrid.NonnegativeRationals
+public import Probability.Process.TimeGrid.Dense.NonnegativeRationals
 public import Topology.ContinuousMap.LastSignChange
 
 /-!

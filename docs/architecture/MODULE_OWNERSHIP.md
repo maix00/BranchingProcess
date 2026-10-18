@@ -12,6 +12,7 @@ identify misplaced application-specific assumptions.
 | Optional child configurations and deterministic branching walks | `Combinatorics/BranchingWalk` | `Step`, `surviveAlong`, `BranchingWalk` |
 | Additive paths and finite block sums | `Algebra/BigOperators` | `AdditivePath`, `AdditivePath/Block` |
 | Order-only finite bounds and grid coordinates | `Order` | `Order/Bounds`, `Order/Interval/UniformGrid` |
+| Deterministic process-time grids and rounding time functionals up to grids | `Probability/Process/TimeGrid` | `UnitInterval`, `Expanding`, `Dense/NonnegativeRationals`, `Ceiling`; the ceiling selector specializes Mathlib's `MeasureTheory.hittingBtwn` and its convergence theorem is independent of paths and probability laws |
 | Deterministic asymptotic scales and limits | `Analysis/Asymptotics` | `Scale`, `InverseScale`, `BlockScale`, regular variation |
 | Measure operations, integral limits, and measure properties | `MeasureTheory` | `Measure/Convolution/Power`, `Measure/DiracSum`, `Integral/Lebesgue/RestrictLimit` |
 | Measurable counting-measure processes | `Probability/PointProcess` | `PointProcess` bundles a measurable map into Mathlib `Measure` with integer-valuedness and the chosen finite-on-family condition |
@@ -64,6 +65,16 @@ N-BRW selection statements; the latter belong under `Selection/NSelection`.
 - Filtrations and stopping times use Mathlib's `Filtration` and stopping-time
   predicates. Process-specific adaptedness proofs are adapters from the
   process maps to those interfaces.
+- Finite observation and time-threshold selection use Mathlib's generic
+  `MeasureTheory.hittingBtwn`. `Probability/Process/TimeGrid/Ceiling.lean`
+  names the time-functional threshold specialization and proves the grid
+  convergence properties that Mathlib's first-hit interface does not supply.
+- `Order/Interval/UniformGrid` is the affine-grid interface for ordered
+  fields. Process-time grids use `ℝ≥0`, so they are not direct instances of
+  that structure; moreover, the process-time modules need horizon and mesh
+  density results that the affine-grid interface does not state. Keep those
+  time coordinates in the `Probability/Process/TimeGrid` owner instead of
+  adding a real-valued conversion layer solely to reuse the structure.
 - Càdlàg paths and Skorokhod-space constructions reuse the path-space objects
   supplied by the project dependencies. Local criteria add the estimates and
   interfaces needed by this library's limit theorems.

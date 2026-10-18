@@ -6,7 +6,8 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.Path.TimeGrid.UnitInterval
+public import Mathlib.Analysis.SpecificLimits.Basic
+public import Mathlib.Algebra.Order.Floor.Semiring
 
 /-!
 # Expanding uniform observation grids

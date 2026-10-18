@@ -8,7 +8,7 @@ module
 
 public import Probability.ConvergenceInDistribution.ContinuousMap.FiniteDimensional
 public import Probability.Process.Brownian.PathLaw.ContinuousModification
-public import Probability.Process.Path.TimeGrid.NonnegativeRationals
+public import Probability.Process.TimeGrid.Dense.NonnegativeRationals
 public import Mathlib.Data.Rat.Encodable
 public import Mathlib.Topology.ContinuousMap.SecondCountableSpace
 public import Mathlib.Topology.Metrizable.ContinuousMap

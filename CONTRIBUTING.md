@@ -59,6 +59,13 @@ measures, filtrations, kernels, point measures, and topological spaces. A
 formalized theorem should compile from a clean checkout with the pinned
 `lean-toolchain` and Lake manifest.
 
+Cross-module use alone does not justify moving a declaration to a more general
+public layer. Search Mathlib and the repository for an interface with weaker
+assumptions and broader semantics, and use that interface when it matches the
+proof. Add a public abstraction only when it states a meaningful reusable
+mathematical operation or theorem beyond a thin restatement of an existing
+API. Keep model-specific names and corollaries with their owning subject.
+
 ## Entry points and supporting lemmas
 
 Keep a principal theorem in a plainly named entry module at the mathematical
