@@ -12,6 +12,7 @@ public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.Return.Basi
 public import Probability.Process.Stable.SmallDeviation.Blocks.Upper.ArbitraryHorizon
 public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Cover
 public import Probability.Process.Path.Skorokhod.Corridor.Segment
+import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Stationarity
 import Mathlib.Order.CompleteLattice.Lemmas
 
 /-!
@@ -195,8 +196,8 @@ theorem IsStableLevyProcess.iInf_sevenBlockEndpointProbability_pow_le_corridor
     · intro ω hω
       exact Set.mem_iUnion.mp (blockEndpointBin_cover hd hω.2)
     · intro i
-      have hlaw := h.rationalUniformBlockProcess_identDistrib blocks hblocks j
-        ⟨0, hblocks⟩
+      have hlaw := h.increments.indepIncrements.rationalUniformBlockProcess_identDistrib
+        h.toIsLevyProcess.stationaryIncrements blocks hblocks j ⟨0, hblocks⟩
       have hprob := hlaw.measure_mem_eq
         (Skorokhod.measurableSet_rationalCoordinateCorridorIocReturnWithMargin
           (-a) a

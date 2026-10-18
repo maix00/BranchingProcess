@@ -8,6 +8,9 @@ module
 
 public import Probability.Process.Stable.SmallDeviation.Blocks.Factorization
 public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Probability
+import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Independence
+import Probability.Process.Stable.FiniteDimensional
+import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Stationarity
 
 /-!
 # Uniform-block upper bound for stable processes
@@ -57,13 +60,15 @@ theorem IsStableLevyProcess.measure_rationalTube_le_pow_uniformBlocks
   let Xq : ↑RationalCoordinate.UnitInterval → Ω → ℝ :=
     fun q ω => X (RationalCoordinate.toNNReal q) ω
   have hindep : iIndepFun (rationalUniformBlockProcess Xq hblocks) P := by
-    convert h.iIndepFun_rationalUniformBlocks blocks hblocks using 1
+    convert h.increments.indepIncrements.iIndepFun_rationalUniformBlocks
+      (fun t => h.increments.aemeasurable_eval t) blocks hblocks using 1
     funext j ω q
     simp [Xq, rationalUniformBlockProcess, rationalTubeBlockIncrement,
       rationalUniformBlockProcessFromTime, rationalUniformBlockAbsoluteTime]
   exact ProbabilityTheory.measure_rationalTube_le_pow_of_iIndep_uniformBlocks
     P Xq hblocks width hindep (fun j =>
-      h.rationalUniformBlockProcess_identDistrib blocks hblocks j ⟨0, hblocks⟩)
+      h.increments.indepIncrements.rationalUniformBlockProcess_identDistrib
+        h.toIsLevyProcess.stationaryIncrements blocks hblocks j ⟨0, hblocks⟩)
 
 /-- Rational-coordinate counterpart of Lemma 2(c), equation (23): a full
 unit-time range tube is bounded by a power of the short-block tube. The

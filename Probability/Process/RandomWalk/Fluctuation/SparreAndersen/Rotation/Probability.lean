@@ -80,7 +80,8 @@ theorem measure_nonnegativeEndpoint_le_card_mul_survival
         {increment | 0 ≤ AdditivePath.displacement n increment} ≤
       n • iidSequenceLaw ν
         {increment | SurvivesNonnegative n increment} := by
-  have hfinite := measure_pi_nonnegative_endpoint_le_card_mul_survival ν hn
+  have hfinite := measure_pi_nonnegative_endpoint_le_card_mul_survival
+    measurableSet_Ici ν hn
   have hmeasEndpoint : MeasurableSet
       {z : Fin n → ℝ | 0 ≤ Fin.partialSum z (Fin.last n)} := by
     exact measurableSet_Ici.preimage (measurable_finitePartialSum (Fin.last n))

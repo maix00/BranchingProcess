@@ -7,6 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.Stable.SmallDeviation.Blocks.Upper.Basic
+public import Probability.Process.Stable.SmallDeviation.RationalTube
 
 /-!
 # Stable scaling of the block upper bound

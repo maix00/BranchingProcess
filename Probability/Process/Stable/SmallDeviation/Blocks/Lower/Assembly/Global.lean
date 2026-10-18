@@ -9,6 +9,7 @@ module
 public import Order.Interval.RationalCoordinate.UnitInterval
 public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.Return.Basic
 public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Cover
+import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Stationarity
 
 /-!
 # From returning blocks to a whole-path range tube
@@ -126,8 +127,8 @@ theorem IsStableLevyProcess.iInf_blockProbability_pow_le_rationalHorizonTube
   · exact fun _ => hbin
   · exact hcover
   · intro j i
-    have hlaw := h.rationalUniformBlockProcess_identDistrib blocks hblocks
-      j ⟨0, hblocks⟩
+    have hlaw := h.increments.indepIncrements.rationalUniformBlockProcess_identDistrib
+      h.toIsLevyProcess.stationaryIncrements blocks hblocks j ⟨0, hblocks⟩
     have hprob := hlaw.measure_mem_eq
       (measurableSet_rationalCoordinateCorridorReturn _ _ _ _ : MeasurableSet (V i))
     change P ((fun ω q => rationalUniformBlockProcessFromTime X hblocks j q ω) ⁻¹'

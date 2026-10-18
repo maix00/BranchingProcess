@@ -8,6 +8,7 @@ module
 
 public import Order.Interval.RationalCoordinate.UnitInterval
 public import Probability.Process.Stable.SmallDeviation.Blocks.Factorization
+import Probability.Process.Stable.FiniteDimensional
 public import MeasureTheory.Measure.Finite.Partition
 
 /-!
