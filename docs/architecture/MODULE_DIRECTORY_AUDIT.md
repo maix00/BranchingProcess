@@ -878,3 +878,40 @@ their content is supplied by the general composition and currying laws. The
 root-only `reindex` remains the named specialization for relabelling initial
 ancestors and is connected to coordinate pullback by
 `reindex_eq_reindexCoordinates`.
+
+## Abstraction review: countable-range coordinate evaluation (2026-10-19)
+
+The dynamic coordinate measurability proofs in
+`Probability/BranchingRandomWalk/Tree/Filtration.lean` and
+`Probability/BranchingRandomWalk/Genealogy/RootIndexed/Field/Filtration.lean`
+had the same measurable-union argument. The pinned Mathlib revision
+`380f2aafb622cb2c1c93dac545b6389083c68c51` provides
+[`Measurable.eval`](https://github.com/leanprover-community/mathlib4/blob/380f2aafb622cb2c1c93dac545b6389083c68c51/Mathlib/MeasureTheory/MeasurableSpace/Constructions.lean#L591)
+for one fixed coordinate and
+[`Measurable.of_eval`](https://github.com/leanprover-community/mathlib4/blob/380f2aafb622cb2c1c93dac545b6389083c68c51/Mathlib/MeasureTheory/MeasurableSpace/Constructions.lean#L596)
+for a function into a full `Pi` space, whose hypothesis gives measurability
+at every coordinate. The [official API documentation](https://leanprover-community.github.io/mathlib4_docs/Mathlib/MeasureTheory/MeasurableSpace/Constructions.html)
+states these same interfaces. Neither covers evaluation at a selector whose
+actual range is countable while the ambient index type can be uncountable.
+
+The general useful statement is placed in
+`MeasureTheory/MeasurableSpace/CountableEvaluation.lean`:
+
+```text
+F : Ω → I → X,  s : Ω → I,
+Countable (range s),
+∀ i ∈ range s,  Measurable (fun ω => F ω i),
+∀ i ∈ range s,  MeasurableSet {ω | s ω = i}
+⊢ Measurable (fun ω => F ω (s ω)).
+```
+
+The index type `I` has no measurable-space assumption, and the two
+measurability hypotheses are required only for indices that can actually be
+selected. This is weaker and more reusable than either branching-specific
+theorem. The public `Measurable.eval_of_countable_range` proves it by
+expressing each preimage as a countable union of the selector fiber
+intersected with one coordinate preimage. The two filtration theorems now
+specialize this result using their respective depth conditions and measurable
+selector fibers. The general theorem belongs in the public measurable-space
+layer; the two filtration statements remain public at their semantic owners.
+No branching-specific wrapper was moved outward based on its client count.
