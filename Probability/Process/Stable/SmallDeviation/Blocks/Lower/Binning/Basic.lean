@@ -7,7 +7,10 @@ Authors: WANG Yiyang
 module
 
 public import Order.Interval.RationalCoordinate.UnitInterval
-public import Probability.Process.Stable.SmallDeviation.Blocks.Factorization
+public import Probability.Process.Stable.Levy
+public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Basic
+public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Prefix
+public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Events
 import Probability.Process.Stable.FiniteDimensional
 import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Independence
 public import MeasureTheory.Measure.Finite.Partition

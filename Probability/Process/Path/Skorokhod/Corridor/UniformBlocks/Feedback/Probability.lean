@@ -7,20 +7,46 @@ Authors: WANG Yiyang
 module
 
 public import Order.Interval.RationalCoordinate.UnitInterval
-public import Probability.Process.Stable.SmallDeviation.Blocks.Factorization
 public import Probability.Independence.Feedback
 public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Feedback.Basic
+public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Feedback.FullPath
 public import Probability.Process.Path.Skorokhod.Corridor.Segment
-import Probability.Process.Stable.FiniteDimensional
+public import Mathlib.Probability.Independence.Process.HasIndepIncrements.Basic
+public import Probability.Process.StationaryIncrements.Basic
 import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Independence
 import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Stationarity
 
 /-!
-# Feedback choice for the next stable-process block
+# Adaptive feedback on a finite uniform path partition
 
-A condition on the complete stopped prefix path may select either of two
-conditions on the next complete block path. The resulting probability bound
-does not assume that the selected event itself is independent of the past.
+The public theorems specialize the abstract adaptive-choice inequality to
+rational paths on uniform blocks. Independent increments make the next block
+independent of the stopped prefix; stationary increments give one common
+one-block lower bound. The process need not be stable.
+
+* `HasIndepIncrements.measure_feedbackNextBlock_ge_mul` proves
+  `q * P(prefix ∈ U) ≤ P((prefix ∈ U ∩ S ∧ next ∈ V₋) ∨
+  (prefix ∈ U ∩ Sᶜ ∧ next ∈ V₊))` from independent increments and
+  coordinate measurability.
+* `HasIndepIncrements.pow_le_measure_feedbackPrefix` proves
+  `q ^ blocks ≤ P(rationalUniformPrefixPath X blocks blocks hblocks ∈
+  rationalFeedbackPrefixSet hblocks blocks target V₊ V₋)` when each of the two
+  correction events has probability at least `q`.
+* `HasIndepIncrements.feedbackPrefix_probability_pos` gives
+  the same displayed event positive probability from positive one-block
+  correction probabilities.
+* `measure_firstBlock_feedbackCorrection_eq_full` identifies the first
+  event `{ω | rationalUniformBlockProcessFromTime X ... ω ∈
+  feedbackCorrectionSet δ d lower upper}` with
+  `fullSegmentCorridorEvent X 0 (1 / (n + 1)) (-δ) δ ∩
+  {ω | X (1 / (n + 1)) ω - X 0 ω - d ∈ Set.Ioo lower upper}` in measure.
+* `HasIndepIncrements.feedbackPrefix_probability_pos_of_fullBlocks` turns
+  positive probabilities for those two complete short-block events into
+  positive probability of the complete adaptive block event, assuming
+  stationary independent increments and almost-sure càdlàg paths.
+* `HasIndepIncrements.linearTube_probability_pos_of_feedbackBlocks` proves
+  `P(∀ t ∈ [0,1], |X t - X 0 - v t| < η) > 0` from the two positive
+  correction probabilities.
 -/
 
 @[expose] public section
@@ -30,11 +56,12 @@ namespace ProbabilityTheory
 open MeasureTheory
 open scoped NNReal
 
-theorem IsStableLevyProcess.measure_feedbackNextBlock_ge_mul
+theorem HasIndepIncrements.measure_feedbackNextBlock_ge_mul
     {Ω : Type*} [MeasurableSpace Ω]
-    {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
+    {X : ℝ≥0 → Ω → ℝ}
     {P : Measure Ω} [IsProbabilityMeasure P]
-    (h : IsStableLevyProcess α μ X P)
+    (h : HasIndepIncrements X P)
+    (hXmeas : ∀ t : ℝ≥0, AEMeasurable (fun ω => X t ω) P)
     (blocks : ℕ) (hblocks : 0 < blocks) (j : Fin blocks)
     (U S Vplus Vminus : Set (↑RationalCoordinate.UnitInterval → ℝ))
     (hU : MeasurableSet U) (hS : MeasurableSet S)
@@ -60,29 +87,27 @@ theorem IsStableLevyProcess.measure_feedbackNextBlock_ge_mul
     change AEMeasurable (fun ω =>
       X (min (RationalCoordinate.toNNReal q)
         (rationalUniformBlockBoundary blocks j.val hblocks)) ω - X 0 ω) P
-    exact (h.increments.aemeasurable_eval _).sub
-      (h.increments.aemeasurable_eval 0)
+    exact (hXmeas _).sub (hXmeas 0)
   have hnext : AEMeasurable next P := by
     rw [aemeasurable_pi_iff]
     intro q
     change AEMeasurable (fun ω =>
       X (rationalUniformBlockAbsoluteTime hblocks j q) ω -
         X (rationalUniformBlockAbsoluteTime hblocks j ⊥) ω) P
-    exact (h.increments.aemeasurable_eval _).sub
-      (h.increments.aemeasurable_eval _)
+    exact (hXmeas _).sub (hXmeas _)
   exact measure_adaptiveChoice_ge_mul P past next
-    (h.increments.indepIncrements.indepFun_rationalPrefix_nextBlock
-      (fun t => h.increments.aemeasurable_eval t) blocks hblocks j)
+    (h.indepFun_rationalPrefix_nextBlock hXmeas blocks hblocks j)
     hpast hnext U S Vplus Vminus hU hS hVplus hVminus q hqplus hqminus
 
 /-- The measurable sign rule chooses a negative correction when the endpoint
 is nonnegative and a positive correction otherwise. This gives the exact
 one-step lower bound used by the finite feedback induction. -/
-theorem IsStableLevyProcess.measure_signedFeedbackNextBlock_ge_mul
+private theorem HasIndepIncrements.measure_signedFeedbackNextBlock_ge_mul
     {Ω : Type*} [MeasurableSpace Ω]
-    {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
+    {X : ℝ≥0 → Ω → ℝ}
     {P : Measure Ω} [IsProbabilityMeasure P]
-    (h : IsStableLevyProcess α μ X P)
+    (h : HasIndepIncrements X P)
+    (hXmeas : ∀ t : ℝ≥0, AEMeasurable (fun ω => X t ω) P)
     (blocks : ℕ) (hblocks : 0 < blocks) (j : Fin blocks)
     (U : Set (↑RationalCoordinate.UnitInterval → ℝ))
     (hU : MeasurableSet U) (target δ d r R : ℝ)
@@ -102,7 +127,7 @@ theorem IsStableLevyProcess.measure_signedFeedbackNextBlock_ge_mul
           (U ∩ (feedbackPrefixNonnegative target)ᶜ)) ∩
         ((fun ω q => rationalUniformBlockProcessFromTime X hblocks j q ω) ⁻¹'
           feedbackCorrectionSet δ d r R))) := by
-  exact h.measure_feedbackNextBlock_ge_mul blocks hblocks j U
+  exact h.measure_feedbackNextBlock_ge_mul hXmeas blocks hblocks j U
     (feedbackPrefixNonnegative target)
     (feedbackCorrectionSet δ d r R)
     (feedbackCorrectionSet δ d (-R) (-r))
@@ -111,15 +136,16 @@ theorem IsStableLevyProcess.measure_signedFeedbackNextBlock_ge_mul
     (measurableSet_feedbackCorrectionSet δ d (-R) (-r))
     q hqplus hqminus
 
-/-- The actual adaptive success event for a fixed finite stable-process
-partition has probability at least the product of the uniform one-block
-lower bound. The next block is chosen from the sign of the current endpoint
-error, and the event depends only on the stopped past. -/
-theorem IsStableLevyProcess.pow_le_measure_feedbackPrefix
+/-- The actual adaptive success event for a fixed finite partition has
+probability at least the product of the uniform one-block lower bound. The
+next block is chosen from the sign of the current endpoint error, and the
+event depends only on the stopped past. -/
+theorem HasIndepIncrements.pow_le_measure_feedbackPrefix
     {Ω : Type*} [MeasurableSpace Ω]
-    {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
+    {X : ℝ≥0 → Ω → ℝ}
     {P : Measure Ω} [IsProbabilityMeasure P]
-    (h : IsStableLevyProcess α μ X P)
+    (h : HasIndepIncrements X P)
+    (hXmeas : ∀ t : ℝ≥0, AEMeasurable (fun ω => X t ω) P)
     (blocks : ℕ) (hblocks : 0 < blocks)
     (target : Fin blocks → ℝ) (δ d r R : ℝ) (q : ENNReal)
     (hqplus : ∀ j : Fin blocks,
@@ -143,7 +169,7 @@ theorem IsStableLevyProcess.pow_le_measure_feedbackPrefix
     | succ k ih =>
       have hk : k < blocks := by omega
       let j : Fin blocks := ⟨k, hk⟩
-      have hchoice := h.measure_signedFeedbackNextBlock_ge_mul
+      have hchoice := h.measure_signedFeedbackNextBlock_ge_mul hXmeas
         blocks hblocks j
         (rationalFeedbackPrefixSet hblocks k target Vplus Vminus)
         (measurableSet_rationalFeedbackPrefixSet hblocks k target
@@ -183,11 +209,13 @@ theorem IsStableLevyProcess.pow_le_measure_feedbackPrefix
 /-- Positive probability of the two first-block correction events implies
 positive probability for the entire adaptive finite-block success event.
 Stationarity supplies the same lower bound at every block. -/
-theorem IsStableLevyProcess.feedbackPrefix_probability_pos
+theorem HasIndepIncrements.feedbackPrefix_probability_pos
     {Ω : Type*} [MeasurableSpace Ω]
-    {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
+    {X : ℝ≥0 → Ω → ℝ}
     {P : Measure Ω} [IsProbabilityMeasure P]
-    (h : IsStableLevyProcess α μ X P)
+    (h : HasIndepIncrements X P)
+    (hstationary : HasStationaryIncrements X P)
+    (hXmeas : ∀ t : ℝ≥0, AEMeasurable (fun ω => X t ω) P)
     (blocks : ℕ) (hblocks : 0 < blocks)
     (target : Fin blocks → ℝ) (δ d r R : ℝ)
     (hplus : 0 < P ((fun ω s => rationalUniformBlockProcessFromTime
@@ -208,30 +236,30 @@ theorem IsStableLevyProcess.feedbackPrefix_probability_pos
   have hqplus (j : Fin blocks) :
       q ≤ P ((fun ω s => rationalUniformBlockProcessFromTime X hblocks j s ω) ⁻¹'
         feedbackCorrectionSet δ d r R) := by
-    rw [(h.increments.indepIncrements.rationalUniformBlockProcess_identDistrib
-      h.toIsLevyProcess.stationaryIncrements blocks hblocks j
+    rw [(h.rationalUniformBlockProcess_identDistrib
+      hstationary blocks hblocks j
       ⟨0, hblocks⟩).measure_mem_eq
         (measurableSet_feedbackCorrectionSet δ d r R)]
     exact min_le_left _ _
   have hqminus (j : Fin blocks) :
       q ≤ P ((fun ω s => rationalUniformBlockProcessFromTime X hblocks j s ω) ⁻¹'
         feedbackCorrectionSet δ d (-R) (-r)) := by
-    rw [(h.increments.indepIncrements.rationalUniformBlockProcess_identDistrib
-      h.toIsLevyProcess.stationaryIncrements blocks hblocks j
+    rw [(h.rationalUniformBlockProcess_identDistrib
+      hstationary blocks hblocks j
       ⟨0, hblocks⟩).measure_mem_eq
         (measurableSet_feedbackCorrectionSet δ d (-R) (-r))]
     exact min_le_right _ _
   exact (ENNReal.pow_pos hq blocks).trans_le
-    (h.pow_le_measure_feedbackPrefix blocks hblocks target δ d r R q
+    (h.pow_le_measure_feedbackPrefix hXmeas blocks hblocks target δ d r R q
       hqplus hqminus)
 
 /-- The measurable first-block correction event has the same probability as
 its complete càdlàg segment formulation. -/
-theorem IsStableLevyProcess.measure_firstBlock_feedbackCorrection_eq_full
+theorem measure_firstBlock_feedbackCorrection_eq_full
     {Ω : Type*} [MeasurableSpace Ω]
-    {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
+    {X : ℝ≥0 → Ω → ℝ}
     {P : Measure Ω} [IsProbabilityMeasure P]
-    (h : IsStableLevyProcess α μ X P)
+    (hcadlag : ∀ᵐ ω ∂P, IsCadlag (fun t => X t ω))
     (n : ℕ) (δ d lower upper : ℝ) :
     P ((fun ω s => rationalUniformBlockProcessFromTime X
       (Nat.succ_pos n) ⟨0, Nat.succ_pos n⟩ s ω) ⁻¹'
@@ -250,7 +278,7 @@ theorem IsStableLevyProcess.measure_firstBlock_feedbackCorrection_eq_full
           feedbackCorrectionSet δ d lower upper) =ᵐ[P]
         (fullSegmentCorridorEvent X 0 t (-δ) δ ∩
           {ω | (X t ω - X 0 ω) - d ∈ Set.Ioo lower upper}) := by
-    filter_upwards [h.ae_cadlag] with ω hω
+    filter_upwards [hcadlag] with ω hω
     have hcorr := mem_fullSegmentCorridorEvent_iff_rational
       X 0 t (-δ) δ ω hω
     simp only [feedbackCorrectionSet, Set.mem_preimage,
@@ -267,11 +295,14 @@ theorem IsStableLevyProcess.measure_firstBlock_feedbackCorrection_eq_full
 
 /-- Positive complete-path correction probabilities for one short block
 imply positive probability of all adaptively chosen blocks. -/
-theorem IsStableLevyProcess.feedbackPrefix_probability_pos_of_fullBlocks
+theorem HasIndepIncrements.feedbackPrefix_probability_pos_of_fullBlocks
     {Ω : Type*} [MeasurableSpace Ω]
-    {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
+    {X : ℝ≥0 → Ω → ℝ}
     {P : Measure Ω} [IsProbabilityMeasure P]
-    (h : IsStableLevyProcess α μ X P)
+    (h : HasIndepIncrements X P)
+    (hstationary : HasStationaryIncrements X P)
+    (hXmeas : ∀ t : ℝ≥0, AEMeasurable (fun ω => X t ω) P)
+    (hcadlag : ∀ᵐ ω ∂P, IsCadlag (fun t => X t ω))
     (n : ℕ) (target : Fin (n + 1) → ℝ) (δ d r R : ℝ)
     (hplus : 0 < P (fullSegmentCorridorEvent X 0
       (1 / ((n : ℝ≥0) + 1)) (-δ) δ ∩
@@ -287,15 +318,69 @@ theorem IsStableLevyProcess.feedbackPrefix_probability_pos_of_fullBlocks
   have hplus' : 0 < P ((fun ω s => rationalUniformBlockProcessFromTime
       X (Nat.succ_pos n) ⟨0, Nat.succ_pos n⟩ s ω) ⁻¹'
         feedbackCorrectionSet δ d r R) := by
-    rw [h.measure_firstBlock_feedbackCorrection_eq_full]
+    rw [measure_firstBlock_feedbackCorrection_eq_full hcadlag]
     exact hplus
   have hminus' : 0 < P ((fun ω s => rationalUniformBlockProcessFromTime
       X (Nat.succ_pos n) ⟨0, Nat.succ_pos n⟩ s ω) ⁻¹'
         feedbackCorrectionSet δ d (-R) (-r)) := by
-    rw [h.measure_firstBlock_feedbackCorrection_eq_full]
+    rw [measure_firstBlock_feedbackCorrection_eq_full hcadlag]
     exact hminus
-  exact h.feedbackPrefix_probability_pos (n + 1) (Nat.succ_pos n)
+  exact h.feedbackPrefix_probability_pos hstationary hXmeas
+    (n + 1) (Nat.succ_pos n)
     target δ d r R hplus' hminus'
+
+/-- Positive probability of the two one-block correction events gives
+positive probability for a complete path to stay in a tube around a linear
+function, after centering the process at its initial value. The assumptions
+are independent and stationary increments, coordinate measurability, and
+almost-sure càdlàg paths. -/
+theorem HasIndepIncrements.linearTube_probability_pos_of_feedbackBlocks
+    {Ω : Type*} [MeasurableSpace Ω]
+    {X : ℝ≥0 → Ω → ℝ}
+    {P : Measure Ω} [IsProbabilityMeasure P]
+    (h : HasIndepIncrements X P)
+    (hstationary : HasStationaryIncrements X P)
+    (hXmeas : ∀ t : ℝ≥0, AEMeasurable (fun ω => X t ω) P)
+    (hcadlag : ∀ᵐ ω ∂P, IsCadlag (fun t => X t ω))
+    (n : ℕ) (v δ r R η : ℝ) (hr : 0 ≤ r) (hR : 0 ≤ R)
+    (hwidth : 2 * (R + δ + |v / ((n : ℝ) + 1)|) < η)
+    (hplus : 0 < P (fullSegmentCorridorEvent X 0
+      (1 / ((n : ℝ≥0) + 1)) (-δ) δ ∩
+      {ω | (X (1 / ((n : ℝ≥0) + 1)) ω - X 0 ω) -
+        v / ((n : ℝ) + 1) ∈ Set.Ioo r R}))
+    (hminus : 0 < P (fullSegmentCorridorEvent X 0
+      (1 / ((n : ℝ≥0) + 1)) (-δ) δ ∩
+      {ω | (X (1 / ((n : ℝ≥0) + 1)) ω - X 0 ω) -
+        v / ((n : ℝ) + 1) ∈ Set.Ioo (-R) (-r)})) :
+    0 < P {ω | ∀ t : unitInterval,
+      |X (UnitInterval.toNNReal t) ω - X 0 ω - v * (t : ℝ)| < η} := by
+  let success : Set Ω :=
+    rationalUniformPrefixPath X (n + 1) (n + 1) (Nat.succ_pos n) ⁻¹'
+      rationalFeedbackPrefixSet (Nat.succ_pos n) (n + 1)
+        (fun j => v * (j.val : ℝ) / ((n : ℝ) + 1))
+        (feedbackCorrectionSet δ (v / ((n : ℝ) + 1)) r R)
+        (feedbackCorrectionSet δ (v / ((n : ℝ) + 1)) (-R) (-r))
+  have hsuccess : 0 < P success := by
+    simpa [success, Nat.cast_add] using
+      h.feedbackPrefix_probability_pos_of_fullBlocks hstationary hXmeas
+        hcadlag n
+        (fun j => v * (j.val : ℝ) / ((n : ℝ) + 1))
+        δ (v / ((n : ℝ) + 1)) r R hplus hminus
+  have hcongr : success =ᵐ[P]
+      {ω | ∀ t : unitInterval,
+        |X (UnitInterval.toNNReal t) ω - X 0 ω - v * (t : ℝ)| < η} ∩ success := by
+    filter_upwards [hcadlag] with ω hω
+    apply propext
+    constructor
+    · intro hs
+      refine ⟨?_, hs⟩
+      exact rationalFeedback_fullPath_bound X ω hω
+        (Nat.succ_pos n) v δ r R η hr hR
+        (by simpa [Nat.cast_add] using hwidth)
+        (by simpa [success, Nat.cast_add] using hs)
+    · exact And.right
+  rw [measure_congr hcongr] at hsuccess
+  exact hsuccess.trans_le (measure_mono Set.inter_subset_left)
 
 end ProbabilityTheory
 
