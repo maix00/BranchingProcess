@@ -54,7 +54,7 @@ when the move only clarifies module organization.
 | `Mogulskii/RandomWalkBounds` and `Mogulskii/Stable/RandomWalkBounds` | Random-walk finite-block bounds and stable-domain random-walk rates | The normal-domain root separates Donsker endpoint, endpoint-band geometry, horizontal tubes, and source-partition arguments. Stable random-walk bounds group `Bridge/`, `Endpoint/`, `Partition/`, `PathClass/`, and `Source/`; the stable-process estimates remain in their own owner directory. `Stable/RandomWalkBounds/FromIncrementLaw/` separates `Normal/`, `Path/`, and `Stable/` adapters, with `HorizontalTube/` holding the finite-variance tube interfaces. `Stable/Scale/Basic.lean` owns the two-scale condition and rate consequences; `Stable/Scale/Rate.lean` owns block-length asymptotics. Gaussian modules remain divided into `Gaussian/Blocks/` and `Gaussian/Path/`. `FunctionalLimit/Donsker/Entrance/` owns the Brownian middle-start corridor and uniform diffusive entrance estimates. |
 | `Analysis/Asymptotics/Scale` | Reusable deterministic scale tools | `Basic.lean` defines the common small-deviation scale relation; `InverseScale.lean` handles generalized inverses and their subdiffusive rates; `BlockScale.lean`, `ShiftedFloor.lean`, and `IntermediatePowerBlock.lean` cover integer block rounding and intermediate block scales; `Sampling.lean` transfers rates along selected time intervals; `SlowDiagonal.lean` and `Tolerance.lean` provide real-valued diagonal and error-threshold selections. All eight direct modules are distinct reusable interfaces, so they remain as peers at this level. |
 | `Analysis/Asymptotics/RegularVariation` | Regular variation, slow variation, and Karamata-type consequences | `Basic.lean`, `Uniform.lean`, `AsymptoticInverse.lean`, `LowerPower.lean`, `MonotoneDensity.lean`, and `SlowScale.lean` remain at the subject root. `Integral/{Basic,Tail}.lean` groups the first and second integral-tail theorems with their regular-variation consequences; both modules expose reusable results and remain outside `Lemmas/`. |
-| `Stable/SmallDeviation/Blocks/Lower` | Lower block estimates | `Assembly/`, `Binning/`, `Bounds/`, `Entrance/`, and `Return/` group the distinct construction steps. `Entrance/PoissonModel.lean` owns the stable `α < 1` positive entrance theorem; it hides the chosen Lévy--Khintchine triple and exposes only the stable-process and CDF assumptions. `Lemmas/ReturnScale.lean` holds the first-uniform-block specialization used by the lower-bound proofs; arbitrary-horizon stable scaling stays at the `Blocks/` level. The reusable feedback construction remains in `Feedback/`. Stable-law adapters are limited to the block laws and estimates whose statements actually use stability. |
+| `Stable/SmallDeviation/Blocks/Lower` | Lower block estimates | `Assembly/`, `Binning/`, `Bounds/`, `Entrance/`, and `Return/` group the distinct construction steps. `Entrance/PoissonModel.lean` owns the stable `α < 1` positive entrance theorem; it hides the chosen Lévy--Khintchine triple and exposes only the stable-process and CDF assumptions. `Lemmas/ReturnScale.lean` holds the first-uniform-block specialization used by the lower-bound proofs; arbitrary-horizon stable scaling stays at the `Blocks/` level. `Feedback/` contains the stable short-block scaling and entrance consequences; the adaptive finite-block probability and path-tube implications now live with generic uniform-block path results. Stable-law adapters are limited to block laws and estimates whose statements actually use stability. |
 | `BranchingRandomWalk/Restart/RootedTrial` | Rooted-trial restart and coupling | Finite-slot and reserve arguments have their own subdirectories. |
 | `Combinatorics/BranchingWalk/Step` | Deterministic branching-step operations | The root keeps `Basic`, `Map`, `Measurability`, and `Relation`. Ordering properties and ranks are under `Ordering/`; slot selection and sibling closure are under `Selection/`; potential and point-measure operations are under `Measure/`; generation-local updates are under `Generation/`. |
 | `Probability/BranchingRandomWalk/Step` | Random step presentations, fields, and laws | Coordinate presentations and their constructors/maps are under `Presentation/`; field operations under `Field/`; probability laws under `Law/`; measurable ordering under `Ordering/`; point-measure observations under `PointMeasure/`. Root-indexed position measurability remains under `Position/`. |
@@ -658,3 +658,54 @@ specific implication. Therefore the general law-transfer and path-support
 results stay public at their existing abstract layers, while the stable
 entrance theorem stays with its small-deviation event. Cross-module use was
 only the audit trigger; the placement follows these mathematical interfaces.
+
+## Abstraction review: uniform-block feedback probabilities (2026-10-19)
+
+The former `Stable/SmallDeviation/Blocks/Factorization.lean` contained two
+theorems whose proofs used only independent increments, stationary increments,
+coordinate measurability, and the rational uniform-block event interface.
+Neither conclusion used a stable law. The finite product lower bound now lives
+in `Probability/Process/Path/Skorokhod/Corridor/UniformBlocks/Probability.lean`
+as
+`HasIndepIncrements.pow_le_measure_rationalUniformPrefixBlockEvent`:
+
+```lean
+(h : HasIndepIncrements X P) → HasStationaryIncrements X P →
+(∀ t, AEMeasurable (fun ω => X t ω) P) → MeasurableSet V →
+q ≤ P (block 0 ∈ V) →
+q ^ blocks ≤ P (every translated uniform block lies in V)
+```
+
+This is the weakest process interface used by the formal proof; it does not
+assume zero start, càdlàg paths, stability, a moment condition, or a scaling
+law. The stable finite-time entrance argument supplies its process facts and
+one-block estimate at the application boundary.
+
+The abstraction comparison checked pinned Mathlib revision
+`380f2aafb622cb2c1c93dac545b6389083c68c51`. Its
+[`iIndepFun.measure_inter_preimage_eq_mul`](https://github.com/leanprover-community/mathlib4/blob/380f2aafb622cb2c1c93dac545b6389083c68c51/Mathlib/Probability/Independence/Basic.lean)
+is stronger at the measure-theoretic level: for an arbitrary finite family of
+independent random variables and measurable coordinate events, it gives the
+exact finite-product identity, including a different event for each index.
+The repository's
+`HasIndepIncrements.iIndepFun_rationalUniformBlocks` and
+`HasIndepIncrements.rationalUniformBlockProcess_identDistrib` provide the
+path-process independence and stationarity specializations. The new theorem
+packages these process facts into the complete lower bound for the existing
+uniform-prefix event. Its common event `V` matches that event's meaning; for
+different measurable events at each block, the general Mathlib product
+identity is the more abstract endpoint and requires no additional local
+wrapper.
+
+The other former declaration,
+`IsStableLevyProcess.measure_prefixTube_inter_nextBlock`, was a single-use
+stable receiver around
+`HasIndepIncrements.indepFun_rationalPrefix_nextBlock` followed by
+`IndepFun.measure_inter_preimage_eq_mul`. It was removed; the upper-bound
+proof now applies those general APIs directly. Thus the former
+`Blocks/Factorization.lean` file was deleted rather than retaining a
+stable-specific public facade. The repository's generic
+`measure_adaptiveChoice_ge_mul` likewise already states the binary feedback
+inequality for arbitrary independent past and future maps; the path-level
+feedback module applies it to rational block paths, and its public interface
+now assumes only independent increments and coordinate measurability.

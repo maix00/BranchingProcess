@@ -6,8 +6,8 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.Stable.SmallDeviation.Blocks.Factorization
 public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Probability
+public import Probability.Process.Stable.Levy
 import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Independence
 import Probability.Process.Stable.FiniteDimensional
 import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Stationarity
@@ -43,7 +43,21 @@ theorem IsStableLevyProcess.measure_rationalPrefixTube_eq_prod
   | succ m ih =>
       have hmlt : m < blocks := by omega
       rw [rationalUniformPrefixTubeEvent_succ X width hblocks m hmlt]
-      rw [h.measure_prefixTube_inter_nextBlock blocks hblocks ⟨m, hmlt⟩ width]
+      have hindep := h.increments.indepIncrements.indepFun_rationalPrefix_nextBlock
+        (fun t => h.increments.aemeasurable_eval t) blocks hblocks ⟨m, hmlt⟩
+      have hfactor := hindep.measure_inter_preimage_eq_mul
+        (rationalUniformPrefixTubeSet width hblocks m)
+        (Skorokhod.rationalCoordinateOscillationTube width)
+        (measurableSet_rationalUniformPrefixTubeSet width hblocks m)
+        (Skorokhod.measurableSet_rationalCoordinateOscillationTube width)
+      have hfactor' :
+          P (rationalUniformPrefixTubeEvent X width hblocks m ∩
+            rationalUniformBlockTubeEvent X width hblocks ⟨m, hmlt⟩) =
+          P (rationalUniformPrefixTubeEvent X width hblocks m) *
+            P (rationalUniformBlockTubeEvent X width hblocks ⟨m, hmlt⟩) := by
+        simpa [rationalUniformPrefixTubeEvent_eq_preimage,
+          rationalUniformBlockTubeEvent] using hfactor
+      rw [hfactor']
       rw [ih (by omega)]
       simp [Finset.prod_range_succ, rationalUniformBlockTubeProbability, hmlt]
 
