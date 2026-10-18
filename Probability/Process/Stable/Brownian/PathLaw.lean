@@ -6,12 +6,12 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.Brownian.Skorokhod
-public import Probability.Process.Stable.Brownian
-public import Probability.Process.Stable.PathLaw
+public import Probability.Process.Brownian.PathLaw.Skorokhod
+public import Probability.Process.Stable.Brownian.Basic
+public import Probability.Process.Stable.PathLaw.Basic
 public import Probability.Process.Path.Cadlag.MeasurableMap
 public import Probability.Process.Stable.PathLaw.UnitInterval
-public import Topology.Cadlag.Skorokhod.Integral
+public import Topology.Cadlag.Skorokhod.Evaluation.Integral
 
 /-!
 # Brownian path laws as stable clock-process laws

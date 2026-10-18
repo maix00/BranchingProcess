@@ -22,7 +22,7 @@ the restart and reserve arguments: `selected_mark_measurable` for an address
 chosen from generation-`n` information, and `causal_lineage_adapted` for an
 unconditionally pre-defined lineage that extends one generation at a time.
 The adapted-state corollary `frontier_causal_state_adapted` is proved in
-`Probability/BranchingRandomWalk/Timing/Frontier.lean`, since it needs the restart lemmas.
+`Probability/BranchingRandomWalk/Timing/Schedule/Frontier.lean`, since it needs the restart lemmas.
 -/
 
 open MeasureTheory
