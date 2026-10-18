@@ -9,6 +9,17 @@ import Probability.BranchingRandomWalk.Spine.Tube.MRCA.Expansion
 /-!
 # Actual MRCA contributions in affine corridors
 
+## Public declarations
+
+* `ProbabilityTheory.BranchingRandomWalk.Spine.measurableSet_affineCorridorThrough`
+  establishes measurability of the affine corridor with a terminal upper bound.
+* `ProbabilityTheory.BranchingRandomWalk.Spine.affineCorridorThrough_succ_eq_endpointCutoff`
+  identifies the corridor through time `n + 1` with
+  `affineCorridorHistoryEndpointCutoff n lower drift width endpointUpper`.
+* `ProbabilityTheory.BranchingRandomWalk.Spine.lintegral_pathGenerationMRCAContribution_affineCorridor_eq`
+  identifies the expected actual MRCA contribution at generation `m` with
+  `affineTubeMRCAPairContribution φ μ m n initial lower drift width endpointUpper`.
+
 This file connects the recursive path-pair count at a positive MRCA depth to
 the conditional continuation-pair observable used in affine-tube estimates.
 The ancestral prefix keeps its corridor indicator and survival condition.

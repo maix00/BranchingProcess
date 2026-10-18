@@ -11,6 +11,24 @@ import Probability.Process.RandomWalk.SmallDeviation.Entrance.FiniteVarianceEndp
 /-!
 # Finite variance spine corridors
 
+## Public declarations
+
+* `ProbabilityTheory.BranchingRandomWalk.Spine.endpointCorridorEvent_eq_affineCorridorThrough`
+  identifies the finite-variance endpoint event with the affine-history event:
+  `InClosedInterval (-ratio * D) 0 n 0 increment ∧ S_n ∈ [−ratio * D, (1 − ratio) * D]`
+  iff `history n 0 increment ∈ affineCorridorThrough n ...`.
+* `ProbabilityTheory.BranchingRandomWalk.Spine.exists_eventually_tiltedIncrementFieldLaw_affineCorridor_lowerBound_of_centeredSecondMoment`
+  assumes a centered tilted law with variance `sigma² > 0`, a Mogulskii scale,
+  and `ratio > 1`; for all sufficiently large `n` it gives an explicit
+  lower bound for the tilted probability of
+  `G_n := {increment | history n 0 increment ∈ affineCorridorThrough n
+  (-ratio * scale n) 0 (ratio * scale n) ((-ratio + 1) * scale n)}`.
+  More precisely, for some `C < 0`, `q > 0`, and `A > 0`, put
+  `B_n := stableBlockLength 2 ν A² scale n` and
+  `R_n := balancedBlockCount (finiteVarianceBridgeLength scale n - B_n) B_n + 1`;
+  then `exp (((C / (ratio / 2 - 13 / 60)² - 1) * A²)) ^ R_n *
+  (q / finiteVarianceEntranceLength scale n) ≤ P_tilted(G_n)` eventually.
+
 The entrance and stable endpoint bridge probability is rewritten as the
 affine corridor event used by the branching random walk path count.
 -/

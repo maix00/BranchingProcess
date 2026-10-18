@@ -10,6 +10,24 @@ import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law.IndependentEven
 /-!
 # Independent-root lower bounds for tube populations
 
+## Public declarations
+
+* `ProbabilityTheory.BranchingRandomWalk.Spine.measure_finiteRootCorridorCount_le_quarter_pzMean`
+  bounds the probability that `m` independent roots produce at most
+  `m * mean² / (4 * second)` corridor paths by
+  `exp (-m * mean² / (4 * second))`, when the one-root path count has mean
+  `mean` and second moment at most `second`.
+* `ProbabilityTheory.BranchingRandomWalk.Spine.lintegral_pathGeneration_ge_exp_mul_spineProbability`
+  gives `exp (lower - initial) * P_tilted(history_n ∈ corridor) ≤ E[pathCount]`
+  when every corridor endpoint is at least `lower`.
+* `ProbabilityTheory.BranchingRandomWalk.Spine.measure_finiteRootCorridorCount_le_quarter_spineLowerPZ`
+  combines that lower mean with a one-root second-moment bound in the same
+  exponential root-count estimate.
+* `ProbabilityTheory.BranchingRandomWalk.Spine.measure_finiteRootCorridor_allRootsAvoid_le_exp_of_spineLowerPZ`
+  bounds the probability that every root misses the corridor by
+  `exp (-m * pzMean / 4)`, with `pzMean` formed from the spine lower mean and
+  the pair-moment input.
+
 This file composes the path-count Paley--Zygmund estimate with the independent
 root Chernoff bound.  The caller supplies the one-root first and second moment
 estimates; the result counts initial roots whose descendant field contains a

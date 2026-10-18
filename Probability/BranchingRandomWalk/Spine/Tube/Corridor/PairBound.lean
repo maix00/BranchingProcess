@@ -10,6 +10,19 @@ import Probability.BranchingRandomWalk.Spine.Tube.SecondMoment.MultiGeneration
 /-!
 # Pair bounds for affine corridor path counts
 
+## Public declarations
+
+* `ProbabilityTheory.BranchingRandomWalk.Spine.pathGenerationMRCAContribution_affineCorridor_measurable`
+  proves measurability of the generation-`m` MRCA contribution for the
+  corridor through generation `m + n + 1`.
+* `ProbabilityTheory.BranchingRandomWalk.Spine.lintegral_pathGenerationDistinctAddressPairCount_affineCorridor_eq_sum_MRCA`
+  identifies the expected ordered distinct-address pair count with the finite
+  sum `∑ m : Fin N, affineTubeMRCAPairContribution ... m ...`.
+* `ProbabilityTheory.BranchingRandomWalk.Spine.lintegral_pathGenerationDistinctAddressPairCount_affineCorridor_le_of_drawdown`
+  bounds that expected pair count by the finite sum of the drawdown factors
+  `exp (-2 * initial) * (exp (2 * endpointUpper) * q (N - m - 1)^2)`, the
+  cross-child moment, and the tilted-spine probability of the affine prefix.
+
 This file sums the actual affine-corridor MRCA contributions over their
 possible generations.  Each fixed-depth term retains the corridor condition
 at the birth generation and is measurable before the finite sum is integrated.

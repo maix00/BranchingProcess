@@ -9,6 +9,32 @@ import Probability.BranchingRandomWalk.Spine.Tube.SecondMoment.Basic
 /-!
 # Two-stage tube success from the branching field
 
+## Public declarations
+
+* `ProbabilityTheory.BranchingRandomWalk.Spine.hasPotentialChildIn` is
+  `{ξ | ∃ i, survive ξ i ∧ potentialValue' φ ξ i ∈ I}`;
+  `ProbabilityTheory.BranchingRandomWalk.Spine.measurableSet_hasPotentialChildIn`
+  proves this event measurable for measurable `I`.
+* `ProbabilityTheory.BranchingRandomWalk.Spine.firstPotentialChildIn` records
+  that slot `i` survives, its potential lies in `I`, and every `j < i` fails
+  this condition. `ProbabilityTheory.BranchingRandomWalk.Spine.measurableSet_firstPotentialChildIn`
+  proves measurability of each first-slot cell.
+* `ProbabilityTheory.BranchingRandomWalk.Spine.twoStageTubeEvent` is the event
+  that the least child entering `I` has a descendant child entering `J` at the
+  next generation; `ProbabilityTheory.BranchingRandomWalk.Spine.measurableSet_twoStageTubeEvent`
+  proves measurability when both windows are measurable.
+* `ProbabilityTheory.BranchingRandomWalk.Spine.hasPotentialChildIn_eq_iUnion_firstPotentialChildIn`
+  decomposes the one-step entry event as `∃ i, firstPotentialChildIn i`;
+  `ProbabilityTheory.BranchingRandomWalk.Spine.firstPotentialChildIn_pairwise_disjoint`
+  proves these first-slot cells pairwise disjoint.
+* `ProbabilityTheory.BranchingRandomWalk.Spine.measure_twoStageTubeEvent_eq_mul`
+  gives the exact product
+  `P(twoStageTubeEvent I J) = P(hasPotentialChildIn I) *
+  P(hasPotentialChildIn J at the selected child's root)`.
+* `ProbabilityTheory.BranchingRandomWalk.Spine.measure_twoStageTubeEvent_pos_of_tiltedWindows_pos`
+  proves positive two-stage success probability when both measurable,
+  lower-bounded windows have positive tilted mass.
+
 The first child whose increment enters a prescribed window is chosen by its
 least slot index. Its descendant field is independent of the root step. This
 gives an exact product formula for success in two consecutive tube windows.

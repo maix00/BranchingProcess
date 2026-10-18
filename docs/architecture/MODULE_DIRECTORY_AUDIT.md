@@ -224,6 +224,13 @@ second-moment modules `Spine/Tube/SecondMoment/OneGenerationTail.lean` and
 module-visible declarations respectively, with their corridor, moment, and
 MRCA formulas. A name comparison confirms that each declaration appears in
 its module header.
+The same follow-up found and fixed missing declaration lists in the other nine
+`Spine/Tube` modules: `Corridor/{FiniteVariance,IndependentRoot,PairBound,SecondMoment}.lean`,
+`MRCA/{ActualContribution,Expansion}.lean`, and
+`SecondMoment/{Basic,MultiGeneration,TwoStage}.lean`. Their 39 public
+definitions and theorems now have named mathematical descriptions; the
+directory scan confirms that every public declaration across `Spine/Tube/`
+appears in its module header.
 The convergence-in-distribution pass grouped its two approximation theorems under
 `Probability/ConvergenceInDistribution/Approximation/` and added formula-bearing
 public-declaration lists to `Basic.lean`, `DeterministicParameter.lean`, and

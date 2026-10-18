@@ -9,6 +9,13 @@ import Probability.BranchingRandomWalk.Spine.Tube.Corridor.PairBound
 /-!
 # Second moments in affine corridors
 
+## Public declarations
+
+* `ProbabilityTheory.BranchingRandomWalk.Spine.lintegral_pathGeneration_affineCorridor_sq_eq_firstMoment_add_mrcaContributions`
+  states the exact identity `E[X_N²] = E[X_N] + ∑ m : Fin N, C_m`, where
+  `X_N` is the path-generation count restricted to the affine corridor and
+  `C_m` is the expected ordered-pair contribution with MRCA generation `m`.
+
 The second moment of a zero-one corridor count is its first moment plus the
 sum of the expected ordered path pairs, grouped by the generation of their
 most recent common ancestor.
