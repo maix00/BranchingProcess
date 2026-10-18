@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Combinatorics.BranchingWalk.Cloud.Basic
-public import Combinatorics.BranchingWalk.Step.Rank
+public import Combinatorics.BranchingWalk.Step.Ordering.Rank
 public import Mathlib.Data.Finset.Card
 
 /-!

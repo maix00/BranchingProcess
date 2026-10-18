@@ -8,7 +8,8 @@ module
 
 public import Probability.Process.RandomWalk.Path.Block.Basic
 public import Probability.Independence.Finite
-public import Probability.Sequence.IID.StoppingTime
+public import Probability.Sequence.IID.Basic
+import Probability.Sequence.IID.Blocks.StoppingTime
 public import Mathlib.Probability.Independence.Basic
 
 /-!

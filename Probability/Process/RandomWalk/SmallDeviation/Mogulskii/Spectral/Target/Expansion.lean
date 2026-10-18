@@ -6,13 +6,41 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.UpperBound
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Survival.Upper
 
 /-!
 # Spectral expansion with a terminal target
 
-The survival estimates use the constant-one terminal function.  Return
-estimates instead need the mass of an arbitrary set of terminal sites.  This
+The public declarations in this module are:
+
+All names below are declarations in
+`ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii`.
+
+Write $K_N=\texttt{intervalKernel}(N)$,
+$1_T(i)=\texttt{intervalTargetIndicator}(T)(i)$,
+$c_k(T)=(\texttt{intervalSineBasis}(N).\texttt{repr}(1_T))_k$,
+$\lambda_k=\texttt{intervalModeEigenvalue}(N,k)$, and
+$\phi_k(x)=\texttt{intervalSineMode}(N,k,x)$.
+
+- `intervalTargetIndicator` and `intervalTargetIndicator_apply` define and
+  evaluate $1_T(i)=\mathbf 1_{i\in T}$.
+- `intervalKernel_pow_mulVec_targetIndicator` identifies the matrix action
+  as target mass,
+  $(K_N^n1_T)(x)=\sum_{y\in T}K_N^n(x,y)$.
+- `intervalKernel_pow_targetMass_eq_spectralSum` expands this mass in the
+  finite sine basis:
+  $\sum_{y\in T}K_N^n(x,y)=\sum_k c_k(1_T)\lambda_k^n\phi_k(x)$.
+- `abs_intervalSineBasis_repr_targetIndicator_le_two` bounds every
+  coefficient by $|c_k(1_T)|\le2$.
+- `intervalKernel_pow_targetMass_eq_principal_add_remainder` splits off the
+  first mode, and `abs_intervalKernel_targetNonzeroModeSum_le` bounds the
+  remaining absolute contribution by
+  $2\sum_{k\ne0}|\lambda_k|^n$.
+- `principal_sub_nonzeroModes_le_intervalKernel_pow_targetMass` turns that
+  estimate into a lower bound by the principal term minus the spectral tail.
+
+The survival estimates use the constant-one terminal function. Return
+estimates instead need the mass of an arbitrary set of terminal sites. This
 file supplies that target-sensitive version without adding a second killed
 kernel.
 -/

@@ -8,7 +8,7 @@ module
 
 public import Probability.Distributions.CharacteristicFunction.Tauberian.FrequencyAverageLimit
 public import Probability.Distributions.CharacteristicFunction.Symmetrization.Tail
-public import Probability.Distributions.Stable.Attraction.Normal
+public import Probability.Distributions.Stable.Attraction.Normal.Basic
 
 /-!
 # Characteristic-defect tails in the normal domain of attraction
