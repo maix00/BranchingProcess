@@ -6,20 +6,20 @@ Authors: WANG Yiyang
 
 module
 
-public import Mathlib.MeasureTheory.Measure.NullMeasurable
-public import Mathlib.Topology.Algebra.InfiniteSum.ENNReal
+public import Mathlib.MeasureTheory.OuterMeasure.Basic
 
 /-!
-# Measure bounds from finite covers
+# Outer measure bounds from finite covers
 
 The public theorems in this file are:
 
-- `measure_mul_le_card_mul_of_finite_cover`: if each of finitely many
-  covering cells has a target extension of relative mass at least $c$,
-  then $c\mu(U)\le |F|\mu(T)$.
-- `measure_le_card_smul_of_finite_cover_invariant`: if $n$ measure-preserving
-  images of an event cover another event, its measure is at most $n$ times
-  the measure of the original event.
+- `measure_mul_le_card_mul_of_finite_cover`: for an outer measure `μ`, if each
+  cell `A i` of a finite cover `F` has a target extension with
+  `c · μ(A i) ≤ μ(A i ∩ B i)` and `A i ∩ B i ⊆ T`, then
+  `c · μ(U) ≤ F.card · μ(T)`.
+- `measure_le_card_smul_of_finite_cover_invariant`: if a finite family indexed
+  by `F : Finset ι` of `μ`-invariant preimages of `safe` covers `event`, then
+  `μ(event) ≤ F.card · μ(safe)`.
 
 These estimates turn finite covers and eventwise product lower bounds into a
 global measure inequality. They do not require the cover to be disjoint.
@@ -29,28 +29,30 @@ global measure inequality. They do not require the cover to be disjoint.
 
 namespace MeasureTheory
 
-/-- A finite cover by measure-preserving images gives the factor-`n`
-measure bound. The maps need only preserve the measure of `safe`. -/
+/-- A finite cover by outer-measure-preserving preimages gives a bound with
+the cardinality of the cover. The maps need only preserve the outer measure
+of `safe`. -/
 theorem measure_le_card_smul_of_finite_cover_invariant
-    {Ω : Type*} [MeasurableSpace Ω] {n : ℕ} (μ : Measure Ω)
-    (event safe : Set Ω) (rotate : Fin n → Ω → Ω)
-    (hcover : event ⊆ ⋃ k, (rotate k) ⁻¹' safe)
-    (hinvariant : ∀ k, μ ((rotate k) ⁻¹' safe) = μ safe) :
-    μ event ≤ n • μ safe := by
+    {Ω ι F : Type*} [FunLike F (Set Ω) ENNReal] [OuterMeasureClass F Ω]
+    (μ : F)
+    (cover : Finset ι) (event safe : Set Ω) (rotate : ι → Ω → Ω)
+    (hcover : event ⊆ ⋃ k ∈ cover, (rotate k) ⁻¹' safe)
+    (hinvariant : ∀ k ∈ cover, μ ((rotate k) ⁻¹' safe) = μ safe) :
+    μ event ≤ cover.card • μ safe := by
   calc
-    μ event ≤ μ (⋃ k, (rotate k) ⁻¹' safe) := measure_mono hcover
-    _ ≤ ∑ k : Fin n, μ ((rotate k) ⁻¹' safe) := measure_iUnion_fintype_le μ _
-    _ = ∑ _k : Fin n, μ safe := by
+    μ event ≤ μ (⋃ k ∈ cover, (rotate k) ⁻¹' safe) := measure_mono hcover
+    _ ≤ ∑ k ∈ cover, μ ((rotate k) ⁻¹' safe) := measure_biUnion_finset_le cover _
+    _ = ∑ _k ∈ cover, μ safe := by
       apply Finset.sum_congr rfl
       intro k hk
-      exact hinvariant k
-    _ = n • μ safe := by simp
+      exact hinvariant k hk
+    _ = cover.card • μ safe := by simp
 
 /-- A finite cover whose cells can each be extended into one target event
-gives a measure bound with the cardinality of the cover as loss. -/
+gives an outer-measure bound with the cardinality of the cover as loss. -/
 theorem measure_mul_le_card_mul_of_finite_cover
-    {Ω ι : Type*} [MeasurableSpace Ω]
-    (P : Measure Ω) (F : Finset ι) (U T : Set Ω)
+    {Ω ι E : Type*} [FunLike E (Set Ω) ENNReal] [OuterMeasureClass E Ω]
+    (P : E) (F : Finset ι) (U T : Set Ω)
     (A B : ι → Set Ω) (c : ENNReal)
     (hcover : U ⊆ ⋃ i ∈ F, A i)
     (hfactor : ∀ i ∈ F, c * P (A i) ≤ P (A i ∩ B i))

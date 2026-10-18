@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Mathlib.MeasureTheory.Constructions.Pi
-public import MeasureTheory.Measure.Finite.Cover
+public import MeasureTheory.OuterMeasure.Finite.Cover
 
 /-!
 # Finite coordinate reindexing of identical product measures
@@ -74,11 +74,14 @@ theorem measure_pi_event_le_card_smul_of_reindexCover
     (hsafe : MeasurableSet safe) :
     Measure.pi (fun _ : Fin n => ν) event ≤
       n • Measure.pi (fun _ : Fin n => ν) safe := by
-  apply MeasureTheory.measure_le_card_smul_of_finite_cover_invariant
-    (μ := Measure.pi (fun _ : Fin n => ν)) event safe
-    (fun k => finiteCoordinateReindex (rotate k)) hcover
-  intro k
-  exact measure_pi_preimage_eq_of_reindex ν (rotate k).symm safe hsafe
+  have hbound := MeasureTheory.measure_le_card_smul_of_finite_cover_invariant
+    (μ := Measure.pi (fun _ : Fin n => ν)) (Finset.univ : Finset (Fin n))
+    event safe (fun k => finiteCoordinateReindex (rotate k))
+    (by simpa using hcover)
+    (by
+      intro k hk
+      exact measure_pi_preimage_eq_of_reindex ν (rotate k).symm safe hsafe)
+  simpa using hbound
 
 end ProbabilityTheory
 
