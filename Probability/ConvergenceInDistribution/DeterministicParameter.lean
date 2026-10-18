@@ -13,9 +13,13 @@ public import Mathlib.MeasureTheory.Measure.FiniteMeasureProd
 /-!
 # Weak convergence with a deterministic parameter
 
-This module records the product-measure form of the continuous mapping
-theorem when one coordinate is deterministic and converges. It does not
-require an additive structure on the other coordinate.
+The public theorem in this file is:
+
+- `MeasureTheory.ProbabilityMeasure.tendsto_map_prod_dirac_of_tendsto`:
+  if $\mu_i\to\mu$, $y_i\to y$, and $g:E\times E'\to F$ is continuous,
+  then $g_*(\mu_i\otimes\delta_{y_i})\to g_*(\mu\otimes\delta_y)$.
+  The spaces are second-countable pseudometrizable Borel spaces as specified
+  in the theorem; no additive structure on $E$ is assumed.
 -/
 
 public section

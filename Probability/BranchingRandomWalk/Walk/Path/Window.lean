@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.Path.Window
+public import Probability.Process.RandomWalk.Path.Window.Core
 public import Probability.BranchingRandomWalk.Walk.Basic
 
 /-!
