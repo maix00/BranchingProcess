@@ -26,6 +26,9 @@ The public definition and theorem in this file are:
   following the passage bounds the selected index from above.
 - `ProbabilityTheory.firstPassageGridCeiling_eq_last_of_not_le`: when the
   passage occurs after the last grid time, the selected index is last.
+- `ProbabilityTheory.firstPassageGridCeiling_eq_iff_of_agreeOn`: if two paths
+  agree through the observation time $r_i$, their selected first-passage
+  grid indices equal $i$ simultaneously.
 - `ProbabilityTheory.tendsto_firstPassageGridCeiling_time_of_finite`:
   nested grids with points arbitrarily close above a finite passage time
   have selected times converging to that passage time.
