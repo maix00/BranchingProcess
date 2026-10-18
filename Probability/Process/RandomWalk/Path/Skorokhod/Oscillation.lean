@@ -7,11 +7,11 @@ Authors: WANG Yiyang
 module
 
 public import Order.Interval.UniformGrid
-public import Probability.Process.RandomWalk.Path.Cadlag
+public import Probability.Process.RandomWalk.Path.Representation.Cadlag
 public import Probability.Process.RandomWalk.Path.Block.Law.FirstCrossing
 public import Topology.Cadlag.Skorokhod.Oscillation.Partition.Finite
 public import Topology.Cadlag.Skorokhod.Oscillation.Partition.Measurability
-public import Topology.Cadlag.Skorokhod.Oscillation.DoubleExcursion
+public import Topology.Cadlag.Skorokhod.Oscillation.DoubleExcursion.Basic
 
 /-!
 # Oscillation partitions for finite random-walk paths
@@ -36,7 +36,7 @@ noncomputable def normalizedStepGridPoints (n : ℕ) (hn : 0 < n)
   simpa [grid, UniformGrid.unit, Set.mem_Icc] using (grid.point_mem_Icc j)
 
 @[simp]
-private theorem normalizedStepGridPoints_coe (n : ℕ) (hn : 0 < n)
+private lemma normalizedStepGridPoints_coe (n : ℕ) (hn : 0 < n)
     (j : Fin (n + 1)) :
     (normalizedStepGridPoints n hn j : ℝ) = (j : ℝ) / n := by
   simp [normalizedStepGridPoints, UniformGrid.point, UniformGrid.unit]
@@ -70,7 +70,7 @@ noncomputable def normalizedStepOscillationPartition (n : ℕ)
 
 /-- On a nonterminal time, the cell index in the step partition is the
 integer part of the rescaled time. -/
-private theorem natFloor_mul_eq_stepPartitionIndex (n : ℕ) (hn : 0 < n)
+private lemma natFloor_mul_eq_stepPartitionIndex (n : ℕ) (hn : 0 < n)
     (t : unitInterval) (ht : t ≠ ⊤) :
     ⌊(n : ℝ) * t⌋₊ =
       ((normalizedStepOscillationPartition n hn).index t).val := by
@@ -166,7 +166,7 @@ theorem exists_pos_uniform_admitsOscillationPartition_normalizedStepPath
   exact normalizedStepCadlagPathIcc_oscillationBoundedOnStepPartition
     scale n hn increment
 
-private theorem exists_pos_uniform_admitsOscillationPartition_normalizedStepPath_zero
+private lemma exists_pos_uniform_admitsOscillationPartition_normalizedStepPath_zero
     (scale : ℕ → ℝ) {maximumOscillation : ℝ}
     (hoscillation : 0 < maximumOscillation) :
     ∃ minimumGap > 0, ∀ increment : ℕ → ℝ,
@@ -228,7 +228,7 @@ theorem exists_pos_uniform_admitsOscillationPartition_normalizedStepPath_prefix
         exact ⟨partition, lt_of_le_of_lt (min_le_right _ _) hmesh,
           bound, hbound, hosc⟩
 
-private theorem existsNatAnchorForWindow {n width i l : ℕ}
+private lemma existsNatAnchorForWindow {n width i l : ℕ}
     (hwidth : 0 < width) (hi : i < n) (hil : i ≤ l)
     (hspan : l - i ≤ width) :
     ∃ j : ℕ, j < n / width + 1 ∧ j * width ≤ i ∧
@@ -245,18 +245,6 @@ private theorem existsNatAnchorForWindow {n width i l : ℕ}
   · omega
   · omega
   · omega
-
-private theorem displacement_natAdd_eq_sub (increment : ℕ → ℝ)
-    {start finish : ℕ} (hstart : start ≤ finish) :
-    AdditivePath.displacement (finish - start)
-        (fun k => increment (start + k)) =
-      AdditivePath.displacement finish increment -
-        AdditivePath.displacement start increment := by
-  have hsplit := AdditivePath.displacement_add start (finish - start) increment
-  have hend : start + (finish - start) = finish := by omega
-  rw [hend] at hsplit
-  rw [hsplit]
-  ring
 
 /-- Distance between two values of a normalized step path, expressed as the
 scaled absolute difference of the corresponding partial sums. -/
@@ -416,13 +404,13 @@ theorem normalizedStepCadlagPathIcc_not_hasDoubleExcursionBound_subset_windowGri
     exact (le_of_lt ((lt_div_iff₀ hscale).mp hdiv))
   have hrawFirst := hvalueDist x y i j rfl rfl hfirst
   have hrawSecond := hvalueDist z w k l rfl rfl hsecond
-  have hshiftI := displacement_natAdd_eq_sub increment
+  have hshiftI := AdditivePath.displacement_natAdd_eq_sub increment
     (show anchor * width ≤ i by omega)
-  have hshiftJ := displacement_natAdd_eq_sub increment
+  have hshiftJ := AdditivePath.displacement_natAdd_eq_sub increment
     (show anchor * width ≤ j by omega)
-  have hshiftK := displacement_natAdd_eq_sub increment
+  have hshiftK := AdditivePath.displacement_natAdd_eq_sub increment
     (show anchor * width ≤ k by omega)
-  have hshiftL := displacement_natAdd_eq_sub increment
+  have hshiftL := AdditivePath.displacement_natAdd_eq_sub increment
     (show anchor * width ≤ l by omega)
   have hrawLocalFirst : ε * scale n ≤
       |AdditivePath.displacement localJ
@@ -465,7 +453,7 @@ theorem normalizedStepCadlagPathIcc_not_hasDoubleExcursionBound_subset_windowGri
         (ε * scale n) := hlocalEvent
   exact Set.mem_iUnion.mpr ⟨anchorIndex, by simpa [anchorIndex] using hgridEvent⟩
 
-private theorem split_abs_sub_at_half {a x y : ℝ}
+private lemma split_abs_sub_at_half {a x y : ℝ}
     (hlarge : 2 * a ≤ |x - y|) : a ≤ |x| ∨ a ≤ |y| := by
   by_contra h
   push Not at h

@@ -5,7 +5,7 @@ Authors: WANG Yiyang
 -/
 module
 
-public import MeasureTheory.Measure.InnerOuter
+public import MeasureTheory.Measure.Limits.InnerOuter
 public import Probability.Process.Path.PathClass.StepCorridor.Probability.Rate.Approximation
 
 import Topology.Order.Limit
@@ -31,7 +31,7 @@ open ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability
 
 namespace ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability
 
-private theorem energyBounds_of_probabilityRate
+private lemma energyBounds_of_probabilityRate
     {Ω : Type*} [MeasurableSpace Ω]
     (P : Measure Ω) [IsProbabilityMeasure P]
     {α κ : ℝ} {I : Type*} {l : Filter I} [NeBot l]
