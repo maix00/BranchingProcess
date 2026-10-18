@@ -9,6 +9,7 @@ module
 public import Order.Interval.RationalCoordinate.UnitInterval
 public import Probability.Process.Stable.SmallDeviation.Blocks.Factorization
 import Probability.Process.Stable.FiniteDimensional
+import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Independence
 public import MeasureTheory.Measure.Finite.Partition
 
 /-!
@@ -45,7 +46,9 @@ theorem IsStableLevyProcess.measure_prefixBin_nextBlock_ge_mul
   let past := rationalUniformPrefixPath X blocks j.val hblocks
   let next : Ω → ↑RationalCoordinate.UnitInterval → ℝ :=
     fun ω q => rationalUniformBlockProcessFromTime X hblocks j q ω
-  have hindep : past ⟂ᵢ[P] next := h.indepFun_rationalPrefix_nextBlock blocks hblocks j
+  have hindep : past ⟂ᵢ[P] next :=
+    h.increments.indepIncrements.indepFun_rationalPrefix_nextBlock
+      (fun t => h.increments.aemeasurable_eval t) blocks hblocks j
   have hpast : AEMeasurable past P := by
     rw [aemeasurable_pi_iff]
     intro q

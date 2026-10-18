@@ -30,18 +30,6 @@ namespace ProbabilityTheory
 open MeasureTheory
 open scoped NNReal
 
-/-- All information in the stopped prefix path is independent of the entire
-next translated block path. -/
-theorem IsStableLevyProcess.indepFun_rationalPrefix_nextBlock
-    {Ω : Type*} [MeasurableSpace Ω] {α : ℝ} {μ : Measure ℝ}
-    {X : ℝ≥0 → Ω → ℝ} {P : Measure Ω} [IsProbabilityMeasure P]
-    (h : IsStableLevyProcess α μ X P) (blocks : ℕ) (hblocks : 0 < blocks)
-    (j : Fin blocks) :
-    (rationalUniformPrefixPath X blocks j.val hblocks) ⟂ᵢ[P]
-      (fun ω q => rationalUniformBlockProcessFromTime X hblocks j q ω) := by
-  exact h.increments.indepIncrements.indepFun_rationalPrefix_nextBlock
-    (fun t => h.increments.aemeasurable_eval t) blocks hblocks j
-
 /-- The event for all previous block tubes factors from the next block tube.
 This gives the exact induction step for the multi-block probability product. -/
 theorem IsStableLevyProcess.measure_prefixTube_inter_nextBlock
@@ -53,7 +41,8 @@ theorem IsStableLevyProcess.measure_prefixTube_inter_nextBlock
         rationalUniformBlockTubeEvent X width hblocks j) =
       P (rationalUniformPrefixTubeEvent X width hblocks j.val) *
         P (rationalUniformBlockTubeEvent X width hblocks j) := by
-  have hindep := h.indepFun_rationalPrefix_nextBlock blocks hblocks j
+  have hindep := h.increments.indepIncrements.indepFun_rationalPrefix_nextBlock
+    (fun t => h.increments.aemeasurable_eval t) blocks hblocks j
   have hfactor := hindep.measure_inter_preimage_eq_mul
     (rationalUniformPrefixTubeSet width hblocks j.val)
     (Skorokhod.rationalCoordinateOscillationTube width)
@@ -92,7 +81,8 @@ theorem IsStableLevyProcess.pow_le_measure_rationalUniformPrefixBlockEvent
         P (rationalUniformPrefixBlockEvent X V hblocks m) * P (nextEvent m) := by
     intro m hm
     let j : Fin blocks := ⟨m, hm⟩
-    have hindep := h.indepFun_rationalPrefix_nextBlock blocks hblocks j
+    have hindep := h.increments.indepIncrements.indepFun_rationalPrefix_nextBlock
+      (fun t => h.increments.aemeasurable_eval t) blocks hblocks j
     have hfactor' := hindep.measure_inter_preimage_eq_mul
       (rationalUniformPrefixBlockSet hblocks m V) V
       (measurableSet_rationalUniformPrefixBlockSet hblocks m hV) hV
