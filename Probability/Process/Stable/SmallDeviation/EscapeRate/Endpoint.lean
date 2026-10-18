@@ -9,6 +9,7 @@ module
 public import Probability.Process.Stable.SmallDeviation.EscapeRate.Corridor
 public import Probability.Process.Stable.SmallDeviation.EndpointComparison
 import Probability.Process.Path.Skorokhod.Corridor.SegmentStationarity
+import Probability.Process.Stable.SmallDeviation.Blocks.ReturnScale
 
 /-! # Endpoint-constrained escape rates
 

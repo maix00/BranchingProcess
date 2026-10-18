@@ -7,6 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.Binning.TwoBins
+import Probability.Process.Stable.SmallDeviation.Blocks.Lower.Lemmas.ReturnScale
 
 /-!
 # A uniform return-block constant
