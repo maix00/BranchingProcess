@@ -218,8 +218,10 @@ interface into `Rotation/FinitePath.lean`, `Rotation/CyclicCover.lean`, and
 `Rotation/FiniteProduct.lean`, found 1,450 production modules and 138 test
 modules. The stable horizontal-tube lower-rate interface was subsequently
 split into `Stable/Rate/Lower/{BlockProbability,Liminf,Positivity,Limit}.lean`;
-the count was 1,453 before the current geometry split. The current production
-scan finds 1,460 Lean files and 138 test files. Earlier batches grouped the
+the count was 1,453 before the current geometry split. The current tracked-source
+scan finds 1,461 production Lean files and 138 test files; the additional
+production module is `Order/SetDissipate.lean`. The largest production
+directory has eight direct Lean files. Earlier batches grouped the
 Lemma 3.2 partition parameters, the Lemma 3.3 jump-pattern and spatial-bin
 setup, the Lemma 3.5 staircase
 parameters under their corresponding `Lemmas/` trees, and moved the generic
