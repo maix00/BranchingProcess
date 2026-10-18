@@ -363,10 +363,11 @@ theorem affineTubeRootMRCAPairMean_le_of_segmentProbability
         n lower drift width endpointUpper)
       hterminal window q hfirst hprob)
 
-/-- The source's small-drift Mogulskii bound gives an explicit estimate for
-the root-split MRCA pair contribution. Here `hsegment` is precisely the
-remaining segment probability input from Lemma 4.2, with the drawdown event
-obtained from the affine tube geometry. -/
+/-- The segment-probability estimate in Wang Yiyang, *Asymptotic Speed of the
+N-Branching Random Walk with Infinite Offspring* (master's thesis, Fudan
+University, 2026), Chapter 4, Lemma 4.2, gives an explicit bound for the
+root-split MRCA pair contribution. The drawdown event in `hsegment` follows
+from the affine tube geometry. -/
 theorem affineTubeRootMRCAPairMean_le_of_mogulskiiSegmentBound
     {X : Type*} [MeasurableSpace X]
     (φ : Potential X) (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
@@ -414,7 +415,9 @@ theorem exists_width0_crossChildMoment_le_exp_rpow
 
 /-- After absorbing the finite cross-child moment into the large-width
 factor, the root-split contribution has the same `3 * width^v` loss as the
-corresponding single summand of Lemma 4.5. Contributions from later ancestor
+corresponding single summand in Wang Yiyang, *Asymptotic Speed of the
+N-Branching Random Walk with Infinite Offspring* (master's thesis, Fudan
+University, 2026), Chapter 4, Lemma 4.5. Contributions from later ancestor
 generations still require the generation-`m` prefix estimate. -/
 theorem affineTubeRootMRCAPairMean_le_of_mogulskiiSegmentBound_of_crossAbsorption
     {X : Type*} [MeasurableSpace X]
@@ -965,7 +968,9 @@ theorem lintegral_weightedPrefixCrossChildWeightSum_eq_crossMoment_mul
 /-- For an indicator prefix corridor, the factorization above is exactly the
 cross-child moment times the corresponding tilted-spine corridor probability.
 This is the ancestor-prefix factor appearing in each positive-depth MRCA
-pair contribution in Lemma 4.5. -/
+pair contribution in Wang Yiyang, *Asymptotic Speed of the N-Branching Random
+Walk with Infinite Offspring* (master's thesis, Fudan University, 2026),
+Chapter 4, Lemma 4.5. -/
 theorem lintegral_weightedPrefixCrossChildWeightSum_indicator_eq_crossMoment_mul_spineProbability
     {X : Type*} [MeasurableSpace X]
     (φ : Potential X) (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]

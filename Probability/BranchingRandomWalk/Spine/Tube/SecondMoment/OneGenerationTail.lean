@@ -19,8 +19,10 @@ import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUppe
 The cross-child moment assumption gives a quantitative lower bound for a
 one-step tube hit. Independent initial roots then give an upper bound for the
 probability that no root produces such a child. This is a finite-horizon
-consequence of the model assumptions; the longer corridor estimates needed
-for (4.15) are separate.
+consequence of the model assumptions; the longer corridor estimates used in
+Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite
+Offspring* (master's thesis, Fudan University, 2026), Chapter 4, Lemma 4.5,
+are separate.
 -/
 
 open MeasureTheory
@@ -51,8 +53,10 @@ def affineCorridorPrefix (n : ℕ) (lower drift width : ℝ) :
 def affineCorridorFirstWindow (lower drift width : ℝ) : Set ℝ :=
   {y | lower + drift ≤ y ∧ y ≤ lower + drift + width}
 
-/-- The affine corridor used in Lemma 4.5, with its terminal endpoint
-restricted by the additional cutoff. -/
+/-- The affine corridor in Wang Yiyang, *Asymptotic Speed of the N-Branching
+Random Walk with Infinite Offspring* (master's thesis, Fudan University,
+2026), Chapter 4, Lemma 4.5, with its terminal endpoint restricted by the
+additional cutoff. -/
 def affineCorridorHistoryEndpointCutoff (n : ℕ) (lower drift width endpointUpper : ℝ) :
     Set (Fin (n + 2) → ℝ) :=
   {history | history ∈ affineCorridorHistory n lower drift width ∧
@@ -135,7 +139,9 @@ theorem affineCorridorHistoryEndpointCutoff_terminalUpper
 /-- On a nondecreasing affine tube, every earlier position is at most one
 width above every later position. The terminal increment is bounded by the
 width plus the total tube drift. This is the deterministic reduction used to
-apply the drawdown estimate to one block of Lemma 4.2. -/
+apply the drawdown estimate to one block in Wang Yiyang, *Asymptotic Speed of
+the N-Branching Random Walk with Infinite Offspring* (master's thesis, Fudan
+University, 2026), Chapter 4, Lemma 4.2. -/
 theorem affineTubeIncrement_mem_noLargeDropEndpointBelowEvent
     (n : ℕ) (lower drift width start : ℝ) (hdrift : 0 ≤ drift)
     (increment : ℕ → ℝ)
@@ -275,8 +281,10 @@ theorem lintegral_pathGenerationChildObservable_eq_manyToOne
       tailTest, hi, hmean]
   · simp [pathGenerationChildObservable, survivingPotentialTest, hi]
 
-/-- The terminal cutoff in Lemma 4.5 bounds a child's continuation moment by
-the exponential terminal weight times the corresponding spine corridor
+/-- The terminal cutoff in Wang Yiyang, *Asymptotic Speed of the N-Branching
+Random Walk with Infinite Offspring* (master's thesis, Fudan University,
+2026), Chapter 4, Lemma 4.5, bounds a child's continuation moment by the
+exponential terminal weight times the corresponding spine corridor
 probability. -/
 theorem lintegral_pathGenerationChildObservable_le_endpoint_weight
     {X : Type*} [MeasurableSpace X]
@@ -495,8 +503,11 @@ theorem lintegral_pathGenerationChildObservable_le_uniform_spineProbability_mul_
   · simpa [survivingPotentialTest, realizedPotentialWeight, hi] using
       hendpoint
 
-/-- The child moment estimate in Lemma 4.5 only needs the uniform corridor
-probability for child positions that lie in the tube at the first time step. -/
+/-- The child moment estimate in Wang Yiyang, *Asymptotic Speed of the
+N-Branching Random Walk with Infinite Offspring* (master's thesis, Fudan
+University, 2026), Chapter 4, Lemma 4.5, needs the uniform corridor
+probability only for child positions that lie in the tube at the first time
+step. -/
 theorem lintegral_pathGenerationChildObservable_le_firstWindowProbability_mul_weight
     {X : Type*} [MeasurableSpace X]
     (φ : Potential X) (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
@@ -655,7 +666,9 @@ theorem ennreal_tsum_offDiagonal_mul_le_crossChildWeight_of_childMomentBound
 
 /-- The root's ordered off-diagonal continuation terms are controlled by the
 cross-child exponential weight once the shifted spine corridor probabilities
-have a uniform bound. This is the fixed-ancestor estimate in Lemma 4.5. -/
+have a uniform bound. This is the fixed-ancestor estimate in Wang Yiyang,
+*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*
+(master's thesis, Fudan University, 2026), Chapter 4, Lemma 4.5. -/
 theorem pathGenerationChildMean_offDiagonal_le_crossChildWeight
     {X : Type*} [MeasurableSpace X]
     (φ : Potential X) (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]

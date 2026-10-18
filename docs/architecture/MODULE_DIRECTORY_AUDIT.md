@@ -332,5 +332,11 @@ The Brownian reflection and conditioned-walk comments also identify Dilworth--Wr
 Theorem 2.1; Bolthausen's Lemma 2.2, Lemma 2.3 equation (2.2), and Theorem
 3.2; and Iglehart's displayed equation (3.4), Section 3, p. 616. Wang Yiyang's
 thesis references give its full title and the exact chapter and lemma number.
+The affine-tube spine estimates now identify Wang Yiyang's *Asymptotic Speed
+of the N-Branching Random Walk with Infinite Offspring* (master's thesis,
+Fudan University, 2026), Chapter 4, Lemma 4.2 for the small-drift segment
+bound and Chapter 4, Lemma 4.5 for the terminally restricted corridor and
+MRCA contributions. The previous generic `source` and bare lemma-number
+references were replaced in the declaration docstrings.
 
 The IID sequence audit grouped stopping-time, prefix-factorization, and conditional-block interfaces in `Probability/Sequence/IID/Blocks/`; these are complete reusable theorems, not theorem-specific proof fragments. Formula-bearing public theorem lists were added to the characteristic-function, filtration-independence, and law-identification modules. Direct users now import the renamed block paths.
