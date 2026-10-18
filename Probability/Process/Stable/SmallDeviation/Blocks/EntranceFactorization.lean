@@ -30,9 +30,9 @@ namespace ProbabilityTheory
 open MeasureTheory
 open scoped NNReal
 
-/-- The first block and the following translated block are independent as
-random paths, for arbitrary nonnegative block lengths. -/
-theorem IsStableLevyProcess.indepFun_entranceAndContinuation
+/-- Independence of the entrance segment from its translated continuation,
+used internally by the event-factorization results below. -/
+private theorem IsStableLevyProcess.indepFun_entranceAndContinuation
     {Ω : Type*} [MeasurableSpace Ω]
     {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
     {P : Measure Ω} [IsProbabilityMeasure P]

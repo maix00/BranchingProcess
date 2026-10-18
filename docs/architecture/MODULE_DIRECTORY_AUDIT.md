@@ -112,7 +112,11 @@ the unused adjacent-block specialization was removed because
 stable-only block-law wrapper under `Stable/SmallDeviation/Blocks/Lemmas/`
 was also removed: its callers now use the general rational-block law directly,
 supplying only the independent- and stationary-increment properties inherited
-from the stable process.
+from the stable process. The stable-only prefix/next-block independence alias
+was removed for the same reason; its callers invoke the general
+`UniformBlocks/Independence` theorem. The entrance/continuation independence
+calculation remains private in `EntranceFactorization.lean` because only that
+file's event-factorization proofs use it.
 
 ## Direct-module density and audited groupings
 

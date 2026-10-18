@@ -12,6 +12,7 @@ public import Probability.Independence.Feedback
 public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Feedback.Basic
 public import Probability.Process.Path.Skorokhod.Corridor.Segment
 import Probability.Process.Stable.FiniteDimensional
+import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Independence
 import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Stationarity
 
 /-!
@@ -70,7 +71,8 @@ theorem IsStableLevyProcess.measure_feedbackNextBlock_ge_mul
     exact (h.increments.aemeasurable_eval _).sub
       (h.increments.aemeasurable_eval _)
   exact measure_adaptiveChoice_ge_mul P past next
-    (h.indepFun_rationalPrefix_nextBlock blocks hblocks j)
+    (h.increments.indepIncrements.indepFun_rationalPrefix_nextBlock
+      (fun t => h.increments.aemeasurable_eval t) blocks hblocks j)
     hpast hnext U S Vplus Vminus hU hS hVplus hVminus q hqplus hqminus
 
 /-- The measurable sign rule chooses a negative correction when the endpoint
