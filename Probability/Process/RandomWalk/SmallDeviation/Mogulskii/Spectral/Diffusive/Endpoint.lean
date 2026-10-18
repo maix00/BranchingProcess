@@ -13,6 +13,17 @@ public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.D
 /-!
 # Diffusive corridor estimates with a terminal interval
 
+The public declarations in this module are:
+
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.ofReal_exp_neg_pi_sq_div_two_le_brownian_openCorridorEndsIn`:
+  for a Brownian path and $w>1$, the probability of staying in
+  $(-w/2,w/2)$ and ending in an open interval containing $[-1/2,1/2]$ is at
+  least $e^{-\pi^2/2}$.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.ofReal_exp_neg_pi_sq_div_two_le_liminf_centeredStrictTubeEndsIn`:
+  for centered unit-variance increments, the $\liminf$ probability of the
+  corresponding width-$w\sqrt n$ strict tube with normalized endpoint in that
+  interval is at least $e^{-\pi^2/2}$.
+
 The principal Brownian corridor constant remains a lower bound after adding
 an open terminal interval that contains the closed unit corridor.  Donsker's
 theorem then transfers this estimate to centered unit-variance random walks.

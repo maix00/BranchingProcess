@@ -7,9 +7,14 @@ Authors: WANG Yiyang
 module
 
 public import Order.Interval.RationalCoordinate.UnitInterval
-public import Probability.Process.Stable.SmallDeviation.Blocks.Independence
+public import Mathlib.Probability.Independence.Basic
+public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Basic
+public import Probability.Process.Stable.Levy
 public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Events
-import MeasureTheory.Measure.FiniteProduct
+import Probability.Process.Stable.FiniteDimensional
+import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Stationarity
+import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Independence
+import MeasureTheory.Measure.Algebra.FiniteProduct
 
 /-!
 # Probability factorization across stable-process blocks
@@ -25,38 +30,6 @@ namespace ProbabilityTheory
 open MeasureTheory
 open scoped NNReal
 
-/-- All information in the stopped prefix path is independent of the entire
-next translated block path. -/
-theorem IsStableLevyProcess.indepFun_rationalPrefix_nextBlock
-    {Ω : Type*} [MeasurableSpace Ω] {α : ℝ} {μ : Measure ℝ}
-    {X : ℝ≥0 → Ω → ℝ} {P : Measure Ω} [IsProbabilityMeasure P]
-    (h : IsStableLevyProcess α μ X P) (blocks : ℕ) (hblocks : 0 < blocks)
-    (j : Fin blocks) :
-    (rationalUniformPrefixPath X blocks j.val hblocks) ⟂ᵢ[P]
-      (fun ω q => rationalUniformBlockProcessFromTime X hblocks j q ω) := by
-  let b := rationalUniformBlockBoundary blocks j.val hblocks
-  let c := rationalUniformBlockAbsoluteTime hblocks j ⊤
-  have hleft (q : ↑RationalCoordinate.UnitInterval) :
-      (0 : ℝ≥0) ≤ min (RationalCoordinate.toNNReal q) b ∧
-        min (RationalCoordinate.toNNReal q) b ≤ b :=
-    ⟨bot_le, min_le_right _ _⟩
-  have hright (q : ↑RationalCoordinate.UnitInterval) :
-      b ≤ rationalUniformBlockAbsoluteTime hblocks j q ∧
-        rationalUniformBlockAbsoluteTime hblocks j q ≤ c := by
-    dsimp [b, c]
-    rw [rationalUniformBlockBoundary_eq_start hblocks j]
-    exact ⟨monotone_rationalUniformBlockAbsoluteTime hblocks j bot_le,
-      monotone_rationalUniformBlockAbsoluteTime hblocks j le_top⟩
-  have hindep := h.increments.indepIncrements.indepFun_adjacentPaths
-    (fun t => h.increments.aemeasurable_eval t) (0 : ℝ≥0) b c
-    (fun q => min (RationalCoordinate.toNNReal q) b)
-    (rationalUniformBlockAbsoluteTime hblocks j) hleft hright
-  convert hindep using 1
-  · rfl
-  · funext ω q
-    simp [rationalUniformBlockProcessFromTime, b,
-      rationalUniformBlockBoundary_eq_start hblocks j]
-
 /-- The event for all previous block tubes factors from the next block tube.
 This gives the exact induction step for the multi-block probability product. -/
 theorem IsStableLevyProcess.measure_prefixTube_inter_nextBlock
@@ -68,7 +41,8 @@ theorem IsStableLevyProcess.measure_prefixTube_inter_nextBlock
         rationalUniformBlockTubeEvent X width hblocks j) =
       P (rationalUniformPrefixTubeEvent X width hblocks j.val) *
         P (rationalUniformBlockTubeEvent X width hblocks j) := by
-  have hindep := h.indepFun_rationalPrefix_nextBlock blocks hblocks j
+  have hindep := h.increments.indepIncrements.indepFun_rationalPrefix_nextBlock
+    (fun t => h.increments.aemeasurable_eval t) blocks hblocks j
   have hfactor := hindep.measure_inter_preimage_eq_mul
     (rationalUniformPrefixTubeSet width hblocks j.val)
     (Skorokhod.rationalCoordinateOscillationTube width)
@@ -107,7 +81,8 @@ theorem IsStableLevyProcess.pow_le_measure_rationalUniformPrefixBlockEvent
         P (rationalUniformPrefixBlockEvent X V hblocks m) * P (nextEvent m) := by
     intro m hm
     let j : Fin blocks := ⟨m, hm⟩
-    have hindep := h.indepFun_rationalPrefix_nextBlock blocks hblocks j
+    have hindep := h.increments.indepIncrements.indepFun_rationalPrefix_nextBlock
+      (fun t => h.increments.aemeasurable_eval t) blocks hblocks j
     have hfactor' := hindep.measure_inter_preimage_eq_mul
       (rationalUniformPrefixBlockSet hblocks m V) V
       (measurableSet_rationalUniformPrefixBlockSet hblocks m hV) hV
@@ -117,7 +92,8 @@ theorem IsStableLevyProcess.pow_le_measure_rationalUniformPrefixBlockEvent
     let j : Fin blocks := ⟨m, hm⟩
     have hqj : q ≤ P ((fun ω s =>
         rationalUniformBlockProcessFromTime X hblocks j s ω) ⁻¹' V) := by
-      rw [(h.rationalUniformBlockProcess_identDistrib blocks hblocks j
+      rw [(h.increments.indepIncrements.rationalUniformBlockProcess_identDistrib
+        h.toIsLevyProcess.stationaryIncrements blocks hblocks j
         ⟨0, hblocks⟩).measure_mem_eq hV]
       exact hq
     simpa [nextEvent, hm, j] using hqj

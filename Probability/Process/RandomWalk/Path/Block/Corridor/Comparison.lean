@@ -6,8 +6,8 @@ Authors: WANG Yiyang
 
 module
 
-public import MeasureTheory.Measure.FiniteCover
-public import Probability.Process.RandomWalk.Path.Block.Law
+public import MeasureTheory.Measure.Finite.Cover
+public import Probability.Process.RandomWalk.Path.Block.Law.Basic
 public import Probability.Process.RandomWalk.Path.Block.Corridor.Measure
 
 /-!

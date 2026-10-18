@@ -6,13 +6,25 @@ Authors: WANG Yiyang
 
 module
 
-public import Algebra.BigOperators.AdditivePath
+public import Algebra.BigOperators.AdditivePath.Basic
 public import Mathlib.Algebra.Order.Monoid.Unbundled.Defs
 
 import Mathlib.Algebra.Order.BigOperators.Group.Finset
 
 /-!
 # Deterministic bounds for partial sums
+
+The public declarations in `AdditivePath` are:
+
+- `displacement_le_nsmul_of_forall_lt` and
+  `nsmul_le_displacement_of_forall_lt` show that pointwise bounds on the
+  first $n$ increments in an additively ordered monoid imply
+  $n\,\ell\le D_n\le n\,u$.
+- `displacement_mem_Icc_nsmul_of_forall_lt` gives
+  $D_n\in[n\,\ell,n\,u]$ when every increment lies in $[\ell,u]$.
+- `displacement_mem_Icc_nsmul_of_forall_lt_of_le` gives the same bound for
+  every prefix $k\le n$ using the single increment-window hypothesis through
+  time $n$.
 
 Coordinatewise bounds on a finite increment prefix give the corresponding
 bounds on every partial sum.  This file contains no probability assumptions;
