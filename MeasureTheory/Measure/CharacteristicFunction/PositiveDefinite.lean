@@ -35,7 +35,7 @@ variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
 
 omit [MeasurableSpace E] [BorelSpace E] in
 /-- Pointwise, the quadratic kernel of a characteristic function is a squared modulus. -/
-private theorem charFun_sum_integrand_eq_normSq
+private lemma charFun_sum_integrand_eq_normSq
     {n : ℕ} (ξ : Fin n → E) (c : Fin n → ℂ) (a : E) :
     ∑ i : Fin n, ∑ j : Fin n,
       starRingEnd ℂ (c i) * c j * exp (↑(⟪a, ξ i - ξ j⟫_ℝ) * I) =
@@ -52,7 +52,7 @@ private theorem charFun_sum_integrand_eq_normSq
   simp only [map_mul, ← exp_conj, map_neg, conj_ofReal, conj_I, mul_neg, neg_neg]
   ring
 
-private theorem integrable_charFun_term (μ : ProbabilityMeasure E)
+private lemma integrable_charFun_term (μ : ProbabilityMeasure E)
     {n : ℕ} (ξ : Fin n → E) (c : Fin n → ℂ) (i j : Fin n) :
     Integrable
       (fun a : E => starRingEnd ℂ (c i) * c j * exp (↑(⟪a, ξ i - ξ j⟫_ℝ) * I))
@@ -62,7 +62,7 @@ private theorem integrable_charFun_term (μ : ProbabilityMeasure E)
   · filter_upwards with a
     simp only [norm_mul, norm_exp_ofReal_mul_I, mul_one, le_refl]
 
-private theorem integrable_charFun_sum_integrand (μ : ProbabilityMeasure E)
+private lemma integrable_charFun_sum_integrand (μ : ProbabilityMeasure E)
     {n : ℕ} (ξ : Fin n → E) (c : Fin n → ℂ) :
     Integrable
       (fun a : E => ∑ i : Fin n, ∑ j : Fin n,
@@ -99,7 +99,7 @@ theorem charFun_sum_eq_integral_normSq (μ : ProbabilityMeasure E)
   exact integral_congr_ae (Filter.Eventually.of_forall fun a =>
     charFun_sum_integrand_eq_normSq ξ c a)
 
-private theorem integrable_charFun_normSq (μ : ProbabilityMeasure E)
+private lemma integrable_charFun_normSq (μ : ProbabilityMeasure E)
     {n : ℕ} (ξ : Fin n → E) (c : Fin n → ℂ) :
     Integrable
       (fun a : E =>
