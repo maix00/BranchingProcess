@@ -407,19 +407,29 @@ Watkins, *Stochastic Processes in Continuous Time*, Definition 2.1, p. 12,
 states stationary increments and independent increments as separate
 properties of a process; stationary increments say that the law of
 `X_{t+s} - X_t` is independent of `t` ([lecture notes](https://math.arizona.edu/~jwatkins/notesc.pdf)).
+The broader time statement below is derived from the ordered additive-time
+hypotheses, rather than attributed to Watkins's real-time definition.
 
 The Lean API therefore records stationary increments independently in
 `Probability/Process/StationaryIncrements/Basic.lean`, with only an additive
-time monoid and a subtraction operation on the state. The finite-dimensional
-law API in `Probability/Process/IndepIncrements/FiniteDimensional.lean` is
-generalized from real-valued paths to a measurable additive commutative group
-with measurable addition. In particular,
-`HasIndepIncrements.translatedProcess_finiteDimensional_identDistrib` uses
-only independent and stationary increments; no càdlàg, stochastic-continuity,
-or stable-law assumption enters its statement. The rational uniform-block
-path theorem keeps real-valued path geometry, but assumes only these two
-increment properties and coordinate measurability. Its stable-process
-corollary remains at the stable small-deviation boundary as an adapter.
+time monoid and subtraction on the state. The finite-dimensional law API in
+`Probability/Process/IndepIncrements/FiniteDimensional.lean` takes values in a
+measurable additive commutative group with measurable addition. Its
+finite-dimensional position-law theorem uses an explicit anchor instead of
+requiring a least time. The translated-increment law is stated for an ordered
+additive commutative time monoid with `PartialOrder`, `AddLeftMono`,
+`ExistsAddOfLE`, `Sub`, and `OrderedSub`. These assumptions express the two
+steps used in the proof: left translation preserves monotone grids, and the
+interval from `q` to `r` has length `r - q`. The duration assumptions use
+Mathlib's `ExistsAddOfLE` and `OrderedSub` interfaces
+([`ExistsAddOfLE`](https://github.com/leanprover-community/mathlib4/blob/021c46bdd042f67b538b9f9871d556a93713a9a9/Mathlib/Algebra/Order/Monoid/Unbundled/ExistsOfLE.lean),
+[`OrderedSub`](https://github.com/leanprover-community/mathlib4/blob/021c46bdd042f67b538b9f9871d556a93713a9a9/Mathlib/Algebra/Order/Sub/Defs.lean)).
+The theorem uses only independent and stationary increments; no càdlàg,
+stochastic-continuity, or stable-law assumption enters its statement. The
+rational uniform-block path theorem keeps real-valued path geometry, but
+assumes only these two increment properties and coordinate measurability. Its
+stable-process corollary remains at the stable small-deviation boundary as an
+adapter.
 
 This placement follows the mathematical dependencies rather than the number
 of clients: the standalone stationary-increment predicate and state-group
