@@ -15,6 +15,15 @@ public import Mathlib.Probability.Moments.Variance
 Convert convergence of second moments into convergence of the corresponding
 `L²` seminorms. This closes the measure-theoretic final step after a trajectory
 proof establishes vanishing second moments.
+
+The public theorems in this file are:
+
+- `ProbabilityTheory.tendsto_eLpNorm_two_zero_of_integral_sq`: if
+  $\int X_n^2\,d\mu\to0$ and $X_n\in L^4$, then
+  $\|X_n\|_{L^2}\to0$.
+- `ProbabilityTheory.tendsto_integral_and_variance_of_tendsto_centered_integral_sq`:
+  if $\int (X_n-c)^2\,d\mu\to0$, then
+  $\int X_n\,d\mu\to c$ and $\operatorname{Var}(X_n)\to0$.
 -/
 
 @[expose] public section

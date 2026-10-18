@@ -14,6 +14,23 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 
 Polynomial tail bounds and logarithmic fourth-moment growth imply the tail
 uniform-integrability estimate used to prove convergence in `L²`.
+
+The public theorems in this file are:
+
+- `ProbabilityTheory.tendsto_integral_sq_of_polynomial_tails_log_fourth_moment`:
+  for each $q\in\mathbb R$, if eventually
+  $\int X_n^4\,d\mu\le C(1+(\log n)^q)$ and, for every $\varepsilon>0$,
+  $\mu(\{\varepsilon\le X_n\}\cup\{X_n\le-\varepsilon\})
+  \le C_\varepsilon n^{-p_\varepsilon}$ for some $C_\varepsilon,p_\varepsilon>0$,
+  then $\int X_n^2\,d\mu\to0$.
+- `ProbabilityTheory.tendsto_eLpNorm_two_zero_of_polynomial_tails_log_fourth_moment`:
+  the same assumptions imply $\|X_n\|_{L^2}\to0$.
+- `ProbabilityTheory.tendsto_eLpNorm_two_sub_const_zero_of_polynomial_tails_log_fourth_moment`:
+  the centered versions of those assumptions imply
+  $\|X_n-c\|_{L^2}\to0$.
+- `ProbabilityTheory.tendsto_integral_and_variance_of_polynomial_tails_log_fourth_moment`:
+  the centered assumptions imply $\mathbb E[X_n]\to c$ and
+  $\operatorname{Var}(X_n)\to0$.
 -/
 
 @[expose] public section
@@ -23,39 +40,32 @@ open scoped ENNReal
 
 namespace ProbabilityTheory
 
-private lemma tendsto_one_add_log_eighth_div_rpow
+private lemma tendsto_one_add_log_rpow_div_rpow (q : ℝ)
     {p : ℝ} (hp : 0 < p) :
     Tendsto (fun n : ℕ =>
-      (1 + Real.log (n : ℝ) ^ 8) / (n : ℝ) ^ p) atTop (nhds 0) := by
+      (1 + Real.log (n : ℝ) ^ q) / (n : ℝ) ^ p) atTop (nhds 0) := by
   have hpow : Tendsto (fun x : ℝ => x ^ p) atTop atTop :=
     tendsto_rpow_atTop hp
   have hinv : Tendsto (fun n : ℕ => ((n : ℝ) ^ p)⁻¹) atTop (nhds 0) :=
     tendsto_inv_atTop_zero.comp (hpow.comp tendsto_natCast_atTop_atTop)
-  have hlogLittleReal : (fun x : ℝ => Real.log x ^ (8 : ℝ)) =o[atTop]
+  have hlogLittle : (fun x : ℝ => Real.log x ^ q) =o[atTop]
       fun x => x ^ p :=
-    isLittleO_log_rpow_rpow_atTop 8 hp
-  have hlogPowEq : (fun x : ℝ => Real.log x ^ (8 : ℝ)) =
-      fun x => Real.log x ^ (8 : ℕ) := by
-    funext x
-    exact Real.rpow_natCast _ _
-  have hlogLittle : (fun x : ℝ => Real.log x ^ (8 : ℕ)) =o[atTop]
-      fun x => x ^ p :=
-    hlogLittleReal.congr_left (fun x => by exact Real.rpow_natCast _ _)
+    isLittleO_log_rpow_rpow_atTop q hp
   have hlog : Tendsto (fun n : ℕ =>
-      Real.log (n : ℝ) ^ 8 / (n : ℝ) ^ p) atTop (nhds 0) :=
+      Real.log (n : ℝ) ^ q / (n : ℝ) ^ p) atTop (nhds 0) :=
     hlogLittle.tendsto_div_nhds_zero.comp tendsto_natCast_atTop_atTop
   have hsum := hinv.add hlog
   have heq : (fun n : ℕ =>
-      (1 + Real.log (n : ℝ) ^ 8) / (n : ℝ) ^ p) =ᶠ[atTop]
+      (1 + Real.log (n : ℝ) ^ q) / (n : ℝ) ^ p) =ᶠ[atTop]
       fun n => ((n : ℝ) ^ p)⁻¹ +
-        Real.log (n : ℝ) ^ 8 / (n : ℝ) ^ p := by
+        Real.log (n : ℝ) ^ q / (n : ℝ) ^ p := by
     filter_upwards [eventually_gt_atTop (0 : ℕ)] with n hn
     have hn' : (0 : ℝ) < (n : ℝ) := by exact_mod_cast hn
     rw [div_eq_mul_inv, div_eq_mul_inv]
     ring
   have hsum' : Tendsto
       (fun n : ℕ => ((n : ℝ) ^ p)⁻¹ +
-        Real.log (n : ℝ) ^ 8 / (n : ℝ) ^ p)
+        Real.log (n : ℝ) ^ q / (n : ℝ) ^ p)
       atTop (nhds 0) := by simpa using hsum
   exact hsum'.congr' heq.symm
 
@@ -63,6 +73,7 @@ private lemma tendsto_one_add_log_eighth_div_rpow
 growth, makes the fourth-moment Hölder contribution vanish at every fixed
 central threshold. -/
 theorem tendsto_integral_sq_of_polynomial_tails_log_fourth_moment
+    (q : ℝ)
     {Ω : Type*} [MeasurableSpace Ω]
     (μ : Measure Ω) [IsProbabilityMeasure μ]
     (X : ℕ → Ω → ℝ)
@@ -70,7 +81,7 @@ theorem tendsto_integral_sq_of_polynomial_tails_log_fourth_moment
     (hX4 : ∀ n, MemLp (X n) (4 : ℝ≥0∞) μ)
     (hfourth : ∃ C : ℝ, 0 ≤ C ∧ ∀ᶠ n : ℕ in atTop,
       (∫ ω, (X n ω) ^ 4 ∂μ) ≤
-        C * (1 + Real.log (n : ℝ) ^ 8))
+        C * (1 + Real.log (n : ℝ) ^ q))
     (htails : ∀ ε : ℝ, 0 < ε →
       ∃ C p : ℝ, 0 ≤ C ∧ 0 < p ∧ ∀ᶠ n : ℕ in atTop,
         μ.real ({ω | ε ≤ X n ω} ∪ {ω | X n ω ≤ -ε}) ≤
@@ -102,13 +113,13 @@ theorem tendsto_integral_sq_of_polynomial_tails_log_fourth_moment
   let fourth : ℕ → ℝ := fun n => ∫ ω, (X n ω) ^ 4 ∂μ
   let tail : ℕ → ℝ := fun n => μ.real (bad n)
   have hratio : Tendsto (fun n : ℕ =>
-      (1 + Real.log (n : ℝ) ^ 8) / (n : ℝ) ^ p)
-      atTop (nhds 0) := tendsto_one_add_log_eighth_div_rpow hp
+      (1 + Real.log (n : ℝ) ^ q) / (n : ℝ) ^ p)
+      atTop (nhds 0) := tendsto_one_add_log_rpow_div_rpow q hp
   have hprodLimit : Tendsto (fun n : ℕ => fourth n * tail n)
       atTop (nhds 0) := by
     have hupper : Tendsto (fun n : ℕ =>
         Cfourth * Ctail *
-          ((1 + Real.log (n : ℝ) ^ 8) / (n : ℝ) ^ p))
+          ((1 + Real.log (n : ℝ) ^ q) / (n : ℝ) ^ p))
         atTop (nhds 0) := by
       have h := hratio.const_mul (Cfourth * Ctail)
       simpa [mul_assoc, mul_left_comm, mul_comm] using h
@@ -121,10 +132,10 @@ theorem tendsto_integral_sq_of_polynomial_tails_log_fourth_moment
     · filter_upwards [hfourthEventually, hbadBound,
         eventually_gt_atTop (0 : ℕ)] with n hM hT hn
       have hn' : 0 < (n : ℝ) := by exact_mod_cast hn
-      have hfactorNonneg : 0 ≤ Cfourth * (1 + Real.log (n : ℝ) ^ 8) := by
+      have hfactorNonneg : 0 ≤ Cfourth * (1 + Real.log (n : ℝ) ^ q) := by
         positivity
       have hmoment : fourth n ≤
-          Cfourth * (1 + Real.log (n : ℝ) ^ 8) := by
+          Cfourth * (1 + Real.log (n : ℝ) ^ q) := by
         exact hM
       have htail' : tail n ≤ Ctail / (n : ℝ) ^ p := by
         exact hT
@@ -132,7 +143,7 @@ theorem tendsto_integral_sq_of_polynomial_tails_log_fourth_moment
       have hprod := mul_le_mul hmoment htail' hTnonneg hfactorNonneg
       have hbound : fourth n * tail n ≤
           Cfourth * Ctail *
-            ((1 + Real.log (n : ℝ) ^ 8) / (n : ℝ) ^ p) := by
+            ((1 + Real.log (n : ℝ) ^ q) / (n : ℝ) ^ p) := by
         have hden : (n : ℝ) ^ p ≠ 0 := ne_of_gt (Real.rpow_pos_of_pos hn' p)
         simpa [fourth, tail, div_eq_mul_inv, mul_assoc, mul_left_comm,
           mul_comm] using hprod
@@ -157,6 +168,7 @@ theorem tendsto_integral_sq_of_polynomial_tails_log_fourth_moment
 /-- Polynomial upper and lower tail estimates, together with logarithmic
 fourth-moment growth, imply convergence to zero in `L²`. -/
 theorem tendsto_eLpNorm_two_zero_of_polynomial_tails_log_fourth_moment
+    (q : ℝ)
     {Ω : Type*} [MeasurableSpace Ω]
     (μ : Measure Ω) [IsProbabilityMeasure μ]
     (X : ℕ → Ω → ℝ)
@@ -164,7 +176,7 @@ theorem tendsto_eLpNorm_two_zero_of_polynomial_tails_log_fourth_moment
     (hX4 : ∀ n, MemLp (X n) (4 : ℝ≥0∞) μ)
     (hfourth : ∃ C : ℝ, 0 ≤ C ∧ ∀ᶠ n : ℕ in atTop,
       (∫ ω, (X n ω) ^ 4 ∂μ) ≤
-        C * (1 + Real.log (n : ℝ) ^ 8))
+        C * (1 + Real.log (n : ℝ) ^ q))
     (htails : ∀ ε : ℝ, 0 < ε →
       ∃ C p : ℝ, 0 ≤ C ∧ 0 < p ∧ ∀ᶠ n : ℕ in atTop,
         μ.real ({ω | ε ≤ X n ω} ∪ {ω | X n ω ≤ -ε}) ≤
@@ -172,11 +184,12 @@ theorem tendsto_eLpNorm_two_zero_of_polynomial_tails_log_fourth_moment
     Tendsto (fun n => eLpNorm (X n) (2 : ℝ≥0∞) μ) atTop (nhds 0) :=
   tendsto_eLpNorm_two_zero_of_integral_sq μ X hX4
     (tendsto_integral_sq_of_polynomial_tails_log_fourth_moment
-      μ X hX hX4 hfourth htails)
+      q μ X hX hX4 hfourth htails)
 
 /-- Centered polynomial tail bounds and logarithmic fourth-moment growth
 imply `L²` convergence of a family to a fixed constant. -/
 theorem tendsto_eLpNorm_two_sub_const_zero_of_polynomial_tails_log_fourth_moment
+    (q : ℝ)
     {Ω : Type*} [MeasurableSpace Ω]
     (μ : Measure Ω) [IsProbabilityMeasure μ]
     (X : ℕ → Ω → ℝ) (c : ℝ)
@@ -184,7 +197,7 @@ theorem tendsto_eLpNorm_two_sub_const_zero_of_polynomial_tails_log_fourth_moment
     (hX4 : ∀ n, MemLp (fun ω => X n ω - c) (4 : ℝ≥0∞) μ)
     (hfourth : ∃ C : ℝ, 0 ≤ C ∧ ∀ᶠ n : ℕ in atTop,
       (∫ ω, (X n ω - c) ^ 4 ∂μ) ≤
-        C * (1 + Real.log (n : ℝ) ^ 8))
+        C * (1 + Real.log (n : ℝ) ^ q))
     (htails : ∀ ε : ℝ, 0 < ε →
       ∃ C p : ℝ, 0 ≤ C ∧ 0 < p ∧ ∀ᶠ n : ℕ in atTop,
         μ.real ({ω | ε ≤ X n ω - c} ∪ {ω | X n ω - c ≤ -ε}) ≤
@@ -197,7 +210,7 @@ theorem tendsto_eLpNorm_two_sub_const_zero_of_polynomial_tails_log_fourth_moment
     exact (hX n).sub measurable_const
   have hY4 : ∀ n, MemLp (Y n) (4 : ℝ≥0∞) μ := hX4
   have hfourthY : ∃ C : ℝ, 0 ≤ C ∧ ∀ᶠ n : ℕ in atTop,
-      (∫ ω, (Y n ω) ^ 4 ∂μ) ≤ C * (1 + Real.log (n : ℝ) ^ 8) := by
+      (∫ ω, (Y n ω) ^ 4 ∂μ) ≤ C * (1 + Real.log (n : ℝ) ^ q) := by
     simpa [Y] using hfourth
   have htailsY : ∀ ε : ℝ, 0 < ε →
       ∃ C p : ℝ, 0 ≤ C ∧ 0 < p ∧ ∀ᶠ n : ℕ in atTop,
@@ -206,12 +219,13 @@ theorem tendsto_eLpNorm_two_sub_const_zero_of_polynomial_tails_log_fourth_moment
     simpa [Y] using htails
   simpa [Y] using
     tendsto_eLpNorm_two_zero_of_polynomial_tails_log_fourth_moment
-      μ Y hY hY4 hfourthY htailsY
+      q μ Y hY hY4 hfourthY htailsY
 
 /-- Centered polynomial tail bounds and logarithmic fourth-moment growth imply
 convergence of the expectations to the center and of the variances to zero.
 This is the moment form of the final `L²` convergence criterion. -/
 theorem tendsto_integral_and_variance_of_polynomial_tails_log_fourth_moment
+    (q : ℝ)
     {Ω : Type*} [MeasurableSpace Ω]
     (μ : Measure Ω) [IsProbabilityMeasure μ]
     (X : ℕ → Ω → ℝ) (c : ℝ)
@@ -219,7 +233,7 @@ theorem tendsto_integral_and_variance_of_polynomial_tails_log_fourth_moment
     (hX4 : ∀ n, MemLp (fun ω => X n ω - c) (4 : ℝ≥0∞) μ)
     (hfourth : ∃ C : ℝ, 0 ≤ C ∧ ∀ᶠ n : ℕ in atTop,
       (∫ ω, (X n ω - c) ^ 4 ∂μ) ≤
-        C * (1 + Real.log (n : ℝ) ^ 8))
+        C * (1 + Real.log (n : ℝ) ^ q))
     (htails : ∀ ε : ℝ, 0 < ε →
       ∃ C p : ℝ, 0 ≤ C ∧ 0 < p ∧ ∀ᶠ n : ℕ in atTop,
         μ.real ({ω | ε ≤ X n ω - c} ∪ {ω | X n ω - c ≤ -ε}) ≤
@@ -232,7 +246,7 @@ theorem tendsto_integral_and_variance_of_polynomial_tails_log_fourth_moment
     exact (hX n).sub measurable_const
   have hY4 : ∀ n, MemLp (Y n) (4 : ℝ≥0∞) μ := hX4
   have hfourthY : ∃ C : ℝ, 0 ≤ C ∧ ∀ᶠ n : ℕ in atTop,
-      (∫ ω, (Y n ω) ^ 4 ∂μ) ≤ C * (1 + Real.log (n : ℝ) ^ 8) := by
+      (∫ ω, (Y n ω) ^ 4 ∂μ) ≤ C * (1 + Real.log (n : ℝ) ^ q) := by
     simpa [Y] using hfourth
   have htailsY : ∀ ε : ℝ, 0 < ε →
       ∃ C p : ℝ, 0 ≤ C ∧ 0 < p ∧ ∀ᶠ n : ℕ in atTop,
@@ -242,7 +256,7 @@ theorem tendsto_integral_and_variance_of_polynomial_tails_log_fourth_moment
   have hsecond : Tendsto (fun n => ∫ ω, (Y n ω) ^ 2 ∂μ)
       atTop (nhds 0) :=
     tendsto_integral_sq_of_polynomial_tails_log_fourth_moment
-      μ Y hY hY4 hfourthY htailsY
+      q μ Y hY hY4 hfourthY htailsY
   have hX2 : ∀ n, MemLp (X n) (2 : ℝ≥0∞) μ := by
     intro n
     have h := (hX4 n).mono_exponent (by norm_num : (2 : ℝ≥0∞) ≤ 4)
