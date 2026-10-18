@@ -28,7 +28,7 @@ open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 section Generic
 variable {α X : Type*}
 
-private theorem stepFieldLaw_mem_at_of_measure_eq_one
+private lemma stepFieldLaw_mem_at_of_measure_eq_one
     [MeasurableSpace X]
     (A : Set (Combinatorics.Branching.Step α X)) (hA : MeasurableSet A)
     (μ : Measure (Combinatorics.Branching.Step α X))

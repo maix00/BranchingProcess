@@ -6,23 +6,24 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Entrance.RobustTransition
-public import Probability.Process.RandomWalk.SmallDeviation.Entrance.Edge.LowerGeometry
-public import Probability.Process.RandomWalk.SmallDeviation.Entrance.Edge.UpperGeometry
+public import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.Event
+public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition.Event
+import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.Lemmas.Edge.LowerMovingTube
+import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.Lemmas.Edge.UpperMovingTube
 /-!
 # Robust terminal geometry at the two edges
 
 The module-visible supporting lemmas in this file are:
 
-- `prefixPositiveWindow_and_transition_subset_robustMovingTransitionEvent`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.prefixPositiveWindow_and_transition_subset_robustMovingTransitionEvent`:
   the lower-edge fixed prefix and nonnegative meander suffix imply the
   moving corridor with endpoint in $[h_n+2\Delta/5,h_n+3\Delta/5]$.
-- `prefixNegativeWindow_and_reflectedTransition_subset_robustMovingTransitionEvent`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.prefixNegativeWindow_and_reflectedTransition_subset_robustMovingTransitionEvent`:
   the reflected upper-edge construction gives the same terminal interval.
 
 These are the two fixed-prefix constructions of Wang Yiyang,
-*Asymptotic speed of the $N$-branching random walk with infinite offspring*,
-Appendix A.2, proof of the meander transition lemma. Their printed
+*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
+Appendix A.2, Lemma A.7. Their printed
 terminal bounds are strengthened to the displayed robust interval by
 increasing the width threshold, with each prefix length fixed.
 -/
@@ -52,7 +53,7 @@ lemma prefixPositiveWindow_and_transition_subset_robustMovingTransitionEvent
       robustMovingTransitionEvent (m + N) width drift start := by
   intro increment hinc
   have hmove :=
-    prefixPositiveWindow_and_transition_subset_movingTransitionEvent
+    prefixPositiveWindow_and_transition_subset_movingCorridorEvent
       hwidth hdrift ha hab hstart hprefixHeight hprefixUpper
       hstep htotal hinc
   have hprefixLower : (m : ℝ) * a ≤
@@ -108,7 +109,7 @@ lemma prefixNegativeWindow_and_reflectedTransition_subset_robustMovingTransition
       robustMovingTransitionEvent (m + N) width drift start := by
   intro increment hinc
   have hmove :=
-    prefixNegativeWindow_and_reflectedTransition_subset_movingTransitionEvent
+    prefixNegativeWindow_and_reflectedTransition_subset_movingCorridorEvent
       hwidth hdrift ha hab hstart hprefixUpper hsmallDrift htotal hinc
   let reflected : ℕ → ℝ := fun k => -increment k
   have hprefixLower : (m : ℝ) * a ≤

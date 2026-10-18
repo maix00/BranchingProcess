@@ -6,14 +6,20 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Endpoint.Windows
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Binning.Parameters
+public import Mathlib.Basic.Real.Basic
+public import Mathlib.Algebra.Order.Archimedean.Real.Basic
+public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.Binning
+public import Probability.Process.RandomWalk.Path.Block.Partition.TailMerged
+public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.BlockTube
+import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Endpoint.Windows
+import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Binning.Parameters
+import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.BlockTube
 /-!
 # Uniform width and time conditions for the staircase blocks
 
 The module-visible supporting lemma in this file is:
 
-- `staircaseBlockNumericConditions`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.staircaseBlockNumericConditions`:
   from $\ell\le|I_j|<2\ell$ and
   $\Delta/2\le\Delta(j)\le\Delta$ and
   $\Delta(j)\ge\Delta-2c\ell/\Delta^2$, common conditions at
@@ -24,8 +30,7 @@ The module-visible supporting lemma in this file is:
   required by the staircase product.
 
 These are the estimates following the two block-length bounds in Wang
-Yiyang, *Asymptotic speed of the $N$-branching random walk with infinite
-offspring*, Chapter 3, proof of Lemma 3.5. Endpoint fractions for ordinary
+Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, proof of Lemma 3.5. Endpoint fractions for ordinary
 and final blocks are treated separately in the product theorem.
 -/
 
@@ -56,18 +61,18 @@ lemma staircaseBlockNumericConditions
           (globalWidth - 2 * drift * (blockLength : ℝ) /
             globalWidth ^ 2)⌋₊ : ℝ) ^ 2)
     {j : ℕ}
-    (hj : j < staircaseBlockCount entrance horizon blockLength) :
+    (hj : j < tailMergedBlockCount entrance horizon blockLength) :
     let actualWidth := staircaseTubeWidth globalWidth drift
-      (staircaseBlockLength entrance horizon blockLength) j
+      (tailMergedBlockLength entrance horizon blockLength) j
     let narrowedWidth := staircaseBinWidth m * actualWidth
     width₀ ≤ ⌊narrowedWidth⌋₊ ∧
     1 / margin ≤ narrowedWidth ∧
     ratio₀ * ⌊narrowedWidth⌋₊ ^ 2 ≤
-      staircaseBlockLength entrance horizon blockLength j ∧
+      tailMergedBlockLength entrance horizon blockLength j ∧
     narrowedRate * globalWidth ^ 2 ≤
       blockRate * (⌊narrowedWidth⌋₊ : ℝ) ^ 2 := by
   let actualWidth := staircaseTubeWidth globalWidth drift
-    (staircaseBlockLength entrance horizon blockLength) j
+    (tailMergedBlockLength entrance horizon blockLength) j
   let narrowedWidth := staircaseBinWidth m * actualWidth
   have hhalf : globalWidth / 2 ≤ actualWidth :=
     staircaseTubeWidth_ge_half_of_schedule_bound hentrance
@@ -96,10 +101,10 @@ lemma staircaseBlockNumericConditions
           (globalWidth - 2 * drift * (blockLength : ℝ) /
             globalWidth ^ 2)⌋₊ ≤ ⌊narrowedWidth⌋₊ :=
     Nat.floor_mono (mul_le_mul_of_nonneg_left hcommon hβ)
-  have hlength := (staircaseBlockLength_bounds
+  have hlength := (tailMergedBlockLength_bounds
     hentrance hblockLength hj).1
   have htime' : ratio₀ * ⌊narrowedWidth⌋₊ ^ 2 ≤
-      staircaseBlockLength entrance horizon blockLength j := by
+      tailMergedBlockLength entrance horizon blockLength j := by
     have hsquare : ⌊narrowedWidth⌋₊ ^ 2 ≤
         ⌊staircaseBinWidth m * globalWidth⌋₊ ^ 2 := by
       exact pow_le_pow_left₀ (Nat.zero_le _) hfloorHigh _

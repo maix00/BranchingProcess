@@ -7,8 +7,10 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.Brownian.Independence.FirstPassageGrid
-public import Probability.Process.Brownian.Reflection.UnboundedBelow
-public import Probability.Process.Path.TimeGrid.Expanding
+public import Probability.Process.Path.FirstPassage.GridApproximation
+public import Probability.Process.Brownian.Reflection.Path.UnboundedBelow
+import Probability.Process.TimeGrid.Expanding
+import Probability.MeasureTheory.Convergence.InvariantLaw
 public import Probability.MeasureTheory.Convergence.IndependentLimits
 
 /-!
@@ -26,8 +28,7 @@ The public theorem in this file is:
 The proof takes expanding finite observation grids, uses the
 finite-valued stopping-time law, and passes to their almost-sure path
 limit. This is the marginal strong-Markov step behind the Lévy
-decomposition cited in Erwin Bolthausen, *On a functional central
-limit theorem for random walks conditioned to stay positive*,
+decomposition cited in Erwin Bolthausen, *On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*,
 Lemma 2.3, equation (2.2), Ann. Probab. 4(3) (1976), 480--485,
 DOI 10.1214/aop/1176996098, referring to Kiyosi Itô and Henry P.
 McKean, *Diffusion Processes and Their Sample Paths* (1965), §1.7.
@@ -42,7 +43,7 @@ open scoped NNReal
 
 /-- Every finite first-passage time is approached from above by the
 expanding first-passage observation grids. -/
-private theorem tendsto_expandingGridCeiling_of_finite
+private lemma tendsto_expandingGridCeiling_of_finite
     (a : ℝ) (f : C(ℝ≥0, ℝ)) (τ : ℝ≥0)
     (hτ : firstPassageBelow f a = τ) :
     Filter.Tendsto

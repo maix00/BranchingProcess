@@ -21,6 +21,30 @@ This file derives the slowly varying factor, stable-process escape rate, and
 random-walk tightness from the usual stable-domain assumptions in the three
 non-Gaussian regimes.  This makes those analytic inputs consequences of the
 theorem hypotheses instead of opaque premises of the discrete estimate.
+
+The public theorems in this module are:
+
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_stableInputs`:
+  under stable-scale, tightness, and escape-rate assumptions,
+  $\frac{\log \mathbb P_{\nu^{\otimes\mathbb N}}\{\omega:
+  \mathrm{normalizedStepCadlagPathIcc}(\mathrm{scale},n,\omega)\in G\}}
+  {nL^*_{\nu}(\mathrm{scale}_n)/\mathrm{scale}_n^\alpha}\to C2^\alpha H$.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_index_lt_one`:
+  derives that limit for $0<\alpha<1$ from stable attraction.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_index_one`:
+  derives the limit at $\alpha=1$ under the sine-centering condition.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_index_gt_one`:
+  derives the limit for $1<\alpha<2$ from stable attraction.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_index_two`:
+  derives the limit at $\alpha=2$ for the Gaussian domain of attraction.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_index_two_of_brownian`:
+  gives the same $\alpha=2$ conclusion for a Brownian realization.
+
+These are domain-of-attraction forms of A. A. Mogul'skii, “Small deviations
+in the sample function space,” Theorem 3, Section 4, p. 764, *Teoriya
+Veroyatnostei i ee Primeneniya* 19(4) (1974), 755--765; English translation,
+“Small Deviations in a Space of Trajectories,” *Theory of Probability and
+Its Applications* 19(4) (1975), 726--736, DOI 10.1137/1119081.
 -/
 
 open Filter MeasureTheory ProbabilityTheory
@@ -35,8 +59,13 @@ open Skorokhod.PathClass.StepCorridor
 open ProbabilityTheory.RandomWalk.FunctionalLimit.Stable
 
 /-- Main stable-domain path-class theorem, with tightness and the slowly
-varying factor supplied as explicit inputs.  The exact target-set event is
+varying factor supplied as explicit inputs. The exact target-set event is
 measurable because `G` is Borel and every finite-step path map is measurable.
+This is the rate conclusion of A. A. Mogul'skii, “Small deviations in the
+sample function space,” Theorem 3, Section 4, p. 764 of the Russian
+original; English translation, “Small Deviations in a Space of
+Trajectories,” *Theory of Probability and Its Applications* 19(4) (1975),
+726--736, DOI 10.1137/1119081.
 -/
 theorem tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_stableInputs
     {ν μ : Measure ℝ} [IsProbabilityMeasure ν] [IsProbabilityMeasure μ]
@@ -104,9 +133,14 @@ theorem tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_s
       ring
     simpa [hcoef'] using hnegative
 
-/-- Stable-domain Mogul'skii theorem below index one.  Regular variation of
+/-- Stable-domain Mogul'skii theorem below index one. Regular variation of
 the tails gives the J₁ tightness criterion; the stable-domain Tauberian result
 gives the slowly varying factor used in the small-deviation normalization.
+This is the domain-of-attraction specialization of A. A. Mogul'skii,
+“Small deviations in the sample function space,” Theorem 3, Section 4,
+p. 764 of the Russian original; English translation, “Small Deviations in
+a Space of Trajectories,” *Theory of Probability and Its Applications*
+19(4) (1975), 726--736, DOI 10.1137/1119081.
 -/
 theorem tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_index_lt_one
     {ν μ : Measure ℝ} [IsProbabilityMeasure ν] [IsProbabilityMeasure μ]
@@ -150,7 +184,11 @@ theorem tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_i
   exact ⟨C, hEscape, hResult⟩
 
 /-- Stable-domain Mogul'skii theorem at index one under the source's
-additional sine-centering condition. -/
+additional sine-centering condition. This is the index-one case of A. A.
+Mogul'skii, “Small deviations in the sample function space,” Theorem 3,
+Section 4, p. 764 of the Russian original; English translation, “Small
+Deviations in a Space of Trajectories,” *Theory of Probability and Its
+Applications* 19(4) (1975), 726--736, DOI 10.1137/1119081. -/
 theorem tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_index_one
     {ν μ : Measure ℝ} [IsProbabilityMeasure ν] [IsProbabilityMeasure μ]
     {normalization scale : ℕ → ℝ}
@@ -192,8 +230,13 @@ theorem tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_i
   exact ⟨C, hEscape, hResult⟩
 
 /-- Stable-domain Mogul'skii theorem for indices strictly between one and
-two.  The domain-of-attraction hypotheses imply finite first moment and zero
+two. The domain-of-attraction hypotheses imply finite first moment and zero
 mean, which are exactly the hypotheses used by the J₁ tightness criterion.
+This is the domain-of-attraction specialization of A. A. Mogul'skii,
+“Small deviations in the sample function space,” Theorem 3, Section 4,
+p. 764 of the Russian original; English translation, “Small Deviations in
+a Space of Trajectories,” *Theory of Probability and Its Applications*
+19(4) (1975), 726--736, DOI 10.1137/1119081.
 -/
 theorem tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_index_gt_one
     {ν μ : Measure ℝ} [IsProbabilityMeasure ν] [IsProbabilityMeasure μ]
@@ -242,7 +285,11 @@ theorem tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_i
 /-- Gaussian-domain Mogul'skii theorem at the normal endpoint `α = 2`.
 This includes infinite-variance increment laws: the Gaussian domain of
 attraction supplies the slowly varying truncated-moment factor, and the
-normal-domain `J₁` criterion supplies tightness. -/
+normal-domain `J₁` criterion supplies tightness. This is the `α = 2` case of
+A. A. Mogul'skii, “Small deviations in the sample function space,” Theorem 3,
+Section 4, p. 764 of the Russian original; English translation, “Small
+Deviations in a Space of Trajectories,” *Theory of Probability and Its
+Applications* 19(4) (1975), 726--736, DOI 10.1137/1119081. -/
 theorem tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_index_two
     {ν : Measure ℝ} [IsProbabilityMeasure ν]
     {normalization scale : ℕ → ℝ}
@@ -287,7 +334,12 @@ theorem tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_i
 
 /-- Source-level exponent-two Mogul'skii theorem for a Mathlib Brownian
 process. This exposes the full path-class conclusion under the normal-domain
-of-attraction hypotheses, including laws with infinite variance. -/
+of-attraction hypotheses, including laws with infinite variance. It is the
+Brownian specialization of A. A. Mogul'skii, “Small deviations in the sample
+function space,” Theorem 3, Section 4, p. 764 of the Russian original;
+English translation, “Small Deviations in a Space of Trajectories,” *Theory
+of Probability and Its Applications* 19(4) (1975), 726--736,
+DOI 10.1137/1119081. -/
 theorem tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_index_two_of_brownian
     {ν : Measure ℝ} [IsProbabilityMeasure ν]
     {normalization scale : ℕ → ℝ}

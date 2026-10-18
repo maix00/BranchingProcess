@@ -6,7 +6,15 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.JumpPattern.UnionBound
+public import Mathlib.Basic.Real.Basic
+public import Mathlib.Algebra.Order.Archimedean.Real.Basic
+public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
+public import Mathlib.Analysis.SpecialFunctions.Pow.Real
+public import Mathlib.Analysis.SpecialFunctions.Log.Basic
+public import Mathlib.Analysis.Complex.Exponential
+public import Mathlib.Order.Filter.Defs
+import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.JumpPattern.UnionBound
+import Analysis.Asymptotics.Scale.IntermediatePowerBlock
 import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 
 /-!
@@ -14,24 +22,22 @@ import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 
 The proof-specific declarations are:
 
-- `jumpPatternProbability_le_exp`: $2^q p^{q-K}\le e^{-dz}$ under the
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.jumpPatternProbability_le_exp`: $2^q p^{q-K}\le e^{-dz}$ under the
   block-count, entropy, and jump-count bounds used in the union estimate.
-- `eventually_drawdownFloorBlockLength_bounds`,
-  `eventually_drawdownCeilingBinWidth_bounds`, and
-  `eventually_drawdownTubeBlockExponent_le`: for large $\Delta$, the chosen
-  floor block length and ceiling bin width satisfy the size and exponential
-  rate inequalities required by the proof.
-- `drawdownBlockCount_scaledBounds` and `drawdownJumpCount_add_one_le`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.eventually_drawdownCeilingBinWidth_bounds` and
+  `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.eventually_drawdownTubeBlockExponent_le`: for large $\Delta$, the chosen
+  ceiling bin width satisfies the size bound, and the block exponent obeys
+  the rate inequality required by the proof. The generic floor estimate is
+  `Asymptotics.eventually_nat_floor_rpow_intermediate_bounds`.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.drawdownBlockCount_scaledBounds` and `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.drawdownJumpCount_add_one_le`:
   the number of complete blocks and maximum jumps obey the scaled estimates
-  used to apply `jumpPatternProbability_le_exp`.
-- `measureReal_noLargeDropEvent_le_exp_of_blockParameters`: fixed block and
-  bin parameters give the exponential drawdown bound.
-- `exists_drawdownBlockExponent` and
-  `eventually_drawdownScaleAbsorptions`: choose the auxiliary exponent and
+  used to apply `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.jumpPatternProbability_le_exp`.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.exists_drawdownBlockExponent` and
+  `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.eventually_drawdownScaleAbsorptions`: choose the auxiliary exponent and
   absorb the remaining powers of $\Delta$ into the final rate.
 
 These estimates assemble the asymptotic parameter choices in Wang Yiyang,
-*Asymptotic speed of the $N$-branching random walk with infinite offspring*,
+*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
 Chapter 3, Lemma 3.3.
 -/
 
@@ -43,9 +49,8 @@ open scoped ENNReal
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown
 
 open ProbabilityTheory.RandomWalk
-open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
-private theorem exp_pow_nat (x : ℝ) (n : ℕ) :
+private lemma exp_pow_nat (x : ℝ) (n : ℕ) :
     Real.exp x ^ n = Real.exp ((n : ℝ) * x) := by
   induction n with
   | zero => simp
@@ -136,61 +141,11 @@ lemma jumpPatternProbability_le_exp
             ring
     _ ≤ Real.exp (-d * z) := Real.exp_le_exp.mpr hexponent
 
-private theorem eventually_real_rpow_ge_const
+private lemma eventually_real_rpow_ge_const
     {power bound : ℝ} (hpower : 0 < power) :
     ∀ᶠ x : ℝ in atTop, bound ≤ x ^ power := by
   exact (_root_.tendsto_rpow_atTop hpower).eventually
     (eventually_ge_atTop bound)
-
-/-- For every positive block exponent, a floor-rounded block length remains
-between the half-exponent and full-exponent powers once the width is large. -/
-lemma eventually_drawdownFloorBlockLength_bounds
-    {eta : ℝ} (heta : 0 < eta) :
-    ∀ᶠ Delta : ℝ in atTop,
-      1 ≤ (⌊Delta ^ (2 + eta)⌋₊ : ℝ) ∧
-      Delta ^ (2 + eta) - Delta ^ (2 + eta / 2) ≤
-        (⌊Delta ^ (2 + eta)⌋₊ : ℝ) ∧
-      Delta ^ (2 + eta / 2) ≤ (⌊Delta ^ (2 + eta)⌋₊ : ℝ) ∧
-      (⌊Delta ^ (2 + eta)⌋₊ : ℝ) ≤ Delta ^ (2 + eta) := by
-  have hlargePower := eventually_real_rpow_ge_const
-    (power := 2 + eta / 2) (bound := 1) (by linarith)
-  have hlargeFactor := eventually_real_rpow_ge_const
-    (power := eta / 2) (bound := 2) (by linarith)
-  filter_upwards [eventually_ge_atTop (1 : ℝ), hlargePower, hlargeFactor] with
-    Delta hDelta hlarge hfactor
-  have hDeltaPos : 0 < Delta := by linarith
-  have hbaseNonneg : 0 ≤ Delta ^ (2 + eta) := by positivity
-  have hfloorUpper : (⌊Delta ^ (2 + eta)⌋₊ : ℝ) ≤ Delta ^ (2 + eta) :=
-    Nat.floor_le hbaseNonneg
-  have hfloorLower : Delta ^ (2 + eta) - 1 <
-      (⌊Delta ^ (2 + eta)⌋₊ : ℝ) := by
-    have hfloor := Nat.lt_floor_add_one (Delta ^ (2 + eta))
-    have hfloorReal : Delta ^ (2 + eta) <
-        (⌊Delta ^ (2 + eta)⌋₊ : ℝ) + 1 := by exact_mod_cast hfloor
-    linarith
-  have hpowerOrder : Delta ^ (2 + eta / 2) ≤ Delta ^ (2 + eta) :=
-    Real.rpow_le_rpow_of_exponent_le hDelta (by linarith)
-  have hpowerSplit : Delta ^ (2 + eta) =
-      Delta ^ (2 + eta / 2) * Delta ^ (eta / 2) := by
-    rw [← Real.rpow_add hDeltaPos (2 + eta / 2) (eta / 2)]
-    congr 1
-    ring
-  have hpowerGap : 1 ≤ Delta ^ (2 + eta) - Delta ^ (2 + eta / 2) := by
-    rw [hpowerSplit]
-    nlinarith [mul_nonneg (sub_nonneg.mpr hlarge) (sub_nonneg.mpr hfactor)]
-  have hhalfPowerLower : Delta ^ (2 + eta / 2) ≤
-      Delta ^ (2 + eta) - 1 := by linarith
-  have hhalfPowerFloor : Delta ^ (2 + eta / 2) ≤
-      (⌊Delta ^ (2 + eta)⌋₊ : ℝ) := by
-    exact hhalfPowerLower.trans hfloorLower.le
-  have hfloorPos : 1 ≤ (⌊Delta ^ (2 + eta)⌋₊ : ℝ) := by
-    have hnat : 1 ≤ ⌊Delta ^ (2 + eta)⌋₊ := by
-      rw [Nat.one_le_floor_iff]
-      exact hlarge.trans hpowerOrder
-    exact_mod_cast hnat
-  refine ⟨?_, ?_, hhalfPowerFloor, hfloorUpper⟩
-  · exact hfloorPos
-  · nlinarith [hlarge, hfloorLower]
 
 lemma eventually_drawdownCeilingBinWidth_bounds
     {eta : ℝ} (heta : 0 < eta) :
@@ -230,7 +185,8 @@ lemma eventually_drawdownTubeBlockExponent_le
   have hR : 0 < R := by dsimp [R]; positivity
   have hgrowth := eventually_real_rpow_ge_const
     (power := eta / 2) (bound := A / R) (by linarith)
-  filter_upwards [eventually_drawdownFloorBlockLength_bounds heta,
+  filter_upwards [Asymptotics.eventually_nat_floor_rpow_intermediate_bounds
+      (p := 2 + eta / 2) (q := 2 + eta) (by linarith) (by linarith),
       eventually_drawdownCeilingBinWidth_bounds heta, hgrowth] with
       Delta hfloor hceil hgrowth
   have hDelta : 1 ≤ Delta := hceil.1
@@ -432,92 +388,6 @@ lemma drawdownJumpCount_add_one_le
         (Delta / c + Delta) / (⌈eta * Delta⌉₊ : ℝ) + 2 := by linarith
     _ ≤ (1 / c + 1) / eta + 2 := by linarith
     _ ≤ 2 * (1 / c + 2) / eta := hconstant
-
-/-- The final entropy and jump-count estimates in Wang Yiyang,
-*Asymptotic speed of the $N$-branching random walk with infinite offspring*,
-Chapter 3, proof of Lemma 3.3, turn the finite jump-pattern bound into the
-desired exponential rate. Here `z = L / Δ^2`, `t = Δ^η`, and `K` bounds the
-number of jumps. The one-block rate is assumed in the explicit form
-\[
-  (w+\Delta)^v-d_0\frac{\ell}{(w+\Delta)^2}
-    \le -d(1+2\eta)t.
-\] -/
-lemma measureReal_noLargeDropEvent_le_exp_of_blockParameters
-    (ν : Measure ℝ) [IsProbabilityMeasure ν]
-    {variance v blockRate eta target t z : ℝ}
-    (hν : ProbabilityTheory.IsCenteredSecondMoment ν variance)
-    (hsquare : Integrable (fun x : ℝ => x ^ 2) ν)
-    (hvariance : 0 < variance)
-    (hv : 0 < v) (hblockRate : 0 < blockRate)
-    (hcritical : blockRate < (Real.pi ^ 2 / 2) * variance)
-    (heta : 0 < eta) (ht : 0 < t) (htarget : 0 < target)
-    (hz : 0 ≤ z)
-    (horizon blockLength : ℕ) (hblockLength : 1 ≤ blockLength)
-    (delta threshold binWidth : ℝ) (hbinWidth : 0 < binWidth)
-    (honeBlock : (binWidth + delta) ^ v -
-        blockRate * ((blockLength : ℝ) / (binWidth + delta) ^ 2) ≤
-          -target * (1 + 2 * eta) * t)
-    (hqLower : z / t - 1 ≤ ((horizon / blockLength : ℕ) : ℝ))
-    (hqUpper : ((horizon / blockLength : ℕ) : ℝ) ≤ z / Real.sqrt t)
-    (hmaxJumps :
-      ⌊(threshold + delta) / binWidth⌋₊ + 1 ≤ horizon / blockLength)
-    (hentropy : Real.log 2 / Real.sqrt t ≤ target * eta)
-    (hjump : target * (1 + 2 * eta) * t *
-        (((⌊(threshold + delta) / binWidth⌋₊ + 1 : ℕ) : ℝ) + 1) ≤
-      target * eta * z) :
-    ∃ width₀, 0 < width₀ ∧
-      (width₀ ≤ binWidth + delta →
-        (iidSequenceLaw ν).real
-            (noLargeDropEndpointBelowEvent horizon delta threshold) ≤
-          Real.exp (-target * z)) := by
-  obtain ⟨width₀, hwidth₀pos, hfinite⟩ :=
-    measureReal_noLargeDropEvent_le_jumpPatternCount_mul_pow
-      ν hν hsquare hvariance hv hblockRate hcritical
-      horizon blockLength hblockLength delta threshold binWidth hbinWidth
-  refine ⟨width₀, hwidth₀pos, ?_⟩
-  intro hwidth
-  have hexponentNonpos :
-      (binWidth + delta) ^ v -
-        blockRate * ((blockLength : ℝ) / (binWidth + delta) ^ 2) ≤ 0 := by
-    calc
-      (binWidth + delta) ^ v -
-          blockRate * ((blockLength : ℝ) / (binWidth + delta) ^ 2) ≤
-          -target * (1 + 2 * eta) * t := honeBlock
-      _ ≤ 0 := by
-        have hpositive : 0 ≤ target * (1 + 2 * eta) * t := by positivity
-        nlinarith
-  have hp : Real.exp ((binWidth + delta) ^ v -
-      blockRate * ((blockLength : ℝ) / (binWidth + delta) ^ 2)) ≤ 1 :=
-    Real.exp_le_one_iff.mpr hexponentNonpos
-  have hfiniteBound := hfinite hwidth hp
-  let q : ℕ := horizon / blockLength
-  let K : ℕ := ⌊(threshold + delta) / binWidth⌋₊ + 1
-  let p : ℝ := Real.exp ((binWidth + delta) ^ v -
-      blockRate * ((blockLength : ℝ) / (binWidth + delta) ^ 2))
-  have hqK : K ≤ q := by exact hmaxJumps
-  have hsmallBlock : p ≤ Real.exp (-target * (1 + 2 * eta) * t) := by
-    exact Real.exp_le_exp.mpr honeBlock
-  have hpow : p ^ (q - K) ≤
-      Real.exp (-target * (1 + 2 * eta) * t) ^ (q - K) :=
-    pow_le_pow_left₀ (Real.exp_nonneg _) hsmallBlock _
-  have hfiniteBound' :
-      (iidSequenceLaw ν).real
-          (noLargeDropEndpointBelowEvent horizon delta threshold) ≤
-        (2 : ℝ) ^ q *
-          Real.exp (-target * (1 + 2 * eta) * t) ^ (q - K) := by
-    calc
-      (iidSequenceLaw ν).real
-          (noLargeDropEndpointBelowEvent horizon delta threshold) ≤
-          (2 : ℝ) ^ q * p ^ (q - K) := by
-            simpa only [q, K, p] using hfiniteBound
-      _ ≤ (2 : ℝ) ^ q *
-          Real.exp (-target * (1 + 2 * eta) * t) ^ (q - K) :=
-        mul_le_mul_of_nonneg_left hpow (by positivity)
-  have hfinal := jumpPatternProbability_le_exp hz ht heta htarget
-    (by simpa only [q] using hqLower)
-    (by simpa only [q] using hqUpper)
-    hqK hentropy (by simpa only [K] using hjump)
-  simpa only [q, K] using hfiniteBound'.trans hfinal
 
 lemma exists_drawdownBlockExponent
     {variance endpointPower horizonPower d : ℝ}

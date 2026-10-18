@@ -6,29 +6,40 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Concrete.Upper.Entrance
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.GlobalConditions
+public import Mathlib.MeasureTheory.Measure.MeasureSpaceDef
+public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
+public import Algebra.BigOperators.AdditivePath.Basic
+public import Probability.Distributions.Moments.Real
+public import Probability.Sequence.Filtration
+public import Probability.Sequence.IID.Basic
+public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.Binning
+public import Probability.Process.RandomWalk.Path.Block.Partition.TailMerged
+public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.BlockTube
+public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.EndpointWindow
+public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.EndpointEvent
+public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Reflection
+public import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.Event
+import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Concrete.Upper.Entrance
+import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.GlobalConditions
 
 /-!
 # Upper-endpoint bound from global staircase conditions
 
 The module-visible supporting lemma in this file is:
 
-- `exists_concreteStaircaseUpperEndpointLowerBound_of_globalConditions`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.exists_concreteStaircaseUpperEndpointLowerBound_of_globalConditions`:
   global block-width, time, rate, and endpoint inequalities together
   with the entrance bound imply
   $\mathbb P(E_{\rm upper})\ge\exp(-d'L/\Delta^2)$.
 
 This is the common-threshold form of the symmetric construction in
-Wang Yiyang, *Asymptotic speed of the $N$-branching random walk with
-infinite offspring*, Chapter 3, proof of Lemma 3.5.
+Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, proof of Lemma 3.5.
 -/
 
 @[expose] public section
 
 open MeasureTheory ProbabilityTheory
 open ProbabilityTheory.RandomWalk.SmallDeviation.Entrance
-open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 

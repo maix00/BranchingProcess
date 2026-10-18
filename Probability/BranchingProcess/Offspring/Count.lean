@@ -15,6 +15,40 @@ Child counts are the `ℕ∞` projection of a complete offspring configuration.
 For countable slot types, their law is a pushforward of the configuration
 law. Taking total mass after the point-measure projection gives the same law,
 after the canonical embedding of `ℕ∞` into `ℝ≥0∞`.
+
+The public declarations are:
+
+- `ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw.childCountLaw`:
+  the law of $\operatorname{childCount}(\xi)$ for an offspring configuration
+  $\xi$ sampled from the configuration law.
+- `ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw.childCountLaw_toMeasure`:
+  the child-count law as the pushforward of the configuration measure.
+- `ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw.childCountLaw_mapMarks`:
+  mapping child marks by a measurable map leaves the child-count law unchanged.
+- `ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw.pointMeasureLaw_totalMass`:
+  the pushforward of the point-measure law by total mass equals the
+  pushforward of the child-count law into $\mathbb R_{\ge0}^\infty$.
+- `ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw.expectedChildCount`:
+  $\mathbb E[\operatorname{childCount}(\xi)]$, allowed to equal $\infty$.
+- `ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw.HasAtLeastOneChild`:
+  the offspring configuration is nonempty with probability one.
+- `ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw.IsSupercritical`:
+  the expected extended child count is greater than one.
+- `ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw.hasAtLeastOneChild_ae`:
+  a mass-one nonempty-support condition implies nonempty support almost surely.
+- `ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw.expectedChildCount_eq_lintegral_pointMeasureLaw_totalMass`:
+  expected child count equals the expected total mass of the point-measure law.
+- `ProbabilityTheory.BranchingProcess.Offspring.offspringSplitSet`:
+  the set $\{\xi:2\le\operatorname{childCount}(\xi)\}$ of offspring
+  configurations with at least two children.
+- `ProbabilityTheory.BranchingProcess.Offspring.offspringSplitSet_eq_nontrivialSupport`:
+  this set is the event that the offspring support contains at least two slots.
+- `ProbabilityTheory.BranchingProcess.Offspring.measurableSet_offspringSplitSet`:
+  for countable offspring slots and a measurable mark space, measurability of
+  the offspring-splitting event.
+- `ProbabilityTheory.BranchingProcess.Offspring.measure_pos_childCount_ge_two_of_expectedChildCount_gt_one`:
+  for an offspring-step probability law with expected child count greater
+  than one, $\mu(\operatorname{offspringSplitSet})>0$.
 -/
 
 @[expose] public section
@@ -130,5 +164,90 @@ theorem expectedChildCount_eq_lintegral_pointMeasureLaw_totalMass
       exact lintegral_map measurable_id htotal
 
 end ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw
+
+namespace ProbabilityTheory.BranchingProcess.Offspring
+
+open MeasureTheory
+open Combinatorics.Branching
+open scoped ENNReal
+
+/-! ### Splitting configurations -/
+
+/-- The offspring configurations containing at least two children. -/
+def offspringSplitSet {ι X : Type*} : Set (Step ι X) :=
+  {ξ | 2 ≤ Step.childCount ξ}
+
+/-- An offspring configuration splits exactly when its support has at least
+two slots. -/
+theorem offspringSplitSet_eq_nontrivialSupport {ι X : Type*} :
+    offspringSplitSet (ι := ι) (X := X) = nontrivialSupport := by
+  ext ξ
+  change 2 ≤ (support ξ).encard ↔
+    ∃ i j, i ≠ j ∧ survive ξ i ∧ survive ξ j
+  constructor
+  · intro hcount
+    have hcard : 1 < (support ξ).encard :=
+      lt_of_lt_of_le (by norm_num : (1 : ℕ∞) < 2) hcount
+    obtain ⟨i, j, hi, hj, hij⟩ := Set.one_lt_encard_iff.mp hcard
+    exact ⟨i, j, hij, by simpa [support] using hi,
+      by simpa [support] using hj⟩
+  · rintro ⟨i, j, hij, hi, hj⟩
+    have hcard : 1 < (support ξ).encard :=
+      Set.one_lt_encard_iff.mpr
+        ⟨i, j, by simpa [support] using hi,
+          by simpa [support] using hj, hij⟩
+    cases hencard : (support ξ).encard with
+    | top => simp
+    | coe n =>
+      have hn : 1 < n := by simpa [hencard] using hcard
+      have hn' : 2 ≤ n := by omega
+      simpa [hencard] using hn'
+
+/-- Measurability of the event that an offspring configuration has at least
+two children. -/
+theorem measurableSet_offspringSplitSet {ι X : Type*} [Countable ι]
+    [MeasurableSpace X] :
+    MeasurableSet (offspringSplitSet (ι := ι) (X := X)) := by
+  rw [offspringSplitSet_eq_nontrivialSupport]
+  exact nontrivialSupport_measurable
+
+private lemma childCount_le_one_of_not_split
+    {ι X : Type*} (ξ : Step ι X)
+    (hnoSplit : ¬ 2 ≤ Step.childCount ξ) : Step.childCount ξ ≤ 1 := by
+  cases hcount : Step.childCount ξ with
+  | top => exact (hnoSplit (by simp [hcount])).elim
+  | coe n =>
+    have hnnot : ¬ 2 ≤ n := by simpa [hcount] using hnoSplit
+    have hn : n ≤ 1 := by omega
+    simpa [hcount] using hn
+
+/-- A probability law on offspring configurations with mean child count
+greater than one assigns positive mass to configurations with at least two
+children. -/
+theorem measure_pos_childCount_ge_two_of_expectedChildCount_gt_one
+    {ι X : Type*} [Countable ι] [MeasurableSpace X]
+    (μ : Measure (Step ι X)) [IsProbabilityMeasure μ]
+    (hsupercritical : (1 : ℝ≥0∞) <
+      ∫⁻ ξ, (Step.childCount ξ : ℝ≥0∞) ∂μ) :
+    0 < μ (offspringSplitSet (ι := ι) (X := X)) := by
+  by_contra hpos
+  have hzero : μ (offspringSplitSet (ι := ι) (X := X)) = 0 :=
+    nonpos_iff_eq_zero.mp (le_of_not_gt hpos)
+  have haeNotSplit : ∀ᵐ ξ ∂μ,
+      ξ ∉ offspringSplitSet (ι := ι) (X := X) := by
+    simpa only [Set.mem_ofPred_eq] using
+      (measure_eq_zero_iff_ae_notMem.mp hzero)
+  have haeCountLeOne : ∀ᵐ ξ ∂μ,
+      (Step.childCount ξ : ℝ≥0∞) ≤ 1 := by
+    filter_upwards [haeNotSplit] with ξ hξ
+    exact_mod_cast childCount_le_one_of_not_split ξ hξ
+  have hle : (∫⁻ ξ, (Step.childCount ξ : ℝ≥0∞) ∂μ) ≤ 1 := by
+    calc
+      (∫⁻ ξ, (Step.childCount ξ : ℝ≥0∞) ∂μ) ≤
+          ∫⁻ _ξ, (1 : ℝ≥0∞) ∂μ := lintegral_mono_ae haeCountLeOne
+      _ = 1 := by simp
+  exact (not_lt_of_ge hle) hsupercritical
+
+end ProbabilityTheory.BranchingProcess.Offspring
 
 end

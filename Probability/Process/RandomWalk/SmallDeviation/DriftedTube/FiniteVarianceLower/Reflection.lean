@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.EndpointEvent
-public import Probability.Sequence.IID
+public import Probability.Sequence.IID.Basic
 
 /-!
 # Reflection of the tilted-tube endpoint event
@@ -25,8 +25,7 @@ The public objects and theorems in this file are:
   equals $\mathbb P_{-\nu}(E_{\mathrm{lower}}(-c,-r_0-\Delta))$.
 
 This is the deterministic reflection in the symmetric construction of
-Wang Yiyang, *Asymptotic speed of the $N$-branching random walk with infinite
-offspring*, Chapter 3, proof of Lemma 3.5.
+Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, proof of Lemma 3.5.
 -/
 
 @[expose] public section
@@ -96,7 +95,7 @@ theorem mem_driftedTubeUpperEndpointWindowEvent_iff_reflected
       · convert neg_le_neg hend.1 using 1 <;> ring
 
 /-- The lower-endpoint tilted-tube event is measurable. -/
-private theorem measurableSet_driftedTubeEndpointWindowEvent
+private lemma measurableSet_driftedTubeEndpointWindowEvent
     (horizon : ℕ) (width drift base endpointFraction : ℝ) :
     MeasurableSet (driftedTubeEndpointWindowEvent
       horizon width drift base endpointFraction) := by

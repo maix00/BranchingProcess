@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import MeasureTheory.Measure.CadlagPath.FiniteDimensional.Dense
-public import Probability.Process.Path.Skorokhod
+public import Probability.Process.Path.Representation.Skorokhod
 public import Order.Interval.RationalCoordinate.UnitInterval
 public import Topology.Order.UnitInterval.Rational
 

@@ -8,7 +8,7 @@ module
 
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.Partition.Limit
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Scale.Rate
-public import Probability.Process.RandomWalk.Path.Skorokhod
+public import Probability.Process.RandomWalk.Path.Skorokhod.Core
 public import Probability.Process.Path.PathClass.StepCorridor.Probability.Rate.Approximation
 public import Probability.Process.Stable.SmallDeviation.PathClass.StepCorridor.Rate
 
@@ -18,6 +18,33 @@ public import Probability.Process.Stable.SmallDeviation.PathClass.StepCorridor.R
 The exact finite-partition estimate is the discrete Lemma 3 input.  This file
 converts its normalization to the common negative denominator and feeds all
 `M₂` corridor rates into the existing `M₃` and `M` approximation arguments.
+
+The public declarations are:
+
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.probabilityRateDenominator`:
+  $-1/r_n$, where $r_n=a_n^\alpha/(nL^*(a_n))$ is the positive
+  small-deviation rate.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.stableSmallDeviationRate_pos_eventually`:
+  $r_n>0$ eventually under the
+  stable two-scale condition and slow variation.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.tendsto_log_div_stableRateNormalization_of_neg`
+  and
+  `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.tendsto_log_div_probabilityRateDenominator_of_stableRateNormalization`:
+  the two normalizations differ by a sign in the limiting logarithmic rate.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_discretestepCorridorRates`:
+  for a null-measurable target $G$ in the source class $M$, the normalized
+  path probabilities have the unique rate
+  $\frac{\log\mathbb P_{\nu^{\otimes\mathbb N}}\{\omega:
+  \operatorname{normalizedStepCadlagPathIcc}(\mathrm{scale},n,\omega)\in G\}}{-1/r_n}
+  \to C2^\alpha H$, with $H$ the common energy of its finite-corridor
+  approximations and $a_n=\mathrm{scale}(n)$.
+
+The last declaration is the stable-domain path-class form of Theorem 3,
+Section 4, p. 764, in A. A. Mogul'skii, “Small deviations in the sample
+function space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974),
+755--765; see also the English translation, “Small Deviations in a Space of
+Trajectories,” *Theory of Probability and Its Applications* 19(4) (1975),
+726--736, DOI 10.1137/1119081.
 -/
 
 open Filter MeasureTheory
@@ -98,7 +125,7 @@ theorem tendsto_log_div_probabilityRateDenominator_of_stableRateNormalization
     field_simp [hn']
   exact h.neg.congr' heq.symm
 
-private theorem probabilityRateDenominator_tendsto_atBot
+private lemma probabilityRateDenominator_tendsto_atBot
     {α : ℝ} {ν : Measure ℝ} [IsProbabilityMeasure ν]
     {normalization scale : ℕ → ℝ}
     (hscale : IsStableMogulskiiScale α ν normalization scale)
@@ -123,7 +150,12 @@ private theorem probabilityRateDenominator_tendsto_atBot
     (fun n : ℕ => -((stableSmallDeviationRate α ν scale n)⁻¹)) atTop atBot
   exact hneg
 
-/-- The discrete exact `M₂` rates imply Mogul'skii's theorem for every
+/-- The discrete exact `M₂` rates imply the stable-domain path-class form of
+Theorem 3, Section 4, p. 764, in A. A. Mogul'skii, “Small deviations in the
+sample function space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4)
+(1974), 755--765; English translation, “Small Deviations in a Space of
+Trajectories,” *Theory of Probability and Its Applications* 19(4) (1975),
+726--736, DOI 10.1137/1119081. This holds for every
 null-measurable path set in the source class `M`.  The hypotheses before
 `hG` are precisely the stable-process escape estimate, attraction input, and
 functional tightness needed by the discrete Lemma 3 estimate. -/

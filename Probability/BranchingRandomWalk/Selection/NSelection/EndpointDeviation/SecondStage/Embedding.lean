@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Population.Embedding
 import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.SecondStage.Roots.Fresh
-import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.LargeDrawdown
+import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Drawdown.Large
 import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.SelectedSubtrees.Position
 
 /-!
@@ -30,7 +30,7 @@ open ProbabilityTheory.BranchingRandomWalk.Spine
 open ProbabilityTheory.RandomWalk
 open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
-private theorem secondStage_subtreePotential_eq_rootPositionDifference
+private lemma secondStage_subtreePotential_eq_rootPositionDifference
     (m : ℕ) (field : RootIndexed.StepField (Fin m) ℕ ℝ)
     (r : Fin m) (u v : List ℕ) :
     Spine.pathPotential realPotential
@@ -43,7 +43,7 @@ private theorem secondStage_subtreePotential_eq_rootPositionDifference
 /-- If a retained particle at the restart generation has a surviving subtree
 path in the second-stage affine corridor, the concatenated path is retained
 at the terminal generation.  `hweight` is the finite-weight condition used
-by the totalized killed process; under the paper's boundary normalization it
+by the totalized killed process; under the boundary normalization it
 holds simultaneously at all addresses almost surely. -/
 theorem mem_restartedPopulation_of_secondStageCorridor
     (m ell ellN : ℕ) (logN b v c κ : ℝ)

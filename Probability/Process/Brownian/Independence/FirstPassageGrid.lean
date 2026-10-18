@@ -8,7 +8,8 @@ module
 
 public import Probability.Process.Brownian.Independence.FiniteStoppingTime
 public import Probability.Process.Brownian.Independence.StoppedPast
-public import Probability.Process.Brownian.Reflection.FirstPassageApproximation
+public import Probability.Process.Path.FirstPassage.GridApproximation
+import Probability.MeasureTheory.Convergence.InvariantLaw
 
 /-!
 # Brownian future at a first-passage observation grid
@@ -26,8 +27,7 @@ The public theorem in this file is:
   the same path-law identity at the first passage time capped at $1$.
 
 This is the grid approximation to the strong Markov step behind the
-Lévy decomposition cited in Erwin Bolthausen, *On a functional central
-limit theorem for random walks conditioned to stay positive*,
+Lévy decomposition cited in Erwin Bolthausen, *On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*,
 Lemma 2.3, equation (2.2), Ann. Probab. 4(3) (1976), 480--485,
 DOI 10.1214/aop/1176996098, referring to Kiyosi Itô and Henry P.
 McKean, *Diffusion Processes and Their Sample Paths* (1965), §1.7.

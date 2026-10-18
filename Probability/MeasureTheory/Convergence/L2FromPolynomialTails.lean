@@ -23,7 +23,7 @@ open scoped ENNReal
 
 namespace ProbabilityTheory
 
-private theorem tendsto_one_add_log_eighth_div_rpow
+private lemma tendsto_one_add_log_eighth_div_rpow
     {p : ℝ} (hp : 0 < p) :
     Tendsto (fun n : ℕ =>
       (1 + Real.log (n : ℝ) ^ 8) / (n : ℝ) ^ p) atTop (nhds 0) := by

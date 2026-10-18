@@ -6,14 +6,27 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Concrete.Lower.Global
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Eventually
+public import Mathlib.Basic.Real.Basic
+public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
+public import Mathlib.MeasureTheory.Measure.MeasureSpaceDef
+public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
+public import Algebra.BigOperators.AdditivePath.Basic
+public import Probability.Distributions.Moments.Real
+public import Probability.Sequence.Filtration
+public import Probability.Sequence.IID.Basic
+public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.Binning
+public import Probability.Process.RandomWalk.Path.Block.Partition.TailMerged
+public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.BlockTube
+public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.EndpointEvent
+public import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.Event
+import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Concrete.Lower.Global
+import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Eventually
 /-!
 # Asymptotic finite-staircase lower bound
 
 The module-visible supporting lemma in this file is:
 
-- `eventually_concreteStaircaseLowerBound_of_robustEntrance`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.eventually_concreteStaircaseLowerBound_of_robustEntrance`:
   along widths $\Delta_n\to\infty$ and arbitrary starting boundaries
   $r_{0,n}$, with
   $\Delta_n^2/\ell_n\to0$ and $\ell_n/\Delta_n^3\to0$,
@@ -22,9 +35,9 @@ The module-visible supporting lemma in this file is:
   $\mathbb P(E_n)\ge\exp(-d'L_n/\Delta_n^2)$.
 
 This is the staircase multiplication in Wang Yiyang,
-*Asymptotic speed of the $N$-branching random walk with infinite offspring*,
+*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
 Chapter 3, proof of Lemma 3.5. The entrance probability is the one
-established in Appendix A.2 by the Brownian-meander argument.
+established in Appendix A.2, Lemma A.7, by the Brownian-meander argument.
 -/
 
 @[expose] public section
@@ -32,12 +45,12 @@ established in Appendix A.2 by the Brownian-meander argument.
 open Filter MeasureTheory ProbabilityTheory
 open scoped Topology
 open ProbabilityTheory.RandomWalk.SmallDeviation.Entrance
-open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 
 /-- The exact concrete staircase bound holds eventually once the robust
-entrance estimate from Appendix A.2 is supplied. -/
+entrance estimate from Wang Yiyang, *Asymptotic Speed of the N-Branching
+Random Walk with Infinite Offspring*, Appendix A.2, Lemma A.7, is supplied. -/
 lemma eventually_concreteStaircaseLowerBound_of_robustEntrance
     {ν : Measure ℝ} [IsProbabilityMeasure ν]
     {sigma narrowedRate uInterior vInterior uFinal vFinal : ℝ}

@@ -26,12 +26,11 @@ The public objects and theorems in this file are:
   if that straight path belongs to the support of a path law $\mathsf m$,
   then $\mathsf m(\mathcal U_{\sigma,\rho})>0$.
 
-This is the open-set and support step in Wang Yiyang, *Asymptotic speed of
-the $N$-branching random walk with infinite offspring*, Chapter 3,
-Lemma 3.5, Appendix A.2. The positive-mass statement for the Brownian
+This is the open-set and support step in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3,
+Lemma 3.5 and Appendix A.2, Lemma A.7. The positive-mass statement for the Brownian
 meander law follows from the last-zero representation of Donald L. Iglehart,
 *Functional Central Limit Theorems for Random Walks Conditioned to Stay
-Positive*, Ann. Probab. 2(4) (1974), 608--619, Section 3.
+Positive*, Ann. Probab. 2(4) (1974), 608--619, DOI 10.1214/aop/1176996607, Section 3, theorem (3.4), p. 616.
 -/
 
 @[expose] public section
@@ -42,8 +41,7 @@ open scoped Topology
 namespace BrownianMeander
 
 /-- The strict upper and terminal corridor in the meander argument of Wang
-Yiyang, *Asymptotic speed of the $N$-branching random walk with infinite
-offspring*, Chapter 3, Lemma 3.5, Appendix A.2. -/
+Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.5 and Appendix A.2, Lemma A.7. -/
 def openCorridor (sigma rho : ℝ) : Set (CadlagPath unitInterval ℝ) :=
   Skorokhod.rangeBelowEndsIn
     ((5 / 6 - rho) / sigma)
@@ -89,7 +87,7 @@ theorem straightPath_mem_openCorridor {sigma rho : ℝ}
 
 /-- Any path law with the straight path $t\mapsto7t/(16\sigma)$ in its
 support assigns positive mass to the meander corridor. This isolates the
-support input in Wang Yiyang, Chapter 3, Lemma 3.5, Appendix A.2. -/
+support input used with Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.5 and Appendix A.2, Lemma A.7. -/
 theorem measure_openCorridor_pos_of_straightPath_mem_support
     {mu : Measure (CadlagPath unitInterval ℝ)} {sigma rho : ℝ}
     (hsigma : 0 < sigma) (hrho : 0 < rho) (hrhoSmall : rho < 1 / 48)

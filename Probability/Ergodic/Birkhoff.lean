@@ -62,7 +62,7 @@ variable {X : Type*} [MeasurableSpace X] {μ : Measure X} {T : X → X}
 /-- Set-integral invariance under a measure-preserving map: if `s` is a measurable
 `T`-invariant set (`T ⁻¹' s = s`), then integrating `h ∘ T` over `s` equals integrating
 `h` over `s`. -/
-private theorem setIntegral_comp_of_invariants
+private lemma setIntegral_comp_of_invariants
     (hT : MeasurePreserving T μ μ) {h : X → ℝ} (hh : AEStronglyMeasurable h μ)
     {s : Set X} (hs : MeasurableSet s) (hsinv : T ⁻¹' s = s) :
     ∫ x in s, (h ∘ T) x ∂μ = ∫ x in s, h x ∂μ := by
@@ -122,7 +122,7 @@ omit [MeasurableSpace X] in
 /-- Pointwise bound for the count of thresholds crossed: for `0 ≤ a` and `0 < δ`,
 `∑'ₙ {x | (n+1)·δ ≤ a}.indicator 1 ≤ a / δ` (as an `ℝ≥0∞`-valued tsum over `n`).
 The sum counts the integers `n` with `(n+1)·δ ≤ a`, which is at most `a / δ`. -/
-private theorem tsum_indicator_threshold_le {δ : ℝ} (hδ : 0 < δ) (a : ℝ) (ha : 0 ≤ a) :
+private lemma tsum_indicator_threshold_le {δ : ℝ} (hδ : 0 < δ) (a : ℝ) (ha : 0 ≤ a) :
     ∑' n : ℕ, (if ((n : ℝ) + 1) * δ ≤ a then (1 : ℝ≥0∞) else 0)
       ≤ ENNReal.ofReal (a / δ) := by
   -- Every contributing `n` satisfies `n + 1 ≤ a / δ`, hence lies in `range ⌊a/δ⌋₊`.
@@ -153,7 +153,7 @@ private theorem tsum_indicator_threshold_le {δ : ℝ} (hδ : 0 < δ) (a : ℝ) 
 /-- For an integrable `g`, the threshold series `∑ₙ μ {x | (n+1)·δ ≤ |g x|}` is finite:
 summing the pointwise count bound `tsum_indicator_threshold_le` against `μ` (Tonelli)
 gives `∑ₙ μ{(n+1)δ ≤ |g|} ≤ (1/δ)·∫⁻ |g| < ∞`. -/
-private theorem tsum_measure_threshold_ne_top {δ : ℝ} (hδ : 0 < δ) {g : X → ℝ}
+private lemma tsum_measure_threshold_ne_top {δ : ℝ} (hδ : 0 < δ) {g : X → ℝ}
     (hg : Integrable g μ) :
     (∑' n : ℕ, μ {x | ((n : ℝ) + 1) * δ ≤ |g x|}) ≠ ∞ := by
   have hgm : AEStronglyMeasurable g μ := hg.1
@@ -298,7 +298,7 @@ theorem ae_forall_orbit_eq (hT : MeasurePreserving T μ μ) {h : X → ℝ}
   exact ae_all_iff.2 (fun j => hstep j)
 
 /-- If `h ∘ T =ᵐ[μ] h` then a.e. `birkhoffSum T h n x = n • h x`. -/
-private theorem birkhoffSum_ae_eq_nsmul (hT : MeasurePreserving T μ μ) {h : X → ℝ}
+private lemma birkhoffSum_ae_eq_nsmul (hT : MeasurePreserving T μ μ) {h : X → ℝ}
     (hh : h ∘ T =ᵐ[μ] h) (n : ℕ) :
     (fun x => birkhoffSum T h n x) =ᵐ[μ] fun x => (n : ℝ) • h x := by
   filter_upwards [ae_forall_orbit_eq hT hh] with x hx
@@ -308,7 +308,7 @@ private theorem birkhoffSum_ae_eq_nsmul (hT : MeasurePreserving T μ μ) {h : X 
 /-- The conditional expectations of `g ∘ T` and of `g` onto the invariant σ-algebra
 coincide a.e.: both have the same set-integrals over `I`-measurable (= measurable
 invariant) sets, by `setIntegral_comp_of_invariants`, so uniqueness of `condExp` applies. -/
-private theorem condExp_comp_invariants_eq [IsFiniteMeasure μ]
+private lemma condExp_comp_invariants_eq [IsFiniteMeasure μ]
     (hT : MeasurePreserving T μ μ) {g : X → ℝ} (hg : Integrable g μ) :
     μ[g ∘ T | MeasurableSpace.invariants T] =ᵐ[μ] μ[g | MeasurableSpace.invariants T] := by
   have hI : MeasurableSpace.invariants T ≤ ‹MeasurableSpace X› :=
@@ -334,7 +334,7 @@ theorem condExp_invariants_comp_self [IsFiniteMeasure μ]
 
 omit [MeasurableSpace X] in
 /-- `birkhoffSum` of a constant function is `n • c`. -/
-private theorem birkhoffSum_const (c : ℝ) (n : ℕ) (x : X) :
+private lemma birkhoffSum_const (c : ℝ) (n : ℕ) (x : X) :
     birkhoffSum T (fun _ => c) n x = (n : ℝ) * c := by
   rw [birkhoffSum_of_comp_eq (φ := fun _ => c) rfl n]
   simp [nsmul_eq_mul]
@@ -343,7 +343,7 @@ omit [MeasurableSpace X] in
 /-- For `n ≥ 1`, having a positive Birkhoff sum of `g - c` is the same as the Birkhoff
 average of `g` exceeding `c`:
 `0 < birkhoffSum T (g - c) (n+1) x ↔ c < birkhoffAverage ℝ T g (n+1) x`. -/
-private theorem birkhoffSum_sub_const_pos_iff (c : ℝ) {g : X → ℝ} (n : ℕ) (x : X) :
+private lemma birkhoffSum_sub_const_pos_iff (c : ℝ) {g : X → ℝ} (n : ℕ) (x : X) :
     0 < birkhoffSum T (fun y => g y - c) (n + 1) x ↔
       c < birkhoffAverage ℝ T g (n + 1) x := by
   have hsub : (fun y => g y - c) = g - (fun _ => c) := by funext y; rfl
@@ -361,7 +361,7 @@ private theorem birkhoffSum_sub_const_pos_iff (c : ℝ) {g : X → ℝ} (n : ℕ
 `c : ℝ`, `c · μ B ≤ ∫_B g` over the maximal set
 `B = {x | ∃ n, c < birkhoffAverage ℝ T g (n+1) x}`. Apply
 `setIntegral_birkhoffSum_pos_nonneg` to `g - c` and rewrite the set and integrand. -/
-private theorem mul_measure_le_setIntegral_maximal [IsFiniteMeasure μ]
+private lemma mul_measure_le_setIntegral_maximal [IsFiniteMeasure μ]
     (hT : MeasurePreserving T μ μ) {g : X → ℝ} (hg : Integrable g μ) (c : ℝ) :
     c * (μ {x | ∃ n : ℕ, c < birkhoffAverage ℝ T g (n + 1) x}).toReal
       ≤ ∫ x in {x | ∃ n : ℕ, c < birkhoffAverage ℝ T g (n + 1) x}, g x ∂μ := by
@@ -384,7 +384,7 @@ private theorem mul_measure_le_setIntegral_maximal [IsFiniteMeasure μ]
 
 /-- The maximal-set measure decays: `(natural) k · μ Bₖ ≤ ∫ |g|`, where
 `Bₖ = {x | ∃ n, (k:ℝ) < birkhoffAverage ℝ T g (n+1) x}`. -/
-private theorem natCast_mul_measure_maximal_le [IsFiniteMeasure μ]
+private lemma natCast_mul_measure_maximal_le [IsFiniteMeasure μ]
     (hT : MeasurePreserving T μ μ) {g : X → ℝ} (hg : Integrable g μ) (k : ℕ) :
     (k : ℝ) * (μ {x | ∃ n : ℕ, (k : ℝ) < birkhoffAverage ℝ T g (n + 1) x}).toReal
       ≤ ∫ x, |g x| ∂μ := by
@@ -518,7 +518,7 @@ theorem ae_bddBelow_birkhoffAverage [IsFiniteMeasure μ]
 is a.e. `T`-invariant. Uses the cocycle identity `A_n(g)(Tx) - A_n(g)(x) = n⁻¹(g(Tⁿx) - g x)`
 together with the orbital tail estimate `ae_tendsto_orbit_div_atTop_zero` and a.e.
 boundedness, via `limsup_eq_of_sub_tendsto_zero`. -/
-private theorem limsup_birkhoffAverage_comp_ae [IsFiniteMeasure μ]
+private lemma limsup_birkhoffAverage_comp_ae [IsFiniteMeasure μ]
     (hT : MeasurePreserving T μ μ) {g : X → ℝ} (hg : Integrable g μ) :
     (fun x => Filter.limsup (fun n => birkhoffAverage ℝ T g n x) atTop) ∘ T
       =ᵐ[μ] fun x => Filter.limsup (fun n => birkhoffAverage ℝ T g n x) atTop := by
@@ -733,7 +733,7 @@ theorem measure_setOf_lt_limsup_eq_zero [IsFiniteMeasure μ]
 
 /-- A.e. `limsup` of the Birkhoff averages is `≤ μ[g | I]`: union the null superlevel sets
 `{L + 1/(k+1) < Ls}` from `measure_setOf_lt_limsup_eq_zero` over `k`. -/
-private theorem limsup_le_condExp_ae [IsFiniteMeasure μ]
+private lemma limsup_le_condExp_ae [IsFiniteMeasure μ]
     (hT : MeasurePreserving T μ μ) {g : X → ℝ} (hg : Integrable g μ) :
     ∀ᵐ x ∂μ, Filter.limsup (fun n => birkhoffAverage ℝ T g n x) atTop
       ≤ (μ[g | MeasurableSpace.invariants T]) x := by
@@ -762,7 +762,7 @@ private theorem limsup_le_condExp_ae [IsFiniteMeasure μ]
 
 /-- A.e. `liminf` of the Birkhoff averages is `≥ μ[g | I]`: apply `limsup_le_condExp_ae`
 to `-g`, using `birkhoffAverage_neg`, `condExp_neg`, and `limsup (-a) = -liminf a`. -/
-private theorem condExp_le_liminf_ae [IsFiniteMeasure μ]
+private lemma condExp_le_liminf_ae [IsFiniteMeasure μ]
     (hT : MeasurePreserving T μ μ) {g : X → ℝ} (hg : Integrable g μ) :
     ∀ᵐ x ∂μ, (μ[g | MeasurableSpace.invariants T]) x
       ≤ Filter.liminf (fun n => birkhoffAverage ℝ T g n x) atTop := by

@@ -7,8 +7,8 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.FunctionalLimit.Donsker.Corridor.Brownian.Endpoint
-public import Probability.Process.RandomWalk.Path.Corridor.Horizontal
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.EndpointBands
+public import Probability.Process.RandomWalk.Path.Corridor.Horizontal.Core
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.EndpointBands.Basic
 /-!
 # Donsker transfer for finite endpoint bands
 

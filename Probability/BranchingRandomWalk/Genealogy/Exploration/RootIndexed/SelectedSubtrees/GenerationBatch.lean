@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Measurability
+public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Field.Measurability
 public import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.SelectedSubtrees.SelectedFamily
 public import Probability.Independence.Finite
 public import Mathlib.Probability.Independence.InfinitePi

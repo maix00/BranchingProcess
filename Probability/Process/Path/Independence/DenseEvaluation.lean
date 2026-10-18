@@ -21,8 +21,7 @@ The public theorem in this file is:
 The theorem uses that dense evaluation is a measurable embedding of
 continuous path space. It supplies the path-level independence needed
 for the rational-interval step in Lemma 2.3 of Erwin Bolthausen,
-*On a functional central limit theorem for random walks conditioned to
-stay positive*, Ann. Probab. 4(3) (1976), 480--485,
+*On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*, Ann. Probab. 4(3) (1976), 480--485,
 DOI 10.1214/aop/1176996098.
 -/
 

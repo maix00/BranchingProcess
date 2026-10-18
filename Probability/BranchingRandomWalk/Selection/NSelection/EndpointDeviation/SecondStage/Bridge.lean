@@ -4,10 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.RightTailKilledCapacity
-import Probability.Process.RandomWalk.Path.Block.Law
+import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Drawdown.Spine.Capacity
+import Probability.Process.RandomWalk.Path.Block.Law.Basic
 import Probability.Process.RandomWalk.Path.Block.Partition.Basic
-import Probability.Process.RandomWalk.Path.Window
+import Probability.Process.RandomWalk.Path.Window.Core
 import Probability.Process.RandomWalk.SmallDeviation.Entrance.NormalDomain
 
 /-!
@@ -58,7 +58,7 @@ theorem measurableSet_finiteCorridorBridgeEvent {n : ℕ}
     exact measurableSet_Icc.preimage (by fun_prop)
   · exact measurableSet_Icc.preimage (by fun_prop)
 
-private theorem partialSum_prefixBlock_eq_displacement
+private lemma partialSum_prefixBlock_eq_displacement
     {prefixLength : ℕ} (increment : ℕ → ℝ)
     (j : Fin (prefixLength + 1)) :
     Fin.partialSum (Combinatorics.Sequence.blockCoordinates 0 prefixLength increment) j =
@@ -67,13 +67,13 @@ private theorem partialSum_prefixBlock_eq_displacement
     AdditivePath.blockSum_eq_displacement_natAdd]
   simp
 
-private theorem history_coordinate_eq_displacement (n : ℕ)
+private lemma history_coordinate_eq_displacement (n : ℕ)
     (increment : ℕ → ℝ) (i : Fin (n + 1)) :
     RandomWalk.history n 0 increment i = AdditivePath.displacement i.val increment := by
   rw [RandomWalk.history_eq_fromIncrements]
   simp [AdditivePath.fromIncrements, AdditivePath.displacement]
 
-private theorem partialSum_nextBlock_eq_blockSum
+private lemma partialSum_nextBlock_eq_blockSum
     {prefixLength bridgeLength : ℕ} (increment : ℕ → ℝ)
     (j : Fin (bridgeLength + 1)) :
     Fin.partialSum

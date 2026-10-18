@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.Path.Continuous
+public import Probability.Process.Path.Representation.Continuous
 public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
 
 /-!
@@ -45,8 +45,7 @@ The public definitions and theorems in this file are:
   reference path's own restriction recovers the reference path.
 
 These maps realize the projection $\Pi_s:C^\infty\to C^s$ used in
-Erwin Bolthausen, *On a functional central limit theorem for random
-walks conditioned to stay positive*, Section 3, Ann. Probab. 4(3)
+Erwin Bolthausen, *On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*, Section 3, Ann. Probab. 4(3)
 (1976), 480--485, DOI 10.1214/aop/1176996098.
 -/
 

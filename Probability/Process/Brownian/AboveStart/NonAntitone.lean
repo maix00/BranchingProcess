@@ -24,8 +24,7 @@ The public theorem in this file is:
 The proof uses independent increments on equal subdivisions and the fact
 that every nondegenerate centered Gaussian increment has a fixed positive
 probability of being positive. This is the probabilistic step in Erwin
-Bolthausen, *On a functional central limit theorem for random walks
-conditioned to stay positive*, Lemma 2.2, p. 481, Ann. Probab. 4(3)
+Bolthausen, *On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*, Lemma 2.2, p. 481, Ann. Probab. 4(3)
 (1976), 480--485, DOI 10.1214/aop/1176996098.
 -/
 
@@ -40,7 +39,7 @@ private noncomputable def uniformBrownianPartition (n : ℕ) :
     Fin (n + 1) → ℝ≥0 :=
   fun i => (i.val : ℝ≥0) / (n : ℝ≥0)
 
-private theorem gaussianReal_Iic_zero_lt_one :
+private lemma gaussianReal_Iic_zero_lt_one :
     gaussianReal 0 (1 : ℝ≥0) (Iic 0) < 1 := by
   have hpos : 0 < gaussianReal 0 (1 : ℝ≥0) (Ioi 0) :=
     gaussianReal_Ioi_zero_pos
@@ -51,7 +50,7 @@ private theorem gaussianReal_Iic_zero_lt_one :
 
 /-- On any finite equal subdivision of $[0,1]$, the probability that
 all Brownian increments are nonpositive decays geometrically. -/
-private theorem IsPreBrownianReal.measure_all_partitionIncrements_nonpos_le
+private lemma IsPreBrownianReal.measure_all_partitionIncrements_nonpos_le
     {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} [IsProbabilityMeasure P]
     {B : ℝ≥0 → Ω → ℝ} (hB : IsPreBrownianReal B P)
     (n : ℕ) (hn : 0 < n) :

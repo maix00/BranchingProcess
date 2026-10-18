@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.EndpointBands
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.EndpointBands.Basic
 /-!
 # Endpoint windows with separate mesh and width
 
@@ -53,7 +53,7 @@ def endpointWindowReturnBlockEvent (lower upper spacing windowRadius : ℝ)
         ((i : ℝ) * spacing - windowRadius)
         ((i : ℝ) * spacing + windowRadius)}
 
-private theorem endpointWindowBlockEvent_subset_returnEvent
+private lemma endpointWindowBlockEvent_subset_returnEvent
     {radius spacing windowRadius x : ℝ} {length : ℕ}
     (hspacing : 0 < spacing) (hwindow : 0 < windowRadius)
     (hwindowLe : windowRadius ≤ 2 * spacing)

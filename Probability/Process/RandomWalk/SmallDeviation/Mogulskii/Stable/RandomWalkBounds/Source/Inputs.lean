@@ -6,11 +6,11 @@ Authors: WANG Yiyang
 
 module
 
-public import Analysis.Asymptotics.Scale
+public import Analysis.Asymptotics.Scale.Basic
 public import Probability.Distributions.Stable.Attraction.Norming.Source
 public import Probability.Distributions.Stable.Attraction.Normal.TruncatedMoment
-public import Probability.Distributions.Stable.Scaling
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Scale
+public import Probability.Distributions.Stable.Operations.Scaling
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Scale.Core
 public import Probability.Process.Stable.Levy
 
 /-!
@@ -21,6 +21,13 @@ its sequence produces a stable norming with unit time constant; the increment
 law and any given reference process are rescaled by the matching positive
 spatial factor. This module packages that shared conversion for probability
 and inner/outer path-rate theorems.
+
+The path-rate results these inputs support formalize A. A. Mogul'skii,
+Theorem 3, Section 4, p. 764, “Small deviations in the sample function
+space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974), 755--765;
+English translation, “Small Deviations in a Space of Trajectories,” *Theory
+of Probability and Its Applications* 19(4) (1975), 726--736, DOI
+10.1137/1119081.
 -/
 
 open Filter MeasureTheory

@@ -28,8 +28,7 @@ The public theorems in this file are:
 These facts use the positive Gaussian density and its scaling identity
 from mathlib's real Gaussian distribution theory. They supply the
 uniform increment-sign estimate in the Brownian argument of Erwin
-Bolthausen, *On a functional central limit theorem for random walks
-conditioned to stay positive*, Lemma 2.2, p. 481,
+Bolthausen, *On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*, Lemma 2.2, p. 481,
 Ann. Probab. 4(3) (1976), 480--485,
 DOI 10.1214/aop/1176996098.
 -/

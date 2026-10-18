@@ -10,7 +10,22 @@ public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Ran
 public import MeasureTheory.Measure.CadlagPath.PathClass.StepCorridor.Partition.LowerEnergy
 
 /-!
-# The exact energy lower rate for M₂ corridors.
+# The exact energy lower rate for M₂ corridors
+
+For $Y_n^\xi=\texttt{normalizedStepCadlagPathIcc}(s,n,\xi)$ and
+$\mathbb P_\nu=\operatorname{iidSequenceLaw}(\nu)$, write
+$P_n(c)=\mathbb P_\nu\{\xi:Y_n^\xi\in
+\operatorname{corridorSet}(c.\texttt{upper},c.\texttt{lower})\}$,
+$\rho_n$ for the stable small-deviation rate, and
+$I_\alpha(c)=C2^\alpha(c.\operatorname{energy}(\alpha)).\operatorname{toReal}$.
+The declarations in
+`ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete` are:
+
+- `eventually_stableSmallDeviationRate_mul_log_normalizedStepCorridor_ge_energy`:
+  for every $\varepsilon>0$, eventually $P_n(c)>0$ and
+  $I_\alpha(c)-\varepsilon\le\rho_n\log P_n(c)$.
+- `liminf_stableSmallDeviationRate_mul_log_normalizedStepCorridor_ge_energy`:
+  $I_\alpha(c)\le\liminf_{n\to\infty}\rho_n\log P_n(c)$.
 -/
 
 open Skorokhod.PathClass.StepCorridor

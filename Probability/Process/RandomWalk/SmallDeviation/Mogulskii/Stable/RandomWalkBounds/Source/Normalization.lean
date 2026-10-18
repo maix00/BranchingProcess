@@ -16,6 +16,13 @@ Reindexing a raw domain-of-attraction normalization produces a stable norming
 with time constant one. If the raw time constant is `d`, the associated
 spatial rescaling is `q = d ^ (1 / α)`. The stable path escape constant then
 changes from `C` to `q ^ α * C = d * C`.
+
+These normalization identities supply the hypotheses for the stable
+small-deviation rate of A. A. Mogul'skii, Theorem 3, Section 4, p. 764,
+“Small deviations in the sample function space,” *Teoriya Veroyatnostei i ee
+Primeneniya* 19(4) (1974), 755--765; English translation, “Small Deviations
+in a Space of Trajectories,” *Theory of Probability and Its Applications*
+19(4) (1975), 726--736, DOI 10.1137/1119081.
 -/
 
 open Filter MeasureTheory
@@ -25,7 +32,7 @@ open scoped NNReal Topology
 
 namespace ProbabilityTheory
 
-private theorem pathMap_eq_of_cadlag {Ω : Type*} [MeasurableSpace Ω]
+private lemma pathMap_eq_of_cadlag {Ω : Type*} [MeasurableSpace Ω]
     (Y : unitInterval → Ω → ℝ) (ω : Ω)
     (hω : IsCadlag (fun t => Y t ω)) :
     Process.Path.Cadlag.pathMap Y ω = ⟨fun t => Y t ω, hω⟩ := by

@@ -25,7 +25,7 @@ namespace ProbabilityTheory.BranchingProcess.GaltonWatson
 
 private def pThreeQuarters : I := ⟨3 / 4, by constructor <;> norm_num⟩
 
-private theorem complement_probability_mass :
+private lemma complement_probability_mass :
     (unitInterval.toNNReal (σ pThreeQuarters) : ℝ≥0∞) =
       ENNReal.ofReal (1 / 4 : ℝ) := by
   have hreal :
@@ -77,15 +77,15 @@ private noncomputable def boundedOffspringConfigurationLaw :
     ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw (Fin 2) PUnit.{1} :=
   (bernoulliMeasure twoChildren noChildren pThreeQuarters).toProbabilityMeasure
 
-private theorem twoChildren_childCount : twoChildren.childCount = 2 := by
+private lemma twoChildren_childCount : twoChildren.childCount = 2 := by
   simp [twoChildren, Combinatorics.Branching.Step.childCount,
     Combinatorics.Branching.support, Combinatorics.Branching.survive]
 
-private theorem noChildren_childCount : noChildren.childCount = 0 := by
+private lemma noChildren_childCount : noChildren.childCount = 0 := by
   simp [noChildren, Combinatorics.Branching.Step.childCount,
     Combinatorics.Branching.support, Combinatorics.Branching.survive]
 
-private theorem boundedOffspringConfigurationLaw_childCountLaw :
+private lemma boundedOffspringConfigurationLaw_childCountLaw :
     (boundedOffspringConfigurationLaw.childCountLaw : Measure ℕ∞) =
       bernoulliMeasure (2 : ℕ∞) 0 pThreeQuarters := by
   rw [ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw.childCountLaw_toMeasure]

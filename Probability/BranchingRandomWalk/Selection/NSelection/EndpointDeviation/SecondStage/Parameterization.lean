@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.SecondStage.Spine
 /-!
-# Paper scales for the second-stage spine corridor
+# Second-stage scales for the spine corridor
 
 This file specializes the finite-variance entrance and bridge estimate to the
 `D^(1/3)` width and `D^(-2/3)` drift used in the second stage of the positive-a
@@ -24,12 +24,12 @@ open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete
 open ProbabilityTheory.RandomWalk.SmallDeviation.Entrance
 open ProbabilityTheory.BranchingRandomWalk.Spine
 
-/-- The slope of the paper's second-stage affine tube. -/
+/-- The slope of the second-stage affine tube. -/
 noncomputable def rightTailPositiveASecondStageSlope
     (κ c : ℝ) (D : ℕ) : ℝ :=
   κ / c ^ 2 * ((D : ℝ) ^ ((-2 : ℝ) / 3))
 
-/-- The width of the paper's second-stage affine tube. -/
+/-- The width of the second-stage affine tube. -/
 noncomputable def rightTailPositiveASecondStageWidth
     (c : ℝ) (D : ℕ) : ℝ :=
   c * ((D : ℝ) ^ ((1 : ℝ) / 3))
@@ -67,7 +67,7 @@ noncomputable def rightTailPositiveASecondStageSpineLowerBound
             (stableBlockLength 2 ν (amplitude ^ (2 : ℝ)) scale bridgeLength) + 1)) *
         (bridgeQ / (finiteVarianceEntranceLength scale bridgeLength : ℝ≥0∞))
 
-private theorem rightTailPositiveASecondStageBridgeScale_isMogulskiiScale
+private lemma rightTailPositiveASecondStageBridgeScale_isMogulskiiScale
     {κ c v : ℝ} (hLambdaV : κ / c ^ 2 < v) :
     IsMogulskiiScale (rightTailPositiveASecondStageBridgeScale κ c v) := by
   let β : ℝ := (v - κ / c ^ 2) / 24
@@ -118,7 +118,7 @@ private theorem rightTailPositiveASecondStageBridgeScale_isMogulskiiScale
   rw [isMogulskiiScale_iff]
   exact ⟨hscale, hratio⟩
 
-private theorem rightTailPositiveA_rpow_third_sq {x : ℝ} (hx : 0 < x) :
+private lemma rightTailPositiveA_rpow_third_sq {x : ℝ} (hx : 0 < x) :
     (x ^ ((1 : ℝ) / 3)) ^ 2 = x ^ ((2 : ℝ) / 3) := by
   calc
     (x ^ ((1 : ℝ) / 3)) ^ 2 =
@@ -126,7 +126,7 @@ private theorem rightTailPositiveA_rpow_third_sq {x : ℝ} (hx : 0 < x) :
     _ = x ^ (((1 : ℝ) / 3) * 2) := by rw [← Real.rpow_mul hx.le]
     _ = x ^ ((2 : ℝ) / 3) := by congr 1; norm_num
 
-private theorem rightTailPositiveA_rpow_third_cube {x : ℝ} (hx : 0 < x) :
+private lemma rightTailPositiveA_rpow_third_cube {x : ℝ} (hx : 0 < x) :
     (x ^ ((1 : ℝ) / 3)) ^ 3 = x := by
   calc
     (x ^ ((1 : ℝ) / 3)) ^ 3 =
@@ -136,7 +136,7 @@ private theorem rightTailPositiveA_rpow_third_cube {x : ℝ} (hx : 0 < x) :
 
 /-- The scaled entrance block is asymptotically shorter than the full
 second-stage horizon, leaving a diverging bridge interval. -/
-private theorem tendsto_secondStageRemainingLength_atTop
+private lemma tendsto_secondStageRemainingLength_atTop
     {D : ℕ → ℕ} (hD : Tendsto (fun n => (D n : ℝ)) atTop atTop)
     {α : ℝ} :
     Tendsto (fun n =>
@@ -189,8 +189,8 @@ private theorem tendsto_secondStageRemainingLength_atTop
   exact hremain
 
 /-- A finite-second-moment increment law gives an eventual quantitative
-lower bound for the tilted random-walk event in the paper's second-stage
-affine tube. The only distributional assumption is the paper's centered
+lower bound for the tilted random-walk event in the second-stage
+affine tube. The only distributional assumption is the centered
 finite second moment; the scale inequalities are consequences of the stated
 parameter constraints. -/
 theorem eventually_iidSequenceLaw_rightTailPositiveASecondStageAffineCorridor_lowerBound_of_centeredSecondMoment
@@ -315,7 +315,7 @@ theorem eventually_iidSequenceLaw_rightTailPositiveASecondStageAffineCorridor_lo
           dsimp [root]
           congr 1
           ring
-    have hdriftPaper : drift n = lambda * ((D n : ℝ) ^ ((-2 : ℝ) / 3)) := by
+    have hdriftFormula : drift n = lambda * ((D n : ℝ) ^ ((-2 : ℝ) / 3)) := by
       dsimp [drift, entranceScale]
       have hscaleSq :
           (α * ((D n : ℝ) ^ ((1 : ℝ) / 3))) ^ 2 =
@@ -329,7 +329,7 @@ theorem eventually_iidSequenceLaw_rightTailPositiveASecondStageAffineCorridor_lo
         ne_of_gt (Real.rpow_pos_of_pos hnDReal _)
       field_simp [hαsq, hDpow]
     have hdriftLength : drift n * (bridgeLength : ℝ) ≤ lambda * root := by
-      rw [hdriftPaper]
+      rw [hdriftFormula]
       calc
         (lambda * ((D n : ℝ) ^ ((-2 : ℝ) / 3))) * (bridgeLength : ℝ) ≤
             (lambda * ((D n : ℝ) ^ ((-2 : ℝ) / 3))) * (D n : ℝ) :=
@@ -360,7 +360,7 @@ theorem eventually_iidSequenceLaw_rightTailPositiveASecondStageAffineCorridor_lo
         (D n - ⌊entranceScale n ^ 2⌋₊) := by
       dsimp [bridgeScale, rightTailPositiveASecondStageBridgeScale]
       positivity
-    have hdriftPaper : drift n = lambda * ((D n : ℝ) ^ ((-2 : ℝ) / 3)) := by
+    have hdriftFormula : drift n = lambda * ((D n : ℝ) ^ ((-2 : ℝ) / 3)) := by
       dsimp [drift, entranceScale]
       have hnDReal : 0 < (D n : ℝ) := hnD
       have hscaleSq :
@@ -375,7 +375,7 @@ theorem eventually_iidSequenceLaw_rightTailPositiveASecondStageAffineCorridor_lo
         ne_of_gt (Real.rpow_pos_of_pos hnDReal _)
       field_simp [hαsq, hDpow]
     have hdriftNonneg : 0 ≤ drift n := by
-      rw [hdriftPaper]
+      rw [hdriftFormula]
       positivity
     dsimp [entranceScale, terminalExtra, root]
     have hterminalScaled :
@@ -392,7 +392,7 @@ theorem eventually_iidSequenceLaw_rightTailPositiveASecondStageAffineCorridor_lo
       hdrift hprefixLe hentranceWidth' hbridgeLower hbridgeUpper hterminal
   refine ⟨entryQ, hentryQ, C, hC, bridgeQ, hbridgeQ, amplitude, hamplitude, ?_⟩
   filter_upwards [hcorridor, hD.eventually_gt_atTop 0] with n hbound hDpos
-  have hpaperDrift : drift n =
+  have hmatchingDrift : drift n =
       rightTailPositiveASecondStageSlope κ c (D n) := by
     have hnD : 0 < (D n : ℝ) := hDpos
     have hlocal : drift n = lambda * ((D n : ℝ) ^ ((-2 : ℝ) / 3)) := by
@@ -409,7 +409,7 @@ theorem eventually_iidSequenceLaw_rightTailPositiveASecondStageAffineCorridor_lo
         ne_of_gt (Real.rpow_pos_of_pos hnD _)
       field_simp [hαsq, hDpow]
     simpa [rightTailPositiveASecondStageSlope, lambda] using hlocal
-  have hpaperWidth : width n = rightTailPositiveASecondStageWidth c (D n) := by
+  have hmatchingWidth : width n = rightTailPositiveASecondStageWidth c (D n) := by
     rfl
   have hmass :
       rightTailPositiveASecondStageSpineLowerBound
@@ -427,7 +427,7 @@ theorem eventually_iidSequenceLaw_rightTailPositiveASecondStageAffineCorridor_lo
           (bridgeQ / ((finiteVarianceEntranceLength bridgeScale
             (D n - ⌊entranceScale n ^ 2⌋₊) : ℕ) : ℝ≥0∞)) := by
     rfl
-  rw [hpaperDrift, hpaperWidth] at hbound
+  rw [hmatchingDrift, hmatchingWidth] at hbound
   rw [hmass]
   simpa [terminalExtra, bridgeScale,
     rightTailPositiveASecondStageBridgeScale] using hbound

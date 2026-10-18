@@ -6,13 +6,28 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.Rate.Bounds
+public import Mathlib.MeasureTheory.Measure.MeasureSpaceDef
+public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
+public import Probability.Distributions.Moments.Real
+public import Probability.Sequence.IID.Basic
+public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.TubeEvent
+public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.Event
+public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.JumpPattern.Basic
+import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.Rate.Bounds
+import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.ConditionalBlocks
+import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.JumpPattern.Probability
+import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.JumpPattern.UnionBound
+import Analysis.Asymptotics.Scale.IntermediatePowerBlock
 
 /-!
 # Endpoint and horizon powers for the drawdown estimate
 
+For increments $\xi=(\xi_i)_{i\ge0}$, let
+$S_j=\sum_{i=0}^{j-1}\xi_i$ and
+$B_{L,\Delta,r}=\{\xi:S_i-S_j\le\Delta\;(0\le i\le j\le L),\;S_L\le r\}$.
+
 The proof-specific declaration is
-`exists_eventually_measureReal_noLargeDropEvent_le_exp_of_endpointAndHorizonPowers`:
+`ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.exists_eventually_measureReal_noLargeDropEvent_le_exp_of_endpointAndHorizonPowers`:
 for positive endpoint and horizon powers, centered increments with finite
 positive variance, and $0<d<\pi^2\sigma^2/2$, sufficiently large widths and
 horizons $L\ge\Delta^{2+\text{horizonPower}}$ satisfy
@@ -22,8 +37,7 @@ horizons $L\ge\Delta^{2+\text{horizonPower}}$ satisfy
 \]
 
 This assembles the rounded-maximum decomposition, fixed-pattern block
-probabilities, and asymptotic block bounds in Wang Yiyang, *Asymptotic speed
-of the $N$-branching random walk with infinite offspring*, Chapter 3,
+probabilities, and asymptotic block bounds in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3,
 Lemma 3.3.
 -/
 
@@ -35,7 +49,6 @@ open scoped ENNReal
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown
 
 open ProbabilityTheory.RandomWalk
-open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
 /-- For positive endpoint and horizon powers, sufficiently large widths
 give the finite-variance drawdown estimate. -/
@@ -83,7 +96,9 @@ lemma exists_eventually_measureReal_noLargeDropEvent_le_exp_of_endpointAndHorizo
         Delta ^ (horizonPower - eta) ∧
       Real.log 2 / (d * eta) ≤ Delta ^ (eta / 2) ∧
       tubeWidth₀ ≤ Delta := by
-    filter_upwards [eventually_drawdownFloorBlockLength_bounds hetaPos,
+    filter_upwards [Asymptotics.eventually_nat_floor_rpow_intermediate_bounds
+        (p := 2 + eta / 2) (q := 2 + eta)
+        (by linarith [hetaPos]) (by linarith [hetaPos]),
       eventually_drawdownCeilingBinWidth_bounds hetaPos,
       eventually_drawdownTubeBlockExponent_le hetaPos hd,
       hscaleAbsorptions, eventually_ge_atTop tubeWidth₀] with

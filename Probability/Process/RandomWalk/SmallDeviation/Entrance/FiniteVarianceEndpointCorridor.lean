@@ -9,8 +9,8 @@ module
 public import Probability.Process.RandomWalk.SmallDeviation.Entrance.NormalDomain
 public import Probability.Process.RandomWalk.SmallDeviation.Entrance.FiniteVariance.StableEndpointBridge
 public import Probability.Process.RandomWalk.FunctionalLimit.Normal.Tightness
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.FromIncrementLaw.PathLaw
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Scale
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.FromIncrementLaw.Path.Law
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Scale.Basic
 public import Probability.Distributions.Gaussian.Interval
 
 /-!
@@ -18,10 +18,10 @@ public import Probability.Distributions.Gaussian.Interval
 
 The public definitions and theorem are:
 
-- `finiteVarianceEntranceLength` and `finiteVarianceBridgeLength`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.finiteVarianceEntranceLength` and `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.finiteVarianceBridgeLength`:
   $\lfloor\Delta_n^2\rfloor$ and the remaining horizon
   $n-\lfloor\Delta_n^2\rfloor$.
-- `exists_eventually_iidSequenceLaw_endpointCorridor_lowerBound_of_centeredSecondMoment`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.exists_eventually_iidSequenceLaw_endpointCorridor_lowerBound_of_centeredSecondMoment`:
   for a centered increment law with positive finite variance, the
   entrance probability times the stable endpoint-bridge probability
   bounds below the chance of remaining in the enlarged corridor and
@@ -212,8 +212,8 @@ theorem exists_eventually_iidSequenceLaw_endpointCorridor_lowerBound_of_centered
     have hentryN' : q / (finiteVarianceEntranceLength scale n : ℝ≥0∞) ≤
         iidSequenceLaw ν
           {increment : ℕ → ℝ |
-            finitePrefixVector
-                (n := finiteVarianceEntranceLength scale n) increment ∈
+            (Combinatorics.Sequence.blockCoordinates 0
+              (finiteVarianceEntranceLength scale n)) increment ∈
               finiteMovingEntranceEvent (n := finiteVarianceEntranceLength scale n)
                 (scale n) 0 1} := by
       have h := hentry (scale n) hentryN (-scale n) ⟨le_rfl, by linarith⟩
@@ -221,7 +221,8 @@ theorem exists_eventually_iidSequenceLaw_endpointCorridor_lowerBound_of_centered
         rw [neg_neg, div_self hscaleN.ne']
       change q / (⌊(scale n) ^ 2⌋₊ : ℝ≥0∞) ≤ iidSequenceLaw ν
         {increment : ℕ → ℝ |
-          finitePrefixVector (n := ⌊(scale n) ^ 2⌋₊) increment ∈
+          (Combinatorics.Sequence.blockCoordinates 0
+            ⌊(scale n) ^ 2⌋₊) increment ∈
             finiteMovingEntranceEvent (n := ⌊(scale n) ^ 2⌋₊) (scale n) 0 1}
       simpa only [hratio, zero_div] using h
     let entryLower : ℝ≥0∞ := q / (finiteVarianceEntranceLength scale n : ℝ≥0∞)

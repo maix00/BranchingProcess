@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.Brownian.AboveStart.InteriorReturn
-public import Probability.Process.Brownian.Reflection.UnboundedBelow
+public import Probability.Process.Brownian.Reflection.Path.UnboundedBelow
 
 /-!
 # Endpoint returns and descending Brownian hitting times
@@ -21,8 +21,7 @@ The public theorem in this file is:
   $y>x$ with $\tau_y\le v$.
 
 This is the pathwise identification of the unit-length jump used in
-equation (2.2) of Lemma 2.3 in Erwin Bolthausen, *On a functional central
-limit theorem for random walks conditioned to stay positive*, Ann.
+equation (2.2) of Lemma 2.3 in Erwin Bolthausen, *On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*, Ann.
 Probab. 4(3) (1976), 480--485, DOI 10.1214/aop/1176996098.
 The separate probabilistic assertion that the hitting-time process has
 no jump of this length comes from the Lévy decomposition cited there.

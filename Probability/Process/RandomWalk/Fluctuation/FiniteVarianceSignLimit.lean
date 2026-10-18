@@ -6,34 +6,38 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Distributions.Stable.Attraction.Normal
+public import Probability.Distributions.Stable.Attraction.Normal.Basic
 public import Probability.Distributions.Gaussian.Sign
 public import Probability.Distributions.Moments.Real
 public import Probability.ConvergenceInDistribution.Portmanteau
-public import Algebra.BigOperators.AdditivePath
+public import Algebra.BigOperators.AdditivePath.Basic
 public import Mathlib.Analysis.Asymptotics.SpecificAsymptotics
 
 /-!
 # The positivity parameter of a finite-variance random walk
 
-The public theorems in this file are:
+Let $(\xi_i)_{i\geq1}$ be i.i.d. with law $\nu$, set
+$S_0=0$ and $S_n=\sum_{i=1}^n\xi_i$, and write $\mathbb P_\nu$ and
+$\mathbb E_\nu$ for the product-law probability and expectation. Assume
+$\mathbb E_\nu[\xi_1]=0$ and $\mathbb E_\nu[\xi_1^2]=\sigma^2>0$. The public
+theorems in this file are:
 
 - `ProbabilityTheory.RandomWalk.tendsto_positivePartialSumProbability_half`:
-  for centered increments with variance $\sigma^2>0$,
-  $\mathbb P(S_n>0)\to 1/2$.
+  $\mathbb P_\nu(S_n>0)\to\frac12$.
 - `ProbabilityTheory.RandomWalk.tendsto_cesaro_positivePartialSumProbability_half`:
-  $n^{-1}\sum_{m=1}^n\mathbb P(S_m>0)\to 1/2$, the Spitzer
+  $\frac{1}{n}\sum_{m=1}^n\mathbb P_\nu(S_m>0)\to\frac12$, the Spitzer
   condition used for the ascending ladder epoch.
 - `ProbabilityTheory.RandomWalk.tendsto_nonnegativePartialSumProbability_half`:
-  $\mathbb P(S_n\ge0)\to 1/2$, the endpoint convention in the
+  $\mathbb P_\nu(S_n\ge0)\to\frac12$, the endpoint convention in the
   nonnegative-survival Sparre--Andersen identity.
 
 This is the Gaussian positivity-parameter input to R. A. Doney,
 *Spitzer's condition and ladder variables in random walks*, Theorem 2
-(Probab. Theory Relat. Fields 101 (1995), 577--580), which is one of the
+(Probab. Theory Relat. Fields 101 (1995), 577--580, DOI 10.1007/BF01202785), which is one of the
 ladder-variable results cited in Francesco Caravenna and Loïc Chaumont,
 *Invariance principles for random walks conditioned to stay positive*,
-Lemma 2.1 (Ann. Inst. H. Poincaré Probab. Statist. 44 (2008), 170--190).
+Lemma 2.1 (Ann. Inst. H. Poincaré Probab. Statist. 44(1) (2008),
+170--190, DOI 10.1214/07-AIHP119).
 -/
 
 @[expose] public section

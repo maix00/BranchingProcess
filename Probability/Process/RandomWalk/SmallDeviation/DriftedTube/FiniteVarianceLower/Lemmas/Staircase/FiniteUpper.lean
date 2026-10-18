@@ -6,21 +6,36 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.FiniteLower
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Endpoint.UpperInclusion
+public import Mathlib.MeasureTheory.Measure.MeasureSpaceDef
+public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
+public import Algebra.BigOperators.AdditivePath.Basic
+public import Probability.Distributions.Moments.Real
+public import Probability.Sequence.Filtration
+public import Probability.Sequence.IID.Basic
+public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.Binning
+public import Probability.Process.RandomWalk.Path.Block.Partition.TailMerged
+public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.BlockTube
+public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.EndpointEvent
+public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Reflection
+import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Rate.BlockExponential
+import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Cost
+import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.FiniteLower
+import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Endpoint.UpperInclusion
+import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Product
+import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.Binning
 
 /-!
 # Finite staircase lower bound with an upper terminal window
 
 The module-visible supporting lemma in this file is:
 
-- `exists_uniform_finiteStaircaseUpperEndpointLowerBound`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.exists_uniform_finiteStaircaseUpperEndpointLowerBound`:
   the entrance estimate, the same uniform horizontal-block product as
   for the lower terminal window, and upper-window inclusion imply
   $\mathbb P(E_{\rm upper})\ge\exp(-d'L/\Delta^2)$.
 
 This is the symmetric endpoint construction in Wang Yiyang,
-*Asymptotic speed of the $N$-branching random walk with infinite offspring*,
+*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
 Chapter 3, proof of Lemma 3.5. The horizontal-block probability estimate
 is reused through `exists_uniform_staircaseProbability_ge_product`.
 -/
@@ -28,9 +43,10 @@ is reused through `exists_uniform_staircaseProbability_ge_product`.
 @[expose] public section
 
 open MeasureTheory ProbabilityTheory
-open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
+
+open ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube
 
 /-- The finite staircase calculation with a final window adjacent to the
 upper edge of the tilted tube. -/

@@ -7,8 +7,8 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.Brownian.Bessel.ThreeDimensional
-public import Probability.Process.Brownian.LinearTube
-public import Topology.Cadlag.Skorokhod.LinearPath
+public import Probability.Process.Brownian.Support.LinearTube
+public import Topology.Cadlag.Skorokhod.Path.Linear
 public import Mathlib.MeasureTheory.Measure.Support
 
 /-!
@@ -20,9 +20,9 @@ The public theorem in this file is:
   every $a\ge0$, the path $t\mapsto at$ belongs to the support of the
   law of the radius of three independent copies.
 
-This is the support input for the Imhof proof of the Brownian-meander
-corridor used by Wang Yiyang, *Asymptotic speed of the $N$-branching random
-walk with infinite offspring*, Chapter 3, Lemma 3.5, Appendix A.2.
+This is a reusable support theorem for the radial path of three independent
+Brownian motions. It supplies the path-space support input for Bessel-based
+Brownian-meander arguments in this library.
 -/
 
 @[expose] public section
@@ -32,7 +32,7 @@ open scoped ENNReal NNReal Topology
 
 namespace BrownianBessel3
 
-private theorem radial_path_close
+private lemma radial_path_close
     {Ω : Type*} {B : ℝ≥0 → Ω → ℝ}
     (hB : ∀ ω, Continuous (B · ω))
     {a δ r : ℝ} (ha : 0 ≤ a) (hδ : 0 < δ)

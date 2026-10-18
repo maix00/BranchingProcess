@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.SourcePartition.LowerProbability
-public import Probability.Process.Stable.SmallDeviation.PathClass.StepCorridor.Partition.LowerGeometry
+public import Probability.Process.Stable.SmallDeviation.PathClass.StepCorridor.Partition.Lower.Geometry
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.EndpointBandTransfer.StableLower.CellBridge
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Partition
 
@@ -185,8 +185,7 @@ theorem exists_eventually_iidSequenceLaw_sourceNormalizedStepCorridor_lowerBound
           intro i
           have hlength (n : ℕ) :
               sourcePartitionCellStepLengths n upper lower i.val = total i n := by
-            simp [total, commonPartitionCellStepLengths,
-              commonPartitionCellStepLength, commonPartitionFloorTimeIndex, i.isLt]
+            simp [total, sourcePartitionCellStepLengths]
           filter_upwards [hlocal i] with n hn
           rw [hlength n]
           exact hn)

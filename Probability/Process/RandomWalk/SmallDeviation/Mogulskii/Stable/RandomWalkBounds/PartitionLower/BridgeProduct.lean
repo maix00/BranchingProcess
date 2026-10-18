@@ -7,12 +7,29 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.Partition.LowerProbability
-public import Probability.Process.Stable.SmallDeviation.PathClass.StepCorridor.Partition.LowerGeometry
+public import Probability.Process.Stable.SmallDeviation.PathClass.StepCorridor.Partition.Lower.Geometry
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.EndpointBandTransfer.StableLower.CellBridge
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Partition
 
 /-!
-# Endpoint-core block bounds and finite-cell product gluing.
+# Endpoint-core block bounds and finite-cell product gluing
+
+Put $Y_n^\xi=\texttt{normalizedStepCadlagPathIcc}(s,n,\xi)$ and
+$P_n=(\operatorname{iidSequenceLaw}\nu)\{\xi:Y_n^\xi\in
+\operatorname{corridorSet}(U,L)\}$. For cell $i$, let $q_i(n)$ be its step
+length, $A_i>0$ its amplitude,
+$m_i(n)=\operatorname{stableBlockLength}(\alpha,\nu,A_i^\alpha,s_n)$, and
+$k_i(n)=\operatorname{balancedBlockCount}(q_i(n)-m_i(n),m_i(n))+1$.
+Writing $L_i=\texttt{cellLower}(i)$ and $U_i=\texttt{cellUpper}(i)$, the
+declaration in
+`ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete` is:
+
+- `exists_eventually_iidSequenceLaw_normalizedStepCorridor_lowerBound_of_endpointCoreBridges`:
+  under the stable process and endpoint-core geometry hypotheses, there are
+  amplitudes $A_i>0$ such that eventually
+  $\displaystyle\prod_i \exp\!\left(\left[
+  \frac{C}{((U_i-L_i-8\varepsilon_i)/2)^\alpha}-\delta_i
+  \right]A_i^\alpha\right)^{k_i(n)}\le P_n$.
 -/
 
 @[expose] public section

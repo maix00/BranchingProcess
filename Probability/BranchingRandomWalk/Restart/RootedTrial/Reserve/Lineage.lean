@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.BranchingRandomWalk.Restart.RootedTrial.SelectedRoot
+public import Probability.BranchingRandomWalk.Restart.RootedTrial.Spine.SelectedRoot
 public import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.StoppingSubtrees.Vector.Factorization
 
 /-!

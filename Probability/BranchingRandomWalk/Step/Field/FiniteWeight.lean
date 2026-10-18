@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.BranchingRandomWalk.Assumptions.Structural
-public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law
+public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law.Basic
 
 /-!
 # Almost-sure finite exponential weights in pre-sampled fields

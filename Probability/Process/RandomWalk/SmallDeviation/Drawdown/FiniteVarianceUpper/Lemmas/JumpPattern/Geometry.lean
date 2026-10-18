@@ -6,37 +6,25 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.JumpPattern.Setup
+public import Probability.Process.Filtration.ConditionalBlocks
+public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.Event
+public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.JumpPattern.DiscretizedMaximum
+public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.JumpPattern.Basic
+public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.TubeEvent
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.Horizontal.PathSegment
+import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.JumpPattern.Setup
+import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.ConditionalBlocks
 
 /-!
 # Geometry of the rounded-maximum decomposition
 
-The proof-specific declarations are:
+The proof-specific declaration is:
 
-- `drawdownBlockTubeCondition` and
-  `drawdownBlockTubeCondition_implies_tubeBlockEvent`: on block $j$,
-  $M_j-w-\delta<S_{s_j+k}\le M_j$ implies the corresponding conditional
-  tube event.
-- `drawdown_card_maximumJumpSet_le` and
-  `drawdown_discretizedMaximumBlockDecomposition`: the rounded maximum has at
-  most the permitted number of jumps, and its increments decompose into the
-  blockwise path increments.
-- `additivePath_le_threshold_add_delta_of_noLargeDrop` and
-  `neg_delta_le_additivePath_of_noLargeDrop`: the no-large-drop condition
-  gives the upper and lower path bounds used in the block construction.
-- `drawdown_event_discretizedMaximumBlockDecomposition` and
-  `drawdown_event_goodBlocks_satisfy_tubeCondition`: a path in the drawdown
-  event has the required blockwise decomposition and every non-jump block
-  satisfies its rounded-maximum tube condition.
-- `drawdownJumpPatternTubeIntersection`, `drawdownAdmissibleJumpPatterns`,
-  `drawdown_mem_jumpPatternTubeIntersection_of_goodBlocks`, and
-  `drawdown_noLargeDropEvent_subset_jumpPatternUnion`: the event is covered
-  by the finite union of tube intersections indexed by admissible jump
-  patterns.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.drawdown_noLargeDropEvent_subset_jumpPatternUnion`:
+  the no-large-drop event is covered by the finite union of tube intersections
+  indexed by admissible jump patterns.
 
-These steps follow Wang Yiyang, *Asymptotic speed of the $N$-branching random
-walk with infinite offspring*, Chapter 3, Lemma 3.3.
+These steps follow Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.3.
 -/
 
 open Filter MeasureTheory Topology
@@ -49,7 +37,7 @@ namespace ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown
 open ProbabilityTheory.RandomWalk
 open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
-def drawdownBlockTubeCondition
+private def drawdownBlockTubeCondition
     (upper width delta : ℝ) (path : ℕ → ℝ)
     (remainder blockLength : ℕ) (j : ℕ) : Prop :=
   ∀ k ≤ blockLength,
@@ -61,7 +49,7 @@ def drawdownBlockTubeCondition
 /-- The deterministic tube condition on a block implies membership in the
 corresponding conditional tube event centered at the rounded running maximum
 of the past. -/
-lemma drawdownBlockTubeCondition_implies_tubeBlockEvent
+private lemma drawdownBlockTubeCondition_implies_tubeBlockEvent
     (increment : ℕ → ℝ) (upper binWidth delta : ℝ)
     (remainder blockLength j : ℕ)
     (hcondition : drawdownBlockTubeCondition upper binWidth delta
@@ -100,22 +88,21 @@ lemma drawdownBlockTubeCondition_implies_tubeBlockEvent
 
 /-- A nonincreasing discretized running maximum has at most `K + 1` jump
 indices when its levels are encoded by `K + 1` possible grid indices. -/
-lemma drawdown_card_maximumJumpSet_le {q K : ℕ}
+private lemma drawdown_card_maximumJumpSet_le {q K : ℕ}
     (bins : Fin (q + 1) → Fin (K + 1))
     (hmono : ∀ i j, i ≤ j → bins j ≤ bins i) :
     (drawdownMaximumJumpSet bins).card ≤ K + 1 := by
   exact card_spatialBinJumpSet_le bins hmono
 
-/-- On the event in Wang Yiyang, Chapter 3, Lemma 3.3, the running maximum
+/-- On the event in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.3, the running maximum
 can be rounded to a nondecreasing sequence of finitely many levels. Every
 block with unchanged level is contained in the interval
 `(M_j - width - delta, M_j]`.
 
 The sequence is encoded by its grid indices, so `hmono` states that the
 indices are nonincreasing. The last component is the tube inclusion used in
-the conditional-expectation step of Wang Yiyang, *Asymptotic speed of the
-$N$-branching random walk with infinite offspring*, Chapter 3, Lemma 3.3. -/
-lemma drawdown_discretizedMaximumBlockDecomposition
+the conditional-expectation step of Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.3. -/
+private lemma drawdown_discretizedMaximumBlockDecomposition
     (increment : ℕ → ℝ) (horizon remainder blocks blockLength : ℕ)
     (upper width delta : ℝ)
     (hzero : AdditivePath.displacement 0 increment = 0)
@@ -149,41 +136,12 @@ lemma drawdown_discretizedMaximumBlockDecomposition
       (AdditivePath.displacement · increment) upper width delta
       hzero hwidth hnoDrop hupper hblocks
 
-/-- A no-large-drawdown path whose endpoint is below a threshold stays below
-that threshold plus one drawdown allowance throughout the finite horizon. -/
-lemma additivePath_le_threshold_add_delta_of_noLargeDrop
-    {horizon : ℕ} (increment : ℕ → ℝ) (delta threshold : ℝ)
-    (hnoDrop : ∀ i j : ℕ, i ≤ j → j ≤ horizon →
-      AdditivePath.displacement i increment -
-        AdditivePath.displacement j increment ≤ delta)
-    (hendpoint : AdditivePath.displacement horizon increment ≤ threshold) :
-    ∀ i ≤ horizon,
-      AdditivePath.displacement i increment ≤ threshold + delta := by
-  intro i hi
-  have h := hnoDrop i horizon hi (Nat.le_refl _)
-  linarith
-
-/-- Starting from zero, a no-large-drawdown path cannot descend below minus
-the drawdown allowance. -/
-lemma neg_delta_le_additivePath_of_noLargeDrop
-    {horizon : ℕ} (increment : ℕ → ℝ) (delta : ℝ)
-    (hnoDrop : ∀ i j : ℕ, i ≤ j → j ≤ horizon →
-      AdditivePath.displacement i increment -
-        AdditivePath.displacement j increment ≤ delta)
-    {i : ℕ} (hi : i ≤ horizon) :
-    -delta ≤ AdditivePath.displacement i increment := by
-  have h := hnoDrop 0 i (Nat.zero_le _) hi
-  have hzero : AdditivePath.displacement 0 increment = 0 :=
-    AdditivePath.displacement_zero increment
-  rw [hzero] at h
-  linarith
-
 /-- Every path in `noLargeDropEndpointBelowEvent` has the discretized
-running-maximum decomposition of Wang Yiyang, Chapter 3, Lemma 3.3. The
+running-maximum decomposition of Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.3. The
 endpoint condition supplies the deterministic ceiling `threshold + delta`;
 the drawdown condition supplies the lower side of each unchanged-maximum
 block interval. -/
-lemma drawdown_event_discretizedMaximumBlockDecomposition
+private lemma drawdown_event_discretizedMaximumBlockDecomposition
     (increment : ℕ → ℝ) (horizon remainder blocks blockLength : ℕ)
     (delta threshold width : ℝ) (hwidth : 0 < width)
     (hblocks : remainder + blocks * blockLength ≤ horizon)
@@ -221,10 +179,9 @@ lemma drawdown_event_discretizedMaximumBlockDecomposition
 
 /-- On a drawdown event, the rounded maximum has a bounded jump set, and
 every block outside that set satisfies the fixed-interval condition in Wang
-Yiyang, *Asymptotic speed of the $N$-branching random walk with infinite
-offspring*, Chapter 3, Lemma 3.3. This packages the deterministic reduction
+Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.3. This packages the deterministic reduction
 preceding its conditional-expectation iteration. -/
-lemma drawdown_event_goodBlocks_satisfy_tubeCondition
+private lemma drawdown_event_goodBlocks_satisfy_tubeCondition
     (increment : ℕ → ℝ) (horizon remainder blocks blockLength : ℕ)
     (delta threshold width : ℝ) (hwidth : 0 < width)
     (hblocks : remainder + blocks * blockLength ≤ horizon)
@@ -267,24 +224,10 @@ lemma drawdown_event_goodBlocks_satisfy_tubeCondition
       simp [drawdownMaximumJumpSet, spatialBinJumpSet, hne]
     simpa [drawdownBlockTubeCondition] using htube j hsame
 
-/-- The tube events selected by a fixed jump pattern, intersected over the
-first `q` blocks. -/
-def drawdownJumpPatternTubeIntersection {q : ℕ}
-    (remainder blockLength : ℕ) (pattern : Finset (Fin q))
-    (upper binWidth tubeWidth : ℝ) : Set (ℕ → ℝ) :=
-  ProbabilityTheory.conditionalBlockIntersection
-    (drawdownJumpPatternTubeEvent remainder blockLength pattern
-      upper binWidth tubeWidth) q
-
-/-- The finite family of jump patterns with at most `K` jump indices. -/
-noncomputable def drawdownAdmissibleJumpPatterns (q K : ℕ) :
-    Finset (Finset (Fin q)) :=
-  Finset.univ.filter fun pattern => pattern.card ≤ K
-
 /-- If the pattern is the actual jump set of the rounded running maximum,
 every block tube required by that pattern holds whenever its deterministic
 good-block condition holds. -/
-lemma drawdown_mem_jumpPatternTubeIntersection_of_goodBlocks
+private lemma drawdown_mem_jumpPatternTubeIntersection_of_goodBlocks
     {q : ℕ} (increment : ℕ → ℝ)
     (remainder blockLength : ℕ) (upper binWidth delta : ℝ)
     (hbinWidth : 0 < binWidth) (pattern : Finset (Fin q))
@@ -328,8 +271,7 @@ lemma drawdown_mem_jumpPatternTubeIntersection_of_goodBlocks
 
 /-- Every path in the drawdown event belongs to a tube intersection for one
 of the finitely many jump patterns allowed by the discretized-maximum
-decomposition in Wang Yiyang, *Asymptotic speed of the $N$-branching random
-walk with infinite offspring*, Chapter 3, proof of Lemma 3.3. -/
+decomposition in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, proof of Lemma 3.3. -/
 lemma drawdown_noLargeDropEvent_subset_jumpPatternUnion
     (increment : ℕ → ℝ) (horizon blockLength : ℕ)
     (delta threshold binWidth : ℝ) (hbinWidth : 0 < binWidth)

@@ -8,7 +8,7 @@ module
 
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Corridor
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Scale.Rate
-public import Analysis.Asymptotics.SlowDiagonal
+public import Analysis.Asymptotics.Scale.SlowDiagonal
 
 /-!
 # Block counts at the stable small-deviation scale
@@ -49,7 +49,9 @@ These are the block-length relations in Mogul'skii, *Small Deviations in a
 Space of Trajectories*, Theorem 3, Section 4. The path-event partition
 comparison is scale-free and lives in `Walk/Path/Block/Partition/Basic.lean`
 and `Walk/Path/Block/Partition/Normalized.lean`.
--/
+
+
+The original bibliography is A. A. Mogul'skii, “Small deviations in the sample function space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974), 755--765; English translation, “Small Deviations in a Space of Trajectories,” *Theory of Probability and Its Applications* 19(4) (1975), 726--736, DOI 10.1137/1119081. -/
 
 @[expose] public section
 

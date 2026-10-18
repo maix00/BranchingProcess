@@ -6,24 +6,36 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Concrete.Lower.Conditional
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Concrete.Upper.Conditional
-public import Analysis.Asymptotics.SequentialEventually
+public import Mathlib.Basic.Real.Basic
+public import Mathlib.MeasureTheory.Measure.MeasureSpaceDef
+public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
+public import Algebra.BigOperators.AdditivePath.Basic
+public import Probability.Distributions.Moments.Real
+public import Probability.Sequence.Filtration
+public import Probability.Sequence.IID.Basic
+public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.Binning
+public import Probability.Process.RandomWalk.Path.Block.Partition.TailMerged
+public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.BlockTube
+public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.EndpointWindow
+public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.EndpointEvent
+public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Reflection
+import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Concrete.Lower.Conditional
+import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Concrete.Upper.Conditional
+public import Analysis.Asymptotics.Sequence.SequentialEventually
 
 /-!
 # Uniform tilted-tube bounds with fixed geometric margins
 
 The module-visible supporting lemma in this file is:
 
-- `exists_uniform_concreteStaircase_bounds_of_powerBlock`: for fixed
+- `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.exists_uniform_concreteStaircase_bounds_of_powerBlock`: for fixed
   interior-window fractions, margins, and rate parameters, a single
   threshold in the real tube width controls both endpoint events for every
   admissible starting boundary and every horizon
   $L\ge\lfloor\Delta^{2+\varepsilon}\rfloor$.
 
 This is the passage from the sequential estimates to the common threshold
-used in Wang Yiyang, *Asymptotic speed of the $N$-branching random walk
-with infinite offspring*, Chapter 3, proof of Lemma 3.5.
+used in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, proof of Lemma 3.5.
 -/
 
 @[expose] public section
@@ -31,12 +43,12 @@ with infinite offspring*, Chapter 3, proof of Lemma 3.5.
 open Filter MeasureTheory ProbabilityTheory
 open scoped NNReal Topology
 open ProbabilityTheory.RandomWalk.SmallDeviation.Entrance
-open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 
-/-- The common large-width threshold in Wang Yiyang's Lemma 3.5 for both endpoint events,
-once its fixed bin fractions and strict margins have been chosen. -/
+/-- The proof of Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.5, chooses one large-width
+threshold for both endpoint events after fixing the bin fractions and strict
+margins. -/
 lemma exists_uniform_concreteStaircase_bounds_of_powerBlock
     {ν : Measure ℝ} [IsProbabilityMeasure ν]
     {sigma narrowedRate uInterior vInterior

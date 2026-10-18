@@ -4,9 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Population.Processes.Selected
+import Probability.BranchingRandomWalk.Population.Processes.Selected.Basic
 import Combinatorics.BranchingWalk.Step.Ordering.Monotone
-import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law
+import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law.Basic
 
 /-!
 # Rank among all countably many children

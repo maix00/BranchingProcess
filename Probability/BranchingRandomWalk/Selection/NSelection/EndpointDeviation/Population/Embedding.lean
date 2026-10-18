@@ -4,9 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.RightTailKilledCapacity
+import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Drawdown.Spine.Capacity
 import Probability.BranchingRandomWalk.Selection.NSelection.Admissible.Real
-import Probability.BranchingRandomWalk.Population.Processes.Causal.PathWindow
+import Probability.BranchingRandomWalk.Population.Processes.Causal.Path.Window
 
 /-!
 # Embedding first-stage corridor successes into the killed population

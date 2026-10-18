@@ -6,29 +6,22 @@ Authors: WANG Yiyang
 
 module
 
-public import Analysis.Asymptotics.BlockScale
+public import Analysis.Asymptotics.Scale.BlockScale
 
 /-!
 # Interior endpoint ratio for the staircase blocks
 
 The module-visible supporting lemmas in this file are:
 
-- `tendsto_staircaseInteriorLowerRatio`:
-  if $D_n/\Delta_n\to0$, then
-  $\bigl((\Delta_n/3+2D_n/3)/(\Delta_n-D_n)\bigr)/\beta
-  \to 1/(3\beta)$.
-- `eventually_staircaseInteriorLowerMargin`:
-  if $1/(3\beta)+\varepsilon<u$, the ordinary-block endpoint lower
-  margin condition holds eventually.
-- `eventually_staircaseInteriorLowerMargin_of_blockScale`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.eventually_staircaseInteriorLowerMargin_of_blockScale`:
   the same conclusion follows directly from
   $\ell_n/\Delta_n^3\to0$ for fixed drift $c$.
-- `eventually_staircaseUpperFinalLowerMargin_of_blockScale`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.eventually_staircaseUpperFinalLowerMargin_of_blockScale`:
   the final upper-window lower endpoint ratio tends to
   $\max(1-v,0)/\beta$ under the same block-scale condition.
 
 These are the ordinary-block endpoint comparisons in Wang Yiyang,
-*Asymptotic speed of the $N$-branching random walk with infinite offspring*,
+*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
 Chapter 3, proof of Lemma 3.5.
 -/
 
@@ -41,7 +34,7 @@ namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 
 /-- The lower endpoint fraction of the next central window approaches
 $1/(3\beta)$ after narrowing the horizontal tube. -/
-lemma tendsto_staircaseInteriorLowerRatio
+private lemma tendsto_staircaseInteriorLowerRatio
     {width loss : ℕ → ℝ} {beta : ℝ}
     (hbeta : 0 < beta)
     (hwidth : Tendsto width atTop atTop)
@@ -74,7 +67,7 @@ lemma tendsto_staircaseInteriorLowerRatio
 
 /-- A strict lower endpoint margin remains valid for all sufficiently
 large ordinary staircase blocks. -/
-lemma eventually_staircaseInteriorLowerMargin
+private lemma eventually_staircaseInteriorLowerMargin
     {width loss : ℕ → ℝ} {beta margin uInterior : ℝ}
     (hbeta : 0 < beta)
     (hwidth : Tendsto width atTop atTop)
@@ -92,8 +85,8 @@ lemma eventually_staircaseInteriorLowerMargin
   exact (hsum.eventually (eventually_lt_nhds hmargin)).mono
     (fun n hn => hn.le)
 
-/-- The subcubic block-scale condition in Wang Yiyang's Lemma 3.5 gives the ordinary-block
-lower endpoint margin with one common width threshold. -/
+/-- Under the subcubic block-scale condition in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.5,
+the ordinary-block lower endpoint margin has one common width threshold. -/
 lemma eventually_staircaseInteriorLowerMargin_of_blockScale
     {width : ℕ → ℝ} {blockLength : ℕ → ℕ}
     {drift beta margin uInterior : ℝ}

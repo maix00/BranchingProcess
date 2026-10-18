@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.BranchingRandomWalk.Spine.PointMeasure
+public import Probability.BranchingRandomWalk.Spine.PointMeasure.Basic
 public import Probability.BranchingProcess.Offspring.Count
 public import Probability.Distributions.Moments.Real
 public import Mathlib.MeasureTheory.Integral.Bochner.Basic

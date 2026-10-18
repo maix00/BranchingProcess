@@ -13,14 +13,14 @@ public import Probability.Process.RandomWalk.SmallDeviation.Entrance.Rotation.Li
 
 The public definitions and theorems are:
 
-- `removeLinearDrift`: the path $s_j-dj$ associated with a path $s_j$.
-- `cyclicPartialSum_removeLinearDrift`: removing drift commutes with
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.removeLinearDrift`: the path $s_j-dj$ associated with a path $s_j$.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.cyclicPartialSum_removeLinearDrift`: removing drift commutes with
   cyclically reindexed partial sums.
-- `cyclicPartialSum_mem_movingOffsetCorridor_of_removeLinearDrift`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.cyclicPartialSum_mem_movingOffsetCorridor_of_removeLinearDrift`:
   membership of the centered path in a static corridor implies
   membership of the original path in its linearly moving corridor.
-- `exists_movingOffsetCorridor_of_linearTube_lowerEdge` and
-  `exists_movingOffsetCorridor_of_linearTube_upperEdge`: a cyclic shift
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.exists_movingOffsetCorridor_of_linearTube_lowerEdge` and
+  `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.exists_movingOffsetCorridor_of_linearTube_upperEdge`: a cyclic shift
   supplies the moving-corridor inclusion at either edge.
 
 The entrance estimate has a boundary that moves linearly in discrete time.

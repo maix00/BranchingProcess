@@ -19,8 +19,7 @@ The public theorem in this file is:
   then $M_n\Rightarrow Q$.
 
 This is the finite-mixture limit used in the last paragraph of page 484
-of Erwin Bolthausen, *On a functional central limit theorem for random
-walks conditioned to stay positive*, Ann. Probab. 4(3) (1976),
+of Erwin Bolthausen, *On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*, Ann. Probab. 4(3) (1976),
 480--485, DOI 10.1214/aop/1176996098.
 -/
 
@@ -34,8 +33,7 @@ open scoped ENNReal Topology
 /-- A finite convex mixture converges to a common limit when its
 weights escape every fixed finite set of indices. This is the
 random-index step in the last paragraph of page 484 of Erwin
-Bolthausen, *On a functional central limit theorem for random walks
-conditioned to stay positive*, Ann. Probab. 4(3) (1976), 480--485,
+Bolthausen, *On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*, Ann. Probab. 4(3) (1976), 480--485,
 DOI 10.1214/aop/1176996098. -/
 theorem tendsto_finiteMixture_of_escape
     {E : Type*} [PseudoEMetricSpace E] [MeasurableSpace E]

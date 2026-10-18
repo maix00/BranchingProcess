@@ -4,30 +4,30 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper
+import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Basic
+import Analysis.Asymptotics.Scale.BlockScale
+import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.Horizontal.PathSegment
 
 /-!
-# Axiom audit for the pathwise drawdown lemmas
+# Axiom audit for drawdown and path-segment lemmas
 
 This audit checks the declarations expressing the finite-horizon event
 \(S_i-S_j\leq\Delta\) for \(i\leq j\), the resulting path bounds, and the
 identification of segment oscillation with the increment-block event.
 It also audits the finite-variance exponential estimate corresponding to
 Wang Yiyang, *Asymptotic speed of the $N$-branching random walk with infinite
-offspring*, Chapter 3, Lemma 3.3.
+offspring*, Chapter 3, Lemma 3.3, and the generic asymptotic estimate for the
+number of complete blocks under a divergent horizon-to-block ratio.
 -/
 
 #print axioms
   ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.additivePath_le_threshold_add_delta_of_noLargeDrop
 
 #print axioms
-  ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.neg_delta_le_additivePath_of_noLargeDrop
+  ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.blockOscillationEvent_of_additiveSegment
 
 #print axioms
-  ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.blockOscillationEvent_of_additiveSegment
-
-#print axioms
-  ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.tendsto_diffusiveBlockCount_atTop_of_horizonRatio
+  Asymptotics.tendsto_nat_div_floorBlockLength_atTop_of_horizonRatio
 
 #print axioms
   ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.measureReal_noLargeDropEndpointBelowEvent_le_exp_of_finiteVariance

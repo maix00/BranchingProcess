@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.PathClass.Regimes
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Rate.EndpointWindowSelection
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Rate.Endpoint.Selection.Basic
 public import Probability.Distributions.Rademacher
 public import Probability.Process.Path.PathClass.StepCorridor.Probability.StableRate
 public import MeasureTheory.Measure.CadlagPath.PathClass.StepCorridor.Energy

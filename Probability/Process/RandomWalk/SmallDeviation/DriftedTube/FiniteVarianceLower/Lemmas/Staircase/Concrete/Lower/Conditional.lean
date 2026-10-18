@@ -6,30 +6,34 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Concrete.Lower.Asymptotic
-public import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.ExponentialBudget
-public import Analysis.Asymptotics.IntermediatePowerBlock
+public import Mathlib.MeasureTheory.Measure.MeasureSpaceDef
+public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
+public import Algebra.BigOperators.AdditivePath.Basic
+public import Probability.Distributions.Moments.Real
+public import Probability.Sequence.Filtration
+public import Probability.Sequence.IID.Basic
+public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.Binning
+public import Probability.Process.RandomWalk.Path.Block.Partition.TailMerged
+public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.BlockTube
+public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.EndpointEvent
+public import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.Event
+import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Concrete.Lower.Asymptotic
+import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Concrete.EntranceBudget
+public import Analysis.Asymptotics.Scale.IntermediatePowerBlock
 
 /-!
 # Tilted-tube lower bound from the reflected survival asymptotics
 
-The module-visible supporting lemmas in this file are:
+The module-visible supporting lemma in this file is:
 
-- `eventually_concreteStaircaseLowerBound_of_centeredFiniteVariance`:
-  for $t_1=\lfloor\Delta^2\rfloor$ and
-  $L\ge\lfloor\Delta^{2+\varepsilon}\rfloor$ and
-  $r_{0,n}\le 0\le r_{0,n}+\Delta_n$, the two reflected
-  inverse-square survival bounds, the block-scale limits in Wang Yiyang's Lemma 3.5, and fixed endpoint and rate margins imply
-  $\mathbb P(E)\ge\exp(-d'L/\Delta^2)$ eventually.
-- `eventually_concreteStaircaseLowerBound_of_powerBlock`: the same bound
+- `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.eventually_concreteStaircaseLowerBound_of_powerBlock`: the same bound
   with $\ell_n=\lfloor\Delta_n^{2+\eta}\rfloor$ and
   $0<\eta<\min(1,\varepsilon)$, so the scale limits and remaining-time
   condition follow from $\Delta_n\to\infty$ and
   $L_n\ge\lfloor\Delta_n^{2+\varepsilon}\rfloor$.
 
 This is the composition of the entrance argument and the staircase
-product in Wang Yiyang, *Asymptotic speed of the $N$-branching random walk
-with infinite offspring*, Chapter 3, proof of Lemma 3.5. The two
+product in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, proof of Lemma 3.5. The two
 transition estimates follow from the conditioned Brownian-meander limit
 and the cyclic rotation cover in M. Bauer, C. Godrèche,
 and J.-M. Luck, *Statistics of persistent events in the binomial random
@@ -42,13 +46,12 @@ immediately after (A.3) (arXiv:cond-mat/9905252).
 open Filter MeasureTheory ProbabilityTheory
 open scoped NNReal Topology
 open ProbabilityTheory.RandomWalk.SmallDeviation.Entrance
-open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 
 /-- The inverse-square survival inputs for the walk and its reflection follow from
 the finite-variance hypotheses. -/
-lemma eventually_concreteStaircaseLowerBound_of_centeredFiniteVariance
+private lemma eventually_concreteStaircaseLowerBound_of_centeredFiniteVariance
     {ν : Measure ℝ} [IsProbabilityMeasure ν]
     {sigma narrowedRate uInterior vInterior uFinal vFinal : ℝ}
     (hν : IsCenteredSecondMoment ν (sigma ^ 2))

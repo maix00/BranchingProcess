@@ -6,10 +6,10 @@ Authors: WANG Yiyang
 
 module
 
-public import Combinatorics.BranchingWalk.Basic.Displace
+public import Combinatorics.BranchingWalk.Basic.Position.Displace
 public import Combinatorics.BranchingWalk.Basic.Map
 public import Combinatorics.BranchingWalk.StepField
-public import Combinatorics.BranchingWalk.Basic.SiblingClosable
+public import Combinatorics.BranchingWalk.Basic.Sibling.Closable
 public import Combinatorics.BranchingWalk.Step.Selection.SiblingClosable
 public import Combinatorics.UlamHarris.MarkedTree.SiblingOrder
 public import Mathlib.Tactic.Abel

@@ -6,23 +6,28 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.JumpPattern.Setup
+public import Mathlib.MeasureTheory.Measure.MeasureSpaceDef
+public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
+public import Mathlib.MeasureTheory.Function.ConditionalExpectation.Basic
+public import Mathlib.Analysis.Complex.Exponential
+public import Probability.Process.Filtration.ConditionalBlocks
+public import Probability.Sequence.IID.Basic
+public import Probability.Process.RandomWalk.Path.Adapted.Filtration
+public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.JumpPattern.Basic
+import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.JumpPattern.Setup
+import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.ConditionalBlocks
 
 /-!
 # Conditional probability of a fixed jump pattern
 
 The proof-specific declarations are:
 
-- `measureReal_drawdownJumpPatternTubeIntersection_le_prod_of_uniformBlockBound`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.measureReal_drawdownJumpPatternTubeIntersection_le_prod_of_uniformBlockBound`:
   if every non-jump block has conditional probability at most $p$, then the
   probability of the fixed-pattern tube intersection is at most the product
   of its factors $1$ on jumps and $p$ on non-jumps.
-- `measureReal_drawdownJumpPatternTubeIntersection_le_prod`: the same product
-  estimate when $p=\exp(w^v-d\ell/w^2)$ is supplied by the conditional
-  finite-variance tube bound.
 
-These are the conditional block steps in Wang Yiyang, *Asymptotic speed of
-the $N$-branching random walk with infinite offspring*, Chapter 3, proof of
+These are the conditional block steps in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, proof of
 Lemma 3.3, using its Lemma 3.2.
 -/
 
@@ -163,38 +168,6 @@ lemma measureReal_drawdownJumpPatternTubeIntersection_le_prod_of_uniformBlockBou
   exact ProbabilityTheory.measureReal_conditionalBlockIntersection_le_prod
     filtration hfiltrationMono hfiltrationAmbient events heventMeasurable
     bounds hboundNonneg hconditionalOnPrefix q
-
-/-- Conditional block estimates from Wang Yiyang, *Asymptotic speed of the
-$N$-branching random walk with infinite offspring*, Chapter 3, Lemma 3.3,
-give a uniform tube-width threshold for each fixed finite block decomposition. -/
-lemma measureReal_drawdownJumpPatternTubeIntersection_le_prod
-    (ν : Measure ℝ) [IsProbabilityMeasure ν]
-    {variance : ℝ}
-    (hν : ProbabilityTheory.IsCenteredSecondMoment ν variance)
-    (hsquare : Integrable (fun x : ℝ => x ^ 2) ν)
-    (hvariance : 0 < variance)
-    {v d : ℝ} (hv : 0 < v) (hd : 0 < d)
-    (hcritical : d < (Real.pi ^ 2 / 2) * variance)
-    (remainder q blockLength : ℕ) (hblockLength : 1 ≤ blockLength) :
-    ∃ tubeWidth₀ : ℝ, 0 < tubeWidth₀ ∧
-      ∀ tubeWidth : ℝ, tubeWidth₀ ≤ tubeWidth →
-      ∀ upper binWidth : ℝ, ∀ pattern : Finset (Fin q),
-        (iidSequenceLaw ν).real
-          (ProbabilityTheory.conditionalBlockIntersection
-            (drawdownJumpPatternTubeEvent remainder blockLength pattern
-              upper binWidth tubeWidth) q) ≤
-          ∏ j ∈ Finset.range q,
-            drawdownJumpPatternBound pattern
-              (Real.exp (tubeWidth ^ v -
-                d * ((blockLength : ℝ) / tubeWidth ^ 2))) j := by
-  obtain ⟨tubeWidth₀, htubeWidth₀, hblockBound⟩ :=
-    iidSequenceLaw_condExp_drawdownTubeBlockEvent_le_of_finiteVariance
-      ν hν hsquare hvariance hv hd hcritical
-  refine ⟨tubeWidth₀, htubeWidth₀, ?_⟩
-  intro tubeWidth htubeWidth upper binWidth pattern
-  exact measureReal_drawdownJumpPatternTubeIntersection_le_prod_of_uniformBlockBound
-    ν hblockBound remainder q blockLength hblockLength
-    tubeWidth htubeWidth upper binWidth pattern
 
 end ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown
 

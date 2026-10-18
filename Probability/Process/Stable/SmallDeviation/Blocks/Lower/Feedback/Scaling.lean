@@ -6,9 +6,9 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.ShortTime
+public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.Entrance.ShortTime
 public import Order.Bounds.Feedback
-public import MeasureTheory.Measure.TwoSidedWindow
+public import MeasureTheory.Measure.Windows.TwoSided
 public import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 
 /-!

@@ -30,6 +30,12 @@ The public definitions and theorems are:
 Finite translated corridors cover paths whose range diameter is bounded.
 Combining that cover with the raw increment-law Mogul'skii rate yields the
 sharp finite-variance exponential rate for block oscillation.
+
+The source corridor rate is A. A. Mogul'skii, Theorem 3, Section 4, p. 764,
+“Small deviations in the sample function space,” *Teoriya Veroyatnostei i ee
+Primeneniya* 19(4) (1974), 755--765; English translation, “Small Deviations
+in a Space of Trajectories,” *Theory of Probability and Its Applications*
+19(4) (1975), 726--736, DOI 10.1137/1119081.
 -/
 
 open Filter MeasureTheory ProbabilityTheory

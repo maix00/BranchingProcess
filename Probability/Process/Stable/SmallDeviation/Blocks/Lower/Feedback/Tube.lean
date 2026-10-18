@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.Feedback.Probability
-public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.FeedbackBound
+public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Feedback.FullPath
 public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.Feedback.Scaling
 /-!
 # A complete-path tube from finite feedback blocks

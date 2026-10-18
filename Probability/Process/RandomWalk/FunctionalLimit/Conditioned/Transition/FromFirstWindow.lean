@@ -6,8 +6,10 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.FirstWindowLimit
-public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition
+public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.FirstWindow.Limit
+public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition.Event
+
+import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition.Lemmas.CorridorProbability
 
 /-!
 # Transition estimate from the centered first-window limit
@@ -21,12 +23,11 @@ The public theorem in this file is:
   $\mathbb P(D_{n+1,\Delta_n}\mid C_{n+1})\ge q$ eventually.
 
 The conditional path convergence is proved from the centered first-window
-construction of Erwin Bolthausen, *On a functional central limit theorem
-for random walks conditioned to stay positive*, Ann. Probab. 4(3)
-(1976), 480--485, Theorem 3.2. The support point is the remaining
+construction of Erwin Bolthausen, *On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*, Ann. Probab. 4(3)
+(1976), 480--485, DOI 10.1214/aop/1176996098, Theorem 3.2. The support point is the remaining
 Brownian-meander identification used in Wang Yiyang,
-*Asymptotic speed of the $N$-branching random walk with infinite offspring*,
-Chapter 3, Lemma 3.5, Appendix A.2.
+*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
+Chapter 3, Lemma 3.5, and Appendix A.2, Lemma A.7.
 -/
 
 @[expose] public section

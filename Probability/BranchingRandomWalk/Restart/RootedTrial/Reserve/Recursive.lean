@@ -4,8 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Restart.RootedTrial.SiblingTrial
-import Probability.Sequence.IID
+import Probability.BranchingRandomWalk.Restart.RootedTrial.Spine.SiblingTrial
+import Probability.Sequence.IID.Basic
 import Probability.BranchingRandomWalk.Restart.FirstSplit.BranchingProperty
 import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.StoppingSubtreeVector.Law
 
@@ -19,7 +19,8 @@ trial succeeds.  Under almost-sure finite split completion, the branching
 property makes this decomposition an independent pair of full descendant
 fields.  The finite all-failure event therefore has an exact product law.
 
-This is the retrospective candidate construction from the thesis.  It proves
+This is the retrospective candidate construction for reserve siblings in
+finite branching trials. It proves
 the candidate event law; it does not identify the retrospectively restarted
 population with an adapted killed process.
 -/

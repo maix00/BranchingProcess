@@ -6,25 +6,34 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Endpoint.Margins
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Endpoint.UpperMargins
+public import Mathlib.Basic.Real.Basic
+public import Mathlib.Algebra.Order.Archimedean.Real.Basic
+public import Mathlib.Algebra.Order.Floor.Semiring
+public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.Binning
+public import Probability.Process.RandomWalk.Path.Block.Partition.TailMerged
+public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.BlockTube
+import Mathlib.Tactic.Linarith
+public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.EndpointWindow
+import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.Numeric
+import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Endpoint.Margins
+import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Endpoint.UpperMargins
 /-!
 # Common global conditions for the staircase blocks
 
 The module-visible supporting lemma in this file is:
 
-- `staircaseBlockConditions_of_global`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.staircaseBlockConditions_of_global`:
   if $10c\ell<\Delta^3$, the four global width, time, and rate
   inequalities together with four ordinary/final endpoint inequalities
   imply all six requirements for every staircase block. The endpoint
   interval for the final block is allowed to differ from that for the
   ordinary blocks.
-- `staircaseUpperEndpointBlockConditions_of_global`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.staircaseUpperEndpointBlockConditions_of_global`:
   the same numeric conditions and ordinary-block margins, with the
   final endpoint margin placed near the upper tube boundary.
 
 This is the common-threshold step in Wang Yiyang,
-*Asymptotic speed of the $N$-branching random walk with infinite offspring*,
+*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
 Chapter 3, proof of Lemma 3.5.
 -/
 
@@ -70,30 +79,30 @@ lemma staircaseBlockConditions_of_global
     (hfinalUpper : vFinal + margin ≤
       (endpointFraction - 1 / (3 * (m : ℝ))) /
         staircaseBinWidth m) :
-    ∀ j, j < staircaseBlockCount entrance horizon blockLength →
+    ∀ j, j < tailMergedBlockCount entrance horizon blockLength →
       let width := staircaseTubeWidth globalWidth drift
-        (staircaseBlockLength entrance horizon blockLength) j
+        (tailMergedBlockLength entrance horizon blockLength) j
       let v₁ := staircaseEndpointLowerFraction
-        (staircaseBlockCount entrance horizon blockLength)
+        (tailMergedBlockCount entrance horizon blockLength)
         globalWidth drift
-        (staircaseBlockLength entrance horizon blockLength) j
+        (tailMergedBlockLength entrance horizon blockLength) j
       let v₂ := staircaseEndpointUpperFraction
-        (staircaseBlockCount entrance horizon blockLength)
+        (tailMergedBlockCount entrance horizon blockLength)
         globalWidth drift endpointFraction
-        (staircaseBlockLength entrance horizon blockLength) j
+        (tailMergedBlockLength entrance horizon blockLength) j
       let narrowedWidth := staircaseBinWidth m * width
       width₀ ≤ ⌊narrowedWidth⌋₊ ∧
       1 / margin ≤ narrowedWidth ∧
       ratio₀ * (⌊narrowedWidth⌋₊) ^ 2 ≤
-        staircaseBlockLength entrance horizon blockLength j ∧
+        tailMergedBlockLength entrance horizon blockLength j ∧
       narrowedRate * globalWidth ^ 2 ≤
         blockRate * (⌊narrowedWidth⌋₊ : ℝ) ^ 2 ∧
-      (j + 1 < staircaseBlockCount entrance horizon blockLength →
+      (j + 1 < tailMergedBlockCount entrance horizon blockLength →
         staircaseBinEndpointLowerFraction m v₁ + margin ≤
           uInterior ∧
         vInterior + margin ≤
           staircaseBinEndpointUpperFraction m v₂) ∧
-      (¬j + 1 < staircaseBlockCount entrance horizon blockLength →
+      (¬j + 1 < tailMergedBlockCount entrance horizon blockLength →
         staircaseBinEndpointLowerFraction m v₁ + margin ≤
           uFinal ∧
         vFinal + margin ≤
@@ -157,30 +166,30 @@ lemma staircaseUpperEndpointBlockConditions_of_global
         staircaseBinWidth m + margin ≤ uFinal)
     (hfinalUpper : vFinal + margin ≤
       (1 - 1 / (3 * (m : ℝ))) / staircaseBinWidth m) :
-    ∀ j, j < staircaseBlockCount entrance horizon blockLength →
+    ∀ j, j < tailMergedBlockCount entrance horizon blockLength →
       let width := staircaseTubeWidth globalWidth drift
-        (staircaseBlockLength entrance horizon blockLength) j
+        (tailMergedBlockLength entrance horizon blockLength) j
       let v₁ := staircaseUpperEndpointLowerFraction
-        (staircaseBlockCount entrance horizon blockLength)
+        (tailMergedBlockCount entrance horizon blockLength)
         globalWidth drift endpointFraction
-        (staircaseBlockLength entrance horizon blockLength) j
+        (tailMergedBlockLength entrance horizon blockLength) j
       let v₂ := staircaseUpperEndpointUpperFraction
-        (staircaseBlockCount entrance horizon blockLength)
+        (tailMergedBlockCount entrance horizon blockLength)
         globalWidth drift endpointFraction
-        (staircaseBlockLength entrance horizon blockLength) j
+        (tailMergedBlockLength entrance horizon blockLength) j
       let narrowedWidth := staircaseBinWidth m * width
       width₀ ≤ ⌊narrowedWidth⌋₊ ∧
       1 / margin ≤ narrowedWidth ∧
       ratio₀ * (⌊narrowedWidth⌋₊) ^ 2 ≤
-        staircaseBlockLength entrance horizon blockLength j ∧
+        tailMergedBlockLength entrance horizon blockLength j ∧
       narrowedRate * globalWidth ^ 2 ≤
         blockRate * (⌊narrowedWidth⌋₊ : ℝ) ^ 2 ∧
-      (j + 1 < staircaseBlockCount entrance horizon blockLength →
+      (j + 1 < tailMergedBlockCount entrance horizon blockLength →
         staircaseBinEndpointLowerFraction m v₁ + margin ≤
           uInterior ∧
         vInterior + margin ≤
           staircaseBinEndpointUpperFraction m v₂) ∧
-      (¬j + 1 < staircaseBlockCount entrance horizon blockLength →
+      (¬j + 1 < tailMergedBlockCount entrance horizon blockLength →
         staircaseBinEndpointLowerFraction m v₁ + margin ≤
           uFinal ∧
         vFinal + margin ≤

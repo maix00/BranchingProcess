@@ -8,7 +8,7 @@ module
 
 public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.Event
 public import Probability.Process.RandomWalk.Path.Basic
-public import Probability.Sequence.IID
+public import Probability.Sequence.IID.Basic
 
 import Mathlib.Tactic.FieldSimp
 
@@ -16,14 +16,15 @@ import Mathlib.Tactic.FieldSimp
 # Scaling identities for drawdown events
 
 Write
-$B_{L,\Delta,r}=\{\xi:S_i-S_j\le\Delta\ (0\le i\le j\le L),\ S_L\le r\}$
+$B_{L,\Delta,r}=\{\xi:S_i-S_j\le\Delta\ (0\le i\le j\le L),\ S_L\le r\}$,
+where $S_j=\sum_{k=0}^{j-1}\xi_k$,
 for the drawdown endpoint event. The public theorems are:
 
-- `measurableSet_noLargeDropEndpointBelowEvent`: $B_{L,\Delta,r}$ is measurable.
-- `noLargeDropEndpointBelowEvent_preimage_div`: for $\sigma>0$ and
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.measurableSet_noLargeDropEndpointBelowEvent`: $B_{L,\Delta,r}$ is measurable.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.noLargeDropEndpointBelowEvent_preimage_div`: for $\sigma>0$ and
   $D_\sigma(\xi)_i=\xi_i/\sigma$,
   $D_\sigma^{-1}(B_{L,\Delta/\sigma,r/\sigma})=B_{L,\Delta,r}$.
-- `iidSequenceLaw_measure_noLargeDropEndpointBelowEvent_eq_map_div`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.iidSequenceLaw_measure_noLargeDropEndpointBelowEvent_eq_map_div`:
   $\mathbb P_\nu(B_{L,\Delta,r})=
   \mathbb P_{\nu\circ(x\mapsto x/\sigma)^{-1}}
   (B_{L,\Delta/\sigma,r/\sigma})$.
@@ -36,7 +37,7 @@ open scoped ENNReal
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown
 
-private theorem displacement_div_const (n : ℕ) (increment : ℕ → ℝ)
+private lemma displacement_div_const (n : ℕ) (increment : ℕ → ℝ)
     (sigma : ℝ) :
     AdditivePath.displacement n (fun k => increment k / sigma) =
       AdditivePath.displacement n increment / sigma := by

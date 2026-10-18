@@ -6,8 +6,9 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Binning.FiniteThreshold
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Binning.Parameters
+public import Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.RealWidthLower
+import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Binning.Parameters
+public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.Binning
 /-!
 # Uniform exponential bound for narrowed staircase bins
 
@@ -20,16 +21,17 @@ The module-visible supporting lemma in this file is:
   width with the global width gives the exponential bound at the latter.
 
 This is the fixed-spatial-bin application of Wang Yiyang,
-*Asymptotic speed of the $N$-branching random walk with infinite offspring*,
+*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
 Chapter 3, Lemma 3.1(ii), inside the proof of Lemma 3.5.
 -/
 
 @[expose] public section
 
 open MeasureTheory ProbabilityTheory
-open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
+
+open ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube
 
 /-- The finitely many narrowed horizontal tubes have a common real-width
 threshold, and their probability bounds use the global width exponent. -/

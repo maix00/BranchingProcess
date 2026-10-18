@@ -7,8 +7,8 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.Brownian.AboveStart.EndpointReturn
-public import Probability.Process.Brownian.Reflection.RandomLevelFirstPassage
-public import Probability.Process.Path.FirstPassageRestart
+public import Probability.Process.Brownian.Reflection.FirstPassage.RandomLevel
+public import Probability.Process.Path.FirstPassage.Restart
 
 /-!
 # Endpoint return of the first Brownian unit window
@@ -22,8 +22,7 @@ The public theorems in this file are:
   the same assertion for the unrestricted first window.
 
 These are equation (2.2) of Lemma 2.3 in Erwin Bolthausen,
-*On a functional central limit theorem for random walks conditioned
-to stay positive*, Ann. Probab. 4(3) (1976), 480--485,
+*On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*, Ann. Probab. 4(3) (1976), 480--485,
 DOI 10.1214/aop/1176996098. Bolthausen cites the Lévy decomposition
 of descending hitting times to exclude a fixed excursion length.
 Here that consequence is derived by conditioning at a rational time
@@ -45,12 +44,12 @@ private noncomputable def excursionTarget (q : ℝ≥0)
     (f : C(ℝ≥0, ℝ)) : ℝ≥0 :=
   (firstPassageBelow f (runningMinimum f q)).untopA + 1 - q
 
-private theorem measurable_excursionGap (q : ℝ≥0) :
+private lemma measurable_excursionGap (q : ℝ≥0) :
     Measurable (excursionGap q) := by
   exact measurable_real_toNNReal.comp
     ((ContinuousMap.measurable_eval q).sub (measurable_runningMinimum q))
 
-private theorem measurable_excursionTarget (q : ℝ≥0) :
+private lemma measurable_excursionTarget (q : ℝ≥0) :
     Measurable (excursionTarget q) := by
   have hpass : Measurable (fun f : C(ℝ≥0, ℝ) =>
       firstPassageBelow f (runningMinimum f q)) :=
@@ -58,13 +57,13 @@ private theorem measurable_excursionTarget (q : ℝ≥0) :
       (measurable_id.prodMk (measurable_runningMinimum q))
   exact (hpass.untopA.add measurable_const).sub measurable_const
 
-private theorem excursionGap_freezeAfter (f : C(ℝ≥0, ℝ)) (q : ℝ≥0) :
+private lemma excursionGap_freezeAfter (f : C(ℝ≥0, ℝ)) (q : ℝ≥0) :
     excursionGap q (freezeAfter f q) = excursionGap q f := by
   unfold excursionGap
   rw [runningMinimum_freezeAfter_eq f (le_refl q)]
   simp [freezeAfter]
 
-private theorem excursionTarget_freezeAfter (f : C(ℝ≥0, ℝ)) (q : ℝ≥0) :
+private lemma excursionTarget_freezeAfter (f : C(ℝ≥0, ℝ)) (q : ℝ≥0) :
     excursionTarget q (freezeAfter f q) = excursionTarget q f := by
   have hprefix (u : ℝ≥0) (hu : u ≤ q) :
       f u = (freezeAfter f q) u := by
@@ -79,7 +78,7 @@ private theorem excursionTarget_freezeAfter (f : C(ℝ≥0, ℝ)) (q : ℝ≥0) 
       (runningMinimum f q) q hprefix hpassLe).symm
   simp [excursionTarget, runningMinimum_freezeAfter_eq f (le_refl q), hpass]
 
-private theorem endpointReturn_rationalFuturePassage
+private lemma endpointReturn_rationalFuturePassage
     (f : C(ℝ≥0, ℝ)) (s t q : ℝ≥0)
     (hfirst : firstNonnegativeWindowStartUpTo f s = t)
     (hend : f (t + 1) = f t)

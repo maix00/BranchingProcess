@@ -21,7 +21,8 @@ The public theorem in this file is:
 This is the one-sided tail consequence of stable attraction used for the
 first descending ladder time in Francesco Caravenna and Loïc Chaumont,
 *Invariance principles for random walks conditioned to stay positive*,
-Lemma 2.1, equation (2.3), DOI 10.1214/07-AIHP119.
+Lemma 2.1, equation (2.3), *Annales de l'Institut Henri Poincaré,
+Probabilités et Statistiques* 44(1) (2008), 170--190, DOI 10.1214/07-AIHP119.
 -/
 
 @[expose] public section

@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Analysis.Asymptotics.RegularVariation.Integral
+public import Analysis.Asymptotics.RegularVariation.Integral.Basic
 public import Probability.Distributions.Stable.Attraction.Norming.Tail
 public import Probability.Distributions.Moments.Truncated.TailIntegral
 public import Probability.Process.RandomWalk.Path.Truncation.Moment
@@ -40,8 +40,11 @@ noncomputable def discardedTailBiasConstant (α radiusMultiplier : ℝ) : ℝ :=
 
 /-- The sine-centering condition used by Mogulskii at stable index one:
 `n ∫ sin(x / B n) dν → 0`. It expresses `βₙ = o(1/n)` from
-Mogul'skii, *Small Deviations in a Space of Trajectories*, Theorem 3,
-Section 4, at a specified norming sequence. -/
+Theorem 3, Section 4 of A. A. Mogul'skii, “Small deviations in the sample
+function space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974),
+755--765; English translation, “Small Deviations in a Space of Trajectories,”
+*Theory of Probability and Its Applications* 19(4) (1975), 726--736, DOI
+10.1137/1119081. It is stated here for a specified norming sequence. -/
 def IsMogulskiiIndexOneCentered (ν : Measure ℝ) (normalization : ℕ → ℝ) : Prop :=
   Tendsto (fun n : ℕ => (n : ℝ) *
     (∫ x, Real.sin (x / normalization n) ∂ν)) atTop (nhds 0)

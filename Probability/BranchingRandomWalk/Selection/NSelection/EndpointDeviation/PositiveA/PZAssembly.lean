@@ -5,7 +5,7 @@ Authors: WANG Yiyang
 -/
 
 import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.PositiveA.PZBudget
-import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.PowerBudget
+import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Rate.PowerBudget
 /-!
 # First-stage PZ power bound
 
@@ -24,7 +24,7 @@ open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 open ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown
 open ProbabilityTheory.BranchingRandomWalk.Spine
 
-private theorem eventually_one_add_const_mul_log_cube_le_exp
+private lemma eventually_one_add_const_mul_log_cube_le_exp
     {N : ℕ → ℕ} (hN : Tendsto N atTop atTop) {C eta : ℝ}
     (heta : 0 < eta) :
     ∀ᶠ n : ℕ in atTop,
@@ -84,7 +84,7 @@ private theorem eventually_one_add_const_mul_log_cube_le_exp
 
 /-- The first-stage one-root PZ probability has the power rate obtained from
 `lowerMean ≳ N^(-b-epsilon)` and `upperMean + MRCA pairs ≲ N^(-b+2v+epsilon)`.
-The only random-walk input is the paper's centered finite second moment; in
+The only random-walk input is the centered finite second moment; in
 the pair estimate the drawdown sequence is constantly one. -/
 theorem eventually_rightTailPositiveA_pzMean_toReal_ge_power_of_centeredSecondMoment
     {N : ℕ → ℕ} (hN : Tendsto N atTop atTop)

@@ -6,17 +6,51 @@ Authors: WANG Yiyang
 
 module
 
-public import Analysis.Asymptotics.BlockScale
-public import Probability.Process.RandomWalk.Path.Cadlag
+public import Analysis.Asymptotics.Scale.BlockScale
+public import Probability.Process.RandomWalk.Path.Representation.Cadlag
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.Partition.Range
 public import Probability.Process.Path.PathClass.StepCorridor.Probability.Partition.Range
 
 /-!
 # Floor-indexed cells for a step-corridor random walk
 
-This module connects the half-open cells of a finite step corridor to the
-right-continuous normalized random-walk path. Partition endpoints are rounded
-down independently, as in Mogulskii's source proof.
+Let $t_i$ be the common partition grid of step boundaries $U,L$, and put
+$F_n(t)=\lfloor nt\rfloor$ and $q_i(n)=F_n(t_{i+1})-F_n(t_i)$. The public
+declarations in `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Discrete`
+are:
+
+- `commonPartitionFloorTimeIndex`: $F_n(t)=\lfloor nt\rfloor$.
+- `commonPartitionCellStepLength`: $q_i(n)$, the number of integer steps in
+  the floor-rounded cell $[t_i,t_{i+1})$.
+- `commonPartitionCellStepLengths`: the sequence equal to $q_i(n)$ on valid
+  cells and $0$ afterwards.
+- `commonPartitionCellStepLength_le`: $q_i(n)\le n$.
+- `commonPartitionFloorTimeIndex_mono`: $s\le t$ implies $F_n(s)\le F_n(t)$.
+- `blockStart_commonPartitionCellStepLengths`:
+  $\sum_{j<i}q_j(n)=F_n(t_i)$.
+- `tendsto_commonPartitionCellRangeHorizon_div_nat`:
+  $(q_i(n)-1)/n\to t_{i+1}-t_i$, the number of constrained positions in the
+  half-open cell, normalized by $n$.
+- `tendsto_commonPartitionCellStepLength_div_nat`:
+  $q_i(n)/n\to t_{i+1}-t_i$.
+- `eventually_commonPartitionCellStepLength_pos`: each fixed nonempty grid
+  cell has $q_i(n)>0$ eventually.
+- `exists_commonPartitionCellTime_floor_eq`: if $n>0$, $t_i<t_{i+1}$, and
+  $F_n(t_i)=a$, $F_n(t_{i+1})=b$, every integer $a\le j<b$ is $F_n(t)$ for
+  some $t\in[t_i,t_{i+1})$.
+- `normalizedStepCorridor_subset_selectedHalfOpenCellPositions`: when the
+  right traces on selected cells equal finite bounds $\ell_i,u_i$, membership
+  of the normalized step path in the global corridor implies
+  $s_n\ell_i<D_{F_n(t_i)+k}<s_nu_i$ for every selected $i$ and $k<q_i(n)$.
+- `iidSequenceLaw_normalizedStepCorridor_le_selectedCellRangeProduct`: under
+  the same boundary equalities, positive $n,s_n$, and $q_i(n)>0$ on a finite
+  selected set $S$, the IID corridor probability is at most
+  $\prod_{i\in S}\pi_{s_n(u_i-\ell_i)}(q_i(n)-1)$, where $\pi_w(r)$ is the
+  probability that the partial-sum range of $r$ increments is less than $w$.
+
+The floor-rounded partition connects half-open cells to the right-continuous
+normalized random-walk path; the independent floor convention matches the
+partition used in the Mogul'skii small-deviation argument.
 -/
 
 open Skorokhod.PathClass.StepCorridor
@@ -244,7 +278,7 @@ theorem exists_commonPartitionCellTime_floor_eq
   · change ⌊(n : ℝ) * z⌋₊ = j
     exact hfloor
 
-private theorem stepBoundary_eval_eq_rightTrace_of_mem_commonPartitionCell
+private lemma stepBoundary_eval_eq_rightTrace_of_mem_commonPartitionCell
     (b upper lower : StepBoundary)
     (hknots : ∀ q ∈ b.knots, q ∈ StepBoundary.commonKnots upper lower)
     (i : Fin ((StepBoundary.commonKnots upper lower).card - 1))

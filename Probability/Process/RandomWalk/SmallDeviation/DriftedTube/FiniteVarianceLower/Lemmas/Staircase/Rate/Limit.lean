@@ -6,21 +6,21 @@ Authors: WANG Yiyang
 
 module
 
-public import Analysis.Asymptotics.BlockScale
+public import Analysis.Asymptotics.Scale.BlockScale
 
 /-!
 # Rounded width under the staircase block scale
 
 The module-visible supporting lemma in this file is:
 
-- `eventually_staircaseRateComparison_of_blockScale`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.eventually_staircaseRateComparison_of_blockScale`:
   if $\ell_n/\Delta_n^3\to0$ and $d<d''\beta^2$, then
   $d\Delta_n^2\le
   d''\lfloor\beta(\Delta_n-2c\ell_n/\Delta_n^2)\rfloor^2$
   eventually.
 
 This is the rounded-width comparison in Wang Yiyang,
-*Asymptotic speed of the $N$-branching random walk with infinite offspring*,
+*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
 Chapter 3, proof of Lemma 3.5.
 -/
 

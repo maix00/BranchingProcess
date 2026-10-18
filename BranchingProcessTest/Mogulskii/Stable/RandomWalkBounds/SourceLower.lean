@@ -1,4 +1,4 @@
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.SourceLower
+import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.Source.Bounds.Lower
 #print axioms ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.eventually_horizontalTubeProbability_ge_pow_of_stableDomain
 #print axioms ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.eventually_horizontalTubeProbability_ge_pow_of_index_lt_one
 #print axioms ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.eventually_horizontalTubeProbability_ge_pow_of_index_one

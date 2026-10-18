@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.Path.Corridor.Interpolation.Basic
-public import Probability.Process.RandomWalk.Path.Interpolation
+public import Probability.Process.RandomWalk.Path.Interpolation.Core
 public import Topology.Cadlag.Skorokhod.Corridor.Endpoint
 
 /-!
@@ -22,8 +22,9 @@ The public theorem in this file is:
   final partial sum belongs to $[u,v]$.
 
 This identifies the finite-grid transition event in Wang Yiyang,
-*Asymptotic speed of the $N$-branching random walk with infinite offspring*,
-Chapter 3, Lemma 3.5, Appendix A.2, with the event of the polygonal path.
+*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
+Chapter 3, Lemma 3.5, and Appendix A.2, Lemma A.7, with the event of the
+polygonal path.
 -/
 
 @[expose] public section

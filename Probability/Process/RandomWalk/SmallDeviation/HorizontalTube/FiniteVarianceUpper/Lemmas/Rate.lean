@@ -6,27 +6,32 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.FiniteVarianceUpper.Lemmas.EqualPartition
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.FromIncrementLaw.Normal.HorizontalTube.Scales
+public import Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.FiniteVarianceUpper.Lemmas.Partition.Parameters
+import Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.FiniteVarianceUpper.Lemmas.EqualPartition
 import Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.BlockIteration
 import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 
 /-!
 # Rate selection for the horizontal-tube upper bound
 
+For increments $\xi=(\xi_i)_{i\ge0}$, let
+$S_j=\sum_{i=0}^{j-1}\xi_i$ and
+$T_{a,\Delta,L}=\{\xi:-a\Delta\le S_j\le(1-a)\Delta\;(1\le j\le L)\}$.
+
 The proof-specific declarations are:
 
-- `exists_partition_size_for_rate`: if $d<d_{\rm crit}$, some $m>0$
+- `ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube.exists_partition_size_for_rate`: if $d<d_{\rm crit}$, some $m>0$
   satisfies $d(1+1/m)^2<d_{\rm crit}$.
-- `eventually_uniform_partitionTube_rateBound`: for a fixed partition and
+- `ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube.eventually_uniform_partitionTube_rateBound`: for a fixed partition and
   $d_{\rm rate}<\pi^2\sigma^2/2$, every corridor in the partition has
   the required one-block exponential bound for all sufficiently large widths.
-- `horizontalTubeProbability_le_exp_of_partitionIndex`: combining the
+- `ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube.horizontalTubeProbability_le_exp_of_partitionIndex`: combining the
   selected corridor, block rate, and remainder gives
   $\mathbb P(T_{a,\Delta,L})\le
   \exp(u\Delta^v-dL/\Delta^2)$.
 
-These choices complete Wang Yiyang, *Asymptotic speed of the $N$-branching
-random walk with infinite offspring*, Chapter 3, Lemma 3.2 and its following
+These choices complete Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.2 and its following
 remark.
 -/
 
@@ -36,9 +41,9 @@ open scoped ENNReal NNReal Topology
 
 @[expose] public section
 
-namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
+namespace ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube
 
-private theorem smallDeviationBlockFactor_mono
+private lemma smallDeviationBlockFactor_mono
     {u v d : ℝ} (hu : 0 < u) (hv : 0 < v) (hd : 0 < d)
     {n₁ n₂ : ℕ} (hn : n₁ ≤ n₂) :
     smallDeviationBlockFactor u v d n₁ ≤ smallDeviationBlockFactor u v d n₂ := by
@@ -51,7 +56,7 @@ private theorem smallDeviationBlockFactor_mono
   dsimp [smallDeviationBlockFactor]
   exact Nat.add_le_add_right (Nat.floor_mono hquot) 1
 
-private theorem smallDeviationBlockFactor_tendsto
+private lemma smallDeviationBlockFactor_tendsto
     {u v d : ℝ} (hu : 0 < u) (hv : 0 < v) (hd : 0 < d) :
     Tendsto (fun n : ℕ => (smallDeviationBlockFactor u v d n : ℝ))
       atTop atTop := by
@@ -69,7 +74,7 @@ private theorem smallDeviationBlockFactor_tendsto
   simpa [smallDeviationBlockFactor, Function.comp_def] using
     (tendsto_natCast_atTop_atTop.comp hfactorNat)
 
-private theorem smallDeviationBlockLength_strictMono
+private lemma smallDeviationBlockLength_strictMono
     {u v d : ℝ} (hu : 0 < u) (hv : 0 < v) (hd : 0 < d) :
     StrictMono (fun k : ℕ => smallDeviationBlockLength u v d (k + 1) + 1) := by
   intro i j hij
@@ -99,7 +104,7 @@ private theorem smallDeviationBlockLength_strictMono
 
 /-- Convert a strict logarithmic rate bound into the corresponding
 probability bound. -/
-private theorem probability_le_exp_of_scaledLogProbability_le
+private lemma probability_le_exp_of_scaledLogProbability_le
     {p : ℝ≥0∞} {width length rate : ℝ}
     (hp : p ≤ 1) (hwidth : 0 < width) (hlength : 0 < length)
     (hrate : 0 < rate)
@@ -133,7 +138,7 @@ private theorem probability_le_exp_of_scaledLogProbability_le
 
 /-- A limiting Mogulskii rate supplies an eventual exponential estimate
 whenever the requested exponent is strictly below the limiting rate. -/
-private theorem eventually_probability_le_exp_of_scaledLogRate
+private lemma eventually_probability_le_exp_of_scaledLogRate
     {probability : ℕ → ℝ≥0∞} {width length : ℕ → ℝ}
     {critical rate : ℝ}
     (hprob : ∀ k, probability k ≤ 1)
@@ -152,7 +157,7 @@ private theorem eventually_probability_le_exp_of_scaledLogRate
     (hwidth k) (hlength k) hratePos hlog
 
 /-- The chosen block length grows faster than the square of its width. -/
-private theorem smallDeviation_widthSq_div_blockLength_tendsto_zero
+private lemma smallDeviation_widthSq_div_blockLength_tendsto_zero
     {u v d c : ℝ} (hu : 0 < u) (hv : 0 < v) (hd : 0 < d) (hc : 0 < c) :
     Tendsto (fun k : ℕ =>
       (c * (k + 2 : ℕ) : ℝ) ^ 2 /
@@ -214,7 +219,7 @@ private theorem smallDeviation_widthSq_div_blockLength_tendsto_zero
     tendsto_const_nhds hbound (Filter.Eventually.of_forall hwidth)
     (Filter.Eventually.of_forall hle)
 
-theorem exists_partition_size_for_rate {d critical : ℝ}
+lemma exists_partition_size_for_rate {d critical : ℝ}
     (hcritical : d < critical) :
     ∃ m : ℕ, 0 < m ∧ d * (1 + 1 / (m : ℝ)) ^ 2 < critical := by
   have hinv : Tendsto (fun m : ℕ => 1 / (m : ℝ)) atTop (𝓝 0) :=
@@ -229,7 +234,7 @@ theorem exists_partition_size_for_rate {d critical : ℝ}
       (eventually_gt_atTop (0 : ℕ)) |>.exists
   exact ⟨m, hmPos, hmBound⟩
 
-private theorem partitionTubeParameter_mem_Ioo {m : ℕ} (hm : 0 < m)
+private lemma partitionTubeParameter_mem_Ioo {m : ℕ} (hm : 0 < m)
     (k : Fin m) :
     0 < partitionTubeParameter m k ∧ partitionTubeParameter m k < 1 := by
   have hmReal : 0 < (m : ℝ) := by exact_mod_cast hm
@@ -245,7 +250,7 @@ private theorem partitionTubeParameter_mem_Ioo {m : ℕ} (hm : 0 < m)
     have hfracPos : 0 < 1 / (m : ℝ) := by positivity
     linarith
 
-theorem eventually_uniform_partitionTube_rateBound
+lemma eventually_uniform_partitionTube_rateBound
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (hcentered : ∫ x, x ∂ν = 0)
     (hsquare : Integrable (fun x : ℝ => x ^ 2) ν)
@@ -334,7 +339,7 @@ theorem eventually_uniform_partitionTube_rateBound
   filter_upwards [hfinite] with k hk j
   simpa [width, block, lengthReal] using hk j
 
-theorem horizontalTubeProbability_le_exp_of_partitionIndex
+lemma horizontalTubeProbability_le_exp_of_partitionIndex
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     {u v d : ℝ} (hu : 0 < u) (hv : 0 < v) (hd : 0 < d)
     {m n : ℕ} (hm : 0 < m) {rate : ℝ}
@@ -482,6 +487,6 @@ theorem horizontalTubeProbability_le_exp_of_partitionIndex
     hΔ hd block horizon hblockPos
     hblockRemainder hblockProbability
 
-end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
+end ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube
 
 end

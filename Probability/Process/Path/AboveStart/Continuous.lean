@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.Path.Continuous
+public import Probability.Process.Path.Representation.Continuous
 public import Mathlib.Topology.Order.Monotone
 public import Mathlib.Data.NNRat.Encodable
 public import Mathlib.Analysis.SpecificLimits.Basic
@@ -78,8 +78,7 @@ The public definition and theorems in this file are:
   $T^s(f)<\infty$ implies $T^s(f)=T(f)$.
 
 These are deterministic ingredients of the first-window time $T^s$ in
-Erwin Bolthausen, *On a functional central limit theorem for random walks
-conditioned to stay positive*, Section 2, definition (2.1),
+Erwin Bolthausen, *On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*, Section 2, definition (2.1),
 Ann. Probab. 4(3) (1976), 480--485, DOI 10.1214/aop/1176996098.
 -/
 
@@ -92,7 +91,7 @@ namespace ProbabilityTheory
 
 attribute [local instance] Classical.propDecidable
 
-private theorem exists_nonnegativeRational_near
+private lemma exists_nonnegativeRational_near
     (t : ℝ≥0) {δ : ℝ} (hδ : 0 < δ) :
     ∃ r : ℚ≥0, dist (r : ℝ≥0) t < δ := by
   have hleft : max (0 : ℝ) ((t : ℝ) - δ) < (t : ℝ) + δ := by
@@ -287,7 +286,7 @@ theorem measurableSet_hasApproxFirstWindowBefore (u : ℝ≥0) :
   exact MeasurableSet.iInter fun n =>
     measurableSet_hasApproxWindowBefore n u
 
-private theorem exists_convergent_approxWindowStarts
+private lemma exists_convergent_approxWindowStarts
     (f : C(ℝ≥0, ℝ)) (u : ℝ≥0)
     (happrox : HasApproxFirstWindowBefore u f) :
     ∃ r : ℕ → ℚ≥0,
@@ -332,7 +331,7 @@ private theorem exists_convergent_approxWindowStarts
       (Filter.Eventually.of_forall fun n => (hr (φ n)).1)
   exact ⟨r, hr, t, htu, φ, hφ, hconv⟩
 
-private theorem eventually_exists_finiteGridPoint_between
+private lemma eventually_exists_finiteGridPoint_between
     {a b : ℝ} (ha : 0 < a) (hab : a < b) (hb : b < 1) :
     ∀ᶠ n : ℕ in Filter.atTop, ∃ i : Fin n,
       a ≤ (((((i : ℝ≥0) + 1) / (n + 1) : ℝ≥0) : ℝ)) ∧
@@ -365,7 +364,7 @@ private theorem eventually_exists_finiteGridPoint_between
   · rw [hgrid, NNReal.coe_div]
     exact (div_le_iff₀ hnpos).2 hjup
 
-private theorem exists_nonnegativeWindowStart_of_hasApproxFirstWindowBefore
+private lemma exists_nonnegativeWindowStart_of_hasApproxFirstWindowBefore
     (f : C(ℝ≥0, ℝ)) (u : ℝ≥0)
     (happrox : HasApproxFirstWindowBefore u f) :
     ∃ t : ℝ≥0, t ≤ u ∧ IsNonnegativeWindowStart f t := by

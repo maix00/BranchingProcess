@@ -9,7 +9,7 @@ module
 public import Mathlib.Probability.BrownianMotion.Basic
 public import Mathlib.Probability.Distributions.Gaussian.IsGaussianProcess.Basic
 public import Mathlib.Probability.Distributions.Gaussian.HasGaussianLaw.Basic
-public import Probability.Process.Brownian.ContinuousPathLaw
+public import Probability.Process.Brownian.PathLaw.ContinuousPathLaw
 public import Probability.Process.Path.TimeReversal.FiniteHorizon
 
 /-!
@@ -35,8 +35,7 @@ The public definition and theorem in this file are:
   its continuous path law equals the original Brownian path law.
 
 This prepares the time-reversal proof of Lévy's reflected-process identity
-used in Lemma 2.3 of Erwin Bolthausen, *On a functional central limit
-theorem for random walks conditioned to stay positive*, Ann. Probab. 4(3)
+used in Lemma 2.3 of Erwin Bolthausen, *On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*, Ann. Probab. 4(3)
 (1976), 480--485, DOI 10.1214/aop/1176996098.
 -/
 
@@ -102,7 +101,7 @@ theorem IsPreBrownianReal.integral_reverseBrownianBefore
     rw [integral_sub (hB.integrable_eval u) (hB.integrable_eval 0),
       hB.integral_eval, hB.integral_eval, sub_self]
 
-private theorem IsPreBrownianReal.covariance_reverseBrownianBefore_inside
+private lemma IsPreBrownianReal.covariance_reverseBrownianBefore_inside
     {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
     {B : ℝ≥0 → Ω → ℝ} (hB : IsPreBrownianReal B P)
     {t s u : ℝ≥0} (hsu : s ≤ u) (hut : u ≤ t) :
@@ -121,7 +120,7 @@ private theorem IsPreBrownianReal.covariance_reverseBrownianBefore_inside
     ring
   all_goals exact (hB.isGaussianProcess.hasGaussianLaw_eval _).memLp_two
 
-private theorem IsPreBrownianReal.covariance_reverseBrownianBefore_cross
+private lemma IsPreBrownianReal.covariance_reverseBrownianBefore_cross
     {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
     {B : ℝ≥0 → Ω → ℝ} (hB : IsPreBrownianReal B P)
     {t s u : ℝ≥0} (hst : s ≤ t) (htu : t < u) :
@@ -138,7 +137,7 @@ private theorem IsPreBrownianReal.covariance_reverseBrownianBefore_cross
     simp
   all_goals exact (hB.isGaussianProcess.hasGaussianLaw_eval _).memLp_two
 
-private theorem IsPreBrownianReal.covariance_reverseBrownianBefore_after
+private lemma IsPreBrownianReal.covariance_reverseBrownianBefore_after
     {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
     {B : ℝ≥0 → Ω → ℝ} (hB : IsPreBrownianReal B P)
     {t s u : ℝ≥0} (hts : t < s) (hsu : s ≤ u) :

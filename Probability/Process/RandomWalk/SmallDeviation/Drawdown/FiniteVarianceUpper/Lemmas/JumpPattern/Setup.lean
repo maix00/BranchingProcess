@@ -6,30 +6,32 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.ConditionalBlocks
+public import Mathlib.Basic.Real.Basic
+public import Mathlib.Data.Finset.Defs
+public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
+public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.JumpPattern.SpatialBins
+public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.JumpPattern.DiscretizedMaximum
+public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.JumpPattern.Basic
+public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.TubeEvent
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.Horizontal.Basic
+import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.ConditionalBlocks
 import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 
 /-!
 # Rounded maxima and jump-pattern data
 
-The proof-specific declarations are:
+The module-visible supporting declarations are:
 
-- `drawdownBlockStart`, `drawdownBlockCount`, `drawdownBlockRemainder`, and
-  `drawdownBlockStart_last_eq_horizon`: $s_j=r+j\ell$, $q=\lfloor L/\ell\rfloor$,
-  $r=L\bmod\ell$, and $s_q=L$.
-- `drawdownDiscretizedMaximum`, `drawdownRunningMaximumBins`,
-  `drawdownRunningMaximumJumpSet`, and `drawdownMaximumJumpSet`: the rounded
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.drawdownBlockStart`: $s_j=r+j\ell$, the block-start schedule.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.drawdownDiscretizedMaximum`, `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.drawdownRunningMaximumBins`,
+  `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.drawdownRunningMaximumJumpSet`, and `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.drawdownMaximumJumpSet`: the rounded
   running maximum $M_j$, its bin indices, and the block indices where those
   bins change.
-- `drawdownJumpPatternTubeEvent`: the intersection of the specified
-  non-jump-block tube events for a fixed pattern.
-- `drawdownJumpPatternBound`, `drawdown_prod_jumpPatternBound_eq_pow`, and
-  `drawdown_prod_jumpPatternBound_le_pow`: the block factor equals $p$ on a
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.drawdown_prod_jumpPatternBound_le_pow`: the block factor equals $p$ on a
   non-jump and $1$ on a jump, so its product is $p^{q-|J|}$ and is at most
   $p^{q-K}$ when $|J|\le K$ and $0\le p\le1$.
 
-These declarations support Wang Yiyang, *Asymptotic speed of the $N$-branching
-random walk with infinite offspring*, Chapter 3, Lemma 3.3.
+These proof steps support Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.3.
 -/
 
 open Filter MeasureTheory Topology
@@ -45,22 +47,8 @@ open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 def drawdownBlockStart (remainder blockLength j : ℕ) : ℕ :=
   remainder + j * blockLength
 
-/-- The number of complete blocks of length `blockLength` in a horizon. -/
-def drawdownBlockCount (horizon blockLength : ℕ) : ℕ :=
-  horizon / blockLength
-
-/-- The initial remainder in the Lemma 3.3 block decomposition. -/
-def drawdownBlockRemainder (horizon blockLength : ℕ) : ℕ :=
-  horizon % blockLength
-
-/-- The remainder and complete blocks end exactly at the horizon. -/
-lemma drawdownBlockStart_last_eq_horizon {horizon blockLength : ℕ} :
-    drawdownBlockStart (drawdownBlockRemainder horizon blockLength)
-      blockLength (drawdownBlockCount horizon blockLength) = horizon := by
-  simp [drawdownBlockStart, drawdownBlockRemainder, drawdownBlockCount,
-    Nat.mod_add_div, Nat.mul_comm]
-
 /-- The rounded running maximum `M_j` from the proof of Wang Yiyang,
+*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
 Chapter 3, Lemma 3.3, at the start time of block `j`. -/
 noncomputable def drawdownDiscretizedMaximum
     (upper width : ℝ) (path : ℕ → ℝ)
@@ -95,28 +83,9 @@ noncomputable def drawdownRunningMaximumJumpSet {q : ℕ}
   spatialBinJumpSet
     (drawdownRunningMaximumBins upper width starts hwidth increment)
 
-/-- For a fixed candidate jump set, impose the rounded-maximum tube on each
-block outside that set and leave the jump blocks unrestricted. -/
-def drawdownJumpPatternTubeEvent {q : ℕ}
-    (remainder blockLength : ℕ) (pattern : Finset (Fin q))
-    (upper binWidth tubeWidth : ℝ) (n : ℕ) : Set (ℕ → ℝ) :=
-  if hn : n < q then
-    if (⟨n, hn⟩ : Fin q) ∈ pattern then Set.univ
-    else drawdownTubeBlockEvent (remainder + n * blockLength) blockLength
-      (drawdownPastDiscretizedMaximum
-        (start := remainder + n * blockLength) upper binWidth) tubeWidth
-  else Set.univ
-
-/-- The conditional factor attached to a block for a fixed jump pattern. -/
-def drawdownJumpPatternBound {q : ℕ}
-    (pattern : Finset (Fin q)) (p : ℝ) (n : ℕ) : ℝ :=
-  if hn : n < q then
-    if (⟨n, hn⟩ : Fin q) ∈ pattern then 1 else p
-  else 1
-
 /-- The factors for a fixed jump pattern multiply to the tube-bound factor
 raised to the number of indices outside that pattern. -/
-lemma drawdown_prod_jumpPatternBound_eq_pow {q : ℕ}
+private lemma drawdown_prod_jumpPatternBound_eq_pow {q : ℕ}
     (pattern : Finset (Fin q)) (p : ℝ) :
     (∏ j ∈ Finset.range q, drawdownJumpPatternBound pattern p j) =
       p ^ (q - pattern.card) := by

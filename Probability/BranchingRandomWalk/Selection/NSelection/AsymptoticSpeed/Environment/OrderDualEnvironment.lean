@@ -6,10 +6,10 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.BranchingRandomWalk.Selection.NSelection.AsymptoticSpeed.Environment
+public import Probability.BranchingRandomWalk.Selection.NSelection.AsymptoticSpeed.Environment.Basic
 public import Probability.BranchingRandomWalk.Assumptions.Structural
-public import Probability.BranchingRandomWalk.Spine.TiltedLaw
-public import Combinatorics.BranchingWalk.Selection.NSelection.OrderDual
+public import Probability.BranchingRandomWalk.Spine.Tilted.Law
+public import Combinatorics.BranchingWalk.Selection.NSelection.Mechanism.OrderDual
 public import Combinatorics.BranchingWalk.Step.Measure.ExponentialWeight
 public import Combinatorics.BranchingWalk.Step.Map
 

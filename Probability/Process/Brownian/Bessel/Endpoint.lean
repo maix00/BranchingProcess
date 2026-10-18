@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.Brownian.Bessel.ThreeDimensional
-public import Topology.Cadlag.Skorokhod.Endpoint
+public import Topology.Cadlag.Skorokhod.Path.Endpoint
 
 /-!
 # The endpoint of a three-dimensional Bessel path
@@ -34,7 +34,7 @@ namespace BrownianBessel3
 
 /-- The first coordinate of a three-dimensional Brownian sample is
 nonzero at time one almost surely. -/
-private theorem ae_first_coordinate_ne_zero
+private lemma ae_first_coordinate_ne_zero
     {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
     [IsProbabilityMeasure P] {B : ℝ≥0 → Ω → ℝ}
     (hBrownian : IsBrownianReal B P) :

@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Population.PZInput
 import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Population.LowCount
-import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.PowerBudget
+import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Rate.PowerBudget
 import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 
 /-!
@@ -28,7 +28,7 @@ open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable
 open ProbabilityTheory.RandomWalk.SmallDeviation.Entrance
 open ProbabilityTheory.BranchingRandomWalk.Spine
 
-private theorem tendsto_rightTailPositiveAFirstCutoff_twoFifths_div_log
+private lemma tendsto_rightTailPositiveAFirstCutoff_twoFifths_div_log
     {N : ℕ → ℕ} (hN : Tendsto N atTop atTop) :
     Tendsto (fun n => logarithmicSmallDeviationScale
       (rightTailPositiveAFirstCutoff N n) /
@@ -67,7 +67,7 @@ private theorem tendsto_rightTailPositiveAFirstCutoff_twoFifths_div_log
     exact hpower.congr' heq.symm
   simpa [cutoff, logarithmicSmallDeviationScale] using hratio
 
-private theorem tendsto_rightTailPositiveASpineScale_div_log
+private lemma tendsto_rightTailPositiveASpineScale_div_log
     {N : ℕ → ℕ} (hN : Tendsto N atTop atTop) {v : ℝ} :
     Tendsto (fun n => (v / 2) * logarithmicSmallDeviationScale
       (rightTailPositiveAFirstCutoff N n) /
@@ -84,7 +84,7 @@ private theorem tendsto_rightTailPositiveASpineScale_div_log
     ring
   simpa only [mul_one] using h.congr' heq.symm
 
-private theorem centeredMoment_integrable_square_of_sigma_pos
+private lemma centeredMoment_integrable_square_of_sigma_pos
     {ν : Measure ℝ} [IsProbabilityMeasure ν] {sigma : ℝ}
     (hν : IsCenteredSecondMoment ν (sigma ^ 2)) (hsigma : 0 < sigma) :
     Integrable (fun x : ℝ => x ^ 2) ν := by
@@ -95,7 +95,7 @@ private theorem centeredMoment_integrable_square_of_sigma_pos
 
 /-- The block used in the stable bridge has quadratic order in `log N`.
 Only the convergence of truncated second moments is used here. -/
-private theorem eventually_rightTailPositiveAStableBlock_ge_log_sq
+private lemma eventually_rightTailPositiveAStableBlock_ge_log_sq
     {N : ℕ → ℕ} (hN : Tendsto N atTop atTop)
     {ν : Measure ℝ} [IsProbabilityMeasure ν] {sigma v amplitude : ℝ}
     (hν : IsCenteredSecondMoment ν (sigma ^ 2)) (hsigma : 0 < sigma)
@@ -256,7 +256,7 @@ private theorem eventually_rightTailPositiveAStableBlock_ge_log_sq
     simpa [stableBlockLength, stableBlockArgument, stableSlowVariation_two] using hfloorLower
   exact ⟨c, hc, by simpa [L, ell, scale, Function.comp_apply] using hfloor⟩
 
-private theorem tendsto_rightTailPositiveABridgeCount_div_log_zero
+private lemma tendsto_rightTailPositiveABridgeCount_div_log_zero
     {N : ℕ → ℕ} (hN : Tendsto N atTop atTop)
     {ν : Measure ℝ} [IsProbabilityMeasure ν] {sigma v amplitude : ℝ}
     (hν : IsCenteredSecondMoment ν (sigma ^ 2)) (hsigma : 0 < sigma)
@@ -334,7 +334,7 @@ private theorem tendsto_rightTailPositiveABridgeCount_div_log_zero
   have hratio := squeeze_zero' hnonneg hupper hrhs
   exact ⟨c, hc, by simpa [count, bridge, block, scale, ell, L] using hratio⟩
 
-private theorem eventually_rightTailPositiveAEntranceLength_le_log_sq
+private lemma eventually_rightTailPositiveAEntranceLength_le_log_sq
     {N : ℕ → ℕ} (hN : Tendsto N atTop atTop) {v : ℝ} (hv : 0 < v) :
     ∀ᶠ n : ℕ in atTop,
       (ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.finiteVarianceEntranceLength
@@ -381,7 +381,7 @@ private theorem eventually_rightTailPositiveAEntranceLength_le_log_sq
     _ ≤ (v * L n) ^ 2 := hscaleSq
     _ = v ^ 2 * L n ^ 2 := by ring
 
-/-- Under the paper's finite-variance hypothesis, the explicit first-stage
+/-- Under the finite-variance hypothesis, the explicit first-stage
 spine corridor estimate is at least `N ^ (-epsilon)` for every positive
 epsilon, eventually. This turns the retained `exp(-O(sqrt(log N)))` bridge
 factor into the polynomial-scale input required by the MRCA/PZ estimate. -/

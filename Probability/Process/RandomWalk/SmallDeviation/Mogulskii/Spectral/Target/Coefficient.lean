@@ -11,8 +11,30 @@ public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.T
 /-!
 # Principal coefficient of an interior terminal target
 
+The public declarations in this module are:
+
+All names below are declarations in
+`ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii`.
+
+For $N=\texttt{interiorCount}>0$, write
+$\phi_0(i)=\texttt{intervalSineWeight}(N,i)$ and
+$c_0(T)=(\texttt{intervalSineBasis}(N).\texttt{repr}(1_T))_0$.
+
+- `intervalSineMode_dotProduct_targetIndicator` identifies the pairing with
+  an indicator as a sum over the target:
+  $\langle\phi_k,1_T\rangle=\sum_{i\in T}\phi_k(i)$.
+- `intervalSineBasis_repr_targetIndicator_zero` gives the principal
+  coefficient
+  $c_0(1_T)=\frac{2}{N+1}\sum_{i\in T}\phi_N(i)$, where
+  $\phi_N(i)=\sin(\pi(i.val+1)/(N+1))$ and $N>0$.
+- `two_mul_mul_card_div_le_intervalSineBasis_repr_targetIndicator_zero`
+  proves $\frac{2a|T|}{N+1}\le c_0(1_T)$ if $a\le\phi_N(i)$ on $T$.
+- `two_mul_mul_le_intervalSineBasis_repr_targetIndicator_zero` gives the
+  width-independent form $2ap\le c_0(1_T)$ when
+  $a\ge0$, $a\le\phi_N(i)$ on $T$, and $p(N+1)\le|T|$.
+
 The first Dirichlet coefficient of a terminal target is the normalized sum
-of the positive ground state over that target.  A target occupying a fixed
+of the positive ground state over that target. A target occupying a fixed
 fraction of an interior region therefore has a coefficient bounded away
 from zero uniformly in the lattice width.
 -/

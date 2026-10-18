@@ -454,7 +454,7 @@ theorem tendsto_integral_abs_sq_of_tendsto_tail_and_fourth_moment
 /-- The two one-sided polynomial tail bounds used in the trajectory-limit
 argument imply the fixed-threshold tail convergence required by
 `tendsto_integral_abs_sq_of_tendsto_tail_and_fourth_moment`. The exponents may
-depend on the threshold, as they do in the paper. -/
+depend on the threshold. -/
 theorem tendsto_integral_abs_sq_of_polynomial_tails_and_fourth_moment
     {Ω : Type*} [MeasurableSpace Ω]
     (μ : ℕ → Measure Ω) (hμ : ∀ n, IsProbabilityMeasure (μ n))

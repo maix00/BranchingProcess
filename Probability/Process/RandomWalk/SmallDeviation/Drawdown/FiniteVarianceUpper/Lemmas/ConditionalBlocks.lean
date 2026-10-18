@@ -7,42 +7,37 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.Event
-public import Probability.Process.RandomWalk.Path.Filtration
+public import Probability.Process.RandomWalk.Path.Adapted.Filtration
 public import Probability.Process.RandomWalk.Path.Block.Law.FiniteInterval
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.BlockScale
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.Horizontal
-public import Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.FiniteVarianceUpper
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Scale.BlockScale
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.Horizontal.Basic
+public import Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.FiniteVarianceUpper.Basic
 public import Probability.Independence.ConditionalIntegral
-public import Probability.Sequence.IID.ConditionalBlocks
+import Probability.Sequence.IID.Blocks.Conditional
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
+public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.JumpPattern.DiscretizedMaximum
+public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.TubeEvent
 
 import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
+import Mathlib.MeasureTheory.Function.Floor
 
 /-!
 # Conditional block bounds for bounded drawdown
 
 The proof-specific declarations in this module are:
 
-- `drawdownPrefixPath`: $S_j=\sum_{i<j}\xi_i$ through the observed prefix,
-  extended by zero after its endpoint for the finite running-maximum
-  calculation.
-- `drawdownPastDiscretizedMaximum` and
-  `measurable_drawdownPastDiscretizedMaximum`: the rounded past maximum
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.measurable_drawdownPastDiscretizedMaximum`: the rounded past maximum
   $M_j=U-w\lfloor(U-M_j^{\max})/w\rfloor$ is measurable with respect to the
   increments before the current block.
-- `drawdownPastDiscretizedMaximum_eq_runningMaximum`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.drawdownPastDiscretizedMaximum_eq_runningMaximum`:
   evaluating that center on an infinite increment sequence gives
   $U-w\lfloor(U-\max_{i\le j}S_i)/w\rfloor$.
-- `drawdownTubePairEvent`, `drawdownTubeBlockEvent`, and
-  `drawdownTubeBlockEvent_iff_path_in_interval`: the condition
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.drawdownTubeBlockEvent_iff_path_in_interval`: the condition
   $S_0+\sum_{i<k}\xi_i\in[a-w,a]$ on a finite block is equivalent to the
-  corresponding interval condition on the full path.
-- `measurableSet_drawdownTubePairEvent` and
-  `measurableSet_drawdownTubeBlockEvent`: these finite-block tube events are
-  measurable.
-- `iidSequenceLaw_condExp_drawdownTubePairEvent_le_of_intervalBound`,
-  `iidSequenceLaw_condExp_drawdownTubePairEvent_le_of_finiteVariance`, and
-  `iidSequenceLaw_condExp_drawdownTubeBlockEvent_le_of_finiteVariance`:
+  corresponding interval condition on the full path; the event constructions
+  are defined in `TubeEvent.lean`.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.measurableSet_drawdownTubeBlockEvent`: the finite-block tube event is measurable.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.iidSequenceLaw_condExp_drawdownTubeBlockEvent_le_of_finiteVariance`:
   the conditional probability of the next tube block is at most
   $\exp(w^v-d\ell/w^2)$ for all sufficiently large $w$.
 
@@ -52,12 +47,14 @@ $\mathbb E[f(X,Y)\mid X]=\int f(X,y)\,d\nu^{\otimes\ell}(y)$.
 Its upper-section consequence is
 `ProbabilityTheory.iidSequenceLaw_condExp_pairEvent_le_of_sectionProbability`.
 These are the conditional-expectation and Markov-property steps in Wang
-Yiyang, *Asymptotic speed of the $N$-branching random walk with infinite
-offspring*, Chapter 3, proof of Lemma 3.3. The one-block estimate applies
-Wang Yiyang's Lemma 3.2, following Aïdékon and Hu,
-*Average-weight percolation on the complete graph*, Lemma 4.1, and
-Mogul'skii, *Small deviations in a space of trajectories*, Theorem 3,
-Section 4, p. 764 (DOI 10.1137/1119081).
+Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, proof of Lemma 3.3. The one-block estimate applies
+Chapter 3, Lemma 3.2, following Elie Aïdékon and Yueyun Hu,
+*Average-weight percolation on the complete graph*, Lemma 4.1 (2025,
+arXiv:2512.23266), and Theorem 3, Section 4, p. 764 of A. A. Mogul'skii,
+“Small deviations in the sample function space,” *Teoriya Veroyatnostei i ee
+Primeneniya* 19(4) (1974), 755--765; English translation, “Small Deviations
+in a Space of Trajectories,” *Theory of Probability and Its Applications*
+19(4) (1975), 726--736, DOI 10.1137/1119081.
 -/
 
 open Filter MeasureTheory Topology
@@ -69,17 +66,9 @@ namespace ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown
 
 open ProbabilityTheory.RandomWalk
 open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
+open ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube
 
-/-- The finite path generated by the increments available at a block start.
-It is set to zero after that time so its running maximum depends only on the
-given prefix. -/
-def drawdownPrefixPath {start : ℕ} (past : Fin start → ℝ) : ℕ → ℝ :=
-  fun time =>
-    if htime : time ≤ start then
-      Fin.partialSum past ⟨time, Nat.lt_succ_of_le htime⟩
-    else 0
-
-private theorem partialSum_eq_prefixSum {length : ℕ}
+private lemma partialSum_eq_prefixSum {length : ℕ}
     (block : Fin length → ℝ) (k : Fin (length + 1)) :
     Fin.partialSum block k =
       ∑ j : Fin k, block
@@ -98,7 +87,7 @@ private theorem partialSum_eq_prefixSum {length : ℕ}
       rw [Fin.sum_univ_castSucc]
       congr 1
 
-private theorem measurable_partialSum {length : ℕ}
+private lemma measurable_partialSum {length : ℕ}
     (k : Fin (length + 1)) :
     Measurable (fun block : Fin length → ℝ =>
       Fin.partialSum block k) := by
@@ -114,7 +103,7 @@ private theorem measurable_partialSum {length : ℕ}
         simp only [Fin.partialSum_succ, Pi.add_apply]
       exact heq ▸ hsum
 
-private theorem measurable_prefixPath_coordinate {start : ℕ}
+private lemma measurable_prefixPath_coordinate {start : ℕ}
     (time : ℕ) :
     Measurable (fun past : Fin start → ℝ => drawdownPrefixPath past time) := by
   by_cases htime : time ≤ start
@@ -122,12 +111,6 @@ private theorem measurable_prefixPath_coordinate {start : ℕ}
       measurable_partialSum
         (⟨time, Nat.lt_succ_of_le htime⟩ : Fin (start + 1))
   · simp [drawdownPrefixPath, htime]
-
-/-- The discretized maximum computed from the available finite increment
-prefix. This is the `M_j` center used when conditioning at a block start. -/
-noncomputable def drawdownPastDiscretizedMaximum {start : ℕ}
-    (upper width : ℝ) (past : Fin start → ℝ) : ℝ :=
-  spatialBinLevel upper width (drawdownPrefixPath past) start
 
 lemma measurable_drawdownPastDiscretizedMaximum {start : ℕ}
     (upper width : ℝ) :
@@ -153,7 +136,7 @@ lemma measurable_drawdownPastDiscretizedMaximum {start : ℕ}
         width) : ℝ))
   exact measurable_const.sub (measurable_const.mul hfloor)
 
-private theorem prefixPath_blockCoordinates_eq
+private lemma prefixPath_blockCoordinates_eq
     {start : ℕ} (increment : ℕ → ℝ) {time : ℕ} (htime : time ≤ start) :
     drawdownPrefixPath
         (Combinatorics.Sequence.blockCoordinates 0 start increment) time =
@@ -169,7 +152,7 @@ private theorem prefixPath_blockCoordinates_eq
     _ = AdditivePath.displacement time increment := by
       simp [AdditivePath.blockSum_eq_displacement_natAdd]
 
-private theorem prefixMaximum_blockCoordinates_eq
+private lemma prefixMaximum_blockCoordinates_eq
     (start : ℕ) (increment : ℕ → ℝ) :
     prefixMaximum
         (drawdownPrefixPath
@@ -191,7 +174,7 @@ lemma drawdownPastDiscretizedMaximum_eq_runningMaximum
   simp only [drawdownPastDiscretizedMaximum, spatialBinLevel, spatialBinIndex]
   rw [prefixMaximum_blockCoordinates_eq start increment]
 
-private theorem prefixSum_blockCoordinates_eq
+private lemma prefixSum_blockCoordinates_eq
     (start : ℕ) (increment : ℕ → ℝ) :
     (∑ i : Fin start,
       Combinatorics.Sequence.blockCoordinates 0 start increment i) =
@@ -199,7 +182,7 @@ private theorem prefixSum_blockCoordinates_eq
   simp [Combinatorics.Sequence.blockCoordinates,
     AdditivePath.displacement, Fin.sum_univ_eq_sum_range]
 
-private theorem tubeBlockPosition_eq
+private lemma tubeBlockPosition_eq
     (start length : ℕ) (increment : ℕ → ℝ)
     (k : Fin (length + 1)) :
     (∑ i : Fin start,
@@ -210,25 +193,6 @@ private theorem tubeBlockPosition_eq
   rw [prefixSum_blockCoordinates_eq, partialSum_blockCoordinates]
   exact (AdditivePath.displacement_add_eq_add_blockSum
     start (k : ℕ) increment).symm
-
-/-- The event for a pair consisting of a past increment prefix and the next
-block: throughout the block, the walk remains in the interval
-`[center(prefix) - width, center(prefix)]`. -/
-def drawdownTubePairEvent {start length : ℕ}
-    (center : (Fin start → ℝ) → ℝ) (width : ℝ) :
-    Set ((Fin start → ℝ) × (Fin length → ℝ)) :=
-  {pair | ∀ k : Fin (length + 1),
-    (∑ i : Fin start, pair.1 i) + Fin.partialSum pair.2 k ∈
-      Set.Icc (center pair.1 - width) (center pair.1)}
-
-/-- The tube event for one increment block, with its center determined by
-the increment prefix at the block's starting time. -/
-def drawdownTubeBlockEvent (start length : ℕ)
-    (center : (Fin start → ℝ) → ℝ) (width : ℝ) : Set (ℕ → ℝ) :=
-  {increment |
-    (Combinatorics.Sequence.blockCoordinates 0 start increment,
-      Combinatorics.Sequence.blockCoordinates start length increment) ∈
-      drawdownTubePairEvent center width}
 
 /-- Membership in a tube block event is the requirement that the original
 walk remain in the corresponding translated interval at every time from the
@@ -269,7 +233,7 @@ private def blockPrefixPair (start length : ℕ) :
       fun j : Fin length =>
         whole (⟨start + (j : ℕ), by omega⟩ : Fin (start + length)))
 
-private theorem measurable_blockPrefixPair (start length : ℕ) :
+private lemma measurable_blockPrefixPair (start length : ℕ) :
     Measurable (blockPrefixPair start length) := by
   have hpast : Measurable
       (fun whole : Fin (start + length) → ℝ =>
@@ -287,7 +251,7 @@ private theorem measurable_blockPrefixPair (start length : ℕ) :
       (⟨start + (j : ℕ), by omega⟩ : Fin (start + length))
   exact hpast.prodMk hblock
 
-private theorem blockPrefixPair_blockCoordinates
+private lemma blockPrefixPair_blockCoordinates
     (start length : ℕ) (increment : ℕ → ℝ) :
     blockPrefixPair start length
         (Combinatorics.Sequence.blockCoordinates 0 (start + length) increment) =
@@ -301,7 +265,7 @@ private theorem blockPrefixPair_blockCoordinates
 
 /-- A measurable choice of the interval center makes the next-block tube
 event measurable in the past prefix and block increments. -/
-lemma measurableSet_drawdownTubePairEvent {start length : ℕ}
+private lemma measurableSet_drawdownTubePairEvent {start length : ℕ}
     (center : (Fin start → ℝ) → ℝ) (hcenter : Measurable center)
     (width : ℝ) : MeasurableSet
       (drawdownTubePairEvent (start := start) (length := length) center width) := by
@@ -387,7 +351,7 @@ conditional probability of the next tube block, even when its upper endpoint
 is selected measurably from the past. The time-zero constraint contributes
 conditional probability zero whenever the current position is outside the
 chosen interval. -/
-lemma iidSequenceLaw_condExp_drawdownTubePairEvent_le_of_intervalBound
+private lemma iidSequenceLaw_condExp_drawdownTubePairEvent_le_of_intervalBound
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (start length : ℕ)
     (center : (Fin start → ℝ) → ℝ) (hcenter : Measurable center)
@@ -472,11 +436,10 @@ lemma iidSequenceLaw_condExp_drawdownTubePairEvent_le_of_intervalBound
   exact ProbabilityTheory.iidSequenceLaw_condExp_pairEvent_le_of_sectionProbability
     ν start length (drawdownTubePairEvent center width) hE hsections
 
-/-- Applying the translated-interval estimate of Wang Yiyang, *Asymptotic
-speed of the $N$-branching random walk with infinite offspring*, Chapter 3,
+/-- Applying the translated-interval estimate of Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3,
 Lemma 3.2, bounds the conditional probability of each tube block in the
 Lemma 3.3 decomposition. -/
-lemma iidSequenceLaw_condExp_drawdownTubePairEvent_le_of_finiteVariance
+private lemma iidSequenceLaw_condExp_drawdownTubePairEvent_le_of_finiteVariance
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     {variance : ℝ}
     (hν : ProbabilityTheory.IsCenteredSecondMoment ν variance)

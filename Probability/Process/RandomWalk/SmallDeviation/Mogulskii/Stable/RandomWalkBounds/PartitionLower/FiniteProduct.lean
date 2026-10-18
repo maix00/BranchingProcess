@@ -9,7 +9,17 @@ module
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Partition
 
 /-!
-# Finite products of stable exponential block bounds.
+# Finite products of stable exponential block bounds
+
+Let $r_n$ be a rate, $m_i(n)$ finite block counts, $a_i$ exponents, and
+$p_n\le1$ probabilities. The declaration in
+`ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete` is:
+
+- `eventually_probabilityRate_ge_finiteProductRate`: if
+  $r_n m_i(n)\to c_i$, $r_n\ge0$ eventually, and
+  $\prod_i e^{a_i m_i(n)}\le p_n$ eventually, then for every $\varepsilon>0$
+  eventually
+  $p_n>0$ and $\sum_i c_i a_i-\varepsilon\le r_n\log p_n$.
 -/
 
 @[expose] public section

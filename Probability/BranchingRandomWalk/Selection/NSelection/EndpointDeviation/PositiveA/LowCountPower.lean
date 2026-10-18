@@ -26,7 +26,7 @@ open ProbabilityTheory.BranchingRandomWalk
 open ProbabilityTheory.BranchingRandomWalk.Spine
 open ProbabilityTheory.RandomWalk
 
-/-- Under the paper's finite second moment, boundary normalization, and
+/-- Under the finite second moment, boundary normalization, and
 finite cross-weight assumptions, the first-stage killed population has at
 least `N^δ` successful particles with an exponentially small failure
 probability. The exponent condition is only the parameter budget

@@ -9,13 +9,21 @@ module
 public import Probability.Process.RandomWalk.FunctionalLimit.NormalizedStep.Block
 public import Probability.Process.RandomWalk.Path.Block.Corridor.Measure
 public import Probability.Process.RandomWalk.Path.Block.Partition.Basic
-public import Probability.Process.RandomWalk.Path.Corridor.Horizontal
-public import Probability.Sequence.IID
+public import Probability.Process.RandomWalk.Path.Corridor.Horizontal.Core
+public import Probability.Sequence.IID.Basic
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.BridgeComparison.FiniteCover
 /-! # Source corridor cells and finite bridge geometry
 
 This module defines the source's prefix and bridge cells, identifies them
-with normalized block-path events, and proves their finite cover and gluing. -/
+with normalized block-path events, and proves their finite cover and gluing.
+The concrete cells encode equation (34), Theorem 3, Section 4, p. 764 of the
+1974 Russian original by A. A. Mogul'skii, “Small deviations in the sample
+function space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974),
+755–765; English translation, “Small Deviations in a Space of Trajectories,”
+*Theory of Probability and Its Applications* 19(4) (1975), 726–736, DOI
+10.1137/1119081.
+
+The original bibliography is A. A. Mogul'skii, “Small deviations in the sample function space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974), 755--765; English translation, “Small Deviations in a Space of Trajectories,” *Theory of Probability and Its Applications* 19(4) (1975), 726--736, DOI 10.1137/1119081. -/
 
 open Filter MeasureTheory ProbabilityTheory
 open scoped ENNReal NNReal Topology
@@ -29,8 +37,9 @@ needed because the source's stable entrance estimate is stated for an
 interior starting point. -/
 abbrev SourceBridgeCenter := {x : ℝ // -1 < x ∧ x < 1}
 
-/-- Prefix cells for the source's equation (34): the prefix stays in the unit
-corridor, and its normalized endpoint lies in the bin around `x`. -/
+/-- Prefix cells for Mogul'skii's equation (34), Theorem 3, Section 4, p. 764
+of the 1974 Russian original cited at the top of this file: the prefix stays
+in the unit corridor, and its normalized endpoint lies in the bin around `x`. -/
 def sourcePrefixCell (length : ℕ) (scale radius x : ℝ) :
     Set (Fin length → ℝ) :=
   {block | InOpenPartialSumCorridor (-scale) scale block ∧

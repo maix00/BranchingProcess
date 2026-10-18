@@ -6,58 +6,35 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.Parameters
+public import Mathlib.Basic.Real.Basic
+public import Mathlib.Order.Interval.Set.Defs
+public import Mathlib.Tactic.SetNotationForOrder
+public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.BlockTube
+public import Probability.Process.RandomWalk.Path.Block.Partition.TailMerged
+public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.EndpointWindow
+import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.BlockTube
 /-!
 # Terminal windows of the horizontal staircase blocks
 
-The public objects and theorems in this file are:
+The endpoint equalities used across the Lemma 3.5 proof modules are:
 
-- `staircaseEndpointLowerFraction` and `staircaseEndpointUpperFraction`:
-  the fractions $v_1(k),v_2(k)$ in Wang Yiyang's proof, using the next
-  central window for nonfinal blocks and $[r_L,r_L+vD]$ for the last block.
-- `staircaseEndpointWindow_interior`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.staircaseEndpointWindow_interior`:
   an interior block's terminal interval equals the next central window.
-- `staircaseEndpointWindow_last`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.staircaseEndpointWindow_last`:
   the last block's terminal interval equals $[r_L,r_L+vD]$.
-- `staircaseUpperEndpointLowerFraction` and
-  `staircaseUpperEndpointUpperFraction`:
-  the same ordinary windows, with the final interval adjacent to the
-  upper edge of the last horizontal block.
-- `staircaseUpperEndpointWindow_interior` and
-  `staircaseUpperEndpointWindow_last_subset`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.staircaseUpperEndpointWindow_interior` and
+  `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.staircaseUpperEndpointWindow_last_subset`:
   the ordinary windows still match the following central window, and
   the last window lies in both $[r_L,s_L]$ and $[s_L-vD,s_L]$.
 
 These are the endpoint definitions and equalities in Wang Yiyang,
-*Asymptotic speed of the $N$-branching random walk with infinite offspring*,
+*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
 Chapter 3, proof of Lemma 3.5.
 -/
 
 @[expose] public section
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
-
-/-- Fraction locating the lower endpoint of the next central window,
-with zero as the lower fraction of the final endpoint window. -/
-noncomputable def staircaseEndpointLowerFraction
-    (q : ℕ) (width drift : ℝ) (length : ℕ → ℕ) (j : ℕ) : ℝ :=
-  if j + 1 < q then
-    (width / 3 + (2 / 3 : ℝ) * drift * (length (j + 1) : ℝ) /
-      width ^ 2) /
-      staircaseTubeWidth width drift length j
-  else 0
-
-/-- Fraction locating the upper endpoint of the next central window,
-or the final endpoint window on the last block. -/
-noncomputable def staircaseEndpointUpperFraction
-    (q : ℕ) (width drift endpointFraction : ℝ)
-    (length : ℕ → ℕ) (j : ℕ) : ℝ :=
-  if j + 1 < q then
-    (2 * width / 3 + (1 / 3 : ℝ) * drift *
-      (length (j + 1) : ℝ) / width ^ 2) /
-      staircaseTubeWidth width drift length j
-  else endpointFraction * width /
-    staircaseTubeWidth width drift length j
 
 /-- A nonfinal block ends exactly in the central window of the following
 horizontal tube. -/
@@ -130,26 +107,6 @@ lemma staircaseEndpointWindow_last
     staircaseEndpointUpperFraction, ite_eq_right hlast,
     div_mul_cancel₀ _ hwidth]
   simp [staircaseLowerEdge, hlastEq, hfinish]
-
-/-- Lower endpoint fraction for the same rising staircase when the final
-window is adjacent to the upper edge of the target tube. -/
-noncomputable def staircaseUpperEndpointLowerFraction
-    (q : ℕ) (width drift endpointFraction : ℝ)
-    (length : ℕ → ℕ) (j : ℕ) : ℝ :=
-  if j + 1 < q then
-    staircaseEndpointLowerFraction q width drift length j
-  else
-    max (1 - endpointFraction) 0 * width /
-      staircaseTubeWidth width drift length j
-
-/-- Upper endpoint fraction for the same rising staircase. The final
-horizontal block ends at its own upper edge. -/
-noncomputable def staircaseUpperEndpointUpperFraction
-    (q : ℕ) (width drift endpointFraction : ℝ)
-    (length : ℕ → ℕ) (j : ℕ) : ℝ :=
-  if j + 1 < q then
-    staircaseEndpointUpperFraction q width drift endpointFraction length j
-  else 1
 
 /-- Ordinary endpoint windows of the upper-endpoint staircase agree with
 those of the lower-endpoint staircase. -/

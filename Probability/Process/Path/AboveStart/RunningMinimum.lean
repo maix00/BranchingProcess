@@ -7,9 +7,9 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.Path.AboveStart.Continuous
-public import Probability.Process.Path.DescendingHittingTime
-public import Probability.Process.Path.RunningMinimum
-public import Probability.Process.Path.TimeGrid.NonnegativeRationals
+public import Probability.Process.Path.FirstPassage.Descending
+public import Probability.Process.Path.Extrema.RunningMinimum
+public import Probability.Process.TimeGrid.Dense.NonnegativeRationals
 
 /-!
 # First windows and the running minimum of a continuous path
@@ -56,8 +56,7 @@ The public definitions and theorems in this file are:
   which $m_f(t+1)=m_f(t)$.
 
 The last equality is the deterministic observation at the beginning of the
-proof of Lemma 2.3 in Erwin Bolthausen, *On a functional central limit
-theorem for random walks conditioned to stay positive*, Ann. Probab. 4(3)
+proof of Lemma 2.3 in Erwin Bolthausen, *On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*, Ann. Probab. 4(3)
 (1976), 480--485, DOI 10.1214/aop/1176996098.
 -/
 
@@ -67,7 +66,7 @@ open scoped NNReal
 
 namespace ProbabilityTheory
 
-private theorem earlier_nonnegativeWindowStart_of_runningMinimum_lt
+private lemma earlier_nonnegativeWindowStart_of_runningMinimum_lt
     (f : C(ℝ≥0, ℝ)) {t : ℝ≥0}
     (ht : IsNonnegativeWindowStart f t)
     (hlt : runningMinimum f t < f t) :
@@ -99,7 +98,7 @@ private theorem earlier_nonnegativeWindowStart_of_runningMinimum_lt
       _ ≤ f (t + w) := ht w
       _ = f (u + v) := by rw [htw]
 
-private theorem runningMinimum_add_one_eq_of_windowStart
+private lemma runningMinimum_add_one_eq_of_windowStart
     (f : C(ℝ≥0, ℝ)) {t : ℝ≥0}
     (ht : IsNonnegativeWindowStart f t)
     (hrecord : f t = runningMinimum f t) :
@@ -503,7 +502,7 @@ theorem firstNonnegativeWindowStartUpTo_lastStart_aboveRunningMinimum_eq_zero
   exact (aboveRunningMinimum_eq_zero_iff f t).2
     (firstNonnegativeWindowStartUpTo_runningMinimum f (t + 1) t hfirst).1
 
-private theorem exists_nonnegativeWindowStart_le_of_runningMinimum_eq
+private lemma exists_nonnegativeWindowStart_le_of_runningMinimum_eq
     (f : C(ℝ≥0, ℝ)) {t : ℝ≥0}
     (hflat : runningMinimum f (t + 1) = runningMinimum f t) :
     ∃ u ≤ t, IsNonnegativeWindowStart f u := by
@@ -519,7 +518,7 @@ private theorem exists_nonnegativeWindowStart_le_of_runningMinimum_eq
     _ = runningMinimum f (t + 1) := hflat.symm
     _ ≤ f (u + v) := runningMinimum_le f huv
 
-private theorem firstNonnegativeWindowStartUpTo_le_of_runningMinimum_eq
+private lemma firstNonnegativeWindowStartUpTo_le_of_runningMinimum_eq
     (f : C(ℝ≥0, ℝ)) {s t : ℝ≥0}
     (hts : t + 1 ≤ s)
     (hflat : runningMinimum f (t + 1) = runningMinimum f t) :

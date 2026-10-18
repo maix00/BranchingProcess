@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.Path.RunningMinimum
+public import Probability.Process.Path.Extrema.RunningMinimum
 
 /-!
 # Reversed increments on a finite time interval
@@ -23,8 +23,7 @@ The public definitions and theorems in this file are:
 
 The final identity is the deterministic time-reversal step underlying
 Lévy's reflected-process identity used in Lemma 2.3 of Erwin Bolthausen,
-*On a functional central limit theorem for random walks conditioned to
-stay positive*, Ann. Probab. 4(3) (1976), 480--485,
+*On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*, Ann. Probab. 4(3) (1976), 480--485,
 DOI 10.1214/aop/1176996098.
 -/
 

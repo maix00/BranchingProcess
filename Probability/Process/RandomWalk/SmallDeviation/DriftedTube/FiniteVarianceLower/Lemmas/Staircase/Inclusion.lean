@@ -7,7 +7,8 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.EndpointEvent
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Blocks.MovingTubeInclusion
+public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.BlockInclusion
+public import Probability.Process.Filtration.ConditionalBlocks
 /-!
 # Staircase inclusion in the tilted endpoint event
 
@@ -23,7 +24,7 @@ The module-visible supporting lemmas in this file are:
 
 This is the deterministic event inclusion at the start and end of the
 reverse Markov product in Wang Yiyang,
-*Asymptotic speed of the $N$-branching random walk with infinite offspring*,
+*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
 Chapter 3, proof of Lemma 3.5.
 -/
 
@@ -33,6 +34,8 @@ open ProbabilityTheory
 open ProbabilityTheory.RandomWalk.SmallDeviation
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
+
+open ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube
 
 /-- Every time after the entrance stage and through the final block end
 belongs to one of the consecutive block intervals. -/

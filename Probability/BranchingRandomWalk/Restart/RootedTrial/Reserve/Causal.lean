@@ -4,8 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Restart.RootedTrial.CapStopped
-import Probability.BranchingRandomWalk.Timing.OrderedCandidates
+import Probability.BranchingRandomWalk.Restart.RootedTrial.Completion.CapStopped
+import Probability.BranchingRandomWalk.Timing.Candidates.Ordered
 
 /-!
 # Causal reserve candidates on one pre-sampled spine

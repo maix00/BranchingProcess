@@ -7,16 +7,46 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.Path.Block.Corridor.Measure
-public import Probability.Process.RandomWalk.Path.Block.Law
-public import Probability.Process.RandomWalk.Path.Cadlag
+public import Probability.Process.RandomWalk.Path.Block.Law.Basic
+public import Probability.Process.RandomWalk.Path.Representation.Cadlag
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.Partition.Corridor
 /-!
 # Endpoint-core events on discrete corridor cells
 
-An incoming core contracts the cell corridor. A slightly wider outgoing core
-is reached by an open endpoint band. These events depend only on the
-increments in their own floor-rounded cell, so their probabilities factor
-under an IID increment law.
+For a block $z$ of length $\ell$, write $S_k(z)=\sum_{j<k}z_j$. The public
+declarations in `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Discrete`
+are:
+
+- `partitionCellCoreReturnBlockEvent`: the event that
+  $a+r_0-c_0<S_k(z)<b-r_0-c_0$ for every $k\le\ell$ and
+  $S_\ell(z)\in(c_1-c_0-(r_1-r_0)/2,\,c_1-c_0+(r_1-r_0)/2)$.
+- `measurableSet_partitionCellCoreReturnBlockEvent`: this finite-dimensional
+  block event is measurable.
+- `partitionCellCoreReturnBlockEvent_positions_mem`: if the start $x$ lies
+  in the incoming core $[c_0-r_0,c_0+r_0]$, every position $x+S_k(z)$ lies
+  strictly in $(a,b)$.
+- `partitionCellCoreReturnBlockEvent_endpoint_mem`: if $r_0<r_1$, then
+  $x+S_\ell(z)\in(c_1-r_1,c_1+r_1)$ for every $x$ in the incoming core.
+- `partitionCellCoreReturnBlockEvent_of_staysIn_endsIn`: a path staying in
+  the scaled, margin-contracted cell corridor and ending in a closed bridge
+  interval of radius smaller than $(r_1-r_0)/2$ satisfies the corresponding
+  scaled core-return event, provided the initial center is strictly inside
+  the contracted cell corridor.
+- `iidSequenceLaw_forall_partitionCellCoreReturnBlockEvent_eq_prod`: for IID
+  increments and consecutive variable-length blocks, the probability that
+  every block satisfies its local event equals the product of the one-block
+  probabilities.
+- `normalizedStepCadlagPathIcc_commonPartitionGrid_apply`:
+  $Y_n(t_i)=s_n^{-1}D_{F_n(t_i)}$ for the normalized step path.
+- `normalizedStepCadlagPathIcc_commonPartitionGrid_mem_core_of_blockEvents`:
+  if the initial center and radius are $0$, the core radii increase from knot
+  to knot, and every floor-cell block has its core-return event, then each
+  partition-knot path value belongs to its prescribed core
+  $[c_i-r_i,c_i+r_i]$.
+
+The incoming core contracts the local corridor; the open endpoint band moves
+the path into the next core. The event depends only on its cell's increments,
+so the IID product formula applies.
 -/
 
 @[expose] public section

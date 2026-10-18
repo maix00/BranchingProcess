@@ -6,20 +6,28 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Endpoint.Margins
+public import Mathlib.Basic.Real.Basic
+public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.Binning
+public import Probability.Process.RandomWalk.Path.Block.Partition.TailMerged
+public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.BlockTube
+public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.EndpointWindow
+import Mathlib.Tactic.Linarith
+import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Endpoint.Margins
+import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Binning.Parameters
+import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.BlockTube
 
 /-!
 # Endpoint margins for the upper-window staircase
 
 The module-visible supporting lemma in this file is:
 
-- `staircaseUpperEndpointMarginConditions`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.staircaseUpperEndpointMarginConditions`:
   the ordinary blocks retain the margins of the lower-window
   staircase; the final block uses the normalized window
   $[\max(1-v,0)\Delta/\Delta(q),1]$.
 
 This is the symmetric final-window choice in Wang Yiyang,
-*Asymptotic speed of the $N$-branching random walk with infinite offspring*,
+*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
 Chapter 3, proof of Lemma 3.5.
 -/
 
@@ -57,9 +65,9 @@ lemma staircaseUpperEndpointMarginConditions
     (hfinalUpper : vFinal + margin ≤
       (1 - 1 / (3 * (m : ℝ))) / staircaseBinWidth m)
     {j : ℕ}
-    (hj : j < staircaseBlockCount entrance horizon blockLength) :
-    let q := staircaseBlockCount entrance horizon blockLength
-    let length := staircaseBlockLength entrance horizon blockLength
+    (hj : j < tailMergedBlockCount entrance horizon blockLength) :
+    let q := tailMergedBlockCount entrance horizon blockLength
+    let length := tailMergedBlockLength entrance horizon blockLength
     let v₁ := staircaseUpperEndpointLowerFraction q globalWidth drift
       endpointFraction length j
     let v₂ := staircaseUpperEndpointUpperFraction q globalWidth drift
@@ -70,8 +78,8 @@ lemma staircaseUpperEndpointMarginConditions
     (¬j + 1 < q →
       staircaseBinEndpointLowerFraction m v₁ + margin ≤ uFinal ∧
       vFinal + margin ≤ staircaseBinEndpointUpperFraction m v₂) := by
-  let q := staircaseBlockCount entrance horizon blockLength
-  let length := staircaseBlockLength entrance horizon blockLength
+  let q := tailMergedBlockCount entrance horizon blockLength
+  let length := tailMergedBlockLength entrance horizon blockLength
   let actualWidth := staircaseTubeWidth globalWidth drift length j
   let loss := 2 * drift * (blockLength : ℝ) / globalWidth ^ 2
   have hβ : 0 < staircaseBinWidth m := staircaseBinWidth_pos hm

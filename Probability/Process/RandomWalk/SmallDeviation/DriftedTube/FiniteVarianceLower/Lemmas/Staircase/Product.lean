@@ -6,8 +6,17 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Blocks.Assembly
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Rate.BinRate
+public import Mathlib.Basic.Real.Basic
+public import Mathlib.MeasureTheory.Measure.MeasureSpaceDef
+public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
+public import Probability.Distributions.Moments.Real
+public import Probability.Process.Filtration.ConditionalBlocks
+public import Probability.Process.RandomWalk.Path.Adapted.Filtration
+public import Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.Blocks.EventBridge
+public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.Binning
+import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Blocks.Assembly
+import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Binning.Parameters
+import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Rate.BinRate
 /-!
 # Finite staircase probability from the endpoint-window rate
 
@@ -21,7 +30,7 @@ The module-visible supporting lemma in this file is:
 
 This composes the narrowed-bin argument, central endpoint windows, and
 reverse Markov product in Wang Yiyang,
-*Asymptotic speed of the $N$-branching random walk with infinite offspring*,
+*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
 Chapter 3, proof of Lemma 3.5. Its assumptions spell out the width,
 terminal-margin, time-ratio, and global exponent comparisons for the
 varying temporal blocks.
@@ -30,12 +39,15 @@ varying temporal blocks.
 @[expose] public section
 
 open MeasureTheory ProbabilityTheory
-open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 
+open ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube
+
 /-- Uniform narrowed-tube rates feed directly into the finite staircase
-product under the quantitative block conditions in Wang Yiyang's proof of Lemma 3.5. -/
+product under the quantitative block conditions in the proof of Wang Yiyang,
+*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
+Chapter 3, Lemma 3.5. -/
 lemma exists_uniform_staircaseProbability_ge_product
     {ν : Measure ℝ} [IsProbabilityMeasure ν]
     {sigma d uInterior vInterior uFinal vFinal : ℝ}

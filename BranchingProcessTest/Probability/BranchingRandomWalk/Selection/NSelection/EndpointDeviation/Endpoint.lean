@@ -1,4 +1,4 @@
-import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint
+import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.Basic
 /-!
 # Axiom audit for the finite-horizon Aïdékon--Hu endpoint estimate
 

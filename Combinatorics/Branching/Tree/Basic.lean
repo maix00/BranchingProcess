@@ -11,6 +11,11 @@ public import Combinatorics.UlamHarris.Tree.Defs
 /-!
 # Deterministic branching trees
 
+## Public declarations
+
+* `Combinatorics.Branching.Tree α` is the deterministic specialization
+  `Combinatorics.UlamHarris.Tree α`, with no probability law.
+
 This layer contains no probability law. A branching tree is the genealogical
 Ulam--Harris object on which later random tree laws are placed.
 -/

@@ -27,10 +27,9 @@ def InHorizontalTube (a width : ℝ) (n : ℕ)
     -a * width ≤ AdditivePath.displacement (k + 1) increment ∧
       AdditivePath.displacement (k + 1) increment ≤ (1 - a) * width
 
-/-- The paper's interval `[lower, lower + width]`, when it contains zero,
-is the horizontal tube with parameter `a = -lower / width`. This keeps the
-paper's translated-interval statement exact while reusing the centered-tube
-probability and block lemmas. -/
+/-- A translated interval `[lower, lower + width]` containing zero is the
+horizontal tube with parameter `a = -lower / width`; its path event is
+therefore equivalent to the centered-tube event. -/
 theorem inHorizontalTube_iff_Icc
     {lower width : ℝ} (hwidth : 0 < width)
     (hlower : lower ≤ 0) (hupper : 0 ≤ lower + width)

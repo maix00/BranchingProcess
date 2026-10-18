@@ -6,15 +6,15 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Scale
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.BlockScale
-public import Probability.Process.RandomWalk.Path.Corridor.Horizontal
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Scale.Core
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Scale.BlockScale
+public import Probability.Process.RandomWalk.Path.Corridor.Horizontal.Core
 public import Probability.Process.RandomWalk.FunctionalLimit.NormalizedStep.Block
 public import Probability.Process.RandomWalk.FunctionalLimit.Stable.PathLimit.Block
 public import Probability.Distributions.Stable.Attraction.Norming.Inverse
-public import Probability.Sequence.IID
+public import Probability.Sequence.IID.Basic
 public import Probability.Process.Stable.SmallDeviation.EscapeRate.PathLaw.Basic
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.Horizontal
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.Horizontal.Basic
 /-!
 # One-block corridors for the stable Mogulskii route
 
@@ -32,6 +32,12 @@ by which the Gaussian specialization reuses the diffusive estimates.
 The one-block estimate is conditional on the block path-law limit: the last
 theorem transfers an explicit `J₁` limit to the corridor probability when the
 limiting path law gives zero mass to the corridor boundary.
+
+The source one-block comparison is Lemma 3(c) of A. A. Mogul'skii,
+“Small deviations in the sample function space,” *Teoriya Veroyatnostei i ee
+Primeneniya* 19(4) (1974), 755–765; English translation, “Small Deviations in
+a Space of Trajectories,” *Theory of Probability and Its Applications* 19(4)
+(1975), 726–736, DOI 10.1137/1119081.
 -/
 
 @[expose] public section

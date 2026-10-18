@@ -1,4 +1,4 @@
-import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.LargeDrawdown
+import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Drawdown.Large
 /-!
 # Axiom audit for the selected-population large-drawdown estimate
 

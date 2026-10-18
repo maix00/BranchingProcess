@@ -14,7 +14,19 @@ public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Ran
 
 The endpoint-core product lower bound and the selected-cell range upper bound
 give the exact stable logarithmic rate for every admissible `M₂` step
-corridor.
+corridor. The public theorem is:
+
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.tendsto_scaledLog_normalizedStepCorridor_eq_energyRate`:
+  for the corridor event $A_n$, its probability is eventually positive and
+  $\mathrm{stableSmallDeviationRate}(\alpha,\nu,\mathrm{scale},n)\log\mathbb P(A_n)
+  \to C2^\alpha\mathcal E_\alpha(c)$.
+
+This is the finite-partition random-walk rate in A. A. Mogul'skii, “Small
+deviations in the sample function space,” Theorem 3, Section 4, p. 764,
+*Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974), 755--765; English
+translation, “Small Deviations in a Space of Trajectories,” *Theory of
+Probability and Its Applications* 19(4) (1975), 726--736,
+DOI 10.1137/1119081.
 -/
 
 open Filter MeasureTheory
@@ -30,7 +42,11 @@ open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Discrete
 
 /-- Exact stable small-deviation asymptotics for a finite-partition `M₂`
 corridor. The returned positivity statement justifies the real logarithm for
-all sufficiently large horizons. -/
+all sufficiently large horizons. This is the discrete random-walk rate in
+A. A. Mogul'skii, “Small deviations in the sample function space,” Theorem 3,
+Section 4, p. 764 of the Russian original; English translation, “Small
+Deviations in a Space of Trajectories,” *Theory of Probability and Its
+Applications* 19(4) (1975), 726--736, DOI 10.1137/1119081. -/
 theorem tendsto_scaledLog_normalizedStepCorridor_eq_energyRate
     {ν μ : Measure ℝ} [IsProbabilityMeasure ν] [IsProbabilityMeasure μ]
     {α C : ℝ} {normalization scale : ℕ → ℝ}

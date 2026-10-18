@@ -6,9 +6,9 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.Horizontal
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.FromIncrementLaw.HorizontalTube
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.Horizontal.Basic
 public import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
+public import Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.FiniteVarianceUpper.Lemmas.Partition.Parameters
 
 /-!
 # Equal-partition inputs for the horizontal-tube upper bound
@@ -19,62 +19,43 @@ Write
     \le(1-a)\Delta\ \text{for }1\le j\le L\},\qquad
   \alpha_{m,j}:=\frac{1-j/m}{1+1/m}.
 \]
-Here `S_j` is the partial sum of the IID increments with centered law `ν`.
+Here $S_j=\sum_{i=0}^{j-1}\xi_i$ is the partial sum of the IID increments
+with centered law `ν`.
 
 The proof-specific module-visible declarations are:
 
-- `partitionTubeParameter`, `partitionTubeWidth`, and `partitionTubeEvent`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube.partitionTubeParameter`,
+  and `ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube.partitionTubeWidth`:
   the fixed translated corridors used to cover the offsets $a\in[0,1]$.
-- `smallDeviationBlockFactor` and `smallDeviationBlockLength`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube.smallDeviationBlockFactor` and
+  `ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube.smallDeviationBlockLength`:
   the factor and block length in the finite-width iteration.
-- `horizontalTube_subset_some_partitionTubeEvent`: for `m≥1`, `a∈[0,1]`,
-  and `Δ>0`, some `j∈{0,…,m−1}` satisfies
-  \(T_{a,\Delta,L}\subseteq T_{\alpha_{m,j},(1+1/m)\Delta,L}\).
-- `horizontalTubeProbability_le_one_partitionTube`: for the same parameters,
+- `ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube.horizontalTubeProbability_le_one_partitionTube`: for the same parameters,
   \(\exists j,\ \mathbb P_\nu(T_{a,\Delta,L})
     \le\mathbb P_\nu(T_{\alpha_{m,j},(1+1/m)\Delta,L})\).
-These are the proof inputs for Wang Yiyang, *Asymptotic speed of the
-$N$-branching random walk with infinite offspring*, Chapter 3, Lemma 3.2 and
-its following remark. The finite-width argument follows Aïdékon and Hu, *Average-weight
+These are the proof inputs for Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.2 and
+its following remark. The finite-width argument follows Elie Aïdékon and Yueyun Hu, *Average-weight
 percolation on the complete graph*, Lemma 4.1 (arXiv:2512.23266): it partitions
 the translations into equal intervals, selects one fixed corridor, and
 iterates the uniform one-block bound.
 -/
 
 open Filter MeasureTheory ProbabilityTheory
-open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete
+open ProbabilityTheory.RandomWalk
 open scoped ENNReal NNReal Topology
 
 @[expose] public section
 
-namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
-
-/-- Parameter of the `k`-th fixed corridor in an equal partition. -/
-noncomputable def partitionTubeParameter (m : ℕ) (k : Fin m) : ℝ :=
-  (1 - (k : ℝ) / m) / (1 + 1 / m)
-
-/-- Width of the fixed corridor obtained by enlarging a tube by the factor
-`1 + 1/m`. -/
-noncomputable def partitionTubeWidth (m : ℕ) (width : ℝ) : ℝ :=
-  (1 + 1 / m) * width
+namespace ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube
 
 /-- The fixed corridor event associated with one cell of the equal partition. -/
-def partitionTubeEvent (m : ℕ) (k : Fin m) (width : ℝ) (length : ℕ) :
+private def partitionTubeEvent (m : ℕ) (k : Fin m) (width : ℝ) (length : ℕ) :
     Set (ℕ → ℝ) :=
   {increment | InHorizontalTube (partitionTubeParameter m k)
     (partitionTubeWidth m width) length increment}
 
-/-- Integer block length at width index `n` and remainder coefficient `u`.
-The factor `1/2` leaves room for the floor rounding while retaining the
-remainder `u * Δ^v`. -/
-noncomputable def smallDeviationBlockFactor (u v d : ℝ) (n : ℕ) : ℕ :=
-  ⌊u * (n : ℝ) ^ v / (2 * d)⌋₊ + 1
-
-noncomputable def smallDeviationBlockLength (u v d : ℝ) (n : ℕ) : ℕ :=
-  n ^ 2 * smallDeviationBlockFactor u v d n
-
 /-- A point of `[0,1]` lies in one of the `m` closed equal subintervals. -/
-private theorem exists_equalPartition_index {m : ℕ} (hm : 0 < m)
+private lemma exists_equalPartition_index {m : ℕ} (hm : 0 < m)
     {x : ℝ} (hx0 : 0 ≤ x) (hx1 : x ≤ 1) :
     ∃ k : Fin m, (k : ℝ) / m ≤ x ∧ x ≤ ((k : ℝ) + 1) / m := by
   let q := Nat.floor ((m : ℝ) * x)
@@ -114,7 +95,7 @@ private theorem exists_equalPartition_index {m : ℕ} (hm : 0 < m)
 /-- Every horizontal tube whose interval contains zero lies in one of the
 fixed corridors from the equal partition. The corridor boundaries are
 `(-1+k/m) width` and `(k+1) width/m`. -/
-theorem horizontalTube_subset_some_partitionTubeEvent
+private lemma horizontalTube_subset_some_partitionTubeEvent
     {m length : ℕ} (hm : 0 < m) {a width : ℝ}
     (ha0 : 0 ≤ a) (ha1 : a ≤ 1) (hwidth : 0 < width) :
     ∃ k : Fin m,
@@ -166,7 +147,7 @@ theorem horizontalTube_subset_some_partitionTubeEvent
 
 /-- A translated tube is contained in one fixed corridor from the finite
 equal partition, with the index depending only on its translation. -/
-theorem horizontalTubeProbability_le_one_partitionTube
+lemma horizontalTubeProbability_le_one_partitionTube
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     {m length : ℕ} (hm : 0 < m) {a width : ℝ}
     (ha0 : 0 ≤ a) (ha1 : a ≤ 1) (hwidth : 0 < width) :
@@ -185,6 +166,6 @@ theorem horizontalTubeProbability_le_one_partitionTube
       simp [partitionTubeEvent, horizontalTubeProbability]
 
 
-end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
+end ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube
 
 end

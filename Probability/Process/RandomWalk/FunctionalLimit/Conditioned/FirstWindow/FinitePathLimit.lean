@@ -7,8 +7,8 @@ Authors: WANG Yiyang
 module
 
 public import Probability.ConvergenceInDistribution.Mapping
-public import Probability.Process.Brownian.AboveStart.FirstWindowCenteredFiniteHorizon
-public import Probability.Process.RandomWalk.FunctionalLimit.Donsker.FiniteHorizon
+public import Probability.Process.Brownian.AboveStart.FirstWindow.Shift.CenteredFiniteHorizon
+public import Probability.Process.RandomWalk.FunctionalLimit.Donsker.Path.FiniteHorizon
 
 /-!
 # Donsker convergence after a finite first-window shift
@@ -21,8 +21,7 @@ The public theorem in this file is:
   the law of the centered shift of the projected Brownian path.
 
 This is the centered continuous-mapping step corresponding to (3.3) of Erwin Bolthausen,
-*On a functional central limit theorem for random walks conditioned to
-stay positive*, Theorem 3.2, Ann. Probab. 4(3) (1976), 480--485,
+*On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*, Theorem 3.2, Ann. Probab. 4(3) (1976), 480--485,
 DOI 10.1214/aop/1176996098. The centered map is required by the
 random-walk block in equation (3.2) and by the limit described on
 p. 484; the printed definition of $\Phi_s$ on p. 482 omits this

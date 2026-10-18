@@ -6,8 +6,24 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Concrete.Lower
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.EntranceBridge
+public import Mathlib.MeasureTheory.Measure.MeasureSpaceDef
+public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
+public import Algebra.BigOperators.AdditivePath.Basic
+public import Probability.Distributions.Moments.Real
+public import Probability.Sequence.Filtration
+public import Probability.Sequence.IID.Basic
+public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.EndpointWindow
+public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.Binning
+public import Probability.Process.RandomWalk.Path.Block.Partition.TailMerged
+public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.BlockTube
+public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.EndpointEvent
+public import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.Event
+import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Concrete.LowerBound
+import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.EntranceBridge
+import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.Measurability
+import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.Binning
+import Probability.Process.RandomWalk.Path.Block.Partition.TailMerged
+import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.BlockTube
 /-!
 # Concrete staircase lower bound after a robust entrance
 
@@ -20,9 +36,9 @@ The module-visible supporting lemma in this file is:
   $\mathbb P(E)\ge\exp(-d'L/\Delta^2)$.
 
 This is the final finite-block multiplication in Wang Yiyang,
-*Asymptotic speed of the $N$-branching random walk with infinite offspring*,
+*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
 Chapter 3, proof of Lemma 3.5. The robust entrance event is a subevent of
-the Appendix A.2 transition event with terminal interval contained in the
+the transition event in Appendix A.2, Lemma A.7, with terminal interval contained in the
 first horizontal block's central window.
 -/
 
@@ -30,7 +46,6 @@ first horizontal block's central window.
 
 open MeasureTheory ProbabilityTheory
 open ProbabilityTheory.RandomWalk.SmallDeviation.Entrance
-open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 
@@ -57,30 +72,30 @@ lemma exists_concreteStaircaseLowerBound_of_robustEntrance
         0 < blockLength → 0 < globalWidth → 0 < margin →
         0 ≤ drift → 0 ≤ blockRate →
         10 * drift * (blockLength : ℝ) < globalWidth ^ 3 →
-        (∀ j, j < staircaseBlockCount entrance horizon blockLength →
+        (∀ j, j < tailMergedBlockCount entrance horizon blockLength →
           let width := staircaseTubeWidth globalWidth drift
-            (staircaseBlockLength entrance horizon blockLength) j
+            (tailMergedBlockLength entrance horizon blockLength) j
           let v₁ := staircaseEndpointLowerFraction
-            (staircaseBlockCount entrance horizon blockLength)
+            (tailMergedBlockCount entrance horizon blockLength)
             globalWidth drift
-            (staircaseBlockLength entrance horizon blockLength) j
+            (tailMergedBlockLength entrance horizon blockLength) j
           let v₂ := staircaseEndpointUpperFraction
-            (staircaseBlockCount entrance horizon blockLength)
+            (tailMergedBlockCount entrance horizon blockLength)
             globalWidth drift endpointFraction
-            (staircaseBlockLength entrance horizon blockLength) j
+            (tailMergedBlockLength entrance horizon blockLength) j
           let narrowedWidth := staircaseBinWidth m * width
           width₀ ≤ ⌊narrowedWidth⌋₊ ∧
           1 / margin ≤ narrowedWidth ∧
           ratio₀ * (⌊narrowedWidth⌋₊) ^ 2 ≤
-            staircaseBlockLength entrance horizon blockLength j ∧
+            tailMergedBlockLength entrance horizon blockLength j ∧
           narrowedRate * globalWidth ^ 2 ≤
             blockRate * (⌊narrowedWidth⌋₊ : ℝ) ^ 2 ∧
-          (j + 1 < staircaseBlockCount entrance horizon blockLength →
+          (j + 1 < tailMergedBlockCount entrance horizon blockLength →
             staircaseBinEndpointLowerFraction m v₁ + margin ≤
               uInterior ∧
             vInterior + margin ≤
               staircaseBinEndpointUpperFraction m v₂) ∧
-          (¬j + 1 < staircaseBlockCount entrance horizon blockLength →
+          (¬j + 1 < tailMergedBlockCount entrance horizon blockLength →
             staircaseBinEndpointLowerFraction m v₁ + margin ≤
               uFinal ∧
             vFinal + margin ≤

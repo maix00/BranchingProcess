@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.FirstWindow.FiniteTime
-public import Probability.Process.Brownian.AboveStart.FirstWindow
+public import Probability.Process.Brownian.AboveStart.FirstWindow.Basic
 
 /-!
 # Approximation by finite first-window times
@@ -19,8 +19,7 @@ The public theorem in this file is:
   normalized polygonal path has no eligible unit window tends to zero.
 
 This is the probability comparison following equations (3.5)--(3.7) in
-Erwin Bolthausen, *On a functional central limit theorem for random walks
-conditioned to stay positive*, Theorem 3.2, Ann. Probab. 4(3) (1976),
+Erwin Bolthausen, *On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*, Theorem 3.2, Ann. Probab. 4(3) (1976),
 480--485, DOI 10.1214/aop/1176996098. For each fixed cutoff $s$,
 the unrestricted failure event lies inside the failure event for $T^s$;
 its limiting Brownian probability tends to zero as $s\to\infty$.

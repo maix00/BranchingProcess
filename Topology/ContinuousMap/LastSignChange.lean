@@ -75,9 +75,10 @@ The endpoint-sign version differs only on paths ending at zero. The
 functional is used in the sketch at the end of Erwin Bolthausen,
 *On a functional central limit theorem for
 random walks conditioned to stay positive*, Ann. Probab. 4(3) (1976),
-480--485, page 484. The last-zero time is the one used in Donald L.
-Iglehart, *Functional Central Limit Theorems for Random Walks Conditioned
-to Stay Positive*, Ann. Probab. 2(4) (1974), 608--619, Section 3.
+480--485, page 484, DOI 10.1214/aop/1176996098. The last-zero time is the one
+used in Donald L. Iglehart, *Functional Central Limit Theorems for Random
+Walks Conditioned to Stay Positive*, Ann. Probab. 2(4) (1974), 608--619,
+Section 3, DOI 10.1214/aop/1176996607.
 -/
 
 @[expose] public section
@@ -92,8 +93,10 @@ noncomputable def lastOppositeSign (f : C(unitInterval, ℝ)) : unitInterval :=
   sSup {t : unitInterval | f t * f ⊤ < 0}
 
 /-- Earliest time from which the path never again takes sign opposite
-to its endpoint. When the endpoint is nonzero this agrees with the
-sign-stable tail time on page 484 of Bolthausen's article. -/
+to its endpoint. When the endpoint is nonzero this agrees with the sign-stable tail time in
+Erwin Bolthausen, *On a Functional Central Limit Theorem for Random Walks
+Conditioned to Stay Positive*, page 484, Ann. Probab. 4(3) (1976), 480--485,
+DOI 10.1214/aop/1176996098. -/
 noncomputable def firstNoSignChangeStart
     (f : C(unitInterval, ℝ)) : unitInterval :=
   sInf {t : unitInterval | ∀ s : unitInterval,
@@ -101,7 +104,9 @@ noncomputable def firstNoSignChangeStart
 
 /-- The earliest time from which every later path value has one weak
 sign. This is Bolthausen's original definition, including paths with
-zero endpoint. -/
+zero endpoint; see Erwin Bolthausen, *On a Functional Central Limit Theorem
+for Random Walks Conditioned to Stay Positive*, p. 484, Ann. Probab. 4(3)
+(1976), 480--485, DOI 10.1214/aop/1176996098. -/
 noncomputable def firstSignStableStart
     (f : C(unitInterval, ℝ)) : unitInterval :=
   sInf {t : unitInterval |
@@ -246,7 +251,7 @@ theorem measurable_firstNoSignChangeStart :
   intro c
   exact (isOpen_setOf_lt_lastOppositeSign c).measurableSet
 
-private theorem firstAvoidanceStart_eq_lastOccurrence
+private lemma firstAvoidanceStart_eq_lastOccurrence
     (P : unitInterval → Prop) :
     sInf {t : unitInterval | ∀ s : unitInterval, t ≤ s → ¬ P s} =
       sSup {t : unitInterval | P t} := by
@@ -274,7 +279,7 @@ private noncomputable def lastNegative (f : C(unitInterval, ℝ)) : unitInterval
 private noncomputable def lastPositive (f : C(unitInterval, ℝ)) : unitInterval :=
   sSup {t : unitInterval | 0 < f t}
 
-private theorem firstSignStableStart_eq_min (f : C(unitInterval, ℝ)) :
+private lemma firstSignStableStart_eq_min (f : C(unitInterval, ℝ)) :
     firstSignStableStart f = min (lastNegative f) (lastPositive f) := by
   have hset : {t : unitInterval |
       (∀ s : unitInterval, t ≤ s → 0 ≤ f s) ∨
@@ -295,7 +300,7 @@ private theorem firstSignStableStart_eq_min (f : C(unitInterval, ℝ)) :
     firstAvoidanceStart_eq_lastOccurrence]
   rfl
 
-private theorem isOpen_setOf_lt_lastOccurrence
+private lemma isOpen_setOf_lt_lastOccurrence
     (c : unitInterval) (Z : Set (C(unitInterval, ℝ) × unitInterval))
     (hZ : IsOpen Z) :
     IsOpen {f : C(unitInterval, ℝ) |
@@ -317,7 +322,7 @@ private theorem isOpen_setOf_lt_lastOccurrence
   rw [himage]
   exact isOpenMap_fst U hU
 
-private theorem measurable_lastNegative : Measurable lastNegative := by
+private lemma measurable_lastNegative : Measurable lastNegative := by
   apply measurable_of_Ioi
   intro c
   have hZ : IsOpen {p : C(unitInterval, ℝ) × unitInterval |
@@ -329,7 +334,7 @@ private theorem measurable_lastNegative : Measurable lastNegative := by
     simp only [Set.mem_preimage, Set.mem_Iio, Set.mem_ofPred_eq]
   exact (isOpen_setOf_lt_lastOccurrence c _ hZ).measurableSet
 
-private theorem measurable_lastPositive : Measurable lastPositive := by
+private lemma measurable_lastPositive : Measurable lastPositive := by
   apply measurable_of_Ioi
   intro c
   have hZ : IsOpen {p : C(unitInterval, ℝ) × unitInterval |
@@ -454,7 +459,10 @@ noncomputable def lastSignChangeMeanderTransform
         (continuous_tailAffineTime (firstNoSignChangeStart f))).abs).div_const _⟩
 
 /-- Bolthausen's original terminal-sign-stable transform. Its start
-time observes both possible weak signs, including paths ending at zero. -/
+time observes both possible weak signs, including paths ending at zero. It is
+the terminal-segment transform in Erwin Bolthausen, *On a Functional Central
+Limit Theorem for Random Walks Conditioned to Stay Positive*, p. 484,
+Ann. Probab. 4(3) (1976), 480--485, DOI 10.1214/aop/1176996098. -/
 noncomputable def signStableMeanderTransform
     (f : C(unitInterval, ℝ)) : C(unitInterval, ℝ) :=
   ⟨(fun t => if firstSignStableStart f = ⊤ then 0 else
@@ -550,7 +558,7 @@ private noncomputable def rescaledTailAt
     Real.sqrt (1 - (start.1 : ℝ)),
     ((f.continuous.comp (continuous_tailAffineTime start.1)).abs).div_const _⟩
 
-private theorem continuous_tailAffineTime_pair :
+private lemma continuous_tailAffineTime_pair :
     Continuous (fun p : unitInterval × unitInterval =>
       tailAffineTime p.1 p.2) := by
   apply Continuous.subtype_mk
@@ -558,7 +566,7 @@ private theorem continuous_tailAffineTime_pair :
     (p.1 : ℝ) + (1 - (p.1 : ℝ)) * (p.2 : ℝ))
   fun_prop
 
-private theorem continuous_rescaledTailAt :
+private lemma continuous_rescaledTailAt :
     Continuous (fun p : C(unitInterval, ℝ) × nonterminalStart =>
       rescaledTailAt p.1 p.2) := by
   apply ContinuousMap.continuous_of_continuous_uncurry

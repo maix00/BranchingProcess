@@ -23,8 +23,7 @@ The public theorem in this file is:
 
 This is the finite-valued approximation to the strong Markov property
 used to identify the descending first-passage process in the Lévy
-decomposition cited in Erwin Bolthausen, *On a functional central limit
-theorem for random walks conditioned to stay positive*, Lemma 2.3,
+decomposition cited in Erwin Bolthausen, *On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*, Lemma 2.3,
 equation (2.2), Ann. Probab. 4(3) (1976), 480--485,
 DOI 10.1214/aop/1176996098, referring to Kiyosi Itô and Henry P.
 McKean, *Diffusion Processes and Their Sample Paths* (1965), §1.7.

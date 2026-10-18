@@ -10,8 +10,25 @@ public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Ran
 public import MeasureTheory.Measure.CadlagPath.PathClass.StepCorridor.Partition.LowerApproximation
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Partition
 
+import Topology.Cadlag.Skorokhod.PathClass.StepCorridor.Partition.LowerGeometry
+
 /-!
-# Sharp lower rates for prescribed finite-partition widths.
+# Sharp lower rates for prescribed finite-partition widths
+
+For cell $i$, let $w_i>0$ be a width. At the cell's left knot, assume either
+the lower boundary is $-\infty$, the upper boundary is $+\infty$, or $w_i$
+is strictly smaller than their finite gap. Write
+$P_n=\mathbb P_\nu(Y_n\in\operatorname{corridorSet}(U,L))$.
+The declaration in
+`ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete` is:
+
+- `eventually_iidSequenceLaw_normalizedStepCorridor_ge_targetRate`: under the
+  stable domain-of-attraction, process escape-rate, path tightness, start, and
+  trace-separation hypotheses, for every $\varepsilon>0$ eventually
+  $P_n>0$ and
+  $\displaystyle\sum_i\frac{C|I_i|}{(w_i/2)^\alpha}-\varepsilon
+   \le \rho_n\log P_n$, where $\rho_n$ is the stable small-deviation rate
+  and $|I_i|$ is the duration of partition cell $i$.
 -/
 
 open Skorokhod.PathClass.StepCorridor

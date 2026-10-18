@@ -11,7 +11,7 @@ public import Mathlib.Algebra.Order.Floor.Semiring
 public import Mathlib.MeasureTheory.Measure.Basic
 public import Mathlib.Order.Filter.IsBounded
 public import Mathlib.Topology.UnitInterval
-public import Topology.Cadlag.Skorokhod.LinearPath
+public import Topology.Cadlag.Skorokhod.Path.Linear
 public import Algebra.BigOperators.PartialSum
 
 /-!
@@ -19,19 +19,19 @@ public import Algebra.BigOperators.PartialSum
 
 The public objects and principal theorems are:
 
-- `normalizedTime`, `cyclicRotatePath`, and `offsetCorridorPath`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.normalizedTime`, `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.cyclicRotatePath`, and `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.offsetCorridorPath`:
   normalized time, cyclic path rotation, and the offset corridor event.
-- `exists_middleOffset_meshPoint` and
-  `linearTube_subset_middleOffsetCorridor`: select a spatial mesh point
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.exists_middleOffset_meshPoint` and
+  `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.linearTube_subset_middleOffsetCorridor`: select a spatial mesh point
   whose corridor contains a path close to the line $t\mapsto t/2$.
-- `exists_cyclicPartialSum_mem_Icc_of_linearTube` and
-  `exists_offsetCorridorPath_of_linearTube_allOffsets`: a cyclic origin
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.exists_cyclicPartialSum_mem_Icc_of_linearTube` and
+  `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.exists_offsetCorridorPath_of_linearTube_allOffsets`: a cyclic origin
   places every partial sum of such a path inside an offset interval.
-- `exists_cyclicPartialSum_mem_Icc_of_negativeLinearTube` and
-  `cyclicPartialSum_last`: the reflected line has a rotated corridor in
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.exists_cyclicPartialSum_mem_Icc_of_negativeLinearTube` and
+  `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.cyclicPartialSum_last`: the reflected line has a rotated corridor in
   $[-3/4,0]$, and rotation preserves the terminal sum $S_n$.
-- `exists_offsetCorridorPath_of_linearTube_lowerEdge` and
-  `exists_offsetCorridorPath_of_linearTube_upperEdge`: the two boundary
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.exists_offsetCorridorPath_of_linearTube_lowerEdge` and
+  `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.exists_offsetCorridorPath_of_linearTube_upperEdge`: the two boundary
   starting positions satisfy the corresponding corridor inclusions.
 
 If a finite partial-sum path stays close to the line `t ↦ t / 2`, rotating

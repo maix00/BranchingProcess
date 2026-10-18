@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Mathlib.MeasureTheory.Constructions.Pi
-public import MeasureTheory.Measure.FiniteCover
+public import MeasureTheory.Measure.Finite.Cover
 
 /-!
 # Finite coordinate reindexing of an IID product law

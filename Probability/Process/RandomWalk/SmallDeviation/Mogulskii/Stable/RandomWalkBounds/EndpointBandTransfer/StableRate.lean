@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.EndpointBandTransfer
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.Endpoint.BandTransfer
 public import Probability.Process.Stable.SmallDeviation.EscapeRate.Endpoint
 public import Probability.Process.Stable.SmallDeviation.EscapeRate.PathLaw.Transfer
 public import Topology.Cadlag.Skorokhod.Corridor.Endpoint

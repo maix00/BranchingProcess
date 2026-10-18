@@ -7,8 +7,8 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.Path.Block.Law.Coordinates
-public import Probability.Process.RandomWalk.Path.Window
-public import Probability.Sequence.IID.StoppingTime
+public import Probability.Process.RandomWalk.Path.Window.Core
+import Probability.Sequence.IID.Blocks.StoppingTime
 
 /-!
 # IID laws of finite interval path events

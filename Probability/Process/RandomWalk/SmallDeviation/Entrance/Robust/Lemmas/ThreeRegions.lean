@@ -6,19 +6,25 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.Lemmas.EdgeProbability
+public import Mathlib.Basic.Real.Basic
+public import Mathlib.Data.Set.Defs
+public import Mathlib.MeasureTheory.Measure.MeasureSpaceDef
+public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
+public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition.Event
+public import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.Event
+import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.Lemmas.EdgeProbability
 /-!
 # Three-region bound for a robust diffusive entrance
 
 The module-visible supporting lemma in this file is:
 
-- `measure_robustMovingTransitionEvent_ge_threeRegionMinimum`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.measure_robustMovingTransitionEvent_ge_threeRegionMinimum`:
   the minimum of the middle Donsker bound and the two independent-prefix
   meander bounds applies uniformly to every $x\in[0,\Delta]$.
 
 This is the three starting-region division in Wang Yiyang,
-*Asymptotic speed of the $N$-branching random walk with infinite offspring*,
-Appendix A.2, proof of the meander transition lemma. The terminal window
+*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
+Appendix A.2, Lemma A.7. The terminal window
 is narrowed to the robust interval needed in Chapter 3, Lemma 3.5.
 -/
 

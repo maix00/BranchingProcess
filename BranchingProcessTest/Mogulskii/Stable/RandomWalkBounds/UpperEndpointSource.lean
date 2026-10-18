@@ -1,5 +1,5 @@
 import Probability.Distributions.Stable.Support.BoundedSupport
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.UpperEndpointSource
+import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.Endpoint.UpperSource
 #print axioms ProbabilityTheory.IsStrictlyAlphaStable.measure_Icc_lt_one_of_lt_two
 #print axioms ProbabilityTheory.IsStrictlyAlphaStable.measure_map_rpow_Icc_lt_one_of_lt_two
 #print axioms ProbabilityTheory.IsStrictlyAlphaStable.measure_Ioi_pos_indexTwo

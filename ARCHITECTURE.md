@@ -17,16 +17,21 @@ than the application that first needs it.
 | `Probability/BranchingRandomWalk` | Random branching models and their bridges to general process and measure interfaces | offspring fields, spines, selection and coupling |
 
 General finite-history drawdown predicates and their measurability belong to
-`Probability/Process/RandomWalk/Path/Drawdown.lean`. Random-walk probability
+`Probability/Process/RandomWalk/Path/Event/Drawdown.lean`. Random-walk probability
 bounds for those paths belong to `Probability/Process/RandomWalk/SmallDeviation/Drawdown/`.
 Generic conditional-probability integration and successive-block product
 bounds belong to `Probability/Process/Filtration/ConditionalBlocks.lean`;
 IID prefix/next-block conditional integration belongs to
-`Probability/Sequence/IID/ConditionalBlocks.lean`. The law transfer between
+`Probability/Sequence/IID/Blocks/Conditional.lean`. The law transfer between
 an infinite IID walk and a finite closed-interval block belongs to
 `Probability/Process/RandomWalk/Path/Block/Law/FiniteInterval.lean`, while
 translation of a finite interval by its initial position belongs beside the
 `FiniteInClosedInterval` definition in `Path/Window/Basic.lean`.
+Generic finite block coordinates and their measurability belong to
+`Probability/Sequence/Block.lean`; their product-law interface for canonical
+IID sequences belongs to `Probability/Sequence/IID/Basic.lean`. These
+sequence-level facts are independent of stopping times and random-walk
+applications.
 Uniform one-block estimates for a killed interval kernel and their iteration
 to a horizontal-tube bound belong to
 `Probability/Process/RandomWalk/SmallDeviation/HorizontalTube/BlockIteration.lean`;
@@ -79,6 +84,21 @@ when it contributes a mathematical interface absent from those objects. Put
 that interface in the lowest layer whose assumptions suffice. A named
 specialization is appropriate when it records a real model choice or provides
 a useful theorem interface; a second copy of a general Mathlib concept is not.
+
+Use across several modules is a prompt to review ownership, not by itself a
+reason to promote a declaration to a broader public layer. First search for a
+more abstract Mathlib or library interface, then compare its assumptions and
+semantics with the actual use sites. For example, finite first-hit selection
+uses Mathlib's `MeasureTheory.hittingBtwn` directly. The separate
+`Probability.Process.TimeGrid.Ceiling` interface abstracts only the additional
+time-threshold operation and its convergence and measurability results over
+an arbitrary domain; continuous-path first passage remains a specialization
+under `Path/FirstPassage/`. When the local source does not settle whether a
+candidate interface is already available, consult the official Mathlib
+documentation/source and relevant references, then verify the candidate
+against the pinned dependency revision. Record the candidate and the semantic
+or hypothesis gap that motivates a local interface; do not promote a theorem
+solely to reduce duplicate code or because it has multiple callers.
 
 For the detailed ownership map and examples of reused Mathlib objects, see
 [`docs/architecture/MODULE_OWNERSHIP.md`](docs/architecture/MODULE_OWNERSHIP.md).

@@ -24,8 +24,7 @@ The public theorems in this file are:
   the same assertion for the unrestricted first unit window.
 
 This is equation (2.4) of Lemma 2.3 in Erwin Bolthausen,
-*On a functional central limit theorem for random walks conditioned to
-stay positive*, Ann. Probab. 4(3) (1976), 480--485,
+*On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*, Ann. Probab. 4(3) (1976), 480--485,
 DOI 10.1214/aop/1176996098. The proof uses Bolthausen's countable
 rational-interval covering of repeated running-minimum values. Bolthausen
 first introduces an event with three zeros of the height above the minimum.

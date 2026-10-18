@@ -7,15 +7,41 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.Partition.Corridor
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.SourcePath
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Path.SourcePath
 
 /-!
 # Floor partitions for the source terminal-left convention
 
-The source convention records the positions `S₀, …, S_(n-1)`.  Its finite
-partition therefore uses the usual floor indices at every knot below `1`,
-and uses `n - 1` at the terminal knot.  This file records that indexing and
-the corresponding variable cell lengths.
+Let $t_j$ be the common partition grid, $F_n(t)=\lfloor nt\rfloor$, and
+$G_n(j)=\min(F_n(t_j),n-1)$. The source path records $S_0,\ldots,S_{n-1}$,
+so its last knot is indexed by $n-1$. The declarations in
+`ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Discrete` are:
+
+- `sourcePartitionKnotIndex`: the clipped knot index $G_n(j)$.
+- `sourcePartitionCellStepLengths`: the cell length
+  $\ell_j=G_n(j+1)-G_n(j)$ on valid cells, extended by zero afterwards.
+- `sourcePartitionKnotIndex_mono`, `sourcePartitionKnotIndex_zero`, and
+  `sourcePartitionKnotIndex_last`: $G_n$ is monotone, $G_n(0)=0$, and
+  $G_n(m-1)=n-1$, where $m$ is the number of common knots.
+- `commonPartitionFloorTimeIndex_le_n_sub_one_of_lt_top`: for $t<1$,
+  $F_n(t)\le n-1$.
+- `sourcePartitionKnotIndex_eq_floor_of_lt_last`: $G_n(j)=F_n(t_j)$ when
+  $j<m-1$.
+- `sourceNormalizedStepCadlagPathIcc_commonPartitionGrid_apply`:
+  $Y_n^{\mathrm{src}}(t_j)=s_n^{-1}D_{G_n(j)}$ for $n>0$.
+- `sourcePartitionCellStepLengths_eq_floorDifference` and
+  `blockStart_sourcePartitionCellStepLengths`:
+  $\ell_i=G_n(i+1)-G_n(i)$ and $\sum_{j<i}\ell_j=G_n(i)$.
+- `sourcePartitionCellStepLength_eq_common_of_not_last`:
+  $\ell_i=q_i(n)$ before the last cell, where $q_i(n)$ is its ordinary
+  floor-rounded length.
+- `sourcePartitionCellStepLength_eq_common_sub_one_last`:
+  $\ell_{m-2}=q_{m-2}(n)-1$ on the terminal cell.
+- `tendsto_sourcePartitionCellStepLength_div_nat`:
+  $\ell_i(n)/n\to t_{i+1}-t_i$ for every fixed cell.
+
+Thus the source convention changes only the terminal knot and the terminal
+cell length; the macroscopic cell lengths have the same limits.
 -/
 
 @[expose] public section
@@ -156,11 +182,11 @@ theorem blockStart_sourcePartitionCellStepLengths
         sourcePartitionKnotIndex n upper lower j := by
     induction j with
     | zero =>
-        simp [sourcePartitionCellStepLengths, sourcePartitionKnotIndex_zero]
+        simp [sourcePartitionKnotIndex_zero]
     | succ j ih =>
         have hjlt : j < (StepBoundary.commonKnots upper lower).card - 1 := by omega
         rw [AdditivePath.blockStart_succ, ih (by omega)]
-        rw [sourcePartitionCellStepLengths, dif_pos hjlt]
+        rw [sourcePartitionCellStepLengths, dite_eq_left hjlt]
         simpa [Nat.succ_eq_add_one] using
           (Nat.add_sub_of_le
             (sourcePartitionKnotIndex_mono n upper lower (Nat.le_succ j)))

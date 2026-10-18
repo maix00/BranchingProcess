@@ -7,8 +7,8 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.Brownian.Meander.LastZeroLaw
-public import Probability.Process.Brownian.Reflection.IntervalMinimum
-public import Probability.Process.Path.TimeGrid.NonnegativeRationals
+public import Probability.Process.Brownian.Reflection.Path.IntervalMinimum
+public import Probability.Process.TimeGrid.Dense.NonnegativeRationals
 public import Topology.ContinuousMap.LastSignChange
 
 /-!
@@ -34,11 +34,11 @@ The public theorem in this file is:
 
 The proof uses atomlessness of interval minima at countably many
 rational starts. This identifies the two path transforms appearing on
-page 484 of Erwin Bolthausen, *On a functional central limit theorem
-for random walks conditioned to stay positive*, Ann. Probab. 4(3)
-(1976), 480--485, and Section 3 of Donald L. Iglehart,
-*Functional Central Limit Theorems for Random Walks Conditioned to
-Stay Positive*, Ann. Probab. 2(4) (1974), 608--619.
+page 484 and Theorem 3.2 of Erwin Bolthausen, *On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*, Ann. Probab.
+4(3) (1976), 480--485, DOI 10.1214/aop/1176996098, and Section 3, theorem
+(3.4), p. 616, of Donald L. Iglehart, *Functional Central Limit Theorems for
+Random Walks Conditioned to Stay Positive*, Ann. Probab. 2(4) (1974),
+608--619, DOI 10.1214/aop/1176996607.
 -/
 
 @[expose] public section
@@ -48,7 +48,7 @@ namespace ProbabilityTheory
 open MeasureTheory
 open scoped NNReal
 
-private theorem lastSignChange_eq_lastZero_of_intervalMinima
+private lemma lastSignChange_eq_lastZero_of_intervalMinima
     (f : C(ℝ≥0, ℝ)) (hf0 : f 0 = 0) (hf1 : f 1 ≠ 0)
     (hmin : ∀ q : ℚ≥0, nonnegativeRationalTime q < 1 →
       intervalMinimum f (nonnegativeRationalTime q) 1 ≠ 0 ∧
@@ -246,10 +246,11 @@ theorem IsBrownianReal.ae_continuousAt_lastSignChangeMeanderTransform
   exact ContinuousMap.continuousAt_lastSignChangeMeanderTransform_of_eq_lastZero
     _ heq hlt
 
-/-- The source transform agrees locally with the endpoint-sign version
-at every Brownian path whose endpoint is nonzero. Consequently the
-source transform is continuous almost surely as asserted on page 484
-of Bolthausen's article. -/
+/-- Bolthausen's original sign-stable transform agrees locally with the
+endpoint-sign transform at every Brownian path whose endpoint is nonzero.
+It is therefore continuous almost surely, as asserted on page 484 of Erwin
+Bolthausen, *On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*, Theorem 3.2, Ann. Probab. 4(3) (1976),
+480--485, DOI 10.1214/aop/1176996098. -/
 theorem IsBrownianReal.ae_continuousAt_signStableMeanderTransform
     {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
     [IsProbabilityMeasure P] {B : ℝ≥0 → Ω → ℝ}

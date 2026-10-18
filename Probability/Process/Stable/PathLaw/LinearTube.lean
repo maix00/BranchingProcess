@@ -7,17 +7,17 @@ Authors: WANG Yiyang
 module
 
 public import Mathlib.Probability.BrownianMotion.Basic
-public import Probability.Process.Stable.Brownian
+public import Probability.Process.Stable.Brownian.Basic
 public import Mathlib.Probability.Distributions.Gaussian.IsGaussianProcess.Independence
 public import Mathlib.Probability.Distributions.Gaussian.Real
 public import Mathlib.MeasureTheory.Measure.OpenPos
 public import Probability.Process.Stable.PathLaw.FullProcess
 public import Probability.Process.Stable.PathLaw.UnitInterval
 public import Probability.Process.Stable.SmallDeviation.EscapeRate.PathLaw.Transfer
-public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.FullCorridor
+public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.Entrance.FullCorridor
 public import Probability.Process.Path.Skorokhod.Corridor.Segment
 public import Probability.Process.Path.Cadlag.MeasurableMap
-public import Topology.Cadlag.Skorokhod.LinearPath
+public import Topology.Cadlag.Skorokhod.Path.Linear
 
 import Mathlib.Probability.Distributions.Gaussian.IsGaussianProcess.Basic
 import Mathlib.Probability.Distributions.Gaussian.HasGaussianLaw.Basic
@@ -48,7 +48,7 @@ private def brownianEndpointProcess {Ω : Type*}
     (B : ℝ≥0 → Ω → ℝ) (_ : Unit) : Ω → ℝ :=
   fun ω => B 1 ω
 
-private theorem rationalBrownianBridge_indep_endpoint
+private lemma rationalBrownianBridge_indep_endpoint
     {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
     {B : ℝ≥0 → Ω → ℝ} (hB : IsPreBrownianReal B P) :
     IndepFun (fun ω q => rationalBrownianBridge B q ω)
@@ -116,7 +116,7 @@ private theorem rationalBrownianBridge_indep_endpoint
   exact IsGaussianProcess.indepFun_of_covariance_eq_zero
     joint hmBridge hmEnd hcov
 
-private theorem gaussianReal_measure_Ioo_pos
+private lemma gaussianReal_measure_Ioo_pos
     (a radius : ℝ) (hradius : 0 < radius) :
     0 < gaussianReal 0 (1 : ℝ≥0) (Set.Ioo (a - radius) (a + radius)) := by
   have hvolume : (volume : Measure ℝ) ≪ gaussianReal 0 (1 : ℝ≥0) :=

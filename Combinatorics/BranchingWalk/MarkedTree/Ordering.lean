@@ -7,8 +7,8 @@ Authors: WANG Yiyang
 module
 
 public import Combinatorics.BranchingWalk.MarkedTree.Equivalence
-public import Combinatorics.BranchingWalk.Basic.Orderable
-public import Combinatorics.BranchingWalk.Basic.DisplacementMap
+public import Combinatorics.BranchingWalk.Basic.Ordering.Orderable
+public import Combinatorics.BranchingWalk.Basic.Position.DisplacementMap
 public import Combinatorics.BranchingWalk.Step.Ordering.Realization
 
 /-!

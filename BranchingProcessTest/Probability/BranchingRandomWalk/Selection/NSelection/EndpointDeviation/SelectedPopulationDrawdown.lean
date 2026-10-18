@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.SelectedPopulationDrawdown
+import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Drawdown.Population
 /-!
 # Axiom audit for the selected-population drawdown transfer
 

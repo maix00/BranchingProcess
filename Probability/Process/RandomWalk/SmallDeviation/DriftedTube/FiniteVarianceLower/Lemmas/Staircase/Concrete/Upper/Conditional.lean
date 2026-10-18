@@ -6,33 +6,45 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Concrete.Upper.Asymptotic
-public import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.ExponentialBudget
-public import Analysis.Asymptotics.IntermediatePowerBlock
+public import Mathlib.Basic.Real.Basic
+public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
+public import Mathlib.MeasureTheory.Measure.MeasureSpaceDef
+public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
+public import Algebra.BigOperators.AdditivePath.Basic
+public import Probability.Distributions.Moments.Real
+public import Probability.Sequence.Filtration
+public import Probability.Sequence.IID.Basic
+public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.Binning
+public import Probability.Process.RandomWalk.Path.Block.Partition.TailMerged
+public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.BlockTube
+public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.EndpointWindow
+public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.EndpointEvent
+public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Reflection
+public import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.Event
+import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Concrete.Upper.Asymptotic
+import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Concrete.EntranceBudget
+public import Analysis.Asymptotics.Scale.IntermediatePowerBlock
 
 /-!
 # Upper-endpoint tilted-tube bound from conditioned entrance estimates
 
-The module-visible supporting lemmas in this file are:
+The module-visible supporting lemma in this file is:
 
-- `eventually_concreteStaircaseUpperEndpointLowerBound_of_centeredFiniteVariance`:
-  for $t_1=\lfloor\Delta_n^2\rfloor$ and
-  $L_n\ge\lfloor\Delta_n^{2+\varepsilon}\rfloor$, the finite-variance
-  survival bounds for the walk and its reflection, the conditioned meander
-  transition estimate, and the staircase scale and margin conditions
-  imply $\mathbb P(E_{\rm upper})\ge\exp(-d'L_n/\Delta_n^2)$.
-- `eventually_concreteStaircaseUpperEndpointLowerBound_of_powerBlock`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.eventually_concreteStaircaseUpperEndpointLowerBound_of_powerBlock`:
   the same estimate with $\ell_n=\lfloor\Delta_n^{2+\eta}\rfloor$ and
   $0<\eta<\min(1,\varepsilon)$.
 
 This is the symmetric endpoint part of Wang Yiyang,
-*Asymptotic speed of the $N$-branching random walk with infinite offspring*,
-Chapter 3, proof of Lemma 3.5. The conditioned limit is stated in Caravenna--Chaumont,
-*Invariance principles for random walks conditioned to stay positive*,
-equation (3.3). The survival input follows from M. Bauer, C. Godrèche, and J.-M. Luck,
-*Statistics of persistent events in the binomial random walk: Will the
-drunken sailor hit the sober man?*, Appendix A, equation (A.7)
-(arXiv:cond-mat/9905252).
+*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
+Chapter 3, proof of Lemma 3.5. The conditioned limit is equation (3.3) of
+Francesco Caravenna and Loïc Chaumont, *Invariance principles for random walks
+conditioned to stay positive*, *Annales de l'Institut Henri Poincaré,
+Probabilités et Statistiques* 44(1) (2008), 170–190, DOI 10.1214/07-AIHP119.
+The survival input uses the finite cyclic-rotation cover described immediately
+after equation (A.3) in Appendix A of M. Bauer, C. Godrèche, and J.-M. Luck,
+*Statistics of persistent events in the binomial random walk: Will the drunken
+sailor hit the sober man?*, *Journal of Statistical Physics* 96 (1999),
+963–1019, DOI 10.1023/A:1004636216365, arXiv:cond-mat/9905252.
 -/
 
 @[expose] public section
@@ -40,13 +52,12 @@ drunken sailor hit the sober man?*, Appendix A, equation (A.7)
 open Filter MeasureTheory ProbabilityTheory
 open scoped NNReal Topology
 open ProbabilityTheory.RandomWalk.SmallDeviation.Entrance
-open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 
 /-- The inverse-square survival inputs for the walk and its reflection follow from
 the finite-variance hypotheses. -/
-lemma eventually_concreteStaircaseUpperEndpointLowerBound_of_centeredFiniteVariance
+private lemma eventually_concreteStaircaseUpperEndpointLowerBound_of_centeredFiniteVariance
     {ν : Measure ℝ} [IsProbabilityMeasure ν]
     {sigma narrowedRate uInterior vInterior uFinal vFinal : ℝ}
     (hν : IsCenteredSecondMoment ν (sigma ^ 2))

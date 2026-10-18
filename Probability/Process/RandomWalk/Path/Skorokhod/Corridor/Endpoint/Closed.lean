@@ -20,8 +20,7 @@ The public theorem in this file is:
   partial sum lies in $[u,v]$.
 
 This is the finite-grid identification used for $D_{N,\Delta}^{\theta}$
-in Wang Yiyang, *Asymptotic speed of the $N$-branching random walk with
-infinite offspring*, Chapter 3, Lemma 3.5, Appendix A.2.
+in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.5, and Appendix A.2, Lemma A.7.
 -/
 
 @[expose] public section

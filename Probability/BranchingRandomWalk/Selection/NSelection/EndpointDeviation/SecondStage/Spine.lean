@@ -27,13 +27,13 @@ open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete
 open ProbabilityTheory.BranchingRandomWalk.Spine
 
-private theorem history_coordinate_eq_displacement (n : ℕ)
+private lemma history_coordinate_eq_displacement (n : ℕ)
     (increment : ℕ → ℝ) (i : Fin (n + 1)) :
     RandomWalk.history n 0 increment i = AdditivePath.displacement i.val increment := by
   rw [RandomWalk.history_eq_fromIncrements]
   simp [AdditivePath.fromIncrements, AdditivePath.displacement]
 
-private theorem partialSum_prefixBlock_eq_displacement
+private lemma partialSum_prefixBlock_eq_displacement
     {prefixLength : ℕ} (increment : ℕ → ℝ)
     (j : Fin (prefixLength + 1)) :
     Fin.partialSum (Combinatorics.Sequence.blockCoordinates 0 prefixLength increment) j =
@@ -42,13 +42,13 @@ private theorem partialSum_prefixBlock_eq_displacement
     AdditivePath.blockSum_eq_displacement_natAdd]
   simp
 
-private theorem history_eq_partialSum_prefixBlock
+private lemma history_eq_partialSum_prefixBlock
     {n : ℕ} (increment : ℕ → ℝ) (j : Fin (n + 1)) :
     RandomWalk.history n 0 increment j =
       Fin.partialSum (Combinatorics.Sequence.blockCoordinates 0 n increment) j := by
   rw [history_coordinate_eq_displacement, ← partialSum_prefixBlock_eq_displacement]
 
-private theorem endpointCorridorEvent_subset_finiteCorridorBridgeEvent
+private lemma endpointCorridorEvent_subset_finiteCorridorBridgeEvent
     (n : ℕ) (D : ℝ) :
     {increment : ℕ → ℝ |
       InClosedInterval (-2 * D) 0 n 0 increment ∧
@@ -201,7 +201,7 @@ theorem eventually_iidSequenceLaw_affineCorridorThrough_lowerBound_of_centeredSe
       (by simp [Set.mem_Icc, hEpos.le])
     have hset :
         {increment : ℕ → ℝ |
-          finitePrefixVector (n := prefixLength) increment ∈
+          (Combinatorics.Sequence.blockCoordinates 0 prefixLength) increment ∈
             finiteMovingEntranceEvent (n := prefixLength) (entranceScale n)
               (entryDrift / (entranceScale n) ^ 3) 0} =
         {increment : ℕ → ℝ |
@@ -210,22 +210,11 @@ theorem eventually_iidSequenceLaw_affineCorridorThrough_lowerBound_of_centeredSe
               (drift n / entranceScale n) 0} := by
       ext increment
       simp only [Set.mem_ofPred_eq]
-      have hvec :
-          finitePrefixVector (n := prefixLength) increment =
-            Combinatorics.Sequence.blockCoordinates 0 prefixLength increment := by
-        funext i
-        simp [finitePrefixVector, Combinatorics.Sequence.blockCoordinates]
-      change finitePrefixVector (n := prefixLength) increment ∈
-          finiteMovingEntranceEvent (entranceScale n)
-            (entryDrift / entranceScale n ^ 3) 0 ↔
-        Combinatorics.Sequence.blockCoordinates 0 prefixLength increment ∈
-          finiteMovingEntranceEvent (entranceScale n)
-            (drift n / entranceScale n) 0
-      rw [hvec, hcoeff]
+      rw [hcoeff]
     have hentryZero : entryQ / (prefixLength : ℝ≥0∞) ≤
         iidSequenceLaw ν
           {increment : ℕ → ℝ |
-            finitePrefixVector (n := prefixLength) increment ∈
+            (Combinatorics.Sequence.blockCoordinates 0 prefixLength) increment ∈
               finiteMovingEntranceEvent (n := prefixLength) (entranceScale n)
                 (entryDrift / (entranceScale n) ^ 3) 0} := by
       simpa using h
@@ -233,7 +222,7 @@ theorem eventually_iidSequenceLaw_affineCorridorThrough_lowerBound_of_centeredSe
       entryQ / (prefixLength : ℝ≥0∞) ≤
           iidSequenceLaw ν
             {increment : ℕ → ℝ |
-              finitePrefixVector (n := prefixLength) increment ∈
+              (Combinatorics.Sequence.blockCoordinates 0 prefixLength) increment ∈
                 finiteMovingEntranceEvent (n := prefixLength) (entranceScale n)
                   (entryDrift / (entranceScale n) ^ 3) 0} := hentryZero
       _ = iidSequenceLaw ν

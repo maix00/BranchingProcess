@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.BranchingRandomWalk.Selection.NSelection.AsymptoticSpeed.Environment
+public import Probability.BranchingRandomWalk.Selection.NSelection.AsymptoticSpeed.Environment.Basic
 public import Mathlib.Dynamics.Ergodic.Ergodic
 public import Mathlib.Order.LiminfLimsup
 public import Mathlib.Probability.Independence.ZeroOne

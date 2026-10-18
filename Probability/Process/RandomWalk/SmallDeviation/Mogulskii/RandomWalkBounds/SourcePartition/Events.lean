@@ -15,6 +15,21 @@ The terminal-left convention has the same observed half-open cell positions
 as the right-continuous path: the final such position is `S_(n-1)`. Therefore
 the existing variable-block independence bound and its `cellLength - 1`
 range horizon apply without an additive probability error.
+
+Write $D_k=\sum_{r<k}\xi_r$, let $q_i(n)$ be the ordinary floor-rounded
+length of cell $i$, and set $p_i=\sum_{j<i}q_j(n)$. The declarations in
+`ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Discrete` are:
+
+- `sourceNormalizedStepCorridor_subset_selectedHalfOpenCellPositions`:
+  for cells with finite right-trace bounds $a_i,b_i$, membership in the
+  source path corridor implies
+  $s_na_i<D_{p_i+k}<s_nb_i$ for each selected cell and $k<q_i(n)$.
+- `iidSequenceLaw_sourceNormalizedStepCorridor_le_selectedCellRangeProduct`:
+  under the IID increment law, the corridor probability is at most
+  $\prod_{i\in A}\pi_\nu(s_n(u_i-\ell_i),q_i(n)-1)$ for any selected finite
+  cell set $A$ with positive cell lengths, where $\pi_\nu(w,r)$ is the
+  probability that the range of $r$ IID increments' partial sums is less
+  than $w$.
 -/
 
 @[expose] public section
@@ -27,7 +42,7 @@ open ProbabilityTheory.RandomWalk
 open Skorokhod.PathClass.StepCorridor
 open Skorokhod.PathClass.StepCorridor
 
-private theorem stepBoundary_eval_eq_rightTrace_of_mem_sourceCell
+private lemma stepBoundary_eval_eq_rightTrace_of_mem_sourceCell
     (b upper lower : StepBoundary)
     (hknots : ∀ q ∈ b.knots, q ∈ StepBoundary.commonKnots upper lower)
     (i : Fin ((StepBoundary.commonKnots upper lower).card - 1))
