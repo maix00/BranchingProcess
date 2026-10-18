@@ -8,12 +8,12 @@ module
 
 public import Probability.Process.Stable.SmallDeviation.Blocks.EntranceFactorization
 public import Probability.Process.Stable.SmallDeviation.Blocks.EntranceScaling
-public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.FullCorridor
+public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.Entrance.FullCorridor
 public import Probability.Process.Stable.SmallDeviation.Blocks.Upper.Shrinking
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.Analysis.SpecialFunctions.Pow.Continuity
 public import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
-public import Analysis.Asymptotics.NegativeRatio
+public import Analysis.Asymptotics.Sequence.NegativeRatio
 public import Mathlib.MeasureTheory.Constructions.BorelSpace.Real
 
 /-!
@@ -45,8 +45,10 @@ theorem IsStableLevyProcess.measure_shiftedFullCorridor_ge_entrance_mul
         (a * (c - (1 + ε))) (a * (c + 1 + ε))) := by
   let cut := stableEntranceHorizon α a
   let remaining : ℝ≥0 := 1 - cut
-  have hcut : cut < 1 :=
-    stableEntranceHorizon_lt_one ha ha1 h.increments.strictlyStable.1
+  have hcut : cut < 1 := by
+    change stableEntranceHorizon α a < 1
+    rw [stableEntranceHorizon, Real.toNNReal_lt_one]
+    exact Real.rpow_lt_one ha.le ha1 h.increments.strictlyStable.1
   have hcutPos : 0 < cut := by
     apply NNReal.coe_pos.mp
     simp [cut, stableEntranceHorizon,

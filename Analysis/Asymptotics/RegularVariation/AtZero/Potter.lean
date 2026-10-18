@@ -5,7 +5,7 @@ Authors: Codex
 -/
 module
 
-public import Analysis.Asymptotics.RegularVariation.AtZero
+public import Analysis.Asymptotics.RegularVariation.AtZero.Basic
 
 /-!
 # Potter bounds at zero from compact-uniform ratios

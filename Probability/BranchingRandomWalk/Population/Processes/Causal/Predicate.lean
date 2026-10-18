@@ -4,8 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Population.Processes.Causal
-import Probability.BranchingRandomWalk.Population.Candidates.RootIndexed
+import Probability.BranchingRandomWalk.Population.Processes.Causal.Basic
+import Probability.BranchingRandomWalk.Population.Candidates.RootIndexed.Basic
 
 /-!
 # Causal populations selected by an observable predicate

@@ -6,7 +6,7 @@ Authors: Codex
 module
 
 public import MeasureTheory.Measure.CharacteristicFunction.Convergence
-public import Probability.Distributions.CharacteristicFunction.Symmetrization
+public import Probability.Distributions.CharacteristicFunction.Symmetrization.Basic
 public import Probability.Distributions.Stable.Attraction.CharacteristicFunction
 
 /-!
@@ -30,7 +30,7 @@ private noncomputable def normalizedSymmetricSumLaw (ν : Measure ℝ)
   (iidSequenceLaw (symmetrizedMeasure ν)).map
     (normalizedIidSum (fun _ => scale) (fun _ => 0) count)
 
-private theorem charFun_normalizedSymmetricSumLaw {ν : Measure ℝ}
+private lemma charFun_normalizedSymmetricSumLaw {ν : Measure ℝ}
     [IsProbabilityMeasure ν] (scale : ℝ) (count : ℕ) (t : ℝ) :
     charFun (normalizedSymmetricSumLaw ν scale count) t =
       (‖charFun ν (scale⁻¹ * t)‖ ^ (2 * count) : ℂ) := by
@@ -44,7 +44,7 @@ private theorem charFun_normalizedSymmetricSumLaw {ν : Measure ℝ}
 /-- A uniform logarithmic limit controls the corresponding exponential
 defect. The compact parameter set is arbitrary; the boundedness assumption is
 only on the limiting function. -/
-private theorem tendstoUniformlyOn_scaledExpDefect
+private lemma tendstoUniformlyOn_scaledExpDefect
     {K : Set ℝ} {f : ℕ → ℝ → ℝ} {g : ℝ → ℝ} {M : ℝ}
     (hM : 0 ≤ M) (hg : ∀ t ∈ K, g t ≤ M)
     (hfg : TendstoUniformlyOn f g atTop K)
