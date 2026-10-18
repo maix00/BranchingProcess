@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.MeasureTheory.SmallValue
+public import Probability.MeasureTheory.SmallValue.Basic
 public import Mathlib.Probability.Distributions.Poisson.Basic
 public import Mathlib.Probability.Independence.Basic
 

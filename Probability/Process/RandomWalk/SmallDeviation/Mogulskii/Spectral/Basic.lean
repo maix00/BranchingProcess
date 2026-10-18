@@ -13,7 +13,19 @@ public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 
 The killed simple symmetric walk on an interval has a sine ground state.
 This file isolates the analytic identity behind that computation from the
-probability-space realization of the walk.
+probability-space realization of the walk.  Its public declarations are:
+
+* `symmetricStep` defines $Af(x)=(f(x-1)+f(x+1))/2$;
+  `symmetricStep_sine` proves
+  $A(\sin(\omega\,\cdot))(x)=\cos(\omega)\sin(\omega x)$.
+* `dirichletSine` defines $\phi_L(x)=\sin(\pi x/L)$.
+  `dirichletSine_zero` and `dirichletSine_right` give
+  $\phi_L(0)=\phi_L(L)=0$ (the latter for $L\ne0$), and
+  `dirichletSine_pos` proves $\phi_L(x)>0$ for $0<x<L$.
+* `symmetricStep_dirichletSine` proves
+  $A\phi_L=\cos(\pi/L)\phi_L$, and
+  `iterate_symmetricStep_dirichletSine` proves
+  $A^n\phi_L=\cos^n(\pi/L)\phi_L$ for every $n\in\mathbb N$.
 -/
 
 @[expose] public section

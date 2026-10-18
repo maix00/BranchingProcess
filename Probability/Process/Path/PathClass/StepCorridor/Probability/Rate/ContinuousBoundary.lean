@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import MeasureTheory.Measure.InnerOuter
+public import MeasureTheory.Measure.Limits.InnerOuter
 public import MeasureTheory.Measure.CadlagPath.PathClass.StepCorridor.ContinuousBoundary
 public import Topology.Cadlag.Skorokhod.PathClass.StepCorridor.ContinuousBoundary
 public import Probability.Process.Path.PathClass.StepCorridor.Probability.Rate.Relative
