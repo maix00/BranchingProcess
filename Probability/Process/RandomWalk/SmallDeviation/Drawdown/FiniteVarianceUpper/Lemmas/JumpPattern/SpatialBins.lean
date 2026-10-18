@@ -10,8 +10,8 @@ public import Mathlib.Algebra.Order.Floor.Semifield
 public import Mathlib.Algebra.Order.Archimedean.Real.Basic
 public import Mathlib.Data.Fin.Basic
 public import Mathlib.Data.Fintype.Fin
-public import Mathlib.Data.Finset.Lattice.Fold
 public import Mathlib.Order.Fin.Basic
+public import Mathlib.Order.PartialSups
 public import Probability.Process.RandomWalk.Path.Event.Oscillation
 
 import Mathlib.Tactic.FieldSimp
@@ -24,9 +24,9 @@ $k_n=\lfloor(U-M_n)/w\rfloor_{\mathbb N}$, and $b_n=U-wk_n$. The declarations
 in `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown` form the internal
 deterministic proof chain:
 
-- `prefixMaximum` defines $M_n$; `le_prefixMaximum` states $i\le n\Rightarrow S_i\le M_n$; `prefixMaximum_le_of_forall` states $(\forall i\le n,\ S_i\le u)\Rightarrow M_n\le u$; `prefixMaximum_mono` states $s\le t\Rightarrow M_s\le M_t$.
+- The running maximum is Mathlib's `partialSups path n`, which states $M_n=\sup_{i\le n}S_i$.
 - `spatialBinIndex` defines $k_n$, and `spatialBinLevel` defines $b_n$.
-- `prefixMaximum_le_spatialBinLevel` and `spatialBinLevel_lt_prefixMaximum_add_width` state $M_n\le b_n<M_n+w$.
+- `partialSups_le_spatialBinLevel` and `spatialBinLevel_lt_partialSups_add_width` state $M_n\le b_n<M_n+w$.
 - `spatialBinIndex_antitone` and `spatialBinLevel_mono` state $s\le t\Rightarrow k_t\le k_s$ and $b_s\le b_t$; `spatialBinIndex_le_of_zero` states $S_0=0\Rightarrow k_n\le\lfloor U/w\rfloor_{\mathbb N}$.
 - `values_between_on_constantSpatialBin` confines each block value to $b_s-w-\delta<S_j\le b_s$ when the endpoint bins agree; `oscillationBounded_on_constantSpatialBin` gives oscillation at most $w+\delta$ on that block.
 - `spatialBinJumpSet` and `spatialBinGoodBlockSet` define the indices with unequal and equal consecutive bins. For a nonincreasing sequence in `Fin (K+1)`, `card_spatialBinJumpSet_le` gives $|J|\le K+1$; `card_spatialBinGoodBlockSet_add_jumpSet_card` gives $|G|+|J|=q$; `card_spatialBinGoodBlockSet_ge` gives $q\le|G|+K+1$.
@@ -42,76 +42,43 @@ an independent interface.
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown
 
-/-- The maximum value of a real sequence through the specified time. -/
-noncomputable def prefixMaximum (path : ℕ → ℝ) (time : ℕ) : ℝ :=
-  (Finset.range (time + 1)).sup'
-    (by exact ⟨0, Finset.mem_range.mpr (Nat.zero_lt_succ _)⟩) path
-
-lemma le_prefixMaximum (path : ℕ → ℝ) {i time : ℕ} (hi : i ≤ time) :
-    path i ≤ prefixMaximum path time := by
-  unfold prefixMaximum
-  exact Finset.le_sup' path
-    (Finset.mem_range.mpr (Nat.lt_succ_of_le hi))
-
-lemma prefixMaximum_le_of_forall (path : ℕ → ℝ) (time : ℕ) (upper : ℝ)
-    (hupper : ∀ i ≤ time, path i ≤ upper) :
-    prefixMaximum path time ≤ upper := by
-  unfold prefixMaximum
-  apply (Finset.sup'_le_iff
-    (⟨0, Finset.mem_range.mpr (Nat.zero_lt_succ _)⟩ :
-      (Finset.range (time + 1)).Nonempty) path).2
-  intro i hi
-  have hi' : i < time + 1 := Finset.mem_range.mp hi
-  exact hupper i (Nat.le_of_lt_succ hi')
-
-lemma prefixMaximum_mono (path : ℕ → ℝ) {s t : ℕ} (hst : s ≤ t) :
-    prefixMaximum path s ≤ prefixMaximum path t := by
-  unfold prefixMaximum
-  apply (Finset.sup'_le_iff
-    (⟨0, Finset.mem_range.mpr (Nat.zero_lt_succ _)⟩ :
-      (Finset.range (s + 1)).Nonempty) path).2
-  intro i hi
-  have hi' : i < s + 1 := Finset.mem_range.mp hi
-  have hit : i ≤ t := (Nat.le_of_lt_succ hi').trans hst
-  exact Finset.le_sup' path (Finset.mem_range.mpr (Nat.lt_succ_of_le hit))
-
 /-- The spatial bin containing the running maximum when spatial bins have
 width `width`. The bin is indexed downward from the deterministic ceiling
 `upper`. -/
 noncomputable def spatialBinIndex (upper width : ℝ) (path : ℕ → ℝ) (time : ℕ) : ℕ :=
-  ⌊(upper - prefixMaximum path time) / width⌋₊
+  ⌊(upper - partialSups path time) / width⌋₊
 
 /-- The upper endpoint of the spatial bin containing the running maximum. -/
 noncomputable def spatialBinLevel (upper width : ℝ) (path : ℕ → ℝ) (time : ℕ) : ℝ :=
   upper - width * (spatialBinIndex upper width path time : ℝ)
 
-lemma prefixMaximum_le_spatialBinLevel
+lemma partialSups_le_spatialBinLevel
     (upper width : ℝ) (path : ℕ → ℝ) (time : ℕ)
-    (hwidth : 0 < width) (hmax : prefixMaximum path time ≤ upper) :
-    prefixMaximum path time ≤ spatialBinLevel upper width path time := by
-  have hquot : 0 ≤ (upper - prefixMaximum path time) / width :=
+    (hwidth : 0 < width) (hmax : partialSups path time ≤ upper) :
+    partialSups path time ≤ spatialBinLevel upper width path time := by
+  have hquot : 0 ≤ (upper - partialSups path time) / width :=
     div_nonneg (sub_nonneg.mpr hmax) hwidth.le
   have hfloor := Nat.floor_le hquot
   have hmul := mul_le_mul_of_nonneg_left hfloor hwidth.le
-  have hcancel : width * ((upper - prefixMaximum path time) / width) =
-      upper - prefixMaximum path time := by
+  have hcancel : width * ((upper - partialSups path time) / width) =
+      upper - partialSups path time := by
     field_simp [hwidth.ne']
   dsimp [spatialBinLevel, spatialBinIndex]
   rw [hcancel] at hmul
   linarith
 
-lemma spatialBinLevel_lt_prefixMaximum_add_width
+lemma spatialBinLevel_lt_partialSups_add_width
     (upper width : ℝ) (path : ℕ → ℝ) (time : ℕ)
-    (hwidth : 0 < width) (hmax : prefixMaximum path time ≤ upper) :
+    (hwidth : 0 < width) (hmax : partialSups path time ≤ upper) :
     spatialBinLevel upper width path time <
-      prefixMaximum path time + width := by
-  have hquot : 0 ≤ (upper - prefixMaximum path time) / width :=
+      partialSups path time + width := by
+  have hquot : 0 ≤ (upper - partialSups path time) / width :=
     div_nonneg (sub_nonneg.mpr hmax) hwidth.le
   have hfloor := Nat.lt_floor_add_one
-    ((upper - prefixMaximum path time) / width)
+    ((upper - partialSups path time) / width)
   have hmul := mul_lt_mul_of_pos_left hfloor hwidth
-  have hcancel : width * ((upper - prefixMaximum path time) / width) =
-      upper - prefixMaximum path time := by
+  have hcancel : width * ((upper - partialSups path time) / width) =
+      upper - partialSups path time := by
     field_simp [hwidth.ne']
   dsimp [spatialBinLevel, spatialBinIndex]
   rw [hcancel] at hmul
@@ -121,11 +88,11 @@ lemma spatialBinIndex_antitone
     (upper width : ℝ) (path : ℕ → ℝ) {s t : ℕ}
     (hwidth : 0 < width) (hst : s ≤ t) :
     spatialBinIndex upper width path t ≤ spatialBinIndex upper width path s := by
-  change ⌊(upper - prefixMaximum path t) / width⌋₊ ≤
-    ⌊(upper - prefixMaximum path s) / width⌋₊
+  change ⌊(upper - partialSups path t) / width⌋₊ ≤
+    ⌊(upper - partialSups path s) / width⌋₊
   apply Nat.floor_mono
   apply div_le_div_of_nonneg_right _ hwidth.le
-  exact sub_le_sub_left (prefixMaximum_mono path hst) upper
+  exact sub_le_sub_left (partialSups_monotone path hst) upper
 
 lemma spatialBinLevel_mono
     (upper width : ℝ) (path : ℕ → ℝ) {s t : ℕ}
@@ -143,12 +110,12 @@ lemma spatialBinIndex_le_of_zero
     (upper width : ℝ) (path : ℕ → ℝ) (time : ℕ)
     (hwidth : 0 < width) (hzero : path 0 = 0) :
     spatialBinIndex upper width path time ≤ ⌊upper / width⌋₊ := by
-  have hmaxNonneg : 0 ≤ prefixMaximum path time := by
+  have hmaxNonneg : 0 ≤ partialSups path time := by
     calc
       0 = path 0 := hzero.symm
-      _ ≤ prefixMaximum path time := le_prefixMaximum path (Nat.zero_le _)
+      _ ≤ partialSups path time := le_partialSups_of_le path (Nat.zero_le _)
   have hquot :
-      (upper - prefixMaximum path time) / width ≤ upper / width := by
+      (upper - partialSups path time) / width ≤ upper / width := by
     apply div_le_div_of_nonneg_right _ hwidth.le
     exact sub_le_self upper hmaxNonneg
   exact Nat.floor_mono hquot
@@ -169,36 +136,36 @@ lemma values_between_on_constantSpatialBin
     ∀ t, start ≤ t → t ≤ finish →
       spatialBinLevel upper width path start - width - delta < path t ∧
         path t ≤ spatialBinLevel upper width path start := by
-  have hmaxStart : prefixMaximum path start ≤ upper :=
-    prefixMaximum_le_of_forall path start upper (fun i hi => hupper i (by omega))
-  have hmaxFinish : prefixMaximum path finish ≤ upper :=
-    prefixMaximum_le_of_forall path finish upper (fun i hi => hupper i (by omega))
-  have hroundedLower := spatialBinLevel_lt_prefixMaximum_add_width
+  have hmaxStart : partialSups path start ≤ upper :=
+    partialSups_le path start upper (fun i hi => hupper i (by omega))
+  have hmaxFinish : partialSups path finish ≤ upper :=
+    partialSups_le path finish upper (fun i hi => hupper i (by omega))
+  have hroundedLower := spatialBinLevel_lt_partialSups_add_width
     upper width path start hwidth hmaxStart
   intro t hst htt
-  have hmaxMono : prefixMaximum path start ≤ prefixMaximum path t :=
-    prefixMaximum_mono path hst
-  have hmaxPath : prefixMaximum path t ≤ path t + delta := by
-    apply prefixMaximum_le_of_forall path t (path t + delta)
+  have hmaxMono : partialSups path start ≤ partialSups path t :=
+    partialSups_monotone path hst
+  have hmaxPath : partialSups path t ≤ path t + delta := by
+    apply partialSups_le path t (path t + delta)
     intro i hit
     have h := hnoDrop i t hit (htt.trans hfinish)
     linarith
-  have hpathUpper : path t ≤ prefixMaximum path finish :=
-    le_prefixMaximum path htt
-  have hfinishUpper := prefixMaximum_le_spatialBinLevel
+  have hpathUpper : path t ≤ partialSups path finish :=
+    le_partialSups_of_le path htt
+  have hfinishUpper := partialSups_le_spatialBinLevel
     upper width path finish hwidth hmaxFinish
   constructor
   · have hlowerStart :
         spatialBinLevel upper width path start - width <
-          prefixMaximum path start := by
+          partialSups path start := by
       linarith
     calc
       spatialBinLevel upper width path start - width - delta <
-          prefixMaximum path start - delta := by linarith
-      _ ≤ prefixMaximum path t - delta := sub_le_sub_right hmaxMono _
+          partialSups path start - delta := by linarith
+      _ ≤ partialSups path t - delta := sub_le_sub_right hmaxMono _
       _ ≤ path t := by linarith
   · calc
-      path t ≤ prefixMaximum path finish := hpathUpper
+      path t ≤ partialSups path finish := hpathUpper
       _ ≤ spatialBinLevel upper width path finish := hfinishUpper
       _ = spatialBinLevel upper width path start := hbin.symm
 

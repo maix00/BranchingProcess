@@ -20,6 +20,7 @@ public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVaria
 
 import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 import Mathlib.MeasureTheory.Function.Floor
+import Mathlib.Order.PartialSups
 
 /-!
 # Conditional block bounds for bounded drawdown
@@ -117,22 +118,23 @@ lemma measurable_drawdownPastDiscretizedMaximum {start : ℕ}
     Measurable (drawdownPastDiscretizedMaximum (start := start) upper width) := by
   have hmaximum : Measurable
       (fun past : Fin start → ℝ =>
-        prefixMaximum (drawdownPrefixPath past) start) :=
-    Finset.measurable_range_sup'' fun time htime =>
-      measurable_prefixPath_coordinate time
+        partialSups (drawdownPrefixPath past) start) := by
+    simpa only [← partialSups_eq_sup'_range] using
+      (Finset.measurable_range_sup'' fun time htime =>
+        measurable_prefixPath_coordinate time)
   have hquotient : Measurable
       (fun past : Fin start → ℝ =>
-        (upper - prefixMaximum (drawdownPrefixPath past) start) / width) :=
+        (upper - partialSups (drawdownPrefixPath past) start) / width) :=
     (measurable_const.sub hmaximum).div_const width
   have hfloor : Measurable
       (fun past : Fin start → ℝ =>
-        (Nat.floor ((upper - prefixMaximum (drawdownPrefixPath past) start) /
+        (Nat.floor ((upper - partialSups (drawdownPrefixPath past) start) /
           width) : ℝ)) :=
     (MeasurableEmbedding.natCast (α := ℝ)).measurable.comp
       hquotient.nat_floor
   change Measurable (fun past : Fin start → ℝ =>
     upper - width *
-      (Nat.floor ((upper - prefixMaximum (drawdownPrefixPath past) start) /
+      (Nat.floor ((upper - partialSups (drawdownPrefixPath past) start) /
         width) : ℝ))
   exact measurable_const.sub (measurable_const.mul hfloor)
 
@@ -152,19 +154,30 @@ private lemma prefixPath_blockCoordinates_eq
     _ = AdditivePath.displacement time increment := by
       simp [AdditivePath.blockSum_eq_displacement_natAdd]
 
-private lemma prefixMaximum_blockCoordinates_eq
+private lemma partialSups_blockCoordinates_eq
     (start : ℕ) (increment : ℕ → ℝ) :
-    prefixMaximum
+    partialSups
         (drawdownPrefixPath
           (Combinatorics.Sequence.blockCoordinates 0 start increment)) start =
-      prefixMaximum (AdditivePath.displacement · increment) start := by
-  unfold prefixMaximum
-  exact Finset.sup'_congr
-    (⟨0, Finset.mem_range.mpr (Nat.zero_lt_succ _)⟩ :
-      (Finset.range (start + 1)).Nonempty)
-    rfl
-    (fun time htime => prefixPath_blockCoordinates_eq increment
-      (Nat.le_of_lt_succ (Finset.mem_range.mp htime)))
+      partialSups (AdditivePath.displacement · increment) start := by
+  calc
+    partialSups
+        (drawdownPrefixPath
+          (Combinatorics.Sequence.blockCoordinates 0 start increment)) start =
+        (Finset.range (start + 1)).sup'
+          (by exact ⟨0, Finset.mem_range.mpr (Nat.zero_lt_succ _)⟩) _ :=
+      partialSups_eq_sup'_range _ _
+    _ = (Finset.range (start + 1)).sup'
+        (by exact ⟨0, Finset.mem_range.mpr (Nat.zero_lt_succ _)⟩) _ := by
+      apply Finset.sup'_congr
+        (⟨0, Finset.mem_range.mpr (Nat.zero_lt_succ _)⟩ :
+          (Finset.range (start + 1)).Nonempty)
+        rfl
+      intro time htime
+      exact prefixPath_blockCoordinates_eq increment
+        (Nat.le_of_lt_succ (Finset.mem_range.mp htime))
+    _ = partialSups (AdditivePath.displacement · increment) start :=
+      (partialSups_eq_sup'_range _ _).symm
 
 lemma drawdownPastDiscretizedMaximum_eq_runningMaximum
     (start : ℕ) (upper width : ℝ) (increment : ℕ → ℝ) :
@@ -172,7 +185,7 @@ lemma drawdownPastDiscretizedMaximum_eq_runningMaximum
         (Combinatorics.Sequence.blockCoordinates 0 start increment) =
       spatialBinLevel upper width (AdditivePath.displacement · increment) start := by
   simp only [drawdownPastDiscretizedMaximum, spatialBinLevel, spatialBinIndex]
-  rw [prefixMaximum_blockCoordinates_eq start increment]
+  rw [partialSups_blockCoordinates_eq start increment]
 
 private lemma prefixSum_blockCoordinates_eq
     (start : ℕ) (increment : ℕ → ℝ) :

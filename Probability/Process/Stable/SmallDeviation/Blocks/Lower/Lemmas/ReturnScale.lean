@@ -26,7 +26,7 @@ the first-block path \(B_N(q)=X_{q/N}-X_0\), where
 The helper is used by the lower block estimates; the arbitrary-horizon
 scaling theorem remains in `Blocks/ReturnScale.lean`.
 
-The sole declaration is
+The sole lemma is
 `IsStableLevyProcess.firstBlock_corridorReturn_scale_inv`, which states the
 displayed probability identity for a positive number of uniform blocks.
 -/
@@ -41,7 +41,7 @@ open scoped NNReal
 /-- The first uniform block's return-corridor probability is the unit-time
 probability with all spatial bounds multiplied by the stable scale of its
 duration. -/
-theorem IsStableLevyProcess.firstBlock_corridorReturn_scale_inv
+lemma IsStableLevyProcess.firstBlock_corridorReturn_scale_inv
     {Ω : Type*} [MeasurableSpace Ω]
     {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
     {P : Measure Ω} [IsProbabilityMeasure P]
