@@ -50,8 +50,8 @@ theorem weighted_sum_as_kernel (s : Finset ι) (w g : ι → ℝ)
   field_simp [hZ]
 
 /-- The one-generation size-bias cancellation, with arbitrary nonzero
-weights. For the thesis, `w i = exp (-lam * Ξᵢ)`; the random and countable
-child extension is a separate obligation. -/
+weights. In the real-potential specialization, `w i = exp (-lam * Ξᵢ)`;
+the random and countable-child extension is a separate obligation. -/
 theorem weighted_sum_cancel (s : Finset ι) (w g : ι → ℝ)
     (hZ : (∑ i ∈ s, w i) ≠ 0)
     (hw : ∀ i ∈ s, w i ≠ 0) :

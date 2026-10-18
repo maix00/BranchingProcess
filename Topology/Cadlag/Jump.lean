@@ -32,14 +32,14 @@ private noncomputable def selectedLeftOscillationRadius
     (t : T) : ℝ :=
   Classical.choose (hf.exists_left_oscillation_radius t hepsilon)
 
-private theorem selectedLeftOscillationRadius_pos
+private lemma selectedLeftOscillationRadius_pos
     {T E : Type*} [LinearOrder T] [PseudoMetricSpace T] [PseudoMetricSpace E]
     {f : T → E}
     (hf : IsCadlag f) {epsilon : ℝ} (hepsilon : 0 < epsilon)
     (t : T) : 0 < selectedLeftOscillationRadius hf epsilon hepsilon t :=
   (Classical.choose_spec (hf.exists_left_oscillation_radius t hepsilon)).1
 
-private theorem selectedLeftOscillationRadius_spec
+private lemma selectedLeftOscillationRadius_spec
     {T E : Type*} [LinearOrder T] [PseudoMetricSpace T] [PseudoMetricSpace E]
     {f : T → E}
     (hf : IsCadlag f) {epsilon : ℝ} (hepsilon : 0 < epsilon)
@@ -57,14 +57,14 @@ private noncomputable def selectedRightOscillationRadius
     (t : T) : ℝ :=
   Classical.choose (hf.exists_right_oscillation_radius t hepsilon)
 
-private theorem selectedRightOscillationRadius_pos
+private lemma selectedRightOscillationRadius_pos
     {T E : Type*} [LinearOrder T] [PseudoMetricSpace T] [PseudoMetricSpace E]
     {f : T → E}
     (hf : IsCadlag f) {epsilon : ℝ} (hepsilon : 0 < epsilon)
     (t : T) : 0 < selectedRightOscillationRadius hf epsilon hepsilon t :=
   (Classical.choose_spec (hf.exists_right_oscillation_radius t hepsilon)).1
 
-private theorem selectedRightOscillationRadius_spec
+private lemma selectedRightOscillationRadius_spec
     {T E : Type*} [LinearOrder T] [PseudoMetricSpace T] [PseudoMetricSpace E]
     {f : T → E}
     (hf : IsCadlag f) {epsilon : ℝ} (hepsilon : 0 < epsilon)
@@ -75,7 +75,7 @@ private theorem selectedRightOscillationRadius_spec
   (Classical.choose_spec
     (hf.exists_right_oscillation_radius t hepsilon)).2 s u hts htu hds hdu
 
-private theorem Ico_mem_nhdsLT_of_lt_general
+private lemma Ico_mem_nhdsLT_of_lt_general
     {T : Type*} [LinearOrder T] [TopologicalSpace T] [OrderTopology T]
     {a b : T} (hab : a < b) : Ico a b ∈ 𝓝[<] b := by
   rw [mem_nhdsWithin_iff_exists_mem_nhds_inter]
@@ -83,7 +83,7 @@ private theorem Ico_mem_nhdsLT_of_lt_general
   intro x hx
   exact ⟨hx.1.le, hx.2⟩
 
-private theorem jump_le_of_left_local_oscillation
+private lemma jump_le_of_left_local_oscillation
     {T E : Type*} [LinearOrder T] [PseudoMetricSpace T]
     [OrderTopology T] [PseudoMetricSpace E] {f : T → E}
     (hf : IsCadlag f) {epsilon radius : ℝ} (hepsilon : 0 < epsilon)
@@ -122,7 +122,7 @@ private theorem jump_le_of_left_local_oscillation
       Metric.isClosed_closedBall.mem_of_tendsto hlim hev
     simpa [Metric.mem_closedBall, dist_comm] using hmem
 
-private theorem jump_le_of_right_local_oscillation
+private lemma jump_le_of_right_local_oscillation
     {T E : Type*} [LinearOrder T] [PseudoMetricSpace T]
     [OrderTopology T] [PseudoMetricSpace E] {f : T → E}
     (hf : IsCadlag f) {epsilon radius : ℝ} (hepsilon : 0 < epsilon)
