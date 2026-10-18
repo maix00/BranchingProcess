@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Mathlib.MeasureTheory.Measure.Tight
-public import Probability.Process.RandomWalk.Path.Skorokhod
+public import Probability.Process.RandomWalk.Path.Skorokhod.Core
 public import Probability.Process.RandomWalk.Path.Skorokhod.Basic
 
 /-!
@@ -34,7 +34,7 @@ theorem isTightMeasureSet_singleton_normalizedStepPathLaw
   have hmap := hsource.map (continuous_normalizedStepCadlagPathIcc scale n)
   simpa [normalizedStepPathLaw, iidSequenceLaw] using hmap
 
-private theorem isTightMeasureSet_of_finite_singletons
+private lemma isTightMeasureSet_of_finite_singletons
     {X : Type*} [MeasurableSpace X] [TopologicalSpace X]
     (S : Set (Measure X))
     (hfinite : S.Finite)
