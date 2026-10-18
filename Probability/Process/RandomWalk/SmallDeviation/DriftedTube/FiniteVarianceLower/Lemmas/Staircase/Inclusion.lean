@@ -8,6 +8,7 @@ module
 
 public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.EndpointEvent
 public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.BlockInclusion
+public import Probability.Process.Filtration.ConditionalBlocks
 /-!
 # Staircase inclusion in the tilted endpoint event
 

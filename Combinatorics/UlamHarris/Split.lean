@@ -11,6 +11,12 @@ public import Combinatorics.UlamHarris.Basic
 /-!
 # Declared splits of a marked tree
 
+## Public declarations
+
+* `Combinatorics.UlamHarris.splitDeclaration path splitMark` defines the
+  generation-indexed event `∅` at generation zero and
+  `{ω | ω (path n ω) ∈ splitMark}` at generation `n + 1`.
+
 `splitDeclaration path splitMark` declares a split at generation `n + 1`
 whenever the mark at the parent `path n` lies in `splitMark`; generation zero
 never declares a split. The first declared split generation is proved to be a

@@ -7,6 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.Blocks.EventBridge
+public import Probability.Process.Filtration.ConditionalBlocks
 /-!
 # Product lower bound for horizontal tube blocks
 

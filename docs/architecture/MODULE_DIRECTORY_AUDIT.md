@@ -244,6 +244,15 @@ formula-bearing lists to `Combinatorics/Sequence/Block.lean`,
 reviewed by semantic family. The next reviewed batch adds formula-bearing
 lists to `Mogulskii/Partition/{Basic,Quantitative}.lean` and
 `Mogulskii/Path/Tightness.lean`; their three module targets build successfully.
+The deterministic address-and-genealogy pass now lists the public definitions
+and relations in `Combinatorics/UlamHarris/{Basic,Generation,Order,Relation,Split}.lean`,
+the step-field maps in `Combinatorics/BranchingWalk/StepField.lean`, and the
+unmarked-process and genealogy projections in
+`Combinatorics/Branching/{Basic,Map,Tree/Basic}.lean`. The stale IID module paths in
+`ARCHITECTURE.md`, `FORMALIZATION_CHECKLIST.md`, and `MODULE_OWNERSHIP.md` were
+updated after those modules moved into `IID/Blocks/`; the stable mapping
+overview now points to the split regular-variation integral modules and the
+norming module that owns `stableScaleTime_isRegularlyVaryingAtTop`.
 
 ## Citation audit
 

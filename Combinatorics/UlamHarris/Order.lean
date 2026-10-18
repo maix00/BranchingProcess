@@ -13,6 +13,13 @@ public import Mathlib.Data.Prod.Lex
 /-!
 # Lexicographic order on root-indexed addresses
 
+## Public declarations
+
+* `Combinatorics.UlamHarris.RootIndexed.addressLinearOrder Root α` orders
+  `(r,u)` first by `r` and then lexicographically by the address `u`.
+  `Combinatorics.UlamHarris.RootIndexed.addressLinearOrder_lt_iff` states
+  `x < y ↔ x.1 < y.1 ∨ (x.1 = y.1 ∧ x.2 < y.2)`.
+
 A root-indexed address is ordered first by its root label and then by its
 Ulam--Harris word. This is the canonical label order used to break ties when
 positions agree.
