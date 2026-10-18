@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.Kernel.Killed.Return.Comparison
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Return
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Blocks.Return
 
 /-!
 # Uniform Mogulskii bounds for return kernels

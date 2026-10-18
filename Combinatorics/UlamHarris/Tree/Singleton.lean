@@ -6,8 +6,8 @@ Authors: WANG Yiyang
 
 module
 
-public import Combinatorics.UlamHarris.Tree.Borel
-public import Combinatorics.UlamHarris.Tree.Metric
+public import Combinatorics.UlamHarris.Tree.Topology.Borel
+public import Combinatorics.UlamHarris.Tree.Topology.Metric
 
 /-!
 # The single-root specialization of root-indexed trees
