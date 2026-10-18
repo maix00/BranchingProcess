@@ -169,3 +169,93 @@ Keep a model-specific assumption at the application boundary. For example,
 the definition of a generic measurable path should not assume a stable law,
 and a deterministic child step should not assume that a child exists or that
 its slots are ordered.
+
+## Abstraction review: process scaling and first-block return laws (2026-10-19)
+
+The mathematical abstraction investigated is $H$-self-similarity: for every
+positive time scale $c$, every finite family of times $t_1,\ldots,t_n$,
+and exponent $H$,
+\[
+  (X_{ct_1},\ldots,X_{ct_n})\overset d=
+  (c^H X_{t_1},\ldots,c^H X_{t_n}).
+\]
+This is the finite-dimensional-distribution definition of self-similarity;
+see John Lamperti, “Semi-stable stochastic processes,” *Transactions of the
+American Mathematical Society* 104(1) (1962), 62--78,
+[DOI 10.1090/S0002-9947-1962-0138128-7](https://doi.org/10.1090/S0002-9947-1962-0138128-7).
+Stable Lévy scaling has $H=1/\alpha$, while Brownian scaling has $H=1/2$.
+
+The checked Mathlib revision is
+`380f2aafb622cb2c1c93dac545b6389083c68c51`. Its
+[`FiniteDimensionalLaws`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Probability/Process/FiniteDimensionalLaws.html)
+API proves that equality in law of processes is characterized by equality
+of every finite-dimensional distribution. The pinned source is
+`Vendor/Mathlib/Mathlib/Probability/Process/FiniteDimensionalLaws.lean`,
+including `identDistrib_iff_forall_finset_identDistrib`. No self-similarity
+predicate or stable/Brownian scaling theorem is supplied by that API.
+
+The repository has two model-specific realizations of the literature's
+scaling relation. `IsStableLevyProcess.timeSpaceScale_positions_identDistrib`
+in `Probability/Process/Stable/FiniteDimensional.lean` identifies the
+finite-position laws on monotone grids, and
+`IsBrownianReal.measure_continuousPathMap_scale_eq` in
+`Probability/Process/Brownian/PathLaw/ContinuousPathLaw.lean` identifies the
+law on continuous path space under
+\(f(t)\mapsto c^{-1/2}f(ct)\). Their common finite-dimensional content is a
+candidate for a public self-similarity interface if it can serve both model
+families without adding a thin wrapper around `IdentDistrib`. The current
+interfaces retain the stronger structure each proof uses: stable increment
+specifications for the first and continuous path laws for the second.
+This audit does not add an `IsSelfSimilarProcess` predicate: the current
+proofs consume finite-dimensional `IdentDistrib` for stable processes and a
+full continuous-path law for Brownian motion, while such a predicate would
+only package the former relation without providing a shared path-law theorem.
+Revisit it when a model-independent theorem can consume the same hypothesis
+in both settings.
+
+For the lower-block return estimate, the exact general candidate is already
+available as
+`IsStableLevyProcess.corridorReturn_timeSpaceScale_inv`: for every horizon
+\(h>0\),
+\[
+  \mathbb P(X_{h\cdot}-X_0\in\mathcal C(l,u,c_-,c_+))=
+  \mathbb P(X_{\cdot}-X_0\in
+    \mathcal C(h^{-1/\alpha}l,h^{-1/\alpha}u,
+      h^{-1/\alpha}c_-,h^{-1/\alpha}c_+)).
+\]
+It is used by the entrance-scaling proof and lower-block bounds. The two
+lower-block callers need only its first-uniform-block instance, where
+\(h=1/N\). `firstBlock_corridorReturn_scale_inv` is therefore retained under
+`Blocks/Lower/Lemmas/` as a supporting lemma, derived from the arbitrary-
+horizon theorem and the first-block path identity. The broader scaling
+operation remains at `Blocks/ReturnScale.lean`; client count does not promote
+the adapter. This audit records the H-self-similar candidate separately so
+future scaling results can be reviewed against it before adding another
+public abstraction.
+
+## Reuse audit: drawdown prefix maxima (2026-10-19)
+
+The Drawdown proof had defined
+\[
+  M_n(f)=\max_{0\le j\le n}f(j)
+       =(\operatorname{range}(n+1)).\operatorname{sup'}(f).
+\]
+The pinned Mathlib API already provides the more general partial supremum
+`partialSups f n`, defined for a locally finite ordered index with bottom and
+a target semilattice supremum. Its natural-number specialization satisfies
+`partialSups_eq_sup'_range`, so the local `prefixMaximum` had exactly the same
+meaning and assumptions were strictly narrower. The same API supplies
+`le_partialSups_of_le`, `partialSups_le`, and `partialSups_monotone`, covering
+the local pointwise, upper-bound, and monotonicity lemmas.
+
+This was checked against pinned Mathlib revision
+`380f2aafb622cb2c1c93dac545b6389083c68c51`, specifically
+`Vendor/Mathlib/Mathlib/Order/PartialSups.lean` and the official
+[`Mathlib.Order.PartialSups` documentation](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Order/PartialSups.html).
+The Drawdown modules now use `partialSups` directly. The floor-rounded
+`spatialBinIndex`, `spatialBinLevel`, and the constant-bin and jump-pattern
+conclusions stay in `Drawdown/FiniteVarianceUpper/Lemmas/JumpPattern/`, since
+their statements depend on this proof's upper boundary, bin width, and
+drawdown event. The proof-specific translation identity in
+`ConditionalBlocks.lean` is expressed through Mathlib's
+`partialSups_eq_sup'_range`; no second running-maximum abstraction remains.
