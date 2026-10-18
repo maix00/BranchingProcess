@@ -9,7 +9,7 @@ module
 public import Analysis.Asymptotics.Power.PolynomialExponential
 public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition.DiffusiveLower
 public import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.Event
-import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.Lemmas.PowerAssembly
+import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.PowerLower
 
 /-!
 # Lemma 3.5 entrance exponential budget
@@ -24,7 +24,7 @@ The supporting lemma in this file is:
 This is the polynomial-to-exponential comparison used in Wang Yiyang,
 *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
 Chapter 3, Lemma 3.5. The general power-bound assembly remains in
-`Entrance/Robust/Lemmas/PowerAssembly.lean`.
+`Entrance/Robust/PowerLower.lean`.
 -/
 
 @[expose] public section
