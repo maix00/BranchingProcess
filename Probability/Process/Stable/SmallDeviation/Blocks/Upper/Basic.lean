@@ -15,8 +15,15 @@ import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Stationarity
 /-!
 # Uniform-block upper bound for stable processes
 
-The prefix factorization gives the full finite product. Equal translated-block
-laws then turn the product into the power in the Mogulskii upper estimate.
+Independence of translated blocks gives the finite product formula. Equality
+of their laws turns that product into the power in the Mogulskii upper bound.
+
+* `IsStableLevyProcess.measure_rationalTube_le_pow_uniformBlocks` states
+  `P(path on [0,1] lies in the width tube) ≤
+  P(first uniform block lies in the width tube) ^ blocks`.
+* `IsStableLevyProcess.measure_rationalHorizonTube_le_pow_shortHorizon`
+  states `P(tube on horizon 1) ≤ P(tube on horizon 1 / blocks) ^ blocks`;
+  this is the rational-coordinate form of Mogulskii's equation (23).
 -/
 
 @[expose] public section
@@ -25,41 +32,6 @@ namespace ProbabilityTheory
 
 open MeasureTheory
 open scoped NNReal
-
-/-- The first `m` tube events factor into the probabilities of individual
-blocks. This is proved from stopped-prefix independence, not assumed as a
-finite-family independence hypothesis. -/
-theorem IsStableLevyProcess.measure_rationalPrefixTube_eq_prod
-    {Ω : Type*} [MeasurableSpace Ω] {α : ℝ} {μ : Measure ℝ}
-    {X : ℝ≥0 → Ω → ℝ} {P : Measure Ω} [IsProbabilityMeasure P]
-    (h : IsStableLevyProcess α μ X P) (blocks : ℕ) (hblocks : 0 < blocks)
-    (width : ℝ) (m : ℕ) (hm : m ≤ blocks) :
-    P (rationalUniformPrefixTubeEvent X width hblocks m) =
-      ∏ k ∈ Finset.range m,
-        rationalUniformBlockTubeProbability P X width hblocks k := by
-  induction m with
-  | zero =>
-      simp [measure_univ]
-  | succ m ih =>
-      have hmlt : m < blocks := by omega
-      rw [rationalUniformPrefixTubeEvent_succ X width hblocks m hmlt]
-      have hindep := h.increments.indepIncrements.indepFun_rationalPrefix_nextBlock
-        (fun t => h.increments.aemeasurable_eval t) blocks hblocks ⟨m, hmlt⟩
-      have hfactor := hindep.measure_inter_preimage_eq_mul
-        (rationalUniformPrefixTubeSet width hblocks m)
-        (Skorokhod.rationalCoordinateOscillationTube width)
-        (measurableSet_rationalUniformPrefixTubeSet width hblocks m)
-        (Skorokhod.measurableSet_rationalCoordinateOscillationTube width)
-      have hfactor' :
-          P (rationalUniformPrefixTubeEvent X width hblocks m ∩
-            rationalUniformBlockTubeEvent X width hblocks ⟨m, hmlt⟩) =
-          P (rationalUniformPrefixTubeEvent X width hblocks m) *
-            P (rationalUniformBlockTubeEvent X width hblocks ⟨m, hmlt⟩) := by
-        simpa [rationalUniformPrefixTubeEvent_eq_preimage,
-          rationalUniformBlockTubeEvent] using hfactor
-      rw [hfactor']
-      rw [ih (by omega)]
-      simp [Finset.prod_range_succ, rationalUniformBlockTubeProbability, hmlt]
 
 /-- The original stable-process block upper inequality follows directly from
 independent increments and equality of translated-block laws. -/
