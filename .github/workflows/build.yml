@@ -295,7 +295,7 @@ jobs:
             Probability.BranchingRandomWalk.Walk.Path.Scaling
           : > "$RUNNER_TEMP/random-walk-axioms.txt"
           cat \
-            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Probability/RandomWalk/RandomWalkPathLaw.lean.log" \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Probability/RandomWalk/PathLaw.lean.log" \
             "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Branching/WalkEquiv.lean.log" \
             >> "$RUNNER_TEMP/random-walk-axioms.txt"
           python3 scripts/check-lean-axioms.py \
