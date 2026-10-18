@@ -11,13 +11,110 @@ import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 /-!
 # MRCA pair contributions in affine tubes
 
-This file specializes the BRW path-level MRCA decomposition to affine tubes.
-It bounds the root-split pair contribution and expresses each later
-ancestor-generation contribution as an ancestral-prefix mass times a
-continuation-pair estimate. `ActualMRCAContribution` identifies these terms
-with the actual path-level contributions; `AffineCorridorPairBound` sums them
-over ancestor generations, and `AffineCorridorSecondMoment` gives the resulting
-corridor-count second moment.
+## Public declarations
+
+* `ProbabilityTheory.BranchingRandomWalk.Spine.affineTubeRootMRCAPairMean`
+  is `∑' i, ∑' j, if i ≠ j then ∫⁻ ξ, cᵢ(ξ) * cⱼ(ξ) ∂μ else 0`, where
+  `cᵢ(ξ) = ∫⁻ η, pathGenerationChildObservable φ n F initial i ξ η
+  ∂stepFieldLaw μ` and `F` is the indicator of
+  `affineCorridorHistoryEndpointCutoff n lower drift width endpointUpper`.
+  Its integral
+  representations are
+  `ProbabilityTheory.BranchingRandomWalk.Spine.affineTubeRootMRCAPairMean_eq_lintegral`
+  and
+  `ProbabilityTheory.BranchingRandomWalk.Spine.affineTubeRootMRCAPairMean_eq_lintegral_pathGenerationMRCAContribution`.
+* `ProbabilityTheory.BranchingRandomWalk.Spine.pathGenerationChildMeanOffDiagonal_le_of_shiftedProbability`,
+  `ProbabilityTheory.BranchingRandomWalk.Spine.pathGenerationChildMeanOffDiagonal_normalized_le_of_shiftedProbability`,
+  and
+  `ProbabilityTheory.BranchingRandomWalk.Spine.pathGenerationChildMeanOffDiagonal_normalized_le_of_uniformShiftedProbability`
+  bound `pathGenerationChildMeanOffDiagonal φ μ n
+  (corridor.indicator (fun _ => 1)) x ξ` by
+  `(exp (terminalUpper - x) * q)^2 * crossChildWeight φ ξ`; the latter two
+  state the normalized inequality
+  `ENNReal.ofReal (exp (2 * x)) * pathGenerationChildMeanOffDiagonal φ μ n
+  (corridor.indicator (fun _ => 1)) x ξ ≤ ENNReal.ofReal
+  (exp (2 * terminalUpper)) * q^2 * crossChildWeight φ ξ`.
+* `ProbabilityTheory.BranchingRandomWalk.Spine.lintegral_affineTube_pathGeneration_succ_sq_eq_diagonal_add_rootMRCAPairMean`
+  decomposes the next-generation second moment. With
+  `F := (affineCorridorHistoryEndpointCutoff n lower drift width endpointUpper).indicator
+  (fun _ => (1 : ℝ≥0∞))`, its identity is
+  `∫⁻ ω, (pathGeneration φ (n + 1) F initial ω)^2 =
+   ∑' i ∫⁻ ξ ∫⁻ η (pathGenerationChildObservable φ n F initial i ξ η)^2 +
+   affineTubeRootMRCAPairMean φ μ n initial lower drift width endpointUpper`.
+  The child observable is integrated under `stepFieldLaw μ`, the outer child
+  mark under `μ`, and the squared path count under `stepFieldLaw μ`.
+  `ProbabilityTheory.BranchingRandomWalk.Spine.affineTubeRootMRCAPairMean_le_of_segmentProbability`
+  bounds that root-split term by the finite cross-child moment and the uniform
+  shifted-segment probability.
+* `ProbabilityTheory.BranchingRandomWalk.Spine.affineTubeRootMRCAPairMean_le_of_mogulskiiSegmentBound`
+  applies the Chapter 4, Lemma 4.2 segment estimate in Wang Yiyang,
+  *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*
+  (master's thesis, Fudan University, 2026). The absorption results
+  `ProbabilityTheory.BranchingRandomWalk.Spine.exists_width0_crossChildMoment_le_exp_rpow`
+  and
+  `ProbabilityTheory.BranchingRandomWalk.Spine.affineTubeRootMRCAPairMean_le_of_mogulskiiSegmentBound_of_crossAbsorption`
+  absorb the finite cross-child moment into a large-width exponential factor.
+* `ProbabilityTheory.BranchingRandomWalk.Spine.affineTubeRootMRCAPairMean_ne_top_of_segmentProbability`
+  and
+  `ProbabilityTheory.BranchingRandomWalk.Spine.affineTubeRootMRCAPairMean_ne_top_of_mogulskiiSegmentBound`
+  establish finiteness of the root-split contribution under the corresponding
+  segment-probability hypotheses.
+* `ProbabilityTheory.BranchingRandomWalk.Spine.weightedPrefixCrossChildWeightSum`
+  is `∑' u, weightedPathGenerationTerm φ n F x u ω * crossChildWeight φ (ω u)`;
+  `ProbabilityTheory.BranchingRandomWalk.Spine.weightedPrefixSquareCrossChildWeightSum`
+  is `∑' u, weightedPathGenerationTerm φ n F x u ω *
+  ENNReal.ofReal (exp (-pathPotential φ ω u)) * crossChildWeight φ (ω u)`, and
+  `ProbabilityTheory.BranchingRandomWalk.Spine.weightedPrefixSquareObservableSum`
+  is `∑' u, weightedPathGenerationTerm φ n F x u ω *
+  ENNReal.ofReal (exp (-pathPotential φ ω u)) * g (ω u)` for an arbitrary
+  offspring observable `g`.
+* `ProbabilityTheory.BranchingRandomWalk.Spine.lintegral_generationPrefixParameterizedObservableSum_le`
+  bounds a position-dependent frontier observable by a uniform bound times
+  the generation-prefix integral. Its child-pair form is
+  `ProbabilityTheory.BranchingRandomWalk.Spine.lintegral_generationPrefixChildPairObservable_le`.
+* `ProbabilityTheory.BranchingRandomWalk.Spine.lintegral_weightedPrefixSquareObservableSum_eq_mul`
+  factors the expected square-weighted prefix observable. The corresponding
+  domination is
+  `ProbabilityTheory.BranchingRandomWalk.Spine.lintegral_weightedPrefixSquareObservableSum_le_of_crossChildBound`.
+* `ProbabilityTheory.BranchingRandomWalk.Spine.lintegral_weightedPrefixSquareCrossChildWeightSum_eq_crossMoment_mul`
+  and
+  `ProbabilityTheory.BranchingRandomWalk.Spine.lintegral_weightedPrefixCrossChildWeightSum_eq_crossMoment_mul`
+  factor the expected prefix/cross-child sum into the finite cross-child
+  moment and its prefix integral. With a corridor indicator this becomes
+  `ProbabilityTheory.BranchingRandomWalk.Spine.lintegral_weightedPrefixCrossChildWeightSum_indicator_eq_crossMoment_mul_spineProbability`;
+  the corresponding upper bounds are
+  `ProbabilityTheory.BranchingRandomWalk.Spine.lintegral_weightedPrefixCrossChildWeightSum_indicator_le_crossMoment_mul`
+  and
+  `ProbabilityTheory.BranchingRandomWalk.Spine.lintegral_weightedPrefixSquareCrossChildWeightSum_indicator_le`.
+* `ProbabilityTheory.BranchingRandomWalk.Spine.lintegral_weightedPrefixSquareMass_indicator_le_spineProbability`
+  bounds the square-weighted corridor-prefix mass by its tilted-spine
+  probability.
+  `ProbabilityTheory.BranchingRandomWalk.Spine.lintegral_weightedPrefixContinuationPair_indicator_le`
+  factors a fixed-depth MRCA contribution into this prefix mass and a
+  continuation-pair bound; its affine-tube drawdown specialization is
+  `ProbabilityTheory.BranchingRandomWalk.Spine.lintegral_affineCorridorPrefixContinuationPair_indicator_le_of_drawdown`.
+* `ProbabilityTheory.BranchingRandomWalk.Spine.affineTubeMRCAPairContribution`
+  is the integral over `ω` of
+  `∑' u, pathGenerationTerm φ m prefix initial u ω *
+  pathGenerationChildMeanOffDiagonal φ μ n continuation
+  (initial + pathPotential φ ω u) (ω u)`, where `prefix` is the indicator of
+  `affineCorridorPrefix m lower drift width` and `continuation` is the
+  indicator of
+  `affineCorridorHistoryEndpointCutoff n (lower + drift * m) drift width endpointUpper`;
+  the outer integral is under `stepFieldLaw μ`.
+  The normalization identity
+  `ProbabilityTheory.BranchingRandomWalk.Spine.affineTubeMRCAPairContribution_eq_normalized`
+  identifies it with the square-weighted continuation expression;
+  `ProbabilityTheory.BranchingRandomWalk.Spine.affineTubeMRCAPairContribution_le_of_drawdown`
+  bounds each positive-depth contribution, and
+  `ProbabilityTheory.BranchingRandomWalk.Spine.sum_affineTubeMRCAPairContribution_le_of_drawdown`
+  sums these bounds over all possible MRCA generations.
+
+This module specializes the branching-random-walk path-level MRCA
+decomposition to affine tubes. Each positive-depth term factors into an
+ancestral-prefix mass and a continuation-pair estimate. The modules
+`ActualContribution`, `PairBound`, and `SecondMoment` identify and assemble
+these terms into the corridor-count second-moment bound.
 -/
 
 open MeasureTheory
@@ -449,7 +546,7 @@ theorem affineTubeRootMRCAPairMean_le_of_mogulskiiSegmentBound_of_crossAbsorptio
       gcongr
 
 /-- In particular, the root-split MRCA pair contribution is finite under the
-the finite cross-child condition whenever the segment-probability bound
+finite cross-child condition whenever the segment-probability bound
 is finite. This is a derived finiteness result, not a pair-moment assumption. -/
 theorem affineTubeRootMRCAPairMean_ne_top_of_segmentProbability
     {X : Type*} [MeasurableSpace X]

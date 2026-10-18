@@ -218,6 +218,12 @@ reusable path-agreement characterization
 `firstPassageGridCeiling N r a f = i ↔ firstPassageGridCeiling N r a g = i`
 when `f` and `g` agree through `r i`; `Brownian/Independence/FirstPassageGrid`
 uses this interface to prove the selected index is a stopping time.
+This pass also completed the declaration lists for the affine-tube spine
+second-moment modules `Spine/Tube/SecondMoment/OneGenerationTail.lean` and
+`Spine/Tube/MRCA/PairContribution.lean`, covering all 37 and 32
+module-visible declarations respectively, with their corridor, moment, and
+MRCA formulas. A name comparison confirms that each declaration appears in
+its module header.
 The convergence-in-distribution pass grouped its two approximation theorems under
 `Probability/ConvergenceInDistribution/Approximation/` and added formula-bearing
 public-declaration lists to `Basic.lean`, `DeterministicParameter.lean`, and

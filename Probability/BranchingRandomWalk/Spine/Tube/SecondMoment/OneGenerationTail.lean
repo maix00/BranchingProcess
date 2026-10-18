@@ -16,6 +16,99 @@ import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUppe
 /-!
 # A one-generation upper-tail bound from the offspring law
 
+## Public declarations
+
+* `ProbabilityTheory.BranchingRandomWalk.Spine.affineCorridorHistory` is the set
+  of histories satisfying `lower + drift * k ≤ x k ≤ lower + drift * k + width`
+  through time `n + 1`.
+  `ProbabilityTheory.BranchingRandomWalk.Spine.affineCorridorPrefix` imposes
+  the same bounds through time `n`, and
+  `ProbabilityTheory.BranchingRandomWalk.Spine.affineCorridorFirstWindow` is
+  `{y | lower + drift ≤ y ∧ y ≤ lower + drift + width}`.
+* `ProbabilityTheory.BranchingRandomWalk.Spine.affineCorridorHistoryEndpointCutoff`
+  is `affineCorridorHistory` intersected with the terminal constraint
+  `x (n + 1) ≤ endpointUpper`.
+* `ProbabilityTheory.BranchingRandomWalk.Spine.measurableSet_affineCorridorHistory`,
+  `ProbabilityTheory.BranchingRandomWalk.Spine.measurableSet_affineCorridorPrefix`,
+  and
+  `ProbabilityTheory.BranchingRandomWalk.Spine.measurableSet_affineCorridorHistoryEndpointCutoff`
+  establish measurability of these three history events.
+* `ProbabilityTheory.BranchingRandomWalk.Spine.affineCorridorHistory_firstWindow`
+  and
+  `ProbabilityTheory.BranchingRandomWalk.Spine.affineCorridorHistoryEndpointCutoff_firstWindow`
+  place the first positive-time coordinate in the corresponding first window;
+  `ProbabilityTheory.BranchingRandomWalk.Spine.affineCorridorHistory_terminalUpper`
+  and
+  `ProbabilityTheory.BranchingRandomWalk.Spine.affineCorridorHistoryEndpointCutoff_terminalUpper`
+  give the terminal upper bounds.
+* `ProbabilityTheory.BranchingRandomWalk.Spine.affineTubeIncrement_mem_noLargeDropEndpointBelowEvent`
+  and
+  `ProbabilityTheory.BranchingRandomWalk.Spine.affineCorridorHistory_continuation_mem_noLargeDropEndpointBelowEvent`
+  convert affine-tube constraints into the drawdown event
+  `∀ i ≤ j ≤ n, S_i - S_j ≤ width`, with terminal bound
+  `S_n ≤ width + drift * n`.
+* `ProbabilityTheory.BranchingRandomWalk.Spine.tiltedIncrementFieldLaw_affineCorridorHistoryEndpointCutoff_le_drawdown`
+  bounds the tilted probability of the endpoint-cutoff corridor by the
+  corresponding drawdown-and-endpoint probability.
+* `ProbabilityTheory.BranchingRandomWalk.Spine.lintegral_pathGenerationChildObservable_eq_manyToOne`
+  identifies the conditional child-continuation integral with its
+  many-to-one spine integral. The endpoint weight estimate
+  `ProbabilityTheory.BranchingRandomWalk.Spine.lintegral_pathGenerationChildObservable_le_endpoint_weight`
+  bounds it by the exponential terminal weight times the corridor probability.
+* `ProbabilityTheory.BranchingRandomWalk.Spine.shiftedCorridorProbability_le_of_firstWindow`
+  extends a first-window probability bound to all starting positions;
+  `ProbabilityTheory.BranchingRandomWalk.Spine.lintegral_pathGenerationChildObservable_le_uniform_spineProbability_mul_weight`
+  and
+  `ProbabilityTheory.BranchingRandomWalk.Spine.lintegral_pathGenerationChildObservable_le_firstWindowProbability_mul_weight`
+  give the corresponding child-moment bounds.
+* `ProbabilityTheory.BranchingRandomWalk.Spine.ennreal_tsum_offDiagonal_mul_le_crossChildWeight_of_childMomentBound`
+  bounds the ordered off-diagonal sum by the cross-child weight. Its fixed-root
+  and integrated forms are
+  `ProbabilityTheory.BranchingRandomWalk.Spine.pathGenerationChildMean_offDiagonal_le_crossChildWeight`
+  and
+  `ProbabilityTheory.BranchingRandomWalk.Spine.lintegral_pathGenerationChildMean_offDiagonal_le_crossChildWeight`.
+* `ProbabilityTheory.BranchingRandomWalk.Spine.measure_ne_zero_ge_lintegral_sq_div_lintegral_sq`
+  is the support-event Paley--Zygmund inequality
+  `μ {x | f x ≠ 0} ≥ (∫ f)^2 / ∫ f^2` for a nonnegative observable.
+* `ProbabilityTheory.BranchingRandomWalk.Spine.lintegral_pathGeneration_succ_sq_le_diagonal_add_crossWeight`,
+  `ProbabilityTheory.BranchingRandomWalk.Spine.lintegral_pathGeneration_affineTube_succ_sq_le_diagonal_add_crossWeight`,
+  and
+  `ProbabilityTheory.BranchingRandomWalk.Spine.lintegral_pathGeneration_affineTube_succ_sq_le_diagonal_add_crossWeight_of_drawdown`
+  give the one-generation second-moment recursion: the next second moment is
+  bounded by the diagonal continuation term plus the cross-child term, with
+  the latter controlled either by a corridor or drawdown probability bound.
+* `ProbabilityTheory.BranchingRandomWalk.Spine.lintegral_mul_distinct_child_subtrees_eq_product`
+  factors the integral of two observables in distinct child subtrees as the
+  product of their integrals.
+* `ProbabilityTheory.BranchingRandomWalk.Spine.pathGeneration_ne_zero_iff_hasPathHistoryIn`
+  identifies a nonzero corridor path count with existence of a path history in
+  the corridor. The moment bound
+  `ProbabilityTheory.BranchingRandomWalk.Spine.measure_hasPathHistoryIn_ge_of_pathGeneration_moments`
+  converts its first and second moments into a one-root success lower bound.
+* `ProbabilityTheory.BranchingRandomWalk.Spine.measure_hasPotentialChildIn_ge_tiltedWindow_sq_div_secondMoment`
+  gives the one-step lower bound `p^2 / (ENNReal.ofReal (exp (-a)) * p + C) ≤ μ{ξ |
+  hasPotentialChildIn φ I ξ}`, where `p = tiltedPotentialLaw φ (-1) μ I` and
+  `C = ∫⁻ ξ, crossChildWeight φ ξ ∂μ`, assuming `I` is measurable, bounded
+  below by `a`, has positive tilted mass, and the cross-child moment is finite.
+* `ProbabilityTheory.BranchingRandomWalk.Spine.measure_noRootHasPotentialChildIn_eq_pow`
+  and
+  `ProbabilityTheory.BranchingRandomWalk.Spine.measure_allRootsAvoidStepFieldEvent_eq_pow`
+  express independent-root failure probabilities as `q^m`.
+  `ProbabilityTheory.BranchingRandomWalk.Spine.measure_allRootsAvoidStepFieldEvent_le_exp`
+  bounds them by `exp (-m * p)` when each root succeeds with probability at
+  least `p`.
+* `ProbabilityTheory.BranchingRandomWalk.Spine.measure_allRootsAvoidPathHistoryIn_le_exp`
+  and
+  `ProbabilityTheory.BranchingRandomWalk.Spine.measure_allRootsAvoidPathHistoryIn_le_exp_of_pathGeneration_moments`
+  give the exponential all-root failure estimate for corridor paths, the
+  latter from first- and second-moment hypotheses.
+  `ProbabilityTheory.BranchingRandomWalk.Spine.measure_noRootHasPotentialChildIn_le_secondMomentPower`
+  gives the corresponding one-generation estimate from the offspring second
+  moment.
+* `ProbabilityTheory.BranchingRandomWalk.Spine.lintegral_pathGeneration_le_exp_mul_spineProbability`
+  bounds the expected corridor path count by the endpoint exponential factor
+  times the tilted-spine corridor probability.
+
 The cross-child moment assumption gives a quantitative lower bound for a
 one-step tube hit. Independent initial roots then give an upper bound for the
 probability that no root produces such a child. This is a finite-horizon
@@ -223,8 +316,8 @@ theorem affineCorridorHistory_continuation_mem_noLargeDropEndpointBelowEvent
 
 /-- The probability of a child continuation in an endpoint-truncated affine
 corridor is bounded by the corresponding drawdown-and-endpoint probability.
-This turns a one-block estimate from Lemma 2.3 into the probability input for
-the affine-tube second-moment recursion. -/
+The pathwise event inclusion transfers any available drawdown estimate to the
+corridor probability used by the affine-tube second-moment recursion. -/
 theorem tiltedIncrementFieldLaw_affineCorridorHistoryEndpointCutoff_le_drawdown
     {X : Type*} [MeasurableSpace X]
     (φ : Potential X) (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
