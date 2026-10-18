@@ -101,11 +101,26 @@ theorem IsStableLevyProcess.linearTube_probability_pos_indexOne
   have hwidth :
       2 * (R * a + η / 8 + |v / ((n : ℝ) + 1)|) < η := by
     linarith
-  exact h.linearTube_probability_pos_of_feedbackBlocks n v (η / 8)
-    (r * a) (R * a) η (by positivity)
-    (mul_nonneg (le_of_lt (lt_trans hr hrR)) ha.le)
-    hwidth (by simpa [t] using hplusCorrect)
-    (by simpa [t] using hminusCorrect)
+  have hrelative : 0 < P {ω | ∀ t : unitInterval,
+      |X (UnitInterval.toNNReal t) ω - X 0 ω - v * (t : ℝ)| < η} :=
+    h.increments.indepIncrements.linearTube_probability_pos_of_feedbackBlocks
+      h.toIsLevyProcess.stationaryIncrements
+      (fun t => h.increments.aemeasurable_eval t) h.ae_cadlag
+      n v (η / 8)
+      (r * a) (R * a) η (by positivity)
+      (mul_nonneg (le_of_lt (lt_trans hr hrR)) ha.le)
+      hwidth (by simpa [t] using hplusCorrect)
+      (by simpa [t] using hminusCorrect)
+  have heq : {ω | ∀ t : unitInterval,
+      |X (UnitInterval.toNNReal t) ω - v * (t : ℝ)| < η} =ᵐ[P]
+      {ω | ∀ t : unitInterval,
+        |X (UnitInterval.toNNReal t) ω - X 0 ω - v * (t : ℝ)| < η} := by
+    filter_upwards [h.increments.ae_start_eq_zero] with ω hzero
+    have hzero' : X 0 ω = 0 := by simpa using hzero
+    apply propext
+    simp [hzero']
+  rw [measure_congr heq]
+  exact hrelative
 
 end ProbabilityTheory
 
