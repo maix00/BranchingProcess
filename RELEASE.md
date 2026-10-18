@@ -1,13 +1,14 @@
-# Standalone Lean library release
+# Standalone Lean library pull requests
 
-The Lean library is published from the `lean/` subtree of the canonical
-repository.  The standalone repository is
-`https://github.com/maix00/BranchingProcess.git`; its `main` branch is the
-published subtree, not the LaTeX thesis checkout.
+The Lean library is maintained in the canonical repository's `lean/` subtree
+and reviewed in `https://github.com/maix00/BranchingProcess`. Keep the subtree
+on a persistent remote PR branch while the work is in progress. The standalone
+`main` branch is the PR base and is updated only by merging that pull request.
 
-## Release checklist
+## Preflight branch workflow
 
-Run these commands from the canonical checkout on `master`:
+From the canonical repository root, compile the Lean project, commit the
+verified changes, then run:
 
 ```sh
 cd lean
@@ -15,29 +16,30 @@ lake build
 cd ..
 git diff --check
 git status --short --untracked-files=all
-./scripts/update-branchingprocess-subtree.sh --push
+./scripts/update-branchingprocess-subtree.sh --preflight
 ```
 
-The last command refuses a dirty worktree and creates a subtree commit with
-`git subtree split --prefix=lean`. It pushes that commit to a temporary
-preflight branch on the standalone repository, waits for the `Lake build`
-workflow to pass on that exact commit, then makes an ordinary fast-forward
-push to `main` and removes the temporary branch. A failed or missing workflow
-prevents publication, and a divergent remote is reported as an error instead
-of being overwritten. If the canonical repository has a `lean/` snapshot whose
-tree exactly matches the remote, the script joins the subtree history to the
-standalone history while preserving both parent histories. Publishing requires an authenticated GitHub CLI (`gh`)
-session with permission to push branches and read workflow results.
+The script splits `lean/`, updates a persistent branch on the standalone
+repository (by default, the current local branch name), and waits for the
+GitHub Actions build for that exact commit. It never pushes to `main` and does
+not delete the preflight branch. Use the branch as the head of the pull
+request; later verified commits update the same branch. Merge only through the
+pull request after review and all required checks pass.
 
-The remote and target branch can be changed explicitly when needed:
+To select a different persistent head branch, pass its name or set
+`BRANCHINGPROCESS_PREFLIGHT_BRANCH`:
 
 ```sh
-BRANCHINGPROCESS_REMOTE=branchingprocess \
-BRANCHINGPROCESS_BRANCH=main \
-./scripts/update-branchingprocess-subtree.sh --push
+./scripts/update-branchingprocess-subtree.sh --preflight codex/branch-name
 ```
 
-Do not release uncommitted files.  The Lake package version and exact
+The remote and PR base branch can be selected with
+`BRANCHINGPROCESS_REMOTE` and `BRANCHINGPROCESS_BRANCH`. If the local subtree
+does not contain the base branch's changes, publication is refused rather
+than rewriting or dropping them. Publishing requires an authenticated GitHub
+CLI (`gh`) session with permission to push branches and read workflow results.
+
+Do not publish uncommitted files. The Lake package version and exact
 dependency revisions are recorded in `lakefile.toml`, `lake-manifest.json`,
-and `lean-toolchain`; a release is valid only after the pinned `lake build`
-and GitHub preflight workflow pass.
+and `lean-toolchain`; a preflight update requires a successful build with
+those pinned dependencies.

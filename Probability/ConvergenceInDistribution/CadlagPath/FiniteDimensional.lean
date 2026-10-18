@@ -8,8 +8,8 @@ module
 
 public import MeasureTheory.Measure.CadlagPath.FiniteDimensional.Dense
 public import Probability.ConvergenceInDistribution.Mapping
-public import Topology.Cadlag.Skorokhod.Evaluation
-public import Topology.Cadlag.Skorokhod.Endpoint
+public import Topology.Cadlag.Skorokhod.Evaluation.Basic
+public import Topology.Cadlag.Skorokhod.Path.Endpoint
 
 /-!
 # Weak convergence of càdlàg path laws from finite grids

@@ -61,7 +61,7 @@ namespace ProbabilityTheory
 /-- Local replacement for the removed `intervalIntegral.integral_eq_zero_of_forall_eq_zero`.
 If `f` vanishes on the open interval `Ioo (min a b) (max a b)`, then `∫ t in a..b, f t = 0`,
 since the endpoints have Lebesgue measure zero. -/
-private theorem intervalIntegral_eq_zero_of_forall_eq_zero {a b : ℝ} {f : ℝ → ℝ}
+private lemma intervalIntegral_eq_zero_of_forall_eq_zero {a b : ℝ} {f : ℝ → ℝ}
     (hf : ∀ t, t ∈ Set.uIoo a b → f t = 0) :
     ∫ t in a..b, f t = 0 := by
   rcases le_or_gt a b with hab | hab
@@ -94,12 +94,12 @@ private noncomputable def fejerApproximant (ψ : ℝ → ℂ) (N : ℝ) (x : ℝ
       ψ u * exp (-(↑x * ↑u * I)) * (1 - ↑(|u| / N))).re
 
 /-- The product of a PD function `ψ` and `u ↦ exp(-ixu)` is PD. -/
-private theorem isPositiveDefinite_mul_exp (ψ : ℝ → ℂ) (hpd : IsPositiveDefinite ψ) (x : ℝ) :
+private lemma isPositiveDefinite_mul_exp (ψ : ℝ → ℂ) (hpd : IsPositiveDefinite ψ) (x : ℝ) :
     IsPositiveDefinite (fun u => ψ u * exp (-(↑x * ↑u * I))) := by
   exact hpd.mul (IsPositiveDefinite.exp_neg_ofReal_mul x)
 
 /-- PD Riemann sums R_m = (h²/N) * Re(∑ᵢ ∑ⱼ g((i-j)h)) are non-negative. -/
-private theorem riemannSum_nonneg_of_pd (g : ℝ → ℂ) (hg_pd : IsPositiveDefinite g)
+private lemma riemannSum_nonneg_of_pd (g : ℝ → ℂ) (hg_pd : IsPositiveDefinite g)
     (N : ℝ) (hN : 0 < N) (m : ℕ) :
     0 ≤ (N / ((m : ℝ) + 1)) ^ 2 / N *
       (∑ i : Fin (m + 1), ∑ j : Fin (m + 1),
@@ -114,7 +114,7 @@ private theorem riemannSum_nonneg_of_pd (g : ℝ → ℂ) (hg_pd : IsPositiveDef
 set_option maxHeartbeats 800000 in
 /-- The Fejér tent integral equals `(1/N) * ∫_0^N ∫_0^N Re(g(s-t)) ds dt` via
 Fubini and the change of variables `u = s - t`. -/
-private theorem tent_integral_eq_fubini (g : ℝ → ℂ) (hg_cont : Continuous g)
+private lemma tent_integral_eq_fubini (g : ℝ → ℂ) (hg_cont : Continuous g)
     (N : ℝ) (hN : 0 < N) :
     (∫ u in Set.Icc (-N) N,
       g u * (1 - ↑(|u| / N))).re =
@@ -295,7 +295,7 @@ private theorem tent_integral_eq_fubini (g : ℝ → ℂ) (hg_cont : Continuous 
 set_option maxHeartbeats 800000 in
 /-- 2D Riemann sum convergence: for a uniformly continuous function F on [0,N]²,
 the sum h² * ∑ᵢ ∑ⱼ F(ih, jh) converges to ∫∫ F as h → 0. -/
-private theorem tendsto_riemannSum_of_uniformContinuousOn
+private lemma tendsto_riemannSum_of_uniformContinuousOn
     (F : ℝ → ℝ → ℝ) (N : ℝ) (hN : 0 < N)
     (hF_cts : Continuous F.uncurry)
     (hF_ucont : UniformContinuousOn F.uncurry
@@ -505,7 +505,7 @@ private theorem tendsto_riemannSum_of_uniformContinuousOn
     _ < ε := by linarith
 
 set_option maxHeartbeats 800000 in
-private theorem fejerApproximant_nonneg (ψ : ℝ → ℂ) (hψc : Continuous ψ)
+private lemma fejerApproximant_nonneg (ψ : ℝ → ℂ) (hψc : Continuous ψ)
     (hpd : IsPositiveDefinite ψ) (N : ℝ) (hN : 0 < N) (x : ℝ) : 0 ≤ fejerApproximant ψ N x := by
   -- Direct proof via PD Riemann sums, bypassing the double integral.
   -- Define g(u) = ψ(u) * exp(-ixu), which is PD and continuous.
@@ -591,7 +591,7 @@ private theorem fejerApproximant_nonneg (ψ : ℝ → ℂ) (hψc : Continuous ψ
 /-- The Fejér approximants converge pointwise to the inverse Fourier density, under
 the integrability assumption on `ψ`. By DCT: the tapered integrand converges to the
 un-tapered integrand, dominated by `‖ψ‖ ∈ L¹`. -/
-private theorem tendsto_fejerApproximant (ψ : ℝ → ℂ) (hI : Integrable ψ volume) (x : ℝ) :
+private lemma tendsto_fejerApproximant (ψ : ℝ → ℂ) (hI : Integrable ψ volume) (x : ℝ) :
     Tendsto (fun n : ℕ => fejerApproximant ψ (↑n + 1) x)
       atTop (𝓝 (inverseFourierDensity ψ x)) := by
   unfold fejerApproximant inverseFourierDensity
@@ -679,7 +679,7 @@ private theorem tendsto_fejerApproximant (ψ : ℝ → ℂ) (hI : Integrable ψ 
 
 /-- The inverse Fourier density is non-negative for PD + L¹ functions, as the pointwise
 limit of non-negative Fejér approximants. -/
-private theorem inverseFourierDensity_nonneg (ψ : ℝ → ℂ) (hψc : Continuous ψ)
+private lemma inverseFourierDensity_nonneg (ψ : ℝ → ℂ) (hψc : Continuous ψ)
     (hpd : IsPositiveDefinite ψ) (hI : Integrable ψ volume) (x : ℝ) : 0 ≤ inverseFourierDensity ψ x :=
   ge_of_tendsto (tendsto_fejerApproximant ψ hI x)
     (Eventually.of_forall fun n => fejerApproximant_nonneg ψ hψc hpd (↑n + 1) (by positivity) x)
@@ -687,7 +687,7 @@ private theorem inverseFourierDensity_nonneg (ψ : ℝ → ℂ) (hψc : Continuo
 /-- The inverse Fourier density is continuous (hence measurable) for continuous L¹ ψ.
 Proof: the integrand `ψ(u) exp(-ixu)` is continuous in x, bounded by `‖ψ(u)‖ ∈ L¹`,
 so by DCT the integral is continuous. -/
-private theorem continuous_inverseFourierDensity (ψ : ℝ → ℂ)
+private lemma continuous_inverseFourierDensity (ψ : ℝ → ℂ)
     (hψc : Continuous ψ) (hI : Integrable ψ volume) :
     Continuous (inverseFourierDensity ψ) := by
   unfold inverseFourierDensity
@@ -718,7 +718,7 @@ private theorem continuous_inverseFourierDensity (ψ : ℝ → ℂ)
 /-- Bridge lemma: the Fourier transform of `w ↦ ψ(2πw)` (in the mathematician's convention)
 equals `↑(inverseFourierDensity ψ y)` for PD integrable `ψ`. This uses that the FT integral
 is real-valued by Hermitian symmetry, and changes variables `u = 2πw` in the integral. -/
-private theorem fourierTransform_rescaled_eq (ψ : ℝ → ℂ) (hψc : Continuous ψ)
+private lemma fourierTransform_rescaled_eq (ψ : ℝ → ℂ) (hψc : Continuous ψ)
     (hpd : IsPositiveDefinite ψ) (hI : Integrable ψ volume) (y : ℝ) :
     𝓕 (fun w => ψ (2 * Real.pi * w)) y = ↑(inverseFourierDensity ψ y) := by
   have h2pi_ne : (2 : ℝ) * Real.pi ≠ 0 := mul_ne_zero two_ne_zero Real.pi_ne_zero
@@ -824,7 +824,7 @@ set_option maxHeartbeats 800000 in
 `∫_x Re(∫_u ψ(u) exp(-ixu)) · exp(-x²/(2σ²)) = √(2πσ²) · Re(∫_u ψ(u) exp(-σ²u²/2))`.
 This swaps the x and u integrals using Fubini, then evaluates the inner x-integral
 via `fourierIntegral_gaussian`. -/
-private theorem fubini_gaussianFourier_identity (ψ : ℝ → ℂ) (hψc : Continuous ψ)
+private lemma fubini_gaussianFourier_identity (ψ : ℝ → ℂ) (hψc : Continuous ψ)
     (hI : Integrable ψ volume) (σ2 : ℝ) (hσ2 : 0 < σ2) :
     ∫ x : ℝ, (∫ u : ℝ, ψ u * exp (-(↑x * ↑u * I))).re *
       Real.exp (-(x ^ 2 / (2 * σ2))) =
@@ -1017,7 +1017,7 @@ private theorem fubini_gaussianFourier_identity (ψ : ℝ → ℂ) (hψc : Conti
 set_option maxHeartbeats 800000 in
 /-- Each Gaussian-smoothed lintegral satisfies `∫⁻ ρ(x) exp(-x²/(2σ²)) ≤ 1`.
 Uses the Fubini identity, `‖ψ‖ ≤ 1`, and `∫ exp(-σ²u²/2) = √(2π/σ²)`. -/
-private theorem gaussianSmoothed_lintegral_le_one (ψ : ℝ → ℂ) (hψc : Continuous ψ)
+private lemma gaussianSmoothed_lintegral_le_one (ψ : ℝ → ℂ) (hψc : Continuous ψ)
     (hpd : IsPositiveDefinite ψ) (h0 : ψ 0 = 1)
     (hI : Integrable ψ volume) (σ2 : ℝ) (hσ2 : 0 < σ2)
     (hρ_nn : ∀ x, 0 ≤ inverseFourierDensity ψ x) :
@@ -1177,7 +1177,7 @@ private theorem gaussianSmoothed_lintegral_le_one (ψ : ℝ → ℂ) (hψc : Con
 set_option maxHeartbeats 800000 in
 /-- The inverseFourierDensity is integrable for PD+continuous+L¹ functions.
 Proof: ρ ≥ 0 (from Fejér argument) and the Gaussian regularization shows ∫ ρ = 1. -/
-private theorem integrable_inverseFourierDensity (ψ : ℝ → ℂ) (hψc : Continuous ψ)
+private lemma integrable_inverseFourierDensity (ψ : ℝ → ℂ) (hψc : Continuous ψ)
     (hpd : IsPositiveDefinite ψ) (h0 : ψ 0 = 1) (hI : Integrable ψ volume) :
     Integrable (inverseFourierDensity ψ) volume := by
   -- ρ ≥ 0 (from inverseFourierDensity_nonneg, which uses Fejér ≥ 0)
@@ -1249,7 +1249,7 @@ set_option maxHeartbeats 800000 in
 /-- The characteristic function of the measure with density `inverseFourierDensity ψ`
 equals `ψ`, assuming `ψ` is continuous and L¹. This is the Fourier inversion theorem
 specialized to the probabilist convention. -/
-private theorem charFun_inverseFourierDensity (ψ : ℝ → ℂ) (hψc : Continuous ψ)
+private lemma charFun_inverseFourierDensity (ψ : ℝ → ℂ) (hψc : Continuous ψ)
     (hpd : IsPositiveDefinite ψ) (h0 : ψ 0 = 1) (hI : Integrable ψ volume) (ξ : ℝ) :
     ∫ x, (inverseFourierDensity ψ x : ℝ) • exp (↑ξ * ↑x * I) = ψ ξ := by
   -- Proof via Fourier inversion theorem (mathlib).
@@ -1326,7 +1326,7 @@ private theorem charFun_inverseFourierDensity (ψ : ℝ → ℂ) (hψc : Continu
 
 /-- The inverse Fourier density integrates to 1 when `ψ(0) = 1`.
 Derived from `charFun_inverseFourierDensity` at `ξ = 0`. -/
-private theorem integral_inverseFourierDensity_eq_one (ψ : ℝ → ℂ) (hψc : Continuous ψ)
+private lemma integral_inverseFourierDensity_eq_one (ψ : ℝ → ℂ) (hψc : Continuous ψ)
     (hpd : IsPositiveDefinite ψ) (h0 : ψ 0 = 1) (hI : Integrable ψ volume) :
     ∫ x, inverseFourierDensity ψ x = 1 := by
   -- Deduce from charFun_inverseFourierDensity at ξ = 0
@@ -1351,7 +1351,7 @@ function with `ψ(0) = 1` is the characteristic function of a probability measur
 Proof: The inverse Fourier density `ρ(x) = (1/2π) Re(∫ ψ(u) e^{-ixu} du)` is non-negative
 (by the Fejér approximation argument), integrates to 1 (by Gaussian regularization), and
 has characteristic function equal to `ψ` (by Fourier inversion). -/
-private theorem exists_probMeasure_of_pd_integrable
+private lemma exists_probMeasure_of_pd_integrable
     (ψ : ℝ → ℂ) (hψc : Continuous ψ) (hpd : IsPositiveDefinite ψ)
     (h0 : ψ 0 = 1) (_hI : Integrable ψ volume) :
     ∃ μ : ProbabilityMeasure ℝ,
@@ -1391,7 +1391,7 @@ private theorem exists_probMeasure_of_pd_integrable
 
 /-- A pointwise limit of characteristic functions which is continuous at zero
 forms a tight family. This delegates to Mathlib's Lévy convergence development. -/
-private theorem isTight_of_charFun_pointwise_tendsto
+private lemma isTight_of_charFun_pointwise_tendsto
     {μs : ℕ → ProbabilityMeasure ℝ} {φ : ℝ → ℂ}
     (hφc : Continuous φ)
     (hconv : ∀ ξ, Tendsto (fun n => charFun (μs n : Measure ℝ) ξ) atTop (𝓝 (φ ξ))) :
@@ -1410,33 +1410,33 @@ private noncomputable def gaussianPM (n : ℕ) : ProbabilityMeasure ℝ :=
   ⟨gaussianReal 0 (gaussianVar n), inferInstance⟩
 
 @[simp]
-private theorem gaussianPM_val (n : ℕ) :
+private lemma gaussianPM_val (n : ℕ) :
     (gaussianPM n : Measure ℝ) = gaussianReal 0 (gaussianVar n) := rfl
 
 /-- The characteristic function of `N(0, 1/(n+1))` is positive definite. -/
-private theorem pd_gaussianCharFun (n : ℕ) :
+private lemma pd_gaussianCharFun (n : ℕ) :
     IsPositiveDefinite (fun ξ => charFun (gaussianReal 0 (gaussianVar n)) ξ) := by
   show IsPositiveDefinite (fun ξ => charFun (gaussianPM n : Measure ℝ) ξ)
   exact MeasureTheory.ProbabilityMeasure.isPositiveDefinite_charFun (gaussianPM n)
 
 /-- The smoothed function `φ · charFun(N(0,1/(n+1)))` is positive definite. -/
-private theorem pd_smoothed {φ : ℝ → ℂ} (hpd : IsPositiveDefinite φ) (n : ℕ) :
+private lemma pd_smoothed {φ : ℝ → ℂ} (hpd : IsPositiveDefinite φ) (n : ℕ) :
     IsPositiveDefinite (fun ξ => φ ξ * charFun (gaussianReal 0 (gaussianVar n)) ξ) :=
   hpd.mul (pd_gaussianCharFun n)
 
 /-- The smoothed function at 0 equals 1. -/
-private theorem smoothed_at_zero {φ : ℝ → ℂ} (h0 : φ 0 = 1) (n : ℕ) :
+private lemma smoothed_at_zero {φ : ℝ → ℂ} (h0 : φ 0 = 1) (n : ℕ) :
     φ 0 * charFun (gaussianReal 0 (gaussianVar n)) 0 = 1 := by
   simp [h0, charFun_zero]
 
 /-- Continuity of the Gaussian characteristic function. -/
-private theorem continuous_charFun_gaussianVar (n : ℕ) :
+private lemma continuous_charFun_gaussianVar (n : ℕ) :
     Continuous (fun ξ => charFun (gaussianReal 0 (gaussianVar n)) ξ) := by
   simp_rw [charFun_gaussianReal]
   fun_prop
 
 /-- Continuity of the smoothed function. -/
-private theorem continuous_smoothed {φ : ℝ → ℂ} (hφc : Continuous φ) (n : ℕ) :
+private lemma continuous_smoothed {φ : ℝ → ℂ} (hφc : Continuous φ) (n : ℕ) :
     Continuous (fun ξ => φ ξ * charFun (gaussianReal 0 (gaussianVar n)) ξ) :=
   hφc.mul (continuous_charFun_gaussianVar n)
 
@@ -1445,7 +1445,7 @@ private theorem continuous_smoothed {φ : ℝ → ℂ} (hφc : Continuous φ) (n
 Proof: `‖charFun(N(0,v)) ξ‖ = exp(-v/2 · ξ²)`, which is integrable as a Gaussian.
 The norm equality follows from `charFun_gaussianReal` and the fact that the mean-0
 Gaussian charfun has purely real, negative exponent. -/
-private theorem integrable_charFun_gaussianVar (n : ℕ) :
+private lemma integrable_charFun_gaussianVar (n : ℕ) :
     Integrable (fun ξ => charFun (gaussianReal 0 (gaussianVar n)) ξ) volume := by
   set v := gaussianVar n
   have hv_pos : (0 : ℝ) < (v : ℝ≥0) := by
@@ -1470,7 +1470,7 @@ private theorem integrable_charFun_gaussianVar (n : ℕ) :
     exact Real.exp_le_exp_of_le (by nlinarith)
 
 /-- Integrability of the smoothed function (bounded by Gaussian). -/
-private theorem integrable_smoothed {φ : ℝ → ℂ} (hφc : Continuous φ)
+private lemma integrable_smoothed {φ : ℝ → ℂ} (hφc : Continuous φ)
     (hpd : IsPositiveDefinite φ) (h0 : φ 0 = 1) (n : ℕ) :
     Integrable (fun ξ => φ ξ * charFun (gaussianReal 0 (gaussianVar n)) ξ) volume := by
   exact (integrable_charFun_gaussianVar n).mono
@@ -1483,7 +1483,7 @@ private theorem integrable_smoothed {φ : ℝ → ℂ} (hφc : Continuous φ)
         _ = ‖charFun (gaussianReal 0 (gaussianVar n)) ξ‖ := one_mul _)
 
 /-- The Gaussian charfun at a fixed `ξ` tends to 1 as the variance → 0. -/
-private theorem tendsto_gaussianCharFun_one (ξ : ℝ) :
+private lemma tendsto_gaussianCharFun_one (ξ : ℝ) :
     Tendsto (fun n => charFun (gaussianReal 0 (gaussianVar n)) ξ) atTop (𝓝 1) := by
   -- charFun(N(0,1/(n+1))) ξ → 1 as the Gaussian variance → 0
   simp_rw [charFun_gaussianReal]
@@ -1503,7 +1503,7 @@ private theorem tendsto_gaussianCharFun_one (ξ : ℝ) :
   exact (((hv_tendsto.mul tendsto_const_nhds).div_const _).neg)
 
 /-- The smoothed charfun converges pointwise to φ. -/
-private theorem tendsto_smoothed (φ : ℝ → ℂ) (ξ : ℝ) :
+private lemma tendsto_smoothed (φ : ℝ → ℂ) (ξ : ℝ) :
     Tendsto (fun n => φ ξ * charFun (gaussianReal 0 (gaussianVar n)) ξ) atTop (𝓝 (φ ξ)) := by
   conv_rhs => rw [show φ ξ = φ ξ * 1 from (mul_one _).symm]
   exact tendsto_const_nhds.mul (tendsto_gaussianCharFun_one ξ)

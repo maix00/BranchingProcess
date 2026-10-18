@@ -26,7 +26,7 @@ open scoped ENNReal
 
 namespace ProbabilityTheory.RandomWalk.FunctionalLimit.Normal
 
-private theorem exists_eventually_compactRange_bound_of_ennrealBudget
+private lemma exists_eventually_compactRange_bound_of_ennrealBudget
     (ν : Measure ℝ) [IsProbabilityMeasure ν] (normalization : ℕ → ℝ)
     (hreal : ∀ ε : ℝ, 0 < ε →
       ∃ range : Set ℝ, IsCompact range ∧
@@ -55,7 +55,7 @@ private theorem exists_eventually_compactRange_bound_of_ennrealBudget
     filter_upwards [hmass] with n hn
     rwa [ENNReal.ofReal_toReal htop] at hn
 
-private theorem isTightMeasureSet_range_normalizedStepPathLaw_of_pathBounds
+private lemma isTightMeasureSet_range_normalizedStepPathLaw_of_pathBounds
     (ν : Measure ℝ) [IsProbabilityMeasure ν] (normalization : ℕ → ℝ)
     (hrange : ∀ {η : ℝ≥0∞}, 0 < η →
       ∃ range : Set ℝ, IsCompact range ∧
