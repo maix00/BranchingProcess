@@ -70,11 +70,15 @@ or outward move, search the pinned Mathlib source and repository, inspect the
 official Mathlib documentation and relevant dependencies online, and consult
 the mathematical literature when it can identify a more general statement.
 Compare the weakest natural assumptions and the exact semantics, not just
-similar names. Add a public abstraction only when it states a meaningful
-reusable mathematical operation or theorem beyond a thin restatement of an
-existing API. A module having several clients is a reason to audit its
-abstraction, not evidence by itself that the declaration belongs at a higher
-level. Record the sources and exact candidate statements examined, compare
+similar names. Public definitions and theorems should expose the most abstract
+useful mathematical structure and the weakest natural assumptions supported
+by their meaning. Judge generality by the mathematical interface, not by
+mechanically dropping hypotheses or enlarging types. Add a public abstraction
+only when it states a meaningful reusable mathematical operation or theorem
+beyond a thin restatement of an existing API. A module having several clients
+is a reason to audit its abstraction, not evidence by itself that the
+declaration belongs at a higher level. Record the sources and exact candidate
+statements examined, compare
 their assumptions and conclusions with the actual use sites, and explain why
 the chosen statement is the most general useful one and belongs at that
 semantic layer. Identify the pinned revision for every dependency API checked.

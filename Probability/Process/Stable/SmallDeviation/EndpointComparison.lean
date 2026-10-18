@@ -12,6 +12,7 @@ public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.Entrance.Fi
 public import Probability.Process.Stable.SmallDeviation.Blocks.Upper.Shrinking
 public import Probability.Process.Corridor.Range
 public import Analysis.Asymptotics.Sequence.NegativeRatio
+import Probability.Process.Path.Skorokhod.Corridor.SegmentStationarity
 import Mathlib.Topology.Compactness.Compact
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 import Mathlib.Tactic.FieldSimp
@@ -367,7 +368,9 @@ private lemma eventually_fixed_endpoint_bin_le_target
         (a' * (outerUpper - x.1 - 3 * r)) secondLower secondUpper) =
       P tailAtCut := by
     simpa [tailAtCut] using
-      h.measure_fullSegmentCorridorReturn_shift prefixH tail
+      h.toIsLevyProcess.indepIncrements.measure_fullSegmentCorridorReturn_shift
+        h.toIsLevyProcess.stationaryIncrements h.toIsLevyProcess.ae_cadlag
+        prefixH tail
         (a' * (outerLower - x.1 + 3 * r))
         (a' * (outerUpper - x.1 - 3 * r)) secondLower secondUpper
   have htailScale := h.measure_scaled_time_fullReturn a' ha' T hT

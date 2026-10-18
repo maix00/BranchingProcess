@@ -41,7 +41,7 @@ when the move only clarifies module organization.
 | `Probability/BranchingRandomWalk/Spine` | Spine random walks, many-to-one identities, and tube moments | `ManyToOne/`, `RandomWalk/`, `PointMeasure/`, and `Tilted/` group the corresponding public constructions. `Path/` keeps its core interfaces at the root and groups decomposition, many-to-one, and second-moment results by subject. `Tube/` groups corridor, MRCA, and second-moment estimates. The declaration namespaces remain rooted at `ProbabilityTheory.BranchingRandomWalk.Spine` to preserve the existing API; only module paths changed. |
 | `Probability/RandomMeasure/Poisson` | Poisson random measures and their public probability interfaces | `Integration/`, `Intensity/`, `JumpPath/`, and `Realization/` group integration identities, support and time-mark facts, path bounds, and finite-jump configurations. `Basic.lean`, `PointFamily.lean`, and `Superposition.lean` remain the direct core interfaces. The declarations retain the `ProbabilityTheory` namespace. |
 | `Probability/Process/Brownian` | Brownian-process construction, continuous path laws, and support | `Construction/` groups existence and modification inputs; `PathLaw/` groups continuous versions and path-space laws; `Scaling/`, `Marginal/`, and `Support/` own the corresponding interfaces. `Reflection/` is divided into `Path/`, `FirstPassage/`, and `Descending/` families. `FirstPassage/Grid.lean` uses Mathlib's generic `hittingBtwn` for finite observations; `GridLaw.lean` contains the Brownian-law theorem for the separate path first-passage grid approximation. |
-| `Probability/Process/Path/Skorokhod/Corridor/UniformBlocks` | Finite uniform partitions of path corridors | `Feedback/Basic.lean` defines the sign-selected block and prefix events and their pathwise identities; `Feedback/FullPath.lean` gives the reusable càdlàg transfer from rational-coordinate bounds to a full-path tube. Both are mathematical interfaces, so they remain outside `Lemmas/`. |
+| `Probability/Process/Path/Skorokhod/Corridor/UniformBlocks` | Finite uniform partitions of path corridors | `Independence.lean` states mutual independence of the canonical rational block paths and independence of a prefix path from its next block for any process with independent increments; `Stationarity.lean` identifies translated block laws under stationary independent increments. `Feedback/Basic.lean` defines the sign-selected block and prefix events and their pathwise identities; `Feedback/FullPath.lean` gives the reusable càdlàg transfer from rational-coordinate bounds to a full-path tube. These statements belong to the named path construction, not to stable-process small-deviation modules. |
 | `Probability/Process/RandomWalk/FunctionalLimit/Stable` | Stable-domain path-law convergence and tightness | `PathLaw/` groups endpoint-grid identification, subsequential law construction, process-law construction, and convergence. `Tightness/` groups block tails, local oscillation, partition bounds, compact-range control, and the resulting tightness theorem. The finite-dimensional endpoint theorem and centering conditions remain at the subject root. |
 | `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Spectral/Range` | Rademacher range small-deviation estimates from spectral interval bounds | `Blocks/` contains the one-block Donsker bounds; `Corridor/` contains the finite Brownian cover and killed-corridor comparison; `Rate/` contains parameter selection, logarithmic transfer, asymptotics, and the sharp upper rate. `Basic.lean` defines integer path coordinates, while `Probability.lean` retains the finite-time translated-interval cover. |
 | `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Rate` | Public normal-domain small-deviation rate results | `Endpoint/` groups endpoint bands, windows, and parameter selection; `Endpoint/Selection/Basic.lean` is the public sharp-rate conclusion, while its floor choices and fixed-parameter proof step are in `Endpoint/Selection/Lemmas/FixedParameters.lean`. `Partition/` groups finite covers and partitions; `Bounds/` groups interior, lower, upper, and variance estimates. The declarations keep their existing Mogulskii namespace because their mathematical ownership is unchanged. |
@@ -54,10 +54,65 @@ when the move only clarifies module organization.
 | `Mogulskii/RandomWalkBounds` and `Mogulskii/Stable/RandomWalkBounds` | Random-walk finite-block bounds and stable-domain random-walk rates | The normal-domain root separates Donsker endpoint, endpoint-band geometry, horizontal tubes, and source-partition arguments. Stable random-walk bounds group `Bridge/`, `Endpoint/`, `Partition/`, `PathClass/`, and `Source/`; the stable-process estimates remain in their own owner directory. `Stable/RandomWalkBounds/FromIncrementLaw/` separates `Normal/`, `Path/`, and `Stable/` adapters, with `HorizontalTube/` holding the finite-variance tube interfaces. `Stable/Scale/Basic.lean` owns the two-scale condition and rate consequences; `Stable/Scale/Rate.lean` owns block-length asymptotics. Gaussian modules remain divided into `Gaussian/Blocks/` and `Gaussian/Path/`. `FunctionalLimit/Donsker/Entrance/` owns the Brownian middle-start corridor and uniform diffusive entrance estimates. |
 | `Analysis/Asymptotics/Scale` | Reusable deterministic scale tools | `Basic.lean` defines the common small-deviation scale relation; `InverseScale.lean` handles generalized inverses and their subdiffusive rates; `BlockScale.lean`, `ShiftedFloor.lean`, and `IntermediatePowerBlock.lean` cover integer block rounding and intermediate block scales; `Sampling.lean` transfers rates along selected time intervals; `SlowDiagonal.lean` and `Tolerance.lean` provide real-valued diagonal and error-threshold selections. All eight direct modules are distinct reusable interfaces, so they remain as peers at this level. |
 | `Analysis/Asymptotics/RegularVariation` | Regular variation, slow variation, and Karamata-type consequences | `Basic.lean`, `Uniform.lean`, `AsymptoticInverse.lean`, `LowerPower.lean`, `MonotoneDensity.lean`, and `SlowScale.lean` remain at the subject root. `Integral/{Basic,Tail}.lean` groups the first and second integral-tail theorems with their regular-variation consequences; both modules expose reusable results and remain outside `Lemmas/`. |
-| `Stable/SmallDeviation/Blocks/Lower` | Lower block estimates | `Assembly/`, `Binning/`, `Bounds/`, `Entrance/`, and `Return/` group the distinct construction steps. The reusable feedback construction remains in `Feedback/`. |
+| `Stable/SmallDeviation/Blocks/Lower` | Lower block estimates | `Assembly/`, `Binning/`, `Bounds/`, `Entrance/`, and `Return/` group the distinct construction steps. The reusable feedback construction remains in `Feedback/`. Stable-law adapters are limited to the block laws and estimates whose statements actually use stability. |
 | `BranchingRandomWalk/Restart/RootedTrial` | Rooted-trial restart and coupling | Finite-slot and reserve arguments have their own subdirectories. |
 | `Combinatorics/BranchingWalk/Step` | Deterministic branching-step operations | The root keeps `Basic`, `Map`, `Measurability`, and `Relation`. Ordering properties and ranks are under `Ordering/`; slot selection and sibling closure are under `Selection/`; potential and point-measure operations are under `Measure/`; generation-local updates are under `Generation/`. |
 | `Probability/BranchingRandomWalk/Step` | Random step presentations, fields, and laws | Coordinate presentations and their constructors/maps are under `Presentation/`; field operations under `Field/`; probability laws under `Law/`; measurable ordering under `Ordering/`; point-measure observations under `PointMeasure/`. Root-indexed position measurability remains under `Position/`. |
+
+## Abstraction review: stationary increment path laws (2026-10-19)
+
+This review was triggered by repeated use of translated block-path laws. The
+checked Mathlib revision is
+`380f2aafb622cb2c1c93dac545b6389083c68c51`. The official
+[independent-increment API](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Probability/Independence/Process/HasIndepIncrements/Basic.html)
+defines independence of increments along every finite monotone time grid.
+The official
+[finite-dimensional-law API](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Probability/Process/FiniteDimensionalLaws.html)
+characterizes equality of process laws by equality of all finite-dimensional
+distributions. These are the general ingredients used here; neither API
+packages equal-duration time changes of a process with stationary independent
+increments. The local
+`Probability.Process.IndepIncrements.FiniteDimensional` API already proves
+function-valued law equality from matching increment laws and zero starts, and
+`Probability.Process.IndepIncrements.DisjointPaths` already gives independence
+for arbitrary observed path coordinates on adjacent intervals and for finite
+monotone partitions. The literature uses stationary independent increments as
+the defining increment structure of a Lévy process; see the
+[Cambridge excerpt of Sato, *Lévy Processes and Infinitely Divisible
+Distributions*](https://assets.cambridge.org/97811076/56499/excerpt/9781107656499_excerpt.pdf).
+
+The resulting public path-law theorem is
+`HasIndepIncrements.process_identDistrib_of_sameDuration_timeChanges` in
+`Probability/Process/IndepIncrements/PathLaw/StationaryTimeChange.lean`. It
+assumes independent increments, stationary increments, monotone maps
+`τ, τ' : I → T`, and
+`τ t - τ s = τ' t - τ' s` whenever `s ≤ t`; it concludes equality in law of
+the centered paths
+`q ↦ X (τ q) - X (τ ⊥)` and
+`q ↦ X (τ' q) - X (τ' ⊥)`, with almost-everywhere measurability of those path
+maps. Its time type is an ordered additive commutative monoid with ordered
+subtraction, its index is any linearly ordered type with a least element, and
+its state is a measurable additive commutative group. The proof reduces path
+increments to equal-duration one-increment laws and then applies the local
+finite-dimensional uniqueness theorem. It needs no zero-start, càdlàg, stable,
+moment, or scaling assumption. This is the most abstract useful form found:
+it adds the equal-duration path-law operation absent from Mathlib while
+retaining the standard hypotheses that make its proof work.
+
+The complete-segment corridor consequences live beside their event semantics
+in `Probability/Process/Path/Skorokhod/Corridor/SegmentStationarity.lean`.
+They additionally require almost-surely càdlàg paths to pass from rational
+coordinates to all times, but do not require a Lévy or stable-process record.
+For finite rational uniform partitions, the named block-path interface in
+`UniformBlocks/Independence.lean` specializes the more general
+`DisjointPaths` results. The two retained statements expose canonical
+partition paths used by the corridor factorization and upper-block arguments;
+the unused adjacent-block specialization was removed because
+`indepFun_adjacentPaths` already states the more general result. The
+stable-only block-law wrapper under `Stable/SmallDeviation/Blocks/Lemmas/`
+was also removed: its callers now use the general rational-block law directly,
+supplying only the independent- and stationary-increment properties inherited
+from the stable process.
 
 ## Direct-module density and audited groupings
 
@@ -147,8 +202,9 @@ interface into `Rotation/FinitePath.lean`, `Rotation/CyclicCover.lean`, and
 modules. The stable horizontal-tube lower-rate interface was subsequently
 split into `Stable/Rate/Lower/{BlockProbability,Liminf,Positivity,Limit}.lean`;
 the count was 1,453 before the current geometry split. The current production
-scan finds 1,457 Lean files and 138 test files. Earlier batches grouped the Lemma 3.2 partition parameters, the
-Lemma 3.3 jump-pattern and spatial-bin setup, the Lemma 3.5 staircase
+scan finds 1,460 Lean files and 138 test files. Earlier batches grouped the
+Lemma 3.2 partition parameters, the Lemma 3.3 jump-pattern and spatial-bin
+setup, the Lemma 3.5 staircase
 parameters under their corresponding `Lemmas/` trees, and moved the generic
 tail-merged schedule to the path-partition module.
 Across both trees there are zero same-stem file/directory collisions, zero

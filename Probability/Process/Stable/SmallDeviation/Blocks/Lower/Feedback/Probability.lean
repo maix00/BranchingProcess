@@ -11,6 +11,8 @@ public import Probability.Process.Stable.SmallDeviation.Blocks.Factorization
 public import Probability.Independence.Feedback
 public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Feedback.Basic
 public import Probability.Process.Path.Skorokhod.Corridor.Segment
+import Probability.Process.Stable.FiniteDimensional
+import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Stationarity
 
 /-!
 # Feedback choice for the next stable-process block
@@ -204,14 +206,16 @@ theorem IsStableLevyProcess.feedbackPrefix_probability_pos
   have hqplus (j : Fin blocks) :
       q ≤ P ((fun ω s => rationalUniformBlockProcessFromTime X hblocks j s ω) ⁻¹'
         feedbackCorrectionSet δ d r R) := by
-    rw [(h.rationalUniformBlockProcess_identDistrib blocks hblocks j
+    rw [(h.increments.indepIncrements.rationalUniformBlockProcess_identDistrib
+      h.toIsLevyProcess.stationaryIncrements blocks hblocks j
       ⟨0, hblocks⟩).measure_mem_eq
         (measurableSet_feedbackCorrectionSet δ d r R)]
     exact min_le_left _ _
   have hqminus (j : Fin blocks) :
       q ≤ P ((fun ω s => rationalUniformBlockProcessFromTime X hblocks j s ω) ⁻¹'
         feedbackCorrectionSet δ d (-R) (-r)) := by
-    rw [(h.rationalUniformBlockProcess_identDistrib blocks hblocks j
+    rw [(h.increments.indepIncrements.rationalUniformBlockProcess_identDistrib
+      h.toIsLevyProcess.stationaryIncrements blocks hblocks j
       ⟨0, hblocks⟩).measure_mem_eq
         (measurableSet_feedbackCorrectionSet δ d (-R) (-r))]
     exact min_le_right _ _
