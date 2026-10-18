@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Combinatorics.BranchingWalk.StepField
-public import Combinatorics.BranchingWalk.Basic.SurviveAlong
+public import Combinatorics.BranchingWalk.Basic.Survival.SurviveAlong
 
 /-!
 # Branching walks

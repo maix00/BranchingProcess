@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Distributions.Moments.Truncated
+public import Probability.Distributions.Moments.Truncated.Basic
 public import Probability.Distributions.Stable.Attraction.Norming.Inverse
 
 /-!

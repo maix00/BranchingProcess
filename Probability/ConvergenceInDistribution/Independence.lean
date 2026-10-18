@@ -18,8 +18,20 @@ public section
 /-!
 # Joint convergence of independent random variables
 
-Weak convergence of independent coordinates, using continuity of product
-probability measures.
+The public theorems in this file are:
+
+- `MeasureTheory.TendstoInDistribution.prodMk_of_indepFun`: if $X_i$ and
+  $Y_i$ are independent for each $i$, and their laws converge to the laws of
+  $Z$ and $T$, then $(X_i,Y_i)$ converges in distribution to $(Z,T)$ on the
+  product of the two limiting probability spaces.
+- `MeasureTheory.TendstoInDistribution.pi_of_iIndepFun`: for a finite index
+  type $J$, if each coordinate converges and the family $(X_{i,j})_{j\in J}$
+  is independent for each $i$, then the vector-valued variables converge to
+  the product law of the limiting coordinates.
+
+The topological and measurability assumptions are those stated by each
+Lean theorem. These results provide the finite-dimensional product step for
+process limits with independent increments.
 -/
 
 open Filter ProbabilityTheory
