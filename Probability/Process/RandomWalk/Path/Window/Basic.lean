@@ -14,6 +14,25 @@ public import Probability.Process.RandomWalk.Path.Block.Basic
 Finite path-window and survival predicates depend only on an initial state
 and an increment path.  Measurability and probability laws are developed in
 the corresponding probability layer.
+
+The public declarations in this file are:
+
+- `InWindows`, `InClosedInterval`, `FiniteInClosedInterval`, and `StaysIn`:
+  finite paths remain in time-indexed windows, closed intervals, or an allowed
+  set.
+- `finiteInClosedInterval_translate_by_initial` and
+  `finiteInClosedInterval_blockCoordinates_iff`: translating the initial
+  position by $a$ translates $[l,u]$ to $[l-a,u-a]$, and a finite block event
+  agrees with the corresponding increment path event.
+- `staysIn_Icc_iff_inClosedInterval`, `staysIn_succ_iff`, and
+  `inClosedInterval_add_iff`: survival is the positive-time form of interval
+  membership, splits after its first step, and decomposes at a deterministic
+  cut time.
+- `StaysIn.mono_Icc_of_abs_sub_le`,
+  `add_mem_Icc_of_add_mem_shrunk_Icc_of_abs_sub_le`, and
+  `StaysIn.and_endpoint_mono_Icc_of_abs_sub_le`: translating the initial
+  position by at most $m$ is controlled by shrinking interval endpoints by
+  $m$, including a terminal interval condition.
 -/
 
 @[expose] public section
@@ -40,6 +59,20 @@ def FiniteInClosedInterval (lower upper initial : ℝ) {n : ℕ}
     ∑ j : Fin k, increment
       ⟨j, lt_of_lt_of_le j.isLt (Nat.le_of_lt_succ k.isLt)⟩ ∈
         Set.Icc lower upper
+
+/-- Translating the initial position to zero translates both interval
+endpoints by the same amount. -/
+theorem finiteInClosedInterval_translate_by_initial
+    {length : ℕ} (lower upper initial : ℝ)
+    (block : Fin length → ℝ) :
+    FiniteInClosedInterval lower upper initial block ↔
+      FiniteInClosedInterval (lower - initial) (upper - initial) 0 block := by
+  simp only [FiniteInClosedInterval, Set.mem_Icc]
+  constructor <;> intro h k
+  · have hk := h k
+    constructor <;> linarith
+  · have hk := h k
+    constructor <;> linarith
 
 /-- A closed-interval path event factors through its finite coordinate
 block. -/

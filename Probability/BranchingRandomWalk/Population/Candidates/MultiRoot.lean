@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Measurability
+public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Field.Measurability
 public import Probability.BranchingRandomWalk.Population.Candidates.Prefix
 
 /-!
