@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.Stable.SmallDeviation.Blocks.Upper
+public import Probability.Process.Stable.SmallDeviation.Blocks.Upper.Basic
 
 /-!
 # Stable scaling of the block upper bound

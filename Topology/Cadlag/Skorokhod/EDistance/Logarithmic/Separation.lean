@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Topology.Cadlag.Skorokhod.EDistance.Logarithmic
+public import Topology.Cadlag.Skorokhod.EDistance.Logarithmic.Basic
 
 /-!
 # Separation for the logarithmic Skorokhod distance
