@@ -58,7 +58,7 @@ N-BRW selection statements; the latter belong under `Selection/NSelection`.
   belong to `Probability/Sequence/IID/Basic`. These interfaces require only an
   IID sequence law and do not belong in random-walk entrance or stopping-time
   modules. Stopping-time-specific factorization stays in
-  `Probability/Sequence/IID/StoppingTime`.
+  `Probability/Sequence/IID/Blocks/StoppingTime`.
 - Transition mechanisms use Mathlib's `Kernel`/`MarkovKernel` interfaces.
   Killed kernels in the random-walk layer are restrictions of those kernels.
 - Filtrations and stopping times use Mathlib's `Filtration` and stopping-time

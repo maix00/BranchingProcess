@@ -22,7 +22,7 @@ bounds for those paths belong to `Probability/Process/RandomWalk/SmallDeviation/
 Generic conditional-probability integration and successive-block product
 bounds belong to `Probability/Process/Filtration/ConditionalBlocks.lean`;
 IID prefix/next-block conditional integration belongs to
-`Probability/Sequence/IID/ConditionalBlocks.lean`. The law transfer between
+`Probability/Sequence/IID/Blocks/Conditional.lean`. The law transfer between
 an infinite IID walk and a finite closed-interval block belongs to
 `Probability/Process/RandomWalk/Path/Block/Law/FiniteInterval.lean`, while
 translation of a finite interval by its initial position belongs beside the

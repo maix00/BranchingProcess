@@ -122,7 +122,7 @@ the prefix is independent of its prefix sigma-algebra. It reuses Mathlib's
 `iIndepFun.iIndep` and `indep_iSup_of_disjoint`; the pinned Mathlib revision
 does not provide a more specialized prefix-filtration theorem.
 
-`Probability/Sequence/IID/StoppingTime.lean` proves exact factorization on
+`Probability/Sequence/IID/Blocks/StoppingTime.lean` proves exact factorization on
 each finite stopping-time cell for every measurable event of a finite future
 block, then sums cells for bounded stopping times and derives the corresponding
 upper bound for arbitrary discrete stopping times. These are generic sequence
