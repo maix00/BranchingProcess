@@ -806,3 +806,55 @@ promoting them. These support files retain the legacy header for now:
 legacy import form, and Lean rejects importing it from an isolated
 module-system file. Migrate this dependency closure together in the
 repository-wide module-system pass.
+
+## Abstraction review: root-indexed Ulam--Harris families (2026-10-19)
+
+The root-indexed tree types in `Combinatorics/UlamHarris/Tree/Defs.lean` and
+`MarkedTree/Basic.lean` are aliases for function families:
+`RootIndexed.Tree Root α = Root → Tree α` and
+`RootIndexed.MarkedTree Root α X = Root → MarkedTree α X`. The first module
+also defined a `reindex` operation by `T.reindex f := fun r => T (f r)` and
+proved its application, identity, and composition equations. The marked-tree
+module repeated the same operation and laws; the only client of that wrapper
+was its local mark-forgetting equation.
+
+We compared these candidate APIs with the pinned Mathlib revision
+`380f2aafb622cb2c1c93dac545b6389083c68c51`. `Function.comp` already states
+precomposition at arbitrary function types, with `Function.comp_apply`,
+`Function.comp_assoc`, `id_comp`, and `comp_id`; see Mathlib's
+[`Logic/Function/Basic.lean`](https://github.com/leanprover-community/mathlib4/blob/380f2aafb622cb2c1c93dac545b6389083c68c51/Mathlib/Logic/Function/Basic.lean)
+and [`Logic/Function/Defs.lean`](https://github.com/leanprover-community/mathlib4/blob/380f2aafb622cb2c1c93dac545b6389083c68c51/Mathlib/Logic/Function/Defs.lean),
+and the [official function API documentation](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Logic/Function/Defs.html).
+The indexed-tree `reindex` declarations added no structure or theorem beyond
+that function API and had no independent clients, so they were removed.
+Pointwise root, parent, and sibling wrappers were removed for the same reason:
+each is obtained directly from the corresponding field of `T r`. The
+`FiniteRootTree` and `CountableRootTree` aliases and the finite extensionality
+alias had no clients and introduced no additional structure. The single-tree
+`Tree.mem_parent` remains because the graph arborescence proof uses its
+parent-prefix formulation; `Tree.ext` remains used by the marked-tree and
+branching-walk equivalence proofs.
+
+The root-indexed mark-forgetting equation is retained in the more direct form
+`forgetMark (M ∘ f) = forgetMark M ∘ f`, as
+`RootIndexed.MarkedTree.forgetMark_comp`. This records the naturality of the
+semantic projection without defining a tree-specific composition operation.
+
+The related `ProbabilityTheory.BranchingRandomWalk.RootIndexed.StepField`
+API was checked against the same generic function interface. Its operation
+`reindexCoordinates f step` is the curried pullback
+`Function.curry (Function.uncurry step ∘ f)` for
+`f : NewRoot × TreeNode α → Root × TreeNode α`; Mathlib already has the
+universal `Function.uncurry` and `Function.comp` operations, so there is no
+need to promote a second arbitrary-function pullback API. The existing
+`RootIndexed.StepField.reindexCoordinates` remains at its semantic owner,
+`Probability/BranchingRandomWalk/Genealogy/RootIndexed/Field/Basic.lean`,
+because the coordinate map acts on the specific root/address pair of a
+branching step field and the operation is used by 41 proof and law statements
+across eight modules. Its root-only specialization `reindex` is used across
+the coupling, selection, restart, and field-law modules and expresses the
+standard operation of relabelling initial ancestors; it remains in the same
+subject API, related to coordinate pullback by
+`reindex_eq_reindexCoordinates`. This placement preserves the meaningful
+field operation without adding a more general public theorem that repeats
+function composition.
