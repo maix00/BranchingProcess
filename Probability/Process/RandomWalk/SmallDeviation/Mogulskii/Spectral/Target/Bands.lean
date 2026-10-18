@@ -13,6 +13,40 @@ public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.D
 /-!
 # Narrow central endpoint windows
 
+The public declarations in this module are:
+
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.centralEndpointBandTarget`:
+  the parity-compatible sites in a lattice endpoint window, with cardinality
+  $e-1$ and coordinates in $(\ell,\ell+2e)$.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.centralEndpointWindowLo`:
+  the left endpoint $4m-(3s+e)+js$ of window $j\in\{0,\ldots,6\}$.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.centralEndpointWindowLo_fits`:
+  if $3s+e\le2m$, each such window lies in the central lattice region
+  $[2m,6m]$.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.centralEndpointBandTarget_card`,
+  `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.centralEndpointBandTarget_coordinate_mem`,
+  `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.centralEndpointBandTarget_isCentralCoreStart`, and
+  `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.centralEndpointBandTarget_parityCompatible`:
+  the target has $e-1$ sites, each site lies in $(\ell,\ell+2e)$ and the
+  central core, and the target is already parity-compatible.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.centralEndpointBandTargetMass_lower`:
+  put $K_m=\texttt{intervalKernel}(8m-1)$,
+  $B=\texttt{centralEndpointBandTarget}(m,n,\ell,e)$,
+  $x_m=\texttt{centralIntervalStart}(m)$,
+  $p=(e-1)/(8m)$, and $\lambda_m=\cos(\frac{\pi}{8m})$. Under the stated
+  geometric hypotheses, if $\lambda_m^n\le p/(p+4)$, then
+  $p\lambda_m^n\le\sum_{y\in B}K_m^n(x_m,y)$.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.eventually_lowerBound_le_centralEndpointBandTargetMass_of_diffusiveRatio`:
+  if the interval width tends to infinity, $n/W_n^2\to c$, and the target
+  proportion tends to $p>0$, then any strict lower constant below
+  $p e^{-c\pi^2/2}$ eventually bounds the corresponding target mass, under
+  the stated spectral-error inequality.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.eventually_forall_sevenCentralEndpointWindowTargetMass_lower`: the same
+  eventual lower bound holds simultaneously for all seven endpoint windows.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.ofReal_centralEndpointBandTargetMass_le_rademacherPathEvent`: the
+  finite-kernel target mass lower bound transfers to the IID Rademacher event
+  of staying in the interval and ending in that target.
+
 The paired principal modes give a lower bound for each parity-compatible
 endpoint window contained in the middle half of a killed interval.  This is
 the spectral input needed for the finitely many endpoint bands in the return

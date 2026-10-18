@@ -7,7 +7,9 @@ Authors: WANG Yiyang
 module
 
 public import Combinatorics.BranchingWalk.Cloud.Order.Basic
-public import Combinatorics.BranchingWalk.Selection.NSelection.Coupling
+public import Combinatorics.BranchingWalk.Selection.NSelection.Coupling.Finite
+public import Combinatorics.BranchingWalk.Selection.NSelection.Coupling.Step
+public import Combinatorics.BranchingWalk.Selection.NSelection.Mechanism.AtRank
 
 /-!
 # Domination under leftmost selection
