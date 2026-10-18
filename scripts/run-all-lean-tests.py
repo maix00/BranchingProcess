@@ -415,14 +415,14 @@ AXIOM_EXPECTATIONS = {
         "ProbabilityTheory.RandomWalk.iidSequenceLaw_measure_mul_le_card_mul_of_finite_block_cover",
         "Asymptotics.eventually_one_sub_le_log_ratio_of_mul_bound",
     ),
-    Path("BranchingProcessTest/RandomWalk/Truncation/TruncationMoments.lean"): (
+    Path("BranchingProcessTest/RandomWalk/Truncation/Moments.lean"): (
         "ProbabilityTheory.RandomWalk.integrable_truncatedIncrement_pow",
         "ProbabilityTheory.RandomWalk.integrable_centeredTruncatedIncrement_pow_four",
         "ProbabilityTheory.RandomWalk.integral_partialSum_pow_four_centeredTruncated_le",
         "ProbabilityTheory.RandomWalk.maximal_ineq_pow_four_blockSum_centeredTruncated_bounded",
         "ProbabilityTheory.RandomWalk.measure_exists_block_exists_abs_ge_le_of_truncation_bounded",
     ),
-    Path("BranchingProcessTest/RandomWalk/Truncation/TruncationSecondMoment.lean"): (
+    Path("BranchingProcessTest/RandomWalk/Truncation/SecondMoment.lean"): (
         "ProbabilityTheory.RandomWalk.integral_truncatedIncrement_sq_eq_truncatedSecondMoment",
         "ProbabilityTheory.RandomWalk.maximal_ineq_sq_blockSum_centeredTruncated_bounded",
         "ProbabilityTheory.RandomWalk.measure_exists_block_exists_abs_ge_le_of_truncation_second_bounded",

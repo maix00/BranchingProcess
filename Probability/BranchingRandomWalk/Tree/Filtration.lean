@@ -8,7 +8,7 @@ module
 
 public import Combinatorics.UlamHarris.Basic
 public import Mathlib.MeasureTheory.Constructions.Pi
-public import Mathlib.Probability.Process.Filtration
+public import Probability.Process.Filtration.GeneratedByCoordinates
 
 import MeasureTheory.MeasurableSpace.CountableEvaluation
 
@@ -73,49 +73,43 @@ variable {α : Type*}
 /-- Node addresses carry the discrete σ-algebra. -/
 instance instMeasurableSpaceTreeNode (α : Type*) : MeasurableSpace (TreeNode α) := ⊤
 
+/-- The generation information forms a filtration of the full product space.
+A mark at depth `d` is first revealed at time `d + 1`. -/
+def generationFiltration :
+    Filtration ℕ (inferInstance : MeasurableSpace (Mark α M)) :=
+  Filtration.generatedByCoordinates
+    (fun u : TreeNode α => u.length + 1)
+    (fun u (ω : Mark α M) => ω u)
+    (fun u => measurable_pi_apply u)
+
 /-- Information revealed by generation `n`: all marks at addresses of
-depth strictly below `n`. -/
+  depth strictly below `n`. -/
 @[instance_reducible] def generationSpace (n : ℕ) :
     MeasurableSpace (Mark α M) :=
-  MeasurableSpace.generateFrom
-    {s | ∃ u : TreeNode α, u.length < n ∧
-      ∃ t : Set M, MeasurableSet t ∧
-        s = {ω : Mark α M | ω u ∈ t}}
+  generationFiltration (M := M) n
 
 /-- Before the root reproduces, no child mark is revealed. -/
 theorem generationSpace_zero :
     generationSpace (α := α) (M := M) 0 = ⊥ := by
-  unfold generationSpace
-  have hgen :
-      {s : Set (Mark α M) | ∃ u : TreeNode α, u.length < 0 ∧
-        ∃ t : Set M, MeasurableSet t ∧
-          s = {ω : Mark α M | ω u ∈ t}} = ∅ := by
-    ext s
-    simp
-  rw [hgen, MeasurableSpace.generateFrom_empty]
-
-/-- The generation information forms a filtration of the full product space. -/
-def generationFiltration :
-    Filtration ℕ (inferInstance : MeasurableSpace (Mark α M)) where
-  seq := generationSpace
-  mono' := by
-    intro i j hij
-    apply MeasurableSpace.generateFrom_mono
-    rintro s ⟨u, hu, t, ht, rfl⟩
-    exact ⟨u, lt_of_lt_of_le hu hij, t, ht, rfl⟩
-  le' := by
-    intro n
-    apply MeasurableSpace.generateFrom_le
-    rintro s ⟨u, hu, t, ht, rfl⟩
-    exact (measurable_pi_apply u) ht
+  change (⨆ u : TreeNode α, ⨆ (_ : u.length + 1 ≤ 0),
+    MeasurableSpace.comap (fun ω : Mark α M => ω u) inferInstance) = ⊥
+  apply le_antisymm
+  · apply iSup_le
+    intro u
+    apply iSup_le
+    intro hu
+    simp at hu
+  · exact bot_le
 
 /-- A node's mark is observable from the next generation onward. -/
 theorem mark_measurable_of_depth_lt (u : TreeNode α) (n : ℕ)
     (hu : u.length < n) :
     Measurable[generationFiltration (M := M) n]
       (fun ω : Mark α M => ω u) := by
-  intro t ht
-  exact MeasurableSpace.measurableSet_generateFrom ⟨u, hu, t, ht, rfl⟩
+  exact Filtration.measurable_coordinate_generatedByCoordinates
+    (fun u : TreeNode α => u.length + 1)
+    (fun u (ω : Mark α M) => ω u)
+    (fun u => measurable_pi_apply u) u n (Nat.succ_le_iff.mpr hu)
 
 theorem mark_measurable_next (u : TreeNode α) :
     Measurable[generationFiltration (M := M) (u.length + 1)]

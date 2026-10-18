@@ -9,6 +9,8 @@ module
 public import Probability.BranchingRandomWalk.Population.Processes.StepSelection.Basic
 public import Probability.BranchingRandomWalk.Restart.Reserve.Lineage
 
+import Probability.Process.Filtration.GeneratedByCoordinates
+
 /-!
 # Observable first-split growth trials
 
@@ -146,19 +148,19 @@ theorem RootIndexed.fixedSubtree_measurable_at
   let _ : MeasurableSpace (RootIndexed.StepField Root α X) :=
     RootIndexed.stepFiltration (Root := Root) (α := α) (X := X)
       (start + duration)
-  let _ : MeasurableSpace (Mark α (Step α X)) :=
-    generationFiltration (M := Step α X) duration
-  change Measurable[RootIndexed.stepFiltration
-    (Root := Root) (α := α) (X := X) (start + duration)]
+  exact Filtration.measurable_to_generatedByCoordinates
+    (fun v : TreeNode α => v.length + 1)
+    (fun v (ω : Mark α (Step α X)) => ω v)
+    (fun v => measurable_pi_apply v)
     (fun ω : RootIndexed.StepField Root α X =>
-      fun v : TreeNode α => ω root.1 (root.2 ++ v))
-  apply measurable_generateFrom
-  intro s hs
-  obtain ⟨v, hv, t, ht, rfl⟩ := hs
-  have hcoord : (root.2 ++ v).length < start + duration := by
-    rw [List.length_append, hdepth]
-    omega
-  exact RootIndexed.step_measurable root.1 (root.2 ++ v) hcoord ht
+      fun v : TreeNode α => ω root.1 (root.2 ++ v)) duration
+    (fun v hv => by
+      have hvdepth : v.length < duration := Nat.succ_le_iff.mp hv
+      have hcoord : (root.2 ++ v).length < start + duration := by
+        rw [List.length_append, hdepth]
+        omega
+      simpa [Function.comp_def] using
+        RootIndexed.step_measurable root.1 (root.2 ++ v) hcoord)
 
 /-- The address of the first selected child at a prescribed observable split
 generation. Generation zero is totalized because a split completion is

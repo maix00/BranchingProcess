@@ -5,6 +5,7 @@ Authors: WANG Yiyang
 -/
 
 import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.SelectedSubtrees.FixedFamily
+import Probability.Process.Filtration.GeneratedByCoordinates
 
 /-!
 # Decomposition at one generation
@@ -101,15 +102,19 @@ theorem RootIndexed.StepField.measurable_stepFiltration_iff_past
   · intro hfield
     exact (RootIndexed.StepField.past_measurable n).comp hfield
   · intro hpast
-    apply measurable_generateFrom
-    intro s hs
-    obtain ⟨r, u, hu, t, ht, rfl⟩ := hs
-    have hcoord : Measurable fun ω => (field ω).past n ⟨(r, u), hu⟩ := by
-      have h := (measurable_pi_apply ⟨(r, u), hu⟩).comp hpast
-      convert h using 1
-      funext ω
-      rfl
-    exact hcoord ht
+    exact Filtration.measurable_to_generatedByCoordinates
+      (fun p : Root × TreeNode α => p.2.length + 1)
+      (fun p (ω : RootIndexed.StepField Root α X) => ω p.1 p.2)
+      (fun p => (measurable_pi_apply p.2).comp (measurable_pi_apply p.1))
+      field n
+      (fun p hp => by
+        have hdepth : p.2.length < n := Nat.succ_le_iff.mp hp
+        let q : {q : RootIndexed.TreeNode Root α // q.2.length < n} :=
+          ⟨p, hdepth⟩
+        have h := (measurable_pi_apply q).comp hpast
+        convert h using 1
+        funext ω
+        rfl)
 
 /-- Gluing is measurable in both arguments. -/
 theorem RootIndexed.StepField.glue_measurable
