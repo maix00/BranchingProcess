@@ -344,5 +344,10 @@ Fudan University, 2026), Chapter 4, Lemma 4.2 for the small-drift segment
 bound and Chapter 4, Lemma 4.5 for the terminally restricted corridor and
 MRCA contributions. The previous generic `source` and bare lemma-number
 references were replaced in the declaration docstrings.
+The affine-corridor event-transfer helper now describes only its deterministic
+inclusion; its former bare “Lemma 2.3” mention did not identify a source result
+used by that helper. The finite-variance estimate that supplies the drawdown
+bound retains its explicit Wang thesis Chapter 3, Lemma 3.3 and Aïdékon--Hu
+Lemma 2.3 references in its owning module.
 
 The IID sequence audit grouped stopping-time, prefix-factorization, and conditional-block interfaces in `Probability/Sequence/IID/Blocks/`; these are complete reusable theorems, not theorem-specific proof fragments. Formula-bearing public theorem lists were added to the characteristic-function, filtration-independence, and law-identification modules. Direct users now import the renamed block paths.
