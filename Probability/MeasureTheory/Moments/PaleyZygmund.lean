@@ -22,7 +22,9 @@ public import Mathlib.MeasureTheory.Integral.Bochner.Set
 
 These statements depend only on the first two moments of a nonnegative random
 variable on a probability space. They do not depend on a particular process
-or distribution.
+or distribution. The first inequality is the random-variable form of Paley and
+Zygmund, [*On some series of functions, (3)*, Lemma 19, p. 192
+(1932)](https://doi.org/10.1017/S0305004100010860).
 -/
 
 @[expose] public section
