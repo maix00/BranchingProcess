@@ -8,7 +8,7 @@ module
 
 public import Probability.Process.Brownian.Reflection.FirstPassage.FiniteStoppingTime
 public import Probability.Process.Path.FirstPassage.GridApproximation
-import Probability.MeasureTheory.Convergence.InvariantLaw
+import MeasureTheory.Measure.Convergence.MapInvariance
 
 /-!
 # Brownian reflection at first-passage grid times

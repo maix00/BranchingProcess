@@ -10,7 +10,7 @@ public import Probability.Process.Brownian.Independence.FirstPassageGrid
 public import Probability.Process.Path.FirstPassage.GridApproximation
 public import Probability.Process.Brownian.Reflection.Path.UnboundedBelow
 import Probability.Process.TimeGrid.Expanding
-import Probability.MeasureTheory.Convergence.InvariantLaw
+import MeasureTheory.Measure.Convergence.MapInvariance
 public import Probability.MeasureTheory.Convergence.IndependentLimits
 
 /-!
@@ -126,7 +126,6 @@ theorem IsBrownianReal.indepFun_shiftToZero_freezeAfter_firstPassageBelow
   let pathB := hB.continuousPathMap hBmeasurable
   let μ := P.map pathB
   letI : IsProbabilityMeasure P := (hB.hasLaw ∅).isProbabilityMeasure
-  let ν : ProbabilityMeasure Ω := ⟨P, inferInstance⟩
   let t : Ω → ℝ≥0 := fun ω => (firstPassageBelow (pathB ω) a).untopA
   let tₙ : ℕ → Ω → ℝ≥0 := fun n ω =>
     expandingGridTime n
@@ -177,12 +176,23 @@ theorem IsBrownianReal.indepFun_shiftToZero_freezeAfter_firstPassageBelow
     htime.mono (fun ω hω =>
       continuous_freezeAfter.continuousAt.tendsto.comp
         (tendsto_const_nhds.prodMk_nhds hω))
+  have hPairlim : ∀ᵐ ω ∂P,
+      Filter.Tendsto (fun n => (Fₙ n ω, Gₙ n ω)) Filter.atTop
+        (nhds (F ω, G ω)) :=
+    (hFlim.and hGlim).mono fun _ hω => hω.1.prodMk_nhds hω.2
+  have hPairdist : MeasureTheory.TendstoInDistribution
+      (fun n ω => (Fₙ n ω, Gₙ n ω)) Filter.atTop
+      (fun ω => (F ω, G ω)) (fun _ => P) P := by
+    exact MeasureTheory.tendstoInDistribution_of_ae_tendsto
+      (fun n => ((hFₙ n).prodMk (hGₙ n)).aemeasurable)
+      (hF.prodMk hG).aemeasurable hPairlim
   have hind (n : ℕ) : Fₙ n ⟂ᵢ[P] Gₙ n :=
     hB.indepFun_shiftToZero_freezeAfter_firstPassageGridCeiling
       hBmeasurable (expandingGridCount n) (expandingGridTime n)
       (expandingGridTime_mono n) a
-  exact indepFun_of_ae_pointwise_limits ν F G Fₙ Gₙ
-    hF hG hFₙ hGₙ hFlim hGlim hind
+  exact indepFun_of_tendstoInDistribution_pair
+    (F := Fₙ) (G := Gₙ) (F' := F) (G' := G)
+    (μ := fun _ => P) (μ' := P) hPairdist hind
 
 end ProbabilityTheory
 

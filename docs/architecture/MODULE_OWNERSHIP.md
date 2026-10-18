@@ -14,7 +14,8 @@ identify misplaced application-specific assumptions.
 | Order-only finite bounds and grid coordinates | `Order` | `Order/Bounds`, `Order/Interval/UniformGrid` |
 | Deterministic process-time grids and rounding time functionals up to grids | `Probability/Process/TimeGrid` | `UnitInterval`, `Expanding`, `Dense/NonnegativeRationals`, `Ceiling`; the ceiling selector specializes Mathlib's `MeasureTheory.hittingBtwn` and its convergence theorem is independent of paths and probability laws |
 | Deterministic asymptotic scales and limits | `Analysis/Asymptotics` | `Scale`, `InverseScale`, `BlockScale`, regular variation |
-| Measure operations, integral limits, and measure properties | `MeasureTheory` | `Measure/Convolution/Power`, `Measure/DiracSum`, `Integral/Lebesgue/RestrictLimit` |
+| Measure operations, integral limits, and invariance under limits | `MeasureTheory` | `Measure/Convolution/Power`, `Measure/DiracSum`, `Measure/Convergence/MapInvariance`, `Integral/Lebesgue/RestrictLimit` |
+| Probability-law convergence and independence of weak limits | `Probability/MeasureTheory/Convergence` | `TendstoInDistribution` applications and `IndependentLimits` |
 | Measurable counting-measure processes | `Probability/PointProcess` | `PointProcess` bundles a measurable map into Mathlib `Measure` with integer-valuedness and the chosen finite-on-family condition |
 | Path-space geometry and generic tightness criteria | `Topology` and `Probability/Process/Path` | `CadlagPath`, Skorokhod oscillation and tightness modules |
 | Finite step-corridor endpoint cores and inner-cell geometry | `Topology/Cadlag/Skorokhod/PathClass/StepCorridor/Partition` | `LowerCores` selects knot cores; `LowerGeometry` places finite real bounds in the common cells, without assumptions on a probability law |

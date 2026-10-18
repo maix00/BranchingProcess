@@ -219,7 +219,7 @@ interface into `Rotation/FinitePath.lean`, `Rotation/CyclicCover.lean`, and
 modules. The stable horizontal-tube lower-rate interface was subsequently
 split into `Stable/Rate/Lower/{BlockProbability,Liminf,Positivity,Limit}.lean`;
 the count was 1,453 before the current geometry split. The current tracked-source
-scan finds 1,461 production Lean files and 138 test files; the additional
+scan finds 1,460 production Lean files and 138 test files; the additional
 production module is `Order/SetDissipate.lean`. The largest production
 directory has eight direct Lean files. Earlier batches grouped the
 Lemma 3.2 partition parameters, the Lemma 3.3 jump-pattern and spatial-bin
@@ -1086,3 +1086,79 @@ from appearing both as a file and as a directory in the project API. The
 Mathlib pattern is an intentional umbrella-module design, not a reason to
 mechanically rename local modules or a basis for claiming that Mathlib has no
 such pairs.
+
+## Abstraction review: convergence interfaces (2026-10-19)
+
+The review distinguished three statements in
+`Probability/MeasureTheory/Convergence/`. Cross-module use was treated as a
+reason to search for the mathematical abstraction, rather than as the
+placement criterion.
+
+`Measure.map_eq_of_ae_pointwise_limit` concerns a finite Borel measure and
+measurable self-maps; it does not use probability normalization or random
+variables. Its owner is therefore `MeasureTheory/Measure/Convergence`, and the
+module now lives at `MeasureTheory/Measure/Convergence/MapInvariance.lean`.
+The pinned Mathlib API has no direct closure theorem for invariant measures
+under almost-everywhere pointwise limits. Its
+[`HasOuterApproxClosed` API](https://leanprover-community.github.io/mathlib4_docs/Mathlib/MeasureTheory/Measure/HasOuterApproxClosed.html)
+provides uniqueness of finite Borel measures from bounded continuous test
+functions, while dominated convergence provides convergence of their
+integrals. The local theorem combines those general ingredients to prove the
+invariance conclusion. This comparison was checked against Mathlib revision
+`380f2aafb622cb2c1c93dac545b6389083c68c51`, including
+[`HasOuterApproxClosed.lean`](https://github.com/leanprover-community/mathlib4/blob/380f2aafb622cb2c1c93dac545b6389083c68c51/Mathlib/MeasureTheory/Measure/HasOuterApproxClosed.lean)
+and the official documentation above.
+
+For independence, the earlier almost-sure-limit statement was generalized to
+`ProbabilityTheory.indepFun_of_tendstoInDistribution_pair`: the source spaces
+and laws may vary with the index, each pair has independent coordinates, and
+the joint laws converge to the law of the limiting pair. This is the natural
+weak-convergence formulation: the product laws converge by continuity of
+`ProbabilityMeasure.prod`, and Mathlib characterizes independence by equality
+of the joint law with the product law. The pinned APIs are
+[`MeasureTheory.TendstoInDistribution.continuous_comp`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/MeasureTheory/Function/ConvergenceInDistribution.html),
+[`ProbabilityMeasure.continuous_prod`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/MeasureTheory/Measure/ProbabilityMeasure.html),
+and
+[`indepFun_iff_map_prod_eq_prod_map_map`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Probability/Independence/Basic.html).
+Mathlib's `tendstoInDistribution_of_ae_tendsto` then supplies the joint-law
+convergence in the Brownian first-passage application. This audit used the
+online Mathlib documentation and pinned source at revision
+`380f2aafb622cb2c1c93dac545b6389083c68c51`.
+
+The former `ProbabilityTheory.tendsto_integral_of_eLpNorm_one_sub_const` was
+removed because no module used it and Mathlib already proves the stronger
+`MeasureTheory.tendsto_integral_of_L1'`: convergence in `L¹` to an arbitrary
+integrable function implies convergence of its Bochner integrals, for general
+measures and complete normed codomains. The local probability/real/constant
+statement was only a specialization. See the pinned
+[`Bochner.Basic.lean`](https://github.com/leanprover-community/mathlib4/blob/380f2aafb622cb2c1c93dac545b6389083c68c51/Mathlib/MeasureTheory/Integral/Bochner/Basic.lean)
+and its [official documentation](https://leanprover-community.github.io/mathlib4_docs/Mathlib/MeasureTheory/Integral/Bochner/Basic.html).
+
+### Polynomial tails and logarithmic fourth moments
+
+`L2FromPolynomialTails.lean` now states the moment-growth exponent as an
+arbitrary real `q`: if the fourth moments are eventually bounded by
+`C * (1 + (log n)^q)` and each fixed two-sided tail is bounded by a possibly
+different polynomial rate, then the second moments tend to zero. The previous
+fixed exponent `8` reflected one application rather than the mathematical
+criterion, so the API now exposes the full real-exponent form.
+
+The closest broader Mathlib theorem is the Vitali criterion
+`MeasureTheory.tendstoInMeasure_iff_tendsto_Lp_finite`: for a finite measure
+and `1 ≤ p < ∞`, convergence in measure together with uniform integrability
+is equivalent to convergence in `Lᵖ`. It is more abstract, but it takes
+uniform integrability and convergence in measure as inputs rather than the
+explicit polynomial-tail and fourth-moment hypotheses used here. The project
+therefore keeps the checkable tail-to-`L²` criterion, with its final step
+factored through the more general local interface
+`ProbabilityTheory.tendsto_integral_sq_of_tendsto_fourthTailControl` in
+`L2FromTails.lean`.
+
+The real exponent is supported by Mathlib's
+`isLittleO_log_rpow_rpow_atTop`, which proves
+`(log x)^q = o(x^p)` for every real `q` and every `p > 0`. This was checked in
+the pinned Mathlib revision `380f2aafb622cb2c1c93dac545b6389083c68c51`,
+[`Analysis/SpecialFunctions/Pow/Asymptotics.lean`](https://github.com/leanprover-community/mathlib4/blob/380f2aafb622cb2c1c93dac545b6389083c68c51/Mathlib/Analysis/SpecialFunctions/Pow/Asymptotics.lean#L365), and against the official
+[API documentation](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Analysis/SpecialFunctions/Pow/Asymptotics.html). The Vitali comparison uses the pinned
+[`MeasureTheory/Function/UniformIntegrable.lean`](https://github.com/leanprover-community/mathlib4/blob/380f2aafb622cb2c1c93dac545b6389083c68c51/Mathlib/MeasureTheory/Function/UniformIntegrable.lean#L566)
+and its [official documentation](https://leanprover-community.github.io/mathlib4_docs/Mathlib/MeasureTheory/Function/UniformIntegrable.html).
