@@ -22,7 +22,7 @@ open scoped ENNReal Topology
 namespace Skorokhod
 
 
-private theorem symm_le_iff_apply_le (change : TimeChange) (a b : unitInterval) :
+private lemma symm_le_iff_apply_le (change : TimeChange) (a b : unitInterval) :
     change.symm a ≤ b ↔ a ≤ change b := by
   constructor
   · intro h
@@ -35,7 +35,7 @@ private theorem symm_le_iff_apply_le (change : TimeChange) (a b : unitInterval) 
         change.symm.strictMono_toHomeomorph.monotone h
       _ = b := change.symm_apply_apply b
 
-private theorem lt_symm_iff_apply_lt (change : TimeChange) (a b : unitInterval) :
+private lemma lt_symm_iff_apply_lt (change : TimeChange) (a b : unitInterval) :
     a < change.symm b ↔ change a < b := by
   constructor
   · intro h
@@ -47,7 +47,7 @@ private theorem lt_symm_iff_apply_lt (change : TimeChange) (a b : unitInterval) 
       a = change.symm (change a) := (change.symm_apply_apply a).symm
       _ < change.symm b := change.symm.strictMono_toHomeomorph h
 
-private theorem dist_symm_apply_le (change : TimeChange) {error : ℝ}
+private lemma dist_symm_apply_le (change : TimeChange) {error : ℝ}
     (herror : ∀ t, dist (change t) t ≤ error) (t : unitInterval) :
     dist (change.symm t) t ≤ error := by
   calc

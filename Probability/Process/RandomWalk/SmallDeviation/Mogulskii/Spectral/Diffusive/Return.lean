@@ -12,6 +12,20 @@ public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.D
 /-!
 # Diffusive killed-block estimates
 
+The public declarations in this module are:
+
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.ofReal_exp_neg_pi_sq_div_two_le_liminf_centeredReturnKernel`:
+  for centered unit-variance increments and $1<w_{\rm in}\le w_{\rm out}$,
+  the return-kernel mass from $0$ into
+  $[-w_{\rm in}\sqrt n/2,w_{\rm in}\sqrt n/2]$, while killed outside
+  $[-w_{\rm out}\sqrt n/2,w_{\rm out}\sqrt n/2]$, has $\liminf$ at least
+  $e^{-\pi^2/2}$.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.eventually_uniform_centeredReturnKernel_of_lt_exp_neg_pi_sq_div_two`:
+  for any $c<e^{-\pi^2/2}$ and widths satisfying the stated containment
+  inequalities, all starting points in the centered initial interval have
+  return-kernel mass at least $c$ for every sufficiently large diffusive
+  horizon.
+
 The Brownian corridor estimate is transferred to a killed random-walk block
 whose terminal interval is wider than its starting core.  These estimates
 are useful one-block comparisons, but the uniform bound below is not a

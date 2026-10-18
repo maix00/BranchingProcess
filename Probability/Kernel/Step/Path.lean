@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Kernel.Step
+public import Probability.Kernel.Step.Basic
 public import Probability.Sequence.Block
 
 /-!

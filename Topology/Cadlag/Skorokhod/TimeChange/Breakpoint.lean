@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Topology.Cadlag.Skorokhod.TimeChange
+public import Topology.Cadlag.Skorokhod.TimeChange.Basic
 
 /-!
 # Piecewise-affine time changes
