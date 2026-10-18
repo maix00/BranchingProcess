@@ -404,9 +404,11 @@ interface. The finite-prefix cover, the source bridge cells, their IID path
 identification, and the finite-cell gluing are proved above. Base-corridor
 positivity follows from the existing stable-domain return lower bound; target
 decay follows from the strict-stable endpoint upper bound when `L*` has a
-positive finite limit. The only index-specific entrance premise is retained
-for `α < 1`, where the proof currently lives in the legacy non-module
-`ShiftComparison/PoissonEntrance.lean`. -/
+positive finite limit. The `α < 1` case is discharged by
+`IsStableLevyProcess.measure_fullEntrance_pos_indexLTOne`, whose public
+statement hides the Lévy--Khintchine triple used by its finite-variation
+Poisson construction in
+`Stable/SmallDeviation/Blocks/Lower/Entrance/PoissonModel.lean`. -/
 theorem exists_source_equation34_log_ratio_lower_of_stableDomain
     {ν μ : Measure ℝ} [IsProbabilityMeasure ν] [IsProbabilityMeasure μ]
     {α : ℝ} {normalization scale : ℕ → ℝ}

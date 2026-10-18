@@ -54,7 +54,7 @@ when the move only clarifies module organization.
 | `Mogulskii/RandomWalkBounds` and `Mogulskii/Stable/RandomWalkBounds` | Random-walk finite-block bounds and stable-domain random-walk rates | The normal-domain root separates Donsker endpoint, endpoint-band geometry, horizontal tubes, and source-partition arguments. Stable random-walk bounds group `Bridge/`, `Endpoint/`, `Partition/`, `PathClass/`, and `Source/`; the stable-process estimates remain in their own owner directory. `Stable/RandomWalkBounds/FromIncrementLaw/` separates `Normal/`, `Path/`, and `Stable/` adapters, with `HorizontalTube/` holding the finite-variance tube interfaces. `Stable/Scale/Basic.lean` owns the two-scale condition and rate consequences; `Stable/Scale/Rate.lean` owns block-length asymptotics. Gaussian modules remain divided into `Gaussian/Blocks/` and `Gaussian/Path/`. `FunctionalLimit/Donsker/Entrance/` owns the Brownian middle-start corridor and uniform diffusive entrance estimates. |
 | `Analysis/Asymptotics/Scale` | Reusable deterministic scale tools | `Basic.lean` defines the common small-deviation scale relation; `InverseScale.lean` handles generalized inverses and their subdiffusive rates; `BlockScale.lean`, `ShiftedFloor.lean`, and `IntermediatePowerBlock.lean` cover integer block rounding and intermediate block scales; `Sampling.lean` transfers rates along selected time intervals; `SlowDiagonal.lean` and `Tolerance.lean` provide real-valued diagonal and error-threshold selections. All eight direct modules are distinct reusable interfaces, so they remain as peers at this level. |
 | `Analysis/Asymptotics/RegularVariation` | Regular variation, slow variation, and Karamata-type consequences | `Basic.lean`, `Uniform.lean`, `AsymptoticInverse.lean`, `LowerPower.lean`, `MonotoneDensity.lean`, and `SlowScale.lean` remain at the subject root. `Integral/{Basic,Tail}.lean` groups the first and second integral-tail theorems with their regular-variation consequences; both modules expose reusable results and remain outside `Lemmas/`. |
-| `Stable/SmallDeviation/Blocks/Lower` | Lower block estimates | `Assembly/`, `Binning/`, `Bounds/`, `Entrance/`, and `Return/` group the distinct construction steps. `Lemmas/ReturnScale.lean` holds the first-uniform-block specialization used by the lower-bound proofs; arbitrary-horizon stable scaling stays at the `Blocks/` level. The reusable feedback construction remains in `Feedback/`. Stable-law adapters are limited to the block laws and estimates whose statements actually use stability. |
+| `Stable/SmallDeviation/Blocks/Lower` | Lower block estimates | `Assembly/`, `Binning/`, `Bounds/`, `Entrance/`, and `Return/` group the distinct construction steps. `Entrance/PoissonModel.lean` owns the stable `α < 1` positive entrance theorem; it hides the chosen Lévy--Khintchine triple and exposes only the stable-process and CDF assumptions. `Lemmas/ReturnScale.lean` holds the first-uniform-block specialization used by the lower-bound proofs; arbitrary-horizon stable scaling stays at the `Blocks/` level. The reusable feedback construction remains in `Feedback/`. Stable-law adapters are limited to the block laws and estimates whose statements actually use stability. |
 | `BranchingRandomWalk/Restart/RootedTrial` | Rooted-trial restart and coupling | Finite-slot and reserve arguments have their own subdirectories. |
 | `Combinatorics/BranchingWalk/Step` | Deterministic branching-step operations | The root keeps `Basic`, `Map`, `Measurability`, and `Relation`. Ordering properties and ranks are under `Ordering/`; slot selection and sibling closure are under `Selection/`; potential and point-measure operations are under `Measure/`; generation-local updates are under `Generation/`. |
 | `Probability/BranchingRandomWalk/Step` | Random step presentations, fields, and laws | Coordinate presentations and their constructors/maps are under `Presentation/`; field operations under `Field/`; probability laws under `Law/`; measurable ordering under `Ordering/`; point-measure observations under `PointMeasure/`. Root-indexed position measurability remains under `Position/`. |
@@ -597,3 +597,64 @@ block-law layer: it is a complete i.i.d. probability theorem with arbitrary
 measurable block events, while its finite-coordinate geometry is supplied by
 Mathlib. Its single current downstream use prompted this review but did not
 determine its placement.
+
+## Abstraction review: stable finite-variation entrance positivity (2026-10-19)
+
+The finite-variation Poisson construction had been stored as
+`Probability/Process/Stable/JumpModel/EntranceLaw.lean`, even though its
+conclusion is positivity of the stable small-deviation event
+`fullSegmentCorridorReturnEvent`. This made the reusable jump-model directory
+depend on a small-deviation event. The result now lives at
+`Stable/SmallDeviation/Blocks/Lower/Entrance/PoissonModel.lean`, and its public
+theorem is
+`IsStableLevyProcess.measure_fullEntrance_pos_indexLTOne`:
+
+```lean
+(h : IsStableLevyProcess α μ X P) → α < 1 →
+(0 < cdf μ 0 ∧ cdf μ 0 < 1) → -1 < b ∧ b < 1 → -1 < c ∧ c < 1 →
+0 < ε → 0 < P (fullSegmentCorridorReturnEvent X 0 1
+  (c - 1) (c + 1) (c - b - ε) (c - b + ε))
+```
+
+The proof-only statement with an explicit
+`LevyKhintchineTriple`, `SigmaFinite` instance, and characteristic-function
+identity is now a private lemma in that module. Strict stability already
+provides such a triple, so including it in the public theorem's assumptions
+would expose a proof representation rather than the mathematical condition.
+The narrower half-open endpoint wrapper and four scaled/log-ratio wrappers
+in `ShiftComparison/PoissonEntrance.lean` had no callers beyond their own
+adapter chain; the scaled form is already supplied by the stable scaling API,
+and the other wrappers were removed with that unused chain. The all-index
+entrance statement remains the only entry in `ShiftComparison/AllIndices.lean`.
+
+The abstraction review compared three levels. First, the pinned Mathlib
+revision is `380f2aafb622cb2c1c93dac545b6389083c68c51`; its
+[`map_eq_iff_forall_finset_map_restrict_eq`](https://github.com/leanprover-community/mathlib4/blob/380f2aafb622cb2c1c93dac545b6389083c68c51/Mathlib/Probability/Process/FiniteDimensionalLaws.lean)
+states that equality of all finite-dimensional distributions is equivalent
+to equality of process laws for almost-everywhere measurable process maps
+under a finite measure. Second, the repository's
+`HasIndepIncrements.process_identDistrib_of_aemeasurable` is a cross-space
+process-law theorem: zero starts, independent increments, and matching
+increment distributions imply equality of the process laws. These are the
+general law-transfer ingredients used by the Poisson proof; they already live
+at their general process-law layer.
+
+Third, the repository's path-space support theorem accepts an arbitrary
+probability measure on `CadlagPath unitInterval ℝ`: if the straight path to
+`c-b` belongs to its support, then the corresponding open corridor and
+terminal window have positive joint probability. This is more abstract than
+the stable adapter, and remains in the path/support layer. Thomas Simon's
+“Petites déviations et support d'un processus de Lévy,” *Comptes Rendus de
+l'Académie des Sciences*, Série I 329(4) (1999), 331--334, DOI
+[10.1016/S0764-4442(00)88576-6](https://doi.org/10.1016/S0764-4442(00)88576-6),
+and its expanded treatment “On the small deviations of a Lévy process,”
+*Potential Analysis* 14 (2001), 155--173, DOI
+[10.1023/A:1008711917156](https://doi.org/10.1023/A:1008711917156), characterize
+small-deviation support and the support of Lévy laws in Skorokhod space. This
+is a possible route to a broader Lévy-process support interface, but it does
+not by itself identify the present prescribed nonzero terminal window from
+the CDF sign condition. The finite-variation construction supplies that
+specific implication. Therefore the general law-transfer and path-support
+results stay public at their existing abstract layers, while the stable
+entrance theorem stays with its small-deviation event. Cross-module use was
+only the audit trigger; the placement follows these mathematical interfaces.
