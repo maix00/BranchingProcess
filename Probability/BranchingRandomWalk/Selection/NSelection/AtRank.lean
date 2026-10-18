@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.BranchingRandomWalk.Selection.NSelection.ByValue
-public import Combinatorics.BranchingWalk.Selection.NSelection.AtRank
+public import Combinatorics.BranchingWalk.Selection.NSelection.Mechanism.AtRank
 
 /-!
 # Measurability of finite dynamic ranks

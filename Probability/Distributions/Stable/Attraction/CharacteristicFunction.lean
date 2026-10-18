@@ -7,8 +7,8 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Distributions.DomainOfAttraction.CharacteristicFunction
-public import Probability.Distributions.Stable.Attraction
-public import Probability.Distributions.Stable.CharacteristicFunction
+public import Probability.Distributions.Stable.Domain.Attraction
+public import Probability.Distributions.Stable.Exponent.CharacteristicFunction
 
 /-!
 # Characteristic functions in a stable domain of attraction

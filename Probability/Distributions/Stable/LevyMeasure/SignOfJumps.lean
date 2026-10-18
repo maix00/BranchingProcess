@@ -4,12 +4,12 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.Distributions.Stable.Sign
-import Probability.Distributions.Stable.LevyMeasure.EndpointLaw
-import Probability.Process.Levy.Jump.PoissonConfiguration.Entrance
-import Probability.Distributions.Stable.LevyMeasure.Tails
-import Probability.Distributions.Stable.LevyMeasure.Windows
-import Probability.Distributions.Stable.LevyMeasure.EntranceWindows
+import Probability.Distributions.Stable.Operations.Sign
+import Probability.Distributions.Stable.LevyMeasure.Tail.EndpointLaw
+import Probability.Process.Levy.Jump.PoissonConfiguration.Entrance.Basic
+import Probability.Distributions.Stable.LevyMeasure.Tail.Homogeneous
+import Probability.Distributions.Stable.LevyMeasure.Tail.Windows
+import Probability.Distributions.Stable.LevyMeasure.Tail.EntranceWindows
 
 /-!
 # Signs of jumps in a two-sided stable law
