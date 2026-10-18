@@ -11,6 +11,20 @@ import Probability.BranchingRandomWalk.Spine.Tube.Corridor.IndependentRoot
 /-!
 # Multi-generation pair decomposition for corridor path counts
 
+## Public declarations
+
+* `ProbabilityTheory.BranchingRandomWalk.Spine.pathGenerationOffDiagonalPairs_ae_eq_distinctAddressPairCount`
+  identifies the recursive off-diagonal remainder almost everywhere with the
+  ordered distinct-address pair count, assuming a finite first corridor moment
+  and a finite terminal upper bound.
+* `ProbabilityTheory.BranchingRandomWalk.Spine.lintegral_pathGenerationOffDiagonalPairs_eq_distinctAddressPairCount`
+  gives equality of their expectations under the same hypotheses.
+* `ProbabilityTheory.BranchingRandomWalk.Spine.measure_finiteRootCorridorCount_le_quarter_spineLower_of_pairMoment`
+  turns a pair-moment bound `pairBound` into a one-root second-moment bound
+  `exp (terminalUpper - initial) * P_tilted(corridor) + pairBound`; the
+  independent-root lower-tail probability is then at most `exp (-m * p / 4)`,
+  with `p` the squared spine lower mean divided by that second-moment bound.
+
 The one-generation second-moment recursion keeps a diagonal child-subtree
 square.  This file iterates that recursion to all generations.  For a
 zero-one path test, the diagonal is exactly the first moment, and the

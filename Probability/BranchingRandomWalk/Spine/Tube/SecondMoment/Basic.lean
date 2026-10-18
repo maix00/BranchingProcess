@@ -15,6 +15,29 @@ import Mathlib.MeasureTheory.Integral.MeanInequalities
 /-!
 # One-step tube mass and its second moment
 
+## Public declarations
+
+* `ProbabilityTheory.BranchingRandomWalk.Spine.weightedOffspringWindowMass`
+  defines `M_I(ξ) = ∑' i, realizedPotentialWeight φ (-1) ξ i * 1_I(ξ.potentialValue' φ i)`.
+* `ProbabilityTheory.BranchingRandomWalk.Spine.weightedOffspringWindowMass_measurable`
+  proves `M_I` measurable when `I` is measurable, and
+  `ProbabilityTheory.BranchingRandomWalk.Spine.lintegral_weightedOffspringWindowMass_eq_tiltedLaw`
+  gives `∫⁻ M_I dμ = tiltedPotentialLaw φ (-1) μ I`.
+* `ProbabilityTheory.BranchingRandomWalk.Spine.weightedOffspringWindowMass_ne_zero_iff`
+  states `M_I(ξ) ≠ 0 ↔ ∃ i, survive ξ i ∧ ξ.potentialValue' φ i ∈ I`.
+* `ProbabilityTheory.BranchingRandomWalk.Spine.weightedOffspringWindowMass_sq_le`
+  gives `M_I(ξ)^2 ≤ exp(-a) M_I(ξ) + crossChildWeight φ ξ` when every point
+  of `I` is at least `a`; its integral form
+  `ProbabilityTheory.BranchingRandomWalk.Spine.lintegral_weightedOffspringWindowMass_sq_le`
+  bounds `∫⁻ M_I² dμ` by `exp(-a) tiltedPotentialLaw φ (-1) μ I + ∫⁻ crossChildWeight φ dμ`.
+* `ProbabilityTheory.BranchingRandomWalk.Spine.tiltedWindowProbability_le_sqrt_success_mul_secondMoment`
+  gives the square-root Paley--Zygmund bound
+  `tiltedPotentialLaw φ (-1) μ I ≤ P(M_I ≠ 0)^(1/2) * (exp(-a) p + C)^(1/2)`,
+  where `p` is the tilted window mass and `C` the cross-child moment.
+* `ProbabilityTheory.BranchingRandomWalk.Spine.measure_hasPotentialChildIn_pos_of_tiltedWindow_pos`
+  concludes `μ{ξ | ∃ i, survive ξ i ∧ ξ.potentialValue' φ i ∈ I} > 0`
+  whenever the measurable, lower-bounded window has positive tilted mass.
+
 The cross-child exponential moment controls the off-diagonal terms in the
 second moment of the exponentially weighted number of children in a bounded
 position window.  The diagonal terms are controlled by the lower endpoint of

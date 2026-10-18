@@ -10,6 +10,25 @@ import Probability.BranchingRandomWalk.Spine.Tube.MRCA.PairContribution
 /-!
 # Corridor tests across an ancestral prefix
 
+## Public declarations
+
+* `ProbabilityTheory.BranchingRandomWalk.Spine.affineCorridorThrough` is the
+  set of histories satisfying `lower + drift * k ≤ x k ≤ lower + drift * k + width`
+  at every `k ≤ horizon`, together with the endpoint constraint
+  `x horizon ≤ endpointUpper`.
+* `ProbabilityTheory.BranchingRandomWalk.Spine.affineCorridorInitialWindow`
+  is `{x | lower ≤ x ∧ x ≤ lower + width}`.
+* `ProbabilityTheory.BranchingRandomWalk.Spine.affineCorridorThrough_prependHistory_iff`
+  splits membership into the first-window condition and a shifted corridor:
+  `prependHistory x tail ∈ C_(h+1) ↔ x ∈ I₀ ∧ tail ∈ C_h(lower + drift, drift)`.
+* `ProbabilityTheory.BranchingRandomWalk.Spine.affineCorridorPrefix_prependHistory_iff`
+  gives the same equivalence for `affineCorridorPrefix`, which has no extra
+  terminal endpoint constraint.
+* `ProbabilityTheory.BranchingRandomWalk.Spine.pathGenerationPrefixTest_affineCorridorThrough`
+  factors a corridor path test at an ancestor of length `m` into the prefix
+  indicator and the shifted continuation-corridor indicator; when the prefix
+  condition fails, the test equals zero.
+
 Affine corridor indicators split into a prefix condition and a shifted
 continuation condition.  This is the bridge from the path-level MRCA
 expansion to the conditional pair contributions used in the tube estimate.
