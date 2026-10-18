@@ -841,20 +841,40 @@ The root-indexed mark-forgetting equation is retained in the more direct form
 semantic projection without defining a tree-specific composition operation.
 
 The related `ProbabilityTheory.BranchingRandomWalk.RootIndexed.StepField`
-API was checked against the same generic function interface. Its operation
-`reindexCoordinates f step` is the curried pullback
-`Function.curry (Function.uncurry step ∘ f)` for
-`f : NewRoot × TreeNode α → Root × TreeNode α`; Mathlib already has the
-universal `Function.uncurry` and `Function.comp` operations, so there is no
-need to promote a second arbitrary-function pullback API. The existing
-`RootIndexed.StepField.reindexCoordinates` remains at its semantic owner,
-`Probability/BranchingRandomWalk/Genealogy/RootIndexed/Field/Basic.lean`,
-because the coordinate map acts on the specific root/address pair of a
-branching step field and the operation is used by 41 proof and law statements
-across eight modules. Its root-only specialization `reindex` is used across
-the coupling, selection, restart, and field-law modules and expresses the
-standard operation of relabelling initial ancestors; it remains in the same
-subject API, related to coordinate pullback by
-`reindex_eq_reindexCoordinates`. This placement preserves the meaningful
-field operation without adding a more general public theorem that repeats
-function composition.
+API was checked against the generic function interfaces in the pinned Mathlib
+revision `380f2aafb622cb2c1c93dac545b6389083c68c51` and the Lean 4.35.0-rc3
+core API, following the cross-module abstraction review rule in
+[`CONTRIBUTING.md`](../../CONTRIBUTING.md#lean-module-headers-and-mathematical-references).
+For
+`step : Root → TreeNode α → Step α X` and
+`f : NewRoot × TreeNode α → Root × TreeNode α`, the most general ordinary
+function expression for the coordinate pullback is
+`Function.curry (Function.uncurry step ∘ f)`. Mathlib's
+[`Function.bicompl`](https://github.com/leanprover-community/mathlib4/blob/380f2aafb622cb2c1c93dac545b6389083c68c51/Mathlib/Logic/Function/Defs.lean)
+is another candidate, with
+`Function.uncurry (Function.bicompl step g h) =
+Function.uncurry step ∘ Prod.map g h`; it covers separately reindexed
+coordinates but not an arbitrary joint map `f`, where the selected root may
+depend on the address. The general candidate is therefore composition after
+uncurrying, followed by currying, using Lean's
+[`Function.curry` and `Function.uncurry`](https://leanprover-community.github.io/mathlib4_docs/Init/Data/Function.html)
+and Mathlib's
+[`Function.comp`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Logic/Function/Defs.html).
+These interfaces require no probabilistic, finiteness, or injectivity
+assumptions.
+
+The subject-level
+`RootIndexed.StepField.reindexCoordinates` remains a named semantic operation
+in `Probability/BranchingRandomWalk/Genealogy/RootIndexed/Field/Basic.lean`:
+it returns a root-indexed branching step field from an arbitrary map of its
+root/address coordinates, and the probability-law and selected-coordinate
+interfaces use that field-valued map. Its 50 references across eight modules
+confirm those call sites; the count is not the reason to promote it to a more
+general layer. The coordinate operation already accepts the weakest natural
+assumptions, while a new general pullback declaration would repeat
+`Function.comp` together with currying. Accordingly, the unused
+`reindexCoordinates_id` and `reindexCoordinates_comp` wrappers were removed;
+their content is supplied by the general composition and currying laws. The
+root-only `reindex` remains the named specialization for relabelling initial
+ancestors and is connected to coordinate pullback by
+`reindex_eq_reindexCoordinates`.
