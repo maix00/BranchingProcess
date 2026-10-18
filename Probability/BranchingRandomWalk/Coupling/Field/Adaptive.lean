@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Genealogy.RootIndexed.GenerationDecomposition
+import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law.GenerationDecomposition
 import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.SelectedSubtrees.SelectedFamily
 import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.SelectedCoordinates
 

@@ -20,7 +20,7 @@ separately.
 
 This whole-walk transform is distinct from the one-generation candidate rule
 in `Selection/Basic.lean`. Capacity-bounded transforms are defined alongside
-bounded branching walks in `Selection/NSelection/BranchingWalk.lean`.
+bounded branching walks in `Selection/NSelection/Walk/BranchingWalk.lean`.
 -/
 
 @[expose] public section

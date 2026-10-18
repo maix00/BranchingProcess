@@ -8,11 +8,11 @@ module
 
 public import Mathlib.MeasureTheory.Constructions.UnitInterval
 public import MeasureTheory.Measure.LevyMeasure.Cutoff
-public import Probability.Process.Levy.Jump.PoissonConfiguration.Entrance
-public import Probability.RandomMeasure.Poisson.Integral
+public import Probability.Process.Levy.Jump.PoissonConfiguration.Entrance.Basic
+public import Probability.RandomMeasure.Poisson.Integration.Integral
 import Mathlib.MeasureTheory.Measure.Prod
-import Probability.RandomMeasure.Poisson.Support
-import Probability.RandomMeasure.Poisson.TimeMark
+import Probability.RandomMeasure.Poisson.Intensity.Support
+import Probability.RandomMeasure.Poisson.Intensity.TimeMark
 
 /-!
 # Endpoint of a jump-sum path

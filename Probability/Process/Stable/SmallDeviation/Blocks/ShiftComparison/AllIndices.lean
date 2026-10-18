@@ -9,7 +9,7 @@ import Probability.Process.Stable.SmallDeviation.Blocks.ShiftComparison.Support
 import Probability.Process.Stable.SmallDeviation.Blocks.ShiftComparison.Feedback
 import Probability.Process.Stable.SmallDeviation.ShiftedCorridor
 import Probability.Process.Stable.SmallDeviation.Blocks.ShiftComparison.PoissonEntrance
-import Probability.Distributions.Stable.Sign
+import Probability.Distributions.Stable.Operations.Sign
 
 /-!
 # Stable corridor comparison across indices

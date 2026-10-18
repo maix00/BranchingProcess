@@ -47,7 +47,7 @@ theorem rightTrace_lt_of_traceSeparated (upper lower : StepBoundary)
   exact lt_of_le_of_lt (le_max_right _ _)
     (lt_of_lt_of_le (hsep t) (min_le_right _ _))
 
-private theorem commonPartitionTraceWidth_pos (upper lower : StepBoundary)
+private lemma commonPartitionTraceWidth_pos (upper lower : StepBoundary)
     (hsep : TraceSeparated upper lower)
     (i : Fin ((StepBoundary.commonKnots upper lower).card - 1))
     (hinf : ¬ (upper.rightTrace (StepBoundary.commonPartitionGrid upper lower i.val) = ⊤ ∨
@@ -138,7 +138,7 @@ theorem commonPartitionApproxWidth_lt_traceWidth (upper lower : StepBoundary)
     rw [commonPartitionApproxWidth, ite_eq_right hinf]
     exact hlt
 
-private theorem tendsto_commonPartitionApproxWidth_finite
+private lemma tendsto_commonPartitionApproxWidth_finite
     (upper lower : StepBoundary) (i : Fin ((StepBoundary.commonKnots upper lower).card - 1))
     (hinf : ¬ (upper.rightTrace (StepBoundary.commonPartitionGrid upper lower i.val) = ⊤ ∨
       lower.rightTrace (StepBoundary.commonPartitionGrid upper lower i.val) = ⊥)) :
@@ -163,7 +163,7 @@ private theorem tendsto_commonPartitionApproxWidth_finite
   rw [commonPartitionApproxWidth, ite_eq_right hinf]
   simp [one_div]
 
-private theorem tendsto_commonPartitionApproxWidth_infinite
+private lemma tendsto_commonPartitionApproxWidth_infinite
     (upper lower : StepBoundary) (i : Fin ((StepBoundary.commonKnots upper lower).card - 1))
     (hinf : upper.rightTrace (StepBoundary.commonPartitionGrid upper lower i.val) = ⊤ ∨
       lower.rightTrace (StepBoundary.commonPartitionGrid upper lower i.val) = ⊥) :
