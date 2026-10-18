@@ -6,15 +6,28 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.Kernel.Killed.Return
-public import Probability.Process.RandomWalk.Path.Corridor.Horizontal
+public import Probability.Process.RandomWalk.Kernel.Killed.Return.Basic
+public import Probability.Process.RandomWalk.Path.Corridor.Horizontal.Core
 
 /-!
 # Horizontal tubes and killed return kernels
 
-Strict centered tube events give lower bounds for killed walks that remain in
-a wider closed interval and return to the closed tube interval.  This bridge
-is independent of any asymptotic theorem.
+For $n\ge1$, the public theorems bound strict horizontal-tube probabilities
+by the mass of an appropriate killed return kernel:
+
+- `strictTubeProbability_le_returnKernel_centeredIcc`: a tube of width $d$
+  centered at $0$ is bounded by the kernel killed outside a wider interval and
+  returned to the inner interval.
+- `strictTubeProbability_le_returnKernel_centeredIcc_from`: the same bound
+  for a tube translated to a starting point inside the initial interval,
+  provided both outer and return widths contain the translated tube.
+- `strictTubeProbability_le_returnKernel_centeredIcc_from_normalized`: the
+  previous inequality after positive spatial scaling.
+- `strictTubeEndsInProbability_le_returnKernel_Icc`: adding a terminal open
+  endpoint constraint gives a lower bound for the return kernel to that
+  interval.
+- `strictTubeNormalizedEndsInProbability_le_returnKernel_centeredIcc`:
+  the corresponding normalized endpoint-window inequality.
 -/
 
 @[expose] public section

@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Population.Candidates.RootIndexed
+import Probability.BranchingRandomWalk.Population.Candidates.RootIndexed.Basic
 import Probability.BranchingRandomWalk.Selection.NSelection.Position
 
 /-!

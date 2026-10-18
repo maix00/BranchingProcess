@@ -1,0 +1,157 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
+module
+
+public import Order.Interval.RationalCoordinate.UnitInterval
+public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Probability
+public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Stationarity
+public import Probability.Process.Stable.SmallDeviation.RationalTube
+
+/-!
+# Stable-process block laws
+
+The public results specialize uniform blocks to a stable Lévy process:
+
+* `rationalUniformBlock_hasStableClockIncrements` gives the stable increment
+  law on a block with clock $q \mapsto q / \mathrm{blocks}$.
+* `rationalUniformBlockProcess_identDistrib` identifies the laws of any two
+  translated blocks of equal length.
+* `rationalTubeBlockProcess_identDistrib` gives the same identity for the
+  rational-coordinate block paths used by tube events.
+* `measure_rationalTube_le_pow_of_iIndep_uniformBlocks` bounds the whole-path
+  tube probability by the one-block probability raised to the number of
+  blocks.
+
+The path-level uniform partition, its measurability, and generic tube
+factorization live in
+`Probability.Process.Path.Skorokhod.Corridor.UniformBlocks`. This file adds
+stable-process adapters for the block-law and tube estimates.
+-/
+
+open MeasureTheory
+open scoped NNReal
+
+@[expose] public section
+
+namespace ProbabilityTheory
+
+/-- Restricting a stable Lévy process to a translated block preserves its
+stable independent-increment specification, with elapsed clock `q / blocks`.
+-/
+theorem IsStableLevyProcess.rationalUniformBlock_hasStableClockIncrements
+    {Ω : Type*} [MeasurableSpace Ω] {α : ℝ} {μ : Measure ℝ}
+    {X : ℝ≥0 → Ω → ℝ} {P : Measure Ω} [IsProbabilityMeasure P]
+    (h : IsStableLevyProcess α μ X P) (blocks : ℕ) (hblocks : 0 < blocks)
+    (j : Fin blocks) :
+    HasStableClockIncrements α μ (rationalUniformBlockClock hblocks j)
+      (rationalUniformBlockProcessFromTime X hblocks j) P := by
+  let τ : ↑RationalCoordinate.UnitInterval → ℝ≥0 :=
+    rationalUniformBlockAbsoluteTime hblocks j
+  let Y : ↑RationalCoordinate.UnitInterval → Ω → ℝ :=
+    rationalUniformBlockProcessFromTime X hblocks j
+  let clock : ↑RationalCoordinate.UnitInterval → ℝ :=
+    rationalUniformBlockClock hblocks j
+  have hτmono : Monotone τ := by
+    intro s t hst
+    apply NNReal.coe_le_coe.mp
+    change ((rationalUniformBlockTime hblocks j s : ℚ) : ℝ) ≤
+      ((rationalUniformBlockTime hblocks j t : ℚ) : ℝ)
+    exact_mod_cast monotone_rationalUniformBlockTime hblocks j hst
+  have hclockMono : Monotone clock := by
+    intro s t hst
+    change rationalUniformBlockClock hblocks j s ≤
+      rationalUniformBlockClock hblocks j t
+    rw [rationalUniformBlockClock_eq hblocks j s,
+      rationalUniformBlockClock_eq hblocks j t]
+    exact div_le_div_of_nonneg_right (by exact_mod_cast hst)
+      (by positivity)
+  have hclockBot : clock ⊥ = 0 := by
+    change rationalUniformBlockClock hblocks j ⊥ = 0
+    rw [rationalUniformBlockClock_eq hblocks j]
+    simp
+  have hbase := h.increments
+  have hcomp : HasIndepIncrements (fun q ω => X (τ q) ω) P :=
+    hbase.indepIncrements.comp_time τ hτmono
+  have hindep : HasIndepIncrements Y P := by
+    intro n grid hgrid
+    convert hcomp n grid hgrid using 1
+    all_goals
+      ext i ω
+      dsimp [Y, rationalUniformBlockProcessFromTime]
+      ring
+  refine ⟨hbase.strictlyStable, hclockMono, hclockBot, ?_, hindep, ?_⟩
+  · filter_upwards [] with ω
+    simp [rationalUniformBlockProcessFromTime]
+  · intro s t hst
+    have hlaw := hbase.increment_hasLaw (τ s) (τ t) (hτmono hst)
+    have hclockDiff : clock t - clock s = (τ t : ℝ) - (τ s : ℝ) := by
+      simp [clock, rationalUniformBlockClock, τ,
+        rationalUniformBlockAbsoluteTime]
+    have hprocessDiff :
+        (fun ω => Y t ω - Y s ω) = fun ω => X (τ t) ω - X (τ s) ω := by
+      funext ω
+      simp [Y, rationalUniformBlockProcessFromTime,
+        rationalUniformBlockAbsoluteTime, τ]
+    rw [hprocessDiff, hclockDiff]
+    exact hlaw
+
+/-- Every translated block of the same length in a stable Lévy process has
+the same rational path law. Mutual independence between blocks is separate. -/
+theorem IsStableLevyProcess.rationalUniformBlockProcess_identDistrib
+    {Ω : Type*} [MeasurableSpace Ω] {α : ℝ} {μ : Measure ℝ}
+    {X : ℝ≥0 → Ω → ℝ} {P : Measure Ω} [IsProbabilityMeasure P]
+    (h : IsStableLevyProcess α μ X P) (blocks : ℕ) (hblocks : 0 < blocks)
+    (j j' : Fin blocks) :
+    IdentDistrib (fun ω q => rationalUniformBlockProcessFromTime X hblocks j q ω)
+      (fun ω q => rationalUniformBlockProcessFromTime X hblocks j' q ω) P P := by
+  exact h.increments.indepIncrements.rationalUniformBlockProcess_identDistrib
+    h.toIsLevyProcess.stationaryIncrements
+    (fun t => h.increments.aemeasurable_eval t) blocks hblocks j j'
+
+/-- The rational-coordinate block process is the process-level restriction
+of the stable Lévy process. -/
+theorem IsStableLevyProcess.rationalTubeBlockProcess_identDistrib
+    {Ω : Type*} [MeasurableSpace Ω] {α : ℝ} {μ : Measure ℝ}
+    {X : ℝ≥0 → Ω → ℝ} {P : Measure Ω} [IsProbabilityMeasure P]
+    (h : IsStableLevyProcess α μ X P) (blocks : ℕ) (hblocks : 0 < blocks)
+    (j j' : Fin blocks) :
+    IdentDistrib
+      (rationalUniformBlockProcess
+        (fun q ω => X (RationalCoordinate.toNNReal q) ω) hblocks j)
+      (rationalUniformBlockProcess
+        (fun q ω => X (RationalCoordinate.toNNReal q) ω) hblocks j') P P := by
+  convert h.rationalUniformBlockProcess_identDistrib blocks hblocks j j' using 1 <;>
+    funext ω q <;>
+    simp [rationalUniformBlockProcess, rationalTubeBlockIncrement,
+      rationalUniformBlockProcessFromTime, rationalUniformBlockAbsoluteTime]
+
+/-- The stable-process instance of the upper block inequality. Stable
+independent increments already identify every translated block path law, so
+the only remaining hypothesis is mutual independence of the finitely many
+block path sigma-fields. -/
+theorem IsStableLevyProcess.measure_rationalTube_le_pow_of_iIndep_uniformBlocks
+    {Ω : Type*} [MeasurableSpace Ω] {α : ℝ} {μ : Measure ℝ}
+    {X : ℝ≥0 → Ω → ℝ} {P : Measure Ω} [IsProbabilityMeasure P]
+    (h : IsStableLevyProcess α μ X P) (blocks : ℕ) (hblocks : 0 < blocks)
+    (width : ℝ)
+    (hindep : iIndepFun
+      (rationalUniformBlockProcess
+        (fun q ω => X (RationalCoordinate.toNNReal q) ω) hblocks) P) :
+    P ((fun ω q => X (RationalCoordinate.toNNReal q) ω) ⁻¹'
+        Skorokhod.rationalCoordinateOscillationTube width) ≤
+      (P ((rationalUniformBlockProcess
+        (fun q ω => X (RationalCoordinate.toNNReal q) ω) hblocks
+          ⟨0, hblocks⟩) ⁻¹'
+        Skorokhod.rationalCoordinateOscillationTube width)) ^ blocks := by
+  apply ProbabilityTheory.measure_rationalTube_le_pow_of_iIndep_uniformBlocks P
+    (fun q ω => X (RationalCoordinate.toNNReal q) ω) hblocks width hindep
+  intro j
+  exact h.rationalTubeBlockProcess_identDistrib blocks hblocks j ⟨0, hblocks⟩
+
+end ProbabilityTheory
+
+end
