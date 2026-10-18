@@ -11,6 +11,13 @@ public import Mathlib.Order.SetDissipate
 /-!
 # Congruence for dissipated sets
 
+The public declaration in `Set` is:
+
+- `dissipate_congr`: if two sequences of sets agree at every index through
+  $n$, their dissipated sets at $n$ agree:
+  $s_m=t_m$ for all $m\le n\Rightarrow
+  \operatorname{dissipate}(s,n)=\operatorname{dissipate}(t,n)$.
+
 This is a finite-prefix congruence property of `Set.dissipate`; it is
 independent of measure and capacity theory.
 -/

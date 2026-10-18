@@ -8,7 +8,7 @@ module
 
 public import Probability.Process.Stable.SmallDeviation.RationalTube
 public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Gluing
-public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks
+public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Basic
 
 /-!
 # Stable scaling for returning corridor blocks

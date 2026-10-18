@@ -10,6 +10,17 @@ public import Combinatorics.BranchingWalk.Basic.Definitions
 /-!
 # Branching as the unmarked branching-walk specialization
 
+## Public declarations
+
+* `Combinatorics.Branching.RootIndexed.Process Root α` and
+  `Combinatorics.Branching.Process α` are the root-indexed and single-root
+  specializations of `BranchingWalk` with both mark types equal to `PUnit`.
+* `Combinatorics.Branching.branchingOfStepField β` packages a unit-marked step
+  field as a single-root process;
+  `Combinatorics.Branching.branchingOfStepField_step` recovers its step field,
+  and `Combinatorics.Branching.measurable_branchingOfStepField` proves the
+  packaging map measurable.
+
 `RootIndexed.Process Root α` is exactly a root-indexed branching walk whose
 mark type is `PUnit`. Thus it retains child presence and genealogy and carries
 no spatial displacement. `Process α` is its single-root case. Trees are a

@@ -6,7 +6,7 @@ Authors: Codex
 module
 
 public import Mathlib.Analysis.SpecialFunctions.Gaussian.FourierTransform
-public import Probability.Distributions.CharacteristicFunction.Symmetrization
+public import Probability.Distributions.CharacteristicFunction.Symmetrization.Basic
 
 /-!
 # Gaussian smoothing of characteristic-function defects
@@ -22,7 +22,7 @@ open MeasureTheory
 
 namespace ProbabilityTheory
 
-private theorem gaussian_cos_two_pi (a : ℝ) :
+private lemma gaussian_cos_two_pi (a : ℝ) :
     (∫ x : ℝ, Real.exp (-Real.pi * x ^ 2) * Real.cos (2 * Real.pi * a * x)) =
       Real.exp (-Real.pi * a ^ 2) := by
   let f : ℝ → ℂ := fun x =>
@@ -98,7 +98,7 @@ private theorem gaussian_cos_two_pi (a : ℝ) :
 private noncomputable def cosineDefect (μ : Measure ℝ) (t : ℝ) : ℝ :=
   ∫ x, 1 - Real.cos (t * x) ∂μ
 
-private theorem cosineDefect_eq_one_sub_charFun_re
+private lemma cosineDefect_eq_one_sub_charFun_re
     (μ : Measure ℝ) [IsProbabilityMeasure μ] (t : ℝ) :
     cosineDefect μ t = 1 - (charFun μ t).re := by
   let f : ℝ → ℂ := fun x => Complex.exp (t * x * Complex.I)

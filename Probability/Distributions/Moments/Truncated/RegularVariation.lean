@@ -6,11 +6,11 @@ Authors: Codex
 
 module
 
-public import Analysis.Asymptotics.RegularVariation
+public import Analysis.Asymptotics.RegularVariation.Basic
 public import Mathlib.Analysis.Normed.Group.Tannery
 public import Mathlib.MeasureTheory.Measure.Continuity
 public import Mathlib.MeasureTheory.Measure.Real
-public import Probability.Distributions.Moments.Truncated
+public import Probability.Distributions.Moments.Truncated.Basic
 
 /-!
 # Regular variation of truncated second moments
@@ -27,7 +27,7 @@ open scoped Topology
 
 namespace ProbabilityTheory
 
-private theorem truncatedSecondMoment_band_lower_bound
+private lemma truncatedSecondMoment_band_lower_bound
     (μ : Measure ℝ) [IsFiniteMeasure μ] {a b : ℝ}
     (ha : 0 ≤ a) (hab : a ≤ b) :
     a ^ 2 * μ.real {y : ℝ | a < |y| ∧ |y| ≤ b} ≤
@@ -95,7 +95,7 @@ private theorem truncatedSecondMoment_band_lower_bound
     _ ≤ ∫ y in band, y ^ 2 ∂μ := hlow'
     _ = truncatedSecondMoment μ b - truncatedSecondMoment μ a := hdiff
 
-private theorem twoSidedTail_difference_eq_band
+private lemma twoSidedTail_difference_eq_band
     (μ : Measure ℝ) [IsFiniteMeasure μ] {a b : ℝ}
     (hab : a ≤ b) :
     μ.real {y : ℝ | a < |y|} - μ.real {y : ℝ | b < |y|} =
@@ -116,7 +116,7 @@ private theorem twoSidedTail_difference_eq_band
   exact (measureReal_sdiff (μ := μ) hsubset
     (measurableSet_lt measurable_const continuous_abs.measurable) (measure_ne_top μ _)).symm
 
-private theorem twoSidedTail_difference_mul_sq_le_truncatedSecondMoment_difference
+private lemma twoSidedTail_difference_mul_sq_le_truncatedSecondMoment_difference
     (μ : Measure ℝ) [IsFiniteMeasure μ] {a b : ℝ}
     (ha : 0 ≤ a) (hab : a ≤ b) :
     a ^ 2 * (μ.real {y : ℝ | a < |y|} - μ.real {y : ℝ | b < |y|}) ≤
@@ -124,7 +124,7 @@ private theorem twoSidedTail_difference_mul_sq_le_truncatedSecondMoment_differen
   rw [twoSidedTail_difference_eq_band μ hab]
   exact truncatedSecondMoment_band_lower_bound μ ha hab
 
-private theorem truncatedSecondMoment_difference_le_sq_mul_twoSidedTail
+private lemma truncatedSecondMoment_difference_le_sq_mul_twoSidedTail
     (μ : Measure ℝ) [IsFiniteMeasure μ] {a b : ℝ}
     (ha : 0 ≤ a) (hab : a ≤ b) :
     truncatedSecondMoment μ b - truncatedSecondMoment μ a ≤
