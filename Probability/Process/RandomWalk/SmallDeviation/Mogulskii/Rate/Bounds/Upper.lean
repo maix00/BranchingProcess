@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.Kernel.Killed.Basic
-public import Probability.Process.RandomWalk.Kernel.Killed.Blocking
+public import Probability.Process.RandomWalk.Kernel.Killed.Survival.Blocking
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Blocks.BlockEndpoint
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Scale.BlockScale
 

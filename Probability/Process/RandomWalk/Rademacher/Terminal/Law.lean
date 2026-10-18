@@ -7,7 +7,8 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.Rademacher.LastSignChange
-public import Probability.Sequence.IID.PrefixBlock
+public import Probability.Sequence.IID.Basic
+import Probability.Sequence.IID.Blocks.Prefix
 public import Probability.Process.RandomWalk.Path.Adapted.Filtration
 
 /-!

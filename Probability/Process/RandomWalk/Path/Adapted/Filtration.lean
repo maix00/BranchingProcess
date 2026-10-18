@@ -9,6 +9,7 @@ module
 public import Probability.Process.RandomWalk.Path.Basic
 public import Probability.Process.RandomWalk.Path.Block.Law.Basic
 public import Probability.Sequence.IID.Filtration
+import Probability.Sequence.IID.Blocks.StoppingTime
 public import Mathlib.Probability.Process.Adapted
 
 /-!

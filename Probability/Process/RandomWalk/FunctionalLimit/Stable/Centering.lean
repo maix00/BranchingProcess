@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Analysis.Asymptotics.RegularVariation.Integral
+public import Analysis.Asymptotics.RegularVariation.Integral.Basic
 public import Probability.Distributions.Stable.Attraction.Norming.Tail
 public import Probability.Distributions.Moments.Truncated.TailIntegral
 public import Probability.Process.RandomWalk.Path.Truncation.Moment

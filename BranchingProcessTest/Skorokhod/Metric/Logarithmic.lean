@@ -5,8 +5,8 @@ Authors: WANG Yiyang
 -/
 
 import Topology.Cadlag.Skorokhod.EDistance.Logarithmic.Basic
-import Topology.Cadlag.Skorokhod.EDistance.Logarithmic.AlignedCauchy
-import Topology.Cadlag.Skorokhod.EDistance.Logarithmic.CauchySubsequence
+import Topology.Cadlag.Skorokhod.EDistance.Logarithmic.Completion.AlignedCauchy
+import Topology.Cadlag.Skorokhod.EDistance.Logarithmic.Completion.CauchySubsequence
 import Topology.Cadlag.Skorokhod.EDistance.Logarithmic.Separation
 import Topology.Cadlag.Skorokhod.EDistance.Logarithmic.Topology
 import Topology.Cadlag.UniformLimit

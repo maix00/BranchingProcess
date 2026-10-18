@@ -21,7 +21,7 @@ the canonical coordinate process.
 
 The public interfaces include:
 
-- `iidSequenceLaw`: the law $\nu^{\mathbb N}$ on infinite sequences.
+- `iidSequenceLaw`: the law $\nu^{\mathbb N}$ on infinite sequences, with its probability-measure instance when $\nu$ is a probability measure.
 - `iidSequenceLaw_map_apply` and `iidSequenceLaw_map_finPrefix`: the
   one-coordinate law and the finite product law of the first $n$ coordinates.
 - `iidSequenceLaw_map_blockCoordinates` and

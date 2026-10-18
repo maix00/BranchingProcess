@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Analysis.Asymptotics.Power.TailIntegral
-public import Analysis.Asymptotics.RegularVariation.Integral
+public import Analysis.Asymptotics.RegularVariation.Integral.Basic
 public import Mathlib.MeasureTheory.Integral.Layercake
 public import Mathlib.MeasureTheory.Integral.Bochner.Set
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real

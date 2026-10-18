@@ -50,13 +50,23 @@ GENERAL_LAYER_BOUNDARIES = {
         "Probability.BranchingProcess",
         "Probability.BranchingRandomWalk",
     ),
-    "Probability.Sequence.IID.StoppingTime": (
+    "Probability.Sequence.IID.Blocks.StoppingTime": (
         "Algebra.BigOperators.AdditivePath",
         "Probability.Process.RandomWalk",
         "Probability.BranchingProcess",
         "Probability.BranchingRandomWalk",
     ),
     "Probability.Sequence.IID.Filtration": (
+        "Probability.Process.RandomWalk",
+        "Probability.BranchingProcess",
+        "Probability.BranchingRandomWalk",
+    ),
+    "Probability.Sequence.IID.Blocks.Conditional": (
+        "Probability.Process.RandomWalk",
+        "Probability.BranchingProcess",
+        "Probability.BranchingRandomWalk",
+    ),
+    "Probability.Sequence.IID.Blocks.Prefix": (
         "Probability.Process.RandomWalk",
         "Probability.BranchingProcess",
         "Probability.BranchingRandomWalk",

@@ -8,7 +8,7 @@ module
 
 public import Probability.Process.RandomWalk.Path.Block.Law.Coordinates
 public import Probability.Process.RandomWalk.Path.Window.Core
-public import Probability.Sequence.IID.StoppingTime
+import Probability.Sequence.IID.Blocks.StoppingTime
 
 /-!
 # IID laws of finite interval path events

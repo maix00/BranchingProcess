@@ -10,7 +10,7 @@ public import Probability.Process.RandomWalk.Path.Interpolation.Finite.Grid
 public import Mathlib.Topology.UnitInterval
 public import Probability.Process.RandomWalk.FunctionalLimit.Donsker.Path.Brownian
 public import Probability.Process.RandomWalk.Path.Interpolation.Path.MaximalJump
-public import Probability.ConvergenceInDistribution.AsymptoticEquivalence
+public import Probability.ConvergenceInDistribution.Approximation.AsymptoticEquivalence
 
 /-!
 # Uniform-grid limits for polygonal random-walk paths

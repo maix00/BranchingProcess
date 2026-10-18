@@ -12,9 +12,14 @@ public import Probability.Process.RandomWalk.Kernel.Killed.Basic
 /-!
 # Equal-block representation of killed-walk survival
 
-The remaining mass of a killed additive kernel over an equal-block time
-partition is identified with the corresponding deterministic block-corridor
-event under the canonical increment law.
+For $m,\ell\ge1$, the public theorems identify the killed kernel's remaining
+mass through $m\ell$ steps with the probability that every point in every
+length-$\ell$ block lies in the closed interval:
+
+- `killedIncrementKernelOn_Icc_remainingMass_mul_eq_blockCorridors`: the
+  restricted-state identity for an initial point in $[a,b]$.
+- `killedIncrementKernel_Icc_remainingMass_mul_eq_blockCorridors`: the
+  ambient-state identity, assuming the initial point lies in $[a,b]$.
 -/
 
 open MeasureTheory Set

@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Mathlib.Algebra.Order.Floor.Semifield
-public import Probability.Process.RandomWalk.Kernel.Killed.Bridge
+public import Probability.Process.RandomWalk.Kernel.Killed.Return.Bridge
 public import Probability.Process.RandomWalk.Path.Block.Partition.Basic
 public import Probability.Process.RandomWalk.Path.Corridor.Horizontal.Core
 public import Probability.Process.RandomWalk.Path.Window.Core

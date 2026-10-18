@@ -11,8 +11,18 @@ public import Probability.Process.RandomWalk.Kernel.Killed.Basic
 /-!
 # Comparison of killed-walk survival masses
 
-Deterministic inclusions between translated path windows give order relations
-between remaining masses of killed additive kernels.
+For a real random walk, the public theorems are:
+
+- `remainingMass_killedIncrementKernel_Icc_mono_of_abs_sub_le`: if
+  $|x-y|\le\delta$, survival for $n$ steps from $y$ in the shrunken interval
+  $[a+\delta,b-\delta]$ is bounded above by survival from $x$ in $[a,b]$.
+- `le_remainingMass_killedIncrementKernel_Icc_of_finset`: a finite
+  $\delta$-net of $[a,b]$ transfers a common shrunken-interval lower bound
+  $p$ to every starting point in $[a,b]$.
+- `eventually_forall_le_remainingMass_killedIncrementKernel_Icc_of_finset`:
+  the same transfer holds eventually for varying scales and durations, assuming
+  eventual nonnegative scales, a finite $\delta$-net, and eventual reference
+  lower bounds.
 -/
 
 open MeasureTheory Set

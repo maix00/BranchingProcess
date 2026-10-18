@@ -11,7 +11,7 @@ public import Probability.Process.RandomWalk.Path.Corridor.Horizontal.Basic
 public import Probability.Process.RandomWalk.Path.Event.Oscillation
 public import Probability.Process.RandomWalk.Path.Block.Law.Basic
 public import Probability.Process.RandomWalk.Kernel.Killed.Return.Basic
-public import Probability.Process.RandomWalk.Kernel.Killed.Blocking
+public import Probability.Process.RandomWalk.Kernel.Killed.Survival.Blocking
 public import Probability.Process.RandomWalk.Path.Corridor.Horizontal.Core
 public import Mathlib.Algebra.Order.Floor.Semifield
 
