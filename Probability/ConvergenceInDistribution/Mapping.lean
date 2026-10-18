@@ -13,9 +13,19 @@ public section
 /-!
 # Measurable mappings under convergence in distribution
 
-This file provides the mapping theorem when the map is continuous almost
-everywhere under the limiting law. The proof uses the open-set form of the
-Portmanteau theorem.
+The public theorems in this file are:
+
+- `MeasureTheory.ProbabilityMeasure.tendsto_map_of_tendsto_of_continuousAt_ae`:
+  $\mu_n\Rightarrow\mu$ and $\mu$-almost-sure continuity of a measurable
+  map $f$ imply $f_*\mu_n\Rightarrow f_*\mu$.
+- `MeasureTheory.TendstoInDistribution.measurable_comp_of_continuousAt_ae`:
+  the corresponding random-variable form,
+  $X_n\Rightarrow X\Rightarrow f(X_n)\Rightarrow f(X)$.
+
+The proof uses the open-set form of the Portmanteau theorem. The
+random-variable form is used for the first-window path shift in
+Erwin Bolthausen, *On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*, Theorem 3.2, Ann. Probab. 4(3)
+(1976), 480--485, DOI 10.1214/aop/1176996098.
 -/
 
 open Filter MeasureTheory Set Topology
@@ -92,6 +102,41 @@ theorem ProbabilityMeasure.tendsto_map_of_tendsto_of_continuousAt_ae
         exact (isBoundedUnder_of_eventually_le <|
           Filter.Eventually.of_forall htarget_le_one).isCoboundedUnder_ge
       exact Filter.liminf_le_liminf hcomp hsource_lb htarget_ub
+
+set_option backward.isDefEq.respectTransparency.types false in
+/-- The continuous mapping theorem for a measurable map which is
+continuous almost surely under the limiting law. -/
+theorem TendstoInDistribution.measurable_comp_of_continuousAt_ae
+    {I : Type*} {Ω : I → Type*} {Ω' E F : Type*}
+    [∀ i, MeasurableSpace (Ω i)] [MeasurableSpace Ω']
+    [MeasurableSpace E] [TopologicalSpace E]
+    [OpensMeasurableSpace E] [HasOuterApproxClosed E]
+    [MeasurableSpace F] [TopologicalSpace F]
+    [OpensMeasurableSpace F] [HasOuterApproxClosed F]
+    {L : Filter I} [L.IsCountablyGenerated]
+    {μ : (i : I) → Measure (Ω i)} [∀ i, IsProbabilityMeasure (μ i)]
+    {μ' : Measure Ω'} [IsProbabilityMeasure μ']
+    {X : (i : I) → Ω i → E} {Z : Ω' → E}
+    (h : TendstoInDistribution X L Z μ μ')
+    {g : E → F} (hg : Measurable g)
+    (hcont : ∀ᵐ x ∂(μ'.map Z), ContinuousAt g x) :
+    TendstoInDistribution (fun i => g ∘ X i) L (g ∘ Z) μ μ' where
+  forall_aemeasurable := fun i =>
+    hg.aemeasurable.comp_aemeasurable (h.forall_aemeasurable i)
+  aemeasurable_limit :=
+    hg.aemeasurable.comp_aemeasurable h.aemeasurable_limit
+  tendsto := by
+    convert! ProbabilityMeasure.tendsto_map_of_tendsto_of_continuousAt_ae
+      h.tendsto hg hcont using 1
+    · congr 1
+      funext i
+      apply Subtype.ext
+      exact (AEMeasurable.map_map_of_aemeasurable
+        hg.aemeasurable (h.forall_aemeasurable i)).symm
+    · congr 1
+      apply Subtype.ext
+      exact (AEMeasurable.map_map_of_aemeasurable
+        hg.aemeasurable h.aemeasurable_limit).symm
 
 end MeasureTheory
 

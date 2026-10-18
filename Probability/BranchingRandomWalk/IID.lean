@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.BranchingRandomWalk.Law
-public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law
+public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law.Basic
 public import Combinatorics.BranchingWalk.StepField
 
 /-!

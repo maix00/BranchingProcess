@@ -1,4 +1,4 @@
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Rate.Lower
+import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Rate.Lower.Limit
 
 #print axioms ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.eventually_openHorizontalTubeProbability_ge_exp_of_stableEscapeRate
 #print axioms ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.stableEscapeRate_liminf_lower
