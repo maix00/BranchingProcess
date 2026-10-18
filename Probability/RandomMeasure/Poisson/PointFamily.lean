@@ -140,7 +140,7 @@ theorem measure_prmPiece_lt_top : m (prmPiece m k) < ⊤ :=
 /-! ### The normalized piece law -/
 
 /-- On a piece of positive `m`-mass, `prmPieceLaw` is the explicit rescaled restriction. -/
-private theorem prmPieceLaw_of_ne_zero [Nonempty E] (hk : m (prmPiece m k) ≠ 0) :
+private lemma prmPieceLaw_of_ne_zero [Nonempty E] (hk : m (prmPiece m k) ≠ 0) :
     prmPieceLaw m k = (m (prmPiece m k))⁻¹ • m.restrict (prmPiece m k) := by
   unfold prmPieceLaw
   rw [ite_eq_right hk]
@@ -457,7 +457,7 @@ theorem measurable_pieceSum {f : E → ℝ} (hK : Measurable (K k))
 /-- A test function integrable on a piece is integrable against that piece's normalized law: on a
 positive-mass piece the law is a finite rescaling of the restriction, and on a zero-mass piece it is
 a Dirac mass. -/
-private theorem integrable_prmPieceLaw {g : E → ℝ} (hg : Measurable g)
+private lemma integrable_prmPieceLaw {g : E → ℝ} (hg : Measurable g)
     (hgi : Integrable g (m.restrict (prmPiece m k))) : Integrable g (prmPieceLaw m k) := by
   unfold prmPieceLaw
   split_ifs with h
@@ -468,7 +468,7 @@ private theorem integrable_prmPieceLaw {g : E → ℝ} (hg : Measurable g)
 /-- Unconditional scaling bridge: the `m`-mass of the piece times the Bochner integral against the
 normalized law is the set integral against `m`, including the zero-mass piece where both sides
 vanish. -/
-private theorem toReal_mul_integral_prmPieceLaw (g : E → ℝ) :
+private lemma toReal_mul_integral_prmPieceLaw (g : E → ℝ) :
     (m (prmPiece m k)).toReal * ∫ x, g x ∂(prmPieceLaw m k) = ∫ x in prmPiece m k, g x ∂m := by
   by_cases h : m (prmPiece m k) = 0
   · rw [h, ENNReal.toReal_zero, zero_mul,
@@ -478,7 +478,7 @@ private theorem toReal_mul_integral_prmPieceLaw (g : E → ℝ) :
 
 /-- Each mark `X k n` integrates `g` to the piece-law integral, and the sum of the first `j` marks
 therefore integrates to `j` times that value. -/
-private theorem integral_marksSum_eq [IsProbabilityMeasure μ] (hd : IsPoissonPointFamily K X m μ)
+private lemma integral_marksSum_eq [IsProbabilityMeasure μ] (hd : IsPoissonPointFamily K X m μ)
     {g : E → ℝ} (hg : Measurable g) (hgi : Integrable g (m.restrict (prmPiece m k))) (j : ℕ) :
     ∫ ω, ∑ n ∈ Finset.range j, g (X k n ω) ∂μ = (j : ℝ) * ∫ x, g x ∂(prmPieceLaw m k) := by
   have hterm : ∀ n, Integrable (fun ω => g (X k n ω)) μ := by
@@ -497,7 +497,7 @@ private theorem integral_marksSum_eq [IsProbabilityMeasure μ] (hd : IsPoissonPo
 /-- **Conditional Campbell factorization.** On the event `{K k = j}` the integral of the sum of the
 first `j` marks factors as the probability of the event times `j` times the piece-law integral, by
 independence of the count from the marks. -/
-private theorem setIntegral_count_rangeSum [IsProbabilityMeasure μ]
+private lemma setIntegral_count_rangeSum [IsProbabilityMeasure μ]
     (hd : IsPoissonPointFamily K X m μ) {g : E → ℝ} (hg : Measurable g)
     (hgi : Integrable g (m.restrict (prmPiece m k))) (j : ℕ) :
     ∫ ω in {ω | K k ω = j}, ∑ n ∈ Finset.range j, g (X k n ω) ∂μ
@@ -529,7 +529,7 @@ private theorem setIntegral_count_rangeSum [IsProbabilityMeasure μ]
   exact integral_marksSum_eq hd hg hgi j
 
 /-- The probability of the piece-count event `{K k = j}` is the Poisson pmf at `j`. -/
-private theorem measureReal_count_eq (hd : IsPoissonPointFamily K X m μ) (j : ℕ) :
+private lemma measureReal_count_eq (hd : IsPoissonPointFamily K X m μ) (j : ℕ) :
     μ.real {ω | K k ω = j} = (poissonMeasure (m (prmPiece m k)).toNNReal).real {j} := by
   have h1 : μ {ω | K k ω = j} = poissonMeasure (m (prmPiece m k)).toNNReal {j} := by
     rw [show {ω | K k ω = j} = K k ⁻¹' {j} from rfl,
@@ -615,7 +615,7 @@ theorem integral_pieceSum [IsProbabilityMeasure μ] (hd : IsPoissonPointFamily K
 /-- **General conditional factorization.** On `{K k = j}`, the integral of any measurable functional
 of the marks of piece `k` factors as the probability of the event times the functional's integral,
 by independence of the count from the marks. -/
-private theorem setIntegral_count_marksFun [IsProbabilityMeasure μ]
+private lemma setIntegral_count_marksFun [IsProbabilityMeasure μ]
     (hd : IsPoissonPointFamily K X m μ) (j : ℕ) {ψ : (ℕ → E) → ℝ} (hψ : Measurable ψ) :
     ∫ ω in {ω | K k ω = j}, ψ (fun n => X k n ω) ∂μ
       = μ.real {ω | K k ω = j} * ∫ ω, ψ (fun n => X k n ω) ∂μ := by
@@ -643,7 +643,7 @@ private theorem setIntegral_count_marksFun [IsProbabilityMeasure μ]
 /-- The square of the sum of the first `j` marks is integrable: expanding the square gives a finite
 sum of products of marks, each integrable (a squared mark on the diagonal, a product of independent
 marks off it). -/
-private theorem integrable_marksSum_sq [IsProbabilityMeasure μ] (hd : IsPoissonPointFamily K X m μ)
+private lemma integrable_marksSum_sq [IsProbabilityMeasure μ] (hd : IsPoissonPointFamily K X m μ)
     {f : E → ℝ} (hf : Measurable f) (hfi : Integrable f (m.restrict (prmPiece m k)))
     (hfi2 : Integrable (fun x => f x ^ 2) (m.restrict (prmPiece m k))) (j : ℕ) :
     Integrable (fun ω => (∑ n ∈ Finset.range j, f (X k n ω)) ^ 2) μ := by
@@ -673,7 +673,7 @@ private theorem integrable_marksSum_sq [IsProbabilityMeasure μ] (hd : IsPoisson
 /-- **Second moment of a fixed-length mark sum.** The mean square of the sum of the first `j` i.i.d.
 marks is `j * E[f^2] + j (j-1) * E[f]^2`, against the piece law. Expanding the square, diagonal terms
 give `E[f^2]` and off-diagonal terms factor as `E[f]^2` by independence. -/
-private theorem integral_marksSum_sq_eq [IsProbabilityMeasure μ]
+private lemma integral_marksSum_sq_eq [IsProbabilityMeasure μ]
     (hd : IsPoissonPointFamily K X m μ) {f : E → ℝ} (hf : Measurable f)
     (hfi : Integrable f (m.restrict (prmPiece m k)))
     (hfi2 : Integrable (fun x => f x ^ 2) (m.restrict (prmPiece m k))) (j : ℕ) :
@@ -744,7 +744,7 @@ private theorem integral_marksSum_sq_eq [IsProbabilityMeasure μ]
 
 /-- Per-cell second moment: on `{K k = j}` the mean square of the piece sum is the Poisson pmf at `j`
 times the fixed-length second moment `j * E[f^2] + j (j-1) * E[f]^2`. -/
-private theorem setIntegral_sq_pieceSum_eq [IsProbabilityMeasure μ]
+private lemma setIntegral_sq_pieceSum_eq [IsProbabilityMeasure μ]
     (hd : IsPoissonPointFamily K X m μ) {f : E → ℝ} (hf : Measurable f)
     (hfi : Integrable f (m.restrict (prmPiece m k)))
     (hfi2 : Integrable (fun x => f x ^ 2) (m.restrict (prmPiece m k))) (j : ℕ) :
@@ -1023,7 +1023,7 @@ theorem measurable_thinnedCount (hK : Measurable (K k)) (hX : ∀ n, Measurable 
 
 /-- Each mark contributes a factor `∫ w d(pieceLaw k)`, so the product of the first `j` marks
 integrates to its `j`-th power, by within-piece i.i.d. independence. -/
-private theorem integral_marksProd_eq [IsProbabilityMeasure μ] (hd : IsPoissonPointFamily K X m μ)
+private lemma integral_marksProd_eq [IsProbabilityMeasure μ] (hd : IsPoissonPointFamily K X m μ)
     {w : E → ℂ} (hw : Measurable w) (j : ℕ) :
     ∫ ω, ∏ n ∈ Finset.range j, w (X k n ω) ∂μ = (∫ x, w x ∂(prmPieceLaw m k)) ^ j := by
   have hZ : iIndepFun (fun i : Fin j => X k (i : ℕ)) μ :=
@@ -1046,7 +1046,7 @@ private theorem integral_marksProd_eq [IsProbabilityMeasure μ] (hd : IsPoissonP
 
 /-- **Conditional pgf factorization (complex).** On `{K k = j}`, the integral of a measurable complex
 functional of the marks factors as the probability of the event times its integral. -/
-private theorem setIntegral_count_marksFun_complex [IsProbabilityMeasure μ]
+private lemma setIntegral_count_marksFun_complex [IsProbabilityMeasure μ]
     (hd : IsPoissonPointFamily K X m μ) (j : ℕ) {ψ : (ℕ → E) → ℂ} (hψ : Measurable ψ) :
     ∫ ω in {ω | K k ω = j}, ψ (fun n => X k n ω) ∂μ
       = (μ.real {ω | K k ω = j} : ℂ) * ∫ ω, ψ (fun n => X k n ω) ∂μ := by

@@ -8,9 +8,9 @@ module
 
 public import Analysis.Fourier.CosineTauberian.Mellin
 public import Probability.Distributions.Stable.Attraction.CharacteristicFunction
-public import Probability.Distributions.Stable.Attraction.Norming
+public import Probability.Distributions.Stable.Attraction.Norming.Basic
 public import Probability.Distributions.Stable.Attraction.NormingRatios.Tauberian
-public import Probability.Distributions.Stable.Scaling
+public import Probability.Distributions.Stable.Operations.Scaling
 
 /-!
 # Compatibility of stable norming constants

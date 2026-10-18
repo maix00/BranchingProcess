@@ -1,5 +1,5 @@
 import Analysis.Asymptotics.RegularVariation.SlowScale
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Scale
+import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Scale.Core
 
 open Filter ProbabilityTheory
 open MeasureTheory

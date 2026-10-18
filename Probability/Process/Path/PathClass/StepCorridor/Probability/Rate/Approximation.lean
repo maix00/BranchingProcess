@@ -19,6 +19,13 @@ sequences to converge to the same value.  Finally, fixed inner and outer
 approximants squeeze the probability rate of any measurable set in class `M`.
 The component `M₂` rate remains an explicit input through the `M₃` rate
 hypothesis.
+
+For the corridor rate supplied to this abstract squeeze, the source result is
+A. A. Mogul'skii, Theorem 3, Section 4, p. 764, “Small deviations in the
+sample function space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4)
+(1974), 755--765; English translation, “Small Deviations in a Space of
+Trajectories,” *Theory of Probability and Its Applications* 19(4) (1975),
+726--736, DOI 10.1137/1119081.
 -/
 
 open Filter MeasureTheory
@@ -279,7 +286,7 @@ theorem tendsto_log_probability_ratio_of_FiniteCorridorUnionApproximation
 
 /-- The limiting energy attached to a set in class `M` is independent of the
 chosen approximation witness, provided the component `M₃` probability rates
-hold.  This is the probabilistic well-definedness assertion in the source. -/
+hold.  This follows from the stated approximation and rate hypotheses. -/
 theorem existsUnique_commonEnergy_of_hasVanishingEnergyGapApproximation
     {Ω : Type*} [MeasurableSpace Ω]
     (P : Measure Ω) [IsProbabilityMeasure P]
