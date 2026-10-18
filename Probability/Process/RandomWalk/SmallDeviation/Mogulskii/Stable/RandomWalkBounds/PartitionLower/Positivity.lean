@@ -8,7 +8,7 @@ module
 
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.PartitionLower.FiniteProduct
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.PartitionLower.BridgeProduct
-public import Probability.Process.Stable.SmallDeviation.PathClass.StepCorridor.Partition.Lower.Geometry
+import Topology.Cadlag.Skorokhod.PathClass.StepCorridor.Partition.LowerGeometry
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Partition
 
 /-!

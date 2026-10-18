@@ -9,6 +9,8 @@ module
 public import Probability.MeasureTheory.FiniteProduct
 public import Probability.Process.Stable.SmallDeviation.PathClass.StepCorridor.Partition.Lower.Assembly
 
+import Probability.Process.Stable.SmallDeviation.PathClass.StepCorridor.Partition.Lower.Lemmas.CoreShrink
+
 /-!
 # Logarithmic lower rate for a fixed inner partition corridor
 

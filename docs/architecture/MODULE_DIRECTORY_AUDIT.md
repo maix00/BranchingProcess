@@ -73,7 +73,7 @@ by mathematical subject:
 | `MeasureTheory/Measure` | `Finite/`, `Algebra/`, `Limits/`, `Tails/`, `Windows/`, and `Levy/`; `Domination.lean` remains at the subject root. |
 | `BranchingRandomWalk/Restart/RootedTrial` | `Completion/`, `Coupling/`, `Reward/`, and `Spine/`. |
 | `BranchingRandomWalk/Population/Processes/StepSelection/SplitSchedule` | `Definition/`, `Field/`, and `Trials/`. |
-| `Stable/SmallDeviation/PathClass/StepCorridor/Partition` | `Core/`, `Lower/`, and `Upper/`. |
+| `Stable/SmallDeviation/PathClass/StepCorridor/Partition` | `Core/`, `Lower/`, and `Upper/`. The deterministic endpoint-core plus finite inner-cell geometry now lives at its semantic owner, `Topology/Cadlag/Skorokhod/PathClass/StepCorridor/Partition/LowerGeometry.lean`; the stable `Lower/Geometry.lean` is reserved for cell events and their pathwise concatenation. The one-use radius-contraction step is under `Lower/Lemmas/CoreShrink.lean`. |
 | `Stable/SmallDeviation/Blocks/Lower` | `Assembly/`, `Binning/`, `Bounds/`, `Entrance/`, and `Return/`. |
 | `RandomWalk/SmallDeviation/Mogulskii` | `Blocks/`, `Path/`, and `Scale/`; `Partition.lean` remains at the subject root. |
 | `BranchingRandomWalk/Selection/NSelection/AsymptoticSpeed` | `Limit/` and `Selection/` group the main speed argument; `InitialPopulation/Basic.lean` remains the initial-population entry, with `Field/`, `Trajectory/`, and `Speed/` subfamilies. |
@@ -146,7 +146,8 @@ interface into `Rotation/FinitePath.lean`, `Rotation/CyclicCover.lean`, and
 `Rotation/FiniteProduct.lean`, found 1,450 production modules and 138 test
 modules. The stable horizontal-tube lower-rate interface was subsequently
 split into `Stable/Rate/Lower/{BlockProbability,Liminf,Positivity,Limit}.lean`;
-the production count is now 1,453. Earlier batches grouped the Lemma 3.2 partition parameters, the
+the count was 1,453 before the current geometry split. The current production
+scan finds 1,457 Lean files and 138 test files. Earlier batches grouped the Lemma 3.2 partition parameters, the
 Lemma 3.3 jump-pattern and spatial-bin setup, the Lemma 3.5 staircase
 parameters under their corresponding `Lemmas/` trees, and moved the generic
 tail-merged schedule to the path-partition module.

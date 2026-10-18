@@ -17,6 +17,7 @@ identify misplaced application-specific assumptions.
 | Measure operations, integral limits, and measure properties | `MeasureTheory` | `Measure/Convolution/Power`, `Measure/DiracSum`, `Integral/Lebesgue/RestrictLimit` |
 | Measurable counting-measure processes | `Probability/PointProcess` | `PointProcess` bundles a measurable map into Mathlib `Measure` with integer-valuedness and the chosen finite-on-family condition |
 | Path-space geometry and generic tightness criteria | `Topology` and `Probability/Process/Path` | `CadlagPath`, Skorokhod oscillation and tightness modules |
+| Finite step-corridor endpoint cores and inner-cell geometry | `Topology/Cadlag/Skorokhod/PathClass/StepCorridor/Partition` | `LowerCores` selects knot cores; `LowerGeometry` places finite real bounds in the common cells, without assumptions on a probability law |
 | IID sequence laws, filtrations, and independence | `Probability/Sequence` | `Sequence/Block` owns measurable finite-block coordinates; `Sequence/IID/Basic` owns `iidSequenceLaw`, its finite-block product-law interface, and coordinate independence; stopping-time factorization remains in `Sequence/IID/StoppingTime` |
 | General random-walk process laws and paths | `Probability/Process/RandomWalk` | path maps, kernels, Donsker and small-deviation interfaces |
 | Stable-law and stable-process semantics | `Probability/Distributions/Stable` and `Probability/Process/Stable` | stable distributions, clock increments, Lévy processes |
@@ -86,6 +87,21 @@ N-BRW selection statements; the latter belong under `Selection/NSelection`.
 - Càdlàg paths and Skorokhod-space constructions reuse the path-space objects
   supplied by the project dependencies. Local criteria add the estimates and
   interfaces needed by this library's limit theorems.
+- The pinned Mathlib
+  [`Topology.MetricSpace.ShrinkingLemma`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Topology/MetricSpace/ShrinkingLemma.html)
+  shrinks locally
+  finite covers by open balls in proper metric spaces, while
+  [`Topology.Neighborhoods.nhds_basis_opens`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Topology/Neighborhoods.html)
+  expresses neighborhood bases. The pinned source files are
+  `Vendor/Mathlib/Mathlib/Topology/MetricSpace/ShrinkingLemma.lean` and
+  `Vendor/Mathlib/Mathlib/Topology/Neighborhoods.lean`.
+  Neither gives the finite ordered core radii required by a step-boundary
+  partition: the first has cover/properness hypotheses and a cover-preserving
+  conclusion, and the second carries no indexed radius-growth condition. The
+  step-corridor geometry therefore stays public at its path-topology owner.
+  Its single-call scalar-contraction proof is theorem-specific and belongs in
+  the stable partition proof's `Lemmas/` subtree; this audit adds no parallel
+  generic radius-selection API.
 - Finite affine grids are represented by `UniformGrid` with caller-supplied
   endpoints. Rational and dyadic grids provide arithmetic specializations.
   Mathlib's `Dyadic` and additive subgroups remain the right objects for
