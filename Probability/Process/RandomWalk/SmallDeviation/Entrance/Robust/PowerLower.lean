@@ -14,15 +14,16 @@ import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.Lemmas.Thre
 import Probability.Process.RandomWalk.SmallDeviation.Entrance.Edge.PrefixSelection
 import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.Lemmas.Edge.PrefixGeometry
 /-!
-# Assembly of the three robust diffusive entrance bounds
+# Power lower bound for the robust entrance event
 
-The proof-specific assembly lemma in this file is:
+The public theorem in this file is:
 
 - `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.exists_eventually_robustTransitionProbability_ge_power_of_transitionBounds`:
-  if each reflected transition event at
-  $\lfloor\Delta^2\rfloor-m_\pm$ has probability at least
-  $C_\pm\Delta^{-1-\alpha}$, then the robust moving entrance event has one
-  lower bound $C\Delta^{-1-\alpha}$ uniformly for $x\in[0,\Delta]$.
+  if the forward and reflected nonnegative-transition events at
+  $\lfloor a_n^2\rfloor-m$ each have an eventual lower bound of the form
+  $C_\pm a_n^{-1-\alpha}$ for every fixed $m$, where $a_n\to\infty$ and
+  $\alpha>0$, then the robust moving entrance event has an eventual lower
+  bound $C a_n^{-1-\alpha}$ uniformly for starting points in $[0,a_n]$.
 
 This is the final minimum-of-three-intervals step in Wang Yiyang,
 *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
