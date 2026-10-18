@@ -9,7 +9,7 @@ module
 public import Order.Interval.RationalCoordinate.UnitInterval
 public import Probability.Process.Stable.SmallDeviation.Blocks.Independence
 public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Events
-import MeasureTheory.Measure.FiniteProduct
+import MeasureTheory.Measure.Algebra.FiniteProduct
 
 /-!
 # Probability factorization across stable-process blocks

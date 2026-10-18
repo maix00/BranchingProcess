@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Combinatorics.BranchingWalk.Selection.NSelection.Infinite
+public import Combinatorics.BranchingWalk.Selection.NSelection.Mechanism.Infinite
 public import Mathlib.MeasureTheory.MeasurableSpace.NCard
 
 /-!
