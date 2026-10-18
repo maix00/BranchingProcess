@@ -28,6 +28,10 @@ The public theorems in this file are:
   type $J$, if each coordinate converges and the family $(X_{i,j})_{j\in J}$
   is independent for each $i$, then the vector-valued variables converge to
   the product law of the limiting coordinates.
+- `ProbabilityTheory.indepFun_of_tendstoInDistribution_pair`: if the joint
+  laws of $(X_i,Y_i)$ converge and each pair has independent coordinates,
+  then the limiting coordinates are independent, even when the source spaces
+  vary with $i$.
 
 The topological and measurability assumptions are those stated by each
 Lean theorem. These results provide the finite-dimensional product step for
@@ -147,3 +151,67 @@ theorem TendstoInDistribution.pi_of_iIndepFun
       (fun j => (hX j).forall_aemeasurable i) (h_indep i)).symm
 
 end MeasureTheory
+
+
+open MeasureTheory TopologicalSpace
+
+namespace ProbabilityTheory
+
+/-- Independence of each pair is preserved when the joint laws converge in
+distribution. The source probability spaces may depend on the index. -/
+theorem indepFun_of_tendstoInDistribution_pair
+    {ι : Type*} {X Y : Type*}
+    [TopologicalSpace X] [MeasurableSpace X] [BorelSpace X]
+    [SecondCountableTopology X] [PseudoMetrizableSpace X]
+    [TopologicalSpace Y] [MeasurableSpace Y] [BorelSpace Y]
+    [SecondCountableTopology Y] [PseudoMetrizableSpace Y]
+    {Ω : ι → Type*} [∀ i, MeasurableSpace (Ω i)]
+    {μ : ∀ i, Measure (Ω i)} [∀ i, IsProbabilityMeasure (μ i)]
+    {Ω' : Type*} [MeasurableSpace Ω'] {μ' : Measure Ω'} [IsProbabilityMeasure μ']
+    {l : Filter ι} [l.NeBot]
+    (F : ∀ i, Ω i → X) (G : ∀ i, Ω i → Y)
+    (F' : Ω' → X) (G' : Ω' → Y)
+    (hlimit : MeasureTheory.TendstoInDistribution
+      (fun i ω => (F i ω, G i ω)) l (fun ω => (F' ω, G' ω)) μ μ')
+    (hind : ∀ i, F i ⟂ᵢ[μ i] G i) :
+    F' ⟂ᵢ[μ'] G' := by
+  have hFdist : MeasureTheory.TendstoInDistribution F l F' μ μ' := by
+    simpa only [Function.comp_def] using
+      hlimit.continuous_comp (g := Prod.fst) continuous_fst
+  have hGdist : MeasureTheory.TendstoInDistribution G l G' μ μ' := by
+    simpa only [Function.comp_def] using
+      hlimit.continuous_comp (g := Prod.snd) continuous_snd
+  have hproducts : Tendsto
+      (fun i =>
+        ProbabilityMeasure.prod
+          (⟨(μ i).map (F i), inferInstance⟩ : ProbabilityMeasure X)
+          (⟨(μ i).map (G i), inferInstance⟩ : ProbabilityMeasure Y))
+      l
+      (nhds
+        (ProbabilityMeasure.prod
+          (⟨μ'.map F', inferInstance⟩ : ProbabilityMeasure X)
+          (⟨μ'.map G', inferInstance⟩ : ProbabilityMeasure Y))) := by
+    exact ProbabilityMeasure.continuous_prod.continuousAt.tendsto.comp
+      (hFdist.tendsto.prodMk_nhds hGdist.tendsto)
+  have hjoint_eq (i : ι) :
+      (⟨(μ i).map (fun ω => (F i ω, G i ω)), inferInstance⟩ :
+        ProbabilityMeasure (X × Y)) =
+      ProbabilityMeasure.prod
+        (⟨(μ i).map (F i), inferInstance⟩ : ProbabilityMeasure X)
+        (⟨(μ i).map (G i), inferInstance⟩ : ProbabilityMeasure Y) := by
+    apply Subtype.ext
+    exact (indepFun_iff_map_prod_eq_prod_map_map
+      (measurable_fst.comp_aemeasurable (hlimit.forall_aemeasurable i))
+      (measurable_snd.comp_aemeasurable (hlimit.forall_aemeasurable i))).mp (hind i)
+  have hjoint_limit :
+      (⟨μ'.map (fun ω => (F' ω, G' ω)), inferInstance⟩ :
+        ProbabilityMeasure (X × Y)) =
+      ProbabilityMeasure.prod
+        (⟨μ'.map F', inferInstance⟩ : ProbabilityMeasure X)
+        (⟨μ'.map G', inferInstance⟩ : ProbabilityMeasure Y) := by
+    apply tendsto_nhds_unique hlimit.tendsto
+    simpa only [hjoint_eq] using hproducts
+  apply (indepFun_iff_map_prod_eq_prod_map_map
+    (measurable_fst.comp_aemeasurable hlimit.aemeasurable_limit)
+    (measurable_snd.comp_aemeasurable hlimit.aemeasurable_limit)).mpr
+  exact congrArg ProbabilityMeasure.toMeasure hjoint_limit
