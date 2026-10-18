@@ -8,16 +8,28 @@ module
 
 public import Order.Interval.RationalCoordinate.UnitInterval
 public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Probability
+public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Stationarity
 public import Probability.Process.Stable.SmallDeviation.RationalTube
 
 /-!
 # Stable-process block laws
 
-The path-level uniform partition, its measurability, and the generic tube
+The public results specialize uniform blocks to a stable Lévy process:
+
+* `rationalUniformBlock_hasStableClockIncrements` gives the stable increment
+  law on a block with clock $q \mapsto q / \mathrm{blocks}$.
+* `rationalUniformBlockProcess_identDistrib` identifies the laws of any two
+  translated blocks of equal length.
+* `rationalTubeBlockProcess_identDistrib` gives the same identity for the
+  rational-coordinate block paths used by tube events.
+* `measure_rationalTube_le_pow_of_iIndep_uniformBlocks` bounds the whole-path
+  tube probability by the one-block probability raised to the number of
+  blocks.
+
+The path-level uniform partition, its measurability, and generic tube
 factorization live in
-`Probability.Process.Path.Representation.Skorokhod.Corridor.UniformBlocks`.  This file only
-adds the translated stable Lévy block law needed by the stable
-small-deviation argument.
+`Probability.Process.Path.Skorokhod.Corridor.UniformBlocks`. This file adds
+stable-process adapters for the block-law and tube estimates.
 -/
 
 open MeasureTheory
@@ -96,17 +108,9 @@ theorem IsStableLevyProcess.rationalUniformBlockProcess_identDistrib
     (j j' : Fin blocks) :
     IdentDistrib (fun ω q => rationalUniformBlockProcessFromTime X hblocks j q ω)
       (fun ω q => rationalUniformBlockProcessFromTime X hblocks j' q ω) P P := by
-  have hj := h.rationalUniformBlock_hasStableClockIncrements blocks hblocks j
-  have hj' := h.rationalUniformBlock_hasStableClockIncrements blocks hblocks j'
-  have hclock : rationalUniformBlockClock hblocks j =
-      rationalUniformBlockClock hblocks j' := by
-    funext q
-    rw [rationalUniformBlockClock_eq, rationalUniformBlockClock_eq]
-  have hj'Clock : HasStableClockIncrements α μ
-      (rationalUniformBlockClock hblocks j)
-      (rationalUniformBlockProcessFromTime X hblocks j') P := by
-    simpa [hclock] using hj'
-  exact hj.process_identDistrib hj'Clock
+  exact h.increments.indepIncrements.rationalUniformBlockProcess_identDistrib
+    h.toIsLevyProcess.stationaryIncrements
+    (fun t => h.increments.aemeasurable_eval t) blocks hblocks j j'
 
 /-- The rational-coordinate block process is the process-level restriction
 of the stable Lévy process. -/
