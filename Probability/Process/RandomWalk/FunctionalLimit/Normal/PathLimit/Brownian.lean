@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Distributions.Moments.Real
-public import Probability.Process.RandomWalk.FunctionalLimit.Normal.PathLimit
+public import Probability.Process.RandomWalk.FunctionalLimit.Normal.PathLimit.Basic
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.CLT
 
 /-!

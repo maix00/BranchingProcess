@@ -8,7 +8,7 @@ module
 
 public import Mathlib.Topology.Order.MonotoneContinuity
 public import Topology.Cadlag.Skorokhod.TimeChange.FinitePartition.Monotone
-public import Topology.Cadlag.Skorokhod.TimeChange
+public import Topology.Cadlag.Skorokhod.TimeChange.Basic
 
 /-!
 # Time changes matching finite partitions
