@@ -4,9 +4,15 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.PositiveA.PZAssembly
+import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.PositiveA.Lemmas.PZAssembly
 import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Population.LowCount
 /-!
+* `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.eventually_rightTailPositiveA_populationLowCount_le_exp_neg_power`:
+  under the finite-second-moment, boundary, and cross-weight hypotheses, the
+  probability that the first-stage killed population has at most
+  `m * pzMean / 4` particles is eventually at most `exp (-N^δ)` whenever
+  `δ < a - b - 2 * v - 3 * ε`.
+
 # First-stage population low-count power bound
 
 The quantitative one-root Paley--Zygmund estimate gives a polynomial lower
@@ -138,7 +144,6 @@ theorem eventually_rightTailPositiveA_populationLowCount_le_exp_neg_power
       hN μ ν hν hνMoment hsigma hb hv hvb
   have htilted : IsProbabilityMeasure (tiltedIncrementFieldLaw realPotential μ) :=
     tiltedIncrementFieldLaw_isProbability realPotential μ hboundary
-  haveI : IsProbabilityMeasure (tiltedIncrementFieldLaw realPotential μ) := htilted
   have hmPos : ∀ᶠ n : ℕ in atTop, 0 < m n := by
     have hpow : Tendsto (fun n : ℕ => (N n : ℝ) ^ a) atTop atTop :=
       (_root_.tendsto_rpow_atTop ha).comp

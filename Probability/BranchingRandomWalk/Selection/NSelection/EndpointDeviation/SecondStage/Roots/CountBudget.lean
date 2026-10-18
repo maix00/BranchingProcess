@@ -6,7 +6,16 @@ Authors: WANG Yiyang
 
 import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.SecondStage.Failure.Bound
 import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.PositiveA.LowCountPower
+import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.PositiveA.Lemmas.PZAssembly
 /-!
+* `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.rightTailPositiveAKilledEnoughRootEvent`:
+  the event that the first-stage killed population at its cutoff contains at
+  least `K` particles.
+* `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.eventually_measure_rightTailPositiveAKilledEnoughRoots_compl_le_exp_neg_power`:
+  if `δ < a - b - 2 * v - 3 * ε`, the probability that this population
+  contains fewer than `floor (N n ^ δ)` particles is eventually at most
+  `exp (-N n ^ δ)`.
+
 # First-stage lower bound for the selected root count
 
 The first-stage PZ budget bounds the probability that the killed slice has
