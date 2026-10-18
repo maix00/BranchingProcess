@@ -6,7 +6,12 @@ are all useful contributions.
 
 ## Before you start
 
-1. Search Mathlib and the existing library before introducing a new definition.
+1. Search the pinned Mathlib source and the existing library before introducing
+   a new definition. When the abstraction boundary is unclear, inspect the
+   current official Mathlib documentation/source and relevant mathematical
+   references as well; then check that the candidate API exists in the pinned
+   revision used by this repository. Network results inform the design, while
+   the pinned dependencies determine what the implementation can use.
 2. Read [`ARCHITECTURE.md`](ARCHITECTURE.md) and place a result in the lowest
    layer that does not depend on the specific construction being formalized.
 3. Import narrow modules. Do not add a catch-all aggregate import just to make
@@ -64,7 +69,14 @@ public layer. Search Mathlib and the repository for an interface with weaker
 assumptions and broader semantics, and use that interface when it matches the
 proof. Add a public abstraction only when it states a meaningful reusable
 mathematical operation or theorem beyond a thin restatement of an existing
-API. Keep model-specific names and corollaries with their owning subject.
+API. A module having several clients is a reason to audit its abstraction, not
+evidence by itself that the declaration belongs at a higher level. For an
+abstraction change, record the best candidate interface found, compare its
+assumptions and semantics with the actual use sites, and explain why the chosen
+statement is the most general useful one. If the decision depends on an API
+outside the pinned source, cite the official documentation or source examined
+and identify the pinned revision checked. Keep model-specific names and
+corollaries with their owning subject.
 
 ## Entry points and supporting lemmas
 

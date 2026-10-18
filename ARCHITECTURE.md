@@ -93,7 +93,12 @@ uses Mathlib's `MeasureTheory.hittingBtwn` directly. The separate
 `Probability.Process.TimeGrid.Ceiling` interface abstracts only the additional
 time-threshold operation and its convergence and measurability results over
 an arbitrary domain; continuous-path first passage remains a specialization
-under `Path/FirstPassage/`.
+under `Path/FirstPassage/`. When the local source does not settle whether a
+candidate interface is already available, consult the official Mathlib
+documentation/source and relevant references, then verify the candidate
+against the pinned dependency revision. Record the candidate and the semantic
+or hypothesis gap that motivates a local interface; do not promote a theorem
+solely to reduce duplicate code or because it has multiple callers.
 
 For the detailed ownership map and examples of reused Mathlib objects, see
 [`docs/architecture/MODULE_OWNERSHIP.md`](docs/architecture/MODULE_OWNERSHIP.md).

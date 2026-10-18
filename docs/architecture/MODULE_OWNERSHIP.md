@@ -69,6 +69,14 @@ N-BRW selection statements; the latter belong under `Selection/NSelection`.
   `MeasureTheory.hittingBtwn`. `Probability/Process/TimeGrid/Ceiling.lean`
   names the time-functional threshold specialization and proves the grid
   convergence properties that Mathlib's first-hit interface does not supply.
+  This boundary was checked against the pinned source in
+  `Vendor/Mathlib/Mathlib/Probability/Process/HittingTime.lean` and the
+  [official Mathlib documentation](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Probability/Process/HittingTime.html):
+  `hittingBtwn` already handles the first entry of an arbitrary indexed process
+  into an arbitrary set on a bounded ordered time interval. The local API
+  therefore stays a threshold specialization over an arbitrary domain and
+  contributes only the ceiling-specific convergence and measurability facts;
+  path and Brownian-law assumptions remain in their owning modules.
 - `Order/Interval/UniformGrid` is the affine-grid interface for ordered
   fields. Process-time grids use `ℝ≥0`, so they are not direct instances of
   that structure; moreover, the process-time modules need horizon and mesh
@@ -96,6 +104,13 @@ For each public object, answer these questions in review:
 3. What is the weakest set of assumptions needed to define it?
 4. Which lower layer owns those assumptions and operations?
 5. Is this a genuine specialization/adapter, or an unnecessary parallel API?
+
+When the existing source does not resolve the abstraction question, inspect
+the official Mathlib documentation/source and relevant references online. Check
+any candidate against the repository's pinned dependency, compare its exact
+assumptions and semantics with this statement, and record why the local public
+interface is still needed. Cross-module use is an audit trigger; the strongest
+candidate interface and the mathematics it adds determine placement.
 
 Keep a model-specific assumption at the application boundary. For example,
 the definition of a generic measurable path should not assume a stable law,
