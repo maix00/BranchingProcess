@@ -6,11 +6,11 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.Stable.PathLaw
+public import Probability.Process.Stable.PathLaw.Basic
 public import Probability.Process.Stable.PathLaw.UnitInterval
 public import Mathlib.Topology.UnitInterval
-public import Topology.Cadlag.Skorokhod.Oscillation
-public import Topology.Cadlag.Skorokhod.Endpoint
+public import Topology.Cadlag.Skorokhod.Oscillation.Basic
+public import Topology.Cadlag.Skorokhod.Path.Endpoint
 public import Topology.Cadlag.Skorokhod.SmallDeviation.PathSets
 
 /-!
@@ -54,8 +54,8 @@ theorem measurableSet_stableProcessTube (a : ℝ) :
   exact Skorokhod.measurableSet_rangeTubeStartingAtZero a
 
 /-- For a process law started at zero almost surely, adding the explicit
-starting-value condition to the source's range tube does not change its
-probability. -/
+starting-value condition to the range-diameter event defined above does not
+change its probability. -/
 theorem measure_stableProcessTube_eq_rangeTube
     {α : ℝ} {μ : Measure ℝ} {P : Measure (CadlagPath unitInterval ℝ)}
     [IsProbabilityMeasure P]
@@ -67,8 +67,13 @@ theorem measure_stableProcessTube_eq_rangeTube
       stableProcessRangeTube, hf]
   exact measure_congr heq
 
-/-- The paper's constant `C` of Lemma 1 I, stated as the limit of
-`a ^ α * log P(stableProcessTube a)` as `a ↓ 0`. -/
+/-- The constant `C` in Mogul'skii's Lemma 1(I), equations (18)--(20),
+stated as the limit of `a ^ α * log P(stableProcessTube a)` as `a ↓ 0`.
+The source is A. A. Mogul'skii, “Small deviations in the sample function
+space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974), 755–765;
+English translation, “Small Deviations in a Space of Trajectories,” *Theory
+of Probability and Its Applications* 19(4) (1975), 726–736, DOI
+10.1137/1119081. -/
 def IsStableEscapeRate (α C : ℝ) (tubeProbability : ℝ → ℝ) : Prop :=
   C < 0 ∧
     (∀ᶠ a in 𝓝[>] (0 : ℝ), 0 < tubeProbability a) ∧
