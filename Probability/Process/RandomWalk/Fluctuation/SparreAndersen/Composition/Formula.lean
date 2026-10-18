@@ -8,7 +8,7 @@ module
 
 public import Probability.Process.RandomWalk.Fluctuation.SparreAndersen.Composition.Cyclic
 public import Probability.Process.RandomWalk.Fluctuation.SparreAndersen.Composition.CyclicReindex
-import Probability.Process.RandomWalk.Fluctuation.SparreAndersen.Composition.Lemmas.BlockProbability
+import Probability.Process.RandomWalk.Fluctuation.SparreAndersen.Composition.CyclicGapSum
 public import Mathlib.MeasureTheory.Constructions.Pi
 
 /-!
@@ -56,7 +56,8 @@ theorem measureReal_nonnegative_endpoint_eq_composition_sum
     (Measure.pi (fun _ : Fin k => ν)).real
       {z : Fin k → ℝ |
         ∀ t : Fin (k + 1), 0 ≤ Fin.partialSum z t}
-  have hsource := measureReal_nonnegative_endpoint_eq_cyclicGap_sum ν hn
+  have hsource := measureReal_nonnegative_endpoint_eq_cyclicGap_sum
+    (G := ℝ) measurableSet_Ici ν hn
   have hsum :
       (∑ u ∈ (Finset.univ : Finset (Fin n)).powerset with u.Nonempty,
         (-1 : ℝ) ^ (u.card + 1) *

@@ -35,7 +35,8 @@ The public definitions and theorems in this file are:
   rotating directly at that block's start.
 - `ProbabilityTheory.RandomWalk.cyclicGapCoordinates` and
   `ProbabilityTheory.RandomWalk.partialSum_cyclicGapCoordinates`:
-  the block's coordinate vector and its partial sums as a restarted path.
+  for any additive commutative group, the block's coordinate vector and its
+  partial sums as a restarted path.
 - `ProbabilityTheory.RandomWalk.cyclicGapComposition`:
   the ordered gaps form a positive composition of $n$.
 - `ProbabilityTheory.RandomWalk.cyclicGapComposition_length` and
@@ -254,12 +255,14 @@ theorem cyclicCoordinateReindex_block_eq {n : ℕ} (hn : 0 < n)
   dsimp [first, current] at hsum ⊢
   exact congrArg (fun m : ℕ => m % n) (by omega)
 
-/-- The `j`-th block of the finite increment vector after rotating at
+variable {G : Type*} [AddCommGroup G]
+
+/-- The `j`-th block of a finite increment vector after rotating at
 the first selected start. -/
 noncomputable def cyclicGapCoordinates {n : ℕ} (hn : 0 < n)
     (u : Finset (Fin n)) (hu : u.Nonempty)
-    (x : Fin n → ℝ) (j : Fin u.card) :
-    Fin (cyclicGapLength u hu j) → ℝ :=
+    (x : Fin n → G) (j : Fin u.card) :
+    Fin (cyclicGapLength u hu j) → G :=
   fun i => x (Fin.cyclicCoordinateReindex hn
     (u.orderEmbOfFin rfl ⟨0, Finset.card_pos.mpr hu⟩)
     ⟨AdditivePath.blockStart
@@ -272,7 +275,7 @@ noncomputable def cyclicGapCoordinates {n : ℕ} (hn : 0 < n)
 at that block's selected start. -/
 theorem partialSum_cyclicGapCoordinates {n : ℕ} (hn : 0 < n)
     (u : Finset (Fin n)) (hu : u.Nonempty)
-    (x : Fin n → ℝ) (j : Fin u.card)
+    (x : Fin n → G) (j : Fin u.card)
     (t : Fin (cyclicGapLength u hu j + 1)) :
     Fin.partialSum (cyclicGapCoordinates hn u hu x j) t =
       Fin.cyclicPartialSum (Fin.partialSum x) (u.orderEmbOfFin rfl j)

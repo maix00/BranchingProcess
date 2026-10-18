@@ -437,3 +437,53 @@ finite-dimensional law are reusable process results, while the rational tube
 event remains a real path-space specialization. The comparison also prevents
 the stronger `IsLevyProcess` bundle, whose càdlàg component is unused, from
 becoming the hypothesis of the generic block-law theorem.
+
+## Abstraction research: finite cyclic-gap expansion
+
+The cross-module use of the finite cyclic-gap formula triggered a review of
+its mathematical generality before deciding its placement. Bauer, Godrèche,
+and Luck derive the cyclic events, their finite inclusion--exclusion, and the
+factorization over consecutive gaps in Appendix A, equations (A.3)--(A.6),
+of *Statistics of persistent events in the binomial random walk: Will the
+drunken sailor hit the sober man?* ([arXiv:cond-mat/9905252](https://arxiv.org/abs/cond-mat/9905252),
+*Journal of Statistical Physics* 96 (1999), 963--1019,
+DOI 10.1023/A:1004636216365). The paper presents the calculation for a
+one-dimensional random walk. The Lean proof was checked against these exact
+finite event identities; the broader state-space statement below is a
+generalization inferred from the proof's hypotheses, not a claim attributed
+to Bauer--Godrèche--Luck.
+
+The repository's Mathlib dependency is pinned at
+`380f2aafb622cb2c1c93dac545b6389083c68c51`. In that revision, the order
+interface is expressed by `[AddCommGroup G] [LinearOrder G]
+[IsOrderedAddMonoid G]`; the former bundled name `LinearOrderedAddCommGroup`
+does not exist there. The relevant definitions are in the pinned
+[Mathlib ordered-group source](https://github.com/leanprover-community/mathlib4/blob/380f2aafb622cb2c1c93dac545b6389083c68c51/Mathlib/Algebra/Order/Group/Defs.lean).
+For measurability, the pinned
+[Mathlib group-arithmetic source](https://github.com/leanprover-community/mathlib4/blob/380f2aafb622cb2c1c93dac545b6389083c68c51/Mathlib/MeasureTheory/Group/Arithmetic.lean)
+provides `MeasurableAdd₂`. No cyclic-survival or cyclic-gap identity was
+found in the corresponding Mathlib probability modules; the finite-sum and
+coordinate-permutation ingredients are assembled from the existing algebra
+and finite-product APIs.
+
+The audit distinguishes the assumptions needed at each step. The finite
+partial-sum identities use an additive commutative group. The cyclic cover
+uses a minimum among finitely many partial sums, so its present proof uses a
+linear order compatible with addition. The probability argument additionally
+uses measurability of addition and an explicit hypothesis that
+`Set.Ici (0 : G)` is measurable. Measurability of subtraction is not needed:
+a rotated survival event is identified with the preimage of ordinary
+survival under a coordinate permutation, which is measurable independently
+of subtraction on `G`. This makes the published cyclic-gap theorem's
+assumptions weaker than the first proof draft's assumptions.
+
+The complete cyclic-gap expansion is a meaningful result in its own right,
+so it is exposed as
+`Probability/Process/RandomWalk/Fluctuation/SparreAndersen/Composition/CyclicGapSum.lean`.
+Its statement covers i.i.d. increments valued in any linearly ordered
+measurable additive commutative group satisfying the hypotheses above; the
+real-valued positive-composition identity remains a specialization in
+`Composition/Formula.lean`. Event descriptions and block-factorization
+steps stay under `Composition/Lemmas/`, because their statements encode the
+particular cyclic events and the assembly of this expansion. Their use by the
+public theorem is not, by itself, a reason to externalize them.
