@@ -219,7 +219,7 @@ the raw-source `α = 2` theorem chain or C's iid path-block construction.
 This mapping records the Mogul'skiĭ path-class and corridor-rate chain; the
 separate tilted-tube event `E₀` is formalized in
 `Probability/Process/RandomWalk/SmallDeviation/Entrance/`. The all-offset
-rotation theorem is compiled and included in the 24-declaration
+rotation theorem is compiled and included in the 22-declaration
 `LinearTubeAxioms.lean` audit. `NormalDomain.lean` constructs the Gaussian
 clock-process law from the raw finite-second-moment assumption and proves a
 uniform `q / floor (Delta²)` bound for its cyclic-rotation event. The direct

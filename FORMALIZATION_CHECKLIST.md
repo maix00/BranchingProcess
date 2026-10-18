@@ -869,7 +869,7 @@ The former `Spectral/Spectrum.lean` aggregate module has been removed.
    replaced by the minimality bound $L_{x(n)-1}+1<n$, which is also proved in
    Lean. `Entrance/Rotation/FiniteProduct.lean` proves the finite IID cyclic-rotation
    transfer, including the moving-boundary drift identity and factor-`n`
-   loss; the all-offset theorem is included in the 24-declaration
+   loss; the all-offset theorem is included in the 22-declaration
    `LinearTubeAxioms.lean` build and axiom audit. `Entrance/NormalDomain.lean`
    derives a uniform `q / floor (Delta²)` entrance lower bound from the raw
    finite centered-second-moment assumption, constructing the Gaussian
