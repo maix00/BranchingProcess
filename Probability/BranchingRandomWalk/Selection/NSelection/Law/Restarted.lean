@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 import Probability.BranchingRandomWalk.Selection.NSelection.Law.CausalPopulation
 import Probability.BranchingRandomWalk.Selection.NSelection.Admissible.Real
-import Probability.BranchingRandomWalk.Population.Processes.Causal.Capacity
+import Probability.BranchingRandomWalk.Population.Processes.Causal.Capacity.Basic
 import Probability.BranchingRandomWalk.Population.Processes.Causal.RelativePosition.Real
 import Probability.BranchingRandomWalk.Population.Processes.Selected.GenerationUpdate
 

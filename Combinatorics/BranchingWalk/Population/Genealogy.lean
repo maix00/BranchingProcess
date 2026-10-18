@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Combinatorics.BranchingWalk.Population.Basic
-public import Combinatorics.BranchingWalk.Basic.ParentSibling
+public import Combinatorics.BranchingWalk.Basic.Sibling.ParentSibling
 
 /-!
 # Genealogy of populations

@@ -1,0 +1,354 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
+module
+
+public import Probability.Process.RandomWalk.Path.Interpolation.Basic
+public import Probability.Process.Path.Representation.Continuous
+
+/-!
+# Polygonal random-walk paths on all nonnegative times
+
+The public definitions and theorems in this file are:
+
+- `ProbabilityTheory.RandomWalk.normalizedLinearPathUnbounded`:
+  $X_n(t)=a_n^{-1}\sum_{k\ge0}w_{n,k}(t)\xi_k$, where only the
+  first $\lfloor nt\rfloor+1$ weights are used.
+- `ProbabilityTheory.RandomWalk.continuous_normalizedLinearPathUnbounded`:
+  this path is continuous on $[0,\infty)$.
+- `ProbabilityTheory.RandomWalk.normalizedLinearContinuousPathUnbounded`:
+  the same path bundled in $C([0,\infty),\mathbb R)$.
+- `ProbabilityTheory.RandomWalk.measurable_normalizedLinearContinuousPathUnbounded`:
+  the path map is Borel measurable in the increment sequence.
+- `ProbabilityTheory.RandomWalk.normalizedLinearPathUnbounded_eq_sum_range`:
+  when $nt\le N$, the defining sum can be extended to the first
+  $N$ increments because every added weight vanishes.
+- `ProbabilityTheory.RandomWalk.normalizedLinearPathUnbounded_segment`:
+  on $j\le nt\le j+1$, the path is the affine segment
+  $a_n^{-1}(S_j+(nt-j)\xi_j)$.
+- `ProbabilityTheory.RandomWalk.normalizedLinearPathUnbounded_eq_bounded`:
+  on $0\le t\le1$, the unbounded path agrees with the existing
+  first-$n$-increment interpolation.
+- `ProbabilityTheory.RandomWalk.normalizedLinearContinuousPathUnbounded_apply_unitInterval`:
+  the same equality for bundled continuous paths.
+- `ProbabilityTheory.RandomWalk.normalizedLinearPathUnbounded_grid`:
+  $X_n(k/n)=a_n^{-1}S_k$ for every integer $k\ge0$.
+- `ProbabilityTheory.RandomWalk.shiftToZero_normalizedLinearContinuousPathUnbounded_grid`:
+  rebasing the path at $j/n$ gives
+  $a_n^{-1}(S_{j+k}-S_j)$ at time $k/n$.
+- `ProbabilityTheory.RandomWalk.shiftToZero_normalizedLinearContinuousPathUnbounded_eq_bounded`:
+  the entire rebased unit-time polygonal path equals the interpolation
+  of the shifted increment sequence.
+
+The unbounded-time interpolation is the path $Y_n$ used in Erwin
+Bolthausen, *On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*, Section 3, Ann. Probab. 4(3) (1976),
+480--485, DOI 10.1214/aop/1176996098. Its restriction to $[0,1]$
+matches the existing bounded interpolation in `Interpolation.Basic`.
+-/
+
+@[expose] public section
+
+namespace ProbabilityTheory.RandomWalk
+
+open Filter
+open scoped NNReal Topology
+
+/-- Normalized polygonal interpolation of an infinite sequence of
+increments. The finite sum contains every potentially nonzero weight
+at time `t`. -/
+noncomputable def normalizedLinearPathUnbounded
+    (scale : ℕ → ℝ) (n : ℕ) (increment : ℕ → ℝ)
+    (t : ℝ≥0) : ℝ :=
+  (scale n)⁻¹ *
+    ∑ k ∈ Finset.range (⌊(n : ℝ) * (t : ℝ)⌋₊ + 1),
+      linearIncrementWeight n k t * increment k
+
+private lemma sum_linearIncrementWeight_eq_range_of_floor_le
+    (n : ℕ) (increment : ℕ → ℝ) (t : ℝ≥0) {N : ℕ}
+    (hN : ⌊(n : ℝ) * (t : ℝ)⌋₊ + 1 ≤ N) :
+    ∑ k ∈ Finset.range (⌊(n : ℝ) * (t : ℝ)⌋₊ + 1),
+      linearIncrementWeight n k t * increment k =
+    ∑ k ∈ Finset.range N,
+      linearIncrementWeight n k t * increment k := by
+  apply Finset.sum_subset (Finset.range_mono hN)
+  intro k hk hkoutside
+  have hfloor : ⌊(n : ℝ) * (t : ℝ)⌋₊ < k := by
+    exact Nat.lt_of_lt_of_le (Nat.lt_succ_self _)
+      (Nat.le_of_not_gt (fun h => hkoutside (Finset.mem_range.mpr h)))
+  rw [linearIncrementWeight_eq_zero_of_floor_lt hfloor, zero_mul]
+
+/-- The unbounded-time polygonal path is continuous: on a
+neighborhood of each time, its defining sum agrees with one fixed
+finite sum of continuous weight functions. -/
+theorem continuous_normalizedLinearPathUnbounded
+    (scale : ℕ → ℝ) (n : ℕ) (increment : ℕ → ℝ) :
+    Continuous (normalizedLinearPathUnbounded scale n increment) := by
+  rw [continuous_iff_continuousAt]
+  intro t
+  let N : ℕ := ⌊(n : ℝ) * ((t + 1 : ℝ≥0) : ℝ)⌋₊ + 1
+  let finitePath : ℝ≥0 → ℝ := fun u =>
+    (scale n)⁻¹ * ∑ k ∈ Finset.range N,
+      linearIncrementWeight n k u * increment k
+  have hfinite : ContinuousAt finitePath t := by
+    apply Continuous.continuousAt
+    dsimp [finitePath]
+    apply Continuous.mul continuous_const
+    apply continuous_finsetSum
+    intro k hk
+    exact ((continuous_linearIncrementWeight n k).comp
+      NNReal.continuous_coe).mul continuous_const
+  have hnear : ∀ᶠ u in 𝓝 t,
+      normalizedLinearPathUnbounded scale n increment u = finitePath u := by
+    have hball : t < t + 1 := lt_add_of_pos_right t (by norm_num)
+    filter_upwards [isOpen_Iio.mem_nhds hball] with u hu
+    have hfloor : ⌊(n : ℝ) * (u : ℝ)⌋₊ + 1 ≤ N := by
+      dsimp [N]
+      apply Nat.add_le_add_right
+      apply Nat.floor_le_floor
+      exact mul_le_mul_of_nonneg_left
+        (NNReal.coe_le_coe.mpr hu.le) (Nat.cast_nonneg n)
+    unfold normalizedLinearPathUnbounded finitePath
+    rw [sum_linearIncrementWeight_eq_range_of_floor_le n increment u hfloor]
+  exact hfinite.congr_of_eventuallyEq hnear
+
+/-- The entire normalized random-walk interpolation as a continuous
+path on nonnegative time. -/
+noncomputable def normalizedLinearContinuousPathUnbounded
+    (scale : ℕ → ℝ) (n : ℕ) (increment : ℕ → ℝ) :
+    C(ℝ≥0, ℝ) :=
+  ⟨normalizedLinearPathUnbounded scale n increment,
+    continuous_normalizedLinearPathUnbounded scale n increment⟩
+
+/-- Measurability of the unbounded polygonal path under the
+product measurable structure on increment sequences. -/
+theorem measurable_normalizedLinearContinuousPathUnbounded
+    (scale : ℕ → ℝ) (n : ℕ) :
+    Measurable (normalizedLinearContinuousPathUnbounded scale n) := by
+  rw [ContinuousMap.measurable_iff_eval]
+  intro t
+  exact measurable_const.mul (Finset.measurable_sum _ fun k _ =>
+    measurable_const.mul (measurable_pi_apply k))
+
+/-- A finite increment range containing the time point gives the same
+value as the whole-time interpolation. -/
+theorem normalizedLinearPathUnbounded_eq_sum_range
+    (scale : ℕ → ℝ) (n : ℕ) (increment : ℕ → ℝ)
+    (t : ℝ≥0) (N : ℕ) (hNt : (n : ℝ) * (t : ℝ) ≤ N) :
+    normalizedLinearPathUnbounded scale n increment t =
+      (scale n)⁻¹ *
+        ∑ k ∈ Finset.range N, linearIncrementWeight n k t * increment k := by
+  have hfloor : ⌊(n : ℝ) * (t : ℝ)⌋₊ ≤ N :=
+    Nat.floor_le_of_le hNt
+  unfold normalizedLinearPathUnbounded
+  congr 1
+  rcases hfloor.eq_or_lt with heq | hlt
+  · rw [heq, Finset.sum_range_succ]
+    have hweight : linearIncrementWeight n N (t : ℝ) = 0 := by
+      unfold linearIncrementWeight
+      rw [max_eq_left (sub_nonpos.mpr hNt)]
+      simp
+    simp [hweight]
+  · exact sum_linearIncrementWeight_eq_range_of_floor_le
+      n increment t (Nat.succ_le_iff.mpr hlt)
+
+/-- Between consecutive lattice times, the normalized path is the
+affine interpolation of the two adjacent partial sums. -/
+theorem normalizedLinearPathUnbounded_segment
+    (scale : ℕ → ℝ) (n j : ℕ) (increment : ℕ → ℝ)
+    (t : ℝ≥0)
+    (hlo : (j : ℝ) ≤ (n : ℝ) * (t : ℝ))
+    (hhi : (n : ℝ) * (t : ℝ) ≤ (j : ℝ) + 1) :
+    normalizedLinearPathUnbounded scale n increment t =
+      (scale n)⁻¹ *
+        (AdditivePath.displacement j increment +
+          ((n : ℝ) * (t : ℝ) - j) * increment j) := by
+  have hNt : (n : ℝ) * (t : ℝ) ≤ (j + 1 : ℕ) := by
+    simpa only [Nat.cast_add, Nat.cast_one] using hhi
+  rw [normalizedLinearPathUnbounded_eq_sum_range
+    scale n increment t (j + 1) hNt, Finset.sum_range_succ]
+  have hsum :
+      (∑ i ∈ Finset.range j,
+        linearIncrementWeight n i (t : ℝ) * increment i) =
+        AdditivePath.displacement j increment := by
+    unfold AdditivePath.displacement
+    apply Finset.sum_congr rfl
+    intro i hi
+    have hij : (i : ℝ) + 1 ≤ (j : ℝ) := by
+      exact_mod_cast Nat.succ_le_of_lt (Finset.mem_range.mp hi)
+    have hge : 1 ≤ (n : ℝ) * (t : ℝ) - i := by linarith
+    simp [linearIncrementWeight, max_eq_right (by linarith :
+      0 ≤ (n : ℝ) * (t : ℝ) - i), min_eq_left hge]
+  have hweight : linearIncrementWeight n j (t : ℝ) =
+      (n : ℝ) * (t : ℝ) - j := by
+    have hge : 0 ≤ (n : ℝ) * (t : ℝ) - j := by linarith
+    have hle : (n : ℝ) * (t : ℝ) - j ≤ 1 := by linarith
+    simp [linearIncrementWeight, max_eq_right hge, min_eq_right hle]
+  rw [hsum, hweight]
+
+/-- On the first unit of time, the unbounded interpolation is exactly
+the existing interpolation of the first `n` increments. -/
+theorem normalizedLinearPathUnbounded_eq_bounded
+    (scale : ℕ → ℝ) (n : ℕ) (increment : ℕ → ℝ)
+    (t : ℝ≥0) (ht : t ≤ 1) :
+    normalizedLinearPathUnbounded scale n increment t =
+      normalizedLinearPath scale n increment t := by
+  have hmul : (n : ℝ) * (t : ℝ) ≤ n := by
+    calc
+      (n : ℝ) * (t : ℝ) ≤ (n : ℝ) * 1 :=
+        mul_le_mul_of_nonneg_left (NNReal.coe_le_coe.mpr ht)
+          (Nat.cast_nonneg n)
+      _ = n := by ring
+  simpa only [normalizedLinearPath] using
+    normalizedLinearPathUnbounded_eq_sum_range
+      scale n increment t n hmul
+
+/-- Restricting the whole-time path to the unit interval recovers
+the existing bounded continuous-path interpolation. -/
+theorem normalizedLinearContinuousPathUnbounded_apply_unitInterval
+    (scale : ℕ → ℝ) (n : ℕ) (increment : ℕ → ℝ)
+    (t : unitInterval) :
+    normalizedLinearContinuousPathUnbounded scale n increment
+        (⟨(t : ℝ), t.property.1⟩ : ℝ≥0) =
+      normalizedLinearContinuousPathIcc scale n increment t := by
+  change normalizedLinearPathUnbounded scale n increment
+    (⟨(t : ℝ), t.property.1⟩ : ℝ≥0) = normalizedLinearPath scale n increment t
+  convert normalizedLinearPathUnbounded_eq_bounded scale n increment
+    (⟨(t : ℝ), t.property.1⟩ : ℝ≥0)
+    (show (⟨(t : ℝ), t.property.1⟩ : ℝ≥0) ≤ 1 from t.property.2) using 1; rfl
+
+/-- Every lattice-time value of the whole-time interpolation is the
+corresponding normalized random-walk position, including times beyond
+the first unit interval. -/
+theorem normalizedLinearPathUnbounded_grid
+    (scale : ℕ → ℝ) {n : ℕ} (hn : 0 < n) (k : ℕ)
+    (increment : ℕ → ℝ) :
+    normalizedLinearPathUnbounded scale n increment
+        (⟨(k : ℝ) / n, div_nonneg (Nat.cast_nonneg k)
+          (Nat.cast_nonneg n)⟩ : ℝ≥0) =
+      (scale n)⁻¹ * AdditivePath.displacement k increment := by
+  have hn0 : (n : ℝ) ≠ 0 := by exact_mod_cast hn.ne'
+  have hgrid : (n : ℝ) * ((k : ℝ) / n) = k := by field_simp
+  have hfloor : ⌊(n : ℝ) * ((k : ℝ) / n)⌋₊ = k := by
+    rw [hgrid]
+    simp
+  unfold normalizedLinearPathUnbounded AdditivePath.displacement
+  change (scale n)⁻¹ *
+    (∑ i ∈ Finset.range (⌊(n : ℝ) * ((k : ℝ) / n)⌋₊ + 1),
+      linearIncrementWeight n i ((k : ℝ) / n) * increment i) = _
+  rw [hfloor, Finset.sum_range_succ]
+  have hlast : linearIncrementWeight n k ((k : ℝ) / n) = 0 :=
+    linearIncrementWeight_grid_of_le hn le_rfl
+  rw [hlast]
+  simp only [zero_mul, add_zero]
+  congr 1
+  apply Finset.sum_congr rfl
+  intro i hi
+  rw [linearIncrementWeight_grid_of_lt hn (Finset.mem_range.mp hi), one_mul]
+
+/-- Rebased lattice-time values are exactly the normalized increments
+of the walk from the new starting index. -/
+theorem shiftToZero_normalizedLinearContinuousPathUnbounded_grid
+    (scale : ℕ → ℝ) {n : ℕ} (hn : 0 < n)
+    (start k : ℕ) (increment : ℕ → ℝ) :
+    shiftToZero (normalizedLinearContinuousPathUnbounded scale n increment)
+        (⟨(start : ℝ) / n, div_nonneg (Nat.cast_nonneg start)
+          (Nat.cast_nonneg n)⟩ : ℝ≥0)
+        (⟨(k : ℝ) / n, div_nonneg (Nat.cast_nonneg k)
+          (Nat.cast_nonneg n)⟩ : ℝ≥0) =
+      (scale n)⁻¹ *
+        (AdditivePath.displacement (start + k) increment -
+          AdditivePath.displacement start increment) := by
+  let gridTime (j : ℕ) : ℝ≥0 :=
+    ⟨(j : ℝ) / n, div_nonneg (Nat.cast_nonneg j) (Nat.cast_nonneg n)⟩
+  have hadd : gridTime start + gridTime k = gridTime (start + k) := by
+    apply NNReal.eq
+    change (start : ℝ) / n + (k : ℝ) / n = ((start + k : ℕ) : ℝ) / n
+    push_cast
+    ring
+  change normalizedLinearPathUnbounded scale n increment
+      (gridTime start + gridTime k) -
+      normalizedLinearPathUnbounded scale n increment (gridTime start) = _
+  rw [hadd]
+  have hfirst := normalizedLinearPathUnbounded_grid scale hn
+    (start + k) increment
+  have hbase := normalizedLinearPathUnbounded_grid scale hn
+    start increment
+  change normalizedLinearPathUnbounded scale n increment
+      (gridTime (start + k)) = _ at hfirst
+  change normalizedLinearPathUnbounded scale n increment
+      (gridTime start) = _ at hbase
+  rw [hfirst, hbase]
+  ring
+
+/-- Rebasing the whole-time polygonal walk at a lattice time gives
+exactly the polygonal interpolation of the shifted increment sequence
+throughout the subsequent unit interval. -/
+theorem shiftToZero_normalizedLinearContinuousPathUnbounded_eq_bounded
+    (scale : ℕ → ℝ) {n : ℕ} (hn : 0 < n)
+    (start : ℕ) (increment : ℕ → ℝ) (t : unitInterval) :
+    shiftToZero (normalizedLinearContinuousPathUnbounded scale n increment)
+        (⟨(start : ℝ) / n, div_nonneg (Nat.cast_nonneg start)
+          (Nat.cast_nonneg n)⟩ : ℝ≥0)
+        (⟨(t : ℝ), t.property.1⟩ : ℝ≥0) =
+      normalizedLinearContinuousPathIcc scale n
+        (fun k => increment (start + k)) t := by
+  let gridTime : ℝ≥0 :=
+    ⟨(start : ℝ) / n, div_nonneg (Nat.cast_nonneg start)
+      (Nat.cast_nonneg n)⟩
+  let u : ℝ≥0 := ⟨(t : ℝ), t.property.1⟩
+  let j : ℕ := ⌊(n : ℝ) * (t : ℝ)⌋₊
+  have hnonneg : 0 ≤ (n : ℝ) * (t : ℝ) :=
+    mul_nonneg (Nat.cast_nonneg n) t.property.1
+  have hjlo : (j : ℝ) ≤ (n : ℝ) * (t : ℝ) :=
+    Nat.floor_le hnonneg
+  have hjhi : (n : ℝ) * (t : ℝ) ≤ (j : ℝ) + 1 :=
+    (Nat.lt_floor_add_one _).le
+  have hn0 : (n : ℝ) ≠ 0 := by exact_mod_cast hn.ne'
+  have htime : (n : ℝ) * ((gridTime + u : ℝ≥0) : ℝ) =
+      (start : ℝ) + (n : ℝ) * (t : ℝ) := by
+    change (n : ℝ) * ((start : ℝ) / n + (t : ℝ)) = _
+    field_simp
+  have htime' : (n : ℝ) * ((gridTime : ℝ) + (u : ℝ)) =
+      (start : ℝ) + (n : ℝ) * (t : ℝ) := by
+    simpa only [NNReal.coe_add] using htime
+  have hwhole := normalizedLinearPathUnbounded_segment scale n
+    (start + j) increment (gridTime + u) (by
+      push_cast
+      linarith [hjlo, htime']) (by
+      push_cast
+      linarith [hjhi, htime'])
+  have hshift := normalizedLinearPathUnbounded_segment scale n j
+    (fun k => increment (start + k)) u (by
+      change (j : ℝ) ≤ (n : ℝ) * (t : ℝ)
+      exact hjlo) (by
+      change (n : ℝ) * (t : ℝ) ≤ (j : ℝ) + 1
+      exact hjhi)
+  have hbase := normalizedLinearPathUnbounded_grid scale hn start increment
+  change normalizedLinearPathUnbounded scale n increment (gridTime + u) -
+      normalizedLinearPathUnbounded scale n increment gridTime =
+    normalizedLinearPath scale n (fun k => increment (start + k)) t
+  rw [hwhole, hbase]
+  have hu : u ≤ 1 := by
+    apply NNReal.coe_le_coe.mp
+    change (t : ℝ) ≤ 1
+    exact t.property.2
+  have hbounded := normalizedLinearPathUnbounded_eq_bounded scale n
+    (fun k => increment (start + k)) u hu
+  change (scale n)⁻¹ *
+        (AdditivePath.displacement (start + j) increment +
+          ((n : ℝ) * ((gridTime + u : ℝ≥0) : ℝ) - (start + j : ℕ)) *
+            increment (start + j)) -
+      (scale n)⁻¹ * AdditivePath.displacement start increment =
+    normalizedLinearPath scale n (fun k => increment (start + k)) (u : ℝ)
+  rw [← hbounded, hshift, AdditivePath.displacement_add, htime]
+  simp only [Nat.cast_add]
+  have hut : (u : ℝ) = (t : ℝ) := rfl
+  rw [hut]
+  ring
+
+end ProbabilityTheory.RandomWalk
+
+end

@@ -5,7 +5,7 @@ Authors: WANG Yiyang
 -/
 
 import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.SelectedSubtrees.SelectedFamily
-import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Positions
+import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Field.Positions
 
 /-!
 # Positions in selected subtree fields
