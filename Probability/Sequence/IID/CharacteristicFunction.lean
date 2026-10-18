@@ -6,14 +6,18 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Sequence.IID
+public import Probability.Sequence.IID.Basic
 public import Mathlib.Probability.Independence.CharacteristicFunction
 
 /-!
 # Characteristic functions of i.i.d. sums
 
-Exact characteristic-function formulas for finite sums under the canonical
-i.i.d. sequence law.
+Exact characteristic-function formula for finite sums under the canonical
+i.i.d. sequence law. The public theorem `ProbabilityTheory.iidSequenceLaw_charFun_sum`
+ states that for a probability measure $\nu$ on $\mathbb R$ and $n\in\mathbb N$,
+$\operatorname{charFun}((\texttt{iidSequenceLaw}\,\nu)\circ
+ (\omega\mapsto\sum_{k<n}\omega_k)^{-1})(t)
+ =(\operatorname{charFun}\,\nu(t))^n$ for every $t\in\mathbb R$.
 -/
 
 open MeasureTheory

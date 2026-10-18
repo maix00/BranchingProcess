@@ -1,5 +1,14 @@
 import Lean
 
+/-!
+# Parse Lean import headers
+
+The executable `main` reads source paths from standard input and writes one
+header record followed by the imported module names for each readable file.
+It is the small Lean-side parser used by the repository's import-boundary
+audit script.
+-/
+
 open Lean
 
 def main : IO Unit := do

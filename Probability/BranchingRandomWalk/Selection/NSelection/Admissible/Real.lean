@@ -5,7 +5,7 @@ Authors: WANG Yiyang
 -/
 
 import Probability.BranchingRandomWalk.Assumptions.Structural
-import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law
+import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law.Basic
 import Probability.BranchingRandomWalk.Population.Candidates.RootIndexed.Real
 import Probability.BranchingRandomWalk.Population.Processes.Selected.RootIndexed
 
