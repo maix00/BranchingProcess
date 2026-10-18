@@ -361,3 +361,69 @@ bound retains its explicit Wang thesis Chapter 3, Lemma 3.3 and Aïdékon--Hu
 Lemma 2.3 references in its owning module.
 
 The IID sequence audit grouped stopping-time, prefix-factorization, and conditional-block interfaces in `Probability/Sequence/IID/Blocks/`; these are complete reusable theorems, not theorem-specific proof fragments. Formula-bearing public theorem lists were added to the characteristic-function, filtration-independence, and law-identification modules. Direct users now import the renamed block paths.
+
+## Abstraction research: stable constant-corridor rate
+
+A cross-module reuse observation prompted a generality review of
+`Probability/Process/Path/PathClass/StepCorridor/Probability/Rate/StableConstantCorridor.lean`.
+The pinned Mathlib API supplies weak convergence of probability laws and the
+continuous mapping theorem in
+[`MeasureTheory.Function.ConvergenceInDistribution`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/MeasureTheory/Function/ConvergenceInDistribution.html),
+but no large-deviation or small-deviation principle for the logarithmic
+probability of a shrinking path corridor. The local stable-process layer
+already supplies the more general reusable hypotheses and shifted-corridor
+rate through `IsStableLevyProcess.exists_shiftedCorridor_escape_rate` and
+`HasStableProcessEscapeRate`.
+
+The literature has broader results along different axes: Elena Shmileva,
+*Shifted small deviations and Chung LIL for symmetric alpha-stable processes*
+(arXiv:0811.2583, 2009), treats arbitrary continuous shifts for symmetric
+stable processes with index in `(1, 2)` in the uniform topology; Frank Aurzada
+and Steffen Dereich, *Small deviations of general Lévy processes* (Annals of
+Probability 37 (2009), 2066–2092, arXiv:0805.1330), treats centered
+supremum-norm small deviations for general real-valued Lévy processes. The
+first result imposes symmetry and an index range, while the second studies a
+centered two-sided supremum corridor. Neither directly subsumes the local
+finite, possibly asymmetric constant-corridor statement under the stable path
+law assumptions.
+
+The local theorem is therefore kept as a complete constant-corridor
+specialization at the path-class rate boundary, built on the stable-process
+interfaces above. Its proof-specific scalar rescaling remains local. The
+audit removed the duplicate import and the unused public
+`scaledPathConstantCorridorEvent` wrapper: the theorem now states its result
+using the existing `scaledConstantCorridorEvent`, which is the canonical event
+for these bounds. This review records why the result remains a specialization
+and does not introduce a second public general-purpose small-deviation API.
+
+## Abstraction research: stationary increments and translated block laws
+
+The uniform-block path-law proof was reviewed against its actual mathematical
+hypotheses before promoting its interface. Mathlib's pinned
+[`HasIndepIncrements` source](https://github.com/leanprover-community/mathlib4/blob/021c46bdd042f67b538b9f9871d556a93713a9a9/Mathlib/Probability/Independence/Process/HasIndepIncrements/Basic.lean)
+defines independent increments for a process over a preorder, but has no
+stationary-increment property or translated-process law theorem. Joseph C.
+Watkins, *Stochastic Processes in Continuous Time*, Definition 2.1, p. 12,
+states stationary increments and independent increments as separate
+properties of a process; stationary increments say that the law of
+`X_{t+s} - X_t` is independent of `t` ([lecture notes](https://math.arizona.edu/~jwatkins/notesc.pdf)).
+
+The Lean API therefore records stationary increments independently in
+`Probability/Process/StationaryIncrements/Basic.lean`, with only an additive
+time monoid and a subtraction operation on the state. The finite-dimensional
+law API in `Probability/Process/IndepIncrements/FiniteDimensional.lean` is
+generalized from real-valued paths to a measurable additive commutative group
+with measurable addition. In particular,
+`HasIndepIncrements.translatedProcess_finiteDimensional_identDistrib` uses
+only independent and stationary increments; no càdlàg, stochastic-continuity,
+or stable-law assumption enters its statement. The rational uniform-block
+path theorem keeps real-valued path geometry, but assumes only these two
+increment properties and coordinate measurability. Its stable-process
+corollary remains at the stable small-deviation boundary as an adapter.
+
+This placement follows the mathematical dependencies rather than the number
+of clients: the standalone stationary-increment predicate and state-group
+finite-dimensional law are reusable process results, while the rational tube
+event remains a real path-space specialization. The comparison also prevents
+the stronger `IsLevyProcess` bundle, whose càdlàg component is unused, from
+becoming the hypothesis of the generic block-law theorem.

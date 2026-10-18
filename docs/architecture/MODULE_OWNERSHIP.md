@@ -20,6 +20,8 @@ identify misplaced application-specific assumptions.
 | Finite step-corridor endpoint cores and inner-cell geometry | `Topology/Cadlag/Skorokhod/PathClass/StepCorridor/Partition` | `LowerCores` selects knot cores; `LowerGeometry` places finite real bounds in the common cells, without assumptions on a probability law |
 | IID sequence laws, filtrations, and independence | `Probability/Sequence` | `Sequence/Block` owns measurable finite-block coordinates; `Sequence/IID/Basic` owns `iidSequenceLaw`, its finite-block product-law interface, and coordinate independence; stopping-time factorization remains in `Sequence/IID/StoppingTime` |
 | General random-walk process laws and paths | `Probability/Process/RandomWalk` | path maps, kernels, Donsker and small-deviation interfaces |
+| Stationary increment laws | `Probability/Process/StationaryIncrements` | `HasStationaryIncrements`; independent of independent-increment and path-regularity assumptions |
+| Finite-dimensional laws from independent increments | `Probability/Process/IndepIncrements` | `FiniteDimensional` reconstructs position laws and identifies translated process laws from generic state-group hypotheses |
 | Stable-law and stable-process semantics | `Probability/Distributions/Stable` and `Probability/Process/Stable` | stable distributions, clock increments, Lévy processes |
 | Branching random-walk models and thesis-specific coupling | `Probability/BranchingRandomWalk` | offspring fields, spine, selected populations, restart coupling |
 | BRW ancestral-path second moments and MRCA pair decomposition | `Probability/BranchingRandomWalk/Spine/Path` | `SecondMoment`; independent of corridor geometry and selection |
@@ -63,6 +65,12 @@ N-BRW selection statements; the latter belong under `Selection/NSelection`.
   `Probability/Sequence/IID/Blocks/StoppingTime`.
 - Transition mechanisms use Mathlib's `Kernel`/`MarkovKernel` interfaces.
   Killed kernels in the random-walk layer are restrictions of those kernels.
+- Mathlib's `HasIndepIncrements` is defined for a process over a preorder and
+  only records independence of consecutive increments. It does not include
+  stationary increment laws. `Probability/Process/StationaryIncrements/Basic`
+  defines that separate law identity on an additive time monoid. The
+  finite-dimensional law results combine both properties only where their
+  conclusions require them; Lévy path regularity stays in `Levy`.
 - Filtrations and stopping times use Mathlib's `Filtration` and stopping-time
   predicates. Process-specific adaptedness proofs are adapters from the
   process maps to those interfaces.
@@ -113,20 +121,39 @@ object explicit.
 
 ## Placement checks for new definitions
 
+Cross-module use is evidence that an object deserves review, not evidence that
+it belongs at a higher layer. The number of clients does not determine the
+right abstraction. A public object should state the mathematical structure or
+result with the weakest natural assumptions that its proof supports; a
+single-use proof step stays private or under the owning module's `Lemmas/`
+subtree. Before promoting a specialized result, look for a more general
+interface in Mathlib, pinned dependencies, and the relevant literature, then
+compare the actual assumptions and conclusion rather than matching names.
+Generalize the local API when the broader statement has independent
+mathematical meaning and can be proved without importing the application that
+currently uses it. Record the searched sources, the closest general form, and
+why it does or does not subsume the local result in this file or the directory
+audit.
+
 For each public object, answer these questions in review:
 
 1. What is the mathematical data, independently of the theorem using it?
 2. Does Mathlib already provide that data or a theorem with the same scope?
 3. What is the weakest set of assumptions needed to define it?
 4. Which lower layer owns those assumptions and operations?
-5. Is this a genuine specialization/adapter, or an unnecessary parallel API?
+5. What more general form is available in Mathlib, dependencies, or the
+   literature, and how do its hypotheses compare?
+6. Is this a genuine specialization/adapter, or an unnecessary parallel API?
+7. If it is a specialization, does it provide a complete result with an
+   independent mathematical use, or only one proof-chain step?
 
 When the existing source does not resolve the abstraction question, inspect
 the official Mathlib documentation/source and relevant references online. Check
 any candidate against the repository's pinned dependency, compare its exact
 assumptions and semantics with this statement, and record why the local public
-interface is still needed. Cross-module use is an audit trigger; the strongest
-candidate interface and the mathematics it adds determine placement.
+interface is still needed. Cross-module use is an audit trigger; mathematical
+generality, the strongest sound candidate interface, and the content added by
+the theorem determine whether to expose it and where to place it.
 
 Keep a model-specific assumption at the application boundary. For example,
 the definition of a generic measurable path should not assume a stable law,
