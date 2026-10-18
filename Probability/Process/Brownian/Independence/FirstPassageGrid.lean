@@ -8,7 +8,8 @@ module
 
 public import Probability.Process.Brownian.Independence.FiniteStoppingTime
 public import Probability.Process.Brownian.Independence.StoppedPast
-public import Probability.Process.Brownian.Reflection.FirstPassage.Approximation
+public import Probability.Process.Path.FirstPassage.GridApproximation
+import Probability.MeasureTheory.Convergence.InvariantLaw
 
 /-!
 # Brownian future at a first-passage observation grid

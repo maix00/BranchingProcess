@@ -12,11 +12,8 @@ public import Mathlib.Probability.Process.HittingTime
 /-!
 # Reflection at a first grid passage time
 
-The public definition and theorem in this file are:
+The public theorem in this file is:
 
-- `ProbabilityTheory.gridFirstPassage`: the first index $i$ among finitely
-  many ordered observation times with $f(r_i)\in S$, taking the final
-  index if none is found.
 - `ProbabilityTheory.IsBrownianReal.measure_reflectAfter_gridFirstPassage_eq`:
   if $T$ is the first of finitely many ordered observation times at which
   a Brownian path enters a Borel set, reflecting the path after $T$
@@ -38,12 +35,6 @@ open scoped NNReal
 
 namespace ProbabilityTheory
 
-/-- The first observation index at which a continuous path visits `s`,
-or the last index if no observation visits `s`. -/
-noncomputable def gridFirstPassage (N : ℕ) (r : Fin (N + 1) → ℝ≥0)
-    (s : Set ℝ) (f : C(ℝ≥0, ℝ)) : Fin (N + 1) :=
-  hittingBtwn (fun i (f : C(ℝ≥0, ℝ)) => f (r i)) s 0 (Fin.last N) f
-
 /-- Reflection at a first visit among finitely many ordered times
 preserves the law of a Brownian path. This instantiates the finite-valued
 stopping-time step of Theorem 2.1 in S. J. Dilworth and Duncan Wright,
@@ -56,23 +47,26 @@ theorem IsBrownianReal.measure_reflectAfter_gridFirstPassage_eq
     (N : ℕ) (r : Fin (N + 1) → ℝ≥0) (hr : Monotone r)
     (s : Set ℝ) (hs : MeasurableSet s) :
     (P.map (hB.continuousPathMap hBmeasurable)).map
-        (fun f => reflectAfter f (r (gridFirstPassage N r s f))) =
+        (fun f => reflectAfter f
+          (r (hittingBtwn (fun i (g : C(ℝ≥0, ℝ)) => g (r i)) s
+            0 (Fin.last N) f))) =
       P.map (hB.continuousPathMap hBmeasurable) := by
   let u : Fin (N + 1) → C(ℝ≥0, ℝ) → ℝ := fun i f => f (r i)
+  let τ : C(ℝ≥0, ℝ) → Fin (N + 1) :=
+    hittingBtwn u s 0 (Fin.last N)
   have hum (i : Fin (N + 1)) : StronglyMeasurable (u i) :=
     (ContinuousMap.measurable_eval (r i)).stronglyMeasurable
   let ℱ := Filtration.natural u hum
   have hu : Adapted ℱ u := (Filtration.stronglyAdapted_natural hum).adapted
   have hτ : IsStoppingTime ℱ
-      (fun f : C(ℝ≥0, ℝ) =>
-        (gridFirstPassage N r s f : WithTop (Fin (N + 1)))) := by
+      (fun f : C(ℝ≥0, ℝ) => (τ f : WithTop (Fin (N + 1)))) := by
     exact hu.isStoppingTime_hittingBtwn hs
   have hstop (i : Fin (N + 1)) :
       MeasurableSet[MeasurableSpace.comap
         (fun f : C(ℝ≥0, ℝ) => fun v : Set.Iic (r i) => f v) inferInstance]
-        {f | gridFirstPassage N r s f = i} := by
+        {f | τ f = i} := by
     have hi : MeasurableSet[ℱ i] {f : C(ℝ≥0, ℝ) |
-        gridFirstPassage N r s f = i} := by
+        τ f = i} := by
       simpa using hτ.measurableSet_eq i
     rw [Filtration.natural_eq_comap u hum i] at hi
     obtain ⟨E, hE, hEeq⟩ := (MeasurableSpace.measurableSet_comap).mp hi
@@ -87,7 +81,7 @@ theorem IsBrownianReal.measure_reflectAfter_gridFirstPassage_eq
     rw [← hEeq]
     rfl
   exact hB.measure_reflectAfter_finiteStoppingTime_eq hBmeasurable
-    (gridFirstPassage N r s) r hstop
+    τ r hstop
 
 end ProbabilityTheory
 

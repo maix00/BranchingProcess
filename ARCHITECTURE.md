@@ -85,6 +85,16 @@ that interface in the lowest layer whose assumptions suffice. A named
 specialization is appropriate when it records a real model choice or provides
 a useful theorem interface; a second copy of a general Mathlib concept is not.
 
+Use across several modules is a prompt to review ownership, not by itself a
+reason to promote a declaration to a broader public layer. First search for a
+more abstract Mathlib or library interface, then compare its assumptions and
+semantics with the actual use sites. For example, finite first-hit selection
+uses Mathlib's `MeasureTheory.hittingBtwn` directly. The separate
+`Probability.Process.TimeGrid.Ceiling` interface abstracts only the additional
+time-threshold operation and its convergence and measurability results over
+an arbitrary domain; continuous-path first passage remains a specialization
+under `Path/FirstPassage/`.
+
 For the detailed ownership map and examples of reused Mathlib objects, see
 [`docs/architecture/MODULE_OWNERSHIP.md`](docs/architecture/MODULE_OWNERSHIP.md).
 For the completed structural moves and their remaining proof obligations, see

@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.Brownian.Reflection.FirstPassage.Approximation
+public import Probability.Process.Brownian.Reflection.FirstPassage.GridLaw
 public import Probability.Process.Brownian.Marginal.Gaussian
 public import Probability.Distributions.Gaussian.Sign
 public import Probability.Process.Path.FirstPassage.Reflection
