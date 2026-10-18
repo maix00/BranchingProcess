@@ -11,6 +11,8 @@ public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Ran
 public import MeasureTheory.Measure.CadlagPath.PathClass.StepCorridor.Partition.LowerApproximation
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Partition
 
+import Topology.Cadlag.Skorokhod.PathClass.StepCorridor.Partition.LowerGeometry
+
 /-!
 # Sharp lower rates for prescribed finite-partition widths.
 -/
