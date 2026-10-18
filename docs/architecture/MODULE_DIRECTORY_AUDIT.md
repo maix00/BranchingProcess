@@ -965,8 +965,12 @@ The resulting reusable API is placed at
   proves that each coordinate is measurable once `r(i) ≤ t`.
 * `MeasureTheory.Filtration.generatedByCoordinates_le` characterizes it as
   the least filtration with those coordinate measurability properties.
-* `MeasureTheory.Filtration.measurable_to_generatedByCoordinates` gives the
-  coordinatewise criterion for maps into this generated filtration.
+* `MeasureTheory.Filtration.measurable_to_generatedByCoordinates` proves the
+  sufficient direction, and
+  `MeasureTheory.Filtration.measurable_iff_coordinates_generatedByCoordinates`
+  records the full iff: coordinatewise measurability is necessary by the
+  generator maps and sufficient by the universal property of the generated
+  σ-algebra.
 
 This abstraction states the shared filtered-information structure and its
 minimality, rather than merely deduplicating two `generateFrom` proofs. In the
@@ -975,6 +979,34 @@ branching specializations, the grade is `u.length + 1`, so
 generation `n`. The subject modules keep their named `generationFiltration`
 and `stepFiltration` interfaces and use the generic API for their measurable
 coordinate proofs and root restriction/reindexing maps.
+
+## Abstraction review: conditional event iteration (2026-10-19)
+
+`Probability/Process/Filtration/ConditionalBlocks.lean` is used by the
+drawdown, horizontal-tube, and drifted-tube arguments. Its public iteration
+theorems concern arbitrary measurable event sequences and filtrations; the
+random-walk block events are supplied by callers. This is a complete
+conditional-probability estimate at the process-probability layer, rather
+than a proof step tied to any one small-deviation argument.
+
+Mathlib's pinned
+[`setIntegral_condExp`](https://github.com/leanprover-community/mathlib4/blob/380f2aafb622cb2c1c93dac545b6389083c68c51/Mathlib/MeasureTheory/Function/ConditionalExpectation/Basic.lean#L231)
+and its [official conditional-expectation API](https://leanprover-community.github.io/mathlib4_docs/Mathlib/MeasureTheory/Function/ConditionalExpectation/Basic.html)
+give the integral identity for a general integrable function and a
+sub-σ-algebra. They do not provide the finite sequence event intersection or
+the resulting product bound. The local one-step event inequality turns that
+identity into an intersection-mass bound; the public product theorems then
+iterate it under a filtration and conditional indicator bounds.
+
+The probability-measure assumption matches the unscaled product conclusions:
+`conditionalBlockIntersection events 0 = Set.univ`, so the induction base
+uses `P.real Set.univ = 1`. A finite measure without normalization would need
+the factor `P.real Set.univ` on the product side. The abstraction review
+therefore keeps the current probability statement and its natural hypotheses;
+dropping `IsProbabilityMeasure` alone would make the displayed bounds false.
+The theorem already leaves the state space, events, filtration, and numeric
+bounds arbitrary, so no random-walk-specific wrapper is promoted to this
+layer.
 
 ## Same-basename module and directory review (2026-10-19)
 
