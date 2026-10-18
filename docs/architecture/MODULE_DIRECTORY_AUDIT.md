@@ -1008,6 +1008,31 @@ The theorem already leaves the state space, events, filtration, and numeric
 bounds arbitrary, so no random-walk-specific wrapper is promoted to this
 layer.
 
+## Abstraction review: finite product reindexing (2026-10-19)
+
+`Probability/Sequence/IID/FiniteReindex.lean` supplies the coordinate
+permutation name used by the cyclic-path argument and a finite-cover estimate
+for repeated-coordinate product measures. The former makes the path action
+readable at its use site: it is the homogeneous `Fin n` specialization of
+Mathlib's `MeasurableEquiv.piCongrLeft`, oriented so that coordinate `i` of
+the reindexed vector is the original coordinate `e i`. The latter adds the
+event-cover bound needed by the random-walk entrance argument.
+
+The pinned Mathlib revision already has the more general dependent-coordinate
+result `Measure.pi_map_piCongrLeft`: it maps a product of a σ-finite family
+of measures along a reindexing equivalence to the reindexed product. Its
+[official API documentation](https://leanprover-community.github.io/mathlib4_docs/Mathlib/MeasureTheory/Constructions/Pi.html)
+and pinned source
+[`Constructions/Pi.lean`](https://github.com/leanprover-community/mathlib4/blob/380f2aafb622cb2c1c93dac545b6389083c68c51/Mathlib/MeasureTheory/Constructions/Pi.lean#L745)
+show that neither identical marginals nor probability normalization are
+required for product reindexing. The local set-preimage equality merely
+rewrapped that theorem and had no clients outside its defining module, so it
+is now private. The public finite-cover result uses the weaker natural
+assumption `[SigmaFinite ν]`; this is sufficient both for Mathlib's product
+reindexing theorem and for the measure inequality, which does not depend on
+normalization. The generic finite-cover step itself remains in
+`MeasureTheory/Measure/Finite/Cover.lean`.
+
 ## Same-basename module and directory review (2026-10-19)
 
 The first-party Lean source tree has no sibling pairs of the form `Foo.lean`
