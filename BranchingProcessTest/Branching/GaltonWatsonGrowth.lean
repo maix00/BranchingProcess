@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 import Probability.BranchingProcess.GaltonWatson.Growth
+import Probability.MeasureTheory.Moments.PaleyZygmund
 import Mathlib.Probability.Distributions.Bernoulli
 import Mathlib.Topology.UnitInterval
 

@@ -10,11 +10,15 @@ import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Ra
 import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 
 /-!
-# Quantitative first-stage PZ budget
+* `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.eventually_rightTailPositiveASpineCorridor_ge_exp_neg_log`:
+  for every `ε > 0`, the corridor lower bound is eventually at least
+  `exp (-ε * log (N n))` and at most the corresponding tilted-walk corridor
+  probability.
 
-The finite-variance entrance and bridge bound is subpolynomial at the
-`log^(5/2) N` first-stage horizon.  This file turns that mass into the
-polynomial one-root PZ rate needed to obtain many successful initial roots.
+# First-stage PZ proof lemmas
+
+This auxiliary module supplies the finite-variance corridor estimate used by
+the first-stage Paley--Zygmund argument.
 -/
 
 open Filter MeasureTheory ProbabilityTheory
@@ -187,7 +191,7 @@ private lemma eventually_rightTailPositiveAStableBlock_ge_log_sq
       dsimp [c]
       ring
     rw [hcEq]
-    convert hquot using 1 <;> ring
+    convert hquot using 1; ring
   have hfloor : ∀ᶠ n : ℕ in atTop,
       c * L n ^ 2 ≤
         (stableBlockLength 2 ν (amplitude ^ 2) (scale ∘ ell) n : ℝ) := by
@@ -385,7 +389,7 @@ private lemma eventually_rightTailPositiveAEntranceLength_le_log_sq
 spine corridor estimate is at least `N ^ (-epsilon)` for every positive
 epsilon, eventually. This turns the retained `exp(-O(sqrt(log N)))` bridge
 factor into the polynomial-scale input required by the MRCA/PZ estimate. -/
-theorem eventually_rightTailPositiveASpineCorridor_ge_exp_neg_log
+lemma eventually_rightTailPositiveASpineCorridor_ge_exp_neg_log
     {N : ℕ → ℕ} (hN : Tendsto N atTop atTop)
     (μ : Measure (Combinatorics.Branching.Step ℕ ℝ)) [IsProbabilityMeasure μ]
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
@@ -513,7 +517,7 @@ theorem eventually_rightTailPositiveASpineCorridor_ge_exp_neg_log
     have heq : (fun x : ℝ => x ^ 2 * Real.exp (-(epsilon / 2) * x)) =ᶠ[atTop]
         fun x => x ^ (2 : ℝ) * Real.exp (-(epsilon / 2) * x) := by
       filter_upwards [eventually_ge_atTop (0 : ℝ)] with x hx
-      simp [Real.rpow_natCast]
+      simp
     exact hraw.congr' heq.symm
   have hquadraticDecayL := hquadraticDecay.comp hL
   have hentranceBudget : ∀ᶠ n : ℕ in atTop,
@@ -594,7 +598,7 @@ theorem eventually_rightTailPositiveASpineCorridor_ge_exp_neg_log
         mul_le_mul hbridge hentry (by positivity) (by positivity)
       _ = rightTailPositiveASpineCorridorLowerBound ν b v C amplitude
           entranceMass (rightTailPositiveAFirstCutoff N n) := by
-        simp [rightTailPositiveASpineCorridorLowerBound, L, ell, scale,
+        simp [rightTailPositiveASpineCorridorLowerBound, ell, scale,
           entranceLength, bridgeLength, blockLength, blockCount, ratio, exponent]
   exact ⟨by simpa [L] using hpower, hprob⟩
 

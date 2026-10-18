@@ -24,6 +24,8 @@ It does not claim that the separate open limit-theorem obligations in
 | Cutoff Poisson path identities | `Probability/Process/Levy/Jump/PoissonConfiguration/Path.lean` | Reusable jump-configuration facts separated from stable-process laws |
 | Convolution powers | `MeasureTheory/Measure/Convolution/Power.lean` | One recursive API remains; the old `convPow` module and definition were removed after proving the convolution-rotation relation |
 | Selection/NSelection boundary | `Probability/BranchingRandomWalk/Genealogy/RootIndexed/Field/Measurability.lean`, `Spine/Tube/`, `Selection/Finite/`, and `Selection/NSelection/{Speed,Tail}/` | Generic root-indexed position observations and path/tube estimates are separated from deterministic first-`N` speed and endpoint arguments; random finite-by-value constructors are under `Selection/Finite/` |
+| Paley--Zygmund inequality | `Probability/MeasureTheory/Moments/PaleyZygmund.lean` | The bound `(𝔼[X] - t)^2 / 𝔼[X^2] ≤ ℙ(t ≤ X)` now lives at its general probability-space level; Galton--Watson moment recurrences and endpoint-deviation rates remain in their owning modules |
+| Positive-`a` endpoint proof chain | `Probability/BranchingRandomWalk/Selection/NSelection/EndpointDeviation/PositiveA/` | The first-stage population low-count theorem remains at the topic entry; its one-use corridor budget and PZ assembly are grouped under `PositiveA/Lemmas/` |
 
 The former source modules for M01--M10 and M13 have been removed. Mixed
 application files for M03, M11, and M12 remain only for the results whose

@@ -4,14 +4,18 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.PositiveA.PZBudget
+import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.PositiveA.Lemmas.PZBudget
 import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Rate.PowerBudget
 /-!
-# First-stage PZ power bound
+* `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.eventually_rightTailPositiveA_pzMean_toReal_ge_power_of_centeredSecondMoment`:
+  if `lowerMean` is the one-root corridor contribution and `upperMean +
+  pairBound` is the first two-moment denominator, then eventually
+  `N n ^ (-b - 2 * v - 3 * ε) ≤ (lowerMean ^ 2 / (upperMean + pairBound)).toReal`.
 
-The finite-variance corridor lower bound is combined with the actual MRCA
-pair estimate using the trivial drawdown bound. The result is the explicit
-one-root PZ power needed by the independent-root count estimate.
+# First-stage PZ proof lemmas
+
+This auxiliary module combines the finite-variance corridor estimate with
+the MRCA pair bound, using the constant drawdown bound.
 -/
 
 open Filter MeasureTheory ProbabilityTheory
@@ -86,7 +90,7 @@ private lemma eventually_one_add_const_mul_log_cube_le_exp
 `lowerMean ≳ N^(-b-epsilon)` and `upperMean + MRCA pairs ≲ N^(-b+2v+epsilon)`.
 The only random-walk input is the centered finite second moment; in
 the pair estimate the drawdown sequence is constantly one. -/
-theorem eventually_rightTailPositiveA_pzMean_toReal_ge_power_of_centeredSecondMoment
+lemma eventually_rightTailPositiveA_pzMean_toReal_ge_power_of_centeredSecondMoment
     {N : ℕ → ℕ} (hN : Tendsto N atTop atTop)
     (μ : Measure (Combinatorics.Branching.Step ℕ ℝ)) [IsProbabilityMeasure μ]
     (hboundary : HasBoundaryNormalization realPotential μ)
@@ -145,7 +149,7 @@ theorem eventually_rightTailPositiveA_pzMean_toReal_ge_power_of_centeredSecondMo
             affineCorridorPrefix j.val (-b * L n) 0 (b * L n)})
   let pairBound (n : ℕ) : ℝ≥0∞ := ∑ j : Fin (ell n), pairTerm n j
   let pzMean (n : ℕ) : ℝ≥0∞ := lowerMean n ^ 2 / (upperMean n + pairBound n)
-  haveI : IsProbabilityMeasure (tiltedIncrementFieldLaw realPotential μ) :=
+  have htilted : IsProbabilityMeasure (tiltedIncrementFieldLaw realPotential μ) :=
     tiltedIncrementFieldLaw_isProbability realPotential μ hboundary
   obtain ⟨C, _hC, entranceMass, hentranceMass, amplitude, hamplitude,
       hcorridor⟩ :=
@@ -317,7 +321,7 @@ theorem eventually_rightTailPositiveA_pzMean_toReal_ge_power_of_centeredSecondMo
         Finset.sum_le_sum fun j hj => hpairTermLe j
       _ = (ell n : ℝ) *
           (Real.exp ((-b + 2 * v) * Lval) * crossMass.toReal) := by
-        simp [Finset.sum_const, Finset.card_fin, nsmul_eq_mul]
+        simp [Finset.sum_const, nsmul_eq_mul]
   have hzTop : z ≠ ∞ := by
     dsimp [z, upperMean]
     exact ENNReal.mul_ne_top ENNReal.ofReal_ne_top hpTop

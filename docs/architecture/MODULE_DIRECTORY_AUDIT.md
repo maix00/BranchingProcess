@@ -49,7 +49,7 @@ when the move only clarifies module organization.
 | `Probability/Process/RandomWalk/Fluctuation/SparreAndersen` | Reusable finite IID fluctuation identities and survival estimates | `Rotation/` contains the cyclic cover and probability inequality; `Composition/` contains block factorization and the finite composition identity; `Survival/` contains the coefficient recurrence and finite-variance lower bound. These are general mathematical results and remain outside `Lemmas/`. |
 | `Probability/Process/RandomWalk/Rademacher` | Results for the simple symmetric random walk | `Basic.lean`, `ConditionedPathLaw.lean`, and `LastSignChange.lean` are peer interfaces for the walk, its conditioned path law, and its last-sign-change index; `Terminal/` groups the terminal-path construction and convergence steps. |
 | `BranchingRandomWalk/Selection/NSelection/AsymptoticSpeed/InitialPopulation` | Initial-population inputs to selected-walk speed estimates | `Basic.lean` is the exact-$N$ split-event and speed-transport interface; `Field/` and `Speed/` group the source field and speed estimates. In `Trajectory/`, `Population.lean` owns the selected-population construction, `Hitting.lean` is the capacity-hitting entry theorem, and `Lemmas/CapacityHit/{Mark,Growth}.lean` contains its proof-specific mark and cardinality-growth chain. |
-| `Selection/NSelection/EndpointDeviation` | Endpoint deviations of the selected population, including estimates that admit reflection | `Endpoint/` separates minimum, positive-moment, and sequence results. `Roots/`, `Drawdown/`, and `Rate/` group root estimates, population/spine drawdown bounds, and rate budgets. `Population/`, `PositiveA/`, and `SecondStage/` retain their theorem families; the directory name does not impose a right-hand orientation. |
+| `Selection/NSelection/EndpointDeviation` | Endpoint deviations of the selected population, including estimates that admit reflection | `Endpoint/` separates minimum, positive-moment, and sequence results. `Roots/`, `Drawdown/`, and `Rate/` group root estimates, population/spine drawdown bounds, and rate budgets. `PositiveA/LowCountPower.lean` is the first-stage entry; its one-use corridor budget and PZ rate assembly are under `PositiveA/Lemmas/`. `Population/` and `SecondStage/` retain their theorem families; the directory name does not impose a right-hand orientation. |
 | `Selection/NSelection/AsymptoticSpeed` | Speed-limit statements and the selected-population speed proof | `Limit/` groups the almost-sure product and subadditive limit results; `Selection/BlockComparison.lean` and `InitialPopulation/Speed/Basic.lean` state their respective public conclusions. `InitialPopulation/Basic.lean` is the entry module for the initial-population argument; `Field/`, `Trajectory/`, and `Speed/` group its field, hitting-time, and speed-transfer interfaces. `Environment/` and `Selection/` hold the remaining supporting constructions. |
 | `Mogulskii/RandomWalkBounds` and `Mogulskii/Stable/RandomWalkBounds` | Random-walk finite-block bounds and stable-domain random-walk rates | The normal-domain root separates Donsker endpoint, endpoint-band geometry, horizontal tubes, and source-partition arguments. Stable random-walk bounds group `Bridge/`, `Endpoint/`, `Partition/`, `PathClass/`, and `Source/`; the stable-process estimates remain in their own owner directory. `Stable/RandomWalkBounds/FromIncrementLaw/` separates `Normal/`, `Path/`, and `Stable/` adapters, with `HorizontalTube/` holding the finite-variance tube interfaces. `Stable/Scale/Basic.lean` owns the two-scale condition and rate consequences; `Stable/Scale/Rate.lean` owns block-length asymptotics. Gaussian modules remain divided into `Gaussian/Blocks/` and `Gaussian/Path/`. `FunctionalLimit/Donsker/Entrance/` owns the Brownian middle-start corridor and uniform diffusive entrance estimates. |
 | `Analysis/Asymptotics/Scale` | Reusable deterministic scale tools | `Basic.lean` defines the common small-deviation scale relation; `InverseScale.lean` handles generalized inverses and their subdiffusive rates; `BlockScale.lean`, `ShiftedFloor.lean`, and `IntermediatePowerBlock.lean` cover integer block rounding and intermediate block scales; `Sampling.lean` transfers rates along selected time intervals; `SlowDiagonal.lean` and `Tolerance.lean` provide real-valued diagonal and error-threshold selections. All eight direct modules are distinct reusable interfaces, so they remain as peers at this level. |
@@ -767,3 +767,40 @@ The unused stable-specific recurrence was therefore removed rather than
 promoted as another wrapper. The complete stable-process power bound and the
 rational form of Mogulskii's equation (23) remain in `Upper/Basic.lean`, where
 their process law and scaling assumptions belong.
+
+## Abstraction review: positive-`a` endpoint PZ chain (2026-10-19)
+
+`EndpointDeviation/PositiveA/PZBudget.lean` and `PZAssembly.lean` each had
+one proof-chain client. The first estimates the tilted-spine corridor mass at
+the specific cutoff `rightTailPositiveAFirstCutoff`; the second combines that
+rate with the first-stage MRCA pair sum and cross-child weight. Neither result
+is the general Paley--Zygmund inequality: both statements contain the
+selected population's tilted law, corridor, cutoff, and model-specific pair
+bound. Their files now live under `PositiveA/Lemmas/`, while the population
+low-count theorem remains at `PositiveA/LowCountPower.lean` and the final
+second-stage root-count theorem imports both results directly.
+
+The pinned Mathlib source at revision
+`380f2aafb622cb2c1c93dac545b6389083c68c51` has no declaration named for the
+Paley--Zygmund inequality. Its general probability-space form had already
+been proved in `BranchingProcess/GaltonWatson/Growth.lean`; its location and
+namespace were narrower than its assumptions and conclusion. It is now exposed
+from `Probability/MeasureTheory/Moments/PaleyZygmund.lean` as
+`ProbabilityTheory.measure_ge_threshold_of_moments`: for `X ≥ 0` almost
+everywhere, `X ∈ L¹ ∩ L²`, `𝔼[X] = m`, `𝔼[X²] = s > 0`, and `0 ≤ t < m`,
+`(m - t)² / s ≤ ℙ(t ≤ X)`. The module also contains the general corollary
+`measure_ge_threshold_of_secondMoment_le`. The Galton--Watson moment
+recurrences and finite-generation specializations remain in `Growth.lean`.
+
+The API review compared this statement with Mathlib's general
+[Markov inequality](https://github.com/leanprover-community/mathlib4/blob/380f2aafb622cb2c1c93dac545b6389083c68c51/Mathlib/MeasureTheory/Integral/Lebesgue/Markov.lean)
+and [(L^2) integral API](https://github.com/leanprover-community/mathlib4/blob/380f2aafb622cb2c1c93dac545b6389083c68c51/Mathlib/MeasureTheory/Function/L2Space.lean).
+These supply neighboring ingredients, while the pinned revision has no
+Paley--Zygmund theorem; the general probability-space statement is the useful
+public abstraction, and the model-specific rate lemmas remain under
+`PositiveA/Lemmas/`. Their use in later modules alone does not justify
+promoting them. These support files retain the legacy header for now:
+`Population/PZInput.lean`, which defines their theorem-level data, also uses the
+legacy import form, and Lean rejects importing it from an isolated
+module-system file. Migrate this dependency closure together in the
+repository-wide module-system pass.
