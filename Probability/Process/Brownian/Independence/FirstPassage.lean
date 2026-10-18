@@ -11,7 +11,7 @@ public import Probability.Process.Path.FirstPassage.GridApproximation
 public import Probability.Process.Brownian.Reflection.Path.UnboundedBelow
 import Probability.Process.TimeGrid.Expanding
 import MeasureTheory.Measure.Convergence.MapInvariance
-public import Probability.MeasureTheory.Convergence.IndependentLimits
+import Probability.ConvergenceInDistribution.Independence
 
 /-!
 # Brownian future path at first passage

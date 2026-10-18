@@ -1089,10 +1089,10 @@ such pairs.
 
 ## Abstraction review: convergence interfaces (2026-10-19)
 
-The review distinguished three statements in
-`Probability/MeasureTheory/Convergence/`. Cross-module use was treated as a
-reason to search for the mathematical abstraction, rather than as the
-placement criterion.
+The review started with the probability-measure convergence wrappers and
+also checked the existing weak-convergence independence interface. Cross-module
+use was treated as a reason to search for the mathematical abstraction, rather
+than as the placement criterion.
 
 `Measure.map_eq_of_ae_pointwise_limit` concerns a finite Borel measure and
 measurable self-maps; it does not use probability normalization or random
@@ -1109,18 +1109,23 @@ invariance conclusion. This comparison was checked against Mathlib revision
 [`HasOuterApproxClosed.lean`](https://github.com/leanprover-community/mathlib4/blob/380f2aafb622cb2c1c93dac545b6389083c68c51/Mathlib/MeasureTheory/Measure/HasOuterApproxClosed.lean)
 and the official documentation above.
 
-For independence, the earlier almost-sure-limit statement was generalized to
-`ProbabilityTheory.indepFun_of_tendstoInDistribution_pair`: the source spaces
-and laws may vary with the index, each pair has independent coordinates, and
-the joint laws converge to the law of the limiting pair. This is the natural
-weak-convergence formulation: the product laws converge by continuity of
-`ProbabilityMeasure.prod`, and Mathlib characterizes independence by equality
-of the joint law with the product law. The pinned APIs are
+The weak-convergence review found that
+`Probability/ConvergenceInDistribution/Independence.lean` already contains the
+forward direction: independent coordinates with convergent marginal laws give
+joint convergence to independent limits. The converse closure theorem,
+`ProbabilityTheory.indepFun_of_tendstoInDistribution_pair`, now lives beside
+it. It allows source spaces and laws to vary with the index, assumes each pair
+has independent coordinates, and concludes independence of the limit from
+joint-law convergence. The two directions form one coherent finite-product
+interface; this placement follows the mathematical subject, not the number of
+clients. The proof uses continuity of `ProbabilityMeasure.prod` and Mathlib's
+characterization of independence by equality of the joint law with the product
+law. The pinned APIs are
 [`MeasureTheory.TendstoInDistribution.continuous_comp`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/MeasureTheory/Function/ConvergenceInDistribution.html),
 [`ProbabilityMeasure.continuous_prod`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/MeasureTheory/Measure/ProbabilityMeasure.html),
 and
 [`indepFun_iff_map_prod_eq_prod_map_map`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Probability/Independence/Basic.html).
-Mathlib's `tendstoInDistribution_of_ae_tendsto` then supplies the joint-law
+Mathlib's `tendstoInDistribution_of_ae_tendsto` supplies the joint-law
 convergence in the Brownian first-passage application. This audit used the
 online Mathlib documentation and pinned source at revision
 `380f2aafb622cb2c1c93dac545b6389083c68c51`.
