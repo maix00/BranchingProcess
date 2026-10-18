@@ -35,6 +35,8 @@ jobs:
     steps:
       - name: Check out source
         uses: actions/checkout@v4
+        with:
+          submodules: recursive
       - name: Install Lean and validate selected declarations
         uses: leanprover/lean-action@v1
         with:

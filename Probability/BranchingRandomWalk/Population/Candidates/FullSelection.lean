@@ -5,7 +5,7 @@ Authors: WANG Yiyang
 -/
 
 import Probability.BranchingRandomWalk.Population.Candidates.FullRank.Selection
-import Combinatorics.BranchingWalk.Step.Monotone
+import Combinatorics.BranchingWalk.Step.Ordering.Monotone
 
 /-!
 # Full selection versus finite truncation

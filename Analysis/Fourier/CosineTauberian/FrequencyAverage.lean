@@ -36,7 +36,7 @@ theorem continuous_cosineSquareFrequencyAverage :
   exact intervalIntegral.continuous_parametric_intervalIntegral_of_continuous'
     (by fun_prop) 1 2
 
-private theorem cosineSquareFrequencyAverage_pos_of_one_le {z : ℝ}
+private lemma cosineSquareFrequencyAverage_pos_of_one_le {z : ℝ}
     (hz : 1 ≤ z) : 0 < cosineSquareFrequencyAverage z := by
   let f : ℝ → ℝ := fun t => (1 - Real.cos (t * z)) ^ 2
   have hfcont : Continuous f := by fun_prop

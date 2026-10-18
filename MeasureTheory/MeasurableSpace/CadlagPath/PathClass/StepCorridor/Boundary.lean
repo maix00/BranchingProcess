@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Topology.Cadlag.Skorokhod.PathClass.StepCorridor.Boundary
+public import Topology.Cadlag.Skorokhod.PathClass.StepCorridor.Boundary.Basic
 public import Mathlib.MeasureTheory.Integral.Bochner.Set
 
 /-!
@@ -24,7 +24,7 @@ open scoped Topology
 
 namespace Skorokhod.PathClass.StepCorridor.StepBoundary
 
-private theorem card_filter_eq_sum {α : Type*} [DecidableEq α] (s : Finset α)
+private lemma card_filter_eq_sum {α : Type*} [DecidableEq α] (s : Finset α)
     (p : α → Prop) [DecidablePred p] :
     (s.filter p).card = ∑ x ∈ s, if p x then 1 else 0 := by
   induction s using Finset.induction_on with
@@ -40,7 +40,7 @@ private theorem card_filter_eq_sum {α : Type*} [DecidableEq α] (s : Finset α)
     · rw [ite_eq_right hp, Finset.sum_insert ha, ih]
       simp [hp]
 
-private theorem card_le_measurable (b : Skorokhod.PathClass.StepCorridor.StepBoundary) :
+private lemma card_le_measurable (b : Skorokhod.PathClass.StepCorridor.StepBoundary) :
     Measurable (fun t : unitInterval => (b.knots.filter (fun s => s ≤ t)).card) := by
   have hsum : Measurable (fun t : unitInterval =>
       ∑ q ∈ b.knots, if q ≤ t then (1 : ℕ) else 0) := by
@@ -55,7 +55,7 @@ private theorem card_le_measurable (b : Skorokhod.PathClass.StepCorridor.StepBou
   rw [hEq]
   exact hsum
 
-private theorem card_lt_measurable (b : Skorokhod.PathClass.StepCorridor.StepBoundary) :
+private lemma card_lt_measurable (b : Skorokhod.PathClass.StepCorridor.StepBoundary) :
     Measurable (fun t : unitInterval => (b.knots.filter (fun s => s < t)).card) := by
   have hsum : Measurable (fun t : unitInterval =>
       ∑ q ∈ b.knots, if q < t then (1 : ℕ) else 0) := by
