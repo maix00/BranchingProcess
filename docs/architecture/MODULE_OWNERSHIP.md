@@ -123,17 +123,18 @@ object explicit.
 
 Cross-module use is evidence that an object deserves review, not evidence that
 it belongs at a higher layer. The number of clients does not determine the
-right abstraction. A public object should state the mathematical structure or
-result with the weakest natural assumptions that its proof supports; a
-single-use proof step stays private or under the owning module's `Lemmas/`
-subtree. Before promoting a specialized result, look for a more general
-interface in Mathlib, pinned dependencies, and the relevant literature, then
-compare the actual assumptions and conclusion rather than matching names.
-Generalize the local API when the broader statement has independent
-mathematical meaning and can be proved without importing the application that
-currently uses it. Record the searched sources, the closest general form, and
-why it does or does not subsume the local result in this file or the directory
-audit.
+right abstraction. Every proposed promotion or outward move therefore triggers
+an online abstraction search: inspect official Mathlib documentation and
+source, the pinned dependency APIs, and relevant mathematical literature where
+it can reveal a broader statement. Compare the exact hypotheses and
+conclusions, not just names. A public object should state the mathematical
+structure or result with the weakest natural assumptions that its proof
+supports; a single-use proof step stays private or under the owning module's
+`Lemmas/` subtree. Generalize the local API when the broader statement has
+independent mathematical meaning and can be proved without importing the
+application that currently uses it. Record the sources, the closest general
+form, its hypotheses, and why it does or does not subsume the local result in
+this file or the directory audit; include the checked dependency revision.
 
 For each public object, answer these questions in review:
 
