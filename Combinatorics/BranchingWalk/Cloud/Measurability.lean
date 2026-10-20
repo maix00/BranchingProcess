@@ -15,6 +15,11 @@ public import Mathlib.MeasureTheory.MeasurableSpace.Constructions
 The measurable space on `CloudSet Time X` is induced by the coordinate map
 `C ↦ C.points`.  Thus membership of every fixed time-space point in a cloud is
 a measurable event.
+
+The public API includes `CloudSet.instMeasurableSpace`, the coordinate
+σ-algebra on `CloudSet Time X`, and the measurability results
+`CloudSet.measurable_points` and `CloudSet.measurable_vertexSet` for the
+point-set coordinate and space-time vertex-set maps.
 -/
 
 @[expose] public section
