@@ -11,7 +11,13 @@ public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.T
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Diffusive.Lower
 
 /-!
-# Narrow central endpoint windows
+# Spectral target estimates for endpoint bands
+
+This proof-support module supplies the seven-window target and its Rademacher
+spectral mass estimate to
+`RandomWalkBounds/EndpointBands/Lemmas/SpectralLowerBound.lean`. Its target
+construction is specific to that endpoint-band argument; the general
+finite-target spectral estimate remains under `Spectral/Target/`.
 
 The public declarations in this module are:
 

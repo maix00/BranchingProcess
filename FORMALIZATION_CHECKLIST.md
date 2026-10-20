@@ -672,7 +672,7 @@ parameter choice and fixed-cover logarithmic transfer are proof-specific
 modules under
 `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Spectral/Range/Rate/Lemmas/`;
 the public sharp-upper composition is
-`Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Spectral/Range/Rate/SharpUpper.lean`.
+`Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Rate/Bounds/SharpUpper.lean`.
 The finite-prefix API uses Mathlib's Fin.partialSum throughout; the
 project-local blockPartialSums and finiteIncrementSums definitions were
 removed. A generic telescope identity supplements the pinned Mathlib

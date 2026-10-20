@@ -493,7 +493,8 @@ interval of total width `8m` and a block of length `n`, assume
    `eventually_lowerBound_le_centralCoreTargetMass` supplies the sharp
    per-block exponent when `n / (8m)^2 → C`.
 2. The narrow-window spectral step is now formalized in
-   `Target/Bands.lean`. `centralEndpointBandTarget` contains exactly `e - 1`
+   `RandomWalkBounds/EndpointBands/Lemmas/SpectralTarget.lean`.
+   `centralEndpointBandTarget` contains exactly `e - 1`
    parity-compatible sites in a prescribed lattice window. Its ground-state
    density lower bound yields a target mass proportional to `(e - 1)/(8m)`;
    `eventually_lowerBound_le_centralEndpointBandTargetMass_of_diffusiveRatio`

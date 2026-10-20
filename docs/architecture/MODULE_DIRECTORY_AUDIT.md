@@ -2283,3 +2283,20 @@ The maintained API boundary is that production modules outside `Lemmas/` do
 not publicly import project-local `Lemmas/` modules. Keep internal re-exports
 when helper modules compose through them, and audit each import against its
 consumers before changing visibility.
+
+## Mogulskii spectral ownership (2026-10-21)
+
+The 43-module `Spectral/` subtree was checked against its declaration
+statements and project importers. The complete sharp horizontal-tube upper
+rate applies to general centered unit-variance increments with a continuous
+Brownian realization, so its entry is now
+`Rate/Bounds/SharpUpper.lean`; its finite-cover spectral derivation remains
+under `Spectral/Range/`, imported ordinarily. The seven-window target
+construction and its endpoint-specific mass estimates had one proof client,
+`RandomWalkBounds/EndpointBands/Lemmas/SpectralLowerBound.lean`. They are now
+grouped alongside that client as
+`RandomWalkBounds/EndpointBands/Lemmas/SpectralTarget.lean`. The general
+finite-target spectral expansion and mass bounds remain under
+`Spectral/Target/`. All moves preserve the declaration namespace and proof
+terms; the corresponding test and proof-route references use the new module
+paths.
