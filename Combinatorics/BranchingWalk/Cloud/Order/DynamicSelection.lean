@@ -14,8 +14,21 @@ public import Combinatorics.BranchingWalk.Selection.NSelection.Mechanism.Hall
 
 This is the deterministic one-generation selection step used in the coupling.
 The target candidates are sorted by their observed positions at the current
-slice, with particle labels only breaking ties.  Hall's theorem turns the
+slice, with particle labels only breaking ties. Hall's theorem turns the
 resulting threshold comparison into one coherent injective particle matching.
+
+The public API is:
+
+- `Cloud.filter_card_le_of_injectivelyDominatesBy` proves, for every threshold
+  `a`,
+  `#{p | p ∈ C.particles t ∧ φ (C.position p.1 p.2) ≤ a} ≤
+  #{q | q ∈ D.particles t ∧ φ (D.position q.1 q.2) ≤ a}`.
+- `Cloud.injectivelyDominatesBy_selectFirstNBy_of_subset` says that any
+  retained source set `R ⊆ C.particles t` with `card(R) ≤ N` admits an
+  injection into the target set selected by `selectFirstNBy N`, with each
+  matched target `q` satisfying
+  `φ (D.position q.1 q.2) ≤ φ (C.position p.1 p.2)`.
+  The matching requires no compatibility between the address order and `φ`.
 -/
 
 open Combinatorics.UlamHarris
