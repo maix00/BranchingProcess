@@ -1839,3 +1839,14 @@ no same-stem file/directory pairs, repeated parent/file stems,
 `Lemmas.lean`/`Lemmas/` collisions, empty directories, `Source/` directories,
 or directories with more than eight direct Lean files. The scan excludes the
 vendored Mathlib and BrownianMotion source trees.
+
+## Branching-walk core module name (2026-10-20)
+
+`Combinatorics/BranchingWalk/Basic/Definitions.lean` defined the root-indexed
+`BranchingWalk` record, its single-root specialization, and the parent-closure
+property. The file is now `Basic/BranchingWalk.lean`, so the import path names
+the mathematical interface instead of the generic word `Definitions`. Its
+declarations remain in `Combinatorics.Branching`: that namespace already
+expresses their mathematical owner, and the file move does not change it.
+All ten direct importers now use the semantic module path. The renamed module
+and those importers built with the pinned toolchain (3,141 Lake jobs).
