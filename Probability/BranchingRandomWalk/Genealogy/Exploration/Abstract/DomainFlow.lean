@@ -9,6 +9,8 @@ module
 public import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.Property
 public import Mathlib.Probability.Independence.Basic
 
+import Probability.Process.Filtration.GeneratedByCoordinates
+
 /-!
 # Domain flow and fresh descendant randomness for abstract branching steps
 
@@ -88,20 +90,8 @@ theorem generationSpace_eq_stepPastSpace
     {α X : Type*} [MeasurableSpace X] (n : ℕ) :
     generationSpace (M := Step α X) n =
       stepPastSpace n := by
-  apply le_antisymm
-  · unfold generationSpace
-    apply MeasurableSpace.generateFrom_le
-    rintro s ⟨u, hu, t, ht, rfl⟩
-    have hle : stepCoordinateSpace (X := X) u ≤
-        stepPastSpace (X := X) n :=
-      le_iSup_of_le u (le_iSup_of_le hu le_rfl)
-    apply hle
-    exact ⟨t, ht, rfl⟩
-  · apply iSup_le
-    intro u
-    apply iSup_le
-    intro hu
-    exact (mark_measurable_of_depth_lt u n hu).comap_le
+  simp [generationSpace, generationFiltration,
+    Filtration.generatedByCoordinates, stepPastSpace, stepCoordinateSpace]
 
 theorem step_coordinate_independent
     {α X : Type*} [MeasurableSpace X]
