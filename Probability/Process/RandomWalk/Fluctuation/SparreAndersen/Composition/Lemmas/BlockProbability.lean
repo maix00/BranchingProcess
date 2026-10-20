@@ -9,11 +9,11 @@ module
 import Probability.Process.RandomWalk.Fluctuation.SparreAndersen.Composition.InclusionExclusion
 import Probability.Process.RandomWalk.Fluctuation.SparreAndersen.Composition.Cyclic
 import Probability.Process.RandomWalk.Path.Block.Law.FiniteProduct
-public import Mathlib.Algebra.Group.Defs
-public import Mathlib.Algebra.Order.Group.Defs
-public import Mathlib.Order.Defs.LinearOrder
-public import Mathlib.MeasureTheory.MeasurableSpace.Defs
-public import Mathlib.MeasureTheory.Group.Arithmetic
+import Mathlib.Algebra.Group.Defs
+import Mathlib.Algebra.Order.Group.Defs
+import Mathlib.Order.Defs.LinearOrder
+import Mathlib.MeasureTheory.MeasurableSpace.Defs
+import Mathlib.MeasureTheory.Group.Arithmetic
 import Mathlib.Tactic.Abel
 import Mathlib.MeasureTheory.Constructions.Pi
 
@@ -31,7 +31,7 @@ Appendix A, *Journal of Statistical Physics* 96 (1999), 963--1019, DOI
 10.1023/A:1004636216365, arXiv:cond-mat/9905252.
 -/
 
-@[expose] public section
+section
 
 open MeasureTheory
 
