@@ -7,6 +7,7 @@ Authors: WANG Yiyang
 module
 
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Target.EndpointBand
+import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Target.Path
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.EndpointBands.Lemmas.SevenWindows
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.EndpointWindows
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.Donsker.EndpointWindowSequence

@@ -2350,6 +2350,15 @@ theorem-specific and remain in
 IID spectral-transfer lemma remains in
 `RandomWalkBounds/EndpointBands/Lemmas/SpectralLowerBound.lean`.
 
+The endpoint-band module also contained a composed lower bound for a specific
+Rademacher path event that had no project callers. The general identity between
+finite killed-kernel mass and its path event remains in
+`Spectral/Target/Path.lean`; the seven-window proof uses its own private
+transfer lemma. The unused composition was removed, and `Path` is now imported
+directly by the client that uses it rather than re-exported by the spectral
+mass module. The four affected production modules build successfully (3,529
+Lake jobs), and their targeted `lint-style` run passes.
+
 The abstraction review checked the vendored Mathlib revision
 `380f2aafb622cb2c1c93dac545b6389083c68c51` at
 `Vendor/Mathlib/Mathlib/Probability/Kernel/Basic.lean` and
@@ -2574,7 +2583,7 @@ and `lint-style` passes on the five modules.
 ## Full source-tree structural scan (2026-10-21)
 
 A fresh scan of the current production and test source trees, excluding
-`.lake`, `Vendor/`, and `.git/`, found 1,485 production modules and 138 test
+`.lake`, `Vendor/`, and `.git/`, found 1,486 production modules and 138 test
 modules. Neither tree has a directory with more than eight direct Lean files.
 Across both trees, the scan found no same-level file/directory stem collision,
 no repeated parent-directory/file stem, no `Source/` directory, no

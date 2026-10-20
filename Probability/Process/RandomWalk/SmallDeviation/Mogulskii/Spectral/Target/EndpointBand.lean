@@ -7,7 +7,6 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Target.Central
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Target.Path
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Diffusive.Lower
 
 /-!
@@ -38,10 +37,6 @@ The public declarations in this module are:
   if the interval width tends to infinity, $n/W_n^2\to c$, and the target
   proportion tends to $p>0$, every strict lower constant below
   $p e^{-c\pi^2/2}$ eventually bounds the target mass.
-- `ofReal_centralEndpointBandTargetMass_le_rademacherPathEvent`: the finite
-  spectral target mass transfers to the IID Rademacher event of staying in
-  the interval and ending in the selected target.
-
 The finite-target spectral estimate used here is the general
 `half_principalScale_le_targetMass` in `Spectral/Target/LowerBound.lean`.
 The endpoint-band specialization supplies the finite-block input for the
@@ -52,8 +47,7 @@ in a Space of Trajectories,” *Theory of Probability and Its Applications*
 19(4) (1975), 726--736, DOI 10.1137/1119081.
 -/
 
-open MeasureTheory
-open scoped BigOperators ENNReal
+open scoped BigOperators
 open Filter Topology
 
 @[expose] public section
@@ -386,53 +380,6 @@ theorem eventually_lowerBound_le_centralEndpointBandTargetMass_of_diffusiveRatio
           (centralIntervalStart (scale n) (hscale n)) finish := by
     simpa [proportion, power, hden] using hmass
   exact hlower.le.trans hmass'
-
-/-- The narrow spectral target mass is an actual Rademacher path event. -/
-theorem ofReal_centralEndpointBandTargetMass_le_rademacherPathEvent
-    (m n lo e : ℕ) (hm : 0 < m) (hn : 0 < n) (he : 2 ≤ e)
-    (hlo : 2 * m ≤ lo) (hhi : lo + 2 * e ≤ 6 * m)
-    (hsmall : Real.cos (Real.pi / ((8 * m - 1 + 1 : ℕ) : ℝ)) ^ n ≤
-      (4 * (Real.sqrt 2 / 2) * (Real.sqrt 2 / 2) *
-        (((e - 1 : ℕ) : ℝ) / ((8 * m - 1 + 1 : ℕ) : ℝ))) /
-      (4 * (Real.sqrt 2 / 2) * (Real.sqrt 2 / 2) *
-        (((e - 1 : ℕ) : ℝ) / ((8 * m - 1 + 1 : ℕ) : ℝ)) + 8)) :
-    ENNReal.ofReal ((((e - 1 : ℕ) : ℝ) / ((8 * m - 1 + 1 : ℕ) : ℝ)) *
-        Real.cos (Real.pi / ((8 * m - 1 + 1 : ℕ) : ℝ)) ^ n) ≤
-      iidSequenceLaw rademacherMeasure
-        {increment : ℕ → ℝ |
-          InClosedInterval 1 (8 * (m : ℝ) - 1) n (4 * (m : ℝ)) increment ∧
-            4 * (m : ℝ) + AdditivePath.displacement n increment ∈
-              intervalSite ''
-                (centralEndpointBandTarget m n lo e hm hhi :
-                  Set (Fin (8 * m - 1)))} := by
-  let target := centralEndpointBandTarget m n lo e hm hhi
-  have hmass := centralEndpointBandTargetMass_lower
-    m n lo e hm hn he hlo hhi hsmall
-  have hpath := ofReal_intervalKernel_pow_apply_finset_eq_iidPathEvent
-    (8 * m - 1) n (centralIntervalStart m hm) target
-  calc
-    _ ≤ ENNReal.ofReal
-        (∑ finish ∈ target,
-          (intervalKernel (8 * m - 1) ^ n)
-            (centralIntervalStart m hm) finish) :=
-      ENNReal.ofReal_le_ofReal hmass
-    _ = iidSequenceLaw rademacherMeasure
-        {increment : ℕ → ℝ |
-          InClosedInterval 1 (8 * (m : ℝ) - 1) n (4 * (m : ℝ)) increment ∧
-            4 * (m : ℝ) + AdditivePath.displacement n increment ∈
-              intervalSite '' (target : Set (Fin (8 * m - 1)))} := by
-      have hstart : intervalSite (centralIntervalStart m hm) = 4 * (m : ℝ) := by
-        dsimp [centralIntervalStart, intervalSite]
-        have hNat : 4 * m - 1 + 1 = 4 * m := by omega
-        exact_mod_cast hNat
-      have hcast : ((8 * m - 1 : ℕ) : ℝ) = 8 * (m : ℝ) - 1 := by
-        rw [Nat.cast_sub (by omega : 1 ≤ 8 * m)]
-        norm_num
-      have hpath' := hpath
-      rw [hstart] at hpath'
-      rw [← hcast]
-      exact hpath'
-
 
 end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
