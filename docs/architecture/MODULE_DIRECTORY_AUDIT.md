@@ -1860,6 +1860,9 @@ pushforward, integral, and fourth-moment transfer formulas now live in
 probability comparison remains in `Roots/Monotonicity.lean`, where its root
 set inclusion and boundary-normalization assumptions are explicit. Public
 declaration headers in these modules now list the objects and their formulas.
+The adjacent `Endpoint/Minimum/{Basic,Address,Lineage}.lean` modules now also
+list each public endpoint definition, measurable minimizing-address selector,
+almost-sure endpoint comparison, and predictable fourth-moment bound.
 
 The production layout scan reports 1,477 modules and 138 test modules, with no
 same-stem file/directory pairs, repeated parent/file stems,
