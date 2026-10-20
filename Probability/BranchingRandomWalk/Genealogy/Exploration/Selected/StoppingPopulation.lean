@@ -4,7 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Genealogy.Exploration.Selected.CellBranching
+import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Field.Filtration
+import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law.Basic
 import Probability.Process.HittingTime.Declarations
 import Probability.BranchingRandomWalk.Population.Processes.Selected.Basic
 

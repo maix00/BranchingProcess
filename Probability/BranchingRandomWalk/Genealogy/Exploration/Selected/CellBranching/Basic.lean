@@ -6,16 +6,46 @@ Authors: WANG Yiyang
 
 import Probability.BranchingRandomWalk.Population.Processes.Selected.Basic
 import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.DomainFlow.Independence
-import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.SelectedSubtrees.FixedFamily
+import Probability.BranchingRandomWalk.Genealogy.Exploration.Selected.CellBranching.Lemmas.Enumeration
 
 /-!
 # Branching on a cell of the selected population
 
-A finite labelled population admits a duplicate-free vector enumeration, and
-the event that the selected population equals that listing is observable at
-the selected generation. On that cell the descendants of the listed particles
-have the product marked-tree law, with the initial offsets shifted by the root
-positions.
+The public declarations in namespace `ProbabilityTheory.BranchingRandomWalk`
+use $P_{N,x,n}(\omega)=\operatorname{selectedPopulation}(N,x,n,\omega)$,
+$\nu_m=\operatorname{finiteRootStepFieldLaw}(\mu,m)$,
+$\nu=\operatorname{stepFieldLaw}(\mu)$, and, for roots
+$u_i=(r_i,v_i)$,
+\[
+  \Phi_{\mathbf u}(\omega)(i,v)=\omega(r_i,v_i\mathbin{++}v),
+  \qquad
+  \pi_{\mathbf u}(\omega)_i=\operatorname{RootIndexed.position}
+      (x,\operatorname{id},\omega,r_i,v_i).
+\]
+
+- `selectedPopulation_cell_factorization μ N x n A hA s roots hcover hinj B hB`
+  proves
+  \[
+    \nu_m\!\left((A\cap\{P_{N,x,n}=s\})
+        \cap\Phi_{\mathbf u}^{-1}(B)\right)
+    =\nu_m\!\left(A\cap\{P_{N,x,n}=s\}\right)
+        \left(\nu^{\otimes k}\right)(B).
+  \]
+- `selectedPopulation_each_cell_branches μ N x n s` supplies such an
+  injective enumeration for each finite $s$ and the same factorization for all
+  generation-measurable $A$ and measurable $B$.
+- `selectedPopulation_cell_position_factorization μ N x n A hA s roots
+  hcover hinj D hD B hB` gives the same product law after also restricting
+  the current root-position vector to $D$:
+  \[
+    \nu_m\!\left(((A\cap\pi_{\mathbf u}^{-1}(D))\cap\{P_{N,x,n}=s\})
+        \cap\Phi_{\mathbf u}^{-1}(B)\right)
+    =\nu_m\!\left((A\cap\pi_{\mathbf u}^{-1}(D))
+        \cap\{P_{N,x,n}=s\}\right)\left(\nu^{\otimes k}\right)(B).
+  \]
+The finite population enumeration is in `Lemmas/`; one-use measurability
+facts are private to this module. The exported results are the cellwise
+branching laws.
 -/
 
 open MeasureTheory
@@ -26,33 +56,9 @@ open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 
 
 
-/-- Every finite labelled population admits a duplicate-free vector
-enumeration.  This uses mathlib's finite-type equivalence with `Fin`. -/
-theorem finiteRootAddress_enumeration {m : ℕ}
-    (s : Finset (RootAddress m ℕ)) :
-    ∃ roots : Fin s.card → RootAddress m ℕ,
-      s = Finset.univ.image roots ∧ Function.Injective roots := by
-  classical
-  let e : {p : RootAddress m ℕ // p ∈ s} ≃ Fin s.card :=
-    Fintype.equivFinOfCardEq (by simp)
-  let roots : Fin s.card → RootAddress m ℕ := fun j => (e.symm j).1
-  refine ⟨roots, ?_, ?_⟩
-  · ext p
-    constructor
-    · intro hp
-      apply Finset.mem_image.mpr
-      refine ⟨e ⟨p, hp⟩, Finset.mem_univ _, ?_⟩
-      simp [roots]
-    · intro hp
-      obtain ⟨j, _, rfl⟩ := Finset.mem_image.mp hp
-      exact (e.symm j).2
-  · intro i j hij
-    apply e.symm.injective
-    exact Subtype.ext hij
-
 /-- Current positions of a fixed vector of generation-`n` particles are
 observable before their descendant marks are exposed. -/
-theorem multiRootPositionVector_measurable {m k n : ℕ}
+private lemma multiRootPositionVector_measurable {m k n : ℕ}
     (x : Fin m → ℝ) (roots : Fin k → RootAddress m ℕ)
     (hlen : ∀ j, (roots j).2.length = n) :
     Measurable[multiRootStepFiltration (m := m) (X := ℝ) n]
@@ -68,7 +74,7 @@ theorem multiRootPositionVector_measurable {m k n : ℕ}
 
 /-- The event that the actual selected population is a prescribed labelled
 set belongs to the generation domain sigma algebra. -/
-theorem selectedPopulation_cell_measurable {m : ℕ}
+private lemma selectedPopulation_cell_measurable {m : ℕ}
     (N : ℕ) (x : Fin m → ℝ) (n : ℕ)
     (A : Set (FiniteRootStepField m ℕ ℝ))
     (hA : MeasurableSet[multiRootStepFiltration (m := m) (X := ℝ) n] A)
@@ -196,24 +202,5 @@ theorem selectedPopulation_cell_position_factorization
       · intro h
         exact h.elim
     simp [hempty']
-
-theorem selectedPopulation_cell_descendant_law
-    (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
-    {m k : ℕ} (N : ℕ) (x : Fin m → ℝ) (n : ℕ)
-    (A : Set (FiniteRootStepField m ℕ ℝ))
-    (hA : MeasurableSet[multiRootStepFiltration (m := m) (X := ℝ) n] A)
-    (s : Finset (RootAddress m ℕ))
-    (roots : Fin k → RootAddress m ℕ)
-    (hcover : s = Finset.univ.image roots)
-    (hinj : Function.Injective roots) :
-    ∀ B : Set (Fin k → 𝕍 → Step ℕ ℝ), MeasurableSet B →
-      finiteRootStepFieldLaw μ m
-        ((A ∩ {ω | selectedPopulation N x n ω = s}) ∩
-          RootIndexed.subtreeStepFieldVector roots ⁻¹' B) =
-      finiteRootStepFieldLaw μ m
-        (A ∩ {ω | selectedPopulation N x n ω = s}) *
-        Measure.infinitePi (fun _ : Fin k => stepFieldLaw μ) B := by
-  intro B hB
-  exact selectedPopulation_cell_factorization μ N x n A hA s roots hcover hinj B hB
 
 end ProbabilityTheory.BranchingRandomWalk
