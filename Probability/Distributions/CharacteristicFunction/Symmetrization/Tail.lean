@@ -5,7 +5,7 @@ Authors: Codex
 -/
 module
 
-public import Probability.Distributions.CharacteristicFunction.Symmetrization
+public import Probability.Distributions.CharacteristicFunction.Symmetrization.Basic
 public import Mathlib.MeasureTheory.Measure.Interval
 public import Mathlib.MeasureTheory.Measure.Prod
 

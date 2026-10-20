@@ -1,4 +1,4 @@
-import Probability.Distributions.Stable.Attraction.Normal
+import Probability.Distributions.Stable.Attraction.Normal.Basic
 import Probability.Distributions.Stable.Attraction.Normal.CharacteristicTail
 
 open Filter MeasureTheory ProbabilityTheory
