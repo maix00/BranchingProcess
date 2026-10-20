@@ -2188,3 +2188,8 @@ records the continuous additive extension formula, and
 cosine power bound and both finite sine-square identities. The path-displacement
 header in `Combinatorics/BranchingWalk/Basic/Position/Displace.lean` now also
 states its recursive cons equation alongside the prefix-sum interfaces.
+
+`Combinatorics/BranchingWalk/Genealogy/Survival.lean` now lists all eleven
+public definitions and results. Its finite-branching equivalence uses
+Mathlib's König-lemma API, while the unbounded-height predicate stays distinct
+from infinite-lineage survival when the slot type is not finite.
