@@ -2169,3 +2169,22 @@ provides each API they use.
 The moved API and its two speed clients built successfully with the pinned
 toolchain. The full `BranchingProcess` target is the repository-wide check for
 this boundary change.
+
+## Public declaration headers: elementary analysis and path displacement (2026-10-21)
+
+The module headers in `Analysis/` were checked for exact names of their
+module-visible named declarations. A source scan matched 187 declarations
+(`def`, `abbrev`, `theorem`, `lemma`, and related named forms); every matched
+name occurs in its module header after this pass. The scan checks name coverage,
+while the formulas below were also compared directly with their Lean types.
+
+`Analysis/Fourier/PositiveDefinite.lean` now lists its predicate, finite
+quadratic-form conditions, Hermitian symmetry, positive-semidefinite matrix
+interface, Schur product, pointwise closure, normalized norm bound, and the two
+exponential characters. `Analysis/SpecificLimits/Geometric.lean` states the
+two finite geometric-sum bounds. `Analysis/FunctionalEquation/ContinuousAdditivePositive.lean`
+records the continuous additive extension formula, and
+`Analysis/SpecialFunctions/Trigonometric/{PowerBound,FiniteSum}.lean` state the
+cosine power bound and both finite sine-square identities. The path-displacement
+header in `Combinatorics/BranchingWalk/Basic/Position/Displace.lean` now also
+states its recursive cons equation alongside the prefix-sum interfaces.
