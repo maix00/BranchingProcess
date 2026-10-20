@@ -1405,7 +1405,12 @@ endpoint-corridor decay step lives in `EndpointCorridorDecay.lean`. The latter
 uses the general stable scale and strict-stability interfaces, while its
 endpoint event remains specific to Mogul'skii equation (34), so it stays in
 this proof family. The endpoint positivity intermediate is private within
-the helper module.
+the helper module. `Bridge/Lemmas/Comparison.lean` imports
+`Bridge/Lemmas/TerminalLeftGeometry.lean` ordinarily for proof assembly and
+directly imports the block-path, IID-law, event, and convergence modules used
+by its public theorem signatures. The logarithmic-ratio proof imports
+`Analysis/Asymptotics/Sequence/NegativeRatio.lean` directly where it uses that
+general estimate.
 
 The old root asymptotics module had four proof-chain declarations beside its
 single theorem entry. Those helpers have moved under `Bridge/Lemmas/`, leaving
@@ -1454,8 +1459,9 @@ is no `Source/` directory. In declaration names, `source` identifies the
 original pre-limit random walk or process; the entry module now states this
 meaning explicitly and distinguishes it from the limiting stable process.
 
-A production-tree scan of 1,467 Lean modules found no directory with more than
-eight direct modules and no same-stem `Foo.lean`/`Foo/` collisions. A separate
+A tracked production-tree scan on 2026-10-21 found 1,477 Lean modules, no
+directory with more than eight direct modules, and no same-stem
+`Foo.lean`/`Foo/` collisions. A separate
 heuristic scan flagged 58 Mogul'skii module docstrings for manual review of
 their public API inventories; this count is only a review queue, not a
 determination that every flagged header is incomplete. Four empty source
