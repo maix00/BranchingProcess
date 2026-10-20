@@ -643,7 +643,7 @@ does not imply that a target is measurable.
 The exponent-two coefficient is identified by comparing the general
 path-class limit with the explicit horizontal-tube limit. This gives escape
 constant `-π²/8` and full-width coefficient `-π²/2`; the Gaussian source-path
-specialization is in `Gaussian/Path/TerminalLeftPathClass.lean`.
+specialization is in `Gaussian/Path/TerminalLeftPathClass/Basic.lean`.
 
 The `α = 2` source-law bridge is formalized. A generic rational-coordinate
 measurable embedding constructs a Skorokhod-valued realization of every
