@@ -8,6 +8,7 @@ module
 
 public import Combinatorics.BranchingWalk.Basic.Position.Displace
 public import Combinatorics.BranchingWalk.Basic.Map
+public import Combinatorics.BranchingWalk.Step.Map
 public import Combinatorics.BranchingWalk.StepField
 public import Combinatorics.BranchingWalk.Step.Measure.Potential
 
@@ -18,6 +19,16 @@ A step field carries marks in `X`. A map `d : X → Y` interprets each present
 mark as an increment in an additive position space `Y`. Thus `X` itself need
 not have any algebraic structure. The existing same-space displacement is the
 special case `Y = X`, `d = id`.
+
+The public API defines `displaceWith d β v p` by mapping marks before applying
+`displace`, with the corresponding nil and cons equations. Its partial form
+`displaceWith?` is `some (displaceWith d β v p)` exactly when
+`surviveAlong β v p`, and is `none` exactly when that path is absent.
+`displaceWith_id` recovers the same-space definition. For an additive
+potential `φ`, `AdditivePotential.map_displace` and
+`AdditivePotential.map_displaceWith` state
+`φ (displace β v p) = displaceWith φ β v p` and
+`φ (displaceWith d β v p) = displaceWith (φ ∘ d) β v p`.
 -/
 
 @[expose] public section
@@ -63,14 +74,6 @@ theorem displaceWith?_eq_none_iff {α X Y : Type*} [AddCommMonoid Y]
     displaceWith id β v p = displace β v p := by
   simp [displaceWith]
 
-/-- An additive projection commutes with zero-defaulted slot reading. -/
-theorem AdditivePotential.map_value'
-    {ι X : Type*} [MeasurableSpace X] [AddCommMonoid X]
-    (φ : AdditivePotential X) (ξ : Step ι X) (i : ι) :
-    value' (ξ.map φ) i = φ (value' ξ i) := by
-  cases h : ξ i <;>
-    simp [Step.map, value', h]
-
 /-- An additive potential may be applied before or after accumulating a path. -/
 theorem AdditivePotential.map_displace
     {α X : Type*} [MeasurableSpace X] [AddCommMonoid X]
@@ -81,7 +84,7 @@ theorem AdditivePotential.map_displace
   | nil => simp [displaceWith]
   | cons i p ih =>
       rw [displace_cons, φ.map_add, displaceWith_cons,
-        AdditivePotential.map_value', ih]
+        Step.value'_map φ.toAddMonoidHom φ.map_zero, ih]
 
 /-- Projecting mapped marks after path accumulation agrees with projecting
 each raw mark first. This is the compatibility theorem for a mark space that
