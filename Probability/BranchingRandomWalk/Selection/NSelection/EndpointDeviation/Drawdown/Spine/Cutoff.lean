@@ -13,16 +13,16 @@ import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 Write `L_N(n) = log (N n)` and
 `ell_N(n) = floor (L_N(n)^(5/2))`. The public declarations are:
 
-- `rightTailPositiveAFirstCutoff`: the first-stage horizon `ell_N`.
-- `tendsto_rightTailPositiveAFirstCutoff_div_logCube`:
+- `rightTailFirstStageCutoff`: the first-stage horizon `ell_N`.
+- `tendsto_rightTailFirstStageCutoff_div_logCube`:
   `ell_N(n) / L_N(n)^3 → 0` when `N n → ∞`.
-- `tendsto_rightTailPositiveAFirstCutoff_atTop`:
+- `tendsto_rightTailFirstStageCutoff_atTop`:
   `ell_N(n) → ∞` when `N n → ∞`.
-- `tendsto_rightTailPositiveAFirstCutoff_smallDeviationScale_div_log`:
+- `tendsto_rightTailFirstStageCutoff_smallDeviationScale_div_log`:
   `(ell_N(n))^(2/5) / L_N(n) → 1`.
-- `eventually_rightTailPositiveAFirstStageAHScale`: if `b > 0` and `p < 1/2`,
+- `eventually_rightTailFirstStageAHScale`: if `b > 0` and `p < 1/2`,
   eventually `delta0 ≤ b L_N(n)` and `(b L_N(n))^(2+p) ≤ ell_N(n)`.
-- `eventually_rightTailPositiveAFirstCutoff_lt_horizon`:
+- `eventually_rightTailFirstStageCutoff_lt_horizon`:
   `ell_N(n) < floor (t L_N(n)^3) + 1` eventually for `t > 0`.
 
 This deterministic schedule is used in the proof of Proposition 3.1,
@@ -38,15 +38,15 @@ namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail
 
 /-- The first-stage cutoff `floor((log N)^(5/2))` used in the positive-`a`
 right-tail proof. -/
-noncomputable def rightTailPositiveAFirstCutoff
+noncomputable def rightTailFirstStageCutoff
     (N : ℕ → ℕ) (n : ℕ) : ℕ :=
   ⌊logarithmOfSampleSize N n ^ ((5 : ℝ) / 2)⌋₊
 
 /-- The `log^(5/2) N` first-stage cutoff is negligible on the `log^3 N`
 scale. -/
-theorem tendsto_rightTailPositiveAFirstCutoff_div_logCube
+theorem tendsto_rightTailFirstStageCutoff_div_logCube
     {N : ℕ → ℕ} (hN : Tendsto N atTop atTop) :
-    Tendsto (fun n => (rightTailPositiveAFirstCutoff N n : ℝ) /
+    Tendsto (fun n => (rightTailFirstStageCutoff N n : ℝ) /
       logarithmOfSampleSize N n ^ 3) atTop (𝓝 0) := by
   let L : ℕ → ℝ := logarithmOfSampleSize N
   let arg : ℕ → ℝ := fun n => L n ^ ((5 : ℝ) / 2)
@@ -83,21 +83,21 @@ theorem tendsto_rightTailPositiveAFirstCutoff_div_logCube
     exact hinv.congr' heq.symm
   have hbase := hfloor.mul hratio
   have heq :
-      (fun n => (rightTailPositiveAFirstCutoff N n : ℝ) / L n ^ 3) =ᶠ[atTop]
+      (fun n => (rightTailFirstStageCutoff N n : ℝ) / L n ^ 3) =ᶠ[atTop]
         fun n => (Nat.floor (arg n) : ℝ) / arg n * (arg n / L n ^ 3) := by
     filter_upwards [hL.eventually_gt_atTop 0] with n hn
     have hargPos : 0 < arg n := Real.rpow_pos_of_pos hn _
-    have hfloorVal : (rightTailPositiveAFirstCutoff N n : ℝ) =
+    have hfloorVal : (rightTailFirstStageCutoff N n : ℝ) =
         (Nat.floor (arg n) : ℝ) := by
-      simp [rightTailPositiveAFirstCutoff, arg, L, logarithmOfSampleSize]
+      simp [rightTailFirstStageCutoff, arg, L, logarithmOfSampleSize]
     rw [hfloorVal]
     field_simp [ne_of_gt hargPos, ne_of_gt hn]
   simpa [L] using hbase.congr' heq.symm
 
 /-- The first-stage cutoff tends to infinity with the sample size. -/
-theorem tendsto_rightTailPositiveAFirstCutoff_atTop
+theorem tendsto_rightTailFirstStageCutoff_atTop
     {N : ℕ → ℕ} (hN : Tendsto N atTop atTop) :
-    Tendsto (rightTailPositiveAFirstCutoff N) atTop atTop := by
+    Tendsto (rightTailFirstStageCutoff N) atTop atTop := by
   let L : ℕ → ℝ := logarithmOfSampleSize N
   have hL : Tendsto L atTop atTop := by
     exact Real.tendsto_log_atTop.comp
@@ -105,18 +105,18 @@ theorem tendsto_rightTailPositiveAFirstCutoff_atTop
   have harg : Tendsto (fun n => L n ^ ((5 : ℝ) / 2)) atTop atTop :=
     (_root_.tendsto_rpow_atTop (by norm_num : (0 : ℝ) < (5 : ℝ) / 2)).comp hL
   convert tendsto_nat_floor_atTop.comp harg using 1 <;>
-    ext n <;> simp [rightTailPositiveAFirstCutoff, L, logarithmOfSampleSize]
+    ext n <;> simp [rightTailFirstStageCutoff, L, logarithmOfSampleSize]
 
 /-- The first-stage cutoff dominates the superdiffusive Aïdékon--Hu power of
 the corridor width when `p < 1/2`, as required by the
 `floor((log N)^(5/2))` choice. -/
-theorem eventually_rightTailPositiveAFirstStageAHScale
+theorem eventually_rightTailFirstStageAHScale
     {N : ℕ → ℕ} (hN : Tendsto N atTop atTop) {b p delta0 : ℝ}
     (hb : 0 < b) (hpHalf : p < 1 / 2) :
     ∀ᶠ n : ℕ in atTop,
       delta0 ≤ b * logarithmOfSampleSize N n ∧
         (b * logarithmOfSampleSize N n) ^ (2 + p) ≤
-          (rightTailPositiveAFirstCutoff N n : ℝ) := by
+          (rightTailFirstStageCutoff N n : ℝ) := by
   let L : ℕ → ℝ := logarithmOfSampleSize N
   let arg : ℕ → ℝ := fun n => L n ^ ((5 : ℝ) / 2)
   let q : ℝ := (1 : ℝ) / 2 - p
@@ -160,10 +160,10 @@ theorem eventually_rightTailPositiveAFirstStageAHScale
   have hargPos : 0 < arg n := Real.rpow_pos_of_pos hLn _
   have hwidthPos : 0 < (b * L n) ^ (2 + p) :=
     Real.rpow_pos_of_pos (mul_pos hb hLn) _
-  have hfloorVal : (rightTailPositiveAFirstCutoff N n : ℝ) =
+  have hfloorVal : (rightTailFirstStageCutoff N n : ℝ) =
       (Nat.floor (arg n) : ℝ) := by
-    simp [rightTailPositiveAFirstCutoff, arg, L, logarithmOfSampleSize]
-  have hfloorLower : arg n / 2 < (rightTailPositiveAFirstCutoff N n : ℝ) := by
+    simp [rightTailFirstStageCutoff, arg, L, logarithmOfSampleSize]
+  have hfloorLower : arg n / 2 < (rightTailFirstStageCutoff N n : ℝ) := by
     rw [hfloorVal]
     have hmul := (lt_div_iff₀ hargPos).mp hfloorLarge
     nlinarith
@@ -175,16 +175,16 @@ theorem eventually_rightTailPositiveAFirstStageAHScale
 
 /-- The first cutoff lies strictly before the `floor(t log^3 N)+1` terminal
 horizon for all sufficiently large sample sizes. -/
-theorem eventually_rightTailPositiveAFirstCutoff_lt_horizon
+theorem eventually_rightTailFirstStageCutoff_lt_horizon
     {N : ℕ → ℕ} (hN : Tendsto N atTop atTop) {t : ℝ} (ht : 0 < t) :
     ∀ᶠ n : ℕ in atTop,
-      rightTailPositiveAFirstCutoff N n < logarithmicHorizon N t n := by
+      rightTailFirstStageCutoff N n < logarithmicHorizon N t n := by
   let L : ℕ → ℝ := logarithmOfSampleSize N
-  have hcut := tendsto_rightTailPositiveAFirstCutoff_div_logCube hN
+  have hcut := tendsto_rightTailFirstStageCutoff_div_logCube hN
   have hterminal := logarithmicHorizon_div_logCube_tendsto hN ht
   have hgap : Tendsto
       (fun n => (logarithmicHorizon N t n : ℝ) / L n ^ 3 -
-        (rightTailPositiveAFirstCutoff N n : ℝ) / L n ^ 3)
+        (rightTailFirstStageCutoff N n : ℝ) / L n ^ 3)
       atTop (𝓝 t) := by
     simpa [L] using hterminal.sub hcut
   have hL : Tendsto L atTop atTop := by
@@ -192,30 +192,30 @@ theorem eventually_rightTailPositiveAFirstCutoff_lt_horizon
       (tendsto_natCast_atTop_atTop.comp hN)
   have hgapPos : ∀ᶠ n : ℕ in atTop,
       0 < (logarithmicHorizon N t n : ℝ) / L n ^ 3 -
-        (rightTailPositiveAFirstCutoff N n : ℝ) / L n ^ 3 :=
+        (rightTailFirstStageCutoff N n : ℝ) / L n ^ 3 :=
     Filter.Tendsto.eventually hgap (Ioi_mem_nhds ht)
   filter_upwards [hgapPos, hL.eventually_gt_atTop 0]
     with n hgap hLn
   have hratio :
-      (rightTailPositiveAFirstCutoff N n : ℝ) / L n ^ 3 <
+      (rightTailFirstStageCutoff N n : ℝ) / L n ^ 3 <
         (logarithmicHorizon N t n : ℝ) / L n ^ 3 := by
     linarith
-  have hreal : (rightTailPositiveAFirstCutoff N n : ℝ) <
+  have hreal : (rightTailFirstStageCutoff N n : ℝ) <
       (logarithmicHorizon N t n : ℝ) := by
     exact (div_lt_div_iff_of_pos_right (pow_pos hLn 3)).mp hratio
   exact_mod_cast hreal
 /-- The `2/5` small-deviation scale of the first-stage cutoff is asymptotic
  to the logarithmic sample-size scale:
-`logarithmicSmallDeviationScale (rightTailPositiveAFirstCutoff N n) /
+`logarithmicSmallDeviationScale (rightTailFirstStageCutoff N n) /
  logarithmOfSampleSize N n → 1`. -/
-lemma tendsto_rightTailPositiveAFirstCutoff_smallDeviationScale_div_log
+lemma tendsto_rightTailFirstStageCutoff_smallDeviationScale_div_log
     {N : ℕ → ℕ} (hN : Tendsto N atTop atTop) :
     Tendsto (fun n => logarithmicSmallDeviationScale
-      (rightTailPositiveAFirstCutoff N n) /
+      (rightTailFirstStageCutoff N n) /
         logarithmOfSampleSize N n) atTop (𝓝 1) := by
   let L : ℕ → ℝ := logarithmOfSampleSize N
   let arg : ℕ → ℝ := fun n => L n ^ ((5 : ℝ) / 2)
-  let cutoff : ℕ → ℝ := fun n => (rightTailPositiveAFirstCutoff N n : ℝ)
+  let cutoff : ℕ → ℝ := fun n => (rightTailFirstStageCutoff N n : ℝ)
   have hL : Tendsto L atTop atTop := by
     exact Real.tendsto_log_atTop.comp
       (tendsto_natCast_atTop_atTop.comp hN)
@@ -226,7 +226,7 @@ lemma tendsto_rightTailPositiveAFirstCutoff_smallDeviationScale_div_log
     have heq : (fun n => cutoff n / arg n) =ᶠ[atTop]
         fun n => (Nat.floor (arg n) : ℝ) / arg n := by
       filter_upwards [] with n
-      simp [cutoff, arg, L, rightTailPositiveAFirstCutoff,
+      simp [cutoff, arg, L, rightTailFirstStageCutoff,
         logarithmOfSampleSize]
     exact h.congr' heq.symm
   have hpower : Tendsto (fun n => (cutoff n / arg n) ^ ((2 : ℝ) / 5))
