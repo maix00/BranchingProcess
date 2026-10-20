@@ -2139,3 +2139,26 @@ conditions.
 
 Both edited modules and their dependency closure built successfully with the
 pinned toolchain (4,007 Lake jobs).
+
+## Infinite-offspring Kingman interface (2026-10-21)
+
+The former `AsymptoticSpeed/Limit/KingmanInterface.lean` mixed the measurable
+repair of countable offspring batches, the subadditive array, Kingman
+convergence, leftmost speed, and a reflection-based rightmost proof. Its
+contents are now organized under `Limit/InfiniteOffspring/`: `Repair.lean`
+owns the measurable totalization and almost-sure repair of the environment;
+`SubadditiveArray.lean` defines the selection array; `KingmanLimit.lean`
+exposes the Kingman almost-sure and `L¹` limits; and `Speed.lean` exposes the
+leftmost speed conclusions. The implementation details and estimates used
+only along that argument are grouped under `Kingman/Lemmas/`.
+
+The reflection-based rightmost route had no clients. `Rightmost.lean` already
+derives the rightmost result by applying the leftmost theorem to `OrderDual`,
+so the duplicate reflection declarations were removed. The public leftmost
+and rightmost interfaces therefore share one symmetry argument. Direct
+imports in `InitialPopulation/` and `Rightmost.lean` now name the module that
+provides each API they use.
+
+The moved API and its two speed clients built successfully with the pinned
+toolchain. The full `BranchingProcess` target is the repository-wide check for
+this boundary change.
