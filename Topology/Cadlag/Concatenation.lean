@@ -48,7 +48,7 @@ theorem continuous_unitBlockParameter (n : ℕ) :
     Continuous (unitBlockParameter n) := by
   exact Continuous.subtype_mk (by fun_prop) (fun t => (unitBlockParameter n t).property)
 
-private theorem floor_eq_of_bounds {t : ℝ≥0} {n : ℕ}
+private lemma floor_eq_of_bounds {t : ℝ≥0} {n : ℕ}
     (hn : (n : ℝ) ≤ t) (ht : (t : ℝ) < n + 1) :
     Nat.floor (t : ℝ) = n := by
   apply (Nat.floor_eq_iff (show (0 : ℝ) ≤ (t : ℝ) from t.2)).2
@@ -137,7 +137,7 @@ private noncomputable def translatedUnitBlock
     (f : ℕ → CadlagPath unitInterval ℝ) (n : ℕ) (t : ℝ≥0) : ℝ :=
   unitBlockEndpointSum f n + f n (unitBlockParameter n t)
 
-private theorem isCadlag_translatedUnitBlock
+private lemma isCadlag_translatedUnitBlock
     (f : ℕ → CadlagPath unitInterval ℝ) (n : ℕ) :
     IsCadlag (translatedUnitBlock f n) := by
   have hcomp : IsCadlag (fun t : ℝ≥0 => f n (unitBlockParameter n t)) :=
@@ -145,7 +145,7 @@ private theorem isCadlag_translatedUnitBlock
       (monotone_unitBlockParameter n) (continuous_unitBlockParameter n)
   exact hcomp.continuous_comp (g := fun x => unitBlockEndpointSum f n + x) (by fun_prop)
 
-private theorem floor_eventually_eq_right {t : ℝ≥0} {n : ℕ}
+private lemma floor_eventually_eq_right {t : ℝ≥0} {n : ℕ}
     (hfloor : Nat.floor (t : ℝ) = n) :
     ∀ᶠ (s : ℝ≥0) in 𝓝[Set.Ioi t] t, Nat.floor (s : ℝ) = n := by
   have hupper : (t : ℝ) < (n : ℝ) + 1 := by
@@ -166,7 +166,7 @@ private theorem floor_eventually_eq_right {t : ℝ≥0} {n : ℕ}
   have ht_s : (t : ℝ) ≤ (s : ℝ) := by exact_mod_cast hsRight.le
   exact floor_eq_of_bounds (t := s) (n := n) (hn_t.trans ht_s) hsUpper
 
-private theorem floor_eventually_eq_left {t : ℝ≥0} {n : ℕ}
+private lemma floor_eventually_eq_left {t : ℝ≥0} {n : ℕ}
     (_hfloor : Nat.floor (t : ℝ) = n) (htInteger : (t : ℝ) = n) (hn : 0 < n) :
     ∀ᶠ (s : ℝ≥0) in 𝓝[Set.Iio t] t, Nat.floor (s : ℝ) = n - 1 := by
   have hlower : ((n - 1 : ℕ) : ℝ) < (t : ℝ) := by
@@ -191,13 +191,13 @@ private theorem floor_eventually_eq_left {t : ℝ≥0} {n : ℕ}
     exact hslt
   exact floor_eq_of_bounds (t := s) (n := n - 1) (le_of_lt hsLower) hupper
 
-private theorem concatenate_eq_translated_of_floor
+private lemma concatenate_eq_translated_of_floor
     (f : ℕ → CadlagPath unitInterval ℝ) {t : ℝ≥0} {n : ℕ}
     (hfloor : Nat.floor (t : ℝ) = n) :
     concatenateUnitPaths f t = translatedUnitBlock f n t := by
   simp [concatenateUnitPaths, translatedUnitBlock, unitBlockEndpointSum, hfloor]
 
-private theorem floor_eventually_eq_left_current {t : ℝ≥0} {n : ℕ}
+private lemma floor_eventually_eq_left_current {t : ℝ≥0} {n : ℕ}
     (hfloor : Nat.floor (t : ℝ) = n) (hn : (n : ℝ) < (t : ℝ)) :
     ∀ᶠ (s : ℝ≥0) in 𝓝[Set.Iio t] t, Nat.floor (s : ℝ) = n := by
   have hupper : (t : ℝ) < (n : ℝ) + 1 := by

@@ -1,4 +1,4 @@
-import Probability.Process.RandomWalk.FunctionalLimit.Stable.ProcessExistence
+import Probability.Process.RandomWalk.FunctionalLimit.Stable.PathLaw.Process
 
 /-!
 # Source-derived stable process existence audit

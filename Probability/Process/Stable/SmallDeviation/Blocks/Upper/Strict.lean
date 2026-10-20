@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.Stable.SmallDeviation.Blocks.Upper.Scale
-public import MeasureTheory.Measure.PositiveTail
+public import MeasureTheory.Measure.Tails.Positive
 
 /-!
 # Strict loss of tube probability
