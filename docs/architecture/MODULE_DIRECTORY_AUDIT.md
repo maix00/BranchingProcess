@@ -1587,3 +1587,71 @@ remains in `Lemmas/LowerGeometry.lean`. Imports changed to the new module
 paths; the declarations still belong to the `Discrete` namespace. This
 removes the opaque compound directory name without moving reusable event or
 probability interfaces into `Lemmas/`.
+
+## Gaussian product-parameter helper abstraction review (2026-10-20)
+
+`Gaussian/Blocks/Lemmas/ProductParameters.lean` has two clients:
+`Mogulskii/Blocks/Uniform.lean` and `Mogulskii/Rate/Partition/Finite.lean`.
+Write $\gamma(I)=\mathbb P(Z\in I)$ for a standard normal random variable
+$Z$. The first selects $0<c\leq1$, $\delta>0$, and $b>0$ so that
+\[
+ b+\operatorname{ENNReal.ofReal}\!\left(k\left(\frac{c}{m^2}+\delta\right)\right)
+ < \prod_{j<k}\gamma\!\left(\left(-\frac{R}{\sqrt c},\frac{R}{\sqrt c}\right)\right),
+\]
+where $m$ is the endpoint margin, $R$ is the block radius, and $k>0$ is the
+number of blocks. For a nonempty finite target family $F$, the second assumes
+\[
+ \operatorname{ENNReal.ofReal}\!\left(\frac{kc}{m^2}\right)
+ < \prod_{j<k}\gamma\!\left(\left(
+   \frac{x_{y,j}-R}{\sqrt c},\frac{x_{y,j}+R}{\sqrt c}
+ \right)\right)
+ \qquad (y\in F),
+\]
+where $x_{y,j}$ is the target center. It chooses common $\delta>0$ and
+$0<b\leq1$ so that the strict inequality remains true after replacing the
+principal cost by $k(c/m^2+\delta)$ and adding $b$, for every $y\in F$.
+Both statements are parameter selections in the finite
+partition lower-bound proof of Mogul'skii (1974), Theorem 3, Section 4,
+p. 764; the source citation is in the Lean module header.
+
+The abstraction candidates were checked against the pinned Mathlib revision
+`380f2aafb622cb2c1c93dac545b6389083c68c51`. Its
+[`Finset.exists_min_image`](https://github.com/maix00/mathlib4/blob/380f2aafb622cb2c1c93dac545b6389083c68c51/Mathlib/Data/Finset/Max.lean)
+chooses $x\in s$ with $f(x)\leq f(y)$ for every $y\in s$ when $s$ is a
+nonempty finite set in a linear order. The corresponding
+[official Mathlib documentation](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Data/Finset/Max.html)
+records this interface. The same pinned revision provides
+[`Finset.prod_le_prod`](https://github.com/maix00/mathlib4/blob/380f2aafb622cb2c1c93dac545b6389083c68c51/Mathlib/Algebra/Order/BigOperators/Group/Finset.lean)
+and `Finset.prod_le_one`, which handle factorwise product comparison. The
+repository's `Probability.Distributions.Gaussian.FiniteProduct` separately
+provides Gaussian interval-product positivity and symmetric-interval
+monotonicity. These APIs supply the minimum, positivity, and product
+comparison steps; the remaining strict-slack allocation is a short numerical
+consequence of the finite minimum.
+
+The same use scan found `prod_gaussian_Ioo_halfRadius_le_linearReturn` only
+at its declaration. Its `y / blocks` shift is application-specific, and the
+proof is just interval containment followed by `measure_mono` and
+`Finset.prod_le_prod`; the pinned Mathlib product API already exposes the
+general factorwise comparison. A generalized center-shift wrapper would still
+be a thin composition of those APIs, so this unused declaration was removed
+from the distribution module. `FiniteProduct.lean` now lists its two retained
+public Gaussian-product theorems and exposes no linear-return-specific name.
+
+The finite-target statement could be generalized to arbitrary finite families
+of ordered values, but that would package `Finset.exists_min_image` with a
+basic real-number slack argument rather than provide a distinct mathematical
+operation. The first statement's cost $k(c/m^2+\delta)$ and both conclusions'
+Gaussian interval products are specific to this proof family. Therefore the
+two declarations remain together under `Gaussian/Blocks/Lemmas/` instead of
+adding a public generic wrapper or moving a reusable Gaussian-product result
+into the proof folder. They are ordinary `lemma` declarations because two
+modules use them; `Lemmas/` describes their proof-chain role and does not make
+them Lean-private.
+
+The import boundary now matches this classification: `ProductParameters.lean`
+publicly imports the Gaussian interval interface used in its statements and
+imports the finite-product results and pinned Mathlib order/product modules
+ordinarily for its proofs. `Blocks/Uniform.lean` directly imports the
+finite-product theorem it uses in its own proof. The helper and both clients
+compiled together with the pinned toolchain (3,431 Lake jobs).
