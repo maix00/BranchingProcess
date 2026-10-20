@@ -17,32 +17,41 @@ public import Combinatorics.BranchingWalk.Basic.Position.Basic
 The public declarations in `ProbabilityTheory.BranchingRandomWalk.RootIndexed`
 are:
 
-- `stepPresentAlong_measurableSet`, `surviveAlong_measurableSet`: survival
-  along a fixed address is measurable with respect to the step filtration at
-  every generation revealing that address.
-- `displace_measurable`, `position_measurable`: mapped displacement and
-  initial-position-shifted position at address $u$ are measurable with
-  respect to `stepFiltration |u|` when the mark map and addition are
-  measurable; the displacement result also handles a fixed path segment
-  $v,p$ whenever $|v|+|p|\le n$.
-- `positionAtGeneration`: returns the position of $u$ when $|u|=n$ and $0$
-  otherwise; `positionAtGeneration_measurable` proves measurability with
-  respect to `stepFiltration n`.
-- `observedPositionAtGeneration`: applies a map to `positionAtGeneration`;
-  `observedPositionAtGeneration_eq` identifies it with the branching-walk
-  position when the label has depth $n$.
-- `selectedPositionAtGeneration_measurable`: a measurable selector with
-  countable range and depth $n$ has measurable position at generation $n$.
+- `stepPresentAlong_measurableSet`: if $|v|+|p|\le n$, then
+  $\{\omega:\operatorname{surviveAlong}(\omega(i),v,p)\}$ belongs to
+  `stepFiltration n`; `surviveAlong_measurableSet` is the case
+  $v=[]$, $n=|u|$, and $p=u$.
+- `displace_measurable`, `position_measurable`: if $|v|+|p|\le n$, then
+  $\omega\mapsto\operatorname{displaceWith}(d,\omega(i),v,p)$ is measurable
+  with respect to `stepFiltration n`; in particular,
+  $\omega\mapsto X(i,u,\omega)$ is measurable with respect to
+  `stepFiltration |u|`.
+- `positionAtGeneration`, `positionAtGeneration_measurable`:
+  $X_n(i,u,\omega)=X(i,u,\omega)$ if $|u|=n$, and $0$ otherwise; this map
+  is measurable with respect to `stepFiltration n`.
+- `observedPositionAtGeneration`, `observedPositionAtGeneration_eq`:
+  $\operatorname{observed}(n,\omega,p)=\varphi(X_n(p.1,p.2,\omega))$, and if
+  $|p.2|=n$ this equals $\varphi$ applied to the corresponding
+  `ofStepField` branching-walk position.
+- `selectedPositionAtGeneration_measurable`: if a measurable selector
+  $s(\omega)$ has countable range and $|s(\omega)|=n$, then
+  $\omega\mapsto X(i,s(\omega),\omega)$ is measurable with respect to
+  `stepFiltration n`.
 - `selectedPositionAtGeneration_measurable_of_countableAddress`: the same
   conclusion when the address type itself is countable.
 
 The two declarations in `ProbabilityTheory.BranchingRandomWalk` specialize
 these facts to finitely many roots indexed by `Fin m`:
-`selectedMultiRootAbsolutePosition_measurable` gives the selected position's
-measurability, and `selectedMultiRootRealizedNode_measurableSet` gives
-measurability of the event that the selected address survives.
+`selectedMultiRootAbsolutePosition_measurable` proves measurability of
+$\omega\mapsto X(i,s(\omega),\omega)$, and
+`selectedMultiRootRealizedNode_measurableSet` proves that
+$\{\omega:\operatorname{surviveAlong}(\omega(i),[],s(\omega))\}$ belongs to
+the corresponding multi-root step filtration.
 
-The mark type and its additive position structure are parameters, so these
+Here $X(i,u,\omega)=\operatorname{position}(\mathrm{initial},d,\omega,i,u)$
+and $X_n(i,u,\omega)=\operatorname{positionAtGeneration}
+(\mathrm{initial},d,n,i,u,\omega)$. The mark type and its additive position
+structure are parameters, so these
 results are not specific to `ℝ`. The measurability proofs carry the current
 address along the path, making each induction step depend on one fixed root
 and one fixed step coordinate.
