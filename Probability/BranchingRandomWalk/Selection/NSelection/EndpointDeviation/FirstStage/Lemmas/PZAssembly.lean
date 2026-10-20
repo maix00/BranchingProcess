@@ -4,8 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.PositiveA.Lemmas.PZBudget
-import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Rate.PowerBudget
+import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.FirstStage.Lemmas.PZBudget
+import Analysis.Asymptotics.Power.ENNRealRatio
 /-!
 * `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.eventually_rightTailPositiveA_pzMean_toReal_ge_power_of_centeredSecondMoment`:
   if `lowerMean` is the one-root corridor contribution and `upperMean +
@@ -387,13 +387,12 @@ lemma eventually_rightTailPositiveA_pzMean_toReal_ge_power_of_centeredSecondMome
       rw [hlog]
       simpa [mul_comm] using hyRealLe
     have hbudget :=
-      ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.ennreal_sq_div_toReal_ge_of_power_bounds
-        hNpos hyTop hyPos hxPower hyPower
+      Asymptotics.ennreal_rpow_div_toReal_ge_of_power_bounds
+        hNpos (by norm_num : 0 ≤ (2 : ℝ)) hyTop hyPos hxPower hyPower
     have hexponent : 2 * (-b - epsilon) - (-b + 2 * v + epsilon) =
         -b - 2 * v - 3 * epsilon := by ring
     rw [hexponent] at hbudget
-    change (N n : ℝ) ^ (-b - 2 * v - 3 * epsilon) ≤ (pzMean n).toReal
-    exact hbudget
+    simpa [pzMean, x, y, z, d] using hbudget
   simpa [pzMean, L, ell, corridor, spineEvent, spineProb, lowerMean,
     upperMean, q, pairBound, pairTerm] using hpzLower
 

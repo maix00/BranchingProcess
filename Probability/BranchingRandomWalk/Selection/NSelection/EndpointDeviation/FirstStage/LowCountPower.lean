@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.PositiveA.Lemmas.PZAssembly
+import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.FirstStage.Lemmas.PZAssembly
 import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Population.LowCount
 /-!
 * `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.eventually_rightTailPositiveA_populationLowCount_le_exp_neg_power`:
