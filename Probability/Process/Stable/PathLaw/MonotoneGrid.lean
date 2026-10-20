@@ -6,8 +6,8 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.FunctionalLimit.Stable.PathFiniteDimensionalSource
-public import Probability.Process.Stable.PathLaw
+public import Probability.Process.RandomWalk.FunctionalLimit.Stable.PathLaw.RandomWalkGrid
+public import Probability.Process.Stable.PathLaw.Basic
 public import Probability.ConvergenceInDistribution.CadlagPath.FiniteDimensional
 public import Mathlib.MeasureTheory.Constructions.Pi
 
@@ -17,6 +17,34 @@ public import Mathlib.MeasureTheory.Constructions.Pi
 This module provides the finite-product operation needed to pass between
 strict and monotone time grids. Removing a repeated position removes a
 zero-length increment; restoring it inserts a Dirac-zero coordinate.
+
+The public finite-coordinate maps are:
+
+- `ProbabilityTheory.insertZeroCoordinate` and
+  `ProbabilityTheory.insertRepeatedPosition`, which insert a zero increment
+  or a repeated position; `ProbabilityTheory.removeRepeatedPosition` and
+  `ProbabilityTheory.deleteRepeatedPointGrid` remove a repeated endpoint.
+- `ProbabilityTheory.measurable_insertZeroCoordinate`,
+  `ProbabilityTheory.measurable_insertRepeatedPosition`, and
+  `ProbabilityTheory.measurable_removeRepeatedPosition`, which give the
+  corresponding measurability statements.
+- `ProbabilityTheory.removeRepeatedPosition_insertRepeatedPosition` and
+  `ProbabilityTheory.map_removeRepeatedPosition_insertRepeatedPosition`,
+  which state the vector and measure round-trip identities.
+- `ProbabilityTheory.insertRepeatedPosition_removeRepeatedPosition_of_diagonal`
+  and
+  `ProbabilityTheory.map_insertRepeatedPosition_removeRepeatedPosition_of_ae_diagonal`,
+  which state the reverse identities for vectors with equal adjacent
+  coordinates and measures supported almost everywhere on that diagonal.
+- `ProbabilityTheory.partialSum_insertZeroCoordinate` and
+  `ProbabilityTheory.measure_pi_insertZeroCoordinate`, which identify the
+  partial sums and product measure after inserting a zero increment.
+
+The final results,
+`ProbabilityTheory.ae_start_eq_zero_of_strictGridPositionLaws` and
+`ProbabilityTheory.stableGridPositionLaws_of_strictGridPositionLaws`, recover
+the zero initial position and stable laws on monotone grids from the laws on
+strictly increasing grids.
 -/
 
 @[expose] public section
@@ -120,18 +148,18 @@ def deleteRepeatedPointGrid {n : ℕ} (i : Fin (n + 1))
     (grid : Fin (n + 2) → unitInterval) : Fin (n + 1) → unitInterval :=
   fun j => grid ((i.succ).succAbove j)
 
-private theorem deleteRepeatedPointGrid_monotone {n : ℕ} (i : Fin (n + 1))
+private lemma deleteRepeatedPointGrid_monotone {n : ℕ} (i : Fin (n + 1))
     (grid : Fin (n + 2) → unitInterval) (hgrid : Monotone grid) :
     Monotone (deleteRepeatedPointGrid i grid) := by
   exact hgrid.comp (i.succ).succAboveOrderEmb.monotone
 
-private theorem deleteRepeatedPointGrid_start {n : ℕ} (i : Fin (n + 1))
+private lemma deleteRepeatedPointGrid_start {n : ℕ} (i : Fin (n + 1))
     (grid : Fin (n + 2) → unitInterval) (hstart : grid 0 = ⊥) :
     deleteRepeatedPointGrid i grid 0 = ⊥ := by
   change grid ((i.succ).succAbove 0) = ⊥
   rw [Fin.succAbove_ne_zero_zero (Fin.succ_ne_zero i), hstart]
 
-private theorem denseEvaluation_insertRepeatedPoint {n : ℕ}
+private lemma denseEvaluation_insertRepeatedPoint {n : ℕ}
     (i : Fin (n + 1)) (grid : Fin (n + 2) → unitInterval)
     (hrep : grid i.castSucc = grid i.succ) (f : CadlagPath unitInterval ℝ) :
     denseEvaluation grid f =
@@ -141,7 +169,7 @@ private theorem denseEvaluation_insertRepeatedPoint {n : ℕ}
   · simp [denseEvaluation, insertRepeatedPosition, deleteRepeatedPointGrid, hrep]
   · simp [denseEvaluation, insertRepeatedPosition, deleteRepeatedPointGrid]
 
-private theorem deleteRepeatedPointGrid_increment_interval {n : ℕ}
+private lemma deleteRepeatedPointGrid_increment_interval {n : ℕ}
     (i : Fin (n + 1)) (grid : Fin (n + 2) → unitInterval)
     (hrep : grid i.castSucc = grid i.succ) (j : Fin n) :
     ((deleteRepeatedPointGrid i grid j.succ : unitInterval) : ℝ) -
@@ -188,7 +216,7 @@ private theorem deleteRepeatedPointGrid_increment_interval {n : ℕ}
     simp [deleteRepeatedPointGrid, Fin.succ_succAbove_succ]
   rw [hupper, hlower]
 
-private theorem contractNth_insertZeroCoordinate {n : ℕ} (i : Fin (n + 1))
+private lemma contractNth_insertZeroCoordinate {n : ℕ} (i : Fin (n + 1))
     (x : Fin n → ℝ) :
     Fin.contractNth i (· + ·) (insertZeroCoordinate i x) = x := by
   ext j

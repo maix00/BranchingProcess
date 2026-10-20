@@ -9,9 +9,26 @@ import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.DomainF
 /-!
 # Independence of subtree-vector events from the past
 
+In namespace `ProbabilityTheory.BranchingRandomWalk`, the public declarations
+are:
+
+- `multiRootSubtreeStepFieldVector_future_measurable roots hlen`: if each
+  root address has length `n`, then the subtree vector is measurable with
+  respect to the future-coordinate sigma-algebra
+  $\sigma(\omega(r,u): |u|\ge n)$.
+- `fixed_multiRootSubtreeStepFieldVector_independent μ roots hlen`:
+  $\operatorname{Indep}(\mathcal F_n,\sigma(V),\nu_m)$, where
+  $\mathcal F_n$ is the multi-root past,
+  `V` is the subtree vector, and `ν_m` is the finite-root product law.
+- `fixed_multiRootSubtreeStepFieldVector_event_factorization μ roots hlen hinj A B hA hB`:
+  for pairwise distinct roots at level `n`,
+  $\nu_m(A\cap V^{-1}(B))=\nu_m(A)\,(\bigotimes_{j:Fin\,k}
+  \operatorname{stepFieldLaw}(\mu))(B)$ when `A`
+  is measurable in `𝓕_n` and `B` is measurable in the subtree-vector space.
+
 The subtree vector is measurable for the future space at the roots' common
-generation, so past events factor against subtree-vector events against the
-product law.
+generation. Its law is the independent product of `k` single-root fields, so
+past events factor against measurable subtree-vector events.
 -/
 
 open MeasureTheory ProbabilityTheory
