@@ -179,7 +179,7 @@ by mathematical subject:
 | `BranchingRandomWalk/Population/Processes/StepSelection/SplitSchedule` | `Definition/`, `Field/`, and `Trials/`. |
 | `Stable/SmallDeviation/PathClass/StepCorridor/Partition` | `Core/`, `Lower/`, and `Upper/`. The deterministic endpoint-core plus finite inner-cell geometry now lives at its semantic owner, `Topology/Cadlag/Skorokhod/PathClass/StepCorridor/Partition/LowerGeometry.lean`; the stable `Lower/Geometry.lean` is reserved for cell events and their pathwise concatenation. The one-use radius-contraction step is under `Lower/Lemmas/CoreShrink.lean`. |
 | `Stable/SmallDeviation/Blocks/Lower` | `Assembly/`, `Binning/`, `Bounds/`, `Entrance/`, `Return/`, and `Lemmas/`. |
-| `RandomWalk/SmallDeviation/Mogulskii` | `Theorems.lean` is the Lean import entry for the original paper's Theorems 1–4. Its public imports group the formalized interfaces for Theorem 1 (discrete random walk), Theorem 2 (strictly stable process), and Theorem 3 (Gaussian/finite variance); the module documentation records their formulas and declaration names. Theorem 4, the full continuous-time source-process rate of Section 5, is not formalized yet and is explicitly marked pending, with its missing process-level inputs in `docs/MOGULSKII_PROCESS_THEOREM_4_PROOF_ROUTE.md`. Keep this as a Lean import module, not a Markdown index. Definitions remain with their semantic owners; theorem-specific block and return-kernel estimates are grouped in the nested `Lemmas/` tree: `Path/` owns path encodings and corridor events; `Scale/` owns diffusive and stable normalization; `Lemmas/Partition/` owns proof-specific finite-partition estimates; `Stable/` and `Gaussian/` contain stable-domain and finite-variance specializations; `RandomWalkBounds/` assembles endpoint and corridor probability bounds; `Rate/` groups the normal-domain rate arguments; and `Spectral/` owns the killed symmetric-lattice spectral route. Reusable mathematical results remain in these subject modules; theorem-specific derivation steps stay in nested `Lemmas/` modules. `Gaussian/Blocks/` contains complete finite-dimensional block-limit results; the finite Gaussian-product parameter choices used only while assembling the lower-bound proofs are grouped under `Gaussian/Blocks/Lemmas/`. `Gaussian/EscapeConstant.lean` is the Brownian escape-constant entry, and its one-use Rademacher-to-tube bridge lives under `Gaussian/Lemmas/NormalConstant.lean`. `Lemmas/Blocks/Uniform.lean` gives the finite-reference block-survival estimates; `Lemmas/Partition/` contains the finite-partition event bounds; and `Lemmas/Return/` assembles and iterates the return-kernel bounds. General killed-kernel APIs remain under `Probability/Process/RandomWalk/Kernel/Killed/`. The original-paper theorem entry remains `Theorems.lean`. |
+| `RandomWalk/SmallDeviation/Mogulskii` | `Theorems.lean` is the Lean import entry for the original paper's Theorems 1–4. Its public imports group the formalized interfaces for Theorem 1 (discrete random walk), Theorem 2 (strictly stable process), and Theorem 3 (Gaussian/finite variance); the module documentation records their formulas and declaration names. Theorem 4, the full continuous-time source-process rate of Section 5, is not formalized yet and is explicitly marked pending, with its missing process-level inputs in `docs/MOGULSKII_PROCESS_THEOREM_4_PROOF_ROUTE.md`. Keep this as a Lean import module, not a Markdown index. Definitions remain with their semantic owners; theorem-specific block and return-kernel estimates are grouped in the nested `Lemmas/` tree: `Path/` owns path encodings and corridor events; `Scale/` owns diffusive and stable normalization; `Lemmas/Partition/` owns proof-specific finite-partition estimates; `Stable/` and `Gaussian/` contain stable-domain and finite-variance specializations; `RandomWalkBounds/` assembles endpoint and corridor probability bounds; `Rate/` groups the normal-domain rate arguments; and `Spectral/` owns the killed symmetric-lattice spectral route. Reusable mathematical results remain in these subject modules; theorem-specific derivation steps stay in nested `Lemmas/` modules. `Gaussian/Blocks/` contains complete finite-dimensional block-limit results; the finite Gaussian-product parameter choices used only while assembling the lower-bound proofs are grouped under `Gaussian/Blocks/Lemmas/`. `Gaussian/EscapeConstant.lean` is the Brownian escape-constant entry, and its one-use Rademacher-to-tube bridge lives under `Gaussian/Lemmas/NormalConstant.lean`. `Gaussian/Blocks/FiniteReferenceSurvival.lean` gives the finite-reference block-survival estimates; `Lemmas/Partition/` contains the finite-partition event bounds; and `Lemmas/Return/` assembles and iterates the return-kernel bounds. General killed-kernel APIs remain under `Probability/Process/RandomWalk/Kernel/Killed/`. The original-paper theorem entry remains `Theorems.lean`. |
 | `BranchingRandomWalk/Selection/NSelection/AsymptoticSpeed` | `Limit/` and `Selection/` group the main speed argument; `InitialPopulation/Basic.lean` remains the initial-population entry, with `Field/`, `Trajectory/`, and `Speed/` subfamilies. |
 | `Mogulskii/Stable/RandomWalkBounds/FromIncrementLaw` | `Normal/`, `Path/`, and `Stable/`; `Normal/HorizontalTube/` groups the index-two finite-variance tube rate, endpoint-window forms, and their proof lemmas with the other normal-domain results. |
 | `Mogulskii/Stable/RandomWalkBounds/FromIncrementLaw/Normal/HorizontalTube` | `Basic.lean` contains the core closed-tube rate, `Scales.lean` its scale specializations, and `EndpointWindow.lean` proves the endpoint-window rate using the event defined in the semantic `SmallDeviation/HorizontalTube/EndpointWindow.lean` module. `TerminalLeftCorridor.lean` owns the terminal-left constant-corridor event and both reusable inclusions between terminal-left corridors and the closed horizontal tube. The singleton endpoint-window corridor and its terminal-left path inclusion remain theorem-specific under `Lemmas/EndpointWindowCorridor.lean`. The reusable unit-tube terminal-window construction is in `Topology/Cadlag/Skorokhod/PathClass/StepCorridor/TerminalWindow.lean`, and its all-exponent energy identity is in the corresponding `MeasureTheory/Measure/CadlagPath/PathClass/StepCorridor/TerminalWindow.lean`. |
@@ -1650,7 +1650,7 @@ probability interfaces into `Lemmas/`.
 ## Gaussian product-parameter helper abstraction review (2026-10-20)
 
 `Gaussian/Blocks/Lemmas/ProductParameters.lean` has two clients:
-`Mogulskii/Lemmas/Blocks/Uniform.lean` and `Mogulskii/Rate/Partition/Finite.lean`.
+`Mogulskii/Gaussian/Blocks/FiniteReferenceSurvival.lean` and `Mogulskii/Rate/Partition/Finite.lean`.
 Write $\gamma(I)=\mathbb P(Z\in I)$ for a standard normal random variable
 $Z$. The first selects $0<c\leq1$, $\delta>0$, and $b>0$ so that
 \[
@@ -1711,9 +1711,9 @@ them Lean-private.
 The import boundary now matches this classification: `ProductParameters.lean`
 publicly imports the Gaussian interval interface used in its statements and
 imports the finite-product results and pinned Mathlib order/product modules
-ordinarily for its proofs. `Lemmas/Blocks/Uniform.lean` directly imports the
-finite-product theorem it uses in its own proof. The helper and both clients
-compiled together with the pinned toolchain (3,431 Lake jobs).
+ordinarily for its proofs. `Gaussian/Blocks/FiniteReferenceSurvival.lean`
+directly imports the finite-product theorem it uses in its proof. The helper
+and both clients compiled together with the pinned toolchain (3,431 Lake jobs).
 
 ## Stable Mogul'skii path-class rate header sign (2026-10-20)
 
@@ -2276,32 +2276,35 @@ imports being re-exported.
 
 ## Mogulskii proof-support hierarchy (2026-10-21)
 
-A module-import and statement audit moved five finite-reference estimates
-from the first-level `Blocks/`, `Partition/`, and `Return/` directories into
-`Lemmas/{Blocks,Partition,Return}/`. The moved modules are
-`Blocks/Uniform.lean`, `Partition/{Basic,Quantitative}.lean`, and
-`Return/{Partition,Uniform}.lean`. Their conclusions use the Mogulskii
-diffusive scale, Gaussian target products, and the finite-partition/return
-argument. The general killed and return-kernel operations they consume remain
-owned by `Probability/Process/RandomWalk/Kernel/Killed/`. The five modules retain
+A module-import and statement audit moved four theorem-specific estimates
+from the first-level `Partition/` and `Return/` directories into
+`Lemmas/{Partition,Return}/`. The moved modules are
+`Partition/{Basic,Quantitative}.lean` and `Return/{Partition,Uniform}.lean`.
+Their conclusions use the Mogulskii diffusive scale, Gaussian target products,
+and the finite-partition/return argument. The general killed and return-kernel
+operations they consume remain owned by
+`Probability/Process/RandomWalk/Kernel/Killed/`. These four modules retain
 `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii`; this organization
-change only adjusts import paths. Proof-only dependencies between
-`Lemmas/` modules and their clients now use ordinary imports; the Gaussian and
-killed-kernel, moment, scale, path-corridor, and IID-law modules that occur in
-theorem statements remain public imports. This keeps proof helpers out of
-downstream re-export surfaces. The return-kernel estimates are consumed in
-proofs by `Rate/Bounds/Lower.lean` and `Rate/Partition/Finite.lean`;
-`Blocks/Uniform.lean` has no direct client and remains as a complete
-finite-reference estimate in the proof-support hierarchy.
+change only adjusts import paths. Proof-only dependencies between `Lemmas/`
+modules and their clients use ordinary imports; the Gaussian and killed-kernel,
+moment, scale, path-corridor, and IID-law modules that occur in theorem
+statements remain public imports. The return-kernel estimates are consumed in
+proofs by `Rate/Bounds/Lower.lean` and `Rate/Partition/Finite.lean`.
+
+The finite-reference Gaussian survival estimates were reclassified after this
+audit: despite having no current caller, they form a complete theorem-level
+interface, so they live in
+`Gaussian/Blocks/FiniteReferenceSurvival.lean` with namespace
+`ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Blocks`.
 
 `Theorems.lean` remains the only article-theorem entry at the Mogulskii root
-and does not re-export these proof-support modules. The other first-level
-directories are semantic interfaces for paths, scales, stable and Gaussian
-regimes, random-walk bounds, rates, and the spectral method. There is no
-catch-all `Definitions/`: each definition remains beside its mathematical
-owner. The five moved modules, their active direct clients, and the full
-`BranchingProcess` target compiled successfully with the pinned toolchain
-(5,593 jobs).
+and does not re-export the Gaussian block estimate or proof-support modules.
+The other first-level directories are semantic interfaces for paths, scales,
+stable and Gaussian regimes, random-walk bounds, rates, and the spectral
+method. There is no catch-all `Definitions/`: each definition remains beside
+its mathematical owner. The four moved helper modules, their active direct
+clients, and the full `BranchingProcess` target compiled successfully with the
+pinned toolchain (5,593 jobs).
 
 ## Proof-helper import visibility (2026-10-21)
 
