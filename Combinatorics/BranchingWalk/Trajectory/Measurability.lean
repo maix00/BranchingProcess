@@ -15,6 +15,11 @@ public import Mathlib.MeasureTheory.MeasurableSpace.Constructions
 
 The σ-algebra on `Trajectory Time X` is induced by the pair of vertex and edge
 images.  The projection back to the vertex cloud is measurable.
+
+The public API equips `Trajectory Time X` with the measurable space induced
+by the pair of vertex and edge images. `measurable_vertices` and
+`measurable_edges` prove the two coordinate maps measurable, and
+`measurable_toCloud` proves measurability of projection to the vertex cloud.
 -/
 
 @[expose] public section

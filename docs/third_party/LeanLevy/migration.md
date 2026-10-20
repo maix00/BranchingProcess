@@ -9,11 +9,11 @@ migration; duplicate API cleanup is tracked separately from file ownership.
 | `LeanLevy/Fourier/PositiveDefinite.lean` | `Analysis/Fourier/PositiveDefinite.lean` |
 | `LeanLevy/Fourier/Bochner.lean` | `Analysis/Fourier/Bochner.lean` |
 | `LeanLevy/Fourier/MeasureFourier.lean` | Removed after replacing the duplicate Fourier transform with Mathlib's `charFun`. |
-| `LeanLevy/Probability/Characteristic.lean` | `MeasureTheory/Measure/CharacteristicFunction/ProbabilityMeasure.lean` (retains only the repository-specific positive-definiteness proof; the wrapper and duplicate basic lemmas were removed). |
+| `LeanLevy/Probability/Characteristic.lean` | `MeasureTheory/Measure/CharacteristicFunction/PositiveDefinite.lean` (retains only the repository-specific positive-definiteness proof; the wrapper and duplicate basic lemmas were removed). |
 | `LeanLevy/Probability/WeakConvergence.lean` | Removed after replacing its specialized real-line Lévy continuity theorem with Mathlib's `ProbabilityMeasure.tendsto_iff_tendsto_charFun` in `Mathlib.MeasureTheory.Measure.LevyConvergence`. |
 | `LeanLevy/Probability/Poisson.lean` | `Probability/Distributions/Poisson/Basic.lean` |
 | `LeanLevy/Levy/InfiniteDivisible.lean` | `Probability/Distributions/InfinitelyDivisible/Basic.lean` |
-| `LeanLevy/Levy/LevyMeasure.lean` | `Probability/Distributions/InfinitelyDivisible/LevyMeasure.lean` |
+| `LeanLevy/Levy/LevyMeasure.lean` | `MeasureTheory/Measure/Levy/Basic.lean` |
 | `LeanLevy/Levy/CompensatedIntegral.lean` | `Probability/Distributions/InfinitelyDivisible/LevyKhintchine/Integrand.lean` |
 | `LeanLevy/Levy/LevyKhintchine.lean` | `Probability/Distributions/InfinitelyDivisible/LevyKhintchine/Defs.lean` |
 | `LeanLevy/Levy/LevyKhintchineProof.lean` | `Probability/Distributions/InfinitelyDivisible/LevyKhintchine/Representation.lean` |

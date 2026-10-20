@@ -174,7 +174,7 @@ private noncomputable def mellinIntegrand (α : ℝ) (p : ℝ × ℝ) : ℝ :=
   cosineTauberianKernel p.1 *
     ((1 - Real.cos (p.1 * p.2)) * p.2 ^ (-1 - α))
 
-private theorem integrable_mellinIntegrand
+private lemma integrable_mellinIntegrand
     {α : ℝ} (hα₀ : 0 < α) (hα₂ : α < 2) :
     Integrable (mellinIntegrand α)
       ((volume.restrict (Ioi 0)).prod (volume.restrict (Ioi 0))) := by
@@ -343,7 +343,7 @@ theorem cosineTauberianMellinMoment_mul_cosineMoment_eq_profileGapMoment
           ∫ y in Ioi (0 : ℝ), cosineTauberianProfileGapWeight α y := by
         simp [μ, integral_const_mul]
 
-private theorem profileGapWeight_eq_small
+private lemma profileGapWeight_eq_small
     {α y : ℝ} (hy₀ : 0 < y) (hy₁ : y ≤ 1) :
     cosineTauberianProfileGapWeight α y =
       (1 / 2 : ℝ) * y ^ (1 - α) - (1 / 3 : ℝ) * y ^ (2 - α) := by
@@ -369,7 +369,7 @@ private theorem profileGapWeight_eq_small
     _ = (1 / 2 : ℝ) * y ^ (1 - α) -
           (1 / 3 : ℝ) * y ^ (2 - α) := by rw [hpow₂, hpow₃]
 
-private theorem profileGapWeight_eq_tail
+private lemma profileGapWeight_eq_tail
     {α y : ℝ} (hy : 1 < y) :
     cosineTauberianProfileGapWeight α y =
       (1 / 6 : ℝ) * y ^ (-1 - α) := by

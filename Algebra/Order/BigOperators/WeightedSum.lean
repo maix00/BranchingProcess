@@ -12,6 +12,19 @@ public import Mathlib.Basic.Real.Basic
 /-!
 # Bounds for weighted finite sums
 
+The public declarations in `Finset` are:
+
+- `weightedSum_bounds_of_sum_eq`: for nonnegative masses $m_i$ and weights
+  $\ell\le w_i\le u$ on $s$, if
+  $\sum_{i\in s}m_iw_i=W$, then
+  $\ell\sum_{i\in s}m_i\le W\le u\sum_{i\in s}m_i$.
+- `div_le_sum_of_weightedSum_eq`: for nonnegative masses $m_i$, if
+  $w_i\le u$ on $s$ with $u>0$ and $\sum_{i\in s}m_iw_i=W$, then
+  $W/u\le\sum_{i\in s}m_i$.
+- `sum_le_div_of_weightedSum_eq`: for nonnegative masses $m_i$, if
+  $0<\ell\le w_i$ on $s$ and $\sum_{i\in s}m_iw_i=W$, then
+  $\sum_{i\in s}m_i\le W/\ell$.
+
 If nonnegative masses are multiplied by weights in a fixed interval, the
 weighted sum bounds the unweighted total after scaling by the interval ends.
 -/
