@@ -1,4 +1,4 @@
-import Analysis.Asymptotics.SlowDiagonal
+import Analysis.Asymptotics.Scale.SlowDiagonal
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Partition
 
 open Filter
