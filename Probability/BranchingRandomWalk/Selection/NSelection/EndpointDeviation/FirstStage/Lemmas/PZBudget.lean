@@ -8,6 +8,8 @@ import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Po
 import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Population.LowCount
 import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Rate.PowerBudget
 import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
+import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Drawdown.Spine.Cutoff
+import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Rate.LogScales
 
 /-!
 * `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.eventually_rightTailPositiveASpineCorridor_ge_exp_neg_log`:
@@ -32,51 +34,13 @@ open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable
 open ProbabilityTheory.RandomWalk.SmallDeviation.Entrance
 open ProbabilityTheory.BranchingRandomWalk.Spine
 
-private lemma tendsto_rightTailPositiveAFirstCutoff_twoFifths_div_log
-    {N : ℕ → ℕ} (hN : Tendsto N atTop atTop) :
-    Tendsto (fun n => logarithmicSmallDeviationScale
-      (rightTailPositiveAFirstCutoff N n) /
-        logarithmOfSampleSize N n) atTop (𝓝 1) := by
-  let L : ℕ → ℝ := logarithmOfSampleSize N
-  let arg : ℕ → ℝ := fun n => L n ^ ((5 : ℝ) / 2)
-  let cutoff : ℕ → ℝ := fun n => (rightTailPositiveAFirstCutoff N n : ℝ)
-  have hL : Tendsto L atTop atTop := by
-    exact Real.tendsto_log_atTop.comp
-      (tendsto_natCast_atTop_atTop.comp hN)
-  have harg : Tendsto arg atTop atTop :=
-    (_root_.tendsto_rpow_atTop (by norm_num : (0 : ℝ) < 5 / 2)).comp hL
-  have hfloor : Tendsto (fun n => cutoff n / arg n) atTop (𝓝 1) := by
-    have h := (tendsto_nat_floor_div_atTop.comp harg)
-    have heq : (fun n => cutoff n / arg n) =ᶠ[atTop]
-        fun n => (Nat.floor (arg n) : ℝ) / arg n := by
-      filter_upwards [] with n
-      simp [cutoff, arg, L, rightTailPositiveAFirstCutoff,
-        logarithmOfSampleSize]
-    exact h.congr' heq.symm
-  have hpower : Tendsto (fun n => (cutoff n / arg n) ^ ((2 : ℝ) / 5))
-      atTop (𝓝 1) := by
-    simpa using hfloor.rpow_const
-      (x := (1 : ℝ)) (p := (2 : ℝ) / 5) (Or.inl (by norm_num))
-  have hratio : Tendsto (fun n => cutoff n ^ ((2 : ℝ) / 5) / L n)
-      atTop (𝓝 1) := by
-    have heq : (fun n => cutoff n ^ ((2 : ℝ) / 5) / L n) =ᶠ[atTop]
-        fun n => (cutoff n / arg n) ^ ((2 : ℝ) / 5) := by
-      filter_upwards [hL.eventually_gt_atTop 0] with n hn
-      have hargPos : 0 < arg n := Real.rpow_pos_of_pos hn _
-      have hargPow : arg n ^ ((2 : ℝ) / 5) = L n := by
-        dsimp [arg]
-        rw [← Real.rpow_mul hn.le]
-        norm_num [Real.rpow_one]
-      rw [Real.div_rpow (by positivity) hargPos.le, hargPow]
-    exact hpower.congr' heq.symm
-  simpa [cutoff, logarithmicSmallDeviationScale] using hratio
 
 private lemma tendsto_rightTailPositiveASpineScale_div_log
     {N : ℕ → ℕ} (hN : Tendsto N atTop atTop) {v : ℝ} :
     Tendsto (fun n => (v / 2) * logarithmicSmallDeviationScale
       (rightTailPositiveAFirstCutoff N n) /
         logarithmOfSampleSize N n) atTop (𝓝 (v / 2)) := by
-  have h := (tendsto_rightTailPositiveAFirstCutoff_twoFifths_div_log hN).const_mul
+  have h := (tendsto_rightTailPositiveAFirstCutoff_smallDeviationScale_div_log hN).const_mul
     (v / 2)
   have heq : (fun n => (v / 2) * logarithmicSmallDeviationScale
       (rightTailPositiveAFirstCutoff N n) /
