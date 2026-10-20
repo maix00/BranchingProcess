@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.Horizontal.Basic
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Path.SourcePath
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Path.TerminalLeft
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.FromIncrementLaw.Normal.ContinuousBoundary
 /-!
 # Finite-variance bounds for block oscillation

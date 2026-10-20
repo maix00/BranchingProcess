@@ -112,6 +112,11 @@ For the mathematical distinction between Mogulskii corridors, drawdown,
 tilted tubes, and entrance estimates, see
 [`Probability/Process/RandomWalk/SmallDeviation/README.md`](Probability/Process/RandomWalk/SmallDeviation/README.md).
 
-There is no umbrella import. Import the module that owns the required
-definition or theorem. The dependency graph and API are checked by the
-repository scripts described in [`CONTRIBUTING.md`](CONTRIBUTING.md).
+There is no repository-wide umbrella import. A named subject entry point may
+re-export a coherent list of principal published results for discovery, as
+`Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Theorems.lean` does
+for the original Mogul'skii theorems. Such an entry point does not replace the
+semantic owner modules: proofs and ordinary clients import the narrow module
+that defines the required object or proves the required result. The dependency
+graph and API are checked by the repository scripts described in
+[`CONTRIBUTING.md`](CONTRIBUTING.md).

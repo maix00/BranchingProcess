@@ -9,7 +9,7 @@ module
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.FromIncrementLaw.Stable.Domain
 public import Probability.Process.Path.PathClass.StepCorridor.Probability.Rate.ContinuousBoundary
 public import Probability.Process.RandomWalk.FunctionalLimit.Stable.Centering
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Path.SourcePathContinuousBoundary
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Path.TerminalLeftContinuousBoundary
 
 /-!
 # Continuous-boundary Mogul'skii rates from increment laws
@@ -20,6 +20,14 @@ the reciprocal width to the power `α`. The general result is formulated with
 inner and outer measures. The finite-step source event is shown measurable,
 so the ordinary-probability corollary needs no caller-supplied measurability
 condition.
+
+The public results are
+`ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.exists_source_continuousBoundary_inner_outer_rates_of_rawSource`,
+which gives the inner- and outer-measure logarithmic rates for a strictly
+separated continuous corridor, and
+`ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.exists_source_continuousBoundary_probability_rate_of_rawSource`,
+which identifies those rates with the ordinary event probability using
+measurability of the finite-step source event.
 
 The source stable path rate is A. A. Mogul'skii, Theorem 3, Section 4,
 p. 764, “Small deviations in the sample function space,” *Teoriya

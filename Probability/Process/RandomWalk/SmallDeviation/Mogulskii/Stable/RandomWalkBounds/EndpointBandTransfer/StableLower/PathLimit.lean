@@ -9,7 +9,6 @@ module
 public import Probability.Process.RandomWalk.FunctionalLimit.Stable.PathLimit.Block
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.EndpointBandTransfer.StableRate
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Scale.Core
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Scale.Rate
 public import Probability.Process.Stable.SmallDeviation.EscapeRate.PathLaw.Transfer
 
 /-!
@@ -18,6 +17,31 @@ public import Probability.Process.Stable.SmallDeviation.EscapeRate.PathLaw.Trans
 This combines the stable escape rate, the variable-block path limit, and
 open-set Portmanteau for an arbitrary shifted interval. It supplies the
 finite endpoint-band probabilities needed by the discrete return kernel.
+
+The public interfaces in `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete`
+are:
+
+- `eventually_endpointBandReturnBlockProbability_ge_of_stablePathLimit`:
+  if $p$ is below the limiting path-law mass of each open endpoint band,
+  then eventually
+  $p\leq\operatorname{Law}_\nu(\mathrm{endpointBandReturnBlockEvent}
+  (l s_n,u s_n,\varepsilon s_n,i,m_n))$ for every $i\in[-3,3]$.
+- `eventually_endpointCorridorBlockProbability_ge_of_stablePathLimit`:
+  if $p$ is below the limiting mass of one open corridor event, then
+  eventually $p\leq\operatorname{Law}_\nu(\mathrm{endpointCorridorBlockEvent}
+  (l s_n,u s_n,l_e s_n,u_e s_n,m_n))$.
+- `eventually_endpointBandReturnBlockProbability_ge_of_stableScaleTimeRatio`:
+  for any block sequence with $|I_n|/T_n\to a^\alpha$, the same eventual
+  endpoint-band lower bound from the first bullet holds.
+- `eventually_endpointCorridorBlockProbability_ge_of_stableScaleTimeRatio`:
+  under the same time-ratio hypothesis, the corridor probability bound from
+  the second bullet holds for any fixed open endpoint corridor.
+- `eventually_endpointCorridorBlockProbabilityFamily_ge_of_stableScaleTimeRatio`:
+  for a finite index set $I$, the corridor bound holds eventually for every
+  $i\in I$, with the corridor and endpoint interval allowed to depend on $i$.
+
+The balanced stable partition asymptotics used by the cell proof are placed
+in `StableLower/Lemmas/BalancedBlocks.lean`.
 -/
 
 open Filter MeasureTheory ProbabilityTheory
@@ -336,119 +360,6 @@ theorem eventually_endpointCorridorBlockProbabilityFamily_ge_of_stableScaleTimeR
     hscale hα hα₂ hslow hEscape hDOA htightBase blockLength hblockTop
     hamplitude hblockRatio (hlower i hi) (hupper i hi) lowerBound
     (hbelow i hi)
-
-/-- In a macroscopic partition cell, split the floor-rounded horizon into
-balanced blocks around a stable reference length. Both possible integer
-lengths diverge and have the same stable time ratio. This is the asymptotic
-input needed to apply one stable endpoint-band estimate to every block in an
-exact cell partition. -/
-theorem balancedStableCellBlock_asymptotics
-    {ν : Measure ℝ} [IsProbabilityMeasure ν]
-    {α : ℝ} {normalization scale : ℕ → ℝ}
-    (hscale : IsStableMogulskiiScale α ν normalization scale)
-    (hα : 0 < α) (hα₂ : α ≤ 2)
-    (hslow : Asymptotics.IsSlowlyVaryingAtTop
-      (stableSlowVariation α ν))
-    (total : ℕ → ℕ) {duration amplitude : ℝ}
-    (hduration : 0 < duration) (hamplitude : 0 < amplitude)
-    (htotal : Tendsto (fun n => (total n : ℝ) / (n : ℝ))
-      atTop (nhds duration)) :
-    Tendsto
-        (fun n => (Asymptotics.balancedBlockCount (total n)
-          (stableBlockLength α ν (amplitude ^ α) scale n) : ℝ)) atTop atTop ∧
-      Tendsto
-        (fun n => Asymptotics.balancedBlockShortLength (total n)
-          (stableBlockLength α ν (amplitude ^ α) scale n)) atTop atTop ∧
-      Tendsto
-        (fun n => Asymptotics.balancedBlockShortLength (total n)
-          (stableBlockLength α ν (amplitude ^ α) scale n) + 1) atTop atTop ∧
-      Tendsto (fun n =>
-        (Asymptotics.balancedBlockShortLength (total n)
-          (stableBlockLength α ν (amplitude ^ α) scale n) : ℝ) /
-          stableScaleTime α ν (scale n)) atTop (nhds (amplitude ^ α)) ∧
-      Tendsto (fun n =>
-        ((Asymptotics.balancedBlockShortLength (total n)
-          (stableBlockLength α ν (amplitude ^ α) scale n) + 1 : ℕ) : ℝ) /
-          stableScaleTime α ν (scale n)) atTop (nhds (amplitude ^ α)) := by
-  let reference : ℕ → ℕ := fun n => stableBlockLength α ν (amplitude ^ α) scale n
-  have hscaleTop : Tendsto scale atTop atTop :=
-    IsStableMogulskiiScale.scale_tendsto_atTop hscale
-  have hrate : Tendsto (stableSmallDeviationRate α ν scale) atTop (nhds 0) :=
-    tendsto_stableSmallDeviationRate_zero_of_slowVariation
-      hscale.stableNorming hscaleTop hscale.scale_div_normalization_tendsto_zero
-      hα hα₂ hslow
-  have hrefTop : Tendsto reference atTop atTop := by
-    simpa [reference] using tendsto_stableBlockLength_atTop_of_slowVariation
-      hα hα₂ hslow (Real.rpow_pos_of_pos hamplitude α) hscaleTop
-  have hrefPos : ∀ᶠ n : ℕ in atTop, 0 < reference n :=
-    hrefTop.eventually (eventually_gt_atTop 0)
-  have hrefRatioZero : Tendsto (fun n => (reference n : ℝ) / (n : ℝ))
-      atTop (nhds 0) := by
-    simpa [reference] using tendsto_stableBlockLength_div_nat_zero_of_slowVariation
-      hα hα₂ hslow (Real.rpow_pos_of_pos hamplitude α) hscaleTop hrate
-  have hcount : Tendsto
-      (fun n => (Asymptotics.balancedBlockCount (total n) (reference n) : ℝ))
-      atTop atTop := by
-    have hnat := Asymptotics.tendsto_nat_div_atTop_of_positive_horizonRatio_of_zero_blockRatio
-      htotal hduration hrefRatioZero hrefPos
-    exact tendsto_natCast_atTop_atTop.comp hnat
-  have hrefTopReal : Tendsto (fun n => (reference n : ℝ)) atTop atTop :=
-    tendsto_natCast_atTop_atTop.comp hrefTop
-  have hshortRatio := Asymptotics.tendsto_balancedBlockShortLength_div_referenceLength
-    (total := total) (referenceLength := reference) hrefTopReal hcount
-  have hlongRatio := Asymptotics.tendsto_balancedBlockLongLength_div_referenceLength
-    (total := total) (referenceLength := reference) hrefTopReal hcount
-  have hreferenceStableRatio := tendsto_stableBlockLength_div_stableScaleTime_of_slowVariation
-    hα hα₂ hslow (Real.rpow_pos_of_pos hamplitude α) hscaleTop
-  have hkappaPos : ∀ᶠ n : ℕ in atTop, 0 < stableScaleTime α ν (scale n) := by
-    have hkappaTop :=
-      (stableScaleTime_tendsto_atTop_of_stableSlowVariation hα hα₂ hslow).comp hscaleTop
-    exact hkappaTop.eventually (eventually_gt_atTop 0)
-  have hshortStableRatio : Tendsto (fun n =>
-      (Asymptotics.balancedBlockShortLength (total n) (reference n) : ℝ) /
-        stableScaleTime α ν (scale n)) atTop (nhds (amplitude ^ α)) := by
-    have hproduct := hshortRatio.mul hreferenceStableRatio
-    have heq : (fun n =>
-        (Asymptotics.balancedBlockShortLength (total n) (reference n) : ℝ) /
-          stableScaleTime α ν (scale n)) =ᶠ[atTop] fun n =>
-        ((Asymptotics.balancedBlockShortLength (total n) (reference n) : ℝ) /
-          (reference n : ℝ)) *
-          ((reference n : ℝ) / stableScaleTime α ν (scale n)) := by
-      filter_upwards [hrefPos, hkappaPos] with n hn hκ
-      have hre : (reference n : ℝ) ≠ 0 := by exact_mod_cast hn.ne'
-      have hκne : stableScaleTime α ν (scale n) ≠ 0 := hκ.ne'
-      field_simp [hre, hκne]
-    simpa using hproduct.congr' heq.symm
-  have hlongStableRatio : Tendsto (fun n =>
-      ((Asymptotics.balancedBlockShortLength (total n) (reference n) + 1 : ℕ) : ℝ) /
-        stableScaleTime α ν (scale n)) atTop (nhds (amplitude ^ α)) := by
-    have hproduct := hlongRatio.mul hreferenceStableRatio
-    have heq : (fun n =>
-        ((Asymptotics.balancedBlockShortLength (total n) (reference n) + 1 : ℕ) : ℝ) /
-          stableScaleTime α ν (scale n)) =ᶠ[atTop] fun n =>
-        (((Asymptotics.balancedBlockShortLength (total n) (reference n) + 1 : ℕ) : ℝ) /
-          (reference n : ℝ)) *
-          ((reference n : ℝ) / stableScaleTime α ν (scale n)) := by
-      filter_upwards [hrefPos, hkappaPos] with n hn hκ
-      have hre : (reference n : ℝ) ≠ 0 := by exact_mod_cast hn.ne'
-      have hκne : stableScaleTime α ν (scale n) ≠ 0 := hκ.ne'
-      field_simp [hre, hκne]
-    simpa using hproduct.congr' heq.symm
-  have hshortTop : Tendsto
-      (fun n => Asymptotics.balancedBlockShortLength (total n) (reference n))
-      atTop atTop := by
-    apply tendsto_atTop_mono' atTop ?_ hrefTop
-    filter_upwards [] with n
-    exact_mod_cast (Nat.le_add_right (reference n)
-      ((total n % reference n) / Asymptotics.balancedBlockCount (total n) (reference n)))
-  have hlongTop : Tendsto
-      (fun n => Asymptotics.balancedBlockShortLength (total n) (reference n) + 1)
-      atTop atTop := by
-    apply tendsto_atTop_mono' atTop ?_ hshortTop
-    filter_upwards [] with n
-    exact_mod_cast (Nat.le_add_right
-      (Asymptotics.balancedBlockShortLength (total n) (reference n)) 1)
-  exact ⟨hcount, hshortTop, hlongTop, hshortStableRatio, hlongStableRatio⟩
 
 end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete
 

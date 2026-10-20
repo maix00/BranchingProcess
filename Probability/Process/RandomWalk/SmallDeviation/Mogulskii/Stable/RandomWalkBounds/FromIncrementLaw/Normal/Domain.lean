@@ -9,10 +9,12 @@ module
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.FromIncrementLaw.Stable.Domain
 public import Probability.Process.RandomWalk.FunctionalLimit.Normal.Tightness
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Gaussian.EscapeConstant
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.Source.PathClass.Relative
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.TerminalLeft.PathClass.Relative
 public import Probability.Distributions.Stable.Gaussian.Basic
+public import Probability.Distributions.Gaussian.Interval
 public import Probability.Process.Path.PathClass.StepCorridor.Probability.Rate.Relative
 public import Probability.Distributions.Stable.Attraction.Normal.Basic
+public import Probability.Distributions.DomainOfAttraction.Normalization
 
 /-!
 # Normal-domain Mogul'skii rates from increment laws
@@ -183,7 +185,7 @@ noncomputable def rawNormalSourceRateData_of_rawSource
   have hDOAstandard0 : IsInDomainOfAttractionAlong ν (gaussianReal 0 1)
       standardNormalization (fun _ => 0) := by
     simpa only [hmap] using
-      hDOA.changeNormalization hstandardNormalizationPos hq hratioDOA
+      hDOA.changeNormalization hstandardNormalizationPos hratioDOA
   let hinputs := exists_source_gaussian_mogulskii_inputs hsmallStandard hDOAstandard0
   let normalization' : ℕ → ℝ := Classical.choose hinputs
   have hinputsSpec := Classical.choose_spec hinputs

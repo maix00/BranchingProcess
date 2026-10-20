@@ -16,6 +16,28 @@ The finite collection of open block events is chosen to match the lower
 endpoint-band comparison. The corridor radius and band spacing are explicit
 parameters, so later scale-diagonal arguments need not assume a unit block
 radius.
+
+The public declarations in this module are:
+
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.normalizedEndpointBandProbability`:
+  the probability of a normalized strict tube with the terminal displacement
+  in the `i`th endpoint band.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.iidSequenceLaw_normalizedEndpointBand_eq`:
+  identifies this event under normalized increments with the corresponding
+  raw-increment event.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.brownianEndpointBand_le_liminf_normalizedEndpointBandProbability`:
+  for centered unit-variance increments, the Brownian open-corridor mass is at
+  most the liminf of the matching endpoint-band probabilities.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.eventually_forall_normalizedEndpointBandProbability_ge`:
+  a strict Brownian lower bound for each `i ∈ [-3,3]` gives an eventual common
+  lower bound for those seven discrete probabilities.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.eventually_horizontalTubeProbability_ge_pow_endpointBands`:
+  if `horizon n ≤ blocks n * n`, the same lower bound raised to `blocks n`
+  bounds the horizontal-tube probability from below.
+
+The limit transfer uses the Donsker endpoint Portmanteau theorem in
+`Probability.Process.RandomWalk.FunctionalLimit.Donsker.Corridor.Brownian.Endpoint`;
+the final estimate uses the reusable finite-block return-kernel iteration.
 -/
 
 open Filter MeasureTheory ProbabilityTheory

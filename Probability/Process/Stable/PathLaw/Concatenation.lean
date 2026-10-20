@@ -9,7 +9,7 @@ module
 public import Mathlib.Probability.Independence.InfinitePi
 public import Mathlib.Data.Finset.Sort
 public import Probability.Process.Stable.PathLaw.UnitInterval
-public import Probability.Process.RandomWalk.FunctionalLimit.Stable.PathLaw.EndpointGridSource
+public import Probability.Process.RandomWalk.FunctionalLimit.Stable.PathLaw.RandomWalkGrid
 public import Topology.Cadlag.Concatenation
 
 /-!
@@ -19,6 +19,30 @@ This file constructs the canonical probability space of iid unit-interval
 path blocks and the càdlàg process obtained by concatenating them. It also
 records the unit-interval consistency interface needed for the converse
 direction from a unit-time path law.
+
+The public constructions are `ProbabilityTheory.iidUnitPathBlockLaw`, the
+countable product of copies of a unit-interval path law, and
+`ProbabilityTheory.iidUnitPathBlockProcess`, their concatenation on
+nonnegative time. The instance
+`ProbabilityTheory.iidUnitPathBlockLaw_isProbabilityMeasure` makes the
+product law a probability measure when each block law is one. The public
+results are:
+
+- `ProbabilityTheory.iidUnitPathBlockProcess_ae_cadlag`:
+  the concatenated process is almost surely càdlàg.
+- `ProbabilityTheory.measurable_iidUnitPathBlockProcess_eval`:
+  each fixed-time evaluation is measurable.
+- `ProbabilityTheory.iidUnitPathBlockProcess_ae_start_eq_zero` and
+  `ProbabilityTheory.iidUnitPathBlockLaw_ae_blocks_start_eq_zero`:
+  a stable-clock block law starting at zero gives a concatenated process and
+  blocks starting at zero almost surely.
+- `ProbabilityTheory.iidUnitPathBlockProcess_unitIntervalPathLaw_eq`:
+  the first unit-interval segment has the prescribed block law.
+- `ProbabilityTheory.iidUnitPathBlockProcess_integer_increments_hasLaw_pi`:
+  increments over integer time intervals have the corresponding product law.
+- `ProbabilityTheory.isStableClockProcessLaw_of_unitInterval_positionGridLaws`:
+  consistent stable position-grid laws determine a full stable-clock process
+  law.
 -/
 
 @[expose] public section

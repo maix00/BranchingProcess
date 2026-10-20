@@ -6,8 +6,10 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Range.Rate.Logarithmic
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Range.Rate.Parameters
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Range.Blocks.Bound
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Range.Rate.SmallWidth
+import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Range.Rate.Lemmas.LogarithmicTransfer
+import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Range.Rate.Lemmas.FiniteCoverParameters
 
 /-!
 # Sharp horizontal upper rate from the fixed-cover block route

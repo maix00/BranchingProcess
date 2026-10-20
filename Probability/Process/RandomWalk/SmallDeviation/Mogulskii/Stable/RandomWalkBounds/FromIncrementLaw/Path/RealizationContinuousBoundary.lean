@@ -15,6 +15,28 @@ The raw-source continuous-corridor theorem is first proved for the canonical
 i.i.d. sequence law. This module transfers it to any independent measurable
 sequence with the same one-coordinate law, using the measurable finite-step
 corridor preimage. No path-space measurability assumption is added.
+
+The public theorem is
+`exists_source_continuousBoundary_probability_rate_of_rawSource_of_iid`.
+For
+$S_n(\omega)=\mathrm{sourceNormalizedStepCadlagPathIcc}(\mathrm{scale},n,
+  (k\mapsto\mathrm{coordinate}(k,\omega)))$ and
+$E_n=\{\omega\mid S_n(\omega)\in
+\mathrm{relativeContinuousBoundaryCorridorSet}(l,u)\}$, it gives $d>0$
+and $C_{\mathrm{source}}<0$ such that $P(E_n)>0$ eventually and
+
+$$
+\frac{\log P(E_n)}{D_n}\longrightarrow
+\operatorname{rateCoefficient}(\alpha,dC_{\mathrm{source}})
+\int_0^1\!\mathrm{continuousBoundaryDensity}(\alpha,l,u,t)\,dt,
+\qquad D_n=\mathrm{probabilityRateDenominator}(\alpha,\nu,\mathrm{scale},n).
+$$
+
+This is the continuous-boundary form of Theorem 3, Section 4, p. 764 of
+A. A. Mogul'skii, “Small deviations in the sample function space,” *Teoriya
+Veroyatnostei i ee Primeneniya* 19(4) (1974), 755--765; English translation,
+“Small Deviations in a Space of Trajectories,” *Theory of Probability and Its
+Applications* 19(4) (1975), 726--736, DOI 10.1137/1119081.
 -/
 
 open Filter MeasureTheory ProbabilityTheory

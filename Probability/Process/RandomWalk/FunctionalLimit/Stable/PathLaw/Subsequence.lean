@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.ConvergenceInDistribution.CadlagPath.FiniteDimensional
-public import Probability.Process.RandomWalk.FunctionalLimit.Stable.PathLaw.EndpointGridSource
+public import Probability.Process.RandomWalk.FunctionalLimit.Stable.PathLaw.RandomWalkGrid
 public import Probability.Process.RandomWalk.Path.Skorokhod.Core
 
 /-!
@@ -24,6 +24,19 @@ The dense continuity set is chosen after taking the subsequence, as required
 for the Skorokhod `J₁` evaluation maps. A second theorem in this file extends
 the identification to all strictly increasing finite grids by right-
 continuous time approximation.
+
+The public extraction theorems are:
+
+- `ProbabilityTheory.RandomWalk.FunctionalLimit.Stable.exists_subseq_normalizedStepPathLaw_with_stable_dense_grid_laws`:
+  tightness and scalar domain-of-attraction convergence yield a weakly
+  convergent subsequence whose limit has stable position laws on a countable
+  dense set of continuity times, given the block-centering condition.
+- `ProbabilityTheory.RandomWalk.FunctionalLimit.Stable.exists_subseq_normalizedStepPathLaw_with_stable_dense_grid_laws_of_zeroCenter`:
+  the same conclusion when domain-of-attraction centering is identically
+  zero, so the block-centering condition is automatic.
+- `ProbabilityTheory.RandomWalk.FunctionalLimit.Stable.exists_subseq_normalizedStepPathLaw_with_stable_grid_laws`:
+  the extracted limit has the stable finite-dimensional position law on every
+  strictly increasing deterministic finite grid.
 -/
 
 open Filter MeasureTheory ProbabilityTheory

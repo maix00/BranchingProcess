@@ -26,10 +26,14 @@ when the move only clarifies module organization.
 | `Probability/BranchingRandomWalk/Population/Processes/Causal` | Causal genealogical populations and their capacity/path interfaces | The root keeps `Basic.lean`, `Predicate.lean`, and `Genealogy.lean` as the population construction, predicate selection, and samplewise genealogy interfaces. `Path/{Window,Bound}.lean` groups finite-history path representations and the reusable pathwise population bound. `Capacity/{Basic,FirstMoment,Spine}.lean` groups generic Markov capacity estimates and their first-moment/spine consequences. These are complete results for the causal-population interface, not fragments of one theorem-specific proof; `RelativePosition/` remains its own reusable path-position family. |
 | `Probability/Process/RandomWalk/Kernel/Killed` | Reusable kernel interfaces for random walks killed on exit | `Basic.lean` defines the restricted transition kernel; `Comparison.lean` compares its survival mass; `Partition.lean` identifies equal-block survival with the path event. `Return/` groups endpoint distributions, target entrance, and terminal bridges; `Survival/` groups block iteration and uniform bounds. These are complete kernel statements reused by multiple small-deviation arguments, so they remain outside `Lemmas/`. |
 | `Probability/Sequence/IID` | Canonical laws and reusable interfaces for independent identically distributed sequences | `Basic.lean`, `Law.lean`, `Filtration.lean`, `CharacteristicFunction.lean`, and `FiniteReindex.lean` remain direct peers for the canonical product law, law identification, prefix-filtration independence, characteristic functions, and finite coordinate symmetry. `Blocks/` groups the complete stopping-time, deterministic-prefix, and conditional block APIs; these are reusable mathematical results and therefore remain outside `Lemmas/`. |
+| `Probability/Process/RandomWalk/Path/Block/Corridor` | Path events and finite-block comparisons for IID random walks | `Comparison.lean` gives the finite-cover measure inequality. `FiniteBridge.lean` adds a reusable `FiniteBridgeGeometry` record, derives uniform bridge mass from open-set path-law convergence, and turns it into the eventual probability and logarithmic-ratio bounds. Applications retain their source-specific corridor geometry in their subject modules. |
+| `Probability/MeasureTheory/Asymptotics` | Asymptotic logarithmic bounds for probability-valued sequences | `FiniteProductRate.lean` turns eventual lower bounds by finite products of exponentials into a lower bound for the scaled logarithm of the target sequence. The result only assumes a finite index type, limits for the scaled counts, eventual nonnegativity of the rate, and values bounded by one; it is independent of random-walk and small-deviation structure. |
 | `Probability/ConvergenceInDistribution` | Core weak-convergence interfaces | `Basic.lean`, `Portmanteau.lean`, `Mapping.lean`, `Independence.lean`, `DeterministicParameter.lean`, and `EscapingMixture.lean` remain direct peer interfaces: they define convergence compatibility, event bounds, continuous mappings, independent products, deterministic-coordinate products, and escaping finite mixtures. The related approximation principles are grouped under `Approximation/{AsymptoticEquivalence,Finite}.lean`; both are complete reusable results, so this semantic grouping does not use `Lemmas/`. The three core modules now list all public declarations and state their formulas and assumptions in the module headers.
+| `Probability/Distributions/DomainOfAttraction` | General interfaces for normalized i.i.d. sums | `Basic.lean` defines attraction along explicit normalization and centering sequences; `Block.lean` transfers the limit to varying block lengths; `Centering.lean` derives zero mean when its hypotheses hold; `Normalization.lean` changes between eventually positive normalizations using `scaleₙ / scale'ₙ → r`, with limiting law pushed forward by `x ↦ r x`. This result applies to any probability limit and belongs at the general domain-of-attraction layer, not under stable norming or Mogulskii. |
+| `RandomWalk/FunctionalLimit/Stable/PathLaw` and `PathLimit` | Fixed-grid laws and `J₁` limits for stable-domain random walks | `PathLaw/EndpointGrid.lean` handles the stable limiting grid, while `PathLaw/RandomWalkGrid.lean` derives the random-walk grid law directly from scalar domain-of-attraction data. `PathLimit/RandomWalk.lean` combines random-walk path-law convergence with the proved tightness criteria below, at, and above index one. The previous generic `Source` filenames were renamed to state the random-walk object explicitly. |
 | `RandomWalk/SmallDeviation/Mogulskii/RandomWalkBounds/Partition` | Floor-rounded finite-partition bounds for normalized step corridors | `Corridor.lean` gives the grid-cell lengths and the upper range-probability product; `Range.lean` owns the IID block-oscillation and product estimates; `Endpoint.lean` owns the endpoint-core block event, its IID factorization, and knot induction; `LowerProbability.lean` assembles these into the corridor lower bound. `Lemmas/LowerGeometry.lean` contains only the theorem-specific deterministic gluing step from local block events to the global corridor event. It retains the `Discrete` namespace because the namespace describes the mathematical interface, while the move only groups the proof module. The lower-probability entry imports this helper ordinarily; its presence under `Lemmas/` indicates proof-chain role, while Lean declaration visibility is governed separately by `private` and the module import. |
 | `RandomWalk/SmallDeviation/Mogulskii/Stable/Rate` | Exact centered horizontal-tube rate under a stable escape-rate hypothesis | `Upper.lean` gives the upper rate; `Lower/BlockProbability.lean` gives the endpoint-return block estimate; `Lower/Liminf.lean` derives strict-subtube and optimized lower rates; `Lower/Positivity.lean` supplies the real-log conditions used by the upper proof; `Lower/Limit.lean` identifies the limit. These complete mathematical interfaces remain outside `Lemmas/`. The partition probability module imports only `Lower/Positivity`, while the final rate test imports `Lower/Limit`. |
-| `RandomWalk/SmallDeviation/Mogulskii/RandomWalkBounds/SourcePartition` | Matching partition estimates for the source terminal-left convention | `Basic.lean` records the clipped terminal knot index and source cell lengths; `Events.lean` gives the selected-cell range upper bound; `LowerProbability.lean` is the lower-bound entry. `Lemmas/LowerGeometry.lean` contains the source-specific deterministic gluing step and is imported ordinarily by the entry. The public interfaces remain beside the `Lemmas/` directory, and the `Discrete` namespace remains unchanged. |
+| `RandomWalk/SmallDeviation/Mogulskii/RandomWalkBounds/TerminalLeftPartition` | Matching partition estimates for the source terminal-left convention | `Basic.lean` records the clipped terminal knot index and source cell lengths; `Events.lean` gives the selected-cell range upper bound; `LowerProbability.lean` is the lower-bound entry. `Lemmas/LowerGeometry.lean` contains the terminal-left deterministic gluing step and is imported ordinarily by the entry. The public interfaces remain beside the `Lemmas/` directory, and the `Discrete` namespace remains unchanged. |
 | `RandomWalk/SmallDeviation/HorizontalTube` | `FiniteVarianceUpper/Basic.lean` formalizes Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.2 and its translated-interval form | The module namespace is `ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube`, including `FiniteVarianceUpper/Lemmas/`. `BlockIteration.lean` owns the reusable killed-interval kernel identity, uniform block estimate, and finite-horizon iteration. The equal-partition and block-length parameters specific to Lemma 3.2, along with its cover, fixed-corridor rate, and rate assembly, are grouped under `FiniteVarianceUpper/Lemmas/Partition/`, `Lemmas/EqualPartition.lean`, and `Lemmas/Rate.lean`. `EndpointWindow.lean` defines the translated and normalized endpoint-window events; `FiniteVarianceLower.lean` owns the reusable endpoint-window consequence of Chapter 3, Lemma 3.1(ii), and `RealWidthLower.lean` supplies uniform real-width thresholds. Lemma 3.5's staircase-specific bins and endpoint fractions live under `DriftedTube/FiniteVarianceLower/Lemmas/Staircase/Setup/`; the finite-cover proof and selection lemmas are under `Lemmas/Staircase/Binning/`. |
 | `RandomWalk/SmallDeviation/Entrance` | `FiniteVarianceEndpointCorridor.lean` and public interfaces with applications to multiple small-deviation arguments | `MovingCorridor.lean` owns the reusable moving-boundary path event and its constant-corridor inclusion, with no terminal-window parameter. `Edge/PrefixSelection.lean` retains the reusable positive-mass increment-window construction; its width inequalities specific to the Lemma 3.5 edge argument are in `Robust/Lemmas/Edge/PrefixGeometry.lean`. `Robust/Event.lean` defines the fixed `[2Δ/5,3Δ/5]` entrance event used in Chapter 3, Lemma 3.5; `Robust/Measurability.lean` proves its prefix-filtration measurability. The inclusion of the Donsker interior event in this narrower-window event is a theorem-specific step in `Robust/Lemmas/Event.lean`. The theorem-specific middle-start estimate, edge products, three-region minimum, and event inclusions remain under `Robust/Lemmas/`. The exponent-uniform assembly from forward and reflected transition-power bounds to a uniform robust-event lower bound is the reusable interface `Robust/PowerLower.lean`; it accepts every positive exponent and is used by the Appendix A.2, Lemma A.7 entrance estimate in the proof of Chapter 3, Lemma 3.5. The inverse-square estimate and polynomial-to-exponential bridge used only by Lemma 3.5 live under `DriftedTube/FiniteVarianceLower/Lemmas/Staircase/Concrete/EntranceBudget.lean`, with the inverse-square estimates private in that file. The unused broad-window power-assembly branch in `Edge` was removed. `Rotation/FinitePath.lean` defines the finite increment path and measurable corridor events; `Rotation/CyclicCover.lean` proves the deterministic path-ball cover by cyclic reindexing; `Rotation/FiniteProduct.lean` converts it to the finite-IID probability bound used by `NormalDomain.lean`. Generic finite-IID reindexing belongs to `Probability/Sequence/IID/FiniteReindex.lean`, and its measure-preserving finite-cover bound belongs to `MeasureTheory/OuterMeasure/Finite/Cover.lean`. The normal-domain entrance bound is still imported by the selected-population second-stage bridge and spine estimates. Lemma 3.5's meander entrance uses the distinct finite-horizon i.i.d. cyclic-rotation inequality in `Fluctuation/SparreAndersen/Rotation/Probability.lean`; `FunctionalLimit/Conditioned/Transition/SurvivalLower.lean` combines it with the Gaussian endpoint-sign limit to obtain the inverse-square width bound. The uniform real-width threshold is proved in the Lemma 3.5 staircase module. |
 | `RandomWalk/FunctionalLimit/Conditioned` | Independent public interfaces by subject: `FirstWindow/`, `Meander/`, `Survival/`, and `Transition/` | `FirstWindow/Definition.lean` owns the prefix event and its measurability; `Selection.lean`, `Existence.lean`, `ConditionedLaw.lean`, `FiniteTime.lean`, `FinitePathLimit.lean`, `Absence.lean`, and `Limit.lean` remain direct complete constructions or limit results. The theorem-specific IID prefix/suffix factorization is grouped under `FirstWindow/Lemmas/BlockFactorization.lean`. The namespace remains `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned` because these declarations belong to the shared conditioned-random-walk interface; moving proof steps changes module organization, not mathematical ownership. `Meander/CorridorProbability.lean` contains the public open-corridor Portmanteau lower bound. `Survival/` contains the conditioned law and scaling. `Transition/Event.lean` owns the finite transition event, its normalized path corridor, equivalences, factorization, and diffusive horizon. The convergence-to-corridor and corridor-to-conditional-probability steps used in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.5 are grouped under `Transition/Lemmas/CorridorProbability.lean`; `Transition/` contains the remaining meander limit and diffusive lower bounds. |
@@ -43,15 +47,16 @@ when the move only clarifies module organization.
 | `Probability/Process/Brownian` | Brownian-process construction, continuous path laws, and support | `Construction/` groups existence and modification inputs; `PathLaw/` groups continuous versions and path-space laws; `Scaling/`, `Marginal/`, and `Support/` own the corresponding interfaces. `Reflection/` is divided into `Path/`, `FirstPassage/`, and `Descending/` families. `FirstPassage/Grid.lean` uses Mathlib's generic `hittingBtwn` for finite observations; `GridLaw.lean` contains the Brownian-law theorem for the separate path first-passage grid approximation. |
 | `Probability/Process/Path/Skorokhod/Corridor/UniformBlocks` | Finite uniform partitions of path corridors | `Independence.lean` states mutual independence of the canonical rational block paths and independence of a prefix path from its next block for any process with independent increments; `Stationarity.lean` identifies translated block laws under stationary independent increments. `Feedback/Basic.lean` defines the sign-selected block and prefix events and their pathwise identities; `Feedback/FullPath.lean` gives the reusable càdlàg transfer from rational-coordinate bounds to a full-path tube. These statements belong to the named path construction, not to stable-process small-deviation modules. |
 | `Probability/Process/RandomWalk/FunctionalLimit/Stable` | Stable-domain path-law convergence and tightness | `PathLaw/` groups endpoint-grid identification, subsequential law construction, process-law construction, and convergence. `Tightness/` groups block tails, local oscillation, partition bounds, compact-range control, and the resulting tightness theorem. The finite-dimensional endpoint theorem and centering conditions remain at the subject root. |
-| `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Spectral/Range` | Rademacher range small-deviation estimates from spectral interval bounds | `Blocks/` contains the one-block Donsker bounds; `Corridor/` contains the finite Brownian cover and killed-corridor comparison; `Rate/` contains parameter selection, logarithmic transfer, asymptotics, and the sharp upper rate. `Basic.lean` defines integer path coordinates, while `Probability.lean` retains the finite-time translated-interval cover. |
+| `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Spectral/Range` | Rademacher range small-deviation estimates from spectral interval bounds | `Blocks/` contains the one-block Donsker bounds; `Corridor/` contains the finite Brownian cover and killed-corridor comparison; `Rate/` contains the Brownian range asymptotics, small-width limit, and sharp upper rate. Its parameter selection and fixed-cover logarithmic transfer are proof-specific and live under `Rate/Lemmas/`. `Basic.lean` defines integer path coordinates, while `Probability.lean` retains the finite-time translated-interval cover. |
 | `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Rate` | Public normal-domain small-deviation rate results | `Endpoint/` groups endpoint bands, windows, and parameter selection; `Endpoint/Selection/Basic.lean` is the public sharp-rate conclusion, while its floor choices and fixed-parameter proof step are in `Endpoint/Selection/Lemmas/FixedParameters.lean`. `Partition/` groups finite covers and partitions; `Bounds/` groups interior, lower, upper, and variance estimates. The declarations keep their existing Mogulskii namespace because their mathematical ownership is unchanged. |
 | `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Spectral` | Spectral estimates for the killed symmetric walk, including diffusive Brownian corridor and endpoint-window bounds | `Kernel/` defines the finite killed transition; `Decomposition/` gives its sine basis, modes, and target-set expansion; `Target/` owns parity-compatible central targets, their principal-mode mass bounds, and the path-event interpretation. These target estimates are parameterized by the target set, interval width, and block scale, so they remain reusable interfaces. `Survival/` groups path-survival bounds; `Scaling/` and `Rate/` contain the diffusive logarithmic limits and analytic asymptotics; `Diffusive/` transfers the spectral lower bound through Donsker convergence to Brownian corridors and return kernels. The finite-cover range upper bound remains in the separate `Range/` family. `Basic.lean` is the core interface, and declarations retain the Mogulskii spectral namespace. |
 | `Probability/Process/RandomWalk/Fluctuation/SparreAndersen` | Reusable finite IID fluctuation identities and survival estimates | `Rotation/` contains the cyclic cover and probability inequality; `Composition/` contains block factorization and the finite composition identity; `Survival/` contains the coefficient recurrence and finite-variance lower bound. These are general mathematical results and remain outside `Lemmas/`. |
 | `Probability/Process/RandomWalk/Rademacher` | Results for the simple symmetric random walk | `Basic.lean`, `ConditionedPathLaw.lean`, and `LastSignChange.lean` are peer interfaces for the walk, its conditioned path law, and its last-sign-change index; `Terminal/` groups the terminal-path construction and convergence steps. |
 | `BranchingRandomWalk/Selection/NSelection/AsymptoticSpeed/InitialPopulation` | Initial-population inputs to selected-walk speed estimates | `Basic.lean` is the exact-$N$ split-event and speed-transport interface; `Field/` and `Speed/` group the source field and speed estimates. In `Trajectory/`, `Population.lean` owns the selected-population construction, `Hitting.lean` is the capacity-hitting entry theorem, and `Lemmas/CapacityHit/{Mark,Growth}.lean` contains its proof-specific mark and cardinality-growth chain. |
-| `Selection/NSelection/EndpointDeviation` | Endpoint deviations of the selected population, including estimates that admit reflection | `Endpoint/` separates minimum, positive-moment, and sequence results. `Roots/`, `Drawdown/`, and `Rate/` group root estimates, population/spine drawdown bounds, and rate budgets. `PositiveA/LowCountPower.lean` is the first-stage entry; its one-use corridor budget and PZ rate assembly are under `PositiveA/Lemmas/`. `Population/` and `SecondStage/` retain their theorem families; the directory name does not impose a right-hand orientation. |
+| `Selection/NSelection/EndpointDeviation` | Endpoint deviations of the selected population, including estimates that admit reflection | `Endpoint/` separates minimum, positive-moment, and sequence results. `Roots/`, `Drawdown/`, and `Rate/` group root estimates, population/spine drawdown bounds, and rate budgets. `FirstStage/LowCountPower.lean` states the first-stage population low-count estimate; its one-use corridor budget and PZ rate assembly are under `FirstStage/Lemmas/`. `FirstStage/` and `SecondStage/` name the proof stages directly instead of encoding the positive exponent parameter in a folder name. `Population/` and `SecondStage/` retain their theorem families; the directory name does not impose a right-hand orientation. |
 | `Selection/NSelection/AsymptoticSpeed` | Speed-limit statements and the selected-population speed proof | `Limit/` groups the almost-sure product and subadditive limit results; `Selection/BlockComparison.lean` and `InitialPopulation/Speed/Basic.lean` state their respective public conclusions. `InitialPopulation/Basic.lean` is the entry module for the initial-population argument; `Field/`, `Trajectory/`, and `Speed/` group its field, hitting-time, and speed-transfer interfaces. `Environment/` and `Selection/` hold the remaining supporting constructions. |
-| `Mogulskii/RandomWalkBounds` and `Mogulskii/Stable/RandomWalkBounds` | Random-walk finite-block bounds and stable-domain random-walk rates | The normal-domain root separates Donsker endpoint, endpoint-band geometry, horizontal tubes, and source-partition arguments. Stable random-walk bounds group `Bridge/`, `Endpoint/`, `Partition/`, `PathClass/`, and `Source/`; the stable-process estimates remain in their own owner directory. `Stable/RandomWalkBounds/FromIncrementLaw/` separates `Normal/`, `Path/`, and `Stable/` adapters, with `HorizontalTube/` holding the finite-variance tube interfaces. `Stable/Scale/Basic.lean` owns the two-scale condition and rate consequences; `Stable/Scale/Rate.lean` owns block-length asymptotics. Gaussian modules remain divided into `Gaussian/Blocks/` and `Gaussian/Path/`. `FunctionalLimit/Donsker/Entrance/` owns the Brownian middle-start corridor and uniform diffusive entrance estimates. |
+| `Mogulskii/RandomWalkBounds` and `Mogulskii/Stable/RandomWalkBounds` | Random-walk finite-block bounds and stable-domain random-walk rates | The normal-domain root separates Donsker endpoint, endpoint-band geometry, horizontal tubes, and source-partition arguments. Stable random-walk bounds group `Bridge/`, `Endpoint/`, `Partition/`, `PathClass/`, and `TerminalLeft/`; `Partition/Lower/` contains the complete lower-rate interfaces, while upper and limit conclusions stay in their corresponding `Partition/` modules. The source-convention lower-rate chain is under `TerminalLeft/Partition/Lower/`, where it keeps the distinct terminal-left path encoding. `Bridge/Events.lean` defines the source corridor events and interior bridge centers that occur in the equation-(34) theorem interfaces. `Bridge/TerminalLeftAsymptotics.lean` proves the equation-(34) bridge estimate from explicit entrance and path-limit hypotheses, while `Bridge/CdfEntrance.lean` specializes it to the source CDF sign condition and exposes the resulting bound. The reusable finite-bridge geometry record and probability comparisons live at `Probability/Process/RandomWalk/Path/Block/Corridor/FiniteBridge.lean`; source-specific finite-cover geometry, bridge cells, entrance positivity, and terminal-left decay derivations remain under `Bridge/Lemmas/`. The stable-process estimates remain in their own owner directory. `Stable/RandomWalkBounds/FromIncrementLaw/` separates `Normal/`, `Path/`, and `Stable/` adapters, with `HorizontalTube/` holding the finite-variance tube interfaces. `Stable/Scale/Basic.lean` owns the two-scale condition and rate consequences; `Stable/Scale/Rate.lean` owns block-length asymptotics. Gaussian modules remain divided into `Gaussian/Blocks/` and `Gaussian/Path/`. `FunctionalLimit/Donsker/Entrance/` owns the Brownian middle-start corridor and uniform diffusive entrance estimates. |
+| `Analysis/Asymptotics/Power` | General real-power comparisons for extended nonnegative quantities | `ENNRealRatio.lean` combines real-power lower and upper bounds into a quotient bound. It depends only on `ENNReal` and real powers, so the former `Probability/MeasureTheory/Moments/PowerRate.lean` was moved here from its one-use Paley–Zygmund caller. |
 | `Analysis/Asymptotics/Scale` | Reusable deterministic scale tools | `Basic.lean` defines the common small-deviation scale relation; `InverseScale.lean` handles generalized inverses and their subdiffusive rates; `BlockScale.lean`, `ShiftedFloor.lean`, and `IntermediatePowerBlock.lean` cover integer block rounding and intermediate block scales; `Sampling.lean` transfers rates along selected time intervals; `SlowDiagonal.lean` and `Tolerance.lean` provide real-valued diagonal and error-threshold selections. All eight direct modules are distinct reusable interfaces, so they remain as peers at this level. |
 | `Analysis/Asymptotics/RegularVariation` | Regular variation, slow variation, and Karamata-type consequences | `Basic.lean`, `Uniform.lean`, `AsymptoticInverse.lean`, `LowerPower.lean`, `MonotoneDensity.lean`, and `SlowScale.lean` remain at the subject root. `Integral/{Basic,Tail}.lean` groups the first and second integral-tail theorems with their regular-variation consequences; both modules expose reusable results and remain outside `Lemmas/`. |
 | `Stable/SmallDeviation/Blocks/Lower` | Lower block estimates | `Assembly/`, `Binning/`, `Bounds/`, `Entrance/`, and `Return/` group the distinct construction steps. `Entrance/PoissonModel.lean` owns the stable `α < 1` positive entrance theorem; it hides the chosen Lévy--Khintchine triple and exposes only the stable-process and CDF assumptions. `Lemmas/ReturnScale.lean` holds the first-uniform-block specialization used by the lower-bound proofs; arbitrary-horizon stable scaling stays at the `Blocks/` level. `Feedback/` contains the stable short-block scaling and entrance consequences; the adaptive finite-block probability and path-tube implications now live with generic uniform-block path results. Stable-law adapters are limited to block laws and estimates whose statements actually use stability. |
@@ -147,11 +152,11 @@ by mathematical subject:
 | `BranchingRandomWalk/Population/Processes/StepSelection/SplitSchedule` | `Definition/`, `Field/`, and `Trials/`. |
 | `Stable/SmallDeviation/PathClass/StepCorridor/Partition` | `Core/`, `Lower/`, and `Upper/`. The deterministic endpoint-core plus finite inner-cell geometry now lives at its semantic owner, `Topology/Cadlag/Skorokhod/PathClass/StepCorridor/Partition/LowerGeometry.lean`; the stable `Lower/Geometry.lean` is reserved for cell events and their pathwise concatenation. The one-use radius-contraction step is under `Lower/Lemmas/CoreShrink.lean`. |
 | `Stable/SmallDeviation/Blocks/Lower` | `Assembly/`, `Binning/`, `Bounds/`, `Entrance/`, `Return/`, and `Lemmas/`. |
-| `RandomWalk/SmallDeviation/Mogulskii` | `Blocks/`, `Path/`, and `Scale/`; `Partition.lean` remains at the subject root. |
+| `RandomWalk/SmallDeviation/Mogulskii` | `Theorems.lean` is the Lean import entry for the original paper's Theorems 1–4. Its public imports group the formalized interfaces for Theorem 1 (discrete random walk), Theorem 2 (strictly stable process), and Theorem 3 (Gaussian/finite variance); the module documentation records their formulas and declaration names. Theorem 4, the full continuous-time source-process rate of Section 5, is not formalized yet and is explicitly marked pending, with its missing process-level inputs in `docs/MOGULSKII_PROCESS_THEOREM_4_PROOF_ROUTE.md`. Keep this as a Lean import module, not a Markdown index. Supporting declarations stay in semantic families rather than catch-all root `Definitions/` or `Lemmas/` directories: `Path/` owns path encodings and corridor events; `Scale/` owns diffusive and stable normalization; `Partition/` owns discrete finite-partition estimates; `Stable/` and `Gaussian/` contain stable-domain and finite-variance specializations; `RandomWalkBounds/` assembles endpoint and corridor probability bounds; `Rate/` groups the normal-domain rate arguments; and `Spectral/` owns the killed symmetric-lattice spectral route. Reusable mathematical results remain in these subject modules; theorem-specific derivation steps stay in nested `Lemmas/` modules. `Gaussian/Blocks/` contains complete finite-dimensional block-limit results; the finite Gaussian-product parameter choices used only while assembling the lower-bound proofs are grouped under `Gaussian/Blocks/Lemmas/`. `Gaussian/EscapeConstant.lean` is the Brownian escape-constant entry, and its one-use Rademacher-to-tube bridge lives under `Gaussian/Lemmas/NormalConstant.lean`. `Blocks/Uniform.lean` gives finite-reference block-survival estimates. `Return/Partition.lean` gives finite-partition return-kernel lower bounds, and `Return/Uniform.lean` lifts these to uniform starting-point bounds and iterates the return kernel. The declarations in these subject folders are supporting APIs; the original-paper theorem entry remains `Theorems.lean`. |
 | `BranchingRandomWalk/Selection/NSelection/AsymptoticSpeed` | `Limit/` and `Selection/` group the main speed argument; `InitialPopulation/Basic.lean` remains the initial-population entry, with `Field/`, `Trajectory/`, and `Speed/` subfamilies. |
 | `Mogulskii/Stable/RandomWalkBounds/FromIncrementLaw` | `Normal/`, `Path/`, and `Stable/`; `Normal/HorizontalTube/` groups the index-two finite-variance tube rate, endpoint-window forms, and their proof lemmas with the other normal-domain results. |
-| `Mogulskii/Stable/RandomWalkBounds/FromIncrementLaw/Normal/HorizontalTube` | `Basic.lean` contains the core closed-tube rate, `Scales.lean` its scale specializations, and `EndpointWindow.lean` proves the endpoint-window rate using the event defined in the semantic `SmallDeviation/HorizontalTube/EndpointWindow.lean` module. `SourceCorridor.lean` owns the source-normalized constant-corridor event and both reusable inclusions between source corridors and the closed horizontal tube. The singleton endpoint-window corridor and its source-path inclusion remain theorem-specific under `Lemmas/EndpointWindowCorridor.lean`. The reusable unit-tube terminal-window construction is in `Topology/Cadlag/Skorokhod/PathClass/StepCorridor/TerminalWindow.lean`, and its all-exponent energy identity is in the corresponding `MeasureTheory/Measure/CadlagPath/PathClass/StepCorridor/TerminalWindow.lean`. |
-| `Mogulskii/Stable/RandomWalkBounds/Source` | `Bounds/`, `Partition/`, and `PathClass/`; `Inputs.lean`, `Normalization.lean`, and `Realization.lean` remain at the source root. |
+| `Mogulskii/Stable/RandomWalkBounds/FromIncrementLaw/Normal/HorizontalTube` | `Basic.lean` contains the core closed-tube rate, `Scales.lean` its scale specializations, and `EndpointWindow.lean` proves the endpoint-window rate using the event defined in the semantic `SmallDeviation/HorizontalTube/EndpointWindow.lean` module. `TerminalLeftCorridor.lean` owns the terminal-left constant-corridor event and both reusable inclusions between terminal-left corridors and the closed horizontal tube. The singleton endpoint-window corridor and its terminal-left path inclusion remain theorem-specific under `Lemmas/EndpointWindowCorridor.lean`. The reusable unit-tube terminal-window construction is in `Topology/Cadlag/Skorokhod/PathClass/StepCorridor/TerminalWindow.lean`, and its all-exponent energy identity is in the corresponding `MeasureTheory/Measure/CadlagPath/PathClass/StepCorridor/TerminalWindow.lean`. |
+| `Mogulskii/Stable/RandomWalkBounds/TerminalLeft` | `Bounds/`, `Partition/`, and `PathClass/`; `Inputs.lean`, `Normalization.lean`, and `Realization.lean` remain at this source-convention root. |
 | `RandomWalk/Path/Interpolation` | `Finite/`, `Limit/`, and `Path/`; `Basic.lean` and `Scaling.lean` remain at the subject root. |
 | `RandomWalk/Path/Block/Partition` | `Basic.lean`, `Core.lean`, and `Normalized.lean` give finite path-partition identities and corridor bounds; `TailMerged.lean` defines the quotient/remainder schedule and proves its endpoint and block-length identities. It is separate from the balanced partition in `Analysis/Asymptotics/Scale/BlockScale.lean`, which distributes the remainder among the blocks. |
 | `RandomWalk/FunctionalLimit/Donsker` | `FiniteDimensional/` and `Path/`; `FiniteDimensional.lean` is the subject entry module. |
@@ -163,7 +168,22 @@ by mathematical subject:
 | `BranchingRandomWalk/Genealogy/RootIndexed` | `Field/` and `Law/`. |
 | `Combinatorics/UlamHarris/Tree` | `Finite/` and `Topology/`; `Defs.lean` and `Singleton.lean` remain at the subject root. |
 | `Selection/NSelection/EndpointDeviation/Endpoint` | `Minimum/`, `PositiveMoment/`, and `Sequence/`. |
-| `Distributions/Stable/Attraction/Norming` | `Basic.lean`, `Inverse.lean`, `Compatibility.lean`, `Centering.lean`, `Source.lean`, `Tail.lean`, and `UniformTail.lean` remain at the subject root; Gaussian and index-two specializations are under `SpecialCases/`. |
+| `Distributions/Stable/Attraction/Norming` | `Basic.lean`, `Inverse.lean`, `Compatibility.lean`, `Centering.lean`, `Mogulskii.lean`, `Tail.lean`, and `UniformTail.lean` remain at the subject root; Gaussian and index-two specializations are under `SpecialCases/`. `Mogulskii.lean` contains the theorem-specific passage to Mogul'skii's source time normalization and its index-one centering transfer; its rounded index sequence and asymptotic lemmas are private. The general normalization-change theorem is in `Distributions/DomainOfAttraction/Normalization.lean`. |
+
+The finite-dimensional Gaussian block-vector limit in
+`Mogulskii/Gaussian/Blocks/BlockVector.lean` specializes the general
+`RandomWalk/FunctionalLimit/FiniteDimensional/IndependentBlocks.lean`
+consecutive-block theorem. This keeps the generic independence and
+coordinate-limit assembly at the reusable functional-limit layer while the
+Mogulskii module supplies its diffusive scale and Gaussian parameters.
+
+Within `Mogulskii/Spectral/Target/`, the target indicator and its full
+finite-dimensional spectral expansion remain in `Expansion.lean`, while
+`LowerBound.lean`, `Central.lean`, `Path.lean`, `Corridor.lean`, and
+`Bands.lean` expose complete target-mass and path-event estimates. The sine
+coefficient calculations in `Lemmas/Coefficient.lean` are used only by the
+extremal-mode argument, so they live under the target proof's `Lemmas/`
+directory and are ordinary-imported by `ExtremalPair.lean`.
 
 The offspring-count module now owns the reusable splitting event
 `offspringSplitSet := {ξ | 2 ≤ Step.childCount ξ}`, its identification with
@@ -218,10 +238,10 @@ interface into `Rotation/FinitePath.lean`, `Rotation/CyclicCover.lean`, and
 `Rotation/FiniteProduct.lean`, found 1,450 production modules and 138 test
 modules. The stable horizontal-tube lower-rate interface was subsequently
 split into `Stable/Rate/Lower/{BlockProbability,Liminf,Positivity,Limit}.lean`;
-the count was 1,453 before the current geometry split. The current tracked-source
-scan finds 1,460 production Lean files and 138 test files; the additional
-production module is `Order/SetDissipate.lean`. The largest production
-directory has eight direct Lean files. Earlier batches grouped the
+the count was 1,453 before the current geometry split. The current worktree
+scan finds 1,466 production Lean files and 138 test files, including untracked
+work in progress. The largest production directory has eight direct Lean
+files. Earlier batches grouped the
 Lemma 3.2 partition parameters, the Lemma 3.3 jump-pattern and spatial-bin
 setup, the Lemma 3.5 staircase
 parameters under their corresponding `Lemmas/` trees, and moved the generic
@@ -256,16 +276,16 @@ to the reviewed modules in `Mogulskii/Spectral/Range/Rate/` and to
 and `Mogulskii/Spectral/Survival/Path.lean`. The current pass adds them to
 `Mogulskii/RandomWalkBounds/Partition/{Corridor,Endpoint,Range,LowerProbability}.lean`;
 the mirrored source-convention modules
-`RandomWalkBounds/SourcePartition/{Basic,Events,LowerProbability}.lean` and
-`RandomWalkBounds/SourcePartition/Lemmas/LowerGeometry.lean` now do the same. The sibling
+`RandomWalkBounds/TerminalLeftPartition/{Basic,Events,LowerProbability}.lean` and
+`RandomWalkBounds/TerminalLeftPartition/Lemmas/LowerGeometry.lean` now do the same. The sibling
 `Partition/Lemmas/LowerGeometry.lean` and
-`SourcePartition/Lemmas/LowerGeometry.lean` each document their single
+`TerminalLeftPartition/Lemmas/LowerGeometry.lean` each document their single
 proof-specific lemma. The stable finite-partition probability chain now also
 lists its rate conclusions in `Stable/RandomWalkBounds/Partition/Probability.lean`
-and `Stable/RandomWalkBounds/PartitionLower/{BridgeProduct,EnergyLower,FiniteProduct,Positivity,WidthRate}.lean`.
+and `Stable/RandomWalkBounds/Partition/Lower/{EnergyLower,Positivity,WidthRate}.lean`; their proof-specific endpoint-core product construction is under `Partition/Lower/Lemmas/BridgeProduct.lean`, and the terminal-left counterpart is under `TerminalLeft/Partition/Lower/Lemmas/BridgeProduct.lean`. The finite-product logarithmic-rate transfer is at its probability-asymptotics owner, `Probability/MeasureTheory/Asymptotics/FiniteProductRate.lean`.
 The source-convention rate entries now state the finite-partition and path-class
-limits in `Stable/RandomWalkBounds/Source/Partition/Limit.lean` and
-`Stable/RandomWalkBounds/Source/PathClass/Rate.lean`.
+limits in `Stable/RandomWalkBounds/TerminalLeft/Partition/Limit.lean` and
+`Stable/RandomWalkBounds/TerminalLeft/PathClass/Rate.lean`.
 This pass also documents the pointwise encoding and pushforward law in
 `Probability/Process/RandomWalk/Rademacher/Basic.lean`, the root-indexed
 selected-population construction in
@@ -369,7 +389,9 @@ English issue number: MathNet lists volume 19, issue 1 (1975), while SIAM's DOI
 page lists volume 19, issue 4 (1975). This repository follows the publisher's
 record. The 2026-10-17 audit corrected 120 English-translation citations in 84
 Lean and documentation files to volume 19, issue 4, while retaining the
-Russian original as volume 19, issue 4 (1974). The source-by-source check confirms
+Russian original as volume 19, issue 4 (1974). A later working-tree edit
+reintroduced issue 1 in 130 citation occurrences across 90 files; this pass
+restores the publisher's issue 4 in those files. The source-by-source check confirms
 Aïdékon--Hu's Lemma 4.1 and Proposition 3.1, equations (4.15)--(4.16);
 Caravenna--Chaumont's Lemma 2.1 and equations (2.3), (3.3); and the relevant
 formulas of Bauer--Godrèche--Luck. Their locations are now distinguished
@@ -772,14 +794,22 @@ their process law and scaling assumptions belong.
 
 ## Abstraction review: positive-`a` endpoint PZ chain (2026-10-19)
 
-`EndpointDeviation/PositiveA/PZBudget.lean` and `PZAssembly.lean` each had
+The proof family was previously grouped under `EndpointDeviation/PositiveA/`,
+which named the parameter condition rather than the mathematics in the files.
+It now lives under `EndpointDeviation/FirstStage/`: the entry proves an
+exponential low-count bound for the first-stage killed population, and its
+PZ-specific rate assembly is grouped under `Lemmas/`. The `rightTailPositiveA`
+identifier remains in theorem names because those statements are indexed by
+the positive exponent parameter; it no longer determines directory placement.
+
+`EndpointDeviation/FirstStage/Lemmas/PZBudget.lean` and `PZAssembly.lean` each had
 one proof-chain client. The first estimates the tilted-spine corridor mass at
 the specific cutoff `rightTailPositiveAFirstCutoff`; the second combines that
 rate with the first-stage MRCA pair sum and cross-child weight. Neither result
 is the general Paley--Zygmund inequality: both statements contain the
 selected population's tilted law, corridor, cutoff, and model-specific pair
-bound. Their files now live under `PositiveA/Lemmas/`, while the population
-low-count theorem remains at `PositiveA/LowCountPower.lean` and the final
+bound. Their files now live under `FirstStage/Lemmas/`, while the population
+low-count theorem remains at `FirstStage/LowCountPower.lean` and the final
 second-stage root-count theorem imports both results directly.
 
 The pinned Mathlib source at revision
@@ -802,7 +832,7 @@ and [(L^2) integral API](https://github.com/leanprover-community/mathlib4/blob/3
 These supply neighboring ingredients, while the pinned revision has no
 Paley--Zygmund theorem; the general probability-space statement is the useful
 public abstraction, and the model-specific rate lemmas remain under
-`PositiveA/Lemmas/`. Their use in later modules alone does not justify
+`FirstStage/Lemmas/`. Their use in later modules alone does not justify
 promoting them. These support files retain the legacy header for now:
 `Population/PZInput.lean`, which defines their theorem-level data, also uses the
 legacy import form, and Lean rejects importing it from an isolated
@@ -1167,3 +1197,339 @@ the pinned Mathlib revision `380f2aafb622cb2c1c93dac545b6389083c68c51`,
 [API documentation](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Analysis/SpecialFunctions/Pow/Asymptotics.html). The Vitali comparison uses the pinned
 [`MeasureTheory/Function/UniformIntegrable.lean`](https://github.com/leanprover-community/mathlib4/blob/380f2aafb622cb2c1c93dac545b6389083c68c51/Mathlib/MeasureTheory/Function/UniformIntegrable.lean#L566)
 and its [official documentation](https://leanprover-community.github.io/mathlib4_docs/Mathlib/MeasureTheory/Function/UniformIntegrable.html).
+
+## Abstraction review: unit-second-moment Gaussian attraction (2026-10-19)
+
+`Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Stable/CLT.lean`
+packaged the central limit theorem as a centered unit-second-moment Gaussian
+domain-of-attraction result. Its statement has no Mogulskii scale, corridor,
+or path-space premise, so it belongs to the distributional normal-attraction
+API. `Probability/Distributions/Stable/Attraction/Normal/Basic.lean` already
+proves the stronger finite-positive-second-moment result with normalization
+`sqrt (n * ∫ x² dν)`. The unit-second-moment corollary now lives beside that
+general theorem; `integrable_of_integral_eq_one` derives square integrability
+from the moment identity, and the normalization simplifies to `sqrt n`.
+
+The Mogulskii-local CLT module was removed. Its existential normal-attraction
+wrapper duplicated the `Along` theorem's existing `.isInDomainOfAttraction`
+projection, and its strictly `2`-stable wrapper duplicated the general
+finite-variance theorem in the same normal-attraction module. Brownian path
+limit and Gaussian small-deviation clients now import the distributional
+theorem directly. The unit-second-moment corollary is public because it is a
+complete distributional result that applies beyond Mogulskii; it is not a
+proof-only `Lemmas/` artifact.
+
+## Structural sweep (2026-10-19)
+
+A path audit of the 1,465 production Lean modules under the eight library
+roots, excluding `Vendor/` and `BranchingProcessTest/`, found no directory with
+more than eight direct `.lean` files, no same-level `Foo.lean`/`Foo/` name
+collision, and no path named `Source` or `source`. The tree has 23 `Lemmas/`
+directories; none has a parallel `Lemmas.lean` at the same level, and no
+production module outside a `Lemmas/` directory uses `public import` for a
+module inside one. These checks enforce discoverability and proof-import
+boundaries; they do not replace the declaration-by-declaration abstraction
+review documented above.
+
+`python3 scripts/run-mathlib-lint-style.py` completed successfully on all
+1,465 modules. Mathlib's linter driver emitted its own missing-`module`
+header warning for `scripts/lint-style.lean`; it did not report a style issue
+in the production modules. The full `lake build BranchingProcess` also
+completed successfully (5,576 jobs). It reports a non-fatal module-system
+advisory in `Selection/NSelection/EndpointDeviation/FirstStage/Lemmas/PZBudget.lean`:
+that legacy module imports the modern Mathlib asymptotics module, while two of
+its project dependencies are legacy modules. Adding a `module` header to this
+file alone makes Lean reject those dependencies; a fix requires migrating the
+whole import chain together.
+
+The separate `BranchingProcessTest/` tree contains 138 Lean modules and was
+checked independently: it has no directory with more than eight direct test
+modules, no same-level file/directory name collision, no `Source`-named
+directory, and no parallel `Lemmas.lean`/`Lemmas/` entry.
+
+## Stable norming ownership and Mogulskii module headers (2026-10-19)
+
+`Mogulskii/Stable/TruncatedMoment.lean` used only a probability measure,
+truncated moments, and the distributional norming factor $L^*$; its theorem
+statements had no walk, path, or small-deviation hypotheses. It therefore
+belongs with the stable norming definition rather than under the random-walk
+small-deviation development. The module now lives at
+`Probability/Distributions/Stable/Attraction/Norming/TruncatedMoment.lean`,
+beside the tail and norming results, and the stable-attraction test imports
+that owner. The fully general truncated-moment identities remain in
+`Probability/Distributions/Moments/Truncated/Basic.lean`; the moved results
+are the stable-factor specializations $L^*(u)\to A-B$ and
+$L^*(u)\to\alpha B/(2-\alpha)$ under their respective tail limits.
+
+The identity `IsStableLevyProcess.unitIntervalPathLaw_spatialScale` was also
+inside `TerminalLeft/Normalization.lean`. Its proof only needed an
+almost-surely càdlàg real process, so that stable-process wrapper was removed
+and the reusable theorem `pathLaw_smul` was added to
+`Probability/Process/Path/Cadlag/MeasurableMap.lean`. It states
+`pathLaw(P, qX) = (pathLaw(P, X)).map (scalePath q)` for every real `q`.
+`PathLaw/UnitInterval.lean` now owns only the stable-process path-law
+construction and stable-clock results. The one-use coefficient substitution
+`sourceNormalization` is private in the terminal-left normalization module;
+the exported raw-normalization theorem remains there.
+
+The public abstraction reviewed for this move is: for any real process
+`X : unitInterval → Ω → ℝ` with `AEMeasurable (X t) P` at every time and
+almost-surely càdlàg paths, and any `q : ℝ`,
+`pathLaw(P, qX) = (pathLaw(P, X)).map (scalePath q)`. No probability,
+independent-increment, stable-law, or positivity assumption on `q` is needed.
+The pinned Mathlib source at revision
+[`380f2aafb622cb2c1c93dac545b6389083c68c51`](https://github.com/leanprover-community/mathlib4/tree/380f2aafb622cb2c1c93dac545b6389083c68c51)
+provides the generic map steps used in the proof:
+[`Measure.map_congr`](https://github.com/leanprover-community/mathlib4/blob/380f2aafb622cb2c1c93dac545b6389083c68c51/Mathlib/MeasureTheory/Measure/Map.lean#L130)
+and
+[`AEMeasurable.map_map_of_aemeasurable`](https://github.com/leanprover-community/mathlib4/blob/380f2aafb622cb2c1c93dac545b6389083c68c51/Mathlib/MeasureTheory/Measure/AEMeasurable.lean#L160).
+Mathlib supplies these measure-map operations but has no `CadlagPath` path-law
+API; the reusable path-law statement therefore belongs in the project's
+`Probability/Process/Path/Cadlag/MeasurableMap.lean`.
+
+The module headers in `Stable/Scale/Rate.lean`,
+`Stable/RandomWalkBounds/Partition/{EnergyUpper,Upper}.lean`, and
+`Stable/RandomWalkBounds/PathClass/InnerOuter.lean` now list their exact public
+declarations and quantitative conclusions. These are candidate-list fixes
+from the lexical header scan, followed by inspection of each declaration and
+its assumptions; the scan itself is not treated as proof that the full
+Mogulskii tree has been audited. The moved module and the affected production
+entry modules build with the pinned toolchain; the stable-attraction check
+module also compiles through `lake env lean` against the new import path.
+`Stable/Corridor.lean` and the equation (34) CDF entrance adapter now also
+list their complete public APIs and quantitative conclusions. The
+`Process/Path/Cadlag/MeasurableMap`, `PathLaw/UnitInterval`, and the
+terminal-left normalization client build after adding the general path-law
+scaling theorem and making the local coefficient substitution private.
+`python3
+scripts/check-lean-import-boundaries.py` also passes after these moves (10
+public entries, 818 graph visits).
+
+## Abstraction review: Rademacher normal-constant chain (2026-10-19)
+
+`Stable/RandomWalkBounds/NormalConstant.lean` used to expose the constant
+corridor, its one-piece finite-corridor representation, the constant
+approximation, its energy limits, and path-event equivalences. Source search
+found that these declarations serve only the rate-transfer proof in the same
+file, so they are now `private`. The remaining rate-transfer lemma moved to
+the Gaussian escape-constant proof family below.
+The Rademacher identity
+`truncatedSecondMoment rademacherMeasure u = 1` for `1 ≤ u` depends only on
+the distribution and the generic truncated-moment definition; it now lives
+in `Probability/Distributions/Rademacher.lean` beside the Rademacher law.
+
+The rate-transfer lemma was also a single proof-chain dependency of the
+Gaussian escape-constant theorem. It now lives at
+`Gaussian/Lemmas/NormalConstant.lean`, under the Gaussian namespace; the
+entry point imports it ordinarily. This places the non-reusable bridge in the
+theorem's proof family without publishing it from `Gaussian/EscapeConstant`.
+The scale identity
+`stableSmallDeviationRate 2 rademacherMeasure scale =ᶠ[atTop] fun n =>
+scale n ^ 2 / n` has one client in the proof of the Gaussian escape constant,
+so it is now a private lemma in `Gaussian/EscapeConstant.lean`. The entry's
+public imports name the direct owners of `IsBrownianReal`, `IsMogulskiiScale`,
+`IsStableLevyProcess`, `pathLaw`, and `HasStableProcessEscapeRate`; its normal
+attraction, tightness, spectral comparison, Rademacher calculations, and
+normal-constant bridge are ordinary imports. The Rademacher distribution
+module, the normal-constant lemma module, and the Gaussian escape-constant
+entry build successfully together (3,985 Lake jobs).
+
+## Abstraction review: stable balanced endpoint blocks (2026-10-19)
+
+The balanced-partition limit used by stable endpoint cells had been exposed
+from `StableLower/PathLimit.lean`, even though it depends only on deterministic
+integer partitions and the stable specialization was used only by the cell
+bridge proof. The general statement now lives in
+`Analysis/Asymptotics/Scale/BlockScale.lean`:
+if $H_n/n\to d>0$, $r_n\to\infty$, $r_n/n\to0$, $c_n>0$ eventually, and
+$r_n/c_n\to a$, then the balanced block count tends to infinity, both
+possible block lengths diverge, and each possible length divided by $c_n$
+tends to $a$. This is independent of random walks, stable laws, and
+Mogulskii scales, so it is the reusable public abstraction.
+
+The stable specialization is now the single proof-chain lemma
+`balancedStableCellBlock_asymptotics` in
+`Stable/RandomWalkBounds/EndpointBandTransfer/StableLower/Lemmas/BalancedBlocks.lean`.
+It derives the hypotheses for the generic partition result from the stable
+Mogulskii scale. Its clients are the two cell constructions in `CellBridge.lean`,
+so the specialization stays under `Lemmas/`. The five path-limit estimates
+remain in `StableLower/PathLimit.lean`: source search confirms they are used
+both by `CellBridge.lean` and by `Gaussian/Blocks/FixedDiffusiveBlock.lean`.
+The module header lists those five probability interfaces and their
+quantitative meanings. The `Rate` imports used only in proof terms are now
+ordinary imports; the public signatures continue to name the stable scale
+objects from their owning module.
+
+The targeted Lake build of `BlockScale`, the new `BalancedBlocks` lemma,
+`PathLimit`, `CellBridge`, and the dependent Gaussian path/block and stable
+normal-domain modules completed successfully. The import-boundary audit also
+passed with 10 public entries and 818 graph visits. The dependent Gaussian
+modules now import `Gaussian.Interval` directly wherever they use the
+Gaussian CDF positivity theorem, rather than relying on it being reexported
+from the escape-constant development.
+
+## Abstraction review: Mogul'skii equation (34) terminal-left chain (2026-10-19)
+
+The equation-(34) proof now has a small set of reader-facing modules under
+`Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Stable/RandomWalkBounds/Bridge/`:
+`Events.lean` defines the base and endpoint corridor events, `CdfEntrance.lean`
+proves the finite-bridge comparison from the source CDF hypothesis,
+`TerminalLeftAsymptotics.lean` gives the logarithmic ratio under a finite
+positive limit of the stable factor, and `TerminalLeftDecay.lean` gives the
+slow-variation version used by the theorem chain. Their module headers state
+the corresponding probability estimates.
+
+The auxiliary estimates specific to this chain are grouped under
+`Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Stable/RandomWalkBounds/Bridge/Lemmas/`.
+The stable-domain base-corridor positivity estimate and the finite-bridge
+logarithmic-ratio deduction live in `TerminalLeftAsymptotics.lean`; its
+endpoint-corridor decay step lives in `EndpointCorridorDecay.lean`. The latter
+uses the general stable scale and strict-stability interfaces, while its
+endpoint event remains specific to Mogul'skii equation (34), so it stays in
+this proof family. The endpoint positivity intermediate is private within
+the helper module.
+
+The old root asymptotics module had four proof-chain declarations beside its
+single theorem entry. Those helpers have moved under `Bridge/Lemmas/`, leaving
+the root module with the equation-(34) theorem. The targeted build of both
+helper modules and the asymptotics and decay entries completed successfully
+(3,908 Lake jobs).
+
+## Abstraction review: spectral endpoint-window lower bound (2026-10-19)
+
+`RandomWalkBounds/SpectralEndpointBands.lean` mixed a spectral endpoint-band
+argument into the general random-walk bound directory. Its four intermediate
+estimates had only in-file callers, and the final centered-unit-variance
+transfer had one production caller in `Rate/Endpoint/Windows.lean`. The proof
+chain now lives in
+`RandomWalkBounds/EndpointBands/Lemmas/SpectralLowerBound.lean`: the four
+single-file steps are private, and the final finite-variance endpoint-window
+estimate is the only helper imported by the rate entry. The generic endpoint
+window events and return-kernel iteration remain in
+`RandomWalkBounds/EndpointWindows.lean`, where they serve the Donsker and
+rate interfaces.
+
+The axiom audit now prints the final transfer lemma; this covers its private
+proof chain. The stale proof-route path was updated. The helper module, its
+rate client, and the `Alpha2EndpointBands` axiom-audit module build with the
+pinned toolchain.
+
+## Mogul'skii subtree inventory (2026-10-19)
+
+The current Mogul'skii tree has 162 Lean modules. `Theorems.lean` is its only
+module at the subject root and records the source formulas and Lean entry
+points for Mogul'skii's four main theorems; it marks Theorem 4 as an open
+formalization. The ten first-level directories each group a mathematical
+subject or regime, with theorem-specific derivations under nested `Lemmas/`.
+The former empty `Stable/RandomWalkBounds/PartitionLower/` directory was
+removed after its modules moved into `Partition/Lower/`.
+
+A production-tree scan of 1,467 Lean modules found no directory with more than
+eight direct modules and no same-stem `Foo.lean`/`Foo/` collisions. A separate
+heuristic scan flagged 58 Mogul'skii module docstrings for manual review of
+their public API inventories; this count is only a review queue, not a
+determination that every flagged header is incomplete. Four empty source
+directories found in the broader scan were removed. Header-by-header review
+remains open.
+
+## Mogul'skii API-header follow-up (2026-10-20)
+
+The endpoint and terminal-left review added formula-bearing declaration lists
+to 21 modules:
+
+- `Bridge/Lemmas/{Comparison,EntrancePositivity,TerminalLeftGeometry}.lean`
+  and `Bridge/TerminalLeftAsymptotics.lean`;
+- `Endpoint/{BandTransfer,Return,StrictStable,Upper}.lean`;
+- `EndpointBandTransfer/StableRate.lean`,
+  `EndpointBandTransfer/StableLower/EndpointMass.lean`, and
+  `EndpointBandTransfer/StableLower/Lemmas/BalancedBlocks.lean`;
+- `FromIncrementLaw/Path/{Law,Realization,RealizationContinuousBoundary}.lean`;
+- `TerminalLeft/Inputs.lean`,
+  `TerminalLeft/Partition/{EnergyUpper,Lower/{EnergyLower,WidthRate}}.lean`,
+  `TerminalLeft/PathClass/{InnerOuter,Relative}.lean`, and
+  `TerminalLeft/Realization.lean`.
+The headers now identify the event measures, rate denominators, finite bridge
+comparisons, endpoint-band bounds, and inner/outer rate limits. A refreshed
+name-only scan of the 162-module Mogul'skii tree reports four apparent name
+omissions; manual inspection confirms that all four declarations are already
+listed under their fully qualified namespace names. This scan checks names,
+not whether every formula and hypothesis is described adequately, so the
+statement-by-statement semantic review remains open.
+
+All 21 affected Lean modules built together with the pinned toolchain (4,042
+Lake jobs). The output contains existing linter suggestions in imported
+modules; the build completed successfully.
+
+## Branching-walk foundational API headers (2026-10-20)
+
+The foundational branching-walk modules now state their public declarations
+and the mathematical data they expose. This batch covers the step encoding,
+mark maps and measurable slot events, set-valued populations and their
+genealogy, and the conversion between sibling-closed branching walks and
+trees. In particular, the population headers describe the generation-depth
+and successor conditions and the prefix-membership conclusion; the step
+headers describe presence, support, and the mark-threshold events.
+
+All seven affected modules, including `Basic/Definitions.lean`, compiled
+with the pinned Lean toolchain (1,792 Lake jobs). A name scan found additional
+foundational genealogy and position modules without an explicit API list;
+those remain in the manual review queue.
+
+The follow-up added formula-level API descriptions to descendant and ancestor
+relations, realized-particle slices, path displacement, and accumulated
+positions. These headers make explicit that the genealogy relations are
+defined by surviving address extensions, and that generation slices partition
+their corresponding particle sets. The five affected modules built with the
+pinned toolchain (1,791 Lake jobs).
+
+The cloud and trajectory review then added API descriptions for the particle
+cloud, geometric support, slice measures, measurable trajectory interface,
+frontiers, lower-tail domination, and injective particle matchings. The
+frontier header also now agrees with its nonempty example: a slice may be
+nonempty while its least frontier is empty because its infimum is not
+attained. The nine affected modules built with the pinned toolchain (1,916
+Lake jobs).
+
+A production-tree layout scan covered 1,467 Lean modules, excluding vendored
+Mathlib and test-only sources. It found no directory with more than eight
+direct Lean modules, no `Foo.lean`/`Foo/` name collision, no directory with
+both `Lemmas.lean` and `Lemmas/`, and no empty source directories. The
+`EndpointDeviation/PositiveA/` path is also absent from the production tree;
+its modules now live under `EndpointDeviation/FirstStage/`, and no production
+import refers to `PositiveA`. This structural scan does not replace the open
+statement-by-statement public API review recorded above.
+
+The 2026-10-20 endpoint-deviation cleanup is committed as two focused changes:
+the first-stage estimate modules are grouped under `EndpointDeviation/FirstStage/`,
+and the old `EndpointDeviation/PositiveA/` files are removed. Their theorem
+identifiers still name the positive-`a` parameter regime; the directory now
+names the first-stage role. The generic extended-real power-ratio inequality
+used by the PZ estimate is exposed from `Analysis/Asymptotics/Power/`, while
+the non-reusable cutoff and PZ assembly steps remain under `FirstStage/Lemmas/`.
+The affected first-stage dependency chain built successfully with 4,710 Lake
+jobs. These commits are on the GitHub `preflight` subtree branch; its remote
+build is recorded separately in the active branch checks.
+
+The four cloud rank and leftmost-selection modules now list their public
+interfaces using their mathematical statements. `Cloud/Rank/Slice.lean`
+contains the general slice-rank definition and finite-order consequences;
+`Cloud/Rank/Descendant.lean` gives the predicate-restricted rank and its
+sibling-rank comparison; `Cloud/Order/DynamicSelection.lean` gives threshold
+count domination and injective matching into dynamic leftmost selection; and
+`Cloud/Order/Selection.lean` lifts those estimates to rankwise and
+measure-level cloud domination. These modules are kept under their semantic
+owners because they expose reusable rank and selection interfaces. All four
+built together with the pinned toolchain (2,042 Lake jobs).
+
+The Mogul'skii theorem entry is now a Lean module,
+`Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Theorems.lean`.
+It reexports the formalized statements corresponding to Theorems 1–3 and
+records the source formula and formalization status for Theorem 4. Theorem 4
+still has no Lean proof, so the entry marks its proof route as pending instead
+of introducing an axiom or an unproved declaration. The supporting folders
+remain grouped by reusable mathematical subjects such as `Path/`, `Scale/`,
+`Stable/`, `Gaussian/`, and `Spectral/`; collecting these public interfaces
+under one generic `Definitions/` or `Lemmas/` folder would obscure their
+semantics and conflict with the rule that reusable APIs stay outside
+`Lemmas/`. The entry module and its imports built with the pinned toolchain
+(4,029 Lake jobs).

@@ -7,12 +7,26 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.Partition.Corridor
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.PartitionLower.Positivity
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.Partition.Lower.Positivity
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.Partition.Probability
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Rate.Upper
 
 /-!
 # Stable range-rate bounds on floor-rounded corridor cells
+
+The public theorems are:
+
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.limsup_commonPartitionCellRangeProbability_le_of_escapeRate`:
+  the normalized log-probability of one floor-rounded partition-cell range
+  has limsup at most its time length times the stable escape rate for that
+  cell's width.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.limsup_scaledLog_normalizedStepCorridor_le_selectedCellRates`:
+  if each selected cell has a negative enlarged-width rate, then the limsup
+  for the full corridor is at most the sum of the selected cell rates plus
+  the prescribed aggregate slack.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.limsup_scaledLog_normalizedStepCorridor_le_selectedCellRates_of_stepCorridor`:
+  the preceding finite-cell estimate applies to a continuous admissible step
+  corridor using its common partition and endpoint traces.
 
 This adapter applies the stable one-block range estimate to the actual
 half-open cells used by the discrete finite-partition argument. The source

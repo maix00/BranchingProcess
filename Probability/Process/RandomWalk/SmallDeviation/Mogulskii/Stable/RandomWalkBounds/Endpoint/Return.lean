@@ -17,6 +17,34 @@ The public theorem in this file is:
 - `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.horizontalTubeProbability_ge_pow_stableEndpointBands`:
   seven one-block endpoint-band lower bounds imply the corresponding
   finite-block horizontal-tube lower bound.
+- `horizontalTubeProbability_ge_pow_stableEndpointBands_of_quotientBlockCount`:
+  when the block length is positive, the same seven band bounds give the
+  horizon estimate with exponent $\lfloor N/L\rfloor+1$.
+
+More precisely, put $r=\mathrm{radius}$, $s_n=\mathrm{scale}(n)$,
+$\kappa=\mathrm{constant}$, and
+$L_n=\mathrm{stableBlockLength}(\alpha,\nu,\kappa,\mathrm{scale},n)$. Let
+$T_N=\mathrm{horizontalTubeProbability}(\mathrm{iidSequenceLaw}(\nu),
+1/2,2(r+4\varepsilon)s_n,N)$. If
+
+$$
+q\le \mathrm{iidSequenceLaw}(\nu\circ(x\mapsto x/s_n)^{-1})
+  (\mathrm{endpointBandBlockEvent}(r,\varepsilon,i,L_n))
+\quad(i=-3,-2,\ldots,3),
+$$
+
+then
+
+$$
+q^m\le T_N
+\quad\text{when }N\le mL_n,
+$$
+
+and therefore
+
+$$
+q^{\lfloor N/L_n\rfloor+1}\le T_N.
+$$
 
 This is the endpoint-return step in the discrete lower estimate (equation
 (33)) of A. A. Mogul'skii, “Small deviations in the sample function space,”

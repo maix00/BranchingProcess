@@ -15,6 +15,15 @@ public import Topology.Cadlag.Skorokhod.Path.Scaling
 /-!
 # Unit-interval path law of a stable Lévy process
 
+The public declarations are:
+
+- `ProbabilityTheory.IsStableLevyProcess.unitIntervalPathLaw`: the canonical
+  law of the process path on $[0,1]$ in càdlàg Skorokhod space.
+- `ProbabilityTheory.IsStableLevyProcess.isStableClockProcessLaw_unitIntervalPathLaw`:
+  this canonical path law has the corresponding stable clock-process law.
+- `ProbabilityTheory.IsStableClockProcessLaw.spatialScale`: scaling paths by
+  $q>0$ pushes the increment law forward by $x\mapsto qx$.
+
 An actual stable Lévy process on nonnegative time induces its canonical
 càdlàg path law on `[0,1]`. This adapter constructs that law from the process
 itself, so applications need not separately provide a compatible finite-

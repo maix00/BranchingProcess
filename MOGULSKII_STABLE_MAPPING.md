@@ -40,6 +40,15 @@ and its text layer; original numbering is retained.
   Gaussian escape constant by calculating it for the simple symmetric walk.
   The statement is a finite-variance theorem, not a theorem specifically for
   the infinite-variance normal domain of attraction.
+* **Теорема 4 (section 5).** For a homogeneous process `ξ(t)` with stationary
+  independent increments and right-continuous paths, whose unit-time increment
+  law is in the strictly stable domain of attraction with `0 < α < 2`, the
+  rescaled full path `t ↦ ξ(nt)/x(n)` has the same rate as Theorem 1 when
+  `x(n) → ∞` and `x(n)/B(n) → 0`:
+  `ln P(ξ(n·)/x(n) ∈ G) ~ C H_α(G) n x(n)^{-α} L*(x(n))`.
+  This full-process statement is not yet formalized. Its process-level
+  functional limit and full-path block squeeze remain open; see
+  `docs/MOGULSKII_PROCESS_THEOREM_4_PROOF_ROUTE.md`.
 
 Mogul'skii's path space `D(0,1)` consists of paths right-continuous before `1`
 and left-continuous at `1`. Its classes `𝔐₁`, `𝔐₂`, `𝔐₃`, and `𝔐` are subsets
@@ -149,21 +158,24 @@ once, not again after replacing `C₀` by its rescaled value.
 | §1: classes `M₁`, `M₂`, `M₃`, and `M` and the corridor energy | `Topology/Cadlag/Skorokhod/PathClass/StepCorridor/` for deterministic path classes; `MeasureTheory/Measure/CadlagPath/PathClass/StepCorridor/` for the corridor cost; `Probability/Process/Path/PathClass/StepCorridor/Probability/` for event measurability and probability rates; `Probability/Process/Stable/SmallDeviation/PathClass/StepCorridor/` for stable-process specializations | Path-set definitions and rate estimates have separate dependency layers. Stable-process M₂/M₃/M rates and random-walk path-class rates are proved for both the current right-continuous `S_n` path and the source `S_(n−1)` path. Arbitrary approximation targets have matching inner/outer rates without an automatic measurability claim; ordinary probability interfaces retain an explicit measurability premise. |
 | Лемма 1 I: the constant `C = −C*` | `Probability/Process/Stable/SmallDeviation/EscapeRate/Basic.lean` and `EscapeRate/PathLaw/{Basic,Transfer}.lean` | The finite negative stable-process escape rate, translated/endpoint-constrained rates, and unit-interval path-law transfer are proved. |
 | Лемма 2, Лемма 3: individual and gluing estimates | `Probability/Process/Stable/SmallDeviation/`, `Probability/Process/Stable/SmallDeviation/PathClass/StepCorridor/Partition/`, `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Stable/RandomWalkBounds/` | Stable-process Lemma 2 and exact M₂ step-corridor rates are proved. The random-walk finite-partition lower/upper estimates, endpoint-core gluing, source comparisons, and slow-diagonal assembly cover both endpoint conventions; the source last block uses its exact shortened length. |
+| Теорема 1: discrete random-walk path-class rate | `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Stable/RandomWalkBounds/PathClass/Rate.lean`, `.../FromIncrementLaw/Stable/Domain.lean`, `.../FromIncrementLaw/Normal/Domain.lean` | The stable-domain path-class rate is assembled from the finite-partition estimate and inner/outer approximation. Raw increment-law wrappers cover `0 < α < 2` and the index-two normal domain under their stated approximation and measurability hypotheses. |
 | Теорема 2: single stable block | `Probability/Process/Stable/SmallDeviation/PathClass/StepCorridor/Rate.lean` | The stable-process M₂, M₃, and M rates are assembled. For an arbitrary `IsM` set, the event need not be measurable; inner and outer probabilities have matching rates. The ordinary probability API keeps its explicit null-measurability premise. |
+| Теорема 3: finite-variance Gaussian constant | `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Stable/RandomWalkBounds/FromIncrementLaw/Normal/FiniteVariance.lean`, `.../TerminalLeft/Partition/Limit.lean` | The centered unit-variance path-class rate and the terminal-left finite-partition rate are formalized. The raw normal-domain route also covers infinite-variance attraction, which is broader than the original finite-variance theorem. |
+| Теорема 4, §5: full continuous-time source process | Not yet implemented; see `docs/MOGULSKII_PROCESS_THEOREM_4_PROOF_ROUTE.md` | The stable-process rate covers the limiting stable process, and the random-walk rate covers its discrete skeleton. The source theorem concerns the original full path `t ↦ ξ(nt)/x(n)`; process-level `J₁` convergence and a full-path block squeeze are still missing. |
 | §3: partition, product bound, `(1−δ)`-shrink | `Probability/Process/RandomWalk/Path/Block/Partition/`, `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Stable/Partition.lean`, `Analysis/Asymptotics/Scale/SlowDiagonal.lean` | Balanced floor partitions, independent cell products, endpoint-core gluing, variable-cell rates, the source-ordered scale diagonal, and the source terminal-index adapter are assembled. |
 | the two `ε`-approximations of a corridor | `Probability/Process/RandomWalk/Path/Corridor/{Basic,Energy}.lean` | present (`InOpenCorridorOn.of_shrunk`, `.relax`, `corridorEnergy_add_sub`, `corridorEnergy_sub_add`) |
 | Later `α = 2` input | `Probability/Distributions/Stable/Attraction/Normal/`, `Probability/Process/RandomWalk/FunctionalLimit/Normal/`, `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Gaussian/`, `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Stable/RandomWalkBounds/FromIncrementLaw/` | Infinite-variance truncated-moment asymptotics, quadratic norming, the normal-domain FCLT, and raw-source `α = 2` path-class and continuous-boundary rate adapters are implemented. The integrated `FromIncrementLawRates.lean` target builds, and its named declarations pass the reviewed axiom allowlist. The separate explicit Gaussian constant adapter still takes `hB : IsBrownianReal B Q`; it is not the raw-source route. This is broader in its attraction input than Mogul'skii's Theorem 3, which assumes finite variance one. |
 
 ## Current proof status
 
-The stable-process M₂/M₃/M rates and random-walk path-class rates are assembled for both endpoint conventions. The deterministic terminal-left path map and its `D₀` domain are in `Topology/Cadlag/TerminalLeft.lean`; its Borel measurability is in `MeasureTheory/MeasurableSpace/CadlagPath/TerminalLeft.lean`. `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Path/SourcePath.lean` defines the source path ending at `S_(n−1)` and proves its exact finite strict-corridor event identity. `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Stable/RandomWalkBounds/Source/Partition/Limit.lean` proves its exact variable-horizon M₂ rate, then the source path-class adapters close M₃/M and the three exponent regimes. No rate is transferred through a merely `o(1)` probability error.
+The stable-process M₂/M₃/M rates and random-walk path-class rates are assembled for both endpoint conventions. The deterministic terminal-left path map and its `D₀` domain are in `Topology/Cadlag/TerminalLeft.lean`; its Borel measurability is in `MeasureTheory/MeasurableSpace/CadlagPath/TerminalLeft.lean`. `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Path/TerminalLeft.lean` defines the source path ending at `S_(n−1)` and proves its exact finite strict-corridor event identity. `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Stable/RandomWalkBounds/TerminalLeft/Partition/Limit.lean` proves its exact variable-horizon M₂ rate, then the source path-class adapters close M₃/M and the three exponent regimes. No rate is transferred through a merely `o(1)` probability error.
 
-The source class `M` does not by itself ensure that an intermediate target is measurable. Stable-process and random-walk APIs therefore offer matching inner/outer probability rates for arbitrary `IsM` targets, while ordinary probability theorems keep an explicit measurability or null-measurability premise. The source-convention inner/outer adapter is in `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Stable/RandomWalkBounds/Source/PathClass/InnerOuter.lean`.
+The source class `M` does not by itself ensure that an intermediate target is measurable. Stable-process and random-walk APIs therefore offer matching inner/outer probability rates for arbitrary `IsM` targets, while ordinary probability theorems keep an explicit measurability or null-measurability premise. The source-convention inner/outer adapter is in `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Stable/RandomWalkBounds/TerminalLeft/PathClass/InnerOuter.lean`.
 
 The source endpoint and target class now agree at the domain level.
 `RelativeFiniteCorridorUnionApproximation` sandwiches a target only after
 intersecting both approximants with a path domain, and
-`SourcePathClassRelative.lean` instantiates it for `terminalLeftPathSpace`.
+`Stable/RandomWalkBounds/TerminalLeft/PathClass/Relative.lean` instantiates it for `terminalLeftPathSpace`.
 `RelativeTerminalLeft.lean` tests this relative event interface through the
 intermediate source-rate adapter, whose input includes a stable-process
 witness `hX`. This test is distinct from the raw-source public interface.
@@ -184,8 +196,8 @@ provides path-law extraction and repeated-grid identification in
 `Probability/Process/RandomWalk/FunctionalLimit/Stable/PathLaw/Subsequence.lean` and
 `Probability/Process/Stable/PathLaw/MonotoneGrid.lean`. C's `Probability/Process/Stable/PathLaw/FullProcess.lean` concatenates iid
 unit-interval path blocks and identifies the resulting unit-interval law.
-`Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Stable/RandomWalkBounds/Source/Inputs.lean` and
-`Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Stable/RandomWalkBounds/Source/Normalization.lean` handle the norming constant
+`Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Stable/RandomWalkBounds/TerminalLeft/Inputs.lean` and
+`Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Stable/RandomWalkBounds/TerminalLeft/Normalization.lean` handle the norming constant
 `d`, spatial factor `q = d^(1/α)`, pushed-forward stable law, and escape-rate
 scaling `C ↦ q^α C = d C`. D's wrappers in `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Stable/RandomWalkBounds/FromIncrementLaw/`
 construct the required path-law input from the stated raw attraction and
