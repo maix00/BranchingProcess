@@ -35,6 +35,22 @@ the particles, `Measure.map (·.position) (Measure.count.restrict (·.particles 
 the one statement that would need the position map to be measurable, i.e. a
 measurable structure on the particle index; it is deliberately not part of this
 layer.
+
+The public API is:
+
+- `Cloud.diracSum C t` is the sum of Dirac measures at positions of particles
+  in the time-`t` slice. `Cloud.diracSum_apply` evaluates it on a measurable
+  set as the sum of the particle indicators, with multiplicity retained.
+- `Cloud.mapOrderDual_diracSum` pushes the slice measure through the order
+  dual; `Cloud.mapOrderDual_diracSum_Iic` identifies its lower half-line mass
+  with the original upper half-line mass.
+- `tsum_indicator_eq_encard_of_countable` and
+  `Cloud.diracSum_apply_of_countable` identify countable indicator sums with
+  cardinality and evaluate arbitrary test sets. In particular,
+  `Cloud.diracSum_Iic_eq_encard_of_countable` identifies the threshold mass
+  with the cardinality of particles positioned in `Iic a`.
+- `Measure.map_dirac_of_measurable` maps a Dirac mass through any measurable
+  function without requiring measurable singleton sets.
 -/
 
 open Classical MeasureTheory

@@ -13,6 +13,22 @@ public import Combinatorics.UlamHarris.Generation
 # Descendant relations
 
 Descendant sets and generation slices for root-indexed branching walks.
+
+The public API is:
+
+- `IsDescendant β p q` means that `q = (p.1, p.2 ++ t)` for some address `t`
+  surviving from `p.2` in the step field rooted at `p.1`.
+- `isDescendant_refl`, `isDescendant_trans`, and
+  `isDescendant_child_iff` give reflexivity, transitivity, and the one-edge
+  criterion; `fst_eq_of_isDescendant` and
+  `generation_eq_generation_add_of_isDescendant` describe root and generation.
+- `descendants β p` and `descendantsAt β p k` are respectively all
+  descendants and those at generation distance `k`. The membership lemmas,
+  disjointness theorem, and `mem_descendants_iff_exists_mem_descendantsAt`
+  state that these slices partition the descendants.
+- `descendantsOfRoot` gives the address-indexed form for one root, and
+  `isDescendant_root_iff` identifies descendants of a root particle with
+  addresses surviving from the root.
 -/
 
 @[expose] public section
