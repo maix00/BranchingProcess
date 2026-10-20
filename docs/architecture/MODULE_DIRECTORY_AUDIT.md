@@ -1692,3 +1692,39 @@ wrapper. The directly relevant Mathlib source was checked at the pinned
 revision `380f2aafb622cb2c1c93dac545b6389083c68c51`. All three modules built
 with the pinned project toolchain (3,133 Lake jobs). The broader
 statement-by-statement module-header audit remains open.
+
+## Root-indexed generation decomposition placement (2026-10-20)
+
+`Genealogy/RootIndexed/Law/GenerationDecomposition.lean` contained no
+probability-law statement. Its 11 declarations define the depth-`n` address
+type, the strict-past coordinate space, restriction and reconstruction of a
+root-indexed step field, their measurability, and the identity
+`glue n (field.past n) (subtreeStepFieldVector (generationRoots n) field) =
+field`. The module now lives at
+`Genealogy/Exploration/RootIndexed/DomainFlow/GenerationDecomposition.lean`,
+beside the coordinate-domain and subtree-vector interfaces it composes. The
+path matches the mathematical subject: it splits a field into past and
+generation-rooted future coordinates. These definitions and theorems remain
+public because they provide the reusable decomposition consumed by adaptive
+and rank couplings, rather than steps in one theorem's proof. The import in
+`Coupling/Field/Adaptive.lean` was updated; the affected client chain has
+now been rebuilt successfully.
+
+## Root-indexed finite-law support boundary (2026-10-20)
+
+`Genealogy/RootIndexed/Law/Basic.lean` had imported the ordered-step module
+only for three specializations to `Step ℕ ℝ`: almost-sure ordered support,
+almost-sure nonempty support, and survival of slot zero. The first two now
+use the existing general theorem
+`finiteRootStepFieldLaw_ae_all_of_measure_one`, which transfers any
+measurable one-step event of probability one to every root and address. The
+slot-zero conclusion is derived at its single client from the ordered and
+nonempty-support events using `orderedSteps_survive_of_le`. The product-law
+module therefore no longer imports or re-exports ordered-step machinery.
+
+This keeps the reusable statement at the abstraction level of an arbitrary
+one-step probability-one property and leaves the model-specific consequence
+with the endpoint-lineage proof that uses it. No `Lemmas/` module is needed for
+the removed wrappers. The affected law module and its clients, together with
+the relocated generation-decomposition module and adaptive coupling chain,
+build with the pinned toolchain (3,300 Lake jobs).

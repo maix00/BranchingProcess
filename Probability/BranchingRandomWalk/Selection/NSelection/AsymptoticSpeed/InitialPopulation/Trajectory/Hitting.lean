@@ -10,6 +10,8 @@ import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Ro
 import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.SelectedSubtrees.SelectedFamily
 import Probability.BranchingRandomWalk.Selection.NSelection.AsymptoticSpeed.InitialPopulation.Trajectory.Population
 import Probability.BranchingRandomWalk.Selection.NSelection.AsymptoticSpeed.InitialPopulation.Trajectory.Lemmas.CapacityHit.Growth
+import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law.Basic
+import Combinatorics.BranchingWalk.Step.Basic
 
 /-!
 # Hitting the capacity from a smaller initial population
@@ -110,7 +112,8 @@ theorem finiteRootStepFieldLaw_ae_smallInitialPopulation_hits_capacity
     μ hboundary N Finset.univ (fun _ : Fin m => (0 : ℝ))
   have hpopulationAE := Tail.finiteRootStepFieldLaw_firstNSelectedPopulation_nonempty_ae
     m N hm hN μ hboundary hnonempty
-  have hmarksAE := finiteRootStepFieldLaw_all_nonempty μ hnonempty m
+  have hmarksAE := finiteRootStepFieldLaw_ae_all_of_measure_one
+    nonemptySupport_measurable μ hnonempty m
   have hsplitAE := ae_frequently_smallInitialActiveSplitEvent
     m N hm μ hsupercritical
   filter_upwards [hgoodAE, hpopulationAE, hmarksAE, hsplitAE]
