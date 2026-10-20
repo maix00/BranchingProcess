@@ -6,10 +6,10 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.FunctionalLimit.NormalizedStep
+public import Probability.Process.RandomWalk.FunctionalLimit.NormalizedStep.Basic
 public import Probability.Process.RandomWalk.Path.Skorokhod.Corridor.Endpoint.Basic
-public import Probability.Process.RandomWalk.Path.Skorokhod.Corridor.Endpoint
-public import Probability.Process.RandomWalk.Path.Corridor.Horizontal
+public import Probability.Process.RandomWalk.Path.Skorokhod.Corridor.Endpoint.Core
+public import Probability.Process.RandomWalk.Path.Corridor.Horizontal.Core
 public import Probability.Process.RandomWalk.Path.Block.Corridor.Measure
 public import Probability.Process.RandomWalk.Path.Block.Partition.Basic
 public import Probability.ConvergenceInDistribution.Portmanteau
