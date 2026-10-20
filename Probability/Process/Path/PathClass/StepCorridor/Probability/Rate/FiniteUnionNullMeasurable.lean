@@ -5,7 +5,7 @@ Authors: WANG Yiyang
 -/
 module
 
-public import Analysis.Asymptotics.LogSum
+public import Analysis.Asymptotics.Sequence.LogSum
 public import MeasureTheory.MeasurableSpace.CadlagPath.PathClass.StepCorridor.NullMeasurable
 public import Probability.Process.Path.PathClass.StepCorridor.Probability.Rate.FiniteUnion
 public import Mathlib.MeasureTheory.Measure.QuasiMeasurePreserving

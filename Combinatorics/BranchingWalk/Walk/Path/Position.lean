@@ -13,8 +13,28 @@ public import Algebra.BigOperators.AdditivePath.Block
 /-!
 # Additive paths along a singleton branching walk
 
-This module proves only the branching-specific correspondence between a
-singleton-slot branching walk and its additive increment path.
+## Public declarations
+
+For `d : Mark → Position`, `initial : Position`, and
+`increment : ℕ → Mark`, the declarations in
+`Combinatorics.Branching.Walk` give the path correspondence:
+
+* `Combinatorics.Branching.Walk.displaceWith_lineNode_eq_displacement`
+  identifies displacement to `lineNode n` with
+  `AdditivePath.displacement n (d ∘ increment)`.
+* `Combinatorics.Branching.Walk.position_lineNode_eq_fromIncrements`
+  identifies the position at `lineNode n` with
+  `AdditivePath.fromIncrements initial (d ∘ increment) n`.
+* `Combinatorics.Branching.Walk.position_lineNode_add` expresses the position
+  at `start + length` as the position at `start` plus
+  `AdditivePath.blockSum start length (d ∘ increment)`.
+* `Combinatorics.Branching.Walk.discreteTimeCloud_position_lineNode_eq_fromIncrements`
+  gives the same position formula for the generation cloud, and
+  `Combinatorics.Branching.Walk.lineNode_mem_discreteTimeCloud` places the
+  canonical address in that cloud.
+
+These results connect the singleton branching representation to the general
+additive-path API without identifying the two underlying objects.
 -/
 
 open scoped BigOperators

@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.PathSurvival
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Survival.Path
 public import Probability.BranchingRandomWalk.Walk.Path.Window
 public import Probability.BranchingRandomWalk.Walk.Rademacher
 

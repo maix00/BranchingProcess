@@ -13,6 +13,36 @@ public import Mathlib.MeasureTheory.Integral.Prod
 /-!
 # Mellin positivity for the cosine Tauberian kernel
 
+The public declarations are:
+
+- `cosineTauberianMellinWeight α y` is
+  $(1-\cos y)y^{-1-\alpha}$;
+  `cosineTauberianCosineMoment α` is its integral over $(0,\infty)$.
+  `cosineTauberianMellinMoment α` is
+  $\int_0^\infty s^\alpha K(s)\,ds$, and
+  `cosineTauberianProfileGapWeight α y` is
+  $(\Phi(0)-\Phi(y))y^{-1-\alpha}$.
+- For $0<\alpha<2$, `integrableOn_cosineTauberianMellinWeight` and
+  `integrableOn_cosineTauberianProfileGapWeight` give integrability of the
+  two weights on $(0,\infty)$; `integrableOn_scaledCosineTauberianMellinWeight`
+  gives the same for $(1-\cos(sy))y^{-1-\alpha}$ when $s>0$.
+- `integral_cosineTauberianMellinWeight_scale` gives, for $s>0$,
+  $\int_0^\infty(1-\cos(sy))y^{-1-\alpha}\,dy=
+  s^\alpha\,\texttt{cosineTauberianCosineMoment}(\alpha)$.
+- `cosineTauberianMellinMoment_mul_cosineMoment_eq_profileGapMoment` gives
+  $J_\alpha M_\alpha=\frac\pi2\int_0^\infty
+  (\Phi(0)-\Phi(y))y^{-1-\alpha}\,dy$ for $0<\alpha<2$; here $J_\alpha$
+  and $M_\alpha$ are the cosine and kernel moments defined above.
+- `integral_cosineTauberianProfileGapWeight` evaluates that profile integral
+  as $\frac{1}{\alpha(2-\alpha)(3-\alpha)}$.
+  `cosineTauberianCosineMoment_pos` and
+  `cosineTauberianMellinMoment_pos` prove both moments positive for
+  $0<\alpha<2$.
+- `cosineTauberianConstant α` is $\frac2\pi M_\alpha$;
+  `cosineTauberianConstant_eq` identifies it as
+  $\frac{1}{\alpha(2-\alpha)(3-\alpha)J_\alpha}$, and
+  `cosineTauberianConstant_pos` proves positivity for $0<\alpha<2$.
+
 This module identifies the signed Mellin moment of the inverse cosine kernel
 by integrating its already established Fourier profile identity against a
 power weight. In particular, it does not assume that the kernel is pointwise
@@ -174,7 +204,7 @@ private noncomputable def mellinIntegrand (α : ℝ) (p : ℝ × ℝ) : ℝ :=
   cosineTauberianKernel p.1 *
     ((1 - Real.cos (p.1 * p.2)) * p.2 ^ (-1 - α))
 
-private theorem integrable_mellinIntegrand
+private lemma integrable_mellinIntegrand
     {α : ℝ} (hα₀ : 0 < α) (hα₂ : α < 2) :
     Integrable (mellinIntegrand α)
       ((volume.restrict (Ioi 0)).prod (volume.restrict (Ioi 0))) := by
@@ -343,7 +373,7 @@ theorem cosineTauberianMellinMoment_mul_cosineMoment_eq_profileGapMoment
           ∫ y in Ioi (0 : ℝ), cosineTauberianProfileGapWeight α y := by
         simp [μ, integral_const_mul]
 
-private theorem profileGapWeight_eq_small
+private lemma profileGapWeight_eq_small
     {α y : ℝ} (hy₀ : 0 < y) (hy₁ : y ≤ 1) :
     cosineTauberianProfileGapWeight α y =
       (1 / 2 : ℝ) * y ^ (1 - α) - (1 / 3 : ℝ) * y ^ (2 - α) := by
@@ -369,7 +399,7 @@ private theorem profileGapWeight_eq_small
     _ = (1 / 2 : ℝ) * y ^ (1 - α) -
           (1 / 3 : ℝ) * y ^ (2 - α) := by rw [hpow₂, hpow₃]
 
-private theorem profileGapWeight_eq_tail
+private lemma profileGapWeight_eq_tail
     {α y : ℝ} (hy : 1 < y) :
     cosineTauberianProfileGapWeight α y =
       (1 / 6 : ℝ) * y ^ (-1 - α) := by
