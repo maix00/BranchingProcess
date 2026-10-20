@@ -27,9 +27,7 @@ public declarations are:
   `Combinatorics.Branching.Selection.NSelection.preimageByRank_eq_some_iff`
   characterizes that inverse by membership and rank equality.
   `Combinatorics.Branching.Selection.NSelection.preimageByRank_leftUnique`
-  proves that one source label has at most one target preimage, and
-  `Combinatorics.Branching.Selection.NSelection.preimageByRank_maps_finite`
-  proves finiteness of the admissible guarded maps for finite populations.
+  proves that one source label has at most one target preimage.
 - `Combinatorics.Branching.Selection.NSelection.particleAtSourceRankBy_ne_none`
   shows that each source member has a target at the same rank when
   $|\mathrm{source}|\leq|\mathrm{target}|$.
@@ -195,40 +193,6 @@ theorem preimageByRank_leftUnique
   obtain ⟨hq₂, _, hr₂⟩ := preimageByRank_eq_some_iff.mp h₂
   apply rankBy_injOn targetValue target hq₁ hq₂
   exact hr₁.symm.trans hr₂
-
-/-- For fixed finite source and target populations there are only finitely
-many guarded inverse maps, independently of the ranking values. -/
-theorem preimageByRank_maps_finite
-    {Source Target : Type*} (source : Finset Source) (target : Finset Target) :
-    {f : Target → Option Source |
-      (∀ q, q ∉ target → f q = none) ∧
-      (∀ q p, f q = some p → p ∈ source)}.Finite := by
-  classical
-  let S : Set (Target → Option Source) :=
-    {f | (∀ q, q ∉ target → f q = none) ∧
-      (∀ q p, f q = some p → p ∈ source)}
-  let code : S → ({q : Target // q ∈ target} →
-      Option {p : Source // p ∈ source}) := fun f q =>
-    match h : f.1 q.1 with
-    | none => none
-    | some p => some ⟨p, f.2.2 q.1 p h⟩
-  have hdecode (f : S) (q : {q : Target // q ∈ target}) :
-      Option.map Subtype.val (code f q) = f.1 q.1 := by
-    simp only [code]
-    split <;> rename_i h
-    · exact h.symm
-    · simp only [Option.map_some]
-      exact h.symm
-  have hcode : Function.Injective code := by
-    intro f g hfg
-    apply Subtype.ext
-    funext q
-    by_cases hq : q ∈ target
-    · rw [← hdecode f ⟨q, hq⟩, ← hdecode g ⟨q, hq⟩,
-        congrFun hfg ⟨q, hq⟩]
-    · rw [f.2.1 q hq, g.2.1 q hq]
-  let _ : Finite S := Finite.of_injective code hcode
-  exact Set.finite_coe_iff.mp inferInstance
 
 /-- A source member has a same-rank target whenever the target has at least
 as many particles. -/

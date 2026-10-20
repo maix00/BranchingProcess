@@ -2454,3 +2454,17 @@ found one omitted declaration name, `particleAtSourceRankBy_matchByRank_target`,
 which is now included in the `Matching.lean` header. The refreshed pass finds
 all syntactically detected top-level declaration names in those eight
 headers; it does not replace review of their assumptions and formulas.
+
+The matching-layer declaration `preimageByRank_maps_finite` was used only by
+`Probability/BranchingRandomWalk/Coupling/Rank/Preimage.lean` to prove
+countability of the actual range of the random inverse map. Its statement is
+independent of ranks, while its implementation is a finite-product argument:
+restrict a map to the finite target subtype and record its values in the
+finite option-valued source subtype. The pinned Mathlib revision
+`380f2aafb622cb2c1c93dac545b6389083c68c51` provides `Set.Finite.pi` and
+`Set.Finite.pi'` for finite products in
+[`Mathlib/Data/Fintype/Pi.lean`](https://github.com/maix00/mathlib4/blob/380f2aafb622cb2c1c93dac545b6389083c68c51/Mathlib/Data/Fintype/Pi.lean#L199-L210).
+Because the repository result is only this proof's finiteness adapter, it is
+now a `private lemma` beside its sole use; no additional public finite-map
+wrapper is introduced. Both affected modules build with the pinned toolchain,
+and `lint-style` passes on them.
