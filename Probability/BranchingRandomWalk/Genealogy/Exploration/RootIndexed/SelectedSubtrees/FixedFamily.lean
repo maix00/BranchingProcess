@@ -6,9 +6,9 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Filtration
+public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Field.Filtration
 public import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.DomainFlow.Space
-public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law
+public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law.Basic
 public import Mathlib.Probability.Independence.Basic
 
 /-!

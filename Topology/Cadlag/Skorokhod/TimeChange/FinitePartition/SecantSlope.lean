@@ -20,7 +20,7 @@ uniform bound on all secant slopes of the matching piecewise-affine clock.
 
 namespace Skorokhod.TimeChange.FinitePartition
 
-private theorem ofMatchingPartitions_apply_points {n : ℕ} (hn : 0 < n)
+private lemma ofMatchingPartitions_apply_points {n : ℕ} (hn : 0 < n)
     (source target : Fin (n + 1) → unitInterval)
     (hsourceFirst : source ⟨0, by omega⟩ = ⊥)
     (hsourceLast : source ⟨n, by omega⟩ = ⊤)
@@ -49,7 +49,7 @@ private theorem ofMatchingPartitions_apply_points {n : ℕ} (hn : 0 < n)
       simpa [Fin.last] using htargetLast
     rw [hs, ht, TimeChange.apply_top]
 
-private theorem map_eq_affine_on_cell {n : ℕ} (hn : 0 < n)
+private lemma map_eq_affine_on_cell {n : ℕ} (hn : 0 < n)
     (source target : Fin (n + 1) → unitInterval)
     (hsourceFirst : source ⟨0, by omega⟩ = ⊥)
     (hsourceLast : source ⟨n, by omega⟩ = ⊤)
@@ -79,7 +79,7 @@ private theorem map_eq_affine_on_cell {n : ℕ} (hn : 0 < n)
       hsourceStrict htargetFirst htargetLast htargetStrict i.succ]
     exact (affineInterpolate_right hgap).symm
 
-private theorem secantSlope_ofMatchingPartitions_on_cell {n : ℕ} (hn : 0 < n)
+private lemma secantSlope_ofMatchingPartitions_on_cell {n : ℕ} (hn : 0 < n)
     (source target : Fin (n + 1) → unitInterval)
     (hsourceFirst : source ⟨0, by omega⟩ = ⊥)
     (hsourceLast : source ⟨n, by omega⟩ = ⊤)
@@ -116,7 +116,7 @@ private theorem secantSlope_ofMatchingPartitions_on_cell {n : ℕ} (hn : 0 < n)
   field_simp [hdenom, htime]
   ring_nf
 
-private theorem secantSlope_mem_band_ofMatchingPartitions_on_cell {n : ℕ}
+private lemma secantSlope_mem_band_ofMatchingPartitions_on_cell {n : ℕ}
     (hn : 0 < n) (source target : Fin (n + 1) → unitInterval)
     (hsourceFirst : source ⟨0, by omega⟩ = ⊥)
     (hsourceLast : source ⟨n, by omega⟩ = ⊤)
@@ -184,7 +184,7 @@ private theorem secantSlope_mem_band_ofMatchingPartitions_on_cell {n : ℕ}
       apply (div_le_div_iff₀ hsg hmesh).2
       nlinarith [hsg_half, hδ]
 
-private theorem matching_source_gap_lower {n : ℕ}
+private lemma matching_source_gap_lower {n : ℕ}
     (source target : Fin (n + 1) → unitInterval)
     (hsourceStrict : StrictMono source)
     (htargetStrict : StrictMono target) (mesh δ : ℝ)
@@ -228,7 +228,7 @@ private theorem matching_source_gap_lower {n : ℕ}
   have hδbound : 2 * δ ≤ mesh / 4 := by linarith [hδsmall]
   linarith
 
-private theorem oscillationPartition_index_lt_right
+private lemma oscillationPartition_index_lt_right
     (partition : OscillationPartition) {x : unitInterval} (hx : x ≠ ⊤) :
     x < partition.points (partition.index x).succ := by
   rcases partition.index_upper x with h | hlast
@@ -243,7 +243,7 @@ private theorem oscillationPartition_index_lt_right
     rw [hpoint]
     exact lt_top_iff_ne_top.mpr hx
 
-private theorem oscillationPartition_index_le_right
+private lemma oscillationPartition_index_le_right
     (partition : OscillationPartition) (x : unitInterval) :
     x ≤ partition.points (partition.index x).succ := by
   rcases partition.index_upper x with h | hlast
@@ -258,7 +258,7 @@ private theorem oscillationPartition_index_le_right
     rw [hpoint]
     exact le_top
 
-private theorem abs_weighted_secantSlope_minus_one_le {x y r₁ r₂ q : ℝ}
+private lemma abs_weighted_secantSlope_minus_one_le {x y r₁ r₂ q : ℝ}
     (hx : 0 < x) (hy : 0 < y)
     (h₁ : |r₁ - 1| ≤ q) (h₂ : |r₂ - 1| ≤ q) :
     |(r₁ * x + r₂ * y) / (x + y) - 1| ≤ q := by
@@ -278,7 +278,7 @@ private theorem abs_weighted_secantSlope_minus_one_le {x y r₁ r₂ q : ℝ}
   rw [abs_le]
   constructor <;> linarith
 
-private theorem matching_map_secantSlope_mem_band {n : ℕ} (hn : 0 < n)
+private lemma matching_map_secantSlope_mem_band {n : ℕ} (hn : 0 < n)
     (source target : Fin (n + 1) → unitInterval)
     (hsourceFirst : source ⟨0, by omega⟩ = ⊥)
     (hsourceLast : source ⟨n, by omega⟩ = ⊤)

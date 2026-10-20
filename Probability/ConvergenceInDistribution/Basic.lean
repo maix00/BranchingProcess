@@ -13,8 +13,21 @@ public section
 /-!
 # Basic operations on convergence in distribution
 
-Cofinal reindexing and eventual almost-everywhere replacement for random
-variables converging in distribution.
+The public declarations in this file are:
+
+- `MeasureTheory.TendstoInDistribution.comp_tendsto`: if $X_i\Rightarrow Z$
+  along a filter $l$ and $g$ tends from $l'$ to $l$, then
+  $X_{g(j)}\Rightarrow Z$ along $l'$.
+- `MeasureTheory.TendstoInDistribution.congr_eventually`: convergence is
+  preserved when the approximating variables agree almost everywhere for
+  all indices in an eventual set.
+- `MeasureTheory.TendstoInDistribution.congr_map_eventually`: it is also
+  preserved when the approximating laws agree eventually, without requiring
+  a common coupling.
+- `MeasureTheory.TendstoInDistribution.congr_limit` and
+  `MeasureTheory.TendstoInDistribution.congr_limit_hasLaw`: the limiting
+  variable may be replaced by any measurable realization with the same law,
+  or with a supplied `HasLaw` witness.
 -/
 
 open Filter ProbabilityTheory

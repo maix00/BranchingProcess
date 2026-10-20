@@ -5,8 +5,8 @@ Authors: WANG Yiyang
 -/
 
 import Probability.RandomMeasure.Poisson.CharacteristicFunction.FiniteWindows
-import Probability.RandomMeasure.Poisson.WindowIntegral
-import Probability.Distributions.Stable.LevyMeasure.EndpointLaw
+import Probability.RandomMeasure.Poisson.Integration.WindowIntegral
+import Probability.Distributions.Stable.LevyMeasure.Tail.EndpointLaw
 
 /-!
 # Finite-dimensional laws of the cutoff stable jump model
