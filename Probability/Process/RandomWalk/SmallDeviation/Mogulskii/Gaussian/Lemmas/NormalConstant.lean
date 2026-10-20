@@ -20,7 +20,7 @@ Brownian escape constant. This module calibrates that constant against the
 sharp horizontal-tube asymptotic, using a constant corridor as a member of
 class `M`.
 
-The public lemma is
+The proof-chain lemma used by `Gaussian/EscapeConstant.lean` is
 `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.tendsto_stableRate_openHorizontalTube_eq_escapeRate`:
 under the stable-scale, slow-variation, Gaussian escape-rate,
 domain-of-attraction, and path-tightness assumptions in its statement, the
