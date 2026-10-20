@@ -5,8 +5,8 @@ Authors: WANG Yiyang
 -/
 
 import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.SecondStage.Failure.Bound
-import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.PositiveA.LowCountPower
-import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.PositiveA.Lemmas.PZAssembly
+import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.FirstStage.LowCountPower
+import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.FirstStage.Lemmas.PZAssembly
 /-!
 * `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.rightTailPositiveAKilledEnoughRootEvent`:
   the event that the first-stage killed population at its cutoff contains at
