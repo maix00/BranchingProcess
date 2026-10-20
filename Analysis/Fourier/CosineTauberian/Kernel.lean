@@ -38,7 +38,7 @@ theorem continuous_cosineTauberianKernel :
   exact intervalIntegral.continuous_parametric_intervalIntegral_of_continuous'
     (by fun_prop) 0 1
 
-private theorem intervalIntegrable_cosineTauberianKernel_integrand (t : ℝ) :
+private lemma intervalIntegrable_cosineTauberianKernel_integrand (t : ℝ) :
     IntervalIntegrable (fun r : ℝ => (1 - r) * r ^ 2 * Real.sinc (t * r))
       volume 0 1 := by
   exact (by fun_prop : Continuous fun r : ℝ => (1 - r) * r ^ 2 * Real.sinc (t * r))
@@ -90,7 +90,7 @@ theorem abs_cosineTauberianKernel_le (t : ℝ) :
     _ = 1 / 12 := hweight
 
 /-- The scaled sine integral in the kernel has an elementary antiderivative. -/
-private theorem integral_cosineTauberian_numerator {t : ℝ} (_ht : 0 < t) :
+private lemma integral_cosineTauberian_numerator {t : ℝ} (_ht : 0 < t) :
     (∫ q in (0 : ℝ)..t, (t - q) * q * Real.sin q) =
       2 * (1 - Real.cos t) - t * Real.sin t := by
   let G : ℝ → ℝ := fun q =>
