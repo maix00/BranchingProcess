@@ -2316,6 +2316,12 @@ not publicly import project-local `Lemmas/` modules. Keep internal re-exports
 when helper modules compose through them, and audit each import against its
 consumers before changing visibility.
 
+The same audit found `RandomWalk/Fluctuation/SparreAndersen/Composition/Lemmas/BlockProbability.lean`
+contains only private declarations but publicly re-exported five Mathlib
+modules. Those imports are now ordinary imports; the public theorem entry
+`Composition/CyclicGapSum.lean` already imports its interface dependencies
+directly. Its full helper and client build succeeds with the narrower boundary.
+
 ## Mogulskii spectral ownership (2026-10-21)
 
 The 43-module `Spectral/` subtree was checked against its declaration
