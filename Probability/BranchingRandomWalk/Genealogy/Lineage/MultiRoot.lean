@@ -6,8 +6,8 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.BranchingRandomWalk.Genealogy.Lineage.Lineages
-public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Filtration
+public import Probability.BranchingRandomWalk.Genealogy.Lineage.PreSampled
+public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Field.Filtration
 
 /-!
 # Reserve lineages in a root-indexed marked forest

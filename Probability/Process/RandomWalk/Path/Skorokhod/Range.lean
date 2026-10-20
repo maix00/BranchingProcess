@@ -7,8 +7,8 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.Path.Block.Law.Excursions
-public import Probability.Process.RandomWalk.Path.Skorokhod
-public import Topology.Cadlag.Skorokhod.Range
+public import Probability.Process.RandomWalk.Path.Skorokhod.Core
+public import Topology.Cadlag.Skorokhod.Path.Range
 
 /-!
 # Range bounds for random-walk step paths

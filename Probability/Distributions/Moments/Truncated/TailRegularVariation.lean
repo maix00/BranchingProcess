@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Analysis.Asymptotics.RegularVariation.Integral
+public import Analysis.Asymptotics.RegularVariation.Integral.Basic
 public import Mathlib.MeasureTheory.Function.L1Space.Integrable
 public import Mathlib.MeasureTheory.Integral.Layercake
 public import Probability.Distributions.Moments.Truncated.TailIntegral

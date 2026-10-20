@@ -11,6 +11,15 @@ public import Mathlib.Data.Fin.Basic
 /-!
 # Finite blocks of sequences
 
+The public declarations in `Combinatorics.Sequence` are:
+
+- `blockCoordinates`: the block $k\mapsto f(s+k)$, for $k<\ell$.
+- `paddedBlockCoordinates`: the sequence equal to $f(s+k)$ when $k<\ell$
+  and to a chosen default otherwise.
+- `paddedBlockCoordinates_of_lt` and `paddedBlockCoordinates_of_not_lt`:
+  $\operatorname{paddedBlock}(s,\ell,d,f)(k)=f(s+k)$ for $k<\ell$, and
+  equals $d$ when $\ell\le k$.
+
 Extract a finite consecutive block from an arbitrary sequence. This operation
 is independent of any algebraic, probabilistic, or process structure on the
 sequence values.
