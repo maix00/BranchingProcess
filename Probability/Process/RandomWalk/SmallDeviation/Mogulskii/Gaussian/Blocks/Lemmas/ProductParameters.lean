@@ -1,0 +1,244 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
+module
+
+public import Probability.Distributions.Gaussian.FiniteProduct
+
+/-!
+# Proof-specific Gaussian product parameters
+
+The proof-specific parameter lemmas in this file are:
+
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Blocks.exists_constant_error_lowerBound_lt_gaussianProduct`:
+  for a fixed positive number of Gaussian blocks, choose $c,\delta,b>0$
+  so that $b+k(c/r^2+\delta)$ lies below the product of the $k$
+  symmetric Gaussian interval probabilities of radius $R/\sqrt c$.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Blocks.exists_error_lowerBound_gap_finset_gaussianProduct`:
+  a strict gap for each member of a nonempty finite reference family gives
+  common $\delta,b>0$ with $b+k(c/r^2+\delta)$ below every product.
+
+These quantitative choices occur in the finite-partition lower-bound proof of
+Theorem 3, Section 4, p. 764 of the 1974 Russian original by A. A.
+Mogul'skii, “Small deviations in the sample function space,” *Teoriya
+Veroyatnostei i ee Primeneniya* 19(4) (1974), 755–765; English translation,
+“Small Deviations in a Space of Trajectories,” *Theory of Probability and Its
+Applications* 19(4) (1975), 726–736, DOI 10.1137/1119081.
+Gaussian interval positivity itself belongs to the distribution layer.
+-/
+
+@[expose] public section
+
+open MeasureTheory
+open scoped Topology
+
+namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Blocks
+
+/-- There are explicit positive block and error parameters for which a
+positive numerical lower bound remains after paying the maximal-inequality
+error.  The comparison uses the Gaussian product at block constant one; a
+smaller constant only enlarges its symmetric intervals. -/
+lemma exists_constant_error_lowerBound_lt_gaussianProduct
+    {endpointMargin blockRadius : ℝ}
+    (hendpointMargin : 0 < endpointMargin)
+    (hblockRadius : 0 < blockRadius)
+    {blocks : ℕ} (hblocks : 0 < blocks) :
+    ∃ constant > 0, constant ≤ 1 ∧ ∃ error > 0,
+      ∃ lowerBound : ENNReal, 0 < lowerBound ∧
+        lowerBound + ENNReal.ofReal
+            (blocks * (constant / endpointMargin ^ 2 + error)) <
+          ∏ _j : Fin blocks,
+            gaussianReal 0 1
+              (Set.Ioo
+                (-blockRadius / Real.sqrt constant)
+                (blockRadius / Real.sqrt constant)) := by
+  let base : ENNReal := ∏ _j : Fin blocks,
+    gaussianReal 0 1 (Set.Ioo (-blockRadius) blockRadius)
+  have hbasePos : 0 < base := by
+    simpa [base] using
+      (prod_gaussian_Ioo_sub_add_pos (constant := (1 : ℝ))
+        zero_lt_one hblockRadius (blocks := blocks) (fun _ => 0))
+  have hbaseLeOne : base ≤ 1 := by
+    dsimp [base]
+    apply Finset.prod_le_one
+    intro j hj
+    simpa using
+      (measure_mono (by intro x hx; trivial) :
+        gaussianReal 0 1 (Set.Ioo (-blockRadius) blockRadius) ≤
+          gaussianReal 0 1 Set.univ)
+  have hbaseTop : base ≠ ⊤ :=
+    ne_of_lt (hbaseLeOne.trans_lt ENNReal.one_lt_top)
+  have hbaseRealPos : 0 < base.toReal :=
+    ENNReal.toReal_pos hbasePos.ne' hbaseTop
+  have hblocksReal : 0 < (blocks : ℝ) := by exact_mod_cast hblocks
+  have hmarginSq : 0 < endpointMargin ^ 2 := sq_pos_of_pos hendpointMargin
+  let constant : ℝ := min (1 / 2)
+    (base.toReal * endpointMargin ^ 2 / (16 * (blocks : ℝ)))
+  have hconstant : 0 < constant := by
+    dsimp [constant]
+    rw [lt_min_iff]
+    constructor
+    · norm_num
+    · exact div_pos (mul_pos hbaseRealPos hmarginSq) (by positivity)
+  have hconstantOne : constant ≤ 1 :=
+    (min_le_left _ _).trans (by norm_num)
+  have hconstantBound :
+      constant ≤ base.toReal * endpointMargin ^ 2 /
+        (16 * (blocks : ℝ)) := min_le_right _ _
+  let error := constant / endpointMargin ^ 2
+  have herror : 0 < error := div_pos hconstant hmarginSq
+  have htotal :
+      (blocks : ℝ) * (constant / endpointMargin ^ 2 + error) ≤
+        base.toReal / 8 := by
+    dsimp [error]
+    calc
+      (blocks : ℝ) *
+          (constant / endpointMargin ^ 2 +
+            constant / endpointMargin ^ 2) =
+          2 * (blocks : ℝ) * constant / endpointMargin ^ 2 := by ring
+      _ ≤ 2 * (blocks : ℝ) *
+          (base.toReal * endpointMargin ^ 2 /
+            (16 * (blocks : ℝ))) / endpointMargin ^ 2 := by
+        exact div_le_div_of_nonneg_right
+          (mul_le_mul_of_nonneg_left hconstantBound (by positivity))
+          hmarginSq.le
+      _ = base.toReal / 8 := by
+        field_simp [hblocksReal.ne', hmarginSq.ne']
+        ring
+  let lowerBound := ENNReal.ofReal (base.toReal / 2)
+  have hlowerBound : 0 < lowerBound := ENNReal.ofReal_pos.2 (by positivity)
+  have herrorBound :
+      ENNReal.ofReal
+          (blocks * (constant / endpointMargin ^ 2 + error)) ≤
+        ENNReal.ofReal (base.toReal / 8) :=
+    ENNReal.ofReal_le_ofReal htotal
+  have hgapBase : lowerBound + ENNReal.ofReal
+        (blocks * (constant / endpointMargin ^ 2 + error)) < base := by
+    calc
+      lowerBound + ENNReal.ofReal
+          (blocks * (constant / endpointMargin ^ 2 + error)) ≤
+          ENNReal.ofReal (base.toReal / 2) +
+            ENNReal.ofReal (base.toReal / 8) :=
+        by simpa [lowerBound, add_comm] using
+          add_le_add_left herrorBound (ENNReal.ofReal (base.toReal / 2))
+      _ = ENNReal.ofReal (base.toReal / 2 + base.toReal / 8) := by
+        rw [ENNReal.ofReal_add] <;> positivity
+      _ < ENNReal.ofReal base.toReal := by
+        exact (ENNReal.ofReal_lt_ofReal_iff hbaseRealPos).2 (by linarith)
+      _ = base := ENNReal.ofReal_toReal hbaseTop
+  refine ⟨constant, hconstant, hconstantOne, error, herror,
+    lowerBound, hlowerBound, ?_⟩
+  exact hgapBase.trans_le
+    (prod_gaussian_Ioo_one_le_of_constant_le_one
+      hconstant hconstantOne hblockRadius blocks)
+
+/-- If the principal maximal-inequality error is strictly below every member
+of a nonempty finite Gaussian-product family, then a positive additional
+error tolerance and a positive common survival bound can be chosen while
+retaining a strict gap. -/
+lemma exists_error_lowerBound_gap_finset_gaussianProduct
+    {constant endpointMargin blockRadius : ℝ}
+    (hconstant : 0 < constant)
+    (hendpointMargin : 0 < endpointMargin)
+    {blocks : ℕ} (hblocks : 0 < blocks)
+    (references : Finset ℝ) (hreferences : references.Nonempty)
+    (target : ℝ → ℕ → ℝ)
+    (hprincipal : ∀ y ∈ references,
+      ENNReal.ofReal (blocks * (constant / endpointMargin ^ 2)) <
+        ∏ j : Fin blocks,
+          gaussianReal 0 1
+            (Set.Ioo
+              ((target y j - blockRadius) / Real.sqrt constant)
+              ((target y j + blockRadius) / Real.sqrt constant))) :
+    ∃ error > 0, ∃ lowerBound : ENNReal,
+      0 < lowerBound ∧ lowerBound ≤ 1 ∧ ∀ y ∈ references,
+        lowerBound + ENNReal.ofReal
+            (blocks * (constant / endpointMargin ^ 2 + error)) <
+          ∏ j : Fin blocks,
+            gaussianReal 0 1
+              (Set.Ioo
+                ((target y j - blockRadius) / Real.sqrt constant)
+                ((target y j + blockRadius) / Real.sqrt constant)) := by
+  classical
+  let product : ℝ → ENNReal := fun y => ∏ j : Fin blocks,
+    gaussianReal 0 1
+      (Set.Ioo
+        ((target y j - blockRadius) / Real.sqrt constant)
+        ((target y j + blockRadius) / Real.sqrt constant))
+  obtain ⟨y₀, hy₀, hy₀Min⟩ :=
+    references.exists_min_image product hreferences
+  have hproductLeOne : product y₀ ≤ 1 := by
+    dsimp [product]
+    apply Finset.prod_le_one
+    intro j hj
+    simpa using
+      (measure_mono (by intro x hx; trivial) :
+        gaussianReal 0 1
+            (Set.Ioo
+              ((target y₀ j - blockRadius) / Real.sqrt constant)
+              ((target y₀ j + blockRadius) / Real.sqrt constant)) ≤
+          gaussianReal 0 1 Set.univ)
+  have hproductTop : product y₀ ≠ ⊤ :=
+    ne_of_lt (hproductLeOne.trans_lt ENNReal.one_lt_top)
+  have hblocksReal : 0 < (blocks : ℝ) := by exact_mod_cast hblocks
+  have hmarginSq : 0 < endpointMargin ^ 2 :=
+    sq_pos_of_pos hendpointMargin
+  let principal : ℝ :=
+    (blocks : ℝ) * (constant / endpointMargin ^ 2)
+  have hprincipalNonneg : 0 ≤ principal := by
+    dsimp [principal]
+    positivity
+  have hstrict : ENNReal.ofReal principal < product y₀ := by
+    simpa [principal] using hprincipal y₀ hy₀
+  have hstrictReal : principal < (product y₀).toReal := by
+    have h :=
+      (ENNReal.toReal_lt_toReal ENNReal.ofReal_ne_top hproductTop).2 hstrict
+    simpa [ENNReal.toReal_ofReal hprincipalNonneg] using h
+  have hproductPos : 0 < product y₀ := lt_of_le_of_lt bot_le hstrict
+  have hproductRealPos : 0 < (product y₀).toReal :=
+    ENNReal.toReal_pos hproductPos.ne' hproductTop
+  let gap : ℝ := (product y₀).toReal - principal
+  have hgap : 0 < gap := sub_pos.mpr hstrictReal
+  let error : ℝ := gap / (4 * (blocks : ℝ))
+  have herror : 0 < error := div_pos hgap (by positivity)
+  let lowerBound : ENNReal := ENNReal.ofReal (gap / 4)
+  have hlowerBound : 0 < lowerBound :=
+    ENNReal.ofReal_pos.2 (div_pos hgap (by norm_num))
+  have hlowerBoundOne : lowerBound ≤ 1 := by
+    calc
+      lowerBound ≤ product y₀ := by
+        rw [show lowerBound = ENNReal.ofReal (gap / 4) by rfl,
+          ← ENNReal.ofReal_toReal hproductTop]
+        exact ENNReal.ofReal_le_ofReal (by
+          dsimp [gap]
+          nlinarith [hprincipalNonneg, hproductRealPos])
+      _ ≤ 1 := hproductLeOne
+  refine ⟨error, herror, lowerBound, hlowerBound, hlowerBoundOne, ?_⟩
+  intro y hy
+  have hmin : product y₀ ≤ product y := hy₀Min y hy
+  have hsum : lowerBound + ENNReal.ofReal
+      (blocks * (constant / endpointMargin ^ 2 + error)) < product y₀ := by
+    rw [show lowerBound = ENNReal.ofReal (gap / 4) by rfl]
+    have htotal : (blocks : ℝ) *
+        (constant / endpointMargin ^ 2 + error) = principal + gap / 4 := by
+      dsimp [error, principal]
+      field_simp [hblocksReal.ne']
+    rw [htotal]
+    have hquarterNonneg : 0 ≤ gap / 4 := by positivity
+    have htotalNonneg : 0 ≤ principal + gap / 4 :=
+      add_nonneg hprincipalNonneg hquarterNonneg
+    calc
+      ENNReal.ofReal (gap / 4) + ENNReal.ofReal (principal + gap / 4) =
+          ENNReal.ofReal (gap / 4 + (principal + gap / 4)) :=
+        (ENNReal.ofReal_add hquarterNonneg htotalNonneg).symm
+      _ < ENNReal.ofReal (product y₀).toReal :=
+        (ENNReal.ofReal_lt_ofReal_iff hproductRealPos).2 (by
+          dsimp [gap]
+          nlinarith)
+      _ = product y₀ := ENNReal.ofReal_toReal hproductTop
+  exact hsum.trans_le hmin
+
+end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Blocks

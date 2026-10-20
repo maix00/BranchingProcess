@@ -6,16 +6,33 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.Path.Block.Partition
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.BlockScale
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Tightness
+public import Probability.Process.RandomWalk.Path.Block.Partition.Core
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Scale.BlockScale
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Path.Tightness
 
 /-!
 # Quantitative finite-partition tightness
 
-This file keeps the diffusive block constant explicit.  The resulting error
-is therefore available for the later numerical choice of a common positive
-one-block survival bound.
+Write $q_n=\operatorname{diffusiveBlockLength}(C,s,n)$ and, for a probability
+measure $\nu$, let $\mathbb P_\nu=(\operatorname{iidSequenceLaw}\,\nu)$. The
+public declarations in `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii`
+are:
+
+- `eventually_normalizedEndpoints_le_corridors_add_explicitError`: for
+  centered unit-second-moment increments, a Mogulskii scale $s$, and
+  $C,\rho,e>0$, eventually in $n$ and uniformly in endpoint sequences
+  $(a_j),(b_j)$,
+  $\mathbb P_\nu(\forall j<m,\ D_{j q_n}/s_n\in(a_j+\rho,b_j-\rho))$
+  is at most
+  $\mathbb P_\nu(\forall j<m,\forall k\le q_n,
+  D_{j q_n+k}\in[s_n a_j,s_n b_j])$
+  plus $\operatorname{ofReal}(m(C/\rho^2+e))$.
+- `eventually_normalizedEndpoints_inter_le_corridors_inter_add_explicitError`:
+  the same estimate holds after intersecting both events with any fixed
+  event of the full increment sequence.
+
+The explicit error keeps the diffusive block constant available for a later
+numerical choice of a common positive one-block survival bound.
 -/
 
 open Filter MeasureTheory Set

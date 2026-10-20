@@ -9,7 +9,7 @@ module
 public import Mathlib.Probability.Independence.InfinitePi
 public import Mathlib.Data.Finset.Sort
 public import Probability.Process.Stable.PathLaw.UnitInterval
-public import Probability.Process.RandomWalk.FunctionalLimit.Stable.PathFiniteDimensionalSource
+public import Probability.Process.RandomWalk.FunctionalLimit.Stable.PathLaw.RandomWalkGrid
 public import Topology.Cadlag.Concatenation
 
 /-!
@@ -19,6 +19,30 @@ This file constructs the canonical probability space of iid unit-interval
 path blocks and the càdlàg process obtained by concatenating them. It also
 records the unit-interval consistency interface needed for the converse
 direction from a unit-time path law.
+
+The public constructions are `ProbabilityTheory.iidUnitPathBlockLaw`, the
+countable product of copies of a unit-interval path law, and
+`ProbabilityTheory.iidUnitPathBlockProcess`, their concatenation on
+nonnegative time. The instance
+`ProbabilityTheory.iidUnitPathBlockLaw_isProbabilityMeasure` makes the
+product law a probability measure when each block law is one. The public
+results are:
+
+- `ProbabilityTheory.iidUnitPathBlockProcess_ae_cadlag`:
+  the concatenated process is almost surely càdlàg.
+- `ProbabilityTheory.measurable_iidUnitPathBlockProcess_eval`:
+  each fixed-time evaluation is measurable.
+- `ProbabilityTheory.iidUnitPathBlockProcess_ae_start_eq_zero` and
+  `ProbabilityTheory.iidUnitPathBlockLaw_ae_blocks_start_eq_zero`:
+  a stable-clock block law starting at zero gives a concatenated process and
+  blocks starting at zero almost surely.
+- `ProbabilityTheory.iidUnitPathBlockProcess_unitIntervalPathLaw_eq`:
+  the first unit-interval segment has the prescribed block law.
+- `ProbabilityTheory.iidUnitPathBlockProcess_integer_increments_hasLaw_pi`:
+  increments over integer time intervals have the corresponding product law.
+- `ProbabilityTheory.isStableClockProcessLaw_of_unitInterval_positionGridLaws`:
+  consistent stable position-grid laws determine a full stable-clock process
+  law.
 -/
 
 @[expose] public section
@@ -167,7 +191,7 @@ theorem iidUnitPathBlockProcess_unitIntervalPathLaw_eq
     hPath.map_eq
   simpa [Q, X] using hPathLaw
 
-private theorem iidUnitPathBlockProcess_nat_eval
+private lemma iidUnitPathBlockProcess_nat_eval
     (ω : ℕ → CadlagPath unitInterval ℝ)
     (hstarts : ∀ n, ω n ⊥ = 0) (n : ℕ) :
     iidUnitPathBlockProcess ω n = ∑ i ∈ Finset.range n, ω i ⊤ := by
@@ -256,7 +280,7 @@ image is a strictly increasing mesh, and the original mesh factors through
 the monotone surjection assigning each point its rank in that image. This is
 an exact finite construction; in particular, it preserves a repeated final
 endpoint without a left-limit argument. -/
-private theorem exists_strict_grid_rank_factorization {n : ℕ}
+private lemma exists_strict_grid_rank_factorization {n : ℕ}
     (grid : Fin (n + 1) → unitInterval) (hgrid : Monotone grid)
     (hstart : grid 0 = ⊥) :
     ∃ (m : ℕ) (strictGrid : Fin (m + 1) → unitInterval)
@@ -317,7 +341,7 @@ private theorem exists_strict_grid_rank_factorization {n : ℕ}
 /-- Adjacent indices in the compressed mesh are either the same rank or
 successive ranks. Surjectivity is essential: a gap would be an omitted mesh
 point that nevertheless occurs in the original grid. -/
-private theorem rank_succ_val_le_add_one {n m : ℕ}
+private lemma rank_succ_val_le_add_one {n m : ℕ}
     (rank : Fin (n + 1) → Fin (m + 1)) (hrankMono : Monotone rank)
     (hrankSurj : Function.Surjective rank) (i : Fin n) :
     (rank i.succ).val ≤ (rank i.castSucc).val + 1 := by
@@ -353,18 +377,18 @@ private def unitGridDifference {n : ℕ} :
     (Fin (n + 1) → ℝ) → (Fin n → ℝ) :=
   fun x i => x i.succ - x i.castSucc
 
-private theorem measurable_unitGridDifference {n : ℕ} :
+private lemma measurable_unitGridDifference {n : ℕ} :
     Measurable (@unitGridDifference n) := by
   apply measurable_pi_iff.mpr
   intro i
   exact (measurable_pi_apply i.succ).sub (measurable_pi_apply i.castSucc)
 
-private theorem unitGridDifference_partialSum {n : ℕ} :
+private lemma unitGridDifference_partialSum {n : ℕ} :
     (unitGridDifference ∘ (Fin.partialSum : (Fin n → ℝ) → Fin (n + 1) → ℝ)) = id := by
   funext x i
   simp [unitGridDifference, Fin.partialSum_succ]
 
-private theorem unitGrid_increments_hasLaw_of_positionLaw
+private lemma unitGrid_increments_hasLaw_of_positionLaw
     {α : ℝ} {μ : Measure ℝ} {P : Measure (CadlagPath unitInterval ℝ)}
     [hμ : IsProbabilityMeasure μ] [hP : IsProbabilityMeasure P] (n : ℕ)
     (grid : Fin (n + 1) → unitInterval) (hgrid : Monotone grid)
