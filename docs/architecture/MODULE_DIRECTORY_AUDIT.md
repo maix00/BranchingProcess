@@ -1655,3 +1655,17 @@ imports the finite-product results and pinned Mathlib order/product modules
 ordinarily for its proofs. `Blocks/Uniform.lean` directly imports the
 finite-product theorem it uses in its own proof. The helper and both clients
 compiled together with the pinned toolchain (3,431 Lake jobs).
+
+## Stable Mogul'skii path-class rate header sign (2026-10-20)
+
+The public theorem in
+`Stable/RandomWalkBounds/PathClass/Rate.lean` concludes that the logarithm of
+the path probability divided by `probabilityRateDenominator` tends to
+`rateCoefficient α C * H`. The pinned definition in
+`Probability/Process/Path/PathClass/StepCorridor/Probability/Normalization.lean`
+is `rateCoefficient α C = -(C * 2 ^ α)`, and
+`HasStableProcessEscapeRate.negative` gives $C<0$. The module header now
+states the corresponding limit $-C2^\alpha H$ for its negative denominator.
+The stable-domain interfaces that divide by the positive normalization retain
+the limit $C2^\alpha H$; the two signs differ because their denominators have
+opposite signs.
