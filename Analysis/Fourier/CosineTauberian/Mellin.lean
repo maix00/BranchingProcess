@@ -13,6 +13,36 @@ public import Mathlib.MeasureTheory.Integral.Prod
 /-!
 # Mellin positivity for the cosine Tauberian kernel
 
+The public declarations are:
+
+- `cosineTauberianMellinWeight α y` is
+  $(1-\cos y)y^{-1-\alpha}$;
+  `cosineTauberianCosineMoment α` is its integral over $(0,\infty)$.
+  `cosineTauberianMellinMoment α` is
+  $\int_0^\infty s^\alpha K(s)\,ds$, and
+  `cosineTauberianProfileGapWeight α y` is
+  $(\Phi(0)-\Phi(y))y^{-1-\alpha}$.
+- For $0<\alpha<2$, `integrableOn_cosineTauberianMellinWeight` and
+  `integrableOn_cosineTauberianProfileGapWeight` give integrability of the
+  two weights on $(0,\infty)$; `integrableOn_scaledCosineTauberianMellinWeight`
+  gives the same for $(1-\cos(sy))y^{-1-\alpha}$ when $s>0$.
+- `integral_cosineTauberianMellinWeight_scale` gives, for $s>0$,
+  $\int_0^\infty(1-\cos(sy))y^{-1-\alpha}\,dy=
+  s^\alpha\,\texttt{cosineTauberianCosineMoment}(\alpha)$.
+- `cosineTauberianMellinMoment_mul_cosineMoment_eq_profileGapMoment` gives
+  $J_\alpha M_\alpha=\frac\pi2\int_0^\infty
+  (\Phi(0)-\Phi(y))y^{-1-\alpha}\,dy$ for $0<\alpha<2$; here $J_\alpha$
+  and $M_\alpha$ are the cosine and kernel moments defined above.
+- `integral_cosineTauberianProfileGapWeight` evaluates that profile integral
+  as $\frac{1}{\alpha(2-\alpha)(3-\alpha)}$.
+  `cosineTauberianCosineMoment_pos` and
+  `cosineTauberianMellinMoment_pos` prove both moments positive for
+  $0<\alpha<2$.
+- `cosineTauberianConstant α` is $\frac2\pi M_\alpha$;
+  `cosineTauberianConstant_eq` identifies it as
+  $\frac{1}{\alpha(2-\alpha)(3-\alpha)J_\alpha}$, and
+  `cosineTauberianConstant_pos` proves positivity for $0<\alpha<2$.
+
 This module identifies the signed Mellin moment of the inverse cosine kernel
 by integrating its already established Fourier profile identity against a
 power weight. In particular, it does not assume that the kernel is pointwise
