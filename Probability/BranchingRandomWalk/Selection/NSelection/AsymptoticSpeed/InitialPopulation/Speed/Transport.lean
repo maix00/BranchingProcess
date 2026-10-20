@@ -7,7 +7,8 @@ Authors: WANG Yiyang
 import Probability.BranchingRandomWalk.Selection.NSelection.AsymptoticSpeed.InitialPopulation.Field.JointMeasurability
 import Probability.BranchingRandomWalk.Selection.NSelection.AsymptoticSpeed.InitialPopulation.Trajectory.RunBridge
 import Probability.BranchingRandomWalk.Selection.NSelection.AsymptoticSpeed.Limit.ProductAlmostSure
-import Probability.BranchingRandomWalk.Selection.NSelection.AsymptoticSpeed.Limit.KingmanInterface
+import Probability.BranchingRandomWalk.Selection.NSelection.AsymptoticSpeed.Limit.InfiniteOffspring.Repair
+import Probability.BranchingRandomWalk.Selection.NSelection.AsymptoticSpeed.Limit.InfiniteOffspring.Speed
 /-!
 # Speed transport for a random initial population
 
