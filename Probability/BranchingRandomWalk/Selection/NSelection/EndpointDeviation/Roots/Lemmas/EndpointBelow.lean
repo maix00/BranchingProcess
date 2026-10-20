@@ -44,7 +44,7 @@ open ProbabilityTheory.BranchingRandomWalk.Selection.NSelection
 /-- Almost surely under the common two-copy field, every selected endpoint
 below a threshold from the smaller root set has a selected endpoint below the
 same threshold in the rank-installed process from the containing root set. -/
-theorem RootIndexed.selectedPopulationNestedRoots_endpointBelow_ae
+lemma RootIndexed.selectedPopulationNestedRoots_endpointBelow_ae
     {Root α : Type*} [Countable α]
     [MeasurableSpace (RootIndexed.TreeNode Root α)]
     [Countable (RootIndexed.TreeNode Root α)]

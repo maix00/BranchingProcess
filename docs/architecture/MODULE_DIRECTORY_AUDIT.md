@@ -2028,3 +2028,18 @@ the surviving-particle parent/sibling relations by their defining formulas.
 These definitions and results remain in their semantic modules rather than
 being moved to `Lemmas/`. The five affected modules built successfully with
 the pinned toolchain.
+
+## Proof-helper declaration and import-boundary scan (2026-10-21)
+
+The tracked-source scan of 95 project modules under `Lemmas/` found one
+module-visible `theorem`,
+`RootIndexed.selectedPopulationNestedRoots_endpointBelow_ae`, in
+`BranchingRandomWalk/Selection/NSelection/EndpointDeviation/Roots/Lemmas/`
+`EndpointBelow.lean`.
+Its only client is `Roots/Monotonicity.lean`, where it is used as a proof
+step, so the declaration now uses the supporting-result keyword `lemma` and
+remains module-visible for that cross-module proof. A follow-up scan finds no
+module-visible `theorem` declarations under `Lemmas/`. A separate scan found
+no project module outside `Lemmas/` that publicly imports a project-local
+`Lemmas/` module. The root monotonicity entry and its helper compiled
+successfully with the pinned toolchain (3,375 Lake jobs).
