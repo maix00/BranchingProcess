@@ -180,12 +180,12 @@ theorem tendsto_frequencyCancellation_ratio_nhdsGT_zero
     (μ := volume) (a := (1 : ℝ)) (b := 2) hHContinuous
   simpa [H, intervalIntegral.integral_div] using hIntegral
 
-private theorem frequencyAverage_nonneg (z : ℝ) :
+private lemma frequencyAverage_nonneg (z : ℝ) :
     0 ≤ cosineSquareFrequencyAverage z := by
   exact intervalIntegral.integral_nonneg_of_forall (by norm_num)
     (fun t => sq_nonneg (1 - Real.cos (t * z)))
 
-private theorem frequencyAverage_le_four (z : ℝ) :
+private lemma frequencyAverage_le_four (z : ℝ) :
     cosineSquareFrequencyAverage z ≤ 4 := by
   let f : ℝ → ℝ := fun t => (1 - Real.cos (t * z)) ^ 2
   have hfcont : Continuous f := by fun_prop

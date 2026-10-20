@@ -7,8 +7,8 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Distributions.Moments.Real
-public import Probability.Process.RandomWalk.FunctionalLimit.Normal.PathLimit
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.CLT
+public import Probability.Distributions.Stable.Attraction.Normal.Basic
+public import Probability.Process.RandomWalk.FunctionalLimit.Normal.PathLimit.Basic
 
 /-!
 # Brownian realization of the normal-domain path limit
@@ -19,6 +19,12 @@ limit with normal-domain `J₁` tightness gives convergence of normalized
 càdlàg step paths to the path-valued realization of Mathlib's Brownian
 process. The limit realization uses rational coordinates and only the
 almost-sure path regularity supplied by `IsBrownianReal`.
+
+The public theorem is
+`ProbabilityTheory.RandomWalk.FunctionalLimit.Normal.tendsto_normalizedStepCadlagPathIcc_of_centeredUnitSecondMoment_of_brownian`:
+for centered unit-second-moment increments and an `IsBrownianReal` process,
+the normalized step-path laws converge in distribution to the Brownian path
+map on `unitInterval`.
 -/
 
 open Filter MeasureTheory ProbabilityTheory
@@ -49,8 +55,8 @@ theorem tendsto_normalizedStepCadlagPathIcc_of_centeredUnitSecondMoment_of_brown
   have hDOA : IsInDomainOfAttractionAlong ν (gaussianReal 0 1)
       normalization (fun _ => 0) := by
     simpa [normalization] using
-      _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.isInDomainOfAttractionAlong_gaussianReal_zero_one ν
-        hcentered hsecondMoment
+      _root_.ProbabilityTheory.isInDomainOfAttractionAlong_gaussianReal_zero_one_of_centered_unitSecondMoment
+        ν ⟨hcentered, hsecondMoment⟩
   have hnormalization : ∀ n, 0 < n → 0 < normalization n := by
     intro n hn
     exact Real.sqrt_pos.2 (by exact_mod_cast hn)

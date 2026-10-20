@@ -5,7 +5,7 @@ Authors: WANG Yiyang
 -/
 
 import Probability.BranchingRandomWalk.Selection.NSelection.Law.SelectedPopulation
-import Probability.BranchingRandomWalk.Population.Processes.Causal
+import Probability.BranchingRandomWalk.Population.Processes.Causal.Basic
 import Probability.Coupling.Basic
 import Probability.BranchingRandomWalk.Coupling.Field.Position
 

@@ -8,7 +8,7 @@ module
 
 public import Probability.Kernel.Step.Survival
 public import Probability.Kernel.Step.Iteration
-public import Probability.Sequence.IID
+public import Probability.Sequence.IID.Basic
 
 /-!
 # IID realizations of finite partial steps

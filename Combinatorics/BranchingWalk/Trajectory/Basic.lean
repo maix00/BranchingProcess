@@ -14,6 +14,19 @@ public import Combinatorics.BranchingWalk.Cloud.Basic
 A `Trajectory Time X` records the vertex and edge images of a walk in
 space-time.  Edges are stored as their point images; segment identity is not
 part of this structure.
+
+## Public declarations
+
+* `Combinatorics.Branching.Trajectory Time X` stores sets of space-time
+  vertices and edge images. `Combinatorics.Branching.Trajectory.vertices` and
+  `Combinatorics.Branching.Trajectory.edges` are its defining projections.
+* `Combinatorics.Branching.Trajectory.carrier T` is the union of those two
+  sets; `Combinatorics.Branching.Trajectory.toCloud T` takes their
+  time-indexed slices of the vertex set.
+* `Combinatorics.Branching.Trajectory.mem_toCloud` states
+  `x ∈ T.toCloud.points t ↔ (t, x) ∈ T.vertices`.
+  `Combinatorics.Branching.Trajectory.ext` proves equality from equality of
+  both the vertex and edge sets.
 -/
 
 @[expose] public section

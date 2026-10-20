@@ -7,16 +7,28 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Distributions.Moments.Real
-public import Probability.Distributions.Stable.Attraction.Normal
-public import Probability.Process.RandomWalk.FunctionalLimit.Normal.PathLimit
+public import Probability.Distributions.Stable.Attraction.Normal.Basic
+public import Probability.Process.RandomWalk.FunctionalLimit.Normal.PathLimit.Basic
 public import Probability.Process.RandomWalk.Path.Skorokhod.Basic
-public import Probability.Sequence.IID
+public import Probability.Sequence.IID.Basic
 public import Probability.Process.Stable.PathLaw.LinearTube
 public import Mathlib.Topology.Compactness.Compact
-public import Topology.Cadlag.Skorokhod.LinearPath
+public import Topology.Cadlag.Skorokhod.Path.Linear
 
 /-!
 # Donsker transfer for a linear open tube
+
+The public theorems are:
+
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.eventually_measure_normalizedStep_linearBall_pos`: for each slope $s$
+  and radius $r>0$, the unit-variance normalized walk has
+  $\mathbb P(X_n\in B_{J_1}(t\mapsto st,r))>q>0$ eventually.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.eventually_measure_normalizedStep_linearBall_pos_of_centeredSecondMoment`:
+  the same bound with normalization $\sigma\sqrt n$ for variance $\sigma^2$.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.eventually_measure_normalizedStep_linearBall_pos_on_Icc`:
+  one $q>0$ works for every slope $s\in[-b,b]$ in the unit-variance case.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.eventually_measure_normalizedStep_linearBall_pos_on_Icc_of_centeredSecondMoment`:
+  the same uniform slope bound for variance $\sigma^2$.
 
 The Gaussian stable path-law linear-tube positivity theorem and the
 normal-domain functional limit imply a positive lower bound, uniform for all
