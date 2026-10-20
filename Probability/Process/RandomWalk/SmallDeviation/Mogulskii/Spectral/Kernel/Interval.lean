@@ -289,7 +289,7 @@ theorem intervalKernel_pow_rowSum_bounds {interiorCount : ℕ}
   obtain ⟨lower, hlower_pos, hlower⟩ :=
     exists_pos_le_intervalSineWeight hcount
   refine ⟨lower, hlower_pos, ?_, ?_⟩
-  · have hbounds := Matrix.pow_rowSum_bounds_of_positive_eigenfunction
+  · have hbounds := Matrix.pow_rowSum_bounds_of_bounded_eigenfunction
       (intervalKernel interiorCount) (intervalSineWeight interiorCount)
       (Real.cos (Real.pi / (interiorCount + 1 : ℕ))) lower 1
       (intervalKernel_nonneg interiorCount) (intervalKernel_mulVec_sine interiorCount)
