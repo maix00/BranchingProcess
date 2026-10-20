@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.Path.Block.Maximal
+public import Probability.Process.RandomWalk.Path.Block.Maximal.Basic
 public import Probability.Distributions.Moments.Real
 
 /-!
@@ -15,6 +15,16 @@ public import Probability.Distributions.Moments.Real
 The abstract block maximal inequality is specialized here to centered
 unit-second-moment increments.  This is the quantitative input used to control
 within-block oscillations in path tightness arguments.
+
+The public theorems in this file are:
+
+- `ProbabilityTheory.RandomWalk.maximal_ineq_sq_blockSum_of_centeredUnitSecondMoment`:
+  the squared maximal inequality holds on every deterministic increment block.
+- `ProbabilityTheory.RandomWalk.measure_sq_le_blockMaximum_le`:
+  $\mathbb P(\max_{j\le n}|S_j|\ge r)\le(n+1)/r^2$ for $r>0$.
+- `ProbabilityTheory.RandomWalk.measure_exists_abs_blockSum_ge_le`:
+  the same estimate for the event that some block partial sum has absolute
+  value at least $r$.
 -/
 
 open MeasureTheory ProbabilityTheory

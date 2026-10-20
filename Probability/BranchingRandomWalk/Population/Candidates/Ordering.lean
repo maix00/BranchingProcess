@@ -8,7 +8,7 @@ module
 
 public import Probability.BranchingRandomWalk.Population.Candidates.Adapted
 public import Combinatorics.BranchingWalk.Step.Basic
-public import Combinatorics.BranchingWalk.Step.Monotone
+public import Combinatorics.BranchingWalk.Step.Ordering.Monotone
 public import Mathlib.Data.Prod.Lex
 
 /-!

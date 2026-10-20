@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Kernel.Survival
+public import Probability.Kernel.Survival.Basic
 public import Mathlib.Analysis.SpecialFunctions.Log.ENNRealLog
 public import Mathlib.MeasureTheory.Integral.Lebesgue.Map
 

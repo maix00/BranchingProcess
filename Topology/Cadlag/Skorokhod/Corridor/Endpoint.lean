@@ -7,9 +7,9 @@ Authors: WANG Yiyang
 module
 
 public import Mathlib.Topology.UnitInterval
-public import Topology.Cadlag.Skorokhod.Corridor
-public import Topology.Cadlag.Skorokhod.Endpoint
-public import Topology.Cadlag.Skorokhod.Scaling
+public import Topology.Cadlag.Skorokhod.Corridor.Basic
+public import Topology.Cadlag.Skorokhod.Path.Endpoint
+public import Topology.Cadlag.Skorokhod.Path.Scaling
 
 /-!
 # Open Skorokhod corridors with an endpoint constraint
