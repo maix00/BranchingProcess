@@ -5,12 +5,40 @@ Authors: WANG Yiyang
 -/
 
 import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.Minimum.Basic
+import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law.FiniteRestriction
 /-!
 # Endpoint observations on one countable-root forest
 
-The finite-root endpoint variables for different initial population sizes are
-realized on the same countable-root product space. Restricting to the first
-`m` roots has exactly the finite-root branching law.
+The public declarations in
+`ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail` are:
+
+- `countableRootEndpointMinimum`: the generation-`H` endpoint minimum among
+  the first `N` selected particles, computed from the first `m` roots of one
+  countable-root field:
+  `firstNSelectedEndpointMinimum m N H (RootIndexed.StepField.first m field)`.
+- `measurable_countableRootEndpointMinimum`: this observable is measurable.
+- `countableRootEndpointMinimum_sublevel_measure_eq`: its sublevel probability
+  under the countable-root law equals the finite-root sublevel probability:
+  $\nu_{\mathbb N}(E_{m,N,H}\le x)=\nu_m(E^{(m)}_{N,H}\le x)$.
+- `countableRootEndpointMinimum_map_eq`: its pushforward law equals the
+  pushforward law of the finite-root endpoint minimum:
+  $(\nu_{\mathbb N})_*E_{m,N,H}=(\nu_m)_*E^{(m)}_{N,H}$.
+- `countableRootEndpointMinimum_integral_map_eq`: every measurable real
+  observable `g` has equal integrals under these two endpoint laws:
+  $\int g(E_{m,N,H})\,d\nu_{\mathbb N}=
+  \int g(E^{(m)}_{N,H})\,d\nu_m$.
+- `countableRootEndpointMinimum_fourthMoment_eq`: for every `c : ℝ`, the
+  centered fourth moments agree:
+  $\mathbb E[(E_{m,N,H}-c)^4]=\mathbb E[(E^{(m)}_{N,H}-c)^4]$.
+
+Here `E_{m,N,H}` is the countable-root endpoint minimum and
+`E^{(m)}_{N,H}` is the finite-root endpoint minimum. The restriction map and
+its product-law identity are provided by
+`ProbabilityTheory.BranchingRandomWalk.RootIndexed.StepField.measurePreserving_first`.
+The observable measurability and law-transfer statements assume the finite-root
+node type has the stated measurable space, countability, and linear order;
+the measure identities also assume that the one-step measure is a probability
+measure.
 -/
 
 open MeasureTheory
@@ -19,26 +47,6 @@ namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail
 
 open Combinatorics.Branching
 open Combinatorics.UlamHarris
-
-theorem RootIndexed.StepField.measurable_first (m : ℕ) :
-    Measurable
-      (RootIndexed.StepField.first m : CountableRootStepField ℕ ℝ →
-        FiniteRootStepField m ℕ ℝ) := by
-  rw [measurable_pi_iff]
-  intro r
-  rw [measurable_pi_iff]
-  intro u
-  exact (measurable_pi_apply u).comp (measurable_pi_apply (Fin.val r))
-
-/-- The first `m` roots of the countable pre-sampled forest have the usual
-finite-root product law. -/
-theorem RootIndexed.StepField.measurePreserving_first
-    (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ] (m : ℕ) :
-    MeasurePreserving (RootIndexed.StepField.first m)
-      (RootIndexed.stepFieldLaw (Root := ℕ) μ)
-      (finiteRootStepFieldLaw μ m) := by
-  refine ⟨RootIndexed.StepField.measurable_first m, ?_⟩
-  exact countableRootStepFieldLaw_first μ m
 
 /-- The generation-`H` minimum among the first `N` selected particles from
 the first `m` roots, viewed on the common countable-root probability space. -/
@@ -53,7 +61,7 @@ theorem measurable_countableRootEndpointMinimum (m N H : ℕ)
     [LinearOrder (RootIndexed.TreeNode (Fin m) ℕ)] :
     Measurable (countableRootEndpointMinimum m N H) := by
   exact (measurable_firstNSelectedEndpointMinimum m N H).comp
-    (RootIndexed.StepField.measurable_first m)
+    (RootIndexed.StepField.measurable_first (α := ℕ) (X := ℝ) m)
 
 theorem countableRootEndpointMinimum_sublevel_measure_eq
     (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
@@ -67,7 +75,8 @@ theorem countableRootEndpointMinimum_sublevel_measure_eq
       (finiteRootStepFieldLaw μ m)
         {field | firstNSelectedEndpointMinimum m N H field ≤ x} := by
   have hmap := countableRootStepFieldLaw_first μ m
-  have hmeas := RootIndexed.StepField.measurable_first m
+  have hmeas :=
+    RootIndexed.StepField.measurable_first (α := ℕ) (X := ℝ) m
   let s : Set (FiniteRootStepField m ℕ ℝ) :=
     {field | firstNSelectedEndpointMinimum m N H field ≤ x}
   have hs : MeasurableSet s := by
@@ -95,7 +104,7 @@ theorem countableRootEndpointMinimum_map_eq
         rfl]
   rw [← Measure.map_map
     (measurable_firstNSelectedEndpointMinimum m N H)
-    (RootIndexed.StepField.measurable_first m)]
+    (RootIndexed.StepField.measurable_first (α := ℕ) (X := ℝ) m)]
   exact congrArg (fun ν : Measure (FiniteRootStepField m ℕ ℝ) =>
     ν.map (firstNSelectedEndpointMinimum m N H))
       (countableRootStepFieldLaw_first μ m)

@@ -10,6 +10,21 @@ set_option linter.style.haveILetI false
 /-!
 # Endpoint sublevel probabilities for nested root sets
 
+The public declarations in
+`ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail` are:
+
+- `RootIndexed.selectedPopulationEndpointBelow`: the event that some particle
+  in the generation-`n` first-`N` selected population from `roots` has position
+  at most `threshold`:
+  `{field | ∃ p, p ∈ RootIndexed.selectedPopulationTotalized N roots initialPosition id id n field ∧ RootIndexed.position initialPosition id field p.1 p.2 ≤ threshold}`.
+- `measurableSet_RootIndexed_selectedPopulationEndpointBelow`: this event is
+  measurable.
+- `RootIndexed.measure_selectedPopulationEndpointBelow_mono_roots`: if
+  `sourceRoots ⊆ targetRoots` and the boundary normalization holds, then the
+  root-indexed step-field law satisfies
+  $\nu(\operatorname{EndpointBelow}(\text{sourceRoots},n,x))\le
+  \nu(\operatorname{EndpointBelow}(\text{targetRoots},n,x))$.
+
 The rank-installed coupling shows that adding initial roots can only increase
 the probability of finding a selected endpoint below a fixed threshold.  The
 two fields in the coupling have the same product-law marginal, so this
