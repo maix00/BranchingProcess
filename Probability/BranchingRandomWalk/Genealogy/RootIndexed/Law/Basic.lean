@@ -17,36 +17,45 @@ public import Combinatorics.BranchingWalk.Step.Basic
 /-!
 # Product laws on root-indexed step fields
 
-One i.i.d. step field is attached to each initial root through mathlib's
-arbitrary-family probability product. The construction and its finite
-marginals do not require a countable root type. Countability appears only when
-coordinatewise almost-sure statements are combined over every root.
-`finiteRoot...` is the `Fin m` marginal consumed by finite-population arguments.
+In namespace `ProbabilityTheory.BranchingRandomWalk`, the public declarations
+provide these laws and marginals:
 
-The public declarations provide these laws and marginals:
-
-- `RootIndexed.stepFieldLaw μ` is the product law
-  `⨂ r : Root, stepFieldLaw μ` on root-indexed fields.
+- `RootIndexed.stepFieldLaw (Root := Root) μ` is
+  the product law $\bigotimes_{r : Root}\operatorname{stepFieldLaw}(\mu)$ on
+  root-indexed fields.
+- `RootIndexed.stepFieldLaw.isProbabilityMeasure` states that this product
+  law is a probability measure when `μ` is one.
 - `RootIndexed.stepFieldLaw_reindex μ f hf` states
-  `map (StepField.reindex f) (stepFieldLaw μ) = stepFieldLaw μ` on `NewRoot`
-  when `f : NewRoot → Root` is injective.
+  `map (RootIndexed.StepField.reindex f)
+  (RootIndexed.stepFieldLaw (Root := Root) μ) =
+  RootIndexed.stepFieldLaw (Root := NewRoot) μ` when
+  `f : NewRoot → Root` is injective.
 - `RootIndexed.stepFieldLaw_mapMarks μ f hf` states that mapping every mark
-  by `f` sends the root product law to the product law of `μ.map (Step.map f)`.
+  by measurable `f` sends the root product law to the product law of
+  `μ.map (Step.map f)`, that is,
+  `map (fun field r => StepField.map f (field r)) (stepFieldLaw μ) =
+  stepFieldLaw (μ.map (Step.map f))`.
 - `RootIndexed.StepField.measurable_reindexCoordinates f` proves
   measurability of coordinate reindexing; for injective `f`,
   `RootIndexed.stepFieldLaw_reindexCoordinates μ f hf` preserves the law.
-- `RootIndexed.stepFieldLaw_coordinates_independent μ` gives mutual
-  independence of all root/address coordinates, and
-  `RootIndexed.stepFieldLaw_roots_independent μ` gives mutual independence
-  of the complete root fields.
+- `RootIndexed.stepFieldLaw_coordinates_independent μ` states
+  `iIndep (fun (r,u) field => field r u) (stepFieldLaw μ)` for a probability
+  measure `μ`; `RootIndexed.stepFieldLaw_roots_independent μ` gives the
+  corresponding mutual independence of the complete root fields.
 - `RootIndexed.stepFieldLaw_root_marginal μ r` has pushforward law
-  `stepFieldLaw μ`; `RootIndexed.stepFieldLaw_coordinate_marginal μ r u`
-  has pushforward law `μ`.
-- If `μ s = 1`, then
+  `map (fun field => field r)
+  (RootIndexed.stepFieldLaw (Root := Root) μ) =
+  ProbabilityTheory.BranchingRandomWalk.stepFieldLaw μ`;
+  `RootIndexed.stepFieldLaw_coordinate_marginal μ r u` states
+  `map (fun field => field r u)
+  (RootIndexed.stepFieldLaw (Root := Root) μ) = μ`.
+- For countable `Root` and `α`, if `μ s = 1`, then
   `RootIndexed.stepFieldLaw_ae_all_of_measure_one hs μ hμ` states that
   `field r u ∈ s` simultaneously for every root `r` and address `u`, almost
   surely.
-- `finiteRootStepFieldLaw μ m` is the root product law with `Root = Fin m`.
+- `finiteRootStepFieldLaw μ m` is
+  `RootIndexed.stepFieldLaw (Root := Fin m) μ`, the product law with
+  `Root = Fin m`.
   `RootIndexed.stepFieldLaw_fin_restrict μ roots hinj` identifies every
   injectively labelled finite family with this law;
   `countableRootStepFieldLaw_first μ m` gives its first-`m` marginal from
@@ -59,6 +68,13 @@ The public declarations provide these laws and marginals:
   `Fin m` root fields, and
   `finiteRootStepFieldLaw_ae_all_of_measure_one hs μ hμ m` transfers a
   one-step probability-one property to every root and address almost surely.
+
+One i.i.d. step field is attached to each initial root through Mathlib's
+arbitrary-family probability product. The construction and its finite
+marginals do not require a countable root type. Countability appears only when
+coordinatewise almost-sure statements are combined over every root.
+`finiteRootStepFieldLaw` is the `Fin m` marginal consumed by finite-population
+arguments.
 -/
 
 open MeasureTheory ProbabilityTheory
