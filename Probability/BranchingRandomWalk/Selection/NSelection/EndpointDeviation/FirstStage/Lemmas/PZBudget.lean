@@ -10,6 +10,7 @@ import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Ra
 import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Drawdown.Spine.Cutoff
 import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Rate.LogScales
+import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Scale.IndexTwo
 
 /-!
 * `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.eventually_rightTailPositiveASpineCorridor_ge_exp_neg_log`:
