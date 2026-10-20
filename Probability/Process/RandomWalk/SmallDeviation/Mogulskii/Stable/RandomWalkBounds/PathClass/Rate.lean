@@ -36,8 +36,9 @@ The public declarations are:
   path probabilities have the unique rate
   $\frac{\log\mathbb P_{\nu^{\otimes\mathbb N}}\{\omega:
   \operatorname{normalizedStepCadlagPathIcc}(\mathrm{scale},n,\omega)\in G\}}{-1/r_n}
-  \to C2^\alpha H$, with $H$ the common energy of its finite-corridor
-  approximations and $a_n=\mathrm{scale}(n)$.
+  \to -C2^\alpha H$, where $C<0$ is the stable-process escape constant,
+  $H$ is the common energy of its finite-corridor approximations, and
+  $a_n=\mathrm{scale}(n)$.
 
 The last declaration is the stable-domain path-class form of Theorem 1 in
 A. A. Mogul'skii, “Small deviations in the sample function space,” *Teoriya
