@@ -1,5 +1,5 @@
-import Probability.BranchingRandomWalk.Step.PointMeasure
-import Probability.BranchingRandomWalk.Step.PointProcess
+import Probability.BranchingRandomWalk.Step.PointMeasure.Basic
+import Probability.BranchingRandomWalk.Step.PointMeasure.Process
 
 noncomputable section
 

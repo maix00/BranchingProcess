@@ -6,14 +6,25 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.Kernel.Killed.Return
+public import Probability.Process.RandomWalk.Kernel.Killed.Return.Basic
 
 /-!
 # Comparison of killed return kernels
 
-Translation of both the survival corridor and the terminal return interval
-gives a comparison between return-kernel row masses.  Finite reference covers
-then turn pointwise estimates in shrunken intervals into uniform estimates.
+For a real random walk, the public theorems transfer return-block mass from
+shrunken intervals to a finite net and then to every starting point:
+
+- `returnKernel_Icc_apply_univ_mono_of_abs_sub_le`: if $|x-y|\le\delta$,
+  the return-block mass from $y$ in the shrunken outer and return intervals is
+  at most the mass from $x$ in the full intervals.
+- `le_returnKernel_Icc_apply_univ_of_finset`: a finite $\delta$-net of the
+  return interval transfers a common lower bound to every starting point.
+- `eventually_forall_le_returnKernel_Icc_apply_univ_of_finset`:
+  the finite-net transfer holds eventually for varying scales and block
+  lengths.
+- `eventually_forall_le_returnKernel_Icc_apply_univ_of_finset_liminf`:
+  strict liminf gaps on a finite covering net yield an eventual uniform
+  return-block lower bound on the scaled return interval.
 -/
 
 open Filter MeasureTheory Set

@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.Stable.SmallDeviation.Blocks.ShiftComparison.Core
-public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.PathSupport
+public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.Entrance.PathSupport
 public import Topology.Cadlag.Skorokhod.SmallDeviation.PathSets
 
 /-!
