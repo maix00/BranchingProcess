@@ -1939,3 +1939,19 @@ The two public power-scale interfaces are grouped in `Scale/Power/`:
 `IntermediateBlock.lean` owns rounded intermediate power block lengths.
 These are peer interfaces within the power-scale subtopic. This brings
 `Analysis/Asymptotics/Scale/` down from nine to seven direct Lean modules.
+
+## Regular-variation API header audit (2026-10-21)
+
+The first header pass over the regular-variation asymptotics family found four
+modules whose module docstrings described their subject but omitted their
+public declarations. The headers now list the exact Lean names and formulas in
+`RegularVariation/AsymptoticInverse.lean`,
+`RegularVariation/AtZero/Basic.lean`,
+`RegularVariation/AtZero/Potter.lean`, and
+`RegularVariation/SlowScale.lean`. The statements record the monotonicity and
+index assumptions for sequential inversion, the ratio-limit definition at
+zero and its reciprocal transfer, the local and global Potter envelopes, and
+the two diagonal slow-scale conclusions. All four modules built with the
+pinned toolchain (2,083 Lake jobs). This is one completed family in the
+repository-wide statement-by-statement header audit; name-token scans remain
+candidate finders and are not counted as verified omissions.
