@@ -6,14 +6,33 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.NormalConstant
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.CLT
-public import Probability.Process.RandomWalk.FunctionalLimit.Normal.Tightness
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Scaling.Discretization
-public import Probability.Process.Stable.Brownian.PathLaw
+import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Lemmas.NormalConstant
+import Probability.Distributions.Rademacher
+import Probability.Distributions.Gaussian.Interval
+import Probability.Distributions.Stable.Attraction.Normal.Basic
+import Probability.Process.RandomWalk.FunctionalLimit.Normal.Tightness
+import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Scaling.Discretization
+import Probability.Process.Stable.Brownian.Basic
+import Probability.Process.Stable.Brownian.PathLaw
+public import Mathlib.Probability.BrownianMotion.Basic
+public import Probability.Process.Path.Cadlag.MeasurableMap
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Scale.Basic
+public import Probability.Process.Stable.Levy
+public import Probability.Process.Stable.SmallDeviation.EscapeRate.PathLaw.Basic
 
 /-!
 # The Brownian escape constant
+
+The public theorems in this file are:
+
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.canonicalMogulskiiScale`:
+  $x_n=\sqrt{\sqrt n}$ satisfies $x_n\to\infty$ and $x_n/\sqrt n\to0$.
+- `ProbabilityTheory.HasStableProcessEscapeRate.eq_neg_pi_sq_div_eight`:
+  the exponent-two centered Brownian escape constant is $C=-\pi^2/8$.
+- `ProbabilityTheory.HasStableProcessEscapeRate.fullWidthCoefficient_eq_neg_pi_sq_div_two`:
+  the full-width coefficient is $4C=-\pi^2/2$.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.exists_brownian_escapeRate_eq_neg_pi_sq_div_eight`:
+  Brownian path law realizes both coefficients.
 
 The path-class theorem identifies the strict centered Rademacher tube rate
 with four times the exponent-two stable-process escape constant.  The sharp
@@ -24,6 +43,12 @@ letting their relative width increase to one identifies the constant.
 The Brownian specialization uses the existing rational-coordinate càdlàg
 path law of `IsBrownianReal`; it only uses the a.e. continuity recorded by
 Mathlib, not an everywhere-continuous sample-path version.
+The constant identifies the Gaussian specialization in Theorem 3, Section 4,
+p. 764 of the 1974 Russian original by A. A. Mogul'skii, “Small deviations in
+the sample function space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4)
+(1974), 755–765; English translation, “Small Deviations in a Space of
+Trajectories,” *Theory of Probability and Its Applications* 19(4) (1975),
+726–736, DOI 10.1137/1119081.
 -/
 
 open Filter MeasureTheory ProbabilityTheory
@@ -77,7 +102,18 @@ private noncomputable def openCenteredTubeProbability
   openHorizontalTubeProbability (iidSequenceLaw rademacherMeasure)
     (1 / 2) (scale n) n
 
-private theorem centeredLatticeWidth_gt (scale : ℕ → ℝ) (n : ℕ)
+private lemma stableSmallDeviationRate_rademacher_eq_of_scale_ge_one
+    {normalization scale : ℕ → ℝ}
+    (hscale : IsStableMogulskiiScale 2 rademacherMeasure normalization scale) :
+    stableSmallDeviationRate 2 rademacherMeasure scale =ᶠ[atTop]
+      fun n => scale n ^ 2 / (n : ℝ) := by
+  filter_upwards [hscale.scale_tendsto_atTop.eventually
+    (eventually_ge_atTop (1 : ℝ))] with n hn
+  rw [stableSmallDeviationRate_two,
+    truncatedSecondMoment_rademacher_eq_one_of_one_le hn]
+  simp
+
+private lemma centeredLatticeWidth_gt (scale : ℕ → ℝ) (n : ℕ)
     (hscale : 0 ≤ scale n) :
     scale n < (2 : ℝ) * (centeredLatticeRadius scale n : ℝ) := by
   have hfloor : (⌊scale n / 2⌋₊ : ℝ) ≤ scale n / 2 :=
@@ -87,7 +123,7 @@ private theorem centeredLatticeWidth_gt (scale : ℕ → ℝ) (n : ℕ)
   simp only [centeredLatticeRadius, Nat.cast_add, Nat.cast_one]
   nlinarith [hfloorLower]
 
-private theorem inOpenTube_subset_inClosedTube
+private lemma inOpenTube_subset_inClosedTube
     {innerWidth outerWidth : ℝ} {n : ℕ}
     (hwidth : innerWidth ≤ outerWidth) :
     {increment : ℕ → ℝ |
@@ -99,7 +135,7 @@ private theorem inOpenTube_subset_inClosedTube
   have hk := hincrement k
   constructor <;> nlinarith [hk.1, hk.2, hwidth]
 
-private theorem inClosedTube_subset_inOpenTube
+private lemma inClosedTube_subset_inOpenTube
     {innerWidth outerWidth : ℝ} {n : ℕ}
     (hwidth : innerWidth < outerWidth) :
     {increment : ℕ → ℝ |
@@ -115,7 +151,7 @@ private theorem inClosedTube_subset_inOpenTube
 Rademacher stable Mogulskii scale.  The rate normalization is the familiar
 `scale n ^ 2 / n`, because the Rademacher truncated second moment is
 eventually one. -/
-private theorem rademacher_openCenteredTube_rate
+private lemma rademacher_openCenteredTube_rate
     {C : ℝ} {P : Measure (CadlagPath unitInterval ℝ)} [IsProbabilityMeasure P]
     (hEscape : HasStableProcessEscapeRate 2 (gaussianReal 0 1) P C)
     {Ω : Type*} [MeasurableSpace Ω]
@@ -137,8 +173,8 @@ private theorem rademacher_openCenteredTube_rate
     norm_num
   have hDOA : IsInDomainOfAttractionAlong rademacherMeasure
       (gaussianReal 0 1) (fun n => Real.sqrt n) (fun _ => 0) :=
-    isInDomainOfAttractionAlong_gaussianReal_zero_one
-      rademacherMeasure hcentered hsecond
+    ProbabilityTheory.isInDomainOfAttractionAlong_gaussianReal_zero_one_of_centered_unitSecondMoment
+      rademacherMeasure ⟨hcentered, hsecond⟩
   have hslow : Asymptotics.IsSlowlyVaryingAtTop
       (stableSlowVariation 2 rademacherMeasure) :=
     hDOA.stableSlowVariation_two_isSlowlyVarying_of_gaussian
@@ -179,7 +215,7 @@ private theorem rademacher_openCenteredTube_rate
 /-- For each fixed relative width `q < 1`, the closed tube with rounded
 lattice width `q * scale` lies inside the original strict tube eventually.
 Its spectral limit therefore gives a lower bound for the strict-tube rate. -/
-private theorem fixedNarrowClosedTube_lower_bound
+private lemma fixedNarrowClosedTube_lower_bound
     {C : ℝ} {P : Measure (CadlagPath unitInterval ℝ)} [IsProbabilityMeasure P]
     (hEscape : HasStableProcessEscapeRate 2 (gaussianReal 0 1) P C)
     {Ω : Type*} [MeasurableSpace Ω]
@@ -310,8 +346,10 @@ private theorem fixedNarrowClosedTube_lower_bound
   rw [hconstant] at hlimit
   exact hlimit
 
-/-- The exponent-two stable-process escape constant is `-π² / 8`.  The
-proof squeezes the strict Rademacher tube between the canonical closed
+/-- The exponent-two stable-process escape constant is `-π² / 8`, the
+Gaussian constant in A. A. Mogul'skii, *Small Deviations in a Space of
+Trajectories*, Theorem 3, Section 4 (DOI 10.1137/1119081). The proof
+squeezes the strict Rademacher tube between the canonical closed
 rounded-width tube and every fixed narrower closed rounded-width tube.
 -/
 theorem _root_.ProbabilityTheory.HasStableProcessEscapeRate.eq_neg_pi_sq_div_eight
@@ -332,8 +370,8 @@ theorem _root_.ProbabilityTheory.HasStableProcessEscapeRate.eq_neg_pi_sq_div_eig
   have hDOA : IsInDomainOfAttractionAlong rademacherMeasure
       (gaussianReal 0 1) normalization (fun _ => 0) := by
     simpa [normalization] using
-      isInDomainOfAttractionAlong_gaussianReal_zero_one
-        rademacherMeasure hcentered hsecond
+      ProbabilityTheory.isInDomainOfAttractionAlong_gaussianReal_zero_one_of_centered_unitSecondMoment
+        rademacherMeasure ⟨hcentered, hsecond⟩
   have hnormalizationPos : ∀ n : ℕ, 0 < n → 0 < normalization n := by
     intro n hn
     exact Real.sqrt_pos.2 (by exact_mod_cast hn)
@@ -427,7 +465,9 @@ theorem _root_.ProbabilityTheory.HasStableProcessEscapeRate.eq_neg_pi_sq_div_eig
     linarith
   nlinarith [hcoef]
 
-/-- The corresponding full-width exponent-two coefficient is `-π² / 2`. -/
+/-- The full-width exponent-two coefficient is `-π² / 2`, as in
+Mogul'skii, *Small Deviations in a Space of Trajectories*, Theorem 3,
+Section 4 (DOI 10.1137/1119081). -/
 theorem _root_.ProbabilityTheory.HasStableProcessEscapeRate.fullWidthCoefficient_eq_neg_pi_sq_div_two
     {C : ℝ} {P : Measure (CadlagPath unitInterval ℝ)} [IsProbabilityMeasure P]
     (hEscape : HasStableProcessEscapeRate 2 (gaussianReal 0 1) P C)

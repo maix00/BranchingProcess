@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.Path.Scaling
+public import Probability.Process.RandomWalk.Path.Representation.Scaling
 
 /-!
 # Corridors for scaled walk paths
