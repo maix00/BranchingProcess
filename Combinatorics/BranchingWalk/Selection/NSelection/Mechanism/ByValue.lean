@@ -12,11 +12,54 @@ public import Mathlib.Data.Prod.Lex
 /-!
 # Selection by a dynamic observed value
 
-Particle labels retain identity and multiplicity, but their static order must
-not be confused with spatial order.  `selectFirstNBy` orders each supplied finite
-population by `(value, label)`: the observed value is primary and the label is
-only a deterministic tie breaker.  Hence a new random population may be sorted
-again at every generation without changing its labels.
+Let $K_v(p)=(v(p),p)$ with lexicographic order, where $v$ is the observed
+value and the label $p$ breaks ties. The public declarations are:
+
+- `Combinatorics.Branching.Selection.NSelection.valueKey` defines $K_v$;
+  `Combinatorics.Branching.Selection.NSelection.ofLex_valueKey` recovers
+  $(v(p),p)$ from the key, and
+  `Combinatorics.Branching.Selection.NSelection.valueKey_injective` proves
+  that labels map injectively to keys.
+- `Combinatorics.Branching.Selection.NSelection.selectFirstNBy` selects the
+  first $N$ labels by $K_v$. Its specification
+  `Combinatorics.Branching.Selection.NSelection.mem_selectFirstNBy_iff` says
+  that $p$ is selected exactly when $p\in s$ and its key is among the first
+  $N$ keys;
+  `Combinatorics.Branching.Selection.NSelection.selectFirstNBy_subset` gives
+  inclusion in $s$.
+- `Combinatorics.Branching.Selection.NSelection.mem_selectFirstNBy_iff_card_lt`
+  gives the threshold-count criterion
+  $p\in\operatorname{selectFirstNBy}(N,v,s)\iff p\in s\land
+  |\{q\in s:K_v(q)<K_v(p)\}|<N$.
+  `Combinatorics.Branching.Selection.NSelection.mem_selectFirstNBy_of_key_lt`
+  states that this selected set is a lower set for the key order, and
+  `Combinatorics.Branching.Selection.NSelection.image_valueKey_selectFirstNBy`
+  identifies its key image with `selectFirstN N (s.image (valueKey v))`.
+- `Combinatorics.Branching.Selection.NSelection.card_selectFirstNBy` gives
+  $|\operatorname{selectFirstNBy}(N,v,s)|=\min(N,|s|)$.
+  `Combinatorics.Branching.Selection.NSelection.card_filter_selectFirstNBy`
+  gives, for every value threshold $a$,
+  $|\{p\in\operatorname{selectFirstNBy}(N,v,s):v(p)\le a\}|=
+  \min(N,|\{p\in s:v(p)\le a\}|)$.
+- `Combinatorics.Branching.Selection.NSelection.filter_card_le_filter_selectFirstNBy`
+  transfers threshold counts: if
+  $R\subseteq S$, $|R|\le N$, and the source threshold count is bounded by
+  the target threshold count for every $a$, then the retained source count
+  below every $a$ is bounded by the dynamically selected target count.
+- `Combinatorics.Branching.Selection.NSelection.leftmostBy` packages the
+  dynamic selector as a finite capacity-$N$ mechanism;
+  `Combinatorics.Branching.Selection.NSelection.leftmostBy_select` identifies
+  its action with `selectFirstNBy`.
+- `Combinatorics.Branching.Selection.NSelection.valueKey_lt_of_value_lt` says
+  a strict increase in observed value gives a strict increase in key.
+  `Combinatorics.Branching.Selection.NSelection.valueKey_toDual_lt_iff` gives
+  the reversed-order
+  criterion
+  $K_v^{\mathrm{op}}(p)<K_v^{\mathrm{op}}(q)\iff
+  v(q)<v(p)\lor(v(p)=v(q)\land p<q)$.
+
+Labels remain unchanged by this selection: the static label order is used
+only as a deterministic tie breaker after the observed value.
 -/
 
 @[expose] public section

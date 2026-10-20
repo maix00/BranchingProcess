@@ -11,10 +11,37 @@ public import Combinatorics.BranchingWalk.Selection.NSelection.Mechanism.ByValue
 /-!
 # Recovering a finite candidate from its rank
 
-Rank is a bijection from a finite linearly ordered set to the natural numbers
-below its cardinality.  This file exposes its inverse as an `Option`, then
-transports it through the dynamic `(value, label)` key used by spatial
-selection.
+Assume a linear order on candidate labels, and also on observed values for
+the dynamic-value declarations below. The public declarations are:
+
+- `Combinatorics.Branching.Selection.NSelection.existsUnique_rank_eq`: for
+  $k<|s|$, there is a unique $p\in s$ with $\operatorname{rank}(s,p)=k$.
+- `Combinatorics.Branching.Selection.NSelection.particleAtRank` returns the
+  candidate of rank $k$ as an `Option`; its specification is given by
+  `Combinatorics.Branching.Selection.NSelection.particleAtRank_eq_some_iff`,
+  $\operatorname{particleAtRank}(s,k)=\operatorname{some}(p)\iff
+  p\in s\land\operatorname{rank}(s,p)=k$, and
+  `Combinatorics.Branching.Selection.NSelection.particleAtRank_eq_none_iff`,
+  $\operatorname{particleAtRank}(s,k)=\operatorname{none}\iff |s|\le k$.
+- `Combinatorics.Branching.Selection.NSelection.rankBy` ranks candidates by
+  the observed-value key `(value, label)`.
+  `Combinatorics.Branching.Selection.NSelection.rankBy_eq_card_filter` states
+  $\operatorname{rankBy}(v,s,p)=
+  |\{q\in s:K_v(q)<K_v(p)\}|$;
+  `Combinatorics.Branching.Selection.NSelection.rankBy_lt_card_of_mem`
+  bounds this rank by $|s|$ for $p\in s$;
+  `Combinatorics.Branching.Selection.NSelection.rankBy_injOn` states that
+  this rank is injective on $s$.
+- `Combinatorics.Branching.Selection.NSelection.particleAtRankBy` returns the
+  label at dynamic rank $k$. Its specifications are
+  `Combinatorics.Branching.Selection.NSelection.particleAtRankBy_eq_some_iff`,
+  $\operatorname{particleAtRankBy}(v,s,k)=\operatorname{some}(p)\iff
+  p\in s\land\operatorname{rankBy}(v,s,p)=k$, and
+  `Combinatorics.Branching.Selection.NSelection.particleAtRankBy_eq_none_iff`,
+  which states that it is `none` exactly when $|s|\le k$.
+
+Here $K_v(p)$ denotes `valueKey v p`, so labels provide a deterministic
+tie-break when two observed values agree.
 -/
 
 @[expose] public section
