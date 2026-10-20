@@ -53,7 +53,7 @@ open ProbabilityTheory.RandomWalk
 whenever the target threshold is strictly above the limiting trajectory.
 Here `r` is the positive cube root of `t`; keeping `r^3 = t` explicit makes
 the algebraic choice of `c` transparent. -/
-theorem exists_rightTailPositiveAParameters
+lemma exists_rightTailPositiveAParameters
     (a t r sigmaSq zeta : ℝ)
     (ha : 0 < a) (ht : 0 < t) (hr : 0 < r) (hrcube : r ^ 3 = t)
     (hsigma : 0 ≤ sigmaSq)
@@ -172,7 +172,7 @@ theorem exists_rightTailPositiveAParameters
 
 /-- The drift at any time in the second tube is bounded by its terminal
 diffusive scale. -/
-theorem rightTailPositiveADrift_le_span
+lemma rightTailPositiveADrift_le_span
     (ell ellN j : ℕ) (κ c : ℝ)
     (hell : ell < ellN) (hκ : 0 ≤ κ)
     (hj : j ≤ ellN - ell) :
@@ -205,7 +205,7 @@ theorem rightTailPositiveADrift_le_span
 /-- At every time strictly after the first cutoff and no later than the
 terminal time, the window's upper endpoint is bounded by the terminal drift
 plus the larger of its two widths. -/
-theorem rightTailPositiveAWindowUpper_le_span
+lemma rightTailPositiveAWindowUpper_le_span
     (ell ellN k : ℕ) (logN b v c κ : ℝ)
     (hell : ell < ellN) (hκ : 0 ≤ κ)
     (hk : ell < k) (hkN : k ≤ ellN) :
@@ -253,7 +253,7 @@ theorem rightTailPositiveAWindowUpper_le_span
 uniform killed-capacity estimate. The initial-stage endpoint is nonpositive
 when `v ≤ b`, and all later upper endpoints are controlled by the terminal
 diffusive scale. -/
-theorem rightTailPositiveAEndpointEnvelope_le
+lemma rightTailPositiveAEndpointEnvelope_le
     (ell ellN : ℕ) (logN b v c κ : ℝ)
     (hellN : ell < ellN)
     (hκ : 0 ≤ κ) (hc : 0 < c) (hvb : v ≤ b) (hlog : 0 ≤ logN) :
@@ -304,7 +304,7 @@ theorem rightTailPositiveAEndpointEnvelope_le
           (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)) := by simp
 
 /-- The endpoint of the first tube is its prescribed narrow interval. -/
-theorem rightTailPositiveAWindowUpper_at_cutoff
+lemma rightTailPositiveAWindowUpper_at_cutoff
     (ell ellN : ℕ) (logN b v c κ : ℝ) :
     rightTailPositiveAWindowUpper ell ellN logN b v c κ ell =
       (-b + v) * logN := by
@@ -312,7 +312,7 @@ theorem rightTailPositiveAWindowUpper_at_cutoff
 
 /-- The first-stage endpoint envelope is nonpositive when the narrow terminal
 window lies below zero. -/
-theorem rightTailPositiveAFirstStageUpper_le_zero
+lemma rightTailPositiveAFirstStageUpper_le_zero
     (ell ellN : ℕ) (logN b v c κ : ℝ)
     (hvb : v ≤ b) (hlog : 0 ≤ logN)
     (k : ℕ) (hk : k ≤ ell) :
@@ -326,7 +326,7 @@ theorem rightTailPositiveAFirstStageUpper_le_zero
 /-- The second-stage exponential endpoint weight retains the negative
 first-stage offset, while its later contribution is controlled by the
 terminal diffusive scale. -/
-theorem rightTailPositiveASecondStageEnvelope_le
+lemma rightTailPositiveASecondStageEnvelope_le
     (ell ellN k : ℕ) (logN b v c κ : ℝ)
     (hellN : ell < ellN) (hκ : 0 ≤ κ)
     (hk : ell < k) (hkN : k ≤ ellN) :
@@ -342,7 +342,7 @@ theorem rightTailPositiveASecondStageEnvelope_le
 /-- At a fixed second-stage generation, the endpoint weight uses that
 generation's drift rather than the terminal drift. This pointwise form is
 what allows the branching weight to cancel the small-deviation exponent. -/
-theorem rightTailPositiveAWindowUpper_le_generationDrift_add_width
+lemma rightTailPositiveAWindowUpper_le_generationDrift_add_width
     (ell ellN k : ℕ) (logN b v c κ : ℝ)
     (hellN : ell < ellN) (hvc : v ≤ c)
     (hk : ell < k) (hkN : k ≤ ellN) :
@@ -366,7 +366,7 @@ theorem rightTailPositiveAWindowUpper_le_generationDrift_add_width
 /-- When the tube drift coefficient equals the Aïdékon--Hu rate coefficient,
 the generation's deterministic drift exactly cancels the exponential
 small-deviation cost at that generation. -/
-theorem rightTailPositiveADrift_eq_ahExponent
+lemma rightTailPositiveADrift_eq_ahExponent
     (ell ellN d : ℕ) (κ c target sigma : ℝ)
     (hellN : ell < ellN) (hc : 0 < c)
     (hκ : κ = target * sigma ^ 2) :
@@ -396,7 +396,7 @@ theorem rightTailPositiveADrift_eq_ahExponent
 /-- Multiplying the generation-specific endpoint weight by its long-prefix
 Aïdékon--Hu probability removes the deterministic drift and leaves only the
 initial offset and tube width. -/
-theorem rightTailPositiveAWindowWeightedAH_le
+lemma rightTailPositiveAWindowWeightedAH_le
     (ell ellN k : ℕ) (logN b v c κ target sigma : ℝ)
     (hellN : ell < ellN) (hvc : v ≤ c) (hc : 0 < c)
     (hk : ell < k) (hkN : k ≤ ellN)
@@ -452,7 +452,7 @@ theorem rightTailPositiveAWindowWeightedAH_le
 /-- Even before a prefix is long enough for the Aïdékon--Hu estimate, its
 drift is small: below the AH cutoff it is at most a constant times
 `span^(p/3)`, which is lower order than the tube width when `p < 1`. -/
-theorem rightTailPositiveADrift_le_shortPrefix_power
+lemma rightTailPositiveADrift_le_shortPrefix_power
     (ell ellN d : ℕ) (κ c p : ℝ)
     (hellN : ell < ellN) (hκ : 0 ≤ κ) (hc : 0 < c)
     (hshort : (d : ℝ) ≤
@@ -502,7 +502,7 @@ theorem rightTailPositiveADrift_le_shortPrefix_power
 /-- The canceled two-stage AH sum has only the original first-phase count
 plus a second-phase contribution with exponent
 `(-b+v) logN + c L^(1/3) + O(L^(p/3))`. -/
-theorem sum_fin_if_le_eq_add_mul (ell ellN : ℕ) (A B : ℝ≥0∞)
+lemma sum_fin_if_le_eq_add_mul (ell ellN : ℕ) (A B : ℝ≥0∞)
     (hell : ell ≤ ellN) :
     (∑ k : Fin (ellN + 1), if (k : ℕ) ≤ ell then A else B) =
       ((ell + 1 : ℕ) : ℝ≥0∞) * A +
@@ -536,7 +536,7 @@ theorem sum_fin_if_le_eq_add_mul (ell ellN : ℕ) (A B : ℝ≥0∞)
     simp [Finset.sum_const]
   rw [hfirst, hsecond]
 
-theorem rightTailPositiveA_canceledAH_sum_le
+lemma rightTailPositiveA_canceledAH_sum_le
     (ell ellN : ℕ) (logN b v c κ p : ℝ)
     (hellN : ell < ellN) (hκ : 0 ≤ κ) (hc : 0 < c)
     (hvc : v ≤ c) :

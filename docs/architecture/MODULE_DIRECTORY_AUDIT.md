@@ -1816,3 +1816,26 @@ The source scan reports 1,475 production modules and 138 test modules, with
 no same-stem file/directory pairs, repeated parent/file stems,
 `Lemmas.lean`/`Lemmas/` collisions, empty source directories, or `Source/`
 directories; no directory contains more than eight direct Lean files.
+
+## Positive-initial-mass spine API boundary (2026-10-20)
+
+The second-stage restarted-window and prefix events are now defined in
+`Selection/NSelection/EndpointDeviation/Drawdown/Spine/SecondStageTube.lean`.
+`Lemmas/Tube.lean` contains only the tube inclusions and probability
+comparisons used in the proof chain. The endpoint-gap polynomial failure
+probability and its conclusion now live in the semantic entry module
+`Spine/FailureProbability.lean`, while the non-reusable estimates remain in
+the nested `Spine/Lemmas/` chain. This leaves seven proof-chain modules under
+`Lemmas/`, with no event definitions or final result hidden there.
+
+The former `EndpointDeviation/PositiveA/` directory is absent from both the
+working tree and the fetched GitHub `preflight` tree. `PositiveA` remains only
+inside parameter-indexed declaration names such as `rightTailPositiveA...`,
+where it records the positive exponent regime.
+
+The ten affected modules built with the pinned toolchain (4,679 Lake jobs).
+The production layout scan reports 1,476 modules and 138 test modules, with
+no same-stem file/directory pairs, repeated parent/file stems,
+`Lemmas.lean`/`Lemmas/` collisions, empty directories, `Source/` directories,
+or directories with more than eight direct Lean files. The scan excludes the
+vendored Mathlib and BrownianMotion source trees.

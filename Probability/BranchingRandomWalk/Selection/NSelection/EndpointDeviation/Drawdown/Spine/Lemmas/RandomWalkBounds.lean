@@ -51,7 +51,7 @@ open ProbabilityTheory.RandomWalk
 /-- The first-stage corridor probability is controlled by any horizontal
 tube whose lower boundary matches the corridor and whose upper boundary is
 nonnegative. The parameterization below makes those inclusions explicit. -/
-theorem rightTailPositiveA_firstStage_probability_le_horizontalTubeProbability
+lemma rightTailPositiveA_firstStage_probability_le_horizontalTubeProbability
     (ell : ℕ) (logN b a : ℝ) (hb : 0 ≤ b) (hlog : 0 ≤ logN)
     (ha : 0 < a) (ha1 : a ≤ 1)
     (incrementLaw : Measure (ℕ → ℝ)) :
@@ -85,7 +85,7 @@ theorem rightTailPositiveA_firstStage_probability_le_horizontalTubeProbability
 at most one corridor width above every later position, and leaves the
 endpoint at or below zero. Thus the first-stage event is contained in the
 drawdown event already estimated by `RawRate`. -/
-theorem rightTailPositiveA_firstStage_event_subset_noLargeDropEndpointBelowEvent
+lemma rightTailPositiveA_firstStage_event_subset_noLargeDropEndpointBelowEvent
     (ell : ℕ) (logN b : ℝ) :
     {increment : ℕ → ℝ |
       InClosedInterval (-b * logN) 0 ell 0 increment} ⊆
@@ -108,7 +108,7 @@ theorem rightTailPositiveA_firstStage_event_subset_noLargeDropEndpointBelowEvent
 
 /-- The first-stage probability inherits any drawdown-and-endpoint bound,
 ready for direct use with the raw finite-variance rate theorem. -/
-theorem rightTailPositiveA_firstStage_probability_le_of_drawdownBound
+lemma rightTailPositiveA_firstStage_probability_le_of_drawdownBound
     (ell : ℕ) (logN b : ℝ) (incrementLaw : Measure (ℕ → ℝ))
     (p : ℝ≥0∞)
     (hdrawdown : incrementLaw
@@ -123,7 +123,7 @@ theorem rightTailPositiveA_firstStage_probability_le_of_drawdownBound
 /-- A horizontal interval corridor has the same uniform finite-variance
 exponential bound as the corresponding drawdown event. This is the first
 stage of the positive-`a` construction in (4.15). -/
-theorem exists_uniform_iidSequenceLaw_firstStageCorridor_le_ah
+lemma exists_uniform_iidSequenceLaw_firstStageCorridor_le_ah
     (ν : Measure ℝ) [IsProbabilityMeasure ν] {sigma : ℝ}
     (hν : ProbabilityTheory.IsCenteredSecondMoment ν (sigma ^ 2))
     (hsigma : 0 < sigma)
@@ -175,7 +175,7 @@ theorem exists_uniform_iidSequenceLaw_firstStageCorridor_le_ah
 Aïdékon--Hu estimate gives the required first-stage corridor probability
 eventually. The restriction `p < 1/2` is precisely the scale comparison
 `(b log N)^(2+p) = o((log N)^(5/2))`. -/
-theorem exists_eventually_iidSequenceLaw_rightTailPositiveAFirstStageCorridor_le_ah
+lemma exists_eventually_iidSequenceLaw_rightTailPositiveAFirstStageCorridor_le_ah
     (ν : Measure ℝ) [IsProbabilityMeasure ν] {sigma : ℝ}
     (hν : ProbabilityTheory.IsCenteredSecondMoment ν (sigma ^ 2))
     (hsigma : 0 < sigma)
@@ -218,7 +218,7 @@ its actual prefix length.  Short prefixes are bounded by one; long prefixes
 use the uniform corridor estimate at the same width as the full first tube.
 This is the generation-wise form needed when summing the first moments in
 the proof of (4.15). -/
-theorem exists_iidSequenceLaw_rightTailPositiveARestartedWindowProbability_le_firstStageAH
+lemma exists_iidSequenceLaw_rightTailPositiveARestartedWindowProbability_le_firstStageAH
     (ν : Measure ℝ) [IsProbabilityMeasure ν] {sigma : ℝ}
     (hν : ProbabilityTheory.IsCenteredSecondMoment ν (sigma ^ 2))
     (hsigma : 0 < sigma)
@@ -271,7 +271,7 @@ by the uniform finite-variance Aïdékon--Hu drawdown estimate on every prefix
 whose length is at least a superdiffusive power of the planned tube width.
 The endpoint ceiling is reduced to the fixed ratio required by that estimate
 using the monotone drift envelope. -/
-theorem iidSequenceLaw_rightTailPositiveASecondStageDrawdown_le_of_ah
+lemma iidSequenceLaw_rightTailPositiveASecondStageDrawdown_le_of_ah
     (ν : Measure ℝ) [IsProbabilityMeasure ν] {sigma : ℝ}
     (hν : ProbabilityTheory.IsCenteredSecondMoment ν (sigma ^ 2))
     (hsigma : 0 < sigma)

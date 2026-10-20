@@ -11,6 +11,7 @@ import Probability.Process.RandomWalk.SmallDeviation.Drawdown.Event
 import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Basic
 import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Rate.LogScales
 import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Drawdown.Spine.Cutoff
+import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Drawdown.Spine.SecondStageTube
 import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Drawdown.Spine.Window
 import Probability.BranchingRandomWalk.Spine.Tube.Corridor.PairBound
 
@@ -52,7 +53,7 @@ open ProbabilityTheory.RandomWalk
 /-- If the planned second-stage span diverges, its spatial width eventually
 passes the uniform Aïdékon--Hu scale threshold. For every `p < 1`, the full
 span is also eventually longer than `width^(2+p)`. -/
-theorem eventually_rightTailPositiveASecondStageAHScale
+lemma eventually_rightTailPositiveASecondStageAHScale
     (D : ℕ → ℕ) (c p delta0 : ℝ)
     (hc : 0 < c) (hp1 : p < 1)
     (hD : Tendsto (fun n => (D n : ℝ)) atTop atTop) :
@@ -94,7 +95,7 @@ theorem eventually_rightTailPositiveASecondStageAHScale
     _ = (D n : ℝ) := hproduct
 
 /-- A positive cubic-scale limit forces the planned span itself to diverge. -/
-theorem tendsto_rightTailPositiveASpan_atTop_of_cubicRatio
+lemma tendsto_rightTailPositiveASpan_atTop_of_cubicRatio
     {D : ℕ → ℕ} {L : ℕ → ℝ} {t : ℝ}
     (hL : Tendsto L atTop atTop)
     (hscale : Tendsto (fun n => (D n : ℝ) / L n ^ 3) atTop (𝓝 t))
@@ -112,7 +113,7 @@ theorem tendsto_rightTailPositiveASpan_atTop_of_cubicRatio
 
 /-- The cubic ratio of a two-stage span is the difference of the stage ratios,
 provided the natural-valued cutoffs are eventually ordered. -/
-theorem tendsto_rightTailPositiveASpan_cubicRatio_of_stageRatios
+lemma tendsto_rightTailPositiveASpan_cubicRatio_of_stageRatios
     {ell ellN : ℕ → ℕ} {L : ℕ → ℝ} {t : ℝ}
     (hL : Tendsto L atTop atTop)
     (hEll : Tendsto (fun n => (ell n : ℝ) / L n ^ 3) atTop (𝓝 0))
@@ -131,7 +132,7 @@ theorem tendsto_rightTailPositiveASpan_cubicRatio_of_stageRatios
 
 /-- Cubic-scale limits for the two cutoffs imply divergence of their gap,
 which is the scale hypothesis needed by the uniform terminal tube estimate. -/
-theorem tendsto_rightTailPositiveASpan_atTop_of_stageCubicRatios
+lemma tendsto_rightTailPositiveASpan_atTop_of_stageCubicRatios
     {ell ellN : ℕ → ℕ} {L : ℕ → ℝ} {t : ℝ}
     (hL : Tendsto L atTop atTop)
     (hEll : Tendsto (fun n => (ell n : ℝ) / L n ^ 3) atTop (𝓝 0))
@@ -145,7 +146,7 @@ theorem tendsto_rightTailPositiveASpan_atTop_of_stageCubicRatios
 
 /-- The choices `ell = floor((log N)^(5/2))` and
 `ellN = floor(t (log N)^3) + 1` have a diverging second-stage span. -/
-theorem tendsto_rightTailPositiveASpan_atTop_of_logarithmicScales
+lemma tendsto_rightTailPositiveASpan_atTop_of_logarithmicScales
     {N : ℕ → ℕ} (hN : Tendsto N atTop atTop) {t : ℝ} (ht : 0 < t) :
     Tendsto (fun n =>
       ((logarithmicHorizon N t n - rightTailPositiveAFirstCutoff N n : ℕ) : ℝ))
@@ -163,7 +164,7 @@ theorem tendsto_rightTailPositiveASpan_atTop_of_logarithmicScales
 
 /-- A positive cubic-scale span has its cube-root width at the corresponding
 linear logarithmic scale. -/
-theorem tendsto_rightTailPositiveASpan_root_div_log
+lemma tendsto_rightTailPositiveASpan_root_div_log
     {D : ℕ → ℕ} {L : ℕ → ℝ} {t : ℝ}
     (hL : Tendsto L atTop atTop)
     (hscale : Tendsto (fun n => (D n : ℝ) / L n ^ 3)
@@ -185,7 +186,7 @@ theorem tendsto_rightTailPositiveASpan_root_div_log
 
 /-- A sequence with cubic logarithmic size has only a subexponential
 logarithmic count: `log (u + 1) = o(log N)`. -/
-theorem tendsto_rightTailPositiveA_log_add_one_div_log_of_cubic_scale
+lemma tendsto_rightTailPositiveA_log_add_one_div_log_of_cubic_scale
     {u L : ℕ → ℝ} {t : ℝ}
     (hL : Tendsto L atTop atTop)
     (hu : ∀ n, 0 ≤ u n)
@@ -233,7 +234,7 @@ theorem tendsto_rightTailPositiveA_log_add_one_div_log_of_cubic_scale
 /-- A sublinear power of the second-stage span is negligible compared with
 `log N`. This is the `p < 1` remainder in the exponent of the long-prefix
 Aïdékon--Hu terms. -/
-theorem tendsto_rightTailPositiveASpan_sublinearPower_div_log
+lemma tendsto_rightTailPositiveASpan_sublinearPower_div_log
     {D : ℕ → ℕ} {L : ℕ → ℝ} {t p : ℝ}
     (hL : Tendsto L atTop atTop)
     (hscale : Tendsto (fun n => (D n : ℝ) / L n ^ 3)
@@ -292,7 +293,7 @@ theorem tendsto_rightTailPositiveASpan_sublinearPower_div_log
 /-- On the logarithmic scales, the exponent in the long-prefix
 capacity contribution has the limiting rate `-b + v + c t^(1/3)`. The
 additional `κ c^p L^(p/3)` term vanishes after division by `log N`. -/
-theorem tendsto_rightTailPositiveAAHExponent_div_log_of_logarithmicScales
+lemma tendsto_rightTailPositiveAAHExponent_div_log_of_logarithmicScales
     {N : ℕ → ℕ} (hN : Tendsto N atTop atTop) {t b v c κ p : ℝ}
     (ht : 0 < t) (hp1 : p < 1) :
     Tendsto
@@ -340,7 +341,7 @@ theorem tendsto_rightTailPositiveAAHExponent_div_log_of_logarithmicScales
 
 /-- Any rate strictly above the logarithmic limit controls the long-prefix
 AH exponential weight by the corresponding power of the sample size. -/
-theorem eventually_rightTailPositiveAAHWeight_le_sampleSize_rpow
+lemma eventually_rightTailPositiveAAHWeight_le_sampleSize_rpow
     {N : ℕ → ℕ} (hN : Tendsto N atTop atTop) {t b v c κ p rate : ℝ}
     (ht : 0 < t) (hp1 : p < 1)
     (hrate : -b + v + c * (t ^ (3⁻¹ : ℝ)) < rate) :
@@ -383,7 +384,7 @@ theorem eventually_rightTailPositiveAAHWeight_le_sampleSize_rpow
 drawdown probability obeys the uniform Aïdékon--Hu exponential estimate.
 The restriction `p < 1` is exactly what makes `width^(2+p)` sublinear in the
 planned span. -/
-theorem eventually_iidSequenceLaw_rightTailPositiveA_terminalDrawdown_le_ah
+lemma eventually_iidSequenceLaw_rightTailPositiveA_terminalDrawdown_le_ah
     (ν : Measure ℝ) [IsProbabilityMeasure ν] {sigma : ℝ}
     (hν : ProbabilityTheory.IsCenteredSecondMoment ν (sigma ^ 2))
     (hsigma : 0 < sigma)
@@ -424,7 +425,7 @@ theorem eventually_iidSequenceLaw_rightTailPositiveA_terminalDrawdown_le_ah
 
 /-- The full second-stage tube has the same terminal Aïdékon--Hu bound,
 because its affine corridor is contained in the associated drawdown event. -/
-theorem eventually_iidSequenceLaw_rightTailPositiveASecondStageTube_le_ah
+lemma eventually_iidSequenceLaw_rightTailPositiveASecondStageTube_le_ah
     (ν : Measure ℝ) [IsProbabilityMeasure ν] {sigma : ℝ}
     (hν : ProbabilityTheory.IsCenteredSecondMoment ν (sigma ^ 2))
     (hsigma : 0 < sigma)
@@ -458,7 +459,7 @@ theorem eventually_iidSequenceLaw_rightTailPositiveASecondStageTube_le_ah
 /-- The logarithmic cutoff and terminal horizon satisfy the hypotheses
 of the uniform second-stage tube estimate, so the full restarted tube inherits
 the terminal Aïdékon--Hu bound eventually. -/
-theorem eventually_iidSequenceLaw_rightTailPositiveASecondStageTube_le_ah_of_logarithmicScales
+lemma eventually_iidSequenceLaw_rightTailPositiveASecondStageTube_le_ah_of_logarithmicScales
     (ν : Measure ℝ) [IsProbabilityMeasure ν] {sigma : ℝ}
     (hν : ProbabilityTheory.IsCenteredSecondMoment ν (sigma ^ 2))
     (hsigma : 0 < sigma)
