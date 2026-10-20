@@ -6,6 +6,7 @@ Authors: WANG Yiyang
 
 module
 
+import Analysis.Asymptotics.Sequence.NegativeRatio
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.Bridge.Lemmas.Comparison
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.Bridge.Events
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.TerminalLeft.Bounds.Lower
