@@ -11,7 +11,24 @@ public import Combinatorics.BranchingWalk.Step.Ordering.Monotone
 public import Combinatorics.UlamHarris.MarkedTree.SiblingOrder
 
 /-!
-# Order compatibility for branching walks and marked trees
+# Order compatibility for step fields and marked trees
+
+## Public declarations
+
+* Under `[LT α]`, `[AddCommGroup X]`, `[PartialOrder X]`, and
+  `[IsOrderedAddMonoid X]`, `Combinatorics.Branching.monotone_stepOfMarkedTree_iff`
+  states that
+  `stepOfMarkedTree M u` is monotone exactly when all realized children at
+  `u` have marks increasing with their slot indices:
+  $\operatorname{IsMonotone}(\operatorname{stepOfMarkedTree}(M)(u))
+  \leftrightarrow\forall i<j,\ u++[i],u++[j]\in M.tree.carrier\Rightarrow
+  M.mark(u++[i])\le M.mark(u++[j])$.
+* `Combinatorics.Branching.forall_monotone_stepOfMarkedTree_iff` states that
+  every local step read from $M$ is monotone exactly when $M$ is sibling
+  monotone.
+* `Combinatorics.Branching.siblingMonotone_markedTreeOfStep` states that if
+  every local step of a sibling-closed field $\beta$ is monotone, then
+  `markedTreeOfStep β hsibling` is sibling monotone.
 
 This adapter identifies monotone child slots with sibling-monotone marks.
 The underlying conversions and their round trips live in `Equivalence`.

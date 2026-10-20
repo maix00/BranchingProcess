@@ -2193,3 +2193,35 @@ states its recursive cons equation alongside the prefix-sum interfaces.
 public definitions and results. Its finite-branching equivalence uses
 Mathlib's König-lemma API, while the unbounded-height predicate stays distinct
 from infinite-lineage survival when the slot type is not finite.
+
+## Root-indexed branching-walk marked trees (2026-10-21)
+
+`Combinatorics/BranchingWalk/MarkedTree/OfBranchingWalk.lean` groups the
+complete constructions that turn a root-indexed branching walk into one
+marked tree per root: arbitrary node marks, accumulated positions, and the
+sibling-closable and ordered specializations. Its carrier, mark, transported
+address, and offspring point-measure identities describe those constructions,
+so they remain public beside the adapter rather than under `Lemmas/`.
+`Equivalence.lean` owns the per-root conversion between step fields and marked
+trees; `Ordering.lean` owns the recursive address transport for a single step
+field; and `Order.lean` owns the monotonicity correspondence. These four direct
+modules are a small semantic family, with no same-stem file/directory pair.
+
+The finite-support convenience constructor had the opaque prime-suffixed name
+`positionedMarkedTreeOfOrderable'`; it is now named
+`positionedMarkedTreeOfFiniteSupport`, which identifies the hypothesis that
+supplies its canonical ordering instance. The module header enumerates all
+thirteen public declarations and their defining or relational formulas. Its
+entry module and the lower-level address-transport module both build with the
+pinned toolchain.
+
+`Equivalence.lean` now lists the per-root construction and round-trip API in
+its module header. The path-telescoping identity, the present-child value
+calculation, and the pointwise sibling-closure step are proof support for
+public results, so they are private; the unused absent-child value corollary
+was removed. `Mathlib.Tactic.Abel` is an ordinary import because it is only
+needed while proving the telescoping identity and is not part of this module's
+mathematical interface. `Order.lean` lists its three complete monotonicity
+results and now names its actual objects, step fields and marked trees, in the
+module title. The three edited modules build successfully with the pinned
+toolchain.
