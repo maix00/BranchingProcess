@@ -10,7 +10,7 @@ import Probability.Process.HittingTime.Declarations
 /-!
 # Cellwise factorization for a stopped finite population
 
-The proof-only lemma `abstractStoppedPopulation_cell_factorization` states
+The theorem `abstractStoppedPopulation_cell_factorization` states
 that, for a fixed population value $s$ and an injective enumeration of its
 roots, the event of a measurable descendant vector $B$ factors from any
 stopped-past event $A$ on that population cell. For roots
@@ -24,8 +24,9 @@ $\nu=\operatorname{stepFieldLaw}(\mu)$. The lemma proves
   =\nu_m\!\left(A\cap\{\mathrm{population}=s\}\right)
     \left(\bigotimes_{i\in\mathrm{Fin}\,k}\nu\right)(B).
 \]
-The lemma is used to prove the random-cardinality mixture theorem in the
-parent `DependentLaw` module.
+It applies to arbitrary measurable mark spaces and supplies the cellwise
+product law used by the random-cardinality mixture theorem in `DependentLaw`
+and by selected-population specializations.
 -/
 
 open MeasureTheory ProbabilityTheory
@@ -35,7 +36,7 @@ namespace ProbabilityTheory.BranchingRandomWalk
 open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 
 
-lemma abstractStoppedPopulation_cell_factorization
+theorem abstractStoppedPopulation_cell_factorization
     {m : ℕ} {X : Type*} [MeasurableSpace X]
     (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
     {k : ℕ}
