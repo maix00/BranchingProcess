@@ -7,11 +7,28 @@ Authors: WANG Yiyang
 import Probability.BranchingRandomWalk.Selection.NSelection.Law.SelectedPopulationCoupling
 
 /-!
-# Endpoint events under nested initial root sets
+# Endpoint event transfer under nested-root coupling
 
-The rank-installed coupling for first-`N` selection carries an injective,
-position-dominating map from a smaller initial root set into a larger one.
-This file records its direct consequence for endpoint sublevel events.
+The public declaration in
+`ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail` is
+`RootIndexed.selectedPopulationNestedRoots_endpointBelow_ae`. Under a
+probability measure with boundary normalization and
+`sourceRoots ⊆ targetRoots\), it states that almost surely under the common
+two-copy root-indexed law, the implication
+
+\[
+\begin{aligned}
+&\exists p\in\operatorname{Selected}_N(\text{sourceRoots},n):
+  \operatorname{position}(p)\le x\\
+&\qquad\Longrightarrow
+  \exists q\in\operatorname{RestartedSelected}_N(\text{targetRoots},n):
+  \operatorname{position}(q)\le x
+\end{aligned}
+\]
+
+holds. The target population and position are those of the rank-installed
+restarted process driven by the same source population and common field. This
+is the endpoint-event step used by the outer root-monotonicity theorem.
 -/
 
 open MeasureTheory
