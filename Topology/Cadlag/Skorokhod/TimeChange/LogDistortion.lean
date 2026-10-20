@@ -8,7 +8,7 @@ module
 
 public import Mathlib.Topology.UnitInterval
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
-public import Topology.Cadlag.Skorokhod.TimeChange
+public import Topology.Cadlag.Skorokhod.TimeChange.Basic
 
 /-!
 # Logarithmic distortion of Skorokhod time changes

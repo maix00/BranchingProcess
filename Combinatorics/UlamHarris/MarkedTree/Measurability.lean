@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Combinatorics.UlamHarris.MarkedTree.Basic
-public import Combinatorics.UlamHarris.Tree.MeasurableSpace
+public import Combinatorics.UlamHarris.Tree.Topology.MeasurableSpace
 public import Combinatorics.BranchingWalk.Step.Basic
 public import Mathlib.MeasureTheory.MeasurableSpace.Constructions
 public import Mathlib.MeasureTheory.MeasurableSpace.Instances
