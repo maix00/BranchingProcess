@@ -30,6 +30,23 @@ of the second.
 The definition is a condition on measures, so it needs nothing on the particle
 index of a cloud; only the half-lines of the value space have to be measurable for
 the statements that move between thresholds.
+
+The public API is:
+
+- `SliceDominatesMeasure μ ν` means `μ (Iic a) ≤ ν (Iic a)` for every
+  threshold `a`; it is reflexive and transitive.
+- `Cloud.RankwiseDominates C D t` matches each particle of rank `k` in the
+  slice of `C` to a particle of the same rank in `D` whose position is no
+  greater. `RankwiseDominatesBy` states this after applying an ordered
+  observation of positions.
+- `rankwiseDominates_encard_Iic_le` and `rankwiseDominates_encard_le` give
+  lower-tail and total particle-count inequalities. Conversely,
+  `rankwiseDominates_of_encard_Iic_le` constructs the rankwise order from
+  threshold counts, and `rankwiseDominates_iff_encard_Iic_le` packages the
+  equivalence. `rankwiseDominates_mapOrderDual_iff` gives the upper-tail order
+  by reversing the value order.
+- `rankwiseDominates_diracSum_of_countable` transfers the rankwise comparison
+  to the corresponding counting-measure inequality on countable slices.
 -/
 
 open MeasureTheory

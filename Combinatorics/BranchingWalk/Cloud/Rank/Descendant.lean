@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Combinatorics.BranchingWalk.Cloud.Basic
-public import Combinatorics.BranchingWalk.Step.Rank
+public import Combinatorics.BranchingWalk.Step.Ordering.Rank
 
 /-!
 # Rank restricted to the descendants of a particle

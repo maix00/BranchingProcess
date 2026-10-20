@@ -7,13 +7,25 @@ Authors: WANG Yiyang
 module
 
 public import Combinatorics.BranchingWalk.Population.Basic
-public import Combinatorics.BranchingWalk.Basic.ParentSibling
+public import Combinatorics.BranchingWalk.Basic.Sibling.ParentSibling
 
 /-!
 # Genealogy of populations
 
 The results apply to arbitrary set-valued populations; finite populations
 inherit them by forgetting their representation.
+
+The public API is:
+
+- `Population.initial_mem_and_surviveAlong` says each node in generation `n`
+  has its root in generation `0` and its address is a surviving path in the
+  corresponding step field.
+- `Population.initial_mem_of_mem` and `Population.surviveAlong_of_mem` give
+  the two conclusions separately.
+- `Population.parent_mem_of_mem_succ` says the parent of a generation
+  `n + 1` node belongs to generation `n`.
+- `Population.prefix_mem_of_mem` says every address prefix of a generation
+  `n` node belongs to the generation indexed by that prefix's length.
 -/
 
 @[expose] public section
