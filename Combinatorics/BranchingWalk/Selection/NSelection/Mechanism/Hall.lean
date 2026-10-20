@@ -13,8 +13,30 @@ public import Mathlib.Combinatorics.Hall.Basic
 /-!
 # Finite matching from lower-tail counts
 
-The Hall-theorem layer turns lower-tail cardinality domination into an
-injective matching.  It is independent of the concrete equal-rank map.
+Assume finite source and target populations, with linear orders on values.
+The public declarations are:
+
+- `Combinatorics.Branching.Selection.NSelection.exists_injective_le_of_filter_card_le`:
+  if
+  $|\{p\in S:f(p)\leq a\}|\leq|\{q\in T:g(q)\leq a\}|$ for every value
+  threshold $a$, then there is an injection $\varphi:S\to T$ satisfying
+  $g(\varphi(p))\leq f(p)$ for each $p\in S$.
+- `Combinatorics.Branching.Selection.NSelection.exists_injective_le_selectFirstNBy`:
+  if $R\subseteq S$, $|R|\leq N$, and the same lower-tail comparison holds
+  between $S$ and $T$, then there is an injection from $R$ into
+  `selectFirstNBy N targetValue target` whose matched value is at most the
+  source value.
+- `Combinatorics.Branching.Selection.NSelection.exists_injective_le_of_embedding_of_isFirstNBy`:
+  if a finite retained population embeds injectively into a candidate set
+  with $g(\operatorname{embed}(p))\leq f(p)$ and has size at most $N$, then
+  it injectively matches into any selected set satisfying
+  `IsFirstNBy N g candidates selected`, preserving the same value bound.
+- `Combinatorics.Branching.Selection.NSelection.exists_injective_le_of_dependent_embedding_of_isFirstNBy`
+  gives the same conclusion when the embedding is supplied only together
+  with a proof that each source label belongs to the retained population.
+
+These finite Hall matching results do not depend on the concrete equal-rank
+matching map in `NSelection/Mechanism/Matching.lean`.
 -/
 
 @[expose] public section

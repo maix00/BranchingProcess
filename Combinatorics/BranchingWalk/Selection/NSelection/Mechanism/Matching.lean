@@ -11,9 +11,62 @@ public import Combinatorics.BranchingWalk.Selection.NSelection.Mechanism.AtRank
 /-!
 # Equal-rank matching
 
-This layer defines the optional inverse, total equal-rank matching, and their
-finite-population identities. The Hall existence theorems live separately in
-NSelection/Mechanism/Hall.lean.
+Assume linear orders on the source labels, target labels, and values. The
+public declarations are:
+
+- `Combinatorics.Branching.Selection.NSelection.value_le_of_rankBy_eq_of_filter_card_le`:
+  if every lower-tail count of the source is at most the corresponding target
+  count, then equal dynamic ranks imply
+  $\operatorname{targetValue}(q)\leq\operatorname{sourceValue}(p)$.
+- `Combinatorics.Branching.Selection.NSelection.particleAtSourceRankBy`
+  defines the optional target with the source particle's dynamic rank;
+  `Combinatorics.Branching.Selection.NSelection.particleAtSourceRankBy_eq_some_iff`
+  characterizes its value by target membership and rank equality.
+  `Combinatorics.Branching.Selection.NSelection.preimageByRank` defines the
+  membership-guarded optional inverse, and
+  `Combinatorics.Branching.Selection.NSelection.preimageByRank_eq_some_iff`
+  characterizes that inverse by membership and rank equality.
+  `Combinatorics.Branching.Selection.NSelection.preimageByRank_leftUnique`
+  proves that one source label has at most one target preimage, and
+  `Combinatorics.Branching.Selection.NSelection.preimageByRank_maps_finite`
+  proves finiteness of the admissible guarded maps for finite populations.
+- `Combinatorics.Branching.Selection.NSelection.particleAtSourceRankBy_ne_none`
+  shows that each source member has a target at the same rank when
+  $|\mathrm{source}|\leq|\mathrm{target}|$.
+  `Combinatorics.Branching.Selection.NSelection.matchByRank` defines the
+  resulting total match on source members;
+  `Combinatorics.Branching.Selection.NSelection.particleAtSourceRankBy_matchByRank`
+  identifies it with the optional construction,
+  `Combinatorics.Branching.Selection.NSelection.matchByRank_mem` places its
+  value in the target, and
+  `Combinatorics.Branching.Selection.NSelection.rankBy_matchByRank` states
+  equality of dynamic ranks.
+  `Combinatorics.Branching.Selection.NSelection.matchByRank_injective`
+  proves injectivity, while
+  `Combinatorics.Branching.Selection.NSelection.matchByRank_value_le` gives
+  the value inequality under lower-tail count domination.
+- `Combinatorics.Branching.Selection.NSelection.rankBy_congr_of_eqOn` states
+  $\operatorname{rankBy}(f,S,p)=\operatorname{rankBy}(f',S,p)$ when
+  $p\in S$ and $f=f'$ on $S$.
+  `Combinatorics.Branching.Selection.NSelection.matchByRankOrSelf`
+  defines the ambient extension that fixes labels outside the source;
+  `Combinatorics.Branching.Selection.NSelection.matchByRankOrSelf_of_mem`
+  and
+  `Combinatorics.Branching.Selection.NSelection.matchByRankOrSelf_of_not_mem`
+  give its two defining cases.
+  `Combinatorics.Branching.Selection.NSelection.matchByRankOrSelf_congr_of_eqOn`
+  proves invariance under value-function changes off the two populations,
+  `Combinatorics.Branching.Selection.NSelection.matchByRankOrSelf_mem` maps
+  source members into the target, and
+  `Combinatorics.Branching.Selection.NSelection.particleAtSourceRankBy_matchByRankOrSelf`
+  gives the inverse identity on the source.
+  `Combinatorics.Branching.Selection.NSelection.matchByRankOrSelf_injOn`
+  proves injectivity on the source, and
+  `Combinatorics.Branching.Selection.NSelection.matchByRankOrSelf_value_le`
+  gives the lower-tail value bound there.
+
+The existence results from finite Hall matching are in
+`NSelection/Mechanism/Hall.lean`.
 -/
 
 @[expose] public section
