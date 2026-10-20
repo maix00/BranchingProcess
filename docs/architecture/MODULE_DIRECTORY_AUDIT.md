@@ -1956,6 +1956,17 @@ pinned toolchain (2,083 Lake jobs). This is one completed family in the
 repository-wide statement-by-statement header audit; name-token scans remain
 candidate finders and are not counted as verified omissions.
 
+## Branching-walk survival and relation API headers (2026-10-21)
+
+The `Basic/Map.lean`, `Basic/Survival/Basic.lean`, and
+`Basic/Sibling/ParentSibling.lean` headers now state the defining predicates,
+coordinate identities, survival-slice partition, measurable-map hypotheses,
+and parent/sibling relations for their public declarations. These modules
+remain at their semantic owners: mapping, realized populations, and immediate
+genealogy relations are distinct interfaces, with no proof-only abstraction
+to move outward. All three targets built successfully with the pinned
+toolchain.
+
 ## Cosine Tauberian public API headers (2026-10-21)
 
 The Fourier cosine Tauberian family has five peer modules with distinct
