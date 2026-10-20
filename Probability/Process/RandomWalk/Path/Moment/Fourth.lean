@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.Path.Martingale
+public import Probability.Process.RandomWalk.Path.Adapted.Martingale
 public import Probability.Independence.Moment.Fourth
 
 /-!

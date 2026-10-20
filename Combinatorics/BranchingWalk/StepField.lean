@@ -11,6 +11,17 @@ public import Combinatorics.UlamHarris.Basic
 /-!
 # Fields of branching steps
 
+## Public declarations
+
+* `Combinatorics.Branching.StepField α X` is the function type
+  `TreeNode α → Step α X`.
+* `Combinatorics.Branching.StepField.map f β` maps each child mark by `f`;
+  `map_apply`, `map_id`, and `map_map` give its pointwise form, identity law,
+  and composition law. `map_measurable` proves measurability when `f` is
+  measurable.
+* `Combinatorics.Branching.StepField.forgetMarks β` maps every mark to
+  `PUnit.unit` while preserving the child slots.
+
 A step field assigns one complete optional child-slot configuration to every
 potential address. This module contains its type and pointwise mark maps, below
 the definitions of realized branching walks.

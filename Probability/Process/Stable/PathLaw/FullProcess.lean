@@ -32,7 +32,7 @@ private noncomputable def unitBlockIncrement {n : ℕ} (t : Fin (n + 1) → ℝ�
     (k : ℕ) (i : Fin n) (ω : ℕ → CadlagPath unitInterval ℝ) : ℝ :=
   ω k (unitBlockGrid t k i.succ) - ω k (unitBlockGrid t k i.castSucc)
 
-private theorem measurable_unitBlockIncrement {n : ℕ}
+private lemma measurable_unitBlockIncrement {n : ℕ}
     (t : Fin (n + 1) → ℝ≥0) (k : ℕ) (i : Fin n) :
     Measurable (unitBlockIncrement t k i) := by
   exact ((Skorokhod.measurable_apply (unitBlockGrid t k i.succ)).comp
@@ -40,7 +40,7 @@ private theorem measurable_unitBlockIncrement {n : ℕ}
       ((Skorokhod.measurable_apply (unitBlockGrid t k i.castSucc)).comp
         (measurable_pi_apply k))
 
-private theorem measurable_unitBlockIncrementVector {n : ℕ}
+private lemma measurable_unitBlockIncrementVector {n : ℕ}
     (t : Fin (n + 1) → ℝ≥0) (k : ℕ) :
     Measurable (fun ω : ℕ → CadlagPath unitInterval ℝ =>
       fun i : Fin n => unitBlockIncrement t k i ω) := by
@@ -228,7 +228,7 @@ theorem iidUnitPathBlockProcess_hasIndepIncrements
 private noncomputable def unitBlockTimeDuration (s t : ℝ≥0) (k : ℕ) : ℝ :=
   (Topology.unitBlockParameter k t : ℝ) - (Topology.unitBlockParameter k s : ℝ)
 
-private theorem measurable_unitBlockTimeIncrement
+private lemma measurable_unitBlockTimeIncrement
     (s t : ℝ≥0) (k : ℕ) :
     Measurable (fun ω : ℕ → CadlagPath unitInterval ℝ =>
       ω k (Topology.unitBlockParameter k t) - ω k (Topology.unitBlockParameter k s)) := by
