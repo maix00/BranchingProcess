@@ -14,6 +14,11 @@ public section
 # Power bounds for trigonometric functions
 
 Elementary finite-multiple estimates used to compare discrete cosine spectra.
+
+## Public declaration
+
+* `Real.cos_nat_mul_le_pow_cos`: if $0\le x$ and $nx\le\pi/2$, then
+  $\cos(nx)\le(\cos x)^n$ for every natural number $n$.
 -/
 
 namespace Real

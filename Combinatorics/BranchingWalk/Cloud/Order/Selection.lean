@@ -7,7 +7,9 @@ Authors: WANG Yiyang
 module
 
 public import Combinatorics.BranchingWalk.Cloud.Order.Basic
-public import Combinatorics.BranchingWalk.Selection.NSelection.Coupling
+public import Combinatorics.BranchingWalk.Selection.NSelection.Coupling.Finite
+public import Combinatorics.BranchingWalk.Selection.NSelection.Coupling.Step
+public import Combinatorics.BranchingWalk.Selection.NSelection.Mechanism.AtRank
 
 /-!
 # Domination under leftmost selection
@@ -16,6 +18,24 @@ The finite counting lemma for `selectFirstN` is lifted here to the existing clou
 orders.  Positions may be abstract; comparison takes place after an ordered
 observation `φ`. Equal observed positions retain their distinct particle
 identities.
+
+The public API is:
+
+- `Cloud.rankwiseDominatesBy_leftmost_of_subset` proves
+  `(C.withFinsetParticles retained).RankwiseDominatesBy φ
+  (D.withFinsetParticles right) t`, where
+  `right t = selectFirstN N (hDfinite t).toFinset`, when each retained slice
+  is a subset of `C.particles t` of size at most `N`, `C` rankwise dominates
+  `D`, and `φ` is monotone along both index orders.
+- `Cloud.dominatesBy_leftmost_of_subset` gives the corresponding
+  measure-level relation
+  `(C.withFinsetParticles retained).DominatesBy φ
+  (D.withFinsetParticles right)` when the particle type is countable and
+  observed values have measurable singletons.
+- `Cloud.exists_leftmost_le_of_mem` proves
+  `∀ p ∈ C.particles t, ∃ q ∈ selectFirstN N (D.particles t),
+  φ (D.position q.1 q.2) ≤ φ (C.position p.1 p.2)` when `N > 0` and `C`
+  rankwise dominates `D` at `t`.
 -/
 
 open Combinatorics.UlamHarris
