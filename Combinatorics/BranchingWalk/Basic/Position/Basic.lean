@@ -17,6 +17,17 @@ the displacement along the address, so it is read off the walk's own data:
 `RootIndexed.BranchingWalk.position β r u`. The displacement itself is the
 address-carrying recursion of `Basic/Position/Displace.lean`, which carries the current
 address instead of reconstructing it from a list index.
+
+The public API is:
+
+- `RootIndexed.BranchingWalk.position d β r u` is the initial position at
+  root `r` plus the displacement obtained by mapping each edge mark through
+  `d` and summing along address `u`.
+- `BranchingWalk.position_child` gives the recursion from `u` to `u ++ [i]`,
+  and `BranchingWalk.position_id` gives the same-mark additive specialization.
+- `BranchingWalk.potential_position` states that an additive potential of
+  the position is the potential of the initial point plus the displacement
+  formed from the transformed edge marks.
 -/
 
 @[expose] public section

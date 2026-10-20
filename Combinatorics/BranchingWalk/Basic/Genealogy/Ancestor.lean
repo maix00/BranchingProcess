@@ -12,6 +12,18 @@ public import Combinatorics.BranchingWalk.Basic.Genealogy.Descendant
 # Ancestor relations
 
 Ancestor sets and generation slices, defined as the reverse of descendant relations.
+
+The public API is:
+
+- `IsAncestor β p q` is `IsDescendant β q p`; `isAncestor_refl` and
+  `isAncestor_trans` give reflexivity and transitivity, while
+  `fst_eq_of_isAncestor` and `generation_eq_generation_add_of_isAncestor`
+  record the root and generation relations.
+- `ancestors β p` is the set of ancestors of `p`, and `ancestorsAt β p k`
+  selects those at distance `k`. Their membership characterizations,
+  `disjoint_ancestorsAt`, and
+  `mem_ancestors_iff_exists_mem_ancestorsAt` state that the distance slices
+  partition the ancestors.
 -/
 
 @[expose] public section
