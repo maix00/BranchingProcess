@@ -14,13 +14,38 @@ public import Combinatorics.BranchingWalk.Basic.Position.Basic
 /-!
 # Measurability of realized nodes and positions, root by root
 
-Realization along a remaining path, the displacement of a fixed address,
-and the position of a generation-measurably selected address are all
-observable at the generation that reveals the path. The proofs are the
-single-root inductions of the deterministic branching-walk position lemmas, carrying the
-current address along so each step only needs the step at one fixed address of
-one fixed root. The mark type and its additive structure are parameters, so
-nothing here is specific to `ℝ`.
+The public declarations in `ProbabilityTheory.BranchingRandomWalk.RootIndexed`
+are:
+
+- `stepPresentAlong_measurableSet`, `surviveAlong_measurableSet`: survival
+  along a fixed address is measurable with respect to the step filtration at
+  every generation revealing that address.
+- `displace_measurable`, `position_measurable`: mapped displacement and
+  initial-position-shifted position at address $u$ are measurable with
+  respect to `stepFiltration |u|` when the mark map and addition are
+  measurable; the displacement result also handles a fixed path segment
+  $v,p$ whenever $|v|+|p|\le n$.
+- `positionAtGeneration`: returns the position of $u$ when $|u|=n$ and $0$
+  otherwise; `positionAtGeneration_measurable` proves measurability with
+  respect to `stepFiltration n`.
+- `observedPositionAtGeneration`: applies a map to `positionAtGeneration`;
+  `observedPositionAtGeneration_eq` identifies it with the branching-walk
+  position when the label has depth $n$.
+- `selectedPositionAtGeneration_measurable`: a measurable selector with
+  countable range and depth $n$ has measurable position at generation $n$.
+- `selectedPositionAtGeneration_measurable_of_countableAddress`: the same
+  conclusion when the address type itself is countable.
+
+The two declarations in `ProbabilityTheory.BranchingRandomWalk` specialize
+these facts to finitely many roots indexed by `Fin m`:
+`selectedMultiRootAbsolutePosition_measurable` gives the selected position's
+measurability, and `selectedMultiRootRealizedNode_measurableSet` gives
+measurability of the event that the selected address survives.
+
+The mark type and its additive position structure are parameters, so these
+results are not specific to `ℝ`. The measurability proofs carry the current
+address along the path, making each induction step depend on one fixed root
+and one fixed step coordinate.
 -/
 
 open MeasureTheory

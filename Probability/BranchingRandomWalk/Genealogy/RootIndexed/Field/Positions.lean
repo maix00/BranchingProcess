@@ -14,9 +14,39 @@ public import Combinatorics.BranchingWalk.Basic.Map
 public import Combinatorics.BranchingWalk.StepField
 public import Mathlib.Probability.Independence.InfinitePi
 
-/-! Root-indexed branching step fields and their positions.
-    An arbitrary type indexes the initial roots; the displacement and the
-    initial-position-shifted position are defined per root. -/
+/-!
+# Positions on root-indexed branching step fields
+
+The public declarations in
+`ProbabilityTheory.BranchingRandomWalk.RootIndexed` are:
+
+- `displace`, `position`: total displacement and initial-position-shifted
+  position at a root and address.
+- `displace?`, `position?`: the corresponding partial values, equal to
+  `some` of the total value exactly when the address survives.
+- `displace?_eq_some_iff`, `displace?_eq_none_iff`,
+  `position?_eq_some_iff`, `position?_eq_none_iff`: characterize the option
+  results by survival along the address.
+- `displace_reindex`, `displace?_reindex`, `position_reindex`,
+  `position?_reindex`: reindexing roots by $f$ changes evaluation at $i$ to
+  evaluation at $f(i)$.
+- `displace_nil`, `position_root`: the root displacement is $0$ and its
+  position is its initial position.
+- `displace_append_singleton`, `position_append_singleton`: appending one
+  child adds the mapped mark at the current address.
+- `position_append_two`: appending two children adds their successive mapped
+  marks.
+- `displace_append`, `position_append`: concatenating addresses adds the
+  displacement along the suffix in the field rebased at the prefix.
+- `position_eq_initial_add_mark`: unfolds the position as the initial value
+  plus the displacement.
+
+For a root-indexed step field and a mark map $d$, `displace` sums the mapped
+marks along a Ulam--Harris address, and `position` adds the root's initial
+position. Their option-valued counterparts record whether that address
+survives. All position-valued statements require only an additive commutative
+monoid.
+-/
 
 open MeasureTheory ProbabilityTheory
 

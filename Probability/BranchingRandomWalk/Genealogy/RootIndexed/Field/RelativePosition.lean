@@ -12,8 +12,21 @@ public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Field.Measur
 /-!
 # Positions relative to an ancestral generation
 
+The public declarations in
+`ProbabilityTheory.BranchingRandomWalk.RootIndexed` are:
+
+- `relativePositionAtGeneration`: for a rooted label $p$ and generations
+  $a,n$, subtracts its position at the prefix of depth $a$ from its position
+  at generation $n$.
+- `relativePositionAtGeneration_measurable`: this relative position is
+  measurable with respect to `stepFiltration n` when $a\le n$.
+- `relativePositionAtGeneration_child`: for a parent $p$ of depth $n$ and
+  $a\le n$, the relative position of the child formed by appending $i$ to $p$
+  at generation $n+1$ equals the parent's relative position plus the mapped
+  mark on the added edge.
+
 The reference generation may depend deterministically on the observation
-generation.  This covers a walk viewed from its root, from a fixed
+generation. This covers a walk viewed from its root, from a fixed
 intermediate generation, or from a piecewise changing restart generation.
 -/
 
