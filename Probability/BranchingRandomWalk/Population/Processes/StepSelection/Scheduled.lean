@@ -5,7 +5,7 @@ Authors: WANG Yiyang
 -/
 
 import Probability.BranchingRandomWalk.Population.Processes.StepSelection.Concurrent
-import Probability.BranchingRandomWalk.Timing.CausalSchedule
+import Probability.BranchingRandomWalk.Timing.Schedule.Causal
 
 /-!
 # Causally scheduled selected branching populations

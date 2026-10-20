@@ -8,8 +8,8 @@ module
 
 public import Combinatorics.BranchingWalk.MarkedTree.Equivalence
 public import Combinatorics.BranchingWalk.MarkedTree.Ordering
-public import Combinatorics.BranchingWalk.Basic.Orderable
-public import Combinatorics.BranchingWalk.Basic.DisplacementMap
+public import Combinatorics.BranchingWalk.Basic.Ordering.Orderable
+public import Combinatorics.BranchingWalk.Basic.Position.DisplacementMap
 public import Combinatorics.BranchingWalk.Basic.Map
 public import Combinatorics.BranchingWalk.StepField
 public import Combinatorics.UlamHarris.MarkedTree.Basic
@@ -17,16 +17,68 @@ public import Combinatorics.UlamHarris.MarkedTree.Basic
 /-!
 # The marked tree of a branching walk
 
-`RootIndexed.BranchingWalk.markedTreeWith` builds the realized genealogical tree
-and accepts an arbitrary dependent node-marking function.  In particular, the
-mark type is independent of both the edge-mark type and the position type.
-`positionedMarkedTree` is the specialization whose node marks are accumulated
-positions obtained through a displacement map.
+## Public declarations
 
-The single-root reading is a bridge: for a walk with one initial ancestor the tree at that ancestor is
-the marked tree of the corresponding step field (`markedTree_apply`), which is where the per-root
-computations of `MarkedTree/Equivalence.lean` are reused. Sibling closure of every step is assumed,
-since a tree is sibling closed and a walk does not carry that condition.
+* `Combinatorics.Branching.RootIndexed.BranchingWalk.markedTreeWith` assigns
+  each root `r` the tree with carrier
+  $\{u\mid\operatorname{surviveAlong}(\beta.\operatorname{step}(r),[],u)\}$
+  and mark at a realized `u` equal to `nodeMark r u _`.
+* `Combinatorics.Branching.RootIndexed.BranchingWalk.positionedMarkedTree`
+  specializes `markedTreeWith` to the accumulated displacement
+  $u\mapsto\operatorname{displaceWith}(d,\beta.\operatorname{step}(r),[],u)$.
+* `Combinatorics.Branching.RootIndexed.BranchingWalk.mem_markedTree_carrier`
+  states
+  $u\in(\beta.\operatorname{markedTreeWith}(hsib,nodeMark)(r)).tree.carrier
+  \leftrightarrow\operatorname{surviveAlong}(\beta.\operatorname{step}(r),[],u)$.
+  `Combinatorics.Branching.RootIndexed.BranchingWalk.markedTreeWith_mark` gives
+  the assigned mark `nodeMark r u hu`, and
+  `Combinatorics.Branching.RootIndexed.BranchingWalk.positionedMarkedTree_mark`
+  gives the mark formula
+  $\operatorname{displaceWith}(d,\beta.\operatorname{step}(r),[],u)$.
+* `Combinatorics.Branching.RootIndexed.BranchingWalk.positionedMarkedTree_apply`
+  states
+  $\operatorname{positionedMarkedTree}(\beta,id,\lambda r.\,hsib,*)=
+  \operatorname{markedTreeOfStep}(\beta.\operatorname{step}(*),hsib)$
+  for a `PUnit`-rooted walk and its unique root `*`.
+  `Combinatorics.Branching.RootIndexed.BranchingWalk.positionedMarkedTreeOfClosable`
+  states
+  $(\beta.\operatorname{positionedMarkedTreeOfClosable}(d,h))(r)=
+  (\beta.\operatorname{step}(r)).\operatorname{positionedMarkedTreeOfClosable}(d,h(r))$.
+* For a walk with slots `ℕ` and linearly ordered edge marks,
+  `Combinatorics.Branching.RootIndexed.BranchingWalk.positionedMarkedTreeOfOrderable`
+  defines the `r`-th tree as
+  $(\beta.\operatorname{step}(r)).\operatorname{markedTreeOfOrderingMap}(h_r,d)$,
+  where $h_r=h.\operatorname{pointwise}(r)$.
+  `Combinatorics.Branching.RootIndexed.BranchingWalk.mem_positionedMarkedTreeOfOrderable_iff` states
+  $u\in(\beta.\operatorname{positionedMarkedTreeOfOrderable}(d,h,r)).tree.carrier\leftrightarrow
+  \operatorname{surviveAlong}(\beta.\operatorname{step}(r),[],
+  \operatorname{orderingAddress}(\beta.\operatorname{step}(r),h_r,u))$.
+* `Combinatorics.Branching.RootIndexed.BranchingWalk.existsUnique_positionedOrderingAddress`
+  states that each `u` surviving in `β.step r` has a unique `v` in the ordered
+  tree with
+  $v\in(\beta.\operatorname{positionedMarkedTreeOfOrderable}(d,h,r)).tree.carrier$
+  and
+  $\operatorname{orderingAddress}(\beta.\operatorname{step}(r),h_r,v)=u$.
+  `Combinatorics.Branching.RootIndexed.BranchingWalk.positionedMarkedTreeOfOrderable_mark`
+  gives the mark
+  $\operatorname{displaceWith}(d,\beta.\operatorname{step}(r),[],
+  \operatorname{orderingAddress}(\beta.\operatorname{step}(r),h_r,u))$.
+* If the mark and position spaces are measurable and `d` is measurable,
+  `Combinatorics.Branching.RootIndexed.BranchingWalk.positionedOrderedStepPointMeasure`
+  states
+  $\operatorname{stepPointMeasure}(\operatorname{stepOfMarkedTree}
+  (\beta.\operatorname{positionedMarkedTreeOfOrderable}(d,h,r),u))=
+  (\operatorname{stepPointMeasure}(\beta.\operatorname{step}(r)
+  (\operatorname{orderingAddress}(\beta.\operatorname{step}(r),h_r,u))).map(d)$.
+* `Combinatorics.Branching.RootIndexed.BranchingWalk.positionedMarkedTreeOfFiniteSupport`
+  is the specialization of `positionedMarkedTreeOfOrderable` whose
+  orderability witness is inferred from finite support.
+
+`markedTreeWith` accepts an arbitrary dependent node-marking function, so its
+mark type is independent of both the edge-mark type and the position type.
+The single-root identity bridges this construction to the per-root marked-tree
+API in `MarkedTree/Equivalence.lean`. Sibling closure is assumed because each
+realized tree has it while a branching walk does not carry that condition.
 -/
 
 @[expose] public section
@@ -225,8 +277,9 @@ theorem RootIndexed.BranchingWalk.positionedOrderedStepPointMeasure
   exact StepField.stepPointMeasure_orderingField_map
     (β.step r) (h.pointwise r) d hd u
 
-/-- On a finitely supported walk the ordered marked tree is had with nothing handed in. -/
-noncomputable def RootIndexed.BranchingWalk.positionedMarkedTreeOfOrderable'
+/-- The ordered positioned tree of a finitely supported walk, using the
+orderability instance supplied by finite support. -/
+noncomputable def RootIndexed.BranchingWalk.positionedMarkedTreeOfFiniteSupport
     {Mark : Type*} [LinearOrder Mark]
     (β : RootIndexed.BranchingWalk Root ℕ Mark Position)
     (d : Mark → Position)

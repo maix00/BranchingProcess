@@ -6,11 +6,18 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Scale
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Scale.Core
 public import Probability.Distributions.Stable.Attraction.Norming.Inverse
 
 /-!
 # Vanishing stable small-deviation rates
+
+The public theorem is:
+
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.tendsto_stableSmallDeviationRate_zero_of_slowVariation`:
+  if $a_n$ is a stable norming, $x_n\to\infty$, $x_n/a_n\to0$,
+  $0<\alpha\le2$, and $L^*$ is slowly varying, then
+  $x_n^\alpha/(nL^*(x_n))\to0$.
 
 The two-scale hypothesis makes the small-deviation rate vanish throughout the
 stable range `0 < α ≤ 2`. The slowly varying factor need not converge to a
