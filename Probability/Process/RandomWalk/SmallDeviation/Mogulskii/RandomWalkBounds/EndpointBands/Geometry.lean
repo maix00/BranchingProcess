@@ -19,42 +19,49 @@ public import Probability.Process.RandomWalk.Path.Block.Corridor.Measure
 The public API is in namespace
 `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii`.
 
-* `endpointBandBlockEvent radius ε i length` is the event that the block
-  stays in $(-r,r)$ and its displacement at `length` lies in
+* `endpointBandBlockEvent radius ε i length` requires the block increments
+  $x$ to satisfy $\sum_{k<j}x_k\in(-\mathrm{radius},\mathrm{radius})$ for
+  every $1\le j\le\mathrm{length}$, with terminal displacement in
   $((i-1)\varepsilon,(i+1)\varepsilon)$.
-  `endpointBandReturnBlockEvent lower upper ε i length` uses the contracted
-  corridor $(\ell+4\varepsilon,u-4\varepsilon)$ and the same terminal band.
-* `endpointCorridorBlockEvent lower upper a b length` requires every partial
-  sum to lie in $(\ell,u)$ and the terminal sum to lie in $(a,b)$.
-  `endpointCorridorBridgeBlockEvent lower upper ε s t i length` specializes
-  this event to the contracted corridor relative to the source center $s$ and
-  the endpoint band relative to target center $t$.
-* `endpointBandReturnBlockEvent_eq_endpointCorridorBridgeBlockEvent` identifies
-  the return event with the same-center bridge event.
-  `endpointCorridorBridgeBlockEvent_scale` proves the event identity after
-  multiplying all spatial parameters by any real scale.
+* `endpointBandReturnBlockEvent lower upper ε i length` requires all partial sums,
+  including zero, to stay
+  in $(\mathrm{lower}+4\varepsilon,\mathrm{upper}-4\varepsilon)$ and the
+  terminal sum to lie in the same endpoint band.
+* `endpointCorridorBlockEvent lower upper endpointLower endpointUpper length`
+  requires every partial sum in $(\mathrm{lower},\mathrm{upper})$ and the
+  terminal sum in $(\mathrm{endpointLower},\mathrm{endpointUpper})$.
+  `endpointCorridorBridgeBlockEvent allowedLower allowedUpper ε s t i length`
+  uses the relative corridor
+  $(\mathrm{allowedLower}+4\varepsilon-s,
+  \mathrm{allowedUpper}-4\varepsilon-s)$ and endpoint band
+  $(t-s+(i-1)\varepsilon,t-s+(i+1)\varepsilon)$.
+* `endpointBandReturnBlockEvent_eq_endpointCorridorBridgeBlockEvent` gives
+  the same-center event identity, and `endpointCorridorBridgeBlockEvent_scale`
+  gives the event identity after simultaneous multiplication of every spatial
+  parameter by any real scale.
 * `measurableSet_endpointBandBlockEvent`,
   `measurableSet_endpointBandReturnBlockEvent`,
   `measurableSet_endpointCorridorBlockEvent`, and
-  `measurableSet_endpointCorridorBridgeBlockEvent` prove measurability of
-  these four events on the product space of increment sequences.
+  `measurableSet_endpointCorridorBridgeBlockEvent` prove measurability of the
+  four events on the product space of increment sequences.
 * `endpointCorridorBridgeBlockEvent_subset_killedBridgeEvent` states that if
-  $x\in[s-3\varepsilon,s+3\varepsilon]$ and
-  $x-s+i\varepsilon\in[0,\varepsilon]$, then the bridge event implies that
-  the walk stays in $[\ell,u]$ and ends in
-  $[t-3\varepsilon,t+3\varepsilon]$, assuming $\varepsilon>0$.
+  $\varepsilon>0$, $x\in[s-3\varepsilon,s+3\varepsilon]$, and
+  $x-s+i\varepsilon\in[0,\varepsilon]$, then the bridge event with
+  allowed corridor $[\mathrm{lower},\mathrm{upper}]$ implies that the walk
+  stays in this corridor and ends in $[t-3\varepsilon,t+3\varepsilon]$.
 * `exists_nearbyEndpointBandIndex` states that, for $\varepsilon>0$, every
   $x\in[-3\varepsilon,3\varepsilon]$ admits $i\in\mathbb Z$ with
   $-3\le i\le3$ and $x+i\varepsilon\in[0,\varepsilon]$.
 
-These seven endpoint shifts give the finite geometry in Lemma 3(d) of
-A. A. Mogul'skii, “Small deviations in the sample function space,”
-*Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974), 755--765; English
-translation, “Small Deviations in a Space of Trajectories,” *Theory of
-Probability and Its Applications* 19(4) (1975), 726--736, DOI 10.1137/1119081.
+The seven integer shifts selected by `exists_nearbyEndpointBandIndex` supply
+the endpoint choice in Lemma 3(d) of A. A. Mogul'skii; the full bibliographic
+reference follows.
 
-
-The original bibliography is A. A. Mogul'skii, “Small deviations in the sample function space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974), 755--765; English translation, “Small Deviations in a Space of Trajectories,” *Theory of Probability and Its Applications* 19(4) (1975), 726--736, DOI 10.1137/1119081. -/
+The original bibliography is A. A. Mogul'skii, “Small deviations in the sample
+function space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974),
+755--765; English translation, “Small Deviations in a Space of Trajectories,”
+*Theory of Probability and Its Applications* 19(4) (1975), 726--736, DOI
+10.1137/1119081. -/
 
 open MeasureTheory Set
 

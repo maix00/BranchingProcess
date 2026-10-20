@@ -2126,6 +2126,9 @@ seven-shift selection with its required positive band width. The declarations
 remain together in `RandomWalkBounds/EndpointBands/Geometry.lean`: each is a
 complete event definition or a reusable geometric fact used by the finite
 endpoint-band argument, rather than a proof-only derivation step.
+The formulas were checked against the definitions, use their actual parameter
+names and time-index conventions, and now have one complete bibliographic
+entry for Lemma 3(d).
 
 The source-aligned Gaussian terminal-left rate header now writes its limit as
 `-\frac{\pi^2}{2}H_2(M)`, matching the theorem statement and the Brownian
