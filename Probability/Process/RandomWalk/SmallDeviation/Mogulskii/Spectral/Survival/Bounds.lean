@@ -137,7 +137,7 @@ theorem intervalKernel_pow_rowSum_uniform_bounds
         simpa [mul_comm] using mul_le_mul_of_nonneg_left
           (hlower start) heigenPowNonneg
       _ ≤ ∑ finish, (intervalKernel interiorCount ^ n) start finish := by
-        have hbounds := Matrix.pow_rowSum_bounds_of_positive_eigenfunction
+        have hbounds := Matrix.pow_rowSum_bounds_of_bounded_eigenfunction
           (intervalKernel interiorCount) (intervalSineWeight interiorCount)
           eigenvalue lower 1 (intervalKernel_nonneg interiorCount)
           (intervalKernel_mulVec_sine interiorCount) hlower
