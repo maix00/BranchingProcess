@@ -13,9 +13,25 @@ public import Mathlib.Order.Bounds.Basic
 # Deterministic cloud frontiers
 
 `lowerFrontier C t` and `upperFrontier C t` are the sets of least and
-greatest positions in the time slice `C.points t`. They are empty exactly
-when the slice is empty, and they record all extremal points when the order
-has ties. The two definitions are order-dual to one another.
+greatest positions in the time slice `C.points t`. They record all extremal
+points when the order has ties. A frontier is empty when its slice has no
+attained extremum; `unattainedLowerExample` gives a nonempty slice with empty
+lower frontier. The two definitions are order-dual to one another.
+
+The public API is:
+
+- `lowerFrontier C t` and `upperFrontier C t` are the least and greatest
+  elements of the slice as sets; their membership theorems characterize
+  these sets by `IsLeast` and `IsGreatest`, and the subset theorems place each
+  frontier inside the original slice.
+- `mem_upperFrontier_iff_orderDual` identifies the upper frontier with the
+  lower frontier after reversing the order. `unattainedLowerExample` proves
+  that an infinite nonempty slice can have no least point.
+- `Cloud.lowerPotentialFrontier`, `upperPotentialFrontier`, and
+  `potentialValues` apply a real-valued potential to a particle cloud.
+  `HasLowerPotentialPoint` states attainment; `lowerPotentialPoint` chooses
+  an attained lower point and the accompanying theorems show it belongs to
+  the frontier and is least among the potential values.
 -/
 
 @[expose] public section
