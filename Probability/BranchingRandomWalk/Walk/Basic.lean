@@ -8,7 +8,7 @@ module
 
 public import Probability.BranchingRandomWalk.Law
 public import Probability.BranchingRandomWalk.Measurability
-public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Measurability
+public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Field.Measurability
 public import Combinatorics.BranchingWalk.Genealogy.Survival
 public import Combinatorics.BranchingWalk.Walk.Path.Position
 public import Mathlib.MeasureTheory.Measure.Map
