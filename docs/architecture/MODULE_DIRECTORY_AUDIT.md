@@ -2116,3 +2116,23 @@ and the random-walk path clients built successfully with the pinned toolchain
 (3,173 Lake jobs). Mathlib `lint-style` passed on all eleven edited Lean
 modules; its only diagnostic was the existing module-header warning for the
 `lint-style` driver itself.
+
+## Mogulskii endpoint-band and Gaussian-rate header audit (2026-10-21)
+
+The endpoint-band geometry header now states the event conditions, the
+same-center identity, unrestricted real scaling, product-space measurability,
+the killed-bridge implication with its start and endpoint hypotheses, and the
+seven-shift selection with its required positive band width. The declarations
+remain together in `RandomWalkBounds/EndpointBands/Geometry.lean`: each is a
+complete event definition or a reusable geometric fact used by the finite
+endpoint-band argument, rather than a proof-only derivation step.
+
+The source-aligned Gaussian terminal-left rate header now writes its limit as
+`-\frac{\pi^2}{2}H_2(M)`, matching the theorem statement and the Brownian
+escape constant. The adjacent scale, tightness, discretization, and escape
+constant headers were checked against their declarations and hypotheses;
+their existing descriptions cover the stated limits and parameter
+conditions.
+
+Both edited modules and their dependency closure built successfully with the
+pinned toolchain (4,007 Lake jobs).
