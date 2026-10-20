@@ -2006,3 +2006,18 @@ public combinatorial APIs, so their peer placement is retained rather than
 moving them into a proof-only `Lemmas/` directory. The three targets built
 successfully with the pinned toolchain; Lean emitted existing `letI` style
 warnings in `GenerationSize.lean`, outside the edited module headers.
+
+## Step-map abstraction and sibling API review (2026-10-21)
+
+`Basic/Position/DisplacementMap.lean` contained
+`AdditivePotential.map_value'`, a one-client theorem saying that a
+zero-defaulted slot read commutes with an additive mark map. The property
+only needs a map `f : X → Y` satisfying `f 0 = 0`, so it is now the reusable
+`Step.value'_map` theorem in `Step/Map.lean`; the specialized duplicate was
+removed and `DisplacementMap.lean` imports its semantic owner directly.
+The three `Basic/Sibling/` module headers now distinguish the direct
+slot-order closure predicate, the pointwise relabelability predicate, and
+the surviving-particle parent/sibling relations by their defining formulas.
+These definitions and results remain in their semantic modules rather than
+being moved to `Lemmas/`. The five affected modules built successfully with
+the pinned toolchain.
