@@ -2270,3 +2270,16 @@ catch-all `Definitions/`: each definition remains beside its mathematical
 owner. The five moved modules, their active direct clients, and the full
 `BranchingProcess` target compiled successfully with the pinned toolchain
 (5,593 jobs).
+
+## Proof-helper import visibility (2026-10-21)
+
+A source scan found 72 project-local `public import` lines from one
+`Lemmas/` module to another. A blanket change to ordinary imports was tested
+and reverted: downstream proof-support modules rely on definitions and types
+from earlier stages in these chains, including definitions appearing in
+module-visible theorem statements. The `Lemmas/` placement classifies these as
+proof-specific components; it does not make their declarations Lean-private.
+The maintained API boundary is that production modules outside `Lemmas/` do
+not publicly import project-local `Lemmas/` modules. Keep internal re-exports
+when helper modules compose through them, and audit each import against its
+consumers before changing visibility.
