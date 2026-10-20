@@ -7,12 +7,30 @@ Authors: WANG Yiyang
 module
 
 public import MeasureTheory.Measure.CadlagPath.FiniteDimensional.Dense
-public import Probability.Process.Path.Skorokhod
+public import Probability.Process.Path.Representation.Skorokhod
 public import Order.Interval.RationalCoordinate.UnitInterval
 public import Topology.Order.UnitInterval.Rational
+public import Topology.Cadlag.Skorokhod.Path.Scaling
 
 /-!
 # Measurable path-valued realizations of càdlàg processes
+
+The public objects and theorems in this file are:
+
+- `rationalEvaluationEmbedding`: the map $f\mapsto(f(q))_{q\in\mathbb Q\cap[0,1]}$
+  embeds the càdlàg path space measurably.
+- `pathMap`, `aemeasurable_pathMap`, and `pathLaw`: the measurable
+  realization of $X$ and its pushforward law $P\circ X^{-1}$.
+- `pathMap_ae_eval_eq`: for an almost-surely càdlàg process,
+  $\operatorname{pathMap}(X)(t)=X_t$ almost surely.
+- `pathMap_eq_cadlagunitIntervalPath` and
+  `pathLaw_eq_cadlagunitIntervalPathLaw`: for an everywhere-continuous
+  process, the rational realization and continuous-path realization agree.
+- `pathLaw_smul`: for an almost-surely càdlàg real process `X`,
+  $\operatorname{pathLaw}(P,qX)=\operatorname{pathLaw}(P,X)\circ
+  (f\mapsto qf)^{-1}$ for every real `q`.
+- `hasLaw_pathMap`: $\operatorname{Law}_P(\operatorname{pathMap}(X))=
+  \operatorname{pathLaw}(P,X)$.
 
 A real process with almost-surely càdlàg paths has an almost-everywhere
 measurable realization in Skorokhod path space. The construction uses the
@@ -23,6 +41,7 @@ outside the set of càdlàg coordinate vectors by a fixed path.
 @[expose] public section
 
 open MeasureTheory
+open scoped NNReal
 
 namespace ProbabilityTheory.Process.Path.Cadlag
 
@@ -106,12 +125,110 @@ theorem pathMap_ae_eval_eq (X : unitInterval → Ω → ℝ) {P : Measure Ω}
     exact rationalEvaluationEmbedding.injective.extend_apply _ _ _
   rw [hmap]
 
+omit [MeasurableSpace Ω] in
+/-- For an everywhere-continuous process, the rational-coordinate path
+realization is the usual bundled continuous path at every sample. -/
+theorem pathMap_eq_cadlagunitIntervalPath
+    (B : ℝ≥0 → Ω → ℝ) (hB : ∀ ω, Continuous (B · ω)) (ω : Ω) :
+    pathMap (fun t ω => B (UnitInterval.toNNReal t) ω) ω =
+      cadlagunitIntervalPath B hB ω := by
+  let p := cadlagunitIntervalPath B hB ω
+  have hcoords :
+      (fun q : RationalCoordinate.UnitInterval =>
+        B (UnitInterval.toNNReal (RationalCoordinate.toUnitInterval q)) ω) =
+        MeasureTheory.CadlagPath.denseEvaluation
+          RationalCoordinate.toUnitInterval p := by
+    funext q
+    rfl
+  change Function.extend
+    (MeasureTheory.CadlagPath.denseEvaluation RationalCoordinate.toUnitInterval)
+    id (fun _ => Skorokhod.ofContinuousMap (ContinuousMap.const unitInterval 0))
+    (fun q : RationalCoordinate.UnitInterval =>
+      B (UnitInterval.toNNReal (RationalCoordinate.toUnitInterval q)) ω) = p
+  rw [hcoords]
+  exact rationalEvaluationEmbedding.injective.extend_apply _ _ _
+
+/-- The rational-coordinate path law agrees with the law of the bundled
+continuous path when a process has everywhere-continuous sample paths. -/
+theorem pathLaw_eq_cadlagunitIntervalPathLaw
+    (P : Measure Ω) (B : ℝ≥0 → Ω → ℝ)
+    (hB : ∀ ω, Continuous (B · ω))
+    (hBmeas : ∀ t, Measurable (B t)) :
+    pathLaw P (fun t ω => B (UnitInterval.toNNReal t) ω)
+      (fun t => (hBmeas (UnitInterval.toNNReal t)).aemeasurable) =
+    cadlagunitIntervalPathLaw P B hB hBmeas := by
+  unfold pathLaw cadlagunitIntervalPathLaw
+  congr 1
+  funext ω
+  exact pathMap_eq_cadlagunitIntervalPath B hB ω
+
 /-- The path-valued realization has the expected pushforward law. -/
 theorem hasLaw_pathMap (X : unitInterval → Ω → ℝ) {P : Measure Ω}
     (hX : ∀ t, AEMeasurable (X t) P) :
     HasLaw (pathMap X) (pathLaw P X hX) P where
   aemeasurable := aemeasurable_pathMap X hX
   map_eq := rfl
+
+omit [MeasurableSpace Ω] in
+private lemma pathMap_eq_of_cadlag (X : unitInterval → Ω → ℝ) (ω : Ω)
+    (hω : IsCadlag (fun t => X t ω)) :
+    pathMap X ω = ⟨fun t => X t ω, hω⟩ := by
+  let p : CadlagPath unitInterval ℝ := ⟨fun t => X t ω, hω⟩
+  have hcoords :
+      (fun q : RationalCoordinate.UnitInterval =>
+        X (RationalCoordinate.toUnitInterval q) ω) =
+        MeasureTheory.CadlagPath.denseEvaluation
+          RationalCoordinate.toUnitInterval p := by
+    funext q
+    rfl
+  change Function.extend
+      (MeasureTheory.CadlagPath.denseEvaluation
+        RationalCoordinate.toUnitInterval)
+      id (fun _ => Skorokhod.ofContinuousMap
+        (ContinuousMap.const unitInterval 0))
+      (fun q : RationalCoordinate.UnitInterval =>
+        X (RationalCoordinate.toUnitInterval q) ω) = p
+  rw [hcoords]
+  exact rationalEvaluationEmbedding.injective.extend_apply _ _ _
+
+/-- For an almost-surely càdlàg real process, pointwise scalar multiplication
+pushes its rational-coordinate path law forward by `Skorokhod.scalePath`:
+`pathLaw(P, q * X) = (pathLaw(P, X)).map (Skorokhod.scalePath q)`. -/
+theorem pathLaw_smul (X : unitInterval → Ω → ℝ) {P : Measure Ω}
+    (hX : ∀ t, AEMeasurable (X t) P)
+    (hcadlag : ∀ᵐ ω ∂P, IsCadlag (fun t => X t ω)) (q : ℝ) :
+    pathLaw P (fun t ω => q * X t ω)
+      (fun t => (hX t).const_mul q) =
+    (pathLaw P X hX).map (Skorokhod.scalePath q) := by
+  let Xq : unitInterval → Ω → ℝ := fun t ω => q * X t ω
+  have hcadlagq : ∀ᵐ ω ∂P, IsCadlag (fun t => Xq t ω) := by
+    filter_upwards [hcadlag] with ω hω
+    have hωq := hω.const_smul q
+    convert hωq using 1
+  have hpathMapEq (ω : Ω) (hω : IsCadlag (fun t => X t ω)) :
+      pathMap Xq ω = Skorokhod.scalePath q (pathMap X ω) := by
+    have hωq := hω.const_smul q
+    have hωq' : IsCadlag (fun t => Xq t ω) := by
+      convert hωq using 1
+    rw [pathMap_eq_of_cadlag Xq ω hωq',
+      pathMap_eq_of_cadlag X ω hω]
+    rfl
+  have hae : pathMap Xq =ᵐ[P] Skorokhod.scalePath q ∘ pathMap X := by
+    filter_upwards [hcadlag] with ω hω
+    exact hpathMapEq ω hω
+  have hXpath : AEMeasurable (pathMap X) P := aemeasurable_pathMap X hX
+  have hscaleCont : Continuous (fun f : CadlagPath unitInterval ℝ =>
+      Skorokhod.scalePath q f) := by
+    exact Skorokhod.continuous_scalePath.comp
+      (continuous_const.prodMk continuous_id)
+  change P.map (pathMap Xq) =
+    (P.map (pathMap X)).map (Skorokhod.scalePath q)
+  calc
+    P.map (pathMap Xq) = P.map (Skorokhod.scalePath q ∘ pathMap X) :=
+      Measure.map_congr hae
+    _ = (P.map (pathMap X)).map (Skorokhod.scalePath q) :=
+      (AEMeasurable.map_map_of_aemeasurable
+        hscaleCont.aemeasurable hXpath).symm
 
 end ProbabilityTheory.Process.Path.Cadlag
 

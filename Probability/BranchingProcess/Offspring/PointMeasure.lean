@@ -5,7 +5,7 @@ Authors: WANG Yiyang
 -/
 module
 
-public import Combinatorics.BranchingWalk.Step.PointMeasure
+public import Combinatorics.BranchingWalk.Step.Measure.PointMeasure
 public import Probability.BranchingProcess.Offspring.Map
 
 /-!

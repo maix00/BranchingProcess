@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Range.Basic
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.SurvivalBounds
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Survival.Bounds
 
 /-!
 # Rademacher range probabilities from interval survival
@@ -19,6 +19,24 @@ width the resulting prefactor grows with the approximation length, so this
 estimate alone does not transfer a sharp upper bound through Donsker's
 theorem; the sharp route uses a fixed finite cover of Brownian corridor
 locations and the full-spectrum geometric estimate instead.
+Put $K_{w+1}=\texttt{intervalRademacherKernel}(w+1)$.  The public
+declarations are:
+
+* `shiftedRademacherIntervalEvent` defines survival in a width-$w$ interval
+  translated by a candidate integer minimum.
+  `rademacherOscillation_subset_intervalCover` places every path satisfying
+  $|S_i-S_j|\le w$ for all $i,j\le n$ in one of these $w+1$ events.
+* `iidRademacher_oscillation_le_intervalSurvival_sum` gives
+  \[
+    \mathbb P\{|S_i-S_j|\le w\ (i,j\le n)\}
+    \le \sum_{q=0}^{w}
+        \texttt{Kernel.remainingMass}(K_{w+1},n,q).
+  \]
+* `iidRademacher_oscillation_le_uniform_spectral_bound` gives, for $w>0$,
+  \[
+    \mathbb P\{|S_i-S_j|\le w\ (i,j\le n)\}
+    \le (w+1)\frac{\cos^n(\pi/(w+2))}{\sin(\pi/(w+2))}.
+  \]
 -/
 
 open MeasureTheory Set
