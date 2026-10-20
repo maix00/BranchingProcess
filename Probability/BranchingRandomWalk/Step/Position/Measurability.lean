@@ -6,9 +6,9 @@ Authors: WANG Yiyang
 
 module
 
-public import Combinatorics.BranchingWalk.Basic.Displace
+public import Combinatorics.BranchingWalk.Basic.Position.Displace
 public import Combinatorics.BranchingWalk.Step.Basic
-public import Combinatorics.BranchingWalk.Basic.SurviveAlong
+public import Combinatorics.BranchingWalk.Basic.Survival.SurviveAlong
 public import Probability.BranchingRandomWalk.Tree.Filtration
 
 /-!

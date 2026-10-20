@@ -16,6 +16,19 @@ public import Combinatorics.BranchingWalk.Step.Basic
 A population is indexed by the natural-number generations of one fixed
 branching field.  It contains no probability space, filtration, measurability,
 position, order, or selection mechanism.
+
+The public API is:
+
+- `Population stepField` is a sequence of sets of root-indexed tree nodes;
+  its `depth` field says every node in generation `n` has address length `n`,
+  and `successor` says generation `n + 1` is contained in the children of
+  generation `n` allowed by `stepField`.
+- The coercion to `ℕ → Set (RootIndexed.TreeNode Root α)` lets `P n` denote
+  generation `n`.
+- `Population.FiniteSlices P` asserts that each generation is finite.
+  `FiniteSlices.toFinset` represents one such generation as a `Finset`, and
+  `mem_toFinset` and `coe_toFinset` identify its membership and set value with
+  the original generation.
 -/
 
 @[expose] public section

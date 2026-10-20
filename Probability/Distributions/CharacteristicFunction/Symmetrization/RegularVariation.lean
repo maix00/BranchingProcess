@@ -5,7 +5,7 @@ Authors: Codex
 -/
 module
 
-public import Analysis.Asymptotics.RegularVariation
+public import Analysis.Asymptotics.RegularVariation.Basic
 public import Mathlib.Analysis.SpecialFunctions.Pow.Continuity
 public import Mathlib.Analysis.SpecificLimits.Basic
 public import Probability.Distributions.CharacteristicFunction.Symmetrization.Tail
@@ -26,7 +26,7 @@ open scoped Topology
 
 namespace ProbabilityTheory
 
-private theorem absBallMass_scaled_tendsto_one (μ : Measure ℝ)
+private lemma absBallMass_scaled_tendsto_one (μ : Measure ℝ)
     [IsProbabilityMeasure μ] {c : ℝ} (hc : 0 < c) :
     Tendsto (fun x : ℝ => absBallMass μ (c * x)) atTop (nhds 1) := by
   have htail := (twoSidedTail_tendsto_zero μ).comp

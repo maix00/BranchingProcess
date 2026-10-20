@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.Path.Basic
-public import Probability.Process.RandomWalk.Rademacher
+public import Probability.Process.RandomWalk.Rademacher.Basic
 public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 
 /-!
@@ -15,7 +15,21 @@ public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 
 The range estimate covers a Rademacher path by translated lattice intervals.
 This file records the integer-lattice and linear-growth facts needed for
-that finite cover.
+that finite cover.  Its public declarations are:
+
+* `rademacherIntIncrement` assigns $1$ to `true` and $-1$ to `false`;
+  `rademacherOfBool_eq_intCast` identifies its real cast with the project's
+  Rademacher increment.
+* `rademacherPartialSum` is the displacement of the first $n$ increments;
+  `rademacherPartialSum_eq_intCast` gives
+  $S_n=\sum_{k<n}\eta(b_k)\in\mathbb Z$,
+  while `rademacherPartialSum_zero` and `rademacherPartialSum_succ` give
+  $S_0=0$ and $S_{n+1}=S_n+\eta(b_n)$.
+* `abs_rademacherRealPartialSum_le` proves $|S_n|\le n$.
+* `RademacherOscillationBounded` is the event predicate
+  $|S_i-S_j|\le w$ for all $0\le i,j\le n$.
+  `exists_shift_of_rademacherOscillation` proves that if $w$ is an integer,
+  then some $q\in\{0,\ldots,w\}$ translates every $S_j$ into $[0,w]$.
 -/
 
 open scoped BigOperators

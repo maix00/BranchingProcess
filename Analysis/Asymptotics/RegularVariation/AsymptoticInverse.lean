@@ -11,6 +11,18 @@ public import Analysis.Asymptotics.RegularVariation.Uniform
 /-!
 # Sequential asymptotic inversion for monotone regularly varying functions
 
+The public theorems are:
+
+- `tendsto_div_of_tendsto_value_ratio`: if $f$ is regularly varying at
+  infinity with index $\rho>0$ and is eventually nondecreasing, and
+  $x_n,y_n\to\infty$ with $\frac{f(y_n)}{f(x_n)}\to r^\rho$ for $r>0$,
+  then $\frac{y_n}{x_n}\to r$.
+- `tendsto_div_of_tendsto_squareQuotient_ratio`: if $V$ is regularly varying
+  with index $0\le\beta<2$ and is eventually nondecreasing, and
+  $x_n,y_n\to\infty$ with
+  $\frac{y_n^2/V(y_n)}{x_n^2/V(x_n)}\to r^{2-\beta}$ for $r>0$, then
+  $\frac{y_n}{x_n}\to r$.
+
 This file states the regularity hypotheses required by the inversion result.
 Pointwise ratio limits without monotonicity or another compact-uniformity
 hypothesis are not used as if they implied uniform convergence.
