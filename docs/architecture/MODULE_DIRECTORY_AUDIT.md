@@ -64,6 +64,33 @@ when the move only clarifies module organization.
 | `Combinatorics/BranchingWalk/Step` | Deterministic branching-step operations | The root keeps `Basic`, `Map`, `Measurability`, and `Relation`. Ordering properties and ranks are under `Ordering/`; slot selection and sibling closure are under `Selection/`; potential and point-measure operations are under `Measure/`; generation-local updates are under `Generation/`. |
 | `Probability/BranchingRandomWalk/Step` | Random step presentations, fields, and laws | Coordinate presentations and their constructors/maps are under `Presentation/`; field operations under `Field/`; probability laws under `Law/`; measurable ordering under `Ordering/`; point-measure observations under `PointMeasure/`. Root-indexed position measurability remains under `Position/`. |
 
+## Mogulskii spectral asymptotics and entry point (2026-10-21)
+
+The Mogulskii subtree has one article-level discovery module,
+`Mogulskii/Theorems.lean`, which imports the formalized interfaces for the
+original Theorems 1--3 and records that Theorem 4 remains unformalized. The
+supporting modules remain grouped by their mathematical objects and methods:
+`Path/`, `Scale/`, `Stable/`, `Gaussian/`, `RandomWalkBounds/`, and
+`Spectral/{Kernel,Decomposition,Target,Survival,Scaling,Rate,Diffusive,Range}/`.
+The definitions therefore stay beside the path, scale, kernel, or target they
+describe; a catch-all `Definitions/` directory would obscure those owners.
+This follows the pinned Mathlib tree, whose corresponding material is also
+organized by subject rather than through a `Definitions/` directory.
+
+The pinned Mathlib revision already provides
+`Real.tendsto_sin_div_nhdsNE_zero` in
+`Mathlib/Analysis/SpecialFunctions/Trigonometric/Deriv.lean` and
+`Real.tendsto_tan_div_nhdsNE_zero` in
+`Mathlib/Analysis/SpecialFunctions/Trigonometric/ArctanDeriv.lean`. The local
+`tendsto_sin_div_self` and `tendsto_tan_div_self` wrappers in
+`Spectral/Rate/Asymptotics.lean` duplicated these general limits and had no
+clients outside that file, so they were removed; the proof uses Mathlib's
+results directly. The logarithmic cosine limit `Real.tendsto_log_cos_div_sq`
+is a reusable real-analysis fact, so it now lives in
+`Analysis/SpecialFunctions/Trigonometric/LogAsymptotics.lean`. The
+ground-state and endpoint-prefactor limits remain in `Spectral/Rate/` because
+their statements describe this killed-walk rate argument.
+
 ## Abstraction review: stationary increment path laws (2026-10-19)
 
 This review was triggered by repeated use of translated block-path laws. The

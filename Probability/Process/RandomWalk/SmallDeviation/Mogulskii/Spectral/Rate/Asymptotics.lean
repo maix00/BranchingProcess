@@ -7,19 +7,15 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Basic
-public import Mathlib.Analysis.Calculus.LHopital
-public import Mathlib.Analysis.SpecialFunctions.Log.Deriv
-public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
+public import Mathlib.Analysis.SpecialFunctions.Log.Basic
+import Analysis.SpecialFunctions.Trigonometric.LogAsymptotics
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
 
 /-!
 # Asymptotics of the symmetric-walk ground-state eigenvalue
 
-The public limits are:
+The public spectral limits are:
 
-* `tendsto_sin_div_self` and `tendsto_tan_div_self`:
-  $\sin x/x\to1$ and $\tan x/x\to1$ as $x\to0$, with $x\ne0$.
-* `tendsto_log_cos_div_sq`:
-  $\log(\cos x)/x^2\to-1/2$ as $x\to0$, with $x\ne0$.
 * `tendsto_sq_mul_log_cos_pi_div`:
   $L^2\log\cos(\pi/L)\to-\pi^2/2$ as $L\to\infty$.
 * `tendsto_log_sin_pi_div_add_log`:
@@ -32,51 +28,6 @@ open scoped Topology
 @[expose] public section
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
-
-theorem tendsto_sin_div_self :
-    Tendsto (fun x : ℝ => Real.sin x / x) (𝓝[≠] 0) (𝓝 1) := by
-  simpa [div_eq_inv_mul, mul_comm] using
-    (Real.hasDerivAt_sin 0).tendsto_slope_zero
-
-theorem tendsto_tan_div_self :
-    Tendsto (fun x : ℝ => Real.tan x / x) (𝓝[≠] 0) (𝓝 1) := by
-  have hcos : Tendsto Real.cos (𝓝[≠] 0) (𝓝 1) := by
-    have hc : Tendsto Real.cos (𝓝 (0 : ℝ)) (𝓝 1) := by
-      simpa using Real.continuous_cos.tendsto 0
-    exact tendsto_nhdsWithin_of_tendsto_nhds hc
-  convert tendsto_sin_div_self.div hcos one_ne_zero using 1
-  · funext x
-    rw [Real.tan_eq_sin_div_cos]
-    simp only [Pi.div_apply, div_div]
-    rw [mul_comm]
-  · norm_num
-
-/-- The local logarithmic asymptotic which produces the `1 / 2` in the
-small-deviation constant. -/
-theorem tendsto_log_cos_div_sq :
-    Tendsto (fun x : ℝ => Real.log (Real.cos x) / x ^ 2)
-      (𝓝[≠] 0) (𝓝 (-1 / 2 : ℝ)) := by
-  apply HasDerivAt.lhopital_zero_nhdsNE
-      (f' := fun x => -Real.tan x) (g' := fun x => 2 * x)
-  · filter_upwards [eventually_nhdsWithin_of_eventually_nhds
-        (Real.continuous_cos.continuousAt.eventually_ne (by norm_num : Real.cos 0 ≠ 0))] with x hx
-    convert (Real.hasDerivAt_cos x).log hx using 1
-    rw [Real.tan_eq_sin_div_cos, neg_div]
-  · exact Eventually.of_forall fun x => by simpa using (hasDerivAt_pow 2 x)
-  · filter_upwards [self_mem_nhdsWithin] with x hx
-    simpa using hx
-  · have hc : Tendsto Real.cos (𝓝 (0 : ℝ)) (𝓝 1) := by
-      simpa using Real.continuous_cos.tendsto 0
-    have hl : Tendsto Real.log (𝓝 (1 : ℝ)) (𝓝 0) := by
-      simpa using (Real.continuousAt_log one_ne_zero).tendsto
-    exact tendsto_nhdsWithin_of_tendsto_nhds (hl.comp hc)
-  · exact tendsto_nhdsWithin_of_tendsto_nhds <| by
-      simpa using (continuous_pow 2).tendsto (0 : ℝ)
-  · have h := tendsto_tan_div_self.const_mul (-1 / 2 : ℝ)
-    convert h using 1
-    · funext x
-      field_simp
-    · norm_num
 
 /-- The logarithm of the principal Dirichlet eigenvalue has the exact
 `π² / 2` diffusive-scale asymptotic used in the symmetric small-ball
@@ -93,7 +44,7 @@ theorem tendsto_sq_mul_log_cos_pi_div :
     refine ⟨hzero, ?_⟩
     filter_upwards [eventually_gt_atTop (0 : ℝ)] with length hlength
     simp [Real.pi_ne_zero, hlength.ne']
-  have h := (tendsto_log_cos_div_sq.comp hpunc).const_mul (Real.pi ^ 2)
+  have h := (Real.tendsto_log_cos_div_sq.comp hpunc).const_mul (Real.pi ^ 2)
   have hbase : Tendsto (fun length : ℝ => Real.pi ^ 2 *
       (Real.log (Real.cos (Real.pi / length)) / (Real.pi / length) ^ 2))
       atTop (𝓝 (Real.pi ^ 2 * (-1 / 2 : ℝ))) := by
@@ -126,7 +77,7 @@ theorem tendsto_log_sin_pi_div_add_log :
   have hratio : Tendsto (fun length : ℝ =>
       Real.sin (Real.pi / length) / (Real.pi / length))
       atTop (𝓝 1) := by
-    convert tendsto_sin_div_self.comp hpunc using 1
+    convert Real.tendsto_sin_div_nhdsNE_zero.comp hpunc using 1
     funext length
     rfl
   have hlogRatio : Tendsto (fun length : ℝ =>
