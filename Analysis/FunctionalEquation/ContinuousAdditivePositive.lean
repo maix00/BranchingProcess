@@ -14,6 +14,11 @@ public import Mathlib.Topology.Instances.NNReal.Lemmas
 
 /-!
 # Continuous additive maps on the nonnegative real line
+
+## Public declaration
+
+* `continuous_additive_nnreal_eq_smul`: if `f : ℝ≥0 → E` is continuous and
+  additive, then $f(x)=x\cdot f(1)$ for every $x\ge0$.
 -/
 open scoped NNReal
 

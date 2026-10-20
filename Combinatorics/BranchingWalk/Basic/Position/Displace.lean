@@ -36,6 +36,8 @@ The public API is:
 - `displace_eq_sum` and `displace_eq_sum_fin` express the recursion as finite
   sums over path coordinates; `displace_append_singleton` and
   `displace_append_two` give short-path forms.
+- `displace_cons` gives the recursive step
+  `displace β v (i :: p) = value' (β v) i + displace β (v ++ [i]) p`.
 - `displace? β v p` is `some` of the displacement when every edge survives
   and `none` otherwise. `displace?_eq_none_iff`,
   `displace?_eq_some_iff`, and `displace?_isSome_iff` characterize these
