@@ -10,6 +10,16 @@ public import Analysis.Asymptotics.RegularVariation.Basic
 /-!
 # Regular variation at zero
 
+The public declarations are:
+
+- `IsRegularlyVaryingAtZero f ρ`: $f(u)>0$ eventually as $u\downarrow0$ and,
+  for every $c>0$,
+  $\frac{f(cu)}{f(u)}\to c^\rho$ as $u\downarrow0$.
+- `eventually_pos` and `ratio_tendsto`: the positivity and ratio-limit
+  consequences of this definition.
+- `comp_inv`: if $f$ is regularly varying at zero with index $\rho$, then
+  $x\mapsto f(x^{-1})$ is regularly varying at infinity with index $-\rho$.
+
 This file records the ratio-limit definition of regular variation at the
 right-hand neighborhood of zero. It is the natural interface for
 characteristic-function defects.

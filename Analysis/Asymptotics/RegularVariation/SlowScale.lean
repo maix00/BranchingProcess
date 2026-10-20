@@ -12,6 +12,18 @@ public import Analysis.Asymptotics.Scale.SlowDiagonal
 /-!
 # Slowly growing multipliers for regularly varying functions
 
+The public theorems are:
+
+- `exists_tendsto_slowScale_of_eventually`: if $f$ has regular variation
+  index $\rho$, $x_n\to\infty$, $r_n\to0$ with $r_n\ge0$ eventually, and
+  each predicate $P(k,n)$ holds eventually for every fixed $k$, then there is
+  a monotone integer scale $d_n\to\infty$ such that $P(d_n+1,n)$ holds
+  eventually, $(d_n+1)r_n\to0$, and
+  $\frac{f((d_n+1)x_n)}{f(x_n)}(d_n+1)^{-\rho}\to1$.
+- `exists_tendsto_slowScale`: under the same scale and error assumptions but
+  without $P$, there is a monotone real scale $a_n\to\infty$ such that
+  $a_nr_n\to0$ and $\frac{f(a_nx_n)}{f(x_n)}a_n^{-\rho}\to1$.
+
 For a regularly varying function, each fixed positive multiplier has the
 usual ratio limit. A diagonal choice lets the multiplier tend to infinity
 while preserving that ratio limit and any separately prescribed vanishing
