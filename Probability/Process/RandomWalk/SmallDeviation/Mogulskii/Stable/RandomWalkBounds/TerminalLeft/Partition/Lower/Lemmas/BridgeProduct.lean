@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.TerminalLeftPartition.LowerProbability
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.TerminalLeft.Partition.LowerProbability
 public import Probability.Process.Stable.SmallDeviation.PathClass.StepCorridor.Partition.Lower.Geometry
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.EndpointBandTransfer.StableLower.CellBridge
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Partition

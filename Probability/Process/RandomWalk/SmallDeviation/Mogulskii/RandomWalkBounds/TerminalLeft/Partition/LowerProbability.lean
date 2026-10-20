@@ -6,9 +6,9 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.TerminalLeftPartition.Events
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.TerminalLeft.Partition.Events
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.Partition.LowerProbability
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.TerminalLeftPartition.Lemmas.LowerGeometry
+import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.TerminalLeft.Partition.Lemmas.LowerGeometry
 /-!
 # Lower probability bounds for terminal-left corridors
 

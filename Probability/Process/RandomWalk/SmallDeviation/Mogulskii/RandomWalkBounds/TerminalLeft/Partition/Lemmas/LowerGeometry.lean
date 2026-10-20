@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.TerminalLeftPartition.Events
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.TerminalLeft.Partition.Events
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.Partition.Endpoint
 /-!
 # Endpoint-core gluing for the terminal-left path

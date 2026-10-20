@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.Partition.Upper
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.TerminalLeftPartition.Events
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.TerminalLeft.Partition.Events
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.TerminalLeft.Partition.Lower.EnergyLower
 
 /-!

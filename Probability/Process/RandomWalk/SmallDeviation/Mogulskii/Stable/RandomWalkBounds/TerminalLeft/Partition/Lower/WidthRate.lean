@@ -9,7 +9,7 @@ module
 import Probability.MeasureTheory.Asymptotics.FiniteProductRate
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.Partition.Lower.Positivity
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.TerminalLeft.Partition.Lower.Lemmas.BridgeProduct
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.TerminalLeftPartition.LowerProbability
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.TerminalLeft.Partition.LowerProbability
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Path.TerminalLeft
 public import MeasureTheory.Measure.CadlagPath.PathClass.StepCorridor.Partition.LowerApproximation
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Partition
