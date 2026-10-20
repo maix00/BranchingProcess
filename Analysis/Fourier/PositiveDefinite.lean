@@ -17,23 +17,35 @@ import Mathlib.Analysis.Matrix.Order
 /-!
 # Positive Definite Functions on Additive Groups
 
-A function `φ : G → ℂ` on an additive group is **positive definite** if for every finite
-sequence of points
-`x₁, …, xₙ` and complex weights `c₁, …, cₙ`, the Hermitian form
-`∑ᵢ ∑ⱼ conj(cᵢ) cⱼ φ(xᵢ − xⱼ)` is nonneg (real and `≥ 0`).
+## Public declarations
 
-## Main definitions
+* `IsPositiveDefinite`: for every `n`, `x : Fin n → G`, and `c : Fin n → ℂ`,
+  $\operatorname{Im}Q=0$ and $0\le\operatorname{Re}Q$, where
+  $Q=\sum_i\sum_j\overline{c_i}c_j\,\varphi(x_i-x_j)$.
+* `IsPositiveDefinite.re_nonneg`: the real part of the same quadratic form is
+  nonnegative.
+* `IsPositiveDefinite.im_eq_zero`: the imaginary part of the same quadratic
+  form is zero.
+* `IsPositiveDefinite.apply_zero_nonneg`: $0 \le \operatorname{Re}\varphi(0)$.
+* `IsPositiveDefinite.apply_zero_im`: $\operatorname{Im}\varphi(0)=0$.
+* `IsPositiveDefinite.conj_neg`: $\varphi(-t)=\overline{\varphi(t)}$.
+* `IsPositiveDefinite.pdMatrix_posSemidef`: for every finite tuple `x`, the
+  matrix $(\varphi(x_i-x_j))_{i,j}$ is positive semidefinite.
+* `IsPositiveDefinite.mul`: the pointwise product of two positive-definite
+  functions is positive definite.
+* `IsPositiveDefinite.closure_pointwise`: pointwise limits of positive-definite
+  functions are positive definite.
+* `IsPositiveDefinite.norm_le_one`: if $\varphi(0)=1$, then
+  $\|\varphi(t)\|\le 1$ for every `t`.
+* `IsPositiveDefinite.exp_neg_ofReal_mul` and
+  `IsPositiveDefinite.exp_ofReal_mul`: for `x : ℝ`, the functions
+  $t\mapsto e^{-ixt}$ and $t\mapsto e^{ixt}$ on $\mathbb R$ are positive
+  definite.
 
-* `IsPositiveDefinite` — the positive-definiteness predicate.
-
-## Main results
-
-* `IsPositiveDefinite.re_nonneg` — `.re ≥ 0` (convenience corollary of definition).
-* `IsPositiveDefinite.apply_zero_nonneg` — `φ(0).re ≥ 0`.
-* `IsPositiveDefinite.conj_neg` — `φ(-t) = conj(φ(t))` (Hermitianness).
-* `IsPositiveDefinite.mul` — Schur product: pointwise product of PD functions is PD.
-* `IsPositiveDefinite.closure_pointwise` — pointwise limit of PD functions is PD.
-
+A function `φ : G → ℂ` on an additive group is **positive definite** if for
+every finite sequence of points `x₁, …, xₙ` and complex weights
+`c₁, …, cₙ`, the Hermitian form
+`∑ᵢ ∑ⱼ conj(cᵢ) cⱼ φ(xᵢ − xⱼ)` is nonnegative (real and `≥ 0`).
 -/
 
 @[expose] public section
