@@ -794,9 +794,9 @@ their process law and scaling assumptions belong.
 
 ## Abstraction review: positive-`a` endpoint PZ chain (2026-10-19)
 
-The proof family was previously grouped under `EndpointDeviation/PositiveA/`,
-which named the parameter condition rather than the mathematics in the files.
-It now lives under `EndpointDeviation/FirstStage/`: the entry proves an
+The proof family had been grouped in a directory named after its parameter
+condition rather than the mathematics in the files. It now lives under
+`EndpointDeviation/FirstStage/`: the entry proves an
 exponential low-count bound for the first-stage killed population, and its
 PZ-specific rate assembly is grouped under `Lemmas/`. The `rightTailPositiveA`
 identifier remains in theorem names because those statements are indexed by
@@ -1506,15 +1506,15 @@ Lake jobs).
 A production-tree layout scan covered 1,467 Lean modules, excluding vendored
 Mathlib and test-only sources. It found no directory with more than eight
 direct Lean modules, no `Foo.lean`/`Foo/` name collision, no directory with
-both `Lemmas.lean` and `Lemmas/`, and no empty source directories. The
-`EndpointDeviation/PositiveA/` path is also absent from the production tree;
-its modules now live under `EndpointDeviation/FirstStage/`, and no production
-import refers to `PositiveA`. This structural scan does not replace the open
+both `Lemmas.lean` and `Lemmas/`, and no empty source directories. The former
+parameter-named directory is absent from the production tree; its modules now
+live under `EndpointDeviation/FirstStage/`, and no production import refers to
+the old path. This structural scan does not replace the open
 statement-by-statement public API review recorded above.
 
 The 2026-10-20 endpoint-deviation cleanup is committed as two focused changes:
 the first-stage estimate modules are grouped under `EndpointDeviation/FirstStage/`,
-and the old `EndpointDeviation/PositiveA/` files are removed. Their theorem
+and the former parameter-named directory is removed. Their theorem
 identifiers still name the positive-`a` parameter regime; the directory now
 names the first-stage role. The generic extended-real power-ratio inequality
 used by the PZ estimate is exposed from `Analysis/Asymptotics/Power/`, while
@@ -1538,8 +1538,8 @@ source-use scan found no external clients of those intermediate declarations.
 The generic monotone-corridor-to-drawdown inclusion stays in
 `RandomWalk/SmallDeviation/Drawdown/Event.lean`; it is shared by the linear
 drifted-tube estimate and this nonlinear spine corridor. The actual directory
-name is `FirstStage/`; `PositiveA` occurs in the mathematical parameterized
-declaration names and in historical migration notes only.
+name is `FirstStage/`; the positive-parameter condition remains encoded in the
+mathematical declaration names.
 
 A fresh production-tree scan counted 1,478 Lean modules, excluding `.lake`,
 vendored dependencies, and test-only sources. It found no same-stem file and
