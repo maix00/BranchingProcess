@@ -2512,3 +2512,26 @@ attributes such as `@[simp]` finds no missing name in the 12-module `Cloud/`
 tree; the scan checks names, while formula and hypothesis review remains
 semantic. The full `BranchingProcess` target builds successfully with 5,595
 jobs, and `lint-style` passes on all 11 edited modules.
+
+## Mogulskii Gaussian block API and citation audit (2026-10-21)
+
+The complete finite-reference Gaussian survival interface was moved from
+`Mogulskii/Lemmas/Blocks/Uniform.lean` to
+`Mogulskii/Gaussian/Blocks/FiniteReferenceSurvival.lean`. Its six public
+theorems give finite-family Gaussian product bounds, common diffusive scales,
+and eventual killed-kernel survival estimates. These are complete
+finite-variance block results, so the module now belongs beside the Gaussian
+block-limit interfaces and uses the
+`ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Blocks`
+namespace. The proof terms are unchanged; no module imported the old path.
+
+The headers of `Gaussian/Blocks/BlockEndpoint.lean`,
+`Gaussian/Blocks/BlockVector.lean`, and `Gaussian/Path/ExplicitRate.lean`
+already gave the full Mogulskii citation before repeating the same bibliography
+paragraph. The duplicate paragraphs were removed while retaining the full
+Russian-original and English-translation reference, theorem location, and
+DOI. `Gaussian/Blocks/FixedDiffusiveBlock.lean` now identifies its return-block
+bound with the finite-dimensional input in Theorem 3, Section 4, p. 764 of the
+same article.
+All five affected modules build with the pinned toolchain (4,011 Lake jobs),
+and `lint-style` passes on the five modules.
