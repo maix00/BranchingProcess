@@ -38,7 +38,7 @@ open Combinatorics.Branching
 open Combinatorics.Branching.Selection.NSelection
 open ProbabilityTheory.BranchingRandomWalk.Selection.NSelection
 
-theorem repairedInfiniteSelection_tendsto_invariant_integrable {N : ℕ}
+lemma repairedInfiniteSelection_tendsto_invariant_integrable {N : ℕ}
     (hN : 0 < N) (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
     (hint : ∀ n, Integrable
       (fun ω : GenerationEnvironment N =>
@@ -64,7 +64,7 @@ theorem repairedInfiniteSelection_tendsto_invariant_integrable {N : ℕ}
 
 /-- In the i.i.d. generation environment the invariant Kingman limit is
 almost surely constant, giving the scalar-speed form of the theorem. -/
-theorem repairedInfiniteSelectionSubadditiveArray_eq_of_allGood {N : ℕ}
+lemma repairedInfiniteSelectionSubadditiveArray_eq_of_allGood {N : ℕ}
     (hN : 0 < N) (ω : GenerationEnvironment N)
     (hgood : ∀ t, IsGoodInfiniteOffspringBatch (ω t))
     (start length : ℕ) :
