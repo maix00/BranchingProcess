@@ -16,15 +16,21 @@ their generation-indexed slices. Here “surviving” means realized in the
 genealogy; it does not mean that a particle has descendants at arbitrarily
 large generations.
 
-The public API is:
-
-- `survivingParticles β` consists of particles descended from their root
-  particles; `mem_survivingParticles_iff_surviveAlong` identifies membership
-  of `(r,u)` with survival of address `u` from root `r`.
-- `survivingParticlesAt β k` restricts this set to generation `k`.
-  Its membership lemmas, `disjoint_survivingParticlesAt`, and
-  `mem_survivingParticles_iff_exists_mem_survivingParticlesAt` show that the
-  generation slices are disjoint and cover all realized particles.
+The set `survivingParticles β` is
+`{p | IsDescendant β (p.1, []) p}`; `mem_survivingParticles_iff` exposes this
+predicate. The public theorems
+`mem_survivingParticles_iff_surviveAlong` and
+`mem_survivingParticles_iff_exists_mem_descendants` identify its members
+with root-address paths satisfying
+`surviveAlong (β.step r) [] u`, equivalently descendants of a root particle.
+The generation slice `survivingParticlesAt β k` is
+`{p ∈ survivingParticles β | generation p.2 = k}`.
+`mem_survivingParticlesAt_iff` gives its membership condition;
+`mem_survivingParticles_of_mem_survivingParticlesAt` and
+`generation_of_mem_survivingParticlesAt` project the conditions.
+`disjoint_survivingParticlesAt` proves distinct generations disjoint, and
+`mem_survivingParticles_iff_exists_mem_survivingParticlesAt` states
+`p ∈ survivingParticles β ↔ ∃ k, p ∈ survivingParticlesAt β k`.
 -/
 
 @[expose] public section
