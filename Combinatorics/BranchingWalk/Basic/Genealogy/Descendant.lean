@@ -12,23 +12,28 @@ public import Combinatorics.UlamHarris.Generation
 /-!
 # Descendant relations
 
-Descendant sets and generation slices for root-indexed branching walks.
+For particles `p = (r,u)` and `q = (s,v)`, `IsDescendant β p q` is the
+relation `∃ t, q = (r, u ++ t) ∧ surviveAlong (β.step r) u t`.
+`isDescendant_refl` and `isDescendant_trans` prove reflexivity and
+transitivity; `isDescendant_child_iff` is the criterion
+`IsDescendant β p (p.1, p.2 ++ [i]) ↔ survive (β.step p.1 p.2) i`.
+`fst_eq_of_isDescendant` gives `q.1 = p.1`,
+`exists_snd_eq_append_of_isDescendant` extracts the surviving suffix, and
+`generation_eq_generation_add_of_isDescendant` gives
+`generation q.2 = generation p.2 + generationAfter p.2 q.2`.
 
-The public API is:
-
-- `IsDescendant β p q` means that `q = (p.1, p.2 ++ t)` for some address `t`
-  surviving from `p.2` in the step field rooted at `p.1`.
-- `isDescendant_refl`, `isDescendant_trans`, and
-  `isDescendant_child_iff` give reflexivity, transitivity, and the one-edge
-  criterion; `fst_eq_of_isDescendant` and
-  `generation_eq_generation_add_of_isDescendant` describe root and generation.
-- `descendants β p` and `descendantsAt β p k` are respectively all
-  descendants and those at generation distance `k`. The membership lemmas,
-  disjointness theorem, and `mem_descendants_iff_exists_mem_descendantsAt`
-  state that these slices partition the descendants.
-- `descendantsOfRoot` gives the address-indexed form for one root, and
-  `isDescendant_root_iff` identifies descendants of a root particle with
-  addresses surviving from the root.
+The sets `descendants β p` and `descendantsAt β p k` collect all descendants
+and those at distance `k`. `mem_descendants_iff` and
+`mem_descendantsAt_iff` give their membership predicates;
+`mem_descendants_of_mem_descendantsAt` and
+`generationAfter_of_mem_descendantsAt` project the two conjuncts.
+`disjoint_descendantsAt` proves distinct slices disjoint, and
+`mem_descendants_iff_exists_mem_descendantsAt` states
+`q ∈ descendants β p ↔ ∃ k, q ∈ descendantsAt β p k`.
+`descendantsOfRoot β r u` is the address-indexed version:
+`mem_descendantsOfRoot_iff_mem_descendants` identifies its members with
+`(r,v) ∈ descendants β (r,u)`, and `isDescendant_root_iff` gives
+`IsDescendant β (r,[]) (r,v) ↔ surviveAlong (β.step r) [] v`.
 -/
 
 @[expose] public section

@@ -12,10 +12,24 @@ public import Combinatorics.BranchingWalk.Step.Selection.Count
 /-!
 # Generation sizes of a branching walk
 
-Particles present in each generation are represented by
-`survivingParticlesAt`. Their cardinality is an observation of every
-root-indexed branching walk. The unmarked specialization inherits this
-definition, and forgetting marks leaves it unchanged.
+For a branching walk `β`, `generationSize β n` is the extended cardinality
+`(survivingParticlesAt β n).encard`. When the child-slot type is finite, each
+generation is finite and `generationSize β n ≠ ⊤`; for a single-root walk,
+`generationSize β 0 = 1` and
+`generationSize β 1 = (β.step PUnit.unit []).childCount`.
+`generationSlice_finite` and `generationSize_ne_top_of_finite_slots` give the
+finite-generation conclusions. For a single-root walk,
+`generationSize_zero` and `generationSize_one_eq_childCount` state the initial
+values `Z₀ = 1` and `Z₁ = childCount(β.step PUnit.unit [])`, where
+`Zₙ = generationSize β n`. The pathwise recursion
+`generationSize_succ_eq_sum_childCount` is
+`Z_(n+1) = ∑ p : {p // p ∈ survivingParticlesAt β n},
+(β.step PUnit.unit p.1.2).childCount`.
+
+`survivingParticlesAt_toBranching` and `generationSize_toBranching` state that
+forgetting marks preserves the generation set and its size.
+`generationSize_succ_eq_zero_of_eq_zero` proves `Zₙ = 0 → Z_(n+1) = 0`, and
+`generationSize_eq_zero_of_le` proves `n ≤ m → Zₙ = 0 → Zₘ = 0`.
 -/
 
 @[expose] public section
