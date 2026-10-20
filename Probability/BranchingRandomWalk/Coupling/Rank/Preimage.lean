@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 import Probability.BranchingRandomWalk.Selection.NSelection.AtRank
 import Probability.BranchingRandomWalk.Coupling.Field.Preimage
-import Combinatorics.BranchingWalk.Selection.NSelection.Matching
+import Combinatorics.BranchingWalk.Selection.NSelection.Mechanism.Matching
 import Combinatorics.BranchingWalk.Step.Map
 
 /-!
