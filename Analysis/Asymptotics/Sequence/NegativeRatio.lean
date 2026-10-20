@@ -16,6 +16,16 @@ import Mathlib.Tactic.FieldSimp
 /-!
 # Comparing diverging negative functions
 
+The public theorems are:
+
+- `eventually_one_sub_le_ratio_of_additive_bound`: if $g\to-\infty$ and
+  $f\le g+C$ eventually, then for every $\varepsilon>0$ eventually
+  $1-\varepsilon\le f/g$.
+- `eventually_one_sub_le_log_ratio_of_mul_bound`: if $C>0$,
+  $0<p,q$ eventually, $q\to0$, and $p\le Cq$ eventually, then for every
+  $\varepsilon>0$ eventually
+  $1-\varepsilon\le\frac{\log p}{\log q}$.
+
 A fixed additive error becomes negligible in the ratio when the denominator
 tends to negative infinity. This is the estimate behind the asymptotic
 comparison convention for negative logarithmic probabilities.

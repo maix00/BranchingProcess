@@ -11,6 +11,22 @@ public import Mathlib.Analysis.Fourier.Inversion
 /-!
 # Fourier inversion for the cosine Tauberian kernel
 
+The public declarations are:
+
+- `cosineTauberianProfile x` is the compactly supported cubic profile
+  $\frac{(\max(1-|x|,0))^2(1+2|x|)}{6}$;
+  `continuous_cosineTauberianProfile` proves continuity.
+- `cosineTauberianProfile_gap_eq_cappedCubic` states that for $x>0$,
+  $x^3(\Phi(0)-\Phi(y/x))=
+  \frac{x(\min(|y|,x))^2}{2}-\frac{(\min(|y|,x))^3}{3}$.
+- `integral_cosineTauberianKernel_cos` gives the full-line transform
+  $\int_{\mathbb R}\cos(sx)K(s)\,ds=\pi\Phi(x)$;
+  `integral_Ioi_cosineTauberianKernel_cos` gives its half-line form with
+  coefficient $\pi/2$.
+- `integral_Ioi_one_sub_cos_mul_cosineTauberianKernel` gives
+  $\int_0^\infty(1-\cos(sx))K(s)\,ds=
+  \frac{\pi}{2}(\Phi(0)-\Phi(x))$.
+
 A compactly supported spline has the Tauberian kernel as its cosine transform.
 Fourier inversion then gives the kernel identity needed for the twice-integrated tail.
 -/

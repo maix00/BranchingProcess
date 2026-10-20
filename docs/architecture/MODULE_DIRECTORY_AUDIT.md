@@ -1955,3 +1955,28 @@ the two diagonal slow-scale conclusions. All four modules built with the
 pinned toolchain (2,083 Lake jobs). This is one completed family in the
 repository-wide statement-by-statement header audit; name-token scans remain
 candidate finders and are not counted as verified omissions.
+
+## Cosine Tauberian public API headers (2026-10-21)
+
+The Fourier cosine Tauberian family has five peer modules with distinct
+public interfaces: `FrequencyAverage.lean` defines the compact-frequency
+coercivity average; `Kernel.lean` defines and bounds the sinc kernel;
+`Inversion.lean` gives its profile and cosine-transform identities;
+`Mellin.lean` evaluates and proves positivity of the Mellin moments and
+constant; and `RegularVariation.lean` gives the dominated-convergence limit
+under the explicit local-ratio and global-bound assumptions. Their module
+headers now list every visible definition and theorem with the quantitative
+formulas and parameter ranges. The derivation helpers remain `private` in
+their owning modules, so this semantic family needs no `Lemmas/` directory.
+All five modules built with the pinned toolchain (2,888 Lake jobs).
+
+## Finite-sum and sampled-scale API headers (2026-10-21)
+
+The `Analysis/Asymptotics/Sequence/LogSum.lean` and `NegativeRatio.lean`
+headers now state the eventual finite-sum logarithmic bound, its finite-union
+limit, and the additive- and multiplicative-error ratio estimates with their
+negative-scale assumptions. The general deterministic
+`Analysis/Asymptotics/Scale/Sampling.lean` header now names the interval-index
+definition itself and states its least-index property explicitly; its width
+sampling and rate-transfer interfaces remain at this reusable scale layer.
+All three modules built with the pinned toolchain (3,142 Lake jobs).
