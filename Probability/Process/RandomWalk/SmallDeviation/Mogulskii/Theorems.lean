@@ -121,5 +121,8 @@ This file reexports the existing theorem modules; it does not duplicate their
 proofs or change their declaration names. Definitions and complete supporting
 results remain with the mathematical subjects listed above; theorem-specific
 derivation steps stay in nested `Lemmas` modules beside the results that use
-them.
+them. In this subtree, `source` in a declaration name refers to the original
+random walk or process before scaling or passage to a limiting stable process;
+it does not refer to a bibliographic source. `FromIncrementLaw` names the
+specialization that starts from the one-step increment law.
 -/

@@ -1441,6 +1441,18 @@ subject or regime, with theorem-specific derivations under nested `Lemmas/`.
 The former empty `Stable/RandomWalkBounds/PartitionLower/` directory was
 removed after its modules moved into `Partition/Lower/`.
 
+The module tree was rechecked on 2026-10-20 against the repository's
+`Lemmas/` placement rule. `Theorems.lean` remains the sole article-result
+entry at the subject root: it lists Mogul'skii's Theorems 1--4, exposes the
+proved interfaces for Theorems 1--3, and records Theorem 4 as open. The
+first-level directories group mathematical subjects and proof regimes; they
+are not competing theorem entry points. No root `Definitions/` or `Lemmas/`
+directory is needed: reusable constructions stay with their semantic owners,
+and theorem-specific derivations stay in nested `Lemmas/` directories. There
+is no `Source/` directory. In declaration names, `source` identifies the
+original pre-limit random walk or process; the entry module now states this
+meaning explicitly and distinguishes it from the limiting stable process.
+
 A production-tree scan of 1,467 Lean modules found no directory with more than
 eight direct modules and no same-stem `Foo.lean`/`Foo/` collisions. A separate
 heuristic scan flagged 58 Mogul'skii module docstrings for manual review of
