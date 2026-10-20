@@ -6,131 +6,45 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.Kernel.Killed.Return.Comparison
-public import Probability.Distributions.Moments.Real
-public import Mathlib.Probability.Distributions.Gaussian.Real
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Scale.Basic
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Scale.BlockScale
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Lemmas.Return.Partition
+public import Probability.Process.RandomWalk.Kernel.Killed.Return.Basic
+public import Probability.Kernel.Survival.Return
 
 /-!
-# Uniform Mogulskii bounds for return kernels
+# Uniform iteration bounds for killed return kernels
 
-The public declarations in `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii`
-are:
+These estimates turn uniform one-block return mass into lower bounds for
+iterated return kernels and for the ambient killed walk. They apply to every
+filtered family of real interval scales and do not depend on a Mogulskii
+normalization or a moment assumption.
 
-- `eventually_uniform_returnKernel_of_finset_gaussianProduct`: a finite cover
-  of the normalized return interval and a positive Gaussian block-product
-  margin give an eventual one-block lower bound for the return kernel, uniform
-  over every starting point in the scaled interval.
-- `eventually_pow_le_remainingMass_returnKernel_Icc_of_normalized`: if each
-  return block has mass at least $p$, then $p^k$ bounds the remaining mass of
-  the $k$-fold return-kernel iterate from every state in the return interval.
-- `eventually_pow_succ_div_le_remainingMass_killedIncrementKernel_Icc`: if
-  blocks of length $\ell$ have the same lower bound $p$, then for every total
-  horizon $N$, $p^{\lfloor N/\ell\rfloor+1}$ bounds the killed-walk remaining
-  mass, including the incomplete terminal block.
+For scale $s_i>0$, let $R_i$ be the return kernel formed from the walk killed
+outside $[s_i a,s_i b]$, with return interval $[s_i c,s_i d]$ and block length
+$\ell_i$. If every row of $R_i$ has mass at least $p$, then
+\[
+p^k\leq \operatorname{remainingMass}(R_i,k,s_i x),
+\qquad
+p^{\lfloor N/\ell_i\rfloor+1}
+ \leq \operatorname{remainingMass}(K_i,N,s_i x),
+\]
+where $K_i$ is the killed-walk kernel and $x\in[c,d]$.
+
+The public declarations in `ProbabilityTheory.RandomWalk` are:
+
+- `eventually_pow_le_remainingMass_returnKernel_Icc_of_normalized`: a
+  uniform row bound on a scaled return interval gives the corresponding power
+  lower bound for repeated return blocks.
+- `eventually_pow_succ_div_le_remainingMass_killedIncrementKernel_Icc`: a
+  one-block return bound controls killed-walk survival for arbitrary elapsed
+  time, with one additional block for the terminal remainder.
 - `eventually_natCast_mul_log_le_log_remainingMass_killedIncrementKernel_Icc`:
-  the preceding estimate implies
-  $(\lfloor N/\ell\rfloor+1)\log p\leq\log M_N(x)$ in extended-real form.
-
-The finite-reference Gaussian estimate is proved in
-`Lemmas/Return/Partition.lean`. This file passes from that estimate to uniform
-starting points and iterates the sub-Markov return kernel.
+  the same arbitrary-time bound in extended-real logarithmic form.
 -/
 
 open Filter MeasureTheory Set
 
 @[expose] public section
 
-namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
-
-
-
-/-- A finite collection of Gaussian return estimates, all using the same
-block scale and error, yields an eventual return-kernel lower bound uniform
-over the full normalized return interval. -/
-theorem eventually_uniform_returnKernel_of_finset_gaussianProduct
-    (ν : Measure ℝ) [IsProbabilityMeasure ν]
-    (hν : IsCenteredUnitSecondMoment ν)
-    {scale : ℕ → ℝ} (hscale : IsMogulskiiScale scale)
-    (hscaleNonneg : ∀ n, 0 ≤ scale n)
-    {constant : ℝ} (hconstant : 0 < constant)
-    {blocks : ℕ} (hblocks : 0 < blocks)
-    {outerLower outerUpper returnLower returnUpper coverMargin : ℝ}
-    {endpointMargin blockRadius error : ℝ}
-    (hendpointMargin : 0 < endpointMargin)
-    (hblockRadius : 0 < blockRadius) (herror : 0 < error)
-    (references : Finset ℝ) (target : ℝ → ℕ → ℝ)
-    (hcover : ∀ x ∈ Set.Icc returnLower returnUpper,
-      ∃ y ∈ references, |x - y| ≤ coverMargin)
-    (hreference : ∀ y ∈ references,
-      y ∈ Set.Icc (returnLower + coverMargin)
-        (returnUpper - coverMargin))
-    (houter : ∀ y ∈ references,
-      y ∈ Set.Icc (outerLower + coverMargin)
-        (outerUpper - coverMargin))
-    (hstartMargin : ∀ y ∈ references, ∀ k < blocks,
-      outerLower + coverMargin - y + endpointMargin +
-            (blocks : ℝ) * blockRadius <
-          ∑ j ∈ Finset.range k, target y j ∧
-        ∑ j ∈ Finset.range k, target y j <
-          outerUpper - coverMargin - y - endpointMargin -
-            (blocks : ℝ) * blockRadius)
-    (hfinalMargin : ∀ y ∈ references,
-      returnLower + coverMargin - y + (blocks : ℝ) * blockRadius <
-          ∑ j ∈ Finset.range blocks, target y j ∧
-        ∑ j ∈ Finset.range blocks, target y j <
-          returnUpper - coverMargin - y -
-            (blocks : ℝ) * blockRadius)
-    (lowerBound : ENNReal)
-    (hgap : ∀ y ∈ references,
-      lowerBound + ENNReal.ofReal
-          (blocks * (constant / endpointMargin ^ 2 + error)) <
-        ∏ j : Fin blocks,
-          gaussianReal 0 1
-            (Set.Ioo
-              ((target y j - blockRadius) / Real.sqrt constant)
-              ((target y j + blockRadius) / Real.sqrt constant))) :
-    ∀ᶠ n in atTop, ∀ x : Set.Icc returnLower returnUpper,
-      lowerBound ≤ returnKernel ν
-        (Set.Icc (scale n * outerLower) (scale n * outerUpper)) measurableSet_Icc
-        (Set.Icc (scale n * returnLower) (scale n * returnUpper)) measurableSet_Icc
-        (blocks * diffusiveBlockLength constant scale n)
-        ⟨scale n * x, by
-          constructor <;> nlinarith [x.property.1, x.property.2,
-            hscaleNonneg n]⟩ univ := by
-  let errorMass := ENNReal.ofReal
-    (blocks * (constant / endpointMargin ^ 2 + error))
-  let referenceBound : ℝ → ENNReal := fun y => ∏ j : Fin blocks,
-    gaussianReal 0 1
-      (Set.Ioo
-        ((target y j - blockRadius) / Real.sqrt constant)
-        ((target y j + blockRadius) / Real.sqrt constant))
-  have hliminf : ∀ (y : ℝ) (hy : y ∈ references),
-      referenceBound y ≤ atTop.liminf (fun n =>
-        returnKernel ν
-          (Set.Icc (scale n * (outerLower + coverMargin))
-            (scale n * (outerUpper - coverMargin))) measurableSet_Icc
-          (Set.Icc (scale n * (returnLower + coverMargin))
-            (scale n * (returnUpper - coverMargin))) measurableSet_Icc
-          (blocks * diffusiveBlockLength constant scale n)
-          ⟨scale n * y, by
-            constructor <;> nlinarith [(hreference y hy).1,
-              (hreference y hy).2, hscaleNonneg n]⟩ univ + errorMass) := by
-    intro y hy
-    simpa only [referenceBound, errorMass] using
-      (gaussianProduct_le_liminf_returnKernel_add
-        ν hν hscale hscaleNonneg hconstant hblocks
-        (houter y hy) (hreference y hy) hendpointMargin hblockRadius herror
-        (target y) (hstartMargin y hy) (hfinalMargin y hy))
-  exact eventually_forall_le_returnKernel_Icc_apply_univ_of_finset_liminf
-    ν outerLower outerUpper returnLower returnUpper coverMargin references
-    scale (fun n => blocks * diffusiveBlockLength constant scale n)
-    lowerBound errorMass referenceBound ENNReal.ofReal_ne_top hscaleNonneg
-    hcover hreference hliminf (by
-      intro y hy
-      simpa only [referenceBound, errorMass] using hgap y hy)
+namespace ProbabilityTheory.RandomWalk
 
 /-- A normalized uniform return estimate supplies the row bound needed to
 iterate the scaled return kernel from every state in its actual subtype. -/
@@ -262,4 +176,4 @@ theorem eventually_natCast_mul_log_le_log_remainingMass_killedIncrementKernel_Ic
   rw [← ENNReal.log_pow]
   exact ENNReal.log_monotone (hi x)
 
-end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
+end ProbabilityTheory.RandomWalk

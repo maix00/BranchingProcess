@@ -12,7 +12,7 @@ public import Probability.Process.RandomWalk.Path.Corridor.Horizontal.Core
 public import Probability.Sequence.IID.Basic
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Scale.Basic
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Rate.Bounds.Lower
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Lemmas.Return.Uniform
+import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Blocks.UniformReturnKernel
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Blocks.Lemmas.ProductParameters
 
 /-!
@@ -97,7 +97,7 @@ theorem mul_log_toReal_le_liminf_horizontalTubeProbability_of_finset_gaussianPro
         scale n ^ 2 / (n : ℝ) *
           Real.log (horizontalTubeProbability
             (iidSequenceLaw ν) a (scale n) n).toReal) := by
-  have hblock := eventually_uniform_returnKernel_of_finset_gaussianProduct
+  have hblock := Gaussian.Blocks.eventually_uniform_returnKernel_of_finset_gaussianProduct
     ν hν hscale (fun n => (hscalePos n).le) hconstant hblocks
     hendpointMargin hblockRadius herror references target hcover hreference
     houter hstartMargin hfinalMargin lowerBound hgap

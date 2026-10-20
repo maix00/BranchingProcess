@@ -95,14 +95,18 @@ its source statement and missing proof interfaces are recorded in
 
 The other directories below `Mogulskii/` organize supporting mathematical
 interfaces rather than additional main theorems of the 1974 article:
-`Path/` owns path encodings and corridor events, `Scale/` owns normalization,
-`Stable/` and `Gaussian/` own the stable and finite-variance regimes,
-`RandomWalkBounds/` assembles random-walk estimates, `Rate/` owns the
-normal-domain rate arguments, and `Spectral/` contains the killed
-symmetric-lattice method. Proof-specific finite-reference block estimates,
-partition-event bounds, and return-kernel assembly are grouped under
-`Lemmas/{Blocks,Partition,Return}/`. General killed-kernel and return-kernel
-interfaces remain in `Probability/Process/RandomWalk/Kernel/Killed/`.
+`Path/` owns path encodings, corridor events, and the finite-partition
+endpoint-to-corridor estimates; `Scale/` owns normalization; `Stable/` and
+`Gaussian/` own the stable and finite-variance regimes, including the
+finite-reference Gaussian block-survival bounds; `RandomWalkBounds/` assembles
+random-walk estimates; `Rate/` owns the normal-domain rate arguments; and
+`Spectral/` contains the killed symmetric-lattice method. `Lemmas/` is reserved
+for derivation steps that have no standalone reusable interface. The Gaussian
+product return-kernel estimates are in `Gaussian/Blocks/ReturnKernel.lean` and
+`Gaussian/Blocks/UniformReturnKernel.lean`; the generic return-block iteration
+estimate is in `Probability/Process/RandomWalk/Kernel/Killed/Return/Uniform.lean`.
+General killed-kernel and return-kernel interfaces remain in
+`Probability/Process/RandomWalk/Kernel/Killed/`.
 
 In the source notation, $F$ is the law of one increment and
 $L^*(u)=u^{\alpha-2}\int_{-u}^{u}x^2\,F(dx)$; the norming is chosen so that

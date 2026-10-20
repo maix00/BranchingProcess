@@ -11,33 +11,52 @@ public import Probability.Distributions.Moments.Real
 public import Mathlib.Probability.Distributions.Gaussian.Real
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Scale.Basic
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Scale.BlockScale
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Lemmas.Partition.Basic
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Lemmas.Partition.Quantitative
+import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Path.PartitionTightness
+import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Blocks.PartitionEndpoints
 
 /-!
 # Finite-partition lower bounds for corridor return kernels
 
 The public theorems in this file are:
 
-- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.gaussianProduct_le_liminf_returnKernel_add_of_eventually_control`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Blocks.gaussianProduct_le_liminf_returnKernel_add_of_eventually_control`:
   a product of $m$ Gaussian target-window probabilities is at most the
   lower limit of the $m$-block return-kernel mass plus a prescribed
   within-block error.
-- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.gaussianProduct_le_liminf_returnKernel_add`:
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Blocks.gaussianProduct_le_liminf_returnKernel_add`:
   with centered unit second moment, the error can be taken as
   $m(c/r^2+e)$ for block constant $c$, endpoint margin $r$, and $e>0$.
 
 The finite-dimensional Gaussian endpoint estimate is combined with the
 quantitative within-block error while retaining a final endpoint constraint.
 The resulting event is identified with one transition of the outer-killed,
-inner-return block kernel.
+inner-return block kernel. This is the return-block step in Theorem 3,
+Section 4 of A. A. Mogul'skii, “Small deviations in the sample function
+space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974), 755–765;
+English translation, “Small Deviations in a Space of Trajectories,” *Theory
+of Probability and Its Applications* 19(4) (1975), 726–736, DOI
+10.1137/1119081.
+
+In particular, with $q_n=\operatorname{diffusiveBlockLength}(C,s,n)$, the
+module proves
+\[
+\prod_{j<m}\mathbb P\!\left(Z\in
+  \left(\frac{y_j-r}{\sqrt C},\frac{y_j+r}{\sqrt C}\right)\right)
+\leq \liminf_{n\to\infty}
+  K_{[s_n a,s_n b]}^{m q_n}(s_n x,[s_n c,s_n d])
+ +\operatorname{ofReal}\!\left(m\left(\frac{C}{\rho^2}+e\right)\right),
+\]
+under the theorem's endpoint-margin hypotheses; $\rho$ is the endpoint
+margin, $r$ is the block radius, $e>0$ is the maximal-bound error, and
+$K_{[s_n a,s_n b]}$ is the killed transition kernel restricted to return
+endpoints in $[s_n c,s_n d]$. Here $Z\sim N(0,1)$.
 -/
 
 open Filter MeasureTheory Set
 
 @[expose] public section
 
-namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
+namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Blocks
 
 
 
@@ -121,7 +140,8 @@ theorem gaussianProduct_le_liminf_returnKernel_add_of_eventually_control
     · simpa [endpointLower, endpointUpper, hlt] using hstartMargin k hlt
     · have heq : k = blocks := by omega
       simpa [endpointLower, endpointUpper, heq] using hfinalMargin
-  have hendpoint := prod_gaussian_Ioo_le_liminf_measure_partitionEndpoints
+  have hendpoint :=
+    prod_gaussian_Ioo_le_liminf_measure_partitionEndpoints
     ν hν.1 hν.2 hscale hconstant hblockRadius target
       endpointLower endpointUpper hmargin
   refine hendpoint.trans (Filter.liminf_le_liminf ?_)
@@ -272,7 +292,7 @@ theorem gaussianProduct_le_liminf_returnKernel_add
   apply gaussianProduct_le_liminf_returnKernel_add_of_eventually_control
     ν hν hscale hscaleNonneg hconstant hblocks hinitialOuter hinitialReturn
       hblockRadius target hstartMargin hfinalMargin
-  exact eventually_normalizedEndpoints_inter_le_corridors_inter_add_explicitError
+  exact _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.eventually_normalizedEndpoints_inter_le_corridors_inter_add_explicitError
     ν hν hscale hconstant hendpointMargin herror blocks
 
-end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
+end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Blocks
