@@ -7,8 +7,8 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Distributions.Moments.Real
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.EndpointEvent
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Reflection
+public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.EndpointWindow.Basic
+public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.EndpointWindow.Reflection
 public import Probability.Sequence.IID.Basic
 import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.Binning
 import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Binning.Geometry
