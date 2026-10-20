@@ -14,7 +14,8 @@ import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Dr
 import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Drawdown.Spine.Window
 import Probability.BranchingRandomWalk.Spine.Tube.Corridor.PairBound
 
-import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Drawdown.Spine.Lemmas.FailureProbability
+import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Drawdown.Spine.Lemmas.CapacityProbability
+import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Drawdown.Spine.Lemmas.RandomWalkBounds
 
 /-!
 # Two-phase capacity interfaces
@@ -51,7 +52,7 @@ open ProbabilityTheory.RandomWalk
 /-- The first-stage generations in the two-phase estimate contribute only
 their number of terms. Thus their path probabilities can be bounded by one,
 leaving the Aïdékon--Hu estimate to control the restarted second stage. -/
-theorem measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhaseOfAHDrawdown_unitFirstStage
+lemma measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhaseOfAHDrawdown_unitFirstStage
     (m ell ellN N : ℕ) (logN b v c κ : ℝ)
     [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
     [Countable (RootIndexed.TreeNode (Fin m) ℕ)]
@@ -129,7 +130,7 @@ theorem measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhaseOfAHDraw
 /-- Both phases of the killed-capacity estimate can be supplied by
 the uniform Aïdékon--Hu bound.  The first phase uses its actual prefix
 generation, while the restarted phase uses its actual post-cutoff length. -/
-theorem exists_measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhaseOfAHBothStages
+lemma exists_measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhaseOfAHBothStages
     (m ell ellN N : ℕ) (logN b v c κ : ℝ)
     [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
     [Countable (RootIndexed.TreeNode (Fin m) ℕ)]
@@ -246,7 +247,7 @@ theorem exists_measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhaseO
 
 /-- The two-stage capacity estimate now accepts a one-stage horizontal-tube
 bound as its remaining random-walk input. -/
-theorem measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhaseOfHorizontalTubeBound
+lemma measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhaseOfHorizontalTubeBound
     (m ell ellN N : ℕ) (logN b v c κ a : ℝ)
     [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
     [Countable (RootIndexed.TreeNode (Fin m) ℕ)]

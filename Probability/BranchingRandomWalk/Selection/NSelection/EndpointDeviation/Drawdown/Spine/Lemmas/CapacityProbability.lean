@@ -52,7 +52,7 @@ open ProbabilityTheory.RandomWalk
 bound. Long second-stage prefixes use the exponential drawdown estimate;
 short prefixes use only that their probability is at most one. This is the
 finite-parameter form of the second-stage estimate in the proof of (4.15). -/
-theorem measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhaseOfAHDrawdown
+lemma measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhaseOfAHDrawdown
     (m ell ellN N : ℕ) (logN b v c κ : ℝ)
     [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
     [Countable (RootIndexed.TreeNode (Fin m) ℕ)]
@@ -150,7 +150,7 @@ theorem measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhaseOfAHDraw
 /-- With `κ` chosen as the Aïdékon--Hu rate coefficient, long-prefix terms
 in the capacity sum reduce to the first-stage offset plus one tube width.
 Only short prefixes retain their generation-specific endpoint weight. -/
-theorem measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhaseOfAHDrawdown_canceled
+lemma measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhaseOfAHDrawdown_canceled
     (m ell ellN N : ℕ) (logN b v c κ : ℝ)
     [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
     [Countable (RootIndexed.TreeNode (Fin m) ℕ)]
@@ -275,7 +275,7 @@ theorem measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhaseOfAHDraw
 /-- The polynomial killed-capacity estimate with an externally supplied
 uniform Aïdékon--Hu threshold.  Keeping the threshold explicit lets the
 logarithmic-scale argument use one value for every sample size. -/
-theorem measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhaseOfAHPolynomialInput_of_uniformAH
+lemma measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhaseOfAHPolynomialInput_of_uniformAH
     (m ell ellN N : ℕ) (logN b v c κ : ℝ)
     [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
     [Countable (RootIndexed.TreeNode (Fin m) ℕ)]
@@ -447,7 +447,7 @@ theorem measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhaseOfAHPoly
 
 /-- Combining the generation-wise capacity estimate with the canceled AH sum
 gives the finite-scale bound used for the first term in (4.15). -/
-theorem measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhaseOfAHPolynomialInput
+lemma measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhaseOfAHPolynomialInput
     (m ell ellN N : ℕ) (logN b v c κ : ℝ)
     [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
     [Countable (RootIndexed.TreeNode (Fin m) ℕ)]
@@ -547,7 +547,7 @@ theorem measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhaseOfAHPoly
 /-- The finite-scale canceled-AH capacity estimate has polynomial decay when
 the initial root count has exponent `a`, the two multiplicity factors have
 subexponential size, and the combined exponent `a + q` is below one. -/
-theorem eventually_probability_le_polynomial_of_canceledAH_capacity_bound
+lemma eventually_probability_le_polynomial_of_canceledAH_capacity_bound
     {P : ℕ → ℝ≥0∞} {m ell ellN N : ℕ → ℕ} {E : ℕ → ℝ} {a q : ℝ}
     (hN : Tendsto N atTop atTop)
     (horder : ∀ᶠ n : ℕ in atTop, ell n ≤ ellN n)

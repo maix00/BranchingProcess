@@ -48,7 +48,7 @@ open ProbabilityTheory.BranchingRandomWalk
 open ProbabilityTheory.BranchingRandomWalk.Spine
 open ProbabilityTheory.RandomWalk
 
-theorem rightTailPositiveARestartedWindow_zero_mem
+lemma rightTailPositiveARestartedWindow_zero_mem
     (ell ellN : ℕ) (logN b v c κ : ℝ)
     (hell : 0 < ell) (hb : 0 ≤ b) (hlog : 0 ≤ logN) :
     0 ∈ rightTailPositiveARestartedWindow ell ellN logN b v c κ 0 := by
@@ -57,7 +57,7 @@ theorem rightTailPositiveARestartedWindow_zero_mem
 /-- Every restarted-window event observed after the first cutoff already
 forces the original path to stay in the first-stage corridor through `ell`.
 This extracts a useful probability bound without estimating the second tube. -/
-theorem rightTailPositiveARestartedWindow_event_subset_firstStage
+lemma rightTailPositiveARestartedWindow_event_subset_firstStage
     (ell ellN : ℕ) (logN b v c κ : ℝ) (n : ℕ)
     (hlog : 0 ≤ logN) (hvb : v ≤ b)
     (hn : ell ≤ n) :
@@ -104,7 +104,7 @@ theorem rightTailPositiveARestartedWindow_event_subset_firstStage
 /-- Before the first cutoff, every restarted-window prefix is contained in
 the corresponding initial corridor prefix.  At the cutoff itself the
 narrower terminal window is still below zero when `v ≤ b`. -/
-theorem rightTailPositiveARestartedWindow_event_subset_firstStagePrefix
+lemma rightTailPositiveARestartedWindow_event_subset_firstStagePrefix
     (ell ellN n : ℕ) (logN b v c κ : ℝ)
     (hlog : 0 ≤ logN) (hvb : v ≤ b) (hn : n ≤ ell) :
     {increment : ℕ → ℝ |
@@ -141,7 +141,7 @@ the two stages of the positive-`a` construction. The right side is expressed
 in terms of tilted random-walk corridor probabilities, so the Mogulskii input
 can be supplied separately without assuming any killed-population expectation
 bound. -/
-theorem measure_rightTailPositiveAKilled_capacityEvent_compl_le
+lemma measure_rightTailPositiveAKilled_capacityEvent_compl_le
     (m ell ellN N : ℕ) (logN b v c κ : ℝ)
     [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
     [Countable (RootIndexed.TreeNode (Fin m) ℕ)]
@@ -200,7 +200,7 @@ theorem measure_rightTailPositiveAKilled_capacityEvent_compl_le
 positive-`a` killed-capacity bound. The endpoint envelope controls the
 exponential weight, while a single bound `p` controls every restarted-window
 probability. -/
-theorem measure_rightTailPositiveAKilled_capacityEvent_compl_le_uniform
+lemma measure_rightTailPositiveAKilled_capacityEvent_compl_le_uniform
     (m ell ellN N : ℕ) (logN b v c κ U : ℝ)
     [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
     [Countable (RootIndexed.TreeNode (Fin m) ℕ)]
@@ -296,7 +296,7 @@ theorem measure_rightTailPositiveAKilled_capacityEvent_compl_le_uniform
 /-- Capacity bound with the positive-`a` tube's deterministic endpoint
 envelope already substituted. The remaining probabilistic input is the
 uniform restarted-window bound `hpath`. -/
-theorem measure_rightTailPositiveAKilled_capacityEvent_compl_le_enveloped
+lemma measure_rightTailPositiveAKilled_capacityEvent_compl_le_enveloped
     (m ell ellN N : ℕ) (logN b v c κ : ℝ)
     [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
     [Countable (RootIndexed.TreeNode (Fin m) ℕ)]
@@ -348,7 +348,7 @@ theorem measure_rightTailPositiveAKilled_capacityEvent_compl_le_enveloped
 /-- Two-stage form of the killed-capacity estimate. The first tube and the
 long restarted tube may use different weighted probability bounds, matching
 the separate corridor estimates in the proof of (4.15). -/
-theorem measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhase
+lemma measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhase
     (m ell ellN N : ℕ) (logN b v c κ : ℝ)
     [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
     [Countable (RootIndexed.TreeNode (Fin m) ℕ)]
@@ -439,7 +439,7 @@ theorem measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhase
 /-- Corridor-probability inputs imply the two weighted phase bounds. The
 first interval uses its nonpositive endpoint weight; the long tube keeps the
 negative cutoff offset in its exponential factor. -/
-theorem measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhaseOfPathBounds
+lemma measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhaseOfPathBounds
     (m ell ellN N : ℕ) (logN b v c κ : ℝ)
     [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
     [Countable (RootIndexed.TreeNode (Fin m) ℕ)]
@@ -538,7 +538,7 @@ theorem measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhaseOfPathBo
 /-- Generation-dependent bounds can be summed directly in the killed-capacity
 estimate. This retains the shorter-prefix drawdown probabilities instead of
 replacing all of them by the full-horizon probability. -/
-theorem measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhaseOfGenerationPathBounds
+lemma measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhaseOfGenerationPathBounds
     (m ell ellN N : ℕ) (logN b v c κ : ℝ)
     [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
     [Countable (RootIndexed.TreeNode (Fin m) ℕ)]
@@ -656,7 +656,7 @@ theorem measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhaseOfGenera
 drawdown estimates directly. The endpoint threshold and the corridor width
 are kept at the full planned scale, while the drawdown horizon is the actual
 observed prefix length. -/
-theorem measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhaseOfDrawdownBounds
+lemma measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhaseOfDrawdownBounds
     (m ell ellN N : ℕ) (logN b v c κ : ℝ)
     [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
     [Countable (RootIndexed.TreeNode (Fin m) ℕ)]
@@ -722,7 +722,7 @@ theorem measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhaseOfDrawdo
 restarted-window probability, since those events retain the first-stage
 prefix. The initial-stage terms use only that the tilted path law is a
 probability measure. -/
-theorem measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhaseOfFirstStageBound
+lemma measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhaseOfFirstStageBound
     (m ell ellN N : ℕ) (logN b v c κ : ℝ)
     [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
     [Countable (RootIndexed.TreeNode (Fin m) ℕ)]

@@ -14,27 +14,39 @@ import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Dr
 import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Drawdown.Spine.Window
 import Probability.BranchingRandomWalk.Spine.Tube.Corridor.PairBound
 
+import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Drawdown.Spine.Lemmas.Asymptotics
 import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Drawdown.Spine.Lemmas.CapacityProbability
+import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Drawdown.Spine.Lemmas.ParameterBounds
 
 /-!
-# Endpoint-gap and polynomial failure bounds
+# Positive-initial-mass killed-capacity failure bound
 
-This module contains non-reusable intermediate statements in the proof of
-the positive-initial-mass capacity estimate, Proposition 3.1, equation
-(4.15), of Elie Aïdékon and Yueyun Hu, *Average-weight percolation on the
-complete graph*, arXiv:2512.23266 (2025). The preceding module in the
-`Lemmas/` chain supplies the definitions and estimates used here.
+The public declarations in namespace
+`ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail` are:
 
-The declarations are theorem-specific reductions: they pass from the
-restarted tube data to the estimates needed by the next stage of the proof.
-Reusable path-event and measure inequalities remain in their semantic
-modules outside this directory.
+- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.rightTailPositiveAKilledCapacityFailureProbability m ell ellN horizon
+  logN b v c κ μ` is the probability under the `m`-root step-field law that
+  the restarted-window causal population fails to reach capacity by
+  `horizon`, as used in Proposition 3.1, equation (4.15), of Elie Aïdékon
+  and Yueyun Hu, *Average-weight percolation on the complete graph*,
+  arXiv:2512.23266 (2025).
+- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.exists_rightTailPositiveAKilledCapacityFailure_le_polynomial_of_endpointGap`
+  states that if $N_n\to\infty$, the tilted increment law is centered with
+  variance $\sigma^2>0$, the Brownian inputs satisfy the pre-Brownian
+  hypotheses, $0<a<1$, $t>0$, and
+  $-a+\frac{\pi^2}{2}\sigma^2t<\zeta$, then there are admissible corridor
+  parameters and $\varepsilon>0$ for which the failure probability is at
+  most $\exp(-\varepsilon\log N_n)$ eventually.
 
-## Proof-chain statements
+The endpoint-gap conclusion formalizes the positive-initial-mass estimate in
+Proposition 3.1, equation (4.15), of Elie Aïdékon and Yueyun Hu,
+*Average-weight percolation on the complete graph*, arXiv:2512.23266 (2025),
+and Chapter 4, equation (4.15), of Wang Yiyang, *Asymptotic Speed of the
+N-Branching Random Walk with Infinite Offspring* (master's thesis, Fudan
+University, 2026).
+The logarithmic-scale reduction used in its proof is private to this module;
+the capacity and tube estimates remain under `Lemmas/`.
 
-- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.rightTailPositiveAKilledCapacityFailureProbability` defines the two-stage capacity-failure probability.
-- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.eventually_rightTailPositiveAKilledCapacityFailure_le_polynomial_of_logarithmicScales` proves an eventual polynomial upper bound under logarithmic cutoffs.
-- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.exists_rightTailPositiveAKilledCapacityFailure_le_polynomial_of_endpointGap` chooses the corridor parameters from a strict endpoint gap and obtains the same polynomial bound.
 -/
 
 open Filter MeasureTheory
@@ -48,7 +60,9 @@ open ProbabilityTheory.BranchingRandomWalk
 open ProbabilityTheory.BranchingRandomWalk.Spine
 open ProbabilityTheory.RandomWalk
 
-/-- The failure probability for the two-stage killed population. -/
+/-- The failure probability for the two-stage killed population in the
+positive-initial-mass estimate of Aïdékon and Hu, Proposition 3.1, equation
+(4.15). -/
 noncomputable def rightTailPositiveAKilledCapacityFailureProbability
     (m ell ellN horizon : ℕ) (logN b v c κ : ℝ)
     (μ : Measure (Step ℕ ℝ)) : ℝ≥0∞ := by
@@ -69,10 +83,10 @@ noncomputable def rightTailPositiveAKilledCapacityFailureProbability
 
 /-- Under logarithmic cutoffs, the first term in Wang Yiyang,
 *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
-Chapter 4, equation (4.15), has polynomial decay whenever its two exponent
-margins are positive. The uniform threshold is chosen once and then used for
-every `N`. -/
-theorem eventually_rightTailPositiveAKilledCapacityFailure_le_polynomial_of_logarithmicScales
+master's thesis, Fudan University (2026), Chapter 4, equation (4.15), has
+polynomial decay whenever its two exponent margins are positive. The uniform
+threshold is chosen once and then used for every `N`. -/
+private lemma eventually_rightTailPositiveAKilledCapacityFailure_le_polynomial_of_logarithmicScales
     {N : ℕ → ℕ} (hN : Tendsto N atTop atTop)
     (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
     (hboundary : HasBoundaryNormalization realPotential μ)
@@ -182,7 +196,12 @@ theorem eventually_rightTailPositiveAKilledCapacityFailure_le_polynomial_of_loga
     (by simpa [L, logarithmOfSampleSize] using hERate) ha1 hmargin hm hraw
 
 /-- Choose the corridor parameters from the endpoint gap and apply
-the logarithmic-scale killed-capacity estimate. -/
+the logarithmic-scale killed-capacity estimate. This is the endpoint-gap
+form of Chapter 4, equation (4.15), in Wang Yiyang, *Asymptotic Speed of the
+N-Branching Random Walk with Infinite Offspring* (master's thesis, Fudan
+University, 2026), and Proposition 3.1, equation (4.15), in Elie Aïdékon and
+Yueyun Hu, *Average-weight percolation on the complete graph*,
+arXiv:2512.23266 (2025). -/
 theorem exists_rightTailPositiveAKilledCapacityFailure_le_polynomial_of_endpointGap
     {N : ℕ → ℕ} (hN : Tendsto N atTop atTop)
     (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]

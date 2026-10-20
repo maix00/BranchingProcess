@@ -11,17 +11,16 @@ import Probability.Process.RandomWalk.SmallDeviation.Drawdown.Event
 import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Basic
 import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Rate.LogScales
 import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Drawdown.Spine.Cutoff
+import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Drawdown.Spine.SecondStageTube
 import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Drawdown.Spine.Window
 import Probability.BranchingRandomWalk.Spine.Tube.Corridor.PairBound
 
 /-!
 # Second-stage tube lemmas for the positive-`a` capacity estimate
 
-The declarations in this module are proof-chain interfaces for the
-second-stage tube used by the positive-initial-mass estimate. The tube
-window has lower endpoint $d_j=(\kappa/c^2)D^{-2/3}j$ and width $cD^{1/3}$
-for $0<j<D$, with terminal width $vD^{1/3}$. The path event requires every
-restarted displacement to lie in its scheduled window.
+The event construction is in the semantic module
+`Spine/SecondStageTube.lean`. This module contains only proof-chain lemmas for
+the second-stage tube used by the positive-initial-mass estimate.
 
 The module proves that these events lie in fixed-width increasing tubes and
 then in the corresponding drawdown events, including finite prefixes. It
@@ -31,12 +30,16 @@ These model-specific steps support the capacity proof and are grouped under
 `Probability.Process.RandomWalk.SmallDeviation.Drawdown.Event`.
 
 
-## Proof-chain statements
-
-- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.rightTailPositiveASecondStageWindow` defines the intervals $W_j=[d_j,d_j+cD^{1/3}]$ for $0<j<D$, with terminal interval $[d_D,d_D+vD^{1/3}]$ and $d_j=(\kappa/c^2)D^{-2/3}j$.
-- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.rightTailPositiveASecondStageTubeEvent` and `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.rightTailPositiveASecondStageTubePrefixEvent` require the restarted path displacement at every indexed generation, or every generation through a prefix, to belong to $W_j$.
-- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.rightTailPositiveASecondStageTubeEvent_subset_fixedTube`, `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.rightTailPositiveASecondStageTubePrefixEvent_subset_fixedTube`, `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.rightTailPositiveASecondStageTubeEvent_subset_drawdownEvent`, and `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.rightTailPositiveASecondStageTubePrefixEvent_subset_drawdownEvent` give the corresponding event inclusions into a fixed-width tube and its drawdown event.
-- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.rightTailPositiveARestartedWindow_event_subset_shiftedSecondStageTubePrefix` embeds each restarted-window prefix into the shifted tube prefix, and `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.iidSequenceLaw_restartedWindowProbability_le_secondStageDrawdown` yields the probability bound $\mathbb P(\text{restarted windows through }d)\leq\mathbb P(\text{second-stage drawdown through }d)$.
+- `rightTailPositiveASecondStageTubeEvent_subset_fixedTube` and
+  `rightTailPositiveASecondStageTubePrefixEvent_subset_fixedTube` embed the
+  variable-width path events in a fixed-width increasing tube when $v\leq c$.
+- `rightTailPositiveASecondStageTubeEvent_subset_drawdownEvent` and
+  `rightTailPositiveASecondStageTubePrefixEvent_subset_drawdownEvent` place
+  those paths in the corresponding drawdown events.
+- `rightTailPositiveARestartedWindow_event_subset_shiftedSecondStageTubePrefix`
+  embeds each restarted-window prefix in the shifted tube prefix, and
+  `iidSequenceLaw_restartedWindowProbability_le_secondStageDrawdown` gives
+  the corresponding probability bound.
 
 The estimate follows the proof of Proposition 3.1, equation (4.15), of
 Elie Aïdékon and Yueyun Hu, *Average-weight percolation on the complete
@@ -54,41 +57,10 @@ open ProbabilityTheory.BranchingRandomWalk
 open ProbabilityTheory.BranchingRandomWalk.Spine
 open ProbabilityTheory.RandomWalk
 
-/-- The second-stage tube as a path started at the restart time. Its terminal
-window may be narrower than the interior window. -/
-noncomputable def rightTailPositiveASecondStageWindow
-    (ell ellN : ℕ) (κ c v : ℝ) (j : ℕ) : Set ℝ :=
-  let D := ellN - ell
-  let width := ((D : ℕ) : ℝ) ^ (3⁻¹ : ℝ)
-  if j = 0 then Set.Icc 0 0
-  else if j < D then
-    Set.Icc (rightTailPositiveADrift ell ellN κ c j)
-      (rightTailPositiveADrift ell ellN κ c j + c * width)
-  else if j = D then
-    Set.Icc (rightTailPositiveADrift ell ellN κ c j)
-      (rightTailPositiveADrift ell ellN κ c j + v * width)
-  else ∅
-
-/-- Membership in the second-stage restarted tube, expressed on the shifted
-increment path beginning at the restart time. -/
-noncomputable def rightTailPositiveASecondStageTubeEvent
-    (ell ellN : ℕ) (κ c v : ℝ) : Set (ℕ → ℝ) :=
-  {increment | ∀ j : Fin (ellN - ell + 1),
-    AdditivePath.displacement (j : ℕ) increment ∈
-      rightTailPositiveASecondStageWindow ell ellN κ c v (j : ℕ)}
-
-/-- A finite initial segment of the second-stage tube. This is the event
-needed at an intermediate generation before the full second-stage horizon. -/
-noncomputable def rightTailPositiveASecondStageTubePrefixEvent
-    (ell ellN d : ℕ) (κ c v : ℝ) : Set (ℕ → ℝ) :=
-  {increment | ∀ j : Fin (d + 1),
-    AdditivePath.displacement (j : ℕ) increment ∈
-      rightTailPositiveASecondStageWindow ell ellN κ c v (j : ℕ)}
-
 /-- The variable-width second-stage tube is contained in a fixed-width
 increasing tube whenever the terminal window is no wider than the interior
 window. -/
-theorem rightTailPositiveASecondStageTubeEvent_subset_fixedTube
+lemma rightTailPositiveASecondStageTubeEvent_subset_fixedTube
     (ell ellN : ℕ) (κ c v : ℝ)
     (hellN : ell < ellN) (hc : 0 ≤ c) (hvc : v ≤ c) :
     rightTailPositiveASecondStageTubeEvent ell ellN κ c v ⊆
@@ -132,7 +104,7 @@ theorem rightTailPositiveASecondStageTubeEvent_subset_fixedTube
 /-- Every initial segment of the second-stage tube is contained in the
 corresponding fixed-width increasing tube, including the narrower terminal
 window when the segment reaches `ellN`. -/
-theorem rightTailPositiveASecondStageTubePrefixEvent_subset_fixedTube
+lemma rightTailPositiveASecondStageTubePrefixEvent_subset_fixedTube
     (ell ellN d : ℕ) (κ c v : ℝ)
     (hellN : ell < ellN) (hd : d ≤ ellN - ell)
     (hc : 0 ≤ c) (hvc : v ≤ c) :
@@ -179,7 +151,7 @@ theorem rightTailPositiveASecondStageTubePrefixEvent_subset_fixedTube
 /-- The whole second-stage tube event implies the drawdown event with the
 same width as its interior corridor. The increasing linear drift is why a
 path can gain height without increasing its drawdown allowance. -/
-theorem rightTailPositiveASecondStageTubeEvent_subset_drawdownEvent
+lemma rightTailPositiveASecondStageTubeEvent_subset_drawdownEvent
     (ell ellN : ℕ) (κ c v : ℝ)
     (hellN : ell < ellN) (hκ : 0 ≤ κ) (hc : 0 < c) (hvc : v ≤ c) :
     rightTailPositiveASecondStageTubeEvent ell ellN κ c v ⊆
@@ -217,7 +189,7 @@ theorem rightTailPositiveASecondStageTubeEvent_subset_drawdownEvent
 /-- A second-stage prefix of length `d` is contained in a drawdown event at
 that same horizon. The corridor scale still uses the full planned horizon
 `ellN - ell`. -/
-theorem rightTailPositiveASecondStageTubePrefixEvent_subset_drawdownEvent
+lemma rightTailPositiveASecondStageTubePrefixEvent_subset_drawdownEvent
     (ell ellN d : ℕ) (κ c v : ℝ)
     (hellN : ell < ellN) (hd : d ≤ ellN - ell)
     (hκ : 0 ≤ κ) (hc : 0 < c) (hvc : v ≤ c) :
@@ -253,7 +225,7 @@ theorem rightTailPositiveASecondStageTubePrefixEvent_subset_drawdownEvent
 /-- After the restart time, membership in the original window schedule
 forces the corresponding shifted increments to stay in the second-stage
 tube through the observed prefix. -/
-theorem rightTailPositiveARestartedWindow_event_subset_shiftedSecondStageTubePrefix
+lemma rightTailPositiveARestartedWindow_event_subset_shiftedSecondStageTubePrefix
     (ell ellN k : ℕ) (logN b v c κ : ℝ)
     (hk : ell < k) (hkN : k ≤ ellN) :
     {increment : ℕ → ℝ |
@@ -321,7 +293,7 @@ theorem rightTailPositiveARestartedWindow_event_subset_shiftedSecondStageTubePre
 /-- Under an IID increment law, the restarted-window probability after the
 cutoff is bounded by the drawdown probability of the shifted second-stage
 prefix at its actual length. -/
-theorem iidSequenceLaw_restartedWindowProbability_le_secondStageDrawdown
+lemma iidSequenceLaw_restartedWindowProbability_le_secondStageDrawdown
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (ell ellN k : ℕ) (logN b v c κ : ℝ)
     (hk : ell < k) (hkN : k ≤ ellN)
