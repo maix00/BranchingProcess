@@ -12,9 +12,25 @@ public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Field.Measur
 /-!
 # Positions relative to an ancestral generation
 
+The public declarations in
+`ProbabilityTheory.BranchingRandomWalk.RootIndexed` are:
+
+- `relativePositionAtGeneration`: for a rooted label $p$,
+  $R_{a,n}(p,\omega)=X_n(p.1,p.2,\omega)-X_a(p.1,p.2.take(a),\omega)$, where
+  $X_k(i,u,\omega)=\operatorname{positionAtGeneration}
+  (\mathrm{initial},d,k,i,u,\omega)$; it uses the zero-default convention
+  when a depth differs from its generation.
+- `relativePositionAtGeneration_measurable`: if $a\le n$, then
+  $R_{a,n}(p,\cdot)$ is measurable with respect to `stepFiltration n`.
+- `relativePositionAtGeneration_child`: if $|p.2|=n$ and $a\le n$, then
+  $R_{a,n+1}((p.1,p.2++[i]),\omega)=R_{a,n}(p,\omega)+\operatorname{value}'
+  ((\mathrm{field}(p.1,p.2)).map\,d,i)$.
+
 The reference generation may depend deterministically on the observation
-generation.  This covers a walk viewed from its root, from a fixed
+generation. This covers a walk viewed from its root, from a fixed
 intermediate generation, or from a piecewise changing restart generation.
+The position space is an additive commutative group; the measurability result
+also assumes measurable addition, subtraction, and mark mapping.
 -/
 
 @[expose] public section

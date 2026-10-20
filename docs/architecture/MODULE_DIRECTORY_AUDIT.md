@@ -1669,3 +1669,26 @@ states the corresponding limit $-C2^\alpha H$ for its negative denominator.
 The stable-domain interfaces that divide by the positive normalization retain
 the limit $C2^\alpha H$; the two signs differ because their denominators have
 opposite signs.
+
+## Root-indexed field position API review (2026-10-20)
+
+The module docstrings of
+`Genealogy/RootIndexed/Field/{Positions,RelativePosition,Measurability}.lean`
+now list all 35 public declarations with their mathematical meanings and the
+relevant depth, measurability, and additive-structure assumptions.
+`Positions.lean` owns the total and partial root-position constructions and
+their reindexing and concatenation laws; `RelativePosition.lean` owns the
+generation-relative process used by restart windows; `Measurability.lean`
+owns the corresponding step-filtration and countable-selector results. These
+statements remain outside `Lemmas/` because they expose the root-indexed
+field's constructions and measurable interfaces, and remain in
+`Genealogy/RootIndexed/Field/` because their types use that branching field
+and its generation filtration.
+
+The selector measurability proof uses the existing countable indexed-union
+argument together with Mathlib's `MeasurableSet.iUnion` and coordinate
+evaluation API; it does not introduce a generic measurable-selection
+wrapper. The directly relevant Mathlib source was checked at the pinned
+revision `380f2aafb622cb2c1c93dac545b6389083c68c51`. All three modules built
+with the pinned project toolchain (3,133 Lake jobs). The broader
+statement-by-statement module-header audit remains open.
