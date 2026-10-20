@@ -1980,3 +1980,18 @@ negative-scale assumptions. The general deterministic
 definition itself and states its least-index property explicitly; its width
 sampling and rate-transfer interfaces remain at this reusable scale layer.
 All three modules built with the pinned toolchain (3,142 Lake jobs).
+
+## Branching-walk genealogy API headers (2026-10-21)
+
+The three peer interfaces in `Combinatorics/BranchingWalk/Basic/Genealogy/`
+now state the mathematical content of their public declarations:
+`Descendant.lean` records the append-and-survival relation, its generation
+identity, and the partition of descendants into distance slices;
+`Ancestor.lean` states the reversed relation and corresponding distance-slice
+partition; and `GenerationSize.lean` gives the extended-cardinality
+definition, finite-slot conclusions, initial values, generation recursion,
+mark-forgetting identities, and extinction propagation. These are coherent
+public combinatorial APIs, so their peer placement is retained rather than
+moving them into a proof-only `Lemmas/` directory. The three targets built
+successfully with the pinned toolchain; Lean emitted existing `letI` style
+warnings in `GenerationSize.lean`, outside the edited module headers.

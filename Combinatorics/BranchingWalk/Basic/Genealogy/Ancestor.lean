@@ -11,19 +11,20 @@ public import Combinatorics.BranchingWalk.Basic.Genealogy.Descendant
 /-!
 # Ancestor relations
 
-Ancestor sets and generation slices, defined as the reverse of descendant relations.
+`IsAncestor β p q` is defined by `IsDescendant β q p`, as recorded by
+`isAncestor_iff_isDescendant`. `isAncestor_refl` and `isAncestor_trans`
+prove reflexivity and transitivity; `fst_eq_of_isAncestor` gives equality of
+roots, and `generation_eq_generation_add_of_isAncestor` gives
+`generation p.2 = generation q.2 + generationAfter q.2 p.2`.
 
-The public API is:
-
-- `IsAncestor β p q` is `IsDescendant β q p`; `isAncestor_refl` and
-  `isAncestor_trans` give reflexivity and transitivity, while
-  `fst_eq_of_isAncestor` and `generation_eq_generation_add_of_isAncestor`
-  record the root and generation relations.
-- `ancestors β p` is the set of ancestors of `p`, and `ancestorsAt β p k`
-  selects those at distance `k`. Their membership characterizations,
-  `disjoint_ancestorsAt`, and
-  `mem_ancestors_iff_exists_mem_ancestorsAt` state that the distance slices
-  partition the ancestors.
+The set `ancestors β p` consists of the `q` with `IsDescendant β q p`, while
+`ancestorsAt β p k` additionally requires `generationAfter q.2 p.2 = k`.
+`mem_ancestors_iff` and `mem_ancestorsAt_iff` characterize membership;
+`mem_ancestors_of_mem_ancestorsAt` and
+`generationAfter_of_mem_ancestorsAt` project the defining conditions.
+`disjoint_ancestorsAt` proves distinct distance slices disjoint, and
+`mem_ancestors_iff_exists_mem_ancestorsAt` states
+`q ∈ ancestors β p ↔ ∃ k, q ∈ ancestorsAt β p k`.
 -/
 
 @[expose] public section
