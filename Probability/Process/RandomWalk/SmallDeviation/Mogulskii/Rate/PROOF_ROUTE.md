@@ -492,17 +492,20 @@ interval of total width `8m` and a block of length `n`, assume
    specialization also gives a closed horizontal tube with a terminal band.
    `eventually_lowerBound_le_centralCoreTargetMass` supplies the sharp
    per-block exponent when `n / (8m)^2 → C`.
-2. The narrow-window spectral step is now formalized in
-   `RandomWalkBounds/EndpointBands/Lemmas/SpectralTarget.lean`.
+2. The central endpoint-band target and its general finite and asymptotic
+   spectral estimates are in `Spectral/Target/EndpointBand.lean`. The
+   seven-window geometry and simultaneous mass estimate are in
+   `RandomWalkBounds/EndpointBands/Lemmas/SevenWindows.lean`.
    `centralEndpointBandTarget` contains exactly `e - 1`
    parity-compatible sites in a prescribed lattice window. Its ground-state
    density lower bound yields a target mass proportional to `(e - 1)/(8m)`;
    `eventually_lowerBound_le_centralEndpointBandTargetMass_of_diffusiveRatio`
    proves the corresponding eventual bound whenever this proportion tends to
    `p > 0` and the limiting principal-eigenvalue power is strictly below the
-   limiting spectral threshold. `centralEndpointBandLo` places all seven
-   translated windows inside the central region when `2e ≤ m`, and
-   `eventually_forall_sevenCentralEndpointBandTargetMass_lower` applies the
+   limiting spectral threshold. `centralEndpointWindowLo` places window `j`
+   at `4m - (3s + e) + js`; the fit condition `3s + e ≤ 2m` puts all seven
+   windows in `[2m, 6m]`. Then
+   `eventually_forall_sevenCentralEndpointWindowTargetMass_lower` applies the
    estimate uniformly to those seven windows. The proof explicitly handles
    both the parity count and the spectral remainder; no mass is inferred for
    individual bands from a lower bound on their union.

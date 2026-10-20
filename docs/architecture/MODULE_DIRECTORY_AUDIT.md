@@ -206,7 +206,7 @@ Mogulskii module supplies its diffusive scale and Gaussian parameters.
 
 Within `Mogulskii/Spectral/Target/`, the target indicator and its full
 finite-dimensional spectral expansion remain in `Expansion.lean`, while
-`LowerBound.lean`, `Central.lean`, `Path.lean`, `Corridor.lean`, and
+`LowerBound.lean`, `Central.lean`, `EndpointBand.lean`, `Path.lean`, `Corridor.lean`, and
 `Bands.lean` expose complete target-mass and path-event estimates. The sine
 coefficient calculations in `Lemmas/Coefficient.lean` are used only by the
 extremal-mode argument, so they live under the target proof's `Lemmas/`
@@ -309,7 +309,7 @@ mathematical API they exercise; this keeps test-only files out of production
 
 The 2026-10-17 interface pass added formula-bearing public declaration lists
 to the reviewed modules in `Mogulskii/Spectral/Range/Rate/` and to
-`Mogulskii/Spectral/Target/{Central,Coefficient,Expansion,ExtremalPair,LowerBound,Path}.lean`
+`Mogulskii/Spectral/Target/{Central,Coefficient,EndpointBand,Expansion,ExtremalPair,LowerBound,Path}.lean`
 and `Mogulskii/Spectral/Survival/Path.lean`. The current pass adds them to
 `Mogulskii/RandomWalkBounds/Partition/{Corridor,Endpoint,Range,LowerProbability}.lean`;
 the mirrored source-convention modules
@@ -2332,15 +2332,49 @@ statements and project importers. The complete sharp horizontal-tube upper
 rate applies to general centered unit-variance increments with a continuous
 Brownian realization, so its entry is now
 `Rate/Bounds/SharpUpper.lean`; its finite-cover spectral derivation remains
-under `Spectral/Range/`, imported ordinarily. The seven-window target
-construction and its endpoint-specific mass estimates had one proof client,
-`RandomWalkBounds/EndpointBands/Lemmas/SpectralLowerBound.lean`. They are now
-grouped alongside that client as
-`RandomWalkBounds/EndpointBands/Lemmas/SpectralTarget.lean`. The general
-finite-target spectral expansion and mass bounds remain under
-`Spectral/Target/`. All moves preserve the declaration namespace and proof
-terms; the corresponding test and proof-route references use the new module
-paths.
+under `Spectral/Range/`, imported ordinarily.
+
+The first organization of the endpoint-band spectral proof placed both its
+general target estimate and its seven-window assembly under the one proof
+client. A statement-level review separated the two roles. The finite target
+`centralEndpointBandTarget` and its mass lower bounds are parameterized by an
+arbitrary endpoint location and width satisfying the central-region bounds;
+they do not depend on the seven-window choice. They now live in
+`Spectral/Target/EndpointBand.lean`, beside the general ground-state estimate
+`half_principalScale_le_targetMass`. The definition and its cardinality,
+coordinate, and parity lemmas no longer take unused hypotheses `2 ≤ e` or
+`2m ≤ lo`; those conditions remain only on results whose meanings require
+them. The seven-window location and simultaneous finite-window estimate are
+theorem-specific and remain in
+`RandomWalkBounds/EndpointBands/Lemmas/SevenWindows.lean`. The corresponding
+IID spectral-transfer lemma remains in
+`RandomWalkBounds/EndpointBands/Lemmas/SpectralLowerBound.lean`.
+
+The abstraction review checked the vendored Mathlib revision
+`380f2aafb622cb2c1c93dac545b6389083c68c51` at
+`Vendor/Mathlib/Mathlib/Probability/Kernel/Basic.lean` and
+`Vendor/Mathlib/Mathlib/LinearAlgebra/Eigenspace/Basic.lean`, alongside the
+official [Mathlib kernel documentation](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Probability/Kernel/Basic.html)
+and [eigenspace documentation](https://leanprover-community.github.io/mathlib4_docs/Mathlib/LinearAlgebra/Eigenspace/Basic.html).
+Those APIs provide general kernels and eigenspace concepts; the reusable
+finite-target spectral mass estimate is already stated in this repository as
+`half_principalScale_le_targetMass`. Quentin Berger and Nicolas Bouchot,
+“About the first eigenvector of the simple random walk killed upon exiting a
+large bounded domain,” arXiv:2408.15858, Theorem 1.4 and Corollary 1.7,
+provide a modern comparison for bulk lower bounds on principal eigenvectors;
+their result concerns eigenvector regularity in higher-dimensional domains,
+not endpoint target masses, so it gives no more suitable interface for this
+one-dimensional finite-window estimate. The endpoint-band estimate supplies
+the finite spectral input to the seven-window construction in Lemma 3(d) of
+A. A. Mogul'skii, “Small deviations in the sample function space,” *Teoriya
+Veroyatnostei i ee Primeneniya* 19(4) (1974), 755--765; English translation,
+“Small Deviations in a Space of Trajectories,” *Theory of Probability and Its
+Applications* 19(4) (1975), 726--736, DOI 10.1137/1119081.
+
+The updated spectral target, seven-window assembly, transfer module, rate
+client, and axiom-audit module build successfully with the pinned toolchain;
+the target `lint-style` check passes. The axiom audit reports only Lean's
+standard axioms (`propext`, `Classical.choice`, and `Quot.sound`).
 
 ## Stable scale and one-block corridor ownership (2026-10-21)
 

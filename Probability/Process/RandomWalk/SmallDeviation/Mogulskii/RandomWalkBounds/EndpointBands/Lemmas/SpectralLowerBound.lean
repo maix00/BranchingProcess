@@ -6,7 +6,8 @@ Authors: WANG Yiyang
 
 module
 
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.EndpointBands.Lemmas.SpectralTarget
+import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Target.EndpointBand
+import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.EndpointBands.Lemmas.SevenWindows
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.EndpointWindows
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.Donsker.EndpointWindowSequence
 public import Probability.Distributions.Moments.Real
@@ -47,7 +48,6 @@ private lemma ofReal_centralEndpointWindowTargetMassSum_le_endpointWindowBlockEv
     ENNReal.ofReal
         (∑ finish ∈ centralEndpointBandTarget m n
             (centralEndpointWindowLo m spacing windowRadius j) windowRadius hm
-            hwindow (centralEndpointWindowLo_fits m spacing windowRadius hfit j).1
             (centralEndpointWindowLo_fits m spacing windowRadius hfit j).2,
           (intervalKernel (8 * m - 1) ^ n)
             (centralIntervalStart m hm) finish) ≤
@@ -67,8 +67,8 @@ private lemma ofReal_centralEndpointWindowTargetMassSum_le_endpointWindowBlockEv
           intervalSite (centralIntervalStart m hm) +
               AdditivePath.displacement n increment ∈
             intervalSite ''
-              (centralEndpointBandTarget m n lo windowRadius hm hwindow
-                hfitLo.1 hfitLo.2 : Set (Fin (8 * m - 1)))} ⊆
+              (centralEndpointBandTarget m n lo windowRadius hm hfitLo.2 :
+                Set (Fin (8 * m - 1)))} ⊆
       endpointWindowBlockEvent (4 * (m : ℝ)) (spacing : ℝ)
         (windowRadius : ℝ) ((j.val : ℤ) - 3) n := by
     intro increment hevent
@@ -116,7 +116,7 @@ private lemma ofReal_centralEndpointWindowTargetMassSum_le_endpointWindowBlockEv
       constructor <;> linarith
     obtain ⟨finish, hfinish, hend⟩ := hevent.2
     have hcoordinate := centralEndpointBandTarget_coordinate_mem
-      m n lo windowRadius hm hwindow hfitLo.1 hfitLo.2 hfinish
+      m n lo windowRadius hm hfitLo.2 hfinish
     have hfinishSite : intervalSite finish = (finish.val : ℝ) + 1 := by
       simp [intervalSite]
     have hend' : 4 * (m : ℝ) + AdditivePath.displacement n increment =
@@ -157,7 +157,7 @@ private lemma ofReal_centralEndpointWindowTargetMassSum_le_endpointWindowBlockEv
     · simpa only [hindex] using hband
   have hpath := ofReal_intervalKernel_pow_apply_finset_eq_iidPathEvent
     (8 * m - 1) n (centralIntervalStart m hm)
-    (centralEndpointBandTarget m n lo windowRadius hm hwindow hfitLo.1 hfitLo.2)
+    (centralEndpointBandTarget m n lo windowRadius hm hfitLo.2)
   have hcast : ((8 * m - 1 : ℕ) : ℝ) = 8 * (m : ℝ) - 1 := by
     rw [Nat.cast_sub (by omega : 1 ≤ 8 * m)]
     norm_num
@@ -169,8 +169,8 @@ private lemma ofReal_centralEndpointWindowTargetMassSum_le_endpointWindowBlockEv
             intervalSite (centralIntervalStart m hm) +
                 AdditivePath.displacement n increment ∈
               intervalSite ''
-                (centralEndpointBandTarget m n lo windowRadius hm hwindow
-                  hfitLo.1 hfitLo.2 : Set (Fin (8 * m - 1)))} := by
+                (centralEndpointBandTarget m n lo windowRadius hm hfitLo.2 :
+                  Set (Fin (8 * m - 1)))} := by
       have hpath' := hpath
       rw [hcast] at hpath'
       simpa [hstart] using hpath'
@@ -213,9 +213,7 @@ private lemma eventually_forall_sevenRademacherEndpointWindowBlockEvent_ge_of_di
       ENNReal.ofReal
         (∑ finish ∈ centralEndpointBandTarget (scale n) (time n)
             (centralEndpointWindowLo (scale n) (spacing n) (windowRadius n) j)
-            (windowRadius n) (hscale n) (hwindow n)
-            (centralEndpointWindowLo_fits (scale n) (spacing n)
-              (windowRadius n) (hfit n) j).1
+            (windowRadius n) (hscale n)
             (centralEndpointWindowLo_fits (scale n) (spacing n)
               (windowRadius n) (hfit n) j).2,
           (intervalKernel (8 * scale n - 1) ^ time n)

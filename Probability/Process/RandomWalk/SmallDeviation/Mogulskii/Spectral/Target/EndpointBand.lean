@@ -8,55 +8,48 @@ module
 
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Target.Central
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Target.Path
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Diffusive.Lower
+import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Diffusive.Lower
 
 /-!
-# Spectral target estimates for endpoint bands
+# Spectral mass bounds for central endpoint bands
 
-This proof-support module supplies the seven-window target and its Rademacher
-spectral mass estimate to
-`RandomWalkBounds/EndpointBands/Lemmas/SpectralLowerBound.lean`. Its target
-construction is specific to that endpoint-band argument; the general
-finite-target spectral estimate remains under `Spectral/Target/`.
+For an interval kernel on $\{0,\ldots,8m-2\}$, this module constructs the
+parity-compatible sites inside a lattice endpoint band and estimates their
+transition mass from the center. The band may be placed anywhere in the
+central region; its location and width need not come from a fixed finite
+window family.
 
 The public declarations in this module are:
 
-- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.centralEndpointBandTarget`:
-  the parity-compatible sites in a lattice endpoint window, with cardinality
-  $e-1$ and coordinates in $(\ell,\ell+2e)$.
-- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.centralEndpointWindowLo`:
-  the left endpoint $4m-(3s+e)+js$ of window $j\in\{0,\ldots,6\}$.
-- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.centralEndpointWindowLo_fits`:
-  if $3s+e\le2m$, each such window lies in the central lattice region
-  $[2m,6m]$.
-- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.centralEndpointBandTarget_card`,
-  `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.centralEndpointBandTarget_coordinate_mem`,
-  `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.centralEndpointBandTarget_isCentralCoreStart`, and
-  `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.centralEndpointBandTarget_parityCompatible`:
-  the target has $e-1$ sites, each site lies in $(\ell,\ell+2e)$ and the
-  central core, and the target is already parity-compatible.
-- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.centralEndpointBandTargetMass_lower`:
-  put $K_m=\texttt{intervalKernel}(8m-1)$,
-  $B=\texttt{centralEndpointBandTarget}(m,n,\ell,e)$,
-  $x_m=\texttt{centralIntervalStart}(m)$,
-  $p=(e-1)/(8m)$, and $\lambda_m=\cos(\frac{\pi}{8m})$. Under the stated
-  geometric hypotheses, if $\lambda_m^n\le p/(p+4)$, then
-  $p\lambda_m^n\le\sum_{y\in B}K_m^n(x_m,y)$.
-- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.eventually_lowerBound_le_centralEndpointBandTargetMass_of_diffusiveRatio`:
+- `centralEndpointBandTarget`: the $e-1$ sites in $(\ell,\ell+2e)$ with
+  parity reachable from the center after $n$ steps.
+- `centralEndpointBandTarget_card` and `centralEndpointBandTarget_coordinate_mem`:
+  the target has cardinality $e-1$ and lies strictly inside its prescribed
+  endpoint band.
+- `centralEndpointBandTarget_isCentralCoreStart` and
+  `centralEndpointBandTarget_parityCompatible`: under the central-region
+  bounds, its sites lie in the central core and are already parity-compatible.
+- `centralEndpointBandTargetMass_lower`: writing $K_m=\texttt{intervalKernel}(8m-1)$,
+  $x_m=\texttt{centralIntervalStart}(m)$, and
+  $p=(e-1)/(8m)$, the spectral condition
+  $\cos^n(\pi/(8m))\le p/(p+4)$ gives
+  $p\cos^n(\pi/(8m))\le\sum_{y\in B}K_m^n(x_m,y)$.
+- `eventually_lowerBound_le_centralEndpointBandTargetMass_of_diffusiveRatio`:
   if the interval width tends to infinity, $n/W_n^2\to c$, and the target
-  proportion tends to $p>0$, then any strict lower constant below
-  $p e^{-c\pi^2/2}$ eventually bounds the corresponding target mass, under
-  the stated spectral-error inequality.
-- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.eventually_forall_sevenCentralEndpointWindowTargetMass_lower`: the same
-  eventual lower bound holds simultaneously for all seven endpoint windows.
-- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.ofReal_centralEndpointBandTargetMass_le_rademacherPathEvent`: the
-  finite-kernel target mass lower bound transfers to the IID Rademacher event
-  of staying in the interval and ending in that target.
+  proportion tends to $p>0$, every strict lower constant below
+  $p e^{-c\pi^2/2}$ eventually bounds the target mass.
+- `ofReal_centralEndpointBandTargetMass_le_rademacherPathEvent`: the finite
+  spectral target mass transfers to the IID Rademacher event of staying in
+  the interval and ending in the selected target.
 
-The paired principal modes give a lower bound for each parity-compatible
-endpoint window contained in the middle half of a killed interval.  This is
-the spectral input needed for the finitely many endpoint bands in the return
-argument; a lower bound for the whole central core alone would not imply it.
+The finite-target spectral estimate used here is the general
+`half_principalScale_le_targetMass` in `Spectral/Target/LowerBound.lean`.
+The endpoint-band specialization supplies the finite-block input for the
+seven-window argument used in Lemma 3(d) of A. A. Mogul'skii, “Small
+Deviations in the Sample Function Space,” *Teoriya Veroyatnostei i ee
+Primeneniya* 19(4) (1974), 755--765; English translation, “Small Deviations
+in a Space of Trajectories,” *Theory of Probability and Its Applications*
+19(4) (1975), 726--736, DOI 10.1137/1119081.
 -/
 
 open MeasureTheory
@@ -71,7 +64,7 @@ namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 the lattice coordinates `lo` and `lo + 2e`.  The fit hypothesis places the
 entire window inside the middle half of the killed interval. -/
 def centralEndpointBandTarget (m n lo e : ℕ) (hm : 0 < m)
-    (he : 2 ≤ e) (_hlo : 2 * m ≤ lo) (hhi : lo + 2 * e ≤ 6 * m) :
+    (hhi : lo + 2 * e ≤ 6 * m) :
     Finset (Fin (8 * m - 1)) :=
   let start := centralIntervalStart m hm
   let offset := if Even (n + start.val + lo) then 0 else 1
@@ -82,26 +75,9 @@ def centralEndpointBandTarget (m n lo e : ℕ) (hm : 0 < m)
       have hroom : lo + 2 * e ≤ 6 * m := hhi
       omega⟩ : Fin (8 * m - 1))
 
-/-- The left lattice boundary of one of seven endpoint windows.  `spacing`
-sets the displacement of consecutive window centers; `windowRadius` is their
-independent half-width. -/
-def centralEndpointWindowLo (m spacing windowRadius : ℕ) (j : Fin 7) : ℕ :=
-  4 * m - (3 * spacing + windowRadius) + j.val * spacing
-
-theorem centralEndpointWindowLo_fits (m spacing windowRadius : ℕ)
-    (hfit : 3 * spacing + windowRadius ≤ 2 * m) (j : Fin 7) :
-    2 * m ≤ centralEndpointWindowLo m spacing windowRadius j ∧
-      centralEndpointWindowLo m spacing windowRadius j + 2 * windowRadius ≤ 6 * m := by
-  have hbase : 3 * spacing + windowRadius ≤ 4 * m := by omega
-  have hj : j.val ≤ 6 := by omega
-  have hjmul : j.val * spacing ≤ 6 * spacing :=
-    Nat.mul_le_mul_right spacing hj
-  unfold centralEndpointWindowLo
-  constructor <;> omega
-
 theorem centralEndpointBandTarget_card (m n lo e : ℕ) (hm : 0 < m)
-    (he : 2 ≤ e) (hlo : 2 * m ≤ lo) (hhi : lo + 2 * e ≤ 6 * m) :
-    (centralEndpointBandTarget m n lo e hm he hlo hhi).card = e - 1 := by
+    (hhi : lo + 2 * e ≤ 6 * m) :
+    (centralEndpointBandTarget m n lo e hm hhi).card = e - 1 := by
   classical
   unfold centralEndpointBandTarget
   rw [Finset.card_image_of_injOn]
@@ -115,10 +91,9 @@ theorem centralEndpointBandTarget_card (m n lo e : ℕ) (hm : 0 < m)
 /-- Coordinates of a target site lie strictly inside the prescribed real
 lattice window. -/
 theorem centralEndpointBandTarget_coordinate_mem (m n lo e : ℕ)
-    (hm : 0 < m) (he : 2 ≤ e) (hlo : 2 * m ≤ lo)
-    (hhi : lo + 2 * e ≤ 6 * m)
+    (hm : 0 < m) (hhi : lo + 2 * e ≤ 6 * m)
     {finish : Fin (8 * m - 1)}
-    (hfinish : finish ∈ centralEndpointBandTarget m n lo e hm he hlo hhi) :
+    (hfinish : finish ∈ centralEndpointBandTarget m n lo e hm hhi) :
     lo < finish.val + 1 ∧ finish.val + 1 < lo + 2 * e := by
   classical
   unfold centralEndpointBandTarget at hfinish
@@ -136,23 +111,22 @@ theorem centralEndpointBandTarget_coordinate_mem (m n lo e : ℕ)
     omega
 
 theorem centralEndpointBandTarget_isCentralCoreStart (m n lo e : ℕ)
-    (hm : 0 < m) (he : 2 ≤ e) (hlo : 2 * m ≤ lo)
+    (hm : 0 < m) (hlo : 2 * m ≤ lo)
     (hhi : lo + 2 * e ≤ 6 * m)
     {finish : Fin (8 * m - 1)}
-    (hfinish : finish ∈ centralEndpointBandTarget m n lo e hm he hlo hhi) :
+    (hfinish : finish ∈ centralEndpointBandTarget m n lo e hm hhi) :
     IsCentralCoreStart m finish := by
   have hcoord := centralEndpointBandTarget_coordinate_mem
-    m n lo e hm he hlo hhi hfinish
+    m n lo e hm hhi hfinish
   constructor
   · exact le_trans hlo hcoord.1.le
   · exact le_trans hcoord.2.le hhi
 
 theorem centralEndpointBandTarget_parityCompatible (m n lo e : ℕ)
-    (hm : 0 < m) (he : 2 ≤ e) (hlo : 2 * m ≤ lo)
-    (hhi : lo + 2 * e ≤ 6 * m) :
+    (hm : 0 < m) (hhi : lo + 2 * e ≤ 6 * m) :
     intervalParityCompatibleTarget n (centralIntervalStart m hm)
-      (centralEndpointBandTarget m n lo e hm he hlo hhi) =
-        centralEndpointBandTarget m n lo e hm he hlo hhi := by
+      (centralEndpointBandTarget m n lo e hm hhi) =
+        centralEndpointBandTarget m n lo e hm hhi := by
   classical
   ext finish
   simp only [intervalParityCompatibleTarget, Finset.mem_filter]
@@ -193,11 +167,11 @@ theorem centralEndpointBandTargetMass_lower
         (((e - 1 : ℕ) : ℝ) / ((8 * m - 1 + 1 : ℕ) : ℝ)) + 8)) :
     (((e - 1 : ℕ) : ℝ) / ((8 * m - 1 + 1 : ℕ) : ℝ)) *
         Real.cos (Real.pi / ((8 * m - 1 + 1 : ℕ) : ℝ)) ^ n ≤
-      ∑ finish ∈ centralEndpointBandTarget m n lo e hm he hlo hhi,
+        ∑ finish ∈ centralEndpointBandTarget m n lo e hm hhi,
         (intervalKernel (8 * m - 1) ^ n)
           (centralIntervalStart m hm) finish := by
   let start := centralIntervalStart m hm
-  let target := centralEndpointBandTarget m n lo e hm he hlo hhi
+  let target := centralEndpointBandTarget m n lo e hm hhi
   let weight : ℝ := Real.sqrt 2 / 2
   let proportion : ℝ := ((e - 1 : ℕ) : ℝ) / ((8 * m - 1 + 1 : ℕ) : ℝ)
   have hcount : 1 < 8 * m - 1 := by omega
@@ -215,7 +189,7 @@ theorem centralEndpointBandTargetMass_lower
     have hfinishTarget : finish ∈ target :=
       (Finset.mem_filter.mp hfinish).1
     have hfinishCore := centralEndpointBandTarget_isCentralCoreStart
-      m n lo e hm he hlo hhi hfinishTarget
+      m n lo e hm hlo hhi hfinishTarget
     exact sqrt_two_div_two_le_intervalSineWeight_of_isCentralCoreStart
       m hm finish hfinishCore
   have hproportion : 0 < proportion := by
@@ -225,8 +199,8 @@ theorem centralEndpointBandTargetMass_lower
     · positivity
   have hcard : proportion * ((8 * m - 1 + 1 : ℕ) : ℝ) ≤
       (intervalParityCompatibleTarget n start target).card := by
-    rw [centralEndpointBandTarget_parityCompatible m n lo e hm he hlo hhi,
-      centralEndpointBandTarget_card m n lo e hm he hlo hhi]
+    rw [centralEndpointBandTarget_parityCompatible m n lo e hm hhi,
+      centralEndpointBandTarget_card m n lo e hm hhi]
     calc
       proportion * ((8 * m - 1 + 1 : ℕ) : ℝ) = ((e - 1 : ℕ) : ℝ) := by
         dsimp [proportion]
@@ -278,7 +252,7 @@ theorem eventually_lowerBound_le_centralEndpointBandTargetMass_of_diffusiveRatio
       Real.exp (c * (-(Real.pi ^ 2) / 2))) :
     ∀ᶠ n in atTop, lowerBound ≤
       ∑ finish ∈ centralEndpointBandTarget (scale n) (time n) (lo n)
-          (e n) (hscale n) (he n) (hlo n) (hhi n),
+          (e n) (hscale n) (hhi n),
         (intervalKernel (8 * scale n - 1) ^ time n)
           (centralIntervalStart (scale n) (hscale n)) finish := by
   let radius : ℕ → ℕ := fun n => 4 * scale n - 1
@@ -407,74 +381,11 @@ theorem eventually_lowerBound_le_centralEndpointBandTargetMass_of_diffusiveRatio
     (hlo n) (hhi n) hsmallN'
   have hmass' : proportion n * power n ≤
       ∑ finish ∈ centralEndpointBandTarget (scale n) (time n) (lo n)
-          (e n) (hscale n) (he n) (hlo n) (hhi n),
+          (e n) (hscale n) (hhi n),
         (intervalKernel (8 * scale n - 1) ^ time n)
           (centralIntervalStart (scale n) (hscale n)) finish := by
     simpa [proportion, power, hden] using hmass
   exact hlower.le.trans hmass'
-
-/-- Uniform spectral lower bounds for seven endpoint windows whose center
-spacing and half-width are independent.  Their relative window width may
-shrink with the block size, as long as it has a positive limit at each fixed
-diffusive parameter. -/
-theorem eventually_forall_sevenCentralEndpointWindowTargetMass_lower
-    (scale time spacing windowRadius : ℕ → ℕ) {c p lowerBound : ℝ}
-    (hscale : ∀ n, 0 < scale n) (htime : ∀ n, 0 < time n)
-    (hwindow : ∀ n, 2 ≤ windowRadius n)
-    (hfit : ∀ n, 3 * spacing n + windowRadius n ≤ 2 * scale n)
-    (hwidth : Tendsto (fun n => ((8 * scale n : ℕ) : ℝ)) atTop atTop)
-    (hratio : Tendsto (fun n => (time n : ℝ) /
-        ((8 * scale n : ℕ) : ℝ) ^ 2) atTop (nhds c))
-    (hproportion : Tendsto (fun n => ((windowRadius n - 1 : ℕ) : ℝ) /
-        ((8 * scale n : ℕ) : ℝ)) atTop (nhds p))
-    (hp : 0 < p)
-    (hsmallLimit : Real.exp (c * (-(Real.pi ^ 2) / 2)) <
-      (4 * (Real.sqrt 2 / 2) * (Real.sqrt 2 / 2) * p) /
-        (4 * (Real.sqrt 2 / 2) * (Real.sqrt 2 / 2) * p + 8))
-    (hlowerBound : lowerBound <
-      p * Real.exp (c * (-(Real.pi ^ 2) / 2))) :
-    ∀ᶠ n in atTop, ∀ j : Fin 7,
-      lowerBound ≤
-        ∑ finish ∈ centralEndpointBandTarget (scale n) (time n)
-            (centralEndpointWindowLo (scale n) (spacing n) (windowRadius n) j)
-            (windowRadius n) (hscale n) (hwindow n)
-            (centralEndpointWindowLo_fits (scale n) (spacing n)
-              (windowRadius n) (hfit n) j).1
-            (centralEndpointWindowLo_fits (scale n) (spacing n)
-              (windowRadius n) (hfit n) j).2,
-          (intervalKernel (8 * scale n - 1) ^ time n)
-            (centralIntervalStart (scale n) (hscale n)) finish := by
-  have hloFit : ∀ n j,
-      2 * scale n ≤ centralEndpointWindowLo (scale n) (spacing n)
-        (windowRadius n) j := by
-    intro n j
-    exact (centralEndpointWindowLo_fits (scale n) (spacing n)
-      (windowRadius n) (hfit n) j).1
-  have hhiFit : ∀ n j,
-      centralEndpointWindowLo (scale n) (spacing n) (windowRadius n) j +
-        2 * windowRadius n ≤ 6 * scale n := by
-    intro n j
-    exact (centralEndpointWindowLo_fits (scale n) (spacing n)
-      (windowRadius n) (hfit n) j).2
-  have hfinite : ∀ᶠ n in atTop, ∀ j ∈ (Finset.univ : Finset (Fin 7)),
-      lowerBound ≤
-        ∑ finish ∈ centralEndpointBandTarget (scale n) (time n)
-            (centralEndpointWindowLo (scale n) (spacing n)
-              (windowRadius n) j) (windowRadius n)
-            (hscale n) (hwindow n) (hloFit n j) (hhiFit n j),
-          (intervalKernel (8 * scale n - 1) ^ time n)
-            (centralIntervalStart (scale n) (hscale n)) finish := by
-    apply (Finset.univ : Finset (Fin 7)).eventually_all.2
-    intro j _
-    exact eventually_lowerBound_le_centralEndpointBandTargetMass_of_diffusiveRatio
-      scale time (fun n => centralEndpointWindowLo (scale n) (spacing n)
-        (windowRadius n) j) windowRadius
-      hscale htime hwindow (hloFit · j) (hhiFit · j) hwidth hratio hproportion hp
-      hsmallLimit hlowerBound
-  filter_upwards [hfinite] with n hn
-  intro j
-  have hj := hn j (Finset.mem_univ j)
-  simpa using hj
 
 /-- The narrow spectral target mass is an actual Rademacher path event. -/
 theorem ofReal_centralEndpointBandTargetMass_le_rademacherPathEvent
@@ -492,9 +403,9 @@ theorem ofReal_centralEndpointBandTargetMass_le_rademacherPathEvent
           InClosedInterval 1 (8 * (m : ℝ) - 1) n (4 * (m : ℝ)) increment ∧
             4 * (m : ℝ) + AdditivePath.displacement n increment ∈
               intervalSite ''
-                (centralEndpointBandTarget m n lo e hm he hlo hhi :
+                (centralEndpointBandTarget m n lo e hm hhi :
                   Set (Fin (8 * m - 1)))} := by
-  let target := centralEndpointBandTarget m n lo e hm he hlo hhi
+  let target := centralEndpointBandTarget m n lo e hm hhi
   have hmass := centralEndpointBandTargetMass_lower
     m n lo e hm hn he hlo hhi hsmall
   have hpath := ofReal_intervalKernel_pow_apply_finset_eq_iidPathEvent
@@ -521,6 +432,7 @@ theorem ofReal_centralEndpointBandTargetMass_le_rademacherPathEvent
       rw [hstart] at hpath'
       rw [← hcast]
       exact hpath'
+
 
 end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
