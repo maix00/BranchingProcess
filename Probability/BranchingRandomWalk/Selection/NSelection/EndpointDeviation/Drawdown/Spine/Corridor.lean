@@ -11,10 +11,37 @@ import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Ra
 /-!
 # Positive probability for the first right-tail corridor
 
-Finite variance supplies a quantitative spine-corridor lower bound along the
-the logarithmic first-stage horizon.  A slightly narrower terminal window
-absorbs the floor in `floor ((log N)^(5/2))` and lies inside the corridor used
-by the first-stage population estimate.
+## Public declarations
+
+Let $\ell_n=\lfloor(\log N_n)^{5/2}\rfloor$ and let
+\[
+G_n=\{x:\mathbb N\to\mathbb R:\operatorname{history}(\ell_n,0,x)
+  \in\operatorname{affineCorridorThrough}(\ell_n,
+  -b\log N_n,0,b\log N_n,(-b+v)\log N_n)\}.
+\]
+
+* `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.rightTailPositiveASpineCorridorLowerBound`
+  defines the explicit lower-bound quantity $B_n$ obtained from a diffusive
+  entrance block and stable endpoint-bridge blocks.  With
+  $\rho=(b-v/4)/(v/2)$, $E_k=\operatorname{finiteVarianceEntranceLength}(s,k)$,
+  and $R_k=\operatorname{balancedBlockCount}(\operatorname{finiteVarianceBridgeLength}(s,k)-J_k,J_k)+1$,
+  where $s_k=(v/2)\operatorname{logarithmicSmallDeviationScale}(k)$ and
+  $J_k=\operatorname{stableBlockLength}(2,\nu,A^2,s,k)$, its formula is
+  \[
+  B_n=\left[\exp\!\left(\left(\frac{C}{(\rho/2-13/60)^2}-1\right)A^2\right)\right]^{R_{\ell_n}}\frac{q}{E_{\ell_n}}.
+  \]
+* `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.eventually_rightTailPositiveA_spineCorridor_lowerBound_of_centeredSecondMoment`
+  assumes that the tilted increment law is centered with variance
+  $\sigma^2\in(0,\infty)$, and proves that some $C<0$, $q>0$, and $A>0$
+  satisfy $B_n\leq\mathbb P_{\mathrm{tilt}}(G_n)$ for all sufficiently large
+  $n$.
+* `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.eventually_rightTailPositiveA_spineCorridor_pos_of_centeredSecondMoment`
+  concludes $\mathbb P_{\mathrm{tilt}}(G_n)>0$ for all sufficiently large
+  $n$ under the same moment assumptions.
+
+The quantitative entrance and endpoint-bridge estimate is supplied by
+`ProbabilityTheory.BranchingRandomWalk.Spine.exists_eventually_tiltedIncrementFieldLaw_affineCorridor_lowerBound_of_centeredSecondMoment`;
+this module specializes its scale and corridor to the first-stage cutoff.
 -/
 
 open Filter MeasureTheory ProbabilityTheory
