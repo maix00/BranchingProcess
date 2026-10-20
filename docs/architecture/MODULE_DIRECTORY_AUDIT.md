@@ -2448,3 +2448,9 @@ mathematical terms. The former owns the canonical equal-rank map, its guarded
 inverse, and ambient extension; the latter owns the reusable existence
 theorems from lower-tail counts and finite Hall matching. This keeps the
 concrete rank construction distinct from the abstract matching theorem.
+
+A name-focused pass across `Basic.lean` and the seven `Mechanism/` modules
+found one omitted declaration name, `particleAtSourceRankBy_matchByRank_target`,
+which is now included in the `Matching.lean` header. The refreshed pass finds
+all syntactically detected top-level declaration names in those eight
+headers; it does not replace review of their assumptions and formulas.
