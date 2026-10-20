@@ -19,6 +19,12 @@ first tube stage in the positive-initial-mass right-tail argument.  A root is
 counted once if its full pre-sampled branching field contains a path in a
 specified event.  The root fields are independent, so a Chernoff estimate
 controls the lower tail of this count.
+
+For a measurable event `E` of one root field, write
+`q = (stepFieldLaw μ)(E)` and
+`N_E(field) = ∑ r : Fin m, 1_E(field r)`. The public theorem
+`measure_finiteRootEventCount_le_quarter_mean μ E hE m hm` states
+`ℙ_{μ^{⊗m}}(N_E ≤ m q / 4) ≤ exp(-m q / 4)` for `0 < m`.
 -/
 
 @[expose] public section

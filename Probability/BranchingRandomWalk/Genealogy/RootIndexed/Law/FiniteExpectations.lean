@@ -17,6 +17,17 @@ it does not alter any single-root identity.  This file transfers measurable
 single-root observables to one labelled root and then sums those identities
 over a finite set of roots.  It is the interface through which a single-root
 many-to-one theorem is later reused for finitely many initial particles.
+
+The public expectation identities are:
+
+- `RootIndexed.lintegral_root_observable μ r g hg`:
+  `∫⁻ field, g (field r) ∂stepFieldLaw μ = ∫⁻ tree, g tree ∂stepFieldLaw μ`.
+- `RootIndexed.lintegral_finset_root_observables μ A g hg`:
+  the integral of `∑ r ∈ A, g r (field r)` is the sum over `r ∈ A` of the
+  corresponding single-root integrals. The observable may depend on `r`.
+- `RootIndexed.lintegral_finset_root_observable μ A g hg` gives the common-
+  observable case as `∫⁻ field, ∑ r ∈ A, g (field r) =
+  A.card • ∫⁻ tree, g tree`.
 -/
 
 open MeasureTheory ProbabilityTheory

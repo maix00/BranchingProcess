@@ -10,10 +10,36 @@ import Probability.Process.Filtration.GeneratedByCoordinates
 /-!
 # Decomposition at one generation
 
-A root-indexed step field is equivalently its coordinates strictly before a
-generation together with the complete descendant field rooted at every node
-of that generation.  Subtypes record the depth conditions, so reconstruction
-does not require a default root, slot, mark, or step.
+The public declarations in `ProbabilityTheory.BranchingRandomWalk.RootIndexed`
+are:
+
+- `Generation`: the subtype of rooted addresses $q$ with $|q.2|=n$.
+- `Past`: the strict-past coordinate field
+  $\{q:|q.2|<n\}\to\operatorname{Step}(\alpha,X)$.
+- `StepField.past`: restricts a full field to those strict-past coordinates.
+- `generationRoots`: maps each depth-$n$ rooted address to its underlying
+  root-address pair; `generationRoots_injective` proves injectivity and
+  `generationRoots_depth` records its depth.
+- `StepField.glue`: reconstructs the full field by
+  $\operatorname{glue}(n,p,f)(r,u)=p(r,u)$ when $|u|<n$, and otherwise uses
+  the future field indexed by $(r,u.take(n))$ at suffix $u.drop(n)$.
+- `StepField.past_measurable`: the past restriction is measurable with
+  respect to `stepFiltration n`.
+- `StepField.measurable_stepFiltration_iff_past`: a field-valued map is
+  measurable with respect to `stepFiltration n` exactly when its strict-past
+  restriction is measurable.
+- `StepField.glue_measurable`: reconstruction is measurable as a map from the
+  product of the past and future field spaces.
+- `StepField.glue_past_subtrees`: for every full field $F$,
+  $\operatorname{glue}(n,F.past(n),\operatorname{RootIndexed.subtreeStepFieldVector}
+  (\operatorname{generationRoots}(n),F))=F$.
+
+The decomposition uses subtypes for generation and past addresses, so it
+requires no default root, slot, mark, or step. It is a domain-flow
+decomposition of the coordinate field; the probability-law consequences are
+proved in their coupling clients. The measurability declarations assume a
+measurable step type; the root and slot types need no finiteness or
+countability assumptions.
 -/
 
 open MeasureTheory

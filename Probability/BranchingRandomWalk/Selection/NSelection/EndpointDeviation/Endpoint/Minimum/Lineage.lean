@@ -8,6 +8,8 @@ import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.En
 import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.PositiveMoment.Bounds
 import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Roots.Nonempty
 import Probability.BranchingRandomWalk.Selection.NSelection.Admissible.Real
+import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law.Basic
+import Combinatorics.BranchingWalk.Step.Ordering.Monotone
 import Probability.BranchingRandomWalk.Step.Ordering.Support
 
 /-!
@@ -284,8 +286,19 @@ theorem finiteRootStepFieldLaw_endpointMinimum_succ_le_predictablePositiveSlotZe
       simp [orderedBySteps, Step.IsOrderedBy, realPotential]]
     rw [L.sortedPotentialImage_orderedBy]
     simp
-  have hfirstChild := finiteRootStepFieldLaw_all_first_child
-    L.sortedPotentialImage hordered hnonemptySorted m
+  have hfirstChild :
+      ∀ᵐ field ∂finiteRootStepFieldLaw L.sortedPotentialImage m,
+        ∀ i : Fin m, ∀ u : 𝕍, survive (field i u) 0 := by
+    filter_upwards
+      [finiteRootStepFieldLaw_ae_all_of_measure_one
+        orderedSteps_measurable L.sortedPotentialImage hordered m,
+       finiteRootStepFieldLaw_ae_all_of_measure_one
+        nonemptySupport_measurable L.sortedPotentialImage hnonemptySorted m]
+      with field horderedField hnonemptyField
+    intro i u
+    obtain ⟨j, hj⟩ := hnonemptyField i u
+    exact orderedSteps_survive_of_le (field i u) (horderedField i u)
+      (Nat.zero_le j) hj
   filter_upwards [hadmiss, hpopulation, hfirstChild]
     with field hadmiss hpopulation hfirstChild
   intro k
