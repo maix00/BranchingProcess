@@ -9,7 +9,19 @@ import Probability.BranchingRandomWalk.Genealogy.Exploration.Selected.AbstractSu
 /-!
 # Abstract branching at a finite stopping generation
 
-The proof partitions by the stopping generation and selected address.  Every
+In namespace `ProbabilityTheory.BranchingRandomWalk`, the public declarations
+are:
+
+- `stopped_selectedSubtreeStepField_event_factorization μ τ hτ hfinite chosen hchosen hcount hdepth A B hA hB` states
+  $\nu(A\cap\Psi^{-1}(B))=\nu(A)\nu(B)$ when $A\in\mathcal F_\tau$,
+  $B$ is measurable, the stopping generation $\tau$ is finite everywhere,
+  and the countably ranged measurable address `chosen` has depth $\tau$.
+- `stopped_selectedSubtreeStepField_independent μ τ hτ hfinite chosen hchosen hcount hdepth`
+  states that the stopped past $\mathcal F_\tau$ and the selected subtree
+  field $\Psi$ are independent under the step-field law.
+
+Here $\Psi(\omega)(v)=\omega(\operatorname{chosen}(\omega)\mathbin{++}v)$.
+The proof partitions by the stopping generation and selected address; each
 cell reduces to the deterministic-generation branching theorem on abstract
 `Step` fields.
 -/
@@ -22,14 +34,14 @@ open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 
 
 
-def abstractStoppedSelectionCell {α X : Type*}
+private def abstractStoppedSelectionCell {α X : Type*}
     (τ : (TreeNode α → Step α X) → WithTop ℕ)
     (chosen : (TreeNode α → Step α X) → TreeNode α)
     (A : Set (TreeNode α → Step α X))
     (p : ℕ × TreeNode α) : Set (TreeNode α → Step α X) :=
   A ∩ {ω | τ ω = p.1} ∩ {ω | chosen ω = p.2}
 
-theorem abstractStoppedSelectionCell_measurable
+private lemma abstractStoppedSelectionCell_measurable
     {α X : Type*} [MeasurableSpace X]
     (τ : (TreeNode α → Step α X) → WithTop ℕ)
     (hτ : IsStoppingTime

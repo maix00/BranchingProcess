@@ -8,10 +8,11 @@ module
 
 public import Order.Interval.RationalCoordinate.UnitInterval
 public import Probability.Process.Stable.SmallDeviation.Blocks.EntranceScaling
-public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.Return
+public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.Return.Basic
 public import Probability.Process.Stable.SmallDeviation.Blocks.Upper.ArbitraryHorizon
 public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Cover
 public import Probability.Process.Path.Skorokhod.Corridor.Segment
+import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Stationarity
 import Mathlib.Order.CompleteLattice.Lemmas
 
 /-!
@@ -55,7 +56,7 @@ def blockEndpointBin (d : ℝ) (i : Fin 5) : Set ℝ :=
   Set.Ioo (-2 * d) (2 * d) ∩
     Set.Ioc (((i.val : ℝ) - 5 / 2) * d) (((i.val : ℝ) - 3 / 2) * d)
 
-private theorem mem_blockEndpointBin_iff {d x : ℝ} (i : Fin 5) :
+private lemma mem_blockEndpointBin_iff {d x : ℝ} (i : Fin 5) :
     x ∈ blockEndpointBin d i ↔
       -2 * d < x ∧ x < 2 * d ∧
         (((i.val : ℝ) - 5 / 2) * d < x ∧
@@ -69,11 +70,11 @@ private theorem mem_blockEndpointBin_iff {d x : ℝ} (i : Fin 5) :
   · rintro ⟨hlo, hhi, hwindow⟩
     exact ⟨⟨hlo, hhi⟩, hwindow⟩
 
-private theorem blockEndpointBin_measurable (d : ℝ) (i : Fin 5) :
+private lemma blockEndpointBin_measurable (d : ℝ) (i : Fin 5) :
     MeasurableSet (blockEndpointBin d i) := by
   exact measurableSet_Ioo.inter measurableSet_Ioc
 
-private theorem blockEndpointBin_disjoint (d : ℝ) :
+private lemma blockEndpointBin_disjoint (d : ℝ) :
     Pairwise (fun i j : Fin 5 => Disjoint (blockEndpointBin d i)
       (blockEndpointBin d j)) := by
   classical
@@ -100,7 +101,7 @@ private theorem blockEndpointBin_disjoint (d : ℝ) :
       lt_of_le_of_lt hstep hxi'.2.2.1
     exact (not_lt_of_ge hxj'.2.2.2) hcontr
 
-private theorem blockEndpointBin_cover {d : ℝ} (hd : 0 < d) :
+private lemma blockEndpointBin_cover {d : ℝ} (hd : 0 < d) :
     Set.Ioo (-2 * d) (2 * d) ⊆ ⋃ i : Fin 5, blockEndpointBin d i := by
   intro x hx
   by_cases h₀ : x ≤ -(3 / 2) * d
@@ -195,8 +196,8 @@ theorem IsStableLevyProcess.iInf_sevenBlockEndpointProbability_pow_le_corridor
     · intro ω hω
       exact Set.mem_iUnion.mp (blockEndpointBin_cover hd hω.2)
     · intro i
-      have hlaw := h.rationalUniformBlockProcess_identDistrib blocks hblocks j
-        ⟨0, hblocks⟩
+      have hlaw := h.increments.indepIncrements.rationalUniformBlockProcess_identDistrib
+        h.toIsLevyProcess.stationaryIncrements blocks hblocks j ⟨0, hblocks⟩
       have hprob := hlaw.measure_mem_eq
         (Skorokhod.measurableSet_rationalCoordinateCorridorIocReturnWithMargin
           (-a) a
