@@ -7,9 +7,12 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.Kernel.Killed.Return.Partition
+public import Probability.Distributions.Moments.Real
 public import Mathlib.Probability.Distributions.Gaussian.Real
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Lemmas.Partition.Basic
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Lemmas.Partition.Quantitative
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Scale.Basic
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Scale.BlockScale
+import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Lemmas.Partition.Basic
+import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Lemmas.Partition.Quantitative
 
 /-!
 # Finite-partition lower bounds for corridor return kernels

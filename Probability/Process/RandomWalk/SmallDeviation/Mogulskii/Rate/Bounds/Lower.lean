@@ -7,7 +7,8 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Scale.BlockScale
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Lemmas.Return.Uniform
+import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Lemmas.Return.Uniform
+public import Probability.Process.RandomWalk.Kernel.Killed.Return.Basic
 public import Probability.Process.RandomWalk.Kernel.Killed.Survival.Blocking
 public import Mathlib.Topology.Order.LiminfLimsup
 
