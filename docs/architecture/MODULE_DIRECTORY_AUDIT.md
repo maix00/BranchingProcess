@@ -2398,3 +2398,20 @@ five affected modules. A fresh structural scan of 1,484 production modules,
 138 test modules, and the project linter driver found no same-stem file and
 directory collisions, no directory with more than eight direct Lean files,
 and no duplicate `Lemmas.lean` plus `Lemmas/` entry.
+
+## First-$N$ selection under injective relabeling (2026-10-21)
+
+The capacity-hit trajectory had a private, one-use proof of this general
+fact: if $f$ injectively relabels candidates and preserves the strict order
+of their `valueKey`s, then
+`IsFirstNBy N value C S` implies
+`IsFirstNBy N targetValue (f '' C) (S.image f)`. This is an invariant of the
+abstract finite-or-infinite first-$N$ selection specification, not a
+branching-walk construction, so it now lives as
+`IsFirstNBy.image` beside that specification in
+`Combinatorics/BranchingWalk/Selection/NSelection/Mechanism/Infinite.lean`.
+The trajectory uses this theorem and no longer carries its local copy. Both
+modules now list their public declarations and formulas in their module
+headers. The theorem module, trajectory module, and direct clients built with
+the pinned toolchain (3,428 Lake jobs); Mathlib `lint-style` passed on the two
+edited modules.
