@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import MeasureTheory.Integral.Lebesgue.RestrictLimit
-public import Probability.MeasureTheory.SmallValue
+public import Probability.MeasureTheory.SmallValue.Basic
 
 /-!
 # Positive-probability small values from restricted-integral convergence

@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Topology.Cadlag.Skorokhod.Compactness
+public import Topology.Cadlag.Skorokhod.Compactness.Basic
 public import Topology.Cadlag.Skorokhod.Compactness.StepPath
 
 /-!

@@ -17,6 +17,23 @@ the offspring coupling we need one coherent parent map.  This file extracts
 that map and proves it is injective whenever ranks distinguish the particles
 of the source slice.  The particles retain their full multi-root labels
 `Root × TreeNode α`; no finiteness or countability of the root type is used.
+
+The public API is:
+
+- `Cloud.SliceDominatingMap φ C D t` is an injective map from `C`'s particles
+  at time `t` to `D`'s particles such that `φ` of each target position is at
+  most `φ` of the matched source position.
+- `Cloud.InjectivelyDominatesBy φ C D t` is the corresponding existence
+  proposition. `injectivelyDominatesBy_iff_nonempty` identifies it with
+  `Nonempty (Cloud.SliceDominatingMap φ C D t)`; the slice maps have identity,
+  composition, and order-dual laws.
+- `exists_injective_match_of_rankwiseDominatesBy` turns rankwise domination
+  into a coherent injective matching when the source rank separates source
+  particles. `exists_injective_match_of_rankwiseDominatesBy_of_finite` gives
+  the finite-source-slice specialization. The theorems
+  `injectivelyDominatesBy_of_rankwiseDominatesBy` and
+  `injectivelyDominatesBy_of_rankwiseDominatesBy_of_finite` package these
+  matchings as the existence proposition.
 -/
 
 open Combinatorics.UlamHarris
