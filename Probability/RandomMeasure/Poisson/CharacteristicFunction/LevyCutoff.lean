@@ -8,7 +8,7 @@ import MeasureTheory.Measure.LevyMeasure.Cutoff
 import Probability.Distributions.InfinitelyDivisible.LevyKhintchine.FiniteVariation
 import Probability.RandomMeasure.Poisson.CharacteristicFunction.Independent
 import Probability.RandomMeasure.Poisson.CharacteristicFunction.TimeWindow
-import Probability.RandomMeasure.Poisson.Support
+import Probability.RandomMeasure.Poisson.Intensity.Support
 
 /-!
 # Characteristic intensity across time and jump cutoffs

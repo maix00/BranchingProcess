@@ -9,9 +9,9 @@ module
 public import Mathlib.MeasureTheory.Measure.OpenPos
 public import Mathlib.MeasureTheory.Measure.Prod
 public import Mathlib.MeasureTheory.Constructions.UnitInterval
-public import MeasureTheory.MeasurableSpace.CadlagPath
+public import MeasureTheory.MeasurableSpace.CadlagPath.Basic
 public import Topology.Cadlag.Jump
-public import Topology.Cadlag.Skorokhod.Evaluation
+public import Topology.Cadlag.Skorokhod.Evaluation.Basic
 
 /-!
 # Deterministic continuity times for càdlàg path laws
@@ -85,7 +85,7 @@ theorem measurableSet_rationalSideSeparation :
     exact (isOpen_Ioi.measurableSet.preimage hdist)
   simpa only [Set.ofPred_and] using hqt.inter (htr.inter (hqnear.inter (hrnear.inter hsep)))
 
-private theorem rationalSideSeparation_not_continuous
+private lemma rationalSideSeparation_not_continuous
     {path : CadlagPath unitInterval ℝ} {t : unitInterval}
     (hsep : (path, t) ∈ rationalSideSeparation)
     (hcont : ContinuousAt (fun s : unitInterval => path s) t) : False := by
@@ -117,7 +117,7 @@ private theorem rationalSideSeparation_not_continuous
       _ < ε := by linarith
   exact (lt_irrefl ε) (lt_trans (by simpa [ε] using hfar) hbound)
 
-private theorem leftLim_ne_of_not_continuousAt
+private lemma leftLim_ne_of_not_continuousAt
     {path : CadlagPath unitInterval ℝ} {t : unitInterval}
     (hbad : ¬ ContinuousAt (fun s : unitInterval => path s) t) :
     Function.leftLim (fun s : unitInterval => path s) t ≠ path t := by
@@ -132,7 +132,7 @@ private theorem leftLim_ne_of_not_continuousAt
   exact hbad (continuousAt_iff_continuous_left'_right'.2
     ⟨hleft, path.isCadlag_toFun.isRightContinuous t⟩)
 
-private theorem exists_rationalSideSequences {t : unitInterval}
+private lemma exists_rationalSideSequences {t : unitInterval}
     (ht0 : (⊥ : unitInterval) < t) (ht1 : t < ⊤) :
     ∃ q r : ℕ → RationalUnitIntervalTime,
       (∀ n, rationalTimeToUnitInterval (q n) < t) ∧
@@ -186,7 +186,7 @@ private theorem exists_rationalSideSequences {t : unitInterval}
     tendsto_nhdsWithin_iff.2 ⟨hrTime, Eventually.of_forall hrStrict⟩
   exact ⟨q, r, hqStrict, hrStrict, hqWithin, hrWithin⟩
 
-private theorem rationalSideSeparation_of_not_continuous
+private lemma rationalSideSeparation_of_not_continuous
     {path : CadlagPath unitInterval ℝ} {t : unitInterval}
     (ht0 : (⊥ : unitInterval) < t) (ht1 : t < ⊤)
     (hbad : ¬ ContinuousAt (fun s : unitInterval => path s) t) :
@@ -284,14 +284,14 @@ theorem rationalSideSeparation_iff_not_continuousAt
     exact rationalSideSeparation_not_continuous hsep hcont
   · exact rationalSideSeparation_of_not_continuous ht0 ht1
 
-private theorem rationalSideSeparation_section_countable
+private lemma rationalSideSeparation_section_countable
     (path : CadlagPath unitInterval ℝ) :
     {t : unitInterval | (path, t) ∈ rationalSideSeparation}.Countable := by
   apply (path.isCadlag_toFun.countable_discontinuitySet).mono
   intro t ht
   exact rationalSideSeparation_not_continuous ht
 
-private theorem rationalSideSeparation_section_volume_zero
+private lemma rationalSideSeparation_section_volume_zero
     (path : CadlagPath unitInterval ℝ) :
     volume {t : unitInterval | (path, t) ∈ rationalSideSeparation} = 0 :=
   (rationalSideSeparation_section_countable path).measure_zero volume

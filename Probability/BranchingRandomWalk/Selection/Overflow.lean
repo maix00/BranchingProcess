@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.BranchingRandomWalk.Selection.Process
-public import Probability.BranchingRandomWalk.Timing.Overflow
+public import Probability.BranchingRandomWalk.Timing.Schedule.Overflow
 public import Combinatorics.UlamHarris.Basic
 
 /-!
