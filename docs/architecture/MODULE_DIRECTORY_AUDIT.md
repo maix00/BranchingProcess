@@ -1905,7 +1905,7 @@ $(n^p)\to\infty$ and $n^p/n^q\to0$. This is a reusable relation between
 power scales, so it belongs in `Analysis/Asymptotics/Scale/`, outside the
 branching-random-walk endpoint-deviation subtree.
 
-The new `Analysis/Asymptotics/Scale/Power.lean` exposes
+The new `Analysis/Asymptotics/Scale/Power/SmallDeviation.lean` exposes
 `Asymptotics.isSmallDeviationScale_natCast_rpow_of_lt`; the endpoint-deviation
 result now specializes it at $p=2/5$ and $q=1/2$. The abstraction uses only
 Mathlib's `tendsto_rpow_atTop` and `tendsto_rpow_neg_atTop` in
@@ -1917,3 +1917,9 @@ $n^p/n^q=n^{-(q-p)}$ for positive $n$. See the
 and [official API documentation](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Analysis/SpecialFunctions/Pow/Asymptotics.html).
 The `LogScales.lean` module header now lists all ten public definitions and
 five public theorems with their formulas and hypotheses.
+
+The two public power-scale interfaces are grouped in `Scale/Power/`:
+`SmallDeviation.lean` owns the general power-law small-deviation relation and
+`IntermediateBlock.lean` owns rounded intermediate power block lengths.
+These are peer interfaces within the power-scale subtopic. This brings
+`Analysis/Asymptotics/Scale/` down from nine to seven direct Lean modules.

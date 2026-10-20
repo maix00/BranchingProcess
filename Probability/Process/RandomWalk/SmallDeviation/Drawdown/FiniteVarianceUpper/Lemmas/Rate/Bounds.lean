@@ -14,7 +14,7 @@ public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.Analysis.Complex.Exponential
 public import Mathlib.Order.Filter.Defs
 import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.JumpPattern.UnionBound
-import Analysis.Asymptotics.Scale.IntermediatePowerBlock
+import Analysis.Asymptotics.Scale.Power.IntermediateBlock
 import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 
 /-!

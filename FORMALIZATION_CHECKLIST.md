@@ -324,7 +324,7 @@ Appendix A.2's Lemma A.7.
 `DriftedTube/FiniteVarianceLower/Lemmas/Staircase/Concrete/Lower/Conditional.lean`
 and `DriftedTube/FiniteVarianceLower/Lemmas/Staircase/Concrete/Upper/Conditional.lean`
 compose that entrance budget with the staircase
-product. `Analysis/Asymptotics/Scale/IntermediatePowerBlock.lean` verifies the
+product. `Analysis/Asymptotics/Scale/Power/IntermediateBlock.lean` verifies the
 choice `ℓ=⌊Δ^(2+η)⌋` in Chapter 3, Lemma 3.5; `Concrete/Uniform.lean` converts both sequential
 bounds into one real-width threshold uniform in `L` and `r₀`.
 `Probability/Process/RandomWalk/SmallDeviation/DriftedTube/FiniteVarianceLower/EndpointBounds.lean` chooses the strict

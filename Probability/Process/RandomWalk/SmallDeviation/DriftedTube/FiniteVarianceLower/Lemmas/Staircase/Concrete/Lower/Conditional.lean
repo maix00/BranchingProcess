@@ -19,7 +19,7 @@ public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVa
 public import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.Event
 import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Concrete.Lower.Asymptotic
 import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Concrete.EntranceBudget
-public import Analysis.Asymptotics.Scale.IntermediatePowerBlock
+public import Analysis.Asymptotics.Scale.Power.IntermediateBlock
 
 /-!
 # Tilted-tube lower bound from the reflected survival asymptotics

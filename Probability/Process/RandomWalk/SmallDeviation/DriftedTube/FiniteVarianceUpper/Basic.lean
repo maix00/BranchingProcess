@@ -13,7 +13,7 @@ public import Probability.Sequence.IID.Basic
 import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Basic
 import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceUpper.Lemmas.Blocks
 import Probability.Process.Filtration.ConditionalBlocks
-import Analysis.Asymptotics.Scale.IntermediatePowerBlock
+import Analysis.Asymptotics.Scale.Power.IntermediateBlock
 
 /-!
 # Finite-variance upper bound for a tilted tube
