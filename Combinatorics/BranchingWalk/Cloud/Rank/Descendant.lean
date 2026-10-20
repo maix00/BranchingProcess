@@ -21,6 +21,8 @@ The public API is:
 
 - `Cloud.descendantRank C t descendant q =
   #{p | p ∈ C.particles t ∧ descendant p ∧ p < q}` in `ℕ∞`.
+- `Cloud.descendantRank_def` is the definitional equality displaying that
+  predecessor-set cardinality.
 - `Cloud.descendantRank_eq_siblingRank` proves
   `descendantRank(i) = ξ.siblingRank(i)` when the selected predecessors of
   `i` are exactly the surviving slots of `ξ` below `i`; local finiteness makes

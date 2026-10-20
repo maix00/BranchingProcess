@@ -32,6 +32,22 @@ The public API is:
   `HasLowerPotentialPoint` states attainment; `lowerPotentialPoint` chooses
   an attained lower point and the accompanying theorems show it belongs to
   the frontier and is least among the potential values.
+
+The exact frontier laws are `CloudSet.mem_lowerFrontier_iff`,
+`CloudSet.lowerFrontier_subset_points`, `CloudSet.mem_upperFrontier_iff`,
+`CloudSet.upperFrontier_subset_points`, and
+`CloudSet.mem_upperFrontier_iff_orderDual`. In particular, both frontiers are
+subsets of `C.points t`, and upper-frontier membership is equivalent to
+lower-frontier membership after applying `OrderDual.toDual`. The example laws
+`CloudSet.unattainedLowerExample_points_nonempty` and
+`CloudSet.unattainedLowerExample_lowerFrontier_empty` give a nonempty slice
+with no least point.
+
+For a scalar observation, `Cloud.lowerPotentialPoint_mem_frontier` and
+`Cloud.isLeast_lowerPotentialPoint` state that an attained selector lies in
+`C.lowerPotentialFrontier potential t` and is least in
+`C.potentialValues potential t`. The identity cases are
+`Cloud.lowerPotentialFrontier_id` and `Cloud.upperPotentialFrontier_id`.
 -/
 
 @[expose] public section

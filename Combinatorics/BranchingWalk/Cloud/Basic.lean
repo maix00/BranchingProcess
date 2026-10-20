@@ -48,6 +48,23 @@ The public API is:
 - `Cloud.ofBranchingWalk_mem_particles_child` characterizes a realized
   one-step child by survival of its slot; `Cloud.mem_ofBranchingWalk_particles_iff`
   gives the full time-slice characterization.
+
+The public equations are `Cloud.withFinsetParticles_particles` and
+`Cloud.withFinsetParticles_position`, which identify the finite slices and
+preserve positions; `Cloud.mapPosition_particles` and
+`Cloud.mapPosition_position`, which preserve labels and apply the observation;
+and `Cloud.ofBranchingWalk_position` and
+`Cloud.discreteTimeCloud_ofBranchingWalk_position`, which give the accumulated
+position `β.initial r + displaceWith d (β.step r) [] u`. The generation-indexed
+identity is `Cloud.discreteTimeCloud_particles_eq_survivingParticlesAt`:
+`(Cloud.discreteTimeCloud_ofBranchingWalk d β).particles k =
+survivingParticlesAt β k`.
+
+For geometric clouds, `CloudSet.mem_vertexSet` identifies membership in the
+space-time vertex set, `CloudSet.ext` gives extensionality by time slices,
+`CloudSet.support_mapPosition` states
+`(C.mapPosition φ).support = C.support.map φ`, and
+`CloudSet.mem_mapOrderDual_points` preserves membership under order reversal.
 -/
 
 @[expose] public section

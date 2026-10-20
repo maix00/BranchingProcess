@@ -19,6 +19,15 @@ theorem constructs pointwise injective relabelings `φ u` for which
 `Step.IsSiblingClosed (fun i => β u (φ u i))`, while every originally
 surviving slot `j` is in the image of `φ u`. Thus the relabeling covers the
 actual child support without requiring a relabeling of the whole slot type.
+
+The public predicates are
+`Combinatorics.Branching.StepField.IsSiblingClosable β`, equivalent to
+`∀ u, Step.IsSiblingClosable (β u)`, and
+`Combinatorics.Branching.RootIndexed.BranchingWalk.IsSiblingClosable β`,
+equivalent to `∀ r, StepField.IsSiblingClosable (β.step r)`. The construction
+`Combinatorics.Branching.StepField.exists_relabeling_isSiblingClosed` gives
+injective relabelings `φ u` whose relabeled steps are sibling closed and whose
+images contain every slot surviving in the original step.
 -/
 
 @[expose] public section

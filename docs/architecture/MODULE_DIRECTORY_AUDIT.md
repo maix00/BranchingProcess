@@ -2468,3 +2468,44 @@ Because the repository result is only this proof's finiteness adapter, it is
 now a `private lemma` beside its sole use; no additional public finite-map
 wrapper is introduced. Both affected modules build with the pinned toolchain,
 and `lint-style` passes on them.
+
+## Branching-walk foundational API header follow-up (2026-10-21)
+
+The public module headers for
+`Combinatorics/BranchingWalk/Basic/Ordering/Orderable.lean`,
+`Basic/Position/DisplacementMap.lean`, and `Basic/Sibling/Closable.lean`
+described their concepts but omitted exact names for several exported
+declarations. Their headers now list the finite-support and orderability
+classes for step fields and root-indexed walks, the mapped-displacement
+definition and its nil/cons, partial-path, and additive-potential laws, and
+the sibling-closability predicates and relabeling existence theorem. The
+formulas state the corresponding pointwise step conditions, path recursion,
+survival equivalences, and support-covering injection. These interfaces
+remain in `Basic/Ordering`, `Basic/Position`, and `Basic/Sibling`, where their
+types are owned; no proof-only module or new abstraction was needed. All three
+modules build with the pinned toolchain, and `lint-style` passes on them.
+
+## Cloud API headers and finite-slice counting adapter (2026-10-21)
+
+Formula-bearing declaration inventories were completed for the public cloud
+interfaces in `Cloud/{Basic,Frontier/Basic,Measurability}.lean`,
+`Cloud/Order/{Basic,Slice,SliceDominatingMap}.lean`, and
+`Cloud/Rank/{Descendant,Slice}.lean`. These headers now state the cloud-slice
+identities, frontier attainment laws, coordinate measurability event,
+rankwise and measure-domination relations, injective matching laws, and rank
+definitions. Their types remain under `Cloud/` because they operate on
+time-indexed particle and geometric clouds; the reusable order relations
+remain in `Cloud/Order/`, and rank definitions remain in `Cloud/Rank/`.
+
+`Cloud.encard_subtype_eq_encard` had only one caller, the countable Dirac-sum
+comparison in `Cloud/Order/Slice.lean`. It merely supplies the equivalence
+between a subtype of a cloud slice and the corresponding set intersection.
+The pinned Mathlib revision `380f2aafb622cb2c1c93dac545b6389083c68c51`
+already supplies the general `Set.encard_congr` in
+[`Mathlib/Data/Set/Card.lean`](https://github.com/maix00/mathlib4/blob/380f2aafb622cb2c1c93dac545b6389083c68c51/Mathlib/Data/Set/Card.lean#L519),
+so this cloud-specific adapter is now private beside that proof rather than a
+public counting API. A declaration-name scan that includes single-line
+attributes such as `@[simp]` finds no missing name in the 12-module `Cloud/`
+tree; the scan checks names, while formula and hypothesis review remains
+semantic. The full `BranchingProcess` target builds successfully with 5,595
+jobs, and `lint-style` passes on all 11 edited modules.
