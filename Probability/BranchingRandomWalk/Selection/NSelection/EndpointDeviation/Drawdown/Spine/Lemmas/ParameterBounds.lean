@@ -33,7 +33,7 @@ modules outside this directory.
 ## Proof-chain statements
 
 - `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.exists_rightTailPositiveAParameters` chooses $b,v,c$ satisfying the strict threshold and width inequalities required by the positive-parameter construction.
-- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.rightTailPositiveADrift_le_span`, `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.rightTailPositiveAWindowUpper_le_span`, `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.rightTailPositiveAEndpointEnvelope_le`, `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.rightTailPositiveAWindowUpper_at_cutoff`, `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.rightTailPositiveAFirstStageUpper_le_zero`, `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.rightTailPositiveASecondStageEnvelope_le`, `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.rightTailPositiveAWindowUpper_le_generationDrift_add_width`, and `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.rightTailPositiveADrift_eq_ahExponent` bound the schedule $d_j=(\kappa/c^2)D^{-2/3}j$ and the exponential endpoint weights by their terminal or generation-scale envelopes.
+- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.rightTailPositiveADrift_le_span`, `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.rightTailPositiveAWindowUpper_at_cutoff`, `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.rightTailPositiveAFirstStageUpper_le_zero`, `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.rightTailPositiveAWindowUpper_le_generationDrift_add_width`, and `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.rightTailPositiveADrift_eq_ahExponent` bound the schedule $d_j=(\kappa/c^2)D^{-2/3}j$ and the exponential endpoint weights by their terminal or generation-scale envelopes.
 - `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.rightTailPositiveAWindowWeightedAH_le` and `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.rightTailPositiveADrift_le_shortPrefix_power` compare the weighted long-prefix and short-prefix terms with the Aïdékon--Hu exponent.
 - `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.sum_fin_if_le_eq_add_mul` splits a finite sum at $\ell$, and `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.rightTailPositiveA_canceledAH_sum_le` bounds the resulting sum by $(\ell+1)+D\exp((-b+v)\log N+cD^{1/3}+\kappa c^pD^{p/3})$.
 -/
@@ -202,107 +202,6 @@ lemma rightTailPositiveADrift_le_span
         (mul_le_mul_of_nonneg_left hjReal (Real.rpow_nonneg hspan.le _)) hcoeff
     _ = κ / c ^ 2 * span ^ (3⁻¹ : ℝ) := by rw [hpow]
 
-/-- At every time strictly after the first cutoff and no later than the
-terminal time, the window's upper endpoint is bounded by the terminal drift
-plus the larger of its two widths. -/
-lemma rightTailPositiveAWindowUpper_le_span
-    (ell ellN k : ℕ) (logN b v c κ : ℝ)
-    (hell : ell < ellN) (hκ : 0 ≤ κ)
-    (hk : ell < k) (hkN : k ≤ ellN) :
-    rightTailPositiveAWindowUpper ell ellN logN b v c κ k ≤
-      (κ / c ^ 2 + max c v) *
-        (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)) := by
-  let span : ℝ := ((ellN - ell : ℕ) : ℝ)
-  have hspan : 0 < span := by
-    dsimp [span]
-    exact_mod_cast Nat.sub_pos_of_lt hell
-  have hspanNonneg :
-      0 ≤ (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)) :=
-    Real.rpow_nonneg hspan.le _
-  have hdrift := rightTailPositiveADrift_le_span ell ellN (k - ell) κ c
-    hell hκ (Nat.sub_le_sub_right hkN ell)
-  have hne : k ≠ ell := ne_of_gt hk
-  by_cases hend : k = ellN
-  · subst k
-    have hnotlt : ¬ellN < ell := Nat.not_lt_of_ge hell.le
-    have hne' : ellN ≠ ell := by omega
-    simp [rightTailPositiveAWindowUpper, hnotlt, hne']
-    calc
-      rightTailPositiveADrift ell ellN κ c (ellN - ell) +
-          v * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)) ≤
-        κ / c ^ 2 * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)) +
-          max c v * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)) := by
-            exact add_le_add hdrift
-              (mul_le_mul_of_nonneg_right (le_max_right c v) hspanNonneg)
-      _ = (κ / c ^ 2 + max c v) *
-          (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)) := by ring
-  · have hkltN : k < ellN := by omega
-    have hnotlt : ¬k < ell := Nat.not_lt_of_ge hk.le
-    simp [rightTailPositiveAWindowUpper, hnotlt, hne, hkltN]
-    calc
-      rightTailPositiveADrift ell ellN κ c (k - ell) +
-          c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)) ≤
-        κ / c ^ 2 * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)) +
-          max c v * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)) := by
-            exact add_le_add hdrift
-              (mul_le_mul_of_nonneg_right (le_max_left c v) hspanNonneg)
-      _ = (κ / c ^ 2 + max c v) *
-          (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)) := by ring
-
-/-- A single deterministic envelope controls every exponential weight in the
-uniform killed-capacity estimate. The initial-stage endpoint is nonpositive
-when `v ≤ b`, and all later upper endpoints are controlled by the terminal
-diffusive scale. -/
-lemma rightTailPositiveAEndpointEnvelope_le
-    (ell ellN : ℕ) (logN b v c κ : ℝ)
-    (hellN : ell < ellN)
-    (hκ : 0 ≤ κ) (hc : 0 < c) (hvb : v ≤ b) (hlog : 0 ≤ logN) :
-    ∀ k : Fin (ellN + 1),
-      (if (k : ℕ) ≤ ell then
-        rightTailPositiveAWindowUpper ell ellN logN b v c κ (k : ℕ)
-      else
-        rightTailPositiveAWindowUpper ell ellN logN b v c κ ell +
-          rightTailPositiveAWindowUpper ell ellN logN b v c κ (k : ℕ)) ≤
-        (κ / c ^ 2 + max c v) *
-          (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)) := by
-  intro k
-  have hscaleNonneg :
-      0 ≤ (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)) :=
-    Real.rpow_nonneg (by positivity) _
-  have hcoeff : 0 ≤ κ / c ^ 2 + max c v := by positivity
-  have hupperEllEq :
-      rightTailPositiveAWindowUpper ell ellN logN b v c κ ell =
-        (-b + v) * logN := by
-    simp [rightTailPositiveAWindowUpper]
-  have hupperEll : rightTailPositiveAWindowUpper ell ellN logN b v c κ ell ≤ 0 := by
-    rw [hupperEllEq]
-    exact mul_nonpos_of_nonpos_of_nonneg (by linarith) hlog
-  by_cases hkle : (k : ℕ) ≤ ell
-  · simp [hkle]
-    by_cases hklt : (k : ℕ) < ell
-    · have hkupper :
-          rightTailPositiveAWindowUpper ell ellN logN b v c κ (k : ℕ) = 0 := by
-        simp [rightTailPositiveAWindowUpper, hklt]
-      rw [hkupper]
-      exact mul_nonneg hcoeff hscaleNonneg
-    · have hkeq : (k : ℕ) = ell := by omega
-      have hkeqFin : k = ⟨ell, by omega⟩ := Fin.ext hkeq
-      rw [hkeqFin]
-      exact hupperEll.trans (mul_nonneg hcoeff hscaleNonneg)
-  · simp [hkle]
-    have hklo : ell < (k : ℕ) := by omega
-    have hkhi : (k : ℕ) ≤ ellN := by omega
-    have hkupper := rightTailPositiveAWindowUpper_le_span ell ellN (k : ℕ)
-      logN b v c κ hellN hκ hklo hkhi
-    calc
-      rightTailPositiveAWindowUpper ell ellN logN b v c κ ell +
-          rightTailPositiveAWindowUpper ell ellN logN b v c κ (k : ℕ) ≤
-        0 + (κ / c ^ 2 + max c v) *
-          (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)) :=
-          add_le_add hupperEll hkupper
-      _ = (κ / c ^ 2 + max c v) *
-          (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)) := by simp
-
 /-- The endpoint of the first tube is its prescribed narrow interval. -/
 lemma rightTailPositiveAWindowUpper_at_cutoff
     (ell ellN : ℕ) (logN b v c κ : ℝ) :
@@ -322,22 +221,6 @@ lemma rightTailPositiveAFirstStageUpper_le_zero
   · have hkeq : k = ell := by omega
     rw [hkeq, rightTailPositiveAWindowUpper_at_cutoff]
     exact mul_nonpos_of_nonpos_of_nonneg (by linarith) hlog
-
-/-- The second-stage exponential endpoint weight retains the negative
-first-stage offset, while its later contribution is controlled by the
-terminal diffusive scale. -/
-lemma rightTailPositiveASecondStageEnvelope_le
-    (ell ellN k : ℕ) (logN b v c κ : ℝ)
-    (hellN : ell < ellN) (hκ : 0 ≤ κ)
-    (hk : ell < k) (hkN : k ≤ ellN) :
-    rightTailPositiveAWindowUpper ell ellN logN b v c κ ell +
-      rightTailPositiveAWindowUpper ell ellN logN b v c κ k ≤
-    (-b + v) * logN + (κ / c ^ 2 + max c v) *
-      (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)) := by
-  rw [rightTailPositiveAWindowUpper_at_cutoff]
-  exact add_le_add_right
-    (rightTailPositiveAWindowUpper_le_span ell ellN k logN b v c κ
-      hellN hκ hk hkN) ((-b + v) * logN)
 
 /-- At a fixed second-stage generation, the endpoint weight uses that
 generation's drift rather than the terminal drift. This pointwise form is

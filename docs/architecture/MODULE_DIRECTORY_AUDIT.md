@@ -1536,23 +1536,24 @@ object with its own measurable-window and upper-envelope statements. The
 second-stage tube, parameter and endpoint bounds, random-walk estimates,
 scale limits, and capacity-probability compositions form one theorem-specific
 proof chain under `Spine/Lemmas/`: `Tube.lean`, `ParameterBounds.lean`,
-`CapacityMarkov.lean`, `RandomWalkBounds.lean`, `Asymptotics.lean`,
-`CapacityProbability.lean`, `FailureProbability.lean`, and `TwoPhase.lean`. A
-source-use scan found no external clients of those intermediate declarations.
+`CapacityMarkov.lean`, `RandomWalkBounds.lean`, `Asymptotics.lean`, and
+`CapacityProbability.lean`. A source-use scan found no external clients of
+those intermediate declarations. The unused `TwoPhase.lean` route and its
+one-use adapters have been removed.
 The generic monotone-corridor-to-drawdown inclusion stays in
 `RandomWalk/SmallDeviation/Drawdown/Event.lean`; it is shared by the linear
 drifted-tube estimate and this nonlinear spine corridor. The actual directory
 name is `FirstStage/`; the positive-parameter condition remains encoded in the
 mathematical declaration names.
 
-A fresh production-tree scan counted 1,474 Lean modules, excluding `.lake`,
+A fresh production-tree scan counted 1,475 Lean modules, excluding `.lake`,
 vendored dependencies, and test-only sources. It found no same-stem file and
 directory pairs, no directory with more than eight direct Lean files, no
 `Lemmas.lean`/`Lemmas/` collisions, and no empty source directories. The
 `Spine/` directory has four direct modules, and its proof-only `Lemmas/`
-folder has eight direct modules. All eight proof-chain modules and the
-`Capacity.lean` public entry compiled with the pinned toolchain (4,678 jobs
-for the proof-chain build; 4,658 jobs for the entry-module build).
+folder has six direct modules. Those six proof-chain modules and the
+`Capacity.lean` public entry compiled with the pinned toolchain after the
+cleanup.
 
 The four cloud rank and leftmost-selection modules now list their public
 interfaces using their mathematical statements. `Cloud/Rank/Slice.lean`
@@ -1821,21 +1822,22 @@ directories; no directory contains more than eight direct Lean files.
 
 The second-stage restarted-window and prefix events are now defined in
 `Selection/NSelection/EndpointDeviation/Drawdown/Spine/SecondStageTube.lean`.
-`Lemmas/Tube.lean` contains only the tube inclusions and probability
-comparisons used in the proof chain. The endpoint-gap polynomial failure
-probability and its conclusion now live in the semantic entry module
+The tube-to-fixed-corridor, tube-to-drawdown, and shifted-prefix inclusions
+are stated beside those event definitions. `Lemmas/Tube.lean` contains the
+one-use restarted-window probability comparison. The endpoint-gap polynomial
+failure probability and its conclusion now live in the semantic entry module
 `Spine/FailureProbability.lean`, while the non-reusable estimates remain in
-the nested `Spine/Lemmas/` chain. This leaves seven proof-chain modules under
-`Lemmas/`, with no event definitions or final result hidden there.
+the nested `Spine/Lemmas/` chain. Removing the unused `TwoPhase.lean` route
+and its one-use adapters leaves six proof-chain modules under `Lemmas/`, with
+no event definitions or final result hidden there.
 
 The former `EndpointDeviation/PositiveA/` directory is absent from both the
 working tree and the fetched GitHub `preflight` tree. `PositiveA` remains only
 inside parameter-indexed declaration names such as `rightTailPositiveA...`,
 where it records the positive exponent regime.
 
-The ten affected modules built with the pinned toolchain (4,679 Lake jobs).
-The production layout scan reports 1,476 modules and 138 test modules, with
-no same-stem file/directory pairs, repeated parent/file stems,
+The production layout scan reports 1,475 modules and 138 test modules, with no
+same-stem file/directory pairs, repeated parent/file stems,
 `Lemmas.lean`/`Lemmas/` collisions, empty directories, `Source/` directories,
 or directories with more than eight direct Lean files. The scan excludes the
 vendored Mathlib and BrownianMotion source trees.
