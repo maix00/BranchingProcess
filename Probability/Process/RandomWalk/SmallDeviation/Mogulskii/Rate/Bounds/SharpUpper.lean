@@ -6,17 +6,26 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Range.Blocks.Bound
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Range.Rate.SmallWidth
+public import Mathlib.Analysis.SpecialFunctions.Log.Basic
+public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.MeasureTheory.Integral.Bochner.Basic
+public import Mathlib.MeasureTheory.Measure.MeasureSpaceDef
+public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
+public import Mathlib.Probability.BrownianMotion.Basic
+public import Mathlib.Topology.Order.LiminfLimsup
+public import Probability.Process.RandomWalk.Path.Corridor.Horizontal.Core
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Scale.Basic
+public import Probability.Sequence.IID.Basic
+import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Range.Blocks.Bound
+import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Range.Rate.SmallWidth
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Range.Rate.Lemmas.LogarithmicTransfer
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Range.Rate.Lemmas.FiniteCoverParameters
 
 /-!
-# Sharp horizontal upper rate from the fixed-cover block route
+# Sharp horizontal-tube upper rate
 
-This file composes the fixed-parameter block estimate with the explicit
-parameter selection. Positivity and lower coboundedness remain hypotheses
-until the matching lower-rate proof supplies them.  The public declaration
+The public declaration
 `limsup_scaledLog_horizontalTubeProbability_le_sharp` states that for
 centered unit-variance increments with a continuous Brownian realization,
 an `IsMogulskiiScale` $s_n$, eventually positive tube probabilities $p_n$,
@@ -28,7 +37,9 @@ and a lower-cobounded normalized logarithm,
   p_n=\texttt{horizontalTubeProbability}
     (\texttt{iidSequenceLaw}(\nu),1/2,s_n,n).
 \]
-The fixed-cover block step uses the continuous-path Donsker theorem
+Its proof uses the spectral fixed-cover block estimates in
+`Spectral/Range/`; this module keeps the complete sharp upper-rate statement
+with the other Mogulskii rate bounds. The block step uses the continuous-path Donsker theorem
 formalized as
 `ProbabilityTheory.RandomWalk.tendstoInDistribution_normalizedLinearContinuousPath_brownian`,
 corresponding to Theorem 4.20 in I. Karatzas and S. E. Shreve,

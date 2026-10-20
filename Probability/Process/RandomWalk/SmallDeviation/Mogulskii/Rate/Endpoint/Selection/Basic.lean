@@ -8,7 +8,7 @@ module
 
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Rate.Endpoint.Windows
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Rate.Endpoint.Selection.Lemmas.FixedParameters
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Range.Rate.SharpUpper
+import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Rate.Bounds.SharpUpper
 
 /-!
 # Sharp normal-domain rate from floor endpoint windows

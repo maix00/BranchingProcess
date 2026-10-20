@@ -1,5 +1,5 @@
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Rate.Endpoint.Selection.Basic
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Target.Bands
+import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.EndpointBands.Lemmas.SpectralTarget
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.EndpointBands.Lemmas.SpectralLowerBound
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.Donsker.EndpointWindowSequence
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Rate.Endpoint.Windows
