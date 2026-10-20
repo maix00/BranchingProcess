@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Combinatorics.BranchingWalk.Selection.NSelection.Leftmost
+public import Combinatorics.BranchingWalk.Selection.NSelection.Mechanism.Leftmost
 
 /-!
 # One-step comparison with leftmost selection

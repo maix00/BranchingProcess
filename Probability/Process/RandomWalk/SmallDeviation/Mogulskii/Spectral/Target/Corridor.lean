@@ -12,6 +12,22 @@ public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.T
 /-!
 # Central spectral targets as horizontal-tube events
 
+The public declarations in this module are:
+
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.ofReal_centralCoreTarget_le_rademacherCoreReturnProbability`:
+  put $K_m=\texttt{intervalKernel}(8m-1)$,
+  $C_{m,n}(x)=\texttt{centralParityTarget}(m,n,x)$,
+  $x_0=x.\mathrm{val}+1$, and
+  $\lambda_m=\cos(\frac{\pi}{8m})$. For
+  $2m\le x_0\le6m$ and $\lambda_m^n\le\frac1{17}$, the IID Rademacher
+  probability of staying in $[1,8m-1]$ and ending in the physical sites of
+  $C_{m,n}(x)$ is at least $\frac14\lambda_m^n$.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.ofReal_centralCoreTarget_le_rademacherTubeEndpointProbability`:
+  with $S_j$ the partial sums of IID Rademacher increments, if
+  $\lambda_m^n\le\frac1{17}$, then
+  $\mathbb P(\forall j\in\{1,\ldots,n\},\ |S_j|\le4m\land|S_n|\le2m)
+  \ge\frac14\lambda_m^n$.
+
 The finite Dirichlet target mass for a centered Rademacher walk is a lower
 bound for the corresponding closed horizontal tube with its endpoint in the
 central core. This is the discrete event needed before applying closed-set
