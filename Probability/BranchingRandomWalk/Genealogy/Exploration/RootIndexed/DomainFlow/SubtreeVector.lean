@@ -9,9 +9,25 @@ import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.DomainF
 /-!
 # Subtree step fields rooted at finitely many addresses
 
-Selected descendants may belong to different initial roots while still sharing
-one pre-sampled product probability space. Equal-length, injectively labelled
-roots give a vector of independent subtree step fields.
+In namespace `ProbabilityTheory.BranchingRandomWalk`, the public declarations
+are:
+
+- `multiRootSubtreeStepFieldVector roots field` is the vector
+  $V(j)(v)=\mathrm{field}(\mathrm{roots}(j).1,
+  \mathrm{roots}(j).2\mathbin{++}v)$ of descendant step fields.
+- `multiRootBranchingAddresses_injective roots hlen hinj` proves that
+  $(j,v)\mapsto(\mathrm{roots}(j).1,
+  \mathrm{roots}(j).2\mathbin{++}v)$ is injective when the root addresses
+  have a common length and are pairwise distinct.
+- `fixed_multiRootSubtreeStepFieldVector_law μ roots hlen hinj` states that
+  the law of `V` under the finite-root product law is
+  $\bigotimes_{j:Fin\,k}\operatorname{stepFieldLaw}(\mu)$.
+- `multiRootSubtreeStepFieldVector_measurable roots` proves measurability of
+  `V`.
+
+Selected descendants may belong to different initial roots while sharing one
+pre-sampled product probability space. Equal-depth, distinct roots give
+independent subtree step fields.
 -/
 
 open MeasureTheory ProbabilityTheory

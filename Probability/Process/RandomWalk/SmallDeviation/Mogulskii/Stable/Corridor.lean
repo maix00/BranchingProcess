@@ -6,18 +6,62 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Scale
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.BlockScale
-public import Probability.Process.RandomWalk.Path.Corridor.Horizontal
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Scale.Core
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Scale.BlockScale
+public import Probability.Process.RandomWalk.Path.Corridor.Horizontal.Core
 public import Probability.Process.RandomWalk.FunctionalLimit.NormalizedStep.Block
 public import Probability.Process.RandomWalk.FunctionalLimit.Stable.PathLimit.Block
 public import Probability.Distributions.Stable.Attraction.Norming.Inverse
-public import Probability.Sequence.IID
+public import Probability.Sequence.IID.Basic
 public import Probability.Process.Stable.SmallDeviation.EscapeRate.PathLaw.Basic
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Discrete.Horizontal
-
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.Horizontal.Basic
 /-!
 # One-block corridors for the stable Mogulskii route
+
+The public declarations in this module are:
+
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.stableBlockLength_two`:
+  at $\alpha=2$, the block length is
+  $\lfloor c x_n^2/V(x_n)\rfloor$, where $V$ is the truncated second moment.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.stableBlockLength_two_of_truncatedSecondMoment_eq`:
+  if $V(x_n)=v$, the exponent-two stable block length equals the diffusive
+  block length with constant $c/v$.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.stableBlockTube`:
+  the event that an increment path stays in the open horizontal tube of
+  width $w x_n$ for the stable block length.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.stableClosedBlockTube`:
+  the corresponding closed-tube event.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.stableBlockCorridorProbability`:
+  the i.i.d. probability of the open stable block tube.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.blockOscillationLTEvent_subset_normalizedStepBlockRangeOscillation`:
+  strict source-block oscillation below $w x_n$ implies normalized path-range
+  oscillation at most $w$.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.iidSequenceLaw_measure_blockOscillationLT_le_normalizedStepBlockPathLaw`:
+  the source oscillation-event probability is bounded by the corresponding
+  normalized path-law probability.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.limsup_normalizedStepBlockRangeOscillation_le_stableProcessTube`:
+  under the block-path $J_1$ limit, the range-oscillation limsup is bounded by
+  the slightly wider stable-process range event.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.limsup_iidSequenceLaw_blockOscillationLT_le_stableProcessTube`:
+  transfers the preceding bound to the source block-oscillation probability.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.eventually_openHorizontalTubeProbability_le_pow_of_blockPathLimit`:
+  a one-block bound $q<1$ yields an eventual estimate
+  $\mathbb P(T_n)\le q^{N_n/b_n}$ for horizon $N_n$ and block length $b_n$.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.eventually_partialSumRangeOscillationLTProbability_le_pow_of_blockPathLimit`:
+  gives $\mathbb P(R_{N_n}<w x_n)\le q^{N_n/b_n}$ for the strict partial-sum
+  range event.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.measurableSet_stableClosedBlockTube`:
+  the closed stable block tube is measurable.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.stableBlockTube_mono_width`:
+  decreasing the open tube width gives a subset of the original event.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.stableBlockCorridorProbability_mono_width`:
+  the open-tube probability is monotone in its width.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.stableBlockCorridorProbability_tendsto_of_pathLawLimit`:
+  an explicit block-path $J_1$ limit and zero boundary mass give convergence
+  of the open-tube probabilities.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.stableBlockCorridorProbability_tendsto_of_stableDomain`:
+  stable-domain attraction, tightness, and slow variation provide the block
+  path-law limit and hence the one-block corridor probability limit.
 
 The one-block step of Mogulskii's stable proof estimates the probability that the increment path stays in a
 corridor of normalized width `w` over a block of `stableBlockLength α ν constant a n` steps, which is
@@ -33,6 +77,12 @@ by which the Gaussian specialization reuses the diffusive estimates.
 The one-block estimate is conditional on the block path-law limit: the last
 theorem transfers an explicit `J₁` limit to the corridor probability when the
 limiting path law gives zero mass to the corridor boundary.
+
+The source one-block comparison is Lemma 3(c) of A. A. Mogul'skii,
+“Small deviations in the sample function space,” *Teoriya Veroyatnostei i ee
+Primeneniya* 19(4) (1974), 755–765; English translation, “Small Deviations in
+a Space of Trajectories,” *Theory of Probability and Its Applications* 19(4)
+(1975), 726–736, DOI 10.1137/1119081.
 -/
 
 @[expose] public section
