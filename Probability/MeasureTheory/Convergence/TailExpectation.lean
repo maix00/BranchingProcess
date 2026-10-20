@@ -13,7 +13,7 @@ public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 public import Mathlib.Data.EReal.Basic
 public import Mathlib.Topology.Order.LiminfLimsup
-public import Mathlib.Tactic
+import Mathlib.Tactic
 
 /-!
 # One-sided endpoint expectations from lower-tail bounds

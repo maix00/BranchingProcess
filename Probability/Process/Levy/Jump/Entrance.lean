@@ -9,7 +9,7 @@ module
 public import Probability.Distributions.Poisson.MarkedEvents
 public import Order.Bounds.Corridor
 public import Mathlib.Topology.Instances.ENNReal.Lemmas
-public import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.Linarith
 
 /-!
 # Entrance by one finite-activity jump

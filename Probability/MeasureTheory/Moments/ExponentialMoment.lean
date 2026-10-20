@@ -10,7 +10,7 @@ public import Mathlib.MeasureTheory.Integral.Bochner.Set
 public import Mathlib.MeasureTheory.Measure.ProbabilityMeasure
 public import Mathlib.Analysis.SpecialFunctions.Exp
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
-public import Mathlib.Tactic
+import Mathlib.Tactic
 
 /-!
 # Moment bounds from exponential moments

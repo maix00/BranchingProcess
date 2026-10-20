@@ -7,8 +7,8 @@ Authors: WANG Yiyang
 module
 
 public import Mathlib.Analysis.Normed.Module.Basic
-public import Mathlib.Tactic.Linarith
-public import Mathlib.Tactic.Abel
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.Abel
 public import Mathlib.Topology.Instances.RealVectorSpace
 public import Mathlib.Topology.Instances.NNReal.Lemmas
 
