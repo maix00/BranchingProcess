@@ -14,6 +14,29 @@ defined to be zero when that population is empty. Under the branching
 assumptions used for the speed theorem, emptiness has probability zero, so
 this totalization agrees almost surely with the ordinary finite-population
 minimum.
+
+The public declarations in
+`ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail` are:
+
+- `firstNSelectedEndpointMinimum m N H`: the minimum of the generation-`H`
+  selected endpoint positions, with value zero when the selected population
+  is empty.
+- `firstNSelectedEndpointMinimum_eq_inf'_of_nonempty`: on a nonempty
+  selected population, this value is its `Finset.inf'` endpoint position.
+- `firstNSelectedEndpointMinimum_le_iff`: for every `x`,
+  `M(field) ≤ x` iff the endpoint-below event holds or the population is
+  empty and `0 ≤ x`.
+- `measurable_firstNSelectedEndpointMinimum`: the totalized endpoint
+  minimum is measurable.
+- `firstNSelectedEndpointMinimum_eq_population_inf'_ae`: for `m,N>0`,
+  boundary normalization, and nonempty offspring support, almost surely the
+  totalized value equals the population `inf'`.
+- `firstNSelectedEndpointMinimum_le_iff_endpointBelow_ae`: under the same
+  assumptions, almost surely
+  `field ∈ firstNSelectedEndpointBelow m N H x ↔ M(field) ≤ x`.
+
+Here `M(field) = firstNSelectedEndpointMinimum m N H field`; the
+probability-one conclusions use the finite-root product law.
 -/
 
 open MeasureTheory

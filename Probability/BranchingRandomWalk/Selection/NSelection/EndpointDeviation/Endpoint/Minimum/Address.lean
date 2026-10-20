@@ -15,6 +15,26 @@ At each generation the selected population is finite. We choose the least
 address, in the fixed address order, among those attaining its minimum
 endpoint. The selector is measurable from the marks revealed by that
 generation. Its slot-zero child gives the one-step endpoint comparison.
+
+The public declarations in
+`ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail` are:
+
+- `firstNSelectedEndpointMinimizers m N k field`: the finite set
+  $\{p\in\operatorname{Pop}_{N,k}: \forall q\in\operatorname{Pop}_{N,k},
+  \operatorname{pos}_k(p)\le\operatorname{pos}_k(q)\}$.
+- `firstNSelectedEndpointMinimizers_nonempty_of_population_nonempty`:
+  a nonempty selected population has at least one minimizing address.
+- `firstNSelectedEndpointMinAddress m N k hm field`: the least minimizing
+  address, with a fixed root/address value on the empty-population branch.
+- `firstNSelectedEndpointMinAddress_mem_and_min`: when the population is
+  nonempty, the chosen address belongs to it and minimizes its endpoint.
+- `firstNSelectedEndpointMinimizers_mem_measurable`: membership of any fixed
+  address in the minimizing set is measurable at generation `k`.
+- `measurable_firstNSelectedEndpointMinAddress`: the canonical address is
+  measurable at generation `k`.
+
+Here `Pop_{N,k}` is the generation-`k` first-`N` selected population and
+`pos_k` is its endpoint position.
 -/
 
 open MeasureTheory
