@@ -2083,3 +2083,36 @@ The two spectral modules and their three Mogulskii clients
 and `Spectral/Survival/Bounds.lean`) built successfully with the pinned
 toolchain (3,226 Lake jobs). The corrected branching-walk map header built
 successfully as part of the same audit pass (1,770 Lake jobs).
+
+## Singleton-walk and trajectory API audit (2026-10-21)
+
+The module headers in `Combinatorics/BranchingWalk/Walk/` and
+`Combinatorics/BranchingWalk/Trajectory/` now enumerate their exact public
+Lean names and state the coordinate, increment, displacement, position,
+space-time image, and measurability formulas. Their paths and namespaces stay
+with the branching-walk representation: `Walk/Path/Position.lean` specializes
+the general additive-path API to the unique `PUnit` lineage, and
+`Trajectory/Step.lean` constructs space-time images from branching step
+fields.
+
+`Walk/Basic.lean` had exposed
+`ofOptionalIncrements_initial_increments` solely to form the left inverse of
+`Walk.equivInitialOptionalIncrements`; no other project module used it. That
+reconstruction equality is now proved directly as the equivalence's left
+inverse, leaving the equivalence as the reusable interface and removing the
+duplicate theorem from the public API. `nodeEquivNat` remains a named
+equivalence of addresses with generations.
+
+The abstraction check used pinned Mathlib revision
+`380f2aafb622cb2c1c93dac545b6389083c68c51`. A source search found no direct
+Mathlib `Trajectory` structure matching the repository's pair of space-time
+vertex and edge images. The local object supplies those images together with
+their time-slice cloud and induced measurable-space interface; this is the
+data consumed by the branching-walk construction, so it remains with that
+owner rather than becoming a generic pair-of-sets wrapper.
+
+The six walk and trajectory modules, the branching genealogy and walk clients,
+and the random-walk path clients built successfully with the pinned toolchain
+(3,173 Lake jobs). Mathlib `lint-style` passed on all eleven edited Lean
+modules; its only diagnostic was the existing module-header warning for the
+`lint-style` driver itself.
