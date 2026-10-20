@@ -17,15 +17,32 @@ configuration may have no children at all. When marks are spatial
 displacements, this is the direct branching-random-walk representation.
 
 The file carries the primitive type, its measurable structure, the presence
-predicate, the support of a step, and the zero-defaulted slot reading.  A slot is read
-directly as `ξ i`; the zero-defaulted reading `value' ξ i` is separate because
-it needs a `Zero X` instance and is not part of the type of a step.  The
-    relation layer is in `Step/Relation.lean`; presence closure and optional
-relabeling are in `Step/SiblingClosed.lean` and `Step/SiblingClosable.lean`.
-The ordered layer is in `Step/Monotone.lean`, and the slot vocabulary in
+predicate, the support of a step, and the zero-defaulted slot reading. A slot
+is read directly as `ξ i`; the zero-defaulted reading `value' ξ i` is separate
+because it needs a `Zero X` instance. The relation layer is in
+`Step/Relation.lean`; presence closure and optional relabeling are in
+`Step/SiblingClosed.lean` and `Step/SiblingClosable.lean`. The ordered layer
+is in `Step/Monotone.lean`, and the slot vocabulary is in
 `Step/Measurability.lean`. Path displacements are in
-`Basic/Displace.lean` and `Basic/DisplacementMap.lean`; realized and marked
-tree conversions are in `BranchingWalk/MarkedTree/`.
+`Basic/Position/Displace.lean` and `Basic/Position/DisplacementMap.lean`;
+realized and marked tree conversions are in `BranchingWalk/MarkedTree/`.
+
+The public API is:
+
+- `Step ι X := ι → Option X`; `ξ i = some x` records a present child with
+  mark `x`, and `ξ i = none` records an absent slot.
+- `value' ξ i` is the mark at slot `i`, with absent slots read as `0`;
+  `value'_eq_getD`, `value'_none`, and `value'_some` give its defining
+  equations.
+- `stepMeasurableSpace` equips `Step ι X` with the product measurable space,
+  and `value'_measurable` states that every zero-defaulted coordinate is
+  measurable.
+- `survive ξ i` means `∃ x, ξ i = some x`; `survive_iff_ne_none` identifies
+  it with `ξ i ≠ none`, and `survive_measurableSet` proves the corresponding
+  event measurable.
+- `support ξ = {i | survive ξ i}`; `Step.IsFinitelySupported ξ` asserts that
+  this set is finite, and `support_finite_of_fintype` proves finiteness when
+  the slot type is finite.
 -/
 
 @[expose] public section

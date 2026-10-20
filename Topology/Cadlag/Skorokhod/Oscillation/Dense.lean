@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Order.Interval.RationalCoordinate.UnitInterval
-public import Topology.Cadlag.Skorokhod.Oscillation
+public import Topology.Cadlag.Skorokhod.Oscillation.Basic
 public import Topology.Order.UnitInterval.Rational
 public import Mathlib.MeasureTheory.Constructions.BorelSpace.Order
 public import Mathlib.MeasureTheory.Constructions.BorelSpace.Real
