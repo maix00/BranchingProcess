@@ -67,7 +67,7 @@ jobs:
             Probability.Distributions.Stable.Attraction.NormingRatios.Index \
             Probability.Distributions.Stable.Attraction.NormingRatios.UniformDefect \
             Probability.Distributions.Stable.Attraction.NormingRatios.RegularVariation \
-            Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.TruncatedMoment \
+            Probability.Distributions.Stable.Attraction.Normal.TruncatedMoment \
             Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.Endpoint.Upper \
             Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.Endpoint.Return \
             MeasureTheory.Measure.CadlagPath.PathClass.StepCorridor.Energy \
