@@ -238,8 +238,9 @@ interface into `Rotation/FinitePath.lean`, `Rotation/CyclicCover.lean`, and
 `Rotation/FiniteProduct.lean`, found 1,450 production modules and 138 test
 modules. The stable horizontal-tube lower-rate interface was subsequently
 split into `Stable/Rate/Lower/{BlockProbability,Liminf,Positivity,Limit}.lean`;
-the count was 1,453 before the current geometry split. The 2026-10-20
-tracked-tree scan finds 1,474 production Lean files and 138 test files. The
+the count was 1,453 before the current geometry split. The 2026-10-21
+tracked-tree scan at commit `1c1134b0` finds 1,477 production Lean files and
+138 test files. The
 largest production directory and the largest test directory each have eight
 direct Lean files. The scan found one test filename repeating its parent
 directory, `Stable/RandomWalk/RandomWalkPathLimit.lean`; it is now
