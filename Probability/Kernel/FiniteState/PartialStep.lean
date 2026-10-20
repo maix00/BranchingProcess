@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Kernel.Step
+public import Probability.Kernel.Step.Basic
 public import Mathlib.Basic.ENNReal.BigOperators
 public import Mathlib.MeasureTheory.Measure.Dirac.Basic
 

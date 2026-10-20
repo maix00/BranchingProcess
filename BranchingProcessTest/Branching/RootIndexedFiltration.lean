@@ -1,5 +1,5 @@
-import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Filtration
-import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Measurability
+import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Field.Filtration
+import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Field.Measurability
 import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.DomainFlow.Space
 import Probability.BranchingRandomWalk.Genealogy.Exploration.PreSampled
 

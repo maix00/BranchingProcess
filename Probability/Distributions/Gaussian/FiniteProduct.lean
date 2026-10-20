@@ -8,12 +8,26 @@ module
 
 public import Probability.Distributions.Gaussian.Interval
 
+import Mathlib.Algebra.BigOperators.GroupWithZero.Finset
+import Mathlib.Algebra.Order.BigOperators.Group.Finset
+
 /-!
 # Finite products of Gaussian interval probabilities
 
-These inequalities concern only the nondegenerate real Gaussian law and a
-finite family of intervals.  They are used by small-deviation arguments, but
-do not depend on random-walk paths, block lengths, or a Mogulskii scale.
+For $\gamma(I)=\mathbb P(Z\in I)$ with $Z\sim N(0,1)$, the public results
+are:
+
+- `ProbabilityTheory.prod_gaussian_Ioo_sub_add_pos`: if $c>0$, $R>0$, and
+  $t_0,\ldots,t_{k-1}\in\mathbb R$, then
+  $\prod_{j<k}\gamma(((t_j-R)/\sqrt c,(t_j+R)/\sqrt c))>0$.
+- `ProbabilityTheory.prod_gaussian_Ioo_one_le_of_constant_le_one`: if
+  $0<c\leq1$ and $R>0$, then
+  $\prod_{j<k}\gamma((-R,R))\leq
+   \prod_{j<k}\gamma((-R/\sqrt c,R/\sqrt c))$.
+
+These facts concern finite products of nondegenerate real Gaussian interval
+probabilities; their statements do not depend on random-walk paths or on a
+small-deviation scale.
 -/
 
 @[expose] public section
@@ -70,42 +84,5 @@ theorem prod_gaussian_Ioo_one_le_of_constant_le_one
       exact (le_div_iff₀ hsqrtPos).2
         (mul_le_of_le_one_right hblockRadius.le hsqrtOne)
     exact hx.2.trans_le hright
-
-/-- If a center shift is at most half the block radius, every shifted Gaussian
-interval in a finite product contains the fixed interval with half that
-radius. -/
-theorem prod_gaussian_Ioo_halfRadius_le_linearReturn
-    {constant blockRadius y : ℝ} (hconstant : 0 < constant)
-    {blocks : ℕ} (hblocks : 0 < blocks)
-    (hshift : |y / (blocks : ℝ)| ≤ blockRadius / 2) :
-    (∏ _j : Fin blocks,
-        gaussianReal 0 1
-          (Ioo
-            (-(blockRadius / 2) / Real.sqrt constant)
-            ((blockRadius / 2) / Real.sqrt constant))) ≤
-      ∏ _j : Fin blocks,
-        gaussianReal 0 1
-          (Ioo
-            (((-y / (blocks : ℝ)) - blockRadius) /
-              Real.sqrt constant)
-            (((-y / (blocks : ℝ)) + blockRadius) /
-              Real.sqrt constant)) := by
-  have hsqrt : 0 < Real.sqrt constant := Real.sqrt_pos.2 hconstant
-  have hblocksReal : 0 < (blocks : ℝ) := by exact_mod_cast hblocks
-  have hshift' : |-y / (blocks : ℝ)| ≤ blockRadius / 2 := by
-    rw [neg_div, abs_neg]
-    exact hshift
-  rw [abs_le] at hshift'
-  apply Finset.prod_le_prod
-  intro j hj
-  apply measure_mono
-  intro x hx
-  constructor
-  · apply lt_of_le_of_lt _ hx.1
-    apply (div_le_div_iff_of_pos_right hsqrt).2
-    linarith [hshift'.1]
-  · apply lt_of_lt_of_le hx.2
-    apply (div_le_div_iff_of_pos_right hsqrt).2
-    linarith [hshift'.2]
 
 end ProbabilityTheory
