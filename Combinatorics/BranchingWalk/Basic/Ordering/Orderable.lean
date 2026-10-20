@@ -22,6 +22,16 @@ of the support is an assumption about the steps and has no source in the slot ty
 carry their own classes for it as well. What is specific to `ℕ` is the instance that turns finite support
 into orderability, because the relabelling proving it labels the children of a step by the ranks
 `0, …, k - 1`, and the surviving slots of that relabelling are the slots below `k`.
+
+The public classes are `Combinatorics.Branching.StepField.IsFinitelySupported`
+and `Combinatorics.Branching.RootIndexed.BranchingWalk.IsFinitelySupported`,
+which assert, respectively, `∀ u, Step.IsFinitelySupported (β u)` and
+`∀ r, StepField.IsFinitelySupported (β.step r)`. The matching orderability
+classes are `Combinatorics.Branching.StepField.IsOrderable` and
+`Combinatorics.Branching.RootIndexed.BranchingWalk.IsOrderable`, with
+`∀ u, Step.IsOrderable (β u)` and
+`∀ r, StepField.IsOrderable (β.step r)`. On `ℕ`, instances derive both
+orderability classes from the corresponding finite-support classes.
 -/
 
 @[expose] public section

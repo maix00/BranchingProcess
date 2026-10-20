@@ -47,6 +47,10 @@ The public API is:
   by reversing the value order.
 - `rankwiseDominates_diracSum_of_countable` transfers the rankwise comparison
   to the corresponding counting-measure inequality on countable slices.
+
+The relation laws are `sliceDominatesMeasure_refl` and
+`sliceDominatesMeasure_trans`, together with
+`Cloud.rankwiseDominates_refl` and `Cloud.rankwiseDominates_trans`.
 -/
 
 open MeasureTheory
@@ -325,7 +329,7 @@ theorem Cloud.rankwiseDominates_mapOrderDual_iff [LT (RootIndexed.TreeNode Root 
 /-- Counting the particles of a slice that satisfy a predicate does not depend on whether the
 slice is read as a set of particles or as its own type: the two sets correspond under the
 identity on the underlying particles. -/
-theorem Cloud.encard_subtype_eq_encard {Time Root α X : Type*} {C : Cloud Time Root α X}
+private lemma Cloud.encard_subtype_eq_encard {Time Root α X : Type*} {C : Cloud Time Root α X}
     (t : Time) (P : RootIndexed.TreeNode Root α → Prop) :
     ({p : (C.particles t : Set (RootIndexed.TreeNode Root α)) | P p.1} : Set _).encard =
       {p | p ∈ C.particles t ∧ P p}.encard :=

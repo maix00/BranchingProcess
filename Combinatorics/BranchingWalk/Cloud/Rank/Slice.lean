@@ -21,6 +21,8 @@ positions), so it is an explicit hypothesis here.
 The public API is:
 
 - `Cloud.sliceRank C t q = #{p | p ∈ C.particles t ∧ p < q}` in `ℕ∞`.
+- `Cloud.sliceRank_def` is the definitional equality displaying this
+  predecessor-set cardinality.
 - `Cloud.sliceRank_mono` proves
   `p < q → C.sliceRank t p ≤ C.sliceRank t q`;
   `Cloud.sliceRank_lt_sliceRank_of_lt` strengthens this to a strict inequality

@@ -25,8 +25,20 @@ The public API is:
   most `φ` of the matched source position.
 - `Cloud.InjectivelyDominatesBy φ C D t` is the corresponding existence
   proposition. `injectivelyDominatesBy_iff_nonempty` identifies it with
-  `Nonempty (Cloud.SliceDominatingMap φ C D t)`; the slice maps have identity,
-  composition, and order-dual laws.
+  `Nonempty (Cloud.SliceDominatingMap φ C D t)` by
+  `Cloud.injectivelyDominatesBy_iff_nonempty`. The concrete maps have identity
+  and composition `Cloud.SliceDominatingMap.refl` and
+  `Cloud.SliceDominatingMap.trans`; `Cloud.SliceDominatingMap.injectivelyDominatesBy`
+  forgets a concrete map, and
+  `Cloud.SliceDominatingMap.ofInjectivelyDominatesBy` chooses one from its
+  existence proof.
+- `Cloud.injectivelyDominatesBy_refl`,
+  `Cloud.injectivelyDominatesBy_of_particles_subset`, and
+  `Cloud.injectivelyDominatesBy_trans` give reflexivity, the canonical
+  inclusion map under the pointwise position inequality, and transitivity.
+  `Cloud.injectivelyDominatesBy_toDual_iff` and
+  `Cloud.injectivelyDominates_mapOrderDual_iff` give the value-order and
+  position-order dual formulations without exchanging the cloud arguments.
 - `exists_injective_match_of_rankwiseDominatesBy` turns rankwise domination
   into a coherent injective matching when the source rank separates source
   particles. `exists_injective_match_of_rankwiseDominatesBy_of_finite` gives

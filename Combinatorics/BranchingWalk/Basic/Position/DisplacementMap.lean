@@ -29,6 +29,20 @@ potential `φ`, `AdditivePotential.map_displace` and
 `AdditivePotential.map_displaceWith` state
 `φ (displace β v p) = displaceWith φ β v p` and
 `φ (displaceWith d β v p) = displaceWith (φ ∘ d) β v p`.
+
+The public declarations are `Combinatorics.Branching.displaceWith`,
+`Combinatorics.Branching.displaceWith_nil`,
+`Combinatorics.Branching.displaceWith_cons`,
+`Combinatorics.Branching.displaceWith?`,
+`Combinatorics.Branching.displaceWith?_eq_some_iff`,
+`Combinatorics.Branching.displaceWith?_eq_none_iff`,
+`Combinatorics.Branching.displaceWith_id`,
+`Combinatorics.Branching.AdditivePotential.map_displace`, and
+`Combinatorics.Branching.AdditivePotential.map_displaceWith`. Their defining
+relations include
+`displaceWith d β v (i :: p) = value' ((β v).map d) i +
+displaceWith d β (v ++ [i]) p`, the equivalences between the partial result
+and `surviveAlong β v p`, and the two potential identities stated above.
 -/
 
 @[expose] public section

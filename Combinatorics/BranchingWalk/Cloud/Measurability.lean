@@ -20,6 +20,9 @@ The public API includes `CloudSet.instMeasurableSpace`, the coordinate
 σ-algebra on `CloudSet Time X`, and the measurability results
 `CloudSet.measurable_points` and `CloudSet.measurable_vertexSet` for the
 point-set coordinate and space-time vertex-set maps.
+
+`CloudSet.measurableSet_points_mem t x` gives the coordinate event
+`{C | x ∈ C.points t}` as a measurable set.
 -/
 
 @[expose] public section
