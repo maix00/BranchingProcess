@@ -6,7 +6,12 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Distributions.Gaussian.FiniteProduct
+public import Probability.Distributions.Gaussian.Interval
+
+import Mathlib.Algebra.BigOperators.GroupWithZero.Finset
+import Mathlib.Algebra.Order.BigOperators.Group.Finset
+import Mathlib.Data.Finset.Max
+import Probability.Distributions.Gaussian.FiniteProduct
 
 /-!
 # Proof-specific Gaussian product parameters

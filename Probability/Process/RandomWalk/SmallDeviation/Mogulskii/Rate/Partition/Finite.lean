@@ -6,6 +6,7 @@ Authors: WANG Yiyang
 
 module
 
+public import Probability.Distributions.Gaussian.Interval
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Rate.Bounds.Lower
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Blocks.Lemmas.ProductParameters
 
