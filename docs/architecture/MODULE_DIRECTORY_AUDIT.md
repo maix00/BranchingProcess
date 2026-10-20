@@ -803,6 +803,8 @@ exponential low-count bound for the first-stage killed population, and its
 PZ-specific rate assembly is grouped under `Lemmas/`. The `rightTailPositiveA`
 identifier remains in theorem names because those statements are indexed by
 the positive exponent parameter; it no longer determines directory placement.
+The former `PositiveA/` source directory has been removed; `PositiveA` now
+appears only in parameter-indexed declaration names.
 
 `EndpointDeviation/FirstStage/Lemmas/PZBudget.lean` estimates the
 tilted-spine corridor mass at the specific cutoff
@@ -1792,3 +1794,25 @@ The production tree now has 1,474 modules and the test tree has 138; the full
 layout scan still finds no same-stem file/directory pairs, repeated parent
 stems, `Lemmas.lean`/`Lemmas/` collisions, or empty directories, and every
 directory has at most eight direct Lean files.
+
+## Selected population cell branching boundary (2026-10-20)
+
+The deterministic-generation selected-cell product laws now live in
+`Genealogy/Exploration/Selected/CellBranching/Basic.lean`. Its public header
+states the finite-root product factorization and its position-restricted
+version. The generation-cell measurability arguments are private to that
+module. The duplicate `selectedPopulation_cell_descendant_law` adapter was
+removed because it had no callers and restated the cell factorization through
+the alternate `RootIndexed.subtreeStepFieldVector` name.
+
+The finite-root enumeration used by both the selected and stopped-cell proof
+chains is in `CellBranching/Lemmas/Enumeration.lean`. It packages
+`Fintype.equivFinOfCardEq` for a finite set of root addresses and remains an
+internal proof-chain lemma rather than a public enumeration interface.
+`StoppingPopulation.lean` now imports the root-field filtration and law modules
+directly; stopped-cell branching imports only the enumeration lemma module.
+The six affected modules built with the pinned toolchain (3,162 Lake jobs).
+The source scan reports 1,475 production modules and 138 test modules, with
+no same-stem file/directory pairs, repeated parent/file stems,
+`Lemmas.lean`/`Lemmas/` collisions, empty source directories, or `Source/`
+directories; no directory contains more than eight direct Lean files.
