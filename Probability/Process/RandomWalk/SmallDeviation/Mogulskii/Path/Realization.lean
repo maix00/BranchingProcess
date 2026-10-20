@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Path.SourcePath
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Path.TerminalLeft
 public import Probability.Process.Path.PathClass.StepCorridor.Probability.Rate.InnerOuter
 public import Probability.Process.Path.PathClass.StepCorridor.Probability.Rate.Relative
 public import Probability.Process.Path.PathClass.StepCorridor.Probability.Rate.FiniteUnionNullMeasurable
@@ -19,7 +19,7 @@ The public theorems in this file are:
 
 - `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.measure_sourceFiniteCorridorUnionEvent_eq_of_iid`:
   for i.i.d. coordinates with law $\nu$, the probability of a finite
-  source-path corridor event equals its probability under
+  terminal-left path corridor event equals its probability under
   `iidSequenceLaw ν`.
 - `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.existsUnique_inner_outer_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_iid`:
   if finite corridor unions have rate $\kappa E(C)$ under the canonical
@@ -34,7 +34,7 @@ probabilities only for its M₃ approximants, whose path events are
 null-measurable under the induced path law, and then apply the existing
 measure-theoretic inner/outer squeeze.
 
-The source path-class rate is A. A. Mogul'skii, Theorem 3, Section 4, p. 764,
+The terminal-left path-class rate is A. A. Mogul'skii, Theorem 3, Section 4, p. 764,
 “Small deviations in the sample function space,” *Teoriya Veroyatnostei i ee
 Primeneniya* 19(4) (1974), 755--765; English translation, “Small Deviations
 in a Space of Trajectories,” *Theory of Probability and Its Applications*
@@ -96,7 +96,7 @@ theorem measure_sourceFiniteCorridorUnionEvent_eq_of_iid
         (measurable_sourceNormalizedStepCadlagPathIcc scale n).aemeasurable
         (by simpa [pathLaw, pathMap] using hpathEvent)
 
-/-- The inner and outer probabilities of any source-path set in class M
+/-- The inner and outer probabilities of any terminal-left path set in class M
 have the same unique logarithmic rate under an arbitrary i.i.d. realization.
 The canonical M₃ rates are transferred through null-measurable corridor
 events; no measurability assumption on G is required. -/

@@ -11,11 +11,25 @@ public import Probability.Process.Stable.SmallDeviation.EscapeRate.Endpoint
 public import Probability.Process.Stable.SmallDeviation.EscapeRate.PathLaw.Transfer
 public import Topology.Cadlag.Skorokhod.Corridor.Endpoint
 
-/-!
-# Stable endpoint-rate transfer
+/-! # Stable endpoint-rate transfer
 
-This adapter connects the legacy stable endpoint-corridor comparison to the
-module-based open-set Portmanteau and discrete return interfaces.
+The public declarations are:
+
+- `eventually_scaledStableEndpointBandProbability_ge_exp`: for
+  $i\in\{-3,\ldots,3\}$, every scaled endpoint band strictly inside
+  $(-r,r)$ eventually has path-law mass greater than
+  $\exp((C/r^\alpha-\delta)s^\alpha)$.
+- `eventually_scaledStableShiftedEndpointCorridorProbability_ge_exp`: for
+  $d\in(-1,1)$ and $-1<c<b<1$, the corridor
+  $(r(d-1),r(d+1))$ with endpoint window $(r(d+c),r(d+b))$ has the same
+  exponential lower bound, eventually as the spatial scale tends to infinity.
+- `eventually_scaledStableIntervalEndpointBandsProbability_ge_exp`: for
+  $l<0<u$ and seven endpoint windows strictly inside $(l,u)$, their scaled
+  path-law masses eventually exceed
+  $\exp((C/((u-l)/2)^\alpha-\delta)s^\alpha)$ uniformly in the band index.
+
+This adapter connects stable endpoint-corridor estimates to the open-set
+Portmanteau and discrete return interfaces.
 -/
 
 open Filter MeasureTheory ProbabilityTheory Set

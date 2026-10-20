@@ -7,11 +7,19 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.Partition.Upper
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.PartitionLower.EnergyLower
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.Partition.Lower.EnergyLower
 public import MeasureTheory.Measure.CadlagPath.PathClass.StepCorridor.Partition.UpperEnergy
 
 /-!
 # Exact discrete upper rate for finite-partition corridors
+
+The public theorem is:
+
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.limsup_scaledLog_normalizedStepCorridor_le_energyRate`:
+  for a stable-domain random walk and an admissible corridor $c$,
+  $\limsup_n r_n\log\mathbb P(X_n\in c)\le C2^\alpha E_\alpha(c)$,
+  where $r_n$ is the stable small-deviation normalization and $C$ is the
+  stable-process escape coefficient.
 
 The finite-width cell estimates converge to the exact corridor energy as
 their relative enlargement and exponential slack vanish. Cells with infinite

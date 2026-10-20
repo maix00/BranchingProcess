@@ -8,8 +8,11 @@ module
 
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Scale.BlockScale
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Path.Existence
+public import Probability.Distributions.Stable.Attraction.Normal.Basic
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.EndpointBandTransfer.StableLower.EndpointMass
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.EndpointBandTransfer.StableLower.PathLimit
+
+public import Probability.Distributions.Gaussian.Interval
 /-!
 # Fixed diffusive blocks from a generated Gaussian path law
 
@@ -62,7 +65,8 @@ theorem exists_eventually_diffusiveEndpointBandReturnBlockProbability_lower
   have hDOA : IsInDomainOfAttractionAlong ν
       (gaussianReal 0 1) normalization (fun _ => 0) := by
     simpa [normalization] using
-      isInDomainOfAttractionAlong_gaussianReal_zero_one ν hν.1 hν.2
+      ProbabilityTheory.isInDomainOfAttractionAlong_gaussianReal_zero_one_of_centered_unitSecondMoment
+        ν hν
   have hnormalization : ∀ n, 0 < n → 0 < normalization n := by
     intro n hn
     exact Real.sqrt_pos.2 (by exact_mod_cast hn)

@@ -14,6 +14,22 @@ The lattice used to select a return band and the half-width of that band are
 independent parameters.  This distinction is needed when a weak-limit
 Portmanteau argument enlarges the endpoint window while keeping the return
 core mesh fixed.
+
+The public declarations in this module are:
+
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.endpointWindowBlockEvent`:
+  the strict centered-tube event whose endpoint lies in the `i`th window of a
+  mesh.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.measurableSet_endpointWindowBlockEvent`:
+  this finite-horizon event is measurable in the increment path.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.endpointWindowReturnBlockEvent`:
+  the corridor and terminal-core event used in one return-kernel step.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.returnKernel_apply_univ_lower_of_endpointWindowEvents`:
+  a common lower bound for endpoint windows gives the same lower bound for
+  every return-kernel row on the core `[-3 * spacing, 3 * spacing]`.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.horizontalTubeProbability_ge_pow_endpointWindows`:
+  iterating `blocks` such return steps gives a horizontal-tube probability at
+  least `lowerBound ^ blocks`.
 -/
 
 open MeasureTheory Set

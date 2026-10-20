@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.FunctionalLimit.Stable.PathLaw.EndpointGridSource
+public import Probability.Process.RandomWalk.FunctionalLimit.Stable.PathLaw.RandomWalkGrid
 public import Probability.Process.Stable.PathLaw.Basic
 public import Probability.ConvergenceInDistribution.CadlagPath.FiniteDimensional
 public import Mathlib.MeasureTheory.Constructions.Pi
@@ -17,6 +17,34 @@ public import Mathlib.MeasureTheory.Constructions.Pi
 This module provides the finite-product operation needed to pass between
 strict and monotone time grids. Removing a repeated position removes a
 zero-length increment; restoring it inserts a Dirac-zero coordinate.
+
+The public finite-coordinate maps are:
+
+- `ProbabilityTheory.insertZeroCoordinate` and
+  `ProbabilityTheory.insertRepeatedPosition`, which insert a zero increment
+  or a repeated position; `ProbabilityTheory.removeRepeatedPosition` and
+  `ProbabilityTheory.deleteRepeatedPointGrid` remove a repeated endpoint.
+- `ProbabilityTheory.measurable_insertZeroCoordinate`,
+  `ProbabilityTheory.measurable_insertRepeatedPosition`, and
+  `ProbabilityTheory.measurable_removeRepeatedPosition`, which give the
+  corresponding measurability statements.
+- `ProbabilityTheory.removeRepeatedPosition_insertRepeatedPosition` and
+  `ProbabilityTheory.map_removeRepeatedPosition_insertRepeatedPosition`,
+  which state the vector and measure round-trip identities.
+- `ProbabilityTheory.insertRepeatedPosition_removeRepeatedPosition_of_diagonal`
+  and
+  `ProbabilityTheory.map_insertRepeatedPosition_removeRepeatedPosition_of_ae_diagonal`,
+  which state the reverse identities for vectors with equal adjacent
+  coordinates and measures supported almost everywhere on that diagonal.
+- `ProbabilityTheory.partialSum_insertZeroCoordinate` and
+  `ProbabilityTheory.measure_pi_insertZeroCoordinate`, which identify the
+  partial sums and product measure after inserting a zero increment.
+
+The final results,
+`ProbabilityTheory.ae_start_eq_zero_of_strictGridPositionLaws` and
+`ProbabilityTheory.stableGridPositionLaws_of_strictGridPositionLaws`, recover
+the zero initial position and stable laws on monotone grids from the laws on
+strictly increasing grids.
 -/
 
 @[expose] public section

@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Rate.Bounds.Lower
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Blocks.ProductParameters
+import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Blocks.Lemmas.ProductParameters
 
 /-!
 # Mogulskii lower rate from a finite Gaussian partition

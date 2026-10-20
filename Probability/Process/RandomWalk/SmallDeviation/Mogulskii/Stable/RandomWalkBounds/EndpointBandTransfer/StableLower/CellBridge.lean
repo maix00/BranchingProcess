@@ -10,17 +10,45 @@ public import Probability.Process.RandomWalk.FunctionalLimit.Stable.PathLimit.Bl
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.Partition.Endpoint
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.EndpointBandTransfer.StableRate
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Scale.Core
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Scale.Rate
 public import Probability.Process.Stable.SmallDeviation.EscapeRate.PathLaw.Transfer
+
+import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Scale.Rate
 
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.EndpointBandTransfer.StableLower.PathLimit
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.EndpointBandTransfer.StableLower.EndpointMass
+
+import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.EndpointBandTransfer.StableLower.Lemmas.BalancedBlocks
 /-!
 # Stable lower bounds for shifted endpoint-return blocks
 
 This combines the stable escape rate, the variable-block path limit, and
 open-set Portmanteau for an arbitrary shifted interval. It supplies the
 finite endpoint-band probabilities needed by the discrete return kernel.
+
+The public conclusions in `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete`
+give, for a suitable amplitude $a>0$, the block mass
+$p(a)=\exp((C/R^\alpha-\delta)a^\alpha)$, where $R$ is the half-width of the
+interior corridor. With $b_n=\lfloor a^\alpha T_n\rfloor$, they conclude
+eventually that each return or bridge block has mass at least $p(a)$. The
+core-to-core tube probability is bounded below by
+$p(a)^{\lfloor(N_n-b_n)/b_n\rfloor+1}$, and balanced endpoint-band survival
+is bounded below by $p(a)^{\lfloor N_n/b_n\rfloor}$. The one-block theorem
+gives the same $p(a)$ lower bound for all seven endpoint bands.
+
+The five public theorem entries and their conclusions are:
+
+- `exists_eventually_commonReturnAndBridgeBlockMassLowerBound_of_stableEscapeRate`:
+  selects $a>0$ and gives uniform eventual return and finite-family bridge
+  block bounds by $p(a)$.
+- `exists_eventually_endpointCoreCellBridgeLowerBound_of_stableEscapeRate`:
+  gives the core-to-core tube bound above.
+- `exists_eventually_partitionCellCoreReturnBlockEvent_ge_exp_of_stableEscapeRate`:
+  bounds the corresponding partition-cell core-return event by the same block
+  mass raised to the number of return blocks plus one.
+- `exists_eventually_balancedEndpointBandSurvival_ge_exp_of_stableEscapeRate`:
+  gives the balanced endpoint-band survival bound above.
+- `exists_eventually_endpointBandReturnBlockProbability_ge_exp_of_stableEscapeRate`:
+  gives the one-block bound $p(a)$ for each endpoint band $i\in[-3,3]$.
 -/
 
 open Filter MeasureTheory ProbabilityTheory

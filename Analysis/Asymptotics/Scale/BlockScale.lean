@@ -47,6 +47,10 @@ The public definitions and theorems are:
   `Asymptotics.mem_balancedBlockLengths`,
   `Asymptotics.tendsto_balancedBlockShortLength_div_referenceLength`, and
   `Asymptotics.tendsto_balancedBlockLongLength_div_referenceLength`.
+- `Asymptotics.tendsto_balancedBlockPartition_of_vanishingReference`: if
+  $H_n/n\to d>0$, $r_n\to\infty$, $r_n/n\to0$, and $r_n/c_n\to a$, then
+  the balanced block count and both possible block lengths diverge, while
+  each possible block length divided by $c_n$ tends to $a$.
 - `Asymptotics.blockCount`, `Asymptotics.blockCount_mul_blockLength_le`,
   `Asymptotics.blockCount_mul_blockLength_le_lt_succ`,
   `Asymptotics.sub_blockLength_lt_blockCount_mul_blockLength`,
@@ -581,6 +585,100 @@ theorem tendsto_balancedBlockLongLength_div_referenceLength
     rw [Nat.cast_add, Nat.cast_one]
     ring
   exact hsum.congr' heq.symm
+
+/-- A positive-density horizon split into balanced blocks of vanishing
+relative reference length has many blocks, and both possible block lengths
+retain the reference scale. -/
+theorem tendsto_balancedBlockPartition_of_vanishingReference
+    {total reference : ℕ → ℕ} {duration clockLimit : ℝ}
+    {clock : ℕ → ℝ}
+    (htotal : Tendsto (fun n => (total n : ℝ) / (n : ℝ)) atTop
+      (nhds duration))
+    (hduration : 0 < duration)
+    (hreference : Tendsto reference atTop atTop)
+    (hreferenceDensity : Tendsto
+      (fun n => (reference n : ℝ) / (n : ℝ)) atTop (nhds 0))
+    (hclockPos : ∀ᶠ n in atTop, 0 < clock n)
+    (hreferenceClock : Tendsto
+      (fun n => (reference n : ℝ) / clock n) atTop (nhds clockLimit)) :
+    Tendsto
+        (fun n => (balancedBlockCount (total n) (reference n) : ℝ))
+        atTop atTop ∧
+      Tendsto (fun n => balancedBlockShortLength (total n) (reference n))
+        atTop atTop ∧
+      Tendsto
+        (fun n => balancedBlockShortLength (total n) (reference n) + 1)
+        atTop atTop ∧
+      Tendsto
+        (fun n => (balancedBlockShortLength (total n) (reference n) : ℝ) /
+          clock n) atTop (nhds clockLimit) ∧
+      Tendsto
+        (fun n =>
+          ((balancedBlockShortLength (total n) (reference n) + 1 : ℕ) : ℝ) /
+            clock n) atTop (nhds clockLimit) := by
+  have hreferencePos : ∀ᶠ n in atTop, 0 < reference n :=
+    hreference.eventually (eventually_gt_atTop 0)
+  have hreferenceReal : Tendsto (fun n => (reference n : ℝ)) atTop atTop :=
+    tendsto_natCast_atTop_atTop.comp hreference
+  have hcountNat : Tendsto (fun n => total n / reference n) atTop atTop :=
+    tendsto_nat_div_atTop_of_positive_horizonRatio_of_zero_blockRatio
+      htotal hduration hreferenceDensity hreferencePos
+  have hcount : Tendsto
+      (fun n => (balancedBlockCount (total n) (reference n) : ℝ))
+      atTop atTop := by
+    simpa only [Function.comp_def, balancedBlockCount] using
+      (tendsto_natCast_atTop_atTop.comp hcountNat)
+  have hshortReference := tendsto_balancedBlockShortLength_div_referenceLength
+    (total := total) (referenceLength := reference)
+    hreferenceReal hcount
+  have hlongReference := tendsto_balancedBlockLongLength_div_referenceLength
+    (total := total) (referenceLength := reference)
+    hreferenceReal hcount
+  have hshortTop : Tendsto
+      (fun n => balancedBlockShortLength (total n) (reference n))
+      atTop atTop := by
+    apply Filter.tendsto_atTop_mono' atTop ?_ hreference
+    filter_upwards [] with n
+    exact Nat.le_add_right (reference n)
+      ((total n % reference n) / balancedBlockCount (total n) (reference n))
+  have hlongTop : Tendsto
+      (fun n => balancedBlockShortLength (total n) (reference n) + 1)
+      atTop atTop := by
+    apply Filter.tendsto_atTop_mono' atTop ?_ hshortTop
+    filter_upwards [] with n
+    exact Nat.le_add_right
+      (balancedBlockShortLength (total n) (reference n)) 1
+  have hshortClock : Tendsto
+      (fun n => (balancedBlockShortLength (total n) (reference n) : ℝ) /
+        clock n) atTop (nhds clockLimit) := by
+    have hproduct := hshortReference.mul hreferenceClock
+    have heq : (fun n =>
+        (balancedBlockShortLength (total n) (reference n) : ℝ) / clock n) =ᶠ[atTop]
+        fun n =>
+          ((balancedBlockShortLength (total n) (reference n) : ℝ) /
+            (reference n : ℝ)) * ((reference n : ℝ) / clock n) := by
+      filter_upwards [hreferencePos, hclockPos] with n hn hc
+      have hreferenceNe : (reference n : ℝ) ≠ 0 := by exact_mod_cast hn.ne'
+      have hclockNe : clock n ≠ 0 := ne_of_gt hc
+      field_simp [hreferenceNe, hclockNe]
+    simpa only [one_mul] using hproduct.congr' heq.symm
+  have hlongClock : Tendsto
+      (fun n =>
+        ((balancedBlockShortLength (total n) (reference n) + 1 : ℕ) : ℝ) /
+          clock n) atTop (nhds clockLimit) := by
+    have hproduct := hlongReference.mul hreferenceClock
+    have heq : (fun n =>
+        ((balancedBlockShortLength (total n) (reference n) + 1 : ℕ) : ℝ) /
+          clock n) =ᶠ[atTop]
+        fun n =>
+          (((balancedBlockShortLength (total n) (reference n) + 1 : ℕ) : ℝ) /
+            (reference n : ℝ)) * ((reference n : ℝ) / clock n) := by
+      filter_upwards [hreferencePos, hclockPos] with n hn hc
+      have hreferenceNe : (reference n : ℝ) ≠ 0 := by exact_mod_cast hn.ne'
+      have hclockNe : clock n ≠ 0 := ne_of_gt hc
+      field_simp [hreferenceNe, hclockNe]
+    simpa only [one_mul] using hproduct.congr' heq.symm
+  exact ⟨hcount, hshortTop, hlongTop, hshortClock, hlongClock⟩
 
 /-! ## Counts of complete blocks -/
 

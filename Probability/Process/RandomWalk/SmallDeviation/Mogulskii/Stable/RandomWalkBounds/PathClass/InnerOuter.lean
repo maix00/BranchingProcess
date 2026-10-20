@@ -11,6 +11,14 @@ import Probability.Process.Path.PathClass.StepCorridor.Probability.Rate.InnerOut
 /-!
 # Discrete path-class rates for inner and outer probabilities
 
+The public theorem is:
+
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.existsUnique_inner_outer_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_discretestepCorridorRates`:
+  if $G$ admits vanishing-energy-gap corridor approximations, then the inner
+  and outer probabilities of its normalized random-walk path event have the
+  same unique logarithmic rate, with coefficient $\operatorname{rateCoeff}C$
+  times the common corridor energy.
+
 The exact target event of an arbitrary source-class `M` path set need not be
 measurable.  The discrete `M₂` estimates give rates for the measurable-up-to-null
 `M₃` approximants, which squeeze the inner and outer probabilities to the same

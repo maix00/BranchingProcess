@@ -11,7 +11,7 @@ public import Probability.Process.Path.PathClass.StepCorridor.Probability.Rate.C
 public import Probability.Process.Path.PathClass.StepCorridor.Probability.Rate.Relative
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.FromIncrementLaw.Normal.FiniteVariance
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.FromIncrementLaw.Normal.Domain
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Path.SourcePathContinuousBoundary
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Path.TerminalLeftContinuousBoundary
 
 /-!
 # Continuous-boundary rates for raw normal-domain sources

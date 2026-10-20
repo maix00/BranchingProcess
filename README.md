@@ -114,7 +114,11 @@ Run `lake update` only when intentionally refreshing dependency revisions, then
 review the resulting manifest changes and rebuild the package.
 
 Import the narrowest module that provides the needed definition or theorem.
-There is deliberately no umbrella import. For example:
+There is no repository-wide umbrella import. A subject-specific discovery
+entry point may re-export its principal results; for example,
+`Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Theorems` collects
+the main theorems from Mogul'skii's original article. Proofs and ordinary
+clients should still import the semantic owner module. For example:
 
 ```lean
 import Probability.BranchingRandomWalk.Walk.Basic

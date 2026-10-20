@@ -7,15 +7,32 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.Kernel.Killed.Return.Comparison
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Blocks.Return
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Return.Partition
 
 /-!
 # Uniform Mogulskii bounds for return kernels
 
-Finite reference estimates in corridors shrunken by a common margin are
-transferred to every starting point of the return interval.  The resulting
-uniform one-block estimate can then be iterated by the sub-Markov return
-kernel.
+The public declarations in `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii`
+are:
+
+- `eventually_uniform_returnKernel_of_finset_gaussianProduct`: a finite cover
+  of the normalized return interval and a positive Gaussian block-product
+  margin give an eventual one-block lower bound for the return kernel, uniform
+  over every starting point in the scaled interval.
+- `eventually_pow_le_remainingMass_returnKernel_Icc_of_normalized`: if each
+  return block has mass at least $p$, then $p^k$ bounds the remaining mass of
+  the $k$-fold return-kernel iterate from every state in the return interval.
+- `eventually_pow_succ_div_le_remainingMass_killedIncrementKernel_Icc`: if
+  blocks of length $\ell$ have the same lower bound $p$, then for every total
+  horizon $N$, $p^{\lfloor N/\ell\rfloor+1}$ bounds the killed-walk remaining
+  mass, including the incomplete terminal block.
+- `eventually_natCast_mul_log_le_log_remainingMass_killedIncrementKernel_Icc`:
+  the preceding estimate implies
+  $(\lfloor N/\ell\rfloor+1)\log p\leq\log M_N(x)$ in extended-real form.
+
+The finite-reference Gaussian estimate is proved in
+`Return/Partition.lean`. This file passes from that estimate to uniform
+starting points and iterates the sub-Markov return kernel.
 -/
 
 open Filter MeasureTheory Set

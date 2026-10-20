@@ -26,7 +26,7 @@ AXIOM_EXPECTATIONS = {
         "ProbabilityTheory.RandomWalk.FunctionalLimit.Normal.tendsto_normalizedStepPathLaw_of_gaussian_of_brownian",
     ),
     Path("BranchingProcessTest/Normal/RandomWalkBrownianLimit.lean"): (
-        "ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.isInDomainOfAttractionAlong_gaussianReal_zero_one",
+        "ProbabilityTheory.isInDomainOfAttractionAlong_gaussianReal_zero_one_of_centered_unitSecondMoment",
         "ProbabilityTheory.Process.Path.Cadlag.aemeasurable_pathMap",
         "ProbabilityTheory.IsBrownianReal.isStableClockProcessLaw_cadlagunitIntervalProcessPathLaw",
         "ProbabilityTheory.RandomWalk.FunctionalLimit.Normal.tendsto_normalizedStepPathLaw_of_gaussian_of_brownian",
@@ -189,7 +189,7 @@ AXIOM_EXPECTATIONS = {
         "ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_index_two",
         "ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_index_two_of_brownian",
     ),
-    Path("BranchingProcessTest/Mogulskii/Path/SourceAlignment.lean"): (
+    Path("BranchingProcessTest/Mogulskii/Path/MogulskiiPathPublicAPI.lean"): (
         "MeasureTheory.CadlagPath.measurable_terminalLeftPath",
         "ProbabilityTheory.RandomWalk.measurable_sourceNormalizedStepCadlagPathIcc",
         "ProbabilityTheory.RandomWalk.sourceNormalizedStepCadlagPathIcc_apply_top",
@@ -316,7 +316,7 @@ AXIOM_EXPECTATIONS = {
         "ProbabilityTheory.RandomWalk.FunctionalLimit.Stable.tendsto_normalizedStepPathLaw_of_stableDomain_of_tight",
         "ProbabilityTheory.RandomWalk.FunctionalLimit.Stable.tendsto_normalizedStepPathLaw_of_zeroCenter_stableDomain_of_tight",
     ),
-    Path("BranchingProcessTest/Stable/RandomWalk/PathLimitSource.lean"): (
+    Path("BranchingProcessTest/Stable/RandomWalk/RandomWalkPathLimit.lean"): (
         "ProbabilityTheory.RandomWalk.FunctionalLimit.Stable.tendsto_normalizedStepPathLaw_of_index_lt_one",
         "ProbabilityTheory.RandomWalk.FunctionalLimit.Stable.tendsto_normalizedStepPathLaw_of_index_one",
         "ProbabilityTheory.RandomWalk.FunctionalLimit.Stable.tendsto_normalizedStepPathLaw_of_index_gt_one",
@@ -467,7 +467,7 @@ AXIOM_EXPECTATIONS = {
         "ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.iidSequenceLaw_measure_forall_blockOscillationLT",
         "ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.openHorizontalTubeProbability_le_pow_blockOscillationLT_source",
     ),
-    Path("BranchingProcessTest/Mogulskii/Stable/RandomWalkBounds/UpperEndpointSource.lean"): (
+    Path("BranchingProcessTest/Mogulskii/Stable/RandomWalkBounds/Endpoint/StrictStable.lean"): (
         "ProbabilityTheory.IsStrictlyAlphaStable.measure_Icc_lt_one_of_lt_two",
         "ProbabilityTheory.IsStrictlyAlphaStable.measure_map_rpow_Icc_lt_one_of_lt_two",
         "ProbabilityTheory.IsStrictlyAlphaStable.measure_Ioi_pos_indexTwo",
@@ -481,7 +481,7 @@ AXIOM_EXPECTATIONS = {
         "ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.eventually_forall_normalizedEndpointBandProbability_ge_of_pathLawLimit",
         "ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.eventually_horizontalTubeProbability_ge_pow_of_pathLawLimit",
     ),
-    Path("BranchingProcessTest/Mogulskii/Stable/RandomWalkBounds/SourceLower.lean"): (
+    Path("BranchingProcessTest/Mogulskii/Stable/RandomWalkBounds/TerminalLeftLower.lean"): (
         "ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.eventually_horizontalTubeProbability_ge_pow_of_stableDomain",
         "ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.eventually_horizontalTubeProbability_ge_pow_of_index_lt_one",
         "ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.eventually_horizontalTubeProbability_ge_pow_of_index_one",

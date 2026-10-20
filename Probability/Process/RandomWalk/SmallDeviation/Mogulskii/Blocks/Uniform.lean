@@ -9,7 +9,7 @@ module
 public import Probability.Process.RandomWalk.Kernel.Killed.Survival.Uniform
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Partition.Basic
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Partition.Quantitative
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Blocks.ProductParameters
+import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Blocks.Lemmas.ProductParameters
 
 /-!
 # Uniform finite-reference Mogulskii bounds

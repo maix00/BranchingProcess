@@ -7,9 +7,13 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.Path.Block.Law.Basic
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Blocks.BlockEndpoint
-public import Probability.ConvergenceInDistribution.Independence
-public import Probability.ConvergenceInDistribution.Portmanteau
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Scale.BlockScale
+public import Probability.ConvergenceInDistribution.Basic
+public import Probability.Distributions.Stable.Gaussian.Basic
+
+import Probability.Process.RandomWalk.FunctionalLimit.FiniteDimensional.IndependentBlocks
+import Probability.Distributions.Stable.Attraction.Normal.Basic
+import Probability.ConvergenceInDistribution.Portmanteau
 
 /-!
 # Gaussian block-vector limits for Mogulskii estimates
@@ -66,50 +70,39 @@ theorem tendstoInDistribution_diffusiveBlockSums
       (fun z (j : Fin blocks) => z j * Real.sqrt constant)
       (fun _ => iidSequenceLaw ν)
       (Measure.pi fun _ : Fin blocks => gaussianReal 0 1) := by
-  let length : ℕ → ℕ := diffusiveBlockLength constant scale
-  let X : ℕ → Fin blocks → (ℕ → ℝ) → ℝ := fun n j increment =>
-    AdditivePath.blockSum (j * length n) (length n) increment / scale n
-  let Z : Fin blocks → ℝ → ℝ := fun _ z => z * Real.sqrt constant
-  have hbase := tendstoInDistribution_partialSum_diffusiveBlock_div_scale
-    ν hcentered hsecondMoment hscale hconstant
-  have hcoordinate (j : Fin blocks) :
-      TendstoInDistribution (fun n => X n j) atTop (Z j)
-        (fun _ => iidSequenceLaw ν) (gaussianReal 0 1) := by
-    apply hbase.congr_map_eventually
-    · filter_upwards [] with n
-      have hblock := iidSequenceLaw_map_blockSum ν
-        (j * length n) (length n)
-      have hdiv : Measurable (fun x : ℝ => x / scale n) :=
-        measurable_id.div_const _
-      calc
-        (iidSequenceLaw ν).map
-            (fun increment => AdditivePath.displacement (length n) increment / scale n) =
-          ((iidSequenceLaw ν).map (AdditivePath.displacement (length n))).map
-            (fun x => x / scale n) := by
-              simpa only [Function.comp_def] using
-                (Measure.map_map hdiv
-                  (displacement_measurable (length n))).symm
-        _ = ((iidSequenceLaw ν).map
-              (AdditivePath.blockSum (j * length n) (length n))).map
-              (fun x => x / scale n) := by
-                rw [show (iidSequenceLaw ν).map
-                    (AdditivePath.blockSum (j * length n) (length n)) =
-                    (iidSequenceLaw ν).map
-                      (AdditivePath.displacement (length n)) by
-                  simpa [iidSequenceLaw] using hblock]
-        _ = (iidSequenceLaw ν).map (X n j) := by
-          simpa only [X, Function.comp_def] using
-            Measure.map_map hdiv
-              (blockSum_measurable (j * length n) (length n))
-    · intro n
-      exact (blockSum_measurable (j * length n) (length n)).div_const _
-        |>.aemeasurable
-  have hindep (n : ℕ) : iIndepFun (X n) (iidSequenceLaw ν) := by
-    have h := iIndepFun_consecutiveBlockSums ν blocks (length n)
-    exact h.comp (fun _ x => x / scale n)
-      (fun _ => measurable_id.div_const _)
-  simpa only [X, Z, length] using TendstoInDistribution.pi_of_iIndepFun
-    hcoordinate (fun _ => by fun_prop) hindep
+  let normalization : ℕ → ℝ := fun n => Real.sqrt n
+  let length : ℕ → ℕ → ℕ :=
+    fun n _ => diffusiveBlockLength constant scale n
+  let ratio : Fin blocks → ℝ := fun _ => Real.sqrt constant
+  let shift : Fin blocks → ℝ := fun _ => 0
+  have hDOA : IsInDomainOfAttractionAlong ν (gaussianReal 0 1)
+      normalization (fun _ => 0) := by
+    simpa [normalization] using
+      ProbabilityTheory.isInDomainOfAttractionAlong_gaussianReal_zero_one_of_centered_unitSecondMoment
+        ν ⟨hcentered, hsecondMoment⟩
+  have hlength (j : Fin blocks) :
+      Tendsto (fun n => length n j.val) atTop atTop := by
+    simpa [length] using
+      IsMogulskiiScale.tendsto_diffusiveBlockLength_atTop hscale hconstant
+  have hscalePos : ∀ᶠ n : ℕ in atTop, scale n ≠ 0 := by
+    filter_upwards [IsMogulskiiScale.eventually_pos hscale] with n hn
+    exact hn.ne'
+  have hratio (j : Fin blocks) :
+      Tendsto (fun n => normalization (length n j.val) / scale n)
+        atTop (nhds (ratio j)) := by
+    simpa [normalization, length, ratio] using
+      IsMogulskiiScale.tendsto_sqrt_diffusiveBlockLength_div hscale hconstant
+  have hcenter (j : Fin blocks) :
+      Tendsto (fun n => (0 : ℝ) / scale n) atTop (nhds (shift j)) := by
+    simp [shift]
+  have hblocks :=
+    ProbabilityTheory.RandomWalk.FunctionalLimit.FiniteDimensional.tendstoInDistribution_consecutiveBlockSums
+      hDOA blocks length scale ratio shift hlength hscalePos hratio hcenter
+  have hstart (n : ℕ) (j : Fin blocks) :
+      AdditivePath.blockStart (length n) j.val =
+        j.val * diffusiveBlockLength constant scale n := by
+    simp [length, AdditivePath.blockStart_const]
+  simpa [length, ratio, shift, hstart, mul_comm] using hblocks
 
 /-- The limiting product-Gaussian probability of a finite open box is a
 lower bound for the liminf of the corresponding normalized block-vector

@@ -6,8 +6,10 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Target.Coefficient
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Target.Expansion
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Survival.Bounds
+
+import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Target.Lemmas.Coefficient
 
 /-!
 # The extremal spectral pair

@@ -14,8 +14,12 @@ are all useful contributions.
    the pinned dependencies determine what the implementation can use.
 2. Read [`ARCHITECTURE.md`](ARCHITECTURE.md) and place a result in the lowest
    layer that does not depend on the specific construction being formalized.
-3. Import narrow modules. Do not add a catch-all aggregate import just to make
-   a declaration available.
+3. Import narrow modules. A named result entry point such as
+   `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Theorems.lean`
+   may re-export a coherent list of principal published results for discovery;
+   it does not replace the semantic modules that own those declarations.
+   Proofs and ordinary clients should import the narrow owner module rather
+   than depend on a catch-all aggregate.
 4. Check the proof boundary in
    [`FORMALIZATION_CHECKLIST.md`](FORMALIZATION_CHECKLIST.md) before describing
    a result as complete.
@@ -120,6 +124,10 @@ group the public modules into semantic subdirectories such as `Ordering/`,
 `Selection/`, or `PointMeasure/`. Keep the subject level for shared core
 definitions and direct entry modules. Do not place a reusable public interface
 under `Lemmas/` just to reduce the number of files at the subject level.
+Name directories for their mathematical subject or proof role, not for a
+parameter value or a sign condition that only selects one theorem instance;
+for example, a first-stage population estimate belongs under `FirstStage/`,
+with the sign condition stated among the theorem's hypotheses.
 Use filenames relative to their semantic directory: prefer
 `PointMeasure/Basic.lean` or `Tilted/Law.lean` to repeating the full directory
 name in every child filename. Mathlib uses same-level `Foo.lean` and `Foo/`

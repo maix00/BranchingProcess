@@ -9,6 +9,7 @@ module
 public import Mathlib.Probability.CentralLimitTheorem
 public import Mathlib.Probability.Moments.Variance
 public import Probability.Distributions.DomainOfAttraction.Basic
+public import Probability.Distributions.Moments.Real
 public import Probability.Distributions.Moments.Truncated.Basic
 public import Probability.Distributions.Stable.Domain.Attraction
 public import Probability.Distributions.Stable.Attraction.Norming.Basic
@@ -20,10 +21,31 @@ public import Probability.Sequence.IID.Basic
 /-!
 # The finite-variance normal domain of attraction
 
-A centered probability law with positive finite second moment belongs to the
-domain of attraction of the standard Gaussian under the canonical normalization
-`sqrt (n * variance)`. The normalization also satisfies the quadratic stable
-norming relation defined from the law's truncated second moment.
+The public declarations in this module are:
+
+- `isStableNorming_two_of_integrable_sq`: if $0<\int x^2\,d\nu<\infty$,
+  then $a_n=\sqrt{n\int x^2\,d\nu}$ is a quadratic stable norming.
+- `stableSlowVariation_two_isSlowlyVarying_of_integrable_sq`:
+  the truncated second moment $L^*(u)$ is slowly varying when the full second
+  moment is finite and positive.
+- `IsInDomainOfAttractionAlong.gaussian_defect_data`: attraction to the
+  standard Gaussian implies regular variation of
+  $1-|\widehat\nu(u)|^2$ with index $2$, and
+  $n(1-|\widehat\nu(a_n^{-1})|^2)\to1$.
+- `IsInDomainOfAttractionAlong.tendsto_scaledGaussianNormDefect`: for every
+  $t>0$, $n(1-|\widehat\nu(t/a_n)|^2)\to t^2$.
+- `IsInDomainOfAttractionAlong.tendsto_gaussian_quadraticDefectCancellation`:
+  $n(4D(t/a_n)-D(2t/a_n))\to0$, where
+  $D(u)=1-|\widehat\nu(u)|^2$.
+- `isInDomainOfAttractionAlong_gaussianReal_zero_one_of_centered_integrable_sq`:
+  a centered law with positive finite second moment converges to the standard
+  Gaussian under $a_n=\sqrt{n\int x^2\,d\nu}$.
+- `isInDomainOfAttractionAlong_gaussianReal_zero_one_of_centered_unitSecondMoment`:
+  under centered unit second moment, the same conclusion holds with
+  $a_n=\sqrt n$.
+- `isInAlphaStableDomainOfAttractionAlong_gaussianReal_zero_one_of_centered_integrable_sq`:
+  the preceding finite-variance convergence also supplies the strictly
+  $2$-stable domain-of-attraction witness.
 
 This is the finite-variance part of the exponent-two normal domain of
 attraction. No assertion about infinite-variance normal attraction is made.
@@ -363,6 +385,25 @@ theorem isInDomainOfAttractionAlong_gaussianReal_zero_one_of_centered_integrable
   filter_upwards [eventually_ge_atTop 1] with n hn
   apply Real.sqrt_pos.2
   exact mul_pos (by exact_mod_cast hn : 0 < (n : ℝ)) hsecondMoment
+
+/-- A centered probability law with second moment one belongs to the
+standard Gaussian domain of attraction along the normalization `sqrt n`.
+This is the unit-second-moment specialization of
+`isInDomainOfAttractionAlong_gaussianReal_zero_one_of_centered_integrable_sq`;
+the moment identity itself supplies square integrability. -/
+theorem isInDomainOfAttractionAlong_gaussianReal_zero_one_of_centered_unitSecondMoment
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (hν : IsCenteredUnitSecondMoment ν) :
+    IsInDomainOfAttractionAlong ν (gaussianReal 0 1)
+      (fun n => Real.sqrt n) (fun _ => 0) := by
+  have hsquare : Integrable (fun x : ℝ => x ^ 2) ν :=
+    integrable_of_integral_eq_one hν.2
+  have hsecondMoment : 0 < ∫ x, x ^ 2 ∂ν := by
+    rw [hν.2]
+    norm_num
+  simpa [hν.2] using
+    isInDomainOfAttractionAlong_gaussianReal_zero_one_of_centered_integrable_sq
+      ν hν.1 hsquare hsecondMoment
 
 /-- A centered probability law with positive finite second moment belongs to
 the strictly `2`-stable domain of attraction of the standard Gaussian, with

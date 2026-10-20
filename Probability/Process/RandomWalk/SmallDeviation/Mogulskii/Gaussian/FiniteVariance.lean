@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Distributions.Moments.Truncated.Basic
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Path.SourcePathClass
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Path.TerminalLeftPathClass
 
 /-!
 # Finite-variance specialization of the normal-domain Mogul'skii rate

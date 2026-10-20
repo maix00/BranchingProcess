@@ -9,7 +9,7 @@ module
 public import Analysis.Asymptotics.Scale.InverseScale
 public import Probability.Process.RandomWalk.Path.Corridor.Horizontal.Core
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.FromIncrementLaw.Normal.ContinuousBoundary
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.FromIncrementLaw.Normal.HorizontalTube.SourceCorridor
+import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.FromIncrementLaw.Normal.HorizontalTube.TerminalLeftCorridor
 /-!
 # Finite-variance closed horizontal-tube rate
 
@@ -17,7 +17,7 @@ The public theorem in this module is:
 
 - `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.centeredFiniteVariance_closedHorizontalTubeProbabilityRate`: if $x_n\to\infty$ and $x_n^2/n\to0$, then for a centered increment law with variance $0<\sigma^2<\infty$, the logarithmic probability of the closed horizontal tube has rate $-\pi^2\sigma^2/2$.
 
-This is the core real-scale input for Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.1(i). The proof transfers the strict source-path corridor rate in A. A. Mogul'skii, Theorem 3, Section 4, p. 764 of “Small deviations in the sample function space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974), 755–765; English translation, “Small Deviations in a Space of Trajectories,” *Theory of Probability and Its Applications* 19(4) (1975), 726–736, DOI 10.1137/1119081.
+This is the core real-scale input for Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.1(i). The proof transfers the strict terminal-left path corridor rate in A. A. Mogul'skii, Theorem 3, Section 4, p. 764 of “Small deviations in the sample function space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974), 755–765; English translation, “Small Deviations in a Space of Trajectories,” *Theory of Probability and Its Applications* 19(4) (1975), 726–736, DOI 10.1137/1119081.
 -/
 
 open Filter MeasureTheory ProbabilityTheory
@@ -37,7 +37,7 @@ sample function space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974),
 755–765; English translation, “Small Deviations in a Space of Trajectories,”
 *Theory of Probability and Its Applications* 19(4) (1975), 726–736, DOI
 10.1137/1119081. The time horizon is `n - 1`, matching the terminal-left
-source path. -/
+terminal-left path. -/
 theorem centeredFiniteVariance_closedHorizontalTubeProbabilityRate
     {ν : Measure ℝ} [IsProbabilityMeasure ν] {scale : ℕ → ℝ}
     (hsmall : Asymptotics.IsSmallDeviationScale scale (fun n => Real.sqrt n))

@@ -17,6 +17,27 @@ public import MeasureTheory.Measure.Limits.InnerOuter
 This module combines raw stable-domain inputs with the general realization
 transfer. Callers provide the coordinate process, but finite-corridor rates are obtained by applying
 `tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_sourceStableInputs`.
+
+The public declarations are:
+
+- `SourceIidRelativePathClassRate`: a record containing a positive time
+  factor, a negative source escape constant, a finite-corridor energy, and
+  inner and outer rates. For
+  $E_n(G)=\{\omega\mid
+  \mathrm{sourceNormalizedStepCadlagPathIcc}(\mathrm{scale},n,
+    (k\mapsto\mathrm{coordinate}(k,\omega)))\in G\}$, define
+  $p_n^{\mathrm{in}}=(P.\mathrm{innerMeasure}(E_n(G))).\mathrm{toReal}$,
+  $p_n^{\mathrm{out}}=(P(E_n(G))).\mathrm{toReal}$, and
+  $D_n=\mathrm{probabilityRateDenominator}(\alpha,\nu,\mathrm{scale},n)$.
+  Both rates satisfy
+  $\log p_n^{\mathrm{in}}/D_n,\log p_n^{\mathrm{out}}/D_n\to
+  \operatorname{rateCoefficient}(\alpha,dC)H$.
+- `sourceIidRelativePathClassRate_of_rawSource`: constructs this record from
+  raw stable domain-of-attraction inputs and an i.i.d. coordinate process
+  with law $\nu$.
+- `SourceIidRelativePathClassRate.probabilityRate`: when every realized
+  event $E_n(G)$ is null-measurable, its ordinary probability is eventually
+  positive and has the same logarithmic rate as its inner measure.
 -/
 
 open Filter MeasureTheory ProbabilityTheory

@@ -12,12 +12,33 @@ public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Sca
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Scale.Rate
 public import Probability.Process.Stable.SmallDeviation.EscapeRate.PathLaw.Transfer
 
-/-!
-# Stable lower bounds for shifted endpoint-return blocks
+/-! # Stable lower bounds for shifted endpoint-return blocks
 
-This combines the stable escape rate, the variable-block path limit, and
-open-set Portmanteau for an arbitrary shifted interval. It supplies the
-finite endpoint-band probabilities needed by the discrete return kernel.
+The public declarations are:
+
+- `eventually_scaledStableEndpointCorridorProbability_ge_exp`: for
+  $l<0<u$ and $l<v_-<v_+<u$, the stable path-law mass of the
+  corridor with endpoint in $(v_-,v_+)$ eventually exceeds
+  $\exp(((C/((u-l)/2)^\alpha)-\delta)a^\alpha)$ after spatial scaling by
+  amplitude $a$.
+- `eventually_scaledStableEndpointWindowFamilyProbability_ge_exp`: the same
+  exponential lower bound holds uniformly for every endpoint interval in a
+  finite family strictly inside $(l,u)$.
+- `exists_stableEndpointCorridorMassLowerBound_of_escapeRate`: some positive
+  amplitude realizes the preceding lower bound for one endpoint interval.
+- `exists_stableEndpointBandReturnMassLowerBound_of_escapeRate`: for the
+  seven windows indexed by $i\in\{-3,\ldots,3\}$, some positive amplitude
+  gives a common lower bound
+  $\exp((C/(((u-l-8\varepsilon)/2)^\alpha)-\delta)a^\alpha)$ in the
+  narrowed corridor $(l+4\varepsilon,u-4\varepsilon)$.
+- `exists_commonStableEndpointBandAndBridgeMassLowerBound_of_escapeRate`:
+  one positive amplitude gives that bound simultaneously for the seven
+  endpoint bands and any specified finite family of bridge windows strictly
+  inside $(l+4\varepsilon,u-4\varepsilon)$.
+
+These estimates combine the stable escape rate, the variable-block path
+limit, and open-set Portmanteau to supply the finite endpoint-band
+probabilities used by the discrete return kernel.
 -/
 
 open Filter MeasureTheory ProbabilityTheory

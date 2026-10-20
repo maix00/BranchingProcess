@@ -34,7 +34,7 @@ open Skorokhod.PathClass.StepCorridor
 the fixed finite inner corridors and all trace containments. The strict radius
 growth is also preserved. This is the quantitative order needed to remove
 the incoming-core loss from the cell rates. -/
-theorem commonPartitionLowerGeometry_shrinkCore
+lemma commonPartitionLowerGeometry_shrinkCore
     (upper lower : StepBoundary)
     (center radius : Fin (StepBoundary.commonKnots upper lower).card → ℝ)
     (innerLower innerUpper :

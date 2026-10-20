@@ -17,6 +17,25 @@ These adapters keep the endpoint-window mesh, window half-width, and path
 normalization independent. This permits a narrow spectral event to be compared
 with a slightly wider fixed Brownian event before transferring it to another
 centered unit-variance increment law.
+
+The public declarations in this module are:
+
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.normalizedEndpointWindowEvent` and
+  `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.normalizedEndpointWindowProbability`:
+  define the normalized tube/endpoint event and its probability under an IID
+  increment law.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.normalizedEndpointWindowEvent_eq_endpointWindowBlockEvent_scale` and
+  `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.normalizedEndpointWindowProbability_eq_endpointWindowBlockEvent_of_div`:
+  identify normalized coordinates with the raw block event and probability
+  after scaling.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.measure_centeredSkorokhodCorridorEndsIn_le_liminf_normalizedEndpointWindowProbability_of_functionalLimit`:
+  an open limiting corridor yields a liminf lower bound for the discrete
+  endpoint-window probability.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.limsup_normalizedEndpointWindowProbability_le_closedCorridor_of_eventually_bounds`:
+  eventual containment in a closed corridor yields a limsup upper bound.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.eventually_ofReal_le_normalizedEndpointWindowProbability_of_spectralLower`:
+  a strict spectral lower bound transfers to wider windows for any centered
+  unit-variance increment law under the stated open/closed corridor margins.
 -/
 
 open Filter MeasureTheory ProbabilityTheory

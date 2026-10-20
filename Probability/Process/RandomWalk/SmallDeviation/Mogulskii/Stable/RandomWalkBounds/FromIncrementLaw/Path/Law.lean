@@ -15,7 +15,17 @@ public import Probability.Process.Stable.SmallDeviation.EscapeRate.PathLaw.Basic
 # Stable escape rates from tight random-walk sources
 
 This is the small-deviation adapter from the general stable process existence
-theorem to the process escape-rate interface.
+theorem to the process escape-rate interface. Its public theorem is
+`exists_generatedStableProcess_escapeRate_of_tightSource`: under a stable
+domain-of-attraction limit, tight normalized path laws, and
+$0<\mathbb P(X_1\le0)<1$, it constructs a probability measure $P$ on
+càdlàg paths and an escape constant $C$ such that
+
+$$
+\mathrm{IsStableClockProcessLaw}(\alpha,\mu,\mathrm{clock},P)
+\quad\text{and}\quad
+\mathrm{HasStableProcessEscapeRate}(\alpha,\mu,P,C).
+$$
 -/
 
 open Filter MeasureTheory ProbabilityTheory
