@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.Kernel.Killed.Return.Comparison
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Return.Partition
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Lemmas.Return.Partition
 
 /-!
 # Uniform Mogulskii bounds for return kernels
@@ -31,7 +31,7 @@ are:
   $(\lfloor N/\ell\rfloor+1)\log p\leq\log M_N(x)$ in extended-real form.
 
 The finite-reference Gaussian estimate is proved in
-`Return/Partition.lean`. This file passes from that estimate to uniform
+`Lemmas/Return/Partition.lean`. This file passes from that estimate to uniform
 starting points and iterates the sub-Markov return kernel.
 -/
 

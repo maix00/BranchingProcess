@@ -8,8 +8,8 @@ module
 
 public import Probability.Process.RandomWalk.Kernel.Killed.Return.Partition
 public import Mathlib.Probability.Distributions.Gaussian.Real
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Partition.Basic
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Partition.Quantitative
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Lemmas.Partition.Basic
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Lemmas.Partition.Quantitative
 
 /-!
 # Finite-partition lower bounds for corridor return kernels

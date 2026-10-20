@@ -95,15 +95,14 @@ its source statement and missing proof interfaces are recorded in
 
 The other directories below `Mogulskii/` organize supporting mathematical
 interfaces rather than additional main theorems of the 1974 article:
-`Path/` handles path encodings and corridor events, `Scale/` the normalization,
-`Partition/` finite-partition estimates, `Stable/` and `Gaussian/` the stable
-and finite-variance regimes, `RandomWalkBounds/` assembled walk estimates,
-`Rate/` the normal-domain rate arguments, and `Spectral/` the killed symmetric
-lattice-walk method. `Blocks/Uniform.lean` gives finite-reference survival
-bounds. `Return/Partition.lean` gives partition return-kernel lower bounds;
-`Return/Uniform.lean` makes them uniform in the starting point and iterates
-them. These are placed by mathematical subject and remain directly importable
-as complete supporting estimates rather than as additional main theorems.
+`Path/` owns path encodings and corridor events, `Scale/` owns normalization,
+`Stable/` and `Gaussian/` own the stable and finite-variance regimes,
+`RandomWalkBounds/` assembles random-walk estimates, `Rate/` owns the
+normal-domain rate arguments, and `Spectral/` contains the killed
+symmetric-lattice method. Proof-specific finite-reference block estimates,
+partition-event bounds, and return-kernel assembly are grouped under
+`Lemmas/{Blocks,Partition,Return}/`. General killed-kernel and return-kernel
+interfaces remain in `Probability/Process/RandomWalk/Kernel/Killed/`.
 
 In the source notation, $F$ is the law of one increment and
 $L^*(u)=u^{\alpha-2}\int_{-u}^{u}x^2\,F(dx)$; the norming is chosen so that
