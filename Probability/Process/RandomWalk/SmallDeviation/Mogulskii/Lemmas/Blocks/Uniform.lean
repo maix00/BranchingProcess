@@ -8,8 +8,8 @@ module
 
 public import Probability.Distributions.Gaussian.Interval
 public import Probability.Process.RandomWalk.Kernel.Killed.Survival.Uniform
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Partition.Basic
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Partition.Quantitative
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Lemmas.Partition.Basic
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Lemmas.Partition.Quantitative
 import Probability.Distributions.Gaussian.FiniteProduct
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Blocks.Lemmas.ProductParameters
 
