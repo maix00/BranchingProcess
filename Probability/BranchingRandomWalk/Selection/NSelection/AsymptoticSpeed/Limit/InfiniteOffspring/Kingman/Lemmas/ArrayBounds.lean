@@ -50,7 +50,7 @@ open Combinatorics.Branching.Selection.NSelection
 open ProbabilityTheory.BranchingRandomWalk.Selection.NSelection
 
 /-- The finite-generation envelope is measurable in the offspring batch. -/
-theorem measurable_infiniteOffspringBatchSlotZeroNorm {N : ℕ} (hN : 0 < N) :
+lemma measurable_infiniteOffspringBatchSlotZeroNorm {N : ℕ} (hN : 0 < N) :
     Measurable (infiniteOffspringBatchSlotZeroNorm hN : GenerationBatch N → ℝ) := by
   have hne : (Finset.univ : Finset (Fin N)).Nonempty :=
     Finset.univ_nonempty_iff.mpr ⟨⟨0, hN⟩⟩
@@ -131,7 +131,7 @@ noncomputable def repairedGenerationBatchSeq {N : ℕ}
     (ω : GenerationEnvironment N) : ℕ → GenerationBatch N :=
   fun t => repairGenerationBatch (ω t)
 
-theorem repairedGenerationBatchSeq_good {N : ℕ}
+lemma repairedGenerationBatchSeq_good {N : ℕ}
     (ω : GenerationEnvironment N) :
     ∀ t, IsGoodInfiniteOffspringBatch (repairedGenerationBatchSeq ω t) := by
   intro t
@@ -139,7 +139,7 @@ theorem repairedGenerationBatchSeq_good {N : ℕ}
   exact repairGenerationBatch_repairable (ω t)
 
 /-- The repaired block array is measurable in the generation environment. -/
-theorem measurable_repairedInfiniteSelectionSubadditiveArray {N : ℕ}
+lemma measurable_repairedInfiniteSelectionSubadditiveArray {N : ℕ}
     (hN : 0 < N) (start length : ℕ) :
     Measurable (fun ω : GenerationEnvironment N =>
       repairedInfiniteSelectionSubadditiveArray hN ω start length) := by
@@ -159,7 +159,7 @@ theorem measurable_repairedInfiniteSelectionSubadditiveArray {N : ℕ}
 
 /-- The repaired one-generation envelope remains integrable after reading a
 fixed row of the i.i.d. generation environment. -/
-theorem integrable_repairedInfiniteOffspringBatchSlotZeroNorm_at {N : ℕ}
+lemma integrable_repairedInfiniteOffspringBatchSlotZeroNorm_at {N : ℕ}
     (hN : 0 < N) (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
     (hboundary : HasBoundaryNormalization realPotential μ)
     (hnonempty : μ nonemptySupport = 1)
@@ -182,7 +182,7 @@ theorem integrable_repairedInfiniteOffspringBatchSlotZeroNorm_at {N : ℕ}
 
 /-- The measurable block array is the deterministic subadditive array of
 the repaired generation sequence. -/
-theorem repairedInfiniteSelectionSubadditiveArray_eq_deterministic
+lemma repairedInfiniteSelectionSubadditiveArray_eq_deterministic
     {N : ℕ} (hN : 0 < N) (ω : GenerationEnvironment N)
     (start length : ℕ) :
     repairedInfiniteSelectionSubadditiveArray hN ω start length =
@@ -196,7 +196,7 @@ theorem repairedInfiniteSelectionSubadditiveArray_eq_deterministic
 
 /-- Almost surely, the absolute block endpoint is bounded by the sum of the
 repaired generation-wise leftmost-child envelopes. -/
-theorem repairedInfiniteSelectionSubadditiveArray_ae_abs_le_envelope
+lemma repairedInfiniteSelectionSubadditiveArray_ae_abs_le_envelope
     {N : ℕ} (hN : 0 < N) (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
     (hordered : μ (orderedBySteps realPotential) = 1)
     (hnonempty : μ nonemptySupport = 1) (n : ℕ) :
@@ -230,7 +230,7 @@ theorem repairedInfiniteSelectionSubadditiveArray_ae_abs_le_envelope
 leftmost-child moment condition and the ordered, nonempty offspring support.
 The proof uses the deterministic sup-norm recursion, then integrates its
 finite sum of generation envelopes. -/
-theorem repairedInfiniteSelectionSubadditiveArray_integrable_of_leftmostMoment
+lemma repairedInfiniteSelectionSubadditiveArray_integrable_of_leftmostMoment
     {N : ℕ} (hN : 0 < N) (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
     (hboundary : HasBoundaryNormalization realPotential μ)
     (hnonempty : μ nonemptySupport = 1)
@@ -263,7 +263,7 @@ theorem repairedInfiniteSelectionSubadditiveArray_integrable_of_leftmostMoment
 expected-value lower bound. Stationarity makes each generation envelope have
 the same finite mean, so the expected block lower bound is linear in its
 length. -/
-theorem repairedInfiniteSelection_normalizedIntegral_bddBelow_of_leftmostMoment
+lemma repairedInfiniteSelection_normalizedIntegral_bddBelow_of_leftmostMoment
     {N : ℕ} (hN : 0 < N) (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
     (hboundary : HasBoundaryNormalization realPotential μ)
     (hnonempty : μ nonemptySupport = 1)

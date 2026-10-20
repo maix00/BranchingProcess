@@ -38,7 +38,7 @@ open Combinatorics.Branching
 open Combinatorics.Branching.Selection.NSelection
 open ProbabilityTheory.BranchingRandomWalk.Selection.NSelection
 
-theorem repairedInfiniteSelectionSubadditiveArray_subadditive
+lemma repairedInfiniteSelectionSubadditiveArray_subadditive
     {N : ℕ} (hN : 0 < N) (ω : GenerationEnvironment N)
     (start firstLength secondLength : ℕ) :
     repairedInfiniteSelectionSubadditiveArray hN ω start
@@ -55,7 +55,7 @@ theorem repairedInfiniteSelectionSubadditiveArray_subadditive
 
 /-- Starting a repaired environment at a later generation agrees with
 advancing the block's start time. -/
-theorem repairedInfiniteSelectionSubadditiveArray_suffix
+lemma repairedInfiniteSelectionSubadditiveArray_suffix
     {N : ℕ} (hN : 0 < N) (ω : GenerationEnvironment N)
     (shift start length : ℕ) :
     repairedInfiniteSelectionSubadditiveArray hN
@@ -78,7 +78,7 @@ theorem repairedInfiniteSelectionSubadditiveArray_suffix
 
 /-- Iterating the one-sided environment shift by `m` is the same as dropping
 the first `m` generations. -/
-theorem generationEnvironmentShift_iterate {N : ℕ}
+lemma generationEnvironmentShift_iterate {N : ℕ}
     (m : ℕ) (ω : GenerationEnvironment N) :
     (generationEnvironmentShift^[m]) ω = fun t => ω (m + t) := by
   induction m generalizing ω with
@@ -96,7 +96,7 @@ theorem generationEnvironmentShift_iterate {N : ℕ}
 /-- The measurable repaired block array is a subadditive cocycle over the
 generation shift, so it can be passed directly to the repository's Kingman
 theorem. -/
-theorem repairedInfiniteSelection_isSubadditiveCocycle {N : ℕ}
+lemma repairedInfiniteSelection_isSubadditiveCocycle {N : ℕ}
     (hN : 0 < N) :
     IsSubadditiveCocycle (generationEnvironmentShift :
       GenerationEnvironment N → GenerationEnvironment N)
