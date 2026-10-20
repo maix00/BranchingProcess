@@ -42,9 +42,7 @@ Primeneniya* 19(4) (1974), 755–765; English translation, “Small Deviations i
 a Space of Trajectories,” *Theory of Probability and Its Applications* 19(4)
 (1975), 726–736, DOI 10.1137/1119081. The endpoint CLT comes from the Donsker
 layer; this file does not assert tightness in path space.
-
-
-The original bibliography is A. A. Mogul'skii, “Small deviations in the sample function space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974), 755--765; English translation, “Small Deviations in a Space of Trajectories,” *Theory of Probability and Its Applications* 19(4) (1975), 726--736, DOI 10.1137/1119081. -/
+-/
 
 open Filter MeasureTheory Set
 
