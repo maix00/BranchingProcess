@@ -597,7 +597,7 @@ positivity, and endpoint decay.
   exact floor-indexed IID cells and proves their inclusion in the whole
   right-continuous corridor event. This preserves the endpoint convention at
   partition knots.
-- `Stable/RandomWalkBounds/EndpointBandTransfer/StableLower/` supplies the open
+- `Stable/RandomWalkBounds/EndpointBandTransfer/Lower/` supplies the open
   endpoint-mass transfer, cell entrance and exit bridges, and their path-limit
   bounds. `Stable/RandomWalkBounds/Partition/Lower/` composes these with the balanced
   floor partition, obtains eventual positivity, and derives the sharp lower
