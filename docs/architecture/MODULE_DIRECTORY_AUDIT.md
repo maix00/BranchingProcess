@@ -2043,3 +2043,43 @@ module-visible `theorem` declarations under `Lemmas/`. A separate scan found
 no project module outside `Lemmas/` that publicly imports a project-local
 `Lemmas/` module. The root monotonicity entry and its helper compiled
 successfully with the pinned toolchain (3,375 Lake jobs).
+
+## Public API header and spectral helper review (2026-10-21)
+
+The follow-up exact-name pass found that
+`Combinatorics/BranchingWalk/Basic/Map.lean` described its map operations and
+projection formulas but did not name every public declaration. Its header now
+lists `surviveAlong_map_iff`, the three root-indexed map constructions, all
+four projection lemmas, and both measurability results with their formulas and
+hypotheses.
+
+The two modules under `LinearAlgebra/Spectrum/` were checked as one subject
+family. `DiagonalBasis.lean` now identifies
+`Module.End.pow_apply_eq_sum_repr_smul` and its finite eigenbasis expansion.
+`FiniteState/Eigenfunction.lean` now lists its weighted matrix-power identity
+and `Matrix.pow_rowSum_bounds_of_bounded_eigenfunction`, the two-sided
+row-sum bound with its eigenfunction and nonnegativity hypotheses. The former
+name said `positive_eigenfunction`, although the statement only assumes
+pointwise lower and upper bounds and does not require a positive lower bound;
+the two Mogulskii clients now use the more accurate name. The auxiliary
+`pow_mulVec_of_mulVec_eq_smul` is used only in the proof of the weighted
+identity, so it is now a `private lemma`; the two cross-module matrix estimates
+are `lemma`s and remain in the public finite-state spectral module.
+
+The abstraction check used pinned Mathlib revision
+`380f2aafb622cb2c1c93dac545b6389083c68c51`. Mathlib's
+[`Module.End.HasEigenvector.pow_apply`](https://github.com/leanprover-community/mathlib4/blob/380f2aafb622cb2c1c93dac545b6389083c68c51/Mathlib/LinearAlgebra/Eigenspace/Basic.lean#L475)
+proves the power formula for an eigenvector, where `HasEigenvector` includes
+the nonzero-vector condition. The local matrix identity assumes only
+`kernel *ᵥ weight = eigenvalue • weight`, so it also covers the zero vector;
+the Mathlib result is not a substitute for that statement. The proof-only
+induction helper is therefore kept private, while the weighted row identity
+and finite-state row-sum estimate remain at their matrix subject owner. The
+search also confirmed that the diagonal-basis expansion is not already stated
+in the pinned Mathlib source.
+
+The two spectral modules and their three Mogulskii clients
+(`Spectral/Kernel/Interval.lean`, `Spectral/Decomposition/Expansion.lean`,
+and `Spectral/Survival/Bounds.lean`) built successfully with the pinned
+toolchain (3,226 Lake jobs). The corrected branching-walk map header built
+successfully as part of the same audit pass (1,770 Lake jobs).
