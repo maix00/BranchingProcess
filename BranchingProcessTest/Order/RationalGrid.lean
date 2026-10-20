@@ -1,4 +1,4 @@
-import Order.Interval.RationalGrid
+import Order.Interval.RationalGrid.Basic
 import Order.Interval.RationalGrid.Interval
 import Order.Interval.RationalCoordinate.UnitInterval
 

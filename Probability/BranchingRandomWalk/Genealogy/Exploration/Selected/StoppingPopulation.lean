@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 import Probability.BranchingRandomWalk.Genealogy.Exploration.Selected.CellBranching
 import Probability.Process.HittingTime.Declarations
-import Probability.BranchingRandomWalk.Population.Processes.Selected
+import Probability.BranchingRandomWalk.Population.Processes.Selected.Basic
 
 /-!
 # Branching for a finite multi-root population at a stopping time
