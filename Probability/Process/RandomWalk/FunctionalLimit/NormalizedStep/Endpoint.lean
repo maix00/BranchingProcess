@@ -7,9 +7,9 @@ Authors: WANG Yiyang
 module
 
 public import Mathlib.Topology.UnitInterval
-public import Probability.Process.RandomWalk.Path.Skorokhod.Corridor.Endpoint
+public import Probability.Process.RandomWalk.Path.Skorokhod.Corridor.Endpoint.Core
 public import Probability.ConvergenceInDistribution.Portmanteau
-public import Probability.Process.Path.Skorokhod.Corridor
+public import Probability.Process.Path.Skorokhod.Corridor.Basic
 
 /-!
 # Normalized-step limits with an endpoint constraint

@@ -11,7 +11,7 @@ public import MeasureTheory.Measure.Tight.Sequence
 public import Topology.Cadlag.Skorokhod.Compactness.Billingsley
 public import Topology.Cadlag.Skorokhod.Oscillation.Partition.Measurability
 public import Topology.Cadlag.Range
-public import Topology.Cadlag.Skorokhod.Range
+public import Topology.Cadlag.Skorokhod.Path.Range
 public import Topology.Cadlag.Skorokhod.Topology
 
 /-!

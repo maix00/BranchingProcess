@@ -19,6 +19,39 @@ partial function `partialMark : TreeNode α →. X` and the `Option`-valued
 accessor `mark? : TreeNode α → Option X`. Neither view needs a `?`-suffixed
 *type*: `?` names functions returning `Option`. The induced measurable space
 and its coordinate measurability statements live in `Measurability.lean`.
+
+The public declarations are:
+
+* `Combinatorics.UlamHarris.MarkedTree α X`: a tree `T.tree` and a mark
+  `T.mark u hu` for each `u ∈ T.tree.carrier`.
+* `Combinatorics.UlamHarris.MarkedTree.rootMark` gives `T.mark [] T.tree.root_mem`;
+  `Combinatorics.UlamHarris.MarkedTree.rootMark_eq` states this equality.
+* `Combinatorics.UlamHarris.MarkedTree.ext`: equality of the trees and
+  `htree : M.tree = N.tree` and
+  `∀ u hu, M.mark u hu = N.mark u (htree ▸ hu)` imply `M = N`.
+* `Combinatorics.UlamHarris.MarkedTree.partialMark` has domain
+  `T.tree.carrier`; `Combinatorics.UlamHarris.MarkedTree.partialMark_dom`
+  states `T.partialMark.Dom = T.tree.carrier`, and
+  `Combinatorics.UlamHarris.MarkedTree.partialMark_asSubtype` states
+  `T.partialMark.asSubtype ⟨u, hu⟩ = T.mark u hu` for
+  `hu : u ∈ T.tree.carrier`.
+* `Combinatorics.UlamHarris.MarkedTree.mark?` is `some (T.mark u hu)` on the
+  tree carrier and `none` off it;
+  `Combinatorics.UlamHarris.MarkedTree.mark?_apply_mem` and
+  `Combinatorics.UlamHarris.MarkedTree.mark?_apply_notMem` state these cases.
+* `Combinatorics.UlamHarris.RootIndexed.MarkedTree Root α X` is the family
+  type `Root → MarkedTree α X`.
+  Its coordinate operations satisfy
+  `Combinatorics.UlamHarris.RootIndexed.MarkedTree.tree M r = (M r).tree`,
+  `Combinatorics.UlamHarris.RootIndexed.MarkedTree.partialMark M r =
+  (M r).partialMark`,
+  `Combinatorics.UlamHarris.RootIndexed.MarkedTree.mark? M r = (M r).mark?`,
+  and `Combinatorics.UlamHarris.RootIndexed.MarkedTree.rootMark M r =
+  (M r).rootMark`. The theorems
+  `Combinatorics.UlamHarris.RootIndexed.MarkedTree.tree_apply`,
+  `Combinatorics.UlamHarris.RootIndexed.MarkedTree.partialMark_apply`, and
+  `Combinatorics.UlamHarris.RootIndexed.MarkedTree.mark?_apply` give the
+  coordinate equations; `rootMark M r = (M r).rootMark` by definition.
 -/
 
 @[expose] public section
@@ -114,7 +147,7 @@ abbrev MarkedTree (Root α X : Type*) [LT α] :=
 
 namespace MarkedTree
 
-variable {Root NewRoot α X : Type*} [LT α]
+variable {Root α X : Type*} [LT α]
 
 /-- The realized tree of the initial ancestor `r`. -/
 def tree (M : RootIndexed.MarkedTree Root α X) (r : Root) : UlamHarris.Tree α :=
@@ -145,30 +178,6 @@ theorem mark?_apply (M : RootIndexed.MarkedTree Root α X) (r : Root) :
 /-- The root mark of the tree belonging to the initial ancestor `r`. -/
 def rootMark (M : RootIndexed.MarkedTree Root α X) (r : Root) : X :=
   (M r).rootMark
-
-@[ext (iff := false)]
-theorem ext {M N : RootIndexed.MarkedTree Root α X}
-    (hmark : ∀ r, M r = N r) : M = N := by
-  funext r
-  exact hmark r
-
-/-- Reindex a family of marked trees along a map of initial ancestors. -/
-def reindex (f : NewRoot → Root) (M : RootIndexed.MarkedTree Root α X) :
-    RootIndexed.MarkedTree NewRoot α X :=
-  fun r => M (f r)
-
-@[simp]
-theorem reindex_apply (f : NewRoot → Root)
-    (M : RootIndexed.MarkedTree Root α X) (r : NewRoot) :
-    M.reindex f r = M (f r) := rfl
-
-@[simp]
-theorem reindex_id (M : RootIndexed.MarkedTree Root α X) : M.reindex id = M := rfl
-
-@[simp]
-theorem reindex_comp (f : NewRoot → Root) {NewerRoot : Type*}
-    (g : NewerRoot → NewRoot) (M : RootIndexed.MarkedTree Root α X) :
-    (M.reindex f).reindex g = M.reindex (f ∘ g) := rfl
 
 end MarkedTree
 
