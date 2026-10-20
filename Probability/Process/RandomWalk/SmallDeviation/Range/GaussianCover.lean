@@ -7,6 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Gaussian.EscapeConstant
+public import Probability.Process.Path.PathClass.StepCorridor.Probability.StableRate
 public import Probability.Process.Stable.SmallDeviation.PathClass.StepCorridor.Rate
 public import Topology.Cadlag.Skorokhod.SmallDeviation.RangeCover
 
