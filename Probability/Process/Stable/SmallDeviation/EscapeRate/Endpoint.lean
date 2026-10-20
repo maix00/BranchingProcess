@@ -8,6 +8,8 @@ module
 
 public import Probability.Process.Stable.SmallDeviation.EscapeRate.Corridor
 public import Probability.Process.Stable.SmallDeviation.EndpointComparison
+import Probability.Process.Path.Skorokhod.Corridor.SegmentStationarity
+import Probability.Process.Stable.SmallDeviation.Blocks.ReturnScale
 
 /-! # Endpoint-constrained escape rates
 
@@ -45,7 +47,7 @@ private def centeredEndpointComparisonProbability
   P (fullSegmentCorridorIocReturnEvent X 0 1
     (-(1 + ε) * a) ((1 + ε) * a) (a * c) (a * b))
 
-private theorem endpoint_log_bound_of_ratio
+private lemma endpoint_log_bound_of_ratio
     {q e : ℝ≥0∞} {δ : ℝ}
     (hδ1 : δ < 1)
     (hqlog : Real.log q.toReal < 0)
@@ -75,7 +77,7 @@ private theorem endpoint_log_bound_of_ratio
 private noncomputable def endpointTailScale (α T ρ a : ℝ) : ℝ :=
   ((1 - 2 * ρ) * a) / (1 - T * a ^ α) ^ (1 / α)
 
-private theorem tendsto_endpointTailScale
+private lemma tendsto_endpointTailScale
     {α T ρ : ℝ} (hα : 0 < α) (hρ2 : 2 * ρ < 1) :
     Tendsto (endpointTailScale α T ρ) (𝓝[>] (0 : ℝ))
       (𝓝[>] (0 : ℝ)) := by
@@ -112,7 +114,7 @@ private theorem tendsto_endpointTailScale
     (nhdsWithin 0 (Set.Ioi 0)) (nhdsWithin 0 (Set.Ioi 0))
   exact tendsto_nhdsWithin_iff.mpr ⟨hscaleZero, hscalePos⟩
 
-private theorem eventually_shiftedEndpoint_probability_ge_endpointComparison
+private lemma eventually_shiftedEndpoint_probability_ge_endpointComparison
     {Ω : Type*} [MeasurableSpace Ω]
     {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
     {P : Measure Ω} [IsProbabilityMeasure P]
@@ -204,7 +206,9 @@ private theorem eventually_shiftedEndpoint_probability_ge_endpointComparison
   let tailAtZero : ℝ≥0∞ :=
     P (fullSegmentCorridorReturnEvent X 0 remaining
       tailLower tailUpper tailCoreLower tailCoreUpper)
-  have hshift := h.measure_fullSegmentCorridorReturn_shift cut remaining
+  have hshift := h.toIsLevyProcess.indepIncrements.measure_fullSegmentCorridorReturn_shift
+    h.toIsLevyProcess.stationaryIncrements h.toIsLevyProcess.ae_cadlag
+    cut remaining
     tailLower tailUpper tailCoreLower tailCoreUpper
   have htailShift : tailAtZero = tailAtCut := by
     simpa [tailAtZero, tailAtCut] using hshift
@@ -371,7 +375,7 @@ private theorem eventually_shiftedEndpoint_probability_ge_endpointComparison
     Real.coe_toNNReal _ (Real.rpow_pos_of_pos ha α).le,
     cut, firstProb] using hprob
 
-private theorem eventually_shiftedEndpoint_ge_fixedEntrance_mul_endpointComparison
+private lemma eventually_shiftedEndpoint_ge_fixedEntrance_mul_endpointComparison
     {Ω : Type*} [MeasurableSpace Ω]
     {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
     {P : Measure Ω} [IsProbabilityMeasure P]
@@ -410,7 +414,7 @@ private noncomputable def endpointEscapeFactor (α ρ : ℝ) : ℝ :=
 private noncomputable def endpointRateFactor (α T ρ a : ℝ) : ℝ :=
   ((a / endpointTailScale α T ρ a) ^ α) / (1 - ρ)
 
-private theorem endpointRateFactor_eq
+private lemma endpointRateFactor_eq
     {α T ρ a : ℝ} (hα : 0 < α) (ha : 0 < a)
     (hρ2 : 2 * ρ < 1)
     (ha1 : T * a ^ α < 1) :
@@ -436,7 +440,7 @@ private theorem endpointRateFactor_eq
   have hqpow : q ^ α ≠ 0 := (Real.rpow_pos_of_pos hq α).ne'
   field_simp [hρ1', hqpow]
 
-private theorem tendsto_endpointRateFactor
+private lemma tendsto_endpointRateFactor
     {α T ρ : ℝ} (hα : 0 < α) (hρ2 : 2 * ρ < 1) :
     Tendsto (endpointRateFactor α T ρ) (𝓝[>] (0 : ℝ))
       (𝓝 (endpointEscapeFactor α ρ)) := by
@@ -461,7 +465,7 @@ private theorem tendsto_endpointRateFactor
     simpa using hH.mul_const (endpointEscapeFactor α ρ)
   exact Filter.Tendsto.congr' hfactorEq.symm hfactor
 
-private theorem tendsto_endpointEscapeFactor
+private lemma tendsto_endpointEscapeFactor
     {α : ℝ} :
     Tendsto (endpointEscapeFactor α) (𝓝 (0 : ℝ)) (𝓝 1) := by
   have htwice : Tendsto (fun ρ : ℝ => 2 * ρ) (𝓝 0) (𝓝 0) := by
@@ -486,7 +490,7 @@ private theorem tendsto_endpointEscapeFactor
     (1 - ρ)⁻¹ * ((1 - 2 * ρ) ^ α)⁻¹) (𝓝 0) (𝓝 1)
   simpa using hprod
 
-private theorem eventually_endpointComparisonProbability_pos
+private lemma eventually_endpointComparisonProbability_pos
     {Ω : Type*} [MeasurableSpace Ω]
     {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
     {P : Measure Ω} [IsProbabilityMeasure P]
@@ -521,7 +525,7 @@ private theorem eventually_endpointComparisonProbability_pos
   have hlogs := endpoint_log_bound_of_ratio hδ1 hqlog hrat
   exact ⟨hlogs.1, hlogs.2.2⟩
 
-private theorem exists_shiftedEndpointEntrance
+private lemma exists_shiftedEndpointEntrance
     {Ω : Type*} [MeasurableSpace Ω]
     {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
     {P : Measure Ω} [IsProbabilityMeasure P]
@@ -536,7 +540,7 @@ private theorem exists_shiftedEndpointEntrance
     (by linarith [hd.2]) (by linarith [hd.1])
     (by linarith) (by linarith) hρ hcdf
 
-private theorem eventually_shiftedEndpointProbability_pos_of_fixed_window
+private lemma eventually_shiftedEndpointProbability_pos_of_fixed_window
     {Ω : Type*} [MeasurableSpace Ω]
     {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
     {P : Measure Ω} [IsProbabilityMeasure P]

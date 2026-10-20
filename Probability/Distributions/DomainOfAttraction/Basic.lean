@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Sequence.IID
+public import Probability.Sequence.IID.Basic
 public import Probability.ConvergenceInDistribution.Basic
 public import Mathlib.MeasureTheory.Function.ConvergenceInDistribution
 

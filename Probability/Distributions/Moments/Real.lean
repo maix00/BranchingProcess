@@ -7,6 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Mathlib.Analysis.SpecificLimits.Basic
+public import Mathlib.MeasureTheory.Integral.Bochner.Basic
 public import Mathlib.MeasureTheory.Function.L2Space
 
 /-!
@@ -30,6 +31,35 @@ def IsCenteredSecondMoment (ν : Measure ℝ) (variance : ℝ) : Prop :=
 /-- A real law has mean zero and second moment one. -/
 def IsCenteredUnitSecondMoment (ν : Measure ℝ) : Prop :=
   IsCenteredSecondMoment ν 1
+
+/-- A nonnegative square-integrable second moment that is positive as an
+extended integral is positive as a real Bochner integral. The integrability
+premise is explicit because the Bochner integral is zero for a nonintegrable
+function. -/
+theorem positive_realSecondMoment_of_positive_lintegral
+    {ν : Measure ℝ} {variance : ℝ}
+    (hcentered : IsCenteredSecondMoment ν variance)
+    (hsquare : Integrable (fun x : ℝ => x ^ 2) ν)
+    (hpositive : 0 < ∫⁻ x, ENNReal.ofReal (x ^ 2) ∂ν) :
+    0 < variance := by
+  have hreal : 0 < ENNReal.ofReal (∫ x, x ^ 2 ∂ν) := by
+    rw [ofReal_integral_eq_lintegral_ofReal hsquare
+      (ae_of_all ν fun x => sq_nonneg x)]
+    exact hpositive
+  have hreal' : 0 < ∫ x, x ^ 2 ∂ν := ENNReal.ofReal_pos.mp hreal
+  exact hcentered.2 ▸ hreal'
+
+/-- Vanishing of the extended integral of the square forces a real-valued
+random variable to vanish almost everywhere. -/
+theorem ae_eq_zero_of_lintegral_sq_eq_zero
+    {ν : Measure ℝ}
+    (hν : ∫⁻ x, ENNReal.ofReal (x ^ 2) ∂ν = 0) :
+    ∀ᵐ x ∂ν, x = 0 := by
+  have hfun : (fun x : ℝ => ENNReal.ofReal (x ^ 2)) =ᵐ[ν] 0 :=
+    (lintegral_eq_zero_iff' (by fun_prop)).mp hν
+  filter_upwards [hfun] with x hx
+  have hx2 : x ^ 2 ≤ 0 := ENNReal.ofReal_eq_zero.mp hx
+  nlinarith [sq_nonneg x]
 
 /-- A probability law with second moment one has a square-integrable identity
 random variable. -/

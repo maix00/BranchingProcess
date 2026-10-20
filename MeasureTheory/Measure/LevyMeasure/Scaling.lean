@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import MeasureTheory.Measure.LevyMeasure
+public import MeasureTheory.Measure.Levy.Basic
 import Mathlib.MeasureTheory.Integral.Lebesgue.Add
 import Mathlib.MeasureTheory.Integral.Lebesgue.Map
 
@@ -23,7 +23,7 @@ namespace ProbabilityTheory
 
 open MeasureTheory MeasureTheory.Measure ENNReal
 
-private theorem min_one_sq_mul_le (a x : ℝ) :
+private lemma min_one_sq_mul_le (a x : ℝ) :
     min 1 ((a * x) ^ 2) ≤ max 1 (a ^ 2) * min 1 (x ^ 2) := by
   by_cases hx : x ^ 2 ≤ 1
   · rw [min_eq_right hx]
