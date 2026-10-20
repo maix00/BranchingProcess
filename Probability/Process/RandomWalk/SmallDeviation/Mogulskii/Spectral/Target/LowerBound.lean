@@ -12,6 +12,32 @@ public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.D
 /-!
 # Target mass lower bounds
 
+The public declarations in this module are:
+
+All names below are declarations in
+`ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii`.
+
+Write $N=\texttt{interiorCount}$, $K_N=\texttt{intervalKernel}(N)$,
+$q_N=\cos(\pi/(N+1))$, $\phi_0(x)=\texttt{intervalSineWeight}(N,x)$,
+and $T$ for the finite terminal target. The constants $a,b,p$ bound the
+starting weight, target weights on reachable sites, and target density.
+
+- `half_mul_mul_le_mul_sub_geometricError` proves that
+  $r\le a/(a+8)$ implies
+  $\frac a2r\le ar-4r^2/(1-r)$ for $a\ge0$ and $0<r<1$.
+- `targetMass_ge_groundStateDensity_bound` gives a lower bound on target
+  mass:
+  $4abp q_N^n-4q_N^{2n}/(1-q_N^n)\le\sum_{y\in T}K_N^n(x,y)$,
+  assuming ground-state lower bounds $a,b$ at the start and
+  parity-compatible endpoints and target density at least $p$.
+- `half_principalScale_le_targetMass` absorbs this geometric error when
+  $q_N^n\le(4abp)/(4abp+8)$, yielding
+  $2abp q_N^n\le\sum_{y\in T}K_N^n(x,y)$.
+- `eventually_realBound_le_centeredDiffusiveTargetMass` gives every strict
+  lower constant below $2abp\,e^{-\pi^2c/2}$ eventually when the interval
+  width tends to infinity, $n_N/(N+1)^2\to c$, and the stated uniform
+  ground-state, parity-density, and spectral-threshold bounds hold.
+
 The paired principal modes give a useful lower bound whenever a terminal
 target contains a positive proportion of parity-reachable sites in the
 interior, where the ground state is bounded below.

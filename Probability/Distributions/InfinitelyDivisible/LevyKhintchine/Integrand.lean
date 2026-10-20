@@ -8,7 +8,7 @@ Authors: LeanLevy Contributors
 -/
 module
 
-public import MeasureTheory.Measure.LevyMeasure
+public import MeasureTheory.Measure.Levy.Basic
 public import Mathlib.Analysis.Complex.Exponential
 public import Mathlib.MeasureTheory.Integral.Bochner.Basic
 public import Mathlib.MeasureTheory.Integral.Bochner.Set

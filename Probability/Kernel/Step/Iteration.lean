@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Kernel.Step.Path
-public import Probability.Sequence.IID
+public import Probability.Sequence.IID.Basic
 public import Mathlib.MeasureTheory.Constructions.Pi
 public import Mathlib.Probability.Kernel.Composition.Comp
 
