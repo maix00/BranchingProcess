@@ -1826,23 +1826,27 @@ most eight direct Lean files in any directory.
 
 The public random-cardinality theorem now owns
 `Genealogy/Exploration/Abstract/StoppedPopulation/DependentLaw.lean`; its
-cellwise factorization proof lives in `Lemmas/Factorization.lean`. The
-one-use finite-set enumeration wrapper was replaced by Mathlib's
-`Fintype.equivFinOfCardEq`, and its selected root enumeration plus cover and
-injectivity proofs are private to the dependent-law module. Unused cell
-partition and measure-sum wrappers, the unused existential cell-branching
-lemma, and the separate enumeration module were removed.
+`Genealogy/Exploration/Abstract/StoppedPopulation/DependentLaw.lean`. Its
+complete cellwise product-law theorem lives in the sibling
+`CellFactorization.lean`: the result is stated for arbitrary measurable mark
+spaces and injectively enumerated finite root populations, and is used by
+both the abstract random-cardinality theorem and the selected-population
+specialization. It therefore belongs at the subject level rather than in
+`Lemmas/`.
 
-In the selected specialization, the cellwise factorization duplicates the
-abstract theorem and has no other caller, so the specialization was removed.
-The remaining cell-enumeration proof is under
+The private root enumeration, cover, and injectivity proofs used to construct
+the dependent random variable remain inside `DependentLaw.lean`. The selected
+stopping-cell proof chain is in
 `Genealogy/Exploration/Selected/StoppingCellBranching/Lemmas/Branches.lean`;
-the root now contains the `RandomSize.lean` and `DependentLaw.lean` results.
-`selectedPopulation_stopped_cell_branches` is private within `RandomSize`, and
-the selected stopped-cell measurability wrapper was removed in favor of the
-existing stopping-time API. Formula-bearing public API lists were added to
+its real-valued population specialization remains theorem-family-specific.
+The finite-address enumeration wrapper used by both selected-cell proof
+chains remains under `Selected/CellBranching/Lemmas/Enumeration.lean`, where
+it only packages Mathlib's `Fintype.equivFinOfCardEq` for root addresses.
+`selectedPopulation_stopped_cell_branches` is private within `RandomSize`,
+and the selected stopped-cell measurability wrapper was removed in favor of
+the existing stopping-time API. Formula-bearing public API lists remain in
 these modules and `Selected/StoppingPopulation.lean`, whose partition and
-measure-sum statements remain the selected population interfaces.
+measure-sum statements are the selected population interfaces.
 
 The six affected modules built with the pinned toolchain (3,162 Lake jobs).
 The production tree now has 1,474 modules and the test tree has 138; the full
@@ -2182,10 +2186,11 @@ repair of countable offspring batches, the subadditive array, Kingman
 convergence, leftmost speed, and a reflection-based rightmost proof. Its
 contents are now organized under `Limit/InfiniteOffspring/`: `Repair.lean`
 owns the measurable totalization and almost-sure repair of the environment;
-`SubadditiveArray.lean` defines the selection array; `KingmanLimit.lean`
-exposes the Kingman almost-sure and `L¹` limits; and `Speed.lean` exposes the
-leftmost speed conclusions. The implementation details and estimates used
-only along that argument are grouped under `Kingman/Lemmas/`.
+`SubadditiveArray.lean` defines the selection array; `Kingman/Limit.lean`
+exposes the Kingman almost-sure and `L¹` limits alongside their proof-only
+`Kingman/Lemmas/` chain; and `Speed.lean` exposes the leftmost speed
+conclusions. This places the proof helpers under the entry they support and
+removes the former `Kingman/` directory that contained only `Lemmas/`.
 
 The reflection-based rightmost route had no clients. `Rightmost.lean` already
 derives the rightmost result by applying the leftmost theorem to `OrderDual`,
@@ -2367,3 +2372,23 @@ under `Lower/Lemmas/`. The namespace and proof terms are unchanged, and all
 imports, the endpoint-bridge and Gaussian clients, and the rate proof route
 now use the new paths. The full `BranchingProcess` target built successfully
 with 5,594 jobs after the move.
+
+## Stopped-population and Kingman entry placement (2026-10-21)
+
+The cellwise product-law factorization for a stopped finite population is a
+complete theorem for arbitrary measurable mark spaces and injectively
+enumerated finite root populations. Since both the abstract random-cardinality
+result and a selected-population specialization use it, it now lives at the
+subject level in `StoppedPopulation/CellFactorization.lean`, rather than in
+`StoppedPopulation/Lemmas/`. The selected stopping-cell specialization remains
+under its theorem family's `Lemmas/Branches.lean`.
+
+The infinite-offspring Kingman limit entry now lives at
+`InfiniteOffspring/Kingman/Limit.lean`, beside its proof-only
+`Kingman/Lemmas/` chain; this removes the intermediate `Kingman/` directory
+that previously contained only helpers. The full `BranchingProcess` target
+built successfully with 5,595 jobs, and Mathlib `lint-style` passed on all
+five affected modules. A fresh structural scan of 1,484 production modules,
+138 test modules, and the project linter driver found no same-stem file and
+directory collisions, no directory with more than eight direct Lean files,
+and no duplicate `Lemmas.lean` plus `Lemmas/` entry.
