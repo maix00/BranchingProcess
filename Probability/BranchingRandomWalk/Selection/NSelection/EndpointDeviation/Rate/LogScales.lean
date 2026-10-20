@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Analysis.Asymptotics.Scale.Power
+import Analysis.Asymptotics.Scale.Power.SmallDeviation
 import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Rate.Raw
 import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 
@@ -49,7 +49,7 @@ The public theorems are:
   $h_n/L_N(n)^3\to t>0$.
 
 This module specializes the power-law scale theorem from
-`Analysis.Asymptotics.Scale.Power`; the remaining estimates verify floor,
+`Analysis.Asymptotics.Scale.Power.SmallDeviation`; the remaining estimates verify floor,
 coverage, and spatial-bin conditions for this selected-population rate.
 -/
 

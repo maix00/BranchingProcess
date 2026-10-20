@@ -17,7 +17,7 @@ import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUppe
 import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.ConditionalBlocks
 import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.JumpPattern.Probability
 import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.JumpPattern.UnionBound
-import Analysis.Asymptotics.Scale.IntermediatePowerBlock
+import Analysis.Asymptotics.Scale.Power.IntermediateBlock
 
 /-!
 # Endpoint and horizon powers for the drawdown estimate

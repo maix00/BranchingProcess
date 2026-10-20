@@ -23,7 +23,7 @@ public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVa
 public import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.Event
 import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Concrete.Upper.Asymptotic
 import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Concrete.EntranceBudget
-public import Analysis.Asymptotics.Scale.IntermediatePowerBlock
+public import Analysis.Asymptotics.Scale.Power.IntermediateBlock
 
 /-!
 # Upper-endpoint tilted-tube bound from conditioned entrance estimates
