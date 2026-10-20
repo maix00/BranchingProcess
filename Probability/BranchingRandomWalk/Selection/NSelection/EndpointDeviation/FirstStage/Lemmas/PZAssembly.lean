@@ -6,6 +6,9 @@ Authors: WANG Yiyang
 
 import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.FirstStage.Lemmas.PZBudget
 import Analysis.Asymptotics.Power.ENNRealRatio
+import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Drawdown.Spine.Cutoff
+import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Rate.LogScales
+
 /-!
 * `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.eventually_rightTailPositiveA_pzMean_toReal_ge_power_of_centeredSecondMoment`:
   if `lowerMean` is the one-root corridor contribution and `upperMean +

@@ -18,10 +18,13 @@ public import Algebra.BigOperators.AdditivePath.Basic
 - `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.additivePath_le_threshold_add_delta_of_noLargeDrop`:
   if $S_i-S_j\le\Delta$ for $0\le i\le j\le L$ and $S_L\le r$, then
   $S_i\le r+\Delta$ for every $0\le i\le L$.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.additivePath_mem_noLargeDropEndpointBelowEvent_of_monotoneCorridor`:
+  for nondecreasing $(d_j)_{j=0}^L$, if $d_j\le S_j\le d_j+\Delta$ for every $j$, then
+  $S_i-S_j\le\Delta$ for $i\le j$ and $S_L\le d_L+\Delta$.
 
-This event is shared by the finite-variance upper estimate and
-branching-random-walk applications. The endpoint implication is a deterministic
-consequence of the drawdown condition.
+This event is shared by finite-variance and branching-random-walk estimates.
+The endpoint and monotone-corridor implications are deterministic consequences
+of the event conditions.
 -/
 
 @[expose] public section
@@ -51,6 +54,26 @@ theorem additivePath_le_threshold_add_delta_of_noLargeDrop
   intro i hi
   have h := hnoDrop i horizon hi (Nat.le_refl _)
   linarith
+
+/-- A path in a constant-width corridor above a nondecreasing lower boundary
+has drawdown at most the corridor width, and its endpoint lies below the
+terminal upper boundary. -/
+theorem additivePath_mem_noLargeDropEndpointBelowEvent_of_monotoneCorridor
+    (horizon : ℕ) (drift : ℕ → ℝ) (width : ℝ)
+    (hmonotone : Monotone drift)
+    (increment : ℕ → ℝ)
+    (hpath : ∀ j : Fin (horizon + 1),
+      AdditivePath.displacement (j : ℕ) increment ∈
+        Set.Icc (drift (j : ℕ)) (drift (j : ℕ) + width)) :
+    increment ∈
+      noLargeDropEndpointBelowEvent horizon width (drift horizon + width) := by
+  constructor
+  · intro i j hij hj
+    have hi := hpath ⟨i, Nat.lt_succ_of_le (hij.trans hj)⟩
+    have hj' := hpath ⟨j, Nat.lt_succ_of_le hj⟩
+    linarith [hi.2, hj'.1, hmonotone hij]
+  · have hend := hpath ⟨horizon, Nat.lt_succ_self horizon⟩
+    exact hend.2
 
 end ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown
 

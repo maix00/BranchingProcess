@@ -118,7 +118,7 @@ lemma exists_driftedTubeBlockProbability_le_exp_of_finiteVariance
         Drawdown.noLargeDropEndpointBelowEvent length Delta (Delta / (eta / 2)) := by
     intro increment hpath
     have hbasic := driftedTubeEvent_subset_noLargeDropEndpointBelowEvent
-      length hDeltaPos hdrift hlower hupper hpath
+      length hdrift hlower hupper hpath
     exact ⟨hbasic.1, hbasic.2.trans hthreshold⟩
   have hmainAt := hmain Delta hDeltaMain' length hlengthLower
   exact (measureReal_mono hsubset (measure_ne_top (iidSequenceLaw ν) _)).trans hmainAt

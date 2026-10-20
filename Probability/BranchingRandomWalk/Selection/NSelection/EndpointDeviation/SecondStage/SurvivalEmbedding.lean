@@ -6,6 +6,7 @@ Authors: WANG Yiyang
 
 import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.SecondStage.Roots.Population
 import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.SecondStage.Embedding
+import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Drawdown.Spine.Window
 /-!
 # Second-stage paths from chosen killed-population roots
 

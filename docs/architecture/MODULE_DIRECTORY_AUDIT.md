@@ -802,15 +802,28 @@ PZ-specific rate assembly is grouped under `Lemmas/`. The `rightTailPositiveA`
 identifier remains in theorem names because those statements are indexed by
 the positive exponent parameter; it no longer determines directory placement.
 
-`EndpointDeviation/FirstStage/Lemmas/PZBudget.lean` and `PZAssembly.lean` each had
-one proof-chain client. The first estimates the tilted-spine corridor mass at
-the specific cutoff `rightTailPositiveAFirstCutoff`; the second combines that
-rate with the first-stage MRCA pair sum and cross-child weight. Neither result
-is the general Paley--Zygmund inequality: both statements contain the
-selected population's tilted law, corridor, cutoff, and model-specific pair
-bound. Their files now live under `FirstStage/Lemmas/`, while the population
-low-count theorem remains at `FirstStage/LowCountPower.lean` and the final
-second-stage root-count theorem imports both results directly.
+`EndpointDeviation/FirstStage/Lemmas/PZBudget.lean` estimates the
+tilted-spine corridor mass at the specific cutoff
+`rightTailPositiveAFirstCutoff`; its only client is `PZAssembly.lean`.
+`PZAssembly.lean` combines that rate with the first-stage MRCA pair sum and
+cross-child weight. Its resulting PZ-mean lower bound is used by both
+`FirstStage/LowCountPower.lean` and
+`SecondStage/Roots/CountBudget.lean`, which allocates the first-stage bound to
+the second-stage root budget. Neither statement is the general
+Paley--Zygmund inequality: both contain the selected population's tilted law,
+corridor, cutoff, and model-specific pair bound. They therefore remain
+theorem-family lemmas under `FirstStage/Lemmas/`; the second-stage use is a
+consumer of the first-stage estimate, not a more general mathematical
+interface.
+
+The deterministic schedule and its scale properties now live beside their
+owner in `Drawdown/Spine/Cutoff.lean`. The limit
+`logarithmicSmallDeviationScale (rightTailPositiveAFirstCutoff N n) /
+logarithmOfSampleSize N n → 1` had been proved independently in
+`PZBudget.lean` and `Spine/Corridor.lean`. It is now one named property of the
+cutoff used by both stages; it remains at the endpoint-deviation subject level
+because it describes this model-specific schedule rather than a general
+asymptotic operation.
 
 The pinned Mathlib source at revision
 `380f2aafb622cb2c1c93dac545b6389083c68c51` has no declaration named for the
@@ -1509,6 +1522,33 @@ the non-reusable cutoff and PZ assembly steps remain under `FirstStage/Lemmas/`.
 The affected first-stage dependency chain built successfully with 4,710 Lake
 jobs. These commits are on the GitHub `preflight` subtree branch; its remote
 build is recorded separately in the active branch checks.
+
+The 2026-10-20 spine-capacity review removed the old overloaded module layout
+from `EndpointDeviation/Drawdown/Spine/Capacity.lean`. That entry now exposes
+the affine-corridor first-stage low-count estimate used by
+`Population/LowCount.lean` and `SecondStage/PZ.lean`. Its positive-parameter
+window schedule remains in `Spine/Window.lean`, where it is a mathematical
+object with its own measurable-window and upper-envelope statements. The
+second-stage tube, parameter and endpoint bounds, random-walk estimates,
+scale limits, and capacity-probability compositions form one theorem-specific
+proof chain under `Spine/Lemmas/`: `Tube.lean`, `ParameterBounds.lean`,
+`CapacityMarkov.lean`, `RandomWalkBounds.lean`, `Asymptotics.lean`,
+`CapacityProbability.lean`, `FailureProbability.lean`, and `TwoPhase.lean`. A
+source-use scan found no external clients of those intermediate declarations.
+The generic monotone-corridor-to-drawdown inclusion stays in
+`RandomWalk/SmallDeviation/Drawdown/Event.lean`; it is shared by the linear
+drifted-tube estimate and this nonlinear spine corridor. The actual directory
+name is `FirstStage/`; `PositiveA` occurs in the mathematical parameterized
+declaration names and in historical migration notes only.
+
+A fresh production-tree scan counted 1,478 Lean modules, excluding `.lake`,
+vendored dependencies, and test-only sources. It found no same-stem file and
+directory pairs, no directory with more than eight direct Lean files, no
+`Lemmas.lean`/`Lemmas/` collisions, and no empty source directories. The
+`Spine/` directory has four direct modules, and its proof-only `Lemmas/`
+folder has eight direct modules. All eight proof-chain modules and the
+`Capacity.lean` public entry compiled with the pinned toolchain (4,678 jobs
+for the proof-chain build; 4,658 jobs for the entry-module build).
 
 The four cloud rank and leftmost-selection modules now list their public
 interfaces using their mathematical statements. `Cloud/Rank/Slice.lean`
