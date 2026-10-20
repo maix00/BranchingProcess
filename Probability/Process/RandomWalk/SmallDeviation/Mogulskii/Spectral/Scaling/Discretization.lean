@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Scale
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Scale.Basic
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Scaling.Centered
 
 /-!
@@ -14,7 +14,27 @@ public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.S
 
 This file rounds a positive real spatial scale to a centered lattice interval.
 The added unit keeps the radius positive at every index; it is negligible on
-every scale tending to infinity.
+every scale tending to infinity.  For $s_n\to\infty$, define
+\[
+  r_n=\left\lfloor\frac{s_n}{2}\right\rfloor+1,
+  \qquad p_n=\mathbb P\bigl(|S_j|\le r_n\text{ for }1\le j\le t_n\bigr),
+\]
+where $(S_j)$ is the simple symmetric walk.  The public declarations are:
+
+* `centeredLatticeRadius` defines $r_n$, and
+  `centeredLatticeRadius_pos` proves $r_n>0$.
+* `tendsto_centeredLatticeWidth_div` proves $2r_n/s_n\to1$;
+  `tendsto_centeredDirichletWidth_div` proves $2(r_n+1)/s_n\to1$;
+  `tendsto_centeredLatticeRadius_atTop` proves $r_n\to\infty$.
+* `tendsto_scaledLog_centeredHorizontalTubeProbability_of_scale` proves
+  $\frac{s_n^2}{t_n}\log p_n\to-\frac{\pi^2}{2}$ when
+  $s_n\to\infty$, $t_n>0$, and $s_n^2/t_n\to0$.
+* `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.tendsto_scaledLog_centeredHorizontalTubeProbability_succ`
+  proves the same conclusion at the successor indices $s_{n+1}$ and time
+  $n+1$;
+  `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.tendsto_scaledLog_centeredHorizontalTubeProbability`
+  gives the conclusion at the original indices $s_n,t_n=n$ for every
+  `IsMogulskiiScale` scale.
 -/
 
 open Filter Topology
@@ -33,7 +53,7 @@ noncomputable def centeredLatticeRadius (scale : ℕ → ℝ) (n : ℕ) : ℕ :=
     0 < centeredLatticeRadius scale n := by
   simp [centeredLatticeRadius]
 
-private theorem tendsto_half_scale_atTop {scale : ℕ → ℝ}
+private lemma tendsto_half_scale_atTop {scale : ℕ → ℝ}
     (hscale : Tendsto scale atTop atTop) :
     Tendsto (fun n => scale n / 2) atTop atTop := by
   simpa [div_eq_mul_inv, mul_comm] using

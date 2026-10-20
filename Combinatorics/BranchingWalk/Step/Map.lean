@@ -16,6 +16,17 @@ those children. `Step.map` changes only the marks, so the survival set is
 invariant. Maps of complete step fields live in
 `Combinatorics/BranchingWalk/StepField.lean`; maps of branching walks live in
 `Combinatorics/BranchingWalk/Basic/Map.lean`.
+
+The public API is:
+
+- `Step.map f ξ` applies `f` to each present mark and preserves absent slots;
+  `Step.map_apply`, `Step.map_id`, and `Step.map_map` give its coordinate,
+  identity, and composition laws.
+- `survive_map_iff` and `Step.support_map` state that relabeling marks
+  preserves the set of present slots.
+- `Step.map_measurable` proves measurability when `f` is measurable.
+- `Step.forgetMark` replaces every present mark by `PUnit.unit`, and
+  `survive_forgetMark_iff` records preservation of survival.
 -/
 
 @[expose] public section

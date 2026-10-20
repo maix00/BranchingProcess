@@ -105,7 +105,7 @@ theorem measure_biInter_commonPartitionCellRangeEvent_eq_prod
       exact measurableSet_commonPartitionCellRangeBound (width i))
   simpa [commonPartitionCellRangeEvent] using hfactor
 
-private theorem eval_eq_rightTrace_at_cellCoordinate
+private lemma eval_eq_rightTrace_at_cellCoordinate
     (b upper lower : StepBoundary)
     (hknots : ∀ r ∈ b.knots, r ∈ StepBoundary.commonKnots upper lower)
     (i : Fin ((StepBoundary.commonKnots upper lower).card - 1))

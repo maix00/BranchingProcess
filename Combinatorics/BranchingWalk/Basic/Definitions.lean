@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Combinatorics.BranchingWalk.StepField
-public import Combinatorics.BranchingWalk.Basic.SurviveAlong
+public import Combinatorics.BranchingWalk.Basic.Survival.SurviveAlong
 
 /-!
 # Branching walks
@@ -17,6 +17,27 @@ one at every address. `RootIndexed.BranchingWalk Root α Mark Position`
 bundles one mark-valued step field and one position-valued initial population
 for every initial ancestor. `BranchingWalk α Mark Position` is its
 single-ancestor case.
+
+The public declarations are:
+
+- `IsParentClosed`: $\forall u,v$, survival at $u++v$ implies survival at
+  $u$.
+- `isParentClosed_of_surviveAlong_prefix`: every step field satisfies this
+  prefix-closure property.
+- `RootIndexed.BranchingWalk`: the data
+  $\mathrm{step}:Root\to\mathrm{StepField}(\alpha,Mark)$ and
+  $\mathrm{initial}:Root\to Position$.
+- `RootIndexed.BranchingWalk.parentClosed`: each root's realized walk is
+  parent-closed.
+- `RootIndexed.BranchingWalk.ofStepField`,
+  `RootIndexed.BranchingWalk.ofStepField_step`, and
+  `RootIndexed.BranchingWalk.ofStepField_initial`: construct the structure
+  from its two coordinate maps and recover those maps by projection.
+- `BranchingWalk`: the single-ancestor specialization with root type
+  $\mathrm{PUnit}$.
+- The `MeasurableSpace (RootIndexed.BranchingWalk Root α Mark Position)`
+  instance is the comap of the product sigma algebra along
+  $\beta\mapsto(\beta.\mathrm{step},\beta.\mathrm{initial})$.
 -/
 
 @[expose] public section

@@ -10,19 +10,22 @@ It does not claim that the separate open limit-theorem obligations in
 
 | Topic | Current owner | Result |
 | --- | --- | --- |
-| General event-measure limits | `MeasureTheory/Measure/SetLimits.lean` | Moved out of the probability application layer |
-| Positive half-line mass | `MeasureTheory/Measure/PositiveTail.lean` | General measure statement; no probability-measure assumption added |
+| General event-measure limits | `MeasureTheory/Measure/Limits/SetLimits.lean` | Moved out of the probability application layer |
+| Positive half-line mass | `MeasureTheory/Measure/Tails/Positive.lean` | General measure statement; no probability-measure assumption added |
 | Restricted nonnegative-integral limits | `MeasureTheory/Integral/Lebesgue/RestrictLimit.lean` | General result separated from the Poisson variation application |
 | Truncation inequalities | `Order/Bounds/Truncation.lean` | Deterministic bounds separated from independent-event integration |
-| Independent-event integration | `Probability/Independence/Integration.lean` | Independence-specific statements remain in probability |
+| Independent-event integration | `Probability/Independence/Integration/Basic.lean` | Independence-specific statements remain in probability |
 | Feedback and one-jump bounds | `Order/Bounds/Feedback.lean`, `Order/Bounds/Corridor.lean` | Real/order arguments no longer live under Skorokhod geometry |
 | Finite weighted-sum bounds | `Algebra/Order/BigOperators/WeightedSum.lean` | General sum inequalities separated from matrix spectral results |
 | Declared-success stopping times | `Probability/Process/HittingTime/Declarations.lean` | General filtration statements use Mathlib stopping-time interfaces |
 | Observable candidates and adapted recursion | `Probability/Process/HittingTime/ObservableCandidates.lean`, `Probability/Process/Adapted/Recursion.lean` | General process interfaces separated from branching applications |
 | Reserve/restart estimates | `Probability/BranchingRandomWalk/Restart/` | Branching-specific hypotheses remain in the branching layer |
-| Poisson window-integral vectors | `Probability/RandomMeasure/Poisson/WindowIntegral.lean` | Generic construction separated from stable-law identification |
+| Poisson window-integral vectors | `Probability/RandomMeasure/Poisson/Integration/WindowIntegral.lean` | Generic construction separated from stable-law identification |
 | Cutoff Poisson path identities | `Probability/Process/Levy/Jump/PoissonConfiguration/Path.lean` | Reusable jump-configuration facts separated from stable-process laws |
 | Convolution powers | `MeasureTheory/Measure/Convolution/Power.lean` | One recursive API remains; the old `convPow` module and definition were removed after proving the convolution-rotation relation |
+| Selection/NSelection boundary | `Probability/BranchingRandomWalk/Genealogy/RootIndexed/Field/Measurability.lean`, `Spine/Tube/`, `Selection/Finite/`, and `Selection/NSelection/{Speed,Tail}/` | Generic root-indexed position observations and path/tube estimates are separated from deterministic first-`N` speed and endpoint arguments; random finite-by-value constructors are under `Selection/Finite/` |
+| Paley--Zygmund inequality | `Probability/MeasureTheory/Moments/PaleyZygmund.lean` | The bound `(𝔼[X] - t)^2 / 𝔼[X^2] ≤ ℙ(t ≤ X)` now lives at its general probability-space level; Galton--Watson moment recurrences and endpoint-deviation rates remain in their owning modules |
+| Positive-`a` endpoint proof chain | `Probability/BranchingRandomWalk/Selection/NSelection/EndpointDeviation/PositiveA/` | The first-stage population low-count theorem remains at the topic entry; its one-use corridor budget and PZ assembly are grouped under `PositiveA/Lemmas/` |
 
 The former source modules for M01--M10 and M13 have been removed. Mixed
 application files for M03, M11, and M12 remain only for the results whose
