@@ -12,7 +12,7 @@ public import Mathlib.MeasureTheory.Integral.Bochner.Set
 public import Mathlib.MeasureTheory.Measure.ProbabilityMeasure
 public import Mathlib.Analysis.Real.Sqrt
 public import Mathlib.Topology.Basic
-public import Mathlib.Tactic
+import Mathlib.Tactic
 
 /-!
 # Second-moment convergence from tail control

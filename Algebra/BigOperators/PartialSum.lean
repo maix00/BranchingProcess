@@ -10,8 +10,8 @@ public import Mathlib.Algebra.BigOperators.Fin
 public import Mathlib.Algebra.Module.Defs
 public import Mathlib.Data.Fintype.Lattice
 public import Mathlib.Basic.Real.Basic
-public import Mathlib.Tactic.Abel
-public import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.Abel
+import Mathlib.Tactic.Linarith
 
 /-!
 # Finite partial-sum identities

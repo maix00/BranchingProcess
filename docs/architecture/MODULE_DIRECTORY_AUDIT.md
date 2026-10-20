@@ -2225,3 +2225,18 @@ mathematical interface. `Order.lean` lists its three complete monotonicity
 results and now names its actual objects, step fields and marked trees, in the
 module title. The three edited modules build successfully with the pinned
 toolchain.
+
+## Tactic import visibility (2026-10-21)
+
+A production-source scan found thirteen modules publicly re-exporting
+Mathlib tactic modules through fifteen `public import` lines. These are proof
+syntax dependencies rather than mathematical interfaces, so the imports are
+now ordinary imports in `Algebra/BigOperators/{CyclicReindex,PartialSum}.lean`,
+`Analysis/FunctionalEquation/ContinuousAdditivePositive.lean`,
+`Probability/BranchingRandomWalk/{Selection/NSelection/AsymptoticSpeed/Limit/Asymptotics,Spine/FiniteKernel}.lean`,
+`Probability/MeasureTheory/{Convergence/{L2FromTails,L2FromVaryingTails,TailExpectation},Moments/ExponentialMoment}.lean`,
+`Probability/Process/{Levy/Jump/Entrance,Path/Skorokhod/Corridor/OneJumpEntrance,RandomWalk/SmallDeviation/DriftedTube/FiniteVarianceLower/Lemmas/Staircase/{Endpoint/Windows,Setup/FirstWindow}}.lean`.
+No production module now has a `public import Mathlib.Tactic...` line. The full
+`BranchingProcess` target compiled successfully with the pinned toolchain
+(5,593 jobs), confirming downstream modules do not depend on these tactic
+imports being re-exported.

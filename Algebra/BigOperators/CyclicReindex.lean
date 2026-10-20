@@ -8,7 +8,7 @@ module
 
 public import Mathlib.Data.ZMod.Basic
 public import Algebra.BigOperators.PartialSum
-public import Mathlib.Tactic.Abel
+import Mathlib.Tactic.Abel
 
 /-!
 # Cyclic reindexing of finite vectors
