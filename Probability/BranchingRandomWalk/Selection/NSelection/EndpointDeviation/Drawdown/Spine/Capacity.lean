@@ -44,7 +44,7 @@ open ProbabilityTheory.RandomWalk
 
 /-- The affine-corridor first-stage count estimate with its second moment
 derived from the actual distinct-pair count.  The pair estimate uses the
-the finite cross-weight condition and the stated tilted-walk drawdown
+finite cross-weight condition and the stated tilted-walk drawdown
 bounds; callers do not supply a second-moment bound for the path count. -/
 theorem measure_rightTailPositiveAFirstStageLowCount_le_of_affineCorridorDrawdown
     (m horizon : ℕ) (hm : 0 < m) (initial lower drift width endpointUpper : ℝ)
