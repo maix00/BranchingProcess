@@ -2253,9 +2253,14 @@ diffusive scale, Gaussian target products, and the finite-partition/return
 argument. The general killed and return-kernel operations they consume remain
 owned by `Probability/Process/RandomWalk/Kernel/Killed/`. The five modules retain
 `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii`; this organization
-change only adjusts import paths. The return-kernel chain is imported by
-`Rate/Bounds/Lower.lean`; `Blocks/Uniform.lean` has no direct client and remains as a
-complete finite-reference estimate in the proof-support hierarchy.
+change only adjusts import paths. Proof-only dependencies between
+`Lemmas/` modules and their clients now use ordinary imports; the Gaussian and
+killed-kernel, moment, scale, path-corridor, and IID-law modules that occur in
+theorem statements remain public imports. This keeps proof helpers out of
+downstream re-export surfaces. The return-kernel estimates are consumed in
+proofs by `Rate/Bounds/Lower.lean` and `Rate/Partition/Finite.lean`;
+`Blocks/Uniform.lean` has no direct client and remains as a complete
+finite-reference estimate in the proof-support hierarchy.
 
 `Theorems.lean` remains the only article-theorem entry at the Mogulskii root
 and does not re-export these proof-support modules. The other first-level
