@@ -18,12 +18,13 @@ The public theorem in this file is:
 
 - `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Path.existsUnique_inner_outer_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_source_index_two_of_brownian_explicit`:
   the inner and outer terminal-left path probabilities have the same unique
-  exponent-two logarithmic rate, $-pi^2 H_2(M)/2$, for each path class $M$
+  exponent-two logarithmic rate, $-\frac{\pi^2}{2}H_2(M)$, for each path class $M$
   with a vanishing-energy-gap approximation.
 
 The source-aligned inner/outer theorem applies in the normal domain of
 attraction, including infinite-variance increment laws. The Brownian escape
-constant identifies its explicit full-width coefficient as `-π² / 2`.
+constant identifies its explicit full-width coefficient as
+$-\frac{\pi^2}{2}$.
 
 The rate is the terminal-left path form of Theorem 3, Section 4, p. 764 of A. A.
 Mogul'skii, “Small deviations in the sample function space,” *Teoriya
