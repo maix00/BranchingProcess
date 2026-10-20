@@ -1893,3 +1893,27 @@ the general Portmanteau API. Its bibliographic inputs remain Bolthausen,
 Theorem 3.2; Iglehart, Section 3, theorem (3.4), p. 616; and Wang Yiyang,
 Appendix A.2, Lemma A.7, as cited in the module header. The three client
 modules now import the semantic transition owner directly.
+
+## Power-law small-deviation scale interface (2026-10-20)
+
+`EndpointDeviation/Rate/LogScales.lean` specialized the predicate
+`Asymptotics.IsSmallDeviationScale` to $k^{2/5}$ relative to $\sqrt{k}$ and
+proved that instance by repeating the positive- and negative-power limit
+arguments. The scale predicate itself is independent of branching processes,
+and the natural general statement is $0<p<q$ implying
+$(n^p)\to\infty$ and $n^p/n^q\to0$. This is a reusable relation between
+power scales, so it belongs in `Analysis/Asymptotics/Scale/`, outside the
+branching-random-walk endpoint-deviation subtree.
+
+The new `Analysis/Asymptotics/Scale/Power.lean` exposes
+`Asymptotics.isSmallDeviationScale_natCast_rpow_of_lt`; the endpoint-deviation
+result now specializes it at $p=2/5$ and $q=1/2$. The abstraction uses only
+Mathlib's `tendsto_rpow_atTop` and `tendsto_rpow_neg_atTop` in
+`Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics.lean` (pinned revision
+`380f2aafb622cb2c1c93dac545b6389083c68c51`): the first gives divergence, and
+the second gives the vanishing ratio after
+$n^p/n^q=n^{-(q-p)}$ for positive $n$. See the
+[pinned Mathlib source](https://github.com/leanprover-community/mathlib4/blob/380f2aafb622cb2c1c93dac545b6389083c68c51/Mathlib/Analysis/SpecialFunctions/Pow/Asymptotics.lean#L37-L52)
+and [official API documentation](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Analysis/SpecialFunctions/Pow/Asymptotics.html).
+The `LogScales.lean` module header now lists all ten public definitions and
+five public theorems with their formulas and hypotheses.

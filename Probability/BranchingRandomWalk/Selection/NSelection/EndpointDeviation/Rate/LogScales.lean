@@ -4,15 +4,53 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
+import Analysis.Asymptotics.Scale.Power
 import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Rate.Raw
 import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 
 /-!
 # Explicit logarithmic scales for the selected-population tail estimate
 
-This file constructs the deterministic integer parameters required by
-`RawRate`.  It verifies the floor, coverage, and spatial-bin conditions.  The
-random-walk rate remains an independent hypothesis of the RawRate theorem.
+All declarations below are in namespace
+`ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail`. For
+$N:\mathbb N\to\mathbb N$, write $L_N(n)=\log(N(n))$.
+
+The public definitions are:
+
+- `logarithmOfSampleSize`: $n\mapsto L_N(n)$.
+- `logarithmicSmallDeviationScale`: $s(k)=k^{2/5}$.
+- `logarithmicRateBeta`: $\beta=\mathrm{factor}(1+\eta)/2$.
+- `logarithmicEndpointThreshold`: $z_n=\zeta L_N(n)$.
+- `logarithmicBlockRoot`: $q_n=\lfloor\sqrt{\beta b L_N(n)}\rfloor$.
+- `logarithmicBlockLength`: $\ell_n=q_n^5-1$ when $1<q_n$, and $\ell_n=1$
+  otherwise.
+- `logarithmicDrawdown`: $D_n=q_n^2/\beta$.
+- `logarithmicHorizon`: $H_n=\lfloor tL_N(n)^3\rfloor+1$.
+- `logarithmicBlockCount`: $B_n=\lfloor H_n/\ell_n\rfloor$.
+- `logarithmicBlockCountForHorizon`: $B_n=\lfloor h_n/\ell_n\rfloor$ for a
+  supplied horizon $h_n$.
+
+The public theorems are:
+
+- `logarithmicSmallDeviationScale_isSmallDeviationScale`: $k^{2/5}\to\infty$
+  and $k^{2/5}/\sqrt{k}\to0$.
+- `logarithmicDrawdown_div_log_tendsto`: if $N_n\to\infty$ and
+  $\beta,b>0$, then $D_n/L_N(n)\to b$.
+- `logarithmicHorizon_div_logCube_tendsto`: if $N_n\to\infty$ and $t>0$,
+  then $H_n/L_N(n)^3\to t$.
+- `logarithmicRawRateParameters`: for $N_n\to\infty$, $\mathrm{factor}>1$,
+  $\eta,b,t>0$, and the stated non-boundary bin condition, there is a fixed
+  $K=\lfloor(\zeta/b+1)/\eta\rfloor$ such that $\ell_n+1\to\infty$,
+  $B_n\to\infty$, $(\ell_n+1)/D_n^2\to\infty$, $H_n/D_n^2\to\infty$,
+  $B_n(\ell_n+1)/H_n\to1$, $B_n\ell_n\le H_n$, and eventually
+  $\lfloor(z_n+D_n)/(\eta D_n)\rfloor=K$ and $s(\ell_n+1)=\beta D_n$.
+- `logarithmicRawRateParametersForHorizon`: the same parameter conclusions
+  with $B_n=\lfloor h_n/\ell_n\rfloor$ whenever
+  $h_n/L_N(n)^3\to t>0$.
+
+This module specializes the power-law scale theorem from
+`Analysis.Asymptotics.Scale.Power`; the remaining estimates verify floor,
+coverage, and spatial-bin conditions for this selected-population rate.
 -/
 
 open Filter
@@ -169,24 +207,18 @@ private lemma rpow_fifthPower_two_fifths (q : ℕ) :
 theorem logarithmicSmallDeviationScale_isSmallDeviationScale :
     Asymptotics.IsSmallDeviationScale logarithmicSmallDeviationScale
       (fun k => Real.sqrt (k : ℝ)) := by
-  refine ⟨?_, ?_⟩
-  · exact (tendsto_rpow_atTop (by norm_num : (0 : ℝ) < 2 / 5)).comp
-      tendsto_natCast_atTop_atTop
-  · have hpow : Tendsto (fun k : ℕ => (k : ℝ) ^ (-(1 : ℝ) / 10))
-        atTop (𝓝 0) := by
-      convert (tendsto_rpow_neg_atTop (by norm_num : (0 : ℝ) < 1 / 10)).comp
-        tendsto_natCast_atTop_atTop using 1
-      ext k
-      norm_num
-    have heq : (fun k : ℕ => logarithmicSmallDeviationScale k /
-        Real.sqrt (k : ℝ)) =ᶠ[atTop]
-        fun k => (k : ℝ) ^ (-(1 : ℝ) / 10) := by
-      filter_upwards [eventually_gt_atTop (0 : ℕ)] with k hk
-      have hkpos : 0 < (k : ℝ) := by exact_mod_cast hk
-      dsimp [logarithmicSmallDeviationScale]
-      rw [Real.sqrt_eq_rpow, ← Real.rpow_sub hkpos]
-      norm_num
-    exact hpow.congr' heq.symm
+  change Asymptotics.IsSmallDeviationScale
+    (fun k : ℕ => (k : ℝ) ^ ((2 : ℝ) / 5))
+    (fun k => Real.sqrt (k : ℝ))
+  have h := Asymptotics.isSmallDeviationScale_natCast_rpow_of_lt
+    (p := (2 : ℝ) / 5) (q := (1 : ℝ) / 2) (by norm_num) (by norm_num)
+  have heq : (fun k : ℕ => (k : ℝ) ^ ((2 : ℝ) / 5) /
+        (k : ℝ) ^ ((1 : ℝ) / 2)) =ᶠ[atTop]
+      fun k => (k : ℝ) ^ ((2 : ℝ) / 5) / Real.sqrt (k : ℝ) := by
+    filter_upwards [] with k
+    rw [Real.sqrt_eq_rpow]
+  exact Asymptotics.IsSmallDeviationScale.of_tendsto h.tendsto_atTop
+    (h.tendsto_div.congr' heq)
 
 private lemma tendsto_logarithmicBlockRoot_sq_div_log
     {N : ℕ → ℕ} (hN : Tendsto N atTop atTop)
