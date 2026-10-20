@@ -7,11 +7,15 @@ Authors: WANG Yiyang
 module
 
 import Probability.Process.RandomWalk.Path.Block.Corridor.FiniteBridge
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.Bridge.Lemmas.TerminalLeftGeometry
+import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.Bridge.Lemmas.TerminalLeftGeometry
+public import Mathlib.MeasureTheory.Function.ConvergenceInDistribution
+public import Probability.Process.RandomWalk.FunctionalLimit.NormalizedStep.Block
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.Bridge.Events
 public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.Feedback.Entrance
 public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.Feedback.EntranceIndexOne
 public import Probability.Distributions.Stable.Operations.Sign
 public import Probability.Process.Stable.SmallDeviation.EscapeRate.PathLaw.Transfer
+public import Probability.Sequence.IID.Basic
 
 /-! # Stable bridge probabilities for Mogul'skii's equation (34)
 
