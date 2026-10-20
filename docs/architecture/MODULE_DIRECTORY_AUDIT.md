@@ -239,7 +239,7 @@ interface into `Rotation/FinitePath.lean`, `Rotation/CyclicCover.lean`, and
 modules. The stable horizontal-tube lower-rate interface was subsequently
 split into `Stable/Rate/Lower/{BlockProbability,Liminf,Positivity,Limit}.lean`;
 the count was 1,453 before the current geometry split. The 2026-10-20
-tracked-tree scan finds 1,477 production Lean files and 138 test files. The
+tracked-tree scan finds 1,474 production Lean files and 138 test files. The
 largest production directory and the largest test directory each have eight
 direct Lean files. The scan found one test filename repeating its parent
 directory, `Stable/RandomWalk/RandomWalkPathLimit.lean`; it is now
@@ -1543,7 +1543,7 @@ drifted-tube estimate and this nonlinear spine corridor. The actual directory
 name is `FirstStage/`; the positive-parameter condition remains encoded in the
 mathematical declaration names.
 
-A fresh production-tree scan counted 1,477 Lean modules, excluding `.lake`,
+A fresh production-tree scan counted 1,474 Lean modules, excluding `.lake`,
 vendored dependencies, and test-only sources. It found no same-stem file and
 directory pairs, no directory with more than eight direct Lean files, no
 `Lemmas.lean`/`Lemmas/` collisions, and no empty source directories. The
@@ -1760,7 +1760,35 @@ single-use `StoppingSubtreeVector/Cell.lean` module has been removed. The
 single-root stopping-cell helpers in `StoppingSubtree.lean` are private as
 well. Imports now express the factorization module's semantic dependencies
 directly. The four affected modules built with the pinned toolchain (3,153
-Lake jobs). A fresh layout scan finds 1,477 production modules and 138 test
+Lake jobs). A fresh layout scan finds 1,474 production modules and 138 test
 modules, with no same-stem file/directory pairs, no repeated parent/file
 stems, no `Lemmas.lean`/`Lemmas/` collisions, no empty directories, and at
 most eight direct Lean files in any directory.
+
+## Stopped finite-population law organization (2026-10-20)
+
+The public random-cardinality theorem now owns
+`Genealogy/Exploration/Abstract/StoppedPopulation/DependentLaw.lean`; its
+cellwise factorization proof lives in `Lemmas/Factorization.lean`. The
+one-use finite-set enumeration wrapper was replaced by Mathlib's
+`Fintype.equivFinOfCardEq`, and its selected root enumeration plus cover and
+injectivity proofs are private to the dependent-law module. Unused cell
+partition and measure-sum wrappers, the unused existential cell-branching
+lemma, and the separate enumeration module were removed.
+
+In the selected specialization, the cellwise factorization duplicates the
+abstract theorem and has no other caller, so the specialization was removed.
+The remaining cell-enumeration proof is under
+`Genealogy/Exploration/Selected/StoppingCellBranching/Lemmas/Branches.lean`;
+the root now contains the `RandomSize.lean` and `DependentLaw.lean` results.
+`selectedPopulation_stopped_cell_branches` is private within `RandomSize`, and
+the selected stopped-cell measurability wrapper was removed in favor of the
+existing stopping-time API. Formula-bearing public API lists were added to
+these modules and `Selected/StoppingPopulation.lean`, whose partition and
+measure-sum statements remain the selected population interfaces.
+
+The six affected modules built with the pinned toolchain (3,162 Lake jobs).
+The production tree now has 1,474 modules and the test tree has 138; the full
+layout scan still finds no same-stem file/directory pairs, repeated parent
+stems, `Lemmas.lean`/`Lemmas/` collisions, or empty directories, and every
+directory has at most eight direct Lean files.

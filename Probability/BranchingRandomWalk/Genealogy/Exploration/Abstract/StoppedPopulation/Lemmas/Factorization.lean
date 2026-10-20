@@ -4,14 +4,28 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.StoppedPopulation.Cells
+import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.DomainFlow.Independence
+import Probability.Process.HittingTime.Declarations
 
 /-!
-# Branching on each population cell
+# Cellwise factorization for a stopped finite population
 
-On a cell of constant population and stopping generation, the descendant step
-fields of the population are independent of the stopped past with the finite
-product law.
+The proof-only lemma `abstractStoppedPopulation_cell_factorization` states
+that, for a fixed population value $s$ and an injective enumeration of its
+roots, the event of a measurable descendant vector $B$ factors from any
+stopped-past event $A$ on that population cell. For roots
+$u_i=(r_i,v_i)$, define
+$\Phi_{\mathbf u}(\omega)(i,v)=\omega(r_i,v_i\mathbin{++}v)$,
+$\nu_m=\operatorname{finiteRootStepFieldLaw}(\mu,m)$, and
+$\nu=\operatorname{stepFieldLaw}(\mu)$. The lemma proves
+\[
+  \nu_m\!\left((A\cap\{\mathrm{population}=s\})
+      \cap\Phi_{\mathbf u}^{-1}(B)\right)
+  =\nu_m\!\left(A\cap\{\mathrm{population}=s\}\right)
+    \left(\bigotimes_{i\in\mathrm{Fin}\,k}\nu\right)(B).
+\]
+The lemma is used to prove the random-cardinality mixture theorem in the
+parent `DependentLaw` module.
 -/
 
 open MeasureTheory ProbabilityTheory
@@ -21,7 +35,7 @@ namespace ProbabilityTheory.BranchingRandomWalk
 open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 
 
-theorem abstractStoppedPopulation_cell_factorization
+lemma abstractStoppedPopulation_cell_factorization
     {m : ℕ} {X : Type*} [MeasurableSpace X]
     (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
     {k : ℕ}
@@ -59,7 +73,9 @@ theorem abstractStoppedPopulation_cell_factorization
     hA.inter (hpopulation s)
   have hCgen n : MeasurableSet[
       multiRootStepFiltration (m := m) (X := X) n] (C n) :=
-    abstractMultiRootStoppedCell_measurable τ hτ E hE n
+    (hτ.measurableSet_inter_eq_iff E n).1
+      (hE.inter (hτ.measurable
+        (measurableSet_singleton (n : WithTop ℕ))))
   have hCmeas n : MeasurableSet (C n) :=
     (multiRootStepFiltration (m := m) (X := X) |>.le n) _ (hCgen n)
   have hDmeas n : MeasurableSet (D n) :=
@@ -121,36 +137,5 @@ theorem abstractStoppedPopulation_cell_factorization
     _ = ∑' n, P (C n) * Q B := tsum_congr hcell
     _ = (∑' n, P (C n)) * Q B := ENNReal.tsum_mul_right
     _ = P E * Q B := by rw [hCsum]
-
-theorem abstractStoppedPopulation_each_cell_branches
-    {m : ℕ} {X : Type*} [MeasurableSpace X]
-    (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
-    (τ : FiniteRootStepField m ℕ X → WithTop ℕ)
-    (hτ : IsStoppingTime
-      (multiRootStepFiltration (m := m) (X := X)) τ)
-    (hfinite : ∀ step, τ step ≠ ⊤)
-    (population : FiniteRootStepField m ℕ X → Finset (Fin m × 𝕍))
-    (hpopulation : ∀ s : Finset (Fin m × 𝕍),
-      MeasurableSet[hτ.measurableSpace] {step | population step = s})
-    (hdepth : ∀ step (u : Fin m × 𝕍), u ∈ population step →
-      ∀ n : ℕ, τ step = (n : WithTop ℕ) → u.2.length = n)
-    (s : Finset (Fin m × 𝕍)) :
-    ∃ roots : Fin s.card → Fin m × 𝕍,
-      s = Finset.univ.image roots ∧
-      ∀ (A : Set (FiniteRootStepField m ℕ X))
-        (_ : MeasurableSet[hτ.measurableSpace] A)
-        (B : Set (Fin s.card → 𝕍 → Step ℕ X))
-        (_ : MeasurableSet B),
-        finiteRootStepFieldLaw μ m
-            ((A ∩ {step | population step = s}) ∩
-              multiRootSubtreeStepFieldVector roots ⁻¹' B) =
-          finiteRootStepFieldLaw μ m
-              (A ∩ {step | population step = s}) *
-            (Measure.infinitePi
-              (fun _ : Fin s.card => stepFieldLaw μ)) B := by
-  obtain ⟨roots, hcover, hinj⟩ := finiteMultiRootAddress_enumeration s
-  exact ⟨roots, hcover, fun A hA B hB =>
-    abstractStoppedPopulation_cell_factorization μ τ hτ hfinite population
-      hpopulation hdepth A hA s roots hcover hinj B hB⟩
 
 end ProbabilityTheory.BranchingRandomWalk
