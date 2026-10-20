@@ -2424,3 +2424,12 @@ a general overview. The header now names its public structures and theorem
 declarations, records the finite and infinite cardinality laws, and states the
 rank, first-$N$, last-$N$, and order-dual interfaces. No theorem statement or
 proof changed. The module builds and its style check passes.
+
+The adjacent `Mechanism/AtRank.lean` and `Mechanism/ByValue.lean` headers had
+the same gap: they explained the idea of a rank inverse and a dynamic
+value-order selector without listing their public API. Their headers now name
+the rank, partial inverse, dynamic key, threshold-count, and finite-selection
+declarations, with the corresponding cardinality and membership formulas.
+These modules retain their current subject-level placement under
+`Mechanism/`; their declarations describe reusable finite-order selection
+operations rather than theorem-specific assembly steps.
