@@ -6,9 +6,9 @@ Authors: WANG Yiyang
 
 module
 
-public import Topology.Cadlag.Skorokhod.Oscillation
+public import Topology.Cadlag.Skorokhod.Oscillation.Basic
 public import Topology.Cadlag.Skorokhod.Corridor.Endpoint
-public import Topology.Cadlag.Skorokhod.Scaling
+public import Topology.Cadlag.Skorokhod.Path.Scaling
 public import Mathlib.MeasureTheory.Constructions.BorelSpace.Real
 
 /-!
