@@ -265,6 +265,13 @@ duplicating the `InitialPopulation` or `Rademacher` directory names. The scan
 also caught and fixed `Analysis/Asymptotics/Scale/Scale.lean`, now
 `Scale/Basic.lean`.
 
+The 2026-10-21 scan of the current Lean subtree commit `d30b8dd5` counts
+1,482 production modules and 138 test modules. Across the 639 project source
+directories, it finds no same-stem file/directory pairs, repeated sibling
+Lean-file stems, empty directories, `Source/` directories, or directories with
+more than eight direct Lean files. This scan excludes `.lake/` and the
+vendored `Mathlib` and `BrownianMotion` source trees.
+
 `BranchingProcessTest` mirrors production module names where it has
 corresponding tests. Its larger `Stable` and `Branching` directories are test
 collections, not public theorem layers. Test modules are grouped by the
