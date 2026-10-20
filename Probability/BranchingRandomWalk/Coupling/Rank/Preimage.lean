@@ -94,6 +94,42 @@ theorem preimageByRank_range_countable
   · exact Set.mem_union_right _ ⟨ω, by simp [preimageByRank, hq]⟩
   · exact Set.mem_union_left _ (by simp [preimageByRank, hq])
 
+private lemma finite_optionMaps_supportedOn
+    {Source Target : Type*} (source : Finset Source) (target : Finset Target) :
+    {f : Target → Option Source |
+      (∀ q, q ∉ target → f q = none) ∧
+      (∀ q p, f q = some p → p ∈ source)}.Finite := by
+  classical
+  let TargetLabel := {q : Target // q ∈ target}
+  let SourceLabel := {p : Source // p ∈ source}
+  let _ : Finite TargetLabel := target.finite_toSet.to_subtype
+  let _ : Finite SourceLabel := source.finite_toSet.to_subtype
+  let S : Set (Target → Option Source) :=
+    {f | (∀ q, q ∉ target → f q = none) ∧
+      (∀ q p, f q = some p → p ∈ source)}
+  let code : S → (TargetLabel → Option SourceLabel) := fun f q =>
+    match h : f.1 q.1 with
+    | none => none
+    | some p => some ⟨p, f.2.2 q.1 p h⟩
+  have hdecode (f : S) (q : TargetLabel) :
+      Option.map Subtype.val (code f q) = f.1 q.1 := by
+    simp only [code]
+    split <;> rename_i h
+    · exact h.symm
+    · simp only [Option.map_some]
+      exact h.symm
+  have hcode : Function.Injective code := by
+    intro f g hfg
+    apply Subtype.ext
+    funext q
+    by_cases hq : q ∈ target
+    · rw [← hdecode f ⟨q, hq⟩, ← hdecode g ⟨q, hq⟩,
+        congrFun hfg ⟨q, hq⟩]
+    · rw [f.2.1 q hq, g.2.1 q hq]
+  let _ : Finite (TargetLabel → Option SourceLabel) := inferInstance
+  let _ : Finite S := Finite.of_injective code hcode
+  exact Set.finite_coe_iff.mp inferInstance
+
 omit [MeasurableSpace Ω] in
 /-- The complete guarded inverse match has countable actual range when its
 random finite source and target supports do.  No countability assumption is
@@ -115,7 +151,7 @@ theorem preimageByRank_function_range_countable
       (∀ q p, f q = some p → p ∈ s.1)}
   have hvalid : ∀ s t, (valid s t).Countable := by
     intro s t
-    exact (preimageByRank_maps_finite s.1 t.1).countable
+    exact (finite_optionMaps_supportedOn s.1 t.1).countable
   have hall : (⋃ s : S, ⋃ t : T, valid s t).Countable :=
     Set.countable_iUnion fun s => Set.countable_iUnion fun t => hvalid s t
   apply hall.mono
