@@ -8,7 +8,7 @@ module
 
 public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition.FromMeander
 
-import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition.Lemmas.CorridorProbability
+import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition.CorridorProbability
 
 /-!
 # Meander transition at a diffusive entrance horizon

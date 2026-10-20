@@ -10,9 +10,9 @@ public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transit
 public import Mathlib.MeasureTheory.Function.ConvergenceInDistribution
 import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Meander.CorridorProbability
 /-!
-# Corridor-probability lemmas for conditioned transitions
+# Positive probabilities for conditioned transition corridors
 
-The intermediate results in this file are:
+The public results in this file are:
 
 - `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.exists_eventually_normalizedTransitionCorridorProbability_ge`:
   for $D_{\sigma,s}=\{f:\forall t\in[0,1],\ 0\le f(t)\le
@@ -27,9 +27,12 @@ The intermediate results in this file are:
   $t\mapsto7t/(16\sigma)$ and $\Delta_n/\sqrt{n+1}\to1$ imply
   $Q_{n+1}(D_{n+1,\Delta_n})\ge q$ eventually for some $q>0$.
 
-These are proof steps for Wang Yiyang, *Asymptotic Speed of the N-Branching
-Random Walk with Infinite Offspring*, Appendix A.2, Lemma A.7, used in
-Chapter 3, Lemma 3.5. The functional limit input is Erwin Bolthausen,
+These are complete probability estimates for the conditioned-transition
+interface, so they live beside its event and transition results rather than
+inside a proof-only `Lemmas/` directory. They formalize the transition
+probability input in Wang Yiyang, *Asymptotic Speed of the N-Branching Random
+Walk with Infinite Offspring*, Appendix A.2, Lemma A.7, used in Chapter 3,
+Lemma 3.5. The functional limit input is Erwin Bolthausen,
 *On a Functional Central Limit Theorem for Random Walks Conditioned to Stay
 Positive*, Ann. Probab. 4(3) (1976), 480--485, DOI
 10.1214/aop/1176996098, Theorem 3.2; the limit-law identification is Donald

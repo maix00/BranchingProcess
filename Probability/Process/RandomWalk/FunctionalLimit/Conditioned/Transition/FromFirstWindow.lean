@@ -9,7 +9,7 @@ module
 public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.FirstWindow.Limit
 public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition.Event
 
-import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition.Lemmas.CorridorProbability
+import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition.CorridorProbability
 
 /-!
 # Transition estimate from the centered first-window limit

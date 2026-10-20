@@ -1864,3 +1864,32 @@ declarations remain in `Combinatorics.Branching`: that namespace already
 expresses their mathematical owner, and the file move does not change it.
 All ten direct importers now use the semantic module path. The renamed module
 and those importers built with the pinned toolchain (3,141 Lake jobs).
+
+## Conditioned transition corridor probability ownership (2026-10-20)
+
+`Probability/Process/RandomWalk/FunctionalLimit/Conditioned/Transition/Lemmas/CorridorProbability.lean`
+contained two complete transition-probability estimates used by
+`FromMeander.lean`, `DiffusiveFromMeander.lean`, and `FromFirstWindow.lean`.
+The first turns a Brownian-meander support point and a nonnegative path limit
+into an eventual positive probability for the normalized transition corridor
+when its scale tends to one. The second translates that bound to the
+survival-conditioned increment event when `width n / sqrt (n + 1) -> 1`.
+Both conclusions are full quantitative interfaces for the conditioned
+transition family, so the module now lives at
+`Transition/CorridorProbability.lean`; the geometry comparison helper remains
+`private` there. The directory has eight direct peer modules, all owned by the
+transition-probability topic.
+
+The abstraction search checked the pinned Mathlib revision
+`380f2aafb622cb2c1c93dac545b6389083c68c51`. Its
+[`ProbabilityMeasure.le_liminf_measure_open_of_tendsto`](https://github.com/leanprover-community/mathlib4/blob/380f2aafb622cb2c1c93dac545b6389083c68c51/Mathlib/MeasureTheory/Measure/Portmanteau.lean)
+is the general open-set lower-bound theorem for weakly convergent probability
+measures; the same API is documented in the
+[official Mathlib reference](https://leanprover-community.github.io/mathlib4_docs/Mathlib/MeasureTheory/Measure/Portmanteau.html).
+`Meander/CorridorProbability.lean` already turns this support and open-set
+input into positive meander-corridor mass. The moved result adds the
+transition-specific endpoint and width comparison, rather than duplicating
+the general Portmanteau API. Its bibliographic inputs remain Bolthausen,
+Theorem 3.2; Iglehart, Section 3, theorem (3.4), p. 616; and Wang Yiyang,
+Appendix A.2, Lemma A.7, as cited in the module header. The three client
+modules now import the semantic transition owner directly.
