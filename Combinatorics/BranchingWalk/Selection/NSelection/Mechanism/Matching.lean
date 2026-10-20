@@ -41,6 +41,9 @@ public declarations are:
   value in the target, and
   `Combinatorics.Branching.Selection.NSelection.rankBy_matchByRank` states
   equality of dynamic ranks.
+  `Combinatorics.Branching.Selection.NSelection.particleAtSourceRankBy_matchByRank_target`
+  states that looking up a source particle at the rank of its matched target
+  recovers that source particle.
   `Combinatorics.Branching.Selection.NSelection.matchByRank_injective`
   proves injectivity, while
   `Combinatorics.Branching.Selection.NSelection.matchByRank_value_le` gives
