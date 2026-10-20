@@ -14,17 +14,20 @@ import Mathlib.Analysis.Complex.ExponentialBounds
 /-!
 # Lower tails for independent root successes
 
-This file supplies the elementary concentration estimate used after the
-first tube stage in the positive-initial-mass right-tail argument.  A root is
-counted once if its full pre-sampled branching field contains a path in a
-specified event.  The root fields are independent, so a Chernoff estimate
-controls the lower tail of this count.
-
-For a measurable event `E` of one root field, write
-`q = (stepFieldLaw μ)(E)` and
-`N_E(field) = ∑ r : Fin m, 1_E(field r)`. The public theorem
+In namespace `ProbabilityTheory.BranchingRandomWalk.RootIndexed`, let
+`ν₁ := ProbabilityTheory.BranchingRandomWalk.stepFieldLaw μ`,
+`νₘ := finiteRootStepFieldLaw μ m`, `q := (ν₁ E).toReal`, and
+`N_E(field) := ∑ r : Fin m, 1_E(field r)`. The public theorem
 `measure_finiteRootEventCount_le_quarter_mean μ E hE m hm` states
-`ℙ_{μ^{⊗m}}(N_E ≤ m q / 4) ≤ exp(-m q / 4)` for `0 < m`.
+$\nu_m\{field : \mathrm{FiniteRootStepField}(m,\mathbb{N},X) :
+N_E(field)\le mq/4\}\le e^{-mq/4}$ when `μ` is a probability law, `E` is
+measurable, and `0 < m`.
+
+This file supplies the elementary concentration estimate used after the
+first tube stage in the positive-initial-mass right-tail argument. A root is
+counted once if its full pre-sampled branching field contains a path in a
+specified event. The root fields are independent, so a Chernoff estimate
+controls the lower tail of this count.
 -/
 
 @[expose] public section
