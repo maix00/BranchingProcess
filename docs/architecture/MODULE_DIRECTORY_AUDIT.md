@@ -2415,3 +2415,12 @@ modules now list their public declarations and formulas in their module
 headers. The theorem module, trajectory module, and direct clients built with
 the pinned toolchain (3,428 Lake jobs); Mathlib `lint-style` passed on the two
 edited modules.
+
+## Capacity selection module header (2026-10-21)
+
+`Combinatorics/BranchingWalk/Selection/NSelection/Basic.lean` defined the
+abstract and finite-input capacity selectors but its module header only gave
+a general overview. The header now names its public structures and theorem
+declarations, records the finite and infinite cardinality laws, and states the
+rank, first-$N$, last-$N$, and order-dual interfaces. No theorem statement or
+proof changed. The module builds and its style check passes.
