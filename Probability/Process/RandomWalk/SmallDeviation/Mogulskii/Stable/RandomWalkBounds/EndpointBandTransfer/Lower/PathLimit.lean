@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.FunctionalLimit.Stable.PathLimit.Block
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.EndpointBandTransfer.StableRate
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.EndpointBandTransfer.Rate
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Scale.Core
 public import Probability.Process.Stable.SmallDeviation.EscapeRate.PathLaw.Transfer
 
@@ -41,7 +41,7 @@ are:
   $i\in I$, with the corridor and endpoint interval allowed to depend on $i$.
 
 The balanced stable partition asymptotics used by the cell proof are placed
-in `StableLower/Lemmas/BalancedBlocks.lean`.
+in `Lower/Lemmas/BalancedBlocks.lean`.
 -/
 
 open Filter MeasureTheory ProbabilityTheory

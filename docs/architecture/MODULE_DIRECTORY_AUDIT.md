@@ -1363,7 +1363,7 @@ entry build successfully together (3,985 Lake jobs).
 ## Abstraction review: stable balanced endpoint blocks (2026-10-19)
 
 The balanced-partition limit used by stable endpoint cells had been exposed
-from `StableLower/PathLimit.lean`, even though it depends only on deterministic
+from `Lower/PathLimit.lean`, even though it depends only on deterministic
 integer partitions and the stable specialization was used only by the cell
 bridge proof. The general statement now lives in
 `Analysis/Asymptotics/Scale/BlockScale.lean`:
@@ -1375,11 +1375,11 @@ Mogulskii scales, so it is the reusable public abstraction.
 
 The stable specialization is now the single proof-chain lemma
 `balancedStableCellBlock_asymptotics` in
-`Stable/RandomWalkBounds/EndpointBandTransfer/StableLower/Lemmas/BalancedBlocks.lean`.
+`Stable/RandomWalkBounds/EndpointBandTransfer/Lower/Lemmas/BalancedBlocks.lean`.
 It derives the hypotheses for the generic partition result from the stable
 Mogulskii scale. Its clients are the two cell constructions in `CellBridge.lean`,
 so the specialization stays under `Lemmas/`. The five path-limit estimates
-remain in `StableLower/PathLimit.lean`: source search confirms they are used
+remain in `Lower/PathLimit.lean`: source search confirms they are used
 both by `CellBridge.lean` and by `Gaussian/Blocks/FixedDiffusiveBlock.lean`.
 The module header lists those five probability interfaces and their
 quantitative meanings. The `Rate` imports used only in proof terms are now
@@ -1484,9 +1484,9 @@ to 21 modules:
 - `Bridge/Lemmas/{Comparison,EntrancePositivity,TerminalLeftGeometry}.lean`
   and `Bridge/TerminalLeftAsymptotics.lean`;
 - `Endpoint/{BandTransfer,Return,StrictStable,Upper}.lean`;
-- `EndpointBandTransfer/StableRate.lean`,
-  `EndpointBandTransfer/StableLower/EndpointMass.lean`, and
-  `EndpointBandTransfer/StableLower/Lemmas/BalancedBlocks.lean`;
+- `EndpointBandTransfer/Rate.lean`,
+  `EndpointBandTransfer/Lower/EndpointMass.lean`, and
+  `EndpointBandTransfer/Lower/Lemmas/BalancedBlocks.lean`;
 - `FromIncrementLaw/Path/{Law,Realization,RealizationContinuousBoundary}.lean`;
 - `TerminalLeft/Inputs.lean`,
   `TerminalLeft/Partition/{EnergyUpper,Lower/{EnergyLower,WidthRate}}.lean`,
@@ -2325,3 +2325,18 @@ range-probability bound consume it. The full `BranchingProcess` target built
 with 5,594 jobs, and Mathlib `lint-style` completed on all 1,483 production
 modules; its only diagnostic was the existing missing-module warning for the
 linter driver itself.
+
+## Stable endpoint-band transfer hierarchy (2026-10-21)
+
+The endpoint transfer modules had a `StableRate.lean` file and a nested
+`StableLower/` directory under the already stable-specific path
+`Stable/RandomWalkBounds/EndpointBandTransfer/`. They are now named
+`EndpointBandTransfer/Rate.lean` and `EndpointBandTransfer/Lower/`, which
+records the actual distinction without repeating the ancestor's stable-law
+regime. The rate-transfer module owns the scaled endpoint-band escape bound;
+`Lower/` owns the discrete path-limit, endpoint-mass, and cell-bridge
+interfaces. The balanced-block asymptotic used only in the bridge proof stays
+under `Lower/Lemmas/`. The namespace and proof terms are unchanged, and all
+imports, the endpoint-bridge and Gaussian clients, and the rate proof route
+now use the new paths. The full `BranchingProcess` target built successfully
+with 5,594 jobs after the move.
