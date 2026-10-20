@@ -8,7 +8,7 @@ module
 
 public import Probability.BranchingProcess.GaltonWatson.Generation
 public import Probability.BranchingProcess.Offspring.Map
-public import Probability.BranchingRandomWalk.Step.Map
+public import Probability.BranchingRandomWalk.Step.Presentation.Map
 public import Probability.BranchingRandomWalk.IID
 
 /-!

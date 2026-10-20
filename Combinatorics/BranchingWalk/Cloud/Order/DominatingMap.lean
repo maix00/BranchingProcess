@@ -13,6 +13,15 @@ public import Mathlib.Data.Set.Basic
 
 The labels and their ordered observations are separate.  No finiteness,
 countability, time, or branching assumption is built into this definition.
+
+The public API is:
+
+- `Cloud.DominatingMap source target sourceValue targetValue` consists of an
+  injection on `source` into `target` such that every target observation is
+  at most the corresponding source observation.
+- `Cloud.DominatingMap.refl` gives the identity map, and `trans` composes two
+  such maps while preserving their membership, injectivity, and order
+  properties.
 -/
 
 @[expose] public section
