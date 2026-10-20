@@ -98,14 +98,18 @@ interfaces rather than additional main theorems of the 1974 article:
 `Path/` owns path encodings, corridor events, and the finite-partition
 endpoint-to-corridor estimates; `Scale/` owns normalization; `Stable/` and
 `Gaussian/` own the stable and finite-variance regimes, including the
-finite-reference Gaussian block-survival bounds; `RandomWalkBounds/` assembles
-random-walk estimates; `Rate/` owns the normal-domain rate arguments; and
-`Spectral/` contains the killed symmetric-lattice method. `Lemmas/` is reserved
-for derivation steps that have no standalone reusable interface. The Gaussian
-product return-kernel estimates are in `Gaussian/Blocks/ReturnKernel.lean` and
+finite-reference Gaussian block-survival bounds. The Gaussian terminal-left
+path-class adapters are grouped under `Gaussian/Path/TerminalLeftPathClass/`;
+they support Theorem 3 and are not separate article-theorem entries.
+`RandomWalkBounds/` assembles random-walk estimates; `Rate/` owns the
+normal-domain rate arguments; and `Spectral/` contains the killed
+symmetric-lattice method. `Lemmas/` is reserved for derivation steps that have
+no standalone reusable interface. The Gaussian product return-kernel
+estimates are in `Gaussian/Blocks/ReturnKernel.lean` and
 `Gaussian/Blocks/UniformReturnKernel.lean`; the generic return-block iteration
-estimate is in `Probability/Process/RandomWalk/Kernel/Killed/Return/Uniform.lean`.
-General killed-kernel and return-kernel interfaces remain in
+estimate is in
+`Probability/Process/RandomWalk/Kernel/Killed/Return/Uniform.lean`. General
+killed-kernel and return-kernel interfaces remain in
 `Probability/Process/RandomWalk/Kernel/Killed/`.
 
 In the source notation, $F$ is the law of one increment and

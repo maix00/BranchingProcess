@@ -2581,6 +2581,19 @@ same article.
 All five affected modules build with the pinned toolchain (4,011 Lake jobs),
 and `lint-style` passes on the five modules.
 
+## Mogulskii Gaussian terminal-left path-class grouping (2026-10-21)
+
+The two Gaussian terminal-left path-class adapters now share the directory
+`Gaussian/Path/TerminalLeftPathClass/`: `Basic.lean` gives the explicit
+source-rate theorem, and `InnerOuter.lean` gives the corresponding unique
+inner/outer rate. They are support modules for Theorem 3, not separate
+article-theorem entry points; `Mogulskii/Theorems.lean` remains the entry for
+the four original theorem statements. Grouping the pair removes two long,
+near-duplicate sibling filenames while keeping their Gaussian path-class
+semantics visible. The declarations and proof terms are unchanged. All three
+affected production modules build; the three affected test modules compile,
+and the style check passes with the pinned toolchain.
+
 
 ## Full source-tree structural scan (2026-10-21)
 
