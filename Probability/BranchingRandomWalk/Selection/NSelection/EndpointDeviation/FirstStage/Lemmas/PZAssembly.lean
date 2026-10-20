@@ -106,7 +106,7 @@ lemma eventually_rightTailPositiveA_pzMean_toReal_ge_power_of_centeredSecondMome
     (hepsilon : 0 < epsilon) :
     ∀ᶠ n : ℕ in atTop,
       (N n : ℝ) ^ (-b - 2 * v - 3 * epsilon) ≤
-        (let ell := rightTailPositiveAFirstCutoff N n
+        (let ell := rightTailFirstStageCutoff N n
          let logN := logarithmOfSampleSize N n
          let corridor := affineCorridorThrough ell (-b * logN) 0
            (b * logN) ((-b + v) * logN)
@@ -129,7 +129,7 @@ lemma eventually_rightTailPositiveA_pzMean_toReal_ge_power_of_centeredSecondMome
          (lowerMean ^ 2 / (upperMean + pairBound)).toReal) := by
   classical
   let L : ℕ → ℝ := logarithmOfSampleSize N
-  let ell : ℕ → ℕ := rightTailPositiveAFirstCutoff N
+  let ell : ℕ → ℕ := rightTailFirstStageCutoff N
   let corridor (n : ℕ) := affineCorridorThrough (ell n) (-b * L n) 0
     (b * L n) ((-b + v) * L n)
   let spineEvent (n : ℕ) : Set (ℕ → ℝ) :=
@@ -162,7 +162,7 @@ lemma eventually_rightTailPositiveA_pzMean_toReal_ge_power_of_centeredSecondMome
   have hcrossRealNonneg : 0 ≤ crossMass.toReal := ENNReal.toReal_nonneg
   have hcrossEq : crossMass = ENNReal.ofReal crossMass.toReal :=
     (ENNReal.ofReal_toReal hcrossTop).symm
-  have hlogCube := tendsto_rightTailPositiveAFirstCutoff_div_logCube hN
+  have hlogCube := tendsto_rightTailFirstStageCutoff_div_logCube hN
   have hlogCubeLt : ∀ᶠ n : ℕ in atTop,
       (ell n : ℝ) / L n ^ 3 < 1 := by
     have h := hlogCube.eventually

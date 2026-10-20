@@ -148,17 +148,17 @@ lemma tendsto_rightTailPositiveASpan_atTop_of_stageCubicRatios
 lemma tendsto_rightTailPositiveASpan_atTop_of_logarithmicScales
     {N : ℕ → ℕ} (hN : Tendsto N atTop atTop) {t : ℝ} (ht : 0 < t) :
     Tendsto (fun n =>
-      ((logarithmicHorizon N t n - rightTailPositiveAFirstCutoff N n : ℕ) : ℝ))
+      ((logarithmicHorizon N t n - rightTailFirstStageCutoff N n : ℕ) : ℝ))
       atTop atTop := by
   let L : ℕ → ℝ := logarithmOfSampleSize N
   have hL : Tendsto L atTop atTop := by
     exact Real.tendsto_log_atTop.comp
       (tendsto_natCast_atTop_atTop.comp hN)
   apply tendsto_rightTailPositiveASpan_atTop_of_stageCubicRatios hL
-    (by simpa [L] using tendsto_rightTailPositiveAFirstCutoff_div_logCube hN)
+    (by simpa [L] using tendsto_rightTailFirstStageCutoff_div_logCube hN)
     (by simpa [L] using logarithmicHorizon_div_logCube_tendsto hN ht)
     ht
-  exact (eventually_rightTailPositiveAFirstCutoff_lt_horizon hN ht).mono
+  exact (eventually_rightTailFirstStageCutoff_lt_horizon hN ht).mono
     (fun _ h => Nat.le_of_lt h)
 
 /-- A positive cubic-scale span has its cube-root width at the corresponding
@@ -298,23 +298,23 @@ lemma tendsto_rightTailPositiveAAHExponent_div_log_of_logarithmicScales
     Tendsto
       (fun n => ((-b + v) * logarithmOfSampleSize N n +
           c * (((logarithmicHorizon N t n -
-            rightTailPositiveAFirstCutoff N n : ℕ) : ℝ) ^ (3⁻¹ : ℝ)) +
+            rightTailFirstStageCutoff N n : ℕ) : ℝ) ^ (3⁻¹ : ℝ)) +
           κ * c ^ p * (((logarithmicHorizon N t n -
-            rightTailPositiveAFirstCutoff N n : ℕ) : ℝ) ^ (p / 3))) /
+            rightTailFirstStageCutoff N n : ℕ) : ℝ) ^ (p / 3))) /
           logarithmOfSampleSize N n)
       atTop (𝓝 (-b + v + c * (t ^ (3⁻¹ : ℝ)))) := by
   let L : ℕ → ℝ := logarithmOfSampleSize N
   let D : ℕ → ℕ := fun n =>
-    logarithmicHorizon N t n - rightTailPositiveAFirstCutoff N n
+    logarithmicHorizon N t n - rightTailFirstStageCutoff N n
   have hL : Tendsto L atTop atTop := by
     exact Real.tendsto_log_atTop.comp
       (tendsto_natCast_atTop_atTop.comp hN)
   have hDscale : Tendsto (fun n => (D n : ℝ) / L n ^ 3)
       atTop (𝓝 t) := by
     apply tendsto_rightTailPositiveASpan_cubicRatio_of_stageRatios hL
-    · simpa [L] using tendsto_rightTailPositiveAFirstCutoff_div_logCube hN
+    · simpa [L] using tendsto_rightTailFirstStageCutoff_div_logCube hN
     · simpa [L] using logarithmicHorizon_div_logCube_tendsto hN ht
-    · exact (eventually_rightTailPositiveAFirstCutoff_lt_horizon hN ht).mono
+    · exact (eventually_rightTailFirstStageCutoff_lt_horizon hN ht).mono
         (fun _ h => Nat.le_of_lt h)
   have hroot := tendsto_rightTailPositiveASpan_root_div_log hL hDscale ht
   have hsmall := tendsto_rightTailPositiveASpan_sublinearPower_div_log

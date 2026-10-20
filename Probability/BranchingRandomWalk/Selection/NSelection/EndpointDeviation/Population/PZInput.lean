@@ -42,20 +42,20 @@ theorem eventually_rightTailPositiveA_firstStagePZInputs_of_centeredSecondMoment
       ∃ amplitude : ℝ, 0 < amplitude ∧
       ∀ᶠ n : ℕ in atTop,
         rightTailPositiveASpineCorridorLowerBound ν b v C amplitude
-            entranceMass (rightTailPositiveAFirstCutoff N n) ≤
+            entranceMass (rightTailFirstStageCutoff N n) ≤
           (tiltedIncrementFieldLaw realPotential μ)
             {increment : ℕ → ℝ |
-              RandomWalk.history (rightTailPositiveAFirstCutoff N n) 0
+              RandomWalk.history (rightTailFirstStageCutoff N n) 0
                 increment ∈
-                affineCorridorThrough (rightTailPositiveAFirstCutoff N n)
+                affineCorridorThrough (rightTailFirstStageCutoff N n)
                   (-b * logarithmOfSampleSize N n) 0
                   (b * logarithmOfSampleSize N n)
                   ((-b + v) * logarithmOfSampleSize N n)} ∧
         0 < (tiltedIncrementFieldLaw realPotential μ)
           {increment : ℕ → ℝ |
-            RandomWalk.history (rightTailPositiveAFirstCutoff N n) 0
+            RandomWalk.history (rightTailFirstStageCutoff N n) 0
               increment ∈
-              affineCorridorThrough (rightTailPositiveAFirstCutoff N n)
+              affineCorridorThrough (rightTailFirstStageCutoff N n)
                 (-b * logarithmOfSampleSize N n) 0
                 (b * logarithmOfSampleSize N n)
                 ((-b + v) * logarithmOfSampleSize N n)} ∧

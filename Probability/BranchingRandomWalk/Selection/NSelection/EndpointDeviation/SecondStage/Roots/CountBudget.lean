@@ -76,7 +76,7 @@ theorem eventually_measure_rightTailPositiveAKilledEnoughRoots_compl_le_exp_neg_
         (Fin (Nat.floor ((N n : ℝ) ^ a))) ℕ)) :
     let m : ℕ → ℕ := fun n => Nat.floor ((N n : ℝ) ^ a)
     let K : ℕ → ℕ := fun n => Nat.floor ((N n : ℝ) ^ delta)
-    let ell : ℕ → ℕ := rightTailPositiveAFirstCutoff N
+    let ell : ℕ → ℕ := rightTailFirstStageCutoff N
     let L : ℕ → ℝ := logarithmOfSampleSize N
     ∀ᶠ n : ℕ in atTop,
       (RootIndexed.stepFieldLaw (Root := Fin (m n)) μ)
@@ -87,7 +87,7 @@ theorem eventually_measure_rightTailPositiveAKilledEnoughRoots_compl_le_exp_neg_
   dsimp
   let m : ℕ → ℕ := fun n => Nat.floor ((N n : ℝ) ^ a)
   let K : ℕ → ℕ := fun n => Nat.floor ((N n : ℝ) ^ delta)
-  let ell : ℕ → ℕ := rightTailPositiveAFirstCutoff N
+  let ell : ℕ → ℕ := rightTailFirstStageCutoff N
   let L : ℕ → ℝ := logarithmOfSampleSize N
   let pzMean (n : ℕ) : ℝ≥0∞ :=
     let corridor := affineCorridorThrough (ell n) (-b * L n) 0

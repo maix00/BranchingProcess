@@ -808,15 +808,16 @@ The proof family had been grouped in a directory named after its parameter
 condition rather than the mathematics in the files. It now lives under
 `EndpointDeviation/FirstStage/`: the entry proves an
 exponential low-count bound for the first-stage killed population, and its
-PZ-specific rate assembly is grouped under `Lemmas/`. The `rightTailPositiveA`
-identifier remains in theorem names because those statements are indexed by
-the positive exponent parameter; it no longer determines directory placement.
-The former `PositiveA/` source directory has been removed; `PositiveA` now
-appears only in parameter-indexed declaration names.
+PZ-specific rate assembly is grouped under `Lemmas/`. The former `PositiveA/`
+source directory has been removed. The `rightTailPositiveA` tag remains on
+declarations belonging to the positive-exponent endpoint estimate. The
+first-stage cutoff itself does not depend on that exponent, so its definition
+and scale-property declarations now use the semantic name
+`rightTailFirstStageCutoff`.
 
 `EndpointDeviation/FirstStage/Lemmas/PZBudget.lean` estimates the
 tilted-spine corridor mass at the specific cutoff
-`rightTailPositiveAFirstCutoff`; its only client is `PZAssembly.lean`.
+`rightTailFirstStageCutoff`; its only client is `PZAssembly.lean`.
 `PZAssembly.lean` combines that rate with the first-stage MRCA pair sum and
 cross-child weight. Its resulting PZ-mean lower bound is used by both
 `FirstStage/LowCountPower.lean` and
@@ -830,7 +831,7 @@ interface.
 
 The deterministic schedule and its scale properties now live beside their
 owner in `Drawdown/Spine/Cutoff.lean`. The limit
-`logarithmicSmallDeviationScale (rightTailPositiveAFirstCutoff N n) /
+`logarithmicSmallDeviationScale (rightTailFirstStageCutoff N n) /
 logarithmOfSampleSize N n → 1` had been proved independently in
 `PZBudget.lean` and `Spine/Corridor.lean`. It is now one named property of the
 cutoff used by both stages; it remains at the endpoint-deviation subject level

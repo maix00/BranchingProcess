@@ -56,7 +56,7 @@ theorem eventually_rightTailPositiveA_populationLowCount_le_exp_neg_power
     (ellN : ℕ → ℕ) :
     ∀ᶠ n : ℕ in atTop,
       let m := Nat.floor ((N n : ℝ) ^ a)
-      let ell := rightTailPositiveAFirstCutoff N n
+      let ell := rightTailFirstStageCutoff N n
       let logN := logarithmOfSampleSize N n
       let corridor := affineCorridorThrough ell (-b * logN) 0
         (b * logN) ((-b + v) * logN)
@@ -97,7 +97,7 @@ theorem eventually_rightTailPositiveA_populationLowCount_le_exp_neg_power
         ENNReal.ofReal (Real.exp (-((N n : ℝ) ^ delta))) := by
   classical
   let m : ℕ → ℕ := fun n => Nat.floor ((N n : ℝ) ^ a)
-  let ell : ℕ → ℕ := rightTailPositiveAFirstCutoff N
+  let ell : ℕ → ℕ := rightTailFirstStageCutoff N
   let logN : ℕ → ℝ := logarithmOfSampleSize N
   let initial (n : ℕ) :=
     RootIndexed.initialPopulation (α := ℕ)

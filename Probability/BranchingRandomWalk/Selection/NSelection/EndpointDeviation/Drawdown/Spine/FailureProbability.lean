@@ -111,12 +111,12 @@ private lemma eventually_rightTailPositiveAKilledCapacityFailure_le_polynomial_o
     ∃ epsilon : ℝ, 0 < epsilon ∧ ∀ᶠ n : ℕ in atTop,
       rightTailPositiveAKilledCapacityFailureProbability
         (Nat.floor ((N n : ℝ) ^ a))
-        (rightTailPositiveAFirstCutoff N n)
+        (rightTailFirstStageCutoff N n)
         (logarithmicHorizon N t n) (N n)
         (logarithmOfSampleSize N n) b v c κ μ ≤
         ENNReal.ofReal (Real.exp (-epsilon * Real.log (N n : ℝ))) := by
   let m : ℕ → ℕ := fun n => Nat.floor ((N n : ℝ) ^ a)
-  let ell : ℕ → ℕ := rightTailPositiveAFirstCutoff N
+  let ell : ℕ → ℕ := rightTailFirstStageCutoff N
   let ellN : ℕ → ℕ := logarithmicHorizon N t
   let D : ℕ → ℕ := fun n => ellN n - ell n
   let L : ℕ → ℝ := logarithmOfSampleSize N
@@ -132,14 +132,14 @@ private lemma eventually_rightTailPositiveAKilledCapacityFailure_le_polynomial_o
   have hLpos : ∀ᶠ n : ℕ in atTop, 0 < L n := hL.eventually_gt_atTop 0
   have hellPos : ∀ᶠ n : ℕ in atTop, 0 < ell n := by
     simpa [ell] using
-      (tendsto_rightTailPositiveAFirstCutoff_atTop hN).eventually_gt_atTop 0
+      (tendsto_rightTailFirstStageCutoff_atTop hN).eventually_gt_atTop 0
   have hellN : ∀ᶠ n : ℕ in atTop, ell n < ellN n := by
-    simpa [ell, ellN] using eventually_rightTailPositiveAFirstCutoff_lt_horizon hN ht
+    simpa [ell, ellN] using eventually_rightTailFirstStageCutoff_lt_horizon hN ht
   have horder : ∀ᶠ n : ℕ in atTop, ell n ≤ ellN n :=
     hellN.mono (fun _ h => Nat.le_of_lt h)
   have hcutoffScale : Tendsto (fun n => (ell n : ℝ) / L n ^ 3)
       atTop (𝓝 0) := by
-    simpa [ell, L] using tendsto_rightTailPositiveAFirstCutoff_div_logCube hN
+    simpa [ell, L] using tendsto_rightTailFirstStageCutoff_div_logCube hN
   have hhorizonScale : Tendsto (fun n => (ellN n : ℝ) / L n ^ 3)
       atTop (𝓝 t) := by
     simpa [ellN, L] using logarithmicHorizon_div_logCube_tendsto hN ht
@@ -225,7 +225,7 @@ theorem exists_rightTailPositiveAKilledCapacityFailure_le_polynomial_of_endpoint
       0 < epsilon ∧ ∀ᶠ n : ℕ in atTop,
         rightTailPositiveAKilledCapacityFailureProbability
           (Nat.floor ((N n : ℝ) ^ a))
-          (rightTailPositiveAFirstCutoff N n)
+          (rightTailFirstStageCutoff N n)
           (logarithmicHorizon N t n) (N n)
           (logarithmOfSampleSize N n) b v c
           ((3 * Real.pi ^ 2 / 8) * sigma ^ 2) μ ≤

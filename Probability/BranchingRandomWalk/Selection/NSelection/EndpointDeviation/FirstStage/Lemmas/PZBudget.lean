@@ -38,15 +38,15 @@ open ProbabilityTheory.BranchingRandomWalk.Spine
 private lemma tendsto_rightTailPositiveASpineScale_div_log
     {N : ℕ → ℕ} (hN : Tendsto N atTop atTop) {v : ℝ} :
     Tendsto (fun n => (v / 2) * logarithmicSmallDeviationScale
-      (rightTailPositiveAFirstCutoff N n) /
+      (rightTailFirstStageCutoff N n) /
         logarithmOfSampleSize N n) atTop (𝓝 (v / 2)) := by
-  have h := (tendsto_rightTailPositiveAFirstCutoff_smallDeviationScale_div_log hN).const_mul
+  have h := (tendsto_rightTailFirstStageCutoff_smallDeviationScale_div_log hN).const_mul
     (v / 2)
   have heq : (fun n => (v / 2) * logarithmicSmallDeviationScale
-      (rightTailPositiveAFirstCutoff N n) /
+      (rightTailFirstStageCutoff N n) /
         logarithmOfSampleSize N n) =ᶠ[atTop]
       fun n => (v / 2) * (logarithmicSmallDeviationScale
-        (rightTailPositiveAFirstCutoff N n) /
+        (rightTailFirstStageCutoff N n) /
           logarithmOfSampleSize N n) := by
     filter_upwards [] with n
     ring
@@ -72,9 +72,9 @@ private lemma eventually_rightTailPositiveAStableBlock_ge_log_sq
       c * logarithmOfSampleSize N n ^ 2 ≤
         (stableBlockLength 2 ν (amplitude ^ 2)
           (fun k => (v / 2) * logarithmicSmallDeviationScale k)
-          (rightTailPositiveAFirstCutoff N n) : ℝ) := by
+          (rightTailFirstStageCutoff N n) : ℝ) := by
   let L : ℕ → ℝ := logarithmOfSampleSize N
-  let ell : ℕ → ℕ := rightTailPositiveAFirstCutoff N
+  let ell : ℕ → ℕ := rightTailFirstStageCutoff N
   let scale : ℕ → ℝ := fun k => (v / 2) * logarithmicSmallDeviationScale k
   let c : ℝ := amplitude ^ 2 * (v / 4) ^ 2 / (4 * sigma ^ 2)
   have hc : 0 < c := by
@@ -87,7 +87,7 @@ private lemma eventually_rightTailPositiveAStableBlock_ge_log_sq
       atTop (𝓝 (v / 2)) := by
     simpa [L, ell, scale] using tendsto_rightTailPositiveASpineScale_div_log hN
   have hell : Tendsto ell atTop atTop := by
-    simpa [ell] using tendsto_rightTailPositiveAFirstCutoff_atTop hN
+    simpa [ell] using tendsto_rightTailFirstStageCutoff_atTop hN
   have hscale : Tendsto (fun n => scale (ell n)) atTop atTop := by
     have hprod := hL.atTop_mul_pos (by linarith : 0 < v / 2) hscaleRatio
     have heq : (fun n => L n * (scale (ell n) / L n)) =ᶠ[atTop]
@@ -186,17 +186,17 @@ private lemma eventually_rightTailPositiveAStableBlock_ge_log_sq
     dsimp [ell, scale] at harg ⊢
     have hfloorReal : stableBlockArgument 2 ν (amplitude ^ 2)
         (fun k => (v / 2) * logarithmicSmallDeviationScale k)
-        (rightTailPositiveAFirstCutoff N n) <
+        (rightTailFirstStageCutoff N n) <
         (stableBlockLength 2 ν (amplitude ^ 2)
           (fun k => (v / 2) * logarithmicSmallDeviationScale k)
-          (rightTailPositiveAFirstCutoff N n) : ℝ) + 1 := by
+          (rightTailFirstStageCutoff N n) : ℝ) + 1 := by
       simpa [stableBlockLength] using Nat.lt_floor_add_one
         (stableBlockArgument 2 ν (amplitude ^ 2)
           (fun k => (v / 2) * logarithmicSmallDeviationScale k)
-          (rightTailPositiveAFirstCutoff N n))
+          (rightTailFirstStageCutoff N n))
     have hargLower : 2 * c * L n ^ 2 ≤ stableBlockArgument 2 ν
         (amplitude ^ 2) (fun k => (v / 2) * logarithmicSmallDeviationScale k)
-        (rightTailPositiveAFirstCutoff N n) := by
+        (rightTailFirstStageCutoff N n) := by
       simpa [ell, scale, Function.comp_apply, stableBlockArgument,
         stableSlowVariation_two] using harg
     have hthresholdSq : (2 / c + 2) ^ 2 ≤ L n ^ 2 := by
@@ -219,7 +219,7 @@ private lemma eventually_rightTailPositiveAStableBlock_ge_log_sq
     have hfloorLower : c * L n ^ 2 ≤
         (stableBlockLength 2 ν (amplitude ^ 2)
           (fun k => (v / 2) * logarithmicSmallDeviationScale k)
-          (rightTailPositiveAFirstCutoff N n) : ℝ) := by
+          (rightTailFirstStageCutoff N n) : ℝ) := by
       linarith [hargLower, hfloorReal, htwice]
     simpa [stableBlockLength, stableBlockArgument, stableSlowVariation_two] using hfloorLower
   exact ⟨c, hc, by simpa [L, ell, scale, Function.comp_apply] using hfloor⟩
@@ -233,19 +233,19 @@ private lemma tendsto_rightTailPositiveABridgeCount_div_log_zero
       ((Asymptotics.balancedBlockCount
         (ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.finiteVarianceBridgeLength
           (fun k => (v / 2) * logarithmicSmallDeviationScale k)
-          (rightTailPositiveAFirstCutoff N n) -
+          (rightTailFirstStageCutoff N n) -
           stableBlockLength 2 ν (amplitude ^ 2)
             (fun k => (v / 2) * logarithmicSmallDeviationScale k)
-            (rightTailPositiveAFirstCutoff N n))
+            (rightTailFirstStageCutoff N n))
         (stableBlockLength 2 ν (amplitude ^ 2)
           (fun k => (v / 2) * logarithmicSmallDeviationScale k)
-          (rightTailPositiveAFirstCutoff N n)) : ℕ) : ℝ) /
+          (rightTailFirstStageCutoff N n)) : ℕ) : ℝ) /
         logarithmOfSampleSize N n) atTop (𝓝 0) := by
   obtain ⟨c, hc, hblock⟩ :=
     eventually_rightTailPositiveAStableBlock_ge_log_sq
       hN hν hsigma hv hamplitude
   let L : ℕ → ℝ := logarithmOfSampleSize N
-  let ell : ℕ → ℕ := rightTailPositiveAFirstCutoff N
+  let ell : ℕ → ℕ := rightTailFirstStageCutoff N
   let scale : ℕ → ℝ := fun k => (v / 2) * logarithmicSmallDeviationScale k
   let bridge : ℕ → ℕ := fun n =>
     ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.finiteVarianceBridgeLength
@@ -257,7 +257,7 @@ private lemma tendsto_rightTailPositiveABridgeCount_div_log_zero
     exact Real.tendsto_log_atTop.comp
       (tendsto_natCast_atTop_atTop.comp hN)
   have hLpos : ∀ᶠ n : ℕ in atTop, 0 < L n := hL.eventually_gt_atTop 0
-  have hellCube := tendsto_rightTailPositiveAFirstCutoff_div_logCube hN
+  have hellCube := tendsto_rightTailFirstStageCutoff_div_logCube hN
   have hupper : ∀ᶠ n : ℕ in atTop,
       (count n : ℝ) / L n ≤ ((ell n : ℝ) / L n ^ 3) / c := by
     filter_upwards [hblock, hLpos] with n hblockN hLn
@@ -307,10 +307,10 @@ private lemma eventually_rightTailPositiveAEntranceLength_le_log_sq
     ∀ᶠ n : ℕ in atTop,
       (ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.finiteVarianceEntranceLength
         (fun k => (v / 2) * logarithmicSmallDeviationScale k)
-        (rightTailPositiveAFirstCutoff N n) : ℝ) ≤
+        (rightTailFirstStageCutoff N n) : ℝ) ≤
         v ^ 2 * logarithmOfSampleSize N n ^ 2 := by
   let L : ℕ → ℝ := logarithmOfSampleSize N
-  let ell : ℕ → ℕ := rightTailPositiveAFirstCutoff N
+  let ell : ℕ → ℕ := rightTailFirstStageCutoff N
   let scale : ℕ → ℝ := fun k => (v / 2) * logarithmicSmallDeviationScale k
   have hL : Tendsto L atTop atTop := by
     exact Real.tendsto_log_atTop.comp
@@ -366,14 +366,14 @@ lemma eventually_rightTailPositiveASpineCorridor_ge_exp_neg_log
       ∃ amplitude : ℝ, 0 < amplitude ∧ ∀ᶠ n : ℕ in atTop,
         ENNReal.ofReal (Real.exp (-epsilon * logarithmOfSampleSize N n)) ≤
           rightTailPositiveASpineCorridorLowerBound ν b v C amplitude
-            entranceMass (rightTailPositiveAFirstCutoff N n) ∧
+            entranceMass (rightTailFirstStageCutoff N n) ∧
         rightTailPositiveASpineCorridorLowerBound ν b v C amplitude
-            entranceMass (rightTailPositiveAFirstCutoff N n) ≤
+            entranceMass (rightTailFirstStageCutoff N n) ≤
           (tiltedIncrementFieldLaw realPotential μ)
             {increment : ℕ → ℝ |
-              RandomWalk.history (rightTailPositiveAFirstCutoff N n) 0
+              RandomWalk.history (rightTailFirstStageCutoff N n) 0
                 increment ∈
-                affineCorridorThrough (rightTailPositiveAFirstCutoff N n)
+                affineCorridorThrough (rightTailFirstStageCutoff N n)
                   (-b * logarithmOfSampleSize N n) 0
                   (b * logarithmOfSampleSize N n)
                   ((-b + v) * logarithmOfSampleSize N n)} := by
@@ -387,7 +387,7 @@ lemma eventually_rightTailPositiveASpineCorridor_ge_exp_neg_log
   have hEntrance := eventually_rightTailPositiveAEntranceLength_le_log_sq
     hN hv
   let L : ℕ → ℝ := logarithmOfSampleSize N
-  let ell : ℕ → ℕ := rightTailPositiveAFirstCutoff N
+  let ell : ℕ → ℕ := rightTailFirstStageCutoff N
   let scale : ℕ → ℝ := fun k => (v / 2) * logarithmicSmallDeviationScale k
   let entranceLength : ℕ → ℕ := fun n =>
     ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.finiteVarianceEntranceLength
@@ -552,7 +552,7 @@ lemma eventually_rightTailPositiveASpineCorridor_ge_exp_neg_log
     exact le_of_eq (by ring)
   have hpower : ENNReal.ofReal (Real.exp (-epsilon * L n)) ≤
       rightTailPositiveASpineCorridorLowerBound ν b v C amplitude
-        entranceMass (rightTailPositiveAFirstCutoff N n) := by
+        entranceMass (rightTailFirstStageCutoff N n) := by
     calc
       ENNReal.ofReal (Real.exp (-epsilon * L n)) ≤
           ENNReal.ofReal (Real.exp (-epsilon / 2 * L n)) *
@@ -561,7 +561,7 @@ lemma eventually_rightTailPositiveASpineCorridor_ge_exp_neg_log
           (entranceMass / (entranceLength n : ℝ≥0∞)) :=
         mul_le_mul hbridge hentry (by positivity) (by positivity)
       _ = rightTailPositiveASpineCorridorLowerBound ν b v C amplitude
-          entranceMass (rightTailPositiveAFirstCutoff N n) := by
+          entranceMass (rightTailFirstStageCutoff N n) := by
         simp [rightTailPositiveASpineCorridorLowerBound, ell, scale,
           entranceLength, bridgeLength, blockLength, blockCount, ratio, exponent]
   exact ⟨by simpa [L] using hpower, hprob⟩

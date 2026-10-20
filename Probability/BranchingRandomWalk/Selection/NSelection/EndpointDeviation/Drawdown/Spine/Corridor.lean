@@ -106,15 +106,15 @@ theorem eventually_rightTailPositiveA_spineCorridor_lowerBound_of_centeredSecond
     ∃ C : ℝ, C < 0 ∧ ∃ q : ℝ≥0∞, 0 < q ∧
       ∃ amplitude : ℝ, 0 < amplitude ∧ ∀ᶠ n : ℕ in atTop,
         rightTailPositiveASpineCorridorLowerBound ν b v C amplitude q
-          (rightTailPositiveAFirstCutoff N n) ≤
+          (rightTailFirstStageCutoff N n) ≤
           (tiltedIncrementFieldLaw realPotential μ)
         {increment : ℕ → ℝ |
-          RandomWalk.history (rightTailPositiveAFirstCutoff N n) 0 increment ∈
-            affineCorridorThrough (rightTailPositiveAFirstCutoff N n)
+          RandomWalk.history (rightTailFirstStageCutoff N n) 0 increment ∈
+            affineCorridorThrough (rightTailFirstStageCutoff N n)
               (-b * logarithmOfSampleSize N n) 0
               (b * logarithmOfSampleSize N n)
               ((-b + v) * logarithmOfSampleSize N n)} := by
-  let ell : ℕ → ℕ := rightTailPositiveAFirstCutoff N
+  let ell : ℕ → ℕ := rightTailFirstStageCutoff N
   let L : ℕ → ℝ := logarithmOfSampleSize N
   let v₀ : ℝ := v / 2
   let b₀ : ℝ := b - v / 4
@@ -128,7 +128,7 @@ theorem eventually_rightTailPositiveA_spineCorridor_lowerBound_of_centeredSecond
     exact (lt_div_iff₀ hv₀).2 (by dsimp [b₀, v₀]; linarith)
   have hscale : IsMogulskiiScale scale := by
     simpa [scale] using logarithmicSmallDeviationScale_mul_isMogulskiiScale hv₀
-  have hcutoffPow := tendsto_rightTailPositiveAFirstCutoff_smallDeviationScale_div_log hN
+  have hcutoffPow := tendsto_rightTailFirstStageCutoff_smallDeviationScale_div_log hN
   have hbottomRatio : Tendsto (fun n => b₀ *
       (logarithmicSmallDeviationScale (ell n) / L n)) atTop (𝓝 b₀) := by
     simpa using hcutoffPow.const_mul b₀
@@ -144,7 +144,7 @@ theorem eventually_rightTailPositiveA_spineCorridor_lowerBound_of_centeredSecond
       realPotential μ hν hνMoment hsigma hscale ratio hratio
   refine ⟨C, hC, q, hq, amplitude, hamplitude, ?_⟩
   have hell : Tendsto ell atTop atTop := by
-    simpa [ell] using tendsto_rightTailPositiveAFirstCutoff_atTop hN
+    simpa [ell] using tendsto_rightTailFirstStageCutoff_atTop hN
   have hscaleAtCutoff : Tendsto (fun n => scale (ell n)) atTop atTop :=
     hscale.1.comp hell
   have hlowerTube : ∀ᶠ n : ℕ in atTop,
@@ -261,8 +261,8 @@ theorem eventually_rightTailPositiveA_spineCorridor_pos_of_centeredSecondMoment
     ∀ᶠ n : ℕ in atTop,
       0 < (tiltedIncrementFieldLaw realPotential μ)
         {increment : ℕ → ℝ |
-          RandomWalk.history (rightTailPositiveAFirstCutoff N n) 0 increment ∈
-            affineCorridorThrough (rightTailPositiveAFirstCutoff N n)
+          RandomWalk.history (rightTailFirstStageCutoff N n) 0 increment ∈
+            affineCorridorThrough (rightTailFirstStageCutoff N n)
               (-b * logarithmOfSampleSize N n) 0
               (b * logarithmOfSampleSize N n)
               ((-b + v) * logarithmOfSampleSize N n)} := by
@@ -271,7 +271,7 @@ theorem eventually_rightTailPositiveA_spineCorridor_pos_of_centeredSecondMoment
       hN μ ν hν hνMoment hsigma hb hv hvb
   filter_upwards [hlower] with n hn
   have hboundPos := rightTailPositiveASpineCorridorLowerBound_pos
-    ν b v C amplitude q hq (rightTailPositiveAFirstCutoff N n)
+    ν b v C amplitude q hq (rightTailFirstStageCutoff N n)
   exact hboundPos.trans_le hn
 
 end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail
