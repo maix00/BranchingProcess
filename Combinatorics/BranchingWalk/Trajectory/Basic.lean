@@ -14,6 +14,15 @@ public import Combinatorics.BranchingWalk.Cloud.Basic
 A `Trajectory Time X` records the vertex and edge images of a walk in
 space-time.  Edges are stored as their point images; segment identity is not
 part of this structure.
+
+The public API is:
+
+- `Trajectory Time X` consists of space-time vertex and edge image sets;
+  `Trajectory.carrier` is their union.
+- `Trajectory.toCloud` takes the time-indexed spatial slices of the vertex
+  image. `mem_toCloud` identifies membership in a slice with membership of
+  the corresponding space-time vertex, and `Trajectory.ext` proves equality
+  from equality of the vertex and edge sets.
 -/
 
 @[expose] public section
