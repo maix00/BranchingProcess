@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Roots.Endpoint
+import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Roots.Lemmas.EndpointBelow
 set_option linter.style.haveILetI false
 
 /-!
