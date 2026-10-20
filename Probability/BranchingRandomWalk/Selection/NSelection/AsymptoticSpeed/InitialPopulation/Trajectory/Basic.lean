@@ -9,9 +9,54 @@ import Probability.BranchingRandomWalk.Selection.NSelection.AsymptoticSpeed.Init
 import Probability.BranchingRandomWalk.Selection.NSelection.Admissible.Real
 import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.SelectedSubtrees.Position
 import Combinatorics.UlamHarris.Order
+import Combinatorics.BranchingWalk.Selection.NSelection.Mechanism.Infinite
 
 /-!
 # The trajectory rooted at the capacity-hitting population
+
+The public declarations are:
+
+- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Speed.smallInitialPopulationHitSubtreeField`:
+  the re-rooted field at the first capacity hit, given by
+  `selectedSubtreeStepFieldVector` at the enumerated hit roots.
+- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Speed.smallInitialPopulationHitInitialPosition`:
+  the vector of absolute positions of those hit roots.
+- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Speed.smallInitialPopulationHitAddress`:
+  maps a local address $v$ below rank $i$ to the original address
+  $(r_i,\,u_i\mathbin{++}v)$.
+- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Speed.smallInitialPopulationHitSubtreePopulation`:
+  the exact-$N$ selected population at each generation in the re-rooted
+  field, started from the hit-position vector.
+- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Speed.smallInitialPopulationHitSubtreePopulation_image_succ`:
+  under the finite-hit, parent-image, candidate-image, and local/global
+  `IsFirstNBy` hypotheses, the next local population transports to the
+  next global population by the hit-address map.
+- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Speed.childrenAtGeneration_image_smallInitialPopulationHitAddress`:
+  when all hit-root addresses have depth $k$, the image of the local
+  generation-$j$ children under the hit-address map is the original
+  generation-$(k+j)$ children.
+- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Speed.smallInitialPopulationHitSubtreePopulation_image` and
+  `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Speed.smallInitialPopulationHitSubtreePopulation_image_of_weight`:
+  after a finite hit, every local selected population maps to the original
+  population; the second theorem derives the selector conditions from finite
+  negative-exponential offspring weights.
+- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Speed.finiteRootStepFieldLaw_ae_smallInitialPopulationHitSubtreePopulation_image`:
+  under boundary normalization, nonempty offspring, supercriticality, and
+  $0<m\le N$, the preceding pathwise identification holds almost surely
+  after some finite hit time.
+- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Speed.smallInitialPopulationHitSubtree_position`:
+  every local descendant has the same absolute position as its prefixed
+  original descendant.
+- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Speed.smallInitialPopulationHitInitialPosition_eq_at_time` and
+  `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Speed.smallInitialPopulationHitRoots_image_at_time`:
+  at a finite hit, the local initial vector is the actual position vector,
+  and the enumerated roots equal the original selected population.
+- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Speed.smallInitialPopulationHitSubtreeField_law`:
+  under the same boundary and growth hypotheses, the re-rooted field has the
+  exact-$N$ product law. For measurable $B$,
+  `finiteRootStepFieldLaw μ m`
+  `(smallInitialPopulationHitSubtreeField m N hm ⁻¹' B)` equals
+  `finiteRootStepFieldLaw μ N B`.
 
 At the first generation where the smaller-start process has `N` particles,
 enumerate those particles in address order and rebase their descendant field.
@@ -77,50 +122,6 @@ private lemma rootedAddress_append_lt
   · exact Or.inl hroot
   · exact Or.inr ⟨hroot,
       list_lt_append_of_length_eq hlen hpath⟩
-
-private lemma isFirstNBy_image
-    {ι κ Value : Type*} [LinearOrder ι] [LinearOrder κ] [LinearOrder Value]
-    [DecidableEq κ]
-    (N : ℕ) (f : ι → κ) (hf : Function.Injective f)
-    (value : ι → Value) (targetValue : κ → Value)
-    (keyOrder : ∀ p q,
-      Combinatorics.Branching.Selection.NSelection.valueKey value p <
-          Combinatorics.Branching.Selection.NSelection.valueKey value q ↔
-        Combinatorics.Branching.Selection.NSelection.valueKey targetValue (f p) <
-          Combinatorics.Branching.Selection.NSelection.valueKey targetValue (f q))
-    (candidates : Set ι) (selected : Finset ι)
-    (hselected : Combinatorics.Branching.Selection.NSelection.IsFirstNBy
-      N value candidates selected) :
-    Combinatorics.Branching.Selection.NSelection.IsFirstNBy N targetValue
-      (f '' candidates) (selected.image f) := by
-  classical
-  refine ⟨?_, ?_, ?_, ?_⟩
-  · intro q hq
-    obtain ⟨p, hp, rfl⟩ := Finset.mem_image.mp hq
-    exact Set.mem_image_of_mem f (hselected.subset hp)
-  · intro hfiniteImage
-    have hfinite : candidates.Finite :=
-      hfiniteImage.of_finite_image (by
-        intro p hp q hq hpq
-        exact hf hpq)
-    have hcard : hfiniteImage.toFinset.card = hfinite.toFinset.card := by
-      rw [← Set.ncard_eq_toFinset_card _ hfiniteImage,
-        ← Set.ncard_eq_toFinset_card _ hfinite]
-      exact Set.ncard_image_of_injective candidates hf
-    rw [Finset.card_image_of_injective _ hf,
-      hselected.card_finite hfinite, hcard]
-  · intro hinfiniteImage
-    have hinfinite : candidates.Infinite :=
-      (Set.infinite_image_iff (by
-        intro p hp q hq hpq
-        exact hf hpq)).mp hinfiniteImage
-    rw [Finset.card_image_of_injective _ hf, hselected.card_infinite hinfinite]
-  · intro p hp q hq hqp
-    obtain ⟨p₀, hp₀, rfl⟩ := Finset.mem_image.mp hp
-    obtain ⟨q₀, hq₀, rfl⟩ := (Set.mem_image f candidates q).mp hq
-    exact Finset.mem_image.mpr ⟨q₀,
-      hselected.lower p₀ hp₀ q₀ hq₀
-        ((keyOrder q₀ p₀).2 hqp), rfl⟩
 
 /-- The descendant field obtained by rooting a fresh `N`-particle forest at
 the enumerated population at the actual capacity-hitting time. -/
@@ -454,7 +455,9 @@ theorem smallInitialPopulationHitSubtreePopulation_image_succ
         (@smallInitialPopulation m N (n + j)
           (RootIndexed.addressLinearOrder (Fin m) ℕ) field) field := by
     rw [hcandidateImage, hparents]
-  have htransport := isFirstNBy_image N address haddressInjective
+  have htransport :=
+    Combinatorics.Branching.Selection.NSelection.IsFirstNBy.image
+    N address haddressInjective
     localValue globalValue hkeyOrder candidates
     (smallInitialPopulationHitSubtreePopulation m N hm field (j + 1)) hlocal
   rw [hcandidateImage'] at htransport

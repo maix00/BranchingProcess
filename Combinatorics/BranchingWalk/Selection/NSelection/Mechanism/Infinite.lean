@@ -12,10 +12,57 @@ public import Mathlib.Data.Set.Card
 /-!
 # Selecting the first N points of a possibly infinite population
 
-`selectFirstNBy` is the finite algorithm.  This file supplies the abstract
-interface needed before that algorithm can be applied to an infinite
-candidate set.  Lower local finiteness rules out descending accumulation at
-the selected edge: every candidate has only finitely many predecessors.
+The public declarations are:
+
+Write $K(p)=\operatorname{valueKey}(value,p)$ for the selected-order key.
+Unless otherwise stated, these definitions and results assume linear orders
+on particle labels and observed values.
+
+- `Combinatorics.Branching.Selection.NSelection.IsLowerFiniteBy`: every
+  candidate has finitely many candidates with key at most its own,
+  $\forall p\in C,\;\{q\in C:K(q)\le K(p)\}$ is finite.
+- `Combinatorics.Branching.Selection.NSelection.IsFirstNBy`: a selected
+  finite set $S$ lies in $C$, has cardinality $\min(N,|C|)$ when $C$ is
+  finite and $N$ when $C$ is infinite, and contains every candidate with
+  key strictly below the key of any member of $S$.
+- `Combinatorics.Branching.Selection.NSelection.AdmitsFirstNBy`:
+  some finite set satisfies `IsFirstNBy` for the given candidates and values.
+- `Combinatorics.Branching.Selection.NSelection.admitsFirstNBy_of_finite`,
+  `Combinatorics.Branching.Selection.NSelection.admitsFirstNBy_of_infinite_of_lowerFinite`,
+  and `Combinatorics.Branching.Selection.NSelection.admitsFirstNBy_of_lowerFinite`:
+  finite candidate sets, and candidate sets with finite lower sections, admit
+  a first-$N$ segment.
+- `Combinatorics.Branching.Selection.NSelection.selectFirstNFromSet` and
+  `Combinatorics.Branching.Selection.NSelection.selectFirstNFromSet_spec`:
+  choose such a segment from an `AdmitsFirstNBy` witness and return its
+  `IsFirstNBy` specification.
+- `Combinatorics.Branching.Selection.NSelection.IsFirstNBy.card_le` and
+  `Combinatorics.Branching.Selection.NSelection.IsFirstNBy.nonempty_of_nonempty_candidates`:
+  $|S|\le N$, and $S$ is nonempty when $N>0$ and $C$ is nonempty.
+- `Combinatorics.Branching.Selection.NSelection.IsFirstNBy.congr_value`:
+  changing the value function on points outside $C$ preserves the selected
+  segment.
+- `Combinatorics.Branching.Selection.NSelection.IsFirstNBy.image`: if $f$ is
+  injective and preserves the strict order of
+  the value keys, then
+  `IsFirstNBy N value C S` implies
+  `IsFirstNBy N targetValue (f '' C) (S.image f)`.
+- `Combinatorics.Branching.Selection.NSelection.IsFirstNBy.unique`: two
+  first-$N$ segments for the same key and candidates are equal.
+- `Combinatorics.Branching.Selection.NSelection.IsFirstNBy.mem_iff_ncard_lt`
+  and `Combinatorics.Branching.Selection.NSelection.mem_selectFirstNFromSet_iff`:
+  membership is equivalent to candidate membership, finiteness of the strict
+  predecessor set, and fewer than $N$ strict predecessors.
+- `Combinatorics.Branching.Selection.NSelection.IsFirstNBy.subset_of_le`:
+  increasing $N$ enlarges the selected segment.
+- `Combinatorics.Branching.Selection.NSelection.filter_card_le_filter_of_isFirstNBy`:
+  among finite retained subsets of
+  cardinality at most $N$, the first-$N$ segment has at least as many points
+  below every value threshold.
+
+`selectFirstNBy` is the finite algorithm. Lower local finiteness supplies the
+abstract interface for infinite candidate sets by ruling out descending
+accumulation at the selected edge.
 -/
 
 @[expose] public section
@@ -198,6 +245,48 @@ theorem IsFirstNBy.congr_value [LinearOrder ι] [LinearOrder Value]
   intro p hp q hq hqp
   apply h.lower p hp q hq
   simpa [valueKey, heq (h.subset hp), heq hq] using hqp
+
+/-- An injective relabeling preserves the first-`N` segment when it preserves
+the strict order of the value keys. -/
+theorem IsFirstNBy.image
+    {κ : Type*}
+    [LinearOrder ι] [LinearOrder κ] [LinearOrder Value] [DecidableEq κ]
+    (N : ℕ) (f : ι → κ) (hf : Function.Injective f)
+    (value : ι → Value) (targetValue : κ → Value)
+    (keyOrder : ∀ p q,
+      valueKey value p < valueKey value q ↔
+        valueKey targetValue (f p) < valueKey targetValue (f q))
+    (candidates : Set ι) (selected : Finset ι)
+    (hselected : IsFirstNBy N value candidates selected) :
+    IsFirstNBy N targetValue (f '' candidates) (selected.image f) := by
+  classical
+  refine ⟨?_, ?_, ?_, ?_⟩
+  · intro q hq
+    obtain ⟨p, hp, rfl⟩ := Finset.mem_image.mp hq
+    exact Set.mem_image_of_mem f (hselected.subset hp)
+  · intro hfiniteImage
+    have hfinite : candidates.Finite :=
+      hfiniteImage.of_finite_image (by
+        intro p hp q hq hpq
+        exact hf hpq)
+    have hcard : hfiniteImage.toFinset.card = hfinite.toFinset.card := by
+      rw [← Set.ncard_eq_toFinset_card _ hfiniteImage,
+        ← Set.ncard_eq_toFinset_card _ hfinite]
+      exact Set.ncard_image_of_injective candidates hf
+    rw [Finset.card_image_of_injective _ hf,
+      hselected.card_finite hfinite, hcard]
+  · intro hinfiniteImage
+    have hinfinite : candidates.Infinite :=
+      (Set.infinite_image_iff (by
+        intro p hp q hq hpq
+        exact hf hpq)).mp hinfiniteImage
+    rw [Finset.card_image_of_injective _ hf, hselected.card_infinite hinfinite]
+  · intro p hp q hq hqp
+    obtain ⟨p₀, hp₀, rfl⟩ := Finset.mem_image.mp hp
+    obtain ⟨q₀, hq₀, rfl⟩ := (Set.mem_image f candidates q).mp hq
+    exact Finset.mem_image.mpr ⟨q₀,
+      hselected.lower p₀ hp₀ q₀ hq₀
+        ((keyOrder q₀ p₀).2 hqp), rfl⟩
 
 /-- The first-`N` initial segment is unique because `valueKey` is a linear
 order, including its deterministic label tie breaker. -/
