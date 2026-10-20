@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.BranchingRandomWalk.Law
-public import Combinatorics.BranchingWalk.Selection.NSelection.BranchingWalk
+public import Combinatorics.BranchingWalk.Selection.NSelection.Walk.BranchingWalk
 
 /-!
 # Random `N`-branching walks

@@ -6,15 +6,27 @@ Authors: WANG Yiyang
 
 module
 
-public import Combinatorics.BranchingWalk.Basic.Definitions
+public import Combinatorics.BranchingWalk.Basic.BranchingWalk
 public import Combinatorics.BranchingWalk.StepField
 
 /-!
 # Mapping realized branching walks
 
 Pointwise maps of deterministic step fields live in
-`Combinatorics/BranchingWalk/StepField.lean`. This file maps realized
-root-indexed branching walks and records the resulting survival relation.
+`Combinatorics/BranchingWalk/StepField.lean`. Here,
+`surviveAlong_map_iff` states
+`surviveAlong (β.map f) v p ↔ surviveAlong β v p`.
+`RootIndexed.BranchingWalk.mapMarks` applies `f` to every child mark and
+preserves initial positions; `mapInitial` applies `f` to initial positions
+and preserves step fields; `map` applies the same function to both when mark
+and position types agree. The four projection theorems state
+`(β.mapMarks f).step r = (β.step r).map f`,
+`(β.mapMarks f).initial = β.initial`,
+`(β.mapInitial f).step = β.step`, and
+`(β.mapInitial f).initial r = f (β.initial r)`.
+Under measurable-space assumptions and measurable `f`,
+`mapMarks_measurable` and `mapInitial_measurable` prove the corresponding
+maps between branching-walk spaces measurable.
 -/
 
 @[expose] public section

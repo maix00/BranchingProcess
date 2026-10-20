@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Combinatorics.BranchingWalk.Basic.Definitions
+public import Combinatorics.BranchingWalk.Basic.BranchingWalk
 
 /-!
 # Selection containment on branching walks

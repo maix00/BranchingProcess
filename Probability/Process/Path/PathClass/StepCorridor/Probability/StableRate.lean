@@ -88,7 +88,7 @@ theorem nullMeasurableSet_scaledConstantCorridorEvent
 
 /-- Uniformly interior path corridors transfer to the corresponding process
 complete-segment event under matching stable increment laws. -/
-private theorem measure_rangeInOpenInterval_eq_fullSegmentCorridorEvent
+private lemma measure_rangeInOpenInterval_eq_fullSegmentCorridorEvent
     {α : ℝ} {μ : Measure ℝ}
     {P : Measure (CadlagPath unitInterval ℝ)} [IsProbabilityMeasure P]
     {Ω : Type*} [MeasurableSpace Ω]
@@ -136,7 +136,7 @@ private theorem measure_rangeInOpenInterval_eq_fullSegmentCorridorEvent
 /-! The exact event is between a smaller open corridor and a slightly
 expanded open corridor. -/
 
-private theorem rangeInOpenInterval_subset_pointwiseCorridor
+private lemma rangeInOpenInterval_subset_pointwiseCorridor
     {lo hi lower upper : ℝ}
     (hlo : lo < lower) (hhi : upper < hi) :
     Skorokhod.rangeInOpenInterval lower upper ⊆
@@ -150,7 +150,7 @@ private theorem rangeInOpenInterval_subset_pointwiseCorridor
   · obtain ⟨_, hhi'⟩ := hpath t
     linarith
 
-private theorem constantCorridorEvent_subset_rangeInOpenInterval
+private lemma constantCorridorEvent_subset_rangeInOpenInterval
     {lower upper lo hi : ℝ}
     (hlo : lo < lower) (hhi : upper < hi) :
     constantCorridorEvent lower upper ⊆
@@ -166,7 +166,7 @@ private theorem constantCorridorEvent_subset_rangeInOpenInterval
   constructor <;> dsimp [margin] <;> have hm := min_le_left (lower - lo) (hi - upper) <;>
     have hm' := min_le_right (lower - lo) (hi - upper) <;> linarith
 
-private theorem measure_rangeInOpenInterval_le_constantCorridorEvent
+private lemma measure_rangeInOpenInterval_le_constantCorridorEvent
     {α : ℝ} {μ : Measure ℝ}
     {P : Measure (CadlagPath unitInterval ℝ)} [IsProbabilityMeasure P]
     (hP : IsStableClockProcessLaw α μ UnitInterval.clock P)
@@ -188,14 +188,14 @@ private theorem measure_rangeInOpenInterval_le_constantCorridorEvent
         P (Skorokhod.rangeInOpenInterval lo hi ∩ startZero) := measure_congr heq
     _ ≤ P (constantCorridorEvent lower upper) := measure_mono hsub
 
-private theorem measure_constantCorridorEvent_le_rangeInOpenInterval
+private lemma measure_constantCorridorEvent_le_rangeInOpenInterval
     {P : Measure (CadlagPath unitInterval ℝ)}
     {lower upper lo hi : ℝ} (hlo : lo < lower) (hhi : upper < hi) :
     P (constantCorridorEvent lower upper) ≤
       P (Skorokhod.rangeInOpenInterval lo hi) :=
   measure_mono (constantCorridorEvent_subset_rangeInOpenInterval hlo hhi)
 
-private theorem rpow_log_rescale {α e s q : ℝ}
+private lemma rpow_log_rescale {α e s q : ℝ}
     (he : 0 < e) (hs : 0 < s) :
     e ^ α * Real.log q = (e / s) ^ α * (s ^ α * Real.log q) := by
   have hpow : (e / s) ^ α * s ^ α = e ^ α := by
