@@ -12,10 +12,53 @@ public import Mathlib.Data.Finset.Max
 /-!
 # The leftmost selection mechanism
 
-`selectFirstN N s` really does keep at most `N` candidates when the candidate type
-is linearly ordered, and it keeps the least candidate. Idempotence and
-monotonicity in the capacity are also proved here. The rightmost rule is the
-order dual of this one and lives in `NSelection/Mechanism/OrderDual.lean`.
+Assume a linear order on candidates. The public declarations are:
+
+- `Combinatorics.Branching.Selection.NSelection.rank_lt_card_of_mem` and
+  `Combinatorics.Branching.Selection.NSelection.rank_lt_rank_of_lt` show that
+  $p\in s$ gives
+  $\operatorname{rank}(s,p)<|s|$, and that $p\in s$ and $p<q$ give
+  $\operatorname{rank}(s,p)<\operatorname{rank}(s,q)$.
+  `Combinatorics.Branching.Selection.NSelection.rank_injOn` states
+  injectivity on $s$;
+  `Combinatorics.Branching.Selection.NSelection.image_rank_eq_range` states
+  $\operatorname{rank}(s) '' s=\operatorname{Finset.range}(|s|)$.
+- `Combinatorics.Branching.Selection.NSelection.card_selectFirstN` gives
+  $|\operatorname{selectFirstN}(N,s)|=\min(N,|s|)$.
+  `Combinatorics.Branching.Selection.NSelection.card_filter_selectFirstN_of_downwardClosed`
+  gives
+  $|\operatorname{selectFirstN}(N,s)\cap P|=\min(N,|s\cap P|)$ when $P$
+  is downward closed on $s$.
+  `Combinatorics.Branching.Selection.NSelection.rank_eq_zero_iff_isLeast`
+  characterizes least candidates by rank zero.
+- `Combinatorics.Branching.Selection.NSelection.selectFirstN_card_le` gives
+  $|\operatorname{selectFirstN}(N,s)|\le N$.
+  `Combinatorics.Branching.Selection.NSelection.selectFirstN_eq_self_of_card_le`
+  and
+  `Combinatorics.Branching.Selection.NSelection.selectFirstN_eq_self_iff_card_le`
+  characterize when the selector retains all of $s$:
+  $\operatorname{selectFirstN}(N,s)=s\iff |s|\le N$.
+  `Combinatorics.Branching.Selection.NSelection.selectFirstN_mono` states
+  $N\le M\Rightarrow
+  \operatorname{selectFirstN}(N,s)\subseteq\operatorname{selectFirstN}(M,s)$,
+  and `Combinatorics.Branching.Selection.NSelection.selectFirstN_idem`
+  states idempotence:
+  $\operatorname{selectFirstN}(N,\operatorname{selectFirstN}(N,s))=
+  \operatorname{selectFirstN}(N,s)$.
+- `Combinatorics.Branching.Selection.NSelection.selectFirstN_nonempty` shows
+  that a nonempty $s$ has a nonempty selection when $N>0$.
+  `Combinatorics.Branching.Selection.NSelection.isLeast_selectFirstN_iff`
+  states that, for $N>0$, the selected set has least element $x$ exactly when
+  $s$ has least element $x$.
+- `Combinatorics.Branching.Selection.NSelection.leftmost` packages the rule
+  as a finite capacity-$N$ mechanism;
+  `Combinatorics.Branching.Selection.NSelection.leftmost_select` identifies
+  its action with `selectFirstN`, and
+  `Combinatorics.Branching.Selection.NSelection.leftmost_preservesLeast`
+  states that it preserves least elements for positive capacity.
+
+The rightmost rule is derived by order duality in
+`NSelection/Mechanism/OrderDual.lean`.
 -/
 
 open Classical

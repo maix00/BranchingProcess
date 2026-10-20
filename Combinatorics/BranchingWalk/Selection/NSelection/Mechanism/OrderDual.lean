@@ -11,16 +11,63 @@ public import Combinatorics.BranchingWalk.Selection.NSelection.Mechanism.Leftmos
 /-!
 # The rightmost selection mechanism is the order dual of the leftmost one
 
-Reversing the order of the line turns "the `N` leftmost candidates" into "the
-`N` rightmost candidates". This module records that as an equality of selection
-mechanisms: `selectLastN` is `selectFirstN` after applying `OrderDual`, and
-`rightmost` is the `OrderDual` transport of `leftmost`. Consequently the
-right-hand version of every selection statement is an instance of the
-left-hand one rather than a second theory.
+The public declarations are in `Combinatorics.Branching.Selection.NSelection`.
+They derive rightmost facts by transporting finite sets through `OrderDual`:
 
-The transport of a mechanism along `OrderDual` is `NSelection.mapOrderDual`.
-Since a mechanism is a deterministic object, the same construction applies to
-every mechanism, not only to the leftmost one.
+- `Combinatorics.Branching.Selection.NSelection.isLeast_image_toDual_iff`,
+  `Combinatorics.Branching.Selection.NSelection.isGreatest_image_ofDual_iff`,
+  and
+  `Combinatorics.Branching.Selection.NSelection.isGreatest_image_toDual_iff`
+  identify least and greatest elements under `toDual` and `ofDual`.
+- `Combinatorics.Branching.Selection.NSelection.toDual_mem_image_toDual_iff`
+  preserves membership under `toDual`.
+  `Combinatorics.Branching.Selection.NSelection.rank_image_toDual` gives
+  $\operatorname{rank}(s.image(\operatorname{toDual}),\operatorname{toDual}(q))
+  =|\{p\in s:q<p\}|$.
+  `Combinatorics.Branching.Selection.NSelection.reverseRank_image_toDual`
+  gives
+  $|\{p\in s.image(\operatorname{toDual}):\operatorname{toDual}(q)<p\}|
+  =|\{p\in s:p<q\}|$.
+- `Combinatorics.Branching.Selection.NSelection.mem_selectFirstN_image_toDual_iff`
+  and
+  `Combinatorics.Branching.Selection.NSelection.mem_selectLastN_image_toDual_iff`
+  state, respectively,
+  $\operatorname{toDual}(q)\in\operatorname{selectFirstN}(N,s.image(\operatorname{toDual}))
+  \iff q\in\operatorname{selectLastN}(N,s)$ and
+  $\operatorname{toDual}(q)\in\operatorname{selectLastN}(N,s.image(\operatorname{toDual}))
+  \iff q\in\operatorname{selectFirstN}(N,s)$.
+  `Combinatorics.Branching.Selection.NSelection.selectFirstN_image_toDual`
+  and
+  `Combinatorics.Branching.Selection.NSelection.image_toDual_selectFirstN`
+  state, respectively,
+  $\operatorname{selectFirstN}(N,s.image(\operatorname{toDual}))=
+  \operatorname{selectLastN}(N,s).image(\operatorname{toDual})$ and
+  $\operatorname{selectFirstN}(N,s).image(\operatorname{toDual})=
+  \operatorname{selectLastN}(N,s.image(\operatorname{toDual}))$; and
+  `Combinatorics.Branching.Selection.NSelection.selectLastN_eq_image_selectFirstN`
+  states
+  $\operatorname{selectLastN}(N,s)=
+  \operatorname{selectFirstN}(N,s.image(\operatorname{toDual})).image(\operatorname{ofDual})$.
+- `Combinatorics.Branching.Selection.NSelection.selectLastN_card_le` gives
+  $|\operatorname{selectLastN}(N,s)|\le N$;
+  `Combinatorics.Branching.Selection.NSelection.card_selectLastN` gives
+  $|\operatorname{selectLastN}(N,s)|=\min(N,|s|)$.
+  `Combinatorics.Branching.Selection.NSelection.isGreatest_selectLastN_iff`
+  states that, for $N>0$, the greatest element is preserved by rightmost
+  selection.
+- `Combinatorics.Branching.Selection.NSelection.rightmost` packages
+  `selectLastN` as a finite capacity-$N$ mechanism;
+  `Combinatorics.Branching.Selection.NSelection.rightmost_select` identifies
+  its action, and
+  `Combinatorics.Branching.Selection.NSelection.rightmost_preservesGreatest`
+  records preservation of greatest elements for positive capacity.
+  `Combinatorics.Branching.Selection.NSelection.leftmost_mapOrderDual` states
+  `NSelection.mapOrderDual (leftmost (ι := ι) N) =
+  rightmost (ι := OrderDual ι) N`.
+
+The same `NSelection.mapOrderDual` construction transports any deterministic
+finite selection mechanism, while the results here specialize it to the
+leftmost and rightmost rules.
 -/
 
 open Classical

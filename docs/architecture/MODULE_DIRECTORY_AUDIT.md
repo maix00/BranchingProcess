@@ -2433,3 +2433,18 @@ declarations, with the corresponding cardinality and membership formulas.
 These modules retain their current subject-level placement under
 `Mechanism/`; their declarations describe reusable finite-order selection
 operations rather than theorem-specific assembly steps.
+
+`Mechanism/Leftmost.lean` and `Mechanism/OrderDual.lean` also lacked complete
+public-declaration inventories. Their headers now state the finite rank and
+leftmost-selection laws, then list the corresponding rightmost identities via
+`OrderDual`, including
+`NSelection.leftmost_mapOrderDual`. This records that the rightmost interface
+is derived from the leftmost one while both remain at the shared finite
+selection-mechanism layer. No proof statements changed.
+
+The neighboring `Mechanism/Matching.lean` and `Mechanism/Hall.lean` headers now
+enumerate their public declarations and state the matching properties in
+mathematical terms. The former owns the canonical equal-rank map, its guarded
+inverse, and ambient extension; the latter owns the reusable existence
+theorems from lower-tail counts and finite Hall matching. This keeps the
+concrete rank construction distinct from the abstract matching theorem.
