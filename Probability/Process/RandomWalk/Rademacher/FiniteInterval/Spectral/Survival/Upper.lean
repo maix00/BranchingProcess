@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Decomposition.Expansion
+public import Probability.Process.RandomWalk.Rademacher.FiniteInterval.Spectral.Expansion
 public import Analysis.SpecificLimits.Geometric
 
 /-!
@@ -26,7 +26,7 @@ $q_N=\cos(\pi/(N+1))$.  The public declarations are:
 open scoped Matrix
 @[expose] public section
 
-namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
+namespace ProbabilityTheory.RandomWalk.Rademacher.FiniteInterval
 
 /-- The surviving row mass is bounded by a finite geometric progression in
 the elapsed-time power of the principal eigenvalue.  Its prefactor is
@@ -87,6 +87,6 @@ theorem intervalKernel_pow_rowSum_le_four_mul_div_one_sub
       mul_le_mul_of_nonneg_left hgeom (by norm_num)
     _ = _ := by rfl
 
-end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
+end ProbabilityTheory.RandomWalk.Rademacher.FiniteInterval
 
 end

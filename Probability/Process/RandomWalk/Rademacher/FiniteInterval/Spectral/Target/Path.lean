@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Survival.Path
+public import Probability.Process.RandomWalk.Rademacher.FiniteInterval.Path
 public import Probability.Kernel.FiniteState.Matrix
 public import Probability.Kernel.Step.Endpoint
 
@@ -16,7 +16,7 @@ public import Probability.Kernel.Step.Endpoint
 The public declarations in this module are:
 
 All names below are declarations in
-`ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii`.
+`ProbabilityTheory.RandomWalk.Rademacher.FiniteInterval`.
 
 For $T\subseteq\operatorname{Fin}(N)$, write
 $T_{\mathrm{site}}=\{i.val+1:i\in T\}$,
@@ -51,7 +51,7 @@ open scoped BigOperators ENNReal
 
 @[expose] public section
 
-namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
+namespace ProbabilityTheory.RandomWalk.Rademacher.FiniteInterval
 
 
 private lemma intervalRademacher_runPartialSteps_eq_some_iff
@@ -248,4 +248,4 @@ theorem ofReal_intervalKernel_pow_apply_finset_eq_iidPathEvent
   exact intervalRademacherKernel_pow_apply_finset_eq_iidPathEvent
     interiorCount n start target
 
-end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
+end ProbabilityTheory.RandomWalk.Rademacher.FiniteInterval

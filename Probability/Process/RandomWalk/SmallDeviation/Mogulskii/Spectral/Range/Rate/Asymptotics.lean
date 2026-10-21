@@ -9,7 +9,7 @@ module
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Rate.Asymptotics
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Range.Corridor.BrownianCover
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Range.Corridor.Survival
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Survival.Bounds
+public import Probability.Process.RandomWalk.Rademacher.FiniteInterval.Spectral.Survival.Bounds
 
 /-!
 # Fixed-corridor spectral limits

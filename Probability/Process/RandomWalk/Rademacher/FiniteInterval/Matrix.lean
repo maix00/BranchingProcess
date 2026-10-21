@@ -63,7 +63,7 @@ open scoped BigOperators Matrix
 
 @[expose] public section
 
-namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
+namespace ProbabilityTheory.RandomWalk.Rademacher.FiniteInterval
 
 open ProbabilityTheory.RandomWalk.Rademacher
 
@@ -307,4 +307,4 @@ theorem intervalKernel_pow_rowSum_bounds {interiorCount : ℕ}
         (Real.cos (Real.pi / (interiorCount + 1 : ℕ)))
         (intervalKernel_mulVec_sine interiorCount) n start
 
-end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
+end ProbabilityTheory.RandomWalk.Rademacher.FiniteInterval

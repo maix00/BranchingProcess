@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Kernel.Interval
+public import Probability.Process.RandomWalk.Rademacher.FiniteInterval.Matrix
 import Probability.Process.RandomWalk.Rademacher.Transition.Basic
 public import LinearAlgebra.Spectrum.DiagonalBasis
 public import Analysis.SpecialFunctions.Trigonometric.PowerBound
@@ -82,7 +82,7 @@ These facts concern the discrete Dirichlet spectrum itself.  They are kept
 here so the survival layer only consumes them when deriving row-mass bounds.
 -/
 
-namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
+namespace ProbabilityTheory.RandomWalk.Rademacher.FiniteInterval
 
 open ProbabilityTheory.RandomWalk.Rademacher
 
@@ -499,6 +499,6 @@ theorem intervalSineBasis_apply (interiorCount : ℕ)
       intervalSineMode interiorCount mode := by
   simp [intervalSineBasis]
 
-end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
+end ProbabilityTheory.RandomWalk.Rademacher.FiniteInterval
 
 end

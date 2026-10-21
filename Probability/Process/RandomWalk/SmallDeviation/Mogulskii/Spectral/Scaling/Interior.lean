@@ -35,6 +35,8 @@ limit under the diffusive scale.
 open Filter Topology
 
 
+open ProbabilityTheory.RandomWalk.Rademacher.FiniteInterval
+
 @[expose] public section
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii

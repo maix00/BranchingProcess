@@ -49,9 +49,9 @@ when the move only clarifies module organization.
 | `Probability/Process/RandomWalk/FunctionalLimit/Stable` | Stable-domain path-law convergence and tightness | `PathLaw/` groups endpoint-grid identification, subsequential law construction, process-law construction, and convergence. `Tightness/` groups block tails, local oscillation, partition bounds, compact-range control, and the resulting tightness theorem. The finite-dimensional endpoint theorem and centering conditions remain at the subject root. |
 | `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Spectral/Range` | Rademacher range small-deviation estimates from spectral interval bounds | `Blocks/` contains the one-block Donsker bounds; `Corridor/` contains the finite Brownian cover and killed-corridor comparison; `Rate/` contains the Brownian range asymptotics, small-width limit, and sharp upper rate. Its parameter selection and fixed-cover logarithmic transfer are proof-specific and live under `Rate/Lemmas/`. `Basic.lean` defines integer path coordinates, while `Probability.lean` retains the finite-time translated-interval cover. |
 | `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Rate` | Public normal-domain small-deviation rate results | `Endpoint/` groups endpoint bands, windows, and parameter selection; `Endpoint/Selection/Basic.lean` is the public sharp-rate conclusion, while its floor choices and fixed-parameter proof step are in `Endpoint/Selection/Lemmas/FixedParameters.lean`. `Partition/` groups finite covers and partitions; `Bounds/` groups interior, lower, upper, and variance estimates. The declarations keep their existing Mogulskii namespace because their mathematical ownership is unchanged. |
-| `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Spectral` | Spectral estimates for the killed symmetric walk, including diffusive Brownian corridor and endpoint-window bounds | `Kernel/` defines the finite killed transition; `Decomposition/` gives its sine basis, modes, and target-set expansion; `Target/` owns parity-compatible central targets, their principal-mode mass bounds, and the path-event interpretation. These target estimates are parameterized by the target set, interval width, and block scale, so they remain reusable interfaces. `Survival/` groups path-survival bounds; `Scaling/` and `Rate/` contain the diffusive logarithmic limits and analytic asymptotics; `Diffusive/` transfers the spectral lower bound through Donsker convergence to Brownian corridors and return kernels. The finite-cover range upper bound remains in the separate `Range/` family. `Basic.lean` is the core interface, and declarations retain the Mogulskii spectral namespace. |
+| `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Spectral` | Mogulskii-specific applications of the finite-interval Rademacher spectral estimates | `Target/` contains the central and endpoint-band geometries used by the Mogulskii corridor bounds. `Scaling/`, `Rate/`, and `Diffusive/` contain the Mogulskii limits, analytic asymptotics, and Brownian corridor/return-kernel consequences. The finite-interval matrix, killed kernel, path law, sine modes, target expansion, and generic target-mass estimates are owned by `Probability/Process/RandomWalk/Rademacher/FiniteInterval/`; `Range/` remains the separate finite-cover range argument. `Mogulskii/Theorems.lean` is the article-level entry for the original Theorems 1--3 and records the status of Theorem 4. |
 | `Probability/Process/RandomWalk/Fluctuation/SparreAndersen` | Reusable finite IID fluctuation identities and survival estimates | `Rotation/` contains the cyclic cover and probability inequality; `Composition/` contains block factorization and the finite composition identity; `Survival/` contains the coefficient recurrence and finite-variance lower bound. These are general mathematical results and remain outside `Lemmas/`. |
-| `Probability/Process/RandomWalk/Rademacher` | Results for the simple symmetric random walk | `Basic.lean`, `ConditionedPathLaw.lean`, and `LastSignChange.lean` are peer interfaces for the walk, its conditioned path law, and its last-sign-change index; `Terminal/` groups the terminal-path construction and convergence steps. |
+| `Probability/Process/RandomWalk/Rademacher` | Results for the simple symmetric random walk | `Basic.lean`, `ConditionedPathLaw.lean`, and `LastSignChange.lean` are peer interfaces for the walk, its conditioned path law, and its last-sign-change index; `FiniteInterval/` owns the killed finite-interval model; `Terminal/` groups the terminal-path construction and convergence steps. |
 | `BranchingRandomWalk/Selection/NSelection/AsymptoticSpeed/InitialPopulation` | Initial-population inputs to selected-walk speed estimates | `Basic.lean` is the exact-$N$ split-event and speed-transport interface; `Field/` and `Speed/` group the source field and speed estimates. In `Trajectory/`, `Population.lean` owns the selected-population construction, `Hitting.lean` is the capacity-hitting entry theorem, and `Lemmas/CapacityHit/{Mark,Growth}.lean` contains its proof-specific mark and cardinality-growth chain. |
 | `Selection/NSelection/EndpointDeviation` | Endpoint deviations of the selected population, including estimates that admit reflection | `Endpoint/` separates minimum, positive-moment, and sequence results; `Endpoint/Minimum/CountableRoots.lean` realizes the endpoint minimum on one common countable-root field and proves its law agrees with the finite-root observable. `Roots/Monotonicity.lean` is the nested-root probability entry; its one-use event-transfer step is grouped under `Roots/Lemmas/EndpointBelow.lean`. `Drawdown/` and `Rate/` group population/spine drawdown bounds and rate budgets. The reusable measurable, measure-preserving prefix restriction of root-indexed product laws belongs to `Genealogy/RootIndexed/Law/FiniteRestriction.lean`. `FirstStage/LowCountPower.lean` states the first-stage population low-count estimate; its one-use corridor budget and PZ rate assembly are under `FirstStage/Lemmas/`. `FirstStage/` and `SecondStage/` name the proof stages directly instead of encoding the positive exponent parameter in a folder name. `Population/` and `SecondStage/` retain their theorem families; the directory name does not impose a right-hand orientation. |
 | `Selection/NSelection/AsymptoticSpeed` | Speed-limit statements and the selected-population speed proof | `Limit/` groups the almost-sure product and subadditive limit results; `Selection/BlockComparison.lean` and `InitialPopulation/Speed/Basic.lean` state their respective public conclusions. `InitialPopulation/Basic.lean` is the entry module for the initial-population argument; `Field/`, `Trajectory/`, and `Speed/` group its field, hitting-time, and speed-transfer interfaces. `Environment/` and `Selection/` hold the remaining supporting constructions. |
@@ -71,7 +71,9 @@ The Mogulskii subtree has one article-level discovery module,
 original Theorems 1--3 and records that Theorem 4 remains unformalized. The
 supporting modules remain grouped by their mathematical objects and methods:
 `Path/`, `Scale/`, `Stable/`, `Gaussian/`, `RandomWalkBounds/`, and
-`Spectral/{Kernel,Decomposition,Target,Survival,Scaling,Rate,Diffusive,Range}/`.
+`Spectral/{Target,Scaling,Rate,Diffusive,Range}/`; the finite-interval
+Rademacher model and its generic spectral tools are owned by
+`RandomWalk/Rademacher/FiniteInterval/`.
 The definitions therefore stay beside the path, scale, kernel, or target they
 describe; a catch-all `Definitions/` directory would obscure those owners.
 This follows the pinned Mathlib tree, whose corresponding material is also
@@ -308,9 +310,12 @@ mathematical API they exercise; this keeps test-only files out of production
 ## Public declaration headers
 
 The 2026-10-17 interface pass added formula-bearing public declaration lists
-to the reviewed modules in `Mogulskii/Spectral/Range/Rate/` and to
-`Mogulskii/Spectral/Target/{Central,Coefficient,EndpointBand,Expansion,ExtremalPair,LowerBound,Path}.lean`
-and `Mogulskii/Spectral/Survival/Path.lean`. The current pass adds them to
+to the reviewed modules in `Mogulskii/Spectral/Range/Rate/` and, at that time,
+to the Mogulskii target and finite-interval path modules. The generic
+finite-interval modules have since moved to
+`RandomWalk/Rademacher/FiniteInterval/`; `Mogulskii/Spectral/Target/` now
+contains only the application-specific central and endpoint-band estimates.
+The current pass adds the lists to
 `Mogulskii/RandomWalkBounds/Partition/{Corridor,Endpoint,Range,LowerProbability}.lean`;
 the mirrored source-convention modules
 `RandomWalkBounds/TerminalLeftPartition/{Basic,Events,LowerProbability}.lean` and
@@ -2119,11 +2124,12 @@ and finite-state row-sum estimate remain at their matrix subject owner. The
 search also confirmed that the diagonal-basis expansion is not already stated
 in the pinned Mathlib source.
 
-The two spectral modules and their three Mogulskii clients
-(`Spectral/Kernel/Interval.lean`, `Spectral/Decomposition/Expansion.lean`,
-and `Spectral/Survival/Bounds.lean`) built successfully with the pinned
-toolchain (3,226 Lake jobs). The corrected branching-walk map header built
-successfully as part of the same audit pass (1,770 Lake jobs).
+The initial finite-interval spectral implementation and its Mogulskii clients
+built successfully with the pinned toolchain. The concrete finite-interval
+model and generic spectral estimates have since moved to
+`Probability/Process/RandomWalk/Rademacher/FiniteInterval/`; their current
+ownership and validation are recorded in the later finite-interval audit
+below.
 
 ## Singleton-walk and trajectory API audit (2026-10-21)
 
@@ -2646,10 +2652,9 @@ in `Transition/Basic.lean` are `symmetricStep_sine`, `dirichletSine_pos`,
 `iterate_symmetricStep_dirichletSine`, together with the named operator and
 profile definitions. The integral identities `integral_add_rademacherMeasure`
 and `integral_dirichletSine_add_rademacherMeasure` are in the sibling
-`Transition/Expectation.lean`. The finite killed matrix, its Markov-kernel
-realization, and the interval-specific eigenvectors remain in
-`Mogulskii/Spectral/Kernel/` and `Mogulskii/Spectral/Decomposition/` because
-their types explicitly encode the finite interval's Rademacher geometry.
+`Transition/Expectation.lean`. The finite-interval killed walk is likewise owned by the Rademacher model;
+Mogulskii `Spectral/` modules retain the subject-specific mode decomposition,
+target bounds, scale limits, and Brownian comparisons.
 
 The pinned Mathlib submodule revision `380f2aafb622cb2c1c93dac545b6389083c68c51`
 was searched for `symmetricStep`, `dirichletSine`, and
@@ -2716,3 +2721,44 @@ only other client of the Brownian linear-ball estimates, and it imports them
 directly. The two edited modules, the meander support module, and its two
 conditioned-transition clients build successfully; `lint-style` passes on the
 two edited modules.
+
+
+## Finite-interval Rademacher model ownership (2026-10-21)
+
+The former `Mogulskii/Spectral/Kernel/Interval.lean`,
+`Mogulskii/Spectral/Kernel/Killed.lean`, and
+`Mogulskii/Spectral/Survival/Path.lean` defined the concrete finite-interval
+walk, not Mogulskii-specific estimates. They now live in
+`Probability/Process/RandomWalk/Rademacher/FiniteInterval/{Matrix,KilledKernel,Path}.lean`
+under `ProbabilityTheory.RandomWalk.Rademacher.FiniteInterval`. The related
+sine-mode decomposition, finite-interval path survival, target expansion,
+extremal-pair estimate, and target-mass lower bounds also moved under that
+owner, in its `Spectral/` subtree. The former mixed target lower-bound module
+was split: generic finite-interval estimates are in
+`FiniteInterval/Spectral/Target/LowerBound.lean`, while the diffusive-limit
+assembly remains in `Mogulskii/Spectral/Diffusive/TargetMass.lean`. The
+finite-interval model is
+the killed simple symmetric walk on sites $1,\ldots,N$, with
+$K_N(i,j)=\frac12\mathbf1_{j=i-1}+\frac12\mathbf1_{j=i+1}$ for interior
+neighbors, and survival event
+$\{1\le x+S_j\le N\text{ for }1\le j\le n\}$. Its sine eigenfunction and
+the identification of its kernel mass with IID path survival are independent
+of the Mogulskii scaling argument.
+
+The abstraction audit compared these declarations with Mathlib at the pinned
+Mathlib revision `380f2aafb622cb2c1c93dac545b6389083c68c51`. Mathlib's
+[`Matrix.rowStochastic`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/LinearAlgebra/Matrix/Stochastic.html)
+requires each row sum to equal one, whereas killing at the boundary makes the
+edge rows substochastic. Mathlib's `ProbabilityTheory.Kernel` supplies the
+measure-valued kernel interface but not this finite-interval Rademacher
+construction. The repository's reusable `Matrix.IsRowSubstochastic`,
+`Kernel.ofRealMatrix`, and bounded-eigenfunction row-sum estimates already
+provide the abstract layer; these moved modules supply its concrete
+Rademacher specialization without duplicating or promoting that abstraction.
+The coefficient identity is part of the generic target interface because it
+applies to every finite target. The geometric-error absorption inequality is
+used only in the target-mass proof and is private in its defining module.
+Mogulskii clients import the finite-interval model from its semantic owner,
+and import the diffusive principal-eigenvalue limit directly where their
+proofs use it. All 32 changed Lean modules built successfully (3,594 Lake
+jobs); the four obsolete empty Mogulskii spectral directories were removed.

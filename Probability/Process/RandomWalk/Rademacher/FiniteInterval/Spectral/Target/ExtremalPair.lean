@@ -6,10 +6,10 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Target.Expansion
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Survival.Bounds
+public import Probability.Process.RandomWalk.Rademacher.FiniteInterval.Spectral.Target.Expansion
+public import Probability.Process.RandomWalk.Rademacher.FiniteInterval.Spectral.Survival.Bounds
 
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Target.Lemmas.Coefficient
+import Probability.Process.RandomWalk.Rademacher.FiniteInterval.Spectral.Target.Coefficient
 
 /-!
 # The extremal spectral pair
@@ -17,7 +17,7 @@ import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Target.L
 The public declarations in this module are:
 
 All names below are declarations in
-`ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii`.
+`ProbabilityTheory.RandomWalk.Rademacher.FiniteInterval`.
 
 Let $N=\texttt{interiorCount}$, $K_N=\texttt{intervalKernel}(N)$,
 $q_N=\cos(\pi/(N+1))$, $\phi_0(x)=\texttt{intervalSineWeight}(N,x)$,
@@ -64,7 +64,7 @@ open scoped BigOperators Matrix
 
 @[expose] public section
 
-namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
+namespace ProbabilityTheory.RandomWalk.Rademacher.FiniteInterval
 
 /-- The first and reversed-first modes are distinct when the interval has at
 least two interior sites. -/
@@ -583,4 +583,4 @@ theorem intervalKernel_pow_targetMass_ge_extremalPair_sub_geometricError
             (Real.pi / ((interiorCount + 1 : ℕ) : ℝ)) ^ n)) := htail
   linarith
 
-end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
+end ProbabilityTheory.RandomWalk.Rademacher.FiniteInterval

@@ -6,8 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Target.ExtremalPair
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Diffusive.Lower
+public import Probability.Process.RandomWalk.Rademacher.FiniteInterval.Spectral.Target.ExtremalPair
 
 /-!
 # Target mass lower bounds
@@ -15,16 +14,13 @@ public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.D
 The public declarations in this module are:
 
 All names below are declarations in
-`ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii`.
+`ProbabilityTheory.RandomWalk.Rademacher.FiniteInterval`.
 
 Write $N=\texttt{interiorCount}$, $K_N=\texttt{intervalKernel}(N)$,
 $q_N=\cos(\pi/(N+1))$, $\phi_0(x)=\texttt{intervalSineWeight}(N,x)$,
 and $T$ for the finite terminal target. The constants $a,b,p$ bound the
 starting weight, target weights on reachable sites, and target density.
 
-- `half_mul_mul_le_mul_sub_geometricError` proves that
-  $r\le a/(a+8)$ implies
-  $\frac a2r\le ar-4r^2/(1-r)$ for $a\ge0$ and $0<r<1$.
 - `targetMass_ge_groundStateDensity_bound` gives a lower bound on target
   mass:
   $4abp q_N^n-4q_N^{2n}/(1-q_N^n)\le\sum_{y\in T}K_N^n(x,y)$,
@@ -33,26 +29,21 @@ starting weight, target weights on reachable sites, and target density.
 - `half_principalScale_le_targetMass` absorbs this geometric error when
   $q_N^n\le(4abp)/(4abp+8)$, yielding
   $2abp q_N^n\le\sum_{y\in T}K_N^n(x,y)$.
-- `eventually_realBound_le_centeredDiffusiveTargetMass` gives every strict
-  lower constant below $2abp\,e^{-\pi^2c/2}$ eventually when the interval
-  width tends to infinity, $n_N/(N+1)^2\to c$, and the stated uniform
-  ground-state, parity-density, and spectral-threshold bounds hold.
 
 The paired principal modes give a useful lower bound whenever a terminal
 target contains a positive proportion of parity-reachable sites in the
 interior, where the ground state is bounded below.
 -/
 
-open Filter Topology
 open scoped BigOperators Matrix
 
 @[expose] public section
 
-namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
+namespace ProbabilityTheory.RandomWalk.Rademacher.FiniteInterval
 
 /-- If the principal-mode scale `r` is small compared with its coefficient,
 the geometric remainder costs at most half the principal term. -/
-theorem half_mul_mul_le_mul_sub_geometricError
+private lemma half_mul_mul_le_mul_sub_geometricError
     {coefficient r : ℝ} (hcoefficient : 0 ≤ coefficient)
     (hr : 0 < r) (hrOne : r < 1)
     (hsmall : r ≤ coefficient / (coefficient + 8)) :
@@ -235,101 +226,4 @@ theorem half_principalScale_le_targetMass
   · dsimp [coefficient, q]
     ring_nf
 
-/-- Uniform ground-state and parity-density bounds turn a diffusive block
-into a uniform positive target-mass estimate.  The block parameter is chosen
-large enough that the two-mode principal contribution dominates the
-geometric spectral remainder. -/
-theorem eventually_realBound_le_centeredDiffusiveTargetMass
-    (radius time : ℕ → ℕ) (target : ∀ n, Finset (Fin (2 * radius n + 1)))
-    (start : ∀ n, Fin (2 * radius n + 1))
-    {startWeight targetWeight proportion c lowerBound : ℝ}
-    (hradius : ∀ n, 0 < radius n) (htime : ∀ n, 0 < time n)
-    (hwidth : Tendsto
-      (fun n => ((2 * (radius n + 1) : ℕ) : ℝ)) atTop atTop)
-    (hratio : Tendsto (fun n => (time n : ℝ) /
-      ((2 * (radius n + 1) : ℕ) : ℝ) ^ 2) atTop (nhds c))
-    (hstartWeight : 0 < startWeight)
-    (htargetWeight : 0 < targetWeight) (hproportion : 0 < proportion)
-    (hstart : ∀ n, startWeight ≤
-      intervalSineWeight (2 * radius n + 1) (start n))
-    (htarget : ∀ n finish,
-      finish ∈ intervalParityCompatibleTarget (time n) (start n) (target n) →
-      targetWeight ≤ intervalSineWeight (2 * radius n + 1) finish)
-    (hcard : ∀ n, proportion * ((2 * (radius n + 1) : ℕ) : ℝ) ≤
-      (intervalParityCompatibleTarget (time n) (start n) (target n)).card)
-    (hsmallLimit : Real.exp (c * (-(Real.pi ^ 2) / 2)) <
-      (4 * startWeight * targetWeight * proportion) /
-        (4 * startWeight * targetWeight * proportion + 8))
-    (hlowerBound : lowerBound <
-      (2 * startWeight * targetWeight * proportion) *
-        Real.exp (c * (-(Real.pi ^ 2) / 2))) :
-    ∀ᶠ n in atTop, lowerBound ≤
-      ∑ finish ∈ target n,
-        (intervalKernel (2 * radius n + 1) ^ time n) (start n) finish := by
-  let width : ℕ → ℝ := fun n => ((2 * (radius n + 1) : ℕ) : ℝ)
-  let qpow : ℕ → ℝ := fun n =>
-    Real.cos (Real.pi / width n) ^ time n
-  let coefficient : ℝ := 4 * startWeight * targetWeight * proportion
-  have hpower : Tendsto qpow atTop
-      (nhds (Real.exp (c * (-(Real.pi ^ 2) / 2)))) := by
-    simpa [qpow, width] using
-      tendsto_centeredPrincipalPower_of_diffusiveRatio
-        radius time c hradius hwidth hratio
-  have hcoefficient : 0 < coefficient := by
-    dsimp [coefficient]
-    positivity
-  have hsmallEventually : ∀ᶠ n in atTop,
-      qpow n ≤ coefficient / (coefficient + 8) := by
-    have hthreshold :
-        ∀ᶠ n in atTop, qpow n < coefficient / (coefficient + 8) :=
-      hpower.eventually (eventually_lt_nhds (by simpa [coefficient] using hsmallLimit))
-    exact hthreshold.mono fun _ h => h.le
-  have hlowerEventually : ∀ᶠ n in atTop,
-      lowerBound < coefficient / 2 * qpow n := by
-    have hscaled : Tendsto (fun n => coefficient / 2 * qpow n)
-        atTop (nhds (coefficient / 2 *
-          Real.exp (c * (-(Real.pi ^ 2) / 2)))) :=
-      (tendsto_const_nhds.mul hpower)
-    have hstrict : lowerBound < coefficient / 2 *
-        Real.exp (c * (-(Real.pi ^ 2) / 2)) := by
-      dsimp [coefficient]
-      nlinarith [hlowerBound]
-    exact hscaled.eventually (eventually_gt_nhds hstrict)
-  filter_upwards [hsmallEventually, hlowerEventually] with n hsmallN hlowerN
-  have hwidthEq : width n =
-      ((2 * radius n + 1 + 1 : ℕ) : ℝ) := by
-    dsimp [width]
-    push_cast
-    ring
-  have hcount : 1 < 2 * radius n + 1 := by
-    have := hradius n
-    omega
-  have hcardN : proportion * ((2 * radius n + 1 + 1 : ℕ) : ℝ) ≤
-      (intervalParityCompatibleTarget (time n) (start n) (target n)).card := by
-    convert hcard n using 1
-  have hsmallN' : Real.cos
-        (Real.pi / ((2 * radius n + 1 + 1 : ℕ) : ℝ)) ^ time n ≤
-      (4 * startWeight * targetWeight * proportion) /
-        (4 * startWeight * targetWeight * proportion + 8) := by
-    rw [← hwidthEq]
-    simpa [qpow, width, coefficient] using hsmallN
-  have hmass := half_principalScale_le_targetMass
-    hcount
-    (htime n) (target n) (start n)
-    (startWeight := startWeight)
-    (targetWeight := targetWeight) (proportion := proportion)
-    hstartWeight htargetWeight hproportion (hstart n)
-    (htarget n) hcardN hsmallN'
-  have hmass' : 2 * startWeight * targetWeight * proportion * qpow n ≤
-      ∑ finish ∈ target n,
-        (intervalKernel (2 * radius n + 1) ^ time n) (start n) finish := by
-    change 2 * startWeight * targetWeight * proportion *
-        Real.cos (Real.pi / width n) ^ time n ≤ _
-    rw [hwidthEq]
-    exact hmass
-  have hlowerN' : lowerBound ≤
-      2 * startWeight * targetWeight * proportion * qpow n :=
-    (le_of_lt hlowerN).trans_eq (by dsimp [coefficient]; ring)
-  exact hlowerN'.trans hmass'
-
-end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
+end ProbabilityTheory.RandomWalk.Rademacher.FiniteInterval

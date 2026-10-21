@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Survival.Upper
+public import Probability.Process.RandomWalk.Rademacher.FiniteInterval.Spectral.Survival.Upper
 
 /-!
 # Spectral expansion with a terminal target
@@ -14,7 +14,7 @@ public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.S
 The public declarations in this module are:
 
 All names below are declarations in
-`ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii`.
+`ProbabilityTheory.RandomWalk.Rademacher.FiniteInterval`.
 
 Write $K_N=\texttt{intervalKernel}(N)$,
 $1_T(i)=\texttt{intervalTargetIndicator}(T)(i)$,
@@ -49,7 +49,7 @@ open scoped BigOperators Matrix
 
 @[expose] public section
 
-namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
+namespace ProbabilityTheory.RandomWalk.Rademacher.FiniteInterval
 
 /-- The real indicator of a finite collection of interval sites. -/
 def intervalTargetIndicator {interiorCount : ℕ}
@@ -235,4 +235,4 @@ theorem principal_sub_nonzeroModes_le_intervalKernel_pow_targetMass
   rw [hexpansion]
   linarith
 
-end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
+end ProbabilityTheory.RandomWalk.Rademacher.FiniteInterval

@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Scaling.Lower
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Survival.Path
+public import Probability.Process.RandomWalk.Rademacher.FiniteInterval.Path
 
 /-!
 # Diffusive-scale lower bounds for the centered symmetric walk
@@ -43,6 +43,8 @@ theorem to fixed Brownian corridor estimates.
 -/
 
 open Filter Topology
+
+open ProbabilityTheory.RandomWalk.Rademacher.FiniteInterval
 
 @[expose] public section
 

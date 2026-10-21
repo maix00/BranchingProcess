@@ -9,7 +9,7 @@ module
 public import Probability.Process.RandomWalk.Rademacher.Basic
 public import Probability.Process.RandomWalk.Path.Window.Core
 public import Probability.Process.RandomWalk.Path.Corridor.Horizontal.Core
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Kernel.Killed
+public import Probability.Process.RandomWalk.Rademacher.FiniteInterval.KilledKernel
 
 /-!
 # Path interpretation of killed Rademacher transitions
@@ -17,7 +17,7 @@ public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.K
 The public declarations in this module are:
 
 All names below are declarations in
-`ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii`.
+`ProbabilityTheory.RandomWalk.Rademacher.FiniteInterval`.
 
 Let $N=\texttt{interiorCount}$, $x=\texttt{intervalSite}(i)=i.val+1$,
 and $S_j$ be the sum of the first $j$ Rademacher increments.
@@ -60,7 +60,7 @@ open MeasureTheory Set
 
 @[expose] public section
 
-namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
+namespace ProbabilityTheory.RandomWalk.Rademacher.FiniteInterval
 
 
 /-- Real coordinate represented by an interior finite-interval state. -/
@@ -350,4 +350,4 @@ theorem centeredIntervalRademacherKernel_pow_apply_univ_eq_horizontalTubeProbabi
   simpa [intervalSite] using
     (inClosedInterval_centered_iff_inHorizontalTube radius n increment)
 
-end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
+end ProbabilityTheory.RandomWalk.Rademacher.FiniteInterval
