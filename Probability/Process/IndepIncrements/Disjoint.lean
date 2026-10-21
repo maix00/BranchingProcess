@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.IndepIncrements
+public import Probability.Process.IndepIncrements.Basic
 
 /-!
 # Disjoint increments

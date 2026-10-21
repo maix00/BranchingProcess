@@ -11,12 +11,15 @@ public import MeasureTheory.Measure.CadlagPath.PathClass.StepCorridor.Energy
 # Vanishing-energy-gap approximation of path sets
 
 This file defines path sets that admit inner and outer approximations by finite
-unions of step corridors, with the energy gap tending to zero. In §1 of A. A.
-Mogul'skii, "Small deviations in the space of trajectories" (1974), this is
-the class `M`; its energy is denoted `Hα`. The library names the approximation
-property and the common energy limit by their roles. Convergence and
-independence of the resulting limit are theorem obligations, not fields
-silently added to the approximation property.
+unions of step corridors, with the energy gap tending to zero. This is the
+class `M` in §1 of A. A. Mogul'skii, “Small deviations in the sample function
+space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974), 755--765; see
+also the English translation, “Small Deviations in a Space of Trajectories,”
+*Theory of Probability and Its Applications* 19(4) (1975), 726--736, DOI
+10.1137/1119081. Its energy is denoted `Hα`. The library names the
+approximation property and the common energy limit by their roles.
+Convergence and independence of the resulting limit are theorem obligations,
+not fields silently added to the approximation property.
 -/
 
 open Filter
@@ -28,7 +31,11 @@ open Skorokhod.PathClass.StepCorridor
 namespace Skorokhod.PathClass.StepCorridor
 
 /-- An inner/outer finite-union corridor approximation with vanishing energy
-gap. This is the approximation property denoted `M` in Mogul'skii's §1. -/
+gap. This is the approximation property denoted `M` in §1 of A. A. Mogul'skii,
+“Small deviations in the sample function space,” *Teoriya Veroyatnostei i ee
+Primeneniya* 19(4) (1974), 755--765; see also the English translation, “Small
+Deviations in a Space of Trajectories,” *Theory of Probability and Its
+Applications* 19(4) (1975), 726--736, DOI 10.1137/1119081. -/
 structure FiniteCorridorUnionApproximation (α : ℝ) (G : Set (CadlagPath unitInterval ℝ)) where
   /-- Inner finite-union corridors, one at each approximation scale. -/
   inner : ℕ → FiniteCorridorUnion α

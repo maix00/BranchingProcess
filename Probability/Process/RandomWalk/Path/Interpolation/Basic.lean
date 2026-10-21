@@ -6,15 +6,32 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.Path.Cadlag
+public import Probability.Process.RandomWalk.Path.Representation.Cadlag
 public import Mathlib.Topology.UnitInterval
-public import Topology.Cadlag.Skorokhod.ContinuousMap
+public import Topology.Cadlag.Skorokhod.Maps.Continuous
 
 /-!
 # Linear interpolation of random-walk paths
 
 This file is deterministic. It constructs the continuous polygonal path
 through the normalized partial sums. Probability laws are added separately.
+
+The public theorem `ProbabilityTheory.RandomWalk.normalizedLinearPath_on_interval`
+states that for $k<n$ and $k\le nt\le k+1$,
+$X_n(t)=a_n^{-1}(S_k+(nt-k)\xi_k)$.
+The theorem `ProbabilityTheory.RandomWalk.normalizedLinearPath_nonneg_after_grid`
+states that a polygonal path remains nonnegative after a grid time
+if every later grid value is nonnegative.
+The theorem `ProbabilityTheory.RandomWalk.normalizedLinearPath_neg`
+states $X_n(-\xi)=-X_n(\xi)$.
+The theorem `ProbabilityTheory.RandomWalk.normalizedLinearPath_nonpos_after_grid`
+is the sign-reversed form of the nonnegative-tail result.
+The theorem `ProbabilityTheory.RandomWalk.normalizedLinearPath_before_zero`
+gives the affine value just before a grid point at which the path
+returns to zero.
+The theorem `ProbabilityTheory.RandomWalk.normalizedLinearPath_tail_after_zero`
+states that if $S_m=0$, then
+$X_n(m/n+(n-m)t/n)=a_n^{-1}\sum_{j<n-m}w_{n-m,j}(t)\xi_{m+j}$.
 -/
 
 open Set
@@ -111,6 +128,14 @@ noncomputable def normalizedLinearPath (scale : ℕ → ℝ) (n : ℕ)
   (scale n)⁻¹ * ∑ k ∈ Finset.range n,
     linearIncrementWeight n k t * increment k
 
+/-- Sign reversal of all increments reverses the polygonal path. -/
+theorem normalizedLinearPath_neg (scale : ℕ → ℝ) (n : ℕ)
+    (increment : ℕ → ℝ) (t : ℝ) :
+    normalizedLinearPath scale n (fun j => -increment j) t =
+      -normalizedLinearPath scale n increment t := by
+  unfold normalizedLinearPath
+  simp only [mul_neg, Finset.sum_neg_distrib]
+
 theorem continuous_normalizedLinearPath (scale : ℕ → ℝ) (n : ℕ)
     (increment : ℕ → ℝ) :
     Continuous (normalizedLinearPath scale n increment) := by
@@ -159,6 +184,240 @@ theorem normalizedLinearPath_grid (scale : ℕ → ℝ) {n k : ℕ}
       apply Finset.sum_congr rfl
       intro i hi
       rw [linearIncrementWeight_grid_of_lt hn (Finset.mem_range.mp hi), one_mul]
+
+/-- On each mesh interval, the polygonal path is affine between its
+two adjacent partial sums. -/
+theorem normalizedLinearPath_on_interval
+    (scale : ℕ → ℝ) {n k : ℕ} (hk : k < n)
+    (increment : ℕ → ℝ) (t : ℝ)
+    (hleft : (k : ℝ) ≤ (n : ℝ) * t)
+    (hright : (n : ℝ) * t ≤ (k + 1 : ℕ)) :
+    normalizedLinearPath scale n increment t =
+      (scale n)⁻¹ *
+        (AdditivePath.displacement k increment +
+          ((n : ℝ) * t - k) * increment k) := by
+  have hweight_lt (i : ℕ) (hi : i < k) :
+      linearIncrementWeight n i t = 1 := by
+    have hcast : ((i + 1 : ℕ) : ℝ) ≤ (k : ℝ) := by
+      exact_mod_cast Nat.succ_le_iff.mpr hi
+    push_cast at hcast
+    unfold linearIncrementWeight
+    rw [max_eq_right (by linarith), min_eq_left (by linarith)]
+  have hweight_gt (i : ℕ) (hi : k < i) :
+      linearIncrementWeight n i t = 0 := by
+    have hcast : ((k + 1 : ℕ) : ℝ) ≤ (i : ℝ) := by
+      exact_mod_cast Nat.succ_le_iff.mpr hi
+    unfold linearIncrementWeight
+    rw [max_eq_left (by push_cast at hcast hright ⊢; linarith)]
+    simp
+  have hweight_eq :
+      linearIncrementWeight n k t = (n : ℝ) * t - k := by
+    unfold linearIncrementWeight
+    rw [max_eq_right (by linarith), min_eq_right (by push_cast at hright ⊢; linarith)]
+  have hsum :
+      ∑ i ∈ Finset.range n, linearIncrementWeight n i t * increment i =
+        AdditivePath.displacement k increment +
+          ((n : ℝ) * t - k) * increment k := by
+    have hsplit :
+        ∑ i ∈ Finset.range n, linearIncrementWeight n i t * increment i =
+          ∑ i ∈ Finset.range k, linearIncrementWeight n i t * increment i +
+            ∑ i ∈ Finset.Ico k n, linearIncrementWeight n i t * increment i := by
+      exact (Finset.sum_range_add_sum_Ico
+        (fun i => linearIncrementWeight n i t * increment i) hk.le).symm
+    rw [hsplit]
+    have hfirst :
+        ∑ i ∈ Finset.range k, linearIncrementWeight n i t * increment i =
+          AdditivePath.displacement k increment := by
+      unfold AdditivePath.displacement
+      apply Finset.sum_congr rfl
+      intro i hi
+      rw [hweight_lt i (Finset.mem_range.mp hi), one_mul]
+    have hsecond :
+        ∑ i ∈ Finset.Ico k n, linearIncrementWeight n i t * increment i =
+          ((n : ℝ) * t - k) * increment k := by
+      rw [Finset.sum_eq_single k]
+      · rw [hweight_eq]
+      · intro i hi hik
+        rw [hweight_gt i (lt_of_le_of_ne (Finset.mem_Ico.mp hi).1 hik.symm), zero_mul]
+      · intro hnot
+        exact (hnot (Finset.mem_Ico.mpr ⟨le_rfl, hk⟩)).elim
+    rw [hfirst, hsecond]
+  simp only [normalizedLinearPath, hsum]
+
+/-- On a mesh interval ending at a zero, the interpolated value is
+the left endpoint value multiplied by the remaining affine fraction. -/
+theorem normalizedLinearPath_before_zero
+    (scale : ℕ → ℝ) {n k : ℕ} (hk : k < n)
+    (increment : ℕ → ℝ)
+    (hzero : AdditivePath.displacement (k + 1) increment = 0)
+    (t : ℝ) (hleft : (k : ℝ) ≤ (n : ℝ) * t)
+    (hright : (n : ℝ) * t ≤ (k + 1 : ℕ)) :
+    normalizedLinearPath scale n increment t =
+      (scale n)⁻¹ *
+        (1 - ((n : ℝ) * t - k)) *
+          AdditivePath.displacement k increment := by
+  have hinc : increment k =
+      -AdditivePath.displacement k increment := by
+    have hsucc := AdditivePath.displacement_succ k increment
+    rw [hzero] at hsucc
+    linarith
+  rw [normalizedLinearPath_on_interval scale hk increment t hleft hright,
+    hinc]
+  ring
+
+/-- After a zero at lattice index `start`, the tail of a normalized
+polygonal walk is the same weighted increment block with the new time
+mesh. -/
+theorem normalizedLinearPath_tail_after_zero
+    (scale : ℕ → ℝ) {n start : ℕ} (hn : 0 < n)
+    (hstart : start ≤ n) (increment : ℕ → ℝ)
+    (hzero : AdditivePath.displacement start increment = 0)
+    (t : unitInterval) :
+    normalizedLinearPath scale n increment
+        ((start : ℝ) / n + ((n - start : ℕ) : ℝ) / n * (t : ℝ)) =
+      (scale n)⁻¹ *
+        ∑ j ∈ Finset.range (n - start),
+          linearIncrementWeight (n - start) j (t : ℝ) *
+            increment (start + j) := by
+  let length := n - start
+  have hnreal : (n : ℝ) ≠ 0 := by exact_mod_cast hn.ne'
+  have htime : (n : ℝ) *
+      ((start : ℝ) / n + (length : ℝ) / n * (t : ℝ)) =
+      (start : ℝ) + (length : ℝ) * (t : ℝ) := by
+    field_simp
+  have hfirst (i : ℕ) (hi : i < start) :
+      linearIncrementWeight n i
+        ((start : ℝ) / n + (length : ℝ) / n * (t : ℝ)) = 1 := by
+    have hlt : (i : ℝ) + 1 ≤ (start : ℝ) := by
+      exact_mod_cast Nat.succ_le_iff.mpr hi
+    have hnonneg : 0 ≤ (length : ℝ) * (t : ℝ) :=
+      mul_nonneg (Nat.cast_nonneg _) t.property.1
+    simp only [linearIncrementWeight, htime]
+    rw [max_eq_right (by linarith), min_eq_left (by linarith)]
+  have hsecond (j : ℕ) :
+      linearIncrementWeight n (start + j)
+        ((start : ℝ) / n + (length : ℝ) / n * (t : ℝ)) =
+      linearIncrementWeight length j (t : ℝ) := by
+    simp only [linearIncrementWeight, htime]
+    have harg : (start : ℝ) + (length : ℝ) * (t : ℝ) -
+        (↑(start + j) : ℝ) = (length : ℝ) * (t : ℝ) - j := by
+      push_cast
+      ring
+    rw [harg]
+  have hnadd : n = start + length := by
+    dsimp [length]
+    omega
+  have hsum :
+      (∑ i ∈ Finset.range n,
+        linearIncrementWeight n i
+          ((start : ℝ) / n + (length : ℝ) / n * (t : ℝ)) *
+            increment i) =
+      ∑ j ∈ Finset.range length,
+        linearIncrementWeight length j (t : ℝ) *
+          increment (start + j) := by
+    conv_lhs => rw [hnadd]
+    rw [Finset.sum_range_add]
+    have hprefix :
+        (∑ i ∈ Finset.range start,
+          linearIncrementWeight n i
+            ((start : ℝ) / n + (length : ℝ) / n * (t : ℝ)) *
+            increment i) = 0 := by
+      apply Eq.trans _ hzero
+      change (∑ i ∈ Finset.range start,
+        linearIncrementWeight n i
+          ((start : ℝ) / n + (length : ℝ) / n * (t : ℝ)) *
+            increment i) = ∑ i ∈ Finset.range start, increment i
+      apply Finset.sum_congr rfl
+      intro i hi
+      rw [hfirst i (Finset.mem_range.mp hi), one_mul]
+    rw [hnadd] at hprefix
+    rw [hprefix, zero_add]
+    apply Finset.sum_congr rfl
+    intro j hj
+    have hsecond' := hsecond j
+    rw [hnadd] at hsecond'
+    rw [hsecond']
+  exact congrArg ((scale n)⁻¹ * ·) hsum
+
+/-- Nonnegative grid values on a final interval imply nonnegativity
+throughout the interpolated final interval. -/
+theorem normalizedLinearPath_nonneg_after_grid
+    (scale : ℕ → ℝ) {n start : ℕ} (hn : 0 < n)
+    (hscale : 0 < scale n) (hstart : start ≤ n)
+    (increment : ℕ → ℝ)
+    (hgrid : ∀ j : ℕ, start ≤ j → j ≤ n →
+      0 ≤ AdditivePath.displacement j increment)
+    (t : unitInterval)
+    (ht : (start : ℝ) ≤ (n : ℝ) * (t : ℝ)) :
+    0 ≤ normalizedLinearPath scale n increment t := by
+  let j := ⌊(n : ℝ) * (t : ℝ)⌋₊
+  have hnt : 0 ≤ (n : ℝ) * (t : ℝ) :=
+    mul_nonneg (Nat.cast_nonneg n) t.property.1
+  have hfloor : (j : ℝ) ≤ (n : ℝ) * (t : ℝ) :=
+    Nat.floor_le hnt
+  have hupper : (n : ℝ) * (t : ℝ) ≤ n := by
+    calc
+      (n : ℝ) * (t : ℝ) ≤ (n : ℝ) * 1 :=
+        mul_le_mul_of_nonneg_left t.property.2 (Nat.cast_nonneg n)
+      _ = n := by ring
+  have hjle : j ≤ n := Nat.floor_le_of_le hupper
+  have hjstart : start ≤ j := by
+    rw [Nat.le_floor_iff hnt]
+    exact ht
+  by_cases hjn : j = n
+  · have ht1 : (t : ℝ) = 1 := by
+      have hnj : (n : ℝ) ≤ (n : ℝ) * (t : ℝ) := by simpa [j, hjn] using hfloor
+      have hnpos : (0 : ℝ) < n := by exact_mod_cast hn
+      nlinarith
+    rw [ht1, normalizedLinearPath_one]
+    exact mul_nonneg (inv_nonneg.mpr hscale.le) (hgrid n (by omega) le_rfl)
+  · have hjlt : j < n := lt_of_le_of_ne hjle hjn
+    have hright : (n : ℝ) * (t : ℝ) ≤ (j + 1 : ℕ) := by
+      have hlt := Nat.lt_floor_add_one ((n : ℝ) * (t : ℝ))
+      push_cast
+      exact le_of_lt (by simpa only [j] using hlt)
+    rw [normalizedLinearPath_on_interval scale hjlt increment (t : ℝ)
+      hfloor hright]
+    let w : ℝ := (n : ℝ) * (t : ℝ) - j
+    have hw0 : 0 ≤ w := sub_nonneg.mpr hfloor
+    have hw1 : w ≤ 1 := by
+      dsimp [w]
+      push_cast at hright
+      linarith
+    have hconvex :
+        AdditivePath.displacement j increment + w * increment j =
+          (1 - w) * AdditivePath.displacement j increment +
+            w * AdditivePath.displacement (j + 1) increment := by
+      rw [AdditivePath.displacement_succ]
+      ring
+    change 0 ≤ (scale n)⁻¹ *
+      (AdditivePath.displacement j increment + w * increment j)
+    rw [hconvex]
+    exact mul_nonneg (inv_nonneg.mpr hscale.le)
+      (add_nonneg
+        (mul_nonneg (by linarith) (hgrid j hjstart hjle))
+        (mul_nonneg hw0 (hgrid (j + 1) (by omega) (by omega))))
+
+/-- Nonpositive grid values on a final interval imply nonpositivity
+throughout the interpolated final interval. -/
+theorem normalizedLinearPath_nonpos_after_grid
+    (scale : ℕ → ℝ) {n start : ℕ} (hn : 0 < n)
+    (hscale : 0 < scale n) (hstart : start ≤ n)
+    (increment : ℕ → ℝ)
+    (hgrid : ∀ j : ℕ, start ≤ j → j ≤ n →
+      AdditivePath.displacement j increment ≤ 0)
+    (t : unitInterval)
+    (ht : (start : ℝ) ≤ (n : ℝ) * (t : ℝ)) :
+    normalizedLinearPath scale n increment t ≤ 0 := by
+  have hneg : ∀ j : ℕ, start ≤ j → j ≤ n →
+      0 ≤ AdditivePath.displacement j (fun i => -increment i) := by
+    intro j hsj hjn
+    rw [AdditivePath.displacement_neg]
+    exact neg_nonneg.mpr (hgrid j hsj hjn)
+  have h := normalizedLinearPath_nonneg_after_grid scale hn hscale
+    hstart (fun i => -increment i) hneg t ht
+  rw [normalizedLinearPath_neg] at h
+  exact neg_nonneg.mp h
 
 theorem sum_linearIncrementWeight_eq_partialSum_add
     {n : ℕ} {t : ℝ} (ht : 0 ≤ t)
