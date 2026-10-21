@@ -9,7 +9,7 @@ module
 public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.FirstWindow.Limit
 public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition.Event
 
-import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition.CorridorProbability
+import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition.Lemmas.Meander.CorridorProbability
 
 /-!
 # Transition estimate from the centered first-window limit
@@ -26,7 +26,8 @@ The conditional path convergence is proved from the centered first-window
 construction of Erwin Bolthausen, *On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*, Ann. Probab. 4(3)
 (1976), 480--485, DOI 10.1214/aop/1176996098, Theorem 3.2. The support point is the remaining
 Brownian-meander identification used in Wang Yiyang,
-*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
+*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*
+(master's thesis, Fudan University, 2026),
 Chapter 3, Lemma 3.5, and Appendix A.2, Lemma A.7.
 -/
 

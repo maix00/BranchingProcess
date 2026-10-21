@@ -7,9 +7,9 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition.Event
-public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition.DiffusiveFromMeander
-public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition.SurvivalLower
-public import Probability.Process.Brownian.Construction.Existence
+import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition.Lemmas.Diffusive.ConditionalProbability
+import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition.Lemmas.Diffusive.SurvivalLower
+import Probability.Process.Brownian.Construction.Existence
 
 /-!
 # Diffusive entrance bound from survival and the meander limit
@@ -24,7 +24,8 @@ The conditional-product step and the version with an explicit Brownian
 witness are private proof helpers.
 
 This is the multiplication step in Wang Yiyang,
-*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
+*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*
+(master's thesis, Fudan University, 2026),
 Appendix A.2, Lemma A.7. The survival bound follows from the cyclic
 rotation cover in M. Bauer,
 C. Godrèche, and J.-M. Luck, *Statistics of persistent events in the
@@ -49,7 +50,9 @@ namespace ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned
 $\mathbb P(D_{N,\Delta})
  =\mathbb P(D_{N,\Delta}\mid C_N)\mathbb P(C_N)$
 at the diffusive horizon. This implements the corresponding step in
-Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Appendix A.2, Lemma A.7. -/
+Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite
+Offspring* (master's thesis, Fudan University, 2026), Appendix A.2,
+Lemma A.7. -/
 private lemma exists_eventually_diffusiveTransitionProbability_ge_inverse_square_of_conditionalBound
     {ν : Measure ℝ} [IsProbabilityMeasure ν]
     {sigma : ℝ} (hν : IsCenteredSecondMoment ν (sigma ^ 2))

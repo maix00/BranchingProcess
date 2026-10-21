@@ -8,10 +8,12 @@ module
 
 public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Meander.Identification
 public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Meander.FiniteVariance
-public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition.FromFirstWindow
+public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition.Event
 public import Probability.Process.Brownian.Meander.LastZeroSupport
 
-import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition.CorridorProbability
+import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition.Lemmas.Meander.FromFirstWindow
+
+import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition.Lemmas.Meander.CorridorProbability
 
 /-!
 # Conditional transition probability from Brownian meander
@@ -28,7 +30,8 @@ The public theorem in this file is:
   by $\sigma\sqrt n$.
 
 This is the conditioned Brownian-meander transition step in Wang Yiyang,
-*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
+*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*
+(master's thesis, Fudan University, 2026),
 Appendix A.2, Lemma A.7, used in the proof of Chapter 3, Lemma 3.5. The functional limit follows
 Erwin Bolthausen, *On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*, Ann. Probab. 4(3) (1976), 480--485, DOI 10.1214/aop/1176996098,
 Theorem 3.2; its identification with the terminal excursion is due to

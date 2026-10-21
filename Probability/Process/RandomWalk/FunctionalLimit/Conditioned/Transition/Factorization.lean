@@ -37,7 +37,9 @@ The public definitions and theorems in this file are:
   $\nu\circ(x\mapsto-x)^{-1}$.
 
 This is the independent fixed-prefix and conditioned-meander suffix
-factorization in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Appendix A.2, Lemma A.7, used in the proof of Chapter 3, Lemma 3.5.
+factorization in Wang Yiyang, *Asymptotic Speed of the N-Branching Random
+Walk with Infinite Offspring* (master's thesis, Fudan University, 2026),
+Appendix A.2, Lemma A.7, used in the proof of Chapter 3, Lemma 3.5.
 -/
 
 @[expose] public section
@@ -151,7 +153,9 @@ theorem measurableSet_prefixWindow_and_shiftedTransition
   exact hprefix.inter htail
 
 /-- Independence of a fixed bounded prefix and the subsequent transition
-block, in the product form used in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Appendix A.2, Lemma A.7. -/
+block, in the product form used in Wang Yiyang, *Asymptotic Speed of the
+N-Branching Random Walk with Infinite Offspring* (master's thesis, Fudan
+University, 2026), Appendix A.2, Lemma A.7. -/
 theorem measure_prefixWindow_and_shiftedTransition
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (window : Set ℝ) (hwindow : MeasurableSet window)

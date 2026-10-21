@@ -29,12 +29,11 @@ The public results in this file are:
   $t\mapsto7t/(16\sigma)$ and $\Delta_n/\sqrt{n+1}\to1$ imply
   $Q_{n+1}(D_{n+1,\Delta_n})\ge q$ eventually for some $q>0$.
 
-These are complete probability estimates for the conditioned-transition
-interface, so they live beside its event and transition results rather than
-inside a proof-only `Lemmas/` directory. They formalize the transition
-probability input in Wang Yiyang, *Asymptotic Speed of the N-Branching Random
-Walk with Infinite Offspring*, Appendix A.2, Lemma A.7, used in Chapter 3,
-Lemma 3.5. The functional limit input is Erwin Bolthausen,
+These are specialized intermediate estimates in the conditioned-transition
+proof chain. They formalize the transition probability input in Wang Yiyang,
+*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*
+(master's thesis, Fudan University, 2026), Appendix A.2, Lemma A.7, used in
+Chapter 3, Lemma 3.5. The functional limit input is Erwin Bolthausen,
 *On a Functional Central Limit Theorem for Random Walks Conditioned to Stay
 Positive*, Ann. Probab. 4(3) (1976), 480--485, DOI
 10.1214/aop/1176996098, Theorem 3.2; the limit-law identification is Donald
@@ -52,8 +51,9 @@ namespace ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned
 
 /-- The fixed meander open set fits inside the normalized transition event
 when $\Delta/\sqrt N$ is within $\rho$ of one and the conditioned path is
-nonnegative. This is the margin comparison in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3,
-Lemma 3.5, and Appendix A.2, Lemma A.7. -/
+nonnegative. This is the margin comparison in Wang Yiyang, *Asymptotic Speed
+of the N-Branching Random Walk with Infinite Offspring* (master's thesis,
+Fudan University, 2026), Chapter 3, Lemma 3.5, and Appendix A.2, Lemma A.7. -/
 private lemma mem_normalizedTransitionCorridor_of_meanderCorridor
     {sigma rho scale : ℝ} (hsigma : 0 < sigma) (hrho : 0 < rho)
     (hscale : |scale - 1| < rho)
@@ -98,8 +98,8 @@ Iglehart identifies the limiting law in *Functional Central Limit Theorems
 for Random Walks Conditioned to Stay Positive*, Ann. Probab. 2(4) (1974),
 608--619, DOI 10.1214/aop/1176996607, Section 3, theorem (3.4), p. 616.
 The support input is used in Wang Yiyang, *Asymptotic Speed of the N-Branching
-Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.5, and Appendix A.2,
-Lemma A.7. -/
+Random Walk with Infinite Offspring* (master's thesis, Fudan University,
+2026), Chapter 3, Lemma 3.5, and Appendix A.2, Lemma A.7. -/
 lemma exists_eventually_normalizedTransitionCorridorProbability_ge
     {Ω Ωm : Type*} [MeasurableSpace Ω] [MeasurableSpace Ωm]
     {P : ℕ → Measure Ω} [∀ n, IsProbabilityMeasure (P n)]
@@ -142,7 +142,8 @@ $S_1,\ldots,S_{n+1}\ge0$, converge to a law with the stated meander support
 point and $\Delta_n/\sqrt{n+1}\to1$, then the conditional probability of
 $D_{n+1,\Delta_n}$ is bounded below by a positive constant eventually.
 This is the transition estimate in Wang Yiyang, *Asymptotic Speed of the
-N-Branching Random Walk with Infinite Offspring*, Appendix A.2, Lemma A.7. -/
+N-Branching Random Walk with Infinite Offspring* (master's thesis, Fudan
+University, 2026), Appendix A.2, Lemma A.7. -/
 lemma exists_eventually_interpolatedTransitionConditionalProbability_ge
     {Ωm : Type*} [MeasurableSpace Ωm]
     {ν : Measure ℝ} [IsProbabilityMeasure ν]
