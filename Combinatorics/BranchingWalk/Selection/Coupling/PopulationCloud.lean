@@ -15,6 +15,15 @@ public import Combinatorics.BranchingWalk.Cloud.Basic
 This constructs a particle cloud from a finite labelled population in a
 root-indexed branching walk.  The construction is independent of the rule used
 to choose that population.
+
+## Public declarations
+
+- `populationCloud d β population` is the constant-time cloud whose particle
+  slice is `↑population` and whose position map is `β.position d`.
+- `populationCloud_particles` states
+  `(populationCloud d β population).particles () = ↑population`.
+- `populationCloud_position` states
+  `(populationCloud d β population).position r u = β.position d r u`.
 -/
 
 @[expose] public section
@@ -31,9 +40,8 @@ def populationCloud [AddCommMonoid Position]
     (d : Mark → Position)
     (β : RootIndexed.BranchingWalk Root α Mark Position)
     (population : Finset (RootIndexed.TreeNode Root α)) :
-    Cloud Unit Root α Position where
-  particles _ := ↑population
-  position := β.position d
+    Cloud Unit Root α Position :=
+  Cloud.ofFinset (fun _ : Unit => population) (β.position d)
 
 @[simp] theorem populationCloud_particles [AddCommMonoid Position]
     (d : Mark → Position)

@@ -3377,3 +3377,29 @@ The abstraction check used the official
 and [Mathlib's list-fold API](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Data/List/Basic.html),
 then checked `Mathlib/Data/List/Basic.lean` at pinned revision
 `380f2aafb622cb2c1c93dac545b6389083c68c51`.
+
+## Finite-slice cloud construction and population adapter review (2026-10-21)
+
+Mathlib represents finite subsets with `Finset` and supplies the canonical
+`Set.Finite.toFinset` / `Finset.finite_toSet` bridge. Its pinned source and
+official API search do not provide the repository's labelled, position-bearing
+`Cloud` structure. The generic operation that turns finite time-indexed slices
+and a position map into a `Cloud` therefore belongs beside `Cloud` itself;
+`Cloud.ofFinset` now states this construction for arbitrary time types and
+root-addressed particles, with its particle and position equations available
+as simp theorems. The coupling layer keeps `populationCloud` as a readable
+specialization at `Unit` time with the branching walk's position map.
+
+The separate `Population.cloud` wrapper had no call sites and merely copied a
+`Population` set sequence and an independently supplied position function into
+`Cloud`. It duplicated the generic cloud construction without adding a
+population invariant or a downstream interface. The wrapper module was
+removed, and `Walk/Path/Position.lean` now imports `Cloud.Basic` directly for
+the generation-cloud API it uses.
+
+The comparison used Mathlib's official
+[`Set.Finite` / `Finset` conversion documentation](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Data/Set/Finite/Basic.html)
+and [finite-set definitions](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Data/Finset/Defs.html),
+then checked the pinned `Mathlib/Data/Set/Finite/Basic.lean` and searched its
+source tree for a particle-cloud structure. No Mathlib definition matches the
+project's cloud semantics.
