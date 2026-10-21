@@ -3128,3 +3128,22 @@ and proposition/equation. The scan found no generic `the paper` or `the thesis`
 references and no private theorem names containing `paper` or `lemma33`; this
 is a source-text check, while full citation normalization remains part of the
 ongoing audit.
+
+## Public theorem-header audit continuation (2026-10-21)
+
+A lexical pass over the 1,494 tracked production modules checked public
+top-level `theorem` and `lemma` names against each leading module docstring,
+accepting either the fully qualified name or its final component. It flags 741
+modules for manual review; this is a triage count, not a verified defect count,
+because a name-only scan cannot assess namespace context or whether the header
+describes the statement and assumptions accurately. Manual checks confirmed
+missing declaration inventories in
+`Combinatorics/SimpleGraph/Acyclic/Height.lean`,
+`Combinatorics/BranchingWalk/Selection/{Contain,WalkTransform}.lean`, and
+`Combinatorics/BranchingWalk/Selection/Coupling/Offspring/{Address,Cloud,Finite}.lean`.
+Their module docstrings now give the exact Lean names and concise mathematical
+statements, including formulas for the acyclicity condition and finite
+offspring-address cardinality identity. All six modules build with the pinned
+toolchain, and Mathlib `lint-style` passes on them. The remaining candidate
+modules still require statement-level review; this pass does not certify the
+repository-wide header requirement.
