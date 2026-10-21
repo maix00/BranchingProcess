@@ -3096,12 +3096,17 @@ lives beside the variable-length normalized block path law in
 
 Mathlib's pinned sources provide finite sums and measurable finite sums, but
 no dedicated measurability theorem for `Fin.partialSum` on a finite increment
-block. The new `measurable_finPartialSum` in
-`Path/Block/Measurable.lean` states that missing interface for any measurable
-additive monoid with measurable addition; the oscillation event proofs reuse
-it instead of carrying duplicate private recursions. This generality follows
-the repository's API rule and Mathlib's review guidance to look for an existing
-more-general result and choose the semantic owner before adding declarations
+block. The new `Fin.measurable_partialSum` in
+`MeasureTheory/Function/FinPartialSum.lean` states that missing interface for
+any measurable additive monoid with measurable addition. It replaces the
+duplicated recursive measurability proof in the independent-increments
+finite-dimensional law and the private drawdown block-event helper, and it
+serves the random-walk block-event proofs from the general measurable-function
+layer. The Mathlib review used its pinned
+`Fin.continuous_partialSum` result as the stronger topological counterpart.
+This placement follows the repository's API rule and Mathlib's guidance to
+look for an existing general result and choose the semantic owner before
+adding declarations
 ([Mathlib review guide](https://leanprover-community.github.io/contribute/pr-review.html#location-location),
 [Mathlib style guide](https://leanprover-community.github.io/contribute/style.html#header-and-imports)).
 

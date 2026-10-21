@@ -11,6 +11,8 @@ public import Probability.Process.RandomWalk.Path.Block.Measurable
 public import Probability.Process.RandomWalk.Path.Event.Oscillation
 public import Mathlib.MeasureTheory.Constructions.BorelSpace.Order
 
+import MeasureTheory.Function.FinPartialSum
+
 /-!
 # Oscillation events for finite random-walk blocks
 
@@ -58,7 +60,7 @@ theorem measurableSet_blockOscillationEvent (width : ℝ) (length : ℕ) :
   exact MeasurableSet.iInter fun i => MeasurableSet.iInter fun j => by
     have hdiff : Measurable (fun increments : Fin length → ℝ =>
         Fin.partialSum increments i - Fin.partialSum increments j) :=
-      (measurable_finPartialSum i).sub (measurable_finPartialSum j)
+      (Fin.measurable_partialSum i).sub (Fin.measurable_partialSum j)
     exact measurableSet_Iic.preimage
       (continuous_abs.measurable.comp hdiff)
 
@@ -82,7 +84,7 @@ theorem measurableSet_blockOscillationLTEvent (width : ℝ) (length : ℕ) :
   exact MeasurableSet.iInter fun i => MeasurableSet.iInter fun j => by
     have hdiff : Measurable (fun increments : Fin length → ℝ =>
         Fin.partialSum increments i - Fin.partialSum increments j) :=
-      (measurable_finPartialSum i).sub (measurable_finPartialSum j)
+      (Fin.measurable_partialSum i).sub (Fin.measurable_partialSum j)
     exact measurableSet_Iio.preimage
       (continuous_abs.measurable.comp hdiff)
 
@@ -112,8 +114,8 @@ theorem measurableSet_blockOscillationPrefixLTEvent
     have hdiff : Measurable (fun increments : Fin length → ℝ =>
         Fin.partialSum increments i.castSucc -
           Fin.partialSum increments j.castSucc) :=
-      (measurable_finPartialSum i.castSucc).sub
-        (measurable_finPartialSum j.castSucc)
+      (Fin.measurable_partialSum i.castSucc).sub
+        (Fin.measurable_partialSum j.castSucc)
     exact measurableSet_Iio.preimage
       (continuous_abs.measurable.comp hdiff)
 

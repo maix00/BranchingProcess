@@ -19,6 +19,7 @@ public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.JumpPattern.DiscretizedMaximum
 public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.TubeEvent
 
+import MeasureTheory.Function.FinPartialSum
 import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 import Mathlib.MeasureTheory.Function.Floor
 import Mathlib.Order.PartialSups
@@ -88,28 +89,12 @@ private lemma partialSum_eq_prefixSum {length : ℕ}
       rw [Fin.sum_univ_castSucc]
       congr 1
 
-private lemma measurable_partialSum {length : ℕ}
-    (k : Fin (length + 1)) :
-    Measurable (fun block : Fin length → ℝ =>
-      Fin.partialSum block k) := by
-  induction k using Fin.induction with
-  | zero => exact measurable_const
-  | succ k ih =>
-      have hsum := ih.add (measurable_pi_apply k)
-      have heq : (fun block : Fin length → ℝ =>
-          Fin.partialSum block k.succ) =
-        (fun block => Fin.partialSum block k.castSucc) +
-          (fun block : Fin length → ℝ => block k) := by
-        funext block
-        simp only [Fin.partialSum_succ, Pi.add_apply]
-      exact heq ▸ hsum
-
 private lemma measurable_prefixPath_coordinate {start : ℕ}
     (time : ℕ) :
     Measurable (fun past : Fin start → ℝ => drawdownPrefixPath past time) := by
   by_cases htime : time ≤ start
   · simpa [drawdownPrefixPath, htime] using
-      measurable_partialSum
+      Fin.measurable_partialSum
         (⟨time, Nat.lt_succ_of_le htime⟩ : Fin (start + 1))
   · simp [drawdownPrefixPath, htime]
 
@@ -298,7 +283,7 @@ private lemma measurableSet_drawdownTubePairEvent {start length : ℕ}
       measurable_pi_apply i).comp measurable_fst)
   have hblock : Measurable (fun pair :
       (Fin start → ℝ) × (Fin length → ℝ) => Fin.partialSum pair.2 k) := by
-    exact (measurable_partialSum k).comp measurable_snd
+    exact (Fin.measurable_partialSum k).comp measurable_snd
   have hcenterValue : Measurable (fun pair :
       (Fin start → ℝ) × (Fin length → ℝ) => center pair.1) :=
     hcenter.comp measurable_fst

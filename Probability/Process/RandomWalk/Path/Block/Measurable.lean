@@ -7,8 +7,9 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.Path.Block.Basic
-public import Algebra.BigOperators.PartialSum
 public import Mathlib.MeasureTheory.Constructions.BorelSpace.Order
+
+import MeasureTheory.Function.FinPartialSum
 
 /-!
 # Measurability of increment blocks
@@ -23,33 +24,6 @@ open MeasureTheory
 @[expose] public section
 
 namespace ProbabilityTheory.RandomWalk
-
-
-section FinitePartialSum
-
-variable {E : Type*} [MeasurableSpace E] [AddMonoid E] [MeasurableAdd₂ E]
-
-/-- The partial sum at a fixed time is measurable as a function of the finite
-increment block. -/
-theorem measurable_finPartialSum {length : ℕ}
-    (time : Fin (length + 1)) :
-    Measurable (fun increments : Fin length → E =>
-      Fin.partialSum increments time) := by
-  induction time using Fin.induction with
-  | zero => exact measurable_const
-  | succ time ih =>
-    have hm := ih.add (measurable_pi_apply time)
-    have heq : (fun increments : Fin length → E =>
-        Fin.partialSum increments time.succ) =
-      (fun increments : Fin length → E =>
-        Fin.partialSum increments time.castSucc) +
-        (fun increments : Fin length → E => increments time) := by
-      funext increments
-      simp only [Fin.partialSum_succ, Pi.add_apply]
-    exact heq ▸ hm
-
-end FinitePartialSum
-
 
 /-- A large oscillation in one of finitely many equal blocks is a measurable
 event on the infinite increment path space. -/
