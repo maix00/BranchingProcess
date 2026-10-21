@@ -14,9 +14,46 @@ public import Combinatorics.BranchingWalk.Basic.Map
 public import Combinatorics.BranchingWalk.StepField
 public import Mathlib.Probability.Independence.InfinitePi
 
-/-! Root-indexed branching step fields and their positions.
-    An arbitrary type indexes the initial roots; the displacement and the
-    initial-position-shifted position are defined per root. -/
+/-!
+# Positions on root-indexed branching step fields
+
+The public declarations in
+`ProbabilityTheory.BranchingRandomWalk.RootIndexed` are:
+
+- `displace`, `position`: the total quantities
+  $D(i,u)=\operatorname{displaceWith}(d,\mathrm{step}(i),[],u)$ and
+  $X(i,u)=\mathrm{initial}(i)+D(i,u)$.
+- `displace?`, `position?`: the corresponding partial values, equal to
+  `some` of the total value exactly when the address survives.
+- `displace?_eq_some_iff`, `displace?_eq_none_iff`,
+  `position?_eq_some_iff`, `position?_eq_none_iff`:
+  $D?(i,u)=\operatorname{some}(D(i,u))$ and
+  $X?(i,u)=\operatorname{some}(X(i,u))$ iff the address survives; each option
+  value is `none` iff the address does not survive.
+- `displace_reindex`, `displace?_reindex`, `position_reindex`,
+  `position?_reindex`: reindexing by $f$ gives
+  $D_{\mathrm{step.reindex}\,f}(i,u)=D_{\mathrm{step}}(f(i),u)$ and the same
+  identity for $X$, their option-valued forms, and `initial.comp f`.
+- `displace_nil`, `position_root`: $D(i,[])=0$ and
+  $X(i,[])=\mathrm{initial}(i)$.
+- `displace_append_singleton`, `position_append_singleton`: for a child $j$,
+  $D(i,u++[j])=D(i,u)+\operatorname{value}'((\mathrm{step}(i,u)).map\,d,j)$,
+  with the same increment formula for $X$.
+- `position_append_two`: appending $j,k$ adds the marks at $u$ and $u++[j]$:
+  $X(i,u++[j,k])=X(i,u)+\operatorname{value}'((\mathrm{step}(i,u)).map\,d,j)
+  +\operatorname{value}'((\mathrm{step}(i,u++[j])).map\,d,k)$.
+- `displace_append`, `position_append`: for addresses $u,v$,
+  $D(i,u++v)=D(i,u)+\operatorname{displaceWith}
+  (d,w\mapsto\mathrm{step}(i,u++w),[],v)$, and the same formula holds for
+  $X$.
+- `position_eq_initial_add_mark`: $X(i,u)=\mathrm{initial}(i)+D(i,u)$.
+
+For a root-indexed step field and a mark map $d$, `displace` sums the mapped
+marks along a Ulam--Harris address, and `position` adds the root's initial
+position. Their option-valued counterparts record whether that address
+survives. All position-valued statements require only an additive commutative
+monoid.
+-/
 
 open MeasureTheory ProbabilityTheory
 

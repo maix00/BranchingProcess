@@ -5,7 +5,7 @@ Authors: WANG Yiyang
 -/
 module
 
-public import Combinatorics.BranchingWalk.Basic.Definitions
+public import Combinatorics.BranchingWalk.Basic.BranchingWalk
 
 /-!
 # Branching as the unmarked branching-walk specialization

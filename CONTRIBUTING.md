@@ -14,8 +14,12 @@ are all useful contributions.
    the pinned dependencies determine what the implementation can use.
 2. Read [`ARCHITECTURE.md`](ARCHITECTURE.md) and place a result in the lowest
    layer that does not depend on the specific construction being formalized.
-3. Import narrow modules. Do not add a catch-all aggregate import just to make
-   a declaration available.
+3. Import narrow modules. A named result entry point such as
+   `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Theorems.lean`
+   may re-export a coherent list of principal published results for discovery;
+   it does not replace the semantic modules that own those declarations.
+   Proofs and ordinary clients should import the narrow owner module rather
+   than depend on a catch-all aggregate.
 4. Check the proof boundary in
    [`FORMALIZATION_CHECKLIST.md`](FORMALIZATION_CHECKLIST.md) before describing
    a result as complete.
@@ -70,11 +74,15 @@ or outward move, search the pinned Mathlib source and repository, inspect the
 official Mathlib documentation and relevant dependencies online, and consult
 the mathematical literature when it can identify a more general statement.
 Compare the weakest natural assumptions and the exact semantics, not just
-similar names. Add a public abstraction only when it states a meaningful
-reusable mathematical operation or theorem beyond a thin restatement of an
-existing API. A module having several clients is a reason to audit its
-abstraction, not evidence by itself that the declaration belongs at a higher
-level. Record the sources and exact candidate statements examined, compare
+similar names. Public definitions and theorems should expose the most abstract
+useful mathematical structure and the weakest natural assumptions supported
+by their meaning. Judge generality by the mathematical interface, not by
+mechanically dropping hypotheses or enlarging types. Add a public abstraction
+only when it states a meaningful reusable mathematical operation or theorem
+beyond a thin restatement of an existing API. A module having several clients
+is a reason to audit its abstraction, not evidence by itself that the
+declaration belongs at a higher level. Record the sources and exact candidate
+statements examined, compare
 their assumptions and conclusions with the actual use sites, and explain why
 the chosen statement is the most general useful one and belongs at that
 semantic layer. Identify the pinned revision for every dependency API checked.
@@ -116,17 +124,22 @@ group the public modules into semantic subdirectories such as `Ordering/`,
 `Selection/`, or `PointMeasure/`. Keep the subject level for shared core
 definitions and direct entry modules. Do not place a reusable public interface
 under `Lemmas/` just to reduce the number of files at the subject level.
+Name directories for their mathematical subject or proof role, not for a
+parameter value or a sign condition that only selects one theorem instance;
+for example, a first-stage population estimate belongs under `FirstStage/`,
+with the sign condition stated among the theorem's hypotheses.
 Use filenames relative to their semantic directory: prefer
 `PointMeasure/Basic.lean` or `Tilted/Law.lean` to repeating the full directory
-name in every child filename. Mathlib permits a same-level `Foo.lean` and
-`Foo/` when the file is a substantive entry interface and the directory holds
-its components. This repository uses a stricter discoverability rule: do not
-place `Foo.lean` beside `Foo/`; put core declarations in `Basic.lean` or
-`Core.lean`, or give child modules names that identify their mathematical
-roles. Also avoid a direct child file whose stem repeats its parent directory,
-such as `Scale/Scale.lean`; use a semantic name such as `Scale/Basic.lean`.
-These path choices do not change Lean declaration namespaces. Do not add a
-same-name file merely to re-export a directory.
+name in every child filename. Mathlib uses same-level `Foo.lean` and `Foo/`
+pairs for deliberate umbrella or entry modules; for example,
+[`MeasureTheory/Measure/Dirac.lean`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/MeasureTheory/Measure/Dirac.html)
+re-exports `Dirac.Def` and `Dirac.Basic`. This repository uses a stricter
+discoverability rule: do not place `Foo.lean` beside `Foo/`; put core
+declarations in `Basic.lean` or `Core.lean`, or give child modules names that
+identify their mathematical roles. Also avoid a direct child file whose stem
+repeats its parent directory, such as `Scale/Scale.lean`; use a semantic name
+such as `Scale/Basic.lean`. These path choices do not change Lean declaration
+namespaces. Do not add a same-name file merely to re-export a directory.
 Count direct `.lean` files during directory reviews. More than eight is a
 review trigger for semantic grouping, not an automatic move: keep a flat
 directory only when its modules are genuinely peer interfaces for one subject,

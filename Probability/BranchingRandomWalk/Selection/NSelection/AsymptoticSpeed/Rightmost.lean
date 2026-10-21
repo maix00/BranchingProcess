@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.BranchingRandomWalk.Selection.NSelection.AsymptoticSpeed.Limit.KingmanInterface
+public import Probability.BranchingRandomWalk.Selection.NSelection.AsymptoticSpeed.Limit.InfiniteOffspring.Speed
 public import Probability.BranchingRandomWalk.Selection.NSelection.AsymptoticSpeed.Environment.OrderDualEnvironment
 /-!
 # Rightmost speed for a fixed number of selected particles

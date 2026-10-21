@@ -6,8 +6,10 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Target.LowerBound
+public import Probability.Process.RandomWalk.Rademacher.FiniteInterval.Spectral.Target.LowerBound
 public import Probability.Kernel.Survival.Return
+import Probability.Process.RandomWalk.Rademacher.Transition.Basic
+import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Diffusive.Lower
 
 /-!
 # Central terminal targets
@@ -68,9 +70,13 @@ open MeasureTheory
 open scoped BigOperators
 open Filter Topology
 
+open ProbabilityTheory.RandomWalk.Rademacher.FiniteInterval
+
 @[expose] public section
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
+
+open ProbabilityTheory.RandomWalk.Rademacher
 
 /-- A central starting site in an interval with Dirichlet width `8 * m`. -/
 def centralIntervalStart (m : ℕ) (hm : 0 < m) : Fin (8 * m - 1) :=

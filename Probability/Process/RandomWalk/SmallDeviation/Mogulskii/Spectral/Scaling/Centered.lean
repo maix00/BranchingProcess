@@ -40,6 +40,8 @@ where $(S_j)$ is the simple symmetric walk.  The public results are:
 
 open Filter Topology
 
+open ProbabilityTheory.RandomWalk.Rademacher.FiniteInterval
+
 @[expose] public section
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii

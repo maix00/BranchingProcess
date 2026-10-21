@@ -17,6 +17,19 @@ public import Combinatorics.Branching.Map
 A branching tree embeds into a branching walk with unit marks. Conversely,
 the genealogy of a sibling-closed branching walk is a branching tree. This is
 the deterministic seam between pure and spatial branching.
+
+The public API is:
+
+- `Tree.stepField T` records a child at slot `i` exactly when `u ++ [i]` is
+  in the carrier of `T`; `Tree.survive_stepField_iff` states this equivalence.
+- `Tree.surviveAlong_stepField_iff` identifies survival along an address
+  from the root with membership of that address in `T`.
+- `Tree.toBranching T` represents `T` as a one-root branching process whose
+  marks are `PUnit.unit`.
+- `RootIndexed.BranchingWalk.genealogicalTree` constructs a tree from the
+  surviving addresses of one root, assuming the step field is sibling-closed.
+- `Tree.genealogicalTree_toBranching` proves that a tree is recovered from
+  the genealogical tree of its associated branching process.
 -/
 
 @[expose] public section

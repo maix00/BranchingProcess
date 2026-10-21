@@ -6,34 +6,30 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.FunctionalLimit.Donsker.FiniteDimensional.CLT
+public import Probability.ConvergenceInDistribution.Basic
+public import Mathlib.Probability.Distributions.Gaussian.Real
 public import Probability.Process.RandomWalk.Path.Basic
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Scale.BlockScale
+import Probability.Process.RandomWalk.FunctionalLimit.Donsker.FiniteDimensional.CLT
 
 /-!
 # Diffusive Gaussian block endpoint adapters for Mogulskii estimates
 
 Let $b_n=\lfloor c x_n^2\rfloor$ with $c>0$ and $x_n\to\infty$. The public
-theorems in this file are:
+theorem in this file is:
 
-- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Blocks.tendstoInDistribution_diffusiveBlockEndpoint`:
-  the product of $\frac{S_{b_n}}{\sqrt{b_n}}$ and
-  $\frac{\sqrt{b_n}}{x_n}$ converges in law to
-  $\sqrt c Z$, where $Z$ is standard Gaussian. The separate factors also
-  define the expression when $b_n=0$.
 - `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Blocks.tendstoInDistribution_partialSum_diffusiveBlock_div_scale`:
   the direct quotient $\frac{S_{b_n}}{x_n}$ converges in law to $\sqrt c Z$.
 
-The central limit theorem itself lives in the Donsker layer. These are the
-single-block inputs used in the proof of Theorem 3, Section 4, p. 764 of the
+The factorized endpoint limit used in its proof is private to this module.
+The central limit theorem itself lives in the Donsker layer. This is the
+single-block input used in the proof of Theorem 3, Section 4, p. 764 of the
 1974 Russian original by A. A. Mogul'skii, “Small deviations in the sample
 function space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974),
 755–765; English translation, “Small Deviations in a Space of Trajectories,”
 *Theory of Probability and Its Applications* 19(4) (1975), 726–736, DOI
 10.1137/1119081.
-
-
-The original bibliography is A. A. Mogul'skii, “Small deviations in the sample function space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974), 755--765; English translation, “Small Deviations in a Space of Trajectories,” *Theory of Probability and Its Applications* 19(4) (1975), 726--736, DOI 10.1137/1119081. -/
+-/
 
 open Filter MeasureTheory
 
@@ -48,7 +44,7 @@ are kept separate so the statement is valid even at the finitely many
 indices where the rounded block length can vanish. This is the single-block
 endpoint limit used in Theorem 3, Section 4, p. 764 of A. A. Mogul'skii,
 *Small Deviations in a Space of Trajectories* (DOI 10.1137/1119081). -/
-theorem tendstoInDistribution_diffusiveBlockEndpoint
+private theorem tendstoInDistribution_diffusiveBlockEndpoint
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (hcentered : ∫ x, x ∂ν = 0)
     (hsecondMoment : ∫ x, x ^ 2 ∂ν = 1)

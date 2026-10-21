@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Rate.Asymptotics
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Decomposition.Modes
+public import Probability.Process.RandomWalk.Rademacher.FiniteInterval.Spectral.Modes
 
 /-!
 # Principal spectral scale
@@ -28,6 +28,8 @@ prefactor.
 -/
 
 open Filter Topology
+
+open ProbabilityTheory.RandomWalk.Rademacher.FiniteInterval
 
 @[expose] public section
 

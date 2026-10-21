@@ -6,11 +6,19 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.NormalConstant
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.CLT
-public import Probability.Process.RandomWalk.FunctionalLimit.Normal.Tightness
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Scaling.Discretization
-public import Probability.Process.Stable.Brownian.PathLaw
+import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Lemmas.NormalConstant
+import Probability.Distributions.Rademacher
+import Probability.Distributions.Gaussian.Interval
+import Probability.Distributions.Stable.Attraction.Normal.Basic
+import Probability.Process.RandomWalk.FunctionalLimit.Normal.Tightness
+import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Scaling.Discretization
+import Probability.Process.Stable.Brownian.Basic
+import Probability.Process.Stable.Brownian.PathLaw
+public import Mathlib.Probability.BrownianMotion.Basic
+public import Probability.Process.Path.Cadlag.MeasurableMap
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Scale.Basic
+public import Probability.Process.Stable.Levy
+public import Probability.Process.Stable.SmallDeviation.EscapeRate.PathLaw.Basic
 
 /-!
 # The Brownian escape constant
@@ -41,9 +49,7 @@ the sample function space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4)
 (1974), 755–765; English translation, “Small Deviations in a Space of
 Trajectories,” *Theory of Probability and Its Applications* 19(4) (1975),
 726–736, DOI 10.1137/1119081.
-
-
-The original bibliography is A. A. Mogul'skii, “Small deviations in the sample function space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974), 755--765; English translation, “Small Deviations in a Space of Trajectories,” *Theory of Probability and Its Applications* 19(4) (1975), 726--736, DOI 10.1137/1119081. -/
+-/
 
 open Filter MeasureTheory ProbabilityTheory
 open scoped ENNReal NNReal Topology
@@ -95,6 +101,17 @@ private noncomputable def openCenteredTubeProbability
     (scale : ℕ → ℝ) (n : ℕ) : ENNReal :=
   openHorizontalTubeProbability (iidSequenceLaw rademacherMeasure)
     (1 / 2) (scale n) n
+
+private lemma stableSmallDeviationRate_rademacher_eq_of_scale_ge_one
+    {normalization scale : ℕ → ℝ}
+    (hscale : IsStableMogulskiiScale 2 rademacherMeasure normalization scale) :
+    stableSmallDeviationRate 2 rademacherMeasure scale =ᶠ[atTop]
+      fun n => scale n ^ 2 / (n : ℝ) := by
+  filter_upwards [hscale.scale_tendsto_atTop.eventually
+    (eventually_ge_atTop (1 : ℝ))] with n hn
+  rw [stableSmallDeviationRate_two,
+    truncatedSecondMoment_rademacher_eq_one_of_one_le hn]
+  simp
 
 private lemma centeredLatticeWidth_gt (scale : ℕ → ℝ) (n : ℕ)
     (hscale : 0 ≤ scale n) :
@@ -156,8 +173,8 @@ private lemma rademacher_openCenteredTube_rate
     norm_num
   have hDOA : IsInDomainOfAttractionAlong rademacherMeasure
       (gaussianReal 0 1) (fun n => Real.sqrt n) (fun _ => 0) :=
-    isInDomainOfAttractionAlong_gaussianReal_zero_one
-      rademacherMeasure hcentered hsecond
+    ProbabilityTheory.isInDomainOfAttractionAlong_gaussianReal_zero_one_of_centered_unitSecondMoment
+      rademacherMeasure ⟨hcentered, hsecond⟩
   have hslow : Asymptotics.IsSlowlyVaryingAtTop
       (stableSlowVariation 2 rademacherMeasure) :=
     hDOA.stableSlowVariation_two_isSlowlyVarying_of_gaussian
@@ -353,8 +370,8 @@ theorem _root_.ProbabilityTheory.HasStableProcessEscapeRate.eq_neg_pi_sq_div_eig
   have hDOA : IsInDomainOfAttractionAlong rademacherMeasure
       (gaussianReal 0 1) normalization (fun _ => 0) := by
     simpa [normalization] using
-      isInDomainOfAttractionAlong_gaussianReal_zero_one
-        rademacherMeasure hcentered hsecond
+      ProbabilityTheory.isInDomainOfAttractionAlong_gaussianReal_zero_one_of_centered_unitSecondMoment
+        rademacherMeasure ⟨hcentered, hsecond⟩
   have hnormalizationPos : ∀ n : ℕ, 0 < n → 0 < normalization n := by
     intro n hn
     exact Real.sqrt_pos.2 (by exact_mod_cast hn)

@@ -1,6 +1,14 @@
 import Probability.Process.Path.PathClass.StepCorridor.Probability.Rate.Relative
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.Source.PathClass.Relative
+import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.TerminalLeft.PathClass.Relative
 import Topology.Cadlag.TerminalLeft
+
+/-!
+# Relative terminal-left Mogul'skii path-class checks
+
+This test checks the terminal-left path-space projection and verifies that a
+strict unit corridor gives a relatively approximable target for the source
+path-class rate interface.
+-/
 
 open MeasureTheory
 open ProbabilityTheory

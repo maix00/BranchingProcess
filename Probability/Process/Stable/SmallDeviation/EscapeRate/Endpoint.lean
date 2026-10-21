@@ -8,6 +8,8 @@ module
 
 public import Probability.Process.Stable.SmallDeviation.EscapeRate.Corridor
 public import Probability.Process.Stable.SmallDeviation.EndpointComparison
+import Probability.Process.Path.Skorokhod.Corridor.SegmentStationarity
+import Probability.Process.Stable.SmallDeviation.Blocks.ReturnScale
 
 /-! # Endpoint-constrained escape rates
 
@@ -204,7 +206,9 @@ private lemma eventually_shiftedEndpoint_probability_ge_endpointComparison
   let tailAtZero : ℝ≥0∞ :=
     P (fullSegmentCorridorReturnEvent X 0 remaining
       tailLower tailUpper tailCoreLower tailCoreUpper)
-  have hshift := h.measure_fullSegmentCorridorReturn_shift cut remaining
+  have hshift := h.toIsLevyProcess.indepIncrements.measure_fullSegmentCorridorReturn_shift
+    h.toIsLevyProcess.stationaryIncrements h.toIsLevyProcess.ae_cadlag
+    cut remaining
     tailLower tailUpper tailCoreLower tailCoreUpper
   have htailShift : tailAtZero = tailAtCut := by
     simpa [tailAtZero, tailAtCut] using hshift

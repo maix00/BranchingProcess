@@ -6,8 +6,10 @@ Authors: WANG Yiyang
 
 module
 
+public import Algebra.BigOperators.AdditivePath.Block
+public import Probability.Distributions.Moments.Real
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Scale.BlockScale
-public import Probability.Process.RandomWalk.FunctionalLimit.Donsker.Tightness.Maximal
+import Probability.Process.RandomWalk.Path.Block.Maximal.SecondMoment
 
 /-!
 # Within-block tightness estimates

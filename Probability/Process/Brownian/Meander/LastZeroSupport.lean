@@ -17,10 +17,6 @@ public import Topology.Cadlag.Skorokhod.Path.Linear
 
 The public theorems in this file are:
 
-- `ProbabilityTheory.lastZero_brownianLinearPath`: for $a>0$, the last
-  zero of $t\mapsto at$ is zero.
-- `ProbabilityTheory.lastZeroMeanderTransform_brownianLinearPath`:
-  the normalized terminal-excursion transform fixes this path.
 - `ProbabilityTheory.IsBrownianReal.brownianLinearPath_mem_lastZeroMeanderPathLaw_support`:
   every positive linear path belongs to the support of Iglehart's
   Brownian terminal-excursion law.
@@ -41,7 +37,7 @@ open scoped NNReal Topology
 namespace ProbabilityTheory
 
 /-- A positive linear path has no zero after time zero. -/
-theorem lastZero_brownianLinearPath {a : ℝ} (ha : 0 < a) :
+private lemma lastZero_brownianLinearPath {a : ℝ} (ha : 0 < a) :
     ContinuousMap.lastZero (brownianLinearPath a) = 0 := by
   have hset : {t : unitInterval | brownianLinearPath a t = 0} = {0} := by
     ext t
@@ -59,7 +55,7 @@ theorem lastZero_brownianLinearPath {a : ℝ} (ha : 0 < a) :
 
 /-- Iglehart's terminal excursion transform fixes every positive linear
 path on the unit interval. -/
-theorem lastZeroMeanderTransform_brownianLinearPath
+private lemma lastZeroMeanderTransform_brownianLinearPath
     {a : ℝ} (ha : 0 < a) :
     ContinuousMap.lastZeroMeanderTransform (brownianLinearPath a) =
       brownianLinearPath a := by

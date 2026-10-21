@@ -6,14 +6,24 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.Stable.SmallDeviation.Blocks.Factorization
 public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Probability
+public import Probability.Process.Stable.Levy
+import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Independence
+import Probability.Process.Stable.FiniteDimensional
+import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Stationarity
 
 /-!
 # Uniform-block upper bound for stable processes
 
-The prefix factorization gives the full finite product. Equal translated-block
-laws then turn the product into the power in the Mogulskii upper estimate.
+Independence of translated blocks gives the finite product formula. Equality
+of their laws turns that product into the power in the Mogulskii upper bound.
+
+* `IsStableLevyProcess.measure_rationalTube_le_pow_uniformBlocks` states
+  `P(path on [0,1] lies in the width tube) ≤
+  P(first uniform block lies in the width tube) ^ blocks`.
+* `IsStableLevyProcess.measure_rationalHorizonTube_le_pow_shortHorizon`
+  states `P(tube on horizon 1) ≤ P(tube on horizon 1 / blocks) ^ blocks`;
+  this is the rational-coordinate form of Mogulskii's equation (23).
 -/
 
 @[expose] public section
@@ -22,27 +32,6 @@ namespace ProbabilityTheory
 
 open MeasureTheory
 open scoped NNReal
-
-/-- The first `m` tube events factor into the probabilities of individual
-blocks. This is proved from stopped-prefix independence, not assumed as a
-finite-family independence hypothesis. -/
-theorem IsStableLevyProcess.measure_rationalPrefixTube_eq_prod
-    {Ω : Type*} [MeasurableSpace Ω] {α : ℝ} {μ : Measure ℝ}
-    {X : ℝ≥0 → Ω → ℝ} {P : Measure Ω} [IsProbabilityMeasure P]
-    (h : IsStableLevyProcess α μ X P) (blocks : ℕ) (hblocks : 0 < blocks)
-    (width : ℝ) (m : ℕ) (hm : m ≤ blocks) :
-    P (rationalUniformPrefixTubeEvent X width hblocks m) =
-      ∏ k ∈ Finset.range m,
-        rationalUniformBlockTubeProbability P X width hblocks k := by
-  induction m with
-  | zero =>
-      simp [measure_univ]
-  | succ m ih =>
-      have hmlt : m < blocks := by omega
-      rw [rationalUniformPrefixTubeEvent_succ X width hblocks m hmlt]
-      rw [h.measure_prefixTube_inter_nextBlock blocks hblocks ⟨m, hmlt⟩ width]
-      rw [ih (by omega)]
-      simp [Finset.prod_range_succ, rationalUniformBlockTubeProbability, hmlt]
 
 /-- The original stable-process block upper inequality follows directly from
 independent increments and equality of translated-block laws. -/
@@ -57,13 +46,15 @@ theorem IsStableLevyProcess.measure_rationalTube_le_pow_uniformBlocks
   let Xq : ↑RationalCoordinate.UnitInterval → Ω → ℝ :=
     fun q ω => X (RationalCoordinate.toNNReal q) ω
   have hindep : iIndepFun (rationalUniformBlockProcess Xq hblocks) P := by
-    convert h.iIndepFun_rationalUniformBlocks blocks hblocks using 1
+    convert h.increments.indepIncrements.iIndepFun_rationalUniformBlocks
+      (fun t => h.increments.aemeasurable_eval t) blocks hblocks using 1
     funext j ω q
     simp [Xq, rationalUniformBlockProcess, rationalTubeBlockIncrement,
       rationalUniformBlockProcessFromTime, rationalUniformBlockAbsoluteTime]
   exact ProbabilityTheory.measure_rationalTube_le_pow_of_iIndep_uniformBlocks
     P Xq hblocks width hindep (fun j =>
-      h.rationalUniformBlockProcess_identDistrib blocks hblocks j ⟨0, hblocks⟩)
+      h.increments.indepIncrements.rationalUniformBlockProcess_identDistrib
+        h.toIsLevyProcess.stationaryIncrements blocks hblocks j ⟨0, hblocks⟩)
 
 /-- Rational-coordinate counterpart of Lemma 2(c), equation (23): a full
 unit-time range tube is bounded by a power of the short-block tube. The

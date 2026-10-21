@@ -49,46 +49,59 @@ def driftedTubeEvent (horizon : ℕ) (width drift lower : ℝ) :
 and lower constraint at time `j ≥ i` bound the drawdown by its width. -/
 theorem driftedTubeEvent_subset_noLargeDropEndpointBelowEvent
     (horizon : ℕ) {width drift lower : ℝ}
-    (hwidth : 0 < width) (hdrift : 0 ≤ drift)
+    (hdrift : 0 ≤ drift)
     (hlower : -width ≤ lower) (hupper : lower ≤ 0) :
     driftedTubeEvent horizon width drift lower ⊆
       noLargeDropEndpointBelowEvent horizon width
         (width + drift * (horizon : ℝ) / width ^ 2) := by
   intro increment hpath
+  let lowerBoundary : ℕ → ℝ := fun j =>
+    lower + drift * (j : ℝ) / width ^ 2
   have hslope : 0 ≤ drift / width ^ 2 := div_nonneg hdrift (sq_nonneg width)
-  have htube (j : ℕ) (hj : 1 ≤ j) (horizonBound : j ≤ horizon) :=
-    hpath j hj horizonBound
-  constructor
-  · intro i j hij hj
-    by_cases hjzero : j = 0
-    · have hizero : i = 0 := by omega
-      subst i
-      subst j
-      simp [AdditivePath.displacement_zero, hwidth.le]
-    have hjpos : 1 ≤ j := by omega
-    have hjtube := htube j hjpos hj
-    by_cases hi : i = 0
-    · subst i
-      have hterm : 0 ≤ drift * (j : ℝ) / width ^ 2 := by positivity
-      simpa [AdditivePath.displacement_zero] using
-        (show (0 : ℝ) - AdditivePath.displacement j increment ≤ width by
-          linarith [hjtube.1])
-    · have hipos : 1 ≤ i := by omega
-      have hitube := htube i hipos (by omega)
-      have htime : (i : ℝ) ≤ (j : ℝ) := by exact_mod_cast hij
-      have hnonneg :
-          drift * (i : ℝ) / width ^ 2 ≤
-            drift * (j : ℝ) / width ^ 2 := by
-        have hmul := mul_le_mul_of_nonneg_left htime hslope
-        simpa [div_eq_mul_inv, mul_assoc, mul_comm, mul_left_comm] using hmul
-      linarith [hitube.2, hjtube.1]
-  · by_cases hzero : horizon = 0
-    · subst horizon
-      simp [AdditivePath.displacement_zero]
-      linarith
-    · have hpos : 1 ≤ horizon := by omega
-      have hend := htube horizon hpos le_rfl
-      linarith [hend.2]
+  have hmonotone : Monotone lowerBoundary := by
+    intro i j hij
+    dsimp [lowerBoundary]
+    have htime : (i : ℝ) ≤ (j : ℝ) := by exact_mod_cast hij
+    have hrate : drift * (i : ℝ) / width ^ 2 ≤
+        drift * (j : ℝ) / width ^ 2 := by
+      have hmul := mul_le_mul_of_nonneg_left htime hslope
+      simpa [div_eq_mul_inv, mul_assoc, mul_comm, mul_left_comm] using hmul
+    linarith [hrate]
+  have hcorridor : ∀ j : Fin (horizon + 1),
+      AdditivePath.displacement (j : ℕ) increment ∈
+        Set.Icc (lowerBoundary (j : ℕ))
+          (lowerBoundary (j : ℕ) + width) := by
+    intro j
+    by_cases hjzero : (j : ℕ) = 0
+    ·
+      have hdisplacement : AdditivePath.displacement (j : ℕ) increment = 0 := by
+        rw [hjzero, AdditivePath.displacement_zero]
+      have hlowerBoundary : lowerBoundary (j : ℕ) = lower := by
+        simp [lowerBoundary, hjzero]
+      rw [hdisplacement, hlowerBoundary]
+      exact ⟨hupper, by linarith [hlower]⟩
+    · have hjpos : 1 ≤ (j : ℕ) := by omega
+      have hjbound : (j : ℕ) ≤ horizon := Nat.le_of_lt_succ j.isLt
+      have h := hpath (j : ℕ) hjpos hjbound
+      simpa [lowerBoundary] using h
+  have hdrawdown :=
+    ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.additivePath_mem_noLargeDropEndpointBelowEvent_of_monotoneCorridor
+      horizon lowerBoundary width hmonotone increment hcorridor
+  change
+    (∀ i j : ℕ, i ≤ j → j ≤ horizon →
+      AdditivePath.displacement i increment -
+        AdditivePath.displacement j increment ≤ width) ∧
+      AdditivePath.displacement horizon increment ≤
+        lowerBoundary horizon + width at hdrawdown
+  change
+    (∀ i j : ℕ, i ≤ j → j ≤ horizon →
+      AdditivePath.displacement i increment -
+        AdditivePath.displacement j increment ≤ width) ∧
+      AdditivePath.displacement horizon increment ≤
+        width + drift * (horizon : ℝ) / width ^ 2
+  refine ⟨hdrawdown.1, ?_⟩
+  dsimp [lowerBoundary] at hdrawdown
+  linarith [hdrawdown.2, hupper]
 
 
 end ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube

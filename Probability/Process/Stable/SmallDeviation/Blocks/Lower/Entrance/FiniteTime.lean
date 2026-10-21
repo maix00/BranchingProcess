@@ -9,8 +9,9 @@ module
 public import Order.Interval.RationalCoordinate.UnitInterval
 public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.Entrance.ShortTime
 public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.Entrance.FullCorridor
-public import Probability.Process.Stable.SmallDeviation.Blocks.Factorization
+public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Probability
 public import Probability.Process.Stable.SmallDeviation.Blocks.EntranceScaling
+import Probability.Process.Stable.SmallDeviation.Blocks.ReturnScale
 public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Gluing
 public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Cover
 public import Probability.Process.Path.Skorokhod.Corridor.Segment
@@ -600,8 +601,10 @@ theorem IsStableLevyProcess.exists_pos_time_measure_fullSegmentCorridorReturnEve
     have hsuccess : 0 < P
         (rationalUniformPrefixBlockEvent Y V (Nat.succ_pos M) (M + 1)) := by
       exact (ENNReal.pow_pos hq (M + 1)).trans_le
-        (hY.pow_le_measure_rationalUniformPrefixBlockEvent (M + 1)
-          (Nat.succ_pos M) V hV q le_rfl)
+        (hY.increments.indepIncrements.pow_le_measure_rationalUniformPrefixBlockEvent
+          hY.toIsLevyProcess.stationaryIncrements
+          (fun t => hY.increments.aemeasurable_eval t)
+          (M + 1) (Nat.succ_pos M) V hV q le_rfl)
     let Nreal : ℝ := (N : ℝ)
     let lowerY : ℝ := lower / Troot
     let upperY : ℝ := upper / Troot

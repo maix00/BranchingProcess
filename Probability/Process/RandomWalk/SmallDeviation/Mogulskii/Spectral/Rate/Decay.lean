@@ -6,7 +6,8 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Survival.Bounds
+public import Probability.Process.RandomWalk.Rademacher.FiniteInterval.Spectral.Survival.Bounds
+import Probability.Process.RandomWalk.Rademacher.Transition.Basic
 public import Mathlib.Analysis.SpecificLimits.Basic
 
 /-!
@@ -30,9 +31,13 @@ open Filter Topology
 open scoped BigOperators Matrix
 
 
+open ProbabilityTheory.RandomWalk.Rademacher.FiniteInterval
+
 @[expose] public section
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
+
+open ProbabilityTheory.RandomWalk.Rademacher
 
 /-- For a fixed interval, the logarithmic row-sum decay is the logarithm of
 the principal Dirichlet eigenvalue, independently of the starting site. -/

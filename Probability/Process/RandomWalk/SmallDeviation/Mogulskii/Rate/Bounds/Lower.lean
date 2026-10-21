@@ -7,7 +7,8 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Scale.BlockScale
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Return.Uniform
+import Probability.Process.RandomWalk.Kernel.Killed.Return.Uniform
+public import Probability.Process.RandomWalk.Kernel.Killed.Return.Basic
 public import Probability.Process.RandomWalk.Kernel.Killed.Survival.Blocking
 public import Mathlib.Topology.Order.LiminfLimsup
 
@@ -83,7 +84,7 @@ theorem mul_log_toReal_le_liminf_normalizedLog_remainingMass_of_return
   have hprobability : ∀ᶠ n in atTop,
       lowerBound ^ exponent n ≤ probability n := by
     have h :=
-      eventually_pow_succ_div_le_remainingMass_killedIncrementKernel_Icc
+      _root_.ProbabilityTheory.RandomWalk.eventually_pow_succ_div_le_remainingMass_killedIncrementKernel_Icc
         ν outerLower outerUpper returnLower returnUpper scale length id
         lowerBound hscalePos hlength hblock
     filter_upwards [h] with n hn

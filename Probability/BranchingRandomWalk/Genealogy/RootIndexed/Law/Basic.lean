@@ -11,18 +11,70 @@ public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Field.Filtra
 public import Combinatorics.BranchingWalk.Step.Measurability
 public import Combinatorics.BranchingWalk.StepField
 public import Probability.BranchingRandomWalk.Step.Law.Field
-public import Combinatorics.BranchingWalk.Step.Ordering.Monotone
 public import Mathlib.Probability.Independence.InfinitePi
 public import Combinatorics.BranchingWalk.Step.Basic
 
 /-!
 # Product laws on root-indexed step fields
 
-One i.i.d. step field is attached to each initial root through mathlib's
+In namespace `ProbabilityTheory.BranchingRandomWalk`, the public declarations
+provide these laws and marginals:
+
+- `RootIndexed.stepFieldLaw (Root := Root) μ` is
+  the product law $\bigotimes_{r : Root}\operatorname{stepFieldLaw}(\mu)$ on
+  root-indexed fields.
+- `RootIndexed.stepFieldLaw.isProbabilityMeasure` states that this product
+  law is a probability measure when `μ` is one.
+- `RootIndexed.stepFieldLaw_reindex μ f hf` states
+  `map (RootIndexed.StepField.reindex f)
+  (RootIndexed.stepFieldLaw (Root := Root) μ) =
+  RootIndexed.stepFieldLaw (Root := NewRoot) μ` when
+  `f : NewRoot → Root` is injective.
+- `RootIndexed.stepFieldLaw_mapMarks μ f hf` states that mapping every mark
+  by measurable `f` sends the root product law to the product law of
+  `μ.map (Step.map f)`, that is,
+  `map (fun field r => StepField.map f (field r)) (stepFieldLaw μ) =
+  stepFieldLaw (μ.map (Step.map f))`.
+- `RootIndexed.StepField.measurable_reindexCoordinates f` proves
+  measurability of coordinate reindexing; for injective `f`,
+  `RootIndexed.stepFieldLaw_reindexCoordinates μ f hf` preserves the law.
+- `RootIndexed.stepFieldLaw_coordinates_independent μ` states
+  `iIndep (fun (r,u) field => field r u) (stepFieldLaw μ)` for a probability
+  measure `μ`; `RootIndexed.stepFieldLaw_roots_independent μ` gives the
+  corresponding mutual independence of the complete root fields.
+- `RootIndexed.stepFieldLaw_root_marginal μ r` has pushforward law
+  `map (fun field => field r)
+  (RootIndexed.stepFieldLaw (Root := Root) μ) =
+  ProbabilityTheory.BranchingRandomWalk.stepFieldLaw μ`;
+  `RootIndexed.stepFieldLaw_coordinate_marginal μ r u` states
+  `map (fun field => field r u)
+  (RootIndexed.stepFieldLaw (Root := Root) μ) = μ`.
+- For countable `Root` and `α`, if `μ s = 1`, then
+  `RootIndexed.stepFieldLaw_ae_all_of_measure_one hs μ hμ` states that
+  `field r u ∈ s` simultaneously for every root `r` and address `u`, almost
+  surely.
+- `finiteRootStepFieldLaw μ m` is
+  `RootIndexed.stepFieldLaw (Root := Fin m) μ`, the product law with
+  `Root = Fin m`.
+  `RootIndexed.stepFieldLaw_fin_restrict μ roots hinj` identifies every
+  injectively labelled finite family with this law;
+  `countableRootStepFieldLaw_first μ m` gives its first-`m` marginal from
+  countably many roots, and `finiteRootStepFieldLaw_first μ hmn` gives the
+  first-`m` marginal of an `n`-root law when `m ≤ n`.
+- `finiteRootStepFieldLaw_root_marginal μ i` and
+  `finiteRootStepFieldLaw_coordinate_marginal μ i u` give the single-root
+  and one-step marginals. The theorem
+  `finiteRootStepFieldLaw_roots_independent μ m` gives independence of the
+  `Fin m` root fields, and
+  `finiteRootStepFieldLaw_ae_all_of_measure_one hs μ hμ m` transfers a
+  one-step probability-one property to every root and address almost surely.
+
+One i.i.d. step field is attached to each initial root through Mathlib's
 arbitrary-family probability product. The construction and its finite
 marginals do not require a countable root type. Countability appears only when
 coordinatewise almost-sure statements are combined over every root.
-`finiteRoot...` is the `Fin m` marginal consumed by finite-population arguments.
+`finiteRootStepFieldLaw` is the `Fin m` marginal consumed by finite-population
+arguments.
 -/
 
 open MeasureTheory ProbabilityTheory
@@ -346,35 +398,5 @@ theorem finiteRootStepFieldLaw_ae_all_of_measure_one
     ∀ᵐ step ∂finiteRootStepFieldLaw μ m, ∀ i : Fin m,
       ∀ u : TreeNode α, step i u ∈ s :=
   RootIndexed.stepFieldLaw_ae_all_of_measure_one hs μ hμ
-
-theorem finiteRootStepFieldLaw_all_ordered
-    (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
-    (hμ : μ orderedSteps = 1) (m : ℕ) :
-    ∀ᵐ step ∂finiteRootStepFieldLaw μ m, ∀ i : Fin m,
-      ∀ u : 𝕍, step i u ∈ orderedSteps :=
-  finiteRootStepFieldLaw_ae_all_of_measure_one
-    orderedSteps_measurable μ hμ m
-
-theorem finiteRootStepFieldLaw_all_nonempty
-    (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
-    (hμ : μ nonemptySupport = 1) (m : ℕ) :
-    ∀ᵐ step ∂finiteRootStepFieldLaw μ m, ∀ i : Fin m,
-      ∀ u : 𝕍, step i u ∈ nonemptySupport :=
-  finiteRootStepFieldLaw_ae_all_of_measure_one
-    nonemptySupport_measurable μ hμ m
-
-/-- Ordered support together with the at-least-one-child assumption
-forces slot zero at every address of every initial root, simultaneously. -/
-theorem finiteRootStepFieldLaw_all_first_child
-    (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
-    (hordered : μ orderedSteps = 1)
-    (hnonempty : μ nonemptySupport = 1) (m : ℕ) :
-    ∀ᵐ step ∂finiteRootStepFieldLaw μ m, ∀ i : Fin m,
-      ∀ u : 𝕍, survive (step i u) 0 := by
-  filter_upwards [finiteRootStepFieldLaw_all_ordered μ hordered m,
-    finiteRootStepFieldLaw_all_nonempty μ hnonempty m] with step hord hne
-  intro i u
-  obtain ⟨j, hj⟩ := hne i u
-  exact orderedSteps_survive_of_le (step i u) (hord i u) (Nat.zero_le j) hj
 
 end ProbabilityTheory.BranchingRandomWalk

@@ -12,9 +12,22 @@ public import Combinatorics.BranchingWalk.Step.Selection.SiblingClosable
 /-!
 # Relabelable sibling steps
 
-The field and walk predicates lift the step-level support-preserving
-relabeling property pointwise. No slot-type-wide instance is provided: a
-relabeling must cover the actual child support of each step.
+`StepField.IsSiblingClosable β` means
+`∀ u, Step.IsSiblingClosable (β u)`; `RootIndexed.BranchingWalk.IsSiblingClosable β`
+means that this holds for every root's step field. The public existence
+theorem constructs pointwise injective relabelings `φ u` for which
+`Step.IsSiblingClosed (fun i => β u (φ u i))`, while every originally
+surviving slot `j` is in the image of `φ u`. Thus the relabeling covers the
+actual child support without requiring a relabeling of the whole slot type.
+
+The public predicates are
+`Combinatorics.Branching.StepField.IsSiblingClosable β`, equivalent to
+`∀ u, Step.IsSiblingClosable (β u)`, and
+`Combinatorics.Branching.RootIndexed.BranchingWalk.IsSiblingClosable β`,
+equivalent to `∀ r, StepField.IsSiblingClosable (β.step r)`. The construction
+`Combinatorics.Branching.StepField.exists_relabeling_isSiblingClosed` gives
+injective relabelings `φ u` whose relabeled steps are sibling closed and whose
+images contain every slot surviving in the original step.
 -/
 
 @[expose] public section

@@ -13,23 +13,28 @@ public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Sca
 public import Probability.ConvergenceInDistribution.Portmanteau
 public import Mathlib.Topology.Order.LiminfLimsup
 
-/-!
-# A stable-domain discrete upper block estimate
+/-! # A stable-domain discrete upper block estimate
 
-At a stable block length, convergence of the block endpoint gives a uniform
-upper bound on the probability of surviving one corridor block, uniformly
-over every allowed starting point.  The killed-kernel blocking inequality
-then raises this bound to the number of complete blocks. This is a
-non-sharp, endpoint-based subcase of the discrete upper comparison in
-Lemma 3 of A. A. Mogul'skii, “Small deviations in the sample function
-space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974), 755--765;
-English translation, “Small Deviations in a Space of Trajectories,”
-*Theory of Probability and Its Applications* 19(4) (1975), 726--736,
-DOI 10.1137/1119081, Section 4, p. 764. It does not require a path-space
-functional limit.
+The public theorem is
+`eventually_horizontalTubeProbability_le_pow_stableBlock_endpointMass`.
+Under stable norming and attraction, a centered block-endpoint limit, and a
+strict one-block bound
+$\mu\circ(x\mapsto c^{1/\alpha}x)^{-1}([-1,1])<q<1$, it gives
 
-The strict endpoint-mass inequality is an explicit input.  It is the only
-distributional estimate on the stable limit used here.
+$$
+\mathbb P(\text{horizontal tube through }n)
+\le q^{\lfloor n/L_n\rfloor}\quad\text{eventually},
+\qquad L_n=\mathrm{stableBlockLength}(\alpha,\nu,c,\mathrm{scale},n).
+$$
+
+The killed-kernel blocking inequality raises the one-block bound to the
+number of complete blocks. This is a non-sharp, endpoint-based subcase of
+Lemma 3, Section 4, p. 764 of A. A. Mogul'skii, “Small deviations in the
+sample function space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4)
+(1974), 755--765; English translation, “Small Deviations in a Space of
+Trajectories,” *Theory of Probability and Its Applications* 19(4) (1975),
+726--736, DOI 10.1137/1119081. It does not require a path-space functional
+limit.
 -/
 
 open Filter MeasureTheory Set

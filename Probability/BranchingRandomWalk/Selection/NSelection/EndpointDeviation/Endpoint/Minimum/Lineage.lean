@@ -8,6 +8,8 @@ import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.En
 import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.PositiveMoment.Bounds
 import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Roots.Nonempty
 import Probability.BranchingRandomWalk.Selection.NSelection.Admissible.Real
+import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law.Basic
+import Combinatorics.BranchingWalk.Step.Ordering.Monotone
 import Probability.BranchingRandomWalk.Step.Ordering.Support
 
 /-!
@@ -19,6 +21,36 @@ offspring assumption. That child need not itself survive the global
 selection step. The first-`N` property instead implies that the next selected
 endpoint minimum is no larger than its endpoint. This is the pathwise bridge
 needed to use predictable fresh-step moments for the endpoint minimum.
+
+The public declarations in
+`ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail` are:
+
+- `firstNSelectedEndpointMinimum_succ_le_of_slotZero_candidate`: if the
+  generation-`k` minimizer's slot-zero child is a candidate and the next
+  candidate ordering is lower-finite, then
+  $M_{k+1}\le X_k(p)+\max(V_p(0),0)$.
+- `firstNSelectedEndpointMinAddressAtDepth m N k hm`: the minimizing address
+  totalized on the empty-population branch by an address of depth `k`.
+- `firstNSelectedEndpointMinAddressAtDepth_length`: the selected address
+  has length exactly `k`, for every field.
+- `measurable_firstNSelectedEndpointMinAddressAtDepth`: this selector is
+  measurable with respect to the generation-`k` field.
+- `finiteRootStepFieldLaw_integral_pow_four_sum_endpointMinAddressPositiveSlotZero_le`:
+  for the selectors $p_k$ below, both the sum and its fourth moment are
+  integrable and
+  $\int(\sum_{k<n}\max(V_{p_k}(0),0))^4\,dP_m
+  \le n^4\int(\xi^+)^4\,d\mu$.
+- `finiteRootStepFieldLaw_endpointMinimum_succ_le_predictablePositiveSlotZero_ae`:
+  under boundary normalization and nonempty offspring support, almost surely
+  $M_{k+1}\le M_k+\max(\xi_{p_k}(0),0)$ for every `k`.
+
+Here $M_k$ is the totalized first-`N` endpoint minimum at generation `k`,
+$X_k(p)=\operatorname{positionAtGeneration}(k,p)$,
+$V_p(0)=\operatorname{value'}(\operatorname{field}(p))(0)$, and
+$p_k=\operatorname{firstNSelectedEndpointMinAddressAtDepth}(m,N,k,hm)$.
+The measure $P_m$ is the finite-root law of the sorted potential field, and
+$\xi^+=\operatorname{leftmostPositivePart}(\xi)$ under the original step law
+$\mu$. The fourth-moment bound assumes $L$ has a finite leftmost fourth moment.
 -/
 
 
@@ -284,8 +316,19 @@ theorem finiteRootStepFieldLaw_endpointMinimum_succ_le_predictablePositiveSlotZe
       simp [orderedBySteps, Step.IsOrderedBy, realPotential]]
     rw [L.sortedPotentialImage_orderedBy]
     simp
-  have hfirstChild := finiteRootStepFieldLaw_all_first_child
-    L.sortedPotentialImage hordered hnonemptySorted m
+  have hfirstChild :
+      ∀ᵐ field ∂finiteRootStepFieldLaw L.sortedPotentialImage m,
+        ∀ i : Fin m, ∀ u : 𝕍, survive (field i u) 0 := by
+    filter_upwards
+      [finiteRootStepFieldLaw_ae_all_of_measure_one
+        orderedSteps_measurable L.sortedPotentialImage hordered m,
+       finiteRootStepFieldLaw_ae_all_of_measure_one
+        nonemptySupport_measurable L.sortedPotentialImage hnonemptySorted m]
+      with field horderedField hnonemptyField
+    intro i u
+    obtain ⟨j, hj⟩ := hnonemptyField i u
+    exact orderedSteps_survive_of_le (field i u) (horderedField i u)
+      (Nat.zero_le j) hj
   filter_upwards [hadmiss, hpopulation, hfirstChild]
     with field hadmiss hpopulation hfirstChild
   intro k

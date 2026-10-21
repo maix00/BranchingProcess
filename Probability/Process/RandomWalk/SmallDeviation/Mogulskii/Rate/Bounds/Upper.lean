@@ -10,6 +10,7 @@ public import Probability.Process.RandomWalk.Kernel.Killed.Basic
 public import Probability.Process.RandomWalk.Kernel.Killed.Survival.Blocking
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Blocks.BlockEndpoint
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Scale.BlockScale
+import Probability.Process.RandomWalk.FunctionalLimit.Donsker.FiniteDimensional.CLT
 
 /-!
 # Uniform block upper bounds from the endpoint CLT

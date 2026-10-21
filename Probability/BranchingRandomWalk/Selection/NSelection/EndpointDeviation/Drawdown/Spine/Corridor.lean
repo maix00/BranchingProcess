@@ -4,16 +4,44 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Drawdown.Spine.Capacity
 import Probability.BranchingRandomWalk.Spine.Tube.Corridor.FiniteVariance
+import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Drawdown.Spine.Cutoff
+import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Rate.LogScales
 
 /-!
 # Positive probability for the first right-tail corridor
 
-Finite variance supplies a quantitative spine-corridor lower bound along the
-the logarithmic first-stage horizon.  A slightly narrower terminal window
-absorbs the floor in `floor ((log N)^(5/2))` and lies inside the corridor used
-by the first-stage population estimate.
+## Public declarations
+
+Let $\ell_n=\lfloor(\log N_n)^{5/2}\rfloor$ and let
+\[
+G_n=\{x:\mathbb N\to\mathbb R:\operatorname{history}(\ell_n,0,x)
+  \in\operatorname{affineCorridorThrough}(\ell_n,
+  -b\log N_n,0,b\log N_n,(-b+v)\log N_n)\}.
+\]
+
+* `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.rightTailPositiveASpineCorridorLowerBound`
+  defines the explicit lower-bound quantity $B_n$ obtained from a diffusive
+  entrance block and stable endpoint-bridge blocks.  With
+  $\rho=(b-v/4)/(v/2)$, $E_k=\operatorname{finiteVarianceEntranceLength}(s,k)$,
+  and $R_k=\operatorname{balancedBlockCount}(\operatorname{finiteVarianceBridgeLength}(s,k)-J_k,J_k)+1$,
+  where $s_k=(v/2)\operatorname{logarithmicSmallDeviationScale}(k)$ and
+  $J_k=\operatorname{stableBlockLength}(2,\nu,A^2,s,k)$, its formula is
+  \[
+  B_n=\left[\exp\!\left(\left(\frac{C}{(\rho/2-13/60)^2}-1\right)A^2\right)\right]^{R_{\ell_n}}\frac{q}{E_{\ell_n}}.
+  \]
+* `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.eventually_rightTailPositiveA_spineCorridor_lowerBound_of_centeredSecondMoment`
+  assumes that the tilted increment law is centered with variance
+  $\sigma^2\in(0,\infty)$, and proves that some $C<0$, $q>0$, and $A>0$
+  satisfy $B_n\leq\mathbb P_{\mathrm{tilt}}(G_n)$ for all sufficiently large
+  $n$.
+* `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.eventually_rightTailPositiveA_spineCorridor_pos_of_centeredSecondMoment`
+  concludes $\mathbb P_{\mathrm{tilt}}(G_n)>0$ for all sufficiently large
+  $n$ under the same moment assumptions.
+
+The quantitative entrance and endpoint-bridge estimate is supplied by
+`ProbabilityTheory.BranchingRandomWalk.Spine.exists_eventually_tiltedIncrementFieldLaw_affineCorridor_lowerBound_of_centeredSecondMoment`;
+this module specializes its scale and corridor to the first-stage cutoff.
 -/
 
 open Filter MeasureTheory ProbabilityTheory
@@ -24,44 +52,6 @@ namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail
 open ProbabilityTheory.BranchingRandomWalk.Spine
 open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
-private lemma tendsto_rightTailPositiveAFirstCutoff_twoFifths_div_log
-    {N : ℕ → ℕ} (hN : Tendsto N atTop atTop) :
-    Tendsto (fun n => logarithmicSmallDeviationScale
-      (rightTailPositiveAFirstCutoff N n) /
-        logarithmOfSampleSize N n) atTop (𝓝 1) := by
-  let L : ℕ → ℝ := logarithmOfSampleSize N
-  let arg : ℕ → ℝ := fun n => L n ^ ((5 : ℝ) / 2)
-  let cutoff : ℕ → ℝ := fun n => (rightTailPositiveAFirstCutoff N n : ℝ)
-  have hL : Tendsto L atTop atTop := by
-    exact Real.tendsto_log_atTop.comp
-      (tendsto_natCast_atTop_atTop.comp hN)
-  have harg : Tendsto arg atTop atTop :=
-    (_root_.tendsto_rpow_atTop (by norm_num : (0 : ℝ) < 5 / 2)).comp hL
-  have hfloor : Tendsto (fun n => cutoff n / arg n) atTop (𝓝 1) := by
-    have h := (tendsto_nat_floor_div_atTop.comp harg)
-    have heq : (fun n => cutoff n / arg n) =ᶠ[atTop]
-        fun n => (Nat.floor (arg n) : ℝ) / arg n := by
-      filter_upwards [] with n
-      simp [cutoff, arg, L, rightTailPositiveAFirstCutoff,
-        logarithmOfSampleSize]
-    exact h.congr' heq.symm
-  have hpower : Tendsto (fun n => (cutoff n / arg n) ^ ((2 : ℝ) / 5))
-      atTop (𝓝 1) := by
-    simpa using hfloor.rpow_const
-      (x := (1 : ℝ)) (p := (2 : ℝ) / 5) (Or.inl (by norm_num))
-  have hratio : Tendsto (fun n => cutoff n ^ ((2 : ℝ) / 5) / L n)
-      atTop (𝓝 1) := by
-    have heq : (fun n => cutoff n ^ ((2 : ℝ) / 5) / L n) =ᶠ[atTop]
-        fun n => (cutoff n / arg n) ^ ((2 : ℝ) / 5) := by
-      filter_upwards [hL.eventually_gt_atTop 0] with n hn
-      have hargPos : 0 < arg n := Real.rpow_pos_of_pos hn _
-      have hargPow : arg n ^ ((2 : ℝ) / 5) = L n := by
-        dsimp [arg]
-        rw [← Real.rpow_mul hn.le]
-        norm_num [Real.rpow_one]
-      rw [Real.div_rpow (by positivity) hargPos.le, hargPow]
-    exact hpower.congr' heq.symm
-  simpa [cutoff, logarithmicSmallDeviationScale] using hratio
 
 private lemma logarithmicSmallDeviationScale_mul_isMogulskiiScale
     {c : ℝ} (hc : 0 < c) :
@@ -116,15 +106,15 @@ theorem eventually_rightTailPositiveA_spineCorridor_lowerBound_of_centeredSecond
     ∃ C : ℝ, C < 0 ∧ ∃ q : ℝ≥0∞, 0 < q ∧
       ∃ amplitude : ℝ, 0 < amplitude ∧ ∀ᶠ n : ℕ in atTop,
         rightTailPositiveASpineCorridorLowerBound ν b v C amplitude q
-          (rightTailPositiveAFirstCutoff N n) ≤
+          (rightTailFirstStageCutoff N n) ≤
           (tiltedIncrementFieldLaw realPotential μ)
         {increment : ℕ → ℝ |
-          RandomWalk.history (rightTailPositiveAFirstCutoff N n) 0 increment ∈
-            affineCorridorThrough (rightTailPositiveAFirstCutoff N n)
+          RandomWalk.history (rightTailFirstStageCutoff N n) 0 increment ∈
+            affineCorridorThrough (rightTailFirstStageCutoff N n)
               (-b * logarithmOfSampleSize N n) 0
               (b * logarithmOfSampleSize N n)
               ((-b + v) * logarithmOfSampleSize N n)} := by
-  let ell : ℕ → ℕ := rightTailPositiveAFirstCutoff N
+  let ell : ℕ → ℕ := rightTailFirstStageCutoff N
   let L : ℕ → ℝ := logarithmOfSampleSize N
   let v₀ : ℝ := v / 2
   let b₀ : ℝ := b - v / 4
@@ -138,7 +128,7 @@ theorem eventually_rightTailPositiveA_spineCorridor_lowerBound_of_centeredSecond
     exact (lt_div_iff₀ hv₀).2 (by dsimp [b₀, v₀]; linarith)
   have hscale : IsMogulskiiScale scale := by
     simpa [scale] using logarithmicSmallDeviationScale_mul_isMogulskiiScale hv₀
-  have hcutoffPow := tendsto_rightTailPositiveAFirstCutoff_twoFifths_div_log hN
+  have hcutoffPow := tendsto_rightTailFirstStageCutoff_smallDeviationScale_div_log hN
   have hbottomRatio : Tendsto (fun n => b₀ *
       (logarithmicSmallDeviationScale (ell n) / L n)) atTop (𝓝 b₀) := by
     simpa using hcutoffPow.const_mul b₀
@@ -154,7 +144,7 @@ theorem eventually_rightTailPositiveA_spineCorridor_lowerBound_of_centeredSecond
       realPotential μ hν hνMoment hsigma hscale ratio hratio
   refine ⟨C, hC, q, hq, amplitude, hamplitude, ?_⟩
   have hell : Tendsto ell atTop atTop := by
-    simpa [ell] using tendsto_rightTailPositiveAFirstCutoff_atTop hN
+    simpa [ell] using tendsto_rightTailFirstStageCutoff_atTop hN
   have hscaleAtCutoff : Tendsto (fun n => scale (ell n)) atTop atTop :=
     hscale.1.comp hell
   have hlowerTube : ∀ᶠ n : ℕ in atTop,
@@ -271,8 +261,8 @@ theorem eventually_rightTailPositiveA_spineCorridor_pos_of_centeredSecondMoment
     ∀ᶠ n : ℕ in atTop,
       0 < (tiltedIncrementFieldLaw realPotential μ)
         {increment : ℕ → ℝ |
-          RandomWalk.history (rightTailPositiveAFirstCutoff N n) 0 increment ∈
-            affineCorridorThrough (rightTailPositiveAFirstCutoff N n)
+          RandomWalk.history (rightTailFirstStageCutoff N n) 0 increment ∈
+            affineCorridorThrough (rightTailFirstStageCutoff N n)
               (-b * logarithmOfSampleSize N n) 0
               (b * logarithmOfSampleSize N n)
               ((-b + v) * logarithmOfSampleSize N n)} := by
@@ -281,7 +271,7 @@ theorem eventually_rightTailPositiveA_spineCorridor_pos_of_centeredSecondMoment
       hN μ ν hν hνMoment hsigma hb hv hvb
   filter_upwards [hlower] with n hn
   have hboundPos := rightTailPositiveASpineCorridorLowerBound_pos
-    ν b v C amplitude q hq (rightTailPositiveAFirstCutoff N n)
+    ν b v C amplitude q hq (rightTailFirstStageCutoff N n)
   exact hboundPos.trans_le hn
 
 end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail

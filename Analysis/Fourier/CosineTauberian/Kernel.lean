@@ -14,6 +14,20 @@ public import Mathlib.MeasureTheory.Integral.DominatedConvergence
 /-!
 # Bounds for the inverse cosine Tauberian kernel
 
+The public declarations are:
+
+- `cosineTauberianKernel t` is
+  $K(t)=\int_0^1(1-r)r^2\,\operatorname{sinc}(tr)\,dr$;
+  `continuous_cosineTauberianKernel` proves continuity.
+- `abs_cosineTauberianKernel_le` gives $|K(t)|\le1/12$ for all $t$.
+- `cosineTauberianKernel_eq_quotient` gives, for $t>0$,
+  $K(t)=\frac{2(1-\cos t)-t\sin t}{t^4}$;
+  `abs_cosineTauberianKernel_le_tail` bounds $|K(t)|$ by
+  $4/t^4+1/t^3$ for $t\ge1$.
+- `integrableOn_rpow_mul_abs_cosineTauberianKernel` proves
+  $s\mapsto s^\alpha|K(s)|$ integrable on $(0,\infty)$ for $0<\alpha<2$;
+  `integrableOn_cosineTauberianKernel` proves integrability of $K$ there.
+
 The kernel is defined by a sinc integral. This module proves its
 continuity, bounds, decay, and Mellin integrability.
 -/

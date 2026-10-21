@@ -7,7 +7,6 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Scale.Core
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Scale.BlockScale
 public import Probability.Process.RandomWalk.Path.Corridor.Horizontal.Core
 public import Probability.Process.RandomWalk.FunctionalLimit.NormalizedStep.Block
 public import Probability.Process.RandomWalk.FunctionalLimit.Stable.PathLimit.Block
@@ -18,16 +17,57 @@ public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalk
 /-!
 # One-block corridors for the stable Mogulskii route
 
-The one-block step of Mogulskii's stable proof estimates the probability that the increment path stays in a
-corridor of normalized width `w` over a block of `stableBlockLength α ν constant a n` steps, which is
-`a n ^ α / L* (a n)` steps up to the constant factor `constant`. The small-deviation scale
-`n * L* (a n) / a n ^ α` is what turns a per-block constant into the corridor rate of the theorem.
+The public declarations in this module are:
+
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.stableBlockTube`:
+  the event that an increment path stays in the open horizontal tube of
+  width $w x_n$ for the stable block length.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.stableClosedBlockTube`:
+  the corresponding closed-tube event.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.stableBlockCorridorProbability`:
+  the i.i.d. probability of the open stable block tube.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.blockOscillationLTEvent_subset_normalizedStepBlockRangeOscillation`:
+  strict source-block oscillation below $w x_n$ implies normalized path-range
+  oscillation at most $w$.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.iidSequenceLaw_measure_blockOscillationLT_le_normalizedStepBlockPathLaw`:
+  the source oscillation-event probability is bounded by the corresponding
+  normalized path-law probability.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.limsup_normalizedStepBlockRangeOscillation_le_stableProcessTube`:
+  under the block-path $J_1$ limit, the range-oscillation limsup is bounded by
+  the slightly wider stable-process range event.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.limsup_iidSequenceLaw_blockOscillationLT_le_stableProcessTube`:
+  transfers the preceding bound to the source block-oscillation probability.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.eventually_openHorizontalTubeProbability_le_pow_of_blockPathLimit`:
+  a one-block bound $q<1$ yields an eventual estimate
+  $\mathbb P(T_n)\le q^{N_n/b_n}$ for horizon $N_n$ and block length $b_n$.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.eventually_partialSumRangeOscillationLTProbability_le_pow_of_blockPathLimit`:
+  gives $\mathbb P(R_{N_n}<w x_n)\le q^{N_n/b_n}$ for the strict partial-sum
+  range event.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.measurableSet_stableClosedBlockTube`:
+  the closed stable block tube is measurable.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.stableBlockTube_mono_width`:
+  decreasing the open tube width gives a subset of the original event.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.stableBlockCorridorProbability_mono_width`:
+  the open-tube probability is monotone in its width.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.stableBlockCorridorProbability_tendsto_of_pathLawLimit`:
+  an explicit block-path $J_1$ limit and zero boundary mass give convergence
+  of the open-tube probabilities.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.stableBlockCorridorProbability_tendsto_of_stableDomain`:
+  stable-domain attraction, tightness, and slow variation provide the block
+  path-law limit and hence the one-block corridor probability limit.
+
+The one-block step of Mogulskii's stable proof estimates the probability that
+the increment path stays in a corridor of normalized width `w` over a block
+of `stableBlockLength α ν constant a n` steps, which is
+`a n ^ α / L* (a n)` steps up to the constant factor `constant`. The
+small-deviation scale `n * L* (a n) / a n ^ α` turns a per-block constant
+into the corridor rate of the theorem.
 
 For `α < 2` the limit process has jumps, so the estimate has to go through the stable Lévy process and the
 Skorokhod `J₁` topology; the killed-interval spectral expansion used for the Gaussian case is not available
 here and is not used. At `α = 2` the slowly varying factor is the truncated second moment, and the block
-length reduces to the diffusive block length with the constant rescaled by that moment, which is the link
-by which the Gaussian specialization reuses the diffusive estimates.
+length reduction to the diffusive scale is stated in
+`Stable/Scale/IndexTwo.lean`.
 
 The one-block estimate is conditional on the block path-law limit: the last
 theorem transfers an explicit `J₁` limit to the corridor probability when the
@@ -47,23 +87,6 @@ open Filter MeasureTheory Set
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
 
-
-/-! ## The block length at `α = 2` -/
-
-/-- At `α = 2` the slowly varying factor of (3) is the truncated second moment, so the stable block length
-is the floor of `constant * scale n ^ 2` divided by that moment. -/
-@[simp] theorem stableBlockLength_two (ν : Measure ℝ) (constant : ℝ) (scale : ℕ → ℝ) (n : ℕ) :
-    stableBlockLength 2 ν constant scale n =
-      ⌊constant * scale n ^ 2 / truncatedSecondMoment ν (scale n)⌋₊ := by
-  simp [stableBlockLength, stableBlockArgument, stableSlowVariation_two]
-
-/-- At `α = 2`, if the truncated second moment at the scale is the constant `c`, the stable block length is
-the diffusive block length with the constant rescaled by `c`. This is the link by which the Gaussian
-specialization reuses the diffusive estimates. -/
-theorem stableBlockLength_two_of_truncatedSecondMoment_eq (ν : Measure ℝ) {constant c : ℝ}
-    {scale : ℕ → ℝ} {n : ℕ} (hc : truncatedSecondMoment ν (scale n) = c) :
-    stableBlockLength 2 ν constant scale n = diffusiveBlockLength (constant / c) scale n := by
-  rw [stableBlockLength_two, hc, diffusiveBlockLength, div_mul_eq_mul_div]
 
 /-! ## The block corridor events -/
 

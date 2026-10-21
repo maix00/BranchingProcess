@@ -5,8 +5,21 @@ Authors: WANG Yiyang
 -/
 
 import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.SecondStage.Failure.Bound
-import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.PositiveA.LowCountPower
+import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.FirstStage.LowCountPower
+import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.FirstStage.Lemmas.PZAssembly
+import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Drawdown.Spine.Cutoff
+import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Drawdown.Spine.Window
+import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Rate.LogScales
+
 /-!
+* `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.rightTailPositiveAKilledEnoughRootEvent`:
+  the event that the first-stage killed population at its cutoff contains at
+  least `K` particles.
+* `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.eventually_measure_rightTailPositiveAKilledEnoughRoots_compl_le_exp_neg_power`:
+  if `δ < a - b - 2 * v - 3 * ε`, the probability that this population
+  contains fewer than `floor (N n ^ δ)` particles is eventually at most
+  `exp (-N n ^ δ)`.
+
 # First-stage lower bound for the selected root count
 
 The first-stage PZ budget bounds the probability that the killed slice has
@@ -63,7 +76,7 @@ theorem eventually_measure_rightTailPositiveAKilledEnoughRoots_compl_le_exp_neg_
         (Fin (Nat.floor ((N n : ℝ) ^ a))) ℕ)) :
     let m : ℕ → ℕ := fun n => Nat.floor ((N n : ℝ) ^ a)
     let K : ℕ → ℕ := fun n => Nat.floor ((N n : ℝ) ^ delta)
-    let ell : ℕ → ℕ := rightTailPositiveAFirstCutoff N
+    let ell : ℕ → ℕ := rightTailFirstStageCutoff N
     let L : ℕ → ℝ := logarithmOfSampleSize N
     ∀ᶠ n : ℕ in atTop,
       (RootIndexed.stepFieldLaw (Root := Fin (m n)) μ)
@@ -74,7 +87,7 @@ theorem eventually_measure_rightTailPositiveAKilledEnoughRoots_compl_le_exp_neg_
   dsimp
   let m : ℕ → ℕ := fun n => Nat.floor ((N n : ℝ) ^ a)
   let K : ℕ → ℕ := fun n => Nat.floor ((N n : ℝ) ^ delta)
-  let ell : ℕ → ℕ := rightTailPositiveAFirstCutoff N
+  let ell : ℕ → ℕ := rightTailFirstStageCutoff N
   let L : ℕ → ℝ := logarithmOfSampleSize N
   let pzMean (n : ℕ) : ℝ≥0∞ :=
     let corridor := affineCorridorThrough (ell n) (-b * L n) 0

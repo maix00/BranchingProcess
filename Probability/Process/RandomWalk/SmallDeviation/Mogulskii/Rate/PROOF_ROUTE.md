@@ -224,8 +224,11 @@ For a fixed small-deviation scale `x(n)`, write
    list of return blocks followed by a final bridge and bounds it by the
    killed walk over the exact sum of their lengths. The endpoint bridge, balanced partition, variable-list kernel composition,
    and finite-cell IID identification are now assembled in
-   `Stable/RandomWalkBounds/PartitionLower/`. `Stable/RandomWalkBounds/PartitionLower/EnergyLower.lean`
-   removes the finite core margins in the exact energy limit.
+   `Stable/RandomWalkBounds/Partition/Lower/`. The finite-product logarithmic
+   rate transfer is stated independently in
+   `Probability/MeasureTheory/Asymptotics/FiniteProductRate.lean`; the lower
+   chain then removes the finite core margins in
+   `Stable/RandomWalkBounds/Partition/Lower/EnergyLower.lean`.
 5. The process theorem is proved for `M₂`, `M₃`, and `M`. For arbitrary `IsM`
    targets, the API states matching inner and outer probability rates; it does
    not infer measurability from energy approximation. Ordinary probability
@@ -489,24 +492,29 @@ interval of total width `8m` and a block of length `n`, assume
    specialization also gives a closed horizontal tube with a terminal band.
    `eventually_lowerBound_le_centralCoreTargetMass` supplies the sharp
    per-block exponent when `n / (8m)^2 → C`.
-2. The narrow-window spectral step is now formalized in
-   `Target/Bands.lean`. `centralEndpointBandTarget` contains exactly `e - 1`
+2. The central endpoint-band target and its general finite and asymptotic
+   spectral estimates are in `Spectral/Target/EndpointBand.lean`. The
+   seven-window geometry and simultaneous mass estimate are in
+   `RandomWalkBounds/EndpointBands/Lemmas/SevenWindows.lean`.
+   `centralEndpointBandTarget` contains exactly `e - 1`
    parity-compatible sites in a prescribed lattice window. Its ground-state
    density lower bound yields a target mass proportional to `(e - 1)/(8m)`;
    `eventually_lowerBound_le_centralEndpointBandTargetMass_of_diffusiveRatio`
    proves the corresponding eventual bound whenever this proportion tends to
    `p > 0` and the limiting principal-eigenvalue power is strictly below the
-   limiting spectral threshold. `centralEndpointBandLo` places all seven
-   translated windows inside the central region when `2e ≤ m`, and
-   `eventually_forall_sevenCentralEndpointBandTargetMass_lower` applies the
+   limiting spectral threshold. `centralEndpointWindowLo` places window `j`
+   at `4m - (3s + e) + js`; the fit condition `3s + e ≤ 2m` puts all seven
+   windows in `[2m, 6m]`. Then
+   `eventually_forall_sevenCentralEndpointWindowTargetMass_lower` applies the
    estimate uniformly to those seven windows. The proof explicitly handles
    both the parity count and the spectral remainder; no mass is inferred for
    individual bands from a lower bound on their union.
-3. `Discrete/SpectralEndpointBands.lean` identifies each target sum with
-   its finite Rademacher path event and proves containment in the corresponding
+3. `RandomWalkBounds/EndpointBands/Lemmas/SpectralLowerBound.lean` identifies
+   each target sum with its finite Rademacher path event and proves containment
+   in the corresponding
    open tube and displacement-band block event. Thus the seven spectral
    estimates give a common eventual lower bound for the seven Rademacher
-   block probabilities. `Rate/Endpoint/Selection.lean` passes these
+   block probabilities. `Rate/Endpoint/Selection/Basic.lean` passes these
    moving widths and endpoint windows through fixed closed and open Brownian
    corridors using Donsker Portmanteau bounds with explicit scale slack. The
    open-set transfer gives the seven block bounds for every centered
@@ -516,7 +524,7 @@ interval of total width `8m` and a block of length `n`, assume
    scale-transfer theorem at each fixed `C` and take `C → ∞`. The explicit
    choices `p = 1/C`, `q = 1 - 10/C`, and `δ = p/(100√C)` make the lower rate
    converge to `-π²/2`. The construction proves eventual positivity and lower
-   coboundedness; `Rate/Endpoint/Selection.lean` combines it with the
+   coboundedness; `Rate/Endpoint/Selection/Basic.lean` combines it with the
    independent sharp upper limsup to prove the horizontal limit.
 
 The centered-core spectrum alone does not give the lower bound for each of
@@ -579,11 +587,12 @@ The discrete random-walk theorem now has an exact finite-partition proof.
   used for the upper estimate, without choosing a random corridor center.
   `Stable/Corridor.lean` transfers the closed range event by closed-set
   Portmanteau. The endpoint-return construction and seven open endpoint bands
-  give the matching one-block lower estimate; `Stable/RandomWalkBounds/Source/Bounds/Lower.lean` derives the
-  endpoint masses and J₁ block limit in the three source regimes below index
-two. `BridgeComparison/SourceDecay.lean` proves the equation-(34) comparison
-  logarithmic comparison from the finite bridge cover, entrance mass, base
-  positivity, and endpoint decay.
+  give the matching one-block lower estimate;
+  `Stable/RandomWalkBounds/TerminalLeft/Bounds/Lower.lean` derives the endpoint
+  masses and J₁ block limit in the three source regimes below index two.
+  `Bridge/TerminalLeftDecay.lean` proves Mogul'skii's equation-(34)
+logarithmic comparison from the finite bridge cover, entrance mass, base
+positivity, and endpoint decay.
 - For a finite-partition `M₂` corridor, `Discrete/PartitionEndpoint.lean`
   defines the contracted local event with an open outgoing core band and proves
   measurability and the incoming/outgoing core implications.
@@ -591,9 +600,9 @@ two. `BridgeComparison/SourceDecay.lean` proves the equation-(34) comparison
   exact floor-indexed IID cells and proves their inclusion in the whole
   right-continuous corridor event. This preserves the endpoint convention at
   partition knots.
-- `Stable/RandomWalkBounds/EndpointBandTransfer/StableLower/` supplies the open
+- `Stable/RandomWalkBounds/EndpointBandTransfer/Lower/` supplies the open
   endpoint-mass transfer, cell entrance and exit bridges, and their path-limit
-  bounds. `Stable/RandomWalkBounds/PartitionLower/` composes these with the balanced
+  bounds. `Stable/RandomWalkBounds/Partition/Lower/` composes these with the balanced
   floor partition, obtains eventual positivity, and derives the sharp lower
   energy rate. `Stable/RandomWalkBounds/Partition/Upper.lean` proves the matching
   selected-cell upper rate. `Stable/RandomWalkBounds/Partition/Limit.lean` combines both sides into the
@@ -634,7 +643,7 @@ does not imply that a target is measurable.
 The exponent-two coefficient is identified by comparing the general
 path-class limit with the explicit horizontal-tube limit. This gives escape
 constant `-π²/8` and full-width coefficient `-π²/2`; the Gaussian source-path
-specialization is in `Gaussian/SourcePathClass.lean`.
+specialization is in `Gaussian/Path/TerminalLeftPathClass/Basic.lean`.
 
 The `α = 2` source-law bridge is formalized. A generic rational-coordinate
 measurable embedding constructs a Skorokhod-valued realization of every

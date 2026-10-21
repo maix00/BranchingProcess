@@ -15,7 +15,18 @@ public import Combinatorics.BranchingWalk.Step.Ordering.Rank
 The descendants of a particle are the particles below it in the genealogical
 order, so a rank restricted to them counts the particles of a time slice that
 are descendants and lie below a fixed particle of `RootIndexed.TreeNode Root α`. As in
-`Rank/Slice.lean`, the order on that type is an explicit hypothesis. -/
+`Rank/Slice.lean`, the order on that type is an explicit hypothesis.
+
+The public API is:
+
+- `Cloud.descendantRank C t descendant q =
+  #{p | p ∈ C.particles t ∧ descendant p ∧ p < q}` in `ℕ∞`.
+- `Cloud.descendantRank_def` is the definitional equality displaying that
+  predecessor-set cardinality.
+- `Cloud.descendantRank_eq_siblingRank` proves
+  `descendantRank(i) = ξ.siblingRank(i)` when the selected predecessors of
+  `i` are exactly the surviving slots of `ξ` below `i`; local finiteness makes
+  this count finite. -/
 
 @[expose] public section
 

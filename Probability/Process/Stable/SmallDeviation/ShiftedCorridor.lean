@@ -9,6 +9,7 @@ module
 public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.Entrance.FiniteTime
 public import Probability.Process.Stable.SmallDeviation.Blocks.EntranceFactorization
 public import Probability.Process.Stable.SmallDeviation.Blocks.EntranceScaling
+import Probability.Process.Stable.SmallDeviation.Blocks.ReturnScale
 public import Probability.Process.Stable.SmallDeviation.Blocks.Upper.Shrinking
 public import Probability.Distributions.Stable.Operations.Sign
 public import Probability.Process.Path.Skorokhod.Corridor.Segment

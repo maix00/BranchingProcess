@@ -8,7 +8,7 @@ module
 
 public import Mathlib.Topology.Order.Basic
 public import Mathlib.Basic.Real.Basic
-public import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.Linarith
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 

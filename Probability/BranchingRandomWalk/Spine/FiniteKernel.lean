@@ -9,7 +9,7 @@ module
 public import Mathlib.Algebra.BigOperators.Field
 public import Mathlib.Algebra.BigOperators.Ring.Finset
 public import Mathlib.Basic.Real.Basic
-public import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.FieldSimp
 public import Mathlib.Analysis.SpecialFunctions.Exp
 
 /-!

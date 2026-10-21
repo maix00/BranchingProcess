@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import MeasureTheory.Measure.Finite.Cover
+public import MeasureTheory.OuterMeasure.Finite.Cover
 public import Probability.Process.RandomWalk.Path.Block.Law.Basic
 public import Probability.Process.RandomWalk.Path.Block.Corridor.Measure
 

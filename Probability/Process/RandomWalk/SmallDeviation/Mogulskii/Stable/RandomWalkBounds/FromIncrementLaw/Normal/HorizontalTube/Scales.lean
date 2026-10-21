@@ -246,7 +246,7 @@ theorem centeredUnitVariance_closedHorizontalTubeProbabilityRate
       hsmall hcentered hsquare hvariancePos ha haOne
 
 /-- The generalized inverse width has the closed-tube rate in the normalization
-of Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.1(i): `scale² / (n - 1)`. The source path uses
+of Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.1(i): `scale² / (n - 1)`. The terminal-left path uses
 the same `n - 1` terminal partial sum. -/
 theorem inverseScale_closedHorizontalTubeProbabilityRate
     {L : ℕ → ℕ}

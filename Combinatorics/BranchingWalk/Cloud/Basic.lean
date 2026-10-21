@@ -27,6 +27,44 @@ contains the natural-number generations is built into `Cloud`.
 The multi-root construction is primitive: each root supplies its own step
 field and initial position, and the cloud is their union.  The single-root
 construction is the special case with the singleton root type `Unit`.
+
+The public API is:
+
+- `CloudSet Time X` is a time-indexed family of point sets. `Cloud Time Root
+  α X` records a time-indexed set of labelled particles and a position map on
+  root-address pairs, retaining particle identity when positions coincide.
+- `Cloud.support C` maps each particle slice through its position map to a
+  geometric point set. `Cloud.mapPosition` changes the observation of
+  positions and `Cloud.mapOrderDual` reverses their order.
+- `Cloud.ofBranchingWalk d β time` has particles
+  `{p | time p.2 = t ∧ surviveAlong (β.step p.1) [] p.2}` at time `t`, with
+  position `β.initial p.1 + displaceWith d (β.step p.1) [] p.2`.
+  `Cloud.discreteTimeCloud_ofBranchingWalk` uses address generation as time;
+  its slices are exactly `survivingParticlesAt`.
+- `Cloud.withFinsetParticles` replaces the labelled slices by finite
+  populations while preserving positions. `CloudSet.map` pushes geometric
+  point sets through a map, and `CloudSet.vertexSet` collects the space-time
+  point set.
+- `Cloud.ofBranchingWalk_mem_particles_child` characterizes a realized
+  one-step child by survival of its slot; `Cloud.mem_ofBranchingWalk_particles_iff`
+  gives the full time-slice characterization.
+
+The public equations are `Cloud.withFinsetParticles_particles` and
+`Cloud.withFinsetParticles_position`, which identify the finite slices and
+preserve positions; `Cloud.mapPosition_particles` and
+`Cloud.mapPosition_position`, which preserve labels and apply the observation;
+and `Cloud.ofBranchingWalk_position` and
+`Cloud.discreteTimeCloud_ofBranchingWalk_position`, which give the accumulated
+position `β.initial r + displaceWith d (β.step r) [] u`. The generation-indexed
+identity is `Cloud.discreteTimeCloud_particles_eq_survivingParticlesAt`:
+`(Cloud.discreteTimeCloud_ofBranchingWalk d β).particles k =
+survivingParticlesAt β k`.
+
+For geometric clouds, `CloudSet.mem_vertexSet` identifies membership in the
+space-time vertex set, `CloudSet.ext` gives extensionality by time slices,
+`CloudSet.support_mapPosition` states
+`(C.mapPosition φ).support = C.support.map φ`, and
+`CloudSet.mem_mapOrderDual_points` preserves membership under order reversal.
 -/
 
 @[expose] public section

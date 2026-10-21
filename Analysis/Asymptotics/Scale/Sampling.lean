@@ -16,7 +16,12 @@ import Mathlib.Tactic
 
 The public declarations in this module are deterministic scale tools:
 
-- `Asymptotics.exists_sampledTimeIntervalIndex`, `Asymptotics.sampledTimeIntervalIndex_spec`, and `Asymptotics.sampledTimeIntervalIndex_le_of_mem`: existence and minimality of the index satisfying n < t[k+1].
+- For $t_k=\mathrm{time}(k)$, `Asymptotics.sampledTimeIntervalIndex` is the
+  least $k(n)$ such that $n<t_{k(n)+1}$;
+  `Asymptotics.exists_sampledTimeIntervalIndex`,
+  `Asymptotics.sampledTimeIntervalIndex_spec`, and
+  `Asymptotics.sampledTimeIntervalIndex_le_of_mem` establish existence, the
+  defining inequality, and minimality.
 - `Asymptotics.sampledTimeIntervalIndex_lower_bound`, `Asymptotics.sampledTimeIntervalIndex_tendsto`, and `Asymptotics.sampledTimeIntervalIndex_at_time`: when t₀ ≤ n, the selected interval satisfies t[k(n)] ≤ n < t[k(n)+1]; also k(n) → ∞ and k(tⱼ) = j.
 - `Asymptotics.sampledIntegerWidthScale` and `Asymptotics.sampledRealWidthScale`: the piecewise constant width w[k(n)].
 - `Asymptotics.sampledIntegerWidthScale_isSmallDeviationScale` and `Asymptotics.sampledRealWidthScale_isSmallDeviationScale`: if wₖ → ∞ and wₖ²/tₖ → 0, then w[k(n)] → ∞ and w[k(n)]²/n → 0.

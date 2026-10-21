@@ -6,16 +6,17 @@ Authors: WANG Yiyang
 
 module
 
-public import Combinatorics.BranchingWalk.Basic.Definitions
+public import Combinatorics.BranchingWalk.Basic.BranchingWalk
 public import Combinatorics.BranchingWalk.Step.Selection.SiblingClosed
 
 /-!
 # Sibling-closed step fields
 
-The direct sibling-closure predicate for a step field says that every local
-step has its surviving slots in an initial segment. It is kept separate from
-the optional relabeling interface in SiblingClosable.lean: a field may be
-relabelable without being sibling-closed in its original slot order.
+`IsSiblingClosed β` means that every local step is sibling-closed in its
+existing slot order:
+`∀ u, Step.IsSiblingClosed (β u)`. This is the direct property, distinct from
+`StepField.IsSiblingClosable`, which says that an injective relabeling can
+make each local step sibling-closed.
 -/
 
 @[expose] public section

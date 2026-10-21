@@ -8,8 +8,11 @@ module
 
 public import Probability.Process.RandomWalk.FunctionalLimit.Normal.Tightness
 public import Probability.Process.RandomWalk.FunctionalLimit.Stable.PathLaw.Process
+public import Probability.Distributions.Stable.Attraction.Normal.Basic
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Gaussian.EscapeConstant
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.CLT
+
+import Probability.Distributions.Gaussian.Interval
+import Probability.Process.Stable.SmallDeviation.EscapeRate.PathLaw.Transfer
 
 /-!
 # Gaussian path-law existence from random-walk tightness
@@ -57,7 +60,8 @@ theorem exists_gaussianStablePathLaw_with_escapeRate
   have hDOA : IsInDomainOfAttractionAlong ν
       (gaussianReal 0 1) normalization (fun _ => 0) := by
     simpa [normalization] using
-      isInDomainOfAttractionAlong_gaussianReal_zero_one ν hν.1 hν.2
+      ProbabilityTheory.isInDomainOfAttractionAlong_gaussianReal_zero_one_of_centered_unitSecondMoment
+        ν hν
   have hnormalization : ∀ n, 0 < n → 0 < normalization n := by
     intro n hn
     exact Real.sqrt_pos.2 (by exact_mod_cast hn)

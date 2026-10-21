@@ -8,7 +8,7 @@ module
 
 public import Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.EndpointWindow
 public import MeasureTheory.Measure.CadlagPath.PathClass.StepCorridor.TerminalWindow
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Path.SourcePath
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Path.TerminalLeft
 
 /-!
 # Endpoint-window corridor proof steps
@@ -16,12 +16,12 @@ public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Path.Sourc
 The proof-specific declarations are:
 
 - `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.endpointWindowCorridorUnion`:
-  the singleton union $G=\{C_{a,u,v}\}$ used to apply the source-path rate theorem.
+  the singleton union $G=\{C_{a,u,v}\}$ used to apply the terminal-left path rate theorem.
 - `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.endpointWindowCorridorUnion_toSet` and
   `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.endpointWindowCorridorUnion_realEnergy`:
   $G.toSet=C_{a,u,v}.toSet$ and $H_2(G)=1$.
 - `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.sourceTerminalJumpCorridor_subset_endpointWindow`:
-  a source-normalized path in $C_{a,u,v}$ lies in the closed tube and has terminal value in $[(u-a)D,(v-a)D]$.
+  a terminal-left normalized path in $C_{a,u,v}$ lies in the closed tube and has terminal value in $[(u-a)D,(v-a)D]$.
 
 These steps support Wang Yiyang, *Asymptotic Speed of the N-Branching
 Random Walk with Infinite Offspring* (master's thesis, Fudan University,

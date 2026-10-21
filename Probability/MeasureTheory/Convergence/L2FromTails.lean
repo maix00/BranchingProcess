@@ -12,7 +12,7 @@ public import Mathlib.MeasureTheory.Integral.Bochner.Set
 public import Mathlib.MeasureTheory.Measure.ProbabilityMeasure
 public import Mathlib.Analysis.Real.Sqrt
 public import Mathlib.Topology.Basic
-public import Mathlib.Tactic
+import Mathlib.Tactic
 
 /-!
 # Second-moment convergence from tail control
@@ -20,6 +20,19 @@ public import Mathlib.Tactic
 These lemmas isolate the last measure-theoretic step in the trajectory
 argument: control the squared variable on a small central interval directly,
 and control its complement by Hölder's inequality and a fourth moment.
+
+The public theorems in this file are:
+
+- `ProbabilityTheory.integral_sq_le_threshold_add_fourthTail`: for
+  $X\in L^4$ and $\varepsilon>0$,
+  $\int X^2\,d\mu\le\varepsilon^2+
+  (\int X^4\,d\mu)^{1/2}\,\mathbb P(|X|\ge\varepsilon)^{1/2}$.
+- `ProbabilityTheory.tendsto_integral_sq_of_tendsto_fourthTailControl`:
+  if for each fixed $\varepsilon>0$ the fourth-moment/tail contribution tends
+  to zero, then $\int X_n^2\,d\mu\to0$.
+- `ProbabilityTheory.tendsto_integral_sq_zero_of_uniform_fourthMoment_and_tails`:
+  a uniform fourth-moment bound and vanishing two-sided fixed-threshold tails
+  imply $\int X_n^2\,d\mu\to0$.
 -/
 
 @[expose] public section

@@ -9,9 +9,9 @@ module
 public import Probability.Process.RandomWalk.Path.Corridor.Interpolation.Basic
 public import Probability.Process.RandomWalk.Path.Corridor.Interpolation.Core
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Range.Basic
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Survival.Path
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Survival.Upper
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Survival.Bounds
+public import Probability.Process.RandomWalk.Rademacher.FiniteInterval.Path
+public import Probability.Process.RandomWalk.Rademacher.FiniteInterval.Spectral.Survival.Upper
+public import Probability.Process.RandomWalk.Rademacher.FiniteInterval.Spectral.Survival.Bounds
 public import Probability.Kernel.Survival.Basic
 
 /-!
@@ -56,6 +56,8 @@ The public declarations are:
 
 open MeasureTheory Set
 open scoped BigOperators
+
+open ProbabilityTheory.RandomWalk.Rademacher.FiniteInterval
 
 @[expose] public section
 

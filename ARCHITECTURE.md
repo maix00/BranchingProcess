@@ -64,6 +64,10 @@ owns each concept it uses.
   A random walk is connected to process-level random-walk results through the
   explicit branching-walk bridge; it does not redefine the deterministic
   walk as a probability object.
+- `Probability/Process/RandomWalk/Rademacher/FiniteInterval/` owns the finite
+  interval walk with fair $\pm1$ increments: its killed transition matrix and
+  kernel, sine eigenfunction, and path-survival interpretation. Small-deviation
+  modules use this concrete model without owning its construction.
 - Ulam--Harris trees describe surviving addresses. A branching walk determines
   its parent-closed genealogy. Sibling closure is additional ordering data and
   is required only when the chosen address order needs it.
@@ -112,6 +116,11 @@ For the mathematical distinction between Mogulskii corridors, drawdown,
 tilted tubes, and entrance estimates, see
 [`Probability/Process/RandomWalk/SmallDeviation/README.md`](Probability/Process/RandomWalk/SmallDeviation/README.md).
 
-There is no umbrella import. Import the module that owns the required
-definition or theorem. The dependency graph and API are checked by the
-repository scripts described in [`CONTRIBUTING.md`](CONTRIBUTING.md).
+There is no repository-wide umbrella import. A named subject entry point may
+re-export a coherent list of principal published results for discovery, as
+`Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Theorems.lean` does
+for the original Mogul'skii theorems. Such an entry point does not replace the
+semantic owner modules: proofs and ordinary clients import the narrow module
+that defines the required object or proves the required result. The dependency
+graph and API are checked by the repository scripts described in
+[`CONTRIBUTING.md`](CONTRIBUTING.md).

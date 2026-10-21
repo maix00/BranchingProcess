@@ -8,6 +8,7 @@ module
 
 public import Probability.Process.RandomWalk.Path.Block.Corridor.Core
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Path.Tightness
+import Probability.Process.RandomWalk.Path.Block.Maximal.SecondMoment
 
 /-!
 # One-block corridor approximation

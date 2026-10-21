@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.PathClass.Rate
-public import Probability.Process.RandomWalk.FunctionalLimit.Stable.PathLimit.Source
+public import Probability.Process.RandomWalk.FunctionalLimit.Stable.PathLimit.RandomWalk
 public import Probability.Process.RandomWalk.FunctionalLimit.Stable.Centering
 public import Probability.Distributions.Stable.Attraction.NormingRatios.Tauberian
 public import Probability.Process.RandomWalk.FunctionalLimit.Normal.Tightness

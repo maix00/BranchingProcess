@@ -10,7 +10,8 @@ public import Mathlib.Algebra.BigOperators.Fin
 public import Mathlib.Algebra.Module.Defs
 public import Mathlib.Data.Fintype.Lattice
 public import Mathlib.Basic.Real.Basic
-public import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.Abel
+import Mathlib.Tactic.Linarith
 
 /-!
 # Finite partial-sum identities
@@ -126,7 +127,8 @@ partial displacement nonnegative. This is the first event-covering step of
 Bauer--Godrèche--Luck, Appendix A, immediately after (A.3)
 (arXiv:cond-mat/9905252). -/
 theorem exists_cyclicPartialSum_nonneg_of_last_nonneg
-    {n : ℕ} (hn : 0 < n) (s : Fin (n + 1) → ℝ)
+    {G : Type*} [AddCommGroup G] [LinearOrder G] [IsOrderedAddMonoid G]
+    {n : ℕ} (hn : 0 < n) (s : Fin (n + 1) → G)
     (hzero : s 0 = 0) (hlast : 0 ≤ s (Fin.last n)) :
     ∃ k : Fin n, ∀ j : Fin (n + 1), 0 ≤ cyclicPartialSum s k j := by
   have huniv : (Finset.univ : Finset (Fin n)).Nonempty :=
@@ -150,15 +152,21 @@ theorem exists_cyclicPartialSum_nonneg_of_last_nonneg
       exact sub_nonneg.mpr (le_trans hkzero hlast)
   · have hindex : k.val + j.val - n < n := by omega
     have hmin := hk ⟨k.val + j.val - n, hindex⟩ (Finset.mem_univ _)
+    let q : Fin (n + 1) := ⟨k.val + j.val - n, by omega⟩
+    let i : Fin n := ⟨k.val + j.val - n, hindex⟩
     have hindexEq :
-        (⟨k.val + j.val - n, by omega⟩ : Fin (n + 1)) =
-          (⟨k.val + j.val - n, hindex⟩ : Fin n).castSucc := by
+        q = i.castSucc := by
       ext
       rfl
-    have hgoal : 0 ≤ s (Fin.last n) - s k.castSucc +
-        s ⟨k.val + j.val - n, by omega⟩ := by
+    have hdiff : 0 ≤ s i.castSucc - s k.castSucc :=
+      sub_nonneg.mpr hmin
+    have hsum : 0 ≤ s (Fin.last n) + (s i.castSucc - s k.castSucc) :=
+      add_nonneg hlast hdiff
+    have hgoal : 0 ≤ s (Fin.last n) - s k.castSucc + s q := by
       rw [hindexEq]
-      linarith
+      calc
+        0 ≤ s (Fin.last n) + (s i.castSucc - s k.castSucc) := hsum
+        _ = s (Fin.last n) - s k.castSucc + s i.castSucc := by abel
     simpa [cyclicPartialSum, h] using hgoal
 
 end Fin

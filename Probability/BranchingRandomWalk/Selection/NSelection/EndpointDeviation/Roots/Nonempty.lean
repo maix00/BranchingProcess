@@ -6,6 +6,8 @@ Authors: WANG Yiyang
 
 import Probability.BranchingRandomWalk.Selection.NSelection.Admissible.Real
 import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Drawdown.Population
+import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law.Basic
+import Combinatorics.BranchingWalk.Step.Basic
 /-!
 # Nonempty selected generations
 
@@ -36,7 +38,8 @@ theorem finiteRootStepFieldLaw_firstNSelectedPopulation_nonempty_ae
         (Finset.univ : Finset (Fin m)) (fun _ => (0 : ℝ)) id id n field).Nonempty := by
   have hspec := RootIndexed.selectedPopulationTotalized_succ_spec_ae
     μ hboundary N (Finset.univ : Finset (Fin m)) (fun _ => (0 : ℝ))
-  have hchildren := finiteRootStepFieldLaw_all_nonempty μ hnonempty m
+  have hchildren := finiteRootStepFieldLaw_ae_all_of_measure_one
+    nonemptySupport_measurable μ hnonempty m
   filter_upwards [hspec, hchildren] with field hspec hchildren
   intro n
   induction n with

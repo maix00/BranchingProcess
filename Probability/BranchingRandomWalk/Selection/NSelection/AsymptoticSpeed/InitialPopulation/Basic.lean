@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.BranchingRandomWalk.Selection.NSelection.AsymptoticSpeed.Limit.KingmanInterface
+public import Probability.BranchingRandomWalk.Selection.NSelection.AsymptoticSpeed.Limit.InfiniteOffspring.Repair
 public import Combinatorics.BranchingWalk.Step.Measurability
 public import Mathlib.Probability.BorelCantelli
 public import Mathlib.Order.LiminfLimsup

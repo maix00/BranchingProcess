@@ -26,6 +26,67 @@ those proofs or relabelings.
 The transport works for arbitrary slot types and arbitrary offspring counts.
 The empty step remains empty, and coverage of the support gives a bijection
 between the realized addresses of the two trees.
+
+## Public declarations
+
+For an orderable step field `β` with ordering witnesses `h`, write
+$A_p(u)=\operatorname{orderingAddressAux}(\beta,h,p,u)$,
+$A(u)=\operatorname{orderingAddress}(\beta,h,u)$, and
+$O(u)=\operatorname{orderingField}(\beta,h,u)$.
+
+* `Combinatorics.Branching.StepField.orderingAddressAux` recursively transports
+  a path below an old parent; `orderingAddress` is its root version, and
+  `orderingField` reads the old step at the transported address and orders its
+  children.
+* `Combinatorics.Branching.StepField.orderingAddressAux_nil` states
+  $A_p([])=[]$.
+* `Combinatorics.Branching.StepField.orderingAddressAux_append_singleton` and
+  `orderingAddressAux_append` state
+  $A_p(u++[i])=A_p(u)++[\rho_{p++A_p(u)}(i)]$ and
+  $A_p(u++v)=A_p(u)++A_{p++A_p(u)}(v)$, where $\rho_q$ is the relabeling at
+  old parent $q$.
+* `Combinatorics.Branching.StepField.orderingAddress_append_singleton` and
+  `orderingAddress_append` give the corresponding identities for $A$.
+* `Combinatorics.Branching.StepField.length_orderingAddressAux` states
+  $|A_p(u)|=|u|$; `injective_orderingAddressAux` and
+  `injective_orderingAddress` state injectivity of the auxiliary and root
+  address maps.
+* `Combinatorics.Branching.StepField.orderingField_apply` gives the defining
+  value of $O(u)$. `survive_orderingField_iff` identifies its surviving child
+  slots with the relabeled surviving slots of $\beta(A(u))$.
+* `Combinatorics.Branching.StepField.surviveAlong_orderingAddressAux_iff`
+  states
+  $\operatorname{surviveAlong}(O,v,u)\leftrightarrow
+  \operatorname{surviveAlong}(\beta,A(v),A_{A(v)}(u))$;
+  `surviveAlong_orderingAddress_iff` specializes this to the root path.
+  `IsSiblingClosed_orderingField` proves that $O$ is sibling closed.
+* `Combinatorics.Branching.StepField.stepPointMeasure_orderingField` states
+  $\operatorname{stepPointMeasure}(O(u))=
+  \operatorname{stepPointMeasure}(\beta(A(u)))$.
+  `stepPointMeasure_orderingField_map` gives the same identity after a
+  measurable mark map.
+* `Combinatorics.Branching.StepField.markedTreeOfOrderingMap` and
+  `markedTreeOfOrdering` define the mapped and unmapped ordered marked trees.
+  `mem_markedTreeOfOrderingMap_iff` states
+  $u\in\operatorname{carrier}(\operatorname{markedTreeOfOrderingMap})
+  \leftrightarrow \operatorname{surviveAlong}(\beta,[],A(u))$.
+* `Combinatorics.Branching.StepField.displace_orderingField` and
+  `displaceWith_orderingField` identify displacement along $O$ with
+  displacement along the original path $A(u)$, before and after a mark map.
+  `markedTreeOfOrdering_mark` and `markedTreeOfOrderingMap_mark` give the
+  corresponding mark formulas on realized addresses.
+* `Combinatorics.Branching.StepField.exists_orderingAddress_preimage` and
+  `existsUnique_orderingAddress_preimage` give existence and uniqueness of an
+  ordered address above every realized original address.
+* `Combinatorics.UlamHarris.MarkedTree.orderingTransport` defines the ordered
+  realization of an arbitrary marked tree. Its public properties are
+  `mem_orderingTransport_iff` (carrier membership is transported by $A$),
+  `existsUnique_orderingAddress_preimage` (the realized-address bijection),
+  `mark_orderingTransport` (marks are read at $A(u)$),
+  `stepOfMarkedTree_orderingTransport` (the local offspring step is the
+  ordered old step), `stepPointMeasure_orderingTransport` (its offspring point
+  measure is unchanged), and `rootMark_orderingTransport` (the root mark is
+  unchanged).
 -/
 
 @[expose] public section

@@ -15,6 +15,22 @@ The particles realized by present parent-child links in a branching walk and
 their generation-indexed slices. Here “surviving” means realized in the
 genealogy; it does not mean that a particle has descendants at arbitrarily
 large generations.
+
+The set `survivingParticles β` is
+`{p | IsDescendant β (p.1, []) p}`; `mem_survivingParticles_iff` exposes this
+predicate. The public theorems
+`mem_survivingParticles_iff_surviveAlong` and
+`mem_survivingParticles_iff_exists_mem_descendants` identify its members
+with root-address paths satisfying
+`surviveAlong (β.step r) [] u`, equivalently descendants of a root particle.
+The generation slice `survivingParticlesAt β k` is
+`{p ∈ survivingParticles β | generation p.2 = k}`.
+`mem_survivingParticlesAt_iff` gives its membership condition;
+`mem_survivingParticles_of_mem_survivingParticlesAt` and
+`generation_of_mem_survivingParticlesAt` project the conditions.
+`disjoint_survivingParticlesAt` proves distinct generations disjoint, and
+`mem_survivingParticles_iff_exists_mem_survivingParticlesAt` states
+`p ∈ survivingParticles β ↔ ∃ k, p ∈ survivingParticlesAt β k`.
 -/
 
 @[expose] public section

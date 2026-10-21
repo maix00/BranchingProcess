@@ -8,7 +8,9 @@ module
 
 public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.Assembly.Global
 public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.Entrance.ShortTime
-public import Probability.Process.Stable.SmallDeviation.Blocks.ReturnScale
+public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Gluing
+import Probability.Process.Stable.SmallDeviation.RationalTube
+import Probability.Process.Stable.SmallDeviation.Blocks.Lower.Lemmas.ReturnScale
 import Mathlib.Order.CompleteLattice.Lemmas
 
 /-!

@@ -12,6 +12,20 @@ public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 /-!
 # Logarithms of finite sums at a diverging negative scale
 
+The public theorems are:
+
+- `eventually_one_sub_eta_sub_delta_le_log_sum_ratio`: if $F$ is finite and
+  nonempty, $g\to-\infty$, $q>0$ eventually,
+  $0<q\le\sum_{i\in F}p_i$ eventually, each $p_i>0$ eventually, and
+  $\frac{\log p_i}{g}\ge1-\eta$ eventually for every $i\in F$, then for
+  every $\delta>0$ eventually
+  $\frac{\log q}{g}\ge1-\eta-\delta$.
+- `tendsto_log_finite_union_ratio`: if $F$ is finite and nonempty,
+  $g\to-\infty$, $q>0$ and $p_i>0$ eventually,
+  $p_{i_0}\le q\le\sum_{i\in F}p_i$ eventually, and
+  $\frac{\log p_i}{g}\to r_i$ with $L\le r_i$ and $r_{i_0}=L$, then
+  $\frac{\log q}{g}\to L$.
+
 A finite sum changes a logarithmic ratio by only a vanishing additive term.
 This estimate is independent of probability and path-space structure.
 -/

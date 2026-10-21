@@ -10,6 +10,21 @@ public import Analysis.Asymptotics.RegularVariation.AtZero.Basic
 /-!
 # Potter bounds at zero from compact-uniform ratios
 
+The public theorems are:
+
+- `exists_potter_bound_of_uniform_ratio`: under eventual positivity,
+  uniform convergence of $\frac{f(ru)}{f(u)}$ to $r^\rho$ for $1\le r\le2$, and
+  $0<\delta<\rho$, there is $U>0$ such that for $0<u\le v<U$,
+  $\frac{1}{2\cdot 2^{\rho-\delta}}\left(\frac{v}{u}\right)^{\rho-\delta}\le
+  \frac{f(v)}{f(u)}\le(2^\rho+1)\left(\frac{v}{u}\right)^{\rho+\delta}$.
+- `exists_potter_envelope_of_uniform_ratio`: under the same hypotheses, there
+  are $U,C>0$ such that $\frac{f(su)}{f(u)}\le
+  C\left(s^{\rho-\delta}+s^{\rho+\delta}\right)$ whenever $u,s>0$ and
+  $u,su<U$.
+- `exists_global_potter_envelope_of_uniform_ratio`: with the additional
+  assumptions $0\le f(x)\le M$ for $x\ge0$, the same envelope holds for all
+  $s>0$ and $0<u<U$; it has no upper restriction on $su$.
+
 The dyadic argument here does not assume monotonicity. Its local input is
 uniform control of ratios on `[1, 2]`; this is stronger than pointwise regular
 variation and is supplied by the compact-uniform characteristic-defect limit.

@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Combinatorics.BranchingWalk.Basic.Definitions
+public import Combinatorics.BranchingWalk.Basic.BranchingWalk
 public import Mathlib.Algebra.BigOperators.Fin
 
 /-!
@@ -26,6 +26,23 @@ recursion that records absence is `displace? β v p`, with the root form
 read at one fixed root, so it is not defined here either: the
 `ProbabilityTheory.BranchingRandomWalk.RootIndexed` layer wraps these
 definitions root by root.
+
+The public API is:
+
+- `displace β v p` recursively sums the zero-defaulted marks along `p`,
+  reading each edge at the address reached so far. `displace_append` splits
+  the sum over concatenated paths, and `displace_rebase` identifies a shifted
+  step field with a shifted starting address.
+- `displace_eq_sum` and `displace_eq_sum_fin` express the recursion as finite
+  sums over path coordinates; `displace_append_singleton` and
+  `displace_append_two` give short-path forms.
+- `displace_cons` gives the recursive step
+  `displace β v (i :: p) = value' (β v) i + displace β (v ++ [i]) p`.
+- `displace? β v p` is `some` of the displacement when every edge survives
+  and `none` otherwise. `displace?_eq_none_iff`,
+  `displace?_eq_some_iff`, and `displace?_isSome_iff` characterize these
+  cases; the two `_eq_some_sum_iff` theorems give the corresponding finite-sum
+  formulas, and `displace?_append_singleton` gives the root one-edge case.
 -/
 
 @[expose] public section

@@ -6,15 +6,37 @@ Authors: WANG Yiyang
 
 module
 
-public import Combinatorics.BranchingWalk.Basic.Definitions
+public import Combinatorics.BranchingWalk.Basic.BranchingWalk
 
 /-!
 # Root-indexed branching step fields
 
 An arbitrary type `Root` indexes the initial ancestors. Each label owns its own
 step field over the Ulam--Harris addresses, and reindexing along a map
-`f : NewRoot → Root` relabels the roots. The `Fin m` and `ℕ` instances are the
-finite and countable cases used by the population arguments.
+`f : NewRoot → Root` relabels the roots. The `Fin m` and `ℕ` specializations
+are the finite and countable cases used by the population arguments.
+
+The public declarations are:
+
+* `ProbabilityTheory.BranchingRandomWalk.RootIndexed.StepField Root α X` is
+  `Root → Combinatorics.Branching.StepField α X`;
+  `ProbabilityTheory.BranchingRandomWalk.FiniteRootStepField m α X` and
+  `ProbabilityTheory.BranchingRandomWalk.CountableRootStepField α X` use
+  `Root = Fin m` and `Root = ℕ`.
+* `ProbabilityTheory.BranchingRandomWalk.RootIndexed.StepField.reindex f step`
+  relabels the root coordinate, with `(step.reindex f) r = step (f r)`.
+* `ProbabilityTheory.BranchingRandomWalk.RootIndexed.StepField.reindexCoordinates
+  f step` pulls the field back along
+  `f : NewRoot × TreeNode α → Root × TreeNode α`, so
+  `(step.reindexCoordinates f) r u = step (f (r, u)).1 (f (r, u)).2`.
+  `ProbabilityTheory.BranchingRandomWalk.RootIndexed.StepField.reindexCoordinates_apply`
+  gives this formula. Its generic representation is
+  `Function.curry (Function.uncurry step ∘ f)`.
+* `ProbabilityTheory.BranchingRandomWalk.RootIndexed.StepField.reindex_eq_reindexCoordinates`
+  identifies root relabelling with coordinate relabelling that keeps
+  addresses fixed. `ProbabilityTheory.BranchingRandomWalk.RootIndexed.StepField.first
+  m step` is `step.reindex Fin.val`; `ProbabilityTheory.BranchingRandomWalk.FiniteRootStepField.first
+  h step` is `step.reindex (Fin.castLE h)` when `h : m ≤ n`.
 -/
 
 @[expose] public section
@@ -22,7 +44,6 @@ finite and countable cases used by the population arguments.
 namespace ProbabilityTheory.BranchingRandomWalk
 
 open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
-
 
 
 namespace RootIndexed
@@ -62,20 +83,6 @@ def reindexCoordinates {Root NewRoot α X : Type*}
     (r : NewRoot) (u : TreeNode α) :
     step.reindexCoordinates f r u =
       step (f (r, u)).1 (f (r, u)).2 :=
-  rfl
-
-@[simp] theorem reindexCoordinates_id
-    {Root α X : Type*} (step : RootIndexed.StepField Root α X) :
-    step.reindexCoordinates id = step := by
-  rfl
-
-theorem reindexCoordinates_comp
-    {Root MiddleRoot NewRoot α X : Type*}
-    (f : MiddleRoot × TreeNode α → Root × TreeNode α)
-    (g : NewRoot × TreeNode α → MiddleRoot × TreeNode α)
-    (step : RootIndexed.StepField Root α X) :
-    (step.reindexCoordinates f).reindexCoordinates g =
-      step.reindexCoordinates (f ∘ g) := by
   rfl
 
 /-- Root relabelling is the coordinate relabelling that leaves every address

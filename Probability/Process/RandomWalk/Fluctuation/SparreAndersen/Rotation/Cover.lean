@@ -34,14 +34,17 @@ of the Sparre--Andersen identity (A.2).
 
 namespace ProbabilityTheory.RandomWalk
 
+variable {G : Type*} [AddCommGroup G] [LinearOrder G]
+  [IsOrderedAddMonoid G]
+
 /-- The finite-product event-covering identity in Bauer--Godrèche--Luck,
 Appendix A, after (A.3). Its finite-vector form allows the IID-prefix law
 to be represented by `Measure.pi`. -/
 theorem nonnegative_finitePartialSum_eq_iUnion_cyclic_survival
     {n : ℕ} (hn : 0 < n) :
-    {x : Fin n → ℝ | 0 ≤ Fin.partialSum x (Fin.last n)} =
+    {x : Fin n → G | 0 ≤ Fin.partialSum x (Fin.last n)} =
       ⋃ k : Fin n,
-        {x : Fin n → ℝ |
+        {x : Fin n → G |
           ∀ j : Fin (n + 1),
             0 ≤ Fin.cyclicPartialSum (Fin.partialSum x) k j} := by
   ext x

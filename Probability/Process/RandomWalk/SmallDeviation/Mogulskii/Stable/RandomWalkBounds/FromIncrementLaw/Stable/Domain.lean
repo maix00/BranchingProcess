@@ -6,12 +6,12 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Distributions.Stable.Attraction.Norming.Source
+public import Probability.Distributions.Stable.Attraction.Norming.Mogulskii
 public import Probability.Process.RandomWalk.FunctionalLimit.Stable.PathLaw.Subsequence
 public import Probability.Process.RandomWalk.FunctionalLimit.Stable.Tightness.Result
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.Source.Inputs
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.Source.Normalization
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.Source.PathClass.Relative
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.TerminalLeft.Inputs
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.TerminalLeft.Normalization
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.TerminalLeft.PathClass.Relative
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.FromIncrementLaw.Path.Law
 public import Probability.Process.Stable.PathLaw.FullProcess
 public import Probability.Process.Stable.PathLaw.Concatenation
@@ -32,12 +32,22 @@ unit-interval stable path law; iid concatenation then supplies the full-time
 stable Lévy process needed by the corridor-rate argument. Callers provide no
 process witness or path-law witness.
 
-The resulting stable-domain path rate specializes A. A. Mogul'skii,
-Theorem 3, Section 4, p. 764, “Small deviations in the sample function
+The public interfaces are
+`ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.exists_source_finiteCorridorUnion_rates_of_rawSource`,
+which constructs common source constants and the rates for all finite unions;
+`ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.HasSourceRelativePathClassRate`,
+which records a common energy and matching inner- and outer-probability
+logarithmic limits; and
+`ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.exists_source_relative_pathClass_rates_of_rawSource`,
+which derives the unique path-class energy and rate from raw
+domain-of-attraction assumptions and a relative vanishing-energy-gap
+approximation.
+
+The resulting stable-domain path rate formalizes the `0 < α < 2` branch of
+Theorem 1 in A. A. Mogul'skii, “Small deviations in the sample function
 space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974), 755--765;
 English translation, “Small Deviations in a Space of Trajectories,” *Theory
-of Probability and Its Applications* 19(4) (1975), 726--736, DOI
-10.1137/1119081.
+of Probability and Its Applications* 19(4) (1975), 726--736, DOI 10.1137/1119081.
 -/
 
 open Filter MeasureTheory ProbabilityTheory

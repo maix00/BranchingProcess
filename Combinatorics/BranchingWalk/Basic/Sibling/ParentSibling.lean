@@ -12,7 +12,24 @@ public import Combinatorics.BranchingWalk.Basic.Genealogy.Ancestor
 /-!
 # Parent and sibling relations
 
-Immediate parent and sibling relations for surviving particles.
+For a particle `p = (r,u)`, `parent p = (r,u.dropLast)`; this total function
+keeps a root at itself. `fst_parent` and `snd_parent` give its coordinates,
+`parent_root` fixes a root, and `parent_child` states
+`parent (r,u ++ [i]) = (r,u)`. `IsParent β p q` means
+`∃ i, q = (p.1, p.2 ++ [i]) ∧ survive (β.step p.1 p.2) i`.
+`isParent_isDescendant`, `isParent_isAncestor`, and
+`isParent_generationAfter` identify it with the descendant and ancestor
+relations and prove `generationAfter p q = 1`;
+`isParent_of_mem_survivingParticles` shows that the parent of any surviving
+child is an `IsParent`.
+
+`IsSibling β p q` means that `p` and `q` have a common `IsParent`. The
+theorems `isSibling_symm`, `isSibling_comm`, and `isSibling_of_isParent`
+record symmetry and its common-parent introduction rule.
+`survivingSiblings β p` further requires membership in
+`survivingParticles β`; `mem_survivingSiblings_iff` states this conjunction,
+and `mem_survivingSiblings_of_survives` places every surviving child of the
+same parent in this set.
 -/
 
 @[expose] public section

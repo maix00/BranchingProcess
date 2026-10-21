@@ -8,7 +8,7 @@ module
 
 public import Mathlib.Data.ZMod.Basic
 public import Algebra.BigOperators.PartialSum
-public import Mathlib.Tactic.Ring
+import Mathlib.Tactic.Abel
 
 /-!
 # Cyclic reindexing of finite vectors
@@ -36,6 +36,8 @@ Appendix A, equation (A.3) (arXiv:cond-mat/9905252).
 @[expose] public section
 
 namespace Fin
+
+variable {G : Type*} [AddCommGroup G]
 
 /-- The cyclic coordinate permutation starting at increment `k`: addition
 by `k` on `ZMod n`, transported to `Fin n`. -/
@@ -79,7 +81,7 @@ theorem cyclicCoordinateReindex_eq_of_le_add {n : ℕ} (hn : 0 < n)
 the corresponding cyclic coordinate. This keeps the `n` increment indices
 separate from the `n + 1` path knots. -/
 theorem cyclicPartialSum_succ_eq_add_reindexedIncrement {n : ℕ}
-    (hn : 0 < n) (x : Fin n → ℝ) (k : Fin n) (j : Fin n) :
+    (hn : 0 < n) (x : Fin n → G) (k : Fin n) (j : Fin n) :
     cyclicPartialSum (Fin.partialSum x) k j.succ =
       cyclicPartialSum (Fin.partialSum x) k j.castSucc +
         x (cyclicCoordinateReindex hn k j) := by
@@ -105,7 +107,7 @@ theorem cyclicPartialSum_succ_eq_add_reindexedIncrement {n : ℕ}
     simp only [cyclicPartialSum, Fin.val_castSucc, dite_eq_left hnext,
       dite_eq_left hcurr]
     rw [hend, hstart, hrot, hp]
-    ring
+    abel
   · have hcurr : k.val + j.val ≤ n := by omega
     have hnext : ¬ k.val + j.succ.val ≤ n := by
       rw [Fin.val_succ]
@@ -166,12 +168,12 @@ theorem cyclicPartialSum_succ_eq_add_reindexedIncrement {n : ℕ}
     simp only [cyclicPartialSum, Fin.val_castSucc, dite_eq_right hnext,
       dite_eq_right hcurr]
     rw [hnextIdx, hcurrIdx, hrot, hp]
-    ring
+    abel
 
 /-- Partial sums of a cyclically reindexed finite vector are the cyclic
 rotation of its original partial-sum path. -/
 theorem partialSum_cyclicCoordinateReindex {n : ℕ}
-    (hn : 0 < n) (x : Fin n → ℝ) (k : Fin n) (j : Fin (n + 1)) :
+    (hn : 0 < n) (x : Fin n → G) (k : Fin n) (j : Fin (n + 1)) :
     Fin.partialSum (fun i => x (cyclicCoordinateReindex hn k i)) j =
       cyclicPartialSum (Fin.partialSum x) k j := by
   induction j using Fin.induction with
@@ -188,7 +190,7 @@ theorem partialSum_cyclicCoordinateReindex {n : ℕ}
 /-- A block of the rotated increment vector has partial sums given by
 differences of the rotated path. -/
 theorem partialSum_cyclicBlock {n : ℕ} (hn : 0 < n)
-    (x : Fin n → ℝ) (k : Fin n)
+    (x : Fin n → G) (k : Fin n)
     (start length : ℕ) (hbound : start + length ≤ n)
     (t : Fin (length + 1)) :
     Fin.partialSum
@@ -197,7 +199,7 @@ theorem partialSum_cyclicBlock {n : ℕ} (hn : 0 < n)
       cyclicPartialSum (Fin.partialSum x) k
         ⟨start + t.val, by omega⟩ -
         cyclicPartialSum (Fin.partialSum x) k ⟨start, by omega⟩ := by
-  let y : Fin n → ℝ := fun i => x (cyclicCoordinateReindex hn k i)
+  let y : Fin n → G := fun i => x (cyclicCoordinateReindex hn k i)
   change Fin.partialSum (fun i : Fin length => y ⟨start + i.val, by omega⟩) t = _
   rw [Fin.partialSum_offset y start length hbound t,
     Fin.partialSum_cyclicCoordinateReindex hn x k,

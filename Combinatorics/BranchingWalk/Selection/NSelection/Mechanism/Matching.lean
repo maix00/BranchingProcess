@@ -11,9 +11,63 @@ public import Combinatorics.BranchingWalk.Selection.NSelection.Mechanism.AtRank
 /-!
 # Equal-rank matching
 
-This layer defines the optional inverse, total equal-rank matching, and their
-finite-population identities. The Hall existence theorems live separately in
-NSelection/Mechanism/Hall.lean.
+Assume linear orders on the source labels, target labels, and values. The
+public declarations are:
+
+- `Combinatorics.Branching.Selection.NSelection.value_le_of_rankBy_eq_of_filter_card_le`:
+  if every lower-tail count of the source is at most the corresponding target
+  count, then equal dynamic ranks imply
+  $\operatorname{targetValue}(q)\leq\operatorname{sourceValue}(p)$.
+- `Combinatorics.Branching.Selection.NSelection.particleAtSourceRankBy`
+  defines the optional target with the source particle's dynamic rank;
+  `Combinatorics.Branching.Selection.NSelection.particleAtSourceRankBy_eq_some_iff`
+  characterizes its value by target membership and rank equality.
+  `Combinatorics.Branching.Selection.NSelection.preimageByRank` defines the
+  membership-guarded optional inverse, and
+  `Combinatorics.Branching.Selection.NSelection.preimageByRank_eq_some_iff`
+  characterizes that inverse by membership and rank equality.
+  `Combinatorics.Branching.Selection.NSelection.preimageByRank_leftUnique`
+  proves that one source label has at most one target preimage.
+- `Combinatorics.Branching.Selection.NSelection.particleAtSourceRankBy_ne_none`
+  shows that each source member has a target at the same rank when
+  $|\mathrm{source}|\leq|\mathrm{target}|$.
+  `Combinatorics.Branching.Selection.NSelection.matchByRank` defines the
+  resulting total match on source members;
+  `Combinatorics.Branching.Selection.NSelection.particleAtSourceRankBy_matchByRank`
+  identifies it with the optional construction,
+  `Combinatorics.Branching.Selection.NSelection.matchByRank_mem` places its
+  value in the target, and
+  `Combinatorics.Branching.Selection.NSelection.rankBy_matchByRank` states
+  equality of dynamic ranks.
+  `Combinatorics.Branching.Selection.NSelection.particleAtSourceRankBy_matchByRank_target`
+  states that looking up a source particle at the rank of its matched target
+  recovers that source particle.
+  `Combinatorics.Branching.Selection.NSelection.matchByRank_injective`
+  proves injectivity, while
+  `Combinatorics.Branching.Selection.NSelection.matchByRank_value_le` gives
+  the value inequality under lower-tail count domination.
+- `Combinatorics.Branching.Selection.NSelection.rankBy_congr_of_eqOn` states
+  $\operatorname{rankBy}(f,S,p)=\operatorname{rankBy}(f',S,p)$ when
+  $p\in S$ and $f=f'$ on $S$.
+  `Combinatorics.Branching.Selection.NSelection.matchByRankOrSelf`
+  defines the ambient extension that fixes labels outside the source;
+  `Combinatorics.Branching.Selection.NSelection.matchByRankOrSelf_of_mem`
+  and
+  `Combinatorics.Branching.Selection.NSelection.matchByRankOrSelf_of_not_mem`
+  give its two defining cases.
+  `Combinatorics.Branching.Selection.NSelection.matchByRankOrSelf_congr_of_eqOn`
+  proves invariance under value-function changes off the two populations,
+  `Combinatorics.Branching.Selection.NSelection.matchByRankOrSelf_mem` maps
+  source members into the target, and
+  `Combinatorics.Branching.Selection.NSelection.particleAtSourceRankBy_matchByRankOrSelf`
+  gives the inverse identity on the source.
+  `Combinatorics.Branching.Selection.NSelection.matchByRankOrSelf_injOn`
+  proves injectivity on the source, and
+  `Combinatorics.Branching.Selection.NSelection.matchByRankOrSelf_value_le`
+  gives the lower-tail value bound there.
+
+The existence results from finite Hall matching are in
+`NSelection/Mechanism/Hall.lean`.
 -/
 
 @[expose] public section
@@ -139,40 +193,6 @@ theorem preimageByRank_leftUnique
   obtain ⟨hq₂, _, hr₂⟩ := preimageByRank_eq_some_iff.mp h₂
   apply rankBy_injOn targetValue target hq₁ hq₂
   exact hr₁.symm.trans hr₂
-
-/-- For fixed finite source and target populations there are only finitely
-many guarded inverse maps, independently of the ranking values. -/
-theorem preimageByRank_maps_finite
-    {Source Target : Type*} (source : Finset Source) (target : Finset Target) :
-    {f : Target → Option Source |
-      (∀ q, q ∉ target → f q = none) ∧
-      (∀ q p, f q = some p → p ∈ source)}.Finite := by
-  classical
-  let S : Set (Target → Option Source) :=
-    {f | (∀ q, q ∉ target → f q = none) ∧
-      (∀ q p, f q = some p → p ∈ source)}
-  let code : S → ({q : Target // q ∈ target} →
-      Option {p : Source // p ∈ source}) := fun f q =>
-    match h : f.1 q.1 with
-    | none => none
-    | some p => some ⟨p, f.2.2 q.1 p h⟩
-  have hdecode (f : S) (q : {q : Target // q ∈ target}) :
-      Option.map Subtype.val (code f q) = f.1 q.1 := by
-    simp only [code]
-    split <;> rename_i h
-    · exact h.symm
-    · simp only [Option.map_some]
-      exact h.symm
-  have hcode : Function.Injective code := by
-    intro f g hfg
-    apply Subtype.ext
-    funext q
-    by_cases hq : q ∈ target
-    · rw [← hdecode f ⟨q, hq⟩, ← hdecode g ⟨q, hq⟩,
-        congrFun hfg ⟨q, hq⟩]
-    · rw [f.2.1 q hq, g.2.1 q hq]
-  let _ : Finite S := Finite.of_injective code hcode
-  exact Set.finite_coe_iff.mp inferInstance
 
 /-- A source member has a same-rank target whenever the target has at least
 as many particles. -/

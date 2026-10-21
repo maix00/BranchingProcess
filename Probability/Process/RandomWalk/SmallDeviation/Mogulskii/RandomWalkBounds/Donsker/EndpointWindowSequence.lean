@@ -16,6 +16,28 @@ This file handles a cofinal sequence of block horizons, rather than requiring
 the block length to equal the sequence index. It is the interface used by the
 fixed-diffusive-parameter argument, where the block horizon is chosen by
 rounding a multiple of the squared spatial scale.
+
+The public declarations in this module are:
+
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.tendstoInDistribution_normalizedStepCadlagPathIcc_brownian_along`:
+  Donsker convergence remains valid along every cofinal sequence of horizons.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.normalizedEndpointWindowProbabilityAlong`:
+  the probability of a normalized tube and endpoint window along varying
+  scales and block lengths.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.normalizedEndpointWindowProbabilityAlong_eq_endpointWindowBlockEvent_of_scale` and
+  `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.iidSequenceLaw_map_div_endpointWindowBlockEvent_eq_normalizedAlong`:
+  identify the normalized and raw endpoint-window events under positive
+  scaling.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.measure_centeredSkorokhodCorridorEndsIn_le_liminf_normalizedEndpointWindowProbabilityAlong_of_functionalLimit`:
+  an open limiting corridor gives a liminf lower bound for the discrete
+  endpoint-window probabilities.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.limsup_normalizedEndpointWindowProbabilityAlong_le_closedCorridor_of_eventually_bounds`:
+  eventual containment in a closed limiting corridor gives the corresponding
+  limsup upper bound.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.eventually_ofReal_le_normalizedEndpointWindowProbabilityAlong_of_spectralLower` and
+  `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.eventually_forall_seven_ofReal_le_normalizedEndpointWindowProbabilityAlong_of_spectralLower`:
+  transfer one spectral lower bound, or the seven return-band bounds, across
+  strict closed/open corridor margins.
 -/
 
 open Filter MeasureTheory ProbabilityTheory

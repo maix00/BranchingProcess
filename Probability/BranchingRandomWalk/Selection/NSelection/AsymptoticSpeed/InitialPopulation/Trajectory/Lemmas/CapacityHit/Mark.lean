@@ -58,7 +58,7 @@ noncomputable def smallInitialActiveAddress (m N n : ℕ) (hm : 0 < m)
   else
     ((⟨0, hm⟩ : Fin m), List.replicate n 0)
 
-private theorem smallInitialActiveAddress_depth (m N n : ℕ) (hm : 0 < m)
+private lemma smallInitialActiveAddress_depth (m N n : ℕ) (hm : 0 < m)
     [LinearOrder (RootIndexed.TreeNode (Fin m) ℕ)]
     (field : FiniteRootStepField m ℕ ℝ) :
     (smallInitialActiveAddress m N n hm field).2.length = n := by
@@ -72,7 +72,7 @@ private theorem smallInitialActiveAddress_depth (m N n : ℕ) (hm : 0 < m)
     exact Tail.firstNSelectedPopulation_depth m N n field _ hmem'
   · simp [smallInitialActiveAddress, hpop]
 
-private theorem measurable_smallInitialActiveAddress (m N n : ℕ) (hm : 0 < m)
+private lemma measurable_smallInitialActiveAddress (m N n : ℕ) (hm : 0 < m)
     [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
     [Countable (RootIndexed.TreeNode (Fin m) ℕ)]
     [LinearOrder (RootIndexed.TreeNode (Fin m) ℕ)] :
@@ -202,7 +202,7 @@ private lemma smallInitialFutureRoots_injective (m N n : ℕ) (hm : 0 < m)
   exact Subsingleton.elim _ _
 
 /-- The actual adaptive mark is measurable when generation `n` is revealed. -/
-private theorem measurable_smallInitialActiveMark_at_succ
+private lemma measurable_smallInitialActiveMark_at_succ
     (m N n : ℕ) (hm : 0 < m)
     [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
     [MeasurableSingletonClass (Fin m × TreeNode ℕ)]
@@ -233,7 +233,7 @@ def smallInitialActiveSplitEvent (m N n : ℕ) (hm : 0 < m)
     Set (FiniteRootStepField m ℕ ℝ) :=
   {field | 2 ≤ Step.childCount (smallInitialActiveMark m N n hm field)}
 
-private theorem measurableSet_smallInitialActiveSplitEvent
+private lemma measurableSet_smallInitialActiveSplitEvent
     (m N n : ℕ) (hm : 0 < m)
     [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
     [MeasurableSingletonClass (Fin m × TreeNode ℕ)]
@@ -252,7 +252,7 @@ offspring mark with the original law, independent of the revealed past.
 The fallback address is only reached if the selected population is empty;
 its depth is still `n`, so the probabilistic statement is valid on the full
 sample space. -/
-private theorem smallInitialActiveMark_independent_and_law
+private lemma smallInitialActiveMark_independent_and_law
     (m N n : ℕ) (hm : 0 < m)
     [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
     [MeasurableSingletonClass (Fin m × TreeNode ℕ)]
@@ -303,7 +303,7 @@ private theorem smallInitialActiveMark_independent_and_law
 form an i.i.d. sequence. At time `n`, the chosen address depends only on the
 previous generations, so the new mark is independent of the finite vector of
 earlier sampled marks. -/
-private theorem smallInitialActiveMark_iIndepFun
+private lemma smallInitialActiveMark_iIndepFun
     (m N : ℕ) (hm : 0 < m)
     [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
     [MeasurableSingletonClass (Fin m × TreeNode ℕ)]
@@ -375,7 +375,7 @@ private theorem smallInitialActiveMark_iIndepFun
 
 /-- Under the supercriticality hypothesis, the actual predictable
 selected address has a strictly positive one-generation chance to split. -/
-private theorem smallInitialActiveMark_split_measure_pos
+private lemma smallInitialActiveMark_split_measure_pos
     (m N n : ℕ) (hm : 0 < m)
     [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
     [MeasurableSingletonClass (Fin m × TreeNode ℕ)]
@@ -447,7 +447,7 @@ private theorem smallInitialActiveMark_split_measure_pos
 infinitely many generations almost surely under the supercriticality
 assumption. This uses the adaptive fresh-mark law, rather than a fixed-root
 trial schedule. -/
-theorem ae_frequently_smallInitialActiveSplitEvent
+lemma ae_frequently_smallInitialActiveSplitEvent
     (m N : ℕ) (hm : 0 < m)
     [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
     [MeasurableSingletonClass (Fin m × TreeNode ℕ)]

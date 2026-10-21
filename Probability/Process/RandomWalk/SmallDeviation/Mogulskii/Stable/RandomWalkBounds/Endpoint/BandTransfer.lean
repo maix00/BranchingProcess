@@ -12,12 +12,31 @@ public import Probability.Process.Path.Skorokhod.Corridor.Basic
 public import Probability.Process.Stable.SmallDeviation.EscapeRate.PathLaw.Transfer
 public import Probability.Sequence.IID.Basic
 
-/-!
-# Portmanteau transfer for stable endpoint bands
+/-! # Portmanteau transfer for stable endpoint bands
 
-An open corridor with an open endpoint window transfers a strict positive
-limit mass to an eventual lower bound for the corresponding finite endpoint
-band. This is the path-law input to the discrete return-kernel estimate.
+The public declarations are:
+
+- `eventually_forall_normalizedEndpointBandReturnProbability_ge_of_pathLawLimit`:
+  if the normalized block paths converge in law and each of seven limiting
+  open corridor-and-endpoint events has mass greater than $q$, then each
+  discrete endpoint-band return probability is eventually at least $q$.
+- `iidSequenceLaw_normalizedEndpointBand_eq`: normalizing increments by
+  $s_n>0$ identifies the tube-and-endpoint event at width $2rs_n$ with the
+  endpoint-band event under the law of $X/s_n$.
+- `eventually_forall_normalizedEndpointBandProbability_ge_of_pathLawLimit`:
+  the same open-set transfer gives eventual lower bound $q$ for the endpoint
+  bands under the scaled increment law $\nu\circ(x\mapsto x/s_n)^{-1}$.
+- `eventually_horizontalTubeProbability_ge_pow_of_pathLawLimit`: if all
+  seven limiting endpoint corridor events have mass greater than $q$, then
+  $q^{\lfloor N_n/L_n\rfloor+1}\le
+  \mathbb P(\text{horizontal tube through }N_n)$ eventually.
+- `eventually_horizontalTubeProbability_ge_pow_of_stablePathLawLimit`:
+  under stable process-law and block path-law convergence, there are
+  $0<r<1/2$ and $q>0$ giving the preceding tube-probability lower bound.
+
+An open corridor with an open endpoint window transfers strict positive limit
+mass to an eventual lower bound for finite endpoint bands. This is the
+path-law input to the discrete return-kernel estimate.
 -/
 
 open Filter MeasureTheory ProbabilityTheory Set
