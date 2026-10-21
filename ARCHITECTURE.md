@@ -16,6 +16,41 @@ than the application that first needs it.
 | `Probability` | Laws, filtrations, independence, random processes, and almost-everywhere statements | IID sequences, random walks, Lévy and stable processes |
 | `Probability/BranchingRandomWalk` | Random branching models and their bridges to general process and measure interfaces | offspring fields, spines, selection and coupling |
 
+General finite-history drawdown predicates and their measurability belong to
+`Probability/Process/RandomWalk/Path/Event/Drawdown.lean`. Random-walk probability
+bounds for those paths belong to `Probability/Process/RandomWalk/SmallDeviation/Drawdown/`.
+Generic conditional-probability integration and successive-block product
+bounds belong to `Probability/Process/Filtration/ConditionalBlocks.lean`;
+IID prefix/next-block conditional integration belongs to
+`Probability/Sequence/IID/Blocks/Conditional.lean`. The law transfer between
+an infinite IID walk and a finite closed-interval block belongs to
+`Probability/Process/RandomWalk/Path/Block/Law/FiniteInterval.lean`, while
+translation of a finite interval by its initial position belongs beside the
+`FiniteInClosedInterval` definition in `Path/Window/Basic.lean`.
+Generic finite block coordinates and their measurability belong to
+`Probability/Sequence/Block.lean`; their product-law interface for canonical
+IID sequences belongs to `Probability/Sequence/IID/Basic.lean`. These
+sequence-level facts are independent of stopping times and random-walk
+applications.
+Uniform one-block estimates for a killed interval kernel and their iteration
+to a horizontal-tube bound belong to
+`Probability/Process/RandomWalk/SmallDeviation/HorizontalTube/BlockIteration.lean`;
+the equal-partition and finite-variance rate choices for Wang Yiyang's Lemma
+3.2 remain theorem-specific under `HorizontalTube/FiniteVarianceUpper/Lemmas/`.
+BRW ancestral-path decompositions, including ordered generation-pair counts
+split by most recent common ancestor, live in `Spine/Path/`; affine-tube
+probability estimates and their use in the second-moment argument live in
+`Spine/Tube/`. Branching-walk first-passage and many-to-one results also live
+under `Probability/BranchingRandomWalk/Spine/`. The general `Selection/` layer owns
+selection mechanisms, including random mechanisms; deterministic first-`N`
+selection is the `Selection/NSelection/` specialization. Its selected-
+population endpoint and drawdown transfers live under
+`Selection/NSelection/EndpointDeviation/`, and its deterministic speed proof lives under
+`Selection/NSelection/AsymptoticSpeed/`. Root-indexed position observations are owned
+by `Genealogy/RootIndexed/Measurability`; `Selection/NSelection/Position`
+contains only first-`N` measurability results, while random finite selectors
+adapted to those observations live under `Selection/Finite/`.
+
 These are ownership boundaries, not a requirement to introduce a wrapper at
 every boundary. A concrete theorem should depend on the narrowest module that
 owns each concept it uses.
@@ -29,6 +64,10 @@ owns each concept it uses.
   A random walk is connected to process-level random-walk results through the
   explicit branching-walk bridge; it does not redefine the deterministic
   walk as a probability object.
+- `Probability/Process/RandomWalk/Rademacher/FiniteInterval/` owns the finite
+  interval walk with fair $\pm1$ increments: its killed transition matrix and
+  kernel, sine eigenfunction, and path-survival interpretation. Small-deviation
+  modules use this concrete model without owning its construction.
 - Ulam--Harris trees describe surviving addresses. A branching walk determines
   its parent-closed genealogy. Sibling closure is additional ordering data and
   is required only when the chosen address order needs it.
@@ -50,13 +89,38 @@ that interface in the lowest layer whose assumptions suffice. A named
 specialization is appropriate when it records a real model choice or provides
 a useful theorem interface; a second copy of a general Mathlib concept is not.
 
+Use across several modules is a prompt to review ownership, not by itself a
+reason to promote a declaration to a broader public layer. First search for a
+more abstract Mathlib or library interface, then compare its assumptions and
+semantics with the actual use sites. For example, finite first-hit selection
+uses Mathlib's `MeasureTheory.hittingBtwn` directly. The separate
+`Probability.Process.TimeGrid.Ceiling` interface abstracts only the additional
+time-threshold operation and its convergence and measurability results over
+an arbitrary domain; continuous-path first passage remains a specialization
+under `Path/FirstPassage/`. When the local source does not settle whether a
+candidate interface is already available, consult the official Mathlib
+documentation/source and relevant references, then verify the candidate
+against the pinned dependency revision. Record the candidate and the semantic
+or hypothesis gap that motivates a local interface; do not promote a theorem
+solely to reduce duplicate code or because it has multiple callers.
+
 For the detailed ownership map and examples of reused Mathlib objects, see
 [`docs/architecture/MODULE_OWNERSHIP.md`](docs/architecture/MODULE_OWNERSHIP.md).
 For the completed structural moves and their remaining proof obligations, see
 [`docs/architecture/MIGRATION_PLAN.md`](docs/architecture/MIGRATION_PLAN.md).
 For theorem-by-theorem formalization status, see
 [`FORMALIZATION_CHECKLIST.md`](FORMALIZATION_CHECKLIST.md).
+For the audit of dense module directories and their entry points, see
+[`docs/architecture/MODULE_DIRECTORY_AUDIT.md`](docs/architecture/MODULE_DIRECTORY_AUDIT.md).
+For the mathematical distinction between Mogulskii corridors, drawdown,
+tilted tubes, and entrance estimates, see
+[`Probability/Process/RandomWalk/SmallDeviation/README.md`](Probability/Process/RandomWalk/SmallDeviation/README.md).
 
-There is no umbrella import. Import the module that owns the required
-definition or theorem. The dependency graph and API are checked by the
-repository scripts described in [`CONTRIBUTING.md`](CONTRIBUTING.md).
+There is no repository-wide umbrella import. A named subject entry point may
+re-export a coherent list of principal published results for discovery, as
+`Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Theorems.lean` does
+for the original Mogul'skii theorems. Such an entry point does not replace the
+semantic owner modules: proofs and ordinary clients import the narrow module
+that defines the required object or proves the required result. The dependency
+graph and API are checked by the repository scripts described in
+[`CONTRIBUTING.md`](CONTRIBUTING.md).

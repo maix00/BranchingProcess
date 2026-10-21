@@ -15,10 +15,32 @@ public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.S
 This file specializes the variable-scale Dirichlet spectrum to a symmetric
 Rademacher walk started at the center of its interval.  Centering keeps the
 principal sine weight equal to one, so the sharp limit only needs the
-diffusive-scale condition.
+diffusive-scale condition.  Write
+\[
+  p_n=\mathbb P\bigl(|S_j|\le r_n\text{ for }1\le j\le t_n\bigr),
+  \qquad W_n=2(r_n+1),
+\]
+where $(S_j)$ is the simple symmetric walk.  The public results are:
+
+* `tendsto_scaledLog_centeredHorizontalTubeProbability` proves
+  $\frac{W_n^2}{t_n}\log p_n\to-\frac{\pi^2}{2}$ when
+  $r_n,t_n>0$, $W_n\to\infty$, and $W_n^2/t_n\to0$.
+* `tendsto_scaledLog_centeredHorizontalTubeProbability_of_logWidth` proves
+  the same limit assuming also
+  $\frac{W_n^2}{t_n}\log W_n\to0$; this is the interface used when that
+  stronger rate hypothesis is already available.
+* `tendsto_tubeWidth_scaledLog_centeredHorizontalTubeProbability` and
+  `tendsto_tubeWidth_scaledLog_centeredHorizontalTubeProbability_of_logWidth`
+  give the same respective conclusions with the normalizing width $2r_n$
+  in place of $W_n$; these require $r_n\to\infty$.
+* `tendsto_scaledLog_centeredHorizontalTubeProbability_of_asymptoticWidth`
+  replaces $2r_n$ in the normalization by any real scale $a_n$ satisfying
+  $a_n/(2r_n)\to1$, while retaining $W_n^2/t_n\to0$.
 -/
 
 open Filter Topology
+
+open ProbabilityTheory.RandomWalk.Rademacher.FiniteInterval
 
 @[expose] public section
 
