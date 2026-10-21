@@ -9,7 +9,7 @@ module
 public import Probability.Distributions.Gaussian.Interval
 public import Probability.Distributions.Moments.Real
 public import Probability.Process.RandomWalk.Path.Block.Partition.Normalized
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Blocks.BlockVector
+import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Blocks.Lemmas.BlockVector
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Scale.BlockScale
 
 /-!

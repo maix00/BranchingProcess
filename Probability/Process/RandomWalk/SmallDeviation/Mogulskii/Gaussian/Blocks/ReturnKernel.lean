@@ -17,16 +17,13 @@ import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Blocks.P
 /-!
 # Finite-partition lower bounds for corridor return kernels
 
-The public theorems in this file are:
+The public theorem in this file is:
 
-- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Blocks.gaussianProduct_le_liminf_returnKernel_add_of_eventually_control`:
-  a product of $m$ Gaussian target-window probabilities is at most the
-  lower limit of the $m$-block return-kernel mass plus a prescribed
-  within-block error.
 - `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Blocks.gaussianProduct_le_liminf_returnKernel_add`:
   with centered unit second moment, the error can be taken as
   $m(c/r^2+e)$ for block constant $c$, endpoint margin $r$, and $e>0$.
 
+The estimate with an explicit within-block control is private to this proof.
 The finite-dimensional Gaussian endpoint estimate is combined with the
 quantitative within-block error while retaining a final endpoint constraint.
 The resulting event is identified with one transition of the outer-killed,
@@ -63,7 +60,7 @@ namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Blocks
 /-- With a fixed block constant and explicit tightness control, a Gaussian
 block product bounds the `liminf` mass of staying in an outer interval and
 returning to an inner interval at the end of the block. -/
-theorem gaussianProduct_le_liminf_returnKernel_add_of_eventually_control
+private lemma gaussianProduct_le_liminf_returnKernel_add_of_eventually_control
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (hν : IsCenteredUnitSecondMoment ν)
     {scale : ℕ → ℝ} (hscale : IsMogulskiiScale scale)

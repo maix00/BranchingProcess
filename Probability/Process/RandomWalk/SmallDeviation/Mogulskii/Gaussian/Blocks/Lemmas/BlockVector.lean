@@ -8,7 +8,7 @@ module
 
 public import Probability.Process.RandomWalk.Path.Block.Law.Basic
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Scale.BlockScale
-public import Probability.ConvergenceInDistribution.Basic
+import Probability.ConvergenceInDistribution.Basic
 public import Probability.Distributions.Stable.Gaussian.Basic
 
 import Probability.Process.RandomWalk.FunctionalLimit.FiniteDimensional.IndependentBlocks
@@ -16,24 +16,26 @@ import Probability.Distributions.Stable.Attraction.Normal.Basic
 import Probability.ConvergenceInDistribution.Portmanteau
 
 /-!
-# Gaussian block-vector limits for Mogulskii estimates
+# Proof lemmas for Gaussian block-vector estimates
 
 Let $b_n=\lfloor c x_n^2\rfloor$ and
 $B_{n,j}=\frac{S_{(j+1)b_n}-S_{jb_n}}{x_n}$ for $j<m$.
-The public theorems are:
+This module combines the generic consecutive-block limit with the Gaussian
+open-set bound and product factorization. Its final endpoint-box estimate is
+consumed by `PartitionEndpoints.lean`; the preceding vector and box claims
+are private proof steps, not separate interfaces.
 
-- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Blocks.tendstoInDistribution_diffusiveBlockSums`:
-  $(B_{n,j})_{j<m}$ converges in law to $m$ independent variables
-  $\sqrt c Z_j$ with standard Gaussian $Z_j$.
-- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Blocks.measure_gaussianBlockBox_le_liminf`:
-  the limiting Gaussian mass of an open box is at most the liminf of the
-  corresponding block-vector probabilities.
-- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Blocks.measure_gaussianBlockBox_eq_prod`:
-  that Gaussian box mass is
-  $\prod_{j<m}\mathbb P(\frac{a_j}{\sqrt c}<Z_j<\frac{b_j}{\sqrt c})$.
-- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Blocks.prod_gaussian_Ioo_le_liminf_measure_diffusiveBlockSums`:
-  the preceding product is at most
-  $\liminf_n\mathbb P(a_j<B_{n,j}<b_j\text{ for every }j<m)$.
+The cross-module lemma is
+`ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Blocks.prod_gaussian_Ioo_le_liminf_measure_diffusiveBlockSums`:
+for centered unit-variance increments, $q_n=\lfloor c s_n^2\rfloor$, and
+interval endpoints $a_j,b_j$, it gives
+\[
+  \prod_{j<m}\mathbb P\!\left(\frac{a_j}{\sqrt c}<Z<\frac{b_j}{\sqrt c}\right)
+  \leq \liminf_{n\to\infty}
+  \mathbb P\!\left(\frac{S_{(j+1)q_n}-S_{jq_n}}{s_n}\in(a_j,b_j)\;
+    \text{for every }j<m\right),
+\]
+where $Z\sim N(0,1)$.
 
 These are finite-dimensional inputs for the block argument in Theorem 3,
 Section 4, p. 764 of the 1974 Russian original by A. A. Mogul'skii, “Small
@@ -54,7 +56,7 @@ namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Blocks
 independent centered Gaussian increments. This is the finite-dimensional
 block limit used in Theorem 3, Section 4, p. 764 of A. A. Mogul'skii,
 *Small Deviations in a Space of Trajectories* (DOI 10.1137/1119081). -/
-theorem tendstoInDistribution_diffusiveBlockSums
+private theorem tendstoInDistribution_diffusiveBlockSums
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (hcentered : ∫ x, x ∂ν = 0)
     (hsecondMoment : ∫ x, x ^ 2 ∂ν = 1)
@@ -107,7 +109,7 @@ lower bound for the liminf of the corresponding normalized block-vector
 probabilities. This is the open-set lower bound applied to the finite block
 limit in Theorem 3, Section 4 of A. A. Mogul'skii, *Small Deviations in a
 Space of Trajectories* (DOI 10.1137/1119081). -/
-theorem measure_gaussianBlockBox_le_liminf
+private theorem measure_gaussianBlockBox_le_liminf
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (hcentered : ∫ x, x ∂ν = 0)
     (hsecondMoment : ∫ x, x ^ 2 ∂ν = 1)
@@ -159,7 +161,7 @@ theorem measure_gaussianBlockBox_le_liminf
 factors into the one-dimensional interval probabilities used in Theorem 3,
 Section 4 of A. A. Mogul'skii, *Small Deviations in a Space of Trajectories*
 (DOI 10.1137/1119081). -/
-theorem measure_gaussianBlockBox_eq_prod
+private theorem measure_gaussianBlockBox_eq_prod
     {constant : ℝ} (hconstant : 0 < constant) {blocks : ℕ}
     (lower upper : Fin blocks → ℝ) :
     (Measure.pi fun _ : Fin blocks => gaussianReal 0 1).map
@@ -195,7 +197,7 @@ theorem measure_gaussianBlockBox_eq_prod
 /-- Direct product form of the finite-dimensional open-box lower bound used
 in Theorem 3, Section 4 of A. A. Mogul'skii, *Small Deviations in a Space of
 Trajectories* (DOI 10.1137/1119081). -/
-theorem prod_gaussian_Ioo_le_liminf_measure_diffusiveBlockSums
+lemma prod_gaussian_Ioo_le_liminf_measure_diffusiveBlockSums
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (hcentered : ∫ x, x ∂ν = 0)
     (hsecondMoment : ∫ x, x ^ 2 ∂ν = 1)

@@ -14,33 +14,37 @@ public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Scale.Basi
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Scale.BlockScale
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Path.PartitionTightness
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Blocks.PartitionEndpoints
-import Probability.Distributions.Gaussian.FiniteProduct
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Blocks.Lemmas.ProductParameters
+import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Blocks.Lemmas.FiniteReferenceSurvival
 
 /-!
 # Finite-reference Gaussian block survival
 
 The public theorems in this file are:
 
-- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Blocks.gaussianProduct_le_liminf_remainingMass_add_of_eventually_control`:
-  under a common within-block control, a product of Gaussian target-window
-  masses is at most the lower limit of killed-kernel survival plus the
-  prescribed error.
-- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Blocks.exists_diffusiveBlockConstant_finset_gaussianProduct_le_liminf_remainingMass_add`:
-  one diffusive block constant $c>0$ gives this inequality for every
-  starting point in a finite reference set.
-- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Blocks.exists_pos_le_finset_gaussianProduct`:
-  finitely many positive Gaussian block products have a common lower
-  bound $p>0$.
-- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Blocks.exists_diffusiveBlockConstant_pos_le_finset_liminf_remainingMass_add`:
-  one pair $(c,p)$ with $c,p>0$ bounds all finite-reference Gaussian
-  products below and all corresponding killed-kernel lower limits above.
 - `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Blocks.exists_diffusiveBlockConstant_eventually_uniform_remainingMass_of_finset`:
   a finite spatial cover and a strict Gaussian-product margin yield an
   eventual killed-kernel survival bound uniform over the initial interval.
 - `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Blocks.exists_eventually_finset_pos_remainingMass_zeroTarget`:
   for finitely many interior starts, some $c,p>0$ give survival mass
   at least $p$ for $\lfloor c x_n^2\rfloor$-length blocks eventually.
+
+Writing $q_n=\lfloor c s_n^2\rfloor$ and $K_n$ for the walk killed outside
+$[s_n a,s_n b]$, the second theorem gives
+\[
+  \exists c\in(0,1],\ p>0,\ N\in\mathbb N,\quad
+  \forall n\geq N\ \forall y\in F,\quad
+  p\leq K_n^{m q_n}(s_n y,\mathbb R),
+\]
+for a finite family $F\subseteq[a,b]$ whose points have a common strict
+interior margin. The first theorem asserts that a finite cover $F$ and a
+strict Gaussian-product margin $p+\eta<\prod_{j<m}\mathbb P(Z\in I_{y,j})$
+for every $y\in F$ give some $c>0$ such that eventually
+\[
+  \forall x\in[a,b],\qquad p\leq K_n^{m q_n}(s_n x,\mathbb R).
+\]
+Here $I_{y,j}$ is the Gaussian target interval for block $j$ and $\eta>0$
+is the within-block error.
 
 The diffusive block length used in the finite-dimensional lower bound is
 chosen before the reference point.  Consequently a finite family of initial
@@ -62,226 +66,6 @@ open Filter MeasureTheory Set
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Blocks
 
 
-
-/-- A prescribed common within-block control transfers the Gaussian endpoint
-bound to killed-kernel survival from one normalized initial position.  Keeping
-the control as an explicit hypothesis makes the chosen block scale reusable
-for several initial positions. -/
-theorem gaussianProduct_le_liminf_remainingMass_add_of_eventually_control
-    (ν : Measure ℝ) [IsProbabilityMeasure ν]
-    (hν : IsCenteredUnitSecondMoment ν)
-    {scale : ℕ → ℝ} (hscale : IsMogulskiiScale scale)
-    {constant : ℝ} (hconstant : 0 < constant)
-    {blocks : ℕ} (hblocks : 0 < blocks)
-    {lower upper initial endpointMargin blockRadius tolerance : ℝ}
-    (hinitial : initial ∈ Set.Icc lower upper)
-    (hblockRadius : 0 < blockRadius)
-    (target : ℕ → ℝ)
-    (hmargin : ∀ k ≤ blocks,
-      lower - initial + endpointMargin + (blocks : ℝ) * blockRadius <
-          ∑ j ∈ Finset.range k, target j ∧
-        ∑ j ∈ Finset.range k, target j <
-          upper - initial - endpointMargin -
-            (blocks : ℝ) * blockRadius)
-    (hcontrol : ∀ᶠ n in atTop, ∀ lower upper : ℕ → ℝ,
-      (iidSequenceLaw ν) {increment | ∀ j < blocks,
-          AdditivePath.displacement
-              (j * diffusiveBlockLength constant scale n) increment /
-              scale n ∈
-            Set.Ioo (lower j + endpointMargin) (upper j - endpointMargin)} ≤
-        (iidSequenceLaw ν) {increment | ∀ j < blocks,
-            ∀ k ≤ diffusiveBlockLength constant scale n,
-              AdditivePath.displacement
-                  (j * diffusiveBlockLength constant scale n + k) increment ∈
-                Set.Icc (scale n * lower j) (scale n * upper j)} +
-          ENNReal.ofReal tolerance) :
-    (∏ j : Fin blocks,
-        gaussianReal 0 1
-          (Set.Ioo
-            ((target j - blockRadius) / Real.sqrt constant)
-            ((target j + blockRadius) / Real.sqrt constant))) ≤
-      atTop.liminf (fun n =>
-        Kernel.remainingMass
-            (killedIncrementKernel ν
-              (Set.Icc (scale n * lower) (scale n * upper))
-              measurableSet_Icc)
-            (blocks * diffusiveBlockLength constant scale n)
-            (scale n * initial) +
-          ENNReal.ofReal tolerance) := by
-  have hendpoint :=
-    prod_gaussian_Ioo_le_liminf_measure_partitionEndpoints
-      ν hν.1 hν.2 hscale hconstant hblockRadius target
-      (fun _ => lower - initial + endpointMargin)
-      (fun _ => upper - initial - endpointMargin) (by
-        intro k hk
-        have hm := hmargin k hk
-        constructor <;> linarith)
-  refine hendpoint.trans (Filter.liminf_le_liminf ?_)
-  filter_upwards [hcontrol, _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.eventually_pos hscale,
-      _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.eventually_diffusiveBlockLength_pos hscale hconstant]
-    with n hn hscalePos hlength
-  have hinitialScaled : scale n * initial ∈
-      Set.Icc (scale n * lower) (scale n * upper) := by
-    constructor <;> nlinarith [hinitial.1, hinitial.2]
-  have hkernel :=
-    killedIncrementKernel_Icc_remainingMass_mul_eq_blockCorridors
-      ν (scale n * lower) (scale n * upper) (scale n * initial)
-      hinitialScaled hblocks hlength
-  have hevent :
-      {increment : ℕ → ℝ | ∀ j < blocks,
-          ∀ k ≤ diffusiveBlockLength constant scale n,
-            AdditivePath.displacement
-                (j * diffusiveBlockLength constant scale n + k) increment ∈
-              Set.Icc (scale n * (lower - initial))
-                (scale n * (upper - initial))} =
-        {increment | ∀ j < blocks,
-          ∀ k ≤ diffusiveBlockLength constant scale n,
-            scale n * initial +
-                AdditivePath.displacement
-                  (j * diffusiveBlockLength constant scale n + k) increment ∈
-              Set.Icc (scale n * lower) (scale n * upper)} := by
-    ext increment
-    simp only [Set.mem_ofPred_eq, Set.mem_Icc]
-    constructor <;> intro h j hj k hk
-    · have hp := h j hj k hk
-      constructor <;> nlinarith
-    · have hp := h j hj k hk
-      constructor <;> nlinarith
-  have hc := hn (fun _ => lower - initial) (fun _ => upper - initial)
-  rw [hevent, ← hkernel] at hc
-  calc
-    (iidSequenceLaw ν) {increment | ∀ k ≤ blocks,
-        AdditivePath.displacement (k * diffusiveBlockLength constant scale n) increment /
-            scale n ∈
-          Set.Ioo (lower - initial + endpointMargin)
-            (upper - initial - endpointMargin)} ≤
-      (iidSequenceLaw ν) {increment | ∀ j < blocks,
-        AdditivePath.displacement (j * diffusiveBlockLength constant scale n) increment /
-            scale n ∈
-          Set.Ioo (lower - initial + endpointMargin)
-            (upper - initial - endpointMargin)} := by
-        apply measure_mono
-        intro increment hincrement j hj
-        exact hincrement j hj.le
-    _ ≤ _ := hc
-
-/-- A finite family of normalized initial positions shares one diffusive block
-constant.  Each reference may use its own deterministic target increments;
-the within-block error and its scale are common to the whole family. -/
-theorem exists_diffusiveBlockConstant_finset_gaussianProduct_le_liminf_remainingMass_add
-    (ν : Measure ℝ) [IsProbabilityMeasure ν]
-    (hν : IsCenteredUnitSecondMoment ν)
-    {scale : ℕ → ℝ} (hscale : IsMogulskiiScale scale)
-    {blocks : ℕ} (hblocks : 0 < blocks)
-    {lower upper endpointMargin blockRadius tolerance : ℝ}
-    (hendpointMargin : 0 < endpointMargin)
-    (hblockRadius : 0 < blockRadius) (htolerance : 0 < tolerance)
-    (references : Finset ℝ) (target : ℝ → ℕ → ℝ)
-    (hinitial : ∀ y ∈ references, y ∈ Set.Icc lower upper)
-    (hmargin : ∀ y ∈ references, ∀ k ≤ blocks,
-      lower - y + endpointMargin + (blocks : ℝ) * blockRadius <
-          ∑ j ∈ Finset.range k, target y j ∧
-        ∑ j ∈ Finset.range k, target y j <
-          upper - y - endpointMargin -
-            (blocks : ℝ) * blockRadius) :
-    ∃ constant > 0, ∀ y ∈ references,
-      (∏ j : Fin blocks,
-          gaussianReal 0 1
-            (Set.Ioo
-              ((target y j - blockRadius) / Real.sqrt constant)
-              ((target y j + blockRadius) / Real.sqrt constant))) ≤
-        atTop.liminf (fun n =>
-          Kernel.remainingMass
-              (killedIncrementKernel ν
-                (Set.Icc (scale n * lower) (scale n * upper))
-                measurableSet_Icc)
-              (blocks * diffusiveBlockLength constant scale n)
-              (scale n * y) +
-            ENNReal.ofReal tolerance) := by
-  obtain ⟨constant, hconstant, hcontrol⟩ :=
-    exists_diffusiveBlockConstant_eventually_normalizedEndpoints_le_corridors_add
-      ν hν hscale hblocks hendpointMargin htolerance
-  refine ⟨constant, hconstant, ?_⟩
-  intro y hy
-  exact gaussianProduct_le_liminf_remainingMass_add_of_eventually_control
-    ν hν hscale hconstant hblocks (hinitial y hy) hblockRadius
-    (target y) (hmargin y hy) hcontrol
-
-/-- A nonempty finite family of the Gaussian block products has a common
-strictly positive lower bound.  The proof chooses an actual minimizing
-reference point, so no extended-real infimum or compactness argument is
-needed. -/
-theorem exists_pos_le_finset_gaussianProduct
-    {constant blockRadius : ℝ} (hconstant : 0 < constant)
-    (hblockRadius : 0 < blockRadius) {blocks : ℕ}
-    (references : Finset ℝ) (hreferences : references.Nonempty)
-    (target : ℝ → ℕ → ℝ) :
-    ∃ lowerBound : ENNReal, 0 < lowerBound ∧ ∀ y ∈ references,
-      lowerBound ≤ ∏ j : Fin blocks,
-        gaussianReal 0 1
-          (Set.Ioo
-            ((target y j - blockRadius) / Real.sqrt constant)
-            ((target y j + blockRadius) / Real.sqrt constant)) := by
-  classical
-  let product : ℝ → ENNReal := fun y => ∏ j : Fin blocks,
-    gaussianReal 0 1
-      (Set.Ioo
-        ((target y j - blockRadius) / Real.sqrt constant)
-        ((target y j + blockRadius) / Real.sqrt constant))
-  obtain ⟨y, hy, hyMin⟩ := references.exists_min_image product hreferences
-  refine ⟨product y, ?_, hyMin⟩
-  exact prod_gaussian_Ioo_sub_add_pos hconstant hblockRadius
-    (fun j : Fin blocks => target y j)
-
-/-- Common-scale finite-reference bounds can be summarized by one positive
-Gaussian lower bound.  This is the finite-dimensional positivity input used
-when choosing the numerical one-block survival constant. -/
-theorem exists_diffusiveBlockConstant_pos_le_finset_liminf_remainingMass_add
-    (ν : Measure ℝ) [IsProbabilityMeasure ν]
-    (hν : IsCenteredUnitSecondMoment ν)
-    {scale : ℕ → ℝ} (hscale : IsMogulskiiScale scale)
-    {blocks : ℕ} (hblocks : 0 < blocks)
-    {lower upper endpointMargin blockRadius tolerance : ℝ}
-    (hendpointMargin : 0 < endpointMargin)
-    (hblockRadius : 0 < blockRadius) (htolerance : 0 < tolerance)
-    (references : Finset ℝ) (hreferences : references.Nonempty)
-    (target : ℝ → ℕ → ℝ)
-    (hinitial : ∀ y ∈ references, y ∈ Set.Icc lower upper)
-    (hmargin : ∀ y ∈ references, ∀ k ≤ blocks,
-      lower - y + endpointMargin + (blocks : ℝ) * blockRadius <
-          ∑ j ∈ Finset.range k, target y j ∧
-        ∑ j ∈ Finset.range k, target y j <
-          upper - y - endpointMargin -
-            (blocks : ℝ) * blockRadius) :
-    ∃ constant > 0, ∃ lowerBound : ENNReal, 0 < lowerBound ∧
-      (∀ y ∈ references,
-        lowerBound ≤ ∏ j : Fin blocks,
-          gaussianReal 0 1
-            (Set.Ioo
-              ((target y j - blockRadius) / Real.sqrt constant)
-              ((target y j + blockRadius) / Real.sqrt constant))) ∧
-      ∀ y ∈ references,
-        (∏ j : Fin blocks,
-            gaussianReal 0 1
-              (Set.Ioo
-                ((target y j - blockRadius) / Real.sqrt constant)
-                ((target y j + blockRadius) / Real.sqrt constant))) ≤
-          atTop.liminf (fun n =>
-            Kernel.remainingMass
-                (killedIncrementKernel ν
-                  (Set.Icc (scale n * lower) (scale n * upper))
-                  measurableSet_Icc)
-                (blocks * diffusiveBlockLength constant scale n)
-                (scale n * y) +
-              ENNReal.ofReal tolerance) := by
-  obtain ⟨constant, hconstant, hliminf⟩ :=
-    exists_diffusiveBlockConstant_finset_gaussianProduct_le_liminf_remainingMass_add
-      ν hν hscale hblocks hendpointMargin hblockRadius htolerance
-      references target hinitial hmargin
-  obtain ⟨lowerBound, hlowerBound, hlower⟩ :=
-    exists_pos_le_finset_gaussianProduct hconstant hblockRadius
-      references hreferences target
-  exact ⟨constant, hconstant, lowerBound, hlowerBound, hlower, hliminf⟩
 
 /-- The common-scale finite-reference estimate feeds directly into the
 uniform survival comparison.  Once a number lies strictly below every finite
