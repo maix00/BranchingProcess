@@ -6,8 +6,11 @@ Authors: WANG Yiyang
 
 module
 
-import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.FirstWindow.Lemmas.Limit.FiniteTime
 public import Probability.Process.Brownian.AboveStart.FirstWindow.Basic
+public import Probability.Process.RandomWalk.Path.Interpolation.Limit.Unbounded
+public import Probability.Sequence.IID.Basic
+
+import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.FirstWindow.Lemmas.Limit.FiniteTime
 
 /-!
 # Approximation by finite first-window times
