@@ -10,7 +10,7 @@ module
 
 public import Probability.Distributions.InfinitelyDivisible.Basic
 public import Probability.Distributions.InfinitelyDivisible.LevyKhintchine.Integrand
-public import MeasureTheory.Measure.LevyMeasure
+public import MeasureTheory.Measure.Levy.Basic
 
 /-!
 # Lévy-Khintchine Data
@@ -24,6 +24,8 @@ where `(b, σ², ν)` is the Lévy-Khintchine triple.
 
 * `ProbabilityTheory.LevyKhintchineTriple` — the drift, Gaussian variance, and
   Lévy measure data used in the representation theorem.
+* `ProbabilityTheory.LevyKhintchineTriple.exponent` —
+  `ψ_T(ξ) = ibξ - σ²ξ²/2 + ∫ (e^{ixξ} - 1 - ixξ·1_{|x|<1}) dν(x)`.
 
 The representation theorem is stated and proved in
 `Probability.Distributions.InfinitelyDivisible.LevyKhintchine.Representation`;
@@ -60,6 +62,22 @@ theorem levyMeasure_zero : T.levyMeasure {0} = 0 :=
 theorem lintegral_min_one_sq_lt_top :
     ∫⁻ x, ENNReal.ofReal (min 1 (x ^ 2)) ∂T.levyMeasure < ⊤ :=
   T.isLevyMeasure.lintegral_min_one_sq_lt_top
+
+/-- The Lévy–Khintchine exponent of `T`, combining its drift, Gaussian variance,
+and compensated jump measure. -/
+noncomputable def exponent (T : LevyKhintchineTriple) (ξ : ℝ) : ℂ :=
+  ↑T.drift * ↑ξ * Complex.I - ↑(T.gaussianVariance : ℝ) * ↑ξ ^ 2 / 2
+    + ∫ x, levyCompensatedIntegrand ξ x ∂T.levyMeasure
+
+/-- Definitional unfolding of the Lévy–Khintchine exponent. -/
+@[simp]
+theorem exponent_def (T : LevyKhintchineTriple) (ξ : ℝ) :
+    T.exponent ξ = ↑T.drift * ↑ξ * Complex.I - ↑(T.gaussianVariance : ℝ) * ↑ξ ^ 2 / 2
+      + ∫ x, levyCompensatedIntegrand ξ x ∂T.levyMeasure := rfl
+
+/-- The Lévy–Khintchine exponent vanishes at the origin. -/
+theorem exponent_zero (T : LevyKhintchineTriple) : T.exponent 0 = 0 := by
+  simp [LevyKhintchineTriple.exponent]
 
 end LevyKhintchineTriple
 

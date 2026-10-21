@@ -173,7 +173,7 @@ theorem commonPartitionCoreRadius_zero
         omega)⟩ = 0 := by
   simp [commonPartitionCoreRadius]
 
-private theorem commonPartitionCoreRadius_lt_margin
+private lemma commonPartitionCoreRadius_lt_margin
     (upper lower : StepBoundary)
     (hstart : StartAdmissible upper lower)
     (hsep : TraceSeparated upper lower)
