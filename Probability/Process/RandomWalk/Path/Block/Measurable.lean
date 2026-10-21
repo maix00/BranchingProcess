@@ -16,7 +16,9 @@ import MeasureTheory.Function.FinPartialSum
 
 The block operations are deterministic; this file records their measurability
 when the increment sequence is regarded as the canonical sample space. It
-also records measurability of the finite partial-sum map on a block.
+uses `Fin.measurable_partialSum` from
+`MeasureTheory.Function.FinPartialSum` for coordinates of a finite partial-sum
+map.
 -/
 
 open MeasureTheory
