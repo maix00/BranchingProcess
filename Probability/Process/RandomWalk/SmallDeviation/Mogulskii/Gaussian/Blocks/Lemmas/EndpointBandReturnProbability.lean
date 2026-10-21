@@ -7,25 +7,39 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Scale.BlockScale
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Path.Existence
-public import Probability.Distributions.Stable.Attraction.Normal.Basic
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.EndpointBandTransfer.Lower.EndpointMass
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.EndpointBandTransfer.Lower.PathLimit
+public import Probability.Distributions.Moments.Real
+public import Probability.Sequence.IID.Basic
 
-public import Probability.Distributions.Gaussian.Interval
+import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Path.Existence
+import Probability.Distributions.Stable.Attraction.Normal.Basic
+import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.EndpointBandTransfer.Lower.PathLimit
+import Probability.Distributions.Gaussian.Interval
+
 /-!
-# Fixed diffusive blocks from a generated Gaussian path law
+# Proof lemma for endpoint-band return probability
 
 Normal-domain path tightness constructs the Gaussian unit-interval path law.
 Its associated Lévy process supplies the stable escape rate, and the variable-
 block path limit transfers the endpoint-band mass to rounded diffusive blocks.
 
-The public theorem in this file is:
+This non-reusable source-specific estimate transfers Gaussian path mass to
+the finite family of endpoint-return bands needed by the Mogulskii block
+argument. It is kept under `Gaussian/Blocks/Lemmas/` because it has no
+independent callers.
 
-- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Blocks.exists_eventually_diffusiveEndpointBandReturnBlockProbability_lower`:
-  for centered unit-variance increments and any fixed finite family of
-  interior endpoint bands, there is a diffusive block constant for which each
-  band's return probability has a common positive eventual lower bound.
+Its lemma
+`ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Blocks.exists_eventually_diffusiveEndpointBandReturnBlockProbability_lower`
+chooses $c>0$ so that, for all seven indices $i\in\{-3,\ldots,3\}$,
+the probability of `endpointBandReturnBlockEvent` is eventually at least
+\[
+  \exp\!\left[
+    \left(-\frac{\pi^2}{8((b-a-8\varepsilon)/2)^2}-\delta\right)c
+  \right].
+\]
+Here $a$ and $b$ denote `lower` and `upper`. The event has endpoint interval
+$[a s_n,b s_n]$, band width $\varepsilon s_n$, index $i$, and block length
+$\lfloor c s_n^2\rfloor$.
 
 This is the finite-dimensional return-block input used in the proof of
 Theorem 3, Section 4, p. 764 of A. A. Mogul'skii, “Small deviations in the
@@ -47,7 +61,7 @@ namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Blocks
 constant for which all seven endpoint-return bands have a common positive
 eventual lower bound. The Gaussian path law and its escape rate are generated
 from the source law by normal-domain tightness. -/
-theorem exists_eventually_diffusiveEndpointBandReturnBlockProbability_lower
+lemma exists_eventually_diffusiveEndpointBandReturnBlockProbability_lower
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (hν : IsCenteredUnitSecondMoment ν)
     {scale : ℕ → ℝ} (hscale : IsMogulskiiScale scale)

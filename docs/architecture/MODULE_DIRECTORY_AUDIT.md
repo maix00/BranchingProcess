@@ -200,7 +200,7 @@ by mathematical subject:
 | `Distributions/Stable/Attraction/Norming` | `Basic.lean`, `Inverse.lean`, `Compatibility.lean`, `Centering.lean`, `Mogulskii.lean`, `Tail.lean`, and `UniformTail.lean` remain at the subject root; Gaussian and index-two specializations are under `SpecialCases/`. `Mogulskii.lean` contains the theorem-specific passage to Mogul'skii's source time normalization and its index-one centering transfer; its rounded index sequence and asymptotic lemmas are private. The general normalization-change theorem is in `Distributions/DomainOfAttraction/Normalization.lean`. |
 
 The finite-dimensional Gaussian block-vector limit in
-`Mogulskii/Gaussian/Blocks/BlockVector.lean` specializes the general
+`Mogulskii/Gaussian/Blocks/Lemmas/BlockVector.lean` specializes the general
 `RandomWalk/FunctionalLimit/FiniteDimensional/IndependentBlocks.lean`
 consecutive-block theorem. This keeps the generic independence and
 coordinate-limit assembly at the reusable functional-limit layer while the
@@ -1414,7 +1414,7 @@ It derives the hypotheses for the generic partition result from the stable
 Mogulskii scale. Its clients are the two cell constructions in `CellBridge.lean`,
 so the specialization stays under `Lemmas/`. The five path-limit estimates
 remain in `Lower/PathLimit.lean`: source search confirms they are used
-both by `CellBridge.lean` and by `Gaussian/Blocks/FixedDiffusiveBlock.lean`.
+both by `CellBridge.lean` and by `Gaussian/Blocks/Lemmas/EndpointBandReturnProbability.lean`.
 The module header lists those five probability interfaces and their
 quantitative meanings. The `Rate` imports used only in proof terms are now
 ordinary imports; the public signatures continue to name the stable scale
@@ -1719,8 +1719,9 @@ The import boundary now matches this classification: `ProductParameters.lean`
 publicly imports the Gaussian interval interface used in its statements and
 imports the finite-product results and pinned Mathlib order/product modules
 ordinarily for its proofs. `Gaussian/Blocks/FiniteReferenceSurvival.lean`
-directly imports the finite-product theorem it uses in its proof. The helper
-and both clients compiled together with the pinned toolchain (3,431 Lake jobs).
+ordinarily imports its proof lemmas from `Gaussian/Blocks/Lemmas/`; the
+finite-product result is imported inside `Lemmas/ProductParameters.lean`. The
+helper and both clients compiled together with the pinned toolchain (3,431 Lake jobs).
 
 ## Stable Mogul'skii path-class rate header sign (2026-10-20)
 
@@ -2299,10 +2300,14 @@ moment, scale, path-corridor, and IID-law modules that occur in theorem
 statements remain public imports. The return-kernel estimates are consumed in
 proofs by `Rate/Bounds/Lower.lean` and `Rate/Partition/Finite.lean`.
 
-The finite-reference Gaussian survival estimates were reclassified after this
-audit: despite having no current caller, they form a complete theorem-level
-interface, so they live in
-`Gaussian/Blocks/FiniteReferenceSurvival.lean` with namespace
+The finite-reference Gaussian survival module exposes two complete
+estimates: a common eventual survival bound over an initial interval covered
+by finitely many reference points, and a common positive survival bound for a
+finite family of interior starts. The one-use Gaussian-to-killed-kernel
+transfer and finite-reference scale selection live in
+`Gaussian/Blocks/Lemmas/FiniteReferenceSurvival.lean`. Two unused wrappers
+that only paired a finite Gaussian-product minimum with that transfer were
+removed. The module keeps namespace
 `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Blocks`.
 
 `Theorems.lean` remains the only article-theorem entry at the Mogulskii root
@@ -2566,26 +2571,36 @@ jobs, and `lint-style` passes on all 11 edited modules.
 
 ## Mogulskii Gaussian block API and citation audit (2026-10-21)
 
-The complete finite-reference Gaussian survival interface was moved from
+The finite-reference Gaussian survival interface was moved from
 `Mogulskii/Lemmas/Blocks/Uniform.lean` to
-`Mogulskii/Gaussian/Blocks/FiniteReferenceSurvival.lean`. Its six public
-theorems give finite-family Gaussian product bounds, common diffusive scales,
-and eventual killed-kernel survival estimates. These are complete
-finite-variance block results, so the module now belongs beside the Gaussian
+`Mogulskii/Gaussian/Blocks/FiniteReferenceSurvival.lean`. The initial move
+placed six declarations there: four finite-reference Gaussian-product and
+scale-selection steps, followed by two complete killed-kernel survival
+estimates. A later use and abstraction audit retained the two complete
+survival estimates at this entry and moved the first two transfer steps to
+`Gaussian/Blocks/Lemmas/FiniteReferenceSurvival.lean`; the two intervening
+wrappers had no callers and were removed. The entry remains beside the Gaussian
 block-limit interfaces and uses the
 `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Blocks`
-namespace. The proof terms are unchanged; no module imported the old path.
+namespace. No module imported the original path.
 
-The headers of `Gaussian/Blocks/BlockEndpoint.lean`,
-`Gaussian/Blocks/BlockVector.lean`, and `Gaussian/Path/ExplicitRate.lean`
-already gave the full Mogulskii citation before repeating the same bibliography
-paragraph. The duplicate paragraphs were removed while retaining the full
-Russian-original and English-translation reference, theorem location, and
-DOI. `Gaussian/Blocks/FixedDiffusiveBlock.lean` now identifies its return-block
-bound with the finite-dimensional input in Theorem 3, Section 4, p. 764 of the
-same article.
-All five affected modules build with the pinned toolchain (4,011 Lake jobs),
-and `lint-style` passes on the five modules.
+The Gaussian block modules cite Mogul'skii's Theorem 3, Section 4,
+p. 764, with the Russian original, English translation, and DOI. The endpoint
+adapter exposes only the direct normalized-sum limit; its factorized CLT
+formulation is private. The block-vector specialization and Gaussian box
+factorization are under `Gaussian/Blocks/Lemmas/BlockVector.lean`; its first
+three intermediate claims are private, and its final product bound is a lemma
+consumed by `PartitionEndpoints.lean`. The endpoint-band return estimate is
+under `Gaussian/Blocks/Lemmas/EndpointBandReturnProbability.lean` because it
+has no independent callers and belongs to the theorem-specific transfer
+chain. `ReturnKernel` keeps the explicit-control version private and exposes
+the centered finite-variance return-kernel bound. The finite-reference entry
+exposes only its uniform-interval and finite-interior survival estimates; its
+common-scale transfer lemmas are under `Gaussian/Blocks/Lemmas/`.
+The current reclassification builds with `lake build BranchingProcess` using
+the pinned toolchain. The import-boundary checker covers 10 public entries
+(818 graph visits), and the module-header, `lint-style`, and `git diff --check`
+checks pass.
 
 ## Mogulskii Gaussian terminal-left path-class grouping (2026-10-21)
 
