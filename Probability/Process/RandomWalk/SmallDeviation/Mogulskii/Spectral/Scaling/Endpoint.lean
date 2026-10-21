@@ -6,11 +6,32 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Asymptotics
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.SurvivalBounds
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Rate.Asymptotics
+public import Probability.Process.RandomWalk.Rademacher.FiniteInterval.Spectral.Survival.Bounds
 
 /-!
 # Endpoint-prefactor spectral limits
+
+The public declarations in this module are:
+
+For $N\ge2$, let $K_N$ be the transition matrix on
+$\{0,\ldots,N-1\}$ with $K_N(x,y)=\frac12$ when $|x-y|=1$ and $0$
+otherwise, and put $R_{N,t}(x)=\sum_{y=0}^{N-1}K_N^t(x,y)$.
+
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.tendsto_scaledLog_remainingMass`:
+  let $W_n=N_n+1$ and $R_n=R_{N_n,t_n}(x_n)$. If $W_n\to\infty$ and
+  $\frac{W_n^2}{t_n}\log\sin(\frac{\pi}{W_n})\to0$, then
+  $\frac{W_n^2}{t_n}\log R_n\to-\frac{\pi^2}{2}$.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.tendsto_scaledLog_rademacherIncrement`:
+  the same limit holds for the IID Rademacher probability of staying in the
+  interval through time $t_n$.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.tendsto_scaledLog_remainingMass_of_logWidth`:
+  the preceding prefactor condition follows from
+  $\frac{W_n^2}{t_n}\to0$ and
+  $\frac{W_n^2}{t_n}\log W_n\to0$; hence the killed row sum has the same
+  logarithmic limit.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.tendsto_scaledLog_rademacherIncrement_of_logWidth`:
+  the same sufficient scale condition gives the process-law limit.
 
 These lemmas retain the sine endpoint weight explicitly.  The general limit
 uses its logarithmic prefactor as an assumption; a separate specialization
@@ -19,6 +40,8 @@ reduces that assumption to a direct logarithmic width condition.
 
 open Filter Topology
 
+
+open ProbabilityTheory.RandomWalk.Rademacher.FiniteInterval
 
 @[expose] public section
 

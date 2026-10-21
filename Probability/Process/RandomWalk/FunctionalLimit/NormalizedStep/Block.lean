@@ -6,12 +6,14 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.FunctionalLimit.NormalizedStep
+public import Probability.Process.RandomWalk.FunctionalLimit.NormalizedStep.Basic
 public import Probability.Process.RandomWalk.Path.Skorokhod.Corridor.Endpoint.Basic
-public import Probability.Process.RandomWalk.Path.Skorokhod.Corridor.Endpoint
-public import Probability.Process.RandomWalk.Path.Corridor.Horizontal
+public import Probability.Process.RandomWalk.Path.Skorokhod.Corridor.Endpoint.Core
+public import Probability.Process.RandomWalk.Path.Corridor.Horizontal.Core
 public import Probability.Process.RandomWalk.Path.Block.Corridor.Measure
+public import Probability.Process.RandomWalk.Path.Block.Oscillation
 public import Probability.Process.RandomWalk.Path.Block.Partition.Basic
+public import Topology.Cadlag.Skorokhod.Oscillation.Basic
 public import Probability.ConvergenceInDistribution.Portmanteau
 
 /-!
@@ -21,6 +23,10 @@ This module separates the number of steps in a block from the spatial
 normalization indexed by the outer limit parameter. It identifies open and
 closed path corridors with the corresponding finite horizontal-tube events,
 then applies Portmanteau to any stated path-law limit.
+
+The block-range interface also records that finite source oscillation bounds
+imply the corresponding range bound for the normalized càdlàg block path, and
+transfers this event inclusion to the block-path law.
 -/
 
 open Filter MeasureTheory ProbabilityTheory Set
@@ -50,6 +56,79 @@ noncomputable instance normalizedStepBlockPathLaw.instIsProbabilityMeasure
     IsProbabilityMeasure (normalizedStepBlockPathLaw ν spatialScale blockLength n) := by
   unfold normalizedStepBlockPathLaw
   infer_instance
+
+/-- A strict source block-oscillation event implies the closed range bound
+for the corresponding normalized càdlàg block path. -/
+theorem blockOscillationLTEvent_subset_normalizedStepBlockRangeOscillation
+    (scale : ℕ → ℝ) (blockLength : ℕ → ℕ) (n : ℕ)
+    (hscale : 0 < scale n) (width : ℝ) :
+    {increment | blockOscillationLTEvent (width * scale n) (blockLength n)
+      (Combinatorics.Sequence.blockCoordinates 0 (blockLength n) increment)} ⊆
+    {increment | RandomWalk.normalizedStepBlockCadlagPathIcc
+        scale blockLength n increment ∈ Skorokhod.rangeOscillationLe width} := by
+  intro increment hosc
+  change ∀ i j : Fin (blockLength n + 1),
+      |Fin.partialSum
+          (Combinatorics.Sequence.blockCoordinates 0 (blockLength n) increment) i -
+        Fin.partialSum
+          (Combinatorics.Sequence.blockCoordinates 0 (blockLength n) increment) j| <
+        width * scale n at hosc
+  intro s t
+  obtain ⟨i, hi⟩ :=
+    RandomWalk.exists_normalizedStepCadlagPathIcc_eq_scaledDisplacement
+      (fun _ => scale n) (blockLength n) increment s
+  obtain ⟨j, hj⟩ :=
+    RandomWalk.exists_normalizedStepCadlagPathIcc_eq_scaledDisplacement
+      (fun _ => scale n) (blockLength n) increment t
+  have hpartialI :
+      Fin.partialSum
+          (Combinatorics.Sequence.blockCoordinates 0 (blockLength n) increment) i =
+        AdditivePath.displacement (i : ℕ) increment := by
+    rw [RandomWalk.partialSum_blockCoordinates, AdditivePath.blockSum_zero_start]
+  have hpartialJ :
+      Fin.partialSum
+          (Combinatorics.Sequence.blockCoordinates 0 (blockLength n) increment) j =
+        AdditivePath.displacement (j : ℕ) increment := by
+    rw [RandomWalk.partialSum_blockCoordinates, AdditivePath.blockSum_zero_start]
+  have hraw : |AdditivePath.displacement (i : ℕ) increment -
+      AdditivePath.displacement (j : ℕ) increment| < width * scale n := by
+    simpa [hpartialI, hpartialJ] using hosc i j
+  have hnormalized :
+      |(scale n)⁻¹ * AdditivePath.displacement (i : ℕ) increment -
+        (scale n)⁻¹ * AdditivePath.displacement (j : ℕ) increment| =
+        |AdditivePath.displacement (i : ℕ) increment -
+          AdditivePath.displacement (j : ℕ) increment| / scale n := by
+    rw [← mul_sub, abs_mul, abs_of_pos (inv_pos.mpr hscale), div_eq_mul_inv]
+    ring
+  change |RandomWalk.normalizedStepCadlagPathIcc (fun _ => scale n)
+      (blockLength n) increment s -
+    RandomWalk.normalizedStepCadlagPathIcc (fun _ => scale n)
+      (blockLength n) increment t| ≤ width
+  rw [hi, hj, hnormalized]
+  exact (div_lt_iff₀ hscale).2 (by simpa [mul_comm] using hraw) |>.le
+
+/-- The finite source block-oscillation probability is bounded above by the
+closed range-oscillation probability of its càdlàg step-path image. -/
+theorem iidSequenceLaw_measure_blockOscillationLT_le_normalizedStepBlockPathLaw
+    {ν : Measure ℝ} [IsProbabilityMeasure ν]
+    (scale : ℕ → ℝ) (blockLength : ℕ → ℕ) (n : ℕ)
+    (hscale : 0 < scale n) (width : ℝ) :
+    iidSequenceLaw ν
+        {increment | blockOscillationLTEvent (width * scale n) (blockLength n)
+          (Combinatorics.Sequence.blockCoordinates 0 (blockLength n) increment)} ≤
+      RandomWalk.normalizedStepBlockPathLaw ν scale blockLength n
+        (Skorokhod.rangeOscillationLe width) := by
+  have hmeas : Measurable
+      (RandomWalk.normalizedStepBlockCadlagPathIcc scale blockLength n) := by
+    change Measurable (RandomWalk.normalizedStepCadlagPathIcc
+      (fun _ => scale n) (blockLength n))
+    exact RandomWalk.measurable_normalizedStepCadlagPathIcc
+      (fun _ => scale n) (blockLength n)
+  rw [RandomWalk.normalizedStepBlockPathLaw, Measure.map_apply hmeas
+    (Skorokhod.isClosed_rangeOscillationLe width).measurableSet]
+  apply measure_mono
+  exact blockOscillationLTEvent_subset_normalizedStepBlockRangeOscillation
+    scale blockLength n hscale width
 
 /-- Membership of a variable-length normalized step path in an open
 Skorokhod corridor is equivalent to the corresponding strict finite grid

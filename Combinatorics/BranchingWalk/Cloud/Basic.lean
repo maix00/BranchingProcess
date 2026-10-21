@@ -8,9 +8,9 @@ module
 
 public import Mathlib.Data.Set.Basic
 public import Mathlib.Order.OrderDual
-public import Combinatorics.BranchingWalk.Basic.Position
-public import Combinatorics.BranchingWalk.Basic.SurviveAlong
-public import Combinatorics.BranchingWalk.Basic.Survival
+public import Combinatorics.BranchingWalk.Basic.Position.Basic
+public import Combinatorics.BranchingWalk.Basic.Survival.SurviveAlong
+public import Combinatorics.BranchingWalk.Basic.Survival.Basic
 
 /-!
 # Time-indexed particle clouds
@@ -27,6 +27,51 @@ contains the natural-number generations is built into `Cloud`.
 The multi-root construction is primitive: each root supplies its own step
 field and initial position, and the cloud is their union.  The single-root
 construction is the special case with the singleton root type `Unit`.
+
+The public API is:
+
+- `CloudSet Time X` is a time-indexed family of point sets. `Cloud Time Root
+  α X` records a time-indexed set of labelled particles and a position map on
+  root-address pairs, retaining particle identity when positions coincide.
+- `Cloud.support C` maps each particle slice through its position map to a
+  geometric point set. `Cloud.mapPosition` changes the observation of
+  positions and `Cloud.mapOrderDual` reverses their order.
+- `Cloud.ofFinset s position` constructs a cloud directly from finite
+  time-indexed slices `s : Time → Finset (RootIndexed.TreeNode Root α)` and a
+  position map, with particles `↑(s t)` at time `t`.
+- `Cloud.ofBranchingWalk d β time` has particles
+  `{p | time p.2 = t ∧ surviveAlong (β.step p.1) [] p.2}` at time `t`, with
+  position `β.initial p.1 + displaceWith d (β.step p.1) [] p.2`.
+  `Cloud.discreteTimeCloud_ofBranchingWalk` uses address generation as time;
+  its slices are exactly `survivingParticlesAt`.
+- `Cloud.withFinsetParticles` replaces the labelled slices by finite
+  populations while preserving positions. `CloudSet.map` pushes geometric
+  point sets through a map, and `CloudSet.vertexSet` collects the space-time
+  point set.
+- `Cloud.ofBranchingWalk_mem_particles_child` characterizes a realized
+  one-step child by survival of its slot; `Cloud.mem_ofBranchingWalk_particles_iff`
+  gives the full time-slice characterization.
+
+The public equations are
+`(Cloud.ofFinset s position).particles t = ↑(s t)` and
+`(Cloud.ofFinset s position).position r u = position r u`, stated by
+`Cloud.ofFinset_particles` and `Cloud.ofFinset_position`;
+`Cloud.withFinsetParticles_particles` and
+`Cloud.withFinsetParticles_position` identify replacement slices and preserve
+an existing position map; `Cloud.mapPosition_particles` and
+`Cloud.mapPosition_position`, which preserve labels and apply the observation;
+and `Cloud.ofBranchingWalk_position` and
+`Cloud.discreteTimeCloud_ofBranchingWalk_position`, which give the accumulated
+position `β.initial r + displaceWith d (β.step r) [] u`. The generation-indexed
+identity is `Cloud.discreteTimeCloud_particles_eq_survivingParticlesAt`:
+`(Cloud.discreteTimeCloud_ofBranchingWalk d β).particles k =
+survivingParticlesAt β k`.
+
+For geometric clouds, `CloudSet.mem_vertexSet` identifies membership in the
+space-time vertex set, `CloudSet.ext` gives extensionality by time slices,
+`CloudSet.support_mapPosition` states
+`(C.mapPosition φ).support = C.support.map φ`, and
+`CloudSet.mem_mapOrderDual_points` preserves membership under order reversal.
 -/
 
 @[expose] public section
@@ -70,6 +115,26 @@ def Cloud.withFinsetParticles {Time Root α X : Type*}
     (s : Time → Finset (RootIndexed.TreeNode Root α)) (r : Root)
     (u : TreeNode α) :
     (C.withFinsetParticles s).position r u = C.position r u :=
+  rfl
+
+/-- Construct a particle cloud directly from finite labelled slices and a
+position map. -/
+def Cloud.ofFinset {Time Root α X : Type*}
+    (s : Time → Finset (RootIndexed.TreeNode Root α))
+    (position : Root → TreeNode α → X) : Cloud Time Root α X where
+  particles t := ↑(s t)
+  position := position
+
+@[simp] theorem Cloud.ofFinset_particles {Time Root α X : Type*}
+    (s : Time → Finset (RootIndexed.TreeNode Root α))
+    (position : Root → TreeNode α → X) (t : Time) :
+    (Cloud.ofFinset s position).particles t = ↑(s t) :=
+  rfl
+
+@[simp] theorem Cloud.ofFinset_position {Time Root α X : Type*}
+    (s : Time → Finset (RootIndexed.TreeNode Root α))
+    (position : Root → TreeNode α → X) (r : Root) (u : TreeNode α) :
+    (Cloud.ofFinset s position).position r u = position r u :=
   rfl
 
 def Cloud.support {Time Root α X : Type*} (C : Cloud Time Root α X) :
