@@ -8,6 +8,7 @@ module
 
 public import Mathlib.MeasureTheory.Integral.IntegrableOn
 public import Probability.Distributions.InfinitelyDivisible.LevyKhintchine.Scaling
+import Mathlib.MeasureTheory.Integral.Bochner.ContinuousLinearMap
 
 /-!
 # The uncompensated drift in a finite-variation Lévy exponent

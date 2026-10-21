@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Distributions.DomainOfAttraction.Basic
-public import Probability.Sequence.IID
+public import Probability.Sequence.IID.Basic
 public import Mathlib.Probability.StrongLaw
 public import Mathlib.MeasureTheory.Integral.DominatedConvergence
 public import Mathlib.Analysis.SpecialFunctions.Exp

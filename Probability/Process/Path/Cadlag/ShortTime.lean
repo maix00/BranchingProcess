@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import MeasureTheory.Measure.SetLimits
+public import MeasureTheory.Measure.Limits.SetLimits
 public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Gluing
 public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
 

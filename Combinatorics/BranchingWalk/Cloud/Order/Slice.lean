@@ -30,6 +30,27 @@ of the second.
 The definition is a condition on measures, so it needs nothing on the particle
 index of a cloud; only the half-lines of the value space have to be measurable for
 the statements that move between thresholds.
+
+The public API is:
+
+- `SliceDominatesMeasure μ ν` means `μ (Iic a) ≤ ν (Iic a)` for every
+  threshold `a`; it is reflexive and transitive.
+- `Cloud.RankwiseDominates C D t` matches each particle of rank `k` in the
+  slice of `C` to a particle of the same rank in `D` whose position is no
+  greater. `RankwiseDominatesBy` states this after applying an ordered
+  observation of positions.
+- `rankwiseDominates_encard_Iic_le` and `rankwiseDominates_encard_le` give
+  lower-tail and total particle-count inequalities. Conversely,
+  `rankwiseDominates_of_encard_Iic_le` constructs the rankwise order from
+  threshold counts, and `rankwiseDominates_iff_encard_Iic_le` packages the
+  equivalence. `rankwiseDominates_mapOrderDual_iff` gives the upper-tail order
+  by reversing the value order.
+- `rankwiseDominates_diracSum_of_countable` transfers the rankwise comparison
+  to the corresponding counting-measure inequality on countable slices.
+
+The relation laws are `sliceDominatesMeasure_refl` and
+`sliceDominatesMeasure_trans`, together with
+`Cloud.rankwiseDominates_refl` and `Cloud.rankwiseDominates_trans`.
 -/
 
 open MeasureTheory
@@ -308,7 +329,7 @@ theorem Cloud.rankwiseDominates_mapOrderDual_iff [LT (RootIndexed.TreeNode Root 
 /-- Counting the particles of a slice that satisfy a predicate does not depend on whether the
 slice is read as a set of particles or as its own type: the two sets correspond under the
 identity on the underlying particles. -/
-theorem Cloud.encard_subtype_eq_encard {Time Root α X : Type*} {C : Cloud Time Root α X}
+private lemma Cloud.encard_subtype_eq_encard {Time Root α X : Type*} {C : Cloud Time Root α X}
     (t : Time) (P : RootIndexed.TreeNode Root α → Prop) :
     ({p : (C.particles t : Set (RootIndexed.TreeNode Root α)) | P p.1} : Set _).encard =
       {p | p ∈ C.particles t ∧ P p}.encard :=

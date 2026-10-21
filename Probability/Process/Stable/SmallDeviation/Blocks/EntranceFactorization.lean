@@ -6,10 +6,14 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.Stable.SmallDeviation.Blocks.Independence
+public import Mathlib.Probability.Independence.Basic
+public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Basic
+public import Probability.Process.Stable.Levy
 public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Gluing
 public import Probability.Process.Path.Skorokhod.Corridor.Segment
-public import Probability.Process.Stable.SmallDeviation.Blocks.Stationarity
+import Probability.Process.Path.Skorokhod.Corridor.SegmentStationarity
+import Probability.Process.IndepIncrements.DisjointPaths
+import Probability.Process.Stable.FiniteDimensional
 
 /-!
 # A fixed entrance block and its independent continuation
@@ -26,9 +30,9 @@ namespace ProbabilityTheory
 open MeasureTheory
 open scoped NNReal
 
-/-- The first block and the following translated block are independent as
-random paths, for arbitrary nonnegative block lengths. -/
-theorem IsStableLevyProcess.indepFun_entranceAndContinuation
+/-- Independence of the entrance segment from its translated continuation,
+used internally by the event-factorization results below. -/
+private theorem IsStableLevyProcess.indepFun_entranceAndContinuation
     {Ω : Type*} [MeasurableSpace Ω]
     {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
     {P : Measure Ω} [IsProbabilityMeasure P]
@@ -236,7 +240,9 @@ theorem IsStableLevyProcess.measure_fullCorridor_ge_entrance_mul_fullCorridor
       P (fullSegmentCorridorEvent X 0 (cut + remaining) lower upper) := by
   have hshort := h.measure_fullCorridor_ge_entrance_mul_continuation
     cut remaining hcut hremaining lower upper endpointLower endpointUpper
-  rw [← h.measure_fullSegmentCorridor_shift cut remaining
+  rw [← h.toIsLevyProcess.indepIncrements.measure_fullSegmentCorridor_shift
+    h.toIsLevyProcess.stationaryIncrements h.toIsLevyProcess.ae_cadlag
+    cut remaining
     (lower - endpointLower) (upper - endpointUpper)] at hshort
   have hmono :
       P (fullSegmentCorridorEvent X 0 (cut + remaining)
