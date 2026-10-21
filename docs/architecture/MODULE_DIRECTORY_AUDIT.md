@@ -237,16 +237,14 @@ than receiving it through the hitting-time module.
 Mathlib permits a substantive `Foo.lean` interface beside `Foo/` when the
 directory holds related component modules; the pinned Mathlib source has 113
 such pairs, including `Tactic/Linarith.lean` beside `Tactic/Linarith/`. This
-repository uses a stricter local organization rule for discoverability:
-production and test source trees contain no same-level `.lean` file and
-directory with the same stem. The initial project-tree inventory found such
-pairs in production modules; their declarations now
-live in `Foo/Basic.lean` or `Foo/Core.lean`, or in subject-specific children;
-callers import those explicit modules. The moves preserve declaration names
-and proofs while changing import paths. This rule does not prohibit a
-substantive entry module where a future module family needs one; such a module
-must expose a clear mathematical interface rather than only re-exporting the
-directory. Four import-only facades were removed:
+repository currently has no same-level `.lean` file and directory with the
+same stem in its production or test source trees. The initial inventory found
+pairs whose file was only an import facade or whose declarations fit more
+clearly in `Foo/Basic.lean`, `Foo/Core.lean`, or subject-specific children;
+those were moved and callers import the owning modules directly. A substantive
+entry file remains appropriate when it presents a real interface and the
+directory groups its related components. Four import-only facades were
+removed:
 `NSelection/Coupling.lean`, `Processes/Concurrent.lean`,
 `Processes/StepSelection.lean`, and `StepSelection/SplitSchedule.lean`.
 Child filenames in the new `Spine/PointMeasure/`, `Spine/Tilted/`, and
@@ -1260,13 +1258,11 @@ The pinned Mathlib source does use same-basename pairs intentionally; the
 `Mathlib.MeasureTheory.Measure.Dirac` entry module re-exports
 `Dirac.Def` and `Dirac.Basic`, as shown in the
 [official module documentation](https://leanprover-community.github.io/mathlib4_docs/Mathlib/MeasureTheory/Measure/Dirac.html).
-The repository keeps its stricter rule from `CONTRIBUTING.md`: substantive
-core declarations live in a file such as `Basic.lean`, while a subject
-directory owns its semantically grouped modules. This keeps an import path
-from appearing both as a file and as a directory in the project API. The
-Mathlib pattern is an intentional umbrella-module design, not a reason to
-mechanically rename local modules or a basis for claiming that Mathlib has no
-such pairs.
+The repository follows the same distinction: a substantive entry module may
+sit beside its component directory; an import-only duplicate is removed, and
+component files use names relative to their semantic directory. The Mathlib
+pattern is an intentional umbrella-module design, not a reason to mechanically
+rename local modules or a basis for claiming that Mathlib has no such pairs.
 
 ## Abstraction review: convergence interfaces (2026-10-19)
 
@@ -2789,8 +2785,10 @@ and the style check passes with the pinned toolchain.
 ## Full source-tree structural scan (2026-10-21)
 
 A fresh scan of the tracked production and test source trees, excluding
-`.lake`, `Vendor/`, and `.git/`, found 1,494 production modules and 138 test
-modules. Neither tree has a directory with more than eight direct Lean files.
+`.lake`, `Vendor/`, and `.git/`, initially found 1,494 production modules and
+138 test modules. After moving the IID consecutive-block APIs, the current
+tree has 1,493 production modules and 138 test modules. Neither tree has a
+directory with more than eight direct Lean files.
 Across both trees,
 the scan found no same-level file/directory stem collision, no repeated
 parent-directory/file stem, no `Source/` directory, and no `Lemmas.lean`
@@ -2804,12 +2802,14 @@ and its [`Data/Matrix/Basic.lean`](https://github.com/leanprover-community/mathl
 and [`Logic/Function/Basic.lean`](https://github.com/leanprover-community/mathlib4/blob/380f2aafb622cb2c1c93dac545b6389083c68c51/Mathlib/Logic/Function/Basic.lean)
 modules. The pinned source contains 775 files named `Basic.lean` in distinct
 semantic directories, so repeating a relative filename such as `Basic.lean`
-across different subject directories follows Mathlib practice. The repository
-keeps its stricter local rule against a file sharing a directory with a
-same-stem directory, and against a child filename that repeats its parent
-directory. No global renaming of semantically scoped relative filenames is
-indicated by the Mathlib comparison. The scan is structural evidence only;
-it does not complete the statement-level ownership or abstraction audit.
+across different subject directories follows Mathlib practice. Same-stem
+`Foo.lean`/`Foo/` pairs are appropriate when the file is a substantive entry
+interface and the directory contains its components; the current project tree
+has none, while its policy allows this pattern under that condition. Direct
+child filenames still avoid repeating their parent directory. No global
+renaming of semantically scoped relative filenames is indicated by the
+Mathlib comparison. The scan is structural evidence only; it does not complete
+the statement-level ownership or abstraction audit.
 
 ## Drifted-tube endpoint-window ownership (2026-10-21)
 

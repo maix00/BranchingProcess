@@ -404,7 +404,7 @@ AXIOM_EXPECTATIONS = {
     ),
     Path("BranchingProcessTest/RandomWalk/Blocks/BlockEndpointComparison.lean"): (
         "MeasureTheory.measure_mul_le_card_mul_of_finite_cover",
-        "ProbabilityTheory.RandomWalk.iidSequenceLaw_measure_inter_prefix_nextBlock",
+        "ProbabilityTheory.iidSequenceLaw_measure_prefix_inter_block_eq_mul",
         "ProbabilityTheory.RandomWalk.measurableSet_inOpenPartialSumCorridorEndsIn",
         "ProbabilityTheory.RandomWalk.iidSequenceLaw_measure_mul_le_card_mul_of_finite_block_cover",
         "Asymptotics.eventually_one_sub_le_log_ratio_of_mul_bound",
