@@ -1,5 +1,5 @@
 import Probability.Process.Stable.PathLaw.LinearTube
-import Probability.Sequence.IID.FiniteReindex
+import MeasureTheory.Measure.Pi.FiniteReindexCover
 import Probability.Process.RandomWalk.SmallDeviation.Entrance.FunctionalLimit
 import Probability.Process.RandomWalk.SmallDeviation.Entrance.Rotation.LinearTube
 import Probability.Process.RandomWalk.SmallDeviation.Entrance.Rotation.FiniteProduct
@@ -18,7 +18,7 @@ and the deterministic cyclic-rotation estimate.
 #print axioms MeasureTheory.measure_le_card_smul_of_finite_cover_invariant
 #print axioms ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.eventually_measure_normalizedStep_linearBall_pos
 #print axioms ProbabilityTheory.iidSequenceLaw_map_finPrefix
-#print axioms ProbabilityTheory.measure_pi_event_le_card_smul_of_reindex_cover
+#print axioms MeasureTheory.measure_pi_event_le_card_smul_of_reindex_cover
 #print axioms ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.cyclicPartialSum_removeLinearDrift
 #print axioms ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.offsetCorridorPath_removeLinearDrift_iff_moving
 #print axioms ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.finiteNormalizedStepPath_apply_grid
