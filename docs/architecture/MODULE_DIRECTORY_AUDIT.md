@@ -25,7 +25,7 @@ when the move only clarifies module organization.
 | `RandomWalk/Fluctuation` | Random-walk records, ladder variables, and Sparre--Andersen identities | `Ladder/RecordLocalTime.lean` and `Ladder/Ascending.lean` define ascending records, local time, ladder times, and heights. `Ladder/Descending/` groups the reflected record/local-time interface, the descending renewal function, the finite-variance ladder-time finiteness result, and the stable-attraction tail theorem. `FiniteVarianceSignLimit.lean` remains at the subject root as the general Gaussian positivity-parameter and Spitzer-condition input. `SparreAndersen/Rotation/` contains the public cyclic-rotation cover and IID probability inequality; `Composition/Cyclic.lean` and `Composition/CyclicReindex.lean` expose the reusable gap-composition equivalence and arbitrary-weight sum reindexing, while the event-decomposition and block-probability proof chain is isolated in `Composition/Lemmas/`; `Survival/` contains the finite-variance lower bounds and recurrence interface. The declarations retain the `ProbabilityTheory.RandomWalk` namespace because each interface is stated for increment paths; the directory move groups the ladder-variable subject without changing ownership. The source citations identify Chaumont--Doney's equation (2.2) and Lemma 5, Caravenna--Chaumont's Lemma 2.1 and equation (2.3), and Doney's Theorem 2. |
 | `Probability/BranchingRandomWalk/Population/Processes/Causal` | Causal genealogical populations and their capacity/path interfaces | The root keeps `Basic.lean`, `Predicate.lean`, and `Genealogy.lean` as the population construction, predicate selection, and samplewise genealogy interfaces. `Path/{Window,Bound}.lean` groups finite-history path representations and the reusable pathwise population bound. `Capacity/{Basic,FirstMoment,Spine}.lean` groups generic Markov capacity estimates and their first-moment/spine consequences. These are complete results for the causal-population interface, not fragments of one theorem-specific proof; `RelativePosition/` remains its own reusable path-position family. |
 | `Probability/Process/RandomWalk/Kernel/Killed` | Reusable kernel interfaces for random walks killed on exit | `Basic.lean` defines the restricted transition kernel; `Comparison.lean` compares its survival mass; `Partition.lean` identifies equal-block survival with the path event. `Return/` groups endpoint distributions, target entrance, terminal bridges, and the generic uniform return-kernel iteration in `Uniform.lean`; `Survival/` groups killed-walk block iteration and uniform bounds. These are complete kernel statements reused by multiple small-deviation arguments, so they remain outside `Lemmas/`. |
-| `Probability/Sequence/IID` | Canonical laws and reusable interfaces for independent identically distributed sequences | `Basic.lean`, `Law.lean`, `Filtration.lean`, `CharacteristicFunction.lean`, and `FiniteReindex.lean` remain direct peers for the canonical product law, law identification, prefix-filtration independence, characteristic functions, and finite coordinate symmetry. `Blocks/` groups the complete stopping-time, deterministic-prefix, and conditional block APIs; these are reusable mathematical results and therefore remain outside `Lemmas/`. |
+| `Probability/Sequence/IID` | Canonical laws and reusable interfaces for independent identically distributed sequences | `Basic.lean`, `Law.lean`, `Filtration.lean`, and `CharacteristicFunction.lean` remain direct peers for the canonical product law, law identification, prefix-filtration independence, and characteristic functions. `Blocks/` groups the complete stopping-time, deterministic-prefix, and conditional block APIs; these are reusable mathematical results and therefore remain outside `Lemmas/`. |
 | `Probability/Process/RandomWalk/Path/Block/Corridor` | Path events and finite-block comparisons for IID random walks | `Comparison.lean` gives the finite-cover measure inequality. `FiniteBridge.lean` adds a reusable `FiniteBridgeGeometry` record, derives uniform bridge mass from open-set path-law convergence, and turns it into the eventual probability and logarithmic-ratio bounds. Applications retain their source-specific corridor geometry in their subject modules. |
 | `Probability/MeasureTheory/Asymptotics` | Asymptotic logarithmic bounds for probability-valued sequences | `FiniteProductRate.lean` turns eventual lower bounds by finite products of exponentials into a lower bound for the scaled logarithm of the target sequence. The result only assumes a finite index type, limits for the scaled counts, eventual nonnegativity of the rate, and values bounded by one; it is independent of random-walk and small-deviation structure. |
 | `Probability/ConvergenceInDistribution` | Core weak-convergence interfaces | `Basic.lean`, `Portmanteau.lean`, `Mapping.lean`, `Independence.lean`, `DeterministicParameter.lean`, and `EscapingMixture.lean` remain direct peer interfaces: they define convergence compatibility, event bounds, continuous mappings, independent products, deterministic-coordinate products, and escaping finite mixtures. The related approximation principles are grouped under `Approximation/{AsymptoticEquivalence,Finite}.lean`; both are complete reusable results, so this semantic grouping does not use `Lemmas/`. The three core modules now list all public declarations and state their formulas and assumptions in the module headers.
@@ -35,7 +35,7 @@ when the move only clarifies module organization.
 | `RandomWalk/SmallDeviation/Mogulskii/Stable/Rate` | Exact centered horizontal-tube rate under a stable escape-rate hypothesis | `Upper.lean` gives the upper rate; `Lower/BlockProbability.lean` gives the endpoint-return block estimate; `Lower/Liminf.lean` derives strict-subtube and optimized lower rates; `Lower/Positivity.lean` supplies the real-log conditions used by the upper proof; `Lower/Limit.lean` identifies the limit. These complete mathematical interfaces remain outside `Lemmas/`. The partition probability module imports only `Lower/Positivity`, while the final rate test imports `Lower/Limit`. |
 | `RandomWalk/SmallDeviation/Mogulskii/RandomWalkBounds/TerminalLeft/Partition` | Matching partition estimates for the source terminal-left convention | `Basic.lean` records the clipped terminal knot index and source cell lengths; `Events.lean` gives the selected-cell range upper bound; `LowerProbability.lean` is the lower-bound entry. `Lemmas/LowerGeometry.lean` contains the terminal-left deterministic gluing step and is imported ordinarily by the entry. The public interfaces remain beside the `Lemmas/` directory, and the `Discrete` namespace remains unchanged. |
 | `RandomWalk/SmallDeviation/HorizontalTube` | `FiniteVarianceUpper/Basic.lean` formalizes Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.2 and its translated-interval form | The module namespace is `ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube`, including `FiniteVarianceUpper/Lemmas/`. `BlockIteration.lean` owns the reusable killed-interval kernel identity, uniform block estimate, and finite-horizon iteration. The equal-partition and block-length parameters specific to Lemma 3.2, along with its cover, fixed-corridor rate, and rate assembly, are grouped under `FiniteVarianceUpper/Lemmas/Partition/`, `Lemmas/EqualPartition.lean`, and `Lemmas/Rate.lean`. `EndpointWindow.lean` defines the translated and normalized endpoint-window events; `FiniteVarianceLower.lean` owns the reusable endpoint-window consequence of Chapter 3, Lemma 3.1(ii), and `RealWidthLower.lean` supplies uniform real-width thresholds. Lemma 3.5's staircase-specific bins and endpoint fractions live under `DriftedTube/FiniteVarianceLower/Lemmas/Staircase/Setup/`; the finite-cover proof and selection lemmas are under `Lemmas/Staircase/Binning/`. |
-| `RandomWalk/SmallDeviation/Entrance` | `FiniteVarianceEndpointCorridor.lean` and public interfaces with applications to multiple small-deviation arguments | `MovingCorridor.lean` owns the reusable moving-boundary path event and its constant-corridor inclusion, with no terminal-window parameter. `Edge/PrefixSelection.lean` retains the reusable positive-mass increment-window construction; its width inequalities specific to the Lemma 3.5 edge argument are in `Robust/Lemmas/Edge/PrefixGeometry.lean`. `Robust/Event.lean` defines the fixed `[2Δ/5,3Δ/5]` entrance event used in Chapter 3, Lemma 3.5; `Robust/Measurability.lean` proves its prefix-filtration measurability. The inclusion of the Donsker interior event in this narrower-window event is a theorem-specific step in `Robust/Lemmas/Event.lean`. The theorem-specific middle-start estimate, edge products, three-region minimum, and event inclusions remain under `Robust/Lemmas/`. The exponent-uniform assembly from forward and reflected transition-power bounds to a uniform robust-event lower bound is the reusable interface `Robust/PowerLower.lean`; it accepts every positive exponent and is used by the Appendix A.2, Lemma A.7 entrance estimate in the proof of Chapter 3, Lemma 3.5. The inverse-square estimate and polynomial-to-exponential bridge used only by Lemma 3.5 live under `DriftedTube/FiniteVarianceLower/Lemmas/Staircase/Concrete/EntranceBudget.lean`, with the inverse-square estimates private in that file. The unused broad-window power-assembly branch in `Edge` was removed. `Rotation/FinitePath.lean` defines the finite increment path and measurable corridor events; `Rotation/CyclicCover.lean` proves the deterministic path-ball cover by cyclic reindexing; `Rotation/FiniteProduct.lean` converts it to the finite-IID probability bound used by `NormalDomain.lean`. Generic finite-IID reindexing belongs to `Probability/Sequence/IID/FiniteReindex.lean`, and its measure-preserving finite-cover bound belongs to `MeasureTheory/OuterMeasure/Finite/Cover.lean`. The normal-domain entrance bound is still imported by the selected-population second-stage bridge and spine estimates. Lemma 3.5's meander entrance uses the distinct finite-horizon i.i.d. cyclic-rotation inequality in `Fluctuation/SparreAndersen/Rotation/Probability.lean`; `FunctionalLimit/Conditioned/Transition/SurvivalLower.lean` combines it with the Gaussian endpoint-sign limit to obtain the inverse-square width bound. The uniform real-width threshold is proved in the Lemma 3.5 staircase module. |
+| `RandomWalk/SmallDeviation/Entrance` | `FiniteVarianceEndpointCorridor.lean` and public interfaces with applications to multiple small-deviation arguments | `MovingCorridor.lean` owns the reusable moving-boundary path event and its constant-corridor inclusion, with no terminal-window parameter. `Edge/PrefixSelection.lean` retains the reusable positive-mass increment-window construction; its width inequalities specific to the Lemma 3.5 edge argument are in `Robust/Lemmas/Edge/PrefixGeometry.lean`. `Robust/Event.lean` defines the fixed `[2Δ/5,3Δ/5]` entrance event used in Chapter 3, Lemma 3.5; `Robust/Measurability.lean` proves its prefix-filtration measurability. The inclusion of the Donsker interior event in this narrower-window event is a theorem-specific step in `Robust/Lemmas/Event.lean`. The theorem-specific middle-start estimate, edge products, three-region minimum, and event inclusions remain under `Robust/Lemmas/`. The exponent-uniform assembly from forward and reflected transition-power bounds to a uniform robust-event lower bound is the reusable interface `Robust/PowerLower.lean`; it accepts every positive exponent and is used by the Appendix A.2, Lemma A.7 entrance estimate in the proof of Chapter 3, Lemma 3.5. The inverse-square estimate and polynomial-to-exponential bridge used only by Lemma 3.5 live under `DriftedTube/FiniteVarianceLower/Lemmas/Staircase/Concrete/EntranceBudget.lean`, with the inverse-square estimates private in that file. The unused broad-window power-assembly branch in `Edge` was removed. `Rotation/FinitePath.lean` defines the finite increment path and measurable corridor events; `Rotation/CyclicCover.lean` proves the deterministic path-ball cover by cyclic reindexing; `Rotation/FiniteProduct.lean` converts it to the finite-IID probability bound used by `NormalDomain.lean`. The generic coordinate-family reindexing cover estimate is in `MeasureTheory/Measure/Pi/FiniteReindexCover.lean`; the invariant-preimage finite-cover bound remains in `MeasureTheory/OuterMeasure/Finite/Cover.lean`. The normal-domain entrance bound is still imported by the selected-population second-stage bridge and spine estimates. Lemma 3.5's meander entrance uses the distinct finite-horizon i.i.d. cyclic-rotation inequality in `Fluctuation/SparreAndersen/Rotation/Probability.lean`; `FunctionalLimit/Conditioned/Transition/SurvivalLower.lean` combines it with the Gaussian endpoint-sign limit to obtain the inverse-square width bound. The uniform real-width threshold is proved in the Lemma 3.5 staircase module. |
 | `RandomWalk/FunctionalLimit/Conditioned` | Independent public interfaces by subject: `FirstWindow/`, `Meander/`, `Survival/`, and `Transition/` | `FirstWindow/Definition.lean` owns the prefix event and its measurability; `Selection.lean`, `Existence.lean`, `ConditionedLaw.lean`, `FiniteTime.lean`, `FinitePathLimit.lean`, `Absence.lean`, and `Limit.lean` remain direct complete constructions or limit results. The theorem-specific IID prefix/suffix factorization is grouped under `FirstWindow/Lemmas/BlockFactorization.lean`. The namespace remains `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned` because these declarations belong to the shared conditioned-random-walk interface; moving proof steps changes module organization, not mathematical ownership. `Meander/CorridorProbability.lean` contains the public open-corridor Portmanteau lower bound. `Survival/` contains the conditioned law and scaling. `Transition/Event.lean` owns the finite transition event, its normalized path corridor, equivalences, factorization, and diffusive horizon. The convergence-to-corridor and corridor-to-conditional-probability steps used in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.5 are grouped under `Transition/Lemmas/CorridorProbability.lean`; `Transition/` contains the remaining meander limit and diffusive lower bounds. |
 | `Probability/Process/Path`, `Probability/Process/TimeGrid`, and `Probability/Process/Brownian/AboveStart` | General path events, deterministic process-time grids, and their Brownian specializations | `TimeGrid/Ceiling.lean` gives the generic ceiling of an arbitrary extended nonnegative time functional by a finite monotone grid, with order, convergence, and measurability results; its selector uses Mathlib's `MeasureTheory.hittingBtwn`. `TimeGrid/UnitInterval.lean` and `TimeGrid/Expanding.lean` provide deterministic grids, while `TimeGrid/Dense/NonnegativeRationals.lean` provides a countable dense set of observation times. None depends on path or Brownian structure. `Path/FirstPassage/GridApproximation.lean` specializes the generic ceiling interface to continuous-path first passage and owns path-locality and reflection-continuity results. Brownian reflection at the selected time is in `Brownian/Reflection/FirstPassage/GridLaw.lean`; finite path observations use `hittingBtwn` directly in `Grid.lean`. `Path/FirstPassage/` also groups descending-hitting-time, reflection, and restart interfaces. `Path/AboveStart/FirstWindow/` groups path-level first-window results; `Brownian/AboveStart/FirstWindow/` keeps the finiteness and first-window-time continuity entries at its root; `Shift/` groups the uncentered, centered, finite-horizon, and cutoff-limit path-shift continuity results, which form one coherent path-transform family. Random-walk path foundations are grouped into `Path/Adapted/` (filtration and martingale), `Path/Event/` (drawdown, survival, oscillation, and last sign change), and `Path/Representation/` (càdlàg paths, interpolation, and scaling); the `Basic`, `Window`, and `Skorokhod` entry modules remain at the root. |
 | `Topology/Cadlag/Skorokhod` | Reusable topology and geometry for càdlàg paths with the Skorokhod metric | Public interfaces are grouped under `Compactness/`, `Corridor/`, `EDistance/`, `Evaluation/`, `Maps/`, `Oscillation/`, `Path/`, and `TimeChange/`. `Topology.lean` remains the subject-level topology interface. `TimeChange/Limit/` groups the summable-distortion convergence chain; `EDistance/Logarithmic/Completion/` groups the aligned Cauchy construction, subsequence extraction, limit identification, and completeness theorem. These are complete reusable convergence results, so they are grouped by mathematical role rather than under `Lemmas/`. |
@@ -1161,13 +1161,11 @@ layer.
 
 ## Abstraction review: finite product reindexing (2026-10-19)
 
-`Probability/Sequence/IID/FiniteReindex.lean` supplies the coordinate
-permutation name used by the cyclic-path argument and a finite-cover estimate
-for repeated-coordinate product measures. The former makes the path action
-readable at its use site: it is the homogeneous `Fin n` specialization of
-Mathlib's `MeasurableEquiv.piCongrLeft`, oriented so that coordinate `i` of
-the reindexed vector is the original coordinate `e i`. The latter adds the
-event-cover bound needed by the random-walk entrance argument.
+The cyclic-path argument uses Mathlib's
+`MeasurableEquiv.piCongrLeft` directly. The former local homogeneous-`Fin n`
+alias added no operation beyond that equivalence and was removed. The event
+cover estimate for reindexed product measures now lives in
+`MeasureTheory/Measure/Pi/FiniteReindexCover.lean`.
 
 The pinned Mathlib revision already has the more general dependent-coordinate
 result `Measure.pi_map_piCongrLeft`: it maps a product of a σ-finite family
@@ -1178,11 +1176,10 @@ and pinned source
 show that neither identical marginals nor probability normalization are
 required for product reindexing. The local set-preimage equality merely
 rewrapped that theorem and had no clients outside its defining module, so it
-is now private. The public finite-cover result uses the weaker natural
-assumption `[SigmaFinite ν]`; this is sufficient both for Mathlib's product
-reindexing theorem and for the measure inequality, which does not depend on
-normalization. The generic finite-cover step itself remains in
-`MeasureTheory/OuterMeasure/Finite/Cover.lean`.
+is private. The public finite-cover result applies to a family
+`ν : ι → Measure E` whenever each coordinate reindexing preserves that
+family, with only coordinatewise sigma-finiteness. The generic finite-cover
+step itself remains in `MeasureTheory/OuterMeasure/Finite/Cover.lean`.
 
 ## Abstraction review: finite-cover outer-measure bounds (2026-10-19)
 
@@ -1203,9 +1200,11 @@ statements therefore use the weaker semantic structure directly:
 
 These are generic finite-cover operations, rather than probability-specific
 results: neither requires measurable sets, a probability normalization, nor a
-particular finite index type. The first statement supports the cyclic-cover
-argument in `Probability/Sequence/IID/FiniteReindex.lean`; the second supports
-the corridor comparison in `Probability/Process/RandomWalk/Path/Block/Corridor/Comparison.lean`.
+particular finite index type. The first statement supports the product
+reindexing corollary in
+`MeasureTheory/Measure/Pi/FiniteReindexCover.lean`; the second supports the
+corridor comparison in
+`Probability/Process/RandomWalk/Path/Block/Corridor/Comparison.lean`.
 The finite subadditivity step is already Mathlib's
 `measure_biUnion_finset_le`, so this module adds only the useful finite-cover
 consequences and does not duplicate the underlying outer-measure API. The
@@ -3030,7 +3029,7 @@ The targets `Analysis.Fourier.PositiveDefinite`,
 `Probability.Distributions.InfinitelyDivisible.LevyKhintchine.Representation` build
 successfully with the pinned toolchain.
 
-## IID finite-product reindexing abstraction review (2026-10-21)
+## Finite-product reindexing cover abstraction review (2026-10-21)
 
 The previous `finiteCoordinateReindex` definition was a homogeneous `Fin n`
 alias for `MeasurableEquiv.piCongrLeft`; its application lemma only exposed
@@ -3049,22 +3048,25 @@ already supplies the outer-measure inequality for any finite family of
 measure-invariant preimages. These existing results cover the two lower-level
 operations, so neither was duplicated or moved into a new public module.
 
-The remaining `ProbabilityTheory.measure_pi_event_le_card_smul_of_reindex_cover`
-is the IID finite-product corollary: for finite coordinate and reindexing
-types `ι` and `κ`, a probability measure `ν`, and measurable `safe`, if the
-preimages of `safe` under a family of coordinate equivalences cover `event`,
-then
-`Measure.pi (fun _ : ι => ν) event ≤ Fintype.card κ • Measure.pi (fun _ : ι => ν) safe`.
-It no longer fixes the coordinate type to `Fin n` or requires the family to
-have exactly `n` members. This statement captures the reusable finite IID
-product probability bound independently of the random-walk path geometry, so
-it remains at `Probability/Sequence/IID/FiniteReindex.lean`; its invariance
-calculation is private. The current cyclic entrance estimate is its only
-project caller, which prompted the generality review but was not itself the
-reason for retaining a public interface. This decision follows Mathlib's
-review questions about existing general results, suitable location, and
-whether an API advances the library
+The former `ProbabilityTheory.measure_pi_event_le_card_smul_of_reindex_cover`
+assumed an identical probability measure in every coordinate. Mathlib's
+`Measure.pi_map_piCongrLeft` accepts a sigma-finite family of coordinate
+measures. The finite-cover estimate now assumes only that each coordinate
+equivalence preserves that family, `ν (rotate k i) = ν i`, and concludes
+`Measure.pi ν event ≤ Fintype.card κ • Measure.pi ν safe` whenever the
+reindexed preimages of `safe` cover `event`. It now lives at
+`MeasureTheory/Measure/Pi/FiniteReindexCover.lean`; the entrance argument
+uses the identical-marginal IID instance.
+
+The review checked the pinned
+[`Constructions/Pi.lean`](https://github.com/leanprover-community/mathlib4/blob/380f2aafb622cb2c1c93dac545b6389083c68c51/Mathlib/MeasureTheory/Constructions/Pi.lean#L745),
+which states product-measure reindexing for coordinate families, and the
+official Mathlib review guide's questions about existing general results,
+semantic location, and the value of the proposed API
 ([review guide](https://leanprover-community.github.io/contribute/pr-review.html#location-location)).
+The generic invariant-preimage cover inequality remains in
+`MeasureTheory/OuterMeasure/Finite/Cover.lean`; the Pi-measure result provides
+its coordinate-reindexing specialization without probability normalization.
 
 ## Finite-block oscillation and partition-range API review (2026-10-21)
 
