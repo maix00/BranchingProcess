@@ -11,6 +11,7 @@ public import Probability.Sequence.Filtration
 public import Probability.Sequence.IID.Basic
 public import Mathlib.Probability.Independence.Basic
 public import Mathlib.Probability.Process.Stopping
+import Probability.Sequence.IID.Blocks.Consecutive
 
 /-!
 # Fresh IID blocks after stopping times
@@ -22,11 +23,8 @@ factorization. This layer is about IID sequences and does not assume that
 coordinates are increments of a random walk.
 Write $\mu=\texttt{iidSequenceLaw}\,\nu$ and $X_k(\omega)=\omega(k)$.
 
-The public declarations are:
+The public declarations in this file are:
 
-- `ProbabilityTheory.indepFun_blockCoordinates_blockCoordinates`: if
-  $m,n\in\mathbb N$, then the coordinate blocks $[s,s+m)$ and
-  $[s+m,s+m+n)$ are independent under `iidSequenceLaw ν`.
 - `ProbabilityTheory.iidBlockEventAfter`: the event
   $\bigcup_{k\in\mathbb N}\{\tau=k\}\cap
   \{(X_k,\ldots,X_{k+\ell-1})\in A\}$ for a finite block event $A$.
@@ -54,38 +52,6 @@ open MeasureTheory
 namespace ProbabilityTheory
 
 variable {E : Type*} [MeasurableSpace E]
-
-/-- Two consecutive finite coordinate blocks of an IID sequence are
-independent. -/
-theorem indepFun_blockCoordinates_blockCoordinates
-    (ν : Measure E) [IsProbabilityMeasure ν]
-    (start m n : ℕ) :
-    IndepFun (Combinatorics.Sequence.blockCoordinates (E := E) start m)
-      (Combinatorics.Sequence.blockCoordinates (start + m) n) (iidSequenceLaw ν) := by
-  let S := Finset.Ico start (start + m)
-  let T := Finset.Ico (start + m) (start + m + n)
-  have hdisjoint : Disjoint S T := by
-    rw [Finset.disjoint_left]
-    intro k hkS hkT
-    simp only [S, T, Finset.mem_Ico] at hkS hkT
-    omega
-  have htuple := (iidSequenceLaw_independent ν).indepFun_finset S T hdisjoint
-    (fun k => measurable_pi_apply k)
-  let left : (S → E) → (Fin m → E) := fun x k =>
-    x ⟨start + k, by simp [S, k.isLt]⟩
-  let right : (T → E) → (Fin n → E) := fun x k =>
-    x ⟨start + m + k, by simp [T, k.isLt]⟩
-  have hleftMeasurable : Measurable left := by
-    rw [measurable_pi_iff]
-    intro k
-    exact measurable_pi_apply _
-  have hrightMeasurable : Measurable right := by
-    rw [measurable_pi_iff]
-    intro k
-    exact measurable_pi_apply _
-  have h := htuple.comp hleftMeasurable hrightMeasurable
-  convert h using 1 <;> funext sequence k <;>
-    simp [left, right, Combinatorics.Sequence.blockCoordinates, Nat.add_assoc]
 
 /-- A finite-coordinate event beginning at a stopping time. The value `⊤`
 contributes no event. -/

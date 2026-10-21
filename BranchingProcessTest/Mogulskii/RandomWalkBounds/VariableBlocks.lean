@@ -1,4 +1,5 @@
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.Horizontal.Basic
+import Probability.Sequence.IID.Blocks.Consecutive
 open MeasureTheory ProbabilityTheory
 open ProbabilityTheory.RandomWalk
 open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
@@ -20,4 +21,4 @@ example (ν : Measure ℝ) [IsProbabilityMeasure ν] :
     (fun j => blockOscillationLTEvent (1 : ℝ) (j.val + 1))
     (by intro j; exact measurableSet_blockOscillationLTEvent 1 (j.val + 1))
 
-#print axioms ProbabilityTheory.RandomWalk.iidSequenceLaw_measure_forall_variableConsecutiveBlockEvent
+#print axioms ProbabilityTheory.iidSequenceLaw_measure_forall_variableConsecutiveBlockEvent

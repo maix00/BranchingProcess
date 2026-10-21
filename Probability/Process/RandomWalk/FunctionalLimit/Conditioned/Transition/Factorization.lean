@@ -11,6 +11,7 @@ public import Probability.Process.RandomWalk.Path.Block.Law.Basic
 public import Probability.Process.RandomWalk.Path.Block.Partition.Basic
 public import Probability.Sequence.IID.Basic
 public import Topology.Algebra.BigOperators.PartialSum
+import Probability.Sequence.IID.Blocks.Prefix
 
 /-!
 # Independent prefix and meander-transition suffix
@@ -180,8 +181,34 @@ theorem measure_prefixWindow_and_shiftedTransition
       hwindow.preimage (measurable_pi_apply k)
   have htail : MeasurableSet tailEvent :=
     measurableSet_finiteNonnegativeTransitionEvent n width
-  have hfactor := iidSequenceLaw_measure_inter_prefix_nextBlock ν m n
-    prefixEvent tailEvent hprefix htail
+  let pastSet : Set (ℕ → ℝ) :=
+    {increment | Combinatorics.Sequence.blockCoordinates 0 m increment ∈ prefixEvent}
+  have hpast : MeasurableSet[sequencePrefixFiltration (E := ℝ) m] pastSet := by
+    rw [sequencePrefixFiltration_eq_comap_blockCoordinates m]
+    exact (MeasurableSpace.measurableSet_comap).2
+      ⟨prefixEvent, hprefix, rfl⟩
+  have hfactorGeneral := iidSequenceLaw_measure_prefix_inter_block_eq_mul
+    ν m n pastSet hpast tailEvent htail
+  have hfactorSet :
+      pastSet ∩ (Combinatorics.Sequence.blockCoordinates m n) ⁻¹' tailEvent =
+        {increment : ℕ → ℝ |
+          Combinatorics.Sequence.blockCoordinates 0 m increment ∈ prefixEvent ∧
+            Combinatorics.Sequence.blockCoordinates m n increment ∈ tailEvent} := by
+    ext increment
+    simp [pastSet]
+  have hfactor :
+      iidSequenceLaw ν
+        {increment : ℕ → ℝ |
+          Combinatorics.Sequence.blockCoordinates 0 m increment ∈ prefixEvent ∧
+            Combinatorics.Sequence.blockCoordinates m n increment ∈ tailEvent} =
+        iidSequenceLaw ν
+          {increment : ℕ → ℝ |
+            Combinatorics.Sequence.blockCoordinates 0 m increment ∈ prefixEvent} *
+          iidSequenceLaw ν
+            {increment : ℕ → ℝ |
+              Combinatorics.Sequence.blockCoordinates 0 n increment ∈ tailEvent} := by
+    rw [← hfactorSet, hfactorGeneral]
+    rfl
   have hprefixEq :
       {increment : ℕ → ℝ |
         Combinatorics.Sequence.blockCoordinates 0 m increment ∈ prefixEvent} =

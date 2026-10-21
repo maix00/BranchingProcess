@@ -23,6 +23,7 @@ import MeasureTheory.Function.FinPartialSum
 import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 import Mathlib.MeasureTheory.Function.Floor
 import Mathlib.Order.PartialSups
+import Probability.Sequence.IID.Blocks.Consecutive
 
 /-!
 # Conditional block bounds for bounded drawdown

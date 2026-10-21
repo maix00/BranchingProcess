@@ -691,42 +691,75 @@ steps stay under `Composition/Lemmas/`, because their statements encode the
 particular cyclic events and the assembly of this expansion. Their use by the
 public theorem is not, by itself, a reason to externalize them.
 
-## Abstraction research: finite consecutive-block product laws
+## Abstraction research: consecutive IID blocks and finite products
 
-The public declarations in
-`Probability/Process/RandomWalk/Path/Block/Law/FiniteProduct.lean` package the
-finite product law of an i.i.d. increment measure across consecutive blocks
-of variable lengths. The exact statement allows each block to have its own
-measurable event and identifies the joint event measure with the product of
-the block event measures. Its hypotheses are an i.i.d. probability law and
-measurability of those block events; no path regularity or moment assumption
-is used.
+The coordinate-block independence declarations formerly in
+`Probability/Process/RandomWalk/Path/Block/Law/Coordinates.lean` used only the
+canonical IID sequence law, coordinate extraction, and cumulative block
+lengths. They required no random-walk path, addition, or moment hypotheses,
+so they now live in `Probability/Sequence/IID/Blocks/Consecutive.lean` under
+`ProbabilityTheory`. Default-valued finite-block measurability likewise moved
+from the random-walk path layer to `Probability/Sequence/Block.lean`.
+Random-walk block sums and path-event consequences remain with
+`RandomWalk/Path/Block/Law/`.
 
 The pinned Mathlib revision is
-`380f2aafb622cb2c1c93dac545b6389083c68c51`. Its
-[`Measure.pi_pi`](https://github.com/leanprover-community/mathlib4/blob/380f2aafb622cb2c1c93dac545b6389083c68c51/Mathlib/MeasureTheory/Constructions/Pi.lean)
-computes the measure of a measurable product rectangle for a finite product
-of sigma-finite measures. The same file provides
-`measurePreserving_piEquivPiSubtypeProd` for splitting coordinates into two
-subfamilies and `measurePreserving_pi` for coordinatewise measure-preserving
-maps. These are more general measure-theoretic primitives than the local
-probability statement. The pinned source has no single theorem that packages
-the ordered, variable-length consecutive-block event used here; the local
-statement supplies that block-indexing adapter and obtains its law from
-`iidSequenceLaw`.
+`380f2aafb622cb2c1c93dac545b6389083c68c51`. Mathlib provides
+[`Measure.pi_pi`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/MeasureTheory/Constructions/Pi.html)
+for evaluating product measures on measurable rectangles and
+`Measure.pi_map_piCongrLeft` for reindexing finite coordinate products; the
+pinned source is
+[`Mathlib/MeasureTheory/Constructions/Pi.lean`](https://github.com/leanprover-community/mathlib4/blob/380f2aafb622cb2c1c93dac545b6389083c68c51/Mathlib/MeasureTheory/Constructions/Pi.lean).
+These are the broad measure-theoretic interfaces. The consecutive IID block
+theorems add the useful sequence-level specialization: arbitrary measurable
+events on disjoint blocks factor under the canonical IID law.
 
-A still broader theorem could allow a different sigma-finite measure at
-each coordinate and express the block decomposition through a measurable
-equivalence between `Fin n` and the dependent sum of the block index types.
-That formulation is a finite-product measure decomposition, rather than a
-random-walk probability result. The Mathlib coordinate-splitting and product
-rectangle APIs already provide its general measure-theoretic ingredients;
-adding another public wrapper solely to restate those APIs would duplicate
-their abstraction. The current result therefore remains at the random-walk
-block-law layer: it is a complete i.i.d. probability theorem with arbitrary
-measurable block events, while its finite-coordinate geometry is supplied by
-Mathlib. Its single current downstream use prompted this review but did not
-determine its placement.
+The finite-product adapter formerly exposed from
+`RandomWalk/Path/Block/Law/FiniteProduct.lean` has only one client, the cyclic
+gap factorization in Bauer--Godrèche--Luck, Appendix A, equation (A.6). Its
+proof identifies the cyclic gaps with consecutive blocks, then uses the
+Mathlib product-rectangle and reindexing APIs. That adapter does not define a
+second reusable probability interface, so its two declarations are now
+`private lemma`s inside
+`RandomWalk/Fluctuation/SparreAndersen/Composition/Lemmas/BlockProbability.lean`,
+beside the proof that consumes them. The one-use two-block prefix adapter was
+also removed: its bridge and finite-cover clients now call the more general
+`Probability/Sequence/IID/Blocks/Prefix.lean` theorem, which accepts any event
+measurable from the finite prefix.
+
+The pinned Mathlib source was also checked for a cumulative start-index API.
+[`List.ranges` in `Mathlib.Data.List.Range`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Data/List/Range.html)
+constructs pairwise-disjoint ranges from a finite list of lengths and proves
+that their concatenation is the range of the total length. It is appropriate
+for a finite list, while the IID block interface is parameterized by an
+arbitrary function `length : ℕ → ℕ`. No Mathlib declaration directly gives the
+prefix sum `b_j = \sum_{i<j} length(i)` for that interface. This index-only
+construction and its recurrence/monotonicity laws therefore now belong to
+`Combinatorics.Sequence.Block` as `Combinatorics.Sequence.blockStart`; it has
+no state-space, algebra, or probability assumptions. The older
+`AdditivePath.blockStart` remains a compatibility alias for the additive-path
+API, and the generic IID block module no longer imports that additive-path
+layer.
+
+Mathlib's product-measure API already supplies the more abstract mechanisms:
+[`Measure.pi_pi`, `Measure.pi_map_piCongrLeft`, and
+`measurePreserving_sumPiEquivProdPi`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/MeasureTheory/Constructions/Pi.html).
+These handle measurable rectangles, coordinate reindexing, and decomposition
+of products over a sum of index types. The cyclic-gap product calculation is
+therefore kept private in its one proof chain instead of introducing another
+public finite-product theorem.
+
+The directory count review excluded vendored and test trees. The three
+production directories with eight direct Lean modules are `Kernel/Killed/Return`,
+`Path/Skorokhod/Corridor/UniformBlocks`, and
+`Distributions/Stable/Attraction/Norming`. Their modules state distinct
+return-kernel, uniform-block, and norming interfaces; they have no shared
+theorem-specific proof family that would make another subdirectory clearer.
+They remain grouped under these semantic owners. A scan of the production tree
+found no same-level `.lean` file and directory with the same stem. Repeated
+short filenames such as `Basic.lean` in different semantic subdirectories
+remain appropriate: Mathlib uses the same local naming pattern throughout its
+subject-organized source tree.
 
 ## Abstraction review: stable finite-variation entrance positivity (2026-10-19)
 

@@ -11,6 +11,7 @@ public import Probability.Process.RandomWalk.Path.Block.Law.Basic
 public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Survival.Conditioning
 public import Probability.Sequence.IID.Basic
 import Probability.Sequence.IID.Blocks.StoppingTime
+import Probability.Sequence.IID.Blocks.Consecutive
 
 /-!
 # Almost-sure existence of a first surviving window

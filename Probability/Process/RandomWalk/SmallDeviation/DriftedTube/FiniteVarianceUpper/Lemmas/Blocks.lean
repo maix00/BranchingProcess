@@ -16,6 +16,7 @@ public import Probability.Sequence.Filtration
 import Probability.Sequence.IID.Blocks.StoppingTime
 import Probability.Independence.ConditionalIntegral
 import Analysis.Asymptotics.Scale.Power.IntermediateBlock
+import Probability.Sequence.IID.Blocks.Consecutive
 
 /-!
 # Proof lemmas for the finite-variance tilted-tube upper bound

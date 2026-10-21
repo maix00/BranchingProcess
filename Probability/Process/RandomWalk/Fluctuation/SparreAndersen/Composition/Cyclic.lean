@@ -131,7 +131,7 @@ theorem blockStart_cyclicGapLength_eq {n : ℕ}
         (starts ⟨m, hm⟩).val -
           (starts ⟨0, Finset.card_pos.mpr hu⟩).val := by
     induction m with
-    | zero => simp [AdditivePath.blockStart_zero]
+    | zero => simp
     | succ m ih =>
         have hm' : m < u.card := by omega
         have hih := ih hm'

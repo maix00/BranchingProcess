@@ -6,7 +6,9 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.Path.Block.Law.Coordinates
+public import Probability.Process.RandomWalk.Path.Block.Basic
+public import Probability.Sequence.Block
+public import Probability.Sequence.IID.Basic
 public import Probability.Process.RandomWalk.Path.Window.Core
 import Probability.Sequence.IID.Blocks.StoppingTime
 

@@ -11,6 +11,7 @@ public import Probability.Sequence.Filtration
 public import Probability.Sequence.IID.Basic
 
 import Probability.Sequence.IID.Blocks.StoppingTime
+import Probability.Sequence.IID.Blocks.Consecutive
 
 /-!
 # Independent finite prefixes and following IID blocks

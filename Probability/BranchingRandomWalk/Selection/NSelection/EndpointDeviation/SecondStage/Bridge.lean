@@ -7,6 +7,7 @@ Authors: WANG Yiyang
 
 import Probability.Process.RandomWalk.Path.Block.Law.Basic
 import Probability.Process.RandomWalk.Path.Block.Partition.Basic
+import Probability.Sequence.IID.Blocks.Prefix
 import Probability.Process.RandomWalk.Path.Window.Core
 import Probability.Process.RandomWalk.SmallDeviation.Entrance.NormalDomain
 
@@ -328,8 +329,17 @@ theorem iidSequenceLaw_measure_ge_mul_of_finiteMovingEntrance_downwardBridge
   have hbridgeMeasurable : MeasurableSet bridge :=
     measurableSet_finiteCorridorBridgeEvent
       bridgeLower bridgeUpper bridgeEndpointLower bridgeEndpointUpper
-  have hfactor := RandomWalk.iidSequenceLaw_measure_inter_prefix_nextBlock
-    ν prefixLength bridgeLength entrance bridge hentranceMeasurable hbridgeMeasurable
+  have hprefix : MeasurableSet[sequencePrefixFiltration (E := ℝ) prefixLength]
+      {increment : ℕ → ℝ |
+        Combinatorics.Sequence.blockCoordinates 0 prefixLength increment ∈ entrance} := by
+    rw [sequencePrefixFiltration_eq_comap_blockCoordinates prefixLength]
+    exact (MeasurableSpace.measurableSet_comap).2
+      ⟨entrance, hentranceMeasurable, rfl⟩
+  have hfactor := iidSequenceLaw_measure_prefix_inter_block_eq_mul
+    ν prefixLength bridgeLength
+    {increment : ℕ → ℝ |
+      Combinatorics.Sequence.blockCoordinates 0 prefixLength increment ∈ entrance}
+    hprefix bridge hbridgeMeasurable
   have hsubset :
       {increment : ℕ → ℝ |
         Combinatorics.Sequence.blockCoordinates 0 prefixLength increment ∈ entrance ∧

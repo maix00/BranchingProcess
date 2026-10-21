@@ -10,6 +10,7 @@ public import Probability.Process.RandomWalk.Path.Block.Corridor.Measure
 public import Probability.Process.RandomWalk.Path.Block.Law.Basic
 public import Probability.Process.RandomWalk.Path.Representation.Cadlag
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.Partition.Corridor
+import Probability.Sequence.IID.Blocks.Consecutive
 /-!
 # Endpoint-core events on discrete corridor cells
 
