@@ -2640,3 +2640,16 @@ modules as complete probability constructions and results. The definition,
 proof module, two corridor-probability entries, and three downstream transition
 clients build successfully; Mathlib `lint-style` passes on the four changed
 Lean modules.
+
+## Brownian meander helper visibility (2026-10-21)
+
+`LastZeroSupport.lean` exposed the two calculations that the last-zero
+transform fixes a positive linear path, although both calculations are used
+only in that file's support proof. They are now private lemmas; the public
+declaration inventory contains only the continuous-path-law and Skorokhod-law
+support results. `LastZeroLaw.lean` likewise keeps the measurability proof for
+the strict-positive path event private, since it is used only to establish the
+Brownian-meander law's strict-positivity property. The public law and support
+statements are unchanged. The two edited modules, their Brownian-meander
+dependents, and the conditioned-transition clients build successfully;
+Mathlib `lint-style` passes on both edited modules.

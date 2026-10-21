@@ -29,8 +29,6 @@ The public objects and theorems in this file are:
   $m\{f:f(t)>0\}=1$ for each fixed $t>0$.
 - `ProbabilityTheory.IsBrownianReal.ae_lastZeroMeanderPathLaw_nonnegative`:
   $m\{f:\forall t,\ f(t)\ge0\}=1$.
-- `ProbabilityTheory.measurableSet_strictlyPositiveAfterZero`:
-  $\{f:\forall t>0,\ f(t)>0\}$ is Borel measurable.
 - `ProbabilityTheory.IsBrownianReal.ae_lastZeroMeanderPathLaw_strictlyPositive`:
   $m\{f:\forall t>0,\ f(t)>0\}=1$.
 
@@ -154,9 +152,9 @@ theorem IsBrownianReal.ae_lastZeroMeanderPathLaw_nonnegative
         exact le_of_eq hω.1.symm
       · exact (hω.2 t (lt_of_le_of_ne bot_le (Ne.symm ht))).le)
 
-/-- Continuous paths which are strictly positive at every positive time
-form a Borel subset of the compact-open path space. -/
-theorem measurableSet_strictlyPositiveAfterZero :
+/- The strict-positive path event is measurable by expressing it as a countable
+intersection of compact-set mapping events. -/
+private theorem measurableSet_strictlyPositiveAfterZero :
     MeasurableSet
       {f : C(unitInterval, ℝ) |
         ∀ t : unitInterval, 0 < t → 0 < f t} := by
