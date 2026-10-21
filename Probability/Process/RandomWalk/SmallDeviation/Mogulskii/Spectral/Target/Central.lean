@@ -6,24 +6,77 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Target.LowerBound
+public import Probability.Process.RandomWalk.Rademacher.FiniteInterval.Spectral.Target.LowerBound
 public import Probability.Kernel.Survival.Return
+import Probability.Process.RandomWalk.Rademacher.Transition.Basic
+import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Diffusive.Lower
 
 /-!
 # Central terminal targets
 
+The public declarations in this module are:
+
+All names below are declarations in
+`ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii`.
+
+Write $N_m=8m-1$, $K_m=\texttt{intervalKernel}(N_m)$, and
+$\phi_m(x)=\sin(\pi(x.val+1)/(8m))$. Let $\varepsilon=0$ when
+$n+x.val+2m-1$ is even and $\varepsilon=1$ otherwise. The target
+$C_{m,n}(x)=\texttt{centralParityTarget}(m,n,x)$ satisfies
+$\{y.val:y\in C_{m,n}(x)\}=\{2m-1+\varepsilon+2j:0\le j<2m\}$.
+
+- `centralIntervalStart`, `IsCentralCoreStart`, and `centralCoreSet` define
+  the midpoint and the central region
+  $\{x:2m\le x.val+1\le6m\}\subseteq\operatorname{Fin}(8m-1)$;
+  `centralCoreSet_measurableSet` proves this finite-state set measurable.
+- `centralCoreReturnKernel` is the return kernel of the killed interval walk
+  on this central region, and `centralParityTarget` is the arithmetic
+  progression of endpoints reachable after $n$ steps.
+- `isCentralCoreStart_of_mem_centralParityTarget` and
+  `isCentralCoreStart_of_mem_compatibleCentralTarget` place every selected
+  endpoint in the central region; `centralParityTarget_card` gives its size
+  $2m$.
+- `sqrt_two_div_two_le_sin_of_mem_middle_thirds`,
+  `sqrt_two_div_two_le_intervalSineWeight_of_isCentralCoreStart`, and
+  `sqrt_two_div_two_le_intervalSineWeight_of_mem_centralParityTarget` prove
+  the lower bound $\sqrt{2}/2\le\phi_{8m-1}(x)$ on the middle region and
+  these targets, where $\phi_N(x)=\sin(\pi(x.val+1)/(N+1))$.
+- `quarter_mul_dirichletWidth_le_centralParityTarget_card` gives
+  $(8m)/4\le|C_{m,n}(x)|$ after parity filtering.
+- `centralCoreTargetMass_lower` states
+  $\frac14\lambda_m^n\le\sum_{y\in C_{m,n}(x)}K_m^n(x,y)$ when
+  $x$ is central, $n>0$, and $\lambda_m^n\le1/17$, with
+  $K_m=\texttt{intervalKernel}(8m-1)$ and
+  $\lambda_m=\cos(\pi/(8m))$.
+- `centralCoreReturnKernel_apply_univ_lower` transfers this to the return
+  kernel. `eventually_lowerBound_le_centralCoreTargetMass` gives every strict
+  lower constant below $\frac14e^{-\pi^2c/2}$ eventually when
+  $n_m/(8m)^2\to c$ and $8m\to\infty$.
+- `eventually_pow_div_lower_survival_from_centralCore` iterates the block
+  estimate to obtain
+  $a^{\lfloor N/n_m\rfloor+1}\le\operatorname{remainingMass}_N$ eventually;
+  `eventually_log_lower_survival_from_centralCore` gives its logarithmic
+  form.
+- `centralIntervalStart_weight` and
+  `centralIntervalStart_isCentralCoreStart` show that the midpoint has
+  ground-state weight $1$ and belongs to the central region.
+
 For intervals whose Dirichlet width is a multiple of eight, an explicit
 arithmetic progression gives a positive-density set of central, reachable
-terminal sites.  These are the targets used in the core-to-core estimate.
+terminal sites. These are the targets used in the core-to-core estimate.
 -/
 
 open MeasureTheory
 open scoped BigOperators
 open Filter Topology
 
+open ProbabilityTheory.RandomWalk.Rademacher.FiniteInterval
+
 @[expose] public section
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
+
+open ProbabilityTheory.RandomWalk.Rademacher
 
 /-- A central starting site in an interval with Dirichlet width `8 * m`. -/
 def centralIntervalStart (m : ℕ) (hm : 0 < m) : Fin (8 * m - 1) :=
