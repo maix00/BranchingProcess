@@ -1569,6 +1569,30 @@ determination that every flagged header is incomplete. Four empty source
 directories found in the broader scan were removed. Header-by-header review
 remains open.
 
+A fresh name-only scan of the current Mogul'skii subtree flags six modules
+and 23 apparent declaration-name omissions. Manual inspection confirms each
+is either a private helper or already listed under its fully qualified name;
+the scanner misses `_root_` declarations and does not parse Lean visibility.
+This resolves the name-only queue for these six modules, while the wider
+formula-and-hypothesis review remains open.
+
+The two nested modules named `RandomWalkBounds/Partition/Lemmas/LowerGeometry.lean`
+and `RandomWalkBounds/TerminalLeft/Partition/Lemmas/LowerGeometry.lean` have
+different statements: one glues blocks for the normalized floor-partition
+path, while the other uses the source-normalized path and its clipped terminal
+cell lengths. Each is used by the corresponding lower-probability proof.
+Their shared proof pattern does not yet give a standalone reusable interface;
+unifying it would require abstracting over the path evaluator, grid, and cell
+indexing conventions. The existing general theorem
+`Skorokhod.PathClass.StepCorridor.exists_commonPartitionLowerGeometry` selects
+the endpoint cores and strict cell levels; it does not convert the two
+random-walk block-event systems into global path membership, so it does not
+replace either helper. They remain separate proof helpers under their
+distinct semantic paths. This follows Mathlib's guidance to check both
+declaration location and whether a proposed result advances the library,
+rather than promoting a helper solely because two proofs share a shape
+([review guide](https://leanprover-community.github.io/contribute/pr-review.html#location-location)).
+
 ## Mogul'skii API-header follow-up (2026-10-20)
 
 The endpoint and terminal-left review added formula-bearing declaration lists
