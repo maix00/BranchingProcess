@@ -10,6 +10,7 @@ public import Probability.Process.RandomWalk.Path.Restart.Windows
 public import Probability.Process.RandomWalk.Path.Block.Law.Basic
 import Probability.Sequence.IID.Blocks.StoppingTime
 public import Probability.Process.RandomWalk.Path.Window.Core
+import Probability.Sequence.IID.Blocks.Consecutive
 
 /-!
 # Laws of restarted walk paths

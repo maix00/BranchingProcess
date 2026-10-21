@@ -11,6 +11,7 @@ public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Surviva
 public import Probability.Process.RandomWalk.Path.Block.Law.Basic
 public import Probability.Sequence.IID.Basic
 import Probability.Sequence.IID.Blocks.StoppingTime
+import Probability.Sequence.IID.Blocks.Consecutive
 
 /-!
 # First-window block factorization lemmas

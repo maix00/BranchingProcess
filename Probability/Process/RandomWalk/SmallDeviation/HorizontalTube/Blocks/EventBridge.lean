@@ -14,6 +14,7 @@ public import Mathlib.MeasureTheory.Function.ConditionalExpectation.Basic
 
 import Probability.Sequence.IID.Blocks.StoppingTime
 import Probability.Independence.ConditionalIntegral
+import Probability.Sequence.IID.Blocks.Consecutive
 
 /-!
 # Finite-block form of a horizontal tube with endpoint window

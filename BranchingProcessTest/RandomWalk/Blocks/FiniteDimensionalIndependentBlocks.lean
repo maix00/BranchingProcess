@@ -1,4 +1,5 @@
 import Probability.Process.RandomWalk.FunctionalLimit.FiniteDimensional.IndependentBlocks
+import Probability.Sequence.IID.Blocks.Consecutive
 
 open Filter MeasureTheory ProbabilityTheory
 open ProbabilityTheory.RandomWalk.FunctionalLimit.FiniteDimensional
@@ -25,7 +26,7 @@ example (ν : Measure ℝ) [IsProbabilityMeasure ν] :
         Combinatorics.Sequence.blockCoordinates
           (AdditivePath.blockStart (fun _ => 0) j.val) 0 increment)
       (iidSequenceLaw ν) :=
-  ProbabilityTheory.RandomWalk.iIndepFun_variableConsecutiveBlockCoordinates
+  ProbabilityTheory.iIndepFun_variableConsecutiveBlockCoordinates
     ν (fun _ => 0) 0
 
 example (ν : Measure ℝ) [IsProbabilityMeasure ν] :
@@ -34,14 +35,14 @@ example (ν : Measure ℝ) [IsProbabilityMeasure ν] :
         Combinatorics.Sequence.blockCoordinates
           (AdditivePath.blockStart (fun k => k + 1) j.val) (j.val + 1) increment)
       (iidSequenceLaw ν) :=
-  ProbabilityTheory.RandomWalk.iIndepFun_variableConsecutiveBlockCoordinates
+  ProbabilityTheory.iIndepFun_variableConsecutiveBlockCoordinates
     ν (fun k => k + 1) 2
 
 example (ν : Measure ℝ) [IsProbabilityMeasure ν] :
     iIndepFun
       (fun (j : Fin 2) increment => Combinatorics.Sequence.blockCoordinates (j.val * 3) 3 increment)
       (iidSequenceLaw ν) :=
-  ProbabilityTheory.RandomWalk.iIndepFun_consecutiveBlockCoordinates ν 2 3
+  ProbabilityTheory.iIndepFun_consecutiveBlockCoordinates ν 2 3
 
 example (ν : Measure ℝ) [IsProbabilityMeasure ν] :
     iIndepFun
@@ -117,7 +118,7 @@ example {ν limit : Measure ℝ} [IsProbabilityMeasure ν] [IsProbabilityMeasure
   exact tendstoInDistribution_consecutiveBlockSums h blocks length spatialScale ratio
     (fun _ => c) hblock hspatial hratio hcenter
 
-#print axioms ProbabilityTheory.RandomWalk.iIndepFun_variableConsecutiveBlockCoordinates
+#print axioms ProbabilityTheory.iIndepFun_variableConsecutiveBlockCoordinates
 #print axioms ProbabilityTheory.RandomWalk.iIndepFun_variableConsecutiveBlockSums
 #print axioms ProbabilityTheory.RandomWalk.FunctionalLimit.FiniteDimensional.tendstoInDistribution_consecutiveBlockSums
 #print axioms ProbabilityTheory.RandomWalk.FunctionalLimit.FiniteDimensional.tendstoInDistribution_consecutiveBlockEndpoints

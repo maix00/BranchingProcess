@@ -10,6 +10,7 @@ public import Probability.Process.RandomWalk.Path.Block.Oscillation
 public import Probability.Process.RandomWalk.Path.Block.Law.Oscillation
 public import Probability.Process.RandomWalk.Path.Block.Law.Basic
 public import Probability.Process.RandomWalk.Path.Block.Partition.Basic
+import Probability.Sequence.IID.Blocks.Consecutive
 
 /-!
 # Range bounds for partitioned random walks
@@ -57,7 +58,7 @@ theorem measure_forall_halfOpenPartitionCellCorridors_le_prod_rangeProbability
           (upper j - lower j) (length j.val - 1) := by
   let blockEvent : (j : Fin blocks) → Set (Fin (length j.val) → ℝ) := fun j =>
     blockOscillationPrefixLTEvent (upper j - lower j) (length j.val)
-  have hfactor := ProbabilityTheory.RandomWalk.iidSequenceLaw_measure_forall_variableConsecutiveBlockEvent
+  have hfactor := ProbabilityTheory.iidSequenceLaw_measure_forall_variableConsecutiveBlockEvent
     ν length blocks blockEvent (fun j =>
       measurableSet_blockOscillationPrefixLTEvent
         (upper j - lower j) (length j.val))
@@ -174,7 +175,7 @@ theorem measure_forall_partitionCellCorridors_le_prod_rangeProbability
           (upper j - lower j) (length j.val) := by
   let blockEvent : (j : Fin blocks) → Set (Fin (length j.val) → ℝ) := fun j =>
     blockOscillationLTEvent (upper j - lower j) (length j.val)
-  have hfactor := ProbabilityTheory.RandomWalk.iidSequenceLaw_measure_forall_variableConsecutiveBlockEvent
+  have hfactor := ProbabilityTheory.iidSequenceLaw_measure_forall_variableConsecutiveBlockEvent
     ν length blocks blockEvent (fun j =>
       measurableSet_blockOscillationLTEvent (upper j - lower j) (length j.val))
   have hfactor' : iidSequenceLaw ν {increment : ℕ → ℝ |
@@ -299,7 +300,7 @@ theorem measure_forall_selectedHalfOpenPartitionCellCorridors_le_prod_rangeProba
     {increment | Combinatorics.Sequence.blockCoordinates 0 (length j.val)
       increment ∈ blockEvent j}
   have hfactor :=
-    ProbabilityTheory.RandomWalk.iidSequenceLaw_measure_forall_variableConsecutiveBlockEvent
+    ProbabilityTheory.iidSequenceLaw_measure_forall_variableConsecutiveBlockEvent
       ν length blocks blockEvent (by
         intro j
         by_cases hj : j ∈ s

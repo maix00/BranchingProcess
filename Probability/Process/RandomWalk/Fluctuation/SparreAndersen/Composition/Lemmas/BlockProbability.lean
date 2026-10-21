@@ -8,7 +8,6 @@ module
 
 import Probability.Process.RandomWalk.Fluctuation.SparreAndersen.Composition.InclusionExclusion
 import Probability.Process.RandomWalk.Fluctuation.SparreAndersen.Composition.Cyclic
-import Probability.Process.RandomWalk.Path.Block.Law.FiniteProduct
 import Mathlib.Algebra.Group.Defs
 import Mathlib.Algebra.Order.Group.Defs
 import Mathlib.Order.Defs.LinearOrder
@@ -16,6 +15,7 @@ import Mathlib.MeasureTheory.MeasurableSpace.Defs
 import Mathlib.MeasureTheory.Group.Arithmetic
 import Mathlib.Tactic.Abel
 import Mathlib.MeasureTheory.Constructions.Pi
+import Probability.Sequence.IID.Blocks.Consecutive
 
 /-!
 # Private proof steps for the cyclic gap identity
@@ -641,6 +641,114 @@ private lemma measurableSet_nonnegativePartialSum (m : ℕ)
       hIci.preimage (hpartial t)
   simpa only [Set.iInter_ofPred] using h
 
+/-- A finite product measure factors over a consecutive partition into
+variable-length measurable coordinate-block events. -/
+private lemma measure_pi_cyclicGapBlocks_eq_prod
+    {E : Type*} [MeasurableSpace E]
+    (ν : Measure E) [IsProbabilityMeasure ν]
+    (length : ℕ → ℕ) (blocks : ℕ)
+    (event : ∀ j : Fin blocks, Set (Fin (length j.val) → E))
+    (hmeas : ∀ j, MeasurableSet (event j)) :
+    let total := Combinatorics.Sequence.blockStart length blocks
+    Measure.pi (fun _ : Fin total => ν)
+      {x : Fin total → E | ∀ j : Fin blocks,
+        (fun k : Fin (length j.val) =>
+          x ⟨Combinatorics.Sequence.blockStart length j.val + k.val, by
+            have hmono := Combinatorics.Sequence.blockStart_mono length
+              (Nat.succ_le_of_lt j.isLt)
+            rw [Combinatorics.Sequence.blockStart_succ] at hmono
+            omega⟩) ∈ event j} =
+      ∏ j : Fin blocks,
+        Measure.pi (fun _ : Fin (length j.val) => ν) (event j) := by
+  let total := Combinatorics.Sequence.blockStart length blocks
+  let finiteEvent : Set (Fin total → E) :=
+    {x | ∀ j : Fin blocks,
+      (fun k : Fin (length j.val) =>
+        x ⟨Combinatorics.Sequence.blockStart length j.val + k.val, by
+          have hmono := Combinatorics.Sequence.blockStart_mono length
+            (Nat.succ_le_of_lt j.isLt)
+          rw [Combinatorics.Sequence.blockStart_succ] at hmono
+          omega⟩) ∈ event j}
+  have hfinite : MeasurableSet finiteEvent := by
+    have h : MeasurableSet (⋂ j : Fin blocks,
+      {x : Fin total → E |
+        (fun k : Fin (length j.val) =>
+          x ⟨Combinatorics.Sequence.blockStart length j.val + k.val, by
+            have hmono := Combinatorics.Sequence.blockStart_mono length
+              (Nat.succ_le_of_lt j.isLt)
+            rw [Combinatorics.Sequence.blockStart_succ] at hmono
+            omega⟩) ∈ event j}) := by
+      apply MeasurableSet.iInter
+      intro j
+      apply (hmeas j).preimage
+      exact measurable_pi_iff.mpr fun k => measurable_pi_apply _
+    simpa only [finiteEvent, Set.iInter_ofPred] using h
+  let firstCoordinates : (ℕ → E) → Fin total → E := fun x i => x i.val
+  have hprefix : Measurable firstCoordinates :=
+    measurable_pi_iff.mpr fun i => measurable_pi_apply i.val
+  have hpreimage :
+      firstCoordinates ⁻¹' finiteEvent =
+        {x : ℕ → E | ∀ j : Fin blocks,
+          Combinatorics.Sequence.blockCoordinates
+            (Combinatorics.Sequence.blockStart length j.val) (length j.val) x ∈ event j} := by
+    ext x
+    simp only [Set.mem_preimage, finiteEvent, Set.mem_ofPred_eq]
+    apply forall_congr'
+    intro j
+    have heq :
+        (fun k : Fin (length j.val) =>
+          firstCoordinates x ⟨Combinatorics.Sequence.blockStart length j.val + k.val, by
+            have hmono := Combinatorics.Sequence.blockStart_mono length
+              (Nat.succ_le_of_lt j.isLt)
+            rw [Combinatorics.Sequence.blockStart_succ] at hmono
+            omega⟩) =
+          Combinatorics.Sequence.blockCoordinates
+            (Combinatorics.Sequence.blockStart length j.val) (length j.val) x := by
+      funext k
+      rfl
+    rw [heq]
+  dsimp only
+  rw [← iidSequenceLaw_map_finPrefix ν total]
+  rw [Measure.map_apply hprefix hfinite, hpreimage]
+  rw [iidSequenceLaw_measure_forall_variableConsecutiveBlockEvent ν length blocks event hmeas]
+  apply Finset.prod_congr rfl
+  intro j _
+  rw [← iidSequenceLaw_map_finPrefix ν (length j.val)]
+  rw [Measure.map_apply (measurable_pi_iff.mpr fun i => measurable_pi_apply i.val)
+    (hmeas j)]
+  congr 1
+  ext x
+  simp only [Set.mem_ofPred_eq, Set.mem_preimage]
+  have heq :
+      Combinatorics.Sequence.blockCoordinates 0 (length j.val) x =
+        (fun i : Fin (length j.val) => x i.val) := by
+    funext k
+    simp [Combinatorics.Sequence.blockCoordinates]
+  rw [heq]
+
+/-- The finite product block factorization with an explicit total length. -/
+private lemma measure_pi_cyclicGapBlocks_eq_prod_of_total
+    {E : Type*} [MeasurableSpace E]
+    (ν : Measure E) [IsProbabilityMeasure ν]
+    (length : ℕ → ℕ) (blocks n : ℕ)
+    (htotal : Combinatorics.Sequence.blockStart length blocks = n)
+    (event : ∀ j : Fin blocks, Set (Fin (length j.val) → E))
+    (hmeas : ∀ j, MeasurableSet (event j)) :
+    Measure.pi (fun _ : Fin n => ν)
+      {x : Fin n → E | ∀ j : Fin blocks,
+        (fun k : Fin (length j.val) =>
+          x ⟨Combinatorics.Sequence.blockStart length j.val + k.val, by
+            have hmono := Combinatorics.Sequence.blockStart_mono length
+              (Nat.succ_le_of_lt j.isLt)
+            rw [Combinatorics.Sequence.blockStart_succ] at hmono
+            omega⟩) ∈ event j} =
+      ∏ j : Fin blocks,
+        Measure.pi (fun _ : Fin (length j.val) => ν) (event j) := by
+  subst n
+  exact measure_pi_cyclicGapBlocks_eq_prod
+    ν length blocks event hmeas
+
+
 /-- Bauer--Godrèche--Luck, Appendix A, equation (A.6): the selected cyclic
 survival intersection factors into the survival probabilities of its
 disjoint cyclic blocks under an IID finite product law. -/
@@ -661,9 +769,9 @@ private lemma measure_pi_cyclicBlockEvent_eq_prod
     fun j => {z | ∀ t : Fin (length j.val + 1), 0 ≤ Fin.partialSum z t}
   have hmeas (j : Fin u.card) : MeasurableSet (event j) :=
     measurableSet_nonnegativePartialSum (length j.val) hIci
-  have htotal : AdditivePath.blockStart length u.card = n :=
+  have htotal : Combinatorics.Sequence.blockStart length u.card = n :=
     blockStart_cyclicGapLength_card u hu
-  have hproduct := measure_pi_forall_variableConsecutiveBlockEvent_of_sum
+  have hproduct := measure_pi_cyclicGapBlocks_eq_prod_of_total
     ν length u.card n htotal event hmeas
   let e := Fin.cyclicCoordinateReindex hn
     (u.orderEmbOfFin rfl ⟨0, Finset.card_pos.mpr hu⟩)

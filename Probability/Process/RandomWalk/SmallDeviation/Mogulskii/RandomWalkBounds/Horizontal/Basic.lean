@@ -14,6 +14,7 @@ public import Probability.Process.RandomWalk.Kernel.Killed.Return.Basic
 public import Probability.Process.RandomWalk.Kernel.Killed.Survival.Blocking
 public import Probability.Process.RandomWalk.Path.Corridor.Horizontal.Core
 public import Mathlib.Algebra.Order.Floor.Semifield
+import Probability.Sequence.IID.Blocks.Consecutive
 
 /-!
 # Discrete horizontal block inequalities
