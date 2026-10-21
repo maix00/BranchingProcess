@@ -16,26 +16,16 @@ The finite-cover block estimate has a fixed multiplicative prefactor and a
 spectral exponent. This file isolates the elementary real-analysis step that
 chooses cover count, Donsker slack, and diffusive block constant in the order
 required by the proof.
-The proof-specific declarations are:
-
-* `finiteCoverCorridorExponential_diffusive` proves the identity
-  \[
-    E_m\!\left(\frac{1+\varepsilon}{\sqrt C}\right)
-    =\exp\!\left(-\frac{\pi^2 C}
-      {2((1+3/m)(1+\varepsilon))^2}\right),
-  \]
-  where $E_m(u)=\texttt{finiteCoverCorridorExponential}(m,u)$.
-* `scaledLog_two_finiteCoverRangeBound_diffusive` gives
-  \[
-    \frac1C\log\!\left(2\,\texttt{finiteCoverRangeBound}
-      \left(m,\frac{1+\varepsilon}{\sqrt C}\right)\right)
-    =\frac{\log(16m)}C-
-      \frac{\pi^2}{2((1+3/m)(1+\varepsilon))^2}.
-  \]
-* `exists_finiteCover_parameters_for_sharp_rate` proves that for every
-  $\eta>0$ one can choose $m,\varepsilon,C>0$ so the spectral and range
-  factors are below $1/2$ and the displayed logarithmic rate is less than
-  $-\pi^2/2+\eta$.
+The public proof lemma `exists_finiteCover_parameters_for_sharp_rate` proves
+that for every $\eta>0$ one can choose $m,\varepsilon,C>0$ so the spectral
+and range factors are below $1/2$ and
+\[
+  \frac1C\log\!\left(2\,\texttt{finiteCoverRangeBound}
+    \left(m,\frac{1+\varepsilon}{\sqrt C}\right)\right)
+  <-\frac{\pi^2}{2}+\eta.
+\]
+The two finite-cover identities used only in its proof are private to this
+module.
 -/
 
 open Filter
@@ -46,7 +36,7 @@ namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
 /-- At diffusive width `(1 + enlargement) / √C`, the finite-cover spectral
 exponential has an exponent linear in `C`. -/
-lemma finiteCoverCorridorExponential_diffusive
+private lemma finiteCoverCorridorExponential_diffusive
     {count : ℕ} (hcount : 0 < count)
     {enlargement C : ℝ} (henlargement : 0 < enlargement) (hC : 0 < C) :
     finiteCoverCorridorExponential count ((1 + enlargement) / Real.sqrt C) =
@@ -61,7 +51,7 @@ lemma finiteCoverCorridorExponential_diffusive
 
 /-- The logarithmic fixed-cover bound is an affine function of the reciprocal
 block constant, with its limiting spectral coefficient explicit. -/
-lemma scaledLog_two_finiteCoverRangeBound_diffusive
+private lemma scaledLog_two_finiteCoverRangeBound_diffusive
     {count : ℕ} (hcount : 0 < count)
     {enlargement C : ℝ} (henlargement : 0 < enlargement) (hC : 0 < C) :
     (1 / C) * Real.log (2 * finiteCoverRangeBound count

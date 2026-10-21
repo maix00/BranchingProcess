@@ -8,23 +8,29 @@ module
 
 public import Mathlib.MeasureTheory.Measure.ProbabilityMeasure
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
+public import Mathlib.Topology.Order.LiminfLimsup
 import Mathlib.Topology.Algebra.Monoid
 
 /-!
-# Logarithmic rates from finite products of exponential probability bounds
+# Asymptotic logarithmic rates for probability sequences
 
-Let $r_n$ be a nonnegative rate, $m_i(n)$ finite counts, $a_i$ exponents, and
-$p_n\le1$ probability values. If $r_nm_i(n)\to c_i$ and
-$\prod_i e^{a_i m_i(n)}\le p_n$ eventually, then for every
-$\varepsilon>0$ eventually $p_n>0$ and
-$\sum_i c_i a_i-\varepsilon\le r_n\log p_n$. This is a general finite-product
-logarithmic-rate transfer and has no random-walk or small-deviation
-hypotheses.
+For an ENNReal-valued probability sequence $p_n\le1$ and a real
+normalization $r_n$, the declarations here provide complementary rate
+transfers with no random-walk hypotheses:
 
-The public declaration is
-`ProbabilityTheory.eventually_probabilityRate_ge_finiteProductRate`; it
-returns the positivity of $p_n$ together with the displayed eventual rate
-bound.
+* `ProbabilityTheory.eventually_probabilityRate_ge_finiteProductRate`:
+  if $r_nm_i(n)\to c_i$ and
+  $\prod_i \exp(a_i m_i(n))\le p_n$ eventually, then for every
+  $\varepsilon>0$ eventually $p_n>0$ and
+  $\sum_i c_i a_i-\varepsilon\le r_n\log p_n$.
+* `ProbabilityTheory.limsup_probabilityRate_le_of_eventually_le_pow`:
+  if $p_n\le q^{m_n}$ eventually, $r_n\ge0$ eventually, and
+  $r_nm_n\to c$, then, assuming eventual positivity and lower coboundedness
+  of $r_n\log p_n$,
+  \[
+    \limsup_{n\to\infty} r_n\log p_n\le c\log q.
+  \]
+Here each $m_i(n)$ and $m_n$ is a natural block count.
 -/
 
 @[expose] public section
@@ -33,6 +39,55 @@ open Filter MeasureTheory
 open scoped ENNReal NNReal Topology
 
 namespace ProbabilityTheory
+
+/-- An eventual power bound on probabilities gives the corresponding upper
+bound on any normalized logarithmic limsup when the normalization times the
+power exponent converges. -/
+theorem limsup_probabilityRate_le_of_eventually_le_pow
+    {probability : ℕ → ENNReal} {rate : ℕ → ℝ} {blockCount : ℕ → ℕ}
+    {q limit : ℝ} (hq : 0 < q)
+    (hprobabilityOne : ∀ n, probability n ≤ 1)
+    (hblockBound : ∀ᶠ n : ℕ in atTop,
+      probability n ≤ ENNReal.ofReal q ^ blockCount n)
+    (hpositive : ∀ᶠ n : ℕ in atTop, 0 < probability n)
+    (hrateNonneg : ∀ᶠ n : ℕ in atTop, 0 ≤ rate n)
+    (hcoefficient : Tendsto (fun n => rate n * (blockCount n : ℝ))
+      atTop (nhds limit))
+    (hlowerCobounded : Filter.IsCoboundedUnder (· ≤ ·) atTop
+      (fun n => rate n * Real.log (probability n).toReal)) :
+    atTop.limsup (fun n => rate n * Real.log (probability n).toReal) ≤
+      limit * Real.log q := by
+  let coefficient : ℕ → ℝ := fun n => rate n * (blockCount n : ℝ)
+  have hlogBound : ∀ᶠ n : ℕ in atTop,
+      rate n * Real.log (probability n).toReal ≤ coefficient n * Real.log q := by
+    filter_upwards [hblockBound, hpositive, hrateNonneg] with n hprob hpos hrate
+    have hprobTop : probability n ≠ ⊤ := ne_of_lt ((hprobabilityOne n).trans_lt
+      ENNReal.one_lt_top)
+    have hpowTop : (ENNReal.ofReal q) ^ blockCount n ≠ ⊤ :=
+      ENNReal.pow_ne_top ENNReal.ofReal_ne_top
+    have hrealBound : (probability n).toReal ≤ q ^ blockCount n := by
+      have hrealENN : (probability n).toReal ≤
+          ((ENNReal.ofReal q) ^ blockCount n).toReal :=
+        (ENNReal.toReal_le_toReal hprobTop hpowTop).2 hprob
+      simpa [ENNReal.toReal_pow, ENNReal.toReal_ofReal hq.le] using hrealENN
+    have hrealPos : 0 < (probability n).toReal :=
+      ENNReal.toReal_pos hpos.ne' hprobTop
+    have hlog := Real.log_le_log hrealPos hrealBound
+    rw [Real.log_pow] at hlog
+    exact calc
+      rate n * Real.log (probability n).toReal ≤
+          rate n * ((blockCount n : ℝ) * Real.log q) :=
+            mul_le_mul_of_nonneg_left hlog hrate
+      _ = coefficient n * Real.log q := by
+        dsimp [coefficient]
+        ring
+  have hright : Tendsto (fun n => coefficient n * Real.log q) atTop
+      (nhds (limit * Real.log q)) := hcoefficient.mul_const _
+  calc
+    atTop.limsup (fun n => rate n * Real.log (probability n).toReal) ≤
+      atTop.limsup (fun n => coefficient n * Real.log q) :=
+        Filter.limsup_le_limsup hlogBound hlowerCobounded hright.isBoundedUnder_le
+    _ = limit * Real.log q := hright.limsup_eq
 
 /-- A finite product of exponential lower bounds gives a lower bound on the
 limiting logarithmic rate of any probability-valued sequence. -/

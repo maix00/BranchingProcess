@@ -7,6 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Range.Blocks.Bound
+import Probability.MeasureTheory.Asymptotics.ProbabilityRate
 import Mathlib.Topology.Order.LiminfLimsup
 
 /-!
@@ -98,59 +99,33 @@ lemma limsup_scaledLog_horizontalTubeProbability_le_of_fixedCover
   have hblock := eventually_horizontalTubeProbability_le_pow_fixedCover
     ν hcentered hsecondMoment hB hcontinuous hmeasurable hscale
     hconstant henlargement hcount hspectral
-  have hlog : ∀ᶠ n : ℕ in atTop,
-      scale n ^ 2 / (n : ℝ) * Real.log (probability n).toReal ≤
-        coefficient n * Real.log q := by
-    filter_upwards [hblock, hpositive, _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.eventually_pos hscale,
-      _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.eventually_diffusiveBlockLength_pos hscale hconstant,
-      (_root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.tendsto_nat_div_diffusiveBlockLength_atTop hscale hconstant).eventually_gt_atTop 0]
-      with n hblockN hpositiveN hscalePos hlengthPos hcountPos
-    have hcountNat : 0 < blockCount n := by
-      dsimp [blockCount, blockLength]
-      exact hcountPos
-    have hTubeOne : probability n ≤ 1 := by
-      dsimp [probability, horizontalTubeProbability]
-      calc
-        iidSequenceLaw ν
-            {increment | InHorizontalTube (1 / 2) (scale n) n increment} ≤
-            iidSequenceLaw ν Set.univ := measure_mono (Set.subset_univ _)
-        _ = 1 := measure_univ
-    have hTubeTop : probability n ≠ ⊤ :=
-      ne_of_lt (hTubeOne.trans_lt ENNReal.one_lt_top)
-    have hqENNTop : ENNReal.ofReal q ≠ ⊤ := ENNReal.ofReal_ne_top
-    have hreal : (probability n).toReal ≤ q ^ blockCount n := by
-      have hrealENN : (probability n).toReal ≤
-          ((ENNReal.ofReal q) ^ blockCount n).toReal :=
-        (ENNReal.toReal_le_toReal hTubeTop
-          (ENNReal.pow_ne_top hqENNTop)).2 hblockN
-      simpa [ENNReal.toReal_pow, ENNReal.toReal_ofReal hqPos.le] using hrealENN
-    have hrealPos : 0 < (probability n).toReal :=
-      ENNReal.toReal_pos hpositiveN.ne' hTubeTop
-    have hlogReal := Real.log_le_log hrealPos hreal
-    rw [Real.log_pow] at hlogReal
-    have hratioNonneg : 0 ≤ scale n ^ 2 / (n : ℝ) := by positivity
-    have hmul := mul_le_mul_of_nonneg_left hlogReal hratioNonneg
+  have hprobabilityOne : ∀ n, probability n ≤ 1 := by
+    intro n
+    change iidSequenceLaw ν
+      {increment | InHorizontalTube (1 / 2) (scale n) n increment} ≤ 1
     calc
-      scale n ^ 2 / (n : ℝ) * Real.log (probability n).toReal ≤
-          scale n ^ 2 / (n : ℝ) *
-            ((blockCount n : ℝ) * Real.log q) := hmul
-      _ = coefficient n * Real.log q := by
-        dsimp [coefficient]
-        ring
+      iidSequenceLaw ν
+          {increment | InHorizontalTube (1 / 2) (scale n) n increment} ≤
+          iidSequenceLaw ν Set.univ := measure_mono (Set.subset_univ _)
+      _ = 1 := measure_univ
   have hcoefficient : Tendsto coefficient atTop (nhds (1 / constant)) := by
     simpa [coefficient, blockCount, blockLength] using
       _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.tendsto_completeBlockCount_mul_sq_div hscale hconstant
-  have hright : Tendsto (fun n => coefficient n * Real.log q) atTop
-      (nhds ((1 / constant) * Real.log q)) := hcoefficient.mul_const _
-  calc
-    atTop.limsup (fun n => scale n ^ 2 / (n : ℝ) *
-        Real.log (probability n).toReal) ≤
-      atTop.limsup (fun n => coefficient n * Real.log q) :=
-        Filter.limsup_le_limsup hlog hlowerCobounded hright.isBoundedUnder_le
-    _ = (1 / constant) * Real.log
-        (2 * finiteCoverRangeBound count
-          ((1 + enlargement) / Real.sqrt constant)) := by
-      simpa [q] using hright.limsup_eq
+  have hrateCoefficient : Tendsto
+      (fun n => scale n ^ 2 / (n : ℝ) * (blockCount n : ℝ))
+      atTop (nhds (1 / constant)) := by
+    have heq : (fun n => scale n ^ 2 / (n : ℝ) * (blockCount n : ℝ)) =
+        coefficient := by
+      funext n
+      dsimp [coefficient]
+      ring
+    rw [heq]
+    exact hcoefficient
+  exact ProbabilityTheory.limsup_probabilityRate_le_of_eventually_le_pow
+    hqPos hprobabilityOne (by simpa [probability, q, blockCount, blockLength] using hblock)
+    (by simpa [probability] using hpositive)
+    (Filter.Eventually.of_forall fun n => div_nonneg (sq_nonneg _) (Nat.cast_nonneg _))
+    hrateCoefficient (by simpa [probability] using hlowerCobounded)
 
 end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
