@@ -6,7 +6,8 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.Path.Filtration
+public import Probability.Process.RandomWalk.Path.Adapted.Filtration
+public import Probability.Sequence.IID.Blocks.StoppingTime
 public import Probability.Process.RandomWalk.Path.Block.Law.Excursions
 public import Mathlib.Probability.Process.Stopping
 

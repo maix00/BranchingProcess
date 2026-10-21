@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Combinatorics.BranchingWalk.Walk.Path.Position
-public import Probability.Process.RandomWalk.Path.Scaling
+public import Probability.Process.RandomWalk.Path.Representation.Scaling
 
 /-!
 # Singleton branching walk representation of normalized random-walk paths

@@ -14,7 +14,7 @@ public import Probability.Process.Path.Skorokhod.Corridor.Segment
 public import Mathlib.Probability.CDF
 
 import Probability.Process.Stable.FiniteDimensional
-public import Probability.Process.Stable.SmallDeviation.EscapeRate
+public import Probability.Process.Stable.SmallDeviation.EscapeRate.Basic
 import Probability.Process.Path.Skorokhod.RationalTime
 import Topology.Order.UnitInterval.Rational
 
