@@ -6,15 +6,39 @@ Authors: WANG Yiyang
 
 module
 
-public import Combinatorics.BranchingWalk.Basic.Definitions
+public import Combinatorics.BranchingWalk.Basic.BranchingWalk
 public import Combinatorics.BranchingWalk.StepField
 
 /-!
 # Mapping realized branching walks
 
 Pointwise maps of deterministic step fields live in
-`Combinatorics/BranchingWalk/StepField.lean`. This file maps realized
-root-indexed branching walks and records the resulting survival relation.
+`Combinatorics/BranchingWalk/StepField.lean`.
+
+## Public declarations
+
+* `Combinatorics.Branching.surviveAlong_map_iff` states
+  `surviveAlong (β.map f) v p ↔ surviveAlong β v p`.
+* `Combinatorics.Branching.RootIndexed.BranchingWalk.mapMarks` applies a mark
+  map to every step and preserves initial positions;
+  `Combinatorics.Branching.RootIndexed.BranchingWalk.mapInitial` applies a map
+  to initial positions and preserves every step; and
+  `Combinatorics.Branching.RootIndexed.BranchingWalk.map` applies the same map
+  to marks and positions when their types agree.
+* `Combinatorics.Branching.RootIndexed.BranchingWalk.mapMarks_step` and
+  `Combinatorics.Branching.RootIndexed.BranchingWalk.mapMarks_initial` give
+  `(β.mapMarks f).step r = (β.step r).map f` and
+  `(β.mapMarks f).initial = β.initial`.
+  `Combinatorics.Branching.RootIndexed.BranchingWalk.mapInitial_step` and
+  `Combinatorics.Branching.RootIndexed.BranchingWalk.mapInitial_initial` give
+  `(β.mapInitial f).step = β.step` and
+  `(β.mapInitial f).initial r = f (β.initial r)`.
+* `Combinatorics.Branching.RootIndexed.BranchingWalk.mapMarks_measurable`
+  assumes measurable mark and position spaces and measurable `f`, and proves
+  that `mapMarks f` is measurable. Under measurable mark, source-position,
+  and target-position spaces, and measurable `f`,
+  `Combinatorics.Branching.RootIndexed.BranchingWalk.mapInitial_measurable`
+  proves the corresponding measurability statement for `mapInitial f`.
 -/
 
 @[expose] public section
