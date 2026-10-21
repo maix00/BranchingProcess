@@ -118,6 +118,13 @@ semantic owner, even when that means moving them above more than one nested
 `Lemmas/` directory. At any one directory level, use at most one direct
 `Lemmas.lean` file or one `Lemmas/` directory; group the supporting files
 under that single entry rather than creating parallel `Lemmas` groupings.
+This use of `Lemmas/` as a marker for non-reusable proof support is a local
+repository convention, not a Mathlib naming convention: the pinned
+[`Mathlib` source tree](https://github.com/leanprover-community/mathlib4/tree/380f2aafb622cb2c1c93dac545b6389083c68c51/Mathlib)
+has no directory named `Lemmas/`. Mathlib organizes source modules by
+mathematical subject and can expose reusable lemmas there; never move a
+reusable API into this repository's `Lemmas/` directory just because its
+current use is proof support.
 
 When a subject directory contains several independent mathematical families,
 group the public modules into semantic subdirectories such as `Ordering/`,
@@ -133,13 +140,17 @@ Use filenames relative to their semantic directory: prefer
 name in every child filename. Mathlib uses same-level `Foo.lean` and `Foo/`
 pairs for deliberate umbrella or entry modules; for example,
 [`MeasureTheory/Measure/Dirac.lean`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/MeasureTheory/Measure/Dirac.html)
-re-exports `Dirac.Def` and `Dirac.Basic`. This repository uses a stricter
-discoverability rule: do not place `Foo.lean` beside `Foo/`; put core
-declarations in `Basic.lean` or `Core.lean`, or give child modules names that
-identify their mathematical roles. Also avoid a direct child file whose stem
-repeats its parent directory, such as `Scale/Scale.lean`; use a semantic name
-such as `Scale/Basic.lean`. These path choices do not change Lean declaration
-namespaces. Do not add a same-name file merely to re-export a directory.
+re-exports `Dirac.Def` and `Dirac.Basic`; the pinned
+[`Mathlib/Tactic/Basify.lean`](https://github.com/leanprover-community/mathlib4/blob/380f2aafb622cb2c1c93dac545b6389083c68c51/Mathlib/Tactic/Basify.lean)
+is another substantive entry module beside `Tactic/Basify/`. The same pattern
+is allowed here when the root file presents a real interface and the directory
+groups related components. Do not add an import-only file merely to re-export
+a directory. If a root file and child directory would obscure ownership, put
+core declarations in `Basic.lean` or `Core.lean`, or give child modules names
+that identify their mathematical roles. Also avoid a direct child file whose
+stem repeats its parent directory, such as `Scale/Scale.lean`; use a semantic
+name such as `Scale/Basic.lean`. These path choices do not change Lean
+declaration namespaces.
 Count direct `.lean` files during directory reviews. More than eight is a
 review trigger for semantic grouping, not an automatic move: keep a flat
 directory only when its modules are genuinely peer interfaces for one subject,
