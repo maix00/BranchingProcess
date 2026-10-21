@@ -3469,3 +3469,48 @@ This comparison used the official Mathlib documentation for
 and [`SimpleGraph.IsTree`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Combinatorics/SimpleGraph/Acyclic.html),
 then checked the vendored Mathlib source at pinned revision
 `380f2aafb622cb2c1c93dac545b6389083c68c51`.
+
+## Conditioned transition proof modules and Portmanteau abstraction (2026-10-21)
+
+`Transition/Event.lean` defines the finite corridor event
+\(D_{n,\Delta}=\{0\le S_j\le 5\Delta/6\ (1\le j\le n),\;
+S_n\in[5\Delta/12,11\Delta/24]\}\), its normalized path realization,
+and its diffusive horizon. `Factorization.lean` provides the finite-block
+measurability and IID prefix/suffix product interfaces used by multiple
+small-deviation clients. `DiffusiveLower.lean` contains the final public
+\(C\Delta^{-2}\) transition estimate used by the entrance argument. These
+three modules remain at the `Transition/` subject level.
+
+The other five modules (`Meander/CorridorProbability`,
+`Meander/FromFirstWindow`, `Meander/FromMeander`,
+`Diffusive/ConditionalProbability`, and `Diffusive/SurvivalLower`) form intermediate
+steps of the single Appendix A.2, Lemma A.7 proof chain. Their current clients
+are confined to that chain, so they now live under the one
+`Transition/Lemmas/` subtree, split into `Meander/` and `Diffusive/`. The
+interfaces they use at broader levels remain with their mathematical owners:
+open-set probability transfer is in `Probability/ConvergenceInDistribution/Portmanteau.lean`,
+the IID cyclic-rotation inequality is in
+`RandomWalk/Fluctuation/SparreAndersen/Rotation/Probability.lean`, and the
+finite-variance endpoint-sign limit is in
+`RandomWalk/Fluctuation/FiniteVarianceSignLimit.lean`. Thus the transition
+subtree keeps the theorem-specific probability estimates while general
+Portmanteau, rotation, and sign-limit statements remain reusable outside it.
+
+The abstraction review checked Mathlib's official
+[`MeasureTheory.Measure.Portmanteau` API](https://leanprover-community.github.io/mathlib4_docs/Mathlib/MeasureTheory/Measure/Portmanteau.html):
+`ProbabilityMeasure.le_liminf_measure_open_of_tendsto` already proves
+\(\mu(G)\le\liminf_n\mu_n(G)\) for open \(G\), and the local
+`TendstoInDistribution.exists_eventually_measure_map_ge_pos_of_isOpen`
+specializes this to a uniform positive lower bound when the limiting open-set
+mass is positive. The support-to-positive-mass step already uses Mathlib's
+`Measure.mem_support_iff_forall`. No additional corridor-specific generic
+wrapper is needed.
+
+The reference audit found that Caravenna--Chaumont equation (3.3) is the
+weak-convergence statement for the rescaled meander, while equation (1.7)
+defines the path rescaling map. The event/path equivalence now cites (1.7);
+the elementary conditional-probability factorization cites Wang Yiyang,
+*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
+Appendix A.2, Lemma A.7, without attributing that identity to equation (3.3).
+The PDF was checked at the authors' hosted copy of
+[*Invariance principles for random walks conditioned to stay positive*](https://chaumont.pages.math.cnrs.fr/rpdfiles/carcha.pdf).

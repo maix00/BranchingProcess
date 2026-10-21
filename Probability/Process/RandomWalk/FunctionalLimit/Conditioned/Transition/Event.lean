@@ -38,7 +38,8 @@ The public objects and theorems in this file are:
 
 This is the transition event and normalization in Wang Yiyang,
 *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
-Chapter 3, Lemma 3.5, and Appendix A.2, Lemma A.7.
+(master's thesis, Fudan University, 2026), Chapter 3, Lemma 3.5, and
+Appendix A.2, Lemma A.7.
 -/
 
 @[expose] public section
@@ -51,7 +52,8 @@ namespace ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned
 /-- The path version of $D_{N,\Delta}$ after normalizing the walk by
 $\sigma\sqrt N$ and writing $s=\Delta/\sqrt N$. This is the transition
 event in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with
-Infinite Offspring*, Chapter 3, Lemma 3.5, and Appendix A.2, Lemma A.7. -/
+Infinite Offspring* (master's thesis, Fudan University, 2026), Chapter 3,
+Lemma 3.5, and Appendix A.2, Lemma A.7. -/
 def normalizedTransitionCorridor (sigma scale : ℝ) :
     Set (CadlagPath unitInterval ℝ) :=
   Skorokhod.rangeInClosedIntervalEndsIn
@@ -59,8 +61,10 @@ def normalizedTransitionCorridor (sigma scale : ℝ) :
       ((5 / 12 * scale) / sigma) ((11 / 24 * scale) / sigma)
 
 
-/-- The nonnegative finite-width transition event in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3,
-Lemma 3.5 and Appendix A.2, Lemma A.7. -/
+/-- The nonnegative finite-width transition event in Wang Yiyang, *Asymptotic
+Speed of the N-Branching Random Walk with Infinite Offspring* (master's
+thesis, Fudan University, 2026), Chapter 3, Lemma 3.5, and Appendix A.2,
+Lemma A.7. -/
 def nonnegativeTransitionEvent (n : ℕ) (width : ℝ) : Set (ℕ → ℝ) :=
   {increment |
     (∀ k : Fin n,
@@ -72,10 +76,10 @@ def nonnegativeTransitionEvent (n : ℕ) (width : ℝ) : Set (ℕ → ℝ) :=
 /-- The precise transition event $D_{n,\Delta}$ is contained in the
 survival event $C_n$, so its probability factors into conditional transition
 and survival probabilities. This is the multiplication step in Wang Yiyang,
-*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
-Appendix A.2, Lemma A.7. The conditioning identity follows Francesco
-Caravenna and Loïc Chaumont, *Invariance principles for random walks
-conditioned to stay positive*, equation (3.3), DOI 10.1214/07-AIHP119. -/
+*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*
+(master's thesis, Fudan University, 2026),
+Appendix A.2, Lemma A.7; the factorization is the standard conditional
+probability identity for an event contained in the conditioning event. -/
 theorem measure_nonnegativeTransitionEvent_eq_cond_mul_survival
     (ν : Measure ℝ) [IsProbabilityMeasure ν] (n : ℕ) (width : ℝ) :
     iidSequenceLaw ν (nonnegativeTransitionEvent n width) =
@@ -92,9 +96,9 @@ theorem measure_nonnegativeTransitionEvent_eq_cond_mul_survival
   simpa only [survivalConditionedLaw, C, D, hinter] using hcond.symm
 
 /-- The finite-grid transition event is exactly its Skorokhod path version
-after the normalization in Francesco Caravenna and Loïc Chaumont,
+after the path normalization in Francesco Caravenna and Loïc Chaumont,
 *Invariance principles for random walks conditioned to stay positive*,
-equation (3.3), DOI 10.1214/07-AIHP119. -/
+equation (1.7), DOI 10.1214/07-AIHP119. -/
 theorem mem_nonnegativeTransitionEvent_iff_normalizedTransitionCorridor
     {n : ℕ} (hn : 0 < n) {sigma : ℝ} (hsigma : 0 < sigma)
     {width : ℝ} (hwidth : 0 ≤ width) (increment : ℕ → ℝ) :
@@ -188,7 +192,9 @@ theorem mem_nonnegativeTransitionEvent_iff_normalizedInterpolatedTransitionCorri
     hn hsigma hwidth increment).trans hpathEq.symm
 
 /-- The diffusive transition horizon after a fixed finite entrance segment
-in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.5, and Appendix A.2, Lemma A.7. -/
+in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite
+Offspring* (master's thesis, Fudan University, 2026), Chapter 3, Lemma 3.5,
+and Appendix A.2, Lemma A.7. -/
 noncomputable def diffusiveTransitionHorizon
     (width : ℕ → ℝ) (offset n : ℕ) : ℕ :=
   Asymptotics.floorBlockLength (fun k => width k ^ 2) n - offset
