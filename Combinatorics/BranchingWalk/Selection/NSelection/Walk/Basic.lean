@@ -31,9 +31,12 @@ are in namespace `Combinatorics.Branching.Selection.NSelection.Walk`.
   finite and has cardinality at most `N`.
 - `childrenOfStep` and `ofChild`: construct finite child positions
   from surviving slots and build a walk from a field of child steps.
-- `mapOrderDual`, `mapOrderDual_select_biUnion`, and
-  `population_mapOrderDual`: order reversal commutes with selection and
-  maps each generation to the image under `OrderDual.toDual`.
+- `mapOrderDual`, `mapOrderDual_initial`, and `mapOrderDual_children`:
+  reverse the position order while mapping the initial set and each child set
+  through `OrderDual.toDual`.
+- `mapOrderDual_select_biUnion` and `population_mapOrderDual`: order reversal
+  commutes with selection and maps each generation to the image under
+  `OrderDual.toDual`.
 
 `Walk` is the deterministic combinatorial object: it starts with at most `N`
 particles, every particle produces a finite set of offspring positions, and a
@@ -48,8 +51,8 @@ the leftmost rule, the rightmost rule, and any other deterministic rule; a
 The population at generation `n` is a `Finset` of positions, and
 `Walk.cloud` is the space-time cloud of those populations. Reversing the order
 on positions is `Walk.mapOrderDual`, which turns the leftmost rule into the
-rightmost one; `population_mapOrderDual` and `mapOrderDual_cloud` record that
-involution, so the two directions are one theory.
+rightmost one; `population_mapOrderDual` records the transformation of every
+generation, so the two directions are one theory.
 -/
 
 open Classical

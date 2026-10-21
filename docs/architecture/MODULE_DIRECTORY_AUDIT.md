@@ -3155,8 +3155,14 @@ The next six candidates in that scan were manually confirmed and fixed:
 declarations now have formula-bearing header inventories. The related
 `Cloud/Frontier/Basic.lean` inventory was also extended for the new generic
 potential-frontier API. Based on the previous 741-candidate count, 735
-candidates remain pending a refreshed repository-wide lexical pass and manual
-review.
+candidates were originally left for review; that count is now stale. A later
+manual pass found that `Selection/NSelection/Walk/Basic.lean` still omitted
+`mapOrderDual_initial` and `mapOrderDual_children` and listed
+`mapOrderDual_cloud`, which belongs to its sibling `Walk/Cloud.lean`. The
+inventory was corrected. A refreshed scan that distinguishes public
+declarations from private helpers, definitions, and test modules, followed by
+manual review, is still required before the repository-wide header audit is
+complete.
 
 ## Selection-mechanism abstraction review (2026-10-21)
 
@@ -3317,3 +3323,28 @@ and [`Finset.sort` documentation](https://leanprover-community.github.io/mathlib
 then checked `Mathlib/Data/Finset/Card.lean` and
 `Mathlib/Data/Finset/Sort.lean` at pinned revision
 `380f2aafb622cb2c1c93dac545b6389083c68c51`.
+
+## Branching ancestry and list-prefix abstraction review (2026-10-21)
+
+`IsDescendant β p q` is the relation
+`∃ t, q = (p.1, p.2 ++ t) ∧ surviveAlong (β.step p.1) p.2 t`. The candidate
+general abstraction is the list-prefix relation on addresses. Lean's
+`List.IsPrefix` captures `p.2 <+: q.2`, and Mathlib's descriptive-set-theory
+tree formalization treats a tree as a set of finite sequences closed under
+prefixes. Those structures represent address shape; they do not encode the
+walk-dependent survival condition along the ancestor's root-indexed step
+field. `IsDescendant` therefore remains owned by `BranchingWalk/Basic/Genealogy`
+and retains the suffix witness that simultaneously records the prefix and its
+survival proof. `descendantsOfRoot β r u`, the address-valued view of the same
+relation for a fixed root, remains a useful domain interface; its
+`mem_descendantsOfRoot_iff` formula was added to the module's public inventory.
+The `Genealogy/` directory contains the three peer topics `Ancestor`,
+`Descendant`, and `GenerationSize`, so no helper-only subgroup is needed.
+
+The abstraction check used the official
+[`List.IsPrefix` documentation](https://leanprover-community.github.io/mathlib4_docs/Init/Data/List/Sublist.html),
+[`List` prefix lemmas](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Data/List/Infix.html),
+and [Mathlib's finite-sequence tree interface](https://leanprover-community.github.io/mathlib4_docs/Mathlib/SetTheory/Descriptive/Tree.html),
+then compared them with the pinned Mathlib source at
+`380f2aafb622cb2c1c93dac545b6389083c68c51` and the current Lean core list
+definitions.

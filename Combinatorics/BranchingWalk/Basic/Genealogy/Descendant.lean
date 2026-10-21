@@ -31,6 +31,7 @@ and those at distance `k`. `mem_descendants_iff` and
 `mem_descendants_iff_exists_mem_descendantsAt` states
 `q ∈ descendants β p ↔ ∃ k, q ∈ descendantsAt β p k`.
 `descendantsOfRoot β r u` is the address-indexed version:
+`v ∈ descendantsOfRoot β r u ↔ IsDescendant β (r,u) (r,v)`;
 `mem_descendantsOfRoot_iff_mem_descendants` identifies its members with
 `(r,v) ∈ descendants β (r,u)`, and `isDescendant_root_iff` gives
 `IsDescendant β (r,[]) (r,v) ↔ surviveAlong (β.step r) [] v`.
