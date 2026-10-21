@@ -12,8 +12,9 @@ public import Probability.Process.RandomWalk.Path.Block.Law.FiniteInterval
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Scale.BlockScale
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.Horizontal.Basic
 public import Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.FiniteVarianceUpper.Basic
-public import Probability.Independence.ConditionalIntegral
-import Probability.Sequence.IID.Blocks.Conditional
+public import Mathlib.MeasureTheory.Function.ConditionalExpectation.Basic
+import Probability.Independence.ConditionalIntegral
+import Probability.Sequence.IID.Blocks.StoppingTime
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.JumpPattern.DiscretizedMaximum
 public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.TubeEvent
@@ -42,12 +43,11 @@ The proof-specific declarations in this module are:
   the conditional probability of the next tube block is at most
   $\exp(w^v-d\ell/w^2)$ for all sufficiently large $w$.
 
-The conditional step uses the general
-`ProbabilityTheory.iidSequenceLaw_condExp_prefix_nextBlock` identity
-$\mathbb E[f(X,Y)\mid X]=\int f(X,y)\,d\nu^{\otimes\ell}(y)$.
-Its upper-section consequence is
-`ProbabilityTheory.iidSequenceLaw_condExp_pairEvent_le_of_sectionProbability`.
-These are the conditional-expectation and Markov-property steps in Wang
+The conditional step uses the independent-pair identity
+`ProbabilityTheory.IndepFun.condExp_indicator_pairEvent_ae_eq_sectionProbability`,
+which identifies the conditional expectation with the probability of the
+future section. These are the conditional-expectation and Markov-property
+steps in Wang
 Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, proof of Lemma 3.3. The one-block estimate applies
 Chapter 3, Lemma 3.2, following Elie Aïdékon and Yueyun Hu,
 *Average-weight percolation on the complete graph*, Lemma 4.1 (2025,
@@ -446,8 +446,20 @@ private lemma iidSequenceLaw_condExp_drawdownTubePairEvent_le_of_intervalBound
         (Combinatorics.Sequence.blockCoordinates start length)).real sectionEvent ≤ bound
       rw [hempty]
       simpa [Measure.real] using hboundNonneg
-  exact ProbabilityTheory.iidSequenceLaw_condExp_pairEvent_le_of_sectionProbability
-    ν start length (drawdownTubePairEvent center width) hE hsections
+  have hblocks := indepFun_blockCoordinates_blockCoordinates ν 0 start length
+  have hnext : Measurable
+      (Combinatorics.Sequence.blockCoordinates (E := ℝ) (0 + start) length) := by
+    simpa only [Nat.zero_add] using
+      (measurable_blockCoordinates (E := ℝ) start length)
+  have hconditional := hblocks.condExp_indicator_pairEvent_ae_eq_sectionProbability
+    (measurable_blockCoordinates (E := ℝ) 0 start)
+    hnext
+    (drawdownTubePairEvent center width) hE
+  have hconditional' := by
+    simpa only [Nat.zero_add] using hconditional
+  filter_upwards [hconditional'] with increment hconditional
+  rw [hconditional]
+  exact hsections (Combinatorics.Sequence.blockCoordinates 0 start increment)
 
 /-- Applying the translated-interval estimate of Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3,
 Lemma 3.2, bounds the conditional probability of each tube block in the

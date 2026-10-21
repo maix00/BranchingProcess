@@ -21,9 +21,12 @@ General finite-history drawdown predicates and their measurability belong to
 bounds for those paths belong to `Probability/Process/RandomWalk/SmallDeviation/Drawdown/`.
 Generic conditional-probability integration and successive-block product
 bounds belong to `Probability/Process/Filtration/ConditionalBlocks.lean`;
-IID prefix/next-block conditional integration belongs to
-`Probability/Sequence/IID/Blocks/Conditional.lean`. The law transfer between
-an infinite IID walk and a finite closed-interval block belongs to
+the conditional expectation of a measurable event of an independent pair,
+as its second-marginal section probability, belongs to
+`Probability/Independence/ConditionalIntegral.lean`. IID prefix/next-block
+applications use the independent-block theorem in
+`Probability/Sequence/IID/Blocks/StoppingTime.lean` directly. The law transfer
+between an infinite IID walk and a finite closed-interval block belongs to
 `Probability/Process/RandomWalk/Path/Block/Law/FiniteInterval.lean`, while
 translation of a finite interval by its initial position belongs beside the
 `FiniteInClosedInterval` definition in `Path/Window/Basic.lean`.

@@ -501,7 +501,69 @@ used by that helper. The finite-variance estimate that supplies the drawdown
 bound retains its explicit Wang thesis Chapter 3, Lemma 3.3 and Aïdékon--Hu
 Lemma 2.3 references in its owning module.
 
-The IID sequence audit grouped stopping-time, prefix-factorization, and conditional-block interfaces in `Probability/Sequence/IID/Blocks/`; these are complete reusable theorems, not theorem-specific proof fragments. Formula-bearing public theorem lists were added to the characteristic-function, filtration-independence, and law-identification modules. Direct users now import the renamed block paths.
+The IID sequence audit groups stopping-time and prefix-factorization results in
+`Probability/Sequence/IID/Blocks/`. Conditional expectation for independent
+block pairs is owned by the more general `Probability/Independence` layer; its
+abstraction review is recorded below. Formula-bearing public theorem lists
+were added to the characteristic-function, filtration-independence, and
+law-identification modules. Direct users now import the renamed block paths.
+
+## Independent-pair conditional section abstraction review (2026-10-21)
+
+The former `Probability/Sequence/IID/Blocks/Conditional.lean` stated a
+conditional-expectation identity for consecutive blocks of an IID sequence,
+then derived upper and lower bounds for event sections. Its three clients
+were the drawdown, drifted-tube, and horizontal-tube block estimates. That
+reuse prompted a search for the actual abstraction, rather than an outward
+move based only on the number of callers.
+
+At the pinned Mathlib revision
+`380f2aafb622cb2c1c93dac545b6389083c68c51`,
+`Mathlib/Probability/Kernel/CondDistrib.lean` provides
+`condExp_prod_ae_eq_integral_condDistrib` and
+`condDistrib_ae_eq_condExp`. The former identifies conditional expectation
+with integration against the regular conditional distribution; the latter
+identifies that kernel's section probabilities with conditional expectations.
+The conditional-distribution API requires a standard Borel future value
+space. The project module `Probability/Independence/ConditionalIntegral.lean`
+already derives the independent-pair identity
+\[
+  \mathbb E[f(X,Y)\mid X](\omega)
+  =\int f(X(\omega),y)\,d(P\circ Y^{-1})(y)
+  \quad\text{for }X\perp Y.
+\]
+The matching event identity is now stated there as
+`IndepFun.condExp_indicator_pairEvent_ae_eq_sectionProbability`:
+\[
+  \mathbb E[\mathbf 1_E(X,Y)\mid X](\omega)
+  =(P\circ Y^{-1})\{y:(X(\omega),y)\in E\}.
+\]
+It accepts an arbitrary independent pair and a measurable event in the
+product of its value spaces, retaining only the standard Borel assumption
+required by the current conditional-distribution proof. Mathlib supplies the
+underlying integral and kernel identities, but not this event-section
+specialization.
+
+This identity is the reusable mathematical operation; the former IID
+prefix/next-block equality is its specialization, and the upper/lower section
+estimates are direct order consequences. The IID-only file and these thin
+wrappers were removed. The three block proofs now use the general identity
+with `indepFun_blockCoordinates_blockCoordinates`, keeping their event bounds
+local to the model-specific estimates. This places the reusable result in the
+independence layer and the sequence-specific fact in
+`Probability/Sequence/IID/Blocks/StoppingTime.lean`.
+
+The source comparison used the pinned
+[`CondDistrib.lean`](https://github.com/leanprover-community/mathlib4/blob/380f2aafb622cb2c1c93dac545b6389083c68c51/Mathlib/Probability/Kernel/CondDistrib.lean)
+and Mathlib's [official API documentation](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Probability/Kernel/CondDistrib.html).
+The library-location decision follows the
+[Mathlib review guide](https://leanprover-community.github.io/contribute/pr-review.html#location-location),
+which asks reviewers to search for existing general results, select a
+semantically appropriate module, and assess whether the addition advances the
+library. The generalized theorem, its three block clients, and the
+finite-product reindexing clients build locally; the remote preflight's build
+step also completed, while its static test step exposed a stale theorem name
+in an axiom-check file, corrected in the current working tree.
 
 ## Abstraction research: stable constant-corridor rate
 

@@ -13,8 +13,8 @@ public import Probability.Process.Filtration.ConditionalBlocks
 public import Combinatorics.Sequence.Block
 public import Probability.Process.RandomWalk.Path.Block.Partition.Basic
 public import Probability.Sequence.Filtration
-import Probability.Sequence.IID.Blocks.Conditional
 import Probability.Sequence.IID.Blocks.StoppingTime
+import Probability.Independence.ConditionalIntegral
 import Analysis.Asymptotics.Scale.Power.IntermediateBlock
 
 /-!
@@ -402,8 +402,20 @@ private lemma iidSequenceLaw_condExp_driftedTubePairEvent_le_of_blockBound
         sectionEvent ≤ bound
       rw [hempty]
       simpa [Measure.real] using hboundNonneg
-  exact ProbabilityTheory.iidSequenceLaw_condExp_pairEvent_le_of_sectionProbability
-    ν start length event hmeasurable hsections
+  have hblocks := indepFun_blockCoordinates_blockCoordinates ν 0 start length
+  have hnext : Measurable
+      (Combinatorics.Sequence.blockCoordinates (E := ℝ) (0 + start) length) := by
+    simpa only [Nat.zero_add] using
+      (measurable_blockCoordinates (E := ℝ) start length)
+  have hconditional := hblocks.condExp_indicator_pairEvent_ae_eq_sectionProbability
+    (measurable_blockCoordinates (E := ℝ) 0 start)
+    hnext
+    event hmeasurable
+  have hconditional' := by
+    simpa only [Nat.zero_add] using hconditional
+  filter_upwards [hconditional'] with increment hconditional
+  rw [hconditional]
+  exact hsections (Combinatorics.Sequence.blockCoordinates 0 start increment)
 
 private def driftedTubePrefixBlockPair (start length : ℕ) :
     (Fin (start + length) → ℝ) →

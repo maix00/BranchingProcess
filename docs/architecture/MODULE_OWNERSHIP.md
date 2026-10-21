@@ -72,6 +72,13 @@ N-BRW selection statements; the latter belong under `Selection/NSelection`.
   defines that separate law identity on an additive time monoid. The
   finite-dimensional law results combine both properties only where their
   conclusions require them; Lévy path regularity stays in `Levy`.
+- `Probability/Independence/ConditionalIntegral.lean` relates independent
+  random variables to Mathlib's regular conditional distribution API. In
+  particular, if $X$ and $Y$ are independent and $E$ is measurable, then
+  $\mathbb E[\mathbf1_E(X,Y)\mid X](\omega)$ equals the $Y$-marginal
+  probability of the section $\{y:(X(\omega),y)\in E\}$. Consecutive IID
+  block applications obtain independence from
+  `Probability/Sequence/IID/Blocks/StoppingTime.lean`.
 - Filtrations and stopping times use Mathlib's `Filtration` and stopping-time
   predicates. Process-specific adaptedness proofs are adapters from the
   process maps to those interfaces.
