@@ -2622,3 +2622,21 @@ was promoted above the subject layer. The staircase estimates stay under
 `FiniteVarianceLower/EndpointBounds.lean` remains the public Lemma 3.5 entry.
 All 17 production modules that directly import the moved modules build with
 the pinned toolchain (4,747 Lake jobs).
+
+## Brownian meander proof-only corridor (2026-10-21)
+
+`Brownian/Meander/Corridor.lean` defines the corridor with constants
+`5/6`, `5/12`, and `11/24` that appears in the conditioned random-walk
+transition statement, so this event remains in the direct semantic module
+and is re-exported by that theorem's entry. The openness proof, the specific
+straight-path inclusion, and the resulting positive-measure implication all
+depend on this event and its chosen constants; they now live in
+`Brownian/Meander/Lemmas/CorridorPositivity.lean`. The meander and transition
+corridor-probability modules import those results as proof dependencies rather
+than re-exporting them.
+The last-zero path law, Bolthausen last-sign-change identification, and
+positive-linear-path support theorem remain in the direct Brownian-meander
+modules as complete probability constructions and results. The definition,
+proof module, two corridor-probability entries, and three downstream transition
+clients build successfully; Mathlib `lint-style` passes on the four changed
+Lean modules.
