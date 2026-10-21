@@ -2862,3 +2862,39 @@ The targets `Analysis.Fourier.PositiveDefinite`,
 `Analysis.Fourier.ConditionallyPositiveDefinite.Schoenberg`, and
 `Probability.Distributions.InfinitelyDivisible.LevyKhintchine.Representation` build
 successfully with the pinned toolchain.
+
+## IID finite-product reindexing abstraction review (2026-10-21)
+
+The previous `finiteCoordinateReindex` definition was a homogeneous `Fin n`
+alias for `MeasurableEquiv.piCongrLeft`; its application lemma only exposed
+the coordinate formula already provided by that Mathlib equivalence. Both
+were removed, and the cyclic-corridor statements now refer directly to
+`MeasurableEquiv.piCongrLeft`. This avoids a project wrapper that did not add
+an operation beyond the pinned dependency API.
+
+Mathlib revision
+`380f2aafb622cb2c1c93dac545b6389083c68c51` provides
+`measurePreserving_piCongrLeft` and `Measure.pi_map_piCongrLeft` for
+reindexing dependent product measures, under coordinatewise sigma-finiteness
+([pinned source](https://github.com/leanprover-community/mathlib4/blob/380f2aafb622cb2c1c93dac545b6389083c68c51/Mathlib/MeasureTheory/Constructions/Pi.lean#L3194-L3224)).
+The repository's `MeasureTheory.measure_le_card_smul_of_finite_cover_invariant`
+already supplies the outer-measure inequality for any finite family of
+measure-invariant preimages. These existing results cover the two lower-level
+operations, so neither was duplicated or moved into a new public module.
+
+The remaining `ProbabilityTheory.measure_pi_event_le_card_smul_of_reindex_cover`
+is the IID finite-product corollary: for finite coordinate and reindexing
+types `ι` and `κ`, a probability measure `ν`, and measurable `safe`, if the
+preimages of `safe` under a family of coordinate equivalences cover `event`,
+then
+`Measure.pi (fun _ : ι => ν) event ≤ Fintype.card κ • Measure.pi (fun _ : ι => ν) safe`.
+It no longer fixes the coordinate type to `Fin n` or requires the family to
+have exactly `n` members. This statement captures the reusable finite IID
+product probability bound independently of the random-walk path geometry, so
+it remains at `Probability/Sequence/IID/FiniteReindex.lean`; its invariance
+calculation is private. The current cyclic entrance estimate is its only
+project caller, which prompted the generality review but was not itself the
+reason for retaining a public interface. This decision follows Mathlib's
+review questions about existing general results, suitable location, and
+whether an API advances the library
+([review guide](https://leanprover-community.github.io/contribute/pr-review.html#location-location)).
