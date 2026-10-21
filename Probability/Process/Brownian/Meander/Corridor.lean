@@ -11,19 +11,21 @@ public import Topology.Cadlag.Skorokhod.Corridor.Upper
 /-!
 # The open corridor used for Brownian meander
 
-The public definition in this file is:
+The public declarations in this file are:
 
 - `BrownianMeander.openCorridor`: the path event
   $\{f:\exists\varepsilon>0,\ \forall t,\
     f(t)\le(5/6-\rho)/\sigma-\varepsilon,\
     f(1)\in((5/12+\rho)/\sigma,(11/24-\rho)/\sigma)\}$.
+- `BrownianMeander.isOpen_openCorridor`: this event is open in the Skorokhod
+  $J_1$ topology.
 
 This is the corridor event in Wang Yiyang, *Asymptotic Speed of the N-Branching
 Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.5 and Appendix A.2,
-Lemma A.7. Its openness and support argument are recorded in
-`Probability.Process.Brownian.Meander.Lemmas.CorridorPositivity`. The positive-mass
-statement for the Brownian meander law follows from the last-zero representation
-of Donald L. Iglehart,
+Lemma A.7. Its openness follows from the general Skorokhod corridor theorem
+`Skorokhod.isOpen_rangeBelowEndsIn`. The positive-mass statement for the
+Brownian meander law follows from the last-zero representation of Donald L.
+Iglehart,
 *Functional Central Limit Theorems for Random Walks Conditioned to Stay
 Positive*, Ann. Probab. 2(4) (1974), 608--619, DOI 10.1214/aop/1176996607, Section 3, theorem (3.4), p. 616.
 -/
@@ -42,6 +44,15 @@ def openCorridor (sigma rho : ℝ) : Set (CadlagPath unitInterval ℝ) :=
     ((5 / 6 - rho) / sigma)
     ((5 / 12 + rho) / sigma)
     ((11 / 24 - rho) / sigma)
+
+/-- The meander corridor is open in the Skorokhod $J_1$ topology. -/
+theorem isOpen_openCorridor (sigma rho : ℝ) :
+    IsOpen (openCorridor sigma rho) := by
+  simpa [openCorridor] using
+    Skorokhod.isOpen_rangeBelowEndsIn
+      ((5 / 6 - rho) / sigma)
+      ((5 / 12 + rho) / sigma)
+      ((11 / 24 - rho) / sigma)
 
 end BrownianMeander
 

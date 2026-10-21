@@ -9,7 +9,6 @@ module
 public import Probability.ConvergenceInDistribution.Portmanteau
 public import Mathlib.MeasureTheory.Measure.Support
 public import Probability.Process.Brownian.Meander.Corridor
-import Probability.Process.Brownian.Meander.Lemmas.CorridorPositivity
 
 /-!
 # Conditioned random-walk limits at a Brownian meander
@@ -46,6 +45,37 @@ open scoped ENNReal NNReal Topology
 
 namespace ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned
 
+private lemma BrownianMeander.straightPath_mem_openCorridor
+    {sigma rho : ℝ} (hsigma : 0 < sigma) (hrho : 0 < rho)
+    (hrhoSmall : rho < 1 / 48) :
+    Skorokhod.straightPath ((7 / 16) / sigma) ∈
+      BrownianMeander.openCorridor sigma rho := by
+  let y : ℝ := (7 / 16) / sigma
+  let upper : ℝ := (5 / 6 - rho) / sigma
+  have hypos : 0 ≤ y := (div_pos (by norm_num) hsigma).le
+  have hyupper : y < upper := by
+    dsimp [y, upper]
+    exact (div_lt_div_iff_of_pos_right hsigma).2 (by linarith)
+  have hleft : (5 / 12 + rho) / sigma < y := by
+    dsimp [y]
+    exact (div_lt_div_iff_of_pos_right hsigma).2 (by linarith)
+  have hright : y < (11 / 24 - rho) / sigma := by
+    dsimp [y]
+    exact (div_lt_div_iff_of_pos_right hsigma).2 (by linarith)
+  change Skorokhod.straightPath y ∈
+    Skorokhod.rangeBelowEndsIn upper
+      ((5 / 12 + rho) / sigma) ((11 / 24 - rho) / sigma)
+  constructor
+  · refine ⟨(upper - y) / 2, half_pos (sub_pos.mpr hyupper), fun t => ?_⟩
+    have ht : (t : ℝ) ≤ 1 := t.property.2
+    have hpath : y * (t : ℝ) ≤ y := by
+      nlinarith [mul_nonneg hypos (sub_nonneg.mpr ht)]
+    change y * (t : ℝ) ≤ upper - (upper - y) / 2
+    linarith
+  · simpa [Skorokhod.straightPath] using
+      (show y ∈ Set.Ioo ((5 / 12 + rho) / sigma)
+        ((11 / 24 - rho) / sigma) from ⟨hleft, hright⟩)
+
 /-- The Portmanteau consequence of Iglehart's *Functional Central Limit
 Theorems for Random Walks Conditioned to Stay Positive*, Ann. Probab. 2(4)
 (1974), 608--619, DOI 10.1214/aop/1176996607, Section 3, theorem (3.4),
@@ -70,9 +100,11 @@ theorem exists_eventually_meanderCorridorProbability_ge
     ∃ q : ℝ≥0∞, 0 < q ∧ ∀ᶠ n : ℕ in atTop,
       q ≤ (P n).map (X n) (BrownianMeander.openCorridor sigma rho) := by
   have hpositive : 0 < (Pm.map M)
-      (BrownianMeander.openCorridor sigma rho) :=
-    BrownianMeander.measure_openCorridor_pos_of_straightPath_mem_support
-      hsigma hrho hrhoSmall hsupport
+      (BrownianMeander.openCorridor sigma rho) := by
+    exact (Measure.mem_support_iff_forall _).1 hsupport _
+      ((BrownianMeander.isOpen_openCorridor sigma rho).mem_nhds
+        (BrownianMeander.straightPath_mem_openCorridor
+          hsigma hrho hrhoSmall))
   exact hlimit.exists_eventually_measure_map_ge_pos_of_isOpen
     (BrownianMeander.isOpen_openCorridor sigma rho) hpositive
 
