@@ -8,7 +8,7 @@ module
 
 public import Analysis.Asymptotics.Scale.BlockScale
 public import Probability.Process.RandomWalk.Path.Representation.Cadlag
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.Partition.Range
+public import Probability.Process.RandomWalk.Path.Block.Partition.Range
 public import Probability.Process.Path.PathClass.StepCorridor.Probability.Partition.Range
 
 /-!
@@ -445,7 +445,7 @@ theorem iidSequenceLaw_normalizedStepCorridor_le_selectedCellRangeProduct
     have hposition := hsubset hmem i hiMem k hk'
     simpa [lengths, hlengthEq i] using hposition
   have hbound :=
-    ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.measure_forall_selectedHalfOpenPartitionCellCorridors_le_prod_rangeProbability
+    ProbabilityTheory.RandomWalk.measure_forall_selectedHalfOpenPartitionCellCorridors_le_prod_rangeProbability
       ν ((StepBoundary.commonKnots upper lower).card - 1) lengths s
       (fun i => scale n * lo i) (fun i => scale n * hi i)
       (by
