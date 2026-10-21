@@ -14,12 +14,20 @@ public import Combinatorics.BranchingWalk.Step.Basic
 The order condition is parameterized by an explicit relation, so an
 increasing and a decreasing enumeration are two instances of one definition
 and the condition is left--right symmetric; `siblingRel_optionMap_iff` is the
-transport lemma. The increasing and decreasing cases live in `Monotone.lean`.
+transport lemma. The increasing and decreasing cases live in
+`Step/Ordering/Monotone.lean`.
 
 Presence closure and relabeling are separate interfaces in
 `SiblingClosed.lean` and `SiblingClosable.lean`; keeping them out of this file
 means a consumer asking only about relations does not acquire either closure
 or choice principles.
+
+## Public declarations
+
+- `siblingRel rel ξ` means
+  `∀ i j x y, i < j → ξ i = some x → ξ j = some y → rel x y`.
+- `siblingRel_optionMap_iff` transports this condition through a map
+  `e : X → Y` whenever `rel' (e a) (e b) ↔ rel a b` for every `a, b`.
 -/
 
 @[expose] public section

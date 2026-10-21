@@ -3403,3 +3403,27 @@ and [finite-set definitions](https://leanprover-community.github.io/mathlib4_doc
 then checked the pinned `Mathlib/Data/Set/Finite/Basic.lean` and searched its
 source tree for a particle-cloud structure. No Mathlib definition matches the
 project's cloud semantics.
+
+## Step selection abstraction and API inventory review (2026-10-21)
+
+The generic selection semantics already live in
+`Selection/NSelection/Mechanism/Infinite.lean`: `IsLowerFiniteBy` expresses
+finite principal lower sections, and `AdmitsFirstNBy` states the existence of
+an initial segment of the dynamic key `(value, particle label)`. The candidate
+for further generalization is `Step.FiniteSelection`, which assigns a finite
+subset of surviving child slots to every step configuration. Mathlib's
+`Set.Finite` and `Finset` APIs provide finite-subset representations and
+conversion, but no total configuration-indexed selector that also proves each
+chosen slot belongs to that configuration's support. The step-indexed record
+therefore remains in `Step/Selection/Finite.lean`: it packages a genuine
+branching-step invariant, while the order-theoretic first-`N` interface remains
+at the more abstract `Selection/NSelection` layer. No generic selector record
+was added because this repository has no second domain client for it.
+
+The module headers for `Step/Relation.lean` and
+`Step/Selection/{Basic,Count,Finite,Slot}.lean` now list their public
+declarations and state the defining predicates or conclusions. The comparison
+used Mathlib's official [`Set.Finite` and `Finset` documentation](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Data/Set/Finite/Basic.html),
+[`Finset` definition](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Data/Finset/Defs.html),
+and the repository's pinned `Mathlib/Data/Set/Finite/Basic.lean` and
+`Mathlib/Data/Finset/Defs.lean`.

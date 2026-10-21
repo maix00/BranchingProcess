@@ -16,6 +16,29 @@ A finite step selection chooses finitely many surviving child slots from an
 otherwise arbitrary branching step.  It does not prescribe an enumeration,
 a distinguished slot, an order, or a capacity.  Those are properties of
 particular rules rather than of the branching-step representation.
+
+## Public declarations
+
+- `Step.FiniteSelection α X` assigns a finite set `R ξ` to every step with
+  `↑(R ξ) ⊆ support ξ`; `mem_support` gives the corresponding membership fact.
+- `FiniteSelection.IsBoundedBy R N` means `(R ξ).card ≤ N` for every `ξ`.
+- `FiniteSelection.filter R keep` retains selected slots satisfying
+  `keep ξ i`; `mem_filter` gives its membership equivalence, and
+  `filter_isBoundedBy` preserves a capacity bound.
+- `FiniteSelection.belowPotential R φ a` retains slots with
+  `ξ.potentialValue' φ i ≤ a`.
+- `FiniteSelection.firstNBy N value hadmits` constructs a selection from the
+  generic existence witnesses. `firstNBy_spec` gives its `IsFirstNBy`
+  specification, `firstNBy_isBoundedBy` bounds its size by `N`, and
+  `firstNBy_subset_of_le` shows monotonicity in the capacity.
+- `FiniteSelection.firstNByPotential N φ hadmits` orders by potential value
+  with slot label as tie breaker;
+  `admitsFirstNByPotential_of_level_finite` supplies existence from finite
+  lower potential levels.
+- `FiniteSelection.preserveFirstBelowPotential N φ a hlevel` retains the first
+  surviving child and members of the first-`N` potential segment below `a`;
+  `mem_preserveFirstBelowPotential_iff` states membership, and
+  `preserveFirstBelowPotential_isBoundedBy` gives capacity `N` when `1 ≤ N`.
 -/
 
 @[expose] public section
