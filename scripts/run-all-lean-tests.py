@@ -460,7 +460,6 @@ AXIOM_EXPECTATIONS = {
     ),
     Path("BranchingProcessTest/Mogulskii/RandomWalkBounds/Horizontal.lean"): (
         "ProbabilityTheory.RandomWalk.iidSequenceLaw_measure_forall_consecutiveBlockEvent",
-        "ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.iidSequenceLaw_measure_forall_blockOscillationLT",
         "ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.openHorizontalTubeProbability_le_pow_blockOscillationLT_source",
     ),
     Path("BranchingProcessTest/Mogulskii/Stable/RandomWalkBounds/Endpoint/StrictStable.lean"): (
