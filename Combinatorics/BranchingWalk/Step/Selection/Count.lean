@@ -15,6 +15,14 @@ public import Mathlib.MeasureTheory.MeasurableSpace.NCard
 The number of children is the extended cardinality of the set of present
 slots. The value `∞` is retained, so no finiteness assumption is built into
 the observation.
+
+## Public declarations
+
+- `Step.childCount ξ = (support ξ).encard` counts surviving slots in `ℕ∞`.
+- `Step.childCount_map` and `Step.childCount_forgetMark` state invariance under
+  relabeling marks and forgetting marks.
+- `Step.childCount_measurable` proves measurability when the slot type is
+  countable.
 -/
 
 @[expose] public section

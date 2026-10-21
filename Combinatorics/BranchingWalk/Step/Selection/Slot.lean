@@ -17,6 +17,18 @@ In a locally finite linear order with a least slot, every step admits a first
 `N`-slot selection, even when the support is infinite. This is an order-based
 selection of surviving slots, not an assumption that particular labels such
 as `0` or `1` are present.
+
+## Public declarations
+
+- `Step.FiniteSelection.admitsFirstNBySlotOrder` proves finite lower sections
+  in a locally finite order with a least element.
+- `Step.FiniteSelection.firstNBySlotOrder N` selects the first `N` surviving
+  slots, and `firstNBySlotOrder_spec` gives the generic first-`N` specification.
+- `card_firstNBySlotOrder_eq_of_le_childCount` gives cardinality `N` when the
+  step has at least `N` children; `firstNBySlotOrder_isBoundedBy` gives the
+  unconditional upper bound `N`.
+- `firstNBySlotOrder_nonempty_of_support_nonempty` gives a nonempty selection
+  when `0 < N` and the step has at least one surviving slot.
 -/
 
 @[expose] public section

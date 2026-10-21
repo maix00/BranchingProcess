@@ -16,6 +16,19 @@ A step may have infinitely many surviving slots.  This file connects its set
 of surviving slots to the abstract first-`N` selection interface.  No finite
 support assumption is introduced: it is enough that every lower potential
 level contains finitely many children.
+
+## Public declarations
+
+- `Step.IsLowerFiniteBy φ ξ` means every set of surviving slots whose dynamic
+  key `(φ (value' ξ i), i)` is at most the key of a fixed surviving slot is
+  finite.
+- `Step.isLowerFiniteBy_of_level_finite` derives that condition from
+  finiteness of `{i | survive ξ i ∧ φ (value' ξ i) ≤ a}` for every `a`.
+- `Step.admitsFirstNBy` turns lower finiteness into
+  `Selection.NSelection.AdmitsFirstNBy N (fun i => φ (value' ξ i)) (support ξ)`.
+- `Step.admitsFirstNBy_of_totalChildWeight_ne_top` applies this to real marks:
+  finite total exponential child weight implies existence of the leftmost
+  `N` surviving children under the displacement order.
 -/
 
 @[expose] public section
