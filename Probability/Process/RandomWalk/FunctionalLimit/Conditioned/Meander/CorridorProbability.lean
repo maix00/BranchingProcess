@@ -7,7 +7,9 @@ Authors: WANG Yiyang
 module
 
 public import Probability.ConvergenceInDistribution.Portmanteau
+public import Mathlib.MeasureTheory.Measure.Support
 public import Probability.Process.Brownian.Meander.Corridor
+import Probability.Process.Brownian.Meander.Lemmas.CorridorPositivity
 
 /-!
 # Conditioned random-walk limits at a Brownian meander
