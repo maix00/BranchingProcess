@@ -10,7 +10,6 @@ public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transit
 public import Mathlib.MeasureTheory.Function.ConvergenceInDistribution
 public import Mathlib.MeasureTheory.Measure.Support
 import Probability.Process.Brownian.Meander.Corridor
-import Probability.Process.Brownian.Meander.Lemmas.CorridorPositivity
 import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Meander.CorridorProbability
 /-!
 # Positive probabilities for conditioned transition corridors

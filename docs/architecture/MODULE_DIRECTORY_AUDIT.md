@@ -2672,14 +2672,27 @@ and the style check passes with the pinned toolchain.
 
 ## Full source-tree structural scan (2026-10-21)
 
-A fresh scan of the current production and test source trees, excluding
-`.lake`, `Vendor/`, and `.git/`, found 1,489 production modules and 138 test
-modules. Neither tree has a directory with more than eight direct Lean files.
-Across both trees, the scan found no same-level file/directory stem collision,
-no repeated parent-directory/file stem, no `Source/` directory, no
-`Lemmas.lean` alongside `Lemmas/`. This checks
-the structural invariants; semantic ownership and abstraction review remain an
-ongoing, statement-level audit.
+A scan of the production and test source trees, excluding `.lake`, `Vendor/`,
+and `.git/`, found 1,492 production modules and 138 test modules. Neither tree
+has a directory with more than eight direct Lean files. Across both trees,
+the scan found no same-level file/directory stem collision, no repeated
+parent-directory/file stem, no `Source/` directory, and no `Lemmas.lean`
+alongside `Lemmas/`. This checks the structural invariants; semantic ownership
+and abstraction review remain an ongoing, statement-level audit.
+
+The naming comparison used the pinned Mathlib revision
+`380f2aafb622cb2c1c93dac545b6389083c68c51`, Mathlib's
+[file-naming conventions](https://leanprover-community.github.io/contribute/naming.html),
+and its [`Data/Matrix/Basic.lean`](https://github.com/leanprover-community/mathlib4/blob/380f2aafb622cb2c1c93dac545b6389083c68c51/Mathlib/Data/Matrix/Basic.lean)
+and [`Logic/Function/Basic.lean`](https://github.com/leanprover-community/mathlib4/blob/380f2aafb622cb2c1c93dac545b6389083c68c51/Mathlib/Logic/Function/Basic.lean)
+modules. The pinned source contains 775 files named `Basic.lean` in distinct
+semantic directories, so repeating a relative filename such as `Basic.lean`
+across different subject directories follows Mathlib practice. The repository
+keeps its stricter local rule against a file sharing a directory with a
+same-stem directory, and against a child filename that repeats its parent
+directory. No global renaming of semantically scoped relative filenames is
+indicated by the Mathlib comparison. The scan is structural evidence only;
+it does not complete the statement-level ownership or abstraction audit.
 
 ## Drifted-tube endpoint-window ownership (2026-10-21)
 
@@ -2748,23 +2761,31 @@ The pinned Mathlib source has `Finset.sum_ite_eq` and related finite-sum
 identities, but no standalone public `Option.elim` transition API is needed
 for these proofs.
 
-## Brownian meander proof-only corridor (2026-10-21)
+## Brownian meander corridor API and proof helpers (2026-10-21)
 
 `Brownian/Meander/Corridor.lean` defines the corridor with constants
 `5/6`, `5/12`, and `11/24` that appears in the conditioned random-walk
 transition statement, so this event remains in the direct semantic module
-and is re-exported by that theorem's entry. The openness proof, the specific
-straight-path inclusion, and the resulting positive-measure implication all
-depend on this event and its chosen constants; they now live in
-`Brownian/Meander/Lemmas/CorridorPositivity.lean`. The meander and transition
-corridor-probability modules import those results as proof dependencies rather
-than re-exporting them.
+and is re-exported by that theorem's entry. Its openness is part of this
+event's public topological interface and follows from the general
+`Skorokhod.isOpen_rangeBelowEndsIn` theorem. The specific straight-path
+inclusion is private to the one meander corridor-probability proof that uses
+it. The implication from support membership to positive mass uses Mathlib's
+generic `Measure.mem_support_iff_forall`; the corridor-specific wrapper was
+removed. At the pinned Mathlib revision
+`380f2aafb622cb2c1c93dac545b6389083c68c51`, that theorem states that support
+membership is equivalent to every neighborhood having positive measure
+([source](https://github.com/leanprover-community/mathlib4/blob/380f2aafb622cb2c1c93dac545b6389083c68c51/Mathlib/MeasureTheory/Measure/Support.lean),
+[API docs](https://leanprover-community.github.io/mathlib4_docs/Mathlib/MeasureTheory/Measure/Support.html)).
+This placement follows Mathlib's review guidance to check for a more general
+existing result and place declarations in the appropriate files
+([guide](https://leanprover-community.github.io/contribute/pr-review.html#location-location)).
 The last-zero path law, Bolthausen last-sign-change identification, and
 positive-linear-path support theorem remain in the direct Brownian-meander
-modules as complete probability constructions and results. The definition,
-proof module, two corridor-probability entries, and three downstream transition
-clients build successfully; Mathlib `lint-style` passes on the four changed
-Lean modules.
+modules as complete probability constructions and results. The corridor
+definition, openness property, and both corridor-probability entries build
+successfully; Mathlib `lint-style` passes on the three affected production
+modules.
 
 ## Brownian meander helper visibility (2026-10-21)
 
