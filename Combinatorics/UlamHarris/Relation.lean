@@ -11,6 +11,16 @@ public import Combinatorics.UlamHarris.Basic
 /-!
 # Relations on Ulam--Harris addresses
 
+## Public declarations
+
+* `Combinatorics.UlamHarris.TreeNode.IsChild parent child` means
+  `∃ i, child = parent ++ [i]`.
+* `Combinatorics.UlamHarris.TreeNode.IsChild.length_lt` proves that a child
+  address is longer than its parent;
+  `Combinatorics.UlamHarris.TreeNode.IsChild.parent_unique` proves uniqueness
+  of the parent; and `Combinatorics.UlamHarris.TreeNode.IsChild.irrefl`
+  proves that no address is its own child.
+
 This file defines relations on addresses without assuming a realized tree.
 `TreeNode.IsChild parent child` means that `child` extends `parent` by exactly
 one label. Its direction is parent to child. It is independent of the

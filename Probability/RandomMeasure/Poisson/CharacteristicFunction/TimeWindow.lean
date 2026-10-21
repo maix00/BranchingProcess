@@ -5,7 +5,7 @@ Authors: WANG Yiyang
 -/
 
 import Probability.RandomMeasure.Poisson.CharacteristicFunction.Integral
-import Probability.RandomMeasure.Poisson.TimeMark
+import Probability.RandomMeasure.Poisson.Intensity.TimeMark
 import Probability.Distributions.InfinitelyDivisible.LevyKhintchine.FiniteVariation
 
 /-!

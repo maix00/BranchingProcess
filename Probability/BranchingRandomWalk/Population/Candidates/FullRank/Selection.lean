@@ -5,7 +5,7 @@ Authors: WANG Yiyang
 -/
 
 import Probability.BranchingRandomWalk.Population.Candidates.FullRank.Exclusion
-import Combinatorics.BranchingWalk.Step.Monotone
+import Combinatorics.BranchingWalk.Step.Ordering.Monotone
 
 /-!
 # Equality of finite and full rank selection
