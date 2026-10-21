@@ -3147,3 +3147,89 @@ offspring-address cardinality identity. All six modules build with the pinned
 toolchain, and Mathlib `lint-style` passes on them. The remaining candidate
 modules still require statement-level review; this pass does not certify the
 repository-wide header requirement.
+
+The next six candidates in that scan were manually confirmed and fixed:
+`Selection/Basic.lean`, `Selection/Coupling/EndpointMinimum.lean`,
+`Selection/Coupling/Position.lean`, and
+`Selection/NSelection/Walk/{Basic,Cloud,Frontier}.lean`. Their public
+declarations now have formula-bearing header inventories. The related
+`Cloud/Frontier/Basic.lean` inventory was also extended for the new generic
+potential-frontier API. Based on the previous 741-candidate count, 735
+candidates remain pending a refreshed repository-wide lexical pass and manual
+review.
+
+## Selection-mechanism abstraction review (2026-10-21)
+
+The current `Combinatorics.Branching.Selection.Mechanism` has the exact
+interface `select : Set ι → Set ι` with `∀ s, select s ⊆ s`; its finite
+counterpart has `select : Finset ι → Finset ι` with the analogous subset
+property. The finite interface is used by `FiniteNSelection`, while the
+set-valued interface is the base of `NSelection.toMechanism` and the random
+selection APIs. The candidate for a more generic abstraction is a map
+`f : α → α` on an arbitrary preorder with `∀ x, f x ≤ x`, instantiated at
+`α = Set ι` with subset order.
+
+The pinned Mathlib revision
+`380f2aafb622cb2c1c93dac545b6389083c68c51` provides `OrderHom`, which also
+requires monotonicity, and `ClosureOperator`, whose official API describes a
+monotone, extensive, idempotent map. Using `ClosureOperator` on `OrderDual α`
+encodes the corresponding anti-extensive, monotone, idempotent structure.
+Those extra laws are absent from selection mechanisms and cannot be assumed: the
+pointwise filter mechanism is a selection, while arbitrary mechanisms in the
+interface are not required to preserve order or be idempotent. No bundled
+arbitrary deflationary endomap API was found in the pinned `Mathlib/Order`
+source. The existing domain-specific `Mechanism` therefore remains the
+smallest faithful reusable interface; introducing a generic wrapper now would
+add a second public type without another independently meaningful client.
+
+The comparison used Mathlib's official
+[closure-operator API documentation](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Order/Closure.html),
+[library style guidance](https://leanprover-community.github.io/contribute/style.html),
+and [contribution scope guidance](https://leanprover-community.github.io/contribute/index.html),
+then checked `Mathlib/Order/Closure.lean` and the related order sources at the
+pinned revision above. Mathlib's separate closure-operator structure shows
+that bundled order operators encode their characteristic laws rather than
+serving as arbitrary endomap wrappers. This review retains the current
+selection abstraction and removes the one-use theorem that only packaged
+`le_trans` in `Selection/Coupling/EndpointMinimum.lean`.
+
+## Scalar-potential frontier abstraction review (2026-10-21)
+
+The former `Cloud.lowerPotentialFrontier` and `Cloud.potentialValues` first
+mapped particle positions through a real-valued potential and then projected
+to `Cloud.support`. The deterministic `NSelection.Walk` frontier module
+independently formed a `Finset` image of each generation, named it
+`potentialPopulation`, and used its `min'` to define a scalar lower point.
+That `Finset` wrapper and its membership theorem had no clients outside their
+defining module. These two implementations share the geometric input
+`CloudSet.points t` and the resulting sets
+`φ '' C.points t` and its `IsLeast`/`IsGreatest` subsets.
+
+The public abstraction now lives on `CloudSet`: for `C : CloudSet Time X` and
+`φ : X → ℝ`, `CloudSet.potentialValues C φ t := φ '' C.points t`,
+`CloudSet.lowerPotentialFrontier C φ t := (C.map φ).lowerFrontier t`, and
+`CloudSet.upperPotentialFrontier C φ t := (C.map φ).upperFrontier t`. The lower
+frontier has an explicit attainment predicate; when it holds,
+`CloudSet.lowerPotentialPoint C φ t h` is a point of that frontier and is
+least in `CloudSet.potentialValues C φ t`. This interface works for arbitrary
+time-indexed clouds, including infinite slices. `Cloud` keeps its named
+scalar-observation API as a specialization through `C.support`, which gives
+clients with particle labels a direct interface. `Walk` now uses the
+`CloudSet` API; its finite nonempty population proves attainment with
+`Finset.exists_min_image`, and the redundant `potentialPopulation` API was
+removed.
+
+The research checked the official
+[`Finset.min'` and `Finset.exists_min_image` APIs](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Data/Finset/Max.html)
+and [`Set.exists_min_image`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Data/Set/Finite/Lemmas.html),
+then checked the repository's pinned Mathlib revision
+`380f2aafb622cb2c1c93dac545b6389083c68c51`, including
+`Mathlib/Order/Closure.lean` and `Mathlib/Data/Set/Finite/Lemmas.lean`.
+Mathlib supplies generic extrema and images for finite sets, but no time-indexed
+cloud potential-frontier semantics; using `Finset.min'` directly cannot serve
+the arbitrary possibly infinite `Cloud` slices. The official closure-operator
+documentation also explains why Mathlib retains a concrete closure interface
+alongside a more general lower-adjoint interface: avoiding a ubiquitous
+specialization parameter can justify a domain-specific convenience API. That
+supports keeping the `Cloud` facade while placing the shared semantics on the
+more general `CloudSet` layer.

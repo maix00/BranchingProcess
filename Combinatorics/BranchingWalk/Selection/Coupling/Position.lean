@@ -12,6 +12,22 @@ public import Combinatorics.BranchingWalk.Selection.Coupling.Offspring.Cloud
 /-!
 # Propagating position order through shared offspring
 
+## Public declarations
+
+The declarations are in namespace
+`Combinatorics.Branching.Selection.Coupling`.
+
+- `childValue`: the observed position after one step,
+  `φ (position p + value' ((step p).map d) i)`.
+- `childValue_filter_card_le_of_injectivelyDominatesBy`: under a finite
+  slice-dominating parent injection, inclusion of matched slot sets, equality
+  of mapped increments, and translation monotonicity,
+  `card (P_C.filter (childValue_C ≤ a)) ≤
+  card (P_D.filter (childValue_D ≤ a))`, where `P_C` and `P_D` are the
+  offspring-pair sets built from the source and target slices.
+- `childValue_eq_branchingWalk_position_child`: the abstract update equals
+  `φ (β.position d p.1 (p.2 ++ [i]))` for a child of a branching walk.
+
 This file instantiates the abstract multi-root offspring matching with the
 actual one-step position update.  Raw child marks, accumulated positions, and
 the ordered observed values remain separate types.

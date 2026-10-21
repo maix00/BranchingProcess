@@ -12,6 +12,29 @@ public import Combinatorics.BranchingWalk.Cloud.Frontier.Basic
 /-!
 # Frontiers of a deterministic `N`-branching walk
 
+## Public declarations
+
+The declarations below are in namespace
+`Combinatorics.Branching.Selection.NSelection.Walk`.
+
+- `lowerFrontier`, `upperFrontier`, `mem_lowerFrontier_iff`,
+  `lowerFrontier_subset_population`, `mem_upperFrontier_iff`, and
+  `upperFrontier_subset_population`: least and greatest positions in a
+  generation, characterized by `IsLeast` and `IsGreatest`.
+- `lowerPotentialPoint`, `isLeast_lowerPotentialPoint`,
+  `lowerPotentialPoint_le`, and `exists_potential_eq_lowerPotentialPoint`:
+  for a nonempty generation, the least value of `potential` is attained by a
+  particle and is at most every value in that generation.
+- `lowerPoint`, `upperPoint`, `isLeast_lowerPoint`, `isGreatest_upperPoint`,
+  `lowerPoint_mem_lowerFrontier`, `upperPoint_mem_upperFrontier`,
+  `lowerFrontier_nonempty`, and `upperFrontier_nonempty`: extrema of a
+  nonempty linearly ordered generation belong to their respective frontiers.
+- `mem_lowerFrontier_mapOrderDual_iff`,
+  `mem_upperFrontier_mapOrderDual_iff`, `lowerFrontier_mapOrderDual`, and
+  `upperFrontier_mapOrderDual`: order reversal exchanges the two frontiers.
+- `lowerPoint_mapOrderDual` and `upperPoint_mapOrderDual`: the extrema of the
+  reversed walk are the order-duals of the opposite extrema.
+
 The population of a generation is a finite set of positions, so it has a lower
 and an upper frontier: the set of its least positions and the set of its
 greatest positions. When the population is nonempty and the positions are
@@ -28,8 +51,8 @@ A generation may be empty, because a particle may have no offspring at all; the
 frontier points are therefore always taken under an explicit nonemptiness
 hypothesis, and non-extinction belongs to the probabilistic layer.
 
-For an arbitrary position space, `lowerPotentialPoint` computes the scalar
-frontier by taking the minimum of the finite image under a potential
+For an arbitrary position space, `lowerPotentialPoint` is the attained lower
+frontier of the walk's `CloudSet` after applying a potential
 `Position → ℝ`. It does not sort particles or choose an ordered child slot.
 -/
 
@@ -79,32 +102,50 @@ theorem upperFrontier_subset_population [LE X] (V : Walk N X M) (n : ℕ) :
 
 /-! ### Scalar frontiers through a potential -/
 
-/-- The finite set of scalar values seen through `potential` at generation
-`n`. Particle identities and ties are intentionally forgotten. -/
-noncomputable def potentialPopulation (V : Walk N X M)
-    (potential : X → ℝ) (n : ℕ) : Finset ℝ :=
-  (V.population n).image potential
+private theorem hasLowerPotentialPoint_of_nonempty (V : Walk N X M)
+    (potential : X → ℝ) (n : ℕ) (h : (V.population n).Nonempty) :
+    V.cloud.HasLowerPotentialPoint potential n := by
+  obtain ⟨x, hx, hmin⟩ := Finset.exists_min_image
+    (V.population n) potential h
+  have hxcloud : x ∈ V.cloud.points n := by
+    simpa [cloud] using hx
+  refine ⟨potential x, ?_⟩
+  rw [CloudSet.mem_lowerPotentialFrontier_iff]
+  change IsLeast (potential '' V.cloud.points n) (potential x)
+  constructor
+  · exact ⟨x, hxcloud, rfl⟩
+  · intro y hy
+    rcases hy with ⟨z, hz, rfl⟩
+    exact hmin z (by simpa [cloud] using hz)
 
-@[simp] theorem mem_potentialPopulation_iff (V : Walk N X M)
-    (potential : X → ℝ) (n : ℕ) (x : ℝ) :
-    x ∈ V.potentialPopulation potential n ↔
-      ∃ y ∈ V.population n, potential y = x := by
-  simp [potentialPopulation]
-
-/-- The scalar lower-frontier position. It is the direct minimum of
-`potential '' population`; no ordering of the particles is constructed. -/
+/-- The least scalar potential value in a nonempty generation. -/
 noncomputable def lowerPotentialPoint (V : Walk N X M)
     (potential : X → ℝ) (n : ℕ) (h : (V.population n).Nonempty) : ℝ :=
-  (V.potentialPopulation potential n).min'
-    ((Finset.image_nonempty).2 h)
+  V.cloud.lowerPotentialPoint potential n (by
+    obtain ⟨x, hx, hmin⟩ := Finset.exists_min_image
+      (V.population n) potential h
+    have hxcloud : x ∈ V.cloud.points n := by
+      simpa [cloud] using hx
+    refine ⟨potential x, ?_⟩
+    rw [CloudSet.mem_lowerPotentialFrontier_iff]
+    change IsLeast (potential '' V.cloud.points n) (potential x)
+    constructor
+    · exact ⟨x, hxcloud, rfl⟩
+    · intro y hy
+      rcases hy with ⟨z, hz, rfl⟩
+      exact hmin z (by simpa [cloud] using hz))
 
 theorem isLeast_lowerPotentialPoint (V : Walk N X M)
     (potential : X → ℝ) (n : ℕ) (h : (V.population n).Nonempty) :
     IsLeast {x | ∃ y ∈ V.population n, potential y = x}
       (V.lowerPotentialPoint potential n h) := by
-  simpa [lowerPotentialPoint, ← mem_potentialPopulation_iff] using
-    Finset.isLeast_min' (V.potentialPopulation potential n)
-      ((Finset.image_nonempty).2 h)
+  have hvalues : V.cloud.potentialValues potential n =
+      {x | ∃ y ∈ V.population n, potential y = x} := by
+    ext x
+    simp [CloudSet.potentialValues, cloud]
+  rw [← hvalues]
+  exact V.cloud.isLeast_lowerPotentialPoint potential n
+    (hasLowerPotentialPoint_of_nonempty V potential n h)
 
 theorem lowerPotentialPoint_le (V : Walk N X M)
     (potential : X → ℝ) (n : ℕ) (h : (V.population n).Nonempty)
