@@ -1,4 +1,0 @@
-import Probability.Process.RandomWalk.FunctionalLimit.Stable.PathLimit
-
-#print axioms ProbabilityTheory.RandomWalk.FunctionalLimit.Stable.tendsto_normalizedStepPathLaw_of_stableDomain_of_tight
-#print axioms ProbabilityTheory.RandomWalk.FunctionalLimit.Stable.tendsto_normalizedStepPathLaw_of_zeroCenter_stableDomain_of_tight

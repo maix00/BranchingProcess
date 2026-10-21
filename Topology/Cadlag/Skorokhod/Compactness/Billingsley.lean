@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Topology.Cadlag.Skorokhod.Compactness.Approximation
-public import Topology.Cadlag.Skorokhod.EDistance.Logarithmic.Completeness
+public import Topology.Cadlag.Skorokhod.EDistance.Logarithmic.Completion.Completeness
 public import Topology.Cadlag.Skorokhod.EDistance.Logarithmic.TopologyComparison
 
 /-!

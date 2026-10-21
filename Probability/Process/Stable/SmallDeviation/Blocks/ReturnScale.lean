@@ -6,9 +6,10 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.Stable.SmallDeviation.RationalTube
+public import Probability.Process.Stable.Levy
+public import Probability.Process.Path.Skorokhod.RationalTime
 public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Gluing
-public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks
+import Probability.Process.Stable.SmallDeviation.RationalTube
 
 /-!
 # Stable scaling for returning corridor blocks
@@ -16,6 +17,23 @@ public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks
 The centered path law follows from the finite-dimensional stable-process law.
 It gives the exact time-space scaling of a corridor with an endpoint return
 window, the local probability appearing in block lower bounds.
+
+The public declarations are:
+
+* The rational-time return event is
+  \[\mathcal C(l,u,c_-,c_+)=\{x:\mathbb Q\cap[0,1]\to\mathbb R:
+    l<x(q)<u\ (\forall q),\ c_-<x(1)<c_+\}.\]
+* `IsStableLevyProcess.centeredRationalRestriction_identDistrib`:
+  \[(X_q-X_0)_{q\in[0,1]}\ \overset d=\ (h^{-1/\alpha}(X_{hq}-X_0))_{q\in[0,1]} .\]
+* `IsStableLevyProcess.corridorReturn_timeSpaceScale` and
+  `IsStableLevyProcess.corridorReturn_timeSpaceScale_inv`:
+  \[\mathbb P(X_{[0,1]}\in\mathcal C(l,u,c_-,c_+))=
+    \mathbb P(X_{[0,h]}\in\mathcal C(h^{1/\alpha}l,h^{1/\alpha}u,
+      h^{1/\alpha}c_-,h^{1/\alpha}c_+)),\]
+  and, equivalently,
+  \[\mathbb P(X_{[0,h]}\in\mathcal C(l,u,c_-,c_+))=
+    \mathbb P(X_{[0,1]}\in\mathcal C(h^{-1/\alpha}l,h^{-1/\alpha}u,
+      h^{-1/\alpha}c_-,h^{-1/\alpha}c_+)).\]
 -/
 
 @[expose] public section
@@ -85,30 +103,6 @@ theorem IsStableLevyProcess.corridorReturn_timeSpaceScale
   rw [hevent] at hprob
   simpa [scale] using hprob
 
-/-- The first block of an `(n+1)`-fold uniform partition is exactly the
-short-horizon path in the stable corridor-return scaling identity. -/
-theorem IsStableLevyProcess.firstBlock_corridorReturn_scale
-    {Ω : Type*} [MeasurableSpace Ω]
-    {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
-    {P : Measure Ω} [IsProbabilityMeasure P]
-    (h : IsStableLevyProcess α μ X P) (n : ℕ)
-    (lower upper coreLower coreUpper : ℝ) :
-    P ((fun ω q => X (RationalCoordinate.toNNReal q) ω - X 0 ω) ⁻¹'
-      rationalCoordinateCorridorReturn lower upper coreLower coreUpper) =
-    P ((fun ω q => rationalUniformBlockProcessFromTime X
-        (Nat.succ_pos n) ⟨0, Nat.succ_pos n⟩ q ω) ⁻¹'
-      rationalCoordinateCorridorReturn
-        (lower / (((1 / ((n : ℝ≥0) + 1) : ℝ≥0) : ℝ) ^ (-(1 / α))))
-        (upper / (((1 / ((n : ℝ≥0) + 1) : ℝ≥0) : ℝ) ^ (-(1 / α))))
-        (coreLower / (((1 / ((n : ℝ≥0) + 1) : ℝ≥0) : ℝ) ^ (-(1 / α))))
-        (coreUpper / (((1 / ((n : ℝ≥0) + 1) : ℝ≥0) : ℝ) ^ (-(1 / α))))) := by
-  have htime : (0 : ℝ≥0) < 1 / ((n : ℝ≥0) + 1) := by positivity
-  have hscale := h.corridorReturn_timeSpaceScale
-    (1 / ((n : ℝ≥0) + 1)) htime lower upper coreLower coreUpper
-  rw [rationalUniformBlockProcess_zero_eq_initial,
-    rationalUniformBlockBoundary_succ_one] at *
-  exact hscale
-
 /-- The reverse orientation is convenient when a block estimate already
 specifies the short-time corridor and return window. -/
 theorem IsStableLevyProcess.corridorReturn_timeSpaceScale_inv
@@ -134,40 +128,6 @@ theorem IsStableLevyProcess.corridorReturn_timeSpaceScale_inv
   dsimp only [scale] at hscale hs
   simp only [mul_div_cancel_right₀ _ hs] at hscale
   exact hscale.symm
-
-/-- A first uniform block can be evaluated as a unit-time stable path in
-the appropriately scaled corridor and return window. -/
-theorem IsStableLevyProcess.firstBlock_corridorReturn_scale_inv
-    {Ω : Type*} [MeasurableSpace Ω]
-    {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
-    {P : Measure Ω} [IsProbabilityMeasure P]
-    (h : IsStableLevyProcess α μ X P)
-    (blocks : ℕ) (hblocks : 0 < blocks)
-    (lower upper coreLower coreUpper : ℝ) :
-    P ((fun ω q => rationalUniformBlockProcessFromTime X hblocks
-        ⟨0, hblocks⟩ q ω) ⁻¹'
-      rationalCoordinateCorridorReturn lower upper coreLower coreUpper) =
-    P ((fun ω q => X (RationalCoordinate.toNNReal q) ω - X 0 ω) ⁻¹'
-      rationalCoordinateCorridorReturn
-        (lower * ((rationalUniformBlockBoundary blocks 1 hblocks : ℝ≥0) : ℝ) ^
-          (-(1 / α)))
-        (upper * ((rationalUniformBlockBoundary blocks 1 hblocks : ℝ≥0) : ℝ) ^
-          (-(1 / α)))
-        (coreLower * ((rationalUniformBlockBoundary blocks 1 hblocks : ℝ≥0) : ℝ) ^
-          (-(1 / α)))
-        (coreUpper * ((rationalUniformBlockBoundary blocks 1 hblocks : ℝ≥0) : ℝ) ^
-          (-(1 / α)))) := by
-  have ht : 0 < rationalUniformBlockBoundary blocks 1 hblocks := by
-    apply NNReal.coe_pos.mp
-    simp only [rationalUniformBlockBoundary, Nat.cast_one]
-    have hb : 0 < (blocks : ℝ) := by exact_mod_cast hblocks
-    change 0 < (1 : ℝ) / (blocks : ℝ)
-    positivity
-  have hscale := h.corridorReturn_timeSpaceScale_inv
-    (rationalUniformBlockBoundary blocks 1 hblocks) ht
-    lower upper coreLower coreUpper
-  rw [rationalUniformBlockProcess_zero_eq_initial]
-  exact hscale
 
 end ProbabilityTheory
 
