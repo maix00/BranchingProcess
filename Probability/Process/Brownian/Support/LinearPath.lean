@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.Brownian.Support.LinearTube
+import Probability.Process.Brownian.Support.LinearTube
 public import Probability.Process.Brownian.PathLaw.ContinuousModification
 public import Probability.Process.Path.Scaling.FiniteHorizon
 public import Mathlib.MeasureTheory.Measure.Support

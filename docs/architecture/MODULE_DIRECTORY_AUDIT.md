@@ -2653,3 +2653,15 @@ Brownian-meander law's strict-positivity property. The public law and support
 statements are unchanged. The two edited modules, their Brownian-meander
 dependents, and the conditioned-transition clients build successfully;
 Mathlib `lint-style` passes on both edited modules.
+
+## Brownian linear-tube proof imports (2026-10-21)
+
+`Brownian/Support/LinearPath.lean` and `Brownian/Bessel/Support.lean`
+previously re-exported `Brownian/Support/LinearTube.lean`, although the
+linear-tube probability bounds occur only inside their support-proof terms.
+Their public statements expose path-law support, not tube probabilities; both
+imports are now ordinary proof dependencies. `Bessel/Support.lean` is the
+only other client of the Brownian linear-ball estimates, and it imports them
+directly. The two edited modules, the meander support module, and its two
+conditioned-transition clients build successfully; `lint-style` passes on the
+two edited modules.
