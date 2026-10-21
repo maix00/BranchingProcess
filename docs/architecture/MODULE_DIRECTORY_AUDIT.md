@@ -3667,3 +3667,17 @@ selection result remains under `Spectral/Range/Rate/Lemmas/`, where its
 proof-specific role is visible. This audit follows the abstract API already
 present in Mathlib while introducing only the additional variable-rate
 statement required by both clients.
+
+## Selected-population enumeration ownership (2026-10-22)
+
+The abstraction search checked Mathlib's official
+[`Data.Fintype.EquivFin` API](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Data/Fintype/EquivFin.html)
+and the vendored source at revision
+`380f2aafb622cb2c1c93dac545b6389083c68c51`. Mathlib already provides
+`Finset.equivFin : s \simeq \mathrm{Fin}(s.\mathrm{card})`; a generic finite-set
+enumeration theorem would duplicate that API. The selected branching proofs
+need the same equivalence reoriented as an injective root-address map whose
+image is exactly the population. That wrapper is specific to this proof chain,
+so it remains under `Selected/Lemmas/` and is shared by the cell-branching and
+stopping-cell-branching arguments, rather than being promoted as a general
+enumeration abstraction or nested under only one consumer.

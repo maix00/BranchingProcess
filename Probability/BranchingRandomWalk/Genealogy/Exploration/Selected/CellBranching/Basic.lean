@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 import Probability.BranchingRandomWalk.Population.Processes.Selected.Basic
 import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.DomainFlow.Independence
-import Probability.BranchingRandomWalk.Genealogy.Exploration.Selected.CellBranching.Lemmas.Enumeration
+import Probability.BranchingRandomWalk.Genealogy.Exploration.Selected.Lemmas.Enumeration
 
 /-!
 # Branching on a cell of the selected population

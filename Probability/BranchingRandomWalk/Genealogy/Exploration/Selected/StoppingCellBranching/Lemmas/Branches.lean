@@ -5,7 +5,7 @@ Authors: WANG Yiyang
 -/
 
 import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.StoppedPopulation.CellFactorization
-import Probability.BranchingRandomWalk.Genealogy.Exploration.Selected.CellBranching.Lemmas.Enumeration
+import Probability.BranchingRandomWalk.Genealogy.Exploration.Selected.Lemmas.Enumeration
 import Probability.BranchingRandomWalk.Genealogy.Exploration.Selected.StoppingPopulation
 
 /-!
