@@ -10,7 +10,6 @@ public import Algebra.BigOperators.CyclicReindex
 public import Probability.Process.RandomWalk.SmallDeviation.Entrance.Rotation.DriftedTube
 public import Probability.Process.RandomWalk.SmallDeviation.Entrance.Rotation.FinitePath
 public import Probability.Process.RandomWalk.SmallDeviation.Entrance.Rotation.LinearTube
-public import Probability.Sequence.IID.FiniteReindex
 public import Topology.Cadlag.Skorokhod.Path.Scaling
 
 /-!
@@ -21,7 +20,7 @@ The public declarations are:
 - `movingOffsetCorridorPath` and
   `offsetCorridorPath_removeLinearDrift_iff_moving`: subtracting $dj$ turns
   the cyclic moving corridor into the static offset corridor.
-- `finiteCoordinateReindex_apply`, `IsCyclicPartialSumReindex`,
+- `IsCyclicPartialSumReindex`,
   `cyclicCoordinateReindex_isCyclicPartialSumReindex`, and
   `cyclicPartialSum_smul`: coordinate rotation, compatibility with partial
   sums, and scaling.
@@ -107,17 +106,6 @@ theorem offsetCorridorPath_removeLinearDrift_iff_moving
       rcases hlast with ⟨hlo, hhi⟩
       constructor <;> linarith
 
-/-- Applying the finite-coordinate reindexing used by exchangeability
-reorders the vector by the supplied equivalence. -/
-@[simp]
-theorem finiteCoordinateReindex_apply
-    {n : ℕ} (e : Fin n ≃ Fin n) (x : Fin n → ℝ) (i : Fin n) :
-    ProbabilityTheory.finiteCoordinateReindex e x i = x (e i) := by
-  simpa [ProbabilityTheory.finiteCoordinateReindex,
-    MeasurableEquiv.coe_piCongrLeft] using
-    (Equiv.piCongrLeft_apply_apply (P := fun _ : Fin n => ℝ)
-      e.symm x (e i))
-
 /-- Compatibility condition between cyclic coordinate rotation and the
 `n + 1` partial-sum knot path. This is stated separately so that the arithmetic
 bridge can be reused independently of any probability law. -/
@@ -175,7 +163,7 @@ theorem finiteLinearBall_subset_cyclicOffsetCover_allOffsets
     (rotate : Fin n → Fin n ≃ Fin n)
     (hrotate : IsCyclicPartialSumReindex rotate) :
     finiteLinearPathBallEvent (n := n) scale (1 / 2 - u) radius ⊆
-      ⋃ k, (ProbabilityTheory.finiteCoordinateReindex (rotate k)) ⁻¹'
+      ⋃ k, (MeasurableEquiv.piCongrLeft (fun _ : Fin n => ℝ) (rotate k).symm) ⁻¹'
         finiteDriftRemovedOffsetCorridorEvent (n := n) scale drift u := by
   intro x hx
   have hslopesmall : |(1 / 2 - u)| ≤ 1 := by
@@ -220,20 +208,22 @@ theorem finiteLinearBall_subset_cyclicOffsetCover_allOffsets
       (removeLinearDrift drift s) hremove0 hε16 htube'
   refine Set.mem_iUnion.mpr ⟨k, ?_⟩
   change finiteDriftRemovedOffsetCorridorEvent (n := n) scale drift u
-    (ProbabilityTheory.finiteCoordinateReindex (rotate k) x)
+    (MeasurableEquiv.piCongrLeft (fun _ : Fin n => ℝ) (rotate k).symm x)
   change offsetCorridorPath u
     (removeLinearDrift drift
       (finiteNormalizedStepKnots scale
-        (ProbabilityTheory.finiteCoordinateReindex (rotate k) x)))
+        (MeasurableEquiv.piCongrLeft (fun _ : Fin n => ℝ) (rotate k).symm x)))
   have hpath :
       removeLinearDrift drift
         (finiteNormalizedStepKnots scale
-          (ProbabilityTheory.finiteCoordinateReindex (rotate k) x)) =
+          (MeasurableEquiv.piCongrLeft (fun _ : Fin n => ℝ) (rotate k).symm x)) =
         cyclicRotatePath (removeLinearDrift drift s) k := by
-    have hcoord : ProbabilityTheory.finiteCoordinateReindex (rotate k) x =
+    have hcoord : MeasurableEquiv.piCongrLeft (fun _ : Fin n => ℝ) (rotate k).symm x =
         fun i => x (rotate k i) := by
       funext i
-      exact finiteCoordinateReindex_apply (rotate k) x i
+      simpa [MeasurableEquiv.coe_piCongrLeft] using
+        Equiv.piCongrLeft_apply_apply (P := fun _ : Fin n => ℝ)
+        (rotate k).symm x (rotate k i)
     rw [hcoord]
     funext j
     change scale⁻¹ * Fin.partialSum (fun i => x (rotate k i)) j -
@@ -263,8 +253,8 @@ theorem finiteLinearBall_subset_cyclicOffsetCover_allOffsets_modular
     (hsmall : 2 * radius + |drift| * (n : ℝ) < 1 / 16)
     (hu : u ∈ Set.Icc 0 1) :
     finiteLinearPathBallEvent (n := n) scale (1 / 2 - u) radius ⊆
-      ⋃ k, (ProbabilityTheory.finiteCoordinateReindex
-          (cyclicCoordinateReindex hn k)) ⁻¹'
+      ⋃ k, (MeasurableEquiv.piCongrLeft (fun _ : Fin n => ℝ)
+          (cyclicCoordinateReindex hn k).symm) ⁻¹'
         finiteDriftRemovedOffsetCorridorEvent (n := n) scale drift u := by
   exact finiteLinearBall_subset_cyclicOffsetCover_allOffsets
     hn scale drift radius u hradius hsmall hu
@@ -308,7 +298,7 @@ theorem finiteLinearBall_subset_cyclicOffsetCover_allOffsets_of_normalizationRat
     (rotate : Fin n → Fin n ≃ Fin n)
     (hrotate : IsCyclicPartialSumReindex rotate) :
     finiteLinearPathBallEvent (n := n) sourceScale sourceSlope radius ⊆
-      ⋃ k, (ProbabilityTheory.finiteCoordinateReindex (rotate k)) ⁻¹'
+      ⋃ k, (MeasurableEquiv.piCongrLeft (fun _ : Fin n => ℝ) (rotate k).symm) ⁻¹'
         finiteDriftRemovedOffsetCorridorEvent (n := n) targetScale drift u := by
   have htargetRadius : 0 < max 1 |ratio| * radius :=
     mul_pos (lt_of_lt_of_le zero_lt_one (le_max_left _ _)) hradius
@@ -341,7 +331,7 @@ theorem finiteLinearBall_subset_cyclicOffsetCover_lowerEdge
     (rotate : Fin n → Fin n ≃ Fin n)
     (hrotate : IsCyclicPartialSumReindex rotate) :
     finiteLinearPathBallEvent (n := n) scale (1 / 2) radius ⊆
-      ⋃ k, (ProbabilityTheory.finiteCoordinateReindex (rotate k)) ⁻¹'
+      ⋃ k, (MeasurableEquiv.piCongrLeft (fun _ : Fin n => ℝ) (rotate k).symm) ⁻¹'
         finiteDriftRemovedOffsetCorridorEvent (n := n) scale drift u := by
   intro x hx
   have htube := finiteLinearPathBall_knots_in_tube hn scale (1 / 2) radius
@@ -383,20 +373,22 @@ theorem finiteLinearBall_subset_cyclicOffsetCover_lowerEdge
       (removeLinearDrift drift s) hremove0 hε hε16 htube'
   refine Set.mem_iUnion.mpr ⟨k, ?_⟩
   change finiteDriftRemovedOffsetCorridorEvent (n := n) scale drift u
-    (ProbabilityTheory.finiteCoordinateReindex (rotate k) x)
+    (MeasurableEquiv.piCongrLeft (fun _ : Fin n => ℝ) (rotate k).symm x)
   change offsetCorridorPath u
     (removeLinearDrift drift
       (finiteNormalizedStepKnots scale
-        (ProbabilityTheory.finiteCoordinateReindex (rotate k) x)))
+        (MeasurableEquiv.piCongrLeft (fun _ : Fin n => ℝ) (rotate k).symm x)))
   have hpath :
       removeLinearDrift drift
         (finiteNormalizedStepKnots scale
-        (ProbabilityTheory.finiteCoordinateReindex (rotate k) x)) =
+        (MeasurableEquiv.piCongrLeft (fun _ : Fin n => ℝ) (rotate k).symm x)) =
         cyclicRotatePath (removeLinearDrift drift s) k := by
-    have hcoord : ProbabilityTheory.finiteCoordinateReindex (rotate k) x =
+    have hcoord : MeasurableEquiv.piCongrLeft (fun _ : Fin n => ℝ) (rotate k).symm x =
         fun i => x (rotate k i) := by
       funext i
-      exact finiteCoordinateReindex_apply (rotate k) x i
+      simpa [MeasurableEquiv.coe_piCongrLeft] using
+        Equiv.piCongrLeft_apply_apply (P := fun _ : Fin n => ℝ)
+        (rotate k).symm x (rotate k i)
     rw [hcoord]
     funext j
     change scale⁻¹ * Fin.partialSum (fun i => x (rotate k i)) j -
@@ -425,8 +417,8 @@ theorem finiteLinearBall_subset_cyclicOffsetCover_lowerEdge_modular
     (hsmall : 2 * radius + |drift| * (n : ℝ) < 1 / 16)
     (hu : u ∈ Set.Icc 0 (1 / 10)) :
     finiteLinearPathBallEvent (n := n) scale (1 / 2) radius ⊆
-      ⋃ k, (ProbabilityTheory.finiteCoordinateReindex
-          (cyclicCoordinateReindex hn k)) ⁻¹'
+      ⋃ k, (MeasurableEquiv.piCongrLeft (fun _ : Fin n => ℝ)
+          (cyclicCoordinateReindex hn k).symm) ⁻¹'
         finiteDriftRemovedOffsetCorridorEvent (n := n) scale drift u := by
   exact finiteLinearBall_subset_cyclicOffsetCover_lowerEdge
     hn scale drift radius u hradius hsmall hu

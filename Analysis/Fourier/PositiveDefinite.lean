@@ -33,6 +33,8 @@ import Mathlib.Analysis.Matrix.Order
   matrix $(\varphi(x_i-x_j))_{i,j}$ is positive semidefinite.
 * `IsPositiveDefinite.mul`: the pointwise product of two positive-definite
   functions is positive definite.
+* `IsPositiveDefinite.smul_nonneg`: if `a ≥ 0`, then `x ↦ a * φ(x)` is
+  positive definite whenever `φ` is.
 * `IsPositiveDefinite.closure_pointwise`: pointwise limits of positive-definite
   functions are positive definite.
 * `IsPositiveDefinite.norm_le_one`: if $\varphi(0)=1$, then
@@ -171,6 +173,30 @@ theorem mul (hφ : IsPositiveDefinite φ) (hψ : IsPositiveDefinite ψ) :
     ring
   rw [hquad_eq] at hquad
   exact hquad
+
+/-- Multiplication by a nonnegative real scalar preserves positive definiteness. -/
+theorem smul_nonneg {a : ℝ} (hφ : IsPositiveDefinite φ) (ha : 0 ≤ a) :
+    IsPositiveDefinite (fun x => (a : ℂ) * φ x) := by
+  intro n x c
+  have hscale : (0 : ℂ) ≤ (a : ℂ) := by
+    rw [Complex.nonneg_iff]
+    simp [ha]
+  have hform : (∑ i, ∑ j, starRingEnd ℂ (c i) * c j *
+      ((a : ℂ) * φ (x i - x j))) =
+      (a : ℂ) * ∑ i, ∑ j, starRingEnd ℂ (c i) * c j * φ (x i - x j) := by
+    calc
+      _ = ∑ i, ∑ j, (a : ℂ) *
+          (starRingEnd ℂ (c i) * c j * φ (x i - x j)) := by
+        refine Finset.sum_congr rfl fun i _ => ?_
+        refine Finset.sum_congr rfl fun j _ => ?_
+        ring
+      _ = (a : ℂ) * ∑ i, ∑ j,
+          starRingEnd ℂ (c i) * c j * φ (x i - x j) := by
+        rw [Finset.mul_sum]
+        refine Finset.sum_congr rfl fun i _ => ?_
+        rw [Finset.mul_sum]
+  rw [hform]
+  exact mul_nonneg hscale (hφ n x c)
 
 /-- Pointwise limit of positive definite functions is positive definite. -/
 theorem closure_pointwise {φs : ℕ → G → ℂ} (hφs : ∀ n, IsPositiveDefinite (φs n))

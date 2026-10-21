@@ -2813,3 +2813,88 @@ downstream modules, `FiniteVariation.lean` and `Stable/Exponent/Basic.lean`
 now import those dependencies directly. All seven affected modules pass
 `lint-style`, and the full `lake build BranchingProcess` succeeds with 5,602
 Lake jobs.
+
+## Abstraction review: conditional positive definiteness and Schoenberg (2026-10-21)
+
+This review compared the candidate interface with A. S. Holevo,
+“Conditionally Positive Definite Functions in Quantum Probability,”
+*Proceedings of the International Congress of Mathematicians* (Berkeley, 1986),
+vol. 2, pp. 1011–1020. The opening paragraph of the Introduction states the group
+Schoenberg correspondence: for a complex function `ψ` on a group, `g ↦ exp(tψ(g))`
+is positive definite for every `t ≥ 0` exactly when `ψ` is Hermitian and conditionally
+positive definite. The proceedings scan is at
+<https://sites.math.rutgers.edu/~zeilberg/akherim/icm1986.pdf>; the correspondence is
+in the opening paragraph rather than a numbered theorem. Mathlib's review guidance
+asks reviewers to check for an existing more-general interface and whether a new
+declaration would be useful beyond its current caller
+(<https://leanprover-community.github.io/contribute/pr-review.html>, “Do the results
+already exist?” and “Is it formalizing something from the literature?”).
+
+The pinned Mathlib revision `380f2aafb622cb2c1c93dac545b6389083c68c51` contains
+`Matrix.PosSemidef.hadamard` in `Mathlib.Analysis.Matrix.Order`, the positive
+semidefinite Schur product theorem, but no function-level conditionally-positive-definite
+API. The repository's `Analysis/Fourier/PositiveDefinite.lean` already supplies the
+function-level positive-definite interface on `AddGroup`; that is the matching owner
+for the new `Analysis/Fourier/ConditionallyPositiveDefinite/Basic.lean` interface.
+Its condition is the full ordered-complex statement
+`0 ≤ ∑ i j, conj (c i) * c j * ψ (x i - x j)` for all finite weights with `∑ i, c i = 0`.
+Under `ComplexOrder`, this requires the quadratic form to be real and nonnegative,
+matching the literature's positivity condition; Hermitian symmetry remains a separate
+hypothesis as in Holevo's statement.
+
+`IsConditionallyPositiveDefinite.schoenberg_exp` now applies to every additive group,
+with assumptions only conditional positive definiteness and Hermitian symmetry, and
+concludes `IsPositiveDefinite (fun x => exp (t * ψ x))` for all `t ≥ 0`. The earlier
+normalization hypothesis `ψ 0 = 0` was unnecessary for Schoenberg's group theorem:
+subtracting the constant `ψ 0` preserves conditional positive definiteness, Hermitian
+symmetry makes `ψ 0` real, and the removed factor `exp(t ψ 0)` is a nonnegative real
+scalar. The general closure theorem `IsPositiveDefinite.smul_nonneg` records the scalar
+operation at the existing positive-definite function layer. The anchored-kernel
+calculation and exponential-kernel argument remain private in `Schoenberg.lean`; the
+matrix Schur step reuses `Matrix.PosSemidef.hadamard` instead of duplicating that result.
+The real Lévy drift, Gaussian term, and compensated-integrand instances remain in
+`LevyKhintchine/Representation.lean`, where their formulas belong.
+
+The exact generic statements now appear in the module headers, while the
+Lévy-specific exponent interface continues to use `ψ 0 = 0` because it must construct
+probability measures from characteristic functions normalized to one at the identity.
+The targets `Analysis.Fourier.PositiveDefinite`,
+`Analysis.Fourier.ConditionallyPositiveDefinite.Schoenberg`, and
+`Probability.Distributions.InfinitelyDivisible.LevyKhintchine.Representation` build
+successfully with the pinned toolchain.
+
+## IID finite-product reindexing abstraction review (2026-10-21)
+
+The previous `finiteCoordinateReindex` definition was a homogeneous `Fin n`
+alias for `MeasurableEquiv.piCongrLeft`; its application lemma only exposed
+the coordinate formula already provided by that Mathlib equivalence. Both
+were removed, and the cyclic-corridor statements now refer directly to
+`MeasurableEquiv.piCongrLeft`. This avoids a project wrapper that did not add
+an operation beyond the pinned dependency API.
+
+Mathlib revision
+`380f2aafb622cb2c1c93dac545b6389083c68c51` provides
+`measurePreserving_piCongrLeft` and `Measure.pi_map_piCongrLeft` for
+reindexing dependent product measures, under coordinatewise sigma-finiteness
+([pinned source](https://github.com/leanprover-community/mathlib4/blob/380f2aafb622cb2c1c93dac545b6389083c68c51/Mathlib/MeasureTheory/Constructions/Pi.lean#L3194-L3224)).
+The repository's `MeasureTheory.measure_le_card_smul_of_finite_cover_invariant`
+already supplies the outer-measure inequality for any finite family of
+measure-invariant preimages. These existing results cover the two lower-level
+operations, so neither was duplicated or moved into a new public module.
+
+The remaining `ProbabilityTheory.measure_pi_event_le_card_smul_of_reindex_cover`
+is the IID finite-product corollary: for finite coordinate and reindexing
+types `ι` and `κ`, a probability measure `ν`, and measurable `safe`, if the
+preimages of `safe` under a family of coordinate equivalences cover `event`,
+then
+`Measure.pi (fun _ : ι => ν) event ≤ Fintype.card κ • Measure.pi (fun _ : ι => ν) safe`.
+It no longer fixes the coordinate type to `Fin n` or requires the family to
+have exactly `n` members. This statement captures the reusable finite IID
+product probability bound independently of the random-walk path geometry, so
+it remains at `Probability/Sequence/IID/FiniteReindex.lean`; its invariance
+calculation is private. The current cyclic entrance estimate is its only
+project caller, which prompted the generality review but was not itself the
+reason for retaining a public interface. This decision follows Mathlib's
+review questions about existing general results, suitable location, and
+whether an API advances the library
+([review guide](https://leanprover-community.github.io/contribute/pr-review.html#location-location)).

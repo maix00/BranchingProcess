@@ -57,13 +57,18 @@ theorem measure_pi_offsetCorridor_ge_div_of_linearTube_allOffsets
       (n := n) ν scale (1 / 2 - u) radius)
   have hcover := finiteLinearBall_subset_cyclicOffsetCover_allOffsets
     hn scale drift radius u hradius hsmall hu rotate hrotate
-  have hbound := ProbabilityTheory.measure_pi_event_le_card_smul_of_reindexCover
+  have hbound := ProbabilityTheory.measure_pi_event_le_card_smul_of_reindex_cover
     ν (finiteLinearPathBallEvent (n := n) scale (1 / 2 - u) radius)
     (finiteDriftRemovedOffsetCorridorEvent (n := n) scale drift u)
     rotate hcover hsafe
+  have hbound' : Measure.pi (fun _ : Fin n => ν)
+      (finiteLinearPathBallEvent (n := n) scale (1 / 2 - u) radius) ≤
+        n • Measure.pi (fun _ : Fin n => ν)
+          (finiteDriftRemovedOffsetCorridorEvent (n := n) scale drift u) := by
+    simpa using hbound
   have hqbound : q ≤ n • Measure.pi (fun _ : Fin n => ν)
       (finiteDriftRemovedOffsetCorridorEvent (n := n) scale drift u) :=
-    hqPi.trans hbound
+    hqPi.trans hbound'
   rw [ENNReal.div_le_iff_le_mul (Or.inl (by exact_mod_cast hn.ne'))
     (Or.inl (by simp))]
   calc
@@ -104,13 +109,18 @@ theorem measure_pi_offsetCorridor_ge_div_of_linearTube_allOffsets_of_normalizati
     finiteLinearBall_subset_cyclicOffsetCover_allOffsets_of_normalizationRatio
       hn targetScale sourceScale ratio drift sourceSlope radius u
       htargetScale hsourceScale hratio hcenter hradius hsmall hu rotate hrotate
-  have hbound := ProbabilityTheory.measure_pi_event_le_card_smul_of_reindexCover
+  have hbound := ProbabilityTheory.measure_pi_event_le_card_smul_of_reindex_cover
     ν (finiteLinearPathBallEvent (n := n) sourceScale sourceSlope radius)
     (finiteDriftRemovedOffsetCorridorEvent (n := n) targetScale drift u)
     rotate hcover hsafe
+  have hbound' : Measure.pi (fun _ : Fin n => ν)
+      (finiteLinearPathBallEvent (n := n) sourceScale sourceSlope radius) ≤
+        n • Measure.pi (fun _ : Fin n => ν)
+          (finiteDriftRemovedOffsetCorridorEvent (n := n) targetScale drift u) := by
+    simpa using hbound
   have hqbound : q ≤ n • Measure.pi (fun _ : Fin n => ν)
       (finiteDriftRemovedOffsetCorridorEvent (n := n) targetScale drift u) :=
-    hqPi.trans hbound
+    hqPi.trans hbound'
   rw [ENNReal.div_le_iff_le_mul (Or.inl (by exact_mod_cast hn.ne'))
     (Or.inl (by simp))]
   calc
@@ -164,13 +174,18 @@ theorem measure_pi_offsetCorridor_ge_div_of_linearTube
       (n := n) ν scale (1 / 2) radius)
   have hcover := finiteLinearBall_subset_cyclicOffsetCover_lowerEdge
     hn scale drift radius u hradius hsmall hu rotate hrotate
-  have hbound := ProbabilityTheory.measure_pi_event_le_card_smul_of_reindexCover
+  have hbound := ProbabilityTheory.measure_pi_event_le_card_smul_of_reindex_cover
     ν (finiteLinearPathBallEvent (n := n) scale (1 / 2) radius)
     (finiteDriftRemovedOffsetCorridorEvent (n := n) scale drift u)
     rotate hcover hsafe
+  have hbound' : Measure.pi (fun _ : Fin n => ν)
+      (finiteLinearPathBallEvent (n := n) scale (1 / 2) radius) ≤
+        n • Measure.pi (fun _ : Fin n => ν)
+          (finiteDriftRemovedOffsetCorridorEvent (n := n) scale drift u) := by
+    simpa using hbound
   have hqbound : q ≤ n • Measure.pi (fun _ : Fin n => ν)
       (finiteDriftRemovedOffsetCorridorEvent (n := n) scale drift u) :=
-    hqPi.trans hbound
+    hqPi.trans hbound'
   rw [ENNReal.div_le_iff_le_mul (Or.inl (by exact_mod_cast hn.ne'))
     (Or.inl (by simp))]
   calc
