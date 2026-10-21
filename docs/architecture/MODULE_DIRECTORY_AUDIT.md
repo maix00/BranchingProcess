@@ -2584,6 +2584,18 @@ four affected modules build successfully with the pinned toolchain (3,351
 Lake jobs); targeted Mathlib `lint-style` passes on both edited helper
 modules.
 
+The same declaration-by-declaration check found one proof-only dependency in
+`Bridge/Lemmas/TerminalLeftAsymptotics.lean`: the complete stable-domain
+endpoint-return estimate from `TerminalLeft/Bounds/Lower.lean` is invoked in
+the proof of base-corridor positivity, but its theorem does not occur in any
+public statement of the bridge helper. That estimate remains public at its
+own semantic owner; this bridge helper now imports it ordinarily. Its public
+imports still name the source corridor events and stable-process assumptions
+appearing in its statements. The direct clients import the helper through
+ordinary imports. This applies the same Mathlib import-visibility review to a
+second proof chain rather than promoting or duplicating the Mogulskii-specific
+estimate.
+
 ## First-$N$ selection under injective relabeling (2026-10-21)
 
 The capacity-hit trajectory had a private, one-use proof of this general
@@ -3053,3 +3065,48 @@ reason for retaining a public interface. This decision follows Mathlib's
 review questions about existing general results, suitable location, and
 whether an API advances the library
 ([review guide](https://leanprover-community.github.io/contribute/pr-review.html#location-location)).
+
+## Finite-block oscillation and partition-range API review (2026-10-21)
+
+This review used the current Mathlib API documentation and the repository's
+pinned Mathlib source at revision
+`380f2aafb622cb2c1c93dac545b6389083c68c51`. Mathlib's
+[`oscillation`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Analysis/Oscillation.html)
+is the local topological oscillation of a function at a point, so it does not
+represent the finite random-walk block event. Mathlib's
+[`Metric.ediam`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Topology/EMetricSpace/Diam.html)
+does express a pairwise diameter bound for a set, but the block event is used
+for arbitrary real widths, including negative widths; replacing its direct
+pairwise predicate by a nonnegative extended diameter would add a side
+condition and obscure the event's current meaning. The existing
+`OscillationBounded` predicate already states the needed pairwise path bound,
+so the finite-block event uses that representation.
+
+The finite-block events now live in
+`Probability/Process/RandomWalk/Path/Block/Oscillation.lean`; IID identities
+between those events and partial-sum range probabilities live in
+`Path/Block/Law/Oscillation.lean`; and the interval-partition product bounds
+live in `Path/Block/Partition/Range.lean`. Their statements require only IID
+increments and finite block data, so their former Mogulskii-specific location
+was too narrow. The horizontal-tube module now applies the general
+`iidSequenceLaw_measure_forall_consecutiveBlockEvent` directly instead of
+exporting two event-specific wrappers. The normalized-step event bridge now
+lives beside the variable-length normalized block path law in
+`FunctionalLimit/NormalizedStep/Block.lean`.
+
+Mathlib's pinned sources provide finite sums and measurable finite sums, but
+no dedicated measurability theorem for `Fin.partialSum` on a finite increment
+block. The new `measurable_finPartialSum` in
+`Path/Block/Measurable.lean` states that missing interface for any measurable
+additive monoid with measurable addition; the oscillation event proofs reuse
+it instead of carrying duplicate private recursions. This generality follows
+the repository's API rule and Mathlib's review guidance to look for an existing
+more-general result and choose the semantic owner before adding declarations
+([Mathlib review guide](https://leanprover-community.github.io/contribute/pr-review.html#location-location),
+[Mathlib style guide](https://leanprover-community.github.io/contribute/style.html#header-and-imports)).
+
+The range event and its probability had also been defined in
+`Path/Corridor/Horizontal/Core.lean`, although neither depends on corridor
+geometry. They now live in `Path/Event/Oscillation.lean`; the horizontal module
+retains only the implication from tube confinement to range control and the
+tube-specific probability results.

@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.TerminalLeft.Partition.Basic
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.Partition.Range
+public import Probability.Process.RandomWalk.Path.Block.Partition.Range
 /-!
 # Cell estimates for the terminal-left path
 
@@ -205,7 +205,7 @@ theorem iidSequenceLaw_sourceNormalizedStepCorridor_le_selectedCellRangeProduct
     have hposition := hsubset hmem i hiMem k hk'
     simpa [lengths, hlengthEq i] using hposition
   have hbound :=
-    ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.measure_forall_selectedHalfOpenPartitionCellCorridors_le_prod_rangeProbability
+    ProbabilityTheory.RandomWalk.measure_forall_selectedHalfOpenPartitionCellCorridors_le_prod_rangeProbability
       ν ((StepBoundary.commonKnots upper lower).card - 1) lengths s
       (fun i => scale n * lo i) (fun i => scale n * hi i)
       (by

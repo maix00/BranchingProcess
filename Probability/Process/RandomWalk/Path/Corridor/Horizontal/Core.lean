@@ -7,6 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.Path.Corridor.Horizontal.Basic
+public import Probability.Process.RandomWalk.Path.Event.Oscillation
 public import Probability.Sequence.IID.Basic
 public import Probability.Process.RandomWalk.Path.Window.Core
 public import Mathlib.Analysis.SpecialFunctions.Log.ENNRealLog
@@ -52,29 +53,6 @@ theorem measurableSet_inOpenHorizontalTube (a width : ℝ) (n : ℕ) :
     measurableSet_Ioi.preimage (displacement_measurable (k + 1)) |>.inter
       (measurableSet_Iio.preimage (displacement_measurable (k + 1)))
 
-/-- The strict range-oscillation event for the partial-sum path through time
-`n`. It is translation invariant: it constrains pairwise differences, not the
-position of the path relative to a fixed center. -/
-def partialSumRangeOscillationLTEvent (width : ℝ) (n : ℕ) : Set (ℕ → ℝ) :=
-  {increment | ∀ i j : Fin (n + 1),
-    |AdditivePath.displacement (i : ℕ) increment -
-      AdditivePath.displacement (j : ℕ) increment| < width}
-
-/-- The strict partial-sum range event is measurable. -/
-theorem measurableSet_partialSumRangeOscillationLTEvent (width : ℝ) (n : ℕ) :
-    MeasurableSet (partialSumRangeOscillationLTEvent width n) := by
-  rw [show partialSumRangeOscillationLTEvent width n =
-      ⋂ i : Fin (n + 1), ⋂ j : Fin (n + 1),
-        {increment : ℕ → ℝ |
-          |AdditivePath.displacement (i : ℕ) increment -
-            AdditivePath.displacement (j : ℕ) increment| < width} by
-    ext increment
-    simp [partialSumRangeOscillationLTEvent]]
-  exact MeasurableSet.iInter fun i => MeasurableSet.iInter fun j => by
-    exact measurableSet_Iio.preimage <|
-      continuous_abs.measurable.comp <|
-        (displacement_measurable (i : ℕ)).sub (displacement_measurable (j : ℕ))
-
 /-- A path confined to a fixed open horizontal tube has strictly bounded
 pairwise range. This forgets the tube's center and retains only its width. -/
 theorem InOpenHorizontalTube.subset_partialSumRangeOscillationLTEvent
@@ -116,24 +94,6 @@ law. -/
 def openHorizontalTubeProbability (incrementLaw : Measure (ℕ → ℝ))
     (a width : ℝ) (n : ℕ) : ENNReal :=
   incrementLaw {increment | InOpenHorizontalTube a width n increment}
-
-/-- Probability of the strict partial-sum range event under an
-increment-path law. -/
-def partialSumRangeOscillationLTProbability
-    (incrementLaw : Measure (ℕ → ℝ)) (width : ℝ) (n : ℕ) : ENNReal :=
-  incrementLaw (partialSumRangeOscillationLTEvent width n)
-
-/-- A longer-horizon range event is contained in the corresponding shorter
-one, since the latter observes only an initial segment of the partial-sum
-path. -/
-theorem partialSumRangeOscillationLTProbability_antitone_horizon
-    (incrementLaw : Measure (ℕ → ℝ)) (width : ℝ) {m n : ℕ} (hmn : m ≤ n) :
-    partialSumRangeOscillationLTProbability incrementLaw width n ≤
-      partialSumRangeOscillationLTProbability incrementLaw width m := by
-  unfold partialSumRangeOscillationLTProbability partialSumRangeOscillationLTEvent
-  apply measure_mono
-  intro increment h i j
-  exact h ⟨i.val, by omega⟩ ⟨j.val, by omega⟩
 
 /-- The probability of a centered open tube is bounded by the probability of
 the translation-invariant range event of the same width. -/

@@ -26,12 +26,6 @@ The public declarations in this module are:
   the corresponding closed-tube event.
 - `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.stableBlockCorridorProbability`:
   the i.i.d. probability of the open stable block tube.
-- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.blockOscillationLTEvent_subset_normalizedStepBlockRangeOscillation`:
-  strict source-block oscillation below $w x_n$ implies normalized path-range
-  oscillation at most $w$.
-- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.iidSequenceLaw_measure_blockOscillationLT_le_normalizedStepBlockPathLaw`:
-  the source oscillation-event probability is bounded by the corresponding
-  normalized path-law probability.
 - `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.limsup_normalizedStepBlockRangeOscillation_le_stableProcessTube`:
   under the block-path $J_1$ limit, the range-oscillation limsup is bounded by
   the slightly wider stable-process range event.
@@ -111,81 +105,6 @@ def stableClosedBlockTube (ν : Measure ℝ) (α constant a width : ℝ) (scale 
 noncomputable def stableBlockCorridorProbability (ν : Measure ℝ)
     (α constant a width : ℝ) (scale : ℕ → ℝ) (n : ℕ) : ENNReal :=
   iidSequenceLaw ν (stableBlockTube ν α constant a width scale n)
-
-/-- A strict source block-oscillation event implies the closed range bound
-for the corresponding normalized càdlàg block path. -/
-theorem blockOscillationLTEvent_subset_normalizedStepBlockRangeOscillation
-    (scale : ℕ → ℝ) (blockLength : ℕ → ℕ) (n : ℕ)
-    (hscale : 0 < scale n) (width : ℝ) :
-    {increment | blockOscillationLTEvent (width * scale n) (blockLength n)
-      (Combinatorics.Sequence.blockCoordinates 0 (blockLength n) increment)} ⊆
-    {increment | RandomWalk.normalizedStepBlockCadlagPathIcc
-        scale blockLength n increment ∈ Skorokhod.rangeOscillationLe width} := by
-  intro increment hosc
-  change ∀ i j : Fin (blockLength n + 1),
-      |Fin.partialSum
-          (Combinatorics.Sequence.blockCoordinates 0 (blockLength n) increment) i -
-        Fin.partialSum
-          (Combinatorics.Sequence.blockCoordinates 0 (blockLength n) increment) j| <
-        width * scale n at hosc
-  intro s t
-  obtain ⟨i, hi⟩ :=
-    RandomWalk.exists_normalizedStepCadlagPathIcc_eq_scaledDisplacement
-      (fun _ => scale n) (blockLength n) increment s
-  obtain ⟨j, hj⟩ :=
-    RandomWalk.exists_normalizedStepCadlagPathIcc_eq_scaledDisplacement
-      (fun _ => scale n) (blockLength n) increment t
-  have hpartialI :
-      Fin.partialSum
-          (Combinatorics.Sequence.blockCoordinates 0 (blockLength n) increment) i =
-        AdditivePath.displacement (i : ℕ) increment := by
-    rw [RandomWalk.partialSum_blockCoordinates, AdditivePath.blockSum_zero_start]
-  have hpartialJ :
-      Fin.partialSum
-          (Combinatorics.Sequence.blockCoordinates 0 (blockLength n) increment) j =
-        AdditivePath.displacement (j : ℕ) increment := by
-    rw [RandomWalk.partialSum_blockCoordinates, AdditivePath.blockSum_zero_start]
-  have hraw : |AdditivePath.displacement (i : ℕ) increment -
-      AdditivePath.displacement (j : ℕ) increment| < width * scale n := by
-    simpa [hpartialI, hpartialJ] using hosc i j
-  have hnormalized :
-      |(scale n)⁻¹ * AdditivePath.displacement (i : ℕ) increment -
-        (scale n)⁻¹ * AdditivePath.displacement (j : ℕ) increment| =
-        |AdditivePath.displacement (i : ℕ) increment -
-          AdditivePath.displacement (j : ℕ) increment| / scale n := by
-    rw [← mul_sub, abs_mul, abs_of_pos (inv_pos.mpr hscale), div_eq_mul_inv]
-    ring
-  change |RandomWalk.normalizedStepCadlagPathIcc (fun _ => scale n)
-      (blockLength n) increment s -
-    RandomWalk.normalizedStepCadlagPathIcc (fun _ => scale n)
-      (blockLength n) increment t| ≤ width
-  rw [hi, hj, hnormalized]
-  exact (div_lt_iff₀ hscale).2 (by simpa [mul_comm] using hraw) |>.le
-
-/-- The finite source block-oscillation probability is bounded above by the
-closed range-oscillation probability of its càdlàg step-path image. This is
-the event bridge needed to combine the source's independent-block inequality
-with the stable path-law upper transfer. -/
-theorem iidSequenceLaw_measure_blockOscillationLT_le_normalizedStepBlockPathLaw
-    {ν : Measure ℝ} [IsProbabilityMeasure ν]
-    (scale : ℕ → ℝ) (blockLength : ℕ → ℕ) (n : ℕ)
-    (hscale : 0 < scale n) (width : ℝ) :
-    iidSequenceLaw ν
-        {increment | blockOscillationLTEvent (width * scale n) (blockLength n)
-          (Combinatorics.Sequence.blockCoordinates 0 (blockLength n) increment)} ≤
-      RandomWalk.normalizedStepBlockPathLaw ν scale blockLength n
-        (Skorokhod.rangeOscillationLe width) := by
-  have hmeas : Measurable
-      (RandomWalk.normalizedStepBlockCadlagPathIcc scale blockLength n) := by
-    change Measurable (RandomWalk.normalizedStepCadlagPathIcc
-      (fun _ => scale n) (blockLength n))
-    exact RandomWalk.measurable_normalizedStepCadlagPathIcc
-      (fun _ => scale n) (blockLength n)
-  rw [RandomWalk.normalizedStepBlockPathLaw, Measure.map_apply hmeas
-    (Skorokhod.isClosed_rangeOscillationLe width).measurableSet]
-  apply measure_mono
-  exact blockOscillationLTEvent_subset_normalizedStepBlockRangeOscillation
-    scale blockLength n hscale width
 
 /-- The closed range-oscillation event of a fixed-parameter variable block
 is bounded by a slightly wider stable-process range tube under the block-path

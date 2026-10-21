@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Basic
 import Analysis.Asymptotics.Scale.BlockScale
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.Horizontal.PathSegment
+import Probability.Process.RandomWalk.Path.Block.Oscillation
 
 /-!
 # Axiom audit for drawdown and path-segment lemmas
@@ -24,7 +24,7 @@ number of complete blocks under a divergent horizon-to-block ratio.
   ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.additivePath_le_threshold_add_delta_of_noLargeDrop
 
 #print axioms
-  ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.blockOscillationEvent_of_additiveSegment
+  ProbabilityTheory.RandomWalk.blockOscillationEvent_of_additiveSegment
 
 #print axioms
   Asymptotics.tendsto_nat_div_floorBlockLength_atTop_of_horizonRatio

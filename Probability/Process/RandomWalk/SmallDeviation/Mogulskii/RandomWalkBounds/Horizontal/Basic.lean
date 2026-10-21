@@ -8,7 +8,7 @@ module
 
 public import Probability.Process.RandomWalk.Path.Block.Partition.Basic
 public import Probability.Process.RandomWalk.Path.Corridor.Horizontal.Basic
-public import Probability.Process.RandomWalk.Path.Event.Oscillation
+public import Probability.Process.RandomWalk.Path.Block.Oscillation
 public import Probability.Process.RandomWalk.Path.Block.Law.Basic
 public import Probability.Process.RandomWalk.Kernel.Killed.Return.Basic
 public import Probability.Process.RandomWalk.Kernel.Killed.Survival.Blocking
@@ -22,13 +22,6 @@ Write $T_{a,w,N}$ for the width-$w$ horizontal-tube event, $J_{w,m}$
 for the range-at-most-$w$ event on one block of length $m$, and
 $J^\circ_{w,m}$ for its strict version. The public declarations are:
 
-- `blockOscillationEvent`, `measurableSet_blockOscillationEvent`,
-  `blockOscillationLTEvent`, and `measurableSet_blockOscillationLTEvent`:
-  the measurable events $J_{w,m}$ and $J^\circ_{w,m}$.
-- `iidSequenceLaw_measure_forall_blockOscillationLT` and
-  `iidSequenceLaw_measure_forall_blockOscillation`:
-  the event on $q$ disjoint IID blocks has probability
-  $\mathbb P(J_{w,m})^q$, also for $J^\circ_{w,m}$.
 - `openHorizontalTubeProbability_le_pow_blockOscillationLT_of_blockCover`
   and `openHorizontalTubeProbability_le_pow_blockOscillationLT_source`:
   $\mathbb P(T^\circ_{a,w,N})\le\mathbb P(J^\circ_{w,m})^q$
@@ -47,7 +40,8 @@ $J^\circ_{w,m}$ for its strict version. The public declarations are:
   a lower return-kernel mass $p$ on a common core yields
   $p^q\le\mathbb P(T_{a,w,qm})$.
 
-These are the finite-time block comparisons in Mogul'skii,
+The events and IID block-product formula are defined in the generic random-walk
+block modules. These are the finite-time block comparisons in Mogul'skii,
 *Small Deviations in a Space of Trajectories*, Lemma 3(c), equation (32).
 They apply to IID increments through disjoint-block independence.
 
@@ -61,110 +55,6 @@ open scoped BigOperators
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
-
-/-- The event that the partial-sum path of one finite increment block has
-oscillation at most `width`. -/
-def blockOscillationEvent (width : ℝ) (length : ℕ) :
-    Set (Fin length → ℝ) :=
-  {increments | OscillationBounded
-    (fun time : Fin (length + 1) => Fin.partialSum increments time) width}
-
-private lemma measurable_partialSum {length : ℕ}
-    (time : Fin (length + 1)) :
-    Measurable (fun increments : Fin length → ℝ =>
-      Fin.partialSum increments time) := by
-  induction time using Fin.induction with
-  | zero => exact measurable_const
-  | succ time ih =>
-    have hm := ih.add (measurable_pi_apply time)
-    have heq : (fun increments : Fin length → ℝ =>
-        Fin.partialSum increments time.succ) =
-      (fun increments : Fin length → ℝ =>
-        Fin.partialSum increments time.castSucc) +
-        (fun increments : Fin length → ℝ => increments time) := by
-      funext increments
-      simp only [Fin.partialSum_succ, Pi.add_apply]
-    exact heq ▸ hm
-
-/-- The finite-block oscillation event is measurable. -/
-theorem measurableSet_blockOscillationEvent (width : ℝ) (length : ℕ) :
-    MeasurableSet (blockOscillationEvent width length) := by
-  rw [show blockOscillationEvent width length =
-      ⋂ i : Fin (length + 1), ⋂ j : Fin (length + 1),
-        {increments : Fin length → ℝ |
-          |Fin.partialSum increments i - Fin.partialSum increments j| ≤
-            width} by
-    ext increments
-    simp [blockOscillationEvent, OscillationBounded]]
-  exact MeasurableSet.iInter fun i => MeasurableSet.iInter fun j => by
-    have hdiff : Measurable (fun increments : Fin length → ℝ =>
-        Fin.partialSum increments i - Fin.partialSum increments j) :=
-      (measurable_partialSum i).sub (measurable_partialSum j)
-    exact measurableSet_Iic.preimage
-      (continuous_abs.measurable.comp hdiff)
-
-/-- The finite-block path has range strictly less than `width`, expressed as
-the pairwise strict-distance condition used by the source's class `J₁`. -/
-def blockOscillationLTEvent (width : ℝ) (length : ℕ) :
-    Set (Fin length → ℝ) :=
-  {increments | ∀ i j : Fin (length + 1),
-    |Fin.partialSum increments i - Fin.partialSum increments j| < width}
-
-/-- The strict finite-block range event is measurable. -/
-theorem measurableSet_blockOscillationLTEvent (width : ℝ) (length : ℕ) :
-    MeasurableSet (blockOscillationLTEvent width length) := by
-  rw [show blockOscillationLTEvent width length =
-      ⋂ i : Fin (length + 1), ⋂ j : Fin (length + 1),
-        {increments : Fin length → ℝ |
-          |Fin.partialSum increments i - Fin.partialSum increments j| <
-            width} by
-    ext increments
-    simp [blockOscillationLTEvent]]
-  exact MeasurableSet.iInter fun i => MeasurableSet.iInter fun j => by
-    have hdiff : Measurable (fun increments : Fin length → ℝ =>
-        Fin.partialSum increments i - Fin.partialSum increments j) :=
-      (measurable_partialSum i).sub (measurable_partialSum j)
-    exact measurableSet_Iio.preimage
-      (continuous_abs.measurable.comp hdiff)
-
-/-- Every one of finitely many independent equal-length IID increment blocks
-has range strictly less than `width` with probability equal to the
-corresponding power of the one-block probability. -/
-theorem iidSequenceLaw_measure_forall_blockOscillationLT
-    (ν : Measure ℝ) [IsProbabilityMeasure ν]
-    (width : ℝ) (blocks length : ℕ) :
-    iidSequenceLaw ν {increment | ∀ j : Fin blocks,
-      blockOscillationLTEvent width length
-        (Combinatorics.Sequence.blockCoordinates (j * length) length increment)} =
-      (iidSequenceLaw ν {increment |
-      blockOscillationLTEvent width length
-        (Combinatorics.Sequence.blockCoordinates 0 length increment)}) ^ blocks := by
-  change iidSequenceLaw ν {increment : ℕ → ℝ | ∀ j : Fin blocks,
-      Combinatorics.Sequence.blockCoordinates (j * length) length increment ∈
-        blockOscillationLTEvent width length} = _
-  exact iidSequenceLaw_measure_forall_consecutiveBlockEvent ν blocks length
-    (blockOscillationLTEvent width length)
-    (measurableSet_blockOscillationLTEvent width length)
-
-/-- The probability that every one of a finite family of consecutive IID
-increment blocks has oscillation at most `width` is the corresponding power
-of the one-block probability. The block-event product formula lives in the
-generic random-walk block-law layer. -/
-theorem iidSequenceLaw_measure_forall_blockOscillation
-    (ν : Measure ℝ) [IsProbabilityMeasure ν]
-    (width : ℝ) (blocks length : ℕ) :
-    iidSequenceLaw ν {increment | ∀ j : Fin blocks,
-      blockOscillationEvent width length
-        (Combinatorics.Sequence.blockCoordinates (j * length) length increment)} =
-      (iidSequenceLaw ν {increment |
-      blockOscillationEvent width length
-        (Combinatorics.Sequence.blockCoordinates 0 length increment)}) ^ blocks := by
-  change iidSequenceLaw ν {increment : ℕ → ℝ | ∀ j : Fin blocks,
-      Combinatorics.Sequence.blockCoordinates (j * length) length increment ∈
-        blockOscillationEvent width length} = _
-  exact iidSequenceLaw_measure_forall_consecutiveBlockEvent ν blocks length
-    (blockOscillationEvent width length)
-    (measurableSet_blockOscillationEvent width length)
 
 /-- Mogulskii's strict path-class comparison: if an IID walk stays in one
 open interval through a covered horizon, then every covered block has
@@ -268,7 +158,9 @@ theorem openHorizontalTubeProbability_le_pow_blockOscillationLT_of_blockCover
     _ = (iidSequenceLaw ν {increment |
           blockOscillationLTEvent width length
             (Combinatorics.Sequence.blockCoordinates 0 length increment)}) ^ blocks :=
-      iidSequenceLaw_measure_forall_blockOscillationLT ν width blocks length
+      iidSequenceLaw_measure_forall_consecutiveBlockEvent ν blocks length
+        (blockOscillationLTEvent width length)
+        (measurableSet_blockOscillationLTEvent width length)
 
 /-- The source parameterization of Mogulskii's Lemma 3(c), equation (32):
 for `c = length / horizon`, the source block count `⌊c⁻¹⌋₊` is
@@ -368,7 +260,9 @@ theorem iidSequenceLaw_measure_partialSumRangeLT_le_pow_blockOscillationLT_of_bl
     _ = (iidSequenceLaw ν {increment |
           blockOscillationLTEvent width length
             (Combinatorics.Sequence.blockCoordinates 0 length increment)}) ^ blocks :=
-      iidSequenceLaw_measure_forall_blockOscillationLT ν width blocks length
+      iidSequenceLaw_measure_forall_consecutiveBlockEvent ν blocks length
+        (blockOscillationLTEvent width length)
+        (measurableSet_blockOscillationLTEvent width length)
 
 /-- A horizontal tube forces every increment block covered by the chosen
 partition to have oscillation no greater than the tube width.  Combined with
@@ -475,7 +369,9 @@ theorem horizontalTubeProbability_le_pow_blockOscillation_of_blockCover
     _ = (iidSequenceLaw ν {increment |
           blockOscillationEvent width length
             (Combinatorics.Sequence.blockCoordinates 0 length increment)}) ^ blocks :=
-      iidSequenceLaw_measure_forall_blockOscillation ν width blocks length
+      iidSequenceLaw_measure_forall_consecutiveBlockEvent ν blocks length
+        (blockOscillationEvent width length)
+        (measurableSet_blockOscillationEvent width length)
 
 /-- The preceding block inequality with the maximal number of complete
 blocks.  The final incomplete segment is ignored, exactly as in the discrete
