@@ -2562,6 +2562,28 @@ five affected modules. A fresh structural scan of 1,484 production modules,
 directory collisions, no directory with more than eight direct Lean files,
 and no duplicate `Lemmas.lean` plus `Lemmas/` entry.
 
+## Kingman proof-chain import visibility (2026-10-21)
+
+I checked the theorem statements and proof bodies in
+`Kingman/Lemmas/Subadditivity.lean` and `Kingman/Lemmas/Convergence.lean`,
+along with their `Kingman/Limit.lean` and `InfiniteOffspring/Speed.lean`
+clients. `ArrayBounds` and `Subadditivity` supply declarations used by the
+later helper proofs, while those declarations do not occur in the public
+statements of the importing helpers. Their three proof-chain edges are now
+ordinary `import`s. The limit and speed clients import the helpers they use
+directly, also as ordinary imports.
+
+The public imports remain the semantic owners of the repaired array, its
+environment and selection interfaces, and the general Kingman theorem. This
+keeps the model-specific cocycle argument in its `Lemmas/` chain while using
+the reusable subadditive ergodic theorem at its mathematical owner. The
+repository's import rule follows Mathlib's public-import/import grouping
+convention ([Mathlib library style guidelines](https://leanprover-community.github.io/contribute/style.html#header-and-imports))
+and narrows `public import` to dependencies in the exposed interface. The
+four affected modules build successfully with the pinned toolchain (3,351
+Lake jobs); targeted Mathlib `lint-style` passes on both edited helper
+modules.
+
 ## First-$N$ selection under injective relabeling (2026-10-21)
 
 The capacity-hit trajectory had a private, one-use proof of this general
