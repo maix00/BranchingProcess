@@ -2623,6 +2623,57 @@ was promoted above the subject layer. The staircase estimates stay under
 All 17 production modules that directly import the moved modules build with
 the pinned toolchain (4,747 Lake jobs).
 
+## Mogulskii spectral base ownership and entry audit (2026-10-21)
+
+`Mogulskii/Theorems.lean` is the article entry for Mogul'skii's Theorems 1--4;
+it lists the source formula and current Lean API for each result and records
+Theorem 4 as open. The directories `Path/`, `Scale/`, `Gaussian/`, `Stable/`,
+`RandomWalkBounds/`, `Rate/`, and `Spectral/` remain separate because they own
+path representations, normalization, parameter regimes, complete rate
+interfaces, and the killed-interval spectral method. These are not all
+non-reusable proof steps, so collecting them under one `Definitions/` or
+`Lemmas/` directory would misstate their mathematical ownership. The
+non-reusable derivations remain in their local nested `Lemmas/` directories.
+
+The analytic one-step average
+$Af(x)=\frac{f(x-1)+f(x+1)}2$, its Rademacher expectation identity, and its
+sine eigenfunction formulas do not depend on Mogulskii's small-deviation
+theorem. They now live in
+`Probability/Process/RandomWalk/Rademacher/Transition/Basic.lean`, under the
+`ProbabilityTheory.RandomWalk.Rademacher` namespace. The public statements
+in `Transition/Basic.lean` are `symmetricStep_sine`, `dirichletSine_pos`,
+`symmetricStep_dirichletSine`, and
+`iterate_symmetricStep_dirichletSine`, together with the named operator and
+profile definitions. The integral identities `integral_add_rademacherMeasure`
+and `integral_dirichletSine_add_rademacherMeasure` are in the sibling
+`Transition/Expectation.lean`. The finite killed matrix, its Markov-kernel
+realization, and the interval-specific eigenvectors remain in
+`Mogulskii/Spectral/Kernel/` and `Mogulskii/Spectral/Decomposition/` because
+their types explicitly encode the finite interval's Rademacher geometry.
+
+The pinned Mathlib submodule revision `380f2aafb622cb2c1c93dac545b6389083c68c51`
+was searched for `symmetricStep`, `dirichletSine`, and
+`integral_rademacherMeasure`; it supplies finite-state matrices and kernels,
+but no corresponding Rademacher transition-average or sine-eigenfunction
+API. The repository's own Rademacher law is therefore the right interface
+for this module. This placement follows Mathlib's UpperCamelCase file naming
+and mathematical-operation naming guidance ([Mathlib naming conventions](https://leanprover-community.github.io/contribute/naming.html));
+it also follows this repository's stricter semantic-owner and narrow-import
+rules. The Mogulskii spectral consumers now import the general analytic
+transition module directly where its declarations occur only in proofs. The
+rate-asymptotic module imports the trigonometric API it uses instead of
+inheriting it through the old Mogulskii-specific base file.
+
+The same kernel review found that `sum_ite_option_eq_elim` and
+`option_elim_mul` were public only to support the finite-interval matrix
+calculation; the latter had one additional caller in the sine-mode proof.
+`intervalKernel_mulVec` now exposes the coefficient-factored neighbor average,
+and both identities are local `private lemma`s in `Kernel/Interval.lean`.
+The analogous ENNReal sum identity in `Kernel/Killed.lean` was already private.
+The pinned Mathlib source has `Finset.sum_ite_eq` and related finite-sum
+identities, but no standalone public `Option.elim` transition API is needed
+for these proofs.
+
 ## Brownian meander proof-only corridor (2026-10-21)
 
 `Brownian/Meander/Corridor.lean` defines the corridor with constants

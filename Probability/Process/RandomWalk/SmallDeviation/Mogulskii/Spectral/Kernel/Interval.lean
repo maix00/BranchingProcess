@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Basic
+public import Probability.Process.RandomWalk.Rademacher.Transition.Basic
 public import LinearAlgebra.Spectrum.FiniteState.Eigenfunction
 public import Algebra.Order.BigOperators.WeightedSum
 public import Probability.Kernel.FiniteState.Matrix
@@ -24,12 +24,7 @@ matrix is substochastic at the two edge sites.  The public declarations are:
   predecessor and successor of a site; `intervalKernel` is the matrix
   $K_N(i,j)=\frac12\mathbf 1_{j=i-1}+\frac12\mathbf 1_{j=i+1}$, with terms
   omitted at the exterior boundaries.
-* `sum_ite_option_eq_elim` and `option_elim_mul` give the identities
-  $\sum_j\mathbf 1_{o=\operatorname{some}(j)}c f(j)=
-  o.\operatorname{elim}(0,\lambda j,c f(j))$ and
-  $o.\operatorname{elim}(0,\lambda j,c f(j))=
-  c\,o.\operatorname{elim}(0,f)$.
-  `intervalKernel_mulVec` states that $K_Nf(i)$ is the average of $f$ over
+* `intervalKernel_mulVec` states that $K_Nf(i)$ is the average of $f$ over
   the available neighbors.
 * `intervalSineWeight` defines
   $\phi_N(i)=\sin(\pi(i+1)/(N+1))$;
@@ -70,6 +65,8 @@ open scoped BigOperators Matrix
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
+open ProbabilityTheory.RandomWalk.Rademacher
+
 /-- The left neighboring interior site, when it exists. -/
 def intervalLeftNeighbor {interiorCount : ℕ} (i : Fin interiorCount) :
     Option (Fin interiorCount) :=
@@ -92,7 +89,7 @@ noncomputable def intervalKernel (interiorCount : ℕ) :
 
 /-- Summing a point mass selected by an optional index evaluates the function
 at that index, and gives zero when the index is absent. -/
-theorem sum_ite_option_eq_elim {ι : Type*} [Fintype ι] [DecidableEq ι]
+private lemma sum_ite_option_eq_elim {ι : Type*} [Fintype ι] [DecidableEq ι]
     (index : Option ι) (coefficient : ℝ) (f : ι → ℝ) :
     (∑ j, (if index = some j then coefficient else 0) * f j) =
       index.elim 0 (fun j => coefficient * f j) := by
@@ -100,7 +97,7 @@ theorem sum_ite_option_eq_elim {ι : Type*} [Fintype ι] [DecidableEq ι]
   | none => simp
   | some i => simp
 
-theorem option_elim_mul {ι : Type*} (index : Option ι)
+private lemma option_elim_mul {ι : Type*} (index : Option ι)
     (coefficient : ℝ) (f : ι → ℝ) :
     index.elim 0 (fun i => coefficient * f i) =
       coefficient * index.elim 0 f := by
@@ -111,11 +108,12 @@ available interior neighbors. -/
 theorem intervalKernel_mulVec (interiorCount : ℕ)
     (f : Fin interiorCount → ℝ) (i : Fin interiorCount) :
     (intervalKernel interiorCount *ᵥ f) i =
-      (intervalLeftNeighbor i).elim 0 (fun j => (1 / 2 : ℝ) * f j) +
-        (intervalRightNeighbor i).elim 0 (fun j => (1 / 2 : ℝ) * f j) := by
+      (1 / 2 : ℝ) * (intervalLeftNeighbor i).elim 0 f +
+        (1 / 2 : ℝ) * (intervalRightNeighbor i).elim 0 f := by
   rw [Matrix.mulVec, dotProduct]
   simp only [intervalKernel, add_mul, Finset.sum_add_distrib]
   rw [sum_ite_option_eq_elim, sum_ite_option_eq_elim]
+  rw [option_elim_mul, option_elim_mul]
 
 /-- The positive Dirichlet sine profile on the interior lattice sites. -/
 noncomputable def intervalSineWeight (interiorCount : ℕ) : Fin interiorCount → ℝ :=
@@ -166,8 +164,7 @@ theorem intervalKernel_mulVec_sine (interiorCount : ℕ) :
       Real.cos (Real.pi / (interiorCount + 1 : ℕ)) •
         intervalSineWeight interiorCount := by
   funext i
-  rw [intervalKernel_mulVec]
-  rw [option_elim_mul, option_elim_mul, intervalLeftNeighbor_sine,
+  rw [intervalKernel_mulVec, intervalLeftNeighbor_sine,
     intervalRightNeighbor_sine]
   have hs := symmetricStep_dirichletSine
     (interiorCount + 1 : ℕ) (i.val + 1 : ℕ)

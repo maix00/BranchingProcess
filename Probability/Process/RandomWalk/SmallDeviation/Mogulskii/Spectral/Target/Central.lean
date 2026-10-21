@@ -8,6 +8,7 @@ module
 
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Target.LowerBound
 public import Probability.Kernel.Survival.Return
+import Probability.Process.RandomWalk.Rademacher.Transition.Basic
 
 /-!
 # Central terminal targets
@@ -71,6 +72,8 @@ open Filter Topology
 @[expose] public section
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
+
+open ProbabilityTheory.RandomWalk.Rademacher
 
 /-- A central starting site in an interval with Dirichlet width `8 * m`. -/
 def centralIntervalStart (m : ℕ) (hm : 0 < m) : Fin (8 * m - 1) :=

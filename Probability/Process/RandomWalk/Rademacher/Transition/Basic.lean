@@ -9,30 +9,29 @@ module
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 
 /-!
-# Spectral input for the symmetric lattice walk
+# The analytic one-step transition of the Rademacher walk
 
-The killed simple symmetric walk on an interval has a sine ground state.
-This file isolates the analytic identity behind that computation from the
-probability-space realization of the walk.  Its public declarations are:
+For a function $f:\mathbb R\to\mathbb R$, its one-step average is
+$Af(x)=\frac{f(x-1)+f(x+1)}2$. The public declarations are:
 
-* `symmetricStep` defines $Af(x)=(f(x-1)+f(x+1))/2$;
+- `ProbabilityTheory.RandomWalk.Rademacher.symmetricStep` defines $A$;
   `symmetricStep_sine` proves
   $A(\sin(\omega\,\cdot))(x)=\cos(\omega)\sin(\omega x)$.
-* `dirichletSine` defines $\phi_L(x)=\sin(\pi x/L)$.
-  `dirichletSine_zero` and `dirichletSine_right` give
-  $\phi_L(0)=\phi_L(L)=0$ (the latter for $L\ne0$), and
-  `dirichletSine_pos` proves $\phi_L(x)>0$ for $0<x<L$.
-* `symmetricStep_dirichletSine` proves
-  $A\phi_L=\cos(\pi/L)\phi_L$, and
-  `iterate_symmetricStep_dirichletSine` proves
-  $A^n\phi_L=\cos^n(\pi/L)\phi_L$ for every $n\in\mathbb N$.
+- `ProbabilityTheory.RandomWalk.Rademacher.dirichletSine` defines
+  $\phi_L(x)=\sin(\pi x/L)$. Theorems `dirichletSine_zero`,
+  `dirichletSine_right`, and `dirichletSine_pos` give its boundary values
+  and positivity on $0<x<L$.
+- `symmetricStep_dirichletSine` and
+  `iterate_symmetricStep_dirichletSine` prove
+  $A\phi_L=\cos(\pi/L)\phi_L$ and
+  $A^n\phi_L=\cos^n(\pi/L)\phi_L$.
 -/
 
 @[expose] public section
 
-namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
+namespace ProbabilityTheory.RandomWalk.Rademacher
 
-/-- The one-step averaging operator of the simple symmetric walk. -/
+/-- The one-step averaging operator of the symmetric Rademacher walk. -/
 noncomputable def symmetricStep (f : ℝ → ℝ) (x : ℝ) : ℝ :=
   (f (x - 1) + f (x + 1)) / 2
 
@@ -95,4 +94,4 @@ theorem iterate_symmetricStep_dirichletSine (length : ℝ) (n : ℕ) :
       rw [Real.sin_sub, Real.sin_add]
       ring
 
-end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
+end ProbabilityTheory.RandomWalk.Rademacher
