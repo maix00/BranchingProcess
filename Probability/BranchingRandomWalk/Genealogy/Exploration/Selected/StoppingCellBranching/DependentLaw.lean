@@ -5,14 +5,33 @@ Authors: WANG Yiyang
 -/
 
 import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.StoppedPopulation.DependentLaw
-import Probability.BranchingRandomWalk.Genealogy.Exploration.Selected.StoppingCellBranching.SelectedPopulation
+import Probability.BranchingRandomWalk.Genealogy.Exploration.Selected.StoppingPopulation
 
 /-!
 # The dependent stopped branching law for the selected process
 
-This specializes the abstract random-cardinality law to the selected
-population.  It gives one random descendant-family object, rather than a
-separate existential statement for every possible population cell.
+The public declarations in namespace `ProbabilityTheory.BranchingRandomWalk`
+specialize the abstract stopped-population law to the selected population
+$P=\operatorname{selectedPopulationAt}(N,x,\tau)$:
+
+- `selectedPopulation_stoppedSubtrees_measurable N x τ hτ hfinite` proves
+  measurability of $\omega\mapsto\operatorname{stoppedPopulationSubtrees}(P)(\omega)$.
+- `selectedPopulation_stoppedSubtrees_factorization μ N x τ hτ hfinite A hA B hB`
+  states
+  \[
+    \nu_m\!\left(A\cap
+      \operatorname{stoppedPopulationSubtrees}(P)^{-1}(B)\right)
+    =\sum_s \nu_m\!\left(A\cap\{P=s\}\right)
+      \left(\nu^{\otimes |s|}\right)
+      \left(\iota_{|s|}^{-1}(B)\right),
+  \]
+  where $\nu_m=\operatorname{finiteRootStepFieldLaw}(\mu,m)$,
+  $\nu=\operatorname{stepFieldLaw}(\mu)$, and
+  $\iota_k(\mathrm{fields})=\langle k,\mathrm{fields}\rangle$. Here $\tau$
+  is an everywhere-finite stopping time, $A$ is measurable at $\tau$, and
+  $B$ is measurable in the dependent descendant-family space. For roots
+  $u_i=(r_i,v_i)$, the descendant-vector map is
+  $\Phi_{\mathbf u}(\omega)(i,v)=\omega(r_i,v_i\mathbin{++}v)$.
 -/
 
 open MeasureTheory ProbabilityTheory

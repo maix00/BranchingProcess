@@ -13,6 +13,39 @@ public import Mathlib.Data.Set.Finite.Basic
 /-!
 # Selection mechanisms
 
+## Public declarations
+
+- `Combinatorics.Branching.Selection.Mechanism`: a map `Set ι → Set ι` with
+  `M.select s ⊆ s` for every candidate set `s`.
+- `Combinatorics.Branching.Selection.Mechanism.ext`:
+  `(∀ s, M.select s = M'.select s) → M = M'`.
+- `Combinatorics.Branching.Selection.Mechanism.select_subset`:
+  `M.select s ⊆ s`.
+- `Combinatorics.Branching.Selection.Mechanism.filter` and
+  `Combinatorics.Branching.Selection.Mechanism.mem_filter`: pointwise selection
+  by `keep`, with `q ∈ (filter keep).select s ↔ q ∈ s ∧ keep q`.
+- `Combinatorics.Branching.Selection.Mechanism.select_mem`:
+  membership in `M.select s` implies membership in `s`.
+- `Combinatorics.Branching.Selection.FiniteMechanism`: the corresponding
+  interface on finite candidate populations.
+- `Combinatorics.Branching.Selection.FiniteMechanism.ofMechanism` and
+  `Combinatorics.Branching.Selection.FiniteMechanism.coe_select_ofMechanism`:
+  restriction to finite sets, satisfying
+  `↑((ofMechanism M).select s) = M.select ↑s`.
+- `Combinatorics.Branching.Selection.FiniteMechanism.ext`:
+  pointwise equality of selections implies equality of finite mechanisms.
+- `Combinatorics.Branching.Selection.FiniteMechanism.select_subset` and
+  `Combinatorics.Branching.Selection.FiniteMechanism.select_mem`:
+  `(M.select s) ⊆ s` and its membership form.
+- `Combinatorics.Branching.Selection.FiniteMechanism.PreservesLeast` and
+  `Combinatorics.Branching.Selection.FiniteMechanism.PreservesGreatest`:
+  least and greatest elements of a finite candidate set belong to its selected
+  subset.
+- `Combinatorics.Branching.Selection.FiniteMechanism.mapOrderDual` and
+  `Combinatorics.Branching.Selection.FiniteMechanism.mapOrderDual_select`:
+  transport to the order dual, with selection given by image under
+  `OrderDual.ofDual` followed by `OrderDual.toDual`.
+
 `Mechanism` acts on arbitrary candidate sets and is the mathematical base
 interface. `FiniteMechanism` is its finite-input implementation interface for
 algorithms using `Finset`.

@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.Path.Interpolation.MaximalJump
+public import Probability.Process.RandomWalk.Path.Interpolation.Path.MaximalJump
 public import Probability.Process.RandomWalk.Path.Truncation.Moment
 
 /-!

@@ -9,9 +9,25 @@ import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.StoppingSu
 /-!
 # Law and independence of the stopped subtree vector
 
-The stopped subtree vector is measurable, its law is the product of independent
-copies of the original field, and it is independent of the stopping-time
-σ-algebra.
+In namespace `ProbabilityTheory.BranchingRandomWalk`, the public declarations
+are:
+
+- `selectedSubtreeStepFieldVector_measurable_of_measurable roots hroots hcount`
+  proves measurability of the selected subtree vector when `roots` is
+  measurable and has countable range.
+- `stopped_selectedSubtreeStepFieldVector_law μ τ hτ hfinite roots hroots hcount hfiber hdepth hinj`
+  states that, for an everywhere-finite stopping generation and a stopped-
+  measurable, countably ranged, depth-matched, injective root family,
+  \[
+    \nu.\operatorname{map}(\Phi)
+      =\operatorname{Measure.infinitePi}
+        (i:\kappa\mapsto\nu),\qquad
+    \nu=\operatorname{stepFieldLaw}(\mu),
+  \]
+  where $\Phi$ is the selected subtree-vector map.
+- `stopped_selectedSubtreeStepFieldVector_independent μ τ hτ hfinite roots hroots hcount hfiber hdepth hinj`
+  states independence of the stopping-time $\sigma$-algebra and the selected
+  subtree-vector field under the original step-field law.
 -/
 
 open MeasureTheory ProbabilityTheory

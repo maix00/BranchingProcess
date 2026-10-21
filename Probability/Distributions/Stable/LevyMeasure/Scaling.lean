@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Distributions.Stable.Exponent
+public import Probability.Distributions.Stable.Exponent.Basic
 public import Probability.Distributions.InfinitelyDivisible.LevyKhintchine.Scaling
 
 /-!
