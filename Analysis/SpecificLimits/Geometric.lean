@@ -19,7 +19,14 @@ public section
 /-!
 # Bounds for finite geometric sums
 
-Elementary bounds for finite geometric progressions.
+## Public declarations
+
+* `Finset.sum_range_pow_succ_le_div_one_sub`: if $0\le r<1$, then
+  $\sum_{i<n}r^{i+1}\le r/(1-r)$.
+* `Finset.sum_range_pow_succ_sub_first_le_sq_div_one_sub`: if $0\le r<1$,
+  then $\sum_{i<n}r^{i+1}-r\le r^2/(1-r)$.
+
+These are finite-sum bounds for geometric progressions.
 -/
 
 open scoped BigOperators

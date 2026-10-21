@@ -12,15 +12,70 @@ public import Mathlib.Data.Set.Card
 /-!
 # Selection mechanisms of capacity `N`
 
-`NSelection ι N` is the general capacity selection on arbitrary candidate
-sets. `FiniteNSelection ι N` is its finite-input algorithmic interface. Both
-keep all candidates below capacity and exactly `N` candidates at or above
-capacity.
+The principal declarations are:
 
-Reversing the order on candidates transports an `NSelection` to an `NSelection`
-of the same capacity, because the transport is a bijection on candidate sets.
-The leftmost rule of capacity `N` is `NSelection.leftmost`; the rightmost rule is
-its transport, `NSelection.rightmost`.
+- `Combinatorics.Branching.Selection.NSelection`: a map from candidate sets
+  to finite selected sets, with subset, finite-cardinality, and infinite-
+  cardinality fields. For finite $s$, the selected cardinality is
+  $\min(N,|s|)$; for infinite $s$, it is $N$.
+- `Combinatorics.Branching.Selection.FiniteNSelection`: the finite-input
+  capacity-selection structure, with
+  $|M.select(s)|=\min(N,|s|)$.
+- `Combinatorics.Branching.Selection.NSelection.toMechanism` forgets the
+  capacity-cardinality fields, and
+  `Combinatorics.Branching.Selection.NSelection.toFiniteNSelection` restricts
+  an arbitrary-set selection to finite candidate sets.
+- `Combinatorics.Branching.Selection.NSelection.select_card_le_set` and
+  `Combinatorics.Branching.Selection.NSelection.select_card_le` give the
+  capacity bounds $|M.select(s)|\le N$ for arbitrary-set and finite-input
+  selections. `Combinatorics.Branching.Selection.NSelection.select_mem_set`
+  and `Combinatorics.Branching.Selection.NSelection.select_mem` state that
+  selected elements belong to the candidate set.
+- `Combinatorics.Branching.Selection.NSelection.exists_capacity_selection`
+  constructs a finite subset $S\subseteq s$ of every candidate set, with
+  $|S|=\min(N,|s|)$ when $s$ is finite and $|S|=N$ when $s$ is infinite; and
+  `Combinatorics.Branching.Selection.NSelection.arbitrary` chooses such a
+  selection without imposing an order on the candidates.
+- `Combinatorics.Branching.Selection.NSelection.rank` counts the candidates
+  in a finite set that precede a point, with
+  $\operatorname{rank}(s,q)=|\{p\in s:p<q\}|$;
+  `Combinatorics.Branching.Selection.NSelection.rank_def` gives this
+  filter-card formula. `Combinatorics.Branching.Selection.NSelection.selectFirstN` and
+  `Combinatorics.Branching.Selection.NSelection.selectLastN` retain the first
+  and last $N$ candidates, respectively.
+  `Combinatorics.Branching.Selection.NSelection.selectFirstN_def`,
+  `Combinatorics.Branching.Selection.NSelection.mem_selectFirstN_iff`, and
+  `Combinatorics.Branching.Selection.NSelection.selectFirstN_subset`, and
+  `Combinatorics.Branching.Selection.NSelection.selectLastN_def`,
+  `Combinatorics.Branching.Selection.NSelection.mem_selectLastN_iff`, and
+  `Combinatorics.Branching.Selection.NSelection.selectLastN_subset` give their
+  defining filters, subset properties, and membership criteria
+  $q\in\operatorname{selectFirstN}(N,s)\iff q\in s\land
+  \operatorname{rank}(s,q)<N$ and
+  $q\in\operatorname{selectLastN}(N,s)\iff q\in s\land
+  |\{p\in s:q<p\}|<N$.
+- `Combinatorics.Branching.Selection.NSelection.ext` identifies finite-input
+  selections that agree on every finite candidate set, that is,
+  $(\forall s,\;M.select(s)=M'.select(s))\Rightarrow M=M'$.
+  `Combinatorics.Branching.Selection.NSelection.select_card` gives
+  $|M.select(s)|=\min(N,|s|)$;
+  `Combinatorics.Branching.Selection.NSelection.select_card_eq_of_card_le`
+  and
+  `Combinatorics.Branching.Selection.NSelection.select_card_eq_of_le_card`
+  give $|M.select(s)|=|s|$ when $|s|\le N$ and
+  $|M.select(s)|=N$ when $N\le|s|$.
+  `Combinatorics.Branching.Selection.NSelection.select_eq_self_of_card_le`
+  says the selector retains every candidate when $|s|\le N$.
+- `Combinatorics.Branching.Selection.NSelection.mapOrderDual` reverses the
+  candidate order while preserving capacity;
+  `Combinatorics.Branching.Selection.NSelection.mapOrderDual_select` states
+  that the transported selector chooses
+  `(M.select (s.image OrderDual.ofDual)).image OrderDual.toDual`; and
+  `Combinatorics.Branching.Selection.NSelection.toFiniteMechanism_mapOrderDual`
+  identifies the corresponding finite-mechanism transport.
+
+The order-based selectors here act on finite sets. The order specification
+for arbitrary candidate sets is defined separately by `IsFirstNBy`.
 -/
 
 open Classical

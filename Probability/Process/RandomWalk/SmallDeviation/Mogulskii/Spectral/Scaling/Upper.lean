@@ -7,11 +7,31 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Scaling.Power
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.SurvivalBounds
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.UpperBound
+public import Probability.Process.RandomWalk.Rademacher.FiniteInterval.Spectral.Survival.Bounds
+public import Probability.Process.RandomWalk.Rademacher.FiniteInterval.Spectral.Survival.Upper
 
 /-!
 # Variable-scale spectral upper bounds
+
+The public declarations in this module are:
+
+For $N\ge2$, let $K_N$ be the transition matrix on
+$\{0,\ldots,N-1\}$ with $K_N(x,y)=\frac12$ when $|x-y|=1$ and $0$
+otherwise, and define the killed row sum
+$R_{N,t}(x)=\sum_{y=0}^{N-1}K_N^t(x,y)$.
+
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.scaledLog_remainingMass_le_main_add_geometricCorrection`:
+  for $N>1$, $t>0$, and a start $x$, put $W=N+1$ and
+  $\lambda_N=\cos(\frac{\pi}{W})$. Then
+  $\frac{W^2}{t}\log R_{N,t}(x)\le
+  W^2\log\lambda_N+\frac{W^2}{t}
+  \log(\frac{4}{1-\lambda_N^t})$.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.eventually_scaledLog_remainingMass_lt_neg_pi_sq_div_two_add`:
+  if $W_n\to\infty$ and $W_n^2/t_n\to0$, then for every $\varepsilon>0$,
+  eventually $\frac{W_n^2}{t_n}\log R_{N_n,t_n}(x_n)<-\pi^2/2+\varepsilon$.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.eventually_scaledLog_rademacherIncrement_lt_neg_pi_sq_div_two_add`:
+  the same upper rate holds for the IID Rademacher probability of staying in
+  the interval through time $t_n$.
 
 These lemmas combine the geometric spectral estimate with the principal
 eigenvalue asymptotic to give the sharp upper rate under the diffusive scale.
@@ -19,6 +39,8 @@ eigenvalue asymptotic to give the sharp upper rate under the diffusive scale.
 
 open Filter Topology
 
+
+open ProbabilityTheory.RandomWalk.Rademacher.FiniteInterval
 
 @[expose] public section
 
