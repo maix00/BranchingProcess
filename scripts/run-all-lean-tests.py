@@ -438,8 +438,8 @@ AXIOM_EXPECTATIONS = {
     Path("BranchingProcessTest/Mogulskii/Stable/CorridorUpper.lean"): (
         "ProbabilityTheory.RandomWalk.limsup_horizontalTubeProbability_le_of_normalizedStepBlockPathLimit",
         "ProbabilityTheory.RandomWalk.exists_normalizedStepCadlagPathIcc_eq_scaledDisplacement",
-        "ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.blockOscillationLTEvent_subset_normalizedStepBlockRangeOscillation",
-        "ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.iidSequenceLaw_measure_blockOscillationLT_le_normalizedStepBlockPathLaw",
+        "ProbabilityTheory.RandomWalk.blockOscillationLTEvent_subset_normalizedStepBlockRangeOscillation",
+        "ProbabilityTheory.RandomWalk.iidSequenceLaw_measure_blockOscillationLT_le_normalizedStepBlockPathLaw",
         "ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.limsup_normalizedStepBlockRangeOscillation_le_stableProcessTube",
         "ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.limsup_iidSequenceLaw_blockOscillationLT_le_stableProcessTube",
         "ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.eventually_openHorizontalTubeProbability_le_pow_of_blockPathLimit",
