@@ -9,9 +9,34 @@ import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.DomainF
 /-!
 # Predictably selected coordinate fields
 
+In namespace `ProbabilityTheory.BranchingRandomWalk`, the public declarations
+are:
+
+- `RootIndexed.selectedCoordinateField chosen field` is the random pullback
+  $\Phi(\omega)(r,u)=\omega(f_\omega(r,u))$.
+- `RootIndexed.StepField.reindexCoordinates_future_measurable f hfuture`
+  proves that a fixed map with every image coordinate at depth at least `n`
+  is measurable in the future sigma-algebra; the theorem
+  `RootIndexed.StepField.reindexCoordinates_independent μ f hfuture` makes
+  that field independent of the past filtration.
+- `RootIndexed.selectedCoordinateField_measurable chosen hcount hfiber`
+  proves measurability when the random coordinate map has countable range and
+  each fibre is measurable in the past filtration.
+- `RootIndexed.selectedCoordinate_measurable chosen hcount hfiber hnk p hdepth`
+  proves measurability of the selected coordinate in the later filtration
+  when its selected depth is below `k`.
+- `RootIndexed.selectedCoordinateField_event_factorization μ chosen hcount hfiber hfuture hinj A B hA hB`
+  states
+  $\nu_R(A\cap\Phi^{-1}(B))=\nu_R(A)\nu_{NewRoot}(B)$, provided the chosen
+  maps are injective and take every output coordinate into the future.
+- `RootIndexed.selectedCoordinateField_law μ chosen hcount hfiber hfuture hinj`
+  states that the pushforward of the root-indexed product law by `Φ` is the
+  product law on `NewRoot`; `RootIndexed.selectedCoordinateField_independent`
+  states independence of `Φ` from the past used to choose it.
+
 An injective coordinate relabelling whose values lie in the future of a
-generation may be chosen measurably from the past.  The resulting complete
-field has the product law and is independent of that past.  This extends the
+generation may be chosen measurably from the past. The resulting complete
+field has the product law and is independent of that past. This extends the
 selected-subtree theorem to coordinate maps which may mix several fresh
 subtrees inside one output field.
 -/

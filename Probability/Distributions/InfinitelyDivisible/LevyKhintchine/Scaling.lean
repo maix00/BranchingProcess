@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Distributions.InfinitelyDivisible.LevyKhintchine.Representation
+public import Probability.Distributions.InfinitelyDivisible.LevyKhintchine.Defs
 public import MeasureTheory.Measure.LevyMeasure.Scaling
 import Mathlib.MeasureTheory.Function.L1Space.Integrable
 import Mathlib.MeasureTheory.Integral.Bochner.ContinuousLinearMap
