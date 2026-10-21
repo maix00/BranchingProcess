@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Combinatorics.BranchingWalk.Selection.NSelection.Coupling.Offspring
-public import Combinatorics.BranchingWalk.Selection.NSelection.Hall
+public import Combinatorics.BranchingWalk.Selection.NSelection.Mechanism.Hall
 
 /-!
 # One-generation first-N coupling
@@ -15,6 +15,15 @@ public import Combinatorics.BranchingWalk.Selection.NSelection.Hall
 This file performs the capacity selection step after parent and offspring
 domination have been established.  It provides both a data-valued injection
 and the final injective-domination theorem used by the pathwise iteration.
+
+The public API includes `nextGenerationInjection_of_isFirstNBy`, which
+constructs an injection from retained source children into selected target
+children with non-increasing observed position, and
+`nextGeneration_injectivelyDominatesBy_of_isFirstNBy`, which packages those
+properties as injective cloud domination. The theorem
+`nextGeneration_injectivelyDominatesBy` specializes the target to the dynamic
+leftmost `N` children and proves the same domination from parent domination,
+slot inclusion, shared increments, and translation monotonicity.
 -/
 
 @[expose] public section

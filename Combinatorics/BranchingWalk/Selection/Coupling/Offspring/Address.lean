@@ -14,6 +14,28 @@ public import Combinatorics.UlamHarris.Basic
 
 This file defines the root-preserving child address map and its set-valued
 parent-slot interface.  It contains no finiteness or spatial-order assumptions.
+
+## Public declarations
+
+* `Combinatorics.Branching.Selection.Coupling.childAddress p i` appends slot
+  `i` to the path of `p` and keeps its root;
+  `Combinatorics.Branching.Selection.Coupling.childAddress_fst` and
+  `Combinatorics.Branching.Selection.Coupling.childAddress_snd` give the two
+  coordinates.
+* `Combinatorics.Branching.Selection.Coupling.offspringPairSet parents slots`
+  consists of pairs `(p,i)` with `p ∈ parents` and `i ∈ slots p`;
+  `Combinatorics.Branching.Selection.Coupling.mem_offspringPairSet` is its
+  membership characterization.
+* `Combinatorics.Branching.Selection.Coupling.offspringAddressSet parents slots`
+  is the image of those pairs under `childAddress`;
+  `Combinatorics.Branching.Selection.Coupling.mem_offspringAddressSet`
+  characterizes its elements as generated child addresses.
+* `Combinatorics.Branching.Selection.Coupling.childAddress_joint_injective`
+  proves that the map `(p,i) ↦ childAddress p i` is injective.
+* `Combinatorics.Branching.Selection.Coupling.offspringPairSet_injection`
+  states that an injective parent matching together with inclusion of each
+  source slot set in the matched target slot set induces an injective map
+  between the corresponding parent-slot sets.
 -/
 
 @[expose] public section

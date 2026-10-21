@@ -9,7 +9,11 @@ Authors: LeanLevy Contributors
 
 module
 
-public import Probability.Distributions.InfinitelyDivisible.LevyKhintchine.Representation
+public import Probability.Distributions.InfinitelyDivisible.LevyKhintchine.Defs
+public import Analysis.SpecialFunctions.Trigonometric.SincBounds
+public import Mathlib.MeasureTheory.Measure.CharacteristicFunction.Basic
+public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
+import Probability.Distributions.InfinitelyDivisible.LevyKhintchine.Representation
 import Mathlib.MeasureTheory.Function.SpecialFunctions.Sinc
 
 /-!
@@ -58,9 +62,8 @@ The smear of the jump piece produces, via the Fourier identity
 `½ ∫_{-1}^{1} e^{iux} du = Real.sinc x` (`intervalIntegral_exp_I_symm`), a density
 `1 − Real.sinc x` against `ν`. We use the mathlib spelling `Real.sinc x` throughout — for a
 Lévy measure `ν` with `ν{0} = 0` this agrees `ν`-a.e. with the classical `1 − sin x / x`, and
-`Real.sinc` lets the bounds proved in `LevyKhintchine/Representation.lean`
-(`one_sub_sinc_le_mul_min`,
-`mul_min_le_one_sub_sinc`) apply syntactically.
+`Real.sinc` lets the bounds in `Analysis/SpecialFunctions/Trigonometric/SincBounds.lean`
+(`Real.one_sub_sinc_le_mul_min`, `Real.mul_min_le_one_sub_sinc`) apply syntactically.
 
 ## Main definitions
 
@@ -93,7 +96,7 @@ Its two pieces are pinned by the smear algebra:
 
 The `Real.sinc` spelling is chosen deliberately over the classical `1 − sin x / x`: the two
 agree `ν`-a.e. when `ν{0} = 0`, and `Real.sinc` matches the sinc bounds proved in
-`LevyKhintchine/Representation.lean`. -/
+`Analysis/SpecialFunctions/Trigonometric/SincBounds.lean`. -/
 noncomputable def smearedMeasure : Measure ℝ :=
   ((σ_sq : ℝ≥0∞) / 6) • Measure.dirac (0 : ℝ)
     + ν.withDensity (fun x => ENNReal.ofReal (1 - Real.sinc x))
@@ -113,7 +116,7 @@ theorem lintegral_one_sub_sinc_lt_top {ν : Measure ℝ} (hν : MeasureTheory.Is
       ≤ ∫⁻ x, 2 * ENNReal.ofReal (min 1 (x ^ 2)) ∂ν := by
         refine lintegral_mono fun x => ?_
         rw [show (2 : ℝ≥0∞) = ENNReal.ofReal 2 by simp, ← ENNReal.ofReal_mul (by norm_num)]
-        exact ENNReal.ofReal_le_ofReal (one_sub_sinc_le_mul_min x)
+        exact ENNReal.ofReal_le_ofReal (Real.one_sub_sinc_le_mul_min x)
     _ = 2 * ∫⁻ x, ENNReal.ofReal (min 1 (x ^ 2)) ∂ν := lintegral_const_mul 2 hmeas
     _ < ⊤ := ENNReal.mul_lt_top (by norm_num) hν.lintegral_min_one_sq_lt_top
 
@@ -146,7 +149,7 @@ variable {ν : Measure ℝ}
 /-- `1 − Real.sinc x` is non-negative everywhere (via the sinc lower bound). -/
 private lemma one_sub_sinc_nonneg (x : ℝ) : 0 ≤ 1 - Real.sinc x :=
   le_trans (mul_nonneg (by positivity) (le_min zero_le_one (sq_nonneg x)))
-    (mul_min_le_one_sub_sinc x)
+    (Real.mul_min_le_one_sub_sinc x)
 
 /-- `∫_{-1}^{1} (ξ + u) du = 2ξ`. -/
 private lemma intInt_linear (ξ : ℝ) : ∫ u in (-1 : ℝ)..1, (ξ + u) = 2 * ξ := by
@@ -173,7 +176,7 @@ private lemma intInt_exp_shift (ξ x : ℝ) :
       = Complex.exp (↑x * ↑ξ * Complex.I) * ∫ u in (-1 : ℝ)..1, Complex.exp (↑u * ↑x * Complex.I)
     from intervalIntegral.integral_const_mul _ _]
   congr 1
-  have h := intervalIntegral_exp_I_symm x
+  have h := Real.intervalIntegral_exp_I_symm x
   rw [← h]; ring
 
 /-- **Pointwise smear of the compensated integrand.** The compensator (linear in the
@@ -246,7 +249,7 @@ private lemma integrable_exp_mul_one_sub_sinc (hν : MeasureTheory.IsLevyMeasure
       exact Complex.norm_exp_ofReal_mul_I _
     rw [hnorm_exp, one_mul, Complex.norm_real, Real.norm_eq_abs,
         abs_of_nonneg (one_sub_sinc_nonneg x)]
-    exact one_sub_sinc_le_mul_min x
+    exact Real.one_sub_sinc_le_mul_min x
 
 /-- **Smear of the jump integral.** Fubini swaps the `u`-average with the `ν`-integral; the
 pointwise smear identity then collapses the inner average. -/
@@ -462,7 +465,7 @@ private lemma withDensity_one_sub_sinc_untilt (hν : MeasureTheory.IsLevyMeasure
   refine withDensity_inv_same measurable_one_sub_sinc ?_ ?_
   · filter_upwards [hne0] with x hx
     rw [ne_eq, ENNReal.ofReal_eq_zero, not_le]
-    exact one_sub_sinc_pos hx
+    exact Real.one_sub_sinc_pos hx
   · filter_upwards with x using ENNReal.ofReal_ne_top
 
 /-- **Recovery of the Gaussian coefficient.** If two smeared measures agree, the Gaussian

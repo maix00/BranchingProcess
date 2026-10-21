@@ -11,6 +11,19 @@ public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 /-!
 # Frequency averages for the cosine defect
 
+The public declarations are:
+
+- `cosineSquareFrequencyAverage z` is
+  $\int_1^2(1-\cos(tz))^2\,dt$; `continuous_cosineSquareFrequencyAverage`
+  proves its continuity.
+- `cosineSquareFrequencyAverage_eq_of_pos` gives, for $z>0$, the explicit
+  value $\frac32-2\frac{\sin(2z)-\sin z}{z}
+  +\frac{\sin(4z)-\sin(2z)}{4z}$.
+- `tendsto_cosineSquareFrequencyAverage_atTop` gives the limit $3/2$ as
+  $z\to\infty$; `exists_pos_cosineSquareFrequencyAverage_lower_bound` gives
+  $c>0$ with $c\le\texttt{cosineSquareFrequencyAverage}(z)$ whenever
+  $|z|\ge1$.
+
 The average of the squared cosine defect over a compact interval of
 frequencies is uniformly positive away from zero. This is the coercivity
 input for recovering tails from a regular-variation limit of the cosine
@@ -36,7 +49,7 @@ theorem continuous_cosineSquareFrequencyAverage :
   exact intervalIntegral.continuous_parametric_intervalIntegral_of_continuous'
     (by fun_prop) 1 2
 
-private theorem cosineSquareFrequencyAverage_pos_of_one_le {z : ℝ}
+private lemma cosineSquareFrequencyAverage_pos_of_one_le {z : ℝ}
     (hz : 1 ≤ z) : 0 < cosineSquareFrequencyAverage z := by
   let f : ℝ → ℝ := fun t => (1 - Real.cos (t * z)) ^ 2
   have hfcont : Continuous f := by fun_prop
