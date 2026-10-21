@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Rate.Asymptotics
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Survival.Bounds
+public import Probability.Process.RandomWalk.Rademacher.FiniteInterval.Spectral.Survival.Bounds
 public import Mathlib.Topology.Order.LiminfLimsup
 
 /-!
@@ -43,6 +43,8 @@ weight is required.
 
 open Filter Topology
 
+
+open ProbabilityTheory.RandomWalk.Rademacher.FiniteInterval
 
 @[expose] public section
 

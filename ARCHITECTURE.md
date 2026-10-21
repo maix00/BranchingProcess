@@ -64,6 +64,10 @@ owns each concept it uses.
   A random walk is connected to process-level random-walk results through the
   explicit branching-walk bridge; it does not redefine the deterministic
   walk as a probability object.
+- `Probability/Process/RandomWalk/Rademacher/FiniteInterval/` owns the finite
+  interval walk with fair $\pm1$ increments: its killed transition matrix and
+  kernel, sine eigenfunction, and path-survival interpretation. Small-deviation
+  modules use this concrete model without owning its construction.
 - Ulam--Harris trees describe surviving addresses. A branching walk determines
   its parent-closed genealogy. Sibling closure is additional ordering data and
   is required only when the chosen address order needs it.

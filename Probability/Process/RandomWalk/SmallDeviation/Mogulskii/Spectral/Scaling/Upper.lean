@@ -7,8 +7,8 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Scaling.Power
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Survival.Bounds
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Survival.Upper
+public import Probability.Process.RandomWalk.Rademacher.FiniteInterval.Spectral.Survival.Bounds
+public import Probability.Process.RandomWalk.Rademacher.FiniteInterval.Spectral.Survival.Upper
 
 /-!
 # Variable-scale spectral upper bounds
@@ -39,6 +39,8 @@ eigenvalue asymptotic to give the sharp upper rate under the diffusive scale.
 
 open Filter Topology
 
+
+open ProbabilityTheory.RandomWalk.Rademacher.FiniteInterval
 
 @[expose] public section
 

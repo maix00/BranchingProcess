@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Decomposition.Basis
+public import Probability.Process.RandomWalk.Rademacher.FiniteInterval.Spectral.Basis
 public import LinearAlgebra.Spectrum.DiagonalBasis
 
 /-!
@@ -33,7 +33,7 @@ The public declarations are:
 open scoped Matrix
 @[expose] public section
 
-namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
+namespace ProbabilityTheory.RandomWalk.Rademacher.FiniteInterval
 
 /-- Exact finite spectral expansion of an arbitrary function under an
 iterate of the killed interval endomorphism. -/
@@ -129,6 +129,6 @@ theorem intervalKernel_pow_rowSum_le_two_mul_sum_absEigenvaluePow
           gcongr
         _ = 2 * |intervalModeEigenvalue interiorCount mode| ^ n := by ring
 
-end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
+end ProbabilityTheory.RandomWalk.Rademacher.FiniteInterval
 
 end

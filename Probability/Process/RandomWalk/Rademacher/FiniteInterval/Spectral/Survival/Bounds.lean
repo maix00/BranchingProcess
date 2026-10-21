@@ -6,8 +6,8 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Survival.Path
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Decomposition.Modes
+public import Probability.Process.RandomWalk.Rademacher.FiniteInterval.Path
+public import Probability.Process.RandomWalk.Rademacher.FiniteInterval.Spectral.Modes
 public import Probability.Kernel.Survival.Basic
 
 /-!
@@ -38,7 +38,7 @@ open scoped BigOperators ENNReal Matrix
 
 @[expose] public section
 
-namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
+namespace ProbabilityTheory.RandomWalk.Rademacher.FiniteInterval
 
 /-- The endpoint value of the sine ground state is its minimum over all
 interior lattice sites. -/
@@ -214,4 +214,4 @@ theorem rademacherIncrement_intervalProbability_uniform_bounds
   · rw [← intervalRademacherKernel_pow_apply_univ_eq_randomWalkInterval]
     exact hbounds.2
 
-end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
+end ProbabilityTheory.RandomWalk.Rademacher.FiniteInterval

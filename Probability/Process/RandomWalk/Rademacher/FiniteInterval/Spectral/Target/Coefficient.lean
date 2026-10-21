@@ -6,17 +6,17 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Target.Expansion
+public import Probability.Process.RandomWalk.Rademacher.FiniteInterval.Spectral.Target.Expansion
 
 /-!
-# Coefficient estimates for spectral target proofs
+# Sine coefficients of finite-interval targets
 
-The following proof-chain lemmas estimate the sine-basis coefficients of a
-finite target. They are used by the extremal-mode estimate in the parent
-`Target/` directory and do not form a separate user-facing interface.
+For a finite target $T\subseteq\operatorname{Fin}(N)$, this module identifies
+the sine-basis coefficients of its indicator and gives lower bounds from
+pointwise ground-state estimates and target density.
 
 All names below are declarations in
-`ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii`.
+`ProbabilityTheory.RandomWalk.Rademacher.FiniteInterval`.
 
 For $N=\texttt{interiorCount}>0$, write
 $\phi_0(i)=\texttt{intervalSineWeight}(N,i)$ and
@@ -45,7 +45,7 @@ open scoped BigOperators Matrix
 
 @[expose] public section
 
-namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
+namespace ProbabilityTheory.RandomWalk.Rademacher.FiniteInterval
 
 /-- Pairing a sine mode with a target indicator restricts the sum to the
 target. -/
@@ -115,4 +115,4 @@ lemma two_mul_mul_le_intervalSineBasis_repr_targetIndicator_zero
     mul_le_mul_of_nonneg_left hcard (mul_nonneg (by norm_num) hweight)
   nlinarith
 
-end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
+end ProbabilityTheory.RandomWalk.Rademacher.FiniteInterval

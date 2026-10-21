@@ -8,6 +8,8 @@ module
 
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Target.Central
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Diffusive.Lower
+import Probability.Process.RandomWalk.Rademacher.FiniteInterval.Spectral.Target.LowerBound
+import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Diffusive.Lower
 
 /-!
 # Spectral mass bounds for central endpoint bands
@@ -38,7 +40,8 @@ The public declarations in this module are:
   proportion tends to $p>0$, every strict lower constant below
   $p e^{-c\pi^2/2}$ eventually bounds the target mass.
 The finite-target spectral estimate used here is the general
-`half_principalScale_le_targetMass` in `Spectral/Target/LowerBound.lean`.
+`half_principalScale_le_targetMass` in
+`Probability.Process.RandomWalk.Rademacher.FiniteInterval.Spectral.Target.LowerBound`.
 The endpoint-band specialization supplies the finite-block input for the
 seven-window argument used in Lemma 3(d) of A. A. Mogul'skii, “Small
 Deviations in the Sample Function Space,” *Teoriya Veroyatnostei i ee
@@ -49,6 +52,8 @@ in a Space of Trajectories,” *Theory of Probability and Its Applications*
 
 open scoped BigOperators
 open Filter Topology
+
+open ProbabilityTheory.RandomWalk.Rademacher.FiniteInterval
 
 @[expose] public section
 

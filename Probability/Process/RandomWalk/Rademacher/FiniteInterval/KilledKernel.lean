@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Kernel.Interval
+public import Probability.Process.RandomWalk.Rademacher.FiniteInterval.Matrix
 public import Probability.Distributions.Rademacher
 public import Probability.Kernel.FiniteState.PartialStep
 public import Probability.Kernel.Step.Survival
@@ -45,7 +45,7 @@ open scoped BigOperators ENNReal
 
 @[expose] public section
 
-namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
+namespace ProbabilityTheory.RandomWalk.Rademacher.FiniteInterval
 
 /-- One Boolean Rademacher transition, killed when it leaves the finite
 interior interval. -/
@@ -161,4 +161,4 @@ theorem intervalKernel_pow_rowSum_eq_survivalWeight
     intervalRademacherKernel_eq_ofRealMatrix,
     intervalKernel_pow_apply_univ]
 
-end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
+end ProbabilityTheory.RandomWalk.Rademacher.FiniteInterval

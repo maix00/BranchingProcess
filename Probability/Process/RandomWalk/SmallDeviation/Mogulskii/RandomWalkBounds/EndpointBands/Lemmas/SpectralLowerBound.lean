@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Target.EndpointBand
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Target.Path
+import Probability.Process.RandomWalk.Rademacher.FiniteInterval.Spectral.Target.Path
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.EndpointBands.Lemmas.SevenWindows
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.EndpointWindows
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.Donsker.EndpointWindowSequence
@@ -36,6 +36,8 @@ translation, “Small Deviations in a Space of Trajectories,” *Theory of
 Probability and Its Applications* 19(4) (1975), 726–736, DOI 10.1137/1119081.
 -/
 open MeasureTheory Filter Topology
+
+open ProbabilityTheory.RandomWalk.Rademacher.FiniteInterval
 
 @[expose] public section
 

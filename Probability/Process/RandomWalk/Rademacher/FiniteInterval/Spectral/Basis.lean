@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Decomposition.Modes
+public import Probability.Process.RandomWalk.Rademacher.FiniteInterval.Spectral.Modes
 public import Analysis.SpecialFunctions.Trigonometric.FiniteSum
 
 /-!
@@ -36,7 +36,7 @@ declarations are:
 open scoped Matrix
 @[expose] public section
 
-namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
+namespace ProbabilityTheory.RandomWalk.Rademacher.FiniteInterval
 
 /-- The coordinate of a vector in the sine basis is characterized by its
 dot product with the corresponding mode.  This form avoids choosing a
@@ -140,6 +140,6 @@ theorem abs_intervalSineBasis_repr_one_le_two (interiorCount : ℕ)
     exact_mod_cast Nat.le_succ interiorCount
   nlinarith
 
-end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
+end ProbabilityTheory.RandomWalk.Rademacher.FiniteInterval
 
 end

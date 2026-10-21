@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Target.Central
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Target.Path
+public import Probability.Process.RandomWalk.Rademacher.FiniteInterval.Spectral.Target.Path
 
 /-!
 # Central spectral targets as horizontal-tube events
@@ -35,6 +35,8 @@ Portmanteau to obtain Brownian endpoint-band mass.
 -/
 
 open MeasureTheory
+
+open ProbabilityTheory.RandomWalk.Rademacher.FiniteInterval
 
 @[expose] public section
 

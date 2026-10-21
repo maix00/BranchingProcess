@@ -50,6 +50,7 @@ Donsker--Portmanteau then transfer that bound to the closed Brownian unit
 corridor.  No explicit construction of Wiener measure is used.
 -/
 
+open ProbabilityTheory.RandomWalk.Rademacher.FiniteInterval
 open Filter MeasureTheory ProbabilityTheory Topology
 
 @[expose] public section

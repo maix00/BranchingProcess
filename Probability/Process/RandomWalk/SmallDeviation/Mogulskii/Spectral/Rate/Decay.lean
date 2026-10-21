@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Survival.Bounds
+public import Probability.Process.RandomWalk.Rademacher.FiniteInterval.Spectral.Survival.Bounds
 import Probability.Process.RandomWalk.Rademacher.Transition.Basic
 public import Mathlib.Analysis.SpecificLimits.Basic
 
@@ -30,6 +30,8 @@ $\lambda_N=\cos(\pi/(N+1))$.  The public declarations are:
 open Filter Topology
 open scoped BigOperators Matrix
 
+
+open ProbabilityTheory.RandomWalk.Rademacher.FiniteInterval
 
 @[expose] public section
 

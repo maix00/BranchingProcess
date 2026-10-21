@@ -34,6 +34,8 @@ open MeasureTheory
 open scoped BigOperators ENNReal
 open Filter Topology
 
+open ProbabilityTheory.RandomWalk.Rademacher.FiniteInterval
+
 @[expose] public section
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
