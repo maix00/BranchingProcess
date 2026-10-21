@@ -14,6 +14,13 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
 This file contains only the deterministic parameter choice used to turn the
 explicit truncated fourth-moment estimate into an arbitrarily small error.
+
+The public theorem in this file is:
+
+- `ProbabilityTheory.RandomWalk.exists_proportionalBlockParameters`:
+  for any positive oscillation threshold and error tolerance, one can choose a
+  finite proportional block cover and truncation parameters whose fourth-
+  moment error bound is below the tolerance.
 -/
 
 open MeasureTheory

@@ -56,30 +56,30 @@ def ofDeterministic (M : Mechanism ι) (hM : Measurable M.select) :
 end CausalSelectMechanism
 
 /-- A time-indexed capacity selection on arbitrary candidate sets. -/
-structure CausalNSelection (Time Ω ι : Type*) (N : ℕ)
+structure CausalCapacitySelection (Time Ω ι : Type*) (N : ℕ)
     [MeasurableSpace ι] (ℱ : Time → MeasurableSpace Ω) where
-  rule : ∀ t, @RandomNSelection Ω ι N (ℱ t) inferInstance
+  rule : ∀ t, @RandomCapacitySelection Ω ι N (ℱ t) inferInstance
 
-namespace CausalNSelection
+namespace CausalCapacitySelection
 
 variable {Time Ω ι : Type*} {N : ℕ} [MeasurableSpace ι]
     {ℱ : Time → MeasurableSpace Ω}
 
-def select (R : CausalNSelection Time Ω ι N ℱ)
+def select (R : CausalCapacitySelection Time Ω ι N ℱ)
     (t : Time) (ω : Ω) (s : Set ι) : Finset ι :=
-  @RandomNSelection.select Ω ι N (ℱ t) inferInstance (R.rule t) ω s
+  @RandomCapacitySelection.select Ω ι N (ℱ t) inferInstance (R.rule t) ω s
 
-theorem select_subset (R : CausalNSelection Time Ω ι N ℱ)
+theorem select_subset (R : CausalCapacitySelection Time Ω ι N ℱ)
     (t : Time) (ω : Ω) (s : Set ι) :
     ∀ q ∈ R.select t ω s, q ∈ s :=
-  @RandomNSelection.subset Ω ι N (ℱ t) inferInstance (R.rule t) ω s
+  @RandomCapacitySelection.subset Ω ι N (ℱ t) inferInstance (R.rule t) ω s
 
-theorem select_card_le (R : CausalNSelection Time Ω ι N ℱ)
+theorem select_card_le (R : CausalCapacitySelection Time Ω ι N ℱ)
     (t : Time) (ω : Ω) (s : Set ι) : (R.select t ω s).card ≤ N :=
-  @RandomNSelection.select_card_le Ω ι N (ℱ t) inferInstance
+  @RandomCapacitySelection.select_card_le Ω ι N (ℱ t) inferInstance
     (R.rule t) ω s
 
-theorem measurable_select (R : CausalNSelection Time Ω ι N ℱ)
+theorem measurable_select (R : CausalCapacitySelection Time Ω ι N ℱ)
     (t : Time) (candidates : Ω → Set ι)
     (hcandidates : @Measurable Ω (Set ι) (ℱ t) inferInstance candidates) :
     @Measurable Ω (Finset ι) (ℱ t) inferInstance
@@ -88,10 +88,10 @@ theorem measurable_select (R : CausalNSelection Time Ω ι N ℱ)
   exact (R.rule t).measurable_select.comp (measurable_id.prodMk hcandidates)
 
 def ofDeterministic (M : NSelection ι N) (hM : Measurable M.select) :
-    CausalNSelection Time Ω ι N ℱ where
-  rule t := @RandomNSelection.ofDeterministic Ω ι N (ℱ t) _ M hM
+    CausalCapacitySelection Time Ω ι N ℱ where
+  rule t := @RandomCapacitySelection.ofDeterministic Ω ι N (ℱ t) _ M hM
 
-end CausalNSelection
+end CausalCapacitySelection
 
 end ProbabilityTheory.BranchingRandomWalk.Selection
 

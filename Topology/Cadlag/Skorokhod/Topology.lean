@@ -8,7 +8,7 @@ module
 
 public import Mathlib.MeasureTheory.Constructions.BorelSpace.Basic
 public import Mathlib.Topology.UnitInterval
-public import Topology.Cadlag.Skorokhod.Separation
+public import Topology.Cadlag.Skorokhod.Path.Separation
 
 /-!
 # The Skorokhod emetric topology
