@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Combinatorics.BranchingWalk.Population.Cloud
+public import Combinatorics.BranchingWalk.Cloud.Basic
 public import Combinatorics.BranchingWalk.Walk.Basic
 public import Algebra.BigOperators.AdditivePath.Block
 
