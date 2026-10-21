@@ -6,8 +6,8 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Basic
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
+public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 import Analysis.SpecialFunctions.Trigonometric.LogAsymptotics
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
 

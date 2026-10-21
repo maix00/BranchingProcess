@@ -7,6 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Kernel.Interval
+import Probability.Process.RandomWalk.Rademacher.Transition.Basic
 public import LinearAlgebra.Spectrum.DiagonalBasis
 public import Analysis.SpecialFunctions.Trigonometric.PowerBound
 public import Mathlib.LinearAlgebra.Eigenspace.Basic
@@ -82,6 +83,8 @@ here so the survival layer only consumes them when deriving row-mass bounds.
 -/
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
+
+open ProbabilityTheory.RandomWalk.Rademacher
 
 /-- Frequency of a discrete Dirichlet sine mode on an interval with
 `interiorCount` interior sites. -/
@@ -399,8 +402,7 @@ theorem intervalKernel_mulVec_sineMode (interiorCount : ℕ)
         intervalSineMode interiorCount mode := by
   funext i
   rw [intervalKernel_mulVec]
-  rw [option_elim_mul, option_elim_mul,
-    intervalLeftNeighbor_sineMode, intervalRightNeighbor_sineMode]
+  rw [intervalLeftNeighbor_sineMode, intervalRightNeighbor_sineMode]
   have hs := symmetricStep_sine
     (intervalModeFrequency interiorCount mode) ((i.val + 1 : ℕ) : ℝ)
   simp only [symmetricStep] at hs

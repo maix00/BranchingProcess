@@ -101,6 +101,10 @@ endpoint-to-corridor estimates; `Scale/` owns normalization; `Stable/` and
 finite-reference Gaussian block-survival bounds. The Gaussian terminal-left
 path-class adapters are grouped under `Gaussian/Path/TerminalLeftPathClass/`;
 they support Theorem 3 and are not separate article-theorem entries.
+The one-step Rademacher averaging operator and its sine eigenfunction are
+general random-walk interfaces in
+`Probability.Process.RandomWalk.Rademacher.Transition.Basic`; the killed finite
+interval matrix and its spectral estimates remain specific to this subject.
 `RandomWalkBounds/` assembles random-walk estimates; `Rate/` owns the
 normal-domain rate arguments; and `Spectral/` contains the killed
 symmetric-lattice method. `Lemmas/` is reserved for derivation steps that have
