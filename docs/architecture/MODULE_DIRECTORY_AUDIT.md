@@ -3159,10 +3159,14 @@ candidates were originally left for review; that count is now stale. A later
 manual pass found that `Selection/NSelection/Walk/Basic.lean` still omitted
 `mapOrderDual_initial` and `mapOrderDual_children` and listed
 `mapOrderDual_cloud`, which belongs to its sibling `Walk/Cloud.lean`. The
-inventory was corrected. A refreshed scan that distinguishes public
-declarations from private helpers, definitions, and test modules, followed by
-manual review, is still required before the repository-wide header audit is
-complete.
+inventory was corrected. A refreshed lexical scan inspected 1,494 production
+modules and 6,893 non-explicit-private theorem/lemma declarations, matching
+their names against the first module docstring; it flags 737 modules for manual
+review. It excludes tests and vendored sources and ignores comments when
+reading declarations, but still needs manual review for file-level `private
+section`s and cannot judge whether a mathematical description states the
+essential assumptions. The 737 count is therefore a review queue, not a defect
+count. The repository-wide header audit remains in progress.
 
 ## Selection-mechanism abstraction review (2026-10-21)
 
@@ -3348,3 +3352,28 @@ and [Mathlib's finite-sequence tree interface](https://leanprover-community.gith
 then compared them with the pinned Mathlib source at
 `380f2aafb622cb2c1c93dac545b6389083c68c51` and the current Lean core list
 definitions.
+
+## Path displacement and generic list folds (2026-10-21)
+
+`displace β v p` is defined by
+`displace β v [] = 0` and
+`displace β v (i :: p) = value' (β v) i + displace β (v ++ [i]) p`.
+The candidate abstraction is `List.foldl` with an accumulator carrying both
+the current address and accumulated displacement. Mathlib's generic
+`List.foldl_append` states the composition law for such a fold; the module's
+`displace_append` is its domain-specific form,
+`displace β v (p ++ q) = displace β v p + displace β (v ++ p) q`.
+The fold accumulator must still update the address using the traversed path and
+read each mark from the corresponding `StepField`; spelling that stateful fold
+out would add a second representation without another client. The recursive
+definition plus `displace_append` and the finite-sum bridge lemmas therefore
+remain the public displacement interface in `Basic/Position/Displace.lean`.
+The missing `displace_nil` formula was added to that module's declaration list.
+`Basic/Position/` has three direct modules, all describing the displacement
+object, its path operations, or maps of the field.
+
+The abstraction check used the official
+[`List.foldl_append` documentation](https://leanprover-community.github.io/mathlib4_docs/Init/Data/List/Lemmas.html)
+and [Mathlib's list-fold API](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Data/List/Basic.html),
+then checked `Mathlib/Data/List/Basic.lean` at pinned revision
+`380f2aafb622cb2c1c93dac545b6389083c68c51`.

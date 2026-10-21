@@ -29,6 +29,7 @@ definitions root by root.
 
 The public API is:
 
+- `displace_nil`: `displace β v [] = 0`.
 - `displace β v p` recursively sums the zero-defaulted marks along `p`,
   reading each edge at the address reached so far. `displace_append` splits
   the sum over concatenated paths, and `displace_rebase` identifies a shifted
