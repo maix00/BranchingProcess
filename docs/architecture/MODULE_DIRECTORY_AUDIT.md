@@ -712,6 +712,22 @@ These are the broad measure-theoretic interfaces. The consecutive IID block
 theorems add the useful sequence-level specialization: arbitrary measurable
 events on disjoint blocks factor under the canonical IID law.
 
+The pinned Mathlib probability API also has the still more general
+`iIndepFun.indepFun_finset` theorem: if $(X_i)_{i\in I}$ is an independent
+family and finite index sets $S,T\subseteq I$ are disjoint, then the tuples
+$(X_i)_{i\in S}$ and $(X_i)_{i\in T}$ are independent. Its statement accepts
+an arbitrary index type and coordinate-dependent value types; see the
+[official API documentation](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Probability/Independence/Basic.html)
+and the pinned
+[`Independence/Basic.lean`](https://github.com/leanprover-community/mathlib4/blob/380f2aafb622cb2c1c93dac545b6389083c68c51/Mathlib/Probability/Independence/Basic.lean#L795).
+Thus the local two-block coordinate-independence theorem remains an IID
+sequence adapter using `blockCoordinates`, while a new arbitrary-finite-set
+independence theorem would duplicate Mathlib's API. The mutual-independence
+and event-factorization results for variable-length consecutive blocks retain
+their sequence-level value: they package the cumulative block starts and
+identify every block-event probability with the corresponding origin-block
+probability under one common marginal law.
+
 The finite-product adapter formerly exposed from
 `RandomWalk/Path/Block/Law/FiniteProduct.lean` has only one client, the cyclic
 gap factorization in Bauer--Godrèche--Luck, Appendix A, equation (A.6). Its
