@@ -2755,9 +2755,10 @@ and the style check passes with the pinned toolchain.
 
 ## Full source-tree structural scan (2026-10-21)
 
-A scan of the production and test source trees, excluding `.lake`, `Vendor/`,
-and `.git/`, found 1,492 production modules and 138 test modules. Neither tree
-has a directory with more than eight direct Lean files. Across both trees,
+A fresh scan of the tracked production and test source trees, excluding
+`.lake`, `Vendor/`, and `.git/`, found 1,494 production modules and 138 test
+modules. Neither tree has a directory with more than eight direct Lean files.
+Across both trees,
 the scan found no same-level file/directory stem collision, no repeated
 parent-directory/file stem, no `Source/` directory, and no `Lemmas.lean`
 alongside `Lemmas/`. This checks the structural invariants; semantic ownership
