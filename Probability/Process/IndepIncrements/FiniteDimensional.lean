@@ -15,6 +15,8 @@ public import Mathlib.MeasureTheory.Group.Arithmetic
 public import Mathlib.Data.Finset.Sort
 public import Probability.Process.StationaryIncrements.Basic
 
+import MeasureTheory.Function.FinPartialSum
+
 /-!
 # Finite-dimensional laws from independent increments
 
@@ -86,19 +88,7 @@ theorem HasIndepIncrements.finiteDimensional_identDistrib
   have hpartialSums : Measurable partialSums := by
     rw [measurable_pi_iff]
     intro i
-    have hEval (j : Fin (n + 1)) :
-        Measurable (fun x : Fin n → E => Fin.partialSum x j) := by
-      induction j using Fin.induction with
-      | zero => exact measurable_const
-      | succ j ih =>
-        have hm := ih.add (measurable_pi_apply j)
-        have heq : (fun x : Fin n → E => Fin.partialSum x j.succ) =
-            (fun x : Fin n → E => Fin.partialSum x j.castSucc) +
-              (fun x : Fin n → E => x j) := by
-          funext x
-          simp only [Fin.partialSum_succ, Pi.add_apply]
-        exact heq ▸ hm
-    exact hEval i.succ
+    exact Fin.measurable_partialSum i.succ
   have hpositions := hvector.comp hpartialSums
   have hXeq : (fun ω (i : Fin n) => X (grid i.succ) ω) =ᵐ[P]
       fun ω => partialSums (fun j => dX j ω) := by
