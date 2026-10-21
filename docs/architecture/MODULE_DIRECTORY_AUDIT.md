@@ -3115,3 +3115,13 @@ The range event and its probability had also been defined in
 geometry. They now live in `Path/Event/Oscillation.lean`; the horizontal module
 retains only the implication from tube confinement to range control and the
 tube-specific probability results.
+
+A citation scan of the Lean `Probability/` source tree found the thesis
+references identify Wang Yiyang's *Asymptotic Speed of the N-Branching Random
+Walk with Infinite Offspring* by author, title, institution, year, and cited
+chapter/lemma or equation. Article references identify Aïdékon and Hu's
+*Average-weight percolation on the complete graph* with its arXiv identifier
+and proposition/equation. The scan found no generic `the paper` or `the thesis`
+references and no private theorem names containing `paper` or `lemma33`; this
+is a source-text check, while full citation normalization remains part of the
+ongoing audit.
