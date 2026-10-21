@@ -11,7 +11,7 @@ public import Combinatorics.UlamHarris.Tree.Topology.Metric
 public import Mathlib.Data.Fintype.Powerset
 
 /-!
-# Finitely many labels: the three σ-algebras coincide
+# Tree topologies over finitely many labels
 
 For a finite label type every truncation has only finitely many nodes, so there
 are only finitely many truncations at a fixed height and hence only countably
@@ -22,6 +22,16 @@ Borel σ-algebra of the tree metric all coincide.
 
 For an infinite label type the countable-ball criterion need not hold, so this
 file makes no equality assertion beyond the finite case.
+
+## Public declarations
+
+- `finite_truncations` proves there are finitely many truncations at each
+  fixed depth, and `countable_truncationBalls` proves the truncation-ball
+  family is countable.
+- `borel_treeTruncationTopology_eq_cylinder_of_finite` identifies the Borel
+  σ-algebra of the truncation topology with the cylinder σ-algebra.
+- `borel_treeMetricTopology_eq_cylinder_of_finite` gives the same equality
+  for the tree metric topology.
 -/
 
 @[expose] public section

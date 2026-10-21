@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Combinatorics.UlamHarris.Tree.Finite.Height
+public import Combinatorics.UlamHarris.Tree.Truncation.Height
 public import Combinatorics.UlamHarris.Tree.Topology.Borel
 public import Mathlib.Topology.MetricSpace.Ultra.Basic
 
@@ -27,10 +27,28 @@ topology it induces is `treeMetricTopology`, which
 `treeMetricTopology_eq_truncationTopology` identifies with the truncation
 topology of `Topology.lean`; the Borel σ-algebras of the two therefore coincide
 (`borel_treeMetricTopology_eq_borel_treeTruncationTopology`). The comparison
-with the cylinder σ-algebra is in `Borel.lean`.
+with the cylinder σ-algebra is in `Topology/Borel.lean`.
 
 Everything about the metric is stated for the raw function `treeDist`, so no
 instance is needed to use it.
+
+## Public declarations
+
+- For one tree, `treeDist T T' = ((1 + heightCongr T T' : ℝ≥0∞)⁻¹).toReal`;
+  `treeDist_eq_zero_iff` characterizes equality, and `treeDist_ultra` states
+  `d(T₁,T₃) ≤ max (d(T₁,T₂)) (d(T₂,T₃))`.
+- `treeDist_lt_inv_iff` characterizes the metric threshold
+  `d(T,T') < (1+n)⁻¹` by agreement through generation `n+1`, while
+  `truncationBall_eq_ball` identifies truncation balls with metric balls.
+  `treeMetricTopology_eq_truncationTopology` identifies the induced topology
+  with the truncation topology.
+- For root-indexed trees, `treeDist T T' = ⨆ r, treeDist (T r) (T' r)`;
+  `treeDist_ultra` gives the sup-metric ultrametric inequality, and
+  `metricTopology_eq_uniformTopology` identifies its topology with the uniform
+  truncation topology.
+- `borel_treeMetricTopology_eq_borel_treeTruncationTopology` and
+  `borel_uniformTopology_eq_borel_metricTopology` transfer the corresponding
+  Borel structures; countable-basis hypotheses give the cylinder equalities.
 -/
 
 @[expose] public section
@@ -226,7 +244,7 @@ theorem borel_treeMetricTopology_eq_borel_treeTruncationTopology (α : Type*) [L
 /-- The cylinder σ-algebra is contained in the Borel σ-algebra of the tree
 metric. For finitely many labels the two σ-algebras coincide
 (`borel_treeMetricTopology_eq_cylinder_of_finite`, in
-`Tree/FiniteLabels.lean`). -/
+`Tree/Topology/FiniteLabels.lean`). -/
 theorem cylinder_le_borel_treeMetricTopology [Countable α] :
     instMeasurableSpaceTree ≤ @borel (Tree α) (treeMetricTopology α) := by
   rw [borel_treeMetricTopology_eq_borel_treeTruncationTopology α]

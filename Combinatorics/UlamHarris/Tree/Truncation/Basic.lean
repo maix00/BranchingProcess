@@ -10,11 +10,22 @@ public import Combinatorics.UlamHarris.Tree.Defs
 public import Mathlib.Data.Set.Basic
 
 /-!
-# Truncation of Ulam--Harris trees
+# Finite-depth truncation of Ulam--Harris trees
 
 The truncation `T.truncate n` keeps only the addresses of length at most `n`.
 These truncations are the basic sets of the locally finite topology used for
-the Borel structure on trees; the topology is in `Tree/Topology.lean`.
+the Borel structure on trees; the topology is in `Tree/Topology/Basic.lean`.
+
+## Public declarations
+
+- `Tree.truncate T n` has carrier `{u | u.length ≤ n ∧ u ∈ T.carrier}`;
+  `mem_truncate` and `truncate_subset` state this description and its
+  inclusion in the original carrier.
+- `truncate_truncate` states
+  `(T.truncate n).truncate m = T.truncate (min n m)`.
+- `Tree.truncationBall T n` is `{S | S.truncate n = T.truncate n}`;
+  `mem_truncationBall` gives membership, and `truncationBall_disjoint` proves
+  balls at the same depth with distinct centers are disjoint.
 -/
 
 @[expose] public section

@@ -195,7 +195,7 @@ by mathematical subject:
 | `BranchingRandomWalk/Timing` | `Candidates/`, `Schedule/`, `Splits/`, and `Trials/`. |
 | `BranchingRandomWalk/Restart` | `Failure/`, `Reserve/`, `Success/`, and `Trial/`; the `RootedTrial.lean` entry module and its component directory remain substantive. |
 | `BranchingRandomWalk/Genealogy/RootIndexed` | `Field/` and `Law/`. |
-| `Combinatorics/UlamHarris/Tree` | `Finite/` and `Topology/`; `Defs.lean` and `Singleton.lean` remain at the subject root. |
+| `Combinatorics/UlamHarris/Tree` | `Finite/` owns finite-carrier trees, `Truncation/` owns finite-depth truncations and their agreement height, `Graph/` owns projections to Mathlib graph interfaces, and `Topology/` owns topological and measurable structures; `Defs.lean` and `Singleton.lean` remain at the subject root. |
 | `Selection/NSelection/EndpointDeviation/Endpoint` | `Minimum/`, `PositiveMoment/`, and `Sequence/`. |
 | `Distributions/Stable/Attraction/Norming` | `Basic.lean`, `Inverse.lean`, `Compatibility.lean`, `Centering.lean`, `Mogulskii.lean`, `Tail.lean`, and `UniformTail.lean` remain at the subject root; Gaussian and index-two specializations are under `SpecialCases/`. `Mogulskii.lean` contains the theorem-specific passage to Mogul'skii's source time normalization and its index-one centering transfer; its rounded index sequence and asymptotic lemmas are private. The general normalization-change theorem is in `Distributions/DomainOfAttraction/Normalization.lean`. |
 
@@ -3427,3 +3427,45 @@ used Mathlib's official [`Set.Finite` and `Finset` documentation](https://leanpr
 [`Finset` definition](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Data/Finset/Defs.html),
 and the repository's pinned `Mathlib/Data/Set/Finite/Basic.lean` and
 `Mathlib/Data/Finset/Defs.lean`.
+
+## Ulam--Harris tree representations and directory ownership (2026-10-21)
+
+The candidate generic representation is Mathlib's
+[`Descriptive.tree α`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/SetTheory/Descriptive/Tree.html),
+a complete sublattice of sets of finite lists closed under prefixes. The
+repository's `UlamHarris.Tree α` also requires `[] ∈ T.carrier` and
+`u ++ [j] ∈ T.carrier ∧ i < j → u ++ [i] ∈ T.carrier`. Those root and ordered
+sibling conditions encode the canonical Ulam--Harris offspring labels. Thus
+`Descriptive.tree` supplies the generic prefix-closed-tree layer, but replacing
+the local type with it would erase defining branching semantics. The local
+parent-closure axiom is equivalent to prefix closure; no change to the
+established `Tree` representation is needed for that equivalence.
+
+Mathlib's descriptive-tree API provides reusable prefix operations such as
+`Tree.take`, `Tree.subAt`, and `Tree.pullSub`. The production Ulam--Harris
+modules currently have no clients for these operations. An isolated conversion
+wrapper would therefore add an API without an active reuse site; introduce that
+bridge if a generic prefix-tree operation is needed by a concrete client.
+Where generic graph semantics are already used, the existing `Tree/Graph/`
+family is substantive: it defines parent--child `Digraph` and `Quiver`
+projections and an undirected `SimpleGraph`, then exposes arborescence,
+connectedness, acyclicity, and tree-isomorphism results. These are complete
+cross-representation interfaces, so they remain outside `Lemmas/`.
+
+The directory now distinguishes four mathematical meanings. `Tree/Finite/`
+contains the finite-carrier predicate and its topological subtype;
+`Tree/Truncation/` contains the operation retaining addresses through depth
+`n` and the agreement-height invariant used by the tree metric;
+`Tree/Topology/FiniteLabels.lean` contains the finite-label Borel equality;
+and `Tree/Graph/` contains the graph representations. This moves generic
+finite-depth operations out of the finite-carrier directory and the finite
+label topology theorem beside its topology subject. Each moved source header
+now lists its public statements; the graph files remain grouped by the
+properties they establish.
+
+This comparison used the official Mathlib documentation for
+[`Descriptive.tree`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/SetTheory/Descriptive/Tree.html),
+[`Quiver.Arborescence`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Combinatorics/Quiver/Arborescence.html),
+and [`SimpleGraph.IsTree`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Combinatorics/SimpleGraph/Acyclic.html),
+then checked the vendored Mathlib source at pinned revision
+`380f2aafb622cb2c1c93dac545b6389083c68c51`.
