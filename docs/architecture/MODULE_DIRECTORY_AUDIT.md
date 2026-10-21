@@ -3604,3 +3604,33 @@ conditioned invariance results of Bolthausen, *On a Functional Central Limit
 Theorem for Random Walks Conditioned to Stay Positive*, Theorem 3.2, and
 Iglehart, *Functional Central Limit Theorems for Random Walks Conditioned to
 Stay Positive*, Section 3, theorem (3.4), p. 616.
+
+## IID stopping-time block API review (2026-10-22)
+
+The stopping-time block results in
+`Probability/Sequence/IID/Blocks/StoppingTime.lean` were checked against the
+pinned Mathlib stopping-time and independence interfaces. Mathlib provides
+`IsStoppingTime` for discrete filtrations and general independence results
+for finite families and processes, including `iIndepFun.indepFun_finset`; the
+reviewed APIs do not provide the factorization of a finite future block on a
+stopping-time cell. The local cell theorem supplies that missing combination
+for a canonical IID sequence and an arbitrary measurable finite-block event.
+Its bounded-stopping-time theorem sums the cell identities, and its
+unbounded-event inequality follows by summing the disjoint finite cells.
+
+These are complete IID-sequence probability statements used by the
+random-walk first-crossing interfaces, rather than derivations belonging to
+one small-deviation proof. They therefore remain in the public
+`Probability/Sequence/IID/Blocks/` family. No additional abstract
+independent-but-not-identically-distributed stopping-time interface was
+introduced: the inspected repository has no client for it, and Mathlib's
+finite-set independence API already supplies the lower-level mechanism.
+This decision follows the abstraction criterion that a new public API should
+state a reusable mathematical interface, not merely package a proof pattern.
+
+The source comparison used Mathlib's official documentation for
+[`Probability.Process.Stopping`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Probability/Process/Stopping.html),
+[`Probability.Independence.Process.Basic`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Probability/Independence/Process/Basic.html),
+and [`Probability.Independence.Basic`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Probability/Independence/Basic.html),
+then searched the pinned sources for an existing stopping-time block
+factorization.
