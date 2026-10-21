@@ -16,6 +16,18 @@ public import Combinatorics.UlamHarris.Tree.Topology.Metric
 unique root the family is identified with its only coordinate.  The family
 definition and its topology, metric, and measurable-space interfaces are in
 the corresponding `Tree/` modules; this file records only the specialization.
+
+## Public declarations
+
+- `equivOfUnique` identifies a family indexed by a unique root with its sole
+  tree: `RootIndexed.Tree Root α ≃ UlamHarris.Tree α`.
+- `treeDist_apply` states that the family distance is the distance of the
+  unique coordinates, and `preimage_truncationBall_eq_uniformBall` pulls a
+  single-tree truncation ball back to the corresponding uniform ball.
+- `measurableSpace_eq_comap`, `pointwiseTopology_eq_induced`,
+  `productTruncationTopology_eq_induced`, `uniformTopology_eq_induced`, and
+  `metricTopology_eq_induced` identify the corresponding structures under the
+  equivalence; `borel_uniformTopology_eq_comap` gives the Borel-space identity.
 -/
 
 open MeasureTheory

@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Combinatorics.UlamHarris.Tree.Finite.Truncation
+public import Combinatorics.UlamHarris.Tree.Truncation.Basic
 public import Mathlib.Data.ENat.Lattice
 public import Mathlib.MeasureTheory.Constructions.BorelSpace.Order
 
@@ -15,8 +15,8 @@ public import Mathlib.MeasureTheory.Constructions.BorelSpace.Order
 
 `heightCongr T T'` is the last generation at which the truncations
 `T.truncate n` and `T'.truncate n` agree, valued in `ℕ∞` so that `⊤` records
-the coincident case. It is the distance `‖T, T'‖ₕ` and the input of the tree
-distance in `Tree/Metric.lean`.
+the coincident case. It is the input of the tree distance in
+`Tree/Topology/Metric.lean`.
 
 The characteristic property is `coe_le_heightCongr_iff`: the levels `n` with
 `(n : ℕ∞) ≤ heightCongr T T'` are exactly the levels at which the truncations
@@ -25,6 +25,19 @@ the supremum: the agreement levels are nonempty (`0` always agrees, since
 truncating at level zero discards everything but the root) and downward
 closed, so a level that fails to agree forces every agreeing level to lie
 below it, which puts the supremum strictly below.
+
+## Public declarations
+
+- `agreeLevels T T' = {n | T.truncate n = T'.truncate n}`; zero belongs to
+  this set and it is downward closed.
+- `heightCongr T T' = ⨆ n ∈ agreeLevels T T', (n : ℕ∞)` and
+  `coe_le_heightCongr_iff` characterizes its finite levels.
+- `heightCongr_self` and `heightCongr_eq_top_iff` state that equal trees have
+  height `⊤`, and height `⊤` characterizes equality.
+- `heightCongr_comm` and `heightCongr_ultra` give symmetry and the ultrametric
+  inequality `min (heightCongr T₁ T₂) (heightCongr T₂ T₃) ≤ heightCongr T₁ T₃`.
+- `ext_of_forall_truncate_eq` reconstructs a tree from all its finite-depth
+  truncations.
 -/
 
 @[expose] public section

@@ -23,6 +23,20 @@ This file equips `LocallyFiniteTree α` with:
 
 The metric and its topology are named definitions, not global instances: the
 default topology remains the subspace topology of the pointwise topology.
+
+## Public declarations
+
+- `Tree.LocallyFinite.topology α` and
+  `Tree.LocallyFinite.measurableSpace α` are the induced pointwise topology and
+  cylinder σ-algebra on `LocallyFiniteTree α`;
+  `topology_eq_inst` and `measurableSpace_eq_inst` identify the instances.
+- `Tree.LocallyFinite.metricSpace α` and `metricTopology α` restrict the tree
+  metric; `metricTopology_eq_induced` and `metricTopology_le_topology` compare
+  the induced metric topology with the default topology.
+- `borel_topology_eq_measurableSpace` gives the Borel/cylinder equality for
+  countable labels. `measurableSpace_le_borel_metricTopology` gives the metric
+  inclusion, and `borel_metricTopology_eq_measurableSpace_of_countable_balls`
+  gives equality when the ambient truncation balls are countable.
 -/
 
 open MeasureTheory
