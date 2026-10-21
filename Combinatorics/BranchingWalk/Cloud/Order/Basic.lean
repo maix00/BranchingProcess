@@ -19,6 +19,29 @@ The other direction of the line is the same definition read in `OrderDual`, whic
 `dominates_orderDual_iff` displays in the upper-tail form of B\'erard and
 Gou\'er\'e. It is *not* `Dominates` with the two clouds exchanged, because both
 directions keep the particle count of the first cloud below that of the second.
+
+The public API is:
+
+- `Cloud.Dominates C D` means that at every time `t` and threshold `a`, the
+  Dirac sum of `C`'s particle positions on `Iic a` is at most that of `D`.
+  `Cloud.DominatesBy φ C D` applies this order after observing positions
+  through `φ`.
+- Both relations are reflexive and transitive (`dominates_refl`,
+  `dominates_trans`, `dominatesBy_refl`, and `dominatesBy_trans`).
+- `dominates_orderDual_iff` expresses the same domination as the upper-tail
+  inequalities on `Ici a` without exchanging the two clouds.
+- `dominates_of_rankwiseDominates_of_countable` and
+  `dominatesBy_of_rankwiseDominatesBy_of_countable` transfer rankwise particle
+  comparisons to measure domination on countable particle slices.
+
+`Cloud.dominates_iff` unfolds the slice-wise definition, while
+`Cloud.dominates_of_particles_eq_empty` states
+`(∀ t, C.particles t = ∅) → C.Dominates D`. The rankwise transfer laws conclude
+`C.Dominates D` from `∀ t, C.RankwiseDominates D t` when each source rank map
+is injective on its slice, and conclude `C.DominatesBy φ D` from the analogous
+observed-position comparison. Their exact declarations are
+`Cloud.dominates_of_rankwiseDominates_of_countable` and
+`Cloud.dominatesBy_of_rankwiseDominatesBy_of_countable`.
 -/
 
 open MeasureTheory

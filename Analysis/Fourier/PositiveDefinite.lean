@@ -17,23 +17,37 @@ import Mathlib.Analysis.Matrix.Order
 /-!
 # Positive Definite Functions on Additive Groups
 
-A function `φ : G → ℂ` on an additive group is **positive definite** if for every finite
-sequence of points
-`x₁, …, xₙ` and complex weights `c₁, …, cₙ`, the Hermitian form
-`∑ᵢ ∑ⱼ conj(cᵢ) cⱼ φ(xᵢ − xⱼ)` is nonneg (real and `≥ 0`).
+## Public declarations
 
-## Main definitions
+* `IsPositiveDefinite`: for every `n`, `x : Fin n → G`, and `c : Fin n → ℂ`,
+  $\operatorname{Im}Q=0$ and $0\le\operatorname{Re}Q$, where
+  $Q=\sum_i\sum_j\overline{c_i}c_j\,\varphi(x_i-x_j)$.
+* `IsPositiveDefinite.re_nonneg`: the real part of the same quadratic form is
+  nonnegative.
+* `IsPositiveDefinite.im_eq_zero`: the imaginary part of the same quadratic
+  form is zero.
+* `IsPositiveDefinite.apply_zero_nonneg`: $0 \le \operatorname{Re}\varphi(0)$.
+* `IsPositiveDefinite.apply_zero_im`: $\operatorname{Im}\varphi(0)=0$.
+* `IsPositiveDefinite.conj_neg`: $\varphi(-t)=\overline{\varphi(t)}$.
+* `IsPositiveDefinite.pdMatrix_posSemidef`: for every finite tuple `x`, the
+  matrix $(\varphi(x_i-x_j))_{i,j}$ is positive semidefinite.
+* `IsPositiveDefinite.mul`: the pointwise product of two positive-definite
+  functions is positive definite.
+* `IsPositiveDefinite.smul_nonneg`: if `a ≥ 0`, then `x ↦ a * φ(x)` is
+  positive definite whenever `φ` is.
+* `IsPositiveDefinite.closure_pointwise`: pointwise limits of positive-definite
+  functions are positive definite.
+* `IsPositiveDefinite.norm_le_one`: if $\varphi(0)=1$, then
+  $\|\varphi(t)\|\le 1$ for every `t`.
+* `IsPositiveDefinite.exp_neg_ofReal_mul` and
+  `IsPositiveDefinite.exp_ofReal_mul`: for `x : ℝ`, the functions
+  $t\mapsto e^{-ixt}$ and $t\mapsto e^{ixt}$ on $\mathbb R$ are positive
+  definite.
 
-* `IsPositiveDefinite` — the positive-definiteness predicate.
-
-## Main results
-
-* `IsPositiveDefinite.re_nonneg` — `.re ≥ 0` (convenience corollary of definition).
-* `IsPositiveDefinite.apply_zero_nonneg` — `φ(0).re ≥ 0`.
-* `IsPositiveDefinite.conj_neg` — `φ(-t) = conj(φ(t))` (Hermitianness).
-* `IsPositiveDefinite.mul` — Schur product: pointwise product of PD functions is PD.
-* `IsPositiveDefinite.closure_pointwise` — pointwise limit of PD functions is PD.
-
+A function `φ : G → ℂ` on an additive group is **positive definite** if for
+every finite sequence of points `x₁, …, xₙ` and complex weights
+`c₁, …, cₙ`, the Hermitian form
+`∑ᵢ ∑ⱼ conj(cᵢ) cⱼ φ(xᵢ − xⱼ)` is nonnegative (real and `≥ 0`).
 -/
 
 @[expose] public section
@@ -159,6 +173,30 @@ theorem mul (hφ : IsPositiveDefinite φ) (hψ : IsPositiveDefinite ψ) :
     ring
   rw [hquad_eq] at hquad
   exact hquad
+
+/-- Multiplication by a nonnegative real scalar preserves positive definiteness. -/
+theorem smul_nonneg {a : ℝ} (hφ : IsPositiveDefinite φ) (ha : 0 ≤ a) :
+    IsPositiveDefinite (fun x => (a : ℂ) * φ x) := by
+  intro n x c
+  have hscale : (0 : ℂ) ≤ (a : ℂ) := by
+    rw [Complex.nonneg_iff]
+    simp [ha]
+  have hform : (∑ i, ∑ j, starRingEnd ℂ (c i) * c j *
+      ((a : ℂ) * φ (x i - x j))) =
+      (a : ℂ) * ∑ i, ∑ j, starRingEnd ℂ (c i) * c j * φ (x i - x j) := by
+    calc
+      _ = ∑ i, ∑ j, (a : ℂ) *
+          (starRingEnd ℂ (c i) * c j * φ (x i - x j)) := by
+        refine Finset.sum_congr rfl fun i _ => ?_
+        refine Finset.sum_congr rfl fun j _ => ?_
+        ring
+      _ = (a : ℂ) * ∑ i, ∑ j,
+          starRingEnd ℂ (c i) * c j * φ (x i - x j) := by
+        rw [Finset.mul_sum]
+        refine Finset.sum_congr rfl fun i _ => ?_
+        rw [Finset.mul_sum]
+  rw [hform]
+  exact mul_nonneg hscale (hφ n x c)
 
 /-- Pointwise limit of positive definite functions is positive definite. -/
 theorem closure_pointwise {φs : ℕ → G → ℂ} (hφs : ∀ n, IsPositiveDefinite (φs n))

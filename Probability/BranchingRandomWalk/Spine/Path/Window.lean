@@ -9,9 +9,9 @@ module
 public import Probability.BranchingRandomWalk.Spine.Path.Basic
 public import Probability.BranchingRandomWalk.Walk.Path.Window
 public import Probability.Process.RandomWalk.Path.Restart.Basic
-public import Probability.Process.RandomWalk.Path.Corridor.Horizontal
+public import Probability.Process.RandomWalk.Path.Corridor.Horizontal.Core
 public import Probability.Process.RandomWalk.Path.Restart.Corridor
-public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.RelativePosition
+public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Field.RelativePosition
 public import Probability.Process.RandomWalk.Path.Restart.Windows
 
 /-!

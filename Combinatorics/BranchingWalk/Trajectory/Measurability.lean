@@ -13,8 +13,16 @@ public import Mathlib.MeasureTheory.MeasurableSpace.Constructions
 /-!
 # Measurability of space-time trajectories
 
-The σ-algebra on `Trajectory Time X` is induced by the pair of vertex and edge
-images.  The projection back to the vertex cloud is measurable.
+## Public declarations
+
+* `Combinatorics.Branching.Trajectory.instMeasurableSpace` equips
+  `Trajectory Time X` with the σ-algebra induced by the pair of vertex and
+  edge sets.
+* `Combinatorics.Branching.Trajectory.measurable_vertices` and
+  `Combinatorics.Branching.Trajectory.measurable_edges` prove measurability of
+  the two coordinate maps.
+* `Combinatorics.Branching.Trajectory.measurable_toCloud` proves that the map
+  from a trajectory to its time-indexed vertex cloud is measurable.
 -/
 
 @[expose] public section

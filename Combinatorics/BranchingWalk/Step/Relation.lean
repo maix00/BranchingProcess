@@ -38,8 +38,8 @@ def siblingRel {ι X : Type*} [LT ι]
     (rel : X → X → Prop) (ξ : Step ι X) : Prop :=
   ∀ i j x y, i < j → ξ i = some x → ξ j = some y → rel x y
 
-/-- Left--right symmetry of the ordering condition, in the form used by the
-thesis: transporting a step along an order embedding turns the condition for
+/-- Left--right symmetry of the ordering condition: transporting a step along an
+order embedding turns the condition for
 one relation into the condition for the other. Reversing the order on the
 marks (`e = OrderDual.toDual`) is the instance that swaps "from the left" and
 "from the right"; no direction is singled out by the definition. -/
