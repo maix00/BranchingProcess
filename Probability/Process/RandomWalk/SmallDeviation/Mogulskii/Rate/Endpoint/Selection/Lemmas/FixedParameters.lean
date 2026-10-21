@@ -19,11 +19,23 @@ $T_n=\{\xi:-x_n/2\le S_j\le x_n/2\;(1\le j\le n)\}$.
 This proof-support module chooses explicit natural-number floor parameters for
 the fixed spectral endpoint-window estimate. Its sole cross-module result is
 `one_div_constant_mul_log_toReal_le_liminf_scaledLog_horizontalTubeProbability_of_floorEndpointWindows`:
-for fixed admissible spectral parameters and return probability $A>0$, it gives
-$(1/c)\log A\le\liminf_n(x_n^2/n)\log\mathbb P(T_n)$, together with eventual
-positivity and a lower bound for this logarithmic rate. The floor parameters
-and their convergence calculations are local to this proof and remain
-private. This is an internal step toward the horizontal-tube constant in
+for a probability law $\nu$ on $\mathbb R$ with mean $0$ and second moment
+$1$, a scale $x_n$ satisfying $x_n\to\infty$ and $x_n/\sqrt n\to0$, and a
+pre-Brownian process with continuous sample paths and measurable evaluations,
+write $r=\sqrt{c/q^2}$, $w=p/r$, $L_{\mathrm{sp}}$ for the chosen spectral
+lower bound, and $A$ for the chosen application lower bound. Suppose
+$c,q,p,\delta>0$, $p<1/32$,
+$e^{-\pi^2c/(2q^2)}<p/(p+4)$,
+$0<L_{\mathrm{sp}}<p e^{-\pi^2c/(2q^2)}$,
+$0<A\le1$, $A<L_{\mathrm{sp}}$, $3\delta<w$, and
+$2(1/(2r)+4w+6\delta)\sqrt c<1$. Then
+$(1/c)\log A\le\liminf_{n\to\infty}(x_n^2/n)\log\mathbb P(T_n)$, the
+probabilities $\mathbb P(T_n)$ are eventually positive, and the scaled
+logarithms are bounded below. Here $S_j=\sum_{i=0}^{j-1}\xi_i$ and
+$T_n=\{\xi:-x_n/2\le S_j\le x_n/2\text{ for }1\le j\le n\}$, as above.
+The floor parameters and their convergence calculations are local to this
+proof and remain private. This is an internal step toward the horizontal-tube
+constant in
 A. A. Mogul'skii, “Small deviations in the sample function space,” Theorem 3,
 Section 4, p. 764, *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974),
 755--765; see also the English translation, “Small Deviations in a Space of
