@@ -1593,6 +1593,32 @@ declaration location and whether a proposed result advances the library,
 rather than promoting a helper solely because two proofs share a shape
 ([review guide](https://leanprover-community.github.io/contribute/pr-review.html#location-location)).
 
+## Fixed endpoint-window parameter selection (2026-10-21)
+
+The fixed `α = 2` endpoint-window selection in
+`Mogulskii/Rate/Endpoint/Selection/Lemmas/FixedParameters.lean` is a proof
+assembly for one rate argument. Its floor sequences depend together on the
+spectral constant, the selected lattice proportion, the endpoint mesh, and
+the application lower bound. The cross-module estimate records exactly the
+result needed by `Endpoint/Selection/Basic.lean`; exporting the intermediate
+integer sequences or a record packaging these four parameters would expose
+the implementation choices rather than a separate reusable probability
+statement.
+
+The reusable rounding operation is already
+`Asymptotics.floorBlockLength`, with general convergence and quotient results
+in `Analysis/Asymptotics/Scale/BlockScale.lean`. The scale hypothesis is
+`IsMogulskiiScale`, whose meaning is `x_n → ∞` and `x_n / √n → 0`. The
+fixed-parameter module therefore remains under the nested `Lemmas/` directory;
+the semantic scale and floor APIs remain with their broader owners. Its module
+header now states the assumptions of the cross-module estimate, including the
+Brownian realization regularity and each strict parameter margin, rather than
+describing the application lower bound as a return probability. This review
+follows Mathlib's location checklist: search for a more general existing
+result, choose the semantic owner, and assess whether an API has future use
+beyond its current caller
+([Mathlib review guide](https://leanprover-community.github.io/contribute/pr-review.html#location-location)).
+
 ## Mogul'skii API-header follow-up (2026-10-20)
 
 The endpoint and terminal-left review added formula-bearing declaration lists
