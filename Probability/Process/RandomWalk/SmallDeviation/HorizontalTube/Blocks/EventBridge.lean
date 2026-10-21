@@ -12,7 +12,8 @@ public import Probability.Sequence.Filtration
 public import Probability.Sequence.IID.Basic
 public import Mathlib.MeasureTheory.Function.ConditionalExpectation.Basic
 
-import Probability.Sequence.IID.Blocks.Conditional
+import Probability.Sequence.IID.Blocks.StoppingTime
+import Probability.Independence.ConditionalIntegral
 
 /-!
 # Finite-block form of a horizontal tube with endpoint window
@@ -184,11 +185,22 @@ theorem iidSequenceLaw_condExp_tubeBlockPairEvent_ge
         {block | (past, block) ∈
           tubeBlockPairEvent lower width v₁ v₂ start length}).toReal
     simpa only [tubeBlockPairEvent, Set.mem_ofPred_eq] using hbound'
-  exact iidSequenceLaw_condExp_pairEvent_ge_of_sectionProbability
-    ν start length
-      (tubeBlockPairEvent lower width v₁ v₂ start length)
-      (measurableSet_tubeBlockPairEvent lower width v₁ v₂ start length)
-      goodPast hsections
+  have hblocks := indepFun_blockCoordinates_blockCoordinates ν 0 start length
+  have hnext : Measurable
+      (Combinatorics.Sequence.blockCoordinates (E := ℝ) (0 + start) length) := by
+    simpa only [Nat.zero_add] using
+      (measurable_blockCoordinates (E := ℝ) start length)
+  have hconditional := hblocks.condExp_indicator_pairEvent_ae_eq_sectionProbability
+    (measurable_blockCoordinates (E := ℝ) 0 start)
+    hnext
+    (tubeBlockPairEvent lower width v₁ v₂ start length)
+    (measurableSet_tubeBlockPairEvent lower width v₁ v₂ start length)
+  have hconditional' := by
+    simpa only [Nat.zero_add] using hconditional
+  filter_upwards [hconditional'] with increment hconditional
+  intro hgood
+  rw [hconditional]
+  exact hsections (Combinatorics.Sequence.blockCoordinates 0 start increment) hgood
 
 /-- The finite horizontal tube block event on the complete increment path. -/
 def tubeBlockEvent (start length : ℕ)
