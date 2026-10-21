@@ -62,6 +62,15 @@ GENERAL_LAYER_BOUNDARIES = {
         "Probability.BranchingRandomWalk",
     ),
     "Probability.Sequence.IID.Blocks.Prefix": (
+        "Algebra.BigOperators.AdditivePath",
+        "Algebra.Order.BigOperators.AdditivePath",
+        "Probability.Process.RandomWalk",
+        "Probability.BranchingProcess",
+        "Probability.BranchingRandomWalk",
+    ),
+    "Probability.Sequence.IID.Blocks.Consecutive": (
+        "Algebra.BigOperators.AdditivePath",
+        "Algebra.Order.BigOperators.AdditivePath",
         "Probability.Process.RandomWalk",
         "Probability.BranchingProcess",
         "Probability.BranchingRandomWalk",
