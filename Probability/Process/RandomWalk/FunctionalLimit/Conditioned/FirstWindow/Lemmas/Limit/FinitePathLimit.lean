@@ -13,7 +13,7 @@ public import Probability.Process.RandomWalk.FunctionalLimit.Donsker.Path.Finite
 /-!
 # Donsker convergence after a finite first-window shift
 
-The public theorem in this file is:
+The finite-horizon continuous-mapping step used by the first-window limit is:
 
 - `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.tendstoInDistribution_centeredFirstWindowShiftFiniteHorizon`:
   for every finite $s$, the law of the centered first-window shift of the

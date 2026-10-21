@@ -14,7 +14,7 @@ public import Probability.Process.RandomWalk.FunctionalLimit.Donsker.Path.Finite
 /-!
 # Convergence of finite first-window times
 
-The public theorems in this file are:
+The finite-time convergence steps used by the first-window limit are:
 
 - `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.tendstoInDistribution_firstWindowTimeFiniteHorizon`:
   for each finite $s$, the first eligible-window time of the
