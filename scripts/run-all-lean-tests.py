@@ -145,7 +145,7 @@ AXIOM_EXPECTATIONS = {
     ),
     Path("BranchingProcessTest/Probability/Process/RandomWalk/SmallDeviation/Drawdown/FiniteVarianceUpper.lean"): (
         "ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.additivePath_le_threshold_add_delta_of_noLargeDrop",
-        "ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.blockOscillationEvent_of_additiveSegment",
+        "ProbabilityTheory.RandomWalk.blockOscillationEvent_of_additiveSegment",
         "Asymptotics.tendsto_nat_div_floorBlockLength_atTop_of_horizonRatio",
         "ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.measureReal_noLargeDropEndpointBelowEvent_le_exp_of_finiteVariance",
     ),
