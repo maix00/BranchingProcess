@@ -8,6 +8,7 @@ module
 
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Corridor
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Partition
+import Probability.MeasureTheory.Asymptotics.ProbabilityRate
 import Mathlib.Topology.Order.LiminfLimsup
 
 /-!
@@ -76,8 +77,6 @@ theorem limsup_stableSmallDeviationRate_mul_log_probability_le_of_blockPowerBoun
       Real.log (probability n).toReal) ≤ (τ / constant) * Real.log q := by
   let blockCount : ℕ → ℕ := fun n =>
     horizon n / stableBlockLength α ν constant scale n
-  let coefficient : ℕ → ℝ := fun n =>
-    stableSmallDeviationRate α ν scale n * (blockCount n : ℝ)
   have hscaleTop : Tendsto scale atTop atTop :=
     IsStableMogulskiiScale.scale_tendsto_atTop hscale
   have hscalePos : ∀ᶠ n : ℕ in atTop, 0 < scale n :=
@@ -85,46 +84,20 @@ theorem limsup_stableSmallDeviationRate_mul_log_probability_le_of_blockPowerBoun
   have hslowPos : ∀ᶠ n : ℕ in atTop,
       0 < stableSlowVariation α ν (scale n) :=
     hscaleTop.eventually hslow.eventually_pos
-  have hlogBound : ∀ᶠ n : ℕ in atTop,
-      stableSmallDeviationRate α ν scale n * Real.log (probability n).toReal ≤
-        coefficient n * Real.log q := by
-    filter_upwards [hblockBound, hpositive, hscalePos, hslowPos] with n hprob hpos hs hL
-    have hprobTop : probability n ≠ ⊤ := ne_of_lt ((hprobabilityOne n).trans_lt
-      ENNReal.one_lt_top)
-    have hpowTop : (ENNReal.ofReal q) ^ blockCount n ≠ ⊤ :=
-      ENNReal.pow_ne_top ENNReal.ofReal_ne_top
-    have hrealBound : (probability n).toReal ≤ q ^ blockCount n := by
-      have hrealENN : (probability n).toReal ≤
-          ((ENNReal.ofReal q) ^ blockCount n).toReal :=
-        (ENNReal.toReal_le_toReal hprobTop hpowTop).2 (by simpa [blockCount] using hprob)
-      simpa [ENNReal.toReal_pow, ENNReal.toReal_ofReal hq.le] using hrealENN
-    have hrealPos : 0 < (probability n).toReal :=
-      ENNReal.toReal_pos (ne_of_gt hpos) hprobTop
-    have hlog := Real.log_le_log hrealPos hrealBound
-    rw [Real.log_pow] at hlog
-    have hrateNonneg : 0 ≤ stableSmallDeviationRate α ν scale n := by
-      rw [stableSmallDeviationRate]
-      positivity
-    have hmul := mul_le_mul_of_nonneg_left hlog hrateNonneg
-    calc
-      stableSmallDeviationRate α ν scale n * Real.log (probability n).toReal ≤
-          stableSmallDeviationRate α ν scale n *
-            ((blockCount n : ℝ) * Real.log q) := hmul
-      _ = coefficient n * Real.log q := by
-        dsimp [coefficient]
-        ring
-  have hcoefficient : Tendsto coefficient atTop (𝓝 (τ / constant)) := by
-    simpa [coefficient, blockCount] using
+  have hrateNonneg : ∀ᶠ n : ℕ in atTop,
+      0 ≤ stableSmallDeviationRate α ν scale n := by
+    filter_upwards [hscalePos, hslowPos] with n hs hL
+    rw [stableSmallDeviationRate]
+    positivity
+  have hcoefficient : Tendsto
+      (fun n => stableSmallDeviationRate α ν scale n * (blockCount n : ℝ))
+      atTop (𝓝 (τ / constant)) := by
+    simpa [blockCount] using
       tendsto_stableScaleTime_div_nat_mul_segmentBlockCount
         hα hα₂ hconstant hscale hslow hhorizon
-  have hright : Tendsto (fun n => coefficient n * Real.log q) atTop
-      (𝓝 ((τ / constant) * Real.log q)) := hcoefficient.mul_const _
-  calc
-    atTop.limsup (fun n => stableSmallDeviationRate α ν scale n *
-        Real.log (probability n).toReal) ≤
-      atTop.limsup (fun n => coefficient n * Real.log q) :=
-        Filter.limsup_le_limsup hlogBound hlowerCobounded hright.isBoundedUnder_le
-    _ = (τ / constant) * Real.log q := hright.limsup_eq
+  exact ProbabilityTheory.limsup_probabilityRate_le_of_eventually_le_pow
+    hq hprobabilityOne (by simpa [blockCount] using hblockBound) hpositive
+    hrateNonneg hcoefficient hlowerCobounded
 
 /-- A fixed stable block parameter bounds the normalized logarithmic rate on
 any positive-width horizontal corridor and any macroscopic time segment. The

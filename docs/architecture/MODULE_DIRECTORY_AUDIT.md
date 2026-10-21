@@ -322,7 +322,7 @@ the mirrored source-convention modules
 `TerminalLeftPartition/Lemmas/LowerGeometry.lean` each document their single
 proof-specific lemma. The stable finite-partition probability chain now also
 lists its rate conclusions in `Stable/RandomWalkBounds/Partition/Probability.lean`
-and `Stable/RandomWalkBounds/Partition/Lower/{EnergyLower,Positivity,WidthRate}.lean`; their proof-specific endpoint-core product construction is under `Partition/Lower/Lemmas/BridgeProduct.lean`, and the terminal-left counterpart is under `TerminalLeft/Partition/Lower/Lemmas/BridgeProduct.lean`. The finite-product logarithmic-rate transfer is at its probability-asymptotics owner, `Probability/MeasureTheory/Asymptotics/FiniteProductRate.lean`.
+and `Stable/RandomWalkBounds/Partition/Lower/{EnergyLower,Positivity,WidthRate}.lean`; their proof-specific endpoint-core product construction is under `Partition/Lower/Lemmas/BridgeProduct.lean`, and the terminal-left counterpart is under `TerminalLeft/Partition/Lower/Lemmas/BridgeProduct.lean`. The finite-product logarithmic-rate transfer is at its probability-asymptotics owner, `Probability/MeasureTheory/Asymptotics/ProbabilityRate.lean`.
 The source-convention rate entries now state the finite-partition and path-class
 limits in `Stable/RandomWalkBounds/TerminalLeft/Partition/Limit.lean` and
 `Stable/RandomWalkBounds/TerminalLeft/PathClass/Rate.lean`.
@@ -3634,3 +3634,36 @@ The source comparison used Mathlib's official documentation for
 and [`Probability.Independence.Basic`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Probability/Independence/Basic.html),
 then searched the pinned sources for an existing stopping-time block
 factorization.
+
+## Fixed-block logarithmic rate abstraction (2026-10-22)
+
+The abstraction search used Mathlib's official
+[`Analysis.Asymptotics.ExpGrowth` API](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Analysis/Asymptotics/ExpGrowth.html)
+and checked its source at the repository-pinned Mathlib revision
+`380f2aafb622cb2c1c93dac545b6389083c68c51`. Mathlib defines
+`ExpGrowth.expGrowthSup p = \limsup_n \log(p_n)/n` and provides
+`ExpGrowth.expGrowthSup_le_iff` for eventual exponential upper bounds. This
+is the standard abstract exponential-growth interface, but its normalization
+is the fixed index `n`; it does not directly express the varying block-count
+normalization used in the small-deviation arguments.
+
+The stable-process block proof and the Brownian finite-cover proof both use
+the same implication: if $p_n\le q^{m_n}$ eventually, $r_n\ge0$ eventually,
+$r_nm_n\to c$, and $p_n>0$ eventually, then
+\[
+  \limsup_n r_n\log p_n\le c\log q,
+\]
+provided the real-valued logarithmic sequence is lower-cobounded. That
+shared statement is now
+`ProbabilityTheory.limsup_probabilityRate_le_of_eventually_le_pow` in
+`Probability/MeasureTheory/Asymptotics/ProbabilityRate.lean`, alongside
+the existing finite-product lower-rate statement. The two random-walk files
+retain the event-specific block estimates and prove their respective limits
+for $r_nm_n$.
+
+The finite-cover parameter file had two further declarations used only by
+its own parameter-selection proof. They are now `private`; the cross-module
+selection result remains under `Spectral/Range/Rate/Lemmas/`, where its
+proof-specific role is visible. This audit follows the abstract API already
+present in Mathlib while introducing only the additional variable-rate
+statement required by both clients.

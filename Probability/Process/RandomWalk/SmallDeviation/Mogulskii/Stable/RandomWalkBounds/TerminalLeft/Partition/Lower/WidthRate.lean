@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-import Probability.MeasureTheory.Asymptotics.FiniteProductRate
+import Probability.MeasureTheory.Asymptotics.ProbabilityRate
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.Partition.Lower.Positivity
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.TerminalLeft.Partition.Lower.Lemmas.BridgeProduct
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.TerminalLeft.Partition.LowerProbability
