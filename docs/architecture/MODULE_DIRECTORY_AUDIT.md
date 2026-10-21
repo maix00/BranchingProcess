@@ -842,9 +842,6 @@ The proof family had been grouped in a directory named after its parameter
 condition rather than the mathematics in the files. It now lives under
 `EndpointDeviation/FirstStage/`: the entry proves an
 exponential low-count bound for the first-stage killed population, and its
-PZ-specific rate assembly is grouped under `Lemmas/`. The former `PositiveA/`
-source directory has been removed. The `rightTailPositiveA` tag remains on
-declarations belonging to the positive-exponent endpoint estimate. The
 first-stage cutoff itself does not depend on that exponent, so its definition
 and scale-property declarations now use the semantic name
 `rightTailFirstStageCutoff`.
@@ -1897,11 +1894,6 @@ the nested `Spine/Lemmas/` chain. Removing the unused `TwoPhase.lean` route
 and its one-use adapters leaves six proof-chain modules under `Lemmas/`, with
 no event definitions or final result hidden there.
 
-The former `EndpointDeviation/PositiveA/` directory is absent from both the
-working tree and the fetched GitHub `preflight` tree. `PositiveA` remains only
-inside parameter-indexed declaration names such as `rightTailPositiveA...`,
-where it records the positive exponent regime.
-
 The `EndpointDeviation/Roots/Countable.lean` review separated generic
 root-field restriction from endpoint-specific observables.
 `RootIndexed.StepField.measurable_first` and
@@ -2619,11 +2611,11 @@ and the style check passes with the pinned toolchain.
 ## Full source-tree structural scan (2026-10-21)
 
 A fresh scan of the current production and test source trees, excluding
-`.lake`, `Vendor/`, and `.git/`, found 1,488 production modules and 138 test
+`.lake`, `Vendor/`, and `.git/`, found 1,489 production modules and 138 test
 modules. Neither tree has a directory with more than eight direct Lean files.
 Across both trees, the scan found no same-level file/directory stem collision,
 no repeated parent-directory/file stem, no `Source/` directory, no
-`Lemmas.lean` alongside `Lemmas/`, and no `PositiveA/` directory. This checks
+`Lemmas.lean` alongside `Lemmas/`. This checks
 the structural invariants; semantic ownership and abstraction review remain an
 ongoing, statement-level audit.
 
@@ -2777,3 +2769,47 @@ Mogulskii clients import the finite-interval model from its semantic owner,
 and import the diffusive principal-eigenvalue limit directly where their
 proofs use it. All 32 changed Lean modules built successfully (3,594 Lake
 jobs); the four obsolete empty Mogulskii spectral directories were removed.
+
+## Abstraction review: Lévy–Khintchine exponent and sinc bounds (2026-10-21)
+
+This review checked candidate interfaces against the pinned Mathlib revision
+`380f2aafb622cb2c1c93dac545b6389083c68c51`, the official
+[Mathlib review guidance](https://github.com/leanprover-community/leanprover-community.github.io/blob/lean4/templates/contribute/pr-review.md),
+and the official [`Real.sinc` API](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Analysis/SpecialFunctions/Trigonometric/Sinc.html).
+The review guidance asks whether a result is already available in a more
+general form and whether the proposed interface remains useful beyond its
+current proof. Mathlib provides `Real.sinc`, its continuity, symmetry,
+unit bounds, and an inverse-absolute-value bound; the pinned [trigonometric
+bounds API](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Analysis/SpecialFunctions/Trigonometric/Bounds.html)
+also provides `Real.sin_ge_sub_cube` and the cosine estimate used below.
+The pinned source has no symmetric exponential-average identity for `Real.sinc`
+and no two-sided comparison of `1 - Real.sinc x` with `min 1 (x ^ 2)`.
+
+The four sinc statements now live at
+`Analysis/SpecialFunctions/Trigonometric/SincBounds.lean`: for real `x`,
+`(2 / (3π²)) · min(1,x²) ≤ 1 - Real.sinc x ≤ 2 · min(1,x²)`;
+the module also records
+`(1/2) ∫_{-1}^1 exp(iux) du = Real.sinc x` and strict positivity away from
+zero. The existing Mathlib `Real.sinc` is reused directly. These statements
+are standalone real-analysis and Fourier-integral facts, and the bounds are
+the general comparison needed for Lévy measures; none mentions a Lévy triple,
+an infinitely divisible law, or the smearing construction. Keeping them at the
+trigonometric analysis layer makes the estimates available to later analytic
+uses without exporting the proof-specific compactness and uniqueness steps.
+The small-argument upper-bound proof now uses Mathlib's stronger
+`Real.sin_ge_sub_cube` estimate instead of the local exponential Taylor bound.
+
+The exponent `ψ_T(ξ) = ibξ - σ²ξ²/2 + ∫(e^{ixξ} - 1 - ixξ·1_{|x|<1}) dν(x)`
+has moved to `LevyKhintchine/Defs.lean` beside its data structure. It is the
+definition attached to a triple and is required by the independent scaling
+module; the continuity, conditional-negative-definiteness, and representation
+proofs remain in `Representation.lean`. Accordingly, `Scaling.lean` imports
+`Defs.lean` rather than the full representation proof. `Uniqueness.lean`
+imports `Defs`, the sinc-analysis interface, and the characteristic-function
+and interval-integral APIs that its public statements expose; it keeps the
+representation proof as an ordinary import because it is used only in proofs.
+After this narrower import boundary exposed two proof-only dependencies in
+downstream modules, `FiniteVariation.lean` and `Stable/Exponent/Basic.lean`
+now import those dependencies directly. All seven affected modules pass
+`lint-style`, and the full `lake build BranchingProcess` succeeds with 5,602
+Lake jobs.
