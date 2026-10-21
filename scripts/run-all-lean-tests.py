@@ -397,7 +397,7 @@ AXIOM_EXPECTATIONS = {
         "IsCadlag.exists_right_oscillation_radius",
     ),
     Path("BranchingProcessTest/RandomWalk/Blocks/FiniteDimensionalIndependentBlocks.lean"): (
-        "ProbabilityTheory.RandomWalk.iIndepFun_variableConsecutiveBlockCoordinates",
+        "ProbabilityTheory.iIndepFun_variableConsecutiveBlockCoordinates",
         "ProbabilityTheory.RandomWalk.iIndepFun_variableConsecutiveBlockSums",
         "ProbabilityTheory.RandomWalk.FunctionalLimit.FiniteDimensional.tendstoInDistribution_consecutiveBlockSums",
         "ProbabilityTheory.RandomWalk.FunctionalLimit.FiniteDimensional.tendstoInDistribution_consecutiveBlockEndpoints",
