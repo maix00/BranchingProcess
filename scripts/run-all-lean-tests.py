@@ -39,7 +39,7 @@ AXIOM_EXPECTATIONS = {
         "MeasureTheory.measure_le_card_smul_of_finite_cover_invariant",
         "ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.eventually_measure_normalizedStep_linearBall_pos",
         "ProbabilityTheory.iidSequenceLaw_map_finPrefix",
-        "ProbabilityTheory.measure_pi_event_le_card_smul_of_reindexCover",
+        "ProbabilityTheory.measure_pi_event_le_card_smul_of_reindex_cover",
         "ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.cyclicPartialSum_removeLinearDrift",
         "ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.offsetCorridorPath_removeLinearDrift_iff_moving",
         "ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.finiteNormalizedStepPath_apply_grid",
