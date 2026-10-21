@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Filtration
+public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Field.Filtration
 public import Probability.BranchingRandomWalk.Population.Processes.StepSelection.Basic
 public import Combinatorics.BranchingWalk.Selection.Coupling.Offspring.Address
 

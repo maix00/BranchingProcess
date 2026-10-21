@@ -6,8 +6,8 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Distributions.Moments.Truncated
-public import Probability.Process.RandomWalk.Path.Truncation.Maximal
+public import Probability.Distributions.Moments.Truncated.Basic
+public import Probability.Process.RandomWalk.Path.Truncation.Maximal.Basic
 
 /-!
 # Second-moment maximal bounds for truncated walks
