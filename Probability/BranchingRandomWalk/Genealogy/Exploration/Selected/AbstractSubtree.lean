@@ -9,6 +9,36 @@ module
 public import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.DomainFlow
 public import Probability.BranchingRandomWalk.Step.Position.Measurability
 
+/-!
+# Subtrees selected from the explored field
+
+For a measurable selector `chosen` whose range is countable and whose values
+have fixed depth `n`, `selectedSubtreeStepField chosen` is independent of the
+generation-`n` domain flow and has the original step-field law. For measurable
+`A` in that flow and measurable `B`, the factorization is
+$P(A\cap F^{-1}(B))=P(A)P(B)$, where
+$F=\operatorname{selectedSubtreeStepField}(chosen)$ and
+$P=\operatorname{stepFieldLaw}(\mu)$.
+
+- `ProbabilityTheory.BranchingRandomWalk.selectedSubtreeStepField` defines
+  the selected subtree field.
+- `ProbabilityTheory.BranchingRandomWalk.selectedSubtreeStepField_measurable_of_countable_range`
+  and `ProbabilityTheory.BranchingRandomWalk.selectedSubtreeStepField_measurable`
+  prove measurability from a countable range, respectively from generation
+  filtration measurability.
+- `ProbabilityTheory.BranchingRandomWalk.abstractSelectionCell` partitions
+  an event by the selector's value.
+- `ProbabilityTheory.BranchingRandomWalk.abstractSelectionCell_measurable`
+  and `ProbabilityTheory.BranchingRandomWalk.abstractSelectionCell_measure_factorization`
+  prove measurability and fixed-subtree factorization on each cell.
+- `ProbabilityTheory.BranchingRandomWalk.selectedSubtreeStepField_event_factorization`
+  proves the displayed event identity.
+- `ProbabilityTheory.BranchingRandomWalk.selectedSubtreeStepField_law` proves
+  that the selected subtree has the original step-field law.
+- `ProbabilityTheory.BranchingRandomWalk.selectedSubtreeStepField_independent`
+  proves independence from the generation-`n` domain flow.
+-/
+
 open MeasureTheory ProbabilityTheory
 
 @[expose] public section

@@ -6,8 +6,8 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Distributions.Stable.Attraction.Norming
-public import Analysis.Asymptotics.BlockScale
+public import Probability.Distributions.Stable.Attraction.Norming.Basic
+public import Analysis.Asymptotics.Scale.BlockScale
 public import Analysis.Asymptotics.RegularVariation.AsymptoticInverse
 
 /-!

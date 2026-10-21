@@ -17,6 +17,39 @@ has a surviving descendant at depth `n` when some realized address has length
 `n`. Permanent survival means one infinite slot sequence has every finite
 prefix realized. Without finite branching, merely having descendants at every
 depth is weaker.
+
+## Public declarations
+
+* `Combinatorics.Branching.RootIndexed.BranchingWalk.SurvivesToGeneration`:
+  $\exists u:\operatorname{TreeNode}(\alpha),\ |u|=n\ \land\
+  \operatorname{surviveAlong}(\operatorname{step}(\operatorname{walk},r),[],u)$.
+* `Combinatorics.Branching.RootIndexed.BranchingWalk.HasArbitrarilyDeepDescendant`:
+  $\forall n,\ \operatorname{SurvivesToGeneration}(\operatorname{walk},r,n)$.
+* `Combinatorics.Branching.RootIndexed.BranchingWalk.lineagePrefix` gives the
+  length-`n` prefix of an infinite sequence of child slots.
+* `Combinatorics.Branching.RootIndexed.BranchingWalk.HasInfiniteLineage`:
+  $\exists \ell:\mathbb N\to\alpha,\ \forall n,\
+  \operatorname{surviveAlong}(\operatorname{step}(\operatorname{walk},r),[],
+  \operatorname{lineagePrefix}(\ell,n))$.
+* `Combinatorics.Branching.RootIndexed.BranchingWalk.SurvivesForever` names
+  existence of one infinite surviving lineage.
+* `Combinatorics.Branching.RootIndexed.BranchingWalk.HasInfiniteLineage.hasArbitrarilyDeepDescendant`:
+  an infinite surviving lineage gives a surviving address at every depth.
+* `Combinatorics.Branching.RootIndexed.BranchingWalk.hasArbitrarilyDeepDescendant_iff_hasInfiniteLineage`:
+  if $\forall r,u,\{i:\alpha\mid\operatorname{survive}(\operatorname{step}(\operatorname{walk},r,u),i)\}$
+  is finite, then unbounded tree height is equivalent to existence of an
+  infinite surviving lineage.
+* `Combinatorics.Branching.RootIndexed.BranchingWalk.hasInfiniteLineage_iff_forall_survivesToGeneration`:
+  for finite $\alpha$, $\operatorname{HasInfiniteLineage}(\operatorname{walk},\star)$
+  is equivalent to $\forall n,\operatorname{SurvivesToGeneration}(\operatorname{walk},\star,n)$.
+* `Combinatorics.Branching.BranchingWalk.SurvivesForever` specializes permanent
+  survival to a single-root branching walk.
+* `Combinatorics.Branching.Walk.survivesForever_iff_survivesEveryGeneration`:
+  $\operatorname{SurvivesForever}(\operatorname{walk})\ \leftrightarrow\
+  \forall n,\operatorname{surviveAlong}(\operatorname{step}(\operatorname{walk},\star),[],\operatorname{lineNode}(n))$.
+* `Combinatorics.Branching.Walk.ofIncrements_survivesForever` states that every
+  increment path defines a walk satisfying
+  $\operatorname{SurvivesForever}(\operatorname{ofIncrements}(x,\xi))$.
 -/
 
 @[expose] public section

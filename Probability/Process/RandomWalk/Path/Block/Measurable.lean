@@ -9,11 +9,14 @@ module
 public import Probability.Process.RandomWalk.Path.Block.Basic
 public import Mathlib.MeasureTheory.Constructions.BorelSpace.Order
 
+import MeasureTheory.Function.FinPartialSum
+
 /-!
 # Measurability of increment blocks
 
 The block operations are deterministic; this file records their measurability
-when the increment sequence is regarded as the canonical sample space.
+when the increment sequence is regarded as the canonical sample space. It
+also records measurability of the finite partial-sum map on a block.
 -/
 
 open MeasureTheory
@@ -21,7 +24,6 @@ open MeasureTheory
 @[expose] public section
 
 namespace ProbabilityTheory.RandomWalk
-
 
 /-- A large oscillation in one of finitely many equal blocks is a measurable
 event on the infinite increment path space. -/
