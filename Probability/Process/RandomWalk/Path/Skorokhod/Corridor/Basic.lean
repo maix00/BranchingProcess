@@ -9,7 +9,7 @@ module
 public import Probability.Process.RandomWalk.Path.Corridor.Interpolation.Basic
 public import Probability.Process.RandomWalk.Path.Skorokhod.Basic
 public import Mathlib.Topology.UnitInterval
-public import Topology.Cadlag.Skorokhod.Corridor
+public import Topology.Cadlag.Skorokhod.Corridor.Basic
 
 /-!
 # Corridor membership of càdlàg walk paths

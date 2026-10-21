@@ -8,7 +8,7 @@ module
 
 public import Mathlib.MeasureTheory.Constructions.UnitInterval
 public import MeasureTheory.Measure.LevyMeasure.Cutoff
-import Probability.RandomMeasure.Poisson.TimeMark
+import Probability.RandomMeasure.Poisson.Intensity.TimeMark
 
 /-!
 # Intensity conditions for a one-jump entrance

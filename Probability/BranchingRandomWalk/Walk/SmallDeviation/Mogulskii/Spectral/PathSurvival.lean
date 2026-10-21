@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.PathSurvival
+public import Probability.Process.RandomWalk.Rademacher.FiniteInterval.Path
 public import Probability.BranchingRandomWalk.Walk.Path.Window
 public import Probability.BranchingRandomWalk.Walk.Rademacher
 
@@ -20,12 +20,13 @@ viewed through the singleton-slot branching-walk realization.
 open MeasureTheory Set
 open scoped BigOperators ENNReal Matrix
 
+open ProbabilityTheory.RandomWalk.Rademacher.FiniteInterval
+
 @[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk.SmallDeviation.Mogulskii
 
 open ProbabilityTheory.RandomWalk
-open _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 open Combinatorics.Branching.Walk
 
 /-- The interval-kernel mass is the same event under the singleton-slot

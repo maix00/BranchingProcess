@@ -4,10 +4,36 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.Property
-import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law
+module
+
+public import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.Property
+public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law.Basic
+
+/-!
+# Subtrees of a finite family of roots
+
+For independent root step fields with common law `μ`, the subtree fields
+selected at deterministic addresses remain independent and each has law
+`stepFieldLaw μ`. In particular, their joint law is the finite product law
+$\mathcal L((F_i)_{i<m})=\bigotimes_{i<m}\operatorname{stepFieldLaw}(\mu)$.
+
+- `ProbabilityTheory.BranchingRandomWalk.multiRootSubtreeStepField` defines
+  the subtree at root `i` and address `u`.
+- `ProbabilityTheory.BranchingRandomWalk.multiRootSubtreeStepField_measurable`
+  proves its measurability.
+- `ProbabilityTheory.BranchingRandomWalk.multiRootSubtreeStepField_law`
+  proves that its law is `stepFieldLaw μ`.
+- `ProbabilityTheory.BranchingRandomWalk.multiRootSubtreeStepFields_independent`
+  proves independence across roots.
+- `ProbabilityTheory.BranchingRandomWalk.multiRootSubtreeStepFields_law`
+  identifies the joint law with the finite product law above.
+- `ProbabilityTheory.BranchingRandomWalk.multiRootSubtree_position_decomposition`
+  gives the displacement decomposition along an address concatenation.
+-/
 
 open MeasureTheory ProbabilityTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
@@ -91,3 +117,5 @@ theorem multiRootSubtree_position_decomposition
     RootIndexed.displace_append id step i u v
 
 end ProbabilityTheory.BranchingRandomWalk
+
+end

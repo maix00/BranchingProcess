@@ -80,7 +80,7 @@ def ofDeterministic (M : Mechanism ι) (hM : Measurable M.select) :
 end RandomSelectMechanism
 
 /-- A random capacity selection from an arbitrary candidate set. -/
-structure RandomNSelection (Ω ι : Type*) (N : ℕ)
+structure RandomCapacitySelection (Ω ι : Type*) (N : ℕ)
     [MeasurableSpace Ω] [MeasurableSpace ι] where
   select : Ω → Set ι → Finset ι
   subset : ∀ ω s q, q ∈ select ω s → q ∈ s
@@ -89,20 +89,20 @@ structure RandomNSelection (Ω ι : Type*) (N : ℕ)
   card_infinite : ∀ ω s, s.Infinite → (select ω s).card = N
   measurable_select : Measurable (fun p : Ω × Set ι => select p.1 p.2)
 
-namespace RandomNSelection
+namespace RandomCapacitySelection
 
 variable {Ω ι : Type*} {N : ℕ}
     [MeasurableSpace Ω] [MeasurableSpace ι]
 
 /-- Forget the capacity law and coerce the finite output to a set. -/
-def toRandomSelectMechanism (R : RandomNSelection Ω ι N)
+def toRandomSelectMechanism (R : RandomCapacitySelection Ω ι N)
     (hcoe : Measurable ((↑) : Finset ι → Set ι)) :
     RandomSelectMechanism Ω ι where
   select ω s := ↑(R.select ω s)
   subset := R.subset
   measurable_select := hcoe.comp R.measurable_select
 
-theorem select_card_le (R : RandomNSelection Ω ι N)
+theorem select_card_le (R : RandomCapacitySelection Ω ι N)
     (ω : Ω) (s : Set ι) : (R.select ω s).card ≤ N := by
   rcases s.finite_or_infinite with h | h
   · rw [R.card_finite ω s h]
@@ -110,14 +110,14 @@ theorem select_card_le (R : RandomNSelection Ω ι N)
   · rw [R.card_infinite ω s h]
 
 def ofDeterministic (M : NSelection ι N) (hM : Measurable M.select) :
-    RandomNSelection Ω ι N where
+    RandomCapacitySelection Ω ι N where
   select _ := M.select
   subset _ := M.subset
   card_finite _ := M.card_finite
   card_infinite _ := M.card_infinite
   measurable_select := hM.comp measurable_snd
 
-end RandomNSelection
+end RandomCapacitySelection
 
 end ProbabilityTheory.BranchingRandomWalk.Selection
 

@@ -9,11 +9,22 @@ module
 public import Probability.Process.RandomWalk.Path.Block.Basic
 public import Mathlib.MeasureTheory.Constructions.BorelSpace.Order
 
+import MeasureTheory.Function.FinPartialSum
+
 /-!
 # Measurability of increment blocks
 
 The block operations are deterministic; this file records their measurability
-when the increment sequence is regarded as the canonical sample space.
+when the increment sequence is regarded as the canonical sample space. It
+uses `Fin.measurable_partialSum` from
+`MeasureTheory.Function.FinPartialSum` for coordinates of a finite partial-sum
+map.
+
+* `measurableSet_exists_block_exists_abs_blockSum_ge`: for
+  $blocks,length\in\mathbb N$, $threshold\in\mathbb R$, and
+  $x : \mathbb N \to \mathbb R$, the event
+  $\{x\mid \exists j<blocks,\ \exists k\le length,\ threshold\le
+  |\operatorname{blockSum}_x(j\cdot length,k+1)|\}$ is measurable.
 -/
 
 open MeasureTheory
@@ -21,7 +32,6 @@ open MeasureTheory
 @[expose] public section
 
 namespace ProbabilityTheory.RandomWalk
-
 
 /-- A large oscillation in one of finitely many equal blocks is a measurable
 event on the infinite increment path space. -/

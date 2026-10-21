@@ -5,7 +5,7 @@ Authors: WANG Yiyang
 -/
 
 import Probability.Process.Levy.Jump.PoissonConfiguration.Increment
-import Probability.RandomMeasure.Poisson.Support
+import Probability.RandomMeasure.Poisson.Intensity.Support
 
 /-!
 # Almost-sure path identities for cutoff Poisson configurations
