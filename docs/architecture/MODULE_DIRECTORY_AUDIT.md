@@ -3514,3 +3514,44 @@ the elementary conditional-probability factorization cites Wang Yiyang,
 Appendix A.2, Lemma A.7, without attributing that identity to equation (3.3).
 The PDF was checked at the authors' hosted copy of
 [*Invariance principles for random walks conditioned to stay positive*](https://chaumont.pages.math.cnrs.fr/rpdfiles/carcha.pdf).
+
+## First-window and Brownian-meander proof ownership (2026-10-21)
+
+The abstraction search checked the official
+[Mathlib Brownian-motion interface](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Probability/BrownianMotion/Basic.html),
+[Mathlib Portmanteau API](https://leanprover-community.github.io/mathlib4_docs/Mathlib/MeasureTheory/Measure/Portmanteau.html),
+[Mathlib measure-support API](https://leanprover-community.github.io/mathlib4_docs/Mathlib/MeasureTheory/Measure/Support.html),
+and the upstream
+[BrownianMotion formalization](https://github.com/RemyDegenne/brownian-motion).
+Mathlib models Brownian motion through its finite-dimensional laws and
+almost-sure continuity; its Portmanteau and support APIs already express the
+general open-set lower bound and the positive-mass consequence of support.
+The upstream BrownianMotion project formalizes Brownian motion and stochastic
+integrals; the inspected interfaces provide no Brownian-meander path law or
+meander-conditioning abstraction. The repository's last-zero construction
+and conditioned random-walk limit therefore remain owned by
+`Brownian/Meander/` and `FunctionalLimit/Conditioned/Meander/` respectively.
+The source check used the repository-pinned BrownianMotion revision
+`d6d901b6df592a543b7edf221f92d2ee6760d18d` and Mathlib revision
+`380f2aafb622cb2c1c93dac545b6389083c68c51`.
+
+`FirstWindow/Definition`, `Existence`, `ConditionedLaw`, and `Selection`
+define the first surviving-window event, its almost-sure existence, the
+selected block's conditional law, and the selected index/path. These are the
+mathematical objects and reusable first-window interfaces. `Limit.lean` is
+the result entry for Bolthausen's first-window functional-limit argument.
+The finite-horizon convergence, shifted-path mapping, and vanishing
+no-window probability are steps used to prove that result; they now live in
+`FirstWindow/Lemmas/Limit/`. The existing block decomposition step remains
+under `FirstWindow/Lemmas/BlockFactorization.lean`.
+
+`Meander/CorridorProbability.lean` specialized generic open-set Portmanteau
+and support facts to one Brownian-meander corridor. Its only callers were the
+conditioned-transition proof chain, so it now lives in
+`Meander/Lemmas/CorridorProbability.lean`; no corridor-specific abstraction
+was promoted. The general measure-theoretic statements remain in the
+Portmanteau and support modules. The interface check is aligned with the
+conditioned invariance results of Bolthausen, *On a Functional Central Limit
+Theorem for Random Walks Conditioned to Stay Positive*, Theorem 3.2, and
+Iglehart, *Functional Central Limit Theorems for Random Walks Conditioned to
+Stay Positive*, Section 3, theorem (3.4), p. 616.

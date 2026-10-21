@@ -6,13 +6,13 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.FirstWindow.FiniteTime
+import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.FirstWindow.Lemmas.Limit.FiniteTime
 public import Probability.Process.Brownian.AboveStart.FirstWindow.Basic
 
 /-!
 # Approximation by finite first-window times
 
-The public theorem in this file is:
+The result used in the final first-window limit argument is:
 
 - `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.tendsto_measure_noFirstWindow`:
   for a centered unit-variance random walk, the probability that the

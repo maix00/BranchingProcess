@@ -11,9 +11,10 @@ public import Mathlib.MeasureTheory.Measure.Support
 public import Probability.Process.Brownian.Meander.Corridor
 
 /-!
-# Conditioned random-walk limits at a Brownian meander
+# Proof lemma for conditioned Brownian-meander corridors
 
-The public theorem in this file is:
+This proof lemma specializes the open-set Portmanteau bound to the Brownian
+meander corridor used in the conditioned-transition estimate:
 
 - `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.exists_eventually_meanderCorridorProbability_ge`:
   if the conditioned path laws $Q_n\circ X_n^{-1}$ converge to a law
