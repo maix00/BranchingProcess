@@ -11,6 +11,17 @@ public import Combinatorics.BranchingWalk.Selection.NSelection.Walk.Basic
 /-!
 # The cloud of a deterministic `N`-branching walk
 
+## Public declarations
+
+The declarations are in namespace
+`Combinatorics.Branching.Selection.NSelection.Walk`.
+
+- `mapOrderDual_points`: `(V.mapOrderDual).cloud.points n` is the image of
+  `V.cloud.points n` under `OrderDual.toDual`.
+- `mapOrderDual_cloud`: `(V.mapOrderDual).cloud = V.cloud.mapOrderDual`.
+- `mem_mapOrderDual_cloud_iff`: membership of `OrderDual.toDual x` in the
+  reversed cloud at generation `n` is equivalent to `x ∈ V.population n`.
+
 The cloud of a walk is the family of its populations, one finite set of
 positions per generation. Because the walk keeps at most `N` particles at each
 step, every time slice of the cloud is finite and has at most `N` elements.

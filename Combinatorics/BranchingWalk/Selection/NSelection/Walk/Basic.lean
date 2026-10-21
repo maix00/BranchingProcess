@@ -13,6 +13,28 @@ public import Combinatorics.BranchingWalk.Step.Measure.PointMeasure
 /-!
 # The deterministic `N`-branching walk
 
+## Public declarations
+
+`Combinatorics.Branching.Selection.NSelection.Walk` is a deterministic walk
+with `initial.card ≤ N` and finite offspring sets. The remaining declarations
+are in namespace `Combinatorics.Branching.Selection.NSelection.Walk`.
+
+- `step` and `step_def`: `step V s = M.select (s.biUnion V.children)`.
+- `population`, `population_zero`, and `population_succ`:
+  `population 0 = initial` and
+  `population (n + 1) = step (population n)`.
+- `population_card_le`: `∀ n, (population n).card ≤ N`.
+- `cloud`, `mem_cloud_points`, `cloud_points_zero`, and `cloud_points_succ`:
+  the time slice is the generation's selected
+  population, with the initial and successor slice equations.
+- `cloud_points_finite` and `cloud_points_ncard_le`: every slice is
+  finite and has cardinality at most `N`.
+- `childrenOfStep` and `ofChild`: construct finite child positions
+  from surviving slots and build a walk from a field of child steps.
+- `mapOrderDual`, `mapOrderDual_select_biUnion`, and
+  `population_mapOrderDual`: order reversal commutes with selection and
+  maps each generation to the image under `OrderDual.toDual`.
+
 `Walk` is the deterministic combinatorial object: it starts with at most `N`
 particles, every particle produces a finite set of offspring positions, and a
 selection mechanism of capacity `N` keeps the next generation. The name carries

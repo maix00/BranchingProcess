@@ -10,6 +10,19 @@ import Combinatorics.BranchingWalk.Cloud.Order.SliceDominatingMap
 /-!
 # Endpoint minima under spatial domination
 
+## Public declarations
+
+The declarations below are in namespace
+`Combinatorics.Branching.Selection.Coupling`.
+
+- `populationCloud_inf'_le_of_sliceDominatingMap`:
+  if `hmap` injectively maps every source particle to a target particle whose
+  observed value is no larger, and `source.Nonempty`, then the target minimum
+  is at most the source minimum.
+- `populationCloud_source_ge_of_target_ge_of_sliceDominatingMap`:
+  under the same assumptions, `threshold ≤ target minimum` implies
+  `threshold ≤ source minimum`.
+
 A particle injection that sends every source particle to a particle no higher
 in the target gives the corresponding order between the two finite endpoint
 minima.  This is the pathwise order step used when comparing selected
@@ -67,17 +80,6 @@ theorem populationCloud_inf'_le_of_sliceDominatingMap
   rw [hpEq]
   exact hdom
 
-/-- Right-tail events are ordered in the same direction as the endpoint
-minima: if the target minimum is at most the source minimum, a target value
-above a threshold forces the source value above that threshold. -/
-theorem source_ge_of_target_ge_of_minima_le
-    {sourceMinimum targetMinimum threshold : Value}
-    [Preorder Value]
-    (hminimum : targetMinimum ≤ sourceMinimum)
-    (htarget : threshold ≤ targetMinimum) :
-    threshold ≤ sourceMinimum :=
-  htarget.trans hminimum
-
 /-- A right-tail event for the target endpoint minimum implies the same
 right-tail event for the source endpoint minimum under spatial domination. -/
 theorem populationCloud_source_ge_of_target_ge_of_sliceDominatingMap
@@ -99,7 +101,8 @@ theorem populationCloud_source_ge_of_target_ge_of_sliceDominatingMap
         (fun q => φ (targetWalk.position d q.1 q.2)) →
       threshold ≤ source.inf' hsource
         (fun p => φ (sourceWalk.position d p.1 p.2)) := by
-  exact source_ge_of_target_ge_of_minima_le
+  intro htarget
+  exact htarget.trans
     (populationCloud_inf'_le_of_sliceDominatingMap φ d sourceWalk targetWalk
       source target hmap hsource)
 
