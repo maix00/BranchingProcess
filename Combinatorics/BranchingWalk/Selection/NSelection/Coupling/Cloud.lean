@@ -6,15 +6,22 @@ Authors: WANG Yiyang
 
 module
 
-public import Combinatorics.BranchingWalk.Basic.Position
+public import Combinatorics.BranchingWalk.Basic.Position.Basic
 public import Combinatorics.BranchingWalk.Cloud.Order.DynamicSelection
-public import Combinatorics.BranchingWalk.Selection.NSelection.Matching
+public import Combinatorics.BranchingWalk.Selection.Coupling.PopulationCloud
+public import Combinatorics.BranchingWalk.Selection.NSelection.Mechanism.Matching
 
 /-!
 # Population clouds for the multi-root spatial coupling
 
 This file turns finite populations in root-indexed branching walks into
 constant-time clouds and chooses the canonical equal-rank injection.
+
+The public API consists of `population_card_le_of_injection`, which gives
+`source.card ≤ target.card` from a spatially dominating injection of the
+population clouds; `canonicalInjection`, which replaces any such witness by
+the injection matching equal dynamic ranks; and `canonicalInjection_apply`,
+which identifies that map pointwise with `matchByRankOrSelf`.
 -/
 
 @[expose] public section
@@ -25,32 +32,6 @@ open Combinatorics.UlamHarris
 open Selection.NSelection
 
 variable {Root α Mark Position Value : Type*}
-
-/-- A finite labelled population presented as a constant-time cloud with the
-position function of a root-indexed branching walk. -/
-def populationCloud [AddCommMonoid Position]
-    (d : Mark → Position)
-    (β : RootIndexed.BranchingWalk Root α Mark Position)
-    (population : Finset (RootIndexed.TreeNode Root α)) :
-    Cloud Unit Root α Position where
-  particles _ := ↑population
-  position := β.position d
-
-@[simp] theorem populationCloud_particles [AddCommMonoid Position]
-    (d : Mark → Position)
-    (β : RootIndexed.BranchingWalk Root α Mark Position)
-    (population : Finset (RootIndexed.TreeNode Root α)) (t : Unit) :
-    (populationCloud d β population).particles t = ↑population :=
-  rfl
-
-@[simp] theorem populationCloud_position [AddCommMonoid Position]
-    (d : Mark → Position)
-    (β : RootIndexed.BranchingWalk Root α Mark Position)
-    (population : Finset (RootIndexed.TreeNode Root α))
-    (p : RootIndexed.TreeNode Root α) :
-    (populationCloud d β population).position p.1 p.2 =
-      β.position d p.1 p.2 :=
-  rfl
 
 theorem population_card_le_of_injection
     [AddCommMonoid Position]

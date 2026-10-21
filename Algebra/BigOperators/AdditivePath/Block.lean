@@ -6,11 +6,39 @@ Authors: WANG Yiyang
 
 module
 
-public import Algebra.BigOperators.AdditivePath
+public import Algebra.BigOperators.AdditivePath.Basic
 public import Mathlib.Algebra.BigOperators.Intervals
+public import Combinatorics.Sequence.Block
 
 /-!
 # Blocks of additive paths
+
+The public declarations in `AdditivePath` are:
+
+For increments $\xi$, write
+$D_n(\xi)=\operatorname{displacement}(n,\xi)=\sum_{k<n}\xi_k$.
+
+- `blockSum`: $B(s,\ell,\xi)=\sum_{k\in[s,s+\ell)}\xi_k$.
+- `blockStart` is a compatibility alias for the sequence-level start index
+  $b_j=\sum_{i<j}\ell_i$ defined in `Combinatorics.Sequence.Block`.
+- `blockStart_zero`, `blockStart_succ`, `blockStart_const`, and
+  `blockStart_mono` give $b_0=0$, $b_{j+1}=b_j+\ell_j$,
+  $b_j=j\ell$ for a constant block length, and monotonicity in $j$.
+- `blockSum_zero` and `blockSum_zero_start` give $B(s,0,\xi)=0$ and
+  $B(0,\ell,\xi)=\operatorname{displacement}(\ell,\xi)$.
+- `blockSum_eq_displacement_natAdd` and
+  `partialSum_block_eq_displacement` give
+  $B(s,\ell,\xi)=D_\ell(k\mapsto\xi_{s+k})$ and
+  $\operatorname{partialSum}(k\mapsto\xi_{s+k},i)=D_{i.val}(k\mapsto\xi_{s+k})$.
+- `blockSum_add` and `displacement_add_eq_add_blockSum` give the consecutive
+  concatenation identities
+  $B(s,m+n,\xi)=B(s,m,\xi)+B(s+m,n,\xi)$ and
+  $D(s+\ell,\xi)=D(s,\xi)+B(s,\ell,\xi)$.
+- `displacement_blockStart_eq_sum_blockSum` reconstructs the displacement
+  through $j$ variable-length blocks as
+  $D(b_j,\xi)=\sum_{i<j}B(b_i,\ell_i,\xi)$.
+- `blockSum_sub_const` states
+  $B(s,\ell,k\mapsto\xi_k-c)=B(s,\ell,\xi)-\ell\,c$ in an additive group.
 
 This file provides finite coordinate and consecutive-sum operations for an
 increment sequence.
@@ -31,35 +59,23 @@ def blockSum (start length : ℕ) (increment : ℕ → E) : E :=
 
 /-- Start index of the `j`-th block in a sequence of possibly unequal block
 lengths. -/
-def blockStart (length : ℕ → ℕ) (j : ℕ) : ℕ :=
-  ∑ i ∈ Finset.range j, length i
+abbrev blockStart (length : ℕ → ℕ) (j : ℕ) : ℕ :=
+  Combinatorics.Sequence.blockStart length j
 
 @[simp] theorem blockStart_zero (length : ℕ → ℕ) : blockStart length 0 = 0 := by
-  simp [blockStart]
+  exact Combinatorics.Sequence.blockStart_zero length
 
 @[simp] theorem blockStart_succ (length : ℕ → ℕ) (j : ℕ) :
     blockStart length (j + 1) = blockStart length j + length j := by
-  simp [blockStart, Finset.sum_range_succ]
+  exact Combinatorics.Sequence.blockStart_succ length j
 
 theorem blockStart_const (length blocks : ℕ) :
     blockStart (fun _ => length) blocks = blocks * length := by
-  induction blocks with
-  | zero => simp [blockStart]
-  | succ blocks ih =>
-      rw [blockStart_succ, ih]
-      simp [Nat.succ_mul, Nat.add_comm]
+  exact Combinatorics.Sequence.blockStart_const length blocks
 
 theorem blockStart_mono (length : ℕ → ℕ) {i j : ℕ} (hij : i ≤ j) :
     blockStart length i ≤ blockStart length j := by
-  induction j with
-  | zero => simp_all [blockStart]
-  | succ j ih =>
-      rw [blockStart_succ]
-      by_cases h : i ≤ j
-      · exact (ih h).trans (Nat.le_add_right _ _)
-      · have hi : i = j + 1 := by omega
-        subst i
-        exact le_of_eq (blockStart_succ length j)
+  exact Combinatorics.Sequence.blockStart_mono length hij
 
 @[simp] theorem blockSum_zero (start : ℕ) (increment : ℕ → E) :
     blockSum start 0 increment = 0 := by

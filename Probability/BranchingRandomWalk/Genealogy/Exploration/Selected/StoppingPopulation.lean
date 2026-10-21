@@ -4,23 +4,42 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Genealogy.Exploration.Selected.CellBranching
+import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Field.Filtration
+import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law.Basic
 import Probability.Process.HittingTime.Declarations
-import Probability.BranchingRandomWalk.Population.Processes.Selected
+import Probability.BranchingRandomWalk.Population.Processes.Selected.Basic
 
 /-!
 # Branching for a finite multi-root population at a stopping time
 
-This file removes the fixed-cardinality restriction from the stopped
-branching argument.  A random finite population is first partitioned by its
-value `s` and by the finite value of the stopping time.  On each such cell,
-the fixed enumeration of `s` lies at one deterministic generation, so the
-deterministic multi-root branching theorem applies.
+The public declarations in namespace `ProbabilityTheory.BranchingRandomWalk`
+are:
 
-The statement includes `s = ∅`.  Thus extinction and branching-step point processes with no atoms require no exceptional convention. This file contains
-the population read at a random generation, its cell measurability, the cell
-partition, and the measure of each cell; the cellwise branching laws are in
-`Selected/StoppingCellBranching/`.
+- `selectedPopulationAt N x τ ω` is
+  \[
+    \begin{cases}
+      \varnothing,&\tau(\omega)=\top,\\
+      \operatorname{selectedPopulation}(N,x,n,\omega),&\tau(\omega)=n.
+    \end{cases}
+  \]
+- `selectedPopulationAt_cell_measurable N x τ hτ hfinite s` proves that the
+  event of population value `s` is measurable in the stopped domain.
+- `selectedPopulationAt_depth N x τ ω u hu n hn` states that every address in
+  the selected population has length `n` whenever `τ ω = n`.
+- `multiRoot_stoppedPopulation_cells_partition population A` proves that the
+  disjoint cells `A ∩ {ω | population ω = s}` cover `A`.
+- `multiRoot_stoppedPopulation_cells_measure_sum μ τ hτ population
+  hpopulation A hA` states
+  \[
+    \sum_s \nu_m\!\left(A\cap\{\operatorname{population}=s\}\right)
+      =\nu_m(A),
+  \]
+  where `νₘ = finiteRootStepFieldLaw μ m` and `A` and each population fibre
+  are measurable at `τ`.
+
+The selected law on each cell is recorded in
+`Selected/StoppingCellBranching/RandomSize.lean`. The partition includes
+`s = ∅`, so extinction needs no separate case.
 -/
 
 open MeasureTheory ProbabilityTheory
@@ -104,20 +123,6 @@ theorem selectedPopulationAt_depth {m : ℕ}
   intro n hn
   simpa [selectedPopulationAt, hn] using
     selectedPopulation_depth N x n ω u (by simpa [selectedPopulationAt, hn] using hu)
-
-/-- A stopped event intersected with one value of the stopping time is
-observable in the corresponding deterministic generation domain. -/
-theorem multiRoot_stoppedCell_measurable {m : ℕ}
-    (τ : FiniteRootStepField m ℕ ℝ → WithTop ℕ)
-    (hτ : IsStoppingTime (multiRootStepFiltration (m := m) (X := ℝ)) τ)
-    (E : Set (FiniteRootStepField m ℕ ℝ))
-    (hE : MeasurableSet[hτ.measurableSpace] E)
-    (n : ℕ) :
-    MeasurableSet[multiRootStepFiltration (m := m) (X := ℝ) n]
-      (E ∩ {ω | τ ω = (n : WithTop ℕ)}) :=
-    (hτ.measurableSet_inter_eq_iff E n).1
-    (hE.inter (hτ.measurable
-      (measurableSet_singleton (n : WithTop ℕ))))
 
 /-- Finite-population cells form the canonical countable partition of a
 stopped event.  This is the measure-theoretic random-cardinality layer. -/

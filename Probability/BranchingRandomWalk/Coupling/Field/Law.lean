@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law
+import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law.Basic
 
 /-!
 # Product law for fixed coordinate matching

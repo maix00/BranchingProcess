@@ -13,7 +13,7 @@ defines or proves it.
 
 | Domain | Core definitions and theorem interfaces | Status |
 | --- | --- | --- |
-| Ulam--Harris trees and branching walks | [`Step`](Combinatorics/BranchingWalk/Step/Basic.lean), [`surviveAlong`](Combinatorics/BranchingWalk/Basic/SurviveAlong.lean), [`RootIndexed.BranchingWalk`](Combinatorics/BranchingWalk/Basic/Definitions.lean), derived parent closure, and the step-level [`IsSiblingClosed`](Combinatorics/BranchingWalk/Basic/SiblingClosed.lean) property used when constructing ordered trees | Reusable foundation |
+| Ulam--Harris trees and branching walks | [`Step`](Combinatorics/BranchingWalk/Step/Basic.lean), [`surviveAlong`](Combinatorics/BranchingWalk/Basic/Survival/SurviveAlong.lean), [`RootIndexed.BranchingWalk`](Combinatorics/BranchingWalk/Basic/BranchingWalk.lean), derived parent closure, and the step-level [`IsSiblingClosed`](Combinatorics/BranchingWalk/Basic/Sibling/Closed.lean) property used when constructing ordered trees | Reusable foundation |
 | Random fields and genealogy | Product laws for step fields, generation filtrations, adapted selections, multi-root marginals, fixed and selected descendant laws | Reusable interfaces; theorem-specific instances continue to grow |
 | Point processes and spines | [`PointProcess`](Probability/PointProcess/Basic.lean), Dirac point measures, exponential tilting, spine laws, and both directions of the many-to-one formulas | Core formulas formalized |
 | Kernels and survival | Markov/sub-Markov kernels, killed and return kernels, corridor survival, block and entrance estimates | Reusable kernel layer |
@@ -69,9 +69,11 @@ Parent closure is derived for every step field from the prefix property of
 - the final varying-boundary finite-variance Mogulskii asymptotic, including
   the quantitative entrance estimate and the last blocking step;
 - the remaining quantitative estimates for the selected-walk speed theorems,
-  including the first-moment and cross-term hypotheses needed by the thesis;
-- the final assembly of the thesis statements (including the proposed
-  first-moment version) from the verified interfaces above.
+  including the first-moment and cross-term hypotheses in Wang Yiyang's
+  *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
+  Theorem 1.1;
+- the final assembly of Wang Yiyang's Theorems 1.1 and 1.2, including the
+  proposed first-moment version, from the verified interfaces above.
 
 The detailed dependency graph and proof boundary are kept in
 [`ARCHITECTURE.md`](ARCHITECTURE.md) and
@@ -103,6 +105,7 @@ The repository pins Lean, Mathlib, and BrownianMotion in
 [`lake-manifest.json`](lake-manifest.json). A clean checkout can be built with:
 
 ```sh
+git submodule update --init --recursive
 lake exe cache get
 lake build
 ```
@@ -111,16 +114,22 @@ Run `lake update` only when intentionally refreshing dependency revisions, then
 review the resulting manifest changes and rebuild the package.
 
 Import the narrowest module that provides the needed definition or theorem.
-There is deliberately no umbrella import. For example:
+There is no repository-wide umbrella import. A subject-specific discovery
+entry point may re-export its principal results; for example,
+`Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Theorems` collects
+the main theorems from Mogul'skii's original article. Proofs and ordinary
+clients should still import the semantic owner module. For example:
 
 ```lean
 import Probability.BranchingRandomWalk.Walk.Basic
-import Probability.Process.RandomWalk.FunctionalLimit.Donsker.CLT
+import Probability.Process.RandomWalk.FunctionalLimit.Donsker.FiniteDimensional.CLT
 import Probability.PointProcess.Basic
 ```
 
-The standalone library is released from the `lean/` subtree of the thesis
-checkout. See [`RELEASE.md`](RELEASE.md) for the reproducible release check.
+The standalone library is released from the `lean/` subtree of the repository
+containing Wang Yiyang's *Asymptotic Speed of the N-Branching Random Walk with
+Infinite Offspring*. See [`RELEASE.md`](RELEASE.md) for the reproducible
+release check.
 
 ## License
 
