@@ -7,6 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Distributions.Stable.Levy.Khintchine
+import Probability.Distributions.InfinitelyDivisible.LevyKhintchine.Representation
 import MeasureTheory.Measure.CharacteristicFunction.Convolution
 import Analysis.FunctionalEquation.ContinuousAdditivePositive
 import Mathlib.Analysis.SpecialFunctions.Pow.Continuity
