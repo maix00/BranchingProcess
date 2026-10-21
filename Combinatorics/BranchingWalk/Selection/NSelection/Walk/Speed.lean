@@ -25,6 +25,22 @@ layer. The deterministic content isolated here is the definition, uniqueness
 of the speed, its invariance under shifting the time index, and the fact that
 reversing the order exchanges the two frontier speeds.
 
+The public API is:
+
+- `HasAsymptoticSpeed p c` means
+  `Tendsto (fun n => (n : 𝕜)⁻¹ • p n) atTop (𝓝 c)`.
+- `hasAsymptoticSpeed_unique` proves that a sequence has at most one speed;
+  `hasAsymptoticSpeed_iff_nat_add` says that deleting a fixed finite prefix
+  leaves the speed unchanged, with the denominator kept at the absolute index.
+- `Walk.lowerPath` and `Walk.upperPath` choose the least and greatest positions
+  at each generation under an explicit nonemptiness hypothesis;
+  `Walk.lowerPath_apply` and `Walk.upperPath_apply` state their pointwise
+  formulas. `Walk.lowerPath_mapOrderDual` and `Walk.upperPath_mapOrderDual`
+  show that order duality exchanges these paths.
+- `Walk.HasLowerFrontierSpeed` and `Walk.HasUpperFrontierSpeed` state their
+  respective path limits; `Walk.hasLowerFrontierSpeed_mapOrderDual_iff`
+  identifies the lower speed of the reversed walk with the upper speed.
+
 A generation of a walk may be empty, because a particle may have no offspring;
 so a frontier path is only defined under an explicit non-extinction hypothesis.
 Non-extinction of the branching random walk is a probabilistic statement and is
@@ -52,11 +68,6 @@ to `c`. -/
 def HasAsymptoticSpeed (p : ℕ → X) (c : X) : Prop :=
   Tendsto (fun n : ℕ => ((n : 𝕜))⁻¹ • p n) atTop (𝓝 c)
 
-theorem hasAsymptoticSpeed_def (p : ℕ → X) (c : X) :
-    HasAsymptoticSpeed (𝕜 := 𝕜) p c ↔
-      Tendsto (fun n : ℕ => ((n : 𝕜))⁻¹ • p n) atTop (𝓝 c) :=
-  Iff.rfl
-
 /-- The asymptotic speed of a sequence is unique. -/
 theorem hasAsymptoticSpeed_unique [T2Space X] {p : ℕ → X} {c d : X}
     (hc : HasAsymptoticSpeed (𝕜 := 𝕜) p c)
@@ -80,15 +91,7 @@ theorem hasAsymptoticSpeed_iff_nat_add (p : ℕ → X) (c : X) (k : ℕ) :
     exact (tendsto_add_atTop_iff_nat
       (f := fun n : ℕ => ((n : 𝕜)⁻¹) • p n) k).1 h
 
-/-- Shifting the time index does not change the asymptotic speed. -/
-theorem hasAsymptoticSpeed_iff_succ (p : ℕ → X) (c : X) :
-    HasAsymptoticSpeed (𝕜 := 𝕜) p c ↔
-      Tendsto (fun n : ℕ => (((n : ℕ) + 1 : ℕ) : 𝕜)⁻¹ • p ((n : ℕ) + 1))
-        atTop (𝓝 c) := by
-  simpa using hasAsymptoticSpeed_iff_nat_add (𝕜 := 𝕜) p c 1
-
-/-- Reversing the order of positions preserves asymptotic speeds. -/
-theorem hasAsymptoticSpeed_mapOrderDual_iff (p : ℕ → X) (c : X) :
+private theorem hasAsymptoticSpeed_mapOrderDual_iff (p : ℕ → X) (c : X) :
     HasAsymptoticSpeed (𝕜 := 𝕜) (fun n => OrderDual.toDual (p n))
         (OrderDual.toDual c) ↔
       HasAsymptoticSpeed (𝕜 := 𝕜) p c :=
@@ -159,12 +162,6 @@ def HasLowerFrontierSpeed (V : Walk N X M)
 def HasUpperFrontierSpeed (V : Walk N X M)
     (h : ∀ n, (V.population n).Nonempty) (c : X) : Prop :=
   HasAsymptoticSpeed (𝕜 := 𝕜) (V.upperPath h) c
-
-theorem hasLowerFrontierSpeed_iff (V : Walk N X M)
-    (h : ∀ n, (V.population n).Nonempty) (c : X) :
-    HasLowerFrontierSpeed (𝕜 := 𝕜) V h c ↔
-      Tendsto (fun n : ℕ => ((n : 𝕜))⁻¹ • V.lowerPath h n) atTop (𝓝 c) :=
-  Iff.rfl
 
 /-- The lower frontier of the reversed walk moves at the speed of the upper
 frontier of the walk. -/

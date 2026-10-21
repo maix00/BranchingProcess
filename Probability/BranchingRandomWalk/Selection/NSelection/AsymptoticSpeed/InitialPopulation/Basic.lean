@@ -248,8 +248,11 @@ theorem infiniteOffspringRun_rankZero_hasAsymptoticSpeed_of_initial
     simpa [zeroRun] using
       infiniteOffspringRun_shift offspring hgood (fun _ => 0) K n
   have hzeroSucc : Tendsto scaledZero atTop (𝓝 c) := by
-    exact Combinatorics.Branching.Selection.NSelection.hasAsymptoticSpeed_iff_succ
-      _ _ |>.1 horigin
+    simpa [scaledZero, zeroRun, origin, smul_eq_mul] using
+      (Combinatorics.Branching.Selection.NSelection.hasAsymptoticSpeed_iff_nat_add
+        (𝕜 := ℝ)
+        (fun n => infiniteOffspringRun offspring hgood (fun _ => 0) n
+          (⟨0, hN⟩ : Fin N)) c 1).1 horigin
   have hreciprocal : Tendsto
       (fun n : ℕ => ((n + 1 : ℕ) : ℝ)⁻¹) atTop (𝓝 0) := by
     simpa [one_div] using
@@ -283,8 +286,11 @@ theorem infiniteOffspringRun_rankZero_hasAsymptoticSpeed_of_initial
     tendsto_of_tendsto_of_tendsto_of_le_of_le'
       hlowLimit hhighLimit (Eventually.of_forall hlowBound)
       (Eventually.of_forall hhighBound)
-  exact Combinatorics.Branching.Selection.NSelection.hasAsymptoticSpeed_iff_succ
-    _ _ |>.2 hscaledInitial
+  simpa [scaledInitial, initialRun, origin, smul_eq_mul] using
+    (Combinatorics.Branching.Selection.NSelection.hasAsymptoticSpeed_iff_nat_add
+      (𝕜 := ℝ)
+      (fun n => infiniteOffspringRun offspring hgood initial n
+        (⟨0, hN⟩ : Fin N)) c 1).2 hscaledInitial
 
 end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Speed
 

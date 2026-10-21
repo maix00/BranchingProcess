@@ -3233,3 +3233,87 @@ alongside a more general lower-adjoint interface: avoiding a ubiquitous
 specialization parameter can justify a domain-specific convenience API. That
 supports keeping the `Cloud` facade while placing the shared semantics on the
 more general `CloudSet` layer.
+
+## Asymptotic-speed and finite-selection abstraction review (2026-10-21)
+
+The candidates were the normalized sequence predicate
+`HasAsymptoticSpeed p c := Tendsto (fun n => (n : 𝕜)⁻¹ • p n) atTop (𝓝 c)` in
+`Combinatorics/BranchingWalk/Selection/NSelection/Walk/Speed.lean`, and the
+finite threshold-count results in
+`Combinatorics/BranchingWalk/Selection/NSelection/Coupling/Finite.lean`:
+`(retained.filter (fun p => position p ≤ a)).card ≤
+((selectFirstN N rightCandidates).filter (fun q => candidatePosition q ≤ a)).card`,
+under subset, capacity, threshold-count, and candidate-monotonicity hypotheses;
+the second result derives a selected `q` with
+`candidatePosition q ≤ position p` for each source `p` when `N > 0`.
+
+The official Mathlib search and pinned source review found `Tendsto` as the
+generic convergence interface, but no bundled asymptotic-speed predicate in
+the pinned tree. `HasAsymptoticSpeed` has actual clients across the deterministic
+N-selection and branching-random-walk limit modules, so it remains a named
+semantic predicate at the deterministic trajectory layer; moving it under
+`Probability/` would make its owner less general. Its public inventory now
+records the normalized limit, uniqueness, fixed-index-shift equivalence,
+frontier paths, and order-dual speed statement. Removed the unused reflexive
+`hasAsymptoticSpeed_def`, the redundant one-step public wrapper
+`hasAsymptoticSpeed_iff_succ` (its two clients now use the general shift theorem),
+and the definitional `Walk.hasLowerFrontierSpeed_iff`. The coercion-only
+order-dual equivalence remains private as a proof step.
+
+Mathlib's official `Finset.sort` API constructs a sorted list and records its
+length and sortedness; its finite extrema APIs provide `min'` and
+`exists_min_image`. Those primitives do not state the threshold-count
+comparison for a capped subpopulation against the first `N` candidates. The
+repository's `Mechanism.ByValue.filter_card_le_filter_selectFirstNBy` handles
+dynamic value-based selection; `Coupling/Finite` handles the distinct case
+where a fixed identity order selects candidates and a monotonicity hypothesis
+connects that order to observed positions. Both finite coupling statements are
+consumed by `Cloud/Order/Selection.lean` and are useful independently of the
+Cloud representation, so they remain public in `Selection/NSelection/Coupling/`
+rather than moving into a theorem-specific `Lemmas/` directory.
+
+The search used Mathlib's official
+[`Finset.sort` documentation](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Data/Finset/Sort.html),
+[`Finset` extrema documentation](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Data/Finset/Max.html),
+and [Mathlib style guidance](https://leanprover-community.github.io/contribute/style.html),
+then checked the pinned revision
+`380f2aafb622cb2c1c93dac545b6389083c68c51` in
+`Mathlib/Data/Finset/Sort.lean`, `Mathlib/Data/Finset/Max.lean`, and the
+repository-wide search for an existing `HasAsymptoticSpeed` declaration.
+`Speed.lean`, its probability client, `Coupling/Finite.lean`, and
+`Cloud/Order/Selection.lean` build with the pinned toolchain.
+
+## Multi-root selection-coupling API review (2026-10-21)
+
+The public coupling family separates four mathematical stages. `Coupling/Cloud`
+translates a finite spatial domination witness between population clouds into
+`source.card ≤ target.card` and a canonical rank-matching injection;
+`Coupling/Offspring` propagates a parent injection to the threshold-count
+inequality for the child addresses
+`(offspringAddresses sourceParents sourceSlots).filter (position ≤ a)`;
+`Coupling/Step` constructs the one-generation injection into a first-`N`
+population; `Coupling/Pathwise` iterates this pointwise in the sample and
+generation indices. Their module docstrings now state the mathematical outputs
+of each public entry.
+
+The abstraction comparison checked Mathlib's `Finset.card_le_card_of_injOn`,
+`Finset.card_filter_le`, `Finset.card_bij`, and `Finset.sort` in the official
+documentation and pinned sources. These give the general finite counting,
+injection, and ordering primitives, but they do not express the branching
+object `offspringAddresses` or the implication from matched parent positions,
+shared child slots, equal shared increments, and translation monotonicity to
+lower-tail child-count domination. `Coupling/Offspring` records that complete
+finite branching result for arbitrary root-indexed walks and arbitrary child
+slot sets, so its two theorems remain a named reusable coupling interface;
+they are not merely calls to Mathlib's raw cardinality facts. The supporting
+stages also remain in their semantic `Cloud/`, `Offspring.lean`, `Step.lean`,
+and `Pathwise.lean` modules rather than being presented as one flat list of
+unrelated helper files. The `Coupling/` directory has five direct Lean modules,
+below the repository's eight-file grouping review threshold.
+
+The comparison used Mathlib's official
+[`Finset` cardinality documentation](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Data/Finset/Card.html)
+and [`Finset.sort` documentation](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Data/Finset/Sort.html),
+then checked `Mathlib/Data/Finset/Card.lean` and
+`Mathlib/Data/Finset/Sort.lean` at pinned revision
+`380f2aafb622cb2c1c93dac545b6389083c68c51`.

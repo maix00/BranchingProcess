@@ -16,6 +16,12 @@ public import Combinatorics.BranchingWalk.Selection.NSelection.Mechanism.Matchin
 
 This file turns finite populations in root-indexed branching walks into
 constant-time clouds and chooses the canonical equal-rank injection.
+
+The public API consists of `population_card_le_of_injection`, which gives
+`source.card ≤ target.card` from a spatially dominating injection of the
+population clouds; `canonicalInjection`, which replaces any such witness by
+the injection matching equal dynamic ranks; and `canonicalInjection_apply`,
+which identifies that map pointwise with `matchByRankOrSelf`.
 -/
 
 @[expose] public section
