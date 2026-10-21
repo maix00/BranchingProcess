@@ -5,7 +5,8 @@ Authors: WANG Yiyang
 -/
 
 import Probability.BranchingRandomWalk.Population.Candidates.FullRank.Selection
-import Combinatorics.BranchingWalk.Step.Monotone
+import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law.Basic
+import Combinatorics.BranchingWalk.Step.Ordering.Monotone
 
 /-!
 # Full selection versus finite truncation
@@ -71,7 +72,8 @@ theorem selectedPopulation_fullSelection_step_ae
           fullRankBelow N x ω
             (allMultiRootChildren
               (selectedPopulation N x n ω) ω) q} := by
-  filter_upwards [finiteRootStepFieldLaw_all_ordered μ hμ m] with ω hω
+  filter_upwards [finiteRootStepFieldLaw_ae_all_of_measure_one
+    orderedSteps_measurable μ hμ m] with ω hω
   exact fun n => selectedPopulation_fullSelection_step N x n ω hω
 
 end ProbabilityTheory.BranchingRandomWalk

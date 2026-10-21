@@ -12,6 +12,32 @@ public import Combinatorics.UlamHarris.Tree.Defs
 /-!
 # The generation of a particle, and the generations between two particles
 
+## Public declarations
+
+* `Combinatorics.UlamHarris.RootIndexed.generation` and
+  `Combinatorics.UlamHarris.generation` give the address length; their
+  exact lemmas are `Combinatorics.UlamHarris.RootIndexed.generation_def`,
+  `Combinatorics.UlamHarris.RootIndexed.generation_mk`,
+  `Combinatorics.UlamHarris.RootIndexed.generation_append`,
+  `Combinatorics.UlamHarris.generation_def`,
+  `Combinatorics.UlamHarris.generation_nil`,
+  `Combinatorics.UlamHarris.generation_eq_indexed`, and
+  `Combinatorics.UlamHarris.generation_append`.
+* `Combinatorics.UlamHarris.RootIndexed.generationAfter` and
+  `Combinatorics.UlamHarris.generationAfter` count the suffix length after
+  dropping the ancestor's generation. The exact conversion lemmas are
+  `Combinatorics.UlamHarris.RootIndexed.generationAfter_eq_length`,
+  `Combinatorics.UlamHarris.generationAfter_eq_length`, and
+  `Combinatorics.UlamHarris.generationAfter_eq_indexed`.
+* The indexed and plain distance laws are respectively
+  `Combinatorics.UlamHarris.RootIndexed.generationAfter_self`,
+  `Combinatorics.UlamHarris.RootIndexed.generationAfter_append_singleton`,
+  `Combinatorics.UlamHarris.RootIndexed.generationAfter_append_append`,
+  `Combinatorics.UlamHarris.generationAfter_self`,
+  `Combinatorics.UlamHarris.generationAfter_append_singleton`, and
+  `Combinatorics.UlamHarris.generationAfter_append_append`; they state zero
+  self-distance, unit child-distance, and additivity along nested suffixes.
+
 `RootIndexed.generation p` is the length of the address of the particle `p`, the level it sits at:
 the notion only looks at a `TreeNode`, so it is indexed by whatever the address is paired with, and
 that pairing is what makes the `Root × TreeNode` case of the cloud available. `RootIndexed.generationAfter p q`
