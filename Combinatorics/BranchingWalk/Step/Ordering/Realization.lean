@@ -14,6 +14,14 @@ public import Combinatorics.BranchingWalk.Step.Measure.PointMeasure
 
 Ordering changes only slot labels.  Because the relabelling is injective and
 covers every surviving raw slot, it preserves the Dirac sum with multiplicity.
+
+The public declaration in `Combinatorics.Branching` is:
+
+- `stepPointMeasure_order`: for a measurable mark space and an orderable step
+  $\xi$, the point measure of its increasing-order realization equals that
+  of the original step,
+  $\operatorname{stepPointMeasure}(\xi.order(h))=
+  \operatorname{stepPointMeasure}(\xi)$.
 -/
 
 open MeasureTheory
