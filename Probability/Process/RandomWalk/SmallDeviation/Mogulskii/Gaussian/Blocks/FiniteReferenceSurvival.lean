@@ -15,7 +15,7 @@ public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Scale.Bloc
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Path.PartitionTightness
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Blocks.PartitionEndpoints
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Blocks.Lemmas.ProductParameters
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Blocks.Lemmas.FiniteReferenceSurvival
+import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Blocks.Lemmas.ProductToSurvival
 
 /-!
 # Finite-reference Gaussian block survival
