@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Combinatorics.BranchingWalk.Step.Measure.Potential
+public import Combinatorics.BranchingWalk.Step.Potential
 public import MeasureTheory.Measure.Finite.AtomFiniteness
 public import Mathlib.MeasureTheory.Function.SpecialFunctions.Basic
 public import Mathlib.MeasureTheory.Integral.Lebesgue.Countable

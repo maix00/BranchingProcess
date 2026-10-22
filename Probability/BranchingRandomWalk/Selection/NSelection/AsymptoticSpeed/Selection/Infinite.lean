@@ -8,7 +8,8 @@ module
 
 public import Combinatorics.BranchingWalk.Step.Basic
 public import Combinatorics.BranchingWalk.Step.Measure.ExponentialWeight
-public import Combinatorics.BranchingWalk.Step.Measure.Potential
+public import Combinatorics.BranchingWalk.Step.Potential
+public import Combinatorics.BranchingWalk.Step.Ordering.ByPotential
 public import Combinatorics.BranchingWalk.Step.Ordering.Monotone
 public import Combinatorics.BranchingWalk.Selection.NSelection.Mechanism.Hall
 public import Combinatorics.BranchingWalk.Selection.NSelection.Mechanism.Matching
