@@ -3872,3 +3872,50 @@ This review moves the base potential out of `Measure/` and keeps potential
 ordering under `Ordering/`, matching both the dependency direction and the
 mathematical ownership. The affected modules are checked with the pinned Lean
 build; no LaTeX source is changed in this pass.
+
+## Stable clock-process abstraction review (2026-10-22)
+
+This review inspected `Probability/Process/Stable/{Basic,Process,Levy,
+FiniteDimensional}.lean` and `Stable/PathLaw/Basic.lean`, together with their
+call sites in stable small-deviation, path-law, Brownian, and Poisson-model
+modules. The network comparison used Mathlib's official
+[`HasIndepIncrements` documentation](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Probability/Independence/Process/HasIndepIncrements/Basic.html)
+and
+[`IsPreBrownianReal` documentation](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Probability/BrownianMotion/Basic.html),
+then verified the dependency interfaces in the pinned Mathlib source at
+`380f2aafb622cb2c1c93dac545b6389083c68c51`. The independent comparison
+formalization `slink/LeanLevy`, revision
+`7e73fd9b23ad52956ec2756a815889a783131ce4`, defines `IsLevyProcess` by a
+zero start, independent and stationary increments, and almost-surely càdlàg
+paths; its stochastic-process module identifies its independent-increment
+predicate with Mathlib's. This project is cited as a design comparison, not
+used as a dependency.
+
+The source comparison supports the current division of responsibility:
+Mathlib's `HasIndepIncrements X P` already states mutual independence of
+successive differences along every finite monotone time grid. Mathlib's
+`IsPreBrownianReal` is the Brownian-specific finite-dimensional-law interface,
+so it does not express the stable, generally non-Gaussian increment laws or a
+deterministic time-change clock. Locally,
+`HasStableClockIncrements α μ clock X P` adds exactly that missing
+specification: `μ` is strictly `α`-stable, `clock` is monotone and zero at the
+least time, the process starts there almost surely, and
+`X_t - X_s` has law
+`μ.map (fun x => (clock t - clock s) ^ (1 / α) * x)` for `s ≤ t`. The
+independence field reuses Mathlib directly. `IsStableClockProcess` adds
+almost-sure càdlàg paths, `IsStableLevyProcess` specializes the clock to
+identity time on `ℝ≥0`, and `IsStableClockProcessLaw` applies the same
+specification to canonical càdlàg paths. The specialization theorem
+`IsStableLevyProcess.toIsLevyProcess` connects this stable interface to the
+repository's general Lévy-process definition.
+
+An additional public `HasIncrementLaw` wrapper, or a generic process bundle
+for arbitrary indexed increment distributions, would only repackage a family
+of `HasLaw` assumptions at present. The generic finite-dimensional results in
+`Probability/Process/IndepIncrements/FiniteDimensional.lean` already accept
+matching one-step increment laws directly, while the stable clock operations
+need the stable scaling formula itself. No additional generic wrapper or
+outward move is justified by the inspected uses. The stable-clock definitions
+remain under `Probability/Process/Stable`, their path-law form remains beside
+the path-space representation, and no theorem-specific proof helper is
+promoted.
