@@ -21,8 +21,9 @@ predicate, the support of a step, and the zero-defaulted slot reading. A slot
 is read directly as `ξ i`; the zero-defaulted reading `value' ξ i` is separate
 because it needs a `Zero X` instance. The relation layer is in
 `Step/Relation.lean`; presence closure and optional relabeling are in
-`Step/SiblingClosed.lean` and `Step/SiblingClosable.lean`. The ordered layer
-is in `Step/Monotone.lean`, and the slot vocabulary is in
+`Step/Selection/SiblingClosed.lean` and
+`Step/Selection/SiblingClosable.lean`. The ordered layer is in
+`Step/Ordering/Monotone.lean`, and the slot vocabulary is in
 `Step/Measurability.lean`. Path displacements are in
 `Basic/Position/Displace.lean` and `Basic/Position/DisplacementMap.lean`;
 realized and marked tree conversions are in `BranchingWalk/MarkedTree/`.

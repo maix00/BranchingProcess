@@ -28,7 +28,7 @@ topology induced by the tree metric introduced in
 this file does not change the default topology of `Tree α`.
 
 The Borel comparison of these topologies with the cylinder σ-algebra lives in
-`Tree/Borel.lean`.
+`Tree/Topology/Borel.lean`.
 
 ## Public declarations
 

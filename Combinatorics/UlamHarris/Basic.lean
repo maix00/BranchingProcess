@@ -29,7 +29,7 @@ Ulam--Harris node set in standard notation.
 generation filtration of
 `Probability/BranchingRandomWalk/Tree/Filtration.lean` is defined on it. This
 is a separate object from a `MarkedTree`, which carries marks only on its
-realized nodes; the realized-tree layer is in `Tree/Basic.lean` and the
+realized nodes; the realized-tree layer is in `Tree/Defs.lean` and the
 marked-tree layer in `MarkedTree/Basic.lean`.
 -/
 

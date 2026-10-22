@@ -15,7 +15,7 @@ public import Mathlib.MeasureTheory.Measure.Map
 The random offspring object is a measurable map into the semantic optional
 field `ι → Option X`.  The definitions in this file accept that map and its
 measurability proof directly; coordinate sampling presentations live in
-`Step/Presentation.lean`.
+`Step/Presentation/Basic.lean`.
 -/
 
 @[expose] public section
