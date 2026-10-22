@@ -6,10 +6,10 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.RandomMeasure.Poisson.Integral
+public import Probability.RandomMeasure.Poisson.Integration.Integral
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Bounds
 import Mathlib.MeasureTheory.Integral.DominatedConvergence
-import Probability.RandomMeasure.Poisson.Integrability
+import Probability.RandomMeasure.Poisson.Integration.Integrability
 import Probability.RandomMeasure.Poisson.CharacteristicFunction.PartitionedSum
 
 /-!

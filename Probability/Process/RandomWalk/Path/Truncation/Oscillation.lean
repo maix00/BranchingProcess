@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.Path.Truncation.Asymptotic
-public import Probability.Process.RandomWalk.Path.Truncation.Maximal
+public import Probability.Process.RandomWalk.Path.Truncation.Maximal.Basic
 public import Probability.Process.RandomWalk.Path.Block.Scale
 
 /-!

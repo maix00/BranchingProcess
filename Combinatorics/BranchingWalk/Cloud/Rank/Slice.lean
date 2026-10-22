@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Combinatorics.BranchingWalk.Cloud.Basic
-public import Combinatorics.BranchingWalk.Step.Rank
+public import Combinatorics.BranchingWalk.Step.Ordering.Rank
 public import Mathlib.Data.Finset.Card
 
 /-!
@@ -16,7 +16,32 @@ public import Mathlib.Data.Finset.Card
 A particle of the cloud is an initial root together with an address, so a rank
 counts particles below a fixed particle of `RootIndexed.TreeNode Root α`. The order on
 that type is not yet fixed by the cloud (the walk's selection compares
-positions), so it is an explicit hypothesis here. -/
+positions), so it is an explicit hypothesis here.
+
+The public API is:
+
+- `Cloud.sliceRank C t q = #{p | p ∈ C.particles t ∧ p < q}` in `ℕ∞`.
+- `Cloud.sliceRank_def` is the definitional equality displaying this
+  predecessor-set cardinality.
+- `Cloud.sliceRank_mono` proves
+  `p < q → C.sliceRank t p ≤ C.sliceRank t q`;
+  `Cloud.sliceRank_lt_sliceRank_of_lt` strengthens this to a strict inequality
+  when `{r | r ∈ C.particles t ∧ r < q}` is finite.
+  `Cloud.sliceRank_injOn_of_finite` says this rank map is injective on a
+  finite linearly ordered slice.
+- `Cloud.sliceRank_eq_coe_ncard_of_finite` identifies a finite-slice rank
+  with its natural-number predecessor count. Under monotonicity of positions
+  along the index order, `Cloud.sliceRank_le_encard_position_of_mono` proves
+  `C.sliceRank t p ≤ #{q | q ∈ C.particles t ∧
+  C.position q.1 q.2 ≤ C.position p.1 p.2}`.
+- For a finite down-closed set `T`, `Cloud.sliceRank_max'_of_downClosed` gives
+  `rank(max T) = card(T) - 1`, and
+  `Cloud.exists_sliceRank_eq_of_downClosed` proves
+  `∀ k < card(T), ∃ v ∈ T, rank(v) = k`.
+- `Cloud.sliceRank_eq_siblingRank` proves
+  `rank(i) = ξ.siblingRank(i)` when the predecessor set agrees with the
+  step's surviving slots below `i` and is finite.
+-/
 
 @[expose] public section
 

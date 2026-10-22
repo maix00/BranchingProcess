@@ -7,21 +7,41 @@ Authors: WANG Yiyang
 module
 
 public import Algebra.BigOperators.PartialSum
+public import Mathlib.Algebra.Order.Sub.Unbundled.Basic
 public import Mathlib.Probability.IdentDistribIndep
 public import Mathlib.Probability.Process.FiniteDimensionalLaws
 public import Mathlib.Probability.Independence.Process.HasIndepIncrements.Basic
+public import Mathlib.MeasureTheory.Group.Arithmetic
 public import Mathlib.Data.Finset.Sort
+public import Probability.Process.StationaryIncrements.Basic
+
+import MeasureTheory.Function.FinPartialSum
 
 /-!
 # Finite-dimensional laws from independent increments
 
-Two processes with independent increments, almost-surely zero initial values,
-and matching one-increment laws have matching position laws on finite grids.
-On a countable time type, Mathlib's finite-dimensional-law uniqueness theorem
-then identifies their laws as function-valued processes.
+The public declarations in this file concern processes valued in a measurable
+additive commutative group `E` with measurable addition:
+
+* `HasIndepIncrements.finiteDimensional_identDistrib`: matching increment
+  laws and common zero values at an arbitrary anchor `t₀` imply
+  $(X_{t_i})_i \stackrel{d}{=} (Y_{t_i})_i$ on a finite monotone grid starting
+  at `t₀`.
+* `HasIndepIncrements.translatedProcess_finiteDimensional_identDistrib`:
+  stationary independent increments on an ordered additive time monoid imply
+  $(X_{s+t_i}-X_s)_i \stackrel{d}{=} (X_{s'+t_i}-X_{s'})_i`.
+* `HasIndepIncrements.finiteRestriction_identDistrib`: matching increment
+  laws and zero starts imply equal laws of finite time restrictions.
+* `HasIndepIncrements.aemeasurable_eval`: a zero start and measurable
+  increments imply almost-everywhere measurability of each coordinate.
+* `HasIndepIncrements.process_identDistrib_of_aemeasurable`: matching
+  increment laws and measurable process maps imply equal process laws.
+* `HasIndepIncrements.process_identDistrib`: on a countable time type,
+  coordinate-measurable increments imply equal process laws.
 -/
 
 open MeasureTheory
+open scoped NNReal
 
 @[expose] public section
 
@@ -30,27 +50,29 @@ namespace ProbabilityTheory
 variable {Ω Ω' : Type*} [MeasurableSpace Ω] [MeasurableSpace Ω']
 
 /-- Independent-increment processes with matching increment distributions and
-zero initial values have the same position-vector law on every finite
-monotone grid. The two processes may live on different probability spaces.
--/
+common zero values at a chosen anchor have the same position-vector law on
+every finite monotone grid starting at that anchor. The two processes may
+live on different probability spaces. -/
 theorem HasIndepIncrements.finiteDimensional_identDistrib
-    {Time : Type*} [Preorder Time] [OrderBot Time]
-    {X : Time → Ω → ℝ} {Y : Time → Ω' → ℝ}
+    {Time : Type*} [Preorder Time]
+    {E : Type*} [AddCommGroup E] [MeasurableSpace E] [MeasurableAdd₂ E]
+    {X : Time → Ω → E} {Y : Time → Ω' → E}
     {P : Measure Ω} {Q : Measure Ω'} [IsProbabilityMeasure P]
     [IsProbabilityMeasure Q]
+    {start : Time}
     (hX : HasIndepIncrements X P) (hY : HasIndepIncrements Y Q)
-    (hXstart : ∀ᵐ ω ∂P, X ⊥ ω = 0)
-    (hYstart : ∀ᵐ ω ∂Q, Y ⊥ ω = 0)
+    (hXstart : ∀ᵐ ω ∂P, X start ω = 0)
+    (hYstart : ∀ᵐ ω ∂Q, Y start ω = 0)
     (hinc : ∀ s t : Time, s ≤ t →
       IdentDistrib (fun ω => X t ω - X s ω) (fun ω => Y t ω - Y s ω) P Q)
     (n : ℕ) (grid : Fin (n + 1) → Time) (hgrid : Monotone grid)
-    (hgridStart : grid 0 = ⊥) :
+    (hgridStart : grid 0 = start) :
     IdentDistrib
       (fun ω (i : Fin n) => X (grid i.succ) ω)
       (fun ω (i : Fin n) => Y (grid i.succ) ω) P Q := by
-  let dX : Fin n → Ω → ℝ := fun i ω =>
+  let dX : Fin n → Ω → E := fun i ω =>
     X (grid i.succ) ω - X (grid i.castSucc) ω
-  let dY : Fin n → Ω' → ℝ := fun i ω =>
+  let dY : Fin n → Ω' → E := fun i ω =>
     Y (grid i.succ) ω - Y (grid i.castSucc) ω
   have hXinc : iIndepFun dX P := by
     simpa [dX] using hX n grid hgrid
@@ -61,24 +83,12 @@ theorem HasIndepIncrements.finiteDimensional_identDistrib
       (hgrid (Fin.castSucc_le_succ i))
   have hvector : IdentDistrib (fun ω i => dX i ω) (fun ω i => dY i ω) P Q :=
     IdentDistrib.pi hincLaw hXinc hYinc
-  let partialSums : (Fin n → ℝ) → (Fin n → ℝ) :=
+  let partialSums : (Fin n → E) → (Fin n → E) :=
     fun x i => Fin.partialSum x i.succ
   have hpartialSums : Measurable partialSums := by
     rw [measurable_pi_iff]
     intro i
-    have hEval (j : Fin (n + 1)) :
-        Measurable (fun x : Fin n → ℝ => Fin.partialSum x j) := by
-      induction j using Fin.induction with
-      | zero => exact measurable_const
-      | succ j ih =>
-        have hm := ih.add (measurable_pi_apply j)
-        have heq : (fun x : Fin n → ℝ => Fin.partialSum x j.succ) =
-            (fun x : Fin n → ℝ => Fin.partialSum x j.castSucc) +
-              (fun x : Fin n → ℝ => x j) := by
-          funext x
-          simp only [Fin.partialSum_succ, Pi.add_apply]
-        exact heq ▸ hm
-    exact hEval i.succ
+    exact Fin.measurable_partialSum i.succ
   have hpositions := hvector.comp hpartialSums
   have hXeq : (fun ω (i : Fin n) => X (grid i.succ) ω) =ᵐ[P]
       fun ω => partialSums (fun j => dX j ω) := by
@@ -109,6 +119,56 @@ theorem HasIndepIncrements.finiteDimensional_identDistrib
   exact (IdentDistrib.of_ae_eq hXposMeas hXeq).trans
     (hpositions.trans (IdentDistrib.of_ae_eq hYposMeas hYeq).symm)
 
+/-- For a process over an ordered additive time space with stationary
+independent increments, the finite-dimensional laws of increments after any
+deterministic time agree. The time order is preserved by addition, and every
+ordered pair has a duration represented by subtraction. No path regularity
+assumption is required. -/
+theorem HasIndepIncrements.translatedProcess_finiteDimensional_identDistrib
+    {Time : Type*} [AddCommMonoid Time] [PartialOrder Time]
+    [AddLeftMono Time] [ExistsAddOfLE Time] [Sub Time] [OrderedSub Time]
+    {E : Type*} [AddCommGroup E] [MeasurableSpace E] [MeasurableAdd₂ E]
+    {process : Time → Ω → E} {P : Measure Ω} [IsProbabilityMeasure P]
+    (h : HasIndepIncrements process P)
+    (hstationary : HasStationaryIncrements process P) (s t : Time)
+    (n : ℕ) (grid : Fin (n + 1) → Time) (hgrid : Monotone grid)
+    (hgridStart : grid 0 = 0) :
+    IdentDistrib
+      (fun ω (i : Fin n) => process (s + grid i.succ) ω - process s ω)
+      (fun ω (i : Fin n) => process (t + grid i.succ) ω - process t ω) P P := by
+  let Xs : Time → Ω → E := fun u ω => process (s + u) ω - process s ω
+  let Xt : Time → Ω → E := fun u ω => process (t + u) ω - process t ω
+  have hXs : HasIndepIncrements Xs P := by
+    intro m u hu
+    have hu' : Monotone (fun i : Fin (m + 1) => s + u i) := by
+      intro i j hij
+      simpa [add_comm] using add_le_add_left (hu hij) s
+    simpa [Xs, sub_sub_sub_cancel_right] using h m (fun i => s + u i) hu'
+  have hXt : HasIndepIncrements Xt P := by
+    intro m u hu
+    have hu' : Monotone (fun i : Fin (m + 1) => t + u i) := by
+      intro i j hij
+      simpa [add_comm] using add_le_add_left (hu hij) t
+    simpa [Xt, sub_sub_sub_cancel_right] using h m (fun i => t + u i) hu'
+  have hXsStart : ∀ᵐ ω ∂P, Xs 0 ω = 0 := by
+    filter_upwards [] with ω
+    simp [Xs]
+  have hXtStart : ∀ᵐ ω ∂P, Xt 0 ω = 0 := by
+    filter_upwards [] with ω
+    simp [Xt]
+  have hinc : ∀ q r : Time, q ≤ r →
+      IdentDistrib (fun ω => Xs r ω - Xs q ω)
+        (fun ω => Xt r ω - Xt q ω) P P := by
+    intro q r hqr
+    let d : Time := r - q
+    have hsum : q + d = r := add_tsub_cancel_of_le hqr
+    have hs := hstationary (s + q) d
+    have ht := hstationary (t + q) d
+    simpa [Xs, Xt, d, add_assoc, hsum] using hs.trans ht.symm
+  exact HasIndepIncrements.finiteDimensional_identDistrib
+    (X := Xs) (Y := Xt) (P := P) (Q := P)
+    hXs hXt hXsStart hXtStart hinc n grid hgrid hgridStart
+
 /-- Matching increment laws imply matching restrictions of the position
 processes to any finite set of times in a linear order with a least element.
 The least element is prepended to the ordered finite set to anchor the
@@ -116,7 +176,8 @@ partial-sum reconstruction at the common zero start.
 -/
 theorem HasIndepIncrements.finiteRestriction_identDistrib
     {Time : Type*} [LinearOrder Time] [OrderBot Time]
-    {X : Time → Ω → ℝ} {Y : Time → Ω' → ℝ}
+    {E : Type*} [AddCommGroup E] [MeasurableSpace E] [MeasurableAdd₂ E]
+    {X : Time → Ω → E} {Y : Time → Ω' → E}
     {P : Measure Ω} {Q : Measure Ω'} [IsProbabilityMeasure P]
     [IsProbabilityMeasure Q]
     (hX : HasIndepIncrements X P) (hY : HasIndepIncrements Y Q)
@@ -150,7 +211,7 @@ theorem HasIndepIncrements.finiteRestriction_identDistrib
   have hvec := hX.finiteDimensional_identDistrib hY hXstart hYstart hinc
     I.card grid hgrid hstart
   let e : Fin I.card ≃o I := I.orderIsoOfFin rfl
-  let reindex : (Fin I.card → ℝ) → (i : I) → ℝ := fun v i => v (e.symm i)
+  let reindex : (Fin I.card → E) → (i : I) → E := fun v i => v (e.symm i)
   have hreindex : Measurable reindex := by
     rw [measurable_pi_iff]
     intro i
@@ -180,11 +241,13 @@ theorem HasIndepIncrements.finiteRestriction_identDistrib
     (hvec'.trans (IdentDistrib.of_ae_eq hvec'.aemeasurable_snd hYeq))
 
 /-- Every coordinate of a zero-start independent-increment process is
-almost-everywhere measurable when its increments have real-valued laws.
+almost-everywhere measurable when each increment is almost-everywhere
+measurable.
 -/
 theorem HasIndepIncrements.aemeasurable_eval
     {Time : Type*} [Preorder Time] [OrderBot Time]
-    {X : Time → Ω → ℝ} {P : Measure Ω}
+    {E : Type*} [MeasurableSpace E] [SubNegZeroMonoid E]
+    {X : Time → Ω → E} {P : Measure Ω}
     (hstart : ∀ᵐ ω ∂P, X ⊥ ω = 0)
     (hincrement : ∀ s t : Time, s ≤ t → AEMeasurable
       (fun ω => X t ω - X s ω) P) (t : Time) :
@@ -202,7 +265,8 @@ result above.
 -/
 theorem HasIndepIncrements.process_identDistrib_of_aemeasurable
     {Time : Type*} [LinearOrder Time] [OrderBot Time]
-    {X : Time → Ω → ℝ} {Y : Time → Ω' → ℝ}
+    {E : Type*} [AddCommGroup E] [MeasurableSpace E] [MeasurableAdd₂ E]
+    {X : Time → Ω → E} {Y : Time → Ω' → E}
     {P : Measure Ω} {Q : Measure Ω'} [IsProbabilityMeasure P]
     [IsProbabilityMeasure Q]
     (hX : HasIndepIncrements X P) (hY : HasIndepIncrements Y Q)
@@ -214,11 +278,11 @@ theorem HasIndepIncrements.process_identDistrib_of_aemeasurable
     (hYmeas : AEMeasurable (fun ω (t : Time) => Y t ω) Q) :
     IdentDistrib (fun ω (t : Time) => X t ω)
       (fun ω t => Y t ω) P Q := by
-  let μX : Measure (∀ t : Time, ℝ) := P.map (fun ω t => X t ω)
-  let μY : Measure (∀ t : Time, ℝ) := Q.map (fun ω t => Y t ω)
-  let fddX : ∀ I : Finset Time, Measure (∀ i : I, ℝ) :=
+  let μX : Measure (∀ t : Time, E) := P.map (fun ω t => X t ω)
+  let μY : Measure (∀ t : Time, E) := Q.map (fun ω t => Y t ω)
+  let fddX : ∀ I : Finset Time, Measure (∀ i : I, E) :=
     fun I => P.map (fun ω => I.restrict (X · ω))
-  let fddY : ∀ I : Finset Time, Measure (∀ i : I, ℝ) :=
+  let fddY : ∀ I : Finset Time, Measure (∀ i : I, E) :=
     fun I => Q.map (fun ω => I.restrict (Y · ω))
   have hprojX : IsProjectiveLimit μX fddX := by
     exact isProjectiveLimit_map hXmeas
@@ -243,7 +307,8 @@ the preceding version, which accepts measurability of the whole process map.
 -/
 theorem HasIndepIncrements.process_identDistrib
     {Time : Type*} [LinearOrder Time] [OrderBot Time] [Countable Time]
-    {X : Time → Ω → ℝ} {Y : Time → Ω' → ℝ}
+    {E : Type*} [AddCommGroup E] [MeasurableSpace E] [MeasurableAdd₂ E]
+    {X : Time → Ω → E} {Y : Time → Ω' → E}
     {P : Measure Ω} {Q : Measure Ω'} [IsProbabilityMeasure P]
     [IsProbabilityMeasure Q]
     (hX : HasIndepIncrements X P) (hY : HasIndepIncrements Y Q)
