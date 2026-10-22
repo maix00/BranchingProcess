@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Restart.FirstSplit
+import Probability.BranchingRandomWalk.Restart.Trial.FirstSplit
 import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.StoppingSubtreeVector.Factorization
 
 /-!

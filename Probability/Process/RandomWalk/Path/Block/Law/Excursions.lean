@@ -6,7 +6,9 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.Path.Block.Law.Coordinates
+public import Probability.Process.RandomWalk.Path.Block.Basic
+public import Probability.Sequence.IID.Blocks.Consecutive
+import Probability.Sequence.IID.Blocks.StoppingTime
 public import Mathlib.MeasureTheory.Constructions.BorelSpace.Order
 
 /-!

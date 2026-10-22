@@ -12,6 +12,16 @@ public import Mathlib.MeasureTheory.Integral.DominatedConvergence
 /-!
 # Regular variation under the cosine Tauberian kernel
 
+The public theorem is `tendsto_integral_ratio_mul_cosineTauberianKernel`.
+If $f$ is continuous, regularly varying at zero with index $\rho$, has
+uniform ratio convergence on multipliers $[1,2]$, and satisfies
+$0<\delta<\rho$, $\rho+\delta<2$, and $0\le f\le M$, then
+\[
+  \int_0^\infty \frac{f(su)}{f(u)}K(s)\,ds
+  \longrightarrow \int_0^\infty s^\rho K(s)\,ds
+  \qquad (u\downarrow0).
+\]
+
 This module combines the nonmonotone Potter envelope with Mathlib's dominated
 convergence theorem. It isolates the analytic integral limit from probability
 and tail-identification arguments.

@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.Path.Cadlag
+public import Probability.Process.RandomWalk.Path.Representation.Cadlag
 public import Mathlib.Topology.UnitInterval
 public import Topology.Cadlag.Skorokhod.Topology
 
