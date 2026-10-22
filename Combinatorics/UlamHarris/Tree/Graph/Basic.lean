@@ -36,6 +36,21 @@ relation `TreeNode.IsChild` in `Combinatorics.UlamHarris.Relation`.
 The multigraph `Graph α β` of `Mathlib/Combinatorics/Graph/Basic.lean` is not
 used: a node of a tree has at most one edge to each child, so its parent--child
 structure is already carried faithfully by a digraph.
+
+## Public declarations
+
+- `Tree.childDigraph T` has vertices `u ∈ T.carrier` and
+  `Adj(u,v) ↔ TreeNode.IsChild u v`; `childDigraph_adj_irrefl` states that
+  `Adj(u,u)` is false.
+- `Tree.childQuiver T` labels an arrow `u ⟶ v` by `i` with `v = u ++ [i]`;
+  `childQuiver_hom_iff` identifies a nonempty arrow type with digraph
+  adjacency.
+- `Tree.childGraph T` forgets edge orientation, with
+  `Adj(u,v) ↔ IsChild(u,v) ∨ IsChild(v,u)`.
+- `RootIndexed.Tree.forestGraph T` joins vertices only within the same root
+  coordinate. `forestGraph_walk_root_eq` and
+  `forestGraph_reachable_root_eq` state that every walk preserves that
+  coordinate.
 -/
 
 @[expose] public section

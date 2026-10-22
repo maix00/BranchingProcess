@@ -1,0 +1,216 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
+module
+
+public import Combinatorics.BranchingWalk.Selection.NSelection.Mechanism.OrderDual
+public import Combinatorics.BranchingWalk.Cloud.Basic
+public import Combinatorics.BranchingWalk.Step.Measure.PointMeasure
+
+/-!
+# The deterministic `N`-branching walk
+
+## Public declarations
+
+`Combinatorics.Branching.Selection.NSelection.Walk` is a deterministic walk
+with `initial.card ≤ N` and finite offspring sets. The remaining declarations
+are in namespace `Combinatorics.Branching.Selection.NSelection.Walk`.
+
+- `step` and `step_def`: `step V s = M.select (s.biUnion V.children)`.
+- `population`, `population_zero`, and `population_succ`:
+  `population 0 = initial` and
+  `population (n + 1) = step (population n)`.
+- `population_card_le`: `∀ n, (population n).card ≤ N`.
+- `cloud`, `mem_cloud_points`, `cloud_points_zero`, and `cloud_points_succ`:
+  the time slice is the generation's selected
+  population, with the initial and successor slice equations.
+- `cloud_points_finite` and `cloud_points_ncard_le`: every slice is
+  finite and has cardinality at most `N`.
+- `childrenOfStep` and `ofChild`: construct finite child positions
+  from surviving slots and build a walk from a field of child steps.
+- `mapOrderDual`, `mapOrderDual_initial`, and `mapOrderDual_children`:
+  reverse the position order while mapping the initial set and each child set
+  through `OrderDual.toDual`.
+- `mapOrderDual_select_biUnion` and `population_mapOrderDual`: order reversal
+  commutes with selection and maps each generation to the image under
+  `OrderDual.toDual`.
+
+`Walk` is the deterministic combinatorial object: it starts with at most `N`
+particles, every particle produces a finite set of offspring positions, and a
+selection mechanism of capacity `N` keeps the next generation. The name carries
+no `random`: a branching random walk is a *law* on these objects, together with
+a law on the offspring, and belongs to the probability layer.
+
+The selection mechanism is an explicit parameter, so the same definition covers
+the leftmost rule, the rightmost rule, and any other deterministic rule; a
+*random* selection mechanism is a law on `NSelection`.
+
+The population at generation `n` is a `Finset` of positions, and
+`Walk.cloud` is the space-time cloud of those populations. Reversing the order
+on positions is `Walk.mapOrderDual`, which turns the leftmost rule into the
+rightmost one; `population_mapOrderDual` records the transformation of every
+generation, so the two directions are one theory.
+-/
+
+open Classical
+
+@[expose] public section
+
+/-! ### Reversing the order -/
+
+namespace Combinatorics
+
+namespace Branching
+
+namespace Selection
+
+namespace NSelection
+
+variable {X : Type*} {N : ℕ} {M : FiniteNSelection X N}
+
+/-- A deterministic `N`-branching walk: an initial population of at most `N`
+particles, a finite offspring set for every particle, and a selection mechanism
+of capacity `N`. -/
+structure Walk (N : ℕ) (X : Type*) (M : FiniteNSelection X N) where
+  /-- The initial population. -/
+  initial : Finset X
+  /-- The initial population has at most `N` particles. -/
+  initial_card_le : initial.card ≤ N
+  /-- The offspring positions of a particle. -/
+  children : X → Finset X
+
+namespace Walk
+
+variable [DecidableEq X]
+
+/-- One branching-selection step: collect the offspring of the current
+population and keep the selected ones. -/
+noncomputable def step (V : Walk N X M) (s : Finset X) : Finset X :=
+  M.select (s.biUnion V.children)
+
+theorem step_def (V : Walk N X M) (s : Finset X) :
+    V.step s = M.select (s.biUnion V.children) :=
+  rfl
+
+/-- The population of the walk at generation `n`. -/
+noncomputable def population (V : Walk N X M) : ℕ → Finset X
+  | 0 => V.initial
+  | n + 1 => V.step (V.population n)
+
+@[simp] theorem population_zero (V : Walk N X M) :
+    V.population 0 = V.initial :=
+  rfl
+
+@[simp] theorem population_succ (V : Walk N X M) (n : ℕ) :
+    V.population (n + 1) = V.step (V.population n) :=
+  rfl
+
+/-- Every generation of an `N`-branching walk has at most `N` particles. -/
+theorem population_card_le (V : Walk N X M) :
+    ∀ n, (V.population n).card ≤ N := by
+  intro n
+  induction n with
+  | zero => exact V.initial_card_le
+  | succ n _ => exact NSelection.select_card_le M _
+
+/-- The space-time cloud of the walk. -/
+noncomputable def cloud (V : Walk N X M) : CloudSet ℕ X where
+  points n := ↑(V.population n)
+
+@[simp] theorem mem_cloud_points (V : Walk N X M) (n : ℕ) (x : X) :
+    x ∈ V.cloud.points n ↔ x ∈ V.population n :=
+  Iff.rfl
+
+theorem cloud_points_zero (V : Walk N X M) :
+    V.cloud.points 0 = ↑V.initial :=
+  rfl
+
+theorem cloud_points_succ (V : Walk N X M) (n : ℕ) :
+    V.cloud.points (n + 1) = ↑(M.select ((V.population n).biUnion V.children)) :=
+  rfl
+
+/-- Every time slice of the cloud is finite: it is the population of a
+generation, and a population is a finite set of positions. -/
+theorem cloud_points_finite (V : Walk N X M) (n : ℕ) :
+    (V.cloud.points n).Finite :=
+  (V.population n).finite_toSet
+
+/-- The capacity of the selection mechanism bounds every time slice of the
+cloud, not only the underlying finite population. -/
+theorem cloud_points_ncard_le (V : Walk N X M) (n : ℕ) :
+    (V.cloud.points n).ncard ≤ N := by
+  rw [show V.cloud.points n = (V.population n : Set X) from rfl, Set.ncard_coe_finset]
+  exact V.population_card_le n
+
+/-- The offspring set of a parent at position `x` under a branching step: the
+positions `x + ξ i` of the survive slots. An absent slot contributes nothing,
+so the offspring set may be empty. -/
+noncomputable def childrenOfStep {κ X : Type*} [Fintype κ] [AddCommMonoid X]
+    [DecidableEq X] (ξ : Step κ X) (x : X) : Finset X :=
+  (Finset.univ.filter fun i => survive ξ i).image fun i => x + value' ξ i
+
+/-- The walk generated by a field of child displacements at each parent
+position. -/
+noncomputable def ofChild {κ : Type*} [Fintype κ] [AddCommMonoid X]
+    (N : ℕ) (M : FiniteNSelection X N) (initial : Finset X)
+    (hinitial : initial.card ≤ N) (child : X → Step κ X) : Walk N X M where
+  initial := initial
+  initial_card_le := hinitial
+  children := fun x => childrenOfStep (child x) x
+
+/-- Reverse the positions of a walk, keeping the same initial set and offspring
+sets. Applied to a walk run by a mechanism `M`, it is the same walk run by the
+transported mechanism `M.mapOrderDual`. -/
+noncomputable def mapOrderDual (V : Walk N X M) :
+    Walk N (OrderDual X) (NSelection.mapOrderDual M) where
+  initial := V.initial.image OrderDual.toDual
+  initial_card_le := by
+    rw [Finset.card_image_of_injective _ OrderDual.toDual.injective]
+    exact V.initial_card_le
+  children := fun q => (V.children (OrderDual.ofDual q)).image OrderDual.toDual
+
+@[simp] theorem mapOrderDual_initial (V : Walk N X M) :
+    V.mapOrderDual.initial = V.initial.image OrderDual.toDual :=
+  rfl
+
+@[simp] theorem mapOrderDual_children (V : Walk N X M) (q : OrderDual X) :
+    V.mapOrderDual.children q =
+      (V.children (OrderDual.ofDual q)).image OrderDual.toDual :=
+  rfl
+
+theorem mapOrderDual_select_biUnion (V : Walk N X M) (s : Finset X) :
+    (NSelection.mapOrderDual M).select (((s.image OrderDual.toDual).biUnion fun q =>
+        (V.children (OrderDual.ofDual q)).image OrderDual.toDual)) =
+      (M.select (s.biUnion V.children)).image OrderDual.toDual := by
+  have htransfer : (((s.image OrderDual.toDual).biUnion fun q =>
+        (V.children (OrderDual.ofDual q)).image OrderDual.toDual)).image OrderDual.ofDual
+      = s.biUnion V.children := by
+    rw [Finset.biUnion_image]
+    rw [Finset.image_biUnion]
+    exact Finset.biUnion_congr rfl fun a _ => by
+      rw [Finset.image_image]
+      simp
+  rw [NSelection.mapOrderDual_select, htransfer]
+
+theorem population_mapOrderDual (V : Walk N X M) (n : ℕ) :
+    V.mapOrderDual.population n = (V.population n).image OrderDual.toDual := by
+  induction n with
+  | zero => rfl
+  | succ n ih =>
+      rw [population_succ, population_succ, ih]
+      show (NSelection.mapOrderDual M).select
+          (((V.population n).image OrderDual.toDual).biUnion fun q =>
+            (V.children (OrderDual.ofDual q)).image OrderDual.toDual) =
+        (M.select ((V.population n).biUnion V.children)).image OrderDual.toDual
+      exact mapOrderDual_select_biUnion V (V.population n)
+
+end Walk
+
+end NSelection end Selection
+
+end Branching
+
+end Combinatorics

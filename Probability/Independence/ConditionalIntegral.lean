@@ -10,11 +10,26 @@ public import Mathlib.Probability.Independence.Integration
 public import Mathlib.Probability.Kernel.CondDistrib
 
 /-!
-# Conditional integration of an independent random variable
+# Conditional integration for independent random variables
 
-This file connects mathlib's independence and regular conditional
-distribution APIs.  It is useful when a future random input is independent
-of the variable generating the current domain.
+The public results in this file are:
+
+- `ProbabilityTheory.IndepFun.condDistrib_ae_eq_const`: for measurable
+  $X,Y$ into measurable value spaces, a probability measure $P$, and
+  $X\perp Y$, the conditional law of a standard-Borel-valued $Y$ given $X$
+  equals the marginal law of $Y$ almost everywhere.
+- `ProbabilityTheory.IndepFun.condExp_prod_ae_eq_integral_map`:
+  for the same measurable independent pair and strongly measurable $f$ with
+  $f(X,Y)\in L^1(P)$,
+  $\mathbb E[f(X,Y)\mid X]=\int f(X,y)\,d(P\circ Y^{-1})(y)$ almost surely.
+- `ProbabilityTheory.IndepFun.condExp_indicator_pairEvent_ae_eq_sectionProbability`:
+  for measurable $E\subseteq A\times B$,
+  $\mathbb E[\mathbf1_E(X,Y)\mid X](\omega)
+   =(P\circ Y^{-1})\{y:(X(\omega),y)\in E\}$ almost surely.
+
+The last identity supplies the conditional probability of a measurable
+section and applies to any independent pair whose future value space is
+standard Borel.
 -/
 
 open Filter MeasureTheory
@@ -56,5 +71,39 @@ theorem IndepFun.condExp_prod_ae_eq_integral_map
     (h.condDistrib_ae_eq_const hX hY)
   filter_upwards [hbase, hcond] with sample hbase_sample hcond_sample
   rw [hbase_sample, hcond_sample, Kernel.const_apply]
+
+/-- For independent random variables, the conditional expectation of the
+indicator of a measurable pair event is the probability of its section under
+the second marginal law. -/
+theorem IndepFun.condExp_indicator_pairEvent_ae_eq_sectionProbability
+    (h : IndepFun X Y P) (hX : Measurable X) (hY : Measurable Y)
+    (E : Set (Past × Future)) (hE : MeasurableSet E) :
+    condExp (MeasurableSpace.comap X inferInstance) P
+        (fun sample => E.indicator (fun _ => (1 : ℝ)) (X sample, Y sample))
+      =ᵐ[P] fun sample => (P.map Y).real {y | (X sample, y) ∈ E} := by
+  let pair : Sample → Past × Future := fun sample => (X sample, Y sample)
+  let f : Past × Future → ℝ := E.indicator (fun _ => (1 : ℝ))
+  have hpair : Measurable pair := hX.prodMk hY
+  have hpreimage : MeasurableSet (pair ⁻¹' E) := hE.preimage hpair
+  have hf : StronglyMeasurable f := stronglyMeasurable_const.indicator hE
+  have hfi : Integrable (fun sample => f (pair sample)) P :=
+    (integrable_const (c := (1 : ℝ))).indicator hpreimage
+  have hcond := h.condExp_prod_ae_eq_integral_map hX hY hf hfi
+  have hsectionIntegral (x : Past) :
+      (∫ y, f (x, y) ∂P.map Y) = (P.map Y).real {y | (x, y) ∈ E} := by
+    let sectionEvent : Set Future := {y | (x, y) ∈ E}
+    have hsection : MeasurableSet sectionEvent :=
+      hE.preimage (measurable_const.prodMk measurable_id)
+    have hfunction : (fun y => f (x, y)) =
+        sectionEvent.indicator (fun _ => (1 : ℝ)) := by
+      funext y
+      simp [f, sectionEvent, Set.indicator]
+    rw [hfunction]
+    change (∫ y, sectionEvent.indicator (fun _ => (1 : ℝ)) y ∂P.map Y) =
+      (P.map Y).real sectionEvent
+    rw [integral_indicator_const (e := (1 : ℝ)) hsection,
+      smul_eq_mul, mul_one]
+  filter_upwards [hcond] with sample hsample
+  rw [hsample, hsectionIntegral]
 
 end ProbabilityTheory

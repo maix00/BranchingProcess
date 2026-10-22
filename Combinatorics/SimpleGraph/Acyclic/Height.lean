@@ -17,6 +17,19 @@ vertex has at most one neighbour of height not exceeding its own. A cycle would
 contain a vertex of maximal height, whose two neighbours on the cycle both have
 height at most its own, hence both are that unique neighbour.
 
+## Public declarations
+
+* `SimpleGraph.isAcyclic_of_height G height huniq`: if, for each vertex `c`,
+  any two adjacent vertices `a` and `b` with `height a ≤ height c` and
+  `height b ≤ height c` are equal, then `G.IsAcyclic`.
+  In symbols,
+  \[
+    \bigl(\forall a,b,c,\; G.\operatorname{Adj}(a,c)
+      \land G.\operatorname{Adj}(b,c) \land h(a)\le h(c)
+      \land h(b)\le h(c) \implies a=b\bigr)
+      \implies G.\operatorname{IsAcyclic}.
+  \]
+
 This file is a mathlib candidate: `Mathlib.Combinatorics.SimpleGraph.Acyclic`
 has no height criterion, and this statement is independent of any application. It
 lives at the mathlib path so that it can be upstreamed; the package root mirrors
