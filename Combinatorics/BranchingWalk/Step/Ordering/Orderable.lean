@@ -27,6 +27,47 @@ order, is itself the label, so nothing here depends on a sorting API.
 The rank of a child is stated for an arbitrary slot type; only the enumeration itself, whose length is the
 number of children, is about `ℕ`. The slots outside the children receive an injection through the finite
 avoidance construction in this file.
+
+The public declarations in `Combinatorics.Branching` are:
+
+- `Step.IsOrderable ξ`: there is an injective relabelling $f$ such that
+  $i\mapsto\xi(f(i))$ is sibling-closed and increasing, and every surviving
+  slot of $\xi$ lies in the range of $f$.
+- `Step.orderingRelabel ξ h` and `Step.order ξ h`: the chosen relabelling and
+  the resulting increasing normal form; `Step.orderingRelabel_injective`,
+  `Step.order_mem_orderedSteps`, and
+  `Step.orderingRelabel_surjectiveOn_support` give injectivity, normal-form
+  membership, and coverage of surviving slots.
+- `Step.leftmost? ξ h`: the value at the least slot of the normal form;
+  `Step.leftmost?_eq_some_le` says that when $\xi$ has a child, this value is
+  present and is at most every raw child displacement.
+- `Step.isOrderable_of_isSiblingClosed_of_isMonotone`: an already
+  sibling-closed, increasing step is orderable by the identity relabelling.
+- `IsOrderable ι X`: every step $\xi: \operatorname{Step}(\iota,X)$ is
+  `Step.IsOrderable ξ`.
+- `Step.HasIncreasingEnumeration ξ`: there are a length $n$ and an injection
+  $e$ whose image is exactly the surviving slots, with $e(i)$ surviving for
+  $i<n$, and whose marks are nondecreasing for indices below $n$.
+  `Step.isOrderable_of_hasIncreasingEnumeration` converts such an
+  enumeration to an orderability witness.
+- `Step.below ξ S j`: the slots $j'\in S$ whose mark is smaller than the
+  mark at $j$, or whose mark is equal and whose slot precedes $j$.
+  `Step.mem_below` characterizes membership, and
+  `Step.not_mem_below_self` gives $j\notin\xi.\operatorname{below}(S,j)$.
+- `Step.below_subset_of_below` and `Step.below_ssubset_of_below`: if $j$
+  precedes $j'$ in the mark-then-slot order, then
+  $\xi.\operatorname{below}(S,j)\subseteq
+  \xi.\operatorname{below}(S,j')$, strictly when $j\in S$.
+- `Step.rank ξ S j`: the cardinality of
+  $\xi.\operatorname{below}(S,j)$.
+  `Step.rank_injOn` makes this rank injective on $S$ when $S$ consists of
+  children; `Step.rank_lt_card` gives $\operatorname{rank}(j)<|S|$ for
+  $j\in S$; `Step.image_rank_eq_range` identifies the image with
+  $\{0,\ldots,|S|-1\}$; `Step.exists_some_le_of_rank_le` orders child marks
+  whenever their ranks are ordered.
+- `Step.hasIncreasingEnumeration_of_isFinitelySupported` and
+  `Step.isOrderable_of_isFinitelySupported`: every finitely supported step
+  on $\mathbb N$ has an increasing enumeration and is orderable.
 -/
 
 @[expose] public section

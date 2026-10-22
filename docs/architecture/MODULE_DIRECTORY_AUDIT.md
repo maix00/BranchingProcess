@@ -3785,3 +3785,18 @@ more than eight `.lean` files per directory, including test modules. It found
 zero such directories after excluding only `Vendor/` and `.lake/`. The
 `SlotOrder` and finite-prefix client modules compile with the pinned toolchain;
 the targeted style check is recorded with this review.
+
+## Branching-step ordering declaration inventory (2026-10-22)
+
+The neighboring `Combinatorics/BranchingWalk/Step/Ordering/` interfaces were
+also checked against the exact public names in each module. The module headers
+now inventory all declarations in `Monotone.lean` (ordered and antitone
+steps, their membership and monotonicity laws, and generic and real-valued
+measurability), `Orderable.lean` (orderability, increasing enumerations,
+finite-set mark-slot ranks, and the finitely-supported `ℕ` construction),
+`Rank.lean` (cardinal- and natural-valued sibling positions and their
+closed-step identities), and `Realization.lean` (point-measure invariance
+under ordered realization). The descriptions state the defining relations
+and conclusions; private measurable-graph and finite-avoidance helpers remain
+outside the inventories. These modules compile with the pinned toolchain and
+pass targeted `lint-style`.

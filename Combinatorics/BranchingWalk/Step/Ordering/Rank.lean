@@ -21,6 +21,17 @@ The definition is polymorphic in the slot type.  For the canonical
 `ℕ`-indexed representation, sibling closure makes the slot number itself the
 sibling rank.  A merely countable slot type does not have a canonical rank:
 one must additionally choose an order whose predecessor sets are finite.
+
+The public declarations in `Combinatorics.Branching` are:
+
+- `Step.siblingCardinal ξ i`: the cardinality of
+  $\{j\mid \operatorname{survive}(\xi,j)\land j<i\}$.
+- `Step.siblingRank ξ i`: the natural cardinality of the same predecessor set.
+- `Step.siblingRank_eq_nat_of_isSiblingClosed` and
+  `Step.siblingCardinal_eq_nat_of_isSiblingClosed`: if $\xi$ is a
+  sibling-closed step indexed by $\mathbb N$ and $i$ survives, then
+  $\operatorname{siblingRank}(\xi,i)=i$ and
+  $\operatorname{siblingCardinal}(\xi,i)=i$ (the latter in `Cardinal`).
 -/
 
 @[expose] public section

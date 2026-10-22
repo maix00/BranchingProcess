@@ -20,6 +20,36 @@ slots form an initial segment and their marks do not decrease. `IsMonotone`
 is the increasing mark-order case and `IsAntitone` its decreasing mirror;
 `orderedSteps` and `antitoneSteps` are the two order-dual sets of such steps.
 This file also carries the measurability of both sets.
+
+The public declarations in `Combinatorics.Branching` are:
+
+- `IsMonotone ξ` and `IsAntitone ξ`: the relations
+  `siblingRel (· ≤ ·) ξ` and `siblingRel (fun x y => y ≤ x) ξ`.
+- `antitone_iff_orderDual`: the decreasing condition on `ξ` is equivalent to
+  the increasing condition after mapping each optional mark into `OrderDual X`.
+- `value'_mono_of_survive`: if `ξ` is increasing, $i\le j$, and both slots
+  survive, then $\operatorname{value}'(\xi,i)\le\operatorname{value}'(\xi,j)$.
+- `orderedStepsOf rel`: the set of sibling-closed steps whose surviving
+  values satisfy `rel` in increasing slot order.
+- `orderedSteps` and `antitoneSteps`: the cases `rel := (· ≤ ·)` and
+  `rel := fun x y => y ≤ x`; `mem_orderedSteps_iff` and
+  `mem_antitoneSteps_iff` give their defining membership conditions.
+- `orderedSteps_survive_of_le`: if $i\le j$ and slot $j$ survives in an
+  ordered step, then slot $i$ survives.
+- `orderedSteps_value_mono`: if $i\le j$ and slot $j$ survives in an
+  ordered step, then $\operatorname{value}'(\xi,i)\le
+  \operatorname{value}'(\xi,j)$.
+- `unorderedExample` and `unorderedExample_not_ordered`: the step on
+  $\mathbb N$ with marks $1$ at $0$, $0$ at $1$, and no other surviving
+  slots is not in `orderedSteps`.
+- `orderedStepsOf_measurable_of`: if $\iota$ is countable and
+  $G_{\mathrm{rel}}=\{(a,b):\forall x,y,\ a=\operatorname{some}(x)\to
+  b=\operatorname{some}(y)\to\mathrm{rel}(x,y)\}$ is measurable in
+  $(\operatorname{Option}X)^2$, then `orderedStepsOf rel` is measurable.
+- `orderedSteps_measurable_of` and `antitoneSteps_measurable_of`: the same
+  implication for the graphs of $x\le y$ and $y\le x$, respectively.
+- `orderedSteps_measurable` and `antitoneSteps_measurable`: the real-valued
+  increasing and decreasing conditions are measurable for countable slots.
 -/
 
 open MeasureTheory
