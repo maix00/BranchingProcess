@@ -8,15 +8,40 @@ module
 
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Corridor
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Partition
+import Probability.MeasureTheory.Asymptotics.ProbabilityRate
 import Mathlib.Topology.Order.LiminfLimsup
 
 /-!
 # Stable Mogulskii upper rate from a fixed block parameter
 
-This module converts the source's independent-block bound into the
-small-deviation logarithmic normalization. The theorem keeps one fixed block
-parameter and one strict one-block base; the source's slow diagonal is a later
-step, after the fixed-parameter limits have been established.
+The public theorems in this file are:
+
+- `limsup_stableSmallDeviationRate_mul_log_probability_le_of_blockPowerBound`:
+  an eventual independent-block bound $p_n\leq q^{\lfloor N_n/\ell_n\rfloor}$
+  implies $\limsup_n a_n\log p_n\leq(\tau/c)\log q$ when $N_n/n\to\tau$.
+- `limsup_stableSmallDeviationRate_mul_log_openHorizontalTubeProbability_le_of_blockPathLimit`
+  and `limsup_stableSmallDeviationRate_mul_log_partialSumRangeOscillationLTProbability_le_of_blockPathLimit`:
+  apply this bound to a horizontal tube and to a translation-invariant range
+  event, respectively, using a fixed stable block and its path-law limit.
+- `limsup_stableSmallDeviationRate_mul_log_openHorizontalTubeProbability_le_of_escapeRate_on_segment`
+  and `limsup_stableSmallDeviationRate_mul_log_partialSumRangeOscillationLTProbability_le_of_escapeRate_on_segment`:
+  for width $w$ and relative duration $\tau$, the normalized logarithmic
+  limsup is at most
+  $\tau[C/((w+m)/2)^\alpha+2\varepsilon]$.
+- `limsup_stableSmallDeviationRate_mul_log_openHorizontalTubeProbability_le_of_escapeRate`:
+  at unit width and full duration, the limsup is at most
+  $C/((1+m)/2)^\alpha+2\varepsilon$.
+- `limsup_stableSmallDeviationRate_mul_log_openHorizontalTubeProbability_le`:
+  the sharp limsup is at most $C/(1/2)^\alpha$.
+
+Here $a_n$ is `stableSmallDeviationRate α ν scale n`, $c$ is the fixed
+block-time parameter, and $\ell_n$ is `stableBlockLength α ν c scale n`.
+This is the independent-block upper-bound argument in Theorem 3, Section 4
+of A. A. Mogul'skii, “Small deviations in the sample function space,”
+*Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974), 755--765; English
+translation, “Small Deviations in a Space of Trajectories,” *Theory of
+Probability and Its Applications* 19(4) (1975), 726--736, DOI 10.1137/1119081.
+The fixed-parameter limits precede the final width optimization.
 -/
 
 open Filter MeasureTheory
@@ -52,8 +77,6 @@ theorem limsup_stableSmallDeviationRate_mul_log_probability_le_of_blockPowerBoun
       Real.log (probability n).toReal) ≤ (τ / constant) * Real.log q := by
   let blockCount : ℕ → ℕ := fun n =>
     horizon n / stableBlockLength α ν constant scale n
-  let coefficient : ℕ → ℝ := fun n =>
-    stableSmallDeviationRate α ν scale n * (blockCount n : ℝ)
   have hscaleTop : Tendsto scale atTop atTop :=
     IsStableMogulskiiScale.scale_tendsto_atTop hscale
   have hscalePos : ∀ᶠ n : ℕ in atTop, 0 < scale n :=
@@ -61,46 +84,20 @@ theorem limsup_stableSmallDeviationRate_mul_log_probability_le_of_blockPowerBoun
   have hslowPos : ∀ᶠ n : ℕ in atTop,
       0 < stableSlowVariation α ν (scale n) :=
     hscaleTop.eventually hslow.eventually_pos
-  have hlogBound : ∀ᶠ n : ℕ in atTop,
-      stableSmallDeviationRate α ν scale n * Real.log (probability n).toReal ≤
-        coefficient n * Real.log q := by
-    filter_upwards [hblockBound, hpositive, hscalePos, hslowPos] with n hprob hpos hs hL
-    have hprobTop : probability n ≠ ⊤ := ne_of_lt ((hprobabilityOne n).trans_lt
-      ENNReal.one_lt_top)
-    have hpowTop : (ENNReal.ofReal q) ^ blockCount n ≠ ⊤ :=
-      ENNReal.pow_ne_top ENNReal.ofReal_ne_top
-    have hrealBound : (probability n).toReal ≤ q ^ blockCount n := by
-      have hrealENN : (probability n).toReal ≤
-          ((ENNReal.ofReal q) ^ blockCount n).toReal :=
-        (ENNReal.toReal_le_toReal hprobTop hpowTop).2 (by simpa [blockCount] using hprob)
-      simpa [ENNReal.toReal_pow, ENNReal.toReal_ofReal hq.le] using hrealENN
-    have hrealPos : 0 < (probability n).toReal :=
-      ENNReal.toReal_pos (ne_of_gt hpos) hprobTop
-    have hlog := Real.log_le_log hrealPos hrealBound
-    rw [Real.log_pow] at hlog
-    have hrateNonneg : 0 ≤ stableSmallDeviationRate α ν scale n := by
-      rw [stableSmallDeviationRate]
-      positivity
-    have hmul := mul_le_mul_of_nonneg_left hlog hrateNonneg
-    calc
-      stableSmallDeviationRate α ν scale n * Real.log (probability n).toReal ≤
-          stableSmallDeviationRate α ν scale n *
-            ((blockCount n : ℝ) * Real.log q) := hmul
-      _ = coefficient n * Real.log q := by
-        dsimp [coefficient]
-        ring
-  have hcoefficient : Tendsto coefficient atTop (𝓝 (τ / constant)) := by
-    simpa [coefficient, blockCount] using
+  have hrateNonneg : ∀ᶠ n : ℕ in atTop,
+      0 ≤ stableSmallDeviationRate α ν scale n := by
+    filter_upwards [hscalePos, hslowPos] with n hs hL
+    rw [stableSmallDeviationRate]
+    positivity
+  have hcoefficient : Tendsto
+      (fun n => stableSmallDeviationRate α ν scale n * (blockCount n : ℝ))
+      atTop (𝓝 (τ / constant)) := by
+    simpa [blockCount] using
       tendsto_stableScaleTime_div_nat_mul_segmentBlockCount
         hα hα₂ hconstant hscale hslow hhorizon
-  have hright : Tendsto (fun n => coefficient n * Real.log q) atTop
-      (𝓝 ((τ / constant) * Real.log q)) := hcoefficient.mul_const _
-  calc
-    atTop.limsup (fun n => stableSmallDeviationRate α ν scale n *
-        Real.log (probability n).toReal) ≤
-      atTop.limsup (fun n => coefficient n * Real.log q) :=
-        Filter.limsup_le_limsup hlogBound hlowerCobounded hright.isBoundedUnder_le
-    _ = (τ / constant) * Real.log q := hright.limsup_eq
+  exact ProbabilityTheory.limsup_probabilityRate_le_of_eventually_le_pow
+    hq hprobabilityOne (by simpa [blockCount] using hblockBound) hpositive
+    hrateNonneg hcoefficient hlowerCobounded
 
 /-- A fixed stable block parameter bounds the normalized logarithmic rate on
 any positive-width horizontal corridor and any macroscopic time segment. The
@@ -543,7 +540,8 @@ theorem limsup_stableSmallDeviationRate_mul_log_openHorizontalTubeProbability_le
 
 /-- The centered horizontal-tube upper rate is the stable escape constant
 scaled by the inverse `α`-power of the tube's half-width. This is the
-constant-width case of the upper half of Mogulskii's theorem. The hypotheses
+constant-width upper bound in A. A. Mogul'skii, *Small Deviations in a Space
+of Trajectories*, Theorem 3, Section 4 (DOI 10.1137/1119081). The hypotheses
 are the stable path-law escape rate, the stable random-walk `J₁` limit with
 its tightness input, and the lower-side positivity/coboundedness needed for
 real logarithms. -/

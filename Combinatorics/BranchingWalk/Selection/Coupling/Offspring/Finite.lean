@@ -14,6 +14,25 @@ public import Combinatorics.BranchingWalk.Selection.Coupling.Offspring.Address
 
 This file realizes the parent-slot interface on finite multi-root populations
 and records the address/pair cardinality identities used by selection.
+
+## Public declarations
+
+* `Combinatorics.Branching.Selection.Coupling.offspringPairs` and
+  `Combinatorics.Branching.Selection.Coupling.offspringAddresses` are the finite
+  parent-slot pairs and their genuine child addresses.
+* `Combinatorics.Branching.Selection.Coupling.mem_offspringPairs` and
+  `Combinatorics.Branching.Selection.Coupling.mem_offspringAddresses`
+  characterize membership in these finite sets;
+  `Combinatorics.Branching.Selection.Coupling.coe_offspringPairs` and
+  `Combinatorics.Branching.Selection.Coupling.coe_offspringAddresses` identify
+  them with the corresponding set-valued constructions.
+* `Combinatorics.Branching.Selection.Coupling.card_filter_offspringAddresses`
+  states, for every predicate `P`, that filtering child addresses has the same
+  cardinality as filtering parent-slot pairs by the induced predicate:
+  \[
+    |\{q\in\operatorname{offspringAddresses}:P(q)\}|=
+    |\{(p,i)\in\operatorname{offspringPairs}:P(\operatorname{childAddress}(p,i))\}|.
+  \]
 -/
 
 @[expose] public section

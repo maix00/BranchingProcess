@@ -38,13 +38,13 @@ abbrev CellInteriorCoordinate :=
 
 /-- The rational coordinate interval embeds monotonically into the real unit
 interval, fixing its left endpoint. -/
-private theorem rationalCoordinate_toUnitInterval_bot :
+private lemma rationalCoordinate_toUnitInterval_bot :
     RationalCoordinate.toUnitInterval (⊥ : RationalCoordinate.UnitInterval) =
       (⊥ : unitInterval) := by
   apply Subtype.ext
   norm_num [RationalCoordinate.toUnitInterval]
 
-private theorem monotone_rationalCoordinate_toUnitInterval :
+private lemma monotone_rationalCoordinate_toUnitInterval :
     Monotone (RationalCoordinate.toUnitInterval :
       RationalCoordinate.UnitInterval → unitInterval) := by
   intro p q hpq

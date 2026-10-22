@@ -5,7 +5,7 @@ Authors: WANG Yiyang
 -/
 module
 
-public import Topology.Cadlag.Skorokhod.PathClass.StepCorridor.Boundary
+public import Topology.Cadlag.Skorokhod.PathClass.StepCorridor.Boundary.Basic
 public import Mathlib.Data.Finset.Sort
 
 /-!
