@@ -4,7 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Population.Candidates.Prefix
+module
+
+public import Mathlib.Data.Fintype.EquivFin
+public import Probability.BranchingRandomWalk.Population.Candidates.Prefix
 
 /-!
 # Enumerating finite selected populations
@@ -15,11 +18,13 @@ $u:\mathrm{Fin}(|s|)\to\operatorname{RootAddress}(m,\mathbb N)$ such that
 \[
   s=\{u_i:i\in\mathrm{Fin}(|s|)\}.
 \]
-It packages Mathlib's finite-type equivalence with `Fin` for the selected-
-population proof chain.
+It packages Mathlib's `Finset.equivFin` as the injective image interface used
+by the selected-population proof chain.
 -/
 
 open MeasureTheory ProbabilityTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
@@ -30,8 +35,7 @@ lemma finiteRootAddress_enumeration {m : ℕ}
     ∃ roots : Fin s.card → RootAddress m ℕ,
       s = Finset.univ.image roots ∧ Function.Injective roots := by
   classical
-  let e : {p : RootAddress m ℕ // p ∈ s} ≃ Fin s.card :=
-    Fintype.equivFinOfCardEq (by simp)
+  let e : s ≃ Fin s.card := s.equivFin
   let roots : Fin s.card → RootAddress m ℕ := fun j => (e.symm j).1
   refine ⟨roots, ?_, ?_⟩
   · ext p
@@ -48,3 +52,5 @@ lemma finiteRootAddress_enumeration {m : ℕ}
     exact Subtype.ext hij
 
 end ProbabilityTheory.BranchingRandomWalk
+
+end

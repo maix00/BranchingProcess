@@ -992,6 +992,21 @@ Zygmund, [*On some series of functions, (3)*, Lemma 19, p. 192
 the general corollary `measure_ge_threshold_of_secondMoment_le`. The Galton--Watson moment
 recurrences and finite-generation specializations remain in `Growth.lean`.
 
+The same moment argument has a useful support-event form for an
+`ENNReal`-valued observable `X`: if `∫⁻ X = m` and `∫⁻ X² ≤ s` with
+`0 < s < ∞`, then `m² / s ≤ μ {ω | X ω ≠ 0}`. A source audit found this
+fully generic proof embedded in `Spine/Tube/SecondMoment/OneGenerationTail.lean`;
+the only model-specific use is to turn a corridor path-count moment estimate
+into the probability that one root has a corridor path. It now lives beside
+the real-valued form in `Probability/MeasureTheory/Moments/PaleyZygmund.lean`,
+and the path-count theorem imports it as a probability-moments result. This
+reuses Mathlib's general `ENNReal` Hölder inequality
+([official API](https://leanprover-community.github.io/mathlib4_docs/Mathlib/MeasureTheory/Integral/MeanInequalities.html));
+the pinned Mathlib source supplies that analytic ingredient but has no
+Paley--Zygmund theorem. The support-event form is not a duplicate of the
+real-valued threshold theorem: it applies directly to extended-nonnegative
+path counts and avoids imposing unnecessary real-integrability conversions.
+
 The API review compared this statement with Mathlib's general
 [Markov inequality](https://github.com/leanprover-community/mathlib4/blob/380f2aafb622cb2c1c93dac545b6389083c68c51/Mathlib/MeasureTheory/Integral/Lebesgue/Markov.lean)
 and [(L^2) integral API](https://github.com/leanprover-community/mathlib4/blob/380f2aafb622cb2c1c93dac545b6389083c68c51/Mathlib/MeasureTheory/Function/L2Space.lean).
@@ -3667,3 +3682,17 @@ selection result remains under `Spectral/Range/Rate/Lemmas/`, where its
 proof-specific role is visible. This audit follows the abstract API already
 present in Mathlib while introducing only the additional variable-rate
 statement required by both clients.
+
+## Selected-population enumeration ownership (2026-10-22)
+
+The abstraction search checked Mathlib's official
+[`Data.Fintype.EquivFin` API](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Data/Fintype/EquivFin.html)
+and the vendored source at revision
+`380f2aafb622cb2c1c93dac545b6389083c68c51`. Mathlib already provides
+`Finset.equivFin : s \simeq \mathrm{Fin}(s.\mathrm{card})`; a generic finite-set
+enumeration theorem would duplicate that API. The selected branching proofs
+need the same equivalence reoriented as an injective root-address map whose
+image is exactly the population. That wrapper is specific to this proof chain,
+so it remains under `Selected/Lemmas/` and is shared by the cell-branching and
+stopping-cell-branching arguments, rather than being promoted as a general
+enumeration abstraction or nested under only one consumer.

@@ -12,6 +12,7 @@ import Probability.BranchingRandomWalk.Assumptions.Structural
 import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law.Basic
 import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.JointSubtrees
 import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Basic
+import Probability.MeasureTheory.Moments.PaleyZygmund
 
 /-!
 # A one-generation upper-tail bound from the offspring law
@@ -67,9 +68,6 @@ import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUppe
   `ProbabilityTheory.BranchingRandomWalk.Spine.pathGenerationChildMean_offDiagonal_le_crossChildWeight`
   and
   `ProbabilityTheory.BranchingRandomWalk.Spine.lintegral_pathGenerationChildMean_offDiagonal_le_crossChildWeight`.
-* `ProbabilityTheory.BranchingRandomWalk.Spine.measure_ne_zero_ge_lintegral_sq_div_lintegral_sq`
-  is the support-event Paley--Zygmund inequality
-  `μ {x | f x ≠ 0} ≥ (∫ f)^2 / ∫ f^2` for a nonnegative observable.
 * `ProbabilityTheory.BranchingRandomWalk.Spine.lintegral_pathGeneration_succ_sq_le_diagonal_add_crossWeight`,
   `ProbabilityTheory.BranchingRandomWalk.Spine.lintegral_pathGeneration_affineTube_succ_sq_le_diagonal_add_crossWeight`,
   and
@@ -920,84 +918,6 @@ theorem lintegral_pathGenerationChildMean_offDiagonal_le_crossChildWeight
           (∫⁻ ξ, crossChildWeight φ ξ ∂μ) := by
         rw [lintegral_const_mul _ (crossChildWeight_measurable φ)]
   simpa [F, childMean] using hbound
-
-/-- Paley--Zygmund for an ENNReal-valued nonnegative observable, in the
-support-event form used for the number of corridor paths. -/
-theorem measure_ne_zero_ge_lintegral_sq_div_lintegral_sq
-    {Ω : Type*} [MeasurableSpace Ω]
-    (μ : Measure Ω) [IsProbabilityMeasure μ]
-    (X : Ω → ℝ≥0∞) (hX : Measurable X)
-    (mean second : ℝ≥0∞)
-    (hmean : (∫⁻ ω, X ω ∂μ) = mean)
-    (hsecond : (∫⁻ ω, X ω ^ 2 ∂μ) ≤ second)
-    (hsecond_pos : 0 < second) (hsecond_top : second ≠ ∞) :
-    mean ^ 2 / second ≤ μ {ω | X ω ≠ 0} := by
-  let A : Set Ω := {ω | X ω ≠ 0}
-  let indicator : Ω → ℝ≥0∞ := A.indicator fun _ => 1
-  have hA : MeasurableSet A := by
-    change MeasurableSet (X ⁻¹' ({0}ᶜ))
-    exact (measurableSet_singleton 0).compl.preimage hX
-  have hindicator : Measurable indicator := measurable_const.indicator hA
-  have h22 : (2 : ℝ).HolderConjugate 2 := by
-    convert Real.HolderConjugate.conjExponent
-      (show 1 < (2 : ℝ) by norm_num) using 1 <;>
-      norm_num [Real.conjExponent]
-  have hHolder := ENNReal.lintegral_mul_le_Lp_mul_Lq μ h22
-    hindicator.aemeasurable hX.aemeasurable
-  have hindicator_sq : (fun ω => indicator ω ^ (2 : ℝ)) = indicator := by
-    funext ω
-    by_cases hω : ω ∈ A <;> simp [indicator, hω]
-  have hindicator_integral :
-      (∫⁻ ω, indicator ω ^ (2 : ℝ) ∂μ) = μ A := by
-    rw [hindicator_sq]
-    exact lintegral_indicator_one hA
-  have hX_on_A : ∀ ω, indicator ω * X ω = X ω := by
-    intro ω
-    by_cases hω : ω ∈ A
-    · simp [indicator, hω]
-    · have hzero : X ω = 0 := by
-        by_contra hne
-        exact hω hne
-      simp [indicator, hω, hzero]
-  have hHolder' :
-      mean ≤ (μ A) ^ (1 / 2 : ℝ) * second ^ (1 / 2 : ℝ) := by
-    calc
-      mean = ∫⁻ ω, indicator ω * X ω ∂μ := by
-        rw [lintegral_congr fun ω => hX_on_A ω, hmean]
-      _ ≤ (∫⁻ ω, indicator ω ^ (2 : ℝ) ∂μ) ^ (1 / 2 : ℝ) *
-          (∫⁻ ω, X ω ^ (2 : ℝ) ∂μ) ^ (1 / 2 : ℝ) := hHolder
-      _ ≤ (μ A) ^ (1 / 2 : ℝ) * second ^ (1 / 2 : ℝ) := by
-        rw [hindicator_integral]
-        gcongr
-        simpa [pow_two] using hsecond
-  have hroot (x : ℝ≥0∞) :
-      x ^ (1 / 2 : ℝ) * x ^ (1 / 2 : ℝ) = x := by
-    calc
-      x ^ (1 / 2 : ℝ) * x ^ (1 / 2 : ℝ) =
-          (x ^ (1 / 2 : ℝ)) ^ 2 := by rw [pow_two]
-      _ = x ^ ((1 / 2 : ℝ) * (2 : ℝ)) := by
-        rw [← ENNReal.rpow_natCast, ← ENNReal.rpow_mul]
-        congr 1
-      _ = x := by
-        have hhalf : (1 / 2 : ℝ) * (2 : ℝ) = 1 := by norm_num
-        rw [hhalf, ENNReal.rpow_one]
-  have hsq : mean ^ 2 ≤ μ A * second := by
-    have hmul := mul_le_mul hHolder' hHolder' (by positivity) (by positivity)
-    calc
-      mean ^ 2 = mean * mean := by rw [pow_two]
-      _ ≤ ((μ A) ^ (1 / 2 : ℝ) * second ^ (1 / 2 : ℝ)) ^ 2 := by
-        simpa [pow_two] using hmul
-      _ = μ A * second := by
-        rw [pow_two]
-        calc
-          ((μ A) ^ (1 / 2 : ℝ) * second ^ (1 / 2 : ℝ)) *
-              ((μ A) ^ (1 / 2 : ℝ) * second ^ (1 / 2 : ℝ)) =
-            ((μ A) ^ (1 / 2 : ℝ) * (μ A) ^ (1 / 2 : ℝ)) *
-              (second ^ (1 / 2 : ℝ) * second ^ (1 / 2 : ℝ)) := by ac_rfl
-          _ = μ A * second := by rw [hroot, hroot]
-  apply (ENNReal.div_le_iff_le_mul
-    (Or.inl hsecond_pos.ne') (Or.inl hsecond_top)).2
-  simpa [mul_comm] using hsq
 
 /-- One generation of the second-moment recursion, with the
 off-diagonal MRCA contribution bounded by the cross-child exponential moment.
