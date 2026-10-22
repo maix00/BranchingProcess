@@ -8,7 +8,7 @@ module
 
 public import Probability.Process.Levy.Jump.Entrance
 public import Probability.Process.Path.Skorokhod.Corridor.Segment
-public import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.Linarith
 
 /-!
 # A one-jump model enters a complete segment corridor

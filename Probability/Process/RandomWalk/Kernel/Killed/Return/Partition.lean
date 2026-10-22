@@ -6,15 +6,17 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.Kernel.Killed.Return
+public import Probability.Process.RandomWalk.Kernel.Killed.Return.Basic
 public import Probability.Process.RandomWalk.Path.Block.Partition.Basic
 
 /-!
 # Equal-block path interpretation of interval return kernels
 
-For a real additive walk, a return block is expressed as simultaneous outer
-corridor constraints on an equal partition together with an inner endpoint
-constraint.
+For positive block count and block length, the public theorem
+`returnKernel_Icc_apply_univ_mul_eq_blockCorridors_endsIn` identifies a
+return-kernel mass after `blocks * length` steps with the IID probability that
+all points in every block stay in the outer interval and the final endpoint
+lies in the return interval.
 -/
 
 open MeasureTheory Set

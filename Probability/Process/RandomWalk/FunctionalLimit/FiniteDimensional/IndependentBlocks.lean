@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Distributions.DomainOfAttraction.Block
-public import Probability.Process.RandomWalk.Path.Block.Law
+public import Probability.Process.RandomWalk.Path.Block.Law.Basic
 public import Probability.Process.RandomWalk.Path.Block.Partition.Basic
 public import Probability.ConvergenceInDistribution.Independence
 public import Topology.Algebra.BigOperators.PartialSum

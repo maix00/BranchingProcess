@@ -17,6 +17,15 @@ Every realized node is the endpoint of a unique directed path from the root in
 the parent--child quiver. The same sequence of edges is a walk in the underlying
 simple graph, so the root reaches every realized node, and by symmetry and
 transitivity the graph is connected.
+
+## Public declarations
+
+- `childGraph_reachable T b` states that the root reaches every vertex `b`, and
+  `childGraph_connected T` gives connectedness of `Tree.childGraph T`.
+- `forestGraph_reachable_same_root` gives reachability between vertices with
+  the same root coordinate. The disjoint-union graph is preconnected exactly
+  when `Root` is a subsingleton; with `[Nonempty Root]`, it is connected in
+  that case.
 -/
 
 @[expose] public section

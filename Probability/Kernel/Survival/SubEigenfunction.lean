@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Kernel.Survival
+public import Probability.Kernel.Survival.Basic
 
 /-!
 # Iterating positive test-function bounds for kernels

@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Combinatorics.BranchingWalk.Selection.NSelection.Leftmost
+public import Combinatorics.BranchingWalk.Selection.NSelection.Mechanism.Leftmost
 
 /-!
 # One-step comparison with leftmost selection
@@ -16,6 +16,23 @@ couplings.  Candidate identities and positions are separate: `ι` and `κ`
 retain multiplicity, while `position` is used only for threshold comparisons.
 No new population order is introduced here.  The conclusion is precisely the
 threshold inequality used by `Cloud.RankwiseDominates` and `Cloud.Dominates`.
+
+The public API is:
+
+- `filter_card_le_filter_selectFirstN` proves that if `retained ⊆ source`,
+  `retained.card ≤ N`,
+  `(source.filter (fun p => position p ≤ a)).card ≤
+  (rightCandidates.filter (fun q => candidatePosition q ≤ a)).card` for every
+  `a`, and
+  `q ≤ p → candidatePosition q ≤ candidatePosition p` on `rightCandidates`,
+  then
+  `(retained.filter (fun p => position p ≤ a)).card ≤
+  ((selectFirstN N rightCandidates).filter
+  (fun q => candidatePosition q ≤ a)).card` for every `a`.
+- `exists_selectFirstN_le_of_mem` gives a one particle consequence: for
+  `N > 0` and `p ∈ source`, there exists `q ∈ selectFirstN N rightCandidates`
+  with `candidatePosition q ≤ position p` under the same threshold and
+  monotonicity hypotheses.
 -/
 
 @[expose] public section
