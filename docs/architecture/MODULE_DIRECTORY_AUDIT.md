@@ -3947,6 +3947,18 @@ That module was removed. The Gaussian path-law existence theorem remains at
 `Gaussian/Path/Existence.lean` as a complete process-level result, and the
 general endpoint-band transfer remains at its stable-process owner.
 
+The remaining helpers in `Gaussian/Blocks/Lemmas/` were checked against their
+call sites. `ProductParameters.lean` selects Gaussian interval and error
+parameters for the finite-reference survival and partition-rate arguments;
+`ProductToSurvival.lean` converts the resulting endpoint-box estimate into
+killed-kernel mass under the theorem's within-block control. Their estimates
+are specific to this Gaussian block proof chain, and neither introduces a
+general event or kernel interface. The parameter proof already uses
+`Finset.exists_min_image`; Mathlib documents that general finite-minimum
+interface in [`Mathlib.Data.Finset.Max`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Data/Finset/Max.html).
+No additional finite-family wrapper is needed, so both modules remain under
+`Lemmas/`.
+
 After these moves and removals, a fresh structural scan of the eight
 production Lean roots found no same-directory file/directory stem collision,
 no parent-directory/file stem collision, no duplicate `Lemmas.lean` and
