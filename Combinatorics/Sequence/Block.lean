@@ -21,8 +21,12 @@ The public declarations in `Combinatorics.Sequence` are:
   $\operatorname{paddedBlock}(s,\ell,d,f)(k)=f(s+k)$ for $k<\ell$, and
   equals $d$ when $\ell\le k$.
 - `blockStart`: the starting index $b_j=\sum_{i<j}\ell_i$ of the $j$-th
-  consecutive block in a variable-length partition; its zero, successor,
-  constant-length, and monotonicity laws are provided below.
+  consecutive block in a variable-length partition.
+- `blockStart_zero` and `blockStart_succ`:
+  $b_0=0$ and $b_{j+1}=b_j+\ell_j$.
+- `blockStart_const` and `blockStart_mono`:
+  $b_j=j\ell$ for constant block length $\ell$, and $i\le j$ implies
+  $b_i\le b_j$ for arbitrary nonnegative block lengths.
 
 Extract a finite consecutive block from an arbitrary sequence. This operation
 is independent of any algebraic, probabilistic, or process structure on the

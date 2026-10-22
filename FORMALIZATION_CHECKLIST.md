@@ -281,7 +281,7 @@ first-block assumption of
 `Entrance/Robust/Event.lean` defines this event with terminal window
 $[h_{t_1}+2\Delta/5,h_{t_1}+3\Delta/5]$;
 `Entrance/Robust/Measurability.lean` proves that it is measurable at time
-$t_1$. `Entrance/Robust/Lemmas/Event.lean` proves the Donsker interior-event
+$t_1$. `Entrance/Robust/Lemmas/InteriorInclusion.lean` proves the Donsker interior-event
 inclusion used in the middle-start estimate.
 `DriftedTube/FiniteVarianceLower/Lemmas/Staircase/Setup/EntranceBridge.lean` proves
 both its tilted-tube path constraint and its membership in the first
