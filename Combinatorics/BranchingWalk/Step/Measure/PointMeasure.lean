@@ -23,6 +23,23 @@ deterministic and carries no probability measure, filtration, or sample space.
 
 Measurability of this observation under a random step lives in
 `Probability/BranchingRandomWalk/Step/`.
+
+## Public declarations
+
+- `stepAtomMeasure ξ i` is the Dirac measure at the mark in slot `i`, or
+  zero when that slot is absent; `stepPointMeasure ξ` is the sum of these
+  measures over all slots.
+- `stepPointMeasure_eq_iOptionDiracSum` identifies this sum with
+  `Measure.iOptionDiracSum ξ`, and `stepPointMeasure_isIntegerValued` proves
+  integer-valuedness, including coincident marks.
+- `stepAtomMeasure_apply` evaluates on a measurable `s` as `1` when the slot
+  has a mark in `s`, and `0` otherwise; `stepPointMeasure_apply` sums these
+  values over slots. `stepAtomMeasure_univ` gives the mass of one slot.
+- `stepAtomMeasure_measurable` and `stepPointMeasure_measurable` prove
+  measurability of these observations, with countable slots for the latter.
+- `stepPointMeasure_map` states
+  `stepPointMeasure (ξ.map f) = (stepPointMeasure ξ).map f` for measurable
+  `f`; `stepPointMeasure_univ` identifies total mass with `ξ.childCount`.
 -/
 
 open MeasureTheory

@@ -25,7 +25,7 @@ are arbitrary, and the measurability of the threshold set is an explicit
 hypothesis discharged by the real line with `measurableSet_Iic` and
 `measurableSet_Ici`.
 
-The public API is:
+## Public declarations
 
 - `nonemptySupport ξ` means that some slot survives, and
   `nonemptySupport_measurable` proves measurability for countable slot types.

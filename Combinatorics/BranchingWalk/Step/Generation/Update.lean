@@ -15,6 +15,23 @@ A recursive coupling may install new offspring steps at the currently exposed
 parents without changing any position already constructed.  `updateGeneration`
 replaces exactly the coordinates at one address depth.  The invariance lemmas
 below are deterministic and therefore belong below the probability layer.
+
+## Public declarations
+
+- `StepField.updateGeneration n replacement fallback u` is
+  `if u.length = n then replacement u else fallback u`;
+  `StepField.updateGeneration_eq`, `StepField.updateGeneration_ne`, and
+  `StepField.updateGeneration_of_lt` give its coordinate formulas.
+- `displaceWith_updateGeneration_of_le` states that
+  `displaceWith d (replacement.updateGeneration n fallback) v p =
+  displaceWith d fallback v p` when `v.length + p.length ≤ n`;
+  `displaceWith_updateGeneration_root_of_le` gives the root case for
+  `u.length ≤ n`.
+- `RootIndexed.StepField.updateGeneration` applies the same update
+  independently at each root, and `RootIndexed.StepField.updateGeneration_apply`
+  gives its coordinate formula.
+- `RootIndexed.BranchingWalk.position_updateGeneration_of_le` states that
+  positions at depth at most `n` are unchanged by updating generation `n`.
 -/
 
 @[expose] public section

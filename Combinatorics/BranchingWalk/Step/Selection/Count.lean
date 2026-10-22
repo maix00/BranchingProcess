@@ -19,10 +19,11 @@ the observation.
 ## Public declarations
 
 - `Step.childCount ξ = (support ξ).encard` counts surviving slots in `ℕ∞`.
-- `Step.childCount_map` and `Step.childCount_forgetMark` state invariance under
-  relabeling marks and forgetting marks.
-- `Step.childCount_measurable` proves measurability when the slot type is
-  countable.
+- `Step.childCount_map` and `Step.childCount_forgetMark` state
+  `(ξ.map f).childCount = ξ.childCount` and
+  `ξ.forgetMark.childCount = ξ.childCount`.
+- `Step.childCount_measurable` proves measurability of
+  `ξ ↦ ξ.childCount` when the slot type is countable.
 -/
 
 @[expose] public section

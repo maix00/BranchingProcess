@@ -27,22 +27,18 @@ is in `Step/Monotone.lean`, and the slot vocabulary is in
 `Basic/Position/Displace.lean` and `Basic/Position/DisplacementMap.lean`;
 realized and marked tree conversions are in `BranchingWalk/MarkedTree/`.
 
-The public API is:
+## Public declarations
 
-- `Step ι X := ι → Option X`; `ξ i = some x` records a present child with
-  mark `x`, and `ξ i = none` records an absent slot.
-- `value' ξ i` is the mark at slot `i`, with absent slots read as `0`;
-  `value'_eq_getD`, `value'_none`, and `value'_some` give its defining
-  equations.
-- `stepMeasurableSpace` equips `Step ι X` with the product measurable space,
-  and `value'_measurable` states that every zero-defaulted coordinate is
-  measurable.
-- `survive ξ i` means `∃ x, ξ i = some x`; `survive_iff_ne_none` identifies
-  it with `ξ i ≠ none`, and `survive_measurableSet` proves the corresponding
-  event measurable.
-- `support ξ = {i | survive ξ i}`; `Step.IsFinitelySupported ξ` asserts that
-  this set is finite, and `support_finite_of_fintype` proves finiteness when
-  the slot type is finite.
+- `Step ι X := ι → Option X`; `ξ i = some x` records a child with mark `x`.
+- `value' ξ i = (ξ i).getD 0`; `value'_eq_getD`, `value'_none`, and
+  `value'_some` give its coordinate formulas.
+- `stepMeasurableSpace` equips `Step ι X` with the product measurable space;
+  `value'_measurable` proves measurability of `ξ ↦ value' ξ i`.
+- `survive ξ i ↔ ξ i ≠ none`, by `survive_iff_ne_none`, and
+  `survive_measurableSet` proves `{ξ | survive ξ i}` measurable.
+- `support ξ = {i | survive ξ i}`; `Step.IsFinitelySupported ξ` means this
+  set is finite, and `support_finite_of_fintype` proves this when `ι` is
+  finite.
 -/
 
 @[expose] public section

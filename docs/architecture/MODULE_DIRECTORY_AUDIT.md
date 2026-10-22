@@ -3800,3 +3800,19 @@ under ordered realization). The descriptions state the defining relations
 and conclusions; private measurable-graph and finite-avoidance helpers remain
 outside the inventories. These modules compile with the pinned toolchain and
 pass targeted `lint-style`.
+
+## Branching-step API and module-header review (2026-10-22)
+
+The direct `Combinatorics/BranchingWalk/Step/` modules and their
+`Generation/`, `Measure/`, `Ordering/`, and `Selection/` children were checked
+against the public declarations in source. The headers now give exact names
+and mathematical descriptions for the step representation and support,
+mark maps, measurable slot events, generation updates, potential weights,
+point measures, child counts, sibling closure, and sibling-preserving
+relabeling. Existing inventories for ordered slots and finite selections were
+retained after checking them against the declarations. This pass changes no
+mathematical statements and promotes no declaration: each module remains at
+the semantic layer named by its object or operation, while the listed results
+describe reusable interfaces rather than one theorem's proof steps. The
+module build and style-check results are recorded with the corresponding
+commit.
