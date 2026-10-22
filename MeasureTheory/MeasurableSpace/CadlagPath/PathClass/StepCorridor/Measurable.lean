@@ -20,7 +20,7 @@ pointwise-strict `M₁` and `M₂` corridor events. Their failure remains the
 projection of the actual violation relation; it is not replaced by a
 uniform-margin event or by finite-coordinate constraints. Null-measurability
 of the projection under finite path laws is proved separately in
-`PathClass/NullMeasurable.lean` using the repository's axiom-clean
+`PathClass/StepCorridor/NullMeasurable.lean` using the repository's axiom-clean
 capacitability result.
 -/
 

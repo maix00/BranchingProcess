@@ -47,10 +47,11 @@ is the number of generations from `p` down to `q`, the length of the segment of 
 The plain forms `generation u` and `generationAfter u v` on addresses alone are the same notions read
 without a root, defined from the indexed ones at the one-point root.
 
-The levels of `generation` are what `Tree/Truncation.lean` cuts at and what `Tree/Height.lean`
-compares; `generationAfter` is the tree distance in the ancestor-descendant case, an ordinary natural
-number rather than the `ℕ∞`-valued height used there, because a node is finitely far below its own
-ancestor.
+The levels of `generation` are what `Tree/Truncation/Basic.lean` cuts at and
+what `Tree/Truncation/Height.lean` compares; `generationAfter` is the tree
+distance in the ancestor-descendant case, an ordinary natural number rather
+than the `ℕ∞`-valued height used there, because a node is finitely far below
+its own ancestor.
 -/
 
 @[expose] public section

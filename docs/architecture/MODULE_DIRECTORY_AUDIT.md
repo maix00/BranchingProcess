@@ -3801,6 +3801,26 @@ and conclusions; private measurable-graph and finite-avoidance helpers remain
 outside the inventories. These modules compile with the pinned toolchain and
 pass targeted `lint-style`.
 
+## Source-reference and citation scan (2026-10-22)
+
+A source-tree check of backticked `.lean` paths in owned module docstrings
+found stale references left by directory moves. The references now point to
+`UlamHarris/Tree/Truncation/{Basic,Height}.lean`,
+`UlamHarris/Tree/Defs.lean`, `UlamHarris/Tree/Topology/Borel.lean`,
+`CadlagPath/PathClass/StepCorridor/NullMeasurable.lean`,
+`BranchingRandomWalk/Step/Presentation/Basic.lean`, and the full
+`Probability/Process/RandomWalk/Path/Block/Partition/` paths. The remaining
+`Mathlib/...` path mentions in the scan resolve inside the pinned vendored
+Mathlib source.
+
+A targeted search of non-vendored Lean sources for generic `the paper`,
+`the thesis`, and similarly incomplete citation phrases found no matches.
+Occurrences of “master's thesis” identify Wang Yiyang's thesis by title and
+cite the chapter and displayed result; the Mogul'skii modules cite the
+original article and translation with theorem, section, pages, and DOI. A
+targeted search also found no private declaration names containing `paper`,
+`thesis`, or theorem-number tokens such as `lemma33`.
+
 ## Branching-step API and module-header review (2026-10-22)
 
 The direct `Combinatorics/BranchingWalk/Step/` modules and their
