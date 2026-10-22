@@ -9,7 +9,7 @@ module
 public import Probability.BranchingRandomWalk.Step.Presentation.Basic
 public import Probability.BranchingRandomWalk.Step.PointMeasure.Basic
 public import Combinatorics.BranchingWalk.Step.Ordering.Realization
-public import Combinatorics.BranchingWalk.Step.Measure.Potential
+public import Combinatorics.BranchingWalk.Step.Ordering.ByPotential
 
 /-!
 # Measurable ordering of a random branching step

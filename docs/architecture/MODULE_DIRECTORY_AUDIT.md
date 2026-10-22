@@ -61,7 +61,7 @@ when the move only clarifies module organization.
 | `Analysis/Asymptotics/RegularVariation` | Regular variation, slow variation, and Karamata-type consequences | `Basic.lean`, `Uniform.lean`, `AsymptoticInverse.lean`, `LowerPower.lean`, `MonotoneDensity.lean`, and `SlowScale.lean` remain at the subject root. `Integral/{Basic,Tail}.lean` groups the first and second integral-tail theorems with their regular-variation consequences; both modules expose reusable results and remain outside `Lemmas/`. |
 | `Stable/SmallDeviation/Blocks/Lower` | Lower block estimates | `Assembly/`, `Binning/`, `Bounds/`, `Entrance/`, and `Return/` group the distinct construction steps. `Entrance/PoissonModel.lean` owns the stable `α < 1` positive entrance theorem; it hides the chosen Lévy--Khintchine triple and exposes only the stable-process and CDF assumptions. `Lemmas/ReturnScale.lean` holds the first-uniform-block specialization used by the lower-bound proofs; arbitrary-horizon stable scaling stays at the `Blocks/` level. `Feedback/` contains the stable short-block scaling and entrance consequences; the adaptive finite-block probability and path-tube implications now live with generic uniform-block path results. Stable-law adapters are limited to block laws and estimates whose statements actually use stability. |
 | `BranchingRandomWalk/Restart/RootedTrial` | Rooted-trial restart and coupling | Finite-slot and reserve arguments have their own subdirectories. |
-| `Combinatorics/BranchingWalk/Step` | Deterministic branching-step operations | The root keeps `Basic`, `Map`, `Measurability`, and `Relation`. Ordering properties and ranks are under `Ordering/`; slot selection and sibling closure are under `Selection/`; potential and point-measure operations are under `Measure/`; generation-local updates are under `Generation/`. |
+| `Combinatorics/BranchingWalk/Step` | Deterministic branching-step operations | The root keeps `Basic`, `Map`, `Measurability`, `Relation`, and the mark-level real-valued `Potential` interface. Ordering properties, ranks, and ordering induced by potentials are under `Ordering/`; slot selection and sibling closure are under `Selection/`; point-measure operations are under `Measure/`; generation-local updates are under `Generation/`. |
 | `Probability/BranchingRandomWalk/Step` | Random step presentations, fields, and laws | Coordinate presentations and their constructors/maps are under `Presentation/`; field operations under `Field/`; probability laws under `Law/`; measurable ordering under `Ordering/`; point-measure observations under `PointMeasure/`. Root-indexed position measurability remains under `Position/`. |
 
 ## Mogulskii spectral asymptotics and entry point (2026-10-21)
@@ -3836,3 +3836,39 @@ the semantic layer named by its object or operation, while the listed results
 describe reusable interfaces rather than one theorem's proof steps. The
 module build and style-check results are recorded with the corresponding
 commit.
+
+## Measurable-potential abstraction and ownership review (2026-10-22)
+
+The former `Step/Measure/Potential.lean` bundled two semantic layers: the
+mark-level measurable map `Potential X`, and the event that a step becomes
+ordered after mapping its marks through that potential. The latter depended
+on `Ordering/Monotone`, while measure-weight interfaces depended on the same
+file. The declarations are now split by owner: `Step/Potential.lean` contains
+measurable real-valued mark observations, additive potentials, their path-sum
+operations, and coordinate measurability; `Step/Ordering/ByPotential.lean`
+contains `Step.IsOrderedBy`, `orderedBySteps`, its membership law, and the
+measurability theorem. Thus `Measure/ExponentialWeight.lean` imports only the
+base observation interface, while ordering realizations import the ordering
+adapter.
+
+The abstraction check used Mathlib's official documentation for
+[`Measurable`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/MeasureTheory/MeasurableSpace/Defs.html),
+[`SimpleFunc`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/MeasureTheory/Function/SimpleFunc.html),
+and [`MeasurableEmbedding` / `MeasurableEquiv`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/MeasureTheory/MeasurableSpace/Embedding.html),
+then inspected the pinned Mathlib source at revision
+`380f2aafb622cb2c1c93dac545b6389083c68c51`. Mathlib's `Measurable f` is a
+proposition on an ordinary function; `SimpleFunc` additionally requires
+finite range; and measurable embeddings/equivalences require injectivity or a
+measurable inverse. None represents an arbitrary many-to-one measurable mark
+observation `X → ℝ`. The local `Potential X` bundle therefore records a
+reusable domain concept, while its codomain remains `ℝ` because path addition,
+ordering, and exponential weights all consume real values. Making the target
+arbitrary would add parameters and operations without a client for them.
+Likewise, `AdditivePotential X` is kept as the measurable additive
+specialization, backed by Mathlib's existing `AddMonoidHom` rather than a new
+generic measurable-hom abstraction. No new generic wrapper is introduced.
+
+This review moves the base potential out of `Measure/` and keeps potential
+ordering under `Ordering/`, matching both the dependency direction and the
+mathematical ownership. The affected modules are checked with the pinned Lean
+build; no LaTeX source is changed in this pass.

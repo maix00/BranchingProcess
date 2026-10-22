@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Combinatorics.BranchingWalk.Step.Measure.Potential
+public import Combinatorics.BranchingWalk.Step.Ordering.ByPotential
 public import Combinatorics.BranchingWalk.Step.Measurability
 public import Probability.BranchingRandomWalk.Step.Law.Field
 public import Probability.BranchingRandomWalk.Step.Ordering.Law
