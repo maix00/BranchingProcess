@@ -152,6 +152,11 @@ independent mathematical meaning and can be proved without importing the
 application that currently uses it. Record the sources, the closest general
 form, its hypotheses, and why it does or does not subsume the local result in
 this file or the directory audit; include the checked dependency revision.
+This check follows Mathlib's official
+[review guidance](https://leanprover-community.github.io/contribute/pr-review.html#location-location),
+which asks whether a result already exists in a more general form and whether
+the literature provides a more general statement using existing library
+concepts.
 
 For each public object, answer these questions in review:
 
