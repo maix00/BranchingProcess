@@ -17,6 +17,23 @@ The first `N` inspected slots are `firstSlots α N`; these finite prefixes
 have cardinality `N` and exhaust `α`.  No randomness or ordering assumption
 is built into the definition: it is applied to a step field that has already
 been transported through the chosen measurable ordering.
+
+The public declarations are:
+
+- `RootAddress m α`: a root-indexed finite address with a child slot in `α`.
+- `initialRootAddresses m`: the addresses $(i,[])$ for $i\in\operatorname{Fin}(m)$,
+  with `initialRootAddresses_card` proving cardinality $m$.
+- `childAddress p j`: the address obtained by appending slot $j$ to $p$.
+- `oneChildCandidate ω p j`: the singleton child address when slot $j$
+  survives, and the empty set otherwise; `mem_oneChildCandidate_iff`
+  characterizes membership.
+- `prefixCandidates N s ω`: the surviving children of parents in $s$ whose
+  slots belong to `firstSlots α N`.
+- `oneChildCandidate_depth` and `prefixCandidates_depth`: each generated
+  child has address length one greater than its parent's.
+- `child_mem_prefixCandidates_eventually`: every surviving child of a parent
+  in a finite parent set occurs in `prefixCandidates N s ω` for some finite
+  cutoff $N$.
 -/
 
 @[expose] public section
@@ -96,13 +113,14 @@ theorem child_mem_prefixCandidates_eventually {m : ℕ}
     (s : Finset (RootAddress m α)) (ω : FiniteRootStepField m α X)
     (p : RootAddress m α) (hp : p ∈ s) (j : α)
     (hj : survive (ω p.1 p.2) j) :
-    childAddress p j ∈
-      prefixCandidates (slotOrderIsoNat α j + 1) s ω := by
+    ∃ N : ℕ, childAddress p j ∈ prefixCandidates N s ω := by
   classical
+  obtain ⟨N, hN⟩ := exists_mem_firstSlots j
+  refine ⟨N, ?_⟩
   unfold prefixCandidates
   apply Finset.mem_biUnion.mpr
   refine ⟨p, hp, Finset.mem_biUnion.mpr ?_⟩
-  exact ⟨j, mem_firstSlots_succ_rank j,
+  exact ⟨j, hN,
     (mem_oneChildCandidate_iff ω p (childAddress p j) j).2 ⟨hj, rfl⟩⟩
 
 end ProbabilityTheory.BranchingRandomWalk
