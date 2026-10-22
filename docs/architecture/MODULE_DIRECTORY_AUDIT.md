@@ -3696,3 +3696,43 @@ image is exactly the population. That wrapper is specific to this proof chain,
 so it remains under `Selected/Lemmas/` and is shared by the cell-branching and
 stopping-cell-branching arguments, rather than being promoted as a general
 enumeration abstraction or nested under only one consumer.
+
+## Kingman and deterministic subadditivity ownership (2026-10-22)
+
+The abstraction check compared the branching proof chain with Mathlib's
+[`Analysis.Subadditive` API](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Analysis/Subadditive.html)
+and the pinned source at revision
+`380f2aafb622cb2c1c93dac545b6389083c68c51`. Mathlib's `Subadditive` interface
+is for a deterministic sequence `u : ℕ → ℝ` satisfying
+`u (m + n) ≤ u m + u n`; its Fekete theorem gives convergence of `u n / n`.
+It does not state Kingman's subadditive ergodic theorem for random arrays.
+The repository's `ProbabilityTheory.tendsto_kingman` in
+`Probability/Ergodic/Kingman/Core.lean` supplies that more general probability
+interface. The repaired generation array, its measurable selection, and the
+cocycle verification depend on the infinite-offspring branching model, so
+they remain in `InfiniteOffspring/Kingman/Lemmas/`; the limit theorem remains
+at its general probability-theory owner. No second deterministic Fekete API
+or branching-specific public abstraction is introduced.
+
+## Repeated proof-module stems (2026-10-22)
+
+The pinned Mathlib tree has concept-named `Lemmas.lean` modules such as
+`Analysis/Asymptotics/Lemmas.lean`, but no `Lemmas/` directories or exact
+parent/helper filename pairs. This repository uses nested `Lemmas/` directories
+to mark proof-chain-only modules, so helper filenames should identify their
+step rather than repeat the adjacent result module's basename. The Mogulskii
+Gaussian block helper was renamed from
+`Gaussian/Blocks/Lemmas/FiniteReferenceSurvival.lean` to
+`Gaussian/Blocks/Lemmas/ProductToSurvival.lean`; the robust entrance helper
+was renamed from `Entrance/Robust/Lemmas/Event.lean` to
+`Entrance/Robust/Lemmas/InteriorInclusion.lean`. Both entry modules and their
+clients build after updating imports. The analogous
+`Bridge/Lemmas/TerminalLeftAsymptotics.lean` file is still locally modified;
+it remains untouched pending preservation of that working-tree edit.
+
+The production source tree was also rechecked for same-directory Lean
+file/directory basename collisions, multiple `Lemmas` entries at one level,
+and directories with at least twelve directly contained Lean modules. Each
+count is zero after excluding vendored Mathlib/BrownianMotion sources and Lake
+packages; there are no remaining instances of the previously identified
+same-level sibling-name collisions or over-flat production directories.
