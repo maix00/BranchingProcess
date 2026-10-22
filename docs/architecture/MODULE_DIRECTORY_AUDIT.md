@@ -199,12 +199,14 @@ by mathematical subject:
 | `Selection/NSelection/EndpointDeviation/Endpoint` | `Minimum/`, `PositiveMoment/`, and `Sequence/`. |
 | `Distributions/Stable/Attraction/Norming` | `Basic.lean`, `Inverse.lean`, `Compatibility.lean`, `Centering.lean`, `Mogulskii.lean`, `Tail.lean`, and `UniformTail.lean` remain at the subject root; Gaussian and index-two specializations are under `SpecialCases/`. `Mogulskii.lean` contains the theorem-specific passage to Mogul'skii's source time normalization and its index-one centering transfer; its rounded index sequence and asymptotic lemmas are private. The general normalization-change theorem is in `Distributions/DomainOfAttraction/Normalization.lean`. |
 
-The finite-dimensional Gaussian block-vector limit in
-`Mogulskii/Gaussian/Blocks/Lemmas/BlockVector.lean` specializes the general
+`Mogulskii/Gaussian/Blocks/FiniteDimensional.lean` exposes the finite-
+dimensional open-box lower bound for normalized Gaussian block sums. It
+specializes the general
 `RandomWalk/FunctionalLimit/FiniteDimensional/IndependentBlocks.lean`
-consecutive-block theorem. This keeps the generic independence and
-coordinate-limit assembly at the reusable functional-limit layer while the
-Mogulskii module supplies its diffusive scale and Gaussian parameters.
+consecutive-block theorem, then applies open-set Portmanteau and factors the
+Gaussian box probability. The finite-dimensional vector limit, Portmanteau
+step, and factorization are private derivations; the combined block estimate
+is a complete interface, rather than a theorem-specific proof fragment.
 
 Within `Mogulskii/Spectral/Target/`, the target indicator and its full
 finite-dimensional spectral expansion remain in `Expansion.lean`, while
@@ -1531,8 +1533,8 @@ The stable specialization is now the single proof-chain lemma
 It derives the hypotheses for the generic partition result from the stable
 Mogulskii scale. Its clients are the two cell constructions in `CellBridge.lean`,
 so the specialization stays under `Lemmas/`. The five path-limit estimates
-remain in `Lower/PathLimit.lean`: source search confirms they are used
-both by `CellBridge.lean` and by `Gaussian/Blocks/Lemmas/EndpointBandReturnProbability.lean`.
+remain in `Lower/PathLimit.lean`; source search confirms that their current
+client is `CellBridge.lean`.
 The module header lists those five probability interfaces and their
 quantitative meanings. The `Rate` imports used only in proof terms are now
 ordinary imports; the public signatures continue to name the stable scale
@@ -2785,12 +2787,12 @@ The Gaussian block modules cite Mogul'skii's Theorem 3, Section 4,
 p. 764, with the Russian original, English translation, and DOI. The endpoint
 adapter exposes only the direct normalized-sum limit; its factorized CLT
 formulation is private. The block-vector specialization and Gaussian box
-factorization are under `Gaussian/Blocks/Lemmas/BlockVector.lean`; its first
-three intermediate claims are private, and its final product bound is a lemma
-consumed by `PartitionEndpoints.lean`. The endpoint-band return estimate is
-under `Gaussian/Blocks/Lemmas/EndpointBandReturnProbability.lean` because it
-has no independent callers and belongs to the theorem-specific transfer
-chain. `ReturnKernel` keeps the explicit-control version private and exposes
+factorization are now under `Gaussian/Blocks/FiniteDimensional.lean`; its
+combined product lower bound is a complete finite-dimensional estimate used
+by `PartitionEndpoints.lean`, while its three derivation steps are private.
+The unused fixed-seven-band endpoint-return specialization was removed after
+the source audit found no importers or callers; its sole proof route duplicated
+the generic stable path-limit transfer. `ReturnKernel` keeps the explicit-control version private and exposes
 the centered finite-variance return-kernel bound. The finite-reference entry
 exposes only its uniform-interval and finite-interior survival estimates; its
 common-scale transfer lemmas are under `Gaussian/Blocks/Lemmas/`.
@@ -3919,3 +3921,34 @@ outward move is justified by the inspected uses. The stable-clock definitions
 remain under `Probability/Process/Stable`, their path-law form remains beside
 the path-space representation, and no theorem-specific proof helper is
 promoted.
+
+## Mogulskii Gaussian block abstraction review (2026-10-22)
+
+The abstraction review compared the Gaussian block estimate with the local
+general consecutive-block theorem in
+`RandomWalk/FunctionalLimit/FiniteDimensional/IndependentBlocks.lean` and
+Mathlib's open-set Portmanteau result. Mathlib's official
+[Portmanteau documentation](https://leanprover-community.github.io/mathlib4_docs/Mathlib/MeasureTheory/Measure/Portmanteau.html)
+states the open-set lower bound as the general measure-convergence interface.
+The pinned revision `380f2aafb622cb2c1c93dac545b6389083c68c51` provides
+`ProbabilityMeasure.le_liminf_measure_open_of_tendsto`, which the local
+Portmanteau wrapper uses. The local consecutive-block
+result already handles the product limit without Mogulskii assumptions. The
+remaining estimate has a genuine finite-dimensional meaning: for every finite
+collection of open intervals, the product of the corresponding Gaussian
+masses is bounded by the liminf of the random-walk block-vector event. It
+therefore remains public at `Gaussian/Blocks/FiniteDimensional.lean`; only its
+assembly steps remain private.
+
+The separate seven-band constant-selection result had no importers or callers.
+It specialized the generic endpoint-band path-limit transfer to one fixed
+seven-index family and was not part of the current Theorem 3 dependency graph.
+That module was removed. The Gaussian path-law existence theorem remains at
+`Gaussian/Path/Existence.lean` as a complete process-level result, and the
+general endpoint-band transfer remains at its stable-process owner.
+
+After these moves and removals, a fresh structural scan of the eight
+production Lean roots found no same-directory file/directory stem collision,
+no parent-directory/file stem collision, no duplicate `Lemmas.lean` and
+`Lemmas/` entry, no directory with more than eight direct Lean modules, and
+no `Source/` directory.

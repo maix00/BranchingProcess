@@ -16,16 +16,16 @@ import Probability.Distributions.Stable.Attraction.Normal.Basic
 import Probability.ConvergenceInDistribution.Portmanteau
 
 /-!
-# Proof lemmas for Gaussian block-vector estimates
+# Gaussian finite-dimensional block lower bounds
 
 Let $b_n=\lfloor c x_n^2\rfloor$ and
 $B_{n,j}=\frac{S_{(j+1)b_n}-S_{jb_n}}{x_n}$ for $j<m$.
-This module combines the generic consecutive-block limit with the Gaussian
-open-set bound and product factorization. Its final endpoint-box estimate is
-consumed by `PartitionEndpoints.lean`; the preceding vector and box claims
-are private proof steps, not separate interfaces.
+The public estimate combines the generic consecutive-block limit with the
+Gaussian open-set bound and product factorization. It gives a reusable
+finite-dimensional lower bound for any prescribed open box; the proof uses
+the existing general consecutive-block and Portmanteau interfaces.
 
-The cross-module lemma is
+The public lemma is
 `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Blocks.prod_gaussian_Ioo_le_liminf_measure_diffusiveBlockSums`:
 for centered unit-variance increments, $q_n=\lfloor c s_n^2\rfloor$, and
 interval endpoints $a_j,b_j$, it gives
@@ -36,6 +36,11 @@ interval endpoints $a_j,b_j$, it gives
     \text{for every }j<m\right),
 \]
 where $Z\sim N(0,1)$.
+
+The vector convergence, open-box Portmanteau step, and Gaussian product
+factorization are private derivations in this module. Their general
+probability and independent-block interfaces remain at their respective
+semantic owners.
 
 These are finite-dimensional inputs for the block argument in Theorem 3,
 Section 4, p. 764 of the 1974 Russian original by A. A. Mogul'skii, “Small
