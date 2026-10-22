@@ -6,9 +6,9 @@ Authors: Codex
 module
 
 public import Probability.Distributions.CharacteristicFunction.CosineDefect
-public import Probability.Distributions.CharacteristicFunction.Symmetrization
+public import Probability.Distributions.CharacteristicFunction.Symmetrization.Basic
 public import Probability.Distributions.Stable.Attraction.NormingRatios.RegularVariation
-public import Probability.Distributions.Stable.Attraction.Norming
+public import Probability.Distributions.Stable.Attraction.Norming.Basic
 public import Probability.Distributions.CharacteristicFunction.Symmetrization.RegularVariation
 public import Analysis.Asymptotics.RegularVariation.AtZero.Potter
 public import Analysis.Fourier.CosineTauberian.Mellin

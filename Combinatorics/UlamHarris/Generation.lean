@@ -12,6 +12,32 @@ public import Combinatorics.UlamHarris.Tree.Defs
 /-!
 # The generation of a particle, and the generations between two particles
 
+## Public declarations
+
+* `Combinatorics.UlamHarris.RootIndexed.generation` and
+  `Combinatorics.UlamHarris.generation` give the address length; their
+  exact lemmas are `Combinatorics.UlamHarris.RootIndexed.generation_def`,
+  `Combinatorics.UlamHarris.RootIndexed.generation_mk`,
+  `Combinatorics.UlamHarris.RootIndexed.generation_append`,
+  `Combinatorics.UlamHarris.generation_def`,
+  `Combinatorics.UlamHarris.generation_nil`,
+  `Combinatorics.UlamHarris.generation_eq_indexed`, and
+  `Combinatorics.UlamHarris.generation_append`.
+* `Combinatorics.UlamHarris.RootIndexed.generationAfter` and
+  `Combinatorics.UlamHarris.generationAfter` count the suffix length after
+  dropping the ancestor's generation. The exact conversion lemmas are
+  `Combinatorics.UlamHarris.RootIndexed.generationAfter_eq_length`,
+  `Combinatorics.UlamHarris.generationAfter_eq_length`, and
+  `Combinatorics.UlamHarris.generationAfter_eq_indexed`.
+* The indexed and plain distance laws are respectively
+  `Combinatorics.UlamHarris.RootIndexed.generationAfter_self`,
+  `Combinatorics.UlamHarris.RootIndexed.generationAfter_append_singleton`,
+  `Combinatorics.UlamHarris.RootIndexed.generationAfter_append_append`,
+  `Combinatorics.UlamHarris.generationAfter_self`,
+  `Combinatorics.UlamHarris.generationAfter_append_singleton`, and
+  `Combinatorics.UlamHarris.generationAfter_append_append`; they state zero
+  self-distance, unit child-distance, and additivity along nested suffixes.
+
 `RootIndexed.generation p` is the length of the address of the particle `p`, the level it sits at:
 the notion only looks at a `TreeNode`, so it is indexed by whatever the address is paired with, and
 that pairing is what makes the `Root × TreeNode` case of the cloud available. `RootIndexed.generationAfter p q`
@@ -21,10 +47,11 @@ is the number of generations from `p` down to `q`, the length of the segment of 
 The plain forms `generation u` and `generationAfter u v` on addresses alone are the same notions read
 without a root, defined from the indexed ones at the one-point root.
 
-The levels of `generation` are what `Tree/Truncation.lean` cuts at and what `Tree/Height.lean`
-compares; `generationAfter` is the tree distance in the ancestor-descendant case, an ordinary natural
-number rather than the `ℕ∞`-valued height used there, because a node is finitely far below its own
-ancestor.
+The levels of `generation` are what `Tree/Truncation/Basic.lean` cuts at and
+what `Tree/Truncation/Height.lean` compares; `generationAfter` is the tree
+distance in the ancestor-descendant case, an ordinary natural number rather
+than the `ℕ∞`-valued height used there, because a node is finitely far below
+its own ancestor.
 -/
 
 @[expose] public section

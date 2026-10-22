@@ -6,12 +6,12 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.Stable.SmallDeviation.PathClass.StepCorridor.Partition.UpperEnergyRate
+public import Probability.Process.Stable.SmallDeviation.PathClass.StepCorridor.Partition.Upper.EnergyRate
 public import Probability.Process.Path.PathClass.StepCorridor.Probability.Rate.FiniteUnionNullMeasurable
 public import Probability.Process.Path.PathClass.StepCorridor.Probability.Rate.Approximation
 public import Probability.Process.Path.PathClass.StepCorridor.Probability.Rate.InnerOuter
 public import Probability.Process.Path.PathClass.StepCorridor.Probability.Normalization
-public import Topology.Cadlag.Skorokhod.Scaling
+public import Topology.Cadlag.Skorokhod.Path.Scaling
 
 /-!
 # Stable-process rates for `M₂` and `M₃`
@@ -20,6 +20,25 @@ The exact partition estimate gives the source-normalized rate for every
 admissible `M₂` corridor. This file converts the scale-parameter limit to the
 negative normalization used by the finite-union and approximation theorems,
 then applies the existing finite-union argument to `M₃`.
+
+The public rate interfaces are
+`ProbabilityTheory.HasStableProcessEscapeRate.stepCorridor_rate` for one
+admissible corridor and
+`ProbabilityTheory.HasStableProcessEscapeRate.finiteCorridorUnion_rate` for a
+finite union, whose minimum corridor energy determines the limit. For a target
+in the approximation class `M`,
+`ProbabilityTheory.HasStableProcessEscapeRate.approximableSet_rate` gives the
+ordinary-probability rate under explicit null-measurability,
+`ProbabilityTheory.HasStableProcessEscapeRate.approximableSet_innerOuterRate`
+gives matching inner- and outer-measure rates without measurability, and
+`ProbabilityTheory.HasStableProcessEscapeRate.approximableSet_measurableRate`
+specializes to measurable targets.
+
+The approximation-class rate is the stable-process form of Theorem 2 in A. A.
+Mogul'skii, “Small deviations in the sample function space,” *Teoriya
+Veroyatnostei i ee Primeneniya* 19(4) (1974), 755--765; English translation,
+“Small Deviations in a Space of Trajectories,” *Theory of Probability and Its
+Applications* 19(4) (1975), 726--736, DOI 10.1137/1119081.
 -/
 
 open Filter MeasureTheory

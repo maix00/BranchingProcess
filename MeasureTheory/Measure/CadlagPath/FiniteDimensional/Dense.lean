@@ -39,7 +39,7 @@ theorem measurable_denseEvaluation {Index : Type*} [MeasurableSpace Index]
   intro i
   exact measurable_apply (time i)
 
-private theorem denseEvaluation_injective {Index : Type*} [LinearOrder Index]
+private lemma denseEvaluation_injective {Index : Type*} [LinearOrder Index]
     (time : Index → unitInterval) (htime : DenseRange time)
     (htimeMono : Monotone time) (htop : (⊤ : unitInterval) ∈ Set.range time) :
     Function.Injective (denseEvaluation time :

@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Kernel.Survival
+public import Probability.Kernel.Survival.Basic
 
 /-!
 # Blocking bounds for remaining kernel mass

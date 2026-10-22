@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Analysis.Asymptotics.RegularVariation.Integral
+import Analysis.Asymptotics.RegularVariation.Integral.Basic
 
 /-!
 # Regular-variation integral asymptotics
