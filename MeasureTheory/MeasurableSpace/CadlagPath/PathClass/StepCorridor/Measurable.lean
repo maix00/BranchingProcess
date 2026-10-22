@@ -8,8 +8,8 @@ module
 
 public import Topology.Cadlag.Skorokhod.PathClass.StepCorridor.Basic
 public import MeasureTheory.MeasurableSpace.CadlagPath.PathClass.StepCorridor.Boundary
-public import Topology.Cadlag.Skorokhod.JointEvaluation
-public import Topology.Cadlag.Skorokhod.Integral
+public import Topology.Cadlag.Skorokhod.Evaluation.Joint
+public import Topology.Cadlag.Skorokhod.Evaluation.Integral
 public import Mathlib.MeasureTheory.Measure.NullMeasurable
 
 /-!
@@ -20,7 +20,7 @@ pointwise-strict `M₁` and `M₂` corridor events. Their failure remains the
 projection of the actual violation relation; it is not replaced by a
 uniform-margin event or by finite-coordinate constraints. Null-measurability
 of the projection under finite path laws is proved separately in
-`PathClass/NullMeasurable.lean` using the repository's axiom-clean
+`PathClass/StepCorridor/NullMeasurable.lean` using the repository's axiom-clean
 capacitability result.
 -/
 
@@ -33,7 +33,7 @@ open scoped Topology
 
 namespace Skorokhod.PathClass.StepCorridor
 
-private theorem strict_between_failure_iff {l x u : EReal} :
+private lemma strict_between_failure_iff {l x u : EReal} :
     (l < x → u ≤ x) ↔ x ≤ l ∨ u ≤ x := by
   constructor
   · intro h

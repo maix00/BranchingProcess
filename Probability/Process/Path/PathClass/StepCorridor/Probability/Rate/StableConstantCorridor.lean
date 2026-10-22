@@ -5,18 +5,22 @@ Authors: WANG Yiyang
 -/
 
 import Probability.Process.Path.PathClass.StepCorridor.Probability.StableRate
-import Probability.Process.Path.PathClass.StepCorridor.Probability.Rate.FiniteUnionNullMeasurable
 import MeasureTheory.Measure.CadlagPath.PathClass.StepCorridor.Energy
-import Probability.Process.Path.PathClass.StepCorridor.Probability.Rate.FiniteUnionNullMeasurable
-import Topology.Cadlag.Skorokhod.Scaling
 
 /-!
 # The fixed constant-corridor input to the stable rate theorem
 
-The stable path-law rate for a constant `M₂` corridor supplies the complete
-probability input for that fixed corridor after the path is scaled by `a⁻¹`.
-This is a concrete component rate, not a claim of the uniform rate over all
-`M₂` corridors required by the process theorem.
+The public result is
+`ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability.exists_constantCorridor_rate`.
+For a stable path law `P`, stable process `X`, exponent `α > 0`, and fixed
+`lower < 0 < upper`, it proves positivity of the scaled-corridor probability
+near zero and
+`log (P (scaledConstantCorridorEvent a lower upper)).toReal / (-a ^ (-α))`
+tends to `κ` times the `M₂` energy of the constant-bound corridor, for some
+`κ > 0`. The event is the existing `scaledConstantCorridorEvent`; this module
+does not introduce a second path-preimage encoding. This is a concrete
+constant-corridor rate, not the uniform rate over all `M₂` corridors required
+by the process theorem.
 -/
 
 open Filter MeasureTheory
@@ -28,59 +32,6 @@ open ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability
 @[expose] public section
 
 namespace ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability
-
-/-- Pull back a fixed constant corridor along spatial rescaling by `a⁻¹`.
-The parameter `a` is the small corridor width. -/
-def scaledPathConstantCorridorEvent (a lower upper : ℝ)
-    (hlower : lower < 0) (hupper : 0 < upper) :
-    Set (CadlagPath unitInterval ℝ) :=
-  {f | Skorokhod.scalePath a⁻¹ f ∈
-    (ContinuousAdmissibleStepCorridor.constantBounds hlower hupper).toSet}
-
-/-- The scaled-path event is exactly the source's pointwise-strict corridor
-with boundaries multiplied by `a`, for positive `a`. -/
-theorem scaledPathConstantCorridorEvent_eq
-    {a lower upper : ℝ} (ha : 0 < a)
-    (hlower : lower < 0) (hupper : 0 < upper) :
-    scaledPathConstantCorridorEvent a lower upper hlower hupper =
-      scaledConstantCorridorEvent a lower upper := by
-  ext f
-  simp only [scaledPathConstantCorridorEvent,
-    ContinuousAdmissibleStepCorridor.constantBounds_toSet hlower hupper,
-    scaledConstantCorridorEvent, constantCorridorEvent,
-    Set.mem_ofPred_eq, Skorokhod.scalePath_apply]
-  constructor
-  · rintro ⟨hstart, hpath⟩
-    refine ⟨?_, ?_⟩
-    · exact Or.resolve_left (mul_eq_zero.mp hstart) (inv_ne_zero ha.ne')
-    · intro t
-      refine ⟨?_, ?_⟩
-      · have hinv : a * (a⁻¹ * f t) = f t := by
-          field_simp
-        have hm := mul_lt_mul_of_pos_left (hpath t).1 ha
-        rw [hinv] at hm
-        exact hm
-      · have hinv : a * (a⁻¹ * f t) = f t := by
-          field_simp
-        have hm := mul_lt_mul_of_pos_left (hpath t).2 ha
-        rw [hinv] at hm
-        exact hm
-  · rintro ⟨hstart, hpath⟩
-    refine ⟨?_, ?_⟩
-    · rw [hstart]
-      simp
-    · intro t
-      refine ⟨?_, ?_⟩
-      · have hinv : a * (a⁻¹ * f t) = f t := by
-          field_simp
-        apply lt_of_mul_lt_mul_left _ ha.le
-        rw [hinv]
-        exact (hpath t).1
-      · have hinv : a * (a⁻¹ * f t) = f t := by
-          field_simp
-        apply lt_of_mul_lt_mul_left _ ha.le
-        rw [hinv]
-        exact (hpath t).2
 
 /-- For one fixed constant admissible corridor, the logarithmic probability
 has a negative-power rate with the exact `M₂` energy. Positivity and
@@ -99,12 +50,12 @@ theorem exists_constantCorridor_rate
     ∃ κ : ℝ, 0 < κ ∧
       Tendsto (fun a : ℝ => -(a ^ (-α))) (𝓝[>] (0 : ℝ)) atBot ∧
       (∀ a : ℝ, NullMeasurableSet
-        (scaledPathConstantCorridorEvent a lower upper hlower hupper) P) ∧
+        (scaledConstantCorridorEvent a lower upper) P) ∧
       (∀ᶠ a : ℝ in 𝓝[>] (0 : ℝ),
-        0 < (P (scaledPathConstantCorridorEvent a lower upper hlower hupper)).toReal) ∧
+        0 < (P (scaledConstantCorridorEvent a lower upper)).toReal) ∧
       Tendsto
         (fun a : ℝ => Real.log
-          ((P (scaledPathConstantCorridorEvent a lower upper hlower hupper)).toReal) /
+          ((P (scaledConstantCorridorEvent a lower upper)).toReal) /
             (-(a ^ (-α))))
         (𝓝[>] (0 : ℝ))
         (𝓝 (κ * (ContinuousAdmissibleStepCorridor.energy α
@@ -123,23 +74,31 @@ theorem exists_constantCorridor_rate
     exact tendsto_neg_atTop_atBot.comp hrpow
   let c : ContinuousAdmissibleStepCorridor := ContinuousAdmissibleStepCorridor.constantBounds hlower hupper
   have hmeas : ∀ a : ℝ,
-      NullMeasurableSet (scaledPathConstantCorridorEvent a lower upper hlower hupper) P := by
+      NullMeasurableSet (scaledConstantCorridorEvent a lower upper) P := by
     intro a
-    apply ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability.ContinuousAdmissibleStepCorridor.nullMeasurableSet_preimage_toSet_of_aemeasurable c P
-    have hcontinuous : Continuous
-        (fun f : CadlagPath unitInterval ℝ => Skorokhod.scalePath (a⁻¹) f) := by
-      exact Skorokhod.continuous_scalePath.comp
-        (continuous_const.prodMk continuous_id)
-    exact hcontinuous.measurable.aemeasurable
+    by_cases ha : 0 < a
+    · exact nullMeasurableSet_scaledConstantCorridorEvent ha hlower hupper P
+    · have hEmpty : scaledConstantCorridorEvent a lower upper = ∅ := by
+        ext f
+        constructor
+        · rintro ⟨hstart, hpath⟩
+          have h := (hpath ⊥).1
+          rw [hstart] at h
+          have ha' : a ≤ 0 := le_of_not_gt ha
+          have hscale : 0 ≤ a * lower :=
+            mul_nonneg_of_nonpos_of_nonpos ha' hlower.le
+          linarith
+        · simp
+      rw [hEmpty]
+      exact nullMeasurableSet_empty
   have hnull : ∀ᶠ a : ℝ in l,
-      0 < (P (scaledPathConstantCorridorEvent a lower upper hlower hupper)).toReal := by
+      0 < (P (scaledConstantCorridorEvent a lower upper)).toReal := by
     have hradius : 0 < (upper - lower) / 2 := by linarith
     have hlimneg : (1 / ((upper - lower) / 2)) ^ α * C < 0 :=
       mul_neg_of_pos_of_neg
         (Real.rpow_pos_of_pos (one_div_pos.mpr hradius) α) hC
     have hevent := hscaled.eventually (Iio_mem_nhds hlimneg)
     filter_upwards [hevent, self_mem_nhdsWithin] with a hnegative ha
-    have hevent' := hnegative
     have hpowpos : 0 < a ^ α := Real.rpow_pos_of_pos ha α
     have hlogneg : Real.log
         ((P (scaledConstantCorridorEvent a lower upper)).toReal) < 0 := by
@@ -157,35 +116,27 @@ theorem exists_constantCorridor_rate
         le_antisymm (not_lt.mp hnot) hnonneg
       rw [hzero, Real.log_zero] at hlogneg
       exact (lt_irrefl 0) hlogneg
-    rw [scaledPathConstantCorridorEvent_eq ha hlower hupper]
     exact hrealpos
   have hrate : Tendsto
       (fun a : ℝ => Real.log
-        ((P (scaledPathConstantCorridorEvent a lower upper hlower hupper)).toReal) /
+        ((P (scaledConstantCorridorEvent a lower upper)).toReal) /
           (-(a ^ (-α)))) l
       (𝓝 (κ * (ContinuousAdmissibleStepCorridor.energy α c).toReal)) := by
     have hnegativeRate : Tendsto
         (fun a : ℝ => -(a ^ α * Real.log
           ((P (scaledConstantCorridorEvent a lower upper)).toReal))) l
         (𝓝 (-((1 / ((upper - lower) / 2)) ^ α * C))) := hscaled.neg
-    have hnegativeRate' : Tendsto
-        (fun a : ℝ => -(a ^ α * Real.log
-          ((P (scaledPathConstantCorridorEvent a lower upper hlower hupper)).toReal))) l
-        (𝓝 (-((1 / ((upper - lower) / 2)) ^ α * C))) := by
-      apply hnegativeRate.congr'
-      filter_upwards [self_mem_nhdsWithin] with a ha
-      rw [scaledPathConstantCorridorEvent_eq ha hlower hupper]
     have hratioEq : (fun a : ℝ => Real.log
-        ((P (scaledPathConstantCorridorEvent a lower upper hlower hupper)).toReal) /
+        ((P (scaledConstantCorridorEvent a lower upper)).toReal) /
           (-(a ^ (-α)))) =ᶠ[l]
         (fun a : ℝ => -(a ^ α * Real.log
-          ((P (scaledPathConstantCorridorEvent a lower upper hlower hupper)).toReal))) := by
+          ((P (scaledConstantCorridorEvent a lower upper)).toReal))) := by
       filter_upwards [self_mem_nhdsWithin] with a ha
       have hpow : a ^ (-α) = (a ^ α)⁻¹ := Real.rpow_neg ha.le α
       have hpowne : a ^ α ≠ 0 := (Real.rpow_pos_of_pos ha α).ne'
       rw [hpow]
       field_simp [hpowne]
-    have hratio := Filter.Tendsto.congr' hratioEq.symm hnegativeRate'
+    have hratio := Filter.Tendsto.congr' hratioEq.symm hnegativeRate
     have hwidth : 0 < upper - lower := by linarith
     have hradius : 0 < (upper - lower) / 2 := by linarith
     have hdiv : 1 / ((upper - lower) / 2) = 2 / (upper - lower) := by

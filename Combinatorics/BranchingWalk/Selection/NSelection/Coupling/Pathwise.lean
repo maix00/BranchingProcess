@@ -19,6 +19,18 @@ countability assumption on either the root labels or the child slots.
 Measurability of a concrete population process is a separate obligation: it
 is supplied by the causal-selection interfaces.  The spatial comparison
 below is a pathwise statement and consequently needs no measurable structure.
+
+The public API gives pointwise one-step and all-generation forms of
+`InjectivelyDominatesBy`: `nextGeneration_injectivelyDominatesBy_of_isFirstNBy`
+and `injectivelyDominatesBy_all_generations_of_isFirstNBy` assume an arbitrary
+first-`N` certificate for each sample; `nextGeneration_injectivelyDominatesBy`
+and `injectivelyDominatesBy_all_generations` use dynamic leftmost selection.
+The all-generation conclusion has the form
+`∀ n ω, sourcePopulation n ω.InjectivelyDominatesBy φ (targetPopulation n ω) ()`.
+`generationInjection_of_isFirstNBy` and
+`generationInjection_of_isFirstNBy_injectivelyDominatesBy` construct the
+corresponding maps for every generation and sample, with membership,
+injectivity, and non-increasing observed-position properties.
 -/
 
 @[expose] public section

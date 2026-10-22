@@ -12,6 +12,21 @@ public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.S
 /-!
 # Interior-start spectral limits
 
+The public declarations in this module are:
+
+For $N\ge2$, let $K_N$ be the transition matrix on
+$\{0,\ldots,N-1\}$ with $K_N(x,y)=\frac12$ when $|x-y|=1$ and $0$
+otherwise, and put $R_{N,t}(x)=\sum_{y=0}^{N-1}K_N^t(x,y)$.
+
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.tendsto_scaledLog_remainingMass_of_sineWeight`:
+  let $W_n=N_n+1$, $R_n=R_{N_n,t_n}(x_n)$, and
+  $\phi_{N_n}(x_n)=\sin(\frac{\pi(x_n+1)}{W_n})$. If $W_n\to\infty$,
+  $W_n^2/t_n\to0$, and $\phi_{N_n}(x_n)\ge c>0$, then
+  $\frac{W_n^2}{t_n}\log R_n(x_n)\to-\frac{\pi^2}{2}$.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.tendsto_scaledLog_rademacherIncrement_of_sineWeight`:
+  the same limit holds for the IID Rademacher probability of staying in the
+  interval through time $t_n$.
+
 The principal sine weight is uniformly positive for starts that stay in the
 interior of the interval.  This gives the matching lower rate and the complete
 limit under the diffusive scale.
@@ -19,6 +34,8 @@ limit under the diffusive scale.
 
 open Filter Topology
 
+
+open ProbabilityTheory.RandomWalk.Rademacher.FiniteInterval
 
 @[expose] public section
 
