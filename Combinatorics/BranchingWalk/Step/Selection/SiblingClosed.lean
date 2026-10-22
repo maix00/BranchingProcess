@@ -14,6 +14,14 @@ public import Combinatorics.BranchingWalk.Step.Basic
 The surviving slots of a step form an initial segment of the slot order. This
 is a presence condition only; mark relations and optional relabelings are
 provided by `Relation.lean` and `SiblingClosable.lean` respectively.
+
+## Public declarations
+
+- `Step.IsSiblingClosed ξ` means `i < j → ξ i = none → ξ j = none`.
+- `Step.IsSiblingClosed.survive_of_lt` says that if `i < j` and slot `j`
+  survives, then slot `i` survives.
+- `Step.IsSiblingClosed.survive_of_le` gives the same implication for
+  `i ≤ j` under a partial order.
 -/
 
 @[expose] public section

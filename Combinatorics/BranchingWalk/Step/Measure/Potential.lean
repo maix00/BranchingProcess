@@ -17,6 +17,31 @@ A measurable potential `φ : X → ℝ` supplies the scalar displacement used
 for ordering, exponential weights, fronts, and speeds.  Mapping a step by
 `φ` preserves the child slots and their absence, so multiplicities remain
 visible even when distinct marks have the same potential.
+
+## Public declarations
+
+- `Potential X` packages a measurable function `X → ℝ`; `Potential.comp`
+  pulls it back along a measurable map, with `Potential.comp_apply` giving
+  `(potential.comp d hd) x = potential (d x)`.
+- `Step.IsOrderedBy φ ξ` means that `ξ.map φ` belongs to `orderedSteps`;
+  `orderedBySteps φ` is this event, `mem_orderedBySteps_iff` gives its
+  membership formula, and `orderedBySteps_measurable` proves measurability
+  for countable slots.
+- `Step.potentialAt? φ ξ i = (ξ i).map φ` retains absence as `none`;
+  `Step.potentialAt?_measurable` proves coordinate measurability.
+  `Step.potentialValue' φ ξ i` replaces absence by `0`, and
+  `Step.potentialValue'_measurable` proves its measurability.
+- `pathPotential φ xs = (xs.map φ).sum`; `pathPotential_nil` and
+  `pathPotential_cons` give its empty-path and concatenation formulas.
+- `realPotential` is the identity potential on `ℝ`, with
+  `realPotential_apply` stating `realPotential x = x`.
+- `AdditivePotential X` packages a measurable additive map to `ℝ`;
+  `AdditivePotential.toPotential` forgets the additive structure,
+  `AdditivePotential.toPotential_apply` gives its evaluation, and
+  `AdditivePotential.map_zero`, `AdditivePotential.map_add`, and
+  `AdditivePotential.map_list_sum` state preservation of zero, addition, and
+  path sums. `realAdditivePotential` is the identity example and
+  `realAdditivePotential_apply` gives its evaluation.
 -/
 
 @[expose] public section

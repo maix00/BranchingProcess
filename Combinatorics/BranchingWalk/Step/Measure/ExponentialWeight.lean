@@ -18,6 +18,24 @@ public import Mathlib.MeasureTheory.Constructions.Polish.Basic
 
 Weights are functions of a step. Their measurability is proved here once and
 is inherited by every random step by composition.
+
+## Public declarations
+
+- `realizedPotentialWeight φ θ ξ i` is the `ENNReal` weight
+  `exp (θ * ξ.potentialValue' φ i)` on surviving slots and `0` otherwise;
+  `realizedPotentialWeight_measurable` proves coordinate measurability.
+- `totalPotentialWeight φ θ ξ = ∑' i, realizedPotentialWeight φ θ ξ i`,
+  and `totalPotentialWeight_measurable` proves its measurability for
+  countable slot types.
+- `realizedChildWeight ξ i` specializes this weight to real marks and
+  `θ = -1`; `realizedPotentialWeight_real_neg_one` identifies the two
+  definitions, and `realizedChildWeight_measurable` proves measurability.
+- `totalChildWeight ξ = ∑' i, realizedChildWeight ξ i`;
+  `totalPotentialWeight_real_neg_one` identifies it with the potential sum,
+  and `totalChildWeight_measurable` proves measurability for countable slots.
+- `finite_realized_children_potential_below` states that finite total
+  negative exponential potential weight makes every lower potential level
+  finite; `finite_realized_children_below` is its real-valued specialization.
 -/
 
 open MeasureTheory

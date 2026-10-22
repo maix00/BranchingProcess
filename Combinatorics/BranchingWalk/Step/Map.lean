@@ -17,7 +17,7 @@ invariant. Maps of complete step fields live in
 `Combinatorics/BranchingWalk/StepField.lean`; maps of branching walks live in
 `Combinatorics/BranchingWalk/Basic/Map.lean`.
 
-The public API is:
+## Public declarations
 
 - `Step.map f ξ` applies `f` to each present mark and preserves absent slots;
   `Step.map_apply`, `Step.map_id`, and `Step.map_map` give its coordinate,

@@ -15,6 +15,12 @@ public import Combinatorics.BranchingWalk.Step.Selection.SiblingClosed
 present slots an initial segment while still covering every original child.
 This support-coverage clause is needed when the relabeled step is used to
 represent the original branching configuration.
+
+## Public declarations
+
+- `Step.IsSiblingClosable ξ` means there is an injective relabeling `f` for
+  which `i ↦ ξ (f i)` is sibling-closed and every slot surviving in `ξ` is
+  in the range of `f`.
 -/
 
 @[expose] public section
