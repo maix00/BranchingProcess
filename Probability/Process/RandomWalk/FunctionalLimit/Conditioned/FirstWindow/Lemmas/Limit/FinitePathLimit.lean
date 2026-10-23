@@ -37,7 +37,7 @@ open scoped NNReal
 
 /-- The centered finite-horizon continuous-mapping step required by
 Bolthausen's Theorem 3.2. The integer `m` covers the real horizon `s`. -/
-theorem tendstoInDistribution_centeredFirstWindowShiftFiniteHorizon
+lemma tendstoInDistribution_centeredFirstWindowShiftFiniteHorizon
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (hcentered : ∫ x, x ∂ν = 0)
     (hsecondMoment : ∫ x, x ^ 2 ∂ν = 1)

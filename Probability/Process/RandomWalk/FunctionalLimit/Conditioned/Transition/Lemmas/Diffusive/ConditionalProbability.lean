@@ -15,7 +15,7 @@ import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition.Lem
 /-!
 # Meander transition at a diffusive entrance horizon
 
-The public theorem in this file is:
+The public lemma in this file is:
 
 - `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.exists_eventually_diffusiveTransitionConditionalProbability_ge_of_centeredSecondMoment`:
   for $N_{\Delta,m}=\lfloor\Delta^2\rfloor-m$, centered increments of
@@ -42,7 +42,7 @@ open scoped NNReal ENNReal Topology
 
 /-- The conditional transition bound at the shifted diffusive time,
 with the meander limit and support proved from the walk hypotheses. -/
-theorem exists_eventually_diffusiveTransitionConditionalProbability_ge_of_centeredSecondMoment
+lemma exists_eventually_diffusiveTransitionConditionalProbability_ge_of_centeredSecondMoment
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     {sigma : ℝ} (hν : IsCenteredSecondMoment ν (sigma ^ 2))
     (hsigma : 0 < sigma)

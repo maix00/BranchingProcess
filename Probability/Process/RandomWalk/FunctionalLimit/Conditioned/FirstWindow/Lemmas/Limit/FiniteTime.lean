@@ -41,7 +41,7 @@ open scoped NNReal
 
 /-- Donsker convergence transfers through Bolthausen's finite-horizon
 first-window time functional by Lemma 2.4. -/
-theorem tendstoInDistribution_firstWindowTimeFiniteHorizon
+lemma tendstoInDistribution_firstWindowTimeFiniteHorizon
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (hcentered : ∫ x, x ∂ν = 0)
     (hsecondMoment : ∫ x, x ^ 2 ∂ν = 1)
@@ -81,7 +81,7 @@ theorem tendstoInDistribution_firstWindowTimeFiniteHorizon
 /-- Bolthausen's equation (3.5): the finite-window existence event is a
 continuity event under the projected Brownian law. Every finite value of
 $T^s$ is at most $s-1$, so the cutoff $s$ has zero mass. -/
-theorem tendsto_measure_finiteFirstWindow
+lemma tendsto_measure_finiteFirstWindow
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (hcentered : ∫ x, x ∂ν = 0)
     (hsecondMoment : ∫ x, x ^ 2 ∂ν = 1)
@@ -155,7 +155,7 @@ theorem tendsto_measure_finiteFirstWindow
       isOpen_Iio.measurableSet, hZpre]
 
 /-- The complementary form of Bolthausen's equation (3.5). -/
-theorem tendsto_measure_noFiniteFirstWindow
+lemma tendsto_measure_noFiniteFirstWindow
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (hcentered : ∫ x, x ∂ν = 0)
     (hsecondMoment : ∫ x, x ^ 2 ∂ν = 1)

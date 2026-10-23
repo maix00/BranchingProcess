@@ -18,7 +18,7 @@ import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition.Lem
 /-!
 # Conditional transition probability from Brownian meander
 
-The public theorem in this file is:
+The public lemma in this file is:
 
 - `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.exists_eventually_transitionConditionalProbability_ge_of_unitVariance`:
   if $S$ is a centered unit-variance walk and $\Delta_n/\sqrt{n+1}\to1$,
@@ -49,7 +49,7 @@ open scoped NNReal ENNReal Topology
 
 /-- The conditioned unit-variance transition estimate with the meander
 limit and support established from Brownian motion. -/
-theorem exists_eventually_transitionConditionalProbability_ge_of_unitVariance
+lemma exists_eventually_transitionConditionalProbability_ge_of_unitVariance
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (hν : IsCenteredUnitSecondMoment ν)
     {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
@@ -96,7 +96,7 @@ theorem exists_eventually_transitionConditionalProbability_ge_of_unitVariance
 
 /-- The meander transition bound for the original positive finite
 variance, with no conditional-limit or support hypothesis. -/
-theorem exists_eventually_transitionConditionalProbability_ge_of_centeredSecondMoment
+lemma exists_eventually_transitionConditionalProbability_ge_of_centeredSecondMoment
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     {sigma : ℝ} (hν : IsCenteredSecondMoment ν (sigma ^ 2))
     (hsigma : 0 < sigma)
