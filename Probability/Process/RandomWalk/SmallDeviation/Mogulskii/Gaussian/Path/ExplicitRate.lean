@@ -5,6 +5,7 @@ Authors: WANG Yiyang
 -/
 
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Gaussian.EscapeConstant
+import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Lemmas.CanonicalScale
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.PathClass.Regimes
 /-!
 # The explicit Gaussian path-class rate

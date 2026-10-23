@@ -25,8 +25,6 @@ public import Probability.Process.Stable.SmallDeviation.EscapeRate.PathLaw.Basic
 
 The public theorems in this file are:
 
-- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.canonicalMogulskiiScale`:
-  $x_n=\sqrt{\sqrt n}$ satisfies $x_n\to\infty$ and $x_n/\sqrt n\to0$.
 - `ProbabilityTheory.HasStableProcessEscapeRate.eq_neg_pi_sq_div_eight`:
   the exponent-two centered Brownian escape constant is $C=-\pi^2/8$.
 - `ProbabilityTheory.HasStableProcessEscapeRate.fullWidthCoefficient_eq_neg_pi_sq_div_two`:
@@ -61,36 +59,6 @@ open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian
 
 open Skorokhod.PathClass.StepCorridor
-
-/-- A canonical scale well below the diffusive scale, used to calibrate the
-scale-independent Brownian escape constant. -/
-theorem canonicalMogulskiiScale :
-    IsMogulskiiScale (fun n : ℕ => Real.sqrt (Real.sqrt (n : ℝ))) := by
-  rw [ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.isMogulskiiScale_iff]
-  apply Asymptotics.IsSmallDeviationScale.of_tendsto
-  · exact Real.tendsto_sqrt_atTop.comp
-      (Real.tendsto_sqrt_atTop.comp tendsto_natCast_atTop_atTop)
-  · have hsqrt : Tendsto
-        (fun n : ℕ => Real.sqrt (Real.sqrt (n : ℝ))) atTop atTop :=
-      Real.tendsto_sqrt_atTop.comp
-        (Real.tendsto_sqrt_atTop.comp tendsto_natCast_atTop_atTop)
-    have hinv := tendsto_inv_atTop_zero.comp hsqrt
-    have heq : (fun n : ℕ =>
-        Real.sqrt (Real.sqrt (n : ℝ)) / Real.sqrt (n : ℝ)) =ᶠ[atTop]
-        fun n : ℕ => (Real.sqrt (Real.sqrt (n : ℝ)))⁻¹ := by
-      filter_upwards [eventually_gt_atTop (0 : ℕ)] with n hn
-      have hn' : 0 < (n : ℝ) := by exact_mod_cast hn
-      have hs : 0 < Real.sqrt (Real.sqrt (n : ℝ)) :=
-        Real.sqrt_pos.2 (Real.sqrt_pos.2 hn')
-      have hsq : Real.sqrt (Real.sqrt (n : ℝ)) ^ 2 = Real.sqrt (n : ℝ) :=
-        Real.sq_sqrt (Real.sqrt_nonneg _)
-      calc
-        Real.sqrt (Real.sqrt (n : ℝ)) / Real.sqrt (n : ℝ) =
-            Real.sqrt (Real.sqrt (n : ℝ)) /
-              Real.sqrt (Real.sqrt (n : ℝ)) ^ 2 := by rw [hsq]
-        _ = (Real.sqrt (Real.sqrt (n : ℝ)))⁻¹ := by
-          field_simp [ne_of_gt hs]
-    exact hinv.congr' heq.symm
 
 private noncomputable def closedCenteredTubeProbability
     (scale : ℕ → ℝ) (n : ℕ) : ENNReal :=

@@ -9,6 +9,7 @@ module
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.FromIncrementLaw.Stable.Domain
 public import Probability.Process.RandomWalk.FunctionalLimit.Normal.Tightness
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Gaussian.EscapeConstant
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Lemmas.CanonicalScale
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.TerminalLeft.PathClass.Relative
 public import Probability.Distributions.Stable.Gaussian.Basic
 public import Probability.Distributions.Gaussian.Interval

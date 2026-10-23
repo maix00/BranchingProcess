@@ -8,6 +8,7 @@ module
 
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Gaussian.EscapeConstant
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.TerminalLeft.PathClass.Regimes
+import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Lemmas.CanonicalScale
 /-!
 # Explicit Gaussian rate for the terminal-left path convention
 
