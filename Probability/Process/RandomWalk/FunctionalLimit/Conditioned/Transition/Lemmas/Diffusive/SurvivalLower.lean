@@ -13,7 +13,7 @@ public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transit
 /-!
 # Finite-variance survival at a diffusive horizon
 
-The public theorem in this file is:
+The public lemma in this file is:
 
 - `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.exists_eventually_diffusiveSurvivalProbability_ge_inverse_square_of_centeredSecondMoment`:
   for centered increments of variance $\sigma^2>0$ and
@@ -36,7 +36,7 @@ namespace ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned
 
 /-- At a diffusive horizon, the cyclic-rotation survival bound and the
 Gaussian endpoint-sign limit give an inverse-square width bound. -/
-theorem exists_eventually_diffusiveSurvivalProbability_ge_inverse_square_of_centeredSecondMoment
+lemma exists_eventually_diffusiveSurvivalProbability_ge_inverse_square_of_centeredSecondMoment
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     {sigma : ℝ} (hν : IsCenteredSecondMoment ν (sigma ^ 2))
     (hsigma : 0 < sigma)

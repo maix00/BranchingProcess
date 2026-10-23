@@ -14,7 +14,7 @@ import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition.Lem
 /-!
 # Transition estimate from the centered first-window limit
 
-The public theorem in this file is:
+The public lemma in this file is:
 
 - `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.exists_eventually_transitionConditionalProbability_ge_of_firstWindowSupport`:
   for centered unit-variance increments, if the Brownian first-window
@@ -40,7 +40,7 @@ open scoped NNReal ENNReal Topology
 
 /-- The conditioned path limit supplies the transition estimate once the
 support of its explicit Brownian first-window limit is established. -/
-theorem exists_eventually_transitionConditionalProbability_ge_of_firstWindowSupport
+lemma exists_eventually_transitionConditionalProbability_ge_of_firstWindowSupport
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (hν : IsCenteredUnitSecondMoment ν)
     {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
