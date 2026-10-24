@@ -55,7 +55,7 @@ private noncomputable def centeredUnitCorridor : ContinuousAdmissibleStepCorrido
   ContinuousAdmissibleStepCorridor.constantBounds (lower := -1 / 2) (upper := 1 / 2)
     (by norm_num) (by norm_num)
 
-private theorem centeredUnitCorridor_energy :
+private lemma centeredUnitCorridor_energy :
     ContinuousAdmissibleStepCorridor.energy 2 centeredUnitCorridor = 1 := by
   rw [ContinuousAdmissibleStepCorridor.energy_eq_widthCost_of_constant_values 2
     centeredUnitCorridor (1 / 2 : ℝ) (-1 / 2 : ℝ)]
@@ -76,12 +76,12 @@ private noncomputable def centeredUnitCorridorFiniteUnion : FiniteCorridorUnion 
   minimum_energy_pos := by
     simp [finiteMinimumEnergy, centeredUnitCorridor_energy]
 
-private theorem centeredUnitCorridorFiniteUnion_realEnergy :
+private lemma centeredUnitCorridorFiniteUnion_realEnergy :
     centeredUnitCorridorFiniteUnion.realEnergy = 1 := by
   simp [FiniteCorridorUnion.realEnergy, FiniteCorridorUnion.energy, centeredUnitCorridorFiniteUnion,
     finiteMinimumEnergy, centeredUnitCorridor_energy]
 
-private theorem centeredUnitCorridorFiniteUnion_toSet :
+private lemma centeredUnitCorridorFiniteUnion_toSet :
     centeredUnitCorridorFiniteUnion.toSet = centeredUnitCorridor.toSet := by
   ext f
   simp [centeredUnitCorridorFiniteUnion, FiniteCorridorUnion.toSet]
@@ -97,7 +97,7 @@ private noncomputable def centeredUnitCorridorApproximation :
     energy_gap_tendsto_zero := by simp
   }
 
-private theorem hasVanishingEnergyGapApproximation_centeredUnitCorridor :
+private lemma hasVanishingEnergyGapApproximation_centeredUnitCorridor :
     HasVanishingEnergyGapApproximation 2 centeredUnitCorridorFiniteUnion.toSet :=
   ⟨centeredUnitCorridorApproximation⟩
 
@@ -110,12 +110,12 @@ private noncomputable def centeredUnitCorridorEnergyLimits :
   exact FiniteCorridorUnionEnergyLimits.ofInnerTendsto
     (A := centeredUnitCorridorApproximation) (L := 1) hinner
 
-@[simp] private theorem centeredUnitCorridorEnergyLimits_commonEnergy :
+@[simp] private lemma centeredUnitCorridorEnergyLimits_commonEnergy :
     centeredUnitCorridorEnergyLimits.commonEnergy = 1 := by
   simp [centeredUnitCorridorEnergyLimits, FiniteCorridorUnionEnergyLimits.commonEnergy,
     FiniteCorridorUnionEnergyLimits.ofInnerTendsto]
 
-private theorem nullMeasurableSet_centeredUnitCorridorFiniteUnion_preimage
+private lemma nullMeasurableSet_centeredUnitCorridorFiniteUnion_preimage
     {Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω) [IsFiniteMeasure P]
     (X : Ω → CadlagPath unitInterval ℝ) (hX : AEMeasurable X P) :
     NullMeasurableSet (X ⁻¹' centeredUnitCorridorFiniteUnion.toSet) P := by
@@ -125,7 +125,7 @@ private theorem nullMeasurableSet_centeredUnitCorridorFiniteUnion_preimage
 
 /-- Membership of a normalized right-continuous step path in the centered
 unit-width corridor is exactly the strict horizontal-tube event. -/
-private theorem normalizedStepCadlagPathIcc_mem_centeredUnitCorridorFiniteUnion_iff_openTube
+private lemma normalizedStepCadlagPathIcc_mem_centeredUnitCorridorFiniteUnion_iff_openTube
     {scale : ℕ → ℝ} {n : ℕ} (hn : 0 < n) (hs : 0 < scale n)
     (increment : ℕ → ℝ) :
     RandomWalk.normalizedStepCadlagPathIcc scale n increment ∈
