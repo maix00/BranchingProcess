@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.JointSubtrees
-import Probability.BranchingRandomWalk.Genealogy.Exploration.Selected.AbstractSubtree
+module
+
+public import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.JointSubtrees
+public import Probability.BranchingRandomWalk.Genealogy.Exploration.Selected.AbstractSubtree
 
 /-!
 # Joint branching after a measurable frontier-family selection
@@ -15,6 +17,8 @@ selected from the generation domain flow. The selected descendant step fields
 are fresh, independent copies of the original pre-sampled field. The proof
 only requires the random family itself to have countable range.
 -/
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 

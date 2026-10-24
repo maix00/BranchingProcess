@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Restart.Success.GoodSplit
-import Probability.BranchingProcess.GaltonWatson.BoundedGrowth
+module
+
+public import Probability.BranchingRandomWalk.Restart.Success.GoodSplit
+public import Probability.BranchingProcess.GaltonWatson.BoundedGrowth
 
 /-!
 # Bounded offspring law of the reserve selector
@@ -15,6 +17,8 @@ encodes its selected child count as a two-slot unmarked offspring configuration,
 proves that this finite-slot law is supercritical from positive split
 probability, and exposes the fixed-horizon Galton--Watson estimate for that law.
 -/
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal

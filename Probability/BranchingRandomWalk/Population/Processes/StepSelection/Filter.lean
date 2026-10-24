@@ -4,7 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Population.Processes.StepSelection.Basic
+module
+
+public import Probability.BranchingRandomWalk.Population.Processes.StepSelection.Basic
 
 /-!
 # Measurable filtering of finite step selections
@@ -13,6 +15,8 @@ Filtering is separate from choosing a finite family.  In particular, a
 truncated rule may first choose an intrinsic finite initial segment of an
 unordered step and then remove every chosen child above a potential barrier.
 -/
+
+@[expose] public section
 
 open MeasureTheory
 
