@@ -5,7 +5,6 @@ Authors: WANG Yiyang
 -/
 
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Gaussian.EscapeConstant
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Lemmas.CanonicalScale
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.TerminalLeft.PathClass.InnerOuter
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.TerminalLeft.PathClass.Rate
 import Probability.Distributions.Stable.Attraction.Normal.TruncatedMoment
