@@ -6,17 +6,38 @@ Authors: WANG Yiyang
 
 module
 
-public import Combinatorics.BranchingWalk.Step.Monotone
-public import Combinatorics.BranchingWalk.Step.Map
+public import Combinatorics.BranchingWalk.Step.Basic
 
 /-!
-# Real-valued potentials on abstract child marks
+# Measurable real-valued potentials on child marks
 
-A branching step may carry marks in an arbitrary measurable space `X`.
-A measurable potential `φ : X → ℝ` supplies the scalar displacement used
-for ordering, exponential weights, fronts, and speeds.  Mapping a step by
-`φ` preserves the child slots and their absence, so multiplicities remain
-visible even when distinct marks have the same potential.
+An edge mark may live in any measurable space `X`. A potential is a measurable
+observation `φ : X → ℝ`, and an additive potential additionally preserves
+zero and addition. These are the mark-level objects used to form path sums,
+displacements, and exponential weights.
+
+## Public declarations
+
+- `Potential X` packages a measurable function `X → ℝ` and coerces to that
+  function; `Potential.comp` pulls it back along a measurable map, with
+  `Potential.comp_apply` giving
+  `(potential.comp d hd) x = potential (d x)`.
+- `Step.potentialAt? φ ξ i = (ξ i).map φ` retains absence as `none`;
+  `Step.potentialAt?_measurable` proves coordinate measurability.
+  `Step.potentialValue' φ ξ i` replaces absence by `0`, and
+  `Step.potentialValue'_measurable` proves its measurability.
+- `pathPotential φ xs = (xs.map φ).sum`; `pathPotential_nil` and
+  `pathPotential_cons` give its empty-path and concatenation formulas.
+- `realPotential` is the identity potential on `ℝ`, with
+  `realPotential_apply` stating `realPotential x = x`.
+- `AdditivePotential X` packages a measurable additive map to `ℝ` and coerces
+  to that function;
+  `AdditivePotential.toPotential` forgets the additive structure,
+  `AdditivePotential.toPotential_apply` gives its evaluation, and
+  `AdditivePotential.map_zero`, `AdditivePotential.map_add`, and
+  `AdditivePotential.map_list_sum` state preservation of zero, addition, and
+  path sums. `realAdditivePotential` is the identity example and
+  `realAdditivePotential_apply` gives its evaluation.
 -/
 
 @[expose] public section
@@ -47,25 +68,6 @@ def Potential.comp {Mark Position : Type*}
     (potential : Potential Position) (d : Mark → Position)
     (hd : Measurable d) (x : Mark) :
     potential.comp d hd x = potential (d x) := rfl
-
-def Step.IsOrderedBy {ι X : Type*} [LT ι] [MeasurableSpace X]
-    (φ : Potential X) (ξ : Step ι X) : Prop :=
-  (ξ.map φ) ∈ orderedSteps
-
-def orderedBySteps {ι X : Type*} [LT ι] [MeasurableSpace X]
-    (φ : Potential X) : Set (Step ι X) :=
-  {ξ | ξ.IsOrderedBy φ}
-
-@[simp] theorem mem_orderedBySteps_iff {ι X : Type*} [LT ι]
-    [MeasurableSpace X] (φ : Potential X) (ξ : Step ι X) :
-    ξ ∈ orderedBySteps φ ↔ ξ.IsOrderedBy φ := Iff.rfl
-
-theorem orderedBySteps_measurable {ι X : Type*} [Countable ι] [LT ι]
-    [MeasurableSpace X] (φ : Potential X) :
-    MeasurableSet (orderedBySteps (ι := ι) φ) := by
-  change MeasurableSet ((Step.map φ) ⁻¹'
-    (orderedSteps : Set (Step ι ℝ)))
-  exact (Step.map_measurable φ.measurable_toFun) orderedSteps_measurable
 
 /-- The scalar optional displacement at a slot; absence remains explicit. -/
 def Step.potentialAt? {ι X : Type*} [MeasurableSpace X]

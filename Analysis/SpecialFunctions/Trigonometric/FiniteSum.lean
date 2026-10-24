@@ -18,6 +18,13 @@ open scoped BigOperators
 
 This file records finite trigonometric sum identities that do not depend on
 probability or spectral terminology.
+
+## Public declarations
+
+* `Real.sum_sin_sq_mul_pi_div`: for natural numbers $0<k<L$,
+  $\sum_{j=1}^{L-1}\sin^2(\pi k j/L)=L/2$.
+* `Real.sum_sin_sq_mul_pi_div_succ`: for $0<k<m+1$,
+  $\sum_{j=1}^{m}\sin^2(\pi k j/(m+1))=(m+1)/2$.
 -/
 
 namespace Real

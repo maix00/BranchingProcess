@@ -13,9 +13,9 @@ public import Mathlib.MeasureTheory.Constructions.BorelSpace.Order
 # Measurable slot conditions
 
 A branching step is the abstract `Step ι X`: slot `i` holds `some x` when
-the corresponding optional child is survive, and `none` otherwise. The
-support records the survive slots, so no separate child vocabulary is
-needed for nonemptiness or splitting.
+the corresponding child is present, and `none` otherwise. The support records
+the present slots, so nonemptiness and splitting can be expressed directly
+through `survive`.
 
 This module derives the measurable sets used. The generic
 support events work for any countable slot type. The threshold-selection
@@ -24,6 +24,23 @@ threshold, and `keepAbove` is its order-dual counterpart. Their thresholds
 are arbitrary, and the measurability of the threshold set is an explicit
 hypothesis discharged by the real line with `measurableSet_Iic` and
 `measurableSet_Ici`.
+
+## Public declarations
+
+- `nonemptySupport ξ` means that some slot survives, and
+  `nonemptySupport_measurable` proves measurability for countable slot types.
+- `nontrivialSupport ξ` means that two distinct slots survive, and
+  `nontrivialSupport_measurable` proves its measurability.
+- `keepRel R i M` is the event that slot `i` survives and its mark satisfies
+  `R (value' ξ i) M`; `keepRel_measurable` reduces its measurability to that
+  of the threshold section `{x | R x M}`.
+- `keepAt i M` specializes to a mark at most `M`, with measurability theorem
+  `keepAt_measurable`. `selectFirstN M` and `keepSecond M` are its slot-`0`
+  and slot-`1` cases, with `selectFirstN_measurable` and
+  `keepSecond_measurable`.
+- `keepAbove i M` selects marks at least `M`; `keepAbove_measurable` proves
+  its measurability, and `mem_keepAbove_iff_orderDual` identifies it with
+  `keepAt` after reversing the mark order.
 -/
 
 @[expose] public section

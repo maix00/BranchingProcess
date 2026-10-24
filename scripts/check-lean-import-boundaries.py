@@ -15,7 +15,7 @@ ENTRY_MODULES = (
     "Probability.Process.Stable.SmallDeviation.BlockBounds",
     "Probability.Process.Stable.SmallDeviation.Blocks.Upper.ArbitraryHorizon",
     "Probability.Process.Stable.SmallDeviation.EndpointComparison",
-    "Probability.Process.Stable.SmallDeviation.EscapeRate",
+    "Probability.Process.Stable.SmallDeviation.EscapeRate.Basic",
     "Probability.Process.Stable.SmallDeviation.EscapeRate.Corridor",
     "Probability.Process.Stable.SmallDeviation.EscapeRate.Endpoint",
     "Probability.Process.Stable.SmallDeviation.EscapeRate.Law",
@@ -24,8 +24,8 @@ FORBIDDEN_PREFIXES = (
     "Probability.Process.Stable.JumpModel",
     "Probability.Process.Stable.SmallDeviation.Blocks.ShiftComparison",
     "Probability.Process.Stable.SmallDeviation.Blocks.Lower.Feedback",
-    "Probability.Process.Stable.SmallDeviation.Blocks.Lower.PathSupport",
-    "Probability.Process.Path.Skorokhod.Corridor.Support",
+    "Probability.Process.Stable.SmallDeviation.Blocks.Lower.Entrance.PathSupport",
+    "Probability.Process.Path.Representation.Skorokhod.Corridor.Support",
 )
 FEEDBACK_MODULE_STEM = (
     "Probability.Process.Stable.SmallDeviation.Blocks.Lower.Feedback"
@@ -50,7 +50,7 @@ GENERAL_LAYER_BOUNDARIES = {
         "Probability.BranchingProcess",
         "Probability.BranchingRandomWalk",
     ),
-    "Probability.Sequence.IID.StoppingTime": (
+    "Probability.Sequence.IID.Blocks.StoppingTime": (
         "Algebra.BigOperators.AdditivePath",
         "Probability.Process.RandomWalk",
         "Probability.BranchingProcess",
@@ -61,16 +61,30 @@ GENERAL_LAYER_BOUNDARIES = {
         "Probability.BranchingProcess",
         "Probability.BranchingRandomWalk",
     ),
-    "Analysis.Asymptotics.Scale": (
+    "Probability.Sequence.IID.Blocks.Prefix": (
+        "Algebra.BigOperators.AdditivePath",
+        "Algebra.Order.BigOperators.AdditivePath",
+        "Probability.Process.RandomWalk",
+        "Probability.BranchingProcess",
+        "Probability.BranchingRandomWalk",
+    ),
+    "Probability.Sequence.IID.Blocks.Consecutive": (
+        "Algebra.BigOperators.AdditivePath",
+        "Algebra.Order.BigOperators.AdditivePath",
+        "Probability.Process.RandomWalk",
+        "Probability.BranchingProcess",
+        "Probability.BranchingRandomWalk",
+    ),
+    "Analysis.Asymptotics.Scale.Basic": (
         "Probability",
     ),
-    "Analysis.Asymptotics.InverseScale": (
+    "Analysis.Asymptotics.Scale.InverseScale": (
         "Probability",
     ),
-    "Analysis.Asymptotics.BlockScale": (
+    "Analysis.Asymptotics.Scale.BlockScale": (
         "Probability",
     ),
-    "MeasureTheory.Measure.LevyMeasure": (
+    "MeasureTheory.Measure.Levy.Basic": (
         "Probability",
     ),
     "MeasureTheory.Measure.CharacteristicFunction.Convolution": (
@@ -79,7 +93,7 @@ GENERAL_LAYER_BOUNDARIES = {
     "MeasureTheory.Measure.CharacteristicFunction.PositiveDefinite": (
         "Probability",
     ),
-    "Topology.Cadlag.Skorokhod.PathClass.StepCorridor.Boundary": (
+    "Topology.Cadlag.Skorokhod.PathClass.StepCorridor.Boundary.Basic": (
         "Probability.Process.RandomWalk",
         "Probability.BranchingRandomWalk",
         "Probability.Process.Stable",
@@ -246,7 +260,7 @@ GENERAL_LAYER_BOUNDARIES = {
         "Probability.BranchingProcess",
         "Probability.BranchingRandomWalk",
     ),
-    "Probability.RandomMeasure.Poisson.Integral": (
+    "Probability.RandomMeasure.Poisson.Integration.Integral": (
         "Probability.Process.Levy",
         "Probability.Process.Stable",
         "Probability.BranchingProcess",
@@ -295,7 +309,7 @@ ADDITIVE_PATH_FORBIDDEN_PREFIXES = (
 )
 LEAN_IMPORT_PARSER = Path(__file__).resolve().with_name("parse_lean_imports.lean")
 MODULE_SYSTEM_REQUIRED_MODULES = (
-    "Probability.Process.Stable.SmallDeviation.EscapeRate",
+    "Probability.Process.Stable.SmallDeviation.EscapeRate.Basic",
     "Probability.Process.Stable.SmallDeviation.EscapeRate.PathLaw.Basic",
     "Probability.Process.Stable.SmallDeviation.EscapeRate.PathLaw.Transfer",
 )

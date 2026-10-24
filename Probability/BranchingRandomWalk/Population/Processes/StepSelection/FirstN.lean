@@ -4,9 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Population.Processes.StepSelection.Basic
-import Probability.BranchingRandomWalk.Selection.NSelection.Infinite
-import Probability.BranchingRandomWalk.Selection.NSelection.ByValue
+module
+
+public import Probability.BranchingRandomWalk.Population.Processes.StepSelection.Basic
+public import Probability.BranchingRandomWalk.Selection.NSelection.Infinite
+public import Probability.BranchingRandomWalk.Selection.NSelection.ByValue
 
 /-!
 # Measurable first-N step rules
@@ -17,6 +19,8 @@ are measurable.  Countability is confined to this labelled realization; the
 underlying `Step.FiniteSelection` and its recursive population do not require
 it.
 -/
+
+@[expose] public section
 
 open MeasureTheory
 
