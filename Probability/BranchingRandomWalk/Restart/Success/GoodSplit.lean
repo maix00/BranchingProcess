@@ -4,13 +4,15 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Assumptions.Structural
-import Probability.BranchingProcess.Offspring.Count
-import Probability.BranchingRandomWalk.Step.Ordering.Law
-import Probability.BranchingRandomWalk.Restart.Trial.FirstSplit
-import Combinatorics.BranchingWalk.Step.Selection.Slot
-import Probability.BranchingRandomWalk.Population.Processes.StepSelection.FirstN
-import Probability.BranchingRandomWalk.Population.Processes.StepSelection.Filter
+module
+
+public import Probability.BranchingRandomWalk.Assumptions.Structural
+public import Probability.BranchingProcess.Offspring.Count
+public import Probability.BranchingRandomWalk.Step.Ordering.Law
+public import Probability.BranchingRandomWalk.Restart.Trial.FirstSplit
+public import Combinatorics.BranchingWalk.Step.Selection.Slot
+public import Probability.BranchingRandomWalk.Population.Processes.StepSelection.FirstN
+public import Probability.BranchingRandomWalk.Population.Processes.StepSelection.Filter
 
 /-!
 # Positive-probability bounded splits
@@ -23,6 +25,8 @@ cutoff while preserving positive probability. This is the input used to
 construct a reserve selector that always retains the first child and retains
 the second below that cutoff.
 -/
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal
@@ -280,7 +284,7 @@ theorem rawSplitEvent_measure_pos
     OffspringConfigurationLaw.hasAtLeastOneChild_ae
       ⟨L.raw, ‹IsProbabilityMeasure L.raw›⟩ hnonempty
   have haeNotSplit : ∀ᵐ ξ ∂L.raw, ¬ rawSplitEvent ξ := by
-    simpa only [Set.mem_setOf_eq] using
+    simpa only [Set.mem_ofPred_eq] using
       (measure_eq_zero_iff_ae_notMem (μ := L.raw)
         (s := {ξ | rawSplitEvent ξ})).mp hzero
   have haeCount : ∀ᵐ ξ ∂L.raw, ξ.childCount = 1 := by
