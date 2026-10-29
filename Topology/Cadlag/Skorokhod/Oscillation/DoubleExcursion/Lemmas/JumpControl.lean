@@ -10,11 +10,27 @@ public import Topology.Cadlag.Skorokhod.Oscillation.DoubleExcursion.Basic
 import Topology.Cadlag.Skorokhod.Oscillation.Partition.Existence
 
 /-!
-# Jump estimates for the double-excursion condition
+# Jump control for double-excursion paths
 
 Endpoint oscillation controls locate large jumps away from the endpoints.
 The double-excursion condition separates such jumps and bounds path
-oscillation on intervals containing no large jumps.
+oscillation on intervals containing no large jumps. Together these estimates
+form the jump-control stage in `DoubleExcursion.Converse`.
+
+The pathwise conditions specialize Billingsley's compactness criterion in
+Patrick Billingsley, *Convergence of Probability Measures*, 1st ed., Wiley,
+1968, Chapter 3, §14, Theorem 14.4, p. 119
+([online copy](https://ru.djvu.online/file/vaaIHv9IWlVeK)).
+
+## Auxiliary declarations
+
+- `HasEndpointOscillationBound.largeJump_awayFromEndpoints`: a jump larger
+  than twice the endpoint oscillation bound lies away from both endpoints.
+- `HasDoubleExcursionBound.largeJumpsSeparated`: two jumps larger than twice
+  the oscillation bound are separated by at least `delta`.
+- `HasDoubleExcursionBound.oscillation_le_of_jumpBound`: if all jumps in a
+  short interval are bounded by `2 * epsilon`, its path oscillation is at most
+  `5 * epsilon` under the double-excursion condition.
 -/
 
 @[expose] public section
