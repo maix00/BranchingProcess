@@ -21,10 +21,16 @@ inclusion; it does not change its probability.
 
 ## Public declarations
 
-* `measure_scalePath_preimage_corridorSet_ge_coreReturnProduct` bounds the
-  probability of the scaled corridor from below by the product of the local
-  core-return probabilities under the stated core geometry and scaling
-  hypotheses.
+* `measure_scalePath_preimage_corridorSet_ge_coreReturnProduct`: under the
+  stated stable-law, core-geometry, and scaling hypotheses,
+  \[
+    \prod_{i\in\mathrm{Fin}(|K|-1)} P(\mathcal R_i)
+      \le P\bigl((\operatorname{scalePath}_{s})^{-1}(\mathcal C)\bigr),
+  \]
+  where \(K=\operatorname{commonKnots}(\mathrm{upper},\mathrm{lower})\),
+  \(\mathcal R_i\) is the core-return event on cell \(i\),
+  \(\mathcal C=\operatorname{corridorSet}(\mathrm{upper},\mathrm{lower})\),
+  and \(s>0\) is the scale.
 
 ## Internal proof declarations
 
