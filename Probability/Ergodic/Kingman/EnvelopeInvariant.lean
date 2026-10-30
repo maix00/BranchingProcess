@@ -22,10 +22,15 @@ the proof is private to this module.
 
 ## Public declarations
 
-* `ProbabilityTheory.Kingman.liminf_div_comp_ae` states that
-  `x ↦ liminfₙ g(n+1,x)/(n+1)` is invariant almost everywhere under `T` when
-  `T` preserves a finite measure, every cocycle level is integrable, and the
-  normalized cocycle is bounded below almost everywhere.
+* `ProbabilityTheory.Kingman.liminf_div_comp_ae`: if `T` preserves the finite
+  measure \(\mu\), \(g\) is an integrable subadditive cocycle, and
+  \(g(n+1,x)/(n+1)\) is bounded below in \(n\) for \(\mu\)-almost every
+  \(x\), then
+  \[
+    \liminf_{n\to\infty}\frac{g(n+1,T x)}{n+1}
+      =\liminf_{n\to\infty}\frac{g(n+1,x)}{n+1}
+    \quad\text{for }\mu\text{-almost every }x.
+  \]
 
 ## References
 
