@@ -8,13 +8,20 @@ module
 
 public import MeasureTheory.Measure.CadlagPath.Support.Corridor
 public import Probability.Process.Path.Skorokhod.Corridor.Segment
-
+public import Topology.Cadlag.Skorokhod.Path.Linear
 /-!
 # Transfer support of a path law to process corridor events
 
 The support criteria for arbitrary càdlàg path laws live in `MeasureTheory`.
 This file transfers them through a measurable path-valued version of a
 stochastic process.
+
+## Public declarations
+
+- `ProbabilityTheory.measure_fullSegmentCorridorReturnEvent_pos_of_path_support`:
+  if a straight path with endpoint in the interior of a terminal corridor
+  belongs to the support of the path law, then the corresponding complete
+  segment return-corridor event has positive probability.
 -/
 
 @[expose] public section
@@ -37,7 +44,7 @@ theorem measure_fullSegmentCorridorReturnEvent_pos_of_path_support
     (hzero : lower < 0 ∧ 0 < upper)
     (hy : lower < y ∧ y < upper)
     (hend : endpointLower < y ∧ y < endpointUpper)
-    (hsupport : Skorokhod.straightPath y ∈ (P.map F).support) :
+    (hsupport : Skorokhod.linearPath y ∈ (P.map F).support) :
     0 < P (fullSegmentCorridorReturnEvent X 0 1
       lower upper endpointLower endpointUpper) := by
   let A := Skorokhod.rangeInOpenIntervalEndsIn
@@ -58,7 +65,7 @@ theorem measure_fullSegmentCorridorReturnEvent_pos_of_path_support
       exact ⟨⟨margin, hmargin, fun t => by simpa [hω t] using hcorridor t⟩,
         by simpa [hω ⊤] using hendω⟩
   have hpos : 0 < (P.map F) A :=
-    MeasureTheory.CadlagPath.measure_skorokhodCorridorEndsIn_pos_of_straightPath_mem_support
+    MeasureTheory.CadlagPath.measure_skorokhodCorridorEndsIn_pos_of_linearPath_mem_support
       (P.map F) hzero hy hend hsupport
   rwa [Measure.map_apply hF hA, measure_congr heq] at hpos
 

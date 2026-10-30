@@ -22,6 +22,15 @@ import Mathlib.Tactic.Ring
 This module contains the denominator arithmetic used to place bounded finite
 rational families on a unit grid. It has no topology or interval-adapter
 dependencies.
+
+## Public declarations
+
+- `RationalGrid.Arithmetic.exists_unit_uniformGrid_of_finset` places every
+  finite family $I\subseteq\left[0,1\right]\cap\mathbb Q$ at grid points of
+  a uniform real grid with endpoints $0$ and $1$.
+- `RationalGrid.Arithmetic.exists_uniformGrid_of_finset_mem_Icc` places every
+  finite family $I\subseteq\left[left,right\right]\cap\mathbb Q$ on a
+  uniform real grid with the prescribed rational endpoints $left\leq right$.
 -/
 
 @[expose] public section
@@ -32,7 +41,7 @@ namespace RationalGrid.Arithmetic
 the unit interval. -/
 private def normalize (left right q : ℚ) : ℚ := (q - left) / (right - left)
 
-private theorem normalize_mem_unit_interval {left right q : ℚ} (hstrict : left < right)
+private lemma normalize_mem_unit_interval {left right q : ℚ} (hstrict : left < right)
     (hq : left ≤ q ∧ q ≤ right) : 0 ≤ normalize left right q ∧
       normalize left right q ≤ 1 := by
   have hden : 0 < right - left := sub_pos.mpr hstrict
@@ -43,15 +52,15 @@ private theorem normalize_mem_unit_interval {left right q : ℚ} (hstrict : left
 
 private def denominator (q : ℚ) : ℕ := q.den
 
-private theorem denominator_pos (q : ℚ) : 0 < denominator q :=
+private lemma denominator_pos (q : ℚ) : 0 < denominator q :=
   Rat.den_pos _
 
 private def numerator (q : ℚ) : ℕ := q.num.toNat
 
-private theorem num_nonneg (q : ℚ) (hq : 0 ≤ q) : 0 ≤ q.num :=
+private lemma num_nonneg (q : ℚ) (hq : 0 ≤ q) : 0 ≤ q.num :=
   Rat.num_nonneg.mpr hq
 
-private theorem cast_eq_numerator_div_denominator (q : ℚ) (hq : 0 ≤ q) :
+private lemma cast_eq_numerator_div_denominator (q : ℚ) (hq : 0 ≤ q) :
     (q : ℝ) = numerator q / denominator q := by
   rw [show (q : ℝ) = ((q : ℚ) : ℝ) by rfl, Rat.cast_def]
   unfold numerator denominator
@@ -59,7 +68,7 @@ private theorem cast_eq_numerator_div_denominator (q : ℚ) (hq : 0 ≤ q) :
   norm_cast
   exact (Int.toNat_of_nonneg (num_nonneg q hq)).symm
 
-private theorem numerator_le_denominator (q : ℚ) (hq0 : 0 ≤ q)
+private lemma numerator_le_denominator (q : ℚ) (hq0 : 0 ≤ q)
     (hq1 : q ≤ 1) : numerator q ≤ denominator q := by
   have hcast : (q : ℝ) ≤ 1 := by
     simpa using (Rat.cast_le (K := ℝ)).2 hq1
@@ -70,14 +79,14 @@ private theorem numerator_le_denominator (q : ℚ) (hq0 : 0 ≤ q)
 private def commonDenominator (I : Finset ℚ) : ℕ :=
   I.lcm denominator
 
-private theorem commonDenominator_pos (I : Finset ℚ) :
+private lemma commonDenominator_pos (I : Finset ℚ) :
     0 < commonDenominator I := by
   apply Nat.pos_of_ne_zero
   rw [commonDenominator, Finset.lcm_ne_zero_iff]
   intro q hq
   exact Nat.ne_of_gt (denominator_pos q)
 
-private theorem denominator_dvd_commonDenominator
+private lemma denominator_dvd_commonDenominator
     {I : Finset ℚ} {q : I} :
     denominator q.1 ∣ commonDenominator I := by
   rw [commonDenominator]

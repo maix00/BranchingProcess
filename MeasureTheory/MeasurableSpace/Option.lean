@@ -13,11 +13,29 @@ public import Mathlib.MeasureTheory.Constructions.BorelSpace.Basic
 
 `Option X` carries the disjoint-union measurable structure used for partial
 random maps: `some x` is an ordinary value and `none` is a cemetery value.
+
+## Public declarations
+
+* `MeasureTheory.optionMeasurableSpace X` is the measurable space induced by
+  `some : X → Option X`.
+* `MeasureTheory.measurableSet_option_none` and
+  `MeasureTheory.measurableSet_option_some_image` show that `{none}` and the
+  image `some '' s` of a measurable set are measurable.
+* `MeasureTheory.measurable_option_some` and
+  `MeasureTheory.measurableEmbedding_option_some` state that `some` is a
+  measurable embedding. `MeasureTheory.measurable_option_map` proves
+  measurability of `Option.map f` when `f` is measurable.
+* `MeasureTheory.measurable_optionGetD d` states that
+  `o ↦ o.getD d` is measurable, and
+  `MeasureTheory.measurable_option_elim none hsome` states that
+  `o ↦ o.elim none some` is measurable when `some` is measurable.
+* `MeasureTheory.measurableSet_option_isSome` states that
+  `{o : Option X | o.isSome}` is measurable.
 -/
 
 public section
 
-open MeasureTheory
+namespace MeasureTheory
 
 /-- The disjoint-union measurable structure on an optional value. -/
 instance optionMeasurableSpace {X : Type*} [MeasurableSpace X] :
@@ -80,5 +98,7 @@ theorem measurableSet_option_isSome {X : Type*} [MeasurableSpace X] :
     ext o
     cases o <;> simp]
   exact measurableSet_option_some_image MeasurableSet.univ
+
+end MeasureTheory
 
 end

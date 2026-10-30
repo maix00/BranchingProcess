@@ -4,17 +4,31 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.RandomMeasure.Poisson.CharacteristicFunction.Integral
-import Probability.RandomMeasure.Poisson.TimeMark
-import Probability.Distributions.InfinitelyDivisible.LevyKhintchine.FiniteVariation
+module
+
+public import Probability.RandomMeasure.Poisson.CharacteristicFunction.Integral
+public import Probability.Distributions.InfinitelyDivisible.LevyKhintchine.FiniteVariation
+public import Mathlib.MeasureTheory.Constructions.UnitInterval
+import all Probability.RandomMeasure.Poisson.Intensity.Lemmas.TimeWindowIntegral
 
 /-!
 # Characteristic function of a jump sum in a time window
 
-The time-window exponent is the window's Lebesgue mass times the mark
-exponent. This result uses a general measurable window and does not
-assume that the mark distribution has a global first moment.
+## Public declarations
+
+- `ProbabilityTheory.IsPoissonPointFamily.integral_exp_timeWindow_jumpSum`: for a measurable
+  time window `S`, the characteristic integral of its Poisson jump sum is
+  `exp (|S| ∫ (exp (i ξ x) - 1) dν)`, assuming realized integrability on `S`
+  and integrability of the mark exponent.
+- `ProbabilityTheory.integral_exp_sum_timeWindow_jumpSums`: for two independent Poisson jump
+  sources on the same measurable window, the exponent is
+  `|S| (∫ (exp (i ξ x) - 1) dνₛ + ∫ (exp (i ξ x) - 1) dνᵦ)`.
+
+These statements use arbitrary measurable windows and require no global first
+moment of the mark distribution.
 -/
+
+@[expose] public section
 
 namespace ProbabilityTheory
 

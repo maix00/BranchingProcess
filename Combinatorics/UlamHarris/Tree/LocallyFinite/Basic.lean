@@ -20,6 +20,14 @@ in the tree this set is empty, so the definition below does not need to assume
 The type `LocallyFiniteTree α` is the subtype of `Tree α` consisting of the
 locally finite trees. Its topology, measurable structure, and metric are in
 `Tree/LocallyFinite/Space.lean`.
+
+## Public declarations
+
+- `Tree.IsLocallyFinite T` means
+  `∀ u, {i | u ++ [i] ∈ T.carrier}.Finite`; `Tree.LocallyFiniteTree α` is the
+  corresponding subtype.
+- `Tree.isLocallyFinite_iff` unfolds the predicate, and
+  `Tree.children_finite` gives the finite child-label set at every address.
 -/
 
 @[expose] public section

@@ -14,6 +14,23 @@ public import Mathlib.Probability.Process.HittingTime
 
 A sequence of success events determines a possibly infinite first time. If
 each event is observable at its generation, this time is a stopping time.
+
+## Public declarations
+
+For events $(A_n)_{n\ge0}$, `firstDeclaredSuccess A ω` is
+\(\inf\{n\mid \omega\in A_n\}\), with value \(\top\) when the set is
+empty. The finite-time characterizations are
+\[
+  \tau(\omega)\le n \iff \exists j\le n,\ \omega\in A_j,
+  \qquad
+  \tau(\omega)=k \iff \omega\in A_k\ \land\ \forall j<k,\ \omega\notin A_j.
+\]
+`shiftDeclarationByOne` moves $A_n$ to generation $n+1$ and
+`firstDeclaredSuccess_shiftDeclarationByOne` proves that the first time then
+increases by one, including the value $\top$. If $A_n\in\mathcal F_n$ for
+every $n$, `firstDeclaredSuccess_isStoppingTime` gives
+\(\tau\in\mathrm{StoppingTime}(\mathcal F)\); the last theorem applies this
+to declarations made after an existing stopping time.
 -/
 
 open MeasureTheory

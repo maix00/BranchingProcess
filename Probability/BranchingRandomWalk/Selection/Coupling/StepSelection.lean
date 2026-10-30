@@ -4,9 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Selection.Coupling.SelectedPopulation
-import Probability.BranchingRandomWalk.Coupling.Field.Position
-import Probability.BranchingRandomWalk.Population.Processes.StepSelection.RootIndexed
+module
+
+public import Probability.BranchingRandomWalk.Selection.Coupling.SelectedPopulation
+public import Probability.BranchingRandomWalk.Coupling.Field.Position
+public import Probability.BranchingRandomWalk.Population.Processes.StepSelection.RootIndexed
 
 /-!
 # Coupling a labelled step-selected trial to an `N`-selected population
@@ -15,7 +17,55 @@ A single-root trial is embedded into the multi-root particle labels used by
 the cloud coupling. The source and target may be built from different step
 fields on the same sample. Their relationship is stated only through selected
 slot inclusion and equality of the corresponding mapped increments.
+
+For a fixed root \(r\), let
+\[
+  S_n(\omega)
+    :=\operatorname{labelledPopulation}
+      \bigl(R,n,\operatorname{sourceStep}(\omega),r\bigr),
+  \qquad
+  T_n(\omega)
+    :=\operatorname{selectedPopulation}
+      \bigl(N,\mathrm{roots},\mathrm{initial},d,\varphi,\mathrm{hadmits},
+        n,\omega\bigr).
+\]
+Define their spatial clouds by
+\[
+  C_n^{\mathrm{src}}(\omega)
+    :=\operatorname{populationCloud}\,d\,
+      \bigl(\operatorname{ofStepField}
+        (\mathrm{initial},\operatorname{sourceStep}(\omega))\bigr)\,S_n(\omega),
+  \qquad
+  C_n^N(\omega)
+    :=\operatorname{populationCloud}\,d\,
+      \bigl(\operatorname{ofStepField}(\mathrm{initial},\omega)\bigr)\,T_n(\omega).
+\]
+Under the stated selected-slot, increment, and capacity hypotheses, the
+labelled coupling gives
+\[
+  \forall n,\omega,\qquad
+  C_n^{\mathrm{src}}(\omega)
+    \preceq_{\varphi} C_n^N(\omega),
+\]
+where \(C\preceq_{\varphi}D\) means
+\(\texttt{Cloud.InjectivelyDominatesBy }\varphi\,C\,D\,()\).
+
+## Public declarations
+
+- `ProbabilityTheory.BranchingRandomWalk.Selection.Coupling.RootIndexed.coupledInjection_labelledPopulation`:
+  for finite `sourceRoots ⊆ targetRoots`, constructs the equal-rank slice
+  injection from the labelled source population to the first-$N$ target.
+- `ProbabilityTheory.BranchingRandomWalk.Selection.Coupling.generationInjection_labelledPopulation`:
+  constructs a canonical single-root slice injection at a fixed generation.
+- `ProbabilityTheory.BranchingRandomWalk.Selection.Coupling.injectivelyDominatesBy_labelledPopulation`:
+  if each labelled source population has size at most $N$, matched parents
+  share selected slots and mapped increments, and $φ$ preserves order under
+  common translations, then its cloud is injectively dominated by the
+  multi-root first-$N$ cloud at every generation. No offspring-law or
+  address-order assumption is required.
 -/
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk.Selection.Coupling
 
@@ -27,76 +77,12 @@ open Combinatorics.Branching.Selection.Coupling
 
 variable {Root α Mark Position Value : Type*}
 
-/-- Canonical recursive coupling of a finite step-selected source trial to a
-causal first-`N` target.  The target field is constructed by equal-rank step
-installation, so selected-slot survival and increment agreement follow from
-the construction rather than appearing as hypotheses. -/
+/-- Couple a finite root-indexed family of step-selected source particles to
+a causal first-`N` population. The target field is built by equal-rank step
+installation, so selected-slot inclusion and increment agreement follow from
+the construction. Only the root sets are finite; the ambient root and slot
+types need no countability assumptions. -/
 noncomputable def RootIndexed.coupledInjection_labelledPopulation
-    {Ω : Type*}
-    [DecidableEq (RootIndexed.TreeNode Root α)]
-    [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder Value]
-    [AddCommMonoid Position]
-    (N : ℕ) (R : Step.FiniteSelection α Mark)
-    (roots : Finset Root) (r : Root) (hr : r ∈ roots)
-    (initial : Ω → Root → Position) (d : Mark → Position) (φ : Position → Value)
-    (hadmits : ∀ (ω : Ω) (n : ℕ) (β : RootIndexed.StepField Root α Mark)
-        (parents : Finset (RootIndexed.TreeNode Root α)),
-      Combinatorics.Branching.Selection.NSelection.AdmitsFirstNBy N
-        (RootIndexed.observedPositionAtGeneration (initial ω) d φ (n + 1) β)
-        (RootIndexed.childrenAtGeneration n parents β))
-    (sourceStep fallback : Ω → RootIndexed.StepField Root α Mark)
-    (hcard : ∀ n ω,
-      (RootIndexed.StepSelection.labelledPopulation
-        R n (sourceStep ω) r).card ≤ N)
-    (htranslate : ∀ x y z : Position,
-      φ y ≤ φ x → φ (y + z) ≤ φ (x + z))
-    (n : ℕ) (ω : Ω) :
-    Cloud.SliceDominatingMap φ
-      (populationCloud d
-        (RootIndexed.BranchingWalk.ofStepField (initial ω) (sourceStep ω))
-        (RootIndexed.StepSelection.labelledPopulation R n (sourceStep ω) r))
-      (populationCloud d
-        (RootIndexed.BranchingWalk.ofStepField (initial ω)
-          (RootIndexed.coupledField N roots initial d φ hadmits sourceStep
-            fallback
-            (fun k sample => RootIndexed.StepSelection.labelledPopulation
-              R k (sourceStep sample) r) n ω))
-        (RootIndexed.coupledPopulation N roots initial d φ hadmits sourceStep
-          fallback
-          (fun k sample => RootIndexed.StepSelection.labelledPopulation
-            R k (sourceStep sample) r) n ω)) () := by
-  apply RootIndexed.coupledInjection N roots initial d φ hadmits sourceStep
-    fallback
-    (fun k sample => RootIndexed.StepSelection.labelledPopulation
-      R k (sourceStep sample) r)
-    (fun _ sample p => ↑(R (sourceStep sample p.1 p.2)))
-  · intro sample
-    refine ⟨id, ?_, Set.injOn_id _, ?_⟩
-    · intro p hp
-      have hp' : p = (r, []) := by simpa using hp
-      subst p
-      change (r, []) ∈ RootIndexed.initialPopulation (α := α) roots
-      rw [RootIndexed.initialPopulation, Finset.mem_map]
-      exact ⟨r, hr, rfl⟩
-    · intro p hp
-      have hp' : p = (r, []) := by simpa using hp
-      subst p
-      simp only [id_eq]
-      change φ (RootIndexed.position (initial sample) d (fallback sample) r []) ≤
-        φ (RootIndexed.position (initial sample) d (sourceStep sample) r [])
-      simp
-  · intro k sample
-    exact RootIndexed.StepSelection.labelledPopulation_succ_subset
-      R k (sourceStep sample) r
-  · intro k sample p hp i hi
-    exact R.subset_support (sourceStep sample p.1 p.2) i hi
-  · exact htranslate
-  · exact fun k _ => hcard (k + 1) ω
-
-/-- Multi-root form of `coupledInjection_labelledPopulation`.  Only the
-source root set is finite; neither the ambient root type nor the offspring
-slot type is required to be countable. -/
-noncomputable def RootIndexed.coupledInjection_labelledPopulationOn
     {Ω : Type*}
     [DecidableEq (RootIndexed.TreeNode Root α)]
     [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder Value]
@@ -106,9 +92,9 @@ noncomputable def RootIndexed.coupledInjection_labelledPopulationOn
     (initial : Ω → Root → Position) (d : Mark → Position) (φ : Position → Value)
     (hadmits : ∀ (ω : Ω) (n : ℕ) (β : RootIndexed.StepField Root α Mark)
         (parents : Finset (RootIndexed.TreeNode Root α)),
-      Combinatorics.Branching.Selection.NSelection.AdmitsFirstNBy N
+      Combinatorics.Selection.NSelection.AdmitsFirstNBy N
         (RootIndexed.observedPositionAtGeneration (initial ω) d φ (n + 1) β)
-        (RootIndexed.childrenAtGeneration n parents β))
+        (Combinatorics.Branching.Population.childrenAtGeneration n parents β))
     (sourceStep fallback : Ω → RootIndexed.StepField Root α Mark)
     (hcard : ∀ n ω,
       (RootIndexed.StepSelection.labelledPopulationOn
@@ -186,9 +172,9 @@ noncomputable def generationInjection_labelledPopulation
       RootIndexed.StepField Root α Mark)
     (hadmits : ∀ (n : ℕ) (ω : RootIndexed.StepField Root α Mark)
         (parents : Finset (RootIndexed.TreeNode Root α)),
-      Combinatorics.Branching.Selection.NSelection.AdmitsFirstNBy N
+      Combinatorics.Selection.NSelection.AdmitsFirstNBy N
         (RootIndexed.observedPositionAtGeneration initial d φ (n + 1) ω)
-        (RootIndexed.childrenAtGeneration n parents ω))
+        (Combinatorics.Branching.Population.childrenAtGeneration n parents ω))
     (hcard : ∀ n ω,
       (RootIndexed.StepSelection.labelledPopulation
         R n (sourceStep ω) r).card ≤ N)
@@ -267,9 +253,9 @@ theorem injectivelyDominatesBy_labelledPopulation
       RootIndexed.StepField Root α Mark)
     (hadmits : ∀ (n : ℕ) (ω : RootIndexed.StepField Root α Mark)
         (parents : Finset (RootIndexed.TreeNode Root α)),
-      Combinatorics.Branching.Selection.NSelection.AdmitsFirstNBy N
+      Combinatorics.Selection.NSelection.AdmitsFirstNBy N
         (RootIndexed.observedPositionAtGeneration initial d φ (n + 1) ω)
-        (RootIndexed.childrenAtGeneration n parents ω))
+        (Combinatorics.Branching.Population.childrenAtGeneration n parents ω))
     (hcard : ∀ n ω,
       (RootIndexed.StepSelection.labelledPopulation
         R n (sourceStep ω) r).card ≤ N)
@@ -303,32 +289,10 @@ theorem injectivelyDominatesBy_labelledPopulation
         (RootIndexed.BranchingWalk.ofStepField initial ω)
         (RootIndexed.selectedPopulation
           N roots initial d φ hadmits n ω)) () := by
-  apply injectivelyDominatesBy_selectedPopulation
-    φ d N roots initial
-    (fun ω => RootIndexed.BranchingWalk.ofStepField initial (sourceStep ω))
-    (fun n ω => RootIndexed.StepSelection.labelledPopulation
-      R n (sourceStep ω) r)
-    (fun _ ω p => ↑(R (sourceStep ω p.1 p.2))) hadmits
-  · intro ω
-    refine ⟨id, ?_, Set.injOn_id _, ?_⟩
-    · intro p hp
-      have hp' : p = (r, []) := by simpa using hp
-      subst p
-      change (r, []) ∈ RootIndexed.initialPopulation (α := α) roots
-      rw [RootIndexed.initialPopulation, Finset.mem_map]
-      exact ⟨r, hr, rfl⟩
-    · intro p hp
-      have hp' : p = (r, []) := by simpa using hp
-      subst p
-      change φ (RootIndexed.position initial d ω r []) ≤
-        φ (RootIndexed.position initial d (sourceStep ω) r [])
-      simp
-  · exact fun n ω =>
-      RootIndexed.StepSelection.labelledPopulation_succ_subset
-        R n (sourceStep ω) r
-  · exact fun n ω => hcard (n + 1) ω
-  · exact hslots
-  · exact hsharedIncrement
-  · exact htranslate
+  intro n ω
+  exact (generationInjection_labelledPopulation φ d N R roots r hr initial
+    sourceStep hadmits hcard hslots hsharedIncrement htranslate n ω).injectivelyDominatesBy
 
 end ProbabilityTheory.BranchingRandomWalk.Selection.Coupling
+
+end

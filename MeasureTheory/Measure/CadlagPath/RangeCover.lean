@@ -14,6 +14,11 @@ public import Mathlib.MeasureTheory.Measure.MeasureSpaceDef
 
 The finite union estimate for path-space oscillation events, stated for an
 arbitrary measure on càdlàg path space.
+
+## Public declarations
+
+- For k > 0, the measure of the scaled range tube of width 1 is
+  bounded by the sum of the measures of its 2k+1 scaled corridor events.
 -/
 
 @[expose] public section

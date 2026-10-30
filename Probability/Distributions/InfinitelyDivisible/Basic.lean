@@ -16,7 +16,7 @@ public import MeasureTheory.Measure.Convolution.Power
 This file defines infinite divisibility in terms of the shared measure
 convolution power.
 
-## Main definition
+## Public declarations
 
 * `ProbabilityTheory.IsInfinitelyDivisible` — a probability measure `μ` is infinitely divisible
   if for every `n ≥ 1` there exists a probability measure `ν` with `μ = ν^{∗n}`.

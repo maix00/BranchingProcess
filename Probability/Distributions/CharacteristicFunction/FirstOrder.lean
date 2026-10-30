@@ -6,10 +6,17 @@ Authors: WANG Yiyang
 
 module
 
-public import Mathlib.MeasureTheory.Measure.CharacteristicFunction.TaylorExpansion
+public import Mathlib.MeasureTheory.Measure.CharacteristicFunction.Basic
+import Mathlib.MeasureTheory.Measure.CharacteristicFunction.TaylorExpansion
 
 /-!
 # First-order behavior of characteristic functions
+
+## Public declarations
+
+- `tendsto_mul_charFun_sub_one_of_integrable_id_of_integral_eq_zero` states
+  that for an integrable centered probability law,
+  $t(\widehat\mu(t^{-1})-1)\to0$ as $t\to\infty$.
 
 The first derivative at zero is the mean. In particular, for an integrable
 centered law the characteristic function differs from one by `o(t)`. This

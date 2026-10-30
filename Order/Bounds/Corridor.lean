@@ -14,7 +14,15 @@ import Mathlib.Tactic.Linarith
 # Deterministic one-jump corridor estimate
 
 This estimate controls a path with one jump when its background path has a
-uniform bound. It depends only on order and real arithmetic.
+uniform bound. The time parameter needs only a decidable relation `≤` and a
+greatest element; the estimate uses real arithmetic for path values.
+
+## Public declarations
+
+- `oneJump_staysInInterval_and_endsNear` states that a background path bounded
+  by $\rho$, with a jump within $\rho$ of a target in a margin-$m$ interval,
+  stays in the interval shrunk by $2\rho$ and ends within $\varepsilon$ of
+  the target when $2\rho<\varepsilon$.
 -/
 
 @[expose] public section
@@ -24,7 +32,7 @@ namespace Order.Bounds
 /-- A uniformly small background path plus one well-placed jump stays in a
 shrunk interval and ends near the target. -/
 theorem oneJump_staysInInterval_and_endsNear
-    {T : Type*} [LinearOrder T] [OrderTop T]
+    {T : Type*} [LE T] [DecidableLE T] [OrderTop T]
     (S : T → ℝ) (jumpTime : T) (jumpSize lower upper target ρ ε margin : ℝ)
     (hε : 2 * ρ < ε)
     (hl0 : lower + margin ≤ 0) (hu0 : 0 ≤ upper - margin)

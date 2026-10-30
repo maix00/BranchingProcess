@@ -6,18 +6,34 @@ Authors: Codex
 
 module
 
-public import Analysis.Asymptotics.RegularVariation
+public import Analysis.Asymptotics.RegularVariation.Basic
 public import Mathlib.Analysis.Normed.Group.Tannery
 public import Mathlib.MeasureTheory.Measure.Continuity
 public import Mathlib.MeasureTheory.Measure.Real
-public import Probability.Distributions.Moments.Truncated
+public import Probability.Distributions.Moments.Truncated.Basic
 
 /-!
 # Regular variation of truncated second moments
 
 This file derives negligibility of the quadratic two-sided tail from slow
 variation of the truncated second moment, proves the converse under eventual
-positivity, and records the fixed-scale consequence.
+positivity, records the fixed-scale consequence, and packages monotonicity of
+the truncated moment for Potter-bound applications.
+
+## Public declarations
+
+- `tendsto_rescaledSecondTailRatio_of_slowVariation`: if `Vμ` is slowly
+  varying and `x² μ(|y|>x)/Vμ(x) → 0`, then for every `c>0`,
+  `x² μ(|y|>cx)/Vμ(x) → 0`.
+- `tendsto_secondTailRatio_of_slowlyVarying_truncatedSecondMoment`: slow
+  variation of `Vμ` implies `x² μ(|y|>x)/Vμ(x) → 0`.
+- `isSlowlyVarying_truncatedSecondMoment_of_tendsto_secondTailRatio`: under
+  eventual positivity of `Vμ`, the tail-ratio limit implies slow variation.
+- `truncatedSecondMoment_isSlowlyVarying_iff_tendsto_secondTailRatio` packages
+  these implications as an equivalence. Here
+  `Vμ(x)=∫_{|y|≤x}y² μ(dy)`.
+- `truncatedSecondMoment_isEventuallyMonotone`: for every locally finite
+  measure, the truncated second moment is eventually monotone at infinity.
 -/
 
 open Filter MeasureTheory
@@ -27,7 +43,17 @@ open scoped Topology
 
 namespace ProbabilityTheory
 
-private theorem truncatedSecondMoment_band_lower_bound
+/-- The truncated second moment is eventually nondecreasing at infinity for
+every locally finite measure. This packages `truncatedSecondMoment_mono` in
+the form used by regular-variation bounds. -/
+theorem truncatedSecondMoment_isEventuallyMonotone (ν : Measure ℝ)
+    [IsLocallyFiniteMeasure ν] :
+    Asymptotics.IsEventuallyMonotoneAtTop (truncatedSecondMoment ν) := by
+  refine ⟨0, ?_⟩
+  intro u v hu huv
+  exact truncatedSecondMoment_mono ν hu huv
+
+private lemma truncatedSecondMoment_band_lower_bound
     (μ : Measure ℝ) [IsFiniteMeasure μ] {a b : ℝ}
     (ha : 0 ≤ a) (hab : a ≤ b) :
     a ^ 2 * μ.real {y : ℝ | a < |y| ∧ |y| ≤ b} ≤
@@ -95,7 +121,7 @@ private theorem truncatedSecondMoment_band_lower_bound
     _ ≤ ∫ y in band, y ^ 2 ∂μ := hlow'
     _ = truncatedSecondMoment μ b - truncatedSecondMoment μ a := hdiff
 
-private theorem twoSidedTail_difference_eq_band
+private lemma twoSidedTail_difference_eq_band
     (μ : Measure ℝ) [IsFiniteMeasure μ] {a b : ℝ}
     (hab : a ≤ b) :
     μ.real {y : ℝ | a < |y|} - μ.real {y : ℝ | b < |y|} =
@@ -116,7 +142,7 @@ private theorem twoSidedTail_difference_eq_band
   exact (measureReal_sdiff (μ := μ) hsubset
     (measurableSet_lt measurable_const continuous_abs.measurable) (measure_ne_top μ _)).symm
 
-private theorem twoSidedTail_difference_mul_sq_le_truncatedSecondMoment_difference
+private lemma twoSidedTail_difference_mul_sq_le_truncatedSecondMoment_difference
     (μ : Measure ℝ) [IsFiniteMeasure μ] {a b : ℝ}
     (ha : 0 ≤ a) (hab : a ≤ b) :
     a ^ 2 * (μ.real {y : ℝ | a < |y|} - μ.real {y : ℝ | b < |y|}) ≤
@@ -124,7 +150,7 @@ private theorem twoSidedTail_difference_mul_sq_le_truncatedSecondMoment_differen
   rw [twoSidedTail_difference_eq_band μ hab]
   exact truncatedSecondMoment_band_lower_bound μ ha hab
 
-private theorem truncatedSecondMoment_difference_le_sq_mul_twoSidedTail
+private lemma truncatedSecondMoment_difference_le_sq_mul_twoSidedTail
     (μ : Measure ℝ) [IsFiniteMeasure μ] {a b : ℝ}
     (ha : 0 ≤ a) (hab : a ≤ b) :
     truncatedSecondMoment μ b - truncatedSecondMoment μ a ≤
@@ -259,9 +285,7 @@ theorem tendsto_secondTailRatio_of_slowlyVarying_truncatedSecondMoment
       (V ((2 : ℝ) ^ (k + 1) * x) / V x - V ((2 : ℝ) ^ k * x) / V x)
   have hVreg : Asymptotics.IsRegularlyVaryingAtTop V 0 := hVslow
   have hVmono : Asymptotics.IsEventuallyMonotoneAtTop V := by
-    refine ⟨0, ?_⟩
-    intro x y hx hxy
-    exact truncatedSecondMoment_mono μ hx hxy
+    simpa [V] using truncatedSecondMoment_isEventuallyMonotone μ
   obtain ⟨R, _, hpotter⟩ :=
     hVreg.exists_potter_upper_bound hVmono (by norm_num : (0 : ℝ) ≤ 0)
       (by norm_num : (0 : ℝ) < 1)
@@ -484,11 +508,11 @@ theorem tendsto_secondTailRatio_of_slowlyVarying_truncatedSecondMoment
     (hratioLeTsum.mono fun x hx => hx.2)
   simpa [tail, V] using hlim
 
-/-- The Feller quadratic-tail condition implies slow variation of the
+/-- The quadratic-tail ratio condition implies slow variation of the
 truncated second moment, provided the truncated moment is eventually positive.
 Together with `tendsto_secondTailRatio_of_slowlyVarying_truncatedSecondMoment`,
-this gives the analytic equivalence between slow variation and Feller's tail
-condition. -/
+this gives the analytic equivalence between slow variation and the
+quadratic-tail ratio limit. -/
 theorem isSlowlyVarying_truncatedSecondMoment_of_tendsto_secondTailRatio
     (μ : Measure ℝ) [IsFiniteMeasure μ]
     (hVpos : ∀ᶠ x : ℝ in atTop, 0 < truncatedSecondMoment μ x)
@@ -628,8 +652,7 @@ theorem isSlowlyVarying_truncatedSecondMoment_of_tendsto_secondTailRatio
     simpa [V, Real.rpow_zero] using hsub.congr' hratioEq.symm
 
 /-- For a finite measure with eventually positive truncated second moment,
-slow variation of that moment is equivalent to Feller's quadratic-tail
-condition. -/
+slow variation of that moment is equivalent to the quadratic-tail ratio limit. -/
 theorem truncatedSecondMoment_isSlowlyVarying_iff_tendsto_secondTailRatio
     (μ : Measure ℝ) [IsFiniteMeasure μ]
     (hVpos : ∀ᶠ x : ℝ in atTop, 0 < truncatedSecondMoment μ x) :

@@ -15,6 +15,21 @@ public import Probability.Process.HittingTime.Declarations
 These lemmas express when a candidate's completion and success are visible at
 the generation where they occur. Countability is imposed only on the family
 whose success events are joined.
+
+## Public declarations
+
+`CandidateObservable F T A` means
+\(\{\omega:T_i(\omega)=n\ \land\ \omega\in A_i\}\in\mathcal F_n\)
+for every candidate $i$ and generation $n$. `successAtCompletion T B` is
+\(\{\omega:\exists n,\ T(\omega)=n\land\omega\in B_n\}\).
+`successfulCandidateWithin T A C N` records
+\(\exists i\in C,\exists n\le N,\ T_i(\omega)=n\land\omega\in A_i\).
+The measurability theorems place these declaration and success events in
+\(\mathcal F_n\) or \(\mathcal F_N\), respectively. Under countability of
+the candidate family (or of the selected candidate subset), the first
+completion or first successful candidate is a stopping time. The theorem
+`successAtCompletion_observable` derives the candidate condition from
+stopping-time completions and tests measurable at each generation.
 -/
 
 open MeasureTheory

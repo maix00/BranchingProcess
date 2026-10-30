@@ -13,6 +13,20 @@ public import Mathlib.MeasureTheory.Measure.Prod
 
 A coupling is a joint measure with prescribed first and second marginals.  The
 definition is independent of any order, branching structure, or pathwise map.
+
+## Public declarations
+
+* `ProbabilityTheory.Coupling μ ν` consists of a measure `κ` on `X × Y` such
+  that `κ.map Prod.fst = μ` and `κ.map Prod.snd = ν`.
+* `ProbabilityTheory.Coupling.AESatisfies κ R` means
+  `∀ᵐ p ∂κ.joint, R p.1 p.2`.
+* `ProbabilityTheory.Coupling.ofVariables` and
+  `ProbabilityTheory.Coupling.ofVariablesOfLaws` form the joint law of two
+  measurable random variables on a common probability space.
+* `ProbabilityTheory.Coupling.independent` is the product coupling;
+  `ProbabilityTheory.Coupling.swap` exchanges the marginals; and
+  `ProbabilityTheory.Coupling.map` pushes both coordinates through measurable
+  maps.
 -/
 
 open MeasureTheory
@@ -37,7 +51,7 @@ instance {μ : Measure X} {ν : Measure Y} [IsProbabilityMeasure μ]
     have h := congrArg (fun m : Measure X => m Set.univ) κ.fst_joint
     simpa [Measure.map_apply measurable_fst MeasurableSet.univ] using h
 
-/-- A pathwise relation holds under the joint law of a coupling. -/
+/-- A relation holds almost surely between the two coordinates of a coupling. -/
 def AESatisfies {μ : Measure X} {ν : Measure Y} (κ : Coupling μ ν)
     (R : X → Y → Prop) : Prop :=
   ∀ᵐ p ∂κ.joint, R p.1 p.2

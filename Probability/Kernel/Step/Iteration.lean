@@ -6,13 +6,27 @@ Authors: WANG Yiyang
 
 module
 
+public import Probability.Kernel.Step.Basic
 public import Probability.Kernel.Step.Path
-public import Probability.Sequence.IID
+public import Probability.Sequence.IID.Basic
 public import Mathlib.MeasureTheory.Constructions.Pi
 public import Mathlib.Probability.Kernel.Composition.Comp
 
 /-!
 # Iteration of partial random steps
+
+## Public declarations
+
+- `survivalProbability` is the probability under the finite product law
+  $\nu^n$ that the partial-step path survives for $n$ transitions.
+- `survivalProbability_succ` gives the one-step integral recursion for
+  $Q_n(a)=\mathbb P(\text{the step path survives $n$ transitions from }a)$.
+- `iidSequenceLaw_apply_survivesPrefix` identifies finite-product survival
+  with the first $n$ coordinates of the canonical IID sequence.
+- `pow_apply_univ_ofPartialStep` identifies the mass of the $n$-step
+  partial-step kernel with $Q_n(a)$, and
+  `pow_apply_univ_ofPartialStep_eq_iidSequenceLaw` identifies it with the
+  corresponding canonical IID prefix event.
 
 The remaining mass of an iterated partial-step kernel is identified with the
 probability that a finite IID noise history survives.  No finiteness or
@@ -35,12 +49,12 @@ noncomputable def survivalProbability (ν : Measure ξ)
     {history | Survives step n a history}
 
 /-- The head-tail form of the next survival event. -/
-def nextSurvivalSet (step : α → ξ → Option α) (n : ℕ) (a : α) :
+private def nextSurvivalSet (step : α → ξ → Option α) (n : ℕ) (a : α) :
     Set (ξ × (Fin n → ξ)) :=
   {p | (step a p.1).elim False fun b => Survives step n b p.2}
 
 omit [MeasurableSpace α] in
-theorem survives_piFinSuccAbove_symm_iff
+private theorem survives_piFinSuccAbove_symm_iff
     (step : α → ξ → Option α) (n : ℕ) (a : α)
     (z : ξ) (tail : Fin n → ξ) :
     Survives step (n + 1) a
@@ -51,7 +65,7 @@ theorem survives_piFinSuccAbove_symm_iff
     simp [h, Survives, runPartialSteps,
       MeasurableEquiv.piFinSuccAbove_symm_apply, Fin.insertNthEquiv]
 
-theorem measurableSet_nextSurvivalSet
+private theorem measurableSet_nextSurvivalSet
     (step : α → ξ → Option α)
     (hstep : Measurable (Function.uncurry step)) (n : ℕ) (a : α) :
     MeasurableSet (nextSurvivalSet step n a) := by
@@ -99,23 +113,6 @@ theorem survivalProbability_succ
       | some b =>
           simp [T, nextSurvivalSet, h, survivalProbability]
 
-/-- A canonical IID sequence restricted to its first `n` coordinates has the
-finite product law. -/
-theorem iidSequenceLaw_map_blockCoordinates_zero
-    (ν : Measure ξ) [IsProbabilityMeasure ν] (n : ℕ) :
-    (iidSequenceLaw ν).map (Combinatorics.Sequence.blockCoordinates 0 (E := ξ) n) =
-      Measure.pi (fun _ : Fin n => ν) := by
-  unfold iidSequenceLaw
-  rw [show Combinatorics.Sequence.blockCoordinates 0 n =
-      (fun sequence (k : Fin n) => sequence (k : ℕ)) by
-    funext sequence k
-    simp [Combinatorics.Sequence.blockCoordinates]]
-  change (Measure.infinitePi (fun _ : ℕ => ν)).map
-      (fun sequence (k : Fin n) => sequence (k : ℕ)) = _
-  rw [Measure.map_infinitePi_infinitePi_of_inj
-      (f := fun k : Fin n => (k : ℕ)) Fin.val_injective]
-  exact Measure.infinitePi_eq_pi _
-
 /-- Finite-product survival is the corresponding event under the canonical
 IID noise sequence. -/
 theorem iidSequenceLaw_apply_survivesPrefix
@@ -128,10 +125,10 @@ theorem iidSequenceLaw_apply_survivesPrefix
       Combinatorics.Sequence.blockCoordinates 0 n ⁻¹' {history | Survives step n a history} by
     ext sequence
     simp [SurvivesPrefix]]
-  rw [← Measure.map_apply (measurable_blockCoordinates 0 n)
-      (measurableSet_survives step hstep n a),
-    iidSequenceLaw_map_blockCoordinates_zero]
-  rfl
+  simpa [survivalProbability] using
+    iidSequenceLaw_measure_blockCoordinates_preimage_eq_pi ν 0 n
+      {history | Survives step n a history}
+      (measurableSet_survives step hstep n a)
 
 /-- The remaining mass after `n` partial-kernel steps is the finite-product
 survival probability. -/

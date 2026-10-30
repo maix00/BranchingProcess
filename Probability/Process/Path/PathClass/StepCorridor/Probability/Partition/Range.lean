@@ -13,6 +13,28 @@ public import Topology.Cadlag.Skorokhod.Oscillation.Dense
 /-!
 # Closed range bounds on common partition cells
 
+## Public declarations
+
+- `ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability.commonPartitionCellPath`:
+  records the path relative to the left knot on the interior of one common cell.
+- `ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability.commonPartitionCellRangeBound`:
+  requires \(|f(s)-f(t)|\le w\) for all interior coordinates in that cell.
+- `ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability.measurableSet_commonPartitionCellRangeBound`:
+  proves measurability of this range-diameter event.
+- `ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability.commonPartitionCellRangeEvent`:
+  pulls the cell range bound back to the process sample space.
+- `ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability.measure_iInter_commonPartitionCellRangeEvent_eq_prod`:
+  factors the probability over all cells under mutual independence.
+- `ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability.measure_biInter_commonPartitionCellRangeEvent_eq_prod`:
+  gives the same product identity on any finite selected set of cells.
+- `ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability.corridorSet_subset_commonPartitionCellRangeEvent_of_finiteBounds`:
+  finite boundary values of width \(h_i-l_i\) imply the local range bound.
+- `ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability.corridorSet_subset_biInter_commonPartitionCellRangeEvents`:
+  gives the simultaneous inclusion over a finite collection of cells.
+- `ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability.measure_corridorSet_le_commonPartitionCellRangeProduct`:
+  bounds corridor probability by the product of the selected cell-range
+  probabilities.
+
 Each open cell uses rational times strictly before its right knot. A closed
 oscillation bound on those coordinates handles left limits at a boundary jump
 without imposing the post-jump constraint on the preceding cell.
@@ -105,7 +127,7 @@ theorem measure_biInter_commonPartitionCellRangeEvent_eq_prod
       exact measurableSet_commonPartitionCellRangeBound (width i))
   simpa [commonPartitionCellRangeEvent] using hfactor
 
-private theorem eval_eq_rightTrace_at_cellCoordinate
+private lemma eval_eq_rightTrace_at_cellCoordinate
     (b upper lower : StepBoundary)
     (hknots : ∀ r ∈ b.knots, r ∈ StepBoundary.commonKnots upper lower)
     (i : Fin ((StepBoundary.commonKnots upper lower).card - 1))
@@ -115,19 +137,15 @@ private theorem eval_eq_rightTrace_at_cellCoordinate
       b.rightTrace (StepBoundary.commonPartitionGrid upper lower i.val) := by
   let s := StepBoundary.commonPartitionCellTime upper lower i.val
     (RationalCoordinate.toUnitInterval q.val)
-  by_cases hleftEq : s = StepBoundary.commonPartitionGrid upper lower i.val
-  · simp [s, hleftEq, StepBoundary.rightTrace_eq_eval]
-  · have hleftLe := StepBoundary.commonPartitionCellTime_left_le upper lower i.val
-      (RationalCoordinate.toUnitInterval q.val)
-    have hleft : StepBoundary.commonPartitionGrid upper lower i.val < s :=
-      lt_of_le_of_ne hleftLe (Ne.symm hleftEq)
-    have hqright : RationalCoordinate.toUnitInterval q.val < ⊤ := by
-      change ((q.val : ℚ) : ℝ) < 1
-      exact_mod_cast q.property
-    have hright := StepBoundary.commonPartitionCellTime_lt_right upper lower
-      i.val i.isLt (RationalCoordinate.toUnitInterval q.val) hqright
-    exact StepBoundary.eval_eq_rightTrace_on_commonPartitionCell
-      b upper lower hknots i.val i.isLt hleft hright
+  have hleft := StepBoundary.commonPartitionCellTime_left_le upper lower i.val
+    (RationalCoordinate.toUnitInterval q.val)
+  have hqright : RationalCoordinate.toUnitInterval q.val < ⊤ := by
+    change ((q.val : ℚ) : ℝ) < 1
+    exact_mod_cast q.property
+  have hright := StepBoundary.commonPartitionCellTime_lt_right upper lower
+    i.val i.isLt (RationalCoordinate.toUnitInterval q.val) hqright
+  exact StepBoundary.eval_eq_rightTrace_on_commonPartitionCell_of_le
+    b upper lower hknots i hleft (by simpa [s] using hright)
 
 /-- A strict step corridor with finite bounds on one common cell forces the
 closed range-diameter bound on that half-open cell. The terminal coordinate

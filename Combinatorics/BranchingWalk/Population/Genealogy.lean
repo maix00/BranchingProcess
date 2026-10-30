@@ -6,14 +6,31 @@ Authors: WANG Yiyang
 
 module
 
+public import Combinatorics.BranchingWalk.Population.Offspring
+
 public import Combinatorics.BranchingWalk.Population.Basic
-public import Combinatorics.BranchingWalk.Basic.ParentSibling
+public import Combinatorics.UlamHarris.Relation
+public import Combinatorics.BranchingWalk.Basic.Survival.SurviveAlong
 
 /-!
 # Genealogy of populations
 
+## Public declarations
+
 The results apply to arbitrary set-valued populations; finite populations
 inherit them by forgetting their representation.
+
+The public API is:
+
+- `Population.initial_mem_and_surviveAlong` says each node in generation `n`
+  has its root in generation `0` and its address is a surviving path in the
+  corresponding step field.
+- `Population.initial_mem_of_mem` and `Population.surviveAlong_of_mem` give
+  the two conclusions separately.
+- `Population.parent_mem_of_mem_succ` says the parent of a generation
+  `n + 1` node belongs to generation `n`.
+- `Population.prefix_mem_of_mem` says every address prefix of a generation
+  `n` node belongs to the generation indexed by that prefix's length.
 -/
 
 @[expose] public section
@@ -40,7 +57,7 @@ theorem initial_mem_and_surviveAlong (P : Population stepField) :
       intro q hq
       have hchild := P.successor n hq
       obtain ⟨p, hp, i, hi, rfl⟩ :=
-        Selection.Coupling.mem_offspringAddressSet.mp hchild
+        Population.mem_offspringAddressSet.mp hchild
       have hparent := ih hp
       exact ⟨hparent.1,
         (surviveAlong_root_append_singleton_iff (stepField p.1) p.2 i).2
@@ -58,11 +75,11 @@ theorem surviveAlong_of_mem (P : Population stepField)
 
 theorem parent_mem_of_mem_succ (P : Population stepField)
     {n : ℕ} {q : RootIndexed.TreeNode Root α} (hq : q ∈ P (n + 1)) :
-    parent q ∈ P n := by
+    Combinatorics.UlamHarris.RootIndexed.parent q ∈ P n := by
   have hchild := P.successor n hq
   obtain ⟨p, hp, i, hi, rfl⟩ :=
-    Selection.Coupling.mem_offspringAddressSet.mp hchild
-  simpa [Selection.Coupling.childAddress] using hp
+    Population.mem_offspringAddressSet.mp hchild
+  simpa [RootIndexed.childAddress] using hp
 
 theorem prefix_mem_of_mem (P : Population stepField) :
     ∀ {n : ℕ} {p : RootIndexed.TreeNode Root α},
@@ -98,6 +115,6 @@ theorem prefix_mem_of_mem (P : Population stepField) :
               rw [List.dropLast_append_getLast hne]
             _ = p.2.dropLast.take k :=
               List.take_append_of_le_length (by simpa [hdropLength] using hk')
-        simpa [parent, htake] using hprefix
+        simpa [Combinatorics.UlamHarris.RootIndexed.parent, htake] using hprefix
 
 end Combinatorics.Branching.Population

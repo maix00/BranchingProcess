@@ -7,12 +7,38 @@ Authors: WANG Yiyang
 module
 
 public import Mathlib.Topology.UnitInterval
-public import Topology.Cadlag.Skorokhod.Corridor
-public import Topology.Cadlag.Skorokhod.Endpoint
-public import Topology.Cadlag.Skorokhod.Scaling
+public import Topology.Cadlag.Skorokhod.Corridor.Basic
+public import Topology.Cadlag.Skorokhod.Path.Endpoint
+public import Topology.Cadlag.Skorokhod.Path.Linear
+public import Topology.Cadlag.Skorokhod.Path.Scaling
 
 /-!
 # Open Skorokhod corridors with an endpoint constraint
+
+## Public declarations
+
+- `Skorokhod.rangeInOpenIntervalEndsIn`: paths with a positive uniform
+  corridor margin and terminal value in `(endpointLower, endpointUpper)`.
+- `Skorokhod.mem_rangeInOpenIntervalEndsIn_iff`: the event is the conjunction
+  of corridor membership and the terminal interval condition.
+- `Skorokhod.mem_rangeInOpenIntervalEndsIn_scalePath_iff`: for positive `c`,
+  scaling the path by `c` transports all corridor and endpoint bounds by
+  division by `c`.
+- `Skorokhod.uniformBall_subset_rangeInOpenIntervalEndsIn`: a uniform ball of
+  radius `δ` around a path with larger corridor and endpoint margins lies in
+  the open corridor-endpoint event.
+- `Skorokhod.isOpen_rangeInOpenIntervalEndsIn` and
+  `Skorokhod.measurableSet_rangeInOpenIntervalEndsIn`: the event is open and
+  measurable in `J₁` path space.
+- `Skorokhod.linearPath_mem_rangeInOpenIntervalEndsIn`: if the line from zero
+  to `y` lies strictly inside the spatial corridor and its endpoint window,
+  then `linearPath y ∈ rangeInOpenIntervalEndsIn`.
+- `Skorokhod.rangeInClosedIntervalEndsIn`: paths in a closed corridor whose
+  terminal value lies in a closed interval.
+- `Skorokhod.mem_rangeInClosedIntervalEndsIn_iff`,
+  `Skorokhod.isClosed_rangeInClosedIntervalEndsIn`, and
+  `Skorokhod.measurableSet_rangeInClosedIntervalEndsIn`: the pointwise
+  characterization and closedness and measurability of the closed event.
 
 The event combines a uniformly interior path corridor with an open condition
 on the terminal value.  Both conditions are open in the `J₁` topology.
@@ -121,19 +147,14 @@ theorem measurableSet_rangeInOpenIntervalEndsIn
   (isOpen_rangeInOpenIntervalEndsIn
     lower upper endpointLower endpointUpper).measurableSet
 
-/-- The straight path from zero to `y`, viewed as a càdlàg path. -/
-def straightPath (y : ℝ) : CadlagPath unitInterval ℝ :=
-  ⟨fun t => y * (t : ℝ),
-    (continuous_const.mul continuous_subtype_val).isCadlag⟩
-
-/-- A corridor and endpoint window containing a straight path form a
+/-- A corridor and endpoint window containing a linear path form a
 nonempty open set in the Skorokhod path space. -/
-theorem straightPath_mem_rangeInOpenIntervalEndsIn
+theorem linearPath_mem_rangeInOpenIntervalEndsIn
     {lower upper endpointLower endpointUpper y : ℝ}
     (hzero : lower < 0 ∧ 0 < upper)
     (hy : lower < y ∧ y < upper)
     (hend : endpointLower < y ∧ y < endpointUpper) :
-    straightPath y ∈ rangeInOpenIntervalEndsIn
+    linearPath y ∈ rangeInOpenIntervalEndsIn
       lower upper endpointLower endpointUpper := by
   let margin := min (min (-lower) upper) (min (y - lower) (upper - y)) / 2
   have hmargin : 0 < margin := by
@@ -174,7 +195,7 @@ theorem straightPath_mem_rangeInOpenIntervalEndsIn
       change lower + margin ≤ y * (t : ℝ) ∧
         y * (t : ℝ) ≤ upper - margin
       constructor <;> linarith
-  · simpa [straightPath] using hend
+  · simpa [linearPath] using hend
 
 /-- Paths that remain in a closed interval and whose terminal value lies in
 a prescribed closed interval. -/

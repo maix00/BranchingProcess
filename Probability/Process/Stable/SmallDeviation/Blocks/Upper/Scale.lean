@@ -6,10 +6,18 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.Stable.SmallDeviation.Blocks.Upper
+public import Probability.Process.Stable.SmallDeviation.Blocks.Upper.Basic
+public import Probability.Process.Stable.SmallDeviation.RationalTube
 
 /-!
 # Stable scaling of the block upper bound
+
+## Public declarations
+
+- `measure_rationalTube_le_pow_scaledBlock` proves
+  $P(T_1(w))\le P(T_1(wN^{1/\alpha}))^N$ for a stable process and
+  integer $N>0$, by stable time-space scaling of the uniform-block bound.
+
 
 The finite-block upper estimate is expressed entirely through unit-time
 stable-process tube probabilities. This puts it on the same scale as the

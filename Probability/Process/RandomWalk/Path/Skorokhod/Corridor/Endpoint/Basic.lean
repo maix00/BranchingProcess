@@ -12,6 +12,19 @@ public import Topology.Cadlag.Skorokhod.Corridor.Endpoint
 /-!
 # Endpoint-constrained corridors for normalized walk paths
 
+## Public declarations
+
+- `ProbabilityTheory.RandomWalk.normalizedStepCadlagPathIcc_mem_rangeInClosedInterval_iff_grid`:
+  closed-corridor membership is equivalent to weak grid inequalities.
+- `ProbabilityTheory.RandomWalk.normalizedStepCadlagPathIcc_mem_centeredOpenIntervalEndsIn_iff`:
+  open terminal-window membership is equivalent to a strict tube event and
+  \(S_n/a_n\in(u,v)\).
+- `ProbabilityTheory.RandomWalk.normalizedStepCadlagPathIcc_mem_centeredClosedInterval_iff`:
+  centered closed-corridor membership is equivalent to the weak tube event.
+- `ProbabilityTheory.RandomWalk.normalizedStepCadlagPathIcc_mem_centeredClosedIntervalEndsIn_iff`:
+  closed terminal-window membership is equivalent to the weak tube event and
+  \(S_n/a_n\in[u,v]\).
+
 This file identifies an open Skorokhod corridor with an open endpoint
 constraint with its finite random-walk path formulation.
 -/

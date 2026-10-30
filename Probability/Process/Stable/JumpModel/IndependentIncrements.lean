@@ -4,20 +4,43 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.Process.Stable.JumpModel.FiniteWindows
-import Probability.Process.Stable.JumpModel.IncrementLaw
-import Probability.Process.Stable.FiniteDimensional
-import Probability.Process.Levy.Jump.PoissonConfiguration.Path
+module
+
+public import Probability.Process.Stable.JumpModel.FiniteWindows
+public import Probability.Process.Stable.JumpModel.IncrementLaw
+public import Probability.Process.Stable.FiniteDimensional
+public import Probability.Process.Levy.Jump.PoissonConfiguration.Path
+import Probability.RandomMeasure.Poisson.Intensity.LevyCutoff
+import Probability.Distributions.Stable.LevyMeasure.Cutoff.Variation
 
 /-!
 # Process law of the canonical cutoff jump path
 
+## Public declarations
+
+- `IsStrictlyAlphaStable.hasIndepIncrements_poissonEntrancePath_cutoff`:
+  for every finite monotone grid $t_0\le\cdots\le t_k$ in $[0,1]$, the
+  increments
+  \[
+    X^{(n)}_{t_i}-X^{(n)}_{t_{i-1}},\qquad 1\le i\le k,
+  \]
+  of the canonical Poisson entrance path are mutually independent.
+- `IsStrictlyAlphaStable.hasStableClockIncrements_poissonEntrancePath`:
+  the same path starts at zero, has independent increments, and for
+  $0\le s\le t\le1$ satisfies
+  \[
+    \operatorname{Law}(X^{(n)}_t-X^{(n)}_s)
+      =(x\mapsto (t-s)^{\frac{1}{\alpha}}x)_*\mu.
+  \]
+
 The canonical entrance path uses the whole mark space for its small-jump
 integral. Since its Poisson source is already restricted to the small-jump
-band, this agrees almost surely at every fixed finite collection of times
-with the explicitly cutoff path. The latter has independent stable
-increments by the finite-window law.
+band, it agrees almost surely at every fixed finite collection of times with
+the explicitly cutoff path; the finite-window law then gives independent
+stable increments.
 -/
+
+@[expose] public section
 
 namespace ProbabilityTheory
 
@@ -25,6 +48,8 @@ open MeasureTheory
 
 attribute [local instance] Classical.propDecidable
 
+/-- For every finite monotone time grid, the increments of the canonical
+Poisson entrance path are independent. -/
 theorem IsStrictlyAlphaStable.hasIndepIncrements_poissonEntrancePath_cutoff
     {α : ℝ} {μ : Measure ℝ} (h : IsStrictlyAlphaStable α μ)
     (T : LevyKhintchineTriple) [SigmaFinite T.levyMeasure]
@@ -67,7 +92,8 @@ theorem IsStrictlyAlphaStable.hasIndepIncrements_poissonEntrancePath_cutoff
         exact Nat.succ_le_of_lt (Fin.lt_def.mp hji')
       have htime := ht hidx
       exact (not_lt_of_ge htime) (hxi.1.trans_le hxj.2)
-  have hsfirst := h.integrable_unitTime_smallJumpMark T hT hα n
+  have hsfirst := T.isLevyMeasure.integrable_unitTime_smallJumpMark n
+    (h.levyMeasure_smallJumpMoment_lt_top T hT hα)
   have hsmallNorm :
       (∫⁻ z : unitInterval × ℝ, ‖z.2‖ₑ
         ∂((volume : Measure unitInterval).prod
@@ -82,7 +108,7 @@ theorem IsStrictlyAlphaStable.hasIndepIncrements_poissonEntrancePath_cutoff
       (T.levyMeasure.restrict (largeJumpBand n)) Set.univ
     simp only [Set.univ_prod_univ, Measure.restrict_apply_univ] at hmass
     rw [hmass]
-    exact T.levyMeasure_largeJumpBand_lt_top n
+    exact T.isLevyMeasure.measure_largeJumpBand_lt_top n
   have hbint := hdb.ae_integrable_of_finite_intensity
     (by fun_prop : Measurable (fun z : unitInterval × ℝ => z.2)) hbigMass
   let : ∀ i : Fin k, DecidablePred (fun z : unitInterval × ℝ => z.1 ∈ S i) :=
@@ -119,7 +145,7 @@ theorem IsStrictlyAlphaStable.hasIndepIncrements_poissonEntrancePath_cutoff
     intro i
     simpa [D, W, S, poissonWindowIntegralVector, Set.mem_Ioc] using
       ae_poissonEntrancePath_cutoff_sub_eq_timeWindow n hds hdb hsfirst
-        (T.levyMeasure_largeJumpBand_lt_top n)
+        (T.isLevyMeasure.measure_largeJumpBand_lt_top n)
         (t i.castSucc) (t i.succ) (ht (Fin.castSucc_le_succ i))
   have hvecAE : D =ᵐ[P] W := by
     filter_upwards [(ae_all_iff.2 hpath)] with ω hω
@@ -176,6 +202,9 @@ theorem IsStrictlyAlphaStable.hasIndepIncrements_poissonEntrancePath_cutoff
   simpa [P] using hcanonicalIndep
 
 set_option maxHeartbeats 1000000 in
+/-- The canonical Poisson entrance path has stable clock increments on the
+unit interval, with the stable index `α`, reference law `μ`, and Lebesgue
+clock. -/
 theorem IsStrictlyAlphaStable.hasStableClockIncrements_poissonEntrancePath
     {α : ℝ} {μ : Measure ℝ} (h : IsStrictlyAlphaStable α μ)
     (T : LevyKhintchineTriple) [SigmaFinite T.levyMeasure]
@@ -215,7 +244,8 @@ theorem IsStrictlyAlphaStable.hasStableClockIncrements_poissonEntrancePath
     have hSi : ∀ i : Unit, MeasurableSet (S i) := fun _ => measurableSet_Ioc
     let : ∀ i : Unit, DecidablePred (fun z : unitInterval × ℝ => z.1 ∈ S i) :=
       fun _ z => Classical.propDecidable _
-    have hsfirst := h.integrable_unitTime_smallJumpMark T hT hα n
+    have hsfirst := T.isLevyMeasure.integrable_unitTime_smallJumpMark n
+      (h.levyMeasure_smallJumpMoment_lt_top T hT hα)
     have hsmallNorm :
         (∫⁻ z : unitInterval × ℝ, ‖z.2‖ₑ
           ∂((volume : Measure unitInterval).prod
@@ -230,7 +260,7 @@ theorem IsStrictlyAlphaStable.hasStableClockIncrements_poissonEntrancePath
         (T.levyMeasure.restrict (largeJumpBand n)) Set.univ
       simp only [Set.univ_prod_univ, Measure.restrict_apply_univ] at hmass
       rw [hmass]
-      exact T.levyMeasure_largeJumpBand_lt_top n
+      exact T.isLevyMeasure.measure_largeJumpBand_lt_top n
     have hbint := hdb.ae_integrable_of_finite_intensity
       (by fun_prop : Measurable (fun z : unitInterval × ℝ => z.2)) hbigMass
     have hsi : ∀ i : Unit, ∀ᵐ ω : Ωs ∂Ps, Integrable
@@ -260,7 +290,7 @@ theorem IsStrictlyAlphaStable.hasStableClockIncrements_poissonEntrancePath
             (Set.univ ×ˢ smallJumpBand n) (Set.univ ×ˢ largeJumpBand n) s ω) =ᵐ[P]
         (fun ω => W ω ()) := by
       filter_upwards [ae_poissonEntrancePath_cutoff_sub_eq_timeWindow n hds hdb
-        hsfirst (T.levyMeasure_largeJumpBand_lt_top n) s t hst] with ω hω
+        hsfirst (T.isLevyMeasure.measure_largeJumpBand_lt_top n) s t hst] with ω hω
       simpa [W, S, poissonWindowIntegralVector, Set.mem_Ioc] using hω
     have hcanonicalAE :
         (fun ω => poissonEntrancePath Ks Xs Kb Xb Set.univ

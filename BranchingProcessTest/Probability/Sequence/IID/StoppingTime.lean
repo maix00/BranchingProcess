@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.Sequence.IID.StoppingTime
+import Probability.Sequence.IID.Blocks.StoppingTime
 
 open MeasureTheory ProbabilityTheory
 

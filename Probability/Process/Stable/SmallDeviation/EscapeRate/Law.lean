@@ -4,7 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.Process.Stable.SmallDeviation.EscapeRate
+module
+
+public import Probability.Process.Stable.SmallDeviation.EscapeRate.Basic
 import Probability.Process.Stable.Corridor.Law
 
 /-!
@@ -13,6 +15,19 @@ import Probability.Process.Stable.Corridor.Law
 The range tube is defined by rational-time coordinates. Equal stable
 increment specifications therefore give equal range-tube probabilities and,
 consequently, the same escape-rate constant.
+## Public declarations
+
+- `IsStableLevyProcess.escapeRate_constant_eq_of_same_law` proves uniqueness
+  of the stable escape-rate constant: if two stable Lévy processes have the
+  same increment law and their normalized rational-range log probabilities
+  converge to $C$ and $D$, then
+  \[
+  \lim_{a\downarrow 0}\operatorname{stableRangeLogRate}(P,X,\alpha)(a)=C,
+  \quad
+  \lim_{a\downarrow 0}\operatorname{stableRangeLogRate}(Q,Y,\alpha)(a)=D
+  \quad\Longrightarrow\quad C=D.
+  \]
+
 -/
 
 @[expose] public section

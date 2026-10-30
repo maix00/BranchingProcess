@@ -6,11 +6,25 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Kernel.Step
+public import MeasureTheory.MeasurableSpace.Option
 public import Probability.Sequence.Block
 
 /-!
 # Paths of partial random steps
+
+## Public declarations
+
+- `runPartialSteps` consumes a finite noise history and returns `none` at
+  the first killed step or `some` of the terminal state.
+- `Survives` and `EndsIn` define the finite-history survival and target
+  events; `SurvivesPrefix` and `EndsInPrefix` are their first-$n$-coordinate
+  versions on an infinite noise sequence.
+- `survives_zero` and `survivesPrefix_succ_iff` give the zero-time and
+  head-tail identities.
+- `runPartialSteps_measurable`, `measurableSet_survives`,
+  `measurableSet_endsIn`, `measurableSet_survivesPrefix`, and
+  `measurableSet_endsInPrefix` establish measurability under a measurable
+  step function.
 
 These definitions are independent of finiteness, countability, and any
 particular noise law.  They record how an option-valued step consumes a finite

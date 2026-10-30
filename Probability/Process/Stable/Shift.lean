@@ -6,83 +6,48 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.Stable.FiniteDimensional
+public import Probability.Process.Levy.Shift
+public import Probability.Process.Stable.Levy
 
 /-!
-# Deterministic time shifts of stable Lévy processes
+# Deterministic shifts of stable Lévy processes
 
-Subtracting the position at a deterministic time produces another process
-with the same stable increment specification. This is the full finite-
-dimensional stationarity needed by corridor probabilities.
+## Public declarations
+
+- `ProbabilityTheory.IsStableLevyProcess.shift` states that for every
+  deterministic $s\geq 0$, the recentered process $Y_t=X_{s+t}-X_s$ remains a
+  stable Lévy process with the same stable law. Its generic Lévy-process path
+  properties follow from `ProbabilityTheory.IsLevyProcess.shift`.
 -/
 
 @[expose] public section
 
-namespace ProbabilityTheory
-
 open MeasureTheory
 open scoped NNReal
 
-theorem IsStableLevyProcess.shifted_increments
-    {Ω : Type*} [MeasurableSpace Ω]
-    {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
-    {P : Measure Ω} [IsProbabilityMeasure P]
-    (h : IsStableLevyProcess α μ X P) (start : ℝ≥0) :
-    HasStableClockIncrements α μ (fun t : ℝ≥0 => (t : ℝ))
-      (fun t ω => X (start + t) ω - X start ω) P := by
-  let hX := h.increments
-  refine ⟨hX.strictlyStable, ?_, ?_, ?_, ?_, ?_⟩
-  · exact fun _ _ hst => hst
-  · simp
-  · exact ae_of_all _ fun ω => by simp
-  · intro n grid hgrid
-    let shiftedGrid : Fin (n + 1) → ℝ≥0 := fun i => start + grid i
-    have hshifted : Monotone shiftedGrid := by
-      intro i j hij
-      simpa [shiftedGrid, add_comm] using add_le_add_left (hgrid hij) start
-    have hbase := hX.indepIncrements n shiftedGrid hshifted
-    convert hbase using 1
-    funext i ω
-    dsimp [shiftedGrid]
-    ring
-  · intro s t hst
-    have htime : start + s ≤ start + t := by
-      simpa [add_comm] using add_le_add_left hst start
-    have hlaw := hX.increment_hasLaw (start + s) (start + t) htime
-    have hscale : ((↑(start + t) : ℝ) - ↑(start + s)) =
-        (t : ℝ) - (s : ℝ) := by
-      simp
-    convert hlaw using 1
-    · funext ω
-      ring
-    · simp
+namespace ProbabilityTheory
 
-theorem IsStableLevyProcess.shifted_ae_cadlag
-    {Ω : Type*} [MeasurableSpace Ω]
-    {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
-    {P : Measure Ω} [IsProbabilityMeasure P]
-    (h : IsStableLevyProcess α μ X P) (start : ℝ≥0) :
-    ∀ᵐ ω ∂P, IsCadlag (fun t : ℝ≥0 => X (start + t) ω - X start ω) := by
-  filter_upwards [h.ae_cadlag] with ω hω
-  have hclockMono : Monotone (fun t : ℝ≥0 => start + t) := by
-    intro s t hst
-    simpa [add_comm] using add_le_add_left hst start
-  have hclockCont : Continuous (fun t : ℝ≥0 => start + t) := by
-    fun_prop
-  have hshift := hω.comp_monotone_continuous hclockMono hclockCont
-  exact hshift.continuous_comp
-    (g := fun x : ℝ => x - X start ω) (by fun_prop)
-
-/-- A deterministic time shift, recentered at its initial position, is a
-stable Lévy process with the same exponent and increment law. -/
-theorem IsStableLevyProcess.shifted
+/-- Recenter a stable Lévy process at a deterministic time. The translated
+stable clock is again the identity clock, and the generic path properties
+follow from `IsLevyProcess.shift`. -/
+theorem IsStableLevyProcess.shift
     {Ω : Type*} [MeasurableSpace Ω]
     {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
     {P : Measure Ω} [IsProbabilityMeasure P]
     (h : IsStableLevyProcess α μ X P) (start : ℝ≥0) :
     IsStableLevyProcess α μ
-      (fun t ω => X (start + t) ω - X start ω) P :=
-  ⟨h.shifted_increments start, h.shifted_ae_cadlag start⟩
+      (fun t ω => X (start + t) ω - X start ω) P := by
+  change HasStableClockIncrements α μ (fun t : ℝ≥0 => (t : ℝ)) X P ∧ _ at h
+  let φ : ℝ≥0 → ℝ≥0 := fun t => start + t
+  have hφ : Monotone φ := by
+    intro s t hst
+    simpa [φ, add_comm] using add_le_add_left hst start
+  have hinc := h.1.translate_comp_time φ hφ
+  have hshiftInc : HasStableClockIncrements α μ (fun t : ℝ≥0 => (t : ℝ))
+      (fun t ω => X (start + t) ω - X start ω) P := by
+    simpa [φ] using hinc
+  let hstable : IsStableLevyProcess α μ X P := ⟨h.1, h.2⟩
+  exact ⟨hshiftInc, (hstable.toIsLevyProcess.shift start).ae_cadlag⟩
 
 end ProbabilityTheory
 

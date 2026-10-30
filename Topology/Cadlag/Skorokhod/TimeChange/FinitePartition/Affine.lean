@@ -16,6 +16,21 @@ import Mathlib.Tactic.Ring
 
 Linear interpolation on an interval and its basic order and displacement
 bounds.
+
+## Public declarations
+
+For $a<b$, $I_{a,b}^{c,d}(x)=c+(d-c)(x-a)/(b-a)$.
+
+- `affineInterpolate` defines $I_{a,b}^{c,d}$.
+- `affineInterpolate_left` and `affineInterpolate_right` give its endpoint
+  values; `affineInterpolate_strictMono` gives strict monotonicity when
+  $a<b$ and $c<d$.
+- `affineInterpolate_mem` and `affineInterpolate_lt_right` bound its values
+  on the source interval.
+- `affineInterpolate_swapped` states that reversing the two intervals
+  inverts the interpolation.
+- `affineInterpolate_distortion_le_max` gives
+  $|I_{a,b}^{c,d}(x)-x|\le\max(|c-a|,|d-b|)$ for $a\le x\le b$.
 -/
 
 @[expose] public section

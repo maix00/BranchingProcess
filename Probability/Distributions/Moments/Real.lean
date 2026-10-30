@@ -6,13 +6,36 @@ Authors: WANG Yiyang
 
 module
 
-public import Mathlib.Analysis.SpecificLimits.Basic
+public import Mathlib.MeasureTheory.Integral.Bochner.Basic
 public import Mathlib.MeasureTheory.Function.L2Space
 
-/-!
-# Centered real laws and second moments
+import Mathlib.Analysis.SpecificLimits.Basic
 
-These predicates and transport lemmas are distributional facts.  They are
+/-!
+# Centered real measures and second moments
+
+## Public declarations
+
+- `ProbabilityTheory.IsCenteredSecondMoment`:
+  \(\int x\,d\nu=0\) and \(\int x^2\,d\nu=v\).
+- `ProbabilityTheory.IsCenteredUnitSecondMoment`: the preceding predicate
+  with \(v=1\).
+- `ProbabilityTheory.positive_realSecondMoment_of_positive_lintegral`:
+  integrability and a positive extended second moment imply a positive real
+  second moment.
+- `ProbabilityTheory.ae_eq_zero_of_lintegral_sq_eq_zero`: if
+  \(\int x^2\,d\nu=0\), then \(x=0\) almost everywhere.
+- `ProbabilityTheory.IsCenteredUnitSecondMoment.memLp_two`: a measure with
+  centered unit second moment has its identity function in \(L^2(\nu)\).
+- `ProbabilityTheory.IsCenteredSecondMoment.map_div`: if the second moment is
+  \(\sigma^2\) with \(\sigma>0\), division by \(\sigma\) gives unit second
+  moment.
+- `ProbabilityTheory.IsCenteredSecondMoment.map_neg`: reflection transports
+  the centered second moment while preserving its value.
+- `ProbabilityTheory.IsCenteredUnitSecondMoment.map_neg`: reflection preserves
+  the unit second-moment condition.
+
+These predicates and transport lemmas are measure-level facts. They are
 shared by the Donsker, maximal-inequality, entrance, and small-deviation
 developments; no random-walk or Mogulskii construction is needed here.
 -/
@@ -23,13 +46,42 @@ open MeasureTheory
 
 namespace ProbabilityTheory
 
-/-- A real law has mean zero and the specified second moment. -/
-def IsCenteredSecondMoment (ν : Measure ℝ) (variance : ℝ) : Prop :=
-  (∫ x, x ∂ν) = 0 ∧ (∫ x, x ^ 2 ∂ν) = variance
+/-- A real measure has mean zero and the specified second moment. -/
+def IsCenteredSecondMoment (ν : Measure ℝ) (secondMoment : ℝ) : Prop :=
+  (∫ x, x ∂ν) = 0 ∧ (∫ x, x ^ 2 ∂ν) = secondMoment
 
-/-- A real law has mean zero and second moment one. -/
+/-- A real measure has mean zero and second moment one. -/
 def IsCenteredUnitSecondMoment (ν : Measure ℝ) : Prop :=
   IsCenteredSecondMoment ν 1
+
+/-- A nonnegative square-integrable second moment that is positive as an
+extended integral is positive as a real Bochner integral. The integrability
+premise is explicit because the Bochner integral is zero for a nonintegrable
+function. -/
+theorem positive_realSecondMoment_of_positive_lintegral
+    {ν : Measure ℝ} {secondMoment : ℝ}
+    (hcentered : IsCenteredSecondMoment ν secondMoment)
+    (hsquare : Integrable (fun x : ℝ => x ^ 2) ν)
+    (hpositive : 0 < ∫⁻ x, ENNReal.ofReal (x ^ 2) ∂ν) :
+    0 < secondMoment := by
+  have hreal : 0 < ENNReal.ofReal (∫ x, x ^ 2 ∂ν) := by
+    rw [ofReal_integral_eq_lintegral_ofReal hsquare
+      (ae_of_all ν fun x => sq_nonneg x)]
+    exact hpositive
+  have hreal' : 0 < ∫ x, x ^ 2 ∂ν := ENNReal.ofReal_pos.mp hreal
+  exact hcentered.2 ▸ hreal'
+
+/-- Vanishing of the extended integral of the square forces a real-valued
+random variable to vanish almost everywhere. -/
+theorem ae_eq_zero_of_lintegral_sq_eq_zero
+    {ν : Measure ℝ}
+    (hν : ∫⁻ x, ENNReal.ofReal (x ^ 2) ∂ν = 0) :
+    ∀ᵐ x ∂ν, x = 0 := by
+  have hfun : (fun x : ℝ => ENNReal.ofReal (x ^ 2)) =ᵐ[ν] 0 :=
+    (lintegral_eq_zero_iff' (by fun_prop)).mp hν
+  filter_upwards [hfun] with x hx
+  have hx2 : x ^ 2 ≤ 0 := ENNReal.ofReal_eq_zero.mp hx
+  nlinarith [sq_nonneg x]
 
 /-- A probability law with second moment one has a square-integrable identity
 random variable. -/
@@ -62,9 +114,9 @@ theorem IsCenteredSecondMoment.map_div
 
 /-- Reflection preserves a centered second-moment hypothesis. -/
 theorem IsCenteredSecondMoment.map_neg
-    {ν : Measure ℝ} {variance : ℝ}
-    (hν : IsCenteredSecondMoment ν variance) :
-    IsCenteredSecondMoment (ν.map fun x => -x) variance := by
+    {ν : Measure ℝ} {secondMoment : ℝ}
+    (hν : IsCenteredSecondMoment ν secondMoment) :
+    IsCenteredSecondMoment (ν.map fun x => -x) secondMoment := by
   constructor
   · calc
       (∫ x, x ∂ν.map fun x => -x) = ∫ x, -x ∂ν := by

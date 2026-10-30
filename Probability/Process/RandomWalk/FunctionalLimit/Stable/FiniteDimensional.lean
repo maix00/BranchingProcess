@@ -17,6 +17,15 @@ This file identifies the endpoint-vector limit from the independent-block
 domain-of-attraction theorem with the finite-dimensional laws of a process
 having stable clock increments. The block-scale and centering limits remain
 explicit inputs, so the result does not claim path-space tightness.
+## Public declarations
+
+- `tendstoInDistribution_endpoints_of_stableClock` and
+  `tendstoInDistribution_endpoints_of_stableNorming` give the finite-vector
+  limit
+  $(S_{\lfloor nt_i\rfloor}/a_n)_{i=1}^k\Rightarrow(X_{t_i})_{i=1}^k$
+  from stable block limits and the specified centering assumptions. These
+  identify endpoint laws only; path tightness is a separate input.
+
 -/
 
 open Filter MeasureTheory
@@ -56,7 +65,7 @@ theorem tendstoInDistribution_endpoints_of_stableClock
         atTop (nhds 0)) :
     TendstoInDistribution
       (fun n (increments : ℕ → ℝ) (j : Fin (blocks + 1)) =>
-        AdditivePath.displacement (AdditivePath.blockStart (length n) j.val)
+        AdditivePath.displacement (Combinatorics.Sequence.blockStart (length n) j.val)
           increments / spatialScale n)
       atTop
       (fun ω j => X (grid j) ω)
@@ -139,7 +148,7 @@ theorem tendstoInDistribution_endpoints_of_stableClock
     exact hendpointLaw'.map_eq
   have hblocks' : TendstoInDistribution
       (fun n (increments : ℕ → ℝ) (j : Fin (blocks + 1)) =>
-        AdditivePath.displacement (AdditivePath.blockStart (length n) j.val)
+        AdditivePath.displacement (Combinatorics.Sequence.blockStart (length n) j.val)
           increments / spatialScale n)
       atTop endpointMap (fun _ => iidSequenceLaw ν)
       (Measure.pi fun _ : Fin blocks => μ) := by
@@ -172,7 +181,7 @@ theorem tendstoInDistribution_endpoints_of_stableNorming
         atTop (nhds 0)) :
     TendstoInDistribution
       (fun n (increments : ℕ → ℝ) (j : Fin (blocks + 1)) =>
-        AdditivePath.displacement (AdditivePath.blockStart (length n) j.val)
+        AdditivePath.displacement (Combinatorics.Sequence.blockStart (length n) j.val)
           increments / normalization n)
       atTop
       (fun ω j => X (grid j) ω)

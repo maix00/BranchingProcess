@@ -4,32 +4,54 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Genealogy.Exploration.Selected.AbstractSubtree
+module
+
+public import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.SelectedSubtree
+public import Probability.Process.HittingTime.Declarations
+import MeasureTheory.Measure.Partition
 
 /-!
 # Abstract branching at a finite stopping generation
 
-The proof partitions by the stopping generation and selected address.  Every
+## Public declarations
+
+In namespace `ProbabilityTheory.BranchingRandomWalk`, the public declarations
+are:
+
+- `stopped_selectedSubtreeStepField_event_factorization μ τ hτ hfinite chosen hchosen hcount hdepth A B hA hB` states
+  $\nu(A\cap\Psi^{-1}(B))=\nu(A)\nu(B)$ when $A\in\mathcal F_\tau$,
+  $B$ is measurable, the stopping generation $\tau$ is finite everywhere,
+  and the countably ranged measurable address `chosen` has depth $\tau$.
+- `stopped_selectedSubtreeStepField_independent μ τ hτ hfinite chosen hchosen hcount hdepth`
+  states that the stopped past $\mathcal F_\tau$ and the selected subtree
+  field $\Psi$ are independent under the step-field law.
+
+Here $\Psi(\omega)(v)=\omega(\operatorname{chosen}(\omega)\mathbin{++}v)$.
+The proof partitions by the stopping generation and selected address; each
 cell reduces to the deterministic-generation branching theorem on abstract
 `Step` fields.
 -/
 
 open MeasureTheory ProbabilityTheory
 
+@[expose] public section
+
 namespace ProbabilityTheory.BranchingRandomWalk
+
+open ProbabilityTheory.BranchingProcess (offspringFieldLaw offspringFieldLaw_coordinate offspringFieldLaw_independent offspringFieldLaw_mapMarks)
 
 open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 
 
 
-def abstractStoppedSelectionCell {α X : Type*}
+private def abstractStoppedSelectionCell {α X : Type*}
     (τ : (TreeNode α → Step α X) → WithTop ℕ)
     (chosen : (TreeNode α → Step α X) → TreeNode α)
     (A : Set (TreeNode α → Step α X))
     (p : ℕ × TreeNode α) : Set (TreeNode α → Step α X) :=
   A ∩ {ω | τ ω = p.1} ∩ {ω | chosen ω = p.2}
 
-theorem abstractStoppedSelectionCell_measurable
+private lemma abstractStoppedSelectionCell_measurable
     {α X : Type*} [MeasurableSpace X]
     (τ : (TreeNode α → Step α X) → WithTop ℕ)
     (hτ : IsStoppingTime
@@ -73,9 +95,9 @@ theorem stopped_selectedSubtreeStepField_event_factorization
     (A B : Set (TreeNode α → Step α X))
     (hA : MeasurableSet[hτ.measurableSpace] A)
     (hB : MeasurableSet B) :
-    stepFieldLaw μ (A ∩ selectedSubtreeStepField chosen ⁻¹' B) =
-      stepFieldLaw μ A * stepFieldLaw μ B := by
-  let P := stepFieldLaw μ
+    offspringFieldLaw μ (A ∩ selectedSubtreeStepField chosen ⁻¹' B) =
+      offspringFieldLaw μ A * offspringFieldLaw μ B := by
+  let P := offspringFieldLaw μ
   let S : Set (TreeNode α) := Set.range chosen
   let _ : Countable S := Set.countable_coe_iff.mpr hcount
   let C := fun p : ℕ × S =>
@@ -146,16 +168,13 @@ theorem stopped_selectedSubtreeStepField_event_factorization
           exact Set.mem_iUnion.mpr
             ⟨(n, ⟨chosen ω, Set.mem_range_self ω⟩),
               ⟨⟨⟨hAω, htime⟩, rfl⟩, hBω⟩⟩
-  have hCsum : (∑' p, P (C p)) = P A := by
-    rw [← hCunion]
-    exact (measure_iUnion hCpair hCmeas).symm
   calc
     P (A ∩ selectedSubtreeStepField chosen ⁻¹' B) =
         P (⋃ p, D p) := by rw [hDunion]
-    _ = ∑' p, P (D p) := measure_iUnion hDpair hDmeas
-    _ = ∑' p, P (C p) * P B := tsum_congr hcell
-    _ = (∑' p, P (C p)) * P B := ENNReal.tsum_mul_right
-    _ = P A * P B := by rw [hCsum]
+    _ = P (⋃ p, C p) * P B :=
+      measure_iUnion_eq_mul_of_disjoint_factor P C D (P B)
+        hCmeas hDmeas hCpair hDpair hcell
+    _ = P A * P B := by rw [hCunion]
 
 theorem stopped_selectedSubtreeStepField_independent
     {α X : Type*} [MeasurableSpace X]
@@ -171,20 +190,20 @@ theorem stopped_selectedSubtreeStepField_independent
       (chosen ω).length = n) :
     Indep hτ.measurableSpace
       (MeasurableSpace.comap (selectedSubtreeStepField chosen) inferInstance)
-      (stepFieldLaw μ) := by
+      (offspringFieldLaw μ) := by
   have hchosenFull : Measurable chosen :=
     hchosen.mono hτ.measurableSpace_le le_rfl
   have hselected :=
     selectedSubtreeStepField_measurable_of_countable_range chosen hchosenFull
       hcount
-  apply (indep_iff_forall_indepSet (stepFieldLaw μ)).2
+  apply (indep_iff_forall_indepSet (offspringFieldLaw μ)).2
   intro A T hA hT
   obtain ⟨B, hB, rfl⟩ := hT
   apply (indepSet_iff_measure_inter_eq_mul
     (hτ.measurableSpace_le _ hA) (hselected hB)
-    (stepFieldLaw μ)).2
-  have hlaw : stepFieldLaw μ
-      (selectedSubtreeStepField chosen ⁻¹' B) = stepFieldLaw μ B := by
+    (offspringFieldLaw μ)).2
+  have hlaw : offspringFieldLaw μ
+      (selectedSubtreeStepField chosen ⁻¹' B) = offspringFieldLaw μ B := by
     have hfactor := stopped_selectedSubtreeStepField_event_factorization μ
       τ hτ hfinite chosen hchosen hcount hdepth Set.univ B (by simp) hB
     simpa using hfactor

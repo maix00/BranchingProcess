@@ -19,6 +19,15 @@ public import Mathlib.MeasureTheory.Measure.ProbabilityMeasure
 This file connects the pure positive-definite-function API to characteristic functions of
 probability measures. The main identity expresses the characteristic-function quadratic form
 as the integral of a squared modulus.
+
+## Public declarations
+
+- `charFun_sum_eq_integral_normSq`: for a probability measure $\mu$,
+  $\sum_{i,j}\overline{c_i}c_j\widehat\mu(\xi_i-\xi_j)=
+  \int\left|\sum_j c_j e^{-i\langle x,\xi_j\rangle}\right|^2\,d\mu(x)$.
+- `isPositiveDefinite_charFun`: every probability measure has a positive-
+  definite characteristic function, so the quadratic form on the left is
+  real and nonnegative for every finite choice of $(c_i,\xi_i)$.
 -/
 
 @[expose] public section
@@ -35,7 +44,7 @@ variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
 
 omit [MeasurableSpace E] [BorelSpace E] in
 /-- Pointwise, the quadratic kernel of a characteristic function is a squared modulus. -/
-private theorem charFun_sum_integrand_eq_normSq
+private lemma charFun_sum_integrand_eq_normSq
     {n : ℕ} (ξ : Fin n → E) (c : Fin n → ℂ) (a : E) :
     ∑ i : Fin n, ∑ j : Fin n,
       starRingEnd ℂ (c i) * c j * exp (↑(⟪a, ξ i - ξ j⟫_ℝ) * I) =
@@ -52,7 +61,7 @@ private theorem charFun_sum_integrand_eq_normSq
   simp only [map_mul, ← exp_conj, map_neg, conj_ofReal, conj_I, mul_neg, neg_neg]
   ring
 
-private theorem integrable_charFun_term (μ : ProbabilityMeasure E)
+private lemma integrable_charFun_term (μ : ProbabilityMeasure E)
     {n : ℕ} (ξ : Fin n → E) (c : Fin n → ℂ) (i j : Fin n) :
     Integrable
       (fun a : E => starRingEnd ℂ (c i) * c j * exp (↑(⟪a, ξ i - ξ j⟫_ℝ) * I))
@@ -62,7 +71,7 @@ private theorem integrable_charFun_term (μ : ProbabilityMeasure E)
   · filter_upwards with a
     simp only [norm_mul, norm_exp_ofReal_mul_I, mul_one, le_refl]
 
-private theorem integrable_charFun_sum_integrand (μ : ProbabilityMeasure E)
+private lemma integrable_charFun_sum_integrand (μ : ProbabilityMeasure E)
     {n : ℕ} (ξ : Fin n → E) (c : Fin n → ℂ) :
     Integrable
       (fun a : E => ∑ i : Fin n, ∑ j : Fin n,
@@ -99,7 +108,7 @@ theorem charFun_sum_eq_integral_normSq (μ : ProbabilityMeasure E)
   exact integral_congr_ae (Filter.Eventually.of_forall fun a =>
     charFun_sum_integrand_eq_normSq ξ c a)
 
-private theorem integrable_charFun_normSq (μ : ProbabilityMeasure E)
+private lemma integrable_charFun_normSq (μ : ProbabilityMeasure E)
     {n : ℕ} (ξ : Fin n → E) (c : Fin n → ℂ) :
     Integrable
       (fun a : E =>

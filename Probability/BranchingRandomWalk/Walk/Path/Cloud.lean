@@ -24,6 +24,17 @@ The equalities are stated for an abstract additive position space.  Killing
 is handled separately by `RandomWalk.process`; the cloud formula below reads
 the position attached to the unique address of an everywhere-present
 increment realization.
+
+## Public declarations
+
+- `discreteTimeCloud_position_ofIncrements` identifies the generation-$n$
+  cloud position with the initial value plus the first $n$ increments.
+- `discreteTimeCloud_displacement_ofIncrements` identifies the corresponding
+  tree displacement with the additive-path partial sum $S_n$.
+- `measurable_discreteTimeCloud_position_ofIncrements` proves measurability
+  of that position as a function of the increment sequence.
+- `iidSequenceLaw_map_discreteTimeCloud_position` identifies its law under
+  IID increments with the $n$-step iterate of the increment kernel.
 -/
 
 @[expose] public section

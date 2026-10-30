@@ -5,7 +5,7 @@ Authors: WANG Yiyang
 -/
 module
 
-public import Analysis.Asymptotics.LogSum
+public import Analysis.Asymptotics.Sequence.LogSum
 public import MeasureTheory.MeasurableSpace.CadlagPath.PathClass.StepCorridor.NullMeasurable
 public import Probability.Process.Path.PathClass.StepCorridor.Probability.Rate.FiniteUnion
 public import Mathlib.MeasureTheory.Measure.QuasiMeasurePreserving
@@ -19,6 +19,20 @@ null-measurable.  Consequently, the finite-union rate argument only needs
 null-measurability of the component events.  The rate estimates themselves are
 unchanged: they depend on component probabilities, not on Borel
 representatives.
+
+## Public declarations
+
+* `ContinuousAdmissibleStepCorridor.nullMeasurableSet_preimage_toSet_of_aemeasurable`
+  proves that the preimage of an admissible corridor under an
+  almost-everywhere measurable path map is null-measurable under a finite
+  measure.
+* `FiniteCorridorUnion.nullMeasurableSet_toSet` proves null-measurability of
+  each finite union of corridor events.
+* `tendsto_log_finiteCorridorUnion_preimage_probability_ratio_of_nullMeasurable`
+  gives the finite-union logarithmic probability rate from null-measurable
+  component events and their component rates.
+* `tendsto_log_finiteCorridorUnion_preimage_probability_ratio_of_aemeasurable_paths`
+  supplies that result for almost-everywhere measurable path maps.
 -/
 
 open Filter MeasureTheory
@@ -182,10 +196,10 @@ theorem tendsto_log_finiteCorridorUnion_preimage_probability_ratio_of_nullMeasur
   have hrateEq : κ * (energy i₀).toReal = κ * G.realEnergy := by
     rw [← hEnergyMin]
   have hmain := Asymptotics.tendsto_log_finite_union_ratio
-    (Finset.univ : Finset (Fin G.count)) huniv i₀ (Finset.mem_univ i₀)
+    (Finset.univ : Finset (Fin G.count)) i₀ (Finset.mem_univ i₀)
     g unionProbability componentProbability
     (fun i => κ * (energy i).toReal) (κ * G.realEnergy)
-    hg hqpos (Filter.Eventually.of_forall hupper) hlowerEventually
+    hg (Filter.Eventually.of_forall hupper) hlowerEventually
     (fun i hi => hcomponentPos i) (fun i hi => hcomponentRate i)
     (fun i hi => hrateLower i) hrateEq
   refine ⟨?_, hqpos, ?_⟩

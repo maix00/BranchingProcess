@@ -15,6 +15,12 @@ public import Probability.Process.RandomWalk.Path.Truncation.Maximal.SecondMomen
 The increment center is explicit. The two prefix events use disjoint blocks,
 so their intersection is bounded by the square of the one-block truncation
 bound. All moment and tail terms are computed under the same shifted law.
+
+## Public declarations
+
+* `measure_inter_adjacentBlockPrefixExceedance_le_sq_of_truncation_second_bounded`
+  bounds the intersection of two adjacent block exceedances by the square of
+  the corresponding one-block hard-truncation bound.
 -/
 
 open MeasureTheory ProbabilityTheory

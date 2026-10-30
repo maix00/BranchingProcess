@@ -19,6 +19,13 @@ import Order.Interval.RationalGrid.Arithmetic
 This module adapts the generic finite rational-coordinate grid theorem to an
 interval with rational endpoints.  Its interval and unit-normalization
 arithmetic is kept out of the root `RationalGrid` API.
+
+## Public declarations
+
+- `RationalGrid.exists_uniformGrid_of_intervalFinset` states that a finite
+  family in the rational interval $\left[left,right\right]$ is represented
+  exactly on a uniform real grid with those same endpoints, for
+  $left\leq right$.
 -/
 
 @[expose] public section

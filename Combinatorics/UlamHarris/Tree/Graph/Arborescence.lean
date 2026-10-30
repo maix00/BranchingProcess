@@ -17,6 +17,13 @@ determined by the parent and the child. It is therefore a thin quiver, and, with
 the address length as height, a mathlib `Quiver.Arborescence`: there is a unique
 directed path from the root to every realized node. This is the directed form of
 the statement that addresses record their unique path from the root.
+
+## Public declarations
+
+- `childQuiver_isThin T` states that any two arrows with the same source and
+  target are equal.
+- `childQuiver_arborescence T` equips the child quiver with root `[]` and a
+  unique directed path from `[]` to every address in `T.carrier`.
 -/
 
 @[expose] public section

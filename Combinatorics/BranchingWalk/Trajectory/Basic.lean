@@ -11,9 +11,19 @@ public import Combinatorics.BranchingWalk.Cloud.Basic
 /-!
 # Space-time trajectories
 
-A `Trajectory Time X` records the vertex and edge images of a walk in
-space-time.  Edges are stored as their point images; segment identity is not
-part of this structure.
+A `Trajectory Time X` records the time-indexed cloud of vertex images and the
+space-time set of edge images of a walk. Edges are stored as their point
+images; segment identity is not part of this structure.
+
+## Public declarations
+
+* `Combinatorics.Branching.Trajectory Time X` stores a vertex cloud
+  `CloudSet Time X` and an edge-image set in `Time × X`; the projections are
+  `Trajectory.vertexCloud` and `Trajectory.edges`.
+* `Combinatorics.Branching.Trajectory.carrier T` is the union of
+  `T.vertexCloud.vertexSet` and `T.edges`.
+* `Combinatorics.Branching.Trajectory.ext` proves equality from equality of
+  the vertex clouds and edge-image sets.
 -/
 
 @[expose] public section
@@ -22,9 +32,9 @@ namespace Combinatorics
 
 namespace Branching
 
-/-- The space-time vertex and edge images of a walk. -/
+/-- The time-indexed vertex cloud and space-time edge image of a walk. -/
 structure Trajectory (Time X : Type*) where
-  vertices : Set (Time × X)
+  vertexCloud : CloudSet Time X
   edges : Set (Time × X)
 
 namespace Trajectory
@@ -33,24 +43,15 @@ variable {Time X : Type*}
 
 /-- The union of the vertex and edge images. -/
 def carrier (T : Trajectory Time X) : Set (Time × X) :=
-  T.vertices ∪ T.edges
-
-/-- The time-indexed cloud of the trajectory vertices. -/
-def toCloud (T : Trajectory Time X) : CloudSet Time X where
-  points t := {x | (t, x) ∈ T.vertices}
-
-@[simp] theorem mem_toCloud (T : Trajectory Time X) (t : Time) (x : X) :
-    x ∈ (T.toCloud).points t ↔ (t, x) ∈ T.vertices :=
-  Iff.rfl
+  T.vertexCloud.vertexSet ∪ T.edges
 
 @[ext] theorem ext {T S : Trajectory Time X}
-    (hvertices : T.vertices = S.vertices)
+    (hvertices : T.vertexCloud = S.vertexCloud)
     (hedges : T.edges = S.edges) : T = S := by
   cases T
   cases S
-  simp only at hvertices hedges
-  subst hvertices
-  subst hedges
+  cases hvertices
+  cases hedges
   rfl
 
 end Trajectory

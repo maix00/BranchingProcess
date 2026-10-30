@@ -6,10 +6,20 @@ Authors: Codex
 module
 
 public import Probability.Distributions.CharacteristicFunction.Tauberian.FrequencyAverage
-public import Mathlib.MeasureTheory.Integral.DominatedConvergence
+import Mathlib.MeasureTheory.Integral.DominatedConvergence
 
 /-!
 # Asymptotics of frequency-averaged cosine defects
+
+## Public declarations
+
+- `exists_pos_closedAbsTail_le_cosineDefectFrequencyAverage_all` gives one
+  positive coercivity constant valid at every scale.
+- `tendsto_closedAbsTail_div_cosineDefect_atTop` states that compact-uniform
+  regular variation of index two for a cosine defect forces its closed
+  two-sided tail to be little-o of the defect at reciprocal scale.
+- `tendsto_symmetrizedClosedAbsTail_div_normDefect_atTop` gives this result
+  for the symmetrized law, using the squared-modulus characteristic defect.
 
 Compact-uniform regular variation of index two makes the leading terms in a
 frequency-averaged cosine defect cancel. This module provides the deterministic
@@ -28,7 +38,7 @@ namespace ProbabilityTheory
 /- The compact-uniform ratio limit cancels the two leading quadratic terms
 in the averaged cosine defect. The base `2 * u` ratio covers multipliers in
 `[2, 4]`. -/
-theorem tendsto_frequencyCancellation_ratio_nhdsGT_zero
+private lemma tendsto_frequencyCancellation_ratio_nhdsGT_zero
     {f : ℝ → ℝ} (hf : Continuous f)
     (hpos : ∀ᶠ u : ℝ in 𝓝[>] (0 : ℝ), 0 < f u)
     (hratio : TendstoUniformlyOn
@@ -180,12 +190,12 @@ theorem tendsto_frequencyCancellation_ratio_nhdsGT_zero
     (μ := volume) (a := (1 : ℝ)) (b := 2) hHContinuous
   simpa [H, intervalIntegral.integral_div] using hIntegral
 
-private theorem frequencyAverage_nonneg (z : ℝ) :
+private lemma frequencyAverage_nonneg (z : ℝ) :
     0 ≤ cosineSquareFrequencyAverage z := by
   exact intervalIntegral.integral_nonneg_of_forall (by norm_num)
     (fun t => sq_nonneg (1 - Real.cos (t * z)))
 
-private theorem frequencyAverage_le_four (z : ℝ) :
+private lemma frequencyAverage_le_four (z : ℝ) :
     cosineSquareFrequencyAverage z ≤ 4 := by
   let f : ℝ → ℝ := fun t => (1 - Real.cos (t * z)) ^ 2
   have hfcont : Continuous f := by fun_prop

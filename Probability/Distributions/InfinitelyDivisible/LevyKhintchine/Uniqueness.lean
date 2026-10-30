@@ -9,17 +9,13 @@ Authors: LeanLevy Contributors
 
 module
 
-public import Probability.Distributions.InfinitelyDivisible.LevyKhintchine.Representation
+public import Probability.Distributions.InfinitelyDivisible.LevyKhintchine.Defs
+public import Analysis.SpecialFunctions.Trigonometric.SincBounds
+public import Mathlib.MeasureTheory.Measure.CharacteristicFunction.Basic
+public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
+import Probability.Distributions.InfinitelyDivisible.LevyKhintchine.Representation
 import Mathlib.MeasureTheory.Function.SpecialFunctions.Sinc
-
-/-!
-## The smear identity
-
-We identify the *smeared exponent* `g(ξ) = ψ_T(ξ) − ½ ∫_{[-1,1]} ψ_T(ξ+u) du` with
-`charFun (smearedMeasure σ² ν) ξ`. The drift piece cancels (its `u`-average is symmetric),
-the Gaussian piece contributes the constant `σ²/6`, and the jump piece contributes
-`∫ e^{ixξ}(1 − sinc x) dν`.
--/
+import Mathlib.Analysis.Complex.CoveringMap
 
 /-!
 # Uniqueness of the Lévy–Khintchine triple: the smeared canonical measure
@@ -31,46 +27,31 @@ determined by the characteristic exponent. The route follows Sato (Theorem 8.1):
 is the characteristic function of a **finite** measure `ρ` on `ℝ`, from which `σ²` is read
 off as an atom and `ν` by untilting on `{0}ᶜ`.
 
-## The smeared measure
+This argument follows Sato's uniqueness route: smearing the exponent gives the characteristic
+function of a finite measure; the Gaussian variance is read from its atom at zero, and the Lévy
+measure is recovered by removing the density `1 - Real.sinc x`. The source is Ken-iti Sato,
+*Lévy Processes and Infinitely Divisible Distributions*, Cambridge Studies in Advanced
+Mathematics 68, Cambridge University Press, 1999, Theorem 8.1 (ISBN 978-0-521-55302-5).
 
-We construct `ρ = smearedMeasure σ² ν` and prove it is finite and computes its atom at `0`.
-Later tasks identify `charFun ρ` with the smeared exponent (giving `ρ` from the exponent alone)
-and invert `ρ` back to `(σ², ν)`.
+## Public declarations
 
-### Pinning the Gaussian coefficient (worked by hand)
-
-The Gaussian piece of the LK exponent is `ψ_G(ξ) = −σ²ξ²/2`. Its smear is
-```
-g_G(ξ) = ψ_G(ξ) − ½ ∫_{-1}^{1} ψ_G(ξ + u) du
-       = −σ²ξ²/2 + (σ²/4) ∫_{-1}^{1} (ξ + u)² du.
-```
-Since `∫_{-1}^{1} (ξ + u)² du = ∫_{-1}^{1} (ξ² + 2ξu + u²) du = 2ξ² + 0 + 2/3`, we get
-```
-g_G(ξ) = −σ²ξ²/2 + (σ²/4)(2ξ² + 2/3) = −σ²ξ²/2 + σ²ξ²/2 + σ²/6 = σ²/6.
-```
-The Gaussian smear is the **constant** `σ²/6`; a constant is the characteristic function of a
-point mass at `0`, so `ρ` carries a Dirac atom of weight `σ²/6` (NOT `σ²`). Hence the
-recovery formula `σ² = 6 · ρ{0}` (`smearedMeasure_singleton_zero`).
-
-### The jump piece
-
-The smear of the jump piece produces, via the Fourier identity
-`½ ∫_{-1}^{1} e^{iux} du = Real.sinc x` (`intervalIntegral_exp_I_symm`), a density
-`1 − Real.sinc x` against `ν`. We use the mathlib spelling `Real.sinc x` throughout — for a
-Lévy measure `ν` with `ν{0} = 0` this agrees `ν`-a.e. with the classical `1 − sin x / x`, and
-`Real.sinc` lets the bounds proved in `LevyKhintchine/Representation.lean`
-(`one_sub_sinc_le_mul_min`,
-`mul_min_le_one_sub_sinc`) apply syntactically.
-
-## Main definitions
-
-* `ProbabilityTheory.smearedMeasure` — the finite measure `ρ = (σ²/6)•δ₀ + ν.withDensity(1 − sinc)`.
-
-## Main results
-
-* `ProbabilityTheory.lintegral_one_sub_sinc_lt_top` — the withDensity mass is finite.
-* `ProbabilityTheory.smearedMeasure_isFiniteMeasure` — `ρ` is a finite measure.
-* `ProbabilityTheory.smearedMeasure_singleton_zero` — `ρ{0} = σ²/6`, so `σ² = 6·ρ{0}`.
+* `smearedMeasure σ_sq ν` is
+  `ρ = (σ² / 6) • δ₀ + ν.withDensity (1 - Real.sinc)`, the canonical finite measure used to
+  recover the Lévy triple.
+* `measurable_one_sub_sinc` states measurability of `x ↦ ENNReal.ofReal (1 - Real.sinc x)`;
+  `lintegral_one_sub_sinc_lt_top` proves its integral against a Lévy measure is finite.
+* `smearedMeasure_isFiniteMeasure` proves `ρ(ℝ) < ∞`, and
+  `smearedMeasure_singleton_zero` gives `ρ({0}) = σ² / 6`.
+* `charFun_smearedMeasure` gives
+  `charFun ρ ξ = σ² / 6 + ∫ exp(i x ξ) (1 - Real.sinc x) dν(x)`.
+* `smeared_exponent_eq_charFun` identifies the characteristic exponent after smearing:
+  `ψ_T(ξ) - ½ ∫_{-1}^1 ψ_T(ξ+u) du = charFun ρ ξ`.
+* `smearedMeasure_gaussianVariance_inj`, `smearedMeasure_levyMeasure_inj`, and
+  `smearedMeasure_inj` recover `σ²` and `ν` from equality of smeared measures.
+* `LevyKhintchineTriple.ext_of_exponent_eq` proves that pointwise equality of exponents implies
+  equality of Lévy triples.
+* `isInfinitelyDivisible_iff_exists_levyKhintchineTriple` characterizes infinite divisibility by
+  `charFun μ ξ = exp (ψ_T ξ)`; `existsUnique_levyKhintchineTriple` adds uniqueness of `T`.
 -/
 
 @[expose] public section
@@ -93,7 +74,7 @@ Its two pieces are pinned by the smear algebra:
 
 The `Real.sinc` spelling is chosen deliberately over the classical `1 − sin x / x`: the two
 agree `ν`-a.e. when `ν{0} = 0`, and `Real.sinc` matches the sinc bounds proved in
-`LevyKhintchine/Representation.lean`. -/
+`Analysis/SpecialFunctions/Trigonometric/SincBounds.lean`. -/
 noncomputable def smearedMeasure : Measure ℝ :=
   ((σ_sq : ℝ≥0∞) / 6) • Measure.dirac (0 : ℝ)
     + ν.withDensity (fun x => ENNReal.ofReal (1 - Real.sinc x))
@@ -113,7 +94,7 @@ theorem lintegral_one_sub_sinc_lt_top {ν : Measure ℝ} (hν : MeasureTheory.Is
       ≤ ∫⁻ x, 2 * ENNReal.ofReal (min 1 (x ^ 2)) ∂ν := by
         refine lintegral_mono fun x => ?_
         rw [show (2 : ℝ≥0∞) = ENNReal.ofReal 2 by simp, ← ENNReal.ofReal_mul (by norm_num)]
-        exact ENNReal.ofReal_le_ofReal (one_sub_sinc_le_mul_min x)
+        exact ENNReal.ofReal_le_ofReal (Real.one_sub_sinc_le_mul_min x)
     _ = 2 * ∫⁻ x, ENNReal.ofReal (min 1 (x ^ 2)) ∂ν := lintegral_const_mul 2 hmeas
     _ < ⊤ := ENNReal.mul_lt_top (by norm_num) hν.lintegral_min_one_sq_lt_top
 
@@ -146,7 +127,7 @@ variable {ν : Measure ℝ}
 /-- `1 − Real.sinc x` is non-negative everywhere (via the sinc lower bound). -/
 private lemma one_sub_sinc_nonneg (x : ℝ) : 0 ≤ 1 - Real.sinc x :=
   le_trans (mul_nonneg (by positivity) (le_min zero_le_one (sq_nonneg x)))
-    (mul_min_le_one_sub_sinc x)
+    (Real.mul_min_le_one_sub_sinc x)
 
 /-- `∫_{-1}^{1} (ξ + u) du = 2ξ`. -/
 private lemma intInt_linear (ξ : ℝ) : ∫ u in (-1 : ℝ)..1, (ξ + u) = 2 * ξ := by
@@ -173,7 +154,7 @@ private lemma intInt_exp_shift (ξ x : ℝ) :
       = Complex.exp (↑x * ↑ξ * Complex.I) * ∫ u in (-1 : ℝ)..1, Complex.exp (↑u * ↑x * Complex.I)
     from intervalIntegral.integral_const_mul _ _]
   congr 1
-  have h := intervalIntegral_exp_I_symm x
+  have h := Real.intervalIntegral_exp_I_symm x
   rw [← h]; ring
 
 /-- **Pointwise smear of the compensated integrand.** The compensator (linear in the
@@ -246,7 +227,7 @@ private lemma integrable_exp_mul_one_sub_sinc (hν : MeasureTheory.IsLevyMeasure
       exact Complex.norm_exp_ofReal_mul_I _
     rw [hnorm_exp, one_mul, Complex.norm_real, Real.norm_eq_abs,
         abs_of_nonneg (one_sub_sinc_nonneg x)]
-    exact one_sub_sinc_le_mul_min x
+    exact Real.one_sub_sinc_le_mul_min x
 
 /-- **Smear of the jump integral.** Fubini swaps the `u`-average with the `ν`-integral; the
 pointwise smear identity then collapses the inner average. -/
@@ -462,7 +443,7 @@ private lemma withDensity_one_sub_sinc_untilt (hν : MeasureTheory.IsLevyMeasure
   refine withDensity_inv_same measurable_one_sub_sinc ?_ ?_
   · filter_upwards [hne0] with x hx
     rw [ne_eq, ENNReal.ofReal_eq_zero, not_le]
-    exact one_sub_sinc_pos hx
+    exact Real.one_sub_sinc_pos hx
   · filter_upwards with x using ENNReal.ofReal_ne_top
 
 /-- **Recovery of the Gaussian coefficient.** If two smeared measures agree, the Gaussian
@@ -568,43 +549,10 @@ a probability measure on `ℝ` is infinitely divisible **iff** its characteristi
 * backward direction: `levyKhintchine_converse` + `Measure.ext_of_charFun` (a triple's law is
   pinned by its characteristic function, so it must equal `μ`);
 * uniqueness: `LevyKhintchineTriple.ext_of_exponent_eq`, once exponents are identified from
-  equal exponentials by the continuous-log argument below.
+  equal exponentials by the covering-map uniqueness theorem.
 -/
 
 section Characterization
-
-/-- **Uniqueness of a continuous logarithm on the line.** If two continuous functions
-`f, g : ℝ → ℂ` agree at `0` and have equal exponentials everywhere, they are equal. The
-difference `f − g` is continuous with `exp (f ξ − g ξ) = 1`, hence lands in the discrete lattice
-`2πiℤ`; writing `f ξ − g ξ = (m ξ)·2πi` with `m ξ : ℤ`, the integer `m` is a continuous map into
-the discrete space `ℤ` (via `Int.isClosedEmbedding_coe_real`), hence constant on the connected
-line, so `f − g ≡ f 0 − g 0 = 0`. -/
-lemma eq_of_cexp_eq_of_continuous {f g : ℝ → ℂ}
-    (hf : Continuous f) (hg : Continuous g) (h0 : f 0 = g 0)
-    (h : ∀ ξ, Complex.exp (f ξ) = Complex.exp (g ξ)) : f = g := by
-  -- The difference has exponential `1`, so it lies in `2πiℤ` pointwise.
-  have hone : ∀ ξ, Complex.exp (f ξ - g ξ) = 1 := fun ξ => by
-    rw [Complex.exp_sub, h ξ, div_self (Complex.exp_ne_zero _)]
-  have hex : ∀ ξ, ∃ n : ℤ, f ξ - g ξ = n * (2 * ↑π * Complex.I) :=
-    fun ξ => Complex.exp_eq_one_iff.mp (hone ξ)
-  choose m hm using hex
-  -- The integer multiplier equals a continuous real function, so `m` is continuous into `ℤ`.
-  have hcast : ∀ ξ, ((m ξ : ℤ) : ℝ) = ((f ξ - g ξ) / (2 * ↑π * Complex.I)).re := by
-    intro ξ
-    have hquot : (f ξ - g ξ) / (2 * ↑π * Complex.I) = (m ξ : ℂ) := by
-      rw [hm ξ, mul_div_assoc, div_self Complex.two_pi_I_ne_zero, mul_one]
-    rw [hquot, Complex.intCast_re]
-  have hcont_cast : Continuous fun ξ => ((m ξ : ℤ) : ℝ) := by
-    simp only [hcast]
-    exact Complex.continuous_re.comp ((hf.sub hg).div_const _)
-  have hcont_m : Continuous m :=
-    Int.isClosedEmbedding_coe_real.isEmbedding.continuous_iff.mpr hcont_cast
-  -- A continuous map from the connected line into the discrete `ℤ` is constant.
-  funext ξ
-  have hval : f ξ - g ξ = 0 := by
-    rw [hm ξ, PreconnectedSpace.constant (α := ℝ) inferInstance hcont_m (x := ξ) (y := 0),
-      ← hm 0, h0, sub_self]
-  exact sub_eq_zero.mp hval
 
 /-- **Characterization of infinite divisibility (Lévy–Khintchine).** A probability measure `μ`
 on `ℝ` is infinitely divisible **iff** its characteristic function is `exp (ψ_T)` for some
@@ -635,17 +583,25 @@ theorem isInfinitelyDivisible_iff_exists_levyKhintchineTriple
 representation with triple uniqueness: an infinitely divisible `μ` has a *unique*
 Lévy–Khintchine triple `T` with `charFun μ = exp (ψ_T)`. Two such triples have equal
 exponentials of their (continuous, `0`-vanishing) exponents, hence equal exponents
-(`eq_of_cexp_eq_of_continuous`), hence are equal (`LevyKhintchineTriple.ext_of_exponent_eq`). -/
+(`Complex.isCoveringMap_exp.eq_of_comp_eq`), hence are equal
+(`LevyKhintchineTriple.ext_of_exponent_eq`). -/
 theorem existsUnique_levyKhintchineTriple
     {μ : Measure ℝ} [IsProbabilityMeasure μ] (hμ : IsInfinitelyDivisible μ) :
     ∃! T : LevyKhintchineTriple, ∀ ξ, charFun μ ξ = Complex.exp (T.exponent ξ) := by
   obtain ⟨T, hT⟩ := isInfinitelyDivisible_iff_exists_levyKhintchineTriple.mp hμ
   refine ⟨T, hT, fun T' hT' => ?_⟩
   apply LevyKhintchineTriple.ext_of_exponent_eq
-  have hfe : T'.exponent = T.exponent :=
-    eq_of_cexp_eq_of_continuous T'.exponent_continuous T.exponent_continuous
-      (by rw [T'.exponent_zero, T.exponent_zero])
-      (fun ξ => by rw [← hT' ξ, ← hT ξ])
+  have hfe : T'.exponent = T.exponent := by
+    have hcomp :
+        (fun ξ : ℝ =>
+          (⟨Complex.exp (T'.exponent ξ), Complex.exp_ne_zero _⟩ : {z : ℂ // z ≠ 0})) =
+        (fun ξ : ℝ =>
+          (⟨Complex.exp (T.exponent ξ), Complex.exp_ne_zero _⟩ : {z : ℂ // z ≠ 0})) := by
+      funext ξ
+      apply Subtype.ext
+      exact (hT' ξ).symm.trans (hT ξ)
+    exact Complex.isCoveringMap_exp.eq_of_comp_eq T'.exponent_continuous
+      T.exponent_continuous hcomp 0 (by rw [T'.exponent_zero, T.exponent_zero])
   exact fun ξ => congrFun hfe ξ
 
 end Characterization

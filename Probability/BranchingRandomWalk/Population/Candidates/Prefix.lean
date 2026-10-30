@@ -6,17 +6,38 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Field
-public import Combinatorics.BranchingWalk.Step.SlotOrder
+public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Field.Basic
+public import Combinatorics.BranchingWalk.Step.Ordering.SlotOrder
+public import Combinatorics.UlamHarris.Relation
 
 /-!
 # Finite prefixes of children from several roots
 
 Candidate generation is defined for an abstract ordered child-slot type.
-The first `N` inspected slots are `firstSlots α N`; these finite prefixes
-have cardinality `N` and exhaust `α`.  No randomness or ordering assumption
-is built into the definition: it is applied to a step field that has already
-been transported through the chosen measurable ordering.
+The first $N$ inspected slots are `firstSlots α N`; this finite prefix has
+cardinality $N$ and exhausts the slot type. Candidate generation is applied
+to a step field already transported through the chosen measurable ordering.
+
+## Public declarations
+
+- `ProbabilityTheory.BranchingRandomWalk.RootAddress` is the root-indexed
+  address type. `ProbabilityTheory.BranchingRandomWalk.initialRootAddresses`
+  is the set of $m$ empty addresses $(i,[])$, and
+  `ProbabilityTheory.BranchingRandomWalk.initialRootAddresses_card` gives its
+  cardinality $m$.
+- `Combinatorics.UlamHarris.RootIndexed.childAddress` supplies the structural
+  address extension used here. `ProbabilityTheory.BranchingRandomWalk.oneChildCandidate`
+  is the resulting singleton when that slot survives, and is empty otherwise;
+  `ProbabilityTheory.BranchingRandomWalk.mem_oneChildCandidate_iff` gives its
+  membership characterization.
+- `ProbabilityTheory.BranchingRandomWalk.prefixCandidates N s ω` is the set
+  of surviving children of parents in $s$ at slots in `firstSlots α N`.
+  `ProbabilityTheory.BranchingRandomWalk.oneChildCandidate_depth` and
+  `ProbabilityTheory.BranchingRandomWalk.prefixCandidates_depth` state that
+  each resulting address has length one greater than its parent.
+- `ProbabilityTheory.BranchingRandomWalk.child_mem_prefixCandidates_eventually`
+  states that every surviving child of a parent in a finite parent set occurs
+  in `prefixCandidates N s ω` for some finite $N$.
 -/
 
 @[expose] public section
@@ -37,20 +58,17 @@ def initialRootAddresses (m : ℕ) {α : Type*} :
   Finset.univ.map
     ⟨fun i : Fin m => (i, []), fun _ _ h => congrArg Prod.fst h⟩
 
-def childAddress {m : ℕ} {α : Type*} (p : RootAddress m α) (j : α) :
-    RootAddress m α :=
-  (p.1, p.2 ++ [j])
-
 noncomputable def oneChildCandidate {m : ℕ}
     (ω : FiniteRootStepField m α X) (p : RootAddress m α) (j : α) :
     Finset (RootAddress m α) := by
   classical
-  exact if survive (ω p.1 p.2) j then {childAddress p j} else ∅
+  exact if survive (ω p.1 p.2) j then
+    {RootIndexed.childAddress p j} else ∅
 
 theorem mem_oneChildCandidate_iff {m : ℕ}
     (ω : FiniteRootStepField m α X) (p q : RootAddress m α) (j : α) :
     q ∈ oneChildCandidate ω p j ↔
-      survive (ω p.1 p.2) j ∧ q = childAddress p j := by
+      survive (ω p.1 p.2) j ∧ q = RootIndexed.childAddress p j := by
   classical
   unfold oneChildCandidate
   split_ifs with h
@@ -75,7 +93,7 @@ theorem oneChildCandidate_depth {m n : ℕ}
     q.2.length = n + 1 := by
   rw [mem_oneChildCandidate_iff] at hq
   rcases hq with ⟨_, rfl⟩
-  simp [childAddress, hp]
+  simp [RootIndexed.childAddress, hp]
 
 theorem prefixCandidates_depth {m n : ℕ}
     [LinearOrder α] [LocallyFiniteOrder α] [OrderBot α] [NoMaxOrder α]
@@ -96,13 +114,15 @@ theorem child_mem_prefixCandidates_eventually {m : ℕ}
     (s : Finset (RootAddress m α)) (ω : FiniteRootStepField m α X)
     (p : RootAddress m α) (hp : p ∈ s) (j : α)
     (hj : survive (ω p.1 p.2) j) :
-    childAddress p j ∈
-      prefixCandidates (slotOrderIsoNat α j + 1) s ω := by
+    ∃ N : ℕ, RootIndexed.childAddress p j ∈ prefixCandidates N s ω := by
   classical
+  obtain ⟨N, hN⟩ := exists_mem_firstSlots j
+  refine ⟨N, ?_⟩
   unfold prefixCandidates
   apply Finset.mem_biUnion.mpr
   refine ⟨p, hp, Finset.mem_biUnion.mpr ?_⟩
-  exact ⟨j, mem_firstSlots_succ_rank j,
-    (mem_oneChildCandidate_iff ω p (childAddress p j) j).2 ⟨hj, rfl⟩⟩
+  exact ⟨j, hN,
+    (mem_oneChildCandidate_iff ω p (RootIndexed.childAddress p j) j).2
+      ⟨hj, rfl⟩⟩
 
 end ProbabilityTheory.BranchingRandomWalk

@@ -9,11 +9,11 @@ module
 public import Mathlib.Algebra.Group.Defs
 public import Mathlib.MeasureTheory.MeasurableSpace.Defs
 public import Mathlib.MeasureTheory.Group.Arithmetic
-public import Probability.Sequence.IID
+public import Probability.Sequence.IID.Basic
 public import Probability.Process.RandomWalk.Path.Basic
 public import Algebra.BigOperators.AdditivePath.Block
 public import MeasureTheory.Measure.Convolution.Power
-public import Probability.Kernel.Step
+public import Probability.Kernel.Step.Basic
 public import Mathlib.MeasureTheory.Measure.GiryMonad
 public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
 public import Mathlib.Probability.Kernel.Defs
@@ -24,10 +24,22 @@ public import Mathlib.Probability.Kernel.Composition.MeasureComp
 /-!
 # Transition kernels of random walks
 
+## Public declarations
+
 An increment law induces the translation invariant Markov kernel sending a
 position `x` to the law of `x + Z`.  This is the kernel interface of an
 independent increment random walk; the walk itself remains the singleton-slot
 specialization of a branching random walk.
+
+- `incrementKernel`: the transition kernel $Q_\nu$ defined by
+  $Q_\nu(x,\cdot)=\nu\circ(z\mapsto x+z)^{-1}$.
+- `incrementKernel_apply`, `incrementKernel_comp`, and
+  `incrementKernel_pow_apply`: translation of one-step and iterated kernels
+  agrees with pushforward and convolution; in particular
+  $Q_\nu^n(x,\cdot)=\delta_x*\nu^{*n}$.
+- `iidSequenceLaw_map_displacement` and `iidSequenceLaw_map_fromIncrements`:
+  the law of the partial-sum displacement is the corresponding convolution
+  power of $\nu$.
 -/
 
 open MeasureTheory
@@ -79,7 +91,7 @@ theorem incrementKernel_comp [MeasurableSingletonClass E]
       (Measure.lintegral_conv (measurable_const.indicator hs)).symm
 
 omit [AddCommMonoid E] [MeasurableAdd₂ E] in
-private theorem kernel_pow_succ_apply (κ : Kernel E E)
+private lemma kernel_pow_succ_apply (κ : Kernel E E)
     [IsSFiniteKernel κ] (n : ℕ) (x : E) :
     (κ ^ (n + 1)) x = κ ∘ₘ ((κ ^ n) x) := by
   ext s hs

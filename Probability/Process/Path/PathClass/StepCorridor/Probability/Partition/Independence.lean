@@ -6,13 +6,24 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.IndepIncrements.DisjointPaths
+public import Probability.Process.IndepIncrements.FiniteObservations.DisjointPaths
 public import Topology.Cadlag.Skorokhod.PathClass.StepCorridor.Boundary.Partition
 public import Order.Interval.RationalCoordinate.UnitInterval
 public import Topology.Order.UnitInterval.Rational
 
 /-!
 # Independent increment paths on a step-corridor partition
+
+## Public declarations
+
+- `ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability.CellInteriorCoordinate`:
+  rational coordinates in the unit interval strictly before the right endpoint.
+- `ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability.HasIndepIncrements.iIndepFun_commonStepBoundaryCells`:
+  for a finite common refinement of two step boundaries, the translated path
+  pieces on distinct cells are mutually independent.
+- `ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability.HasIndepIncrements.iIndepFun_commonStepBoundaryInteriorCells`:
+  the same independence holds after restricting each cell to rational times
+  strictly before its right endpoint.
 
 The union of the two finite boundary-knot sets gives a nonuniform finite
 partition. Each cell is parametrized by rational unit-interval coordinates.
@@ -38,13 +49,13 @@ abbrev CellInteriorCoordinate :=
 
 /-- The rational coordinate interval embeds monotonically into the real unit
 interval, fixing its left endpoint. -/
-private theorem rationalCoordinate_toUnitInterval_bot :
+private lemma rationalCoordinate_toUnitInterval_bot :
     RationalCoordinate.toUnitInterval (⊥ : RationalCoordinate.UnitInterval) =
       (⊥ : unitInterval) := by
   apply Subtype.ext
   norm_num [RationalCoordinate.toUnitInterval]
 
-private theorem monotone_rationalCoordinate_toUnitInterval :
+private lemma monotone_rationalCoordinate_toUnitInterval :
     Monotone (RationalCoordinate.toUnitInterval :
       RationalCoordinate.UnitInterval → unitInterval) := by
   intro p q hpq

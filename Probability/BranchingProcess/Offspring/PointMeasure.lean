@@ -5,7 +5,7 @@ Authors: WANG Yiyang
 -/
 module
 
-public import Combinatorics.BranchingWalk.Step.PointMeasure
+public import Combinatorics.BranchingWalk.Step.Measure.PointMeasure
 public import Probability.BranchingProcess.Offspring.Map
 
 /-!
@@ -15,6 +15,18 @@ The law of the point-measure observation is a pushforward of the complete
 slot-configuration law. This projection forgets slot labels but retains
 multiplicity. It does not assert local finiteness; that must be supplied for
 the chosen family of sets when a locally finite point process is needed.
+
+## Public declarations
+
+- `ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw.pointMeasureLaw`:
+  the pushforward law of the point measure associated with one offspring
+  configuration, $\mu.pointMeasureLaw=\mu.map(\operatorname{stepPointMeasure})$.
+- `ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw.pointMeasureLaw_toMeasure`:
+  the underlying measure of the point-measure law is this pushforward.
+- `ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw.pointMeasureLaw_mapMarks`:
+  taking the point-measure law after mapping marks agrees with mapping the
+  original point-measure law, $(\mu.mapMarks(f)).pointMeasureLaw=
+  \mu.pointMeasureLaw.map(\operatorname{Measure.map}(f))$.
 -/
 
 @[expose] public section

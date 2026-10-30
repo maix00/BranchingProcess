@@ -7,6 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Mathlib.MeasureTheory.Measure.Tight
+public import MeasureTheory.Measure.Tight.FiniteFamily
 
 /-!
 # Tightness of sequential families of measures
@@ -15,6 +16,14 @@ This file records a generic finite-prefix principle for tightness. It only
 uses the compact-complement characterization of `IsTightMeasureSet`; no
 separability, completeness, or regularity assumptions on the underlying
 space are needed when tightness of individual measures is supplied directly.
+
+## Public declarations
+
+* `MeasureTheory.isTightMeasureSet_image_Iio_of_singletons` states
+  `(∀ n, IsTightMeasureSet {μ n}) → IsTightMeasureSet (μ '' Iio N)`.
+* `MeasureTheory.isTightMeasureSet_range_of_eventually_uniform_compact_mass_bound`
+  states that individual tightness and `∀ ε > 0, ∃ N K` compact with
+  `∀ n ≥ N, μ n (Kᶜ) ≤ ε` imply `IsTightMeasureSet (range μ)`.
 -/
 
 @[expose] public section
@@ -30,28 +39,8 @@ variable {X : Type*} [MeasurableSpace X] [TopologicalSpace X]
 theorem isTightMeasureSet_image_Iio_of_singletons
     (μ : ℕ → Measure X)
     (hsingle : ∀ n, IsTightMeasureSet {μ n}) (N : ℕ) :
-    IsTightMeasureSet (μ '' Iio N) := by
-  induction N with
-  | zero =>
-      rw [isTightMeasureSet_iff_exists_isCompact_measure_compl_le]
-      intro ε hε
-      refine ⟨∅, isCompact_empty, ?_⟩
-      intro ν hν
-      simp only [mem_image, mem_Iio] at hν
-      obtain ⟨i, hi, hν⟩ := hν
-      omega
-  | succ N ih =>
-      have hinterval : Iio (N + 1) = insert N (Iio N) := by
-        ext i
-        simp only [mem_Iio, mem_insert_iff]
-        omega
-      rw [hinterval]
-      rw [Set.image_insert_eq]
-      have himage : insert (μ N) (μ '' Iio N) = {μ N} ∪ (μ '' Iio N) := by
-        ext ν
-        simp [mem_insert_iff]
-      rw [himage]
-      exact (hsingle N).union ih
+    IsTightMeasureSet (μ '' Iio N) :=
+  isTightMeasureSet_image_of_finite μ (Set.finite_Iio N) hsingle
 
 /-- If every measure in a sequence is tight, and for each error tolerance a
 single compact set controls all sufficiently late measures, then the range of

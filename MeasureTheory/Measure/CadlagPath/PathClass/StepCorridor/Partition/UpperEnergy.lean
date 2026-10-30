@@ -16,6 +16,14 @@ The upper estimate uses only the finite-width cells of the common partition;
 infinite-width cells carry no restriction and have zero energy. Combined with
 the lower construction, this proves the exact stable-process rate for every
 admissible `M₂` step corridor.
+
+## Public declarations
+
+- The common-partition rate over finite-width cells equals the real-valued
+  corridor energy; infinite-width cells contribute zero.
+- As the partition-cell enlargement vanishes, the corresponding relative
+  partition rate converges to the corridor energy, giving the exact $M_2$
+  asymptotic from the finite-cell lower and upper estimates.
 -/
 
 open Filter MeasureTheory

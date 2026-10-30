@@ -4,8 +4,12 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.SelectedSubtrees.SelectedFamily
-import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Positions
+module
+
+public import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.SelectedSubtrees.SelectedFamily
+public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Field.Positions
+
+public import Mathlib.Algebra.Group.Monoid
 
 /-!
 # Positions in selected subtree fields
@@ -14,7 +18,18 @@ The position space and edge-mark space remain separate.  Giving every
 selected subtree its absolute position at the selected root makes all local
 positions agree exactly with the corresponding positions in the original
 root-indexed field.
+## Public declarations
+
+* `RootIndexed.subtreeInitialPosition` assigns each selected root its absolute
+  position in the original field; `position_subtreeStepFieldVector` proves
+  that rebasing the field preserves all descendant positions.
+* `RootIndexed.selectedSubtreeInitialPosition` specializes the construction
+  to roots chosen from the field itself, and
+  `position_selectedSubtreeStepFieldVector` proves the corresponding exact
+  position identity.
 -/
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
@@ -68,3 +83,5 @@ theorem RootIndexed.position_selectedSubtreeStepFieldVector
     initial d step (chosen step) i v
 
 end ProbabilityTheory.BranchingRandomWalk
+
+end

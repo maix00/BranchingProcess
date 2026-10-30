@@ -6,10 +6,10 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.BranchingRandomWalk.Spine.EndpointManyToOne
-public import Combinatorics.BranchingWalk.Basic.DisplacementMap
+public import Probability.BranchingRandomWalk.Spine.ManyToOne.EndpointManyToOne
+public import Combinatorics.BranchingWalk.Basic.Position.DisplacementMap
 public import Combinatorics.BranchingWalk.Basic.Map
-public import Probability.BranchingRandomWalk.Step.Law
+public import Probability.BranchingProcess.Offspring.FieldLaw
 public import Combinatorics.BranchingWalk.StepField
 
 /-!
@@ -20,6 +20,24 @@ kept separate from the recursively defined branching operators until the
 product-law theorem identifies their expectations.  All sums range over
 addresses and test survival explicitly, so extinction and empty generations
 require no special convention.
+
+## Public declarations
+
+`pathPotential φ ω u` is the sum of edge potentials along address `u`, with
+zero at the root and the one-edge potential at a singleton address. The
+address-survival event and every fixed-address path potential are measurable.
+`weightedGenerationTerm` and `generationTerm` are the per-address contributions
+at depth `n`, with the first multiplied by
+`exp (-pathPotential φ ω u)`; their countable sums are the actual weighted and
+unweighted generation endpoint observables. Both sums are measurable and
+equal `f x` at generation zero.
+
+At generation one, `weightedGenerationEndpoint` is the offspring-slot sum
+`∑' i, realizedPotentialWeight φ (-1) (ω []) i *
+f (x + (ω []).potentialValue' φ i)`, while `generationEndpoint` is the
+corresponding sum of surviving slot tests. Integrating these identities under
+`offspringFieldLaw μ` gives `weightedBranchingEndpointOperator φ μ f x` and
+`branchingEndpointOperator φ μ f x`, respectively.
 -/
 
 open MeasureTheory
@@ -28,6 +46,8 @@ open scoped ENNReal
 @[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk.Spine
+
+open ProbabilityTheory.BranchingProcess (offspringFieldLaw offspringFieldLaw_coordinate offspringFieldLaw_independent offspringFieldLaw_mapMarks)
 
 open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 
@@ -266,7 +286,7 @@ theorem lintegral_weightedGenerationEndpoint_one
     (φ : Potential X) (μ : Measure (Combinatorics.Branching.Step ι X))
     [IsProbabilityMeasure μ]
     {f : ℝ → ENNReal} (hf : Measurable f) (x : ℝ) :
-    (∫⁻ ω, weightedGenerationEndpoint φ 1 f x ω ∂stepFieldLaw μ) =
+    (∫⁻ ω, weightedGenerationEndpoint φ 1 f x ω ∂offspringFieldLaw μ) =
       weightedBranchingEndpointOperator φ μ f x := by
   let g : Combinatorics.Branching.Step ι X → ENNReal := fun ξ =>
     ∑' i : ι, realizedPotentialWeight φ (-1) ξ i *
@@ -277,9 +297,9 @@ theorem lintegral_weightedGenerationEndpoint_one
     exact (realizedPotentialWeight_measurable φ (-1) i).mul
       (hf.comp (measurable_const.add (Step.potentialValue'_measurable φ i)))
   simp_rw [weightedGenerationEndpoint_one]
-  change (∫⁻ ω, g (ω []) ∂stepFieldLaw μ) = _
+  change (∫⁻ ω, g (ω []) ∂offspringFieldLaw μ) = _
   rw [← lintegral_map hg (measurable_pi_apply ([] : TreeNode ι)),
-    stepFieldLaw_coordinate μ ([] : TreeNode ι)]
+    offspringFieldLaw_coordinate μ ([] : TreeNode ι)]
   rfl
 
 /-- Integrating the actual unweighted first generation under the i.i.d. field
@@ -289,7 +309,7 @@ theorem lintegral_generationEndpoint_one
     (φ : Potential X) (μ : Measure (Combinatorics.Branching.Step ι X))
     [IsProbabilityMeasure μ]
     {f : ℝ → ENNReal} (hf : Measurable f) (x : ℝ) :
-    (∫⁻ ω, generationEndpoint φ 1 f x ω ∂stepFieldLaw μ) =
+    (∫⁻ ω, generationEndpoint φ 1 f x ω ∂offspringFieldLaw μ) =
       branchingEndpointOperator φ μ f x := by
   let g : Combinatorics.Branching.Step ι X → ENNReal := fun ξ =>
     ∑' i : ι, survivingPotentialTest φ (fun y => f (x + y)) ξ i
@@ -301,9 +321,9 @@ theorem lintegral_generationEndpoint_one
       (measurable_const.add (Step.potentialValue'_measurable φ i))).ite
         (survive_measurableSet i) measurable_const
   simp_rw [generationEndpoint_one]
-  change (∫⁻ ω, g (ω []) ∂stepFieldLaw μ) = _
+  change (∫⁻ ω, g (ω []) ∂offspringFieldLaw μ) = _
   rw [← lintegral_map hg (measurable_pi_apply ([] : TreeNode ι)),
-    stepFieldLaw_coordinate μ ([] : TreeNode ι)]
+    offspringFieldLaw_coordinate μ ([] : TreeNode ι)]
   rfl
 
 end ProbabilityTheory.BranchingRandomWalk.Spine

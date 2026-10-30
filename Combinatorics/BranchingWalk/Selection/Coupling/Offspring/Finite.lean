@@ -7,13 +7,32 @@ Authors: WANG Yiyang
 module
 
 public import Mathlib.Data.Finset.Sigma
-public import Combinatorics.BranchingWalk.Selection.Coupling.Offspring.Address
+public import Combinatorics.BranchingWalk.Population.Offspring
 
 /-!
 # Finite offspring candidates
 
 This file realizes the parent-slot interface on finite multi-root populations
 and records the address/pair cardinality identities used by selection.
+
+## Public declarations
+
+* `Combinatorics.Branching.Selection.Coupling.offspringPairs` and
+  `Combinatorics.Branching.Selection.Coupling.offspringAddresses` are the finite
+  parent-slot pairs and their genuine child addresses.
+* `Combinatorics.Branching.Selection.Coupling.mem_offspringPairs` and
+  `Combinatorics.Branching.Selection.Coupling.mem_offspringAddresses`
+  characterize membership in these finite sets;
+  `Combinatorics.Branching.Selection.Coupling.coe_offspringPairs` and
+  `Combinatorics.Branching.Selection.Coupling.coe_offspringAddresses` identify
+  them with the corresponding set-valued constructions.
+* `Combinatorics.Branching.Selection.Coupling.card_filter_offspringAddresses`
+  states, for every predicate `P`, that filtering child addresses has the same
+  cardinality as filtering parent-slot pairs by the induced predicate:
+  \[
+    |\{q\in\operatorname{offspringAddresses}:P(q)\}|=
+    |\{(p,i)\in\operatorname{offspringPairs}:P(\operatorname{childAddress}(p,i))\}|.
+  \]
 -/
 
 @[expose] public section
@@ -47,7 +66,8 @@ parent-slot candidate set. -/
     (parents : Finset (RootIndexed.TreeNode Root α))
     (slots : RootIndexed.TreeNode Root α → Finset α) :
     ↑(offspringPairs parents slots) =
-      offspringPairSet (↑parents) (fun p => ↑(slots p)) := by
+      Combinatorics.Branching.Population.offspringPairSet (↑parents)
+        (fun p => ↑(slots p)) := by
   classical
   ext pi
   rcases pi with ⟨p, i⟩
@@ -61,25 +81,26 @@ noncomputable def offspringAddresses
     (slots : RootIndexed.TreeNode Root α → Finset α) :
     Finset (RootIndexed.TreeNode Root α) := by
   classical
-  exact (offspringPairs parents slots).image fun pi => childAddress pi.1 pi.2
+  exact (offspringPairs parents slots).image fun pi =>
+    RootIndexed.childAddress pi.1 pi.2
 
 @[simp] theorem mem_offspringAddresses
     {parents : Finset (RootIndexed.TreeNode Root α)}
     {slots : RootIndexed.TreeNode Root α → Finset α}
     {q : RootIndexed.TreeNode Root α} :
     q ∈ offspringAddresses parents slots ↔
-      ∃ p ∈ parents, ∃ i ∈ slots p, q = childAddress p i := by
+      ∃ p ∈ parents, ∃ i ∈ slots p, q = RootIndexed.childAddress p i := by
   classical
   constructor
   · intro hq
     obtain ⟨⟨p, i⟩, hpi, hchild⟩ :=
       Finset.mem_image.mp (show q ∈ (offspringPairs parents slots).image
-        (fun pi => childAddress pi.1 pi.2) from hq)
+        (fun pi => RootIndexed.childAddress pi.1 pi.2) from hq)
     obtain ⟨hp, hi⟩ := mem_offspringPairs.mp hpi
     exact ⟨p, hp, i, hi, hchild.symm⟩
   · rintro ⟨p, hp, i, hi, rfl⟩
-    show childAddress p i ∈ (offspringPairs parents slots).image
-      (fun pi => childAddress pi.1 pi.2)
+    show RootIndexed.childAddress p i ∈ (offspringPairs parents slots).image
+      (fun pi => RootIndexed.childAddress pi.1 pi.2)
     exact Finset.mem_image.mpr
       ⟨(p, i), mem_offspringPairs.mpr ⟨hp, hi⟩, rfl⟩
 
@@ -88,7 +109,8 @@ noncomputable def offspringAddresses
     (parents : Finset (RootIndexed.TreeNode Root α))
     (slots : RootIndexed.TreeNode Root α → Finset α) :
     ↑(offspringAddresses parents slots) =
-      offspringAddressSet (↑parents) (fun p => ↑(slots p)) := by
+      Combinatorics.Branching.Population.offspringAddressSet (↑parents)
+        (fun p => ↑(slots p)) := by
   classical
   ext q
   simp
@@ -101,10 +123,10 @@ theorem card_filter_offspringAddresses
     (P : RootIndexed.TreeNode Root α → Prop) [DecidablePred P] :
     ((offspringAddresses parents slots).filter P).card =
       ((offspringPairs parents slots).filter fun pi =>
-        P (childAddress pi.1 pi.2)).card := by
+      P (RootIndexed.childAddress pi.1 pi.2)).card := by
   classical
   rw [offspringAddresses, Finset.filter_image]
-  exact Finset.card_image_of_injective _ childAddress_joint_injective
+  exact Finset.card_image_of_injective _ RootIndexed.childAddress_joint_injective
 
 end Combinatorics.Branching.Selection.Coupling
 

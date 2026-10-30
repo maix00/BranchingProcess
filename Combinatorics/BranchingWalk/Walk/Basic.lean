@@ -6,14 +6,52 @@ Authors: WANG Yiyang
 
 module
 
-public import Combinatorics.BranchingWalk.Basic.Position
+public import Combinatorics.BranchingWalk.Basic.Position.Basic
 
 /-!
 # Walks as one-branch branching walks
 
-A walk is the child-slot singleton specialization of a branching walk.  The
-only address in generation `n` is `lineNode n`, and an increment sequence
-therefore determines the whole step field without an arbitrary slot choice.
+## Public declarations
+
+* `Combinatorics.Branching.Walk Mark Position` is
+  `BranchingWalk PUnit Mark Position`, the one-child-slot specialization.
+* `Combinatorics.Branching.Walk.lineNode n` is the unique address of length
+  `n`; `Combinatorics.Branching.Walk.lineNode_length`,
+  `Combinatorics.Branching.Walk.lineNode_zero`, and
+  `Combinatorics.Branching.Walk.lineNode_succ` give its length, initial value,
+  and successor recursion, and
+  `Combinatorics.Branching.Walk.eq_lineNode_length` identifies every
+  `PUnit`-labelled address with this canonical address.
+* `Combinatorics.Branching.Walk.singletonStep x` assigns `some x` to the only
+  child slot. `Combinatorics.Branching.Walk.stepFieldOfIncrements increment`
+  places increment `n` at every address of length `n`;
+  `Combinatorics.Branching.Walk.singletonStep_apply`
+  and `Combinatorics.Branching.Walk.stepFieldOfIncrements_apply` give their
+  coordinate formulas, and
+  `Combinatorics.Branching.Walk.surviveAlong_stepFieldOfIncrements` proves
+  every finite path survives.
+* `Combinatorics.Branching.Walk.ofIncrements initial increment` constructs a
+  walk with every edge present, while
+  `Combinatorics.Branching.Walk.ofOptionalIncrements initial increment`
+  retains absent edges. Their coordinate formulas are
+  `Combinatorics.Branching.Walk.ofIncrements_step`,
+  `Combinatorics.Branching.Walk.ofIncrements_initial`,
+  `Combinatorics.Branching.Walk.ofOptionalIncrements_step`, and
+  `Combinatorics.Branching.Walk.ofOptionalIncrements_initial`.
+* `Combinatorics.Branching.Walk.increments walk` reads the optional mark on
+  each generation edge.
+  `Combinatorics.Branching.Walk.increments_ofIncrements` gives
+  `increments (ofIncrements initial increment) = some ∘ increment`, and
+  `Combinatorics.Branching.Walk.increments_ofOptionalIncrements` gives
+  `increments (ofOptionalIncrements initial increment) = increment`.
+* `Combinatorics.Branching.Walk.displaceWith_lineNode` identifies displacement
+  along `lineNode n` with `∑ k ∈ Finset.range n, d (increment k)`;
+  `Combinatorics.Branching.Walk.position_lineNode` adds this sum to the initial
+  position.
+
+A singleton-slot branching walk is represented by its initial position and
+optional increment sequence; the corresponding equivalence is in
+`Walk/Equiv.lean`.
 -/
 
 @[expose] public section
@@ -123,21 +161,6 @@ def increments (walk : Walk Mark Position) : ℕ → Option Mark :=
     increments (ofOptionalIncrements initial increment) = increment := by
   funext n
   simp [increments, ofOptionalIncrements]
-
-/-- Initial position and optional increments determine a singleton walk,
-including all absent edges after extinction. -/
-theorem ofOptionalIncrements_initial_increments
-    (walk : Walk Mark Position) :
-    ofOptionalIncrements (walk.initial PUnit.unit) (increments walk) = walk := by
-  apply RootIndexed.BranchingWalk.ext
-  · funext root
-    cases root
-    funext u i
-    rw [eq_lineNode_length u]
-    simp [ofOptionalIncrements, increments]
-  · funext root
-    cases root
-    rfl
 
 /-- The displacement along the unique `n`-edge path is the sum of the first
 `n` mapped increments. -/

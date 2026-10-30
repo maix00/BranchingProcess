@@ -6,8 +6,8 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.Path.Block.Law.FirstCrossing
-public import Probability.Process.RandomWalk.Path.Skorokhod.Oscillation
+public import Probability.Process.RandomWalk.Path.Block.Law.TwoExcursions
+public import Probability.Process.RandomWalk.Path.Skorokhod.Oscillation.BlockEvents
 
 /-!
 # Block bounds for Skorokhod oscillation criteria
@@ -16,6 +16,18 @@ This module converts a one-block random-walk maximal bound into the double-
 excursion and endpoint estimates used by the deterministic Skorokhod
 compactness criterion. Distribution-specific tail or moment estimates belong
 in adapters above this layer.
+## Public declarations
+
+Let $b$ bound the probability of one finite-block prefix excursion.
+
+- `eventually_measure_twoOrderedBlockExcursions_le_of_blockPrefixBound` uses
+  independence after the first crossing to bound two ordered excursions by
+  $b^2$.
+- `eventually_measure_not_hasDoubleExcursionBound_le_of_blockPrefixBound`
+  gives the path-level failure bound $(\lfloor n/w_n\rfloor+1)b^2$.
+- `eventually_measure_not_hasEndpointOscillationBound_le_of_blockPrefixBound`
+  bounds the two endpoint windows by $2b$.
+
 -/
 
 open Filter MeasureTheory ProbabilityTheory

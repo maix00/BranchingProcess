@@ -11,6 +11,15 @@ public import Mathlib.Data.List.Basic
 /-!
 # Ulam--Harris addresses and mark functions
 
+## Public declarations
+
+* `Combinatorics.UlamHarris.TreeNode α` is the address type `List α`;
+  `Combinatorics.UlamHarris.RootIndexed.TreeNode Root α` is
+  `Root × TreeNode α`.
+* `Combinatorics.UlamHarris.𝕍` is `TreeNode ℕ`, and
+  `Combinatorics.UlamHarris.Mark α M` is the function type
+  `TreeNode α → M`.
+
 `TreeNode α` is the abstract address type `List α` of a rooted tree whose
 child labels live in `α`; it is not tied to `ℕ`. `𝕍 = TreeNode ℕ` is the
 Ulam--Harris node set in standard notation.
@@ -20,7 +29,7 @@ Ulam--Harris node set in standard notation.
 generation filtration of
 `Probability/BranchingRandomWalk/Tree/Filtration.lean` is defined on it. This
 is a separate object from a `MarkedTree`, which carries marks only on its
-realized nodes; the realized-tree layer is in `Tree/Basic.lean` and the
+realized nodes; the realized-tree layer is in `Tree/Defs.lean` and the
 marked-tree layer in `MarkedTree/Basic.lean`.
 -/
 

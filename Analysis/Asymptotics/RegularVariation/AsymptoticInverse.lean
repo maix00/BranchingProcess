@@ -11,6 +11,18 @@ public import Analysis.Asymptotics.RegularVariation.Uniform
 /-!
 # Sequential asymptotic inversion for monotone regularly varying functions
 
+## Public declarations
+
+- `tendsto_div_of_tendsto_value_ratio`: if $f$ is regularly varying at
+  infinity with index $\rho>0$ and is eventually nondecreasing, and
+  $x_n,y_n\to\infty$ with $\frac{f(y_n)}{f(x_n)}\to r^\rho$ for $r>0$,
+  then $\frac{y_n}{x_n}\to r$.
+- `tendsto_div_of_tendsto_powerQuotient_ratio`: if $V$ is regularly varying
+  with index $0\le\beta<q$ and is eventually nondecreasing, and
+  $x_n,y_n\to\infty$ with
+  $\frac{y_n^q/V(y_n)}{x_n^q/V(x_n)}\to r^{q-\beta}$ for $r>0$, then
+  $\frac{y_n}{x_n}\to r$.
+
 This file states the regularity hypotheses required by the inversion result.
 Pointwise ratio limits without monotonicity or another compact-uniformity
 hypothesis are not used as if they implied uniform convergence.
@@ -141,28 +153,30 @@ theorem tendsto_div_of_tendsto_value_ratio
     rw [← Real.rpow_mul (le_of_lt hpos), mul_one_div_cancel hρ.ne', Real.rpow_one]
   exact hroot.congr' heq
 
-/-- Sequential inversion for the quotient `x ^ 2 / V x` when `V` is an
-eventually nondecreasing regularly varying function of index below two. The
+/-- Sequential inversion for the power quotient `x ^ q / V x` when `V` is an
+eventually nondecreasing regularly varying function with index `β < q`. The
 monotonicity and the Potter bound are applied to `V`; no monotonicity is
-assumed for the quotient itself. -/
-theorem tendsto_div_of_tendsto_squareQuotient_ratio
-    {V : ℝ → ℝ} {β r : ℝ} {x y : ℕ → ℝ}
+assumed for the quotient itself. The proof uses the uniform convergence and
+Potter bounds for regularly varying functions (Bingham, Goldie, and Teugels,
+*Regular Variation*, Theorems 1.2.1 and 1.5.6). -/
+theorem tendsto_div_of_tendsto_powerQuotient_ratio
+    {V : ℝ → ℝ} {β q r : ℝ} {x y : ℕ → ℝ}
     (hV : IsRegularlyVaryingAtTop V β)
     (hVmono : IsEventuallyMonotoneAtTop V)
-    (hβ : 0 ≤ β) (hβ₂ : β < 2) (hr : 0 < r)
+    (hβ : 0 ≤ β) (hβq : β < q) (hr : 0 < r)
     (hx : Tendsto x atTop atTop) (hy : Tendsto y atTop atTop)
     (hquotient : Tendsto
-      (fun n => (y n) ^ 2 / V (y n) / ((x n) ^ 2 / V (x n))) atTop
-      (𝓝 (r ^ (2 - β)))) :
+      (fun n => (y n) ^ q / V (y n) / ((x n) ^ q / V (x n))) atTop
+      (𝓝 (r ^ (q - β)))) :
     Tendsto (fun n => y n / x n) atTop (𝓝 r) := by
-  let α : ℝ := 2 - β
+  let α : ℝ := q - β
   let γ : ℝ := α / 2
   let p : ℝ := β + γ
   let C : ℝ := 2 ^ p
   let limit : ℝ := r ^ α
   have hα : 0 < α := by dsimp [α]; linarith
   have hγ : 0 < γ := by dsimp [γ]; positivity
-  have hγp : 2 - p = γ := by dsimp [α, γ, p]; ring
+  have hγp : q - p = γ := by dsimp [α, γ, p]; ring
   have hC : 0 < C := by dsimp [C]; positivity
   have hlimit : 0 < limit := by
     dsimp [limit]
@@ -200,7 +214,7 @@ theorem tendsto_div_of_tendsto_squareQuotient_ratio
     have hVypos : ∀ᶠ n : ℕ in atTop, 0 < V (y n) :=
       hy.eventually hV.eventually_pos
     have hquotientWindow : ∀ᶠ n : ℕ in atTop,
-        y n ^ 2 / V (y n) / (x n ^ 2 / V (x n)) ∈
+        y n ^ q / V (y n) / (x n ^ q / V (x n)) ∈
           Set.Ioo (limit / 2) (limit + 1) := by
       have hmem : Set.Ioo (limit / 2) (limit + 1) ∈ 𝓝 limit :=
         isOpen_Ioo.mem_nhds ⟨by linarith [hlimit], by linarith⟩
@@ -209,10 +223,15 @@ theorem tendsto_div_of_tendsto_squareQuotient_ratio
       hquotientWindow] with n hRx hRy hxpos hypos hVxpos hVypos hwindow
     let ratio : ℝ := y n / x n
     have hratio : 0 < ratio := by dsimp [ratio]; exact div_pos hypos hxpos
-    have hratioFormula :
-        y n ^ 2 / V (y n) / (x n ^ 2 / V (x n)) =
-          ratio ^ 2 / (V (y n) / V (x n)) := by
+    have hratioMul : y n = ratio * x n := by
       dsimp [ratio]
+      exact (div_mul_cancel₀ _ (ne_of_gt hxpos)).symm
+    have hratioRpow : y n ^ q = ratio ^ q * x n ^ q := by
+      rw [hratioMul, Real.mul_rpow hratio.le hxpos.le]
+    have hratioFormula :
+        y n ^ q / V (y n) / (x n ^ q / V (x n)) =
+          ratio ^ q / (V (y n) / V (x n)) := by
+      rw [hratioRpow]
       field_simp [ne_of_gt hxpos, ne_of_gt hVxpos, ne_of_gt hVypos]
     have hlowBasePow : lowerBase ^ γ = limit / (2 * C) := by
       dsimp [lowerBase]
@@ -228,7 +247,7 @@ theorem tendsto_div_of_tendsto_squareQuotient_ratio
       have hratioUpper : V (y n) / V (x n) ≤ C * ratio ^ p := by
         simpa [C, p, ratio, mul_comm] using hpot
       have hquotientLower : ratio ^ γ / C ≤
-          y n ^ 2 / V (y n) / (x n ^ 2 / V (x n)) := by
+          y n ^ q / V (y n) / (x n ^ q / V (x n)) := by
         rw [hratioFormula]
         apply (le_div_iff₀ (div_pos hVypos hVxpos)).2
         calc
@@ -240,14 +259,13 @@ theorem tendsto_div_of_tendsto_squareQuotient_ratio
             dsimp [C]
             field_simp
             exact (Real.rpow_add hratio γ p).symm
-          _ = ratio ^ 2 := by
-            rw [show γ + p = 2 by linarith [hγp]]
-            exact Real.rpow_natCast ratio 2
+          _ = ratio ^ q := by
+            rw [show γ + p = q by linarith [hγp]]
       have hratiopower : ratio ^ γ < C * (limit + 1) := by
-        have hle : ratio ^ γ ≤ C * (y n ^ 2 / V (y n) / (x n ^ 2 / V (x n))) := by
+        have hle : ratio ^ γ ≤ C * (y n ^ q / V (y n) / (x n ^ q / V (x n))) := by
           calc
             ratio ^ γ = C * (ratio ^ γ / C) := by field_simp [ne_of_gt hC]
-            _ ≤ C * (y n ^ 2 / V (y n) / (x n ^ 2 / V (x n))) :=
+            _ ≤ C * (y n ^ q / V (y n) / (x n ^ q / V (x n))) :=
               mul_le_mul_of_nonneg_left hquotientLower hC.le
         exact lt_of_le_of_lt hle (mul_lt_mul_of_pos_left hwindow.2 hC)
       have hratioUpper : ratio < upperBase := by
@@ -281,29 +299,25 @@ theorem tendsto_div_of_tendsto_squareQuotient_ratio
         rw [hinv, hpowInv] at hpot'
         exact hpot'
       have hquotientFormula :
-          y n ^ 2 / V (y n) / (x n ^ 2 / V (x n)) =
-            ratio ^ 2 * (V (x n) / V (y n)) := by
-        dsimp [ratio]
+          y n ^ q / V (y n) / (x n ^ q / V (x n)) =
+            ratio ^ q * (V (x n) / V (y n)) := by
+        rw [hratioRpow]
         field_simp [ne_of_gt hxpos, ne_of_gt hypos,
           ne_of_gt hVxpos, ne_of_gt hVypos]
-      have hpower : ratio ^ 2 * ratio ^ (-p) = ratio ^ γ := by
+      have hpower : ratio ^ q * ratio ^ (-p) = ratio ^ γ := by
         calc
-          ratio ^ 2 * ratio ^ (-p) = ratio ^ (2 : ℝ) * ratio ^ (-p) := by
-            exact congrArg (fun z : ℝ => z * ratio ^ (-p))
-              (Real.rpow_natCast ratio 2).symm
-          _ = ratio ^ (2 : ℝ) / ratio ^ p := by
+          ratio ^ q * ratio ^ (-p) = ratio ^ q / ratio ^ p := by
             rw [Real.rpow_neg hratio.le, div_eq_mul_inv]
-          _ = ratio ^ (2 - p) := by
-            exact (Real.rpow_sub hratio 2 p).symm
+          _ = ratio ^ (q - p) := (Real.rpow_sub hratio q p).symm
           _ = ratio ^ γ := by simp [hγp]
       have hquotientUpper :
-          y n ^ 2 / V (y n) / (x n ^ 2 / V (x n)) ≤ C * ratio ^ γ := by
+          y n ^ q / V (y n) / (x n ^ q / V (x n)) ≤ C * ratio ^ γ := by
         calc
-          y n ^ 2 / V (y n) / (x n ^ 2 / V (x n)) =
-              ratio ^ 2 * (V (x n) / V (y n)) := hquotientFormula
-          _ ≤ ratio ^ 2 * (C * ratio ^ (-p)) :=
-            mul_le_mul_of_nonneg_left hratioUpper (sq_nonneg ratio)
-          _ = C * (ratio ^ 2 * ratio ^ (-p)) := by ring
+          y n ^ q / V (y n) / (x n ^ q / V (x n)) =
+              ratio ^ q * (V (x n) / V (y n)) := hquotientFormula
+          _ ≤ ratio ^ q * (C * ratio ^ (-p)) :=
+            mul_le_mul_of_nonneg_left hratioUpper (Real.rpow_nonneg hratio.le q)
+          _ = C * (ratio ^ q * ratio ^ (-p)) := by ring
           _ = C * ratio ^ γ := by rw [hpower]
       have hratiopower : limit / (2 * C) < ratio ^ γ := by
         have hlt : limit / 2 < C * ratio ^ γ := lt_of_lt_of_le hwindow.1 hquotientUpper
@@ -335,11 +349,11 @@ theorem tendsto_div_of_tendsto_squareQuotient_ratio
     apply Metric.tendsto_atTop.2
     intro ε hε
     have hvalueClose : ∀ᶠ n : ℕ in atTop,
-        dist (y n ^ 2 / V (y n) / (x n ^ 2 / V (x n))) limit < ε / 2 := by
+        dist (y n ^ q / V (y n) / (x n ^ q / V (x n))) limit < ε / 2 := by
       have h := (Metric.tendsto_atTop.1 hquotient) (ε / 2) (by positivity)
       simpa [limit, α] using h
     have hquotientUpper : ∀ᶠ n : ℕ in atTop,
-        y n ^ 2 / V (y n) / (x n ^ 2 / V (x n)) < limit + 1 := by
+        y n ^ q / V (y n) / (x n ^ q / V (x n)) < limit + 1 := by
       have hnbhd : Set.Iio (limit + 1) ∈ 𝓝 limit := Iio_mem_nhds (by linarith)
       exact hquotient.eventually hnbhd
     let d : ℝ := lower ^ β
@@ -359,6 +373,11 @@ theorem tendsto_div_of_tendsto_squareQuotient_ratio
         with n hval hκupper hU hbound hxpos hypos hVxpos hVypos
       let ratio : ℝ := y n / x n
       have hratio : 0 < ratio := by dsimp [ratio]; exact div_pos hypos hxpos
+      have hratioMul : y n = ratio * x n := by
+        dsimp [ratio]
+        exact (div_mul_cancel₀ _ (ne_of_gt hxpos)).symm
+      have hratioRpow : y n ^ q = ratio ^ q * x n ^ q := by
+        rw [hratioMul, Real.mul_rpow hratio.le hxpos.le]
       have hratioβLower : d ≤ ratio ^ β := by
         dsimp [d]
         exact Real.rpow_le_rpow (le_of_lt hlower) hbound.1 hβ
@@ -371,58 +390,56 @@ theorem tendsto_div_of_tendsto_squareQuotient_ratio
         rw [Real.dist_eq, abs_sub_comm] at hdist
         simpa [hVratio] using hdist
       have hformula :
-          y n ^ 2 / V (y n) / (x n ^ 2 / V (x n)) *
-            (V (y n) / V (x n)) = ratio ^ 2 := by
-        dsimp [ratio]
-        field_simp [ne_of_gt hxpos, ne_of_gt hypos,
-          ne_of_gt hVxpos, ne_of_gt hVypos]
-      have hpower : ratio ^ β * ratio ^ α = ratio ^ 2 := by
+          y n ^ q / V (y n) / (x n ^ q / V (x n)) *
+            (V (y n) / V (x n)) = ratio ^ q := by
+        rw [hratioRpow]
+        field_simp [ne_of_gt hxpos, ne_of_gt hVxpos, ne_of_gt hVypos]
+      have hpower : ratio ^ β * ratio ^ α = ratio ^ q := by
         calc
           ratio ^ β * ratio ^ α = ratio ^ (β + α) := (Real.rpow_add hratio β α).symm
-          _ = ratio ^ (2 : ℝ) := by
-            rw [show β + α = (2 : ℝ) by dsimp [α]; ring]
-          _ = ratio ^ 2 := Real.rpow_natCast ratio 2
+          _ = ratio ^ q := by
+            rw [show β + α = q by dsimp [α]; ring]
       have hid : ratio ^ β * (ratio ^ α -
-            (y n ^ 2 / V (y n) / (x n ^ 2 / V (x n)))) =
-          (y n ^ 2 / V (y n) / (x n ^ 2 / V (x n))) *
+            (y n ^ q / V (y n) / (x n ^ q / V (x n)))) =
+          (y n ^ q / V (y n) / (x n ^ q / V (x n))) *
             (V (y n) / V (x n) - ratio ^ β) := by
         nlinarith [hformula, hpower]
-      have hκpos : 0 < y n ^ 2 / V (y n) / (x n ^ 2 / V (x n)) := by
+      have hκpos : 0 < y n ^ q / V (y n) / (x n ^ q / V (x n)) := by
         positivity
       have habsId : ratio ^ β * |ratio ^ α -
-            (y n ^ 2 / V (y n) / (x n ^ 2 / V (x n)))| =
-          (y n ^ 2 / V (y n) / (x n ^ 2 / V (x n))) *
+            (y n ^ q / V (y n) / (x n ^ q / V (x n)))| =
+          (y n ^ q / V (y n) / (x n ^ q / V (x n))) *
             |V (y n) / V (x n) - ratio ^ β| := by
         calc
           ratio ^ β * |ratio ^ α -
-              (y n ^ 2 / V (y n) / (x n ^ 2 / V (x n)))| =
+              (y n ^ q / V (y n) / (x n ^ q / V (x n)))| =
               |ratio ^ β * (ratio ^ α -
-                (y n ^ 2 / V (y n) / (x n ^ 2 / V (x n))))| := by
+                (y n ^ q / V (y n) / (x n ^ q / V (x n))))| := by
                   rw [abs_mul, abs_of_nonneg (Real.rpow_nonneg hratio.le _)]
-          _ = |(y n ^ 2 / V (y n) / (x n ^ 2 / V (x n))) *
+          _ = |(y n ^ q / V (y n) / (x n ^ q / V (x n))) *
                 (V (y n) / V (x n) - ratio ^ β)| := congrArg abs hid
-          _ = (y n ^ 2 / V (y n) / (x n ^ 2 / V (x n))) *
+          _ = (y n ^ q / V (y n) / (x n ^ q / V (x n))) *
                 |V (y n) / V (x n) - ratio ^ β| := by
                   rw [abs_mul, abs_of_nonneg hκpos.le]
       have habsSmall : |ratio ^ α -
-          (y n ^ 2 / V (y n) / (x n ^ 2 / V (x n)))| < ε / 4 := by
+          (y n ^ q / V (y n) / (x n ^ q / V (x n)))| < ε / 4 := by
         have hupperAbs :
-            (y n ^ 2 / V (y n) / (x n ^ 2 / V (x n))) *
+            (y n ^ q / V (y n) / (x n ^ q / V (x n))) *
                 |V (y n) / V (x n) - ratio ^ β| < (limit + 1) * δ := by
           calc
-            _ < (y n ^ 2 / V (y n) / (x n ^ 2 / V (x n))) * δ :=
+            _ < (y n ^ q / V (y n) / (x n ^ q / V (x n))) * δ :=
               mul_lt_mul_of_pos_left hVclose (by positivity)
             _ ≤ (limit + 1) * δ :=
               mul_le_mul_of_nonneg_right hκupper.le hδ.le
         have hmainAbs : d * |ratio ^ α -
-            (y n ^ 2 / V (y n) / (x n ^ 2 / V (x n)))| < (limit + 1) * δ := by
+            (y n ^ q / V (y n) / (x n ^ q / V (x n)))| < (limit + 1) * δ := by
           calc
             d * |ratio ^ α -
-                (y n ^ 2 / V (y n) / (x n ^ 2 / V (x n)))| ≤
+                (y n ^ q / V (y n) / (x n ^ q / V (x n)))| ≤
                 ratio ^ β * |ratio ^ α -
-                  (y n ^ 2 / V (y n) / (x n ^ 2 / V (x n)))| :=
+                  (y n ^ q / V (y n) / (x n ^ q / V (x n)))| :=
                     mul_le_mul_of_nonneg_right hratioβLower (abs_nonneg _)
-            _ = (y n ^ 2 / V (y n) / (x n ^ 2 / V (x n))) *
+            _ = (y n ^ q / V (y n) / (x n ^ q / V (x n))) *
                   |V (y n) / V (x n) - ratio ^ β| := habsId
             _ < (limit + 1) * δ := hupperAbs
         have hcancel : (limit + 1) * δ = ε * d / 4 := by
@@ -431,22 +448,22 @@ theorem tendsto_div_of_tendsto_squareQuotient_ratio
           field_simp
         rw [hcancel] at hmainAbs
         have : |ratio ^ α -
-            (y n ^ 2 / V (y n) / (x n ^ 2 / V (x n)))| < ε / 4 := by
+            (y n ^ q / V (y n) / (x n ^ q / V (x n)))| < ε / 4 := by
           by_contra hnot
           have hge : ε / 4 ≤ |ratio ^ α -
-              (y n ^ 2 / V (y n) / (x n ^ 2 / V (x n)))| := le_of_not_gt hnot
+              (y n ^ q / V (y n) / (x n ^ q / V (x n)))| := le_of_not_gt hnot
           have hmul := mul_le_mul_of_nonneg_left hge hd.le
           nlinarith
         exact this
       have hdistApprox : dist (ratio ^ α)
-          (y n ^ 2 / V (y n) / (x n ^ 2 / V (x n))) < ε / 4 := by
+          (y n ^ q / V (y n) / (x n ^ q / V (x n))) < ε / 4 := by
         rw [Real.dist_eq]
         exact habsSmall
       have hdist : dist (ratio ^ α) limit < ε := by
         calc
           dist (ratio ^ α) limit ≤
-                dist (ratio ^ α) (y n ^ 2 / V (y n) / (x n ^ 2 / V (x n))) +
-                dist (y n ^ 2 / V (y n) / (x n ^ 2 / V (x n))) limit :=
+                dist (ratio ^ α) (y n ^ q / V (y n) / (x n ^ q / V (x n))) +
+                dist (y n ^ q / V (y n) / (x n ^ q / V (x n))) limit :=
               dist_triangle _ _ _
           _ < ε / 4 + ε / 2 := add_lt_add hdistApprox hval
           _ < ε := by linarith

@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Sequence.IID
+public import Probability.Sequence.IID.Basic
 public import Probability.ConvergenceInDistribution.Basic
 public import Mathlib.MeasureTheory.Function.ConvergenceInDistribution
 
@@ -15,6 +15,21 @@ public import Mathlib.MeasureTheory.Function.ConvergenceInDistribution
 
 General domain-of-attraction definitions for normalized i.i.d. sums.  Stable
 limit laws are added in the stable-distribution layer.
+
+## Public declarations
+
+* `ProbabilityTheory.normalizedIidSum` is the centered normalized sum
+  $a_n^{-1}(\sum_{k<n}x_k-b_n)$, and
+  `ProbabilityTheory.normalizedIidSum_measurable` proves it measurable.
+* `ProbabilityTheory.IsInDomainOfAttractionAlong(ν, μ, a, b)` records eventual positivity of
+  $a_n$ and convergence in distribution of the normalized i.i.d. sums with
+  increment law $ν$ to $μ$. Its projections are
+  `ProbabilityTheory.IsInDomainOfAttractionAlong.eventually_scale_pos` and
+  `ProbabilityTheory.IsInDomainOfAttractionAlong.tendstoInDistribution`.
+* `ProbabilityTheory.IsInDomainOfAttraction(ν, μ)` existentially packages a
+  normalization and centering for that convergence;
+  `ProbabilityTheory.IsInDomainOfAttractionAlong.isInDomainOfAttraction`
+  forgets the specified sequences.
 -/
 
 open Filter MeasureTheory
@@ -60,48 +75,6 @@ theorem tendstoInDistribution {ν limit : Measure ℝ}
       (fun _ => iidSequenceLaw ν) limit := h.2
 
 end IsInDomainOfAttractionAlong
-
-set_option linter.style.haveILetI false in
-/-- Rescaling the normalization by `r⁻¹` rescales the limiting law by `r`.
-This is the continuous-mapping theorem together with the identity between the
-two normalized sums; only eventual positivity of the original scale is needed. -/
-theorem IsInDomainOfAttractionAlong.rescale
-    {ν limit : Measure ℝ} [IsProbabilityMeasure ν] [IsProbabilityMeasure limit]
-    {scale center : ℕ → ℝ}
-    (h : IsInDomainOfAttractionAlong ν limit scale center)
-    (r : ℝ) (hr : 0 < r) :
-    IsInDomainOfAttractionAlong ν (limit.map fun x => r * x)
-      (fun n => r⁻¹ * scale n) center := by
-  let f : ℝ → ℝ := fun x => r * x
-  let scale' : ℕ → ℝ := fun n => r⁻¹ * scale n
-  let limit' : Measure ℝ := limit.map f
-  have hf : Measurable f := by fun_prop
-  have hfcont : Continuous f := by fun_prop
-  have hscalePos : ∀ᶠ n : ℕ in atTop, 0 < scale' n := by
-    filter_upwards [h.eventually_scale_pos] with n hn
-    exact mul_pos (inv_pos.mpr hr) hn
-  have hcontinuous := h.tendstoInDistribution.continuous_comp hfcont
-  haveI : IsProbabilityMeasure limit' := by
-    dsimp [limit']
-    infer_instance
-  have hlimitLaw : limit.map (f ∘ id) = limit'.map id := by
-    simp [limit']
-  have hcontinuous' := MeasureTheory.TendstoInDistribution.congr_limit
-    hcontinuous aemeasurable_id hlimitLaw
-  have hscaleEq : ∀ᶠ n : ℕ in atTop,
-      (fun ω => f (normalizedIidSum scale center n ω)) =ᵐ[iidSequenceLaw ν]
-        normalizedIidSum scale' center n := by
-    filter_upwards [h.eventually_scale_pos] with n hn
-    filter_upwards [] with ω
-    have hscaleNe : scale n ≠ 0 := hn.ne'
-    dsimp [normalizedIidSum, f, scale']
-    have hfactor : (r⁻¹ * scale n)⁻¹ = r * (scale n)⁻¹ := by
-      field_simp [hr.ne', hscaleNe]
-    rw [hfactor]
-    ring
-  have hconvergence := hcontinuous'.congr_eventually hscaleEq
-    (fun n => (normalizedIidSum_measurable scale' center n).aemeasurable)
-  exact ⟨hscalePos, hconvergence⟩
 
 /-- A one-step law belongs to the domain of attraction of `limit` when some
 eventually positive scaling and deterministic centering make its normalized

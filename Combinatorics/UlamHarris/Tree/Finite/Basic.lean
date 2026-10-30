@@ -18,6 +18,16 @@ injective map `i ↦ u ++ [i]`.
 
 The type `FiniteTree α` is the subtype of `Tree α` consisting of finite trees.
 Its topology, measurable structure, and metric are in `Tree/Finite/Space.lean`.
+
+## Public declarations
+
+- `Tree.IsFinite T` means `T.carrier.Finite`, and `Tree.FiniteTree α` is the
+  subtype of trees satisfying this predicate.
+- `Tree.isFinite_iff` unfolds the predicate, while
+  `Tree.IsFinite.isLocallyFinite` proves every finite-carrier tree is locally
+  finite.
+- `Tree.toLocallyFinite α T` is the inclusion into the locally finite subtype;
+  `Tree.toLocallyFinite_injective` proves it injective.
 -/
 
 @[expose] public section
