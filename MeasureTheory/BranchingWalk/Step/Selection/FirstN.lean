@@ -22,10 +22,12 @@ constructors.
 ## Public declarations
 
 - `Combinatorics.Branching.Step.FiniteSelection.firstNBy_measurable` proves
-  measurability of the intrinsic first-`N` selection under admissibility and
-  measurable pairwise comparison keys.
+  `\(\operatorname{Measurable}(\xi \mapsto
+  \operatorname{firstNBy}(N,\operatorname{value})(\xi).select)\)` under
+  admissibility and measurable pairwise comparison keys.
 - `Combinatorics.Branching.Step.FiniteSelection.firstNByPotential_measurable`
-  gives the corresponding result for a real-valued potential key.
+  gives the same measurability conclusion when candidates are ordered by a
+  real-valued potential.
 -/
 
 @[expose] public section

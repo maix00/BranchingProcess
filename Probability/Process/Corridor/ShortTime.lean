@@ -17,20 +17,27 @@ public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
 
 ## Public declarations
 
-- `ProbabilityTheory.rationalInitialCorridorEvent`: the event that all
-  rational-time increments on `[0, horizon]` lie in `(lower, upper)`.
+- `ProbabilityTheory.rationalInitialCorridorEvent X T a b` is
+  \(\{\omega\mid\forall q\in\mathbb Q\cap[0,1],\;
+  a<X(Tq,\omega)-X(0,\omega)<b\}\).
 - `ProbabilityTheory.rationalInitialCorridorEvent_inter_positive_subset_return`:
-  a path in the centered corridor with positive terminal increment belongs
-  to the corresponding corridor-return event.
+  \(A_{T,-\delta,\delta}\cap\{X(T)-X(0)>0\}\subseteq
+  R_{T,-\delta,\delta;0,c}\) whenever \(\delta\le c\).
 - `ProbabilityTheory.rationalInitialCorridorEvent_inter_negative_subset_return`:
-  a path in the centered corridor with negative terminal increment belongs
-  to the corresponding lower-side corridor-return event.
+  \(A_{T,-\delta,\delta}\cap\{X(T)-X(0)<0\}\subseteq
+  R_{T,-\delta,\delta;c,0}\) whenever \(c\le-\delta\).
 - `ProbabilityTheory.nullMeasurableSet_rationalInitialCorridorEvent`:
-  the corridor event is null-measurable when each coordinate is
-  almost-everywhere measurable.
+  the event is null-measurable under \(P\) if every coordinate \(X_t\) is
+  \(P\)-almost-everywhere measurable.
 - `ProbabilityTheory.tendsto_measure_rationalInitialCorridorEvent`: for an
-  almost surely càdlàg process and horizons tending to zero, every fixed
-  positive centered corridor has probability tending to one.
+  if \(X\) is almost surely càdlàg and \(T_n\to0\), then for each
+  \(\delta>0\),
+  \(P(\forall q\in\mathbb Q\cap[0,1],\;
+  |X(T_nq)-X(0)|<\delta)\to1\).
+
+Here \(A_{T,a,b}\) denotes the rational-time corridor event in the first
+declaration, and \(R_{T,a,b;c,d}\) denotes the corresponding corridor-return
+event with terminal interval \([c,d]\).
 
 Almost-sure right continuity at the starting time makes every fixed centered
 spatial corridor overwhelmingly likely as its time horizon shrinks to zero.

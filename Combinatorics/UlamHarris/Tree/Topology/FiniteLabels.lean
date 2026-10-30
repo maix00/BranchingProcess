@@ -25,13 +25,15 @@ file makes no equality assertion beyond the finite case.
 
 ## Public declarations
 
-- `finite_truncations` proves there are finitely many truncations at each
-  fixed depth, and `countable_truncationBalls` proves the truncation-ball
-  family is countable.
-- `borel_treeTruncationTopology_eq_cylinder_of_finite` identifies the Borel
-  σ-algebra of the truncation topology with the cylinder σ-algebra.
-- `borel_treeMetricTopology_eq_cylinder_of_finite` gives the same equality
-  for the tree metric topology.
+- `finite_truncations` states
+  `\(\operatorname{Finite}\{\tau : Tree\ \alpha\mid
+  \tau=\tau.truncate(n)\}\)`; `countable_truncationBalls` states that the
+  family of truncation balls is countable.
+- `borel_treeTruncationTopology_eq_cylinder_of_finite` states
+  `\(\mathcal B(treeTruncationTopology)=instMeasurableSpaceTree\)`;
+  `borel_treeMetricTopology_eq_cylinder_of_finite` states
+  `\(\mathcal B(treeMetricTopology(\alpha))=instMeasurableSpaceTree\)`
+  when `α` is finite.
 -/
 
 @[expose] public section

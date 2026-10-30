@@ -14,8 +14,9 @@ public import Mathlib.MeasureTheory.Measure.Tight
 ## Public declarations
 
 * `MeasureTheory.isTightMeasureSet_image_of_finite` states that the image of
-  a finite index set under a family of measures is tight when each individual
-  measure is tight.
+  a finite index set under a family of tight measures is tight:
+  `\((\forall i,\ \operatorname{IsTightMeasureSet}\{\mu_i\})
+  \to \operatorname{IsTightMeasureSet}(\mu '' I)\)` when `I` is finite.
 -/
 
 @[expose] public section

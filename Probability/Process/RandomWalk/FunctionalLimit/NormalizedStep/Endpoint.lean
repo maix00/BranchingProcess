@@ -21,11 +21,17 @@ identifies the normalized-step laws with horizontal-tube events.
 ## Public declarations
 
 - `measure_centeredSkorokhodCorridorEndsIn_le_liminf_strictTubeEndsIn_of_functionalLimit`
-  gives the open-corridor lower bound for a strict tube whose normalized
-  terminal value lies in a prescribed open interval.
+  states
+  \(P(\operatorname{limit}\in O)\le\liminf_n
+  \mathbb P_\nu(\operatorname{strictTube}_n\land
+  \operatorname{endpoint}_n\in(a,b))\), where the limit event is the open
+  centered corridor with terminal value in \((a,b)\).
 - `limsup_weakTubeEndsIn_le_measure_centeredSkorokhodCorridorEndsIn_of_functionalLimit`
-  gives the matching closed-corridor upper bound for weak tubes with the same
-  endpoint constraint.
+  states the matching closed-set bound
+  \(\limsup_n\mathbb P_\nu(\operatorname{weakTube}_n\land
+  \operatorname{endpoint}_n\in[a,b])\le
+  P(\operatorname{limit}\in C)\), where \(C\) is the closed centered
+  corridor with terminal value in \([a,b]\).
 
 -/
 

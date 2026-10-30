@@ -22,14 +22,19 @@ of the source slice.  The particles retain their full multi-root labels
 
 - `Cloud.SliceDominatingMap φ C D t` is an injective map from `C`'s particles
   at time `t` to `D`'s particles such that `φ` of each target position is at
-  most `φ` of the matched source position.
+  most `φ` of the matched source position: for its underlying map `f`,
+  `\(f '' C.particles(t) \subseteq D.particles(t)\)`,
+  `\(\operatorname{InjOn}(f,C.particles(t))\)`, and
+  `\(\forall p\in C.particles(t),
+  \varphi(D.position((f(p)).1,(f(p)).2))\le
+  \varphi(C.position(p.1,p.2))\)`.
 - `Cloud.InjectivelyDominatesBy φ C D t` is the corresponding existence
-  proposition. `injectivelyDominatesBy_iff_nonempty` identifies it with
-  `Nonempty (Cloud.SliceDominatingMap φ C D t)` by
-  `Cloud.injectivelyDominatesBy_iff_nonempty`. The concrete maps have identity
-  and composition `Cloud.SliceDominatingMap.refl` and
-  `Cloud.SliceDominatingMap.trans`; `Cloud.SliceDominatingMap.injectivelyDominatesBy`
-  forgets a concrete map, and
+  proposition, and `Cloud.injectivelyDominatesBy_iff_nonempty` states
+  `\(C.InjectivelyDominatesBy(\varphi,D,t)
+  \iff \operatorname{Nonempty}(Cloud.SliceDominatingMap(\varphi,C,D,t))\)`.
+  `Cloud.SliceDominatingMap.injectivelyDominatesBy` forgets a concrete map;
+  `Cloud.SliceDominatingMap.refl` and
+  `Cloud.SliceDominatingMap.trans` give identity and composition, and
   `Cloud.SliceDominatingMap.ofInjectivelyDominatesBy` chooses one from its
   existence proof.
 - `Cloud.injectivelyDominatesBy_refl`,

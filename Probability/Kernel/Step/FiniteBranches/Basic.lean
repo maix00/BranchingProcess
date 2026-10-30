@@ -16,14 +16,17 @@ public import Mathlib.MeasureTheory.Measure.Dirac.Basic
 ## Public declarations
 
 - `ofFinitePartialStep` defines the kernel of a finite weighted family of
-  option-valued transitions; a `none` outcome kills its weight.
-- `ofFinitePartialStep_apply` gives the target mass as the weighted sum of
-  branches landing in the target, and `lintegral_ofFinitePartialStep` gives
-  its integral formula.
-- `isSubMarkovKernel_ofFinitePartialStep` proves sub-Markovness when the
-  total available weight is at most one.
+  option-valued transitions, with
+  \(K(a,A)=\sum_k w_k\mathbf1_{\{\operatorname{next}(a,k)\in
+  \operatorname{some}(A)\}}\).
+- `ofFinitePartialStep_apply` gives this target-mass formula, and
+  `lintegral_ofFinitePartialStep` gives
+  \(\int f\,dK(a)=\sum_k w_k\,\operatorname{Option.elim}
+  (\operatorname{next}(a,k),0,f)\).
+- `isSubMarkovKernel_ofFinitePartialStep` proves
+  \(\sum_k w_k\le1\Longrightarrow K(a,\beta)\le1\).
 - `ofFinitePartialStep_eq_ofPartialStep` identifies this finite sum with the
-  general noise-law kernel when each singleton has the specified weight.
+  noise-law kernel when \(\nu(\{k\})=w_k\) for every branch \(k\).
 
 The state space may be countable and the target may be any measurable space;
 finiteness is required only of the branch index type.

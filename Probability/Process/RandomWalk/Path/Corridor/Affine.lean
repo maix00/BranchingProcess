@@ -28,23 +28,37 @@ are handled by the branching-random-walk layer.
 
 ## Public declarations
 
-ProbabilityTheory.RandomWalk.affineCorridorHistory,
-affineCorridorPrefix, affineCorridorFirstWindow,
-affineCorridorHistoryEndpointCutoff, affineCorridorThrough,
-affineCorridorInitialWindow,
-affineCorridorThrough_prependHistory_iff,
-affineCorridorPrefix_prependHistory_iff,
-measurableSet_affineCorridorThrough,
-affineCorridorThrough_succ_eq_endpointCutoff,
-measurableSet_affineCorridorHistory,
-measurableSet_affineCorridorPrefix,
-affineCorridorHistory_firstWindow,
-affineCorridorHistory_terminalUpper,
-measurableSet_affineCorridorHistoryEndpointCutoff,
-affineCorridorHistoryEndpointCutoff_firstWindow,
-affineCorridorHistoryEndpointCutoff_terminalUpper,
-affineTubeIncrement_mem_noLargeDropEndpointBelowEvent, and
-affineCorridorHistory_continuation_mem_noLargeDropEndpointBelowEvent.
+- `affineCorridorHistory n a v Δ` and `affineCorridorPrefix n a v Δ` have
+  membership laws
+  `\(x_k\in[a+vk,a+vk+\Delta]\)` for every history coordinate `k`.
+  `affineCorridorFirstWindow a v Δ` is `[a + v, a + v + Δ]`, and
+  `affineCorridorInitialWindow a Δ` is `[a, a + Δ]`.
+- `affineCorridorHistoryEndpointCutoff n a v Δ U` adds the terminal bound
+  `\(x_{n+1}\le U\)` to `affineCorridorHistory`; `affineCorridorThrough`
+  states the same corridor and terminal condition on `Fin (horizon + 1)`.
+  `affineCorridorThrough_succ_eq_endpointCutoff` identifies
+  `affineCorridorThrough (n + 1) a v Δ U` with
+  `affineCorridorHistoryEndpointCutoff n a v Δ U`.
+- `affineCorridorThrough_prependHistory_iff` and
+  `affineCorridorPrefix_prependHistory_iff` give the restart identities; in
+  particular,
+  `\(\operatorname{prependHistory}(x,y)\in
+  \operatorname{affineCorridorThrough}(n+1,a,v,\Delta,U)\)` is equivalent to
+  `\(x\in[a,a+\Delta]\)` and
+  `\(y\in\operatorname{affineCorridorThrough}(n,a+v,v,\Delta,U)\)`.
+- `measurableSet_affineCorridorThrough`,
+  `measurableSet_affineCorridorHistory`,
+  `measurableSet_affineCorridorPrefix`, and
+  `measurableSet_affineCorridorHistoryEndpointCutoff` establish measurability
+  of the corresponding events. `affineCorridorHistory_firstWindow`,
+  `affineCorridorHistory_terminalUpper`,
+  `affineCorridorHistoryEndpointCutoff_firstWindow`, and
+  `affineCorridorHistoryEndpointCutoff_terminalUpper` give their endpoint
+  consequences.
+- `affineTubeIncrement_mem_noLargeDropEndpointBelowEvent` and
+  `affineCorridorHistory_continuation_mem_noLargeDropEndpointBelowEvent`
+  state the deterministic inclusions from an affine-tube increment or a
+  corridor continuation into the corresponding drawdown and endpoint event.
 -/
 
 @[expose] public section

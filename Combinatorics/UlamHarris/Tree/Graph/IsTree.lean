@@ -23,15 +23,16 @@ mathlib's notion of a tree on an arbitrary vertex type.
 
 ## Public declarations
 
-- `Tree.childGraph_isTree T` identifies the undirected parent--child graph of
-  one address tree as a Mathlib `SimpleGraph.IsTree`.
-- For `[Unique Root]`, `forestGraph_isTree T` identifies the disjoint-union
-  graph with a tree, and `uniqueForestGraphIso T` gives its graph isomorphism
-  with `Tree.childGraph (T default)`.
+- `Tree.childGraph_isTree T` states
+  `\((Tree.childGraph\ T).IsTree\)` for the undirected parent--child graph.
+- For `[Unique Root]`, `RootIndexed.Tree.forestGraph_isTree T` states
+  `\((RootIndexed.Tree.forestGraph\ T).IsTree\)`, and
+  `RootIndexed.Tree.uniqueForestGraphIso T` gives
+  `\(forestGraph(T)\cong Tree.childGraph(T\ default)\)`.
 - `childGraph_isAcyclic_iff_forestGraph`,
   `childGraph_connected_iff_forestGraph`, and
-  `childGraph_isTree_iff_forestGraph` transfer these graph properties across
-  that isomorphism.
+  `childGraph_isTree_iff_forestGraph` state the corresponding equivalences
+  between the one-root child graph and the forest graph.
 -/
 
 @[expose] public section

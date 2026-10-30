@@ -24,10 +24,15 @@ Probability.Process.Path.Representation.Skorokhod.
 ## Public declarations
 
 - `ProbabilityTheory.IsBrownianReal.hasLaw_finiteEvaluation_continuousunitIntervalPath`:
-  finite evaluations of a continuous Brownian path have the Brownian
-  projective-family law reindexed to the selected unit-interval times.
+  for every finite \(I\subseteq[0,1]\), the evaluation vector of the
+  continuous path has law
+  \(\operatorname{map}(\operatorname{restrict}_I,
+  \operatorname{BrownianReal.projectiveFamily}(I'))\), where
+  \(I'=\{t\in\mathbb R_{\ge0}:t=s\text{ for some }s\in I\}\) and
+  \(\operatorname{restrict}_I(x)(s)=x(\operatorname{toNNReal}(s))\).
 - `ProbabilityTheory.IsBrownianReal.hasLaw_finiteEvaluation_cadlagunitIntervalPath`:
-  the same finite-dimensional law after the Skorokhod embedding.
+  the same finite-dimensional law holds for the evaluation vector of its
+  Skorokhod embedding.
 -/
 
 open MeasureTheory

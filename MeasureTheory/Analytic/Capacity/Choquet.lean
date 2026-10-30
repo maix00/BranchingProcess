@@ -17,22 +17,27 @@ import Topology.Compactness.CompactSystem.Operations
 ## Public declarations
 
 - `IsPavingAnalyticFor.isCapacitable` and
-  `IsPavingAnalytic.isCapacitable` state that a set analytic for a paving is
-  capacitable for every capacity satisfying the required empty-set,
-  finite-intersection, and finite-union conditions.
+  `IsPavingAnalytic.isCapacitable` state that
+  `\(\operatorname{IsPavingAnalyticFor}(p,\mathcal K,s)
+  \to \operatorname{IsCapacitable}(m,s)\)` and
+  `\(\operatorname{IsPavingAnalytic}(p,s)
+  \to \operatorname{IsCapacitable}(m,s)\)`, under the stated capacity
+  hypotheses.
 - `isCapacitable_measure_iff` characterizes
-  `IsCapacitable (measureCapacity μ) s` by `NullMeasurableSet s μ`.
+  `\(\operatorname{IsCapacitable}(\operatorname{measureCapacity}(\mu),s)
+  \iff \operatorname{NullMeasurableSet}(s,\mu)\)` for finite `μ`.
   `IsPavingAnalytic.nullMeasurableSet` and
   `IsMeasurableAnalytic.nullMeasurableSet` imply that analytic sets are
-  null-measurable for every finite measure.
+  `\(\operatorname{NullMeasurableSet}(s,\mu)\)` for every finite `μ`.
 - `IsPavingAnalytic.nullMeasurableSet_fst`,
   `IsPavingAnalytic.nullMeasurableSet_snd`,
   `IsMeasurableAnalytic.nullMeasurableSet_fst`,
   `IsMeasurableAnalytic.nullMeasurableSet_snd`,
   `MeasurableSet.nullMeasurableSet_fst`, and
-  `MeasurableSet.nullMeasurableSet_snd` state null-measurability of the
-  corresponding projections under the stated compactness and standard
-  Borel hypotheses.
+  `MeasurableSet.nullMeasurableSet_snd` state
+  `\(\operatorname{NullMeasurableSet}(\operatorname{Prod.fst}''s,\mu)\)`
+  or the corresponding second-coordinate projection under the stated
+  compactness and standard Borel hypotheses.
 - `isPavingAnalytic_swap` and `isPavingAnalytic_measurableSet_swap` transport
   analytic sets under the coordinate swap.
 

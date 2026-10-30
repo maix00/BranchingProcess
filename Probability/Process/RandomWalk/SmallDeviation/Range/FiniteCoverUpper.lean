@@ -45,7 +45,10 @@ Graduate Texts in Mathematics 113, Springer (1991), DOI
 ## Public declarations
 
 - `ProbabilityTheory.RandomWalk.SmallDeviation.Range.eventually_iidSequenceLaw_blockOscillationProbability_le_of_fixedCover`:
-  the uniform eventual one-block probability bound stated above.
+  under \(L_n\to\infty\), \(w_n/\sqrt{L_n}\le u\) eventually,
+  \(m>0\), and the displayed spectral condition, eventually
+  \(\mathbb P_\nu\{\operatorname{osc}(S_0,\ldots,S_{L_n})\le w_n\}
+  \le 2B_m(u)\).
 -/
 
 open Filter MeasureTheory ProbabilityTheory
