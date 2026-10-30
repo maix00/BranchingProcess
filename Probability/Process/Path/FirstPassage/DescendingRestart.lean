@@ -6,13 +6,15 @@ Authors: WANG Yiyang
 
 module
 
+public import Probability.Process.Path.Transform.Continuous
+
 public import Probability.Process.Path.FirstPassage.Descending
 public import Probability.Process.Path.FirstPassage.Restart
 
 /-!
 # Restart identity for descending hitting times
 
-The public theorems in this file are:
+## Public declarations
 
 - `ProbabilityTheory.descendingHittingTime_shiftToZero_eq`:
   for finite $\tau_x,\tau_{x+y}$ and $y>0$,

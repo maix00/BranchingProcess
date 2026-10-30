@@ -7,7 +7,8 @@ Authors: WANG Yiyang
 module
 
 public import Probability.BranchingRandomWalk.Population.Processes.StepSelection.SplitSchedule.Definition.Basic
-public import Probability.BranchingRandomWalk.Timing.Candidates.Ordered
+public import Probability.Process.HittingTime.OrderedCandidates
+public import Probability.Process.Stopping.TrialSchedule.Completion
 
 /-!
 # Successful completions on a split schedule
@@ -15,6 +16,17 @@ public import Probability.BranchingRandomWalk.Timing.Candidates.Ordered
 Each trial runs for a fixed duration after its observable split-schedule start.
 The first ordered success is a stopping time and its generation event has the
 usual current-success/earlier-failure form.
+## Public declarations
+
+* `completion` is the global time at which a trial's fixed-duration run ends.
+  `completion_isStoppingTime` and its countable-slot variant prove it is a
+  stopping time, and `completion_mono` proves completion times are ordered.
+* `firstSuccessfulCompletion_isStoppingTime` and
+  `firstSuccessfulCompletion_isStoppingTime_of_countable` give the stopping
+  time of the first successful completion.
+* `mem_orderedDeclaration_iff` characterizes membership in the ordered
+  population declaration by success at the current completion and failure at
+  all earlier trial completions.
 -/
 
 open MeasureTheory
@@ -35,7 +47,8 @@ noncomputable def completion
     (initial : RootIndexed.StepField Root α X → WithTop ℕ)
     (threshold duration i : ℕ)
     (ω : RootIndexed.StepField Root α X) : WithTop ℕ :=
-  time R root initial threshold i ω + duration
+  ProbabilityTheory.Process.Stopping.TrialSchedule.completion
+    (time R root initial threshold) duration i ω
 
 theorem completion_isStoppingTime
     {Root α X : Type*} [MeasurableSpace X]
@@ -49,7 +62,9 @@ theorem completion_isStoppingTime
     IsStoppingTime
       (RootIndexed.stepFiltration (Root := Root) (α := α) (X := X))
       (completion R root initial threshold duration i) :=
-  htime.add_const' duration
+  ProbabilityTheory.Process.Stopping.TrialSchedule.completion_isStoppingTime
+    (RootIndexed.stepFiltration (Root := Root) (α := α) (X := X))
+    (time R root initial threshold) i htime duration
 
 theorem completion_isStoppingTime_of_countable
     {Root α X : Type*} [Countable α] [MeasurableSpace X]
@@ -72,9 +87,9 @@ theorem completion_mono
     (threshold duration : ℕ)
     (ω : RootIndexed.StepField Root α X) :
     Monotone fun i => completion R root initial threshold duration i ω := by
-  intro i j hij
-  simpa [completion] using add_le_add_left
-    (time_mono R root initial threshold ω hij) (duration : WithTop ℕ)
+  exact ProbabilityTheory.Process.Stopping.TrialSchedule.completion_mono
+    (time R root initial threshold)
+    (fun ω => time_mono R root initial threshold ω) duration ω
 
 /-- The first successful completed split-scheduled trial is a stopping time. -/
 theorem firstSuccessfulCompletion_isStoppingTime
@@ -150,10 +165,9 @@ theorem mem_orderedDeclaration_iff
         completion R root initial threshold duration i ω = n ∧
           ω ∈ success i ∧
           ∀ j ∈ candidates, j < i → ω ∉ success j := by
-  apply mem_orderedCandidateDeclarationWithin_iff
-  intro ω' i j _ _ hji
-  exact completion_mono R root initial threshold duration ω'
-    (Nat.le_of_lt hji)
+  exact ProbabilityTheory.mem_orderedDeclaration_iff
+    (completion R root initial threshold duration) success candidates
+    (fun ω' => completion_mono R root initial threshold duration ω') n ω
 
 end SplitSchedule
 end StepSelection

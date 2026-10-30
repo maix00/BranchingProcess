@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Combinatorics.BranchingWalk.Step.Basic
-public import Combinatorics.BranchingWalk.Step.Selection.Count
+public import Combinatorics.BranchingWalk.Step.Count
 public import Combinatorics.BranchingWalk.Step.Measurability
 public import Mathlib.Basic.Real.ENatENNReal
 public import Mathlib.MeasureTheory.Measure.GiryMonad

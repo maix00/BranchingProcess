@@ -17,6 +17,17 @@ public import Topology.Cadlag.Skorokhod.Path.Endpoint
 Tightness and convergence of finite-dimensional laws identify weak limits in
 Skorokhod path space. The underlying dense-coordinate measure-uniqueness
 results are in `MeasureTheory.Measure.CadlagPath.FiniteDimensional.Dense`.
+
+## Public declarations
+
+- `ProbabilityTheory.CadlagPath.ProbabilityMeasure.exists_tendsto_subseq_of_tight`:
+  every tight sequence $(\mu_n)$ of probability laws on
+  $D([0,1],\mathbb R)$ has a strictly increasing $n_k$ and a probability law
+  $\mu_0$ with $\mu_{n_k}\Rightarrow\mu_0$.
+- `ProbabilityTheory.CadlagPath.ProbabilityMeasure.tendsto_of_tight_of_finiteGridEvaluation`:
+  if $(\mu_i)$ is tight and $\mu_i\circ e_\pi^{-1}\Rightarrow
+  \mu_0\circ e_\pi^{-1}$ for every finite increasing grid $\pi$ beginning
+  at $0$, then $\mu_i\Rightarrow\mu_0$ on Skorokhod path space.
 -/
 
 @[expose] public section

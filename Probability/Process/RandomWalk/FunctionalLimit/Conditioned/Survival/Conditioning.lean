@@ -14,6 +14,8 @@ public import Mathlib.Probability.ConditionalProbability
 /-!
 # Random-walk laws conditioned on nonnegative survival
 
+## Public declarations
+
 The public objects and theorems in this file are:
 
 - `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.survivalConditionedLaw`:

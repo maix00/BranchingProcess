@@ -6,39 +6,32 @@ Authors: WANG Yiyang
 
 module
 
-public import Combinatorics.BranchingWalk.Selection.NSelection.Mechanism.Infinite
-public import Combinatorics.BranchingWalk.Step.Potential
+public import Combinatorics.Selection.NSelection.Mechanism.Infinite.Basic
+public import Combinatorics.BranchingWalk.Step.Basic
 
 /-!
 # Finite selections from a branching step
 
 A finite step selection chooses finitely many surviving child slots from an
-otherwise arbitrary branching step.  It does not prescribe an enumeration,
-a distinguished slot, an order, or a capacity.  Those are properties of
-particular rules rather than of the branching-step representation.
+otherwise arbitrary branching step. It carries no order or capacity rule;
+those belong to particular selection operations.
 
 ## Public declarations
 
-- `Step.FiniteSelection α X` assigns a finite set `R ξ` to every step with
-  `↑(R ξ) ⊆ support ξ`; `mem_support` gives the corresponding membership fact.
-- `FiniteSelection.IsBoundedBy R N` means `(R ξ).card ≤ N` for every `ξ`.
-- `FiniteSelection.filter R keep` retains selected slots satisfying
-  `keep ξ i`; `mem_filter` gives its membership equivalence, and
-  `filter_isBoundedBy` preserves a capacity bound.
-- `FiniteSelection.belowPotential R φ a` retains slots with
-  `ξ.potentialValue' φ i ≤ a`.
-- `FiniteSelection.firstNBy N value hadmits` constructs a selection from the
-  generic existence witnesses. `firstNBy_spec` gives its `IsFirstNBy`
-  specification, `firstNBy_isBoundedBy` bounds its size by `N`, and
-  `firstNBy_subset_of_le` shows monotonicity in the capacity.
-- `FiniteSelection.firstNByPotential N φ hadmits` orders by potential value
-  with slot label as tie breaker;
-  `admitsFirstNByPotential_of_level_finite` supplies existence from finite
-  lower potential levels.
-- `FiniteSelection.preserveFirstBelowPotential N φ a hlevel` retains the first
-  surviving child and members of the first-`N` potential segment below `a`;
-  `mem_preserveFirstBelowPotential_iff` states membership, and
-  `preserveFirstBelowPotential_isBoundedBy` gives capacity `N` when `1 ≤ N`.
+- `Combinatorics.Branching.Step.FiniteSelection α X` assigns a finite set
+  `R ξ` with `↑(R ξ) ⊆ support ξ`; its `select` field returns that set.
+- `Combinatorics.Branching.Step.FiniteSelection.mem_support` states
+  `i ∈ R ξ → survive ξ i`.
+- `Combinatorics.Branching.Step.FiniteSelection.IsBoundedBy R N` means
+  `(R ξ).card ≤ N` for every step `ξ`.
+- `Combinatorics.Branching.Step.FiniteSelection.filter R keep` retains the
+  selected slots with `keep ξ i`; `.mem_filter` gives its membership formula,
+  and `.filter_isBoundedBy` preserves every capacity bound.
+- `Combinatorics.Branching.Step.FiniteSelection.firstNBy N value hadmits`
+  constructs a first-`N` selection from existence witnesses;
+  `.firstNBy_spec` gives `IsFirstNBy N (value ξ) (support ξ) (R ξ)`,
+  `.firstNBy_isBoundedBy` gives `(R ξ).card ≤ N`, and
+  `.firstNBy_subset_of_le` gives monotonicity in `N`.
 -/
 
 @[expose] public section
@@ -90,12 +83,6 @@ theorem filter_isBoundedBy (R : Step.FiniteSelection α X)
   intro ξ
   exact (Finset.card_filter_le _ _).trans (hR ξ)
 
-/-- Kill selected children whose potential exceeds a threshold. -/
-noncomputable def belowPotential [MeasurableSpace X]
-    (R : Step.FiniteSelection α X) (φ : Potential X) (a : ℝ) :
-    Step.FiniteSelection α X :=
-  R.filter fun ξ i => ξ.potentialValue' φ i ≤ a
-
 /-- Select the intrinsic first `N` surviving slots by a step-dependent
 ordered observation.  Existence is supplied explicitly, so the constructor
 does not hide any local-finiteness assumption. -/
@@ -133,97 +120,9 @@ theorem firstNBy_subset_of_le
   (firstNBy_spec N value hadmitsN ξ).subset_of_le
     (firstNBy_spec M value hadmitsM ξ) hNM
 
-/-- First-`N` selection ordered by a real-valued potential of the child
-mark.  Raw slots serve only as a deterministic tie breaker. -/
-noncomputable def firstNByPotential
-    [MeasurableSpace X] [LinearOrder α]
-    (N : ℕ) (φ : Potential X)
-    (hadmits : ∀ ξ : Step α X, AdmitsFirstNBy N
-      (fun i => ξ.potentialValue' φ i) (support ξ)) :
-    Step.FiniteSelection α X :=
-  firstNBy N (fun ξ i => ξ.potentialValue' φ i) hadmits
-
-/-- Finite lower potential levels guarantee existence of the intrinsic
-first-`N` child selection.  This also rules out an unattained left edge such
-as displacements `1 / n`. -/
-theorem admitsFirstNByPotential_of_level_finite
-    [MeasurableSpace X] [LinearOrder α]
-    (N : ℕ) (φ : Potential X) (ξ : Step α X)
-    (hlevel : ∀ a : ℝ,
-      {i | survive ξ i ∧ ξ.potentialValue' φ i ≤ a}.Finite) :
-    AdmitsFirstNBy N (fun i => ξ.potentialValue' φ i) (support ξ) := by
-  apply admitsFirstNBy_of_lowerFinite N _
-  intro p hp
-  apply (hlevel (ξ.potentialValue' φ p)).subset
-  intro q hq
-  refine ⟨hq.1, ?_⟩
-  exact (Prod.Lex.le_iff.mp hq.2).elim le_of_lt (fun h => h.1.le)
-
-/-- Preserve the first child whenever it exists, and keep the remaining
-members of the first `N` segment only below a potential threshold.  The
-branching step itself need not be ordered and may be empty. -/
-noncomputable def preserveFirstBelowPotential
-    [MeasurableSpace X] [LinearOrder α]
-    (N : ℕ) (φ : Potential X) (a : ℝ)
-    (hlevel : ∀ ξ : Step α X, ∀ b : ℝ,
-      {i | survive ξ i ∧ ξ.potentialValue' φ i ≤ b}.Finite) :
-    Step.FiniteSelection α X := by
-  let admits : ∀ k ξ, AdmitsFirstNBy k
-      (fun i => ξ.potentialValue' φ i) (support ξ) :=
-    fun k ξ => admitsFirstNByPotential_of_level_finite k φ ξ (hlevel ξ)
-  let first := firstNByPotential 1 φ (admits 1)
-  let initial := firstNByPotential N φ (admits N)
-  exact {
-    select := fun ξ => first ξ ∪ (initial.belowPotential φ a) ξ
-    subset_support := fun ξ i hi => by
-      rcases Finset.mem_union.mp hi with hi | hi
-      · exact first.subset_support ξ i hi
-      · exact (initial.belowPotential φ a).subset_support ξ i hi }
-
-theorem mem_preserveFirstBelowPotential_iff
-    [MeasurableSpace X] [LinearOrder α]
-    (N : ℕ) (φ : Potential X) (a : ℝ)
-    (hlevel : ∀ ξ : Step α X, ∀ b : ℝ,
-      {i | survive ξ i ∧ ξ.potentialValue' φ i ≤ b}.Finite)
-    (ξ : Step α X) (i : α) :
-    i ∈ preserveFirstBelowPotential N φ a hlevel ξ ↔
-      i ∈ firstNByPotential 1 φ
-          (fun ξ => admitsFirstNByPotential_of_level_finite
-            1 φ ξ (hlevel ξ)) ξ ∨
-        (i ∈ firstNByPotential N φ
-            (fun ξ => admitsFirstNByPotential_of_level_finite
-              N φ ξ (hlevel ξ)) ξ ∧
-          ξ.potentialValue' φ i ≤ a) := by
-  simp [preserveFirstBelowPotential, belowPotential, mem_filter]
-
-theorem preserveFirstBelowPotential_isBoundedBy
-    [MeasurableSpace X] [LinearOrder α]
-    (N : ℕ) (hN : 1 ≤ N) (φ : Potential X) (a : ℝ)
-    (hlevel : ∀ ξ : Step α X, ∀ b : ℝ,
-      {i | survive ξ i ∧ ξ.potentialValue' φ i ≤ b}.Finite) :
-    (preserveFirstBelowPotential N φ a hlevel).IsBoundedBy N := by
-  intro ξ
-  let admits : ∀ k ξ, AdmitsFirstNBy k
-      (fun i => ξ.potentialValue' φ i) (support ξ) :=
-    fun k ξ => admitsFirstNByPotential_of_level_finite k φ ξ (hlevel ξ)
-  let first := firstNByPotential 1 φ (admits 1)
-  let initial := firstNByPotential N φ (admits N)
-  have hfirst : first ξ ⊆ initial ξ :=
-    firstNBy_subset_of_le hN
-      (fun ξ i => ξ.potentialValue' φ i) (admits 1) (admits N) ξ
-  have hunion : first ξ ∪ (initial.belowPotential φ a) ξ ⊆ initial ξ := by
-    intro i hi
-    rcases Finset.mem_union.mp hi with hi | hi
-    · exact hfirst hi
-    · have hi' : i ∈ initial.filter
-          (fun ξ i => ξ.potentialValue' φ i ≤ a) ξ := by
-        simpa only [belowPotential] using hi
-      exact (mem_filter initial
-        (fun ξ i => ξ.potentialValue' φ i ≤ a) ξ i).mp hi' |>.1
-  apply (Finset.card_le_card hunion).trans
-  exact (firstNBy_spec N
-    (fun ξ i => ξ.potentialValue' φ i) (admits N) ξ).card_le
 
 end Step.FiniteSelection
 
 end Combinatorics.Branching
+
+end

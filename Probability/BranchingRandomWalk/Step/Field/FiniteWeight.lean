@@ -15,6 +15,13 @@ public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law.Basic
 Boundary normalization first gives one-step almost-sure finiteness.  For
 countable root and address labels, the same property holds simultaneously at
 every coordinate of the root-indexed product field.
+
+## Public declarations
+
+- `ProbabilityTheory.BranchingRandomWalk.RootIndexed.stepFieldLaw_all_finitePotentialWeight`:
+  for countable roots and slots, the negative exponential weight is finite at
+  every field coordinate almost surely.
+
 -/
 
 @[expose] public section
@@ -26,36 +33,8 @@ namespace ProbabilityTheory.BranchingRandomWalk
 
 open Combinatorics.UlamHarris Combinatorics.Branching
 
-/-- The measurable one-step event on which the negative exponential child
-weight is finite. -/
-def finitePotentialWeightSteps {α X : Type*} [MeasurableSpace X]
-    (φ : Potential X) : Set (Combinatorics.Branching.Step α X) :=
-  {ξ | totalPotentialWeight φ (-1) ξ ≠ ∞}
-
-theorem measurableSet_finitePotentialWeightSteps
-    {α X : Type*} [Countable α] [MeasurableSpace X]
-    (φ : Potential X) : MeasurableSet (finitePotentialWeightSteps (α := α) φ) := by
-  exact (totalPotentialWeight_measurable φ (-1)
-    (measurableSet_singleton (∞ : ENNReal))).compl
-
-theorem HasBoundaryNormalization.measure_finitePotentialWeightSteps
-    {α X : Type*} [Countable α] [MeasurableSpace X]
-    (φ : Potential X)
-    (μ : Measure (Combinatorics.Branching.Step α X)) [IsProbabilityMeasure μ]
-    (h : HasBoundaryNormalization φ μ) :
-    μ (finitePotentialWeightSteps φ) = 1 := by
-  calc
-    μ (finitePotentialWeightSteps φ) = μ Set.univ :=
-      (ae_mem_iff_measure_eq
-        (measurableSet_finitePotentialWeightSteps φ).nullMeasurableSet).mp
-        (by
-          change ∀ᵐ ξ ∂μ, totalPotentialWeight φ (-1) ξ ≠ ∞
-          exact h.ae_totalPotentialWeight_ne_top φ μ)
-    _ = 1 := measure_univ
-
-/-- Under boundary normalization every coordinate of a countably labelled
-pre-sampled forest has finite negative exponential weight simultaneously,
-almost surely. -/
+/-- Under boundary normalization, the negative exponential child weight is
+finite at every address in a countably indexed pre-sampled forest, almost surely. -/
 theorem RootIndexed.stepFieldLaw_all_finitePotentialWeight
     {Root α X : Type*} [Countable Root] [Countable α] [MeasurableSpace X]
     (φ : Potential X)
@@ -64,9 +43,19 @@ theorem RootIndexed.stepFieldLaw_all_finitePotentialWeight
     ∀ᵐ field ∂RootIndexed.stepFieldLaw (Root := Root) μ,
       ∀ r : Root, ∀ u : TreeNode α,
         totalPotentialWeight φ (-1) (field r u) ≠ ∞ := by
-  simpa [finitePotentialWeightSteps] using
-    (RootIndexed.stepFieldLaw_ae_all_of_measure_one
-      (measurableSet_finitePotentialWeightSteps φ) μ
-      (h.measure_finitePotentialWeightSteps φ μ))
+  let A : Set (Combinatorics.Branching.Step α X) :=
+    {ξ | totalPotentialWeight φ (-1) ξ ≠ ∞}
+  have hA : MeasurableSet A := by
+    exact (totalPotentialWeight_measurable φ (-1)
+      (measurableSet_singleton (∞ : ENNReal))).compl
+  have hμA : μ A = 1 := by
+    calc
+      μ A = μ Set.univ :=
+        (ae_mem_iff_measure_eq hA.nullMeasurableSet).mp (by
+          change ∀ᵐ ξ ∂μ, totalPotentialWeight φ (-1) ξ ≠ ∞
+          exact h.ae_totalPotentialWeight_ne_top φ μ)
+      _ = 1 := measure_univ
+  simpa only [A, Set.mem_ofPred_eq] using
+    (RootIndexed.stepFieldLaw_ae_all_of_measure_one hA μ hμA)
 
 end ProbabilityTheory.BranchingRandomWalk

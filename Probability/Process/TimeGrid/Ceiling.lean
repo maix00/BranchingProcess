@@ -11,6 +11,8 @@ public import Mathlib.Probability.Process.HittingTime
 /-!
 # Ceiling a time by a finite grid
 
+## Public declarations
+
 The public definition and theorems in this file are:
 
 - `ProbabilityTheory.timeGridCeiling`: for any type `X`, time functional

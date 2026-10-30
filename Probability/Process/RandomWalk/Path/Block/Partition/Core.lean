@@ -14,6 +14,20 @@ public import Probability.Process.RandomWalk.Path.Block.Corridor.Core
 
 Deterministic finite-partition corridor inclusions are lifted to measure
 inequalities. No independence or moment assumptions are imposed here.
+
+## Public declarations
+
+* `measure_normalizedEndpoints_le_partitionStartMargins` bounds the measure
+  of simultaneous normalized endpoint constraints by that of the resulting
+  unnormalized margins when `scale > 0`.
+* `measure_partitionStartMargins_le_corridors_add_sum_largeDeviation` bounds
+  the measure of simultaneous block-start margins by the all-block corridor
+  measure plus the sum of block large-displacement measures.
+* `measure_partitionStartMargins_inter_le_corridors_inter_add_sum_largeDeviation`
+  gives the same estimate after intersecting the source and corridor events
+  with a common event; the error remains the sum of the block exceptions.
+* `measure_normalizedEndpoints_inter_le_corridors_inter_add_sum_largeDeviation`
+  gives the normalized, scaled version of the common-event estimate.
 -/
 
 open MeasureTheory

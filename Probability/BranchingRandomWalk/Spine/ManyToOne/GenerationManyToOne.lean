@@ -15,6 +15,14 @@ public import Probability.BranchingRandomWalk.Spine.RandomWalk.Basic
 This file connects observables of the pre-sampled branching field to the spine
 random walk.  The first-generation theorem is the base case for the general
 subtree induction.
+
+## Public declarations
+
+- `weightedGenerationManyToOne` and `generationManyToOne`: identify the
+  weighted and unweighted observable sums over the actual generation of the
+  pre-sampled field with the corresponding spine-walk expectations.
+- `weightedGenerationOneManyToOne` and `generationOneManyToOne`: their
+  one-generation forms, used as the base step for subtree induction.
 -/
 
 @[expose] public section
@@ -23,6 +31,8 @@ open MeasureTheory ProbabilityTheory
 open scoped ENNReal
 
 namespace ProbabilityTheory.BranchingRandomWalk.Spine
+
+open ProbabilityTheory.BranchingProcess (offspringFieldLaw offspringFieldLaw_coordinate offspringFieldLaw_independent offspringFieldLaw_mapMarks)
 
 open Combinatorics.Branching.Walk
 open ProbabilityTheory.RandomWalk
@@ -41,13 +51,13 @@ theorem weightedGenerationManyToOne
     (hboundary : HasBoundaryNormalization (potential.comp d hd) μ)
     {f : ℝ → ENNReal} (hf : Measurable f) (n : ℕ) (x : ℝ) :
     (∫⁻ ω, weightedGenerationEndpoint (potential.comp d hd) n f x ω
-        ∂stepFieldLaw μ) =
+        ∂offspringFieldLaw μ) =
       ∫⁻ increment,
         f (x + AdditivePath.displacement n increment)
         ∂tiltedIncrementFieldLaw (potential.comp d hd) μ := by
   calc
     (∫⁻ ω, weightedGenerationEndpoint (potential.comp d hd) n f x ω
-        ∂stepFieldLaw μ) =
+        ∂offspringFieldLaw μ) =
         weightedBranchingEndpointIterate
           (potential.comp d hd) μ n f x :=
       lintegral_weightedGenerationEndpoint_eq_iterate
@@ -67,7 +77,7 @@ theorem generationManyToOne
     (hboundary : HasBoundaryNormalization (potential.comp d hd) μ)
     {f : ℝ → ENNReal} (hf : Measurable f) (n : ℕ) (x : ℝ) :
     (∫⁻ ω, generationEndpoint (potential.comp d hd) n f x ω
-        ∂stepFieldLaw μ) =
+        ∂offspringFieldLaw μ) =
       ∫⁻ increment,
         ENNReal.ofReal (Real.exp
           (AdditivePath.displacement n increment)) *
@@ -75,7 +85,7 @@ theorem generationManyToOne
         ∂tiltedIncrementFieldLaw (potential.comp d hd) μ := by
   calc
     (∫⁻ ω, generationEndpoint (potential.comp d hd) n f x ω
-        ∂stepFieldLaw μ) =
+        ∂offspringFieldLaw μ) =
         branchingEndpointIterate (potential.comp d hd) μ n f x :=
       lintegral_generationEndpoint_eq_iterate
         (potential.comp d hd) μ hf n x
@@ -94,13 +104,13 @@ theorem weightedGenerationOneManyToOne
     (hboundary : HasBoundaryNormalization (potential.comp d hd) μ)
     {f : ℝ → ENNReal} (hf : Measurable f) (x : ℝ) :
     (∫⁻ ω, weightedGenerationEndpoint (potential.comp d hd) 1 f x ω
-        ∂stepFieldLaw μ) =
+        ∂offspringFieldLaw μ) =
       ∫⁻ increment,
         f (x + AdditivePath.displacement 1 increment)
         ∂tiltedIncrementFieldLaw (potential.comp d hd) μ := by
   calc
     (∫⁻ ω, weightedGenerationEndpoint (potential.comp d hd) 1 f x ω
-        ∂stepFieldLaw μ) =
+        ∂offspringFieldLaw μ) =
         weightedBranchingEndpointOperator (potential.comp d hd) μ f x :=
       lintegral_weightedGenerationEndpoint_one
         (potential.comp d hd) μ hf x
@@ -121,7 +131,7 @@ theorem generationOneManyToOne
     (hboundary : HasBoundaryNormalization (potential.comp d hd) μ)
     {f : ℝ → ENNReal} (hf : Measurable f) (x : ℝ) :
     (∫⁻ ω, generationEndpoint (potential.comp d hd) 1 f x ω
-        ∂stepFieldLaw μ) =
+        ∂offspringFieldLaw μ) =
       ∫⁻ increment,
         ENNReal.ofReal (Real.exp
           (AdditivePath.displacement 1 increment)) *
@@ -129,7 +139,7 @@ theorem generationOneManyToOne
         ∂tiltedIncrementFieldLaw (potential.comp d hd) μ := by
   calc
     (∫⁻ ω, generationEndpoint (potential.comp d hd) 1 f x ω
-        ∂stepFieldLaw μ) =
+        ∂offspringFieldLaw μ) =
         branchingEndpointOperator (potential.comp d hd) μ f x :=
       lintegral_generationEndpoint_one (potential.comp d hd) μ hf x
     _ = branchingEndpointIterate

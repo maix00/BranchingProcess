@@ -6,13 +6,13 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.Path.FirstPassage.Basic
+public import Probability.Process.Path.FirstPassage.Prefix
 public import Probability.Process.Path.Reflection.Basic
 
 /-!
 # First passage under path reflection
 
-The public theorems in this file are:
+## Public declarations
 
 - `ProbabilityTheory.firstPassageBelow_reflectAfter_eq_of_le`: if the
   first passage below $a$ occurs by $r$, reflecting the path after $r$
@@ -61,7 +61,7 @@ theorem firstPassageBelow_le_one_reflectAfter_capped_iff
     have hhit : ∃ t : ℝ≥0, f t ≤ a := ⟨u, hu⟩
     let τ : ℝ≥0 := sInf {t : ℝ≥0 | f t ≤ a}
     have hτ : firstPassageBelow f a = τ := by
-      simp only [firstPassageBelow, firstPassageLE, ite_eq_left hhit]
+      simp only [firstPassageBelow, firstPassageLE_eq_sInf, ite_eq_left hhit]
       rfl
     have hτ1 : τ ≤ 1 := by
       rw [hτ] at h
@@ -91,7 +91,7 @@ theorem reflectAfter_firstPassageBelow_capped_apply_one
   have hhit : ∃ t : ℝ≥0, f t ≤ a := ⟨u, hu⟩
   let τ : ℝ≥0 := sInf {t : ℝ≥0 | f t ≤ a}
   have hτ : firstPassageBelow f a = τ := by
-    simp only [firstPassageBelow, firstPassageLE, ite_eq_left hhit]
+    simp only [firstPassageBelow, firstPassageLE_eq_sInf, ite_eq_left hhit]
     rfl
   have hτ1 : τ ≤ 1 := by
     rw [hτ] at h

@@ -6,7 +6,10 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.RandomMeasure.Poisson.Basic
+public import Probability.RandomMeasure.Poisson.RandomMeasure.Basic
+import Probability.RandomMeasure.Poisson.Integration.Campbell
+import Probability.RandomMeasure.Poisson.Integration.Integral
+import Probability.RandomMeasure.Poisson.RandomMeasure.Evaluation
 public import Probability.RandomMeasure.Poisson.Integrability.FiniteActivity
 
 /-!
@@ -15,6 +18,18 @@ public import Probability.RandomMeasure.Poisson.Integrability.FiniteActivity
 Finite intensity makes every measurable real observable integrable against
 the realized measure almost surely; finite first moments give the same
 conclusion for σ-finite intensities.
+
+## Public declarations
+
+* `IsPoissonPointFamily.ae_lintegral_poissonRandomMeasure_lt_top` transfers
+  $\int g\,dm<\infty$ for measurable $g\geq0$ to almost-sure finiteness of
+  the realized Poisson integral.
+* `IsPoissonPointFamily.ae_lintegral_restrict_poissonRandomMeasure_lt_top`
+  gives the same conclusion on a measurable restriction.
+* `IsPoissonPointFamily.ae_integrable_poissonRandomMeasure` transfers
+  $\int |f|\,dm<\infty$ to almost-sure Bochner integrability against the
+  realized point measure.
+
 -/
 
 @[expose] public section

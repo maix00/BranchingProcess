@@ -4,28 +4,30 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingProcess.Offspring.Count
-import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.Minimum.Address
-import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Roots.Nonempty
-import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.SelectedSubtrees.SelectedFamily
-import Probability.BranchingRandomWalk.Selection.NSelection.AsymptoticSpeed.InitialPopulation.Trajectory.Population
-import Probability.BranchingRandomWalk.Selection.NSelection.AsymptoticSpeed.InitialPopulation.Trajectory.Lemmas.CapacityHit.Growth
-import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law.Basic
-import Combinatorics.BranchingWalk.Step.Basic
+module
+
+public import Probability.BranchingProcess.Offspring.Count
+public import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.Minimum.Address
+public import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Roots.Nonempty
+public import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.SelectedSubtrees.SelectedFamily
+public import Probability.BranchingRandomWalk.Selection.NSelection.AsymptoticSpeed.InitialPopulation.Trajectory.Population
+import all Probability.BranchingRandomWalk.Selection.NSelection.AsymptoticSpeed.InitialPopulation.Trajectory.Lemmas.CapacityHit.Growth
+public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law.Basic
+public import Combinatorics.BranchingWalk.Step.Basic
 
 /-!
 # Hitting the capacity from a smaller initial population
 
-The actual selected population grows through recurrent split opportunities.
-Once it reaches size $N$, the trajectory and fresh-field statements are
-proved in the sibling modules under `Field/`.
-
-The public declaration is:
+## Public declarations
 
 - `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Speed.finiteRootStepFieldLaw_ae_smallInitialPopulation_hits_capacity`:
   under supercriticality, almost-surely nonempty offspring, and boundary
   normalization, $0<m\le N$ implies the selected population reaches size $N$
   in finite time almost surely.
+
+The actual selected population grows through recurrent split opportunities.
+Once it reaches size $N$, the trajectory and fresh-field statements are
+proved in the sibling modules under `Field/`.
 
 -/
 
@@ -33,13 +35,15 @@ open MeasureTheory ProbabilityTheory
 open Filter
 open scoped ENNReal
 
-section
-
+@[expose] public section
 namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Speed
+
+open ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation
 
 open Combinatorics.Branching
 open Combinatorics.UlamHarris
-open Combinatorics.Branching.Selection.NSelection
+open _root_.Combinatorics.Selection.NSelection
+open ProbabilityTheory.BranchingProcess (offspringFieldLaw)
 open ProbabilityTheory.BranchingProcess.Offspring
 
 attribute [local instance] Classical.propDecidable Classical.decEq
@@ -110,7 +114,7 @@ theorem finiteRootStepFieldLaw_ae_smallInitialPopulation_hits_capacity
   have hN : 0 < N := lt_of_lt_of_le hm hmN
   have hgoodAE := RootIndexed.selectedPopulationTotalized_succ_spec_ae
     μ hboundary N Finset.univ (fun _ : Fin m => (0 : ℝ))
-  have hpopulationAE := Tail.finiteRootStepFieldLaw_firstNSelectedPopulation_nonempty_ae
+  have hpopulationAE := finiteRootStepFieldLaw_firstNSelectedPopulation_nonempty_ae
     m N hm hN μ hboundary hnonempty
   have hmarksAE := finiteRootStepFieldLaw_ae_all_of_measure_one
     nonemptySupport_measurable μ hnonempty m
@@ -140,7 +144,7 @@ theorem finiteRootStepFieldLaw_ae_smallInitialPopulation_hits_capacity
       change IsFirstNBy N
         (RootIndexed.observedPositionAtGeneration
           (fun _ : Fin m => (0 : ℝ)) id id (k + 1) field)
-        (RootIndexed.childrenAtGeneration k
+        (Combinatorics.Branching.Population.childrenAtGeneration k
           (smallInitialPopulation m N k field) field)
         (smallInitialPopulation m N (k + 1) field) at hfirst
       simpa [populationSize, smallInitialPopulation] using hfirst.card_le
@@ -151,13 +155,13 @@ theorem finiteRootStepFieldLaw_ae_smallInitialPopulation_hits_capacity
     let value := RootIndexed.observedPositionAtGeneration
       (fun _ : Fin m => (0 : ℝ)) id id (n + 1) field
     have hfirst : IsFirstNBy N value
-        (RootIndexed.childrenAtGeneration n parents field) selected := by
+        (Combinatorics.Branching.Population.childrenAtGeneration n parents field) selected := by
       simpa [parents, selected, value, smallInitialPopulation] using hgood n
     have hdepth : ∀ p ∈ parents, p.2.length = n := by
       intro p hp
-      exact Tail.firstNSelectedPopulation_depth m N n field p
+      exact firstNSelectedPopulation_depth m N n field p
         (by simpa [parents, smallInitialPopulation,
-          Tail.firstNSelectedPopulation] using hp)
+          firstNSelectedPopulation] using hp)
     have hchildren : ∀ p ∈ parents,
         ∃ i : ℕ, survive (field p.1 p.2) i := by
       intro p hp
@@ -175,29 +179,29 @@ theorem finiteRootStepFieldLaw_ae_smallInitialPopulation_hits_capacity
     let value := RootIndexed.observedPositionAtGeneration
       (fun _ : Fin m => (0 : ℝ)) id id (n + 1) field
     have hfirst : IsFirstNBy N value
-        (RootIndexed.childrenAtGeneration n parents field) selected := by
+        (Combinatorics.Branching.Population.childrenAtGeneration n parents field) selected := by
       simpa [parents, selected, value, smallInitialPopulation] using hgood n
     have hdepth : ∀ p ∈ parents, p.2.length = n := by
       intro p hp
-      exact Tail.firstNSelectedPopulation_depth m N n field p
+      exact firstNSelectedPopulation_depth m N n field p
         (by simpa [parents, smallInitialPopulation,
-          Tail.firstNSelectedPopulation] using hp)
+          firstNSelectedPopulation] using hp)
     have hchildren : ∀ p ∈ parents,
         ∃ i : ℕ, survive (field p.1 p.2) i := by
       intro p hp
       exact hmarks p.1 p.2
     have hchosen : smallInitialActiveAddress m N n hm field ∈ parents := by
       have hnonempty := hpopulation n
-      have hnonempty' : (Tail.firstNSelectedPopulation m N n field).Nonempty := by
-        simpa [Tail.firstNSelectedPopulation] using hnonempty
+      have hnonempty' : (firstNSelectedPopulation m N n field).Nonempty := by
+        simpa [firstNSelectedPopulation] using hnonempty
       have hmem : smallInitialActiveAddress m N n hm field ∈
-          Tail.firstNSelectedPopulation m N n field := by
+          firstNSelectedPopulation m N n field := by
         dsimp [smallInitialActiveAddress]
         rw [ite_eq_left hnonempty']
-        exact (Tail.firstNSelectedEndpointMinAddress_mem_and_min m N n hm field
+        exact (firstNSelectedEndpointMinAddress_mem_and_min m N n hm field
           hnonempty').1
       simpa [parents, smallInitialPopulation,
-        Tail.firstNSelectedPopulation] using hmem
+        firstNSelectedPopulation] using hmem
     have hsplit' : 2 ≤ Step.childCount
         (field (smallInitialActiveAddress m N n hm field).1
           (smallInitialActiveAddress m N n hm field).2) := by

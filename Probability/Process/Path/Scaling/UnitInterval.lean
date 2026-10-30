@@ -13,6 +13,14 @@ public import Topology.Order.UnitInterval.Time
 /-!
 # Continuous paths of processes on the unit interval
 
+## Public declarations
+
+- `continuousunitIntervalPath` sends a continuous process $X_t$ to the
+  bundled path $u\mapsto X_u$ on $[0,1]$.
+- `continuousunitIntervalPath_apply` gives its pointwise evaluation, and
+  `measurable_continuousunitIntervalPath` proves measurability from
+  coordinatewise measurability.
+
 This file restricts a continuous real-time process to the canonical unit
 interval and bundles the sample paths as continuous maps.
 -/
@@ -28,14 +36,14 @@ its sample paths as continuous maps. -/
 def continuousunitIntervalPath
     (X : NNReal → Ω → ℝ) (hX : ∀ ω, Continuous (X · ω)) :
     Ω → C(unitInterval, ℝ) :=
-  continuousPath (fun t ω ↦ X (UnitInterval.toNNReal t) ω)
-    fun ω ↦ (hX ω).comp UnitInterval.continuous_toNNReal
+  continuousPath (fun t ω ↦ X (unitInterval.toNNReal t) ω)
+    fun ω ↦ (hX ω).comp unitInterval.toNNReal_continuous
 
 @[simp]
 theorem continuousunitIntervalPath_apply
     (X : NNReal → Ω → ℝ) (hX : ∀ ω, Continuous (X · ω))
     (ω : Ω) (t : unitInterval) :
-    continuousunitIntervalPath X hX ω t = X (UnitInterval.toNNReal t) ω :=
+    continuousunitIntervalPath X hX ω t = X (unitInterval.toNNReal t) ω :=
   rfl
 
 theorem measurable_continuousunitIntervalPath [MeasurableSpace Ω]
@@ -44,7 +52,7 @@ theorem measurable_continuousunitIntervalPath [MeasurableSpace Ω]
     Measurable (continuousunitIntervalPath X hX) := by
   apply measurable_continuousPath
   intro t
-  exact hXmeas (UnitInterval.toNNReal t)
+  exact hXmeas (unitInterval.toNNReal t)
 
 end ProbabilityTheory
 

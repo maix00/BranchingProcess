@@ -4,15 +4,16 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Genealogy.Lineage.MultiRoot
+import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Lineage
 import Probability.BranchingRandomWalk.Restart.Failure.Estimate
 import Probability.BranchingRandomWalk.Restart.Trial.FirstSplit
 import Probability.BranchingRandomWalk.Restart.FirstSplit.BranchingProperty
 import Probability.BranchingRandomWalk.Restart.Reserve.Lineage
 import Probability.BranchingRandomWalk.Restart.Trial.Basic
+import Probability.BranchingRandomWalk.Restart.Trial.RootIndexed
 import Probability.BranchingRandomWalk.Restart.RootedTrial.Reserve.Lineage
 import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.StoppingSubtreeVector.Factorization
-import Probability.BranchingRandomWalk.Timing.Trials.Counterexample
+import Probability.Process.HittingTime.Examples.Lookahead
 
 /-!
 # Pre-sampled reserve-lineage API checks
@@ -25,9 +26,9 @@ one-generation visibility fact from a general successor rule for anticipative
 times.
 -/
 
-#print axioms ProbabilityTheory.BranchingRandomWalk.firstSelectedSlot_measurable
+#print axioms Combinatorics.Branching.Step.FiniteSelection.firstSelectedSlot_measurable
 
-#print axioms ProbabilityTheory.BranchingRandomWalk.firstSelectedSlot_mem
+#print axioms Combinatorics.Branching.Step.FiniteSelection.firstSelectedSlot_mem
 
 #print axioms ProbabilityTheory.BranchingRandomWalk.splitBy_measurable
 
@@ -95,13 +96,13 @@ times.
   ProbabilityTheory.BranchingRandomWalk.RootIndexed.integral_reserveRoot_abs_on_candidateFailure_le
 
 #print axioms
-  ProbabilityTheory.BranchingRandomWalk.lookahead_time_not_stopping
+  ProbabilityTheory.Process.HittingTime.Examples.lookahead_time_not_stopping
 
 #print axioms
-  ProbabilityTheory.BranchingRandomWalk.lookahead_completion_isStoppingTime
+  ProbabilityTheory.Process.HittingTime.Examples.lookahead_completion_isStoppingTime
 
 #print axioms
-  ProbabilityTheory.BranchingRandomWalk.delayed_lookahead_completion_not_stopping
+  ProbabilityTheory.Process.HittingTime.Examples.delayed_lookahead_completion_not_stopping
 
 #print axioms
   ProbabilityTheory.BranchingRandomWalk.selectedPopulationSplitCompletion_eq_raw_add_one
@@ -118,7 +119,7 @@ times.
 #print axioms
   ProbabilityTheory.BranchingRandomWalk.selectedPopulation_firstSplit_has_sibling_pair
 
-#print axioms ProbabilityTheory.BranchingRandomWalk.secondSelectedSlot_measurable
+#print axioms Combinatorics.Branching.Step.FiniteSelection.secondSelectedSlot_measurable
 
 #print axioms
   ProbabilityTheory.BranchingRandomWalk.RootIndexed.ReserveLineages.secondChildRootAt_selected

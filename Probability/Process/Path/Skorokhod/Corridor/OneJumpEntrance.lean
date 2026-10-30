@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.Levy.Jump.Entrance
+public import Probability.Process.Corridor.PoissonEntrance
 public import Probability.Process.Path.Skorokhod.Corridor.Segment
 import Mathlib.Tactic.Linarith
 
@@ -17,6 +17,19 @@ This converts the generic marked-Poisson entrance theorem to the exact
 complete-path event used in small-deviation arguments. The jump-sum
 decomposition remains an explicit hypothesis; no stable-process
 representation is asserted here.
+
+## Public declarations
+
+- `ProbabilityTheory.measure_fullSegmentCorridorReturn_pos_of_oneJumpDecomposition`:
+  under the stated Poisson count, jump law, independence, small-variation, and
+  path-decomposition hypotheses, the complete segment return-corridor event
+  has positive probability.
+- `ProbabilityTheory.measure_fullSegmentCorridorReturn_pos_of_oneJumpDecomposition_ae`:
+  the same positivity conclusion when the pathwise bounds and decomposition
+  hold almost surely.
+- `ProbabilityTheory.measure_fullSegmentCorridorReturn_pos_of_noJumpDecomposition`:
+  when the target displacement is zero, the no-jump and small-variation event
+  gives positive probability to the centered complete return corridor.
 -/
 
 @[expose] public section
@@ -124,7 +137,7 @@ theorem measure_fullSegmentCorridorReturn_pos_of_noJumpDecomposition
       ∀ t, segmentIncrement X 0 1 ω t = S t ω) :
     0 < P (fullSegmentCorridorReturnEvent X 0 1
       (c - 1) (c + 1) (-ε) ε) := by
-  have hgood := measure_noJump_and_smallVariation_pos P N V rate
+  have hgood := measure_noJump_and_smallValue_pos P N V rate
     (ENNReal.ofReal ρ) hN hVN hV hE
   apply hgood.trans_le
   apply measure_mono

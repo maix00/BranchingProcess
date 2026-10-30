@@ -6,17 +6,29 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.MeasureTheory.SmallValue.Basic
 public import Mathlib.Probability.Distributions.Poisson.Basic
 public import Mathlib.Probability.Independence.Basic
 
-/-!
-# One marked Poisson jump and small residual variation
+import Probability.MeasureTheory.SmallValue.Basic
 
-A finite-rate Poisson count with an independent jump mark has positive
-probability of exactly one jump in any positive-mass mark window. If the
-residual total variation is independent of this pair and has sufficiently
-small expectation, all three requirements hold simultaneously.
+/-!
+# Marked Poisson events with a small independent observable
+
+## Public declarations
+
+- `ProbabilityTheory.measure_oneMarkedJump_and_smallValue_pos`: if
+  \(N\sim\operatorname{Poisson}(\lambda)\), \(W\sim\nu\), the pair
+  \((N,W)\) is independent of the residual variation \(V\), and
+  \(\mathbb E[V]<\rho\), then for every measurable \(J\) with \(\nu(J)>0\),
+  \(\mathbb P(V<\rho,\,N=1,\,W\in J)>0\).
+- `ProbabilityTheory.measure_noJump_and_smallValue_pos`: if
+  \(N\sim\operatorname{Poisson}(\lambda)\) is independent of \(V\) and
+  \(\mathbb E[V]<\rho\), then \(\mathbb P(V<\rho,\,N=0)>0\).
+
+A finite-rate Poisson count with an independent mark has positive probability
+of exactly one jump in any positive-mass mark window. If an arbitrary
+nonnegative extended-real observable is independent of this pair and has
+sufficiently small expectation, all three requirements hold simultaneously.
 -/
 
 @[expose] public section
@@ -26,7 +38,7 @@ namespace ProbabilityTheory
 open MeasureTheory
 open scoped NNReal
 
-theorem measure_oneMarkedJump_and_smallVariation_pos
+theorem measure_oneMarkedJump_and_smallValue_pos
     {Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω)
     [IsProbabilityMeasure P]
     (N : Ω → ℕ) (W : Ω → ℝ) (V : Ω → ENNReal)
@@ -40,7 +52,7 @@ theorem measure_oneMarkedJump_and_smallVariation_pos
     (hE : (∫⁻ ω, V ω ∂P) < ρ) :
     0 < P {ω | V ω < ρ ∧ N ω = 1 ∧ W ω ∈ J} := by
   have hsmall : 0 < P {ω | V ω < ρ} :=
-    measure_smallVariation_pos P V hV ρ hE
+    measure_pos_of_lintegral_lt P V hV ρ hE
   have hcount : 0 < P {ω | N ω = 1} := by
     have h := hN.measure_eq (p := fun n => n = 1) (measurableSet_singleton 1)
     rw [h]
@@ -67,9 +79,9 @@ theorem measure_oneMarkedJump_and_smallVariation_pos
   rw [hprod]
   exact ENNReal.mul_pos hsmall.ne' hbig.ne'
 
-/-- The zero-target alternative: no large jump, while the small-jump total
-variation stays below its threshold. -/
-theorem measure_noJump_and_smallVariation_pos
+/-- The zero-target alternative: no marked jump, while an independent
+nonnegative extended-real observable stays below its threshold. -/
+theorem measure_noJump_and_smallValue_pos
     {Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω)
     [IsProbabilityMeasure P]
     (N : Ω → ℕ) (V : Ω → ENNReal)
@@ -80,7 +92,7 @@ theorem measure_noJump_and_smallVariation_pos
     (hE : (∫⁻ ω, V ω ∂P) < ρ) :
     0 < P {ω | V ω < ρ ∧ N ω = 0} := by
   have hsmall : 0 < P {ω | V ω < ρ} :=
-    measure_smallVariation_pos P V hV ρ hE
+    measure_pos_of_lintegral_lt P V hV ρ hE
   have hcount : 0 < P {ω | N ω = 0} := by
     have h := hN.measure_eq (p := fun n => n = 0) (measurableSet_singleton 0)
     rw [h]

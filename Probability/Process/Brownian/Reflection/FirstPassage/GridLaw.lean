@@ -6,14 +6,16 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.Brownian.Reflection.FirstPassage.FiniteStoppingTime
+public import Probability.Process.Brownian.PathLaw.ContinuousPathLaw
 public import Probability.Process.Path.FirstPassage.GridApproximation
+public import Probability.Process.Path.Reflection.Basic
+import Probability.Process.Brownian.Reflection.FirstPassage.FiniteStoppingTime
 import MeasureTheory.Measure.Convergence.MapInvariance
 
 /-!
 # Brownian reflection at first-passage grid times
 
-The public theorems in this file are:
+## Public declarations
 
 - `ProbabilityTheory.IsBrownianReal.measure_reflectAfter_firstPassageGridCeiling_eq`:
   reflection at the first grid time after continuous passage below $a$
@@ -77,8 +79,8 @@ theorem IsBrownianReal.measure_reflectAfter_firstPassageBeforeOne_eq
           (min (firstPassageBelow f a) (1 : WithTop ℝ≥0)).untopA) =
       P.map (hB.continuousPathMap hBmeasurable) := by
   let μ := P.map (hB.continuousPathMap hBmeasurable)
-  haveI : IsProbabilityMeasure P := (hB.hasLaw ∅).isProbabilityMeasure
-  haveI : IsFiniteMeasure μ := inferInstance
+  have : IsProbabilityMeasure P := (hB.hasLaw ∅).isProbabilityMeasure
+  have : IsFiniteMeasure μ := inferInstance
   let F : C(ℝ≥0, ℝ) → C(ℝ≥0, ℝ) := fun f =>
     reflectAfter f (min (firstPassageBelow f a) (1 : WithTop ℝ≥0)).untopA
   let Fₙ : ℕ → C(ℝ≥0, ℝ) → C(ℝ≥0, ℝ) := fun n f =>

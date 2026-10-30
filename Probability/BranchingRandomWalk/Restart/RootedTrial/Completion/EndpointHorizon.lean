@@ -4,56 +4,48 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Restart.RootedTrial.Coupling.Basic
+module
+
+public import Probability.BranchingRandomWalk.Restart.RootedTrial.Completion.EndpointFreshField
+public import Probability.BranchingRandomWalk.Restart.RootedTrial.Coupling.ReserveSpine
+public import Probability.BranchingRandomWalk.Restart.RootedTrial.Completion.Endpoint
+public import Probability.BranchingRandomWalk.Selection.NSelection.Law.Causal.Restarted.Coupling
+import all Probability.BranchingRandomWalk.Restart.RootedTrial.Completion.Lemmas.EndpointHorizon.RootFamily
+import all Probability.BranchingRandomWalk.Restart.RootedTrial.Completion.Lemmas.EndpointHorizon.Geometry
+import all Probability.BranchingRandomWalk.Restart.RootedTrial.Completion.Lemmas.EndpointHorizon.FreshField
+public import Probability.Process.Stopping.Selection.Ranked
+public import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.SelectedSubtrees.FixedFamily
 
 /-!
 # Endpoint-dependent finite restart horizons
 
-The fixed-horizon endpoint theorem can be pushed through observables whose
-horizon is a measurable function of the successful endpoint time.  The
-endpoint time is the first completion of the pre-sampled candidate family;
-split marks are exposed at their observable completion generations.  This
-file does not identify the candidate-union source with the retrospective
-restart frontier, and it makes no stopping-time claim about a raw split label.
+## Public declarations
+
+* selectedReserveSpineRestartEndpointTimePositionFreshField_jointLaw_on_finite gives the
+  product-law identity
+  \[
+    \mathcal L\bigl((\tau,\mathrm{positions}),\mathrm{fresh}\mid \tau<\infty\bigr)
+    =
+    \mathcal L\bigl((\tau,\mathrm{positions})\mid \tau<\infty\bigr)
+      \otimes \mathcal L(\mathrm{fresh}),
+  \]
+  where \(\tau\) is the first successful candidate's completion generation and \mathrm{fresh}
+  is the descendant field rooted at the selected endpoint particles.
+* selectedReserveSpineRestartEndpointRandomHorizonObservable_law_on_finite pushes this law
+  through every measurable observable of the stopped endpoint data and its fresh field,
+  including an observable whose remaining horizon is read from \tau.
 -/
+
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
 open Combinatorics.Branching Combinatorics.UlamHarris
-
-private lemma measurable_subtreeStepFieldVector_of_measurable_roots
-    {Root κ α X : Type*} [MeasurableSpace X]
-    [MeasurableSpace κ] [MeasurableSpace Root]
-    [MeasurableSpace (RootIndexed.TreeNode Root α)]
-    [Countable κ] [MeasurableSingletonClass Root]
-    [MeasurableSingletonClass (RootIndexed.TreeNode Root α)]
-    (roots : RootIndexed.StepField Root α X →
-      κ → RootIndexed.TreeNode Root α)
-    (hroots : Measurable roots)
-    (hcount : (Set.range roots).Countable) :
-    Measurable (fun ω => RootIndexed.subtreeStepFieldVector (roots ω) ω) := by
-  classical
-  let S : Set (κ → RootIndexed.TreeNode Root α) := Set.range roots
-  let _ : Countable S := Set.countable_coe_iff.mpr hcount
-  intro B hB
-  have hpre :
-      (fun ω => RootIndexed.subtreeStepFieldVector (roots ω) ω) ⁻¹' B =
-        ⋃ q : S, {ω | roots ω = q.1} ∩
-          RootIndexed.subtreeStepFieldVector q.1 ⁻¹' B := by
-    ext ω
-    simp only [Set.mem_preimage, Set.mem_iUnion, Set.mem_inter_iff,
-      Set.mem_ofPred_eq]
-    constructor
-    · intro h
-      exact ⟨⟨roots ω, Set.mem_range_self ω⟩, rfl, h⟩
-    · rintro ⟨q, hq, h⟩
-      simpa [hq] using h
-  rw [hpre]
-  exact MeasurableSet.iUnion fun q =>
-    (hroots (measurableSet_singleton q.1)).inter
-      ((RootIndexed.subtreeStepFieldVector_measurable q.1) hB)
+open ProbabilityTheory.BranchingRandomWalk.Completion.Lemmas.EndpointHorizon
+open ProbabilityTheory.BranchingRandomWalk.Selection.NSelection
 
 /-- The successful endpoint time, endpoint positions, and their actual
 rank-installed target descendant field have the joint law obtained by
@@ -163,7 +155,7 @@ theorem selectedReserveSpineRestartEndpointTimePositionFreshField_jointLaw_on_fi
   have hfresh : Measurable fresh := by
     change Measurable (fun field =>
       RootIndexed.subtreeStepFieldVector (targetRoots field) field)
-    exact measurable_subtreeStepFieldVector_of_measurable_roots
+    exact RootIndexed.subtreeStepFieldVector_measurable_of_measurable_roots
       targetRoots hroots hcount
   have hpair : Measurable (fun field => (data field, fresh field)) :=
     hdata.prodMk hfresh

@@ -11,10 +11,13 @@ public import Mathlib.Probability.IdentDistrib
 /-!
 # Processes with stationary increments
 
-The public definition `HasStationaryIncrements X P` is
-`$X_{s+t}-X_s \stackrel{d}{=} X_t-X_0$` for every `s` and `t`. It assumes
-only an additive time monoid and subtraction on the state space; independent
-increments and path regularity are separate properties.
+## Public declarations
+
+- `ProbabilityTheory.HasStationaryIncrements X P` means that translated
+  increments have a common law:
+  $\forall s,t,\quad X_{s+t}-X_s\;\stackrel{P}{=}\;X_t-X_0$.
+  The definition uses an additive time monoid and subtraction on the state
+  space.
 -/
 
 open MeasureTheory

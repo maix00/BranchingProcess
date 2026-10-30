@@ -234,8 +234,16 @@ class ImportBoundaryCheckTests(unittest.TestCase):
     def test_recently_lowered_measure_and_analysis_layers_are_protected(self):
         expected = {
             "Analysis.Asymptotics.Scale.Basic": ("Probability",),
-            "Analysis.Asymptotics.Scale.InverseScale": ("Probability",),
-            "Analysis.Asymptotics.Scale.BlockScale": ("Probability",),
+            "Analysis.Asymptotics.Scale.Inverse.Basic": ("Probability",),
+            "Analysis.Asymptotics.Scale.Inverse.LevelMultiplicity": (
+                "Probability",
+            ),
+            "Analysis.Asymptotics.Scale.Inverse.Superquadratic": (
+                "Probability",
+            ),
+            "Analysis.Asymptotics.Scale.Block.Length": ("Probability",),
+            "Analysis.Asymptotics.Scale.Block.Partition": ("Probability",),
+            "Analysis.Asymptotics.Scale.Block.Count": ("Probability",),
             "MeasureTheory.Measure.Levy.Basic": ("Probability",),
             "MeasureTheory.Measure.CharacteristicFunction.Convolution": (
                 "Probability",
@@ -261,7 +269,7 @@ class ImportBoundaryCheckTests(unittest.TestCase):
             "MeasureTheory.MeasurableSpace.ContinuousMap.Oscillation": (
                 "Probability",
             ),
-            "MeasureTheory.Measure.ContinuousMap.Oscillation": (
+            "MeasureTheory.Measure.ContinuousMap.RangeOscillation": (
                 "Probability",
             ),
             "Probability.ConvergenceInDistribution.ContinuousMap.Corridor": (
@@ -276,13 +284,20 @@ class ImportBoundaryCheckTests(unittest.TestCase):
             "MeasureTheory.Measure.ContinuousMap.Tightness.Criteria": (
                 "Probability",
             ),
-            "MeasureTheory.Measure.Recurrence.BlockBounds": ("Probability",),
         }
         for module, forbidden in expected.items():
             with self.subTest(module=module):
                 self.assertEqual(
                     imports.GENERAL_LAYER_BOUNDARIES[module], forbidden
                 )
+
+    def test_generic_recurrence_layer_avoids_probability_imports(self):
+        self.assertEqual(
+            imports.GENERAL_LAYER_BOUNDARIES[
+                "Algebra.Order.Monoid.Recurrence"
+            ],
+            ("Probability",),
+        )
 
     def test_offspring_modules_are_covered_by_application_boundaries(self):
         for module in (
@@ -400,7 +415,7 @@ class ImportBoundaryCheckTests(unittest.TestCase):
 
     def test_poisson_general_layers_are_covered(self):
         for module in (
-            "Probability.Distributions.Poisson.Basic",
+            "Probability.Distributions.Poisson.Moments",
             "Probability.RandomMeasure.Poisson.PointFamily",
             "Probability.RandomMeasure.Poisson.Basic",
             "Probability.RandomMeasure.Poisson.Integration.Integral",

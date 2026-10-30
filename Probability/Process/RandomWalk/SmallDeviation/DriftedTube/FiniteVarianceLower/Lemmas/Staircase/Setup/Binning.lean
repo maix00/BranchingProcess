@@ -6,10 +6,12 @@ Authors: WANG Yiyang
 
 module
 
-public import Mathlib.Basic.Real.Basic
+import Mathlib.Basic.Real.Basic
 
 /-!
 # Binning parameters in the Lemma 3.5 proof
+
+## Internal proof declarations
 
 The definitions used by the internal staircase proof are:
 
@@ -31,7 +33,7 @@ Chapter 3 of Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk
 with Infinite Offspring*.
 -/
 
-@[expose] public section
+section
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 

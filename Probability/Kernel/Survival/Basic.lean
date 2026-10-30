@@ -12,10 +12,29 @@ public import Mathlib.Probability.Kernel.Composition.Comp
 /-!
 # Remaining mass of iterated kernels
 
-For a sub-Markov kernel, evaluation on the whole space is the probability
-mass that has not been killed.  The definitions and Chapman--Kolmogorov
-identities below apply to every kernel; sub-Markovness is only needed when
-one wants to interpret the value as a probability.
+For a kernel $K$, write $M_n(x)=(K^n)(x,S)$.
+
+## Public declarations
+
+- `remainingMass` defines $M_n(x)=(K^n)(x,S)$; `remainingMass_zero` and
+  `remainingMass_add` give $M_0(x)=1$ and
+  $M_{m+n}(x)=\int M_n(y)\,(K^m)(x,dy)$.
+- `mul_pow_apply_le_pow_add_apply_of_mem` and
+  `mul_pow_apply_le_remainingMass_add_of_mem` give the two-block lower bound
+  $c(K^m)(x,E)\le(K^{m+n})(x,B)$ when the second-block mass is at least $c$
+  on the measurable entrance set $E$; the latter takes $B=S$.
+  `mul_remainingMass_le_remainingMass_add` is the uniform-survival case.
+- `remainingMass_add_le_mul_remainingMass` gives the corresponding upper
+  bound $M_{m+n}(x)\le uM_m(x)$ from a uniform second-block upper bound $u$.
+- For a sub-Markov kernel, `remainingMass_le_one`,
+  `remainingMass_add_le_left`, and `antitone_remainingMass` show
+  $M_n(x)\le1$ and that $M_n(x)$ decreases with $n$.
+- `pow_le_remainingMass_mul` and `remainingMass_mul_le_pow` iterate a uniform
+  one-block lower or upper bound to the exact horizon $rb$.
+
+The identities and block inequalities apply to arbitrary kernels; the
+sub-Markov assumption is used only for bounds that interpret total mass as
+survival probability.
 -/
 
 @[expose] public section

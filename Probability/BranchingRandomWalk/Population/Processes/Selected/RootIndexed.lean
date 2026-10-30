@@ -4,11 +4,35 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Population.Candidates.RootIndexed.Basic
-import Probability.BranchingRandomWalk.Selection.NSelection.Position
+module
+
+public import Combinatorics.BranchingWalk.Population.Offspring
+
+public import Combinatorics.BranchingWalk.Population.Candidates.Generation
+public import Probability.BranchingRandomWalk.Population.Candidates.RootIndexed.Measurability
+public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Field.Selection
 
 /-!
 # Root-indexed selected population process
+
+## Public declarations
+
+- `initialPopulation` and `mem_initialPopulation_iff`: a finite root set is
+  embedded as the corresponding empty-address vertices.
+- `selectedPopulationTotalized` and `selectedPopulation`: recursive
+  root-indexed populations formed by retaining the first $N$ children at each
+  generation, with and without totalized first-$N$ selection.
+- `selectedPopulationTotalized_succ_spec`,
+  `selectedPopulationTotalized_succ_subset`, `selectedPopulationTotalized_depth`,
+  `selectedPopulationTotalized_root_mem`, and
+  `selectedPopulationTotalized_adapted`: successor, inclusion, generation,
+  root, and domain-filtration measurability properties of the totalized process.
+- `selectedPopulation_succ_spec`, `selectedPopulation_succ_subset`,
+  `selectedPopulation_adapted`, `selectedPopulation_adapted_of_countable`,
+  `selectedPopulation_depth`, `selectedPopulation_succ_spec_offspringAddressSet`,
+  `selectedPopulation_succ_spec_position`, and `selectedPopulation_card_le`:
+  corresponding recursive, measurability, depth, ordering, and cardinality
+  properties of the first-$N$ selected process.
 
 At every generation this process forms the set of all surviving children of
 the retained population, allowing infinitely many children, then retains its
@@ -16,12 +40,14 @@ intrinsic first `N` particles by observed position. The construction is
 causal on the pre-sampled root-indexed step field.
 -/
 
+@[expose] public section
+
 open MeasureTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk.RootIndexed
 
 open Combinatorics.UlamHarris Combinatorics.Branching
-open Combinatorics.Branching.Selection.NSelection
+open _root_.Combinatorics.Selection.NSelection
 
 noncomputable section
 
@@ -62,9 +88,9 @@ noncomputable def selectedPopulationTotalized
       Finset (RootIndexed.TreeNode Root α)
   | 0, _ => initialPopulation roots
   | n + 1, ω =>
-      Selection.NSelection.selectFirstNFromSetTotalized N
+      Combinatorics.Selection.NSelection.selectFirstNFromSetTotalized N
         (observedPositionAtGeneration initial d φ (n + 1))
-        (fun field => childrenAtGeneration n
+        (fun field => Combinatorics.Branching.Population.childrenAtGeneration n
           (selectedPopulationTotalized N roots initial d φ n field) field) ω
 
 theorem selectedPopulationTotalized_succ_spec
@@ -74,18 +100,18 @@ theorem selectedPopulationTotalized_succ_spec
     (N : ℕ) (roots : Finset Root) (initial : Root → Position)
     (d : Mark → Position) (φ : Position → Value)
     (n : ℕ) (ω : RootIndexed.StepField Root α Mark)
-    (hgood : Combinatorics.Branching.Selection.NSelection.IsLowerFiniteBy
+    (hgood : Combinatorics.Selection.NSelection.IsLowerFiniteBy
       (observedPositionAtGeneration initial d φ (n + 1) ω)
-      (childrenAtGeneration n
+      (Combinatorics.Branching.Population.childrenAtGeneration n
         (selectedPopulationTotalized N roots initial d φ n ω) ω)) :
     IsFirstNBy N
       (observedPositionAtGeneration initial d φ (n + 1) ω)
-      (childrenAtGeneration n
+      (Combinatorics.Branching.Population.childrenAtGeneration n
         (selectedPopulationTotalized N roots initial d φ n ω) ω)
       (selectedPopulationTotalized N roots initial d φ (n + 1) ω) := by
-  exact Selection.NSelection.selectFirstNFromSetTotalized_spec
+  exact Combinatorics.Selection.NSelection.selectFirstNFromSetTotalized_spec
     N (observedPositionAtGeneration initial d φ (n + 1))
-    (fun field => childrenAtGeneration n
+    (fun field => Combinatorics.Branching.Population.childrenAtGeneration n
       (selectedPopulationTotalized N roots initial d φ n field) field) ω hgood
 
 theorem selectedPopulationTotalized_succ_subset
@@ -96,19 +122,19 @@ theorem selectedPopulationTotalized_succ_subset
     (d : Mark → Position) (φ : Position → Value)
     (n : ℕ) (ω : RootIndexed.StepField Root α Mark) :
     ↑(selectedPopulationTotalized N roots initial d φ (n + 1) ω) ⊆
-      childrenAtGeneration n
+      Combinatorics.Branching.Population.childrenAtGeneration n
         (selectedPopulationTotalized N roots initial d φ n ω) ω := by
   classical
-  by_cases hgood : Combinatorics.Branching.Selection.NSelection.IsLowerFiniteBy
+  by_cases hgood : Combinatorics.Selection.NSelection.IsLowerFiniteBy
       (observedPositionAtGeneration initial d φ (n + 1) ω)
-      (childrenAtGeneration n
+      (Combinatorics.Branching.Population.childrenAtGeneration n
         (selectedPopulationTotalized N roots initial d φ n ω) ω)
   · exact (selectedPopulationTotalized_succ_spec N roots initial d φ n ω
       hgood).subset
   · have hEmpty :=
-      Selection.NSelection.selectFirstNFromSetTotalized_empty_of_not_lowerFinite N
+      Combinatorics.Selection.NSelection.selectFirstNFromSetTotalized_empty_of_not_lowerFinite N
         (observedPositionAtGeneration initial d φ (n + 1))
-        (fun field => childrenAtGeneration n
+        (fun field => Combinatorics.Branching.Population.childrenAtGeneration n
           (selectedPopulationTotalized N roots initial d φ n field) field)
         ω hgood
     simp [selectedPopulationTotalized, hEmpty]
@@ -130,7 +156,7 @@ theorem selectedPopulationTotalized_depth
       obtain ⟨r, _, rfl⟩ := hp
       rfl
   | succ n =>
-      apply childrenAtGeneration_depth n
+      apply Combinatorics.Branching.Population.childrenAtGeneration_depth n
         (selectedPopulationTotalized N roots initial d φ n ω) ω p
       exact selectedPopulationTotalized_succ_subset N roots initial d φ n ω hp
 
@@ -156,7 +182,7 @@ theorem selectedPopulationTotalized_root_mem
       have hchild := selectedPopulationTotalized_succ_subset
         N roots initial d φ n ω hp
       obtain ⟨q, hq, hqdepth, i, hi, rfl⟩ :=
-        (mem_childrenAtGeneration_iff n
+        (Combinatorics.Branching.Population.mem_childrenAtGeneration_iff n
           (selectedPopulationTotalized N roots initial d φ n ω) ω p).mp hchild
       exact ih q hq
 
@@ -184,7 +210,7 @@ theorem selectedPopulationTotalized_adapted
         (selectedPopulationTotalized N roots initial d φ n) ih
       exact RootIndexed.measurable_selectFirstNFromSetTotalized
         N initial d hd φ hφ (n + 1)
-        (fun ω => childrenAtGeneration n
+        (fun ω => Combinatorics.Branching.Population.childrenAtGeneration n
           (selectedPopulationTotalized N roots initial d φ n ω) ω)
         hcandidates
 
@@ -201,7 +227,7 @@ noncomputable def selectedPopulation
         (parents : Finset (RootIndexed.TreeNode Root α)),
       AdmitsFirstNBy N
         (observedPositionAtGeneration initial d φ (n + 1) ω)
-        (childrenAtGeneration n parents ω)) :
+        (Combinatorics.Branching.Population.childrenAtGeneration n parents ω)) :
     ℕ → RootIndexed.StepField Root α Mark →
       Finset (RootIndexed.TreeNode Root α)
   | 0, _ => initialPopulation roots
@@ -209,7 +235,7 @@ noncomputable def selectedPopulation
       let parents := selectedPopulation N roots initial d φ hadmits n ω
       selectFirstNFromSet N
         (observedPositionAtGeneration initial d φ (n + 1) ω)
-        (childrenAtGeneration n parents ω) (hadmits n ω parents)
+        (Combinatorics.Branching.Population.childrenAtGeneration n parents ω) (hadmits n ω parents)
 
 theorem selectedPopulation_succ_spec
     [DecidableEq (RootIndexed.TreeNode Root α)]
@@ -221,16 +247,16 @@ theorem selectedPopulation_succ_spec
         (parents : Finset (RootIndexed.TreeNode Root α)),
       AdmitsFirstNBy N
         (observedPositionAtGeneration initial d φ (n + 1) ω)
-        (childrenAtGeneration n parents ω))
+        (Combinatorics.Branching.Population.childrenAtGeneration n parents ω))
     (n : ℕ) (ω : RootIndexed.StepField Root α Mark) :
     IsFirstNBy N
       (observedPositionAtGeneration initial d φ (n + 1) ω)
-      (childrenAtGeneration n
+      (Combinatorics.Branching.Population.childrenAtGeneration n
         (selectedPopulation N roots initial d φ hadmits n ω) ω)
       (selectedPopulation N roots initial d φ hadmits (n + 1) ω) := by
   exact selectFirstNFromSet_spec N
     (observedPositionAtGeneration initial d φ (n + 1) ω)
-    (childrenAtGeneration n
+    (Combinatorics.Branching.Population.childrenAtGeneration n
       (selectedPopulation N roots initial d φ hadmits n ω) ω)
     (hadmits n ω
       (selectedPopulation N roots initial d φ hadmits n ω))
@@ -245,10 +271,10 @@ theorem selectedPopulation_succ_subset
         (parents : Finset (RootIndexed.TreeNode Root α)),
       AdmitsFirstNBy N
         (observedPositionAtGeneration initial d φ (n + 1) ω)
-        (childrenAtGeneration n parents ω))
+        (Combinatorics.Branching.Population.childrenAtGeneration n parents ω))
     (n : ℕ) (ω : RootIndexed.StepField Root α Mark) :
     ↑(selectedPopulation N roots initial d φ hadmits (n + 1) ω) ⊆
-      childrenAtGeneration n
+      Combinatorics.Branching.Population.childrenAtGeneration n
         (selectedPopulation N roots initial d φ hadmits n ω) ω :=
   (selectedPopulation_succ_spec N roots initial d φ hadmits n ω).subset
 
@@ -264,7 +290,7 @@ theorem selectedPopulation_adapted
         (parents : Finset (RootIndexed.TreeNode Root α)),
       AdmitsFirstNBy N
         (observedPositionAtGeneration initial d φ (n + 1) ω)
-        (childrenAtGeneration n parents ω))
+        (Combinatorics.Branching.Population.childrenAtGeneration n parents ω))
     (hselect : ∀ (n : ℕ)
         (parents : RootIndexed.StepField Root α Mark →
           Finset (RootIndexed.TreeNode Root α)),
@@ -274,7 +300,7 @@ theorem selectedPopulation_adapted
         (Root := Root) (α := α) (X := Mark) (n + 1)] fun ω =>
         selectFirstNFromSet N
           (observedPositionAtGeneration initial d φ (n + 1) ω)
-          (childrenAtGeneration n (parents ω) ω)
+          (Combinatorics.Branching.Population.childrenAtGeneration n (parents ω) ω)
           (hadmits n ω (parents ω))) :
     ∀ n, Measurable[RootIndexed.stepFiltration
       (Root := Root) (α := α) (X := Mark) n]
@@ -287,7 +313,7 @@ theorem selectedPopulation_adapted
         (Root := Root) (α := α) (X := Mark) (n + 1)] (fun ω =>
           selectFirstNFromSet N
             (observedPositionAtGeneration initial d φ (n + 1) ω)
-            (childrenAtGeneration n
+            (Combinatorics.Branching.Population.childrenAtGeneration n
               (selectedPopulation N roots initial d φ hadmits n ω) ω)
             (hadmits n ω
               (selectedPopulation N roots initial d φ hadmits n ω)))
@@ -313,7 +339,7 @@ theorem selectedPopulation_adapted_of_countable
         (parents : Finset (RootIndexed.TreeNode Root α)),
       AdmitsFirstNBy N
         (observedPositionAtGeneration initial d φ (n + 1) ω)
-        (childrenAtGeneration n parents ω)) :
+        (Combinatorics.Branching.Population.childrenAtGeneration n parents ω)) :
     ∀ n, Measurable[RootIndexed.stepFiltration
       (Root := Root) (α := α) (X := Mark) n]
       (selectedPopulation N roots initial d φ hadmits n) := by
@@ -325,7 +351,7 @@ theorem selectedPopulation_adapted_of_countable
         (selectedPopulation N roots initial d φ hadmits n) ih
       exact RootIndexed.measurable_selectFirstNFromSet
         N initial d hd φ hφ (n + 1)
-        (fun ω => childrenAtGeneration n
+        (fun ω => Combinatorics.Branching.Population.childrenAtGeneration n
           (selectedPopulation N roots initial d φ hadmits n ω) ω)
         (fun ω => hadmits n ω
           (selectedPopulation N roots initial d φ hadmits n ω))
@@ -341,7 +367,7 @@ theorem selectedPopulation_depth
         (parents : Finset (RootIndexed.TreeNode Root α)),
       AdmitsFirstNBy N
         (observedPositionAtGeneration initial d φ (n + 1) ω)
-        (childrenAtGeneration n parents ω))
+        (Combinatorics.Branching.Population.childrenAtGeneration n parents ω))
     (n : ℕ) (ω : RootIndexed.StepField Root α Mark)
     (p : RootIndexed.TreeNode Root α)
     (hp : p ∈ selectedPopulation N roots initial d φ hadmits n ω) :
@@ -353,11 +379,11 @@ theorem selectedPopulation_depth
       obtain ⟨r, _, rfl⟩ := hp
       rfl
   | succ n =>
-      apply childrenAtGeneration_depth n
+      apply Combinatorics.Branching.Population.childrenAtGeneration_depth n
         (selectedPopulation N roots initial d φ hadmits n ω) ω p
       exact (selectFirstNFromSet_spec N
         (observedPositionAtGeneration initial d φ (n + 1) ω)
-        (childrenAtGeneration n
+        (Combinatorics.Branching.Population.childrenAtGeneration n
           (selectedPopulation N roots initial d φ hadmits n ω) ω)
         (hadmits n ω
           (selectedPopulation N roots initial d φ hadmits n ω))).subset hp
@@ -374,15 +400,15 @@ theorem selectedPopulation_succ_spec_offspringAddressSet
         (parents : Finset (RootIndexed.TreeNode Root α)),
       AdmitsFirstNBy N
         (observedPositionAtGeneration initial d φ (n + 1) ω)
-        (childrenAtGeneration n parents ω))
+        (Combinatorics.Branching.Population.childrenAtGeneration n parents ω))
     (n : ℕ) (ω : RootIndexed.StepField Root α Mark) :
     IsFirstNBy N
       (observedPositionAtGeneration initial d φ (n + 1) ω)
-      (Combinatorics.Branching.Selection.Coupling.offspringAddressSet
+      (Combinatorics.Branching.Population.offspringAddressSet
         (↑(selectedPopulation N roots initial d φ hadmits n ω))
         (fun p => {i | survive (ω p.1 p.2) i}))
       (selectedPopulation N roots initial d φ hadmits (n + 1) ω) := by
-  rw [← childrenAtGeneration_eq_offspringAddressSet n
+  rw [← Combinatorics.Branching.Population.childrenAtGeneration_eq_offspringAddressSet n
     (selectedPopulation N roots initial d φ hadmits n ω) ω]
   · exact selectedPopulation_succ_spec N roots initial d φ hadmits n ω
   · intro p hp
@@ -401,13 +427,13 @@ theorem selectedPopulation_succ_spec_position
         (parents : Finset (RootIndexed.TreeNode Root α)),
       AdmitsFirstNBy N
         (observedPositionAtGeneration initial d φ (n + 1) ω)
-        (childrenAtGeneration n parents ω))
+        (Combinatorics.Branching.Population.childrenAtGeneration n parents ω))
     (n : ℕ) (ω : RootIndexed.StepField Root α Mark) :
     IsFirstNBy N
       (fun q => φ
         ((Combinatorics.Branching.RootIndexed.BranchingWalk.ofStepField
           initial ω).position d q.1 q.2))
-      (Combinatorics.Branching.Selection.Coupling.offspringAddressSet
+      (Combinatorics.Branching.Population.offspringAddressSet
         (↑(selectedPopulation N roots initial d φ hadmits n ω))
         (fun p => {i | survive (ω p.1 p.2) i}))
       (selectedPopulation N roots initial d φ hadmits (n + 1) ω) := by
@@ -415,9 +441,9 @@ theorem selectedPopulation_succ_spec_position
     N roots initial d φ hadmits n ω).congr_value
   intro q hq
   apply observedPositionAtGeneration_eq
-  rw [← childrenAtGeneration_eq_offspringAddressSet n
+  rw [← Combinatorics.Branching.Population.childrenAtGeneration_eq_offspringAddressSet n
     (selectedPopulation N roots initial d φ hadmits n ω) ω] at hq
-  · exact childrenAtGeneration_depth n
+  · exact Combinatorics.Branching.Population.childrenAtGeneration_depth n
       (selectedPopulation N roots initial d φ hadmits n ω) ω q hq
   · intro p hp
     exact selectedPopulation_depth N roots initial d φ hadmits n ω p hp
@@ -432,12 +458,12 @@ theorem selectedPopulation_card_le
         (parents : Finset (RootIndexed.TreeNode Root α)),
       AdmitsFirstNBy N
         (observedPositionAtGeneration initial d φ (n + 1) ω)
-        (childrenAtGeneration n parents ω))
+        (Combinatorics.Branching.Population.childrenAtGeneration n parents ω))
     (n : ℕ) (ω : RootIndexed.StepField Root α Mark) :
     (selectedPopulation N roots initial d φ hadmits (n + 1) ω).card ≤ N :=
   (selectFirstNFromSet_spec N
     (observedPositionAtGeneration initial d φ (n + 1) ω)
-    (childrenAtGeneration n
+    (Combinatorics.Branching.Population.childrenAtGeneration n
       (selectedPopulation N roots initial d φ hadmits n ω) ω)
     (hadmits n ω
       (selectedPopulation N roots initial d φ hadmits n ω))).card_le

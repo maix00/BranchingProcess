@@ -7,10 +7,10 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Distributions.Stable.Basic
-public import Probability.Distributions.Stable.Gaussian.Basic
-public import Probability.Distributions.Stable.Operations.Sign
-public import Mathlib.Analysis.SpecificLimits.Basic
-public import Mathlib.Probability.Moments.Variance
+public import Mathlib.Probability.CDF
+import Probability.Distributions.Stable.Support.Sign
+import Mathlib.Analysis.SpecificLimits.Basic
+import Mathlib.Probability.Moments.Variance
 
 /-!
 # Strictly stable laws do not have bounded support below index two
@@ -18,6 +18,18 @@ public import Mathlib.Probability.Moments.Variance
 A bounded nondegenerate law has finite variance. The strict stability identity
 then forces the scaling exponent to be two. Consequently, a strictly stable
 law of index below two assigns positive mass outside every bounded interval.
+
+## Public declarations
+
+* `measure_Icc_lt_one_of_lt_two` and
+  `measure_map_rpow_Icc_lt_one_of_lt_two`: if `α < 2`, every fixed bounded
+  interval, before or after positive power scaling, has mass strictly below one.
+* `measure_Ioi_pos_indexTwo`: for a strictly `2`-stable law with
+  `0 < cdf μ 0 < 1`, every open right half-line has positive mass.
+* `measure_Icc_lt_one_indexTwo` and
+  `measure_map_rpow_Icc_lt_one_indexTwo`: under the same CDF condition, every
+  bounded interval and every positively scaled unit interval has mass below
+  one.
 -/
 
 @[expose] public section

@@ -6,11 +6,19 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Scale.BlockScale
-import Probability.Process.RandomWalk.Kernel.Killed.Return.Uniform
-public import Probability.Process.RandomWalk.Kernel.Killed.Return.Basic
-public import Probability.Process.RandomWalk.Kernel.Killed.Survival.Blocking
+public import Mathlib.Analysis.SpecialFunctions.Log.Basic
+public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
 public import Mathlib.Topology.Order.LiminfLimsup
+public import Probability.Kernel.Survival.Basic
+public import Probability.Process.RandomWalk.Kernel.Killed.Basic
+public import Probability.Process.RandomWalk.Kernel.Killed.Return.Basic
+public import Probability.Process.RandomWalk.Path.Corridor.Horizontal.Core
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Scale.Basic
+public import Analysis.Asymptotics.Scale.Block.Diffusive
+public import Probability.Sequence.IID.Basic
+import Probability.Process.RandomWalk.Kernel.Killed.Return.Uniform
+import Probability.Process.RandomWalk.Kernel.Killed.Survival.Blocking
 
 /-!
 # Mogulskii lower rate from uniform return blocks
@@ -19,7 +27,14 @@ This file converts a positive uniform return-block estimate into a normalized
 real logarithmic `liminf` bound.  The probabilistic construction and the
 integer block asymptotics remain separate inputs.
 
-The public declarations are:
+This rate-transfer step supplies the lower-bound side of A. A. Mogul'skii,
+Theorem 3, Section 4, p. 764, “Small deviations in the sample function
+space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974), 755--765;
+English translation, “Small Deviations in a Space of Trajectories,” *Theory
+of Probability and Its Applications* 19(4) (1975), 726--736, DOI
+10.1137/1119081.
+
+## Public declarations
 
 - `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.mul_log_toReal_le_liminf_normalizedLog_remainingMass_of_return`:
   if each complete return block has probability at least $p>0$, then from a
@@ -44,7 +59,6 @@ normalized initial point in the return interval. -/
 theorem mul_log_toReal_le_liminf_normalizedLog_remainingMass_of_return
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     {scale : ℕ → ℝ} (hscale : IsMogulskiiScale scale)
-    (hscalePos : ∀ n, 0 < scale n)
     {constant : ℝ} (hconstant : 0 < constant)
     {blocks : ℕ} (hblocks : 0 < blocks)
     {outerLower outerUpper returnLower returnUpper initial : ℝ}
@@ -52,14 +66,14 @@ theorem mul_log_toReal_le_liminf_normalizedLog_remainingMass_of_return
     (lowerBound : ENNReal) (hlowerBound : 0 < lowerBound)
     (hlowerBoundOne : lowerBound ≤ 1)
     (hblock : ∀ᶠ n in atTop,
-      ∀ x : Set.Icc returnLower returnUpper,
+      ∃ hscalePos : 0 < scale n, ∀ x : Set.Icc returnLower returnUpper,
         lowerBound ≤ returnKernel ν
           (Set.Icc (scale n * outerLower) (scale n * outerUpper)) measurableSet_Icc
           (Set.Icc (scale n * returnLower) (scale n * returnUpper)) measurableSet_Icc
-          (blocks * diffusiveBlockLength constant scale n)
+          (blocks * Asymptotics.diffusiveBlockLength constant scale n)
           ⟨scale n * x, by
             constructor <;> nlinarith [x.property.1, x.property.2,
-              hscalePos n]⟩ univ) :
+              hscalePos]⟩ univ) :
     (1 / ((blocks : ℝ) * constant)) * Real.log lowerBound.toReal ≤
       atTop.liminf (fun n =>
         scale n ^ 2 / (n : ℝ) *
@@ -69,7 +83,7 @@ theorem mul_log_toReal_le_liminf_normalizedLog_remainingMass_of_return
               measurableSet_Icc) n
             (scale n * initial)).toReal) := by
   let length : ℕ → ℕ := fun n =>
-    blocks * diffusiveBlockLength constant scale n
+    blocks * Asymptotics.diffusiveBlockLength constant scale n
   let exponent : ℕ → ℕ := fun n => n / length n + 1
   let coefficient : ℕ → ℝ := fun n =>
     (exponent n : ℝ) * scale n ^ 2 / (n : ℝ)
@@ -78,7 +92,7 @@ theorem mul_log_toReal_le_liminf_normalizedLog_remainingMass_of_return
       (Set.Icc (scale n * outerLower) (scale n * outerUpper)) measurableSet_Icc)
     n (scale n * initial)
   have hlength : ∀ᶠ n in atTop, 0 < length n := by
-    filter_upwards [_root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.eventually_diffusiveBlockLength_pos hscale hconstant]
+    filter_upwards [_root_.Asymptotics.IsSmallDeviationScale.eventually_diffusiveBlockLength_pos hscale hconstant]
       with n hn
     exact Nat.mul_pos hblocks hn
   have hprobability : ∀ᶠ n in atTop,
@@ -86,12 +100,13 @@ theorem mul_log_toReal_le_liminf_normalizedLog_remainingMass_of_return
     have h :=
       _root_.ProbabilityTheory.RandomWalk.eventually_pow_succ_div_le_remainingMass_killedIncrementKernel_Icc
         ν outerLower outerUpper returnLower returnUpper scale length id
-        lowerBound hscalePos hlength hblock
-    filter_upwards [h] with n hn
+        lowerBound hlength hblock
+    filter_upwards [h, Asymptotics.IsSmallDeviationScale.eventually_pos hscale]
+      with n hn hscalePos
     simpa only [probability, exponent, id_eq] using hn
       (⟨scale n * initial, by
         constructor <;> nlinarith [hinitial.1, hinitial.2,
-          hscalePos n]⟩ :
+          hscalePos]⟩ :
         Set.Icc (scale n * returnLower) (scale n * returnUpper))
   have hlowerBoundTop : lowerBound ≠ ⊤ :=
     ne_of_lt (hlowerBoundOne.trans_lt ENNReal.one_lt_top)
@@ -131,7 +146,7 @@ theorem mul_log_toReal_le_liminf_normalizedLog_remainingMass_of_return
   have hcoefficient : Tendsto coefficient atTop
       (nhds (1 / ((blocks : ℝ) * constant))) := by
     simpa [coefficient, exponent, length] using
-      _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.tendsto_succ_completeReturnBlockCount_mul_sq_div hscale
+      _root_.Asymptotics.IsSmallDeviationScale.tendsto_succ_completeReturnBlockCount_mul_sq_div hscale
         hconstant hblocks
   have hleft : Tendsto
       (fun n => coefficient n * Real.log lowerBound.toReal) atTop
@@ -170,7 +185,6 @@ require a separate entrance estimate. -/
 theorem mul_log_toReal_le_liminf_normalizedLog_horizontalTubeProbability_of_return
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     {scale : ℕ → ℝ} (hscale : IsMogulskiiScale scale)
-    (hscalePos : ∀ n, 0 < scale n)
     {constant : ℝ} (hconstant : 0 < constant)
     {blocks : ℕ} (hblocks : 0 < blocks)
     {a returnLower returnUpper : ℝ}
@@ -179,14 +193,14 @@ theorem mul_log_toReal_le_liminf_normalizedLog_horizontalTubeProbability_of_retu
     (lowerBound : ENNReal) (hlowerBound : 0 < lowerBound)
     (hlowerBoundOne : lowerBound ≤ 1)
     (hblock : ∀ᶠ n in atTop,
-      ∀ x : Set.Icc returnLower returnUpper,
+      ∃ hscalePos : 0 < scale n, ∀ x : Set.Icc returnLower returnUpper,
         lowerBound ≤ returnKernel ν
           (Set.Icc (scale n * (-a)) (scale n * (1 - a))) measurableSet_Icc
           (Set.Icc (scale n * returnLower) (scale n * returnUpper)) measurableSet_Icc
-          (blocks * diffusiveBlockLength constant scale n)
+          (blocks * Asymptotics.diffusiveBlockLength constant scale n)
           ⟨scale n * x, by
             constructor <;> nlinarith [x.property.1, x.property.2,
-              hscalePos n, ha0, ha1]⟩ univ) :
+              hscalePos, ha0, ha1]⟩ univ) :
     (1 / ((blocks : ℝ) * constant)) * Real.log lowerBound.toReal ≤
       atTop.liminf (fun n =>
         scale n ^ 2 / (n : ℝ) *
@@ -194,7 +208,7 @@ theorem mul_log_toReal_le_liminf_normalizedLog_horizontalTubeProbability_of_retu
             (iidSequenceLaw ν) a (scale n) n).toReal) := by
   have hkernel :=
     mul_log_toReal_le_liminf_normalizedLog_remainingMass_of_return
-      ν hscale hscalePos hconstant hblocks hreturnZero lowerBound
+      ν hscale hconstant hblocks hreturnZero lowerBound
       hlowerBound hlowerBoundOne hblock
   convert hkernel using 1
   apply congrArg (fun f => atTop.liminf f)

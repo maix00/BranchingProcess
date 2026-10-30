@@ -13,6 +13,8 @@ public import Mathlib.Topology.Instances.ENNReal.Lemmas
 /-!
 # Uniform killed-kernel bounds from finite liminf estimates
 
+## Public declarations
+
 The public theorems transfer real-interval bounds to uniform bounds on the
 restricted-state kernel:
 

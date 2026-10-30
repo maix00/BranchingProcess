@@ -6,10 +6,14 @@ Authors: WANG Yiyang
 
 module
 
+public import Probability.Process.Path.Transform.Continuous
+
 public import Probability.Process.Path.Extrema.RunningMinimum
 
 /-!
 # Minimum of a continuous path on a finite interval
+
+## Public declarations
 
 The public definitions and theorems in this file are:
 

@@ -4,9 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
+module
+
 import Topology.Cadlag.Skorokhod.EDistance.Logarithmic.Basic
 import Topology.Cadlag.Skorokhod.EDistance.Logarithmic.Completion.AlignedCauchy
-import Topology.Cadlag.Skorokhod.EDistance.Logarithmic.Completion.CauchySubsequence
+import all Topology.Cadlag.Skorokhod.EDistance.Logarithmic.Completion.Lemmas.CauchySubsequence
 import Topology.Cadlag.Skorokhod.EDistance.Logarithmic.Separation
 import Topology.Cadlag.Skorokhod.EDistance.Logarithmic.Topology
 import Topology.Cadlag.UniformLimit
@@ -23,6 +25,5 @@ import Topology.Cadlag.UniformLimit
 #print axioms Skorokhod.instMetricSpaceBillingsleyPath
 #print axioms Skorokhod.uniformContinuous_toCadlagPath
 #print axioms IsCadlag.tendstoUniformly
-#print axioms Skorokhod.cauchySeq_alignedUniformFun
 #print axioms Skorokhod.exists_cadlag_uniformLimit_of_summably_aligned
-#print axioms Skorokhod.cauchySeq_subsequence_has_summableLogAlignment
+#print axioms Skorokhod.Completion.Lemmas.cauchySeq_subsequence_has_summableLogAlignment

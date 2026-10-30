@@ -1,6 +1,21 @@
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Partition
-import Probability.Distributions.Stable.Attraction.Norming.TruncatedMoment
+module
+
+import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Scale.BlockCount
+import Analysis.Asymptotics.Scale.Block.Count
+import Analysis.Asymptotics.Power.TailIntegral
+import Analysis.Asymptotics.RegularVariation.Integral.Basic
+import Probability.Distributions.Stable.Attraction.Norming.Asymptotics.Tail
+import Probability.Distributions.Stable.Attraction.Norming.Asymptotics.Inverse
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Scale.Rate
+import Probability.Distributions.Moments.Truncated.TailAsymptotics
+
+/-!
+# Axiom and consequence checks for stable norming scales
+
+This test module declares no public API. Its examples verify scale-time,
+block-count, truncated-moment, and norming consequences under slow or regular
+variation assumptions.
+-/
 
 open Filter MeasureTheory ProbabilityTheory
 open ProbabilityTheory.RandomWalk

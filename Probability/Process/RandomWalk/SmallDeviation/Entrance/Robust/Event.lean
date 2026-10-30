@@ -11,6 +11,8 @@ public import Probability.Process.RandomWalk.SmallDeviation.Entrance.MovingCorri
 /-!
 # Robust moving-corridor event
 
+## Public declarations
+
 The public definition in this file is:
 
 - `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.robustMovingTransitionEvent`:
@@ -20,12 +22,11 @@ The public definition in this file is:
 
 The central terminal interval is the first-block window used in Wang
 Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite
-Offspring*, Chapter 3, proof of Lemma 3.5.
+Offspring* (master's thesis, Fudan University, 2026), Appendix A.2,
+Lemma A.7, in the proof of Chapter 3, Lemma 3.5.
 -/
 
 @[expose] public section
-
-open MeasureTheory ProbabilityTheory
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Entrance
 

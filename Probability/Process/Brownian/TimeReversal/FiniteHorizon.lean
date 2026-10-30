@@ -15,7 +15,7 @@ public import Probability.Process.Path.TimeReversal.FiniteHorizon
 /-!
 # Brownian increments reversed over a finite time horizon
 
-The public definition and theorem in this file are:
+## Public declarations
 
 - `ProbabilityTheory.reverseBrownianBefore`:
   for $u\le t$ it is $B(t)-B(t-u)$, continued by $B(u)-B(0)$ for $u>t$.

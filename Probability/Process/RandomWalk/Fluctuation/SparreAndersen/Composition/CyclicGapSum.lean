@@ -6,8 +6,10 @@ Authors: WANG Yiyang
 
 module
 
-import all Probability.Process.RandomWalk.Fluctuation.SparreAndersen.Composition.Lemmas.BlockProbability
-public import Probability.Process.RandomWalk.Fluctuation.SparreAndersen.Composition.Cyclic
+import all Probability.Process.RandomWalk.Fluctuation.SparreAndersen.Composition.Lemmas.BlockProbability.Event
+import all Probability.Process.RandomWalk.Fluctuation.SparreAndersen.Composition.Lemmas.BlockProbability.Measure
+import all Probability.Process.RandomWalk.Fluctuation.SparreAndersen.Composition.Lemmas.BlockProbability.IIDFactorization
+public import Combinatorics.Sequence.CyclicGap.Basic
 public import Mathlib.Algebra.Group.Defs
 public import Mathlib.Algebra.Order.Group.Defs
 public import Mathlib.MeasureTheory.Constructions.Pi
@@ -16,6 +18,8 @@ public import Mathlib.MeasureTheory.Integral.Bochner.Set
 
 /-!
 # Cyclic-gap formula for a finite random walk
+
+## Public declarations
 
 The public theorem in this file is:
 
@@ -29,7 +33,7 @@ The public theorem in this file is:
   one increment law.
 
 This is equation (A.6) of Bauer--Godrèche--Luck. The formalized state-space
-generality follows from the proof's hypotheses; the cited article formulates
+generality follows from the proof's hypotheses; Bauer--Godrèche--Luck state
 the calculation for a one-dimensional random walk. Measurability of
 subtraction is not needed because each rotated event is the preimage of
 ordinary survival under a coordinate permutation.
@@ -46,6 +50,8 @@ partial-sum and cyclic-gap arguments.
 public section
 
 open MeasureTheory
+
+open Combinatorics.Sequence
 
 namespace ProbabilityTheory.RandomWalk
 
@@ -77,7 +83,7 @@ theorem measureReal_nonnegative_endpoint_eq_cyclicGap_sum
   simp only [dite_eq_left hnonempty]
   congr 1
   rw [MeasureTheory.measureReal_def,
-    measure_pi_cyclicBlockEvent_eq_prod (hIci := hIci) ν hn u hnonempty,
+    measure_pi_cyclicBlockEvent_eq_prod (hIci := hIci) ν u hnonempty,
     ENNReal.toReal_prod]
   rfl
 

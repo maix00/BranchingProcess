@@ -4,8 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Selection.NSelection.AsymptoticSpeed.InitialPopulation.Speed.Basic
+import Probability.BranchingRandomWalk.Selection.NSelection.AsymptoticSpeed.Selection.PopulationBatch
+import Combinatorics.Selection.NSelection.Matching.ByRank
+import Probability.BranchingRandomWalk.Selection.NSelection.AsymptoticSpeed.InitialPopulation.Trajectory.Basic
 import Probability.BranchingRandomWalk.Selection.NSelection.AsymptoticSpeed.InitialPopulation.Basic
+import Combinatorics.UlamHarris.Relation
 /-!
 # The ranked-batch representation of a finite selected trajectory
 
@@ -13,6 +16,21 @@ This file compares a finite root-indexed N-selection process with the
 ranked-batch recursion used by the speed theorem. Candidate children are
 identified by their ranked parent and offspring slot; value thresholds make
 the comparison independent of address tie breaks.
+
+## Public declarations
+
+- `selectedPopulationRankPosition N n initial field i` is the position of the
+  particle of dynamic rank $i$ in the finite selected population at generation
+  $n$.
+- `selectedPopulationTotalized_card_eq_of_rankedBatches_good` states that if
+  every ranked offspring batch is admissible, then the totalized selected
+  population has cardinality $N$ at every generation.
+- `selectedPopulationRankPosition_eq_infiniteOffspringRun` identifies the
+  whole finite-population trajectory with the infinite-offspring recursion
+  driven by the ranked batches.
+- `selectedPopulationRankPosition_hasAsymptoticSpeed_of_originRun` transports
+  a speed shared by the origin-start infinite-offspring run to the rank-zero
+  trajectory from any finite initial position vector.
 -/
 
 open Filter MeasureTheory ProbabilityTheory
@@ -22,7 +40,7 @@ namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Speed
 
 open Combinatorics.UlamHarris
 open Combinatorics.Branching
-open Combinatorics.Branching.Selection.NSelection
+open _root_.Combinatorics.Selection.NSelection
 open ProbabilityTheory.BranchingRandomWalk
 open ProbabilityTheory.BranchingRandomWalk.RootIndexed
 
@@ -89,7 +107,7 @@ private lemma rankedChildAddress_candidateImage
     Set.image (rankedChildAddress N n initial field)
         (infiniteOffspringCandidates
           (selectedRootBatch (selectedPopulationRankRoots N initial) n field)) =
-      RootIndexed.childrenAtGeneration n
+      Combinatorics.Branching.Population.childrenAtGeneration n
         (rankedPopulation N n initial field) field := by
   classical
   let roots := rankedRoots N n initial field
@@ -110,11 +128,11 @@ private lemma rankedChildAddress_candidateImage
     have hsurvive' : survive (field (roots (ofLex r).1).1
         (roots (ofLex r).1).2) (ofLex r).2 := by
       simpa [batch, rankedRoot_batch_value, roots] using hsurvive
-    exact RootIndexed.childAddress_mem_childrenAtGeneration n population field
+    exact Combinatorics.Branching.Population.childAddress_mem_childrenAtGeneration n population field
       (roots (ofLex r).1) hparent hdepth (ofLex r).2 hsurvive'
   · intro hq
     obtain ⟨p, hp, hpdepth, j, hj, rfl⟩ :=
-      (RootIndexed.mem_childrenAtGeneration_iff n population field q).mp hq
+      (Combinatorics.Branching.Population.mem_childrenAtGeneration_iff n population field q).mp hq
     rw [← hroots] at hp
     obtain ⟨i, _, hroot⟩ := Finset.mem_image.mp hp
     refine ⟨toLex (i, j), ?_, ?_⟩
@@ -134,9 +152,9 @@ private lemma rankedChildAddress_injective
     Function.Injective (rankedChildAddress N n initial field) := by
   intro q r h
   let roots := rankedRoots N n initial field
-  have hparent := congrArg Combinatorics.Branching.parent h
+  have hparent := congrArg Combinatorics.UlamHarris.RootIndexed.parent h
   have hroots : roots (ofLex q).1 = roots (ofLex r).1 := by
-    simpa [rankedChildAddress, roots, Combinatorics.Branching.parent] using hparent
+    simpa [rankedChildAddress, roots, Combinatorics.UlamHarris.RootIndexed.parent] using hparent
   have hindex : (ofLex q).1 = (ofLex r).1 := by
     exact selectedPopulationRankRoots_injective N n initial field hroots
   have hpath : (roots (ofLex q).1).2 ++ [(ofLex q).2] =
@@ -179,7 +197,7 @@ private lemma rankedPopulation_succ_card_of_good
   let population := rankedPopulation N n initial field
   let batch := selectedRootBatch (selectedPopulationRankRoots N initial) n field
   let value := RootIndexed.observedPositionAtGeneration initial id id (n + 1) field
-  let candidates := RootIndexed.childrenAtGeneration n population field
+  let candidates := Combinatorics.Branching.Population.childrenAtGeneration n population field
   let selected := rankedPopulation N (n + 1) initial field
   have hroots : Finset.univ.image roots = population :=
     rankedRoots_image_eq_of_card N n initial field hcard
@@ -191,12 +209,8 @@ private lemma rankedPopulation_succ_card_of_good
     have hi := hgood.finiteWeight i
     simpa [batch, rankedRoot_batch_value, roots,
       totalPotentialWeight_real_neg_one] using hi
-  have hdepth : ∀ p ∈ population, p.2.length = n := by
-    intro p hp
-    exact RootIndexed.selectedPopulationTotalized_depth
-      N Finset.univ initial id id n field p (by simpa [population, rankedPopulation] using hp)
   have hselector := RootIndexed.childrenAtGeneration_isLowerFiniteBy_real
-    n population field initial hdepth hweight
+    n population field initial hweight
   have hspec := RootIndexed.selectedPopulationTotalized_succ_spec
     N Finset.univ initial id id n field hselector
   have himage : Set.image (rankedChildAddress N n initial field)
@@ -230,7 +244,7 @@ noncomputable def selectedPopulationRankPosition
   fun i => RootIndexed.observedPositionAtGeneration initial id id n field
     (rankedRoots N n initial field i)
 
-theorem rankedPopulation_card_eq_of_rankedBatches_good
+private theorem rankedPopulation_card_eq_of_rankedBatches_good
     (N : ℕ) (initial : Fin N → ℝ)
     [LinearOrder (RootIndexed.TreeNode (Fin N) ℕ)]
     (field : RootIndexed.StepField (Fin N) ℕ ℝ)
@@ -277,7 +291,7 @@ private lemma rankedPosition_succ_eq_transition
   let population := rankedPopulation N n initial field
   let batch := selectedRootBatch (selectedPopulationRankRoots N initial) n field
   let valueLeft := RootIndexed.observedPositionAtGeneration initial id id (n + 1) field
-  let candidatesLeft := RootIndexed.childrenAtGeneration n population field
+  let candidatesLeft := Combinatorics.Branching.Population.childrenAtGeneration n population field
   let selectedLeft := rankedPopulation N (n + 1) initial field
   let valueRight := infiniteOffspringPosition (selectedPopulationRankPosition N n initial field) batch
   let candidatesRight := infiniteOffspringCandidates batch
@@ -293,12 +307,8 @@ private lemma rankedPosition_succ_eq_transition
     have hr := hgood.finiteWeight r
     simpa [batch, rankedRoot_batch_value, roots,
       totalPotentialWeight_real_neg_one] using hr
-  have hdepth : ∀ p ∈ population, p.2.length = n := by
-    intro p hp
-    exact RootIndexed.selectedPopulationTotalized_depth
-      N Finset.univ initial id id n field p (by simpa [population, rankedPopulation] using hp)
   have hselector := RootIndexed.childrenAtGeneration_isLowerFiniteBy_real
-    n population field initial hdepth hweight
+    n population field initial hweight
   have hselectedLeft := RootIndexed.selectedPopulationTotalized_succ_spec
     N Finset.univ initial id id n field hselector
   have hselectedRight := infiniteOffspringFirstN_spec
@@ -386,39 +396,55 @@ private lemma rankedPosition_succ_eq_transition
       hselectedLeft hselectedRight hcardLeft hcardRight
       (rankedChildAddress N n initial field) backward
       hforward hbackward hbackwardForward hforwardBackward hvalue a
-  let fallbackLeft : RootIndexed.TreeNode (Fin N) ℕ :=
-    (i, List.replicate (n + 1) 0)
-  let fallbackRight : InfiniteSlotLabel N := fallback
-  have hrankValues := selectedRankValue_eq_of_thresholdCounts
-    valueLeft valueRight selectedLeft selectedRight fallbackLeft fallbackRight
+  have hrankValues := valueAtRankBy_eq_of_thresholdCounts
+    valueLeft valueRight selectedLeft selectedRight (0 : ℝ) (0 : ℝ)
     hcardLeft hcardRight hcounts i
   have hleft : selectedPopulationRankPosition N (n + 1) initial field i =
-      selectedRankValue valueLeft selectedLeft fallbackLeft i.val := by
+      valueAtRankBy valueLeft selectedLeft (0 : ℝ) i.val := by
     have hfull : (RootIndexed.selectedPopulationTotalized N Finset.univ
         initial id id (n + 1) field).card = N := by
       simpa [rankedPopulation] using hcardLeft
     change RootIndexed.observedPositionAtGeneration initial id id (n + 1) field
         (rankedRoots N (n + 1) initial field i) =
-      selectedRankValue valueLeft selectedLeft fallbackLeft i.val
-    simp [rankedRoots, selectedPopulationRankRoots, selectedPopulationRankRoot,
-      selectedRankValue, selectedLeft, rankedPopulation, fallbackLeft, hfull, valueLeft]
+      valueAtRankBy valueLeft selectedLeft (0 : ℝ) i.val
+    have hopt : particleAtRankBy valueLeft selectedLeft i.val ≠ none := by
+      intro hnone
+      have hle := particleAtRankBy_eq_none_iff.mp hnone
+      rw [hcardLeft] at hle
+      exact (not_le_of_gt i.isLt) hle
+    have hroot : rankedRoots N (n + 1) initial field i =
+        (particleAtRankBy valueLeft selectedLeft i.val).getD
+          (i, List.replicate (n + 1) 0) := by
+      simp [rankedRoots, selectedPopulationRankRoots, selectedPopulationRankRoot,
+        selectedLeft, rankedPopulation, hfull, valueLeft]
+    cases h : particleAtRankBy valueLeft selectedLeft i.val with
+    | none => exact (hopt h).elim
+    | some p =>
+        have hvalue : valueAtRankBy valueLeft selectedLeft (0 : ℝ) i.val =
+            valueLeft p := by
+          simp [valueAtRankBy, h]
+        rw [hroot, h]
+        change valueLeft p = valueAtRankBy valueLeft selectedLeft (0 : ℝ) i.val
+        rw [hvalue]
   have hright : infiniteOffspringTransition (selectedPopulationRankPosition N n initial field)
-      batch hgood i = selectedRankValue valueRight selectedRight fallbackRight i.val := by
+      batch hgood i = valueAtRankBy valueRight selectedRight (0 : ℝ) i.val := by
     let opt := particleAtRankBy valueRight selectedRight i.val
     have hopt : opt ≠ none := by
       intro hnone
-      have hle := particleAtRankBy_eq_none_iff.mp hnone
+      have hnone' : particleAtRankBy valueRight selectedRight i.val = none := by
+        simpa [opt] using hnone
+      have hle := particleAtRankBy_eq_none_iff.mp hnone'
       rw [hcardRight] at hle
       exact (not_le_of_gt i.isLt) hle
     cases h : opt with
     | none => exact (hopt h).elim
     | some p =>
         simp [infiniteOffspringTransition, selectedLabelAtRank,
-          selectedRankValue, selectedRight, valueRight, opt, h]
+          valueAtRankBy, selectedRight, valueRight, opt, h]
   calc
     selectedPopulationRankPosition N (n + 1) initial field i =
-        selectedRankValue valueLeft selectedLeft fallbackLeft i.val := hleft
-    _ = selectedRankValue valueRight selectedRight fallbackRight i.val := hrankValues
+        valueAtRankBy valueLeft selectedLeft (0 : ℝ) i.val := hleft
+    _ = valueAtRankBy valueRight selectedRight (0 : ℝ) i.val := hrankValues
     _ = infiniteOffspringTransition (selectedPopulationRankPosition N n initial field) batch hgood i := hright.symm
 
 /-- If every ranked batch is admissible, then the finite root-indexed

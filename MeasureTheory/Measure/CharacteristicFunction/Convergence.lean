@@ -5,18 +5,31 @@ Authors: Codex
 -/
 module
 
-public import Mathlib.MeasureTheory.Measure.LevyConvergence
-public import Mathlib.MeasureTheory.Measure.CharacteristicFunction.TaylorExpansion
-public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Bounds
+public import Mathlib.MeasureTheory.Measure.CharacteristicFunction.Basic
+public import Mathlib.MeasureTheory.Measure.Tight
+public import Mathlib.MeasureTheory.Measure.ProbabilityMeasure
 public import Mathlib.Topology.UniformSpace.Ascoli
+
+import Mathlib.MeasureTheory.Measure.LevyConvergence
+import Mathlib.MeasureTheory.Measure.CharacteristicFunction.TaylorExpansion
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Bounds
 
 /-!
 # Compact-uniform convergence of characteristic functions
 
-Weak convergence of probability measures implies uniform convergence of their
-characteristic functions on compact frequency sets.  The proof uses tightness
-to obtain equicontinuity and then the compactness criterion for uniform
-convergence in Mathlib.
+Pointwise convergence of characteristic functions to that of a probability
+measure implies uniform convergence on compact frequency sets. Tightness gives
+equicontinuity, and the compactness criterion for uniform convergence in
+Mathlib completes the argument.
+
+## Public declarations
+
+- `equicontinuous_charFun_of_isTightMeasureSet`: tightness of a family
+  $(\mu_n)$ gives equicontinuity of $t\mapsto\widehat\mu_n(t)$.
+- `tendstoUniformlyOn_charFun_of_tendsto`: pointwise convergence
+  $\widehat\mu_n(t)\to\widehat\mu(t)$ implies uniform convergence on every
+  compact frequency set $K$, namely
+  $\sup_{t\in K}|\widehat\mu_n(t)-\widehat\mu(t)|\to0$.
 -/
 
 open Filter MeasureTheory Set

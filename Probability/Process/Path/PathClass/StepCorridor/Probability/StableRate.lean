@@ -13,6 +13,27 @@ public import Probability.Process.Stable.SmallDeviation.EscapeRate.Corridor
 /-!
 # Stable small-deviation rate for constant `M₂` corridors
 
+## Public declarations
+
+- `ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability.constantCorridorEvent`:
+  \(f(0)=0\) and \(\ell<f(t)<u\) for every \(t\in[0,1]\).
+- `ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability.corridorSet_constant_eq`:
+  identifies this event with the constant-boundary corridor set.
+- `ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability.ContinuousAdmissibleStepCorridor.constantBounds`:
+  constructs an admissible `M₂` corridor when \(\ell<0<u\).
+- `ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability.ContinuousAdmissibleStepCorridor.constantBounds_toSet`:
+  identifies the constructed corridor's path set with the pointwise event.
+- `ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability.scaledConstantCorridorEvent`:
+  defines the corridor with boundaries \(a\ell\) and \(au\).
+- `ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability.scaledConstantCorridorEvent_eq_toSet`:
+  identifies that event with the corresponding admissible `M₂` set for \(a>0\).
+- `ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability.nullMeasurableSet_scaledConstantCorridorEvent`:
+  proves null-measurability under every finite path measure.
+- `ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability.exists_tendsto_log_scaledConstantCorridorEvent`:
+  for the stable path law, some \(C<0\) satisfies
+  \(a^\alpha\log\mathbb P(f(0)=0,\;a\ell<f(t)<au\ \forall t)
+  \to ((u-\ell)/2)^{-\alpha}C\) as \(a\downarrow0\).
+
 The source's pointwise-strict corridor need not be open in `J₁`: a càdlàg
 path can approach a boundary through a left limit without attaining it.  For
 constant finite boundaries, its stable small-width rate can nevertheless be
@@ -93,7 +114,7 @@ private lemma measure_rangeInOpenInterval_eq_fullSegmentCorridorEvent
     {P : Measure (CadlagPath unitInterval ℝ)} [IsProbabilityMeasure P]
     {Ω : Type*} [MeasurableSpace Ω]
     {X : ℝ≥0 → Ω → ℝ} {Q : Measure Ω} [IsProbabilityMeasure Q]
-    (hP : IsStableClockProcessLaw α μ UnitInterval.clock P)
+    (hP : IsStableClockProcessLaw α μ unitInterval.clock P)
     (hX : IsStableLevyProcess α μ X Q) (lower upper : ℝ) :
     P (Skorokhod.rangeInOpenInterval lower upper) =
       Q (fullSegmentCorridorEvent X 0 1 lower upper) := by
@@ -169,7 +190,7 @@ private lemma constantCorridorEvent_subset_rangeInOpenInterval
 private lemma measure_rangeInOpenInterval_le_constantCorridorEvent
     {α : ℝ} {μ : Measure ℝ}
     {P : Measure (CadlagPath unitInterval ℝ)} [IsProbabilityMeasure P]
-    (hP : IsStableClockProcessLaw α μ UnitInterval.clock P)
+    (hP : IsStableClockProcessLaw α μ unitInterval.clock P)
     {lo hi lower upper : ℝ} (hlo : lower < lo) (hhi : hi < upper) :
     P (Skorokhod.rangeInOpenInterval lo hi) ≤
       P (constantCorridorEvent lower upper) := by
@@ -215,7 +236,7 @@ theorem exists_tendsto_log_scaledConstantCorridorEvent
     {P : Measure (CadlagPath unitInterval ℝ)} [IsProbabilityMeasure P]
     {Ω : Type*} [MeasurableSpace Ω]
     {X : ℝ≥0 → Ω → ℝ} {Q : Measure Ω} [IsProbabilityMeasure Q]
-    (hP : IsStableClockProcessLaw α μ UnitInterval.clock P)
+    (hP : IsStableClockProcessLaw α μ unitInterval.clock P)
     (hX : IsStableLevyProcess α μ X Q)
     (hcdf : 0 < cdf μ 0 ∧ cdf μ 0 < 1)
     {lower upper : ℝ} (hlower : lower < 0) (hupper : 0 < upper) :

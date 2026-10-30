@@ -6,14 +6,19 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.Brownian.Reflection.Descending.Law
-public import Probability.Process.Brownian.Independence.PastFuturePaths
-public import Probability.Independence.NullSections
+public import Probability.Process.Path.Transform.Continuous
+
+public import Probability.Process.Brownian.PathLaw.ContinuousPathLaw
+public import Probability.Process.Path.FirstPassage.Descending
+public import Probability.Process.Path.FirstPassage.Measurability
+import Probability.Process.Brownian.Reflection.Descending.Law
+import Probability.Process.Brownian.Independence.PastFuturePaths
+import Probability.Independence.NullSections
 
 /-!
 # Brownian first passage at a past-measurable level
 
-The public theorem in this file is:
+## Public declarations
 
 - `ProbabilityTheory.IsBrownianReal.measure_randomLevelFirstPassage_eq_zero`:
   for deterministic $q$, let $A$ and $T$ be measurable functions of

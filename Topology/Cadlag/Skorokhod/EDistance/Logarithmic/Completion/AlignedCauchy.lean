@@ -16,19 +16,19 @@ public import Topology.Cadlag.UniformLimit
 
 ## Public declarations
 
-* `Skorokhod.tendsto_tsum_tail_error` says the tails of a summable nonnegative sequence
-  tend to zero.
 * `Skorokhod.alignedPath path clocks n` applies the cumulative time change through step
   `n` to `path n`.
-* `Skorokhod.uniformEDist_alignedPath_succ_le` preserves each local alignment bound;
-  `Skorokhod.cauchySeq_alignedUniformFun` sums these bounds to prove the aligned paths
-  are Cauchy in the uniform-function space.
 * `Skorokhod.exists_cadlag_uniformLimit_of_summably_aligned` gives a càdlàg uniform
   limit whenever the successive alignment errors are summable.
 
 Summably close time changes align a sequence of càdlàg paths into a uniformly
 Cauchy sequence. Completeness of the logarithmic path metric additionally
 requires controlling the tail time change, proved separately.
+
+This alignment step follows the subsequence construction in Theorem 14.2 of
+Patrick Billingsley, *Convergence of Probability Measures*, 1st ed., Wiley,
+1968, Chapter 3, §14, equations (A4.27)–(A4.31), pp. 115–116
+([text](https://ru.djvu.online/file/vaaIHv9IWlVeK)).
 -/
 
 @[expose] public section
@@ -38,11 +38,6 @@ open scoped NNReal UniformConvergence
 
 namespace Skorokhod
 
-/-- The tails of a nonnegative sequence tend to zero in `ℝ≥0`. -/
-theorem tendsto_tsum_tail_error (error : ℕ → ℝ≥0) :
-    Tendsto (fun start => ∑' k, error (start + k)) atTop (nhds 0) :=
-  by simpa only [Nat.add_comm] using NNReal.tendsto_sum_nat_add error
-
 /-- Reparameterize the `n`th path by all preceding alignment clocks. -/
 noncomputable def alignedPath {E : Type*} [TopologicalSpace E]
     (path : ℕ → CadlagPath unitInterval E) (clocks : ℕ → TimeChange) :
@@ -51,7 +46,7 @@ noncomputable def alignedPath {E : Type*} [TopologicalSpace E]
 
 /-- One local alignment estimate is unchanged after applying the accumulated
 time change to both paths. -/
-theorem uniformEDist_alignedPath_succ_le {E : Type*} [EMetricSpace E]
+private theorem uniformEDist_alignedPath_succ_le {E : Type*} [EMetricSpace E]
     (path : ℕ → CadlagPath unitInterval E) (clocks : ℕ → TimeChange)
     (error : ℕ → ℝ≥0)
     (hclose : ∀ n, uniformEDist ((clocks n).act (path n.succ)) (path n) ≤ error n) :
@@ -71,7 +66,7 @@ theorem uniformEDist_alignedPath_succ_le {E : Type*} [EMetricSpace E]
 /-- If successive paths can be aligned with summably small uniform errors,
 the aligned sequence is Cauchy in the space of all functions with its uniform
 convergence structure. -/
-theorem cauchySeq_alignedUniformFun {E : Type*} [EMetricSpace E]
+private theorem cauchySeq_alignedUniformFun {E : Type*} [EMetricSpace E]
     (path : ℕ → CadlagPath unitInterval E) (clocks : ℕ → TimeChange)
     (error : ℕ → ℝ≥0)
     (hclose : ∀ n, uniformEDist ((clocks n).act (path n.succ)) (path n) ≤ error n)

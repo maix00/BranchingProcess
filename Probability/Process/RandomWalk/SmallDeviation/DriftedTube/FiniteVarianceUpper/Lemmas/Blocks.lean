@@ -6,13 +6,13 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Basic
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.Event
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.BlockEvent
-public import Probability.Process.Filtration.ConditionalBlocks
-public import Combinatorics.Sequence.Block
-public import Probability.Process.RandomWalk.Path.Block.Partition.Basic
-public import Probability.Sequence.Filtration
+import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Theorems
+import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.Event
+import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.BlockEvent
+import Probability.Process.Filtration.ConditionalBlocks
+import Combinatorics.Sequence.Block
+import Probability.Process.RandomWalk.Path.Block.Partition.Basic
+import Probability.Sequence.Filtration
 import Probability.Sequence.IID.Blocks.StoppingTime
 import Probability.Independence.ConditionalIntegral
 import Analysis.Asymptotics.Scale.Power.IntermediateBlock
@@ -20,6 +20,8 @@ import Probability.Sequence.IID.Blocks.Consecutive
 
 /-!
 # Proof lemmas for the finite-variance tilted-tube upper bound
+
+## Internal proof declarations
 
 These declarations support the equal-length block proof of Wang Yiyang,
 *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
@@ -32,6 +34,9 @@ proof and are kept under `FiniteVarianceUpper/Lemmas/`.
   block probability bound obtained from Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.3.
 - `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.measurableSet_driftedTubeBlockEvent`:
   measurability of the block event.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.driftedTubeEvent_subset_noLargeDropEndpointBelowEvent`:
+  the one-use reduction of a tilted tube to the general monotone-corridor
+  drawdown bound used by this block estimate.
 - `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.iidSequenceLaw_condExp_driftedTubeBlockEvent_le_of_blockBound`:
   the
   conditional probability bound used in the block iteration.
@@ -40,12 +45,69 @@ proof and are kept under `FiniteVarianceUpper/Lemmas/`.
 open Filter MeasureTheory
 open scoped Topology
 
-@[expose] public section
+section
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 
 open ProbabilityTheory.RandomWalk
 open ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown
+
+/-- The one-use tilted-tube reduction to the generic drawdown estimate in
+Wang Yiyang's Chapter 3, Lemma 3.4 block argument. -/
+lemma driftedTubeEvent_subset_noLargeDropEndpointBelowEvent
+    (horizon : ℕ) {width drift lower : ℝ}
+    (hdrift : 0 ≤ drift)
+    (hlower : -width ≤ lower) (hupper : lower ≤ 0) :
+    driftedTubeEvent horizon width drift lower ⊆
+      noLargeDropEndpointBelowEvent horizon width
+        (width + drift * (horizon : ℝ) / width ^ 2) := by
+  intro increment hpath
+  let lowerBoundary : ℕ → ℝ := fun j =>
+    lower + drift * (j : ℝ) / width ^ 2
+  have hslope : 0 ≤ drift / width ^ 2 := div_nonneg hdrift (sq_nonneg width)
+  have hmonotone : Monotone lowerBoundary := by
+    intro i j hij
+    dsimp [lowerBoundary]
+    have htime : (i : ℝ) ≤ (j : ℝ) := by exact_mod_cast hij
+    have hrate : drift * (i : ℝ) / width ^ 2 ≤
+        drift * (j : ℝ) / width ^ 2 := by
+      have hmul := mul_le_mul_of_nonneg_left htime hslope
+      simpa [div_eq_mul_inv, mul_assoc, mul_comm, mul_left_comm] using hmul
+    linarith [hrate]
+  have hcorridor : ∀ j : Fin (horizon + 1),
+      AdditivePath.displacement (j : ℕ) increment ∈
+        Set.Icc (lowerBoundary (j : ℕ))
+          (lowerBoundary (j : ℕ) + width) := by
+    intro j
+    by_cases hjzero : (j : ℕ) = 0
+    · have hdisplacement : AdditivePath.displacement (j : ℕ) increment = 0 := by
+        rw [hjzero, AdditivePath.displacement_zero]
+      have hlowerBoundary : lowerBoundary (j : ℕ) = lower := by
+        simp [lowerBoundary, hjzero]
+      rw [hdisplacement, hlowerBoundary]
+      exact ⟨hupper, by linarith [hlower]⟩
+    · have hjpos : 1 ≤ (j : ℕ) := by omega
+      have hjbound : (j : ℕ) ≤ horizon := Nat.le_of_lt_succ j.isLt
+      have h := hpath (j : ℕ) hjpos hjbound
+      simpa [lowerBoundary] using h
+  have hdrawdown :=
+    ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.additivePath_mem_noLargeDropEndpointBelowEvent_of_monotoneCorridor
+      horizon lowerBoundary width hmonotone increment hcorridor
+  change
+    (∀ i j : ℕ, i ≤ j → j ≤ horizon →
+      AdditivePath.displacement i increment -
+        AdditivePath.displacement j increment ≤ width) ∧
+      AdditivePath.displacement horizon increment ≤
+        lowerBoundary horizon + width at hdrawdown
+  change
+    (∀ i j : ℕ, i ≤ j → j ≤ horizon →
+      AdditivePath.displacement i increment -
+        AdditivePath.displacement j increment ≤ width) ∧
+      AdditivePath.displacement horizon increment ≤
+        width + drift * (horizon : ℝ) / width ^ 2
+  refine ⟨hdrawdown.1, ?_⟩
+  dsimp [lowerBoundary] at hdrawdown
+  linarith [hdrawdown.2, hupper]
 
 /-- The single complete-block estimate in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, proof of
 Lemma 3.4. Its inclusion in the no-large-drop event uses Chapter 3, Lemma 3.3
@@ -55,7 +117,6 @@ lemma exists_driftedTubeBlockProbability_le_exp_of_finiteVariance
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     {variance drift eta d : ℝ}
     (hν : ProbabilityTheory.IsCenteredSecondMoment ν variance)
-    (hsquare : Integrable (fun x : ℝ => x ^ 2) ν)
     (hvariance : 0 < variance) (hdrift : 0 ≤ drift)
     (heta : 0 < eta) (hetaOne : eta < 1)
     (hd : 0 < d) (hcritical : d < Real.pi ^ 2 / 2 * variance) :
@@ -68,7 +129,7 @@ lemma exists_driftedTubeBlockProbability_le_exp_of_finiteVariance
   have hetaHalf : 0 < eta / 2 := by linarith
   obtain ⟨DeltaMain, hDeltaMain, hmain⟩ :=
     Drawdown.measureReal_noLargeDropEndpointBelowEvent_le_exp_of_finiteVariance
-      ν hν hsquare hvariance hetaHalf hd hcritical
+      ν hν hvariance hetaHalf hd hcritical
   have hfloor := Asymptotics.eventually_nat_floor_rpow_intermediate_bounds
     (p := 2 + eta / 2) (q := 2 + eta) (by linarith) (by linarith)
   have hgrowth : ∀ᶠ Delta : ℝ in atTop,

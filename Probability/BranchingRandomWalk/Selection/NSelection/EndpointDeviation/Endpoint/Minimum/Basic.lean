@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.Basic
-import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Roots.Nonempty
+module
+
+public import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.Basic
+public import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Roots.Nonempty
 /-!
 # Measurable endpoint minimum
 
@@ -15,8 +17,10 @@ assumptions used for the speed theorem, emptiness has probability zero, so
 this totalization agrees almost surely with the ordinary finite-population
 minimum.
 
-The public declarations in
-`ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail` are:
+## Public declarations
+
+The declarations in
+`ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation` are:
 
 - `firstNSelectedEndpointMinimum m N H`: the minimum of the generation-`H`
   selected endpoint positions, with value zero when the selected population
@@ -41,11 +45,10 @@ probability-one conclusions use the finite-root product law.
 
 open MeasureTheory
 
-section
-
+@[expose] public section
 attribute [local instance] Classical.propDecidable Classical.decEq
 
-namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail
+namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation
 
 open Combinatorics.Branching
 open Combinatorics.UlamHarris
@@ -85,7 +88,7 @@ theorem firstNSelectedEndpointMinimum_le_iff
   unfold firstNSelectedEndpointMinimum
   dsimp only
   by_cases h : (firstNSelectedPopulation m N H field).Nonempty
-  · rw [dif_pos h, Finset.inf'_le_iff]
+  · rw [dite_eq_left h, Finset.inf'_le_iff]
     constructor
     · intro hmin
       exact Or.inl (by simpa [firstNSelectedEndpointBelow] using hmin)
@@ -93,7 +96,7 @@ theorem firstNSelectedEndpointMinimum_le_iff
       rcases hbelow with hbelow | ⟨hfalse, _⟩
       · simpa [firstNSelectedEndpointBelow] using hbelow
       · exact False.elim (hfalse h)
-  · rw [dif_neg h]
+  · rw [dite_eq_right h]
     constructor
     · intro hx
       exact Or.inr ⟨h, hx⟩
@@ -127,7 +130,7 @@ theorem measurable_firstNSelectedEndpointMinimum
   have hbelow : MeasurableSet (firstNSelectedEndpointBelow m N H x) :=
     measurableSet_firstNSelectedEndpointBelow m N H x
   by_cases hx : 0 ≤ x
-  · rw [if_pos hx]
+  · rw [ite_eq_left hx]
     apply hbelow.union
     have hpopulation : Measurable (firstNSelectedPopulation m N H) :=
       firstNSelectedPopulation_measurable m N H
@@ -142,7 +145,7 @@ theorem measurable_firstNSelectedEndpointMinimum
       exact hpopulation (measurableSet_singleton (∅ : Finset
         (RootIndexed.TreeNode (Fin m) ℕ)))
     exact hempty
-  · rw [if_neg hx]
+  · rw [ite_eq_right hx]
     exact hbelow.union MeasurableSet.empty
 
 theorem firstNSelectedEndpointMinimum_eq_population_inf'_ae
@@ -189,6 +192,6 @@ theorem firstNSelectedEndpointMinimum_le_iff_endpointBelow_ae
   rw [firstNSelectedEndpointMinimum_le_iff]
   simp [hpopulation']
 
-end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail
+end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation
 
 end

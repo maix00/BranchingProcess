@@ -12,6 +12,8 @@ public import Mathlib.Algebra.Order.Floor.Semiring
 /-!
 # Uniform grids on the unit time interval
 
+## Public declarations
+
 The public definition and theorems in this file are:
 
 - `ProbabilityTheory.unitIntervalGridTime`: the time $i/(n+1)$ for

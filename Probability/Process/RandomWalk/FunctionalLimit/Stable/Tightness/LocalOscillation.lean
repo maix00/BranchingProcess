@@ -7,8 +7,8 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.FunctionalLimit.Stable.Tightness.BlockTail
-public import Probability.Process.RandomWalk.Path.Block.Law.FirstCrossing
-public import Probability.Process.RandomWalk.Path.Skorokhod.Oscillation
+public import Probability.Process.RandomWalk.Path.Block.Law.TwoExcursions
+public import Probability.Process.RandomWalk.Path.Skorokhod.Oscillation.BlockEvents
 
 /-!
 # Stable-domain bounds for two ordered block excursions
@@ -19,6 +19,41 @@ This file supplies the stable-domain one-block estimate and obtains the
 corresponding squared local bound. It is a local oscillation estimate; the
 global Skorokhod tightness criterion still requires a covering argument and
 endpoint control.
+## Public declarations
+
+Put
+\[
+ C_{\alpha,r,\theta}
+ =\frac{2-\alpha}{\alpha}r^{-\alpha}+1+
+   \frac{4(r^{2-\alpha}+1)}{\theta^2},
+ \qquad a_n=\texttt{normalization}(n),\quad
+ \mu_n=\texttt{normalizedStepPathLaw}(\nu,\texttt{normalization},n).
+\]
+The bounds hold eventually under the stable norming, two-sided regular
+variation, and truncation-bias assumptions in the declarations. Write
+$D_{s,\ell}(h)$ for the event that two chronologically ordered increments of
+the partial-sum path in the block $[s,s+\ell]$ each have absolute size at
+least $h$.
+
+- `eventually_measure_twoOrderedBlockExcursions_le_of_stableNorming` proves
+  $\mathbb P_\nu(D_{s_n,\ell_n}(2\theta a_n))\le
+  \operatorname{ENNReal.ofReal}(\delta C_{\alpha,r,\theta})^2$ whenever
+  $\frac{\ell_n}{n}\le\delta$.
+- `eventually_measure_iUnion_twoOrderedBlockExcursions_le_of_stableNorming`
+  gives the union bound
+  $\mathbb P_\nu(\bigcup_{j<m_n}D_{s_{n,j},\ell_n}(2\theta a_n))\le
+  m_n\operatorname{ENNReal.ofReal}(\delta C_{\alpha,r,\theta})^2$.
+- `eventually_measure_not_hasDoubleExcursionBound_le_of_stableNorming` proves
+  $\mu_n(\{x:\operatorname{HasDoubleExcursionBound}(x,\eta,\varepsilon)\}^c)
+  \le (\lfloor\frac{n}{w_n}\rfloor+1)
+  \operatorname{ENNReal.ofReal}(\rho C_{\alpha,r,\frac{\varepsilon}{2}})^2$,
+  where $\frac{w_n}{n}\ge\eta$ and $\frac{2w_n}{n}\le\rho$ eventually.
+- `eventually_measure_not_hasEndpointOscillationBound_le_of_stableNorming`
+  proves
+  $\mu_n(\{x:\operatorname{HasEndpointOscillationBound}(x,\eta,\varepsilon)\}^c)
+  \le 2\operatorname{ENNReal.ofReal}(\rho C_{\alpha,r,\frac{\varepsilon}{2}})$,
+  where $\frac{w_n}{n}\ge\eta$ and $\frac{w_n}{n}\le\rho$ eventually.
+
 -/
 
 open Filter MeasureTheory ProbabilityTheory

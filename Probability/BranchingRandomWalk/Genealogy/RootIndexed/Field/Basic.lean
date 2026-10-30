@@ -11,12 +11,14 @@ public import Combinatorics.BranchingWalk.Basic.BranchingWalk
 /-!
 # Root-indexed branching step fields
 
+## Public declarations
+
 An arbitrary type `Root` indexes the initial ancestors. Each label owns its own
 step field over the Ulam--Harris addresses, and reindexing along a map
 `f : NewRoot → Root` relabels the roots. The `Fin m` and `ℕ` specializations
 are the finite and countable cases used by the population arguments.
 
-The public declarations are:
+The declarations are:
 
 * `ProbabilityTheory.BranchingRandomWalk.RootIndexed.StepField Root α X` is
   `Root → Combinatorics.Branching.StepField α X`;

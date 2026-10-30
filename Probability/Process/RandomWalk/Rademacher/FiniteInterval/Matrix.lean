@@ -7,14 +7,13 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.Rademacher.Transition.Basic
-public import LinearAlgebra.Spectrum.FiniteState.Eigenfunction
-public import Algebra.Order.BigOperators.WeightedSum
 public import Probability.Kernel.FiniteState.Matrix
-public import Mathlib.Data.Finset.Max
 public import Mathlib.LinearAlgebra.Matrix.Symmetric
 
 /-!
 # The killed symmetric-walk kernel on a finite interval
+
+## Public declarations
 
 `Fin interiorCount` represents the interior sites `1, ..., interiorCount`.
 A step that would reach either exterior Dirichlet boundary is omitted, so the
@@ -50,13 +49,8 @@ matrix is substochastic at the two edge sites.  The public declarations are:
   $(K_N^{\mathrm{kernel}})^t(i,\mathrm{univ})=
   \operatorname{ofReal}(\sum_j K_N^t(i,j))$.
 * `intervalSineWeight_pos` and `intervalSineWeight_le_one` bound the profile
-  by $0<\phi_N(i)\le1$ on a nonempty interval;
-  `exists_pos_le_intervalSineWeight` supplies a positive uniform lower bound
-  $c_N\le\phi_N(i)$.
-  `intervalKernel_pow_rowSum_bounds` then gives, for some $c_N>0$,
-  $\lambda_N^t\phi_N(i)\le\sum_jK_N^t(i,j)
-  \le\lambda_N^t\phi_N(i)/c_N$, where
-  $\lambda_N=\cos(\pi/(N+1))$.
+  by $0<\phi_N(i)\le1$ on a nonempty interval. Its quantitative row-mass
+  consequences are grouped under `Spectral/Survival/`.
 -/
 
 open scoped BigOperators Matrix
@@ -260,51 +254,5 @@ theorem intervalSineWeight_le_one (interiorCount : ℕ) (i : Fin interiorCount) 
     intervalSineWeight interiorCount i ≤ 1 := by
   exact Real.sin_le_one _
 
-/-- On every nonempty finite interval the positive sine ground state has a
-strictly positive uniform lower bound. -/
-theorem exists_pos_le_intervalSineWeight {interiorCount : ℕ}
-    (hcount : 0 < interiorCount) :
-    ∃ lower : ℝ, 0 < lower ∧ ∀ i, lower ≤ intervalSineWeight interiorCount i := by
-  let i₀ : Fin interiorCount := ⟨0, hcount⟩
-  obtain ⟨i, _, hi⟩ := Finset.exists_min_image Finset.univ
-    (intervalSineWeight interiorCount) ⟨i₀, Finset.mem_univ _⟩
-  exact ⟨intervalSineWeight interiorCount i,
-    intervalSineWeight_pos hcount i, fun j => hi j (Finset.mem_univ _)⟩
-
-/-- Quantitative row-mass bounds for every power of the killed interval
-kernel.  The row sum becomes the interval-survival probability once the
-kernel is identified with the Rademacher path law. -/
-theorem intervalKernel_pow_rowSum_bounds {interiorCount : ℕ}
-    (hcount : 0 < interiorCount) (n : ℕ) (start : Fin interiorCount) :
-    ∃ lower : ℝ, 0 < lower ∧
-      Real.cos (Real.pi / (interiorCount + 1 : ℕ)) ^ n *
-          intervalSineWeight interiorCount start ≤
-        ∑ finish, (intervalKernel interiorCount ^ n) start finish ∧
-      (∑ finish, (intervalKernel interiorCount ^ n) start finish) ≤
-        (Real.cos (Real.pi / (interiorCount + 1 : ℕ)) ^ n *
-          intervalSineWeight interiorCount start) / lower := by
-  obtain ⟨lower, hlower_pos, hlower⟩ :=
-    exists_pos_le_intervalSineWeight hcount
-  refine ⟨lower, hlower_pos, ?_, ?_⟩
-  · have hbounds := Matrix.pow_rowSum_bounds_of_bounded_eigenfunction
-      (intervalKernel interiorCount) (intervalSineWeight interiorCount)
-      (Real.cos (Real.pi / (interiorCount + 1 : ℕ))) lower 1
-      (intervalKernel_nonneg interiorCount) (intervalKernel_mulVec_sine interiorCount)
-      hlower (intervalSineWeight_le_one interiorCount) n start
-    simpa using hbounds.2
-  · apply Finset.sum_le_div_of_weightedSum_eq Finset.univ
-      (fun finish => (intervalKernel interiorCount ^ n) start finish)
-      (intervalSineWeight interiorCount) lower
-      (Real.cos (Real.pi / (interiorCount + 1 : ℕ)) ^ n *
-        intervalSineWeight interiorCount start)
-      hlower_pos
-    · intro finish _
-      exact Matrix.pow_apply_nonneg (intervalKernel_nonneg interiorCount)
-        n start finish
-    · exact fun finish _ => hlower finish
-    · simpa using Matrix.sum_pow_apply_mul_weight
-        (intervalKernel interiorCount) (intervalSineWeight interiorCount)
-        (Real.cos (Real.pi / (interiorCount + 1 : ℕ)))
-        (intervalKernel_mulVec_sine interiorCount) n start
 
 end ProbabilityTheory.RandomWalk.Rademacher.FiniteInterval

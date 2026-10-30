@@ -15,6 +15,14 @@ An inner and outer corridor approximation may be valid only on a specified
 subset of path space. The containment and energy-limit statements are
 deterministic measure-theoretic data; probability-rate arguments consuming
 them live in the probability layer.
+
+## Public declarations
+
+- RelativeFiniteCorridorUnionApproximation α D G records
+  $D\cap A_n\subseteq G\subseteq D\cap B_n$ and an energy gap tending to
+  zero.
+- If the inner and outer energies converge, their limits agree; the common
+  value is the relative approximation's energy.
 -/
 
 open Filter

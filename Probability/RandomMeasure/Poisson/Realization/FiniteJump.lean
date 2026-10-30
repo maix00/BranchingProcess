@@ -6,7 +6,9 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.RandomMeasure.Poisson.Basic
+public import Probability.RandomMeasure.Poisson.RandomMeasure.Basic
+import Probability.RandomMeasure.Poisson.RandomMeasure.Evaluation
+import Probability.RandomMeasure.Poisson.RandomMeasure.Independence
 import Probability.MeasureTheory.SmallValue.Basic
 
 /-!
@@ -14,6 +16,16 @@ import Probability.MeasureTheory.SmallValue.Basic
 
 For disjoint finite-intensity mark regions, the Poisson random measure has
 positive probability of one point in the target region and none in the other.
+
+## Public declarations
+
+* `measure_poissonRandomMeasure_one_and_zero_pos` gives positive probability
+  that a finite-intensity target set has count one while a disjoint
+  finite-intensity set has count zero.
+* `measure_poissonRandomMeasure_one_zero_smallValue_pos` adds an
+  independent nonnegative observable with expectation below $\rho$ and gives
+  positive probability of all three events simultaneously.
+
 -/
 
 @[expose] public section
@@ -81,9 +93,9 @@ theorem measure_poissonRandomMeasure_one_and_zero_pos
       (mul_pos (Real.exp_pos _) (by exact_mod_cast hrate))).ne'
   · positivity
 
-/-- A small residual variation can be combined with the one-jump Poisson
-configuration when it is independent of the two large-region counts. -/
-theorem measure_poissonRandomMeasure_one_zero_smallVariation_pos
+/-- An independent observable below `ρ` can be combined with the one-jump
+Poisson configuration to give a positive joint event. -/
+theorem measure_poissonRandomMeasure_one_zero_smallValue_pos
     {Ω E : Type} [MeasurableSpace Ω] [MeasurableSpace E]
     {K : ℕ → Ω → ℕ} {X : ℕ → ℕ → Ω → E}
     {m : Measure E} [SigmaFinite m] [Nonempty E]
@@ -98,7 +110,7 @@ theorem measure_poissonRandomMeasure_one_zero_smallVariation_pos
       (poissonRandomMeasure K X ω J, poissonRandomMeasure K X ω B)) P) :
     0 < P {ω : Ω | V ω < ρ ∧ poissonRandomMeasure K X ω J = 1 ∧
       poissonRandomMeasure K X ω B = 0} := by
-  have hsmall := measure_smallVariation_pos P V hV ρ hE
+  have hsmall := measure_pos_of_lintegral_lt P V hV ρ hE
   have hbig := measure_poissonRandomMeasure_one_and_zero_pos
     hd hJ hB hfinJ hfinB hJpos hdisj
   have hproduct := hIndep.measure_inter_preimage_eq_mul

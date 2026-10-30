@@ -7,18 +7,22 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition.Event
-import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition.Lemmas.Diffusive.ConditionalProbability
-import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition.Lemmas.Diffusive.SurvivalLower
+public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Survival.Conditioning
+import all Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition.Lemmas.Diffusive.ConditionalProbability
+import all Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition.Lemmas.Diffusive.SurvivalLower
 import Probability.Process.Brownian.Construction.Existence
 
 /-!
 # Diffusive entrance bound from survival and the meander limit
 
-The public theorem in this file is:
+## Public declarations
 
 - `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.exists_eventually_diffusiveTransitionProbability_ge_inverse_square_of_centeredFiniteVariance`:
-  a $C\Delta^{-2}$ estimate with a Brownian witness constructed
-  from the Gaussian random-walk functional limit.
+  for centered increments of variance $\sigma^2>0$ and widths
+  $\Delta_n\to\infty$, there is $C>0$ such that
+  $\mathbb P(D_{N_{\Delta_n,m},\Delta_n})\ge\frac{C}{\Delta_n^2}$
+  eventually, with the Brownian witness obtained from the Gaussian random-walk
+  functional limit.
 
 The conditional-product step and the version with an explicit Brownian
 witness are private proof helpers.
@@ -45,6 +49,24 @@ open Filter MeasureTheory ProbabilityTheory
 open scoped ENNReal NNReal Topology
 
 namespace ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned
+
+/-- The transition event is contained in survival, so its probability is
+the product of its survival-conditioned probability and the survival
+probability. -/
+private lemma measure_nonnegativeTransitionEvent_eq_cond_mul_survival
+    (ν : Measure ℝ) [IsProbabilityMeasure ν] (n : ℕ) (width : ℝ) :
+    iidSequenceLaw ν (nonnegativeTransitionEvent n width) =
+      survivalConditionedLaw ν n (nonnegativeTransitionEvent n width) *
+        iidSequenceLaw ν {increment | SurvivesNonnegative n increment} := by
+  let C : Set (ℕ → ℝ) := {increment | SurvivesNonnegative n increment}
+  let D : Set (ℕ → ℝ) := nonnegativeTransitionEvent n width
+  have hsubset : D ⊆ C := by
+    intro increment hin k
+    exact (hin.1 k).1
+  have hinter : C ∩ D = D := Set.inter_eq_right.mpr hsubset
+  have hcond := ProbabilityTheory.cond_mul_eq_inter
+    (measurableSet_survivesNonnegative n) D (iidSequenceLaw ν)
+  simpa only [survivalConditionedLaw, C, D, hinter] using hcond.symm
 
 /-- Combine the two factors in
 $\mathbb P(D_{N,\Delta})

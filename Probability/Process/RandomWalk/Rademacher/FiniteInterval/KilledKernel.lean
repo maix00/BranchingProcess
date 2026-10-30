@@ -8,12 +8,15 @@ module
 
 public import Probability.Process.RandomWalk.Rademacher.FiniteInterval.Matrix
 public import Probability.Distributions.Rademacher
-public import Probability.Kernel.FiniteState.PartialStep
-public import Probability.Kernel.Step.Survival
-public import Probability.Kernel.Step.IID
+public import Probability.Kernel.Step.FiniteBranches.Basic
+public import Probability.Kernel.Step.FiniteBranches.Survival
+public import Probability.Sequence.IID.Basic
+import Probability.Kernel.Step.Iteration
 
 /-!
 # Killed Rademacher transition on a finite interval
+
+## Public declarations
 
 The two Boolean branches represent the increments `-1` and `+1`, each with
 mass `1/2`.  A branch whose endpoint lies outside the finite interval is

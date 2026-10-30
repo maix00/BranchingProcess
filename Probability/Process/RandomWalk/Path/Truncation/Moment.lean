@@ -19,6 +19,54 @@ public import Probability.Process.RandomWalk.Path.Moment.Fourth
 Hard truncation turns a finite second moment into a finite fourth moment.  The
 centering operation is kept in the probability layer because it depends on
 the increment law.
+
+## Public declarations
+
+* `integrable_truncatedIncrement_pow`,
+  `integrable_truncatedIncrement`, and
+  `integrable_truncatedIncrement_pow_four` establish integrability of every
+  finite power of the hard-truncated increment under a finite measure.
+* `integral_truncatedIncrement_pow_four_le` gives
+  `∫ (truncatedIncrement radius x)⁴ dν ≤ radius² ∫ x² dν` for nonnegative
+  radius and an integrable second moment.
+* `truncatedIncrementMean ν radius` is the mean of the truncated increment;
+  `centeredTruncatedIncrement ν radius x` subtracts this mean.
+  `measurable_centeredTruncatedIncrement`,
+  `integrable_centeredTruncatedIncrement`, and
+  `integral_centeredTruncatedIncrement` give measurability, integrability, and
+  mean zero of the centered variable.
+* `abs_truncatedIncrementMean_le_abs_radius` and
+  `abs_truncatedIncrementMean_le_integral_min_abs` give
+  `|truncatedIncrementMean ν radius| ≤ |radius|` and, for `radius ≥ 0`,
+  `|truncatedIncrementMean ν radius| ≤ ∫ min |x| radius dν`.
+* `integrable_centeredTruncatedIncrement_pow`,
+  `integrable_centeredTruncatedIncrement_pow_four`, and
+  `memLp_centeredTruncatedIncrement_four` give finite centered moments up to
+  fourth order.
+* `truncatedIncrementMean_eq_neg_integral_tail` identifies the centered-law
+  bias with `-∫ 1_{radius < |x|} x dν`;
+  `abs_truncatedIncrementMean_le_integral_tail` and
+  `radius_mul_abs_truncatedIncrementMean_le_integral_tail_sq` bound its
+  magnitude by `∫ 1_{radius < |x|} |x| dν` and its radius-weighted magnitude
+  by `∫ 1_{radius < |x|} x² dν`, respectively.
+* `centeredTruncatedIncrement_pow_four_le` and
+  `centeredTruncatedIncrement_pow_four_le_mean` give pointwise fourth-moment
+  bounds by `8 (radius² * x² + radius⁴)` and
+  `8 (radius² * (truncatedIncrement radius x)² +
+  truncatedIncrementMean⁴)`;
+  `integral_centeredTruncatedIncrement_sq_le_truncated` and
+  `integral_centeredTruncatedIncrement_sq_le` give
+  `∫ (centeredTruncatedIncrement ν radius x)² dν ≤
+  ∫ (truncatedIncrement radius x)² dν` and
+  `∫ (centeredTruncatedIncrement ν radius x)² dν ≤ ∫ x² dν`.
+* `integral_centeredTruncatedIncrement_pow_four_le` bounds the centered
+  fourth moment by
+  `8 (radius² * ∫ (truncatedIncrement radius x)² dν +
+  truncatedIncrementMean⁴)`;
+  `integral_partialSum_pow_four_centeredTruncated_le` gives the corresponding
+  bound
+  `∫ S_n⁴ d(iid law) ≤ 8n(radius² * ∫ truncated² dν + bias⁴) +
+  3n²(∫ truncated² dν)²` for the centered truncated partial sum `S_n`.
 -/
 
 open MeasureTheory ProbabilityTheory

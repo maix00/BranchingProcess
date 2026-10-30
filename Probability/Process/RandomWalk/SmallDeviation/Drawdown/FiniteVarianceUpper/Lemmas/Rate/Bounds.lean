@@ -6,19 +6,21 @@ Authors: WANG Yiyang
 
 module
 
-public import Mathlib.Basic.Real.Basic
-public import Mathlib.Algebra.Order.Archimedean.Real.Basic
-public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
-public import Mathlib.Analysis.SpecialFunctions.Pow.Real
-public import Mathlib.Analysis.SpecialFunctions.Log.Basic
-public import Mathlib.Analysis.Complex.Exponential
-public import Mathlib.Order.Filter.Defs
-import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.JumpPattern.UnionBound
+import Mathlib.Basic.Real.Basic
+import Mathlib.Algebra.Order.Archimedean.Real.Basic
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
+import Mathlib.Analysis.SpecialFunctions.Pow.Real
+import Mathlib.Analysis.SpecialFunctions.Log.Basic
+import Mathlib.Analysis.Complex.Exponential
+import Mathlib.Order.Filter.Defs
+import all Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.JumpPattern.UnionBound
 import Analysis.Asymptotics.Scale.Power.IntermediateBlock
 import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 
 /-!
 # Asymptotic bounds for drawdown block parameters
+
+## Internal proof declarations
 
 The proof-specific declarations are:
 
@@ -44,7 +46,7 @@ Chapter 3, Lemma 3.3.
 open Filter MeasureTheory Topology
 open scoped ENNReal
 
-@[expose] public section
+section
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown
 

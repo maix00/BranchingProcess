@@ -7,26 +7,34 @@ Authors: WANG Yiyang
 module
 
 public import Mathlib.Probability.Independence.Basic
-public import Mathlib.MeasureTheory.Measure.Prod
+import Mathlib.MeasureTheory.Measure.Prod
 
 /-!
 # Null sections of independent random variables
 
-The public theorems in this file are:
+## Public declarations
 
 - `ProbabilityTheory.IndepFun.measure_preimage_eq_zero_of_null_sections`:
-  if $X$ and $Y$ are independent and every section
-  $\{b:(a,b)\in E\}$ has zero $Y$-law, then
-  $\mathbb P((X,Y)\in E)=0$.
+  for a finite measure $P$ and measurable independent $X,Y$, if $E$ is
+  measurable and every section $\{b:(a,b)\in E\}$ has zero $Y$-law, then
+  $P((X,Y)\in E)=0$.
 
 - `ProbabilityTheory.IndepFun.measure_eq_zero_of_null_sections`:
-  if $X$ and $Y$ are independent and
-  $\mathbb P(F(a,Y)=0)=0$ for every $a$, then
-  $\mathbb P(F(X,Y)=0)=0$.
+  under the same finite-measure and measurability assumptions, if $F$ is
+  jointly measurable and $P(F(a,Y)=0)=0$ for every $a$, then
+  $P(F(X,Y)=0)=0$.
+
+- `ProbabilityTheory.IndepFun.measure_eq_zero_of_right_atomless`:
+  for a finite measure $P$ and measurable independent real-valued $X,Y$, if
+  $P(Y=y)=0$ for every $y\in\mathbb R$, then $P(X=Y)=0$.
 
 The proof identifies the joint law with a product measure and applies
 Fubini's theorem to the zero-mass sections. It is a reusable conditional
-atomlessness step for Brownian first-passage times.
+atomlessness step for Brownian first-passage times. The equality corollary
+supplies the diagonal-null step in Lemma 2.3 of Erwin Bolthausen, *On a
+Functional Central Limit Theorem for Random Walks Conditioned to Stay
+Positive*, Ann. Probab. 4(3) (1976), 480--485,
+DOI 10.1214/aop/1176996098.
 -/
 
 @[expose] public section
@@ -71,18 +79,34 @@ theorem IndepFun.measure_eq_zero_of_null_sections
     P {ω | F (X ω) (Y ω) = 0} = 0 := by
   let E : Set (A × B) := {p | F p.1 p.2 = 0}
   have hE : MeasurableSet E := hF (measurableSet_singleton 0)
-  have hprod : (P.map X).prod (P.map Y) E = 0 := by
-    apply (Measure.measure_prod_null hE).2
-    filter_upwards [] with a
-    exact hnull a
-  calc
-    P {ω | F (X ω) (Y ω) = 0} =
-        P.map (fun ω => (X ω, Y ω)) E := by
-      rw [Measure.map_apply (hX.prodMk hY) hE]
-      rfl
-    _ = (P.map X).prod (P.map Y) E := by
-      rw [hXY.map_prod_eq_prod_map_map hX.aemeasurable hY.aemeasurable]
-    _ = 0 := hprod
+  change P {ω | (X ω, Y ω) ∈ E} = 0
+  exact hXY.measure_preimage_eq_zero_of_null_sections hX hY hE hnull
+
+/-- Independent real-valued variables coincide with probability zero
+when the second marginal assigns zero mass to every singleton. This is the
+diagonal-null step in Lemma 2.3 of Erwin Bolthausen, *On a Functional Central
+Limit Theorem for Random Walks Conditioned to Stay Positive*, Ann. Probab.
+4(3) (1976), 480--485, DOI 10.1214/aop/1176996098. -/
+theorem IndepFun.measure_eq_zero_of_right_atomless
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} [IsFiniteMeasure P]
+    {X Y : Ω → ℝ} (hXY : X ⟂ᵢ[P] Y)
+    (hX : Measurable X) (hY : Measurable Y)
+    (hnull : ∀ y : ℝ, (P.map Y) {y} = 0) :
+    P {ω | X ω = Y ω} = 0 := by
+  let diagonal : Set (ℝ × ℝ) := {z | z.1 = z.2}
+  have hdiag : MeasurableSet diagonal :=
+    measurableSet_eq_fun measurable_fst measurable_snd
+  have hsections : ∀ x : ℝ,
+      (P.map Y) {y | (x, y) ∈ diagonal} = 0 := by
+    intro x
+    have hsection : {y : ℝ | (x, y) ∈ diagonal} = {x} := by
+      ext y
+      simp [diagonal, eq_comm]
+    rw [hsection]
+    exact hnull x
+  have hzero := hXY.measure_preimage_eq_zero_of_null_sections
+    hX hY hdiag hsections
+  simpa [diagonal] using hzero
 
 end ProbabilityTheory
 

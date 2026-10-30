@@ -6,12 +6,12 @@ Authors: Codex
 module
 
 public import Analysis.Fourier.CosineTauberian.Kernel
-public import Mathlib.Analysis.Fourier.Inversion
+import Mathlib.Analysis.Fourier.Inversion
 
 /-!
 # Fourier inversion for the cosine Tauberian kernel
 
-The public declarations are:
+## Public declarations
 
 - `cosineTauberianProfile x` is the compactly supported cubic profile
   $\frac{(\max(1-|x|,0))^2(1+2|x|)}{6}$;
@@ -179,14 +179,7 @@ private lemma intervalIntegral_cosineTauberianProfile_mul_cos_eq_kernel
       field_simp [ne_of_gt ht]
       ring
     _ = cosineTauberianKernel t := by
-      rw [cosineTauberianKernel_eq_quotient ht]
-
-private lemma cosineTauberianKernel_neg (t : ℝ) :
-    cosineTauberianKernel (-t) = cosineTauberianKernel t := by
-  unfold cosineTauberianKernel
-  apply intervalIntegral.integral_congr
-  intro r _
-  simp [Real.sinc_neg]
+      rw [cosineTauberianKernel_eq_quotient (ne_of_gt ht)]
 
 private lemma integrable_cosineTauberianKernel :
     Integrable cosineTauberianKernel := by
@@ -198,7 +191,7 @@ private lemma integrable_cosineTauberianKernel :
     rw [← hset]
     apply hcomp.congr_fun
     · intro x _
-      exact cosineTauberianKernel_neg x
+      exact even_cosineTauberianKernel x
     · rw [hset]
       exact measurableSet_Iio
   have hrest : IntegrableOn cosineTauberianKernel
@@ -240,7 +233,7 @@ private lemma intervalIntegral_cosineTauberianProfile_mul_cos_eq_kernel_of_ne
           cosineTauberianProfile r * Real.cos ((-t) * r) := hcos
       _ = cosineTauberianKernel (-t) :=
         intervalIntegral_cosineTauberianProfile_mul_cos_eq_kernel hneg
-      _ = cosineTauberianKernel t := cosineTauberianKernel_neg t
+      _ = cosineTauberianKernel t := even_cosineTauberianKernel t
 
 private noncomputable def cosineTauberianComplexProfile (x : ℝ) : ℂ :=
   (cosineTauberianProfile x : ℂ)
@@ -610,7 +603,10 @@ theorem integral_Ioi_cosineTauberianKernel_cos (x : ℝ) :
   have hfint : Integrable f := by
     simpa [f] using integrable_cosineTauberianCosIntegrand x
   have heven (s : ℝ) : f (-s) = f s := by
-    simp [f, Real.cos_neg, cosineTauberianKernel_neg]
+    change Real.cos ((-s) * x) * cosineTauberianKernel (-s) =
+      Real.cos (s * x) * cosineTauberianKernel s
+    rw [show (-s) * x = -(s * x) by ring, Real.cos_neg,
+      even_cosineTauberianKernel]
   have hchange : (∫ s in Ioi (0 : ℝ), f (-s)) =
       ∫ s in Iio (0 : ℝ), f s := by
     let g : ℝ → ℝ := (Iio (0 : ℝ)).indicator f

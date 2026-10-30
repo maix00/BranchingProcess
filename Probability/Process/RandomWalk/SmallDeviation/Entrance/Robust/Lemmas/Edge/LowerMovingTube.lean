@@ -6,11 +6,13 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Entrance.MovingCorridor
-public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition.Factorization
+import Probability.Process.RandomWalk.SmallDeviation.Entrance.MovingCorridor
+import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition.Event
 
 /-!
 # Lower-edge moving-tube step for the robust entrance estimate
+
+## Internal proof declarations
 
 The supporting lemma in this file is:
 
@@ -20,12 +22,13 @@ The supporting lemma in this file is:
   $D_{N,\Delta}$ satisfies the moving-corridor path constraints at time
   $m+N$.
 
-This path inclusion is used to prove the narrowed terminal-window version of Wang Yiyang,
-*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
-Appendix A.2, Lemma A.7, used in Chapter 3, Lemma 3.5.
+This path inclusion proves the narrowed terminal-window version of Wang
+Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite
+Offspring* (master's thesis, Fudan University, 2026), Appendix A.2,
+Lemma A.7, used in Chapter 3, Lemma 3.5.
 -/
 
-@[expose] public section
+section
 
 open MeasureTheory ProbabilityTheory
 

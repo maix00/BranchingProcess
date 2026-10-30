@@ -12,6 +12,8 @@ public import Probability.Sequence.IID.Basic
 /-!
 # Reflection of the tilted-tube endpoint event
 
+## Public declarations
+
 The public objects and theorems in this file are:
 
 - `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.driftedTubeUpperEndpointWindowEvent`:

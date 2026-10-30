@@ -6,33 +6,28 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.Path.Scaling.FiniteHorizon
-public import Probability.Process.RandomWalk.Path.Interpolation.Limit.Unbounded
+public import Probability.Process.RandomWalk.Path.Interpolation.Limit.FiniteHorizon
 public import Probability.Process.RandomWalk.FunctionalLimit.Donsker.Path.Continuous
 public import Probability.Process.Brownian.Scaling.FiniteHorizon
+import Probability.ConvergenceInDistribution.Basic
 
 /-!
 # Finite-horizon polygonal random-walk paths
 
-The public theorem in this file is:
+## Public declarations
 
-- `ProbabilityTheory.RandomWalk.restrict_normalizedLinearContinuousPathUnbounded_eq_rescaleUnitPath`:
-  on the interval $[0,m]$, the normalized polygonal walk of mesh
-  $1/n$ is the time-rescaled first-$mn$-increment path on $[0,1]$,
-  with amplitude factor $a_{mn}/a_n$.
-- `ProbabilityTheory.RandomWalk.restrict_normalizedLinearContinuousPathUnbounded_sqrt`:
-  for $a_n=\sqrt n$, the amplitude factor is $\sqrt m$.
 - `ProbabilityTheory.RandomWalk.tendstoInDistribution_normalizedLinearContinuousPath_finiteHorizon_scaledBrownian`:
-  for each positive integer $m$, the path on $[0,m]$ converges
-  to the time-amplitude rescaling $t\mapsto\sqrt m B(t/m)$.
+  for centered, unit-second-moment increments and every positive integer
+  $m$, the path on $[0,m]$ converges to $t\mapsto\sqrt m B(t/m)$.
 - `ProbabilityTheory.RandomWalk.tendstoInDistribution_normalizedLinearContinuousPath_finiteHorizon_brownian`:
-  the same finite-horizon limit has the projected Brownian law $P^m$.
+  when $B$ is Brownian, the same finite-horizon limit has the projected law
+  $P^m$.
 - `ProbabilityTheory.RandomWalk.tendstoInDistribution_normalizedLinearContinuousPath_finiteHorizon`:
-  for every finite $s\le m$ and positive integer $m$, the path restricted
-  to $[0,s]$ converges to the Brownian restriction on $[0,s]$.
+  for every $s\le m$ and positive integer $m$, restriction to $[0,s]$
+  converges to the Brownian restriction on $[0,s]$.
 
-This deterministic identity is the path-level step for applying
-Donsker's theorem to $Q_n\Pi_s^{-1}$ in Erwin Bolthausen,
+The finite-horizon statement is the path-law form of the rescaling used to
+apply Donsker's theorem to $Q_n\Pi_s^{-1}$ in Erwin Bolthausen,
 *On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*, Section 3, Ann. Probab. 4(3) (1976), 480--485,
 DOI 10.1214/aop/1176996098.
 -/
@@ -44,58 +39,9 @@ namespace ProbabilityTheory.RandomWalk
 open Filter MeasureTheory ProbabilityTheory
 open scoped NNReal
 
-/-- Finite-horizon restriction of the whole-time polygonal path is
-exactly a rescaled unit-time polygonal path with the corresponding
-number of increments. -/
-theorem restrict_normalizedLinearContinuousPathUnbounded_eq_rescaleUnitPath
-    (scale : ℕ → ℝ) (m n : ℕ) (hm : 0 < m)
-    (hscale : scale n ≠ 0) (hscaleMN : scale (m * n) ≠ 0)
-    (increment : ℕ → ℝ) :
-    restrictPathTo (m : ℝ≥0)
-        (normalizedLinearContinuousPathUnbounded scale n increment) =
-      rescaleUnitPath (m : ℝ≥0) (by exact_mod_cast hm)
-        (scale (m * n) / scale n)
-        (normalizedLinearContinuousPathIcc scale (m * n) increment) := by
-  ext t
-  let u : unitInterval := unitTimeOfFiniteTime (m : ℝ≥0)
-    (by exact_mod_cast hm) t
-  have hm0 : (m : ℝ) ≠ 0 := by exact_mod_cast hm.ne'
-  have harg : ((m * n : ℕ) : ℝ) * (u : ℝ) = (n : ℝ) * (t.1 : ℝ) := by
-    change ((m * n : ℕ) : ℝ) * ((t.1 : ℝ) / (m : ℝ)) =
-      (n : ℝ) * (t.1 : ℝ)
-    push_cast
-    field_simp
-  have hcap : (n : ℝ) * (t.1 : ℝ) ≤ (m * n : ℕ) := by
-    have ht : (t.1 : ℝ) ≤ m := NNReal.coe_le_coe.mpr t.property.2
-    calc
-      (n : ℝ) * (t.1 : ℝ) ≤ (n : ℝ) * m :=
-        mul_le_mul_of_nonneg_left ht (Nat.cast_nonneg n)
-      _ = (m * n : ℕ) := by push_cast; ring
-  have hweights (i : ℕ) :
-      linearIncrementWeight (m * n) i (u : ℝ) =
-        linearIncrementWeight n i (t.1 : ℝ) := by
-    unfold linearIncrementWeight
-    rw [harg]
-  have hsum :
-      (∑ i ∈ Finset.range (m * n),
-        linearIncrementWeight (m * n) i (u : ℝ) * increment i) =
-      ∑ i ∈ Finset.range (m * n),
-        linearIncrementWeight n i (t.1 : ℝ) * increment i := by
-    apply Finset.sum_congr rfl
-    intro i hi
-    rw [hweights]
-  change normalizedLinearPathUnbounded scale n increment t.1 =
-    (scale (m * n) / scale n) *
-      normalizedLinearPath scale (m * n) increment u
-  rw [normalizedLinearPathUnbounded_eq_sum_range
-    scale n increment t.1 (m * n) hcap]
-  unfold normalizedLinearPath
-  rw [hsum]
-  field_simp
-
 /-- With diffusive normalization, stretching the time interval by
 `m` multiplies the unit-time path values by $\sqrt m$. -/
-theorem restrict_normalizedLinearContinuousPathUnbounded_sqrt
+private lemma restrict_normalizedLinearContinuousPathUnbounded_sqrt
     (m n : ℕ) (hm : 0 < m) (hn : 0 < n)
     (increment : ℕ → ℝ) :
     restrictPathTo (m : ℝ≥0)

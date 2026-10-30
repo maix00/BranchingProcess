@@ -13,6 +13,8 @@ public import Probability.ConvergenceInDistribution.Mapping
 /-!
 # Donsker convergence through the last-sign-change transform
 
+## Public declarations
+
 The public theorem in this file is:
 
 - `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.tendstoInDistribution_signStableMeanderTransform`:
@@ -66,7 +68,7 @@ theorem tendstoInDistribution_signStableMeanderTransform
     have hpath : continuousunitIntervalPath B hcontinuous ω =
         restrictPathToUnitInterval (hB.continuousPathMap hmeasurable ω) := by
       ext t
-      exact (heq (UnitInterval.toNNReal t)).symm
+      exact (heq (unitInterval.toNNReal t)).symm
     simpa only [hpath] using hcont
   have hcontLaw : ∀ᵐ f ∂P.map (continuousunitIntervalPath B hcontinuous),
       ContinuousAt ContinuousMap.signStableMeanderTransform f := by

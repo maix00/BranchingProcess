@@ -13,19 +13,19 @@ generation.  It does not include the large-drawdown union term in (4.16).
 -/
 
 #print axioms
-  ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.firstNSelectedPopulation_measurable
+  ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.firstNSelectedPopulation_measurable
 
 #print axioms
-  ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.measurableSet_firstNSelectedNoLargeDropEndpointBelow
+  ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.measurableSet_firstNSelectedNoLargeDropEndpointBelow
 
 #print axioms
-  ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.firstNSelectedPopulation_depth
+  ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.firstNSelectedPopulation_depth
 
 #print axioms
-  ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.firstNSelectedPopulation_surviveAlong
+  ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.firstNSelectedPopulation_surviveAlong
 
 #print axioms
-  ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.firstNSelectedNoLargeDropEndpointBelow_subset_roots
+  ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.firstNSelectedNoLargeDropEndpointBelow_subset_roots
 
 #print axioms
-  ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.measure_firstNSelectedNoLargeDropEndpointBelow_le
+  ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.measure_firstNSelectedNoLargeDropEndpointBelow_le

@@ -6,7 +6,8 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.Path.Interpolation.Path.MaximalJump
+public import MeasureTheory.Integral.Convergence.IndicatorTail
+public import MeasureTheory.Measure.Tails.SecondMoment
 public import Probability.Process.RandomWalk.Path.Truncation.Moment
 
 /-!
@@ -15,6 +16,26 @@ public import Probability.Process.RandomWalk.Path.Truncation.Moment
 This file turns the finite-cutoff estimates into statements along any cutoff
 which tends to infinity.  The results depend only on the one-step law and
 therefore remain in the random-walk path layer.
+
+## Public declarations
+
+* `tendsto_integral_tail_sq_zero` states that
+  `∫ 1_{radius n < |x|} x² dν → 0` when `radius n → ∞` and `x²` is integrable.
+* `tendsto_radius_mul_abs_truncatedIncrementMean_zero` gives
+  `radius n * |truncatedIncrementMean ν (radius n)| → 0` for centered
+  finite-variance increments.
+* `tendsto_abs_truncatedIncrementMean_zero` gives convergence of the absolute
+  truncation bias to zero under the same assumptions.
+* `tendsto_radius_pow_four_mul_truncatedIncrementMean_pow_four_zero` gives
+  `radius n⁴ * truncatedIncrementMean ν (radius n)⁴ → 0`.
+* `tendsto_count_mul_measureReal_abs_ge_zero` and
+  `tendsto_count_mul_measure_abs_ge_zero` give the real-valued and
+  `ENNReal` forms of
+  `count n * ν(|x| ≥ radius n) → 0` when `count n / radius n²` has a finite
+  limit.
+* `tendsto_length_mul_abs_truncatedIncrementMean_div_threshold_zero` gives
+  `((length n + 1) * |truncatedIncrementMean ν (radius n)|) /
+  threshold n → 0` under the displayed finite-ratio hypothesis.
 -/
 
 open Filter MeasureTheory ProbabilityTheory
@@ -36,7 +57,7 @@ theorem tendsto_integral_tail_sq_zero
   have hradiusSq : Tendsto (fun n => radius n ^ 2) atTop atTop :=
     (tendsto_pow_atTop (by norm_num : (2 : ℕ) ≠ 0)).comp hradius
   have hupper : Tendsto upper atTop (nhds 0) :=
-    tendsto_integral_indicator_threshold_le_zero hsq
+    MeasureTheory.tendsto_integral_indicator_of_threshold_tendsto_atTop hsq
       (fun x : ℝ => sq_nonneg x) _ hradiusSq
   apply squeeze_zero'
   · exact Eventually.of_forall fun n => integral_nonneg fun x => by
@@ -149,7 +170,7 @@ theorem tendsto_count_mul_measureReal_abs_ge_zero
   have htail : Tendsto tail atTop (nhds 0) := by
     have hradiusSq : Tendsto (fun n => radius n ^ 2) atTop atTop :=
       (tendsto_pow_atTop (by norm_num : (2 : ℕ) ≠ 0)).comp hradius
-    exact tendsto_integral_indicator_threshold_le_zero hsq
+    exact MeasureTheory.tendsto_integral_indicator_of_threshold_tendsto_atTop hsq
       (fun x : ℝ => sq_nonneg x) _ hradiusSq
   have hproduct : Tendsto
       (fun n => ((count n : ℝ) / radius n ^ 2) * tail n)

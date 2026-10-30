@@ -9,10 +9,10 @@ module
 public import Mathlib.Probability.CentralLimitTheorem
 public import Mathlib.Probability.Moments.Variance
 public import Probability.Distributions.DomainOfAttraction.Basic
+import Probability.Distributions.DomainOfAttraction.Normalization
 public import Probability.Distributions.Moments.Real
 public import Probability.Distributions.Moments.Truncated.Basic
 public import Probability.Distributions.Stable.Domain.Attraction
-public import Probability.Distributions.Stable.Attraction.Norming.Basic
 public import Probability.Distributions.Stable.Gaussian.Basic
 public import Probability.Distributions.Stable.Attraction.NormingRatios.Index
 public import Probability.Distributions.Stable.Attraction.NormingRatios.RegularVariation
@@ -21,13 +21,8 @@ public import Probability.Sequence.IID.Basic
 /-!
 # The finite-variance normal domain of attraction
 
-The public declarations in this module are:
+## Public declarations
 
-- `isStableNorming_two_of_integrable_sq`: if $0<\int x^2\,d\nu<\infty$,
-  then $a_n=\sqrt{n\int x^2\,d\nu}$ is a quadratic stable norming.
-- `stableSlowVariation_two_isSlowlyVarying_of_integrable_sq`:
-  the truncated second moment $L^*(u)$ is slowly varying when the full second
-  moment is finite and positive.
 - `IsInDomainOfAttractionAlong.gaussian_defect_data`: attraction to the
   standard Gaussian implies regular variation of
   $1-|\widehat\nu(u)|^2$ with index $2$, and
@@ -37,14 +32,14 @@ The public declarations in this module are:
 - `IsInDomainOfAttractionAlong.tendsto_gaussian_quadraticDefectCancellation`:
   $n(4D(t/a_n)-D(2t/a_n))\to0$, where
   $D(u)=1-|\widehat\nu(u)|^2$.
-- `isInDomainOfAttractionAlong_gaussianReal_zero_one_of_centered_integrable_sq`:
-  a centered law with positive finite second moment converges to the standard
+- `isInDomainOfAttractionAlong_gaussianReal_zero_one_of_centered_posSecondMoment`:
+  a centered law with positive second moment converges to the standard
   Gaussian under $a_n=\sqrt{n\int x^2\,d\nu}$.
 - `isInDomainOfAttractionAlong_gaussianReal_zero_one_of_centered_unitSecondMoment`:
   under centered unit second moment, the same conclusion holds with
   $a_n=\sqrt n$.
-- `isInAlphaStableDomainOfAttractionAlong_gaussianReal_zero_one_of_centered_integrable_sq`:
-  the preceding finite-variance convergence also supplies the strictly
+- `isInAlphaStableDomainOfAttractionAlong_gaussianReal_zero_one_of_centered_posSecondMoment`:
+  the preceding positive-second-moment convergence also supplies the strictly
   $2$-stable domain-of-attraction witness.
 
 This is the finite-variance part of the exponent-two normal domain of
@@ -57,84 +52,6 @@ open scoped BigOperators
 @[expose] public section
 
 namespace ProbabilityTheory
-
-/-- For a probability law with positive finite second moment, the quadratic
-stable norming relation holds for the canonical second-moment scale
-`sqrt (n * secondMoment)`. -/
-theorem isStableNorming_two_of_integrable_sq
-    (ν : Measure ℝ) [IsProbabilityMeasure ν]
-    (hsquare : Integrable (fun x : ℝ => x ^ 2) ν)
-    (hsecondMoment : 0 < ∫ x, x ^ 2 ∂ν) :
-    IsStableNorming 2 ν
-      (fun n => Real.sqrt ((n : ℝ) * ∫ x, x ^ 2 ∂ν)) := by
-  let secondMoment : ℝ := ∫ x, x ^ 2 ∂ν
-  let normalization : ℕ → ℝ := fun n => Real.sqrt ((n : ℝ) * secondMoment)
-  have hsecondMoment' : 0 < secondMoment := by simpa [secondMoment] using hsecondMoment
-  have hnormalizationPos : ∀ n, 0 < n → 0 < normalization n := by
-    intro n hn
-    dsimp [normalization]
-    exact Real.sqrt_pos.2 (mul_pos (by exact_mod_cast hn) hsecondMoment')
-  have hnormalizationTop : Tendsto normalization atTop atTop := by
-    have hnTop : Tendsto (fun n : ℕ => (n : ℝ) * secondMoment) atTop atTop := by
-      simpa [mul_comm] using
-        (tendsto_natCast_atTop_atTop.const_mul_atTop hsecondMoment')
-    change Tendsto (fun n : ℕ => Real.sqrt ((n : ℝ) * secondMoment)) atTop atTop
-    exact Real.tendsto_sqrt_atTop.comp hnTop
-  have htruncated : Tendsto (fun u : ℝ => truncatedSecondMoment ν u) atTop
-      (nhds secondMoment) := by
-    simpa [secondMoment] using tendsto_truncatedSecondMoment ν hsquare
-  have htruncatedNorm : Tendsto
-      (fun n : ℕ => truncatedSecondMoment ν (normalization n)) atTop
-      (nhds secondMoment) := htruncated.comp hnormalizationTop
-  have htruncatedPos : ∀ᶠ n : ℕ in atTop,
-      0 < truncatedSecondMoment ν (normalization n) :=
-    htruncatedNorm.eventually (Ioi_mem_nhds hsecondMoment')
-  have hnormRatio : Tendsto
-      (fun n : ℕ => normalization n ^ (2 : ℝ) /
-        stableSlowVariation 2 ν (normalization n) / (n : ℝ))
-      atTop (nhds 1) := by
-    have hlimit : Tendsto
-        (fun n : ℕ => secondMoment / truncatedSecondMoment ν (normalization n))
-        atTop (nhds 1) := by
-      have hinv := htruncatedNorm.inv₀ hsecondMoment'.ne'
-      have hmul : Tendsto
-          (fun n : ℕ => secondMoment *
-            (truncatedSecondMoment ν (normalization n))⁻¹)
-          atTop (nhds (secondMoment * secondMoment⁻¹)) :=
-        tendsto_const_nhds.mul hinv
-      convert hmul using 1 <;> simp [div_eq_mul_inv, hsecondMoment'.ne']
-    apply hlimit.congr'
-    filter_upwards [eventually_gt_atTop (0 : ℕ), htruncatedPos]
-      with n hn hmoment
-    have hnReal : (n : ℝ) ≠ 0 := by exact_mod_cast hn.ne'
-    have hscaleSq : normalization n ^ (2 : ℝ) = (n : ℝ) * secondMoment := by
-      calc
-        normalization n ^ (2 : ℝ) = normalization n ^ (2 : ℕ) :=
-          Real.rpow_natCast (normalization n) 2
-        _ = (Real.sqrt ((n : ℝ) * secondMoment)) ^ 2 := rfl
-        _ = (n : ℝ) * secondMoment :=
-          Real.sq_sqrt (mul_nonneg (Nat.cast_nonneg n) hsecondMoment'.le)
-    rw [stableSlowVariation_two, hscaleSq]
-    dsimp [secondMoment]
-    field_simp [hnReal, hmoment.ne']
-  have hnorming : IsStableNorming 2 ν normalization :=
-    ⟨hnormalizationPos, hnormalizationTop, hnormRatio⟩
-  simpa [normalization, secondMoment] using hnorming
-
-/-- A finite positive second moment makes the exponent-two factor `L*` slowly
-varying: its truncated second moments converge to the full second moment. -/
-theorem stableSlowVariation_two_isSlowlyVarying_of_integrable_sq
-    (ν : Measure ℝ) [IsProbabilityMeasure ν]
-    (hsquare : Integrable (fun x : ℝ => x ^ 2) ν)
-    (hsecondMoment : 0 < ∫ x, x ^ 2 ∂ν) :
-    Asymptotics.IsSlowlyVaryingAtTop (stableSlowVariation 2 ν) := by
-  have hmoment := tendsto_truncatedSecondMoment ν hsquare
-  have hslow : Asymptotics.IsSlowlyVaryingAtTop (truncatedSecondMoment ν) :=
-    Asymptotics.IsSlowlyVaryingAtTop.of_tendsto_pos hsecondMoment hmoment
-  rw [show stableSlowVariation 2 ν = truncatedSecondMoment ν by
-    funext u
-    exact stableSlowVariation_two ν u]
-  exact hslow
 
 /-- Every attraction to the standard Gaussian has the corresponding
 characteristic-function consequences: the squared-modulus defect is regularly
@@ -271,19 +188,20 @@ theorem IsInDomainOfAttractionAlong.tendsto_gaussian_quadraticDefectCancellation
   rw [hlimit] at hfinal
   exact hfinal
 
-/-- A centered probability law with positive finite second moment is in the
+/-- A centered probability law with positive second moment is in the
 standard Gaussian domain of attraction along the canonical normalization
 `sqrt (n * variance)`, with zero centering. -/
-theorem isInDomainOfAttractionAlong_gaussianReal_zero_one_of_centered_integrable_sq
+theorem isInDomainOfAttractionAlong_gaussianReal_zero_one_of_centered_posSecondMoment
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (hcentered : ∫ x, x ∂ν = 0)
-    (hsquare : Integrable (fun x : ℝ => x ^ 2) ν)
     (hsecondMoment : 0 < ∫ x, x ^ 2 ∂ν) :
     IsInDomainOfAttractionAlong ν (gaussianReal 0 1)
       (fun n => Real.sqrt ((n : ℝ) * ∫ x, x ^ 2 ∂ν)) (fun _ => 0) := by
   let secondMoment : ℝ := ∫ x, x ^ 2 ∂ν
   let sigma : ℝ := Real.sqrt secondMoment
   let normalization : ℕ → ℝ := fun n => Real.sqrt ((n : ℝ) * secondMoment)
+  have hsquare : Integrable (fun x : ℝ => x ^ 2) ν :=
+    Integrable.of_integral_ne_zero (ne_of_gt hsecondMoment)
   let P := iidSequenceLaw ν
   let X : ℕ → (ℕ → ℝ) → ℝ := fun i sequence => sequence i
   have hXlaw (i : ℕ) : HasLaw (X i) ν P := by
@@ -389,35 +307,32 @@ theorem isInDomainOfAttractionAlong_gaussianReal_zero_one_of_centered_integrable
 /-- A centered probability law with second moment one belongs to the
 standard Gaussian domain of attraction along the normalization `sqrt n`.
 This is the unit-second-moment specialization of
-`isInDomainOfAttractionAlong_gaussianReal_zero_one_of_centered_integrable_sq`;
-the moment identity itself supplies square integrability. -/
+`isInDomainOfAttractionAlong_gaussianReal_zero_one_of_centered_posSecondMoment`.
+The second-moment identity supplies the positive-integral hypothesis. -/
 theorem isInDomainOfAttractionAlong_gaussianReal_zero_one_of_centered_unitSecondMoment
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (hν : IsCenteredUnitSecondMoment ν) :
     IsInDomainOfAttractionAlong ν (gaussianReal 0 1)
       (fun n => Real.sqrt n) (fun _ => 0) := by
-  have hsquare : Integrable (fun x : ℝ => x ^ 2) ν :=
-    integrable_of_integral_eq_one hν.2
   have hsecondMoment : 0 < ∫ x, x ^ 2 ∂ν := by
     rw [hν.2]
     norm_num
   simpa [hν.2] using
-    isInDomainOfAttractionAlong_gaussianReal_zero_one_of_centered_integrable_sq
-      ν hν.1 hsquare hsecondMoment
+    isInDomainOfAttractionAlong_gaussianReal_zero_one_of_centered_posSecondMoment
+      ν hν.1 hsecondMoment
 
-/-- A centered probability law with positive finite second moment belongs to
+/-- A centered probability law with positive second moment belongs to
 the strictly `2`-stable domain of attraction of the standard Gaussian, with
 the canonical second-moment normalization retained as a witness. -/
-theorem isInAlphaStableDomainOfAttractionAlong_gaussianReal_zero_one_of_centered_integrable_sq
+theorem isInAlphaStableDomainOfAttractionAlong_gaussianReal_zero_one_of_centered_posSecondMoment
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (hcentered : ∫ x, x ∂ν = 0)
-    (hsquare : Integrable (fun x : ℝ => x ^ 2) ν)
     (hsecondMoment : 0 < ∫ x, x ^ 2 ∂ν) :
     IsInAlphaStableDomainOfAttractionAlong 2 ν (gaussianReal 0 1)
       (fun n => Real.sqrt ((n : ℝ) * ∫ x, x ^ 2 ∂ν)) (fun _ => 0) := by
   refine ⟨(isStrictlyAlphaStable_gaussianReal_zero (by norm_num)).isAlphaStable, ?_⟩
-  exact isInDomainOfAttractionAlong_gaussianReal_zero_one_of_centered_integrable_sq
-    ν hcentered hsquare hsecondMoment
+  exact isInDomainOfAttractionAlong_gaussianReal_zero_one_of_centered_posSecondMoment
+    ν hcentered hsecondMoment
 
 end ProbabilityTheory
 

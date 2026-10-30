@@ -14,6 +14,18 @@ public import Probability.Process.RandomWalk.Path.Moment.Fourth
 
 The IID fourth-power maximal inequality is invariant under deterministic
 shifts of the increment coordinates, just as its second-moment counterpart.
+
+## Public declarations
+
+For centered IID increments with finite fourth moment, the fourth-power
+maximal bound on a deterministic block is
+\[
+  \varepsilon\,\mathbb P\!\left(
+    \max_{0\leq k\leq n}\left|\sum_{i=start}^{start+k}X_i\right|^4
+      \geq\varepsilon\right)
+  \leq \operatorname{ofReal}\!\left((n+1)\mathbb E[X_0^4]
+    +3(n+1)n\bigl(\mathbb E[X_0^2]\bigr)^2\right).
+\]
 -/
 
 open MeasureTheory ProbabilityTheory

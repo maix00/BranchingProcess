@@ -4,9 +4,13 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Spine.RandomWalk.IncrementProcess
-import Probability.BranchingRandomWalk.Spine.Tube.MRCA.Expansion
-import Probability.Process.RandomWalk.SmallDeviation.Entrance.FiniteVarianceEndpointCorridor
+module
+
+public import Analysis.Asymptotics.Scale.Basic
+public import Probability.BranchingRandomWalk.Spine.RandomWalk.IncrementProcess
+public import Probability.BranchingRandomWalk.Spine.Tube.MRCA.Expansion
+public import Probability.Process.RandomWalk.SmallDeviation.Entrance.FiniteVariance.EndpointCorridor
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Scale.BlockLength
 
 /-!
 # Finite variance spine corridors
@@ -33,6 +37,8 @@ The entrance and stable endpoint bridge probability is rewritten as the
 affine corridor event used by the branching random walk path count.
 -/
 
+@[expose] public section
+
 open MeasureTheory ProbabilityTheory
 open scoped ENNReal
 
@@ -41,7 +47,6 @@ namespace ProbabilityTheory.BranchingRandomWalk.Spine
 open Combinatorics.Branching
 open ProbabilityTheory.RandomWalk
 open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
-open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete
 open ProbabilityTheory.RandomWalk.SmallDeviation.Entrance
 
 /-- The fixed-window event from the finite-variance random-walk corridor
@@ -57,7 +62,7 @@ theorem endpointCorridorEvent_eq_affineCorridorThrough
         affineCorridorThrough n (-ratio * D) 0 (ratio * D)
           ((-ratio + 1) * D)} := by
   ext increment
-  simp only [Set.mem_setOf_eq, InClosedInterval, InWindows,
+  simp only [Set.mem_ofPred_eq, InClosedInterval, InWindows,
     affineCorridorThrough]
   have hwidth : -ratio * D + ratio * D = 0 := by ring
   have hlast : RandomWalk.history n 0 increment
@@ -104,14 +109,15 @@ theorem exists_eventually_tiltedIncrementFieldLaw_affineCorridor_lowerBound_of_c
     (hν : ν = tiltedPotentialLaw φ (-1) μ)
     {sigma : ℝ} (hνMoment : IsCenteredSecondMoment ν (sigma ^ 2))
     (hsigma : 0 < sigma) {scale : ℕ → ℝ}
-    (hscale : RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale scale)
+    (hscale : Asymptotics.IsSmallDeviationScale scale
+      (fun n => Real.sqrt n))
     (ratio : ℝ) (hratio : 1 < ratio) :
     ∃ C : ℝ, C < 0 ∧ ∃ q : ℝ≥0∞, 0 < q ∧
       ∃ amplitude : ℝ, 0 < amplitude ∧ ∃ n₀ : ℕ, ∀ n ≥ n₀,
         ENNReal.ofReal (Real.exp
           ((C / ((ratio / 2 - 13 / 60) ^ (2 : ℝ)) - 1) *
             amplitude ^ (2 : ℝ))) ^
-            (Asymptotics.balancedBlockCount
+            (Combinatorics.Sequence.balancedBlockCount
               (finiteVarianceBridgeLength scale n -
                 stableBlockLength 2 ν (amplitude ^ (2 : ℝ)) scale n)
               (stableBlockLength 2 ν (amplitude ^ (2 : ℝ)) scale n) + 1) *
@@ -135,3 +141,5 @@ theorem exists_eventually_tiltedIncrementFieldLaw_affineCorridor_lowerBound_of_c
   exact hbound'
 
 end ProbabilityTheory.BranchingRandomWalk.Spine
+
+end

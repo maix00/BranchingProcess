@@ -4,14 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Selection.Process
-import Combinatorics.BranchingWalk.Cloud.Order.Selection
-import Probability.BranchingRandomWalk.Coupling.Field.Law
-import Probability.BranchingRandomWalk.Coupling.Field.Adaptive
-import Probability.BranchingRandomWalk.Coupling.Field.Position
-import Probability.BranchingRandomWalk.Coupling.Field.Preimage
-import Probability.BranchingRandomWalk.Selection.Coupling.SelectedPopulation
-import Probability.BranchingRandomWalk.Selection.Coupling.StepSelection
+module
+
+public import MeasureTheory.Selection.Process
+public import Combinatorics.BranchingWalk.Cloud.Order.Selection
 
 /-!
 # Causal selected-population coupling
@@ -21,9 +17,24 @@ random selection rule.  Randomness may come entirely from the common
 pre-sampled marked forest. The rule is measurable in the generation domain by
 `CausalFiniteMechanism.measurable_population`; the comparison itself holds for
 every sample point.
+
+## Public declarations
+
+- `ProbabilityTheory.BranchingRandomWalk.Selection.CausalFiniteMechanism.injectivelyDominatesBy_leftmostBy_of_card_le`:
+  if $R_t(\omega)\subseteq C_t(\omega)$ has at most $N$ particles and
+  $C(\omega)$ injectively dominates $D(\omega)$, then the retained cloud
+  injectively dominates the $N$ leftmost particles of $D(\omega)$ at every
+  time.
+- `ProbabilityTheory.BranchingRandomWalk.Selection.CausalFiniteMechanism.dominatesBy_leftmost_of_card_le`:
+  under the same subset and size bounds, rankwise domination transfers to
+  the retained source and the target's first $N$ particles when both clouds'
+  values are monotone in address order.
 -/
 
 open MeasureTheory Combinatorics.UlamHarris
+open MeasureTheory.Selection
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk.Selection
 
@@ -55,7 +66,7 @@ theorem injectivelyDominatesBy_leftmostBy_of_card_le
       ((C ω).withFinsetParticles
         (fun _ => R.population candidates t ω)).InjectivelyDominatesBy φ
       ((D ω).withFinsetParticles (fun _ =>
-        Combinatorics.Branching.Selection.NSelection.selectFirstNBy N
+        Combinatorics.Selection.NSelection.selectFirstNBy N
           (fun q => φ ((D ω).position q.1 q.2))
           (hDfinite ω t).toFinset)) t := by
   intro ω t
@@ -93,7 +104,7 @@ theorem dominatesBy_leftmost_of_card_le
         φ ((D ω).position p.1 p.2) ≤ φ ((D ω).position q.1 q.2))
     (hdom : ∀ ω t, (C ω).RankwiseDominatesBy φ (D ω) t) :
     ∀ ω,
-      let right := fun t => Combinatorics.Branching.Selection.NSelection.selectFirstN
+      let right := fun t => Combinatorics.Selection.NSelection.selectFirstN
         N (hDfinite ω t).toFinset
       ((C ω).withFinsetParticles (fun t => R.population candidates t ω)).DominatesBy φ
         ((D ω).withFinsetParticles right) := by
@@ -111,3 +122,5 @@ theorem dominatesBy_leftmost_of_card_le
 end CausalFiniteMechanism
 
 end ProbabilityTheory.BranchingRandomWalk.Selection
+
+end

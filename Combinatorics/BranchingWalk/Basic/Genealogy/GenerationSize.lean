@@ -7,20 +7,25 @@ module
 
 public import Combinatorics.BranchingWalk.Basic.Survival.Basic
 public import Combinatorics.Branching.Map
-public import Combinatorics.BranchingWalk.Step.Selection.Count
+public import Combinatorics.BranchingWalk.Step.Count
+import Mathlib.Data.Set.Finite.List
 
 /-!
 # Generation sizes of a branching walk
 
+## Public declarations
+
 For a branching walk `β`, `generationSize β n` is the extended cardinality
-`(survivingParticlesAt β n).encard`. When the child-slot type is finite, each
-generation is finite and `generationSize β n ≠ ⊤`; for a single-root walk,
+`(survivingParticlesAt β n).encard`. When the initial-root and child-slot
+types are finite, each generation is finite and `generationSize β n ≠ ⊤`; for a single-root walk,
 `generationSize β 0 = 1` and
 `generationSize β 1 = (β.step PUnit.unit []).childCount`.
-`generationSlice_finite` and `generationSize_ne_top_of_finite_slots` give the
+`RootIndexed.BranchingWalk.generationSlice_finite` and
+`generationSize_ne_top_of_finite_roots_and_slots` give the
 finite-generation conclusions. For a single-root walk,
-`generationSize_zero` and `generationSize_one_eq_childCount` state the initial
-values `Z₀ = 1` and `Z₁ = childCount(β.step PUnit.unit [])`, where
+`BranchingWalk.generationSize_zero` and
+`BranchingWalk.generationSize_one_eq_childCount` state the initial values
+`Z₀ = 1` and `Z₁ = childCount(β.step PUnit.unit [])`, where
 `Zₙ = generationSize β n`. The pathwise recursion
 `generationSize_succ_eq_sum_childCount` is
 `Z_(n+1) = ∑ p : {p // p ∈ survivingParticlesAt β n},
@@ -36,19 +41,6 @@ forgetting marks preserves the generation set and its size.
 
 namespace Combinatorics.Branching
 
-private lemma finite_list_length_eq {α : Type*} [Finite α] (n : ℕ) :
-    Finite {u : List α // u.length = n} := by
-  classical
-  refine Finite.of_injective
-    (fun u : {u : List α // u.length = n} => fun i : Fin n => u.1[i]?) ?_
-  intro u v h
-  apply Subtype.ext
-  refine List.ext_getElem? fun i => ?_
-  by_cases hi : i < n
-  · exact congrFun h ⟨i, hi⟩
-  · rw [List.getElem?_eq_none_iff.mpr (by omega : u.1.length ≤ i),
-      List.getElem?_eq_none_iff.mpr (by omega : v.1.length ≤ i)]
-
 /-- The possibly infinite number of particles present at generation `n`,
 across all labelled initial roots. -/
 noncomputable def RootIndexed.BranchingWalk.generationSize
@@ -56,42 +48,49 @@ noncomputable def RootIndexed.BranchingWalk.generationSize
     (n : ℕ) : ℕ∞ :=
   (survivingParticlesAt β n).encard
 
-/-- Every fixed generation is finite when the child-slot type is finite.
-This is a pathwise combinatorial fact, independent of the offspring law. -/
+/-- Every fixed generation is finite when the initial-root and child-slot
+types are finite. This is a pathwise combinatorial fact, independent of the
+offspring law. -/
 theorem RootIndexed.BranchingWalk.generationSlice_finite
-    {α Mark Position : Type*} [Finite α]
-    (β : _root_.Combinatorics.Branching.BranchingWalk α Mark Position) (n : ℕ) :
+    {Root α Mark Position : Type*} [Finite Root] [Finite α]
+    (β : RootIndexed.BranchingWalk Root α Mark Position) (n : ℕ) :
     (survivingParticlesAt β n).Finite := by
-  classical
-  have hlist : Finite {u : List α // u.length = n} := finite_list_length_eq n
+  have hlist : Finite {u : List α // u.length = n} := by
+    exact (List.finite_length_eq α n).to_subtype
+  letI : Finite {u : List α // u.length = n} := hlist
   have hlevel : Finite
-      {p : Combinatorics.UlamHarris.RootIndexed.TreeNode PUnit.{1} α //
+      {p : Combinatorics.UlamHarris.RootIndexed.TreeNode Root α //
         p.2.length = n} := by
-    refine @Finite.of_injective _ _ hlist
-      (fun p => (⟨p.1.2, p.2⟩ : {u : List α // u.length = n})) ?_
+    refine @Finite.of_injective _ _ (inferInstance :
+      Finite (Root × {u : List α // u.length = n}))
+      (fun p => (p.1.1, ⟨p.1.2, p.2⟩)) ?_
     intro p q hpq
+    have hroot : p.1.1 = q.1.1 :=
+      congrArg (fun x : Root × {u : List α // u.length = n} => x.1) hpq
+    have haddr : p.1.2 = q.1.2 :=
+      congrArg Subtype.val
+        (congrArg (fun x : Root × {u : List α // u.length = n} => x.2) hpq)
     apply Subtype.ext
-    have haddr : p.1.2 = q.1.2 := congrArg Subtype.val hpq
-    exact Prod.ext (Subsingleton.elim _ _) haddr
+    exact Prod.ext hroot haddr
   have hslice : Finite
-      {p : Combinatorics.UlamHarris.RootIndexed.TreeNode PUnit.{1} α //
+      {p : Combinatorics.UlamHarris.RootIndexed.TreeNode Root α //
         p ∈ survivingParticlesAt β n} := by
     refine @Finite.of_injective _ _ hlevel
       (fun p => (⟨p.1, by
         simpa [Combinatorics.UlamHarris.RootIndexed.generation] using p.2.2⟩ :
-        {p : Combinatorics.UlamHarris.RootIndexed.TreeNode PUnit.{1} α //
+        {p : Combinatorics.UlamHarris.RootIndexed.TreeNode Root α //
           p.2.length = n})) ?_
     intro p q hpq
     exact Subtype.ext (congrArg
-      (fun q : {p : Combinatorics.UlamHarris.RootIndexed.TreeNode PUnit.{1} α //
+      (fun q : {p : Combinatorics.UlamHarris.RootIndexed.TreeNode Root α //
           p.2.length = n} => q.1) hpq)
   exact Set.finite_coe_iff.mpr hslice
 
-/-- With finitely many child slots, the extended generation count is always
-finite. -/
-theorem RootIndexed.BranchingWalk.generationSize_ne_top_of_finite_slots
-    {α Mark Position : Type*} [Finite α]
-    (β : _root_.Combinatorics.Branching.BranchingWalk α Mark Position) (n : ℕ) :
+/-- With finitely many initial roots and child slots, the extended generation
+count is always finite. -/
+theorem RootIndexed.BranchingWalk.generationSize_ne_top_of_finite_roots_and_slots
+    {Root α Mark Position : Type*} [Finite Root] [Finite α]
+    (β : RootIndexed.BranchingWalk Root α Mark Position) (n : ℕ) :
     β.generationSize n ≠ ⊤ := by
   unfold RootIndexed.BranchingWalk.generationSize
   exact Set.encard_ne_top_iff.mpr
@@ -99,7 +98,7 @@ theorem RootIndexed.BranchingWalk.generationSize_ne_top_of_finite_slots
 
 /-- A single-root branching walk has exactly its initial particle in
 generation zero. -/
-theorem RootIndexed.BranchingWalk.generationSize_zero
+theorem BranchingWalk.generationSize_zero
     {α Mark Position : Type*}
     (β : _root_.Combinatorics.Branching.BranchingWalk α Mark Position) :
     β.generationSize 0 = 1 := by
@@ -121,7 +120,7 @@ theorem RootIndexed.BranchingWalk.generationSize_zero
 
 /-- The particles present at generation one correspond exactly to the
 children in a single root's first offspring configuration. -/
-theorem RootIndexed.BranchingWalk.generationSize_one_eq_childCount
+theorem BranchingWalk.generationSize_one_eq_childCount
     {α Mark Position : Type*}
     (β : _root_.Combinatorics.Branching.BranchingWalk α Mark Position) :
     β.generationSize 1 = (β.step PUnit.unit []).childCount := by

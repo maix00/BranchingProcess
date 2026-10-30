@@ -4,52 +4,66 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Selection.NSelection.AtRank
-import Probability.BranchingRandomWalk.Coupling.Field.Preimage
-import Combinatorics.BranchingWalk.Selection.NSelection.Mechanism.Matching
-import Combinatorics.BranchingWalk.Step.Map
+module
+
+public import MeasureTheory.Selection.NSelection.AtRank
+public import Probability.BranchingRandomWalk.Coupling.Field.Preimage
+public import Combinatorics.Selection.NSelection.Matching.ByRank
+public import Combinatorics.BranchingWalk.Step.Map
+import MeasureTheory.MeasurableSpace.CountableEvaluation
 
 /-!
 # Rank preimage measurability
 
 Countable-range and generation-domain-flow measurability for the guarded
 rank inverse and its optional value lookup.
+
+## Public declarations
+
+* `preimageByRank_function_range_countable` states that the actual range of
+  `(ω, q) ↦ preimageByRank (sourceValue ω) (targetValue ω) (source ω)
+  (target ω) q` is countable when both random finite supports have countable
+  actual ranges.
+* `matchByRankOrSelf_range_countable` states that the canonical equal-rank
+  match, with identity fallback, has countable actual range under a
+  countable-range hypothesis on the target support.
+* `measurableSet_particleAtSourceRankBy_eq_some` proves measurability of each
+  event where a source particle's rank lookup returns a specified target.
+* `measurableSet_preimageByRank_function_eq` proves measurability of every
+  fibre of the entire guarded inverse function, not just one coordinate.
+* `valueAtMatchedRank` installs source data at the target label of equal rank
+  and uses fallback data where no source rank is available.
+* `valueAtMatchedRank_matchByRankOrSelf` states that the installed value at a
+  canonical match equals the original source value.
+* `valueAtMatchedRank_measurable` proves measurability of the installed
+  target-indexed family from measurable source and fallback data.
 -/
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk.Coupling
 
-open ProbabilityTheory.BranchingRandomWalk.Selection.NSelection
-
 open MeasureTheory
+open Combinatorics.Selection.NSelection
 open Combinatorics.Branching
-open Combinatorics.Branching.Selection.NSelection
+open _root_.Combinatorics.Selection.NSelection
 open Combinatorics.UlamHarris
 
 variable {Ω Value : Type*} [MeasurableSpace Ω]
 
-theorem measurableSet_mem_finset
+private theorem measurableSet_mem_finset
     {ι : Type*} (s : Ω → Finset ι)
     (hfiber : ∀ t, MeasurableSet {ω | s ω = t})
     (hrange : (Set.range s).Countable) (i : ι) :
     MeasurableSet {ω | i ∈ s ω} := by
-  let S : Set (Finset ι) := Set.range s
-  let _ : Countable S := Set.countable_coe_iff.mpr hrange
-  have hset : {ω | i ∈ s ω} =
-      ⋃ t : {t : S // i ∈ t.1}, {ω | s ω = t.1.1} := by
-    ext ω
-    simp only [Set.mem_ofPred_eq, Set.mem_iUnion]
-    constructor
-    · intro hi
-      exact ⟨⟨⟨s ω, Set.mem_range_self ω⟩, hi⟩, rfl⟩
-    · rintro ⟨t, ht⟩
-      simpa [ht] using t.2
-  rw [hset]
-  exact MeasurableSet.iUnion fun t => hfiber t.1.1
+  have hs : Measurable s :=
+    measurable_of_countable_range_of_fibers s hfiber hrange
+  exact measurableSet_setOfPred.2 (measurable_finset_iff.mp hs i)
 
 omit [MeasurableSpace Ω] in
 /-- For a fixed source label, optional equal-rank lookup has countable actual
 range whenever the random target finite set has countable actual range. -/
-theorem particleAtSourceRankBy_range_countable
+private theorem particleAtSourceRankBy_range_countable
     {Source Target : Type*}
     [LinearOrder Source] [LinearOrder Target] [LinearOrder Value]
     (sourceValue : Ω → Source → Value)
@@ -79,7 +93,7 @@ theorem particleAtSourceRankBy_range_countable
 omit [MeasurableSpace Ω] in
 /-- The guarded inverse match has countable actual range whenever the random
 source population does. -/
-theorem preimageByRank_range_countable
+private theorem preimageByRank_range_countable
     {Particle : Type*} [LinearOrder Particle] [LinearOrder Value]
     (sourceValue targetValue : Ω → Particle → Value)
     (source target : Ω → Finset Particle)
@@ -220,7 +234,7 @@ theorem measurableSet_particleAtSourceRankBy_eq_some
       (hsourceKey p)) q
 
 /-- Every optional equal-rank lookup fibre is measurable. -/
-theorem measurableSet_particleAtSourceRankBy_eq
+private theorem measurableSet_particleAtSourceRankBy_eq
     {Source Target : Type*}
     [LinearOrder Source] [LinearOrder Target] [LinearOrder Value]
     (sourceValue : Ω → Source → Value)
@@ -251,7 +265,7 @@ theorem measurableSet_particleAtSourceRankBy_eq
           (hsourceKey p))
 
 /-- Every fibre of the guarded inverse rank match is measurable. -/
-theorem measurableSet_preimageByRank_eq
+private theorem measurableSet_preimageByRank_eq
     {Particle : Type*} [LinearOrder Particle] [LinearOrder Value]
     (sourceValue targetValue : Ω → Particle → Value)
     (source target : Ω → Finset Particle)
@@ -413,15 +427,25 @@ theorem valueAtMatchedRank_measurable
     Measurable fun ω q =>
       valueAtMatchedRank sourceValue targetValue source target
         sourceData fallback ω q := by
-  apply Coupling.valueAtPreimage_measurable_pi
-  · intro q
-    exact preimageByRank_range_countable sourceValue targetValue
-      source target hsourceRange q
-  · intro q o
-    exact measurableSet_preimageByRank_eq sourceValue targetValue source target
-      hsourceFiber hsourceRange htargetFiber htargetRange hsourceKey
-      htargetKey q o
-  · exact hsourceData
-  · exact hfallback
+  apply measurable_pi_iff.mpr
+  intro q
+  let pre : Ω → Option Particle := fun ω =>
+    preimageByRank (sourceValue ω) (targetValue ω)
+      (source ω) (target ω) q
+  let field : Ω → Option Particle → Y := fun ω o =>
+    o.elim (fallback ω q) (sourceData ω)
+  have hfield : Measurable (fun ω => field ω (pre ω)) := by
+    apply Measurable.eval_of_countable_range field pre
+    · intro o _
+      cases o with
+      | none => simpa [field] using hfallback q
+      | some p => simpa [field] using hsourceData p
+    · intro o _
+      exact measurableSet_preimageByRank_eq sourceValue targetValue
+        source target hsourceFiber hsourceRange htargetFiber htargetRange
+        hsourceKey htargetKey q o
+    · exact preimageByRank_range_countable sourceValue targetValue
+        source target hsourceRange q
+  simpa [valueAtMatchedRank, Coupling.valueAtPreimage, pre, field] using hfield
 
 end ProbabilityTheory.BranchingRandomWalk.Coupling

@@ -17,7 +17,9 @@ public import Mathlib.Probability.Independence.InfinitePi
 /-!
 # Positions on root-indexed branching step fields
 
-The public declarations in
+## Public declarations
+
+The declarations in
 `ProbabilityTheory.BranchingRandomWalk.RootIndexed` are:
 
 - `displace`, `position`: the total quantities

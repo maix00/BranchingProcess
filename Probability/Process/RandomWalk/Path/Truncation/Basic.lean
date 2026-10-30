@@ -13,6 +13,23 @@ public import Mathlib.MeasureTheory.Function.LpSeminorm.Basic
 
 This file is deterministic.  It defines the hard symmetric truncation used in
 finite-second-moment invariance arguments and records its pointwise bounds.
+
+## Public declarations
+
+* `truncatedIncrement radius x` equals `x` when `|x| ≤ radius` and `0`
+  otherwise.
+* `truncatedIncrement_of_abs_le` and `truncatedIncrement_of_lt_abs` give the
+  two pointwise cases of that definition.
+* `measurable_truncatedIncrement radius` states measurability of the
+  truncated increment as a function of `x`.
+* `abs_truncatedIncrement_le_abs` gives
+  `|truncatedIncrement radius x| ≤ |x|`.
+* `abs_truncatedIncrement_le` gives
+  `|truncatedIncrement radius x| ≤ radius` when `0 ≤ radius`, and
+  `abs_truncatedIncrement_le_abs_radius` gives the bound by `|radius|` for
+  every real radius.
+* `truncatedIncrement_pow_four_le` gives
+  `(truncatedIncrement radius x)⁴ ≤ radius² * x²` for nonnegative radius.
 -/
 
 @[expose] public section

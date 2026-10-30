@@ -6,10 +6,13 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.Path.Cadlag.ShortTime
+import MeasureTheory.Measure.EventLimits
+
+public import Probability.Process.Corridor.ShortTime
 public import Probability.Process.Stable.FiniteDimensional
-public import Probability.Distributions.Stable.Operations.Sign
+public import Probability.Distributions.Stable.Support.Sign
 public import Probability.Process.Path.Skorokhod.Corridor.Enlargement
+public import Probability.Process.Path.Skorokhod.Corridor.RationalCoordinate
 public import Mathlib.Analysis.SpecificLimits.Basic
 
 /-!
@@ -18,6 +21,58 @@ public import Mathlib.Analysis.SpecificLimits.Basic
 This is the topological probability input for the directional return events
 in the stable-process block lower bound. Endpoint sign probabilities are
 handled separately through the stable increment law.
+
+## Public declarations
+
+Let \(\tau_n=(n+1)^{-1}\), and let \(A_n(\delta)\) be the event that
+\(-\delta<X_{\tau_n q}-X_0<\delta\) for every rational \(q\in[0,1]\).
+Write \(C_n(a,b)\) for the complete-path event
+\[
+  \exists\eta>0,\quad
+  \forall t\in[0,1],\quad
+  a+\eta\le X_{\tau_n t}-X_0\le b-\eta.
+\]
+
+- IsStableLevyProcess.tendsto_measure_shortCorridor:
+  if \(\delta>0\), then \(\mathbb P(A_n(\delta))\to1\).
+- IsStableLevyProcess.eventually_shortCorridor_scaledIncrement_pos:
+  if \(J\subseteq\mathbb R\) is measurable and \(\mu(J)>0\), then eventually
+  \[
+    \mathbb P\!\left(A_n(\delta)\cap
+      \left\{\frac{X_{\tau_n}-X_0}{\tau_n^{1/\alpha}}\in J\right\}\right)>0.
+  \]
+- IsStableLevyProcess.eventually_fullShortCorridor_scaledIncrement_pos:
+  the preceding conclusion holds with \(A_n(\delta)\) replaced by
+  \(C_n(-\delta,\delta)\).
+- IsStableLevyProcess.measure_positive_increment_eq and
+  IsStableLevyProcess.measure_negative_increment_eq: for every \(t>0\),
+  \[
+    \mathbb P(X_t-X_0>0)=\mu((0,\infty)),\qquad
+    \mathbb P(X_t-X_0<0)=\mu((-\infty,0)).
+  \]
+- IsStableLevyProcess.eventually_measure_shortCorridor_positiveIncrement_pos
+  and IsStableLevyProcess.eventually_measure_shortCorridor_negativeIncrement_pos:
+  positive mass on a sign half-line gives eventual positive probability of
+  \(A_n(\delta)\) together with the corresponding endpoint sign.
+- IsStableLevyProcess.eventually_directionalReturn_probabilities_pos:
+  if \(a\le-\delta<0<\delta\le b\) and both sign half-lines have positive
+  mass, then eventually both rational return events
+  \[
+    A_n(\delta)\cap\{X_{\tau_n}-X_0\in(0,b)\},\qquad
+    A_n(\delta)\cap\{X_{\tau_n}-X_0\in(a,0)\}
+  \]
+  have positive probability.
+- IsStableLevyProcess.eventually_directionalReturn_probabilities_pos_of_cdfAtZero:
+  the preceding positivity follows from \(0<F_\mu(0)<1\).
+- IsStableLevyProcess.eventually_fullDirectionalReturn_probabilities_pos_of_cdfAtZero:
+  under the same CDF condition, both complete-path events
+  \(C_n(-\delta,\delta)\cap\{X_{\tau_n}-X_0\in(0,b)\}\) and
+  \(C_n(-\delta,\delta)\cap\{X_{\tau_n}-X_0\in(a,0)\}\) eventually have
+  positive probability.
+- IsStableLevyProcess.eventually_firstBlock_directionalReturn_probabilities_pos:
+  the two rational return events have eventual positive probability when
+  expressed on the first interval of the uniform partition into \(n+1\)
+  blocks.
 -/
 
 @[expose] public section
@@ -115,7 +170,6 @@ theorem IsStableLevyProcess.eventually_fullShortCorridor_scaledIncrement_pos
     rintro ⟨hsmallω, hendω⟩
     refine ⟨?_, hendω⟩
     apply (mem_fullSegmentCorridorEvent_iff_rational X 0 t (-δ) δ ω hω).2
-    rw [Skorokhod.rationalCoordinateCorridorWithMargin_eq_real]
     refine ⟨δ / 2, by positivity, fun q => ?_⟩
     have hq := Set.mem_iInter.mp hsmallω q
     change -(δ / 2) < X (t * RationalCoordinate.toNNReal q) ω - X 0 ω ∧

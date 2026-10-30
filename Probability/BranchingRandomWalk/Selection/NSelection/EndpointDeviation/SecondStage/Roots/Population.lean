@@ -4,43 +4,70 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.SecondStage.Roots.Chosen
-import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.SecondStage.Roots.Fresh
-/-!
-# Independent second-stage failure below killed-population roots
+module
 
-The measurable root choice from a finite killed slice can be passed directly
-to the predictable fresh-subtree estimate.  The estimate controls failure on
-the event that the slice contains the requested number of roots.
+public import Probability.BranchingRandomWalk.Population.Processes.Causal.Basic
+/-!
+# Population threshold for the second-stage roots
+
+## Public declarations
+
+The declarations are in
+`ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation`.
+
+- `RestartedField m` is the field space
+  \(\Omega_m=\operatorname{StepField}(\operatorname{Fin}(m),\mathbb N,\mathbb R)\).
+- `RestartedPopulation m` is the causal population on \(\Omega_m\), rooted at
+  \(\operatorname{Fin}(m)\) and observed through `stepFiltration`.
+- `secondStageEnoughRoots P hP generation n` defines the event
+  \(A_n=\{\omega:K\le ((hP\,n).toFinset(\mathrm{generation}(n),\omega)).card\}\).
+- `measurableSet_secondStageEnoughRoots` proves that `Aₙ` is
+  measurable with respect to the field revealed through `generation n`, when
+  every slice of `P` is finite.
+
+This module owns the restarted field and population types together with the
+finite-slice threshold event and its measurability. The predictable root
+constructor and its measurable, injective-family interface are in
+`Roots/Selection.lean`. The selected-root all-avoid estimate is a proof-chain
+specialization in `Roots/Lemmas/AllAvoid.lean`.
 -/
 
 open Filter MeasureTheory ProbabilityTheory
 open scoped ENNReal Topology
 
-namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail
+namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation
 
 open Combinatorics.Branching
 open Combinatorics.UlamHarris
 open ProbabilityTheory.BranchingRandomWalk
 open ProbabilityTheory.BranchingRandomWalk.RootIndexed
-open ProbabilityTheory.BranchingRandomWalk.Spine
 
 @[expose] public section
 
+/-- The root-indexed real step-field space used by the restarted
+second-stage population. -/
+abbrev RestartedField (m : ℕ) := RootIndexed.StepField (Fin m) ℕ ℝ
+
+/-- The causal population process on `RestartedField m` with initial root set
+`Fin m` and the natural-generation filtration. -/
+abbrev RestartedPopulation (m : ℕ) :=
+  RootIndexed.CausalPopulation (RestartedField m) (Fin m) ℕ ℝ
+    (RootIndexed.stepFiltration (Root := Fin m) (α := ℕ) (X := ℝ)) id
+
 /-- The event that the actual finite killed slice contains at least `K`
 particles. -/
-def rightTailSecondStageEnoughRoots
+def secondStageEnoughRoots
     {m K : ℕ} (P : ℕ → RestartedPopulation m)
     (hP : ∀ n, (P n).FiniteSlices) (generation : ℕ → ℕ) (n : ℕ) :
     Set (RestartedField m) :=
   {field | K ≤ ((hP n).toFinset (generation n) field).card}
 
-theorem measurableSet_rightTailSecondStageEnoughRoots
+theorem measurableSet_secondStageEnoughRoots
     {m K : ℕ} (P : ℕ → RestartedPopulation m)
     (hP : ∀ n, (P n).FiniteSlices) (generation : ℕ → ℕ) (n : ℕ) :
     MeasurableSet[RootIndexed.stepFiltration
       (Root := Fin m) (α := ℕ) (X := ℝ) (generation n)]
-      (rightTailSecondStageEnoughRoots (K := K) P hP generation n) := by
+      (secondStageEnoughRoots (K := K) P hP generation n) := by
   let F := RootIndexed.stepFiltration (Root := Fin m) (α := ℕ) (X := ℝ)
   let candidates : RestartedField m → Finset (RootIndexed.TreeNode (Fin m) ℕ) :=
     fun field => (hP n).toFinset (generation n) field
@@ -59,72 +86,6 @@ theorem measurableSet_rightTailSecondStageEnoughRoots
     {field | K ≤ (candidates field).card}
   simpa using hlarge (measurableSet_singleton True)
 
-/-- The selected roots from the killed slice satisfy all hypotheses of the
-predictable independent-subtree estimate. -/
-theorem eventually_measure_rightTailSecondStageEnoughRoots_allAvoid_le
-    {m K : ℕ} [treeOrder : LinearOrder (RootIndexed.TreeNode (Fin m) ℕ)]
-    (hKm : K ≤ m)
-    (P : ℕ → RestartedPopulation m) (hP : ∀ n, (P n).FiniteSlices)
-    {D generation : ℕ → ℕ}
-    (hD : Tendsto (fun n => (D n : ℝ)) atTop atTop)
-    (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
-    (hboundary : HasBoundaryNormalization realPotential μ)
-    (hcross : HasFiniteCrossWeight realPotential μ)
-    {sigma κ c v : ℝ}
-    (hν : IsCenteredSecondMoment
-      (tiltedPotentialLaw realPotential (-1) μ) (sigma ^ 2))
-    (hsigma : 0 < sigma) (hκ : 0 ≤ κ) (hc : 0 < c) (hv : 0 < v)
-    (hκv : κ / c ^ 2 < v)
-    (hterminal : κ / c ^ 2 ≤ 2 * v / 5)
-    (hentranceWidth : (5 * (κ / c ^ 2) + v) / 2 ≤ c)
-    (hK : 0 < K)
-    [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
-    [Countable (RootIndexed.TreeNode (Fin m) ℕ)]
-    [MeasurableSingletonClass (RootIndexed.TreeNode (Fin m) ℕ)] :
-    ∃ entryQ : ℝ≥0∞, 0 < entryQ ∧
-      ∃ C : ℝ, C < 0 ∧ ∃ bridgeQ : ℝ≥0∞, 0 < bridgeQ ∧
-        ∃ amplitude : ℝ, 0 < amplitude ∧
-          ∀ᶠ n : ℕ in atTop,
-            let pzMean := rightTailPositiveASecondStagePZMean μ (D n) κ c v
-            let A := rightTailSecondStageEnoughRoots (K := K) P hP generation n
-            (RootIndexed.stepFieldLaw (Root := Fin m) μ)
-              (A ∩
-                RootIndexed.selectedSubtreeStepFieldVector
-                    (rightTailSecondStageRoots hKm P hP generation n) ⁻¹'
-                  rightTailPositiveASecondStageFailureEvent K (D n) κ c v) ≤
-              (RootIndexed.stepFieldLaw (Root := Fin m) μ) A *
-                ENNReal.ofReal (Real.exp (-((K : ℝ) * pzMean.toReal / 4))) := by
-  let chosen := rightTailSecondStageRoots hKm P hP generation
-  let A : ℕ → Set (RestartedField m) :=
-    fun n => rightTailSecondStageEnoughRoots (K := K) P hP generation n
-  have hcount : ∀ n, (Set.range (chosen n)).Countable :=
-    rightTailSecondStageRoots_countable hKm P hP generation
-  have hfiber : ∀ n roots, MeasurableSet[
-      RootIndexed.stepFiltration (Root := Fin m) (α := ℕ) (X := ℝ)
-        (generation n)]
-      {field | chosen n field = roots} := by
-    intro n roots
-    exact measurableSet_rightTailSecondStageRoots_eq hKm P hP generation n roots
-  have hdepth : ∀ n field i, (chosen n field i).2.length = generation n :=
-    rightTailSecondStageRoots_depth hKm P hP generation
-  have hinj : ∀ n field, Function.Injective (chosen n field) :=
-    rightTailSecondStageRoots_injective hKm P hP generation
-  have hA : ∀ n, MeasurableSet[
-      RootIndexed.stepFiltration (Root := Fin m) (α := ℕ) (X := ℝ)
-        (generation n)] (A n) := by
-    intro n
-    exact measurableSet_rightTailSecondStageEnoughRoots P hP generation n
-  obtain ⟨entryQ, hentryQ, C, hC, bridgeQ, hbridgeQ, amplitude, hamplitude,
-      hbound⟩ :=
-    eventually_measure_predictableSecondStageRoots_allAvoid_le
-      (Root := Fin m) (m := K) (D := D) (generation := generation)
-      hD μ hboundary hcross hν hsigma hκ hc hv hκv hterminal hentranceWidth hK
-      chosen hcount hfiber hdepth hinj A hA
-  refine ⟨entryQ, hentryQ, C, hC, bridgeQ, hbridgeQ, amplitude,
-    hamplitude, ?_⟩
-  filter_upwards [hbound] with n hboundN
-  simpa [chosen, A, rightTailSecondStageEnoughRoots] using hboundN
-
 end
 
-end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail
+end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation

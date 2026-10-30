@@ -6,12 +6,14 @@ Authors: WANG Yiyang
 
 module
 
+public import Probability.Process.Path.Transform.Continuous
+
 public import Probability.Process.Brownian.Independence.FiniteStoppingTime
 
 /-!
 # Independence of a Brownian stopped past and future
 
-The public theorem in this file is:
+## Public declarations
 
 - `ProbabilityTheory.IsBrownianReal.indepFun_shiftToZero_freezeAfter_finiteStoppingTime`:
   for a finite-valued stopping time $T$, the path

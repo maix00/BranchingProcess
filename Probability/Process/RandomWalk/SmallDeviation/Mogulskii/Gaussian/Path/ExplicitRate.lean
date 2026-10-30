@@ -4,12 +4,14 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Gaussian.EscapeConstant
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.PathClass.Regimes
+module
+
+public import Probability.Process.Stable.SmallDeviation.EscapeRate.Gaussian
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.PathClass.Regimes
 /-!
 # The explicit Gaussian path-class rate
 
-The public theorem in this file is:
+## Public declarations
 
 - `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Path.tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_index_two_of_brownian_explicit`:
   the Brownian escape constant is $-\pi^2/8$ and, for a path class $G$
@@ -66,9 +68,9 @@ theorem tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_i
     (hGmeas : MeasurableSet G) :
     HasStableProcessEscapeRate 2 (gaussianReal 0 1)
         (Process.Path.Cadlag.pathLaw Q
-          (fun t ω => B (UnitInterval.toNNReal t) ω)
+          (fun t ω => B (unitInterval.toNNReal t) ω)
           (fun t => hB.toIsPreBrownianReal.aemeasurable
-            (UnitInterval.toNNReal t))) (-(Real.pi ^ 2) / 8) ∧
+            (unitInterval.toNNReal t))) (-(Real.pi ^ 2) / 8) ∧
       (∀ n : ℕ,
         NullMeasurableSet
           {increment : ℕ → ℝ |
@@ -89,10 +91,10 @@ theorem tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_i
   have hX := hB.isStableLevyProcess
   have hC : C = -(Real.pi ^ 2) / 8 :=
     _root_.ProbabilityTheory.HasStableProcessEscapeRate.eq_neg_pi_sq_div_eight
-      hEscape hX canonicalMogulskiiScale
+      hEscape hX
   have hfull : C * 2 ^ (2 : ℝ) = -(Real.pi ^ 2) / 2 :=
     _root_.ProbabilityTheory.HasStableProcessEscapeRate.fullWidthCoefficient_eq_neg_pi_sq_div_two
-      hEscape hX canonicalMogulskiiScale
+      hEscape hX
   refine ⟨?_, hNull, H, ⟨hH.1, ?_⟩, ?_⟩
   · simpa [hC] using hEscape
   · have hrate := hH.2

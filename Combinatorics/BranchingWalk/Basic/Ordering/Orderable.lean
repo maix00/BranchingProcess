@@ -7,10 +7,13 @@ Authors: WANG Yiyang
 module
 
 public import Combinatorics.BranchingWalk.Basic.BranchingWalk
+public import Combinatorics.BranchingWalk.Basic.FiniteSupport
 public import Combinatorics.BranchingWalk.Step.Ordering.Orderable
 
 /-!
 # The orderable form of a step field and of a walk
+
+## Public declarations
 
 `Step.IsOrderable` is the step-level notion, and a finitely supported step on `ℕ` has it by
 `Step.isOrderable_of_isFinitelySupported`. The classes here lift it: a step field is orderable when all of
@@ -23,15 +26,12 @@ carry their own classes for it as well. What is specific to `ℕ` is the instanc
 into orderability, because the relabelling proving it labels the children of a step by the ranks
 `0, …, k - 1`, and the surviving slots of that relabelling are the slots below `k`.
 
-The public classes are `Combinatorics.Branching.StepField.IsFinitelySupported`
-and `Combinatorics.Branching.RootIndexed.BranchingWalk.IsFinitelySupported`,
-which assert, respectively, `∀ u, Step.IsFinitelySupported (β u)` and
-`∀ r, StepField.IsFinitelySupported (β.step r)`. The matching orderability
-classes are `Combinatorics.Branching.StepField.IsOrderable` and
+The public classes are `Combinatorics.Branching.StepField.IsOrderable` and
 `Combinatorics.Branching.RootIndexed.BranchingWalk.IsOrderable`, with
 `∀ u, Step.IsOrderable (β u)` and
 `∀ r, StepField.IsOrderable (β.step r)`. On `ℕ`, instances derive both
-orderability classes from the corresponding finite-support classes.
+orderability classes from the finite-support classes defined in
+`Basic/FiniteSupport.lean`.
 -/
 
 @[expose] public section
@@ -41,16 +41,6 @@ namespace Combinatorics
 namespace Branching
 
 open Combinatorics.UlamHarris
-
-/-- A step field is finitely supported when all of its steps are. -/
-class StepField.IsFinitelySupported {α X : Type*} (β : StepField α X) : Prop where
-  pointwise : ∀ u, Step.IsFinitelySupported (β u)
-
-/-- A root-indexed walk is finitely supported when all of its step fields are. -/
-class RootIndexed.BranchingWalk.IsFinitelySupported
-    {Root α Mark Position : Type*}
-    (β : RootIndexed.BranchingWalk Root α Mark Position) : Prop where
-  pointwise : ∀ r, StepField.IsFinitelySupported (β.step r)
 
 /-- A step field is orderable when all of its steps are. -/
 class StepField.IsOrderable {α X : Type*} [LT α] [Preorder X] (β : StepField α X) : Prop where

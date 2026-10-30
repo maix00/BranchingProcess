@@ -16,6 +16,20 @@ public import Probability.Process.RandomWalk.Path.Skorokhod.Tightness
 
 The stable excursion-partition probability bounds and compact-range bounds
 combine through the general Skorokhod criterion to prove J1 tightness.
+## Public declarations
+
+For $\mu_n=\texttt{normalizedStepPathLaw}(\nu,\texttt{normalization},n)$, each public theorem
+asserts
+\[
+  \operatorname{IsTightMeasureSet}\bigl(\{\mu_n:n\in\mathbb N\}\bigr).
+\]
+`isTightMeasureSet_range_normalizedStepPathLaw_of_index_lt_one` proves this
+for $0<\alpha<1$ under the uncentered convention;
+`isTightMeasureSet_range_normalizedStepPathLaw_of_index_one` proves it at
+$\alpha=1$ under `IsMogulskiiIndexOneCentered`; and
+`isTightMeasureSet_range_normalizedStepPathLaw_of_index_gt_one` proves it for
+$1<\alpha<2$ when the increments are integrable and have mean zero.
+
 -/
 
 @[expose] public section
@@ -24,33 +38,6 @@ open Filter MeasureTheory ProbabilityTheory
 open scoped ENNReal
 
 namespace ProbabilityTheory.RandomWalk.FunctionalLimit.Stable
-
-/-- The stable oscillation-partition estimate and compact-range control imply
-J1 tightness for the whole family of normalized càdlàg random-walk path laws.
-The three source centering conventions are kept separate in the corollaries
-below. -/
-private lemma isTightMeasureSet_range_normalizedStepPathLaw_of_range_and_oscillation
-    (ν : Measure ℝ) [IsProbabilityMeasure ν] (normalization : ℕ → ℝ)
-    (hrange : ∀ {η : ℝ≥0∞}, 0 < η →
-      ∃ range : Set ℝ, IsCompact range ∧
-        ∀ᶠ n : ℕ in atTop,
-          (normalizedStepPathLaw ν normalization n)
-            (CadlagPath.rangeIn (T := unitInterval) range)ᶜ ≤ η)
-    (hosc : ∀ {η : ℝ≥0∞}, 0 < η →
-      ∃ gap oscillationTolerance : ℕ → ℝ,
-        (∀ n, 0 < gap n) ∧ (∀ n, 0 < oscillationTolerance n) ∧
-          Tendsto oscillationTolerance atTop (nhds 0) ∧
-            ∀ᶠ n : ℕ in atTop,
-              (normalizedStepPathLaw ν normalization n)
-                (Skorokhod.admitsOscillationPartitionSequence
-                  (E := ℝ) gap oscillationTolerance)ᶜ ≤ η) :
-    IsTightMeasureSet (Set.range
-      (fun n => normalizedStepPathLaw ν normalization n)) := by
-  apply MeasureTheory.isTightMeasureSet_range_of_eventually_compactRange_and_oscillationPartitions
-  · intro n
-    exact RandomWalk.isTightMeasureSet_singleton_normalizedStepPathLaw ν normalization n
-  · exact hrange
-  · exact hosc
 
 /-- The stable random-walk path laws are J1-tight below index one under the
 uncentered stable-domain convention. -/
@@ -62,8 +49,9 @@ theorem isTightMeasureSet_range_normalizedStepPathLaw_of_index_lt_one
       (fun u : ℝ => ν.real {x : ℝ | u < |x|}) (-α)) :
     IsTightMeasureSet (Set.range
       (fun n => normalizedStepPathLaw ν normalization n)) := by
-  apply isTightMeasureSet_range_normalizedStepPathLaw_of_range_and_oscillation
-    ν normalization
+  apply MeasureTheory.isTightMeasureSet_range_of_eventually_compactRange_and_oscillationPartitions
+  · intro n
+    exact RandomWalk.isTightMeasureSet_singleton_normalizedStepPathLaw ν normalization n
   · intro η hη
     exact exists_eventually_compactRange_bound_of_index_lt_one_ennreal
       hnorm hα₀ hα₁ htail hη
@@ -92,8 +80,9 @@ theorem isTightMeasureSet_range_normalizedStepPathLaw_of_index_one
     (hcenter : IsMogulskiiIndexOneCentered ν normalization) :
     IsTightMeasureSet (Set.range
       (fun n => normalizedStepPathLaw ν normalization n)) := by
-  apply isTightMeasureSet_range_normalizedStepPathLaw_of_range_and_oscillation
-    ν normalization
+  apply MeasureTheory.isTightMeasureSet_range_of_eventually_compactRange_and_oscillationPartitions
+  · intro n
+    exact RandomWalk.isTightMeasureSet_singleton_normalizedStepPathLaw ν normalization n
   · intro η hη
     exact exists_eventually_compactRange_bound_of_index_one_ennreal
       hnorm htail hcenter hη
@@ -124,8 +113,9 @@ theorem isTightMeasureSet_range_normalizedStepPathLaw_of_index_gt_one
     (hcenter : (∫ x : ℝ, x ∂ν) = 0) :
     IsTightMeasureSet (Set.range
       (fun n => normalizedStepPathLaw ν normalization n)) := by
-  apply isTightMeasureSet_range_normalizedStepPathLaw_of_range_and_oscillation
-    ν normalization
+  apply MeasureTheory.isTightMeasureSet_range_of_eventually_compactRange_and_oscillationPartitions
+  · intro n
+    exact RandomWalk.isTightMeasureSet_singleton_normalizedStepPathLaw ν normalization n
   · intro η hη
     exact exists_eventually_compactRange_bound_of_index_gt_one_ennreal
       hnorm hα₀ hα₁ hα₂ htail hint hcenter hη

@@ -11,10 +11,21 @@ public import Probability.Kernel.Survival.Basic
 /-!
 # Blocking bounds for remaining kernel mass
 
-Bounds proved for one fixed block extend to arbitrary elapsed times by using
-the quotient and one possible final incomplete block.  This file contains the
-order-theoretic part of blocking; no finite-state or random-walk assumptions
-are needed.
+## Public declarations
+
+For a sub-Markov kernel $K$ with remaining mass
+$M_n(x)=(K^n)(x,S)$:
+
+- If every $b$-step block has mass at least $p$ uniformly in its starting
+  state and $b>0$, `pow_succ_div_le_remainingMass` gives
+  $p^{\lfloor n/b\rfloor+1}\le M_n(x)$.
+- If every $b$-step block has mass at most $u$,
+  `remainingMass_le_pow_div` gives $M_n(x)\le u^{\lfloor n/b\rfloor}$.
+- `remainingMass_bounds_of_block` packages both bounds under their respective
+  uniform one-block hypotheses.
+
+These bounds use only the quotient and remainder of the elapsed time; they
+require no finite-state or random-walk structure.
 -/
 
 public section

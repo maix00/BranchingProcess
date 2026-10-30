@@ -6,14 +6,23 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Feedback.Probability
-public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.Feedback.Scaling
+public import Order.Interval.RationalCoordinate.UnitInterval
+public import Probability.Process.Stable.Levy
+import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Feedback.Probability
+import Probability.Process.Stable.SmallDeviation.Blocks.Lower.Entrance.ShortTime
+import all Probability.Process.Stable.SmallDeviation.Blocks.Lower.Feedback.Lemmas.Scaling
 /-!
 # Stable linear tubes from positive short-block probabilities
 
-* `IsStableLevyProcess.linearTube_probability_pos` states that, for
-  `α > 1`, two-sided increment mass implies
-  `P(∀ t ∈ [0,1], |X_t - v t| < η) > 0` for every `v ∈ ℝ` and `η > 0`.
+## Public declarations
+
+- IsStableLevyProcess.linearTube_probability_pos: for \(\alpha>1\), if the
+  increment law has positive mass on both half-lines, then for every
+  \(v\in\mathbb R\) and \(\eta>0\),
+  \[
+    \mathbb P\!\left(\forall t\in[0,1],\
+      |X_t-vt|<\eta\right)>0.
+  \]
 
 The short-block positivity and scale choice use stability. The finite
 feedback construction and its pathwise tube implication live in the general
@@ -38,7 +47,7 @@ theorem IsStableLevyProcess.linearTube_probability_pos
     (hpos : 0 < μ (Set.Ioi 0)) (hneg : 0 < μ (Set.Iio 0))
     (v η : ℝ) (hη : 0 < η) :
     0 < P {ω | ∀ t : unitInterval,
-      |X (UnitInterval.toNNReal t) ω - v * (t : ℝ)| < η} := by
+      |X (unitInterval.toNNReal t) ω - v * (t : ℝ)| < η} := by
   obtain ⟨r, R, hr, hrR, hevent⟩ :=
     h.exists_feedbackShortBlockWindows hα hpos hneg
       (η / 8) (by positivity) v (η / 16) (by positivity)
@@ -83,7 +92,7 @@ theorem IsStableLevyProcess.linearTube_probability_pos
             Set.Ioo (-((R + r / 2) * a)) (-(r * a / 2))}) := by
     simpa only [neg_mul, a, t] using hcorrectMinus
   have hrelative : 0 < P {ω | ∀ t : unitInterval,
-      |X (UnitInterval.toNNReal t) ω - X 0 ω - v * (t : ℝ)| < η} :=
+      |X (unitInterval.toNNReal t) ω - X 0 ω - v * (t : ℝ)| < η} :=
     h.increments.indepIncrements.linearTube_probability_pos_of_feedbackBlocks
       h.toIsLevyProcess.stationaryIncrements
       (fun s => h.increments.aemeasurable_eval s) h.ae_cadlag
@@ -91,9 +100,9 @@ theorem IsStableLevyProcess.linearTube_probability_pos
       hr' hR' hwidth hcorrectPlus hcorrectMinus'
   have heq :
       {ω | ∀ t : unitInterval,
-        |X (UnitInterval.toNNReal t) ω - v * (t : ℝ)| < η} =ᵐ[P]
+        |X (unitInterval.toNNReal t) ω - v * (t : ℝ)| < η} =ᵐ[P]
       {ω | ∀ t : unitInterval,
-        |X (UnitInterval.toNNReal t) ω - X 0 ω - v * (t : ℝ)| < η} := by
+        |X (unitInterval.toNNReal t) ω - X 0 ω - v * (t : ℝ)| < η} := by
     filter_upwards [h.increments.ae_start_eq_zero] with ω hzero
     have hzero' : X 0 ω = 0 := by simpa using hzero
     apply propext

@@ -20,6 +20,13 @@ An integrable increment law whose uncentered normalized i.i.d. sums converge
 to a probability law must have zero mean whenever the normalization is
 sublinear. The proof compares the strong law with scalar weak convergence
 using a bounded continuous test function that vanishes at both infinities.
+
+## Public declarations
+
+* `ProbabilityTheory.integral_eq_zero_of_uncenteredAttraction_of_sublinearNormalization`
+  proves that if $\int |x|\,d\nu(x)<\infty$, the uncentered sums
+  $a_n^{-1}\sum_{k<n}X_k$ converge in distribution to a probability law, and
+  $a_n/n\to0$, then $\int x\,d\nu(x)=0$. The limit law is unrestricted.
 -/
 
 open Filter MeasureTheory ProbabilityTheory

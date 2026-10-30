@@ -15,6 +15,11 @@ public import Mathlib.MeasureTheory.Integral.Bochner.Set
 The finite-step boundary and its traces are defined in the deterministic
 Skorokhod layer. This file proves that their level indices and evaluations are
 measurable, keeping measure-theoretic facts out of the topological definition.
+
+## Public declarations
+
+- The level index, left level index, boundary evaluation, and left trace of a
+  finite-step corridor boundary are measurable functions of time.
 -/
 
 open MeasureTheory Set

@@ -39,18 +39,28 @@ structure is already carried faithfully by a digraph.
 
 ## Public declarations
 
-- `Tree.childDigraph T` has vertices `u ∈ T.carrier` and
-  `Adj(u,v) ↔ TreeNode.IsChild u v`; `childDigraph_adj_irrefl` states that
-  `Adj(u,u)` is false.
-- `Tree.childQuiver T` labels an arrow `u ⟶ v` by `i` with `v = u ++ [i]`;
-  `childQuiver_hom_iff` identifies a nonempty arrow type with digraph
-  adjacency.
-- `Tree.childGraph T` forgets edge orientation, with
-  `Adj(u,v) ↔ IsChild(u,v) ∨ IsChild(v,u)`.
-- `RootIndexed.Tree.forestGraph T` joins vertices only within the same root
-  coordinate. `forestGraph_walk_root_eq` and
-  `forestGraph_reachable_root_eq` state that every walk preserves that
-  coordinate.
+* `Combinatorics.UlamHarris.Tree.childDigraph T` has vertex type
+  `↥T.carrier`; `Combinatorics.UlamHarris.Tree.childDigraph_adj_iff` states
+  `(childDigraph T).Adj a b ↔ TreeNode.IsChild a.1 b.1`;
+  `Combinatorics.UlamHarris.Tree.childDigraph_adj_irrefl` states
+  `¬ (childDigraph T).Adj a a`.
+* `Combinatorics.UlamHarris.Tree.childQuiver T` has arrows labelled by child
+  addresses, and `Combinatorics.UlamHarris.Tree.childQuiver_hom_iff` states
+  `Nonempty (a ⟶ b) ↔ (childDigraph T).Adj a b`.
+* `Combinatorics.UlamHarris.Tree.childGraph T` forgets edge orientation, and
+  `Combinatorics.UlamHarris.Tree.childGraph_adj` states
+  `(childGraph T).Adj a b ↔ IsChild a.1 b.1 ∨ IsChild b.1 a.1`.
+* `Combinatorics.UlamHarris.RootIndexed.Tree.ForestVertex T` is the subtype of
+  realized `(root, address)` pairs, and
+  `Combinatorics.UlamHarris.RootIndexed.Tree.forestGraph T` joins vertices only
+  within one root coordinate. `Combinatorics.UlamHarris.RootIndexed.Tree.forestGraph_adj`
+  gives its adjacency predicate, while
+  `Combinatorics.UlamHarris.RootIndexed.Tree.forestGraph_adj_mk_iff` identifies
+  each root component with `Combinatorics.UlamHarris.Tree.childGraph (T r)`.
+* `Combinatorics.UlamHarris.RootIndexed.Tree.forestGraph_walk_root_eq` and
+  `Combinatorics.UlamHarris.RootIndexed.Tree.forestGraph_reachable_root_eq`
+  state that a walk or reachable pair in `forestGraph T` has equal root
+  coordinates.
 -/
 
 @[expose] public section

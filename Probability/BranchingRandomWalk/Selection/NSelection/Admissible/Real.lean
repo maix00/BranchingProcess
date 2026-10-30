@@ -4,13 +4,27 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Assumptions.Structural
-import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law.Basic
-import Probability.BranchingRandomWalk.Population.Candidates.RootIndexed.Real
-import Probability.BranchingRandomWalk.Population.Processes.Selected.RootIndexed
+module
+
+public import Probability.BranchingRandomWalk.Assumptions.Structural
+public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law.Basic
+public import Probability.BranchingRandomWalk.Population.Candidates.RootIndexed.RealPosition
+public import Probability.BranchingRandomWalk.Population.Processes.Selected.RootIndexed
 
 /-!
 # Almost-sure admissibility for real-valued branching walks
+
+## Public declarations
+
+- `ProbabilityTheory.BranchingRandomWalk.RootIndexed.stepFieldLaw_ae_real_weight_finite_on_roots`:
+  boundary normalization implies that, almost surely, each of finitely many
+  roots has finite negative exponential weight at every address.
+- `ProbabilityTheory.BranchingRandomWalk.RootIndexed.selectedPopulationTotalized_admissible_ae`:
+  almost surely, every generation's selected population has a lower-finite
+  child-position set.
+- `ProbabilityTheory.BranchingRandomWalk.RootIndexed.selectedPopulationTotalized_succ_spec_ae`:
+  almost surely, each next selected population is the first \(N\) children in
+  the prescribed order.
 
 Boundary normalization makes every pre-sampled offspring configuration have
 finite negative exponential weight almost surely.  Countability lifts this to
@@ -26,7 +40,7 @@ open scoped ENNReal
 namespace ProbabilityTheory.BranchingRandomWalk
 
 open Combinatorics.UlamHarris Combinatorics.Branching
-open Combinatorics.Branching.Selection.NSelection
+open _root_.Combinatorics.Selection.NSelection
 
 theorem RootIndexed.stepFieldLaw_ae_real_weight_finite_on_roots
     {Root α : Type*} [Countable α]
@@ -85,7 +99,7 @@ theorem RootIndexed.selectedPopulationTotalized_admissible_ae
     ∀ᵐ field ∂RootIndexed.stepFieldLaw (Root := Root) μ,
       ∀ n, IsLowerFiniteBy
         (RootIndexed.observedPositionAtGeneration initial id id (n + 1) field)
-        (RootIndexed.childrenAtGeneration n
+        (Combinatorics.Branching.Population.childrenAtGeneration n
           (RootIndexed.selectedPopulationTotalized N roots initial id id n field)
           field) := by
   filter_upwards
@@ -95,8 +109,6 @@ theorem RootIndexed.selectedPopulationTotalized_admissible_ae
   exact RootIndexed.childrenAtGeneration_isLowerFiniteBy_real n
     (RootIndexed.selectedPopulationTotalized N roots initial id id n field)
     field initial
-    (fun p hp => RootIndexed.selectedPopulationTotalized_depth
-      N roots initial id id n field p hp)
     (fun p hp => hfield p.1
       (RootIndexed.selectedPopulationTotalized_root_mem N roots initial id id
         n field p hp) p.2)
@@ -111,7 +123,7 @@ theorem RootIndexed.selectedPopulationTotalized_succ_spec_ae
     ∀ᵐ field ∂RootIndexed.stepFieldLaw (Root := Root) μ, ∀ n,
       IsFirstNBy N
         (RootIndexed.observedPositionAtGeneration initial id id (n + 1) field)
-        (RootIndexed.childrenAtGeneration n
+        (Combinatorics.Branching.Population.childrenAtGeneration n
           (RootIndexed.selectedPopulationTotalized N roots initial id id n field)
           field)
         (RootIndexed.selectedPopulationTotalized N roots initial id id (n + 1)

@@ -6,30 +6,25 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Survival.Conditioning
 public import Probability.Process.RandomWalk.Path.Skorokhod.Corridor.Endpoint.Closed
 public import Probability.Process.RandomWalk.Path.Skorokhod.Corridor.Endpoint.Interpolation
-public import Analysis.Asymptotics.Scale.ShiftedFloor
+public import Analysis.Asymptotics.Scale.Block.FixedOffset
 
 /-!
 # The finite transition event in the conditioned meander argument
 
-The public objects and theorems in this file are:
+## Public declarations
 
 - `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.nonnegativeTransitionEvent`:
-  $D_{n,\Delta}=\{0\le S_j\le5\Delta/6\ (1\le j\le n),\
-  S_n\in[5\Delta/12,11\Delta/24]\}$.
+  $D_{n,\Delta}=\{0\le S_j\le\frac{5\Delta}{6}\ (1\le j\le n),\
+  S_n\in\left[\frac{5\Delta}{12},\frac{11\Delta}{24}\right]\}$.
 - `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.normalizedTransitionCorridor`:
-  the path event $\{f:\forall t\in[0,1],\ 0\le f(t)\le5s/(6\sigma),\
-  f(1)\in[5s/(12\sigma),11s/(24\sigma)]\}$.
-- `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.measure_nonnegativeTransitionEvent_eq_cond_mul_survival`:
-  $\mathbb P(D_{n,\Delta})=
-  \mathbb P(D_{n,\Delta}\mid C_n)\mathbb P(C_n)$, where
-  $C_n=\{S_j\ge0:1\le j\le n\}$.
+  the path event $\{f:\forall t\in[0,1],\ 0\le f(t)\le\frac{5s}{6\sigma},\
+  f(1)\in\left[\frac{5s}{12\sigma},\frac{11s}{24\sigma}\right]\}$.
 - `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.mem_nonnegativeTransitionEvent_iff_normalizedTransitionCorridor`:
   for $n>0$ and $\sigma>0$, membership in $D_{n,\Delta}$ equals
-  membership of $S_{\lfloor nt\rfloor}/(\sigma\sqrt n)$ in the
-  normalized transition corridor with scale $\Delta/\sqrt n$.
+  membership of $\frac{S_{\lfloor nt\rfloor}}{\sigma\sqrt n}$ in the
+  normalized transition corridor with scale $\frac{\Delta}{\sqrt n}$.
 - `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.mem_nonnegativeTransitionEvent_iff_normalizedInterpolatedTransitionCorridor`:
   the same grid event is the closed endpoint corridor event of the
   polygonal interpolation, whose values between grid points are affine.
@@ -43,9 +38,6 @@ Appendix A.2, Lemma A.7.
 -/
 
 @[expose] public section
-
-open Filter MeasureTheory ProbabilityTheory
-open scoped ENNReal NNReal Topology
 
 namespace ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned
 
@@ -72,28 +64,6 @@ def nonnegativeTransitionEvent (n : ℕ) (width : ℝ) : Set (ℕ → ℝ) :=
       AdditivePath.displacement (k + 1) increment ≤ (5 / 6) * width) ∧
     AdditivePath.displacement n increment ∈
       Set.Icc ((5 / 12) * width) ((11 / 24) * width)}
-
-/-- The precise transition event $D_{n,\Delta}$ is contained in the
-survival event $C_n$, so its probability factors into conditional transition
-and survival probabilities. This is the multiplication step in Wang Yiyang,
-*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*
-(master's thesis, Fudan University, 2026),
-Appendix A.2, Lemma A.7; the factorization is the standard conditional
-probability identity for an event contained in the conditioning event. -/
-theorem measure_nonnegativeTransitionEvent_eq_cond_mul_survival
-    (ν : Measure ℝ) [IsProbabilityMeasure ν] (n : ℕ) (width : ℝ) :
-    iidSequenceLaw ν (nonnegativeTransitionEvent n width) =
-      survivalConditionedLaw ν n (nonnegativeTransitionEvent n width) *
-        iidSequenceLaw ν {increment | SurvivesNonnegative n increment} := by
-  let C : Set (ℕ → ℝ) := {increment | SurvivesNonnegative n increment}
-  let D : Set (ℕ → ℝ) := nonnegativeTransitionEvent n width
-  have hsubset : D ⊆ C := by
-    intro increment hin k
-    exact (hin.1 k).1
-  have hinter : C ∩ D = D := Set.inter_eq_right.mpr hsubset
-  have hcond := ProbabilityTheory.cond_mul_eq_inter
-    (measurableSet_survivesNonnegative n) D (iidSequenceLaw ν)
-  simpa only [survivalConditionedLaw, C, D, hinter] using hcond.symm
 
 /-- The finite-grid transition event is exactly its Skorokhod path version
 after the path normalization in Francesco Caravenna and Loïc Chaumont,

@@ -16,6 +16,29 @@ public import Mathlib.MeasureTheory.Order.Group.Lattice
 /-!
 # One-slot moment assumptions on the child law
 
+## Public declarations
+
+- `ProbabilityTheory.BranchingRandomWalk.StepLaw.leftmostPositivePart` and
+  `ProbabilityTheory.BranchingRandomWalk.StepLaw.leftmostNegativePart`:
+  the positive and negative parts of the ordered leftmost displacement,
+  \(x^+=\max(x,0)\) and \(x^- = \max(-x,0)\).
+- `ProbabilityTheory.BranchingRandomWalk.StepLaw.leftmostPositivePart_measurable`
+  and `ProbabilityTheory.BranchingRandomWalk.StepLaw.leftmostNegativePart_measurable`:
+  measurability of these one-slot functions.
+- `ProbabilityTheory.BranchingRandomWalk.StepLaw.integrable_leftmostNegativePart`,
+  `ProbabilityTheory.BranchingRandomWalk.StepLaw.integrable_leftmostDisplacement`,
+  `ProbabilityTheory.BranchingRandomWalk.StepLaw.integrable_sortedLeftmostDisplacement`,
+  and `ProbabilityTheory.BranchingRandomWalk.StepLaw.integrable_sortedPotentialImage_firstSlot_abs`:
+  integrability consequences for the ordered first slot under the stated
+  one-slot moment assumptions.
+- `ProbabilityTheory.BranchingRandomWalk.HasLeftmostFirstMoment`,
+  `ProbabilityTheory.BranchingRandomWalk.HasLeftmostFourthMoment`, and
+  `ProbabilityTheory.BranchingRandomWalk.HasLeftmostPositiveExponentialMoment`:
+  the first, fourth, and positive exponential moment predicates for the
+  leftmost displacement.
+- `ProbabilityTheory.BranchingRandomWalk.fourthMoment_implies_firstMoment`:
+  a finite fourth moment implies a finite first absolute moment.
+
 The leftmost-child assumptions use a `StepLaw` ordering rule before reading
 slot zero. The raw law itself is not required to be ordered; the symmetric
 cross-child weight condition lives separately in `CrossWeight.lean`.

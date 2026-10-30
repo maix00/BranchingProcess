@@ -7,6 +7,10 @@ Authors: WANG Yiyang
 module
 
 public import Mathlib.Topology.UnitInterval
+public import Mathlib.Probability.BrownianMotion.Basic
+public import Probability.Distributions.Moments.Real
+public import Probability.Process.Brownian.PathLaw.ContinuousModification
+public import Probability.Process.Brownian.Construction.PreBrownianModification
 public import Probability.Process.RandomWalk.FunctionalLimit.Donsker.Path.Skorokhod
 public import Probability.Process.RandomWalk.Path.Corridor.Horizontal.Core
 public import Probability.Process.RandomWalk.FunctionalLimit.NormalizedStep.Endpoint
@@ -17,14 +21,23 @@ public import Probability.Process.RandomWalk.FunctionalLimit.NormalizedStep.Endp
 This file specializes the endpoint-constrained Portmanteau bound to the
 verified Donsker theorem for centered unit-variance increments.
 
-The public theorems in this file are:
+## Public declarations
 
 - `ProbabilityTheory.RandomWalk.brownian_centeredSkorokhodCorridorEndsIn_le_liminf_strictTubeEndsIn`:
-  Brownian mass in an open corridor with an open terminal interval is at most
-  the liminf of the matching discrete event probabilities.
+  for centered unit-variance increments and $w>0$, Brownian path-law mass of
+  $\{f:|f(t)|<w/2\ (0\le t\le1),\ f(1)\in(a,b)\}$ is at most
+  $\liminf_n\mathbb P(|S_j|<w\sqrt n/2\ (1\le j\le n),\
+  S_n/\sqrt n\in(a,b))$.
 - `ProbabilityTheory.RandomWalk.limsup_centeredWeakTube_le_brownian_closedCorridor`:
-  the limsup probability of weak centered tubes is at most the Brownian mass
-  of the corresponding closed corridor.
+  for centered unit-variance increments and $w\ge0$, the limsup probability
+  of the weak centered tube is at most Brownian path-law mass of
+  $\{f:|f(t)|\le w/2\ (0\le t\le1)\}$.
+
+These are Portmanteau consequences of
+`RandomWalk.tendstoInDistribution_normalizedStepCadlagPath_brownian`, the
+Skorokhod-space form of Donsker's Theorem 4.20 in I. Karatzas and S. E. Shreve,
+*Brownian Motion and Stochastic Calculus*, 2nd ed., Graduate Texts in
+Mathematics 113, Springer (1991), DOI 10.1007/978-1-4612-0949-2.
 -/
 
 open Filter MeasureTheory ProbabilityTheory
@@ -41,12 +54,12 @@ theorem brownian_centeredSkorokhodCorridorEndsIn_le_liminf_strictTubeEndsIn
     (hν : IsCenteredUnitSecondMoment ν)
     {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
     [IsProbabilityMeasure P] {B : NNReal → Ω → ℝ}
-    (hB : IsPreBrownianReal B P)
-    (hcontinuous : ∀ ω, Continuous (B · ω))
-    (hmeasurable : ∀ t, Measurable (B t))
+    (hB : IsBrownianReal B P)
     {width endpointLower endpointUpper : ℝ} (hwidth : 0 < width) :
     P.map (Skorokhod.ofContinuousMap ∘
-        continuousunitIntervalPath B hcontinuous)
+        continuousunitIntervalPath
+          (hB.toIsPreBrownianReal.continuousModification)
+          (hB.toIsPreBrownianReal.continuous_continuousModification))
         (Skorokhod.rangeInOpenIntervalEndsIn
           (-(width / 2)) (width / 2) endpointLower endpointUpper) ≤
       atTop.liminf (fun n : ℕ =>
@@ -54,15 +67,21 @@ theorem brownian_centeredSkorokhodCorridorEndsIn_le_liminf_strictTubeEndsIn
           InOpenHorizontalTube (1 / 2) (width * Real.sqrt n) n increment ∧
             AdditivePath.displacement n increment / Real.sqrt n ∈
               Set.Ioo endpointLower endpointUpper}) := by
+  let Bc := hB.toIsPreBrownianReal.continuousModification
+  have hBc := hB.toIsPreBrownianReal.isBrownianReal_continuousModification
+  have hBccontinuous : ∀ ω, Continuous (Bc · ω) :=
+    hB.toIsPreBrownianReal.continuous_continuousModification
+  have hBcmeasurable : ∀ t, Measurable (Bc t) :=
+    hB.toIsPreBrownianReal.measurable_continuousModification
   apply measure_centeredSkorokhodCorridorEndsIn_le_liminf_strictTubeEndsIn_of_functionalLimit
     P ν (fun n => Real.sqrt n)
     (limit := Skorokhod.ofContinuousMap ∘
-      continuousunitIntervalPath B hcontinuous)
+      continuousunitIntervalPath Bc hBccontinuous)
     (width := width)
   · filter_upwards [eventually_gt_atTop 0] with n hn
     exact Real.sqrt_pos.2 (by exact_mod_cast hn)
   · exact tendstoInDistribution_normalizedStepCadlagPath_brownian
-      ν hν.1 hν.2 hB hcontinuous hmeasurable
+      ν hν.1 hν.2 hBc.toIsPreBrownianReal hBccontinuous hBcmeasurable
   · exact hwidth
 
 /-- The weak centered tube has a closed-corridor `limsup` bound for every
@@ -73,18 +92,24 @@ theorem limsup_centeredWeakTube_le_brownian_closedCorridor
     (hν : IsCenteredUnitSecondMoment ν)
     {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
     [IsProbabilityMeasure P] {B : NNReal → Ω → ℝ}
-    (hB : IsPreBrownianReal B P)
-    (hcontinuous : ∀ ω, Continuous (B · ω))
-    (hmeasurable : ∀ t, Measurable (B t))
+    (hB : IsBrownianReal B P)
     {width : ℝ} (hwidth : 0 ≤ width) :
     atTop.limsup (fun n : ℕ =>
       horizontalTubeProbability (iidSequenceLaw ν)
         (1 / 2) (width * Real.sqrt n) n) ≤
       P.map (Skorokhod.ofContinuousMap ∘
-        continuousunitIntervalPath B hcontinuous)
+        continuousunitIntervalPath
+          (hB.toIsPreBrownianReal.continuousModification)
+          (hB.toIsPreBrownianReal.continuous_continuousModification))
         (Skorokhod.rangeInClosedInterval (-(width / 2)) (width / 2)) := by
+  let Bc := hB.toIsPreBrownianReal.continuousModification
+  have hBc := hB.toIsPreBrownianReal.isBrownianReal_continuousModification
+  have hBccontinuous : ∀ ω, Continuous (Bc · ω) :=
+    hB.toIsPreBrownianReal.continuous_continuousModification
+  have hBcmeasurable : ∀ t, Measurable (Bc t) :=
+    hB.toIsPreBrownianReal.measurable_continuousModification
   let limit := Skorokhod.ofContinuousMap ∘
-    continuousunitIntervalPath B hcontinuous
+    continuousunitIntervalPath Bc hBccontinuous
   let tube : ℕ → ENNReal := fun n => horizontalTubeProbability
     (iidSequenceLaw ν) (1 / 2) (width * Real.sqrt n) n
   let tubeEnds : ℕ → ENNReal := fun n => iidSequenceLaw ν
@@ -95,7 +120,7 @@ theorem limsup_centeredWeakTube_le_brownian_closedCorridor
       (fun n => normalizedStepCadlagPathIcc (fun n => Real.sqrt n) n)
       atTop limit (fun _ => iidSequenceLaw ν) P :=
     tendstoInDistribution_normalizedStepCadlagPath_brownian
-      ν hν.1 hν.2 hB hcontinuous hmeasurable
+      ν hν.1 hν.2 hBc.toIsPreBrownianReal hBccontinuous hBcmeasurable
   have hport := limsup_weakTubeEndsIn_le_measure_centeredSkorokhodCorridorEndsIn_of_functionalLimit
     P ν (fun n => Real.sqrt n)
     (by

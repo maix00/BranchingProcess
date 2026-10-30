@@ -37,6 +37,9 @@ public import Combinatorics.UlamHarris.Tree.Defs
   `Combinatorics.UlamHarris.generationAfter_append_singleton`, and
   `Combinatorics.UlamHarris.generationAfter_append_append`; they state zero
   self-distance, unit child-distance, and additivity along nested suffixes.
+* `Combinatorics.UlamHarris.RootIndexed.appendAddresses_injective` states
+  that appending arbitrary suffixes to an injectively indexed family of
+  equal-depth root-address pairs gives an injective address map.
 
 `RootIndexed.generation p` is the length of the address of the particle `p`, the level it sits at:
 the notion only looks at a `TreeNode`, so it is indexed by whatever the address is paired with, and
@@ -61,6 +64,24 @@ namespace Combinatorics
 namespace UlamHarris
 
 namespace RootIndexed
+
+/-- Appending arbitrary descendant paths to an injectively indexed family of
+same-generation root addresses preserves injectivity. -/
+theorem appendAddresses_injective {Root κ α : Type*} {n : ℕ}
+    (roots : κ → RootIndexed.TreeNode Root α)
+    (hlen : ∀ i, (roots i).2.length = n)
+    (hinj : Function.Injective roots) :
+    Function.Injective (fun p : κ × UlamHarris.TreeNode α =>
+      ((roots p.1).1, (roots p.1).2 ++ p.2)) := by
+  rintro ⟨i, a⟩ ⟨j, b⟩ h
+  have hr : (roots i).1 = (roots j).1 := (Prod.mk.inj h).1
+  have hp : (roots i).2 ++ a = (roots j).2 ++ b := (Prod.mk.inj h).2
+  have hpref := congrArg (List.take n) hp
+  have hpath : (roots i).2 = (roots j).2 := by
+    simpa [hlen i, hlen j] using hpref
+  have hij : i = j := hinj (Prod.ext hr hpath)
+  subst j
+  exact Prod.ext rfl (List.append_cancel_left hp)
 
 /-- The generation of a particle: the length of its address, the number of edges from the root. -/
 def generation {Root α : Type*} (p : RootIndexed.TreeNode Root α) : ℕ :=

@@ -13,6 +13,8 @@ public import Mathlib.Order.Filter.AtTopBot.Basic
 /-!
 # Asymptotic speed of a frontier
 
+## Public declarations
+
 The speed of a frontier is the limit of `p n / n`, where `p n` is the position
 of the frontier particle at generation `n`. The definition only uses a scalar
 action and a topology, so it applies verbatim to the order-dual position type
@@ -50,6 +52,8 @@ not proved here.
 open Filter
 
 @[expose] public section
+
+open _root_.Combinatorics.Selection
 
 open scoped Topology
 

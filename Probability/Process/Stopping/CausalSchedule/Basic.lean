@@ -1,0 +1,103 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
+module
+
+public import Probability.Process.HittingTime.Declarations
+
+/-!
+# Causal schedules of pre-sampled trials
+
+Every trial is defined whether or not an earlier trial succeeds.  Trial
+`i + 1` starts at the first time after trial `i`'s start at which its
+pre-defined readiness event is observed.  This provides the stopping-time
+schedule needed by concurrent reserve constructions without conditioning the
+definition of later trial times on earlier failures.
+## Public declarations
+
+- `ProbabilityTheory.Process.Stopping.CausalSchedule.time initial ready` is
+  defined by $t_0=initial$ and
+  $t_{i+1}=\inf\{n\mid t_i\le n\land\omega\in ready(i,n)\}$, where the infimum is
+  the first declared success.
+- `time_isStoppingTime` proves every scheduled start is a stopping time when
+  each readiness event is observable at that time.
+- `time_le_succ` and `time_mono` show that trial start times are nondecreasing;
+  `time_zero` and `time_succ` expose the recursion equations.
+-/
+
+open MeasureTheory
+
+@[expose] public section
+
+namespace ProbabilityTheory.Process.Stopping.CausalSchedule
+
+variable {Ω : Type*} {m : MeasurableSpace Ω}
+
+/-- Recursive observable trial times. `ready i n` is the time-`n`
+event that announces the next start after trial `i`. -/
+noncomputable def time
+    (initial : Ω → WithTop ℕ) (ready : ℕ → ℕ → Set Ω) :
+    ℕ → Ω → WithTop ℕ
+  | 0 => initial
+  | i + 1 => firstDeclaredSuccess fun n =>
+      {ω | time initial ready i ω ≤ n ∧ ω ∈ ready i n}
+
+@[simp] theorem time_zero
+    (initial : Ω → WithTop ℕ) (ready : ℕ → ℕ → Set Ω) :
+    time initial ready 0 = initial :=
+  rfl
+
+@[simp] theorem time_succ
+    (initial : Ω → WithTop ℕ) (ready : ℕ → ℕ → Set Ω)
+    (i : ℕ) :
+    time initial ready (i + 1) = firstDeclaredSuccess fun n =>
+      {ω | time initial ready i ω ≤ n ∧ ω ∈ ready i n} :=
+  rfl
+
+/-- Adapted readiness declarations recursively produce stopping times. -/
+theorem time_isStoppingTime
+    (F : Filtration ℕ m)
+    (initial : Ω → WithTop ℕ) (hinitial : IsStoppingTime F initial)
+    (ready : ℕ → ℕ → Set Ω)
+    (hready : ∀ i n, MeasurableSet[F n] (ready i n)) :
+    ∀ i, IsStoppingTime F (time initial ready i) := by
+  intro i
+  induction i with
+  | zero => simpa using hinitial
+  | succ i ih =>
+      rw [time_succ]
+      apply firstDeclaredSuccess_isStoppingTime F
+      intro n
+      exact (ih n).inter (hready i n)
+
+/-- Every next trial starts weakly after the preceding trial. -/
+theorem time_le_succ
+    (initial : Ω → WithTop ℕ) (ready : ℕ → ℕ → Set Ω)
+    (i : ℕ) (ω : Ω) :
+    time initial ready i ω ≤ time initial ready (i + 1) ω := by
+  rw [time_succ]
+  by_cases htop : firstDeclaredSuccess
+      (fun n => {ω | time initial ready i ω ≤ n ∧ ω ∈ ready i n}) ω = ⊤
+  · simp [htop]
+  · obtain ⟨n, hn⟩ := WithTop.ne_top_iff_exists.mp htop
+    have hdeclared := (firstDeclaredSuccess_le_iff
+      (fun n => {ω | time initial ready i ω ≤ n ∧ ω ∈ ready i n})
+      ω n).mp (by simp [← hn])
+    obtain ⟨j, hjn, hj, _⟩ := hdeclared
+    calc
+      time initial ready i ω ≤ (j : WithTop ℕ) := hj
+      _ ≤ (n : WithTop ℕ) := WithTop.coe_le_coe.mpr hjn
+      _ = firstDeclaredSuccess
+          (fun n => {ω | time initial ready i ω ≤ n ∧ ω ∈ ready i n}) ω := hn
+
+/-- Trial times are monotone in their trial index. -/
+theorem time_mono
+    (initial : Ω → WithTop ℕ) (ready : ℕ → ℕ → Set Ω)
+    {ω : Ω} : Monotone fun i => time initial ready i ω := by
+  apply monotone_nat_of_le_succ
+  exact fun i => time_le_succ initial ready i ω
+
+end ProbabilityTheory.Process.Stopping.CausalSchedule

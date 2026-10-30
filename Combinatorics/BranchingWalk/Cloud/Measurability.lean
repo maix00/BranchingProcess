@@ -12,6 +12,8 @@ public import Mathlib.MeasureTheory.MeasurableSpace.Constructions
 /-!
 # Measurability of time-indexed clouds
 
+## Public declarations
+
 The measurable space on `CloudSet Time X` is induced by the coordinate map
 `C ↦ C.points`.  Thus membership of every fixed time-space point in a cloud is
 a measurable event.

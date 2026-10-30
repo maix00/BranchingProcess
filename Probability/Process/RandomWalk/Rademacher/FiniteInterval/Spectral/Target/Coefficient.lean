@@ -11,6 +11,8 @@ public import Probability.Process.RandomWalk.Rademacher.FiniteInterval.Spectral.
 /-!
 # Sine coefficients of finite-interval targets
 
+## Public declarations
+
 For a finite target $T\subseteq\operatorname{Fin}(N)$, this module identifies
 the sine-basis coefficients of its indicator and gives lower bounds from
 pointwise ground-state estimates and target density.

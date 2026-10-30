@@ -7,10 +7,12 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.Kernel.Killed.Return.Basic
-public import Probability.Kernel.Survival.Bridge
+public import Probability.Kernel.Survival.Return.Bridge
 
 /-!
 # Terminal bridges after killed return blocks
+
+## Public declarations
 
 For measurable $\mathrm{core},\mathrm{target}\subseteq\mathrm{allowed}$,
 if each return block has mass at least $p$ from every core point and the final

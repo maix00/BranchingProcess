@@ -16,6 +16,11 @@ public import MeasureTheory.Measure.Convolution.Power
 
 The characteristic function turns additive convolution into multiplication,
 so the characteristic function of an `n`-fold convolution is the `n`th power.
+
+## Public declarations
+
+- `charFun_convPower`: for a probability measure $\mu$,
+  $\widehat{\mu^{*n}}(t)=\widehat\mu(t)^n$.
 -/
 
 @[expose] public section

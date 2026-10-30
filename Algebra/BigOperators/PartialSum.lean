@@ -16,7 +16,7 @@ import Mathlib.Tactic.Linarith
 /-!
 # Finite partial-sum identities
 
-The public declarations in this file are:
+## Public declarations
 
 - `Fin.partialSum_differences`: consecutive differences telescope to
   $s_j-s_0$.

@@ -17,6 +17,14 @@ public import Probability.Process.Stable.PathLaw.MonotoneGrid
 Tightness and scalar domain-of-attraction convergence produce a subsequential
 càdlàg path law. Its strict-grid finite-dimensional laws extend to monotone
 grids, which are the input to the generic stable clock-process constructor.
+## Public declarations
+
+- `exists_stableClockProcessLaw_of_tightSource` constructs a stable clock
+  process law as a subsequential path-law limit of tight normalized random
+  walks, identifying its finite-dimensional laws on monotone time grids.
+- `exists_stableLevyProcess_of_tightSource` gives the corresponding stable
+  Lévy-process realization.
+
 -/
 
 open Filter MeasureTheory ProbabilityTheory
@@ -38,7 +46,7 @@ theorem exists_stableClockProcessLaw_of_tightSource
     (htight : IsTightMeasureSet (Set.range
       (fun n => RandomWalk.normalizedStepPathLaw ν normalization n))) :
     ∃ P : ProbabilityMeasure (CadlagPath unitInterval ℝ),
-      IsStableClockProcessLaw α μ UnitInterval.clock (P : Measure _) ∧
+      IsStableClockProcessLaw α μ unitInterval.clock (P : Measure _) ∧
       ∃ sub : ℕ → ℕ,
         StrictMono sub ∧
         Tendsto (fun n =>
@@ -61,7 +69,7 @@ theorem exists_stableClockProcessLaw_of_tightSource
       (M : Measure (Fin (n + 1) → ℝ))) (hstrict n grid hgrid hstart)
   obtain ⟨hstart, hpositions⟩ :=
     stableGridPositionLaws_of_strictGridPositionLaws hStable hStrictPositionLaws
-  have hP : IsStableClockProcessLaw α μ UnitInterval.clock Pmeasure :=
+  have hP : IsStableClockProcessLaw α μ unitInterval.clock Pmeasure :=
     ProbabilityTheory.isStableClockProcessLaw_of_unitInterval_positionGridLaws
       hStable hstart hpositions
   exact ⟨P, hP, sub, hsub, hconv⟩

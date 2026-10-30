@@ -13,6 +13,8 @@ public import Combinatorics.UlamHarris.Tree.Singleton
 /-!
 # Forgetting the marks of a marked tree
 
+## Public declarations
+
 `MarkedTree α X` pairs a tree with a mark on each realized node, so forgetting
 the marks is the projection on the tree. This is the single-root case of the
 connection from marked trees to trees; the root-indexed counterpart is below

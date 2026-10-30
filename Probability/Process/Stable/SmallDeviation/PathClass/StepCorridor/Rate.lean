@@ -10,8 +10,8 @@ public import Probability.Process.Stable.SmallDeviation.PathClass.StepCorridor.P
 public import Probability.Process.Path.PathClass.StepCorridor.Probability.Rate.FiniteUnionNullMeasurable
 public import Probability.Process.Path.PathClass.StepCorridor.Probability.Rate.Approximation
 public import Probability.Process.Path.PathClass.StepCorridor.Probability.Rate.InnerOuter
-public import Probability.Process.Path.PathClass.StepCorridor.Probability.Normalization
 public import Topology.Cadlag.Skorokhod.Path.Scaling
+public import Probability.MeasureTheory.Asymptotics.SmallDeviation
 
 /-!
 # Stable-process rates for `M₂` and `M₃`
@@ -33,6 +33,15 @@ ordinary-probability rate under explicit null-measurability,
 gives matching inner- and outer-measure rates without measurability, and
 `ProbabilityTheory.HasStableProcessEscapeRate.approximableSet_measurableRate`
 specializes to measurable targets.
+
+## Public declarations
+
+- For fixed inner widths $w_i$ and contracted endpoint radii $r_i$, the
+  eventual lower rate is
+  $\sum_i C\ell_i/((w_i-2r_i)/2)^\alpha-\varepsilon
+    \le s^{-\alpha}\log\mathbb P(s^{-1}X\in G)$.
+- Contracting the endpoint-core radii to zero gives convergence of the finite
+  inner-partition rate to its uncontracted value.
 
 The approximation-class rate is the stable-process form of Theorem 2 in A. A.
 Mogul'skii, “Small deviations in the sample function space,” *Teoriya
@@ -73,7 +82,7 @@ theorem HasStableProcessEscapeRate.stepCorridor_rate
     Tendsto
       (fun scale : ℝ => Real.log
         ((P ((Skorokhod.scalePath scale) ⁻¹' c.toSet)).toReal) / (-(scale ^ α)))
-      atTop (𝓝 (rateCoefficient α C * (c.energy α).toReal)) := by
+      atTop (𝓝 (smallDeviationEnergyCoefficient α C * (c.energy α).toReal)) := by
   have hα : 0 < α := hEscape.isStableClockProcessLaw.strictlyStable.1
   have hsource := HasStableProcessEscapeRate.tendsto_scaledCorridorLog_eq_energyRate
     hEscape hX hcdf c
@@ -92,7 +101,7 @@ theorem HasStableProcessEscapeRate.stepCorridor_rate
   have hrate : Tendsto
       (fun scale : ℝ => Real.log
         ((P ((Skorokhod.scalePath scale) ⁻¹' c.toSet)).toReal) / (-(scale ^ α)))
-      atTop (𝓝 (rateCoefficient α C * (c.energy α).toReal)) := by
+      atTop (𝓝 (smallDeviationEnergyCoefficient α C * (c.energy α).toReal)) := by
     have hnegative := hsource.2.neg
     have heq : (fun scale : ℝ => Real.log
         ((P ((Skorokhod.scalePath scale) ⁻¹' c.toSet)).toReal) / (-(scale ^ α))) =ᶠ[atTop]
@@ -111,10 +120,10 @@ theorem HasStableProcessEscapeRate.stepCorridor_rate
           ring
     have hnegative' := Filter.Tendsto.congr' heq.symm hnegative
     have htarget : -target =
-        rateCoefficient α C * (c.energy α).toReal := by
-      dsimp [target, rateCoefficient]
+        smallDeviationEnergyCoefficient α C * (c.energy α).toReal := by
+      dsimp [target, smallDeviationEnergyCoefficient]
       ring
-    simpa [htarget, rateCoefficient] using hnegative'
+    simpa [htarget, smallDeviationEnergyCoefficient] using hnegative'
   exact ⟨hg, hnull, hsource.1, hrate⟩
 
 /-- The exact stable-process rate for a finite union of admissible corridors.
@@ -136,13 +145,13 @@ theorem HasStableProcessEscapeRate.finiteCorridorUnion_rate
       (fun scale : ℝ => Real.log
         ((P {ω | Skorokhod.scalePath scale ω ∈ G.toSet}).toReal) /
           (-(scale ^ α)))
-      atTop (𝓝 (rateCoefficient α C * G.realEnergy)) := by
+      atTop (𝓝 (smallDeviationEnergyCoefficient α C * G.realEnergy)) := by
   let paths : ℝ → CadlagPath unitInterval ℝ → CadlagPath unitInterval ℝ :=
     fun scale => Skorokhod.scalePath scale
   let g : ℝ → ℝ := fun scale => -(scale ^ α)
   have hα : 0 < α := hEscape.isStableClockProcessLaw.strictlyStable.1
-  have hκ : 0 < rateCoefficient α C :=
-    rateCoefficient_pos hEscape.negative
+  have hκ : 0 < smallDeviationEnergyCoefficient α C :=
+    smallDeviationEnergyCoefficient_pos hEscape.negative
   have hg : Tendsto g atTop atBot := by
     change Tendsto (fun scale : ℝ => -(scale ^ α)) atTop atBot
     exact tendsto_neg_atTop_atBot.comp (tendsto_rpow_atTop hα)
@@ -193,15 +202,15 @@ theorem HasStableProcessEscapeRate.approximableSet_rate
       Tendsto
         (fun scale : ℝ => Real.log
           ((P {ω | Skorokhod.scalePath scale ω ∈ G}).toReal) / (-(scale ^ α)))
-        atTop (𝓝 (rateCoefficient α C * hLimits.commonEnergy)) := by
+        atTop (𝓝 (smallDeviationEnergyCoefficient α C * hLimits.commonEnergy)) := by
   classical
   rcases hG with ⟨A⟩
   let paths : ℝ → CadlagPath unitInterval ℝ → CadlagPath unitInterval ℝ :=
     fun scale => Skorokhod.scalePath scale
   let g : ℝ → ℝ := fun scale => -(scale ^ α)
   have hα : 0 < α := hEscape.isStableClockProcessLaw.strictlyStable.1
-  have hκ : 0 < rateCoefficient α C :=
-    rateCoefficient_pos hEscape.negative
+  have hκ : 0 < smallDeviationEnergyCoefficient α C :=
+    smallDeviationEnergyCoefficient_pos hEscape.negative
   have hg : Tendsto g atTop atBot := by
     change Tendsto (fun scale : ℝ => -(scale ^ α)) atTop atBot
     exact tendsto_neg_atTop_atBot.comp (tendsto_rpow_atTop hα)
@@ -212,7 +221,7 @@ theorem HasStableProcessEscapeRate.approximableSet_rate
         0 < (P {ω | paths scale ω ∈ C₃.toSet}).toReal) ∧
       Tendsto (fun scale => Real.log
         ((P {ω | paths scale ω ∈ C₃.toSet}).toReal) / g scale)
-        atTop (𝓝 (rateCoefficient α C * C₃.realEnergy)) := by
+        atTop (𝓝 (smallDeviationEnergyCoefficient α C * C₃.realEnergy)) := by
     intro C₃
     have hC₃ := HasStableProcessEscapeRate.finiteCorridorUnion_rate hEscape hX hcdf C₃
     refine ⟨?_, ?_, ?_⟩
@@ -268,18 +277,18 @@ theorem HasStableProcessEscapeRate.approximableSet_innerOuterRate
           ((P.innerMeasure
             {ω | Skorokhod.scalePath scale ω ∈ G}).toReal) /
               (-(scale ^ α)))
-        atTop (𝓝 (rateCoefficient α C * hLimits.commonEnergy)) ∧
+        atTop (𝓝 (smallDeviationEnergyCoefficient α C * hLimits.commonEnergy)) ∧
       Tendsto
         (fun scale : ℝ => Real.log
           ((P {ω | Skorokhod.scalePath scale ω ∈ G}).toReal) /
             (-(scale ^ α)))
-        atTop (𝓝 (rateCoefficient α C * hLimits.commonEnergy)) ∧
+        atTop (𝓝 (smallDeviationEnergyCoefficient α C * hLimits.commonEnergy)) ∧
       0 < hLimits.commonEnergy ∧ hLimits.commonEnergy ≤ FiniteCorridorUnion.realEnergy (A.inner 0) := by
   let paths : ℝ → CadlagPath unitInterval ℝ → CadlagPath unitInterval ℝ :=
     fun scale => Skorokhod.scalePath scale
   let g : ℝ → ℝ := fun scale => -(scale ^ α)
   have hα : 0 < α := hEscape.isStableClockProcessLaw.strictlyStable.1
-  have hκ : 0 < rateCoefficient α C := rateCoefficient_pos hEscape.negative
+  have hκ : 0 < smallDeviationEnergyCoefficient α C := smallDeviationEnergyCoefficient_pos hEscape.negative
   have hg : Tendsto g atTop atBot := by
     change Tendsto (fun scale : ℝ => -(scale ^ α)) atTop atBot
     exact tendsto_neg_atTop_atBot.comp (tendsto_rpow_atTop hα)
@@ -290,7 +299,7 @@ theorem HasStableProcessEscapeRate.approximableSet_innerOuterRate
         0 < (P {ω | paths scale ω ∈ C₃.toSet}).toReal) ∧
       Tendsto (fun scale => Real.log
         ((P {ω | paths scale ω ∈ C₃.toSet}).toReal) / g scale)
-        atTop (𝓝 (rateCoefficient α C * C₃.realEnergy)) := by
+        atTop (𝓝 (smallDeviationEnergyCoefficient α C * C₃.realEnergy)) := by
     intro C₃
     have hC₃ := HasStableProcessEscapeRate.finiteCorridorUnion_rate hEscape hX hcdf C₃
     refine ⟨?_, ?_, ?_⟩
@@ -324,7 +333,7 @@ theorem HasStableProcessEscapeRate.approximableSet_measurableRate
       Tendsto
         (fun scale : ℝ => Real.log
           ((P {ω | Skorokhod.scalePath scale ω ∈ G}).toReal) / (-(scale ^ α)))
-        atTop (𝓝 (rateCoefficient α C * hLimits.commonEnergy)) := by
+        atTop (𝓝 (smallDeviationEnergyCoefficient α C * hLimits.commonEnergy)) := by
   apply HasStableProcessEscapeRate.approximableSet_rate hEscape hX hcdf hG
   intro scale
   have hcontinuous : Continuous

@@ -6,8 +6,10 @@ Authors: WANG Yiyang
 
 module
 public import Probability.BranchingRandomWalk.Selection.NSelection.AsymptoticSpeed.Environment.ErgodicEnvironment
-public import Probability.BranchingRandomWalk.Selection.NSelection.AtRank
-public import Probability.BranchingRandomWalk.Selection.NSelection.Totalized
+public import Probability.BranchingRandomWalk.Selection.NSelection.AsymptoticSpeed.Selection.InfiniteOffspring.Transition
+public import Probability.BranchingRandomWalk.Selection.NSelection.AsymptoticSpeed.Selection.InfiniteOffspring.Run
+public import MeasureTheory.Selection.NSelection.AtRank
+public import MeasureTheory.Selection.NSelection.Totalized
 public import Probability.BranchingRandomWalk.Assumptions.Moments
 public import Probability.BranchingRandomWalk.Step.Ordering.Law
 public import Combinatorics.BranchingWalk.Selection.NSelection.Walk.Speed
@@ -17,51 +19,69 @@ public import Mathlib.Probability.IdentDistrib
 /-!
 # Measurable repair of infinite-offspring environments
 
-This module repairs invalid generation batches to a canonical valid batch and
-constructs the measurable recursion driven by the repaired environment.
-It also installs the countability and discrete measurable-space instances
-for `InfiniteSlotLabel N` used by that recursion.
+Set \(B_N=\operatorname{Fin}(N)\to\operatorname{Step}(\mathbb N,\mathbb R)\)
+and \(\Omega_N=\mathbb N\to B_N\). Write \(G_N(b)\) for
+`IsGoodInfiniteOffspringBatch b`, \(C_N(b)\) for the set of candidate parent-slot
+pairs, and \(p_{x,b}(q)\) for the position of candidate \(q\) from state \(x\)
+and batch \(b\). Write \(R_N(b)=\operatorname{repairGenerationBatch}(b)\).
+For an environment \(\omega\in\Omega_N\), write
+\(\omega_{t,i}=\omega(t)(i)\). The public interfaces are:
 
-- `fallbackOffspringStep` and `fallbackGenerationBatch`: the canonical
-  one-child batch at displacement zero.
-- `IsRepairableBatch`: the predicate that a batch satisfies
-  `IsGoodInfiniteOffspringBatch`.
-- `isRepairableBatch_measurable`: measurability of that validity predicate.
-- `totalizedInfiniteOffspringFirstN`: the measurable totalized first-`N`
-  offspring selector.
-- `totalizedInfiniteOffspringRankOption` and
-  `totalizedInfiniteOffspringRankLabel`: rank lookup before and after
-  replacing a missing rank by the default label.
-- `totalizedInfiniteOffspringTransition`: the resulting totalized
-  one-generation transition.
-- `repairGenerationBatch`: the identity on repairable batches and the
-  canonical fallback on other batches.
-- `measurable_repairGenerationBatch`: measurability of the batch repair map.
-- `repairGenerationBatch_repairable`: every repaired batch is repairable.
-- `repairGenerationBatch_eq_of_repairable`: a repairable batch is fixed by
-  the repair map.
-- `repairGenerationBatch_orderedFirst_of_orderedFirst`: the repair preserves
-  ordered batches with a surviving slot-zero child.
-- `generationEnvironmentLaw_ae_allOrderedFirst`: if a one-step law is
-  supported on ordered, nonempty batches, then almost every i.i.d. environment
-  has that property at every generation.
-- `repairGenerationEnvironment`: the pointwise repair of every generation.
-- `measurable_repairGenerationEnvironment`: measurability of that map.
-- `repairGenerationEnvironment_commutes_shift`: repairing then shifting is
-  equal to shifting then repairing.
-- `repairGenerationEnvironment_ae_eq_self`: under the boundary and
-  nonempty-support assumptions, the repaired environment equals the original
-  almost surely.
-- `measurableRepairedInfiniteOffspringRun`: the totalized measurable run
-  driven by repaired batches.
-- `measurable_measurableRepairedInfiniteOffspringRun`: measurability of each
-  time-indexed run map.
-- `measurableRepairedInfiniteOffspringRun_eq_infiniteOffspringRun`: the
-  measurable run agrees pointwise with the ordinary selection recursion on
-  the repaired environment.
+## Public declarations
+
+- The instances make `InfiniteSlotLabel N` countable with the discrete
+  measurable space. `fallbackOffspringStep` is defined by
+  \[
+    F(j)=\begin{cases}\operatorname{some}(0),&j=0,\\
+    \operatorname{none},&j\ne0.\end{cases}
+  \]
+  `fallbackGenerationBatch N` assigns \(F\) to every parent.
+- `IsRepairableBatch b` means \(G_N(b)\), and
+  `isRepairableBatch_measurable` states that
+  \(\{b\in B_N:G_N(b)\}\) is measurable.
+- For \(x=(z,b)\), `totalizedInfiniteOffspringFirstN(x)` selects the first
+  \(N\) elements of \(C_N(b)\) by \(p_{z,b}\), using the totalized
+  selector when \(C_N(b)\) has fewer than \(N\) elements.
+  `totalizedInfiniteOffspringRankOption(x,i)` is
+  \(\operatorname{particleAtRankBy}(p_{z,b},S_N(x),i)\), where
+  \(S_N(x)=\operatorname{totalizedInfiniteOffspringFirstN}(x)\).
+  `totalizedInfiniteOffspringRankLabel(x,i)` is this optional label with
+  default \((i,0)\); denote it by \(L(x,i)\).
+- `totalizedInfiniteOffspringTransition(x)(i)` is the position
+  \(p_{z,b}(L(x,i))\).
+- `repairGenerationBatch(b)` equals \(b\) when \(G_N(b)\) holds and the
+  canonical fallback batch otherwise. `repairGenerationBatch_repairable`
+  states \(G_N(R_N(b))\), while
+  `repairGenerationBatch_eq_of_repairable` states that repair fixes every
+  batch satisfying \(G_N\).
+- `repairGenerationBatch_orderedFirst_of_orderedFirst` states that if every
+  parent row is ordered and has a surviving slot-zero child, the repaired
+  batch has the same property. `generationEnvironmentLaw_ae_allOrderedFirst`
+  states that if \(\mu(\operatorname{orderedBySteps}(\operatorname{realPotential}))=
+  \mu(\operatorname{nonemptySupport})=1\), then
+  \(\mathbb P(\forall t,i,\;\omega_{t,i}.\operatorname{IsOrderedBy}
+  (\operatorname{realPotential})\land\operatorname{survive}(\omega_{t,i},0))=1\).
+- `measurable_repairGenerationBatch` and
+  `measurable_repairGenerationEnvironment` state measurability of the batch
+  map and the pointwise map \((\mathcal R\omega)(t)=R_N(\omega(t))\).
+  `repairGenerationEnvironment_commutes_shift` states
+  \(\mathcal R(\theta\omega)=\theta(\mathcal R\omega)\), where
+  \((\theta\omega)(t)=\omega(t+1)\).
+- Under boundary normalization and nonempty offspring support,
+  `repairGenerationEnvironment_ae_eq_self` states
+  \(\mathcal R\omega=\omega\) almost surely under the generation-environment
+  law.
+- `measurableRepairedInfiniteOffspringRun` defines the recursion
+  \(X_0(x)=x_1\) and
+  \(X_{n+1}(x)=T(X_n(x),R_N(x_2(n)))\), where \(T\) is the totalized
+  transition. `measurable_measurableRepairedInfiniteOffspringRun` states that
+  each \(x\mapsto X_n(x)\) is measurable, and
+  `measurableRepairedInfiniteOffspringRun_eq_infiniteOffspringRun` identifies
+  \(X_n(x)\) with the ordinary selection recursion on the repaired batches.
 -/
 
 open MeasureTheory Filter
+open Combinatorics.Selection.NSelection
 open scoped ENNReal Topology
 
 @[expose] public section
@@ -69,7 +89,7 @@ open scoped ENNReal Topology
 namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Speed
 
 open Combinatorics.Branching
-open Combinatorics.Branching.Selection.NSelection
+open _root_.Combinatorics.Selection.NSelection
 open ProbabilityTheory.BranchingRandomWalk.Selection.NSelection
 
 instance (N : ℕ) : Countable (InfiniteSlotLabel N) := by
@@ -146,7 +166,7 @@ private theorem measurable_totalizedInfiniteOffspringFirstN {N : ℕ} :
   apply measurable_selectFirstNFromSetTotalized
   · exact measurable_infiniteOffspringCandidates.comp measurable_snd
   · intro p q
-    apply NSelection.measurable_valueKey_lt
+    apply Combinatorics.Selection.NSelection.measurable_valueKey_lt
     intro r
     exact Measurable.eval (a := r)
       (measurable_infiniteOffspringPosition (N := N))
@@ -186,13 +206,13 @@ private lemma measurable_totalizedInfiniteOffspringRankOption_eq_some
   have hkey : ∀ p r : InfiniteSlotLabel N, Measurable fun x =>
       valueKey (value x) r < valueKey (value x) p := by
     intro p r
-    apply NSelection.measurable_valueKey_lt
+    apply Combinatorics.Selection.NSelection.measurable_valueKey_lt
     intro t
     exact Measurable.eval (a := t)
       (measurable_infiniteOffspringPosition (N := N))
   change MeasurableSet
     {x | particleAtRankBy (value x) (selected x) i.val = some q}
-  exact NSelection.measurableSet_particleAtRankBy_eq_some value selected
+  exact Combinatorics.Selection.NSelection.measurableSet_particleAtRankBy_eq_some value selected
     hfiber (Set.to_countable _) hkey i.val q
 
 private lemma measurable_totalizedInfiniteOffspringRankOption_eq_none
@@ -210,13 +230,13 @@ private lemma measurable_totalizedInfiniteOffspringRankOption_eq_none
   have hkey : ∀ p r : InfiniteSlotLabel N, Measurable fun x =>
       valueKey (value x) r < valueKey (value x) p := by
     intro p r
-    apply NSelection.measurable_valueKey_lt
+    apply Combinatorics.Selection.NSelection.measurable_valueKey_lt
     intro t
     exact Measurable.eval (a := t)
       (measurable_infiniteOffspringPosition (N := N))
   change MeasurableSet
     {x | particleAtRankBy (value x) (selected x) i.val = none}
-  exact NSelection.measurableSet_particleAtRankBy_eq_none value selected
+  exact Combinatorics.Selection.NSelection.measurableSet_particleAtRankBy_eq_none value selected
     hfiber (Set.to_countable _) i.val
 
 /-- For a fixed rank, turn a possibly missing rank lookup into a label by

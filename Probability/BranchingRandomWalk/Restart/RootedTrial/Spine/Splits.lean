@@ -4,7 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Restart.RootedTrial.Reserve.Causal
+module
+
+public import Probability.BranchingRandomWalk.Restart.RootedTrial.Spine.ReservePath
 /-!
 # Split completions along a pre-sampled reserve spine
 
@@ -13,13 +15,38 @@ pre-sampled marked tree.  The split counter below only counts splits reached
 while the spine is alive.  A split mark at generation `k` is first observable
 in the domain filtration at generation `k + 1`; consequently every finite
 split count, and every ordinal split-completion time, is adapted/stopping.
+
+## Public declarations
+
+`selectedReserveSpineSplitCount`, `selectedReserveSpineSplitCount_eq_sum_indicators`,
+and `selectedReserveSpineSplitCount_measurable` define the number of live
+splits observed before generation `n`, identify it with the finite sum of the
+indicators `1_{alive(k) ∧ split(k)}`, and prove measurability at generation `n`.
+`selectedReserveSpineSplitCompletion` and
+`selectedReserveSpineSplitCompletion_isStoppingTime` give the first generation
+at which the count reaches `i` and its stopping-time property.
+
+`selectedReserveSpineReservePrefix` and
+`selectedReserveSpineReserveFieldAtSplit` name the second-child subtree after a
+split at generation `k`. `selectedReserveSpinePath_decompose_at_split_field`
+and `selectedReserveSpineMark_decompose_at_split_field` identify its later
+path and marks with the corresponding absolute reserve-spine generations;
+`selectedReserveSpineAlive_decompose_at_split_field` gives the corresponding
+alive-state equivalence. `selectedReserveSpineCandidate_root_at_split`
+identifies the first-child root at a split as
+`(r, path(k) ++ [firstSelectedSlot(mark(path(k)))])` and proves the selected
+slot belongs to the offspring selection. The recursive form is
+`selectedReserveSpineCandidate_root_at_recursive_split`.
 -/
 
 open MeasureTheory ProbabilityTheory
 
+@[expose] public section
+
 namespace ProbabilityTheory.BranchingRandomWalk
 
 open Combinatorics.Branching Combinatorics.UlamHarris MeasureTheory
+open Combinatorics.Branching.Step.FiniteSelection
 
 attribute [local instance] Classical.propDecidable Classical.decEq
 
@@ -173,14 +200,52 @@ theorem selectedReserveSpinePath_decompose_at_split_field
       selectedReserveSpineReservePrefix R r k ω ++
         selectedReserveSpinePath R PUnit.unit n
           (selectedReserveSpineReserveFieldAtSplit R r k ω) := by
+  let reservePrefix := selectedReserveSpineReservePrefix R r k ω
+  let reserveField := selectedReserveSpineReserveFieldAtSplit R r k ω
+  change ∀ n, selectedReserveSpinePath R r (k + 1 + n) ω =
+    reservePrefix ++ selectedReserveSpinePath R PUnit.unit n reserveField
+  have hprefix : selectedReserveSpinePath R r (k + 1) ω = reservePrefix := by
+    dsimp [reservePrefix, selectedReserveSpineReservePrefix]
+    exact selectedReserveSpinePath_succ_eq_second_of_split R r k ω
+      (by simpa [splitBy] using hsplit)
   intro n
-  change selectedReserveSpinePath R r (k + 1 + n) ω =
-    (selectedReserveSpinePath R r k ω ++
-      [secondSelectedSlot R (ω r (selectedReserveSpinePath R r k ω))]) ++
-    selectedReserveSpinePath R PUnit.unit n
-      (fun _ u => ω r ((selectedReserveSpinePath R r k ω ++
-        [secondSelectedSlot R (ω r (selectedReserveSpinePath R r k ω))]) ++ u))
-  exact selectedReserveSpinePath_decompose_at_split R r k ω hsplit n
+  induction n with
+  | zero =>
+      change selectedReserveSpinePath R r (k + 1) ω =
+        reservePrefix ++ selectedReserveSpinePath R PUnit.unit 0 reserveField
+      rw [show selectedReserveSpinePath R PUnit.unit 0 reserveField = [] by rfl,
+        List.append_nil]
+      exact hprefix
+  | succ n ih =>
+      have hindex : k + 1 + (n + 1) = (k + 1 + n) + 1 := by omega
+      rw [hindex, selectedReserveSpinePath]
+      rw [ih]
+      simp [List.append_assoc, selectedReserveSpinePath, reservePrefix,
+        reserveField, selectedReserveSpineReservePrefix,
+        selectedReserveSpineReserveFieldAtSplit]
+
+/-- At a split on the reserve spine, the first-child root selected for the
+candidate starts at the first selected child; the spine continues through the
+distinct second selected child. -/
+theorem selectedReserveSpineCandidate_root_at_split
+    {Root α X : Type*} [Countable α] [MeasurableSpace α]
+    [MeasurableSingletonClass α] [LinearOrder α] [OrderBot α]
+    [MeasurableSpace X]
+    (R : Step.FiniteSelection α X) (hR : Measurable R.select)
+    (r : Root) (k : ℕ) (ω : RootIndexed.StepField Root α X)
+    (hsplit : ω r (selectedReserveSpinePath R r k ω) ∈ splitBy R) :
+    (selectedReserveSpineLineages R hR).firstChildRootAt R r
+        PUnit.unit (k + 1) ω =
+      (r, selectedReserveSpinePath R r k ω ++
+        [firstSelectedSlot R (ω r (selectedReserveSpinePath R r k ω))]) ∧
+    firstSelectedSlot R (ω r (selectedReserveSpinePath R r k ω)) ∈
+      R (ω r (selectedReserveSpinePath R r k ω)) := by
+  have h := (selectedReserveSpineLineages R hR).firstChildRootAt_selected
+    R r PUnit.unit (k + 1) ω (by omega) (by
+      simpa [selectedReserveSpineLineages] using hsplit)
+  have hroot := (selectedReserveSpineLineages R hR).firstChildRootAt_root
+    R r PUnit.unit (k + 1) ω
+  exact ⟨Prod.ext hroot h.1, h.2⟩
 
 /-- A split seen in the recursively defined reserve subtree is exactly the
 same split mark in the original pre-sampled tree at the corresponding
@@ -298,3 +363,5 @@ theorem selectedReserveSpineCandidate_root_at_recursive_split
       exact List.append_assoc _ _ _
 
 end ProbabilityTheory.BranchingRandomWalk
+
+end

@@ -4,19 +4,21 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
+module
+
 import Probability.BranchingRandomWalk.Restart.RootedTrial.Coupling.ReserveSpine
 import Probability.BranchingRandomWalk.Restart.RootedTrial.Completion.Endpoint
 import Probability.BranchingRandomWalk.Restart.RootedTrial.Reserve.Causal
-import Probability.BranchingRandomWalk.Selection.NSelection.AtStoppingTime
-import Probability.BranchingRandomWalk.Selection.NSelection.ByValue
-import Probability.BranchingRandomWalk.Selection.NSelection.AtRank
+import Probability.Process.Stopping.Selection.Ranked
+import MeasureTheory.Selection.NSelection.ByValue
+import MeasureTheory.Selection.NSelection.AtRank
 import Probability.BranchingRandomWalk.Coupling.Field.Ranked.Basic
 import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.StoppingSubtrees.Vector.Factorization
 
 /-!
 # Source-side endpoint roots: proof support
 
-## Supporting declarations
+## Internal proof declarations
 
 * `selectedReserveSpineRestartSourceEndpointRankVector` ranks the causal source at the first
   successful completion time and provides a pointwise fallback when the target population is
@@ -29,14 +31,14 @@ import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.Stoppin
   finite random root family.
 -/
 
-@[expose] public section
+section
 
 open MeasureTheory ProbabilityTheory
 open Combinatorics.Branching Combinatorics.UlamHarris
 open ProbabilityTheory.BranchingRandomWalk
 open ProbabilityTheory.BranchingRandomWalk.Coupling
 open ProbabilityTheory.BranchingRandomWalk.Selection.NSelection
-open Combinatorics.Branching.Selection.NSelection
+open _root_.Combinatorics.Selection.NSelection
 
 namespace ProbabilityTheory.BranchingRandomWalk.Completion.Lemmas.EndpointHorizon
 
@@ -112,7 +114,7 @@ lemma selectedReserveSpineRestartSourceEndpointRankVector_measurable
   have hkey (n : ℕ) (p q : RootIndexed.TreeNode Root α) : Measurable[F n]
       fun field => valueKey (value n field) q < valueKey (value n field) p := by
     let _ : MeasurableSpace (RootIndexed.StepField (Root ⊕ Root) α ℝ) := F n
-    exact Selection.NSelection.measurable_valueKey_lt
+    exact Combinatorics.Selection.NSelection.measurable_valueKey_lt
       (fun field z => value n field z)
       (fun z =>
         (RootIndexed.positionAtGeneration_measurable initialPosition id

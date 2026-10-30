@@ -7,13 +7,33 @@ Authors: WANG Yiyang
 module
 
 public import Order.Interval.RationalCoordinate.UnitInterval
-public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.Binning.Basic
-public import Probability.Process.Corridor.CoreReturn
+public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
+public import Probability.Process.Stable.Levy
 public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Gluing
+public import Probability.Process.Path.Skorokhod.Corridor.RationalCoordinate
+import Algebra.Order.Monoid.Recurrence
+import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Feedback.Probability
+import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Probability.Independence
 import Probability.Process.Stable.FiniteDimensional
 
 /-!
 # One-block lower corridor recurrence
+
+## Public declarations
+
+- IsStableLevyProcess.measure_prefixCorridor_succ_ge_mul: if the prefix
+  endpoint is covered by finitely many disjoint measurable bins and each
+  corresponding translated next-block corridor has probability at least
+  \(c\), then
+  \[
+    c\,\mathbb P(E_j)\le\mathbb P(E_{j+1}),
+  \]
+  where \(E_j\) is rationalUniformPrefixCorridorEvent with \(m=j\), the
+  event that the first \(j\) uniform blocks stay in
+  \((\mathrm{lower},\mathrm{upper})\).
+- IsStableLevyProcess.pow_le_measure_prefixCorridor_of_bins: if those bin
+  conditions hold on every block, then the probability of the full
+  blockwise corridor event is at least \(c^{\mathrm{blocks}}\).
 
 Finite endpoint bins, independence of the next translated block, and the
 deterministic corridor-gluing inequality combine into a lower recurrence for
@@ -131,9 +151,11 @@ theorem IsStableLevyProcess.pow_le_measure_prefixCorridor_of_bins
           (lower - binLower j i) (upper - binUpper j i))) :
     c ^ blocks ≤
       P (rationalUniformPrefixCorridorEvent X lower upper hblocks blocks) := by
-  apply ProbabilityTheory.pow_le_measure_prefixCorridor_of_steps
-    (P := P) (X := X) blocks hblocks lower upper c (by simp) ?_
-  intro j
+  apply IsOrderedMonoid.pow_le_of_mul_le_succ
+    (fun m => P (rationalUniformPrefixCorridorEvent X lower upper hblocks m))
+    blocks c (by simp)
+  intro j hj
+  let j : Fin blocks := ⟨j, hj⟩
   exact h.measure_prefixCorridor_succ_ge_mul blocks hblocks j lower upper
     (I j) (binLower j) (binUpper j) c (hI j) (hdisj j) (hbin j)
     (hcover j) (hc j)

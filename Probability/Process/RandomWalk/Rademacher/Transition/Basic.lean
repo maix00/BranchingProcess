@@ -11,6 +11,8 @@ public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 /-!
 # The analytic one-step transition of the Rademacher walk
 
+## Public declarations
+
 For a function $f:\mathbb R\to\mathbb R$, its one-step average is
 $Af(x)=\frac{f(x-1)+f(x+1)}2$. The public declarations are:
 

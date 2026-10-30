@@ -17,6 +17,15 @@ Under boundary normalization the integrated tilted potential law is a
 probability measure.  Its countable product is the canonical spine increment
 process.  This file records the coordinate laws, independence, and measurable
 partial-sum positions used in the path form of the many-to-one formula.
+
+## Public declarations
+
+- `tiltedIncrementFieldLaw`: the countable product law of independent
+  increments with the boundary-normalized tilted potential distribution.
+- `tiltedIncrementFieldLaw_isProbability`,
+  `tiltedIncrementFieldLaw_coordinate`, and
+  `tiltedIncrementFieldLaw_independent`: establish its probability, coordinate
+  marginal, and independent-increment properties.
 -/
 
 open MeasureTheory ProbabilityTheory

@@ -15,6 +15,15 @@ This probability law samples one offspring configuration independently at
 every potential Ulam--Harris address and retains the complete sampled field.
 The realized genealogy and its generation sizes are observations of that
 presampled configuration.
+
+## Public declarations
+
+- `ProbabilityTheory.BranchingProcess.GaltonWatson.law`:
+  the pushforward of the independent offspring-field law by the construction
+  of the corresponding presampled branching configuration.
+- `ProbabilityTheory.BranchingProcess.GaltonWatson.law_stepField`:
+  observing the complete offspring field under `law μ` recovers the product
+  field law, $(law(\mu)).map(\operatorname{step})=\mu.fieldLaw$.
 -/
 
 @[expose] public section

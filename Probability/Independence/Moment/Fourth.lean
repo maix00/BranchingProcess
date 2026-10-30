@@ -12,8 +12,20 @@ public import Mathlib.MeasureTheory.Function.L2Space
 /-!
 # Fourth moments of independent centered sums
 
-The identities here are independent of any random-walk representation.  They
-supply the elementary fourth-moment recurrence used by truncation arguments.
+The identities hold for general independent random variables.
+
+## Public declarations
+
+- `ProbabilityTheory.memLp_four_iff_integrable_pow_four`: for an
+  a.e.-strongly-measurable real random variable,
+  $X\in L^4(\mu)$ iff $\int X^4\,d\mu<\infty$.
+- `ProbabilityTheory.IndepFun.integral_add_pow_four`: for independent real
+  $X,Y\in L^4(\mu)$, expands $\int(X+Y)^4\,d\mu$ into the five terms
+  $\int X^4$, $4(\int X^3)(\int Y)$, $6(\int X^2)(\int Y^2)$,
+  $4(\int X)(\int Y^3)$, and $\int Y^4$.
+- `ProbabilityTheory.IndepFun.integral_add_pow_four_of_centered`: if in
+  addition $\int X\,d\mu=\int Y\,d\mu=0$, the expansion reduces to
+  $\int(X+Y)^4\,d\mu=\int X^4\,d\mu+6(\int X^2\,d\mu)(\int Y^2\,d\mu)+\int Y^4\,d\mu$.
 -/
 
 open MeasureTheory

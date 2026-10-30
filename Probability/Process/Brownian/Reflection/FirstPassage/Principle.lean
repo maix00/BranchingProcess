@@ -6,16 +6,17 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.Brownian.Reflection.FirstPassage.GridLaw
-public import Probability.Process.Brownian.Marginal.Gaussian
-public import Probability.Distributions.Gaussian.Sign
-public import Probability.Process.Path.FirstPassage.Reflection
+public import Probability.Process.Brownian.PathLaw.ContinuousPathLaw
 public import Probability.Process.Path.Extrema.RunningMinimum
+import Probability.Process.Brownian.Reflection.FirstPassage.GridLaw
+import Probability.Process.Brownian.Marginal.Gaussian
+import Probability.Distributions.Gaussian.Sign
+import Probability.Process.Path.FirstPassage.Reflection
 
 /-!
 # Brownian first-passage reflection principle
 
-The public theorem in this file is:
+## Public declarations
 
 - `ProbabilityTheory.IsBrownianReal.measure_hitAndAbove_eq_below`:
   for $a<0$, the probability of hitting $(-\infty,a]$ by time $1$
@@ -348,7 +349,7 @@ theorem IsBrownianReal.measure_runningMinimum_eq_of_neg
     change runningMinimum f t ≤ a
     exact hf.le
   have hOFinite : μ O ≠ ∞ := by
-    letI : IsProbabilityMeasure P :=
+    let : IsProbabilityMeasure P :=
       (hB.toIsPreBrownianReal.hasLaw ∅).isProbabilityMeasure
     exact measure_ne_top μ O
   have hdiff : C \ O = {f : C(ℝ≥0, ℝ) | runningMinimum f t = a} := by
@@ -475,7 +476,7 @@ theorem IsBrownianReal.measure_runningMinimum_eq
   · exact hB.measure_runningMinimum_eq_of_neg hBmeasurable ht haNeg
   by_cases haZero : a = 0
   · subst a
-    letI : IsProbabilityMeasure P :=
+    let : IsProbabilityMeasure P :=
       (hB.toIsPreBrownianReal.hasLaw ∅).isProbabilityMeasure
     have hmeas : MeasurableSet
         {f : C(ℝ≥0, ℝ) | runningMinimum f t < 0} :=

@@ -6,8 +6,9 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Distributions.Stable.Attraction.Norming.Tail
+public import Probability.Distributions.Stable.Attraction.Norming.Asymptotics.Tail
 public import Probability.Process.RandomWalk.FunctionalLimit.Stable.Centering
+public import Probability.Process.RandomWalk.Path.Block.Law.StoppingTime
 public import Probability.Process.RandomWalk.Path.Truncation.Normalized
 
 /-!
@@ -17,6 +18,71 @@ The regular-variation limits for the discarded tail and truncated second
 moment turn the normalized hard-truncation estimate into an eventual
 small-block bound. The truncation-bias margin is an explicit hypothesis and
 is not inferred from stable attraction here.
+## Public declarations
+
+Write $S_m=\sum_{i=0}^{m-1}X_i$ for the IID increments, and
+\[
+ A_{s,\ell}(h)=\left\{\max_{1\le j\le\ell}|S_{s+j}-S_s|\ge h\right\},
+ \qquad
+ B_{\alpha,r,\theta}(\delta)
+ =\delta\left(\frac{2-\alpha}{\alpha}r^{-\alpha}+1+
+       \frac{4(r^{2-\alpha}+1)}{\theta^2}\right).
+\]
+Here $a_n=\texttt{normalization}(n)$ and
+$\mathbb P_\nu(A)=(\texttt{iidSequenceLaw}\;\nu)(A)$. For a stopping time
+$\tau$, let $A_{\tau,\ell}(h)=\bigcup_{s\in\mathbb N}
+\{\tau=s\}\cap A_{s,\ell}(h)$, so an infinite value of $\tau$ contributes no
+event. The public bounds below hold eventually in $n$, under the stable
+norming and two-sided regular-variation hypotheses stated in the declarations.
+
+- `eventually_measure_blockPrefixExceedance_le_of_stableNorming` proves
+  \[
+   \mathbb P_\nu\!\left(A_{0,\ell_n}(\theta a_n)\right)
+   \le \operatorname{ENNReal.ofReal}\!\left(
+     \delta\left(c_T+\frac{4c_M}{\theta^2}\right)\right)
+  \]
+  from $\frac{\ell_n}{n}\le\delta$, truncation-bias at most
+  $\frac{\theta}{2}$, and margins
+  $\frac{2-\alpha}{\alpha}r^{-\alpha}<c_T$ and $r^{2-\alpha}<c_M$.
+- `eventually_measure_blockPrefixExceedance_le_of_stableNorming_unitMargins`
+  specializes this to the same probability bound with
+  $c_T=\frac{2-\alpha}{\alpha}r^{-\alpha}+1$ and
+  $c_M=r^{2-\alpha}+1$, hence the right side is
+  $\operatorname{ENNReal.ofReal}(B_{\alpha,r,\theta}(\delta))$.
+- `eventually_measure_blockPrefixExceedanceAfter_le_of_stableNorming` gives
+  \[
+   \mathbb P_\nu\!\left(A_{\tau_n,\ell_n}(\theta a_n)\right)
+   \le\operatorname{ENNReal.ofReal}(B_{\alpha,r,\theta}(\delta))
+  \]
+  after a discrete stopping time $\tau_n$.
+- `eventually_measure_adjacentBlockPrefixExceedance_le_of_stableNorming`
+  proves
+  \[
+   \mathbb P_\nu\!\left(A_{0,\ell_n}(\theta a_n)
+     \cap A_{\ell_n,\ell_n}(\theta a_n)\right)
+   \le\operatorname{ENNReal.ofReal}(B_{\alpha,r,\theta}(\delta))^2.
+  \]
+- `eventually_measure_adjacentVariableBlockPrefixExceedance_le_of_stableNorming`
+  proves the same squared bound for
+  $A_{s_n,p_n}(\theta a_n)\cap A_{s_n+p_n,q_n}(\theta a_n)$ when both
+  lengths satisfy $\frac{p_n}{n},\frac{q_n}{n}\le\delta$ and their respective
+  bias bounds.
+- `eventually_measure_iUnion_adjacentBlockPrefixExceedance_le_of_stableNorming`
+  proves
+  \[
+   \mathbb P_\nu\!\left(\bigcup_{j=0}^{m-1}
+      A_{j\ell_n,\ell_n}(\theta a_n)\cap
+      A_{(j+1)\ell_n,\ell_n}(\theta a_n)\right)
+   \le m\,\operatorname{ENNReal.ofReal}(B_{\alpha,r,\theta}(\delta))^2.
+  \]
+- `eventually_measure_blockPrefixExceedance_le_of_stableNorming_of_index_lt_one`,
+  `eventually_measure_blockPrefixExceedance_le_of_stableNorming_of_index_one`,
+  and `eventually_measure_blockPrefixExceedance_le_of_stableNorming_of_index_gt_one`
+  give the one-block bound above in the three centering regimes. At index one,
+  its right side is
+  $\operatorname{ENNReal.ofReal}\!\left(\delta\left(r^{-1}+1+
+  \frac{4(r+1)}{\theta^2}\right)\right)$.
+
 -/
 
 open Filter MeasureTheory ProbabilityTheory
@@ -119,6 +185,40 @@ theorem eventually_measure_blockPrefixExceedance_le_of_stableNorming_unitMargins
     (momentBound := radiusMultiplier ^ (2 - α) + 1)
     hnorm hα₀ hα₂ htail hradius hthreshold hδ length
     (by linarith) (by linarith) hlength hlengthRatio hbias) using 1
+
+/-- A stable-domain one-block estimate remains valid when the block starts at
+an arbitrary discrete stopping time, possibly depending on the sample size.
+The stopping-time extension follows by conditioning on the finite values of
+the time and using independence of the following increments. -/
+theorem eventually_measure_blockPrefixExceedanceAfter_le_of_stableNorming
+    {α radiusMultiplier thresholdMultiplier δ : ℝ}
+    {ν : Measure ℝ} [IsProbabilityMeasure ν]
+    {normalization : ℕ → ℝ} (hnorm : IsStableNorming α ν normalization)
+    (hα₀ : 0 < α) (hα₂ : α < 2)
+    (htail : Asymptotics.IsRegularlyVaryingAtTop
+      (fun u : ℝ => ν.real {x : ℝ | u < |x|}) (-α))
+    (hradius : 0 < radiusMultiplier) (hthreshold : 0 < thresholdMultiplier)
+    (hδ : 0 ≤ δ) (length : ℕ → ℕ)
+    (hlength : ∀ᶠ n in atTop, 0 < length n)
+    (hlengthRatio : ∀ᶠ n in atTop, (length n : ℝ) / n ≤ δ)
+    (hbias : ∀ᶠ n in atTop,
+      (length n : ℝ) *
+        |truncatedIncrementMean ν (radiusMultiplier * normalization n)| /
+          normalization n ≤ thresholdMultiplier / 2)
+    (τ : ℕ → (ℕ → ℝ) → WithTop ℕ)
+    (hτ : ∀ n, IsStoppingTime (sequencePrefixFiltration (E := ℝ)) (τ n)) :
+    ∀ᶠ n in atTop,
+      (iidSequenceLaw ν)
+          (blockPrefixExceedanceAfter (τ n) (length n)
+            (thresholdMultiplier * normalization n)) ≤
+        ENNReal.ofReal
+          (δ * (((2 - α) / α) * radiusMultiplier ^ (-α) + 1 +
+            4 * (radiusMultiplier ^ (2 - α) + 1) / thresholdMultiplier ^ 2)) := by
+  filter_upwards [eventually_measure_blockPrefixExceedance_le_of_stableNorming_unitMargins
+    hnorm hα₀ hα₂ htail hradius hthreshold hδ length hlength hlengthRatio hbias]
+      with n hn
+  exact (measure_blockPrefixExceedanceAfter_le ν (τ n) (hτ n)
+      (length n) (thresholdMultiplier * normalization n)).trans hn
 
 /-- Under the same stable norming and centering hypotheses as the one-block
 estimate, two adjacent block excursions have the square of its probability

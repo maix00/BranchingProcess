@@ -7,17 +7,16 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.Path.Window.Endpoint
-public import Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.EndpointWindow
+public import Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.EndpointWindow.Basic
 public import Probability.Sequence.Filtration
 public import Probability.Sequence.IID.Basic
-public import Mathlib.MeasureTheory.Function.ConditionalExpectation.Basic
 
 import Probability.Sequence.IID.Blocks.StoppingTime
-import Probability.Independence.ConditionalIntegral
-import Probability.Sequence.IID.Blocks.Consecutive
 
 /-!
 # Finite-block form of a horizontal tube with endpoint window
+
+## Public declarations
 
 The public theorems in this file are:
 
@@ -32,9 +31,6 @@ The public theorems in this file are:
   the joint event for the preceding increments and one finite tube block.
 - `ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube.measurableSet_tubeBlockPairEvent`:
   this joint event is measurable.
-- `ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube.iidSequenceLaw_condExp_tubeBlockPairEvent_ge`:
-  a uniform zero-start tube bound becomes the corresponding conditional
-  block bound at every preceding position inside the tube.
 - `ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube.tubeBlockEvent`:
   the block event on the complete increment sequence.
 - `ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube.measurableSet_tubeBlockEvent`:
@@ -43,12 +39,11 @@ The public theorems in this file are:
   a successful block places the walk in its specified terminal window.
 - `ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube.tubeBlockEvent_path_mem`:
   every time within a successful block lies in its horizontal tube.
-- `ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube.iidSequenceLaw_condExp_tubeBlockEvent_ge`:
-  the preceding conditional bound expressed on the complete sequence.
 
-This is the conditional-probability identification in Wang Yiyang,
+The event and translation interfaces are used in Wang Yiyang,
 *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
-Chapter 3, proof of Lemma 3.5.
+Chapter 3, proof of Lemma 3.5. Conditional-expectation calculations for these
+events are proof support under `Blocks/Lemmas/ConditionalProduct.lean`.
 -/
 
 @[expose] public section
@@ -133,75 +128,6 @@ theorem measure_blockCoordinates_finiteTubeEndpoint_eq_relativeHorizontalTubeEnd
   simpa only [Set.mem_preimage, Set.mem_ofPred_eq, Nat.zero_add] using
     (finiteInClosedIntervalEndsIn_blockCoordinates_iff_relativeHorizontalTubeEndpointWindowEvent
       hinitial 0 n increment)
-
-/-- The Markov step in the horizontal-block argument: conditionally on the
-preceding position lying inside the tube, the chance of the next finite
-block is bounded by its translated zero-start probability. -/
-theorem iidSequenceLaw_condExp_tubeBlockPairEvent_ge
-    (ν : Measure ℝ) [IsProbabilityMeasure ν]
-    (lower width v₁ v₂ : ℝ) (start length : ℕ)
-    (good : Set ℝ)
-    (hgoodTube : good ⊆ Set.Icc lower (lower + width))
-    {bound : ℝ}
-    (hbound : ∀ initial ∈ good,
-      bound ≤ (iidSequenceLaw ν).real
-        (relativeHorizontalTubeEndpointWindowEvent
-          (lower - initial) width length v₁ v₂)) :
-    ∀ᵐ increment ∂iidSequenceLaw ν,
-      (∑ j : Fin start,
-          Combinatorics.Sequence.blockCoordinates 0 start increment j) ∈
-        good →
-      bound ≤ condExp
-        (MeasurableSpace.comap
-          (Combinatorics.Sequence.blockCoordinates 0 start) inferInstance)
-        (iidSequenceLaw ν)
-        (fun increment =>
-          (tubeBlockPairEvent lower width v₁ v₂ start length).indicator
-            (fun _ => (1 : ℝ))
-            (Combinatorics.Sequence.blockCoordinates 0 start increment,
-              Combinatorics.Sequence.blockCoordinates start length increment))
-        increment := by
-  let goodPast : Set (Fin start → ℝ) :=
-    {past | (∑ j : Fin start, past j) ∈ good}
-  have hsections : ∀ past : Fin start → ℝ, past ∈ goodPast →
-      bound ≤ ((iidSequenceLaw ν).map
-        (Combinatorics.Sequence.blockCoordinates start length)).real
-        {block | (past, block) ∈
-          tubeBlockPairEvent lower width v₁ v₂ start length} := by
-    intro past hpast
-    have hpast' : (∑ j : Fin start, past j) ∈
-        Set.Icc lower (lower + width) := hgoodTube hpast
-    have hbridge :=
-      measure_blockCoordinates_finiteTubeEndpoint_eq_relativeHorizontalTubeEndpointWindowEvent
-        ν (lower := lower) (width := width) (v₁ := v₁) (v₂ := v₂)
-          hpast' start length
-    have hbound' := hbound (∑ j : Fin start, past j) hpast
-    have hbridgeReal := congrArg ENNReal.toReal hbridge
-    change bound ≤ ((iidSequenceLaw ν)
-      (relativeHorizontalTubeEndpointWindowEvent
-        (lower - ∑ j : Fin start, past j) width length v₁ v₂)).toReal at hbound'
-    rw [← hbridgeReal] at hbound'
-    change bound ≤ (((iidSequenceLaw ν).map
-      (Combinatorics.Sequence.blockCoordinates start length))
-        {block | (past, block) ∈
-          tubeBlockPairEvent lower width v₁ v₂ start length}).toReal
-    simpa only [tubeBlockPairEvent, Set.mem_ofPred_eq] using hbound'
-  have hblocks := indepFun_blockCoordinates_blockCoordinates ν 0 start length
-  have hnext : Measurable
-      (Combinatorics.Sequence.blockCoordinates (E := ℝ) (0 + start) length) := by
-    simpa only [Nat.zero_add] using
-      (measurable_blockCoordinates (E := ℝ) start length)
-  have hconditional := hblocks.condExp_indicator_pairEvent_ae_eq_sectionProbability
-    (measurable_blockCoordinates (E := ℝ) 0 start)
-    hnext
-    (tubeBlockPairEvent lower width v₁ v₂ start length)
-    (measurableSet_tubeBlockPairEvent lower width v₁ v₂ start length)
-  have hconditional' := by
-    simpa only [Nat.zero_add] using hconditional
-  filter_upwards [hconditional'] with increment hconditional
-  intro hgood
-  rw [hconditional]
-  exact hsections (Combinatorics.Sequence.blockCoordinates 0 start increment) hgood
 
 /-- The finite horizontal tube block event on the complete increment path. -/
 def tubeBlockEvent (start length : ℕ)
@@ -314,41 +240,6 @@ theorem tubeBlockEvent_path_mem
     AdditivePath.fromIncrements, hpast,
     AdditivePath.displacement_add] using hposition
 
-/-- The block-start conditional probability bound in the natural domain
-filtration, using the translated zero-start bound from the preceding theorem. -/
-theorem iidSequenceLaw_condExp_tubeBlockEvent_ge
-    (ν : Measure ℝ) [IsProbabilityMeasure ν]
-    (lower width v₁ v₂ : ℝ) (start length : ℕ)
-    (good : Set ℝ)
-    (hgoodTube : good ⊆ Set.Icc lower (lower + width))
-    {bound : ℝ}
-    (hbound : ∀ initial ∈ good,
-      bound ≤ (iidSequenceLaw ν).real
-        (relativeHorizontalTubeEndpointWindowEvent
-          (lower - initial) width length v₁ v₂)) :
-    ∀ᵐ increment ∂iidSequenceLaw ν,
-      (∑ j : Fin start,
-          Combinatorics.Sequence.blockCoordinates 0 start increment j) ∈
-        good →
-      bound ≤ condExp (sequencePrefixFiltration (E := ℝ) start)
-        (iidSequenceLaw ν)
-        ((tubeBlockEvent start length lower width v₁ v₂).indicator
-          (fun _ => (1 : ℝ))) increment := by
-  rw [sequencePrefixFiltration_eq_comap_blockCoordinates]
-  have hconditional := iidSequenceLaw_condExp_tubeBlockPairEvent_ge
-    ν lower width v₁ v₂ start length good hgoodTube hbound
-  have hindicator :
-      (tubeBlockEvent start length lower width v₁ v₂).indicator
-          (fun _ => (1 : ℝ)) =
-        fun increment =>
-          (tubeBlockPairEvent lower width v₁ v₂ start length).indicator
-            (fun _ => (1 : ℝ))
-            (Combinatorics.Sequence.blockCoordinates 0 start increment,
-              Combinatorics.Sequence.blockCoordinates start length increment) := by
-    funext increment
-    rfl
-  rw [hindicator]
-  exact hconditional
 
 end ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube
 

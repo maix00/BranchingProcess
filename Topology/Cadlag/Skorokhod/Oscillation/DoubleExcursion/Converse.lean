@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Topology.Cadlag.Skorokhod.Oscillation.DoubleExcursion.Basic
-import Topology.Cadlag.Skorokhod.Oscillation.DoubleExcursion.Lemmas.JumpControl
+import all Topology.Cadlag.Skorokhod.Oscillation.DoubleExcursion.Lemmas.JumpControl
 import Topology.Cadlag.Skorokhod.Oscillation.Partition.Finite
 import Topology.Cadlag.Jump
 import Order.Interval.UniformGrid

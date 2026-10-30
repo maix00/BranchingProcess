@@ -12,6 +12,8 @@ public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 /-!
 # Finite blocks of sequences
 
+## Public declarations
+
 The public declarations in `Combinatorics.Sequence` are:
 
 - `blockCoordinates`: the block $k\mapsto f(s+k)$, for $k<\ell$.

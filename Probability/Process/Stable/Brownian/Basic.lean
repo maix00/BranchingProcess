@@ -15,7 +15,7 @@ public import Probability.Process.Stable.Levy
 /-!
 # Brownian motion as a stable Lévy process
 
-The public theorems in this file are:
+## Public declarations
 
 - `IsPreBrownianReal.hasStableClockIncrements`: Brownian increments satisfy
   $B_t-B_s\sim N(0,t-s)$, hence the exponent-two stable clock law.
@@ -26,7 +26,9 @@ The public theorems in this file are:
   finite-dimensional laws and independent increments.
 
 The converse identifies the Gaussian process used in the proof of corridor
-positivity in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.5.
+positivity in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk
+with Infinite Offspring* (master's thesis, Fudan University, 2026), Chapter 3,
+Lemma 3.5.
 -/
 
 open MeasureTheory

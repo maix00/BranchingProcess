@@ -6,8 +6,8 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.BranchingRandomWalk.Step.Law.OptionalField
 public import Combinatorics.BranchingWalk.Step.Measurability
+public import Mathlib.MeasureTheory.Measure.Map
 public import Mathlib.MeasureTheory.Measure.ProbabilityMeasure
 
 /-!
@@ -19,6 +19,28 @@ optional field `ι → Option X`. Displacements on absent slots are ignored by
 that field, so equality of assembled fields is weaker than equality of these
 presentations. Core law and point-measure interfaces accept the optional field
 and its measurability proof directly.
+
+## Public declarations
+
+- `ProbabilityTheory.BranchingRandomWalk.StepPresentation Ω ι X`: the
+  measurable coordinate presentation with a Boolean presence variable and an
+  $X$-valued displacement at each slot.
+- `ProbabilityTheory.BranchingRandomWalk.StepPresentation.toFun`: assembles a
+  presentation into the optional field
+  $i\mapsto\operatorname{if}\ S.present_i(\omega)\ \operatorname{then}\
+  \operatorname{some}(S.displace_i(\omega))\ \operatorname{else}\
+  \operatorname{none}$.
+- `ProbabilityTheory.BranchingRandomWalk.StepPresentation.apply_eq_some_iff`
+  and `StepPresentation.apply_eq_none_iff`: characterize presence and absence
+  in the assembled field.
+- `ProbabilityTheory.BranchingRandomWalk.StepPresentation.measurable_toFun`:
+  the assembly map is measurable.
+- `ProbabilityTheory.BranchingRandomWalk.StepPresentation.indexedLaw` and
+  `StepPresentation.indexedLaw.isProbabilityMeasure`: define the pushforward
+  step law and its probability-measure instance.
+- `ProbabilityTheory.BranchingRandomWalk.StepPresentation.indexedLaw_apply`:
+  for measurable $A$, $\operatorname{indexedLaw}(S,P)(A)=P(S^{-1}(A))$.
+
 -/
 
 open MeasureTheory
@@ -85,13 +107,13 @@ noncomputable def StepPresentation.indexedLaw
     {Ω ι X : Type*} [MeasurableSpace Ω] [MeasurableSpace X]
     (S : StepPresentation Ω ι X) (P : Measure Ω) :
     Measure (Combinatorics.Branching.Step ι X) :=
-  stepLaw S.toFun P
+  P.map S.toFun
 
 instance StepPresentation.indexedLaw.isProbabilityMeasure
     {Ω ι X : Type*} [MeasurableSpace Ω] [MeasurableSpace X]
     (S : StepPresentation Ω ι X) (P : Measure Ω)
     [IsProbabilityMeasure P] : IsProbabilityMeasure (S.indexedLaw P) := by
-  unfold StepPresentation.indexedLaw stepLaw
+  unfold StepPresentation.indexedLaw
   infer_instance
 
 theorem StepPresentation.indexedLaw_apply
@@ -100,6 +122,6 @@ theorem StepPresentation.indexedLaw_apply
     (s : Set (Combinatorics.Branching.Step ι X))
     (hs : MeasurableSet s) :
     S.indexedLaw P s = P (S ⁻¹' s) := by
-  exact stepLaw_apply S.toFun S.measurable_toFun P s hs
+  exact Measure.map_apply S.measurable_toFun hs
 
 end ProbabilityTheory.BranchingRandomWalk

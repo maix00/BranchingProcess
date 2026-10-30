@@ -7,7 +7,9 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.Stable.SmallDeviation.PathClass.StepCorridor.Partition.Lower.Geometry
-public import Probability.Process.Stable.SmallDeviation.PathClass.StepCorridor.Partition.Lower.Product
+import Probability.Process.Path.PathClass.StepCorridor.Probability.Partition.Independence
+import Probability.Process.Stable.SmallDeviation.PathClass.StepCorridor.Partition.Independence
+import all Probability.Process.Stable.SmallDeviation.PathClass.StepCorridor.Partition.Lower.Lemmas.Geometry
 
 /-!
 # Finite-partition lower bound from endpoint-return kernels
@@ -16,9 +18,22 @@ The deterministic core construction and independent cell kernels combine to
 give a genuine probability lower bound for the scaled step corridor. The
 almost-sure zero start is intersected into the event only for the pathwise
 inclusion; it does not change its probability.
+
+## Public declarations
+
+* `measure_scalePath_preimage_corridorSet_ge_coreReturnProduct` bounds the
+  probability of the scaled corridor from below by the product of the local
+  core-return probabilities under the stated core geometry and scaling
+  hypotheses.
+
+## Internal proof declarations
+
+* A private finite-event factorization applies independence of the normalized
+  partition-cell paths to the local return events.
 -/
 
 open MeasureTheory
+open ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability
 open scoped NNReal
 
 @[expose] public section
@@ -28,6 +43,35 @@ namespace ProbabilityTheory
 open Skorokhod.PathClass.StepCorridor
 open Skorokhod.PathClass.StepCorridor
 
+/-- The endpoint-return events on the finitely many normalized partition
+cells factor under the stable clock path law. -/
+private theorem measure_iInter_scaledNormalizedCellIocReturnEvent_eq_prod
+    {α : ℝ} {μ : Measure ℝ}
+    {P : Measure (CadlagPath unitInterval ℝ)} [IsProbabilityMeasure P]
+    (hP : IsStableClockProcessLaw α μ unitInterval.clock P)
+    (upper lower : StepBoundary)
+    (scale lo hi coreLo coreHi :
+      Fin ((StepBoundary.commonKnots upper lower).card - 1) → ℝ) :
+    P (⋂ i, scaledNormalizedCellIocReturnEvent (α := α)
+        upper lower i (scale i) (lo i) (hi i) (coreLo i) (coreHi i)) =
+      ∏ i, P (scaledNormalizedCellIocReturnEvent (α := α)
+        upper lower i (scale i) (lo i) (hi i) (coreLo i) (coreHi i)) := by
+  let cellPath := fun (i : Fin ((StepBoundary.commonKnots upper lower).card - 1))
+      (f : CadlagPath unitInterval ℝ) (q : RationalCoordinate.UnitInterval) =>
+        scale i * normalizedCommonPartitionCellPath (α := α) upper lower i q f
+  have hindep :=
+    ProbabilityTheory.IsStableClockProcessLaw.iIndepFun_scaledNormalizedCommonPartitionCellPaths
+      hP upper lower scale
+  have hfactor := hindep.measure_inter_preimage_eq_mul
+    (Finset.univ : Finset (Fin ((StepBoundary.commonKnots upper lower).card - 1)))
+    (sets := fun i => Skorokhod.rationalCoordinateCorridorIocReturnWithMargin
+      (lo i) (hi i) (coreLo i) (coreHi i))
+    (by
+      intro i hiI
+      exact Skorokhod.measurableSet_rationalCoordinateCorridorIocReturnWithMargin
+        (lo i) (hi i) (coreLo i) (coreHi i))
+  simpa [cellPath, scaledNormalizedCellIocReturnEvent] using hfactor
+
 /-- The product of the independent endpoint-return kernels is a lower bound
 for the probability that the scaled stable path stays in the step corridor.
 The proof keeps the almost-sure pinned-start condition explicit, because the
@@ -35,7 +79,7 @@ deterministic concatenation uses the value at time zero. -/
 theorem measure_scalePath_preimage_corridorSet_ge_coreReturnProduct
     {α scale : ℝ} {μ : Measure ℝ}
     {P : Measure (CadlagPath unitInterval ℝ)} [IsProbabilityMeasure P]
-    (hP : IsStableClockProcessLaw α μ UnitInterval.clock P)
+    (hP : IsStableClockProcessLaw α μ unitInterval.clock P)
     (upper lower : StepBoundary)
     (center radius : Fin (StepBoundary.commonKnots upper lower).card → ℝ)
     (innerLower innerUpper :

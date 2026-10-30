@@ -6,12 +6,12 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Scale.BlockScale
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.Donsker.EndpointWindowSequence
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Scale.Basic
+public import Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.EndpointWindow.Donsker.AlongScale
 public import Probability.Process.RandomWalk.Path.Corridor.Horizontal.Core
 public import Probability.Distributions.Moments.Real
 public import Mathlib.Probability.BrownianMotion.Basic
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.EndpointBands.Lemmas.SpectralLowerBound
+import all Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Lemmas.EndpointBands.SpectralLowerBound
 public import Mathlib.Topology.Order.LiminfLimsup
 
 /-!
@@ -28,7 +28,7 @@ used by the `α = 2` spectral argument. The block probability estimate and the
 asymptotic block-count ratio are explicit hypotheses; this file only composes
 the return kernel and passes to the Mogulskii normalization.
 
-The public declarations are:
+## Public declarations
 
 - `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.one_div_constant_mul_log_toReal_le_liminf_scaledLog_horizontalTubeProbability_of_endpointWindowBlocks`:
   uniform lower bounds $p>0$ on the seven endpoint-window block probabilities
@@ -53,6 +53,7 @@ open Filter MeasureTheory Set Topology
 @[expose] public section
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
+open ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube.EndpointWindow
 
 /-- A uniform seven-window block lower bound yields the corresponding
 horizontal-tube logarithmic lower rate. The outer tube must contain the
@@ -69,7 +70,6 @@ theorem one_div_constant_mul_log_toReal_le_liminf_scaledLog_horizontalTubeProbab
     (hspacing : ∀ᶠ n in atTop, 0 < spacing n)
     (hwindow : ∀ᶠ n in atTop, 0 < windowRadius n)
     (hwindowLe : ∀ᶠ n in atTop, windowRadius n ≤ 2 * spacing n)
-    (_hconstant : 0 < constant)
     (hfit : ∀ᶠ n in atTop,
       2 * (radius n + 3 * spacing n + windowRadius n) *
         Real.sqrt (blockLength n) ≤ scale n)
@@ -106,7 +106,7 @@ theorem one_div_constant_mul_log_toReal_le_liminf_scaledLog_horizontalTubeProbab
   have hpower : ∀ᶠ n in atTop,
       lowerBound ^ count n ≤ probability n := by
     filter_upwards [hblock, hfit, hspacing, hwindow, hwindowLe, hlengthPos,
-      _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.eventually_pos hscale]
+      _root_.Asymptotics.IsSmallDeviationScale.eventually_pos hscale]
       with n hbands hfitN hspacingN hwindowN hwindowLeN hlengthN hscaleN
     have hcover : n ≤ count n * length n := by
       have hdiv := Nat.lt_mul_div_succ n hlengthN
@@ -157,7 +157,7 @@ theorem one_div_constant_mul_log_toReal_le_liminf_scaledLog_horizontalTubeProbab
       coefficient n * Real.log lowerBound.toReal ≤
         ratio n * Real.log (probability n).toReal := by
     filter_upwards [hpower, hlengthPos,
-      _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.eventually_pos hscale,
+      _root_.Asymptotics.IsSmallDeviationScale.eventually_pos hscale,
       eventually_gt_atTop 0] with n hprob hlen hscaleN hn
     have hprobOne : probability n ≤ 1 := by
       calc
@@ -211,7 +211,7 @@ theorem one_div_constant_mul_log_toReal_le_liminf_scaledLog_horizontalTubeProbab
   have hrightUpper : ∀ᶠ n in atTop,
       ratio n * Real.log (probability n).toReal ≤ 0 := by
     filter_upwards [
-      _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.eventually_pos hscale,
+      _root_.Asymptotics.IsSmallDeviationScale.eventually_pos hscale,
       eventually_gt_atTop 0] with n hs hn
     have hprobOne : probability n ≤ 1 := by
       calc
@@ -257,7 +257,7 @@ theorem one_div_constant_mul_log_toReal_le_liminf_scaledLog_horizontalTubeProbab
     (hB : IsPreBrownianReal B P)
     (hcontinuous : ∀ ω, Continuous (B · ω))
     (hmeasurable : ∀ t, Measurable (B t))
-    {constant : ℝ} (hconstant : 0 < constant)
+    {constant : ℝ}
     (blockLength time latticeScale spacing windowRadius : ℕ → ℕ)
     (hblockLengthPos : ∀ᶠ n in atTop, 0 < blockLength n)
     (hcountLimit : Tendsto
@@ -344,7 +344,7 @@ theorem one_div_constant_mul_log_toReal_le_liminf_scaledLog_horizontalTubeProbab
   have hrate :=
     one_div_constant_mul_log_toReal_le_liminf_scaledLog_horizontalTubeProbability_of_endpointWindowBlocks
       ν hscale blockLength hblockLengthPos hcountLimit hspacingPositive
-      happlicationWindowPositive hreturnWindowLe hconstant houterFit
+      happlicationWindowPositive hreturnWindowLe houterFit
       (ENNReal.ofReal applicationLower)
       (ENNReal.ofReal_pos.mpr happlicationLower)
       (ENNReal.ofReal_le_one.mpr happlicationLowerOne) hblock

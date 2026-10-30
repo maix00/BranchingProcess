@@ -11,10 +11,18 @@ public import Probability.Process.RandomWalk.Path.Basic
 public import Mathlib.MeasureTheory.Constructions.BorelSpace.Order
 
 /-!
-# Oscillation bounds for real-valued paths
+# Partial-sum range events
 
-The oscillation bound is stated for an arbitrary index type.  It therefore
-applies to finite walk segments as well as to continuous-time paths.
+## Public declarations
+
+- `partialSumRangeOscillationLTEvent width n` is the event
+  $|S_i-S_j|<width$ for every $i,j\in\{0,\ldots,n\}$, where
+  $S_j=\texttt{AdditivePath.displacement}(j,increment)$.
+- `measurableSet_partialSumRangeOscillationLTEvent` proves this event is
+  measurable, and `partialSumRangeOscillationLTProbability` gives its mass
+  under an increment-path law.
+- `partialSumRangeOscillationLTProbability_antitone_horizon` states that the
+  event probability is nonincreasing in the observation horizon.
 -/
 
 @[expose] public section
@@ -22,24 +30,6 @@ applies to finite walk segments as well as to continuous-time paths.
 open MeasureTheory
 
 namespace ProbabilityTheory.RandomWalk
-
-/-- A real-valued path has oscillation at most `bound` when any two of its
-values differ by at most `bound`. -/
-def OscillationBounded {Time : Type*} (path : Time → ℝ) (bound : ℝ) : Prop :=
-  ∀ s t, |path s - path t| ≤ bound
-
-/-- Increasing the allowed oscillation preserves boundedness. -/
-theorem OscillationBounded.mono {Time : Type*} {path : Time → ℝ}
-    {bound₁ bound₂ : ℝ} (hbound : bound₁ ≤ bound₂)
-    (hpath : OscillationBounded path bound₁) :
-    OscillationBounded path bound₂ :=
-  fun s t => (hpath s t).trans hbound
-
-/-- Oscillation boundedness is symmetric in its two path indices. -/
-theorem OscillationBounded.symm {Time : Type*} {path : Time → ℝ}
-    {bound : ℝ} (hpath : OscillationBounded path bound) (s t : Time) :
-    |path t - path s| ≤ bound := by
-  simpa [abs_sub_comm] using hpath s t
 
 /-- The strict range-oscillation event for the partial-sum path through time
 `n`. It is translation invariant: it constrains pairwise differences, not the

@@ -11,6 +11,8 @@ public import Probability.Process.RandomWalk.Rademacher.FiniteInterval.Spectral.
 /-!
 # Spectral expansion with a terminal target
 
+## Public declarations
+
 The public declarations in this module are:
 
 All names below are declarations in

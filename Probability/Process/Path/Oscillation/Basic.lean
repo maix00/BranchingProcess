@@ -12,6 +12,12 @@ public import Topology.ContinuousMap.Oscillation
 /-!
 # Range-oscillation mass of a continuous process
 
+## Public declarations
+
+- `ProbabilityTheory.Process.Path.rangeOscillationMass` is the path-law mass
+  $P(|B_s-B_t|\leq\varepsilon\text{ for all }s,t\in[0,1])$, represented as the image
+  measure of the bundled continuous path under Mathlib's oscillation set.
+
 The deterministic oscillation sets and measure-convergence bounds live in the
 topology, measure, and convergence layers. This file connects a continuous
 process to its path law.

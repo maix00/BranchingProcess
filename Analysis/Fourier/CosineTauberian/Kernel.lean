@@ -5,22 +5,25 @@ Authors: Codex
 -/
 module
 
-public import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals
-public import Mathlib.Analysis.MellinTransform
+import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals
+import Mathlib.Analysis.MellinTransform
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Sinc
-public import Mathlib.MeasureTheory.Integral.IntervalIntegral.IntegrationByParts
-public import Mathlib.MeasureTheory.Integral.DominatedConvergence
+public import Mathlib.MeasureTheory.Integral.IntegrableOn
+public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
+import Mathlib.MeasureTheory.Integral.IntervalIntegral.IntegrationByParts
+import Mathlib.MeasureTheory.Integral.DominatedConvergence
 
 /-!
 # Bounds for the inverse cosine Tauberian kernel
 
-The public declarations are:
+## Public declarations
 
 - `cosineTauberianKernel t` is
   $K(t)=\int_0^1(1-r)r^2\,\operatorname{sinc}(tr)\,dr$;
   `continuous_cosineTauberianKernel` proves continuity.
 - `abs_cosineTauberianKernel_le` gives $|K(t)|\le1/12$ for all $t$.
-- `cosineTauberianKernel_eq_quotient` gives, for $t>0$,
+- `even_cosineTauberianKernel` identifies the kernel as an even function.
+- `cosineTauberianKernel_eq_quotient` gives, for $t\ne0$,
   $K(t)=\frac{2(1-\cos t)-t\sin t}{t^4}$;
   `abs_cosineTauberianKernel_le_tail` bounds $|K(t)|$ by
   $4/t^4+1/t^3$ for $t\ge1$.
@@ -42,6 +45,14 @@ namespace Analysis.Fourier.CosineTauberian
 
 noncomputable def cosineTauberianKernel (t : ℝ) : ℝ :=
   ∫ r in (0 : ℝ)..1, (1 - r) * r ^ 2 * Real.sinc (t * r)
+
+/-- The cosine Tauberian kernel is even in its frequency parameter. -/
+theorem even_cosineTauberianKernel : Function.Even cosineTauberianKernel := by
+  intro t
+  unfold cosineTauberianKernel
+  apply intervalIntegral.integral_congr
+  intro r _
+  simp [Real.sinc_neg]
 
 /-- The sinc representation makes the Tauberian kernel continuous at every
 frequency, including zero. -/
@@ -134,7 +145,7 @@ private lemma integral_cosineTauberian_numerator {t : ℝ} (_ht : 0 < t) :
 
 /-- For positive frequencies, the sinc representation is exactly the quotient
 kernel used in the twice-integrated cosine-tail identity. -/
-theorem cosineTauberianKernel_eq_quotient {t : ℝ} (ht : 0 < t) :
+private lemma cosineTauberianKernel_eq_quotient_of_pos {t : ℝ} (ht : 0 < t) :
     cosineTauberianKernel t =
       (2 * (1 - Real.cos t) - t * Real.sin t) / t ^ 4 := by
   let g : ℝ → ℝ := fun q => (t - q) * q * Real.sin q
@@ -158,13 +169,30 @@ theorem cosineTauberianKernel_eq_quotient {t : ℝ} (ht : 0 < t) :
   rw [integral_cosineTauberian_numerator ht]
   field_simp [ne_of_gt ht]
 
+/-- The explicit quotient formula holds at every nonzero frequency. -/
+theorem cosineTauberianKernel_eq_quotient {t : ℝ} (ht : t ≠ 0) :
+    cosineTauberianKernel t =
+      (2 * (1 - Real.cos t) - t * Real.sin t) / t ^ 4 := by
+  by_cases hpos : 0 < t
+  · exact cosineTauberianKernel_eq_quotient_of_pos hpos
+  · have hneg : t < 0 := (lt_or_gt_of_ne ht).resolve_right hpos
+    have hpos' : 0 < -t := neg_pos.mpr hneg
+    calc
+      cosineTauberianKernel t = cosineTauberianKernel (-t) :=
+        (even_cosineTauberianKernel t).symm
+      _ = (2 * (1 - Real.cos (-t)) - (-t) * Real.sin (-t)) / (-t) ^ 4 :=
+        cosineTauberianKernel_eq_quotient_of_pos hpos'
+      _ = (2 * (1 - Real.cos t) - t * Real.sin t) / t ^ 4 := by
+        rw [Real.cos_neg, Real.sin_neg]
+        ring
+
 /-- The quotient kernel has cubic decay at infinity. The uniform bound near
 zero comes from its sinc representation, while this estimate controls the
 Mellin tail. -/
 theorem abs_cosineTauberianKernel_le_tail {t : ℝ} (ht : 1 ≤ t) :
     |cosineTauberianKernel t| ≤ 4 / t ^ 4 + 1 / t ^ 3 := by
   have htpos : 0 < t := lt_of_lt_of_le zero_lt_one ht
-  rw [cosineTauberianKernel_eq_quotient htpos]
+  rw [cosineTauberianKernel_eq_quotient (ne_of_gt htpos)]
   have hcos : |Real.cos t| ≤ 1 := Real.abs_cos_le_one t
   have hsin : |Real.sin t| ≤ 1 := Real.abs_sin_le_one t
   have hshift : |1 - Real.cos t| ≤ 2 := by
@@ -232,9 +260,9 @@ theorem integrableOn_rpow_mul_abs_cosineTauberianKernel
       hf_bot (by linarith)
   simpa [f, show α + 1 - 1 = α by ring] using hint
 
-/-- The Tauberian kernel itself is integrable on the positive half-line.  This
-is the `α = 1` weighted estimate away from zero, together with continuity near
-zero. -/
+/-- The Tauberian kernel is integrable on the positive half-line. Continuity
+controls the integral near zero, and the explicit inverse-power bound controls
+the tail. -/
 theorem integrableOn_cosineTauberianKernel :
     IntegrableOn cosineTauberianKernel (Ioi 0) := by
   have hsmall : IntegrableOn cosineTauberianKernel (Ioc (0 : ℝ) 1) := by

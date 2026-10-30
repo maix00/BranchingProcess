@@ -14,6 +14,8 @@ public import Probability.Kernel.Survival.Basic
 /-!
 # Random walks killed outside a measurable set
 
+## Public declarations
+
 For a measurable allowed set $A\subseteq E$, `killedIncrementKernel` is the
 additive transition kernel restricted to $A$, and `killedIncrementKernelOn`
 uses $A$ itself as the state space. The public constructions and theorems are:

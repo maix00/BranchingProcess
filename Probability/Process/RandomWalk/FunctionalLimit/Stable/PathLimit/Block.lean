@@ -19,6 +19,31 @@ combining weak convergence of the base path laws with convergence of the
 deterministic normalization ratio. A product with a Dirac law and the
 continuous mapping theorem avoid imposing an additive structure on the
 Skorokhod `J₁` path space.
+## Public declarations
+
+Write $S_m=\sum_{i=0}^{m-1}X_i$ for IID increments of law $\nu$, and
+$a_m=\texttt{normalization}(m)$. For
+$k_n=\texttt{blockLength}(n)$ and $c_n=\texttt{spatialScale}(n)$,
+\[
+ \texttt{normalizedStepBlockPathLaw}(\nu,c,k,n)
+ =\operatorname{Law}_\nu\!\left(t\mapsto
+   \frac{S_{\lfloor tk_n\rfloor}}{c_n}\right).
+\]
+`tendstoInDistribution_normalizedStepBlockPathLaw_of_baseTightness` proves
+\[
+ \operatorname{Law}_\nu\!\left(t\mapsto
+   \frac{S_{\lfloor tk_n\rfloor}}{c_n}\right)
+ \;\Longrightarrow_{J_1}\;
+ (\operatorname{scalePath}(r))_*P
+\]
+when the fixed-horizon laws
+$\operatorname{Law}_\nu\!\left(t\mapsto
+  \frac{S_{\lfloor mt\rfloor}}{a_m}\right)$ converge to
+the stable path law $P$, $k_n\to\infty$, $c_n>0$ and $a_{k_n}>0$ eventually,
+and $\frac{a_{k_n}}{c_n}\to r$. The theorem derives the fixed-horizon convergence
+from the scalar stable-domain, stable-process-law, and tightness hypotheses in
+its Lean type.
+
 -/
 
 @[expose] public section
@@ -40,7 +65,7 @@ of probability measures with a Dirac law, so no vector-space structure is
 required on the Skorokhod `J₁` path space. -/
 theorem tendstoInDistribution_normalizedStepBlockPathLaw_of_baseTightness
     (hDOA : IsInDomainOfAttractionAlong ν μ normalization (fun _ => 0))
-    (hP : IsStableClockProcessLaw α μ UnitInterval.clock P)
+    (hP : IsStableClockProcessLaw α μ unitInterval.clock P)
     (htightBase : IsTightMeasureSet
       (Set.range fun n => RandomWalk.normalizedStepPathLaw ν normalization n))
     (hblock : Tendsto blockLength atTop atTop)

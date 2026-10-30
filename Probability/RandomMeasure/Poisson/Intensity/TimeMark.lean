@@ -15,6 +15,15 @@ Lebesgue measure on the unit interval has total mass one. Thus a product
 intensity on time and marks has the same full-time mark integrals and masses
 as its mark measure. These are the unit-time specializations of product
 measure integration used by marked Poisson random measures.
+
+## Public declarations
+
+* `lintegral_unitTime_prod_mark` and `integral_unitTime_prod_mark` identify
+  integrals of mark-only functions against unit-time product intensity.
+* `unitTime_prod_markWindow`, `unitTime_prod_restrict_markWindow`, and
+  `unitTime_prod_restrict_carrier` give full-time mass, restricted-window
+  mass, and support statements.
+
 -/
 
 @[expose] public section
@@ -78,29 +87,5 @@ theorem unitTime_prod_restrict_carrier
     simp
   rw [hcompl, Measure.prod_prod]
   simp [Measure.restrict_apply hA.compl]
-
-/-- The intensity integral over a measurable time window is its length
-times the mark integral. This is the product-measure input for joint
-increment characteristic functions. -/
-theorem integral_timeWindow_prod_mark
-    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
-    (ν : Measure ℝ) [SigmaFinite ν]
-    (S : Set unitInterval)
-    (f : ℝ → E) (hf : Integrable f ν) :
-    (∫ z in S ×ˢ Set.univ, f z.2
-      ∂((volume : Measure unitInterval).prod ν)) =
-      ((volume : Measure unitInterval) S).toReal • (∫ x, f x ∂ν) := by
-  rw [← Measure.prod_restrict, Measure.restrict_univ,
-    integral_prod _ (hf.comp_snd ((volume : Measure unitInterval).restrict S))]
-  simp [Measure.real]
-
-/-- A deterministic observation time carries no jump intensity, even
-when the mark intensity has infinite total mass. -/
-theorem unitTime_prod_singleton_time_zero
-    (ν : Measure ℝ) [SigmaFinite ν] (t : unitInterval) :
-    ((volume : Measure unitInterval).prod ν)
-      ({t} ×ˢ Set.univ) = 0 := by
-  rw [Measure.prod_prod]
-  simp
 
 end ProbabilityTheory

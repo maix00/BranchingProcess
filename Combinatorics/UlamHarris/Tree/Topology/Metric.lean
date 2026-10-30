@@ -35,20 +35,34 @@ instance is needed to use it.
 ## Public declarations
 
 - For one tree, `treeDist T T' = ((1 + heightCongr T T' : ℝ≥0∞)⁻¹).toReal`;
-  `treeDist_eq_zero_iff` characterizes equality, and `treeDist_ultra` states
+  `treeDist_self`, `treeDist_comm`, and `treeDist_nonneg` give the basic
+  metric laws; `treeDist_eq_zero_iff` characterizes equality, and
+  `treeDist_ultra` states
   `d(T₁,T₃) ≤ max (d(T₁,T₂)) (d(T₂,T₃))`.
 - `treeDist_lt_inv_iff` characterizes the metric threshold
   `d(T,T') < (1+n)⁻¹` by agreement through generation `n+1`, while
-  `truncationBall_eq_ball` identifies truncation balls with metric balls.
+  `mem_truncationBall_iff_treeDist_lt` and `truncationBall_eq_ball` identify
+  truncation balls of level `n+1` with metric balls of radius `(1+n)⁻¹`.
   `treeMetricTopology_eq_truncationTopology` identifies the induced topology
   with the truncation topology.
+- `treeMetricSpace`, `treeMetricTopology`, `dist_eq_treeDist`, and
+  `treeMetricSpace_isUltrametricDist` package this distance as a metric and
+  identify its distance function; `borel_treeMetricTopology_eq_borel_treeTruncationTopology`
+  and `cylinder_le_borel_treeMetricTopology` give its Borel comparisons.
+  The diameter bound is `treeDist_le_one`.
 - For root-indexed trees, `treeDist T T' = ⨆ r, treeDist (T r) (T' r)`;
-  `treeDist_ultra` gives the sup-metric ultrametric inequality, and
-  `metricTopology_eq_uniformTopology` identifies its topology with the uniform
-  truncation topology.
+  `treeDist_self`, `treeDist_comm`, `treeDist_nonneg`, `treeDist_le_one`,
+  `treeDist_ultra`, and `ext_of_zero_treeDist` give the sup-metric laws for any
+  root type. `mem_uniformBall_iff_treeDist_lt` characterizes uniform balls by
+  the sup distance. `metricSpace`, `metricTopology`, `dist_eq_treeDist`, and
+  `metricSpace_isUltrametricDist` package it as an ultrametric, while
+  `metricTopology_eq_uniformTopology` identifies the induced topology with
+  the uniform truncation topology. In the empty-root case the function space
+  is a singleton and the supremum distance is zero.
 - `borel_treeMetricTopology_eq_borel_treeTruncationTopology` and
   `borel_uniformTopology_eq_borel_metricTopology` transfer the corresponding
-  Borel structures; countable-basis hypotheses give the cylinder equalities.
+  Borel structures; `borel_metricTopology_eq_cylinder_of_countable_basis`
+  gives the cylinder equality from a countable measurable basis.
 -/
 
 @[expose] public section
@@ -81,7 +95,7 @@ theorem treeDist_nonneg (T T' : Tree α) : 0 ≤ treeDist T T' :=
   ENNReal.toReal_nonneg
 
 /-- The distance is zero exactly for equal trees. -/
-theorem ext_of_zero_treeDist {T T' : Tree α} (h : treeDist T T' = 0) :
+private theorem ext_of_zero_treeDist {T T' : Tree α} (h : treeDist T T' = 0) :
     T = T' := by
   rw [treeDist] at h
   rcases (ENNReal.toReal_eq_zero_iff _).1 h with h0 | htop
@@ -177,7 +191,7 @@ noncomputable def treeMetricSpace (α : Type*) [LT α] : MetricSpace (Tree α) w
   dist_triangle T1 T2 T3 :=
     le_trans (treeDist_ultra T1 T2 T3)
       (max_le_add_of_nonneg (treeDist_nonneg _ _) (treeDist_nonneg _ _))
-  eq_of_dist_eq_zero := fun h => ext_of_zero_treeDist h
+  eq_of_dist_eq_zero := fun h => (treeDist_eq_zero_iff _ _).mp h
 
 /-- The topology induced by the tree metric. It is identified with the
 truncation topology in `treeMetricTopology_eq_truncationTopology`. -/
@@ -259,7 +273,7 @@ theorem treeDist_le_one (T T' : UlamHarris.Tree α) : treeDist T T' ≤ 1 := by
   · rw [ENNReal.inv_le_one]
     simp
 
-theorem treeDist_le_inv_succ_of_lt_inv (S T : UlamHarris.Tree α) (n : ℕ)
+private lemma treeDist_le_inv_succ_of_lt_inv (S T : UlamHarris.Tree α) (n : ℕ)
     (h : treeDist S T < (1 + (n : ℝ))⁻¹) :
     treeDist S T ≤ (1 + ((n + 1 : ℕ) : ℝ))⁻¹ := by
   have hH : ((n + 1 : ℕ) : ℝ≥0∞) ≤ (heightCongr S T : ℝ≥0∞) := by
@@ -294,45 +308,52 @@ variable {Root α : Type*} [LT α]
 noncomputable def treeDist (T T' : RootIndexed.Tree Root α) : ℝ :=
   ⨆ r, UlamHarris.Tree.treeDist (T r) (T' r)
 
-theorem treeDist_bddAbove (T T' : RootIndexed.Tree Root α) :
+private lemma treeDist_bddAbove (T T' : RootIndexed.Tree Root α) :
     BddAbove (Set.range fun r : Root => UlamHarris.Tree.treeDist (T r) (T' r)) :=
   ⟨1, by rintro _ ⟨r, rfl⟩; exact UlamHarris.Tree.treeDist_le_one _ _⟩
 
-section NonemptyRoot
-
-variable [Nonempty Root]
+section RootIndexedMetric
 
 theorem treeDist_self (T : RootIndexed.Tree Root α) : treeDist T T = 0 := by
   rw [treeDist]
   simp only [UlamHarris.Tree.treeDist_self]
-  exact ciSup_const
+  by_cases h : Nonempty Root
+  · letI := h
+    exact ciSup_const
+  · letI : IsEmpty Root := not_nonempty_iff.mp h
+    simp
 
-omit [Nonempty Root] in
 theorem treeDist_comm (T T' : RootIndexed.Tree Root α) :
     treeDist T T' = treeDist T' T := by
   rw [treeDist, treeDist]
   exact congrArg _ (funext fun r => UlamHarris.Tree.treeDist_comm _ _)
 
-omit [Nonempty Root] in
 theorem treeDist_nonneg (T T' : RootIndexed.Tree Root α) : 0 ≤ treeDist T T' :=
   Real.iSup_nonneg fun _ => UlamHarris.Tree.treeDist_nonneg _ _
 
-theorem treeDist_le_one (T T' : RootIndexed.Tree Root α) : treeDist T T' ≤ 1 :=
-  (ciSup_le_iff (treeDist_bddAbove T T')).2 fun _ =>
-    UlamHarris.Tree.treeDist_le_one _ _
+theorem treeDist_le_one (T T' : RootIndexed.Tree Root α) : treeDist T T' ≤ 1 := by
+  by_cases h : Nonempty Root
+  · letI := h
+    exact (ciSup_le_iff (treeDist_bddAbove T T')).2 fun _ =>
+      UlamHarris.Tree.treeDist_le_one _ _
+  · letI : IsEmpty Root := not_nonempty_iff.mp h
+    simp [treeDist]
 
 theorem treeDist_ultra (T₁ T₂ T₃ : RootIndexed.Tree Root α) :
-    treeDist T₁ T₃ ≤ max (treeDist T₁ T₂) (treeDist T₂ T₃) :=
-  (ciSup_le_iff (treeDist_bddAbove T₁ T₃)).2 fun r =>
-    (UlamHarris.Tree.treeDist_ultra _ _ _).trans (max_le_max
-      (le_ciSup (treeDist_bddAbove T₁ T₂) r)
-      (le_ciSup (treeDist_bddAbove T₂ T₃) r))
+    treeDist T₁ T₃ ≤ max (treeDist T₁ T₂) (treeDist T₂ T₃) := by
+  by_cases h : Nonempty Root
+  · letI := h
+    exact (ciSup_le_iff (treeDist_bddAbove T₁ T₃)).2 fun r =>
+      (UlamHarris.Tree.treeDist_ultra _ _ _).trans (max_le_max
+        (le_ciSup (treeDist_bddAbove T₁ T₂) r)
+        (le_ciSup (treeDist_bddAbove T₂ T₃) r))
+  · letI : IsEmpty Root := not_nonempty_iff.mp h
+    simp [treeDist]
 
-omit [Nonempty Root] in
 theorem ext_of_zero_treeDist {T T' : RootIndexed.Tree Root α} (h : treeDist T T' = 0) :
     T = T' := by
   funext r
-  refine UlamHarris.Tree.ext_of_zero_treeDist
+  refine (UlamHarris.Tree.treeDist_eq_zero_iff _ _).mp
     (le_antisymm ?_ (UlamHarris.Tree.treeDist_nonneg _ _))
   rw [← h]
   exact le_ciSup (treeDist_bddAbove T T') r
@@ -341,16 +362,21 @@ theorem mem_uniformBall_iff_treeDist_lt (S T : RootIndexed.Tree Root α) (n : �
     S ∈ uniformBall T (n + 1) ↔ treeDist S T < (1 + (n : ℝ))⁻¹ := by
   constructor
   · intro hS
-    have hsup_le : treeDist S T ≤ (1 + ((n + 1 : ℕ) : ℝ))⁻¹ :=
-      (ciSup_le_iff (treeDist_bddAbove S T)).2 fun r =>
-        UlamHarris.Tree.treeDist_le_inv_succ_of_lt_inv (S r) (T r) n
-          ((UlamHarris.Tree.mem_truncationBall_iff_treeDist_lt (T r) (S r) n).1
-            (hS r))
-    exact lt_of_le_of_lt hsup_le (by
-      rw [inv_lt_inv₀ (a := 1 + ((n + 1 : ℕ) : ℝ)) (b := 1 + (n : ℝ))
-        (by positivity) (by positivity)]
-      rw [Nat.cast_add, Nat.cast_one]
-      linarith)
+    by_cases h : Nonempty Root
+    · letI := h
+      have hsup_le : treeDist S T ≤ (1 + ((n + 1 : ℕ) : ℝ))⁻¹ :=
+        (ciSup_le_iff (treeDist_bddAbove S T)).2 fun r =>
+          UlamHarris.Tree.treeDist_le_inv_succ_of_lt_inv (S r) (T r) n
+            ((UlamHarris.Tree.mem_truncationBall_iff_treeDist_lt (T r) (S r) n).1
+              (hS r))
+      exact lt_of_le_of_lt hsup_le (by
+        rw [inv_lt_inv₀ (a := 1 + ((n + 1 : ℕ) : ℝ)) (b := 1 + (n : ℝ))
+          (by positivity) (by positivity)]
+        rw [Nat.cast_add, Nat.cast_one]
+        linarith)
+    · letI : IsEmpty Root := not_nonempty_iff.mp h
+      simp [treeDist]
+      positivity
   · intro h r
     exact (UlamHarris.Tree.mem_truncationBall_iff_treeDist_lt (T r) (S r) n).2
       (lt_of_le_of_lt (le_ciSup (treeDist_bddAbove S T) r) h)
@@ -438,7 +464,7 @@ theorem metricTopology_eq_uniformTopology :
 
 end MetricTopology
 
-end NonemptyRoot
+end RootIndexedMetric
 
 end RootIndexed.Tree
 
@@ -447,7 +473,7 @@ namespace RootIndexed.Tree
 variable {Root α : Type*} [LT α]
 
 /-- The Borel σ-algebras of the uniform and metric topologies coincide. -/
-theorem borel_uniformTopology_eq_borel_metricTopology [Nonempty Root] :
+ theorem borel_uniformTopology_eq_borel_metricTopology :
     @borel (RootIndexed.Tree Root α)
         (metricTopology (Root := Root) (α := α)) =
       @borel (RootIndexed.Tree Root α)
@@ -456,8 +482,7 @@ theorem borel_uniformTopology_eq_borel_metricTopology [Nonempty Root] :
 
 /-- If the uniform topology has a countable basis of cylinder-measurable sets,
 then the Borel σ-algebra of the sup metric is the cylinder σ-algebra. -/
-theorem borel_metricTopology_eq_cylinder_of_countable_basis [Nonempty Root]
-    [Countable Root] [Countable α]
+theorem borel_metricTopology_eq_cylinder_of_countable_basis [Countable Root] [Countable α]
     {B : Set (Set (RootIndexed.Tree Root α))}
     (hB : TopologicalSpace.IsTopologicalBasis
       (t := uniformTopology (Root := Root) (α := α)) B)

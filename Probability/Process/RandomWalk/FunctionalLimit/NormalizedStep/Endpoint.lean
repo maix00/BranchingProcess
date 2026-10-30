@@ -18,6 +18,15 @@ Portmanteau transfers open or closed path corridors together with matching
 terminal intervals to the corresponding finite random-walk events.  The
 path-space Portmanteau input is supplied by the process layer; this file only
 identifies the normalized-step laws with horizontal-tube events.
+## Public declarations
+
+- `measure_centeredSkorokhodCorridorEndsIn_le_liminf_strictTubeEndsIn_of_functionalLimit`
+  gives the open-corridor lower bound for a strict tube whose normalized
+  terminal value lies in a prescribed open interval.
+- `limsup_weakTubeEndsIn_le_measure_centeredSkorokhodCorridorEndsIn_of_functionalLimit`
+  gives the matching closed-corridor upper bound for weak tubes with the same
+  endpoint constraint.
+
 -/
 
 open Filter MeasureTheory ProbabilityTheory

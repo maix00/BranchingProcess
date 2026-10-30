@@ -36,4 +36,4 @@ flow.
   ProbabilityTheory.BranchingRandomWalk.integral_selectedReserveSpineStep_observable
 
 #print axioms
-  ProbabilityTheory.BranchingRandomWalk.integral_selectedReserveSpineStep_firstRSelectedSlotPositivePotential
+  ProbabilityTheory.BranchingRandomWalk.integral_selectedReserveSpineStep_firstSelectedSlotPositivePotential

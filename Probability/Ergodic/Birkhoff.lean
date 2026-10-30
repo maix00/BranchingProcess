@@ -16,6 +16,9 @@ public import Mathlib.MeasureTheory.Integral.Lebesgue.Add
 public import Mathlib.Topology.Order.LiminfLimsup
 public import Mathlib.Topology.Algebra.Order.LiminfLimsup
 public import Mathlib.MeasureTheory.Measure.QuasiMeasurePreserving
+import Mathlib.Dynamics.BirkhoffSum.QuasiMeasurePreserving
+import MeasureTheory.Integral.MeasurePreserving
+import Order.Filter.LiminfLimsup
 
 
 /-!
@@ -32,16 +35,28 @@ This file also proves the supporting commutation lemma (`condExp` commutes with 
 measure-preserving composition) and the ergodic corollary (the limit is the space
 average `∫ g ∂μ`).
 
-## Main results
+## Public declarations
 
-* `ProbabilityTheory.condExp_invariants_comp`: the conditional expectation onto the invariant
-  σ-algebra commutes with composition by the measure-preserving map.
-* `ProbabilityTheory.ae_tendsto_orbit_div_atTop_zero`: for integrable `g`, the orbital tail
-  `n⁻¹ · g (T^[n] x)` tends to `0` almost everywhere.
-* `ProbabilityTheory.tendsto_birkhoffAverage_ae`: the pointwise ergodic theorem over a finite
-  measure. The finiteness hypothesis is necessary (see the theorem docstring).
-* `ProbabilityTheory.tendsto_birkhoffAverage_ae_integral`: the ergodic case over a probability
-  measure, where the a.e. limit is the space average `∫ g ∂μ`.
+Write $I=\operatorname{invariants}(T)$ and
+$A_n g(x)=\operatorname{birkhoffAverage}(\mathbb R,T,g,n,x)$.
+
+* `ProbabilityTheory.condExp_invariants_comp`: for the invariant σ-algebra `I`,
+  $\mathbb E[g\circ T\mid I]=\mathbb E[g\mid I]\circ T$ almost everywhere.
+* `ProbabilityTheory.ae_tendsto_orbit_div_atTop_zero`: if `g` is integrable and `T` preserves
+  `μ`, then $g(T^n x)/n\to0$ for almost every `x`.
+* `ProbabilityTheory.ae_forall_orbit_eq`: if $h\circ T=h$ almost everywhere and `T` preserves
+  `μ`, then $h(T^j x)=h(x)$ for every `j`, for almost every `x`.
+* `ProbabilityTheory.ae_bddAbove_birkhoffAverage`: for finite `μ` and integrable `g`, the
+  sequence $(A_{n+1}g(x))_{n\ge0}$ is bounded above for almost every `x`.
+* `ProbabilityTheory.integral_birkhoffAverage_eq`: for a complete real normed space `E`, if
+  `T` preserves `μ` and `g : X → E` is integrable, then
+  $\int A_{n+1}g\,d\mu=\int g\,d\mu$ for every $n\ge0$.
+* `ProbabilityTheory.measure_setOf_lt_limsup_eq_zero`: for finite `μ`, integrable `g`, and
+  $\varepsilon>0$, $\mu\{x:\mathbb E[g\mid I](x)+\varepsilon<\limsup_{n\to\infty}A_ng(x)\}=0$.
+* `ProbabilityTheory.tendsto_birkhoffAverage_ae`: for finite `μ` and integrable `g`,
+  $A_ng(x)\to\mathbb E[g\mid I](x)$ for almost every `x`.
+* `ProbabilityTheory.tendsto_birkhoffAverage_ae_integral`: in the ergodic probability case,
+  $A_ng(x)\to\int g\,d\mu$ for almost every `x`.
 
 ## References
 
@@ -169,7 +184,7 @@ private lemma tsum_measure_threshold_ne_top {δ : ℝ} (hδ : 0 < δ) {g : X →
       = {x | ((n : ℝ) + 1) * δ ≤ |g x|}.indicator (fun _ => (1 : ℝ≥0∞)) := by
     intro n
     funext x
-    simp only [Set.indicator, Set.mem_setOf_eq]
+    simp only [Set.indicator, Set.mem_ofPred_eq]
   have hae : ∀ n : ℕ, AEMeasurable
       (fun x => (if ((n : ℝ) + 1) * δ ≤ |g x| then (1 : ℝ≥0∞) else 0)) μ := by
     intro n
@@ -325,7 +340,7 @@ private lemma condExp_comp_invariants_eq [IsFiniteMeasure μ]
 /-- The conditional expectation `μ[g | invariants T]` is a.e. `T`-invariant:
 `(μ[g | invariants T]) ∘ T =ᵐ[μ] μ[g | invariants T]`. Combines
 `condExp_invariants_comp` with `condExp_comp_invariants_eq`. -/
-theorem condExp_invariants_comp_self [IsFiniteMeasure μ]
+private theorem condExp_invariants_comp_self [IsFiniteMeasure μ]
     (hT : MeasurePreserving T μ μ) (hTm : Measurable T) {g : X → ℝ} (hg : Integrable g μ) :
     (μ[g | MeasurableSpace.invariants T]) ∘ T =ᵐ[μ] μ[g | MeasurableSpace.invariants T] :=
   ((condExp_invariants_comp hT hTm hg).symm.trans (condExp_comp_invariants_eq hT hg))
@@ -369,7 +384,7 @@ private lemma mul_measure_le_setIntegral_maximal [IsFiniteMeasure μ]
   -- The maximal set for `g - c` equals `B`.
   have hset : {x | ∃ n : ℕ, 0 < birkhoffSum T (fun y => g y - c) (n + 1) x} = B := by
     ext x
-    simp only [Set.mem_setOf_eq, hBdef]
+    simp only [Set.mem_ofPred_eq, hBdef]
     exact exists_congr (fun n => birkhoffSum_sub_const_pos_iff c n x)
   have hgc : Integrable (fun y => g y - c) μ := hg.sub (integrable_const c)
   have hM1 := setIntegral_birkhoffSum_pos_nonneg hT hgc
@@ -430,10 +445,10 @@ theorem ae_bddAbove_birkhoffAverage [IsFiniteMeasure μ]
   -- Off the intersection, the range is bounded above.
   rw [ae_iff]
   refine measure_mono_null (fun x hx => ?_) hmeasInter
-  simp only [Set.mem_setOf_eq] at hx
+  simp only [Set.mem_ofPred_eq] at hx
   rw [Set.mem_iInter]
   intro k
-  simp only [hBdef, Set.mem_setOf_eq]
+  simp only [hBdef, Set.mem_ofPred_eq]
   by_contra hcon
   rw [not_exists] at hcon
   simp only [not_lt] at hcon
@@ -441,64 +456,43 @@ theorem ae_bddAbove_birkhoffAverage [IsFiniteMeasure μ]
     obtain ⟨n, rfl⟩ := hy
     exact hcon n⟩
 
-/-! ### A real-analysis helper: `limsup` is insensitive to a vanishing perturbation -/
+/-! ### Integrals of Birkhoff averages -/
 
-/-- If two bounded real sequences differ by a sequence tending to `0`, their `limsup`s
-(along `atTop`) coincide. Bound `u ≤ v + δ` eventually and use `limsup_add_const`. -/
-theorem limsup_eq_of_sub_tendsto_zero {u v : ℕ → ℝ}
-    (hau : BddAbove (Set.range u)) (hbu : BddBelow (Set.range u))
-    (hav : BddAbove (Set.range v)) (hbv : BddBelow (Set.range v))
-    (h : Tendsto (fun n => u n - v n) atTop (𝓝 0)) :
-    Filter.limsup u atTop = Filter.limsup v atTop := by
-  have bau : IsBoundedUnder (· ≤ ·) atTop u := hau.isBoundedUnder_of_range
-  have bbu : IsBoundedUnder (· ≥ ·) atTop u := hbu.isBoundedUnder_of_range
-  have bav : IsBoundedUnder (· ≤ ·) atTop v := hav.isBoundedUnder_of_range
-  have bbv : IsBoundedUnder (· ≥ ·) atTop v := hbv.isBoundedUnder_of_range
-  have cou : IsCoboundedUnder (· ≤ ·) atTop u := bbu.isCoboundedUnder_le
-  have cov : IsCoboundedUnder (· ≤ ·) atTop v := bbv.isCoboundedUnder_le
-  -- One direction (then apply symmetrically).
-  have key : ∀ (a b : ℕ → ℝ), BddBelow (Set.range a) →
-      IsBoundedUnder (· ≤ ·) atTop b → IsCoboundedUnder (· ≤ ·) atTop b →
-      Tendsto (fun n => a n - b n) atTop (𝓝 0) →
-      Filter.limsup a atTop ≤ Filter.limsup b atTop := by
-    intro a b hba bab cob hab
-    have coa : IsCoboundedUnder (· ≤ ·) atTop a :=
-      hba.isBoundedUnder_of_range.isCoboundedUnder_le
-    have hle : ∀ δ : ℝ, 0 < δ → Filter.limsup a atTop ≤ Filter.limsup b atTop + δ := by
-      intro δ hδ
-      have heq : Filter.limsup (fun n => b n + δ) atTop = Filter.limsup b atTop + δ :=
-        limsup_add_const atTop b δ bab cob
-      rw [← heq]
-      have hbab' : IsBoundedUnder (· ≤ ·) atTop (fun n => b n + δ) := by
-        obtain ⟨M, hM⟩ := bab
-        refine ⟨M + δ, ?_⟩
-        simp only [eventually_map] at hM ⊢
-        filter_upwards [hM] with n hn
-        exact by linarith
-      refine Filter.limsup_le_limsup ?_ coa hbab'
-      -- eventually `a n ≤ b n + δ`, since `a n - b n → 0`.
-      have hev : ∀ᶠ n in atTop, a n - b n < δ := by
-        obtain ⟨N, hN⟩ := (Metric.tendsto_atTop.1 hab) δ hδ
-        filter_upwards [eventually_atTop.2 ⟨N, fun n hn => hN n hn⟩] with n hn
-        rw [Real.dist_eq, sub_zero] at hn
-        exact (abs_lt.1 hn).2
-      filter_upwards [hev] with n hn
-      change a n ≤ b n + δ
-      linarith
-    -- Let δ ↓ 0.
-    by_contra hcon
-    rw [not_le] at hcon
-    have := hle ((Filter.limsup a atTop - Filter.limsup b atTop) / 2) (by linarith)
-    linarith
-  apply le_antisymm
-  · exact key u v hbu bav cov h
-  · refine key v u hbv bau cou ?_
-    have heq2 : (fun n => v n - u n) = (fun n => -(u n - v n)) := by funext n; ring
-    rw [heq2]
-    simpa using h.neg
+/-- For an integrable function with values in a complete real normed space, every
+positive-time Birkhoff average has the same Bochner integral as the function:
+`∫ x, birkhoffAverage ℝ T g (n+1) x ∂μ = ∫ x, g x ∂μ`. -/
+theorem integral_birkhoffAverage_eq {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [CompleteSpace E] (hT : MeasurePreserving T μ μ) {g : X → E}
+    (hg : Integrable g μ) (n : ℕ) :
+    ∫ x, birkhoffAverage ℝ T g (n + 1) x ∂μ = ∫ x, g x ∂μ := by
+  have hcomp (j : ℕ) :
+      ∫ x, g (T^[j] x) ∂μ = ∫ x, g x ∂μ := by
+    have hmp : MeasurePreserving (T^[j]) μ μ := hT.iterate j
+    have hgmap : AEStronglyMeasurable g (Measure.map (T^[j]) μ) := by
+      rw [hmp.map_eq]
+      exact hg.aestronglyMeasurable
+    have hmap := integral_map hmp.aemeasurable (f := g) hgmap
+    rw [hmp.map_eq] at hmap
+    exact hmap.symm
+  have hsum : ∫ x, birkhoffSum T g (n + 1) x ∂μ
+      = ((n + 1 : ℕ) : ℝ) • ∫ x, g x ∂μ := by
+    simp only [birkhoffSum]
+    rw [integral_finsetSum (f := fun k x => g (T^[k] x)) _
+      (fun j _ => (hT.iterate j).integrable_comp_of_integrable hg)]
+    rw [Finset.sum_congr rfl (fun j _ => hcomp j), Finset.sum_const, Finset.card_range,
+      Nat.cast_smul_eq_nsmul]
+  have hba : ∫ x, birkhoffAverage ℝ T g (n + 1) x ∂μ
+      = ((n + 1 : ℕ) : ℝ)⁻¹ • ∫ x, birkhoffSum T g (n + 1) x ∂μ := by
+    rw [show (fun x => birkhoffAverage ℝ T g (n + 1) x)
+        = fun x => ((n + 1 : ℕ) : ℝ)⁻¹ • birkhoffSum T g (n + 1) x from rfl,
+      integral_smul]
+  rw [hba, hsum, smul_smul]
+  have hne : ((n + 1 : ℕ) : ℝ) ≠ 0 := by positivity
+  rw [Nat.cast_add, Nat.cast_one] at hne ⊢
+  rw [inv_mul_cancel₀ hne, one_smul]
 
 /-- Almost every orbit has Birkhoff averages bounded below (apply `ae_bddAbove` to `-g`). -/
-theorem ae_bddBelow_birkhoffAverage [IsFiniteMeasure μ]
+private theorem ae_bddBelow_birkhoffAverage [IsFiniteMeasure μ]
     (hT : MeasurePreserving T μ μ) {g : X → ℝ} (hg : Integrable g μ) :
     ∀ᵐ x ∂μ, BddBelow (Set.range (fun n : ℕ => birkhoffAverage ℝ T g (n + 1) x)) := by
   filter_upwards [ae_bddAbove_birkhoffAverage hT hg.neg] with x hx
@@ -534,7 +528,9 @@ private lemma limsup_birkhoffAverage_comp_ae [IsFiniteMeasure μ]
   -- Reduce to limsup of the shifted (n+1) sequences.
   rw [← limsup_nat_add (fun n => birkhoffAverage ℝ T g n (T x)) 1,
     ← limsup_nat_add (fun n => birkhoffAverage ℝ T g n x) 1]
-  apply limsup_eq_of_sub_tendsto_zero hbAT hbBT hbA hbB
+  apply Filter.limsup_eq_of_sub_tendsto_zero
+    hbAT.isBoundedUnder_of_range hbBT.isBoundedUnder_of_range
+    hbA.isBoundedUnder_of_range hbB.isBoundedUnder_of_range
   -- The difference of the two (n+1) sequences tends to `0`.
   have hdiff : (fun n : ℕ => birkhoffAverage ℝ T g (n + 1) (T x)
       - birkhoffAverage ℝ T g (n + 1) x)
@@ -598,7 +594,9 @@ theorem measure_setOf_lt_limsup_eq_zero [IsFiniteMeasure μ]
   have hLseq : Ls =ᵐ[μ] Ls₀ := by
     -- The birkhoff sums of `g` and `g₀` agree a.e. for all `n` simultaneously.
     have hall : ∀ᵐ x ∂μ, ∀ n : ℕ, birkhoffSum T g n x = birkhoffSum T g₀ n x :=
-      ae_all_iff.2 (fun n => birkhoffSum_congr_ae hT hgg₀ n)
+      ae_all_iff.2 (fun n =>
+        MeasureTheory.Measure.QuasiMeasurePreserving.birkhoffSum_ae_eq_of_ae_eq
+          hT.quasiMeasurePreserving hgg₀ n)
     filter_upwards [hall] with x hx
     simp only [hLsdef, hLs₀def, birkhoffAverage]
     congr 1; funext n; rw [hx n]
@@ -608,10 +606,10 @@ theorem measure_setOf_lt_limsup_eq_zero [IsFiniteMeasure μ]
     nullMeasurableSet_lt (hLmeas.aemeasurable.add_const ε) hLsaem
   -- `E` is a.e. `T`-invariant.
   have hEinv : T ⁻¹' E =ᵐ[μ] E := by
-    rw [Filter.eventuallyEq_set]
+    rw [Filter.eventuallyEqSet_iff]
     filter_upwards [hLinv, hLsinv] with x hLx hLsx
     simp only [Function.comp] at hLx hLsx
-    simp only [Set.mem_preimage, hEdef, Set.mem_setOf_eq, hLx, hLsx]
+    simp only [Set.mem_preimage, hEdef, Set.mem_ofPred_eq, hLx, hLsx]
   -- Extract a genuinely invariant `I`-measurable set `E'` with `E' =ᵐ E`.
   obtain ⟨E', hE'm, hE'eq, hE'inv⟩ :=
     hT.quasiMeasurePreserving.exists_preimage_eq_of_preimage_ae hEnull hEinv
@@ -656,14 +654,14 @@ theorem measure_setOf_lt_limsup_eq_zero [IsFiniteMeasure μ]
     ring
   -- `Bφ =ᵐ E'`.
   have hBφE' : Bφ =ᵐ[μ] E' := by
-    rw [Filter.eventuallyEq_set]
+    rw [Filter.eventuallyEqSet_iff]
     filter_upwards [hSφ, hE'eq, hLseq, ae_bddBelow_birkhoffAverage hT hg]
       with x hSφx hE'x hLsx hbb
     constructor
     · -- `Bφ ⊆ E'` (genuine): off `E'`, all partial sums vanish.
       intro hxB
       by_contra hxE'
-      simp only [hBφdef, Set.mem_setOf_eq] at hxB
+      simp only [hBφdef, Set.mem_ofPred_eq] at hxB
       obtain ⟨n, hn⟩ := hxB
       have hzero : birkhoffSum T φ (n + 1) x = 0 := by
         simp only [birkhoffSum]
@@ -688,7 +686,7 @@ theorem measure_setOf_lt_limsup_eq_zero [IsFiniteMeasure μ]
       obtain ⟨m, hm⟩ := (hfreq.and_eventually (eventually_ge_atTop 1)).exists
       obtain ⟨p, rfl⟩ : ∃ p, m = p + 1 := ⟨m - 1, by omega⟩
       have hmg : L x + ε < birkhoffAverage ℝ T g (p + 1) x := hm.1
-      simp only [hBφdef, Set.mem_setOf_eq]
+      simp only [hBφdef, Set.mem_ofPred_eq]
       refine ⟨p, ?_⟩
       rw [hSφx p hxE']
       -- `A_{p+1}(g) x > L x + ε` iff `S_{p+1}(g) x > (p+1)(L x + ε)`.
@@ -746,13 +744,13 @@ private lemma limsup_le_condExp_ae [IsFiniteMeasure μ]
   -- The set where `Ls > L` is contained in their union, hence null.
   rw [ae_iff]
   refine measure_mono_null (fun x hx => ?_) (measure_iUnion_null hnull)
-  simp only [Set.mem_setOf_eq, not_le] at hx
+  simp only [Set.mem_ofPred_eq, not_le] at hx
   rw [Set.mem_iUnion]
   -- `L x < Ls x` gives some `k` with `L x + 1/(k+1) < Ls x`.
   obtain ⟨k, hk⟩ := exists_nat_gt (1 / (Ls x - L x))
   have hkpos : (0 : ℝ) < (k : ℝ) + 1 := by positivity
   refine ⟨k, ?_⟩
-  simp only [Set.mem_setOf_eq]
+  simp only [Set.mem_ofPred_eq]
   have hdiff : (0 : ℝ) < Ls x - L x := by linarith
   rw [div_lt_iff₀ hdiff] at hk
   have : (1 / ((k : ℝ) + 1)) < Ls x - L x := by

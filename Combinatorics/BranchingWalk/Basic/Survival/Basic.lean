@@ -11,6 +11,8 @@ public import Combinatorics.BranchingWalk.Basic.Genealogy.Descendant
 /-!
 # Realized particle sets
 
+## Public declarations
+
 The particles realized by present parent-child links in a branching walk and
 their generation-indexed slices. Here “surviving” means realized in the
 genealogy; it does not mean that a particle has descendants at arbitrarily

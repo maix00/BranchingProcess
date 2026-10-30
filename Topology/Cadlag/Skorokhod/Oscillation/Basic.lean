@@ -9,6 +9,7 @@ module
 public import Topology.Cadlag.Skorokhod.Topology
 public import Topology.Cadlag.Skorokhod.Corridor.Basic
 public import Topology.Cadlag.Skorokhod.Path.Scaling
+public import Topology.MetricSpace.Oscillation
 
 /-!
 # Oscillation tubes in Skorokhod path space
@@ -16,6 +17,17 @@ public import Topology.Cadlag.Skorokhod.Path.Scaling
 The oscillation of a path is invariant under time changes in the Skorokhod
 `J₁` metric. A strict bound is represented with an explicit uniform margin,
 which makes its openness visible in the definition.
+
+## Public declarations
+
+- `Metric.OscillationBounded f b` means `dist (f s) (f t) ≤ b` for every pair
+  of times; `oscillationInOpenTube b` imposes this bound with a positive
+  margin below `b`. Positive spatial scaling rescales the width, and the set
+  is open and Borel.
+- rangeOscillationLe b is the non-strict bound on the diameter of the path
+  range; this set is closed and lies in every strictly wider oscillation tube.
+- A path with range in a closed interval of length less than b belongs to
+  oscillationInOpenTube b.
 -/
 
 open scoped ENNReal
@@ -24,15 +36,10 @@ open scoped ENNReal
 
 namespace Skorokhod
 
-/-- A path has oscillation at most `bound` if every pair of its values differs
-by at most `bound`. -/
-def OscillationBounded (path : CadlagPath unitInterval ℝ) (bound : ℝ) : Prop :=
-  ∀ s t, |path s - path t| ≤ bound
-
 /-- The strict oscillation tube of width `width`, represented by a positive
 uniform margin below that width. -/
 def oscillationInOpenTube (width : ℝ) : Set (CadlagPath unitInterval ℝ) :=
-  {path | ∃ margin > 0, OscillationBounded path (width - margin)}
+  {path | ∃ margin > 0, Metric.OscillationBounded path (width - margin)}
 
 /-- Positive spatial scaling pulls an oscillation tube back to the tube with
 width divided by the scale. -/
@@ -46,8 +53,9 @@ theorem mem_oscillationInOpenTube_scalePath_iff
   · rintro ⟨margin, hmargin, hosc⟩
     refine ⟨margin / scale, div_pos hmargin hscale, ?_⟩
     intro s t
-    have h := hosc s t
-    change |scale * path s - scale * path t| ≤ width - margin at h
+    have hdist := hosc s t
+    have h : |scale * path s - scale * path t| ≤ width - margin := by
+      simpa [Real.dist_eq] using hdist
     have habs : |scale * path s - scale * path t| =
         scale * |path s - path t| := by
       rw [show scale * path s - scale * path t =
@@ -55,16 +63,20 @@ theorem mem_oscillationInOpenTube_scalePath_iff
     rw [habs] at h
     have hscaled : |path s - path t| ≤ (width - margin) / scale :=
       (le_div_iff₀ hscale).2 (by nlinarith [h])
-    simpa [sub_div] using hscaled
+    have hscaled' : dist (path s) (path t) ≤ (width - margin) / scale := by
+      simpa [Real.dist_eq] using hscaled
+    simpa [sub_div] using hscaled'
   · rintro ⟨margin, hmargin, hosc⟩
     refine ⟨scale * margin, mul_pos hscale hmargin, ?_⟩
     intro s t
-    have h := hosc s t
+    have h : dist (path s) (path t) ≤ width / scale - margin := hosc s t
+    have hscaleDist : dist (scale * path s) (scale * path t) =
+        scale * dist (path s) (path t) := by
+      simp [Real.dist_eq, abs_mul, abs_of_pos hscale,
+        show scale * path s - scale * path t = scale * (path s - path t) by ring]
     calc
-      |scale * path s - scale * path t| =
-          scale * |path s - path t| := by
-            rw [show scale * path s - scale * path t =
-              scale * (path s - path t) by ring, abs_mul, abs_of_pos hscale]
+      dist (scale * path s) (scale * path t) =
+          scale * dist (path s) (path t) := hscaleDist
       _ ≤ scale * (width / scale - margin) :=
           mul_le_mul_of_nonneg_left h hscale.le
       _ = width - scale * margin := by field_simp [ne_of_gt hscale]
@@ -93,10 +105,11 @@ theorem isOpen_oscillationInOpenTube (width : ℝ) :
     TimeChange.act_apply, Real.dist_eq, abs_lt] at hs
   rw [edist_dist, ENNReal.ofReal_lt_ofReal_iff hradius,
     TimeChange.act_apply, Real.dist_eq, abs_lt] at ht
-  have hpath := hosc (change s) (change t)
+  have hpathDist := hosc (change s) (change t)
+  have hpath : |path (change s) - path (change t)| ≤ width - margin := by
+    simpa [Real.dist_eq] using hpathDist
   have htri := abs_sub_le (other s) (path (change s)) (path (change t))
   have htri' := abs_sub_le (other s) (path (change t)) (other t)
-  change _ ≤ width - margin / 2
   have hs' : |other s - path (change s)| < margin / 4 := by
     rcases hs with ⟨hs₁, hs₂⟩
     dsimp [radius] at hs₁ hs₂
@@ -117,7 +130,9 @@ theorem isOpen_oscillationInOpenTube (width : ℝ) :
       _ ≤ |other s - path (change s)| +
             |path (change s) - path (change t)| +
             |path (change t) - other t| := by linarith [htri]
-  nlinarith [hsum, hs', hpath, ht']
+  have hoscOther : |other s - other t| ≤ width - margin / 2 := by
+    nlinarith [hsum, hs', hpath, ht']
+  simpa [Real.dist_eq] using hoscOther
 
 theorem measurableSet_oscillationInOpenTube (width : ℝ) :
     MeasurableSet (oscillationInOpenTube width) :=
@@ -125,7 +140,7 @@ theorem measurableSet_oscillationInOpenTube (width : ℝ) :
 
 /-- Paths whose range has diameter at most `width`. -/
 def rangeOscillationLe (width : ℝ) : Set (CadlagPath unitInterval ℝ) :=
-  {path | OscillationBounded path width}
+  {path | Metric.OscillationBounded path width}
 
 /-- The non-strict range-oscillation event is closed for the Skorokhod `J₁`
 topology. -/
@@ -133,13 +148,16 @@ theorem isClosed_rangeOscillationLe (width : ℝ) :
     IsClosed (rangeOscillationLe width) := by
   rw [← isOpen_compl_iff, isOpen_iff_forall_mem_open]
   intro path hpath
-  change ¬ ∀ s t, |path s - path t| ≤ width at hpath
+  change ¬ Metric.OscillationBounded path width at hpath
+  change ¬ ∀ s t, dist (path s) (path t) ≤ width at hpath
   push Not at hpath
   obtain ⟨s, t, hbad⟩ := hpath
+  have hbadAbs : width < |path s - path t| := by
+    simpa [Real.dist_eq] using hbad
   let ε : ℝ := (|path s - path t| - width) / 3
   have hε : 0 < ε := by
     dsimp [ε]
-    linarith
+    linarith [hbadAbs]
   refine ⟨Metric.ball path ε, ?_, Metric.isOpen_ball,
     Metric.mem_ball_self hε⟩
   intro other hother
@@ -167,7 +185,8 @@ theorem isClosed_rangeOscillationLe (width : ℝ) :
     simpa [Real.dist_eq] using hpoint
   have hnot : other ∉ rangeOscillationLe width := by
     intro hosc
-    have hmiddle := hosc s' t'
+    have hmiddle : |other s' - other t'| ≤ width := by
+      simpa [Metric.OscillationBounded, Real.dist_eq] using hosc s' t'
     have htriangle :
         |path s - path t| ≤
           |path s - other s'| + |other s' - other t'| +
@@ -196,7 +215,7 @@ theorem isClosed_rangeOscillationLe (width : ℝ) :
           gcongr
         _ = 2 * ε + width := by ring
     dsimp [ε] at hle
-    linarith
+    linarith [hbadAbs]
   exact hnot
 
 /-- A path confined to a closed interval has oscillation at most the
@@ -214,7 +233,9 @@ theorem rangeInClosedInterval_subset_oscillationInOpenTube
   have hosc : |path s - path t| ≤ upper - lower := by
     rw [abs_le]
     constructor <;> linarith
-  change |path s - path t| ≤ upper - lower + margin - margin
+  have hosc' : dist (path s) (path t) ≤ upper - lower := by
+    simpa [Real.dist_eq] using hosc
+  change dist (path s) (path t) ≤ upper - lower + margin - margin
   linarith
 
 /-- A closed range-oscillation bound is contained in every strictly wider
@@ -225,6 +246,8 @@ theorem rangeOscillationLe_subset_oscillationInOpenTube
   intro path hpath
   refine ⟨margin, hmargin, ?_⟩
   intro s t
-  linarith [hpath s t]
+  have h : dist (path s) (path t) ≤ width := hpath s t
+  change dist (path s) (path t) ≤ width + margin - margin
+  linarith
 
 end Skorokhod

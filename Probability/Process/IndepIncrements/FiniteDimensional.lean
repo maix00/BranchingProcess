@@ -20,6 +20,8 @@ import MeasureTheory.Function.FinPartialSum
 /-!
 # Finite-dimensional laws from independent increments
 
+## Public declarations
+
 The public declarations in this file concern processes valued in a measurable
 additive commutative group `E` with measurable addition:
 

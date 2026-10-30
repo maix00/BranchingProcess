@@ -7,15 +7,17 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.Kernel.Killed.Return.Basic
-public import Probability.Kernel.Survival.Return
+public import Probability.Kernel.Survival.Return.Basic
 
 /-!
 # Uniform iteration bounds for killed return kernels
 
+## Public declarations
+
 These estimates turn uniform one-block return mass into lower bounds for
-iterated return kernels and for the ambient killed walk. They apply to every
-filtered family of real interval scales and do not depend on a Mogulskii
-normalization or a moment assumption.
+iterated return kernels and for the ambient killed walk. Along the filter, the
+scale need only be positive at indices where the one-block estimate is used.
+The results do not depend on a Mogulskii normalization or a moment assumption.
 
 For scale $s_i>0$, let $R_i$ be the return kernel formed from the walk killed
 outside $[s_i a,s_i b]$, with return interval $[s_i c,s_i d]$ and block length
@@ -31,11 +33,13 @@ where $K_i$ is the killed-walk kernel and $x\in[c,d]$.
 The public declarations in `ProbabilityTheory.RandomWalk` are:
 
 - `eventually_pow_le_remainingMass_returnKernel_Icc_of_normalized`: a
-  uniform row bound on a scaled return interval gives the corresponding power
-  lower bound for repeated return blocks.
+  uniform row bound, paired eventually with a proof that the scale is
+  positive, gives the corresponding power lower bound for repeated return
+  blocks.
 - `eventually_pow_succ_div_le_remainingMass_killedIncrementKernel_Icc`: a
-  one-block return bound controls killed-walk survival for arbitrary elapsed
-  time, with one additional block for the terminal remainder.
+  one-block return bound, paired eventually with positive scale and block
+  length, controls killed-walk survival for arbitrary elapsed time, with one
+  additional block for the terminal remainder.
 - `eventually_natCast_mul_log_le_log_remainingMass_killedIncrementKernel_Icc`:
   the same arbitrary-time bound in extended-real logarithmic form.
 -/
@@ -53,15 +57,15 @@ theorem eventually_pow_le_remainingMass_returnKernel_Icc_of_normalized
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (outerLower outerUpper returnLower returnUpper : ℝ)
     (scale : ι → ℝ) (length iterations : ι → ℕ) (lowerBound : ENNReal)
-    (hscale : ∀ i, 0 < scale i)
-    (hblock : ∀ᶠ i in l, ∀ x : Set.Icc returnLower returnUpper,
-      lowerBound ≤ returnKernel ν
+    (hblock : ∀ᶠ i in l, ∃ hscale : 0 < scale i,
+      ∀ x : Set.Icc returnLower returnUpper,
+        lowerBound ≤ returnKernel ν
         (Set.Icc (scale i * outerLower) (scale i * outerUpper)) measurableSet_Icc
         (Set.Icc (scale i * returnLower) (scale i * returnUpper)) measurableSet_Icc
         (length i)
         ⟨scale i * x, by
           constructor <;> nlinarith [x.property.1, x.property.2,
-            hscale i]⟩ univ) :
+            hscale]⟩ univ) :
     ∀ᶠ i in l,
       ∀ x : Set.Icc (scale i * returnLower) (scale i * returnUpper),
         lowerBound ^ iterations i ≤ Kernel.remainingMass
@@ -70,27 +74,36 @@ theorem eventually_pow_le_remainingMass_returnKernel_Icc_of_normalized
             (Set.Icc (scale i * returnLower) (scale i * returnUpper)) measurableSet_Icc
             (length i)) (iterations i) x := by
   filter_upwards [hblock] with i hi
+  obtain ⟨hscale, hi⟩ := hi
   intro x
-  apply pow_le_remainingMass_returnKernel
-  intro state
-  let normalized : Set.Icc returnLower returnUpper :=
-    ⟨(state : ℝ) / scale i, by
-      constructor
-      · exact (le_div_iff₀ (hscale i)).2
-          (by simpa [mul_comm] using state.property.1)
-      · exact (div_le_iff₀ (hscale i)).2
-          (by simpa [mul_comm] using state.property.2)⟩
-  have hrow := hi normalized
-  have hstate : state =
-      (⟨scale i * normalized, by
-        constructor <;> nlinarith [normalized.property.1,
-          normalized.property.2, hscale i]⟩ :
-        Set.Icc (scale i * returnLower) (scale i * returnUpper)) := by
-    apply Subtype.ext
-    dsimp [normalized]
-    field_simp [(hscale i).ne']
-  rw [hstate]
-  exact hrow
+  let K := returnKernel ν
+    (Set.Icc (scale i * outerLower) (scale i * outerUpper)) measurableSet_Icc
+    (Set.Icc (scale i * returnLower) (scale i * returnUpper)) measurableSet_Icc
+    (length i)
+  have hrow : ∀ state : Set.Icc (scale i * returnLower)
+      (scale i * returnUpper),
+      lowerBound ≤ Kernel.remainingMass K 1 state := by
+    intro state
+    let normalized : Set.Icc returnLower returnUpper :=
+      ⟨(state : ℝ) / scale i, by
+        constructor
+        · exact (le_div_iff₀ hscale).2
+            (by simpa [mul_comm] using state.property.1)
+        · exact (div_le_iff₀ hscale).2
+            (by simpa [mul_comm] using state.property.2)⟩
+    have hrow := hi normalized
+    have hstate : state =
+        (⟨scale i * normalized, by
+          constructor <;> nlinarith [normalized.property.1,
+            normalized.property.2, hscale]⟩ :
+          Set.Icc (scale i * returnLower) (scale i * returnUpper)) := by
+      apply Subtype.ext
+      dsimp [normalized]
+      field_simp [hscale.ne']
+    rw [hstate]
+    simpa [Kernel.remainingMass, K] using hrow
+  simpa [K] using Kernel.pow_le_remainingMass_mul
+    K 1 (iterations i) x lowerBound hrow
 
 /-- A normalized uniform return estimate controls ambient killed-walk
 survival for every total duration.  The exponent contains one additional
@@ -100,16 +113,16 @@ theorem eventually_pow_succ_div_le_remainingMass_killedIncrementKernel_Icc
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (outerLower outerUpper returnLower returnUpper : ℝ)
     (scale : ι → ℝ) (length total : ι → ℕ) (lowerBound : ENNReal)
-    (hscale : ∀ i, 0 < scale i)
     (hlength : ∀ᶠ i in l, 0 < length i)
-    (hblock : ∀ᶠ i in l, ∀ x : Set.Icc returnLower returnUpper,
-      lowerBound ≤ returnKernel ν
+    (hblock : ∀ᶠ i in l, ∃ hscale : 0 < scale i,
+      ∀ x : Set.Icc returnLower returnUpper,
+        lowerBound ≤ returnKernel ν
         (Set.Icc (scale i * outerLower) (scale i * outerUpper)) measurableSet_Icc
         (Set.Icc (scale i * returnLower) (scale i * returnUpper)) measurableSet_Icc
         (length i)
         ⟨scale i * x, by
           constructor <;> nlinarith [x.property.1, x.property.2,
-            hscale i]⟩ univ) :
+            hscale]⟩ univ) :
     ∀ᶠ i in l,
       ∀ x : Set.Icc (scale i * returnLower) (scale i * returnUpper),
         lowerBound ^ (total i / length i + 1) ≤ Kernel.remainingMass
@@ -117,6 +130,7 @@ theorem eventually_pow_succ_div_le_remainingMass_killedIncrementKernel_Icc
             (Set.Icc (scale i * outerLower) (scale i * outerUpper))
             measurableSet_Icc) (total i) x := by
   filter_upwards [hlength, hblock] with i hlengthPos hi
+  obtain ⟨hscale, hi⟩ := hi
   intro x
   apply Kernel.pow_succ_div_le_remainingMass_of_returnKernel
     (killedIncrementKernel ν
@@ -127,19 +141,19 @@ theorem eventually_pow_succ_div_le_remainingMass_killedIncrementKernel_Icc
   let normalized : Set.Icc returnLower returnUpper :=
     ⟨(state : ℝ) / scale i, by
       constructor
-      · exact (le_div_iff₀ (hscale i)).2
+      · exact (le_div_iff₀ hscale).2
           (by simpa [mul_comm] using state.property.1)
-      · exact (div_le_iff₀ (hscale i)).2
+      · exact (div_le_iff₀ hscale).2
           (by simpa [mul_comm] using state.property.2)⟩
   have hrow := hi normalized
   have hstate : state =
       (⟨scale i * normalized, by
         constructor <;> nlinarith [normalized.property.1,
-          normalized.property.2, hscale i]⟩ :
+          normalized.property.2, hscale]⟩ :
         Set.Icc (scale i * returnLower) (scale i * returnUpper)) := by
     apply Subtype.ext
     dsimp [normalized]
-    field_simp [(hscale i).ne']
+    field_simp [hscale.ne']
   rw [hstate]
   exact hrow
 
@@ -150,16 +164,16 @@ theorem eventually_natCast_mul_log_le_log_remainingMass_killedIncrementKernel_Ic
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (outerLower outerUpper returnLower returnUpper : ℝ)
     (scale : ι → ℝ) (length total : ι → ℕ) (lowerBound : ENNReal)
-    (hscale : ∀ i, 0 < scale i)
     (hlength : ∀ᶠ i in l, 0 < length i)
-    (hblock : ∀ᶠ i in l, ∀ x : Set.Icc returnLower returnUpper,
-      lowerBound ≤ returnKernel ν
+    (hblock : ∀ᶠ i in l, ∃ hscale : 0 < scale i,
+      ∀ x : Set.Icc returnLower returnUpper,
+        lowerBound ≤ returnKernel ν
         (Set.Icc (scale i * outerLower) (scale i * outerUpper)) measurableSet_Icc
         (Set.Icc (scale i * returnLower) (scale i * returnUpper)) measurableSet_Icc
         (length i)
         ⟨scale i * x, by
           constructor <;> nlinarith [x.property.1, x.property.2,
-            hscale i]⟩ univ) :
+            hscale]⟩ univ) :
     ∀ᶠ i in l,
       ∀ x : Set.Icc (scale i * returnLower) (scale i * returnUpper),
         ((total i / length i + 1 : ℕ) : EReal) * ENNReal.log lowerBound ≤
@@ -170,7 +184,7 @@ theorem eventually_natCast_mul_log_le_log_remainingMass_killedIncrementKernel_Ic
   have hprobability :=
     eventually_pow_succ_div_le_remainingMass_killedIncrementKernel_Icc
       ν outerLower outerUpper returnLower returnUpper scale length total
-      lowerBound hscale hlength hblock
+      lowerBound hlength hblock
   filter_upwards [hprobability] with i hi
   intro x
   rw [← ENNReal.log_pow]

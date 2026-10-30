@@ -6,8 +6,13 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Rate.Partition.Finite
-public import Probability.Process.RandomWalk.Path.Corridor.FiniteCover
+public import Probability.Distributions.Gaussian.Interval
+public import Probability.Distributions.Moments.Real
+public import Probability.Process.RandomWalk.Path.Corridor.Horizontal.Core
+public import Probability.Sequence.IID.Basic
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Scale.Basic
+import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Rate.Partition.Finite
+import all Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Rate.Partition.Lemmas.FiniteCover
 
 /-!
 # Mogulskii lower rate from an interval cover
@@ -17,12 +22,25 @@ internal compactness device.  This file constructs it from the return
 interval, so public rate statements need only geometric conditions on that
 interval and a Gaussian-product inequality throughout its shrunken interior.
 
-The public declaration is:
+## Public declarations
+
+The declaration is:
 
 - `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.exists_lowerRate_horizontalTubeProbability_of_IccCover`:
   a strict Gaussian-product bound throughout a shrunken return interval gives
   $p\in(0,1]$ and $C>0$ with
   $((mC)^{-1})\log p\leq\liminf_n(a_n^2/n)\log\mathbb P(T_n)$.
+
+This finite-cover formulation packages the horizontal-tube lower-rate
+argument of A. A. Mogul'skii, Theorem 3, Section 4, p. 764, “Small
+deviations in the sample function space,” *Teoriya Veroyatnostei i ee
+Primeneniya* 19(4) (1974), 755--765; English translation, “Small Deviations
+in a Space of Trajectories,” *Theory of Probability and Its Applications*
+19(4) (1975), 726--736, DOI 10.1137/1119081. The corresponding finite-variance
+estimate appears in Wang Yiyang, *Asymptotic Speed of the N-Branching Random
+Walk with Infinite Offspring* (master's thesis, Fudan University, 2026),
+Chapter 3, Lemma 3.1(i). This interval-cover interface is a derived form of
+those arguments, not a separately numbered result in either source.
 -/
 
 @[expose] public section
@@ -40,7 +58,6 @@ theorem exists_lowerRate_horizontalTubeProbability_of_IccCover
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (hν : IsCenteredUnitSecondMoment ν)
     {scale : ℕ → ℝ} (hscale : IsMogulskiiScale scale)
-    (hscalePos : ∀ n, 0 < scale n)
     {constant : ℝ} (hconstant : 0 < constant)
     {blocks : ℕ} (hblocks : 0 < blocks)
     {a returnLower returnUpper coverMargin : ℝ}
@@ -89,7 +106,7 @@ theorem exists_lowerRate_horizontalTubeProbability_of_IccCover
   obtain ⟨y, hy, _⟩ := hcover returnLower ⟨le_rfl, hlowerUpper⟩
   have hreferences : references.Nonempty := ⟨y, hy⟩
   apply exists_lowerRate_horizontalTubeProbability_of_linearReturn
-    ν hν hscale hscalePos hconstant hblocks ha0 ha1 hreturnZero
+    ν hν hscale hconstant hblocks ha0 ha1 hreturnZero
     hendpointMargin hblockRadius references hreferences hcover hreference
   · intro z hz
     have hzInterior := hreference z hz

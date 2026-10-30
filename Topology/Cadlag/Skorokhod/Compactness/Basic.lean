@@ -9,9 +9,28 @@ module
 public import Mathlib.Topology.Compactness.Compact
 public import Topology.Cadlag.Skorokhod.Oscillation.Partition.Measurability
 public import Topology.Cadlag.Skorokhod.Oscillation.Partition.Existence
+import all Topology.Cadlag.Skorokhod.EDistance.Basic
 
 /-!
 # Compact families of fixed-partition step paths
+
+## Public declarations
+
+- `Skorokhod.OscillationPartition.edist_stepPath_le`: for a fixed finite
+  partition, `edist (stepPath v) (stepPath w) ≤ edist v w`.
+- `Skorokhod.OscillationPartition.continuous_stepPath`: the fixed-partition
+  map `v ↦ stepPath v` is continuous into `J₁` path space.
+- `Skorokhod.OscillationPartition.isCompact_stepPath_image`: compact value
+  sets `K` give a compact image `stepPath '' Set.pi Set.univ (fun _ => K)`.
+- `Skorokhod.isBounded_pathRange_of_isCompact`: if `K` is compact in the
+  `J₁` path space over a metric state space and `base` is a state, then some
+  `R ≥ 0` satisfies `dist (path t) base ≤ R` for every `path ∈ K` and time `t`.
+- `Skorokhod.exists_uniform_admitsOscillationPartition_of_isCompact`: for
+  compact `K`, if `∀ f ∈ K, ∃ δ > 0, f ∈ admitsOscillationPartition δ M`,
+  then `∃ δ₀ > 0, ∀ f ∈ K, f ∈ admitsOscillationPartition δ₀ M`.
+- `Skorokhod.exists_uniform_admitsOscillationPartition_of_isCompact_of_pos`:
+  for compact `K` of real paths and `ε > 0`, there is `δ₀ > 0` such that
+  `∀ f ∈ K, f ∈ admitsOscillationPartition δ₀ ε`.
 
 For a fixed finite time partition, the map from its finite vector of values to
 the associated càdlàg step path is nonexpansive from the supremum metric to
@@ -76,66 +95,40 @@ theorem OscillationPartition.isCompact_stepPath_image
   apply (isCompact_univ_pi fun _ => hK).image
   exact partition.continuous_stepPath
 
-def zeroPath : CadlagPath unitInterval ℝ :=
-  ⟨fun _ => 0, by simp⟩
-
-private lemma TimeChange.act_zeroPath (change : TimeChange) :
-    change.act zeroPath = zeroPath := by
-  ext t
-  simp [zeroPath, TimeChange.act_apply]
-
-/-- The `J₁` distance from a path to zero is its uniform distance from zero.
-Every time change preserves the range of a path, and the identity time change
-has zero distortion. -/
-theorem j1EDist_eq_uniformEDist_zero (path : CadlagPath unitInterval ℝ) :
-    j1EDist path zeroPath = uniformEDist path zeroPath := by
-  apply le_antisymm
-  · calc
-      j1EDist path zeroPath ≤ j1Cost path zeroPath TimeChange.refl :=
-        j1EDist_le_cost path zeroPath TimeChange.refl
-      _ = uniformEDist path zeroPath := by simp [j1Cost]
-  · unfold j1EDist
-    refine le_iInf fun change => ?_
-    change uniformEDist path zeroPath ≤
-      max (ENNReal.ofReal change.distortion)
-        (uniformEDist (change.act path) zeroPath)
-    rw [← change.act_zeroPath, uniformEDist_act]
-    exact le_max_right _ _
-
-/-- A compact family in Skorokhod space has uniformly bounded path ranges.
-The range seminorm is exactly the `J₁` distance to the zero path. -/
+/-- A compact family in Skorokhod space stays within a bounded distance of
+any fixed state-space point. -/
 theorem isBounded_pathRange_of_isCompact
-    {K : Set (CadlagPath unitInterval ℝ)} (hK : IsCompact K) :
+    {E : Type*} [MetricSpace E] {K : Set (CadlagPath unitInterval E)}
+    (hK : IsCompact K) (base : E) :
     ∃ bound : ℝ, 0 ≤ bound ∧
-      ∀ path ∈ K, ∀ t : unitInterval, |path t| ≤ bound := by
+      ∀ path ∈ K, ∀ t : unitInterval, dist (path t) base ≤ bound := by
   by_cases hEmpty : K = ∅
   · refine ⟨0, le_rfl, ?_⟩
     simp [hEmpty]
   · have hNonempty : K.Nonempty := Set.nonempty_iff_ne_empty.mpr hEmpty
     have hBounded : Bornology.IsBounded K := hK.isBounded
     obtain ⟨bound, hClosedBall⟩ :=
-      (Metric.isBounded_iff_subset_closedBall zeroPath).mp hBounded
+      (Metric.isBounded_iff_subset_closedBall (CadlagPath.const base)).mp hBounded
     have hboundNonneg : 0 ≤ bound := by
       obtain ⟨path, hpath⟩ := hNonempty
       have hdist := Metric.mem_closedBall.mp (hClosedBall hpath)
       exact le_trans dist_nonneg hdist
     refine ⟨bound, hboundNonneg, ?_⟩
     intro path hpath t
-    have hdistPath : dist path zeroPath ≤ bound :=
+    have hdistPath : dist path (CadlagPath.const base) ≤ bound :=
       Metric.mem_closedBall.mp (hClosedBall hpath)
-    have hpoint : edist (path t) 0 ≤ edist path zeroPath := by
+    have hpoint : edist (path t) base ≤ edist path (CadlagPath.const base) := by
       calc
-        edist (path t) 0 ≤ uniformEDist path zeroPath :=
-          edist_apply_le_uniformEDist path zeroPath t
-        _ = j1EDist path zeroPath :=
-          (j1EDist_eq_uniformEDist_zero path).symm
-        _ = edist path zeroPath := edist_cadlagPath_eq_j1EDist path zeroPath
-    have hpoint' : dist (path t) 0 ≤ dist path zeroPath := by
+        edist (path t) base ≤ uniformEDist path (CadlagPath.const base) :=
+          edist_apply_le_uniformEDist path (CadlagPath.const base) t
+        _ = j1EDist path (CadlagPath.const base) :=
+          (j1EDist_const_right_eq_uniformEDist path base).symm
+        _ = edist path (CadlagPath.const base) :=
+          edist_cadlagPath_eq_j1EDist path (CadlagPath.const base)
+    have hpoint' : dist (path t) base ≤ dist path (CadlagPath.const base) := by
       rw [edist_dist, edist_dist] at hpoint
       exact (ENNReal.ofReal_le_ofReal_iff dist_nonneg).mp hpoint
-    rw [Real.dist_eq] at hpoint'
-    simpa only [sub_zero, abs_of_nonneg (abs_nonneg _)] using
-      (le_trans hpoint' hdistPath)
+    exact le_trans hpoint' hdistPath
 
 /-- On a compact path family, a pathwise oscillation-partition bound can be
 made uniform. This isolates the compactness step from the separate theorem

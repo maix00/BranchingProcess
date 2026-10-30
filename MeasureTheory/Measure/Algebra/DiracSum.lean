@@ -20,6 +20,20 @@ Mathlib already defines the counting measure as
 lemmas `Measure.sum_smul_dirac` and `Measure.map_eq_sum`. The one shape used by
 this file is an indexed family of optional points: absent slots contribute zero,
 while repeated present points retain their multiplicity.
+
+## Public declarations
+
+* `MeasureTheory.Measure.iOptionDiracSum f = ∑ i, (f i).elim 0 dirac` defines
+  the measure of an option-valued family; `measurable_option_dirac` states that the
+  one-slot map `Option X → Measure X` is measurable.
+* `MeasureTheory.Measure.iOptionDiracSum_apply` gives its value on a measurable
+  set `s` as
+  `∑' i, 1` over the present points lying in `s`.
+* `MeasureTheory.Measure.iOptionDiracSum_measurable` proves measurability of
+  the full measure-valued map for countable index types.
+* `MeasureTheory.Measure.iOptionDiracSum_isIntegerValued` states that every
+  measurable set receives a natural-number mass or `∞`, with multiplicity
+  retained.
 -/
 
 @[expose] public section

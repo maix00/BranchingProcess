@@ -12,6 +12,8 @@ public import Combinatorics.UlamHarris.Generation
 /-!
 # Descendant relations
 
+## Public declarations
+
 For particles `p = (r,u)` and `q = (s,v)`, `IsDescendant β p q` is the
 relation `∃ t, q = (r, u ++ t) ∧ surviveAlong (β.step r) u t`.
 `isDescendant_refl` and `isDescendant_trans` prove reflexivity and

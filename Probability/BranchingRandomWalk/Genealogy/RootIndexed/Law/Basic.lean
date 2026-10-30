@@ -10,18 +10,20 @@ public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Field.Positi
 public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Field.Filtration
 public import Combinatorics.BranchingWalk.Step.Measurability
 public import Combinatorics.BranchingWalk.StepField
-public import Probability.BranchingRandomWalk.Step.Law.Field
+public import Probability.BranchingProcess.Offspring.FieldLaw
 public import Mathlib.Probability.Independence.InfinitePi
 public import Combinatorics.BranchingWalk.Step.Basic
 
 /-!
 # Product laws on root-indexed step fields
 
-In namespace `ProbabilityTheory.BranchingRandomWalk`, the public declarations
+## Public declarations
+
+In namespace `ProbabilityTheory.BranchingRandomWalk`, the declarations below
 provide these laws and marginals:
 
 - `RootIndexed.stepFieldLaw (Root := Root) μ` is
-  the product law $\bigotimes_{r : Root}\operatorname{stepFieldLaw}(\mu)$ on
+  the product law $\bigotimes_{r : Root}\operatorname{offspringFieldLaw}(\mu)$ on
   root-indexed fields.
 - `RootIndexed.stepFieldLaw.isProbabilityMeasure` states that this product
   law is a probability measure when `μ` is one.
@@ -33,19 +35,19 @@ provide these laws and marginals:
 - `RootIndexed.stepFieldLaw_mapMarks μ f hf` states that mapping every mark
   by measurable `f` sends the root product law to the product law of
   `μ.map (Step.map f)`, that is,
-  `map (fun field r => StepField.map f (field r)) (stepFieldLaw μ) =
-  stepFieldLaw (μ.map (Step.map f))`.
+  `map (fun field r => StepField.map f (field r)) (offspringFieldLaw μ) =
+  offspringFieldLaw (μ.map (Step.map f))`.
 - `RootIndexed.StepField.measurable_reindexCoordinates f` proves
   measurability of coordinate reindexing; for injective `f`,
   `RootIndexed.stepFieldLaw_reindexCoordinates μ f hf` preserves the law.
 - `RootIndexed.stepFieldLaw_coordinates_independent μ` states
-  `iIndep (fun (r,u) field => field r u) (stepFieldLaw μ)` for a probability
+  `iIndep (fun (r,u) field => field r u) (offspringFieldLaw μ)` for a probability
   measure `μ`; `RootIndexed.stepFieldLaw_roots_independent μ` gives the
   corresponding mutual independence of the complete root fields.
 - `RootIndexed.stepFieldLaw_root_marginal μ r` has pushforward law
   `map (fun field => field r)
   (RootIndexed.stepFieldLaw (Root := Root) μ) =
-  ProbabilityTheory.BranchingRandomWalk.stepFieldLaw μ`;
+  ProbabilityTheory.BranchingProcess.offspringFieldLaw μ`;
   `RootIndexed.stepFieldLaw_coordinate_marginal μ r u` states
   `map (fun field => field r u)
   (RootIndexed.stepFieldLaw (Root := Root) μ) = μ`.
@@ -85,6 +87,8 @@ open MeasureTheory ProbabilityTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
+open ProbabilityTheory.BranchingProcess (offspringFieldLaw offspringFieldLaw_coordinate offspringFieldLaw_independent offspringFieldLaw_mapMarks)
+
 open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 
 noncomputable def RootIndexed.stepFieldLaw
@@ -92,7 +96,7 @@ noncomputable def RootIndexed.stepFieldLaw
     (μ : Measure (Step α X)) :
     Measure (RootIndexed.StepField Root α X) :=
   Measure.infinitePi (fun _ : Root =>
-    ProbabilityTheory.BranchingRandomWalk.stepFieldLaw (α := α) (X := X) μ)
+    ProbabilityTheory.BranchingProcess.offspringFieldLaw (α := α) (Mark := X) μ)
 
 instance RootIndexed.stepFieldLaw.isProbabilityMeasure
     {Root α X : Type*} [MeasurableSpace X]
@@ -112,7 +116,7 @@ theorem RootIndexed.stepFieldLaw_reindex
   unfold RootIndexed.stepFieldLaw
   exact Measure.map_infinitePi_infinitePi_of_inj
     (P := fun _ : Root =>
-      ProbabilityTheory.BranchingRandomWalk.stepFieldLaw (α := α) (X := X) μ)
+      ProbabilityTheory.BranchingProcess.offspringFieldLaw (α := α) (Mark := X) μ)
       (f := f) hf
 
 /-- Mapping child marks commutes with the independent product over roots. -/
@@ -129,21 +133,21 @@ theorem RootIndexed.stepFieldLaw_mapMarks
   unfold RootIndexed.stepFieldLaw
   calc
     _ = Measure.infinitePi (fun _ : Root =>
-        (_root_.ProbabilityTheory.BranchingRandomWalk.stepFieldLaw μ).map
+        (_root_.ProbabilityTheory.BranchingProcess.offspringFieldLaw μ).map
           (_root_.Combinatorics.Branching.StepField.map f)) := by
           exact Measure.infinitePi_map_pi
             (μ := fun _ : Root =>
-              _root_.ProbabilityTheory.BranchingRandomWalk.stepFieldLaw μ)
+              _root_.ProbabilityTheory.BranchingProcess.offspringFieldLaw μ)
             (f := fun (_ : Root)
                 (field : _root_.Combinatorics.Branching.StepField α Mark) =>
               _root_.Combinatorics.Branching.StepField.map f field)
             (hf := fun (_ : Root) =>
               _root_.Combinatorics.Branching.StepField.map_measurable hf)
     _ = Measure.infinitePi (fun _ : Root =>
-        _root_.ProbabilityTheory.BranchingRandomWalk.stepFieldLaw
+        _root_.ProbabilityTheory.BranchingProcess.offspringFieldLaw
           (μ.map (Step.map f))) := by
           apply Measure.eq_infinitePi (μ := fun _ : Root =>
-            _root_.ProbabilityTheory.BranchingRandomWalk.stepFieldLaw
+            _root_.ProbabilityTheory.BranchingProcess.offspringFieldLaw
               (μ.map (Step.map f)))
           intro s t ht
           rw [Measure.infinitePi_pi _ (fun i _ => ht i)]
@@ -151,8 +155,8 @@ theorem RootIndexed.stepFieldLaw_mapMarks
           intro r hr
           exact congrArg (fun ν : Measure
               (_root_.Combinatorics.Branching.StepField α Mark') => ν (t r))
-            (ProbabilityTheory.BranchingRandomWalk.stepFieldLaw_mapMarks
-              μ f hf).symm
+            (ProbabilityTheory.BranchingProcess.offspringFieldLaw_mapMarks
+              μ f hf)
 
 /-- Coordinate reindexing is measurable for arbitrary root and slot types. -/
 theorem RootIndexed.StepField.measurable_reindexCoordinates
@@ -206,7 +210,7 @@ theorem RootIndexed.stepFieldLaw_reindexCoordinates
                 Measure.infinitePi
                   (fun _ : Root × TreeNode α => μ) by
               simpa only [RootIndexed.stepFieldLaw,
-                ProbabilityTheory.BranchingRandomWalk.stepFieldLaw,
+                ProbabilityTheory.BranchingProcess.offspringFieldLaw,
                 ProbabilityTheory.BranchingProcess.offspringFieldLaw,
                 uncurryRoot] using
                 (Measure.infinitePi_map_curry_symm
@@ -220,7 +224,7 @@ theorem RootIndexed.stepFieldLaw_reindexCoordinates
           uncurryNewRoot := by
             symm
             simpa only [RootIndexed.stepFieldLaw,
-              ProbabilityTheory.BranchingRandomWalk.stepFieldLaw,
+              ProbabilityTheory.BranchingProcess.offspringFieldLaw,
               ProbabilityTheory.BranchingProcess.offspringFieldLaw,
               uncurryNewRoot] using
               (Measure.infinitePi_map_curry_symm
@@ -237,8 +241,7 @@ theorem RootIndexed.stepFieldLaw_coordinates_independent
       (fun (p : Root × TreeNode α)
         (ω : RootIndexed.StepField Root α X) => ω p.1 p.2)
       (RootIndexed.stepFieldLaw (Root := Root) μ) := by
-    unfold RootIndexed.stepFieldLaw _root_.ProbabilityTheory.BranchingRandomWalk.stepFieldLaw
-      _root_.ProbabilityTheory.BranchingProcess.offspringFieldLaw
+    unfold RootIndexed.stepFieldLaw _root_.ProbabilityTheory.BranchingProcess.offspringFieldLaw
     simpa using (iIndepFun_uncurry_infinitePi'
       (μ := fun (_ : Root) (_ : TreeNode α) => μ)
       (X := fun (_ : Root) (_ : TreeNode α) => id)
@@ -250,12 +253,12 @@ theorem RootIndexed.stepFieldLaw_root_marginal
     {Root α X : Type*} [MeasurableSpace X]
     (μ : Measure (Step α X)) [IsProbabilityMeasure μ] (r : Root) :
     (RootIndexed.stepFieldLaw (Root := Root) μ).map (fun ω => ω r) =
-      ProbabilityTheory.BranchingRandomWalk.stepFieldLaw
-        (α := α) (X := X) μ := by
+      ProbabilityTheory.BranchingProcess.offspringFieldLaw
+        (α := α) (Mark := X) μ := by
   simpa [RootIndexed.stepFieldLaw] using
     (Measure.infinitePi_map_eval
-      (fun _ : Root => ProbabilityTheory.BranchingRandomWalk.stepFieldLaw
-        (α := α) (X := X) μ) r)
+      (fun _ : Root => ProbabilityTheory.BranchingProcess.offspringFieldLaw
+        (α := α) (Mark := X) μ) r)
 
 /-- Every root/address coordinate has the original one-step law. -/
 theorem RootIndexed.stepFieldLaw_coordinate_marginal
@@ -275,7 +278,7 @@ theorem RootIndexed.stepFieldLaw_coordinate_marginal
     _ = μ := by
       rw [RootIndexed.stepFieldLaw_root_marginal
           (Root := Root) (α := α) μ r,
-        stepFieldLaw_coordinate (α := α) μ u]
+        offspringFieldLaw_coordinate (α := α) μ u]
 
 /-- The complete pre-sampled fields carried by distinct roots are mutually
 independent. Consequently every finite injective family of root observations
@@ -289,8 +292,8 @@ theorem RootIndexed.stepFieldLaw_roots_independent
       (RootIndexed.stepFieldLaw (Root := Root) μ) := by
   unfold RootIndexed.stepFieldLaw
   simpa using (iIndepFun_infinitePi
-    (P := fun _ : Root => ProbabilityTheory.BranchingRandomWalk.stepFieldLaw
-      (α := α) (X := X) μ)
+    (P := fun _ : Root => ProbabilityTheory.BranchingProcess.offspringFieldLaw
+      (α := α) (Mark := X) μ)
     (X := fun _ => id) (fun _ => measurable_id))
 
 /-- A one-step event of probability one holds simultaneously at every address
@@ -361,7 +364,7 @@ theorem finiteRootStepFieldLaw_root_marginal
     (μ : Measure (Step α X)) [IsProbabilityMeasure μ]
     {m : ℕ} (i : Fin m) :
     (finiteRootStepFieldLaw μ m).map (fun ω => ω i) =
-      stepFieldLaw (α := α) μ := by
+      offspringFieldLaw (α := α) μ := by
   exact RootIndexed.stepFieldLaw_root_marginal
     (Root := Fin m) (α := α) μ i
 
@@ -379,7 +382,7 @@ theorem finiteRootStepFieldLaw_coordinate_marginal
             · exact measurable_pi_apply u
             · exact measurable_pi_apply i
     _ = μ := by rw [finiteRootStepFieldLaw_root_marginal μ i,
-      stepFieldLaw_coordinate μ u]
+      offspringFieldLaw_coordinate μ u]
 
 theorem finiteRootStepFieldLaw_roots_independent
     {α X : Type*} [MeasurableSpace X]

@@ -16,6 +16,17 @@ The first successful fixed-age population supplies a finite family of new
 subtree roots.  An abstract linear order on addresses gives a canonical
 enumeration; no child slot is distinguished.  A caller-provided family is
 used off the success event, so the selector remains total.
+## Public declarations
+
+* `rootFamily` enumerates the first `N` nodes of a finite population, using a
+  supplied total fallback when the population has fewer than `N` nodes.
+  `roots` applies this choice to the first successful trial.
+* `roots_of_firstSuccess_eq` identifies the selected roots on a successful
+  trial; `roots_injective` and `roots_depth` give injectivity and generation.
+* `roots_fiber_adapted` proves measurability of every selected-root fiber,
+  `roots_range_countable` proves countability of its range, and
+  `roots_mem_population_of_firstSuccess_eq` places the selected addresses in
+  the successful generation.
 -/
 
 @[expose] public section

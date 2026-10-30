@@ -12,8 +12,30 @@ public import Mathlib.MeasureTheory.Group.Arithmetic
 /-!
 # Increment paths of random walks
 
-This module gives the process realization and finite histories used by the
-random-walk probability theory. The underlying additive path arithmetic is in
+## Public declarations
+
+- `positionProcess x n ξ` is the position
+  \(X_n(ξ)=x+\sum_{j<n}ξ_j\). `positionProcess_zero` and
+  `positionProcess_succ` state (X_0=x) and (X_{n+1}=X_n+ξ_n).
+- `displacement_measurable`, `measurable_natAdd`,
+  `positionProcess_measurable`, and `positionProcess_path_measurable` give
+  measurability of accumulated displacements, deterministic shifts, and the
+  position process under the stated measurable-addition assumptions.
+- `history n x ξ` is the finite path on `Fin (n + 1)`.
+  `history_eq_fromIncrements` identifies it with the corresponding
+  coordinates of the infinite path, and `history_apply` states
+  \(H_n(i)=x+\operatorname{displacement}(i.\mathrm{val},ξ)\).
+  `history_zero`, `history_last`, and `history_restart` give its initial value,
+  terminal value, and restart identity; `history_measurable` and
+  `history_joint_measurable` prove measurability.
+- `prependHistory x tail` adds an initial coordinate to a finite path, and
+  `incrementTail ξ j = ξ (j + 1)`. `prependHistory_zero`,
+  `prependHistory_succ`, `prependHistory_joint_measurable`, and
+  `incrementTail_measurable` state their coordinate and measurability
+  properties. `history_succ` gives the first-step decomposition of a finite
+  history into the initial point followed by the shifted path.
+
+The underlying additive path arithmetic is in
 `Algebra.BigOperators.AdditivePath`.
 -/
 
@@ -76,6 +98,13 @@ def history (n : ℕ) (initial : E) (increment : ℕ → E) :
     history n initial increment =
       fun k : Fin (n + 1) => AdditivePath.fromIncrements initial increment k :=
   AdditivePath.finitePrefix_restrict_eq_fromIncrements initial increment
+
+@[simp] theorem history_apply (n : ℕ) (initial : E) (increment : ℕ → E)
+    (i : Fin (n + 1)) :
+    history n initial increment i =
+      initial + AdditivePath.displacement i.val increment := by
+  rw [history_eq_fromIncrements]
+  rfl
 
 @[simp] theorem history_zero (n : ℕ) (initial : E) (increment : ℕ → E) :
     history n initial increment 0 = initial := by

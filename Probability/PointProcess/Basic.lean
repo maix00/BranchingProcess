@@ -33,6 +33,12 @@ The corresponding random `Step` adapter belongs to the branching random walk
 and lives in `Probability/BranchingRandomWalk/Step/PointMeasure/Process.lean`. This
 file keeps only the measure-theoretic core, so nothing below it depends on
 slot order, roots, trees, or a selection rule.
+
+## Public declarations
+
+- `PointProcess Ω E 𝒜` is a measurable map $\omega\mapsto\nu_\omega$ into
+  measures on $E$, with each $\nu_\omega$ integer-valued and finite on every
+  $s\in\mathcal A$.
 -/
 
 open MeasureTheory

@@ -12,6 +12,8 @@ public import Mathlib.Probability.Independence.Basic
 /-!
 # Independence of continuous paths from dense evaluations
 
+## Public declarations
+
 The public theorem in this file is:
 
 - `ProbabilityTheory.IndepFun.of_indep_finiteEvaluation`:

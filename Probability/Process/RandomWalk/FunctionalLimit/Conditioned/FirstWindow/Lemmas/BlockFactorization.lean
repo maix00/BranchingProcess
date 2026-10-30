@@ -6,18 +6,20 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.FirstWindow.Definition
-public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Survival.Conditioning
-public import Probability.Process.RandomWalk.Path.Block.Law.Basic
-public import Probability.Sequence.IID.Basic
-import Probability.Sequence.IID.Blocks.StoppingTime
+import all Probability.Process.RandomWalk.FunctionalLimit.Conditioned.FirstWindow.Lemmas.PrefixEvent
+import Combinatorics.Sequence.Block
+import Probability.Sequence.Block
+import Probability.Sequence.Filtration
+import Probability.Sequence.IID.Basic
 import Probability.Sequence.IID.Blocks.Consecutive
 
 /-!
 # First-window block factorization lemmas
 
-The declaration in this module is a proof-specific lemma for the
-finite-dimensional first-window law:
+## Internal proof declarations
+
+The following package-internal lemma supports the finite-dimensional
+first-window law:
 
 - `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.measure_firstWindow_block_union_eq_tsum`
   sums the disjoint fixed-start
@@ -31,7 +33,7 @@ argument related to Vladislav Vysotsky, *Positivity of integrated random
 walks*, Section 3.1, equation (17), DOI 10.1214/12-AIHP487.
 -/
 
-@[expose] public section
+section
 
 open MeasureTheory ProbabilityTheory
 open scoped ENNReal

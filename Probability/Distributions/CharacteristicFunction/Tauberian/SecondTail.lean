@@ -8,11 +8,19 @@ module
 public import Probability.Distributions.Moments.Truncated.TailIntegral
 public import Analysis.Fourier.CosineTauberian.Inversion
 public import Probability.Distributions.CharacteristicFunction.CosineDefect
-public import Mathlib.MeasureTheory.Integral.IntervalIntegral.IntegrationByParts
-public import Mathlib.MeasureTheory.Integral.DominatedConvergence
+import Mathlib.MeasureTheory.Integral.IntervalIntegral.IntegrationByParts
+import Mathlib.MeasureTheory.Integral.DominatedConvergence
 
 /-!
 # Twice-integrated tails and cosine defects
+
+## Public declarations
+
+- `secondTailIntegral_twoSidedTail_eq_cappedCubic` represents the second
+  integral of a two-sided tail as the expectation of a capped cubic function.
+- `secondTailIntegral_eq_cosineDefect_kernel` identifies that second-tail
+  integral with the cosine defect integrated against the inverse-cosine
+  Tauberian kernel, for every probability measure and positive scale.
 
 This module connects two-sided tails to the cosine defect of their measure.
 For an increment law's squared-modulus characteristic defect, the relevant

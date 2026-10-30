@@ -27,6 +27,23 @@ then applies Portmanteau to any stated path-law limit.
 The block-range interface also records that finite source oscillation bounds
 imply the corresponding range bound for the normalized càdlàg block path, and
 transfers this event inclusion to the block-path law.
+## Public declarations
+
+For outer index $n$, block length $\ell_n$ and spatial scale $a_n$, this
+module encodes the block path $t\mapsto S_{\lfloor t\ell_n\rfloor}/a_n$ and
+its law under the i.i.d. increment sequence.
+
+- `normalizedStepBlockCadlagPathIcc` and `normalizedStepBlockPathLaw` define
+  that path family and its probability law.
+- The `..._iff` and `..._apply` theorems identify its open and closed
+  corridor, endpoint, and range events with the corresponding finite block
+  events under the increment law.
+- `limsup_horizontalTubeProbability_le_of_normalizedStepBlockPathLimit`
+  transfers a block-path limit to a tube-probability upper bound;
+  `tendsto_measure_normalizedStepBlockPathLaw_of_null_frontier` gives the
+  corresponding event-probability convergence when the limit boundary is
+  null.
+
 -/
 
 open Filter MeasureTheory ProbabilityTheory Set

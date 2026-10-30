@@ -18,6 +18,25 @@ root-indexed product law, and every indicator has the same marginal law.
 
 Countability is used only to observe the cardinality of a finite population.
 Neither the root type nor the family of trials is required to be countable.
+## Public declarations
+
+* `successSet` is the one-root fixed-age population-size event, and
+  `successEvent` is its pullback to a root-indexed field. Their membership and
+  measurability interfaces are `successEvent_eq_preimage`,
+  `measurableSet_successSet`, `measurableSet_successEvent_adapted`, and
+  `measurableSet_successEvent`.
+* `successIndicator` and `failureEvent` encode trial outcomes as measurable
+  Boolean observations; their pointwise, fiber, and measurability statements
+  are `successIndicator_eq_true_iff`, `successIndicator_eq_false_iff`,
+  `successIndicator_preimage_true`, `successIndicator_measurable`,
+  `successIndicator_root_preimage_true`,
+  `successIndicator_root_preimage_false`, and
+  `measurableSet_failureEvent`.
+* For injectively assigned roots, `successIndicators_independent` and
+  `successEvents_independent` give independence of the trial outcomes.
+  `measure_successEvent`, `measure_failureEvent`, and
+  `measure_iInter_failureEvent` identify their common marginal and finite
+  failure probabilities.
 -/
 
 open MeasureTheory ProbabilityTheory
@@ -221,7 +240,7 @@ theorem measure_successEvent
     (μ : Measure (Step α X)) [IsProbabilityMeasure μ] :
     RootIndexed.stepFieldLaw (Root := Root) μ
         (successEvent R root duration target i) =
-      ProbabilityTheory.BranchingRandomWalk.stepFieldLaw
+      ProbabilityTheory.BranchingProcess.offspringFieldLaw
         (α := α) μ (successSet R duration target) := by
   have heval : Measurable
       (fun ω : RootIndexed.StepField Root α X => ω (root i)) :=
@@ -239,7 +258,7 @@ theorem measure_failureEvent
     (μ : Measure (Step α X)) [IsProbabilityMeasure μ] :
     RootIndexed.stepFieldLaw (Root := Root) μ
         (failureEvent R root duration target i) =
-      1 - ProbabilityTheory.BranchingRandomWalk.stepFieldLaw
+      1 - ProbabilityTheory.BranchingProcess.offspringFieldLaw
         (α := α) μ (successSet R duration target) := by
   rw [failureEvent, measure_compl
     (measurableSet_successEvent R hR root duration target i) (by finiteness),
@@ -255,7 +274,7 @@ theorem measure_iInter_failureEvent
     [IsProbabilityMeasure μ] (s : Finset I) :
     RootIndexed.stepFieldLaw (Root := Root) μ
         (⋂ i ∈ s, failureEvent R root duration target i) =
-      (1 - ProbabilityTheory.BranchingRandomWalk.stepFieldLaw
+      (1 - ProbabilityTheory.BranchingProcess.offspringFieldLaw
         (α := α) μ (successSet R duration target)) ^ s.card := by
   have h := iIndepFun.measure_inter_preimage_eq_mul
     (successIndicators_independent R hR root hroot duration target μ)

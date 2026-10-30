@@ -11,7 +11,7 @@ public import Mathlib.Probability.BrownianMotion.Basic
 /-!
 # Nonatomic Brownian marginals
 
-The public theorem in this file is:
+## Public declarations
 
 - `ProbabilityTheory.IsPreBrownianReal.ae_eval_ne`:
   for $t>0$ and $a\in\mathbb R$, $\mathbb P(B_t=a)=0$.

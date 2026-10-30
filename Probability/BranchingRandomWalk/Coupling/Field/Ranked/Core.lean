@@ -4,9 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Coupling.Rank.Field
-import Probability.BranchingRandomWalk.Step.Field.Update
-import Probability.BranchingRandomWalk.Population.Processes.Selected.GenerationUpdate
+module
+
+public import Probability.BranchingRandomWalk.Coupling.Rank.Field
+public import Probability.BranchingRandomWalk.Step.Field.Update
+public import Probability.BranchingRandomWalk.Population.Processes.Selected.GenerationUpdate
 
 /-!
 # Recursive rank-matched step fields
@@ -15,14 +17,45 @@ At stage `n + 1`, the source steps are installed at the equal-rank target
 parents of generation `n`, and only coordinates of address depth `n` are
 changed.  Earlier coordinates therefore remain stable.  Population and value
 functionals stay abstract; the selected branching walk is one application.
+
+Writing `F_n` for `rankInstalledField`, its recursion is
+
+\[
+F_0(\omega)=\mathrm{fallback}(\omega),\qquad
+F_{n+1}(\omega)=\mathrm{updateGeneration}_n
+  (\mathrm{rankInstalledStepField}_n(F_n,\omega),F_n(\omega)).
+\]
+
+## Public declarations
+
+* `RootIndexed.rankInstalledField` recursively constructs the field obtained
+  by installing source steps at equal-rank target parents generation by
+  generation.
+* `RootIndexed.rankInstalledField_succ_apply_of_lt` states that a coordinate
+  of depth less than `n` is unchanged at stage `n + 1`.
+* `RootIndexed.rankInstalledField_succ_apply_matchByRankOrSelf` identifies
+  the stage-`n + 1` coordinate at a matched parent and child slot with the
+  source field's coordinate.
+* `RootIndexed.rankInstalledField_apply_stable` and
+  `RootIndexed.rankInstalledField_apply_of_le_length` give the resulting
+  stabilization identities for a fixed coordinate and for every stage at
+  or beyond its address depth.
+* `RootIndexed.selectedPopulation_rankInstalledField_succ` proves that the
+  selected population through generation `n` is unchanged by the next
+  installation step.
+* `RootIndexed.rankInstalledField_measurable` proves stagewise field
+  measurability, `Measurable(F_n)`, from the recursive support and coordinate hypotheses;
+  `RootIndexed.rankInstalledField_measurable_of_stages` assembles those
+  hypotheses over all stages.
 -/
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk.Coupling
 
-open ProbabilityTheory.BranchingRandomWalk.Selection.NSelection
 
 open Combinatorics.UlamHarris Combinatorics.Branching
-open Combinatorics.Branching.Selection.NSelection
+open _root_.Combinatorics.Selection.NSelection
 
 variable {Ω Root α X Value : Type*}
 
@@ -241,7 +274,7 @@ theorem RootIndexed.selectedPopulation_rankInstalledField_succ
         (parents : Finset (RootIndexed.TreeNode Root α)),
       AdmitsFirstNBy N
         (RootIndexed.observedPositionAtGeneration initial d φ (k + 1) β)
-        (RootIndexed.childrenAtGeneration k parents β))
+        (Combinatorics.Branching.Population.childrenAtGeneration k parents β))
     (sourceValue : ℕ → Ω → RootIndexed.TreeNode Root α → Value)
     (targetValue : ℕ → Ω → RootIndexed.StepField Root α X →
       RootIndexed.TreeNode Root α → Value)

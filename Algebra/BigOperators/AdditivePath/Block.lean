@@ -8,40 +8,37 @@ module
 
 public import Algebra.BigOperators.AdditivePath.Basic
 public import Mathlib.Algebra.BigOperators.Intervals
+public import Mathlib.Analysis.Normed.Group.Defs
+import Mathlib.Analysis.Normed.Group.Basic
 public import Combinatorics.Sequence.Block
 
 /-!
 # Blocks of additive paths
 
-The public declarations in `AdditivePath` are:
+## Public declarations
 
-For increments $\xi$, write
-$D_n(\xi)=\operatorname{displacement}(n,\xi)=\sum_{k<n}\xi_k$.
+For increments $ξ : ℕ → E$, let $D_n(ξ)=AdditivePath.displacement(n,ξ)$.
 
-- `blockSum`: $B(s,\ell,\xi)=\sum_{k\in[s,s+\ell)}\xi_k$.
-- `blockStart` is a compatibility alias for the sequence-level start index
-  $b_j=\sum_{i<j}\ell_i$ defined in `Combinatorics.Sequence.Block`.
-- `blockStart_zero`, `blockStart_succ`, `blockStart_const`, and
-  `blockStart_mono` give $b_0=0$, $b_{j+1}=b_j+\ell_j$,
-  $b_j=j\ell$ for a constant block length, and monotonicity in $j$.
-- `blockSum_zero` and `blockSum_zero_start` give $B(s,0,\xi)=0$ and
-  $B(0,\ell,\xi)=\operatorname{displacement}(\ell,\xi)$.
-- `blockSum_eq_displacement_natAdd` and
-  `partialSum_block_eq_displacement` give
-  $B(s,\ell,\xi)=D_\ell(k\mapsto\xi_{s+k})$ and
-  $\operatorname{partialSum}(k\mapsto\xi_{s+k},i)=D_{i.val}(k\mapsto\xi_{s+k})$.
-- `blockSum_add` and `displacement_add_eq_add_blockSum` give the consecutive
-  concatenation identities
-  $B(s,m+n,\xi)=B(s,m,\xi)+B(s+m,n,\xi)$ and
-  $D(s+\ell,\xi)=D(s,\xi)+B(s,\ell,\xi)$.
-- `displacement_blockStart_eq_sum_blockSum` reconstructs the displacement
-  through $j$ variable-length blocks as
-  $D(b_j,\xi)=\sum_{i<j}B(b_i,\ell_i,\xi)$.
-- `blockSum_sub_const` states
-  $B(s,\ell,k\mapsto\xi_k-c)=B(s,\ell,\xi)-\ell\,c$ in an additive group.
-
-This file provides finite coordinate and consecutive-sum operations for an
-increment sequence.
+- `AdditivePath.blockSum` defines
+  $B(s,ℓ,ξ)=∑_{s≤k<s+ℓ}ξ_k$.
+- `AdditivePath.blockSum_zero` and `AdditivePath.blockSum_zero_start` give
+  $B(s,0,ξ)=0$ and $B(0,ℓ,ξ)=D_ℓ(ξ)$.
+- `AdditivePath.blockSum_eq_displacement_natAdd` gives
+  $B(s,ℓ,ξ)=D_ℓ(k↦ξ_{s+k})$.
+  `AdditivePath.partialSum_block_eq_displacement` gives
+  $Fin.partialSum(k↦ξ_{s+k},i)=D_{i.val}(k↦ξ_{s+k})$ for $i : Fin(ℓ+1)$.
+- `AdditivePath.blockSum_add` and
+  `AdditivePath.displacement_add_eq_add_blockSum` give
+  $B(s,m+n,ξ)=B(s,m,ξ)+B(s+m,n,ξ)$ and
+  $D_{s+ℓ}(ξ)=D_s(ξ)+B(s,ℓ,ξ)$.
+- `AdditivePath.displacement_blockStart_eq_sum_blockSum` gives
+  $D_{b_j}(ξ)=∑_{i<j}B(b_i,ℓ_i,ξ)$, where
+  $b_j=∑_{i<j}ℓ_i$ is defined by `Combinatorics.Sequence.blockStart`.
+- `AdditivePath.blockSum_sub_const` gives
+  $B(s,ℓ,k↦ξ_k-c)=B(s,ℓ,ξ)-ℓ•c$ in an additive commutative group.
+- `AdditivePath.norm_displacement_sub_le_length_mul_of_forall_norm_le` bounds
+  the norm of a displacement difference by the number of increments times a
+  common norm bound on those increments.
 -/
 
 open scoped BigOperators
@@ -56,26 +53,6 @@ variable {E : Type*} [AddCommMonoid E]
 /-- Sum of `length` consecutive increments starting at `start`. -/
 def blockSum (start length : ℕ) (increment : ℕ → E) : E :=
   ∑ k ∈ Finset.Ico start (start + length), increment k
-
-/-- Start index of the `j`-th block in a sequence of possibly unequal block
-lengths. -/
-abbrev blockStart (length : ℕ → ℕ) (j : ℕ) : ℕ :=
-  Combinatorics.Sequence.blockStart length j
-
-@[simp] theorem blockStart_zero (length : ℕ → ℕ) : blockStart length 0 = 0 := by
-  exact Combinatorics.Sequence.blockStart_zero length
-
-@[simp] theorem blockStart_succ (length : ℕ → ℕ) (j : ℕ) :
-    blockStart length (j + 1) = blockStart length j + length j := by
-  exact Combinatorics.Sequence.blockStart_succ length j
-
-theorem blockStart_const (length blocks : ℕ) :
-    blockStart (fun _ => length) blocks = blocks * length := by
-  exact Combinatorics.Sequence.blockStart_const length blocks
-
-theorem blockStart_mono (length : ℕ → ℕ) {i j : ℕ} (hij : i ≤ j) :
-    blockStart length i ≤ blockStart length j := by
-  exact Combinatorics.Sequence.blockStart_mono length hij
 
 @[simp] theorem blockSum_zero (start : ℕ) (increment : ℕ → E) :
     blockSum start 0 increment = 0 := by
@@ -128,17 +105,55 @@ theorem displacement_add_eq_add_blockSum (start length : ℕ)
       displacement start increment + blockSum start length increment := by
   rw [displacement_add, blockSum_eq_displacement_natAdd]
 
+section SeminormedAddCommGroup
+
+variable {G : Type*} [SeminormedAddCommGroup G]
+
+/-- The displacement difference over an interval is bounded by its length
+times a common norm bound for the increments in that interval. -/
+theorem norm_displacement_sub_le_length_mul_of_forall_norm_le
+    {left right : ℕ} {increment : ℕ → G} {bound : ℝ}
+    (hle : left ≤ right)
+    (hbound : ∀ k ∈ Finset.Ico left right, ‖increment k‖ ≤ bound) :
+    ‖displacement right increment - displacement left increment‖ ≤
+      ((right - left : ℕ) : ℝ) * bound := by
+  have hright : right = left + (right - left) := by omega
+  have hbound' : ∀ k ∈ Finset.Ico left (left + (right - left)),
+      ‖increment k‖ ≤ bound := by
+    intro k hk
+    have hk' : k ∈ Finset.Ico left right := by
+      rcases Finset.mem_Ico.mp hk with ⟨hleftk, hklt⟩
+      refine Finset.mem_Ico.mpr ⟨hleftk, ?_⟩
+      omega
+    exact hbound k hk'
+  conv_lhs =>
+    rw [hright, displacement_add_eq_add_blockSum, add_sub_cancel_left]
+  unfold blockSum
+  calc
+    ‖∑ k ∈ Finset.Ico left (left + (right - left)), increment k‖ ≤
+        ∑ k ∈ Finset.Ico left (left + (right - left)), ‖increment k‖ :=
+      norm_sum_le _ _
+    _ ≤ ∑ _k ∈ Finset.Ico left (left + (right - left)), bound := by
+      apply Finset.sum_le_sum
+      intro k hk
+      exact hbound' k hk
+    _ = ((right - left : ℕ) : ℝ) * bound := by
+      simp only [Finset.sum_const, Nat.card_Ico, Nat.add_sub_cancel_left, nsmul_eq_mul]
+
+end SeminormedAddCommGroup
+
 /-- A finite sequence of variable length blocks reconstructs the additive
 path displacement at its final endpoint. -/
 theorem displacement_blockStart_eq_sum_blockSum (length : ℕ → ℕ)
     (blocks : ℕ) (increment : ℕ → E) :
-    displacement (blockStart length blocks) increment =
+    displacement (Combinatorics.Sequence.blockStart length blocks) increment =
       ∑ j ∈ Finset.range blocks,
-        blockSum (blockStart length j) (length j) increment := by
+        blockSum (Combinatorics.Sequence.blockStart length j) (length j) increment := by
   induction blocks with
-  | zero => simp [blockStart]
+  | zero => simp [Combinatorics.Sequence.blockStart]
   | succ blocks ih =>
-      rw [blockStart_succ, displacement_add_eq_add_blockSum, ih,
+      rw [Combinatorics.Sequence.blockStart_succ,
+        displacement_add_eq_add_blockSum, ih,
         Finset.sum_range_succ]
 
 section AddCommGroup

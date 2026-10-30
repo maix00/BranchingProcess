@@ -10,7 +10,18 @@ public import MeasureTheory.Measure.CadlagPath.PathClass.StepCorridor.Partition.
 public import Probability.Process.Stable.SmallDeviation.PathClass.StepCorridor.Partition.Lower.EnergyRate
 public import Probability.Process.Stable.SmallDeviation.PathClass.StepCorridor.Partition.Core.Scaled
 
-/-! # Stable-process upper rate and exact corridor energy -/
+/-!
+# Stable-process upper rate and exact corridor energy
+
+## Public declarations
+
+- For every continuous admissible corridor, eventually
+  $s^{-\alpha}\log\mathbb P(s^{-1}X\in G)
+    \le C2^\alpha H_\alpha(G)+\varepsilon$.
+- Together with the lower estimate, the scaled logarithm converges to
+  $C2^\alpha H_\alpha(G)$ and the corridor probability is eventually
+  positive.
+-/
 
 open Filter MeasureTheory
 open scoped NNReal Topology

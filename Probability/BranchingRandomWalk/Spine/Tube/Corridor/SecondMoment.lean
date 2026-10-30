@@ -4,7 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Spine.Tube.Corridor.PairBound
+module
+
+public import Probability.BranchingRandomWalk.Spine.Tube.Corridor.PairBound
 
 /-!
 # Second moments in affine corridors
@@ -24,7 +26,11 @@ most recent common ancestor.
 open MeasureTheory
 open scoped ENNReal
 
+@[expose] public section
+
 namespace ProbabilityTheory.BranchingRandomWalk.Spine
+
+open ProbabilityTheory.BranchingProcess (offspringFieldLaw offspringFieldLaw_coordinate offspringFieldLaw_independent offspringFieldLaw_mapMarks)
 
 open Combinatorics.Branching
 open Combinatorics.UlamHarris
@@ -42,10 +48,10 @@ theorem lintegral_pathGeneration_affineCorridor_sq_eq_firstMoment_add_mrcaContri
     (N : ℕ) (initial lower drift width endpointUpper : ℝ) :
     (∫⁻ ω, (pathGeneration φ N
       ((affineCorridorThrough N lower drift width endpointUpper).indicator
-        (fun _ => (1 : ℝ≥0∞))) initial ω) ^ 2 ∂stepFieldLaw μ) =
+        (fun _ => (1 : ℝ≥0∞))) initial ω) ^ 2 ∂offspringFieldLaw μ) =
       (∫⁻ ω, pathGeneration φ N
         ((affineCorridorThrough N lower drift width endpointUpper).indicator
-          (fun _ => (1 : ℝ≥0∞))) initial ω ∂stepFieldLaw μ) +
+          (fun _ => (1 : ℝ≥0∞))) initial ω ∂offspringFieldLaw μ) +
         ∑ m : Fin N,
           affineTubeMRCAPairContribution φ μ m.val (N - m.val - 1)
             initial lower drift width endpointUpper := by
@@ -65,15 +71,15 @@ theorem lintegral_pathGeneration_affineCorridor_sq_eq_firstMoment_add_mrcaContri
     lintegral_pathGenerationDistinctAddressPairCount_affineCorridor_eq_sum_MRCA
       φ μ hboundary N initial lower drift width endpointUpper
   calc
-    _ = (∫⁻ ω, pathGeneration φ N F initial ω ∂stepFieldLaw μ) +
+    _ = (∫⁻ ω, pathGeneration φ N F initial ω ∂offspringFieldLaw μ) +
           (∫⁻ ω, pathGenerationDistinctAddressPairCount φ N F initial ω
-            ∂stepFieldLaw μ) := hsecond
-    _ = (∫⁻ ω, pathGeneration φ N F initial ω ∂stepFieldLaw μ) +
+            ∂offspringFieldLaw μ) := hsecond
+    _ = (∫⁻ ω, pathGeneration φ N F initial ω ∂offspringFieldLaw μ) +
           ∑ m : Fin N,
             affineTubeMRCAPairContribution φ μ m.val (N - m.val - 1)
               initial lower drift width endpointUpper := by
         rw [show (∫⁻ ω, pathGenerationDistinctAddressPairCount φ N F initial ω
-            ∂stepFieldLaw μ) =
+            ∂offspringFieldLaw μ) =
             ∑ m : Fin N,
               affineTubeMRCAPairContribution φ μ m.val (N - m.val - 1)
                 initial lower drift width endpointUpper by
@@ -81,3 +87,5 @@ theorem lintegral_pathGeneration_affineCorridor_sq_eq_firstMoment_add_mrcaContri
     _ = _ := by simp [F, corridor]
 
 end ProbabilityTheory.BranchingRandomWalk.Spine
+
+end

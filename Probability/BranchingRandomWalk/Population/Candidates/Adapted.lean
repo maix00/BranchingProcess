@@ -15,6 +15,14 @@ The parent address set is countable. Partition by its value and apply the
 fixed-parent measurability theorem on each cell. This avoids unfolding the
 finite-set update as a product-valued measurable map. The mark type is a
 parameter.
+
+## Public declarations
+
+- `ProbabilityTheory.BranchingRandomWalk.multiRootCandidatesAtGeneration_of_adapted`
+  states that if the finite parent-set map is measurable with respect to the
+  generation-$n$ domain flow, then its first-$N$ child-candidate update is
+  measurable with respect to the generation-$(n+1)$ domain flow.
+
 -/
 
 open MeasureTheory

@@ -6,10 +6,11 @@ Authors: WANG Yiyang
 
 module
 
-public import Combinatorics.BranchingWalk.Cloud.Order.Basic
-public import Combinatorics.BranchingWalk.Selection.NSelection.Coupling.Finite
+public import Combinatorics.BranchingWalk.Cloud.Order.Domination
+public import Combinatorics.BranchingWalk.Cloud.Order.DynamicSelection
+public import Combinatorics.Selection.NSelection.Mechanism.Finite.Threshold
 public import Combinatorics.BranchingWalk.Selection.NSelection.Coupling.Step
-public import Combinatorics.BranchingWalk.Selection.NSelection.Mechanism.AtRank
+public import Combinatorics.Selection.NSelection.Mechanism.Finite.AtRank
 
 /-!
 # Domination under leftmost selection
@@ -19,7 +20,7 @@ orders.  Positions may be abstract; comparison takes place after an ordered
 observation `φ`. Equal observed positions retain their distinct particle
 identities.
 
-The public API is:
+## Public declarations
 
 - `Cloud.rankwiseDominatesBy_leftmost_of_subset` proves
   `(C.withFinsetParticles retained).RankwiseDominatesBy φ
@@ -44,7 +45,7 @@ open Combinatorics.UlamHarris
 
 namespace Combinatorics.Branching
 
-open Selection
+open _root_.Combinatorics.Branching.Selection
 
 set_option linter.style.haveILetI false
 

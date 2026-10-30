@@ -22,7 +22,9 @@ The small-initial-population extension has three dependencies:
 2. repeated independent opportunities for this split fill any fixed finite
    capacity in finite time almost surely;
 3. the process after the filling time has the law of an exact-`N` process,
-   so its asymptotic speed is the one obtained from the Kingman interface.
+   so its asymptotic speed follows from
+   `infiniteOffspringRun_leftmost_ae_hasAsymptoticSpeed_of_stepLaw` in
+   `Limit.InfiniteOffspring.Speed`.
 
 This file records the independent split events in the exact-`N` generation
 environment and transports the rank-zero speed from the origin to any finite
@@ -30,7 +32,9 @@ initial vector. The actual smaller root-indexed population and its capacity
 hitting argument are developed in the sibling `Trajectory/` modules; their
 fresh-field law is then connected to the ranked-batch speed interface.
 
-The public declarations are:
+## Public declarations
+
+The declarations are:
 
 - `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Speed.firstRankSplitEvent`:
   for $h_N:0<N$, the generation-$n$ event
@@ -56,6 +60,7 @@ namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Speed
 
 open Combinatorics.Branching
 open Filter ProbabilityTheory
+open ProbabilityTheory.BranchingProcess (offspringFieldLaw)
 open ProbabilityTheory.BranchingProcess.Offspring
 open scoped Topology
 

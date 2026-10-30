@@ -37,11 +37,11 @@ remain those recorded in `Probability/Process/RandomWalk/SmallDeviation/Mogulski
   increments, independent increments, and almost-sure càdlàg paths.
 - `Probability/Process/IndepIncrements/FiniteDimensional.lean` derives finite
   dimensional laws from independent increments, and
-  `Probability/Process/IndepIncrements/DisjointPaths.lean` gives independence
-  of paths on adjacent intervals. These are the right inputs for exact
-  block-factorization arguments.
-- `Probability/Process/Path/Cadlag/MeasurableMap.lean` constructs measurable
-  càdlàg path realizations. `Topology/Cadlag/TerminalLeft.lean` provides the
+  `Probability/Process/IndepIncrements/FiniteObservations/DisjointPaths.lean`
+  gives independence of paths on adjacent intervals. These are the right
+  inputs for exact block-factorization arguments.
+- `Probability/Process/Path/Representation/Cadlag.lean` constructs measurable
+  càdlàg path realizations. `Topology/Cadlag/Skorokhod/Path/TerminalLeft.lean` provides the
   deterministic terminal-left map and its `D₀` domain;
   `MeasureTheory/MeasurableSpace/CadlagPath/TerminalLeft.lean` proves its
   Borel measurability.
@@ -54,7 +54,7 @@ remain those recorded in `Probability/Process/RandomWalk/SmallDeviation/Mogulski
   estimates needed in a block squeeze.
 - The random-walk stable-domain functional limit and `M₂` rates are already
   available in `Probability/Process/RandomWalk/FunctionalLimit/Stable/` and
-  `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Stable/RandomWalkBounds/`.
+  `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Stable/Discrete/`.
   They concern the step path made from unit-time increments, not the full
   continuous-time path `t ↦ ξ(n t)`.
 - The generic Skorokhod tightness and finite-grid identification criteria,

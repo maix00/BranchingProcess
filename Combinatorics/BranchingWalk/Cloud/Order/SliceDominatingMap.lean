@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Combinatorics.BranchingWalk.Cloud.Order.Slice
-public import Combinatorics.BranchingWalk.Cloud.Order.DominatingMap
+public import Order.DominatingMap
 
 /-!
 # Particle matching extracted from rankwise domination
@@ -18,7 +18,7 @@ that map and proves it is injective whenever ranks distinguish the particles
 of the source slice.  The particles retain their full multi-root labels
 `Root × TreeNode α`; no finiteness or countability of the root type is used.
 
-The public API is:
+## Public declarations
 
 - `Cloud.SliceDominatingMap φ C D t` is an injective map from `C`'s particles
   at time `t` to `D`'s particles such that `φ` of each target position is at
@@ -59,12 +59,12 @@ set_option linter.style.haveILetI false
 variable {Time Root α Position Value : Type*}
 
 /-- An order-dominating map between two cloud slices.  This is the cloud-slice
-specialization of `Cloud.DominatingMap`; it is pathwise data rather
+specialization of `Order.DominatingMap`; it is pathwise data rather
 than a coupling of probability measures. -/
 abbrev Cloud.SliceDominatingMap [Preorder Value]
     (φ : Position → Value) (C D : Cloud Time Root α Position)
     (t : Time) :=
-  Cloud.DominatingMap (C.particles t) (D.particles t)
+  Order.DominatingMap (C.particles t) (D.particles t)
     (fun p => φ (C.position p.1 p.2))
     (fun p => φ (D.position p.1 p.2))
 
@@ -76,12 +76,12 @@ instance (φ : Position → Value) (C D : Cloud Time Root α Position)
     (t : Time) : CoeFun (Cloud.SliceDominatingMap φ C D t)
       (fun _ => RootIndexed.TreeNode Root α →
         RootIndexed.TreeNode Root α) :=
-  ⟨Cloud.DominatingMap.toFun⟩
+  ⟨Order.DominatingMap.toFun⟩
 
 /-- The identity dominating map of a cloud slice. -/
 def refl (φ : Position → Value) (C : Cloud Time Root α Position)
     (t : Time) : Cloud.SliceDominatingMap φ C C t :=
-  Cloud.DominatingMap.refl (C.particles t)
+  Order.DominatingMap.refl (C.particles t)
     (fun p => φ (C.position p.1 p.2))
 
 /-- Composition retains the concrete particle correspondence. -/
@@ -89,7 +89,7 @@ def trans {φ : Position → Value} {C D E : Cloud Time Root α Position} {t : T
     (f : Cloud.SliceDominatingMap φ C D t)
     (g : Cloud.SliceDominatingMap φ D E t) :
     Cloud.SliceDominatingMap φ C E t :=
-  Cloud.DominatingMap.trans f g
+  Order.DominatingMap.trans f g
 
 end Cloud.SliceDominatingMap
 

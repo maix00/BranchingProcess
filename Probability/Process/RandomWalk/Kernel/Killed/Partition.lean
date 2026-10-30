@@ -12,6 +12,8 @@ public import Probability.Process.RandomWalk.Kernel.Killed.Basic
 /-!
 # Equal-block representation of killed-walk survival
 
+## Public declarations
+
 For $m,\ell\ge1$, the public theorems identify the killed kernel's remaining
 mass through $m\ell$ steps with the probability that every point in every
 length-$\ell$ block lies in the closed interval:

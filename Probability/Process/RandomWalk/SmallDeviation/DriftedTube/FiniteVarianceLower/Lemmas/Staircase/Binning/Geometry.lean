@@ -6,14 +6,18 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.FiniteVarianceLower
-public import Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.EndpointWindow
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.Binning
+import Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.EndpointWindow.FiniteVarianceLower
+import Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.EndpointWindow.Basic
+import all Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.Binning
 
 /-!
 # Spatial-bin coverage for the finite-variance tilted tube
 
-The module-visible lemma in this file is:
+## Internal proof declarations
+
+For every $x\in[-2/3,-1/3]$, some bin $l<m$ covers it, $b_l\le x\le b_{l+1}$. Thus if $y\in[r+\Delta/3,r+2\Delta/3]$, then $(r-y)/\Delta\in[-2/3,-1/3]$ and the common bin event is contained in the centered endpoint window.
+
+The supporting lemma in this file is:
 
 - `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.exists_staircaseBin_commonEvent_subset_centerWindow`:
   the same selection for every point in the middle endpoint window.
@@ -28,7 +32,7 @@ Offspring*, Chapter 3, Lemma 3.1(ii).
 open Filter MeasureTheory ProbabilityTheory
 open scoped ENNReal Topology
 
-@[expose] public section
+section
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 

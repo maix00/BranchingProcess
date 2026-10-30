@@ -12,7 +12,7 @@ public import Mathlib.MeasureTheory.Integral.Bochner.Set
 /-!
 # Conditional probability bounds along a filtration
 
-The public declarations in this file are:
+## Public declarations
 
 - `ProbabilityTheory.measureReal_inter_ge_of_condExp_indicator_ge` and
   `ProbabilityTheory.measureReal_inter_le_of_condExp_indicator_le`: if `A` is

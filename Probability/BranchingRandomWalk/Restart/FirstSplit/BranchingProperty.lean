@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Restart.Trial.FirstSplit
-import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.StoppingSubtreeVector.Factorization
+module
+
+public import Probability.BranchingRandomWalk.Restart.Trial.FirstSplit
+public import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.StoppingSubtreeVector.Factorization
 
 /-!
 # Branching at the selected population's first split
@@ -15,11 +17,27 @@ sibling roots have fresh independent descendant fields.  The statement is
 restricted to samples on which the split occurs at a finite generation; no
 children are postulated on samples where the selected population becomes
 empty or never splits.
+
+## Public declarations
+
+- `ProbabilityTheory.BranchingRandomWalk.selectedPopulation_firstSplit_subtree_vector_factorization`:
+  writing $\tau_R=\operatorname{selectedPopulationSplitCompletion}(R)$ and
+  $Z_R=\operatorname{selectedSubtreeStepFieldVector}
+  (\operatorname{selectedPopulationFirstSplitRoots}(R))$, for $A$ measurable
+  at $\tau_R$ and measurable $B$ it proves
+  $(\operatorname{offspringFieldLaw}(\mu))
+  (A\cap\{\tau_R\ne\infty\}\cap Z_R^{-1}(B))=
+  (\operatorname{offspringFieldLaw}(\mu))(A\cap\{\tau_R\ne\infty\})
+  (\bigotimes_{i\in\operatorname{Fin}(2)}\operatorname{offspringFieldLaw}(\mu))(B)$.
 -/
 
 open MeasureTheory ProbabilityTheory
 
+@[expose] public section
+
 namespace ProbabilityTheory.BranchingRandomWalk
+
+open ProbabilityTheory.BranchingProcess (offspringFieldLaw offspringFieldLaw_coordinate offspringFieldLaw_independent offspringFieldLaw_mapMarks)
 
 open Combinatorics.Branching Combinatorics.UlamHarris MeasureTheory
 
@@ -34,13 +52,13 @@ theorem selectedPopulation_firstSplit_subtree_vector_factorization
     (hA : MeasurableSet[
       (selectedPopulationSplitCompletion_isStoppingTime R hR).measurableSpace] A)
     (hB : MeasurableSet B) :
-    stepFieldLaw μ
+    offspringFieldLaw μ
         ((A ∩ {ω | selectedPopulationSplitCompletion R ω ≠ ⊤}) ∩
           selectedSubtreeStepFieldVector
             (selectedPopulationFirstSplitRoots R) ⁻¹' B) =
-      stepFieldLaw μ
+      offspringFieldLaw μ
         (A ∩ {ω | selectedPopulationSplitCompletion R ω ≠ ⊤}) *
-          (Measure.infinitePi (fun _ : Fin 2 => stepFieldLaw μ)) B := by
+          (Measure.infinitePi (fun _ : Fin 2 => offspringFieldLaw μ)) B := by
   let σ := selectedPopulationSplitCompletion R
   let roots := selectedPopulationFirstSplitRoots R
   have hσ : IsStoppingTime (generationFiltration (M := Step α X)) σ :=
@@ -62,3 +80,5 @@ theorem selectedPopulation_firstSplit_subtree_vector_factorization
     μ σ hσ roots hcount hfiber hdepth hinj A B hA hB
 
 end ProbabilityTheory.BranchingRandomWalk
+
+end

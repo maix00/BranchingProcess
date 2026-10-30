@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Mathlib.MeasureTheory.Constructions.UnitInterval
-public import MeasureTheory.Measure.LevyMeasure.Cutoff
+public import MeasureTheory.Measure.Levy.Cutoff
 import Probability.RandomMeasure.Poisson.Intensity.TimeMark
 
 /-!
@@ -16,6 +16,13 @@ import Probability.RandomMeasure.Poisson.Intensity.TimeMark
 A finite truncated first moment and a positive mark window away from zero
 produce one cutoff satisfying all quantitative intensity conditions needed
 for the independent small/large Poisson model.
+
+## Public declarations
+
+* `ProbabilityTheory.exists_unitTime_cutoff_intensities` chooses one cutoff
+  for which the small-jump first-moment integral is below $\rho$, the target
+  large-mark window has positive product intensity, and the total large-jump
+  intensity is finite.
 -/
 
 @[expose] public section
@@ -23,22 +30,6 @@ for the independent small/large Poisson model.
 namespace ProbabilityTheory
 
 open MeasureTheory
-
-/-- A target window and its remainder partition the finite-activity mark
-region when the window lies inside it. -/
-theorem unitTime_target_union_remainder
-    {A J : Set ℝ} (hJA : J ⊆ A) :
-    ((Set.univ : Set unitInterval) ×ˢ J) ∪
-      (Set.univ ×ˢ (A \ J)) = Set.univ ×ˢ A := by
-  ext z
-  constructor
-  · rintro (hz | hz)
-    · exact ⟨Set.mem_univ _, hJA hz.2⟩
-    · exact ⟨Set.mem_univ _, hz.2.1⟩
-  · intro hz
-    by_cases hj : z.2 ∈ J
-    · exact Or.inl ⟨Set.mem_univ _, hj⟩
-    · exact Or.inr ⟨Set.mem_univ _, ⟨hz.2, hj⟩⟩
 
 theorem exists_unitTime_cutoff_intensities
     (ν : Measure ℝ) [SigmaFinite ν]

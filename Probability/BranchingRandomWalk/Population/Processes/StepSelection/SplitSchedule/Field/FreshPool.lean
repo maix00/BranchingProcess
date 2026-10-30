@@ -14,6 +14,18 @@ A successful population supplies the finite active part of the next field.
 An injectively labelled reserve family supplies all remaining root labels.
 This produces a complete product field whose root type can be reused at the
 next restart stage.
+## Public declarations
+
+* `activeRoots` and `extendRoots` form the active/reserve root index and its
+  injective inclusion; `mem_activeRoots`, `card_activeRoots`,
+  `extendRoots_left_injective`, and `extendRoots_injective` describe them.
+* `poolRoots` labels the selected active roots together with an injective
+  reserve family. Its range, fibers, depths, root/reserve separation, and
+  injectivity are stated by `poolRoots_range_countable`,
+  `poolRoots_fiber_adapted`, `poolRoots_depth`, `roots_root_ne_reserve`, and
+  `poolRoots_injective`.
+* `poolField` is the complete root-indexed field on this pool, and
+  `poolField_law` proves that it has the product law of the original field.
 -/
 
 open MeasureTheory ProbabilityTheory

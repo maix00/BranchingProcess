@@ -1,7 +1,6 @@
-import Probability.BranchingRandomWalk.Selection.NSelection.Law.Restarted
-
+import Probability.BranchingRandomWalk.Selection.NSelection.Law.Causal.Restarted.Coupling
 open Combinatorics.Branching
-open Combinatorics.Branching.Selection.NSelection
+open _root_.Combinatorics.Selection.NSelection
 open ProbabilityTheory.BranchingRandomWalk.Selection.NSelection
 
 private def descendingOffspring : Step ℕ ℝ := fun i => some (-(i : ℝ))

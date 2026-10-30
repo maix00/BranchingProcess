@@ -13,6 +13,15 @@ public import Topology.Cadlag.Skorokhod.Maps.Continuous
 /-!
 # Càdlàg path-space interfaces
 
+## Public declarations
+
+- `cadlagPathProcess` and `cadlagunitIntervalPath` bundle process sample
+  paths as càdlàg paths; `cadlagunitIntervalPath_apply` identifies values.
+- `measurable_cadlagunitIntervalPath` proves measurability from measurable
+  coordinates, and `cadlagunitIntervalPathLaw` is the image law
+  $P\circ X^{-1}$ on the càdlàg path space.
+- `hasLaw_cadlagunitIntervalPath` records the distribution of this path map.
+
 The canonical coordinate process and the embedding of continuous
 unit-interval paths into Skorokhod space are generic path-space interfaces.
 The path-space embedding and its law apply to any everywhere-continuous,
@@ -49,7 +58,7 @@ def cadlagunitIntervalPath
 theorem cadlagunitIntervalPath_apply
     (X : NNReal → Ω → ℝ) (hX : ∀ ω, Continuous (X · ω))
     (ω : Ω) (t : unitInterval) :
-    cadlagunitIntervalPath X hX ω t = X (UnitInterval.toNNReal t) ω :=
+    cadlagunitIntervalPath X hX ω t = X (unitInterval.toNNReal t) ω :=
   rfl
 
 theorem measurable_cadlagunitIntervalPath [MeasurableSpace Ω]

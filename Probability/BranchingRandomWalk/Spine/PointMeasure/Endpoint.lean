@@ -8,7 +8,8 @@ module
 
 public import Probability.BranchingRandomWalk.Spine.ManyToOne.EndpointManyToOne
 public import Probability.BranchingRandomWalk.Spine.PointMeasure.Basic
-public import Probability.PointProcess.Tilted
+public import Probability.Process.RandomWalk.Kernel.Endpoint
+public import Probability.RandomMeasure.ExponentialTilt
 
 /-!
 # Enumeration-free endpoint many-to-one recursion
@@ -17,10 +18,34 @@ The offspring law in this file is a law on measures over an arbitrary
 measurable mark space.  One branching transition is expressed by integration
 against the sampled measure, so neither the mark space nor an auxiliary set
 of child slots is assumed countable.
+
+## Public declarations
+
+- `pointMeasureWeightedEndpointOperator` and `pointMeasureEndpointOperator`:
+  the one-step exponential and unweighted transitions obtained directly from
+  a law on random measures.
+- `pointMeasureWeightedEndpointOperator_eq_tilted` and
+  `pointMeasureEndpointOperator_eq_untilted`: identify those transitions with
+  the abstract tilted and untilted endpoint operators.
+- `pointMeasureWeightedEndpointIterate`,
+  `pointMeasureEndpointIterate`,
+  `measurable_pointMeasureWeightedEndpointIterate`, and
+  `measurable_pointMeasureEndpointIterate`: define and establish measurability
+  of the iterated random-measure transitions.
+- `pointMeasureWeightedEndpointManyToOne` and
+  `pointMeasureEndpointManyToOne`: identify the iterated weighted and
+  unweighted branching integrals with endpoint integrals under the
+  enumeration-free tilted potential law.
+- `pointMeasureWeightedEndpointOperator_map_stepPointMeasure`,
+  `pointMeasureEndpointOperator_map_stepPointMeasure`,
+  `pointMeasureWeightedEndpointIterate_map_stepPointMeasure`, and
+  `pointMeasureEndpointIterate_map_stepPointMeasure`: transfer the operators
+  and their iterates along the slot-to-point-measure pushforward.
 -/
 
 open MeasureTheory
 open scoped ENNReal
+open ProbabilityTheory.RandomWalk
 
 @[expose] public section
 
@@ -34,7 +59,7 @@ noncomputable def pointMeasureWeightedEndpointOperator
     {E : Type*} [MeasurableSpace E]
     (potential : E → ℝ) (θ : ℝ) (law : Measure (Measure E))
     (f : ℝ → ENNReal) (x : ℝ) : ENNReal :=
-  ∫⁻ ν, ∫⁻ z, PointProcess.exponentialWeight potential θ z *
+  ∫⁻ ν, ∫⁻ z, RandomMeasure.exponentialWeight potential θ z *
     f (x + potential z) ∂ν ∂law
 
 /-- One unweighted branching transition obtained directly from a law on
@@ -51,10 +76,10 @@ theorem pointMeasureWeightedEndpointOperator_eq_tilted
     (θ : ℝ) (law : Measure (Measure E))
     {f : ℝ → ENNReal} (hf : Measurable f) :
     pointMeasureWeightedEndpointOperator potential θ law f =
-      tiltedEndpointOperator (PointProcess.tiltedLaw potential θ law) f := by
+      endpointOperator (RandomMeasure.tiltedLaw potential θ law) f := by
   funext x
   symm
-  exact PointProcess.lintegral_tiltedLaw hpotential θ law
+  exact RandomMeasure.lintegral_tiltedLaw hpotential θ law
     (hf.comp (measurable_const.add measurable_id))
 
 theorem pointMeasureEndpointOperator_eq_untilted
@@ -63,12 +88,12 @@ theorem pointMeasureEndpointOperator_eq_untilted
     (law : Measure (Measure E))
     {f : ℝ → ENNReal} (hf : Measurable f) :
     pointMeasureEndpointOperator potential law f =
-      untiltedEndpointOperator
-        (PointProcess.tiltedLaw potential (-1) law) f := by
+      exponentialEndpointOperator
+        (RandomMeasure.tiltedLaw potential (-1) law) f := by
   funext x
   symm
-  simpa [untiltedEndpointOperator, pointMeasureEndpointOperator] using
-    (PointProcess.lintegral_tiltedLaw_cancel hpotential (-1) law
+  simpa [exponentialEndpointOperator, pointMeasureEndpointOperator] using
+    (RandomMeasure.lintegral_tiltedLaw_cancel hpotential (-1) law
       (f := fun y : ℝ => f (x + y))
       (hf.comp (measurable_const.add measurable_id)))
 
@@ -96,20 +121,20 @@ theorem measurable_pointMeasureWeightedEndpointIterate
     {E : Type*} [MeasurableSpace E]
     {potential : E → ℝ} (hpotential : Measurable potential)
     (θ : ℝ) (law : Measure (Measure E))
-    (hnormalization : PointProcess.HasNormalization potential θ law)
+    (hnormalization : RandomMeasure.HasNormalization potential θ law)
     {f : ℝ → ENNReal} (hf : Measurable f) :
     ∀ n, Measurable
       (pointMeasureWeightedEndpointIterate potential θ law n f)
   | 0 => hf
   | n + 1 => by
       let _ : IsProbabilityMeasure
-          (PointProcess.tiltedLaw potential θ law) :=
-        PointProcess.tiltedLaw_isProbability hpotential θ law hnormalization
+          (RandomMeasure.tiltedLaw potential θ law) :=
+        RandomMeasure.tiltedLaw_isProbability hpotential θ law hnormalization
       rw [pointMeasureWeightedEndpointIterate,
         pointMeasureWeightedEndpointOperator_eq_tilted hpotential θ law
           (measurable_pointMeasureWeightedEndpointIterate hpotential θ law
             hnormalization hf n)]
-      exact measurable_tiltedEndpointOperator _
+      exact measurable_endpointOperator _
         (measurable_pointMeasureWeightedEndpointIterate hpotential θ law
           hnormalization hf n)
 
@@ -118,39 +143,39 @@ theorem pointMeasureWeightedEndpointManyToOne
     {E : Type*} [MeasurableSpace E]
     {potential : E → ℝ} (hpotential : Measurable potential)
     (θ : ℝ) (law : Measure (Measure E))
-    (hnormalization : PointProcess.HasNormalization potential θ law)
+    (hnormalization : RandomMeasure.HasNormalization potential θ law)
     {f : ℝ → ENNReal} (hf : Measurable f) :
     ∀ n, pointMeasureWeightedEndpointIterate potential θ law n f =
-      tiltedEndpointIterate
-        (PointProcess.tiltedLaw potential θ law) n f
+      endpointIterate
+        (RandomMeasure.tiltedLaw potential θ law) n f
   | 0 => rfl
   | n + 1 => by
       let _ : IsProbabilityMeasure
-          (PointProcess.tiltedLaw potential θ law) :=
-        PointProcess.tiltedLaw_isProbability hpotential θ law hnormalization
-      rw [pointMeasureWeightedEndpointIterate, tiltedEndpointIterate,
+          (RandomMeasure.tiltedLaw potential θ law) :=
+        RandomMeasure.tiltedLaw_isProbability hpotential θ law hnormalization
+      rw [pointMeasureWeightedEndpointIterate, endpointIterate,
         pointMeasureWeightedEndpointManyToOne hpotential θ law
           hnormalization hf n]
       exact pointMeasureWeightedEndpointOperator_eq_tilted hpotential θ law
-        (measurable_tiltedEndpointIterate _ hf n)
+        (measurable_endpointIterate _ hf n)
 
 theorem measurable_pointMeasureEndpointIterate
     {E : Type*} [MeasurableSpace E]
     {potential : E → ℝ} (hpotential : Measurable potential)
     (law : Measure (Measure E))
-    (hnormalization : PointProcess.HasNormalization potential (-1) law)
+    (hnormalization : RandomMeasure.HasNormalization potential (-1) law)
     {f : ℝ → ENNReal} (hf : Measurable f) :
     ∀ n, Measurable (pointMeasureEndpointIterate potential law n f)
   | 0 => hf
   | n + 1 => by
       let _ : IsProbabilityMeasure
-          (PointProcess.tiltedLaw potential (-1) law) :=
-        PointProcess.tiltedLaw_isProbability hpotential (-1) law hnormalization
+          (RandomMeasure.tiltedLaw potential (-1) law) :=
+        RandomMeasure.tiltedLaw_isProbability hpotential (-1) law hnormalization
       rw [pointMeasureEndpointIterate,
         pointMeasureEndpointOperator_eq_untilted hpotential law
           (measurable_pointMeasureEndpointIterate hpotential law
             hnormalization hf n)]
-      exact measurable_untiltedEndpointOperator _
+      exact measurable_exponentialEndpointOperator _
         (measurable_pointMeasureEndpointIterate hpotential law
           hnormalization hf n)
 
@@ -159,20 +184,20 @@ theorem pointMeasureEndpointManyToOne
     {E : Type*} [MeasurableSpace E]
     {potential : E → ℝ} (hpotential : Measurable potential)
     (law : Measure (Measure E))
-    (hnormalization : PointProcess.HasNormalization potential (-1) law)
+    (hnormalization : RandomMeasure.HasNormalization potential (-1) law)
     {f : ℝ → ENNReal} (hf : Measurable f) :
     ∀ n, pointMeasureEndpointIterate potential law n f =
-      untiltedEndpointIterate
-        (PointProcess.tiltedLaw potential (-1) law) n f
+      exponentialEndpointIterate
+        (RandomMeasure.tiltedLaw potential (-1) law) n f
   | 0 => rfl
   | n + 1 => by
       let _ : IsProbabilityMeasure
-          (PointProcess.tiltedLaw potential (-1) law) :=
-        PointProcess.tiltedLaw_isProbability hpotential (-1) law hnormalization
-      rw [pointMeasureEndpointIterate, untiltedEndpointIterate,
+          (RandomMeasure.tiltedLaw potential (-1) law) :=
+        RandomMeasure.tiltedLaw_isProbability hpotential (-1) law hnormalization
+      rw [pointMeasureEndpointIterate, exponentialEndpointIterate,
         pointMeasureEndpointManyToOne hpotential law hnormalization hf n]
       exact pointMeasureEndpointOperator_eq_untilted hpotential law
-        (measurable_untiltedEndpointIterate _ hf n)
+        (measurable_exponentialEndpointIterate _ hf n)
 
 /-- A labelled offspring step realizes the abstract weighted random-measure
 transition through its counting measure. -/

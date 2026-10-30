@@ -14,6 +14,19 @@ are all useful contributions.
    the pinned dependencies determine what the implementation can use.
 2. Read [`ARCHITECTURE.md`](ARCHITECTURE.md) and place a result in the lowest
    layer that does not depend on the specific construction being formalized.
+   Choose the owner from the mathematical object in the declaration, not
+   merely from a typeclass assumption or a familiar word in its name. For
+   example, a capacity-$N$ rule `M : Set ι → Finset ι` with
+   $M(S)\subseteq S$ and the prescribed cardinality is a generic
+   candidate-set selector, so its deterministic interface belongs in
+   combinatorics.
+   Measurability results for that interface belong with measurable selection.
+   The branching-walk update
+   $P_{n+1}=M(\bigcup_{x\in P_n}\operatorname{children}(x))$ depends on
+   offspring and generation data, so it belongs under `BranchingWalk`; its
+   random law belongs in the probability layer. A `MeasurableSpace`
+   hypothesis alone does not make a declaration part of
+   `MeasureTheory/MeasurableSpace/`.
 3. Import narrow modules. A named result entry point such as
    `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Theorems.lean`
    may re-export a coherent list of principal published results for discovery;
@@ -103,12 +116,21 @@ each declaration in it against this rule; split mixed files so reusable
 declarations remain outside. A `Lemmas/` directory belongs to one principal
 result or a coherent theorem family; do not collect unrelated results in it.
 
-An entry module may import its proof chain, but it should use ordinary
-`import` for modules under `Lemmas/`; reserve `public import` for mathematical
-dependencies that belong to the entry module's exposed interface. This keeps
-proof-only helper declarations from appearing as re-exported API. A helper
-module may import earlier steps in its own proof chain, but those imports do
-not make the earlier steps independently reusable.
+An entry module may import its proof chain, but it must not use `public import`
+for modules under `Lemmas/`; reserve that for mathematical dependencies that
+belong to the entry module's exposed interface. Keep cross-file proof helpers
+in `Lemmas/` as ordinary `lemma` declarations, not `public lemma` or
+`theorem`. For files using Lean's `module` syntax, the direct proof caller
+should use `import all` for that helper module, never `public import`; this
+allows access to proof support without re-exporting it downstream. Legacy
+files without `module` syntax cannot use the `all` import modifier, and a
+module-syntax file cannot import a legacy module. Until that whole dependency
+chain is migrated together, keep both files in the legacy syntax and use plain
+`import` for the helper. Do not add `module` solely to obtain `import all`.
+If a result needs to be available as a public declaration, move it outside
+`Lemmas/` to its mathematical subject. A helper module may import earlier
+steps in its own proof chain; those imports do not make the earlier steps
+independently reusable.
 
 Proof groupings may be nested when a proof step has its own substantial chain,
 including paths such as `FiniteVarianceUpper/Lemmas/JumpPattern/Lemmas/`.

@@ -7,6 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.Path.Skorokhod.Corridor.Segment
+public import Probability.Process.Path.Skorokhod.Corridor.RationalCoordinate
 public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Gluing
 
 /-!
@@ -15,6 +16,17 @@ public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Gluing
 Pointwise strict rational bounds do not themselves imply a uniform margin.
 Enlarging the spatial corridor supplies that margin before the càdlàg
 dense-coordinate theorem is applied.
+
+## Public declarations
+
+- `ProbabilityTheory.measure_rationalCorridorReturn_le_fullSegmentCorridorReturn_enlarged`:
+  for fixed terminal window $(u,v)$ and $\varepsilon>0$, almost surely
+  càdlàg paths satisfy
+  $\mathbb P(C^{\mathrm{rat}}_{a,b;u,v})\le
+  \mathbb P(C^{\mathrm{full}}_{a-\varepsilon,b+\varepsilon;u,v})$.
+- `ProbabilityTheory.measure_rationalHorizonTube_le_fullSegmentCorridor`:
+  a rational-time tube of width $w$ has probability at most that of the full
+  segment corridor $(a,b)$ whenever $a<-w<w<b$.
 -/
 
 @[expose] public section

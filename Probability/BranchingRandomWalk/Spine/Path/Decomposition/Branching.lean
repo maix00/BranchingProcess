@@ -8,6 +8,8 @@ module
 
 public import Probability.BranchingRandomWalk.Spine.Path.Decomposition.Generation
 public import Probability.BranchingRandomWalk.Spine.Tilted.Law
+public import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.SelectedSubtrees.Position
+import all Topology.Algebra.InfiniteSum.ENNReal.PairPartition
 
 /-!
 # Branching decomposition of ancestral-path observables
@@ -15,6 +17,32 @@ public import Probability.BranchingRandomWalk.Spine.Tilted.Law
 The first child slot is quantified over.  No slot is distinguished in the
 model.  The remaining history is evaluated in the corresponding descendant
 field and then prefixed with the initial position.
+
+## Public declarations
+
+- `ProbabilityTheory.BranchingRandomWalk.Spine.weightedPathGeneration_succ`
+  decomposes the weighted generation-$(n+1)$ path sum over first-child slots:
+  $\widehat Z_{n+1}(F,x,\omega)=\sum_i
+    e^{-V(\omega_{\varnothing},i)}\widehat Z_n(F_x,
+    x+V(\omega_{\varnothing},i),\omega_{[i]})$.
+- `ProbabilityTheory.BranchingRandomWalk.Spine.pathGeneration_succ` gives the
+  corresponding unweighted recursion, with each child contribution gated by
+  its survival event.
+- `ProbabilityTheory.BranchingRandomWalk.Spine.pathPotential_subtreeStepFieldVector_eq_position_sub`
+  identifies a descendant path potential in a rebased subtree with the
+  difference between its endpoint and root positions in the original field.
+- `ProbabilityTheory.BranchingRandomWalk.Spine.pathGenerationChildObservable`
+  defines the generation-`n` path count after fixing the root step and one
+  child slot.
+- `ProbabilityTheory.BranchingRandomWalk.Spine.pathGenerationChildObservable_measurable`
+  states that this observable is measurable in the root step and descendant
+  field whenever the terminal path observable is measurable.
+- `ProbabilityTheory.BranchingRandomWalk.Spine.pathGeneration_succ_sq_eq_childPairSum`
+  identifies the squared generation-$(n+1)$ path count with the ordered sum
+  $\sum_{i,j} C_i C_j$ of first-child continuation counts.
+- `ProbabilityTheory.BranchingRandomWalk.Spine.pathGeneration_succ_sq_eq_diagonal_add_offDiagonal`
+  splits this square into equal-child and distinct-child terms:
+  $Z_{n+1}^2=\sum_i C_i^2+\sum_{i\ne j}C_iC_j$.
 -/
 
 @[expose] public section
@@ -27,6 +55,46 @@ namespace ProbabilityTheory.BranchingRandomWalk.Spine
 open ProbabilityTheory.RandomWalk
 
 open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
+
+/-- The path potential in a subtree rooted at `(r, q)` equals the difference
+between the original endpoint position and the original position at `(r, q)`.
+This identity works for any measurable real-valued potential on the edge
+marks. -/
+theorem pathPotential_subtreeStepFieldVector_eq_position_sub
+    {Root ι X : Type*} [MeasurableSpace X]
+    (φ : Potential X) (field : RootIndexed.StepField Root ι X)
+    (r : Root) (q v : TreeNode ι) :
+    pathPotential φ
+        (RootIndexed.subtreeStepFieldVector
+          (fun _ : Unit => (r, q)) field ()) v =
+      RootIndexed.position (fun _ : Root => (0 : ℝ)) φ field r (q ++ v) -
+        RootIndexed.position (fun _ : Root => (0 : ℝ)) φ field r q := by
+  let roots : Unit → Root × TreeNode ι := fun _ => (r, q)
+  have hposition := RootIndexed.position_subtreeStepFieldVector
+    (initial := fun _ : Root => (0 : ℝ)) (d := φ) field roots () v
+  have hroot := RootIndexed.position_subtreeStepFieldVector
+    (initial := fun _ : Root => (0 : ℝ)) (d := φ) field roots () []
+  have hsplit :
+      RootIndexed.position
+          (RootIndexed.subtreeInitialPosition
+            (fun _ : Root => (0 : ℝ)) φ field roots) φ
+          (RootIndexed.subtreeStepFieldVector roots field) () v =
+        RootIndexed.position
+            (RootIndexed.subtreeInitialPosition
+              (fun _ : Root => (0 : ℝ)) φ field roots) φ
+            (RootIndexed.subtreeStepFieldVector roots field) () [] +
+          pathPotential φ (RootIndexed.subtreeStepFieldVector roots field ()) v := by
+    simp [RootIndexed.position, RootIndexed.subtreeInitialPosition,
+      RootIndexed.displace, pathPotential,
+      Combinatorics.Branching.displaceWith]
+  rw [hsplit, hroot] at hposition
+  have hposition' :
+      RootIndexed.position (fun _ : Root => (0 : ℝ)) φ field r q +
+          pathPotential φ (RootIndexed.subtreeStepFieldVector
+            (fun _ : Unit => (r, q)) field ()) v =
+        RootIndexed.position (fun _ : Root => (0 : ℝ)) φ field r (q ++ v) := by
+    simpa [roots] using hposition
+  linarith
 
 /-- The weighted path observable at generation `n + 1` decomposes over every
 surviving first-generation child and its descendant field. -/
@@ -306,47 +374,6 @@ theorem pathGeneration_succ_sq_eq_childPairSum
     _ = ∑' p : ι × ι, childCount p.1 * childCount p.2 :=
       ENNReal.tsum_prod.symm
 
-/-- Split an ordered pair sum into pairs that stay in the same child subtree
-and pairs whose paths separate at the first generation. -/
-theorem ennreal_tsum_pair_eq_diagonal_add_offDiagonal
-    {ι : Type*} [Countable ι] [DecidableEq ι] (f : ι → ℝ≥0∞) :
-    (∑' p : ι × ι, f p.1 * f p.2) =
-      (∑' i, f i ^ 2) +
-        ∑' i, ∑' j, if i ≠ j then f i * f j else 0 := by
-  classical
-  have hsplit (i j : ι) :
-      f i * f j =
-        (if i = j then f i * f j else 0) +
-          (if i ≠ j then f i * f j else 0) := by
-    by_cases h : i = j <;> simp [h]
-  have hdiag (i : ι) :
-      (∑' j, if i = j then f i * f j else 0) = f i ^ 2 := by
-    rw [tsum_eq_single i]
-    · simp [pow_two]
-    · intro j hj
-      simp [Ne.symm hj]
-  calc
-    (∑' p : ι × ι, f p.1 * f p.2) =
-        ∑' i, ∑' j, f i * f j :=
-      ENNReal.tsum_prod (f := fun i j => f i * f j)
-    _ =
-        ∑' i, ((∑' j, if i = j then f i * f j else 0) +
-          ∑' j, if i ≠ j then f i * f j else 0) := by
-      apply tsum_congr
-      intro i
-      rw [← ENNReal.tsum_add]
-      apply tsum_congr
-      intro j
-      exact hsplit i j
-    _ = (∑' i, ∑' j, if i = j then f i * f j else 0) +
-        ∑' i, ∑' j, if i ≠ j then f i * f j else 0 := ENNReal.tsum_add
-    _ = (∑' i, f i ^ 2) +
-        ∑' i, ∑' j, if i ≠ j then f i * f j else 0 := by
-      congr 1
-      apply tsum_congr
-      intro i
-      exact hdiag i
-
 /-- The generation-`n + 1` path count square separates into pairs that
 remain in one child subtree and pairs whose paths diverge at the root. -/
 theorem pathGeneration_succ_sq_eq_diagonal_add_offDiagonal
@@ -376,5 +403,8 @@ theorem pathGeneration_succ_sq_eq_diagonal_add_offDiagonal
           exact pathGeneration_succ_sq_eq_childPairSum φ n F x ω
     _ = (∑' i, childCount i ^ 2) +
         ∑' i, ∑' j, if i ≠ j then childCount i * childCount j else 0 :=
-      ennreal_tsum_pair_eq_diagonal_add_offDiagonal childCount
+      by
+        simpa [pow_two] using
+          ENNReal.tsum_prod_eq_tsum_diagonal_add_offDiagonal
+            (fun p => childCount p.1 * childCount p.2)
 end ProbabilityTheory.BranchingRandomWalk.Spine

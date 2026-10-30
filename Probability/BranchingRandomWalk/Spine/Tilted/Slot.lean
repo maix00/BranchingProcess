@@ -21,6 +21,25 @@ potential `φ : X → ℝ`, exponential weights define a probability mass functi
 on the surviving slots whenever their total weight is finite and nonzero.  The
 potential of the selected mark gives the corresponding real spine increment.
 No ordering of the raw branching law is used here.
+
+## Public declarations
+
+- `tiltedSlotPMF`, `tiltedSlotPMF_apply`, `tiltedSlotPMF_sum`, and
+  `tiltedSlotPMF_tsum_weighted`: define the normalized probability mass
+  function on surviving slots from their exponential potential weights.
+- `finitePositiveWeightDomain`, `finitePositiveWeightDomain_measurable`,
+  `measurableTiltedWeight`, `measurableTiltedWeight_measurable`, and
+  `measurableTiltedWeight_eq_pmf`: define and characterize the measurable
+  domain and totalized slot-selection kernel.
+- `tiltedPotentialPMF`, `tiltedPotentialPMF_toMeasure_map`,
+  `tiltedPotentialPMF_apply`, and `tiltedPotentialPMF_apply_set`: push the
+  selected slot through its real potential and identify its law.
+- `totalPotentialWeight_ne_zero_of_nonempty`,
+  `finitePositiveWeightDomain_ae`,
+  `finitePositiveWeightDomain_ae_of_boundary`,
+  `tiltedPotentialPMF_apply_set_ae`, and
+  `measurableTiltedWeight_tsum_one_ae`: nonemptiness and boundary assumptions
+  give almost-sure normalization and probability laws.
 -/
 
 open MeasureTheory

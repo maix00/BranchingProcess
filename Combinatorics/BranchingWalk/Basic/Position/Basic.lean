@@ -12,6 +12,8 @@ public import Combinatorics.BranchingWalk.StepField
 /-!
 # Positions
 
+## Public declarations
+
 The position of an address in a walk is the initial position of its root plus
 the displacement along the address, so it is read off the walk's own data:
 `RootIndexed.BranchingWalk.position β r u`. The displacement itself is the
@@ -44,7 +46,7 @@ namespace RootIndexed
 through `d`, and add the resulting increments. The mark space needs no
 algebraic structure. -/
 def BranchingWalk.position {Root α Mark Position : Type*}
-    [AddCommMonoid Position] (d : Mark → Position)
+    [AddMonoid Position] (d : Mark → Position)
     (β : RootIndexed.BranchingWalk Root α Mark Position)
     (r : Root) (u : TreeNode α) : Position :=
   β.initial r + displaceWith d (β.step r) [] u
@@ -53,7 +55,7 @@ def BranchingWalk.position {Root α Mark Position : Type*}
 step, so this statement does not require any algebraic structure on the raw
 mark type or require an arbitrary mark map to preserve a distinguished zero. -/
 theorem BranchingWalk.position_child {Root α Mark Position : Type*}
-    [AddCommMonoid Position] (d : Mark → Position)
+    [AddMonoid Position] (d : Mark → Position)
     (β : RootIndexed.BranchingWalk Root α Mark Position)
     (r : Root) (u : TreeNode α) (i : α) :
     β.position d r (u ++ [i]) =
@@ -63,7 +65,7 @@ theorem BranchingWalk.position_child {Root α Mark Position : Type*}
   simp only [StepField.map_apply]
 
 @[simp] theorem BranchingWalk.position_id
-    {Root α X : Type*} [AddCommMonoid X]
+    {Root α X : Type*} [AddMonoid X]
     (β : RootIndexed.BranchingWalk Root α X X)
     (r : Root) (u : TreeNode α) :
     β.position id r u = β.initial r + displace (β.step r) [] u := by
@@ -74,7 +76,7 @@ abstract position, or to the initial position and every raw edge mark before
 the path is accumulated. -/
 theorem BranchingWalk.potential_position
     {Root α Mark Position : Type*} [MeasurableSpace Position]
-    [AddCommMonoid Position]
+    [AddMonoid Position]
     (φ : AdditivePotential Position) (d : Mark → Position)
     (β : RootIndexed.BranchingWalk Root α Mark Position)
     (r : Root) (u : TreeNode α) :

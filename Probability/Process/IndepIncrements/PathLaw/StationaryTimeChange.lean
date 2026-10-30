@@ -15,6 +15,8 @@ import Probability.Process.IndepIncrements.FiniteDimensional
 /-!
 # Path laws under stationary time changes
 
+## Public declarations
+
 For a process with independent stationary increments, two monotone
 parameterizations with the same elapsed time on every ordered pair induce the
 same law on centered paths. In particular, for $s \le t$,

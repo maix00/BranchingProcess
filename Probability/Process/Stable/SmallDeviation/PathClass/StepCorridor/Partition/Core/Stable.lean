@@ -10,8 +10,9 @@ public import Probability.Process.Path.PathClass.StepCorridor.Probability.Partit
 public import Probability.Process.Path.PathClass.StepCorridor.Probability.Partition.Range
 public import Topology.Cadlag.Skorokhod.PathClass.StepCorridor.Partition.LowerCores
 public import Probability.Process.Stable.FiniteDimensional
+public import Probability.Process.Stable.Levy
 public import Probability.Process.Stable.PathLaw.Basic
-public import Probability.Process.Stable.PathContinuity
+public import Probability.Process.Levy.PathContinuity
 public import Probability.Process.Stable.SmallDeviation.EscapeRate.PathLaw.Transfer
 public import Probability.Process.Path.Scaling.UnitInterval
 public import Probability.Process.Path.Skorokhod.RationalTime
@@ -24,6 +25,17 @@ The cell process is translated to its left endpoint and rescaled by the
 stable time-space factor. Its rational-coordinate law is the unit-time stable
 process law, so a half-open closed range event can be bounded by a slightly
 wider full stable tube using the fixed-time no-jump result.
+
+## Public declarations
+
+- For a partition cell of length $\ell_i$, commonPartitionCellSpatialScale
+  is $\ell_i^{-1/\alpha}$, and normalizedCommonPartitionCellPath is
+  $f\mapsto\ell_i^{-1/\alpha}(f\circ\phi_i-f(t_i))$.
+- Under a stable clock path law, each normalized cell has the unit-time
+  stable increment specification and the corresponding finite-dimensional
+  law.
+- Cell range-event probabilities are bounded by products of stable tube
+  probabilities, with an arbitrarily small positive width margin.
 -/
 
 open Skorokhod.PathClass.StepCorridor
@@ -69,7 +81,7 @@ translated and normalized coordinate path has the unit stable clock. -/
 theorem IsStableClockProcessLaw.hasStableClockIncrements_normalizedCommonPartitionCellPath
     {α : ℝ} {μ : Measure ℝ}
     {P : Measure (CadlagPath unitInterval ℝ)} [IsProbabilityMeasure P]
-    (hP : IsStableClockProcessLaw α μ UnitInterval.clock P)
+    (hP : IsStableClockProcessLaw α μ unitInterval.clock P)
     (upper lower : StepBoundary)
     (i : Fin ((StepBoundary.commonKnots upper lower).card - 1)) :
     HasStableClockIncrements α μ
@@ -101,17 +113,17 @@ theorem IsStableClockProcessLaw.hasStableClockIncrements_normalizedCommonPartiti
       (RationalCoordinate.toUnitInterval ⊥) = left
     rw [hqbot, StepBoundary.commonPartitionCellTime_bot]
   have hclockPoint (q : RationalCoordinate.UnitInterval) :
-      UnitInterval.clock (φ q) = (left : ℝ) +
+      unitInterval.clock (φ q) = (left : ℝ) +
         (RationalCoordinate.toNNReal q : ℝ) * length := by
     change (StepBoundary.commonPartitionCellTime upper lower i.val
       (RationalCoordinate.toUnitInterval q) : ℝ) = _
     rw [StepBoundary.coe_commonPartitionCellTime]
     simp [left, right, length, RationalCoordinate.toNNReal_coe]
   have htranslated :=
-    (show HasStableClockIncrements α μ UnitInterval.clock
+    (show HasStableClockIncrements α μ unitInterval.clock
       cadlagPathProcess P from hP).translate_comp_time φ hφmono
   let oldClock : RationalCoordinate.UnitInterval → ℝ := fun q =>
-    UnitInterval.clock (φ q) - UnitInterval.clock (φ ⊥)
+    unitInterval.clock (φ q) - unitInterval.clock (φ ⊥)
   let newClock : RationalCoordinate.UnitInterval → ℝ := fun q =>
     (RationalCoordinate.toNNReal q : ℝ)
   have hnewMono : Monotone newClock := by
@@ -123,7 +135,7 @@ theorem IsStableClockProcessLaw.hasStableClockIncrements_normalizedCommonPartiti
     simp [RationalCoordinate.toNNReal_bot]
   have holdClock (q : RationalCoordinate.UnitInterval) :
       oldClock q = length * newClock q := by
-    change UnitInterval.clock (φ q) - UnitInterval.clock (φ ⊥) =
+    change unitInterval.clock (φ q) - unitInterval.clock (φ ⊥) =
       length * (RationalCoordinate.toNNReal q : ℝ)
     rw [hclockPoint q, hclockPoint ⊥]
     simp [RationalCoordinate.toNNReal_bot]
@@ -155,7 +167,7 @@ theorem IsStableClockProcessLaw.identDistrib_normalizedCommonPartitionCellPath
     {P : Measure (CadlagPath unitInterval ℝ)} [IsProbabilityMeasure P]
     {Ω : Type*} [MeasurableSpace Ω]
     {X : ℝ≥0 → Ω → ℝ} {Q : Measure Ω} [IsProbabilityMeasure Q]
-    (hP : IsStableClockProcessLaw α μ UnitInterval.clock P)
+    (hP : IsStableClockProcessLaw α μ unitInterval.clock P)
     (hX : IsStableLevyProcess α μ X Q)
     (upper lower : StepBoundary)
     (i : Fin ((StepBoundary.commonKnots upper lower).card - 1)) :
@@ -184,7 +196,7 @@ theorem measure_commonPartitionCellRangeEvent_le_rationalHorizonTube
     {P : Measure (CadlagPath unitInterval ℝ)} [IsProbabilityMeasure P]
     {Ω : Type*} [MeasurableSpace Ω]
     {X : ℝ≥0 → Ω → ℝ} {Q : Measure Ω} [IsProbabilityMeasure Q]
-    (hP : IsStableClockProcessLaw α μ UnitInterval.clock P)
+    (hP : IsStableClockProcessLaw α μ unitInterval.clock P)
     (hX : IsStableLevyProcess α μ X Q)
     (upper lower : StepBoundary)
     (i : Fin ((StepBoundary.commonKnots upper lower).card - 1))
@@ -251,7 +263,8 @@ theorem measure_commonPartitionCellRangeEvent_le_rationalHorizonTube
         Q (fullReference ⁻¹' Skorokhod.rationalCoordinateOscillationLe
           (scale * width)) := by
     apply measure_mono_ae
-    filter_upwards [hX.ae_rationalInteriorOscillationLe_implies_rationalCoordinateOscillationLe
+    filter_upwards [ProbabilityTheory.ae_rationalInteriorOscillationLe_implies_rationalCoordinateOscillationLe
+      hX.ae_cadlag (hX.toIsLevyProcess.ae_leftLim_eq_eval 1 (by norm_num))
       (scale * width)] with ω hendpoint
     intro hlocal
     change ∀ s t : RationalCoordinate.UnitInterval,
@@ -290,7 +303,7 @@ theorem measure_set_le_stableProcessTubeProduct_of_rangeBounds
     {P : Measure (CadlagPath unitInterval ℝ)} [IsProbabilityMeasure P]
     {Ω : Type*} [MeasurableSpace Ω]
     {X : ℝ≥0 → Ω → ℝ} {Q : Measure Ω} [IsProbabilityMeasure Q]
-    (hP : IsStableClockProcessLaw α μ UnitInterval.clock P)
+    (hP : IsStableClockProcessLaw α μ unitInterval.clock P)
     (hX : IsStableLevyProcess α μ X Q)
     (upper lower : StepBoundary)
     (s : Finset (Fin ((StepBoundary.commonKnots upper lower).card - 1)))
@@ -304,7 +317,7 @@ theorem measure_set_le_stableProcessTubeProduct_of_rangeBounds
     P G ≤
       ∏ i ∈ s, P (stableProcessTube
         ((commonPartitionCellSpatialScale α upper lower i * width i + margin i) / 2)) := by
-  let hbase : HasStableClockIncrements α μ UnitInterval.clock
+  let hbase : HasStableClockIncrements α μ unitInterval.clock
       cadlagPathProcess P := hP
   have hindep := HasIndepIncrements.iIndepFun_commonStepBoundaryInteriorCells
     hbase.indepIncrements (fun t => hbase.aemeasurable_eval t) upper lower
@@ -351,7 +364,7 @@ theorem measure_corridorSet_le_stableProcessTubeProduct
     {P : Measure (CadlagPath unitInterval ℝ)} [IsProbabilityMeasure P]
     {Ω : Type*} [MeasurableSpace Ω]
     {X : ℝ≥0 → Ω → ℝ} {Q : Measure Ω} [IsProbabilityMeasure Q]
-    (hP : IsStableClockProcessLaw α μ UnitInterval.clock P)
+    (hP : IsStableClockProcessLaw α μ unitInterval.clock P)
     (hX : IsStableLevyProcess α μ X Q)
     (upper lower : StepBoundary)
     (s : Finset (Fin ((StepBoundary.commonKnots upper lower).card - 1)))

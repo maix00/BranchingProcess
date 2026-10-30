@@ -6,12 +6,14 @@ Authors: WANG Yiyang
 
 module
 
+public import Probability.Process.Path.Transform.Continuous
+
 public import Probability.Process.Brownian.Independence.PastFuturePaths
 
 /-!
 # Brownian future path at a finite-valued stopping time
 
-The public theorem in this file is:
+## Public declarations
 
 - `ProbabilityTheory.IsBrownianReal.measure_shiftToZero_finiteStoppingTime_eq`:
   if a finite-valued pathwise stopping time $T$ has fibers determined by

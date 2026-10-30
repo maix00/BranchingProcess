@@ -12,6 +12,8 @@ public import Combinatorics.BranchingWalk.Basic.Survival.SurviveAlong
 /-!
 # Branching walks
 
+## Public declarations
+
 `StepField α X = TreeNode α → Step α X` is the raw field of branching steps,
 one at every address. `RootIndexed.BranchingWalk Root α Mark Position`
 bundles one mark-valued step field and one position-valued initial population

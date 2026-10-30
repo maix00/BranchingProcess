@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Combinatorics.BranchingWalk.Step.Selection.Finite
-public import Combinatorics.BranchingWalk.Step.Selection.Count
+public import Combinatorics.BranchingWalk.Step.Count
 public import Mathlib.Order.Interval.Finset.Defs
 
 /-!
@@ -20,15 +20,26 @@ as `0` or `1` are present.
 
 ## Public declarations
 
-- `Step.FiniteSelection.admitsFirstNBySlotOrder` proves finite lower sections
-  in a locally finite order with a least element.
-- `Step.FiniteSelection.firstNBySlotOrder N` selects the first `N` surviving
-  slots, and `firstNBySlotOrder_spec` gives the generic first-`N` specification.
-- `card_firstNBySlotOrder_eq_of_le_childCount` gives cardinality `N` when the
-  step has at least `N` children; `firstNBySlotOrder_isBoundedBy` gives the
-  unconditional upper bound `N`.
-- `firstNBySlotOrder_nonempty_of_support_nonempty` gives a nonempty selection
-  when `0 < N` and the step has at least one surviving slot.
+- `Combinatorics.Branching.Step.FiniteSelection.firstSelectedSlot` returns
+  the least selected child, with `⊥` on an empty selection;
+  `.firstSelectedSlot_mem` gives membership for nonempty selections.
+- `Combinatorics.Branching.Step.FiniteSelection.secondSelectedSlot` returns
+  the least selected child after removing the first, with `⊥` when fewer than
+  two children are selected; `.secondSelectedSlot_mem_of_card` proves the
+  two selected slots are distinct members when the selection has cardinality
+  at least two. `.firstSelectedSlot_lt_second_of_card` gives their strict
+  order in the slot labels.
+- `Combinatorics.Branching.Step.FiniteSelection.admitsFirstNBySlotOrder`
+  proves lower finiteness for the slot key under a locally finite linear
+  order with a least element.
+- `Combinatorics.Branching.Step.FiniteSelection.firstNBySlotOrder N` selects
+  the first `N` surviving slots, and `.firstNBySlotOrder_spec` gives its
+  `IsFirstNBy` specification.
+- `Combinatorics.Branching.Step.FiniteSelection.card_firstNBySlotOrder_eq_of_le_childCount`
+  gives cardinality `N` when `N ≤ childCount ξ`; `.firstNBySlotOrder_isBoundedBy`
+  gives the unconditional bound `card ≤ N`.
+- `Combinatorics.Branching.Step.FiniteSelection.firstNBySlotOrder_nonempty_of_support_nonempty`
+  gives a nonempty selection when `0 < N` and the support is nonempty.
 -/
 
 @[expose] public section
@@ -40,6 +51,66 @@ open Selection.NSelection
 namespace Step.FiniteSelection
 
 variable {α X : Type*}
+
+/-- The least slot in a finite selected family, with a total value on the
+empty-family case. -/
+noncomputable def firstSelectedSlot [LinearOrder α] [OrderBot α]
+    (R : Step.FiniteSelection α X) (ξ : Step α X) : α :=
+  if h : (R ξ).Nonempty then (R ξ).min' h else ⊥
+
+/-- The least selected slot after removing the first selected slot. The bottom
+slot is used when fewer than two slots are selected. -/
+noncomputable def secondSelectedSlot [LinearOrder α] [OrderBot α]
+    (R : Step.FiniteSelection α X) (ξ : Step α X) : α :=
+  let first := firstSelectedSlot R ξ
+  if h : (R ξ).erase first |>.Nonempty then
+    (R ξ).erase first |>.min' h
+  else ⊥
+
+theorem firstSelectedSlot_mem [LinearOrder α] [OrderBot α]
+    (R : Step.FiniteSelection α X) (ξ : Step α X)
+    (hne : (R ξ).Nonempty) : firstSelectedSlot R ξ ∈ R ξ := by
+  rw [firstSelectedSlot, dite_eq_left hne]
+  exact Finset.min'_mem _ _
+
+theorem secondSelectedSlot_mem_of_card [LinearOrder α] [OrderBot α]
+    (R : Step.FiniteSelection α X) (ξ : Step α X)
+    (hcard : 2 ≤ (R ξ).card) :
+    secondSelectedSlot R ξ ∈ R ξ ∧
+      firstSelectedSlot R ξ ≠ secondSelectedSlot R ξ := by
+  classical
+  have hfirst : firstSelectedSlot R ξ ∈ R ξ :=
+    firstSelectedSlot_mem R ξ (Finset.card_pos.mp (by omega))
+  have herase : ((R ξ).erase (firstSelectedSlot R ξ)).Nonempty := by
+    apply Finset.card_pos.mp
+    rw [Finset.card_erase_of_mem hfirst]
+    omega
+  have hsecond : secondSelectedSlot R ξ ∈
+      (R ξ).erase (firstSelectedSlot R ξ) := by
+    have hvalue : secondSelectedSlot R ξ =
+        ((R ξ).erase (firstSelectedSlot R ξ)).min' herase := by
+      simp [secondSelectedSlot, herase]
+    rw [hvalue]
+    exact Finset.min'_mem _ _
+  exact ⟨(Finset.mem_erase.mp hsecond).2,
+    (Finset.mem_erase.mp hsecond).1.symm⟩
+
+/-- The first and second selected slots are strictly ordered by their labels.
+-/
+theorem firstSelectedSlot_lt_second_of_card [LinearOrder α] [OrderBot α]
+    (R : Step.FiniteSelection α X) (ξ : Step α X)
+    (hcard : 2 ≤ (R ξ).card) :
+    firstSelectedSlot R ξ < secondSelectedSlot R ξ := by
+  have hslots := secondSelectedSlot_mem_of_card R ξ hcard
+  have hnonempty : (R ξ).Nonempty := Finset.card_pos.mp (by omega)
+  have hfirst : firstSelectedSlot R ξ = (R ξ).min' hnonempty := by
+    simp [firstSelectedSlot, hnonempty]
+  have hle : (R ξ).min' hnonempty ≤ secondSelectedSlot R ξ :=
+    Finset.min'_le _ _ hslots.1
+  have hle' : firstSelectedSlot R ξ ≤ secondSelectedSlot R ξ := by
+    rw [hfirst]
+    exact hle
+  exact lt_of_le_of_ne hle' hslots.2
 
 /-- The support of a step is lower-finite when ordered by its slot labels.
 The least slot bounds every lower section inside a finite interval. -/

@@ -7,12 +7,24 @@ Authors: WANG Yiyang
 module
 
 public import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.Exploration.Domains
+public import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.SelectedSubtree
+import MeasureTheory.Measure.Partition
 
 /-!
 # A fresh subtree selected from an exploration domain
 
-A root chosen measurably from the exploration domain and always fresh for it
-carries an independent subtree with the original field law.
+## Public declarations
+
+A root chosen measurably from the exploration domain, with countable range,
+and whose descendant coordinates are disjoint from the inspected set for
+every outcome carries an independent subtree with the original field law.
+
+- `BranchingExplorationDomains.selected_fresh_subtree_event_factorization`
+  states `P(A ∩ F⁻¹(B)) = P(A) P(B)` for a domain-measurable event `A` and
+  measurable subtree event `B`, when the selector has countable range and
+  every selected descendant set is disjoint from the inspected coordinates.
+- `BranchingExplorationDomains.selected_fresh_subtree_independent` states
+  independence of the selected subtree field from the exploration domain.
 -/
 
 open MeasureTheory ProbabilityTheory
@@ -21,16 +33,16 @@ open MeasureTheory ProbabilityTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
+open ProbabilityTheory.BranchingProcess (offspringFieldLaw offspringFieldLaw_coordinate offspringFieldLaw_independent offspringFieldLaw_mapMarks)
+
 open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 
-
-theorem selectedSubtreeStepField_measurable_of_measurable
-    {α X : Type*} [MeasurableSpace X]
+private def abstractSelectionCell {α X : Type*}
     (chosen : (TreeNode α → Step α X) → TreeNode α)
-    (hchosen : Measurable chosen)
-    (hcount : (Set.range chosen).Countable) :
-    Measurable (selectedSubtreeStepField chosen) :=
-  selectedSubtreeStepField_measurable_of_countable_range chosen hchosen hcount
+    (A : Set (TreeNode α → Step α X)) (u : TreeNode α) :
+    Set (TreeNode α → Step α X) :=
+  A ∩ {ω | chosen ω = u}
+
 
 theorem BranchingExplorationDomains.selected_fresh_subtree_event_factorization
     {α X : Type*} [MeasurableSpace X]
@@ -43,15 +55,13 @@ theorem BranchingExplorationDomains.selected_fresh_subtree_event_factorization
       (branchingDescendantAddresses (chosen ω)))
     (A B : Set (TreeNode α → Step α X))
     (hA : MeasurableSet[H.domain j] A) (hB : MeasurableSet B) :
-    stepFieldLaw μ (A ∩ selectedSubtreeStepField chosen ⁻¹' B) =
-      stepFieldLaw μ A * stepFieldLaw μ B := by
-  let P := stepFieldLaw μ
+    offspringFieldLaw μ (A ∩ selectedSubtreeStepField chosen ⁻¹' B) =
+      offspringFieldLaw μ A * offspringFieldLaw μ B := by
+  let P := offspringFieldLaw μ
   let S : Set (TreeNode α) := Set.range chosen
   let _ : Countable S := Set.countable_coe_iff.mpr hcount
   let C := fun u : S => abstractSelectionCell chosen A u.1
   let D := fun u : S => C u ∩ subtreeStepField u.1 ⁻¹' B
-  have hchosenFull : Measurable chosen :=
-    hchosen.mono ((H.domain_le j).trans (stepsOnSpace_le _)) le_rfl
   have hCdomain (u : S) : MeasurableSet[H.domain j] (C u) :=
     hA.inter (hchosen (measurableSet_singleton u.1))
   have hCmeas (u : S) : MeasurableSet (C u) :=
@@ -106,16 +116,13 @@ theorem BranchingExplorationDomains.selected_fresh_subtree_event_factorization
     · rintro ⟨hAω, hBω⟩
       exact ⟨⟨chosen ω, Set.mem_range_self ω⟩,
         ⟨⟨hAω, rfl⟩, hBω⟩⟩
-  have hCsum : (∑' u, P (C u)) = P A := by
-    rw [← hCunion]
-    exact (measure_iUnion hCpair hCmeas).symm
   calc
     P (A ∩ selectedSubtreeStepField chosen ⁻¹' B) =
         P (⋃ u, D u) := by rw [hDunion]
-    _ = ∑' u, P (D u) := measure_iUnion hDpair hDmeas
-    _ = ∑' u, P (C u) * P B := tsum_congr hcell
-    _ = (∑' u, P (C u)) * P B := ENNReal.tsum_mul_right
-    _ = P A * P B := by rw [hCsum]
+    _ = P (⋃ u, C u) * P B :=
+      measure_iUnion_eq_mul_of_disjoint_factor P C D (P B)
+        hCmeas hDmeas hCpair hDpair hcell
+    _ = P A * P B := by rw [hCunion]
 
 theorem BranchingExplorationDomains.selected_fresh_subtree_independent
     {α X : Type*} [MeasurableSpace X]
@@ -128,19 +135,19 @@ theorem BranchingExplorationDomains.selected_fresh_subtree_independent
       (branchingDescendantAddresses (chosen ω))) :
     Indep (H.domain j)
       (MeasurableSpace.comap (selectedSubtreeStepField chosen) inferInstance)
-      (stepFieldLaw μ) := by
-  apply (indep_iff_forall_indepSet (stepFieldLaw μ)).2
+      (offspringFieldLaw μ) := by
+  apply (indep_iff_forall_indepSet (offspringFieldLaw μ)).2
   intro A T hA hT
   obtain ⟨B, hB, rfl⟩ := hT
   have hchosenFull : Measurable chosen :=
     hchosen.mono ((H.domain_le j).trans (stepsOnSpace_le _)) le_rfl
   have hselected :=
-    selectedSubtreeStepField_measurable_of_measurable chosen hchosenFull hcount
+    selectedSubtreeStepField_measurable_of_countable_range chosen hchosenFull hcount
   apply (indepSet_iff_measure_inter_eq_mul
     (((H.domain_le j).trans (stepsOnSpace_le _)) _ hA)
-    (hselected hB) (stepFieldLaw μ)).2
-  have hlaw : stepFieldLaw μ
-      (selectedSubtreeStepField chosen ⁻¹' B) = stepFieldLaw μ B := by
+    (hselected hB) (offspringFieldLaw μ)).2
+  have hlaw : offspringFieldLaw μ
+      (selectedSubtreeStepField chosen ⁻¹' B) = offspringFieldLaw μ B := by
     have hfactor := H.selected_fresh_subtree_event_factorization μ j
       chosen hchosen hcount hfresh Set.univ B (by simp) hB
     simpa using hfactor

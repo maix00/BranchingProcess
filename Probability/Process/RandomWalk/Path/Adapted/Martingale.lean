@@ -8,11 +8,11 @@ module
 
 public import Probability.Process.RandomWalk.Path.Basic
 public import Probability.Sequence.IID.Basic
-public import BrownianMotion.Auxiliary.Martingale
-public import Mathlib.Probability.BorelCantelli
+public import Probability.Process.Martingale.Convex
 public import Mathlib.Probability.Martingale.Basic
-public import Mathlib.Probability.Martingale.OptionalStopping
 public import Mathlib.Probability.Moments.Variance
+import Mathlib.Probability.BorelCantelli
+import Mathlib.Probability.Martingale.OptionalStopping
 
 /-!
 # Partial-sum martingales
@@ -20,6 +20,26 @@ public import Mathlib.Probability.Moments.Variance
 Centered independent real increments generate a martingale of partial sums
 with respect to their natural filtration. The underlying partial-sum operation
 remains in the deterministic walk layer.
+
+## Public declarations
+
+* `partialSumProcess increment n ω = ∑_{k=0}^{n} increment k ω` defines the
+  partial-sum process with its time index aligned to the exposed increments.
+* `martingale_partialSumProcess` and
+  `martingale_partialSumProcess_iidSequenceLaw` prove the martingale property
+  for centered independent increments and its canonical IID specialization.
+* `submartingale_sq_partialSumProcess` and its IID specialization prove that
+  squared partial sums form a submartingale under square-integrability.
+  `submartingale_sq_partialSumProcess_iidSequenceLaw` states this for the
+  canonical IID law when `X ∈ L²(ν)` and `∫ x ∂ν = 0`.
+* `maximal_ineq_sq_partialSumProcess` bounds
+  `ε · ℙ(max_{k≤n} S_{k+1}² ≥ ε)` by `𝔼[S_{n+1}²]`;
+  `maximal_ineq_sq_partialSumProcess_iidSequenceLaw` substitutes
+  `(n+1) · Var(ν)` for that second moment.
+* `integral_sq_partialSumProcess` identifies the terminal second moment with
+  `∑_{k=0}^{n} Var(increment_k)` for independent centered increments;
+  `integral_sq_partialSumProcess_iidSequenceLaw` gives
+  `𝔼[S_{n+1}²] = (n+1) · Var(id,ν)`.
 -/
 
 open MeasureTheory ProbabilityTheory

@@ -4,12 +4,17 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.DomainFlow
-import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.JointSubtrees
-import Probability.BranchingRandomWalk.Genealogy.Exploration.Selected.AbstractSubtreeVector
+module
+
+public import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.AddressFiltration
+public import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.JointSubtrees
+public import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.SelectedSubtreeVector
+import MeasureTheory.Measure.Partition
 
 /-!
 # Factorization of stopped subtree-vector events
+
+## Public declarations
 
 The public declaration in namespace `ProbabilityTheory.BranchingRandomWalk` is
 `stopped_selectedSubtreeStepFieldVector_event_factorization_on_finite μ τ hτ
@@ -19,7 +24,7 @@ measurable $B$, it states
   \nu\bigl((A\cap\{\tau<\infty\})\cap\Phi^{-1}(B)\bigr)
   =\nu(A\cap\{\tau<\infty\})\,\nu^{\otimes\kappa}(B),
 \]
-where $\nu=\operatorname{stepFieldLaw}(\mu)$ and
+where $\nu=\operatorname{offspringFieldLaw}(\mu)$ and
 $\Phi(\omega)(i,v)=\omega(\operatorname{roots}(\omega)(i)\mathbin{++}v)$.
 The assumptions require a stopping time, countable range and stopped-measurable
 fibres for `roots`, depth equal to $\tau$ on each finite-time cell, and
@@ -28,7 +33,11 @@ injectivity of `roots` whenever $\tau<\infty$.
 
 open MeasureTheory ProbabilityTheory
 
+@[expose] public section
+
 namespace ProbabilityTheory.BranchingRandomWalk
+
+open ProbabilityTheory.BranchingProcess (offspringFieldLaw offspringFieldLaw_coordinate offspringFieldLaw_independent offspringFieldLaw_mapMarks)
 
 open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 
@@ -89,13 +98,13 @@ theorem stopped_selectedSubtreeStepFieldVector_event_factorization_on_finite
     (B : Set (κ → TreeNode α → Step α X))
     (hA : MeasurableSet[hτ.measurableSpace] A)
     (hB : MeasurableSet B) :
-    stepFieldLaw μ
+    offspringFieldLaw μ
         ((A ∩ {ω | τ ω ≠ ⊤}) ∩
           selectedSubtreeStepFieldVector roots ⁻¹' B) =
-      stepFieldLaw μ (A ∩ {ω | τ ω ≠ ⊤}) *
-        (Measure.infinitePi (fun _ : κ => stepFieldLaw μ)) B := by
-  let P := stepFieldLaw μ
-  let Q := Measure.infinitePi (fun _ : κ => stepFieldLaw μ)
+      offspringFieldLaw μ (A ∩ {ω | τ ω ≠ ⊤}) *
+        (Measure.infinitePi (fun _ : κ => offspringFieldLaw μ)) B := by
+  let P := offspringFieldLaw μ
+  let Q := Measure.infinitePi (fun _ : κ => offspringFieldLaw μ)
   let A' := A ∩ {ω | τ ω ≠ ⊤}
   have hfinite : MeasurableSet[hτ.measurableSpace]
       {ω | τ ω ≠ ⊤} := by
@@ -176,15 +185,14 @@ theorem stopped_selectedSubtreeStepFieldVector_event_factorization_on_finite
           exact Set.mem_iUnion.mpr
             ⟨(n, ⟨roots ω, Set.mem_range_self ω⟩),
               ⟨⟨⟨⟨hAω, hfiniteω⟩, htime⟩, rfl⟩, hBω⟩⟩
-  have hCsum : (∑' p, P (C p)) = P A' := by
-    rw [← hCunion]
-    exact (measure_iUnion hCpair hCmeas).symm
   calc
     P (A' ∩ selectedSubtreeStepFieldVector roots ⁻¹' B) =
         P (⋃ p, D p) := by rw [hDunion]
-    _ = ∑' p, P (D p) := measure_iUnion hDpair hDmeas
-    _ = ∑' p, P (C p) * Q B := tsum_congr hcell
-    _ = (∑' p, P (C p)) * Q B := ENNReal.tsum_mul_right
-    _ = P A' * Q B := by rw [hCsum]
+    _ = P (⋃ p, C p) * Q B :=
+      measure_iUnion_eq_mul_of_disjoint_factor P C D (Q B)
+        hCmeas hDmeas hCpair hDpair hcell
+    _ = P A' * Q B := by rw [hCunion]
 
 end ProbabilityTheory.BranchingRandomWalk
+
+end

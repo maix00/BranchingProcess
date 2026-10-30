@@ -56,7 +56,7 @@ GENERAL_LAYER_BOUNDARIES = {
         "Probability.BranchingProcess",
         "Probability.BranchingRandomWalk",
     ),
-    "Probability.Sequence.IID.Filtration": (
+    "Probability.Sequence.IndependentPrefix": (
         "Probability.Process.RandomWalk",
         "Probability.BranchingProcess",
         "Probability.BranchingRandomWalk",
@@ -78,10 +78,22 @@ GENERAL_LAYER_BOUNDARIES = {
     "Analysis.Asymptotics.Scale.Basic": (
         "Probability",
     ),
-    "Analysis.Asymptotics.Scale.InverseScale": (
+    "Analysis.Asymptotics.Scale.Inverse.Basic": (
         "Probability",
     ),
-    "Analysis.Asymptotics.Scale.BlockScale": (
+    "Analysis.Asymptotics.Scale.Inverse.LevelMultiplicity": (
+        "Probability",
+    ),
+    "Analysis.Asymptotics.Scale.Inverse.Superquadratic": (
+        "Probability",
+    ),
+    "Analysis.Asymptotics.Scale.Block.Length": (
+        "Probability",
+    ),
+    "Analysis.Asymptotics.Scale.Block.Partition": (
+        "Probability",
+    ),
+    "Analysis.Asymptotics.Scale.Block.Count": (
         "Probability",
     ),
     "MeasureTheory.Measure.Levy.Basic": (
@@ -131,7 +143,7 @@ GENERAL_LAYER_BOUNDARIES = {
     "Topology.Order.UnitInterval.Rational": (
         "Probability",
     ),
-    "Topology.Cadlag.TerminalLeft": (
+    "Topology.Cadlag.Skorokhod.Path.TerminalLeft": (
         "Probability",
     ),
     "MeasureTheory.MeasurableSpace.CadlagPath.TerminalLeft": (
@@ -161,7 +173,7 @@ GENERAL_LAYER_BOUNDARIES = {
     "MeasureTheory.MeasurableSpace.ContinuousMap.Oscillation": (
         "Probability",
     ),
-    "MeasureTheory.Measure.ContinuousMap.Oscillation": (
+    "MeasureTheory.Measure.ContinuousMap.RangeOscillation": (
         "Probability",
     ),
     "Probability.ConvergenceInDistribution.ContinuousMap.Corridor": (
@@ -176,7 +188,7 @@ GENERAL_LAYER_BOUNDARIES = {
     "MeasureTheory.Measure.ContinuousMap.Tightness.Criteria": (
         "Probability",
     ),
-    "MeasureTheory.Measure.Recurrence.BlockBounds": (
+    "Algebra.Order.Monoid.Recurrence": (
         "Probability",
     ),
     "Probability.ConvergenceInDistribution.ContinuousMap.FiniteDimensional": (
@@ -241,20 +253,20 @@ GENERAL_LAYER_BOUNDARIES = {
         "Probability.BranchingRandomWalk",
         "Combinatorics.BranchingWalk",
     ),
-    "Probability.Distributions.Poisson.Basic": (
+    "Probability.Distributions.Poisson.Moments": (
         "Probability.RandomMeasure",
         "Probability.Process",
         "Probability.BranchingProcess",
         "Probability.BranchingRandomWalk",
         "Combinatorics.BranchingWalk",
     ),
-    "Probability.RandomMeasure.Poisson.PointFamily": (
+    "Probability.RandomMeasure.Poisson.PointFamily.Basic": (
         "Probability.Process.Levy",
         "Probability.Process.Stable",
         "Probability.BranchingProcess",
         "Probability.BranchingRandomWalk",
     ),
-    "Probability.RandomMeasure.Poisson.Basic": (
+    "Probability.RandomMeasure.Poisson.RandomMeasure.Basic": (
         "Probability.Process.Levy",
         "Probability.Process.Stable",
         "Probability.BranchingProcess",

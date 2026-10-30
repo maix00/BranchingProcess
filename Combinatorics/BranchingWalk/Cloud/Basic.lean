@@ -15,6 +15,8 @@ public import Combinatorics.BranchingWalk.Basic.Survival.Basic
 /-!
 # Time-indexed particle clouds
 
+## Public declarations
+
 A `Cloud Time Root α X` is an indexed particle cloud: at every time it holds a
 set of particles, each one an initial root together with the address it sits at,
 and `position` reads the position of a particle. Its `support` is the geometric

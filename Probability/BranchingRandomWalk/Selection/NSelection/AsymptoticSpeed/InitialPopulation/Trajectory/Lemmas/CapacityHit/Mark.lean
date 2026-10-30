@@ -4,16 +4,21 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
+module
+
 import Probability.BranchingProcess.Offspring.Count
 import Mathlib.Probability.BorelCantelli
 import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.Minimum.Address
 import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Roots.Nonempty
 import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.SelectedSubtrees.SelectedFamily
-import Probability.Independence.Finite
+import Probability.Independence.FiniteFamily
 import Probability.BranchingRandomWalk.Selection.NSelection.AsymptoticSpeed.InitialPopulation.Trajectory.Population
 
 /-!
 # Selected marks along an initially smaller population
+
+## Internal proof declarations
+
 
 The proof-chain declarations are:
 
@@ -40,9 +45,12 @@ section
 
 namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Speed
 
+open ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation
+
 open Combinatorics.Branching
 open Combinatorics.UlamHarris
-open Combinatorics.Branching.Selection.NSelection
+open _root_.Combinatorics.Selection.NSelection
+open ProbabilityTheory.BranchingProcess (offspringFieldLaw)
 open ProbabilityTheory.BranchingProcess.Offspring
 
 attribute [local instance] Classical.propDecidable Classical.decEq
@@ -53,8 +61,8 @@ selected address would have the same fresh-mark law. -/
 noncomputable def smallInitialActiveAddress (m N n : ℕ) (hm : 0 < m)
     [LinearOrder (RootIndexed.TreeNode (Fin m) ℕ)] :
     FiniteRootStepField m ℕ ℝ → RootIndexed.TreeNode (Fin m) ℕ := fun field =>
-  if _hpop : (Tail.firstNSelectedPopulation m N n field).Nonempty then
-    Tail.firstNSelectedEndpointMinAddress m N n hm field
+  if _hpop : (firstNSelectedPopulation m N n field).Nonempty then
+    firstNSelectedEndpointMinAddress m N n hm field
   else
     ((⟨0, hm⟩ : Fin m), List.replicate n 0)
 
@@ -63,13 +71,13 @@ private lemma smallInitialActiveAddress_depth (m N n : ℕ) (hm : 0 < m)
     (field : FiniteRootStepField m ℕ ℝ) :
     (smallInitialActiveAddress m N n hm field).2.length = n := by
   classical
-  by_cases hpop : (Tail.firstNSelectedPopulation m N n field).Nonempty
-  · have hmem := (Tail.firstNSelectedEndpointMinAddress_mem_and_min
+  by_cases hpop : (firstNSelectedPopulation m N n field).Nonempty
+  · have hmem := (firstNSelectedEndpointMinAddress_mem_and_min
       m N n hm field hpop).1
     have hmem' : smallInitialActiveAddress m N n hm field ∈
-        Tail.firstNSelectedPopulation m N n field := by
+        firstNSelectedPopulation m N n field := by
       simpa [smallInitialActiveAddress, hpop] using hmem
-    exact Tail.firstNSelectedPopulation_depth m N n field _ hmem'
+    exact firstNSelectedPopulation_depth m N n field _ hmem'
   · simp [smallInitialActiveAddress, hpop]
 
 private lemma measurable_smallInitialActiveAddress (m N n : ℕ) (hm : 0 < m)
@@ -82,22 +90,22 @@ private lemma measurable_smallInitialActiveAddress (m N n : ℕ) (hm : 0 < m)
   classical
   let F := RootIndexed.stepFiltration (Root := Fin m) (α := ℕ) (X := ℝ)
   have hpopulation : Measurable[F n]
-      (Tail.firstNSelectedPopulation m N n) := by
+      (firstNSelectedPopulation m N n) := by
     change Measurable[F n]
       (fun field => RootIndexed.selectedPopulationTotalized N
         (Finset.univ : Finset (Fin m)) (fun _ => (0 : ℝ)) id id n field)
     exact RootIndexed.selectedPopulationTotalized_adapted N Finset.univ
       (fun _ : Fin m => (0 : ℝ)) id measurable_id id measurable_id n
   have hnonempty : MeasurableSet[F n]
-      {field | (Tail.firstNSelectedPopulation m N n field).Nonempty} := by
-    rw [show {field | (Tail.firstNSelectedPopulation m N n field).Nonempty} =
-      {field | Tail.firstNSelectedPopulation m N n field ≠ ∅} by
+      {field | (firstNSelectedPopulation m N n field).Nonempty} := by
+    rw [show {field | (firstNSelectedPopulation m N n field).Nonempty} =
+      {field | firstNSelectedPopulation m N n field ≠ ∅} by
         ext field
         simp [Finset.nonempty_iff_ne_empty]]
     exact (hpopulation (measurableSet_singleton
       (∅ : Finset (RootIndexed.TreeNode (Fin m) ℕ)))).compl
   exact Measurable.ite hnonempty
-    (Tail.measurable_firstNSelectedEndpointMinAddress m N n hm)
+    (measurable_firstNSelectedEndpointMinAddress m N n hm)
     measurable_const
 
 private lemma smallInitialActiveAddress_fiber_measurable

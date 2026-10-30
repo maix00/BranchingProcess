@@ -6,14 +6,16 @@ Authors: WANG Yiyang
 
 module
 
-public import Mathlib.Basic.Real.Basic
-public import Mathlib.Data.Finset.Defs
-public import Probability.Process.Filtration.ConditionalBlocks
-public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.JumpPattern.DiscretizedMaximum
-public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.TubeEvent
+import Mathlib.Basic.Real.Basic
+import Mathlib.Data.Finset.Defs
+import Probability.Process.Filtration.ConditionalBlocks
+import all Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.JumpPattern.DiscretizedMaximum
+import all Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.TubeEvent
 
 /-!
 # Jump-pattern constructions for the Lemma 3.3 proof
+
+## Internal proof declarations
 
 The internal constructions used by the proof are:
 
@@ -32,7 +34,7 @@ Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite
 Offspring*, Chapter 3, Lemma 3.3.
 -/
 
-@[expose] public section
+section
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown
 

@@ -14,7 +14,10 @@ import Mathlib.Algebra.Order.BigOperators.Group.Finset
 /-!
 # Deterministic bounds for partial sums
 
-The public declarations in `AdditivePath` are:
+## Public declarations
+
+Write $D_n=\sum_{j<n}x_j$ for `AdditivePath.displacement n x`; the results
+below bound $D_n$ and all of its prefixes from coordinatewise increment bounds.
 
 - `displacement_le_nsmul_of_forall_lt` and
   `nsmul_le_displacement_of_forall_lt` show that pointwise bounds on the

@@ -25,6 +25,8 @@ import Mathlib.Tactic.Linarith
 Finite covers of possible prefixH endpoints reduce the endpoint-constrained
 comparison to fixed-time entrance probabilities and independent increments.
 
+## Public declarations
+
 The public declarations are:
 
 - `ProbabilityTheory.IsStableLevyProcess.measure_scaled_time_fullReturn`:

@@ -6,12 +6,14 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.Path.AboveStart.FirstWindow.TimeFiniteHorizon
+public import Probability.Process.Path.AboveStart.FirstWindow.Time.FiniteHorizon
 public import Probability.Process.Brownian.AboveStart.FirstWindow.Continuity
 import Mathlib.Topology.Metrizable.Real
 
 /-!
 # Brownian continuity of finite-horizon first-window times
+
+## Public declarations
 
 The public theorem in this file is:
 

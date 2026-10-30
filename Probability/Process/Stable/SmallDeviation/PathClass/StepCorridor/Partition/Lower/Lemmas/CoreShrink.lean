@@ -6,12 +6,15 @@ Authors: WANG Yiyang
 
 module
 
-public import Topology.Cadlag.Skorokhod.PathClass.StepCorridor.Basic
-public import Topology.Cadlag.Skorokhod.PathClass.StepCorridor.Boundary.Partition
+import Topology.Cadlag.Skorokhod.PathClass.StepCorridor.Basic
+import Topology.Cadlag.Skorokhod.PathClass.StepCorridor.Boundary.Partition
 import Topology.Cadlag.Skorokhod.PathClass.StepCorridor.Partition.LowerGeometry
 
 /-!
 # Core contraction step for the stable partition-rate proof
+
+## Internal proof declarations
+
 
 Given $0<\theta\leq1$, replacing every endpoint radius $r_j$ by
 $\theta r_j$ preserves trace containment, strict increase between adjacent
@@ -24,7 +27,7 @@ argument in the stable partition lower-rate assembly.
 
 open MeasureTheory
 
-@[expose] public section
+section
 
 namespace ProbabilityTheory
 

@@ -6,14 +6,23 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Probability
+public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Probability.Bounds
 public import Probability.Process.Stable.Levy
-import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Independence
+import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Probability.Independence
 import Probability.Process.Stable.FiniteDimensional
-import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Stationarity
+import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Probability.Stationarity
 
 /-!
 # Uniform-block upper bound for stable processes
+
+## Public declarations
+
+For a stable process and `blocks` equal subintervals, the public inequalities
+control the width-`w` unit-time tube by the product of identical block
+probabilities, hence by a `blocks`-th power. The horizon form states
+$P(T_1(w))\le P(T_{1/N}(w))^N$. These are the rational-coordinate
+finite-block upper estimates used by the stable small-deviation rate proof.
+
 
 Independence of translated blocks gives the finite product formula. Equality
 of their laws turns that product into the power in the Mogulskii upper bound.

@@ -4,7 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Spine.Path.SecondMoment.Basic
+module
+
+public import Probability.BranchingRandomWalk.Spine.Path.SecondMoment.SubtreeLaws
 
 /-!
 # Prefix conditioning for MRCA pair contributions
@@ -12,12 +14,26 @@ import Probability.BranchingRandomWalk.Spine.Path.SecondMoment.Basic
 This file lifts the root split-pair identity to a generation-measurable
 ancestral prefix.  It is the conditioning interface used when a tube path is
 split at a positive-depth MRCA.
+
+## Public declarations
+
+- `lintegral_generationPrefixRootMRCAContribution_eq_childMeanOffDiagonal`
+  factors each generation-$m$ prefix coefficient and position through the
+  independent descendant field: the integral of the weighted root MRCA pair
+  contribution equals the integral of the same prefix weight times the
+  conditional off-diagonal child-pair mean. The coefficient and position are
+  measurable with respect to the generation-$m$ domain, and the coefficient
+  vanishes off generation $m$.
 -/
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal
 
 namespace ProbabilityTheory.BranchingRandomWalk.Spine
+
+open ProbabilityTheory.BranchingProcess (offspringFieldLaw offspringFieldLaw_coordinate offspringFieldLaw_independent offspringFieldLaw_mapMarks)
 
 open Combinatorics.Branching
 open Combinatorics.UlamHarris
@@ -96,7 +112,7 @@ private lemma pathGenerationChildMeanOffDiagonal_joint_measurable
       (η : StepField ℕ X) : ℝ≥0∞ :=
     pathGenerationChildObservable φ n F p.1 i p.2 η
   let childMean (i : ℕ) (p : ℝ × Step ℕ X) : ℝ≥0∞ :=
-    ∫⁻ η, childKernel i p η ∂stepFieldLaw μ
+    ∫⁻ η, childKernel i p η ∂offspringFieldLaw μ
   have hchildMean (i : ℕ) : Measurable (childMean i) := by
     have hkernel : Measurable (Function.uncurry (childKernel i)) := by
       change Measurable
@@ -110,7 +126,7 @@ private lemma pathGenerationChildMeanOffDiagonal_joint_measurable
   have hterm (i j : ℕ) : Measurable (fun p : ℝ × Step ℕ X =>
       if i ≠ j then childMean i p * childMean j p else 0) := by
     by_cases hij : i ≠ j
-    · simp only [if_pos hij]
+    · simp only [ite_eq_left hij]
       exact (hchildMean i).mul (hchildMean j)
     · have hEq : i = j := by
         by_contra hne
@@ -151,7 +167,7 @@ private lemma pathGenerationRootMRCAContribution_joint_measurable
   have hterm (i j : ℕ) : Measurable (fun p : ℝ × StepField ℕ X =>
       if i ≠ j then child i p * child j p else 0) := by
     by_cases hij : i ≠ j
-    · simp only [if_pos hij]
+    · simp only [ite_eq_left hij]
       exact (hchild i).mul (hchild j)
     · have hEq : i = j := by
         by_contra hne
@@ -197,10 +213,10 @@ theorem lintegral_generationPrefixRootMRCAContribution_eq_childMeanOffDiagonal
     (hsupport : ∀ u, u.length ≠ m → A u = fun _ => 0) :
     (∫⁻ ω, ∑' u : TreeNode ℕ,
       A u ω * pathGenerationMRCAContribution φ 0 (n + 1) F
-        (position u ω) (subtreeStepField u ω) ∂stepFieldLaw μ) =
+        (position u ω) (subtreeStepField u ω) ∂offspringFieldLaw μ) =
       (∫⁻ ω, ∑' u : TreeNode ℕ,
         A u ω * pathGenerationChildMeanOffDiagonal φ μ n F
-          (position u ω) (ω u) ∂stepFieldLaw μ) := by
+          (position u ω) (ω u) ∂offspringFieldLaw μ) := by
   classical
   let g : ℝ → Step ℕ X → ℝ≥0∞ := fun x ξ =>
     pathGenerationChildMeanOffDiagonal φ μ n F x ξ
@@ -214,9 +230,9 @@ theorem lintegral_generationPrefixRootMRCAContribution_eq_childMeanOffDiagonal
     φ n F hF
   have hfactor (u : TreeNode ℕ) :
       (∫⁻ ω, A u ω * pathGenerationMRCAContribution φ 0 (n + 1) F
-        (position u ω) (subtreeStepField u ω) ∂stepFieldLaw μ) =
+        (position u ω) (subtreeStepField u ω) ∂offspringFieldLaw μ) =
       (∫⁻ ω, A u ω * (∫⁻ ξ, g (position u ω) ξ ∂μ)
-        ∂stepFieldLaw μ) := by
+        ∂offspringFieldLaw μ) := by
     by_cases hu : u.length = m
     · let state : StepField ℕ X → ℝ≥0∞ × ℝ :=
         fun ω => (A u ω, position u ω)
@@ -245,7 +261,7 @@ theorem lintegral_generationPrefixRootMRCAContribution_eq_childMeanOffDiagonal
             (fun p : (ℝ≥0∞ × ℝ) × StepField ℕ X => p.2) :=
           measurable_snd
         exact hcoeff.mul (hrootJoint.comp (hposition.prodMk hfield))
-      have hind : IndepFun state tail (stepFieldLaw μ) := by
+      have hind : IndepFun state tail (offspringFieldLaw μ) := by
         rw [IndepFun_iff_Indep]
         exact indep_of_indep_of_le_left
           (generation_subtreeStepField_independent μ u) hstateGen.comap_le
@@ -253,11 +269,11 @@ theorem lintegral_generationPrefixRootMRCAContribution_eq_childMeanOffDiagonal
           p.1 * (∫⁻ ξ, g p.2 ξ ∂μ)) :=
         measurable_fst.mul (hmean.comp measurable_snd)
       have hpoint (s : ℝ≥0∞ × ℝ) :
-          (∫⁻ η, H (s, η) ∂stepFieldLaw μ) =
+          (∫⁻ η, H (s, η) ∂offspringFieldLaw μ) =
             s.1 * (∫⁻ ξ, g s.2 ξ ∂μ) := by
         change (∫⁻ η, s.1 *
           pathGenerationMRCAContribution φ 0 (n + 1) F s.2 η
-          ∂stepFieldLaw μ) = _
+          ∂offspringFieldLaw μ) = _
         have hrootMeas : Measurable
             (pathGenerationMRCAContribution φ 0 (n + 1) F s.2) :=
           hrootJoint.comp (measurable_const.prodMk measurable_id)
@@ -268,24 +284,24 @@ theorem lintegral_generationPrefixRootMRCAContribution_eq_childMeanOffDiagonal
             φ μ n F hF s.2
       calc
         (∫⁻ ω, A u ω * pathGenerationMRCAContribution φ 0 (n + 1) F
-            (position u ω) (subtreeStepField u ω) ∂stepFieldLaw μ) =
-            ∫⁻ p, H p ∂(stepFieldLaw μ).map pair := by
+            (position u ω) (subtreeStepField u ω) ∂offspringFieldLaw μ) =
+            ∫⁻ p, H p ∂(offspringFieldLaw μ).map pair := by
               exact (lintegral_map hH hpair).symm
-        _ = ∫⁻ p, H p ∂((stepFieldLaw μ).map state).prod
-              ((stepFieldLaw μ).map tail) := by
+        _ = ∫⁻ p, H p ∂((offspringFieldLaw μ).map state).prod
+              ((offspringFieldLaw μ).map tail) := by
               rw [hind.map_prod_eq_prod_map_map
                 hstate.aemeasurable htail.aemeasurable]
-        _ = ∫⁻ s, ∫⁻ η, H (s, η) ∂((stepFieldLaw μ).map tail)
-              ∂(stepFieldLaw μ).map state :=
-              lintegral_prod (μ := (stepFieldLaw μ).map state)
-                (ν := (stepFieldLaw μ).map tail) H hH.aemeasurable
+        _ = ∫⁻ s, ∫⁻ η, H (s, η) ∂((offspringFieldLaw μ).map tail)
+              ∂(offspringFieldLaw μ).map state :=
+              lintegral_prod (μ := (offspringFieldLaw μ).map state)
+                (ν := (offspringFieldLaw μ).map tail) H hH.aemeasurable
         _ = ∫⁻ s, s.1 * (∫⁻ ξ, g s.2 ξ ∂μ)
-              ∂(stepFieldLaw μ).map state := by
+              ∂(offspringFieldLaw μ).map state := by
               rw [subtreeStepField_law μ u]
               apply lintegral_congr
               exact hpoint
         _ = ∫⁻ ω, A u ω * (∫⁻ ξ, g (position u ω) ξ ∂μ)
-              ∂stepFieldLaw μ :=
+              ∂offspringFieldLaw μ :=
               lintegral_map hmeanState hstate
     · have hzero : A u = fun _ => 0 := hsupport u hu
       rw [hzero]
@@ -303,40 +319,42 @@ theorem lintegral_generationPrefixRootMRCAContribution_eq_childMeanOffDiagonal
   have hleftSum :
       (∫⁻ ω, ∑' u : TreeNode ℕ,
         A u ω * pathGenerationMRCAContribution φ 0 (n + 1) F
-          (position u ω) (subtreeStepField u ω) ∂stepFieldLaw μ) =
+          (position u ω) (subtreeStepField u ω) ∂offspringFieldLaw μ) =
         ∑' u : TreeNode ℕ,
           ∫⁻ ω, A u ω * pathGenerationMRCAContribution φ 0 (n + 1) F
-            (position u ω) (subtreeStepField u ω) ∂stepFieldLaw μ := by
+            (position u ω) (subtreeStepField u ω) ∂offspringFieldLaw μ := by
     rw [lintegral_tsum]
     intro u
     exact (hleftTerm u).aemeasurable
   have hrightSum :
       (∫⁻ ω, ∑' u : TreeNode ℕ,
         A u ω * (∫⁻ ξ, g (position u ω) ξ ∂μ)
-        ∂stepFieldLaw μ) =
+        ∂offspringFieldLaw μ) =
         ∑' u : TreeNode ℕ,
           ∫⁻ ω, A u ω * (∫⁻ ξ, g (position u ω) ξ ∂μ)
-            ∂stepFieldLaw μ := by
+            ∂offspringFieldLaw μ := by
     rw [lintegral_tsum]
     intro u
     exact (hrightTerm u).aemeasurable
   calc
     _ = ∑' u : TreeNode ℕ,
           ∫⁻ ω, A u ω * pathGenerationMRCAContribution φ 0 (n + 1) F
-            (position u ω) (subtreeStepField u ω) ∂stepFieldLaw μ := hleftSum
+            (position u ω) (subtreeStepField u ω) ∂offspringFieldLaw μ := hleftSum
     _ = ∑' u : TreeNode ℕ,
           ∫⁻ ω, A u ω * (∫⁻ ξ, g (position u ω) ξ ∂μ)
-            ∂stepFieldLaw μ := by
+            ∂offspringFieldLaw μ := by
           apply tsum_congr
           exact hfactor
     _ = ∫⁻ ω, ∑' u : TreeNode ℕ,
           A u ω * (∫⁻ ξ, g (position u ω) ξ ∂μ)
-          ∂stepFieldLaw μ := hrightSum.symm
+          ∂offspringFieldLaw μ := hrightSum.symm
     _ = ∫⁻ ω, ∑' u : TreeNode ℕ,
-          A u ω * g (position u ω) (ω u) ∂stepFieldLaw μ := by
+          A u ω * g (position u ω) (ω u) ∂offspringFieldLaw μ := by
           symm
           exact lintegral_generationPrefixParameterizedObservableSum_eq
             μ m A position g hAgen hA hpositionGen hposition hsupport hg
     _ = _ := by rfl
 
 end ProbabilityTheory.BranchingRandomWalk.Spine
+
+end

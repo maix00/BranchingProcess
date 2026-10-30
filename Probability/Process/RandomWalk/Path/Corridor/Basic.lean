@@ -11,8 +11,26 @@ public import Probability.Process.RandomWalk.Path.Representation.Scaling
 /-!
 # Corridors for scaled walk paths
 
-Corridor membership, grid restriction, and corridor energy are deterministic
-properties of real-valued paths.
+Corridor membership and grid restriction are deterministic properties of
+real-valued paths.
+
+## Public declarations
+
+For boundaries `f`, `g` and path `x`, `InOpenCorridorOn T f g x` means
+`∀ t ∈ T, f t < x t < g t`; `InClosedCorridorOn` replaces both strict
+inequalities by `≤`. `InOpenCorridor` and `InClosedCorridor` specialize these
+predicates to `[0,1]`. `InOpenCorridorOnGrid` and `InClosedCorridorOnGrid`
+use the normalized step path at times `(k+1)/n`, for each `k : Fin n`.
+
+* `InOpenCorridorOn.closed` sends `f < x < g` to `f ≤ x ≤ g`.
+* `InOpenCorridorOn.mono` and `InClosedCorridorOn.mono` enlarge a corridor
+  when its lower boundary decreases and its upper boundary increases.
+* `InOpenCorridorOn.of_shrunk` places the strict tube `[f+ε,g-ε]` inside
+  `[f,g]`; `InOpenCorridorOn.relax` places the closed tube `[f,g]` inside the
+  strict tube `[f-ε,g+ε]`, when `ε>0`.
+* `inClosedCorridor_const_iff_grid` identifies the full-time event for a
+  constant-boundary step path with its positive-grid event, assuming
+  `lower ≤ 0 ≤ upper` and `n>0`.
 -/
 
 open MeasureTheory Set

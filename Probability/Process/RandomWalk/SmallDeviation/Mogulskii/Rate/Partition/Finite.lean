@@ -11,9 +11,10 @@ public import Probability.Distributions.Moments.Real
 public import Probability.Process.RandomWalk.Path.Corridor.Horizontal.Core
 public import Probability.Sequence.IID.Basic
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Scale.Basic
+public import Analysis.Asymptotics.Scale.Block.Diffusive
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Rate.Bounds.Lower
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Blocks.UniformReturnKernel
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Blocks.Lemmas.ProductParameters
+import all Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Blocks.Lemmas.UniformReturnKernel
+import all Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Blocks.Lemmas.ProductParameters
 
 /-!
 # Mogulskii lower rate from a finite Gaussian partition
@@ -23,7 +24,16 @@ partition argument and the arbitrary-duration logarithmic rate.  Its
 hypotheses are purely geometric and numerical; the intermediate uniform
 return-block estimate is constructed internally.
 
-The public declarations are:
+This lower-rate interface is a finite-partition step in A. A. Mogul'skii,
+Theorem 3, Section 4, p. 764, “Small deviations in the sample function
+space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974), 755--765;
+English translation, “Small Deviations in a Space of Trajectories,” *Theory
+of Probability and Its Applications* 19(4) (1975), 726--736, DOI
+10.1137/1119081. Its finite-variance specialization is used in Wang Yiyang,
+*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*
+(master's thesis, Fudan University, 2026), Chapter 3, Lemma 3.1(i).
+
+## Public declarations
 
 - `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.mul_log_toReal_le_liminf_horizontalTubeProbability_of_finset_gaussianProduct`:
   a strict Gaussian-product bound on a finite reference set gives the lower
@@ -51,7 +61,6 @@ theorem mul_log_toReal_le_liminf_horizontalTubeProbability_of_finset_gaussianPro
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (hν : IsCenteredUnitSecondMoment ν)
     {scale : ℕ → ℝ} (hscale : IsMogulskiiScale scale)
-    (hscalePos : ∀ n, 0 < scale n)
     {constant : ℝ} (hconstant : 0 < constant)
     {blocks : ℕ} (hblocks : 0 < blocks)
     {a returnLower returnUpper coverMargin : ℝ}
@@ -97,14 +106,56 @@ theorem mul_log_toReal_le_liminf_horizontalTubeProbability_of_finset_gaussianPro
         scale n ^ 2 / (n : ℝ) *
           Real.log (horizontalTubeProbability
             (iidSequenceLaw ν) a (scale n) n).toReal) := by
+  have hsmall : Asymptotics.IsSmallDeviationScale scale
+      (fun n => Real.sqrt n) := hscale
+  let positiveScale : ℕ → ℝ := fun n => max 1 (scale n)
+  have heq : positiveScale =ᶠ[atTop] scale := by
+    filter_upwards
+      [hsmall.tendsto_atTop.eventually (eventually_ge_atTop (1 : ℝ))]
+      with n hn
+    exact max_eq_right hn
+  have hpositive : ∀ n, 0 < positiveScale n := by
+    intro n
+    dsimp [positiveScale]
+    exact lt_of_lt_of_le (by norm_num) (le_max_left _ _)
+  have hratio : Tendsto (fun n => positiveScale n / Real.sqrt n)
+      atTop (nhds 0) := by
+    apply hsmall.tendsto_div.congr'
+    filter_upwards [heq] with n hn
+    simp [hn]
+  have hpositiveScale : IsMogulskiiScale positiveScale :=
+    Asymptotics.IsSmallDeviationScale.of_tendsto
+      (hsmall.tendsto_atTop.congr' heq.symm) hratio
   have hblock := Gaussian.Blocks.eventually_uniform_returnKernel_of_finset_gaussianProduct
-    ν hν hscale (fun n => (hscalePos n).le) hconstant hblocks
+    ν hν hpositiveScale (fun n => (hpositive n).le) hconstant hblocks
     hendpointMargin hblockRadius herror references target hcover hreference
     houter hstartMargin hfinalMargin lowerBound hgap
-  exact
+  have hblockPositive : ∀ᶠ n in atTop,
+      ∃ hscale : 0 < positiveScale n, ∀ x : Set.Icc returnLower returnUpper,
+        lowerBound ≤ returnKernel ν
+          (Set.Icc (positiveScale n * (-a)) (positiveScale n * (1 - a)))
+          measurableSet_Icc
+          (Set.Icc (positiveScale n * returnLower) (positiveScale n * returnUpper))
+          measurableSet_Icc (blocks * Asymptotics.diffusiveBlockLength constant positiveScale n)
+          ⟨positiveScale n * x, by
+            constructor <;> nlinarith [x.property.1, x.property.2, hscale]⟩ univ := by
+    filter_upwards [hblock] with n hn
+    exact ⟨hpositive n, hn⟩
+  have hbound :=
     mul_log_toReal_le_liminf_normalizedLog_horizontalTubeProbability_of_return
-      ν hscale hscalePos hconstant hblocks ha0 ha1 hreturnZero
-      lowerBound hlowerBound hlowerBoundOne hblock
+      ν hpositiveScale hconstant hblocks ha0 ha1
+      hreturnZero lowerBound hlowerBound hlowerBoundOne hblockPositive
+  have hsequenceEq :
+      (fun n => positiveScale n ^ 2 / (n : ℝ) *
+        Real.log (horizontalTubeProbability
+          (iidSequenceLaw ν) a (positiveScale n) n).toReal) =ᶠ[atTop]
+      fun n => scale n ^ 2 / (n : ℝ) *
+        Real.log (horizontalTubeProbability
+          (iidSequenceLaw ν) a (scale n) n).toReal := by
+    filter_upwards [heq] with n hn
+    simp [hn]
+  rw [Filter.liminf_congr hsequenceEq] at hbound
+  exact hbound
 
 /-- A convenient specialization in which every reference point follows the
 linear deterministic skeleton back to zero.  The hypotheses only say that
@@ -114,7 +165,6 @@ theorem mul_log_toReal_le_liminf_horizontalTubeProbability_of_linearReturn
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (hν : IsCenteredUnitSecondMoment ν)
     {scale : ℕ → ℝ} (hscale : IsMogulskiiScale scale)
-    (hscalePos : ∀ n, 0 < scale n)
     {constant : ℝ} (hconstant : 0 < constant)
     {blocks : ℕ} (hblocks : 0 < blocks)
     {a returnLower returnUpper coverMargin : ℝ}
@@ -162,8 +212,8 @@ theorem mul_log_toReal_le_liminf_horizontalTubeProbability_of_linearReturn
             (iidSequenceLaw ν) a (scale n) n).toReal) := by
   have hblocksReal : 0 < (blocks : ℝ) := by exact_mod_cast hblocks
   refine
-    mul_log_toReal_le_liminf_horizontalTubeProbability_of_finset_gaussianProduct
-      ν hν hscale hscalePos hconstant hblocks ha0 ha1 hreturnZero
+      mul_log_toReal_le_liminf_horizontalTubeProbability_of_finset_gaussianProduct
+      ν hν hscale hconstant hblocks ha0 ha1 hreturnZero
       hendpointMargin hblockRadius herror references
       (fun y _ => -y / (blocks : ℝ)) hcover hreference ?_ ?_ ?_
       lowerBound hlowerBound hlowerBoundOne ?_
@@ -224,7 +274,6 @@ theorem exists_lowerRate_horizontalTubeProbability_of_linearReturn
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (hν : IsCenteredUnitSecondMoment ν)
     {scale : ℕ → ℝ} (hscale : IsMogulskiiScale scale)
-    (hscalePos : ∀ n, 0 < scale n)
     {constant : ℝ} (hconstant : 0 < constant)
     {blocks : ℕ} (hblocks : 0 < blocks)
     {a returnLower returnUpper coverMargin : ℝ}
@@ -274,7 +323,7 @@ theorem exists_lowerRate_horizontalTubeProbability_of_linearReturn
       (fun y _ => -y / (blocks : ℝ)) hprincipal
   refine ⟨lowerBound, hlowerBound, hlowerBoundOne, ?_⟩
   exact mul_log_toReal_le_liminf_horizontalTubeProbability_of_linearReturn
-    ν hν hscale hscalePos hconstant hblocks ha0 ha1 hreturnZero
+    ν hν hscale hconstant hblocks ha0 ha1 hreturnZero
     hendpointMargin hblockRadius herror references hcover hreference
     houterReference houterZero hreturnFinal lowerBound hlowerBound
     hlowerBoundOne hgap

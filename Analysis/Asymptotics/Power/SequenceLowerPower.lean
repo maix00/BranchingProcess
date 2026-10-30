@@ -12,7 +12,7 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 /-!
 # Lower power bounds from prefix sums
 
-The public theorem in this file is:
+## Public declarations
 
 - `Asymptotics.lower_power_of_prefix`: if $F_n>0$, $0<\gamma<\beta$,
   $\gamma\le1$, and $\beta\sum_{k=0}^{n-N}F_k\le nF_n$ for

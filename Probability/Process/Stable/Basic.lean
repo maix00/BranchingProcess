@@ -9,12 +9,21 @@ module
 public import Mathlib.Probability.HasLaw
 public import Mathlib.Probability.IdentDistrib
 public import Mathlib.Probability.Independence.Process.HasIndepIncrements.Basic
-public import Probability.Process.IndepIncrements.Basic
+public import Probability.Process.IndepIncrements.TimeChange
 public import Probability.Distributions.Stable.Basic
 public import Probability.Distributions.Stable.Operations.Scaling
 
 /-!
 # Stable clock increments
+
+## Public declarations
+
+- HasStableClockIncrements requires a strictly $\alpha$-stable reference law,
+  a monotone clock $c$ with $c(\bot)=0$, zero start, independent increments,
+  and increment law
+  $X_t-X_s\sim (x\mapsto(c(t)-c(s))^{1/\alpha}x)_\#\mu$.
+- Monotone time changes, translated time changes, positive space scalings,
+  and the matching stable time-space rescaling preserve this specification.
 
 The core process interface uses Mathlib's convention `Time → Ω → State`.
 `HasStableClockIncrements` is deliberately valid on a general ordered time
@@ -96,17 +105,20 @@ theorem increments_hasLaw_pi (h : HasStableClockIncrements α μ clock X P)
   intro i
   exact h.increment_hasLaw (t i.castSucc) (t i.succ) (ht (Fin.castSucc_le_succ i))
 
-/-- Two processes with the same stable clock-increment specification have
-identically distributed increment vectors on every finite monotone time grid.
--/
+/-- Two processes on possibly different probability spaces with the same
+stable clock-increment specification have identically distributed increment
+vectors on every finite monotone time grid. -/
 theorem increments_identDistrib
-    {X Y : Time → Ω → ℝ} {P : Measure Ω} [IsProbabilityMeasure P]
+    {Ω' : Type*} [MeasurableSpace Ω']
+    {X : Time → Ω → ℝ} {Y : Time → Ω' → ℝ}
+    {P : Measure Ω} {Q : Measure Ω'}
+    [IsProbabilityMeasure P] [IsProbabilityMeasure Q]
     (hX : HasStableClockIncrements α μ clock X P)
-    (hY : HasStableClockIncrements α μ clock Y P)
+    (hY : HasStableClockIncrements α μ clock Y Q)
     (n : ℕ) (t : Fin (n + 1) → Time) (ht : Monotone t) :
     IdentDistrib
       (fun ω (i : Fin n) => X (t i.succ) ω - X (t i.castSucc) ω)
-      (fun ω (i : Fin n) => Y (t i.succ) ω - Y (t i.castSucc) ω) P P := by
+      (fun ω (i : Fin n) => Y (t i.succ) ω - Y (t i.castSucc) ω) P Q := by
   exact (hX.increments_hasLaw_pi n t ht).identDistrib
     (hY.increments_hasLaw_pi n t ht)
 
@@ -266,7 +278,7 @@ theorem map_spaceScale_measure
   let stateScale : ℝ → ℝ := fun x => scale * x
   letI : IsProbabilityMeasure μ := h.strictlyStable.isProbabilityMeasure
   have hμ : IsStrictlyAlphaStable α (μ.map stateScale) :=
-    IsStrictlyAlphaStable.map_mul h.strictlyStable scale hscale
+    IsStrictlyAlphaStable.map_mul h.strictlyStable scale (ne_of_gt hscale)
   letI : IsProbabilityMeasure (μ.map stateScale) := hμ.isProbabilityMeasure
   refine ⟨hμ, h.monotone_clock, h.clock_bot, ?_, ?_, ?_⟩
   · filter_upwards [h.ae_start_eq_zero] with ω hω

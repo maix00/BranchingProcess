@@ -16,6 +16,13 @@ The proof uses right continuity directly.  At a nonterminal time, compare at
 a slightly later time and choose a time change whose clock distortion keeps
 the changed time inside the same right neighbourhood.  At the terminal time,
 every increasing self-homeomorphism of `[0, 1]` fixes the endpoint.
+
+## Public declarations
+
+- `Skorokhod.exists_timeChange_j1Cost_lt`: if the infimum $J_1$ distance is
+  below $\varepsilon$, some time change has cost below $\varepsilon$.
+- `Skorokhod.j1EDist_eq_zero_imp` and `Skorokhod.j1EDist_eq_zero`:
+  zero $J_1$ distance implies equality of càdlàg paths.
 -/
 
 @[expose] public section

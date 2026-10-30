@@ -13,6 +13,26 @@ public import Topology.ContinuousMap.Corridor
 /-!
 # Uniformly interior corridors in Skorokhod path space
 
+## Public declarations
+
+- `Skorokhod.rangeInOpenInterval lower upper`: paths `f` for which some
+  `δ > 0` satisfies `lower + δ ≤ f t ≤ upper - δ` for every `t`.
+- `Skorokhod.mem_rangeInOpenInterval_iff`: membership is equivalent to that
+  positive uniform-margin formula.
+- `Skorokhod.isOpen_rangeInOpenInterval` and
+  `Skorokhod.measurableSet_rangeInOpenInterval`: the strict corridor is open
+  and measurable in `J₁` path space.
+- `Skorokhod.rangeInClosedInterval lower upper`: paths satisfying
+  `lower ≤ f t ≤ upper` for every `t`.
+- `Skorokhod.mem_rangeInClosedInterval_iff`: membership is equivalent to the
+  pointwise closed-interval bounds.
+- `Skorokhod.isClosed_rangeInClosedInterval` and
+  `Skorokhod.measurableSet_rangeInClosedInterval`: the closed corridor is
+  closed and measurable in `J₁` path space.
+- `Skorokhod.ofContinuousMap_mem_rangeInOpenInterval_iff`: when `lower < upper`,
+  a continuous path belongs to the uniform-margin corridor exactly when its
+  range lies pointwise in `(lower, upper)`.
+
 For a càdlàg path, pointwise membership in an open interval need not have a
 positive uniform margin: a left limit may lie on the boundary without being
 attained.  The open event appropriate for the Skorokhod `J₁` topology therefore

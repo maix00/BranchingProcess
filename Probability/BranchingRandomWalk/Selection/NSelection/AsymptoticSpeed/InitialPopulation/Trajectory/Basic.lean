@@ -9,12 +9,14 @@ import Probability.BranchingRandomWalk.Selection.NSelection.AsymptoticSpeed.Init
 import Probability.BranchingRandomWalk.Selection.NSelection.Admissible.Real
 import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.SelectedSubtrees.Position
 import Combinatorics.UlamHarris.Order
-import Combinatorics.BranchingWalk.Selection.NSelection.Mechanism.Infinite
+import Combinatorics.Selection.NSelection.Mechanism.Infinite.Basic
 
 /-!
 # The trajectory rooted at the capacity-hitting population
 
-The public declarations are:
+## Public declarations
+
+The declarations are:
 
 - `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Speed.smallInitialPopulationHitSubtreeField`:
   the re-rooted field at the first capacity hit, given by
@@ -194,7 +196,7 @@ private lemma smallInitialPopulationHitAddress_strictMono_at_time
         (@smallInitialPopulationCapacityTime_eq_iff m N n
           (RootIndexed.addressLinearOrder (Fin m) ℕ) field).1 htime |>.1
       simp only [smallInitialPopulationRootsAt,
-        smallInitialPopulationRootsOfFinset, dif_pos hcard]
+        smallInitialPopulationRootsOfFinset, dite_eq_left hcard]
       exact (smallInitialPopulation m N n field).orderEmbOfFin hcard |>.strictMono hij
     exact rootedAddress_append_lt
       (@smallInitialPopulationHitRoots m N hm
@@ -314,7 +316,7 @@ private lemma smallInitialPopulationHitAddress_observedPosition_eq
         hrootDepth, hp]
       omega
     simp only [RootIndexed.observedPositionAtGeneration,
-      RootIndexed.positionAtGeneration, if_pos hp, if_pos haddressDepth]
+      RootIndexed.positionAtGeneration, ite_eq_left hp, ite_eq_left haddressDepth]
     have hposition := RootIndexed.position_selectedSubtreeStepFieldVector
       (fun _ : Fin m => (0 : ℝ)) id
       (@smallInitialPopulationHitRoots m N hm
@@ -354,13 +356,13 @@ theorem smallInitialPopulationHitSubtreePopulation_image_succ
     (hcandidateImage : Set.image
         (@smallInitialPopulationHitAddress m N hm
           (RootIndexed.addressLinearOrder (Fin m) ℕ) field)
-        (RootIndexed.childrenAtGeneration j parents
+        (Combinatorics.Branching.Population.childrenAtGeneration j parents
           (@smallInitialPopulationHitSubtreeField m N hm
             (RootIndexed.addressLinearOrder (Fin m) ℕ) field)) =
-      RootIndexed.childrenAtGeneration (n + j)
+      Combinatorics.Branching.Population.childrenAtGeneration (n + j)
         (parents.image (@smallInitialPopulationHitAddress m N hm
           (RootIndexed.addressLinearOrder (Fin m) ℕ) field)) field)
-    (hlocal : @Combinatorics.Branching.Selection.NSelection.IsFirstNBy
+    (hlocal : @Combinatorics.Selection.NSelection.IsFirstNBy
       (RootIndexed.TreeNode (Fin N) ℕ) ℝ
       (RootIndexed.addressLinearOrder (Fin N) ℕ) inferInstance N
       (RootIndexed.observedPositionAtGeneration
@@ -369,16 +371,16 @@ theorem smallInitialPopulationHitSubtreePopulation_image_succ
         id id (j + 1)
         (@smallInitialPopulationHitSubtreeField m N hm
           (RootIndexed.addressLinearOrder (Fin m) ℕ) field))
-      (RootIndexed.childrenAtGeneration j parents
+      (Combinatorics.Branching.Population.childrenAtGeneration j parents
         (@smallInitialPopulationHitSubtreeField m N hm
           (RootIndexed.addressLinearOrder (Fin m) ℕ) field))
       (smallInitialPopulationHitSubtreePopulation m N hm field (j + 1)))
-    (hglobal : @Combinatorics.Branching.Selection.NSelection.IsFirstNBy
+    (hglobal : @Combinatorics.Selection.NSelection.IsFirstNBy
       (RootIndexed.TreeNode (Fin m) ℕ) ℝ
       (RootIndexed.addressLinearOrder (Fin m) ℕ) inferInstance N
       (RootIndexed.observedPositionAtGeneration
         (fun _ : Fin m => (0 : ℝ)) id id (n + j + 1) field)
-      (RootIndexed.childrenAtGeneration (n + j)
+      (Combinatorics.Branching.Population.childrenAtGeneration (n + j)
         (@smallInitialPopulation m N (n + j)
           (RootIndexed.addressLinearOrder (Fin m) ℕ) field) field)
       (@smallInitialPopulation m N (n + j + 1)
@@ -406,7 +408,7 @@ theorem smallInitialPopulationHitSubtreePopulation_image_succ
     localInitial id id (j + 1) localField
   let globalValue := RootIndexed.observedPositionAtGeneration
     (fun _ : Fin m => (0 : ℝ)) id id (n + j + 1) field
-  let candidates := RootIndexed.childrenAtGeneration j parents localField
+  let candidates := Combinatorics.Branching.Population.childrenAtGeneration j parents localField
   have hdepth (i : Fin N) : (smallInitialPopulationHitRoots m N hm field i).2.length = n :=
     @smallInitialPopulationHitRoots_depth_at_time m N n hm
       (RootIndexed.addressLinearOrder (Fin m) ℕ) field htime i
@@ -424,10 +426,10 @@ theorem smallInitialPopulationHitSubtreePopulation_image_succ
     exact smallInitialPopulationHitAddress_injective_at_time
       m N n hm field htime q r hqr
   have hkeyOrder (p q : RootIndexed.TreeNode (Fin N) ℕ) :
-      Combinatorics.Branching.Selection.NSelection.valueKey localValue p <
-          Combinatorics.Branching.Selection.NSelection.valueKey localValue q ↔
-        Combinatorics.Branching.Selection.NSelection.valueKey globalValue (address p) <
-          Combinatorics.Branching.Selection.NSelection.valueKey globalValue (address q) := by
+      Combinatorics.Selection.NSelection.valueKey localValue p <
+          Combinatorics.Selection.NSelection.valueKey localValue q ↔
+        Combinatorics.Selection.NSelection.valueKey globalValue (address p) <
+          Combinatorics.Selection.NSelection.valueKey globalValue (address q) := by
     have hp := smallInitialPopulationHitAddress_observedPosition_eq
       m N n j hm field htime p
     have hq := smallInitialPopulationHitAddress_observedPosition_eq
@@ -451,12 +453,12 @@ theorem smallInitialPopulationHitSubtreePopulation_image_succ
       · exact Or.inl hvalue
       · exact Or.inr ⟨heq, hlabel.mpr hlt⟩
   have hcandidateImage' : Set.image address candidates =
-      RootIndexed.childrenAtGeneration (n + j)
+      Combinatorics.Branching.Population.childrenAtGeneration (n + j)
         (@smallInitialPopulation m N (n + j)
           (RootIndexed.addressLinearOrder (Fin m) ℕ) field) field := by
     rw [hcandidateImage, hparents]
   have htransport :=
-    Combinatorics.Branching.Selection.NSelection.IsFirstNBy.image
+    Combinatorics.Selection.NSelection.IsFirstNBy.image
     N address haddressInjective
     localValue globalValue hkeyOrder candidates
     (smallInitialPopulationHitSubtreePopulation m N hm field (j + 1)) hlocal
@@ -476,16 +478,16 @@ theorem childrenAtGeneration_image_smallInitialPopulationHitAddress
       (smallInitialPopulationHitRoots m N hm field i).2.length = k)
     (parents : Finset (RootIndexed.TreeNode (Fin N) ℕ)) :
     Set.image (smallInitialPopulationHitAddress m N hm field)
-        (RootIndexed.childrenAtGeneration j parents
+        (Combinatorics.Branching.Population.childrenAtGeneration j parents
           (smallInitialPopulationHitSubtreeField m N hm field)) =
-      RootIndexed.childrenAtGeneration (k + j)
+      Combinatorics.Branching.Population.childrenAtGeneration (k + j)
         (parents.image (smallInitialPopulationHitAddress m N hm field)) field := by
   classical
   ext q
   constructor
   · rintro ⟨qLocal, hqLocal, rfl⟩
     obtain ⟨p, hp, hpdepth, i, hi, rfl⟩ :=
-      (RootIndexed.mem_childrenAtGeneration_iff j parents
+      (Combinatorics.Branching.Population.mem_childrenAtGeneration_iff j parents
         (smallInitialPopulationHitSubtreeField m N hm field) qLocal).mp hqLocal
     have hsurvive : survive (field
         (smallInitialPopulationHitRoots m N hm field p.1).1
@@ -497,15 +499,17 @@ theorem childrenAtGeneration_image_smallInitialPopulationHitAddress
         (smallInitialPopulationHitAddress m N hm field p).2.length = k + j := by
       simp [smallInitialPopulationHitAddress, List.length_append,
         hdepth p.1, hpdepth]
-    have hchild := RootIndexed.childAddress_mem_childrenAtGeneration
+    have hchild := Combinatorics.Branching.Population.childAddress_mem_childrenAtGeneration
       (k + j)
       (parents.image (smallInitialPopulationHitAddress m N hm field))
       field (smallInitialPopulationHitAddress m N hm field p)
       (Finset.mem_image.mpr ⟨p, hp, rfl⟩) hpdepth' i hsurvive
-    simpa [smallInitialPopulationHitAddress, List.append_assoc] using hchild
+    simpa [smallInitialPopulationHitAddress,
+      Combinatorics.UlamHarris.RootIndexed.childAddress,
+      List.append_assoc] using hchild
   · intro hq
     obtain ⟨pGlobal, hpGlobal, hpGlobalDepth, i, hi, rfl⟩ :=
-      (RootIndexed.mem_childrenAtGeneration_iff (k + j)
+      (Combinatorics.Branching.Population.mem_childrenAtGeneration_iff (k + j)
         (parents.image (smallInitialPopulationHitAddress m N hm field))
         field q).mp hq
     obtain ⟨pLocal, hpLocal, hpEq⟩ := Finset.mem_image.mp hpGlobal
@@ -523,12 +527,14 @@ theorem childrenAtGeneration_image_smallInitialPopulationHitAddress
         smallInitialPopulationHitSubtreeField,
         RootIndexed.selectedSubtreeStepFieldVector,
         RootIndexed.subtreeStepFieldVector] using hi
-    have hchild := RootIndexed.childAddress_mem_childrenAtGeneration
+    have hchild := Combinatorics.Branching.Population.childAddress_mem_childrenAtGeneration
       j parents (smallInitialPopulationHitSubtreeField m N hm field)
       pLocal hpLocal hpLocalDepth i hsurvive
     refine ⟨(pLocal.1, pLocal.2 ++ [i]), hchild, ?_⟩
     rw [← hpEq]
-    simp [smallInitialPopulationHitAddress, List.append_assoc]
+    simp [smallInitialPopulationHitAddress,
+      Combinatorics.UlamHarris.RootIndexed.childAddress,
+      List.append_assoc]
 
 /-- After a finite capacity hit, the re-rooted exact-`N` selected process
 agrees generation by generation with the original selected process. The
@@ -541,7 +547,7 @@ theorem smallInitialPopulationHitSubtreePopulation_image
     (htime : @smallInitialPopulationCapacityTime m N
       (RootIndexed.addressLinearOrder (Fin m) ℕ) field = n)
     (hlocalGood : ∀ j,
-      @Combinatorics.Branching.Selection.NSelection.IsLowerFiniteBy
+      @Combinatorics.Selection.NSelection.IsLowerFiniteBy
         (RootIndexed.TreeNode (Fin N) ℕ) ℝ
         (RootIndexed.addressLinearOrder (Fin N) ℕ) inferInstance
         (RootIndexed.observedPositionAtGeneration
@@ -550,17 +556,17 @@ theorem smallInitialPopulationHitSubtreePopulation_image
           id id (j + 1)
           (@smallInitialPopulationHitSubtreeField m N hm
             (RootIndexed.addressLinearOrder (Fin m) ℕ) field))
-        (RootIndexed.childrenAtGeneration j
+        (Combinatorics.Branching.Population.childrenAtGeneration j
           (smallInitialPopulationHitSubtreePopulation m N hm field j)
           (@smallInitialPopulationHitSubtreeField m N hm
             (RootIndexed.addressLinearOrder (Fin m) ℕ) field)))
     (hglobalGood : ∀ j,
-      @Combinatorics.Branching.Selection.NSelection.IsLowerFiniteBy
+      @Combinatorics.Selection.NSelection.IsLowerFiniteBy
         (RootIndexed.TreeNode (Fin m) ℕ) ℝ
         (RootIndexed.addressLinearOrder (Fin m) ℕ) inferInstance
         (RootIndexed.observedPositionAtGeneration
           (fun _ : Fin m => (0 : ℝ)) id id (n + j + 1) field)
-        (RootIndexed.childrenAtGeneration (n + j)
+        (Combinatorics.Branching.Population.childrenAtGeneration (n + j)
           (@smallInitialPopulation m N (n + j)
             (RootIndexed.addressLinearOrder (Fin m) ℕ) field) field)) :
     ∀ j,
@@ -637,26 +643,26 @@ theorem smallInitialPopulationHitSubtreePopulation_image
       have hcandidate := childrenAtGeneration_image_smallInitialPopulationHitAddress
         m N j n hm field hdepth (localPopulation j)
       have hlocalGood' := hlocalGood j
-      change Combinatorics.Branching.Selection.NSelection.IsLowerFiniteBy
+      change Combinatorics.Selection.NSelection.IsLowerFiniteBy
         (RootIndexed.observedPositionAtGeneration localInitial id id
           (j + 1) localField)
-        (RootIndexed.childrenAtGeneration j (localPopulation j) localField)
+        (Combinatorics.Branching.Population.childrenAtGeneration j (localPopulation j) localField)
         at hlocalGood'
       have hlocalSpec :
-          Combinatorics.Branching.Selection.NSelection.IsFirstNBy N
+          Combinatorics.Selection.NSelection.IsFirstNBy N
             (RootIndexed.observedPositionAtGeneration localInitial id id
               (j + 1) localField)
-            (RootIndexed.childrenAtGeneration j (localPopulation j) localField)
+            (Combinatorics.Branching.Population.childrenAtGeneration j (localPopulation j) localField)
             (localPopulation (j + 1)) := by
         simpa [localPopulation, localInitial, localField,
           smallInitialPopulationHitSubtreePopulation] using
           (RootIndexed.selectedPopulationTotalized_succ_spec N Finset.univ
             localInitial id id j localField hlocalGood')
       have hglobalSpec :
-          Combinatorics.Branching.Selection.NSelection.IsFirstNBy N
+          Combinatorics.Selection.NSelection.IsFirstNBy N
             (RootIndexed.observedPositionAtGeneration
               (fun _ : Fin m => (0 : ℝ)) id id (n + j + 1) field)
-            (RootIndexed.childrenAtGeneration (n + j)
+            (Combinatorics.Branching.Population.childrenAtGeneration (n + j)
               (@smallInitialPopulation m N (n + j)
                 (RootIndexed.addressLinearOrder (Fin m) ℕ) field) field)
             (@smallInitialPopulation m N (n + j + 1)
@@ -703,13 +709,6 @@ theorem smallInitialPopulationHitSubtreePopulation_image_of_weight
     apply RootIndexed.childrenAtGeneration_isLowerFiniteBy_real j
       (localPopulation j) localField localInitial
     · intro p hp
-      have hdepth := RootIndexed.selectedPopulationTotalized_depth
-        N Finset.univ localInitial id id j localField p (by
-          simpa [localPopulation, localInitial, localField,
-            smallInitialPopulationHitSubtreePopulation] using hp)
-      simpa [localPopulation, localInitial, localField,
-        smallInitialPopulationHitSubtreePopulation] using hdepth
-    · intro p hp
       have hweight' := hweight
         (smallInitialPopulationHitRoots m N hm field p.1).1
         ((smallInitialPopulationHitRoots m N hm field p.1).2 ++ p.2)
@@ -720,10 +719,6 @@ theorem smallInitialPopulationHitSubtreePopulation_image_of_weight
     apply RootIndexed.childrenAtGeneration_isLowerFiniteBy_real (n + j)
       (smallInitialPopulation m N (n + j) field) field
       (fun _ : Fin m => (0 : ℝ))
-    · intro p hp
-      exact RootIndexed.selectedPopulationTotalized_depth
-        N Finset.univ (fun _ : Fin m => (0 : ℝ)) id id (n + j) field p
-        (by simpa [smallInitialPopulation] using hp)
     · intro p hp
       exact hweight p.1 p.2
 

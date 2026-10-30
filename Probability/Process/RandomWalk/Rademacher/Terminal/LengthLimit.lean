@@ -7,10 +7,12 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.Rademacher.ConditionedPathLaw
-public import Probability.Process.RandomWalk.FunctionalLimit.Donsker.FiniteDimensional.CLT
+import Probability.Process.RandomWalk.FunctionalLimit.Normal.FiniteDimensional.CentralLimitTheorem
 
 /-!
 # Divergence of the terminal sign-stable length
+
+## Public declarations
 
 The public theorem in this file is:
 

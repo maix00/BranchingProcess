@@ -8,7 +8,7 @@ module
 
 public import Probability.Process.RandomWalk.Path.Block.Partition.Basic
 public import Probability.Process.RandomWalk.Path.Block.Measurable
-public import Probability.Process.RandomWalk.Path.Event.Oscillation
+public import Topology.MetricSpace.Oscillation
 public import Mathlib.MeasureTheory.Constructions.BorelSpace.Order
 
 import MeasureTheory.Function.FinPartialSum
@@ -23,7 +23,7 @@ $\{|S_i-S_j|<w\ (0\le i,j\le m)\}$. It also records the half-open
 prefix version, which observes $0\le i,j<m$, and the deterministic
 translation from an additive-path segment to its increment block.
 
-The public declarations are:
+## Public declarations
 
 - `blockOscillationEvent` and `blockOscillationLTEvent`: weak and strict
   pairwise range bounds for all positions in a finite increment block.
@@ -44,7 +44,7 @@ namespace ProbabilityTheory.RandomWalk
 oscillation at most `width`. -/
 def blockOscillationEvent (width : ℝ) (length : ℕ) :
     Set (Fin length → ℝ) :=
-  {increments | OscillationBounded
+  {increments | Metric.OscillationBounded
     (fun time : Fin (length + 1) => Fin.partialSum increments time) width}
 
 /-- The finite-block oscillation event is measurable. -/
@@ -56,7 +56,7 @@ theorem measurableSet_blockOscillationEvent (width : ℝ) (length : ℕ) :
           |Fin.partialSum increments i - Fin.partialSum increments j| ≤
             width} by
     ext increments
-    simp [blockOscillationEvent, OscillationBounded]]
+    simp [blockOscillationEvent, Metric.OscillationBounded, Real.dist_eq]]
   exact MeasurableSet.iInter fun i => MeasurableSet.iInter fun j => by
     have hdiff : Measurable (fun increments : Fin length → ℝ =>
         Fin.partialSum increments i - Fin.partialSum increments j) :=
@@ -123,12 +123,12 @@ theorem measurableSet_blockOscillationPrefixLTEvent
 finite-block oscillation event for the increments in that segment. -/
 theorem blockOscillationEvent_of_additiveSegment
     {start length : ℕ} {increment : ℕ → ℝ} {width : ℝ}
-    (hsegment : OscillationBounded
+    (hsegment : Metric.OscillationBounded
       (fun k : Fin (length + 1) =>
         AdditivePath.displacement (start + (k : ℕ)) increment) width) :
     blockOscillationEvent width length
       (Combinatorics.Sequence.blockCoordinates start length increment) := by
-  change OscillationBounded
+  change Metric.OscillationBounded
     (fun k : Fin (length + 1) =>
       Fin.partialSum
         (Combinatorics.Sequence.blockCoordinates start length increment) k)

@@ -6,7 +6,6 @@ Authors: WANG Yiyang
 
 module
 
-public import Combinatorics.UlamHarris.Split
 public import Combinatorics.BranchingWalk.Step.Measurability
 public import Probability.Process.HittingTime.Declarations
 public import Probability.BranchingRandomWalk.Timing.Splits.Declared
@@ -20,6 +19,12 @@ bifurcation is a stopping time for the generation domain flow. If `τ` is
 that first-declaration time and `\mathcal F_n` is the generation domain
 flow, the conclusion is
 $\{\omega \mid \tau(\omega) \le n\} \in \mathcal F_n$ for every $n$.
+## Public declarations
+
+- `first_bifurcation_isStoppingTime` states that for an adapted full-depth lineage, the first
+  generation at which its mark lies in `nontrivialSupport` is a stopping time for the
+  generation domain flow. Equivalently, $\{\omega\mid\tau(\omega)\le n\}$ is observable
+  at generation $n$.
 -/
 
 open MeasureTheory

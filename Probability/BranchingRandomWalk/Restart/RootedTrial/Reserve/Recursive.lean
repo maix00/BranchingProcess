@@ -5,7 +5,6 @@ Authors: WANG Yiyang
 -/
 
 import Probability.BranchingRandomWalk.Restart.RootedTrial.Spine.SiblingTrial
-import Probability.Sequence.IID.Basic
 import Probability.BranchingRandomWalk.Restart.FirstSplit.BranchingProperty
 import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.StoppingSubtreeVector.Law
 
@@ -23,6 +22,19 @@ This is the retrospective candidate construction for reserve siblings in
 finite branching trials. It proves
 the candidate event law; it does not identify the retrospectively restarted
 population with an adapted killed process.
+
+## Public declarations
+
+- `selectedPopulationFirstSplitSubtrees`,
+  `selectedPopulationFirstSplitSubtrees_measurable`, and
+  `selectedPopulationFirstSplitSubtrees_map_eq_product`: define the two
+  totalized sibling descendant fields and identify their law with the product
+  law under finite first-split completion.
+- `recursiveReserveFailure`, `recursiveReserveFailure_measurable`,
+  `measure_recursiveReserveFailure_succ`, and
+  `measure_recursiveReserveFailure_eq_pow`: define the recursive all-failure
+  event and show its probability is the corresponding power of the
+  single-trial failure probability.
 -/
 
 open MeasureTheory ProbabilityTheory
@@ -30,6 +42,8 @@ open MeasureTheory ProbabilityTheory
 section
 
 namespace ProbabilityTheory.BranchingRandomWalk
+
+open ProbabilityTheory.BranchingProcess (offspringFieldLaw)
 
 open Combinatorics.Branching Combinatorics.UlamHarris MeasureTheory
 
@@ -79,11 +93,11 @@ theorem selectedPopulationFirstSplitSubtrees_map_eq_product
     [MeasurableSpace X]
     (μ : Measure (Step α X)) [IsProbabilityMeasure μ]
     (R : Step.FiniteSelection α X) (hR : Measurable R.select)
-    (hfinite : ∀ᵐ ω ∂stepFieldLaw μ,
+    (hfinite : ∀ᵐ ω ∂offspringFieldLaw μ,
       selectedPopulationSplitCompletion R ω ≠ ⊤) :
-    (stepFieldLaw μ).map (selectedPopulationFirstSplitSubtrees R) =
-      Measure.infinitePi (fun _ : Fin 2 => stepFieldLaw μ) := by
-  let ν := stepFieldLaw μ
+    (offspringFieldLaw μ).map (selectedPopulationFirstSplitSubtrees R) =
+      Measure.infinitePi (fun _ : Fin 2 => offspringFieldLaw μ) := by
+  let ν := offspringFieldLaw μ
   let σ := selectedPopulationSplitCompletion R
   let finite : Set (Mark α (Step α X)) := {ω | σ ω ≠ ⊤}
   have hfiniteSet : finite =ᵐ[ν] Set.univ := by
@@ -183,17 +197,17 @@ theorem measure_recursiveReserveFailure_succ
     (hsplit : Measurable splitSelection.select)
     (hgrowth : Measurable growthSelection.select)
     (duration lower upper k : ℕ)
-    (hfinite : ∀ᵐ ω ∂stepFieldLaw μ,
+    (hfinite : ∀ᵐ ω ∂offspringFieldLaw μ,
       selectedPopulationSplitCompletion splitSelection ω ≠ ⊤) :
-    stepFieldLaw μ
+    offspringFieldLaw μ
         (recursiveReserveFailure splitSelection growthSelection
           duration lower upper (k + 1)) =
-      stepFieldLaw μ
+      offspringFieldLaw μ
         {ω | ¬ growthTrialSuccess growthSelection lower upper duration ω} *
-        stepFieldLaw μ
+        offspringFieldLaw μ
           (recursiveReserveFailure splitSelection growthSelection
             duration lower upper k) := by
-  let ν := stepFieldLaw μ
+  let ν := offspringFieldLaw μ
   let children := selectedPopulationFirstSplitSubtrees splitSelection
   let failedTrial : Set (Mark α (Step α X)) :=
     {ω | ¬ growthTrialSuccess growthSelection lower upper duration ω}
@@ -283,12 +297,12 @@ theorem measure_recursiveReserveFailure_eq_pow
     (hsplit : Measurable splitSelection.select)
     (hgrowth : Measurable growthSelection.select)
     (duration lower upper : ℕ)
-    (hfinite : ∀ᵐ ω ∂stepFieldLaw μ,
+    (hfinite : ∀ᵐ ω ∂offspringFieldLaw μ,
       selectedPopulationSplitCompletion splitSelection ω ≠ ⊤) :
-    ∀ k, stepFieldLaw μ
+    ∀ k, offspringFieldLaw μ
         (recursiveReserveFailure splitSelection growthSelection
           duration lower upper k) =
-      (stepFieldLaw μ
+      (offspringFieldLaw μ
         {ω | ¬ growthTrialSuccess growthSelection lower upper duration ω}) ^ k := by
   intro k
   induction k with

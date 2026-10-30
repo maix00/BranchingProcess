@@ -17,6 +17,8 @@ increment vector to its partial-sum path is measurable. This is the measurable
 counterpart of `Fin.continuous_partialSum` and requires no topology on the
 state space.
 
+## Public declarations
+
 * `Fin.measurable_partialSum`: for `time : Fin (length + 1)`, the map
   `increments ↦ Fin.partialSum increments time` from `Fin length → E` to `E`
   is measurable.

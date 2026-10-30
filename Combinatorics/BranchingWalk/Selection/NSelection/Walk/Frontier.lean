@@ -7,7 +7,8 @@ Authors: WANG Yiyang
 module
 
 public import Combinatorics.BranchingWalk.Selection.NSelection.Walk.Cloud
-public import Combinatorics.BranchingWalk.Cloud.Frontier.Basic
+public import Combinatorics.BranchingWalk.Cloud.Frontier
+public import Order.OrderDual.SetExtrema
 
 /-!
 # Frontiers of a deterministic `N`-branching walk
@@ -59,6 +60,8 @@ frontier of the walk's `CloudSet` after applying a potential
 open Classical
 
 @[expose] public section
+
+open _root_.Combinatorics.Selection
 
 /-! ### The two frontiers of a generation -/
 
@@ -222,7 +225,7 @@ theorem mem_upperFrontier_mapOrderDual_iff [LE X] (V : Walk N X M) (n : ℕ)
   rw [mapOrderDual_cloud]
   show IsGreatest (OrderDual.toDual '' V.cloud.points n) (OrderDual.toDual x) ↔
     IsLeast (V.cloud.points n) x
-  exact isGreatest_image_toDual_iff
+  exact OrderDual.isGreatest_image_toDual_iff
 
 theorem lowerFrontier_mapOrderDual (V : Walk N X M) [LE X] (n : ℕ) :
     (V.mapOrderDual).lowerFrontier n = OrderDual.toDual '' V.upperFrontier n := by

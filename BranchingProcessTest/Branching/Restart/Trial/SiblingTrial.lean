@@ -31,7 +31,7 @@ past at the observable split completion.
   ProbabilityTheory.BranchingRandomWalk.measure_recursiveReserveFailure_eq_pow
 
 #print axioms
-  ProbabilityTheory.BranchingRandomWalk.rawSplitEvent_measure_pos
+  ProbabilityTheory.BranchingRandomWalk.exists_positive_selectedSplit
 
 #print axioms
   ProbabilityTheory.BranchingRandomWalk.exists_nat_cutoff_positive_boundedSelectedSplit
@@ -63,9 +63,9 @@ theorem concrete_reserve_split_completion_ae_finite
       (⟨L.raw, ‹IsProbabilityMeasure L.raw›⟩ :
         ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw ι X)) :
     ∃ M : ℕ,
-      ∀ᵐ ω ∂ProbabilityTheory.BranchingRandomWalk.stepFieldLaw L.sorted,
+      ∀ᵐ ω ∂ProbabilityTheory.BranchingProcess.offspringFieldLaw L.sorted,
         ProbabilityTheory.BranchingRandomWalk.selectedPopulationSplitCompletion
-          (ProbabilityTheory.BranchingRandomWalk.reserveSelectionBelowPotential
+          (Combinatorics.Branching.Step.FiniteSelection.reserveSelectionBelowPotential
             (Step.FiniteSelection.firstNBySlotOrder (α := α) (X := X) 2)
             L.potential (M : ℝ)) ω ≠ ⊤ := by
   letI : IsProbabilityMeasure L.sorted := inferInstance
@@ -73,14 +73,14 @@ theorem concrete_reserve_split_completion_ae_finite
     ProbabilityTheory.BranchingRandomWalk.exists_nat_cutoff_positive_reserveSplit
       L hnonempty hsupercritical
   let R : Step.FiniteSelection α X :=
-    ProbabilityTheory.BranchingRandomWalk.reserveSelectionBelowPotential
+    Combinatorics.Branching.Step.FiniteSelection.reserveSelectionBelowPotential
       (Step.FiniteSelection.firstNBySlotOrder (α := α) (X := X) 2)
       L.potential (M : ℝ)
   have hR : Measurable R.select := by
     simpa [R] using
-      ProbabilityTheory.BranchingRandomWalk.reserveSelectionBelowPotential_measurable
+      Combinatorics.Branching.Step.FiniteSelection.reserveSelectionBelowPotential_measurable
         (Step.FiniteSelection.firstNBySlotOrder (α := α) (X := X) 2)
-        (ProbabilityTheory.BranchingRandomWalk.firstTwoBySlotOrder_measurable
+        (Combinatorics.Branching.Step.FiniteSelection.firstTwoBySlotOrder_measurable
           (α := α) (X := X)) L.potential (M : ℝ)
   have hnonemptyAE : ∀ᵐ ξ ∂L.sorted, (R ξ).Nonempty := by
     simpa [R] using

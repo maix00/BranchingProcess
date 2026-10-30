@@ -4,21 +4,70 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Population.Embedding
+module
+
+import all Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Population.Lemmas.Embedding
 import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Drawdown.Spine.Capacity
-import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Drawdown.Spine.Window
+public import Probability.BranchingRandomWalk.Population.Processes.Causal.RelativePosition.Real
+public import Probability.BranchingRandomWalk.Spine.Path.ManyToOne.Event
+public import Probability.BranchingRandomWalk.Selection.NSelection.Admissible.Real
+public import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Population.RestartedWindow
+public import Probability.Process.RandomWalk.Path.Corridor.Affine
+public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.Event
+public import Probability.BranchingRandomWalk.Assumptions.CrossWeight
 /-!
 # First-stage lower count in the killed population
 
-A successful initial root gives a distinct particle in the actual restarted
-killed population. This module transfers the independent-root PZ low-count
-bound to the population used by the second stage.
+This is the population-transfer estimate used in Chapter 3, Lemma 3.5 of
+WANG Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite
+Offspring*.
+
+## Public declarations
+
+Fix `L=log N` and cutoff `ell`. Define
+\[
+  G=\{x:\mathbb N\to\mathbb R:
+    \operatorname{history}(\ell,0,x)\in
+      \operatorname{affineCorridorThrough}(\ell,-bL,0,bL,(-b+v)L)\},
+  \quad
+  G_j^{\mathrm{pre}}=\{x:\mathbb N\to\mathbb R:
+    \operatorname{history}(j,0,x)\in
+      \operatorname{affineCorridorPrefix}(j,-bL,0,bL)\}.
+\]
+For a drawdown bound `q`, put
+\[
+  u=e^{-bL}\mathbb P_{\nu}(G),\qquad
+  w=e^{(-b+v)L}\mathbb P_{\nu}(G),
+  \qquad
+  R=e^{(-b+2v)L}
+    \left(\int\operatorname{crossPotentialWeight}
+      (\varphi,-1,\xi)\,d\mu(\xi)\right)
+    \sum_{j=0}^{\ell-1}q_{\ell-j-1}^{2}
+      \mathbb P_{\nu}(G_j^{\mathrm{pre}}),
+  \qquad
+  p_{\mathrm{PZ}}=\operatorname{toReal}\!\left(\frac{u^2}{w+R}\right).
+\]
+Here `\mathbb P_{\nu}=iidSequenceLaw(\nu)`, and
+`\mathbb P_{\mu}^{(m)}=finiteRootStepFieldLaw(\mu,m)`; `K_ell(F)` is the
+generation-`ell` finite slice `populationFinite.toFinset(ell,F)` of the
+restarted-window population. The theorem
+`measure_positiveA_population_le_pzThreshold_le_exp_of_affineCorridorDrawdown`
+states that, when `G` has positive probability and `q_k` is finite and bounds
+the probability of `noLargeDropEndpointBelowEvent(k,bL,bL)`,
+\[
+  \mathbb P_{\mu}^{(m)}\!\left(
+    \#K_{\ell}(F)\le\frac{m p_{\mathrm{PZ}}}{4}
+  \right)
+    \le \exp\!\left(-\frac{m p_{\mathrm{PZ}}}{4}\right).
+\]
 -/
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal BigOperators
 
-namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail
+namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation
 
 open Combinatorics.Branching
 open Combinatorics.UlamHarris
@@ -30,7 +79,7 @@ open ProbabilityTheory.RandomWalk
 restarted killed population has no more than the independent-root PZ
 threshold. The embedding into the actual population holds almost surely by
 boundary normalization. -/
-theorem measure_rightTailPositiveA_population_le_pzThreshold_le_exp_of_affineCorridorDrawdown
+theorem measure_positiveA_population_le_pzThreshold_le_exp_of_affineCorridorDrawdown
     (m ell ellN : ℕ) (hm : 0 < m) (logN b v c κ : ℝ)
     (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
     (hboundary : HasBoundaryNormalization realPotential μ)
@@ -58,7 +107,7 @@ theorem measure_rightTailPositiveA_population_le_pzThreshold_le_exp_of_affineCor
       ENNReal.ofReal (Real.exp 0) *
         (ENNReal.ofReal (Real.exp (2 * ((-b + v) * logN))) *
           q (ell - j.val - 1) ^ 2) *
-        (∫⁻ ξ, crossChildWeight realPotential ξ ∂μ) *
+        (∫⁻ ξ, crossPotentialWeight realPotential (-1) ξ ∂μ) *
         (ENNReal.ofReal (Real.exp (0 - (-b * logN))) *
           (tiltedIncrementFieldLaw realPotential μ)
             {increment | RandomWalk.history j.val 0 increment ∈
@@ -66,15 +115,15 @@ theorem measure_rightTailPositiveA_population_le_pzThreshold_le_exp_of_affineCor
     let pzMean := lowerMean ^ 2 / (upperMean + pairBound)
     let initial := RootIndexed.initialPopulation (α := ℕ)
       (Finset.univ : Finset (Fin m))
-    let window := rightTailPositiveARestartedWindow ell ellN logN b v c κ
-    let upper := rightTailPositiveAWindowUpper ell ellN logN b v c κ
+    let window := positiveARestartedWindow ell ellN logN b v c κ
+    let upper := positiveAWindowUpper ell ellN logN b v c κ
     let populationFinite :=
       RootIndexed.CausalPopulation.ofRestartedRealPositionSets_finiteSlices
         (fun _ : Fin m => 0) id measurable_id initial
         (by simp [initial, RootIndexed.mem_initialPopulation_iff])
-        ell window (measurableSet_rightTailPositiveARestartedWindow
+        ell window (measurableSet_positiveARestartedWindow
           ell ellN logN b v c κ)
-        upper (rightTailPositiveARestartedWindow_subset_Iic_upper
+        upper (positiveARestartedWindow_subset_Iic_upper
           ell ellN logN b v c κ)
     (finiteRootStepFieldLaw μ m)
       {field | ((populationFinite.toFinset ell field).card : ℝ) ≤
@@ -96,7 +145,7 @@ theorem measure_rightTailPositiveA_population_le_pzThreshold_le_exp_of_affineCor
       ENNReal.ofReal (Real.exp 0) *
         (ENNReal.ofReal (Real.exp (2 * ((-b + v) * logN))) *
           q (ell - j.val - 1) ^ 2) *
-        (∫⁻ ξ, crossChildWeight realPotential ξ ∂μ) *
+        (∫⁻ ξ, crossPotentialWeight realPotential (-1) ξ ∂μ) *
         (ENNReal.ofReal (Real.exp (0 - (-b * logN))) *
           (tiltedIncrementFieldLaw realPotential μ)
             {increment | RandomWalk.history j.val 0 increment ∈
@@ -104,23 +153,23 @@ theorem measure_rightTailPositiveA_population_le_pzThreshold_le_exp_of_affineCor
   let pzMean : ℝ≥0∞ := lowerMean ^ 2 / (upperMean + pairBound)
   let initial := RootIndexed.initialPopulation (α := ℕ)
     (Finset.univ : Finset (Fin m))
-  let window := rightTailPositiveARestartedWindow ell ellN logN b v c κ
-  let upper := rightTailPositiveAWindowUpper ell ellN logN b v c κ
+  let window := positiveARestartedWindow ell ellN logN b v c κ
+  let upper := positiveAWindowUpper ell ellN logN b v c κ
   let populationFinite :=
     RootIndexed.CausalPopulation.ofRestartedRealPositionSets_finiteSlices
       (fun _ : Fin m => 0) id measurable_id initial
       (by simp [initial, RootIndexed.mem_initialPopulation_iff])
-      ell window (measurableSet_rightTailPositiveARestartedWindow
+      ell window (measurableSet_positiveARestartedWindow
         ell ellN logN b v c κ)
-      upper (rightTailPositiveARestartedWindow_subset_Iic_upper
+      upper (positiveARestartedWindow_subset_Iic_upper
         ell ellN logN b v c κ)
   let successfulRoots : RootIndexed.StepField (Fin m) ℕ ℝ → Finset (Fin m) :=
-    fun field => rightTailPositiveASuccessfulRoots m ell logN b v field
-  have hbound := measure_rightTailPositiveAFirstStageLowCount_le_of_affineCorridorDrawdown
+    fun field => positiveASuccessfulRoots m ell logN b v field
+  have hbound := measure_positiveAFirstStageLowCount_le_of_affineCorridorDrawdown
     m ell hm 0 (-b * logN) 0 (b * logN) ((-b + v) * logN)
     (by norm_num) μ hboundary hcross q hqTop
     (by intro n; simpa using hdrawdown n) hspinePositive
-  have hsuccessEmbedding := ae_rightTailPositiveA_successfulRoots_card_le_killedPopulation
+  have hsuccessEmbedding := ae_positiveA_successfulRoots_card_le_killedPopulation
     m ell ellN logN b v c κ μ hboundary
   let rootsLow : Set (RootIndexed.StepField (Fin m) ℕ ℝ) :=
     {field | (∑ r : Fin m,
@@ -134,7 +183,7 @@ theorem measure_rightTailPositiveA_population_le_pzThreshold_le_exp_of_affineCor
         (hasPathHistoryIn (ι := ℕ) realPotential ell 0 corridor).indicator
           (fun _ => (1 : ℝ)) (field r)) =
         (successfulRoots field).card := by
-    simp [successfulRoots, rightTailPositiveASuccessfulRoots, corridor,
+    simp [successfulRoots, positiveASuccessfulRoots, corridor,
       Set.indicator]
   have hsubset : ∀ᵐ field ∂finiteRootStepFieldLaw μ m,
       field ∈ populationLow → field ∈ rootsLow := by
@@ -165,4 +214,6 @@ theorem measure_rightTailPositiveA_population_le_pzThreshold_le_exp_of_affineCor
         (finiteRootStepFieldLaw μ m) rootsLow := measure_mono_ae hsubset
     _ ≤ ENNReal.ofReal (Real.exp (-((m : ℝ) * pzMean.toReal / 4))) := hrootsBound
 
-end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail
+end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation
+
+end

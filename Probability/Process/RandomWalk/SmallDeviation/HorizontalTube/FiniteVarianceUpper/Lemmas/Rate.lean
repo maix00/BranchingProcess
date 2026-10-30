@@ -6,14 +6,16 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.FromIncrementLaw.Normal.HorizontalTube.Scales
-public import Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.FiniteVarianceUpper.Lemmas.Partition.Parameters
-import Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.FiniteVarianceUpper.Lemmas.EqualPartition
-import Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.BlockIteration
+import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.FromIncrementLaw.Normal.HorizontalTube.Scales
+import all Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.FiniteVarianceUpper.Lemmas.Partition.Parameters
+import all Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.FiniteVarianceUpper.Lemmas.EqualPartition
+import Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.Kernel.BlockIteration
 import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 
 /-!
 # Rate selection for the horizontal-tube upper bound
+
+## Internal proof declarations
 
 For increments $\xi=(\xi_i)_{i\ge0}$, let
 $S_j=\sum_{i=0}^{j-1}\xi_i$ and
@@ -39,7 +41,7 @@ open Filter MeasureTheory ProbabilityTheory
 open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete
 open scoped ENNReal NNReal Topology
 
-@[expose] public section
+section
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube
 
@@ -253,7 +255,6 @@ private lemma partitionTubeParameter_mem_Ioo {m : ℕ} (hm : 0 < m)
 lemma eventually_uniform_partitionTube_rateBound
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (hcentered : ∫ x, x ∂ν = 0)
-    (hsquare : Integrable (fun x : ℝ => x ^ 2) ν)
     (hvariance : 0 < ∫ x : ℝ, x ^ 2 ∂ν)
     {u v d : ℝ} (hu : 0 < u) (hv : 0 < v) (hd : 0 < d)
     {m : ℕ} (hm : 0 < m) {rate : ℝ}
@@ -271,6 +272,8 @@ lemma eventually_uniform_partitionTube_rateBound
   let time : ℕ → ℕ := fun k => block k + 1
   let width : ℕ → ℝ := fun k => partitionTubeWidth m ((k + 2 : ℕ) : ℝ)
   let lengthReal : ℕ → ℝ := fun k => (block k : ℝ)
+  have hsquare : Integrable (fun x : ℝ => x ^ 2) ν :=
+    Integrable.of_integral_ne_zero (ne_of_gt hvariance)
   have hc : 0 < 1 + 1 / (m : ℝ) := by positivity
   have htimeStrict : StrictMono time := by
     simpa [time, block] using smallDeviationBlockLength_strictMono hu hv hd
@@ -298,7 +301,7 @@ lemma eventually_uniform_partitionTube_rateBound
           (lengthReal k / width k ^ 2))) := fun j => by
       have haj := partitionTubeParameter_mem_Ioo hm j
       have hrate := centeredFiniteVariance_closedHorizontalTubeProbabilityRate_realWidthAlong
-        htimeStrict htimePos hwidthPos hwidthTop hwidthSq hcentered hsquare
+        htimeStrict htimePos hwidthPos hwidthTop hwidthSq hcentered
         hvariance haj.1 haj.2
       have hrateBase : Tendsto (fun k : ℕ => width k ^ 2 / lengthReal k *
           Real.log (horizontalTubeProbability (iidSequenceLaw ν)

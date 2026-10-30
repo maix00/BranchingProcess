@@ -4,36 +4,39 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Population.Processes.Causal.Capacity.Spine
-import Probability.Process.RandomWalk.Path.Corridor.Horizontal.Core
-import Probability.Process.RandomWalk.Path.Restart.Basic
-import Probability.Process.RandomWalk.SmallDeviation.Drawdown.Event
-import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Basic
-import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Rate.LogScales
-import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Drawdown.Spine.Cutoff
-import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Drawdown.Spine.Window
-import Probability.BranchingRandomWalk.Spine.Tube.Corridor.PairBound
+module
 
-import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Drawdown.Spine.Lemmas.Asymptotics
-import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Drawdown.Spine.Lemmas.CapacityProbability
-import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Drawdown.Spine.Lemmas.ParameterBounds
+public import Probability.BranchingRandomWalk.Population.Processes.Causal.Capacity.Spine
+public import Probability.Process.RandomWalk.Path.Corridor.Horizontal.Core
+public import Probability.Process.RandomWalk.Path.Restart.Basic
+public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.Event
+public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Theorems
+public import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.Sequence.LogarithmicScales
+public import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.FirstStage.Cutoff
+public import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Population.RestartedWindow
+public import Probability.BranchingRandomWalk.Spine.Tube.Corridor.PairBound
 
+import Analysis.Asymptotics.Sequence.LogarithmicScale
+import all Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Drawdown.Spine.Lemmas.Asymptotics
+import all Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Drawdown.Spine.Lemmas.Capacity.ProbabilityBound
+import all Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Drawdown.Spine.Lemmas.ParameterBounds
 /-!
 # Positive-initial-mass killed-capacity failure bound
 
-The public declarations in namespace
-`ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail` are:
+## Public declarations
 
-- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.rightTailPositiveAKilledCapacityFailureProbability m ell ellN horizon
+The declarations in namespace
+`ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation` are:
+
+- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.positiveAKilledCapacityFailureProbability m ell ellN horizon
   logN b v c κ μ` is the probability under the `m`-root step-field law that
   the restarted-window causal population fails to reach capacity by
   `horizon`, as used in Proposition 3.1, equation (4.15), of Elie Aïdékon
   and Yueyun Hu, *Average-weight percolation on the complete graph*,
   arXiv:2512.23266 (2025).
-- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.exists_rightTailPositiveAKilledCapacityFailure_le_polynomial_of_endpointGap`
+- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.exists_positiveAKilledCapacityFailure_le_polynomial_of_endpointGap`
   states that if $N_n\to\infty$, the tilted increment law is centered with
-  variance $\sigma^2>0$, the Brownian inputs satisfy the pre-Brownian
-  hypotheses, $0<a<1$, $t>0$, and
+  variance $\sigma^2>0$, $0<a<1$, $t>0$, and
   $-a+\frac{\pi^2}{2}\sigma^2t<\zeta$, then there are admissible corridor
   parameters and $\varepsilon>0$ for which the failure probability is at
   most $\exp(-\varepsilon\log N_n)$ eventually.
@@ -49,10 +52,12 @@ the capacity and tube estimates remain under `Lemmas/`.
 
 -/
 
+@[expose] public section
+
 open Filter MeasureTheory
 open scoped ENNReal BigOperators Topology
 
-namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail
+namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation
 
 open Combinatorics.Branching
 open Combinatorics.UlamHarris
@@ -63,11 +68,11 @@ open ProbabilityTheory.RandomWalk
 /-- The failure probability for the two-stage killed population in the
 positive-initial-mass estimate of Aïdékon and Hu, Proposition 3.1, equation
 (4.15). -/
-noncomputable def rightTailPositiveAKilledCapacityFailureProbability
+noncomputable def positiveAKilledCapacityFailureProbability
     (m ell ellN horizon : ℕ) (logN b v c κ : ℝ)
     (μ : Measure (Step ℕ ℝ)) : ℝ≥0∞ := by
-  let window := rightTailPositiveARestartedWindow ell ellN logN b v c κ
-  let upper := rightTailPositiveAWindowUpper ell ellN logN b v c κ
+  let window := positiveARestartedWindow ell ellN logN b v c κ
+  let upper := positiveAWindowUpper ell ellN logN b v c κ
   let population := RootIndexed.CausalPopulation.ofRestartedRealPositionSets
     (fun _ : Fin m => (0 : ℝ)) id measurable_id
     (RootIndexed.initialPopulation (α := ℕ) (Finset.univ : Finset (Fin m)))
@@ -75,8 +80,8 @@ noncomputable def rightTailPositiveAKilledCapacityFailureProbability
       intro q hq
       rcases RootIndexed.mem_initialPopulation_iff.mp hq with ⟨r, _hr, rfl⟩
       simp) ell window
-    (measurableSet_rightTailPositiveARestartedWindow ell ellN logN b v c κ)
-    upper (rightTailPositiveARestartedWindow_subset_Iic_upper
+    (measurableSet_positiveARestartedWindow ell ellN logN b v c κ)
+    upper (positiveARestartedWindow_subset_Iic_upper
       ell ellN logN b v c κ)
   exact (RootIndexed.stepFieldLaw (Root := Fin m) μ)
     (population.capacityEvent horizon ellN)ᶜ
@@ -86,7 +91,7 @@ noncomputable def rightTailPositiveAKilledCapacityFailureProbability
 master's thesis, Fudan University (2026), Chapter 4, equation (4.15), has
 polynomial decay whenever its two exponent margins are positive. The uniform
 threshold is chosen once and then used for every `N`. -/
-private lemma eventually_rightTailPositiveAKilledCapacityFailure_le_polynomial_of_logarithmicScales
+private lemma eventually_positiveAKilledCapacityFailure_le_polynomial_of_logarithmicScales
     {N : ℕ → ℕ} (hN : Tendsto N atTop atTop)
     (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
     (hboundary : HasBoundaryNormalization realPotential μ)
@@ -95,11 +100,6 @@ private lemma eventually_rightTailPositiveAKilledCapacityFailure_le_polynomial_o
     {sigma : ℝ}
     (hspine : ProbabilityTheory.IsCenteredSecondMoment ν (sigma ^ 2))
     (hsigma : 0 < sigma)
-    {Ω : Type*} [MeasurableSpace Ω] {brownianMeasure : Measure Ω}
-    [IsProbabilityMeasure brownianMeasure] {B : NNReal → Ω → ℝ}
-    (hB : IsPreBrownianReal B brownianMeasure)
-    (hcontinuous : ∀ ω, Continuous (B · ω))
-    (hmeasurable : ∀ t, Measurable (B t))
     {a t b v c κ target blockTarget p : ℝ}
     (_ha : 0 < a) (ha1 : a < 1) (ht : 0 < t)
     (hb : 0 ≤ b) (hvb : v ≤ b) (hc : 0 < c) (hvc : v ≤ c)
@@ -109,14 +109,14 @@ private lemma eventually_rightTailPositiveAKilledCapacityFailure_le_polynomial_o
     (hp : 0 < p) (hpHalf : p < 1 / 2)
     (hmargin : a + (-b + v + c * (t ^ (3⁻¹ : ℝ))) < 1) :
     ∃ epsilon : ℝ, 0 < epsilon ∧ ∀ᶠ n : ℕ in atTop,
-      rightTailPositiveAKilledCapacityFailureProbability
+      positiveAKilledCapacityFailureProbability
         (Nat.floor ((N n : ℝ) ^ a))
-        (rightTailFirstStageCutoff N n)
+        (positiveAFirstStageCutoff N n)
         (logarithmicHorizon N t n) (N n)
         (logarithmOfSampleSize N n) b v c κ μ ≤
         ENNReal.ofReal (Real.exp (-epsilon * Real.log (N n : ℝ))) := by
   let m : ℕ → ℕ := fun n => Nat.floor ((N n : ℝ) ^ a)
-  let ell : ℕ → ℕ := rightTailFirstStageCutoff N
+  let ell : ℕ → ℕ := positiveAFirstStageCutoff N
   let ellN : ℕ → ℕ := logarithmicHorizon N t
   let D : ℕ → ℕ := fun n => ellN n - ell n
   let L : ℕ → ℝ := logarithmOfSampleSize N
@@ -124,7 +124,7 @@ private lemma eventually_rightTailPositiveAKilledCapacityFailure_le_polynomial_o
     (-b + v) * L n + c * ((D n : ℝ) ^ (3⁻¹ : ℝ)) +
       κ * c ^ p * ((D n : ℝ) ^ (p / 3))
   let P : ℕ → ℝ≥0∞ := fun n =>
-    rightTailPositiveAKilledCapacityFailureProbability
+    positiveAKilledCapacityFailureProbability
       (m n) (ell n) (ellN n) (N n) (L n) b v c κ μ
   have hL : Tendsto L atTop atTop := by
     exact Real.tendsto_log_atTop.comp
@@ -132,43 +132,69 @@ private lemma eventually_rightTailPositiveAKilledCapacityFailure_le_polynomial_o
   have hLpos : ∀ᶠ n : ℕ in atTop, 0 < L n := hL.eventually_gt_atTop 0
   have hellPos : ∀ᶠ n : ℕ in atTop, 0 < ell n := by
     simpa [ell] using
-      (tendsto_rightTailFirstStageCutoff_atTop hN).eventually_gt_atTop 0
+      (tendsto_positiveAFirstStageCutoff_atTop hN).eventually_gt_atTop 0
   have hellN : ∀ᶠ n : ℕ in atTop, ell n < ellN n := by
-    simpa [ell, ellN] using eventually_rightTailFirstStageCutoff_lt_horizon hN ht
+    simpa [ell, ellN] using eventually_positiveAFirstStageCutoff_lt_horizon hN ht
   have horder : ∀ᶠ n : ℕ in atTop, ell n ≤ ellN n :=
     hellN.mono (fun _ h => Nat.le_of_lt h)
   have hcutoffScale : Tendsto (fun n => (ell n : ℝ) / L n ^ 3)
       atTop (𝓝 0) := by
-    simpa [ell, L] using tendsto_rightTailFirstStageCutoff_div_logCube hN
+    simpa [ell, L] using tendsto_positiveAFirstStageCutoff_div_logCube hN
   have hhorizonScale : Tendsto (fun n => (ellN n : ℝ) / L n ^ 3)
       atTop (𝓝 t) := by
     simpa [ellN, L] using logarithmicHorizon_div_logCube_tendsto hN ht
   have hDScale : Tendsto (fun n => (D n : ℝ) / L n ^ 3)
       atTop (𝓝 t) := by
-    apply tendsto_rightTailPositiveASpan_cubicRatio_of_stageRatios hL
+    apply tendsto_positiveASpan_cubicRatio_of_stageRatios hL
       hcutoffScale hhorizonScale
     exact horder
+  have hhorizonCountBound : ∀ᶠ n : ℕ in atTop,
+      (ellN n : ℝ) ≤ (t + 1) * L n ^ (3 : ℝ) := by
+    have hratio := hhorizonScale.eventually
+      (Iio_mem_nhds (by linarith : t < t + 1))
+    filter_upwards [hratio, hL.eventually_gt_atTop 0] with n hratio hLn
+    calc
+      (ellN n : ℝ) ≤ (t + 1) * L n ^ 3 :=
+        ((div_lt_iff₀ (pow_pos hLn 3)).mp hratio).le
+      _ = (t + 1) * L n ^ (3 : ℝ) := by
+        congr 1
+        exact (Real.rpow_natCast (L n) 3).symm
   have hfirstCountLog : Tendsto
       (fun n => Real.log ((ellN n : ℝ) + 1) / L n) atTop (𝓝 0) := by
-    simpa using tendsto_rightTailPositiveA_log_add_one_div_log_of_cubic_scale
-      hL (fun _ => Nat.cast_nonneg _) hhorizonScale ht
+    exact Asymptotics.tendsto_log_add_one_div_scale_of_power_bound hL
+      (Filter.Eventually.of_forall (fun _ => Nat.cast_nonneg _))
+      (by linarith : 0 ≤ t + 1)
+      (by norm_num : (0 : ℝ) < 3) hhorizonCountBound
+  have hspanCountBound : ∀ᶠ n : ℕ in atTop,
+      (D n : ℝ) ≤ (t + 1) * L n ^ (3 : ℝ) := by
+    have hratio := hDScale.eventually
+      (Iio_mem_nhds (by linarith : t < t + 1))
+    filter_upwards [hratio, hL.eventually_gt_atTop 0] with n hratio hLn
+    calc
+      (D n : ℝ) ≤ (t + 1) * L n ^ 3 :=
+        ((div_lt_iff₀ (pow_pos hLn 3)).mp hratio).le
+      _ = (t + 1) * L n ^ (3 : ℝ) := by
+        congr 1
+        exact (Real.rpow_natCast (L n) 3).symm
   have hspanCountLog : Tendsto
       (fun n => Real.log ((D n : ℝ) + 1) / L n) atTop (𝓝 0) := by
-    simpa using tendsto_rightTailPositiveA_log_add_one_div_log_of_cubic_scale
-      hL (fun _ => Nat.cast_nonneg _) hDScale ht
+    exact Asymptotics.tendsto_log_add_one_div_scale_of_power_bound hL
+      (Filter.Eventually.of_forall (fun _ => Nat.cast_nonneg _))
+      (by linarith : 0 ≤ t + 1)
+      (by norm_num : (0 : ℝ) < 3) hspanCountBound
   have hERate : Tendsto (fun n => E n / L n) atTop
       (𝓝 (-b + v + c * (t ^ (3⁻¹ : ℝ)))) := by
     simpa [E, D, L, ell, ellN] using
-      tendsto_rightTailPositiveAAHExponent_div_log_of_logarithmicScales
+      tendsto_positiveAAHExponent_div_log_of_logarithmicScales
         hN ht (by linarith : p < 1)
   have hspan : Tendsto (fun n => (D n : ℝ)) atTop atTop := by
     simpa [D, ell, ellN] using
-      tendsto_rightTailPositiveASpan_atTop_of_logarithmicScales hN ht
+      tendsto_positiveASpan_atTop_of_logarithmicScales hN ht
   obtain ⟨delta0, hdelta0, hAH⟩ :=
-    iidSequenceLaw_rightTailPositiveASecondStageDrawdown_le_of_ah
-      ν hspine hsigma hB hcontinuous hmeasurable κ c target blockTarget p
-      hκ hc htarget htargetBlock hblockTarget hp
-  have hscale := eventually_rightTailPositiveASecondStageAHScale
+    iidSequenceLaw_positiveASecondStageDrawdown_le_of_ah
+      ν hspine hsigma κ c target blockTarget p hκ hc htarget htargetBlock
+      hblockTarget hp
+  have hscale := eventually_positiveASecondStageAHScale
     D c p delta0 hc (by linarith : p < 1) hspan
   have htiltedLog : ∀ᶠ n : ℕ in atTop, 0 ≤ L n :=
     hLpos.mono (fun _ h => h.le)
@@ -183,11 +209,11 @@ private lemma eventually_rightTailPositiveAKilledCapacityFailure_le_polynomial_o
           (N n + 1 : ℕ) := by
     filter_upwards [hscale, hellPos, hellN, htiltedLog] with n hscale hnell hnorder hnlog
     have hcap :=
-      measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhaseOfAHPolynomialInput_of_uniformAH
+      measure_positiveAKilled_capacityEvent_compl_le_twoPhaseOfAHPolynomialInput_of_uniformAH
         (m n) (ell n) (ellN n) (N n) (L n) b v c κ
         hnell hnorder hb hnlog hκ hvb hc hvc μ hboundary ν hν target p hκrate
         delta0 hAH hscale.1
-    simpa [P, rightTailPositiveAKilledCapacityFailureProbability, m, ell,
+    simpa [P, positiveAKilledCapacityFailureProbability, m, ell,
       ellN, D, E, L] using hcap
   exact eventually_probability_le_polynomial_of_canceledAH_capacity_bound
     (P := P) (m := m) (ell := ell) (ellN := ellN) (N := N) (E := E)
@@ -202,7 +228,7 @@ N-Branching Random Walk with Infinite Offspring* (master's thesis, Fudan
 University, 2026), and Proposition 3.1, equation (4.15), in Elie Aïdékon and
 Yueyun Hu, *Average-weight percolation on the complete graph*,
 arXiv:2512.23266 (2025). -/
-theorem exists_rightTailPositiveAKilledCapacityFailure_le_polynomial_of_endpointGap
+theorem exists_positiveAKilledCapacityFailure_le_polynomial_of_endpointGap
     {N : ℕ → ℕ} (hN : Tendsto N atTop atTop)
     (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
     (hboundary : HasBoundaryNormalization realPotential μ)
@@ -211,11 +237,6 @@ theorem exists_rightTailPositiveAKilledCapacityFailure_le_polynomial_of_endpoint
     {sigma : ℝ}
     (hspine : ProbabilityTheory.IsCenteredSecondMoment ν (sigma ^ 2))
     (hsigma : 0 < sigma)
-    {Ω : Type*} [MeasurableSpace Ω] {brownianMeasure : Measure Ω}
-    [IsProbabilityMeasure brownianMeasure] {B : NNReal → Ω → ℝ}
-    (hB : IsPreBrownianReal B brownianMeasure)
-    (hcontinuous : ∀ ω, Continuous (B · ω))
-    (hmeasurable : ∀ t, Measurable (B t))
     {a t zeta : ℝ} (ha : 0 < a) (ha1 : a < 1) (ht : 0 < t)
     (hgap : -a + Real.pi ^ 2 / 2 * sigma ^ 2 * t < zeta) :
     ∃ b v c epsilon : ℝ,
@@ -223,9 +244,9 @@ theorem exists_rightTailPositiveAKilledCapacityFailure_le_polynomial_of_endpoint
       c < (t ^ (3⁻¹ : ℝ))⁻¹ ∧
       c * t ^ (3⁻¹ : ℝ) + (a - b) + v < 1 ∧
       0 < epsilon ∧ ∀ᶠ n : ℕ in atTop,
-        rightTailPositiveAKilledCapacityFailureProbability
+        positiveAKilledCapacityFailureProbability
           (Nat.floor ((N n : ℝ) ^ a))
-          (rightTailFirstStageCutoff N n)
+          (positiveAFirstStageCutoff N n)
           (logarithmicHorizon N t n) (N n)
           (logarithmOfSampleSize N n) b v c
           ((3 * Real.pi ^ 2 / 8) * sigma ^ 2) μ ≤
@@ -241,7 +262,7 @@ theorem exists_rightTailPositiveAKilledCapacityFailure_le_polynomial_of_endpoint
       _ = t := by
         rw [show (3⁻¹ : ℝ) * 3 = 1 by norm_num, Real.rpow_one]
   obtain ⟨b, v, c, hb, hba, hv, hvb, hvc, hc, hcr, hmargin, _hendpoint⟩ :=
-    exists_rightTailPositiveAParameters a t r (sigma ^ 2) zeta
+    exists_positiveAParameters a t r (sigma ^ 2) zeta
       ha ht hr hrcube (sq_nonneg sigma) hgap
   let target : ℝ := 3 * Real.pi ^ 2 / 8
   let blockTarget : ℝ := 7 * Real.pi ^ 2 / 16
@@ -264,8 +285,8 @@ theorem exists_rightTailPositiveAKilledCapacityFailure_le_polynomial_of_endpoint
   have hp : 0 < (1 / 4 : ℝ) := by norm_num
   have hpHalf : (1 / 4 : ℝ) < 1 / 2 := by norm_num
   obtain ⟨epsilon, hepsilon, hcapacity⟩ :=
-    eventually_rightTailPositiveAKilledCapacityFailure_le_polynomial_of_logarithmicScales
-      hN μ hboundary ν hν hspine hsigma hB hcontinuous hmeasurable
+    eventually_positiveAKilledCapacityFailure_le_polynomial_of_logarithmicScales
+      hN μ hboundary ν hν hspine hsigma
       (a := a) (t := t) (b := b) (v := v) (c := c) (κ := κ)
       (target := target) (blockTarget := blockTarget) (p := 1 / 4)
       ha ha1 ht hb.le (by linarith [hvb]) hc hvc hκ hκrate
@@ -274,4 +295,6 @@ theorem exists_rightTailPositiveAKilledCapacityFailure_le_polynomial_of_endpoint
   · simpa [r] using hcr
   · simpa [r] using hmargin
 
-end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail
+end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation
+
+end

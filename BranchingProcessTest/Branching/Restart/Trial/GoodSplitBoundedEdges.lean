@@ -10,10 +10,10 @@ the cutoff.
 -/
 
 #print axioms
-  ProbabilityTheory.BranchingRandomWalk.reserveSelectionBelowPotential_split_iff_boundedSecond
+  Combinatorics.Branching.Step.FiniteSelection.reserveSelectionBelowPotential_card_ge_two_iff_boundedSecond
 
 #print axioms
-  ProbabilityTheory.BranchingRandomWalk.reserveSelectionBelowPotential_split_edgePotentials_le_of_ordered
+  Combinatorics.Branching.Step.FiniteSelection.reserveSelectionBelowPotential_edgePotentials_le_of_ordered
 
 #print axioms
   ProbabilityTheory.BranchingRandomWalk.reserveSelectionBelowPotential_split_edgePotentials_le_sorted_ae

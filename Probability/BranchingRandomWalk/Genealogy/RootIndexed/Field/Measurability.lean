@@ -14,7 +14,9 @@ public import Combinatorics.BranchingWalk.Basic.Position.Basic
 /-!
 # Measurability of realized nodes and positions, root by root
 
-The public declarations in `ProbabilityTheory.BranchingRandomWalk.RootIndexed`
+## Public declarations
+
+The declarations in `ProbabilityTheory.BranchingRandomWalk.RootIndexed`
 are:
 
 - `stepPresentAlong_measurableSet`: if $|v|+|p|\le n$, then
@@ -39,14 +41,9 @@ are:
   `stepFiltration n`.
 - `selectedPositionAtGeneration_measurable_of_countableAddress`: the same
   conclusion when the address type itself is countable.
-
-The two declarations in `ProbabilityTheory.BranchingRandomWalk` specialize
-these facts to finitely many roots indexed by `Fin m`:
-`selectedMultiRootAbsolutePosition_measurable` proves measurability of
-$\omega\mapsto X(i,s(\omega),\omega)$, and
-`selectedMultiRootRealizedNode_measurableSet` proves that
-$\{\omega:\operatorname{surviveAlong}(\omega(i),[],s(\omega))\}$ belongs to
-the corresponding multi-root step filtration.
+- `RootIndexed.fixedSubtree_measurable_at`: the first `duration` generations
+  below a fixed address of depth `start` are measurable by global generation
+  `start + duration`.
 
 Here $X(i,u,\omega)=\operatorname{position}(\mathrm{initial},d,\omega,i,u)$
 and $X_n(i,u,\omega)=\operatorname{positionAtGeneration}
@@ -66,6 +63,36 @@ namespace ProbabilityTheory.BranchingRandomWalk
 open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 
 namespace RootIndexed
+
+/-- The subtree of a fixed labelled node, viewed only through its first
+`duration` generations, is observable by the corresponding global generation
+when the root has depth `start`. -/
+theorem fixedSubtree_measurable_at
+    {Root α X : Type*} [MeasurableSpace X]
+    (root : Root × TreeNode α) (start duration : ℕ)
+    (hdepth : root.2.length = start) :
+    @Measurable (RootIndexed.StepField Root α X)
+      (Mark α (Step α X))
+      (RootIndexed.stepFiltration (Root := Root) (α := α) (X := X)
+        (start + duration))
+      (generationFiltration (M := Step α X) duration)
+      (fun ω v => ω root.1 (root.2 ++ v)) := by
+  let _ : MeasurableSpace (RootIndexed.StepField Root α X) :=
+    RootIndexed.stepFiltration (Root := Root) (α := α) (X := X)
+      (start + duration)
+  exact Filtration.measurable_to_generatedByCoordinates
+    (fun v : TreeNode α => v.length + 1)
+    (fun v (ω : Mark α (Step α X)) => ω v)
+    (fun v => measurable_pi_apply v)
+    (fun ω : RootIndexed.StepField Root α X =>
+      fun v : TreeNode α => ω root.1 (root.2 ++ v)) duration
+    (fun v hv => by
+      have hvdepth : v.length < duration := Nat.succ_le_iff.mp hv
+      have hcoord : (root.2 ++ v).length < start + duration := by
+        rw [List.length_append, hdepth]
+        omega
+      simpa [Function.comp_def] using
+        RootIndexed.step_measurable root.1 (root.2 ++ v) hcoord)
 
 /-- Realization along a remaining path, root by root. Same induction as in the
 single-root case; the address is carried along so each step only needs the
@@ -290,57 +317,5 @@ theorem selectedPositionAtGeneration_measurable_of_countableAddress
   exact hcount
 
 end RootIndexed
-
-set_option linter.style.haveILetI false in
-theorem selectedMultiRootAbsolutePosition_measurable
-    {m : ℕ} {Mark Position : Type*}
-    [MeasurableSpace Mark] [MeasurableSpace Position]
-    [AddCommMonoid Position] [MeasurableAdd₂ Position]
-    (initial : Fin m → Position) (d : Mark → Position) (hd : Measurable d)
-    (n : ℕ) (i : Fin m)
-    (chosen : FiniteRootStepField m ℕ Mark → 𝕍)
-    (hchosen : Measurable[
-      multiRootStepFiltration (m := m) (X := Mark) n] chosen)
-    (hdepth : ∀ ω, (chosen ω).length = n) :
-    Measurable[multiRootStepFiltration (m := m) (X := Mark) n]
-      (fun ω => RootIndexed.position initial d ω i (chosen ω)) := by
-  simpa only [multiRootStepFiltration] using
-    (RootIndexed.selectedPositionAtGeneration_measurable_of_countableAddress
-      initial d hd n i chosen hchosen hdepth)
-
-theorem selectedMultiRootRealizedNode_measurableSet
-    {m : ℕ} {X : Type*} [MeasurableSpace X] (n : ℕ) (i : Fin m)
-    (chosen : FiniteRootStepField m ℕ X → 𝕍)
-    (hchosen : Measurable[
-      multiRootStepFiltration (m := m) (X := X) n] chosen)
-    (hdepth : ∀ ω, (chosen ω).length = n) :
-    MeasurableSet[multiRootStepFiltration (m := m) (X := X) n]
-      {ω | surviveAlong (ω i) [] (chosen ω)} := by
-  have hset : {ω : FiniteRootStepField m ℕ X |
-      surviveAlong (ω i) [] (chosen ω)} =
-      ⋃ u : 𝕍,
-        {ω : FiniteRootStepField m ℕ X | chosen ω = u} ∩
-          {ω | surviveAlong (ω i) [] u} := by
-    ext ω
-    simp only [Set.mem_ofPred_eq, Set.mem_iUnion, Set.mem_inter_iff]
-    constructor
-    · intro h
-      exact ⟨chosen ω, rfl, h⟩
-    · rintro ⟨u, hu, hreal⟩
-      simpa [hu] using hreal
-  rw [hset]
-  apply MeasurableSet.iUnion
-  intro u
-  by_cases hu : u.length = n
-  · subst n
-    exact (hchosen (measurableSet_singleton u)).inter
-      (RootIndexed.surviveAlong_measurableSet (X := X) i u)
-  · have hempty :
-        {ω : FiniteRootStepField m ℕ X | chosen ω = u} = ∅ := by
-      ext ω
-      simp only [Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false]
-      intro heq
-      exact hu (heq ▸ hdepth ω)
-    simp [hempty]
 
 end ProbabilityTheory.BranchingRandomWalk

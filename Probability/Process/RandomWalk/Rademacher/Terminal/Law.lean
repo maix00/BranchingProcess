@@ -14,6 +14,8 @@ public import Probability.Process.RandomWalk.Path.Adapted.Filtration
 /-!
 # Prefix and terminal-block independence for the simple symmetric walk
 
+## Public declarations
+
 The public theorems in this file are:
 
 - `ProbabilityTheory.RandomWalk.positiveSurvivesBlock`:

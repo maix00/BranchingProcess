@@ -1,3 +1,4 @@
+import Probability.Distributions.Stable.Attraction.Norming.SpecialCases.IndexTwo
 import Probability.Distributions.Stable.Attraction.Normal.Basic
 import Probability.Distributions.Stable.Attraction.Normal.CharacteristicTail
 
@@ -20,22 +21,20 @@ example {ν : Measure ℝ} [IsProbabilityMeasure ν]
 canonical normalization. -/
 example (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (hcentered : ∫ x : ℝ, x ∂ν = 0)
-    (hsquare : Integrable (fun x : ℝ => x ^ 2) ν)
     (hpositive : 0 < ∫ x : ℝ, x ^ 2 ∂ν) :
     IsInDomainOfAttractionAlong ν (gaussianReal 0 1)
       (fun n => Real.sqrt ((n : ℝ) * ∫ x : ℝ, x ^ 2 ∂ν)) (fun _ => 0) :=
-  isInDomainOfAttractionAlong_gaussianReal_zero_one_of_centered_integrable_sq
-    ν hcentered hsquare hpositive
+  isInDomainOfAttractionAlong_gaussianReal_zero_one_of_centered_posSecondMoment
+    ν hcentered hpositive
 
 example (ν : Measure ℝ) [IsProbabilityMeasure ν]
-    (hsquare : Integrable (fun x : ℝ => x ^ 2) ν)
     (hpositive : 0 < ∫ x : ℝ, x ^ 2 ∂ν) :
     IsStableNorming 2 ν
       (fun n => Real.sqrt ((n : ℝ) * ∫ x : ℝ, x ^ 2 ∂ν)) :=
-  isStableNorming_two_of_integrable_sq ν hsquare hpositive
+  isStableNorming_two_of_posSecondMoment ν hpositive
 
 #print axioms ProbabilityTheory.IsInDomainOfAttractionAlong.gaussian_defect_data
-#print axioms ProbabilityTheory.isStableNorming_two_of_integrable_sq
+#print axioms ProbabilityTheory.isStableNorming_two_of_posSecondMoment
 #print axioms
   ProbabilityTheory.IsInDomainOfAttractionAlong.tendsto_symmetrizedClosedAbsTail_div_normDefect_atTop_of_gaussian
 #print axioms

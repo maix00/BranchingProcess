@@ -6,22 +6,22 @@ Authors: WANG Yiyang
 
 module
 
-public import Analysis.Asymptotics.Sequence.NegativeRatio
+import Analysis.Asymptotics.Sequence.NegativeRatio
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 
 /-!
 # Logarithms of finite sums at a diverging negative scale
 
-The public theorems are:
+## Public declarations
 
-- `eventually_one_sub_eta_sub_delta_le_log_sum_ratio`: if $F$ is finite and
-  nonempty, $g\to-\infty$, $q>0$ eventually,
+- `eventually_one_sub_eta_sub_delta_le_log_sum_ratio`: if $F$ is finite,
+  $g\to-\infty$, $q>0$ eventually,
   $0<q\le\sum_{i\in F}p_i$ eventually, each $p_i>0$ eventually, and
   $\frac{\log p_i}{g}\ge1-\eta$ eventually for every $i\in F$, then for
   every $\delta>0$ eventually
   $\frac{\log q}{g}\ge1-\eta-\delta$.
-- `tendsto_log_finite_union_ratio`: if $F$ is finite and nonempty,
-  $g\to-\infty$, $q>0$ and $p_i>0$ eventually,
+- `tendsto_log_finite_union_ratio`: if $F$ is finite, $i_0\in F$,
+  $g\to-\infty$, and $p_i>0$ eventually,
   $p_{i_0}\le q\le\sum_{i\in F}p_i$ eventually, and
   $\frac{\log p_i}{g}\to r_i$ with $L\le r_i$ and $r_{i_0}=L$, then
   $\frac{\log q}{g}\to L$.
@@ -42,7 +42,7 @@ sum has ratio at least `1 - η - δ` eventually. The only extra cost is the
 logarithm of the fixed number of summands. -/
 theorem eventually_one_sub_eta_sub_delta_le_log_sum_ratio
     {ι I : Type*} [DecidableEq ι] {l : Filter I}
-    (F : Finset ι) (hF : 0 < F.card)
+    (F : Finset ι)
     (g q : I → ℝ) (p : I → ι → ℝ)
     (η δ : ℝ) (hδ : 0 < δ)
     (hg : Tendsto g l atBot)
@@ -59,8 +59,8 @@ theorem eventually_one_sub_eta_sub_delta_le_log_sum_ratio
     apply F.eventually_all.2
     intro i hi
     exact (hp i hi).and (hlog i hi)
-  let C : ℝ := Real.log (F.card : ℝ)
-  have hC : 0 < (F.card : ℝ) := Nat.cast_pos.mpr hF
+  let C : ℝ := Real.log ((F.card : ℝ) + 1)
+  have hC : 0 < (F.card : ℝ) + 1 := by positivity
   have herror : Tendsto (fun x => C / g x) l (𝓝 0) := by
     simpa [C, div_eq_mul_inv] using
       (tendsto_const_nhds.mul (tendsto_inv_atBot_zero.comp hg) :
@@ -77,23 +77,24 @@ theorem eventually_one_sub_eta_sub_delta_le_log_sum_ratio
       p x i = Real.exp (Real.log (p x i)) := (Real.exp_log hpi).symm
       _ ≤ Real.exp ((1 - η) * g x) := Real.exp_le_exp.mpr hlogi
   have hsumBound :
-      (∑ i ∈ F, p x i) ≤ (F.card : ℝ) * Real.exp ((1 - η) * g x) := by
+      (∑ i ∈ F, p x i) ≤ ((F.card : ℝ) + 1) * Real.exp ((1 - η) * g x) := by
     calc
       (∑ i ∈ F, p x i) ≤ ∑ i ∈ F, Real.exp ((1 - η) * g x) :=
         Finset.sum_le_sum fun i hi => hterm i hi
       _ = (F.card : ℝ) * Real.exp ((1 - η) * g x) := by simp
-  have hqBound : q x ≤ (F.card : ℝ) * Real.exp ((1 - η) * g x) :=
+      _ ≤ ((F.card : ℝ) + 1) * Real.exp ((1 - η) * g x) := by
+        exact mul_le_mul_of_nonneg_right (by norm_num) (Real.exp_nonneg _)
+  have hqBound : q x ≤ ((F.card : ℝ) + 1) * Real.exp ((1 - η) * g x) :=
     hsumx.trans hsumBound
   have hlogBound := Real.log_le_log hqx hqBound
   rw [Real.log_mul (ne_of_gt hC) (ne_of_gt (Real.exp_pos _)), Real.log_exp] at hlogBound
   have hdiv :
-      (Real.log (F.card : ℝ) + (1 - η) * g x) / g x ≤
+      (C + (1 - η) * g x) / g x ≤
         Real.log (q x) / g x := by
     exact (div_le_div_right_of_neg hxneg).2 (by simpa [C, add_comm] using hlogBound)
   have hdivEq :
-    (Real.log (F.card : ℝ) + (1 - η) * g x) / g x =
+    (C + (1 - η) * g x) / g x =
         1 - η + C / g x := by
-    dsimp [C]
     field_simp [hxneg.ne]
     ring
   rw [hdivEq] at hdiv
@@ -105,10 +106,9 @@ the denominator's negativity reverses the order, so the relevant rate is the
 minimum of the component limits. -/
 theorem tendsto_log_finite_union_ratio
     {ι I : Type*} [DecidableEq ι] {l : Filter I}
-    (F : Finset ι) (hF : F.Nonempty) (i₀ : ι) (hi₀ : i₀ ∈ F)
+    (F : Finset ι) (i₀ : ι) (hi₀ : i₀ ∈ F)
     (g q : I → ℝ) (p : I → ι → ℝ) (rate : ι → ℝ) (L : ℝ)
     (hg : Tendsto g l atBot)
-    (hqpos : ∀ᶠ x in l, 0 < q x)
     (hupper : ∀ᶠ x in l, q x ≤ ∑ i ∈ F, p x i)
     (hlower : ∀ᶠ x in l, p x i₀ ≤ q x)
     (hp : ∀ i ∈ F, ∀ᶠ x in l, 0 < p x i)
@@ -117,6 +117,9 @@ theorem tendsto_log_finite_union_ratio
     (hL : ∀ i ∈ F, L ≤ rate i)
     (hrate : rate i₀ = L) :
     Tendsto (fun x => Real.log (q x) / g x) l (𝓝 L) := by
+  have hqpos : ∀ᶠ x in l, 0 < q x := by
+    filter_upwards [hp i₀ hi₀, hlower] with x hpi hqi
+    exact lt_of_lt_of_le hpi hqi
   refine tendsto_order.2 ⟨?_, ?_⟩
   · intro y hy
     let δ : ℝ := (L - y) / 2
@@ -135,7 +138,7 @@ theorem tendsto_log_finite_union_ratio
         linarith
       linarith
     have hsum := eventually_one_sub_eta_sub_delta_le_log_sum_ratio
-      F hF.card_pos g q p η (δ / 2) (by positivity) hg hqpos hupper
+      F g q p η (δ / 2) (by positivity) hg hqpos hupper
       (fun i hi => hp i hi) hlogLower
     have hsum' : ∀ᶠ x in l, L - δ ≤ Real.log (q x) / g x := by
       filter_upwards [hsum] with x hx

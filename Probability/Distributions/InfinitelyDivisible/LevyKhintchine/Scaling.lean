@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Distributions.InfinitelyDivisible.LevyKhintchine.Defs
-public import MeasureTheory.Measure.LevyMeasure.Scaling
+public import MeasureTheory.Measure.Levy.Scaling
 import Mathlib.MeasureTheory.Function.L1Space.Integrable
 import Mathlib.MeasureTheory.Integral.Bochner.ContinuousLinearMap
 import Probability.Distributions.InfinitelyDivisible.LevyKhintchine.Integrand
@@ -18,6 +18,22 @@ import Probability.Distributions.InfinitelyDivisible.LevyKhintchine.Integrand
 Changing spatial scale changes the truncation radius. The resulting
 correction is linear in the Fourier variable and therefore contributes only
 to the drift. This file records the pointwise identity and its integrability.
+
+## Public declarations
+
+* `compensationDifference a ξ x` is the correction between the two truncations,
+  `f(aξ,x) - f(ξ,ax)`, and `compensationDifference_eq` gives its indicator formula.
+* `compensationDifference_mul_freq` shows this correction is linear in `ξ`, while
+  `compensationDifference_re` proves its real part vanishes.
+* `IsLevyMeasure.integrable_compensationDifference` proves integrability when `a ≠ 0`;
+  `integral_compensationDifference_mul_freq` and
+  `integral_compensationDifference_re` give the corresponding integral identities.
+* `IsLevyMeasure.integral_compensated_scale` states
+  `∫ f(aξ,x) dν(x) = ∫ f(ξ,y) d(ν.map (x ↦ ax))(y) + ξ ∫ compensationDifference(a,1,x) dν(x)`.
+* `LevyKhintchineTriple.scale T a ha` gives the triple for spatial dilation, and
+  `LevyKhintchineTriple.scale_exponent` proves its exponent is `ψ_T(aξ)`.
+* `LevyKhintchineTriple.scaleIntensity T c hc` scales all triple components by `c ≥ 0`, with
+  `scaleIntensity_exponent` giving exponent `c ψ_T`.
 -/
 
 @[expose] public section

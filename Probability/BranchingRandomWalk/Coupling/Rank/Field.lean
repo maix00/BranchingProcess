@@ -4,23 +4,40 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Coupling.Rank.Preimage
-import Combinatorics.BranchingWalk.Step.Map
+module
+
+public import Probability.BranchingRandomWalk.Coupling.Rank.Preimage
+public import Combinatorics.BranchingWalk.Step.Map
 
 /-!
 # Rank-installed step fields
 
 The deterministic rank-installed StepField, its pointwise identities, and
 measurability under finite-support hypotheses.
+
+## Public declarations
+
+* `RootIndexed.rankInstalledStepField` installs each source step at the
+  target node of equal dynamic rank and leaves unmatched target steps at
+  their fallback values.
+* `RootIndexed.rankInstalledStepField_matchByRankOrSelf` states that the
+  installed field recovers the source step at every canonical equal-rank
+  match.
+* `RootIndexed.rankInstalledStepField_measurable` proves measurability of
+  the installed field from measurable support fibres, rank comparisons, and
+  source/fallback steps.
+* `RootIndexed.reindexedSteps_matchByRankOrSelf_measurable` proves
+  measurability in the generation domain flow of the step family read through
+  the canonical equal-rank matching.
 -/
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk.Coupling
 
-open ProbabilityTheory.BranchingRandomWalk.Selection.NSelection
-
 open MeasureTheory
 open Combinatorics.Branching
-open Combinatorics.Branching.Selection.NSelection
+open _root_.Combinatorics.Selection.NSelection
 open Combinatorics.UlamHarris
 
 variable {Ω Value : Type*} [MeasurableSpace Ω]
@@ -63,7 +80,7 @@ theorem RootIndexed.rankInstalledStepField_matchByRankOrSelf
     (fun sample q => fallback sample q.1 q.2) hp
 
 omit [MeasurableSpace Ω] in
-theorem RootIndexed.survive_rankInstalledStepField_matchByRankOrSelf
+private theorem RootIndexed.survive_rankInstalledStepField_matchByRankOrSelf
     {Root α X Value : Type*}
     [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder Value]
     (sourceValue targetValue : Ω → RootIndexed.TreeNode Root α → Value)
@@ -83,7 +100,7 @@ theorem RootIndexed.survive_rankInstalledStepField_matchByRankOrSelf
     source target ω hcard sourceStep fallback hp]
 
 omit [MeasurableSpace Ω] in
-theorem RootIndexed.value'_map_rankInstalledStepField_matchByRankOrSelf
+private theorem RootIndexed.value'_map_rankInstalledStepField_matchByRankOrSelf
     {Root α X Position Value : Type*}
     [Zero Position]
     [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder Value]
@@ -139,7 +156,7 @@ theorem RootIndexed.rankInstalledStepField_measurable
 
 /-- Every fibre of the total equal-rank match is measurable.  Outside the
 source population the total map fixes the particle label. -/
-theorem measurableSet_matchByRankOrSelf_eq
+private theorem measurableSet_matchByRankOrSelf_eq
     {Particle : Type*} [LinearOrder Particle] [LinearOrder Value]
     (sourceValue targetValue : Ω → Particle → Value)
     (source target : Ω → Finset Particle)

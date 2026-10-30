@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.BranchingRandomWalk.Tree.Filtration
-public import Combinatorics.UlamHarris.Split
+public import Combinatorics.UlamHarris.Basic
 public import Probability.Process.HittingTime.Declarations
 
 /-!
@@ -18,6 +18,17 @@ public import Probability.Process.HittingTime.Declarations
 file proves that the first generation at which a split is declared is a
 stopping time for the generation filtration, and specialises the statement to
 an adapted full-depth lineage on the Ulam--Harris node set `𝕍`.
+## Public declarations
+
+- `splitDeclaration path splitMark` declares a split at generation `n + 1`
+  when the mark at `path n` belongs to `splitMark`; generation zero has no
+  declaration.
+- `first_split_generation_isStoppingTime_of_countable_range` states that the first generation
+  whose selected lineage mark belongs to a measurable split set is a stopping time when the
+  lineage is adapted, has depth $n$ at generation $n$, and has countable range.
+- `first_split_generation_isStoppingTime` derives the countable-range condition from countable
+  child slots; `first_split_isStoppingTime_of` specializes this to full-depth lineages in the
+  Ulam--Harris node set $\mathbb V$.
 -/
 
 open MeasureTheory
@@ -31,6 +42,14 @@ open Combinatorics.UlamHarris MeasureTheory
 
 
 variable {α : Type*} {M : Type*} [MeasurableSpace M]
+
+/-- The event that the mark read at the generation-`n` parent belongs to the
+specified split set is declared at generation `n + 1`. Generation zero has no
+declaration. -/
+def splitDeclaration (path : ℕ → Mark α M → TreeNode α)
+    (splitMark : Set M) : ℕ → Set (Mark α M)
+  | 0 => ∅
+  | n + 1 => {ω | ω (path n ω) ∈ splitMark}
 
 /-- The first observable split generation is a stopping time for the actual
 pre-sampled-tree generation filtration. -/

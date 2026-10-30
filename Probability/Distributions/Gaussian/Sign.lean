@@ -12,7 +12,7 @@ public import Mathlib.MeasureTheory.Measure.Support
 /-!
 # Signs of centered real Gaussian variables
 
-The public theorems in this file are:
+## Public declarations
 
 - `ProbabilityTheory.gaussianReal_Ioi_zero_pos`:
   a standard Gaussian law gives positive mass to $(0,\infty)$.
@@ -80,26 +80,13 @@ theorem gaussianReal_Iic_zero_eq_standard
     {v : ℝ≥0} (hv : 0 < v) :
     gaussianReal 0 v (Iic 0) =
       gaussianReal 0 (1 : ℝ≥0) (Iic 0) := by
-  let c : ℝ := Real.sqrt v
-  have hc : 0 < c := Real.sqrt_pos.2 (by exact_mod_cast hv)
-  have hvar : NNReal.mk (c ^ 2) (sq_nonneg c) = v := by
-    apply NNReal.coe_injective
-    change c ^ 2 = (v : ℝ)
-    exact Real.sq_sqrt v.property
-  have hmap : (gaussianReal 0 (1 : ℝ≥0)).map (c * ·) =
-      gaussianReal 0 v := by
-    rw [gaussianReal_map_const_mul, mul_zero]
-    simpa only [mul_one] using congrArg (gaussianReal 0) hvar
-  rw [← hmap, Measure.map_apply (by fun_prop) measurableSet_Iic]
-  have hpre : (c * ·) ⁻¹' Iic (0 : ℝ) = Iic 0 := by
+  have hIic : Iic (0 : ℝ) = (Ioi 0)ᶜ := by
     ext x
-    change c * x ≤ 0 ↔ x ≤ 0
-    constructor
-    · intro hx
-      by_contra hx'
-      exact (not_le_of_gt (mul_pos hc (lt_of_not_ge hx'))) hx
-    · exact mul_nonpos_of_nonneg_of_nonpos hc.le
-  rw [hpre]
+    simp
+  have hcomplement (w : ℝ≥0) :
+      gaussianReal 0 w (Iic (0 : ℝ)) = 1 - gaussianReal 0 w (Ioi 0) := by
+    rw [hIic, measure_compl measurableSet_Ioi (by finiteness), measure_univ]
+  rw [hcomplement v, hcomplement 1, gaussianReal_Ioi_zero_eq_standard hv]
 
 /-- A nondegenerate centered Gaussian has half of its mass below zero.
 The equation is written without division in `ℝ≥0∞`. -/

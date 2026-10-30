@@ -6,9 +6,25 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.Feedback.Tube
+public import Order.Interval.RationalCoordinate.UnitInterval
+public import Probability.Process.Corridor.Segment
+public import Probability.Process.Stable.Levy
+import all Probability.Process.Stable.SmallDeviation.Blocks.Lower.Feedback.Lemmas.Scaling
+import MeasureTheory.Measure.Windows.TwoSided
+import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Feedback.Probability
+import Probability.Process.Stable.SmallDeviation.Blocks.Lower.Entrance.ShortTime
 /-!
 # Feedback tubes at stable index one
+
+## Public declarations
+
+- IsStableLevyProcess.linearTube_probability_pos_indexOne: for a strictly
+  \(1\)-stable process, if the increment law has positive mass on both sides
+  of \(v\), then for every \(\eta>0\),
+  \[
+    \mathbb P\!\left(\forall t\in[0,1],\
+      |X_t-vt|<\eta\right)>0.
+  \]
 
 At index one the normalized target drift of a block is the fixed number
 `v`. The endpoint windows therefore straddle `v`, rather than zero. The
@@ -32,7 +48,7 @@ theorem IsStableLevyProcess.linearTube_probability_pos_indexOne
     (v η : ℝ) (hη : 0 < η)
     (habove : 0 < μ (Set.Ioi v)) (hbelow : 0 < μ (Set.Iio v)) :
     0 < P {ω | ∀ t : unitInterval,
-      |X (UnitInterval.toNNReal t) ω - v * (t : ℝ)| < η} := by
+      |X (unitInterval.toNNReal t) ω - v * (t : ℝ)| < η} := by
   obtain ⟨r, R, hr, hrR, hwinPlus, hwinMinus⟩ :=
     μ.exists_twoSidedWindow_around_pos v habove hbelow
   have hshortPlus := h.eventually_fullShortCorridor_scaledIncrement_pos
@@ -102,7 +118,7 @@ theorem IsStableLevyProcess.linearTube_probability_pos_indexOne
       2 * (R * a + η / 8 + |v / ((n : ℝ) + 1)|) < η := by
     linarith
   have hrelative : 0 < P {ω | ∀ t : unitInterval,
-      |X (UnitInterval.toNNReal t) ω - X 0 ω - v * (t : ℝ)| < η} :=
+      |X (unitInterval.toNNReal t) ω - X 0 ω - v * (t : ℝ)| < η} :=
     h.increments.indepIncrements.linearTube_probability_pos_of_feedbackBlocks
       h.toIsLevyProcess.stationaryIncrements
       (fun t => h.increments.aemeasurable_eval t) h.ae_cadlag
@@ -112,9 +128,9 @@ theorem IsStableLevyProcess.linearTube_probability_pos_indexOne
       hwidth (by simpa [t] using hplusCorrect)
       (by simpa [t] using hminusCorrect)
   have heq : {ω | ∀ t : unitInterval,
-      |X (UnitInterval.toNNReal t) ω - v * (t : ℝ)| < η} =ᵐ[P]
+      |X (unitInterval.toNNReal t) ω - v * (t : ℝ)| < η} =ᵐ[P]
       {ω | ∀ t : unitInterval,
-        |X (UnitInterval.toNNReal t) ω - X 0 ω - v * (t : ℝ)| < η} := by
+        |X (unitInterval.toNNReal t) ω - X 0 ω - v * (t : ℝ)| < η} := by
     filter_upwards [h.increments.ae_start_eq_zero] with ω hzero
     have hzero' : X 0 ω = 0 := by simpa using hzero
     apply propext

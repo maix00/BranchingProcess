@@ -4,13 +4,25 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.Coupling.Basic
+module
+
+public import Probability.Coupling.Order
 
 /-!
 # Tail comparison through a coupling
 
 An almost-sure order between two real-valued observables transfers upper-tail
 probability bounds through the corresponding coupling.
+
+## Public declarations
+
+* `ProbabilityTheory.Coupling.measure_ge_le_of_ae_le`: if
+  `g(p.2) ≤ f(p.1)` almost surely under a coupling, then for every
+  `threshold : ℝ`,
+  \[
+  \nu\{y\mid threshold\le g(y)\}
+  \le \mu\{x\mid threshold\le f(x)\}.
+  \]
 -/
 
 open MeasureTheory
@@ -28,31 +40,9 @@ theorem measure_ge_le_of_ae_le
     (horder : ∀ᵐ p ∂κ.joint, g p.2 ≤ f p.1)
     (threshold : ℝ) :
     ν {y | threshold ≤ g y} ≤ μ {x | threshold ≤ f x} := by
-  let targetEvent : Set (X × Y) := {p | threshold ≤ g p.2}
-  let sourceEvent : Set (X × Y) := {p | threshold ≤ f p.1}
-  have hsubset : ∀ᵐ p ∂κ.joint, p ∈ targetEvent → p ∈ sourceEvent := by
-    filter_upwards [horder] with p hp
-    intro htarget
-    exact htarget.trans hp
-  have htargetSet : MeasurableSet {y | threshold ≤ g y} :=
-    measurableSet_Ici.preimage hg
-  have hsourceSet : MeasurableSet {x | threshold ≤ f x} :=
-    measurableSet_Ici.preimage hf
-  have htargetMap : κ.joint targetEvent = ν {y | threshold ≤ g y} := by
-    have hpreimage : targetEvent =
-        Prod.snd ⁻¹' {y | threshold ≤ g y} := by
-      ext p
-      rfl
-    rw [hpreimage, ← Measure.map_apply measurable_snd htargetSet,
-      κ.snd_joint]
-  have hsourceMap : κ.joint sourceEvent = μ {x | threshold ≤ f x} := by
-    have hpreimage : sourceEvent =
-        Prod.fst ⁻¹' {x | threshold ≤ f x} := by
-      ext p
-      rfl
-    rw [hpreimage, ← Measure.map_apply measurable_fst hsourceSet,
-      κ.fst_joint]
-  rw [← htargetMap, ← hsourceMap]
-  exact measure_mono_ae hsubset
+  change ν (g ⁻¹' Set.Ici threshold) ≤ μ (f ⁻¹' Set.Ici threshold)
+  exact measure_preimage_le_of_ae_le
+    (s := Set.Ici threshold) (isUpperSet_Ici threshold) measurableSet_Ici
+    κ f g hf hg horder
 
 end ProbabilityTheory.Coupling

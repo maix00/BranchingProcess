@@ -12,6 +12,12 @@ public import Mathlib.MeasureTheory.Measure.ProbabilityMeasure
 /-!
 # A nonnegative random variable is small with positive probability
 
+## Public declarations
+
+- `ProbabilityTheory.measure_pos_of_lintegral_lt`: if \(V\ge0\) is
+  ENNReal-valued on a probability space and \(\mathbb E[V]<\rho\), then
+  \(\mathbb P(V<\rho)>0\).
+
 This Markov-inequality consequence applies to any nonnegative random
 variable.
 -/
@@ -22,7 +28,7 @@ namespace ProbabilityTheory
 
 open MeasureTheory
 
-theorem measure_smallVariation_pos
+theorem measure_pos_of_lintegral_lt
     {Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω)
     [IsProbabilityMeasure P] (V : Ω → ENNReal)
     (hV : Measurable V) (ρ : ENNReal)

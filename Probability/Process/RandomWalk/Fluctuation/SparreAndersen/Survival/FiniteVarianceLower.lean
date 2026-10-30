@@ -6,14 +6,22 @@ Authors: WANG Yiyang
 
 module
 
-public import Analysis.Asymptotics.Power.SequenceLowerPower
 public import Probability.Distributions.Moments.Signs
-public import Probability.Process.RandomWalk.Fluctuation.SparreAndersen.Survival.Recurrence
-public import Probability.Process.RandomWalk.Fluctuation.FiniteVarianceSignLimit
-public import Probability.Process.RandomWalk.Path.Survival.Probability
+public import Mathlib.Data.Set.Defs
+public import Mathlib.MeasureTheory.Measure.Basic
+public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
+public import Mathlib.MeasureTheory.Constructions.Pi
+public import Probability.Process.RandomWalk.Path.Survival.Basic
+public import Probability.Sequence.IID.Basic
+import Analysis.Asymptotics.Power.SequenceLowerPower
+import all Probability.Process.RandomWalk.Fluctuation.SparreAndersen.Survival.Lemmas.FiniteVarianceLower
+import Probability.Process.RandomWalk.Fluctuation.SparreAndersen.Survival.Recurrence
+import Probability.Process.RandomWalk.Fluctuation.FiniteVarianceSignLimit
 
 /-!
 # Finite-variance survival lower bound
+
+## Public declarations
 
 The public theorem in this file is:
 
@@ -40,133 +48,6 @@ open scoped ENNReal Topology
 
 namespace ProbabilityTheory.RandomWalk
 
-private lemma partialSum_prefix_eq_displacement
-    (n : ℕ) (increment : ℕ → ℝ) (t : Fin (n + 1)) :
-    Fin.partialSum (fun i : Fin n => increment i.val) t =
-      AdditivePath.displacement t.val increment := by
-  induction t using Fin.induction with
-  | zero => simp [AdditivePath.displacement]
-  | succ k ih =>
-      rw [Fin.partialSum_succ, ih]
-      simp [AdditivePath.displacement, Finset.sum_range_succ]
-
-private lemma finitePartialSum_measurable (n : ℕ) (t : Fin (n + 1)) :
-    Measurable (fun z : Fin n → ℝ => Fin.partialSum z t) := by
-  induction t using Fin.induction with
-  | zero => simp
-  | succ k ih =>
-      rw [show (fun z : Fin n → ℝ => Fin.partialSum z k.succ) =
-        (fun z => Fin.partialSum z k.castSucc + z k) by funext z; rw [Fin.partialSum_succ]]
-      exact ih.add (measurable_pi_apply k)
-
-private lemma finiteSurvivalEvent_measurable (n : ℕ) :
-    MeasurableSet {z : Fin n → ℝ |
-      ∀ t : Fin (n + 1), 0 ≤ Fin.partialSum z t} := by
-  rw [show {z : Fin n → ℝ | ∀ t : Fin (n + 1), 0 ≤ Fin.partialSum z t} =
-      ⋂ t : Fin (n + 1), {z | 0 ≤ Fin.partialSum z t} by ext z; simp]
-  exact MeasurableSet.iInter fun t =>
-    measurableSet_Ici.preimage (finitePartialSum_measurable n t)
-
-private lemma finiteSurvivalEvent_eq_infinite
-    (n : ℕ) (increment : ℕ → ℝ) :
-    (∀ t : Fin (n + 1), 0 ≤ Fin.partialSum
-      (fun i : Fin n => increment i.val) t) ↔
-      SurvivesNonnegative n increment := by
-  constructor
-  · intro h k
-    simpa only [partialSum_prefix_eq_displacement, Fin.val_succ] using h k.succ
-  · intro h t
-    induction t using Fin.induction with
-    | zero => simp
-    | succ k ih =>
-        simpa only [partialSum_prefix_eq_displacement, Fin.val_succ] using h k
-
-private lemma finiteSurvivalProbability_eq_infinite
-    (ν : Measure ℝ) [IsProbabilityMeasure ν] (n : ℕ) :
-    (Measure.pi (fun _ : Fin n => ν)).real
-      {z : Fin n → ℝ | ∀ t : Fin (n + 1), 0 ≤ Fin.partialSum z t} =
-      ((iidSequenceLaw ν) {increment | SurvivesNonnegative n increment}).toReal := by
-  change ((Measure.pi (fun _ : Fin n => ν))
-      {z : Fin n → ℝ | ∀ t : Fin (n + 1), 0 ≤ Fin.partialSum z t}).toReal = _
-  rw [← iidSequenceLaw_map_finPrefix ν n]
-  rw [Measure.map_apply (measurable_pi_iff.mpr fun i => measurable_pi_apply i.val)
-      (finiteSurvivalEvent_measurable n)]
-  apply congrArg ENNReal.toReal
-  apply congrArg (iidSequenceLaw ν)
-  ext increment
-  exact finiteSurvivalEvent_eq_infinite n increment
-private lemma finiteEndpointProbability_eq_infinite
-    (ν : Measure ℝ) [IsProbabilityMeasure ν] (n : ℕ) :
-    (Measure.pi (fun _ : Fin n => ν)).real
-      {z : Fin n → ℝ | 0 ≤ Fin.partialSum z (Fin.last n)} =
-      ((iidSequenceLaw ν)
-        {increment | 0 ≤ AdditivePath.displacement n increment}).toReal := by
-  change ((Measure.pi (fun _ : Fin n => ν))
-      {z : Fin n → ℝ | 0 ≤ Fin.partialSum z (Fin.last n)}).toReal = _
-  rw [← iidSequenceLaw_map_finPrefix ν n]
-  have hs : MeasurableSet {z : Fin n → ℝ | 0 ≤ Fin.partialSum z (Fin.last n)} := by
-    exact measurableSet_Ici.preimage (finitePartialSum_measurable n (Fin.last n))
-  rw [Measure.map_apply (measurable_pi_iff.mpr fun i => measurable_pi_apply i.val) hs]
-  apply congrArg ENNReal.toReal
-  apply congrArg (iidSequenceLaw ν)
-  ext increment
-  simp only [Set.mem_preimage, Set.mem_ofPred_eq,
-    partialSum_prefix_eq_displacement, Fin.val_last]
-
-private lemma finiteSurvivalProbability_zero
-    (ν : Measure ℝ) [IsProbabilityMeasure ν] :
-    (Measure.pi (fun _ : Fin 0 => ν)).real
-      {z : Fin 0 → ℝ | ∀ t : Fin 1, 0 ≤ Fin.partialSum z t} = 1 := by
-  have hevent : {z : Fin 0 → ℝ | ∀ t : Fin 1, 0 ≤ Fin.partialSum z t} = Set.univ := by
-    ext z
-    simp [Fin.forall_fin_succ]
-  rw [hevent]
-  simp
-
-private lemma recurrence_to_convolution
-    (F P : ℕ → ℝ) (hF0 : F 0 = 1)
-    (hrec : ∀ n : ℕ, 0 < n →
-      P n = (n : ℝ) * F n -
-        ∑ r : Fin (n - 1), F (r.val + 1) * P (n - (r.val + 1)))
-    {n : ℕ} (hn : 0 < n) :
-    (n : ℝ) * F n = ∑ k : Fin n, F k.val * P (n - k.val) := by
-  obtain ⟨m, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (by omega : n ≠ 0)
-  rw [Fin.sum_univ_succ]
-  simp only [Fin.val_zero, Nat.sub_zero, hF0, one_mul, Fin.val_succ]
-  have h := hrec (m + 1) (by omega)
-  simpa [Nat.succ_eq_add_one, add_comm, add_left_comm, add_assoc] using
-    (sub_eq_iff_eq_add.mp h.symm)
-private lemma prefix_bound_of_convolution
-    (F P : ℕ → ℝ) (hFnonneg : ∀ k, 0 ≤ F k)
-    (hPnonneg : ∀ j, 0 ≤ P j)
-    {β : ℝ} (_hβ : 0 ≤ β) (N : ℕ) (_hN : 1 ≤ N)
-    (hPβ : ∀ j, N ≤ j → β ≤ P j)
-    (hconv : ∀ n : ℕ, 0 < n →
-      (n : ℝ) * F n = ∑ k : Fin n, F k.val * P (n - k.val))
-    (n : ℕ) (hn : N ≤ n) :
-    β * ∑ k ∈ Finset.range (n - N + 1), F k ≤ (n : ℝ) * F n := by
-  have hm : n - N + 1 ≤ n := by omega
-  rw [hconv n (by omega : 0 < n)]
-  have hfin : (∑ k : Fin n, F k.val * P (n - k.val)) =
-      ∑ k ∈ Finset.range n, F k * P (n - k) :=
-    Fin.sum_univ_eq_sum_range (fun i : ℕ => F i * P (n - i)) n
-  rw [hfin]
-  calc
-    β * ∑ k ∈ Finset.range (n - N + 1), F k =
-        ∑ k ∈ Finset.range (n - N + 1), β * F k := by
-      rw [Finset.mul_sum]
-    _ ≤ ∑ k ∈ Finset.range (n - N + 1), F k * P (n - k) := by
-      apply Finset.sum_le_sum
-      intro k hk
-      have hk' : k < n - N + 1 := Finset.mem_range.mp hk
-      have hnk : N ≤ n - k := by omega
-      exact mul_le_mul_of_nonneg_right (hPβ (n - k) hnk) (hFnonneg k) |>.trans_eq (mul_comm _ _)
-    _ ≤ ∑ k ∈ Finset.range n, F k * P (n - k) := by
-      apply Finset.sum_le_sum_of_subset_of_nonneg
-      · intro k hk
-        exact Finset.mem_range.mpr (lt_of_lt_of_le (Finset.mem_range.mp hk) hm)
-      · intro k _ _
-        exact mul_nonneg (hFnonneg k) (hPnonneg (n - k))
 
 /-- A positive centered finite-variance walk has a polynomial lower bound
 for survival through each finite horizon. -/

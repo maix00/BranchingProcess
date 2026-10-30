@@ -7,7 +7,8 @@ Authors: WANG Yiyang
 module
 
 public import Probability.BranchingRandomWalk.Population.Processes.StepSelection.SplitSchedule.Field.Law
-public import Probability.BranchingRandomWalk.Timing.Trials.Geometric
+public import Probability.Process.HittingTime.Geometric
+public import Probability.Process.HittingTime.OrderedCandidates
 
 /-!
 # Geometric law of independent split trials
@@ -16,6 +17,19 @@ The first successful fixed-age trial is defined from the root-indexed
 pre-sampled field. Injective root assignment makes its zero-based index
 geometric. This file only concerns trial outcomes; their causal global-clock
 completion times are handled separately by `Completion` and `Success`.
+## Public declarations
+
+* `firstSuccess` is the zero-based index of the first fixed-age population
+  reaching the target, with value `⊤` if none does; `firstSuccess_eq_iff`
+  characterizes success at that index and failure at every earlier index.
+* `measurableSet_firstSuccess_eq_adapted` and
+  `measurableSet_firstSuccess_eq_top_adapted` show that finite success and
+  total failure are observable at the fixed trial duration.
+* Under injective root assignments and the product field law,
+  `measure_firstSuccess_eq` gives the geometric mass `p * (1 - p)^k`, and
+  `measure_failures_before` gives `(1 - p)^k`.
+* `mem_orderedPopulationDeclaration_univ_iff` identifies the global-clock
+  declaration with completion of the first successful fixed-age trial.
 -/
 
 open MeasureTheory ProbabilityTheory
@@ -92,14 +106,14 @@ theorem measure_firstSuccess_eq
     [IsProbabilityMeasure μ] (k : ℕ) :
     RootIndexed.stepFieldLaw (Root := Root) μ
         {ω | firstSuccess R root duration target ω = k} =
-      ProbabilityTheory.BranchingRandomWalk.stepFieldLaw
+      ProbabilityTheory.BranchingProcess.offspringFieldLaw
           (α := α) μ (successSet R duration target) *
-        (1 - ProbabilityTheory.BranchingRandomWalk.stepFieldLaw
+        (1 - ProbabilityTheory.BranchingProcess.offspringFieldLaw
           (α := α) μ (successSet R duration target)) ^ k := by
   apply measure_firstDeclaredSuccess_eq
     (fun i => measurableSet_successEvent R hR root duration target i)
     (successEvents_independent R hR root hroot duration target μ)
-    (ProbabilityTheory.BranchingRandomWalk.stepFieldLaw
+    (ProbabilityTheory.BranchingProcess.offspringFieldLaw
       (α := α) μ (successSet R duration target))
   · intro i
     exact measure_successEvent R hR root duration target i μ
@@ -113,7 +127,7 @@ theorem measure_failures_before
     [IsProbabilityMeasure μ] (k : ℕ) :
     RootIndexed.stepFieldLaw (Root := Root) μ
         (⋂ i ∈ Finset.range k, failureEvent R root duration target i) =
-      (1 - ProbabilityTheory.BranchingRandomWalk.stepFieldLaw
+      (1 - ProbabilityTheory.BranchingProcess.offspringFieldLaw
         (α := α) μ (successSet R duration target)) ^ k := by
   simpa using measure_iInter_failureEvent R hR root hroot
     duration target μ (Finset.range k)

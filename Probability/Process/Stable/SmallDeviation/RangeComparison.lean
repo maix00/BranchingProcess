@@ -18,6 +18,8 @@ This module proves the two logarithmic comparisons in Mogulskii's range
 comparison. The range event is the rational-coordinate event of the original
 process; almost-sure càdlàg paths connect it to full-segment corridors.
 
+## Public declarations
+
 The public declarations are:
 
 - `ProbabilityTheory.centeredCorridorProbability_le_rationalRangeProbability`
@@ -189,10 +191,6 @@ theorem IsStableLevyProcess.eventually_one_sub_le_log_range_div_log_corridor_of_
     rw [sub_pos]
     exact (lt_div_iff₀ (by linarith : 0 < scaleFactor)).2 (by nlinarith [hscaleFactorUpper])
   let F : Finset ℕ := Finset.range (2 * k + 1)
-  have hF : 0 < F.card := by
-    apply Finset.card_pos.mpr
-    refine ⟨0, ?_⟩
-    simp [F]
   let center : ℕ → ℝ := fun j => (j : ℝ) / k - 1
   let b : ℕ → ℝ := fun j => center j / scaleFactor
   let η : ℝ := δ / 2
@@ -351,7 +349,7 @@ theorem IsStableLevyProcess.eventually_one_sub_le_log_range_div_log_corridor_of_
     simpa [p, w, η] using h21a
   have hresult :=
     Asymptotics.eventually_one_sub_eta_sub_delta_le_log_sum_ratio
-      F hF w q p η (δ / 2) (by positivity) hwLog hqPositive hsum hp hlog
+      F w q p η (δ / 2) (by positivity) hwLog hqPositive hsum hp hlog
   filter_upwards [hresult] with a ha
   have ha' : 1 - δ ≤ Real.log (q a) / w a := by
     dsimp [η] at ha

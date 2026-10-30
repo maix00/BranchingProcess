@@ -11,12 +11,19 @@ public import Probability.Process.RandomWalk.Path.Basic
 /-!
 # Tilted-tube endpoint event
 
+## Public declarations
+
 The public definition in this file is:
 
 - `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.driftedTubeEndpointWindowEvent`:
-  the linearly moving tube with a terminal window measured from its lower edge.
+  for $Y_j=\sum_{i=0}^{j-1}\xi_i$ and
+  $R_j=r+cj/\Delta^2$, the event
+  $\{R_j\le Y_j\le R_j+\Delta\ (1\le j\le L),\;
+  Y_L\in[R_L,R_L+v\Delta]\}$.
 
-This event is used in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.5.
+This is the lower-endpoint event in Wang Yiyang, *Asymptotic Speed of the
+N-Branching Random Walk with Infinite Offspring* (master's thesis, Fudan
+University, 2026), Chapter 3, Lemma 3.5.
 -/
 
 @[expose] public section

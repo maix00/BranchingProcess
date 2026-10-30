@@ -18,7 +18,7 @@ public section
 This file records analytic estimates for `Real.sinc` used to compare its defect
 `1 - Real.sinc x` with the standard truncation weight `min 1 (x ^ 2)`.
 
-## Main results
+## Public declarations
 
 * `Real.intervalIntegral_exp_I_symm`:
   `½ ∫_{-1}^1 exp(iux) du = sinc x`.

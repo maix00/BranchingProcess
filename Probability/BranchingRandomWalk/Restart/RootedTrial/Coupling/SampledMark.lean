@@ -4,9 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Restart.RootedTrial.Completion.CapStopped
+import Probability.BranchingRandomWalk.Restart.RootedTrial.Spine.ReservePath
 import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.SelectedSubtrees.SelectedFamily
-import Probability.Independence.Finite
+import Probability.Independence.FiniteFamily
+import Combinatorics.BranchingWalk.Step.Selection.Potential
 
 /-!
 # Laws of predictably sampled reserve-spine steps
@@ -17,6 +18,22 @@ address therefore has the original one-step law and is independent of the
 information revealed before that generation. Iteration shows that the
 totalized sequence of sampled steps is mutually independent, even though its
 addresses are chosen adaptively from earlier marks.
+
+## Public declarations
+
+- `selectedReserveSpineFutureRoots`,
+  `selectedReserveSpineFutureRoots_countable`,
+  `selectedReserveSpineFutureRoots_fiber_measurable`,
+  `selectedReserveSpineFutureRoots_depth`, and
+  `selectedReserveSpineFutureRoots_injective`: the selected spine address
+  defines a measurable, countable future-root family at the correct depth.
+- `selectedReserveSpineStep`, `selectedReserveSpineStep_measurable`,
+  `selectedReserveSpineStep_law`, `selectedReserveSpineStep_independent`,
+  `selectedReserveSpineStep_iIndepFun`,
+  `integral_selectedReserveSpineStep_observable`, and
+  `integral_selectedReserveSpineStep_firstSelectedSlotPositivePotential`:
+  predictably sampled marks have the original one-step law and are mutually
+  independent, with the corresponding observable expectation identities.
 -/
 
 open MeasureTheory ProbabilityTheory
@@ -24,6 +41,7 @@ open MeasureTheory ProbabilityTheory
 namespace ProbabilityTheory.BranchingRandomWalk
 
 open Combinatorics.Branching Combinatorics.UlamHarris MeasureTheory
+open Combinatorics.Branching.Step.FiniteSelection
 
 attribute [local instance] Classical.propDecidable Classical.decEq
 
@@ -324,21 +342,19 @@ theorem integral_selectedReserveSpineStep_observable
 the first `R`-selected slot, provided it is integrable under the one-step
 law.  This names the slot selected by `R`; it does not identify it with a
 distinguished offspring mark such as `Xi₁`. -/
-theorem integral_selectedReserveSpineStep_firstRSelectedSlotPositivePotential
+theorem integral_selectedReserveSpineStep_firstSelectedSlotPositivePotential
     {Root α X : Type*} [Countable α] [MeasurableSpace α]
     [MeasurableSingletonClass α] [LinearOrder α] [OrderBot α]
     [MeasurableSpace X]
     (μ : Measure (Step α X)) [IsProbabilityMeasure μ]
     (R : Step.FiniteSelection α X) (hR : Measurable R.select)
     (r : Root) (n : ℕ) (φ : Potential X)
-    (hg : Integrable
-      (fun ξ : Step α X => max 0
-        (ξ.potentialValue' φ (firstSelectedSlot R ξ))) μ) :
-    (∫ ω, max 0 ((selectedReserveSpineStep R r n ω).potentialValue' φ
-        (firstSelectedSlot R (selectedReserveSpineStep R r n ω)))
+    (hg : Integrable (firstSelectedSlotPositivePotential R φ) μ) :
+    (∫ ω, firstSelectedSlotPositivePotential R φ
+        (selectedReserveSpineStep R r n ω)
       ∂RootIndexed.stepFieldLaw (Root := Root) μ) =
-    ∫ ξ, max 0 (ξ.potentialValue' φ (firstSelectedSlot R ξ)) ∂μ := by
+    ∫ ξ, firstSelectedSlotPositivePotential R φ ξ ∂μ := by
   exact integral_selectedReserveSpineStep_observable μ R hR r n
-    (fun ξ => max 0 (ξ.potentialValue' φ (firstSelectedSlot R ξ))) hg
+    (firstSelectedSlotPositivePotential R φ) hg
 
 end ProbabilityTheory.BranchingRandomWalk

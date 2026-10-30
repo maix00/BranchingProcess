@@ -16,7 +16,7 @@ For countable slot types, their law is a pushforward of the configuration
 law. Taking total mass after the point-measure projection gives the same law,
 after the canonical embedding of `ℕ∞` into `ℝ≥0∞`.
 
-The public declarations are:
+## Public declarations
 
 - `ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw.childCountLaw`:
   the law of $\operatorname{childCount}(\xi)$ for an offspring configuration

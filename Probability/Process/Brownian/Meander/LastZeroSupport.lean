@@ -8,16 +8,19 @@ module
 
 public import Probability.Process.Brownian.Support.LinearPath
 public import Probability.Process.Brownian.Meander.LastZeroLaw
-public import Topology.ContinuousMap.LastSignChange
+public import Mathlib.Probability.BrownianMotion.Basic
+public import Mathlib.MeasureTheory.Measure.Support
+import Topology.ContinuousMap.LastSignChange
+import Topology.Order.UnitInterval.Time
 public import Topology.Cadlag.Skorokhod.Maps.Continuous
 public import Topology.Cadlag.Skorokhod.Path.Linear
 
 /-!
 # Linear paths in the support of the Brownian terminal excursion
 
-The public theorems in this file are:
+## Public declarations
 
-- `ProbabilityTheory.IsBrownianReal.brownianLinearPath_mem_lastZeroMeanderPathLaw_support`:
+- `ProbabilityTheory.IsBrownianReal.linearPath_mem_lastZeroMeanderPathLaw_support`:
   every positive linear path belongs to the support of Iglehart's
   Brownian terminal-excursion law.
 - `ProbabilityTheory.IsBrownianReal.linearPath_mem_lastZeroMeanderCadlagLaw_support`:
@@ -37,11 +40,11 @@ open scoped NNReal Topology
 namespace ProbabilityTheory
 
 /-- A positive linear path has no zero after time zero. -/
-private lemma lastZero_brownianLinearPath {a : ℝ} (ha : 0 < a) :
-    ContinuousMap.lastZero (brownianLinearPath a) = 0 := by
-  have hset : {t : unitInterval | brownianLinearPath a t = 0} = {0} := by
+private lemma lastZero_linearPath {a : ℝ} (ha : 0 < a) :
+    ContinuousMap.lastZero (ContinuousMap.linearPath a) = 0 := by
+  have hset : {t : unitInterval | ContinuousMap.linearPath a t = 0} = {0} := by
     ext t
-    simp only [Set.mem_ofPred_eq, Set.mem_singleton_iff, brownianLinearPath,
+    simp only [Set.mem_ofPred_eq, Set.mem_singleton_iff, ContinuousMap.linearPath,
       ContinuousMap.coe_mk, mul_eq_zero]
     constructor
     · intro h
@@ -51,41 +54,42 @@ private lemma lastZero_brownianLinearPath {a : ℝ} (ha : 0 < a) :
     · intro h
       subst t
       exact Or.inr rfl
-  simp [ContinuousMap.lastZero, hset]
+  rw [ContinuousMap.lastZero, hset]
+  simp
 
 /-- Iglehart's terminal excursion transform fixes every positive linear
 path on the unit interval. -/
-private lemma lastZeroMeanderTransform_brownianLinearPath
+private lemma lastZeroMeanderTransform_linearPath
     {a : ℝ} (ha : 0 < a) :
-    ContinuousMap.lastZeroMeanderTransform (brownianLinearPath a) =
-      brownianLinearPath a := by
+    ContinuousMap.lastZeroMeanderTransform (ContinuousMap.linearPath a) =
+      ContinuousMap.linearPath a := by
   apply ContinuousMap.ext
   intro t
-  have hzero := lastZero_brownianLinearPath ha
-  have htime : ContinuousMap.tailAffineTime (0 : unitInterval) t = t := by
+  have hzero := lastZero_linearPath ha
+  have htime : unitInterval.terminalSegmentParameter (0 : unitInterval) t = t := by
     apply Subtype.ext
     change (0 : ℝ) + (1 - 0) * (t : ℝ) = (t : ℝ)
     ring
   have heval : ContinuousMap.lastZeroMeanderTransform
-      (brownianLinearPath a) t =
-      |(brownianLinearPath a) (ContinuousMap.tailAffineTime 0 t)| /
+      (ContinuousMap.linearPath a) t =
+      |(ContinuousMap.linearPath a) (unitInterval.terminalSegmentParameter 0 t)| /
         Real.sqrt (1 - (0 : ℝ)) := by
     have hne : (0 : unitInterval) ≠ ⊤ := ne_of_lt (by
       change (0 : ℝ) < 1
       norm_num)
     simp [ContinuousMap.lastZeroMeanderTransform, hzero, hne]
   rw [heval, htime]
-  simp [brownianLinearPath, abs_of_nonneg (mul_nonneg ha.le t.property.1)]
+  simp [ContinuousMap.linearPath, abs_of_nonneg (mul_nonneg ha.le t.property.1)]
 
 /-- Positive linear paths lie in the support of Iglehart's normalized
 Brownian terminal-excursion law. -/
-theorem IsBrownianReal.brownianLinearPath_mem_lastZeroMeanderPathLaw_support
+theorem IsBrownianReal.linearPath_mem_lastZeroMeanderPathLaw_support
     {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
     [IsProbabilityMeasure P] {B : ℝ≥0 → Ω → ℝ}
     (hB : IsBrownianReal B P)
     (hmeasurable : ∀ t, Measurable (B t))
     {a : ℝ} (ha : 0 < a) :
-    brownianLinearPath a ∈
+    ContinuousMap.linearPath a ∈
       (hB.lastZeroMeanderPathLaw hmeasurable).support := by
   let path : Ω → C(unitInterval, ℝ) := fun ω =>
     restrictPathToUnitInterval (hB.continuousPathMap hmeasurable ω)
@@ -94,27 +98,27 @@ theorem IsBrownianReal.brownianLinearPath_mem_lastZeroMeanderPathLaw_support
   have hpath : Measurable path :=
     continuous_restrictPathToUnitInterval.measurable.comp
       (hB.measurable_continuousPathMap hmeasurable)
-  have hsource : brownianLinearPath a ∈ (P.map path).support :=
-    hB.brownianLinearPath_mem_support hmeasurable a
-  have hcont : ContinuousAt transform (brownianLinearPath a) :=
+  have hsource : ContinuousMap.linearPath a ∈ (P.map path).support :=
+    hB.linearPath_mem_support hmeasurable a
+  have hcont : ContinuousAt transform (ContinuousMap.linearPath a) :=
     ContinuousMap.continuousAt_lastZeroMeanderTransform_of_lastZero_eq_zero
-      _ (lastZero_brownianLinearPath ha)
+      _ (lastZero_linearPath ha)
   apply (Measure.mem_support_iff_forall _).2
   intro U hU
   obtain ⟨r, hr, hball⟩ := Metric.mem_nhds_iff.mp hU
-  have hpre : transform ⁻¹' Metric.ball (brownianLinearPath a) r ∈
-      𝓝 (brownianLinearPath a) := by
-    have hballnhds : Metric.ball (transform (brownianLinearPath a)) r ∈
-        𝓝 (transform (brownianLinearPath a)) :=
+  have hpre : transform ⁻¹' Metric.ball (ContinuousMap.linearPath a) r ∈
+      𝓝 (ContinuousMap.linearPath a) := by
+    have hballnhds : Metric.ball (transform (ContinuousMap.linearPath a)) r ∈
+        𝓝 (transform (ContinuousMap.linearPath a)) :=
       Metric.ball_mem_nhds _ hr
     simpa only [Filter.mem_map, transform,
-      lastZeroMeanderTransform_brownianLinearPath ha]
+      lastZeroMeanderTransform_linearPath ha]
       using hcont hballnhds
   have hpos : 0 < (P.map path)
-      (transform ⁻¹' Metric.ball (brownianLinearPath a) r) :=
+      (transform ⁻¹' Metric.ball (ContinuousMap.linearPath a) r) :=
     (Measure.mem_support_iff_forall _).1 hsource _ hpre
   have htarget : 0 < hB.lastZeroMeanderPathLaw hmeasurable
-      (Metric.ball (brownianLinearPath a) r) := by
+      (Metric.ball (ContinuousMap.linearPath a) r) := by
     rw [IsBrownianReal.lastZeroMeanderPathLaw,
       Measure.map_apply (hB.measurable_lastZeroMeanderPath hmeasurable)
         Metric.isOpen_ball.measurableSet]
@@ -137,19 +141,19 @@ theorem IsBrownianReal.linearPath_mem_lastZeroMeanderCadlagLaw_support
         Skorokhod.ofContinuousMap).support := by
   let emb : C(unitInterval, ℝ) → CadlagPath unitInterval ℝ :=
     Skorokhod.ofContinuousMap
-  have hemb : emb (brownianLinearPath a) =
+  have hemb : emb (ContinuousMap.linearPath a) =
       Skorokhod.linearPath a := rfl
-  have hsource : brownianLinearPath a ∈
+  have hsource : ContinuousMap.linearPath a ∈
       (hB.lastZeroMeanderPathLaw hmeasurable).support :=
-    hB.brownianLinearPath_mem_lastZeroMeanderPathLaw_support
+    hB.linearPath_mem_lastZeroMeanderPathLaw_support
       hmeasurable ha
   apply (Measure.mem_support_iff_forall _).2
   intro U hU
   obtain ⟨r, hr, hball⟩ := Metric.mem_nhds_iff.mp hU
   have hpre : emb ⁻¹' Metric.ball (Skorokhod.linearPath a) r ∈
-      𝓝 (brownianLinearPath a) := by
-    have hU' : Metric.ball (emb (brownianLinearPath a)) r ∈
-        𝓝 (emb (brownianLinearPath a)) := Metric.ball_mem_nhds _ hr
+      𝓝 (ContinuousMap.linearPath a) := by
+    have hU' : Metric.ball (emb (ContinuousMap.linearPath a)) r ∈
+        𝓝 (emb (ContinuousMap.linearPath a)) := Metric.ball_mem_nhds _ hr
     rw [hemb] at hU'
     exact Skorokhod.continuous_ofContinuousMap.continuousAt hU'
   have hpos := (Measure.mem_support_iff_forall _).1 hsource _ hpre

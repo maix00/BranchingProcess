@@ -26,9 +26,9 @@ and remaining-work statement is in the final section of this file.
 | --- | --- | --- |
 | `Probability/Kernel/Step` | Measurable transition kernels induced by noisy and killed steps | `Basic.lean` constructs total and option-valued steps; `Path.lean` defines finite histories and their measurability; `Iteration.lean` treats arbitrary noise measures and survival; and `Endpoint.lean` adds a terminal target. The finite weighted branch constructor, its survival weights, and its canonical-IID comparison are grouped in `FiniteBranches/{Basic,Survival,IID}.lean`. All seven modules expose complete interfaces; no proof-only `Lemmas/` collection is needed. The finite branch index is the only finiteness assumption in `FiniteBranches/Basic.lean`; its state space may be countable and its target need not be finite. |
 | `Probability/Kernel/FiniteState` | Kernel representations on a genuinely finite state space | `Matrix.lean` converts nonnegative substochastic matrices to kernels and relates matrix multiplication to kernel composition. The generic row-substochastic matrix condition belongs to `LinearAlgebra/Matrix/Substochastic.lean`; the finite weighted branch constructor belongs to `Kernel/Step/FiniteBranches/Basic.lean` and permits a general measurable target. |
-| `RandomWalk/SmallDeviation/DriftedTube` | `FiniteVarianceLower/EndpointBounds.lean` contains both endpoint conclusions of Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.5; `FiniteVarianceUpper/Basic.lean` formalizes Chapter 3, Lemma 3.4 | `Event.lean` owns the full tilted-tube event; `BlockEvent.lean` owns the reusable pair and full-sequence events for one finite block. `FiniteVarianceUpper/Lemmas/Blocks.lean` contains the theorem-specific conditional block proof. The bin endpoints, narrowed width, and terminal fractions are internal parameters in `FiniteVarianceLower/Lemmas/Staircase/Setup/Binning.lean`; the ordinary and terminal block windows and horizontal sub-tube geometry are grouped in `Setup/EndpointWindow.lean` and `Setup/BlockTube.lean`. The finite-cover proof and parameter selection are in `FiniteVarianceLower/Lemmas/Staircase/Binning/`. `HorizontalTube/EndpointWindow/RealWidthLower.lean` owns reusable real-width endpoint-window bounds; `HorizontalTube/Blocks/` owns generic block events, conditional bounds, and product estimates. `BlockInclusion.lean` owns the reusable moving-tube inclusion. `FiniteVarianceLower/Lemmas/Staircase/` contains the Lemma 3.5 proof assembly, divided into `Setup`, `Endpoint`, `Rate`, `Concrete`, and block steps. `EndpointWindow/Basic.lean` defines the lower endpoint-window event, and `EndpointWindow/Reflection.lean` proves its reflected upper-window correspondence. These statements require no finite-variance assumptions, so they are grouped at the `DriftedTube` subject level; `FiniteVarianceLower/EndpointBounds.lean` consumes them in Lemma 3.5. The generic quotient/remainder schedule and its natural-number count, endpoint, and block-length facts are all in `Path/Block/Partition/TailMerged.lean`; the balanced finite list is constructed by `Combinatorics/Sequence/BalancedPartition.lean`, and `Analysis/Asymptotics/Scale/Block/Partition.lean` contains its asymptotic limits. The Lemma 3.5-specific tube-width and endpoint margins stay under `FiniteVarianceLower/Lemmas/Staircase/Setup/`, while the block exponential product and the entrance-rate allocation are grouped in `FiniteVarianceLower/Lemmas/Staircase/Rate/BlockExponential.lean`. `FiniteVarianceLower/Lemmas/Staircase/Concrete/` contains the theorem-specific lower and upper bound assembly. |
+| `RandomWalk/SmallDeviation/DriftedTube` | `FiniteVarianceLower/EndpointBounds.lean` contains both endpoint conclusions of Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.5; `FiniteVarianceUpper/Basic.lean` formalizes Chapter 3, Lemma 3.4 | `Event.lean` owns the full tilted-tube event; `BlockEvent.lean` owns the reusable pair and full-sequence events for one finite block. `FiniteVarianceUpper/Lemmas/Blocks.lean` contains the theorem-specific conditional block proof. The bin endpoints, narrowed width, and terminal fractions are internal parameters in `FiniteVarianceLower/Lemmas/Staircase/Setup/Binning.lean`; the ordinary and terminal block windows and horizontal sub-tube geometry are grouped in `Setup/EndpointWindow.lean` and `Setup/BlockTube.lean`. The finite-cover proof and parameter selection are in `FiniteVarianceLower/Lemmas/Staircase/Binning/`. `HorizontalTube/EndpointWindow/RealWidthLower.lean` owns reusable real-width endpoint-window bounds; `HorizontalTube/Blocks/` owns generic block events, conditional bounds, and product estimates. `BlockInclusion.lean` owns the reusable moving-tube inclusion. `FiniteVarianceLower/Lemmas/Staircase/` contains the Lemma 3.5 proof assembly, divided into `Setup`, `Endpoint`, `Rate`, `Concrete`, and block steps. `EndpointWindow/Basic.lean` defines the lower endpoint-window event, and `EndpointWindow/Reflection.lean` proves its reflected upper-window correspondence. These statements require no finite-variance assumptions, so they are grouped at the `DriftedTube` subject level; `FiniteVarianceLower/EndpointBounds.lean` consumes them in Lemma 3.5. The generic quotient/remainder schedule and its natural-number count, endpoint, and block-length facts are in `Combinatorics/Sequence/TailMergedBlock.lean`; the balanced finite list is constructed by `Combinatorics/Sequence/BalancedPartition.lean`, and `Analysis/Asymptotics/Scale/Block/Partition.lean` contains its asymptotic limits. The Lemma 3.5-specific tube-width and endpoint margins stay under `FiniteVarianceLower/Lemmas/Staircase/Setup/`, while the block exponential product and the entrance-rate allocation are grouped in `FiniteVarianceLower/Lemmas/Staircase/Rate/BlockExponential.lean`. `FiniteVarianceLower/Lemmas/Staircase/Concrete/` contains the theorem-specific lower and upper bound assembly. |
 | `RandomWalk/SmallDeviation/Drawdown` | `FiniteVarianceUpper/Theorems.lean` formalizes Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.3 and its uniform consequence | `Path/Event/Drawdown.lean` owns the reusable finite-history drawdown predicates and their measurability. The finite-prefix path, spatial-bin definitions, jump-pattern events, factors, and admissible pattern family are specific to Lemma 3.3 and live under `FiniteVarianceUpper/Lemmas/JumpPattern/`; the running maximum uses Mathlib's general `partialSups` API directly. `FiniteVarianceUpper/Lemmas/TubeEvent.lean` defines the finite-pair and sequence-level block tube events used only by this proof's conditional-block and jump-pattern steps. `FiniteVarianceUpper/Lemmas/ConditionalBlocks.lean`, `Lemmas/JumpPattern/`, and `Lemmas/Rate/` contain the non-reusable conditional tube, rounded-maximum jump, union-bound, and rate proofs. General conditional event iteration was moved to `Probability/Process/Filtration/ConditionalBlocks.lean`; translation of finite interval events moved beside its definition in `Path/Window/Basic.lean`, and IID finite-block interval-law transfer moved to `Path/Block/Law/FiniteInterval.lean`. The generic quotient estimate for a horizon divided by a floor-rounded block length is in `Analysis/Asymptotics/Scale/Block/Length.lean`. DriftedTube now uses `Fin.partialSum` and finite sums directly instead of importing Drawdown's finite-sum aliases. `Scaling.lean` remains outside the proof tree because its scaling identities apply to general event sets. |
-| `RandomWalk/SmallDeviation/Range` | Independent bounded-range and block-oscillation small-deviation estimates | `IndependentBlocks.lean` gives the finite-horizon IID range-to-block-oscillation probability bound; `BlockOscillation.lean` compares a block oscillation event with the source corridor; `BlockDonsker.lean` gives the centered-unit-variance finite-block Donsker comparison; `QuadraticEnergyCover.lean` constructs the exponent-two finite corridor cover; `Rate.lean` assembles the finite-variance exponential range rate. These are complete interfaces, so this five-file subject does not need a `Lemmas/` branch. The generic index-type range cover is in `Order/Bounds/RangeCover.lean`, with its path-space adapter in `Topology/Cadlag/Skorokhod/SmallDeviation/RangeCover.lean`. These estimates are separate from the Lemma 3.3 drawdown proof, which uses Lemma 3.2 directly. |
+| `RandomWalk/SmallDeviation/Range` | Independent bounded-range and block-oscillation small-deviation estimates | The five subject-level modules have separate interfaces: `BlockDonsker.lean` transfers finite-block oscillation probabilities to Brownian range events; `FiniteCoverUpper.lean` gives the fixed-cover block estimate; `QuadraticEnergyCover.lean` constructs the exponent-two finite corridor cover; `BlockOscillation.lean` gives the finite-variance exponential block bound; and `Rate.lean` assembles the finite-variance range rate. The general finite-horizon IID range-to-block inequality lives at `RandomWalk/Path/Block/Partition/Range.lean`, since it assumes no small-deviation or moment hypotheses. The three deterministic block-to-path inclusions used by the last two rate proofs are in the non-reusable `Lemmas/BlockCorridor.lean`, imported with `import all`. Mathlib provides the general extended diameter API through `Metric.ediam`, so no duplicate general metric oscillation theorem is introduced here ([Mathlib diameter API](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Topology/EMetricSpace/Diam.html)). The generic index-type range cover is in `Order/Bounds/RangeCover.lean`, with its path-space adapter in `Topology/Cadlag/Skorokhod/SmallDeviation/RangeCover.lean`. These estimates are separate from the Lemma 3.3 drawdown proof, which uses Lemma 3.2 directly. |
 | `RandomWalk/Fluctuation` | Random-walk records, ladder variables, and Sparre--Andersen identities | `Ladder/RecordLocalTime.lean` and `Ladder/Ascending.lean` define ascending records, local time, ladder times, and heights. `Ladder/Descending/` groups the reflected record/local-time interface, the descending renewal function, the finite-variance ladder-time finiteness result, and the stable-attraction tail theorem. `FiniteVarianceSignLimit.lean` remains at the subject root as the general Gaussian positivity-parameter and Spitzer-condition input. Under `SparreAndersen/Rotation/`, `Cover.lean` owns the finite path event cover, `Basic.lean` owns the cyclic survival event and its preimage and measurability interfaces, `FiniteProduct.lean` owns IID finite-product invariance and the finite endpoint-to-survival probability inequality, and `Probability.lean` transfers the inequality to the canonical infinite IID sequence law. `Composition/{InclusionExclusion,CyclicGapSum,EndpointProbability}.lean` expose the finite-measure inclusion--exclusion identity and the iid endpoint expansions. The probability-independent cyclic-gap construction and positive-composition reindexing now live under `Combinatorics/Sequence/CyclicGap/{Basic,Reindex}.lean` in `Combinatorics.Sequence`; `CyclicGap/Lemmas/Composition.lean` contains only the inverse proof chain. `Composition/Lemmas/BlockProbability/{Event,Measure,IIDFactorization}.lean` keeps the proof-specific adjacent-block event, measure identity, and iid gap factorization. Probability statements remain in `ProbabilityTheory.RandomWalk`, while the finite combinatorial construction uses its generic sequence namespace. `Survival/` contains the finite-variance lower bounds and recurrence interface. The source citations identify Chaumont--Doney's equation (2.2) and Lemma 5, Caravenna--Chaumont's Lemma 2.1 and equation (2.3), and Doney's Theorem 2. |
 | `Probability/BranchingRandomWalk/Population/Processes/Causal` | Causal genealogical populations and their capacity/path interfaces | The root keeps `Basic.lean`, `Predicate.lean`, and `Genealogy.lean` as the population construction, predicate selection, and samplewise genealogy interfaces. `Path/{Window,Bound}.lean` groups finite-history path representations and the reusable pathwise population bound. `Capacity/{Basic,FirstMoment,Spine}.lean` groups generic Markov capacity estimates and their first-moment/spine consequences. These are complete results for the causal-population interface, not fragments of one theorem-specific proof; `RelativePosition/` remains its own reusable path-position family. |
 | `Probability/Process/RandomWalk/Kernel` | Translation-invariant increment kernels and Markov structure of IID additive walks | `Basic.lean` defines the increment kernel $Q_\nu(x,\cdot)=\nu\circ(z\mapsto x+z)^{-1}$ and identifies its iterates with convolution powers. `Markov/Basic.lean` and `Markov/Stopping.lean` state the Markov and strong Markov properties for the position process and prefix domain flow. These are general random-walk interfaces; killed-walk and return-kernel APIs remain grouped in `Kernel/Killed/`. |
@@ -37,6 +37,7 @@ and remaining-work statement is in the final section of this file.
 | `Probability/Kernel/Survival` | Generic finite-horizon kernel survival and return estimates | `Basic.lean`, `Blocking.lean`, and `SubEigenfunction.lean` are complete interfaces; `Return/{Basic,VariableBlocks,Bridge}.lean` groups one return block, finite variable-length return sequences, and a final bridge. These are reusable public constructions and estimates, not theorem-specific proof helpers, so they do not belong under `Lemmas/`. |
 | `Probability/Sequence` | Finite sequence blocks and the strict-prefix domain flow | `Block.lean` gives measurable finite-block coordinate maps; `Filtration.lean` defines the filtration generated by coordinates with index `< n`; `IndependentPrefix.lean` states the arbitrary independent-coordinate result that a coordinate at index `k ≥ n` is independent of that finite prefix. The latter lives outside `IID/` because its assumptions do not require identical distributions. |
 | `Probability/Sequence/IID` | Canonical laws and reusable interfaces for independent identically distributed sequences | `Basic.lean`, `Law.lean`, and `CharacteristicFunction.lean` remain direct peers for the canonical product law, law identification, and characteristic functions. `Blocks/` groups the complete stopping-time, deterministic-prefix, finite-cover, and conditional block APIs; these are reusable mathematical results and therefore remain outside `Lemmas/`. |
+| `Probability/Process/RandomWalk/Path/Block` | Finite increment-block operations, oscillation events, and their IID laws | `Basic.lean` owns block sums and their measurability; `Oscillation.lean` defines finite-block pairwise range events and their measurability; `Law/` owns IID block-sum, excursion, first-crossing, and oscillation laws. `Partition/Range.lean` owns variable-length cell products and the finite-horizon IID inequality bounding a whole-walk range event by a power of the one-block oscillation probability. The generic corridor and maximal interfaces live in their semantic subdirectories. |
 | `Probability/Process/RandomWalk/Path/Block/Maximal` | Maximal displacement estimates on IID random-walk blocks | `Basic.lean` adapts Mathlib’s Doob maximal inequality to deterministic IID increment blocks; `SecondMoment.lean` gives the centered unit-second-moment event bounds, their absolute-value form, and uniform asymptotic bounds for arbitrary diverging spatial scales. These are complete event interfaces reused by block partition, Donsker tightness, and corridor arguments. |
 | `Probability/Process/RandomWalk/Path/Block/Corridor` | Path events, block geometry, and corridor probability bounds for IID random walks | `Basic.lean` defines open and endpoint-constrained corridor events; `Geometry.lean` states reusable same-block and adjacent-block displacement bounds, shrunken-corridor transfer, and the endpoint-margin dichotomy. `Core.lean` gives the distribution-free measure comparison; `SecondMoment.lean` derives the variance-sensitive fixed-block error and a uniform diffusive-block estimate for every diverging scale under unit second moment; `Measure.lean` owns event measurability; `CoreReturn.lean` defines the finite-block core-return event and its geometric consequences; and `FiniteBridge.lean` derives uniform bridge mass and logarithmic-ratio bounds from open-set path-law convergence. The generic finite-cover inequality now belongs to `Probability/Sequence/IID/Blocks/FiniteCover.lean`; applications retain their source-specific corridor geometry in their semantic modules. |
 | `Probability/MeasureTheory/Convergence` | Moment convergence from tail bounds on probability measures | `IndicatorTail.lean` gives the moving-level-set integral limit; `L2FromTails.lean` proves second-moment convergence from fixed-threshold tail control and fourth moments; `L2FromVaryingTails.lean` handles varying laws; `L2FromPolynomialTails.lean` handles polynomial tails with logarithmic fourth-moment growth; `L2Norm.lean` transfers second moments to $L^2$ seminorms and variance, with its seminorm limit requiring only $L^2$ integrability; and `TailExpectation.lean` gives a separate one-sided first-moment bound from an exponential negative moment. These six files state complete theorems under distinct hypotheses and remain public peers. |
@@ -48,43 +49,58 @@ and remaining-work statement is in the final section of this file.
 | `Probability/Process/RandomWalk/Path/Block/Partition/CoreReturn` | Generic endpoint-core propagation, deterministic corridor gluing, and IID product bounds | The three modules require only a finite `StepBoundary` partition, positive spatial scale, IID increments where probability enters, and the finite-block core-return event. Mogul'skii-specific terminal-left lower-bound geometry and product assembly remain package-private under `SmallDeviation/Mogulskii/Lemmas/TerminalLeft/Partition/`; the generic source-grid and selected-cell interfaces live with the terminal-left path semantics. |
 | `RandomWalk/SmallDeviation/Mogulskii/Stable/Rate` | Exact centered horizontal-tube rate under a stable escape-rate hypothesis | `Upper.lean` gives the upper rate; `Lower/Liminf.lean` derives strict-subtube and optimized lower rates; `Lower/Limit.lean` identifies the rate limit. The endpoint-return block estimate is the public discrete transfer theorem at `Stable/Discrete/EscapeRateLowerBound.lean`; the positivity and real-log consequence remains internal at `Stable/Discrete/Lemmas/EscapeRateTubeLower.lean`, used by the rate-limit and discrete-range proof chains. |
 | `RandomWalk/Path/Skorokhod/TerminalLeft` | Terminal-left normalized random-walk paths and their Borel interfaces | `Basic.lean` defines the terminal-left path, its IID path law, endpoint and range identities, and the horizontal-tube event equivalence; `ContinuousBoundary.lean` characterizes and proves measurability of continuous-boundary corridor membership cell by cell. These source-path constructions are shared by Mogulskii and range small-deviation results, so they live with the random-walk Skorokhod path API. |
-| `RandomWalk/SmallDeviation/HorizontalTube` | `FiniteVarianceUpper/Basic.lean` formalizes Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.2 and its translated-interval form | `Blocks/` groups endpoint bridging, consecutive-block geometry, product lower bounds, and finite IID block upper bounds; `Diffusive/{TubeLower,EndpointLower}.lean` gives complete centered-unit-variance Donsker lower bounds; `EndpointBand/` and `EndpointWindow/` separate their distinct terminal-event semantics, with endpoint-band iteration and Donsker transfer under `EndpointBand/`, and the real-width endpoint-window estimate under `EndpointWindow/RealWidthLower.lean`. The theorem-specific equal-partition, block-length parameters, corridor cover, fixed-corridor rate, and rate assembly for Chapter 3, Lemma 3.2 stay under `FiniteVarianceUpper/Lemmas/`. `Kernel/BlockIteration.lean` owns the reusable killed-interval identity, uniform one-block bound, and finite-horizon iteration; `Kernel/DiffusiveReturnLower.lean` transfers diffusive tube bounds to killed return kernels. `Scaling.lean` gives the horizontal-tube logarithmic-rate rescaling identity. The subfolders state the mathematical role; reusable complete estimates remain visible at their endpoint or block owners, while Lemma 3.2's one-use rate derivation stays under `Lemmas/`. Lemma 3.5's staircase parameters remain under `DriftedTube/FiniteVarianceLower/Lemmas/Staircase/`. |
-| `RandomWalk/SmallDeviation/Entrance` | Entrance events, normal-domain estimates, and endpoint-corridor conclusions | `NormalDomainEvent.lean` exposes the finite moving-corridor event and its explicit partial-sum membership theorem; `NormalDomain.lean` owns the normal-domain first-diffusive-time entrance bounds. Finite-variance middle-corridor and endpoint results live under `FiniteVariance/`, with Donsker support under `FiniteVariance/Lemmas/InteriorDiffusive/`. The robust event and exponent-uniform entrance bound use Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring* (master's thesis, Fudan University, 2026), Appendix A.2, Lemma A.7 and Chapter 3, Lemma 3.5; their one-use proof chain remains under `Robust/Lemmas/`. The finite path, cyclic geometry, finite IID cover, and path-law transfer for the normal-domain argument are package-internal under `Lemmas/Rotation/`. Reusable cyclic-sum identities remain in `Algebra/BigOperators/CyclicReindex.lean`, finite product-measure reindexing in `MeasureTheory/Measure/Pi/FiniteReindexCover.lean`, and the finite-horizon IID survival inequality in `Fluctuation/SparreAndersen/Rotation/Probability.lean`. The reusable Donsker open-linear-ball estimates remain at `FunctionalLimit/Normal/PathLimit/LinearTube.lean`.
+| `RandomWalk/SmallDeviation/HorizontalTube` | `FiniteVarianceUpper/Basic.lean` formalizes Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.2 | `Blocks/EndpointWindowProduct.lean` is the complete endpoint-window product interface; `Blocks/EventBridge.lean` owns finite-block event semantics and translation; the conditional-expectation steps are private in `Blocks/Lemmas/ConditionalProduct.lean`. `Blocks/UpperBound.lean` gives the finite-horizon IID upper bound. `Diffusive/`, `EndpointBand/`, `EndpointWindow/`, and `Kernel/` separate complete Donsker, endpoint, and killed-kernel interfaces. The finite-variance upper-bound derivation stays under `FiniteVarianceUpper/Lemmas/`; one-use endpoint-index and real-width floor arguments stay under `EndpointWindow/Lemmas/`. `Scaling.lean` gives the general horizontal-tube rescaling identity.
+| `RandomWalk/SmallDeviation/Entrance` | Entrance events, normal-domain estimates, and endpoint-corridor conclusions | `NormalDomainEvent.lean` exposes the finite moving-corridor event and its explicit partial-sum membership theorem; `NormalDomain.lean` owns the normal-domain first-diffusive-time entrance bounds. Finite-variance middle-corridor and endpoint results live under `FiniteVariance/`, with Donsker support under `FiniteVariance/Lemmas/InteriorDiffusive/` and the one-use finite-block composition for `EndpointCorridor.lean` under `FiniteVariance/Lemmas/EndpointBridge.lean`. The robust event and exponent-uniform entrance bound use Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring* (master's thesis, Fudan University, 2026), Appendix A.2, Lemma A.7 and Chapter 3, Lemma 3.5; their one-use proof chain remains under `Robust/Lemmas/`. The finite path, cyclic geometry, finite IID cover, and path-law transfer for the normal-domain argument are package-internal under `Lemmas/Rotation/`. Reusable cyclic-sum identities remain in `Algebra/BigOperators/CyclicReindex.lean`, finite product-measure reindexing in `MeasureTheory/Measure/Pi/FiniteReindexCover.lean`, and the finite-horizon IID survival inequality in `Fluctuation/SparreAndersen/Rotation/Probability.lean`. The reusable Donsker open-linear-ball estimates remain at `FunctionalLimit/Normal/PathLimit/LinearTube.lean`.
 | `RandomWalk/FunctionalLimit/Conditioned` | Independent public interfaces by subject: `FirstWindow/`, `Meander/`, `Survival/`, and `Transition/` | `FirstWindow/Existence.lean`, `BlockLaw.lean`, `Selection.lean`, and `Limit.lean` expose the complete existence, conditional block law, selected index/path law, and functional-limit results. The Bolthausen-specific prefix event and prefix measurability are proof inputs in `FirstWindow/Lemmas/PrefixEvent.lean`; the IID prefix/suffix factorization is under `FirstWindow/Lemmas/BlockFactorization.lean`; finite-time and finite-path convergence steps used by `Limit.lean` are grouped under `FirstWindow/Lemmas/Limit/`. The unused no-window probability corollary was removed after the final path-limit proof was confirmed to use the finite-cutoff approximations directly. The namespace remains `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned` because these declarations belong to the shared conditioned-random-walk interface; moving proof steps changes module organization, not mathematical ownership. `Survival/` contains the conditioned law and scaling. `Transition/Event.lean` owns the sequence-level transition event, its normalized path corridor, grid-membership equivalences, and diffusive horizon. `Transition/Lemmas/Meander/CorridorProbability.lean` groups the convergence-to-corridor and corridor-to-conditional-probability steps used in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.5; its one-use open-meander Portmanteau step is private. The transition-specific finite-block encodings and prefix/suffix product calculations are used only in the robust entrance proof, so they belong in `SmallDeviation/Entrance/Robust/Lemmas/Edge/IndependentPrefixFactorization.lean`. That proof uses the general `iidSequenceLaw_measure_prefix_inter_block_eq_mul` API from `Probability/Sequence/IID/Blocks/Prefix.lean`; the transition-specific product identities stay internal. `Transition/DiffusiveLower.lean` keeps its one-use conditional-probability identity private beside the inverse-square estimate; the generic identity is Mathlib’s `ProbabilityTheory.cond_mul_eq_inter`. `Transition/` contains the remaining meander limit and diffusive lower bounds. |
-| `Probability/Process/Path`, `Probability/Process/TimeGrid`, and `Probability/Process/Brownian/AboveStart` | General path events, deterministic process-time grids, and their Brownian specializations | `TimeGrid/Ceiling.lean` gives the generic ceiling of an arbitrary extended nonnegative time functional by a finite monotone grid, with order, convergence, and measurability results; its selector uses Mathlib's `MeasureTheory.hittingBtwn`. `TimeGrid/UnitInterval.lean` and `TimeGrid/Expanding.lean` provide deterministic grids, while `TimeGrid/Dense/NonnegativeRationals.lean` provides a countable dense set of observation times. None depends on path or Brownian structure. `Path/FirstPassage/GridApproximation.lean` specializes the generic ceiling interface to continuous-path first passage and owns path-locality and reflection-continuity results. Brownian reflection at the selected time is in `Brownian/Reflection/FirstPassage/GridLaw.lean`; finite path observations use `hittingBtwn` directly in `Grid.lean`. `Path/FirstPassage/` also groups descending-hitting-time, reflection, and restart interfaces. `Path/AboveStart/FirstWindow/` owns the generic continuous-path time, running-minimum characterization, and uncentered/centered shift maps. `Brownian/AboveStart/FirstWindow/` contains Brownian-law specializations; its `Lemmas/` directory holds the finite-window boundary, existence, interior-return, and endpoint-return proof stages, while `Shift/` owns their Brownian continuity and cutoff-limit consequences. The namespaces and module paths therefore separate general path constructions from process-specific laws. Random-walk path foundations are grouped into `Path/Adapted/` (filtration and martingale), `Path/Event/` (drawdown, survival, oscillation, and last sign change), and `Path/Representation/` (càdlàg paths, interpolation, and scaling); the `Basic`, `Window`, and `Skorokhod` entry modules remain at the root. |
+| `Probability/Process/HittingTime` | First declarations, population-overflow times, and their stopping-time properties | `Declarations.lean` builds event-indexed success times from Mathlib hitting times; `PopulationOverflow.lean` treats arbitrary set-valued processes and finite-set specializations, with no branching assumptions; `Geometric.lean` and `ObservableCandidates.lean` provide reusable event-time laws; root-indexed branching applications remain under `Probability/BranchingRandomWalk/Selection/`. |
+| `Probability/Process/Stopping/Selection` | Selection-aware stopping-time observations | `Ranked.lean` evaluates a generic finite rank selector at a stopping time; `Overflow.lean` extends population overflow to a causal finite selection process on arbitrary labels, with directly measurable size criteria and a countable-label convenience theorem. |
+| `Probability/Process/Parallel` and `Probability/Process/Stopping/Concurrent` | Generic unions of time-indexed set-valued processes and of processes started at stopping times | `Parallel/Basic.lean` defines the union of enabled candidate sets, and `Parallel/Finite.lean` gives the finite realization, its domain-flow measurability, and cardinality bounds. `Stopping/Concurrent/Basic.lean` places each age-indexed candidate at its observed start generation; `Finite.lean` gives the finite realization and its stopping-time measurability and cardinality results. These definitions have arbitrary index and state types; root-indexed populations and split schedules remain applications under `Probability/BranchingRandomWalk/`. The stopping-time layer follows Mathlib's `Filtration` and `Stopping` API owners. |
+| `Probability/Process/Subadditive` | Expected normalized limits for subadditive random arrays | `Expected.lean` reduces an integrable, mean-stationary subadditive array with a linear expected lower bound to [Mathlib's scalar Fekete lemma](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Analysis/Subadditive.html). The result has no N-selection or branching-walk hypotheses, so it is owned here rather than under a particular speed application. |
+| `Probability/Process/Path`, `Probability/Process/TimeGrid`, and `Probability/Process/Brownian/AboveStart` | General path events, deterministic process-time grids, and their Brownian specializations | `TimeGrid/Ceiling.lean` gives the generic ceiling of an arbitrary extended nonnegative time functional by a finite monotone grid, with order, convergence, and measurability results; its selector uses Mathlib's `MeasureTheory.hittingBtwn`. `TimeGrid/UnitInterval.lean` and `TimeGrid/Expanding.lean` provide deterministic grids. The reusable density of the canonical inclusion $\mathbb Q_{\ge 0}\hookrightarrow\mathbb R_{\ge 0}$ is owned by `Topology/Order/NNReal/Rational.lean`, independent of process-time grids. `Path/FirstPassage/GridApproximation.lean` specializes the generic ceiling interface to continuous-path first passage and owns path-locality and reflection-continuity results. Brownian reflection at the selected time is in `Brownian/Reflection/FirstPassage/GridLaw.lean`; finite path observations use `hittingBtwn` directly in `Grid.lean`. `Path/FirstPassage/` also groups descending-hitting-time, reflection, and restart interfaces. `Path/AboveStart/FirstWindow/` owns the generic continuous-path time, running-minimum characterization, and uncentered/centered shift maps. `Brownian/AboveStart/FirstWindow/` contains Brownian-law specializations; its `Lemmas/` directory holds the finite-window boundary, existence, interior-return, and endpoint-return proof stages, while `Shift/` owns their Brownian continuity and cutoff-limit consequences. The namespaces and module paths therefore separate general path constructions from process-specific laws. Random-walk path foundations are grouped into `Path/Adapted/` (filtration and martingale), `Path/Event/` (drawdown, survival, oscillation, and last sign change), and `Path/Representation/` (càdlàg paths, interpolation, and scaling); the `Basic`, `Window`, and `Skorokhod` entry modules remain at the root. |
+| `Topology/Order/NNReal` | Order-topological facts for nonnegative real coordinates | `Rational.lean` proves density of the canonical map $\mathbb Q_{\ge 0}\to\mathbb R_{\ge 0}$ and chooses a nonnegative rational strictly between two ordered nonnegative reals. These statements are independent of probability processes and provide the countable dense evaluation coordinates used by continuous-path laws. |
 | `Topology/Cadlag/Skorokhod` | Reusable topology and geometry for càdlàg paths with the Skorokhod metric | Public interfaces are grouped under `Compactness/`, `Corridor/`, `EDistance/`, `Evaluation/`, `Maps/`, `Oscillation/`, `Path/`, and `TimeChange/`. Under `Evaluation/`, `Basic.lean` states continuity at continuity times, `Integral.lean` owns continuity of bounded-continuous integral functionals, `Measurable.lean` owns fixed-time Borel evaluation, and `Joint.lean` owns variable-time Borel evaluation. The fixed-time and joint measurability results now cover arbitrary metric Borel state spaces. `Maps/Continuous.lean` owns the continuous embedding from continuous paths into Skorokhod space; its measurability follows from continuity without a second-countability assumption on the state space. `Topology.lean` remains the subject-level topology interface. `TimeChange/FinitePartition/` owns the piecewise-affine clock matching finite partitions and the resulting step-path and logarithmic-distortion bounds; the one-use secant-slope estimate and its proof chain are grouped under `FinitePartition/Lemmas/`. `TimeChange/Limit/` groups the summable-distortion convergence chain; `EDistance/Logarithmic/Completion/` groups the aligned Cauchy construction, subsequence extraction, limit identification, and completeness theorem. These are complete reusable convergence results, so they are grouped by mathematical role rather than under `Lemmas/`. |
 | `BranchingProcessTest` | Tests for the production library | Test modules are grouped by topic. Mogul'skii tests use `Mogulskii/{Axiom,Path,PathClass,Rates,Regression}/`; stable tests use `Attraction/`, `PathLaw/`, `RandomWalk/`, and `SmallDeviation/`; restart tests use `Branching/Restart/Trial/` and `Branching/Restart/Lineage/`; Skorokhod tests are grouped by topology operation. `scripts/run-all-lean-tests.py` and CI log paths follow these locations. |
 | `Combinatorics/BranchingWalk/Basic` | Shared data and basic branching-walk operations | `Genealogy/` contains ancestor, descendant, and generation-size results; `Position/` contains displacement and position maps; `Sibling/` contains parent/sibling relations and closure properties; `Survival/` contains realized-particle and path-survival predicates; `Ordering/` contains orderability. `Definitions.lean` and `Map.lean` remain directly under `Basic/` as shared foundations. |
-| `Combinatorics/BranchingWalk/Selection/NSelection` | Deterministic capacity-`N` selection and its induced walks | `Mechanism/` contains the selection rules, rank and value interfaces, and matching criteria; `Walk/` contains the bounded walk, its cloud, generation frontiers, and speed; `Coupling/` contains the coupling modules directly, with callers importing the specific result modules. `Basic.lean` remains the mechanism definition. |
+| `Combinatorics/BranchingWalk/Step/Selection` | Deterministic operations on finite selections of offspring slots | `Finite.lean` defines finite selections of surviving slots; `Potential.lean` and `Slot.lean` give deterministic reserve and slot-order interfaces; `FiniteSlot.lean` encodes a capacity-two selection as a binary offspring step. |
+| `Combinatorics/BranchingWalk/Genealogy` | Infinite lineages and permanent survival of rooted branching walks | `Survival.lean` defines finite-depth survival, arbitrary-depth descendants, and an infinite surviving lineage; under finite children at every surviving prefix of the specified root it proves `HasArbitrarilyDeepDescendant root ↔ HasInfiniteLineage root`. The proof directly uses Mathlib’s `exists_seq_forall_proj_of_forall_finite` inverse-system form of Kőnig’s infinity lemma (pinned revision `380f2aafb622cb2c1c93dac545b6389083c68c51`). This is a complete subject interface, separate from the finite ancestor/descendant and generation-size operations in `Basic/Genealogy/`; its local proof is contained in the result, so a `Lemmas/` subtree is not needed. |
+| `Combinatorics/BranchingWalk/Population/Candidates` | Deterministic root-indexed candidates and admissibility for a generation | `Generation.lean` defines the surviving child-address set of a finite parent population and connects it to the generic offspring-address set. `ExponentialWeight.lean` proves that finite negative exponential offspring weight makes its real-position lower sections finite, without a probability law or measurable-space assumption. The field-observable specialization and domain-flow measurability result belong in `Probability/BranchingRandomWalk/Population/Candidates/RootIndexed/`. |
+| `Probability/BranchingRandomWalk/Population/Candidates` | Candidate populations in a root-indexed branching-random-walk field | `Prefix.lean` and `MultiRoot.lean` define finite child candidates; `Ordering.lean` and `Leftmost.lean` rank them by particle position and address; `FullChildren.lean` and `FullSelection.lean` compare finite slot truncations with the full offspring set. `RootIndexed/RealPosition.lean` connects the deterministic real-position lower-finiteness theorem to the generation-truncated field observable, while `RootIndexed/Measurability.lean` and `Adapted.lean` prove fixed-parent and adapted candidate measurability. The one-use finite-prefix comparison chain is in `Lemmas/FullSelection.lean`. |
+| `Combinatorics/Selection/NSelection` | Generic deterministic capacity-`N` selection | `Basic.lean` defines selectors on arbitrary candidate sets; `Mechanism/` gives ordered first-`N` rules, value ranking, and order transport; `Matching/` gives generic Hall and equal-rank criteria. These definitions use sets, finite sets, and order and carry no measurable-space, branching-genealogy, offspring, or generation data. |
+| ``Combinatorics/BranchingWalk/Selection/`NSelection` | Capacity-`N` selection applied to deterministic branching walks | `Walk/` defines the generation recursion from offspring sets and the resulting cloud, frontier, and speed; `Coupling/` proves cloud, offspring, and pathwise comparisons. The generic selector is imported from `Combinatorics/Selection/NSelection`; this subtree is where it acquires branching-walk semantics. |
+| `MeasureTheory/Selection` | Measurable environment-dependent and domain-flow-adapted selection | `Random.lean` defines general set-valued and capacity-$N$ mechanisms; `Finite/{Basic,Causal,ByValue}.lean` gives finite-input, domain-flow, and measurable value-ranked forms; `NSelection/` proves measurability of generic ranked capacity-$N$ selectors; `Causal.lean` handles arbitrary candidate sets; `Process.lean` forms measurable selected populations. These types use measurable candidate spaces and information domains without branching data. Root-indexed and cloud-coupling applications remain under `Probability/BranchingRandomWalk/Selection/`; the generic causal finite-selection overflow stopping time belongs under `Probability/Process/Stopping/Selection/Overflow.lean`. |
+| `MeasureTheory/BranchingWalk/Step/Selection` | Measurability of operations on finite offspring selections | `FirstN.lean`, `Potential.lean`, and `Slot.lean` give measurable versions of the corresponding deterministic step-selection operations; `FiniteSlot.lean` proves measurability of the binary-slot offspring encoding. |
 | `Probability/BranchingRandomWalk/Spine` | Spine random walks, many-to-one identities, and tube moments | `ManyToOne/`, `RandomWalk/`, `PointMeasure/`, and `Tilted/` group the corresponding public constructions. `Path/` groups lineage-generation observables, many-to-one identities, and second-moment results by subject; `Path/SecondMoment/Basic.lean` owns pathwise diagonal/off-diagonal and MRCA decompositions, while `Path/SecondMoment/SubtreeLaws.lean` owns distinct-child subtree laws and integrated second-moment identities. The IID finite-history integral recursions belong to the general random-walk path interface at `Probability/Process/RandomWalk/Path/Measure.lean`; Spine modules import them for their proof chains. `Tube/` groups corridor and tube-specific second-moment estimates; within `Tube/MRCA/`, `Expansion.lean` handles path-level corridor splitting, `Prefix.lean` factors weighted ancestral-prefix observables, and `PositiveDepth.lean` defines and bounds the affine-tube contribution at every MRCA depth, including the root split at depth zero. `MRCA/Lemmas/ChildPairBound.lean` contains the technical shifted-corridor stages for the root-split term. `ActualContribution.lean` connects the path-level decomposition to the depth-indexed contribution. The declaration namespaces remain rooted at `ProbabilityTheory.BranchingRandomWalk.Spine`. |
+| `Probability/BranchingRandomWalk/Restart/RootedTrial/FiniteSlot` | Finite-slot coupling and growth estimates for selected branching populations | `Offspring.lean` owns the pushforward offspring law and ENNReal supercriticality; `Coupling.lean` identifies the selected population with a binary-address process and proves its iid row law; `Moments.lean` gives the first- and second-moment recursions and identifies the real encoded mean with the offspring law's extended expected count; `Growth.lean` converts the existing supercriticality criterion to the real moment hypothesis and proves finite-horizon growth bounds. `Lemmas/Coding.lean` contains only the one-use address-coding and subtree-vector proof support. The deterministic encoding itself is owned by `Combinatorics/BranchingWalk/Step/Selection/FiniteSlot.lean`, and its measurability by `MeasureTheory/BranchingWalk/Step/Selection/FiniteSlot.lean`. |
 | `Probability/RandomMeasure` | General transformations of laws on measure-valued spaces | `ExponentialTilt.lean` is the exponential weighted-image law for an arbitrary random measure; it does not require a counting measure or a point-process finiteness condition. Poisson random measures remain grouped in `Poisson/`. |
 | `Probability/RandomMeasure/Poisson` | Poisson random measures and their public probability interfaces | `RandomMeasure/Basic.lean`, `Evaluation.lean`, and `Independence.lean` expose the realized measure, evaluation laws, and disjoint-set independence; their shared proof support is in `RandomMeasure/Lemmas.lean`. `Integration/`, `Intensity/`, `JumpPath/`, and `Realization/` group integration identities, support and time-mark facts, path bounds, and finite-jump configurations. `PointFamily/` separates the partition and canonical construction, block independence, piece sums, and thinning. The declarations retain the `ProbabilityTheory` namespace. |
-| `Probability/Process/Brownian` | Brownian-process construction, continuous path laws, and support | `Construction/` groups existence and modification inputs; `PathLaw/` groups continuous versions and path-space laws; `Scaling/`, `Marginal/`, and `Support/` own the corresponding interfaces. `Reflection/` is divided into `Path/`, `FirstPassage/`, and `Descending/` families. `FirstPassage/Grid.lean` uses Mathlib's generic `hittingBtwn` for finite observations; `GridLaw.lean` contains the Brownian-law theorem for the separate path first-passage grid approximation. |
+| `Probability/Process/Brownian` | Brownian-process construction, continuous path laws, and support | `Construction/Existence.lean` constructs the Gaussian pre-Brownian process from the random-walk path limit; `PreBrownianModification.lean` owns the project-level continuous-version interface; its one-use fourth-moment Kolmogorov bound is under `Construction/Lemmas/KolmogorovMoment.lean`. `PathLaw/` groups continuous versions and path-space laws; `Scaling/`, `Marginal/`, and `Support/` own the corresponding interfaces. `Reflection/` is divided into `Path/`, `FirstPassage/`, and `Descending/` families. `FirstPassage/Grid.lean` uses Mathlib's generic `hittingBtwn` for finite observations; `GridLaw.lean` contains the Brownian-law theorem for the separate path first-passage grid approximation.
 | `Probability/Process/Stable/PathLaw` | Càdlàg path laws for stable clock processes and stable Lévy processes | `Basic.lean` states the general stable-clock path-law interface; `UnitInterval.lean` constructs its canonical finite-horizon law. `Concatenation.lean` builds a full-time process from i.i.d. unit blocks, and `FullProcess.lean` proves independent increments and stable increment laws. `MonotoneGrid.lean` extends strict finite-grid laws to grids with repeated times; `LinearTube.lean` proves positive mass of Gaussian stable path balls around linear paths. These are complete reusable path-law constructions and theorems; their module-local grid and bridge computations remain private. |
 | `Probability/Process/Stable/SmallDeviation/EscapeRate` | Stable-process range, corridor, endpoint, and path-law escape rates | `Basic.lean` proves the rational-time range escape rate; `Corridor.lean` transfers its constant to centered and shifted corridors; `Endpoint.lean` treats the left-open, right-closed terminal window. `Law.lean` proves uniqueness of the rate constant from the increment law. `PathLaw/Basic.lean` defines the finite-horizon tube and rate predicate, while `PathLaw/Transfer.lean` transfers the process-level result to a stable-clock path law. The comparison and positivity calculations remain private within their theorem modules. |
 | `Probability/Process/Stable/SmallDeviation` | Stable-process small-deviation event interfaces and probability comparisons | The subject root owns the rational range tube, block endpoint-bin lower bound, corridor/range logarithmic comparison, shifted-corridor entrance comparison, and endpoint-constrained comparison. `Blocks/` owns stable time-space rescaling and adjacent-block entrance factorization; these complete stable-process event interfaces are distinct from the theorem-specific construction modules under `Blocks/Lower/` and `Blocks/Upper/`. `EscapeRate/` owns the process-level limits and finite-horizon path-law transfer. |
-| `Probability/Process/Path/Skorokhod/Corridor/UniformBlocks` | Finite uniform partitions of path corridors | `Basic.lean` owns the uniform rational block clock, translated block paths, tube events, and their structural/measurability facts; `Prefix.lean` owns stopped prefix paths and their block increments; `Events.lean` owns the corresponding measurable block and prefix events. `Gluing.lean` defines path-space corridors and proves endpoint-bin concatenation; `Cover.lean` groups rational-time block coverage with the resulting whole-path corridor and tube comparisons. `Probability/{Bounds,Independence,Stationarity}.lean` state general product bounds, block-path independence, and equality in law under independent stationary increments. `Feedback/{Basic,FullPath,Probability}.lean` define adaptive endpoint-selected events, transfer rational bounds to càdlàg paths, and prove the corresponding probability lower bounds. These are complete construction or probability interfaces at their semantic owner, not theorem-specific proof chains. |
+| `Probability/Process/Path/Skorokhod/Corridor/UniformBlocks` | Finite uniform partitions of path corridors | `Basic.lean` owns the uniform rational block clock, translated block paths, tube events, and their structural/measurability facts; `Prefix.lean` owns stopped prefix paths and their block increments; `Events.lean` owns the corresponding measurable block and prefix events. `Gluing.lean` defines path-space corridors and proves endpoint-bin concatenation; `Cover.lean` groups rational-time block coverage with the resulting whole-path corridor and tube comparisons. `Probability/{Bounds,Independence,Stationarity}.lean` state general product bounds, block-path independence, and equality in law under independent stationary increments. Stable lower-bound clients apply the generic `IsOrderedMonoid.pow_le_of_mul_le_succ` recurrence directly to these prefix-event probabilities; no event-specific wrapper is kept. `Feedback/{Basic,FullPath,Probability}.lean` define adaptive endpoint-selected events, transfer rational bounds to càdlàg paths, and prove the corresponding probability lower bounds. |
 | `Probability/Process/RandomWalk/FunctionalLimit/Stable` | Stable-domain path-law convergence and tightness | `PathLaw/` groups endpoint-grid identification, subsequential law construction, process-law construction, and convergence. `Tightness/` groups block tails, local oscillation, partition bounds, compact-range control, and the resulting tightness theorem. The finite-dimensional endpoint theorem and centering conditions remain at the subject root. |
-| `Probability/Process/Brownian/SmallDeviation/Range` | Brownian range small-width probability bounds and their exponential rate | `FiniteCover.lean` is the fixed finite-corridor spectral estimate; `UpperRate.lean` derives the small-width logarithmic upper rate. The short Rademacher Donsker transfer is a private lemma in `FiniteCover.lean`. The finite-time Rademacher range and rounded-corridor survival estimates live under `RandomWalk/Rademacher/FiniteInterval/Range/`; the general finite-block Donsker comparison lives under `RandomWalk/SmallDeviation/Range/BlockDonsker.lean`. |
+| `Probability/Process/Brownian/SmallDeviation/Range` | Brownian range small-width probability bounds and their exponential rate | `EscapeConstant.lean` gives the standard Brownian path-law escape coefficient; `FiniteCover.lean` gives the fixed finite-corridor spectral estimate; `UpperRate.lean` derives the small-width logarithmic upper rate. Their theorem-specific transfer and limit calculations are grouped under the single `Lemmas/` tree: `FiniteCoverTransfer.lean` supplies the Donsker and Rademacher spectral-limit chain, and `UpperRate.lean` supplies positivity and exponential-limit steps. These are imported with `import all` as non-reusable proof support. Mathlib owns the Brownian process-law assumptions, with `IsBrownianReal` adding almost-sure path continuity to `IsPreBrownianReal`; it does not provide these project-specific small-deviation results ([Mathlib Brownian-motion API](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Probability/BrownianMotion/Basic.html)). The finite-time Rademacher range and rounded-corridor survival estimates live under `RandomWalk/Rademacher/FiniteInterval/Range/`; the general finite-block Donsker comparison lives under `RandomWalk/SmallDeviation/Range/BlockDonsker.lean`. |
 | `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Rate` | Public normal-domain small-deviation rate results | `Endpoint/` groups endpoint bands, windows, and parameter selection; `Endpoint/Selection/Basic.lean` is the public sharp-rate conclusion, while its floor choices and fixed-parameter proof step are in `Endpoint/Selection/Lemmas/FixedParameters.lean`. `Partition/{Finite,Cover}.lean` exposes complete Gaussian-partition and interval-cover lower-rate interfaces, not one-use proof steps. In `Bounds/`, `{Lower,Upper,SharpUpper,StrictInterior}.lean` contains complete rate-transfer and tube-bound results; the finite-cover block estimate, parameter choice, and logarithmic transfer used only for `SharpUpper` remain under `Bounds/Lemmas/SharpUpper/`. The declarations keep their existing Mogulskii namespace because their mathematical ownership is unchanged. |
 | `Probability/Process/RandomWalk/SmallDeviation/HorizontalTube/EndpointBand` and `Probability/Process/RandomWalk/SmallDeviation/HorizontalTube/EndpointWindow` | Generic endpoint windows, translated endpoint bridges, killed-kernel iteration, path-law transfer, and Donsker transfer | `EndpointWindow/Basic.lean` is the single owner of measurable strict block and return events with independent mesh spacing and window half-width. `EndpointWindow/Iteration.lean` gives their generic return-kernel bounds; `EndpointWindow/PathLawTransfer.lean` transfers finite families of open endpoint-window masses through a path-law limit and gives the resulting seven-window tube lower bound, without stable-process assumptions; `Donsker/AlongScale.lean` transfers them along varying block horizons and scales. The integer- and real-width finite-variance lower bounds are in `FiniteVarianceLower.lean` and `RealWidthLower.lean`. `EndpointBand/Basic.lean` owns translated corridor and bridge events, their scaling and measurability, and the inclusion into killed bridges; `Iteration.lean` composes return windows with a translated exit bridge, while `Donsker/Normalized.lean` gives the centered unit-variance specialization. The seven-shift selector and the floor-rounding event inclusion are proof support under `EndpointWindow/Lemmas/`. These event and probability interfaces have no Mogul'skii scale assumptions and belong to `HorizontalTube/`. The seven-window spectral construction and its one-use conversion to centered unit-variance block probabilities remain proof support under `Mogulskii/Lemmas/EndpointBands/`; the finite-state spectral model remains under `RandomWalk/Rademacher/FiniteInterval/`, and Brownian range estimates under `Probability/Process/Brownian/SmallDeviation/Range/`.
 | `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Stable/Discrete/Endpoint/BandTransfer` | Stable path-law and discrete endpoint-band lower bounds | `Rate.lean` owns the stable-process endpoint-rate input. `Lower/CellBridge.lean` is the public discrete core-return bound used by the entrance and partition clients. The one-use endpoint-mass and path-limit transfers, stable return-block chain, and balanced-block specialization are grouped in `Lower/Lemmas/{EndpointMass,PathLimit,StableReturnBlocks,BalancedBlocks}.lean`. The reusable partition limit stays in `Analysis/Asymptotics/Scale/Block/Partition.lean`; open-corridor mass transfer uses the shared `measure_skorokhodCorridorEndsIn_le_liminf` API, which delegates to Mathlib's open-set Portmanteau theorem.
 | `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Stable/Discrete/Endpoint` | One-block endpoint events and the stable endpoint contribution to tube probabilities | the generic block-gluing iteration is owned by `HorizontalTube/EndpointWindow/Iteration`; its stable-specific scaling and block-count adapters are lemmas under `Endpoint/Lemmas/Return.lean` because no production module uses them; `StablePathLaw.lean` packages the stable-process endpoint-corridor input with the generic path-law transfer owned under `HorizontalTube/EndpointWindow/`; `Upper.lean` and `StrictStable.lean` give the endpoint-based upper bound and its strict-stability consequences. The one-use conversion from a strict endpoint-mass bound to a geometric block base is under `Endpoint/Lemmas/StrictStableMass.lean`; `BandTransfer/` separates the sharp stable endpoint-mass estimates and discrete cell-bridge chain.
 | `Probability/Process/RandomWalk/Fluctuation/SparreAndersen` | Reusable finite IID fluctuation identities and survival estimates | `Rotation/` contains the cyclic cover and probability inequality; `Composition/` contains the probability identities and endpoint expansions; `Combinatorics/Sequence/CyclicGap/` owns the generic cyclic-gap data and weighted composition reindexing, with its inverse proof under `Lemmas/`. `Survival/` contains the coefficient recurrence and finite-variance lower bound; their one-use proof chains are under `Survival/Lemmas/`. |
-| `Probability/Process/RandomWalk/Rademacher` | Results for the simple symmetric random walk | `Basic.lean`, `ConditionedPathLaw.lean`, and `LastSignChange.lean` are peer interfaces for the walk, its conditioned path law, and its last-sign-change index; `FiniteInterval/` owns the killed finite-interval model and its lattice path/range coordinates. `FiniteInterval/Range/Probability.lean` gives the finite-time oscillation-to-interval-survival bounds, and `FiniteInterval/Range/Corridor/Survival.lean` gives the rounded-corridor path and spectral estimates. `FiniteInterval/Spectral/Survival/Asymptotics/` groups variable-width survival log limits for arbitrary interior starts and centered tubes. `Terminal/` groups the terminal-path construction and convergence steps. |
-| `BranchingRandomWalk/Selection/NSelection/AsymptoticSpeed/InitialPopulation` | Initial-population inputs to selected-walk speed estimates | `Basic.lean` is the exact-$N$ split-event and speed-transport interface; `Field/` and `Speed/` group the source field and speed estimates. In `Trajectory/`, `Population.lean` owns the selected-population construction, `Hitting.lean` is the capacity-hitting entry theorem, and `Lemmas/CapacityHit/{Mark,Growth}.lean` contains its proof-specific mark and cardinality-growth chain. |
-| `Selection/NSelection/EndpointDeviation` | Endpoint deviations of the selected population, including estimates that admit reflection | `Endpoint/` separates minimum, positive-moment, and sequence results; `Endpoint/Minimum/CountableRoots.lean` realizes the endpoint minimum on one common countable-root field and proves its law agrees with the finite-root observable. `Roots/Monotonicity.lean` is the nested-root probability entry; its one-use event-transfer argument is a private lemma in that file. `Drawdown/` and `Rate/` group population/spine drawdown bounds and rate budgets. The reusable measurable, measure-preserving prefix restriction of root-indexed product laws belongs to `Genealogy/RootIndexed/Law/FiniteRestriction.lean`. `FirstStage/LowCountPower.lean` states the first-stage population low-count estimate; its one-use corridor budget and PZ rate assembly are under `FirstStage/Lemmas/`. `FirstStage/` and `SecondStage/` name the proof stages directly instead of encoding the positive exponent parameter in a folder name. `Population/` and `SecondStage/` retain their theorem families; the directory name does not impose a right-hand orientation. |
-| `Selection/NSelection/AsymptoticSpeed` | Speed-limit statements and the selected-population speed proof | `Limit/` groups the almost-sure product and subadditive limit results; `Selection/BlockComparison.lean` owns the general iid-block speed comparison, and `Selection/PopulationBatch.lean` owns the ranked-batch field law. `InitialPopulation/Basic.lean` is the entry module for the initial-population argument; `Field/`, `Trajectory/`, and `Speed/Transport.lean` group its field, hitting-time, and speed-transfer interfaces. Generic finite-ranking and candidate-bijection facts live with the N-selection mechanism. `Environment/` and `Selection/` hold the remaining supporting constructions. |
+| `Probability/Process/RandomWalk/Rademacher` | Results for the simple symmetric random walk | `Basic.lean`, `ConditionedPathLaw.lean`, and `LastSignChange.lean` are peer interfaces for the walk, its conditioned path law, and its last-sign-change index; `FiniteInterval/` owns the killed finite-interval model and its lattice path/range coordinates. `FiniteInterval/Range/Probability.lean` gives the finite-time oscillation-to-interval-survival bounds, and `FiniteInterval/Range/Corridor/Survival.lean` gives the rounded-corridor path and spectral estimates. `FiniteInterval/Spectral/Survival/Asymptotics/` groups variable-width survival log limits for arbitrary interior starts and centered tubes. `Terminal/` groups the terminal-path construction and convergence steps. Generic centered-lattice rounding used by these variable-scale results is owned by `Analysis/Asymptotics/Scale/CenteredInterval.lean`. |
+| `BranchingRandomWalk/Selection/NSelection/AsymptoticSpeed/InitialPopulation` | Initial-population inputs to selected-walk speed estimates | `Basic.lean` gives repeated split events and transfers the exact-$N$ speed to an initial position vector. `Trajectory/Population.lean` defines the selected population; `Trajectory/Hitting.lean` is the capacity-hitting entry theorem; `Trajectory/Basic.lean` identifies the re-rooted subtree population and field after the hit; `Trajectory/RunBridge.lean` compares that trajectory with the ranked-batch recursion. `Field/{Fresh,Independence}.lean` give the stopped descendant-field law and its factorization from hit positions; `Speed/Transport.lean` transfers the speed to a random initial-position law. The one-use split-mark and growth arguments remain in `Trajectory/Lemmas/CapacityHit/`. |
+| `Selection/NSelection/EndpointDeviation` | Endpoint deviations of the selected population, including estimates that admit reflection | `Endpoint/` separates minimum, positive-moment, and sequence results. `Endpoint/Minimum/Basic.lean` owns the totalized endpoint-minimum observable and its measurability; `Address.lean` owns the canonical measurable minimizing address, also consumed by the initial-population trajectory theorem; `CountableRoots.lean` exposes the countable-root observable and its pushforward-law identity. Sublevel, integral, and centered-moment equalities follow from that law identity and are obtained from the generic measure-preserving interface at their use sites. The one-use predictable-lineage and fourth-moment argument is grouped under `Endpoint/Minimum/Lemmas/Lineage.lean`. `Roots/Monotonicity.lean` is the nested-root probability entry; its one-use event-transfer argument is a private lemma in that file. `Drawdown/` and `Rate/` group population/spine drawdown bounds and rate budgets. The reusable measurable, measure-preserving prefix restriction of root-indexed product laws belongs to `Genealogy/RootIndexed/Law/FiniteRestriction.lean`. `FirstStage/Cutoff.lean` owns the logarithmic cutoff and its scale laws; the first-stage tilted-corridor specialization used only by the PZ chain is in `FirstStage/Lemmas/CorridorLowerBound.lean`. `FirstStage/LowCountPower.lean` states the low-count estimate, while its one-use corridor budget and PZ rate assembly are under `FirstStage/Lemmas/`. `Population/RestartedWindow.lean` defines the drift and windows for the restarted two-stage population and proves their local measurability and upper-bound facts. `Drawdown/Spine/` now contains the drawdown-dependent capacity and failure estimates with their internal reductions under `Lemmas/`. `FirstStage/` and `SecondStage/` name proof stages directly instead of encoding the positive exponent parameter in a folder name; `Population/` identifies the killed-population construction, without imposing a right-hand orientation. |
+| `Selection/NSelection/AsymptoticSpeed` | Speed-limit statements and the selected-population speed proof | `Limit/` groups the almost-sure product and subadditive limit results; `Selection/PopulationBatch.lean` owns the ranked-batch field law, while `Selection/FixedOffspring.lean` and `Selection/InfiniteOffspring/` own the model-specific ranked transitions and arrays. The generic IID block comparison is in `Probability/Sequence/IID/Blocks/SpeedComparison.lean`. `InitialPopulation/Basic.lean` is the entry module for the initial-population argument; `Field/`, `Trajectory/`, and `Speed/Transport.lean` group its field, hitting-time, and speed-transfer interfaces. Generic finite-ranking and candidate-bijection facts live with the N-selection mechanism. `Environment/` and `Selection/` hold the remaining supporting constructions. |
+| `Selection/NSelection/Law` | Product-law preservation and pathwise coupling for the ranked first-`N` population | `SelectedPopulation.lean` is the concrete product-law entry; `Causal/` gives generic causal-source, finite step-selection, nested-root, and restarted-source consequences. The restarted source and matched target are in `Causal/Restarted/Basic.lean`, its product-law coupling and almost-sure injection results are in `Coupling.lean`, and the one-use finite-stage induction is isolated in `Lemmas/Coupling.lean`. These conclusions use the branching step-field law, generation filtration, and offspring geometry, so the family remains in `Probability/BranchingRandomWalk/`. |
 | `Mogulskii/Stable/Discrete` | Discrete random-walk small-deviation and endpoint results in the stable-domain route | `Bridge/`, `Endpoint/`, `Partition/`, `PathClass/`, and `TerminalLeft/` separate the endpoint conventions and probability tasks; `FromIncrementLaw/{Normal,Path,Stable}/` expose the corresponding results from raw increment-law assumptions. `PathClass/{Rate,Regimes,InnerOuter}.lean` are peer theorem interfaces for the discrete M₂-to-M₃/M transfer, its stable-index regimes, and the common inner/outer rate; they are complete results, so they do not belong under `Lemmas/`. Their one-use discrete partition-limit dependency remains an ordinary import. `EscapeRateLowerBound.lean` exposes the complete transfer from a stable-process escape rate to a discrete horizontal-tube lower bound. Its one-use real-log positivity consequence is under `Lemmas/EscapeRateTubeLower.lean`; the reserved-terminal-bridge block-count specialization is under `Lemmas/Partition/BalancedCoreCount.lean`, while generic quotient estimates remain at `Analysis/Asymptotics/Scale/Block/Count.lean`. Within `Partition/`, `Lower/` contains the endpoint-core lower-rate proof, while `Upper.lean`, `EnergyUpper.lean`, and `Limit.lean` own the matching upper and limit statements. The generic clipped source-grid and selected-cell APIs live under `RandomWalk/Path/Skorokhod/TerminalLeft/Partition/`; theorem-specific lower assembly remains under `Mogulskii/Lemmas/TerminalLeft/Partition/`. Stable scale normalization and block counts stay under `Mogulskii/Stable/Scale/`. The terminal-left path encoding and continuous-boundary measurability API live under `RandomWalk/Path/Skorokhod/TerminalLeft/`. |
 | `Analysis/Asymptotics/Power` | General real-power comparisons for extended nonnegative quantities | `ENNRealRatio.lean` combines real-power lower and upper bounds into a quotient bound. It depends only on `ENNReal` and real powers, so the former `Probability/MeasureTheory/Moments/PowerRate.lean` was moved here from its one-use Paley–Zygmund caller. |
-| `Analysis/Asymptotics/Scale` | Reusable deterministic scale tools | `Basic.lean` defines the combined divergence and vanishing-ratio predicate; `Block/{Length,FixedOffset,Partition,Count,Proportional}.lean` owns rounded lengths, fixed offsets, balanced-partition limits, complete-block quotients, and proportional blocks; the finite balanced-list constructor belongs to `Combinatorics/Sequence/BalancedPartition.lean`; `Inverse/{Basic,LevelMultiplicity,Superquadratic}.lean` owns discrete generalized inverses and their asymptotic criteria; `Power/{IntermediateBlock,SmallDeviation}.lean` gives arbitrary-exponent intermediate blocks and the power-law constructor for small-deviation scales; `Sampling.lean` transfers limits along selected time intervals. The one-use quadratic-error choice formerly in `Tolerance.lean` is private in `Mogulskii/Rate/Bounds/StrictInterior.lean`.
+| `Analysis/Asymptotics/Scale` | Reusable deterministic scale tools | `Basic.lean` defines the combined divergence and vanishing-ratio predicate; `Block/{Length,FixedOffset,Partition,Count,Proportional}.lean` owns rounded lengths, fixed offsets, balanced-partition limits, complete-block quotients, and proportional blocks; the finite balanced-list constructor belongs to `Combinatorics/Sequence/BalancedPartition.lean`; `Inverse/{Basic,LevelMultiplicity,Superquadratic}.lean` owns discrete generalized inverses and their asymptotic criteria; `Power/{IntermediateBlock,SmallDeviation}.lean` gives arbitrary-exponent intermediate blocks and the power-law constructor for small-deviation scales; `Sampling.lean` transfers limits along selected time intervals. The one-use quadratic-error choice formerly in `Tolerance.lean` is private in `Mogulskii/Rate/Bounds/StrictInterior.lean`. `CenteredInterval.lean` defines the rounded centered-lattice radius and the asymptotic effective widths $2r_n$ and $2(r_n+1)$; it uses Mathlib floor limits and is shared by random-walk, Brownian, and stable-process estimates.
 | `Analysis/Asymptotics/Sequence` | General limits for real sequences and diagonal selection | `ExponentialSum.lean`, `LogSum.lean`, `LogarithmicScale.lean`, `NegativeRatio.lean`, and `UniformThreshold.lean` provide reusable sequence-limit tools. `SqrtRatio.lean` proves the generic implication from $a_n^2/b_n\to0$ to $a_n/\sqrt{b_n}\to0$ under eventual positivity. `SlowDiagonal.lean` combines a countable diagonal selector with a real-valued error bound; its order-theoretic selector is in `Order/Filter/SlowDiagonal.lean`.
 | `Analysis/Asymptotics/RegularVariation` | Regular variation, slow variation, and Karamata-type consequences | `Basic.lean`, `Uniform.lean`, `AsymptoticInverse.lean`, `LowerPower.lean`, `MonotoneDensity.lean`, and `SlowScale.lean` remain at the subject root. `Integral/{Basic,Tail}.lean` groups the first and second integral-tail theorems with their regular-variation consequences; both modules expose reusable results and remain outside `Lemmas/`. |
 | `Analysis/SpecialFunctions` | General complex exponential, logarithmic-ceiling, and trigonometric estimates | `Complex/Exponential.lean` packages the real-parameter complex exponential slope limit; `LogarithmicCeiling.lean` converts a real log-base threshold into a natural power bound. `Trigonometric/{FiniteSum,LogAsymptotics,PowerBound,SincBounds}.lean` groups the discrete sine-mode norm, logarithmic sine/cosine limits, cosine power bound, and sinc-defect estimates. The one-use successor-width sine identity was removed in favor of the general-width statement. |
 | `Stable/SmallDeviation/Blocks/Lower` | Lower block estimates | `Assembly/`, `Bounds/`, `Entrance/`, `Feedback/`, and `Return/` group the distinct construction steps. `Return/TwoBins.lean` gives the concrete two-bin return-core construction and stable range-tube lower bounds. `Entrance/PoissonModel.lean` owns the stable `α < 1` positive entrance theorem; it hides the chosen Lévy--Khintchine triple and exposes only the stable-process and CDF assumptions. The first-block specialization of stable return scaling used by these proofs now lives one level above at `Blocks/ReturnScale.lean`. `Feedback/` contains the stable short-block scaling and entrance consequences; the adaptive finite-block probability and path-tube implications now live with generic uniform-block path results. Stable-law adapters are limited to block laws and estimates whose statements actually use stability. |
 | `Stable/SmallDeviation/Blocks/Upper` | Stable-process finite-block tube upper bounds | `Basic.lean` derives the product/power bound from independent, identically distributed uniform blocks; `Scale.lean` rescales the tube; `ArbitraryHorizon.lean` gives the floor-inverse exponent; `Strict.lean` derives an exponential bound from positive tail mass; `Shrinking.lean` proves vanishing for a corridor whose width tends to zero. The shrinking-corridor proof uses the more general exact-width inclusion from `Probability/Process/Corridor/Range.lean`; its duplicate extra-width helper was removed. |
 | `Stable/SmallDeviation/Blocks/ShiftComparison` | Entrance probabilities and logarithmic ratios for translated stable corridors | `Core.lean` proves the finite-scale comparison assuming a positive entrance probability; `Feedback.lean` derives that input in the index-above-one and index-one regimes; `Support.lean` gives a path-support criterion; `AllIndices.lean` proves entrance positivity for every strictly stable index from the two-sided CDF condition. The complete entrance and ratio theorems remain public; their individual construction arguments stay in the lower-bound modules. |
-| `BranchingRandomWalk/Restart/RootedTrial` | Rooted-trial restart and coupling | `Spine/ReservePath.lean` defines the selected reserve path, its lineage, and the causal reserve population; `Spine/Splits.lean` defines live split counts, their completion stopping times, and recursive reserve-subtree identities. `Spine/SelectedRoot.lean` lifts subtree split-completion stopping times to deterministic or stopped selected roots; `Spine/SiblingTrial.lean` gives the complete first-child growth/second-child reserve probability factorization; `Spine/BoundedOffspring.lean` constructs the finite-slot offspring law and its Galton--Watson growth bound. These are complete interfaces of the reserve-spine construction, not isolated proof calculations. |
+| `BranchingRandomWalk/Restart/RootedTrial` | Root-indexed restart trials, reserve-spine growth, and first-`N` coupling | `Basic.lean` transfers a fixed-root split-completion time to the global domain filtration. `Spine/` defines the selected reserve path, split completion, selected roots, and sibling-trial factorization. `Reserve/` owns concurrent candidates, causal reserve sources, finite-slot Galton--Watson growth, stopped sibling lineages, and the recursive failure identity. `FiniteSlot/` defines the binary-slot offspring law, its coupling and moment recurrences, and the growth bound; its address-coding support is under `FiniteSlot/Lemmas/`. `Completion/` contains the cap-stopped trial, endpoint stopping and fresh-field laws, horizon estimates, and parallel growth bound; one-use completion proofs are under `Completion/Lemmas/`. `Coupling/` lifts the reserve source to the two-root field and proves the sampled-mark law and independence. `Reward/` owns the reserve-spine expectation identities. The generic finite-concurrent-population capacity estimate remains in `Process/Stopping/Concurrent/Finite`.
+| `Combinatorics/BranchingWalk/MarkedTree` | Marked-tree conversions, order compatibility, and recursive sibling-order transport | `Equivalence.lean` connects sibling-closed step fields to marked Ulam-Harris trees and proves the round trips; `OfBranchingWalk.lean` builds arbitrary node-marked and positioned trees from branching walks; `SiblingMonotonicity.lean` identifies local step monotonicity with sibling-monotone marks; `SiblingOrderTransport.lean` recursively relabels complete descendant subtrees and proves preservation of realized nodes, marks, and offspring point measures. These are complete mathematical interfaces, not proof-only steps. `orderingTransport` returns a Ulam-Harris marked tree but stays in this layer because its construction requires `StepField.IsOrderable` and the branching-walk path transport. Mathlib `BinaryTree` is a fixed binary-node datatype, while `UlamHarris.Tree` is an arbitrary-slot, prefix-closed set of finite addresses; Mathlib has no matching replacement ([pinned Mathlib source](https://github.com/leanprover-community/mathlib4/blob/380f2aafb622cb2c1c93dac545b6389083c68c51/Mathlib/Data/Tree/Basic.lean)). |
 | `Combinatorics/BranchingWalk/Step` | Deterministic branching-step operations | The root keeps `Basic`, `Map`, `Measurability`, `Relation`, and the mark-level real-valued `Potential` interface. Ordering properties, ranks, and ordering induced by potentials are under `Ordering/`; slot selection and sibling closure are under `Selection/`; point-measure operations are under `Measure/`; generation-local updates are under `Generation/`. |
 | `Probability/BranchingRandomWalk/Step` | Random step presentations, fields, and laws | Coordinate presentations and their constructors/maps are under `Presentation/`; field operations under `Field/`; probability laws under `Law/`; measurable ordering under `Ordering/`; point-measure observations under `PointMeasure/`. Root-indexed position measurability remains under `Position/`. |
 
@@ -213,7 +229,7 @@ by mathematical subject:
 | `RandomWalk/SmallDeviation/Mogulskii` | `Theorems.lean` is the Lean import entry for A. A. Mogul'skii's Theorems 1–4. Its public imports group the formalized interfaces for Theorem 1 (discrete random walk), Theorem 2 (strictly stable process), and Theorem 3 (Gaussian/finite variance); the module documentation records their formulas and declaration names. Theorem 4, the full continuous-time source-process rate of Section 5, is not formalized yet and is explicitly marked pending, with its missing process-level inputs in `docs/MOGULSKII_PROCESS_THEOREM_4_PROOF_ROUTE.md`. Keep this as a Lean import module, not a Markdown index. Definitions remain with their semantic owners: `Path/` owns path encodings, corridor events, and reusable finite-partition endpoint-to-corridor bounds; `Scale/Basic.lean` owns the diffusive normalization predicate; the particular $n^{1/4}$ witness is derived locally in the Gaussian escape-coefficient proof from the general power-scale theorem; `Stable/` and `Gaussian/` contain the stable-domain and finite-variance specializations; `Probability/Process/RandomWalk/Path/Skorokhod/TerminalLeft/` records the source path representation; its clipped finite-grid partition and selected-cell probability bound live at `Probability/Process/RandomWalk/Path/Skorokhod/TerminalLeft/Partition/`; `Stable/Discrete/TerminalLeft/Partition/` owns the stable rate arguments; `Rate/` groups the normal-domain rate arguments; and the reusable endpoint-band and endpoint-window probability interfaces live under `HorizontalTube/EndpointBand/` and `HorizontalTube/EndpointWindow/`. The seven-window spectral construction remains proof support under `Lemmas/EndpointBands/`. The finite-state spectral model is owned by `RandomWalk/Rademacher/FiniteInterval/Spectral/`, and Brownian range bounds are under `Probability/Process/Brownian/SmallDeviation/Range/`. Generic centered-unit-variance Donsker tube lower bounds and their return-kernel consequences live under `RandomWalk/SmallDeviation/HorizontalTube/`; generic finite-time IID tube comparisons are in `HorizontalTube/Blocks/UpperBound.lean`, the strict range-event comparison is in `Range/IndependentBlocks.lean`, and the terminal-left source path semantics live under `Probability/Process/RandomWalk/Path/Skorokhod/TerminalLeft/`, with stable rate consequences under `Stable/Discrete/TerminalLeft/Partition/`. `Gaussian/Blocks/Lemmas/` groups the theorem-specific Gaussian endpoint-product and return-kernel proof steps used by `Rate/Partition/Finite.lean`; the finite-reference survival wrapper was removed after confirming it had no production client and did not feed the current theorem entry. The single-use endpoint CLT adapter is private in `Rate/Bounds/Upper.lean`. Generic return-block iteration is in `Kernel/Killed/Return/Uniform.lean`. General killed-kernel APIs remain under `Probability/Process/RandomWalk/Kernel/Killed/`. Mogul'skii's article-theorem entry remains `Theorems.lean`. |
 | `BranchingRandomWalk/Selection/NSelection/AsymptoticSpeed` | `Limit/` and `Selection/` group the main speed argument; `InitialPopulation/Basic.lean` remains the initial-population entry, with `Field/`, `Trajectory/`, and `Speed/` subfamilies. |
 | `Mogulskii/Stable/Discrete/FromIncrementLaw` | `Normal/`, `Path/`, and `Stable/`; `Normal/HorizontalTube/` groups the index-two finite-variance tube rate, endpoint-window forms, and their proof lemmas with the other normal-domain results. |
-| `Mogulskii/Stable/Discrete/FromIncrementLaw/Normal/HorizontalTube` | `Basic.lean` contains the core closed-tube rate, `Scales.lean` its scale specializations, and `EndpointWindow.lean` proves the endpoint-window rate using the event defined in the semantic `SmallDeviation/HorizontalTube/EndpointWindow/Basic.lean` module. The singleton endpoint-window corridor and its terminal-left path inclusion remain theorem-specific under `Lemmas/EndpointWindowCorridor.lean`. The constant-corridor event and its one-client inclusions into the closed horizontal tube are package-private proof support under `Stable/Discrete/TerminalLeft/Lemmas/HorizontalTubeCorridor.lean`, where they follow the terminal-left path semantics they use; the sole client imports them with `import all`. The reusable unit-tube terminal-window construction is in `Topology/Cadlag/Skorokhod/PathClass/StepCorridor/TerminalWindow.lean`, and its all-exponent energy identity is in the corresponding `MeasureTheory/Measure/CadlagPath/PathClass/StepCorridor/TerminalWindow.lean`. |
+| `Mogulskii/Stable/Discrete/FromIncrementLaw/Normal/HorizontalTube` | `Basic.lean` contains the core closed-tube rate, `Scales.lean` its scale specializations, and `EndpointWindow.lean` proves the endpoint-window rate using the event defined in the semantic `SmallDeviation/HorizontalTube/EndpointWindow/Basic.lean` module. The singleton endpoint-window corridor, its unit-energy calculation, and its terminal-left path inclusion are theorem-specific proof steps in `Lemmas/EndpointWindowCorridor.lean`; keeping the concrete construction and energy identity there avoids exposing a one-client API from the topology or measure layers. The constant-corridor event and its one-client inclusions into the closed horizontal tube are package-private proof support under `Stable/Discrete/TerminalLeft/Lemmas/HorizontalTubeCorridor.lean`, where they follow the terminal-left path semantics they use; the sole client imports them with `import all`. |
 | `RandomWalk/Path/Skorokhod/TerminalLeft/Partition` | Finite-grid interfaces for the terminal-left random-walk path | `Basic.lean` owns the clipped source-knot index and terminal-cell lengths; `CellBounds.lean` turns corridor membership into selected-cell position constraints and the IID range-probability product bound. These public interfaces have no stable-law assumptions and are stated in the `ProbabilityTheory.RandomWalk` namespace. |
 | `Mogulskii/Stable/Discrete/TerminalLeft` | Stable-domain terminal-left small-deviation rates and their source-path proof support | `Bounds/`, `Partition/`, and `PathClass/` group the stable-specific rates; `Inputs.lean`, `Normalization.lean`, and `Realization.lean` remain at this source-convention root. `Lemmas/HorizontalTubeCorridor.lean` contains the one-client constant-corridor event comparison used by the finite-variance tube transfer. `Partition/{EnergyUpper,Lower,Limit}.lean` owns the upper, lower, and exact rate conclusions, consuming the generic source-grid interfaces from `Probability/Process/RandomWalk/Path/Skorokhod/TerminalLeft/Partition/`. |
 | `RandomWalk/Path/Interpolation` | `Finite/`, `Limit/`, `Oscillation/`, and `Path/`; `Basic.lean`, `Core.lean`, and `Scaling.lean` remain at the subject root. `Finite/Lemmas/Grid.lean` holds the one-use floor-index and partial-sum steps for the complete endpoint estimate in `Finite/Grid.lean`. The first-window path-to-survival transform lives at its semantic owner, `RandomWalk/Path/Survival/Interpolation.lean`, rather than under asymptotic `Limit/`. |
@@ -225,7 +241,7 @@ by mathematical subject:
 | `Distributions/Stable` | `Domain/`, `Exponent/`, `Gaussian/`, `Levy/`, and `Operations/`; `Basic.lean` remains at the root. |
 | `BranchingRandomWalk/Timing` | `Candidates/`, `Schedule/`, and `Splits/`; generic first-success laws and IID reward identities live under `Probability/Process/HittingTime/` and `Probability/Sequence/IID/`. |
 | `BranchingRandomWalk/Restart` | `Failure/`, `Reserve/`, `Success/`, and `Trial/`; the `RootedTrial.lean` entry module and its component directory remain substantive. |
-| `BranchingRandomWalk/Genealogy/RootIndexed` | `Field/` and `Law/`. Root-indexed exploration domains and fresh-descendant independence are grouped under `Genealogy/Exploration/RootIndexed/DomainFlow/`; `Exploration.lean` gives the arbitrary-root and arbitrary-slot interface. |
+| `BranchingRandomWalk/Genealogy/RootIndexed` | `Field/`, `Law/`, and `Lineage.lean`. `Lineage.lean` defines reserve paths and their declaration times on the root-indexed generation-coordinate field. The separate `Genealogy/Lineage/PreSampled.lean` interface treats one marked Ulam--Harris field. Root-indexed exploration domains and fresh-descendant independence are grouped under `Genealogy/Exploration/RootIndexed/AddressFiltration/`; `Exploration.lean` gives the arbitrary-root and arbitrary-slot interface. |
 | `Combinatorics/UlamHarris/Tree` | `Finite/` owns finite-carrier trees, `Truncation/` owns finite-depth truncations and their agreement height, `Graph/` owns projections to Mathlib graph interfaces, and `Topology/` owns topological and measurable structures; `Defs.lean` and `Singleton.lean` remain at the subject root. |
 | `Selection/NSelection/EndpointDeviation/Endpoint` | `Minimum/`, `PositiveMoment/`, and `Sequence/`. |
 | `Distributions/Stable/Attraction/Norming` | `Basic.lean`, `Inverse.lean`, `Compatibility.lean`, `Centering.lean`, `Mogulskii.lean`, `Tail.lean`, and `UniformTail.lean` remain at the subject root; Gaussian and index-two specializations are under `SpecialCases/`. `Mogulskii.lean` contains the theorem-specific passage to Mogul'skii's source time normalization and its index-one centering transfer; its rounded index sequence and asymptotic lemmas are private. The general normalization-change theorem is in `Distributions/DomainOfAttraction/Normalization.lean`. |
@@ -607,7 +623,7 @@ in an axiom-check file, corrected in the current working tree.
 ## Abstraction research: stable constant-corridor rate
 
 A cross-module reuse observation prompted a generality review of
-`Probability/Process/Path/PathClass/StepCorridor/Probability/Rate/StableConstantCorridor.lean`.
+`Probability/Process/Stable/SmallDeviation/PathClass/StepCorridor/ConstantCorridorRate.lean`.
 The pinned Mathlib API supplies weak convergence of probability laws and the
 continuous mapping theorem in
 [`MeasureTheory.Function.ConvergenceInDistribution`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/MeasureTheory/Function/ConvergenceInDistribution.html),
@@ -1013,7 +1029,7 @@ tilted-spine corridor mass at the specific cutoff
 `PZAssembly.lean` combines that rate with the first-stage MRCA pair sum and
 cross-child weight. Its resulting PZ-mean lower bound is used by both
 `FirstStage/LowCountPower.lean` and
-`SecondStage/Roots/CountBudget.lean`, which allocates the first-stage bound to
+`SecondStage/Roots/CountLowerBound.lean`, which allocates the first-stage bound to
 the second-stage root budget. Neither statement is the general
 Paley--Zygmund inequality: both contain the selected population's tilted law,
 corridor, cutoff, and model-specific pair bound. They therefore remain
@@ -1022,7 +1038,7 @@ consumer of the first-stage estimate, not a more general mathematical
 interface.
 
 The deterministic schedule and its scale properties now live beside their
-owner in `Drawdown/Spine/Cutoff.lean`. The limit
+owner in `FirstStage/Cutoff.lean`. The limit
 `logarithmicSmallDeviationScale (positiveAFirstStageCutoff N n) /
 logarithmOfSampleSize N n → 1` had been proved independently in
 `PZBudget.lean` and `Spine/Corridor.lean`. It is now one named property of the
@@ -1536,7 +1552,7 @@ The identity `IsStableLevyProcess.unitIntervalPathLaw_spatialScale` was also
 inside `TerminalLeft/Normalization.lean`. Its proof only needed an
 almost-surely càdlàg real process, so that stable-process wrapper was removed
 and the reusable theorem `pathLaw_smul` was added to
-`Probability/Process/Path/Cadlag/MeasurableMap.lean`. It states
+`Probability/Process/Path/Representation/Cadlag.lean`. It states
 `pathLaw(P, qX) = (pathLaw(P, X)).map (scalePath q)` for every real `q`.
 `PathLaw/UnitInterval.lean` now owns only the stable-process path-law
 construction and stable-clock results. The one-use coefficient substitution
@@ -1556,7 +1572,7 @@ and
 [`AEMeasurable.map_map_of_aemeasurable`](https://github.com/leanprover-community/mathlib4/blob/380f2aafb622cb2c1c93dac545b6389083c68c51/Mathlib/MeasureTheory/Measure/AEMeasurable.lean#L160).
 Mathlib supplies these measure-map operations but has no `CadlagPath` path-law
 API; the reusable path-law statement therefore belongs in the project's
-`Probability/Process/Path/Cadlag/MeasurableMap.lean`.
+`Probability/Process/Path/Representation/Cadlag.lean`.
 
 The module headers in `Stable/Scale/Rate.lean`,
 `Stable/RandomWalkBounds/Partition/{EnergyUpper,Upper}.lean`, and
@@ -1569,7 +1585,7 @@ entry modules build with the pinned toolchain; the stable-attraction check
 module also compiles through `lake env lean` against the new import path.
 `Stable/Corridor.lean` and the equation (34) CDF entrance adapter now also
 list their complete public APIs and quantitative conclusions. The
-`Process/Path/Cadlag/MeasurableMap`, `PathLaw/UnitInterval`, and the
+`Process/Path/Representation/Cadlag`, `PathLaw/UnitInterval`, and the
 terminal-left normalization client build after adding the general path-law
 scaling theorem and making the local coefficient substitution private.
 `python3
@@ -1851,7 +1867,7 @@ build is recorded separately in the active branch checks.
 The 2026-10-20 spine-capacity review removed the old overloaded module layout
 from `EndpointDeviation/Drawdown/Spine/Capacity.lean`. That entry now exposes
 the affine-corridor first-stage low-count estimate used by
-`Population/LowCount.lean` and `SecondStage/Lemmas/PZ.lean`. Its positive-parameter
+`Population/LowCount.lean` and `SecondStage/Lemmas/Corridor/PZ.lean`. Its positive-parameter
 window schedule remains in `Spine/Window.lean`, where it is a mathematical
 object with its own measurable-window and upper-envelope statements. The
 second-stage tube, parameter and endpoint bounds, random-walk estimates,
@@ -1868,7 +1884,7 @@ name is `FirstStage/`; the positive-parameter condition remains encoded in the
 mathematical declaration names.
 
 The second-stage affine-corridor estimate is organized by semantic role:
-`SecondStage/Lemmas/AffineCorridorBound.lean` contains the one-use
+`SecondStage/Lemmas/Corridor/AffineBound.lean` contains the one-use
 finite-variance affine-corridor composition; its moving-entrance and
 endpoint-corridor inputs remain in the random-walk small-deviation modules.
 `TubeParameters.lean` owns the reusable $D^{1/3}$ width and $D^{-2/3}$ slope,
@@ -1899,8 +1915,8 @@ The four cloud rank and leftmost-selection modules now list their public
 interfaces using their mathematical statements. `Cloud/Rank/Slice.lean`
 contains the general slice-rank definition and finite-order consequences;
 `Cloud/Rank/Descendant.lean` gives the predicate-restricted rank and its
-sibling-rank comparison; `Cloud/Order/DynamicSelection.lean` gives threshold
-count domination and injective matching into dynamic leftmost selection; and
+sibling-rank comparison; `Cloud/Order/DynamicSelection.lean` gives the public injective matching
+into dynamic leftmost selection; and
 `Cloud/Order/Selection.lean` lifts those estimates to rankwise and
 measure-level cloud domination. These modules are kept under their semantic
 owners because they expose reusable rank and selection interfaces. All four
@@ -1961,7 +1977,7 @@ The public theorem in
 `Stable/RandomWalkBounds/PathClass/Rate.lean` concludes that the logarithm of
 the path probability divided by `probabilityRateDenominator` tends to
 `rateCoefficient α C * H`. The pinned definition in
-`Probability/Process/Path/PathClass/StepCorridor/Probability/Normalization.lean`
+`Probability/Process/Stable/SmallDeviation/EscapeRate/Normalization.lean`
 is `rateCoefficient α C = -(C * 2 ^ α)`, and
 `HasStableProcessEscapeRate.negative` gives $C<0$. The module header now
 states the corresponding limit $-C2^\alpha H$ for its negative denominator.
@@ -2000,7 +2016,7 @@ type, the strict-past coordinate space, restriction and reconstruction of a
 root-indexed step field, their measurability, and the identity
 `glue n (field.past n) (subtreeStepFieldVector (generationRoots n) field) =
 field`. The module now lives at
-`Genealogy/Exploration/RootIndexed/DomainFlow/GenerationDecomposition.lean`,
+`Genealogy/Exploration/RootIndexed/AddressFiltration/GenerationDecomposition.lean`,
 beside the coordinate-domain and subtree-vector interfaces it composes. The
 path matches the mathematical subject: it splits a field into past and
 generation-rooted future coordinates. These definitions and theorems remain
@@ -2032,7 +2048,7 @@ build with the pinned toolchain (3,300 Lake jobs).
 
 The module headers in `Genealogy/RootIndexed/Law/{Basic,FiniteExpectations,
 IndependentEventCount}.lean` and
-`Genealogy/Exploration/RootIndexed/DomainFlow/{Space,RootSubset,
+`Genealogy/Exploration/RootIndexed/AddressFiltration/{Space,RootSubset,
 SubtreeVector,Independence}.lean` now enumerate their public declarations
 with formulas for the product laws, marginal expectations, lower-tail count,
 coordinate sigma-algebras, subtree-vector law, and past/future factorization.
@@ -2065,8 +2081,8 @@ most eight direct Lean files in any directory.
 ## Stopped finite-population law organization (2026-10-20)
 
 The public random-cardinality theorem now owns
-`Genealogy/Exploration/Abstract/StoppedPopulation/DependentLaw.lean`; its
-`Genealogy/Exploration/Abstract/StoppedPopulation/DependentLaw.lean`. Its
+`Genealogy/Exploration/Abstract/StoppedPopulation/RandomCardinalityLaw.lean`; its
+`Genealogy/Exploration/Abstract/StoppedPopulation/RandomCardinalityLaw.lean`. Its
 complete cellwise product-law theorem lives in the sibling
 `CellFactorization.lean`: the result is stated for arbitrary measurable mark
 spaces and injectively enumerated finite root populations, and is used by
@@ -2097,7 +2113,7 @@ directory has at most eight direct Lean files.
 ## Selected population cell branching boundary (2026-10-20)
 
 The deterministic-generation selected-cell product laws now live in
-`Genealogy/Exploration/Selected/CellBranching/Basic.lean`. Its public header
+`Genealogy/Exploration/Selected/CellBranching/FixedTime.lean`. Its public header
 states the finite-root product factorization and its position-restricted
 version. The generation-cell measurability arguments are private to that
 module. The duplicate `selectedPopulation_cell_descendant_law` adapter was
@@ -2471,7 +2487,7 @@ semantic review removed the geometric wrappers in favor of Mathlib's ordered
 field geometric-sum bound and removed the sine-square wrapper, leaving the
 general-width identity as the public trigonometric result. The cosine power
 bound remains in `Analysis/SpecialFunctions/Trigonometric/PowerBound.lean`.
-`Analysis/FunctionalEquation/ContinuousAdditivePositive.lean` records the
+`Analysis/FunctionalEquation/NNReal.lean` records the
 continuous additive extension formula. The path-displacement header in
 `Combinatorics/BranchingWalk/Basic/Position/Displace.lean` now also states its
 recursive cons equation alongside the prefix-sum interfaces.
@@ -2519,7 +2535,7 @@ A production-source scan found thirteen modules publicly re-exporting
 Mathlib tactic modules through fifteen `public import` lines. These are proof
 syntax dependencies rather than mathematical interfaces, so the imports are
 now ordinary imports in `Algebra/BigOperators/{CyclicReindex,PartialSum}.lean`,
-`Analysis/FunctionalEquation/ContinuousAdditivePositive.lean`,
+`Analysis/FunctionalEquation/NNReal.lean`,
 `Probability/BranchingRandomWalk/{Selection/NSelection/AsymptoticSpeed/Limit/Asymptotics,Spine/FiniteKernel}.lean`,
 `Probability/MeasureTheory/{Convergence/{L2FromTails,L2FromVaryingTails,TailExpectation},Moments/ExponentialMoment}.lean`,
 `Probability/Process/{Levy/Jump/Entrance,Path/Skorokhod/Corridor/OneJumpEntrance,RandomWalk/SmallDeviation/DriftedTube/FiniteVarianceLower/Lemmas/Staircase/{Endpoint/Windows,Setup/FirstWindow}}.lean`.
@@ -2801,7 +2817,7 @@ of their `valueKey`s, then
 abstract finite-or-infinite first-$N$ selection specification, not a
 branching-walk construction, so it now lives as
 `IsFirstNBy.image` beside that specification in
-`Combinatorics/BranchingWalk/Selection/NSelection/Mechanism/Infinite.lean`.
+``Combinatorics/BranchingWalk/Selection/`NSelection/Mechanism/Infinite.lean`.
 The trajectory uses this theorem and no longer carries its local copy. Both
 modules now list their public declarations and formulas in their module
 headers. The theorem module, trajectory module, and direct clients built with
@@ -2810,7 +2826,7 @@ edited modules.
 
 ## Capacity selection module header (2026-10-21)
 
-`Combinatorics/BranchingWalk/Selection/NSelection/Basic.lean` defined the
+``Combinatorics/BranchingWalk/Selection/`NSelection/Basic.lean` defined the
 abstract and finite-input capacity selectors but its module header only gave
 a general overview. The header now names its public structures and theorem
 declarations, records the finite and infinite cardinality laws, and states the
@@ -3364,8 +3380,8 @@ because a name-only scan cannot assess namespace context or whether the header
 describes the statement and assumptions accurately. Manual checks confirmed
 missing declaration inventories in
 `Combinatorics/SimpleGraph/Acyclic/Height.lean`,
-`Combinatorics/BranchingWalk/Selection/{Contain,WalkTransform}.lean`, and
-`Combinatorics/BranchingWalk/Selection/Coupling/Offspring/{Address,Cloud,Finite}.lean`.
+``Combinatorics/BranchingWalk/Selection/`{Contain,WalkTransform}.lean`, and
+``Combinatorics/BranchingWalk/Selection/`Coupling/Offspring/{Address,Cloud,Finite}.lean`.
 Their module docstrings now give the exact Lean names and concise mathematical
 statements, including formulas for the acyclicity condition and finite
 offspring-address cardinality identity. All six modules build with the pinned
@@ -3378,7 +3394,7 @@ The next six candidates in that scan were manually confirmed and fixed:
 `Selection/Coupling/Position.lean`, and
 `Selection/NSelection/Walk/{Basic,Cloud,Frontier}.lean`. Their public
 declarations now have formula-bearing header inventories. The related
-`Cloud/Frontier/Basic.lean` inventory was also extended for the new generic
+`Cloud/Frontier.lean` inventory was also extended for the new generic
 potential-frontier API. Based on the previous 741-candidate count, 735
 candidates were originally left for review; that count is now stale. A later
 manual pass found that `Selection/NSelection/Walk/Basic.lean` still omitted
@@ -3395,7 +3411,7 @@ count. The repository-wide header audit remains in progress.
 
 ## Selection-mechanism abstraction review (2026-10-21)
 
-The current `Combinatorics.Branching.Selection.Mechanism` has the exact
+The `Combinatorics.Selection.Mechanism` interface has the exact
 interface `select : Set ι → Set ι` with `∀ s, select s ⊆ s`; its finite
 counterpart has `select : Finset ι → Finset ι` with the analogous subset
 property. The finite interface is used by `FiniteNSelection`, while the
@@ -3427,6 +3443,53 @@ that bundled order operators encode their characteristic laws rather than
 serving as arbitrary endomap wrappers. This review retains the current
 selection abstraction and removes the one-use theorem that only packaged
 `le_trans` in `Selection/Coupling/EndpointMinimum.lean`.
+
+## Selection ownership review (2026-10-30)
+
+The word *selection* names two different layers in this repository. In the
+branching-selection literature, an N-branching random walk first branches and
+then retains a prescribed number of particles at each generation; the
+particle-system transition belongs under
+`Combinatorics/BranchingWalk/Selection/`
+([Bérard–Maillard](https://arxiv.org/abs/1311.1488)). The deterministic
+`NSelection.Walk` and finite child-slot selection are kept in that layer.
+
+By contrast, `Combinatorics.Selection.Mechanism` and
+`Combinatorics.Selection.NSelection` have only an arbitrary candidate type,
+sets or finite sets, cardinality, and order. They do not mention offspring,
+generation, or genealogy. `MeasureTheory/Selection/` uses the same interface
+to describe measurable and domain-flow selection rules, and
+`Probability/Process/Stopping/Selection/Ranked.lean` specializes it to finite
+ranked data at a stopping time. Those declarations are complete general
+selection interfaces, so their deterministic base remains under
+`Combinatorics/Selection/`; the branching-walk dynamics remain under
+`Combinatorics/BranchingWalk/Selection/`.
+
+The pinned Mathlib source provides generic finite-set filtering and sorting,
+but no bundled `Set ι → Set ι` or `Finset ι → Finset ι` selection-mechanism
+structure ([`Finset.filter`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Data/Finset/Filter.html),
+[`Finset.sort`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Data/Finset/Sort.html)).
+Mathlib's `Combinatorics/Compactness` also formalizes Rado's selection
+principle as a combinatorial theorem; it is a compactness result rather than
+an analogue of the repository's capacity-bounded selector interface
+([module documentation](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Combinatorics/Compactness.html)).
+The repository interface therefore remains a small deterministic base for
+its measurable and process-level selection constructions.
+
+## Parallel and concurrent process ownership review (2026-10-30)
+
+The set-valued `parallelPopulation` and the concurrent-start construction
+depend only on arbitrary index, state, and probability-space types. Their
+adaptation statements use a `Filtration`; concurrent starts use Mathlib's
+`IsStoppingTime`. Neither construction refers to branching, roots, offspring,
+or genealogy, so their generic definitions and finite realizations now live
+under `Probability/Process/Parallel/` and
+`Probability/Process/Stopping/Concurrent/`. The root-indexed step-selection
+and rooted-trial modules retain their adapters in
+`Probability/BranchingRandomWalk/`. This ownership follows Mathlib's separate
+process filtration and stopping-time APIs
+([Filtration](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Probability/Process/Filtration.html),
+[Stopping](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Probability/Process/Stopping.html)).
 
 ## Scalar-potential frontier abstraction review (2026-10-21)
 
@@ -3473,9 +3536,9 @@ more general `CloudSet` layer.
 
 The candidates were the normalized sequence predicate
 `HasAsymptoticSpeed p c := Tendsto (fun n => (n : 𝕜)⁻¹ • p n) atTop (𝓝 c)` in
-`Combinatorics/BranchingWalk/Selection/NSelection/Walk/Speed.lean`, and the
+``Combinatorics/BranchingWalk/Selection/`NSelection/Walk/Speed.lean`, and the
 finite threshold-count results in
-`Combinatorics/BranchingWalk/Selection/NSelection/Coupling/Finite.lean`:
+``Combinatorics/BranchingWalk/Selection/`NSelection/Coupling/Finite.lean`:
 `(retained.filter (fun p => position p ≤ a)).card ≤
 ((selectFirstN N rightCandidates).filter (fun q => candidatePosition q ≤ a)).card`,
 under subset, capacity, threshold-count, and candidate-monotonicity hypotheses;
@@ -3513,7 +3576,7 @@ The search used Mathlib's official
 and [Mathlib style guidance](https://leanprover-community.github.io/contribute/style.html),
 then checked the pinned revision
 `380f2aafb622cb2c1c93dac545b6389083c68c51` in
-`Mathlib/Data/Finset/Sort.lean`, `Mathlib/Data/Finset/Max.lean`, and the
+`Mathlib/`Data/Finset`/Sort.lean`, `Mathlib/`Data/Finset`/Max.lean`, and the
 repository-wide search for an existing `HasAsymptoticSpeed` declaration.
 `Speed.lean`, its probability client, `Coupling/Finite.lean`, and
 `Cloud/Order/Selection.lean` build with the pinned toolchain.
@@ -3549,8 +3612,8 @@ below the repository's eight-file grouping review threshold.
 The comparison used Mathlib's official
 [`Finset` cardinality documentation](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Data/Finset/Card.html)
 and [`Finset.sort` documentation](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Data/Finset/Sort.html),
-then checked `Mathlib/Data/Finset/Card.lean` and
-`Mathlib/Data/Finset/Sort.lean` at pinned revision
+then checked `Mathlib/`Data/Finset`/Card.lean` and
+`Mathlib/`Data/Finset`/Sort.lean` at pinned revision
 `380f2aafb622cb2c1c93dac545b6389083c68c51`.
 
 ## Branching ancestry and list-prefix abstraction review (2026-10-21)
@@ -3625,7 +3688,7 @@ the generation-cloud API it uses.
 The comparison used Mathlib's official
 [`Set.Finite` / `Finset` conversion documentation](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Data/Set/Finite/Basic.html)
 and [finite-set definitions](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Data/Finset/Defs.html),
-then checked the pinned `Mathlib/Data/Set/Finite/Basic.lean` and searched its
+then checked the pinned `Mathlib/`Data/Set/Finite/Basic`.lean` and searched its
 source tree for a particle-cloud structure. No Mathlib definition matches the
 project's cloud semantics.
 
@@ -3650,8 +3713,8 @@ The module headers for `Step/Relation.lean` and
 declarations and state the defining predicates or conclusions. The comparison
 used Mathlib's official [`Set.Finite` and `Finset` documentation](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Data/Set/Finite/Basic.html),
 [`Finset` definition](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Data/Finset/Defs.html),
-and the repository's pinned `Mathlib/Data/Set/Finite/Basic.lean` and
-`Mathlib/Data/Finset/Defs.lean`.
+and the repository's pinned `Mathlib/`Data/Set/Finite/Basic`.lean` and
+`Mathlib/`Data/Finset`/Defs.lean`.
 
 ## Ulam--Harris tree representations and directory ownership (2026-10-21)
 
@@ -4368,7 +4431,7 @@ horizontal-tube event semantics and geometry supplied by the local modules.
 
 The candidate generic representation is the running-minimum characterization
 already proved in
-`Probability/Process/Path/AboveStart/RunningMinimum.lean`:
+`Probability/Process/Path/AboveStart/FirstWindow/Time/RunningMinimum.lean`:
 `firstNonnegativeWindowStartUpTo_eq_coe_iff_runningMinimum` states, for a
 continuous path $f$, horizon $s$, and finite time $t$, that $T^s(f)=t$ iff
 $t+1\le s$, the running minimum is constant from $t$ to $t+1$, and no earlier
@@ -4414,7 +4477,7 @@ a separate complete result at `FirstWindow/EndpointHittingTime.lean`; it
 states an independent consequence for every qualifying endpoint return.
 
 The generic path modules now separate the running-minimum characterization
-from endpoint-return consequences. `Path/AboveStart/RunningMinimum.lean`
+from endpoint-return consequences. `Path/AboveStart/FirstWindow/Time/RunningMinimum.lean`
 contains the core deterministic identities. The path-level first-window
 directory groups time-functional results under `Time/` (continuity,
 finite-horizon restriction, and probability exhaustion), path transforms under
@@ -4552,7 +4615,7 @@ mathematical abstractions remains open.
 ## Public declaration inventory: root-indexed singleton and bounded branching (2026-10-23)
 
 Manual review of three declaration-scan candidates added formula-bearing
-inventories to `Combinatorics/BranchingWalk/Selection/NSelection/Walk/BranchingWalk.lean`,
+inventories to ``Combinatorics/BranchingWalk/Selection/`NSelection/Walk/BranchingWalk.lean`,
 `Combinatorics/UlamHarris/Tree/Singleton.lean`, and
 `Combinatorics/UlamHarris/MarkedTree/Singleton.lean`. The descriptions state
 the child-count bound defining `N`-branching walks, the induced subtype and
@@ -5185,7 +5248,7 @@ existing equivalence, rather than a separate public mathematical interface.
 Both cell-branching modules and the random-size branching theorem build
 successfully with the pinned toolchain (3,159 Lake jobs).
 
-## Lévy-measure atom-free radius API promotion (2026-10-24)
+## Historical Lévy-measure atom-free radius API promotion (2026-10-24; superseded 2026-10-30)
 
 A declaration-level reassessment refined and supersedes the 2026-10-23
 placement decision for `AtomFreeRadii.lean`. Although the representation proof
@@ -5201,6 +5264,12 @@ null-fiber selection remains in `MeasureTheory/Measure/LevelSet.lean`; this
 move adds only the Lévy-specific interface. The moved API and affected
 Lévy–Khintchine representation modules build successfully against the pinned
 Mathlib revision (3,424 Lake jobs).
+
+The 2026-10-30 module-ownership audit supersedes this public-placement
+decision: the two radial selectors have only proof-chain clients, while the
+reusable abstraction is already `MeasureTheory.exists_measure_zero_fiber_of_not_countable`.
+The selectors now live under
+`LevyKhintchine/Lemmas/Representation/Lemmas/AtomFreeRadii.lean`.
 
 ## Structural scan checkpoint (2026-10-24)
 
@@ -6733,12 +6802,12 @@ declaration-to-header comparison remains open.
 
 ## Infinite-offspring selection interface (2026-10-24)
 
-`AsymptoticSpeed/Selection/Infinite.lean` combined four interfaces in 889
+`AsymptoticSpeed/Selection/InfiniteOffspring.lean` combined four interfaces in 889
 lines: admissible optional-slot batches, the one-generation transition,
 finite-run identities, and the associated block-minimum/subadditive arrays.
 These are separate semantic layers used by the environment construction,
 measurable repair, and Kingman proof. The module is now grouped under
-`Selection/Infinite/` as `Batch.lean`, `Transition.lean`, `Run.lean`, and
+`Selection/InfiniteOffspring/` as `Batch.lean`, `Transition.lean`, `Run.lean`, and
 `BlockArray.lean`. Their module docstrings inventory the declarations and give
 the order, norm, run, and subadditivity formulas. Direct clients import the
 smallest relevant module; the array and run layers expose their mathematical
@@ -6792,14 +6861,14 @@ The former 734-line Selection/FiniteArray.lean contained two independent
 interfaces: a model with exactly K child slots for each parent, and an
 iteration/subadditivity theorem for arbitrary time-dependent coordinate
 transitions. They are now owned by Selection/FixedOffspring.lean and
-Selection/BlockArray.lean respectively. The generic block-array module no
+Selection/CoordinateIteration.lean respectively. The generic block-array module no
 longer inherits Fintype, Nonempty, or MeasurableSpace assumptions for its
 deterministic definitions and subadditivity theorem; measurability assumptions
 appear only on its two measurability results. The two finite monotone-count
 arguments used only by the fixed-offspring transition are private lemmas.
 
 The order-isomorphism covariance of the first-N selector now belongs to
-Combinatorics/BranchingWalk/Selection/NSelection/Mechanism/Leftmost.lean:
+`Combinatorics/BranchingWalk/Selection/`NSelection/Mechanism/Leftmost.lean:
 for linear orders α and β, an order isomorphism e, a finite set s, and n,
 the image of selectFirstN n s under e equals selectFirstN n (s.image e).
 This property applies to every use of the repository's selector, so the
@@ -6822,7 +6891,7 @@ the first-N/order-isomorphism identity is not part of that API.
 The fixed-offspring module explicitly records that its transition assumes
 exactly K slots at every parent and does not model zero or variable offspring
 counts. It remains a separate bounded model; the countable-offspring speed
-argument stays under Selection/Infinite/.
+argument stays under Selection/InfiniteOffspring/.
 
 The Leftmost, BlockArray, and FixedOffspring modules build successfully with
 the pinned toolchain (1,778 Lake jobs). This reviewed family is one part of
@@ -6962,7 +7031,7 @@ give the least strict predecessor/successor for any finite subset of a linear
 order. The `StepCorridor/Basic.lean` callers now use those results directly
 after adjoining the interval endpoint, and the four wrappers were removed.
 The relevant pinned API is in
-[`Mathlib/Data/Finset/Max.lean`](https://github.com/leanprover-community/mathlib4/blob/380f2aafb622cb2c1c93dac545b6389083c68c51/Mathlib/Data/Finset/Max.lean#L276)
+[`Mathlib/`Data/Finset`/Max.lean`](https://github.com/leanprover-community/mathlib4/blob/380f2aafb622cb2c1c93dac545b6389083c68c51/Mathlib/Data/Finset/Max.lean#L276)
 and its [Mathlib documentation](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Data/Finset/Max.html#Finset.exists_next_right).
 The two boundary modules, the corridor module, and eight direct downstream
 clients build successfully (3,593 Lake jobs); Mathlib `lint-style` passes on
@@ -7135,9 +7204,11 @@ interfaces are distinct complete results: finite-union rates; their
 null-measurable pullback form; absolute and relative inner/outer approximation
 rates; continuous-boundary rates; and the stable constant-corridor rate. The
 one internal energy-bound argument stays `private` in `InnerOuter.lean`.
-`StableConstantCorridor.lean` is a full 169-line rate conclusion with its own
-stable scaling and energy output, so it remains an explicit result module
-rather than a `Lemmas` file. The source-level Mogul'skii citation in
+`ConstantCorridorRate.lean` is a complete fixed-corridor result with its own
+stable scaling and energy output. It was moved to the stable-process small-
+deviation layer because its hypotheses and conclusion require stable-clock and
+Lévy-process laws; it remains public as a standalone rate theorem, rather than
+becoming a one-use proof lemma. The source-level Mogul'skii citation in
 `Approximation.lean` identifies Theorem 3, Section 4 and the journal
 publication details. Added formula-level `## Public declarations` inventories
 to all seven modules; the prior prose inventories and theorem bodies remain
@@ -7870,7 +7941,7 @@ types together with the finite-slice threshold event; `Roots/Selection.lean`
 owns the predictable root constructor and its measurable, injective-family
 interface. The public killed population and its finite-slice theorem now live
 at `SecondStage/Population.lean`; the one-use pathwise success implication is
-in `SecondStage/Lemmas/PopulationTransfer.lean` and is imported by the failure
+in `SecondStage/Lemmas/Population/Transfer.lean` and is imported by the failure
 decomposition rather than re-exported as an entry theorem.
 
 The estimate for an arbitrary measurable, injective family of same-generation
@@ -8027,17 +8098,17 @@ abstraction, module-header, and citation review is still in progress.
 
 ## N-selection probability interfaces (2026-10-25)
 
-Reviewed the direct modules in
-`Probability/BranchingRandomWalk/Selection/NSelection/`. Their placement
-separates dynamic-rank measurability (`AtRank.lean`), stopping-time rank
-vectors (`AtStoppingTime.lean`), finite-value selection (`ByValue.lean`),
-possibly infinite candidate populations (`Infinite.lean`), root-indexed
-position specializations (`Position.lean`), and the everywhere-defined
-empty-fallback selector (`Totalized.lean`). These are semantic interfaces
-used by population laws, selected-population constructions, and stopping-time
-arguments; they do not belong in theorem-specific `Lemmas/` directories. The
-six remaining module headers now list every public declaration by its full
-Lean name and state its object or measurability conclusion.
+The 2026-10-25 audit reviewed the then-current direct modules in
+`Probability/BranchingRandomWalk/Selection/NSelection/`. That historical tree
+separated dynamic-rank measurability (`AtRank.lean`), stopping-time rank vectors
+(`AtStoppingTime.lean`), finite-value selection (`ByValue.lean`), possibly
+infinite candidate populations (`Infinite.lean`), root-indexed position
+specializations (`Position.lean`), and the empty-fallback selector
+(`Totalized.lean`). Subsequent semantic review moved generic fixed-time
+measurability to `MeasureTheory/Selection/NSelection` and stopped-process
+rank selection to `Probability/Process/Stopping/Selection/Ranked.lean`; only
+the root-indexed position adapter remains under the BRW owner. These complete
+interfaces do not belong in theorem-specific `Lemmas/` directories.
 
 Removed `Probability/BranchingRandomWalk/Selection/NSelection/Basic.lean`.
 Its sole declaration, `NBranchingRandomWalk`, stored only a measure and an
@@ -8101,7 +8172,7 @@ starts with a `Public declarations` list naming its exposed Lean declarations
 and describing the associated path, map, or theorem. The two initial-interval
 results formerly exposed from `Topology/Cadlag/Basic.lean` have a single
 client: the short-time corridor probability argument. They now live as
-private helpers in `Probability/Process/Path/Cadlag/ShortTime.lean`, beside
+private helpers in `Probability/Process/Corridor/ShortTime.lean`, beside
 that argument. They need no standalone file or `Lemmas/` directory: both are
 small, nonreusable steps in one proof.
 
@@ -9857,13 +9928,17 @@ slice domination. `Field/Preimage.lean` owns random particle lookup and
 measurability; `Field/Law.lean` owns deterministic coordinate pasting and
 fixed product-law preservation; and `Field/Adaptive.lean` owns predictable
 splicing of descendant fields onto a past. `Field/Ranked/` separates the
-recursive construction (`Core` and `Basic`), its product-law arguments
-(`Law`), and filtration/observable measurability (`Measurability/`).
+recursive construction (`Core` and `Basic`), its product-law interface
+(`Law`), and generation-domain/observable measurability (`Measurability/`).
+The one-use recursive-step expansion and past-coordinate proof stages are
+grouped under `Lemmas/` at their respective local scopes.
 `Field/Position.lean` is the branching-walk position specialization, while
-`Rank/` gives the more general equal-rank inverse and block-coordinate
-interface. These modules describe distinct mathematical operations and
-complete results, so they remain at their semantic levels rather than being
-collected under a single proof-only `Lemmas/` directory.
+`Rank/` gives the equal-rank inverse and block-coordinate interfaces; its
+`Block/Basic` exposes the coordinate map and structural properties, while
+`Block/Lemmas/Glue` contains the one-use generation-update identity. The main
+coupling modules define distinct operations and complete
+results, so they remain at their semantic levels; only local proof stages are
+grouped in the nested `Lemmas/` directories.
 
 The abstraction review compared these modules with the pinned Mathlib
 independence and measure-map interfaces. Mathlib supplies independent-function
@@ -9872,10 +9947,11 @@ general ingredients used by the local proofs. They do not encode random
 generation-indexed root matching, the causal domain flow, or descendant-field
 splicing, so those constructions remain owned by the branching-field coupling
 subtree ([Mathlib independence API](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Probability/Independence/Basic.html); [Mathlib measure-map API](https://leanprover-community.github.io/mathlib4_docs/Mathlib/MeasureTheory/Measure/Map.html)).
-No new one-purpose module was introduced. Every module in this coupling
-subtree now has a formula-level `## Public declarations` inventory; the
-single-file event predicate and canonical right-copy constructions remain
-where their definitions are used.
+The semantic entry modules give formula-level `## Public declarations`
+inventories. The internal `Lemmas/` modules identify their proof-chain clients
+and contain no reusable construction or standalone result. The single-file
+event predicate and canonical right-copy constructions remain where their
+definitions are used.
 
 The coupling subtree and its direct selected-population and restart clients
 build with the pinned toolchain (3,402 Lake jobs), and `git diff --check`
@@ -9922,7 +9998,7 @@ unfinished.
 ## N-selection mechanism and order-dual extrema (2026-10-25)
 
 Reviewed all seven modules under
-`Combinatorics/BranchingWalk/Selection/NSelection/Mechanism/`. They form the
+``Combinatorics/BranchingWalk/Selection/`NSelection/Mechanism/`. They form the
 finite and lower-finite selection interface: `Leftmost` owns finite
 label-ordered selection, `ByValue` and `AtRank` provide observed-value keys
 and rank lookup, `Infinite` characterizes first-$N$ segments for lower-finite
@@ -10203,10 +10279,12 @@ Reviewed the complete `Probability/BranchingRandomWalk/Population/Candidates`
 family, including the root-indexed and finite multi-root candidate interfaces,
 measurability, the position/address tie order, and the finite-to-full selection
 bridge. The generic infinite-population interface already lives at
-`Combinatorics/BranchingWalk/Selection/NSelection/Mechanism/Infinite.lean`:
+``Combinatorics/BranchingWalk/Selection/`NSelection/Mechanism/Infinite.lean`:
 `IsLowerFiniteBy`, `IsFirstNBy`, and `AdmitsFirstNBy` formulate existence and
 specification of a first-$N$ segment without branching-process assumptions.
-`RootIndexed/Basic.lean` uses that interface directly. The finite multi-root
+The deterministic generation-candidate API in
+`Combinatorics/BranchingWalk/Population/Candidates/Generation.lean` uses that
+interface directly. The finite multi-root
 bridge has an additional ordered-offspring obligation: every realized child
 at a slot $j\ge N$ has $N$ earlier realized siblings. This is not another
 abstract first-$N$ selector, so the proof remains at the population boundary.
@@ -11343,7 +11421,7 @@ the repository rule that cross-file helpers use ordinary `lemma` declarations
 and same-module-only helpers use `private lemma`. The pathwise second-stage
 population transfer is consumed from a separate failure-decomposition proof
 module, so it remains a module-visible `lemma` under
-`SecondStage/Lemmas/PopulationTransfer.lean`. In `Roots/Lemmas/AllAvoid.lean`,
+`SecondStage/Lemmas/Population/Transfer.lean`. In `Roots/Lemmas/AllAvoid.lean`,
 the predictable-root estimate is called only by the selected-population
 specialization in that same module, so it is now `private lemma`; the
 specialization remains an ordinary internal `lemma` because
@@ -11815,7 +11893,7 @@ semantic subject level.
 
 The follow-up endpoint-deviation review moved the one-use affine-corridor
 composition from `SecondStage/Spine.lean` to
-`SecondStage/Lemmas/AffineCorridorBound.lean`. Its only client is
+`SecondStage/Lemmas/Corridor/AffineBound.lean`. Its only client is
 `Lemmas/Parameterization.lean`; the reusable entrance and finite-variance
 endpoint-corridor estimates remain in the random-walk small-deviation layer.
 The single-use block probability wrapper remains private inside the new proof
@@ -11837,7 +11915,7 @@ semantic-ownership audit remain in progress.
 Added mathematical public-declaration inventories to the three modules under
 `AsymptoticSpeed/Environment/`. `Basic.lean` defines the product law on
 independent finite generation batches and its shift; `ErgodicEnvironment.lean`
-proves ergodicity of that shift; `OrderDualEnvironment.lean` transports the
+proves ergodicity of that shift; `OrderDual.lean` transports the
 offspring marks, tilted law, and boundary normalization to the order-dual
 view. These form distinct reusable interfaces, so each remains beside the
 environment semantics it defines rather than under `Lemmas/`.
@@ -12869,7 +12947,7 @@ one-route scaffolding; the existing probability many-to-one interfaces remain
 in their point-measure and spine modules.
 
 The Mathlib check found the finite-sum primitives in
-[`Mathlib/Data/Finset/Sum.lean`](https://github.com/leanprover-community/mathlib4/blob/master/Mathlib/Data/Finset/Sum.lean)
+[`Mathlib/`Data/Finset`/Sum.lean`](https://github.com/leanprover-community/mathlib4/blob/master/Mathlib/Data/Finset/Sum.lean)
 and finite-support probability construction in
 [`Mathlib/Probability/ProbabilityMassFunction/Constructions.lean`](https://github.com/leanprover-community/mathlib4/blob/master/Mathlib/Probability/ProbabilityMassFunction/Constructions.lean),
 but no matching named cancellation theorem in the reviewed API. The new
@@ -14551,6 +14629,30 @@ All three Bessel modules build successfully (3,553 Lake jobs). The old
 namespace search has no production or test references, and this audit adds
 one completed family to the still-open whole-library review.
 
+## Bessel estimate abstraction correction (2026-10-29)
+
+The earlier review kept the coordinatewise radial perturbation estimate
+public because it might support other path-law comparisons. A full production
+reference search shows that `abs_radius_sub_abs_le` has only one client,
+`Bessel/Support.lean`; the generic norm-difference step is already available
+from Mathlib as `abs_norm_sub_norm_le` ([official API](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Analysis/Normed/Group/Basic.html#abs_norm_sub_norm_le)).
+The remaining coordinatewise estimate is specific to the support proof, so it
+is now part of a package-internal two-lemma chain in
+`Bessel/Lemmas/Support.lean`; the public `ThreeDimensional` interface no
+longer includes it. This supersedes the reuse judgment recorded above. The
+three Bessel modules and the four Brownian meander modules have
+been reconciled in the module audit ledger; their article-level results remain
+at their subject owners, with the meander transforms themselves owned by
+`Topology/ContinuousMap`. The affected Bessel targets build successfully
+(3,565 Lake jobs).
+
+At this point in the review, the ledger records 306/1602 modules as reviewed
+(1296 pending); the later first-window reconciliation below supersedes that
+snapshot. The meander review confirms the four direct files each state a
+complete Brownian path-law, transform-identification, or support result, and
+conditioned-walk clients use these interfaces. No standalone auxiliary file
+or extra `Lemmas/` layer is needed for that group.
+
 ## Brownian construction module ownership and dependency check (2026-10-27)
 
 Reviewed the three modules under `Probability/Process/Brownian/Construction/`.
@@ -15585,10 +15687,14 @@ and projection theorem apply to arbitrary set families and compact systems;
 they therefore remain at the reusable `MeasureTheory/Analytic/Capacity/`
 level, with no additional `Lemmas/` directory.
 
-The pinned Mathlib source tree has no capacity or Choquet-capacitability API,
-and the current official [Mathlib module index](https://leanprover-community.github.io/mathlib4_docs/Mathlib.html)
-has no `Capacity`, `Choquet`, or `AnalyticSet` entry. Thus these declarations
-fill a general measure-theoretic gap rather than duplicate a Mathlib result.
+The pinned Mathlib source tree defines `AnalyticSet` and proves that Borel
+sets are analytic and that continuous images of analytic sets remain analytic
+in `Mathlib/MeasureTheory/Constructions/Polish/Basic.lean`. It does not provide
+the paving-analytic predicate, abstract capacities, or Choquet capacitability.
+Thus the paving and capacity declarations fill a general measure-theoretic
+gap. The former local `MeasureTheory/Analytic/Projection.lean` only renamed
+Mathlib's continuous-image result and had no clients, so it was removed rather
+than retained as a wrapper.
 The module namespace remains `MeasureTheory.Analytic.Paving`: capacities are
 parameterized by the set family `p`, and capacitability is defined using its
 countable closure operations; the sibling `Paving` modules own those closure
@@ -15841,7 +15947,7 @@ interface: all three image-extremum equivalences require only `[LE]`, while
 Mathlib's `IsLeast.dual` and `IsGreatest.dual` require `[Preorder]` ([Mathlib
 order-bounds API](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Order/Bounds/Basic.html)).
 The weaker assumptions matter because the sole production caller in
-`Combinatorics/BranchingWalk/Selection/NSelection/Walk/Frontier.lean` has only
+``Combinatorics/BranchingWalk/Selection/`NSelection/Walk/Frontier.lean` has only
 `[LE]`. Restored the public API at the semantic path
 `Order/OrderDual/SetExtrema.lean`, and returned the caller to that shared
 result. This avoids both the misleading `Bounds` ownership and a private copy
@@ -16782,6 +16888,21 @@ The former `Spectrum/FiniteState/Eigenfunction.lean` consisted of matrix results
 
 The proof route uses Mathlib's `Matrix.mulVec_mulVec`, `Matrix.pow_apply_nonneg`, and `Module.End.HasEigenvector.pow_apply`, together with the repository's `Finset.weightedSum_bounds_of_sum_eq`; the exact aggregate statements are absent from the inspected Mathlib interfaces. Both linear-algebra modules and the changed Rademacher clients passed their dependent Lake build (3,141 jobs).
 
+The 2026-10-30 re-audit confirmed the ownership of all three linear-algebra
+modules. Mathlib's `HasEigenvector.pow_apply` is the general single-vector
+result; `Spectrum/DiagonalBasis.lean` packages it with basis representation to
+give the reusable finite-eigenbasis expansion. `Matrix/FiniteKernel/Eigenfunction.lean`
+then supplies the matrix row-mass identity and its bounded-weight estimate,
+which are used by the Rademacher clients without carrying path or probability
+assumptions. `Matrix/Substochastic.lean` defines the row-sum-at-most-one
+counterpart to Mathlib's row-stochastic submonoid. The pinned Mathlib source
+has no substochastic predicate, finite-basis expansion, or matrix weighted
+row-sum bound with these statements; its adjacent APIs are
+[`HasEigenvector.pow_apply`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/LinearAlgebra/Eigenspace/Basic.html)
+and [`Matrix.rowStochastic`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/LinearAlgebra/Matrix/Stochastic.html).
+All three modules remain public, and the weighted identity's induction
+helper remains private.
+
 
 ## Kernel step API and finite-branch audit (2026-10-27)
 
@@ -17029,8 +17150,9 @@ window, asymptotic, and parameter steps. The named cutoff and restarted window
 remain public because first-stage and second-stage result statements use them.
 
 The modules cite Aïdékon--Hu, Proposition 3.1 equations (4.15)--(4.16), and
-Wang Yiyang's thesis, Chapter 4 equation (4.15), where applicable. The missing
-source attribution in `Spine/Corridor.lean` was added. Local Mathlib search
+Wang Yiyang's thesis, Chapter 4 equation (4.15), where applicable. The source
+attribution for the first-stage corridor bound is in
+`FirstStage/Lemmas/CorridorLowerBound.lean`. Local Mathlib search
 found no Paley--Zygmund/second-moment probability theorem matching
 `Spine/Capacity.lean`; the file specializes the repository's general
 finite-root corridor pair-moment estimate. Since this specialization has no
@@ -17364,7 +17486,7 @@ Mathlib revision `380f2aafb622cb2c1c93dac545b6389083c68c51`, Mathlib provides
 generic characteristic functions, convolution, and continuous-logarithm
 tools, but no stable-specific characteristic-function or exponent formula.
 
-Their shared additive fact, `Analysis/FunctionalEquation/ContinuousAdditivePositive.lean`,
+Their shared additive fact, `Analysis/FunctionalEquation/NNReal.lean`,
 states that a continuous additive `f : ℝ≥0 → E` into a Hausdorff topological
 real vector space satisfies `f x = (x : ℝ) • f 1`. The codomain assumptions
 were weakened from a normed-space structure to
@@ -17478,7 +17600,7 @@ normal-domain results, so both remain public outside `Lemmas/`.
 The three companion modules `QuadraticTail.lean`, `Centering.lean`, and
 `Norming.lean` retain partial proof-route status while their source-level
 comparison with Feller, *An Introduction to Probability Theory and Its
-Applications*, Vol. II, Chapter XVII, Theorem 5.2, remains open. Their
+Applications*, Vol. II, Section XVII.5, Theorem 2, remains open. Their
 mathematical placement, Mathlib boundary, and citation are reviewed; their
 local Lean routes compile. The two newly reviewed modules and affected clients
 passed the 5,702-job full Lake build; the 21 affected modules passed
@@ -17837,6 +17959,14 @@ have a partial proof-route review with no pending dimension. By source root,
 those 1,352 unfinished reviews are Probability 1,129, Combinatorics 123,
 MeasureTheory 65, and Topology 35. All 1,592 ledger rows record a successful
 Lake build; this turn freshly rebuilt the modules and clients listed above.
+
+On 2026-10-30, the ten-module EDistance group was rechecked against the
+current source tree. The three `Lemmas/` modules contain only the threshold,
+subsequence-extraction, and aligned-limit steps consumed by their owning
+separation, topology, and completeness proofs. In `EDistance/Basic.lean`, the
+single-use reindexing helper is private and the unused trivial `j1Cost_nonneg`
+declaration was removed. The comparison and completeness entry points rebuilt
+successfully with their full dependency chain (2,175 Lake jobs).
 
 ## Càdlàg foundations and terminal-left path ownership (2026-10-28)
 
@@ -18256,7 +18386,7 @@ only.
 ## From-increment-law audit update (2026-10-28)
 
 The normal-domain finite-prefix normalization construction now has its own
-`FromIncrementLaw/Normal/Normalization.lean` owner; the general strictly stable
+`FromIncrementLaw/Normal/PositiveNormalization.lean` owner; the general strictly stable
 normalization results remain in `FromIncrementLaw/Stable/Normalization.lean`.
 The three path-realization modules and both stable normalization/domain modules
 were reviewed for module boundaries, abstraction, citations, and source-proof
@@ -18532,7 +18662,7 @@ Two one-use details were tightened. `SmallValue/RestrictedIntegral.lean` only
 wrapped the general restricted-integral limit and the generic strict
 sublevel-probability result for one Poisson application; that wrapper was
 removed and its short argument is now in
-`RandomMeasure/Poisson/JumpPath/SmallVariation.lean`. The generic public
+`RandomMeasure/Poisson/Integration/SmallValue.lean`. The generic public
 declaration was renamed to `measure_pos_of_lintegral_lt`, with no old-name
 alias. In `Convergence/L2Norm.lean`, the second-moment-to-L2 convergence
 theorem now assumes `MemLp X 2`, which is exactly the integrability used by
@@ -18863,7 +18993,7 @@ The root-indexed exploration cluster had an unused finite-root wrapper in
 `Genealogy/Exploration/RootIndexed/Exploration.lean`. Its coordinate spaces
 were specializations of `RootIndexed.stepSpace`; the wrapper's unique record
 and fresh-subtree result generalized to arbitrary root and slot types. These
-now live in `Genealogy/Exploration/RootIndexed/DomainFlow/Exploration.lean` as
+now live in `Genealogy/Exploration/RootIndexed/AddressFiltration/Exploration.lean` as
 `RootIndexed.ExplorationDomains`, together with the descendant-coordinate
 space, its equality with the coordinate supremum, and measurability of the
 descendant field. The independence proof reuses the repository's
@@ -18897,14 +19027,14 @@ merge remain outstanding.
 ## Arbitrary-family subtree API consolidation (2026-10-28)
 
 The finite-root/natural-slot subtree-vector modules under
-`Genealogy/Exploration/RootIndexed/DomainFlow/` duplicated the arbitrary-root,
+`Genealogy/Exploration/RootIndexed/AddressFiltration/` duplicated the arbitrary-root,
 arbitrary-slot interface in
 `Genealogy/Exploration/RootIndexed/SelectedSubtrees/FixedFamily.lean`.
 Migrated stopped-population factorization, its random-cardinality law,
 selected-population cell branching, and the stopped selected-population
 interface to `RootIndexed.subtreeStepFieldVector` and its generic law,
 measurability, and event-factorization results. The old
-`DomainFlow/SubtreeVector.lean` and `DomainFlow/Independence.lean` files had no
+`AddressFiltration/SubtreeVector.lean` and `AddressFiltration/Independence.lean` files had no
 remaining production or test importers and were removed without aliases. The
 four affected clients built successfully in a focused 3,160-job Lake build.
 
@@ -18927,14 +19057,14 @@ See [Mathlib's finite-set equivalence API](https://leanprover-community.github.i
 
 ## Root-indexed domain-flow API cleanup (2026-10-28)
 
-Renamed `RootIndexed/DomainFlow/Space.lean` to `PastFuture.lean`, whose sole
+Renamed `RootIndexed/AddressFiltration/Space.lean` to `PastFuture.lean`, whose sole
 public result is independence of the general root-indexed past and future.
 Removed its four finite-root/natural-slot wrappers because production clients
 already use the arbitrary-root API; the existing test file now checks the
 corresponding general statements directly. The coordinate-space disjointness
 helper in `RootSubset.lean` is now private, since its only use is the proof of
 `rootSpace_independent`. `GenerationDecomposition.lean` remains a public
-DomainFlow interface: it reconstructs an arbitrary root-indexed step field
+AddressFiltration interface: it reconstructs an arbitrary root-indexed step field
 from its strict past and generation-indexed descendant fields, and is used by
 the adaptive coupling client. The renamed module, root-restriction API, field
 decomposition, and direct production clients built successfully (3,159 Lake
@@ -18993,7 +19123,7 @@ unreviewed modules as confirmed structural errors.
 
 ## Stopped-population measure API and current audit snapshot (2026-10-29)
 
-`Selected/StoppingCellBranching/RandomSize.lean` now sums the measurable
+`Selected/CellBranching/Stopping/RandomSize.lean` now sums the measurable
 selected-population cells by applying Mathlib's general
 `MeasureTheory.tsum_measure_preimage_singleton` theorem to the measure
 restricted to the stopped-past event. The source already contains this
@@ -19045,7 +19175,7 @@ jobs.
 
 On 2026-10-29, the abstract exploration coordinate modules were audited.
 `stepsOnSpace` now owns the common coordinate-set sigma-algebra in
-`Abstract/DomainFlow`; the past, future, and descendant spaces specialize it.
+`Abstract/AddressFiltration`; the past, future, and descendant spaces specialize it.
 `Abstract/Exploration/Space` keeps the reusable order and independence
 theorems and imports their semantic owner directly. The fixed-family subtree
 law now uses `Combinatorics.UlamHarris.RootIndexed.appendAddresses_injective`
@@ -19245,7 +19375,7 @@ finds 1,550 module-header files and 52 remaining legacy files.
 
 ## Finite-cloud endpoint-order module boundary (2026-10-29)
 
-`Combinatorics/BranchingWalk/Selection/Coupling/EndpointMinimum.lean` gives
+``Combinatorics/BranchingWalk/Selection/`Coupling/EndpointMinimum.lean` gives
 the finite-population consequence of an injective slice-dominating map:
 the target cloud's minimum observed value is at most the source minimum, and
 the corresponding upper-tail event transfers to the source. The statements
@@ -19275,11 +19405,11 @@ status reconstruction still incomplete.
 
 ## Stable constant-corridor rate module audit (2026-10-29)
 
-`Probability/Process/Path/PathClass/StepCorridor/Probability/Rate/StableConstantCorridor.lean` proves the complete logarithmic rate for every fixed finite corridor with `lower < 0 < upper`. It reuses `exists_tendsto_log_scaledConstantCorridorEvent` and the existing `M₂` energy of `constantBounds`; the statement carries eventual positivity and null-measurability as well as the limit. It is a complete parameterized stable-corridor result, so its placement under the path-corridor `Probability/Rate/` owner is appropriate even though its only current downstream import is a regression example. The two direct imports are public because their stable-rate and corridor-energy declarations occur in the exported theorem statement. The file now uses Lean's `module` syntax. Its focused target built successfully with 3,440 Lake jobs.
+`Probability/Process/Stable/SmallDeviation/PathClass/StepCorridor/ConstantCorridorRate.lean` proves the complete logarithmic rate for every fixed finite corridor with `lower < 0 < upper`. It reuses `exists_tendsto_log_scaledConstantCorridorEvent` and the existing `M₂` energy of `constantBounds`; the statement carries eventual positivity and null-measurability as well as the limit. It is a complete parameterized stable-corridor result. Its stable-clock and Lévy-process hypotheses place it under the stable-process small-deviation owner, even though its only current downstream importer is a regression example. The two direct imports are public because their stable-rate and corridor-energy declarations occur in the exported theorem statement. The file now uses Lean's `module` syntax. Its focused target built successfully with 3,440 Lake jobs.
 
 ## Stable corridor and terminal-left module-boundary audit (2026-10-29)
 
-`Probability/Process/Path/PathClass/StepCorridor/Probability/Rate/StableConstantCorridor.lean` is now a module-system file. Its two direct imports are public because the exported fixed-boundary stable-rate theorem uses both the generic stable-rate result and the `M₂` corridor-energy interface. The target built with 3,440 Lake jobs, and `BranchingProcessTest/Mogulskii/Rates/PathClassRate.lean` compiled against it.
+`Probability/Process/Stable/SmallDeviation/PathClass/StepCorridor/ConstantCorridorRate.lean` is now a module-system file. Its two direct imports are public because the exported fixed-boundary stable-rate theorem uses both the generic stable-rate result and the `M₂` corridor-energy interface. The target built with 3,440 Lake jobs, and `BranchingProcessTest/Mogulskii/Rates/PathClassRate.lean` compiled against it.
 
 Three additional leaf modules with no direct legacy-module dependencies were migrated: `Mogulskii/Gaussian/Path/ExplicitRate.lean`, `Mogulskii/Stable/Discrete/TerminalLeft/PathClass/InnerOuter.lean`, and `Mogulskii/Stable/Discrete/TerminalLeft/Realization.lean`. Their mathematical declarations remain at their existing owners. Signature dependencies are public imports; `Measure.innerMeasure` is now imported explicitly where it appears in the exposed conclusions, while stable-rate transfer and path-limit adapters used only by proofs are ordinary imports. The latter two failed their first module-system build because legacy transitive imports had supplied these names implicitly; after adding the direct imports, both targets built successfully in a 3,926-job Lake invocation, and the explicit Gaussian-rate target built in the preceding 4,120-job invocation. These are module-boundary migrations; their full mathematical proof and client audits remain open. The working-tree inventory now has 1,556 module-system files and 46 legacy files among 1,602 production modules.
 
@@ -19742,7 +19872,7 @@ the mark at a random lineage address and represents a split declaration one
 generation after the raw read, so its probability/time semantics belong with
 those callers. Removed the old module and imports, leaving no compatibility
 alias. The root-indexed declaration event stays with
-`Genealogy/Lineage/MultiRoot.lean`, where it is part of the root-indexed
+`Genealogy/RootIndexed/Lineage.lean`, where it is part of the root-indexed
 reserve-lineage candidate/completion-time interface; the two forms observe
 different sample-field types.
 
@@ -19887,7 +20017,7 @@ The production semantic ledger now records 242/1604 modules as reviewed (1362 pe
 
 ## Increment-law normalization and path-rate interfaces (2026-10-29)
 
-Reviewed the nine remaining modules in `Stable/Discrete/FromIncrementLaw/Normal/HorizontalTube`, `Normal/Normalization`, `Stable/Normalization`, and `Path/`. The centered finite-variance closed-tube rate and its sampled-width, real-width, and generalized-inverse forms are complete source-facing theorems for WANG Yiyang, Chapter 3, Lemma 3.1(i); `EndpointWindow` gives the corresponding complete rates for Lemma 3.1(ii). Their generic scale and sampled-time composition is already owned by `Analysis/Asymptotics/Scale`, while the one-use corridor-union proof remains in the nested `Normal/HorizontalTube/Lemmas/` folder. The Gaussian and stable normalization modules construct law-aware inputs from raw domain-of-attraction data. The path realization record and continuous-boundary modules expose complete rate interfaces for canonical and arbitrary i.i.d. realizations. The current placement separates source-law theorems, path realization, and one-use proof steps; no reusable generic statement was duplicated or found missing.
+Reviewed the nine remaining modules in `Stable/Discrete/FromIncrementLaw/Normal/HorizontalTube`, `Normal/PositiveNormalization`, `Stable/Normalization`, and `Path/`. The centered finite-variance closed-tube rate and its sampled-width, real-width, and generalized-inverse forms are complete source-facing theorems for WANG Yiyang, Chapter 3, Lemma 3.1(i); `EndpointWindow` gives the corresponding complete rates for Lemma 3.1(ii). Their generic scale and sampled-time composition is already owned by `Analysis/Asymptotics/Scale`, while the one-use corridor-union proof remains in the nested `Normal/HorizontalTube/Lemmas/` folder. The Gaussian and stable normalization modules construct law-aware inputs from raw domain-of-attraction data. The path realization record and continuous-boundary modules expose complete rate interfaces for canonical and arbitrary i.i.d. realizations. The current placement separates source-law theorems, path realization, and one-use proof steps; no reusable generic statement was duplicated or found missing.
 
 The production semantic ledger now records 251/1604 modules as reviewed (1353 pending). Mogulskii has 63/104 reviewed and 41 pending modules.
 
@@ -19975,3 +20105,7202 @@ The production semantic ledger now records 297/1602 modules reviewed (1305 pendi
 Reviewed the discrete terminal-left `Bounds/{Lower,Upper}.lean` modules. `Lower` transfers stable-domain attraction, the stable functional-limit tightness interface, and stable-process entrance positivity to the open horizontal-tube lower bound at the rounded one-block scale, with explicit cases for $lpha<1$, $lpha=1$, and $1<lpha<2$. `Upper` gives the finite selected-cell logarithmic upper rate for source-normalized terminal-left corridors and admissible step corridors; `Partition/EnergyUpper` aggregates this bound. Both modules state substantive, reusable rate interfaces under explicit hypotheses, rather than exposing parameter-selection or path-gluing steps. Their citations name Mogulskii Theorem 1 equation (15), and Theorem 3 Section 4, p. 764, for the Gaussian case.
 
 The production semantic ledger now records 299/1602 modules reviewed (1303 pending); Mogulskii is 78/102 reviewed (24 pending).
+
+
+## Current first-window inventory verification (2026-10-29)
+
+Reconciled and rechecked the 25 generic-path and Brownian first-window modules
+against the current source layout. Generic eligibility, running-minimum
+characterization, time-functional results, endpoint-return consequences, and
+path shifts remain under `Probability/Process/Path/AboveStart/`; the recent
+move groups those results under `Time/`, `Shift/`, and `EndpointReturn/`.
+Brownian-law statements remain under `Probability/Process/Brownian/AboveStart/FirstWindow/`,
+with the four one-use existence, cutoff-boundary, interior-return, and
+endpoint-return proof stages under its single `Lemmas/` child.
+
+The pinned Mathlib `hittingBtwn` API returns first entry into a state-space
+set; it does not encode the path-dependent condition that a future unit
+interval stays above its starting level. Mathlib's Brownian shift invariance
+handles fixed shifts, while the first-window selector and its Brownian
+continuity/cutoff results remain local interfaces. This matches the official
+[hitting-time API](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Probability/Process/HittingTime.html)
+and [Brownian API](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Probability/BrownianMotion/Basic.html).
+The updated 25 targets build successfully (3,344 Lake jobs).
+
+The production semantic ledger now records 331/1602 modules reviewed
+(1271 pending); Mogulskii remains at 78/102 reviewed (24 pending).
+
+
+## Package-internal proof support visibility (2026-10-29)
+
+The repository rule requires declarations under `Lemmas/` to stay out of the
+public API. `DoubleExcursion/Lemmas/JumpControl.lean` had been moved under the
+right subject path but still used `@[expose] public section`; that exposure
+was removed, its semantic dependency is now an ordinary import, and
+`DoubleExcursion/Converse.lean` uses `import all` for the three internal proof
+lemmas. The two connected Bessel radial-support estimates likewise live in
+`Bessel/Lemmas/Support.lean`, imported internally by the public support
+theorem. No `Lemmas/` module is re-exported. Both affected theorem targets
+build successfully (3,565 Lake jobs). A repository scan of all 186 production
+modules under a `Lemmas/` path found no exposed public sections, no public
+imports inside those files, and no public imports of a project `Lemmas/`
+module.
+
+The source inventory and audit ledger now match at 1603 production modules;
+332 are semantically reviewed and 1271 remain pending. Mogulskii remains at
+78/101 reviewed (23 pending).
+
+## Gaussian distribution API and one-use import cleanup (2026-10-29)
+
+The initial audit reviewed four modules under `Probability/Distributions/Gaussian/`.
+The current-tree re-audit below supersedes that boundary: `Interval` and `Sign`
+remain distribution-level interfaces, while the unused finite-product wrappers
+were removed and the one-client fourth-moment formulas moved to Brownian's
+`Construction/Lemmas/` proof support. The formulas derive from Mathlib's real
+Gaussian and Fernique interfaces ([real Gaussian API](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Probability/Distributions/Gaussian/Real.html),
+[Fernique API](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Probability/Distributions/Gaussian/Fernique.html)); the Brownian continuity input cites *Brownian Motion in Lean*, and the sign lemma names Bolthausen Lemma 2.2.
+
+`Mogulskii/Gaussian/Blocks/Lemmas/ProductParameters` imported the public
+finite-product module but used neither declaration. That dependency has been
+removed; the affected module builds successfully (3,204 Lake jobs). Its own
+finite-family parameter-selection result stays private to the Mogulskii proof.
+
+## Stable escape-rate normalization ownership (2026-10-29)
+
+Moved `rateCoefficient` and its positivity theorem from the path-class
+step-corridor probability directory to
+`Probability/Process/Stable/SmallDeviation/EscapeRate/Normalization.lean`.
+The definition is the shared scaling relation
+\(\kappa(\alpha,C)=-2^\alpha C\) between the half-width-one escape constant
+and the full-width energy rate. Stable path-class, random-walk range, and
+Mogul'skii Gaussian/stable rate interfaces use this normalization, so its
+owner is the stable escape-rate layer rather than one particular corridor
+construction. No matching escape-rate normalization API was found in the
+pinned Mathlib source; Mathlib supplies the general asymptotic and probability
+primitives used by these clients.
+
+Updated all 20 source and integration-example consumers to import or open the
+new owner; no declaration remains at the old namespace or module path. The
+20 production targets build successfully with the pinned toolchain (the
+single target that failed in the initial batch passed on the focused rerun).
+The semantic ledger now records 355/1603 modules reviewed (1248 pending);
+Mogulskii remains at 78/101 reviewed (23 pending).
+
+## Step-corridor probability interfaces and public boundaries (2026-10-29)
+
+Reviewed the partition and probability-rate interfaces under
+`Probability/Process/Path/PathClass/StepCorridor/Probability/`. The two
+`Partition` modules stay public: `Independence` packages common-cell path
+maps under Mathlib's general `HasIndepIncrements` interface, and `Range`
+exports the range event and product bounds used in public stable-partition
+conclusions. The latter is generic in the process law and supplies a path
+probability interface beyond the stable-process client. Mathlib's
+[independent-increments API](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Probability/Independence/Process/HasIndepIncrements/Basic.html)
+provides the general finite-increment independence predicate; the common
+boundary-cell event and its range estimate are local path-class constructions.
+
+The six `Rate/` modules separate complete contracts: finite-union component
+rates, null-measurable preimages, absolute and relative inner/outer
+approximation, continuous-boundary transfer, and the M-class energy-gap
+criterion. Their multiple clients and public conclusion types justify the
+separate files; one-use numerical arguments remain private in their callers.
+`StableRate.lean` owns the stable path-law constant-corridor event and rate.
+The fixed-boundary rate theorem has since moved to
+`Probability/Process/Stable/SmallDeviation/PathClass/StepCorridor/ConstantCorridorRate.lean`,
+where its stable-clock and Lévy-process assumptions are visible in the path.
+`rateCoefficient` likewise moved to
+`Probability/Process/Stable/SmallDeviation/EscapeRate/Normalization.lean`;
+no path-class-local alias remains.
+
+The nine probability and partition targets build successfully (3,456 Lake
+jobs). Their public interfaces and source citations were checked against the
+current headers; the local rate-transfer layer cites Mogul'skii Theorem 3,
+Section 4, p. 764, while the path-event modules add no unsupported claim of a
+separate literature result. The production ledger now records 364/1603
+modules reviewed (1239 pending); Mogulskii remains at 78/101 reviewed (23
+pending).
+
+## Terminal-left finite-partition import-boundary re-audit (2026-10-29)
+
+Rechecked the direct public imports of the terminal-left finite-partition
+upper-rate chain against its theorem signatures and current clients.
+`TerminalLeft/Bounds/Upper.lean` now publicly imports the owners of the stable
+scale, stable process, domain-of-attraction, tightness, source-path, and
+finite-partition types in its declarations. The ordinary partition estimate
+and terminal-left lower-energy theorem are proof dependencies, and the range
+probability support under `Lemmas/` is imported with `import all`.
+
+`TerminalLeft/Partition/EnergyUpper.lean` exposes its complete finite-partition
+upper-rate theorem. The selected-cell estimate and grid-length API are ordinary
+proof imports; the two local rate-envelope continuity lemmas remain private.
+`TerminalLeft/Partition/Limit.lean` likewise imports the one-sided rate
+theorems ordinarily and exposes the underlying stable, source-path, and
+corridor-energy type owners for its exact-rate conclusion. The three affected
+modules compile with the pinned toolchain.
+
+The finite-partition upper-rate interface is attached to Mogulskii Theorem 1,
+equation (15). Its current Lean proof composes the selected-cell upper bound
+with the finite-cell energy identity. The detailed line-by-line comparison
+with the article proof remains unfinished; `EnergyUpper.lean` therefore stays
+pending in the semantic ledger. The whole-tree structural checks remain clean,
+and the ledger is still at 364/1603 semantically reviewed modules.
+
+## Terminal-left finite-partition lower-rate import boundary (2026-10-29)
+
+`TerminalLeft/Partition/Lower/EnergyLower.lean` previously publicly imported
+`Lower/WidthRate.lean` even though its two exported conclusions use the width-rate
+theorem only in their proofs. That dependency is now ordinary. Its public
+imports name the actual stable scale, process-law, domain-of-attraction,
+tightness, IID/path-law, terminal-left source-path, and corridor-energy types
+used by its declarations. The eventual width-rate theorem remains a complete
+interface in its own owner module; it is not re-exported through the exact
+energy conclusion. The lower-energy module and its direct upper/exact-rate
+clients compile after this change. Its Mogulskii proof-route comparison remains
+open, so its semantic ledger row stays pending. The repository inventory is
+unchanged at 1,603 modules, with 364 fully reviewed and 1,239 pending.
+
+## Stable discrete finite-partition lower and exact-rate import boundaries (2026-10-29)
+
+Rechecked the non-terminal stable finite-partition lower and exact-rate modules
+against their declarations. `Partition/Lower/EnergyLower.lean` now imports
+`Lower/WidthRate.lean` ordinarily because the prescribed-width theorem occurs
+only in the proof; its public imports identify the stable, IID/path-law, and
+corridor-energy types used by the exported lower-rate statements.
+`Partition/Limit.lean` imports the one-sided theorem modules and the local
+limit-comparison tool ordinarily, while its public imports name the types in
+the exact-rate statement. `Partition/EnergyUpper.lean` keeps the selected-cell
+estimate as an ordinary proof import and exposes the source types of its
+finite-partition rate result.
+
+The three files, their one-sided inputs, the terminal-left counterparts,
+`Mogulskii/Theorems.lean`, and the public API verification module compile
+successfully. The exact-rate conclusions are placed as public theorem
+interfaces; their proof-only width and cell estimates remain at their own
+proof stages. This pass reviewed the module boundaries and citations, while the
+line-by-line comparison of the finite-partition arguments with Mogulskii's
+article remains open. Their pending semantic statuses are retained. The
+repository ledger remains at 364/1603 fully reviewed modules.
+
+## Mogul'skii article-theorem entry boundary (2026-10-29)
+
+Rechecked `Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Theorems`
+against the four numbered results of Mogul'skii's 1974 article. The entry
+reexports the available interfaces for Theorems 1–3 and the rate definition
+used in their statements. The terminal-left finite-partition exact-rate result
+is a proof/application specialization of Theorem 1; it remains available from
+`Stable/Discrete/TerminalLeft/Partition/Limit` and its path-class client, but
+is no longer reexported as a separate article-theorem entry. Theorem 4 remains
+explicitly documented as not yet formalized. The entry and its public API
+verification module compile after the boundary change.
+
+## Finite-variance endpoint-window lower interface (2026-10-29)
+
+Reviewed `HorizontalTube/EndpointWindow/FiniteVarianceLower.lean`,
+`EndpointWindow/RealWidthLower.lean`, and the private
+`EndpointWindow/Lemmas/RealWidthFloor.lean`. The integer-width endpoint
+probability estimate is the exponential consequence of Wang Yiyang's Chapter
+3, Lemma 3.1(ii), using the finite-variance endpoint rate from Mogul'skii,
+Theorem 3, Section 4, p. 764. Its uniform width/time threshold is proved by
+contradiction and a strictly increasing subsequence, matching the sequential
+rate input. The real-width adapter changes the event by an explicit floor
+inclusion; its finite-family variant takes the finite supremum of the bin
+thresholds with `Finset.sup`.
+
+The resulting public interface depends only on centered finite variance and
+horizontal-tube endpoint events. The finite-variance rate module is also
+consumed by the real-width adapter, whose theorem is used by DriftedTube's
+staircase bin rate. The staircase's block index is not bounded uniformly in the tube
+width; its endpoint fractions instead satisfy the fixed interior-margin
+hypotheses of this uniform estimate. Thus the finite maximum ranges over the
+fixed spatial bins, not over the width-dependent block indices. Pinned Mathlib
+owns the general filter/sequence limit criteria (including
+`Filter.eventually_iff_seq_eventually`); its [filter limit API](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Order/Filter/Tendsto.html)
+does not provide this random-walk probability estimate. The floor event
+inclusion is proof-only and remains under `EndpointWindow/Lemmas/`. The real-
+width API and the Lemma 3.5 endpoint theorem compile with the pinned toolchain.
+The three audited modules are marked reviewed in the ledger.
+
+## Lemma 3.5 staircase uniform-rate composition (2026-10-29)
+
+Reviewed the finite-bin rate and uniform-threshold composition used by the
+DriftedTube lower-bound entry. `Lemmas/Staircase/Rate/BinRate` applies the
+real-width horizontal endpoint estimate with fixed strict endpoint margins.
+The finite bin set is `Fin m`, so its finitely many thresholds combine by a
+finite supremum. The staircase block index can grow with the tube width; the
+proof uses its uniform endpoint-margin bounds instead of taking a maximum over
+those indices.
+
+`Lemmas/Staircase/Concrete/Uniform` combines the sequential lower and upper
+estimates and applies the generic sequence-to-uniform-threshold result in
+`Analysis/Asymptotics/Sequence/UniformThreshold`. Its contradiction argument
+matches the paper's shared-threshold step. These two modules are proof support
+under `Lemmas`; the public endpoint estimate remains in `FiniteVarianceLower/EndpointBounds`.
+The focused Lean compilations of these modules and `EndpointBounds` succeeded.
+The rest of the staircase proof and its line-by-line comparison with Wang
+Yiyang's thesis Lemma 3.5 remain under audit.
+
+## DriftedTube event ownership and Lemma 3.4 route (2026-10-29)
+
+The full tilted-tube event remains in `DriftedTube/Event.lean`; its
+proof-specific implication to a no-large-drop event now lives in
+`FiniteVarianceUpper/Lemmas/Blocks.lean`, beside its sole caller. The general
+monotone-corridor drawdown theorem remains in `Drawdown`, so the specialization
+is no longer exposed as a separate public declaration. `BlockEvent.lean`
+owns the finite pair and sequence-level block events used by both finite-
+variance upper and lower proof chains. They are complete event constructions
+for the moving-tube subject, not theorem-specific probability estimates.
+
+`BlockInclusion.lean` remains at the DriftedTube level: it states a complete
+deterministic inclusion from a horizontal block bounded by the endpoint
+extrema into a linearly moving tube, for either drift sign, then gives its
+rising-tube specialization. `EndpointWindow/Basic` owns the lower terminal
+window; `EndpointWindow/Reflection` proves the upper-window path reflection
+and the measure identity under the reflected IID law. That identity does not
+assume symmetry of the original increment law.
+
+Compared with the thesis proof of Wang Yiyang, Chapter 3, Lemma 3.4, the Lean
+entry uses the same short-horizon bound, equal-length blocks, conditional
+probability iteration, and final remainder estimate. It additionally allows
+horizon zero, for which the asserted exponential bound is immediate. The
+proof-only tilted-tube-to-drawdown step is grouped with the block estimate.
+Pinned Mathlib revision `380f2aafb622cb2c1c93dac545b6389083c68c51` provides the
+fully additive `Fin.partialSum` construction
+([source](https://github.com/leanprover-community/mathlib4/blob/380f2aafb622cb2c1c93dac545b6389083c68c51/Mathlib/Algebra/BigOperators/Fin.lean),
+[API documentation](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Algebra/BigOperators/Fin.html)); it does not define the path event for a linearly moving tube.
+
+The affected `Event`, `FiniteVarianceUpper/Lemmas/Blocks`, and `FiniteVarianceUpper/Basic`
+modules rebuilt successfully after the proof-only relocation. Seven DriftedTube
+modules are now marked semantically reviewed in the ledger. The whole-repository
+semantic audit remains in progress.
+
+## Current repository-wide audit status (2026-10-29)
+
+The production Lean inventory and semantic ledger contain 1,603 matching
+modules. The structural scan finds no same-parent `.lean`/directory stem
+collisions, no directory with more than eight direct Lean files, and no
+`Lemmas.lean`/`Lemmas/` conflicts. Semantic review is not complete: 403 modules
+are reviewed and 1,200 remain pending. Pending means unreviewed, not known to
+be incorrect. The Mogulskii subtree has 78 of 101 modules reviewed; Theorem 4
+of Mogul'skii's article remains a separate formalization gap.
+
+## HorizontalTube block-interface visibility audit (2026-10-29)
+
+`Blocks/EventBridge.lean` owns the finite-pair and complete-sequence horizontal
+tube events, their translated zero-start equivalence, and the conditional IID
+block interface. These event constructions are reused in later tilted-tube
+proofs and remain public at their HorizontalTube owner. `Blocks/UpperBound.lean`
+exposes complete finite-time comparisons from tube survival to block
+oscillation and the resulting exponential bound. They require an IID law but
+no variance assumptions; the path event inclusion belongs to HorizontalTube,
+while finite prefix sums use Mathlib's `Fin.partialSum`.
+
+`Blocks/Geometry.lean` keeps the endpoint-window product lower bound as its
+public interface. The one-use induction that moves a successful prefix into
+the next tube is now a private lemma in that module. The lower-bound block
+product specialization lives in `Blocks/Lemmas/ConditionalProduct.lean` and is
+declared as a lemma; the reusable conditional-block product theorem it applies
+is `measureReal_initialInterConditionalBlockIntersection_ge_mul_prod_prefix`
+in `Probability/Process/Filtration/ConditionalBlocks.lean`.
+
+The Mogulskii reference attached to the finite-block upper bounds identifies
+the 1974 Russian publication (vol. 19, no. 4, pp. 755--765) and the 1975
+English translation (vol. 19, no. 1, pp. 726--736, DOI 10.1137/1119081).
+The bibliographic records were checked at [MathNet](https://www.mathnet.ru/eng/tvp3978)
+and [SIAM](https://epubs.siam.org/doi/10.1137/1119081). The two block-product
+modules were built successfully after making the one-use helper private and
+the `Lemmas/` declaration a `lemma`.
+
+
+## HorizontalTube diffusive and kernel interface audit (2026-10-29)
+
+Reviewed the centered-unit-variance diffusive lower bounds, killed-kernel
+transfers, and tube-rate scaling interface. `Diffusive/TubeLower.lean` and
+`Diffusive/EndpointLower.lean` state complete Donsker lower bounds; the former
+keeps the inner-corridor parameters that determine the rate constant, while
+the latter includes a terminal interval. `Kernel/BlockIteration.lean` exposes
+the killed-interval/tube identity and complete finite-block upper and
+common-core return lower bounds. `Kernel/DiffusiveReturnLower.lean` transfers
+the diffusive estimates to return-kernel liminf and eventual uniform
+interfaces. `Scaling.lean` states the general law-rescaling identity for
+horizontal-tube logarithmic limits and supports both EndpointBand and
+EndpointWindow transfers.
+
+The audit narrowed proof imports in `EndpointLower`, `BlockIteration`, and
+`DiffusiveReturnLower`. The latter explicitly public-imports
+`Moments.Real`, which owns the centered-unit-second-moment assumption in its
+public signatures. All three changed targets built successfully with the
+pinned toolchain; `TubeLower` was replayed successfully as a dependency. The
+Karatzas--Shreve reference identifies Theorem 4.20, the Donsker invariance
+principle, and matches the cited result. The HorizontalTube subtree now has
+12 of 25 modules reviewed; the repository-wide semantic audit has 386 of
+1,603 modules reviewed.
+
+
+## HorizontalTube endpoint-band interface audit (2026-10-29)
+
+`EndpointBand/Basic.lean` defines the translated partial-sum corridor and
+endpoint-band events, their mesh scaling and same-center identity, their
+measurability, and the pathwise inclusion into a killed bridge. These are
+complete event and geometry interfaces. The killed bridge kernel and corridor
+measurability results are proof-only imports.
+
+`EndpointBand/Donsker/Normalized.lean` gives the normalized endpoint-band
+probability, its Donsker liminf comparison, a common eventual lower bound for
+the seven endpoint bands, and the resulting finite-block tube lower bound.
+The endpoint-band and IID objects in public declarations now come directly
+from their owning modules; the normalized-step theorem and endpoint-window
+iteration remain proof imports. `EndpointBand/Iteration.lean` exposes the
+translated bridge-row estimate and return-block/final-exit composition. Its
+public type imports the killed-kernel definition directly, while the general
+killed terminal-bridge composition is imported only for the proof.
+
+All three endpoint-band modules and the two stable endpoint-band clients built
+with the pinned toolchain. The Karatzas--Shreve citation used by the Donsker
+transfer specifies Theorem 4.20, the Invariance Principle of Donsker, in
+*Brownian Motion and Stochastic Calculus*, 2nd ed., Springer (1991), DOI
+10.1007/978-1-4612-0949-2. The HorizontalTube subtree now has 15 of 25
+modules reviewed; the repository-wide audit has 389 of 1,603 reviewed.
+
+
+## HorizontalTube endpoint-window scale and path-law audit (2026-10-29)
+
+`EndpointWindow/Basic.lean` owns the complete closed tube endpoint window and
+open return-window block events with their measurability interfaces. The
+finite endpoint-index choice in `Lemmas/IndexSelection.lean` is specific to
+the seven-window return argument and remains a non-public support lemma.
+`EndpointWindow/Iteration.lean` exposes the resulting return-kernel row
+bounds, variable and balanced block composition, and tube-survival lower
+bounds. Its partition and generic tube-iteration dependencies are used only
+inside the proofs.
+
+`Donsker/AlongScale.lean` transfers endpoint windows along any cofinal block
+horizon sequence and gives normalized/raw event identities and a reference-law
+lower-bound transfer. `PathLawTransfer.lean` gives open-set transfer for a
+finite family of endpoint windows and its seven-window product consequence.
+`Scale.lean` retains the coordinatewise scaling identity used by both
+diffusive and stable endpoint-window clients. Corridor measurability and
+endpoint-window iteration imports are proof-only where applicable; the public
+interfaces import their event, IID, path-law, and partition owners directly.
+
+All six modules and their affected stable discrete, Mogulskii, DriftedTube,
+and HorizontalTube clients built with the pinned toolchain. The HorizontalTube
+subtree has 21 of 25 modules reviewed; only its four `FiniteVarianceUpper`
+modules remain pending. The repository-wide semantic audit has 395 of 1,603
+modules reviewed and 1,208 pending.
+
+
+## HorizontalTube finite-variance upper proof-chain audit (2026-10-29)
+
+`FiniteVarianceUpper/Basic.lean` is the public finite-variance horizontal-tube
+upper-bound entry for the centered and translated interval estimates in Wang
+Yiyang's thesis, Chapter 3, Lemma 3.2 and its remark. Its equal-partition
+argument follows Aïdékon--Hu, *Average-weight percolation on the complete
+graph*, Lemma 4.1; its block-rate input is documented separately as a
+Mogul'skii small-deviation result. The article record confirms the title,
+authors, and 2025 arXiv version [arXiv:2512.23266](https://arxiv.org/abs/2512.23266).
+
+The fixed corridor cover and the rate/exponential assembly remain under
+`FiniteVarianceUpper/Lemmas/`: `EqualPartition.lean`,
+`Lemmas/Partition/Parameters.lean`, and `Lemmas/Rate.lean`. These are used
+only by the Lemma 3.2 proof chain. Generic one-block-to-horizon iteration
+remains in `HorizontalTube/Kernel/`. All four modules built successfully,
+along with the dependent DriftedTube upper-bound entry. HorizontalTube is now
+fully audited at 25 of 25 modules. The repository-wide semantic audit has 399
+of 1,603 modules reviewed and 1,204 pending.
+
+
+## Nonnegative-real continuous additive extension (2026-10-29)
+
+`Analysis/FunctionalEquation/NNReal.lean` exposes the reusable theorem
+`continuous_additive_nnreal_eq_smul`: if `f : ℝ≥0 → E` is continuous and
+additive and `E` is a Hausdorff topological real vector space, then
+`f x = (x : ℝ) • f 1`. The result extends a continuous additive map from the
+closed nonnegative half-line to its linear formula; the proof uses the odd
+extension to `ℝ`. Its two current clients are stable-exponent proofs, but the
+statement has no stable-law assumptions and remains at the abstract Analysis
+layer, outside `Lemmas/`.
+
+The pinned Mathlib revision is
+`380f2aafb622cb2c1c93dac545b6389083c68c51`. Its official
+[`Mathlib.Topology.Instances.RealVectorSpace` API](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Topology/Instances/RealVectorSpace.html)
+provides `map_real_smul` for a continuous additive homomorphism whose source
+is a real vector space; it does not cover `ℝ≥0` as the source. A search of
+the pinned source found no corresponding nonnegative-domain theorem, so the
+local theorem supplies the missing reusable extension. The module path was
+renamed from `ContinuousAdditivePositive.lean` to `NNReal.lean`, which names
+the actual domain. `Mathlib.Basic.NNReal.Basic` and the topology/typeclass
+owners needed by the public signature are public imports;
+`Mathlib.Topology.Instances.NNReal.Lemmas` and
+`Mathlib.Topology.Instances.RealVectorSpace` are ordinary proof imports. The
+renamed module and both stable-exponent clients built successfully (3,441
+Lake jobs).
+
+
+## Branching path displacement algebra (2026-10-29)
+
+Reviewed `Combinatorics/BranchingWalk/Basic/Position/{Displace,DisplacementMap,Basic}.lean`. These three modules form one small semantic family: the address-carrying displacement recursion, its raw-mark-to-position map, and the resulting root-indexed walk position. All three belong under `Basic/Position/`; they expose complete constructions and path laws, so their APIs stay outside `Lemmas/`. The recursive displacement and its partial `Option` form use addition in path order and therefore need only `[AddMonoid X]`. The append and rebase identities use associativity, not commutativity. The coordinate formulas through `Finset.sum` remain under `[AddCommMonoid X]`, matching Mathlib's finite-sum API. The one-use recursion `displace?_eq_some_of_survive` is now a private lemma inside `Displace.lean`; the public iff characterization remains available. The module header now lists the full public surface.
+
+The abstraction comparison checked the pinned Mathlib revision
+`380f2aafb622cb2c1c93dac545b6389083c68c51`: the official
+[`List.foldl` API](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Data/List/Basic.html)
+provides the generic ordered-fold operation, while
+[`Finset.sum`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Algebra/BigOperators/Group/Finset/Basic.html)
+requires `[AddCommMonoid]`. A generic fold would still have to carry and
+update both the current Ulam--Harris address and accumulated value, so the
+existing domain-specific recursion remains the clearer public construction;
+no duplicate fold representation was added. The narrowed-assumption modules
+and eight direct marked-tree, genealogy, and spine clients built successfully
+(3,195 Lake jobs).
+
+
+## Branching-walk support and sibling predicates (2026-10-29)
+
+The reusable predicates `StepField.IsFinitelySupported` and
+`RootIndexed.BranchingWalk.IsFinitelySupported` now live in
+`Combinatorics/BranchingWalk/Basic/FiniteSupport.lean`. Their natural-number
+orderability instances remain in `Basic/Ordering/Orderable.lean`, where step
+support is converted into an orderable child enumeration. The field-level
+direct sibling predicate is now named `StepField.IsSiblingClosed`, matching
+its owner and distinguishing it from `StepField.IsSiblingClosable`; all
+affected clients use the qualified name and the old global declaration was
+removed. `Survival/Basic.lean` defines the realized particle set and its
+generation slices; “surviving” refers to particles realized in the genealogy,
+not particles with arbitrarily deep descendants.
+
+The new `FiniteSupport` module, `Orderable`, both sibling modules, the
+survival module, and their direct marked-tree and genealogy clients built
+successfully (1,920 Lake jobs). The production inventory is 1,604 modules: 408
+reviewed and 1,196 pending. Structural checks report no same-parent source /
+directory stem collisions, no directory with more than eight direct Lean
+files, and no `Lemmas.lean` / `Lemmas/` conflicts. The semantic audit remains
+incomplete.
+
+## Current repository-wide audit status (2026-10-29)
+
+The production inventory and semantic ledger contain 1,604 modules. Structural
+checks pass: no same-parent `.lean` / directory stem collisions, no directory
+with more than eight direct Lean files, and no `Lemmas.lean` / `Lemmas/`
+conflicts. Semantic review is incomplete: 408 modules are reviewed and 1,196
+remain pending. Pending means unreviewed, not known to be incorrect. The
+Mogulskii subtree remains at 78 of 101 modules reviewed; Mogul'skii's Theorem 4
+remains a separate formalization gap.
+
+
+## Branching-step selection and slot-order module audit (2026-10-29)
+
+The step directory now separates three semantic families. `Step/Count.lean`
+owns `Step.childCount ξ = (support ξ).encard` in `ℕ∞`, including invariance
+under mark maps and measurability for countable slots; the count is independent
+of any selection rule. The support initial-segment predicates
+`Step.IsSiblingClosed` and `Step.IsSiblingClosable` now live under
+`Step/Ordering/`, where they sit beside ordered-slot and rank interfaces.
+They characterize a present child set that is an initial segment and an
+injective reindexing that produces such a segment while covering all present
+slots. These properties are not finite-selection operations.
+
+The generic `Step.FiniteSelection` structure, capacity, filtering, and
+first-`N` constructor remain in `Step/Selection/Finite.lean`. Potential
+threshold filtering and first-`N` potential rules now live in the distinct
+`Step/Selection/Potential.lean`; finite lower-section hypotheses and their
+first-`N` existence bridge are named by `Step/Selection/LowerFinite.lean`,
+formerly `Basic.lean`. This leaves four direct selection modules.
+`Step/Ordering/` has eight direct modules, all describing order, rank, or
+ordered realization of a step. The step root has six direct modules.
+
+The pinned Mathlib source revision is
+`380f2aafb622cb2c1c93dac545b6389083c68c51`. Mathlib's
+[`IsLowerSet` API](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Order/UpperLower/Basic.html)
+expresses downward closure using `≤`. This step predicate is intentionally
+formulated using only the strict relation `[LT ι]`, so importing an order
+structure solely to reuse `IsLowerSet` would strengthen its assumptions. The
+public predicate therefore stays with the branching-step ordering API.
+
+The moved and split owner modules, their field and marked-tree clients, the
+measurable selection clients, and the positive-split entry built successfully
+(3,135 Lake jobs). Their module headers now name the public declarations and
+state the defining formulas. The production inventory is 1,605 modules, with
+415 reviewed and 1,190 pending; the repository-wide semantic audit remains
+open.
+
+## Current repository-wide audit status (2026-10-29)
+
+The production inventory and semantic ledger contain 1,605 modules. Structural
+checks pass: no same-parent `.lean`/directory stem collisions, no directory
+with more than eight direct Lean files, and no `Lemmas.lean` / `Lemmas/`
+conflicts. Semantic review is incomplete: 415 modules are reviewed and 1,190
+remain pending. Pending means unreviewed, not known to be incorrect. The
+Mogulskii subtree remains at 78 of 101 modules reviewed; Mogul'skii's Theorem 4
+remains a separate formalization gap.
+
+
+## Branching-step ordering interfaces (2026-10-29)
+
+The ordering subtree keeps six distinct interfaces at the level where their
+concepts are defined: potential-based ordered membership, monotonicity of
+optional child values, support-covering ordered realizations, sibling rank,
+point-measure invariance, and finite prefixes of an abstract slot order.
+`Rank.lean` is now `SiblingRank.lean`, which distinguishes the count of
+surviving predecessor slots from `Step.rank`, the mark-then-slot rank used to
+construct a finite increasing enumeration. `Realization.lean` is now
+`MeasureInvariance.lean`, naming its point-measure conclusion.
+
+The orderability predicate and its ordered-step transport need only `[LE X]`
+for the mark comparison; they no longer require reflexivity or transitivity
+from a `Preorder X`. `SlotOrder.lean` uses Mathlib's
+`orderIsoNatOfLinearSuccPredArch` and builds the domain-level `firstSlots`
+prefixes on that canonical order. Mathlib's [`Finset.sort` and
+`orderIsoOfFin`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Data/Finset/Sort.html)
+order a finite set, while
+[`orderIsoNatOfLinearSuccPredArch`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Order/SuccPred/LinearLocallyFinite.html)
+provides the order isomorphism for locally finite orders; the former is not a
+replacement for the latter's first-ℕ-prefix interface.
+
+The ordering owners and their direct marked-tree, branching-law, and cloud-rank
+clients built successfully (3,108 Lake jobs). The production inventory remains
+1,605 modules: 421 are semantically reviewed and 1,184 remain pending.
+Structural checks continue to report no same-parent source/directory stem
+collisions, no directory with more than eight direct Lean files, and no
+`Lemmas.lean`/`Lemmas/` conflicts. The full semantic audit is still in
+progress.
+
+
+## Branching-step core interfaces (2026-10-29)
+
+The `Step` core now has audited ownership for the optional-slot model,
+slot-level relations and measurable events, potentials, generation updates,
+and its two measure observations. `Step.Basic` remains the primitive
+`ι → Option X` representation. `Step.Relation` parameterizes sibling order
+by a relation; `Step.Ordering` owns closure, monotonicity, rank, and ordered
+realization properties. `Step.Potential` keeps general measurable scalar
+observations separate from additive potentials needed for path sums.
+`Step.Measure.PointMeasure` identifies its count with the generic
+`Measure.iOptionDiracSum`, while `Step.Measure.ExponentialWeight` owns the
+weight-specific consequences. `Step.Generation.Update` remains below the
+probability layer because it is deterministic and is consumed by multiple
+coupling and population results.
+
+`Step.Measurability.keepRel` now describes the event by the present mark
+`some x` and the relation `R x M`, using the existing measurable-image lemma
+for `Option.some`; it therefore needs no `Zero X` instance. The unused
+fixed-slot wrappers `selectFirstN` and `keepSecond` and their duplicate
+measurability theorems were removed; clients can use the generic `keepAt i M`.
+
+The affected Step modules and their ordering, selected-population, coupling,
+point-measure, and branching-law clients built successfully. The production
+inventory remains 1,605 modules: 428 are semantically reviewed and 1,177
+remain pending. Structural checks continue to pass; the full semantic audit
+remains in progress.
+
+
+## Mogulskii small-deviation hierarchy audit (2026-10-29)
+
+The public theorem entry remains
+`Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Theorems.lean`; it
+records the source statements and Lean interfaces for Mogul’skii Theorems 1–3
+and explicitly records Theorem 4 as unformalized. `Gaussian/` and `Stable/`
+separate finite-variance and stable-law regimes; `Rate/`, `Scale/`, and
+`Path/` own energy/rate, normalization, and path-event realization interfaces.
+The stable discrete path-class assembly is under `Stable/Discrete/PathClass/`,
+with finite-partition estimates under `Partition/`; the left-endpoint source
+path convention is separated under `TerminalLeft/`. These modules expose
+substantive mathematical interfaces, not additional main theorem entry points.
+
+The audited `Lemmas/` modules provide endpoint-return logarithmic bounds,
+balanced endpoint-core counts, range-probability lower bounds, bridge-product
+gluing, and terminal-left corridor inclusions. Their direct proof callers use
+`import all`; no `Lemmas/` module is public-imported as a general interface.
+The main theorem umbrella and all 23 previously pending modules in this subtree
+built successfully (4,143 Lake jobs). The Mogulskii subtree now has 101 of 101
+modules semantically reviewed; this closes the directory audit, while
+Mogul’skii Theorem 4 remains a separate formalization gap.
+
+The full production inventory is 1,605 modules: 451 semantically reviewed and
+1,154 pending. Structural checks pass: no same-parent source/directory stem
+collisions, no directory with more than eight direct Lean files, and no
+`Lemmas.lean`/`Lemmas/` conflicts.
+
+
+## Branching cloud model, order, and rank interfaces (2026-10-29)
+
+The cloud layer separates its model (`Cloud/Basic.lean`), slice counting
+measure (`SliceMeasure.lean`), fixed-time measure/rank order (`Order/Slice.lean`),
+and all-time lower-tail domination (`Order/Domination.lean`). Matching witnesses
+live in `Order/SliceDominatingMap.lean`; the generic injective dominating map
+interface is `Order/DominatingMap.lean`. `Rank/Slice.lean` and
+`Rank/Descendant.lean` define distinct rank concepts on a time slice and below a
+particle. The frontier, measurability, and leftmost-selection results remain in
+their semantic subtrees.
+
+`Order/Basic.lean` was renamed `Order/Domination.lean` because it owns the
+all-time cloud order and depends on the fixed-time `Order/Slice` layer. The
+generic finite lower-level-set count consequence is now part of
+`Order/DominatingMap.lean`, using Mathlib's
+`Finset.card_le_card_of_injOn`. The address-order-free dynamic first-N matching
+theorem is public in `Order/DynamicSelection.lean`: three independent coupling
+clients use it, so it belongs with the Cloud selection interface rather than
+in `Lemmas/`. `Order/Selection.lean` publicly reexports it. The Cloud owners
+and those direct clients built successfully (3,331 Lake jobs). The production
+inventory has 1,605 modules: 463 semantically reviewed and 1,142 pending.
+
+
+## Naming and directory structure recheck (2026-10-29)
+
+The Cloud reorganization no longer places the dynamic first-N coupling result
+under `Lemmas/`: it has three production callers and is exposed from
+`Cloud/Order/DynamicSelection.lean`. At the 2026-10-29 checkpoint, the finite
+lower-level-set count was abstracted over labelled sets in
+`Cloud/Order/DominatingMap.lean`. The
+2026-10-30 review below compares this bundle with Mathlib's general mapping
+and order-embedding interfaces and moves it to the generic `Order` layer. At
+that checkpoint, the cardinality consequence used Mathlib's
+`Finset.card_le_card_of_injOn`
+([Mathlib Finset cardinality API](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Data/Finset/Card.html)).
+
+The last production filename whose stem repeated its parent directory prefix
+was `Normal/Normalization.lean`; it is now `Normal/PositiveNormalization.lean`.
+Eight empty source directories left by earlier moves were removed. A fresh scan
+counts 1,605 production modules and 1,605 ledger rows: 463 modules are
+semantically reviewed and 1,142 remain pending. It finds zero same-parent
+file/directory stem collisions, zero parent-prefix filename repetitions, zero
+directories with more than eight Lean files, zero empty source directories, and
+zero missing or untracked ledger paths.
+
+## Drawdown finite-variance upper estimate (2026-10-29)
+
+Reviewed all 13 modules under `Probability/Process/RandomWalk/SmallDeviation/Drawdown`.
+The root `Event.lean` defines the finite-horizon drawdown-and-endpoint event
+used by both random-walk and branching-random-walk estimates; `Scaling.lean`
+owns its measurable-set and increment-rescaling laws. The theorem entry is
+`FiniteVarianceUpper/Theorems.lean`. Its proof decomposition is clearly
+private to that estimate: conditional block bounds, rounded maximum bins,
+jump-pattern covering, finite union probabilities, and exponent budgets all
+live under the single `FiniteVarianceUpper/Lemmas/` tree, with `JumpPattern/`
+and `Rate/` subdivisions. Every proof helper is imported with `import all`, and
+no helper module is reexported as a public API.
+
+The result is correctly organized under `SmallDeviation/Drawdown`: it bounds a
+finite-horizon path event controlling all downward increments together with an
+endpoint, while the `FiniteVarianceUpper` layer records the centered
+finite-variance assumptions. The one-block estimate is reused from
+`HorizontalTube/`; the rounded maximum uses Mathlib's `partialSups` and finite
+partial sums rather than introducing parallel generic path constructions.
+All 13 modules and direct public consumers built successfully (4,792 Lake
+jobs). The ledger now records 476 semantically reviewed modules and 1,129
+pending modules.
+
+
+## Random-walk range small-deviation interfaces (2026-10-29)
+
+Reviewed the six subject-level modules under
+`Probability/Process/RandomWalk/SmallDeviation/Range/`. They expose the IID
+finite-block comparison, the finite-block Donsker comparison, the explicit
+finite Brownian cover bound, the exponent-two corridor cover, the finite-
+variance block bound, and the assembled finite-variance range rate. The
+block-event inclusions used by the last two are deterministic proof steps, not
+independent interfaces; they now live together in
+`Range/Lemmas/BlockCorridor.lean` and are imported with `import all`. The
+finite cover and rate remain public because the cover appears in the rate
+statement. Mathlib's `Metric.ediam` already provides the general diameter
+concept, so the project keeps its local random-walk block event bridge without
+adding a second general metric abstraction.
+
+The new support module, both owning probability-bound modules, and the
+Mogulskii theorem, stable-corridor, and sharp-upper clients built successfully.
+The production ledger now has 1,606 modules: 483 semantically reviewed and
+1,123 pending. The broader all-module audit is still in progress.
+
+## Brownian range result and proof-helper ownership (2026-10-29)
+
+The Brownian range subtree has three complete subject-level results:
+`EscapeConstant.lean` identifies the standard Brownian path-law escape rate
+with coefficient $-\pi^2/8$ (and full-width coefficient $-\pi^2/2$);
+`FiniteCover.lean` gives the fixed finite-corridor spectral bound for the
+Brownian range event; and `UpperRate.lean` gives its small-width logarithmic
+upper rate. The Donsker transfer, rounded-corridor spectral limits, positivity
+of the range mass, and exponential-limit calculation only support those
+results. They are grouped in the single `Range/Lemmas/` tree and imported with
+`import all` rather than exposed as a public import surface.
+
+The input distinction follows Mathlib's Brownian API: `IsPreBrownianReal`
+encodes the Brownian finite-dimensional laws, and `IsBrownianReal` adds
+almost-sure path continuity. The finite-cover theorem uses the former together
+with pathwise continuity; the path-law escape-rate theorem uses the latter.
+Mathlib supplies these process interfaces, while the small-deviation bounds
+are project results
+([Mathlib Brownian-motion API](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Probability/BrownianMotion/Basic.html)).
+The affected Brownian modules, RandomWalk range modules, and their Mogulskii
+clients built successfully; the complete dependency build reported 4,139
+jobs, and the import-order follow-up for `UpperRate.lean` built successfully
+with 3,582 jobs.
+
+The production inventory is 1,608 modules: 488 are semantically reviewed and
+1,120 remain pending. All ledger rows have passing structural-scan and build
+status. The fresh production-tree scan found zero same-parent file/directory
+stem collisions, zero parent-prefix filename repetitions, zero directories
+with more than eight direct Lean modules, zero empty source directories, and
+zero `Lemmas.lean`/`Lemmas/` conflicts. The empty generated folder
+`lean/tmp/pdfs/` and its now-empty parent `lean/tmp/` were removed.
+
+
+## Rooted branching-walk infinite lineage (2026-10-29)
+
+`Combinatorics/BranchingWalk/Genealogy/Survival.lean` is the complete
+interface for the passage from surviving addresses of every finite depth to
+one infinite lineage. The equivalence assumes only that every prefix surviving
+from the specified root has finitely many surviving children. This is weaker
+than requiring finite child sets at every root and every address. The proof
+instantiates Peter Nelson's inverse-system form of Kőnig's infinity lemma,
+`Mathlib.Order.KonigLemma.exists_seq_forall_proj_of_forall_finite`; at pinned
+Mathlib commit `380f2aafb622cb2c1c93dac545b6389083c68c51`, the theorem constructs a
+coherent sequence from nonempty levels, finite initial level, and finite
+projection fibers
+([pinned Mathlib source](https://github.com/leanprover-community/mathlib4/blob/380f2aafb622cb2c1c93dac545b6389083c68c51/Mathlib/Order/KonigLemma.lean)).
+The lower-level ancestor, descendant, and generation-size definitions remain
+under `Basic/Genealogy/`; the infinite-lineage equivalence is a separate
+complete theorem family rather than proof support for those definitions. The
+module and its direct probability-law client built successfully (3,150 Lake
+jobs).
+
+The production inventory is 1,608 modules: 489 are semantically reviewed and
+1,119 remain pending. Structural checks remain clear across the full production
+ledger: no same-parent file/directory stem collisions, parent-prefix filename
+repetitions, directories with more than eight direct Lean modules, empty source
+directories, or `Lemmas.lean`/`Lemmas/` conflicts.
+
+
+## Marked-tree interfaces and recursive sibling order (2026-10-29)
+
+The `BranchingWalk/MarkedTree/` family exposes four complete interfaces:
+`Equivalence.lean` converts between a sibling-closed step field and its
+realized marked tree; `OfBranchingWalk.lean` constructs node-marked and
+positioned trees from a branching walk; `SiblingMonotonicity.lean` relates
+local step monotonicity to the order of sibling marks; and
+`SiblingOrderTransport.lean` recursively moves each entire descendant subtree
+when sibling labels are reordered. The names `Order.lean` and `Ordering.lean`
+were too close for these distinct statements, so both paths were renamed and
+all imports and source references updated. The namespaces remain unchanged.
+
+`orderingTransport` returns `UlamHarris.MarkedTree`, but its construction is
+parameterized by `StepField.IsOrderable` and depends on the recursively
+transported branching-walk field. It therefore remains in the dependent
+BranchingWalk layer instead of making the general Ulam-Harris layer import a
+more specific model. Mathlib's pinned `BinaryTree` stores a fixed binary node
+with two subtrees; the repository's `UlamHarris.Tree α` is a prefix-closed
+carrier of finite `α`-addresses with arbitrary ordered child slots. The
+pinned Mathlib datatype does not replace that object
+([Mathlib source at the locked revision](https://github.com/leanprover-community/mathlib4/blob/380f2aafb622cb2c1c93dac545b6389083c68c51/Mathlib/Data/Tree/Basic.lean)).
+All four modules and the downstream point-measure realization client built
+successfully (2,770 Lake jobs). The four module docs enumerate their complete
+public interfaces; there is no proof-only file to place under `Lemmas/`.
+
+The production inventory is 1,608 modules: 493 are semantically reviewed and
+1,115 remain pending. Structural checks continue to pass across the production
+ledger: zero same-parent file/directory stem collisions, zero parent-prefix
+filename repetitions, zero directories with more than eight direct Lean
+modules, zero empty source directories, and zero `Lemmas.lean`/`Lemmas/`
+conflicts.
+
+
+## Generic Ulam--Harris offspring ownership review (2026-10-29)
+
+`RootIndexed.childAddress` is now owned by `Combinatorics/UlamHarris/Relation.lean`,
+alongside the structural parent operation and direct-child relation. The
+arbitrary-set constructions `offspringPairSet` and `offspringAddressSet`, with
+their membership characterizations, now live in
+`Combinatorics/BranchingWalk/Population/Offspring.lean`. This removes the
+dependency from the general `Population` interface to
+`Selection/Coupling/Offspring`. The finite parent-slot and address sets remain
+under `Selection/Coupling/Offspring/Finite.lean`, where they support the
+selection-specific cardinality comparison. The unused set-level
+`offspringPairSet_injection` declaration was removed because it had no callers;
+the finite cloud theorem constructs the matching needed by its own proof.
+
+The abstraction boundary follows the pinned Mathlib tree interfaces. Mathlib's
+`BinaryTree` is a fixed binary datatype, while the repository addresses are
+`Root × List α` with arbitrary child labels; Mathlib's list-prefix relations
+remain useful for the generic address proofs but do not own the root-indexed
+offspring-set semantics ([pinned Mathlib source](https://github.com/leanprover-community/mathlib4/blob/380f2aafb622cb2c1c93dac545b6389083c68c51/Mathlib/Data/Tree/Basic.lean),
+[Mathlib list-prefix API](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Data/List/Infix.html)).
+All direct clients of the moved declarations built successfully, in a
+4,880-job Lake build. The root population type, offspring-set owner, genealogy
+interface, finite offspring adapter, and address relation are now recorded as
+semantically reviewed in the ledger.
+
+The production inventory remains 1,608 modules: 496 are semantically reviewed
+and 1,112 remain pending. The 137 modules under `BranchingProcessTest/` and the
+Lean script under `scripts/` are outside the production inventory. Structural
+checks pass across all production modules: zero same-parent file/directory
+stem collisions, zero parent-prefix filename repetitions, zero directories
+with more than eight direct Lean modules, zero empty source directories, and
+zero `Lemmas.lean`/`Lemmas/` conflicts.
+
+
+## Selection and offspring-cloud interfaces (2026-10-29)
+
+Reviewed `Selection/Basic.lean` and `Selection/Contain.lean` as the base
+selection-mechanism and selected-sub-walk interfaces. `Mechanism` allows an
+arbitrary candidate type and set-valued input; `FiniteMechanism` is its
+finite-input interface for `Finset` clients. The finite restriction,
+order-dual transport, and least/greatest preservation properties are part of
+that selector interface and are used by capacity and probability-selection
+modules. `SelectContain` is specific to branching walks because it compares
+their initial positions and surviving optional steps.
+
+The coupling modules expose three complete semantic layers:
+`PopulationCloud.lean` converts a finite labelled population and branching-walk
+position map to a constant-time `Cloud`; `Offspring/Cloud.lean` compares
+finite parent-slot lower-tail counts under injective or rankwise cloud
+domination; and `Position.lean` specializes that comparison to the actual
+one-step position update, shared marks, and translation monotonicity. The
+constructions and comparisons are used by endpoint and N-selection coupling
+modules, so they remain outside proof-only `Lemmas/` directories.
+
+The five modules and their direct dependencies built successfully (1,916 Lake
+jobs). The ledger now records 501 of 1,608 production modules as semantically
+reviewed and 1,107 as pending. The production structural scan remains clear:
+all 1,608 modules are represented in the ledger, all recorded builds pass, and
+there are zero same-parent stem collisions, parent-prefix filename
+repetitions, directories with more than eight direct Lean files, empty source
+directories, or `Lemmas.lean`/`Lemmas/` conflicts.
+
+
+## N-selection order-statistics and matching review (2026-10-29)
+
+Reviewed the seven modules in `Selection/NSelection/Mechanism/`. Their
+finite first-$N$ selector, value-and-label tie-breaking key, arbitrary-set
+first-$N$ specification, rank lookup, and order-dual rightmost construction
+are complete selection interfaces used across branching-walk and probability
+clients. They remain in `Mechanism/`.
+
+Moved the lower-tail Hall theorem family from `Mechanism/Hall.lean` to
+`Selection/NSelection/Matching/Hall.lean`, and the deterministic equal-rank
+matching family from `Mechanism/Matching.lean` to
+`Selection/NSelection/Matching/ByRank.lean`. These are complete, reusable
+matching results, not proof-only steps. Mathlib's generic finite Hall theorem
+is stated for arbitrary relations, while the moved result supplies the
+ordered-value lower-tail formulation. Mathlib's `Finset.sort` and
+`Finset.orderIsoOfFin` provide sorted finite indexing, while the selection
+modules provide the predecessor-count and value-ranked first-$N$ interfaces
+needed by this project ([Mathlib Hall API](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Combinatorics/Hall/Basic.html),
+[Mathlib Finset sorting API](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Data/Finset/Sort.html)).
+All imports and source references use the new paths; no compatibility aliases
+remain.
+
+The seven reviewed modules and their direct clients built successfully in a
+4,792-job Lake build. The ledger records 508 of 1,608 production modules as
+semantically reviewed and 1,100 as pending. A fresh structural scan found
+zero unledgered or missing modules, same-parent file/directory collisions,
+parent-prefix filename repetitions, directories with more than eight direct
+Lean modules, empty production directories, or parallel `Lemmas.lean` and
+`Lemmas/` entries.
+
+
+## N-selection mechanism, coupling, and walk ownership (2026-10-29)
+
+Reviewed `Selection/NSelection/Basic.lean`, all four modules in its
+`Coupling/` directory, and all five modules in `Walk/`. The capacity selector
+is the generic combinatorial base; `Walk/` owns the deterministic finite
+branching recursion, its generation clouds, frontier extrema, and frontier
+speeds. `Coupling/Cloud`, `Offspring`, `Step`, and `Pathwise` remain together
+because they progressively pass domination from a population cloud, through
+child slots, to one selected generation and then all generations.
+
+Moved `Coupling/Finite.lean` to `Mechanism/Threshold.lean`. Its two theorems
+compare lower-tail counts for an arbitrary retained source and the first `N`
+candidates in a separately ordered target population. They use no branching
+walk, offspring, or cloud structure, and the Cloud-order layer consumes the
+result directly. This placement corrects the earlier 2026-10-21 assessment,
+which treated independent use by a Cloud client as sufficient reason to keep
+the module inside `Coupling/` without accounting for the dependency direction.
+The theorem family remains public because it is a complete selector comparison;
+it is not proof-only content for `Lemmas/`.
+
+Across the two batches, eight mechanism/matching modules and ten additional
+capacity, coupling, and deterministic-walk modules were reviewed. Those modules
+and their direct clients built successfully in a 3,391-job Lake build. The ledger records
+519 of 1,608 production modules as semantically reviewed and 1,089 as pending.
+A fresh production scan found no unledgered or missing modules, same-parent
+file/directory collisions, parent-prefix filename repetitions, directories
+with more than eight direct Lean modules, empty production directories, or
+parallel `Lemmas.lean` and `Lemmas/` entries.
+
+
+## Random-walk Skorokhod path and terminal-left partition audit (2026-10-29)
+
+Reviewed the 16 modules already under
+`Probability/Process/RandomWalk/Path/Skorokhod/` and added two modules for the
+terminal-left partition construction. The existing groups by corridors,
+endpoint corridors, oscillation, range, and tightness match their mathematical
+interfaces. The terminal-left partition now has a distinct `Definitions`
+module for the clipped knot index and cell lengths, `Basic` for common-grid
+path evaluation and the normalized cell-length limit, and `CellBounds` for
+the IID range-probability product estimate. The knot monotonicity, endpoint,
+floor, and last-cell calculations are internal under `Partition/Lemmas/Index`;
+the Mogul'skii-specific geometry and product assembly remain in the
+Mogul'skii proof subtree.
+
+The fixed-prefix (L^1) estimates in `Skorokhod/Basic.lean` are used only to
+prove continuity of the normalized step-path map, so they are now private
+proof support. The public declarations there are the continuity and
+measurability results. Replaced the public random-walk-specific unit-interval
+floor helper with direct applications of Mathlib's `Nat.floor_le_of_le`
+where needed; the bound follows from (0\le t\le1) and (n\ge0), and does
+not require a separate repository API.
+
+Renamed the path-specific `source...` terminal-left declarations to
+`terminalLeft...` throughout their declarations and clients. The
+continuous-boundary cutoff, cell-event equivalence, and cell measurability
+steps are private to their proof module. Moved the generic common-partition
+floor-index estimate beside its owner in `Block/Partition/StepCorridor`.
+Mathlib's [`Nat.floor_le_of_le`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Algebra/Order/Floor/Semiring.html)
+provides the generic floor principle; the finite common-partition index and
+terminal-left adaptations remain with their respective owners.
+
+The renamed terminal-left clients had already built in the 4,625-job group
+build; after making the prefix estimates internal and inlining the floor
+bound at its clients, the affected five path and entrance modules built
+successfully in a 3,172-job Lake build. The production ledger now records 594
+of 1,610 modules as semantically reviewed and 1,016 as pending. The structural
+scan found no unledgered or missing production modules, same-parent
+file/directory stem collisions, parent-prefix filename repetitions,
+directories with more than eight direct Lean modules, empty source
+directories, or parallel `Lemmas.lean` and `Lemmas/` entries.
+
+
+## Branching-walk space-time trajectory abstraction (2026-10-29)
+
+Reviewed the three modules under `Combinatorics/BranchingWalk/Trajectory/`.
+The package has no production importer outside its own three-module family,
+so cross-module use alone does not motivate retaining it. The object itself is
+a complete generic construction: it pairs a time-indexed vertex image with
+the edge-image set of a marked step field, for arbitrary time coordinates,
+position type, and segment-image map. Keep the object and its constructors as
+the public branching-walk trace interface; its short projection equations are
+part of that construction rather than a separate proof chain.
+
+Changed `Trajectory.vertexCloud` to use the existing
+`CloudSet Time X` abstraction directly. Previously the trajectory stored its
+vertices as a subset of `Time × X` and reconstructed the same time slices via
+`toCloud`, duplicating the representation already given by
+`CloudSet.vertexSet`. The edge image remains a subset of `Time × X`, and the
+carrier is now `vertexCloud.vertexSet ∪ edges`. The induced measurable space
+uses the two canonical coordinates; measurability of the space-time vertex
+set composes `CloudSet.measurable_vertexSet` with the coordinate projection.
+The old `toCloud` and `vertices` projections had no clients and were removed
+without compatibility aliases. Constructor equations are now named
+`ofStepField_vertexCloud` to match their result.
+
+The abstraction check compared the pinned Mathlib revision
+`380f2aafb622cb2c1c93dac545b6389083c68c51`: `Mathlib.Combinatorics.Quiver.Path`
+models a finite composable arrow path with specified endpoints, not its
+embedded time-space image. The repository's `CloudSet` already supplies the
+generic time-indexed point-set representation needed for the vertex part; the
+trajectory-specific edge image remains at the branching-walk owner. See the
+[pinned Quiver.Path source](https://github.com/leanprover-community/mathlib4/blob/380f2aafb622cb2c1c93dac545b6389083c68c51/Mathlib/Combinatorics/Quiver/Path.lean)
+and [Mathlib's Quiver.Path API documentation](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Combinatorics/Quiver/Path.html).
+
+The three trajectory modules built successfully with their direct imports in
+a 1,785-job Lake build. The production ledger records 597 of 1,610 modules as
+semantically reviewed and 1,013 as pending.
+
+
+## Deterministic branch-walk spine and selection order (2026-10-29)
+
+Reviewed the singleton-walk modules, the tree/genealogy bridge, the generic
+walk-transform module, and the existing `Selection/Contain` relation. The
+single-slot walk is a substantive specialization: `Walk/Basic` identifies its
+unique generation addresses and encodes optional increment sequences;
+`Walk/Equiv` gives the corresponding equivalence with an initial position;
+`Walk/Path/Position` connects its positions and generation clouds to the
+general `AdditivePath` and block-sum interfaces. These statements are
+complementary, and their current `Walk/Basic`, `Walk/Equiv`, and
+`Walk/Path/Position` ownership follows the object, equivalence, and path
+semantics.
+
+`Tree/Genealogy` is the deterministic bridge between a Ulam--Harris tree and
+its unit-mark branching walk. Its converse requires sibling-closed child
+steps, which is precisely the hypothesis needed for the walk's surviving
+addresses to form an ordered tree. Mathlib's quiver paths encode composable
+arrows, while `Quiver.Arborescence` encodes unique directed paths from a root;
+neither supplies the ordered Ulam--Harris address carrier and optional child
+slots used here. The bridge therefore remains at `Combinatorics/Branching`.
+
+The relation `SelectContain` already had reflexivity, transitivity, and
+antisymmetry proofs, and the module described it as a partial order. It now
+provides Mathlib's standard `PartialOrder` instance on root-indexed branching
+walks; the single-root abbreviation inherits that instance. This uses the
+existing relation as the order and adds no parallel relation. Mathlib defines
+`PartialOrder` by precisely these three laws ([pinned source at
+`380f2aafb622cb2c1c93dac545b6389083c68c51`](https://github.com/leanprover-community/mathlib4/blob/380f2aafb622cb2c1c93dac545b6389083c68c51/Mathlib/Order/Defs/PartialOrder.lean),
+[API documentation](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Order/Defs/PartialOrder.html)).
+`WalkTransform` remains the public map-with-subwalk-bound construction. Its
+unused `surviveAlong_parent_of_descendant` theorem merely repeated the
+assumption-free `surviveAlong_prefix` result, so it was removed; the generic
+owner continues to supply this fact.
+
+The affected containment, transform, tree, and walk modules and their direct
+clients built successfully in a 1,800-job Lake build. The production ledger
+records 602 of 1,610 modules as semantically reviewed and 1,008 as pending.
+
+
+## Enumerative composition and simple-graph height criteria (2026-10-29)
+
+Reviewed the remaining two modules under `Combinatorics/`. The positive-
+composition extension gives a concrete first-part/tail equivalence and the
+resulting finite-sum reindexing. Mathlib's pinned
+`Composition.recOnSingleAppend` and `Composition.recOnAppendSingle` provide
+induction principles over block lists, while `Composition.append` provides
+concatenation; none gives the first-part Sigma equivalence or the finite-sum
+formula needed to regroup composition weights. These reusable composition
+interfaces therefore stay in `Combinatorics/Enumerative/Composition/FirstPart`,
+separate from the Sparre--Andersen coefficient recurrence that consumes them.
+The comparison used Mathlib commit
+`380f2aafb622cb2c1c93dac545b6389083c68c51` ([Composition source](https://github.com/leanprover-community/mathlib4/blob/380f2aafb622cb2c1c93dac545b6389083c68c51/Mathlib/Combinatorics/Enumerative/Composition.lean),
+[API documentation](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Combinatorics/Enumerative/Composition.html)).
+
+`SimpleGraph.isAcyclic_of_height` is a generic graph theorem, not a
+Ulam--Harris helper: a cycle has a vertex of maximal height, and the two
+incident cycle vertices must coincide when each vertex has at most one
+neighbor of height at most its own. The height codomain is now any `LinearOrder`
+`H`, since the proof uses only a maximum over the finite set of cycle indices.
+The theorem remains at the SimpleGraph owner; the tree-specific height choice
+and uniqueness-of-parent argument stay in `UlamHarris/Tree/Graph/Acyclic`.
+
+The pinned Mathlib `SimpleGraph.Acyclic` API has path-uniqueness, bridge, and
+cycle characterizations, and `Mathlib.Order.Height` handles maximal lengths
+of chains; neither states this local-neighbor height criterion. The pinned
+`Quiver.arborescenceMk` theorem also uses a different directed rooted-tree
+interface: height strictly increases along arrows, and it additionally
+requires unique incoming arrows and a root-or-incoming-arrow condition. Those
+assumptions do not replace the undirected graph criterion ([pinned
+SimpleGraph source](https://github.com/leanprover-community/mathlib4/blob/380f2aafb622cb2c1c93dac545b6389083c68c51/Mathlib/Combinatorics/SimpleGraph/Acyclic.lean),
+[pinned Quiver.Arborescence source](https://github.com/leanprover-community/mathlib4/blob/380f2aafb622cb2c1c93dac545b6389083c68c51/Mathlib/Combinatorics/Quiver/Arborescence.lean),
+[official SimpleGraph documentation](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Combinatorics/SimpleGraph/Acyclic.html),
+[official Quiver.Arborescence documentation](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Combinatorics/Quiver/Arborescence.html)).
+
+The composition module, generalized height criterion, and their direct
+clients built successfully in a 3,214-job Lake build. This completes the
+semantic review of the production `Combinatorics/` modules. The production
+ledger records 604 of 1,610 modules reviewed and 1,006 pending.
+
+
+## Entrance finite-variance bridge ownership and citation review (2026-10-29)
+
+Reviewed all 27 modules in
+`Probability/Process/RandomWalk/SmallDeviation/Entrance/`. Public event and
+probability interfaces remain at `Entrance/`, `FiniteVariance/`, and
+`Robust/`; the theorem-specific rotation, Donsker, and three-region proof
+chains remain under their single `Lemmas/` subtrees. The reusable cyclic
+reindexing, finite-product reindexing, survival inequality, and Donsker
+linear-ball lower bound remain in their general owners.
+
+The finite-block composition
+`iidSequenceLaw_measure_mul_of_finiteMovingEntranceEvent_bridge` has one
+production caller, `FiniteVariance/EndpointCorridor.lean`, and specializes the
+generic finite-cover product theorem to the entrance and endpoint-core events
+of this proof. It is now under
+`FiniteVariance/Lemmas/EndpointBridge.lean`, in the internal
+`FiniteVariance.Lemmas` namespace; the caller uses `import all`. This revises
+the 2026-10-28 placement assessment: its lack of a variance hypothesis does
+not make this event-specific wrapper a reusable API when the underlying block
+composition is already generic.
+
+The NormalDomain, finite-variance endpoint-corridor, and stable endpoint-bridge
+headers now cite the relevant Wang Yiyang thesis results. The stable bridge
+also cites A. A. Mogul'skii, Theorem 3, Section 4, p. 764, and its 1975 English
+translation. Corrected the `LinearTube.lean` header to identify its declarations
+as internal proof support.
+
+The endpoint bridge, endpoint corridor, and stable bridge modules built
+successfully with their direct imports in a 3,756-job Lake build. The ledger
+records 546 of 1,608 production modules as semantically reviewed and 1,062 as
+pending. A fresh structural scan found no unledgered or missing modules,
+same-parent file/directory collisions, parent-prefix filename repetitions,
+directories with more than eight direct Lean modules, empty production
+directories, or parallel `Lemmas.lean` and `Lemmas/` entries.
+
+
+## Finite random-walk block interfaces and partition-cell traces (2026-10-29)
+
+Reviewed the 29 previously pending modules in
+`Probability/Process/RandomWalk/Path/Block/`. The existing divisions by
+`Corridor/`, `Law/`, `Maximal/`, and `Partition/` match their public
+mathematical interfaces. The root owns finite-block operations and
+oscillation events; the child modules state complete event, IID-law,
+maximal-bound, and finite-partition results. The short private algebra and
+endpoint-evaluation steps stay local to their results; no file in this group
+is only an unreferenced proof helper. Its two previously reviewed second-
+moment modules remain beside the general corridor and maximal APIs they
+specialize.
+
+Three modules independently proved that a `StepBoundary` equals its right
+trace throughout a common partition cell, including the left knot. Added the
+general half-open-cell statement
+`StepBoundary.eval_eq_rightTrace_on_commonPartitionCell_of_le` to
+`Topology/Cadlag/Skorokhod/PathClass/StepCorridor/Boundary/Partition.lean`.
+The block-partition and Mogulskii terminal-left clients now use this shared
+result; the path-corridor probability client uses it in its cell-coordinate
+helper. Mathlib's [`Topology.Order.Cadlag`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Topology/Order/Cadlag.html)
+provides general right-continuity facts, while the finite `StepBoundary`
+partition statement is specific to this topology object, so the reusable
+result belongs at its owner rather than in a random-walk `Lemmas/` folder.
+
+The new boundary theorem and four changed clients built successfully with
+their direct dependencies in a 3,261-job Lake build. The ledger records 576 of
+1,608 production modules as semantically reviewed and 1,032 as pending. A
+fresh production scan found no unledgered or missing modules, same-parent
+file/directory collisions, parent-prefix filename repetitions, directories
+with more than eight direct Lean modules, empty production directories, or
+parallel `Lemmas.lean` and `Lemmas/` entries.
+
+## Core càdlàg path layer audit (2026-10-29)
+
+The six core modules directly under `Topology/Cadlag/` were reviewed together.
+`Basic.lean` builds the reusable `CadlagPath` subtype and its range and
+monotone-clock operations on Mathlib's `IsCadlag` predicate; it does not impose
+path-space topology. `Concatenation.lean` constructs a càdlàg path from
+unit-time segments and gives its finite-sum and increment formulas. These are
+complete constructions rather than proof-only steps.
+
+`Oscillation.lean` provides the left and right local oscillation bounds used
+by the finite-jump and Skorokhod partition arguments. `Jump.lean` uses those
+bounds and compactness to prove finiteness of jumps above a fixed threshold,
+then countability of discontinuities. The radii selections and jump-local
+estimates remain private inside that proof. `Measurability.lean` turns the
+countability result into measurability of a fixed time section; the statement
+does not concern evaluation on a path space. `UniformLimit.lean` proves
+sequential uniform-limit stability into a complete pseudometric state space.
+
+The pinned Mathlib source
+[`Mathlib.Topology.Order.Cadlag`](https://github.com/leanprover-community/mathlib4/blob/380f2aafb622cb2c1c93dac545b6389083c68c51/Mathlib/Topology/Order/Cadlag.lean)
+provides the `IsCadlag` predicate, one-sided limits, and local boundedness.
+It does not provide the path subtype, compact-time finite-jump/countability
+results, metric oscillation radii, or uniform-limit theorem reviewed here.
+The direct `Topology/Cadlag/` directory has eight Lean files including the
+previously reviewed `Range.lean`, within the repository's eight-file limit;
+its reusable subject interfaces stay at this level, while proof-only support
+is private or under the single nested `Lemmas/` directory where needed.
+
+## Continuous-map compactness and corridor audit (2026-10-29)
+
+The continuous-map layer was checked against the pinned Mathlib Ascoli and
+continuous-map metric interfaces. `Compactness.lean` gives path-oriented
+compact-closure criteria from a common modulus or a sequence of oscillation
+bounds, together with closedness and equicontinuity facts. The general
+Arzelà--Ascoli criterion remains Mathlib's abstraction; these statements
+supply the concrete hypotheses used by the measure-level tightness clients.
+
+`Corridor.lean` identifies open and closed real interval range constraints
+with uniform balls on a compact time domain, yielding their topological and
+Borel properties. `Oscillation.lean` gives a deterministic finite cover of
+zero-starting paths with bounded oscillation by horizontal corridors. The
+cover depends only on the oscillation width and a finite location grid, so its
+owner is the continuous path topology; probability estimates using the cover
+remain in the probability and measure layers. The five direct modules under
+`Topology/ContinuousMap/` stay within the eight-file directory limit and each
+owns a distinct path-space interface.
+
+## Unit-interval terminal segment and meander path ownership audit (2026-10-29)
+
+The affine reparameterization of `[start,1]` was moved out of the last-zero
+module into `Topology/Order/UnitInterval/Time.lean`. It is the reusable
+unit-interval specialization of Mathlib's `AffineMap.lineMap`, with the
+coordinate identity, endpoint values, and continuity in both inputs recorded
+at the time-coordinate owner. Both last-zero and sign-change paths use this
+same clock map, so they no longer own copies of a generic time operation.
+See the pinned Mathlib [`AffineMap.lineMap`](https://github.com/leanprover-community/mathlib4/blob/380f2aafb622cb2c1c93dac545b6389083c68c51/Mathlib/LinearAlgebra/AffineSpace/AffineMap.lean#L486).
+
+`Topology/ContinuousMap/LastZero.lean` owns the zero-set supremum,
+closed-level and measurability results, continuity at paths whose last zero
+is the initial time, and Iglehart's normalized terminal-excursion map.
+`LastSignChange.lean` owns Bolthausen's sign-stable time, the endpoint-sign
+last-opposite time, the comparison with the last-zero time, and the associated
+path transforms. The two start-time conventions remain separate because they
+differ when the endpoint is zero; the endpoint-nonzero equality is explicit.
+The joint continuity helper used only in the transform proof remains private.
+These are two complete path-functional APIs in `Topology/ContinuousMap/`,
+while the laws and probability statements remain in
+`Probability/Process/Brownian/Meander/`.
+
+The five affected Lean targets, including the Brownian support and Rademacher
+terminal-transform clients, built successfully (3,583 Lake jobs).
+
+The 2026-10-30 reconciliation also reviewed `Topology/Algebra/BigOperators/PartialSum.lean`,
+`Topology/Algebra/InfiniteSum/ENNReal/PairPartition.lean`, and
+`Topology/Compactness/CompactSystem/Operations.lean`. The finite partial-sum
+map and diagonal/off-diagonal `tsum` identity are generic topological-algebra
+interfaces; Mathlib supplies their finite-sum and `tsum_prod` ingredients but
+not these packaged statements. `CompactSystem.Operations` extends Mathlib's
+compact-system predicate with constructions independent of the analytic
+paving client. These belong outside proof-only `Lemmas/` directories. The
+eight reviewed modules are recorded in the audit ledger; the continuous-path
+modules remain at `Topology/ContinuousMap`, while Brownian law statements
+remain at `Probability/Process/Brownian/Meander`.
+
+
+## Skorokhod path-space interface audit (2026-10-29)
+
+The deterministic path-space directory was checked module by module. Its seven
+direct modules each own a separate reusable interface: endpoint evaluation,
+linear-path estimates, closed range constraints, spatial scaling, path-space
+separability/completeness, J₁ separation, and the terminal-left endpoint
+convention. The eighth direct entry is the single `Lemmas/` subtree; its
+countable dense step-path family is proof support used only by
+`Path/Separable.lean`. This meets the directory limit and leaves one clearly
+marked proof-only subtree.
+
+The exact pinned Mathlib source was searched for Skorokhod/J₁ support: it has
+`IsCadlag` and generic topology/metric primitives, but no J₁ path-space model.
+Accordingly, these files remain in the project topology layer. Mogulskii's
+terminal-left endpoint convention is cited in `Path/TerminalLeft.lean`; its
+real-valued measurability adapter remains under `MeasureTheory`. The eight
+module ledger entries now record the semantic and ownership review.
+
+
+## Skorokhod compactness audit (2026-10-29)
+
+All five direct modules under `Topology/Cadlag/Skorokhod/Compactness/` were
+reviewed. `StepPath` owns the separated-knot parameter space and the continuous
+step-path constructor; `Basic` owns fixed-partition compact images and compact
+family bounds; `MovingPartition` packages the reusable compact finite-family
+interface; `Approximation` assembles the total-boundedness and compactness
+criteria; `CompactRange` gives relative compactness from compact range and
+uniform oscillation partitions. The moving-partition family is used by multiple
+independent constructions and is mathematical path-space data, so it remains a
+public interface rather than a `Lemmas/` implementation detail. The top-level
+directory has five direct modules and no proof-only files to group. The compact
+range criterion was checked against Billingsley, *Convergence of Probability
+Measures*, 1st ed., Chapter 3, §14, Theorem 14.3, p. 116. Mathlib's Ascoli APIs
+cover continuous-function families but supply no càdlàg `J₁` compactness
+criterion; the exact pinned-source scan confirms the project owns this
+specialization.
+
+
+## Skorokhod extended-distance audit (2026-10-29)
+
+The ten modules in `Topology/Cadlag/Skorokhod/EDistance/` were reviewed
+against Billingsley's logarithmic metric construction. `Basic` owns the
+pseudo-emetric uniform and J₁ costs; `Logarithmic/Basic` defines the
+Billingsley clock cost and its explicit conversion modulus; `Comparison`
+proves the local reverse bound and topology equivalence; `Separation` and
+`Topology` provide the metric and uniform-continuity interfaces;
+`Completion/AlignedCauchy` gives the summable clock-alignment limit, and
+`Completion/Completeness` gives the complete-space theorem. The two technical
+completeness steps and the one-use modulus threshold are under their respective
+`Lemmas/` subtrees. Each is used only inside its owning proof chain. The
+public alignment criterion remains outside `Lemmas/` because it states a
+standalone limit theorem for arbitrary càdlàg path sequences. The tree has at
+most six direct entries per directory. The pinned Mathlib source has generic
+metric and uniform-function machinery but no Skorokhod distance implementation.
+The Billingsley references in the Lean headers were checked against Theorems
+14.1–14.2 and equations (A4.12)–(A4.31), pp. 111–116.
+
+
+## Skorokhod time-change audit (2026-10-29)
+
+The time-change tree was reviewed as the deterministic clock foundation for
+J₁. `TimeChange/Basic` defines the order-isomorphism clock and its group
+action; `Breakpoint` provides the complete one-knot piecewise-affine clock;
+`LogDistortion` supplies Billingsley's secant-slope penalty; `Sequence`
+assembles finite and infinite budgets. `FinitePartition/` is split by
+construction, order/homeomorphism properties, and distortion bounds. Its
+`Affine` interpolation is a useful interval-rescaling specialization of
+Mathlib's `AffineMap.lineMap`, while `Lemmas/SecantSlope` contains only the
+internal estimate used by the distortion theorem. `Limit/` separates uniform
+convergence, strictness of the limiting clock, preservation of distortion,
+and tail factorization; each is an independently stated limit interface.
+Billingsley references in these modules were checked against §14,
+equations (A4.16)–(A4.31), pp. 113–116. Mathlib supplies the underlying
+order-isomorphism, affine-map, and uniform-limit primitives, not this clock
+object or its finite-partition and distortion API. Directory sizes remain under
+the eight-entry limit, with no duplicate `Lemmas` nodes.
+
+
+## Skorokhod corridor and evaluation audit (2026-10-29)
+
+The five direct corridor modules are semantic interfaces: `Basic` owns the
+uniform-margin open and closed events; `Dense` identifies them with countable
+rational-coordinate events and endpoint-return variants; `Endpoint` adds
+terminal windows and linear-path/ball consequences; `Upper` owns the one-sided
+upper event used by the meander argument; `Weight` builds bounded continuous
+cutoffs from the generic metric cutoff. The positive margin in the open event
+is part of its definition because a càdlàg left limit can reach a boundary
+without the path attaining it. This is consistent with the source proof and
+with the topology of the J₁ event.
+
+The four `Evaluation/` modules give finite-time continuity, fixed-time
+measurability, joint path/time measurability, and continuity of bounded
+continuous integral functionals. These are independent path-space interfaces;
+the scalar-probe, right-grid, and dominated-convergence constructions remain
+private in their theorem modules. Both directories stay under the eight-entry
+limit, and neither needs a `Lemmas/` folder. The exact pinned Mathlib tree has
+no J₁ path-space event or evaluation API; the modules extend its general
+metric, Borel, and càdlàg primitives. The one-sided corridor's source reference
+is Wang Yiyang's *Asymptotic Speed of the N-Branching Random Walk with Infinite
+Offspring*, Chapter 3, Lemma 3.5 and Appendix A.2, Lemma A.7.
+
+On 2026-10-30, `Dense.lean` was simplified to define the countable-coordinate
+event with one positive real margin. The former rational-margin definition and
+its public equality theorem duplicated this event; rational submargins now
+appear only in the local countable-union proof of measurability. The scaling
+theorems and càdlàg extension use the real-margin definition directly. All
+clients of the removed equality theorem were updated and their focused build
+passed.
+
+
+## Finite-step corridor path-class audit (2026-10-29)
+
+The deterministic finite-step corridor layer was checked against Mogul'skii's
+original 1974 article, §1, and against the path/event ownership boundaries in
+this repository. `Boundary/Basic` defines finite extended-real step boundaries
+and their traces; `Boundary/Partition` supplies the common jump partition.
+`Basic` owns the M₁/M₂ path-set predicates and the trace-separation criterion
+for a continuous admissible path. `UniformGrid` and `ContinuousBoundary`
+provide the continuous-boundary approximation and sandwich, while
+`Partition/{LowerCores,LowerGeometry}` gives finite deterministic interior
+geometry for endpoint concatenation. The one-terminal-jump corridor used in
+the normal-domain endpoint-window proof is kept with that proof under
+`Probability/Process/RandomWalk/SmallDeviation/Mogulskii/.../Lemmas/`; its
+concrete constructor and unit-energy calculation have no separate public
+topology or measure module. Mathlib has generic
+`IsCadlag`, finite-set, and uniform-grid primitives, but no finite EReal
+step-boundary or M₁/M₂ corridor interface. The subject has three direct entries
+with `Boundary/` and `Partition/` subgroups; the hierarchy stays below the
+per-directory entry limit.
+
+
+## Remaining topology-layer audit (2026-10-29)
+
+The final eight topology modules were checked. `Topology.lean` is the sole J₁
+metric/Borel entry; `Maps/{Continuous,Range}` gives the continuous-path
+embedding and the isometric subtype-forgetting map. `SmallDeviation/PathSets`
+owns law-independent path-event operations, and `RangeCover` applies the generic
+finite corridor-cover theorem to those sets. The two algebra/topology modules
+state a general continuity result for `Fin.partialSum` and a countable ENNReal
+diagonal/off-diagonal sum decomposition; neither duplicates Mathlib's existing
+API. `CompactSystem/Operations` extends Mathlib's `IsCompactSystem` by generic
+product and closure operations. Their ownership descriptions are in
+`MODULE_OWNERSHIP.md`. All eight ledger entries are now reviewed; the
+Topology production-module audit is complete.
+
+
+## Càdlàg path measure interfaces (2026-10-29)
+
+The 13 remaining production modules under `MeasureTheory/Measure/CadlagPath`
+were reviewed by ownership, abstraction level, clients, and overlap with the
+pinned Mathlib source. `ContinuityTimes`, `FiniteDimensional/Dense`,
+`RangeCover`, `Support/Corridor`, and `Tightness` expose complete path-law
+results. `Corridor/Weight` states the generic arbitrary-measure cutoff bound.
+`PathClass/StepCorridor/{Energy,Approximation,RelativeApproximation,
+ContinuousBoundary}` and `Partition/{LowerApproximation,LowerEnergy,UpperEnergy}`
+form the finite-boundary energy and approximation interfaces; their distinct
+definitions and limit statements remain with the measure-theoretic corridor
+owner. Mathlib supplies the underlying measure, Borel, and càdlàg primitives,
+but no finite extended-real step-corridor energy or dense-evaluation
+uniqueness interface.
+
+The one-client unit-tube terminal-window constructor and its energy identity
+were moved out of public topology and measure modules into the normal-domain
+Mogulskii endpoint proof's `Lemmas/EndpointWindowCorridor.lean`. Its concrete
+path and energy steps are private to that proof; the reusable event, energy,
+and approximation interfaces remain in their semantic owner modules.
+
+
+## Brownian construction and path-law interfaces (2026-10-29)
+
+The 16 pending modules in `Probability/Process/Brownian` were reviewed
+against Mathlib's `IsPreBrownianReal` and `IsBrownianReal` interfaces, the
+pinned BrownianMotion dependency, their production clients, and the cited
+proof routes. The grid laws, finite-horizon reversal, path-law uniqueness and
+scaling, support criteria, and Brownian corridor estimates are complete
+Brownian-specific interfaces. Generic path embedding, finite covers, and
+measure operations remain with `Probability/Process/Path`, `Topology`, and
+`MeasureTheory`. The one-use fourth-moment Kolmogorov estimate now lives under
+`Construction/Lemmas/`; `PreBrownianModification` uses the package's generic
+Kolmogorov-Chentsov theorem.
+
+The vendored BrownianMotion source contains a more general
+`IsPreBrownianReal.isAEKolmogorovProcess`, but building its
+`BrownianMotion.Gaussian.BrownianMotion` module currently fails in transitive
+`BrownianMotion.Auxiliary.HasLaw`, `KolmogorovExtension4.KolmogorovExtension`,
+and `BrownianMotion.Gaussian.Moment` modules against the pinned Mathlib
+revision. The project therefore keeps only its Gaussian fourth-moment adapter
+as internal proof support instead of importing that unbuildable umbrella.
+
+
+## Paving, capacity, and compact-system abstraction review (2026-10-29)
+
+Semantically reviewed the seven modules under `MeasureTheory/Analytic/Paving/`
+and the four under `MeasureTheory/Analytic/Capacity/`. The paving foundation,
+paving-analytic definition and closure operations, interval characterization,
+projection theorem, capacity structure, projected-capacity construction,
+countable-closure theorem, and Choquet consequences each define complete,
+abstract interfaces. The single finite-union representation adapter remains
+in `Paving/Lemmas/FiniteUnion.lean`; its two clients are the paving projection
+and capacity projection proofs. The antitone-intersection projection result
+itself stays public because its statement applies to arbitrary set families
+and compact systems.
+
+The bidirectional ownership review found generic compact-system facts still
+embedded in `Paving/Basic.lean`: finite-subset and interval systems,
+equivalence transport, and sigma/sum constructions. These now live in
+`Topology/Compactness/CompactSystem/Operations.lean` beside the existing
+generic product and closure operations. Their former declarations were removed
+from the analytic paving module; callers import the topological owner. This
+uses Mathlib's `IsCompactSystem` directly and avoids compatibility aliases.
+
+The official [Mathlib Polish-space analytic-set module](https://leanprover-community.github.io/mathlib4_docs/Mathlib/MeasureTheory/Constructions/Polish/Basic.html)
+provides `AnalyticSet`, `MeasurableSet.analyticSet`, and continuous-image
+results. The [Brownian Motion in Lean project](https://github.com/RemyDegenne/brownian-motion)
+contains a separate Choquet/paving development, but its vendored
+`BrownianMotion/Choquet/CompactSystem.lean` still emits `sorry` warnings for
+compact-system results. The local compact-system extensions have complete
+proofs against the pinned Mathlib interface, so this project keeps its generic
+completed versions and does not import the unfinished alternatives.
+
+The prior assertion that Mathlib had no `AnalyticSet` API was inaccurate; it
+is corrected above. The local continuous-image wrapper was deleted because
+Mathlib already supplies the result and the wrapper had no clients. The 11
+remaining paving/capacity modules plus `Topology/Compactness/CompactSystem/Operations`
+build successfully with the pinned toolchain (2,007 Lake jobs). At this
+checkpoint the production ledger covers all 1,607 Lean modules: 718 have a
+completed semantic review and 889 remain. The structural scan finds no
+unledgered modules, same-stem file/directory collisions, `Lemmas.lean` versus
+`Lemmas/` conflicts, overfull directories, or parent-prefixed module names;
+`git diff --check` passes.
+
+The 2026-10-30 ledger reconciliation confirms all four modules in
+`MeasureTheory/Analytic/Capacity/` as reviewed. The capacity structure,
+countable-closure capacitability theorem, projected-capacity construction,
+and Choquet consequences are complete abstract interfaces. The recursion
+used to select countable approximants and the projection-to-countable-closure
+argument remain private or under `Paving/Lemmas/`; they are proof support,
+whereas the exported capacitability and projection statements are reusable
+results at the capacity layer. Pinned Mathlib supplies general analytic sets
+and null-measure operations, but the inspected measure-theory and topology
+sources have no paving-indexed capacity or Choquet-capacitability interface.
+Source references identify He, Wang, and Yan, Theorems 1.34–1.35, and
+Bichteler, Appendix A.5.8(ii).
+
+During the same review, `Analytic/Paving/Analytic/Basic.lean`'s public
+`Set.iInter_prod` had only one client and duplicated the coordinate-reversed
+form of Mathlib's `Set.prod_iInter`. The public wrapper is removed; the
+coordinate-specific identity is local to `Analytic/Projection.lean`, where it
+is used. `lake build MeasureTheory.Analytic.Paving.Analytic.Projection`
+completed successfully (1,529 jobs).
+
+The reconciled production ledger now records 770 of 1,606 modules as
+semantically reviewed and 836 pending. This checkpoint includes all
+production modules in `Combinatorics/`, the three audited linear-algebra
+modules, the 11 paving/capacity modules, and eight non-càdlàg topology
+modules. The 137 `BranchingProcessTest/` files remain a separate organization
+review scope.
+
+
+## Measure-theoretic path and integration audit (2026-10-29)
+
+Reviewed the remaining 14 pending `MeasureTheory` modules against the pinned
+Mathlib source, their declarations, and production clients. Generic integral
+composition, finite partial-sum measurability, varying-set integral limits,
+countable-selector evaluation, finite-set filtering, measurable options,
+strict measurable-space separation, and finite-cover outer-measure bounds
+remain at their semantic owners. The three `StepCorridor` modules expose
+boundary, Borel-event, and null-measurability interfaces, while continuous
+oscillation and terminal-left modifications remain in the measurable-space
+layer. `integral_comp_of_integrable` is now stated for real normed-space-valued
+functions and does not assume injectivity.
+
+The càdlàg path audit found two definitions of rational unit-interval
+coordinates. Both now use `RationalCoordinate.UnitInterval`; the generic dense
+evaluation map and its measurable embedding live in
+`MeasureTheory/MeasurableSpace/CadlagPath/Basic.lean`, beside the Borel
+structure they generate. The redundant local rational-time subtype/map and
+the duplicate path-law embedding specialization were removed. Finite-measure
+uniqueness remains in `MeasureTheory/Measure/CadlagPath/FiniteDimensional/Dense.lean`.
+The affected modules and their clients build successfully.
+
+The production ledger still covers all 1,607 Lean modules. At this checkpoint,
+762 have completed semantic review and 845 remain; every ledger entry has a
+successful Lake build. The structural scan reports zero unledgered modules,
+same-stem file/directory collisions, same-name parent modules, directories
+with more than eight direct Lean modules, conflicting `Lemmas.lean` and
+`Lemmas/` entries, or filenames that repeat their parent directory name.
+
+The 2026-10-30 ledger reconciliation separately confirms
+`MeasureTheory/Integral/Lebesgue/RestrictLimit.lean` and
+`MeasureTheory/Integral/MeasurePreserving.lean`. The former specializes
+dominated convergence to measurable bands that almost every point eventually
+leaves; Mathlib's `tendsto_setLIntegral_zero` instead assumes that the
+measures of those bands tend to zero. The latter removes the
+`MeasurableEmbedding` hypothesis from `MeasurePreserving.integral_comp` when
+the integrand is integrable, and provides its invariant-set set-integral
+counterpart. Both are retained as general measure interfaces. The current
+production ledger contains 1,606 modules: 772 reviewed and 834 pending.
+
+The same reconciliation confirms `MeasureTheory/Function/FinPartialSum.lean`
+and `MeasureTheory/OuterMeasure/Finite/Cover.lean`. The former exposes the
+measurability of finite partial-sum coordinates for arbitrary measurable
+additive monoids; the latter gives finite-cover consequences for arbitrary
+outer measures using Mathlib's finite subadditivity. Neither belongs under a
+probability-specific owner. The current ledger now records 774 reviewed and
+832 pending production modules.
+
+
+## Characteristic-function distribution API review (2026-10-29)
+
+Reviewed the 11 modules under `Probability/Distributions/CharacteristicFunction/`
+against pinned Mathlib's characteristic-function and Gaussian Fourier APIs,
+their public declarations, and their internal proof structure. The cosine
+defect, symmetrized difference law and tail comparison, regular-variation
+transfer, Gaussian/Laplace identities, truncated-moment comparisons, and
+frequency-average/integrated-tail conclusions are probability-level results
+that complement Mathlib's characteristic-function primitives and the generic
+cosine Tauberian kernels in `Analysis/Fourier/CosineTauberian`. The supporting
+pointwise bounds and interval identities remain private inside their owning
+proof modules. Gaussian smoothing now reuses the existing `cosineDefectIntegral`
+API instead of defining a second local cosine defect.
+
+At this checkpoint, 773 of the 1,607 production modules have completed
+semantic review and 834 remain. The changed characteristic-function module
+builds successfully with its pinned Mathlib dependency.
+
+
+## Truncated-moment and tail interface review (2026-10-29)
+
+Reviewed all five modules under `Probability/Distributions/Moments/Truncated/`
+against Mathlib's generic Layercake, the local regular-variation API, and
+production clients. The truncated-moment definition, its capped-moment
+representations, tail-integral equivalences, and regular-variation criteria
+form one reusable distribution-level interface, so the existing `Basic`,
+`Layercake`, and tail/asymptotic split matches the mathematics. The module
+boundaries do not duplicate Mathlib's generic layer-cake theorem: they state
+its real-valued truncated-moment specializations.
+
+The audit ledger now records 778 reviewed modules and 829 pending modules out
+of 1,607 production Lean files.
+
+
+## Elementary real and Poisson distribution review (2026-10-29)
+
+Reviewed the Rademacher and scalar-CDF-scaling interfaces and both Poisson
+modules against the pinned Mathlib Bernoulli, CDF, and Poisson APIs. The
+Rademacher law remains a specialization of Mathlib's Bernoulli measure; the
+positive-dilation CDF formula fills a generic mapping gap. Mathlib owns the
+Poisson PMF, normalization, and integration bridge, while the project module
+provides its moment sums and integral consequences. The marked-event bounds
+are stated under arbitrary independent probability-law data and remain a
+reusable Poisson event interface. All four modules build successfully.
+
+The ledger now records 782 reviewed modules and 825 pending modules out of
+1,607.
+
+
+## Stable-domain norming asymptotics review (2026-10-29)
+
+Reviewed the five modules under
+`Probability/Distributions/Stable/Attraction/Norming/Asymptotics/` against
+the local regular-variation and rounded-block APIs and the pinned Mathlib
+tree. Their results specialize the stable truncated-moment factor, stable
+time scale, and norming relation; the general asymptotic-inverse argument is
+already owned by `Analysis/Asymptotics/RegularVariation/AsymptoticInverse`
+and is reused directly. The modules therefore remain in the stable-domain
+layer, while Potter, regular-variation uniformity, tail integration, and floor
+rounding stay with their generic owners. Pinned Mathlib contains no stable
+domain-of-attraction package. This placement follows Mathlib's stated
+emphasis on generality and the option of a project-level library for theories
+outside its current scope ([contributing guide](https://leanprover-community.github.io/contribute/index.html)).
+
+The ledger now records 787 reviewed modules and 820 pending modules out of
+1,607.
+
+
+## Stable-law operations and support placement review (2026-10-29)
+
+Reviewed the stable-law convolution, reflection, positive-scaling, and
+half-line-mass interfaces against the pinned Mathlib measure/convolution APIs,
+the local stable-law predicate, their module headers, and production imports.
+Mathlib supplies the general measure pushforward and convolution operations;
+the stable-specific closure laws, convolution semigroup, roots, and support
+consequences remain owned by `Probability/Distributions/Stable`. The
+CDF-at-zero and half-line-mass results describe support, so `Sign.lean` now
+lives under `Stable/Support/` rather than `Stable/Operations/`. All imports were
+updated without retaining a compatibility alias.
+
+The four audited modules and their direct import clients passed a focused Lake
+build (3,790 jobs). The current structural scan covers all 1,607 production
+modules and finds zero same-level file/directory name collisions, zero
+parent-name modules, zero directories with more than eight direct Lean files,
+and zero `Lemmas.lean`/`Lemmas/` conflicts. The ledger now records 791 modules
+with semantic review complete and 816 pending out of 1,607; all entries have a
+successful Lake build.
+
+
+## Stable-law support module review (2026-10-29)
+
+Reviewed `Stable/Support/BoundedSupport.lean` and `Stable/Support/IndexOne.lean`
+against Mathlib's generic variance, exponential-integrability, and measure APIs,
+then checked their production clients. The files group complete stable-specific
+conclusions: bounded intervals cannot carry full mass below index two, the
+index-two law has unbounded positive support under the CDF sign condition, and
+the index-one law has positive mass on both half-lines. The exponential
+non-integrability statement is the explicit supporting fact for the index-one
+tail results. No stable-specific support theorem exists in the pinned Mathlib
+tree, so these interfaces remain under the stable-law owner. Both modules and
+their direct production clients pass the focused build recorded above.
+
+The audit ledger now records 793 semantically reviewed modules and 814 pending
+modules out of 1,607; every module entry has a successful Lake build.
+
+
+## Stable Lévy-measure and generic cutoff ownership audit (2026-10-29)
+
+Reviewed the stable Lévy-measure `Scaling`, `Tail`, `Cutoff`, and
+`SignOfJumps` modules against the generic Lévy-measure cutoff API, the
+Lévy--Khintchine finite-variation module, Poisson unit-time intensity APIs, and
+all production clients. The existing tree already provides generic reciprocal
+jump bands and small-band cutoff selection in
+`MeasureTheory/Measure/Levy/Cutoff`. The finite-mass theorem for every
+reciprocal large-jump band was moved there as
+`IsLevyMeasure.measure_largeJumpBand_lt_top`, and all callers now use that
+generic result.
+
+The first-moment `smallJumpMean` and derived `uncompensatedDrift` definitions
+were moved from the stable-specific cutoff proof to
+`Probability/Distributions/InfinitelyDivisible/LevyKhintchine/FiniteVariation`,
+which already owns the canonical compensation and uncompensated-integrand
+identities. The finite truncated first-moment implication for the unit-time
+small-jump mark is now the generic
+`Probability/RandomMeasure/Poisson/Intensity/LevyCutoff` result for any Lévy
+measure. Its stable-only wrapper and two unreferenced cutoff convenience
+wrappers were removed, along with the now-empty `Stable/LevyMeasure/Cutoff/Basic`
+module. Stable drift cancellation, small-jump variation, homogeneous tails,
+window positivity, and CDF-derived jump signs remain in their stable-specific
+owners. The tail-to-window measure inequalities in `Tail/Windows` are short,
+one-module proof support and stay private there.
+
+The focused build of the new generic interface, all stable Lévy-measure
+modules, and their direct jump-model/entrance clients completed successfully
+(3,652 jobs). The current structural scan still covers 1,607 production
+modules, with no same-level file/directory conflicts, parent-name modules,
+overfull directories, or `Lemmas.lean`/`Lemmas/` conflicts. The ledger now
+records 803 semantically reviewed modules and 804 pending modules; every entry
+has a successful Lake build.
+
+
+## Stable-law definitions, characteristic functions, and exponents (2026-10-29)
+
+Reviewed the real-valued stable-law predicates, their characteristic-function
+modulus consequences, strictly stable Lévy–Khintchine exponent identities, and
+the stable-specific Lévy–Khintchine existence/uniqueness interface. The
+characteristic-function modulus file was moved from `Stable/Exponent/` to
+`Stable/CharacteristicFunction/Modulus.lean`: its hypotheses and conclusions
+concern affine alpha-stability and the modulus of the characteristic function,
+not a Lévy–Khintchine exponent. All imports were updated without a compatibility
+alias. `Stable/Exponent/Basic.lean` remains the owner of exponent homogeneity,
+while the stable-specific representation result remains under `Stable/Levy/`.
+The `Stable/Basic.lean` header now describes its actual real-valued,
+probability-measure scope rather than future multivariate generalizations.
+
+This placement follows the pinned Mathlib organization: general characteristic-
+function results live under characteristic-function or independence owners,
+while distribution-specific predicates and consequences live with the
+corresponding distribution (for example, Gaussian results under
+`Probability/Distributions/Gaussian`). The pinned Mathlib tree has no stable-law
+predicate to reuse. The moved module, stable-law foundations, and direct
+production clients pass the focused Lake build (see current turn build output).
+The ledger now records 807 semantically reviewed modules and 800 pending modules
+out of 1,607; every module has a successful Lake build.
+
+
+## Stable-domain interface ownership review (2026-10-29)
+
+Reviewed the stable-domain wrappers, characteristic-function specialization,
+and stable norming definitions. The general normalized-i.i.d.-sum formula and
+its characteristic-function limit remain in `DomainOfAttraction`; the stable
+layer specializes those results using the stable characteristic-function
+modulus. The stable norming module defines the truncated-moment factor and its
+associated rates, while general regular variation remains in `Analysis`.
+Removed the unused pointwise existential projection from
+`Stable/Attraction/CharacteristicFunction.lean`; the all-frequency theorem
+already supplies the client-facing result and no caller used the projection.
+The three reviewed modules and their clients compile successfully.
+
+The ledger now records 810 semantically reviewed modules and 797 pending
+modules out of 1,607; every module has a successful Lake build.
+
+
+## Finite-variance norming ownership (2026-10-29)
+
+The positive-second-moment constructor for the index-two stable norming and
+its slowly-varying truncated-moment consequence were initially grouped with
+the Gaussian domain-of-attraction proofs. Their hypotheses do not include
+Gaussian attraction: they follow from finiteness and positivity of the second
+moment. Moved both results to `Stable/Attraction/Norming/SpecialCases/IndexTwo`,
+where the asymptotic variance-scale theorems for index-two normings already
+live. `Normal/Basic` now contains only Gaussian-attraction results, and its
+unneeded public import of the stable-norming definitions was removed. Updated
+the sole direct client import; no compatibility theorem remains. The affected
+normal-attraction modules and the test client compile successfully.
+
+
+## Gaussian-domain tail, centering, and norming modules (2026-10-29)
+
+Reviewed the five modules under `Stable/Attraction/Normal`. They form a
+coherent proof sequence: characteristic-defect tail estimates, Feller's
+quadratic-tail consequence, first-moment integrability and centering, and the
+resulting quadratic norming and triangular-array bounds. Their reusable
+ingredients—regular variation, Potter bounds, generic characteristic-function
+Tauberian estimates, truncated-moment integrals, and centering criteria—remain
+in their generic owners. The combined Gaussian-attraction results stay under
+`Normal/`; the positive finite-second-moment norming constructor was moved to
+`Norming/SpecialCases/IndexTwo` in the preceding audit. The private bundled
+tail estimate has only local proof use, while the four public quadratic-tail
+consequences have several production callers. All five modules and their
+normalization clients pass the focused build.
+
+
+## Stable norming ratios and rescaling (2026-10-29)
+
+Audited the stable-domain norming-ratio chain and its Mogulskii rescaling
+interface. The public results remain in `NormingRatios/`: index-ratio and
+divergence limits, compact-uniform characteristic-defect convergence,
+continuous-frequency regular variation, and stable tail/truncated-moment
+consequences. Generic regular-variation and Tauberian machinery stays in
+`Analysis/`; sum-law, first-crossing, and local comparison calculations remain
+proof details. The rounded integer reindexing and index-one sine-centering
+transfer are now organized under their owning `Rescaling/Lemmas/` and
+`Stable/Discrete/Lemmas/` directories. Gaussian-law characterization and the
+Gaussian truncated-moment specialization remain at their distribution and
+norming semantic owners.
+
+The focused build of the 16 stable norming/ratio modules and the direct
+centering-reindexing clients succeeded (3,969 Lake jobs). The structural scan
+now covers 1,609 production modules: it finds no same-stem file/directory
+collisions, parent-name modules, directories with more than eight direct Lean
+files, or `Lemmas.lean`/`Lemmas/` conflicts. The semantic ledger records 826
+reviewed modules and 783 pending modules; every listed module has a successful
+Lake build.
+
+
+## Drifted-tube finite-variance staircase (2026-10-29)
+
+Audited the complete staircase proof family for the two endpoint lower bounds.
+`FiniteVarianceLower/EndpointBounds.lean` is the sole public theorem entry in
+that directory. The internal staircase modules are organized under
+`FiniteVarianceLower/Lemmas/Staircase/`, with separate `Setup`, `Binning`,
+`Endpoint`, `Rate`, `Blocks`, and `Concrete/{Lower,Upper}` stages. Their
+definitions and estimates depend on this specific finite-bin tilted corridor;
+none supplies an assumption-free abstraction that belongs outside the proof
+subtree. The finite-block exponential identities reuse Mathlib's
+`Finset.sum_range_tsub` and `Real.exp_sum`.
+
+One complete result did not depend on staircase geometry: the centered finite-
+variance robust-entrance exponential budget. It moved from
+`DriftedTube/FiniteVarianceLower/Lemmas/Staircase/Concrete/EntranceBudget.lean`
+to `Entrance/Robust/FiniteVariance.lean`, where it follows the event and power-
+lower interfaces it specializes. The inverse-square constant extraction
+remains private in that module. Updated both endpoint chains to import the
+entrance owner directly; no compatibility alias remains.
+
+The focused build of the robust-entrance theorem, the full staircase entry,
+and all affected clients succeeded (4,797 Lake jobs). The structural scan
+continues to cover 1,609 production modules with no file/directory naming
+conflicts, parent-name modules, overfull directories, or `Lemmas.lean`/
+`Lemmas/` conflicts. The semantic ledger now records 860 reviewed modules
+and 749 pending modules; every listed module has a successful Lake build.
+
+
+## Galton–Watson offspring laws and moments (2026-10-29)
+
+Reviewed the 15 production modules under `Probability/BranchingProcess/`. The
+`Offspring/` files form the single-configuration law, mark-map, point-measure,
+count, and independent-field interfaces. The `GaltonWatson/` files define the
+presampled process law, generation observations, and finite-slot moment
+recurrences; the general Paley–Zygmund and second-moment growth results remain
+in `Probability/MeasureTheory/Moments/`. The two one-use expansion and
+finiteness files stay under `GaltonWatson/Moments/Lemmas/`. The generic
+product-law and independent-coordinate APIs are supplied by Mathlib
+`Measure.infinitePi` and `iIndepFun`, so no additional product-independence
+framework was introduced. Galton–Watson generation uses the existing
+mark-generic address-field independence interface at
+`BranchingRandomWalk/Genealogy/Exploration/Abstract/AddressFiltration` for its
+`PUnit` specialization rather than duplicating that interface.
+The focused audit build completed successfully: the 15 modules and their
+dependency graph built in 3,163 Lake jobs. The ledger now records 875 of
+1,609 production modules as semantically reviewed and 734 as pending; every
+ledger build field remains `pass`.
+
+
+## Random branching-step field interfaces (2026-10-29)
+
+Reviewed the 17 pending modules under `Probability/BranchingRandomWalk/Step/`.
+The `Presentation/`, `Field/`, and `Law/` APIs distinguish coordinate sampling,
+measurable assembly, deterministic optional-step maps, and IID address fields.
+`Ordering/` owns measurable order realization, ordered field observations, and
+transport of the ordered one-step law; `PointMeasure/` owns the random
+point-measure observation and generic point-process adapter;
+`Position/Measurability` owns probabilistic adaptedness of deterministic
+positions. These are complete domain interfaces, so no `Lemmas/` subtree is
+needed for them. The IID product measure is shared with
+`BranchingProcess/Offspring/FieldLaw`, which uses Mathlib's infinite-product
+and independent-coordinate API; the BRW-facing law module reuses that
+construction rather than proving a second product law.
+The focused step-field build completed successfully (3,191 Lake jobs). The
+ledger now records 892 of 1,609 production modules as semantically reviewed
+and 717 as pending; all listed module builds pass.
+
+
+## Abstract address exploration and stopped subtree laws (2026-10-29)
+
+Reviewed the 11 modules under `Probability/BranchingRandomWalk/Genealogy/
+Exploration/Abstract/`. Renamed `DomainFlow.lean` to `AddressFiltration.lean`
+because it defines coordinate-generated address spaces and their generation
+filtrations. Renamed `StoppedPopulation/DependentLaw.lean` to
+`StoppedPopulation/RandomCardinalityLaw.lean`; migrated it and
+`StoppingSubtree.lean` to explicit Lean modules with declared public interfaces.
+No compatibility paths remain. The `Exploration/` directory owns inspected
+domains and countable-range subtree selection; fixed-root product laws stay
+under `JointSubtrees`; stopped scalar and vector laws remain separate from the
+random-cardinality mixture result. The fixed-population cell factorization is a
+substantive public theorem used by the mixture theorem and a second
+selected-population specialization. One-use selections, enumeration, and cell
+partition calculations are private in their theorem modules, so this cluster
+does not need another `Lemmas/` subtree. The address-filtration results use
+Mathlib's generic independence and product-measure APIs, while the address
+spaces and descendant geometry remain branching-step-specific.
+
+The renamed and migrated interfaces compiled successfully.
+
+
+## Root-indexed address filtrations (2026-10-29)
+
+Reviewed the four modules under `Probability/BranchingRandomWalk/Genealogy/
+Exploration/RootIndexed/AddressFiltration/`. Renamed the old `DomainFlow/`
+folder to `AddressFiltration/`: its modules define coordinate sigma-algebras,
+root-restricted filtrations, fresh-descendant independence, and the measurable
+past/future decomposition of a generation. This is a reusable root-indexed
+field interface, distinct from the branching-specific exploration geometry.
+`PastFuture` and `RootSubset` use Mathlib's independence API for disjoint
+coordinate sigma-algebras; `Exploration` specializes it to fresh descendants;
+`GenerationDecomposition` gives the concrete reconstruction maps. Updated
+direct client descriptions to call these objects filtrations. No compatibility
+module remains at the old path.
+
+The four modules and four direct clients compiled successfully (3,157 Lake
+jobs). The semantic ledger now records 907 of 1,609 production modules as
+reviewed and 702 as pending; every ledger build field remains `pass`.
+
+
+## General kernel module ledger reconciliation (2026-10-30)
+
+Rechecked the 17 modules under `Probability/Kernel/` against their current
+source and production clients. The interfaces divide into generic kernel
+closure and sub-Markov structure, measurable noisy/partial steps and finite
+histories, finite-state matrix representation, remaining-mass estimates, and
+return/bridge constructions. The current layout keeps these semantic owners
+separate; all are complete reusable APIs rather than proof-only fragments.
+Mathlib's pinned kernel modules supply `Kernel`, Markov-kernel structure,
+composition, powers, and map/comap operations. Its [kernel definitions]
+(https://leanprover-community.github.io/mathlib4_docs/Mathlib/Probability/Kernel/Defs.html)
+and [composition API]
+(https://leanprover-community.github.io/mathlib4_docs/Mathlib/Probability/Kernel/Composition/Comp.html)
+do not define the row-mass-at-most-one `IsSubMarkovKernel` interface or the
+option-valued noise-step path API; those remain at this repository's kernel
+owner. The existing ownership audit already established the same Mathlib
+boundary; this pass reconciled its stale per-module ledger entries.
+
+The ledger now records 924 of 1,609 production modules as semantically
+reviewed and 685 as pending. All 1,609 entries have passing recorded Lake
+builds.
+
+
+## Measure-theoretic moment interfaces (2026-10-30)
+
+Reviewed the four public modules under `Probability/MeasureTheory/Moments/`
+against their statements, clients, and pinned Mathlib sources. `PaleyZygmund`
+owns the general threshold and support-event inequalities; `SecondMomentGrowth`
+owns the sequence-level geometric recurrence and its probability consequences;
+`SecondMomentTail` owns the measure-level second-moment tail estimate; and
+`ExponentialMoment` gives an explicit fourth-moment bound for the negative
+part from a one-sided exponential integral. Their interfaces apply beyond the
+branching or random-walk models of their current clients, so they stay at the
+measure-theoretic probability layer.
+
+Mathlib's [`IntegrableExpSet` moment results]
+(https://leanprover-community.github.io/mathlib4_docs/Mathlib/Probability/Moments/IntegrableExpMul.html)
+prove all finite moments when zero is interior to the moment-generating
+function's integrability domain. That covers moment integrability, but not the
+explicit logarithmic fourth-moment bound needed by the current client. The
+Paley--Zygmund proof uses Mathlib's Hölder/Lp inequalities, while the
+second-moment tail result specializes Mathlib's [Markov inequality]
+(https://leanprover-community.github.io/mathlib4_docs/Mathlib/MeasureTheory/Integral/Lebesgue/Markov.html). No duplicate generic integration inequality was introduced.
+
+The four module reviews are recorded in the ledger. The aggregate count
+originally written here did not match the checked-out CSV and is superseded by
+the source-path reconciliation recorded below.
+
+
+## Nonnegative rational topology ownership (2026-10-30)
+
+Moved the canonical inclusion and density results for $\mathbb Q_{\ge 0}$ in
+$\mathbb R_{\ge 0}$ from `Probability/Process/TimeGrid/Dense/` to
+`Topology/Order/NNReal/Rational.lean`. The identity wrapper
+`ProbabilityTheory.nonnegativeRationalTime` and its forwarding lemmas were
+removed; all seven process and path clients now use the canonical coercion
+and the topology-owned density/interval-selection theorems. The pinned
+Mathlib API has rational density for casts into archimedean ordered fields,
+while this module supplies the corresponding nonnegative-subtype statement.
+The new owner and its seven clients compile successfully.
+
+
+## Production ledger reconciliation (2026-10-30)
+
+A fresh source-path comparison found that the prior inventory statement of
+928 reviewed and 681 pending modules did not match the checked-out CSV. I
+reconciled the ledger against the current production tree: it now has exactly
+1,609 module paths, with no missing or stale paths. The reconciliation removed
+34 obsolete paths and added 41 current paths. Completed reviews were carried
+forward only for groups whose audit records and current sources agree; the
+current count is 339 semantically reviewed and 1,270 pending. Structural
+checks found no same-stem file/directory conflicts, parent-name module files,
+overfull directories with more than eight direct modules, or duplicate
+`Lemmas.lean`/`Lemmas/` owners. The 33 previously unrecorded module targets
+compiled with their dependency closure in 4,355 Lake jobs; every ledger build
+entry is now `pass`. The semantic audit remains incomplete.
+
+
+## Independent-increment module audit (2026-10-30)
+
+Audited the eight modules under `Probability/Process/IndepIncrements/` and
+compared their statements with the pinned Mathlib
+[`HasIndepIncrements` API](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Probability/Independence/Process/HasIndepIncrements/Basic.html)
+and its source in `Vendor/Mathlib/Mathlib/Probability/Independence/Process/HasIndepIncrements/Basic.lean`.
+`HasIndepIncrements.nat` and Mathlib's finite-family independence lemmas
+supply the sequence and vector foundations; `indepFun_sub_sub` gives the
+adjacent-interval case. The repository's `indepFun_disjoint_sub_sub` extends
+that result to two intervals separated by a nonempty gap, and
+`indepFun_increment_vectors` packages independence of arbitrary disjoint
+finite sets of interval increments. `BlockVectors` uses the latter. The
+specialized every-other-interval wrapper had no clients and was removed; its
+proof pattern is already available through `iIndepFun.precomp`.
+
+Renamed `IndepIncrements/Basic.lean` to `TimeChange.lean` because its sole
+result composes independent-increment processes with monotone deterministic
+time maps. Reviewed the arbitrary-query finite-grid bridge in
+`FiniteObservations/BlockPaths.lean` as a reusable public extension: Mathlib’s
+`HasIndepIncrements.indepFun_sub_sub` covers one adjacent increment pair, while
+`indepFun_finiteObservationQueries` handles arbitrary query families whose times
+lie in two adjacent blocks. The local order-index inverse, finite-grid extension,
+and coordinate-projection wrappers remain private implementation details. Mathlib's
+`Finset.orderEmbOfFin` and `orderIsoOfFin` already provide the general finite
+ordered-set enumeration and inverse. The process-facing `finiteTimeGrid`
+and its monotonicity remain beside `iIndepFun_finiteTimeGrid`, which adapts a
+finite set to the `Fin (n+1)` grid required by `HasIndepIncrements`.
+`FiniteDimensional` and `PathLaw/StationaryTimeChange` remain public because
+they give complete cross-space finite-dimensional and centered path-law
+identification theorems beyond Mathlib's projective-limit uniqueness result.
+
+The renamed, reorganized, and directly dependent modules compiled successfully
+with the pinned toolchain (3,173 Lake jobs). The ledger now records 347 of
+1,609 production modules as semantically reviewed and 1,262 as pending; every
+module path is present once and every recorded Lake build passes. The complete
+semantic audit and eventual PR merge remain outstanding.
+
+
+## Stable path-law layer (2026-10-30)
+
+Reviewed the eight stable `PathLaw` and `Brownian` modules against their
+callers and the pinned Mathlib sources. Mathlib already provides the general
+independent-increment predicate, Brownian Gaussian characterization, finite
+tuple insertion (`Fin.insertNth`), and the measurable finite-product
+reindexing used here; it does not provide the stable clock-process path-law
+predicate or the canonical unit-interval stable path-law construction. The
+former interfaces therefore stay in the stable-process layer.
+
+Moved the one-use zero-coordinate insertion, repeated-position pushforward,
+and zero-start calculations out of `PathLaw/MonotoneGrid.lean` into
+`PathLaw/Lemmas/MonotoneGrid.lean`, namespaced under
+`StablePathLaw.MonotoneGrid.Lemmas`. The public module now presents only the
+complete strict-to-monotone stable-grid theorem. Built that module, the stable
+path-law and Brownian adapters, and both direct theorem clients with
+`lake -Kjobs=2 build` (3,966 Lake jobs). The ledger now covers 1,610 production
+modules: 356 have completed semantic review and 1,254 remain pending. All
+recorded build fields pass. The repository-wide semantic audit and PR merge
+remain outstanding.
+
+
+## Lévy-process shifts (2026-10-30)
+
+Reviewed `Levy/Basic`, `Levy/Brownian`, and the stable-process shift adapter
+against the pinned Mathlib interfaces and repository call sites. Mathlib
+provides the process-level independent-increment predicate and Brownian
+characterization; the project owns the combined Lévy-process predicate,
+including stationary increments and càdlàg paths. The previous stable-only
+shift module repeated the increment and path arguments in separate stages.
+
+Added the generic `Probability.Process.Levy.Shift` result: for an
+additively commutative state space, $Y_t=X_{s+t}-X_s$ is a Lévy process. The
+stable specialization now uses the generic shift for its path properties and
+`HasStableClockIncrements.translate_comp_time` for its stable increment law.
+Both modules compiled with `lake -Kjobs=2 build`; the checked modules' Lake
+job count was 3,313 and then 3,043. The ledger covers 1,611 production
+modules, with 360 semantically reviewed and 1,251 pending; every recorded
+build field passes. The full semantic audit and PR merge remain outstanding.
+
+
+## Generic rational-range law transfer (2026-10-30)
+
+Reviewed `Probability/Process/Corridor/Range.lean` and
+`Probability/Process/Stable/Corridor/Law.lean` against their direct client and
+Mathlib's `IdentDistrib` measure interface. The generic corridor owner now
+contains the law-invariance theorem for rational range events; the stable
+module derives the rational-coordinate process law from stable clock
+increments and uses that theorem. The stable adapter remains a complete
+process-specific interface. Both modules build with `lake -Kjobs=2 build`
+(3,230 Lake jobs).
+
+The production ledger covers 1,611 modules: 362 have completed semantic
+review and 1,249 remain pending; every recorded structural scan and Lake build
+passes. The 137 `BranchingProcessTest` modules are tracked separately from the
+production semantic-review count. The repository-wide semantic audit remains
+in progress.
+
+
+## Stable clock-process interfaces (2026-10-30)
+
+Reviewed `Stable/Basic`, `Stable/Process`, `Stable/Levy`, and
+`Stable/FiniteDimensional` against direct callers, the repository's generic
+independent-increment module, and the pinned Mathlib process-law APIs. Mathlib
+provides independent increments, identical-distribution transfer, and the
+finite-dimensional-law uniqueness interface; the stable layer contributes
+strictly stable elapsed-clock increment laws, their càdlàg specialization,
+and the identity-clock Lévy adapter.
+
+Generalized the stable increment-vector, finite-grid position, and finite
+restriction law comparisons to allow processes on distinct probability
+spaces. The six affected entry and client modules build successfully with
+`lake -Kjobs=2 build` (3,230 Lake jobs). The production ledger contains
+1,611 modules, with 366 semantically reviewed and 1,245 pending. All recorded
+structural scans and Lake builds pass. The separate `BranchingProcessTest/`
+tree currently contains 137 Lean modules.
+
+
+## Stable fixed-time continuity and corridor endpoint transfer (2026-10-30)
+
+Moved the rational interior-oscillation-to-endpoint result out of the stable
+process module into `Probability/Process/Corridor/Range.lean`. The theorem now
+requires only almost-sure càdlàg paths and almost-sure continuity at time one;
+the stable partition client supplies these from the stable process and its
+fixed-time no-jump theorem. Mathlib provides the deterministic
+`Function.leftLim` limit API, while the process-level fixed-time no-jump
+argument remains stable-specific. The range owner, stable no-jump module, and
+direct partition client build with `lake -Kjobs=2 build` (3,312 Lake jobs).
+
+## Stable Poisson jump-model interfaces (2026-10-30)
+
+Reviewed the four `Stable/JumpModel` modules and their direct entrance-model
+client. `EndpointLaw`, `FiniteWindows`, `IncrementLaw`, and
+`IndependentIncrements` expose distinct complete laws for the canonical
+finite-variation stable jump construction, so they remain in the semantic
+`JumpModel/` layer. Added declaration docstrings to the path-increment and
+independent-increment entry points. The four modules and direct client build
+with `lake -Kjobs=2 build` (3,652 Lake jobs).
+
+The production ledger covers 1,611 modules: 371 have completed semantic
+review and 1,240 remain pending. All recorded structural scans and Lake builds
+pass. The separate `BranchingProcessTest/` tree contains 137 Lean modules.
+
+
+## Generic small-deviation energy normalization (2026-10-30)
+
+Reviewed `Probability/MeasureTheory/Asymptotics/SmallDeviation.lean` and the
+production clients of its rate and energy interfaces. The full-width scalar
+coefficient `smallDeviationEnergyCoefficient α C = -(C * 2^α)` depends only on
+the exponent and negative logarithmic rate constant. It has no stable-process
+assumption, so it now lives beside the generic power-law small-deviation rate;
+the stable `EscapeRate` subtree retains the process escape-rate statements.
+Updated the 20 production importers and one separately tracked test module,
+removed the former stable `EscapeRate/Normalization.lean` module without a
+compatibility alias, and updated the current ownership and formalization docs.
+The generic module and all 20 affected production client modules build with
+`lake -Kjobs=2 build` (4,150 Lake jobs); the separate test module was not built.
+A fresh structural scan found zero same-parent file/directory stem collisions,
+zero directories with more than eight direct Lean files, and zero
+`Lemmas.lean`/`Lemmas/` conflicts. The ledger now covers 1,610 production
+modules: 372 have completed semantic review and 1,238 remain pending. Mathlib's
+pinned API provides the asymptotic/filter primitives
+used by the generic rate theorem but no full-width small-deviation energy
+coefficient, so the scalar definition remains project-owned.
+
+
+## Generic logarithmic rate transfers (2026-10-30)
+
+Reviewed `Probability/MeasureTheory/Asymptotics/LogarithmicRate.lean` and its
+four direct Mogulskii clients. The finite-product lower transfer and eventual
+power-bound limsup transfer require only probability-valued sequences, finite
+products or a scalar power bound, and the stated asymptotic normalization.
+They carry no process assumptions and remain a cohesive public interface in
+the generic probability-asymptotics layer. Mathlib provides the component
+filter-limsup, ENNReal, and logarithm APIs, but the pinned API search found no
+bundled theorem with these rate-transfer hypotheses and conclusions. The module
+and all four clients build with `lake -Kjobs=2 build` (3,840 Lake jobs). The
+production semantic ledger now records 373 of 1,610 modules as reviewed and
+1,237 pending.
+
+
+## Measure-theoretic convergence interfaces (2026-10-30)
+
+Reviewed all six direct modules in `Probability/MeasureTheory/Convergence/`
+and their production clients. The folder has six direct Lean files, within the
+repository limit; there are no same-stem folder/file conflicts or
+`Lemmas.lean`/`Lemmas/` conflicts. Each module presents a complete abstract
+measure-theoretic interface: dominated-convergence tail integrals, second
+moment convergence from fourth moments and tails, its fixed-law and
+varying-law polynomial specializations, the L2/variance bridge, and a
+one-sided expectation transfer. Proof-only steps remain private beside their
+results, so an additional `Lemmas/` tier is not needed here. Mathlib provides
+dominated convergence, Hölder/Lp identities, variance identities, and power
+asymptotics; the combined tail-to-moment and tail-to-expectation transfers
+remain project-owned. Added exact references to Wang Yiyang's thesis, Chapter
+4, Proposition 3.1 and equation (4.16), where the source-facing applications
+are described. The six modules and two direct random-walk clients build with
+`lake -Kjobs=2 build` (3,714 Lake jobs). The ledger now records 379 of 1,610
+production modules as reviewed and 1,231 pending.
+
+
+## Nonnegative-real continuous-additive interface (2026-10-30)
+
+Rechecked `Analysis/FunctionalEquation/NNReal.lean` against Mathlib and its two
+stable-distribution clients. Mathlib's `map_real_smul` proves real-linearity
+for continuous additive homomorphisms whose domain is a real vector space; it
+does not cover `ℝ≥0` as the source. The local theorem is therefore a genuine
+generic extension, remains in the one-file `Analysis/FunctionalEquation/`
+module, and is not a proof-only lemma. Its API now takes an
+`AddMonoidHomClass` map plus continuity, matching Mathlib's generic map-class
+style and the statement of `map_real_smul`; clients package their additive
+functions as `AddMonoidHom`s. The three affected modules build successfully
+with `lake -Kjobs=2 build`. The production semantic ledger now records 380 of
+1,610 modules reviewed and 1,230 pending. Mathlib references checked:
+[`map_real_smul`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Topology/Instances/RealVectorSpace.html)
+and [`AddMonoidHomClass`/continuous map interfaces](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Topology/Algebra/ContinuousMonoidHom.html).
+
+
+## Deterministic branching-walk data and path positions (2026-10-30)
+
+Reviewed the eight pending interfaces under `Combinatorics/BranchingWalk/Basic/`. Their public objects belong to the deterministic branching-walk layer: pointwise finite-support and orderability predicates; sibling closure and relabelability; address-dependent displacement and mapped positions; and realized-particle sets with generation slices. Each supplies a complete reusable semantic interface, so none belongs under `Lemmas/` and no new `Lemmas/` directory is needed. The position layer already separates the generic fixed-increment `AdditivePath` interface from the state-dependent Ulam--Harris step field. Mathlib's `Quiver.Path` models composable arrows and endpoints; list folds and `mapAccumr` are generic traversals. None exposes the address-carrying marked-step displacement operation, so the review keeps that operation in its current semantic owner rather than adding a thin generic state-accumulator layer.
+
+Checked Mathlib at the pinned revision `380f2aafb622cb2c1c93dac545b6389083c68c51`: [Quiver.Path](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Combinatorics/Quiver/Path.html) and [List lemmas, including `mapAccumr`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Data/List/Lemmas.html). The 8 modules and 3 direct deterministic clients build with `lake -Kjobs=2 build` (1,920 Lake jobs). The production ledger now records 388 of 1,610 modules reviewed and 1,222 pending.
+
+
+## Generic lower-tail measure order and cloud slice measures (2026-10-30)
+
+Moved the relation on arbitrary measures `∀ a, μ (Iic a) ≤ ν (Iic a)` from the Cloud proof layer to `MeasureTheory/Measure/LowerTail.lean` as `Measure.LowerTailDominates`, with its reflexive and transitive laws. It has only the natural assumptions of a measurable space and preorder, and no finite-mass or probability hypothesis. The pinned Mathlib API has pointwise order on measures, which compares all measurable sets, and Borel-order uniqueness from half-line values, which proves equality under stronger hypotheses; neither defines this lower-tail inequality relation. Cloud modules now specialize the generic relation, with no compatibility alias.
+
+The same review found that `Cloud/SliceMeasure.lean` duplicated pinned Mathlib's `Measure.map_dirac'`; the local wrapper was removed and its sole use now calls Mathlib directly. Its generic indicator-sum/`encard` bridge is used once and is now private, while the public cloud-level threshold evaluation remains. Checked Mathlib at pinned revision `380f2aafb622cb2c1c93dac545b6389083c68c51`: [measure order](https://leanprover-community.github.io/mathlib4_docs/Mathlib/MeasureTheory/Measure/CompleteLattice.html), [Borel measure order and `ext_of_Iic`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/MeasureTheory/Constructions/BorelSpace/Order.html), and [`Measure.map_dirac'`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/MeasureTheory/Measure/Dirac/Basic.html). The generic module, the cloud slice measure module, and their Cloud order/coupling clients build with `lake -Kjobs=2 build` (2,040 Lake jobs). The production ledger now covers 1,611 modules: 390 have completed semantic review and 1,221 remain pending.
+
+
+## Time-indexed cloud interfaces and order-map abstraction (2026-10-30)
+
+Completed the semantic review of the deterministic cloud layer. Its directory
+now has ten Lean modules: four at `Cloud/` root for the labelled cloud, its
+geometric `CloudSet`, slice Dirac measures, coordinate measurability, and
+attained frontiers; five in `Cloud/Order/` for fixed-slice and all-time orders,
+cloud matching, and first-$N$ selection; and one `Cloud/Rank/Slice.lean` for
+cardinal ranks and their finite-order consequences. The folder groups complete
+public interfaces by model, order, and rank. Each directory is below the
+repository's eight-direct-file limit. The old `Rank/Descendant.lean` had no
+Lean clients and exposed a predicate-filtered predecessor cardinal together
+with a specialization of the sibling-rank identity; the existing slice-rank
+interface covers the used rank operations, so the unused module was removed.
+
+The order-dominating map bundle is generic in both carrier types and in the two
+score functions. Mathlib supplies `Set.MapsTo` and `Set.InjOn` as separate
+predicates; `RelEmbedding` is an embedding of one ordered carrier that
+preserves and reflects its relation. Neither is the cross-carrier structure
+`f '' source ⊆ target`, `InjOn f source`, and
+`targetScore (f a) ≤ sourceScore a`. The bundle and finite threshold-cardinality
+bound therefore moved from `Cloud/Order/DominatingMap.lean` to the generic
+`Order/DominatingMap.lean`; `Cloud.SliceDominatingMap` remains its cloud
+specialization. No compatibility alias was retained.
+
+The ownership table and production ledger now record these boundaries. The
+cloud citations identify Wang Yiyang, *Asymptotic Speed of the N-Branching
+Random Walk with Infinite Offspring*, Chapter 3, §3.4, and Bérard–Gouéré,
+“Brunet-Derrida behavior of branching-selection particle systems on the line,”
+§2.1, arXiv:0811.2782v3, DOI 10.48550/arXiv.0811.2782. The latter's upper-tail
+convention is represented through `OrderDual`.
+
+The generic order map, all ten remaining cloud modules, and their direct
+selection/coupling clients build with `lake -Kjobs=2 build` (2,051 Lake jobs).
+`git diff --check` passes. A fresh scan agrees with the ledger at 1,610
+production modules and finds zero same-stem file/directory pairs, zero files
+sharing their parent directory's stem, zero directories with more than eight
+direct Lean files, zero `Lemmas.lean`/`Lemmas/` pairs, and zero missing or
+stale ledger paths. Every recorded structural scan and targeted build passes.
+The production semantic ledger now records 400 of 1,610 modules reviewed and
+1,210 pending. Current pinned Mathlib references:
+[`Set.MapsTo` and `Set.InjOn`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Data/Set/Function.html),
+[`RelEmbedding`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Order/RelIso/Basic.html),
+and [`Finset.card_le_card_of_injOn`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Data/Finset/Card.html).
+
+## Ordered branching-step interfaces and finite-rank support (2026-10-30)
+
+Reviewed the eight direct modules in `Combinatorics/BranchingWalk/Step/Ordering/`. They describe distinct reusable interfaces: initial-segment support, support-covering relabeling, increasing and decreasing mark order, potential-observed order, increasing normal form, predecessor cardinality, generic finite slot prefixes, and point-measure invariance. The direct directory remains at eight modules. The finite mark-then-slot rank used only to construct the normal form now lives in `Step/Ordering/Lemmas/FiniteRank.lean`; `Orderable.lean` imports it internally and no longer lists or exports those proof steps as public declarations. `SiblingRank.lean` now describes cardinal ranks rather than ordinals.
+
+Compared the finite enumeration with Mathlib's [`Finset.sort` and `Finset.orderIsoOfFin`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Data/Finset/Sort.html). They supply sorted lists and an order isomorphism for a finite set with its inherited linear order. The step proof orders the support by the lexicographic pair (mark, slot), then extends the enumeration to an injective relabeling of all of $\mathbb N$ whose unused labels avoid the support. Mathlib supplies the generic finite-order tools, but not this optional-step support and complement construction; the local rank argument remains proof-only instead of becoming a separate reusable API. `SlotOrder.lean` directly uses Mathlib's [`orderIsoNatOfLinearSuccPredArch`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Order/SuccPred/LinearLocallyFinite.html) for linearly locally finite slot types with a bottom and no maximum.
+
+The eight interface modules, the nested rank-support module, and their direct ordering, marked-tree, cloud-rank, population-prefix, spine-truncation, and random-step clients build successfully with `lake -Kjobs=2 build` (3,315 Lake jobs). The refreshed structural scan matches all 1,611 production modules to the ledger, with zero stale or missing rows, same-stem source/directory collisions, overfull direct-file directories, or `Lemmas.lean`/`Lemmas/` conflicts. The semantic ledger now records 409 reviewed modules and 1,202 pending. Pending means not yet reviewed. The repository-wide audit remains in progress.
+
+## Measurable random branching-step ordering (2026-10-30)
+
+Reviewed the four modules under `Probability/BranchingRandomWalk/Step/Ordering/`. They expose complete interfaces for a measurable child reordering, its nodewise optional first mark and generation measurability, transport of the raw offspring law and its point-measure/exponential-weight observations, and almost-sure orderedness and first-child survival in the product step field. All four modules remain direct subject modules. The directory has four direct files; the single short coordinate-law lemma in `Support.lean` remains private beside its use, so a `Lemmas/` subtree would add a needless module boundary.
+
+Compared these constructions with Mathlib's [`Measure.map`, `map_apply`, and `map_map`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/MeasureTheory/Measure/Map.html) and [`iIndepFun` and infinite product-law interfaces](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Probability/Independence/InfinitePi.html). The local `StepLaw.sorted` and `sortedPotentialImage` are ordinary pushforwards and use Mathlib's map infrastructure; the product field likewise uses the existing coordinate product law. The extra structure records which optional child marks survive reordering, preserves their point-measure multiplicities, and locates the first-child observation in the generation domain. Those clauses are specific to the branching-step model, so there is no duplicated generic measure abstraction to move outward.
+
+The four ordering modules and six direct assumption, multi-root law, restart, selection, and environment clients build successfully with `lake -Kjobs=2 build` (4,789 Lake jobs). The semantic ledger now records 413 of 1,611 production modules reviewed and 1,198 pending. Pending means not yet reviewed. The full repository audit remains open.
+
+## Random branching-step field foundations (2026-10-30)
+
+Reviewed the three direct modules in `Probability/BranchingRandomWalk/Step/Field/`. `Basic.lean` is the samplewise measurable realization from random step presentations to deterministic fields; `Update.lean` provides the generation-local update measurability used by ranked-field couplings; `FiniteWeight.lean` exposes the complete result that boundary normalization makes the negative exponential child weight finite at every coordinate of a countably indexed product field, almost surely. The finite-weight module previously exposed a one-step event and two short conversion theorems that repeated `HasBoundaryNormalization.ae_totalPotentialWeight_ne_top`; these are now inside the proof of the all-coordinate theorem. The unused `FiniteWeight` import was also removed from `Environment/Basic.lean`. No extra `Lemmas/` directory is needed: the remaining declarations are complete subject results, and the former intermediate steps were short.
+
+Compared the field realization and update with Mathlib's product measurable-space and `Measure.infinitePi`/`iIndepFun` interfaces ([official documentation](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Probability/Independence/InfinitePi.html)). Samplewise realization uses the standard measurable-function-to-product characterization, and the forest law uses the existing coordinate product law. The generation update is a coordinatewise specialization of measurable product maps, but Mathlib has no theorem for this repository's nested address-indexed optional-step update; its reusable statement stays beside the random step-field layer and is shared by two coupling clients.
+
+The three field modules and the finite-weight environment and update clients build with `lake -Kjobs=2 build`; the full targeted build completed 3,351 Lake jobs, and the follow-up build after removing a deprecated simp lemma completed 3,301 jobs. `Environment/Basic.lean`, ranked-field coupling, and infinite-offspring repair clients all compile. The semantic ledger now records 416 of 1,611 production modules reviewed and 1,195 pending. Pending means not yet reviewed. The repository-wide audit remains in progress.
+
+## Random step presentation and pushforward interface audit (2026-10-30)
+
+Reviewed `Step/Presentation/Basic.lean`, `Step/Presentation/Map.lean`,
+`Step/PointMeasure/Basic.lean`, and `Step/Law/MultiRoot.lean`. The presentation
+structure records measurable presence and displacement coordinates; its named
+`indexedLaw` is the pushforward of the assembled optional-step map. Mark
+transport and point-measure transport are branching-step statements built on
+Mathlib's `Measure.map`, `map_apply`, and `map_map` interfaces
+([Mathlib documentation](https://leanprover-community.github.io/mathlib4_docs/Mathlib/MeasureTheory/Measure/Map.html)). The multi-root results state complete marginal and simultaneous-survival properties.
+
+Removed `Step/Law/OptionalField.lean`: its `stepLaw` definition was exactly
+`P.map S`, and `stepLaw_apply` repeated Mathlib's measurable-set formula.
+`StepPresentation.indexedLaw` now uses `P.map S.toFun` directly, and the
+point-measure composition theorem uses `Measure.map_map` directly. The theorem
+name was updated to describe the point-measure pushforward without referring to
+the deleted wrapper. The six affected modules and their immediate law and
+ordering clients compile successfully with `lake -Kjobs=2 build` (3,184 jobs).
+
+The production ledger then matched all 1,610 source modules. Structural scans
+passed for 1,610/1,610; semantic review covered 420/1,610, leaving 1,190
+modules pending review. Pending means not yet reviewed. The repository-wide
+semantic organization audit remains open.
+
+## Generic offspring-field law migration (2026-10-30)
+
+Removed `Probability/BranchingRandomWalk/Step/Law/Field.lean`, whose four
+`stepFieldLaw` declarations forwarded the generic optional-child-slot product
+law, coordinate marginals, coordinate independence, and measurable mark maps.
+The owner is
+`Probability/BranchingProcess/Offspring/FieldLaw.lean`: those constructions
+depend on the child-slot configuration and address product, not on spatial
+displacement or branching-random-walk selection. Updated the 75 affected
+production clients to use that interface directly; the genuinely root-indexed
+BRW law remains under `Step/Law/MultiRoot.lean`. This removes a duplicate
+public wrapper without retaining compatibility aliases.
+
+The full `lake -Kjobs=2 build` completed successfully (5,723 jobs). The
+production source inventory is now 1,609 modules, matching the ledger after
+removing the retired wrapper. Structural scans pass for all 1,609 modules;
+semantic review covers 420, leaving 1,189 pending. Pending means not yet
+reviewed. The full-library organization audit remains open.
+
+## Deterministic branching-walk representations (2026-10-30)
+
+Reviewed the branching-walk survival, marked-tree, and deterministic
+population interfaces. `Genealogy/Survival.lean` correctly separates
+arbitrarily deep descendants from one infinite lineage when branching can be
+infinite; its finite-branching equivalence specializes Mathlib's inverse-system
+form of König's lemma. `MarkedTree/Equivalence.lean` owns the per-root
+step-field/tree conversions and keeps telescoping and dependent-membership
+proofs private. `SiblingOrderTransport.lean` exposes the address-level map and
+its structural equations because descendant addresses must follow their
+parents when sibling labels are changed. `SiblingMonotonicity.lean` contains
+three complete order-conversion results, so its focused module is proportionate.
+`OfBranchingWalk.lean` owns the root-indexed metadata and accumulated-position
+adapters. `Population/{Offspring,Basic,Genealogy}.lean` remains a deterministic
+layer: arbitrary parent-slot constructions, generation sets, and their prefix
+properties carry no probability or selection assumptions.
+
+Compared the tree representations with Mathlib's
+[`RootedTree`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Order/SuccPred/Tree.html)
+and [`Quiver.Arborescence`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Combinatorics/Quiver/Arborescence.html).
+Those APIs represent ancestor orders and unique directed paths; neither
+contains the optional slot labels and relative edge marks used here. The
+existing Ulam--Harris marked-tree representation therefore remains the semantic
+owner, with no file moves needed in this family.
+
+The audit ledger now records 427 of 1,609 production modules as semantically
+reviewed and 1,182 pending. The structural scan passes for all 1,609 modules,
+and the full Lean build passes. Pending means not yet reviewed.
+
+## Deterministic optional-step and selection interfaces (2026-10-30)
+
+Reviewed the optional-step core, coordinate/count/relation and generation-update
+interfaces, mark potentials, point-measure and exponential-weight observations,
+and the finite, slot-ordered, and potential-ordered selection modules. These
+files expose complete semantic interfaces at the deterministic branching-step
+layer. The coordinate measurable space is the generic product construction
+provided by Mathlib, so the duplicate `stepMeasurableSpace` instance was
+removed from `Step/Basic.lean`; there is no local Pi construction to preserve.
+The finite-sublevel-to-lower-finite argument is independent of branching-step
+semantics and now lives in
+`Selection/NSelection/Mechanism/Infinite.lean`; the step-specific exponential
+weight criterion remains in `Step/Selection/Potential.lean`. The ledger's old
+`Step/Selection/LowerFinite.lean` row had no corresponding source module and
+was removed. No compatibility aliases were added.
+
+Compared the measurable-space ownership with Mathlib's generic
+[`MeasurableSpace.pi`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/MeasureTheory/MeasurableSpace/Constructions.html)
+construction. The product instance covers arbitrary dependent coordinate
+functions; local step definitions add optional-child support and its counting,
+mark, and measure semantics rather than a second product-space abstraction.
+
+The full `lake -Kjobs=2 build` completed successfully (5,722 jobs). The
+production inventory and ledger match at 1,608 modules; the separate test tree
+contains 137 Lean files. A structural scan of the 1,745 project source files
+across 730 directories found no same-stem file/directory pairs, repeated
+parent/file stems, directories with more than eight direct Lean files,
+`Lemmas.lean`/`Lemmas/` conflicts, `Source/` directories, or empty source
+directories. Semantic review covers 439 production modules, leaving 1,169
+pending. Pending means not yet reviewed, so the repository-wide semantic
+organization audit remains open.
+
+## Stable random-walk truncation-bias ownership (2026-10-30)
+
+Reviewed `Probability/Process/RandomWalk/FunctionalLimit/Stable/Centering.lean`.
+It owns the stable-domain truncated-mean bounds, the index-one sine-centering
+condition $n\int\sin(x/B_n)\,\nu(dx)\to0$, and its normalization-reindexing
+result. The public estimates identify the limits of
+$\frac{n}{B_n}\int\min(|x|,rB_n)\,\nu(dx)$ for $0<\alpha<1$ and
+$\frac{n}{B_n}\int_{|x|>rB_n}|x|\,\nu(dx)$ for $1<\alpha<2$, then derive the
+block-bias bounds; the index-one estimate is controlled by the stated sine
+centering and truncated second moment.
+
+The sine-versus-hard-truncated-mean comparison has one client in this module,
+so it is now a private proof step. Mathlib's `ProbabilityTheory.truncation`
+truncates a function to $(-A,A]$ and provides moment identities, while this
+argument uses the repository's hard-truncated increment and its second-moment
+interface; Mathlib's trigonometric bounds supply the analytic estimate. See
+[Mathlib's StrongLaw truncation API](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Probability/StrongLaw.html)
+and [trigonometric bounds](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Analysis/SpecialFunctions/Trigonometric/Bounds.html).
+
+The normalization-reindexing theorem had already moved to its semantic owner;
+the obsolete `Stable/Discrete/Lemmas/CenteringReindexing.lean` ledger row is
+removed. The production inventory now has 1,607 modules, with 440 semantically
+reviewed and 1,167 pending. A fresh inventory matches the ledger exactly; the
+production tree's structural scan reports no duplicate-stem pairs, overfull
+directories, `Lemmas.lean`/`Lemmas/` conflicts, `Source/` directories, or
+empty source directories. The centering module and its three direct client
+modules compile successfully with `lake -Kjobs=2 build` (3,968 dependency
+jobs), and `git diff --check` passes. The full semantic organization audit
+remains open.
+
+## Mogul'skii stable discrete proof support (2026-10-30)
+
+Reviewed six nested proof modules: `Stable/Discrete/Lemmas/EscapeRateTubeLower`,
+`Stable/Discrete/Lemmas/Partition/BalancedCoreCount`,
+`Stable/Discrete/Lemmas/RangeProbability`,
+`Stable/Discrete/Partition/Lower/Lemmas/BridgeProduct`,
+`Stable/Discrete/TerminalLeft/Partition/Lower/Lemmas`, and
+`Stable/Discrete/TerminalLeft/Lemmas/HorizontalTubeCorridor`. They provide
+proof-chain adapters for the stable escape-rate endpoint estimate, balanced
+endpoint-core count, range-event probability, finite bridge product, and
+terminal-left constant-corridor inclusions. Their imports use generic partition,
+IID path, bridge, and corridor interfaces at their semantic owners. The six
+results are specific to the theorem proof chain and remain in `Lemmas/`; they
+are not Mogul'skii theorem entry points or reusable public constructions.
+The semantic ledger now records 446 of 1,607 modules reviewed, leaving 1,161
+pending across the repository.
+
+## Mogul'skii stable discrete partition-rate refinement (2026-10-30)
+
+Moved `Stable/Discrete/Partition/Lower/Positivity.lean` to
+`Stable/Discrete/Lemmas/Partition/Positivity.lean` and changed its declaration
+to a `lemma`. It supplies eventual positivity and a logarithmic lower bound
+used by the stable finite-partition upper-rate assembly; it is proof support,
+not an additional article-theorem entry. Removed its unused imports from both
+width-rate modules. The complete finite-cell lower/upper rates and their exact
+finite-partition limit remain grouped under `Partition/`, where they provide
+stable-discrete interfaces for path-class assembly.
+
+The shared one-cell range-rate estimate is used by both ordinary and
+terminal-left corridor upper bounds. Its namespace now matches its semantic
+owner, `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete`.
+The affected interfaces and their direct clients build successfully with
+`lake -Kjobs=2 build` (4,143 jobs). The 101-module Mogul'skii subtree now has 86
+modules reviewed and 15 pending; across the 1,607 production modules, 448 are
+reviewed and 1,159 remain pending.
+
+## Stable discrete finite-partition rate interfaces (2026-10-30)
+
+Reviewed the stable discrete endpoint estimate, finite-partition energy upper
+and lower bounds, exact finite-partition limit, prescribed-width lower bound,
+and the path-class inner/outer and stable-index-regime interfaces. These
+modules state complete mathematical outputs: the endpoint estimate transfers
+a stable-process escape rate to the open horizontal-tube event; the partition
+modules give upper, lower, and exact rates for finite corridors; and the
+path-class modules transfer these rates under explicit approximation
+hypotheses and specialize them to the stable index regimes in Mogulskii's
+Theorem 1. Endpoint-core geometry, balanced block counts, and logarithmic
+positivity calculations remain in nested `Lemmas/` modules. The pinned
+Mathlib source search found generic measure, probability, and asymptotic tools
+but no stable random-walk corridor-rate interface matching these statements;
+these files therefore remain at their stable-discrete mathematical owner.
+The full audit ledger now records 455 of 1,607 production modules reviewed
+and 1,152 pending.
+
+## Terminal-left stable Mogul'skii rate interfaces (2026-10-30)
+
+Reviewed the terminal-left finite-partition upper, lower, and exact-rate
+modules, the prescribed-width lower bound, and the `PathClass/{Rate,
+InnerOuter,Relative,Regimes}` and `Realization` interfaces. The partition
+modules give complete rate statements for the terminal-left path convention;
+the path-class modules transfer them to ambient or relative approximation
+classes and state the stable-index and arbitrary-IID-realization forms. Their
+endpoint convention is mathematically explicit in both the module path and
+the theorem names. Generic terminal-left source-grid bounds remain at the
+random-walk path owner; endpoint-core and block-product derivations remain in
+`Lemmas/`. These eight modules complete the semantic review of the 101-module
+Mogul'skii subtree. The repository-wide ledger now records 463 of 1,607
+production modules reviewed and 1,144 pending.
+
+## Generic IID whole-range block inequality (2026-10-30)
+
+Moved the finite-horizon IID inequality
+$\mathbb P(\operatorname{range}(S_0,\ldots,S_N)<w)\le
+\mathbb P(\operatorname{osc}(S_0,\ldots,S_m)<w)^q$ under $qm\le N$ from
+`SmallDeviation/Range/IndependentBlocks.lean` to
+`Path/Block/Partition/Range.lean`. The estimate assumes only an IID increment
+law and finite block coverage, so its semantic owner is the general path-block
+partition interface. It is Mogul'skii's Lemma 3(c), equation (32), and reuses
+the existing consecutive-block product law. Mathlib provides generic finite
+IID independence and product-measure reindexing, but no direct whole-path
+range-to-block probability inequality. The small-deviation client imports the
+general owner; the old module was removed without a forwarding alias. The
+focused Lean build passed. The ledger now contains 1,606 production modules:
+464 reviewed and 1,142 pending; repository-wide organization work remains open.
+
+## Sequence block partitions and path block interfaces (2026-10-30)
+
+Reviewed the ten-module `RandomWalk/Path/Block/Partition` family: the
+`Basic`, `Normalized`, `Core`, and `Maximal` interfaces; the arbitrary
+`StepBoundary` partition; the four-module `CoreReturn` construction; and the
+whole-range inequality in `Range`. The deterministic endpoint identities,
+measure comparisons, finite-variance maximal error, corridor gluing, and IID
+product lower bounds each expose complete results at their semantic owner.
+Their one-use calculations remain private or in the existing theorem-specific
+`Lemmas/` trees. Mathlib supplies `Fin.partialSum`, finite-sum estimates,
+measure bounds, second-moment tools, and generic IID independence; it does not
+package the repository's `AdditivePath` block coordinates, normalized
+`StepBoundary` grid, or core-return corridor implication. See the [Mathlib
+moments API](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Probability/Moments/Basic.html)
+and [IID independence API](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Probability/Independence/Basic.html).
+
+Moved the quotient/remainder schedule whose last block absorbs the remainder
+from `Probability/Process/RandomWalk/Path/Block/Partition/TailMerged.lean` to
+the generic `Combinatorics/Sequence/TailMergedBlock.lean`. Its domain is only
+natural-number interval data, and its consumers now import the generic
+sequence module. The touched DriftedTube entry point and all direct schedule
+clients build successfully (4,795 Lake jobs). A fresh scan of 1,606 production
+modules and 137 test modules found no same-level file/directory collisions,
+`Lemmas.lean`/`Lemmas/` conflicts, overfull directories, `Source/` folders, or
+empty source directories. There are also no direct folder/file prefix repeats
+such as `InitialPopulation/InitialPopulationFreshField.lean`; the pinned
+Mathlib tree has 70 such semantically named files among 8,554 modules (for
+example, `Order/OrderDual.lean`), so this is not a blanket naming ban. The
+semantic ledger records 474 reviewed modules and 1,132 still pending.
+
+## Finite random-walk block and corridor interfaces (2026-10-30)
+
+Re-audited the 18 block, corridor, IID-law, and maximal modules currently
+marked pending in the semantic ledger. The existing decomposition matches the
+mathematics: root `Path/Block` files own block measurability and oscillation;
+`Corridor/` separates event definitions, measurability, reusable geometry,
+distribution-free probability, core returns, finite bridges, and the
+finite-variance specialization; `Law/` owns IID block laws and excursion,
+first-crossing, stopping-time, finite-interval, and oscillation consequences;
+and `Maximal/` groups the second- and fourth-moment Doob specializations.
+
+`Corridor/Geometry.lean` contains complete deterministic estimates used by
+three clients, so it belongs at the corridor owner rather than in `Lemmas/`.
+`Law/FirstCrossing.lean` is a reusable stopping-time/excursion interface, while
+the two-excursion tightness consequence is separately stated in
+`Law/TwoExcursions.lean`; the path-difference conversion used by both remains
+beside the prefix-exceedance event in `Law/Excursions.lean`. The finite-bridge
+comparison has only two current clients, but its finite-cover geometry and
+weak-limit bridge bound are parameterized independently of the stable
+application, so it remains a complete public interface. One-use calculations
+are private in their result modules. Mathlib's `iIndepFun` and Doob maximal
+inequality provide the generic probability tools; these modules specialize
+them to the repository's increment-block events and path coordinates.
+
+The block, corridor, maximal, and IID-law modules and their selected Donsker,
+stable-tightness, bridge, and Drawdown clients build successfully (4,634 Lake
+jobs); `git diff --check` passes.
+
+The updated ownership inventory now describes every subdirectory at its
+semantic level. The production ledger records 492 reviewed modules and 1,114
+pending; the repository-wide organization audit remains open.
+
+## Random-walk polygonal-path interpolation (2026-10-30)
+
+Re-audited the twelve current modules under
+`Probability/Process/RandomWalk/Path/Interpolation/`, including the new
+`Limit/FiniteHorizon` and `Path/Approximation` modules and the removal of the
+former `Limit/FirstWindow` and `Path/MaximalJump` files. The current split
+tracks the mathematical interfaces: `Basic` defines the normalized polygonal
+path; `Core` gives its IID laws; `Finite/` handles finite-block laws and the
+uniform-grid endpoint estimate; `Scaling` and `Oscillation/` state pathwise
+relations; `Path/` handles path approximation and oscillation probabilities;
+and `Limit/` connects unbounded and finite-horizon paths and transfers weak
+convergence. The first-window survival equivalence remains under
+`Path/Survival`, its event owner.
+
+The one-use floor and partial-sum calculations stay in the single nested
+`Finite/Lemmas/Grid` module; the complete uniform-grid estimate remains public
+at `Finite/Grid`. No other file in this family is merely a one-use proof chain.
+The existing generic `Topology/ContinuousMap/LinearPath` is only the map
+$t\mapsto at$; it does not express the discrete normalized increment-sum
+interpolation. The pinned Mathlib source has no
+`Topology/Algebra/Order/PiecewiseLinear` module. Mathlib PR
+[#35753](https://github.com/leanprover-community/mathlib4/pull/35753) proposes
+regular-grid piecewise-linear helpers, but that API is not available in the
+pinned dependency; the random-walk-specific definitions therefore remain at
+their current owner. Bolthausen citations are present at the finite-block and
+unbounded-path source interfaces, where the corresponding path constructions
+are used.
+
+All twelve modules build successfully (3,209 Lake jobs). The ownership map
+now describes the current nested split. The ledger records 504 reviewed and
+1,102 pending out of 1,606 production modules; the full repository audit
+remains open.
+
+## Hard-truncated random-walk path interfaces (2026-10-30)
+
+Re-audited the ten current modules under
+`Probability/Process/RandomWalk/Path/Truncation/`. The direct modules each own
+a complete result at their mathematical layer: the truncation map, its moment
+and asymptotic estimates, normalized and adjacent-block event bounds, and the
+path oscillation estimate. `Maximal/` separates fourth-moment estimates,
+second-moment estimates, and its one-use event decomposition;
+`Oscillation/Lemmas/Scaling` holds the proportional-block calculations used
+only by `Oscillation/Bound`. Both helper subtrees therefore follow the
+repository's private proof-support rule; the public probability interfaces
+remain at their subject owners. The direct-file counts remain within the
+folder limit.
+
+Compared the local cutoff with the generic truncation already present in
+Mathlib's
+[`ProbabilityTheory.truncation`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Probability/StrongLaw.html): Mathlib uses the indicator of $(-r,r]$, whereas this
+random-walk development uses $[-r,r]$. They differ at $-r$ when the increment
+law has an atom there, so replacing the local definition would change the
+statements. Generic truncated second moments remain owned by
+`Probability/Distributions/Moments/Truncated`; tail-integral estimates remain
+in `Probability/MeasureTheory`. The symmetric increment cutoff is used by the
+random-walk finite-variance and stable functional-limit developments, which
+justifies retaining this model-level interface.
+
+The ten truncation modules and their interpolation-oscillation client build
+successfully (3,195 Lake jobs). The ownership map now records both the model
+owner and its generic moment/tail dependencies. The ledger records 514
+reviewed and 1,092 pending out of 1,606 production modules; full repository
+organization review remains open.
+
+## Donsker path and corridor interfaces (2026-10-30)
+
+Re-audited the twelve current Donsker modules in the finite-dimensional,
+tightness, path, and Brownian-corridor stages. The finite-dimensional modules
+expose successive complete results (proportional sums, Brownian endpoint
+identification, uniform-grid path values, and rational finite-dimensional
+convergence). `Tightness/Path` states the oscillation and uniform-bound
+interfaces and derives path-law tightness; its deterministic parameter choice
+remains in `Tightness/Lemmas/Parameters`. `Path/Continuous` is the continuous
+path-space Donsker theorem; `Path/FiniteHorizon` and `Path/Skorokhod` are its
+finite-time and cadlag step-path consequences. The two `Corridor/Brownian`
+modules give open/closed and endpoint-constrained Brownian corridor adapters;
+`Path/Corridor` supplies the paired generic continuous-path event comparison.
+These roles agree with the existing owner map, so no file move or new public
+entry layer is justified by this review.
+
+The mathematical boundary follows Mathlib's reusable interfaces: its IID
+central limit theorem supplies scalar limits, generic finite-product
+convergence supplies the independent block step, the Brownian API supplies
+finite-dimensional laws, and Portmanteau/tightness APIs supply the measure
+convergence criteria. The local modules state the canonical normalized
+random-walk path laws and event adapters that those generic results do not
+provide. Existing module comments cite source results where the formalized
+path construction needs them.
+
+All twelve Donsker modules build successfully (3,541 Lake jobs). The replayed
+BrownianMotion dependency emits existing style/deprecation warnings; the build
+completes. The ledger now records 526 reviewed and 1,080 pending out of 1,606
+production modules.
+
+## Conditioned random-walk and first-window interfaces (2026-10-30)
+
+Re-audited the twenty current ledger-pending modules in
+`FunctionalLimit/Conditioned/`. The directory split follows the theorem
+interfaces: `FirstWindow/` gives the first surviving block law, its selection
+and the full shifted functional limit; `Meander/` identifies the limiting
+path law and states the finite-variance convergence; `Survival/` packages the
+finite-horizon conditioning law and scaling; `Transition/` owns the normalized
+corridor event and the complete diffusive lower bound. Brownian meander path
+laws and support remain in `Probability/Process/Brownian/Meander`. The finite
+block factorization, prefix characterization, fixed-horizon convergence,
+cyclic-rotation survival estimate, and meander corridor transfers are
+theorem-specific proof steps and stay in the nested `Lemmas/` directories.
+No complete generic result was found there that should be promoted.
+
+The current declarations and source comments match the previously recorded
+Bolthausen Theorem 3.2 / Lemma 3.1 and the named Vysotsky and Iglehart
+references. The centered first-window path is stated explicitly in the Lean
+API; the module comments identify the printed centering discrepancy rather
+than hiding it behind a generic citation. Existing Brownian meander law and
+support results are imported from their Brownian semantic owner. A scan of
+this family finds no generic `the paper`/`the thesis` wording, ambiguous
+`lemma33` private names, or missing public/internal declaration inventories.
+
+All twenty conditioned modules build successfully (3,878 Lake jobs); the
+build completes with existing linter and deprecation warnings in dependency
+modules. The ownership map now distinguishes the complete survival, meander,
+and transition interfaces from their proof-only lemmas. The ledger records
+546 reviewed and 1,060 pending out of 1,606 production modules.
+
+## Brownian first-window probability interfaces (2026-10-30)
+
+Re-audited the thirteen pending current modules under
+`Probability/Process/Brownian/AboveStart/FirstWindow/`. The generic path
+selector, first-window time, endpoint-return geometry, and centered or
+uncentered shift maps remain under `Probability/Process/Path/AboveStart`; this
+folder owns their Brownian-law specializations: almost-sure finiteness,
+continuity of the time and shift maps, endpoint-hitting consequences, and
+finite-horizon projected-law and cutoff limits. The uncentered and centered
+shift modules remain separate because they formalize different maps. The four
+Brownian-specific positive-window, boundary, interior-return, and
+endpoint-return proof stages are grouped in the single `Lemmas/` child; the
+rational-cover construction is imported from its generic path owner.
+
+The current public/internal declaration inventories state the path and
+probability interfaces, and source attribution identifies the corresponding
+Bolthausen results. The Brownian almost-sure statements stay at the Brownian
+process layer; the path transformations remain at their general deterministic
+owner. The existing Mathlib comparison found that its hitting-time API encodes
+first entry into a state-space set, not the path-dependent condition that a
+future unit interval stays above its starting value. No broader Mathlib
+first-window or shift API replaces these results.
+
+All thirteen Brownian first-window modules build successfully (3,344 Lake
+jobs). The ownership inventory now records both the general path owner and
+its Brownian specialization. The ledger records 559 reviewed and 1,047
+pending out of 1,606 production modules.
+
+## General first-window path constructions (2026-10-30)
+
+Re-audited the nine current pending modules under
+`Probability/Process/Path/AboveStart/FirstWindow/`. This confirms the
+general/Brownian boundary: the selector, first-window time, endpoint-return
+geometry, and uncentered or centered shifts are deterministic interfaces on
+continuous paths and remain outside `Brownian/`. The current `Time/`,
+`Shift/`, and `EndpointReturn/` nesting tracks those distinct semantic
+interfaces. Brownian probability-one finiteness, continuity, and cutoff
+statements remain in `Probability/Process/Brownian/AboveStart/FirstWindow/`.
+The rational-cover argument has one Brownian proof-chain use and stays under
+`EndpointReturn/Lemmas/`.
+
+The general first-window modules therefore reuse path and measure abstractions
+without exporting Brownian-specific assumptions. Their formulas and Bolthausen
+references match the public Brownian specializations, and all direct and
+nested modules have the correct public or internal declaration inventories.
+No source move was warranted.
+
+All nine generic path modules build successfully (2,671 Lake jobs). The ledger
+records 568 reviewed and 1,038 pending out of 1,606 production modules.
+
+## Killed random-walk kernel interfaces (2026-10-30)
+
+Re-audited all thirteen modules under
+`Probability/Process/RandomWalk/Kernel/Killed/`. `Basic`, `Comparison`, and
+`Partition` define the killed increment kernel, remaining-mass comparisons,
+and the path-event identification. `Return/` separates return-kernel
+construction, endpoint laws, bridge and entrance bounds, path comparisons,
+and uniform iteration; `Survival/` gives the horizontal-tube identity and
+uniform block estimates. These are complete random-walk kernel interfaces
+used by multiple small-deviation constructions, so none belongs in
+`Lemmas/`. The generic kernel survival and return-block iteration already
+reside in `Probability/Kernel/Survival`; this subtree contains the additive
+IID-walk specialization, not a duplicate of that generic API.
+
+The module inventories identify their event and kernel formulas. Short path
+decoding lemmas in `Return/Basic` are private, and no theorem-specific helper
+file is needed in this family. The owner map now makes the generic-kernel vs.
+random-walk boundary explicit.
+
+All thirteen modules build successfully (3,145 Lake jobs). The ledger records
+581 reviewed and 1,025 pending out of 1,606 production modules.
+
+## Drifted-tube endpoint theorem modules (2026-10-30)
+
+Reviewed the 43 current modules under
+`Probability/Process/RandomWalk/SmallDeviation/DriftedTube/`. The public
+source-facing entries are `FiniteVarianceLower/EndpointBounds` for Wang
+Yiyang, Chapter 3, Lemma 3.5, and `FiniteVarianceUpper/Basic` for Chapter 3,
+Lemma 3.4. The moving-tube event, block event, deterministic inclusion, and
+endpoint-window/reflection correspondence remain at their semantic owners.
+All 36 staircase-specific lower-bound proof modules are nested below
+`FiniteVarianceLower/Lemmas/Staircase/`; the upper-bound block derivation is
+under `FiniteVarianceUpper/Lemmas/`. The complete robust entrance budget is
+owned by `SmallDeviation/Entrance/Robust/FiniteVariance.lean`, since both
+endpoint chains use it and it does not depend on staircase geometry. Its
+inverse-square constant extraction remains private.
+
+The module inventory, owner map, local citation declarations, public/private
+boundaries, and available Mathlib abstractions were reviewed, and all 43
+modules compile (4,816 Lake jobs). The assembled Lemma 3.5 proof has not yet
+received a line-by-line comparison against the thesis proof; the semantic
+ledger's `reviewed` status here records the ownership and abstraction audit,
+not completion of that proof-route comparison. The production ledger now
+records 624 reviewed and 982 pending out of 1,606 modules.
+
+## Drawdown small-deviation ownership (2026-10-30)
+
+Audited the 13 modules under
+`Probability/Process/RandomWalk/SmallDeviation/Drawdown/`. `Event.lean` owns
+the finite-horizon drawdown-plus-endpoint event and its deterministic corridor
+consequences; `Scaling.lean` owns its measurability and positive-rescaling
+identities; `FiniteVarianceUpper/Theorems.lean` is the public finite-variance
+upper-estimate entry. Its 10 derivation modules are grouped below
+`FiniteVarianceUpper/Lemmas/`, separating rounded maxima, jump-pattern
+geometry, conditional block probabilities, and rate estimates. No helper file
+was promoted: the floor bins and finite jump patterns are specific to the
+estimate.
+
+The generic running maximum is already represented by Mathlib's
+`Mathlib.Order.PartialSups.partialSups`; the path-event semantics and finite
+drawdown estimate belong to this project. The module comments cite Wang
+Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite
+Offspring*, Chapter 3, Lemma 3.3; Aïdékon and Hu, *Average-weight
+percolation on the complete graph*, Lemma 2.3; and Mogul'skii's Theorem 3
+for the one-block input. The three public modules document their formulas,
+and all ten support modules identify their internal proof declarations.
+
+The theorem entry builds successfully with its dependency graph (4,626 Lake
+jobs). The ledger now records 637 reviewed and 969 pending out of 1,606
+production modules.
+
+## Random-walk entrance module ownership (2026-10-30)
+
+Audited all 28 modules under
+`Probability/Process/RandomWalk/SmallDeviation/Entrance/`. The public event
+and theorem interfaces are `MovingCorridor`, `NormalDomainEvent` and
+`NormalDomain`, the four finite-variance event/interior/bridge modules, and
+`Robust/{Event,Measurability,PowerLower,FiniteVariance}`. In particular,
+`Robust/PowerLower` states the complete arbitrary-power transition-bound
+result used before finite-variance specialization; the inverse-square
+constant extraction in `Robust/FiniteVariance` remains private. The 17
+one-use constructions are grouped under `Lemmas/Rotation/`,
+`Robust/Lemmas/`, and `FiniteVariance/Lemmas/`.
+
+The path-specific cyclic rotation and finite-path transfer used by
+`NormalDomain` stay under `Entrance/Lemmas/Rotation/`. Generic finite-product
+reindex-cover measure transfer belongs to
+`MeasureTheory/Measure/Pi/FiniteReindexCover`, while the IID survival
+inequality belongs to
+`RandomWalk/Fluctuation/SparreAndersen/Rotation/Probability`. Mathlib's
+finite product measure and independence interfaces cover those general
+probability operations; they do not define these entrance corridor events
+or the cited entrance lower bounds.
+
+Current module comments cite Wang Yiyang, *Asymptotic Speed of the N-Branching
+Random Walk with Infinite Offspring*, Appendix A.2, Lemma A.7, and Chapter 3,
+Lemma 3.5. The normal-domain route uses the path-specific finite rotation
+transfer; the long-horizon finite-variance route uses the conditioned
+Brownian-meander transition estimates. The module ownership, public/internal
+boundaries, and citation locations were reviewed. This is not a line-by-line
+verification of either route against the thesis proof. The three public-entry
+builds succeeded (3,975 Lake jobs). The ledger records 665 reviewed and 941
+pending out of 1,606 production modules.
+
+## HorizontalTube current-tree audit (2026-10-30)
+
+Reconciled all 25 current modules under
+`Probability/Process/RandomWalk/SmallDeviation/HorizontalTube/` with the
+module ledger. The unclear `Blocks/Geometry.lean` name is now
+`Blocks/EndpointWindowProduct.lean`; no compatibility alias remains. The
+public product statement covers arbitrary finite schedules, endpoint windows,
+good sets, and one-block lower bounds, while the generic conditional product
+principle remains at `Probability/Process/Filtration/ConditionalBlocks`. The
+two conditional-expectation calculations used only by this construction are
+private declarations under `Blocks/Lemmas/ConditionalProduct.lean`.
+
+The 25-module subtree builds successfully with the pinned toolchain (4,629
+Lake jobs, two workers). The repository-wide structural scan currently finds
+1,606 project production modules, with no same-parent Lean-file/directory
+name collisions, no directory containing more than eight direct Lean files,
+and no duplicate `Lemmas.lean`/`Lemmas/` entry. Those structural checks do not
+complete the semantic audit: the ledger now records 690 reviewed and 916
+pending modules. Pending means not yet reviewed. The assembled thesis Lemma 3.5
+proof still needs a separate line-by-line comparison, and Mogul'skii's
+Theorem 4 remains a formalization gap.
+
+
+## Rademacher finite-interval spectral audit (2026-10-30)
+
+Reviewed all 25 modules previously grouped under
+`Probability/Process/RandomWalk/Rademacher/FiniteInterval/`. The discrete sine
+basis, eigenvalue ordering, killed-walk path semantics, survival rates, and
+target-site estimates remain in that model family; Mathlib supplies general
+finite-dimensional symmetric spectral theory, but not this interval's explicit
+sine modes. The centered-lattice radius and effective-width limits are generic
+scale facts used by Rademacher, Brownian, and stable-process results, so
+`FiniteInterval/Scale.lean` moved to
+`Analysis/Asymptotics/Scale/CenteredInterval.lean`. Mathlib's existing floor
+limit theorems supply its rounding limits. The two unused stronger log-width
+wrappers were removed from `CenteredTube.lean`, and the duplicate existential
+row-sum bounds were replaced at their call sites by
+`Matrix.pow_rowSum_bounds_of_bounded_eigenfunction`.
+
+The focused build of the 25 finite-interval modules, the new scale module, and
+the Brownian and stable clients completed successfully (4,100 Lake jobs, two
+workers). The ledger now records 715 reviewed and 891 pending out of 1,606
+production modules. The full semantic audit is still in progress.
+
+
+## Generic selection interfaces moved out of BranchingWalk (2026-10-30)
+
+Reviewed the ten generic selection modules and their project clients. The
+arbitrary-set selection records, capacity-$N$ selection, ordered first-$N$
+mechanisms, value-key tie-breaking, lower-finite specifications, and
+lower-tail Hall/equal-rank matching now live under `Combinatorics/Selection/`.
+Their statements range over arbitrary types, finite sets, ordered values, and
+lower-finite candidate sets, with no branching-walk assumptions. The public
+namespace is `Combinatorics.Selection` (and its `NSelection` subnamespace).
+All import paths and fully qualified references use the new names; no aliases
+for the previous BranchingWalk paths remain.
+
+The pinned Mathlib `Finset.Sort` API provides finite order enumerations and
+order embeddings, and `Mathlib.Combinatorics.Hall.Basic` provides generic
+relation-based matching. These APIs do not provide arbitrary-capacity
+selection on sets, value-key first-$N$ selection for lower-finite populations,
+or the lower-tail count and matching interfaces. The specific mechanisms
+therefore remain useful public combinatorics results. Branching-walk cloud and
+offspring coupling, deterministic selected walks, and frontier speed remain
+under ``Combinatorics/BranchingWalk/Selection/``.
+
+The ten relocated modules are recorded at their new paths in the audit ledger.
+One module was already semantically reviewed before relocation, so this batch
+adds nine new reviewed modules: the production ledger now records 724 reviewed
+and 882 pending out of 1,606. The full production library built successfully
+with 5,720 Lake jobs and a two-worker limit. Two test-only modules that import the moved selection interfaces also
+typechecked with `lake env lean`. All 137 test-only modules remain outside the
+production audit ledger and need their own organization review. The structural
+scan still reports zero
+same-parent stem collisions, directories with more than eight direct Lean
+files, simultaneous `Lemmas.lean`/`Lemmas/` entries, and empty production
+directories.
+
+
+## Branching-walk selection interfaces and coupling layers (2026-10-30)
+
+Reviewed the fifteen remaining selection, coupling, and deterministic-walk
+modules under ``Combinatorics/BranchingWalk/Selection/``. `Contain` and
+`WalkTransform` express sub-walk selection; `Coupling/` constructs population
+clouds and transfers domination through offspring slots, child positions, a
+single first-$N$ step, and pathwise iteration; `NSelection/Walk/` owns the
+deterministic global-capacity walk, its cloud/frontier/speed interfaces, and a
+distinct per-node bounded-branching selection transform. These files expose
+complete branching-specific constructions and comparison results, so they
+remain public at those semantic owners rather than moving into proof-only
+`Lemmas/` directories.
+
+The generic first-$N$, order-statistic, and lower-tail matching mechanisms used
+by these modules now come from `Combinatorics/Selection/`. Random laws and
+measurability remain in `Probability/`. The full production library builds
+with the relocated API. The ledger now records 739 reviewed and 867 pending
+out of 1,606 production modules; the 137 `BranchingProcessTest/` modules are
+a separate, still-unreviewed organization audit scope.
+
+
+## Remaining combinatorics and deterministic walk modules (2026-10-30)
+
+Reviewed the remaining nine pending modules in `Combinatorics/`: the
+space-time trajectory object and its step-field/measurability adapters,
+branching-tree genealogy, singleton-walk and additive-path correspondences,
+the first-part decomposition of positive compositions, and the graph height
+criterion for acyclicity. Each has a complete mathematical interface at the
+lowest semantic layer its hypotheses require. Mathlib supplies the underlying
+composition, graph, measurable-space, and additive-path primitives but not
+these specific branching semantics or decomposition criteria. The modules
+remain outside proof-only `Lemmas/` folders. All nine are covered by the
+successful full production build.
+
+The production ledger now records 748 reviewed and 858 pending modules out of
+1,606. All production modules under `Combinatorics/` have now received a
+semantic ownership and abstraction review. The separate 137-module test tree
+has not yet been reviewed.
+
+
+## Current repository-wide audit snapshot (2026-10-30)
+
+The production source inventory and `MODULE_AUDIT_LEDGER.csv` both contain
+1,603 Lean modules. The latest structural scan found no same-parent
+Lean-file/directory stem collisions, no `Lemmas.lean`/`Lemmas/` collisions,
+no repeated direct parent/file-name prefixes, no `Source/` directories, and no
+production directory with more than eight direct Lean files. The largest has
+eight. The separate test tree contains 137 Lean files;
+`scripts/parse_lean_imports.lean` is tooling. Neither is included in the
+production module count.
+
+The ledger records 878 modules semantically reviewed and 725 pending.
+Pending counts by root are MeasureTheory 24 and Probability 701. All production
+rows currently record passing structural scans and Lake builds; those build
+records do not substitute for the semantic review.
+
+This pass reconciled audit records for the Skorokhod time-change, path-space,
+finite-step corridor, càdlàg measure, and Kingman families. The four public
+Kingman entry modules were rebuilt successfully (3,021 Lake jobs). Their
+integral limit adapts Mathlib's scalar `Subadditive.tendsto_lim`; the cocycle
+theorems and Kingman limit remain repository interfaces. See the
+[Mathlib subadditive sequence API](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Analysis/Subadditive.html).
+The full semantic audit remains in progress. The 137 test modules have not yet
+been included in the semantic ownership audit.
+
+
+## Gaussian distribution interfaces and proof-local moments (2026-10-30)
+
+Reviewed the Gaussian interval and sign interfaces against the pinned Mathlib
+Gaussian distribution APIs. `Interval.lean` retains positive mass for every
+nonempty interval and the centered CDF bounds; Mathlib provides the Gaussian
+density, absolute continuity, and general open-positive-measure results, but
+not these interval-level statements. `Sign.lean` retains the half-line
+probability facts used by Brownian and random-walk clients. Its closed
+half-line scaling proof now follows from the positive half-line scaling
+identity by taking complements.
+
+Removed `Gaussian/FiniteProduct.lean`: neither theorem had a caller, and both
+were direct Gaussian specializations of `Finset.prod_pos` or
+`Finset.prod_le_prod` plus interval positivity. Removed the public
+`Gaussian/FourthMoment.lean` module as well: its two formulas had a single
+client in Brownian's Kolmogorov proof. Their proofs now remain private in
+`Brownian/Construction/Lemmas/KolmogorovMoment.lean`, where Mathlib's
+`IsGaussian.memLp_id` and Gaussian scaling theorem provide the inputs. See the
+[Mathlib Gaussian real API](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Probability/Distributions/Gaussian/Real.html)
+and [Gaussian Fernique API](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Probability/Distributions/Gaussian/Fernique.html).
+
+The Gaussian sign/interval modules, the relocated Kolmogorov moment proof, and
+their Brownian and random-walk clients built successfully (3,393 Lake jobs
+for the last dependent build). The two unused modules were removed from the
+production ledger; the ledger now lists 1,604 production modules.
+
+
+## Lévy measure interfaces and proof-local atom-free radii (2026-10-30)
+
+Reviewed the five Lévy measure modules against the pinned Mathlib source and
+the Lévy cutoff conventions in the cited literature. `IsLevyMeasure`, its
+finite-away-from-zero consequences, and its nonzero-dilation closure are
+measure-level interfaces absent from Mathlib; Mathlib's
+[Lévy–Prokhorov API](https://leanprover-community.github.io/mathlib4_docs/Mathlib/MeasureTheory/Measure/LevyProkhorovMetric.html)
+concerns a different metric on finite measures. `JumpRegions` owns the unit
+small-jump set and arbitrary-radius large-jump sets used in Lévy–Khintchine
+identification and semigroup convergence. `Cutoff` owns the distinct
+reciprocal-radius bands and canonical truncation used by Poisson jump
+constructions; the two cutoff APIs have different set contracts.
+
+The radial atom-avoidance wrapper was used only by the Lévy–Khintchine
+representation proof chain. Its general ingredient,
+`MeasureTheory.exists_measure_zero_fiber_of_not_countable`, already lives at
+the reusable measure-theory layer. The wrapper now lives under
+`LevyKhintchine/Lemmas/Representation/Lemmas/` and its three clients import
+that proof-support module directly. The moved module and all clients built
+successfully with `lake build` (3,429 jobs). A fresh tree/ledger reconciliation
+matches all 1,604 production modules; the structural scan reports no stem
+collisions, overfull directories, or `Lemmas.lean`/`Lemmas/` conflicts.
+The ledger now records 878 reviewed and 725 pending modules.
+
+
+## Measurable-space and càdlàg corridor interface audit (2026-10-30)
+
+Reviewed the nine remaining modules in `MeasureTheory/MeasurableSpace/` against
+their direct clients and the pinned Mathlib source. The countable-selector
+evaluation and measurable finite-set filter theorems are general operations;
+Mathlib supplies the countable-coordinate and `Finset` membership primitives,
+but no matching selector-evaluation or parameterized-filter theorem. The
+`Option` measurable-space instance and its `some`/`map`/`elim` interfaces are
+used across kernels and branching steps. The dense rational-coordinate
+embedding, terminal-left map, and finite-step boundary/event measurability
+remain at their càdlàg or corridor owners, with the Borel-relation and
+null-measurable-projection contracts in separate modules.
+
+Removed the unused finite-coordinate corridor event and its two inclusion
+wrappers, plus the unused measure-specific `BorelRepresentative` structure and
+its three transfer theorems. The active path-law proof already uses Mathlib's
+`NullMeasurableSet.preimage` through a quasi-measure-preserving map, so the
+older representative route duplicated an available general API. The
+one-client `MeasurableSpace.exists_measurableSet_not_mem_of_lt` wrapper was
+also removed; its short order argument now sits at the Ulam–Harris Borel
+comparison that uses it. See Mathlib's
+[quasi-measure-preserving preimage API](https://leanprover-community.github.io/mathlib4_docs/Mathlib/MeasureTheory/Measure/QuasiMeasurePreserving.html),
+[null-measurable API](https://leanprover-community.github.io/mathlib4_docs/Mathlib/MeasureTheory/Measure/NullMeasurable.html),
+and [measurable `Finset` constructions](https://leanprover-community.github.io/mathlib4_docs/Mathlib/MeasureTheory/MeasurableSpace/Constructions.html).
+
+All affected interfaces and direct path-law, corridor, energy, and Ulam–Harris
+clients built successfully with `lake -Kjobs=2 build` (4,111 jobs). The
+production inventory and ledger both contain 1,603 modules; a fresh structural
+scan found no path mismatches, same-stem collisions, repeated parent prefixes,
+overfull directories, `Lemmas.lean`/`Lemmas/` conflicts, or `Source/` folders.
+The ledger now records 878 reviewed and 725 pending production modules. The
+separate 137-module test tree remains to be audited.
+
+
+## Measure tails and tightness interfaces (2026-10-30)
+
+Reviewed the generic tail and tightness modules together with continuous-path
+oscillation tightness. The finite-family and sequential tightness results are
+complete interfaces: they turn individual tightness plus an eventual common
+compact-mass bound into tightness of the full family. Pinned Mathlib supplies
+tightness closure under unions and the compact-complement characterization,
+but has no finite-index image or eventual-uniform-sequence criterion.
+
+The continuous-path modules turn deterministic Arzelà--Ascoli compactness into
+tightness criteria driven by one-scale or multiscale oscillation bounds. Their
+statements are independent of any increment law; the diagonal oscillation
+result is used by the criteria layer. The finite-corridor measure estimate is
+used by Brownian-support and convergence-in-distribution clients. The two
+real-tail modules also remain at `Measure/Tails`: one extracts a positive
+threshold from positive half-line mass, and the other applies the layer-cake
+formula to obtain finite capped first moments from power-tail bounds. The
+integral calculations inside the latter are private. No module move was needed.
+
+The latest production ledger contains 1,603 modules, with 885 semantically
+reviewed and 718 pending. Pending production modules are all under
+`Probability/` (701) and `MeasureTheory/` (17). The 137 modules under
+`BranchingProcessTest/` remain a separate unaudited scope; including them,
+855 modules remain for semantic review. The production structural scan still
+passes for all 1,603 ledger modules; test-tree structure has not yet been
+scanned.
+
+
+## General measure construction and convergence audit (2026-10-30)
+
+Reviewed the general event-limit, disjoint-partition, finite product-reindex,
+measure-map invariance, convolution-power, and two-sided-window interfaces.
+These statements are independent of a single process model and form usable
+measure-theoretic APIs. `MeasureTheory.Measure.convPower` adds an indexed
+convolution iteration to Mathlib's binary convolution API; event convergence
+and finite-cover reindexing combine standard integral/product-measure
+primitives into results used by path-law and random-walk arguments.
+
+The finite-measure family layer remains generic: `IsFiniteOnFamily` supports
+compact and order-ray families, while the domination theorem derives almost-sure
+finiteness from an integrable common bound. The inner measure definition is
+the supremum over measurable subsets and is used by several path lower-bound
+modules; Mathlib's inner-regularity predicates do not define that quantity for
+arbitrary sets. The bounded two-sided window lemma remains in the real-measure
+`Windows` subject and is used by stable entrance arguments.
+
+Removed `Measure/Finite/AtomFiniteness.lean`. Its only used result, finiteness
+of atoms above a positive `ENNReal` threshold, is exactly
+`ENNReal.finite_const_le_of_tsum_ne_top` in the pinned Mathlib source
+([Mathlib source](https://github.com/maix00/mathlib4/blob/380f2aafb622cb2c1c93dac545b6389083c68c51/Mathlib/Topology/Algebra/InfiniteSum/ENNReal.lean#L303-L312));
+its remaining leftmost-atom wrappers had no repository clients. The two
+branching-step finite-child bounds now use the Mathlib theorem directly. The
+affected branching-step selection clients built successfully (3,398 jobs).
+
+The production inventory now contains 1,602 modules, with 894 semantically
+reviewed and 708 pending. Pending production modules are under `Probability/`
+(701) and `MeasureTheory/` (7). The 137 modules under
+`BranchingProcessTest/` remain a separate unaudited scope; including them, 845
+modules remain for semantic review. Production structural checks must be
+rerun after this deletion; the test tree remains outside that scan.
+
+
+## Measure algebra, characteristic functions, and recurrence ownership (2026-10-30)
+
+Reviewed the remaining measure-algebra and characteristic-function modules.
+`DiracSum` provides the option-indexed counted point-mass construction used by
+point-measure clients; `IntegerValued` states the separate mass-value property.
+The characteristic-function modules provide complete interfaces for
+convolution powers, point-mass identification, positive definiteness, and
+compact-uniform convergence under tightness and pointwise convergence. The
+Fourier identity and integrability details remain private in the positive
+definiteness proof. These interfaces complement the pinned Mathlib
+characteristic-function and Levy-convergence APIs.
+
+Moved the recurrence result from `Measure/Recurrence/BlockBounds` to
+`Algebra/Order/Monoid/Recurrence` and generalized it from measures of events
+to sequences in any ordered commutative monoid. The three clients now supply
+`fun n => P (E n)` directly. Mathlib provides the ordered-multiplication
+monotonicity used by the induction, but no matching sequence recurrence
+statement ([ordered-monoid API](https://github.com/maix00/mathlib4/blob/380f2aafb622cb2c1c93dac545b6389083c68c51/Mathlib/Algebra/Order/Monoid/Defs.lean)).
+Both the old measure-specific module and its declaration were removed without
+a forwarding alias. The generic module and all three clients built successfully
+(3,169 jobs).
+
+The production ledger now contains 1,602 modules, with 901 semantically
+reviewed and 701 pending; the remaining production review is entirely under
+`Probability/`. The separate 137-module test tree remains unaudited, leaving
+838 modules for semantic review across both trees. The production structural scan passes and the ledger paths match the filesystem.
+A separate scan of all 137 test modules found no same-stem or `Lemmas`
+collisions, repeated prefixes, `Source/` folders, or directories with more than
+eight direct Lean files; these test modules still need semantic review.
+
+
+## Ergodic and measure-probability core audit (2026-10-30)
+
+Reviewed the pointwise and maximal ergodic modules, the invariant-observable
+criterion, finite-product logarithm conversion, positive-probability sublevel
+criterion, and abstract point-process core against their direct clients and
+the pinned Mathlib APIs. The Birkhoff modules own the complete finite-measure
+pointwise theorem and maximal inequality; Mathlib supplies Birkhoff sums and
+averages, quasi-measure-preserving congruence, and mean-ergodic results, but
+not this pointwise conditional-expectation limit
+([Birkhoff average API](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Dynamics/BirkhoffSum/Average.html),
+[mean ergodic API](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Analysis/InnerProductSpace/MeanErgodic.html)).
+The proof-only steps remain private, while the maximal and conditional-limit
+results are named complete interfaces.
+
+The two probability-product logarithm bounds stay together as opposite
+conversions for finite ENNReal products. The small-value theorem remains a
+general Markov consequence used across Poisson and random-measure clients.
+`PointProcess` remains the probability-level object: it combines a measurable
+random measure, integer-valued samples, and a chosen finiteness family; its
+branching-step presentation remains an adapter. The semantic ownership map now
+records these public entry points.
+
+The production ledger now contains 1,602 modules, with 907 semantically
+reviewed and 695 pending; all pending production modules are under
+`Probability/`. Together with the 137 semantically unaudited test modules,
+832 modules remain for semantic review. Production and test-tree structural
+scans both pass.
+
+## Brownian terminal-excursion law audit (2026-10-30)
+
+Reviewed the four modules under `Probability/Process/Brownian/Meander/`.
+`LastZero` proves the almost-sure last-zero and positivity facts needed for
+Iglehart's terminal-excursion transform; `LastZeroLaw` defines its measurable
+continuous-path image law and positivity properties; `LastSignChange` proves
+the almost-sure identification with Bolthausen's sign-change transform and the
+resulting law and continuity statements; `LastZeroSupport` gives support for
+positive linear paths in both continuous and Skorokhod path spaces. These are
+complete process-specific interfaces with downstream uses or a direct role in
+the conditioned-walk limit, so they remain in the Brownian `Meander` subject.
+The deterministic last-zero and sign-change transformations remain in their
+existing topology modules. The declarations cite Iglehart (1974), Theorem
+(3.4), and Bolthausen (1976), Theorem 3.2, as recorded in their module headers.
+
+The production ledger now contains 1,602 modules, with 911 semantically
+reviewed and 691 pending. The separate 137-module test tree remains outside
+this semantic pass. Production and test-tree structural scans pass.
+
+## Branching-process current-tree semantic recheck (2026-10-30)
+
+Rechecked the 15 current production modules under `Probability/BranchingProcess/`
+against the declarations, imports, and clients. The offspring package owns the
+complete optional-slot configuration law, mark and point-measure pushforwards,
+child-count interface, and independent address field. The Galton--Watson package
+owns the presampled tree law, generation observations and branching property,
+finite-slot first- and second-moment recurrences, Paley--Zygmund consequences,
+and finite-slot growth specialization. The two `Moments/Lemmas/` modules supply
+only the finite-population bounds and product-field expansions used to prove
+those recurrences; their declarations are imported internally and have no
+external clients. General product-law and coordinate-independence statements
+are already supplied by Mathlib's `Measure.infinitePi` and `iIndepFun` APIs;
+the remaining definitions specialize these constructions to optional child
+slots and Ulam--Harris descendant fields. The current focused build passed in
+3,161 Lake jobs.
+
+The ledger now records 926 of 1,602 production modules as semantically
+reviewed and 676 pending. The 137 test-tree modules remain outside this
+semantic pass.
+
+## Fixed-density and Poisson random-measure review (2026-10-30)
+
+Reviewed the random-measure exponential tilt and the four Poisson random-measure
+modules. Mathlib's `measurable_withDensity` varies the density for a fixed base
+measure, and the Giry API provides measurable integration over a variable
+measure; the pinned API has no corresponding theorem for the map
+$\mu\mapsto\mu.withDensity(w)$ with fixed measurable $w$. The parameter-dual
+result is now owned by `MeasureTheory/Measure/WithDensity.lean`; the random-
+measure module imports it and retains the exponential weighted image and
+mixture law. The package's `RandomMeasure/Lemmas.lean` remains proof support for
+partial counts and convergence used by evaluation and disjoint-set independence.
+The affected construction and tilt modules built successfully in 2,185 Lake
+jobs.
+
+The production inventory now contains 1,603 modules, with 932 semantically
+reviewed and 671 pending. The 137 test-tree modules remain a separate semantic
+auditing scope. The new fixed-density module's path has no same-stem sibling or
+paired parent file, and its insertion leaves no overfull source directory.
+See the official [Mathlib with-density API](https://leanprover-community.github.io/mathlib4_docs/Mathlib/MeasureTheory/Measure/WithDensity.html)
+and [Giry measure API](https://leanprover-community.github.io/mathlib4_docs/Mathlib/MeasureTheory/Measure/GiryMonad.html).
+
+## Poisson integral interfaces and Campbell identity (2026-10-30)
+
+Reviewed finite-activity integrability, pathwise sum representations,
+measurability, Campbell's identity, first-moment integrability transfers, and
+the finite two-source time-window vector. The integration modules form complete
+Poisson random-measure interfaces; the window vector is parameterized by an
+arbitrary finite family of measurable time windows and two independently
+sampled Poisson models, and is used by the stable jump-model finite-window and
+increment laws, so it remains with the Poisson integration APIs. The separate
+`RandomMeasure/Lemmas.lean` stays proof-only. The Campbell module now cites
+Last and Penrose, *Lectures on the Poisson Process*, Proposition 2.7, Section
+2.2, pages 12--13 (Cambridge University Press, 2017, DOI
+10.1017/9781316104477). Its stated Poisson formula is the specialization of
+the general intensity-measure identity.
+
+The five reviewed modules built successfully in 3,216 Lake jobs. The production
+ledger now contains 1,603 modules, with 937 semantically reviewed and 666
+pending; the 137 test-only modules remain unaudited semantically. See the
+[official publisher record](https://www.cambridge.org/core/books/lectures-on-the-poisson-process/97F98804D6A3A378C305C8BE1A0D657D)
+and the [authors' copy, Section 2.2 and Proposition 2.7](https://stoch.math.kit.edu/img/Last/lastpenrose2017.pdf).
+
+
+## Poisson characteristic-function and time-window proof-support review (2026-10-30)
+
+Reviewed the seven `CharacteristicFunction/` modules and the unit-time
+`Intensity/TimeMark.lean` interface against their declarations, importers, and
+the pinned Mathlib API. The characteristic-function modules form a coherent
+public sequence: a finite Poisson piece, finite independent partition sums,
+the full Poisson integral, independent sources, time windows, Lévy cutoffs,
+and finite weighted window families. The characteristic-function proof chain
+uses the project’s finite-Poisson product formula and Mathlib’s
+`charFun_map_cast_poissonMeasure`; the law-identification theorems use
+Mathlib’s general characteristic-function uniqueness API. The pinned Mathlib
+Poisson module provides the count-law characteristic function, but no marked
+Poisson-random-measure integral characteristic formula.
+
+The one-use unit-time product integral `integral_timeWindow_prod_mark` had two
+proof clients and was only a specialization of Mathlib’s `Measure.prod_restrict`
+and `integral_prod`. It now lives in
+`Probability/RandomMeasure/Poisson/Intensity/Lemmas/TimeWindowIntegral.lean`,
+which is imported privately by its characteristic-function clients. The
+remaining five unit-time identities stay in `Intensity/TimeMark.lean` because
+they describe reusable product-intensity, mark-window, and support facts used
+by entrance, path, and cutoff modules. Fixed-time atomlessness now follows
+from the product-intensity support result in `Intensity/Support.lean`. The `CharacteristicFunction/`
+directory has seven direct source files; its reusable formulas remain at that
+level, while proof-only calculations are private or under the owning
+`Intensity/Lemmas/` directory.
+
+Last and Penrose, *Lectures on the Poisson Process*, Theorem 3.9, Section 3.3,
+presents the Poisson Laplace functional for nonnegative functions. The complex
+characteristic-function formulas here are derived from finite Poisson
+probability-generating functions and dominated convergence; Theorem 3.9 is
+related background rather than an exact statement of these Lean theorems. See
+the [authors’ copy](https://stoch.math.kit.edu/img/Last/lastpenrose2017.pdf).
+The focused build of the changed interfaces and the stable jump-model
+finite-window client succeeded in 3,564 Lake jobs.
+
+The production inventory now contains 1,604 modules: 946 have completed
+semantic review and 658 remain pending. The separate test tree contains 137
+modules still awaiting semantic review. The current structural scan finds no
+same-stem file/directory conflicts, no directories with more than eight direct
+Lean files, and no duplicate `Lemmas.lean`/`Lemmas/` entries in either tree.
+
+## Poisson intensity support and cutoff review (2026-10-30)
+
+Reviewed `Intensity/Entrance.lean`, `Intensity/LevyCutoff.lean`, and
+`Intensity/Support.lean` against their callers, the local Poisson point-family
+API, Mathlib's product-measure and integral APIs, and the upstream
+[LeanLevy Poisson random-measure interface](https://github.com/slink/LeanLevy).
+The latter supplies the point-family construction, random-measure evaluation,
+Campbell identities, and thinning; Mathlib supplies the Poisson count law and
+general measure-theory steps, but not these point-family support consequences.
+
+`exists_unitTime_cutoff_intensities` packages the generic Lévy cutoff choice
+with a positive mark window away from zero and finite large-jump intensity.
+It has stable-tail entrance clients and belongs in the Poisson intensity
+interface. `IsLevyMeasure.integrable_unitTime_smallJumpMark` is a reusable
+finite-variation cutoff consequence, used by endpoint and jump-model clients.
+In `Support.lean`, zero intensity gives almost-sure zero realized mass;
+full-intensity carriers give equality after restriction; zero-mass time or
+mark singletons exclude points there; and intensity support transfers signs
+to realized Poisson integrals. The generic statements are appropriately
+public; their proofs reduce to the existing Poisson evaluation expectation,
+`Measure.prod_prod`, and Mathlib's integral support lemmas.
+
+The fixed-mark zero-intensity step cited by `Support.lean` matches Bolthausen,
+“On a Functional Central Limit Theorem for Random Walks Conditioned to Stay
+Positive,” Lemma 2.3, equation (2.2), pp. 481–482. The article uses the Lévy
+decomposition of the descending Brownian hitting-time process for the
+no-jump-of-length-one assertion. This review records the citation and checks
+the scope of the Lean support consequence; it does not identify the full
+Brownian path argument with this single-measure lemma.
+
+The focused build of the changed support and cutoff interfaces and their
+characteristic-function and Lévy path clients succeeded in 3,566 Lake jobs.
+After recording these three modules, the production ledger contains 949
+semantically reviewed modules and 655 pending; 137 test modules remain for
+semantic review.
+
+## Poisson jump-path entrance abstraction review (2026-10-30)
+
+Reviewed the one-jump path, small-integral cutoff, entrance construction, and
+independent-source realization against their direct clients and the upstream
+[LeanLevy random-measure API](https://github.com/slink/LeanLevy). Upstream
+`LevyJumpPath` provides pathwise band-jump sums and càdlàg compensated paths;
+the local `poissonJumpPath` instead integrates a selected marked region up to
+an arbitrary preorder time and identifies the path when one point is present
+and a disjoint region has zero mass. The local entrance modules then transfer
+that event to a full corridor and terminal-window event. These statements
+serve different interfaces, so the path and corridor constructors remain in
+`JumpPath/` rather than duplicating the upstream càdlàg process layer.
+
+`exists_poissonSmallVariation_pos` had one caller and did not state a path
+property: it is a general Poisson integral result for arbitrary measurable
+mark spaces, weights, and shrinking measurable sets. It now lives at
+`Integration/SmallValue.lean` as `exists_poissonSmallIntegral_pos`, alongside
+Campbell's formula; the theorem combines Campbell's identity with the generic
+restricted-integral limit and strict sublevel-probability result. The former
+`JumpPath/Bound.lean` estimate had one caller and is just the generic norm
+bound for a restricted integral followed by set monotonicity, so it is now a
+private helper in `JumpPath/Entrance/Basic.lean`. No compatibility aliases or
+duplicate public estimate remain.
+
+`JumpPath/Entrance/Basic.lean` retains the pathwise corridor transfer,
+`Entrance/FixedCutoff.lean` retains the complete fixed-intensity construction,
+and `Realization/Independent.lean` retains the reusable independent-source
+event and model constructors. The moved modules and their direct realization,
+entrance, endpoint, and increment clients built successfully with
+`lake -Kjobs=2 build` (3,246 Lake jobs).
+
+The production inventory now contains 1,603 modules: 954 have completed
+semantic review and 649 remain pending. The separate test tree contains 137
+modules still awaiting semantic review. The live source inventory matches all
+1,603 ledger paths with no missing or stale rows. Structural scans of both the
+production and test trees find no same-stem file/directory conflicts, no
+directory with more than eight direct Lean files, and no sibling
+`Lemmas.lean`/`Lemmas/` pair.
+
+## Import-boundary registry path reconciliation (2026-10-30)
+
+The repository import-boundary checker still named two retired module paths.
+The continuous-path measure bound now lives at
+`MeasureTheory/Measure/ContinuousMap/RangeOscillation.lean`, so the checker
+and its fixture now use `MeasureTheory.Measure.ContinuousMap.RangeOscillation`.
+The event-probability recurrence was generalized and moved to
+`Algebra/Order/Monoid/Recurrence.lean`; the obsolete
+`MeasureTheory.Measure.Recurrence.BlockBounds` entry was replaced by a
+boundary check on the actual ordered-monoid theorem. Both modules had already
+passed semantic review, so the ledger review count is unchanged. The updated
+checker passes all ten public-entry graphs (839 graph visits), header checks,
+and the registered general-layer dependency checks.
+
+## Poisson point-family interface review (2026-10-30)
+
+Reviewed the four `PointFamily/` modules against the local clients, Mathlib's
+Poisson distribution and independence interfaces, and the exact module mapping
+in `docs/third_party/LeanLevy/migration.md`. Each source header records the
+LeanLevy revision and license. The modules form a compact public interface:
+`Basic` partitions a σ-finite intensity and constructs the jointly independent
+count-and-mark family; `Independence` extracts independence for disjoint
+coordinate families; `PieceSum` proves one-piece Campbell and second-moment
+identities plus independent block sums; and `Thinning` derives retained-count
+laws and characteristic functions for finite disjoint families.
+
+The per-piece Campbell identity and the full random-measure Campbell formula
+serve different scopes: the former evaluates a finite sum conditioned on its
+piece count, while the latter integrates over the realized measure. The local
+modules use Mathlib's Poisson count law, moment formulas, `HasLaw`, and
+independence machinery; Mathlib does not provide this marked point-family
+construction or its thinning interface. The four files therefore remain at
+the public `PointFamily/` level. Their derivation steps are private within the
+owning files, and the directory has no proof-only module or excessive flat
+file list.
+
+All four modules are now recorded as semantically reviewed. The production
+ledger contains 1,603 modules: 958 reviewed and 645 pending; 137 test modules
+remain pending semantic review.
+
+## Poisson source-slot and finite-jump realization review (2026-10-30)
+
+Reviewed the source-slot identities and finite-jump event estimates against
+their direct clients and the generic `Measure.sum`, `Measure.dirac`, Poisson
+count-law, and independence APIs. `Realization/UniqueAtom.lean` contained no
+probability-space construction: it identifies the source slots counted by a
+realized Poisson random measure, characterizes one and zero counts, and proves
+the single-Dirac restriction and integral consequences. It is now
+`RandomMeasure/SourceSlots.lean`, alongside evaluation and independence, where
+this pathwise random-measure interface belongs. Its public results are
+mathematical interfaces for source-slot counts and single-atom restrictions;
+the module is not proof support for the jump-path client.
+
+`Realization/FiniteJump.lean` remains with the realization estimates: it proves
+positive probability of one point in a finite-mass target region and zero
+points in a disjoint finite-mass region, and combines this event with an
+independent observable below a threshold. That observable is arbitrary and
+ENNReal-valued, so its theorem is now named
+`measure_poissonRandomMeasure_one_zero_smallValue_pos` rather than calling it
+small variation. The complete event estimate remains a public construction
+input; it is not duplicated in `JumpPath/Entrance/`.
+
+The moved source-slot module, finite-jump estimates, and direct path and
+entrance clients built successfully with `lake -Kjobs=2 build` (3,238 Lake
+jobs). The independent random-measure addition result was moved from the
+Poisson root into `RandomMeasure/Superposition.lean`: its statements give the
+Poisson count law on each finite-mass set for the sum of two independent
+point-family realizations, including an intensity partition specialization.
+This is a reusable random-measure law, while the one-set statement does not
+itself assert the joint law of all evaluations. The scope matches the
+distinction in LeanLevy's `map_poissonRandomMeasure_apply` entry point, which
+identifies one finite-mass evaluation of a constructed Poisson random measure
+([LeanLevy Poisson random-measure source](https://github.com/slink/LeanLevy/blob/main/LeanLevy/RandomMeasure/PoissonRandomMeasure.lean));
+Mathlib supplies the natural-number Poisson convolution used in the proof
+([Mathlib Poisson distribution API](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Probability/Distributions/Poisson/Basic.html)).
+The moved module built successfully with `lake -Kjobs=2 build`
+(`Probability.RandomMeasure.Poisson.RandomMeasure.Superposition`, 3,211 Lake
+jobs). The production ledger now records 1,603 modules: 961 reviewed and 642
+pending; the 137 test modules remain pending semantic review.
+
+## Poisson distribution moments and marked-event review (2026-10-30)
+
+Reviewed `Distributions/Poisson/Moments.lean` against the Poisson probability
+mass formula and its current Mathlib API. Its first and second factorial
+moments, variance, integral forms, and zero-rate law are reusable facts about
+the Poisson distribution; the local point-family evaluation and Campbell
+proofs use the first moment identities. The pinned Mathlib API provides the
+Poisson mass, normalization, characteristic function, and convolution, while
+these moment formulas are additional results.
+
+`Distributions/Poisson/MarkedEvents.lean` supplies complete positive-probability
+events from independent Poisson counts, a mark in a positive-measure set, and
+an independent nonnegative `ENNReal` observable below a threshold. The
+observable is arbitrary, so the two declarations and their descriptions now
+use `smallValue` instead of `smallVariation`; their two Lévy and path-level
+clients were updated without compatibility aliases. The small-value step is
+already factored through the general `MeasureTheory.SmallValue` result, and
+the Poisson count probabilities are derived from Mathlib's singleton mass
+formula.
+
+The moment and marked-event modules and both clients built successfully with
+`lake -Kjobs=2 build` (3,169 Lake jobs). The production ledger now records
+1,603 modules: 963 reviewed and 640 pending; the 137 test modules remain
+pending semantic review.
+
+## Scalar domain-of-attraction interface review (2026-10-30)
+
+Reviewed the five modules under `Distributions/DomainOfAttraction/` against
+their stable-law, Brownian-limit, and random-walk clients. `Basic.lean` owns
+the general centered normalized i.i.d.-sum and attraction definitions.
+`Normalization.lean` states the change-of-scale theorem for arbitrary
+eventually positive normalizations and asymptotic scale ratios;
+`Block.lean` transfers attraction to varying block lengths while retaining
+the centering contribution; `Centering.lean` gives the standalone zero-mean
+consequence under integrability and sublinear normalization; and
+`CharacteristicFunction.lean` records the exact transform of normalized
+finite sums and its limits. Each is a complete statement at the general
+domain-of-attraction level, so these modules remain public rather than moving
+their results into application-specific `Lemmas/` folders. The pinned Mathlib
+imports provide the underlying i.i.d. sequence law, convergence-in-distribution
+and convergence-in-measure APIs; the domain-of-attraction predicate and these
+normalization adapters are supplied by this project.
+
+All five modules built successfully with `lake -Kjobs=2 build` (3,300 Lake
+jobs). The production ledger now records 1,603 modules: 968 reviewed and 635
+pending; the 137 test modules remain pending semantic review.
+
+## Root-indexed spatial-selection adapter placement (2026-10-30)
+
+`Selection/NSelection/Position.lean` defines its three public measurability
+theorems in the `BranchingRandomWalk.RootIndexed` namespace. Their arguments
+are `RootIndexed.StepField` objects, and the file imports the root-indexed
+field measurability and position APIs; the generic first-$N$ selection
+mechanisms remain in `Selection/NSelection/`. The adapter therefore moved to
+`Genealogy/RootIndexed/Field/Selection.lean`, alongside the field interface it
+specializes. Its public statements remain available without a compatibility
+alias, and both direct clients now import the semantic owner. The move reduces
+the direct module count in `Selection/NSelection/` and keeps the root-indexed
+field APIs together.
+
+The moved module and its two clients built successfully with
+`lake -Kjobs=2 build` (3,143 Lake jobs). The production ledger now records
+1,603 modules: 969 reviewed and 634 pending; the 137 test modules remain
+pending semantic review.
+
+## Generic selector and branching-walk ownership (2026-10-30)
+
+The generic capacity selector in `Combinatorics/Selection/NSelection/Basic.lean`
+acts on `Set ι` and returns a `Finset ι`; its laws only refer to subset
+membership and cardinality. `Mechanism/` adds order, rank, and tie-breaking,
+without addresses, offspring, generations, or a branching population process.
+Those interfaces therefore belong to generic combinatorics. The measurable
+theorems are now under `MeasureTheory/Selection/NSelection/`, where their
+measurable-space assumptions belong. Their declarations remain in
+``Combinatorics.Selection.NSelection``, the namespace of the selector they
+characterize; this does not make the core selector measure-theoretic.
+
+The branching-walk meaning starts in
+``Combinatorics/BranchingWalk/Selection/`NSelection/Walk/Basic.lean`: a `Walk`
+has an initial population, an offspring map, and a generation recursion that
+uses a capacity selector. Cloud coupling, trajectories, and speeds likewise
+remain in the BranchingWalk subtree. This is the boundary between the reusable
+selection rule and one domain-specific process built from it.
+
+The totalized selector and the definitions `lowerSection` and
+`lowerFiniteDomain` live with the order-theoretic mechanism in
+`Combinatorics/Selection/NSelection/Mechanism/`. The modules under
+`MeasureTheory/Selection/NSelection/` prove measurable properties of those
+definitions; they do not own the underlying selection objects. These files
+state generic measurable interfaces for ordered candidate sets, so their
+measure-theoretic location does not turn the selector definition into a
+measure-theory object.
+
+The pinned Mathlib API supplies `Finset.sort`, which returns an ordered list,
+and `Finset.min`/`Finset.max`, which select one extremal element. It does not
+provide this project's capacity-`N` selector interface, including its
+set-valued and lower-finite forms ([`Finset.sort`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Data/Finset/Sort.html),
+[`Finset.min` and `Finset.max`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Data/Finset/Max.html)). The selector's measurable properties
+are grouped under `MeasureTheory/Selection/NSelection/`, according to the
+assumptions needed to state them; the underlying selection definitions remain
+in the generic combinatorics layer.
+
+The selector mechanisms, five measurability modules, and direct production
+clients built successfully with `lake build` (3,485 jobs). The production
+ledger now records 1,604 modules: 975 reviewed and 629 pending. The 137 test
+modules remain pending semantic review.
+
+The structural scan currently finds no same-level file/directory stem
+collisions, no directory with more than eight direct Lean modules, no paired
+`Lemmas.lean` and `Lemmas/` entry points, and no file stems repeating their
+parent directory name. The production module paths and audit ledger match
+exactly.
+
+
+## Endpoint-deviation ownership correction (2026-10-30)
+
+The previous `Drawdown/Spine/` grouping mixed three different roles. The
+first-stage cutoff and its asymptotic properties now live in
+`FirstStage/Cutoff.lean`; the positive tilted-spine corridor lower bound used
+only by the PZ proof is in `FirstStage/Lemmas/CorridorLowerBound.lean`; and the
+two-stage drift/window schedule is in `Population/RestartedWindow.lean`, next
+to the restarted-population construction. The latter file proves measurability
+and the upper-window inclusion for that specific schedule; those facts do not
+move the window object into a generic measure-theory layer.
+
+`Drawdown/Spine/` now contains only the drawdown-dependent capacity and
+failure-probability results plus their nested `Lemmas/` chain. The declarations
+remain in the `NSelection.EndpointDeviation` namespace because their
+mathematical owner is the selected population's endpoint-deviation argument;
+module relocation does not introduce aliases or change theorem statements.
+The affected import paths and public-import boundaries are being checked with
+targeted Lake builds. This correction is part of the full module audit; it does
+not certify the remaining endpoint-deviation proof routes or the repository-wide
+semantic review.
+
+## Selection ownership and restarted-population proof boundaries (2026-10-30)
+
+Reviewed the selection layers against their actual definitions. The generic
+`NSelection` mechanism stays in `Combinatorics/Selection/NSelection/`; the
+first-N rule itself contains no branching data. The deterministic selected
+walk, which adds offspring sets and generation populations, stays in
+``Combinatorics/BranchingWalk/Selection/`NSelection/Walk/`. This split keeps the
+operator at its reusable level and the process semantics with BranchingWalk.
+
+The converse between restarted path windows and killed-population membership
+is a general causal-population fact, so
+`mem_ofRestartedRealPositionSets_of_path` now lives beside the forward
+implication in `Probability/BranchingRandomWalk/Population/Processes/Causal/Path/Window.lean`.
+It is stated for arbitrary roots and child labels, a measurable mark type, and
+a measurable real-valued observation. The positive-a successful-root
+cardinality embedding is used only by `Population/LowCount.lean`; it now lives
+under `Population/Lemmas/Embedding.lean`, and its import is internal. The
+second-stage proof no longer imports that unrelated helper.
+
+The causal path-window module built successfully with `lake -Kjobs=2 build`
+(3,235 jobs). The moved lemma module and affected low-count/second-stage
+clients built successfully with `lake -Kjobs=2 build` (3,918 jobs). The
+import-boundary checker passed. The production ledger now contains 1,604
+modules: 983 semantically reviewed and 621 pending; 137 test modules remain
+pending semantic review. The structural scan still finds no same-level
+file/directory stem collisions, no directory with more than eight direct Lean
+modules, no paired `Lemmas.lean` and `Lemmas/` entry points, and no file stem
+repeating its parent directory name. Full-repository semantic review remains
+in progress.
+
+## General selection mechanism ownership (2026-10-30)
+
+The environment-dependent selection interfaces are now owned by
+`MeasureTheory/Selection/`: their statements require measurable candidate
+spaces, joint measurability, and—in the causal forms—time-indexed domain
+flows, while remaining independent of any branching model. Their BRW clients
+are adapters for root-indexed particles and selected-cloud couplings. The
+causal finite-selection overflow time is label-generic and belongs with the
+process stopping-time interfaces. The deterministic `NSelection` structures remain
+under `Combinatorics/Selection/NSelection/`; the recursively selected walk
+remains under ``Combinatorics/BranchingWalk/Selection/`NSelection/Walk/`.
+This reflects ownership by the object defined, rather than by the current
+caller. The combinatorial selector and ranked specification remain under
+`Combinatorics/Selection/NSelection/`. Its measurable realization theorems
+now live under `MeasureTheory/Selection/NSelection/`, where their measurable
+candidate spaces and value comparisons belong; this layer imports the generic
+selector. The general environment-dependent mechanism interface lives under
+`MeasureTheory/Selection/`. The six moved modules and their direct BRW clients
+built successfully with `lake -Kjobs=2 build` (3,345 jobs). The ledger has
+1,604 production modules, with 983 reviewed and 621 pending; 137 test modules
+remain pending semantic review. The general `populationOverflowTime` interface previously placed under
+`Probability/BranchingRandomWalk/Timing/Schedule/` now lives under
+`Probability/Process/HittingTime/PopulationOverflow.lean`; its definition
+and stopping-time results quantify over arbitrary set-valued populations.
+The BRW selection module keeps only the root-indexed causal-population
+adapter. Both targets build successfully with `lake -Kjobs=2 build`
+(3,035 jobs). `Probability/BranchingRandomWalk/Selection/Coupling/Basic.lean` now imports
+only the generic causal mechanism and cloud-selection interfaces used in its
+public statements. Six unused field and sibling-coupling imports were
+removed, and the narrowed module builds successfully. The production ledger
+now records 1,604 modules: 986 reviewed and 618 pending; 137 test modules
+remain pending semantic review. The full repository audit remains in progress.
+
+## Capacity selection and root-indexed coupling review (2026-10-30)
+
+The `NSelection` structure remains in `Combinatorics/Selection/NSelection/`:
+its definition is a capacity-bounded finite-subset selector on arbitrary sets.
+This is a generic candidate-set combinatorial interface; the word
+`Selection` here does not yet carry offspring or generation semantics.
+``Combinatorics/BranchingWalk/Selection/`NSelection/Walk/` adds offspring and
+generation recursion, while `MeasureTheory/Selection/` owns environment-
+dependent measurable rules. `MeasureTheory/Selection/NSelection/` owns the
+measurability properties of ranked selection maps and imports the core
+definition from `Combinatorics/Selection/NSelection/`. The core selector
+remains independent of measurable and branching data.
+
+The root-indexed finite selector and two population-coupling modules were
+reviewed against their signatures and clients. Their use of generation flows,
+root-indexed addresses, offspring, and spatial clouds places them in the BRW
+selection layer. In `Selection/Coupling/StepSelection.lean`, the single-root
+coupling constructor was fully subsumed by the finite-root-set constructor and
+had no callers. The narrower declaration was removed; the generalized
+constructor now has the canonical name
+`RootIndexed.coupledInjection_labelledPopulation`, and its sole client was
+updated. Both the adapter and its split-schedule client built successfully
+with `lake -Kjobs=2 build` (3,339 jobs). The related generic coupling and
+root-indexed selection modules also built successfully (3,288 jobs). After
+moving the five ranked-selector measurability modules under
+`MeasureTheory/Selection/NSelection/`, those modules and their affected
+production clients built successfully with `lake -Kjobs=2 build` (3,440 jobs).
+
+The import-boundary checker passed (10 public entries, 839 graph visits).
+The production tree and ledger both contain 1,604 modules, with zero path
+mismatches. The latest structural scan found zero file/directory stem
+collisions, repeated parent/file stems, duplicate `Lemmas` entries, directories
+with more than eight direct Lean modules, or `Source/` directories. The ledger
+now records 1,604 production modules: 989 reviewed and 615 pending; 137 test
+modules remain pending semantic review. The full repository audit remains in
+progress.
+
+## Recursive rank-installed field proof-support review (2026-10-30)
+
+`Probability/BranchingRandomWalk/Coupling/Field/Ranked/` owns the recursive
+equal-rank installation construction, its generation-domain measurability,
+selected-population and position observables, and finite-stage product-law
+preservation. The construction uses root-indexed step fields and predictable
+generation updates, so this interface belongs to branching-field coupling.
+
+The one-step identity expanding a recursive update as a past/selected-coordinate
+gluing is used only by the past-coordinate and product-law proofs; it now lives
+in `Ranked/Lemmas/RecursiveStep.lean`. The past-coordinate measurability
+induction is used only by the field measurability and product-law modules; it
+now lives in `Ranked/Measurability/Lemmas/Past.lean`. The public domain-flow
+and observable measurability results remain in `Measurability/Field.lean` and
+`Measurability/Observables.lean`. The two domain-flow theorem names now use
+`domainFlow` consistently, with no compatibility aliases.
+
+The recursive construction, internal proof modules, product law, measurable
+observables, and direct selected-population and restart clients built with
+`lake -Kjobs=2 build` (3,379 jobs). The import-boundary checker passed (10
+public entries, 839 graph visits). The production tree and ledger both contain
+1,605 modules with no path mismatches. The structural scan found no same-stem
+file/directory collisions, parent/file stem repetitions, duplicate `Lemmas`
+entries, directories with more than eight direct modules, or `Source/`
+directories. The ledger records 996 reviewed and 609 pending production
+modules; 137 test modules remain pending semantic review. The full repository
+audit remains in progress.
+
+## Selection semantics and branching-field coupling review (2026-10-30)
+
+The generic `Combinatorics/Selection/` modules operate on candidate sets and
+finite sets: a mechanism returns a subset, `NSelection` adds the capacity
+cardinality law, and the ordered and matching modules use only order and
+finite-set structure. These declarations do not describe offspring or
+generation updates. ``Combinatorics/BranchingWalk/Selection/`NSelection/Walk/`
+adds the branching semantics by collecting each generation's children and
+recursively selecting the next population. Measurable, environment-dependent
+rules belong to `MeasureTheory/Selection/`, and stochastic laws and estimates
+belong to `Probability/BranchingRandomWalk/Selection/`. The generic selector
+therefore remains under `Combinatorics`; the walk process remains under
+`BranchingWalk`. Mathlib supplies finite-set primitives under ``Data/Finset``
+and subject-specific combinatorial interfaces under `Combinatorics`, but no
+direct counterpart of this repository's capacity-`N` selector was found.
+
+The three offspring-assumption modules under
+`Probability/BranchingRandomWalk/Assumptions/` and the five field-coupling
+modules under `Probability/BranchingRandomWalk/Coupling/` were reviewed. Their
+claims depend on raw offspring laws, root-indexed addresses, generation-domain
+flows, spatial positions, or random cloud couplings, so they remain in the
+branching-random-walk layer. The generic optional-preimage measurability
+wrappers were removed from `Coupling/Field/Preimage.lean`; the rank-matched
+field proof now uses Mathlib's countable-range evaluation theorem directly.
+The affected coupling modules and direct clients built successfully (3,335
+Lake jobs).
+
+The import-boundary checker passes its 10 configured public entries and 839
+graph visits. The production source inventory and ledger both contain 1,606
+modules with no path mismatches. The structural scan found no same-stem
+file/directory collisions, repeated parent/file stems, `Lemmas.lean`/`Lemmas/`
+conflicts, directories with more than eight direct Lean files, or `Source/`
+directories. The ledger records 1,009 reviewed and 597 pending production
+modules; 137 test modules remain outside the production ledger and await their
+own semantic review. The full repository audit remains in progress.
+
+## Brownian range small-deviation module review (2026-10-30)
+
+The five modules in `Probability/Process/Brownian/SmallDeviation/Range/` have
+distinct roles. `EscapeConstant` specializes the general stable-process escape
+constant to standard Brownian motion. `FiniteCover` exposes the fixed finite
+spectral-cover probability bound, while `UpperRate` exposes the explicit
+finite-cover envelope and the small-width logarithmic upper rate. Their
+calculations are grouped in `Lemmas/FiniteCoverTransfer` and
+`Lemmas/UpperRate`; the first contains the one-use Donsker transfer and
+diffusive spectral limits, and the second contains positivity and
+exponential-limit support. The subtree has three direct theorem modules and
+one `Lemmas/` directory, with no redundant filename or directory level.
+
+The Brownian escape-rate theorem specializes the project's generic
+stable-process escape-rate API. The fixed-cover proof uses Mathlib's Brownian
+finite-dimensional-law interface, the project's continuous-path Donsker
+theorem, and the finite-interval Rademacher spectral estimate. Mathlib supplies
+the Brownian process characterization, but no corresponding Brownian
+small-range spectral bound or logarithmic-rate API; these results therefore
+remain in the Brownian small-deviation layer. The finite-cover envelope is
+also consumed by random-walk range estimates, and its Brownian spectral meaning
+justifies its ownership here.
+
+The five modules and their direct clients have passing recorded Lake builds.
+The production inventory remains 1,606 modules and matches the ledger; the
+ledger records 1,014 reviewed and 592 pending modules. The structural scan and
+the 10-entry import-boundary check pass. The 137 test modules remain outside
+the production semantic ledger. The full repository audit remains in progress.
+
+## Brownian corridor lower-bound review and endpoint ownership (2026-10-30)
+
+The centered-corridor lower-bound statements in `Corridor/Bounds.lean` are
+complete Brownian probability interfaces: they give the principal-mode lower
+bound for a fixed corridor fraction, arbitrary positive width, the optimized
+unit-width case, and the resulting open-corridor and positivity consequences.
+The finite-interval Rademacher eigenvalue limit and closed-event Donsker
+transfer used to prove them remain in `Corridor/Lemmas/LowerBound.lean` as
+proof-only declarations. `SmallDeviation/Endpoint.lean` described survival in
+a wider Brownian corridor together with a terminal interval, and directly
+depended on the closed-unit-corridor theorem. It has been moved to
+`SmallDeviation/Corridor/Endpoint.lean`; the random-walk endpoint client and
+its citation now use the canonical module path, with no forwarding alias.
+
+These are Brownian-specific probability estimates. Mathlib supplies the
+`IsBrownianReal` process interface, while the quantitative lower bound uses
+the repository's finite-interval Rademacher spectral estimate and Donsker
+transfer. The grouped `Corridor/` owner now contains `Bounds.lean`,
+`Endpoint.lean`, and one `Lemmas/` directory, matching the event semantics.
+The moved module and its direct endpoint client built successfully with
+`lake -Kjobs=2 build` (3,735 Lake jobs). The production inventory remains
+1,606 modules and matches the ledger; 1,017 are reviewed and 589 remain
+pending. Structural checks and the import-boundary checker pass. The full
+repository audit remains in progress.
+
+## N-selection semantic ownership check (2026-10-30)
+
+The `NSelection` name occurs at several semantic layers, so the owner follows
+the mathematical object rather than the presence of a measurability theorem.
+`Combinatorics/Selection/NSelection/` owns the abstract capacity-$N$ selector
+on arbitrary candidate sets and its deterministic order-based mechanisms.
+`MeasureTheory/Selection/NSelection/` contains only measurable realizations
+and measurability theorems for that generic selector; it does not own or
+define the `NSelection` object. A different, branching-walk-specific
+`NSelection` transforms offspring fields and recursively builds generations;
+it belongs under
+`Combinatorics/BranchingWalk/Selection/NSelection/Walk/`. Its stochastic laws,
+speed limits, and deviation estimates belong under
+`Probability/BranchingRandomWalk/Selection/NSelection/`.
+
+## Brownian Bessel endpoint hypothesis review (2026-10-30)
+
+The four modules in `Probability/Process/Brownian/Bessel/` have one coherent
+model owner. `ThreeDimensional.lean` constructs the product law, radial
+process, unit-interval path, and path law. `Endpoint.lean` now separates the
+time-one radius fact from the path-law statement: `ae_pos_endpoint` uses only
+the one-time Gaussian law and states $R_1>0$ almost surely under the triple
+product law, while `ae_pos_endpoint_pathLaw` uses continuity and measurability
+to transfer that fact to the mapped path law. This keeps path assumptions out
+of a theorem that depends only on one-time marginals. `Support.lean` exposes
+the complete support theorem for every nonnegative linear path; its
+coordinatewise radial error estimate and path-space transfer are single-client
+proof steps in `Lemmas/Support.lean`.
+
+The pinned Mathlib Brownian API supplies the process law and continuity
+interfaces, and its Bessel module supplies special functions; neither provides
+a stochastic BES(3) process or radial path law. The model construction remains
+local, with Imhof's Theorem 1 cited in the module documentation. The corrected
+Bessel targets built successfully with
+`lake -Kjobs=2 build Probability.Process.Brownian.Bessel.Endpoint Probability.Process.Brownian.Bessel.Support`
+(3,561 Lake jobs). The four Bessel rows are now recorded as reviewed; this
+brings the production audit ledger to 1,021 reviewed and 585 pending modules.
+The complete repository audit remains in progress.
+
+This separation matches Mathlib's object-first organization: finite-set
+operations and the `Finset` measurable-space instance are supplied by their
+respective ``Data/Finset`` and `MeasureTheory/MeasurableSpace` modules, while
+selection semantics are not identified with the measurable-space structure.
+The pinned Mathlib API gives `measurable_finset_iff` for finite-set-valued maps,
+which the local ranked-selector measurability proofs use; it does not define
+capacity-$N$ or branching-walk selection. The official
+[finite-set measurability API](https://leanprover-community.github.io/mathlib4_docs/Mathlib/MeasureTheory/MeasurableSpace/Constructions.html)
+documents this boundary. No `NSelection` module is present under the project's
+`MeasureTheory/MeasurableSpace/` tree. The deterministic and generic
+measure-theoretic selector modules have reviewed ledger entries; the separate
+branching-random-walk probability subtree remains part of the ongoing audit.
+
+## Brownian construction ledger reconciliation (2026-10-30)
+
+Reconciled the two remaining pending production rows in
+`Probability/Process/Brownian/Construction/` with the existing API and
+dependency review above. `Existence.lean` owns the complete pre-Brownian and
+continuous Brownian witness results; `PreBrownianModification.lean` owns the
+continuous modification interface for an arbitrary pre-Brownian process. The
+fourth-moment Gaussian calculation has one client and remains internal under
+`Construction/Lemmas/`. The targeted build passed for both public modules
+(3,649 Lake jobs). The ledger now records 1,023 reviewed and 583 pending
+production modules; the whole-library audit remains open.
+
+
+## Brownian reflection semantic ownership review (2026-10-30)
+
+The reflection modules separate three mathematical objects: path-law
+consequences in Reflection/Path/, reflection at finite and continuous
+first-passage times in Reflection/FirstPassage/, and descending hitting-time
+laws and increments in Reflection/Descending/. Their current placement
+matches those interfaces; the generic path-reflection map remains under
+Probability/Process/Path/Reflection, and finite-observation hitting uses
+Mathlib's hittingBtwn API. Mathlib supplies the generic hitting-time
+constructions but does not provide the Brownian reflection principle as a
+path-law result. The stopping-time reflection argument follows Theorem 2.1 of
+Dilworth and Wright, A direct proof of the reflection principle for Brownian
+motion ([article PDF](https://www.mathnet.ru/links/fd16f2cc79c7ab0189f7ffcb6b20a967/thsp157.pdf)); the first-passage consequences also supply the Brownian identities used
+in Bolthausen's Lemma 2.3.
+
+The audit found one layer leak: isClosed_nonnegativeUnitPaths was a
+Brownian-specific module exposing a pure topological fact. It is now replaced
+by ContinuousMap.isClosed_setOf_forall_mem in
+Topology/ContinuousMap/Range.lean, which proves that pointwise membership
+in a closed target set defines a closed subset of the continuous-map space.
+The Brownian null-path result and a random-walk Donsker Portmanteau proof both
+reuse this general theorem. The interval-specific Corridor API remains useful
+for the stronger open/closed interval characterizations and is not duplicated.
+
+The 12 reflection modules and the new generic topology module are recorded as
+reviewed in the ledger. Their direct clients built successfully with
+lake -Kjobs=2 build (3,751 Lake jobs). The production ledger now records
+1036 reviewed and 571 pending modules; the repository-wide audit
+remains in progress.
+
+
+## Distinguishing generic and branching N-selection (2026-10-30)
+
+The repository contains two related but distinct objects with the name
+NSelection. `Combinatorics.Selection.NSelection` is a capacity-$N$ selector
+on arbitrary candidate sets: it returns a finite subset, retains every point
+below capacity, and returns exactly $N$ points when the input is infinite.
+Its finite-input interface is consumed by generic measurable-selection
+modules and by the deterministic branching-walk recursion. By contrast,
+`Combinatorics.Branching.NSelection` is a transformation on entire branching
+walks whose output has at most $N$ offspring at each node. The former is a
+candidate-set combinatorial structure; the latter is explicitly
+BranchingWalk semantics and stays under
+`Combinatorics/BranchingWalk/Selection/`.
+
+The pinned Mathlib source provides the underlying finite-subset operations,
+including `Set.Infinite.exists_subset_card_eq` under
+`Data/Set/Finite/Basic` and finite-cardinality selection under `Data/Finset`; it
+does not package these into an order-transportable capacity-selection
+structure. This higher-level interface has generic measurable clients as
+well as branching clients, so keeping the generic selector in
+Combinatorics/Selection/ gives it the appropriate abstraction boundary. The
+exact distinction is recorded in the ownership table.
+
+
+## Brownian range input consolidation (2026-10-30)
+
+The previous Probability/Process/Brownian/Support/Range.lean combined two
+Brownian range facts with support results, though its only client was the
+finite-cover small-deviation proof. The range-oscillation cover inequality
+was an unused wrapper around the generic MeasureTheory result, so it was
+removed. The continuous path's almost-sure start-at-zero fact has one client;
+it is now a private lemma in
+Probability/Process/Brownian/SmallDeviation/Range/Lemmas/FiniteCoverTransfer.lean.
+That keeps the proof input beside the Donsker transfer that consumes it and
+leaves Brownian/Support with the linear-path support interfaces.
+
+The targeted build for Range/FiniteCover, Range/UpperRate, and
+Range/EscapeConstant passed with lake -Kjobs=2 build (4,099 Lake jobs). The
+obsolete Support/Range module was removed from the production inventory and
+ledger. The ledger now has 1606 modules: 1036 reviewed and
+570 pending; the full semantic audit remains in progress.
+
+
+## Brownian path-law and finite-horizon interface review (2026-10-30)
+
+Reviewed the nine remaining Brownian production modules in
+FiniteDimensional, Marginal, PathLaw, Scaling, Support, and TimeReversal.
+Their path-valued versions and image laws remain Brownian specializations;
+the generic continuous and Skorokhod path maps are owned by
+Probability/Process/Path/Representation. The Brownian continuous-path law
+uniqueness result delegates its reusable step to
+Probability/ConvergenceInDistribution/ContinuousMap/FiniteDimensional, whose
+finite-evaluation projections determine a measure on continuous-path space.
+The Brownian module only identifies those projections from the common
+projective-family law, so another generic adapter would duplicate the existing
+interface.
+
+The Skorokhod path-law module exposed three zero-client wrappers: a direct
+copy of the generic image-law theorem and two immediate evaluation-law
+rewrites of Mathlib's Brownian marginal theorem. Those wrappers were removed;
+the complete joint finite-evaluation laws for both continuous and Skorokhod
+paths remain. The nine modules and their direct clients passed
+lake -Kjobs=2 build (3,856 Lake jobs). The Brownian path-law entry points
+are recorded in the ledger; the production audit now records 1606
+modules, 1045 reviewed and 561 pending.
+
+
+## Poisson path endpoint and increment ownership review (2026-10-30)
+
+The cutoff endpoint and increment modules mixed two general supported-path
+identities with their small/large Lévy-band specializations. The general
+identities depend only on the two realized Poisson measures, their support
+relations, and (for increments) pathwise integrability. They now live beside
+the `poissonEntrancePath` definition under
+`Probability/RandomMeasure/Poisson/JumpPath/Entrance/Endpoint.lean` and
+`Increment.lean`. The Lévy `PoissonConfiguration/Endpoint.lean` and
+`Increment.lean` now expose only the fixed-cutoff almost-sure results.
+`Path.lean` remains under `Probability/Process/Levy` because canonical-to-cutoff
+path equality and its zero-start statement depend on the small- and large-jump
+bands.
+
+The identity for subtracting two cumulative integrals is used only inside the
+generic increment proof, so it is now private there. Mathlib already supplies
+Bochner integral linearity and set-integral difference identities in
+[`Mathlib/MeasureTheory/Integral/Bochner/Set`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/MeasureTheory/Integral/Bochner/Set.html); the public project result records the Poisson-path statement, not a duplicate integral API. The two new generic modules, the three cutoff modules, and the stable jump-model endpoint, increment-law, and independent-increment clients built successfully with `lake -Kjobs=2 build` (3,587 Lake jobs).
+
+The production inventory now contains 1,608 modules: 1,050 are reviewed and
+558 remain pending. The repository-wide semantic audit continues.
+
+
+## One-jump corridor entrance ownership review (2026-10-30)
+
+`Probability/Process/Levy/Jump/Entrance.lean` states a positive-probability
+result from a Poisson count, a mark, an independent small-variation bound, and
+an explicit path decomposition. The theorem has no `IsLevyProcess` assumption;
+its conclusion is a process-corridor event. It now lives in
+`Probability/Process/Corridor/PoissonEntrance.lean`, and the Skorokhod segment
+adapter imports that module directly. The canonical finite-variation theorem
+remains in `Probability/Process/Levy/Jump/Intensity/Entrance/Canonical.lean`
+because it selects the small/large Lévy cutoff bands and constructs their
+Poisson path model.
+
+The moved corridor theorem, its direct Skorokhod adapter, and the stable
+small-deviation Poisson-model client built successfully with
+`lake -Kjobs=2 build` (3,657 Lake jobs). The production inventory remains
+1,608 modules; 1,052 have completed semantic review and 556 remain pending.
+
+
+## Uniform-block prefix recurrence helper ownership review (2026-10-30)
+
+`Probability/Process/Corridor/CoreReturn.lean` only iterated a one-step
+probability inequality for two rational uniform-prefix corridor events. The
+induction itself is already the general theorem
+`IsOrderedMonoid.pow_le_of_mul_le_succ`; the wrappers have clients only in the
+stable lower-bound assembly chain. Moved them to
+`UniformBlocks/Probability/Lemmas/PrefixRecurrence.lean`, next to the event
+definitions they specialize and under `Lemmas/` to identify their supporting
+role. The three direct stable clients and the moved module built successfully
+with `lake -Kjobs=2 build` (3,205 Lake jobs). The production inventory remains
+1,608 modules; 1,053 have completed semantic review and 555 remain pending.
+
+
+## Root-indexed selected-subtree interfaces and root-step batch placement (2026-10-30)
+
+The seven modules in `Genealogy/Exploration/RootIndexed/SelectedSubtrees/`
+provide complete, separately reusable interfaces: fixed and adaptive fresh
+fields, finite iteration, original-address and position transport, spatial
+population comparison, and generation-selected offspring batches. Their
+clients span restart, coupling, selected-population, and endpoint-deviation
+proofs, so they remain in this focused subject directory rather than moving
+under `Lemmas/`. The abstract single-root subtree API remains alongside it:
+that interface has an unlabelled `TreeNode α → Step α X` sample space, while
+`RootIndexed` retains arbitrary initial-root labels and root/address pairs.
+
+The generic `rootStepBatch` map and its arbitrary-index infinite product-law
+result were separated from `SelectedSubtrees/GenerationBatch.lean` into
+`Genealogy/RootIndexed/Law/RootBatch.lean`. They apply to every family of
+roots, independently of adaptive subtree selection; `GenerationBatch` now
+owns only the generation-selected specialization. Mathlib's
+[`Measure.map_infinitePi_infinitePi_of_inj` and independent product-law API](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Probability/Independence/InfinitePi.html),
+and [`indep_iSup_of_disjoint`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Probability/Independence/Basic.html),
+provide the generic measure and sigma-algebra results. The project interfaces
+specialize them to Ulam--Harris address extension and the generation domain
+flow.
+
+The root-step law is stated for arbitrary `Root`, with
+`Measure.infinitePi (fun _ : Root => μ)` as its result; finite root families
+reduce through Mathlib's `Measure.infinitePi_eq_pi`. The new root-batch module,
+all seven selected-subtree modules, the selected population batch client, and
+the trajectory bridge client built successfully with `lake -Kjobs=2 build`
+(4,775 Lake jobs). The production ledger now
+contains 1,609 modules: 1,061 are reviewed and 548 remain pending.
+
+## Finite iid event-count concentration ownership (2026-10-30)
+
+The Chernoff proof for counting successful initial roots separated into a
+generic event-count theorem and a root-field specialization. The reusable
+`measure_iidEventCount_le_quarter_mean` now lives in
+`Probability/Independence/FiniteEventCount.lean`; for any finite family of
+independent, identically distributed observations and measurable event of
+probability `q`, it bounds the probability of at most one quarter of the mean
+by `exp (-|A| q / 4)`. Its hypotheses and statement contain no branching,
+genealogy, or root-index data. It uses Mathlib's
+`mgf_sum_of_identDistrib` and `measure_le_le_exp_mul_mgf`, adding the
+Bernoulli-indicator estimate needed for this reusable specialization.
+
+`Genealogy/RootIndexed/Law/IndependentEventCount.lean` now applies that result
+to root-coordinate projections. It retains the root-specific exact product
+formula and exponential bound for all roots avoiding a measurable event; the
+former proof's mgf calculation and Chernoff assembly were removed from this
+module. The generic theorem, the root-specific module, and its direct corridor
+client built successfully with `lake -Kjobs=2 build` (3,234 Lake jobs).
+
+The adjacent `Law/Basic.lean` interface was checked against Mathlib's
+`Measure.infinitePi`, product reindexing, coordinate marginal, and independence
+APIs; it specializes those results to root-indexed branching step fields.
+`Law/FiniteExpectations.lean` is consumed by population first-moment and
+endpoint-moment arguments, while `Law/FiniteRestriction.lean` supplies the
+measurable, measure-preserving finite-prefix map used by the endpoint-minimum
+client. Both are complete root-field interfaces and remain public at this
+owner. These modules and their direct clients built successfully with
+`lake -Kjobs=2 build` (4,760 Lake jobs).
+
+The five `Genealogy/RootIndexed/Field/` modules were then reviewed as one
+semantic group. They define the root-indexed field, its generation-coordinate
+domain flow, generic mark-valued path positions, filtration measurability, and
+anchored relative positions. Their core statements are parameterized by
+arbitrary root, slot, mark, and position types; generation-restricted
+measurability is built on Mathlib's product-coordinate maps and the project's
+generic generated-coordinate filtration. The two unused finite-root
+measurability wrappers were removed; clients use the arbitrary-root results
+directly. The field modules, measurable selection adapter, and direct
+population-candidate and restart-reward clients built successfully with
+`lake -Kjobs=2 build` (3,253 Lake jobs).
+
+The single-field `Genealogy/Lineage/PreSampled.lean` interface and its
+root-indexed counterpart define distinct sample-field semantics: a single
+marked Ulam--Harris field versus coordinates indexed by both root and address.
+The latter had been named `MultiRoot.lean`, which hid its actual owner and
+excluded a one-root root-indexed field by name. It now lives at
+`Genealogy/RootIndexed/Lineage.lean`; all restart, reserve, completion, spine,
+and test-tree imports were updated without changing declarations. Both
+interfaces provide complete lineage constructions and declaration-time
+results, so they remain public rather than moving into a proof-only `Lemmas/`
+folder. The new module and four direct production clients built successfully
+with `lake -Kjobs=2 build` (3,185 Lake jobs); the updated restart test source
+compiled with `lake env lean`.
+
+The deterministic `Combinatorics/BranchingWalk/Selection/NSelection/Walk/`
+object consumes offspring sets and generation recursion. Its `Walk/Basic.lean`
+had also re-exported `Step/Measure/PointMeasure.lean`, though it used no point
+measure declaration. That unrelated public dependency was removed; the walk,
+cloud, and frontier modules built successfully with `lake -Kjobs=2 build`
+(1,790 Lake jobs). `MeasureTheory/Selection/NSelection/` continues to own
+measurability interfaces only, leaving the selector and branching-walk model
+at their respective semantic levels.
+
+The ten modules under
+`Selection/NSelection/AsymptoticSpeed/InitialPopulation/` were reviewed as one
+selected-walk probability interface. `Trajectory/Population.lean` names the
+finite selected population; `Trajectory/Hitting.lean` proves almost-sure
+capacity attainment; `Trajectory/Basic.lean` gives the hit-rooted field and
+pathwise population transport; `Trajectory/RunBridge.lean` identifies that
+trajectory with the ranked-batch recursion. `Field/` supplies the stopped
+descendant law and its factorization from hit positions, while `Speed/` moves
+the endpoint-speed conclusion to a random initial-position law. The two files
+in `Trajectory/Lemmas/CapacityHit/` are imported only by the hitting proof and
+hold its active-address split-mark and finite-population growth arguments.
+They remain proof-chain modules; the named trajectory, field-law, and speed
+conclusions remain at their subject interfaces. The checked modules already
+use the generic root-indexed subtree factorization and generic ranked matching
+results from their semantic owners, so no lower-level abstraction or
+cross-domain move was indicated. The ten modules built successfully with
+`lake -Kjobs=2 build` (4,806 Lake jobs); `Speed/Transport.lean` was rechecked
+after reverting a module-system marker that its legacy direct dependencies do
+not yet support (4,805 Lake jobs).
+
+`AsymptoticSpeed/Expected.lean` was the one generic declaration left in the
+N-selection speed folder. It accepts an arbitrary integrable real array and
+only assumes stationary means, almost-everywhere subadditivity, and a linear
+lower bound on expected values. A repository-wide reference search found no
+client, and the theorem has no N-selection data. It now lives in
+`Probability/Process/Subadditive/Expected.lean` under
+`ProbabilityTheory.Subadditive`, with the old namespace/path removed. Mathlib's
+[`Analysis/Subadditive`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Analysis/Subadditive.html)
+provides deterministic scalar Fekete convergence; this module supplies the
+expectation-array reduction. The moved public result built successfully with
+`lake -Kjobs=2 build`.
+
+The previous CSV audit found seven notes with unquoted commas; their fields
+have been quoted and the full ledger now parses with exactly six columns per
+row. The production inventory and ledger both contain 1,610 modules, with
+1,084 reviewed and 526 pending; source-to-ledger comparison reports no missing
+or stale entries. Structural scans report no overfull production directories,
+same-parent file/directory stem collisions, repeated parent/file stems, or
+`Lemmas.lean`/`Lemmas/` conflicts. The repository-wide semantic audit remains
+in progress.
+
+## i.i.d. sequence-shift ergodicity and generation-environment ownership (2026-10-30)
+
+The invariant-event/tail-event argument in
+`Environment/ErgodicEnvironment.lean` depends only on an i.i.d. sequence and
+its infinite product law. It now appears once as the general theorem
+`ProbabilityTheory.iidSequenceShift_ergodic` in
+`Probability/Ergodic/IIDShift.lean`; Mathlib supplies the product-coordinate
+independence and Kolmogorov zero-one law, but has no packaged ergodicity theorem
+for this shift. The branching-random-walk environment module is now a short
+specialization of that theorem. Its `generationSuffix` proof helper was removed
+with the specialized proof.
+
+The `GenerationEnvironment` type and the coordinate domain
+`generationCoordinateSigma n = σ(ω ↦ ω_n)` describe the environment itself, so
+they now live in `Environment/Basic.lean` beside its product law and shift.
+This also gives `InitialPopulation/Basic.lean` the correctly owned coordinate
+domain it uses to prove independence of generation events. Both environment
+modules and the generic theorem are recorded as reviewed. The generic module,
+environment modules, repair adapter, initial-population client, and Kingman
+limit client built successfully with
+`lake -Kjobs=2 build` (3,344 Lake jobs). The production inventory now has
+1,611 modules, of which 1,087 are reviewed and 524 remain pending; the full
+semantic audit remains in progress.
+
+## Root-indexed finite-selection adapter review (2026-10-30)
+
+`Probability/BranchingRandomWalk/Selection/Finite/RootIndexed.lean` constructs
+leftmost and rightmost causal finite-capacity selectors from measurable
+positions on arbitrary root-indexed pre-sampled forests. Its signature uses
+`StepField`, `TreeNode`, the generation step filtration, and the generation
+position process, so it is a BranchingRandomWalk adapter. The generic ranked
+selector remains in `Combinatorics/Selection/`, and its measurability results
+remain in `MeasureTheory/Selection/`. The rightmost constructor reuses the
+leftmost one through `OrderDual`; the module contains two reusable adapters
+and their defining equations, with no proof-only declarations to relocate.
+The module's existing structural-scan and Lake-build records pass. The
+production ledger now records 1,611 modules, with 1,089 semantically reviewed
+and 522 pending; the repository-wide audit remains in progress.
+
+## Step-selected population coupling review (2026-10-30)
+
+`Probability/BranchingRandomWalk/Selection/Coupling/StepSelection.lean`
+specializes the all-generation selected-population coupling to labelled
+step-selected source particles. Its hypotheses and conclusion use root-indexed
+fields, generation populations, offspring slots, mapped increments, and a
+multi-root first-`N` cloud, so the adapter stays in the BRW selection layer.
+The fixed-generation `generationInjection_labelledPopulation` constructs the
+rank map; `injectivelyDominatesBy_labelledPopulation` now obtains its result
+from that map's `injectivelyDominatesBy` property, removing a second expansion
+of the same construction. The generic generation-by-generation induction
+remains in `Selection/Coupling/SelectedPopulation.lean`. The target and its
+3,295-job dependency closure built successfully. The ledger now records 1,611
+production modules, with 1,090 semantically reviewed and 521 pending.
+
+## Discrete stopped-selector ownership correction (2026-10-30)
+
+The selector has arbitrary candidate and value types, but its public
+operation evaluates a time-indexed ranked selector at a discrete stopping
+time. Its generic capacity-$N$ selector remains in
+`Combinatorics/Selection/NSelection`; fixed-time measurability remains under
+`MeasureTheory/Selection/NSelection`. The stopped selector and its
+stopping-σ-algebra measurability now live in
+`Probability/Process/Stopping/Selection/Ranked.lean`, matching Mathlib's owner
+for `IsStoppingTime` and stopped-process operations. The declaration namespace
+remains `Combinatorics.Selection.NSelection`, and BRW restart clients use this
+as a generic process-level dependency. The ownership change was checked against
+the pinned Mathlib source at revision
+380f2aafb622cb2c1c93dac545b6389083c68c51 and its [official stopping-process
+documentation](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Probability/Process/Stopping.html).
+The moved module and restart endpoint entry points built successfully with `lake -Kjobs=2 build` (3,382 jobs).
+
+## Real-marked branching-step order duality (2026-10-30)
+
+The generic Step operation was separated from the spine-law consequences.
+`Combinatorics/BranchingWalk/Step/Ordering/OrderDual.lean` owns the real-mark
+map into `OrderDual ℝ`, support preservation, potential negation, and the
+slotwise and total exponential-weight identities. They hold for arbitrary
+slot types without a probability law. The countable-slot tilted-law identity,
+its negation pushforward, boundary-normalization transfer, integral formula,
+and $L^2$ consequence stay in
+`Probability/BranchingRandomWalk/Spine/Tilted/OrderDualLaw.lean`.
+
+Mathlib's pinned `Mathlib.Order.OrderDual` provides the order-reversing type
+and the explicit `OrderDual.toDual`/`ofDual` maps; its API does not specialize
+these maps to optional-child steps or their potentials and exponential
+weights. This comparison used pinned Mathlib revision
+380f2aafb622cb2c1c93dac545b6389083c68c51 and the [official OrderDual
+documentation](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Order/OrderDual.html).
+The generic step module, tilted-law adapter, environment map, and rightmost
+speed theorem all build successfully. The production ledger has 1,613 modules,
+with 1,094 semantically reviewed and 519 pending; `scripts/parse_lean_imports.lean`
+is excluded as a tooling script.
+
+## N-selection and generation-candidate semantic boundary (2026-10-30)
+
+`Combinatorics/Selection/NSelection/Basic.lean` owns the deterministic
+capacity-`N` operation on arbitrary candidate sets. Its type has no measurable
+space or branching data; it depends only on set inclusion, finite subsets, and
+cardinality. `Combinatorics/Selection` is the generic combinatorial layer here,
+not a synonym for BranchingWalk. `MeasureTheory/Selection/NSelection/` is a
+dependent theorem layer: it imports that operation and proves measurability,
+including a measurable realization of the first-`N` specification; it does not
+define a second `NSelection` object. The branching-step selector has the
+different input `Step α X` and invariant `R ξ ⊆ support ξ`, so it belongs in
+`Combinatorics/BranchingWalk/Step/Selection`. The `NSelection` recursion on
+offspring and generations is separately owned by
+`Combinatorics/BranchingWalk/Selection/NSelection/Walk/`.
+
+The full root-indexed child-address set of one generation is now defined in
+`Combinatorics/BranchingWalk/Population/Candidates/Generation.lean`, where it
+depends on Ulam--Harris addresses and branching-step survival but no sample
+space. Its domain-flow measurability theorem is in
+`Probability/BranchingRandomWalk/Population/Candidates/RootIndexed/Measurability.lean`.
+At this checkpoint, `RootIndexed/Real.lean` remained in the probability model
+layer because its public conclusion was stated for the generation-truncated
+observed-position function. The 2026-10-31 candidate ownership correction
+below supersedes that placement: the deterministic lower-finiteness argument
+now lives in `Combinatorics/BranchingWalk/Population/Candidates/`, and the
+field-observable specialization has its own `RealPosition.lean` interface.
+
+This placement follows Mathlib's separation of finite-set data and ordering:
+[`Finset` is defined as finite-subset data](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Data/Finset/Defs.html),
+while [sorting a finite set](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Data/Finset/Sort.html)
+is a separate deterministic order interface. The repository's capacity
+selector extends those combinatorial interfaces; its measurable realization
+belongs in the dependent measure-theory layer.
+
+The generic generation candidate module, its probability measurability module,
+and the affected selected-population, causal-population, endpoint-deviation,
+and initial-population clients built successfully with `lake -Kjobs=2 build`
+(4,777 jobs). The initial build exposed a missing address-associativity
+reduction in the initial-population transport; that equality is now explicit
+and the repaired target builds.
+
+The subsequent ownership review moved the arbitrary set-valued parallel and
+concurrent-start constructions to `Probability/Process/Parallel/` and
+`Probability/Process/Stopping/Concurrent/`; their root-indexed and split-
+schedule specializations remain in `Probability/BranchingRandomWalk/`. The
+focused build of both generic families and their affected BranchingRandomWalk
+clients completed successfully (3,381 Lake jobs). The selection review also
+confirmed the distinction between the general candidate-subset rule and the
+branching-generation selection step; neither layer crosses into the other's
+directory.
+
+The source-to-ledger reconciliation now contains 1,614 production modules,
+with 1,110 semantically reviewed and 504 pending; it found no missing or
+stale ledger paths. The full semantic audit remains in progress.
+
+## Restarted-selection coupling module decomposition (2026-10-30)
+
+The former single `Law/Causal/Restarted.lean` combined the killed-source
+construction, matched-field construction, product-law coupling, and a
+one-use finite-stage induction. It is now split into `Restarted/Basic.lean`
+(source and matched-population definitions), `Restarted/Coupling.lean` (the
+coupling and almost-sure injection conclusions), and
+`Restarted/Lemmas/Coupling.lean` (the induction support used only by the
+coupling proof). The old module path has no compatibility alias. The split
+keeps the complete source and coupling interfaces outside the proof-only
+`Lemmas/` subfolder; the staging induction remains grouped with its sole
+consumer.
+
+The three modules and seven production clients built successfully with
+`lake -Kjobs=2 build` (3,389 Lake jobs). The build emitted existing linter
+warnings in neighboring restart modules; there were no errors. The current
+production inventory and ledger both contain 1,616 modules, with 1,113
+semantically reviewed and 503 pending. Source-to-ledger reconciliation found
+no missing or stale paths.
+
+The selection ownership boundary remains semantic: generic candidate-set
+selection and rank rules under `Combinatorics/Selection/` return finite,
+capacity-bounded subsets and carry only set, finite-set, cardinality, and order
+data. The recursive process that branches, forms generations, and retains a
+capacity-limited population remains under
+`Combinatorics/BranchingWalk/Selection/`. Mathlib provides finite-set filtering
+and ordering primitives rather than a project-level selection mechanism; the
+separation here reflects the extra process semantics supplied by the
+BranchingWalk modules.
+
+
+## N-selection ownership and semantic file grouping (2026-10-30)
+
+The N-selection particle-system dynamics are a branching-walk construction:
+children are generated, grouped by generation, ranked, and retained in a
+finite population. Their deterministic definition stays under
+`Combinatorics/BranchingWalk/Selection/NSelection/Walk/`; stochastic laws and
+speed estimates stay under `Probability/BranchingRandomWalk/Selection/`.
+`Combinatorics/Selection/NSelection/` owns only the reusable first-N subset
+mechanism on arbitrary candidate sets. `MeasureTheory/Selection/NSelection/`
+contains measurability results for that generic mechanism; it defines no
+branching model and does not own the N-selection process. Its set-valued
+selector module is named `FromSet.lean` because the candidate set may be finite
+or infinite. The `NSelection` object is not a measurable-space construction:
+`MeasureTheory/Selection/NSelection/` states measurability properties of the
+generic combinatorial selector, while `MeasureTheory/MeasurableSpace/` owns
+measurable-space structures and generated σ-algebras. This distinction keeps
+the deterministic selector, its measurable realizations, and the measurable
+spaces on which they operate at their respective semantic levels.
+
+The optional-offspring speed interface is now grouped as
+`Selection/InfiniteOffspring/{Batch,Transition,Run,SubadditiveArray}.lean`.
+The generic coordinate iteration is named `CoordinateIteration.lean`, and the
+finite exact-slot model remains separate in `FixedOffspring.lean`. The
+infinite-offspring array has definitions in `Array/Basic.lean`, public array
+properties in `SubadditiveArray.lean`, and its one-use block-minimum
+concatenation and shift steps in the private
+`Array/Lemmas/Subadditivity.lean`, imported with `import all` only by its array
+entry module. Reusable array definitions and conclusions stay outside
+`Lemmas/`. The batch header cites Cortines and Mallein, “A N-branching
+random walk with random selection,” *ALEA* 14 (2017), 117–137, Section 1, and
+identifies this file's leftmost convention as order-dual to their rightmost
+convention.
+
+The three sibling-step modules are grouped under
+`Combinatorics/BranchingWalk/Step/Ordering/Sibling/` because they define
+sibling closure, support-preserving sibling relabelling, and sibling ranks.
+The other ordering modules remain at the parent because they own distinct
+ordering, measure-invariance, or order-duality APIs. A targeted Lake build of
+the renamed modules and direct clients completed successfully (2,327 jobs).
+The optional-offspring array helper, public array module, and Kingman clients
+completed a targeted build after the split (3,337 jobs). Intermediate build
+errors from an adjacent doc comment and an unmatched section terminator were
+repaired before the successful build. The renamed
+`MeasureTheory/Selection/NSelection/FromSet.lean` module and its direct clients
+also built successfully (3,143 jobs).
+
+A fresh source-to-ledger reconciliation has 1,618 production modules, with
+1,123 semantically reviewed and 495 pending, and no missing or stale paths.
+The structural scan finds no same-parent file/directory stem collisions, no
+folder containing both `Lemmas.lean` and `Lemmas/`, and no directory with more
+than eight direct Lean modules. The whole-tree semantic audit remains in
+progress.
+
+## N-selection second-stage root and corridor chain review (2026-10-30)
+
+The 15 modules under `EndpointDeviation/SecondStage/` now have a semantic
+owner audit. `TubeParameters.lean`, `Tube.lean`, and `Population.lean` define
+the second-stage scales, corridor/failure/PZ objects, and killed population.
+`Roots/Population.lean` defines the restarted field and threshold event;
+`Roots/Selection.lean` owns the predictable rank-root family; and
+`Roots/CountLowerBound.lean` gives the first-stage enough-roots probability
+bound. `Failure/Bound.lean` is the public terminal-empty estimate. Its event
+decomposition, path-to-population embedding, entrance/bridge splice,
+parameterized corridor mass, PZ estimate, population transfer, and selected-
+root all-avoid argument remain under the nested `Lemmas/` directories as
+proof-chain support. Their statements depend on this specific corridor and
+N-selection model, so the general-looking predictable-root wrapper does not
+create a new public abstraction.
+
+The audit found that `Lemmas/AffineCorridorBound.lean` duplicated the
+block-coordinate/partial-sum identity already imported from
+`Lemmas/Bridge.lean`; it also declared an unused history conversion. Both
+were removed, and the corridor proof now uses the shared internal identity.
+`Roots/CountBudget.lean` was renamed to `Roots/CountLowerBound.lean` to match
+its enough-roots complement estimate. The parameterization header now defines
+the explicit entrance/bridge mass and states the corridor probability bound.
+
+All 15 modules and their direct proof-chain clients built with
+`lake -Kjobs=2 build` (3,950 jobs). The production ledger and source tree both
+contain 1,618 modules; 1,138 are semantically reviewed and 480 remain pending.
+The full audit and final PR verification remain outstanding.
+
+## Generic finite-path restart-window review (2026-10-30)
+
+The three modules under `Probability/Process/Path/Restart/` have been audited.
+`Basic.lean` defines the cutoff-based anchor and the relation
+`x(k) - x(restartAnchor cutoff k) ∈ window k` for a finite path.
+`Bounds.lean` derives endpoint displacement bounds using only an additively
+ordered commutative group. `Measurability.lean` proves the corresponding
+finite-product event measurable from measurable subtraction and coordinate
+windows. These declarations do not require a random-walk law or branching
+structure, so the deterministic condition and its general path consequences
+remain at the path layer, with the measurable-set result at the measure layer.
+
+A search of the pinned Mathlib source found no restart-anchor or restarted-window
+path interface; the modules use its finite-coordinate product measurability
+primitives directly. The three modules built successfully with
+`lake -Kjobs=2 build` (1,907 jobs). The ledger now records 1,141 reviewed
+modules and 477 pending modules out of 1,618 production modules.
+
+## Adaptedness, filtrations, and Markov-property review (2026-10-30)
+
+Five generic process modules were audited. `Adapted/Recursion.lean` proves
+that a recursively updated state is adapted when each new mark is measurable
+at the next filtration time. `Filtration/GeneratedByCoordinates.lean` defines
+the least filtration generated by observations at arbitrary preorder grades;
+its use by branching-field constructions is a specialization of that general
+interface. `Filtration/ConditionalBlocks.lean` gives the one-step conditional
+probability bounds and their finite product iterations, which are used across
+several small-deviation arguments. These results stay public at the filtration
+and adaptedness layers because their assumptions and conclusions do not encode
+a particular process model.
+
+`Markov/Basic.lean` and `Markov/Stopping/Basic.lean` provide the process-level
+Markov and finite-stopping-time Strong Markov properties using Mathlib's
+`Kernel`, `IsMarkovKernel`, conditional expectation, and stopping-time σ-algebra
+interfaces. The pinned Mathlib source contains the kernel and stopping-time
+primitives but no corresponding `IsMarkovProcess` or strong Markov process
+property. Review found two semantic requirements missing from the local
+definitions: Markov conditional expectations are now stated under a probability
+measure, and the generic strong-Markov time advance is required to satisfy
+`t ≤ advance t d`. The discrete-chain instance supplies this inequality from
+natural addition.
+
+All five modules and the canonical IID random-walk Strong Markov application
+built successfully with `lake -Kjobs=2 build` (3,152 jobs). The ledger now
+records 1,146 reviewed modules and 472 pending modules out of 1,618 production
+modules.
+
+## Stable-law operations review (2026-10-30)
+
+The three modules under `Probability/Distributions/Stable/Operations/` have
+been audited. `Convolution.lean` owns the scaled stable time law, its
+convolution-semigroup identity, convolution roots, and integer-time powers.
+`Scaling.lean` proves weak and strict stability under every nonzero real scale.
+`Reflection.lean` retains the named reflection results as specializations at
+scale `-1`; its former duplicated measure and weighted-sum arguments were
+replaced by applications of the scaling theorem. The pinned Mathlib source
+provides the measure convolution and pushforward primitives but no stable-law
+property or stable time-law construction, so these distribution-level
+interfaces remain in the local stable-distribution layer.
+
+The scaling, reflection, stable-process, attraction-rescaling, and discrete
+Mogulskii normalization clients built successfully with `lake -Kjobs=2 build`
+(3,419 jobs). The ledger now records 1,149 reviewed modules and 469 pending
+modules out of 1,618 production modules.
+
+## Stable-law support review (2026-10-30)
+
+The three modules under `Probability/Distributions/Stable/Support/` own
+substantive support conclusions for strictly stable probability laws.
+`BoundedSupport.lean` shows that a strictly stable law of index below two
+cannot be concentrated on a bounded interval, and gives the corresponding
+right-tail conclusion at index two. `IndexOne.lean` proves exponential
+non-integrability and positive mass on both open half-lines for strictly
+1-stable laws. `Sign.lean` derives two-sided mass from the CDF-at-zero
+condition; its one auxiliary ENNReal inequality stays private beside its use.
+These statements are distribution-level results, not proof fragments for a
+single branching-walk estimate, and Mathlib has no stable-law support API, so
+the current module placement is appropriate.
+
+The three support modules and representative stable small-deviation and
+endpoint clients built successfully with `lake -Kjobs=2 build` (3,503 jobs).
+The ledger now records 1,152 reviewed modules and 466 pending modules out of
+1,618 production modules.
+
+## Stable Gaussian-attraction review (2026-10-30)
+
+The general stable characteristic-function specialization remains in
+`Attraction/CharacteristicFunction.lean`. The five modules under
+`Attraction/Normal/` separate complete Gaussian-attraction results by subject:
+`Basic` gives the Gaussian characteristic-defect and finite-variance CLT
+consequences; `CharacteristicTail` gives closed-tail bounds;
+`QuadraticTail` gives the truncated-second-moment tail criterion and slow
+variation; `Centering` establishes first-moment integrability and the zero
+mean; and `Norming` gives the quadratic normalization conclusions. Each file
+has public results used outside its local proof, while the two theorem-specific
+estimates in `QuadraticTail` remain private beside their proof. The five-file
+directory is within the direct-module limit and has no additional proof-only
+module to relocate.
+
+The cited characterization is Feller, *An Introduction to Probability Theory
+and Its Applications*, Vol. II, 2nd ed. (Wiley, 1971), Section XVII.5,
+Theorem 2 (also numbered XVII.5.2). No Mathlib theorem
+provides this collection of Gaussian-attraction consequences. The six audited
+modules and a Mogulskii normalization client built successfully with
+`lake -Kjobs=2 build` (3,406 jobs). The ledger now records 1,158 reviewed
+modules and 460 pending modules out of 1,618 production modules.
+
+## Truncated moments and stable norming asymptotics review (2026-10-30)
+
+The five modules under `Probability/Distributions/Moments/Truncated/` form a
+coherent public family. `Basic.lean` defines
+`Vμ(u)=∫_{[-u,u]}x² μ(dx)`, its monotonicity under local finiteness, and its
+limit under global second-moment integrability. `Layercake.lean` owns the
+capped-square and layer-cake identities. `RegularVariation.lean` proves the
+equivalence between slow variation of `Vμ` and
+`x² μ(|y|>x)/Vμ(x)→0` under eventual positivity, as well as the fixed-scale
+tail consequence. `TailAsymptotics.lean` and `TailIntegral.lean` transfer
+two-sided-tail and integrated-tail asymptotics to truncated moments. These are
+complete distribution-level results; the five direct modules are within the
+directory limit.
+
+The abstraction review examined the candidate statement
+`[IsLocallyFiniteMeasure μ] →
+Asymptotics.IsEventuallyMonotoneAtTop (truncatedSecondMoment μ)`, formerly
+located with stable norming. The weakest natural assumption is local
+finiteness: the defining integral is restricted to a bounded interval and
+`truncatedSecondMoment_mono` proves the order relation under exactly that
+assumption. At the pinned Mathlib revision
+`380f2aafb622cb2c1c93dac545b6389083c68c51`,
+[`Mathlib.MeasureTheory.Integral.Bochner.Set`](https://github.com/leanprover-community/mathlib4/blob/380f2aafb622cb2c1c93dac545b6389083c68c51/Mathlib/MeasureTheory/Integral/Bochner/Set.lean)
+provides generic set-integral monotonicity such as `setIntegral_mono_set`,
+but no truncated-second-moment definition or bridge to the repository's
+eventual-monotonicity interface. The specialized statement packages that
+property for a standard distributional object and stays in its moment owner;
+it is not a stable-law theorem. Stable `Centering` and `Inverse` results use
+this interface to apply Potter bounds. The generic moment files now describe
+the tail-ratio limit directly, while the Gaussian domain-of-attraction result
+retains the precise attribution to Feller, *An Introduction to Probability
+Theory and Its Applications*, Vol. II, 2nd ed. (Wiley, 1971), Section XVII.5,
+Theorem 2 (ISBN 978-0-471-25709-7).
+
+The four modules under
+`Probability/Distributions/Stable/Attraction/Norming/Asymptotics/` are also
+complete subject-level results. `Inverse.lean` transfers the stable time
+scale to rounded and asymptotically equivalent block lengths;
+`Tail.lean` gives tail and truncated-moment limits along stable normings;
+`Centering.lean` proves sublinearity and the zero-mean conclusion above index
+one; and `UniformTail.lean` gives compact-uniform fixed-multiple tail limits.
+The former `TruncatedMoment.lean` contained only two notation-level wrappers
+around the general truncated-moment asymptotics, with a single validation
+caller. Those two stable `L*` statements now live in `Tail.lean`, alongside
+the corresponding stable norming limits; the separate file was removed and
+no compatibility alias remains.
+
+The nine production modules and their dependencies built successfully with
+`lake -Kjobs=2 build` (3,377 jobs). The dependent stable-scale validation file
+also compiled with `lake env lean`. The production source inventory is now
+1,617 modules; the ledger records 1,167 reviewed and 450 pending modules.
+Full-library review and the final PR merge remain outstanding.
+
+
+## Selection ownership boundary review (2026-10-30)
+
+`Combinatorics/Selection/` owns candidate-set operations that have no branching
+walk data in their signatures: `Mechanism` maps `Set ι` to a selected subset,
+`FiniteMechanism` acts on `Finset ι`, and `NSelection` adds the exact capacity
+rule `card(select s) = min N (card s)` for finite inputs. Ordered first-`N`
+selection and its rank-based matching results are likewise stated for arbitrary
+ordered candidate types. These signatures do not encode particles, offspring,
+generations, or a walk update.
+
+The generic layer has non-BranchingWalk clients:
+`MeasureTheory/Selection/Random.lean` adds environment-dependent randomness to
+a general capacity selector, and
+`Probability/Process/Stopping/Selection/Ranked.lean` evaluates a generic ranked
+candidate selector at a stopping time. The branching-walk meaning begins when a
+candidate cloud is formed from offspring and then selected to produce the next
+generation; those constructions remain in
+`Combinatorics/BranchingWalk/Selection/` and
+`Probability/BranchingRandomWalk/Selection/`. Generic API comments in
+`Combinatorics/Selection/Basic.lean` now describe predicate restriction and
+subset membership without importing survival or killing terminology.
+
+The pinned Mathlib revision
+`380f2aafb622cb2c1c93dac545b6389083c68c51` supplies the underlying finite
+order-statistic and matching tools: [`Finset.Sort`](https://github.com/leanprover-community/mathlib4/blob/380f2aafb622cb2c1c93dac545b6389083c68c51/Mathlib/Data/Finset/Sort.lean)
+provides sorted finite enumerations and order embeddings, while
+[`Hall.Basic`](https://github.com/leanprover-community/mathlib4/blob/380f2aafb622cb2c1c93dac545b6389083c68c51/Mathlib/Combinatorics/Hall/Basic.lean)
+provides relation-based matching. The pinned APIs do not package these into an
+N-selection mechanism or the repository's lower-tail rank-matching interface.
+This supports keeping the abstract candidate-selection layer under
+`Combinatorics`, while retaining offspring/generation semantics under
+`BranchingWalk`.
+
+
+## Single-root selected-subtree ownership update (2026-10-30)
+
+The public selected-subtree field results are now located at
+`Probability/BranchingRandomWalk/Genealogy/Exploration/Abstract/SelectedSubtree.lean`
+and `.../Abstract/SelectedSubtreeVector.lean`. Their inputs are arbitrary
+countable-range measurable address selections from a single pre-sampled tree
+field; they do not use the `selectedPopulation` model. Abstract exploration and
+stopped-subtree results depend on these theorems, so the `Abstract` owner
+reflects the dependency direction. The separate `RootIndexed/SelectedSubtrees/`
+API remains distinct because its sample space is a separately labelled family
+of root fields. Concrete selected-population cell laws stay under
+`Exploration/Selected/`. Old imports were replaced directly with the new
+module paths; no compatibility modules were retained.
+
+
+## Selected-population cell-branching organization review (2026-10-30)
+
+The concrete fixed-generation cell laws are now in
+`Exploration/Selected/CellBranching/FixedTime.lean`; stopping-generation
+cell laws are grouped below `Exploration/Selected/CellBranching/Stopping/`
+(`DependentLaw.lean` and `RandomSize.lean`). This replaces parallel
+`CellBranching/` and `StoppingCellBranching/` trees.
+`StoppingPopulation.lean` remains at the `Selected` level because it defines
+the selected population at a stopping time and proves its cell measurability
+and address-depth interface, which both stopped-law modules consume.
+
+The fixed-generation results are the actual branching law on a specified
+selected-population cell, its finite-root enumeration form, and the position
+restricted form. The stopped dependent-family law gives a mixture on the
+dependent family space; the random-size law gives each finite cell's explicit
+root enumeration and the total cell-mass identity. These are distinct public
+statements. Enumeration and cell-factorization steps used only in their proofs
+remain private. `StoppingPopulation` now imports
+`Mathlib.Probability.Process.Stopping` directly for `IsStoppingTime`; this
+keeps the stopping-time interface separate from the local first-hit-time
+construction. The affected selected, abstract stopping, and restart clients
+built successfully in focused Lake builds (3,173 and 3,216 jobs).
+
+
+## Root-indexed stopped subtree-vector review (2026-10-30)
+
+`RootIndexed/StoppingSubtrees/Vector/Factorization.lean` gives the stopped
+factorization on $\{\tau<\top\}$ for a countable-range, stopped-measurable
+family of distinct roots whose depths equal the stopping generation. Its proof
+partitions by the pair `(generation, selected root-family value)`, applies the
+fixed-generation `RootIndexed.selectedSubtreeStepFieldVector` factorization on
+each cell, and combines the cells with
+`MeasureTheory.measure_iUnion_eq_mul_of_disjoint_factor`. The statement keeps
+root-indexed input and output laws, so it remains separate from the single-tree
+stopped-vector result in `Abstract/StoppingSubtreeVector/`. Its restart and
+selected-population clients compiled with the focused 4,833-job Lake build,
+and the dependent validation module compiled with `lake env lean`. Mathlib's
+[`Probability.Process.Stopping`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Probability/Process/Stopping.html)
+provides the stopping-time σ-algebra and finite-time measurability API; it does
+not provide the branching-field factorization.
+
+
+## Branching step-selection population review (2026-10-30)
+
+The eight modules at `Probability/BranchingRandomWalk/Population/Processes/StepSelection/`
+were reviewed. `Basic.lean` defines the generation recursion from a finite
+branching-step selector; `RootIndexed.lean` and `Concurrent/` lift it to labelled
+roots and observable scheduled starts. `Filter.lean`, `FirstN.lean`, and
+`PreserveFirst.lean` are branching-step measurability adapters over generic
+finite-filter and capacity-selection APIs. `SelectedPath.lean` characterizes
+generation membership through retained child slots along a genealogy. These
+modules remain under the branching-random-walk probability layer because
+their statements involve offspring supports, address generations, root-indexed
+fields, or the generation-domain filtration. The selector interfaces stay in
+`Combinatorics/BranchingWalk/Step/Selection/Finite.lean`; the generic
+capacity-`N` candidate mechanism stays in `Combinatorics/Selection/`;
+measurable finite-selection primitives stay in `MeasureTheory/Selection/`.
+The audited files were already recorded with passing Lake builds; this review
+made no source-code changes. The production ledger now records 1,183 reviewed
+and 434 pending modules out of 1,617.
+
+
+## Split-schedule field and trial module review (2026-10-30)
+
+The split-schedule modules are grouped by the object they expose: `Definition/`
+contains the threshold schedule, fixed-age first-success index, and selected
+root family; `Field/` contains the fresh active/reserve field, its product law,
+position-preserving embedding, and iterated-field construction; `Trials/`
+contains completion times, success tests, and almost-sure repeated-trial
+success. `Trials/Iteration.lean` was moved to `Field/Iteration.lean`: its
+principal object is the recursively transformed root-indexed field and its
+product law, and the field-coupling module is its only direct caller. The
+import and ledger path were updated without aliases. These are complete
+branching-field and trial interfaces, so they remain outside `Lemmas/`.
+
+The moved field module and its coupling caller compiled successfully in a
+focused build (3,340 Lake jobs). Together with the eight selected-population
+modules reviewed above, the ledger records 1,194 reviewed and 423 pending
+modules out of 1,617 production Lean modules.
+
+
+## Causal branching-population layer review (2026-10-30)
+
+The causal-population modules were checked against the local `StepSelection`
+model. `CausalPopulation` permits generation-dependent retention based on the
+whole available generation domain; `Step.FiniteSelection` applies a fixed
+local slot selector at each parent. The former therefore remains a separate
+process-level abstraction under `Probability/BranchingRandomWalk/Population/Processes/Causal/`.
+Its `Capacity/`, `Path/`, and `RelativePosition/` subdirectories each hold a
+coherent family: finite-horizon overflow estimates, ancestral path bounds and
+window identities, and relative-position killed populations with finiteness
+and real-weight specializations. These are complete interfaces and estimates,
+so the group does not need a `Lemmas/` directory. The reviewed files were
+already recorded as Lake-build passing; no source changes were required. The
+ledger now records 1,203 reviewed and 414 pending modules out of 1,617.
+
+
+## Selected root-indexed population review (2026-10-30)
+
+`Selected/RootIndexed.lean` defines the actual branching process: it forms the
+union of surviving offspring and applies first-`N` rank selection at each
+generation on a pre-sampled root-indexed field. `GenerationUpdate.lean` gives
+a generation-locality theorem for that process, and
+`ParameterizedRootIndexed.lean` exposes its jointly measurable parameterized
+finite-generation population and endpoint. All three are model-specific
+branching-random-walk results. This confirms the layer split: the abstract
+capacity selector remains under `Combinatorics/Selection/`, while recursive
+offspring selection and its random-field laws stay in
+`Probability/BranchingRandomWalk/Population/Processes/Selected/`. The three
+modules were already recorded as Lake-build passing; the ledger now records
+1,206 reviewed and 411 pending modules out of 1,617.
+
+
+## Branching-walk law and growth layer review (2026-10-30)
+
+The root law modules have separate roles: `Law.lean` names an arbitrary
+probability measure on branching-walk realizations; `IID.lean` constructs the
+canonical law from the independently sampled step field; and
+`Genealogy/GaltonWatson.lean` identifies the unmarked projection with the
+presampled Galton-Watson law. `Measurability.lean` contains only coordinate
+and survival measurability. Its unrelated public import of `Law.lean` was
+removed; `Measurability` and its direct `Walk/Basic` client compile in a
+focused build (3,150 jobs). A later semantic review moved the deterministic
+one-or-two-child recurrence from `Probability/BranchingRandomWalk/Population/Growth/`
+to `Combinatorics/BranchingWalk/Population/Growth/`: its statement uses only
+natural-number sequences and no probability law or random environment. The
+pinned Mathlib search found no existing branching-population API for this
+recurrence, so it remains a branching-population estimate without adding a
+separate generic arithmetic layer. The ledger records 1,211 reviewed and 406
+pending modules out of 1,617 at this historical checkpoint.
+
+
+## Restart, reserve, and rooted-trial review (2026-10-30)
+
+The reserve modules factor first moments of fresh selected subtrees over
+observable candidate-failure events, with `Reserve/Lineage.lean` specializing
+the factorization to pre-sampled root/trial lineages. `Failure/Estimate.lean`
+composes this event estimate with candidate completion observability.
+`FirstSplit/BranchingProperty.lean` applies stopped subtree-vector
+factorization to the two roots of the first selected-population split, and
+`RootedTrial/Basic.lean` transfers the local split completion to a fixed
+descendant root with its deterministic generation offset. Their types retain
+the branching field, address, split, or lineage data, so they remain in
+`Probability/BranchingRandomWalk/Restart/`. Existing passing build records were
+left intact because this review changed no Lean source. The ledger records
+1,216 reviewed and 401 pending modules out of 1,617.
+
+
+## Finite selected-split completion proof-boundary review (2026-10-30)
+
+`Completion/FiniteSplit.lean` is the public almost-sure finite-completion
+result. Its specific no-split prefix event and depth-`n` fallback representative
+remain in `Completion/Lemmas/FiniteSplit.lean`; the helper module is imported
+with `import all`. Cross-module support statements in that file now use
+`lemma`, and its module header lists the exact visible event, representative,
+and measurability/depth interfaces. The one-step population recurrence,
+selected-child cardinality identity, and almost-sure nonemptiness induction
+remain private proof steps. The helper and public result compiled successfully
+in a focused build (3,154 Lake jobs). The ledger records 1,218 reviewed and
+399 pending modules out of 1,617.
+
+
+## Rooted-trial completion module review (2026-10-30)
+
+The `Completion/` tree has seven direct model modules, one `Lemmas/` proof
+tree, and a `RootIndexed/` specialization. `CapStopped.lean` defines the
+selected process stopped at a population cap; `ParallelGrowth.lean` supplies
+the deterministic active-window capacity bound; `RootIndexed/CapStopped.lean`
+lifts the candidate process to reserve lineages. `Endpoint.lean` owns the
+stopping time and rank vector; `EndpointFreshField.lean` proves the fresh
+product law; `EndpointHorizon.lean` adds the stopping generation and random
+remaining horizons; `FixedHorizon.lean` pushes the law through a fixed-horizon
+population. Their APIs are distinct. The nested `Lemmas/EndpointHorizon/` and
+`Lemmas/FixedHorizon.lean` modules contain endpoint- and theorem-specific
+root, geometry, factorization, measurability, and pushforward steps; public
+ranked-selection and product-law interfaces remain outside. Every direct proof
+caller uses `import all` for its helper module. The ledger now records 1,229
+reviewed and 388 pending modules out of 1,617.
+
+
+## Finite-slot selected-population moment review (2026-10-30)
+
+The `Restart/RootedTrial/FiniteSlot/` family keeps its domain boundary. `Coupling.lean` defines the binary-address population and proves its selected-offspring row law; `Lemmas/Coding.lean` contains only the encode/decode support for that construction. `Moments.lean` was compared with the general finite-slot Galton--Watson recurrences in `Probability/BranchingProcess/GaltonWatson/Moments/FirstMoment.lean` and `SecondMoment.lean`. Those theorems integrate the generation size under the actual Galton--Watson process law. The `FiniteSlot` results instead integrate the selected BRW population under the original offspring-field law and derive the connection through its own coding, row independence, and conditional expectation. No existing law-identification API identifies these observables, so the model-specific recurrences remain as the bridge used by `Growth.lean`; the probability estimate itself reuses `Probability/MeasureTheory/Moments/SecondMomentGrowth.lean`. Existing ledger build statuses for all four modules are `pass`. The ledger records 1233 reviewed and 384 pending modules out of 1617.
+
+
+## Ordered child-slot selection ownership (2026-10-30)
+
+`firstSelectedSlot` and `secondSelectedSlot` take a `Step.FiniteSelection` and
+choose child labels from a branching step. Their operation is deterministic
+combinatorics, but its input and meaning are specifically BranchingWalk, so
+the definitions and membership facts belong in
+`Combinatorics/BranchingWalk/Step/Selection/Slot.lean`. Their measurable
+versions belong in `MeasureTheory/BranchingWalk/Step/Selection/Slot.lean`.
+This keeps them distinct from the abstract capacity selector under
+`Combinatorics/Selection/` and from random selector laws. The old definitions
+were removed from the probabilistic restart trial modules, which now consume
+the BranchingWalk interface.
+
+The previous `Spine/BoundedOffspring.lean` mixed the finite selected-family
+encoding with a reserve-specific Galton--Watson estimate. The one-step law and
+its supercriticality criterion now live under `RootedTrial/FiniteSlot/`, while
+the reserve specialization and fixed-horizon estimate live under
+`RootedTrial/Reserve/`; both layers reuse the finite-slot encoding and the
+existing Galton--Watson growth theorem. The import boundary in the coupling
+module now explicitly exposes the product-measure, independence, and
+offspring-field-law APIs used in its public statements. Source-to-ledger
+reconciliation found no missing or stale module paths: the ledger records
+1,619 production modules, 1,236 semantically reviewed and 383 pending.
+
+
+## Rooted-trial coupling, candidate, and reward review (2026-10-30)
+
+`Coupling/ReserveSpine.lean` owns the two-root injection and endpoint
+comparison between the reserve source and first-`N` candidate population;
+`Coupling/SampledMark.lean` owns the one-step law and independence of
+predictably sampled spine marks. Both are complete probability interfaces for
+this BRW construction. `Reserve/Candidates.lean` owns the enabled concurrent
+candidate family and its population bounds. Its finite-window cardinality
+calculation serves only that local theorem and is now a private lemma, while
+the public cardinality statements retain the reserve-spine event semantics.
+`Reward/PositivePart.lean` exposes the pathwise reserve-source estimate, and
+`Reward/Expectation.lean` integrates it under a first-moment assumption using
+the sampled-step marginal. Both are substantive bounds, so they remain outside
+`Lemmas/`. These files passed the focused Lake build. The ledger now records
+1,241 reviewed and 378 pending modules out of 1,619.
+
+
+## Branching-walk selection layer boundary (2026-10-30)
+
+`Combinatorics/Selection` remains the owner of generic selector mechanisms.
+For `M : Combinatorics.Selection.NSelection ι N`, the selector has type
+`Set ι → Finset ι`, satisfies `M.select s ⊆ s`, and has cardinality
+`min N (s.toFinset.card)` for finite `s` and `N` for infinite `s`. It has no
+branching-step or offspring semantics. A step selector has a different type
+and invariant: `R : Combinatorics.Branching.Step.FiniteSelection α X` maps each
+step `ξ` to a finite set `R ξ ⊆ support ξ`. Its slot-order and potential-based
+constructions belong in
+`Combinatorics/BranchingWalk/Step/Selection`; their measurable statements
+belong in `MeasureTheory/BranchingWalk/Step/Selection`. Measurability
+statements for the generic `NSelection` remain in `MeasureTheory/Selection`.
+Selected populations iterated by generation belong in
+`Combinatorics/BranchingWalk/Selection`, and laws and estimates for random
+branching populations belong in `Probability/BranchingRandomWalk`. The
+placement follows the input and invariant of each object: a generic selector
+remains combinatorial when a branching walk uses it, while a finite selector
+whose domain is a branching step has BranchingWalk semantics.
+
+The generic owner also has clients outside the branching-walk hierarchy:
+`MeasureTheory/Selection/NSelection` proves measurable realizations for
+arbitrary candidate types, and `Probability/Process/Stopping/Selection/Ranked`
+applies the rank interface to arbitrary time-indexed finite candidate sets.
+Neither statement includes offspring or genealogy data. These clients confirm
+that the combinatorial selector is a reusable interface rather than a
+branching-specific type moved outward only to shorten imports.
+
+The ownership was checked against the pinned Mathlib revision
+`380f2aafb622cb2c1c93dac545b6389083c68c51`. Mathlib organizes finite subsets
+under `Data/Finset` and graph walks under
+`Combinatorics/SimpleGraph/Walk`; see the pinned
+[`Mathlib/Data/Finset/Basic.lean`](https://github.com/leanprover-community/mathlib4/blob/380f2aafb622cb2c1c93dac545b6389083c68c51/Mathlib/Data/Finset/Basic.lean)
+and
+[`Mathlib/Combinatorics/SimpleGraph/Walk/Basic.lean`](https://github.com/leanprover-community/mathlib4/blob/380f2aafb622cb2c1c93dac545b6389083c68c51/Mathlib/Combinatorics/SimpleGraph/Walk/Basic.lean).
+Its `Finset.rado_selection` in `Mathlib/Combinatorics/Compactness.lean` is a
+compactness theorem assembling compatible local choice functions, not a
+finite-capacity subset selector. The pinned source has no `NSelection`
+interface matching the project's arbitrary-candidate capacity mechanism.
+The focused build of the three combinatorial step-selection modules, the three
+measurability adapters, `Restart/Success/GoodSplit`, and the affected reserve
+Galton--Watson clients completed successfully (3,275 Lake jobs).
+
+The two moved reserve-growth modules were reviewed as probability-level
+results: `RootedTrial/Reserve/GaltonWatson.lean` constructs the cutoff-dependent
+finite-offspring law and applies the Galton--Watson growth estimate, while
+`RootedTrial/Reserve/GrowthSuccess.lean` transfers that estimate to the
+observable reserve-trial event. They remain outside combinatorics and
+`Lemmas/` because each states a complete probability theorem. The ledger has
+1,618 production modules, of which 1,214 are semantically reviewed and 404
+remain pending. This count reflects the recovered and path-reconciled ledger
+state; the previous prose checkpoint recorded 1,241 reviewed modules before
+the ledger recovery.
+
+
+## Recovered production-tree structure scan before the first-passage split (2026-10-30)
+
+The production-tree inventory excludes `.lake/`, `Vendor/`,
+`BranchingProcessTest/`, and `scripts/`. Its 1,618 Lean modules reconciled
+one-to-one with the module ledger at that scan. No directory had a direct
+`Foo.lean` file and a same-level `Foo/` directory, and no production directory
+had more than eight direct Lean modules. These are structural-scan results;
+semantic review is tracked separately. The recovered ledger at that scan
+recorded 1,214 reviewed and 404 pending modules. An earlier prose checkpoint
+records 1,241 reviewed; 27 review-status entries could not be recovered from
+the available Git snapshots, so the current ledger does not count those
+entries as reviewed.
+
+## Continuous-path first-passage module review (2026-10-30)
+
+The continuous-path first-passage modules now separate the definition and
+order facts (`Basic`), path-prefix locality (`Prefix`), and hitting-event
+closedness and passage-time measurability (`Measurability`). `Restart`,
+`Reflection`, `Descending`, `DescendingRestart`, and `GridApproximation` each
+state complete path operations or comparison interfaces. The first-passage
+definition specializes Mathlib's `MeasureTheory.hittingAfter` to the
+continuous-path evaluation process; `firstPassageLE_eq_sInf` records the
+specialization's exact infimum formula. The local closed-set, attainment,
+restart, reflection, and Borel-measurability results use continuity of the
+path, which the generic process hitting-time API does not assume.
+
+The split leaves eight direct Lean files under `FirstPassage/`, at the
+repository's directory limit. Each module states a reusable path definition,
+locality fact, measurability result, or path operation, so no proof-only
+`Lemmas/` directory is introduced. The eight modules, together with their
+direct path and Brownian clients, built with `lake -Kjobs=2 build` (3,333 Lake
+jobs). The production tree and ledger now contain 1,620 modules: 1,222
+reviewed and 398 pending. Full-repository semantic review remains in progress.
+
+## Current production-tree structure scan (2026-10-30)
+
+The production inventory excludes `.lake/`, `Vendor/`,
+`BranchingProcessTest/`, and `scripts/`. It contains 1,620 Lean modules and
+reconciles exactly with the ledger. The structural scan found no file/directory
+same-stem collisions, no repeated parent/file stems, no directory with more
+than eight direct Lean modules, and no directory containing both `Lemmas.lean`
+and `Lemmas/`. `Probability/Process/Path/FirstPassage/` has eight direct
+modules and is the largest directory. The ledger records 1,222 reviewed and
+398 pending modules; semantic review remains in progress.
+
+
+## Continuous path transformation ownership review (2026-10-30)
+
+The continuous process representation module now contains only the maps that
+turn a coordinate process into a path-valued random variable and their
+measurable version theorem. Deterministic maps on `C(ℝ≥0, ℝ)`—freezing a path,
+shifting its time origin, and rebasing it at zero—are grouped in
+`Probability/Process/Path/Transform/Continuous.lean`. Their declarations depend
+on continuous path space and do not require a stochastic process. Direct clients
+import the transform owner, while process-to-path realization remains in
+`Representation/Continuous.lean`. This split follows the definition's
+parameters and keeps process measurability separate from deterministic path
+operations.
+
+
+The 2026-10-30 path-module audit placed the almost-surely càdlàg path-valued
+realization in `Probability/Process/Path/Representation/Cadlag.lean`, alongside
+the continuous and Skorokhod path representations. The short-horizon rational
+corridor probability limit moved to `Probability/Process/Corridor/ShortTime.lean`:
+its public theorem is a process-level corridor probability statement under an
+a.s. càdlàg hypothesis, and it is not a deterministic path lemma. Both moves
+update all direct imports and remove the now-empty `Path/Cadlag/` directory.
+
+
+## First-window path time ownership review (2026-10-30)
+
+The fixed-unit-window predicate and the order-theoretic first-window times
+$T^s$ and $T$ are in
+`Probability/Process/Path/AboveStart/FirstWindow/Time/Core.lean`. The public
+measurability and countable-infimum results are in `Time/Basic.lean`; the
+rational-grid approximation proof is grouped under the private
+`Time/Lemmas/Approximation.lean`. The characterization of the first time by a
+flat running-minimum interval is in `Time/RunningMinimum.lean`. This keeps
+first-window-time statements together and distinguishes them from the general
+positive-duration local-window argument in `AboveStart/LocalMinimum.lean`, whose
+interface has no first-window-time parameter. The moved modules retain their
+declaration names; all imports were updated. `LocalMinimum.lean` now imports only
+the continuous-map, compactness, NNReal, and order APIs needed by its public
+statement. The core, measurability entry, private approximation module, and
+direct path clients all built successfully.
+
+
+The current production source-to-ledger reconciliation contains 1,623 Lean
+modules. The ledger records 1,238 semantically reviewed modules and 385 pending
+modules. The structural scan still finds no same-level file/directory stem
+collisions, no repeated parent/file stems, no module directory with more than
+eight direct files, and no parent with both `Lemmas.lean` and `Lemmas/`. The
+latest additions are the continuous-path transformation owner, the moved
+càdlàg representation and short-time corridor modules, and the split
+`FirstWindow/Time/{Core,Basic,Lemmas/Approximation}` structure.
+
+## Endpoint-minimum proof support (2026-10-31)
+
+The totalized endpoint minimum and its minimizing address remain semantic
+interfaces under `Endpoint/Minimum/`: the former represents the selected
+population's endpoint minimum, while the latter provides a canonical
+measurable address and is used by the initial-population trajectory result.
+The countable-root module keeps the observable, its measurability, and the
+pushforward-law identity with the finite-root observable. Unused specialized
+sublevel, integral, and centered-fourth-moment corollaries were removed;
+their conclusions follow from the generic measure-preserving restriction
+theorem, and the fourth-moment proof now applies that theorem directly.
+The predictable slot-zero lineage and its one-use fourth-moment estimates are
+used only by the endpoint positive-moment proof, so they now live under
+`Endpoint/Minimum/Lemmas/Lineage.lean`.
+
+
+## N-selection semantics and predictable-lineage ownership review (2026-10-31)
+
+The selection interface has several related owners, distinguished by the
+data in their inputs and conclusions. The abstract
+`Combinatorics.Selection.NSelection` is a capacity rule on arbitrary candidate
+sets, with signature `Set ι → Finset ι`; it contains no particle, offspring,
+generation, or walk state. The actual N-branching random walk is the recursive
+particle system in `Combinatorics/BranchingWalk/Selection/NSelection/Walk/`,
+where offspring form each candidate cloud and the selector produces the next
+generation. Its probability laws and estimates remain under
+`Probability/BranchingRandomWalk/Selection/NSelection/`. The source literature
+likewise treats N-selection as a branching-selection particle system
+([Bérard--Maillard](https://arxiv.org/abs/1311.1488)).
+
+`MeasureTheory/Selection/NSelection/` owns measurable realizations and
+measurability results for the generic selector; those files express measurable
+properties of selector maps, not the branching model. Step selectors whose
+domain is an offspring configuration remain under
+`Combinatorics/BranchingWalk/Step/Selection/`, with their measurable
+statements under `MeasureTheory/BranchingWalk/Step/Selection/`.
+The source-tree check confirms that `MeasureTheory/MeasurableSpace/` contains
+no `NSelection` declarations or references. It owns constructions and
+properties of measurable-space structures; an instance or measurability
+hypothesis alone does not make a selector theorem part of that subject.
+
+The endpoint positive-moment proof now uses the reusable fresh-step law
+`Probability/BranchingRandomWalk/Genealogy/RootIndexed/Law/PredictableAddress.lean`.
+If a root/address of depth $n$ is chosen measurably from the generation-$n$
+domain flow, then its step has the original one-step law; countability is
+required only for the range of the chosen root/address. This theorem belongs to
+the stochastic root-indexed genealogy layer. The fourth-moment transport and
+sum assembly specific to the endpoint lineage are grouped under the internal
+`Selection/NSelection/EndpointDeviation/Endpoint/PositiveMoment/Lemmas/`;
+the endpoint-minimizing address and its pathwise comparison remain under the
+internal `Endpoint/Minimum/Lemmas/`. The public
+`Endpoint/PositiveMoment/Closure.lean` consumes that proof chain.
+
+The root-indexed law module, the endpoint positive-moment proof module, and
+the endpoint-minimum lineage client build with `lake -Kjobs=2 build`. The
+production inventory now contains 1,624 modules and reconciles with the
+ledger: 1,240 semantically reviewed and 384 pending. The structural scan
+continues to show no same-level file/directory stem collisions, repeated
+parent/file stems, directories with more than eight direct modules, or
+siblings named both `Lemmas.lean` and `Lemmas/`.
+
+## N-selection speed-limit closure review (2026-10-31)
+
+`AsymptoticSpeed/Limit/Asymptotics.lean` exposed only
+`speed_limit_of_eventual_bounds`, which converts eventual two-sided
+epsilon-bounds into `Tendsto` by applying `tendsto_order.mpr`. This is exactly
+Mathlib's order-topology convergence characterization, so the project wrapper
+and its standalone public module were removed. The pinned Mathlib revision
+`380f2aafb622cb2c1c93dac545b6389083c68c51` declares this API in
+`Mathlib/Topology/Order/Basic.lean`; the final Theorem 1.2 proof should use it
+directly. The checklist was updated, including deletion of its stale claim that
+the module also contained a first-moment truncation inequality.
+
+`Limit/SubadditiveLimit.lean` was renamed to `Limit/FirstRowLimits.lean` and
+its single-use `SubadditiveArrayLimitData` wrapper was removed. The surviving
+theorem states the exact inputs it uses: almost-sure convergence of
+`A(0,n)/n`, convergence of the corresponding `L1` error, and the path identity
+`p(ω,n) = -A(0,n)`. It transfers these to almost-sure speed and `L1`
+convergence for the position path. The theorem is retained as a complete
+model-level transfer result; its assumptions do not claim subadditivity, and
+the file is not a proof-only helper. The renamed module builds with
+`lake -Kjobs=2 build` (2,226 jobs). The production ledger now contains 1,623
+modules, 1,241 semantically reviewed and 382 pending.
+
+## Generic selection versus branching-walk selection review (2026-10-31)
+
+The directory boundary was rechecked after the concern that selection itself
+may have BranchingWalk semantics. The generic capacity selector has input
+`S : Set ι` and output `M.select S : Finset ι`, with
+`M.select S ⊆ S`; for finite `S`, its cardinality is
+`min N S.ncard`, and for infinite `S` its cardinality is `N`. These data
+define a candidate-set operation. They have no offspring map, population
+state, generation index, or transition law.
+
+The recursive branching-walk object adds precisely those data:
+$P_{n+1}=M(\bigcup_{x\in P_n}\mathrm{children}(x))$. It therefore remains
+under `Combinatorics/BranchingWalk/Selection/NSelection/Walk/`; selectors
+whose input itself is a branching step remain under
+`Combinatorics/BranchingWalk/Step/Selection/`.
+
+This separation is reflected in actual dependencies. The generic measurable
+interface in `MeasureTheory/Selection/Random.lean` imports the capacity
+selector without importing BranchingWalk. The stopped-rank results in
+`Probability/Process/Stopping/Selection/Ranked.lean` likewise use its generic
+rank interface. Moving the deterministic selector under BranchingWalk would
+make these model-independent modules depend on the branching model. Keep the
+generic candidate-set operation at `Combinatorics/Selection/` and keep the
+recursive particle system under `Combinatorics/BranchingWalk/`.
+
+The pinned Mathlib snapshot is `maix00/mathlib4` revision
+`380f2aafb622cb2c1c93dac545b6389083c68c51`. Its
+`Mathlib/Combinatorics/` tree has topic directories such as `Additive`,
+`Enumerative`, `SetFamily`, `SimpleGraph`, and `Matroid`; a search of that tree
+found no analogous generic `Selection` or capacity-selector API. Mathlib
+therefore provides no direct precedent prescribing either location for this
+specific object. The chosen location follows the selector's mathematical
+signature and the dependency boundary above, rather than treating the first
+application as its semantic owner.
+
+## Infinite-offspring Kingman speed cluster review (2026-10-31)
+
+Reviewed `Limit/InfiniteOffspring/{Repair,SubadditiveArray,Speed}.lean`,
+`Kingman/{Array,Limit}.lean`, and `Kingman/Lemmas/ArrayBounds.lean` against
+WANG Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite
+Offspring*, Master's thesis, Fudan University (2026), Section 3.4.2,
+Lemma 3.12. The exact displayed number was checked in both compiled PDFs and
+the source subsection. The repair module defines the measurable all-environment
+model used by the Kingman array and both leftmost/rightmost speed results; the
+array definition and its subadditive/cocycle properties remain beside the
+infinite-offspring limit. One-use envelope and integrability estimates remain
+private under `Kingman/Lemmas/`.
+
+The module headers now cite the exact thesis result and the Kingman/Liggett
+theorems. WANG Yiyang's Lemma 3.12 proof obtains almost-sure and (L^1) convergence in one
+application of Liggett's improved theorem. Lean obtains the almost-sure limit
+from the repository's Kingman theorem and proves (L^1) convergence in a
+separate uniform-integrability/Vitali step; this proof-organization difference
+is documented in `Speed.lean` and `Kingman/Limit.lean`, while the theorem's
+assumptions and conclusion agree with Lemma 3.12. The shift-iterate identity
+used only to assemble the cocycle is now private.
+
+The entry module builds with
+`lake -Kjobs=2 build Probability.BranchingRandomWalk.Selection.NSelection.AsymptoticSpeed.Limit.InfiniteOffspring.Speed`
+(3,338 jobs). The build reports only the existing `haveI`/`letI` style lints
+in `Speed.lean` and `Kingman/Limit.lean`. The source ledger reconciles at
+1,623 modules, with 1,247 semantically reviewed and 376 pending.
+
+## Branching-walk law and observation modules (2026-10-31)
+
+Reviewed `Probability/BranchingRandomWalk/{Law,IID,Measurability}.lean`,
+`Probability/BranchingRandomWalk/Genealogy/GaltonWatson.lean`, and
+`Probability/BranchingRandomWalk/Walk/Basic.lean`. `WalkLaw` names an arbitrary
+probability measure on the branching-walk realization space; the underlying
+construction remains Mathlib's `ProbabilityMeasure`. `iid` is the canonical
+product law of complete offspring configurations, independent across
+addresses while allowing dependence between siblings in one configuration.
+The Galton--Watson module is a public genealogy bridge that forgets marks and
+identifies the resulting law with the presampled Galton--Watson law. The
+singleton-slot `RandomWalk` remains the one-child specialization and adds no
+survival assumption to its type.
+
+The root-coordinate and fixed-address survival measurability results remain
+under `Probability/BranchingRandomWalk/Measurability.lean`. They concern the
+generation domain flow defined on branching-walk step fields; they do not
+define a new measurable-space structure, selection rule, or probability law.
+This dependency makes the probability-process observation layer their owner,
+while the base measurable space on a branching walk is induced by its
+combinatorial step and initial-position coordinates.
+
+The deterministic two-child population recurrence estimate has been moved
+from `Probability/BranchingRandomWalk/Population/Growth/` to
+`Combinatorics/BranchingWalk/Population/Growth/`. Its hypotheses are only
+natural-number sequences with $p_0=1$, $e_n\le p_n$, and
+$p_{n+1}=p_n+e_n$; it uses no random environment, probability law, or
+measurability assumption. The exact pinned Mathlib search found no existing
+branching-population API for this recurrence, so the estimate remains a
+combinatorial result under the population subject.
+
+The reserve factorization modules were kept as public interfaces: `Reserve/Basic`
+states fresh-subtree independence and the resulting exact first-moment
+identity for arbitrary measurable observables and exploration domains;
+`Failure/Estimate` specializes it to countable candidate-failure events;
+`Reserve/Lineage` specializes those statements to a presampled reserve-lineage
+family and is consumed by the root-indexed trial interface. The selected
+first-split subtree factorization is used by the recursive rooted-trial
+construction and remains in `Restart/FirstSplit/` because its event and output
+are specific to the selected population's first split.
+
+## Finite-slot ownership and rooted-trial completion review (2026-10-31)
+
+The selected-child count encoding was separated by semantic layer. The map
+`Step.FiniteSelection.binaryOffspringStep` and its exact child-count identity
+are deterministic branching-step combinatorics, so they now live in
+`Combinatorics/BranchingWalk/Step/Selection/FiniteSlot.lean`. Its measurable
+realization is in `MeasureTheory/BranchingWalk/Step/Selection/FiniteSlot.lean`;
+the probability pushforward law and supercriticality criterion remain in
+`Probability/BranchingRandomWalk/Restart/RootedTrial/FiniteSlot/Offspring.lean`.
+The finite-slot coupling, moment recursions, and growth estimates are full
+probability interfaces, while their one-use binary-address and subtree-law
+proof chain remains under `FiniteSlot/Lemmas/`.
+
+The root-indexed cap-stopped candidate interface was also checked against its
+measurability proof. The selected-root adapter now sits under the nested
+`Completion/Lemmas/RootIndexed/` path, and the unused selected-child identity
+wrappers were removed. The candidate adaptedness theorem no longer accepts a
+split mark or its measurability proof, since neither occurs in its statement;
+those assumptions remain where the completion-time interface uses them.
+Focused builds passed for the finite-slot combinatorics, measurability, law,
+coupling, and growth modules, and for the cap-stopped root-indexed interface
+and its reserve-causal client. The builds report existing style-linter
+warnings in neighboring proofs.
+
+This review maintains the N-selection boundary: a deterministic capacity
+selector belongs to `Combinatorics/Selection/`; its application to branching
+steps or generations adds `BranchingWalk` semantics; measurability theorems
+belong to `MeasureTheory/Selection/` or the branching-step measurable layer;
+only laws and random evolution belong to `Probability/BranchingRandomWalk/`.
+The typeclass assumption `[MeasurableSpace α]` alone does not move a
+combinatorial construction into `MeasureTheory/MeasurableSpace/`.
+
+The source ledger currently reconciles at 1,626 production modules, with
+1,283 semantically reviewed and 343 pending; there are no missing, stale, or
+duplicate ledger rows.
+
+## Generic selection and drawdown ownership review (2026-10-31)
+
+The generic `Combinatorics.Selection.NSelection` interface remains in
+`Combinatorics/Selection/NSelection/`: it maps an arbitrary candidate set
+`S` to a finite subset `M.select S`, with capacity `N` and no tree, offspring,
+generation, or population-process parameter. This is a reusable capacity
+selector, so its abstract definition belongs to combinatorics. The branching
+semantics begin when the candidates are generated from offspring or when the
+selected set is iterated across generations; those interfaces remain under
+`Combinatorics/BranchingWalk/Selection/`. Measurable realizations are in
+`MeasureTheory/Selection/`, branching-step measurability is in
+`MeasureTheory/BranchingWalk/Step/Selection/`, and stochastic laws and
+population estimates remain in `Probability/BranchingRandomWalk/Selection/`.
+This boundary follows the mathematical inputs of each declaration rather
+than the word “selection” or a typeclass assumption alone.
+
+The drawdown audit removed the second definition of the totalized first-`N`
+population from `Drawdown/Large.lean`; the population definition together
+with its cardinality and generation-flow properties now has one owner in
+`Drawdown/Population.lean`. The measurable one-root first-crossing event and
+its many-to-one probability bound moved from the N-selection estimate to
+`Probability/BranchingRandomWalk/Spine/FirstPassage.lean`, where they apply to
+a general single-root branching random walk. The selected-population event
+and its bound remain in `Drawdown/Large.lean`. The long address-count estimate
+used only to assemble that probability bound is under
+`Drawdown/Lemmas/SelectedCount.lean`.
+
+Focused builds passed for the generic first-passage module, the selected
+population interface, the internal count estimate, and the large-drawdown
+entry module (`3,225` Lake jobs). The source ledger reconciles at `1,627`
+production modules, with `1,294` semantically reviewed and `333` pending;
+there are no missing, stale, or duplicate rows.
+
+The ownership check also moved the selected-population ancestor-prefix
+property to `Drawdown/Population.lean`, where the population is defined, and
+moved the subtree path-potential/position-difference identity to the generic
+`Spine/Path/Decomposition/Branching.lean` interface. The second-stage
+N-selection embedding now reuses that Spine identity instead of carrying a
+private duplicate. The generic selector remains in `Combinatorics`; only its
+measurability results are in `MeasureTheory/Selection`, while recursive
+offspring selection is in `BranchingWalk`. No `NSelection` definition or
+selector theorem was placed under `MeasureTheory/MeasurableSpace`.
+
+The focused client build, including `Drawdown/Large` and the second-stage
+embedding, passed all `3,924` Lake jobs. The source ledger reconciles at
+`1,627` production modules, with `1,295` semantically reviewed and `332`
+pending; there are no missing, stale, or duplicate rows.
+
+
+## Gaussian-domain functional-limit and tightness ownership review (2026-10-31)
+
+The normal-domain functional-limit family is organized by its mathematical
+interfaces. `FiniteDimensional/CentralLimitTheorem.lean` adapts Mathlib's scalar
+central limit theorem and Portmanteau bounds to the canonical IID random-walk
+law. `BlockTail.lean` gives truncated-bias and finite-prefix exceedance
+estimates, and `PathRange.lean` gives the complete compact-range probability
+bound; both remain at the normal-domain layer as standalone estimates.
+`PathLimit/{Basic,Brownian,LinearTube}.lean` contains the complete path-law
+limit, its Brownian-process realization, and the open linear-tube consequences.
+
+The public tightness result now has one entry at
+`FunctionalLimit/Normal/Tightness/Basic.lean`. Its local double-excursion and
+endpoint-oscillation estimates and the Gaussian-specific oscillation-partition
+argument were used only to assemble this theorem, so they are grouped under
+`Tightness/Lemmas/{Oscillation,OscillationPartitions}.lean` and imported with
+`import all`. The public entry imports the standalone compact-range bound as
+proof support. The move updates all production imports and removes the former
+same-level `Tightness.lean`/`Tightness/` stem collision risk.
+
+The Mathlib boundary is explicit: the scalar CLT is
+`ProbabilityTheory.tendstoInDistribution_inv_sqrt_mul_sum` from
+`Mathlib.Probability.CentralLimitTheorem`, and weak-convergence interval
+bounds reuse the Portmanteau API
+([Mathlib documentation](https://leanprover-community.github.io/mathlib4_docs/Mathlib/MeasureTheory/Measure/Portmanteau.html)). The path-space tightness
+criterion is already generic in the repository's càdlàg measure layer; the
+Gaussian-domain estimates specialize its compact-range and oscillation inputs.
+No duplicate generic CLT, Portmanteau, or tightness criterion was added.
+
+Focused builds passed for the nine normal-domain modules, the tightness and
+path-limit entries, and their direct Brownian, entrance, and Mogulskii clients;
+the largest targeted build completed 4,129 Lake jobs. The ledger reconciles at
+1,627 production modules, with 1,304 semantically reviewed and 323 pending;
+there are no missing, stale, or duplicate rows.
+
+## Stable entrance entry ownership correction (2026-10-31)
+
+`ShiftComparison/AllIndices.lean` exposed the all-index positive-probability
+theorem for the unit-time corridor and endpoint event. Its statement is an
+entrance result, while `ShiftComparison/` owns the shifted-corridor product
+bound and its logarithmic consequences. The module therefore moved to
+`Blocks/Lower/Entrance/AllIndices.lean`, beside the low-index Poisson entrance
+theorem and the centered full-corridor positivity result. Its only client now
+imports the new path. The module no longer imports the unused
+`ShiftComparison/Core` chain, and the proof-specific index-regime theorems are
+ordinary imports; the public boundary is the stable process, corridor event,
+and CDF interface appearing in the theorem statement.
+
+The entrance directory now has six direct modules and remains below the
+repository's flat-directory limit. The index-regime entrance results formerly
+stored in `Lower/Feedback/{Entrance,EntranceIndexOne}.lean` now live under
+`Lower/Entrance/Feedback/{AboveOne,IndexOne}.lean`; `Lower/Feedback/` therefore
+owns only the linear-tube estimates and their scaling proof support. The
+one-use tube-to-entrance bridge is private inside `AboveOne.lean`. Both the
+all-index entry and the index-regime entrance results are recorded as reviewed.
+The feedback scaling, index-one tube, and index-greater-than-one tube modules
+are also reviewed: their public results are complete stable linear-tube
+positivity statements, while the power-limit and endpoint-correction chain is
+confined to `Lower/Feedback/Lemmas/Scaling.lean`.
+
+The all-index entrance entry, both feedback entrance specializations, both
+linear-tube results, their scaling support, and the direct Mogulskii bridge
+clients build successfully with `lake -Kjobs=2 build` (3,945 Lake jobs).
+The current source inventory and ledger each contain 1,627 modules with no
+duplicate, missing, or stale entries; the ledger records 1,310 reviewed and
+317 pending modules. The fresh structural scan found zero same-stem file and
+directory collisions, zero direct modules repeating their parent-directory
+name, zero directories with more than eight direct Lean modules, and zero
+directories containing both `Lemmas.lean` and `Lemmas/`.
+
+
+## Module audit ledger recovery (2026-10-31)
+
+The preceding full-audit checkpoint recorded 1,310 reviewed and 317 pending
+modules. During a subsequent ledger update, pre-existing unquoted commas in CSV
+notes caused the write to stop partway through the file. The committed ledger
+and the preserved module-level architecture references were used to restore a
+complete source-matched inventory. Confirmed review records were retained;
+modules whose individual status could not be recovered are marked pending for
+re-audit. The restored ledger contains 1,627 current production modules,
+with 792 reviewed and 835 pending. All 1,627 modules retain
+the prior full-checkpoint structural and build status.
+
+
+## Branching-spine random-walk interface review (2026-10-31)
+
+`Spine/RandomWalk/IncrementProcess.lean` defines the infinite product law of
+the boundary-normalized tilted potential increments and proves the coordinate
+law and independence statements. `Spine/RandomWalk/Basic.lean` packages this
+process as the canonical single-root random walk and provides the endpoint
+many-to-one interface. Both depend on the branching step field and its tilted
+potential law, so their owner is `Probability/BranchingRandomWalk/Spine`.
+Mathlib supplies the generic infinite-product and independence interface
+([`Measure.infinitePi` and `iIndepFun_infinitePi`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Probability/Independence/InfinitePi.html)); the project modules specialize it to the BRW spine without adding another IID abstraction. The modules'
+existing Lake build status is `pass`.
+
+The generic `Combinatorics/Selection/NSelection` interface remains separate
+from `Combinatorics/BranchingWalk/Selection/NSelection/Walk`: the former maps
+arbitrary candidate sets to finite capacity-bounded subsets, while the latter
+maps branching walks to sub-walks with at most N children per node. Mathlib
+organizes the supporting finite-set and matching primitives under
+`Data/Finset` and `Combinatorics/Hall`
+([`Finset`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Data/Finset/Defs.html),
+[Hall's theorem](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Combinatorics/Hall/Basic.html)); this supports the existing semantic split.
+
+The recovered ledger now records 1,627 current production modules,
+with 794 reviewed and 833 pending.
+
+
+## Branching-spine MRCA prefix estimate ownership review (2026-10-31)
+
+`MRCA/Prefix.lean` keeps complete prefix factorization results parameterized
+by arbitrary measurable history corridors, generation-prefix weights, and
+frontier observables. `MRCA/ChildPairBound.lean` exposes the fixed-ancestor
+and integrated ordered off-diagonal estimates for arbitrary corridors; the
+conditional many-to-one and weighted-series calculations remain in
+`MRCA/Lemmas/ChildPairBound.lean`. The affine-corridor drawdown specialization
+was used only by `PositiveDepth.lean`, so it now lives in
+`MRCA/Lemmas/AffineCorridorContinuation.lean` and is imported with
+`import all`. `PositiveDepth.lean` remains the public entry for the complete
+depth-indexed MRCA contribution and its finite aggregate.
+
+The refactored chain builds successfully with
+`lake -Kjobs=2 build Probability.BranchingRandomWalk.Spine.Tube.MRCA.Lemmas.AffineCorridorContinuation Probability.BranchingRandomWalk.Spine.Tube.MRCA.Prefix Probability.BranchingRandomWalk.Spine.Tube.MRCA.PositiveDepth`
+(3,211 Lake jobs). The reconciled ledger contains 1,628 current
+production modules, with 799 reviewed and 829 pending.
+
+The affine-corridor prefix factorization and the bridge from the actual
+path-pair expectation to the depth-indexed MRCA contribution are complete
+public interfaces, so `MRCA/Expansion.lean` and
+`MRCA/ActualContribution.lean` are now recorded as reviewed. The focused build
+of these interfaces and their corridor pair-bound client succeeds with
+`lake -Kjobs=2 build Probability.BranchingRandomWalk.Spine.Tube.MRCA.Expansion Probability.BranchingRandomWalk.Spine.Tube.MRCA.ActualContribution Probability.BranchingRandomWalk.Spine.Tube.Corridor.PairBound`
+(3,256 Lake jobs). The reconciled ledger still has 1,628 production modules
+and now records 801 reviewed and 827 pending.
+
+
+## BRW first-N selected-population coupling review (2026-10-31)
+
+`Probability/BranchingRandomWalk/Selection/Coupling/SelectedPopulation.lean`
+instantiates the arbitrary-offspring pathwise coupling with the causal first-
+`N` population on a root-indexed pre-sampled field. Its source and target
+clouds and generation-wise injective domination are now stated explicitly in
+the module header. The generic first-`N` selection and generation induction
+remain in `Combinatorics/BranchingWalk`; this module owns the probability-layer
+population adapter. The corresponding ownership row now names the three
+coupling interfaces by role.
+
+The selected-population adapter and its labelled step-selection client build
+successfully with
+`lake -Kjobs=2 build Probability.BranchingRandomWalk.Selection.Coupling.SelectedPopulation Probability.BranchingRandomWalk.Selection.Coupling.StepSelection`
+(3,296 Lake jobs). The ledger contains 1,628 production modules, with 802
+reviewed and 826 pending.
+
+
+## N-selection generation environment review (2026-10-31)
+
+`AsymptoticSpeed/Environment/Basic.lean` owns the finite-parent offspring
+batch and its i.i.d. sequence law, generation-coordinate domains, shift
+invariance, marginals, independence, and almost-sure good-transition result.
+The latter uses private one-batch boundary-normalization and nonempty-support
+arguments. `ErgodicEnvironment.lean` specializes the reusable
+`Probability.Ergodic.IIDShift` theorem; `OrderDual.lean` transports both finite
+and countable product laws through the deterministic step order-dual map. The
+three modules are complete environment interfaces, so they remain outside
+`Lemmas/`.
+
+The environment cluster builds successfully with
+`lake -Kjobs=2 build Probability.BranchingRandomWalk.Selection.NSelection.AsymptoticSpeed.Environment.Basic Probability.BranchingRandomWalk.Selection.NSelection.AsymptoticSpeed.Environment.ErgodicEnvironment Probability.BranchingRandomWalk.Selection.NSelection.AsymptoticSpeed.Environment.OrderDual`
+(3,279 Lake jobs). The ledger contains 1,628 production modules, with 805
+reviewed and 823 pending.
+
+
+## Selection ownership boundaries and endpoint population interface (2026-10-31)
+
+The selector names refer to three distinct mathematical objects. The generic
+`Combinatorics.Selection.NSelection` maps an arbitrary candidate set to a
+finite subset of capacity at most `N`. `Combinatorics.Branching.RootIndexed.NSelection`
+acts on a complete branching walk and requires every node of its output to
+have at most `N` surviving children; `Combinatorics.Branching.Step.FiniteSelection`
+selects child slots from one step. Their measurable statements belong in the
+corresponding `MeasureTheory` adapters, while branching laws and estimates stay
+in `Probability/BranchingRandomWalk`. The generic selector itself has no
+measurable-space parameter and remains in `Combinatorics/Selection`.
+
+`AsymptoticSpeed/Selection/PopulationBatch.lean` is a complete BRW probability
+interface: it ranks the totalized selected population, proves the ranked-root
+family measurable and injective, and identifies the offspring-batch law with
+the iid generation environment. The range-countability and fibre-measurability
+facts are local proof steps and are private. Its only external clients are the
+initial-population trajectory and speed-transport modules. The endpoint
+probability decomposition now uses the canonical selected-population and
+ancestor-closure results directly; references to the removed
+`largeDrawdownPopulation` helper were obsolete names left by the directory
+reorganization.
+
+The focused modules build successfully with
+`lake -Kjobs=2 build Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.Basic Probability.BranchingRandomWalk.Selection.NSelection.AsymptoticSpeed.Selection.PopulationBatch`
+(4,749 Lake jobs). The ledger contains 1,628 production modules, with 807
+reviewed and 821 pending.
+
+
+## Generic IID block comparison ownership (2026-10-31)
+
+The former `BranchingRandomWalk/Selection/NSelection/AsymptoticSpeed/Selection/BlockComparison.lean`
+used only a real sequence `position`, an almost-sure limit of
+`position n / n`, pairwise-independent identically distributed integrable
+increments, and pathwise comparisons at times `k * L`. Its two conclusions
+were therefore moved to
+`Probability/Sequence/IID/Blocks/SpeedComparison.lean`; the hypotheses now
+state the normalized-position limit directly, without referring to the
+branching-specific `HasAsymptoticSpeed` predicate. No compatibility alias is
+retained.
+
+The comparison with pinned Mathlib APIs found that
+[`Function.iterate_add`](https://github.com/leanprover-community/mathlib4/blob/380f2aafb622cb2c1c93dac545b6389083c68c51/Mathlib/Logic/Function/Iterate.lean)
+composes one fixed map, while
+[`Subadditive`](https://github.com/leanprover-community/mathlib4/blob/380f2aafb622cb2c1c93dac545b6389083c68c51/Mathlib/Analysis/Subadditive.lean)
+concerns a scalar sequence satisfying `u (m+n) ≤ u m + u n` and its Fekete
+limit. Neither contains the IID block-time comparison. The proof reuses
+Mathlib's strong law for pairwise independent identically distributed
+integrable variables, then compares the two limits along the block-index map.
+
+The generic theorem builds with
+`lake -Kjobs=2 build Probability.Sequence.IID.Blocks.SpeedComparison`
+(3,033 Lake jobs). The deterministic ranked-configuration iteration, exact-K
+slot specialization, and optional-offspring transition/run/array remain in
+their N-selection speed subtree; their assumptions are selection-specific.
+The array's block concatenation and shift identities are proof support only
+and are ordinary `lemma` declarations under `Array/Lemmas/`, imported by the
+public array entry with `import all`.
+
+The ledger contains 1,628 production modules, with 816 semantically reviewed
+and 812 pending.
+
+## Rooted-trial completion boundary recheck (2026-10-31)
+
+Rechecked the current `Restart/RootedTrial/Completion/` tree and rebuilt its
+14 production modules successfully (3,403 Lake jobs). Its seven direct modules
+expose complete cap-stopped, endpoint, product-law, fixed-horizon, and causal
+source-capacity interfaces. The theorem-specific factorization, geometry,
+measurability, and pushforward steps remain under the single nested
+`Completion/Lemmas/` tree, including `Lemmas/RootIndexed/CapStopped.lean`.
+That file's selected-root measurability declaration has its sole caller in
+`RootIndexed/CapStopped.lean`; it is now marked `lemma`, consistent with the
+proof-only role. The `RootIndexed/` folder owns the actual rooted population
+construction and its public candidate/source interfaces. No folder move was
+needed in this cluster.
+
+## Restart trial and reserve interface recheck (2026-10-31)
+
+The discrete trial modules separate the selected-population growth event
+(`Restart/Trial/Basic`), its first raw split and observable completion
+(`Trial/FirstSplit`), and the root-indexed candidate family
+(`Trial/RootIndexed`). The finite-threshold positive split event is owned by
+`Restart/Success/GoodSplit`; its probability conclusion follows from the
+branching offspring assumptions. `Trial/GeometricFirstMoment` is the
+`StepLaw` application of the general IID marked-reward formula in
+`Probability/Sequence/IID/GeometricReward`. Mathlib's `geometricMeasure`
+provides the waiting-time distribution, while the repository formula also
+tracks mark-dependent reward on each IID trial. Fresh reserve-subtree
+independence and its first-moment factorization form the reusable reserve
+interface; candidate-failure and lineage-completion specializations remain in
+`Restart/Failure` and `Restart/Reserve/Lineage`. The nine focused Restart
+modules built successfully (3,213 Lake jobs); `GoodSplit.lean`'s two unused
+`simp` arguments and unnecessary local instance binder were simplified, and
+its focused target rebuilt successfully (3,091 jobs).
+
+## Finite-slot offspring and moment interfaces (2026-10-31)
+
+Rechecked `Restart/RootedTrial/FiniteSlot/{Offspring,Coupling,Moments,Growth}`
+and the dependent reserve-growth theorem. The boundaries remain semantic:
+`Offspring` defines the binary-slot pushforward law and its ENNReal
+supercriticality criterion; `Coupling` identifies the actual selected
+population with the iid row process; `Moments` gives the conditional and
+integrated moments under the pre-sampled offspring-field law; and `Growth`
+applies the second-moment probability estimate. The Galton--Watson moment
+recurrences do not directly replace `Moments`, because they integrate the
+Galton--Watson generation-size law rather than the coded selected population.
+
+`Moments` now exposes the conversion
+`finiteSlotOffspringMeanReal_eq_expectedChildCount_toReal`, connecting the real
+mean used by the recursion to `OffspringConfigurationLaw.expectedChildCount`.
+`Growth` composes this identity with the existing
+`finiteOffspringLaw_isSupercritical`, removing a duplicate integral proof of
+the nonempty-and-split criterion and its redundant measurable-split argument.
+The one-use address-coding calculations remain in `FiniteSlot/Lemmas/Coding`.
+Mathlib's `integral_toReal`, `lintegral_map`, and the generic second-moment
+growth estimate provide the integration and probability interfaces.
+
+The focused build of `Moments`, `Growth`, and the dependent
+`Reserve/GrowthSuccess` module succeeded with `lake -Kjobs=2 build` (3,253
+Lake jobs). The build reports existing `letI` style warnings in the coding,
+coupling, and moment modules; no warning was introduced by the new bridge or
+the shorter growth proof. The audit ledger now records 835 reviewed and 793
+pending modules out of 1,628.
+
+## Rooted-trial reserve and coupling recheck (2026-10-31)
+
+Rechecked `Reserve/Candidates.lean` and the two `Coupling/` modules against their definitions, public statements, and production clients. The candidate-window count is private; the finite concurrent-population bound is reused from `Process/Stopping/Concurrent/Finite`. The coupling modules specialize the generic root-indexed field-factorization and rank-installation interfaces to the reserve-spine construction. Their mathematical ownership remains in `Restart/RootedTrial`. Renamed the unused candidate-index binder in `Reserve/Candidates.lean` to `_i`. Focused builds of `Coupling/ReserveSpine`, `Coupling/SampledMark`, and `Reserve/Candidates` succeeded with `lake -Kjobs=2 build` (3,396 and 3,200 jobs). The audit ledger records 838 reviewed and 790 pending modules out of 1,628.
+
+## Selection and finite-matching ownership recheck (2026-10-31)
+
+The deterministic capacity selector in `Combinatorics/Selection/NSelection/Basic.lean`
+has type `Set ι → Finset ι`, with subset and exact-capacity cardinality laws;
+it has no offspring, genealogy, or generation data. The branching-walk layer
+adds those inputs in `Combinatorics/BranchingWalk/Selection/NSelection/Walk/Basic.lean`
+and defines the generation step by collecting child sets and applying the
+selector. The generic interface therefore remains in `Combinatorics/Selection`,
+while the recursive walk and child-step selectors remain in `BranchingWalk`.
+The generic random-selector and stopped-rank modules also consume the abstract
+interface, consistent with that dependency direction.
+
+The Mathlib comparison found finite-set filtering and sorting under
+`Mathlib/Data/Finset`, and general relation-based Hall matching under
+`Mathlib/Combinatorics/Hall/Basic.lean`; it does not supply this project's
+capacity-`N` selector interface. A theorem in the former
+`Selection/NSelection/Matching/Hall.lean` depended only on finite populations
+and ordered values, so it now lives in `Combinatorics/Matching/LowerTail.lean`.
+The remaining `NSelection/Matching/Hall.lean` declarations use first-`N`
+selection and stay with that specialization. No compatibility alias remains.
+
+The focused build of `Combinatorics.Matching.LowerTail`,
+`Combinatorics.Selection.NSelection.Matching.Hall`, the dependent branching
+selection step and cloud-order modules, and the infinite-offspring speed batch
+succeeded with `lake -Kjobs=2 build` (2,327 Lake jobs). The ledger now records
+843 reviewed and 786 pending modules out of 1,629.
+
+
+## Module audit ledger recovery follow-up (2026-10-31)
+
+A later ledger write stopped at an unquoted comma in a notes field. The
+complete production inventory was rebuilt from the current Lean source tree,
+the committed ledger, the intact audit records, and successful per-module
+ledger updates preserved in the Codex session history. The restored CSV was
+written atomically and validated against all 1,629 production
+modules. Its recovered semantic review count is 950 reviewed and
+679 pending. Probability modules without row-level or explicit audit
+evidence remain pending.
+
+## Drawdown endpoint-deviation ownership review (2026-10-31)
+
+Reviewed the selected-population drawdown subtree against its declarations and
+production references. `Drawdown/Population.lean` owns the totalized first-$N$
+population and its pathwise and measurability interface; `Drawdown/Large.lean`
+owns the large ancestral-drawdown event and its probability estimate. The
+single-client selected-address count estimate remains in
+`Drawdown/Lemmas/SelectedCount.lean`. Under `Drawdown/Spine/`, `Capacity.lean`
+and `FailureProbability.lean` expose the first-stage and positive-initial-mass
+capacity results, while `Spine/Lemmas/` contains their parameter, tube,
+random-walk, asymptotic, and probability reductions. These declarations depend
+on selected genealogies, offspring fields, or the Aïdékon--Hu corridor
+construction, so their current probability and branching-walk ownership is
+appropriate.
+
+`SecondStageTube.lean` contained a full-horizon tube event and a containment
+lemma used only by each other. The prefix event already handles the full
+horizon by choosing `d = ellN - ell`; removed that duplicate pair and retained
+the prefix APIs used by `Tube.lean` and the capacity estimates. Simplified the
+adjacent displacement identity to `simp` after the focused build identified
+both listed simp arguments as unused. The focused build of
+`Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Drawdown.Spine.Lemmas.SecondStageTube`
+succeeded with `lake -Kjobs=2 build` (3,120 jobs), without warnings.
+
+The ledger now records 962 reviewed and 667 pending production modules out of
+1,629.
+
+## Selected-endpoint minimum ownership review (2026-10-31)
+
+Reviewed `Endpoint/Minimum/` and its direct clients. `Basic.lean` defines the
+empty-population totalization and the measurable endpoint minimum;
+`Address.lean` provides the minimizer set, canonical address, minimizer
+property, and generation-wise measurability; `CountableRoots.lean` transfers
+the observable and its law through the existing finite-root restriction map.
+These are complete probability-layer interfaces used by endpoint deviation,
+positive-moment, and initial-population speed proofs. The predictable
+slot-zero lineage and fourth-moment derivation has one client in
+`PositiveMoment/Closure.lean`, so it remains in `Minimum/Lemmas/Lineage.lean`.
+
+`endpointAtGeneration` remains part of the public address interface because
+the public minimizer property states the endpoint comparison with this name.
+The address and drawdown modules built successfully with `lake -Kjobs=2
+build`; the address build reports existing linter warnings in its dependencies,
+and its own unused `simp` arguments and tactic were removed before the final
+successful build. The ledger now records 966 reviewed and 663 pending
+production modules out of 1,629.
+
+
+## Selection ownership and endpoint moment review (2026-10-31)
+
+Selection ownership was checked from declaration inputs and import edges.
+`Combinatorics/Selection/` defines deterministic capacity-constrained
+candidate-set selectors using only sets, finite sets, and cardinality. These
+selectors are also used by generic measurable selection and stopped ranked
+selection. Their application to offspring sets and recursive generations is
+owned by `Combinatorics/BranchingWalk/Selection/`; measurable realizations and
+random branching populations stay at their respective measure-theory and
+probability layers. The selection modules under `Combinatorics/Selection/`
+have no imports from the branching-walk or branching-random-walk layers. This
+matches Mathlib's separation of finite-set order operations in
+`Mathlib/Data/Finset/Order.lean` and general finite Hall matching in
+`Mathlib/Combinatorics/Hall/Basic.lean`.
+
+The finite-sum moment estimate used by the endpoint proof assumes only an
+arbitrary measure, measurability, nonnegative summands, integrability, and a
+uniform moment upper bound. It now lives in
+`MeasureTheory/Integral/Moments/FiniteSum.lean`; the branching-random-walk
+lineage adapter imports it from the measure-theory layer. The four
+`Endpoint/PositiveMoment/` modules were reviewed: `Basic.lean` gives the
+negative-part estimate, `Closure.lean` gives the positive-part estimate, and
+`L2Closure.lean` combines them and transfers the result to the common
+countable-root field. `Lemmas/PredictableLineage.lean` contains the
+endpoint-specific predictable-lineage moment assembly.
+
+The focused build of `MeasureTheory.Integral.Moments.FiniteSum` and
+`Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.PositiveMoment.Lemmas.PredictableLineage`
+succeeded with `lake -Kjobs=2 build` (3,165 jobs). The dependency
+`Genealogy.RootIndexed.Law.PredictableAddress` emitted its existing
+`letI`-style warning; both targets built successfully.
+
+The ledger now records 970 reviewed and 659 pending production modules out of
+1,629.
+
+## Endpoint sequence module review (2026-10-31)
+
+Reviewed `Endpoint/Sequence/Parameters.lean`, `Sublevel.lean`, and
+`LogarithmicScales.lean` together with their production importers. The sequence
+module owns the deterministic scales and their sequence-level bounds;
+`Parameters.lean` exposes the endpoint exponent-parameter existence result;
+`Sublevel.lean` exposes the conversion from the finite-horizon probability
+estimate to a polynomial endpoint bound. The raw exponent conversion in
+`Sublevel.lean` has one in-file client, so it is private. The logarithmic-scale
+proof helpers form one cohesive chain in their source file and remain private
+there. The focused `lake -Kjobs=2 build` batch, including the three sequence
+modules and their direct production clients, completed successfully.
+
+The ledger now records 973 reviewed and 656 pending production modules out
+of 1,629.
+
+## Causal selected-population law review (2026-10-31)
+
+Reviewed the product-law and coupling modules under
+`Selection/NSelection/Law/` and `Law/Causal/`. The noncausal
+`Law/SelectedPopulation.lean` is the common totalized first-$N$ target-law
+interface. `Law/Causal/Population.lean` handles arbitrary finite causal
+sources; `SelectedPopulation.lean`, `Selection.lean`, and `StepSelection.lean`
+are the corresponding first-$N$, random-selector, and finite-step-selector
+source interfaces. `NestedRoots.lean` owns the nested-root specialization.
+Under `Restarted/`, `Basic.lean` defines the restarted source and matched-field
+objects shared by several clients, and `Coupling.lean` exposes their
+product-law and almost-sure domination results.
+
+`Restarted/Lemmas/Coupling.lean` contains the initial-slice identity,
+matched-population stage stability, and the finite-stage injection induction.
+All three are consumed only by `Restarted/Coupling.lean`; the proof already
+uses the general pathwise one-generation injection in
+`Combinatorics/BranchingWalk/Selection/NSelection/Coupling/Step.lean`, so a
+second public coupling abstraction is unnecessary. The existing nested
+`Lemmas/` placement is appropriate. The focused target modules had successful
+Lake builds recorded in the ledger.
+
+The ledger now records 982 reviewed and 647 pending production modules out of
+1,629.
+
+## First-stage, killed-population, and root-event review (2026-10-31)
+
+Reviewed the first-stage cutoff and low-count modules, the killed-population
+embedding and restarted-window modules, and the endpoint root-event modules.
+`FirstStage/Cutoff.lean` defines the scale used by both the first-stage bound
+and the drawdown estimates. `FirstStage/LowCountPower.lean` is the public
+first-stage low-count conclusion; the corridor lower bound, logarithmic PZ
+budget, and PZ assembly stay together in the single `FirstStage/Lemmas/`
+subdirectory. The helper modules use module-private declarations and their
+proof-chain clients import them with `import all`.
+
+`Population/RestartedWindow.lean` is shared by first-stage, second-stage, and
+drawdown estimates, so its window schedule belongs at the population subject
+level. `Population/LowCount.lean` exposes the killed-population count estimate;
+its corridor-success embedding has only this proof-chain client and remains in
+`Population/Lemmas/`. `Roots/Monotonicity.lean` owns the measurable
+endpoint-below event and root-set monotonicity, while `Roots/Nonempty.lean`
+provides the almost-sure nonemptiness property used by endpoint-minimum and
+speed arguments. These module boundaries match their input objects and
+observed clients; no additional abstraction or relocation is warranted.
+The focused target modules had successful Lake builds recorded in the ledger.
+
+The ledger now records 991 reviewed and 638 pending production modules out of
+1,629.
+
+## Second-stage corridor and population proof tree (2026-10-31)
+
+Grouped the internal second-stage proof chain by mathematical role:
+`SecondStage/Lemmas/Corridor/` contains the entrance/bridge composition, affine
+corridor estimate, parameterization, and PZ step; `SecondStage/Lemmas/Population/`
+contains the corridor-to-population embedding and population transfer. Both
+families consist of module-internal proof declarations and are imported with
+`import all` by their proof-chain clients. This leaves the parent `SecondStage/`
+with the public restarted population, tube, tube parameters, failure estimate,
+and root interfaces rather than six unrelated proof files.
+
+Reviewed the public root-count, root-population, rank-selection, tube, and
+failure interfaces, as well as their internal decomposition chain. The focused
+build of all moved modules and their direct production clients completed
+successfully with `lake -Kjobs=2 build` (3,952 Lake jobs). Existing linter
+warnings in replayed dependencies remain; the moved modules built successfully.
+
+The ledger now records 1,005 reviewed and 624 pending production modules out
+of 1,629.
+
+## Infinite-offspring rightmost speed ownership (2026-10-31)
+
+Moved the rightmost speed result from the `AsymptoticSpeed/` root to
+`AsymptoticSpeed/Limit/InfiniteOffspring/Rightmost.lean`, beside its leftmost
+limit theorem. The statement is specifically for the infinite-offspring model,
+and its proof transports the existing leftmost speed and $L^1$ convergence
+through the established order-dual environment. It retains the original-law
+right-boundary and rightmost-moment hypotheses; the dual conversion remains a
+private proof step. The moved target and its dependencies built successfully
+with `lake -Kjobs=2 build` (3,341 Lake jobs).
+
+The ledger now records 1,006 reviewed and 623 pending production modules out
+of 1,629.
+
+
+## Selection ownership and infinite-offspring speed proof boundaries (2026-10-31)
+
+Reviewed the generic and branching-specific selection modules against their input
+objects and production clients. `Combinatorics/Selection/NSelection/Basic.lean`
+defines a capacity-$N$ subset selector on an arbitrary candidate set: it has no
+offspring relation or generation recursion. Generic measurable selection and
+stopped ranked selection use this interface outside the branching-walk model.
+`Combinatorics/BranchingWalk/Selection/` owns the separate objects whose inputs
+are branching walks or offspring steps, including subwalk containment and the
+generation update that selects from the union of child sets. The generic
+interface therefore remains in `Combinatorics/Selection/`, while model-specific
+selection remains under `BranchingWalk/Selection/`. This is consistent with
+Mathlib's placement of a set-enumeration choice function as an explicit
+parameter in `Mathlib.Data.Set.Enumerate` and of finite predicate selection in
+`Mathlib.Data.Finset.Filter`; neither provides a general
+`Selection.Mechanism` structure. The source records and module declarations for
+both layers spell out this input-object distinction.
+
+Reclassified the four repaired-array identities previously in
+`Limit/InfiniteOffspring/Kingman/Array.lean` as proof-chain support. Their only
+production clients are the adjacent Kingman limit and speed-transfer modules;
+together they verify the subadditivity, shift, cocycle, and repair-agreement
+hypotheses for this one model array. They now live in
+`Kingman/Lemmas/ArrayStructure.lean` and are imported with `import all`. The
+public `Kingman/Limit.lean` continues to expose the almost-sure and $L^1$ limit
+results. The existing `Kingman/Lemmas/ArrayBounds.lean` remains the separate
+internal integrability and expectation-estimate chain.
+
+Reviewed the finite-start initial-population interface as one dependency chain.
+`Trajectory/Population.lean` names the shared finite-root population;
+`Trajectory/Hitting.lean` proves capacity attainment; the nested
+`Trajectory/Lemmas/CapacityHit/` files provide only its active-mark and
+population-growth proof steps. `Trajectory/Basic.lean` and `Trajectory/RunBridge.lean`
+construct and identify the hit-rooted trajectory; `Field/` states the fresh-field
+law and hit-position factorization; `Speed/Transport.lean` transfers the
+conclusion to an arbitrary initial-position law. The limit subtree retains the
+repair construction and canonical array as mathematical objects, the public
+Kingman and speed conclusions as entry results, and array-hypothesis
+verification in `Kingman/Lemmas/`. Citation comments identify WANG Yiyang's
+specific thesis result and the cited Kingman/Liggett theorems.
+
+The focused `lake -Kjobs=2 build` of all reviewed initial-population and
+infinite-offspring speed targets and their direct dependencies completed
+successfully (4,815 Lake jobs). The old module-syntax warnings for
+`Speed/Transport.lean` are expected under the repository migration rule: its
+`Trajectory/RunBridge.lean` and `Trajectory/Basic.lean` dependency chain remains
+legacy, so the files must migrate together.
+
+The ledger now records 1,021 reviewed and 608 pending production modules out
+of 1,629.
+
+
+## Generic selection overflow and N-selection admissibility (2026-10-31)
+
+The remaining selection files were checked against their input objects and
+clients. `NSelection/Admissible/Real.lean` stays with the branching-random-walk
+N-selection model: it turns real boundary normalization into almost-sure
+finite exponential weights, lower-finite offspring populations, and the
+first-$N$ successor rule; endpoint-deviation, restarted-law, and initial-speed
+modules consume these conclusions.
+
+`Probability/BranchingRandomWalk/Selection/Overflow.lean` had a different
+semantic signature: its declarations used only a causal finite selection
+mechanism, a finite candidate process, and a label type. The old `RootIndexed`
+label specialization was removed. The module now lives at
+`Probability/Process/Stopping/Selection/Overflow.lean` and is polymorphic in
+all labels. Its primary stopping-time criterion accepts measurable population
+sizes directly, so it works for arbitrary label types. The convenience
+criterion deriving size measurability from adapted finite-set candidates
+retains `[Countable ι]`: Mathlib's `measurable_encard` for set-valued
+populations has this hypothesis (`Mathlib/MeasureTheory/MeasurableSpace/NCard`),
+and cardinality is not in general measurable from the membership-generated
+finite-set sigma-algebra for an uncountable label type. The specialized
+countable-label assumption therefore appears only on that convenience result.
+
+The new overflow module, ranked stopping-time selection, and direct N-selection
+clients built successfully with `lake -Kjobs=2 build` (4,901 Lake jobs). The
+ledger now records 1,023 reviewed and 606 pending production modules out of
+1,629.
+
+
+## Candidate selection ownership correction (2026-10-31)
+
+The `Selection` name is split by the mathematical input. The generic
+`Combinatorics/Selection/NSelection/` interface maps any candidate set to a
+finite subset of capacity $N$ and depends only on membership, cardinality, and
+order. It has no genealogy, offspring, generation, or probability-space data.
+The recursion that applies this selector to child populations belongs under
+`Combinatorics/BranchingWalk/Selection/`; the root-indexed realized-candidate
+construction belongs under
+`Probability/BranchingRandomWalk/Population/Candidates/`. Measurability of
+generic selectors remains in `MeasureTheory/Selection/`, and the random
+branching-walk laws and estimates remain in
+`Probability/BranchingRandomWalk/Selection/`.
+
+The former `Probability/BranchingRandomWalk/Population/Candidates/RootIndexed/Real.lean`
+combined a deterministic theorem with a field-observable presentation. The
+core theorem has moved to
+`Combinatorics/BranchingWalk/Population/Candidates/ExponentialWeight.lean`:
+for arbitrary root and slot types, finite negative exponential offspring
+weight at each member of a finite parent population implies lower-finiteness
+of the full child's real-position order. This statement requires neither a
+probability law nor measurability. The assumption that every parent has depth
+$n$ was removed because the lower-section argument depends only on the
+parent's step and the child-position recursion.
+
+`Probability/BranchingRandomWalk/Population/Candidates/RootIndexed/RealPosition.lean`
+retains the useful process-facing specialization. It identifies the actual
+branching-walk position with the generation-truncated observable on the
+generation-$(n+1)$ child set, so the totalized N-selection process can consume
+the generic theorem without duplicating its weight argument. This is a model
+adapter, not the owner of the deterministic estimate.
+
+The neighboring `Population/Candidates` modules were reviewed and retained:
+their roots, child addresses, survival tests, spatial ordering, or generation
+domain flow are branching-random-walk inputs. The finite-prefix comparison
+remains isolated in the single `Lemmas/FullSelection.lean` proof module.
+Both new candidate modules and the affected admissibility and trajectory
+clients built successfully with `lake -Kjobs=2 build` (4,780 Lake jobs).
+
+The production ledger now records 1,033 reviewed and 597 pending modules out
+of 1,630.
+
+
+## Offspring-configuration and Galton--Watson interface review (2026-10-31)
+
+Reviewed the offspring-law and Galton--Watson generation modules against their
+declared objects and clients. `Offspring/` owns the probability law of one
+complete optional-slot configuration, its mark pushforward, its point-measure
+and child-count laws, and the independently sampled address field. These
+interfaces retain slot labels or explicitly project them away, so their
+probability-law statements remain beside the branching-process model.
+`GaltonWatson/Law.lean` constructs the presampled process law and identifies its
+observable offspring field; `Generation.lean` groups the descendant-field
+product law, generation-size recursion, measurability, and first-generation
+law. The moment definitions and first/second-moment recurrences stay under
+`GaltonWatson/Moments/`, the process-specific Paley--Zygmund consequences stay
+beside those moments, and the two proof-only expansion/finiteness chains remain
+under `Moments/Lemmas/`.
+
+Removed `GaltonWatson/BranchingProperty.lean`: its sole declaration merely
+specialized `offspringFieldLaw_independent` to the unmarked `PUnit` law, and its
+only client was a compile-time interface example. That example now invokes the
+mark-generic field-independence theorem directly. This leaves one owner for the
+product-field result and removes the standalone one-theorem wrapper module.
+The affected production modules built successfully with `lake -Kjobs=2 build`
+(3,161 Lake jobs).
+
+The production ledger now records 1,044 reviewed and 585 pending modules out
+of 1,629.
+
+
+## Generic selection layer versus branching-walk selection (2026-10-31)
+
+The `Combinatorics/Selection/` layer was checked by its declarations and
+import graph. `Selection.Mechanism` is a map from arbitrary candidate sets to
+subsets; `NSelection` adds the capacity law
+\(|S(A)|=\min(N,|A|)\) for finite candidates and \(|S(A)|=N\) for infinite
+candidates. Rank, first-$N$, last-$N$, and rank-matching results use set
+membership, finite cardinality, and order. These objects carry no child-slot,
+genealogy, generation, branching-walk, or probability-space data.
+
+The dependency graph confirms that this is a lower-level reusable interface:
+`MeasureTheory/Selection/` imports the generic selectors to prove measurability,
+while `Combinatorics/BranchingWalk/Selection/` imports them to select child
+slots, compare offspring clouds, and construct selected branching walks. Moving
+the generic interface under `BranchingWalk` would make the measure-theory
+selection layer depend on a branching-process model that its definitions do not
+use. The current split therefore follows the mathematical dependencies:
+abstract candidate-set selection in `Combinatorics/Selection/`, measurable
+realizations in `MeasureTheory/Selection/`, deterministic branching-walk
+applications in `Combinatorics/BranchingWalk/Selection/`, and their random laws
+in `Probability/BranchingRandomWalk/Selection/`.
+
+The pinned Mathlib source provides the lower-level primitives `Finset.filter`
+(`Mathlib/Data/Finset/Filter.lean`) and `Finset.choose`
+(`Mathlib/Data/Finset/Basic.lean`). The pinned source search found no general
+capacity-$N$ selector or selector-mechanism interface; the project structure
+packages a distinct reusable specification above those primitives. Its
+placement in `Combinatorics` is based on this abstraction boundary, while
+branch-specific selection rules remain in the branching-walk subtree.
+
+The cross-potential statistic review also moved the deterministic observable
+`crossPotentialWeight φ θ ξ = \sum_{i\ne j} w_i w_j` to
+`Combinatorics/BranchingWalk/Step/Measure/ExponentialWeight.lean`, where
+\(w_i=\operatorname{realizedPotentialWeight}(\varphi,\theta,\xi,i)\).
+The raw-law condition `HasFiniteCrossWeight` remains in
+`Probability/BranchingRandomWalk/Assumptions/CrossWeight.lean` and specializes
+the integral to \(\theta=-1\). Its second-moment callers now use the explicit
+identity with the summed-potential exponential expression. The affected Lean
+modules built with `lake -Kjobs=2 build`.
+
+The production ledger now records 1,047 reviewed and 582 pending modules out
+of 1,629.
+
+
+## Current Rademacher hierarchy and ledger recovery (2026-10-31)
+
+Rechecked the current 35-module `Probability/Process/RandomWalk/Rademacher/`
+family against its source headers, declaration sets, import graph, and directory
+contents. The root keeps the canonical IID path, the Boolean-to-real
+conditioned-path bridge, and the last-sign-change path object. `FiniteInterval/`
+separates the killed kernel, explicit Dirichlet matrix, path-event identity,
+integer-range cover, discrete sine spectrum, survival estimates, and finite
+target-mass interfaces. `Terminal/` groups finite-block laws, path coding,
+mixture, length decay, and weak convergence; `Transition/` groups the averaging
+operator and its Rademacher expectation. These distinctions correspond to
+separate mathematical inputs or complete output statements, so this review
+found no proof-only module that should be moved into `Lemmas/` and no need to
+flatten or rename the established subdirectories. The finite-target coefficient
+module remains a direct `Target/` interface because it states identities and
+uniform lower bounds for every finite target set, not merely a one-proof
+calculation. One-use algebraic steps remain `private` in their semantic owner.
+
+The current subtree contains 35 Lean files. Its directories have at most six
+direct Lean files, and there are no file/directory stem collisions or files
+whose name repeats the parent directory. Rebuilt all 35 modules with
+`lake -Kjobs=2 build` (3,574 Lake jobs, two workers); the build passed. This
+recovers the 31 stale row-level pending records while preserving the older
+module-by-module architecture history.
+
+The production ledger now records 1,078 reviewed and 551 pending modules out
+of 1,629.
+
+## Branching-random-walk coupling directory review (2026-10-31)
+
+The production modules under `Probability/BranchingRandomWalk/Coupling/` were
+reviewed by their input objects and declaration roles. `Slice.lean` states
+almost-sure domination of branching-walk cloud slices under a measure-level
+coupling. `Rank/` constructs equal-rank matches between rooted populations,
+installs offspring steps, and records the associated block-coordinate and
+product-law interfaces. `Field/` extends that operation recursively across
+generations and exposes its measurable observables and finite-stage laws.
+These objects depend on rooted offspring fields, generation-domain flows,
+selected populations, or spatial cloud slices, so they remain in the
+branching-random-walk probability layer.
+
+The directory hierarchy separates the one-generation rank construction from
+its recursive field extension. The two one-use identities and the past
+measurability induction remain in the corresponding nested `Lemmas/` folders.
+The largest directory has five direct Lean files, and the family has no
+same-stem file/directory collision or redundant parent/file stem. No further
+move is justified by the current declaration interfaces. The audit ledger now
+records the complete coupling family as semantically reviewed; the full
+repository audit remains in progress.
+
+## General process interface review (2026-10-31)
+
+The small process modules were checked against their state and dependency
+interfaces. `Process/Markov/` owns the general transition-function, Markov,
+and finite-stopping-time strong Markov definitions, all expressed through
+Mathlib kernels and conditional expectations. `Process/Parallel/` separates
+arbitrary set-valued enabled unions from their finite-set realization and
+cardinality estimates. `Process/Adapted/Recursion.lean` gives the general
+induction principle for causal measurable recursions. None depends on a
+branching-walk model; each remains at the general process layer. The directories
+contain at most two direct Lean modules, and `Parallel/Finite.lean` is a
+semantic implementation split rather than a proof-only file. The ledger now
+records these five modules as reviewed.
+
+## Finite-sum moment interface inventory correction (2026-10-31)
+
+The production-source/ledger reconciliation found
+`MeasureTheory/Integral/Moments/FiniteSum.lean` missing from the ledger. Its
+public theorem bounds the ((p+1))-st moment of a finite sum of nonnegative
+measurable real-valued functions under an arbitrary measure, using a uniform
+bound on each summand's moment. The statement is generic in the index type,
+finite set, measure, and moment order; the sole production client is a
+branching-random-walk endpoint-moment proof. The theorem packages the
+finite-sum power inequality with Bochner-integral linearity and monotonicity,
+so it is a reusable `MeasureTheory/Integral/Moments` result rather than a
+branching-specific helper. The targeted build
+`lake -Kjobs=2 build MeasureTheory.Integral.Moments.FiniteSum` passed.
+
+## Current stable-discrete Mogulskii hierarchy review (2026-10-31)
+
+Rechecked the 24 current `Stable/Discrete` modules against their module
+docstrings, theorem roles, import boundaries, and directory positions. The
+finite-partition `EnergyUpper`, `EnergyLower`, `WidthRate`, and `Limit` files
+state substantive probability-rate interfaces. `PathClass/` and
+`TerminalLeft/PathClass/` expose path-space rate theorems and their stable
+regime specializations. `TerminalLeft/` remains a separate subtree because its
+normalized path convention changes endpoint evaluation and the corresponding
+corridor events. The Gaussian `PositiveNormalization` module is a public
+adapter from raw domain-of-attraction data. Endpoint-core counts, finite-cell
+product gluing, corridor positivity, range-event logarithmic bounds, and
+horizontal-tube inclusions are proof-chain declarations and remain inside the
+relevant `Lemmas/` paths; the single `TerminalLeft/Partition/Lower/Lemmas.lean`
+file is the sole compact helper module for that chain. The public theorem entry
+remains `Mogulskii/Theorems.lean`.
+
+The current 24-module target set built successfully with
+`lake -Kjobs=2 build` (3,961 Lake jobs). The structural scan of the 216-module
+`SmallDeviation/` subtree found no file/directory stem collisions, repeated
+parent/file stems, duplicate `Lemmas` entries, or `Source/` directories; no
+folder exceeds six direct Lean modules. The production source inventory now
+matches all 1,630 ledger rows, and the ledger records 1,126 reviewed and 504
+pending production modules. The full repository audit remains in progress.
+
+## Drawdown current-source verification (2026-10-31)
+
+Rechecked the current 13-module Drawdown subtree after its worktree edits. The
+three subject and theorem-entry modules expose the drawdown event, its scaling
+laws, and the finite-variance upper estimate. The ten estimate-specific stages
+remain grouped under `FiniteVarianceUpper/Lemmas/`, with jump-pattern geometry,
+probability, and rate arguments in their own subfolders. All 13 module headers
+have the required public or internal declaration inventory, and every
+module-visible declaration is listed. The current 13-module target set built
+successfully with `lake -Kjobs=2 build` (4,624 Lake jobs); the directory
+structure remains semantically coherent.
+
+## Random-walk range current-source verification (2026-10-31)
+
+Rechecked the six modules under `SmallDeviation/Range/`. `BlockDonsker` and
+`BlockOscillation` provide the finite-block probability inputs;
+`QuadraticEnergyCover` defines the explicit corridor cover;
+`FiniteCoverUpper` and `Rate` state the resulting upper bound and rate. The
+sole one-use event-inclusion chain is in `Range/Lemmas/BlockCorridor.lean`.
+All six headers contain a formula-bearing declaration inventory, and the
+current six-module target set built successfully with
+`lake -Kjobs=2 build` (4,137 Lake jobs). The five direct subject modules remain
+peer interfaces under `Range/`, with only the event-inclusion proof separated
+under `Lemmas/`.
+
+
+## N-selection semantic ownership and Entrance support check (2026-10-31)
+
+The selector terminology was checked against the actual declaration types and
+imports. `Combinatorics.Selection.NSelection` is the generic capacity-$N$ map
+$S:\mathcal P(\iota)\to\operatorname{Finset}(\iota)$ with
+$S(A)\subseteq A$; it has no offspring, genealogy, or generation arguments.
+Its measurable properties therefore live under
+`MeasureTheory/Selection/NSelection/`, while the object itself remains under
+`Combinatorics/Selection/`. No selector definition belongs under
+`MeasureTheory/MeasurableSpace/`, which owns measurable-space structures and
+generated sigma algebras. The generation-by-generation offspring recursion
+and branching-walk transforms belong under
+`Combinatorics/BranchingWalk/Selection/NSelection/`; their random laws and
+estimates belong under `Probability/BranchingRandomWalk/Selection/`. This
+keeps the generic capacity selector, its measurable properties, and the
+branching-selection process at the layers of their respective inputs and
+invariants.
+
+The seven generic mechanism modules are split by their input domain:
+`NSelection/Mechanism/Finite/` contains finite-candidate rank, value, leftmost,
+order-dual, and threshold mechanisms; `NSelection/Mechanism/Infinite/` contains
+the lower-finite arbitrary-set selector and its totalization. The seven
+single-use Drawdown spine lemmas are grouped under `Lemmas/Capacity/` and
+`Lemmas/Tube/`, with the remaining scale, parameter, and random-walk estimates
+beside those subdirectories. This leaves each file in one owner and avoids a
+flat seven-module directory. The production-source scan reports no
+same-parent file/directory stem collisions, and neither reviewed tree has a
+directory with more than six direct Lean modules.
+
+The current 27-module `SmallDeviation/Entrance/` subtree was rechecked against
+its declaration headers and import graph. The stable index-two endpoint-bridge
+specialization has one client, `FiniteVariance/EndpointCorridor.lean`, so it
+now sits as an internal lemma in
+`FiniteVariance/Lemmas/EndpointBridge.lean`; the separate
+`FiniteVariance/StableEndpointBridge.lean` module was removed. The endpoint
+corridor's public statement explicitly imports
+`Combinatorics.Sequence.BalancedPartition`, which supplies its
+`balancedBlockCount` expression. All 27 current Entrance targets built with
+`lake -Kjobs=2 build` (3,979 Lake jobs). The production inventory and ledger
+now agree at 1,629 modules; 1,170 are reviewed and 459 remain pending.
+
+## Kingman theorem entry and proof-chain audit (2026-10-31)
+
+The Kingman directory has five subject-level modules: `Basic` defines the
+subadditive-cocycle interface and normalization; `Theorem` is the main
+convergence entry; `EnvelopeInvariant` states the reusable almost-everywhere
+invariance of the liminf envelope; `Derriennic` owns the maximal integral
+inequalities; and `Fekete` owns the normalized-integral limit. The previous
+`Core.lean` entry was renamed to `Theorem.lean`, and its direct imports and the
+current ownership table were updated without a compatibility module.
+
+The four modules under `Kingman/Lemmas/` contain one-use companion-cocycle,
+block-squeeze, leader-set, and Fatou-envelope calculations. They use Lean's
+module-private default, and their entry callers use `import all`; none is
+re-exported as public API. The standalone liminf-envelope invariance theorem
+stays at subject level because its assumptions and conclusion form an
+independently reusable subadditive-cocycle result. The `A_m \subseteq Λ_m`
+docstring in `Lemmas/Derriennic.lean` was corrected to state the actual
+subadditive decomposition
+`g m y ≤ g k y + g (m-k) (T^[k] y)` and the resulting strict inequality.
+
+All nine Kingman modules and the two infinite-offspring Kingman speed clients
+build with `lake -Kjobs=2 build` (3,338 Lake jobs). The build reports three
+existing `letI` style warnings in the speed-limit client. The production
+inventory and audit ledger reconcile at 1,629 modules: 1,177 reviewed and 452
+pending. This count excludes `BranchingProcessTest/` and `scripts/`, which are
+tracked separately from production modules.
+
+## Tail-integral ownership and second-moment convergence (2026-10-31)
+
+Two declarations under `Probability/MeasureTheory` have no probability
+assumptions: the moving-level-set integral limit and the real second-moment
+tail bound. They now live at `MeasureTheory/Integral/Convergence/IndicatorTail`
+and `MeasureTheory/Measure/Tails/SecondMoment`, respectively, with their
+declarations in the `MeasureTheory` namespace. Both random-walk path clients
+import the measure-theory owners directly.
+
+The four probability-specific second-moment convergence modules are grouped
+under `Probability/MeasureTheory/Convergence/SecondMoment/`; the unrelated
+one-sided expectation estimate stays at `Convergence/TailExpectation`. Mathlib
+provides `UniformIntegrable` and the fixed-measure Vitali theorem
+([official API](https://leanprover-community.github.io/mathlib4_docs/Mathlib/MeasureTheory/Function/UniformIntegrable.html)).
+The existing tail criteria remain distinct: `FromVaryingTails` permits the
+underlying probability measure to vary with the index, while
+`FromPolynomialTails` allows logarithmic growth of fourth moments and proves
+the needed tail contribution directly.
+
+The seven production modules in this group and their two path-level clients
+build with `lake -Kjobs=2 build` (3,714 Lake jobs). The two `BranchingProcessTest/`
+import paths were updated, but that tree is outside the production-module Lake
+target and the audit ledger. The production inventory remains 1,629 modules;
+1,182 are reviewed and 447 remain pending.
+
+### N-selection ownership cross-check (2026-10-31)
+
+A source-level review confirms three distinct declarations that share the name
+`NSelection`: the generic capacity-$N$ candidate-set mechanism in
+`Combinatorics/Selection/NSelection`; the branching-walk transform and
+generation recursion in `Combinatorics/BranchingWalk/Selection/NSelection/Walk`;
+and branching-random-walk laws and estimates in
+`Probability/BranchingRandomWalk/Selection/NSelection`. Measurability results
+for the generic mechanism remain in `MeasureTheory/Selection/NSelection`,
+where they describe measurable selector maps rather than measurable-space
+structures. No `NSelection` module belongs directly under
+`MeasureTheory/MeasurableSpace`. The current ownership table had a stale sentence
+assigning removed `ByValue`, `Infinite`, `Totalized`, and `AtRank` files to the
+probability layer; that sentence is corrected to match the current source tree.
+All 113 production modules across these four subtrees are marked reviewed in
+the audit ledger.
+
+## Poisson time-window proof-support visibility (2026-10-31)
+
+`Intensity/Lemmas/TimeWindowIntegral.lean` states the unit-time-window
+specialization used by the characteristic-function proofs in
+`CharacteristicFunction/TimeWindow.lean` and `FiniteWindows.lean`. Its proof is
+Mathlib's `Measure.prod_restrict`, `integral_prod`, and `setIntegral_const`
+composed for the unit-interval intensity; the specialization is specific to
+this two-module proof chain. The declaration and its imports now use the
+module-private default, and both callers use `import all`. The reusable product
+Fubini interface remains Mathlib's.
+
+The three current targets build successfully with
+`lake -Kjobs=2 build` (3,244 Lake jobs).
+
+## Poisson random-measure module ownership review (2026-10-31)
+
+The 20 previously pending production modules in the Poisson random-measure
+subtree were checked against their public declarations, direct imports, and
+Mathlib overlap. `RandomMeasure/` owns the count-mark construction, its count
+laws, disjoint-region independence, and finite-region superposition.
+`Integration/` and `Integrability/` own pathwise integral representations,
+Campbell identities, and intensity-to-realized-integrability transfer.
+`Intensity/` owns the unit-time product-intensity specializations, support
+transfer, and the Lévy cutoff used by the entrance construction.
+`CharacteristicFunction/` owns marked-piece, integral, independent-source,
+time-window, and finite-window exponents. `JumpPath/Entrance/Increment`
+contains the supported path increment identities. These statements use the
+project Poisson point-family construction; Mathlib supplies the Poisson law on
+`ℕ`, product integration, measure sums, and independence tools, but not this
+marked random-measure model. The Campbell module records its source as Last and
+Penrose, *Lectures on the Poisson Process*, Proposition 2.7.
+
+The only proof-support visibility defect found was the public unit-window
+product-integral specialization under `Intensity/Lemmas/`; it is now
+module-private and consumed via `import all`. The three affected targets build
+successfully with `lake -Kjobs=2 build` (3,244 Lake jobs). The ledger marks all
+20 modules reviewed.
+
+## Random-walk small-deviation support hierarchy review (2026-10-31)
+
+The 49 previously pending modules in the centered/linearly drifted horizontal
+tube subtree were checked by semantic inputs, source-facing statements, and
+proof visibility. `DriftedTube/Event`, `BlockEvent`, `BlockInclusion`, and
+`EndpointWindow/` own complete finite-horizon event and geometric interfaces;
+they have no finite-variance assumptions and stay at the subject level.
+`HorizontalTube/Blocks/` owns the IID block-event bridge, the general finite
+schedule product lower bound, and Mogulskii's independent-block upper bound.
+`EndpointWindow/FiniteVarianceLower` and `RealWidthLower` are complete
+source-facing centered finite-variance lower bounds; the floor-width inclusion
+is a single-use step under `EndpointWindow/Lemmas/`.
+
+All 35 modules in
+`DriftedTube/FiniteVarianceLower/Lemmas/Staircase/` form the proof of the
+finite-variance endpoint lower bound. Their `Setup`, `Binning`, `Endpoint`,
+`Blocks`, `Rate`, and `Concrete` subdirectories group one-use steps by the
+actual mathematical part of that proof. The source scan found no public section
+or public declaration in these helper modules; no `lemma3` or `paper` theorem
+names occur. `FiniteVarianceUpper/Basic` remains the source-facing upper-bound
+entry, with its conditional-block calculation under `Lemmas/Blocks`. The
+Mogul'skii Theorem 3 and Lemma 3(c) references and WANG Yiyang thesis Chapter
+3 references are stated by exact work title and theorem location in the module
+headers.
+
+The existing Lake build records for these targets pass. The production
+inventory remains 1,629 modules, with 1,251 reviewed and 378 pending.
+
+## Stable-process small-deviation semantic and proof-tree audit (2026-10-31)
+
+The 49 previously pending modules in `Probability/Process/Stable/SmallDeviation/`
+were checked by their public statements, model assumptions, imports, and proof
+visibility. `Blocks/Lower/` contains the stable return, entrance, and feedback
+probability arguments; `Blocks/Upper/` contains independent-block tube upper
+bounds; and `Blocks/ShiftComparison/` consumes an entrance probability as an
+input and proves the shifted-corridor comparison. `EscapeRate/` owns limits
+for stable path-tube probabilities. `PathClass/StepCorridor/Partition/` owns
+the normalized cell laws, independence, and stable lower/upper energy rates.
+These statements use the stable Lévy or stable-clock path law and therefore
+remain in the stable-process probability layer. Mathlib supplies the path,
+measure, and independent-increment primitives, with no competing stable
+small-deviation entry API.
+
+The three one-use modules under `Feedback/Lemmas/` and
+`Partition/Lower/Lemmas/` remain module-private proof support. The source scan
+found no same-level file/directory collisions, duplicate Lemmas entries, or
+directories with more than eight Lean files. It found no generic `paper` or
+`thesis` references and no `lemma3`-style declarations. Source-facing
+Mogul'ski results retain the exact article title and theorem/equation
+location in their module documentation. The 49 existing Lake-build records
+are successful. The production inventory remains 1,629 modules; 1,300 are
+reviewed and 329 remain pending.
+
+## Branching-genealogy exploration ownership review (2026-10-31)
+
+The 30 modules under `Probability/BranchingRandomWalk/Genealogy/Exploration/`
+were checked by their definitions, imports, declarations, public-header
+inventories, and directory structure. `Abstract/` removes root labels or a
+particular selected-population process while retaining Ulam--Harris addresses,
+offspring-step fields, descendant subtrees, and their laws. `RootIndexed/`
+adds arbitrary initial-root labels and records the associated coordinate
+filtrations, selected fresh-subtree families, and position-preserving maps.
+`Selected/` specializes those results to the repository's selected
+branching-walk population and its fixed-time or stopped cells. A selector may
+choose the roots, but these modules' objects and conclusions concern
+genealogical descendants and branching-field laws; the generic candidate-set
+selector remains under `Combinatorics/Selection`.
+
+The subdirectories have no same-level file/directory stem collisions, no
+duplicate `Lemmas` entries, and at most seven direct Lean modules. The header
+inventory check found one omitted public theorem in
+`Abstract/JointSubtrees.lean`; its event-factorization statement is now listed
+alongside the independent-law interface. The existing Lake-build ledger
+entries were retained; no build was run for this structure and ownership pass.
+The ledger now records all 30 modules as reviewed. The production inventory
+remains 1,629 modules, with 1,328 reviewed and 301 pending.
+
+## Root-indexed genealogy field and law review (2026-10-31)
+
+The remaining 11 modules in `Probability/BranchingRandomWalk/Genealogy/` were
+reviewed by their domain types, public statements, imports, and current module
+headers. `RootIndexed/Field/` owns position, relative-position, generation
+measurability, and the first-$N$ measurable adapter on root-indexed branching
+fields. `RootIndexed/Law/` owns their product law, root marginals, finite
+restrictions and expectations, root-step batches, and the branching-specific
+event-count specializations. `Lineage/` owns the pre-sampled causal reserve
+paths and the raw-candidate/declaration-time relation
+`sigma = tau + 1`; generic stopping-time and iid event-count interfaces remain
+with their process and probability owners.
+
+`RootIndexed/Field/Selection` is an adapter using
+`MeasureTheory/Selection/NSelection`; it does not relocate the generic
+candidate-set selector into a branching namespace. The only missing header
+entry was `ReserveLineages.sigma_eq_tau_add_one`, now listed with its pointwise
+time-shift formula. The full genealogy tree has no same-level stem collisions
+or directories with more than eight direct modules. The ledger records all
+genealogy modules as reviewed. The production inventory remains 1,629 modules,
+with 1,339 reviewed and 290 pending.
+
+## Singleton branching-walk probability bridge review (2026-10-31)
+
+The six remaining modules under `Probability/BranchingRandomWalk/Walk/` were
+checked against their represented objects and imported random-walk APIs.
+`MeasurableEquiv` encodes a singleton-slot walk by its initial position and
+optional increments. `Path/` transfers path law, interval-window, scaling,
+and generation-cloud statements between that tree representation and the
+ordinary increment-path model. `Rademacher` gives the symmetric-increment
+branching-walk realization. These modules retain the branching-walk owner
+because their statements explicitly use the singleton-slot walk; the generic
+increment-path APIs remain under `Probability/Process/RandomWalk`.
+
+All six module headers list their public declarations, and the source scan
+found no generic `paper`/`thesis` references or `lemma3` names. The `Walk/`
+tree has no same-level stem collisions and no directory with more than eight
+direct modules. Its ownership-map row now describes the `MeasurableEquiv` and
+`Path/` adapters. The ledger records all six modules as reviewed. The
+production inventory remains 1,629 modules, with 1,345 reviewed and 284
+pending.
+
+
+## Random-walk path API review (2026-10-31)
+
+The 31 outstanding modules in `Probability/Process/RandomWalk/Path/` were
+reviewed against their definitions, imported abstractions, theorem statements,
+current clients, and file headers. `Adapted/` specializes the sequence-prefix
+filtration and IID block independence to walk positions and sums; `Moment/`
+specializes the generic independent-variable fourth-moment expansion.
+`Representation/` owns the normalized step path and its càdlàg realization.
+`Corridor/`, `Window/`, `Restart/`, and `Survival/` separate deterministic path
+events from measurability, IID factorization, and finite-horizon consequences.
+`Block/Partition/` provides finite-partition geometry and probability
+interfaces for arbitrary step boundaries, without a Mogul'skii scale or
+stable-law assumption; these results therefore remain reusable at the
+random-walk path owner.
+
+The review confirmed that the terminal-left index calculations and restarted
+interval factorization are private proof support under their nested `Lemmas/`
+directories. The only missing public-header entries were four declarations in
+`Adapted/Martingale`, `Corridor/Horizontal/Basic`, `Event/LastSignChange`, and
+`Moment/Fourth`; their names and mathematical statements are now recorded. The
+99-module path subtree has no same-level file/directory stem collisions, no
+directory with more than eight direct Lean files, and no generic `paper`,
+`thesis`, or `lemma33` references. Existing build records were retained; no
+Lake build was run during this semantic and documentation pass. The ledger now
+records 1,376 reviewed and 253 pending modules out of 1,629.
+
+
+## Stable random-walk path-law review (2026-10-31)
+
+The five pending modules in
+`Probability/Process/RandomWalk/FunctionalLimit/Stable/PathLaw/` were checked
+against their theorem statements, imports, clients, and file headers.
+`WalkGrid` and `EndpointGrid` own finite-grid block laws and their path-value
+limits; `Subsequence` extracts tight path-law limits and identifies their
+dense-grid laws; `Process` constructs the stable clock-process witness; and
+`Convergence` combines tightness with finite-dimensional identification. The
+separate modules therefore form a stable random-walk functional-limit API,
+while the path-law assembly steps in `Subsequence` remain private.
+
+Two files had duplicated a long private proof of
+`⌊ nt⌋/n → t`. Mathlib's more general
+`Filter.Tendsto` theorem `tendsto_nat_floor_mul_div_atTop` already proves the
+real-parameter floor ratio. Both local proofs now compose it with
+`Nat.cast : ℕ → ℝ` and discharge the multiplication-order identity. A
+focused `lake -Kjobs=2 build` of `WalkGrid` and `EndpointGrid` succeeded. The
+production ledger now records 1,381 reviewed and 248 pending modules out of
+1,629.
+
+## Production source-tree naming scan (2026-10-31)
+
+The production Lean source tree was scanned excluding vendored dependencies,
+Lake build outputs, and regression fixtures. It currently has no same-level
+file/directory stem collision, no directory with more than eight direct Lean
+files, and no source filename that redundantly repeats its parent directory
+prefix. This scan confirms the earlier same-level naming findings have been
+removed from the current working tree.
+
+
+## Stable tightness semantic and API review (2026-10-31)
+
+Reviewed the five public modules under
+`Probability/Process/RandomWalk/FunctionalLimit/Stable/Tightness/` together
+with their generic path and measure dependencies. `BlockTail` owns explicit
+regular-variation one-block bounds, their stopping-time extension, adjacent
+block products, finite-grid unions, and the three stable-index centering
+specializations. `LocalOscillation` converts these bounds to the double-
+excursion and endpoint moduli; `Partitions` gives the multiscale event;
+`Range` supplies compact-range control; and `Result` combines range and
+partition control into the stable path-law tightness conclusions. These five
+files are separate mathematical interfaces rather than proof-only modules.
+Their headers now state each public result using formulas for the relevant
+probabilities, parameter bounds, events, and index regimes.
+
+The relatively long scalar choice lemma for the stable compact-range budget
+has a single client and carries no independent path, probability, or
+regular-variation interface. It was moved from `Range.lean` into the internal
+`Tightness/Lemmas/Parameters.lean` module. This is the only `Lemmas` entry in
+the directory; the five public theorem modules remain directly visible. A
+focused build of these five modules and the helper succeeded. The directory
+has five direct Lean source files, no same-level file/directory stem conflict,
+and a single nested `Lemmas/` folder.
+
+The selector ownership review was also clarified in
+`MODULE_OWNERSHIP.md`: arbitrary candidate-set selectors use only subset,
+finite-cardinality, and ordering structure and serve non-branching clients as
+well as branching clients. The whole-walk selector separately constrains each
+node's offspring count and remains under `Combinatorics/BranchingWalk`;
+measurable random/ranked adapters remain under `MeasureTheory`. This split was
+checked against the pinned Mathlib source: the concrete `Finset.choose`
+operation is in `Mathlib/Data/Finset/Basic.lean` at revision
+`380f2aafb622cb2c1c93dac545b6389083c68c51`, and Mathlib has no abstract
+ranked capacity-`N` selector matching the repository interface.
+
+The production ledger now records 1,387 reviewed and 243 pending modules out
+of 1,630.
+
+## Stable path-limit semantic and API review (2026-10-31)
+
+Reviewed `Stable/PathLimit/RandomWalk.lean` and `Stable/PathLimit/Block.lean`.
+`RandomWalk` is the public three-regime invariance-principle interface: for
+stable index below one, at one with the sine-centering condition, and above
+one, it gives convergence of the normalized IID step-path laws in the
+Skorokhod $J_1$ topology. `Block` transfers the fixed-horizon stable limit to
+variable block lengths and spatial scales, with the exact ratio
+$a_{k_n}/c_n\to r$, and limits to the image of the stable path law under
+spatial scaling by $r$. Both are substantive public interfaces, so neither
+belongs under `Lemmas/`.
+
+`Probability/ConvergenceInDistribution/DeterministicParameter.lean` supplies
+the general weak-convergence rule for continuous maps of a convergent random
+element paired with a convergent deterministic parameter. Mathlib provides
+the component APIs for product probability measures, Dirac measures, and
+continuous mapping, but no combined theorem matching this interface; the
+general theorem therefore remains at the convergence-in-distribution layer.
+The focused Lake build for both path-limit modules succeeded (3,560 jobs).
+Their public headers now state the path-law formulas and each index regime.
+The ledger records 1,389 reviewed and 241 pending modules out of 1,630.
+
+## Random-walk transition-kernel and Markov API review (2026-10-31)
+
+Reviewed `Probability/Process/RandomWalk/Kernel/Basic.lean` and the two
+modules under `Kernel/Markov/`. The first defines the translation kernel
+$Q_\nu(x,\cdot)=\nu\circ(z\mapsto x+z)^{-1}$ for an additive IID increment
+law, proves $Q_\nu^n(x,\cdot)=\delta_x*\nu^{*n}$, and identifies the
+partial-sum law with the same convolution power. This is the random-walk
+kernel interface and remains at the `RandomWalk/Kernel` level.
+
+`Markov/Basic.lean` specializes the repository's general Markov-chain
+conditional-expectation definition to the canonical IID additive walk and its
+prefix domain flow. Its statement is
+$\mathbb E[\mathbf 1_{\{X_n\in A\}}\mid\mathcal F_m]
+=(Q_\nu^{n-m})(X_m,A)$ for $m\le n$. `Markov/Stopping.lean` obtains the
+natural-time strong Markov identities
+$\mathbb E[\mathbf 1_{\{X_{T+k}\in A\}}\mid\mathcal F_T]
+=(Q_\nu^k)(X_T,A)$ from the general discrete-time theorem. The prefix
+decomposition and finite-coordinate measurability calculations are used only
+by the first specialization, so they now live in the sole nested
+`Markov/Lemmas/PrefixDecomposition.lean` module; no reusable Markov theorem
+was moved into that proof-only directory.
+
+The public headers now state the full multi-step identities and kernel
+formula. Focused Lake builds of the kernel, both Markov interfaces, and the
+internal helper succeeded; an unused `Nonempty E` section assumption was
+removed from the two Markov specializations. The ledger records 1,393 reviewed
+and 238 pending modules out of 1,631.
+
+
+## Stable jump laws and fixed-time Lévy continuity review (2026-10-31)
+
+Reviewed `Probability/Process/Stable/JumpModel/{FiniteWindows,IncrementLaw,IndependentIncrements}.lean` and the fixed-time continuity interface for general Lévy processes. The three jump-model modules expose, respectively, the joint law of disjoint increments, the one-window stable increment law, and finite-grid independent-increment specifications. Their statements now make the interval lengths and the stable scaling exponent explicit.
+
+A fixed-time no-jump statement follows from stationary increments and almost-sure càdlàg paths. For fixed $t>0$, set $t_n=\frac{tn}{n+1}$. Stationarity identifies $X_t-X_{t_n}$ in law with $X_{t-t_n}-X_0$. Right continuity at zero gives $X_{t-t_n}-X_0\to0$ almost surely; the left-limit property of càdlàg paths gives $X_t-X_{t_n}\to X_t-X_{t-}$ almost surely. Uniqueness of distributional limits yields $\mathbb P(X_{t-}=X_t)=1$. This theorem now lives at `Probability/Process/Levy/PathContinuity.lean`, and the stable path-class argument imports the general result.
+
+The focused Lake builds succeeded for the three stable jump-law modules, the generic Lévy continuity module, and its stable path-class client. The production ledger records 1,397 reviewed and 234 pending modules out of 1,631.
+
+
+## Selection semantic-layer review (2026-10-31)
+
+`Combinatorics/Selection/NSelection/Basic.lean` defines a capacity-$N$ map from arbitrary candidate sets to finite subsets, with $|S(A)|=\min(N,|A|)$ for finite $A$ and $|S(A)|=N$ for infinite $A$. Its ordered mechanisms and matching results use candidate sets, finite cardinalities, and order relations. The deterministic branching-walk specialization in `Combinatorics/BranchingWalk/Selection/NSelection/Walk/BranchingWalk.lean` maps a walk to one with at most $N$ surviving offspring at each vertex; child-slot selection stays with branching steps. Measurable adapters remain under `MeasureTheory/Selection`, and the recursively selected random population remains under `Probability/BranchingRandomWalk/Population/Processes/Selected`.
+
+This ownership follows the neighboring Mathlib layers: generic Hall matching is in [`Mathlib.Combinatorics.Hall`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Combinatorics/Hall/Basic.html), while low-level finite-set operations such as `Finset.choose` are in [`Mathlib.Data.Finset.Basic`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Data/Finset/Basic.html). Mathlib's `Finset.choose` selects a unique element satisfying a predicate, while the repository's capacity-$N$ interface selects a finite subset with a prescribed cardinality.
+
+Reviewed `Probability/BranchingRandomWalk/Population/Processes/Selected/Basic.lean`: it constructs the common multi-root population recursively from the realized branching field and states its adaptedness, generation depth, capacity bound, and nonemptiness criterion. Its field and generation semantics place it in the branching-random-walk probability layer. The row is now recorded as reviewed; the ledger has 1,398 reviewed and 233 pending modules out of 1,631.
+
+
+The generic-versus-branching split also appears in
+`Probability/BranchingRandomWalk/Population/Processes/StepSelection/Basic.lean`.
+It iterates a deterministic finite child-slot rule over the realized branching
+field: $Z_0=\{[]\}$ and
+$Z_{n+1}=\bigcup_{u\in Z_n}\{u\mathbin{++}[i]:i\in R(\omega(u))\}$.
+The module proves generation-depth, population-size, survival, and domain-flow
+adaptation properties. The finite child-slot contract is owned by
+`Combinatorics/BranchingWalk/Step/Selection`; the recursively generated
+random population belongs to `Probability/BranchingRandomWalk`. This module's
+semantic review is recorded in the ledger, which now has 1,399 reviewed and
+232 pending modules out of 1,631.
+
+
+## Step-selection population family review (2026-10-31)
+
+Reviewed the 15 remaining modules under
+`Probability/BranchingRandomWalk/Population/Processes/StepSelection/`.
+`Concurrent/Basic` defines age-indexed root candidates, their global-clock
+components, and finite enabled unions; `Concurrent/Scheduled` gives the direct
+causal-schedule adaptation results. `RootIndexed` adds root-labelled recursive
+populations, while `SelectedPath` characterizes generation membership by
+selected edges. Under `SplitSchedule/`, `Definition` defines threshold hitting
+times and successful root families; `Field` constructs fresh active/reserve
+fields, their laws, iterates the pool, and states spatial domination; `Trials`
+owns completion, success, and repeated-success results. These are complete
+model constructions and event or law interfaces in a coherent branching
+process family.
+
+The tree groups by these objects: `Concurrent` has two direct Lean modules,
+`Definition` three, `Field` five, and `Trials` three; the family root has three
+direct entry modules. Every directory stays within the repository's eight-file
+review threshold, with no `Lemmas/` subtree needed for these interfaces. The
+finite-step contract stays at `Combinatorics/BranchingWalk/Step/Selection`,
+while realized fields, generation timing, and split trials remain in the
+branching-random-walk probability layer. During the review of
+`Processes/Selected/Basic.lean`, its private countable-index evaluation proof
+was replaced by the existing generic
+`MeasureTheory.Measurable.eval_of_countable_range`; its focused Lake build
+succeeded (3,132 jobs). The ledger now records 1,414 reviewed and 217 pending
+modules out of 1,631.
+
+## Selection semantic boundary review (2026-10-31)
+
+The two selection layers have different input objects. The generic
+`Combinatorics/Selection` interface acts on `Set ι` or `Finset ι`, carries
+capacity and order data, and has no offspring or genealogy fields. Its ranked
+selector is also used by the arbitrary-candidate stopping-time API. A
+`Combinatorics/BranchingWalk/Step/Selection` interface instead takes an actual
+branching step and returns selected slots contained in that step's support.
+Whole-walk truncation and generation recursion remain in
+`Combinatorics/BranchingWalk/Selection`. Mathlib's Hall matching API is placed
+under `Combinatorics/Hall`, and its unique finite-set chooser is placed under
+`Data/Finset`, consistent with organizing by the mathematical object.
+
+During the review, the deterministic reserve-slot choice was moved from
+`Probability/BranchingRandomWalk/Restart/RootedTrial/Spine/ReservePath.lean`
+to `Combinatorics/BranchingWalk/Step/Selection/ReserveSpine.lean`. Its input
+is a `Step.FiniteSelection`, and its defining cases use only the number and
+order of selected child slots. The recursive path, random-field dependence,
+lineage, and adaptedness statements remain with the probability process. The
+focused build of the new module and four dependent production modules
+(`ReservePath`, causal candidates, the positive-part estimate, and its
+expectation bound) succeeded with `lake -Kjobs=2` (3,247 jobs). The ledger now
+records 1,415 reviewed and 217 pending modules out of 1,632.
+
+The reserve reward proof also exposed a path-potential append calculation that
+was private and specialized to a one-slot suffix. It is now the public
+`Spine.pathPotential_append` theorem in
+`Spine/GenerationBranching/Decomposition.lean`:
+\[
+  \operatorname{pathPotential}_{\varphi}(\omega,u\mathbin{++}v)
+  =\operatorname{pathPotential}_{\varphi}(\omega,u)
+  +\operatorname{pathPotential}_{\varphi}(\omega_u,v),
+  \qquad \omega_u(w)=\omega(u\mathbin{++}w).
+\]
+`Reward/PositivePart.lean` uses this general decomposition to prove its
+edge-sum identity. The decomposition module and the positive-part and
+expectation clients build successfully; no reserve-specific append lemma
+remains.
+
+The 2026-10-31 selection audit confirms the layer boundaries from the actual
+input types. `Combinatorics.Selection.NSelection` maps arbitrary candidate
+sets to finite subsets and carries only capacity, cardinality, and order
+information. The generation recursion that applies it to offspring belongs
+under `Combinatorics/BranchingWalk/Selection/NSelection/Walk`; measurable
+results for the generic selector belong under `MeasureTheory/Selection`,
+while measurable branching-step selectors belong under
+`MeasureTheory/BranchingWalk/Step/Selection`. No selector definition belongs
+under `MeasureTheory/MeasurableSpace`, whose modules own measurable-space
+structures and general operations on them.
+
+In the reserve-spine chain, the deterministic estimate connecting
+`reserveSpineSlot` to `reserveSelectionBelowPotential` now lives in
+`Combinatorics/BranchingWalk/Step/Selection/ReserveSpine.lean`; the shared
+positive-potential observable and its measurability result live in their
+respective combinatorics and measure-theory owners. The live-spine membership
+property was moved to `Reserve/Causal.lean` beside the source-slice
+definition. The one-use minimum comparison is local to
+`Reward/PositivePart.lean`; these proof steps are absent from its public API.
+The edited selector, causal-source, path, sampled-mark, and reward modules
+build successfully with `lake -Kjobs=2` (3,248 jobs). The ledger records 1,417
+reviewed and 215 pending modules out of 1,632.
+
+The adjacent `RootedTrial/Spine/` modules were then audited by their input
+objects and conclusions. `ReservePath.lean` defines a recursive address path
+on the pre-sampled branching field and its depth, selected-edge, lineage,
+adaptedness, alive-slice, and causal-population interfaces. `SelectedRoot.lean`
+extends the subtree split-completion stopping-time theorem to a measurable
+root chosen at a fixed generation, with a separate result for a stopping-time
+start. `SiblingTrial.lean` factors the stopped past, first-child growth trial,
+and second-child reserve field through the independent descendant-field law.
+These are distinct path, stopping-time, and probability-factorization
+interfaces. Their focused build succeeded with `lake -Kjobs=2` (3,198 jobs);
+the ledger now records 1,420 reviewed and 212 pending modules out of 1,632.
+
+The root-indexed cap-stopped audit checked whether the selected-root
+measurability step was proof-only. Its statement accepts any measurable
+generation-$s$ root selector of depth $s$ and proves measurability of the
+rooted cap-stopped population at generation $s+a$. This is a reusable
+root-indexed interface, so it was promoted to
+`Completion/RootIndexed/CapStopped.lean`; the reserve-lineage application
+remains there as its client. The former single-purpose module
+`Completion/Lemmas/RootIndexed/CapStopped.lean` was removed. Following the
+move, the ledger records 1,420 reviewed and 211 pending modules out of 1,631.
+
+`Reserve/Candidates.lean` was rechecked against the enabled-generation set,
+the concurrent finite-population constructor, and its endpoint cardinality
+bounds. The generation-window injection is private to that estimate; the
+general concurrent-process cardinality theorem is reused from
+`Probability/Process/Stopping/Concurrent/Finite`. Its focused build with the
+root-indexed cap-stopped and causal-source clients succeeded with
+`lake -Kjobs=2` (3,203 jobs). The ledger now records 1,421 reviewed and 210
+pending modules out of 1,631.
+
+`Reserve/Lineage.lean` owns the measurable first- and second-sibling root
+selectors at the reserve split's observable completion, including root,
+depth, selection, distinctness, and stopped-domain properties. Its sibling
+subtree vector factorization specializes the generic stopped-subtree vector
+factorization from `Genealogy/Exploration/RootIndexed/StoppingSubtrees/Vector`.
+`Reserve/Recursive.lean` then constructs the retrospective first-split
+subtree pair and proves the exact power law for the recursively defined
+all-failure event from the existing first-split branching identity. Both
+modules expose complete reserve-trial probability interfaces. Their focused
+build succeeded with `lake -Kjobs=2` (3,196 jobs); the ledger now records
+1,423 reviewed and 208 pending modules out of 1,631.
+
+## Restart trial and root-indexed field ownership follow-up (2026-10-31)
+
+The predecessor-nonemptiness implication for the selected population is now
+owned by `Population/Processes/StepSelection/Basic.lean`: from
+`(population R (n + 1) ω).Nonempty`, the retained-parent theorem gives
+`(population R n ω).Nonempty`. This statement has no first-split premise, so
+the first-split file now consumes it instead of defining a restart-local
+version. Its total representative for an arbitrary finite population is used
+only to implement the public sibling-root construction; the representative
+and its membership fact are private, and the public sibling-root definition
+contains its totalized choice directly.
+
+`RootIndexed.fixedSubtree_measurable_at` observes the first `t` generations
+below an address of depth `s` by global generation `s+t`. Its inputs are only
+the root-indexed step field and the two generation domains, and it is used by
+fixed-root completion, selected-root, and cap-stopped candidate modules. It now
+lives in `Genealogy/RootIndexed/Field/Measurability.lean`; the restart
+root-indexed trial module retains the split-specific root and candidate
+conclusions. `Trial/Basic` remains the owner of finite selected-population
+split and growth-trial events, while `Trial/FirstSplit` owns their raw and
+observable first-split times and sibling roots.
+
+The population, trial, first-split, root-indexed trial, fixed-root completion,
+and selected-root modules build successfully with `lake -Kjobs=2`. The ledger
+now records 1,426 reviewed and 205 pending modules out of 1,631.
+
+
+## N-selection semantics and bounded-split proof reuse (2026-10-31)
+
+The ownership check distinguishes three mathematical objects that share the
+name `NSelection`. `Combinatorics.Selection.NSelection` maps arbitrary
+candidate sets to finite subsets and records only subset and capacity laws.
+The deterministic process that applies a selector recursively to child slots
+belongs under `Combinatorics.BranchingWalk.Selection.NSelection.Walk`;
+probability laws and estimates for the selected branching random walk belong
+under `Probability.BranchingRandomWalk.Selection.NSelection`. The
+`MeasureTheory.Selection.NSelection` subtree contains measurable extensions
+of the generic selector, with no selector definition or branching-process
+recursion. This split follows the actual input and output types, so the
+branching-specific selector remains in the `BranchingWalk` hierarchy.
+
+`Restart/Success/GoodSplit.lean` now reuses the generic offspring event and
+positive-mass theorem from `Probability/BranchingProcess/Offspring/Count.lean`.
+The finite potential-cutoff conclusion requires supercriticality alone; the
+almost-sure nonempty-offspring assumption remains on the separate theorem
+showing that the reserve selector is almost surely nonempty. Duplicate
+`rawSplitEvent` declarations, unused first-two cutoff specialization, and
+one-use wrappers around deterministic reserve-selection results were removed.
+The affected production modules built successfully with `lake -Kjobs=2`
+(3,266 jobs).
+
+The audit ledger records 1,427 reviewed and 204 pending modules out of 1,631.
+
+
+## Continuous-path extrema and first-passage ownership (2026-10-31)
+
+The jointly measurable map `(f, a) ↦ firstPassageBelow f a` was declared in
+`Path/Extrema/RunningMinimum.lean` because its old proof used the running
+minimum. It now lives in `Path/FirstPassage/Measurability.lean`, alongside
+the fixed-level first-passage measurability results. Its proof identifies each
+sublevel set with the projection of the closed relation
+`f(u) ≤ a` over the compact interval `[0,t]`; it therefore needs no running-
+minimum measurability result. Brownian clients import the first-passage
+interface directly.
+
+`runningMinimum_eq_of_between` now uses an arbitrary duration `d`:
+`m_f(t+d)=m_f(t)` implies `m_f(t+u)=m_f(t)` for `0≤u≤d`. The deterministic
+local-window principle likewise takes an arbitrary horizon `T`, and its
+Brownian unit-horizon application specializes to `T=1`. The previous
+unit-specific public predicate and theorem names were removed without
+compatibility aliases.
+
+The focused build succeeded for the first-passage measurability, running-
+minimum, local-window, Brownian random-level reflection, and Brownian
+unit-window modules (`lake -Kjobs=2`, 3,329 jobs). The ledger now records
+1,429 reviewed and 202 pending modules out of 1,631.
+
+## Selection ownership and full Lean build (2026-10-31)
+
+The ownership split in `lean/ARCHITECTURE.md` matches the declaration inputs.
+`Combinatorics.Selection.NSelection` maps arbitrary candidate sets `Set ι`
+to capacity-bounded `Finset ι` values. Its generic clients include random
+selection mechanisms and ranked selection at a stopping time. A branching-step
+selector instead takes `Step α X` and returns surviving child slots, while the
+deterministic selected-walk module iterates that rule over offspring sets.
+Those declarations remain under `Combinatorics/BranchingWalk/`, and their random
+laws and couplings remain under `Probability/BranchingRandomWalk/`.
+
+The Mathlib interface used by the generic selector is finite-set filtering and
+ordering (`Finset.filter` and `Finset.sort`); the project-specific capacity
+interface composes those operations with the cardinality specification.
+
+After removing obsolete namespace opens left by the Mogulskii module moves,
+`lake -Kjobs=2 build` completed successfully with 5,745 jobs. The audit ledger
+currently has 1,429 reviewed and 202 pending semantic reviews among 1,631
+production modules; the build result does not change the semantic-review count.
+
+## Generic trial timing ownership (2026-10-31)
+
+The ordered-candidate declaration and causal trial schedule modules previously
+under `Probability/BranchingRandomWalk/Timing/` take only general discrete
+filtrations, arbitrary candidate indices, completion times, readiness events,
+and success sets as inputs. They now live in
+`Probability/Process/HittingTime/OrderedCandidates.lean`,
+`Probability/Process/Stopping/CausalSchedule/Basic.lean`, and
+`Probability/Process/Stopping/TrialSchedule/Completion.lean`. The generic
+fixed-duration map accepts any scheduled start family, and the split-schedule
+completion interface now calls it. The ordered-declaration equivalence also
+belongs with the generic ordered-candidate event. The branching-specific
+frontier adaptation theorem remains in
+`Probability/BranchingRandomWalk/Timing/Schedule/Frontier.lean`, where its
+statement uses `frontierMarks` and the generation domain flow.
+
+This division matches Mathlib's stopping-time interface, which is stated for
+general filtrations and includes fixed-time addition of stopping times
+([Mathlib stopping-time documentation](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Probability/Process/Stopping.html)).
+The moved modules and all direct clients built successfully with
+`lake -Kjobs=2 build` (5,745 jobs). The fresh production structural scan found
+1,631 modules, zero same-level file/directory stem collisions, zero repeated
+parent/file stems, zero duplicate `Lemmas.lean`/`Lemmas/` entry points, zero
+directories over eight Lean files, and zero `Source`/`Sources` directories.
+The audit ledger now records 1,433 semantically reviewed and 198 pending
+modules.
+
+## Branching point-measure and spine audit (2026-10-31)
+
+Reviewed the single-step point-measure modules and the spine point-measure
+route. `Combinatorics/BranchingWalk/Step/Measure/PointMeasure.lean` owns the
+deterministic counting measure on child marks; `Probability/BranchingRandomWalk/Step/PointMeasure/`
+owns its random-field law, integral identity, and adapter to the generic point
+process interface. The latter retains slot multiplicities, and local
+finiteness is supplied as a samplewise hypothesis at the point-process
+boundary.
+
+`Spine/PointMeasure/` owns the change-of-measure bridge from slot-indexed
+offspring to random-measure spine transitions, endpoint recursions, and the
+iid increment realization. `Spine/Path/ManyToOne/PointMeasure.lean` extends
+that construction to complete ancestral histories over arbitrary measurable
+mark spaces. These declarations use the random-measure offspring model and
+spine law, so they remain in the branching-random-walk probability layer;
+generic path integration remains in `Probability/Process/RandomWalk/Path/Measure.lean`.
+
+The single-step law module now exposes only its measurable-functional integral
+formula. Its forward and backward pushforward wrappers duplicated
+`StepPresentation.indexedLaw_map_pointMeasure`. The spine random-walk module no
+longer exports a second theorem for independence that repeated the increment
+law's independence statement. No proof-only declarations in this group require
+a `Lemmas/` subtree; the three direct files in each `PointMeasure/` directory
+define separate public law, process, endpoint, or random-walk interfaces.
+
+The focused build of these seven modules and their direct ordering, multi-root,
+variance, and path clients succeeded with `lake -Kjobs=2 build` (3,796 jobs).
+The ledger now records 1,440 semantically reviewed and 191 pending modules out
+of 1,631.
+
+
+## Selection ownership boundary check (2026-10-31)
+
+The declaration signatures confirm three distinct owners. The abstract
+`Combinatorics.Selection.Mechanism` has type `Set ι → Set ι` and only a subset
+law; `Combinatorics.Selection.NSelection` adds a finite-capacity cardinality
+law. Neither takes offspring slots, generations, or a measurable space. A
+branch-step selector instead maps `Step α X` to surviving child slots, and the
+selected-walk recursion forms the union of offspring before applying the
+capacity selector; these remain under `Combinatorics/BranchingWalk/Selection/`.
+Environment-dependent measurable realizations remain under
+`MeasureTheory/Selection/`, with their random population laws in the
+probability layer.
+
+No core `NSelection` declaration belongs under
+`MeasureTheory/MeasurableSpace/`. `MeasureTheory/Selection/NSelection/` contains
+only measurable realizations and measurability theorems for the combinatorial
+selector. This follows the Mathlib split: finite-set selection operations live
+with `Finset`, while the measurable cardinality of `Set.ncard` is in
+`Mathlib/MeasureTheory/MeasurableSpace/NCard.lean` ([pinned source](https://github.com/leanprover-community/mathlib4/blob/380f2aafb622cb2c1c93dac545b6389083c68c51/Mathlib/MeasureTheory/MeasurableSpace/NCard.lean)).
+The current module tree already follows these inputs, so this check requires no
+module move.
+
+
+## Distribution interfaces semantic audit (2026-10-31)
+
+Reviewed the five scalar domain-of-attraction modules, the real-Gaussian
+interval and sign modules, and the Poisson moments and marked-event modules.
+The domain-of-attraction interfaces keep normalization and centering visible
+and are generic over the limiting probability law; Gaussian facts use only the
+real Gaussian law; Poisson moments are distribution properties. The marked
+Poisson-event results combine Poisson singleton probabilities, Mathlib's
+independence formula, and the generic small-value probability bound. Their
+two entrance clients use the same complete Poisson-specific statement, so it
+remains with Poisson distribution facts rather than becoming a new abstraction
+that repeats Mathlib's independent-event API.
+
+The nine reviewed modules built successfully with `lake -Kjobs=2 build`;
+3,348 Lake jobs completed.
+
+
+## Stable attraction and norming semantic audit (2026-10-31)
+
+Reviewed the stable attraction coefficient, Gaussian-domain tail/centering and
+norming consequences, stable norming definitions, scale inverses, tail limits,
+compact-uniform tail estimates, rescaling compatibility, and norming-ratio
+chain. The stable objects are defined from the increment law and use explicit
+normalization and centering data. Their assumptions correspond to the
+regular-variation and truncated-moment criteria recorded in the adjacent
+Feller and Bingham--Goldie--Teugels reviews. The general norming and ratio
+interfaces remain public at the stable-distribution layer. The single rounded
+index used to reindex the Mogulskii norming is an internal declaration under
+`Norming/Rescaling/Lemmas/`.
+
+All 19 modules in this group built successfully with `lake -Kjobs=2 build`;
+3,408 Lake jobs completed. The build emitted existing `haveI`/`letI` style
+warnings in the two rescaling modules; no errors occurred.
+
+
+## Stable Lévy-measure ownership audit (2026-10-31)
+
+Reviewed stable homogeneity of the Lévy--Khintchine triple and Lévy measure,
+its positive and negative power-law tails, the finite-variation threshold for
+small jumps below index one, and the signed-window consequences used for
+entrance constructions. The measure-level layer-cake tail-integrability
+estimate and the unit-time Poisson cutoff construction are already stated at
+their generic owners; the seven stable modules specialize those APIs using the
+stable characteristic exponent and its scaling law. The modules therefore
+remain under `Distributions/Stable/LevyMeasure/` rather than moving generic
+cutoff machinery into the stable subtree.
+
+The seven modules built successfully with `lake -Kjobs=2 build`; 3,558 Lake
+jobs completed.
+
+
+## Infinitely divisible and Lévy--Khintchine ownership audit (2026-10-31)
+
+Reviewed the convolution-power definition of infinite divisibility, the
+Lévy--Khintchine triple and compensated exponent, the finite-variation
+correction, the semigroup representation, the canonical tilted finite-measure
+construction, and the law-level representation and uniqueness. The main
+representation modules are complete distribution-theory results and retain
+their Sato Theorem 8.1 attribution. The sequential cutoff estimates and
+large-/small-jump extraction steps are local proof components; they remain
+under `LevyKhintchine/Lemmas/Representation/`, including the single-file
+nested `Lemmas/` group for atom-free radii. Generic zero-fiber selection and
+Lévy-measure cutoff tools remain at their broader measure-theory owners.
+
+All 17 representation/semigroup modules built successfully with
+`lake -Kjobs=2 build` (3,439 jobs), and the infinite-divisibility definition
+built successfully separately (1,886 jobs).
+
+
+## Characteristic-function distribution API audit (2026-10-31)
+
+Reviewed the cosine defect, first-order characteristic expansion, Gaussian
+smoothing, symmetrized laws and their tails, truncated-moment comparisons, and
+the probability-specific Tauberian consequences. The general cosine
+frequency-average and inverse kernels remain under `Analysis/Fourier/`; these
+modules add probability measures, iid difference laws, and two-sided tail
+statements. Their declarations therefore belong to the distribution layer,
+while the reusable deterministic Fourier estimates remain at the analysis
+layer. No duplicate general Fourier abstraction was found in this group.
+
+The ten modules built successfully with `lake -Kjobs=2 build`; 3,223 Lake
+jobs completed.
+
+
+## Moment and stable-distribution semantic audit (2026-10-31)
+
+Reviewed the centered second-moment interfaces, sign consequences, tail
+integrability, truncated-moment/layer-cake asymptotics, stable-law
+characteristic modulus, stable attraction specialization, exponent homogeneity,
+Gaussian identification, Lévy--Khintchine bridge, stable operations, and
+support results. The moment statements depend only on real probability laws and
+moment/tail data, so they remain under `Distributions/Moments/`; stable-law
+operations and support results use the weighted-sum stability predicate and
+remain under `Distributions/Stable/`. The only cross-layer inputs are generic
+moment, convolution, map, and Lévy--Khintchine APIs, imported from their owners.
+
+All 18 modules built successfully with `lake -Kjobs=2 build`; 3,544 Lake jobs
+completed.
+
+
+## Uniform-block recurrence abstraction correction (2026-10-31)
+
+The earlier placement of two corridor-specific power-iteration wrappers under
+`UniformBlocks/Probability/Lemmas/` was reviewed against the repository rule
+that `Lemmas/` contains non-reusable proof support. Their full statements only
+instantiate the general ordered-monoid recurrence
+`IsOrderedMonoid.pow_le_of_mul_le_succ`; the wrappers add no new probability
+content. Removed the wrapper module and its ledger entry, and changed the three
+stable-process clients to apply the generic recurrence directly. Updated the
+current directory inventory and migration status; the older 2026-10-30 entry
+above records the superseded placement decision.
+
+The three affected clients built successfully with `lake -Kjobs=2 build`
+(3,204 Lake jobs). The 20 other path-corridor and uniform-block modules in the
+same audit batch also built successfully (3,551 Lake jobs; one existing
+`letI` style warning in `FiniteUnionNullMeasurable.lean`). The production
+ledger now has 1,630 modules: 1,545 reviewed and 85 pending.
+
+
+## Brownian process and small-deviation semantic audit (2026-10-31)
+
+Reviewed the Brownian marginal, continuous modification, finite-horizon
+scaling, time reversal, support, corridor, and range modules. Process-law and
+Brownian-specific conclusions remain under `Probability/Process/Brownian/`;
+generic path scaling, support criteria, and stable Gaussian path-law inputs are
+imported from their existing owners. The Donsker/spectral calculations and
+fourth-moment Kolmogorov step used only within parent constructions remain in
+the corresponding `Lemmas/` subtrees; complete Brownian probability bounds
+remain public in `Bounds`, `Endpoint`, and `UpperRate` modules.
+
+All 13 reviewed modules built successfully with `lake -Kjobs=2 build` (3,750
+Lake jobs). The output contained style and deprecation warnings in Brownian
+source and dependency modules; no build errors occurred.
+
+
+## Normal-domain tightness support regrouping (2026-10-31)
+
+Reviewed the Gaussian-domain compact-range estimate and the tightness assembly
+that consumes it. The compact-range estimate has one client, `Tightness/Basic`,
+and is a proof component alongside the Gaussian oscillation and partition
+estimates. Moved it from `Normal/PathRange.lean` to
+`Normal/Tightness/Lemmas/CompactRange.lean`. Converted all three modules under
+`Tightness/Lemmas/` to package-internal sections, ordinary semantic imports,
+and explicit `import all` at the tightness entry. Updated the ownership map and
+per-module ledger. The complete tightness theorem remains the public entry.
+The ledger now records 1,562 reviewed modules and 68 pending modules.
+
+The tightness entry and its two path-limit clients built successfully with
+`lake -Kjobs=2 build` (3,592 Lake jobs); the compact-range helper and both
+oscillation proof modules compiled as dependencies. No build errors occurred.
+
+
+## Normalized-step corridor API audit (2026-10-31)
+
+Reviewed the normalized-step functional-limit adapter and its direct Donsker
+corridor client. `IsNormalizedStepFunctionalLimit` only restated an existing
+`TendstoInDistribution` proposition, and its three namespaced theorems repeated
+the three direct corridor adapters without any repository clients. Removed the
+unused proposition wrapper and those duplicate methods; retained the three
+direct Portmanteau-to-horizontal-tube theorems used by
+`Donsker/Corridor/Brownian/Basic.lean`. The production ledger now records 1,563
+reviewed modules and 67 pending modules.
+
+The normalized-step adapter and its Donsker corridor client built successfully
+with `lake -Kjobs=2 build` (3,521 Lake jobs). No build errors occurred.
+
+
+## Normalized-step weighted API audit (2026-10-31)
+
+Reviewed the path-weight Portmanteau adapters. The corridor-endpoint and
+continuous-potential estimates are complete weighted path-law consequences
+and remain available in `NormalizedStep/Weighted.lean`. Its generic
+normalized-path limintegral wrapper only specializes Mathlib's continuous
+nonnegative Portmanteau theorem and is called only twice in that module, so it
+is now a local private helper. The module built successfully with
+`lake -Kjobs=2 build` (3,167 Lake jobs). The ledger now records 1,564 reviewed
+modules and 66 pending modules.
+
+
+## Random-walk functional-limit API audit (2026-10-31)
+
+Reviewed the generic block-oscillation and oscillation-partition criteria,
+independent-block finite-dimensional convergence, Gaussian-domain block-tail
+and central-limit estimates, Gaussian path limits and linear-tube bounds,
+variable-length normalized-block identities, endpoint-constrained Portmanteau
+adapters, and stable endpoint limits. Generic providers and the reusable
+probability or convergence consequences remain at the functional-limit layer;
+Gaussian- and stable-law assumptions stay in their respective specializations.
+The declaration dependencies are used by the Donsker, stable path-grid,
+Mogulskii, terminal-rate, and entrance clients. No further module move or
+proof-only extraction was indicated in this group.
+
+All 11 modules built successfully with `lake -Kjobs=2 build` (3,689 Lake
+jobs). The build emitted existing linter warnings in stable Brownian path-law
+dependencies; no errors occurred. The ledger now records 1,575 reviewed
+modules and 55 pending modules.
+
+
+## Process-path ownership audit (2026-10-31)
+
+Reviewed finite-horizon restriction and extension, first-window measurability,
+continuous-path extrema and oscillation, dense-evaluation independence,
+deterministic reflection, càdlàg path-law representations, restarted-window
+events, unit-time reparameterization, rational-time Skorokhod observations,
+and finite-horizon reversal. The shared definitions depend on path maps,
+topologies, and measures rather than on Brownian or branching laws, so they
+remain under `Probability/Process/Path/`; the Brownian and branching
+specializations remain with their processes. Rational approximation lemmas
+used only by first-window measurability stay in `Time/Lemmas/` as package-local
+proof support. The per-module ledger records these ownership and reuse checks.
+
+All 15 modules built successfully with `lake -Kjobs=2 build` (3,139 Lake
+jobs). The ledger now records 1,590 reviewed modules and 40 pending modules.
+
+
+## Branching-step ownership and selection-layer audit (2026-10-31)
+
+The selection boundary was checked against declaration types and their
+dependencies. `Combinatorics.Selection.NSelection` is the deterministic
+capacity selector on arbitrary candidate sets; it has no sample, measurable
+space, offspring relation, or generation parameter. The distinct
+`Combinatorics.Branching.RootIndexed.NSelection` transforms whole branching
+walks into walks with at most `N` children per node, and therefore belongs to
+`Combinatorics/BranchingWalk/Selection`. `MeasureTheory/Selection/NSelection`
+contains measurable specifications and measurability results for the generic
+selector, while probability laws on selected branching walks stay under
+`Probability/BranchingRandomWalk`. No core selector was moved into
+`MeasureTheory/MeasurableSpace`.
+
+This split matches Mathlib's separation of finite-set filtering in
+`Mathlib/Data/Finset/Filter.lean` from measurability of `Set.ncard` in
+`Mathlib/MeasureTheory/MeasurableSpace/NCard.lean`; the latter proves a
+measurability property of a data-layer construction rather than owning the
+selection operation itself.
+
+Reviewed the twelve pending sampled branching-step modules under
+`Probability/BranchingRandomWalk/Step/{Field,Law,Ordering,Position,Presentation}`.
+Their declarations concern sample-indexed step presentations, product-field
+laws, almost-sure support properties, or observations adapted to the
+generation filtration, so their probability-process ownership is appropriate.
+Corrected the stale ownership sentence in
+`Step/Position/Measurability.lean`: deterministic step and path-displacement
+definitions are owned by `Combinatorics/BranchingWalk`, while this module proves
+their generation-filtration measurability. The ledger now records 1,602
+reviewed and 28 pending modules out of 1,630.
+
+
+## Generic restarted-window moment ownership (2026-10-31)
+
+Reviewed the declarations and all clients of `Spine/Path/Window.lean`. Its
+objects take only a measure on real increment paths, a deterministic restarted
+window, and an endpoint bound; they contain no branching field, genealogy,
+root, or spine parameter. Moved the module to
+`Probability/Process/RandomWalk/Path/Restart/FirstMoment.lean`, placed its
+declarations in `ProbabilityTheory.RandomWalk`, and removed the old module path
+without a compatibility alias. The causal-population clients import the
+random-walk interface directly, while the branch-path identity module now
+imports its branching path dependency explicitly.
+
+The migrated module and its five direct clients built successfully with
+`lake -Kjobs=2 build` (4,777 jobs; the second run completed without errors).
+The ledger now records 1,603 reviewed and 27 pending modules out of 1,630.
+
+
+## Stable path-law proof-support visibility (2026-10-31)
+
+Reviewed `Probability/Process/Stable/PathLaw/Lemmas/MonotoneGrid.lean`.
+Its coordinate insertions, grid deletion maps, and product-measure
+pushforward identities form one proof chain for
+`stableGridPositionLaws_of_strictGridPositionLaws`; they are not independent
+public interfaces. Changed the helper imports and declarations to package-local
+visibility, and made the theorem module consume them with `import all`. The
+focused build of `Probability.Process.Stable.PathLaw.MonotoneGrid` passed
+(3,403 Lake jobs).
+
+Completed the remaining 26 semantic reviews in the module ledger: the
+branching-spine generation, many-to-one, second-moment, tilted-law, and tube
+interfaces, plus the generic concurrent stopping-process interfaces. A closer
+signature-level review separated the affine-corridor API by mathematical
+content: finite-history path events, restart identities, measurability, and
+deterministic drawdown inclusion now live in
+`Probability/Process/RandomWalk/Path/Corridor/Affine.lean`; the spine tube
+module retains only the transfer of that inclusion to its tilted increment
+law in `Probability/BranchingRandomWalk/Spine/Tube/Corridor/Drawdown.lean`.
+The former `Corridor/Events.lean` path was removed, with no compatibility
+alias. The 26 reviewed modules, stable path-law helper, and affected affine-
+corridor clients built successfully; the latter build completed in 3,950
+Lake jobs. The production module ledger now records 1,631 reviewed modules
+and no pending entries.
+
+
+## Audit corrections (2026-10-31)
+
+The finite adjacent-block query theorem is a public interface at
+`Probability/Process/IndepIncrements/FiniteObservations/BlockPaths.lean`;
+its finite-grid enumeration and projection arguments are private details. The
+audit ledger now includes semantic notes for all 1,631 production modules,
+including every previously blank note.
+
+## Internal proof-module visibility audit (2026-10-31)
+
+Audited every production `Lemmas/` module and `Lemmas.lean` against the
+repository rule for non-reusable proof support. The scan finds no
+`@[expose] public section`, no `public import`, and no direct helper import
+that bypasses `import all`. Converted 76 helper declarations from `theorem` to
+`lemma`; declaration names and statements are unchanged. The measurable field
+entry now explicitly imports the public types and generation-domain structures
+that occur in its signatures, rather than inheriting them through an internal
+proof module. The full `lake -Kjobs=2 build` completed successfully after these
+visibility changes (5,745 Lake jobs); existing style-linter warnings remain,
+with no build errors.

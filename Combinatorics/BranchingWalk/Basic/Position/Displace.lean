@@ -12,11 +12,16 @@ public import Mathlib.Algebra.BigOperators.Fin
 /-!
 # Displacement along a path
 
+## Public declarations
+
 `displace β v p` is the displacement from the address `v` to the address
 `v ++ p`: it sums the zero-defaulted marks of the slots of `p`, reading each
 slot at the address it is met at. The current address is carried along
 explicitly, so no index arithmetic (`take`, `getElem!`) is needed. Absent slots
 contribute zero, so it is the algebraic extension of the displacement.
+The recursive definition, partial result, and append/rebase identities need
+only an `AddMonoid`; the unordered finite-sum formulas below require an
+`AddCommMonoid`.
 
 The root displacement is `displace β [] u`, written out at the call sites
 rather than packaged in a second definition. The sum over prefixes
@@ -27,23 +32,26 @@ read at one fixed root, so it is not defined here either: the
 `ProbabilityTheory.BranchingRandomWalk.RootIndexed` layer wraps these
 definitions root by root.
 
-The public API is:
+The public declarations are:
 
-- `displace_nil`: `displace β v [] = 0`.
-- `displace β v p` recursively sums the zero-defaulted marks along `p`,
-  reading each edge at the address reached so far. `displace_append` splits
-  the sum over concatenated paths, and `displace_rebase` identifies a shifted
-  step field with a shifted starting address.
-- `displace_eq_sum` and `displace_eq_sum_fin` express the recursion as finite
-  sums over path coordinates; `displace_append_singleton` and
-  `displace_append_two` give short-path forms.
-- `displace_cons` gives the recursive step
+- `displace β v p` recursively sums zero-defaulted marks, reading each edge
+  at the address reached so far. `displace_nil` gives `displace β v [] = 0`,
+  and `displace_cons` gives
   `displace β v (i :: p) = value' (β v) i + displace β (v ++ [i]) p`.
-- `displace? β v p` is `some` of the displacement when every edge survives
-  and `none` otherwise. `displace?_eq_none_iff`,
-  `displace?_eq_some_iff`, and `displace?_isSome_iff` characterize these
-  cases; the two `_eq_some_sum_iff` theorems give the corresponding finite-sum
-  formulas, and `displace?_append_singleton` gives the root one-edge case.
+- `displace_append` splits a path at concatenation, and `displace_rebase`
+  identifies a shifted step field with a shifted starting address.
+- `displace_eq_sum` and `displace_eq_sum_fin`, under an `AddCommMonoid`, give
+  the corresponding sums over `Finset.range p.length` and `Fin p.length`.
+- `displace_append_singleton` and `displace_append_two` give the one-edge and
+  two-edge root formulas.
+- `displace? β v p` returns `some` of the displacement when every edge is
+  present and `none` otherwise. `displace?_nil` and `displace?_cons` give its
+  recursion; `displace?_eq_none_iff` and `displace?_isSome_iff` characterize
+  absence and presence, while `displace?_eq_some_iff` states
+  `displace? β v p = some x ↔ surviveAlong β v p ∧ displace β v p = x`.
+- `displace?_eq_some_sum_iff` and `displace?_eq_some_sum_fin_iff` give the
+  finite-sum forms of the realized-path characterization, and
+  `displace?_append_singleton` gives its root one-edge form.
 -/
 
 @[expose] public section
@@ -71,17 +79,17 @@ open Combinatorics.UlamHarris
 /-- The displacement from the address `v` along the remaining path `p`. The
 current address is carried along explicitly, so no index arithmetic (`take`,
 `getElem!`) is needed. -/
-def displace {α : Type*} {X : Type*} [AddCommMonoid X]
+def displace {α : Type*} {X : Type*} [AddMonoid X]
     (β : StepField α X) : TreeNode α → TreeNode α → X
   | _, [] => 0
   | v, i :: p => value' (β v) i +
       displace β (v ++ [i]) p
 
 @[simp] theorem displace_nil {α : Type*} {X : Type*}
-    [AddCommMonoid X] (β : StepField α X) (v : TreeNode α) :
+    [AddMonoid X] (β : StepField α X) (v : TreeNode α) :
     displace β v [] = 0 := rfl
 
-theorem displace_cons {α : Type*} {X : Type*} [AddCommMonoid X]
+theorem displace_cons {α : Type*} {X : Type*} [AddMonoid X]
     (β : StepField α X) (v : TreeNode α) (i : α) (p : TreeNode α) :
     displace β v (i :: p) =
       value' (β v) i +
@@ -89,7 +97,7 @@ theorem displace_cons {α : Type*} {X : Type*} [AddCommMonoid X]
 
 /-- The displacement splits an appended path, moving the starting address by
 the first part. -/
-theorem displace_append {α : Type*} {X : Type*} [AddCommMonoid X]
+theorem displace_append {α : Type*} {X : Type*} [AddMonoid X]
     (β : StepField α X) (v p q : TreeNode α) :
     displace β v (p ++ q) =
       displace β v p +
@@ -103,7 +111,7 @@ theorem displace_append {α : Type*} {X : Type*} [AddCommMonoid X]
 
 /-- Re-basing the step field below a prefix `u` is the same as moving the
 starting address by `u`. -/
-theorem displace_rebase {α : Type*} {X : Type*} [AddCommMonoid X]
+theorem displace_rebase {α : Type*} {X : Type*} [AddMonoid X]
     (β : StepField α X) (u v p : TreeNode α) :
     displace (fun w => β (u ++ w)) v p =
       displace β (u ++ v) p := by
@@ -169,7 +177,7 @@ theorem displace_eq_sum_fin {α : Type*} {X : Type*}
 /-- Increment of one step from the root: the displacement of `u ++ [i]` is the
 displacement of `u` plus the mark of the slot at `i`. -/
 theorem displace_append_singleton {α : Type*} {X : Type*}
-    [AddCommMonoid X]
+    [AddMonoid X]
     (β : StepField α X) (u : TreeNode α) (i : α) :
     displace β [] (u ++ [i]) =
       displace β [] u + value' (β u) i := by
@@ -178,7 +186,7 @@ theorem displace_append_singleton {α : Type*} {X : Type*}
 /-- Increment of two steps from the root, in the order in which the two slots
 are met. -/
 theorem displace_append_two {α : Type*} {X : Type*}
-    [AddCommMonoid X]
+    [AddMonoid X]
     (β : StepField α X) (u : TreeNode α)
     (i j : α) :
     displace β [] (u ++ [i, j]) =
@@ -203,24 +211,24 @@ open Combinatorics.UlamHarris
 
 /-- The partial displacement along the remaining path `p` from the address
 `v`; `none` as soon as one slot on the path is absent. -/
-def displace? {α X : Type*} [AddCommMonoid X]
+def displace? {α X : Type*} [AddMonoid X]
     (β : StepField α X) : TreeNode α → TreeNode α → Option X
   | _, [] => some 0
   | v, i :: p =>
       (β v i).bind fun x =>
         (displace? β (v ++ [i]) p).map fun y => x + y
 
-@[simp] theorem displace?_nil {α X : Type*} [AddCommMonoid X]
+@[simp] theorem displace?_nil {α X : Type*} [AddMonoid X]
     (β : StepField α X) (v : TreeNode α) :
     displace? β v [] = some 0 := rfl
 
-theorem displace?_cons {α X : Type*} [AddCommMonoid X]
+theorem displace?_cons {α X : Type*} [AddMonoid X]
     (β : StepField α X) (v : TreeNode α) (i : α) (p : TreeNode α) :
     displace? β v (i :: p) =
       (β v i).bind fun x =>
         (displace? β (v ++ [i]) p).map fun y => x + y := rfl
 
-theorem displace?_eq_none_iff {α X : Type*} [AddCommMonoid X]
+theorem displace?_eq_none_iff {α X : Type*} [AddMonoid X]
     (β : StepField α X) (v p : TreeNode α) :
     displace? β v p = none ↔
       ¬ surviveAlong β v p := by
@@ -236,8 +244,8 @@ theorem displace?_eq_none_iff {α X : Type*} [AddCommMonoid X]
 
 /-- On a realized path the partial recursion returns the total displacement
 mark. -/
-theorem displace?_eq_some_of_survive {α X : Type*}
-    [AddCommMonoid X] (β : StepField α X) :
+private lemma displace?_eq_some_of_survive {α X : Type*}
+    [AddMonoid X] (β : StepField α X) :
     ∀ (v p : TreeNode α), surviveAlong β v p →
       displace? β v p =
         some (displace β v p)
@@ -251,7 +259,7 @@ theorem displace?_eq_some_of_survive {α X : Type*}
 
 /-- The three readings of the partial mark — it has a value, the path is
 realized, and that value is the total displacement — are one statement. -/
-theorem displace?_eq_some_iff {α X : Type*} [AddCommMonoid X]
+theorem displace?_eq_some_iff {α X : Type*} [AddMonoid X]
     (β : StepField α X) (v p : TreeNode α) (x : X) :
     displace? β v p = some x ↔
       surviveAlong β v p ∧
@@ -268,7 +276,7 @@ theorem displace?_eq_some_iff {α X : Type*} [AddCommMonoid X]
   · rintro ⟨hp, rfl⟩
     exact displace?_eq_some_of_survive β v p hp
 
-theorem displace?_isSome_iff {α X : Type*} [AddCommMonoid X]
+theorem displace?_isSome_iff {α X : Type*} [AddMonoid X]
     (β : StepField α X) (v p : TreeNode α) :
     (displace? β v p).isSome ↔
       surviveAlong β v p := by
@@ -307,7 +315,7 @@ survive. This replaces the earlier statement that wrapped the total definition
 in an `if`, which forced a `Classical.propDecidable` instance into the
 conclusion. -/
 theorem displace?_append_singleton
-    {α X : Type*} [AddCommMonoid X]
+    {α X : Type*} [AddMonoid X]
     (step : StepField α X) (u : TreeNode α) (i : α) :
     displace? step [] (u ++ [i]) =
         some (displace step [] u + value' (step u) i) ↔

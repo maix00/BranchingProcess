@@ -4,10 +4,14 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Assumptions.Moments
-import Probability.BranchingRandomWalk.Restart.Success.GoodSplit
-import Probability.BranchingRandomWalk.Timing.GeometricTrial.FirstMoment
-import Probability.BranchingProcess.Offspring.Count
+module
+
+public import Probability.BranchingRandomWalk.Assumptions.Moments
+public import Probability.BranchingRandomWalk.Restart.Success.GoodSplit
+public import Probability.Sequence.IID.GeometricReward.Definitions
+import Probability.Sequence.IID.GeometricReward.FirstMoment
+public import Probability.BranchingProcess.Offspring.Count
+public import Mathlib.Probability.Independence.Basic
 
 /-!
 # First-moment position cost before a reserve split
@@ -22,12 +26,26 @@ portion of one reserve cycle, with no second moment.
 This is a one-cycle estimate.  It does not identify the random
 restart frontier or prove that the cycle samples are fresh after earlier
 candidate outcomes.
+
+## Public declarations
+
+- `ProbabilityTheory.BranchingRandomWalk.iidGeometricFailureLeftmostPositiveDisplacement_le`:
+  for iid
+  steps and a success event `B` of probability `p > 0`, the expected total
+  positive leftmost displacement accumulated on failures before the first
+  success is bounded by
+  `∫ ξ, L.leftmostPositivePart ξ ∂L.raw / p`.
+- `ProbabilityTheory.BranchingRandomWalk.exists_nat_cutoff_iidGeometricFailureLeftmostPositiveDisplacement_le`:
+  under the supercritical offspring assumption and a finite leftmost first
+  moment, some finite cutoff `M` has positive split probability, and the
+  corresponding expected failed-cycle displacement is bounded by the same
+  first moment divided by that probability.
 -/
 
 open MeasureTheory ProbabilityTheory
 open scoped BigOperators
 
-section
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
@@ -75,8 +93,9 @@ theorem iidGeometricFailureLeftmostPositiveDisplacement_le
   have hRestricted : Integrable
       (fun ξ => max (Y ξ) 0 * Bᶜ.indicator (fun _ => (1 : ℝ)) ξ) L.raw := by
     have hindicator := hYpos.indicator hB.compl
-    convert hindicator using 1 <;> ext ξ <;> by_cases hξ : ξ ∈ B <;>
-      simp [hξ]
+    convert hindicator using 1
+    ext ξ
+    by_cases hξ : ξ ∈ B <;> simp [hξ]
   have hnum :
       (∫ ξ, max (Y ξ) 0 * Bᶜ.indicator (fun _ => (1 : ℝ)) ξ ∂L.raw) ≤
         ∫ ξ, max (Y ξ) 0 ∂L.raw := by
@@ -86,8 +105,8 @@ theorem iidGeometricFailureLeftmostPositiveDisplacement_le
   rw [hEq]
   apply (div_le_div_of_nonneg_right hnum hp.le)
 
-/-- Under the nonempty supercritical base assumptions, a capacity-
-two selection has some finite second-child cutoff with positive split
+/-- Under the supercritical base assumption, a capacity-two selection has
+some finite second-child cutoff with positive split
 probability.  The preceding theorem then supplies a finite first-moment
 bound on the failed first-child displacement accumulated before that split.
 This is the one-cycle estimate used in place of a second-moment estimate for
@@ -97,9 +116,6 @@ theorem exists_nat_cutoff_iidGeometricFailureLeftmostPositiveDisplacement_le
     [Countable ι] [MeasurableSingletonClass ι]
     (μ : Measure Ω) [IsProbabilityMeasure μ]
     (L : StepLaw ι ℕ ℝ) [IsProbabilityMeasure L.raw]
-    (hnonempty : OffspringConfigurationLaw.HasAtLeastOneChild
-      (⟨L.raw, ‹IsProbabilityMeasure L.raw›⟩ :
-        OffspringConfigurationLaw ι ℝ))
     (hsupercritical : OffspringConfigurationLaw.IsSupercritical
       (⟨L.raw, ‹IsProbabilityMeasure L.raw›⟩ :
         OffspringConfigurationLaw ι ℝ))
@@ -119,8 +135,8 @@ theorem exists_nat_cutoff_iidGeometricFailureLeftmostPositiveDisplacement_le
         (∫ ξ, L.leftmostPositivePart ξ ∂L.raw) /
           L.raw.real (boundedSelectedSplitEvent L R M) := by
   obtain ⟨M, hsplit, _hmeas⟩ :=
-    exists_nat_cutoff_positive_boundedSelectedSplit L hnonempty
-      hsupercritical R hR hadequate
+    exists_nat_cutoff_positive_boundedSelectedSplit L hsupercritical
+      R hR hadequate
   have hp : 0 < L.raw.real (boundedSelectedSplitEvent L R M) :=
     ENNReal.toReal_pos hsplit.ne' (measure_ne_top L.raw _)
   refine ⟨M, hp, ?_⟩

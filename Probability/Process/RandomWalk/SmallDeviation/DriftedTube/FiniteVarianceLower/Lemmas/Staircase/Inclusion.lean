@@ -6,13 +6,15 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.EndpointWindow.Basic
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.BlockInclusion
-public import Probability.Process.Filtration.ConditionalBlocks
+import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.EndpointWindow.Basic
+import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.BlockInclusion
+import Probability.Process.Filtration.ConditionalBlocks
 /-!
 # Staircase inclusion in the tilted endpoint event
 
-The module-visible supporting lemmas in this file are:
+## Internal proof declarations
+
+The supporting lemmas in this file are:
 
 - `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.initialInterTubeBlocks_subset_driftedTubeEndpointWindowEvent_of_extremeBounds`:
   the inclusion for either direction of drift, using the maximum lower
@@ -28,7 +30,7 @@ reverse Markov product in Wang Yiyang,
 Chapter 3, proof of Lemma 3.5.
 -/
 
-@[expose] public section
+section
 
 open ProbabilityTheory
 open ProbabilityTheory.RandomWalk.SmallDeviation

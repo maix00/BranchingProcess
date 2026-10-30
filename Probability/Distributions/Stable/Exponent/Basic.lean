@@ -7,9 +7,11 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Distributions.Stable.Levy.Khintchine
+import Probability.Distributions.Stable.Operations.Convolution
 import Probability.Distributions.InfinitelyDivisible.LevyKhintchine.Representation
 import MeasureTheory.Measure.CharacteristicFunction.Convolution
-import Analysis.FunctionalEquation.ContinuousAdditivePositive
+import Analysis.FunctionalEquation.NNReal
+import Mathlib.Analysis.Complex.CoveringMap
 import Mathlib.Analysis.SpecialFunctions.Pow.Continuity
 
 /-!
@@ -18,6 +20,21 @@ import Mathlib.Analysis.SpecialFunctions.Pow.Continuity
 The integer scaling identity follows directly from the stable convolution
 semigroup and uniqueness of a continuous logarithm. It is a first step toward
 identifying the Lévy measure of a strictly stable law.
+
+## Public declarations
+
+Write `ψ = T.exponent` for a Lévy--Khintchine triple `T` representing `μ`.
+
+* `IsStrictlyAlphaStable.exponent_nat`:
+  `ψ((n : ℝ)^(1/α) ξ) = (n : ℂ) ψ(ξ)` for every natural `n`.
+* `IsStrictlyAlphaStable.exponent_scaled_add`:
+  `ψ(a * ξ) + ψ(b * ξ) = ψ(alphaStableScale α a b * ξ)` for `a,b > 0`.
+* `IsStrictlyAlphaStable.exponent_time_add`:
+  `ψ(s^(1/α) * ξ) + ψ(t^(1/α) * ξ) = ψ((s+t)^(1/α) * ξ)` for `s,t > 0`.
+* `IsStrictlyAlphaStable.exponent_time` gives
+  `ψ(t^(1/α) * ξ) = (t : ℂ) * ψ(ξ)` for `t ≥ 0`.
+* `IsStrictlyAlphaStable.exponent_scale` gives
+  `ψ(a * ξ) = ((a^α : ℝ) : ℂ) * ψ(ξ)` for `a > 0`.
 -/
 
 @[expose] public section
@@ -40,11 +57,14 @@ theorem IsStrictlyAlphaStable.exponent_nat
   let r : ℝ := (n : ℝ) ^ (1 / α)
   have heq : (fun x : ℝ => T.exponent (r * x)) =
       (fun x : ℝ => (n : ℂ) * T.exponent x) := by
-    apply eq_of_cexp_eq_of_continuous
-    · exact T.exponent_continuous.comp (continuous_const.mul continuous_id)
-    · exact continuous_const.mul T.exponent_continuous
-    · simp
-    · intro x
+    have hcomp :
+        (fun x : ℝ =>
+          (⟨Complex.exp (T.exponent (r * x)), Complex.exp_ne_zero _⟩ : {z : ℂ // z ≠ 0})) =
+        (fun x : ℝ =>
+          (⟨Complex.exp ((n : ℂ) * T.exponent x), Complex.exp_ne_zero _⟩ :
+            {z : ℂ // z ≠ 0})) := by
+      funext x
+      apply Subtype.ext
       calc
         Complex.exp (T.exponent (r * x)) = charFun μ (r * x) := (hT _).symm
         _ = charFun (stableTimeLaw α μ n) x := by
@@ -54,6 +74,9 @@ theorem IsStrictlyAlphaStable.exponent_nat
         _ = (charFun μ x) ^ n := Measure.charFun_convPower μ n x
         _ = Complex.exp ((n : ℂ) * T.exponent x) := by
           rw [hT, Complex.exp_nat_mul]
+    exact Complex.isCoveringMap_exp.eq_of_comp_eq
+      (T.exponent_continuous.comp (continuous_const.mul continuous_id))
+      (continuous_const.mul T.exponent_continuous) hcomp 0 (by simp)
   exact congrFun heq ξ
 
 /-- The exponent satisfies the functional equation encoded by strict
@@ -68,16 +91,25 @@ theorem IsStrictlyAlphaStable.exponent_scaled_add
   let : IsProbabilityMeasure μ := h.isProbabilityMeasure
   have heq : (fun x : ℝ => T.exponent (a * x) + T.exponent (b * x)) =
       (fun x : ℝ => T.exponent (alphaStableScale α a b * x)) := by
-    apply eq_of_cexp_eq_of_continuous
-    · exact (T.exponent_continuous.comp (continuous_const.mul continuous_id)).add
-        (T.exponent_continuous.comp (continuous_const.mul continuous_id))
-    · exact T.exponent_continuous.comp (continuous_const.mul continuous_id)
-    · simp
-    · intro x
-      rw [Complex.exp_add, ← hT, ← hT]
-      rw [← charFun_map_mul a x, ← charFun_map_mul b x]
-      rw [← charFun_conv]
-      rw [h.conv_scaled ha hb, charFun_map_mul, hT]
+    have hcomp :
+        (fun x : ℝ =>
+          (⟨Complex.exp (T.exponent (a * x) + T.exponent (b * x)),
+            Complex.exp_ne_zero _⟩ : {z : ℂ // z ≠ 0})) =
+        (fun x : ℝ =>
+          (⟨Complex.exp (T.exponent (alphaStableScale α a b * x)),
+            Complex.exp_ne_zero _⟩ : {z : ℂ // z ≠ 0})) := by
+      funext x
+      have h_exp : Complex.exp (T.exponent (a * x) + T.exponent (b * x)) =
+          Complex.exp (T.exponent (alphaStableScale α a b * x)) := by
+        rw [Complex.exp_add, ← hT, ← hT]
+        rw [← charFun_map_mul a x, ← charFun_map_mul b x]
+        rw [← charFun_conv]
+        rw [h.conv_scaled ha hb, charFun_map_mul, hT]
+      exact Subtype.ext h_exp
+    exact Complex.isCoveringMap_exp.eq_of_comp_eq
+      ((T.exponent_continuous.comp (continuous_const.mul continuous_id)).add
+        (T.exponent_continuous.comp (continuous_const.mul continuous_id)))
+      (T.exponent_continuous.comp (continuous_const.mul continuous_id)) hcomp 0 (by simp)
   exact congrFun heq ξ
 
 /-- In the time parameter, the exponent is additive on positive times. -/
@@ -127,10 +159,16 @@ theorem IsStrictlyAlphaStable.exponent_time
     have hypos : 0 < (y : ℝ) := by exact_mod_cast (pos_iff_ne_zero.mpr hy)
     simpa only [f, NNReal.coe_add, eq_comm] using
       (h.exponent_time_add T hT hxpos hypos ξ)
-  have hlin := continuous_additive_nnreal_eq_smul f hf hadd (Real.toNNReal t)
+  let fHom : ℝ≥0 →+ ℂ :=
+    { toFun := f
+      map_zero' := hfzero
+      map_add' := hadd }
+  have hlin := map_nnreal_smul fHom hf (Real.toNNReal t)
+  have hlin' : f (Real.toNNReal t) = (Real.toNNReal t : ℝ) • f 1 := by
+    simpa only [fHom, AddMonoidHom.coe_mk, ZeroHom.coe_mk, AddHom.coe_mk] using hlin
   simpa only [f, Real.coe_toNNReal t ht, Real.toNNReal_one, NNReal.coe_one, Real.one_rpow, one_mul,
     Complex.real_smul,
-    smul_eq_mul] using hlin
+    smul_eq_mul] using hlin'
 
 /-- The characteristic exponent is homogeneous at every positive spatial
 scale. -/

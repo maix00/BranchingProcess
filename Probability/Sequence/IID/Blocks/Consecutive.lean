@@ -7,23 +7,30 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Sequence.Block
-public import Probability.Independence.Finite
+import Probability.Independence.FiniteFamily
 public import Probability.Sequence.IID.Basic
 public import Mathlib.Probability.Independence.Basic
 
 /-!
 # Independence of consecutive blocks in an IID sequence
 
+## Public declarations
+
 The public theorems in this file concern a canonical IID sequence
 $(X_n)_{n\geq 0}$ with one-coordinate law $\nu$:
 
 - `indepFun_blockCoordinates_blockCoordinates` proves
   $\operatorname{IndepFun}((X_{s+k})_{k<m},(X_{s+m+k})_{k<n})$.
-- `indepFun_variableConsecutiveBlockCoordinates_next` proves independence of
-  $( (X_{b_j+k})_{k<\ell_j})_{j<q}$ and $(X_{b_q+k})_{k<\ell_q}$, where
-  $b_j=\sum_{i<j}\ell_i$.
+- `indepFun_variableConsecutiveBlockCoordinates_next` proves independence
+  between the vector of the first $q$ variable-length blocks
+  $((X_{b_j+k})_{k<\ell_j})_{j<q}$ and the following block
+  $(X_{b_q+k})_{k<\ell_q}$, where $b_j=\sum_{i<j}\ell_i$.
 - `iIndepFun_variableConsecutiveBlockCoordinates` proves mutual independence
   of the finite family $((X_{b_j+k})_{k<\ell_j})_{j<q}$.
+- `indepFun_consecutiveBlockCoordinates_next` and
+  `iIndepFun_consecutiveBlockCoordinates` specialize this to equal-length
+  blocks, proving independence of the next block and mutual independence of
+  the first $q$ blocks.
 - `iidSequenceLaw_measure_forall_variableConsecutiveBlockEvent` proves
   $\mathbb P(\forall j<q,\,(X_{b_j+k})_{k<\ell_j}\in A_j)
     =\prod_{j<q}\mathbb P((X_k)_{k<\ell_j}\in A_j)$ for measurable $A_j$.

@@ -8,13 +8,42 @@ module
 public import Combinatorics.BranchingWalk.Basic.Genealogy.GenerationSize
 public import Probability.BranchingProcess.Offspring.Count
 public import Probability.BranchingProcess.GaltonWatson.Law
-public import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.DomainFlow
+public import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.AddressFiltration
 
 /-!
 # Galton--Watson generation sizes
 
 Generation sizes reuse the `ℕ∞`-valued observation on presampled branching
 configurations, so infinite populations remain representable.
+
+## Public declarations
+
+- `ProbabilityTheory.BranchingProcess.GaltonWatson.childSubtreeField`:
+  the descendant field below child $i$, given by
+  $u\mapsto\operatorname{field}(i::u)$.
+- `ProbabilityTheory.BranchingProcess.GaltonWatson.childSubtreeVector`:
+  the family of those descendant fields, indexed by the child slot type.
+- `ProbabilityTheory.BranchingProcess.GaltonWatson.childSubtreeVector_measurable`:
+  the descendant-field family is measurable.
+- `ProbabilityTheory.BranchingProcess.GaltonWatson.childSubtreeVector_law`:
+  the descendant fields have the product law of independent copies of
+  `μ.fieldLaw`.
+- `ProbabilityTheory.BranchingProcess.GaltonWatson.fieldLaw_root_childSubtrees_jointLaw`:
+  the root configuration and its child-subtree fields have joint law
+  $\mu\otimes\bigotimes_{i\in\iota}\mu.fieldLaw$.
+- `ProbabilityTheory.BranchingProcess.GaltonWatson.generationSize_succ_eq_sum_childSubtree`:
+  for a finite child type, $Z_{n+1}$ equals the sum of generation-$n$
+  descendant counts over the children present at the root.
+- `ProbabilityTheory.BranchingProcess.GaltonWatson.generationSize_succ_eq_sum_childSubtreeSlots`:
+  equivalently, summing over all slots gives
+  $Z_{n+1}=\sum_{i\in\iota}\mathbf 1_{\{i\text{ present}}}Z_n(\operatorname{field}_i)$.
+- `ProbabilityTheory.BranchingProcess.GaltonWatson.generationSize_measurable`:
+  every fixed generation count $\beta\mapsto Z_n(\beta)$ is measurable.
+- `ProbabilityTheory.BranchingProcess.GaltonWatson.generationSize_one_law`:
+  the first-generation count under `law μ` has distribution `μ.childCountLaw`.
+- `ProbabilityTheory.BranchingProcess.GaltonWatson.lintegral_generationSize_one_eq_expectedChildCount`:
+  the extended expectation of the first-generation count equals
+  `μ.expectedChildCount`.
 -/
 
 @[expose] public section
@@ -167,36 +196,36 @@ theorem fieldLaw_root_childSubtrees_jointLaw {ι : Type*}
         (M := Combinatorics.Branching.Step ι PUnit.{1}) 1)
       (ProbabilityTheory.BranchingRandomWalk.stepFutureSpace
         (α := ι) (X := PUnit.{1}) 1)
-      (ProbabilityTheory.BranchingRandomWalk.stepFieldLaw ν) :=
+      (ProbabilityTheory.BranchingProcess.offspringFieldLaw ν) :=
     ProbabilityTheory.BranchingRandomWalk.generation_stepFuture_independent ν 1
   have hindPastVector : Indep
       (ProbabilityTheory.BranchingRandomWalk.generationFiltration
         (M := Combinatorics.Branching.Step ι PUnit.{1}) 1)
       (MeasurableSpace.comap (childSubtreeVector (ι := ι)) inferInstance)
-      (ProbabilityTheory.BranchingRandomWalk.stepFieldLaw ν) :=
+      (ProbabilityTheory.BranchingProcess.offspringFieldLaw ν) :=
     ProbabilityTheory.indep_of_indep_of_le_right hindPast
       childSubtreeVector_measurable_future.comap_le
   have hindPastRoot : Indep
       (MeasurableSpace.comap
         (fun field : Combinatorics.Branching.StepField ι PUnit.{1} => field []) inferInstance)
       (MeasurableSpace.comap (childSubtreeVector (ι := ι)) inferInstance)
-      (ProbabilityTheory.BranchingRandomWalk.stepFieldLaw ν) :=
+      (ProbabilityTheory.BranchingProcess.offspringFieldLaw ν) :=
     ProbabilityTheory.indep_of_indep_of_le_left hindPastVector hrootPast.comap_le
   have hind : IndepFun
       (fun field : Combinatorics.Branching.StepField ι PUnit.{1} => field [])
       (childSubtreeVector (ι := ι))
-      (ProbabilityTheory.BranchingRandomWalk.stepFieldLaw ν) := by
+      (ProbabilityTheory.BranchingProcess.offspringFieldLaw ν) := by
     rw [IndepFun_iff_Indep]
     exact hindPastRoot
   rw [ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw.fieldLaw_toMeasure]
   change Measure.map
       (fun field : Combinatorics.Branching.StepField ι PUnit.{1} =>
         (field [], childSubtreeVector field))
-      (ProbabilityTheory.BranchingRandomWalk.stepFieldLaw ν) = _
+      (ProbabilityTheory.BranchingProcess.offspringFieldLaw ν) = _
   rw [hind.map_prod_eq_prod_map_map hroot.aemeasurable hvector.aemeasurable,
-    ProbabilityTheory.BranchingRandomWalk.stepFieldLaw_coordinate ν []]
+    ProbabilityTheory.BranchingProcess.offspringFieldLaw_coordinate ν []]
   congr 1
-  simpa [ProbabilityTheory.BranchingRandomWalk.stepFieldLaw, ν,
+  simpa [ProbabilityTheory.BranchingProcess.offspringFieldLaw, ν,
     ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw.fieldLaw_toMeasure]
     using childSubtreeVector_law μ
 
@@ -421,7 +450,7 @@ theorem generationSize_one_law {ι : Type*} [Countable ι]
           Combinatorics.Branching.Step.childCount
             ((β.step PUnit.unit) ([] : Combinatorics.UlamHarris.TreeNode ι)) := by
       funext β
-      exact Combinatorics.Branching.RootIndexed.BranchingWalk.generationSize_one_eq_childCount β
+      exact Combinatorics.Branching.BranchingWalk.generationSize_one_eq_childCount β
     rw [heq]
     exact hcount
   have hfield : Measurable
@@ -438,7 +467,7 @@ theorem generationSize_one_law {ι : Type*} [Countable ι]
         Combinatorics.Branching.Step.childCount (field ([] :
           Combinatorics.UlamHarris.TreeNode ι))) := by
     funext field
-    exact Combinatorics.Branching.RootIndexed.BranchingWalk.generationSize_one_eq_childCount
+    exact Combinatorics.Branching.BranchingWalk.generationSize_one_eq_childCount
       (Combinatorics.Branching.branchingOfStepField field)
   have hchildCount : Measurable
       (Combinatorics.Branching.Step.childCount :

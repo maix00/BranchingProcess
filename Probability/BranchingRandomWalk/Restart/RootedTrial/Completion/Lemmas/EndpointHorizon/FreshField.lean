@@ -4,19 +4,21 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
+module
+
 import Probability.BranchingRandomWalk.Restart.RootedTrial.Coupling.ReserveSpine
 import Probability.BranchingRandomWalk.Restart.RootedTrial.Completion.Endpoint
-import Probability.BranchingRandomWalk.Restart.RootedTrial.Completion.Lemmas.EndpointHorizon.RootFamily
-import Probability.BranchingRandomWalk.Restart.RootedTrial.Completion.Lemmas.EndpointHorizon.Geometry
+import all Probability.BranchingRandomWalk.Restart.RootedTrial.Completion.Lemmas.EndpointHorizon.RootFamily
+import all Probability.BranchingRandomWalk.Restart.RootedTrial.Completion.Lemmas.EndpointHorizon.Geometry
 import Probability.BranchingRandomWalk.Restart.RootedTrial.Reserve.Causal
-import Probability.BranchingRandomWalk.Selection.NSelection.AtStoppingTime
+import Probability.Process.Stopping.Selection.Ranked
 import Probability.BranchingRandomWalk.Coupling.Field.Ranked.Basic
 import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.StoppingSubtrees.Vector.Factorization
 
 /-!
 # Fresh-field factorization at the endpoint: proof support
 
-## Supporting declarations
+## Internal proof declarations
 
 * `selectedReserveSpineRestartEndpointFreshField_factorization_on_finite` factors the fresh
   descendant field below mixed endpoint roots from the stopped domain information.
@@ -24,7 +26,7 @@ import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.Stoppin
   same factorization with the actual rank-installed target roots on the finite-endpoint event.
 -/
 
-@[expose] public section
+section
 
 open MeasureTheory ProbabilityTheory
 open Combinatorics.Branching Combinatorics.UlamHarris

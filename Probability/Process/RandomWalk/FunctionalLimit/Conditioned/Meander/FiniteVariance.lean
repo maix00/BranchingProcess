@@ -6,12 +6,21 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Meander.Identification
-public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Survival.Scaling
-public import Probability.Process.RandomWalk.Path.Interpolation.Scaling
+public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Survival.Conditioning
+public import Probability.Process.Brownian.Meander.LastZeroLaw
+public import Probability.ConvergenceInDistribution.Basic
+public import Probability.Distributions.Moments.Signs
+public import Probability.Process.RandomWalk.Path.Interpolation.Basic
+import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Meander.Identification
+import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Survival.Scaling
+import Probability.Process.RandomWalk.Path.Interpolation.Core
+import Probability.Process.RandomWalk.Path.Interpolation.Scaling
+public import Mathlib.Probability.BrownianMotion.Basic
 
 /-!
 # Brownian-meander limit for finite positive variance
+
+## Public declarations
 
 The public theorem in this file is:
 

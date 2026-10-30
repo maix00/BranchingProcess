@@ -14,7 +14,7 @@ public import Mathlib.Topology.ContinuousMap.Bounded.Basic
 /-!
 # Invariance under pointwise limits
 
-The public theorems in this file are:
+## Public declarations
 
 - `MeasureTheory.Measure.map_eq_of_ae_pointwise_limit`: if a finite Borel
   measure $\mu$ satisfies $(F_n)_*\mu=\mu$ for every $n$ and

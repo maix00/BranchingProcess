@@ -15,6 +15,15 @@ public import Topology.Cadlag.Skorokhod.Path.Scaling
 Multiplying a path by a positive factor divides each corridor width seen by
 the original path by that factor. This deterministic bridge lets the stable
 cell estimate apply directly to the process small-deviation event.
+
+## Public declarations
+
+- Scaling a path by $s>0$ sends a corridor of width $w$ to a cell-range
+  constraint of width $w/s$.
+- The probability of a positively scaled finite step corridor is bounded by
+  the product of stable tube probabilities on its finite partition cells.
+- The relative-enlargement form yields the corresponding logarithmic
+  upper-rate bound with cell widths independent of the scale parameter.
 -/
 
 @[expose] public section
@@ -98,7 +107,7 @@ theorem measure_scalePath_preimage_corridorSet_le_stableProcessTubeProduct
     {P : Measure (CadlagPath unitInterval ℝ)} [IsProbabilityMeasure P]
     {Ω : Type*} [MeasurableSpace Ω]
     {X : ℝ≥0 → Ω → ℝ} {Q : Measure Ω} [IsProbabilityMeasure Q]
-    (hP : IsStableClockProcessLaw α μ UnitInterval.clock P)
+    (hP : IsStableClockProcessLaw α μ unitInterval.clock P)
     (hX : IsStableLevyProcess α μ X Q)
     (hscale : 0 < scale)
     (upper lower : StepBoundary)
@@ -131,7 +140,7 @@ theorem measure_scalePath_preimage_corridorSet_le_stableProcessTubeProduct_of_re
     {P : Measure (CadlagPath unitInterval ℝ)} [IsProbabilityMeasure P]
     {Ω : Type*} [MeasurableSpace Ω]
     {X : ℝ≥0 → Ω → ℝ} {Q : Measure Ω} [IsProbabilityMeasure Q]
-    (hP : IsStableClockProcessLaw α μ UnitInterval.clock P)
+    (hP : IsStableClockProcessLaw α μ unitInterval.clock P)
     (hX : IsStableLevyProcess α μ X Q)
     (hscale : 0 < scale) (hε : 0 < ε)
     (upper lower : StepBoundary)

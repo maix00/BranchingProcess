@@ -1,6 +1,6 @@
 import Probability.Process.Path.PathClass.StepCorridor.Probability.Rate.Relative
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.TerminalLeft.PathClass.Relative
-import Topology.Cadlag.TerminalLeft
+import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.TerminalLeft.PathClass.Relative
+import Topology.Cadlag.Skorokhod.Path.TerminalLeft
 
 /-!
 # Relative terminal-left Mogul'skii path-class checks
@@ -104,16 +104,16 @@ variable (htightBase : IsTightMeasureSet
   (Set.range fun n => RandomWalk.normalizedStepPathLaw ν normalization n))
 
 #check
-  ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.existsUnique_inner_outer_log_probability_ratio_of_hasRelativeVanishingEnergyGapApproximation_of_sourceDiscretestepCorridorRates
+  ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.existsUnique_inner_outer_log_probability_ratio_of_hasRelativeVanishingEnergyGapApproximation_of_sourceDiscreteStepCorridorRates
     hscale (by norm_num) (by norm_num) hslow hEscape hX hcdf hDOA htightBase
     (G := unitSourceCorridor) ⟨unitSourceCorridorApproximation⟩
 
 end SourceRateApplication
 
-#check ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.existsUnique_inner_outer_log_probability_ratio_of_hasRelativeVanishingEnergyGapApproximation_of_sourceDiscretestepCorridorRates
+#check ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.existsUnique_inner_outer_log_probability_ratio_of_hasRelativeVanishingEnergyGapApproximation_of_sourceDiscreteStepCorridorRates
 
 #print axioms Skorokhod.terminalLeftPath_eq_self_of_mem_space
 #print axioms Skorokhod.terminalLeftPath_idempotent
 #print axioms ProbabilityTheory.IsStableClockProcessLaw.spatialScale
 #print axioms ProbabilityTheory.HasStableProcessEscapeRate.spatialScale
-#print axioms ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.existsUnique_inner_outer_log_probability_ratio_of_hasRelativeVanishingEnergyGapApproximation_of_sourceDiscretestepCorridorRates
+#print axioms ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.existsUnique_inner_outer_log_probability_ratio_of_hasRelativeVanishingEnergyGapApproximation_of_sourceDiscreteStepCorridorRates

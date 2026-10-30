@@ -24,6 +24,15 @@ library uses names that describe these objects' structure. Infinite corridor
 width has zero cost. Continuous admissibility ensures positive width at every
 interior time; a totalized density keeps the definition meaningful outside
 that domain.
+
+## Public declarations
+
+- widthCost α U L is $(U-L)^{-\alpha}$ when the width is finite and positive,
+  and is zero for infinite width.
+- ContinuousAdmissibleStepCorridor.energy integrates this cost; its value is
+  the sum of the cell costs over a common partition of the two boundaries.
+- FiniteCorridorUnion α represents a finite union of corridors, and its
+  energy is the minimum energy among its members.
 -/
 
 open MeasureTheory Set

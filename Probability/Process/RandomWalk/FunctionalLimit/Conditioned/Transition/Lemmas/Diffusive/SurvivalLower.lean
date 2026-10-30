@@ -6,14 +6,14 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.Fluctuation.SparreAndersen.Rotation.Probability
-public import Probability.Process.RandomWalk.Fluctuation.FiniteVarianceSignLimit
-public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition.Event
+import Probability.Process.RandomWalk.Fluctuation.SparreAndersen.Rotation.Probability
+import Probability.Process.RandomWalk.Fluctuation.FiniteVarianceSignLimit
+import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition.Event
 
 /-!
 # Finite-variance survival at a diffusive horizon
 
-The public lemma in this file is:
+## Internal proof declarations
 
 - `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.exists_eventually_diffusiveSurvivalProbability_ge_inverse_square_of_centeredSecondMoment`:
   for centered increments of variance $\sigma^2>0$ and
@@ -27,7 +27,7 @@ immediately after (A.3) (arXiv:cond-mat/9905252), with the Gaussian
 endpoint-sign limit.
 -/
 
-@[expose] public section
+section
 
 open Filter MeasureTheory ProbabilityTheory
 open scoped ENNReal Topology

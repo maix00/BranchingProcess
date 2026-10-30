@@ -13,10 +13,30 @@ public import Topology.Cadlag.Skorokhod.TimeChange.Basic
 /-!
 # Extended distance underlying the Skorokhod `J₁` topology
 
+## Public declarations
+
+- `Skorokhod.uniformEDist f g = \sup_t \operatorname{edist}(f(t),g(t))`
+  is the extended uniform distance on paths. Its evaluation, symmetry,
+  triangle, and time-change invariance properties apply to pseudometric-valued
+  paths.
+- `Skorokhod.j1Cost f g change` is the maximum of the clock distortion and
+  $\sup_t\operatorname{edist}(f(change(t)),g(t))$.
+- `Skorokhod.j1EDist f g = \inf_{change}\,j1Cost(f,g,change)` defines the
+  extended Skorokhod `J₁` distance. The file proves its symmetry, triangle
+  inequality, zero diagonal, and finiteness on càdlàg paths with metric-valued
+  state spaces.
+- `Skorokhod.j1EDist_const_right_eq_uniformEDist`: for a constant path `c`,
+  `j1EDist f (CadlagPath.const c) = uniformEDist f (CadlagPath.const c)`.
+
 The distance formulas and their pseudo-emetric laws apply to pseudo-emetric
 state spaces. For a metric state space, `Skorokhod.Topology` equips the càdlàg
 path space with its `EMetricSpace` and Borel structure; the separate càdlàg
 separation theorem is needed to show that the `J₁` distance separates paths.
+
+The time-change and uniform-error formula is the Skorokhod metric described
+by Patrick Billingsley, *Convergence of Probability Measures*, 1st ed., Wiley,
+1968, Chapter 3, §14, equations (A4.12)–(A4.13), p. 111
+([text](https://ru.djvu.online/file/vaaIHv9IWlVeK)).
 -/
 
 @[expose] public section
@@ -55,7 +75,7 @@ theorem uniformEDist_comm {T E : Type*} [PseudoEMetricSpace E] (f g : T → E) :
   rw [uniformEDist_eq_edist, uniformEDist_eq_edist]
   exact edist_comm _ _
 
-theorem uniformEDist_comp_equiv {S T E : Type*} [PseudoEMetricSpace E]
+private lemma uniformEDist_comp_equiv {S T E : Type*} [PseudoEMetricSpace E]
     (f g : T → E) (e : S ≃ T) :
     uniformEDist (f ∘ e) (g ∘ e) = uniformEDist f g := by
   simp only [uniformEDist_eq_iSup, Function.comp_apply]
@@ -109,11 +129,6 @@ change. -/
 noncomputable def j1Cost {E : Type*} [PseudoEMetricSpace E]
     (f g : CadlagPath unitInterval E) (change : TimeChange) : ℝ≥0∞ :=
   max (ENNReal.ofReal change.distortion) (uniformEDist (change.act f) g)
-
-theorem j1Cost_nonneg {E : Type*} [PseudoEMetricSpace E]
-    (f g : CadlagPath unitInterval E) (change : TimeChange) :
-    0 ≤ j1Cost f g change :=
-  bot_le
 
 theorem uniformEDist_act_symm {E : Type*} [PseudoEMetricSpace E]
     (f g : CadlagPath unitInterval E) (change : TimeChange) :
@@ -206,5 +221,27 @@ theorem j1EDist_self {E : Type*} [PseudoEMetricSpace E]
   apply le_antisymm
   · simpa using j1EDist_le_uniformEDist f f
   · exact bot_le
+
+/-- The `J₁` distance from a path to a constant path is its uniform distance.
+Every time change preserves a constant path, so the uniform distance is
+unchanged by the time changes in the `J₁` infimum. -/
+theorem j1EDist_const_right_eq_uniformEDist {E : Type*} [PseudoEMetricSpace E]
+    (f : CadlagPath unitInterval E) (value : E) :
+    j1EDist f (CadlagPath.const value) =
+      uniformEDist f (CadlagPath.const value) := by
+  apply le_antisymm
+  · exact j1EDist_le_uniformEDist _ _
+  · unfold j1EDist
+    refine le_iInf fun change => ?_
+    have hconst : change.act (CadlagPath.const value) = CadlagPath.const value := by
+      ext t
+      rfl
+    have hmove :
+        uniformEDist (change.act f) (CadlagPath.const value) =
+          uniformEDist f (CadlagPath.const value) := by
+      rw [← hconst]
+      exact uniformEDist_act f (CadlagPath.const value) change
+    rw [← hmove]
+    exact le_max_right _ _
 
 end Skorokhod

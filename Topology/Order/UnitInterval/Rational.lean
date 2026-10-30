@@ -15,6 +15,16 @@ public import Order.Interval.RationalCoordinate.UnitInterval
 This file supplies the topological embedding and density result for rational
 unit-interval coordinates. Their finite-grid representation is an instance of
 the bounded interval construction in `Order.Interval.RationalGrid.Interval`.
+
+## Public declarations
+
+- `RationalCoordinate.toUnitInterval` includes rational coordinates in
+  $\left[0,1\right]\cap\mathbb Q$ into the real unit interval, and
+  `denseRange_toUnitInterval` states that this map has dense range.
+- `RationalCoordinate.toNNReal` maps the same coordinates to $\mathbb R_{\geq0}$.
+  `toNNReal_coe` identifies its real value with the unit-interval inclusion;
+  `monotone_toNNReal` states monotonicity; `toNNReal_bot` and `toNNReal_top`
+  identify both endpoints, and `toNNReal_le_one` bounds its values by $1$.
 -/
 
 @[expose] public section

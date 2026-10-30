@@ -15,6 +15,13 @@ public import Topology.Cadlag.Skorokhod.Topology
 This file proves topological properties of the common-range path set in the
 Skorokhod `J₁` topology. The underlying set is defined generically in
 `Topology.Cadlag.Range`.
+
+## Public declarations
+
+- `Skorokhod.isClosed_rangeIn`: if $A\subseteq E$ is closed, then
+  $\{f\in D([0,1],E): f(t)\in A\text{ for every }t\}$ is closed in the
+  $J_1$ topology.
+- `Skorokhod.measurableSet_rangeIn`: the same path set is measurable.
 -/
 
 @[expose] public section

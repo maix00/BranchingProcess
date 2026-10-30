@@ -19,6 +19,15 @@ public import Mathlib.MeasureTheory.Measure.ProbabilityMeasure
 This file connects the pure positive-definite-function API to characteristic functions of
 probability measures. The main identity expresses the characteristic-function quadratic form
 as the integral of a squared modulus.
+
+## Public declarations
+
+- `charFun_sum_eq_integral_normSq`: for a probability measure $\mu$,
+  $\sum_{i,j}\overline{c_i}c_j\widehat\mu(\xi_i-\xi_j)=
+  \int\left|\sum_j c_j e^{-i\langle x,\xi_j\rangle}\right|^2\,d\mu(x)$.
+- `isPositiveDefinite_charFun`: every probability measure has a positive-
+  definite characteristic function, so the quadratic form on the left is
+  real and nonnegative for every finite choice of $(c_i,\xi_i)$.
 -/
 
 @[expose] public section

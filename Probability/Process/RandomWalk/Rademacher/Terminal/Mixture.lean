@@ -8,9 +8,12 @@ module
 
 public import Probability.Process.RandomWalk.Rademacher.ConditionedPathLaw
 public import Probability.Process.RandomWalk.Rademacher.Terminal.Transform
+import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Survival.Conditioning
 
 /-!
 # The finite mixture of terminal path laws
+
+## Public declarations
 
 The public theorem in this file is:
 

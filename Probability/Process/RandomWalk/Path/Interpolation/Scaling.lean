@@ -11,7 +11,7 @@ public import Probability.Process.RandomWalk.Path.Interpolation.Basic
 /-!
 # Scaling polygonal random-walk paths
 
-The public theorems in this file are:
+## Public declarations
 
 - `ProbabilityTheory.RandomWalk.normalizedLinearPath_div_const_eq`:
   the polygonal path of $(x_j/\sigma)$ normalized by $\sqrt n$ equals

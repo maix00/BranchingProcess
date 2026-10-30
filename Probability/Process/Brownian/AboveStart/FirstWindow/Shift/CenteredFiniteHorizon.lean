@@ -6,11 +6,13 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.Path.AboveStart.FirstWindow.CenteredFiniteHorizon
+public import Probability.Process.Path.AboveStart.FirstWindow.Shift.CenteredFiniteHorizon
 public import Probability.Process.Brownian.AboveStart.FirstWindow.Shift.Centered
 
 /-!
 # Brownian continuity of finite-horizon centered first-window paths
+
+## Public declarations
 
 The public theorem in this file is:
 

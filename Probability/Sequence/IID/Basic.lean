@@ -19,7 +19,11 @@ branching.
 Write $\mu=\texttt{iidSequenceLaw}\,\nu$ and $X_k(\omega)=\omega(k)$ for
 the canonical coordinate process.
 
-The public interfaces include:
+## Public declarations
+
+The declarations below state the canonical sequence law, its finite-coordinate
+and finite-block laws, coordinate independence, coordinatewise pushforwards,
+and finite-coordinate probability bounds:
 
 - `iidSequenceLaw`: the law $\nu^{\mathbb N}$ on infinite sequences, with its probability-measure instance when $\nu$ is a probability measure.
 - `iidSequenceLaw_map_apply` and `iidSequenceLaw_map_finPrefix`: the

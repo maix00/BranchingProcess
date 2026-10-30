@@ -20,12 +20,20 @@ transitivity the graph is connected.
 
 ## Public declarations
 
-- `childGraph_reachable T b` states that the root reaches every vertex `b`, and
-  `childGraph_connected T` gives connectedness of `Tree.childGraph T`.
-- `forestGraph_reachable_same_root` gives reachability between vertices with
-  the same root coordinate. The disjoint-union graph is preconnected exactly
-  when `Root` is a subsingleton; with `[Nonempty Root]`, it is connected in
-  that case.
+* `Combinatorics.UlamHarris.Tree.childGraph_reachable T b` states that the
+  root reaches every vertex `b`; `Combinatorics.UlamHarris.Tree.childGraph_preconnected T`
+  and `Combinatorics.UlamHarris.Tree.childGraph_connected T` state that
+  `(childGraph T).Preconnected` and `(childGraph T).Connected`.
+* `Combinatorics.UlamHarris.RootIndexed.Tree.forestGraph_reachable_same_root T r b` gives reachability
+  from the root of component `r` to every vertex `b` in that component.
+  `Combinatorics.UlamHarris.RootIndexed.Tree.forestGraph_preconnected T`
+  proves preconnectedness when `Root` is a subsingleton, and
+  `Combinatorics.UlamHarris.RootIndexed.Tree.not_forestGraph_preconnected h`
+  states `r ≠ s → ¬ (forestGraph T).Preconnected`.
+* `Combinatorics.UlamHarris.RootIndexed.Tree.forestGraph_preconnected_iff_subsingleton T`
+  states `(forestGraph T).Preconnected ↔ Subsingleton Root`;
+  `Combinatorics.UlamHarris.RootIndexed.Tree.forestGraph_connected T` gives
+  `(forestGraph T).Connected` when `Root` is nonempty and a subsingleton.
 -/
 
 @[expose] public section

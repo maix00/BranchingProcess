@@ -8,14 +8,14 @@ module
 
 public import Probability.Process.Path.Scaling.FiniteHorizon
 public import Probability.Process.Brownian.PathLaw.ContinuousModification
-public import Probability.Distributions.Stable.Gaussian.Basic
+import Probability.Distributions.Stable.Gaussian.Basic
 public import Topology.ContinuousMap.LastZero
 public import Mathlib.Probability.BrownianMotion.Basic
 
 /-!
 # The last zero of Brownian motion before time one
 
-The public theorem in this file is:
+## Public declarations
 
 - `ProbabilityTheory.IsBrownianReal.ae_lastZero_restrictPathToUnitInterval_lt_top`:
   for Brownian motion $B$ started at zero and

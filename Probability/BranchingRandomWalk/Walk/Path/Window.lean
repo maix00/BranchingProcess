@@ -12,6 +12,17 @@ public import Probability.BranchingRandomWalk.Walk.Basic
 /-!
 # Window events for the singleton-slot branching walk
 
+## Public declarations
+
+- `ProbabilityTheory.BranchingRandomWalk.RandomWalk.ProcessInClosedInterval`:
+  the event that the singleton-walk process lies in \([a,b]\) at each time
+  \(0,\ldots,n\).
+- `ProbabilityTheory.BranchingRandomWalk.RandomWalk.measurableSet_processInClosedInterval`:
+  measurability of this finite-time path event.
+- `ProbabilityTheory.BranchingRandomWalk.RandomWalk.processInClosedInterval_ofIncrements_iff`:
+  identifies it with the increment-path event
+  \(a\le x+\sum_{j<k}\xi_j\le b\) for every \(k\le n\).
+
 This module connects path windows in the branching-walk realization to
 ordinary increment-window events. The general measurable window API lives in
 `Probability.Process.RandomWalk.Path.Window`.

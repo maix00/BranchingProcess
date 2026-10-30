@@ -23,7 +23,7 @@ part give a one-sided first-moment estimate.  This is the analytic step needed
 for the `a = 1` endpoint in the speed lower bound; it does not require a
 second moment or the full `L²` trajectory limit.
 
-The public theorems in this file are:
+## Public declarations
 
 - `ProbabilityTheory.integral_ge_of_lower_bound_off_event_exp_neg`: if
   $X\ge z$ outside $A$, $\mathbb P(A)\le p$, and
@@ -162,9 +162,11 @@ theorem integral_ge_of_lower_bound_off_event_exp_neg
 The family of measures may vary with `n`. For each threshold below `target`,
 the bad-event probability is assumed to be eventually bounded by `n⁻ᵋ` for
 some positive `ε`; this is the abstract analytic input supplied by a
-polynomial estimate such as (4.16). The theorem proves the sequence liminf,
-in the extended reals so no separate upper-bound assumption is needed. It does
-not itself prove any branching-random-walk tail estimate. -/
+polynomial lower-tail estimate in WANG Yiyang, *Asymptotic Speed of the
+N-Branching Random Walk with Infinite Offspring* (master's thesis, Fudan
+University, 2026), Chapter 4, equation (4.16). The theorem proves the sequence
+liminf, in the extended reals so no separate upper-bound assumption is needed.
+It does not itself prove any branching-random-walk tail estimate. -/
 theorem target_le_liminf_integral_div_log_of_polynomial_lower_tail
     {Ω : Type*} [MeasurableSpace Ω]
     (μ : ℕ → Measure Ω) (hμ : ∀ n, IsProbabilityMeasure (μ n))
@@ -209,7 +211,7 @@ theorem target_le_liminf_integral_div_log_of_polynomial_lower_tail
       exact hlog.eventually_gt_atTop 0
     filter_upwards [htail, hExpBound, hlogPos, herrorSmall,
       eventually_atTop.2 ⟨2, fun n hn => hn⟩] with n htailN hExpN hlogN herr hn
-    letI : IsProbabilityMeasure (μ n) := hμ n
+    let : IsProbabilityMeasure (μ n) := hμ n
     let A : Set Ω := {ω | X n ω ≤ z' * Real.log (n : ℝ)}
     have hA : MeasurableSet A := by
       exact measurableSet_Iic.preimage (hMeas n)

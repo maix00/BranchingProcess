@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.BranchingRandomWalk.Spine.Tilted.Law
-public import Mathlib.MeasureTheory.Measure.Prod
+public import Probability.Process.RandomWalk.Kernel.Endpoint
 
 /-!
 # Endpoint form of the iterated many-to-one identity
@@ -19,6 +19,21 @@ law.  The one-generation identities imply equality of their iterates.
 
 The later tree theorem identifies the recursive branching transition with the
 actual generation of the pre-sampled branching field.
+
+## Public declarations
+
+- `weightedBranchingEndpointOperator` and `branchingEndpointOperator`:
+  define the one-step weighted and unweighted branching endpoint operators.
+- `weightedBranchingEndpointOperator_eq_tilted` and
+  `branchingEndpointOperator_eq_untilted`: identify them with the generic
+  endpoint operators of the tilted increment law.
+- `weightedBranchingEndpointIterate` and `branchingEndpointIterate`: define
+  the iterated branching operators.
+- `weightedEndpointManyToOne` and `endpointManyToOne`: for every nonnegative
+  endpoint test $f$, identify the $n$-generation exponentially weighted
+  branching sum with `RandomWalk.endpointIterate`, and the unweighted
+  branching sum with `RandomWalk.exponentialEndpointIterate` under the tilted
+  increment law.
 -/
 
 open MeasureTheory
@@ -29,16 +44,7 @@ open scoped ENNReal
 namespace ProbabilityTheory.BranchingRandomWalk.Spine
 
 open Combinatorics.Branching MeasureTheory
-
-/-- Apply one additive spine increment to an endpoint test. -/
-noncomputable def tiltedEndpointOperator (ν : Measure ℝ)
-    (f : ℝ → ENNReal) (x : ℝ) : ENNReal :=
-  ∫⁻ y, f (x + y) ∂ν
-
-/-- Apply one spine increment and undo the exponential tilt. -/
-noncomputable def untiltedEndpointOperator (ν : Measure ℝ)
-    (f : ℝ → ENNReal) (x : ℝ) : ENNReal :=
-  ∫⁻ y, ENNReal.ofReal (Real.exp y) * f (x + y) ∂ν
+open ProbabilityTheory.RandomWalk
 
 /-- One exponentially weighted branching generation, viewed from position
 `x`. -/
@@ -57,18 +63,6 @@ noncomputable def branchingEndpointOperator {ι X : Type*}
   ∫⁻ ξ, ∑' i : ι,
     survivingPotentialTest φ (fun y => f (x + y)) ξ i ∂μ
 
-theorem measurable_tiltedEndpointOperator
-    (ν : Measure ℝ) [SFinite ν] {f : ℝ → ENNReal} (hf : Measurable f) :
-    Measurable (tiltedEndpointOperator ν f) := by
-  apply Measurable.lintegral_prod_right
-  fun_prop
-
-theorem measurable_untiltedEndpointOperator
-    (ν : Measure ℝ) [SFinite ν] {f : ℝ → ENNReal} (hf : Measurable f) :
-    Measurable (untiltedEndpointOperator ν f) := by
-  apply Measurable.lintegral_prod_right
-  fun_prop
-
 /-- The weighted branching transition is exactly the tilted spine
 transition. -/
 theorem weightedBranchingEndpointOperator_eq_tilted {ι X : Type*}
@@ -76,7 +70,7 @@ theorem weightedBranchingEndpointOperator_eq_tilted {ι X : Type*}
     (φ : Potential X) (μ : Measure (Combinatorics.Branching.Step ι X))
     {f : ℝ → ENNReal} (hf : Measurable f) :
     weightedBranchingEndpointOperator φ μ f =
-      tiltedEndpointOperator (tiltedPotentialLaw φ (-1) μ) f := by
+      endpointOperator (tiltedPotentialLaw φ (-1) μ) f := by
   funext x
   symm
   exact lintegral_tiltedPotentialLaw φ (-1) μ
@@ -89,10 +83,10 @@ theorem branchingEndpointOperator_eq_untilted {ι X : Type*}
     (φ : Potential X) (μ : Measure (Combinatorics.Branching.Step ι X))
     {f : ℝ → ENNReal} (hf : Measurable f) :
     branchingEndpointOperator φ μ f =
-      untiltedEndpointOperator (tiltedPotentialLaw φ (-1) μ) f := by
+      exponentialEndpointOperator (tiltedPotentialLaw φ (-1) μ) f := by
   funext x
   symm
-  simpa [untiltedEndpointOperator, branchingEndpointOperator] using
+  simpa [exponentialEndpointOperator, branchingEndpointOperator] using
     (lintegral_tiltedPotentialLaw_cancel φ (-1) μ
       (fun y => f (x + y)) (by fun_prop))
 
@@ -114,34 +108,6 @@ noncomputable def branchingEndpointIterate {ι X : Type*}
   | n + 1, f => branchingEndpointOperator φ μ
       (branchingEndpointIterate φ μ n f)
 
-/-- Recursive `n`-step tilted spine endpoint functional. -/
-noncomputable def tiltedEndpointIterate (ν : Measure ℝ) :
-    ℕ → (ℝ → ENNReal) → ℝ → ENNReal
-  | 0, f => f
-  | n + 1, f => tiltedEndpointOperator ν (tiltedEndpointIterate ν n f)
-
-/-- Recursive `n`-step spine endpoint functional with the reciprocal
-exponential factor at every step. -/
-noncomputable def untiltedEndpointIterate (ν : Measure ℝ) :
-    ℕ → (ℝ → ENNReal) → ℝ → ENNReal
-  | 0, f => f
-  | n + 1, f => untiltedEndpointOperator ν
-      (untiltedEndpointIterate ν n f)
-
-theorem measurable_tiltedEndpointIterate
-    (ν : Measure ℝ) [SFinite ν] {f : ℝ → ENNReal} (hf : Measurable f) :
-    ∀ n, Measurable (tiltedEndpointIterate ν n f)
-  | 0 => hf
-  | n + 1 => measurable_tiltedEndpointOperator ν
-      (measurable_tiltedEndpointIterate ν hf n)
-
-theorem measurable_untiltedEndpointIterate
-    (ν : Measure ℝ) [SFinite ν] {f : ℝ → ENNReal} (hf : Measurable f) :
-    ∀ n, Measurable (untiltedEndpointIterate ν n f)
-  | 0 => hf
-  | n + 1 => measurable_untiltedEndpointOperator ν
-      (measurable_untiltedEndpointIterate ν hf n)
-
 /-- Weighted endpoint recursion when raw edge marks are first interpreted in
 an abstract position space and then observed through a real potential. -/
 theorem weightedEndpointManyToOne
@@ -153,17 +119,17 @@ theorem weightedEndpointManyToOne
     (hboundary : HasBoundaryNormalization (potential.comp d hd) μ)
     {f : ℝ → ENNReal} (hf : Measurable f) :
     ∀ n, weightedBranchingEndpointIterate (potential.comp d hd) μ n f =
-      tiltedEndpointIterate
+      endpointIterate
         (tiltedPotentialLaw (potential.comp d hd) (-1) μ) n f
   | 0 => rfl
   | n + 1 => by
       let φ := potential.comp d hd
       let _ : IsProbabilityMeasure (tiltedPotentialLaw φ (-1) μ) :=
         tiltedPotentialLaw_isProbability φ μ hboundary
-      rw [weightedBranchingEndpointIterate, tiltedEndpointIterate,
+      rw [weightedBranchingEndpointIterate, endpointIterate,
         weightedEndpointManyToOne d hd potential μ hboundary hf n]
       exact weightedBranchingEndpointOperator_eq_tilted φ μ
-        (measurable_tiltedEndpointIterate _ hf n)
+        (measurable_endpointIterate _ hf n)
 
 /-- Unweighted endpoint recursion with separate raw marks, positions, and
 real-valued potential. -/
@@ -176,16 +142,16 @@ theorem endpointManyToOne
     (hboundary : HasBoundaryNormalization (potential.comp d hd) μ)
     {f : ℝ → ENNReal} (hf : Measurable f) :
     ∀ n, branchingEndpointIterate (potential.comp d hd) μ n f =
-      untiltedEndpointIterate
+      exponentialEndpointIterate
         (tiltedPotentialLaw (potential.comp d hd) (-1) μ) n f
   | 0 => rfl
   | n + 1 => by
       let φ := potential.comp d hd
       let _ : IsProbabilityMeasure (tiltedPotentialLaw φ (-1) μ) :=
         tiltedPotentialLaw_isProbability φ μ hboundary
-      rw [branchingEndpointIterate, untiltedEndpointIterate,
+      rw [branchingEndpointIterate, exponentialEndpointIterate,
         endpointManyToOne d hd potential μ hboundary hf n]
       exact branchingEndpointOperator_eq_untilted φ μ
-        (measurable_untiltedEndpointIterate _ hf n)
+        (measurable_exponentialEndpointIterate _ hf n)
 
 end ProbabilityTheory.BranchingRandomWalk.Spine

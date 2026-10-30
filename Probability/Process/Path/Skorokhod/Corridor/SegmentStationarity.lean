@@ -21,15 +21,18 @@ almost-surely càdlàg paths, complete-segment corridor probabilities are
 invariant under deterministic time translation. The process need not start at
 zero, and no stable-law or scaling assumption is used.
 
-The public results are `HasIndepIncrements.measure_fullSegmentCorridor_shift`
-and `HasIndepIncrements.measure_fullSegmentCorridorReturn_shift`. The first
-states
+## Public declarations
+
+- `ProbabilityTheory.HasIndepIncrements.measure_fullSegmentCorridor_shift`
+  states
 \[
   \mathbb P\bigl(X_t-X_0\in C\text{ for }0\le t\le T\bigr)
   =
   \mathbb P\bigl(X_{s+t}-X_s\in C\text{ for }0\le t\le T\bigr),
 \]
-and the second includes a prescribed terminal return window. Their proofs use
+under independent stationary increments and a.s. càdlàg paths.
+- `ProbabilityTheory.HasIndepIncrements.measure_fullSegmentCorridorReturn_shift`
+  gives the same equality with a prescribed terminal return window. Their proofs use
 the general path-law theorem for equal-duration time changes and the rational
 coordinate characterization of càdlàg corridor events.
 -/

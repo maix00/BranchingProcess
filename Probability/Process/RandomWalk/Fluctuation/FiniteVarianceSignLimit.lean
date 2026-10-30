@@ -6,15 +6,18 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Distributions.Stable.Attraction.Normal.Basic
-public import Probability.Distributions.Gaussian.Sign
 public import Probability.Distributions.Moments.Real
-public import Probability.ConvergenceInDistribution.Portmanteau
+public import Probability.Sequence.IID.Basic
 public import Algebra.BigOperators.AdditivePath.Basic
-public import Mathlib.Analysis.Asymptotics.SpecificAsymptotics
+import Probability.Distributions.Stable.Attraction.Normal.Basic
+import Probability.Distributions.Gaussian.Sign
+import Probability.ConvergenceInDistribution.Portmanteau
+import Mathlib.Analysis.Asymptotics.SpecificAsymptotics
 
 /-!
 # The positivity parameter of a finite-variance random walk
+
+## Public declarations
 
 Let $(\xi_i)_{i\geq1}$ be i.i.d. with law $\nu$, set
 $S_0=0$ and $S_n=\sum_{i=1}^n\xi_i$, and write $\mathbb P_\nu$ and
@@ -58,15 +61,11 @@ theorem tendsto_positivePartialSumProbability_half
     Tendsto (fun n : ℕ => iidSequenceLaw ν
       {increment | 0 < AdditivePath.displacement n increment})
       atTop (nhds ((1 / 2 : ℝ≥0∞))) := by
-  have hsquare : Integrable (fun x : ℝ => x ^ 2) ν :=
-    Integrable.of_integral_ne_zero (by
-      rw [hν.2]
-      exact pow_ne_zero 2 hsigma.ne')
   let scale : ℕ → ℝ :=
     fun n => Real.sqrt ((n : ℝ) * ∫ x, x ^ 2 ∂ν)
   have hnormal :=
-    isInDomainOfAttractionAlong_gaussianReal_zero_one_of_centered_integrable_sq
-      ν hν.1 hsquare (hν.2 ▸ sq_pos_of_pos hsigma)
+    isInDomainOfAttractionAlong_gaussianReal_zero_one_of_centered_posSecondMoment
+      ν hν.1 (hν.2 ▸ sq_pos_of_pos hsigma)
   have hzero : (gaussianReal 0 (1 : ℝ≥0))
       (frontier (Set.Ioi (0 : ℝ))) = 0 := by
     rw [frontier_Ioi]
@@ -137,15 +136,11 @@ theorem tendsto_nonnegativePartialSumProbability_half
     Tendsto (fun n : ℕ => iidSequenceLaw ν
       {increment | 0 ≤ AdditivePath.displacement n increment})
       atTop (nhds ((1 / 2 : ℝ≥0∞))) := by
-  have hsquare : Integrable (fun x : ℝ => x ^ 2) ν :=
-    Integrable.of_integral_ne_zero (by
-      rw [hν.2]
-      exact pow_ne_zero 2 hsigma.ne')
   let scale : ℕ → ℝ :=
     fun n => Real.sqrt ((n : ℝ) * ∫ x, x ^ 2 ∂ν)
   have hnormal :=
-    isInDomainOfAttractionAlong_gaussianReal_zero_one_of_centered_integrable_sq
-      ν hν.1 hsquare (hν.2 ▸ sq_pos_of_pos hsigma)
+    isInDomainOfAttractionAlong_gaussianReal_zero_one_of_centered_posSecondMoment
+      ν hν.1 (hν.2 ▸ sq_pos_of_pos hsigma)
   have hzero : (gaussianReal 0 (1 : ℝ≥0))
       (frontier (Set.Ici (0 : ℝ))) = 0 := by
     rw [frontier_Ici]

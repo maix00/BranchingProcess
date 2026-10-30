@@ -17,8 +17,41 @@ This module contains the path-level part of a uniform corridor partition.
 It is independent of stable laws and of any particular process: a path on
 rational times is cut into translated block paths, and the resulting tube
 events are measurable.  Generic measure bounds for independent block paths
-live in `UniformBlocks.Probability`; stable Lévy processes supply the block
+live in `UniformBlocks.Probability.Bounds`; stable Lévy processes supply the block
 laws and independence in `Probability.Process.Stable.SmallDeviation.Blocks`.
+
+## Public declarations
+
+Write `N = blocks` and `τⱼ(q) = (j + q) / N`. The definitions
+`rationalUniformBlockTime`, `rationalUniformBlockAbsoluteTime`,
+`rationalUniformBlockBoundary`, and `rationalUniformBlockClock` give the
+rational block time, its real-time image, the boundary `m / N`, and elapsed
+time within the block. `rationalUniformBlockProcessFromTime X hblocks j q ω`
+is `X(τⱼ(q)) - X(τⱼ(0))`; `rationalTubeBlockIncrement hblocks j x q` is the
+same translated increment for a rational-coordinate path, and
+`rationalUniformBlockProcess X hblocks j` is the family of these block paths.
+`rationalTubeBlockEvent width hblocks j` is the event that this increment
+path has oscillation less than `width`.
+
+The time-map identities are `monotone_rationalUniformBlockTime`,
+`rationalUniformBlockTime_bot`,
+`rationalUniformBlockBoundary_eq_start`,
+`rationalUniformBlockBoundary_succ_eq_end`,
+`monotone_rationalUniformBlockAbsoluteTime`,
+`rationalUniformBlockAbsoluteTime_le_boundary`,
+`rationalUniformBlockAbsoluteTime_zero_eq_horizon`,
+`rationalUniformBlockProcess_zero_eq_initial`,
+`rationalUniformBlockBoundary_succ_one`,
+`rationalUniformBlockAbsoluteTime_top_eq_bot_of_succ`, and
+`rationalUniformBlockClock_eq`; in particular, every block has elapsed time
+`q / N` and adjacent block endpoints agree.
+
+The measurability results are `measurable_rationalTubeBlockIncrement`,
+`measurable_rationalUniformBlockProcess`, and
+`measurableSet_rationalTubeBlockEvent`. Finally,
+`rationalCoordinateOscillationTube_subset_iInter_uniformBlockEvents` states
+that a path with oscillation less than `width` has each block increment path
+in the same oscillation tube.
 -/
 
 open MeasureTheory

@@ -36,6 +36,8 @@ open Classical
 
 @[expose] public section
 
+open _root_.Combinatorics.Selection
+
 namespace Combinatorics
 
 namespace Branching

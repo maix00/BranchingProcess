@@ -11,7 +11,7 @@ public import Probability.Process.RandomWalk.Path.Skorokhod.Corridor.Endpoint.Ba
 /-!
 # Closed endpoint corridors for step paths
 
-The public theorem in this file is:
+## Public declarations
 
 - `ProbabilityTheory.RandomWalk.normalizedStepCadlagPathIcc_mem_rangeInClosedIntervalEndsIn_iff_grid`:
   for $a\le0\le b$ and $n>0$, the normalized step path lies in

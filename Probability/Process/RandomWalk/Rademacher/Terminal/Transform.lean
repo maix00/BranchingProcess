@@ -9,9 +9,12 @@ module
 public import Probability.Process.RandomWalk.Rademacher.LastSignChange
 public import Probability.Process.RandomWalk.Path.Interpolation.Core
 public import Topology.ContinuousMap.LastSignChange
+import Topology.Order.UnitInterval.Time
 
 /-!
 # Bolthausen's sign-stable tail time of a simple symmetric walk
+
+## Public declarations
 
 The public theorem in this file is:
 
@@ -308,7 +311,7 @@ theorem rademacher_signStableMeanderTransform_eq_terminalAbsolutePath
     then 0 else
       |normalizedLinearContinuousPathIcc
         (fun j => Real.sqrt j) n (rademacherIncrementPath branch)
-          (ContinuousMap.tailAffineTime
+          (unitInterval.terminalSegmentParameter
             (ContinuousMap.firstSignStableStart
               (normalizedLinearContinuousPathIcc
                 (fun j => Real.sqrt j) n (rademacherIncrementPath branch))) t)| /
@@ -319,7 +322,7 @@ theorem rademacher_signStableMeanderTransform_eq_terminalAbsolutePath
               (rademacherIncrementPath branch)) : ℝ))) = _
   rw [hcut]
   simp only [hcutTop, ↓reduceIte]
-  have htime : (ContinuousMap.tailAffineTime cut t : ℝ) =
+  have htime : (unitInterval.terminalSegmentParameter cut t : ℝ) =
       (μ : ℝ) / n + ((n - μ : ℕ) : ℝ) / n * (t : ℝ) := by
     change (μ : ℝ) / n + (1 - (μ : ℝ) / n) * (t : ℝ) = _
     have hnreal : (n : ℝ) ≠ 0 := by exact_mod_cast hn.ne'

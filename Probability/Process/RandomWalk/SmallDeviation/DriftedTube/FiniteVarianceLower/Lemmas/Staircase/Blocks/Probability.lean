@@ -6,15 +6,27 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.Filtration.ConditionalBlocks
-public import Probability.Sequence.IID.Basic
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.Binning
-public import Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.EndpointWindow
-import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Binning.Geometry
+import Probability.Process.Filtration.ConditionalBlocks
+import Probability.Sequence.IID.Basic
+import all Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.Binning
+import Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.EndpointWindow.Basic
+import all Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Binning.Geometry
 /-!
 # Common narrowed tubes give uniform block probabilities
 
-The module-visible lemma in this file is:
+## Internal proof declarations
+
+For each bin $l<m$, suppose the narrowed endpoint-window event has probability at least $b$. Then the translated target event has the same lower bound for every entrance position in the central window:
+
+$$
+\left(\forall l<m,\ b\leq (\operatorname{iidSequenceLaw}\nu)(H_l)\right)
+\Longrightarrow
+\forall y\in[r+\Delta/3,r+2\Delta/3],\quad
+b\leq (\operatorname{iidSequenceLaw}\nu)(T_y).
+$$
+
+Here $H_l$ is the fixed narrowed tube for bin $l$, and $T_y$ is the target tube translated by $r-y$.
+The supporting lemma in this file is:
 
 - `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.relativeHorizontalTubeProbability_ge_of_staircaseBinBounds`:
   lower probability bounds for the finitely many fixed narrowed tubes
@@ -29,7 +41,7 @@ translation, “Small Deviations in a Space of Trajectories,” *Theory of
 Probability and Its Applications* 19(4) (1975), 726--736, DOI 10.1137/1119081.
 -/
 
-@[expose] public section
+section
 
 open MeasureTheory ProbabilityTheory
 

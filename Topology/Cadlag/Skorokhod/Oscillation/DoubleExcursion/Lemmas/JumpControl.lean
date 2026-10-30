@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Topology.Cadlag.Skorokhod.Oscillation.DoubleExcursion.Basic
+import Topology.Cadlag.Skorokhod.Oscillation.DoubleExcursion.Basic
 import Topology.Cadlag.Skorokhod.Oscillation.Partition.Existence
 
 /-!
@@ -22,7 +22,7 @@ Patrick Billingsley, *Convergence of Probability Measures*, 1st ed., Wiley,
 1968, Chapter 3, §14, Theorem 14.4, p. 119
 ([online copy](https://ru.djvu.online/file/vaaIHv9IWlVeK)).
 
-## Auxiliary declarations
+## Internal proof declarations
 
 - `HasEndpointOscillationBound.largeJump_awayFromEndpoints`: a jump larger
   than twice the endpoint oscillation bound lies away from both endpoints.
@@ -33,7 +33,7 @@ Patrick Billingsley, *Convergence of Probability Measures*, 1st ed., Wiley,
   `5 * epsilon` under the double-excursion condition.
 -/
 
-@[expose] public section
+section
 
 open Set
 open Filter
@@ -181,7 +181,7 @@ private lemma HasEndpointOscillationBound.rightJump_le
 
 /-- Endpoint oscillation control forces every jump larger than `2 * epsilon`
 away from both endpoints. -/
-theorem HasEndpointOscillationBound.largeJump_awayFromEndpoints
+lemma HasEndpointOscillationBound.largeJump_awayFromEndpoints
     {E : Type*} [PseudoMetricSpace E]
     {path : CadlagPath unitInterval E} {delta epsilon : ℝ}
     (hend : HasEndpointOscillationBound path delta epsilon)
@@ -262,7 +262,7 @@ private lemma largeJumps_separated_of_lt
 
 /-- Two distinct interior jumps larger than `2 * epsilon` must be at least
 `delta` apart under the double-excursion bound. -/
-theorem HasDoubleExcursionBound.largeJumpsSeparated
+lemma HasDoubleExcursionBound.largeJumpsSeparated
     {E : Type*} [PseudoMetricSpace E]
     {path : CadlagPath unitInterval E} {delta epsilon : ℝ}
     (hdouble : HasDoubleExcursionBound path delta epsilon)
@@ -282,7 +282,7 @@ theorem HasDoubleExcursionBound.largeJumpsSeparated
 /-- On an interval shorter than `delta`, a path with no jumps exceeding
 `2 * epsilon` has oscillation at most `5 * epsilon` under the
 double-excursion bound. -/
-theorem HasDoubleExcursionBound.oscillation_le_of_jumpBound
+lemma HasDoubleExcursionBound.oscillation_le_of_jumpBound
     {E : Type*} [PseudoMetricSpace E]
     {path : CadlagPath unitInterval E} {delta epsilon : ℝ}
     (hdouble : HasDoubleExcursionBound path delta epsilon)

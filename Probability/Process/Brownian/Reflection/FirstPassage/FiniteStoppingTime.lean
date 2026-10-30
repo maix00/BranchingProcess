@@ -6,13 +6,15 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.Brownian.Reflection.Path.Deterministic
+public import Probability.Process.Brownian.PathLaw.ContinuousPathLaw
+public import Probability.Process.Path.Reflection.Basic
 public import Mathlib.MeasureTheory.Measure.Basic
+import Probability.Process.Brownian.Reflection.Path.Deterministic
 
 /-!
 # Reflection at a finite-valued Brownian stopping time
 
-The public theorems in this file are:
+## Public declarations
 
 - `ProbabilityTheory.IsBrownianReal.measure_reflectAfter_finitePathwiseStoppingTime_eq`:
   a measurable, finite-valued pathwise stopping time preserves Brownian

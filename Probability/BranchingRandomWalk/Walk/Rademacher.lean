@@ -12,6 +12,20 @@ public import Probability.BranchingRandomWalk.Walk.Basic
 /-!
 # The Rademacher walk as a singleton-slot branching walk
 
+## Public declarations
+
+- `ProbabilityTheory.BranchingRandomWalk.RandomWalk.rademacher`: the walk
+  obtained by mapping an IID sequence with the symmetric law on \(\{-1,1\}\)
+  to its partial-sum path.
+- `ProbabilityTheory.BranchingRandomWalk.RandomWalk.rademacher_law`: identifies
+  the path law with the image of that IID sequence under `Walk.ofIncrements`.
+- `ProbabilityTheory.BranchingRandomWalk.RandomWalk.rademacher_isIncrementPathRealization`:
+  realizes the walk from its independent Rademacher increments.
+- `ProbabilityTheory.BranchingRandomWalk.RandomWalk.rademacher_survivesForever`:
+  the singleton-slot branching walk survives at every generation.
+- `ProbabilityTheory.BranchingRandomWalk.RandomWalk.process_ofIncrements_eq_partialSum`:
+  identifies the process generated from increments with their partial sums.
+
 This module connects the process-level Rademacher increment law to the
 singleton-slot branching-walk law.
 -/

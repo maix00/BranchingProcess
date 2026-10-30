@@ -6,9 +6,9 @@ Authors: WANG Yiyang
 
 module
 
-public import Mathlib.Algebra.Order.Floor.Ring
 public import Mathlib.Topology.UnitInterval
 public import Order.Interval.DyadicGrid
+import Mathlib.Algebra.Order.Floor.Ring
 
 /-!
 # Dyadic coordinates in the unit interval
@@ -16,6 +16,15 @@ public import Order.Interval.DyadicGrid
 This is the unit-interval topological adapter for the finite dyadic grids.
 The underlying `DyadicGrid.grid` accepts arbitrary endpoints; this file adds
 the unit-interval subtype and its density theorem.
+
+## Public declarations
+
+- `DyadicGrid.unitGrid k` is the level-$k$ grid on $\left[0,1\right]$;
+  `unitPoint k j` views its $j$-th point as an element of the real unit
+  interval.
+- `DyadicGrid.unitPoints` is the union of the finite level grids.
+  `countable_unitPoints` proves it countable and `dense_unitPoints` proves it
+  dense in the real unit interval.
 -/
 
 @[expose] public section

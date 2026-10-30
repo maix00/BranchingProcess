@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.BranchingRandomWalk.Genealogy.Lineage.MultiRoot
+public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Lineage
 public import Probability.BranchingRandomWalk.Restart.Failure.Estimate
 
 /-!
@@ -17,6 +17,14 @@ observable completion times of a pre-sampled multi-root reserve family.
 Candidate outcomes are tested at their `sigma` completion generations, so the
 failure event is measurable in the domain filtration while the selected
 frontier subtrees remain independent of that filtration.
+
+## Public declarations
+
+- `RootIndexed.ReserveLineages.integral_selectedSubtree_abs_on_candidateFailure`
+  and
+  `RootIndexed.ReserveLineages.integral_selectedSubtree_abs_on_candidateFailure_le`:
+  factor the first absolute moment of a lineage-selected reserve subtree by
+  the candidate-failure probability and give the resulting bound.
 -/
 
 open MeasureTheory ProbabilityTheory

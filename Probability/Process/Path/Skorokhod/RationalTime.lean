@@ -13,6 +13,16 @@ public import Topology.Order.UnitInterval.Rational
 /-!
 # Rational-time restrictions of processes
 
+## Public declarations
+
+- `rationalHorizonProcess` restricts a process to rational points of the
+  unit interval after time rescaling by a finite horizon.
+- `centerRationalPath` maps $x$ to $q\mapsto x(q)-x(0)$, and
+  `measurable_centerRationalPath` proves this centering map measurable.
+- `rationalHorizonTubeEvent` is the pullback of the strict rational-time
+  oscillation event; membership means that some rational $\delta>0$ satisfies
+  $|x(q)-x(r)|\leq\text{width}-\delta$ for every rational $q,r\in[0,1]$.
+
 The rational embedding into nonnegative time is deterministic and lives in
 `Topology.Order.UnitInterval.Rational`. This file defines its use to restrict
 real-time processes and form tube events.

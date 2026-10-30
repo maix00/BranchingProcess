@@ -6,12 +6,14 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.ConvergenceInDistribution.Mapping
-public import Probability.Process.Brownian.AboveStart.FirstWindow.Shift.CenteredFiniteHorizon
-public import Probability.Process.RandomWalk.FunctionalLimit.Donsker.Path.FiniteHorizon
+import Probability.ConvergenceInDistribution.Mapping
+import Probability.Process.Brownian.AboveStart.FirstWindow.Shift.CenteredFiniteHorizon
+import Probability.Process.RandomWalk.FunctionalLimit.Donsker.Path.FiniteHorizon
 
 /-!
 # Donsker convergence after a finite first-window shift
+
+## Internal proof declarations
 
 The finite-horizon continuous-mapping step used by the first-window limit is:
 
@@ -28,7 +30,7 @@ p. 484; the printed definition of $\Phi_s$ on p. 482 omits this
 centering. The argument uses the continuity proof of Lemma 2.5.
 -/
 
-@[expose] public section
+section
 
 namespace ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned
 

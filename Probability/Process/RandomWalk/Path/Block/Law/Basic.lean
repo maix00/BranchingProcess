@@ -8,7 +8,7 @@ module
 
 import Probability.Sequence.IID.Blocks.Consecutive
 public import Probability.Process.RandomWalk.Path.Block.Law.FiniteInterval
-public import Probability.Independence.Finite
+public import Probability.Independence.FiniteFamily
 public import Probability.Sequence.IID.Basic
 import Probability.Sequence.IID.Blocks.StoppingTime
 public import Mathlib.Probability.Independence.Basic
@@ -16,16 +16,25 @@ public import Mathlib.Probability.Independence.Basic
 /-!
 # Laws of block sums
 
-For an IID increment sequence $X$, the public declarations include:
+For IID increments, this module identifies the law of any translated block
+sum and proves independence for consecutive block sums of variable or equal
+length.
 
-- `iidSequenceLaw_map_blockSum`: $\sum_{k=s}^{s+\ell-1}X_k$ has the same law
-  as the initial displacement $\sum_{k<\ell}X_k$.
-- `indepFun_blockSum_blockSum`: sums over consecutive disjoint blocks are
-  independent.
-- `iIndepFun_variableConsecutiveBlockSums`: sums over any finite family of
-  consecutive blocks with prescribed lengths are mutually independent.
+## Public declarations
 
-The equal-length results specialize the variable-length block-sum laws.
+* `iidSequenceLaw_map_blockSum` identifies the law of the sum over indices
+  `[start, start + length)` with the law of the initial length-`length`
+  displacement.
+* `indepFun_blockSum_blockSum` proves independence of sums on two consecutive
+  disjoint increment blocks.
+* `indepFun_variableConsecutiveBlockSums_next` proves independence of the sum
+  over a finite family of variable-length consecutive blocks from the next
+  block sum.
+* `iIndepFun_variableConsecutiveBlockSums` proves mutual independence for a
+  finite family of variable-length consecutive block sums.
+* `indepFun_consecutiveBlockSums_next` and
+  `iIndepFun_consecutiveBlockSums` give the two corresponding equal-length
+  specializations.
 -/
 
 open MeasureTheory
@@ -92,9 +101,9 @@ theorem indepFun_variableConsecutiveBlockSums_next
     (ν : Measure E) [IsProbabilityMeasure ν] (length : ℕ → ℕ) (blocks : ℕ) :
     IndepFun
       (fun increment (j : Fin blocks) =>
-        AdditivePath.blockSum (AdditivePath.blockStart length j.val)
+        AdditivePath.blockSum (Combinatorics.Sequence.blockStart length j.val)
           (length j.val) increment)
-      (AdditivePath.blockSum (AdditivePath.blockStart length blocks) (length blocks))
+      (AdditivePath.blockSum (Combinatorics.Sequence.blockStart length blocks) (length blocks))
       (iidSequenceLaw ν) := by
   let left : (∀ j : Fin blocks, Fin (length j.val) → E) → Fin blocks → E :=
     fun x j => ∑ k, x j k
@@ -106,25 +115,25 @@ theorem indepFun_variableConsecutiveBlockSums_next
     Finset.measurable_sum Finset.univ fun k _ => measurable_pi_apply k
   have h := h.comp hleftMeasurable hrightMeasurable
   have hleft : left ∘ (fun increment (j : Fin blocks) =>
-      Combinatorics.Sequence.blockCoordinates (AdditivePath.blockStart length j.val)
+      Combinatorics.Sequence.blockCoordinates (Combinatorics.Sequence.blockStart length j.val)
         (length j.val) increment) =
       (fun increment (j : Fin blocks) =>
-        AdditivePath.blockSum (AdditivePath.blockStart length j.val)
+        AdditivePath.blockSum (Combinatorics.Sequence.blockStart length j.val)
           (length j.val) increment) := by
     funext increment j
     simp only [Function.comp_apply, left, Combinatorics.Sequence.blockCoordinates]
     rw [AdditivePath.blockSum_eq_displacement_natAdd]
     exact Fin.sum_univ_eq_sum_range
-      (fun k => increment (AdditivePath.blockStart length j.val + k))
+      (fun k => increment (Combinatorics.Sequence.blockStart length j.val + k))
       (length j.val)
   have hright : right ∘ Combinatorics.Sequence.blockCoordinates
-      (AdditivePath.blockStart length blocks) (length blocks) =
-      AdditivePath.blockSum (AdditivePath.blockStart length blocks) (length blocks) := by
+      (Combinatorics.Sequence.blockStart length blocks) (length blocks) =
+      AdditivePath.blockSum (Combinatorics.Sequence.blockStart length blocks) (length blocks) := by
     funext increment
     simp only [Function.comp_apply, right, Combinatorics.Sequence.blockCoordinates]
     rw [AdditivePath.blockSum_eq_displacement_natAdd]
     exact Fin.sum_univ_eq_sum_range
-      (fun k => increment (AdditivePath.blockStart length blocks + k))
+      (fun k => increment (Combinatorics.Sequence.blockStart length blocks + k))
       (length blocks)
   simpa only [hleft, hright, Function.comp_apply] using h
 
@@ -133,7 +142,7 @@ by applying the finite-sum map to the independent coordinate blocks. -/
 theorem iIndepFun_variableConsecutiveBlockSums
     (ν : Measure E) [IsProbabilityMeasure ν] (length : ℕ → ℕ) (blocks : ℕ) :
     iIndepFun (fun (j : Fin blocks) increment =>
-      AdditivePath.blockSum (AdditivePath.blockStart length j.val)
+      AdditivePath.blockSum (Combinatorics.Sequence.blockStart length j.val)
         (length j.val) increment) (iidSequenceLaw ν) := by
   let sumBlock : ∀ j : Fin blocks, (Fin (length j.val) → E) → E :=
     fun _ x => ∑ k, x k
@@ -143,15 +152,15 @@ theorem iIndepFun_variableConsecutiveBlockSums
   have h := hcoords.comp sumBlock hsumMeasurable
   have hsum : (fun (j : Fin blocks) (increment : ℕ → E) =>
       sumBlock j (Combinatorics.Sequence.blockCoordinates
-        (AdditivePath.blockStart length j.val) (length j.val) increment)) =
+        (Combinatorics.Sequence.blockStart length j.val) (length j.val) increment)) =
       (fun (j : Fin blocks) (increment : ℕ → E) =>
-        AdditivePath.blockSum (AdditivePath.blockStart length j.val)
+        AdditivePath.blockSum (Combinatorics.Sequence.blockStart length j.val)
           (length j.val) increment) := by
     funext j increment
     simp only [sumBlock, Combinatorics.Sequence.blockCoordinates]
     rw [AdditivePath.blockSum_eq_displacement_natAdd]
     exact Fin.sum_univ_eq_sum_range
-      (fun k => increment (AdditivePath.blockStart length j.val + k))
+      (fun k => increment (Combinatorics.Sequence.blockStart length j.val + k))
       (length j.val)
   rw [← hsum]
   exact h
@@ -166,7 +175,7 @@ theorem indepFun_consecutiveBlockSums_next
         AdditivePath.blockSum (j * length) length increment)
       (AdditivePath.blockSum (blocks * length) length)
       (iidSequenceLaw ν) := by
-  simpa only [AdditivePath.blockStart_const] using
+  simpa only [Combinatorics.Sequence.blockStart_const] using
     indepFun_variableConsecutiveBlockSums_next ν (fun _ => length) blocks
 
 /-- Any finite family of equal-length block sums specializes from the
@@ -176,7 +185,7 @@ theorem iIndepFun_consecutiveBlockSums
     (blocks length : ℕ) :
     iIndepFun (fun (j : Fin blocks) increment =>
       AdditivePath.blockSum (j * length) length increment) (iidSequenceLaw ν) := by
-  simpa only [AdditivePath.blockStart_const] using
+  simpa only [Combinatorics.Sequence.blockStart_const] using
     iIndepFun_variableConsecutiveBlockSums ν (fun _ => length) blocks
 
 end ProbabilityTheory.RandomWalk

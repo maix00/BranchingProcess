@@ -6,13 +6,20 @@ Authors: WANG Yiyang
 
 module
 
+public import Algebra.BigOperators.PartialSum
+public import Algebra.BigOperators.AdditivePath.Basic
+public import Mathlib.Data.Set.Defs
+public import Mathlib.MeasureTheory.MeasurableSpace.Defs
 public import Probability.Process.RandomWalk.Path.Skorokhod.Basic
 public import Probability.Process.RandomWalk.Path.Corridor.Interpolation.Basic
 public import Combinatorics.Sequence.Block
 public import Mathlib.MeasureTheory.Constructions.BorelSpace.Order
+public import Mathlib.MeasureTheory.Group.Arithmetic
 
 /-!
 # Nonnegative finite random-walk paths
+
+## Public declarations
 
 The public objects and theorems in this file are:
 
@@ -23,6 +30,9 @@ The public objects and theorems in this file are:
   whenever $n\le m$.
 - `ProbabilityTheory.RandomWalk.SurvivesNonnegative.displacement_nonneg`:
   $C_n$ also gives $S_k\ge0$ for $0\le k\le n$.
+- `ProbabilityTheory.RandomWalk.finitePartialSum_nonnegative_iff_survivesNonnegative`:
+  nonnegativity of all partial sums of a finite increment vector is equivalent
+  to survival of the corresponding increment sequence through that horizon.
 - `ProbabilityTheory.RandomWalk.SurvivesNonnegative.normalizedLinearCadlagPathIcc_nonnegative`:
   $C_n$ gives $S^{\mathrm{lin}}_n(t)\ge0$ for every $t\in[0,1]$
   whenever the normalization scale is positive.
@@ -38,6 +48,10 @@ The public objects and theorems in this file are:
   its finite coordinate block.
 - `ProbabilityTheory.RandomWalk.measurableSet_finiteSurvivesNonnegative`:
   the finite survival block event is measurable.
+- `ProbabilityTheory.RandomWalk.measurableSet_nonnegativePartialSum`:
+  for an additive monoid with a preorder, measurable addition, and measurable
+  nonnegative half-line, the event
+  $\{x\in G^n: S_j(x)\ge0\text{ for }0\le j\le n\}$ is measurable.
 - `ProbabilityTheory.RandomWalk.measurableSet_isFirstSurvivingWindow`:
   this finite-time first-window event is measurable.
 - `ProbabilityTheory.RandomWalk.IsFirstSurvivingWindow.unique`:
@@ -60,10 +74,59 @@ open MeasureTheory
 
 namespace ProbabilityTheory.RandomWalk
 
+section FinitePartialSumMeasurability
+
+variable {G : Type*} [AddMonoid G] [Preorder G]
+  [MeasurableSpace G] [MeasurableAdd₂ G]
+
+omit [Preorder G] in
+private lemma measurable_finitePartialSum {n : ℕ}
+    (j : Fin (n + 1)) :
+    Measurable (fun x : Fin n → G => Fin.partialSum x j) := by
+  induction j using Fin.induction with
+  | zero => simp
+  | succ j ih =>
+    rw [show (fun x : Fin n → G => Fin.partialSum x j.succ) =
+      (fun x => Fin.partialSum x j.castSucc + x j) by
+        funext x
+        exact Fin.partialSum_succ x j]
+    exact ih.add (measurable_pi_apply j)
+
+/-- For an additively measurable monoid with a preorder, the set of finite
+increment vectors whose partial sums, including time zero, are nonnegative
+is measurable when the nonnegative half-line is measurable. -/
+theorem measurableSet_nonnegativePartialSum {n : ℕ}
+    (hIci : MeasurableSet (Set.Ici (0 : G))) :
+    MeasurableSet {x : Fin n → G |
+      ∀ j : Fin (n + 1), 0 ≤ Fin.partialSum x j} := by
+  have h : MeasurableSet (⋂ j : Fin (n + 1),
+      {x : Fin n → G | 0 ≤ Fin.partialSum x j}) :=
+    MeasurableSet.iInter fun j =>
+      hIci.preimage (measurable_finitePartialSum j)
+  simpa only [Set.iInter_ofPred] using h
+
+end FinitePartialSumMeasurability
+
 /-- The partial sums through time `n` are nonnegative at positive integer
 times. This is the survival event in Caravenna--Chaumont, Lemma 2.1. -/
 def SurvivesNonnegative (n : ℕ) (increment : ℕ → ℝ) : Prop :=
   ∀ k : Fin n, 0 ≤ AdditivePath.displacement (k + 1) increment
+
+/-- Nonnegativity of all finite-vector partial sums, including time zero, is
+equivalent to nonnegative survival of the corresponding increment sequence. -/
+theorem finitePartialSum_nonnegative_iff_survivesNonnegative
+    (n : ℕ) (increment : ℕ → ℝ) :
+    (∀ t : Fin (n + 1),
+      0 ≤ Fin.partialSum (fun i : Fin n => increment i.val) t) ↔
+      SurvivesNonnegative n increment := by
+  constructor
+  · intro h k
+    simpa only [AdditivePath.partialSum_eq_displacement, Fin.val_succ] using h k.succ
+  · intro h t
+    induction t using Fin.induction with
+    | zero => simp
+    | succ k ih =>
+        simpa only [AdditivePath.partialSum_eq_displacement, Fin.val_succ] using h k
 
 /-- Survival of all positive-time prefix sums of a finite increment block. -/
 def FiniteSurvivesNonnegative {n : ℕ} (block : Fin n → ℝ) : Prop :=
@@ -232,7 +295,12 @@ theorem SurvivesNonnegative.normalizedStepCadlagPathIcc_nonnegative
     ∀ t : unitInterval,
       0 ≤ normalizedStepCadlagPathIcc scale n increment t := by
   intro t
-  have htime := natFloor_mul_le_of_mem_unitInterval n t
+  have htime : ⌊(n : ℝ) * (t : ℝ)⌋₊ ≤ n := by
+    apply Nat.floor_le_of_le
+    calc
+      (n : ℝ) * (t : ℝ) ≤ (n : ℝ) * 1 :=
+        mul_le_mul_of_nonneg_left t.property.2 (Nat.cast_nonneg n)
+      _ = n := by ring
   have hdisp := h.displacement_nonneg htime
   change 0 ≤ (scale n)⁻¹ *
     AdditivePath.displacement ⌊(n : ℝ) * (t : ℝ)⌋₊ increment

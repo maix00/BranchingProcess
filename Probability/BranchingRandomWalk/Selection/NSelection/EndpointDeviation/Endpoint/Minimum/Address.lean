@@ -4,9 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.Minimum.Basic
-import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Drawdown.Population
-import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law.Basic
+module
+
+public import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.Minimum.Basic
+public import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Drawdown.Population
+public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law.Basic
 
 /-!
 # A measurable address attaining the selected endpoint minimum
@@ -16,8 +18,14 @@ address, in the fixed address order, among those attaining its minimum
 endpoint. The selector is measurable from the marks revealed by that
 generation. Its slot-zero child gives the one-step endpoint comparison.
 
-The public declarations in
-`ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail` are:
+## Public declarations
+
+- `endpointAtGeneration m k field p` is the position of address `p` at
+  generation `k`, namely `RootIndexed.positionAtGeneration` from zero initial
+  positions.
+
+The declarations in
+`ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation` are:
 
 - `firstNSelectedEndpointMinimizers m N k field`: the finite set
   $\{p\in\operatorname{Pop}_{N,k}: \forall q\in\operatorname{Pop}_{N,k},
@@ -39,17 +47,16 @@ Here `Pop_{N,k}` is the generation-`k` first-`N` selected population and
 
 open MeasureTheory
 
-section
-
+@[expose] public section
 attribute [local instance] Classical.propDecidable Classical.decEq
 
-namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail
+namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation
 
 open Combinatorics.Branching
-open Combinatorics.Branching.Selection.NSelection
+open _root_.Combinatorics.Selection.NSelection
 open Combinatorics.UlamHarris
 
-private abbrev endpointAtGeneration (m k : ℕ)
+abbrev endpointAtGeneration (m k : ℕ)
     (field : FiniteRootStepField m ℕ ℝ)
     (p : RootIndexed.TreeNode (Fin m) ℕ) : ℝ :=
   RootIndexed.positionAtGeneration (fun _ : Fin m => (0 : ℝ)) id k
@@ -162,7 +169,7 @@ theorem firstNSelectedEndpointMinimizers_mem_measurable
             {field | endpointAtGeneration m k field q ≤
               endpointAtGeneration m k field r}) by
       ext field
-      simp only [Set.mem_setOf_eq, Set.mem_iInter, Set.mem_union]
+      simp only [Set.mem_ofPred_eq, Set.mem_iInter, Set.mem_union]
       constructor
       · intro h r
         by_cases hr : r ∈ firstNSelectedPopulation m N k field
@@ -236,7 +243,7 @@ theorem measurable_firstNSelectedEndpointMinAddress
           ({field | q ∉ firstNSelectedEndpointMinimizers m N k field} ∪
             {field | @LE.le _ addressLE p q}) by
       ext field
-      simp only [Set.mem_setOf_eq, Set.mem_iInter, Set.mem_union]
+      simp only [Set.mem_ofPred_eq, Set.mem_iInter, Set.mem_union]
       constructor
       · intro h q
         by_cases hq : q ∈ firstNSelectedEndpointMinimizers m N k field
@@ -272,14 +279,14 @@ theorem measurable_firstNSelectedEndpointMinAddress
       · have hpopNe : firstNSelectedPopulation m N k field ≠ ∅ :=
           Finset.nonempty_iff_ne_empty.mp hpop
         simp [firstNSelectedEndpointMinAddress, hpop, hpopNe,
-          Finset.min'_eq_iff] <;> (intro _; rfl)
+          Finset.min'_eq_iff]
       · have hempty : firstNSelectedPopulation m N k field = ∅ :=
           Finset.not_nonempty_iff_eq_empty.mp hpop
         by_cases hp : p = ((⟨0, hm⟩ : Fin m), [])
-        · simp [firstNSelectedEndpointMinAddress, hpop, hp, hempty]
+        · simp [firstNSelectedEndpointMinAddress, hp, hempty]
         · have hdefaultNe : ((⟨0, hm⟩ : Fin m), []) ≠ p :=
             fun h => hp h.symm
-          simp [firstNSelectedEndpointMinAddress, hpop, hp, hempty,
+          simp [firstNSelectedEndpointMinAddress, hp, hempty,
             hdefaultNe]]
     apply MeasurableSet.union
     · exact (hpopulationEmpty.inter (hminMem p)).inter (hleast p)
@@ -296,6 +303,6 @@ theorem measurable_firstNSelectedEndpointMinAddress
     (RootIndexed.stepFiltration (Root := Fin m) (α := ℕ) (X := ℝ) k)
     (firstNSelectedEndpointMinAddress m N k hm) hfiber
 
-end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail
+end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation
 
 end

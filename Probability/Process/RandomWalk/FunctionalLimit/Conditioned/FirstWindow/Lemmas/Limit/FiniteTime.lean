@@ -6,13 +6,15 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.ConvergenceInDistribution.Portmanteau
-public import Probability.ConvergenceInDistribution.Mapping
-public import Probability.Process.Brownian.AboveStart.FirstWindow.TimeFiniteHorizon
-public import Probability.Process.RandomWalk.FunctionalLimit.Donsker.Path.FiniteHorizon
+import Probability.ConvergenceInDistribution.Portmanteau
+import Probability.ConvergenceInDistribution.Mapping
+import Probability.Process.Brownian.AboveStart.FirstWindow.TimeFiniteHorizon
+import Probability.Process.RandomWalk.FunctionalLimit.Donsker.Path.FiniteHorizon
 
 /-!
 # Convergence of finite first-window times
+
+## Internal proof declarations
 
 The finite-time convergence steps used by the first-window limit are:
 
@@ -32,7 +34,7 @@ DOI 10.1214/aop/1176996098. It uses Donsker convergence and the
 almost-sure continuity in Lemma 2.4.
 -/
 
-@[expose] public section
+section
 
 namespace ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned
 

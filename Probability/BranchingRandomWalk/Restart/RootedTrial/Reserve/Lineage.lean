@@ -16,6 +16,27 @@ The pre-sampled lineage is selected at its `sigma` completion generation.
 The selector is measurable in the stopped sigma-algebra, including the
 infinite-time fiber, so the selected subtree's later split completion is a
 stopping time in the original generation filtration.
+
+## Public declarations
+
+- `RootIndexed.ReserveLineages.firstChildRootAt_sigma_fiber_measurable` and
+  `RootIndexed.ReserveLineages.sigma_firstChildSubtree_splitCompletion_isStoppingTime`:
+  the first sibling root selected at a sigma completion is measurable in the
+  stopped domain, and its subsequent split completion is a stopping time.
+- `RootIndexed.ReserveLineages.secondChildRootAt`,
+  `secondChildRootAt_root`, `secondChildRootAt_depth`,
+  `secondChildRootAt_selected`, `secondChildRootAt_sigma_selected`,
+  `secondChildRootAt_ne_firstChildRootAt`,
+  `secondChildRootAt_sigma_ne_firstChildRootAt`,
+  `secondChildRootAt_fiber_measurable`, and
+  `secondChildRootAt_sigma_fiber_measurable`: define the second sibling root
+  and establish its root, depth, selection, distinctness, and stopped-domain
+  measurability properties.
+- `RootIndexed.ReserveLineages.sigma_secondChildSubtree_splitCompletion_isStoppingTime`,
+  `RootIndexed.ReserveLineages.sigmaSiblingRoots`, and
+  `RootIndexed.ReserveLineages.sigma_sibling_subtree_vector_factorization_on_finite`:
+  the second subtree split completion is a stopping time and the sibling
+  subtree vector has product law on finite completion.
 -/
 
 open MeasureTheory ProbabilityTheory
@@ -25,6 +46,7 @@ open MeasureTheory ProbabilityTheory
 namespace ProbabilityTheory.BranchingRandomWalk
 
 open Combinatorics.Branching Combinatorics.UlamHarris MeasureTheory
+open Combinatorics.Branching.Step.FiniteSelection
 
 /-- The first selected child root, chosen from a pre-sampled reserve lineage
 at its observable `sigma` completion, is measurable in the stopped

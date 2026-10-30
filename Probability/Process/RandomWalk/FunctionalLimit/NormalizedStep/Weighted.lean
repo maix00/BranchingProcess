@@ -19,6 +19,12 @@ Portmanteau applies to continuous nonnegative path weights as well as open
 events.  The normalized-step adapters below turn that fact into weighted
 bounds for discrete killed-walk blocks, retaining endpoint information needed
 for core-to-core estimates.
+## Public declarations
+
+- The corridor-weight theorems apply Portmanteau to continuous path weights
+  supported by open tube and terminal-window events; the corridor-potential
+  theorem gives the corresponding full-path weight estimate.
+
 -/
 
 open Filter MeasureTheory ProbabilityTheory
@@ -32,7 +38,7 @@ namespace ProbabilityTheory.RandomWalk
 /-- A functional limit theorem transfers a continuous nonnegative path
 weight to a `liminf` of its expectations under the normalized random-walk
 path laws. -/
-theorem lintegral_map_le_liminf_normalizedStepPathLaw_of_functionalLimit
+private theorem lintegral_map_le_liminf_normalizedStepPathLaw_of_functionalLimit
     {Ω : Type*} [MeasurableSpace Ω]
     (P : Measure Ω) [IsProbabilityMeasure P]
     (ν : Measure ℝ) [IsProbabilityMeasure ν]

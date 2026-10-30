@@ -6,15 +6,21 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.BranchingRandomWalk.Step.Presentation.Basic
 public import Probability.BranchingRandomWalk.Step.PointMeasure.Basic
 
 /-!
-# Laws of deterministic point-measure observations
+# Integration under the point-measure law
 
-These are pushforward identities for the point measure of `S`. They are kept
-separate from the branching-random-walk many-to-one theorem, which concerns a
-size-biased spine path across generations.
+The point-measure law of a random step presentation is defined in
+`Step/PointMeasure/Basic.lean` as a pushforward. This file gives its integral
+formula for measurable functionals.
+
+## Public declarations
+
+- `ProbabilityTheory.BranchingRandomWalk.lintegral_stepPointMeasure`: for
+  measurable $F$, integrating $F$ under the point-measure law equals the
+  expectation of $F$ evaluated at the sample's point measure.
+
 -/
 
 @[expose] public section
@@ -24,18 +30,6 @@ open MeasureTheory
 namespace ProbabilityTheory.BranchingRandomWalk
 
 open Combinatorics.Branching
-
-theorem stepPointMeasureLaw_forward
-    {Ω ι X : Type*} [MeasurableSpace Ω] [MeasurableSpace X]
-    [Countable ι] (S : StepPresentation Ω ι X) (P : Measure Ω) :
-    (S.indexedLaw P).map stepPointMeasure = S.branchingLaw P :=
-  S.indexedLaw_map_pointMeasure P
-
-theorem stepPointMeasureLaw_backward
-    {Ω ι X : Type*} [MeasurableSpace Ω] [MeasurableSpace X]
-    [Countable ι] (S : StepPresentation Ω ι X) (P : Measure Ω) :
-    S.branchingLaw P = (S.indexedLaw P).map stepPointMeasure :=
-  (S.indexedLaw_map_pointMeasure P).symm
 
 theorem lintegral_stepPointMeasure
     {Ω ι X : Type*} [MeasurableSpace Ω] [MeasurableSpace X]

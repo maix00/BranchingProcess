@@ -6,19 +6,22 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.FunctionalLimit.Normal.Tightness
-public import Probability.Process.RandomWalk.FunctionalLimit.Stable.PathLaw.Process
-public import Probability.Distributions.Stable.Attraction.Normal.Basic
+import all Probability.Process.RandomWalk.FunctionalLimit.Normal.Tightness.Basic
+import Probability.Process.RandomWalk.FunctionalLimit.Stable.PathLaw.Process
+import Probability.Distributions.Stable.Attraction.Normal.Basic
 public import Probability.Distributions.Stable.Gaussian.Basic
-public import Probability.Distributions.Moments.Real
-public import Probability.Distributions.Rademacher
+import Probability.Distributions.Moments.Real
+import Probability.Distributions.Rademacher
 public import Probability.Process.Stable.Brownian.Basic
-public import Probability.Process.Brownian.Construction.PreBrownianModification
+public import Topology.Cadlag.Skorokhod.Topology
+public import Mathlib.Probability.BrownianMotion.Basic
+public import Mathlib.MeasureTheory.Measure.ProbabilityMeasure
+import Probability.Process.Brownian.Construction.PreBrownianModification
 
 /-!
 # A pre-Brownian process from the Gaussian random-walk path limit
 
-The public theorem in this file is:
+## Public declarations
 
 - `exists_preBrownianReal_cadlag`: there is a probability space carrying a
   càdlàg process $B$ with independent increments
@@ -61,8 +64,8 @@ theorem exists_preBrownianReal_cadlag :
   have hDOA : IsInDomainOfAttractionAlong rademacherMeasure
       (gaussianReal 0 1) (fun n => Real.sqrt n) (fun _ => 0) := by
     simpa [hRademacher.2] using
-      isInDomainOfAttractionAlong_gaussianReal_zero_one_of_centered_integrable_sq
-        rademacherMeasure hRademacher.1 hSquare hSecondPositive
+      isInDomainOfAttractionAlong_gaussianReal_zero_one_of_centered_posSecondMoment
+        rademacherMeasure hRademacher.1 hSecondPositive
   have hPositiveScale : ∀ n : ℕ, 0 < n → 0 < Real.sqrt n := by
     intro n hn
     exact Real.sqrt_pos.2 (by exact_mod_cast hn)

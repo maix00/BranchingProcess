@@ -6,13 +6,15 @@ Authors: WANG Yiyang
 
 module
 
-public import Mathlib.Basic.Real.Basic
-public import Mathlib.Algebra.Order.Floor.Ring
-public import Probability.Process.RandomWalk.Path.Block.Partition.Basic
-public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.JumpPattern.SpatialBins
+import Mathlib.Basic.Real.Basic
+import Mathlib.Algebra.Order.Floor.Ring
+import Probability.Process.RandomWalk.Path.Block.Partition.Basic
+import all Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.JumpPattern.SpatialBins
 
 /-!
 # Finite-prefix maximum data for the Lemma 3.3 proof
+
+## Internal proof declarations
 
 The internal constructions used by the jump-pattern proof are:
 
@@ -29,7 +31,7 @@ These are the finite-prefix maximum constructions in Wang Yiyang,
 Chapter 3, proof of Lemma 3.3.
 -/
 
-@[expose] public section
+section
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown
 

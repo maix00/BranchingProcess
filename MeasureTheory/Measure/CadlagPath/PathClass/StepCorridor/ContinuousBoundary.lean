@@ -19,6 +19,16 @@ The reciprocal-width energy of a strictly separated continuous corridor is
 finite and agrees with the ordinary real Lebesgue integral of its density.
 The interval is the source unit interval, on which the path-space and corridor
 energy APIs are currently defined.
+
+## Public declarations
+
+- continuousBoundaryDensity is $\bigl(upper(t)-lower(t)\bigr)^{-\alpha}$,
+  and continuousBoundaryEnergy is its extended-real integral over $[0,1]$.
+- For strictly separated continuous boundaries, the density is integrable and
+  the extended-real energy equals the real Lebesgue integral.
+- A continuous admissible corridor admits uniform-grid step-corridor
+  approximations whose energy converges to the continuous-boundary energy;
+  the resulting approximation is relative to the corridor's path domain.
 -/
 
 open MeasureTheory

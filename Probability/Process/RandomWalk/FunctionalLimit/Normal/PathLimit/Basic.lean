@@ -6,9 +6,9 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.FunctionalLimit.Normal.Tightness
 public import Probability.Process.RandomWalk.FunctionalLimit.Stable.PathLaw.Convergence
 public import Probability.Process.Stable.Brownian.PathLaw
+import all Probability.Process.RandomWalk.FunctionalLimit.Normal.Tightness.Basic
 
 /-!
 # Functional limits in the normal domain of attraction
@@ -17,6 +17,16 @@ The scalar Gaussian-domain assumption supplies finite-dimensional convergence,
 and the normal-domain estimates supply `J₁` tightness. The target remains an
 explicit Brownian path law with the stable-clock increment specification; this
 keeps the functional theorem independent of a particular Brownian construction.
+## Public declarations
+
+- `tendsto_normalizedStepPathLaw_of_gaussian` states that if $\nu$ is in the
+  centered Gaussian domain of attraction with norming $a_n$, then the laws of
+  the normalized càdlàg step paths converge in the Skorokhod $J_1$ topology
+  to any given standard Brownian path law.
+- `tendsto_normalizedStepPathLaw_of_gaussian_of_brownian` specializes this to
+  the path law induced by an `IsBrownianReal` process; in both cases,
+  $\mathcal L(S_{\lfloor n\cdot\rfloor}/a_n)\Rightarrow\mathcal L(B)$.
+
 -/
 
 open Filter MeasureTheory ProbabilityTheory
@@ -40,7 +50,7 @@ theorem tendsto_normalizedStepPathLaw_of_gaussian
     (hnormalization : ∀ n, 0 < n → 0 < normalization n)
     {P : Measure (CadlagPath unitInterval ℝ)} [IsProbabilityMeasure P]
     (hP : IsStableClockProcessLaw 2 (gaussianReal 0 1)
-      UnitInterval.clock P) :
+      unitInterval.clock P) :
     Tendsto (fun n : ℕ =>
       (⟨RandomWalk.normalizedStepPathLaw ν normalization n,
         (inferInstance : IsProbabilityMeasure
@@ -74,14 +84,14 @@ theorem tendsto_normalizedStepPathLaw_of_gaussian_of_brownian
         ProbabilityMeasure (CadlagPath unitInterval ℝ)))
       atTop (@nhds (ProbabilityMeasure (CadlagPath unitInterval ℝ)) inferInstance
         (⟨Process.Path.Cadlag.pathLaw P
-            (fun t ω => B (UnitInterval.toNNReal t) ω)
+            (fun t ω => B (unitInterval.toNNReal t) ω)
             (fun t => hB.toIsPreBrownianReal.aemeasurable
-              (UnitInterval.toNNReal t)),
+              (unitInterval.toNNReal t)),
           (inferInstance : IsProbabilityMeasure
             (Process.Path.Cadlag.pathLaw P
-              (fun t ω => B (UnitInterval.toNNReal t) ω)
+              (fun t ω => B (unitInterval.toNNReal t) ω)
               (fun t => hB.toIsPreBrownianReal.aemeasurable
-                (UnitInterval.toNNReal t))))⟩ :
+                (unitInterval.toNNReal t))))⟩ :
           ProbabilityMeasure (CadlagPath unitInterval ℝ))) := by
   exact tendsto_normalizedStepPathLaw_of_gaussian hDOA hnormalization
     (hB.isStableClockProcessLaw_cadlagunitIntervalProcessPathLaw)

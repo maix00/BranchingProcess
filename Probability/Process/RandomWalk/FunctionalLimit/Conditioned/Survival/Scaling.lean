@@ -12,6 +12,8 @@ public import Probability.Distributions.Moments.Real
 /-!
 # Positive scaling of survival-conditioned random walks
 
+## Public declarations
+
 The public theorems in this file are:
 
 - `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.survivesNonnegative_div_const_iff`:

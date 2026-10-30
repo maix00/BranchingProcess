@@ -17,8 +17,6 @@ Pointwise maps of deterministic step fields live in
 
 ## Public declarations
 
-* `Combinatorics.Branching.surviveAlong_map_iff` states
-  `surviveAlong (β.map f) v p ↔ surviveAlong β v p`.
 * `Combinatorics.Branching.RootIndexed.BranchingWalk.mapMarks` applies a mark
   map to every step and preserves initial positions;
   `Combinatorics.Branching.RootIndexed.BranchingWalk.mapInitial` applies a map
@@ -46,13 +44,6 @@ Pointwise maps of deterministic step fields live in
 namespace Combinatorics.Branching
 
 open Combinatorics.UlamHarris
-
-@[simp] theorem surviveAlong_map_iff {α X Y : Type*} (f : X → Y)
-    (β : StepField α X) (v p : TreeNode α) :
-    surviveAlong (β.map f) v p ↔ surviveAlong β v p := by
-  induction p generalizing v with
-  | nil => simp [surviveAlong]
-  | cons i p ih => simp [surviveAlong, ih]
 
 /-- Change only the child marks of a root-indexed branching walk. -/
 def RootIndexed.BranchingWalk.mapMarks {Root α Mark Mark' Position : Type*}

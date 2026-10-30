@@ -4,19 +4,46 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import MeasureTheory.Measure.LevyMeasure.Cutoff
-import Probability.Distributions.InfinitelyDivisible.LevyKhintchine.FiniteVariation
-import Probability.RandomMeasure.Poisson.CharacteristicFunction.Independent
-import Probability.RandomMeasure.Poisson.CharacteristicFunction.TimeWindow
-import Probability.RandomMeasure.Poisson.Intensity.Support
+module
+
+public import MeasureTheory.Measure.Levy.Cutoff
+public import Probability.Distributions.InfinitelyDivisible.LevyKhintchine.FiniteVariation
+public import Probability.RandomMeasure.Poisson.CharacteristicFunction.Independent
+public import Probability.RandomMeasure.Poisson.CharacteristicFunction.TimeWindow
+public import Probability.RandomMeasure.Poisson.Intensity.Support
+import Probability.RandomMeasure.Poisson.Intensity.TimeMark
+import Probability.RandomMeasure.Poisson.Integration.Integrability
 
 /-!
 # Characteristic intensity across time and jump cutoffs
 
-The two independent Poisson sources used for a jump-sum path have the
-small- and large-jump restrictions of the same Lévy mark measure. The
-unit-time product intensities therefore recover the original exponent.
+## Public declarations
+
+- `ProbabilityTheory.integral_exp_unitTime_split_poissonRandomMeasures`: the characteristic
+  integral of the sum of the small- and large-jump Poisson sources at unit
+  time is `exp (∫ (exp (i ξ x) - 1) dν)`.
+- `ProbabilityTheory.law_unitTime_split_poissonRandomMeasures`: if a probability measure has
+  this Lévy characteristic function, it is the law of the unit-time split
+  jump sum.
+- `ProbabilityTheory.integral_exp_timeWindow_split_poissonRandomMeasures`: for any measurable
+  window `S`, the split-source characteristic exponent is
+  `|S| ∫ (exp (i ξ x) - 1) dν`.
+- `ProbabilityTheory.law_timeWindow_split_poissonRandomMeasures`: identifies the law of the
+  split jump sum on a measurable time window from that characteristic
+  function.
+- `ProbabilityTheory.measure_Ioi_zero_of_split_poisson_law_no_positive_intensity`: if the
+  split jump-sum law is identified and `ν (Ioi 0) = 0`, then its law gives
+  zero mass to `Ioi 0`.
+- `ProbabilityTheory.measure_Iio_zero_of_split_poisson_law_no_negative_intensity`: if the
+  split jump-sum law is identified and `ν (Iio 0) = 0`, then its law gives
+  zero mass to `Iio 0`.
+
+The two independent Poisson sources use the small- and large-jump
+restrictions of the same Lévy measure, so their unit-time intensities recover
+the unsplit exponent.
 -/
+
+@[expose] public section
 
 namespace ProbabilityTheory
 
@@ -26,7 +53,7 @@ attribute [local instance] Classical.propDecidable
 
 /-- Integrating an uncompensated jump exponent over the two disjoint
 unit-time sources gives exactly the unsplit Lévy exponent. -/
-theorem _root_.MeasureTheory.IsLevyMeasure.integral_unitTime_uncompensated_split
+private theorem _root_.MeasureTheory.IsLevyMeasure.integral_unitTime_uncompensated_split
     {ν : Measure ℝ} [SigmaFinite ν] (hν : MeasureTheory.IsLevyMeasure ν)
     (hsmall : Integrable smallJumpDisplacement ν)
     (n : ℕ) (ξ : ℝ) :
@@ -297,7 +324,7 @@ theorem law_timeWindow_split_poissonRandomMeasures
 
 /-- If the Lévy intensity has no positive marks, the realized sum of the
 two cutoff sources is nonpositive almost surely. -/
-theorem ae_unitTime_split_poissonRandomMeasures_nonpos
+private theorem ae_unitTime_split_poissonRandomMeasures_nonpos
     {Ωs Ωb : Type} [MeasurableSpace Ωs] [MeasurableSpace Ωb]
     {Ks : ℕ → Ωs → ℕ} {Xs : ℕ → ℕ → Ωs → unitInterval × ℝ}
     {Kb : ℕ → Ωb → ℕ} {Xb : ℕ → ℕ → Ωb → unitInterval × ℝ}
@@ -344,7 +371,7 @@ theorem ae_unitTime_split_poissonRandomMeasures_nonpos
 
 /-- The full endpoint jump sum is almost everywhere measurable under the
 same small-first-moment and large-finite-activity conditions as its law. -/
-theorem aemeasurable_unitTime_split_poissonRandomMeasures
+private theorem aemeasurable_unitTime_split_poissonRandomMeasures
     {Ωs Ωb : Type} [MeasurableSpace Ωs] [MeasurableSpace Ωb]
     {Ks : ℕ → Ωs → ℕ} {Xs : ℕ → ℕ → Ωs → unitInterval × ℝ}
     {Kb : ℕ → Ωb → ℕ} {Xb : ℕ → ℕ → Ωb → unitInterval × ℝ}

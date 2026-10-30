@@ -6,11 +6,39 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.Binning.TwoBins
-import Probability.Process.Stable.SmallDeviation.Blocks.Lower.Lemmas.ReturnScale
+public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.Return.TwoBins
+public import Probability.Process.Path.Skorokhod.Corridor.RationalCoordinate
+import Probability.Process.Stable.SmallDeviation.Blocks.ReturnScale
+import Probability.Process.Stable.SmallDeviation.Blocks.Lower.Entrance.ShortTime
 
 /-!
 # A uniform return-block constant
+
+## Public declarations
+
+For \(q\in\mathbb Q\cap[0,1]\), put
+\[
+  A_\delta=\{\omega:\forall q,\ -\delta<X_q-X_0<\delta\},\qquad
+  p_\delta^+=\mathbb P(A_\delta\cap\{0<X_1-X_0<\delta\}),\qquad
+  p_\delta^-=\mathbb P(A_\delta\cap\{-\delta<X_1-X_0<0\}).
+\]
+Write \(T_X(w)=\mathbb P(\operatorname{rationalHorizonTubeEvent}(X,1,w))\);
+membership means that some positive rational margin \(r\) satisfies
+\(|X_s-X_t|\le w-r\) for all rational \(s,t\in[0,1]\).
+
+- IsStableLevyProcess.exists_positive_unit_directionalReturn: positive mass
+  on both increment half-lines gives some \(\delta>0\) with
+  \(\min(p_\delta^+,p_\delta^-)>0\).
+- IsStableLevyProcess.unit_directionalReturn_pow_le_tube: for \(N\ge1\), the
+  same unit-block factor \(p=\min(p_{\delta_0}^+,p_{\delta_0}^-)\) gives
+  \[
+    p^N\le T_X\!\left(7\delta_0 N^{-1/\alpha}\right).
+  \]
+- IsStableLevyProcess.exists_exponential_tube_lower_bound: one pair
+  \(\delta_0,c>0\) works for every \(N\ge1\), with
+  \[
+    c^N\le T_X\!\left(7\delta_0 N^{-1/\alpha}\right).
+  \]
 
 Short-time directional return events and exact stable scaling produce a
 positive unit-time return probability. The same probability then controls
@@ -53,9 +81,18 @@ theorem IsStableLevyProcess.exists_positive_unit_directionalReturn
     change 0 < (1 : ℝ) / ((n + 1 : ℕ) : ℝ)
     positivity
   refine ⟨scale, hscale, ?_⟩
-  rw [h.firstBlock_corridorReturn_scale_inv (n + 1) (Nat.succ_pos n)
+  have htime : 0 < rationalUniformBlockBoundary (n + 1) 1 (Nat.succ_pos n) := by
+    apply NNReal.coe_pos.mp
+    simp only [rationalUniformBlockBoundary, Nat.cast_one]
+    have hb : 0 < ((n + 1 : ℕ) : ℝ) := by positivity
+    change 0 < (1 : ℝ) / ((n + 1 : ℕ) : ℝ)
+    positivity
+  rw [rationalUniformBlockProcess_zero_eq_initial X (Nat.succ_pos n)] at hn
+  rw [h.corridorReturn_timeSpaceScale_inv
+      (rationalUniformBlockBoundary (n + 1) 1 (Nat.succ_pos n)) htime
       (-1) 1 0 1,
-    h.firstBlock_corridorReturn_scale_inv (n + 1) (Nat.succ_pos n)
+    h.corridorReturn_timeSpaceScale_inv
+      (rationalUniformBlockBoundary (n + 1) 1 (Nat.succ_pos n)) htime
       (-1) 1 (-1) 0] at hn
   simpa [scale] using (lt_min hn.1 hn.2)
 

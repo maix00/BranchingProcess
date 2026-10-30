@@ -6,15 +6,21 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.FunctionalLimit.Donsker.Path.Continuous
 public import Probability.Process.RandomWalk.Path.Survival.Basic
 public import Probability.Process.RandomWalk.Fluctuation.Ladder.Descending.LocalTime
-public import Probability.Process.Brownian.Reflection.Path.NonnegativeUnitPath
-public import Probability.Process.Brownian.Construction.Existence
 public import Probability.Distributions.Moments.Real
+public import Probability.Sequence.IID.Basic
+import Probability.Process.RandomWalk.FunctionalLimit.Donsker.Path.Continuous
+import Probability.Process.Brownian.Reflection.Path.NonnegativeUnitPath
+import Topology.ContinuousMap.Range
+import Probability.Process.Brownian.Construction.Existence
+import Probability.ConvergenceInDistribution.Portmanteau
+import Probability.Process.RandomWalk.Path.Interpolation.Core
 
 /-!
 # Finiteness of the first descending ladder time
+
+## Public declarations
 
 Let $(\xi_i)_{i\geq1}$ be i.i.d. with law $\nu$, set
 $S_0=0$ and $S_n=\sum_{i=1}^n\xi_i$, and write $\mathbb P_\nu$ for the
@@ -86,7 +92,8 @@ theorem tendsto_survivalProbability_zero_of_centeredUnitSecondMoment
   letI : IsProbabilityMeasure
       (Q : Measure (ℕ → CadlagPath unitInterval ℝ)) := Q.property
   let F : Set C(unitInterval, ℝ) := {f | ∀ t, 0 ≤ f t}
-  have hclosed : IsClosed F := isClosed_nonnegativeUnitPaths
+  have hclosed : IsClosed F :=
+    ContinuousMap.isClosed_setOf_forall_mem isClosed_Ici
   have hDonsker :=
     tendstoInDistribution_normalizedLinearContinuousPath_brownian
       ν hcentered hsecondMoment hB.toIsPreBrownianReal

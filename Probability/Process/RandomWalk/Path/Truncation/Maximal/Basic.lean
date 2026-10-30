@@ -10,12 +10,59 @@ public import Probability.Process.RandomWalk.Path.Block.Maximal.Fourth
 public import Probability.Process.RandomWalk.Path.Block.Measurable
 public import Probability.Process.RandomWalk.Path.Truncation.Moment
 
+import all Probability.Process.RandomWalk.Path.Truncation.Maximal.Lemmas.Truncation
+
 /-!
 # Maximal bounds for truncated increments
 
-The fourth-power block maximal inequality is combined here with the moment
-bounds for centered hard truncations.  All quantities on the right are
-moments of the original increment law.
+Write $\widehat x_R=\operatorname{truncatedIncrement}(R,x)$ and
+$m_R=\int \widehat x_R\,d\nu=\operatorname{truncatedIncrementMean}(\nu,R)$;
+then $\operatorname{centeredTruncatedIncrement}(\nu,R,x)=\widehat x_R-m_R$.
+For an increment path $x$, write $S_{s,k}(x)=\operatorname{blockSum}_x(s,k+1)$
+and $S_{j,k}^{(n)}(x)=S_{jn,k}(x)$.
+
+## Public declarations
+
+* `centeredTruncatedFourthNumerator ν R n` is
+  $(n+1)\bigl(8(R^2\int x^2\,d\nu+m_R^4)\bigr)
+  +3(n+1)^2(\int x^2\,d\nu)^2$.
+* `centeredTruncatedFourthBound ν R n t` is the fourth-moment bound
+  $\operatorname{ofReal}(N_c/t^4)$ formed from that numerator.
+* `truncatedCenteredFourthNumerator ν R n` is the same expression with
+  $\int x^2\,d\nu$ replaced by $\int \widehat x_R^2\,d\nu$.
+* `truncatedCenteredFourthBound ν R n t` is the corresponding
+  $\operatorname{ofReal}(N_R/t^4)$ bound.
+* `maximal_ineq_pow_four_blockSum_centeredTruncated` and
+  `maximal_ineq_pow_four_blockSum_centeredTruncated_bounded` give fourth-power
+  maximal inequalities
+  $\varepsilon\,\mathbb P(\varepsilon\le
+  \max_{0\le k\le n}|S_{start,k}|^4)
+  \le \operatorname{ofReal}(N_c)$ and its bounded-truncation counterpart for
+  the centered truncated IID walk; the first assumes a finite second moment
+  of $\nu$, while the second uses only that $\nu$ is a probability measure.
+* `measure_exists_abs_blockSum_centeredTruncated_ge_le` and
+  `measure_exists_abs_blockSum_centeredTruncated_ge_le_bounded` bound a
+  one-block event by
+  $\mathbb P(\exists k\le n:\ t\le|S_{start,k}|)\le
+  \operatorname{ofReal}(N_c/t^4)$, with the corresponding bound for bounded
+  truncation.
+* `measure_exists_block_exists_abs_centeredTruncated_ge_le` and
+  `measure_exists_block_exists_abs_centeredTruncated_ge_le_bounded` give the
+  bound
+  $\mathbb P(\exists j<q,\exists k\le n:\ t\le|S_{j,k}^{(n)}|)
+  \le q\,\operatorname{ofReal}(N_c/t^4)$ over `blocks` equal-length blocks
+  for the centered truncated walk. The declarations
+  `measure_exists_block_exists_abs_map_centeredTruncated_ge_le` and
+  `measure_exists_block_exists_abs_map_centeredTruncated_ge_le_bounded` state
+  the same bounds on the original IID sample space after applying truncation
+  coordinatewise.
+* `measure_exists_block_exists_abs_ge_le_of_truncation` and
+  `measure_exists_block_exists_abs_ge_le_of_truncation_bounded` bound the
+  original-walk block-oscillation probability by
+  $(q n+1)\,\nu\{|x|>R\}+
+  q\,\operatorname{ofReal}(N_c/(t-(n+1)|m_R|)^4)$ when
+  $(n+1)|m_R|<t$; the first assumes $\int x^2\,d\nu<\infty$, while the
+  second assumes only that $\nu$ is a probability measure.
 -/
 
 open MeasureTheory ProbabilityTheory
@@ -60,83 +107,6 @@ noncomputable def truncatedCenteredFourthBound
     (ν : Measure ℝ) (radius : ℝ) (length : ℕ) (threshold : ℝ) : ENNReal :=
   ENNReal.ofReal
     (truncatedCenteredFourthNumerator ν radius length / threshold ^ 4)
-
-/-- A large block oscillation of the original path is caused either by a
-discarded increment or by a large oscillation of the centered truncated path.
-The extra deterministic margin is the accumulated truncation bias. -/
-theorem exists_block_exists_abs_subset_largeIncrement_union_centeredTruncated
-    (ν : Measure ℝ) {radius threshold : ℝ}
-    (blocks length : ℕ) :
-    {path : ℕ → ℝ |
-      ∃ j < blocks, ∃ k ∈ Finset.range (length + 1),
-        threshold ≤ |AdditivePath.blockSum (j * length) (k + 1) path|} ⊆
-      {path | ∃ i ∈ Finset.range (blocks * length + 1),
-        radius < |path i|} ∪
-      {path | ∃ j < blocks, ∃ k ∈ Finset.range (length + 1),
-        threshold - ((length + 1 : ℕ) : ℝ) *
-            |truncatedIncrementMean ν radius| ≤
-          |AdditivePath.blockSum (j * length) (k + 1)
-            (fun i => centeredTruncatedIncrement ν radius (path i))|} := by
-  intro path hlarge
-  by_cases htail : ∃ i ∈ Finset.range (blocks * length + 1),
-      radius < |path i|
-  · exact Or.inl htail
-  · right
-    obtain ⟨j, hj, k, hk, hklarge⟩ := hlarge
-    refine ⟨j, hj, k, hk, ?_⟩
-    let mean := truncatedIncrementMean ν radius
-    let centeredPath : ℕ → ℝ :=
-      fun i => centeredTruncatedIncrement ν radius (path i)
-    have hcoordinate : ∀ i ∈ Finset.Ico (j * length) (j * length + (k + 1)),
-        centeredPath i = path i - mean := by
-      intro i hi
-      have hklt : k < length + 1 := Finset.mem_range.1 hk
-      have hkLe : k + 1 ≤ length + 1 :=
-        Nat.succ_le_succ (Nat.lt_succ_iff.1 hklt)
-      have hiUpper : i < blocks * length + 1 := by
-        have hjSucc : j + 1 ≤ blocks := Nat.succ_le_iff.2 hj
-        have hi' : i < j * length + (k + 1) := Finset.mem_Ico.1 hi |>.2
-        calc
-          i < j * length + (k + 1) := hi'
-          _ ≤ j * length + (length + 1) := Nat.add_le_add_left hkLe _
-          _ = (j + 1) * length + 1 := by
-            rw [Nat.add_mul]
-            omega
-          _ ≤ blocks * length + 1 :=
-            Nat.add_le_add_right (Nat.mul_le_mul_right length hjSucc) 1
-      have hnotLarge : ¬radius < |path i| := fun hiLarge =>
-        htail ⟨i, Finset.mem_range.2 hiUpper, hiLarge⟩
-      simp only [centeredPath, centeredTruncatedIncrement, mean]
-      rw [truncatedIncrement_of_abs_le (le_of_not_gt hnotLarge)]
-    have hblock : AdditivePath.blockSum (j * length) (k + 1) centeredPath =
-        AdditivePath.blockSum (j * length) (k + 1) path - (k + 1) • mean := by
-      calc
-        AdditivePath.blockSum (j * length) (k + 1) centeredPath =
-            AdditivePath.blockSum (j * length) (k + 1) (fun i => path i - mean) := by
-          apply Finset.sum_congr rfl
-          intro i hi
-          exact hcoordinate i hi
-        _ = _ := AdditivePath.blockSum_sub_const (j * length) (k + 1) path mean
-    have hreverse : AdditivePath.blockSum (j * length) (k + 1) path =
-        AdditivePath.blockSum (j * length) (k + 1) centeredPath + (k + 1) • mean := by
-      rw [hblock]
-      abel
-    have htriangle : |AdditivePath.blockSum (j * length) (k + 1) path| ≤
-        |AdditivePath.blockSum (j * length) (k + 1) centeredPath| +
-          ((k + 1 : ℕ) : ℝ) * |mean| := by
-      rw [hreverse]
-      refine (abs_add_le _ _).trans ?_
-      rw [nsmul_eq_mul, abs_mul,
-        abs_of_nonneg (show 0 ≤ (((k + 1 : ℕ) : ℝ)) by positivity)]
-    have hkCast : (((k + 1 : ℕ) : ℝ)) ≤ ((length + 1 : ℕ) : ℝ) := by
-      exact_mod_cast Nat.succ_le_succ
-        (Nat.lt_succ_iff.1 (Finset.mem_range.1 hk))
-    have hbias : (((k + 1 : ℕ) : ℝ)) * |mean| ≤
-        ((length + 1 : ℕ) : ℝ) * |mean| :=
-      mul_le_mul_of_nonneg_right hkCast (abs_nonneg _)
-    change threshold - ((length + 1 : ℕ) : ℝ) * |mean| ≤
-      |AdditivePath.blockSum (j * length) (k + 1) centeredPath|
-    linarith
 
 /-- Fourth-power maximal estimate for a block of centered hard-truncated IID
 increments. -/

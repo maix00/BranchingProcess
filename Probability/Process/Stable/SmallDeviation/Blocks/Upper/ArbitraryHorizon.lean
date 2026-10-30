@@ -17,6 +17,8 @@ The uniform partition theorem uses blocks of length `1 / n`. Stable scaling
 compares that block with any shorter prescribed horizon, so the bound applies
 to the stated exponent `⌊1 / c⌋₊` without identifying `c` with `1 / n`.
 
+## Public declarations
+
 The public declarations are:
 
 - `ProbabilityTheory.IsStableLevyProcess.measure_rationalTube_le_pow_shorterHorizon`:

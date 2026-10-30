@@ -15,6 +15,20 @@ public import Analysis.Asymptotics.RegularVariation.AtZero.Basic
 Compact-uniform characteristic-function defects and a first-crossing scale
 index transfer the discrete norming asymptotics to all sufficiently small
 frequencies. The first-crossing construction does not assume monotonicity.
+
+## Public declarations
+
+Write $\varphi_\nu$ for the characteristic function of the increment law.
+* `IsInDomainOfAttractionAlong.tendsto_normDefect_ratio_nhdsGT_zero`:
+  $(1-|\varphi_\nu(st)|^2)/(1-|\varphi_\nu(t)|^2)\to s^\alpha$
+  as $t\downarrow0$, for each $s>0$.
+* `IsInDomainOfAttractionAlong.tendstoUniformlyOn_normDefect_ratio_nhdsGT_zero`:
+  the same ratio converges uniformly for $s\in[1,2]$.
+* `IsInDomainOfAttractionAlong.eventually_pos_normDefect_nhdsGT_zero`:
+  $1-|\varphi_\nu(t)|^2>0$ for all sufficiently small $t>0$.
+* `IsInDomainOfAttractionAlong.isRegularlyVarying_normDefect_atZero`:
+  $t\mapsto1-|\varphi_\nu(t)|^2$ is regularly varying at zero with index
+  $\alpha$.
 -/
 
 open Filter MeasureTheory

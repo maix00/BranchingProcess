@@ -16,6 +16,13 @@ Weak convergence of symmetrized normalized sums first gives compact-uniform
 convergence of their characteristic functions. Positivity of the stable limit
 then permits logarithms, and a uniform exponential remainder gives the
 compact-uniform squared-modulus defect.
+
+## Public declarations
+
+* `IsInDomainOfAttractionAlong.exists_tendstoUniformlyOn_normDefect`: for
+  every compact $K\subset\mathbb R$, there is $c>0$ such that
+  $n\bigl(1-|\varphi_\nu(a_n^{-1}t)|^2\bigr)\to2c|t|^\alpha$
+  uniformly for $t\in K$, where $a_n$ is the attraction scale.
 -/
 
 open Filter MeasureTheory

@@ -13,7 +13,7 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 /-!
 # A lower bound for a finite power sum
 
-The public theorem in this file is:
+## Public declarations
 
 - `Asymptotics.rpow_sum_lower`: for $0<\gamma\le1$ and $m\in\mathbb N$,
   $((m+2)^\gamma-1)/\gamma\le

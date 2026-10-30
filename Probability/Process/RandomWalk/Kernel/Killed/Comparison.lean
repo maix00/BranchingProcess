@@ -11,6 +11,8 @@ public import Probability.Process.RandomWalk.Kernel.Killed.Basic
 /-!
 # Comparison of killed-walk survival masses
 
+## Public declarations
+
 For a real random walk, the public theorems are:
 
 - `remainingMass_killedIncrementKernel_Icc_mono_of_abs_sub_le`: if

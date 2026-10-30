@@ -4,8 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
+module
+
+
 import Probability.BranchingRandomWalk.Spine.FirstPassage
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Range.Blocks.Bound
+import all Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Rate.Bounds.Lemmas.SharpUpper.BlockEstimate
 
 /-!
 # Axiom audit for the raw `a = 1` endpoint sublevel input

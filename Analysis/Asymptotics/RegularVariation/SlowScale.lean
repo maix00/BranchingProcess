@@ -7,12 +7,12 @@ Authors: WANG Yiyang
 module
 
 public import Analysis.Asymptotics.RegularVariation.Basic
-public import Analysis.Asymptotics.Scale.SlowDiagonal
+import Analysis.Asymptotics.Sequence.SlowDiagonal
 
 /-!
 # Slowly growing multipliers for regularly varying functions
 
-The public theorems are:
+## Public declarations
 
 - `exists_tendsto_slowScale_of_eventually`: if $f$ has regular variation
   index $\rho$, $x_n\to\infty$, $r_n\to0$ with $r_n\ge0$ eventually, and

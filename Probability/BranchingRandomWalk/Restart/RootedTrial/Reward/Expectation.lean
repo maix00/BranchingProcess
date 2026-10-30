@@ -5,8 +5,10 @@ Authors: WANG Yiyang
 -/
 
 import Probability.BranchingRandomWalk.Restart.RootedTrial.Reward.PositivePart
+import Probability.BranchingRandomWalk.Restart.RootedTrial.Spine.ReservePath
 import Probability.BranchingRandomWalk.Restart.RootedTrial.Coupling.SampledMark
 import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Field.Measurability
+import Combinatorics.BranchingWalk.Step.Selection.Potential
 
 /-!
 # First-moment estimate for a reserve spine
@@ -17,6 +19,12 @@ steps.  The result only assumes a first moment for the one-step observable;
 it does not identify that observable with a distinguished raw offspring
 slot, or identify the causal reserve source with the retrospective restart
 process.
+
+## Public declarations
+
+- `integral_selectedReserveSpinePath_positivePart_le`: integrates the
+  pathwise reserve-spine estimate to obtain a linear first-moment bound from
+  the one-step selected-slot observable.
 -/
 
 open MeasureTheory ProbabilityTheory
@@ -25,13 +33,7 @@ open scoped BigOperators
 namespace ProbabilityTheory.BranchingRandomWalk
 
 open Combinatorics.Branching Combinatorics.UlamHarris
-
-/-- The positive potential of the first slot selected by `R`.  This is an
-observable of the selected slot, not a distinguished raw offspring mark. -/
-noncomputable def firstRSelectedSlotPositivePotential
-    {α X : Type*} [LinearOrder α] [OrderBot α] [MeasurableSpace X]
-    (R : Step.FiniteSelection α X) (φ : Potential X) : Step α X → ℝ :=
-  fun ξ => max 0 (ξ.potentialValue' φ (firstSelectedSlot R ξ))
+open Combinatorics.Branching.Step.FiniteSelection
 
 /-- Integrating the pathwise reserve-spine bound gives a linear first-moment
 bound.  The hypotheses make all model inputs explicit: `R.select` is
@@ -49,7 +51,7 @@ theorem integral_selectedReserveSpinePath_positivePart_le
     (R : Step.FiniteSelection α X) (hR : Measurable R.select)
     (hRcap : R.IsBoundedBy 2) (φ : Potential X) (M : ℝ) (hM : 0 ≤ M)
     (r : Root) (n : ℕ)
-    (honeStep : Integrable (firstRSelectedSlotPositivePotential R φ) μ)
+    (honeStep : Integrable (firstSelectedSlotPositivePotential R φ) μ)
     (hordered : ∀ᵐ ω ∂RootIndexed.stepFieldLaw (Root := Root) μ,
       ∀ k < n,
         (ω r (selectedReserveSpinePath
@@ -64,10 +66,10 @@ theorem integral_selectedReserveSpinePath_positivePart_le
         (reserveSelectionBelowPotential R φ M) r n ω))
       ∂RootIndexed.stepFieldLaw (Root := Root) μ) ≤
       M * (n : ℝ) + (n : ℝ) *
-        (∫ ξ, firstRSelectedSlotPositivePotential R φ ξ ∂μ) := by
+        (∫ ξ, firstSelectedSlotPositivePotential R φ ξ ∂μ) := by
   let P := RootIndexed.stepFieldLaw (Root := Root) μ
   let S := reserveSelectionBelowPotential R φ M
-  let g := firstRSelectedSlotPositivePotential R φ
+  let g := firstSelectedSlotPositivePotential R φ
   let endpoint : RootIndexed.StepField Root α X → ℝ := fun ω =>
     max 0 (Spine.pathPotential φ (ω r) (selectedReserveSpinePath S r n ω))
   let reserveBound : RootIndexed.StepField Root α X → ℝ := fun ω =>
@@ -109,7 +111,7 @@ theorem integral_selectedReserveSpinePath_positivePart_le
     have h := selectedReserveSpinePath_positivePart_le_cutoff_add_firstChildSum
       R hRcap φ M hM r n ω hωordered hωnonempty
     simpa [endpoint, reserveBound, S, g,
-      firstRSelectedSlotPositivePotential, selectedReserveSpineStep] using h
+      firstSelectedSlotPositivePotential, selectedReserveSpineStep] using h
 
   have hpath : Measurable[
       RootIndexed.stepFiltration (Root := Root) (α := α) (X := X) n]
@@ -166,6 +168,6 @@ theorem integral_selectedReserveSpinePath_positivePart_le
       simp only [integral_const, probReal_univ, smul_eq_mul, one_mul]
       rw [hsumIntegral]
       simp_rw [htermIntegral]
-      simp [g, firstRSelectedSlotPositivePotential]
+      simp [g, firstSelectedSlotPositivePotential]
 
 end ProbabilityTheory.BranchingRandomWalk

@@ -11,6 +11,8 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 /-!
 # Power-law small-deviation scales
 
+## Public declarations
+
 The public theorem `Asymptotics.isSmallDeviationScale_natCast_rpow_of_lt`
 states that for $0<p<q$, the power scale $n\mapsto n^p$ satisfies
 $(n^p)\to\infty$ and $n^p/n^q\to0$. It supplies a reusable instance of

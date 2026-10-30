@@ -5,10 +5,23 @@ Authors: Codex
 -/
 module
 
-public import Mathlib.MeasureTheory.Measure.CharacteristicFunction.TaylorExpansion
+public import Mathlib.MeasureTheory.Measure.CharacteristicFunction.Basic
+import Mathlib.MeasureTheory.Measure.CharacteristicFunction.TaylorExpansion
 
 /-!
 # Cosine defect of a probability measure
+
+## Public declarations
+
+- `cosineDefectIntegral μ t` is the real integral
+  $\int (1-\cos(ty))\,\mu(dy)$.
+- `cosineDefectIntegral_eq_one_sub_charFun_re` identifies it, for a
+  probability measure, with $1-\operatorname{Re}\widehat\mu(t)$.
+- `one_sub_norm_charFun_sq_eq_two_cosineDefect_sub_norm_sq` expresses the
+  squared-modulus defect as twice the cosine defect minus
+  $|\widehat\mu(t)-1|^2$.
+- `continuous_cosineDefectIntegral` proves continuity, and
+  `cosineDefectIntegral_mem_Icc` gives its range $[0,2]$.
 
 This module owns the basic real-valued cosine defect and its characteristic-
 function formulas. It is independent of the Tauberian inversion kernel.
@@ -52,6 +65,21 @@ theorem cosineDefectIntegral_eq_one_sub_charFun_re
     simp [Measure.real_def]
   rw [cosineDefectIntegral, integral_sub (integrable_const (1 : ℝ)) hcosInt,
     hconst, hcos]
+
+/-- For a probability measure, the squared-modulus defect of the
+characteristic function is twice the real cosine defect minus the squared
+modulus of the centered characteristic function. -/
+theorem one_sub_norm_charFun_sq_eq_two_cosineDefect_sub_norm_sq
+    (μ : Measure ℝ) [IsProbabilityMeasure μ] (t : ℝ) :
+    1 - ‖charFun μ t‖ ^ 2 =
+      2 * cosineDefectIntegral μ t - ‖charFun μ t - 1‖ ^ 2 := by
+  rw [cosineDefectIntegral_eq_one_sub_charFun_re]
+  let z : ℂ := charFun μ t
+  have h₁ : ‖z - 1‖ ^ 2 - (z.re - 1) ^ 2 = z.im ^ 2 := by
+    simpa [z] using Complex.sq_norm_sub_sq_re (z - 1)
+  have h₂ : ‖z‖ ^ 2 - z.im ^ 2 = z.re ^ 2 :=
+    Complex.sq_norm_sub_sq_im z
+  nlinarith [h₁, h₂]
 
 /-- The cosine defect is a continuous function of frequency for a probability
 measure. This follows from the standard continuity theorem for

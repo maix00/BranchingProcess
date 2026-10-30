@@ -15,6 +15,13 @@ import Mathlib.Tactic
 /-!
 # Moment bounds from exponential moments
 
+## Public declarations
+
+- `ProbabilityTheory.integrable_pow_four_max_neg_of_lintegral_exp_neg_le`:
+  on a probability space, if \(B\ge1\) and
+  \(\mathbb E[e^{-X}]\le B\), then \(((-X)^+)^4\) is integrable and
+  \(\mathbb E[((-X)^+)^4]\le2048(1+\log^4 B)\).
+
 These estimates apply to measurable real-valued random variables on arbitrary
 probability spaces. They do not depend on a particular distribution.
 -/

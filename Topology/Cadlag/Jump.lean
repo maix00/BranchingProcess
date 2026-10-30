@@ -14,6 +14,14 @@ public import Mathlib.Topology.Compactness.Compact
 /-!
 # Large jumps of càdlàg functions
 
+## Public declarations
+
+- `IsCadlag.finite_jumpTimesAbove`: on a compact linearly ordered
+  pseudometric time space with a bottom element, the set
+  `{t ≠ ⊥ | dist (leftLim f t) (f t) > ε}` is finite for every `ε > 0`.
+- `IsCadlag.countable_discontinuitySet`: on the same time space, a càdlàg
+  function has at most countably many discontinuity times.
+
 A càdlàg function on a compact linearly ordered pseudometric space with its
 order topology and a bottom element has only finitely many noninitial jumps
 larger than any fixed positive threshold. The proof uses local one-sided

@@ -12,9 +12,33 @@ public import Topology.Cadlag.Skorokhod.TimeChange.LogDistortion
 /-!
 # Logarithmic Skorokhod distance
 
+## Public declarations
+
+- `Skorokhod.logarithmicJ1Modulus b = \max(e^b-e^{-b},b)` is continuous and
+  vanishes at zero.
+- `Skorokhod.billingsleyCost f g change` is the maximum of the logarithmic
+  clock distortion and the uniform path error after `change`;
+  `Skorokhod.billingsleyEDist f g = \inf_{change}\,billingsleyCost(f,g,change)`.
+- `Skorokhod.j1EDist_le_modulus_of_billingsleyEDist_lt` gives the conversion
+  $d_{J_1}(f,g)\le \operatorname{ofReal}(m(b))$ whenever
+  $d_B(f,g)<\operatorname{ofReal}(b)$ and $b\ge0$, where
+  $m(b)=\max(e^b-e^{-b},b)$. The fixed-time-change versions give the same
+  bound from a bound on `billingsleyCost`.
+- The `billingsleyEDist` lemmas establish its zero diagonal, symmetry,
+  triangle inequality, and bound by every admissible time-change cost.
+
 This file defines Billingsley's logarithmic time-change cost and proves its
 extended-distance axioms. Completeness and equivalence with the usual
 Skorokhod topology are separate results and are not assumed here.
+
+The logarithmic clock penalty is Billingsley's `||λ||` from equation
+(A4.16), and the strict cost conditions are equations (A4.17)–(A4.18);
+symmetry and composition use (A4.19)–(A4.20), Patrick Billingsley,
+*Convergence of Probability Measures*, 1st ed., Wiley, 1968, Chapter 3, §14,
+pp. 113–114 ([text](https://ru.djvu.online/file/vaaIHv9IWlVeK)). The metric
+equivalence and completeness results are formalized separately in
+`Comparison.lean` and `Completion/Completeness.lean`, following Theorems 14.1
+and 14.2, pp. 114–116.
 -/
 
 @[expose] public section

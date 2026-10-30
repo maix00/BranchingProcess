@@ -12,6 +12,8 @@ public import LinearAlgebra.Spectrum.DiagonalBasis
 /-!
 # Finite spectral expansion of the killed interval kernel
 
+## Public declarations
+
 This file turns the sine basis into matrix-power and surviving-row-mass
 identities.  Geometric tail estimates are kept in the dependent file
 UpperBound.lean.  For each mode $k$, let $v_k$ and $\lambda_k$ be its sine

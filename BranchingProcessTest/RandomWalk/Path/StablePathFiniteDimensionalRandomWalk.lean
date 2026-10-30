@@ -1,4 +1,4 @@
-import Probability.Process.RandomWalk.FunctionalLimit.Stable.PathLaw.RandomWalkGrid
+import Probability.Process.RandomWalk.FunctionalLimit.Stable.PathLaw.WalkGrid
 
 open Filter MeasureTheory ProbabilityTheory
 open ProbabilityTheory.RandomWalk.FunctionalLimit.Stable
@@ -17,7 +17,7 @@ example {ν μ : Measure ℝ} [IsProbabilityMeasure ν] [IsProbabilityMeasure μ
         atTop (𝓝 0)) :
     TendstoInDistribution
       (fun n (increments : ℕ → ℝ) (j : Fin blocks) =>
-        AdditivePath.blockSum (AdditivePath.blockStart
+        AdditivePath.blockSum (Combinatorics.Sequence.blockStart
           (unitIntervalGridBlockLength grid n) j.val)
           (unitIntervalGridBlockLength grid n j.val) increments / normalization n)
       atTop id

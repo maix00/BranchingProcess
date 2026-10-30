@@ -12,7 +12,7 @@ public import Probability.Process.Brownian.PathLaw.ContinuousPathLaw
 /-!
 # Brownian scaling on a finite path interval
 
-The public theorem in this file is:
+## Public declarations
 
 - `ProbabilityTheory.rescaleUnitPath_restrictPathToUnitInterval_eq_restrict_brownianPathScaling`:
   for $s>0$ and a continuous path $f$,
@@ -44,7 +44,7 @@ theorem rescaleUnitPath_restrictPathToUnitInterval_eq_restrict_brownianPathScali
       restrictPathTo m (brownianPathScaling m⁻¹ f) := by
   ext t
   have htime :
-      UnitInterval.toNNReal (unitTimeOfFiniteTime m hm t) = m⁻¹ * t.1 := by
+      unitInterval.toNNReal (unitTimeOfFiniteTime m hm t) = m⁻¹ * t.1 := by
     apply NNReal.eq
     change (t.1 : ℝ) / (m : ℝ) = ((m⁻¹ : ℝ≥0) : ℝ) * (t.1 : ℝ)
     rw [NNReal.coe_inv]
@@ -52,7 +52,7 @@ theorem rescaleUnitPath_restrictPathToUnitInterval_eq_restrict_brownianPathScali
   have hamp : (Real.sqrt (((m⁻¹ : ℝ≥0) : ℝ)))⁻¹ = Real.sqrt m := by
     rw [NNReal.coe_inv, Real.sqrt_inv]
     simp
-  change Real.sqrt m * f (UnitInterval.toNNReal
+  change Real.sqrt m * f (unitInterval.toNNReal
       (unitTimeOfFiniteTime m hm t)) =
       (Real.sqrt (((m⁻¹ : ℝ≥0) : ℝ)))⁻¹ * f (m⁻¹ * t.1)
   rw [htime, hamp]
@@ -75,7 +75,7 @@ theorem IsBrownianReal.measure_rescaleUnitPath_eq_finiteHorizonPathLaw
         fun ω => restrictPathToUnitInterval (path ω) := by
     filter_upwards [hB.continuousPathMap_ae_eq hmeasurable] with ω hω
     ext t
-    exact (hω (UnitInterval.toNNReal t)).symm
+    exact (hω (unitInterval.toNNReal t)).symm
   have hscale :
       P.map (brownianPathScaling m⁻¹ ∘ path) = P.map path :=
     hB.measure_continuousPathMap_scale_eq hmeasurable (inv_ne_zero hm.ne')

@@ -15,6 +15,17 @@ public import Combinatorics.BranchingWalk.StepField
 A random step is indexed by child slots. A random step field adds one further
 index, the Ulam--Harris address at which reproduction occurs. Evaluation at a
 sample assembles the corresponding deterministic step field.
+
+## Public declarations
+
+- `ProbabilityTheory.BranchingRandomWalk.StepField Ω α X`: the type of random
+  optional-step fields, indexed by addresses and with sample space $\Omega$.
+- `ProbabilityTheory.BranchingRandomWalk.StepField.realize`: evaluates all
+  coordinate presentations at one sample to produce a deterministic
+  `Combinatorics.Branching.StepField`.
+- `ProbabilityTheory.BranchingRandomWalk.StepField.measurable_realize`: the
+  realization map is measurable.
+
 -/
 
 @[expose] public section

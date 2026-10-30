@@ -7,12 +7,13 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Distributions.Moments.Truncated.Basic
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Path.TerminalLeftPathClass.Basic
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Path.TerminalLeft.Basic
+import Probability.Process.Brownian.Construction.Existence
 
 /-!
 # Finite-variance specialization of the normal-domain Mogul'skii rate
 
-The public theorem in this file is:
+## Public declarations
 
 - `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.tendsto_scaledLog_sourceProbability_of_finiteVariance`:
   for a finite-variance Gaussian-domain walk and a source path class $G$,
@@ -53,25 +54,26 @@ theorem tendsto_scaledLog_sourceProbability_of_finiteVariance
     (hscale : IsStableMogulskiiScale 2 ν normalization scale)
     (hDOA : IsInDomainOfAttractionAlong ν (gaussianReal 0 1)
       normalization (fun _ => 0))
-    {Ω : Type*} [MeasurableSpace Ω] {Q : Measure Ω}
-    [IsProbabilityMeasure Q] {B : ℝ≥0 → Ω → ℝ}
-    (hB : IsBrownianReal B Q)
     {G : Set (CadlagPath unitInterval ℝ)} (hG : HasVanishingEnergyGapApproximation 2 G)
     (hGmeas : MeasurableSet G)
-    (hsquare : Integrable (fun x : ℝ => x ^ 2) ν)
     (hvariance : 0 < ∫ x : ℝ, x ^ 2 ∂ν) :
     ∃ H : ℝ, ∃ A : FiniteCorridorUnionApproximation 2 G, ∃ hLimits : FiniteCorridorUnionEnergyLimits A,
       H = hLimits.commonEnergy ∧
       Tendsto
         (fun n : ℕ => (scale n) ^ 2 / (n : ℝ) * Real.log
           ((iidSequenceLaw ν {increment : ℕ → ℝ |
-            RandomWalk.sourceNormalizedStepCadlagPathIcc scale n increment ∈ G}).toReal))
+            RandomWalk.terminalLeftNormalizedStepCadlagPathIcc scale n increment ∈ G}).toReal))
         atTop (𝓝 (-(Real.pi ^ 2) / 2 * (∫ x : ℝ, x ^ 2 ∂ν) * hLimits.commonEnergy)) := by
+  obtain ⟨Q, B, hB, _, _⟩ := ProbabilityTheory.exists_brownianReal
+  let : IsProbabilityMeasure
+      (Q : Measure (ℕ → CadlagPath unitInterval ℝ)) := Q.property
   obtain ⟨_, ⟨_, ⟨H, hRateData, _hUnique⟩⟩⟩ :=
     tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_source_index_two_of_brownian_explicit
       hscale hDOA hB hG hGmeas
   rcases hRateData with ⟨⟨A, hLimits, hH⟩, hRate⟩
   subst H
+  have hsquare : Integrable (fun x : ℝ => x ^ 2) ν :=
+    Integrable.of_integral_ne_zero (ne_of_gt hvariance)
   have htruncated := tendsto_truncatedSecondMoment ν hsquare
   have hvarianceLimit : Tendsto
       (fun n : ℕ => stableSlowVariation 2 ν (scale n)) atTop
@@ -91,22 +93,22 @@ theorem tendsto_scaledLog_sourceProbability_of_finiteVariance
   have hlogRate : Tendsto
       (fun n : ℕ => Real.log
         ((iidSequenceLaw ν {increment : ℕ → ℝ |
-          RandomWalk.sourceNormalizedStepCadlagPathIcc scale n increment ∈ G}).toReal) /
+          RandomWalk.terminalLeftNormalizedStepCadlagPathIcc scale n increment ∈ G}).toReal) /
           stableRateNormalization 2 ν scale n)
       atTop (𝓝 (-(Real.pi ^ 2) / 2 * hLimits.commonEnergy)) := hRate
   have hproduct := hlogRate.mul hvarianceLimit
   have hfinal : Tendsto
       (fun n : ℕ => (scale n) ^ 2 / (n : ℝ) * Real.log
         ((iidSequenceLaw ν {increment : ℕ → ℝ |
-          RandomWalk.sourceNormalizedStepCadlagPathIcc scale n increment ∈ G}).toReal))
+          RandomWalk.terminalLeftNormalizedStepCadlagPathIcc scale n increment ∈ G}).toReal))
       atTop (𝓝 (-(Real.pi ^ 2) / 2 * (∫ x : ℝ, x ^ 2 ∂ν) * hLimits.commonEnergy)) := by
     have hEq : (fun n : ℕ =>
         Real.log ((iidSequenceLaw ν {increment : ℕ → ℝ |
-          RandomWalk.sourceNormalizedStepCadlagPathIcc scale n increment ∈ G}).toReal) /
+          RandomWalk.terminalLeftNormalizedStepCadlagPathIcc scale n increment ∈ G}).toReal) /
           stableRateNormalization 2 ν scale n * stableSlowVariation 2 ν (scale n)) =ᶠ[atTop]
         (fun n : ℕ => (scale n) ^ 2 / (n : ℝ) * Real.log
           ((iidSequenceLaw ν {increment : ℕ → ℝ |
-            RandomWalk.sourceNormalizedStepCadlagPathIcc scale n increment ∈ G}).toReal)) := by
+            RandomWalk.terminalLeftNormalizedStepCadlagPathIcc scale n increment ∈ G}).toReal)) := by
       filter_upwards [eventually_gt_atTop (0 : ℕ), hscale.eventually_scale_pos,
         hvarianceLimit.eventually (Ioi_mem_nhds hvariance)] with n hn hscaleN hL
       rw [stableRateNormalization_eq, stableSlowVariation_two]

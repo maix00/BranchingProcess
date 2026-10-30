@@ -13,14 +13,14 @@ public section
 /-!
 # Measurable mappings under convergence in distribution
 
-The public theorems in this file are:
+## Public declarations
 
 - `MeasureTheory.ProbabilityMeasure.tendsto_map_of_tendsto_of_continuousAt_ae`:
   $\mu_n\Rightarrow\mu$ and $\mu$-almost-sure continuity of a measurable
   map $f$ imply $f_*\mu_n\Rightarrow f_*\mu$.
 - `MeasureTheory.TendstoInDistribution.measurable_comp_of_continuousAt_ae`:
-  the corresponding random-variable form,
-  $X_n\Rightarrow X\Rightarrow f(X_n)\Rightarrow f(X)$.
+  if $X_n\Rightarrow X$ and $f$ is measurable and continuous at $X$
+  almost surely, then $f(X_n)\Rightarrow f(X)$.
 
 The proof uses the open-set form of the Portmanteau theorem. The
 random-variable form is used for the first-window path shift in
@@ -128,8 +128,7 @@ theorem TendstoInDistribution.measurable_comp_of_continuousAt_ae
   tendsto := by
     convert! ProbabilityMeasure.tendsto_map_of_tendsto_of_continuousAt_ae
       h.tendsto hg hcont using 1
-    · congr 1
-      funext i
+    · funext i
       apply Subtype.ext
       exact (AEMeasurable.map_map_of_aemeasurable
         hg.aemeasurable (h.forall_aemeasurable i)).symm

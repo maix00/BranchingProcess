@@ -6,9 +6,12 @@ Authors: WANG Yiyang
 
 module
 
-import Probability.BranchingRandomWalk.Restart.RootedTrial.Spine.BoundedOffspring
-import Probability.BranchingRandomWalk.Genealogy.Exploration.Selected.AbstractSubtreeVector
+import Probability.BranchingRandomWalk.Restart.RootedTrial.FiniteSlot.Offspring
+import Combinatorics.BranchingWalk.Step.Selection.Slot
+import MeasureTheory.BranchingWalk.Step.Selection.Slot
+import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.SelectedSubtreeVector
 import Probability.BranchingRandomWalk.Population.Processes.StepSelection.Basic
+import Probability.BranchingRandomWalk.Population.Processes.StepSelection.SelectedPath
 import Probability.Independence.ConditionalIntegral
 
 /-!
@@ -19,10 +22,35 @@ construct the finite-slot population process in the parent `Coupling` module.
 The coding is specific to that construction and is kept in the parent's
 `Lemmas/` layer as non-reusable proof support.
 
-## Public declarations
+## Internal proof declarations
 
-None. The address maps and ordinary lemmas below only support the construction
-and proof of the finite-slot coupling; they do not form a standalone API.
+The parent `FiniteSlot/Coupling.lean` uses the following internal interfaces:
+
+- `finiteSlotDecode S ω u` decodes a binary address $u$ by iteratively
+  selecting a source slot, and `finiteSlotCodedStepField S ω u` reads the
+  finite offspring step at that decoded source address.
+  `finiteSlotDecode_length` states $|\operatorname{finiteSlotDecode}(S,\omega,u)|=|u|$,
+  and `finiteSlotDecode_surviveAlong_iff_selectedAlong` states
+  `surviveAlong (finiteSlotCodedStepField S ω) [] u ↔
+  selectedAlong S ω [] (finiteSlotDecode S ω u)`.
+- `finiteSlotDecode_mem_population_of_surviveAlong` and
+  `finiteSlotDecode_existsUnique_of_mem_population` relate active coded
+  addresses to the selected population at generation $n$; the latter gives a
+  unique length-$n$ coded address for each selected source path, while
+  `finiteSlotDecode_injective_level` proves levelwise injectivity. Explicitly,
+  an active $u$ with $|u|=n$ decodes to a member of
+  $\operatorname{population}(S,n,\omega)$, and every such member $p$ has a
+  unique active address $u$ with $|u|=n$ and
+  $\operatorname{finiteSlotDecode}(S,\omega,u)=p$.
+- `finiteSlotLevelRoots S ω n u := finiteSlotDecode S ω (List.ofFn u)` is
+  measurable from the generation-$n$ field, has countable range, has
+  measurable fibers, has depth $n$, and is injective in $u$.
+- `finiteSlotLevelSubtreeVector_law` identifies the joint law of the source
+  subtrees rooted at all binary addresses of length $n$ with the product law
+  `Measure.infinitePi (fun _ : (Fin n → Fin 2) => offspringFieldLaw μ)`.
+
+The address choices and encode/decode calculations used only to prove these
+interfaces are private to this module.
 -/
 
 open MeasureTheory
@@ -30,16 +58,20 @@ open scoped ENNReal
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
+open ProbabilityTheory.BranchingProcess (offspringFieldLaw offspringFieldLaw_coordinate offspringFieldLaw_independent offspringFieldLaw_mapMarks)
+
 open Combinatorics.Branching Combinatorics.UlamHarris
+open Combinatorics.Branching.Step.FiniteSelection
+open StepSelection
 
 /-- A successor slot used to fill an inactive binary branch. -/
-noncomputable def finiteSlotSuccessor
+private noncomputable def finiteSlotSuccessor
     {α : Type*} [LinearOrder α] [LocallyFiniteOrder α]
     [OrderBot α] [NoMaxOrder α] (x : α) : α := by
   letI : SuccOrder α := LinearLocallyFiniteOrder.succOrder α
   exact Order.succ x
 
-lemma finiteSlotSuccessor_gt
+private lemma finiteSlotSuccessor_gt
     {α : Type*} [LinearOrder α] [LocallyFiniteOrder α]
     [OrderBot α] [NoMaxOrder α] (x : α) :
     x < finiteSlotSuccessor x := by
@@ -53,7 +85,7 @@ lemma finiteSlotSuccessor_gt
 Selected children occupy the first positions in slot order. Missing positions
 are sent to successors of the first selected slot, which provides distinct
 addresses for inactive binary branches. -/
-noncomputable def finiteSlotAddress
+private noncomputable def finiteSlotAddress
     {α X : Type*} [LinearOrder α] [LocallyFiniteOrder α]
     [OrderBot α] [NoMaxOrder α]
     (S : Step.FiniteSelection α X) (ξ : Step α X) (i : Fin 2) : α := by
@@ -61,14 +93,14 @@ noncomputable def finiteSlotAddress
     if 2 ≤ (S ξ).card then secondSelectedSlot S ξ else
       finiteSlotSuccessor (firstSelectedSlot S ξ)
 
-@[simp] lemma finiteSlotAddress_zero
+@[simp] private lemma finiteSlotAddress_zero
     {α X : Type*} [LinearOrder α] [LocallyFiniteOrder α]
     [OrderBot α] [NoMaxOrder α]
     (S : Step.FiniteSelection α X) (ξ : Step α X) :
     finiteSlotAddress S ξ 0 = firstSelectedSlot S ξ := by
   simp [finiteSlotAddress]
 
-@[simp] lemma finiteSlotAddress_one
+@[simp] private lemma finiteSlotAddress_one
     {α X : Type*} [LinearOrder α] [LocallyFiniteOrder α]
     [OrderBot α] [NoMaxOrder α]
     (S : Step.FiniteSelection α X) (ξ : Step α X) :
@@ -79,7 +111,7 @@ noncomputable def finiteSlotAddress
 
 /-- Under the capacity-two bound, the two finite labels have distinct source
 slots, including when the selected family is empty or a singleton. -/
-lemma finiteSlotAddress_injective
+private lemma finiteSlotAddress_injective
     {α X : Type*} [LinearOrder α] [LocallyFiniteOrder α]
     [OrderBot α] [NoMaxOrder α]
     (S : Step.FiniteSelection α X) (ξ : Step α X) :
@@ -101,7 +133,7 @@ lemma finiteSlotAddress_injective
 
 /-- Every selected source slot is represented by an active binary label when
 the selector keeps at most two children. -/
-lemma finiteSlotAddress_exists_of_mem
+private lemma finiteSlotAddress_exists_of_mem
     {α X : Type*} [LinearOrder α] [LocallyFiniteOrder α]
     [OrderBot α] [NoMaxOrder α]
     (S : Step.FiniteSelection α X) (ξ : Step α X)
@@ -114,7 +146,7 @@ lemma finiteSlotAddress_exists_of_mem
   · refine ⟨0, ?_, ?_⟩
     · have hpos : 0 < (S ξ).card := Finset.card_pos.mpr ⟨i, hi⟩
       simp [hpos]
-    · simpa [finiteSlotAddress_zero, f, hfi]
+    · simp [finiteSlotAddress_zero, f, hfi]
   · have htwo : 2 ≤ (S ξ).card := by
       by_contra h
       have hle : (S ξ).card ≤ 1 := by omega
@@ -141,84 +173,9 @@ lemma finiteSlotAddress_exists_of_mem
     · simp [hcard]
     · rw [finiteSlotAddress_one, ite_eq_left htwo, hsecond]
 
-/-- A path belongs to the selected population exactly when each of its
-successive slots is retained by the selector at its parent. -/
-def selectedAlong {α X : Type*}
-    (S : Step.FiniteSelection α X) (ω : Mark α (Step α X)) :
-    TreeNode α → TreeNode α → Prop
-  | _, [] => True
-  | v, i :: p => i ∈ S (ω v) ∧ selectedAlong S ω (v ++ [i]) p
-
-lemma selectedAlong_append_singleton
-    {α X : Type*} (S : Step.FiniteSelection α X)
-    (ω : Mark α (Step α X)) :
-    ∀ (v p : TreeNode α) (i : α),
-      selectedAlong S ω v (p ++ [i]) ↔
-        selectedAlong S ω v p ∧ i ∈ S (ω (v ++ p)) := by
-  intro v p
-  induction p generalizing v with
-  | nil => intro i; simp [selectedAlong]
-  | cons j p ih =>
-      intro i
-      have hpath : v ++ (j :: p) = (v ++ [j]) ++ p := by simp
-      simp only [List.cons_append, selectedAlong]
-      rw [ih]
-      simp only [hpath, and_assoc]
-
-/-- The recursive selected population is precisely the finite set of
-same-generation paths retained edge by edge. -/
-lemma mem_population_iff_length_selectedAlong
-    {α X : Type*} (S : Step.FiniteSelection α X)
-    (ω : Mark α (Step α X)) :
-    ∀ n u, u ∈ StepSelection.population S n ω ↔
-      u.length = n ∧ selectedAlong S ω [] u := by
-  intro n
-  induction n with
-  | zero =>
-      intro u
-      rw [StepSelection.population_zero]
-      simp only [Finset.mem_singleton]
-      constructor
-      · intro hu
-        subst u
-        simp [selectedAlong]
-      · rintro ⟨hu, _⟩
-        exact List.length_eq_zero_iff.mp hu
-  | succ n ih =>
-      intro q
-      rw [StepSelection.population_succ, StepSelection.mem_grow_iff]
-      constructor
-      · rintro ⟨u, hu, i, hi, rfl⟩
-        have hu' := (ih u).mp hu
-        have hfrontier : frontierMarks n ω u = ω u := by
-          simp [frontierMarks, hu'.1]
-        refine ⟨by simp [hu'.1], ?_⟩
-        rw [selectedAlong_append_singleton]
-        exact ⟨hu'.2, hfrontier ▸ hi⟩
-      · rintro ⟨hqLength, hqSelected⟩
-        have hqne : q ≠ [] := by
-          intro h
-          simp [h] at hqLength
-        let i := q.getLast hqne
-        have hsplit : q.dropLast ++ [i] = q := by
-          simpa [i] using List.dropLast_append_getLast hqne
-        have hselected : selectedAlong S ω [] (q.dropLast ++ [i]) := by
-          simpa [hsplit] using hqSelected
-        have hparts := (selectedAlong_append_singleton S ω [] q.dropLast i).mp
-          hselected
-        have hparentLength : q.dropLast.length = n := by
-          rw [List.length_dropLast]
-          omega
-        have hparent : q.dropLast ∈ StepSelection.population S n ω :=
-          (ih q.dropLast).mpr ⟨hparentLength, hparts.1⟩
-        have hfrontier :
-            frontierMarks n ω q.dropLast = ω q.dropLast := by
-          simp [frontierMarks, hparentLength]
-        exact ⟨q.dropLast, hparent, i, hfrontier ▸ hparts.2, hsplit.symm⟩
-
 /-- The finite label survives in the coded offspring step exactly when its
 source address is selected. -/
-lemma finiteSlotAddress_mem_iff
+private lemma finiteSlotAddress_mem_iff
     {α X : Type*} [LinearOrder α] [LocallyFiniteOrder α]
     [OrderBot α] [NoMaxOrder α]
     (S : Step.FiniteSelection α X) (ξ : Step α X)
@@ -227,7 +184,7 @@ lemma finiteSlotAddress_mem_iff
   classical
   letI : SuccOrder α := LinearLocallyFiniteOrder.succOrder α
   fin_cases i
-  · simp only [finiteSlotAddress_zero]
+  · simp only
     by_cases hnonempty : (S ξ).Nonempty
     · have hfirst := firstSelectedSlot_mem S ξ hnonempty
       have hpos : 0 < (S ξ).card := Finset.card_pos.mpr hnonempty
@@ -236,7 +193,7 @@ lemma finiteSlotAddress_mem_iff
         simpa [Finset.card_pos] using hnonempty
       have hS : S ξ = ∅ := Finset.card_eq_zero.mp hcard
       simp [firstSelectedSlot, hS]
-  · simp only [finiteSlotAddress_one]
+  · simp only
     by_cases htwo : 2 ≤ (S ξ).card
     · have hsecond := secondSelectedSlot_mem_of_card S ξ htwo
       have hlt : 1 < (S ξ).card := by omega
@@ -256,16 +213,16 @@ lemma finiteSlotAddress_mem_iff
           intro heq
           exact (ne_of_lt (finiteSlotSuccessor_gt (firstSelectedSlot S ξ)))
             (hfirstx.trans heq.symm)
-        simp [htwo, hcard1, hnotmem]
+        simp [hcard1, hnotmem]
       · have hcard0 : (S ξ).card = 0 := by
           simpa [Finset.card_pos] using hnonempty
         have hfirst : firstSelectedSlot S ξ = ⊥ := by
           simp [firstSelectedSlot, hnonempty]
-        simp [htwo, hcard0, hfirst, Finset.card_eq_zero.mp hcard0]
+        simp [hfirst, Finset.card_eq_zero.mp hcard0]
 
 /-- A fixed binary label's source slot is a measurable function of the
 offspring mark. -/
-lemma finiteSlotAddress_measurable
+private lemma finiteSlotAddress_measurable
     {α X : Type*} [Countable α] [MeasurableSpace α]
     [MeasurableSingletonClass α] [MeasurableSpace X]
     [LinearOrder α] [LocallyFiniteOrder α] [OrderBot α] [NoMaxOrder α]
@@ -306,7 +263,7 @@ noncomputable def finiteSlotDecode
 
 /-- Appending one binary label appends its selected source slot to the
 previously decoded prefix. -/
-@[simp] lemma finiteSlotDecode_append_singleton
+@[simp] private lemma finiteSlotDecode_append_singleton
     {α X : Type*} [LinearOrder α] [LocallyFiniteOrder α]
     [OrderBot α] [NoMaxOrder α]
     (S : Step.FiniteSelection α X) (ω : Mark α (Step α X))
@@ -322,7 +279,7 @@ noncomputable def finiteSlotCodedStepField
     [OrderBot α] [NoMaxOrder α]
     (S : Step.FiniteSelection α X) (ω : Mark α (Step α X)) :
     StepField (Fin 2) PUnit.{1} :=
-  fun u => finiteOffspringStep S (ω (finiteSlotDecode S ω u))
+  fun u => S.binaryOffspringStep (ω (finiteSlotDecode S ω u))
 
 /-- A binary path survives in the coded finite-slot field exactly when its
 decoded source path uses selected children at every step. -/
@@ -338,8 +295,7 @@ lemma finiteSlotDecode_surviveAlong_iff_selectedAlong
   intro u
   induction u using List.reverseRecOn with
   | nil =>
-      simp [Combinatorics.Branching.surviveAlong, finiteSlotCodedStepField,
-        selectedAlong, finiteSlotDecode]
+      simp [Combinatorics.Branching.surviveAlong, selectedAlong, finiteSlotDecode]
   | append_singleton u i ih =>
       rw [Combinatorics.Branching.surviveAlong_append_singleton,
         finiteSlotDecode_append_singleton,
@@ -351,26 +307,26 @@ lemma finiteSlotDecode_surviveAlong_iff_selectedAlong
           survive (finiteSlotCodedStepField S ω u) i ↔
             finiteSlotAddress S (ω (finiteSlotDecode S ω u)) i ∈
               S (ω (finiteSlotDecode S ω u)) := by
-        change survive (finiteOffspringStep S
+        change survive (S.binaryOffspringStep
           (ω (finiteSlotDecode S ω u))) i ↔ _
         calc
-          survive (finiteOffspringStep S
+          survive (S.binaryOffspringStep
               (ω (finiteSlotDecode S ω u))) i ↔
               i.val < (S (ω (finiteSlotDecode S ω u))).card := by
                 rw [Combinatorics.Branching.survive_iff_ne_none]
-                simp [finiteOffspringStep]
+                simp [Step.FiniteSelection.binaryOffspringStep]
           _ ↔ finiteSlotAddress S (ω (finiteSlotDecode S ω u)) i ∈
               S (ω (finiteSlotDecode S ω u)) := hslot.symm
       rw [hchild]
 
 /-- Select the binary label assigned to a selected source slot. -/
-noncomputable def finiteSlotRank
+private noncomputable def finiteSlotRank
     {α X : Type*} [LinearOrder α] [LocallyFiniteOrder α]
     [OrderBot α] [NoMaxOrder α]
     (S : Step.FiniteSelection α X) (ξ : Step α X) (i : α) : Fin 2 :=
   if finiteSlotAddress S ξ 0 = i then 0 else 1
 
-lemma finiteSlotRank_address
+private lemma finiteSlotRank_address
     {α X : Type*} [LinearOrder α] [LocallyFiniteOrder α]
     [OrderBot α] [NoMaxOrder α]
     (S : Step.FiniteSelection α X) (ξ : Step α X)
@@ -407,7 +363,7 @@ lemma finiteSlotRank_address
 
 /-- Extend a source prefix by the finite label assigned to each selected
 source child. -/
-noncomputable def finiteSlotEncodeFrom
+private noncomputable def finiteSlotEncodeFrom
     {α X : Type*} [LinearOrder α] [LocallyFiniteOrder α]
     [OrderBot α] [NoMaxOrder α]
     (S : Step.FiniteSelection α X) (ω : Mark α (Step α X))
@@ -417,7 +373,7 @@ noncomputable def finiteSlotEncodeFrom
       finiteSlotEncodeFrom S ω (v ++ [i]) p
 
 /-- Encode a selected source path from the root by its binary slot labels. -/
-noncomputable def finiteSlotEncode
+private noncomputable def finiteSlotEncode
     {α X : Type*} [LinearOrder α] [LocallyFiniteOrder α]
     [OrderBot α] [NoMaxOrder α]
     (S : Step.FiniteSelection α X) (ω : Mark α (Step α X))
@@ -425,21 +381,21 @@ noncomputable def finiteSlotEncode
   finiteSlotEncodeFrom S ω [] p
 
 /-- Decoding can start at an already decoded source prefix. -/
-noncomputable def finiteSlotDecodeFrom
+private noncomputable def finiteSlotDecodeFrom
     {α X : Type*} [LinearOrder α] [LocallyFiniteOrder α]
     [OrderBot α] [NoMaxOrder α]
     (S : Step.FiniteSelection α X) (ω : Mark α (Step α X))
     (v : TreeNode α) (u : TreeNode (Fin 2)) : TreeNode α :=
   u.foldl (fun p i => p ++ [finiteSlotAddress S (ω p) i]) v
 
-lemma finiteSlotDecode_eq_decodeFrom
+private lemma finiteSlotDecode_eq_decodeFrom
     {α X : Type*} [LinearOrder α] [LocallyFiniteOrder α]
     [OrderBot α] [NoMaxOrder α]
     (S : Step.FiniteSelection α X) (ω : Mark α (Step α X))
     (u : TreeNode (Fin 2)) :
     finiteSlotDecode S ω u = finiteSlotDecodeFrom S ω [] u := rfl
 
-@[simp] lemma finiteSlotDecodeFrom_append_singleton
+@[simp] private lemma finiteSlotDecodeFrom_append_singleton
     {α X : Type*} [LinearOrder α] [LocallyFiniteOrder α]
     [OrderBot α] [NoMaxOrder α]
     (S : Step.FiniteSelection α X) (ω : Mark α (Step α X))
@@ -449,7 +405,7 @@ lemma finiteSlotDecode_eq_decodeFrom
         [finiteSlotAddress S (ω (finiteSlotDecodeFrom S ω v u)) i] := by
   simp [finiteSlotDecodeFrom, List.foldl_append]
 
-lemma finiteSlotEncodeFrom_length
+private lemma finiteSlotEncodeFrom_length
     {α X : Type*} [LinearOrder α] [LocallyFiniteOrder α]
     [OrderBot α] [NoMaxOrder α]
     (S : Step.FiniteSelection α X) (ω : Mark α (Step α X)) :
@@ -460,7 +416,7 @@ lemma finiteSlotEncodeFrom_length
   | nil => rfl
   | cons i p ih => simp [finiteSlotEncodeFrom, ih]
 
-lemma finiteSlotDecodeFrom_encodeFrom
+private lemma finiteSlotDecodeFrom_encodeFrom
     {α X : Type*} [LinearOrder α] [LocallyFiniteOrder α]
     [OrderBot α] [NoMaxOrder α]
     (S : Step.FiniteSelection α X) (ω : Mark α (Step α X))
@@ -523,7 +479,7 @@ lemma finiteSlotDecode_mem_population_of_surviveAlong
 
 /-- Every source path in the N-selected population has an active binary
 address in the coded finite-slot tree. -/
-lemma finiteSlotDecode_exists_of_mem_population
+private lemma finiteSlotDecode_exists_of_mem_population
     {α X : Type*} [LinearOrder α] [LocallyFiniteOrder α]
     [OrderBot α] [NoMaxOrder α]
     (S : Step.FiniteSelection α X) (ω : Mark α (Step α X))
@@ -550,7 +506,7 @@ lemma finiteSlotDecode_exists_of_mem_population
 
 /-- Decoding a binary address of length `n` only reads marks at depths below
 `n`, so the resulting source address is observable at generation `n`. -/
-lemma finiteSlotDecode_measurable
+private lemma finiteSlotDecode_measurable
     {α X : Type*} [Countable α] [MeasurableSpace α]
     [MeasurableSingletonClass α] [MeasurableSpace X]
     [LinearOrder α] [LocallyFiniteOrder α] [OrderBot α] [NoMaxOrder α]
@@ -584,7 +540,7 @@ lemma finiteSlotDecode_measurable
             finiteSlotDecode S ω (u ++ [i])) := by
         convert happend.comp hpair using 1
         funext ω
-        simp [Function.comp_def, finiteSlotDecode_append_singleton]
+        simp [finiteSlotDecode_append_singleton]
       change Measurable[
         generationFiltration (M := Step α X) ((u ++ [i]).length)]
         (fun ω : Mark α (Step α X) =>
@@ -608,7 +564,7 @@ lemma finiteSlotDecode_injective_level
         cases v with
         | nil => rfl
         | cons i v => simp at hlen
-      simpa [hv]
+      simp [hv]
   | append_singleton u i ih =>
       have hvne : v ≠ [] := by
         intro hv
@@ -749,9 +705,9 @@ lemma finiteSlotLevelSubtreeVector_law
     [LinearOrder α] [LocallyFiniteOrder α] [OrderBot α] [NoMaxOrder α]
     (μ : Measure (Step α X)) [IsProbabilityMeasure μ]
     (S : Step.FiniteSelection α X) (hS : Measurable S.select) (n : ℕ) :
-    (stepFieldLaw μ).map
+    (offspringFieldLaw μ).map
       (selectedSubtreeStepFieldVector (finiteSlotLevelRoots S · n)) =
-      Measure.infinitePi (fun _ : (Fin n → Fin 2) => stepFieldLaw μ) := by
+      Measure.infinitePi (fun _ : (Fin n → Fin 2) => offspringFieldLaw μ) := by
   classical
   exact selectedSubtreeStepFieldVector_law μ
     (finiteSlotLevelRoots S · n)

@@ -6,9 +6,8 @@ Authors: WANG Yiyang
 
 module
 
-public import Combinatorics.BranchingWalk.Selection.NSelection.Mechanism.OrderDual
+public import Combinatorics.Selection.NSelection.Mechanism.Finite.OrderDual
 public import Combinatorics.BranchingWalk.Cloud.Basic
-public import Combinatorics.BranchingWalk.Step.Measure.PointMeasure
 
 /-!
 # The deterministic `N`-branching walk
@@ -58,6 +57,9 @@ generation, so the two directions are one theory.
 open Classical
 
 @[expose] public section
+
+open _root_.Combinatorics.Selection
+open _root_.Combinatorics.Selection.NSelection
 
 /-! ### Reversing the order -/
 

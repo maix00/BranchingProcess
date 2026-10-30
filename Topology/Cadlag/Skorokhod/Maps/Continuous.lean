@@ -15,6 +15,16 @@ public import Topology.Cadlag.Skorokhod.Topology
 
 Continuous paths embed continuously into the Skorokhod `J₁` space.  The
 identity time change bounds the `J₁` distance by the uniform distance.
+
+## Public declarations
+
+- `ofContinuousMap f` regards `f : C([0,1], E)` as a càdlàg path, with
+  `ofContinuousMap f t = f t`.
+- `edist_ofContinuousMap_le`: the extended distance of the embedded paths is
+  bounded by the uniform extended distance of `f` and `g`.
+- `continuous_ofContinuousMap` and `measurable_ofContinuousMap`: the
+  embedding `C([0,1], E) → D([0,1], E)` is continuous and, for a second
+  countable state space, Borel measurable.
 -/
 
 @[expose] public section
@@ -56,8 +66,7 @@ theorem continuous_ofContinuousMap {E : Type*} [MetricSpace E] :
   · exact Eventually.of_forall fun _ ↦ bot_le
   · exact Eventually.of_forall fun g ↦ edist_ofContinuousMap_le g f
 
-theorem measurable_ofContinuousMap {E : Type*} [MetricSpace E]
-    [SecondCountableTopology E] :
+theorem measurable_ofContinuousMap {E : Type*} [MetricSpace E] :
     Measurable (ofContinuousMap : C(unitInterval, E) →
       CadlagPath unitInterval E) :=
   continuous_ofContinuousMap.measurable

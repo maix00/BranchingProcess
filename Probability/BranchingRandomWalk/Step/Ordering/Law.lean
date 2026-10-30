@@ -11,6 +11,8 @@ public import Probability.BranchingRandomWalk.Step.PointMeasure.Basic
 public import Probability.BranchingRandomWalk.Assumptions.Structural
 public import Combinatorics.BranchingWalk.Step.Map
 
+import Probability.RandomMeasure.ExponentialTilt
+
 /-!
 # Branching laws presented through a measurable scalar ordering
 
@@ -18,6 +20,35 @@ A raw child law is never assumed to use ordered slots. A `StepLaw` stores an
 abstract mark law, a measurable real potential, and deterministic measurable
 code that lists every realized child increasingly by that potential. Indexed
 variables are read only after applying this code.
+
+## Public declarations
+
+* `StepLaw` packages the raw child law, its real-valued potential, and the
+  deterministic measurable ordering rule. `StepLaw.sorted` pushes the raw
+  law to ordered child slots; `StepLaw.sortedPotentialImage` then maps every
+  child mark through the potential. The two corresponding
+  `isProbabilityMeasure` instances preserve probability laws.
+* `StepLaw.displacement?` reads the optional child at a slot, and
+  `StepLaw.displacement` reads its potential value, using zero for an absent
+  child. `displacement?_measurable` and `displacement_measurable` prove the
+  coordinate maps measurable.
+* `StepLaw.sorted_orderedBy` states that the ordered law assigns its full mass
+  to steps ordered by the potential, and `StepLaw.sorted_pointMeasure` gives
+  pointwise equality of child point measures. `StepLaw.nonempty_ordering_iff`
+  preserves nonemptiness pointwise; `sorted_nonemptySupport` transfers its
+  probability through the ordered law. The real-valued image satisfies
+  `sortedPotentialImage_nonemptySupport` and
+  `sortedPotentialImage_orderedBy`.
+* `Step.totalPotentialWeight_map` commutes the total exponential potential
+  weight with mapping the child marks through the potential.
+  `StepLaw.pointMeasureFunctional_ordering`,
+  `totalChildWeight_ordering`, and `totalPotentialWeight_ordering` state the
+  resulting invariance of point-measure functionals and exponential weights.
+* `StepLaw.sorted_hasBoundaryNormalization` transfers the boundary identity
+  $\int \operatorname{totalPotentialWeight}(\varphi,-1)(\xi)\,dL(\xi)=1$
+  to the ordered law, and
+  `sortedPotentialImage_hasBoundaryNormalization` transfers it to the
+  real-valued potential image.
 -/
 
 open MeasureTheory
@@ -193,12 +224,12 @@ theorem StepLaw.totalPotentialWeight_ordering
       totalPotentialWeight L.potential (-1) ξ := by
   calc
     totalPotentialWeight L.potential (-1) (L.ordering ξ) =
-        ∫⁻ x, ProbabilityTheory.PointProcess.exponentialWeight
+        ∫⁻ x, ProbabilityTheory.RandomMeasure.exponentialWeight
           L.potential (-1) x ∂stepPointMeasure (L.ordering ξ) := by
       simpa [totalPotentialWeight] using
         (lintegral_stepPointMeasure_potential L.potential (-1)
           (L.ordering ξ) (f := fun _ => (1 : ENNReal)) measurable_const).symm
-    _ = ∫⁻ x, ProbabilityTheory.PointProcess.exponentialWeight
+    _ = ∫⁻ x, ProbabilityTheory.RandomMeasure.exponentialWeight
           L.potential (-1) x ∂stepPointMeasure ξ := by
       rw [L.sorted_pointMeasure ξ]
     _ = totalPotentialWeight L.potential (-1) ξ := by

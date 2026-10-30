@@ -6,12 +6,14 @@ Authors: WANG Yiyang
 
 module
 
-public import Combinatorics.BranchingWalk.Selection.Coupling.Offspring.Address
+public import Combinatorics.BranchingWalk.Population.Offspring
 public import Combinatorics.BranchingWalk.StepField
 public import Combinatorics.BranchingWalk.Step.Basic
 
 /-!
 # Populations in a branching field
+
+## Public declarations
 
 A population is indexed by the natural-number generations of one fixed
 branching field.  It contains no probability space, filtration, measurability,
@@ -44,7 +46,7 @@ structure Population {Root α X : Type*}
   depth : ∀ n p, p ∈ particles n → p.2.length = n
   successor : ∀ n,
     particles (n + 1) ⊆
-      Selection.Coupling.offspringAddressSet (particles n)
+      Population.offspringAddressSet (particles n)
         (fun p => support (stepField p.1 p.2))
 
 namespace Population

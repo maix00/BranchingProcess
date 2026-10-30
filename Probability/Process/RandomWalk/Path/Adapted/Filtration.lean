@@ -8,7 +8,7 @@ module
 
 public import Probability.Process.RandomWalk.Path.Basic
 public import Probability.Process.RandomWalk.Path.Block.Law.Basic
-public import Probability.Sequence.IID.Filtration
+public import Probability.Sequence.Filtration
 import Probability.Sequence.IID.Blocks.StoppingTime
 public import Mathlib.Probability.Process.Adapted
 import Probability.Sequence.IID.Blocks.Consecutive
@@ -21,16 +21,18 @@ filtration of its increment sequence. This file records the random-walk
 consequences: a position is adapted, and a finite prefix is independent of a
 later block sum under the canonical IID law.
 
-The public theorems in this file are:
+## Public declarations
 
-- `ProbabilityTheory.RandomWalk.indepFun_sequencePrefix_blockSum`: the
-  increment prefix and a later block sum are independent under an IID law.
-- `ProbabilityTheory.RandomWalk.positionProcess_adapted`: $S_n$ is measurable
-  with respect to the first $n$ increments.
-- `ProbabilityTheory.RandomWalk.displacement_measurable_prefix`: $S_k$ is
-  measurable at prefix time $n$ whenever $k\le n$.
-- `ProbabilityTheory.RandomWalk.displacement_natAdd_measurable_prefix`:
-  a shifted block sum ending by $n$ is measurable at prefix time $n$.
+- `RandomWalk.indepFun_sequencePrefix_blockSum`: under `iidSequenceLaw ν`,
+  the coordinates in `[0,start)` are independent of the block sum on
+  `[start,start+length)`.
+- `RandomWalk.positionProcess_adapted`: the position process is adapted to
+  `sequencePrefixFiltration`.
+- `RandomWalk.displacement_measurable_prefix`: if `k ≤ n`, the displacement
+  through time `k` is measurable with respect to the first `n` increments.
+- `RandomWalk.displacement_natAdd_measurable_prefix`: a block sum on
+  `[start,start+length)` is measurable with respect to the increment prefix
+  through `horizon` when `start + length ≤ horizon`.
 -/
 
 open MeasureTheory

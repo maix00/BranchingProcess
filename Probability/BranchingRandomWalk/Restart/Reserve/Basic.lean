@@ -9,7 +9,7 @@ module
 public import Probability.Independence.Integration.Basic
 public import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.Exploration.SelectedSubtree
 public import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.SelectedSubtrees.SelectedFamily
-public import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.DomainFlow.RootSubset
+public import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.AddressFiltration.RootSubset
 
 /-!
 # First-moment estimates from a fresh reserve subtree
@@ -20,6 +20,18 @@ the inspected information and its descendant coordinates are fresh, every
 measurable real observable of that subtree is independent of the exploration
 domain.  Consequently its contribution on any failure event in that domain
 gains the probability of the failure event exactly.
+
+## Public declarations
+
+- `BranchingExplorationDomains.selected_fresh_subtree_observable_independent`:
+  a measurable observable of a selected fresh subtree is independent of the
+  explored domain.
+- `BranchingExplorationDomains.integral_reserve_abs_on_event`,
+  `RootIndexed.selectedSubtree_observable_independent`,
+  `RootIndexed.integral_reserve_abs_on_event`, and
+  `RootIndexed.integral_reserveRoot_abs_on_event`: give the corresponding
+  independence and exact first-moment factorization for selected fresh
+  subtrees and reserve roots.
 -/
 
 open MeasureTheory ProbabilityTheory
@@ -27,6 +39,8 @@ open MeasureTheory ProbabilityTheory
 @[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk
+
+open ProbabilityTheory.BranchingProcess (offspringFieldLaw offspringFieldLaw_coordinate offspringFieldLaw_independent offspringFieldLaw_mapMarks)
 
 open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 
@@ -45,7 +59,7 @@ theorem BranchingExplorationDomains.selected_fresh_subtree_observable_independen
     Indep (H.domain j)
       (MeasurableSpace.comap
         (fun ω => g (selectedSubtreeStepField chosen ω)) inferInstance)
-      (stepFieldLaw μ) := by
+      (offspringFieldLaw μ) := by
   have hind := H.selected_fresh_subtree_independent μ j chosen hchosen
     hcount hfresh
   apply indep_of_indep_of_le_right hind
@@ -70,15 +84,15 @@ theorem BranchingExplorationDomains.integral_reserve_abs_on_event
     (E : Set (TreeNode α → Step α X))
     (hE : MeasurableSet[H.domain j] E)
     (hint : Integrable
-      (fun ω => g (selectedSubtreeStepField chosen ω)) (stepFieldLaw μ)) :
+      (fun ω => g (selectedSubtreeStepField chosen ω)) (offspringFieldLaw μ)) :
     (∫ ω, |g (selectedSubtreeStepField chosen ω)| *
-        E.indicator (fun _ => (1 : ℝ)) ω ∂stepFieldLaw μ) =
-      (∫ ω, |g (selectedSubtreeStepField chosen ω)| ∂stepFieldLaw μ) *
-        (stepFieldLaw μ).real E := by
+        E.indicator (fun _ => (1 : ℝ)) ω ∂offspringFieldLaw μ) =
+      (∫ ω, |g (selectedSubtreeStepField chosen ω)| ∂offspringFieldLaw μ) *
+        (offspringFieldLaw μ).real E := by
   have hEfull : MeasurableSet E :=
     ((H.domain_le j).trans (stepsOnSpace_le _)) E hE
   exact integral_abs_mul_indicator_eq_of_indep
-    (stepFieldLaw μ) (H.domain j)
+    (offspringFieldLaw μ) (H.domain j)
     (fun ω => g (selectedSubtreeStepField chosen ω)) E hint hE hEfull
     (H.selected_fresh_subtree_observable_independent μ j chosen
       hchosen hcount hfresh g hg)

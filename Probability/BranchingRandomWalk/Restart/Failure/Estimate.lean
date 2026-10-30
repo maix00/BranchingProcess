@@ -16,6 +16,16 @@ This file composes the two independent obligations in a restart argument:
 candidate successes are observable in the generation domain flow, and the
 continuation is read from a fresh selected subtree family.  The resulting
 factorization is the direct `L¹` replacement for a Cauchy--Schwarz bound.
+
+## Public declarations
+
+- `RootIndexed.integral_reserve_abs_on_candidateFailure`,
+  `RootIndexed.integral_reserve_abs_on_boundedCandidateFailure`,
+  `RootIndexed.integral_reserve_abs_on_boundedCandidateFailure_le`,
+  `RootIndexed.integral_reserveRoot_abs_on_candidateFailure`, and
+  `RootIndexed.integral_reserveRoot_abs_on_candidateFailure_le`: factor the
+  first absolute moment of a fresh reserve observable by the probability of
+  candidate failure, including bounded and root-indexed forms.
 -/
 
 open MeasureTheory ProbabilityTheory

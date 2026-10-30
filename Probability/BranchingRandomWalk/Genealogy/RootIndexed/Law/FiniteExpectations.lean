@@ -14,9 +14,11 @@ public import Mathlib.MeasureTheory.Integral.Lebesgue.Add
 
 In namespace `ProbabilityTheory.BranchingRandomWalk`, write
 `ν_Root := RootIndexed.stepFieldLaw (Root := Root) μ` and
-`ν₁ := ProbabilityTheory.BranchingRandomWalk.stepFieldLaw μ`. The public
+`ν₁ := ProbabilityTheory.BranchingProcess.offspringFieldLaw μ`. The public
 expectation identities assume a probability measure `μ` and measurable
 observables:
+
+## Public declarations
 
 - `RootIndexed.lintegral_root_observable μ r g hg`:
   $\int^- g(\mathrm{field}(r))\,d\nu_{Root}(\mathrm{field})=
@@ -53,7 +55,7 @@ theorem RootIndexed.lintegral_root_observable
     (r : Root) (g : Combinatorics.Branching.StepField α X → ENNReal) (hg : Measurable g) :
     (∫⁻ field, g (field r) ∂RootIndexed.stepFieldLaw (Root := Root) μ) =
       ∫⁻ tree : Combinatorics.Branching.StepField α X,
-        g tree ∂ProbabilityTheory.BranchingRandomWalk.stepFieldLaw (α := α) (X := X) μ := by
+        g tree ∂ProbabilityTheory.BranchingProcess.offspringFieldLaw (α := α) (Mark := X) μ := by
   rw [← RootIndexed.stepFieldLaw_root_marginal
     (Root := Root) (α := α) μ r]
   rw [lintegral_map hg (measurable_pi_apply r)]
@@ -68,7 +70,7 @@ theorem RootIndexed.lintegral_finset_root_observables
     (∫⁻ field, ∑ r ∈ A, g r (field r)
         ∂RootIndexed.stepFieldLaw (Root := Root) μ) =
       ∑ r ∈ A, ∫⁻ tree : Combinatorics.Branching.StepField α X,
-        g r tree ∂ProbabilityTheory.BranchingRandomWalk.stepFieldLaw (α := α) (X := X) μ := by
+        g r tree ∂ProbabilityTheory.BranchingProcess.offspringFieldLaw (α := α) (Mark := X) μ := by
   rw [lintegral_finsetSum]
   · apply Finset.sum_congr rfl
     intro r hr
@@ -85,7 +87,7 @@ theorem RootIndexed.lintegral_finset_root_observable
     (∫⁻ field, ∑ r ∈ A, g (field r)
         ∂RootIndexed.stepFieldLaw (Root := Root) μ) =
       A.card • (∫⁻ tree : Combinatorics.Branching.StepField α X,
-        g tree ∂ProbabilityTheory.BranchingRandomWalk.stepFieldLaw (α := α) (X := X) μ) := by
+        g tree ∂ProbabilityTheory.BranchingProcess.offspringFieldLaw (α := α) (Mark := X) μ) := by
   rw [RootIndexed.lintegral_finset_root_observables μ A (fun _ => g)
     (fun _ _ => hg)]
   simp

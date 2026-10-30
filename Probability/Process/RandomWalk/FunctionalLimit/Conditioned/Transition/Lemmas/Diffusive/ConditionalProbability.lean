@@ -6,16 +6,17 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition.Event
-public import Mathlib.Probability.BrownianMotion.Basic
-import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition.Lemmas.Meander.FromMeander
+import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition.Event
+import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Survival.Conditioning
+import Mathlib.Probability.BrownianMotion.Basic
+import all Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition.Lemmas.Meander.FromMeander
 
-import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition.Lemmas.Meander.CorridorProbability
-
+import all Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition.Lemmas.Meander.CorridorProbability
+import Topology.Cadlag.Skorokhod.Path.Linear
 /-!
 # Meander transition at a diffusive entrance horizon
 
-The public lemma in this file is:
+## Internal proof declarations
 
 - `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.exists_eventually_diffusiveTransitionConditionalProbability_ge_of_centeredSecondMoment`:
   for $N_{\Delta,m}=\lfloor\Delta^2\rfloor-m$, centered increments of
@@ -33,7 +34,7 @@ Theorem 3.2; the meander identification follows Iglehart,
 Positive*, Ann. Probab. 2(4) (1974), 608--619, DOI 10.1214/aop/1176996607, Section 3, theorem (3.4), p. 616.
 -/
 
-@[expose] public section
+section
 
 namespace ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned
 
@@ -111,7 +112,7 @@ lemma exists_eventually_diffusiveTransitionConditionalProbability_ge_of_centered
     filter_upwards [hNpos] with n hn
     apply Subtype.ext
     simp only [Nat.sub_add_cancel hn]
-  have hsupport : Skorokhod.straightPath ((7 / 16) / sigma) ∈
+  have hsupport : Skorokhod.linearPath ((7 / 16) / sigma) ∈
       (P.map (fun ω => Skorokhod.ofContinuousMap
         (hB.lastZeroMeanderPath hmeasurable ω))).support := by
     have hlaw : P.map (fun ω => Skorokhod.ofContinuousMap

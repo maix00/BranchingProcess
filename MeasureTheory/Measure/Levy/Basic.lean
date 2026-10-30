@@ -34,20 +34,21 @@ divisible distributions: the Levy measure captures the jump structure of the pro
 while the vanishing at zero and the integrability condition ensure that the
 characteristic exponent is well-defined.
 
-## Main definitions
+## Public declarations
 
-* `MeasureTheory.IsLevyMeasure` — predicate asserting that a measure on `ℝ` is a Lévy measure.
-
-## Main results
-
-* `MeasureTheory.IsLevyMeasure.zero_singleton` — `ν {0} = 0`.
-* `MeasureTheory.IsLevyMeasure.lintegral_min_one_sq_lt_top` — the integral condition.
-* `MeasureTheory.IsLevyMeasure.measure_setOf_abs_ge_lt_top` — `ν {x | ε ≤ |x|} < ⊤` for `ε > 0`.
-* `MeasureTheory.IsLevyMeasure.measure_compl_Ioo_lt_top` — `ν (Ioo (-1) 1)ᶜ < ⊤`.
-* `MeasureTheory.IsLevyMeasure.sigmaFinite` — every Lévy measure is σ-finite.
-* `MeasureTheory.IsLevyMeasure.smul` — a finite scalar multiple of a Lévy measure is a Lévy
-  measure.
-* `MeasureTheory.isLevyMeasure_zero` — the zero measure is a Lévy measure.
+- `IsLevyMeasure ν` means
+  $\nu(\{0\})=0$ and
+  $\int^-\operatorname{ofReal}(\min(1,x^2))\,d\nu(x)<\infty$; the theorem
+  `isLevyMeasure_iff` exposes this characterization.
+- `zero_singleton`, `lintegral_min_one_sq_lt_top`, and
+  `integrable_min_one_sq` expose the two defining properties in measure and
+  integral form.
+- `measure_setOf_abs_ge_lt_top` and `isFiniteMeasure_restrict_abs_ge` give
+  $\nu(\{|x|\ge\varepsilon\})<\infty$ for every $\varepsilon>0$; in
+  particular, `measure_compl_Ioo_lt_top` gives finite mass outside $(-1,1)$.
+- `sigmaFinite` proves every Lévy measure is σ-finite, while `smul` and
+  `of_isFiniteMeasure` give closure under finite scaling and finite measures
+  with zero mass at $0$; `isLevyMeasure_zero` handles the zero measure.
 -/
 
 @[expose] public section
@@ -116,6 +117,11 @@ theorem measure_setOf_abs_ge_lt_top (hν : IsLevyMeasure ν) {ε : ℝ} (hε : 0
   have hle : c * ν {x | ε ≤ |x|} ≤ ∫⁻ x, f x ∂ν :=
     le_trans (mul_le_mul_right (measure_mono hSub) c) hMarkov
   exact lt_top_of_mul_ne_top_right (ne_top_of_le_ne_top hν.2.ne hle) hc_pos.ne'
+
+/-- A Lévy measure restricted to the complement of `(-ε, ε)` is finite whenever `ε > 0`. -/
+theorem isFiniteMeasure_restrict_abs_ge (hν : IsLevyMeasure ν) {ε : ℝ} (hε : 0 < ε) :
+    IsFiniteMeasure (ν.restrict {x | ε ≤ |x|}) :=
+  isFiniteMeasure_restrict.mpr (hν.measure_setOf_abs_ge_lt_top hε).ne
 
 /-- A Lévy measure has finite mass outside `Ioo (-1) 1`. -/
 theorem measure_compl_Ioo_lt_top (hν : IsLevyMeasure ν) :

@@ -24,10 +24,22 @@ public import Mathlib.Probability.Kernel.Composition.MeasureComp
 /-!
 # Transition kernels of random walks
 
+## Public declarations
+
 An increment law induces the translation invariant Markov kernel sending a
 position `x` to the law of `x + Z`.  This is the kernel interface of an
 independent increment random walk; the walk itself remains the singleton-slot
 specialization of a branching random walk.
+
+- `incrementKernel`: the transition kernel $Q_\nu$ defined by
+  $Q_\nu(x,\cdot)=\nu\circ(z\mapsto x+z)^{-1}$.
+- `incrementKernel_apply`, `incrementKernel_comp`, and
+  `incrementKernel_pow_apply`: translation of one-step and iterated kernels
+  agrees with pushforward and convolution; in particular
+  $Q_\nu^n(x,\cdot)=\delta_x*\nu^{*n}$.
+- `iidSequenceLaw_map_displacement` and `iidSequenceLaw_map_fromIncrements`:
+  the law of the partial-sum displacement is the corresponding convolution
+  power of $\nu$.
 -/
 
 open MeasureTheory

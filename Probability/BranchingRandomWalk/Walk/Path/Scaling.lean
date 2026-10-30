@@ -11,6 +11,15 @@ public import Probability.Process.RandomWalk.Path.Representation.Scaling
 
 /-!
 # Singleton branching walk representation of normalized random-walk paths
+
+## Public declarations
+
+- `ProbabilityTheory.BranchingRandomWalk.Walk.normalizedStepPath_eq_displaceWith`:
+  \(X_n(t)=a_n^{-1}\,\mathrm{displace}(\text{lineNode}(\lfloor nt\rfloor))\)
+  for the singleton-lineage encoding of the increment sequence.
+- `ProbabilityTheory.BranchingRandomWalk.Walk.normalizedStepPath_eq_discreteTimeCloud_position`:
+  the same normalized path equals the rescaled position observable in the
+  discrete-time branching cloud started from zero.
 -/
 
 @[expose] public section

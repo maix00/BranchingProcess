@@ -6,15 +6,27 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.FirstWindow.ConditionedLaw
+public import Probability.Process.Path.Transform.Continuous
+
+public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Survival.Conditioning
+import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.FirstWindow.Existence
+import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.FirstWindow.BlockLaw
+public import Probability.Process.RandomWalk.Path.Interpolation.Basic
 public import Probability.Process.RandomWalk.Path.Interpolation.Finite.Block
-public import Probability.Process.RandomWalk.Path.Interpolation.Limit.FirstWindow
-public import Probability.Process.Path.AboveStart.FirstWindow.Centered
+public import Probability.Process.RandomWalk.Path.Interpolation.Limit.Unbounded
+public import Probability.Process.RandomWalk.Path.Survival.Basic
+import Probability.Process.RandomWalk.Path.Survival.Interpolation
+public import Probability.Process.Path.AboveStart.FirstWindow.Time.Basic
+public import Probability.Process.Path.AboveStart.FirstWindow.Shift.Centered
+public import Probability.Process.Path.Scaling.FiniteHorizon
+public import Combinatorics.Sequence.Block
+import Probability.Sequence.Block
+public import Probability.Sequence.IID.Basic
 
 /-!
 # Selecting the first surviving random-walk block
 
-The public definitions and theorems in this file are:
+## Public declarations
 
 - `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.firstSurvivingWindowIndex`:
   the least $j$ for which $S_{j+k}\ge S_j$ for $1\le k\le n$,

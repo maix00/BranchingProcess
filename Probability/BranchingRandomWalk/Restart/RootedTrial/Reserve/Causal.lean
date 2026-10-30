@@ -4,8 +4,16 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Restart.RootedTrial.Completion.CapStopped
-import Probability.BranchingRandomWalk.Timing.Candidates.Ordered
+module
+
+public import Combinatorics.BranchingWalk.Population.Offspring
+
+public import Probability.BranchingRandomWalk.Restart.RootedTrial.Spine.ReservePath
+import all Probability.BranchingRandomWalk.Restart.RootedTrial.Spine.Splits
+public import Probability.BranchingRandomWalk.Restart.RootedTrial.Completion.CapStopped
+public import Probability.BranchingRandomWalk.Restart.RootedTrial.Completion.RootIndexed.CapStopped
+public import Probability.BranchingRandomWalk.Restart.RootedTrial.Reserve.Candidates
+public import Probability.Process.HittingTime.OrderedCandidates
 
 /-!
 # Causal reserve candidates on one pre-sampled spine
@@ -13,13 +21,51 @@ import Probability.BranchingRandomWalk.Timing.Candidates.Ordered
 The candidates are indexed by the generation of their reserve parent.  Their
 enablement only uses the spine and split mark observed at that generation;
 the fixed candidate windows are independent of the success/failure outcomes.
+
+## Public declarations
+
+* selectedReserveSpineCandidateEnabled_adapted and
+  selectedReserveSpineCandidatePopulation_adapted place candidate activation and its
+  generation population in the domain filtration at generation $n$.
+* `mem_selectedReserveSpineCandidatePopulation_iff` characterizes candidate
+  membership by an enabled split index and membership in that index's
+  cap-stopped trial.
+* `selectedReserveSpineCandidateSuccessEvent` is the event that candidate $k$ is
+  enabled and its fixed-duration cap-stopped population reaches the target size;
+  `selectedReserveSpineCandidateSuccessEvent_measurable` places this event at
+  generation $k+1+\mathrm{duration}$.
+* `selectedReserveSpineFirstSuccessfulCandidateCompletion` records the first
+  successful candidate's completion generation, and
+  `selectedReserveSpineFirstSuccessfulCandidateCompletion_isStoppingTime` states that
+  \[
+    \{\tau\le n\}
+      = \bigcup_{\substack{k\in\mathbb N\\k+1+\mathrm{duration}\le n}}
+        \{\text{candidate }k\text{ succeeds}\}.
+  \]
+* selectedReserveSpineRestartSourceSlice and selectedReserveSpineRestartSource define the
+  union of all enabled candidate populations through generation $n$;
+  selectedReserveSpineRestartSource_finiteSlices and
+  selectedReserveSpineRestartSource_card_le give finite-slice existence and the bound
+  \[
+    |\mathrm{sourceSlice}(n)|
+      \le 1+(\mathrm{duration}+1)(2\,\mathrm{cap}).
+  \]
+* `selectedReserveSpineRestartSourceSlice_contains_live_spine` states that
+  on the alive event, the source slice contains the address pair
+  $(r,\operatorname{selectedReserveSpinePath}(R,r,n,\omega))$.
+* `selectedReserveSpineCandidate_subset_restartSource_at_endpoint` embeds an enabled
+  candidate at its completion generation; `selectedReserveSpineRestartSource_card_ge_of_candidate_success`
+  transfers its endpoint population lower bound to the source slice.
 -/
+
+@[expose] public section
 
 open MeasureTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
 open Combinatorics.Branching Combinatorics.UlamHarris
+open Combinatorics.Branching.Step.FiniteSelection
 
 attribute [local instance] Classical.propDecidable Classical.decEq
 
@@ -74,14 +120,14 @@ theorem selectedReserveSpineCandidateEnabled_adapted
         simp [selectedReserveSpineCandidateEnabled, hk, hwindow,
           Finset.mem_filter, Finset.mem_range]
       apply toPropMeasurable _
-      simpa [heq] using (F n).measurableSet_empty
+      simp [heq]
   · have heq : {ω | k ∈ selectedReserveSpineCandidateEnabled
         R r duration n ω} = ∅ := by
       ext ω
       simp [selectedReserveSpineCandidateEnabled, hk,
         Finset.mem_filter, Finset.mem_range]
     apply toPropMeasurable _
-    simpa [heq] using (F n).measurableSet_empty
+    simp [heq]
 
 /-- The finite-window population of candidate subtrees is adapted.  At a
 split in generation `k`, the first-child trial starts in generation `k+1`.
@@ -94,8 +140,7 @@ theorem selectedReserveSpineCandidatePopulation_adapted
     [MeasurableSingletonClass (RootIndexed.TreeNode Root α)]
     [DecidableEq (RootIndexed.TreeNode Root α)]
     (R growth : Step.FiniteSelection α X) (hR : Measurable R.select)
-    (hgrowth : Measurable growth.select) (splitMark : Set (Step α X))
-    (hmark : MeasurableSet splitMark) (cap duration : ℕ) (r : Root) :
+    (hgrowth : Measurable growth.select) (cap duration : ℕ) (r : Root) :
     ∀ n, Measurable[RootIndexed.stepFiltration
       (Root := Root) (α := α) (X := X) n]
       (fun ω => selectedReserveSpineCandidatePopulation
@@ -122,43 +167,19 @@ theorem selectedReserveSpineCandidatePopulation_adapted
   have hcandidate : ∀ i k age, Measurable[F (k + age)] (candidate i k age) := by
     intro i k age
     simpa [candidate] using lineages.capStoppedCandidate_adapted
-      R growth hR hgrowth splitMark hmark cap r PUnit.unit k age
+      R growth hR hgrowth cap r PUnit.unit k age
   have hcomponent : ∀ i n, Measurable[F n]
-      (Concurrent.Finite.component start candidate i n) := by
+      (ProbabilityTheory.Process.Stopping.Concurrent.Finite.component start candidate i n) := by
     intro i n
-    exact Concurrent.Finite.component_adapted F start hstart candidate
+    exact ProbabilityTheory.Process.Stopping.Concurrent.Finite.component_adapted F start hstart candidate
       hcandidate i n
   have hpop : ∀ n, Measurable[F n]
-      (fun ω => Concurrent.Finite.population enabled start candidate n ω) :=
-    Concurrent.Finite.population_adapted F enabled start candidate
+      (fun ω => ProbabilityTheory.Process.Stopping.Concurrent.Finite.population enabled start candidate n ω) :=
+    ProbabilityTheory.Process.Stopping.Concurrent.Finite.population_adapted F enabled start candidate
       henabled henabledRange hcomponent
   intro n
   simpa [selectedReserveSpineCandidatePopulation, lineages, enabled,
     selectedReserveSpineLineages, start, candidate] using hpop n
-
-/-- At a split on the reserve spine, the candidate indexed by that parent
-generation starts exactly at the first selected child; the reserve path
-continues through the distinct second selected child.
--/
-theorem selectedReserveSpineCandidate_root_at_split
-    {Root α X : Type*} [Countable α] [MeasurableSpace α]
-    [MeasurableSingletonClass α] [LinearOrder α] [OrderBot α]
-    [MeasurableSpace X]
-    (R : Step.FiniteSelection α X) (hR : Measurable R.select)
-    (r : Root) (k : ℕ) (ω : RootIndexed.StepField Root α X)
-    (hsplit : ω r (selectedReserveSpinePath R r k ω) ∈ splitBy R) :
-    (selectedReserveSpineLineages R hR).firstChildRootAt R r
-        PUnit.unit (k + 1) ω =
-      (r, selectedReserveSpinePath R r k ω ++
-        [firstSelectedSlot R (ω r (selectedReserveSpinePath R r k ω))]) ∧
-    firstSelectedSlot R (ω r (selectedReserveSpinePath R r k ω)) ∈
-      R (ω r (selectedReserveSpinePath R r k ω)) := by
-  have h := (selectedReserveSpineLineages R hR).firstChildRootAt_selected
-    R r PUnit.unit (k + 1) ω (by omega) (by
-      simpa [selectedReserveSpineLineages] using hsplit)
-  have hroot := (selectedReserveSpineLineages R hR).firstChildRootAt_root
-    R r PUnit.unit (k + 1) ω
-  exact ⟨Prod.ext hroot h.1, h.2⟩
 
 /-- The success event for a fixed split generation on the pre-sampled reserve
 spine. It is indexed before looking at any trial outcome, and includes the
@@ -289,7 +310,7 @@ theorem selectedReserveSpineFirstSuccessfulCandidateCompletion_isStoppingTime
         exact htest
       have heq : {ω | completion k ω = n ∧ ω ∈ success k} = success k := by
         ext ω
-        simp only [Set.mem_setOf_eq, completion]
+        simp only [Set.mem_ofPred_eq, completion]
         constructor
         · rintro ⟨_, hω⟩
           exact hω
@@ -302,7 +323,7 @@ theorem selectedReserveSpineFirstSuccessfulCandidateCompletion_isStoppingTime
         exact htime (WithTop.coe_injective h)
       have heq : {ω | completion k ω = n ∧ ω ∈ success k} = ∅ := by
         ext ω
-        simp only [Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false,
+        simp only [Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false,
           completion, not_and]
         intro h
         exact False.elim (hcastne h)
@@ -311,44 +332,6 @@ theorem selectedReserveSpineFirstSuccessfulCandidateCompletion_isStoppingTime
   simpa [selectedReserveSpineFirstSuccessfulCandidateCompletion,
     completion, success] using
       (first_candidate_completion_isStoppingTime F completion success hobservable)
-
-/-- After a split on the reserve spine, the future spine is exactly the
-reserve spine of the pre-sampled second-child subtree. This is the pathwise
-suffix identity needed to iterate the first-split construction: it does not
-refer to any candidate success event. -/
-theorem selectedReserveSpinePath_decompose_at_split
-    {Root α X : Type*} [LinearOrder α] [OrderBot α]
-    (R : Step.FiniteSelection α X) (r : Root) (k : ℕ)
-    (ω : RootIndexed.StepField Root α X)
-    (hsplit : ω r (selectedReserveSpinePath R r k ω) ∈ splitBy R) :
-    let reservePrefix := selectedReserveSpinePath R r k ω ++
-      [secondSelectedSlot R (ω r (selectedReserveSpinePath R r k ω))]
-    let reserveField : RootIndexed.StepField PUnit α X :=
-      fun _ u => ω r (reservePrefix ++ u)
-    ∀ n, selectedReserveSpinePath R r (k + 1 + n) ω =
-      reservePrefix ++ selectedReserveSpinePath R PUnit.unit n reserveField := by
-  dsimp only
-  let reservePrefix := selectedReserveSpinePath R r k ω ++
-    [secondSelectedSlot R (ω r (selectedReserveSpinePath R r k ω))]
-  let reserveField : RootIndexed.StepField PUnit α X :=
-    fun _ u => ω r (reservePrefix ++ u)
-  have hprefix : selectedReserveSpinePath R r (k + 1) ω = reservePrefix := by
-    exact selectedReserveSpinePath_succ_eq_second_of_split R r k ω
-      (by simpa [splitBy] using hsplit)
-  intro n
-  induction n with
-  | zero =>
-      change selectedReserveSpinePath R r (k + 1) ω =
-        reservePrefix ++ selectedReserveSpinePath R PUnit.unit 0 reserveField
-      rw [show selectedReserveSpinePath R PUnit.unit 0 reserveField = [] by rfl,
-        List.append_nil]
-      exact hprefix
-  | succ n ih =>
-      have hindex : k + 1 + (n + 1) = (k + 1 + n) + 1 := by omega
-      rw [hindex, selectedReserveSpinePath]
-      rw [ih]
-      simp [reservePrefix, reserveField, List.append_assoc,
-        selectedReserveSpinePath]
 
 /-- The candidate-union slice at generation `n`, represented as a finite set.
 The reserve spine contributes at most one particle; each enabled split
@@ -365,6 +348,20 @@ noncomputable def selectedReserveSpineRestartSourceSlice
       {(r, selectedReserveSpinePath R r n ω)} else ∅) ∪
     selectedReserveSpineCandidatePopulation R growth hR cap duration r n ω
 
+/-- The active reserve spine is one of the addresses in the candidate-union
+source slice. -/
+theorem selectedReserveSpineRestartSourceSlice_contains_live_spine
+    {Root α X : Type*} [Countable α] [MeasurableSpace α]
+    [MeasurableSingletonClass α] [LinearOrder α] [OrderBot α]
+    [MeasurableSpace X] [DecidableEq (RootIndexed.TreeNode Root α)]
+    (R growth : Step.FiniteSelection α X) (hR : Measurable R.select)
+    (cap duration : ℕ) (r : Root) (n : ℕ)
+    (ω : RootIndexed.StepField Root α X)
+    (halive : selectedReserveSpineAlive R r n ω) :
+    (r, selectedReserveSpinePath R r n ω) ∈
+      selectedReserveSpineRestartSourceSlice R growth hR cap duration r n ω := by
+  simp [selectedReserveSpineRestartSourceSlice, halive]
+
 /-- Membership in the finite-window candidate union is exactly membership in
 one enabled, fixed-start cap-stopped candidate. -/
 theorem mem_selectedReserveSpineCandidatePopulation_iff
@@ -380,13 +377,13 @@ theorem mem_selectedReserveSpineCandidatePopulation_iff
           R growth cap r PUnit.unit (k + 1) (n - (k + 1)) ω := by
   classical
   rw [selectedReserveSpineCandidatePopulation,
-    Concurrent.Finite.mem_population_iff]
+    ProbabilityTheory.Process.Stopping.Concurrent.Finite.mem_population_iff]
   constructor
   · rintro ⟨k, hk, hq⟩
     have hk' : k < n := by
       change k ∈ (Finset.range n).filter _ at hk
       exact Finset.mem_range.mp (Finset.mem_filter.mp hk).1
-    have hcomponent := Concurrent.Finite.component_eq_of_start
+    have hcomponent := ProbabilityTheory.Process.Stopping.Concurrent.Finite.component_eq_of_start
       (fun i _ => ((i + 1 : ℕ) : WithTop ℕ))
       (fun i j age ω =>
         (selectedReserveSpineLineages R hR).capStoppedCandidate
@@ -398,7 +395,7 @@ theorem mem_selectedReserveSpineCandidatePopulation_iff
     have hk' : k < n := by
       change k ∈ (Finset.range n).filter _ at hk
       exact Finset.mem_range.mp (Finset.mem_filter.mp hk).1
-    have hcomponent := Concurrent.Finite.component_eq_of_start
+    have hcomponent := ProbabilityTheory.Process.Stopping.Concurrent.Finite.component_eq_of_start
       (fun i _ => ((i + 1 : ℕ) : WithTop ℕ))
       (fun i j age ω =>
         (selectedReserveSpineLineages R hR).capStoppedCandidate
@@ -408,29 +405,9 @@ theorem mem_selectedReserveSpineCandidatePopulation_iff
     rw [hcomponent]
     exact hq
 
-/-- Every node of a rooted cap-stopped candidate has its expected absolute
-generation. -/
-theorem rootedCapStoppedPopulation_node_depth
-    {Root α X : Type*} [MeasurableSpace X]
-    (R : Step.FiniteSelection α X) (cap : ℕ)
-    (ω : RootIndexed.StepField Root α X)
-    (root q : RootIndexed.TreeNode Root α) (age : ℕ)
-    (hq : q ∈ rootedCapStoppedPopulation R cap ω root age) :
-    q.2.length = root.2.length + age := by
-  classical
-  rw [rootedCapStoppedPopulation, Finset.mem_map] at hq
-  obtain ⟨u, hu, hqeq⟩ := hq
-  have haddr : q.2 = root.2 ++ u := by
-    have h := congrArg Prod.snd hqeq
-    change (root.2 ++ u) = q.2 at h
-    exact h.symm
-  rw [haddr, List.length_append]
-  rw [capStoppedPopulation_depth R cap
-    (fun v => ω root.1 (root.2 ++ v)) age u hu]
-
 /-- Depth of an enabled candidate slice, with its absolute start generation
 made explicit. -/
-theorem selectedReserveSpineCandidate_node_depth
+private theorem selectedReserveSpineCandidate_node_depth
     {Root α X : Type*} [Countable α] [MeasurableSpace α]
     [MeasurableSingletonClass α] [LinearOrder α] [OrderBot α]
     [MeasurableSpace X] [DecidableEq (RootIndexed.TreeNode Root α)]
@@ -452,57 +429,6 @@ theorem selectedReserveSpineCandidate_node_depth
       (k + 1) ω) q (n - (k + 1)) hq
   rw [hrootDepth] at hqDepth
   omega
-
-/-- If the ordinary fixed-length growth trial succeeds, the cap-stopped
-version with cap `upper` agrees with it through the endpoint.  The cap is
-checked before each growth step, so only the strict pre-endpoint bounds from
-`growthTrialSuccess` are needed. -/
-theorem capStoppedPopulation_eq_population_of_growthTrialSuccess
-    {α X : Type*} [MeasurableSpace X]
-    (R : Step.FiniteSelection α X) (lower upper duration : ℕ)
-    (ω : Mark α (Step α X)) (hupper : 1 ≤ upper)
-    (hsuccess : growthTrialSuccess R lower upper duration ω) :
-    capStoppedPopulation R upper duration ω =
-      StepSelection.population R duration ω := by
-  have hpre : ∀ k < duration,
-      (StepSelection.population R k ω).card ≤ upper := by
-    intro k hk
-    by_cases hk0 : k = 0
-    · subst k
-      simpa using hupper
-    · let j : Fin (duration - 1) := ⟨k - 1, by omega⟩
-      have hj := hsuccess.2.2 j
-      have hindex : j.val + 1 = k := by simp [j]; omega
-      rw [hindex] at hj
-      exact Nat.le_of_lt hj.2
-  have hmain : ∀ n ≤ duration,
-      capStoppedPopulation R upper n ω = StepSelection.population R n ω := by
-    intro n
-    induction n with
-    | zero => intro _; rfl
-    | succ n ih =>
-        intro hle
-        have hn : n < duration := by omega
-        rw [capStoppedPopulation_succ, capStoppedStep, ih (by omega)]
-        have hnot : ¬ upper < (StepSelection.population R n ω).card :=
-          Nat.not_lt.mpr (hpre n hn)
-        rw [if_neg hnot, StepSelection.population_succ]
-  exact hmain duration le_rfl
-
-/-- A successful growth trial contributes at least its requested endpoint
-population to the corresponding rooted cap-stopped candidate. -/
-theorem rootedCapStoppedPopulation_card_ge_of_growthTrialSuccess
-    {Root α X : Type*} [MeasurableSpace X]
-    (R : Step.FiniteSelection α X) (lower upper duration : ℕ)
-    (ω : RootIndexed.StepField Root α X)
-    (root : RootIndexed.TreeNode Root α) (hupper : 1 ≤ upper)
-    (hsuccess : growthTrialSuccess R lower upper duration
-      (fun v => ω root.1 (root.2 ++ v))) :
-    lower ≤ (rootedCapStoppedPopulation R upper ω root duration).card := by
-  have htrial := capStoppedPopulation_eq_population_of_growthTrialSuccess
-    R lower upper duration (fun v => ω root.1 (root.2 ++ v)) hupper hsuccess
-  rw [rootedCapStoppedPopulation, Finset.card_map, htrial]
-  exact hsuccess.1
 
 /-- A pre-sampled candidate's cap-stopped population is included in the causal
 reserve source at its fixed endpoint. The split generation is read from the
@@ -626,13 +552,13 @@ noncomputable def selectedReserveSpineRestartSource
               selectedReserveSpineRestartSourceSlice R growth hR
                 cap duration r n ω := by
             simp [selectedReserveSpineRestartSourceSlice, hactive'.1]
-          apply Combinatorics.Branching.Selection.Coupling.mem_offspringAddressSet.mpr
+          apply Combinatorics.Branching.Population.mem_offspringAddressSet.mpr
           refine ⟨(r, selectedReserveSpinePath R r n ω), hp,
             reserveSpineSlot R (ω r (selectedReserveSpinePath R r n ω)),
             R.subset_support _ _ hedge.2, ?_⟩
-          simpa [Combinatorics.Branching.Selection.Coupling.childAddress] using
+          simpa [Combinatorics.UlamHarris.RootIndexed.childAddress] using
             congrArg (fun p : TreeNode α => (r, p)) hedge.1
-        · simp [selectedReserveSpineRestartSourceSlice, ha] at hspine
+        · simp [ha] at hspine
       · obtain ⟨k, hk, hcandidate⟩ :=
           (mem_selectedReserveSpineCandidatePopulation_iff R growth hR
             cap duration r (n + 1) ω q).mp hcandidate
@@ -672,10 +598,10 @@ noncomputable def selectedReserveSpineRestartSource
             have hk_parts := Finset.mem_filter.mp hk
             have halive : selectedReserveSpineAlive R r n ω := hk_parts.2.1
             simp [parent, selectedReserveSpineRestartSourceSlice, halive]
-          apply Combinatorics.Branching.Selection.Coupling.mem_offspringAddressSet.mpr
+          apply Combinatorics.Branching.Population.mem_offspringAddressSet.mpr
           refine ⟨parent, hparent, slot, R.subset_support _ _ hroot', ?_⟩
           simp [parent, slot, hroot.1,
-            Combinatorics.Branching.Selection.Coupling.childAddress]
+            Combinatorics.UlamHarris.RootIndexed.childAddress]
         · have hprevEnabled : k ∈
               selectedReserveSpineCandidateEnabled R r duration n ω := by
             have hk_parts := Finset.mem_filter.mp hk
@@ -698,7 +624,7 @@ noncomputable def selectedReserveSpineRestartSource
               (n - (k + 1)) ω
               ((selectedReserveSpineLineages R hR).firstChildRootAt
                 R r PUnit.unit (k + 1) ω)) hparent
-          rcases Combinatorics.Branching.Selection.Coupling.mem_offspringAddressSet.mp
+          rcases Combinatorics.Branching.Population.mem_offspringAddressSet.mp
               hsucc with ⟨p, hp, i, hi, hchild⟩
           have hsourceParent : p ∈
               selectedReserveSpineRestartSourceSlice R growth hR
@@ -713,7 +639,7 @@ noncomputable def selectedReserveSpineRestartSource
               Finset.mem_coe.mp hp
             exact ⟨k, hprevEnabled, by
               simpa [RootIndexed.ReserveLineages.capStoppedCandidate] using hpFin⟩
-          apply Combinatorics.Branching.Selection.Coupling.mem_offspringAddressSet.mpr
+          apply Combinatorics.Branching.Population.mem_offspringAddressSet.mpr
           refine ⟨p, hsourceParent, i, ?_, hchild⟩
           exact growth.subset_support (ω p.1 p.2) i hi
   }
@@ -739,8 +665,7 @@ noncomputable def selectedReserveSpineRestartSource
       · simp [ha, selectedReserveSpineSlice]
       · simp [ha, selectedReserveSpineSlice]
     have hcandidates := selectedReserveSpineCandidatePopulation_adapted
-      R growth hR hgrowth (splitBy R) (splitBy_measurable R hR)
-      cap duration r n
+      R growth hR hgrowth cap duration r n
     have hsource : Measurable[RootIndexed.stepFiltration
         (Root := Root) (α := α) (X := X) n]
         (fun ω => selectedReserveSpineRestartSourceSlice R growth hR

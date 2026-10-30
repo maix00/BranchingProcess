@@ -15,6 +15,12 @@ public import Mathlib.MeasureTheory.Measure.ProbabilityMeasure
 `WalkLaw` is an arbitrary probability law on the space of branching walks.
 It records no independence or homogeneity property; those belong to specific
 constructions such as `iid`.
+
+## Public declarations
+
+- `WalkLaw α Mark Position` is the type of probability measures on
+  `BranchingWalk α Mark Position`; it imposes no independence or branching
+  assumptions.
 -/
 
 @[expose] public section

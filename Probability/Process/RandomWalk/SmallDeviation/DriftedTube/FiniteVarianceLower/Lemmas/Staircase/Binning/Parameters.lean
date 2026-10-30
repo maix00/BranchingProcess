@@ -6,15 +6,17 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.Binning
-public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
+import all Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.Binning
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 import Mathlib.Topology.Basic
-import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Binning.Geometry
+import all Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Binning.Geometry
 
 /-!
 # Admissible parameters for narrowed staircase tubes
 
-The module-visible lemmas in this file are:
+## Internal proof declarations
+
+The supporting lemmas in this file are:
 
 - `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.staircaseBinWidth_pos`:
   $1-1/(3m)>0$ for $m\ge2$.
@@ -45,7 +47,7 @@ in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite O
 open Filter
 open scoped Topology
 
-@[expose] public section
+section
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 

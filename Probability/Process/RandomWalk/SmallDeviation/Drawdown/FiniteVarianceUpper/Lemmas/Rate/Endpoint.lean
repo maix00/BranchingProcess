@@ -6,21 +6,23 @@ Authors: WANG Yiyang
 
 module
 
-public import Mathlib.MeasureTheory.Measure.MeasureSpaceDef
-public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
-public import Probability.Distributions.Moments.Real
-public import Probability.Sequence.IID.Basic
-public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.TubeEvent
-public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.Event
-public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.JumpPattern.Basic
-import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.Rate.Bounds
-import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.ConditionalBlocks
-import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.JumpPattern.Probability
-import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.JumpPattern.UnionBound
+import Mathlib.MeasureTheory.Measure.MeasureSpaceDef
+import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
+import Probability.Distributions.Moments.Real
+import Probability.Sequence.IID.Basic
+import all Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.TubeEvent
+import Probability.Process.RandomWalk.SmallDeviation.Drawdown.Event
+import all Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.JumpPattern.Basic
+import all Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.Rate.Bounds
+import all Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.ConditionalBlocks
+import all Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.JumpPattern.Probability
+import all Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.JumpPattern.UnionBound
 import Analysis.Asymptotics.Scale.Power.IntermediateBlock
 
 /-!
 # Endpoint and horizon powers for the drawdown estimate
+
+## Internal proof declarations
 
 For increments $\xi=(\xi_i)_{i\ge0}$, let
 $S_j=\sum_{i=0}^{j-1}\xi_i$ and
@@ -44,7 +46,7 @@ Lemma 3.3.
 open Filter MeasureTheory Topology
 open scoped ENNReal
 
-@[expose] public section
+section
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown
 
@@ -56,7 +58,6 @@ lemma exists_eventually_measureReal_noLargeDropEvent_le_exp_of_endpointAndHorizo
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     {variance endpointPower horizonPower d : ℝ}
     (hν : ProbabilityTheory.IsCenteredSecondMoment ν variance)
-    (hsquare : Integrable (fun x : ℝ => x ^ 2) ν)
     (hvariance : 0 < variance)
     (hendpoint : 0 < endpointPower) (hhorizon : 0 < horizonPower)
     (hd : 0 < d)
@@ -79,7 +80,7 @@ lemma exists_eventually_measureReal_noLargeDropEvent_le_exp_of_endpointAndHorizo
     simpa [blockRate, B] using hcriticalEta
   obtain ⟨tubeWidth₀, htubeWidth₀, hblockBound⟩ :=
     iidSequenceLaw_condExp_drawdownTubeBlockEvent_le_of_finiteVariance
-      ν hν hsquare hvariance (by linarith : 0 < eta / 2)
+      ν hν hvariance (by linarith : 0 < eta / 2)
       hblockRatePos hblockCritical
   have hscaleAbsorptions := eventually_drawdownScaleAbsorptions
     (endpointPower := endpointPower) (d := d) hetaHorizon hetaPos

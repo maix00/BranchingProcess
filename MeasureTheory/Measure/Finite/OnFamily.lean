@@ -8,7 +8,6 @@ module
 
 public import Mathlib.MeasureTheory.Measure.Typeclasses.Finite
 public import Mathlib.MeasureTheory.Constructions.BorelSpace.Basic
-public import Mathlib.MeasureTheory.PiSystem
 public import Mathlib.Topology.MetricSpace.Bounded
 public import Mathlib.Topology.Order.Bornology
 
@@ -32,6 +31,25 @@ line. In particular the left and right versions are the *same* statement for
 mirrored families, so no theorem has to be reproved for the right side. What
 is genuinely asymmetric is only the direction of the enumeration chosen later,
 not this finiteness condition.
+
+## Public declarations
+
+* `MeasureTheory.IsFiniteOnFamily ν 𝒜` means
+  `∀ s ∈ 𝒜, ν s ≠ ∞`; `IsFiniteOnFamily.mono` restricts this property along
+  `𝒜 ⊆ ℬ`, and `IsFiniteOnFamily.of_finiteMeasure` proves it for a finite
+  measure.
+* `MeasureTheory.compactFamily E`, `leftRayFamily E`, and `rightRayFamily E`
+  are respectively `{s | IsCompact s}`, `range Set.Iic`, and `range Set.Ici`.
+  `IsLeftLocallyFinite ν` and `IsRightLocallyFinite ν` abbreviate
+  `IsFiniteOnFamily` for the left- and right-ray families.
+* `IsLeftLocallyFinite.apply` and `IsRightLocallyFinite.apply` give
+  `ν (Iic a) ≠ ∞` and `ν (Ici a) ≠ ∞`; `mem_rightRayFamily_iff_orderDual`
+  identifies right rays with left rays in `OrderDual E`.
+* `isFiniteOnFamily_compactFamily_iff` states that finiteness on compact sets
+  is equivalent to `IsFiniteMeasureOnCompacts`.
+* `isLeftLocallyFinite_of_finiteMeasure` derives left-ray finiteness from a
+  finite measure, and `IsLeftLocallyFinite.isFiniteMeasureOnCompacts` proves
+  that left-ray finiteness on `ℝ` implies compact finiteness.
 -/
 
 open MeasureTheory
@@ -101,17 +119,6 @@ theorem mem_rightRayFamily_iff_orderDual (E : Type*) [Preorder E] (s : Set E) :
     exact ⟨OrderDual.toDual a, rfl⟩
   · rintro ⟨b, rfl⟩
     exact ⟨OrderDual.ofDual b, rfl⟩
-
-/-- Left rays form a π-system. This is mathlib's `isPiSystem_Iic` transported
-to the local name of the family. -/
-theorem isPiSystem_leftRayFamily (E : Type*) [LinearOrder E] :
-    IsPiSystem (leftRayFamily E) :=
-  isPiSystem_Iic
-
-/-- Right rays form a π-system, the mirror of `isPiSystem_leftRayFamily`. -/
-theorem isPiSystem_rightRayFamily (E : Type*) [LinearOrder E] :
-    IsPiSystem (rightRayFamily E) :=
-  isPiSystem_Ici
 
 /-- Finiteness on the compact family is exactly mathlib's
 `IsFiniteMeasureOnCompacts`. -/

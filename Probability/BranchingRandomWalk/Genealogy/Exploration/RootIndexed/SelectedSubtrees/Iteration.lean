@@ -11,6 +11,15 @@ import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.Selecte
 
 Finite iteration of generation-measurable fresh-subtree replacement preserves
 the complete root-indexed product law.
+## Public declarations
+
+* `RootIndexed.iteratedSelectedSubtreeStepField` recursively replaces a
+  root-indexed field by generation-measurably selected descendant fields.
+  `iteratedSelectedSubtreeStepField_zero` and
+  `iteratedSelectedSubtreeStepField_succ` give its recursion equations.
+* `iteratedSelectedSubtreeStepField_measurable` proves measurability at every
+  finite stage, and `iteratedSelectedSubtreeStepField_law` proves that each
+  stage retains the original root-indexed product law.
 -/
 
 open MeasureTheory ProbabilityTheory

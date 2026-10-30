@@ -8,10 +8,22 @@ module
 public import Analysis.Fourier.CosineTauberian.FrequencyAverage
 public import Probability.Distributions.CharacteristicFunction.CosineDefect
 public import Probability.Distributions.CharacteristicFunction.Symmetrization.Basic
-public import Mathlib.MeasureTheory.Integral.Prod
+import Mathlib.MeasureTheory.Integral.Prod
 
 /-!
 # Frequency averaging for probability cosine defects
+
+## Public declarations
+
+- `intervalIntegral_four_cosineDefect_sub_double` expresses the averaged
+  second difference of the cosine defect as twice the integral of the squared
+  cosine defect.
+- `exists_pos_closedAbsTail_le_cosineDefectFrequencyAverage` bounds the
+  closed two-sided tail of a probability measure by its frequency-averaged
+  cosine defect, with a positive constant.
+- `exists_pos_symmetrizedClosedAbsTail_le_normDefectFrequencyAverage` gives
+  the corresponding bound for the law of the difference of two independent
+  samples, expressed through the squared-modulus characteristic defect.
 
 The averaged squared cosine kernel detects the tail of the measure whose
 cosine defect is being averaged. For an increment law's squared-modulus

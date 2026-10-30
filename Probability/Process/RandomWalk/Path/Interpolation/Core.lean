@@ -14,6 +14,18 @@ public import Probability.Process.Path.Representation.Continuous
 
 /-!
 # Laws of linearly interpolated random-walk paths
+
+## Public declarations
+
+- `measurable_normalizedLinearContinuousPathIcc` and
+  `measurable_normalizedLinearCadlagPathIcc` prove measurability of the polygonal path maps into
+  $C([0,1],\mathbb R)$ and the càdlàg path space.
+- `normalizedLinearPathLaw` and `normalizedLinearCadlagPathLaw` are the respective pushforward
+  laws of the canonical IID sequence law. Each carries an `IsProbabilityMeasure` instance.
+- `hasLaw_normalizedLinearContinuousPathIcc` and
+  `hasLaw_normalizedLinearCadlagPathIcc` identify each path map's law with its defined pushforward.
+- `normalizedLinearCadlagPathLaw_eq_map` states that the càdlàg law is the pushforward of the
+  continuous-path law under the canonical inclusion $C([0,1],\mathbb R)\to D([0,1],\mathbb R)$.
 -/
 
 open MeasureTheory ProbabilityTheory
@@ -30,13 +42,6 @@ theorem measurable_normalizedLinearContinuousPathIcc
   intro t
   exact measurable_const.mul (Finset.measurable_sum _ fun k _ ↦
     measurable_const.mul (measurable_pi_apply k))
-
-theorem measurable_maxAbsUpTo (n : ℕ) :
-    Measurable (maxAbsUpTo n) := by
-  unfold maxAbsUpTo
-  exact Finset.measurable_range_sup'' fun k _ ↦
-    Measurable.abs (measurable_pi_apply k :
-      Measurable (fun increment : ℕ → ℝ ↦ increment k))
 
 theorem measurable_normalizedLinearCadlagPathIcc
     (scale : ℕ → ℝ) (n : ℕ) :

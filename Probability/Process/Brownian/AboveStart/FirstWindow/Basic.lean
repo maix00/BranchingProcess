@@ -7,11 +7,13 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.Brownian.PathLaw.ContinuousPathLaw
-public import Probability.Process.Brownian.AboveStart.NonAntitone
-public import Probability.Process.Path.AboveStart.FirstWindow.Tail
+public import Probability.Process.Path.AboveStart.FirstWindow.Time.Tail
+import all Probability.Process.Brownian.AboveStart.FirstWindow.Lemmas.Existence
 
 /-!
 # Almost-sure finiteness of the first Brownian unit window
+
+## Public declarations
 
 The public theorem in this file is:
 
@@ -88,7 +90,7 @@ private lemma brownianPathScaling_windowStart_iff
 
 private lemma hasNonnegativeWindowBeforeUnit_iff_scaledFirstWindowUpTo_ne_top
     (f : C(ℝ≥0, ℝ)) {c : ℝ≥0} (hc : c ≠ 0) :
-    HasNonnegativeWindowBeforeUnit f c ↔
+    HasNonnegativeWindowBefore f 1 c ↔
       firstNonnegativeWindowStartUpTo (brownianPathScaling c f) (1 / c) ≠ ⊤ := by
   rw [firstNonnegativeWindowStartUpTo_ne_top_iff]
   constructor
@@ -137,8 +139,8 @@ private lemma shrinkingWindowDuration_anti {n m : ℕ} (hnm : n ≤ m) :
 
 private lemma hasNonnegativeWindowBeforeUnit_mono_duration
     (f : C(ℝ≥0, ℝ)) {d d' : ℝ≥0} (hdd' : d' ≤ d)
-    (h : HasNonnegativeWindowBeforeUnit f d) :
-    HasNonnegativeWindowBeforeUnit f d' := by
+    (h : HasNonnegativeWindowBefore f 1 d) :
+    HasNonnegativeWindowBefore f 1 d' := by
   rcases h with ⟨t, ht, hwindow⟩
   refine ⟨t, ?_, ?_⟩
   · calc
@@ -180,7 +182,7 @@ theorem IsBrownianReal.measure_firstNonnegativeWindowStart_ne_top_eq_one
   classical
   let path : Ω → C(ℝ≥0, ℝ) := hB.continuousPathMap hBmeasurable
   let A : ℕ → Set Ω := fun n =>
-    {ω | HasNonnegativeWindowBeforeUnit (path ω)
+    {ω | HasNonnegativeWindowBefore (path ω) 1
       (shrinkingWindowDuration n)}
   let E : Set C(ℝ≥0, ℝ) :=
     {f | firstNonnegativeWindowStart f ≠ ⊤}
@@ -229,7 +231,7 @@ theorem IsBrownianReal.measure_firstNonnegativeWindowStart_ne_top_eq_one
       ext t
       rw [hf t, hpathEq t]
     obtain ⟨n, hn⟩ := exists_shrinkingWindowDuration_le d hd
-    have hshort : HasNonnegativeWindowBeforeUnit (path ω)
+    have hshort : HasNonnegativeWindowBefore (path ω) 1
         (shrinkingWindowDuration n) := by
       rw [← hfeq]
       exact hasNonnegativeWindowBeforeUnit_mono_duration f hn hfd

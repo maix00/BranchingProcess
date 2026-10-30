@@ -11,7 +11,9 @@ public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law.Basic
 /-!
 # Finite restrictions of root-indexed product laws
 
-The public declarations in `ProbabilityTheory.BranchingRandomWalk` state:
+## Public declarations
+
+The declarations in `ProbabilityTheory.BranchingRandomWalk` state:
 
 - `RootIndexed.StepField.measurable_first`: restricting a field indexed by
   countably many roots to its first `m` roots is measurable, for any

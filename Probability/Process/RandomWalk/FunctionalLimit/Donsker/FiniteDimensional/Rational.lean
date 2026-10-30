@@ -8,12 +8,16 @@ module
 
 public import Order.Interval.RationalGrid.Interval
 public import Order.Interval.RationalCoordinate.UnitInterval
-public import Mathlib.Topology.UnitInterval
+public import Mathlib.MeasureTheory.Function.ConvergenceInDistribution
 public import Mathlib.Probability.BrownianMotion.Basic
-public import Probability.Process.RandomWalk.FunctionalLimit.Donsker.FiniteDimensional.Grid
-public import Probability.ConvergenceInDistribution.ContinuousMap.FiniteDimensional
+public import Mathlib.Topology.UnitInterval
 public import Probability.Process.Path.Scaling.UnitInterval
+public import Probability.Process.RandomWalk.Path.Interpolation.Basic
+public import Probability.Sequence.IID.Basic
+public import Probability.ConvergenceInDistribution.ContinuousMap.FiniteDimensional
 public import Topology.Order.UnitInterval.Rational
+import Order.Interval.RationalGrid.Interval
+import Probability.Process.RandomWalk.FunctionalLimit.Donsker.FiniteDimensional.Grid
 
 /-!
 # Rational finite-dimensional Donsker limits
@@ -22,7 +26,7 @@ Every finite family of rational unit-interval times is projected from one
 common uniform grid.  This converts the uniform-grid limit into the finite
 marginals on a fixed countable dense time family.
 
-The public theorems in this file are:
+## Public declarations
 
 - `ProbabilityTheory.RandomWalk.tendstoInDistribution_normalizedLinearPath_rationalFinite_brownian`:
   polygonal paths converge jointly at any fixed finite family of rational
@@ -55,7 +59,7 @@ theorem tendstoInDistribution_normalizedLinearPath_rationalFinite_brownian
           (RationalCoordinate.toUnitInterval q : ℝ))
       atTop
       (fun ω => fun q : I =>
-        B (UnitInterval.toNNReal
+        B (unitInterval.toNNReal
           (RationalCoordinate.toUnitInterval q)) ω)
       (fun _ => iidSequenceLaw nu) P := by
   obtain ⟨blocks, hleft, hright, index, hindex⟩ :=
@@ -89,10 +93,10 @@ theorem tendstoInDistribution_normalizedLinearPath_rationalFinite_brownian
   · filter_upwards [] with ω
     funext q
     change B (uniformGridTime step (index q)) ω =
-      B (UnitInterval.toNNReal
+      B (unitInterval.toNNReal
         (RationalCoordinate.toUnitInterval q)) ω
     have htime : uniformGridTime step (index q) =
-        UnitInterval.toNNReal (RationalCoordinate.toUnitInterval q) := by
+        unitInterval.toNNReal (RationalCoordinate.toUnitInterval q) := by
       apply NNReal.eq
       rw [coe_uniformGridTime]
       change (index q : ℝ) * (1 / (blocks.blocks : ℝ)) =

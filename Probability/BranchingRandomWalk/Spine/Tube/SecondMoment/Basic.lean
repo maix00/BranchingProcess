@@ -26,10 +26,10 @@ import Mathlib.MeasureTheory.Integral.MeanInequalities
 * `ProbabilityTheory.BranchingRandomWalk.Spine.weightedOffspringWindowMass_ne_zero_iff`
   states `M_I(ξ) ≠ 0 ↔ ∃ i, survive ξ i ∧ ξ.potentialValue' φ i ∈ I`.
 * `ProbabilityTheory.BranchingRandomWalk.Spine.weightedOffspringWindowMass_sq_le`
-  gives `M_I(ξ)^2 ≤ exp(-a) M_I(ξ) + crossChildWeight φ ξ` when every point
+  gives `M_I(ξ)^2 ≤ exp(-a) M_I(ξ) + crossPotentialWeight φ (-1) ξ` when every point
   of `I` is at least `a`; its integral form
   `ProbabilityTheory.BranchingRandomWalk.Spine.lintegral_weightedOffspringWindowMass_sq_le`
-  bounds `∫⁻ M_I² dμ` by `exp(-a) tiltedPotentialLaw φ (-1) μ I + ∫⁻ crossChildWeight φ dμ`.
+  bounds `∫⁻ M_I² dμ` by `exp(-a) tiltedPotentialLaw φ (-1) μ I + ∫⁻ ξ, crossPotentialWeight φ (-1) ξ ∂μ`.
 * `ProbabilityTheory.BranchingRandomWalk.Spine.tiltedWindowProbability_le_sqrt_success_mul_secondMoment`
   gives the square-root Paley--Zygmund bound
   `tiltedPotentialLaw φ (-1) μ I ≤ P(M_I ≠ 0)^(1/2) * (exp(-a) p + C)^(1/2)`,
@@ -137,7 +137,7 @@ theorem weightedOffspringWindowMass_sq_le
     (hI : ∀ x ∈ I, a ≤ x) (ξ : Step ι X) :
     weightedOffspringWindowMass φ I ξ ^ 2 ≤
       ENNReal.ofReal (Real.exp (-a)) * weightedOffspringWindowMass φ I ξ +
-        crossChildWeight φ ξ := by
+        crossPotentialWeight φ (-1) ξ := by
   classical
   let w : ι → ℝ≥0∞ := fun i =>
     realizedPotentialWeight φ (-1) ξ i *
@@ -177,7 +177,7 @@ theorem weightedOffspringWindowMass_sq_le
       · have hw : w i = 0 := by simp [w, realizedPotentialWeight, hi]
         simp [hw]
     · have hdiag : (if i = j then ENNReal.ofReal (Real.exp (-a)) * w i else 0) = 0 :=
-        if_neg hij
+        ite_eq_right hij
       rw [hdiag]
       by_cases hi : survive ξ i
       · by_cases hj : survive ξ j
@@ -196,7 +196,7 @@ theorem weightedOffspringWindowMass_sq_le
                 rw [← Real.exp_add]
                 congr 1
                 ring
-              simp only [if_pos (show i ≠ j ∧ survive ξ i ∧ survive ξ j from
+              simp only [ite_eq_left (show i ≠ j ∧ survive ξ i ∧ survive ξ j from
                 ⟨hij, hi, hj⟩), zero_add]
               rw [← ENNReal.ofReal_mul
                 (Real.exp_nonneg (-(ξ.potentialValue' φ i))), hexp]
@@ -220,7 +220,7 @@ theorem weightedOffspringWindowMass_sq_le
               (-(ξ.potentialValue' φ p.1 + ξ.potentialValue' φ p.2))) else 0)) :=
       ENNReal.tsum_le_tsum (fun p => hpair p.1 p.2)
     _ = ENNReal.ofReal (Real.exp (-a)) * (∑' i, w i) +
-        crossChildWeight φ ξ := by
+        crossPotentialWeight φ (-1) ξ := by
       have hdiagProd :
           (∑' p : (ι × ι),
             if p.1 = p.2 then ENNReal.ofReal (Real.exp (-a)) * w p.1 else 0) =
@@ -258,7 +258,7 @@ theorem weightedOffspringWindowMass_sq_le
           _ = ENNReal.ofReal (Real.exp (-a)) * (∑' i, w i) :=
             ENNReal.tsum_mul_left
       rw [hdiag]
-      rfl
+      rw [← crossPotentialWeight_real_neg_one_eq_sum φ ξ]
 
 /-- The integrated second moment of the weighted offspring mass is bounded
 by the lower window endpoint and the cross-child exponential moment. -/
@@ -269,21 +269,21 @@ theorem lintegral_weightedOffspringWindowMass_sq_le
     (μ : Measure (Step ι X)) :
     (∫⁻ ξ, weightedOffspringWindowMass φ I ξ ^ 2 ∂μ) ≤
       ENNReal.ofReal (Real.exp (-a)) * tiltedPotentialLaw φ (-1) μ I +
-        (∫⁻ ξ, crossChildWeight φ ξ ∂μ) := by
+        (∫⁻ ξ, crossPotentialWeight φ (-1) ξ ∂μ) := by
   let W : Step ι X → ℝ≥0∞ := weightedOffspringWindowMass φ I
   have hW : Measurable W := weightedOffspringWindowMass_measurable φ I hI
   calc
     (∫⁻ ξ, W ξ ^ 2 ∂μ) ≤
         ∫⁻ ξ, ENNReal.ofReal (Real.exp (-a)) * W ξ +
-          crossChildWeight φ ξ ∂μ :=
+          crossPotentialWeight φ (-1) ξ ∂μ :=
       lintegral_mono fun ξ => weightedOffspringWindowMass_sq_le
         φ I a hlower ξ
     _ = ENNReal.ofReal (Real.exp (-a)) * (∫⁻ ξ, W ξ ∂μ) +
-          (∫⁻ ξ, crossChildWeight φ ξ ∂μ) := by
+          (∫⁻ ξ, crossPotentialWeight φ (-1) ξ ∂μ) := by
       rw [lintegral_add_left' ((hW.const_mul _).aemeasurable),
         lintegral_const_mul _ hW]
     _ = ENNReal.ofReal (Real.exp (-a)) * tiltedPotentialLaw φ (-1) μ I +
-          (∫⁻ ξ, crossChildWeight φ ξ ∂μ) := by
+          (∫⁻ ξ, crossPotentialWeight φ (-1) ξ ∂μ) := by
       rw [lintegral_weightedOffspringWindowMass_eq_tiltedLaw φ I hI μ]
 
 /-- One-step Paley--Zygmund bound for entering a position window.  It is
@@ -298,7 +298,7 @@ theorem tiltedWindowProbability_le_sqrt_success_mul_secondMoment
     tiltedPotentialLaw φ (-1) μ I ≤
       (μ {ξ | weightedOffspringWindowMass φ I ξ ≠ 0}) ^ (1 / 2 : ℝ) *
         (ENNReal.ofReal (Real.exp (-a)) * tiltedPotentialLaw φ (-1) μ I +
-          (∫⁻ ξ, crossChildWeight φ ξ ∂μ)) ^ (1 / 2 : ℝ) := by
+          (∫⁻ ξ, crossPotentialWeight φ (-1) ξ ∂μ)) ^ (1 / 2 : ℝ) := by
   let W : Step ι X → ℝ≥0∞ := weightedOffspringWindowMass φ I
   let A : Set (Step ι X) := {ξ | W ξ ≠ 0}
   let indicator : Step ι X → ℝ≥0∞ := A.indicator fun _ => 1
@@ -339,7 +339,7 @@ theorem tiltedWindowProbability_le_sqrt_success_mul_secondMoment
         (∫⁻ ξ, W ξ ^ (2 : ℝ) ∂μ) ^ (1 / 2 : ℝ) := hHolder
     _ ≤ (μ A) ^ (1 / 2 : ℝ) *
         (ENNReal.ofReal (Real.exp (-a)) * tiltedPotentialLaw φ (-1) μ I +
-          (∫⁻ ξ, crossChildWeight φ ξ ∂μ)) ^ (1 / 2 : ℝ) := by
+          (∫⁻ ξ, crossPotentialWeight φ (-1) ξ ∂μ)) ^ (1 / 2 : ℝ) := by
       rw [hindicator_integral]
       gcongr
       simpa [W] using hsecond

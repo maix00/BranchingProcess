@@ -7,8 +7,10 @@ Authors: WANG Yiyang
 module
 
 public import Combinatorics.BranchingWalk.MarkedTree.Equivalence
-public import Combinatorics.BranchingWalk.MarkedTree.Ordering
+public import Combinatorics.BranchingWalk.MarkedTree.SiblingOrderTransport
 public import Combinatorics.BranchingWalk.Basic.Ordering.Orderable
+public import Combinatorics.BranchingWalk.Basic.FiniteSupport
+public import Combinatorics.BranchingWalk.Basic.Sibling.Closed
 public import Combinatorics.BranchingWalk.Basic.Position.DisplacementMap
 public import Combinatorics.BranchingWalk.Basic.Map
 public import Combinatorics.BranchingWalk.StepField
@@ -99,7 +101,7 @@ variable [LT α]
 The metadata may depend on the proof that the node is realized. -/
 noncomputable def RootIndexed.BranchingWalk.markedTreeWith
     (β : RootIndexed.BranchingWalk Root α Mark Position)
-    (hsib : ∀ r, IsSiblingClosed (β.step r))
+    (hsib : ∀ r, StepField.IsSiblingClosed (β.step r))
     (nodeMark : ∀ r u, surviveAlong (β.step r) [] u → M) :
     UlamHarris.RootIndexed.MarkedTree Root α M :=
   fun r =>
@@ -124,14 +126,14 @@ position space. -/
 noncomputable def RootIndexed.BranchingWalk.positionedMarkedTree
     [AddCommMonoid Position]
     (β : RootIndexed.BranchingWalk Root α Mark Position)
-    (d : Mark → Position) (hsib : ∀ r, IsSiblingClosed (β.step r)) :
+    (d : Mark → Position) (hsib : ∀ r, StepField.IsSiblingClosed (β.step r)) :
     UlamHarris.RootIndexed.MarkedTree Root α Position :=
   β.markedTreeWith hsib (fun r u _ => displaceWith d (β.step r) [] u)
 
 /-- The realized addresses of the marked tree of a walk are the surviving addresses of that root. -/
 @[simp] theorem RootIndexed.BranchingWalk.mem_markedTree_carrier
     (β : RootIndexed.BranchingWalk Root α Mark Position)
-    (hsib : ∀ r, IsSiblingClosed (β.step r))
+    (hsib : ∀ r, StepField.IsSiblingClosed (β.step r))
     (nodeMark : ∀ r u, surviveAlong (β.step r) [] u → M)
     (r : Root) (u : TreeNode α) :
     u ∈ (β.markedTreeWith hsib nodeMark r).tree.carrier ↔ surviveAlong (β.step r) [] u :=
@@ -139,7 +141,7 @@ noncomputable def RootIndexed.BranchingWalk.positionedMarkedTree
 
 @[simp] theorem RootIndexed.BranchingWalk.markedTreeWith_mark
     (β : RootIndexed.BranchingWalk Root α Mark Position)
-    (hsib : ∀ r, IsSiblingClosed (β.step r))
+    (hsib : ∀ r, StepField.IsSiblingClosed (β.step r))
     (nodeMark : ∀ r u, surviveAlong (β.step r) [] u → M)
     (r : Root) (u : TreeNode α)
     (h : u ∈ (β.markedTreeWith hsib nodeMark r).tree.carrier) :
@@ -149,7 +151,7 @@ noncomputable def RootIndexed.BranchingWalk.positionedMarkedTree
 @[simp] theorem RootIndexed.BranchingWalk.positionedMarkedTree_mark
     [AddCommMonoid Position]
     (β : RootIndexed.BranchingWalk Root α Mark Position)
-    (d : Mark → Position) (hsib : ∀ r, IsSiblingClosed (β.step r))
+    (d : Mark → Position) (hsib : ∀ r, StepField.IsSiblingClosed (β.step r))
     (r : Root) (u : TreeNode α)
     (h : u ∈ (β.positionedMarkedTree d hsib r).tree.carrier) :
     (β.positionedMarkedTree d hsib r).mark u h =
@@ -164,7 +166,7 @@ walk at that ancestor is the marked tree of its step field, which is where the p
 of `MarkedTree/Equivalence.lean` are reused. -/
 theorem RootIndexed.BranchingWalk.positionedMarkedTree_apply
     (β : RootIndexed.BranchingWalk PUnit α Position Position)
-    (hsib : IsSiblingClosed (β.step PUnit.unit)) :
+    (hsib : StepField.IsSiblingClosed (β.step PUnit.unit)) :
     β.positionedMarkedTree id (fun _ => hsib) PUnit.unit =
       markedTreeOfStep (β.step PUnit.unit) hsib := by
   have htree : (β.positionedMarkedTree id (fun _ => hsib) PUnit.unit).tree =

@@ -9,7 +9,7 @@ module
 public import Order.Interval.RationalCoordinate.UnitInterval
 public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.Entrance.ShortTime
 public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.Entrance.FullCorridor
-public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Probability
+public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Probability.Bounds
 public import Probability.Process.Stable.SmallDeviation.Blocks.EntranceScaling
 import Probability.Process.Stable.SmallDeviation.Blocks.ReturnScale
 public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Gluing
@@ -17,6 +17,7 @@ public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Cover
 public import Probability.Process.Path.Skorokhod.Corridor.Segment
 public import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 import Mathlib.MeasureTheory.Measure.Support
+import Topology.Order.UnitInterval.Time
 
 /-!
 # Stable entrance in a fixed finite time
@@ -24,6 +25,17 @@ import Mathlib.MeasureTheory.Measure.Support
 For the shifted-corridor comparison, an entrance block may have any fixed
 finite duration. The construction below uses a positive-probability bounded
 block, rescales it, and repeats it a finite number of times.
+
+## Public declarations
+
+- ProbabilityTheory.IsStableLevyProcess.exists_pos_time_measure_fullSegmentCorridorReturnEvent_pos:
+  if \(a<0<b\), \(a<y<b\), \(\varepsilon>0\), and
+  \(0<F_\mu(0)<1\), then some \(T>0\) satisfies
+  \[
+    \mathbb P\!\left(\exists \eta>0,\ \forall t\in[0,1],\quad
+      a+\eta\le X_{Tt}-X_0\le b-\eta,\quad
+      X_T-X_0\in(y-\varepsilon,y+\varepsilon)\right)>0.
+  \]
 -/
 
 @[expose] public section
@@ -310,8 +322,9 @@ private lemma exists_bounded_unit_endpoint_block
     rintro ω ⟨hcorr, hend⟩
     refine ⟨hcorr, ?_⟩
     have ha0 : a ≠ 0 := ha.ne'
+    have htop : unitInterval.toNNReal ⊤ = 1 := unitInterval.toNNReal_one
     have hseg : segmentIncrement X 0 t ω ⊤ = X t ω - X 0 ω := by
-      simp [segmentIncrement]
+      simp [segmentIncrement, htop]
     have hcancel : a * ((X t ω - X 0 ω) / a) = X t ω - X 0 ω := by
       field_simp
     have hend' : z - w < (X t ω - X 0 ω) / a ∧
@@ -571,9 +584,10 @@ theorem IsStableLevyProcess.exists_pos_time_measure_fullSegmentCorridorReturnEve
       change (Y blockTime ω - Y 0 ω) - d ∈ Set.Ioo (-R) R
       change segmentIncrement Y 0 blockTime ω ⊤ ∈
         Set.Ioo (d - R) (d + R) at hend
+      have htop : unitInterval.toNNReal ⊤ = 1 := unitInterval.toNNReal_one
       have hseg : segmentIncrement Y 0 blockTime ω ⊤ =
           Y blockTime ω - Y 0 ω := by
-        simp [segmentIncrement]
+        simp [segmentIncrement, htop]
       rw [hseg] at hend
       simp only [Set.mem_Ioo] at hend ⊢
       constructor <;> linarith
@@ -685,7 +699,6 @@ theorem IsStableLevyProcess.exists_pos_time_measure_fullSegmentCorridorReturnEve
         change rationalTubeBlockIncrement (Nat.succ_pos M) j f ∈
           rationalUniformBlockEndpointSet B d (-R) R at hj
         rcases hj with ⟨hcorr, hend⟩
-        rw [Skorokhod.rationalCoordinateCorridorWithMargin_eq_real] at hcorr
         obtain ⟨margin, hmargin, hbound⟩ := hcorr
         have hend' : -R < rationalTubeBlockIncrement (Nat.succ_pos M) j f ⊤ - d ∧
             rationalTubeBlockIncrement (Nat.succ_pos M) j f ⊤ - d < R := by
@@ -704,7 +717,6 @@ theorem IsStableLevyProcess.exists_pos_time_measure_fullSegmentCorridorReturnEve
         (fun j => (hdata j).1) (fun j q => (hdata j).2 q)
       have hrat : f ∈ Skorokhod.rationalCoordinateCorridorWithMargin
           lowerY upperY := by
-        rw [Skorokhod.rationalCoordinateCorridorWithMargin_eq_real]
         refine ⟨m / (4 * Troot), by positivity, fun q => ?_⟩
         rcases hpathBounds.1 q with ⟨hqlo, hqhi⟩
         have hmarginSmall : 0 < m / (4 * Troot) := by positivity

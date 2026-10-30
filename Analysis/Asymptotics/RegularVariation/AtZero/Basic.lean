@@ -10,7 +10,7 @@ public import Analysis.Asymptotics.RegularVariation.Basic
 /-!
 # Regular variation at zero
 
-The public declarations are:
+## Public declarations
 
 - `IsRegularlyVaryingAtZero f ρ`: $f(u)>0$ eventually as $u\downarrow0$ and,
   for every $c>0$,
@@ -22,7 +22,11 @@ The public declarations are:
 
 This file records the ratio-limit definition of regular variation at the
 right-hand neighborhood of zero. It is the natural interface for
-characteristic-function defects.
+characteristic-function defects. The corresponding definition at infinity is
+the standard Karamata definition; see N. H. Bingham, C. M. Goldie, and J. L.
+Teugels, *Regular Variation*, Chapter 1, “Karamata Theory” (Cambridge
+University Press, 1987), DOI `10.1017/CBO9780511721434`. The definition at zero
+is obtained by reciprocating the argument.
 -/
 
 open Filter

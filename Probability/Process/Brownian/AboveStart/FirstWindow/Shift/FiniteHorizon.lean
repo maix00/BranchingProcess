@@ -6,11 +6,13 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.Path.AboveStart.FirstWindow.FiniteHorizon
+public import Probability.Process.Path.AboveStart.FirstWindow.Shift.FiniteHorizon
 public import Probability.Process.Brownian.AboveStart.FirstWindow.Shift.Basic
 
 /-!
 # Finite-horizon Brownian first-window law
+
+## Public declarations
 
 The public theorem in this file is:
 

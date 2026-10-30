@@ -1,4 +1,4 @@
-import Probability.BranchingRandomWalk.Selection.NSelection.Totalized
+import MeasureTheory.Selection.NSelection.Totalized
 import Mathlib.Basic.Real.Basic
 import Combinatorics.BranchingWalk.Step.Basic
 
@@ -9,7 +9,7 @@ The negative integer positions have no leftmost particle, while the usual
 natural-number order is an infinite population with a valid first-N segment.
 -/
 
-open Combinatorics.Branching.Selection.NSelection
+open _root_.Combinatorics.Selection.NSelection
 open ProbabilityTheory.BranchingRandomWalk.Selection.NSelection
 open Combinatorics.Branching
 

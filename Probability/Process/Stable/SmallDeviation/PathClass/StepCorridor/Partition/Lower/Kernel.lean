@@ -16,6 +16,16 @@ public import Probability.Process.Stable.SmallDeviation.EscapeRate.Endpoint
 This module transfers the source's left-open, right-closed endpoint-return
 events from a normalized nonuniform cell to a reference stable Lévy process.
 The resulting kernel has the same escape rate as a centered range tube.
+
+## Public declarations
+
+- The scaled endpoint-return event on a partition cell has the probability of
+  the corresponding unit-time stable-process event with all four bounds
+  divided by the spatial scale.
+- For fixed normalized widths and a return window inside the corridor,
+  $s^{-\alpha}\log\mathbb P(E_s)\to C/r^\alpha$.
+- The bound variants allow general finite corridor endpoints and provide the
+  width-dependent rate used in the finite-partition lower bound.
 -/
 
 open Filter MeasureTheory
@@ -47,7 +57,7 @@ theorem measure_scaledNormalizedCellIocReturnEvent_eq
     {P : Measure (CadlagPath unitInterval ℝ)} [IsProbabilityMeasure P]
     {Ω : Type*} [MeasurableSpace Ω]
     {X : ℝ≥0 → Ω → ℝ} {Q : Measure Ω} [IsProbabilityMeasure Q]
-    (hP : IsStableClockProcessLaw α μ UnitInterval.clock P)
+    (hP : IsStableClockProcessLaw α μ unitInterval.clock P)
     (hX : IsStableLevyProcess α μ X Q)
     (hscale : 0 < scale)
     (upper lower : StepBoundary)

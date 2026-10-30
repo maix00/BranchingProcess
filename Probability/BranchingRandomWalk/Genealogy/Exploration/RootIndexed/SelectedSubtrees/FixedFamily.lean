@@ -7,17 +7,32 @@ Authors: WANG Yiyang
 module
 
 public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Field.Filtration
-public import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.DomainFlow.Space
+public import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.AddressFiltration.PastFuture
 public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law.Basic
+public import Combinatorics.UlamHarris.Generation
 public import Mathlib.Probability.Independence.Basic
 
 /-!
 # Subtree families in an arbitrary root-indexed field
 
-This is the primary multi-root interface.  The initial-root type `Root`, the
-selected-family index `κ`, and the child-slot type `α` are arbitrary.  Product
-measures and fixed-coordinate measurability do not require any of them to be
+The initial-root type `Root`, the selected-family index `κ`, and the child-slot type `α` are
+arbitrary. Product measures and fixed-coordinate measurability do not require any of them to be
 finite or countable.
+
+## Public declarations
+
+* `RootIndexed.subtreeStepFieldVector` rebases a fixed family of root-address
+  pairs.
+* `subtreeStepFieldVector_measurable` proves measurability for fixed roots,
+  while `subtreeStepFieldVector_measurable_of_measurable_roots` handles a
+  random family with countable range and measurable fibers.
+* `subtreeStepFieldVector_law` gives the rebased field the full product law.
+  `subtreeStepFieldVector_future_measurable` places it in the future of the
+  generation-`n` filtration, and `subtreeStepFieldVector_independent` proves
+  independence from that flow.
+* `subtreeStepFieldVector_event_factorization` gives the corresponding
+  product formula for a generation-`n` event and a measurable event of the
+  rebased future field.
 -/
 
 open MeasureTheory ProbabilityTheory
@@ -34,23 +49,6 @@ def RootIndexed.subtreeStepFieldVector {Root κ α X : Type*}
     RootIndexed.StepField κ α X :=
   fun i v => step (roots i).1 ((roots i).2 ++ v)
 
-theorem RootIndexed.branchingAddresses_injective
-    {Root κ α : Type*} {n : ℕ}
-    (roots : κ → Root × TreeNode α)
-    (hlen : ∀ i, (roots i).2.length = n)
-    (hinj : Function.Injective roots) :
-    Function.Injective (fun p : κ × TreeNode α =>
-      ((roots p.1).1, (roots p.1).2 ++ p.2)) := by
-  rintro ⟨i, a⟩ ⟨j, b⟩ h
-  have hr : (roots i).1 = (roots j).1 := (Prod.mk.inj h).1
-  have hp : (roots i).2 ++ a = (roots j).2 ++ b := (Prod.mk.inj h).2
-  have hpref := congrArg (List.take n) hp
-  have hpath : (roots i).2 = (roots j).2 := by
-    simpa [hlen i, hlen j] using hpref
-  have hij : i = j := hinj (Prod.ext hr hpath)
-  subst j
-  exact Prod.ext rfl (List.append_cancel_left hp)
-
 theorem RootIndexed.subtreeStepFieldVector_measurable
     {Root κ α X : Type*} [MeasurableSpace X]
     (roots : κ → Root × TreeNode α) :
@@ -61,6 +59,41 @@ theorem RootIndexed.subtreeStepFieldVector_measurable
   intro v
   exact (measurable_pi_apply ((roots i).2 ++ v)).comp
     (measurable_pi_apply (roots i).1)
+
+/-- Measurability of a step-field vector rebased at a measurable,
+countable-range random family of roots. The proof partitions the domain by
+the countable set of root families and uses measurability for each fixed
+family. -/
+theorem RootIndexed.subtreeStepFieldVector_measurable_of_measurable_roots
+    {Root κ α X : Type*} [MeasurableSpace X]
+    [MeasurableSpace Root] [MeasurableSpace (RootIndexed.TreeNode Root α)]
+    [Countable κ] [MeasurableSingletonClass Root]
+    [MeasurableSingletonClass (RootIndexed.TreeNode Root α)]
+    (roots : RootIndexed.StepField Root α X → κ → RootIndexed.TreeNode Root α)
+    (hroots : Measurable roots)
+    (hcount : (Set.range roots).Countable) :
+    Measurable (fun ω =>
+      RootIndexed.subtreeStepFieldVector (roots ω) ω) := by
+  classical
+  let S : Set (κ → RootIndexed.TreeNode Root α) := Set.range roots
+  let _ : Countable S := Set.countable_coe_iff.mpr hcount
+  intro B hB
+  have hpre :
+      (fun ω => RootIndexed.subtreeStepFieldVector (roots ω) ω) ⁻¹' B =
+        ⋃ q : S, {ω | roots ω = q.1} ∩
+          RootIndexed.subtreeStepFieldVector q.1 ⁻¹' B := by
+    ext ω
+    simp only [Set.mem_preimage, Set.mem_iUnion, Set.mem_inter_iff,
+      Set.mem_ofPred_eq]
+    constructor
+    · intro h
+      exact ⟨⟨roots ω, Set.mem_range_self ω⟩, rfl, h⟩
+    · rintro ⟨q, hq, h⟩
+      simpa [hq] using h
+  rw [hpre]
+  exact MeasurableSet.iUnion fun q =>
+    (hroots (measurableSet_singleton q.1)).inter
+      ((RootIndexed.subtreeStepFieldVector_measurable q.1) hB)
 
 theorem RootIndexed.subtreeStepFieldVector_law
     {Root κ α X : Type*} [MeasurableSpace X]
@@ -75,7 +108,8 @@ theorem RootIndexed.subtreeStepFieldVector_law
     (P := fun _ : Root × TreeNode α => μ)
     (f := fun p : κ × TreeNode α =>
       ((roots p.1).1, (roots p.1).2 ++ p.2))
-    (RootIndexed.branchingAddresses_injective roots hlen hinj)
+    (Combinatorics.UlamHarris.RootIndexed.appendAddresses_injective
+      roots hlen hinj)
   have hcurrySource := Measure.infinitePi_map_curry
     (μ := fun (_ : Root) (_ : TreeNode α) => μ)
   have hcurryTarget := Measure.infinitePi_map_curry
@@ -85,7 +119,6 @@ theorem RootIndexed.subtreeStepFieldVector_law
       (fun ω i v => ω (roots i).1 ((roots i).2 ++ v)) =
     RootIndexed.stepFieldLaw (Root := κ) μ
   unfold RootIndexed.stepFieldLaw
-    _root_.ProbabilityTheory.BranchingRandomWalk.stepFieldLaw
     _root_.ProbabilityTheory.BranchingProcess.offspringFieldLaw
   rw [← hcurrySource, ← hcurryTarget, ← hflat]
   rw [Measure.map_map, Measure.map_map]

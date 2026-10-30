@@ -6,12 +6,14 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.Path.FirstPassage.Basic
+public import Probability.Process.Path.Transform.Continuous
+
+public import Probability.Process.Path.FirstPassage.Prefix
 
 /-!
 # Restarting a continuous path at first passage
 
-The public theorems in this file are:
+## Public declarations
 
 - `ProbabilityTheory.firstPassageBelow_shiftToZero_eq`:
   if $b<a<f(0)$ and the first passages $\tau_a,\tau_b$ are finite,
@@ -70,7 +72,7 @@ theorem firstPassageBelow_shiftToZero_eq_of_before
     exact WithTop.coe_ne_top htop
   have hinf : sInf {u : ℝ≥0 | f u ≤ a} = t :=
     WithTop.coe_eq_coe.mp (by
-      simpa [firstPassageBelow, firstPassageLE, hhit] using hpass)
+      simpa [firstPassageBelow, firstPassageLE_eq_sInf, hhit] using hpass)
   have hft : f t ≤ a := by
     rw [← hinf]
     exact firstPassageBelow_attained f a hhit
@@ -99,7 +101,7 @@ theorem firstPassageBelow_shiftToZero_eq_of_before
       exact WithTop.coe_lt_coe.mp hlt
     have huInf : sInf {v : ℝ≥0 | (shiftToZero f q) v ≤ a - f q} = u :=
       WithTop.coe_eq_coe.mp (by
-        simpa [firstPassageBelow, firstPassageLE, hhitShift] using hu.symm)
+        simpa [firstPassageBelow, firstPassageLE_eq_sInf, hhitShift] using hu.symm)
     have huVal : (shiftToZero f q) u ≤ a - f q := by
       rw [← huInf]
       exact firstPassageBelow_attained _ _ hhitShift
@@ -145,7 +147,7 @@ theorem firstPassageBelow_shiftToZero_eq_of_strictUntil
       exact WithTop.coe_lt_coe.mp hlt
     have huInf : sInf {v : ℝ≥0 | (shiftToZero f q) v ≤ a - f q} = u :=
       WithTop.coe_eq_coe.mp (by
-        simpa [firstPassageBelow, firstPassageLE, hhit] using hu.symm)
+        simpa [firstPassageBelow, firstPassageLE_eq_sInf, hhit] using hu.symm)
     have huVal : (shiftToZero f q) u ≤ a - f q := by
       rw [← huInf]
       exact firstPassageBelow_attained _ _ hhit
@@ -181,10 +183,10 @@ theorem firstPassageBelow_shiftToZero_eq
     exact WithTop.coe_ne_top htop
   have hinfA : sInf {t : ℝ≥0 | f t ≤ a} = τa := by
     apply WithTop.coe_injective
-    simpa [firstPassageBelow, firstPassageLE, hhitA] using ha
+    simpa [firstPassageBelow, firstPassageLE_eq_sInf, hhitA] using ha
   have hinfB : sInf {t : ℝ≥0 | f t ≤ b} = τb := by
     apply WithTop.coe_injective
-    simpa [firstPassageBelow, firstPassageLE, hhitB] using hb
+    simpa [firstPassageBelow, firstPassageLE_eq_sInf, hhitB] using hb
   have hvalueA : f τa = a := by
     rw [← hinfA]
     exact firstPassageBelow_value_eq f a h0 hhitA
@@ -230,7 +232,7 @@ theorem firstPassageBelow_shiftToZero_eq
   apply le_antisymm hupper
   have hshiftEq : firstPassageBelow (shiftToZero f τa) (b - a) =
       (sInf {t : ℝ≥0 | (shiftToZero f τa) t ≤ b - a} : ℝ≥0) := by
-    simp [firstPassageBelow, firstPassageLE, hhitShift]
+    simp [firstPassageBelow, firstPassageLE_eq_sInf, hhitShift]
     rfl
   rw [hshiftEq]
   exact WithTop.coe_le_coe.mpr hlower

@@ -8,10 +8,12 @@ module
 
 public import Probability.Process.RandomWalk.Kernel.Killed.Basic
 public import Probability.Kernel.Step.Endpoint
-public import Probability.Kernel.Survival.Return
+public import Probability.Kernel.Survival.Return.Basic
 
 /-!
 # Killed block kernels returning to an interior set
+
+## Public declarations
 
 Let $\kappa_A$ be the additive kernel killed outside a measurable set $A$,
 and let $R$ be any measurable return set. `returnKernel` runs $\ell$ steps
@@ -20,24 +22,11 @@ of $\kappa_A$ and retains endpoints in $R$. The public declarations are:
 - `returnKernel`: the resulting transition kernel on the state space $R$.
 - `returnKernel_apply_univ`:
   $\rho_\ell(x,R)=(\kappa_A^\ell)(x,R)$ for $x\in R$.
-- `returnKernel_apply_univ_eq_iidSequenceLaw`: a one-block row mass equals
-  the IID probability of surviving in $A$ and ending in $R$.
-- `runPartialSteps_killedStep_sequencePrefix_eq_some` and
-  `runPartialSteps_killedStep_sequencePrefix_eq_none`: the direct killed-step
-  execution returns the usual partial-sum endpoint on survival and `none`
-  after an exit.
-- `endsInPrefix_killedStep_iff`: a killed partial-step path ends in a target
-  iff it stays in $A$ and its partial-sum endpoint belongs to that target.
 - `killedIncrementKernel_pow_apply_eq_staysIn_endsIn`: an $n$-step killed
   transition to a measurable target equals the IID probability of survival
   and endpoint membership.
 - `returnKernel_apply_univ_eq_staysIn_endsIn`: the same identity for a return
   block starting in $R$ and ending in $R$.
-- `pow_le_remainingMass_returnKernel`: if every one-block row mass is at
-  least $p$, then $p^m$ bounds below the remaining mass after $m$ blocks.
-- `remainingMass_returnKernel_le_killedIncrementKernel`: requiring each
-  block endpoint to return to $R$ gives a lower event, so the return-kernel
-  mass is at most the ambient survival mass over the same total duration.
 -/
 
 open MeasureTheory Set
@@ -84,28 +73,10 @@ theorem returnKernel_apply_univ
     (killedIncrementKernel ν allowed hallowed)
     returnSet hreturn length x
 
-/-- One return-block mass is the canonical IID event that the killed partial
-step survives and its endpoint belongs to the return set. -/
-theorem returnKernel_apply_univ_eq_iidSequenceLaw
-    [MeasurableSingletonClass E]
-    (ν : Measure E) [IsProbabilityMeasure ν]
-    (allowed : Set E) (hallowed : MeasurableSet allowed)
-    (returnSet : Set E) (hreturn : MeasurableSet returnSet)
-    (length : ℕ) (x : returnSet) :
-    returnKernel ν allowed hallowed returnSet hreturn length x univ =
-      iidSequenceLaw ν {sequence |
-        Kernel.EndsInPrefix (killedStep allowed) returnSet
-          length (x : E) sequence} := by
-  rw [returnKernel_apply_univ,
-    killedIncrementKernel_eq_ofPartialStep ν allowed hallowed,
-    Kernel.pow_apply_ofPartialStep_eq_iidSequenceLaw
-      ν (killedStep allowed) (killedStep_measurable allowed hallowed)
-      hreturn length (x : E)]
-
 omit [MeasurableSpace E] [MeasurableAdd₂ E] in
 /-- On a surviving path, executing the killed additive partial step gives the
 usual partial-sum endpoint. -/
-theorem runPartialSteps_killedStep_sequencePrefix_eq_some
+private lemma runPartialSteps_killedStep_sequencePrefix_eq_some
     (allowed : Set E) (n : ℕ) (initial : E) (increment : ℕ → E)
     (hsurvives : StaysIn allowed n initial increment) :
     Kernel.runPartialSteps (killedStep allowed) n initial
@@ -131,7 +102,7 @@ theorem runPartialSteps_killedStep_sequencePrefix_eq_some
 
 omit [MeasurableSpace E] [MeasurableAdd₂ E] in
 /-- On a killed path, execution returns `none`. -/
-theorem runPartialSteps_killedStep_sequencePrefix_eq_none
+private lemma runPartialSteps_killedStep_sequencePrefix_eq_none
     (allowed : Set E) (n : ℕ) (initial : E) (increment : ℕ → E)
     (hkilled : ¬StaysIn allowed n initial increment) :
     Kernel.runPartialSteps (killedStep allowed) n initial
@@ -148,7 +119,7 @@ theorem runPartialSteps_killedStep_sequencePrefix_eq_none
 omit [MeasurableSpace E] [MeasurableAdd₂ E] in
 /-- The killed partial-step endpoint event is exactly path survival together
 with membership of the final partial-sum position in the target set. -/
-theorem endsInPrefix_killedStep_iff
+private lemma endsInPrefix_killedStep_iff
     (allowed target : Set E) (n : ℕ) (initial : E)
     (increment : ℕ → E) :
     Kernel.EndsInPrefix (killedStep allowed) target n initial increment ↔
@@ -201,45 +172,5 @@ theorem returnKernel_apply_univ_eq_staysIn_endsIn
   rw [returnKernel_apply_univ,
     killedIncrementKernel_pow_apply_eq_staysIn_endsIn
       ν allowed hallowed returnSet hreturn length (x : E)]
-
-/-- A uniform one-block return estimate multiplies over any number of complete
-blocks. -/
-theorem pow_le_remainingMass_returnKernel
-    (ν : Measure E) [IsProbabilityMeasure ν]
-    (allowed : Set E) (hallowed : MeasurableSet allowed)
-    (returnSet : Set E) (hreturn : MeasurableSet returnSet)
-    (length blocks : ℕ) (lowerBound : ENNReal)
-    (hblock : ∀ x : returnSet, lowerBound ≤
-      returnKernel ν allowed hallowed returnSet hreturn length x univ) :
-    ∀ x : returnSet,
-      lowerBound ^ blocks ≤ Kernel.remainingMass
-        (returnKernel ν allowed hallowed returnSet hreturn length)
-        blocks x := by
-  intro x
-  have hblock' : ∀ state : returnSet, lowerBound ≤
-      Kernel.remainingMass
-        (returnKernel ν allowed hallowed returnSet hreturn length) 1 state := by
-    intro state
-    simpa [Kernel.remainingMass] using hblock state
-  simpa using Kernel.pow_le_remainingMass_mul
-    (returnKernel ν allowed hallowed returnSet hreturn length)
-    1 blocks x lowerBound hblock'
-
-/-- Paths that return to `returnSet` after every block form a subset of the
-ambient killed-walk survival event over the same total duration. -/
-theorem remainingMass_returnKernel_le_killedIncrementKernel
-    (ν : Measure E) [IsProbabilityMeasure ν]
-    (allowed : Set E) (hallowed : MeasurableSet allowed)
-    (returnSet : Set E) (hreturn : MeasurableSet returnSet)
-    (length blocks : ℕ) (x : returnSet) :
-    Kernel.remainingMass
-        (returnKernel ν allowed hallowed returnSet hreturn length)
-        blocks x ≤
-      Kernel.remainingMass
-        (killedIncrementKernel ν allowed hallowed)
-        (blocks * length) (x : E) := by
-  exact Kernel.remainingMass_returnKernel_le
-    (killedIncrementKernel ν allowed hallowed)
-    returnSet hreturn length blocks x
 
 end ProbabilityTheory.RandomWalk

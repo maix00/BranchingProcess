@@ -20,6 +20,16 @@ $h_n\le r$. The public measurability results are
 `ProbabilityTheory.RandomWalk.measurableSet_historyHasNoLargeDrop` and
 `ProbabilityTheory.RandomWalk.measurableSet_historyNoLargeDropAndEndpointBelow`,
 which establish measurability in the finite product space.
+
+## Public declarations
+
+- `historyHasNoLargeDrop δ h` means
+  $h_i-h_j\leq\delta$ whenever $0\leq i\leq j\leq n$.
+- `historyNoLargeDropAndEndpointBelow δ r h` means the preceding condition
+  together with $h_n\leq r$.
+- `measurableSet_historyHasNoLargeDrop δ` and
+  `measurableSet_historyNoLargeDropAndEndpointBelow δ r` prove measurability
+  of the corresponding subsets of $\mathbb R^{n+1}$.
 -/
 
 @[expose] public section

@@ -10,12 +10,23 @@ public import Probability.Distributions.CharacteristicFunction.Symmetrization.Ba
 public import Probability.Distributions.Stable.Attraction.CharacteristicFunction
 public import Mathlib.Algebra.Order.Floor.Semifield
 
+import Mathlib.MeasureTheory.Measure.CharacteristicFunction.TaylorExpansion
+
 /-!
 # Ratios of stable norming sequences
 
 Characteristic functions of symmetrized sums remove deterministic centering.
 This module develops the ratio consequences of attraction without assuming
 monotonicity of the norming sequence.
+
+## Public declarations
+
+* `IsInDomainOfAttractionAlong.tendsto_norming_ratio`: if
+  $m_n/n\to r>0$, then $a_{m_n}/a_n\to r^{1/\alpha}$ for a norming sequence
+  $a_n$ of attraction to an $\alpha$-stable law.
+* `IsInDomainOfAttractionAlong.tendsto_norming_succ_ratio`:
+  $a_{n+1}/a_n\to1$.
+* `IsInDomainOfAttractionAlong.tendsto_scale_atTop`: $a_n\to+\infty$.
 -/
 
 open Filter MeasureTheory

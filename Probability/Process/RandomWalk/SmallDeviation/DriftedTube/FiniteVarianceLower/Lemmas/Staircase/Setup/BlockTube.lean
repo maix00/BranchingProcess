@@ -6,13 +6,15 @@ Authors: WANG Yiyang
 
 module
 
-public import Mathlib.Analysis.SpecialFunctions.Exp
-public import Probability.Process.RandomWalk.Path.Block.Partition.TailMerged
+import Mathlib.Analysis.SpecialFunctions.Exp
+import Combinatorics.Sequence.TailMergedBlock
 import Mathlib.Tactic
 /-!
 # Horizontal sub-tubes of a linearly rising tube
 
-The definitions and module-visible lemmas in this file are:
+## Internal proof declarations
+
+The proof-support definitions and lemmas in this file are:
 
 - `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.staircaseLowerEdge`:
   $r_{t_{j+1}}=r+c t_{j+1}/\Delta^2$.
@@ -36,7 +38,9 @@ These are the horizontal sub-tubes $H_j$ in Wang Yiyang,
 Chapter 3, proof of Lemma 3.5.
 -/
 
-@[expose] public section
+open Combinatorics.Sequence
+
+section
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 

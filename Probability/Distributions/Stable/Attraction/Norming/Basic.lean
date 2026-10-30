@@ -18,13 +18,25 @@ Under attraction to a nondegenerate `α`-stable law, the normalized truncated
 second moment is slowly varying; the definition alone does not assert that
 property. The limiting stable law and the functional limit theorem remain
 separate data.
+
+## Public declarations
+
+- `stableSlowVariation α ν u = u^(α - 2) ∫_{|x| ≤ u} x² ν(dx)` is the
+  truncated-moment factor.
+- `IsStableNorming α ν B` means `Bₙ > 0` for `n > 0`, `Bₙ → ∞`, and
+  `Bₙ^α / (n L*ν(Bₙ)) → 1`.
+- `stableSmallDeviationRate α ν a n = aₙ^α / (n L*ν(aₙ))`, and
+  `stableRateNormalization α ν a n` is its reciprocal
+  `n L*ν(aₙ) / aₙ^α`.
+- `stableScaleTime α ν u = u^α / L*ν(u)`; for `α = 2`, this is
+  `u² / ∫_{|x| ≤ u} x² ν(dx)`.
+- The public identities express the `α = 2` specializations, positivity of
+  `L*ν`, and `stableRateNormalization α ν a n = n / stableScaleTime α ν (aₙ)`.
 -/
 
 open Filter MeasureTheory Set
 
 @[expose] public section
-
-/-! ## Positivity of `L*` -/
 
 namespace ProbabilityTheory
 
@@ -35,63 +47,6 @@ regularly varying two-sided tail is a sufficient condition. -/
 noncomputable def stableSlowVariation
     (α : ℝ) (ν : Measure ℝ) (u : ℝ) : ℝ :=
   u ^ (α - 2) * truncatedSecondMoment ν u
-
-/-- A regularly varying two-sided tail of index `-α`, for `0 < α < 2`, makes
-the increment law's truncated-moment factor `L*` slowly varying. The
-truncated-moment-to-tail ratio is obtained from the general Karamata theorem in
-`Probability.Distributions.Moments.Truncated`. -/
-theorem stableSlowVariation_isSlowlyVarying_of_regularlyVaryingTail
-    {α : ℝ} {ν : Measure ℝ} [IsProbabilityMeasure ν]
-    (hα₀ : 0 < α) (hα₂ : α < 2)
-    (hTail : Asymptotics.IsRegularlyVaryingAtTop
-      (fun u : ℝ => ν.real {x : ℝ | u < |x|}) (-α)) :
-    Asymptotics.IsSlowlyVaryingAtTop (stableSlowVariation α ν) := by
-  let T : ℝ → ℝ := fun u => ν.real {x : ℝ | u < |x|}
-  let R : ℝ → ℝ := fun u =>
-    truncatedSecondMoment ν u / (u ^ 2 * T u)
-  have hTailFactor : Asymptotics.IsSlowlyVaryingAtTop
-      (fun u : ℝ => u ^ α * T u) := by
-    simpa [Asymptotics.IsSlowlyVaryingAtTop, T, mul_comm] using
-      hTail.mul (Asymptotics.IsRegularlyVaryingAtTop.rpow α)
-  have hratio : Tendsto R atTop
-      (nhds (α / (2 - α))) := by
-    simpa [R, T] using
-      tendsto_truncatedSecondMoment_div_tail_of_regularlyVarying
-        ν hα₀ hα₂ hTail
-  have hconst : 0 < α / (2 - α) := div_pos hα₀ (by linarith)
-  have hratioSlow : Asymptotics.IsSlowlyVaryingAtTop R :=
-    Asymptotics.IsSlowlyVaryingAtTop.of_tendsto_pos hconst hratio
-  have hfactorEq : (stableSlowVariation α ν) =ᶠ[atTop]
-      fun u => (u ^ α * T u) * R u := by
-    filter_upwards [eventually_gt_atTop (0:ℝ), hTail.eventually_pos] with u hu hTu
-    have hpow : u ^ (α - 2) = u ^ α / u ^ 2 := by
-      calc
-        u ^ (α - 2) = u ^ α / u ^ (2:ℝ) := Real.rpow_sub hu α 2
-        _ = u ^ α / u ^ 2 := congrArg (fun z : ℝ => u ^ α / z)
-          (Real.rpow_natCast u 2)
-    have hden : u ^ 2 * T u ≠ 0 := ne_of_gt (mul_pos (sq_pos_of_pos hu) hTu)
-    change u ^ (α - 2) * truncatedSecondMoment ν u = _
-    rw [hpow]
-    dsimp [R]
-    field_simp [hden]
-    rw [mul_div_assoc]
-    rw [div_self (ne_of_gt hTu)]
-    ring
-  have hprodSlow := hTailFactor.mul hratioSlow
-  refine ⟨?_, ?_⟩
-  · filter_upwards [hfactorEq, hprodSlow.eventually_pos] with u hEq hpos
-    rw [hEq]
-    exact hpos
-  · intro c hc
-    have hcTop : Tendsto (fun u : ℝ => c * u) atTop atTop :=
-      tendsto_id.const_mul_atTop hc
-    have hfactorScaled : (fun u : ℝ =>
-        stableSlowVariation α ν (c * u) / stableSlowVariation α ν u) =ᶠ[atTop]
-        fun u => (((c * u) ^ α * T (c * u)) * R (c * u)) /
-          ((u ^ α * T u) * R u) := by
-      filter_upwards [hfactorEq, hcTop.eventually hfactorEq] with u hEq hEqc
-      rw [hEqc, hEq]
-    exact (hprodSlow.ratio_tendsto hc).congr' hfactorScaled.symm
 
 /-- A normalization satisfies the asymptotic inverse-norming condition for a
 stable domain of attraction. The ratio tends to one rather than requiring an
@@ -113,46 +68,6 @@ noncomputable def stableSmallDeviationRate
 @[simp] theorem stableSlowVariation_two (ν : Measure ℝ) (u : ℝ) :
     stableSlowVariation 2 ν u = truncatedSecondMoment ν u := by
   simp [stableSlowVariation]
-
-/-- At exponent two, the stable norming relation is equivalent to the
-normalized truncated-second-moment relation. This direction is useful when
-turning a norming sequence into variance profiles for hard truncation. -/
-theorem IsStableNorming.tendsto_nat_mul_truncatedSecondMoment_div_sq
-    {ν : Measure ℝ} {normalization : ℕ → ℝ}
-    (h : IsStableNorming 2 ν normalization) :
-    Tendsto (fun n : ℕ => (n : ℝ) *
-      truncatedSecondMoment ν (normalization n) / normalization n ^ 2)
-      atTop (nhds 1) := by
-  let V : ℝ → ℝ := truncatedSecondMoment ν
-  have hratio : Tendsto (fun n : ℕ => normalization n ^ (2 : ℝ) /
-      V (normalization n) / (n : ℝ)) atTop (nhds 1) := by
-    simpa only [stableSlowVariation_two] using h.2.2
-  have hinv := hratio.inv₀ (by norm_num : (1 : ℝ) ≠ 0)
-  have hnatPos : ∀ᶠ n : ℕ in atTop, 0 < (n : ℝ) := by
-    filter_upwards [eventually_gt_atTop (0 : ℕ)] with n hn
-    exact_mod_cast hn
-  have hscalePos : ∀ᶠ n : ℕ in atTop, 0 < normalization n :=
-    h.2.1.eventually (eventually_gt_atTop 0)
-  have hratioPos : ∀ᶠ n : ℕ in atTop,
-      normalization n ^ (2 : ℝ) / V (normalization n) / (n : ℝ) > 0 :=
-    hratio.eventually (Ioi_mem_nhds (by norm_num : (0 : ℝ) < 1))
-  have hVpos : ∀ᶠ n : ℕ in atTop, 0 < V (normalization n) := by
-    filter_upwards [hscalePos, hnatPos, hratioPos] with n hb hn hq
-    have hnum : 0 < normalization n ^ (2 : ℝ) / V (normalization n) :=
-      (div_pos_iff_of_pos_right hn).mp hq
-    have hpow : normalization n ^ (2 : ℝ) = normalization n ^ 2 :=
-      Real.rpow_natCast (normalization n) 2
-    rw [hpow] at hnum
-    exact (div_pos_iff_of_pos_left (sq_pos_of_pos hb)).mp hnum
-  have heq : (fun n : ℕ =>
-      (normalization n ^ (2 : ℝ) / V (normalization n) / (n : ℝ))⁻¹) =ᶠ[atTop]
-      fun n => (n : ℝ) * V (normalization n) / normalization n ^ 2 := by
-    filter_upwards [hscalePos, hnatPos, hVpos] with n hb hn hV
-    have hpow : normalization n ^ (2 : ℝ) = normalization n ^ 2 :=
-      Real.rpow_natCast (normalization n) 2
-    rw [hpow]
-    field_simp [ne_of_gt hb, ne_of_gt hn, ne_of_gt hV]
-  simpa [V] using hinv.congr' heq
 
 @[simp] theorem stableSmallDeviationRate_two
     (ν : Measure ℝ) (scale : ℕ → ℝ) (n : ℕ) :
@@ -206,59 +121,9 @@ At `α = 2` it is `u ^ 2 / truncatedSecondMoment ν u`, the diffusive time scale
 noncomputable def stableScaleTime (α : ℝ) (ν : Measure ℝ) (u : ℝ) : ℝ :=
   u ^ α / stableSlowVariation α ν u
 
-/-- If the increment law's truncated-moment factor `L*ν` is slowly varying,
-then its characteristic time scale `κν(u) = u^α / L*ν(u)` is regularly
-varying with index `α`. This isolates the deterministic regular-variation
-step; slow variation from a domain-of-attraction hypothesis is proved
-separately. -/
-theorem stableScaleTime_isRegularlyVaryingAtTop
-    {α : ℝ} {ν : Measure ℝ}
-    (hslow : Asymptotics.IsSlowlyVaryingAtTop
-      (stableSlowVariation α ν)) :
-    Asymptotics.IsRegularlyVaryingAtTop (stableScaleTime α ν) α := by
-  change Asymptotics.IsRegularlyVaryingAtTop
-    (fun u => u ^ α / stableSlowVariation α ν u) α
-  exact Asymptotics.isRegularlyVaryingAtTop_rpow_div_of_slowlyVarying hslow
-
 @[simp] theorem stableScaleTime_two (ν : Measure ℝ) (u : ℝ) :
     stableScaleTime 2 ν u = u ^ 2 / truncatedSecondMoment ν u := by
   simp [stableScaleTime]
-
-/-- Under the asymptotic norming condition, the quadratic norming has
-the expected variance scale. The exact identity `B*(B(n)) = n` is not needed:
-the defining asymptotic `B*(B(n))/n → 1` and convergence of truncated second
-moments suffice. -/
-theorem IsStableNorming.tendsto_sq_div_nat
-    {ν : Measure ℝ} (hν : Integrable (fun x : ℝ => x ^ 2) ν)
-    {b : ℕ → ℝ} (h : IsStableNorming 2 ν b) :
-    Tendsto (fun n : ℕ => b n ^ 2 / (n : ℝ)) atTop
-      (nhds (∫ x, x ^ 2 ∂ν)) := by
-  have hnat : Tendsto (fun n : ℕ => truncatedSecondMoment ν (b n)) atTop
-      (nhds (∫ x, x ^ 2 ∂ν)) :=
-    (tendsto_truncatedSecondMoment ν hν).comp h.2.1
-  have hratio : Tendsto
-      (fun n : ℕ => stableScaleTime 2 ν (b n) / (n : ℝ)) atTop (nhds 1) := by
-    simpa [stableScaleTime, stableSlowVariation_two] using h.2.2
-  have hproduct : Tendsto
-      (fun n : ℕ => stableScaleTime 2 ν (b n) / (n : ℝ) *
-        truncatedSecondMoment ν (b n)) atTop
-      (nhds (1 * (∫ x, x ^ 2 ∂ν))) := hratio.mul hnat
-  have hratioPos : ∀ᶠ n : ℕ in atTop,
-      0 < stableScaleTime 2 ν (b n) / (n : ℝ) := by
-    simpa only [Set.mem_Ioi] using
-      hratio.eventually (isOpen_Ioi.mem_nhds (by norm_num : (0 : ℝ) < 1))
-  have heq : (fun n : ℕ => b n ^ 2 / (n : ℝ)) =ᶠ[atTop]
-      fun n => stableScaleTime 2 ν (b n) / (n : ℝ) *
-        truncatedSecondMoment ν (b n) := by
-    filter_upwards [hratioPos, eventually_gt_atTop 0] with n hr hn
-    have hLne : truncatedSecondMoment ν (b n) ≠ 0 := by
-      intro hzero
-      have hpos := hr
-      rw [stableScaleTime_two, hzero] at hpos
-      simp at hpos
-    rw [stableScaleTime_two]
-    field_simp [hLne, show (n : ℝ) ≠ 0 by exact_mod_cast hn.ne']
-  simpa using hproduct.congr' heq.symm
 
 /-- The rate normalization is the number of steps divided by the scale time: `λ n = n / B* (x n)`,
 the number of blocks of `B* (x n)` steps that fit into the `n` steps of the walk. -/

@@ -13,7 +13,7 @@ public section
 /-!
 # Event probabilities under convergence in distribution
 
-The public theorems are:
+## Public declarations
 
 - `MeasureTheory.TendstoInDistribution.measure_map_le_liminf_of_isOpen`:
   $\mu'(Z\in G)\le\liminf_i\mu_i(X_i\in G)$ for open $G$.

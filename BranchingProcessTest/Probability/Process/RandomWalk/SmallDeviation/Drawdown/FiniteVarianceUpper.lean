@@ -4,8 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Basic
-import Analysis.Asymptotics.Scale.BlockScale
+import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Theorems
+import Analysis.Asymptotics.Scale.Block.Length
 import Probability.Process.RandomWalk.Path.Block.Oscillation
 
 /-!

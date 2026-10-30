@@ -10,9 +10,10 @@ public import Mathlib.Probability.Independence.Basic
 public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Basic
 public import Probability.Process.Stable.Levy
 public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Gluing
+public import Probability.Process.Path.Skorokhod.Corridor.RationalCoordinate
 public import Probability.Process.Path.Skorokhod.Corridor.Segment
 import Probability.Process.Path.Skorokhod.Corridor.SegmentStationarity
-import Probability.Process.IndepIncrements.DisjointPaths
+import Probability.Process.IndepIncrements.FiniteObservations.DisjointPaths
 import Probability.Process.Stable.FiniteDimensional
 
 /-!
@@ -21,6 +22,14 @@ import Probability.Process.Stable.FiniteDimensional
 The complete rational-coordinate increment paths on adjacent intervals are
 independent. Hence a corridor-and-endpoint event on the first interval and a
 translated corridor event on the second have product probability.
+## Public declarations
+
+For adjacent time intervals, the entrance segment and the translated
+continuation are independent. The public theorems factor the corresponding
+entrance/continuation and return-event probabilities and derive lower bounds
+of the form $\mathbb P(A\cap B)\ge\mathbb P(A)\mathbb P(B)$ for the
+full-path corridor events. The independence calculation itself is private.
+
 -/
 
 @[expose] public section

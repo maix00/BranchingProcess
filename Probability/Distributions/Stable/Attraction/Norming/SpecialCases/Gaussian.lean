@@ -13,7 +13,7 @@ public import Probability.Distributions.Stable.Attraction.Norming.Basic
 /-!
 # The stable truncated second moment for Gaussian laws
 
-The public theorem in this file is:
+## Public declarations
 
 - `ProbabilityTheory.tendsto_stableSlowVariation_two_gaussianReal_zero`:
   for a centered Gaussian law with variance $v$, the exponent-two stable

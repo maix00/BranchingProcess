@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.ConvergenceInDistribution.CadlagPath.FiniteDimensional
-public import Probability.Process.RandomWalk.FunctionalLimit.Stable.PathLaw.RandomWalkGrid
+public import Probability.Process.RandomWalk.FunctionalLimit.Stable.PathLaw.WalkGrid
 public import Probability.Process.RandomWalk.Path.Skorokhod.Core
 
 /-!
@@ -37,6 +37,14 @@ The public extraction theorems are:
 - `ProbabilityTheory.RandomWalk.FunctionalLimit.Stable.exists_subseq_normalizedStepPathLaw_with_stable_grid_laws`:
   the extracted limit has the stable finite-dimensional position law on every
   strictly increasing deterministic finite grid.
+## Public declarations
+
+The extraction theorems produce a subsequence $n_j$ for which the normalized
+step-path laws converge, and identify the limit's stable increment vectors on
+a countable dense continuity grid and then on every strictly increasing
+finite grid. The zero-center versions state the corresponding specialization.
+The dense-grid approximation and law-extension steps remain private.
+
 -/
 
 open Filter MeasureTheory ProbabilityTheory

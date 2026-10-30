@@ -8,7 +8,7 @@ open scoped Topology
 example (ν : Measure ℝ) [IsProbabilityMeasure ν] :
     iIndepFun
       (fun (j : Fin 0) increment =>
-        AdditivePath.blockSum (AdditivePath.blockStart (fun _ => 0) j.val) 0 increment)
+        AdditivePath.blockSum (Combinatorics.Sequence.blockStart (fun _ => 0) j.val) 0 increment)
       (iidSequenceLaw ν) := by
   exact ProbabilityTheory.RandomWalk.iIndepFun_variableConsecutiveBlockSums
     ν (fun _ => 0) 0
@@ -24,7 +24,7 @@ example (ν : Measure ℝ) [IsProbabilityMeasure ν] :
     iIndepFun
       (fun (j : Fin 0) increment =>
         Combinatorics.Sequence.blockCoordinates
-          (AdditivePath.blockStart (fun _ => 0) j.val) 0 increment)
+          (Combinatorics.Sequence.blockStart (fun _ => 0) j.val) 0 increment)
       (iidSequenceLaw ν) :=
   ProbabilityTheory.iIndepFun_variableConsecutiveBlockCoordinates
     ν (fun _ => 0) 0
@@ -33,7 +33,7 @@ example (ν : Measure ℝ) [IsProbabilityMeasure ν] :
     iIndepFun
       (fun (j : Fin 2) increment =>
         Combinatorics.Sequence.blockCoordinates
-          (AdditivePath.blockStart (fun k => k + 1) j.val) (j.val + 1) increment)
+          (Combinatorics.Sequence.blockStart (fun k => k + 1) j.val) (j.val + 1) increment)
       (iidSequenceLaw ν) :=
   ProbabilityTheory.iIndepFun_variableConsecutiveBlockCoordinates
     ν (fun k => k + 1) 2
@@ -47,7 +47,7 @@ example (ν : Measure ℝ) [IsProbabilityMeasure ν] :
 example (ν : Measure ℝ) [IsProbabilityMeasure ν] :
     iIndepFun
       (fun (j : Fin 1) increment =>
-        AdditivePath.blockSum (AdditivePath.blockStart (fun _ => 2) j.val) 2 increment)
+        AdditivePath.blockSum (Combinatorics.Sequence.blockStart (fun _ => 2) j.val) 2 increment)
       (iidSequenceLaw ν) :=
   ProbabilityTheory.RandomWalk.iIndepFun_variableConsecutiveBlockSums
     ν (fun _ => 2) 1
@@ -55,7 +55,7 @@ example (ν : Measure ℝ) [IsProbabilityMeasure ν] :
 example (ν : Measure ℝ) [IsProbabilityMeasure ν] :
     iIndepFun
       (fun (j : Fin 2) increment =>
-        AdditivePath.blockSum (AdditivePath.blockStart (fun k => k + 1) j.val)
+        AdditivePath.blockSum (Combinatorics.Sequence.blockStart (fun k => k + 1) j.val)
           (j.val + 1) increment)
       (iidSequenceLaw ν) :=
   ProbabilityTheory.RandomWalk.iIndepFun_variableConsecutiveBlockSums
@@ -83,7 +83,7 @@ example {ν limit : Measure ℝ} [IsProbabilityMeasure ν] [IsProbabilityMeasure
         atTop (nhds 0)) :
     TendstoInDistribution
       (fun n (increments : ℕ → ℝ) (j : Fin blocks) =>
-        AdditivePath.blockSum (AdditivePath.blockStart (length n) j.val)
+        AdditivePath.blockSum (Combinatorics.Sequence.blockStart (length n) j.val)
           (length n j.val) increments / spatialScale n)
       atTop
       (fun z j => ratio j * z j)
@@ -109,7 +109,7 @@ example {ν limit : Measure ℝ} [IsProbabilityMeasure ν] [IsProbabilityMeasure
         atTop (nhds c)) :
     TendstoInDistribution
       (fun n (increments : ℕ → ℝ) (j : Fin blocks) =>
-        AdditivePath.blockSum (AdditivePath.blockStart (length n) j.val)
+        AdditivePath.blockSum (Combinatorics.Sequence.blockStart (length n) j.val)
           (length n j.val) increments / spatialScale n)
       atTop
       (fun z j => ratio j * z j + c)

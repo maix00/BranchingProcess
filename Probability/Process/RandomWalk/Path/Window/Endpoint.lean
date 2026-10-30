@@ -7,23 +7,23 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.Path.Window.Core
+import Mathlib.MeasureTheory.Constructions.BorelSpace.Order
 
 /-!
 # Finite path windows with a terminal interval
 
-The public objects and theorems in this file are:
+## Public declarations
 
 - `ProbabilityTheory.RandomWalk.FiniteInClosedIntervalEndsIn`:
-  a path started at $y$ stays in $[l,u]$ through $n$ steps and ends in
-  $[a,b]$.
+  $\mathrm{FiniteInClosedInterval}(l,u,y,\xi)\land y+\sum_{j<n}\xi_j\in[a,b]$ for a finite increment vector.
 - `ProbabilityTheory.RandomWalk.measurableSet_finiteInClosedIntervalEndsIn`:
   this finite-increment-vector event is measurable.
 - `ProbabilityTheory.RandomWalk.finiteInClosedIntervalEndsIn_blockCoordinates_iff`:
-  applying the event to a coordinate block equals the corresponding
-  infinite-sequence corridor and endpoint event.
+  applying the event to a coordinate block is equivalent to the same path
+  constraint on the increment segment and its terminal sum.
 - `ProbabilityTheory.RandomWalk.measurableSet_pairFiniteInClosedIntervalEndsIn`:
-  the same event remains measurable when its initial position is a
-  measurable function of a preceding block.
+  the event remains measurable when the initial position is a measurable
+  function of a preceding block.
 
 The endpoint-window event is the reusable finite-path version of the
 horizontal sub-tubes in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, proof of Lemma 3.5.

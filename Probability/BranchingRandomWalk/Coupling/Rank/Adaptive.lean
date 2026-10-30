@@ -4,22 +4,34 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Coupling.Rank.Block
+module
+
+public import Probability.BranchingRandomWalk.Coupling.Rank.Block.Basic
+public import Probability.BranchingRandomWalk.Coupling.Field.Law
 
 /-!
 # Product law for adaptive rank splicing
 
 The past-measurable rank choice preserves the target root-indexed product law.
+
+## Public declarations
+
+- `ProbabilityTheory.BranchingRandomWalk.Coupling.RootIndexed.stepFieldLaw_spliceByRank`:
+  if source particles have depth $n$ and the equal-rank choice is countably
+  ranged and measurable with respect to generation $n$'s past field, then
+  splicing that choice into an independent two-root product field preserves
+  the target product-field law.
 -/
 
 open MeasureTheory ProbabilityTheory
 
+@[expose] public section
+
 namespace ProbabilityTheory.BranchingRandomWalk.Coupling
 
-open ProbabilityTheory.BranchingRandomWalk.Selection.NSelection
 
 open Combinatorics.UlamHarris Combinatorics.Branching
-open Combinatorics.Branching.Selection.NSelection
+open _root_.Combinatorics.Selection.NSelection
 
 /-- A past-measurable equal-rank matching of generation-`n` populations
 preserves the complete target product law.  Countability is localized to the
@@ -54,3 +66,5 @@ theorem RootIndexed.stepFieldLaw_spliceByRank
     (RootIndexed.rankChoice_injective n sourceValue targetValue source target)
 
 end ProbabilityTheory.BranchingRandomWalk.Coupling
+
+end

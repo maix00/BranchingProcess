@@ -15,6 +15,17 @@ public import Probability.Distributions.Stable.Basic
 The general attraction predicate is defined in
 `Probability.Distributions.DomainOfAttraction.Basic`.  This module adds the
 stable-limit combinations and keeps their established import path.
+
+## Public declarations
+
+* `IsInAlphaStableDomainOfAttraction α ν limit` means that `limit` is
+  nondegenerate `α`-stable and `ν` is in its domain of attraction.
+* `IsInAlphaStableDomainOfAttractionAlong α ν limit scale center` retains the
+  explicit norming and centering sequences together with the same stable-limit
+  and attraction assertions.
+* The projection theorems `.stable`, `.domain`, and `.attraction` recover the
+  two components; `.isInAlphaStableDomainOfAttraction` forgets the chosen
+  sequences while retaining the domain-of-attraction property.
 -/
 
 open MeasureTheory

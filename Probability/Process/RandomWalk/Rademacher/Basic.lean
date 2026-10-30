@@ -12,6 +12,8 @@ public import Probability.Distributions.Rademacher
 /-!
 # The Rademacher increment law
 
+## Public declarations
+
 This file realizes the canonical IID Rademacher increment law as a
 process-level random walk, independently of any branching-walk realization.
 

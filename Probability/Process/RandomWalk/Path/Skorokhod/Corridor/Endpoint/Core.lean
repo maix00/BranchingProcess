@@ -12,6 +12,15 @@ public import Probability.Process.RandomWalk.Path.Skorokhod.Core
 /-!
 # Laws of endpoint-constrained walk corridors
 
+## Public declarations
+
+- `ProbabilityTheory.RandomWalk.normalizedStepPathLaw_apply_centeredOpenIntervalEndsIn`:
+  the law of the path in a centered open corridor with terminal window
+  \((u,v)\) equals the IID law of the strict tube and
+  \(S_n/a_n\in(u,v)\).
+- `ProbabilityTheory.RandomWalk.normalizedStepPathLaw_apply_centeredClosedIntervalEndsIn`:
+  the analogous identity for a closed corridor and closed terminal window.
+
 The normalized path law of an open Skorokhod corridor with a terminal
 constraint is identified with the corresponding finite strict-tube event.
 -/

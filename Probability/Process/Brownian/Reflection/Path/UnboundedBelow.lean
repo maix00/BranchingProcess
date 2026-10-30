@@ -6,12 +6,13 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.Brownian.Reflection.FirstPassage.Principle
+public import Probability.Process.Brownian.PathLaw.ContinuousPathLaw
+import Probability.Process.Brownian.Reflection.FirstPassage.Principle
 
 /-!
 # Brownian paths descend below every level
 
-The public theorem in this file is:
+## Public declarations
 
 - `ProbabilityTheory.IsBrownianReal.ae_continuousPath_unboundedBelow`:
   almost every continuous Brownian path satisfies

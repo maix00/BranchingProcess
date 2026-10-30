@@ -6,11 +6,15 @@ Authors: WANG Yiyang
 
 module
 
+public import Probability.Process.Path.Transform.Continuous
+
 public import Probability.Process.RandomWalk.Path.Interpolation.Basic
 public import Probability.Process.Path.Representation.Continuous
 
 /-!
 # Polygonal random-walk paths on all nonnegative times
+
+## Public declarations
 
 The public definitions and theorems in this file are:
 

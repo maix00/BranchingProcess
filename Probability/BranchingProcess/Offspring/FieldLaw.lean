@@ -15,6 +15,35 @@ public import Probability.BranchingProcess.Offspring.Map
 The generic branching-process construction samples one complete child-slot
 configuration independently at every Ulam--Harris address. It is independent
 of spatial positions and applies to marked and unmarked configurations alike.
+
+## Public declarations
+
+- `ProbabilityTheory.BranchingProcess.offspringFieldLaw`:
+  the product measure $\bigotimes_{u\in\mathcal U_\alpha}\mu$ on fields of
+  offspring configurations indexed by Ulam--Harris addresses.
+- `ProbabilityTheory.BranchingProcess.offspringFieldLaw.isProbabilityMeasure`:
+  this field law is a probability measure whenever its one-address law is.
+- `ProbabilityTheory.BranchingProcess.offspringFieldLaw_coordinate`:
+  each address coordinate has marginal law $\mu$.
+- `ProbabilityTheory.BranchingProcess.offspringFieldLaw_independent`:
+  the coordinate family is mutually independent under the product law.
+- `ProbabilityTheory.BranchingProcess.offspringFieldLaw_injective_coordinates_independent`:
+  coordinates selected by an injective address map remain mutually
+  independent.
+- `ProbabilityTheory.BranchingProcess.offspringFieldLaw_injective_coordinates_comp_independent`:
+  measurable observations of those injectively selected coordinates remain
+  mutually independent.
+- `ProbabilityTheory.BranchingProcess.offspringFieldLaw_mapMarks`:
+  the pushforward of the field law by the coordinatewise mark map equals the
+  field law built from the one-configuration pushforward.
+- `ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw.fieldLaw`:
+  the probability-measure version of the independently sampled field.
+- `ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw.fieldLaw_toMeasure`:
+  its underlying measure is `offspringFieldLaw`.
+- `ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw.fieldLaw_coordinate`:
+  every address has the original configuration law as its marginal.
+- `ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw.fieldLaw_mapMarks`:
+  mapping child marks commutes with forming the probability-measure field law.
 -/
 
 @[expose] public section

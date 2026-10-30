@@ -6,17 +6,17 @@ Authors: WANG Yiyang
 
 module
 
-public import Mathlib.Topology.Algebra.Order.Field
-public import Mathlib.Basic.Real.Basic
-public import Mathlib.Topology.Algebra.Ring.Real
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
+import Mathlib.Topology.Algebra.Order.Field
+import Mathlib.Basic.Real.Basic
+import Mathlib.Topology.Algebra.Ring.Real
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.FieldSimp
 
 /-!
 # Comparing diverging negative functions
 
-The public theorems are:
+## Public declarations
 
 - `eventually_one_sub_le_ratio_of_additive_bound`: if $g\to-\infty$ and
   $f\le g+C$ eventually, then for every $\varepsilon>0$ eventually

@@ -12,6 +12,8 @@ public import Mathlib.MeasureTheory.Constructions.BorelSpace.WithTop
 /-!
 # Strict ascending ladder times and heights
 
+## Public declarations
+
 Let $(\xi_i)_{i\geq1}$ be increments, $S_0=0$, and
 $S_n=\sum_{i=1}^n\xi_i$. Write
 $\ell_n=\#\{1\leq j\leq n:S_j>\max_{0\leq i<j}S_i\}$ and define

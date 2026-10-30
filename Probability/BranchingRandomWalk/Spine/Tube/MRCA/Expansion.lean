@@ -4,35 +4,33 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Spine.Path.SecondMoment.MRCAExpansion
-import Probability.BranchingRandomWalk.Spine.Tube.MRCA.PairContribution
+module
+
+public import Probability.BranchingRandomWalk.Spine.Path.SecondMoment.MRCAExpansion
+public import Probability.Process.RandomWalk.Path.Corridor.Affine
 
 /-!
 # Corridor tests across an ancestral prefix
 
 ## Public declarations
 
-* `ProbabilityTheory.BranchingRandomWalk.Spine.affineCorridorThrough` is the
-  set of histories satisfying `lower + drift * k ≤ x k ≤ lower + drift * k + width`
-  at every `k ≤ horizon`, together with the endpoint constraint
-  `x horizon ≤ endpointUpper`.
-* `ProbabilityTheory.BranchingRandomWalk.Spine.affineCorridorInitialWindow`
-  is `{x | lower ≤ x ∧ x ≤ lower + width}`.
-* `ProbabilityTheory.BranchingRandomWalk.Spine.affineCorridorThrough_prependHistory_iff`
-  splits membership into the first-window condition and a shifted corridor:
-  `prependHistory x tail ∈ C_(h+1) ↔ x ∈ I₀ ∧ tail ∈ C_h(lower + drift, drift)`.
-* `ProbabilityTheory.BranchingRandomWalk.Spine.affineCorridorPrefix_prependHistory_iff`
-  gives the same equivalence for `affineCorridorPrefix`, which has no extra
-  terminal endpoint constraint.
-* `ProbabilityTheory.BranchingRandomWalk.Spine.pathGenerationPrefixTest_affineCorridorThrough`
-  factors a corridor path test at an ancestor of length `m` into the prefix
-  indicator and the shifted continuation-corridor indicator; when the prefix
-  condition fails, the test equals zero.
-
-Affine corridor indicators split into a prefix condition and a shifted
-continuation condition.  This is the bridge from the path-level MRCA
-expansion to the conditional pair contributions used in the tube estimate.
+Let \(A_{k}(a,v,\Delta,U)\) be the affine corridor through time \(k\),
+with lower boundary \(a+vj\), width \(\Delta\), and terminal bound \(U\).
+For a node \(u\) with \(|u|=m\), let \(H_m(u)\) be its ancestral history
+and let \(\eta\) be a continuation path starting at its endpoint. Then
+`pathGenerationPrefixTest_affineCorridorThrough` gives
+\[
+  T_{m,n}(\mathbf 1_{A_{m+n+1}})(x,\omega,u;\eta)
+    =\mathbf 1_{\{H_m(u)\in\operatorname{Prefix}_m(a,v,\Delta)\}}
+      \mathbf 1_{\{\eta\in A_{n+1}(a+vm,v,\Delta,U)\}},
+\]
+where \(T_{m,n}\) is `pathGenerationPrefixTest` and
+\(\operatorname{Prefix}_m\) is `affineCorridorPrefix`. This is the
+pathwise factorization used to pass from a global corridor test to the
+conditional continuation contribution at a fixed ancestor.
 -/
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal
@@ -44,123 +42,6 @@ open Combinatorics.Branching
 open Combinatorics.UlamHarris
 open ProbabilityTheory.BranchingRandomWalk
 open ProbabilityTheory.RandomWalk
-
-/-- Histories through a fixed endpoint that remain in an affine corridor. -/
-def affineCorridorThrough (horizon : ℕ) (lower drift width endpointUpper : ℝ) :
-    Set (Fin (horizon + 1) → ℝ) :=
-  {history | (∀ k, lower + drift * (k.val : ℝ) ≤ history k ∧
-      history k ≤ lower + drift * (k.val : ℝ) + width) ∧
-    history ⟨horizon, Nat.lt_succ_self horizon⟩ ≤ endpointUpper}
-
-/-- The time-zero window of an affine corridor. -/
-def affineCorridorInitialWindow (lower width : ℝ) : Set ℝ :=
-  {x | lower ≤ x ∧ x ≤ lower + width}
-
-/-- Splitting off the first coordinate shifts the affine corridor by one
-time unit. -/
-theorem affineCorridorThrough_prependHistory_iff
-    (horizon : ℕ) (lower drift width endpointUpper x : ℝ)
-    (tail : Fin (horizon + 1) → ℝ) :
-    prependHistory x tail ∈
-        affineCorridorThrough (horizon + 1) lower drift width endpointUpper ↔
-      x ∈ affineCorridorInitialWindow lower width ∧
-        tail ∈ affineCorridorThrough horizon (lower + drift) drift width
-          endpointUpper := by
-  constructor
-  · intro h
-    have hx := h.1 0
-    have hx' : x ∈ affineCorridorInitialWindow lower width := by
-      simpa [affineCorridorInitialWindow, affineCorridorThrough,
-        prependHistory] using hx
-    refine ⟨hx', ?_⟩
-    constructor
-    · intro k
-      have hk := h.1 k.succ
-      simp only [prependHistory_succ] at hk
-      have hshift : lower + drift * ((k.succ).val : ℝ) =
-          lower + drift + drift * (k.val : ℝ) := by simp; ring
-      constructor
-      · calc
-          lower + drift + drift * (k.val : ℝ) =
-              lower + drift * ((k.succ).val : ℝ) := hshift.symm
-          _ ≤ tail k := hk.1
-      · calc
-          tail k ≤ lower + drift * ((k.succ).val : ℝ) + width := hk.2
-          _ = lower + drift + drift * (k.val : ℝ) + width := by rw [hshift]
-    · have hlast :
-          (⟨horizon + 1, Nat.lt_succ_self (horizon + 1)⟩ :
-            Fin ((horizon + 1) + 1)) =
-          (⟨horizon, Nat.lt_succ_self horizon⟩ : Fin (horizon + 1)).succ := rfl
-      have hEnd : (prependHistory x tail)
-          (⟨horizon + 1, Nat.lt_succ_self (horizon + 1)⟩ :
-            Fin ((horizon + 1) + 1)) ≤ endpointUpper := h.2
-      simpa only [hlast, prependHistory_succ] using hEnd
-  · rintro ⟨hx, htail⟩
-    constructor
-    · intro k
-      refine Fin.cases ?_ ?_ k
-      · simpa [affineCorridorThrough, affineCorridorInitialWindow,
-          prependHistory] using hx
-      · intro j
-        have hj := htail.1 j
-        simp only [prependHistory_succ]
-        constructor
-        · calc
-            lower + drift * ((j.succ).val : ℝ) =
-                lower + drift + drift * (j.val : ℝ) := by simp; ring
-            _ ≤ tail j := hj.1
-        · calc
-            tail j ≤ lower + drift + drift * (j.val : ℝ) + width := hj.2
-            _ = lower + drift * ((j.succ).val : ℝ) + width := by simp; ring
-    · have hlast :
-          (⟨horizon + 1, Nat.lt_succ_self (horizon + 1)⟩ :
-            Fin ((horizon + 1) + 1)) =
-          (⟨horizon, Nat.lt_succ_self horizon⟩ : Fin (horizon + 1)).succ := rfl
-      have hEnd : tail
-          (⟨horizon, Nat.lt_succ_self horizon⟩ : Fin (horizon + 1)) ≤
-          endpointUpper := htail.2
-      simpa only [hlast, prependHistory_succ] using hEnd
-
-/-- The same splitting identity for a prefix with no extra endpoint. -/
-theorem affineCorridorPrefix_prependHistory_iff
-    (horizon : ℕ) (lower drift width x : ℝ)
-    (tail : Fin (horizon + 1) → ℝ) :
-    prependHistory x tail ∈ affineCorridorPrefix (horizon + 1) lower drift width ↔
-      x ∈ affineCorridorInitialWindow lower width ∧
-        tail ∈ affineCorridorPrefix horizon (lower + drift) drift width := by
-  constructor
-  · intro h
-    have hx := h 0
-    have hx' : x ∈ affineCorridorInitialWindow lower width := by
-      simpa [affineCorridorInitialWindow, affineCorridorPrefix,
-        prependHistory] using hx
-    refine ⟨hx', ?_⟩
-    intro k
-    have hk := h k.succ
-    simp only [prependHistory_succ] at hk
-    constructor
-    · calc
-        lower + drift + drift * (k.val : ℝ) =
-            lower + drift * ((k.succ).val : ℝ) := by simp; ring
-        _ ≤ tail k := hk.1
-    · calc
-        tail k ≤ lower + drift * ((k.succ).val : ℝ) + width := hk.2
-        _ = lower + drift + drift * (k.val : ℝ) + width := by simp; ring
-  · rintro ⟨hx, htail⟩ k
-    refine Fin.cases ?_ ?_ k
-    · simpa [affineCorridorPrefix, affineCorridorInitialWindow,
-        prependHistory] using hx
-    · intro j
-      have hj := htail j
-      simp only [prependHistory_succ]
-      constructor
-      · calc
-          lower + drift * ((j.succ).val : ℝ) =
-              lower + drift + drift * (j.val : ℝ) := by simp; ring
-          _ ≤ tail j := hj.1
-      · calc
-          tail j ≤ lower + drift + drift * (j.val : ℝ) + width := hj.2
-          _ = lower + drift * ((j.succ).val : ℝ) + width := by simp; ring
 
 /-- Restricting the full tube indicator to a fixed ancestral address gives
 the prefix test times the shifted continuation test. The continuation path
@@ -220,7 +101,7 @@ theorem pathGenerationPrefixTest_affineCorridorThrough
           by_cases hx : initial ∈ affineCorridorInitialWindow lower width
           · have hmem : pathHistory φ 0 initial ω [] ∈
                 affineCorridorPrefix 0 lower drift width := hpref.mpr hx
-            rw [if_pos hmem]
+            rw [ite_eq_left hmem]
             simp only [Nat.cast_zero, mul_zero, add_zero]
           · have hnot : tail ∉
                 affineCorridorThrough (n + 1) lower drift width endpointUpper := by
@@ -235,7 +116,7 @@ theorem pathGenerationPrefixTest_affineCorridorThrough
                 by simpa [htail0] using hupp⟩
             have hprefixFalse : pathHistory φ 0 initial ω [] ∉
                 affineCorridorPrefix 0 lower drift width := mt hpref.mp hx
-            rw [if_neg hprefixFalse]
+            rw [ite_eq_right hprefixFalse]
             simp [Set.indicator_apply, hnot]
       | cons i u => simp at hu
   | succ m ih =>
@@ -295,7 +176,7 @@ theorem pathGenerationPrefixTest_affineCorridorThrough
             x' ω' u tail = _
           rw [houterFun]
           by_cases hx : initial ∈ affineCorridorInitialWindow lower width
-          · simp only [hx, if_pos]
+          · simp only [hx, ite_eq_left]
             rw [htest]
             have hprefix :
                 pathHistory φ (m + 1) initial ω (i :: u) ∈
@@ -319,3 +200,5 @@ theorem pathGenerationPrefixTest_affineCorridorThrough
             simp [pathGenerationPrefixTest_zero]
 
 end ProbabilityTheory.BranchingRandomWalk.Spine
+
+end

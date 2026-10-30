@@ -10,6 +10,7 @@ public import Probability.Process.RandomWalk.Path.Block.Oscillation
 public import Probability.Process.RandomWalk.Path.Block.Law.Oscillation
 public import Probability.Process.RandomWalk.Path.Block.Law.Basic
 public import Probability.Process.RandomWalk.Path.Block.Partition.Basic
+public import Probability.Process.RandomWalk.Path.Event.Oscillation
 import Probability.Sequence.IID.Blocks.Consecutive
 
 /-!
@@ -18,17 +19,25 @@ import Probability.Sequence.IID.Blocks.Consecutive
 For an IID increment sequence, confinement of each disjoint partial-sum block
 in a prescribed interval bounds the probability by a product of the
 corresponding one-block range probabilities. The half-open version leaves the
-terminal increment of each block unrestricted.
+terminal increment of each block unrestricted. A strict range bound on the
+whole finite walk also bounds the probability by the product probability for
+any number of covered equal-length oscillation blocks.
 
-The public declarations are:
+## Public declarations
 
-- `measure_forall_halfOpenPartitionCellCorridors_le_prod_rangeProbability`:
-  the product bound for half-open cells, with each cell's terminal increment
-  assigned to the next cell.
-- `measure_forall_partitionCellCorridors_le_prod_rangeProbability`:
-  the product bound when each block includes its terminal position.
-- `measure_forall_selectedHalfOpenPartitionCellCorridors_le_prod_rangeProbability`:
-  the half-open bound for any selected finite family of cells.
+* `measure_forall_halfOpenPartitionCellCorridors_le_prod_rangeProbability`
+  bounds the probability of strict confinement before each block endpoint by
+  the product of the one-block range probabilities at lengths `length j - 1`.
+* `measure_forall_partitionCellCorridors_le_prod_rangeProbability` bounds
+  strict confinement through each block endpoint by the product of the
+  one-block range probabilities at lengths `length j`.
+* `measure_forall_selectedHalfOpenPartitionCellCorridors_le_prod_rangeProbability`
+  gives the corresponding product bound for an arbitrary finite selected
+  family of half-open cells.
+* `iidSequenceLaw_measure_partialSumRangeLT_le_pow_blockOscillationLT_of_blockCover`
+  states that if $qm\le N$, then
+  $\mathbb P(\operatorname{range}(S_0,\ldots,S_N)<w)\le
+  \mathbb P(\operatorname{osc}(S_0,\ldots,S_m)<w)^q$.
 -/
 
 open MeasureTheory
@@ -50,9 +59,9 @@ theorem measure_forall_halfOpenPartitionCellCorridors_le_prod_rangeProbability
     iidSequenceLaw ν {increment : ℕ → ℝ |
       ∀ j : Fin blocks, ∀ k < length j.val,
         lower j < AdditivePath.displacement
-            (AdditivePath.blockStart length j.val + k) increment ∧
+            (Combinatorics.Sequence.blockStart length j.val + k) increment ∧
         AdditivePath.displacement
-            (AdditivePath.blockStart length j.val + k) increment < upper j} ≤
+            (Combinatorics.Sequence.blockStart length j.val + k) increment < upper j} ≤
       ∏ j : Fin blocks,
         partialSumRangeOscillationLTProbability (iidSequenceLaw ν)
           (upper j - lower j) (length j.val - 1) := by
@@ -65,7 +74,7 @@ theorem measure_forall_halfOpenPartitionCellCorridors_le_prod_rangeProbability
   have hfactor' : iidSequenceLaw ν {increment : ℕ → ℝ |
       ∀ j : Fin blocks,
         Combinatorics.Sequence.blockCoordinates
-          (AdditivePath.blockStart length j.val) (length j.val) increment ∈
+          (Combinatorics.Sequence.blockStart length j.val) (length j.val) increment ∈
             blockEvent j} =
       ∏ j : Fin blocks, iidSequenceLaw ν {increment : ℕ → ℝ |
         Combinatorics.Sequence.blockCoordinates 0 (length j.val) increment ∈
@@ -75,23 +84,23 @@ theorem measure_forall_halfOpenPartitionCellCorridors_le_prod_rangeProbability
       {increment : ℕ → ℝ |
         ∀ j : Fin blocks, ∀ k < length j.val,
           lower j < AdditivePath.displacement
-              (AdditivePath.blockStart length j.val + k) increment ∧
+              (Combinatorics.Sequence.blockStart length j.val + k) increment ∧
           AdditivePath.displacement
-              (AdditivePath.blockStart length j.val + k) increment < upper j} ⊆
+              (Combinatorics.Sequence.blockStart length j.val + k) increment < upper j} ⊆
       {increment : ℕ → ℝ |
         ∀ j : Fin blocks,
           Combinatorics.Sequence.blockCoordinates
-            (AdditivePath.blockStart length j.val) (length j.val) increment ∈
+            (Combinatorics.Sequence.blockStart length j.val) (length j.val) increment ∈
               blockEvent j} := by
     intro increment hconfined j
     change ∀ i k : Fin (length j.val),
       |Fin.partialSum
           (Combinatorics.Sequence.blockCoordinates
-            (AdditivePath.blockStart length j.val) (length j.val) increment)
+            (Combinatorics.Sequence.blockStart length j.val) (length j.val) increment)
           i.castSucc -
         Fin.partialSum
           (Combinatorics.Sequence.blockCoordinates
-            (AdditivePath.blockStart length j.val) (length j.val) increment)
+            (Combinatorics.Sequence.blockStart length j.val) (length j.val) increment)
           k.castSucc| < upper j - lower j
     intro i k
     have hi := hconfined j i.val i.isLt
@@ -99,41 +108,41 @@ theorem measure_forall_halfOpenPartitionCellCorridors_le_prod_rangeProbability
     have hvalue (offset : Fin (length j.val)) :
         Fin.partialSum
             (Combinatorics.Sequence.blockCoordinates
-              (AdditivePath.blockStart length j.val) (length j.val) increment)
+              (Combinatorics.Sequence.blockStart length j.val) (length j.val) increment)
             offset.castSucc =
           AdditivePath.displacement
-              (AdditivePath.blockStart length j.val + (offset : ℕ)) increment -
-            AdditivePath.displacement (AdditivePath.blockStart length j.val) increment := by
+              (Combinatorics.Sequence.blockStart length j.val + (offset : ℕ)) increment -
+            AdditivePath.displacement (Combinatorics.Sequence.blockStart length j.val) increment := by
       rw [partialSum_blockCoordinates]
       simp only [Fin.val_castSucc]
       have h := AdditivePath.displacement_add_eq_add_blockSum
-        (AdditivePath.blockStart length j.val) (offset : ℕ) increment
+        (Combinatorics.Sequence.blockStart length j.val) (offset : ℕ) increment
       linarith
     have hupper :
         AdditivePath.displacement
-            (AdditivePath.blockStart length j.val + (i : ℕ)) increment -
+            (Combinatorics.Sequence.blockStart length j.val + (i : ℕ)) increment -
           AdditivePath.displacement
-            (AdditivePath.blockStart length j.val + (k : ℕ)) increment <
+            (Combinatorics.Sequence.blockStart length j.val + (k : ℕ)) increment <
           upper j - lower j := by
       linarith [hi.2, hk.1]
     have hlower' :
         -(upper j - lower j) <
           AdditivePath.displacement
-              (AdditivePath.blockStart length j.val + (i : ℕ)) increment -
+              (Combinatorics.Sequence.blockStart length j.val + (i : ℕ)) increment -
             AdditivePath.displacement
-              (AdditivePath.blockStart length j.val + (k : ℕ)) increment := by
+              (Combinatorics.Sequence.blockStart length j.val + (k : ℕ)) increment := by
       linarith [hi.1, hk.2]
     have hcancel :
         (AdditivePath.displacement
-              (AdditivePath.blockStart length j.val + (i : ℕ)) increment -
-            AdditivePath.displacement (AdditivePath.blockStart length j.val) increment) -
+              (Combinatorics.Sequence.blockStart length j.val + (i : ℕ)) increment -
+            AdditivePath.displacement (Combinatorics.Sequence.blockStart length j.val) increment) -
           (AdditivePath.displacement
-              (AdditivePath.blockStart length j.val + (k : ℕ)) increment -
-            AdditivePath.displacement (AdditivePath.blockStart length j.val) increment) =
+              (Combinatorics.Sequence.blockStart length j.val + (k : ℕ)) increment -
+            AdditivePath.displacement (Combinatorics.Sequence.blockStart length j.val) increment) =
           AdditivePath.displacement
-              (AdditivePath.blockStart length j.val + (i : ℕ)) increment -
+              (Combinatorics.Sequence.blockStart length j.val + (i : ℕ)) increment -
             AdditivePath.displacement
-              (AdditivePath.blockStart length j.val + (k : ℕ)) increment := by
+              (Combinatorics.Sequence.blockStart length j.val + (k : ℕ)) increment := by
       ring
     rw [hvalue i, hvalue k, hcancel]
     exact abs_lt.mpr ⟨hlower', hupper⟩
@@ -141,7 +150,7 @@ theorem measure_forall_halfOpenPartitionCellCorridors_le_prod_rangeProbability
     _ ≤ iidSequenceLaw ν {increment : ℕ → ℝ |
           ∀ j : Fin blocks,
             Combinatorics.Sequence.blockCoordinates
-              (AdditivePath.blockStart length j.val) (length j.val) increment ∈
+              (Combinatorics.Sequence.blockStart length j.val) (length j.val) increment ∈
                 blockEvent j} := measure_mono hsubset
     _ = ∏ j : Fin blocks, iidSequenceLaw ν {increment : ℕ → ℝ |
           Combinatorics.Sequence.blockCoordinates 0 (length j.val) increment ∈
@@ -167,9 +176,9 @@ theorem measure_forall_partitionCellCorridors_le_prod_rangeProbability
     iidSequenceLaw ν {increment : ℕ → ℝ |
       ∀ j : Fin blocks, ∀ k ≤ length j.val,
         lower j < AdditivePath.displacement
-            (AdditivePath.blockStart length j.val + k) increment ∧
+            (Combinatorics.Sequence.blockStart length j.val + k) increment ∧
         AdditivePath.displacement
-            (AdditivePath.blockStart length j.val + k) increment < upper j} ≤
+            (Combinatorics.Sequence.blockStart length j.val + k) increment < upper j} ≤
       ∏ j : Fin blocks,
         partialSumRangeOscillationLTProbability (iidSequenceLaw ν)
           (upper j - lower j) (length j.val) := by
@@ -181,7 +190,7 @@ theorem measure_forall_partitionCellCorridors_le_prod_rangeProbability
   have hfactor' : iidSequenceLaw ν {increment : ℕ → ℝ |
       ∀ j : Fin blocks,
         Combinatorics.Sequence.blockCoordinates
-          (AdditivePath.blockStart length j.val) (length j.val) increment ∈
+          (Combinatorics.Sequence.blockStart length j.val) (length j.val) increment ∈
             blockEvent j} =
       ∏ j : Fin blocks, iidSequenceLaw ν {increment : ℕ → ℝ |
         Combinatorics.Sequence.blockCoordinates 0 (length j.val) increment ∈
@@ -191,22 +200,22 @@ theorem measure_forall_partitionCellCorridors_le_prod_rangeProbability
       {increment : ℕ → ℝ |
         ∀ j : Fin blocks, ∀ k ≤ length j.val,
           lower j < AdditivePath.displacement
-              (AdditivePath.blockStart length j.val + k) increment ∧
+              (Combinatorics.Sequence.blockStart length j.val + k) increment ∧
           AdditivePath.displacement
-              (AdditivePath.blockStart length j.val + k) increment < upper j} ⊆
+              (Combinatorics.Sequence.blockStart length j.val + k) increment < upper j} ⊆
       {increment : ℕ → ℝ |
         ∀ j : Fin blocks,
           Combinatorics.Sequence.blockCoordinates
-            (AdditivePath.blockStart length j.val) (length j.val) increment ∈
+            (Combinatorics.Sequence.blockStart length j.val) (length j.val) increment ∈
               blockEvent j} := by
     intro increment hconfined j
     change ∀ i k : Fin (length j.val + 1),
       |Fin.partialSum
           (Combinatorics.Sequence.blockCoordinates
-            (AdditivePath.blockStart length j.val) (length j.val) increment) i -
+            (Combinatorics.Sequence.blockStart length j.val) (length j.val) increment) i -
         Fin.partialSum
           (Combinatorics.Sequence.blockCoordinates
-            (AdditivePath.blockStart length j.val) (length j.val) increment) k| <
+            (Combinatorics.Sequence.blockStart length j.val) (length j.val) increment) k| <
         upper j - lower j
     intro i k
     have hi := hconfined j i.val (Nat.le_of_lt_succ i.isLt)
@@ -214,40 +223,40 @@ theorem measure_forall_partitionCellCorridors_le_prod_rangeProbability
     have hvalue (offset : Fin (length j.val + 1)) :
         Fin.partialSum
             (Combinatorics.Sequence.blockCoordinates
-              (AdditivePath.blockStart length j.val) (length j.val) increment)
+              (Combinatorics.Sequence.blockStart length j.val) (length j.val) increment)
             offset =
           AdditivePath.displacement
-              (AdditivePath.blockStart length j.val + (offset : ℕ)) increment -
-            AdditivePath.displacement (AdditivePath.blockStart length j.val) increment := by
+              (Combinatorics.Sequence.blockStart length j.val + (offset : ℕ)) increment -
+            AdditivePath.displacement (Combinatorics.Sequence.blockStart length j.val) increment := by
       rw [partialSum_blockCoordinates]
       have h := AdditivePath.displacement_add_eq_add_blockSum
-        (AdditivePath.blockStart length j.val) (offset : ℕ) increment
+        (Combinatorics.Sequence.blockStart length j.val) (offset : ℕ) increment
       linarith
     have hupper :
         AdditivePath.displacement
-            (AdditivePath.blockStart length j.val + (i : ℕ)) increment -
+            (Combinatorics.Sequence.blockStart length j.val + (i : ℕ)) increment -
           AdditivePath.displacement
-            (AdditivePath.blockStart length j.val + (k : ℕ)) increment <
+            (Combinatorics.Sequence.blockStart length j.val + (k : ℕ)) increment <
           upper j - lower j := by
       linarith [hi.2, hk.1]
     have hlower :
         -(upper j - lower j) <
           AdditivePath.displacement
-              (AdditivePath.blockStart length j.val + (i : ℕ)) increment -
+              (Combinatorics.Sequence.blockStart length j.val + (i : ℕ)) increment -
             AdditivePath.displacement
-              (AdditivePath.blockStart length j.val + (k : ℕ)) increment := by
+              (Combinatorics.Sequence.blockStart length j.val + (k : ℕ)) increment := by
       linarith [hi.1, hk.2]
     have hcancel :
         (AdditivePath.displacement
-              (AdditivePath.blockStart length j.val + (i : ℕ)) increment -
-            AdditivePath.displacement (AdditivePath.blockStart length j.val) increment) -
+              (Combinatorics.Sequence.blockStart length j.val + (i : ℕ)) increment -
+            AdditivePath.displacement (Combinatorics.Sequence.blockStart length j.val) increment) -
           (AdditivePath.displacement
-              (AdditivePath.blockStart length j.val + (k : ℕ)) increment -
-            AdditivePath.displacement (AdditivePath.blockStart length j.val) increment) =
+              (Combinatorics.Sequence.blockStart length j.val + (k : ℕ)) increment -
+            AdditivePath.displacement (Combinatorics.Sequence.blockStart length j.val) increment) =
           AdditivePath.displacement
-              (AdditivePath.blockStart length j.val + (i : ℕ)) increment -
+              (Combinatorics.Sequence.blockStart length j.val + (i : ℕ)) increment -
             AdditivePath.displacement
-              (AdditivePath.blockStart length j.val + (k : ℕ)) increment := by
+              (Combinatorics.Sequence.blockStart length j.val + (k : ℕ)) increment := by
       ring
     rw [hvalue i, hvalue k, hcancel]
     exact abs_lt.mpr ⟨hlower, hupper⟩
@@ -255,7 +264,7 @@ theorem measure_forall_partitionCellCorridors_le_prod_rangeProbability
     _ ≤ iidSequenceLaw ν {increment : ℕ → ℝ |
           ∀ j : Fin blocks,
             Combinatorics.Sequence.blockCoordinates
-              (AdditivePath.blockStart length j.val) (length j.val) increment ∈
+              (Combinatorics.Sequence.blockStart length j.val) (length j.val) increment ∈
                 blockEvent j} := measure_mono hsubset
     _ = ∏ j : Fin blocks, iidSequenceLaw ν {increment : ℕ → ℝ |
           Combinatorics.Sequence.blockCoordinates 0 (length j.val) increment ∈
@@ -286,9 +295,9 @@ theorem measure_forall_selectedHalfOpenPartitionCellCorridors_le_prod_rangeProba
     iidSequenceLaw ν {increment : ℕ → ℝ |
       ∀ j ∈ s, ∀ k < length j.val,
         lower j < AdditivePath.displacement
-            (AdditivePath.blockStart length j.val + k) increment ∧
+            (Combinatorics.Sequence.blockStart length j.val + k) increment ∧
         AdditivePath.displacement
-            (AdditivePath.blockStart length j.val + k) increment < upper j} ≤
+            (Combinatorics.Sequence.blockStart length j.val + k) increment < upper j} ≤
       ∏ j ∈ s,
         partialSumRangeOscillationLTProbability (iidSequenceLaw ν)
           (upper j - lower j) (length j.val - 1) := by
@@ -312,13 +321,13 @@ theorem measure_forall_selectedHalfOpenPartitionCellCorridors_le_prod_rangeProba
       {increment : ℕ → ℝ |
         ∀ j ∈ s, ∀ k < length j.val,
           lower j < AdditivePath.displacement
-              (AdditivePath.blockStart length j.val + k) increment ∧
+              (Combinatorics.Sequence.blockStart length j.val + k) increment ∧
           AdditivePath.displacement
-              (AdditivePath.blockStart length j.val + k) increment < upper j} ⊆
+              (Combinatorics.Sequence.blockStart length j.val + k) increment < upper j} ⊆
       {increment : ℕ → ℝ |
         ∀ j : Fin blocks,
           Combinatorics.Sequence.blockCoordinates
-            (AdditivePath.blockStart length j.val) (length j.val) increment ∈
+            (Combinatorics.Sequence.blockStart length j.val) (length j.val) increment ∈
               blockEvent j} := by
     intro increment h j
     by_cases hj : j ∈ s
@@ -326,11 +335,11 @@ theorem measure_forall_selectedHalfOpenPartitionCellCorridors_le_prod_rangeProba
       change ∀ i k : Fin (length j.val),
         |Fin.partialSum
             (Combinatorics.Sequence.blockCoordinates
-              (AdditivePath.blockStart length j.val) (length j.val) increment)
+              (Combinatorics.Sequence.blockStart length j.val) (length j.val) increment)
             i.castSucc -
           Fin.partialSum
             (Combinatorics.Sequence.blockCoordinates
-              (AdditivePath.blockStart length j.val) (length j.val) increment)
+              (Combinatorics.Sequence.blockStart length j.val) (length j.val) increment)
             k.castSucc| < upper j - lower j
       intro i k
       have hi := h j hj i.val i.isLt
@@ -338,44 +347,44 @@ theorem measure_forall_selectedHalfOpenPartitionCellCorridors_le_prod_rangeProba
       have hvalue (offset : Fin (length j.val)) :
           Fin.partialSum
               (Combinatorics.Sequence.blockCoordinates
-                (AdditivePath.blockStart length j.val) (length j.val) increment)
+                (Combinatorics.Sequence.blockStart length j.val) (length j.val) increment)
               offset.castSucc =
             AdditivePath.displacement
-                (AdditivePath.blockStart length j.val + (offset : ℕ)) increment -
-              AdditivePath.displacement (AdditivePath.blockStart length j.val)
+                (Combinatorics.Sequence.blockStart length j.val + (offset : ℕ)) increment -
+              AdditivePath.displacement (Combinatorics.Sequence.blockStart length j.val)
                 increment := by
         rw [partialSum_blockCoordinates]
         simp only [Fin.val_castSucc]
         have h := AdditivePath.displacement_add_eq_add_blockSum
-          (AdditivePath.blockStart length j.val) (offset : ℕ) increment
+          (Combinatorics.Sequence.blockStart length j.val) (offset : ℕ) increment
         linarith
       have hupper :
           AdditivePath.displacement
-              (AdditivePath.blockStart length j.val + (i : ℕ)) increment -
+              (Combinatorics.Sequence.blockStart length j.val + (i : ℕ)) increment -
             AdditivePath.displacement
-              (AdditivePath.blockStart length j.val + (k : ℕ)) increment <
+              (Combinatorics.Sequence.blockStart length j.val + (k : ℕ)) increment <
             upper j - lower j := by
         linarith [hi.2, hk.1]
       have hlower' :
           -(upper j - lower j) <
             AdditivePath.displacement
-                (AdditivePath.blockStart length j.val + (i : ℕ)) increment -
+                (Combinatorics.Sequence.blockStart length j.val + (i : ℕ)) increment -
               AdditivePath.displacement
-                (AdditivePath.blockStart length j.val + (k : ℕ)) increment := by
+                (Combinatorics.Sequence.blockStart length j.val + (k : ℕ)) increment := by
         linarith [hi.1, hk.2]
       have hcancel :
           (AdditivePath.displacement
-                (AdditivePath.blockStart length j.val + (i : ℕ)) increment -
-              AdditivePath.displacement (AdditivePath.blockStart length j.val)
+                (Combinatorics.Sequence.blockStart length j.val + (i : ℕ)) increment -
+              AdditivePath.displacement (Combinatorics.Sequence.blockStart length j.val)
                 increment) -
             (AdditivePath.displacement
-                (AdditivePath.blockStart length j.val + (k : ℕ)) increment -
-              AdditivePath.displacement (AdditivePath.blockStart length j.val)
+                (Combinatorics.Sequence.blockStart length j.val + (k : ℕ)) increment -
+              AdditivePath.displacement (Combinatorics.Sequence.blockStart length j.val)
                 increment) =
           AdditivePath.displacement
-              (AdditivePath.blockStart length j.val + (i : ℕ)) increment -
+              (Combinatorics.Sequence.blockStart length j.val + (i : ℕ)) increment -
             AdditivePath.displacement
-              (AdditivePath.blockStart length j.val + (k : ℕ)) increment := by
+              (Combinatorics.Sequence.blockStart length j.val + (k : ℕ)) increment := by
         ring
       rw [hvalue i, hvalue k, hcancel]
       exact abs_lt.mpr ⟨hlower', hupper⟩
@@ -401,13 +410,13 @@ theorem measure_forall_selectedHalfOpenPartitionCellCorridors_le_prod_rangeProba
     iidSequenceLaw ν {increment : ℕ → ℝ |
         ∀ j ∈ s, ∀ k < length j.val,
           lower j < AdditivePath.displacement
-              (AdditivePath.blockStart length j.val + k) increment ∧
+              (Combinatorics.Sequence.blockStart length j.val + k) increment ∧
           AdditivePath.displacement
-              (AdditivePath.blockStart length j.val + k) increment < upper j} ≤
+              (Combinatorics.Sequence.blockStart length j.val + k) increment < upper j} ≤
       iidSequenceLaw ν {increment : ℕ → ℝ |
         ∀ j : Fin blocks,
           Combinatorics.Sequence.blockCoordinates
-            (AdditivePath.blockStart length j.val) (length j.val) increment ∈
+            (Combinatorics.Sequence.blockStart length j.val) (length j.val) increment ∈
               blockEvent j} := measure_mono hsubset
     _ = ∏ j : Fin blocks, iidSequenceLaw ν (oneBlockEvent j) := by
       simpa [oneBlockEvent] using hfactor
@@ -427,6 +436,89 @@ theorem measure_forall_selectedHalfOpenPartitionCellCorridors_le_prod_rangeProba
           apply Finset.prod_subset (Finset.subset_univ s)
           intro j hj hjnot
           exact houtside j hjnot
+
+/-- A strict range bound on a whole finite walk forces the same strict range
+bound on every complete equal-length increment block. The block events are
+independent, so the whole-path probability is bounded by the one-block
+probability raised to the number of covered blocks.
+
+This finite-time estimate is Mogul'skii, Lemma 3(c), equation (32), in
+“Small deviations in the sample function space,” *Teoriya Veroyatnostei i ee
+Primeneniya* 19(4) (1974), 755--765; English translation, “Small Deviations
+in a Space of Trajectories,” *Theory of Probability and Its Applications*
+19(4) (1975), 726--736, DOI 10.1137/1119081. -/
+theorem iidSequenceLaw_measure_partialSumRangeLT_le_pow_blockOscillationLT_of_blockCover
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (width : ℝ) (blocks length horizon : ℕ)
+    (hcover : blocks * length ≤ horizon) :
+    partialSumRangeOscillationLTProbability (iidSequenceLaw ν) width horizon ≤
+      (iidSequenceLaw ν {increment |
+        blockOscillationLTEvent width length
+          (Combinatorics.Sequence.blockCoordinates 0 length increment)}) ^ blocks := by
+  change iidSequenceLaw ν {increment : ℕ → ℝ | ∀ i j : Fin (horizon + 1),
+    |AdditivePath.displacement (i : ℕ) increment -
+      AdditivePath.displacement (j : ℕ) increment| < width} ≤ _
+  have hsubset :
+      {increment : ℕ → ℝ | ∀ i j : Fin (horizon + 1),
+        |AdditivePath.displacement (i : ℕ) increment -
+          AdditivePath.displacement (j : ℕ) increment| < width} ⊆
+      {increment : ℕ → ℝ | ∀ j : Fin blocks,
+        blockOscillationLTEvent width length
+          (Combinatorics.Sequence.blockCoordinates (j * length) length increment)} := by
+    intro increment hrange j
+    change ∀ i k : Fin (length + 1),
+      |Fin.partialSum
+          (Combinatorics.Sequence.blockCoordinates (j * length) length increment) i -
+        Fin.partialSum
+          (Combinatorics.Sequence.blockCoordinates (j * length) length increment) k| < width
+    intro i k
+    have htime (offset : Fin (length + 1)) :
+        j * length + (offset : ℕ) ≤ horizon := by
+      have hoffset : (offset : ℕ) ≤ length := Nat.le_of_lt_succ offset.isLt
+      calc
+        j * length + (offset : ℕ) ≤ j * length + length :=
+          Nat.add_le_add_left hoffset _
+        _ = (j + 1) * length := by simp [Nat.succ_mul]
+        _ ≤ blocks * length :=
+          Nat.mul_le_mul_right length (Nat.succ_le_iff.mpr j.isLt)
+        _ ≤ horizon := hcover
+    have hvalue (offset : Fin (length + 1)) :
+        Fin.partialSum
+            (Combinatorics.Sequence.blockCoordinates (j * length) length increment)
+            offset =
+          AdditivePath.displacement (j * length + (offset : ℕ)) increment -
+            AdditivePath.displacement (j * length) increment := by
+      rw [partialSum_blockCoordinates]
+      have h := AdditivePath.displacement_add_eq_add_blockSum
+        (j * length) (offset : ℕ) increment
+      linarith
+    let ti : Fin (horizon + 1) :=
+      ⟨j * length + (i : ℕ), Nat.lt_succ_of_le (htime i)⟩
+    let tk : Fin (horizon + 1) :=
+      ⟨j * length + (k : ℕ), Nat.lt_succ_of_le (htime k)⟩
+    rw [hvalue i, hvalue k]
+    have hcancel :
+        (AdditivePath.displacement (j * length + (i : ℕ)) increment -
+            AdditivePath.displacement (j * length) increment) -
+          (AdditivePath.displacement (j * length + (k : ℕ)) increment -
+            AdditivePath.displacement (j * length) increment) =
+          AdditivePath.displacement (ti : ℕ) increment -
+            AdditivePath.displacement (tk : ℕ) increment := by
+      simp only [ti, tk]
+      ring
+    rw [hcancel]
+    exact hrange ti tk
+  calc
+    _ ≤ iidSequenceLaw ν {increment : ℕ → ℝ | ∀ j : Fin blocks,
+          blockOscillationLTEvent width length
+            (Combinatorics.Sequence.blockCoordinates (j * length) length increment)} :=
+      measure_mono hsubset
+    _ = (iidSequenceLaw ν {increment |
+          blockOscillationLTEvent width length
+            (Combinatorics.Sequence.blockCoordinates 0 length increment)}) ^ blocks :=
+      iidSequenceLaw_measure_forall_consecutiveBlockEvent ν blocks length
+        (blockOscillationLTEvent width length)
+        (measurableSet_blockOscillationLTEvent width length)
 
 end ProbabilityTheory.RandomWalk
 

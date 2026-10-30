@@ -12,6 +12,8 @@ public import Mathlib.Data.PFun
 /-!
 # Marked Ulam--Harris trees
 
+## Public declarations
+
 `MarkedTree α X` pairs a realized tree `Tree α` with a mark in `X` on every
 realized node; it is the object meant when one says "marked tree". The marks
 are defined only on a part of the address space, so they are exposed as the

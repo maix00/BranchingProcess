@@ -9,6 +9,7 @@ module
 public import Probability.Process.Stable.Levy
 public import Probability.Process.Path.Skorokhod.RationalTime
 public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Gluing
+public import Probability.Process.Path.Skorokhod.Corridor.RationalCoordinate
 import Probability.Process.Stable.SmallDeviation.RationalTube
 
 /-!
@@ -17,6 +18,8 @@ import Probability.Process.Stable.SmallDeviation.RationalTube
 The centered path law follows from the finite-dimensional stable-process law.
 It gives the exact time-space scaling of a corridor with an endpoint return
 window, the local probability appearing in block lower bounds.
+
+## Public declarations
 
 The public declarations are:
 

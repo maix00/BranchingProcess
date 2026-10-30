@@ -20,7 +20,8 @@ is measurable exactly when membership of every address is measurable.
 
 ## Public declarations
 
-- `instMeasurableSpaceTree` is the σ-algebra induced by the carrier map, and
+- `instMeasurableSpaceTree` is the σ-algebra induced by the carrier map;
+  `measurable_carrier` proves `T ↦ T.carrier` measurable, and
   `measurableSet_carrier u` states that `{T | u ∈ T.carrier}` is measurable.
 - `RootIndexed.Tree.measurableSpace_eq_iSup` identifies the family σ-algebra
   with the supremum of its coordinate pullbacks; `measurable_apply r` gives

@@ -19,6 +19,8 @@ public import Mathlib.Data.Fin.Rev
 /-!
 # Dirichlet modes of the killed interval kernel
 
+## Public declarations
+
 This file defines the full discrete sine family, proves the eigenfunction
 identities, and constructs the orthogonal sine basis.  Spectral expansions and
 row-mass estimates are kept in the dependent files.  For $N$ interior sites

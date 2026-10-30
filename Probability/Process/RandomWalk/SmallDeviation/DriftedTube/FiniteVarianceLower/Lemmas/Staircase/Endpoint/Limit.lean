@@ -6,12 +6,16 @@ Authors: WANG Yiyang
 
 module
 
-public import Analysis.Asymptotics.Scale.BlockScale
+import Mathlib.Analysis.SpecificLimits.Basic
+import Mathlib.Topology.Instances.Nat
+
 
 /-!
 # Interior endpoint ratio for the staircase blocks
 
-The module-visible supporting lemmas in this file are:
+## Internal proof declarations
+
+The supporting lemmas in this file are:
 
 - `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.eventually_staircaseInteriorLowerMargin_of_blockScale`:
   the same conclusion follows directly from
@@ -25,7 +29,7 @@ These are the ordinary-block endpoint comparisons in Wang Yiyang,
 Chapter 3, proof of Lemma 3.5.
 -/
 
-@[expose] public section
+section
 
 open Filter
 open scoped Topology

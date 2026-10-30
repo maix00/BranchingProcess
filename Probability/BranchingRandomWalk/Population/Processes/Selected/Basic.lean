@@ -7,9 +7,29 @@ Authors: WANG Yiyang
 module
 
 public import Probability.BranchingRandomWalk.Population.Candidates.Leftmost
+import Probability.BranchingRandomWalk.Population.Candidates.Adapted
+import MeasureTheory.MeasurableSpace.CountableEvaluation
 
 /-!
 # A measurable multi-root finite-candidate selection process
+
+## Public declarations
+
+- `ProbabilityTheory.BranchingRandomWalk.finiteLeftmostAtGeneration_of_adapted`:
+  if the finite candidate pool at generation \(n\) is adapted, selecting its
+  first \(N\) particles by the leftmost order remains adapted.
+- `ProbabilityTheory.BranchingRandomWalk.selectedPopulation`: defines one
+  recursively selected population from all \(m\) labelled roots.
+- `ProbabilityTheory.BranchingRandomWalk.selectedPopulation_adapted`:
+  under the stated measurable-selection premise, every selected generation
+  is adapted to the multi-root domain flow.
+- `ProbabilityTheory.BranchingRandomWalk.selectedPopulation_depth`:
+  particles in generation \(n\) have address length \(n\).
+- `ProbabilityTheory.BranchingRandomWalk.selectedPopulation_card_le`:
+  every generation contains at most \(N\) selected particles.
+- `ProbabilityTheory.BranchingRandomWalk.selectedPopulation_nonempty_of_first_child`:
+  a first child at every nonempty generation keeps the selected population
+  nonempty.
 
 All `m` initial roots enter one common selection pool. At each generation
 the process examines the first `N` child slots of every retained parent,
@@ -27,43 +47,21 @@ namespace ProbabilityTheory.BranchingRandomWalk
 
 open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 
-
-
-/-- A countably indexed family of measurable functions remains measurable
-when its index is selected measurably from the same information. -/
-theorem measurable_countable_choice {Ω ι β : Type*}
-    [MeasurableSpace Ω] [MeasurableSpace ι] [MeasurableSpace β]
-    [Countable ι] [MeasurableSingletonClass ι]
-    (F : MeasurableSpace Ω)
-    (index : Ω → ι) (hindex : Measurable[F] index)
-    (f : ι → Ω → β) (hf : ∀ i, Measurable[F] (f i)) :
-    Measurable[F] (fun ω => f (index ω) ω) := by
-  intro B hB
-  have hpre :
-      (fun ω => f (index ω) ω) ⁻¹' B =
-        ⋃ i : ι, {ω | index ω = i} ∩ {ω | f i ω ∈ B} := by
-    ext ω
-    simp only [Set.mem_preimage, Set.mem_iUnion, Set.mem_inter_iff,
-      Set.mem_ofPred_eq]
-    constructor
-    · intro h
-      exact ⟨index ω, rfl, h⟩
-    · rintro ⟨i, hi, hfi⟩
-      simpa [hi] using hfi
-  rw [hpre]
-  exact MeasurableSet.iUnion (fun i =>
-    (hindex (measurableSet_singleton i)).inter ((hf i) hB))
-
 theorem finiteLeftmostAtGeneration_of_adapted {m : ℕ}
     (N n : ℕ) (x : Fin m → ℝ)
     (candidates : FiniteRootStepField m ℕ ℝ → Finset (RootAddress m ℕ))
     (hcandidates : Measurable[multiRootStepFiltration (m := m) (X := ℝ) n] candidates) :
     Measurable[multiRootStepFiltration (m := m) (X := ℝ) n]
       (fun ω => finiteLeftmostAtGeneration N n x ω (candidates ω)) := by
-  exact measurable_countable_choice
-    (multiRootStepFiltration (m := m) (X := ℝ) n) candidates hcandidates
-    (fun s ω => finiteLeftmostAtGeneration N n x ω s)
-    (finiteLeftmostAtGeneration_fixed_measurable N n x)
+  exact @Measurable.eval_of_countable_range
+    (FiniteRootStepField m ℕ ℝ) (Finset (RootAddress m ℕ))
+    (Finset (RootAddress m ℕ))
+    (multiRootStepFiltration (m := m) (X := ℝ) n) inferInstance
+    (fun ω s => finiteLeftmostAtGeneration N n x ω s) candidates
+    (fun s _ => finiteLeftmostAtGeneration_fixed_measurable N n x s)
+    (fun s _ => hcandidates (measurableSet_singleton s))
+    (Set.Countable.mono (Set.subset_univ (Set.range candidates))
+      Set.countable_univ)
 
 /-- One common selected population from `m` labelled initial ancestors. -/
 noncomputable def selectedPopulation {m : ℕ}
@@ -140,13 +138,13 @@ theorem selectedPopulation_nonempty_of_first_child {m : ℕ}
       obtain ⟨p, hp⟩ := ih
       let C := multiRootCandidatesAtGeneration N n
         (selectedPopulation N x n ω) ω
-      have hpC : childAddress p 0 ∈ C := by
+      have hpC : RootIndexed.childAddress p 0 ∈ C := by
         unfold C multiRootCandidatesAtGeneration
         apply multiRootCandidates_first_mem hN _ ω p
         · exact Finset.mem_filter.mpr
             ⟨hp, selectedPopulation_depth N x n ω p hp⟩
         · exact hfirst p.1 p.2
-      have hC : C.Nonempty := ⟨childAddress p 0, hpC⟩
+      have hC : C.Nonempty := ⟨RootIndexed.childAddress p 0, hpC⟩
       have hCdepth : ∀ q ∈ C, q.2.length = n + 1 := by
         intro q hq
         exact multiRootCandidatesAtGeneration_depth N n _ ω q hq

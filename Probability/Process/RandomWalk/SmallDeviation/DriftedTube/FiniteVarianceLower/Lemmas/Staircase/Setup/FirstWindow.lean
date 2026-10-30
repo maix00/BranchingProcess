@@ -6,16 +6,17 @@ Authors: WANG Yiyang
 
 module
 
-public import Mathlib.Basic.Real.Basic
-public import Mathlib.Order.Interval.Set.Defs
+import Mathlib.Basic.Real.Basic
+import Mathlib.Order.Interval.Set.Defs
 import Mathlib.Tactic.SetNotationForOrder
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.BlockTube
-public import Probability.Process.RandomWalk.Path.Block.Partition.TailMerged
-import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.BlockTube
+import all Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.BlockTube
+import Combinatorics.Sequence.TailMergedBlock
 /-!
 # First entrance window of the staircase
 
-The module-visible supporting lemma in this file is:
+## Internal proof declarations
+
+The supporting lemma in this file is:
 
 - `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.staircaseFirstInteriorWindow`: if $10c\ell<\Delta^3$, the robust
   entrance endpoint interval
@@ -28,7 +29,9 @@ Chapter 3, proof of Lemma 3.5. Appendix A.2, Lemma A.7 gives the
 probability lower bound for the displayed entrance interval.
 -/
 
-@[expose] public section
+open Combinatorics.Sequence
+
+section
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 

@@ -6,8 +6,11 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Distributions.Stable.LevyMeasure.Cutoff.Variation
+public import Probability.Distributions.Stable.Basic
+public import Mathlib.MeasureTheory.Measure.CharacteristicFunction.Basic
 public import Probability.Distributions.InfinitelyDivisible.LevyKhintchine.FiniteVariation
+import Probability.Distributions.Stable.LevyMeasure.Cutoff.Variation
+import Probability.Distributions.Stable.LevyMeasure.Scaling
 
 /-!
 # Vanishing uncompensated drift below index one
@@ -15,6 +18,14 @@ public import Probability.Distributions.InfinitelyDivisible.LevyKhintchine.Finit
 For a strictly stable law with `α < 1`, the small-jump first moment exists.
 The canonical Lévy–Khintchine drift equals this moment, so the drift in the
 uncompensated finite-variation representation vanishes.
+
+## Public declarations
+
+* `IsStrictlyAlphaStable.uncompensatedDrift_eq_zero` proves the adjusted
+  drift is zero for `α < 1`.
+* `exponent_eq_integral_uncompensated` and
+  `charFun_eq_exp_integral_uncompensated` give the exponent and characteristic
+  function as the uncompensated jump integral.
 -/
 
 @[expose] public section
@@ -22,15 +33,6 @@ uncompensated finite-variation representation vanishes.
 namespace ProbabilityTheory
 
 open MeasureTheory
-
-/-- The small-jump first moment under the canonical open-unit-ball
-truncation. -/
-noncomputable def LevyKhintchineTriple.smallJumpMean (T : LevyKhintchineTriple) : ℝ :=
-  ∫ x, smallJumpDisplacement x ∂T.levyMeasure
-
-/-- The drift after removing the canonical small-jump compensation. -/
-noncomputable def LevyKhintchineTriple.uncompensatedDrift (T : LevyKhintchineTriple) : ℝ :=
-  T.drift - T.smallJumpMean
 
 /-- A strictly stable law of index below one has zero drift in the
 uncompensated finite-variation convention. -/

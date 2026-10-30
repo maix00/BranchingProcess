@@ -13,7 +13,7 @@ public section
 /-!
 # Basic operations on convergence in distribution
 
-The public declarations in this file are:
+## Public declarations
 
 - `MeasureTheory.TendstoInDistribution.comp_tendsto`: if $X_i\Rightarrow Z$
   along a filter $l$ and $g$ tends from $l'$ to $l$, then

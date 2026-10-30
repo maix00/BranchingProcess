@@ -12,6 +12,11 @@ public import Mathlib.Probability.Kernel.Basic
 /-!
 # Markov kernels
 
+## Public declarations
+
+- `IsMarkovKernel.pow`: if `K` is a Markov transition kernel on a measurable
+  state space, every iterate `K ^ n` is Markov.
+
 Small closure results for mathlib's `Kernel` API.
 -/
 

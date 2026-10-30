@@ -4,50 +4,68 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Population.PZInput
+module
+
 import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Population.LowCount
-import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Rate.PowerBudget
 import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
-import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Drawdown.Spine.Cutoff
-import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Rate.LogScales
+import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.FirstStage.Cutoff
+import all Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.FirstStage.Lemmas.CorridorLowerBound
+import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.Sequence.LogarithmicScales
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Scale.IndexTwo
 
 /-!
-* `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.eventually_rightTailPositiveASpineCorridor_ge_exp_neg_log`:
-  for every `ε > 0`, the corridor lower bound is eventually at least
-  `exp (-ε * log (N n))` and at most the corresponding tilted-walk corridor
-  probability.
+# First-stage PZ budget
 
-# First-stage PZ proof lemmas
+## Internal proof declarations
 
-This auxiliary module supplies the finite-variance corridor estimate used by
-the first-stage Paley--Zygmund argument.
+* `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.eventually_positiveASpineCorridor_ge_exp_neg_log`:
+  set `L_n=log N_n`, `\ell_n=positiveAFirstStageCutoff(N,n)`, and
+  \[
+    G_n=\{x:\mathbb N\to\mathbb R:
+      \operatorname{history}(\ell_n,0,x)\in
+      \operatorname{affineCorridorThrough}(\ell_n,-bL_n,0,bL_n,(-b+v)L_n)\}.
+  \]
+  For every `\varepsilon>0`, there are `C<0`, `M>0`, and `A>0` such that,
+  eventually,
+  \[
+    e^{-\varepsilon\log N_n}
+      \le \mathcal B_n(C,M,A)
+      \le \mathbb P_{\nu}(G_n),
+  \]
+  where `G_n` is the affine-corridor event for the tilted walk and
+  `\mathcal B_n(C,M,A)` is
+  `positiveASpineCorridorLowerBound ν b v C A M (positiveAFirstStageCutoff N n)`.
+  Here `\mathbb P_{\nu}=iidSequenceLaw(\nu)`.
+
+
+This intermediate estimate supplies the finite-variance corridor input in
+the proof of Chapter 3, Lemma 3.5 of WANG Yiyang, *Asymptotic Speed of the
+N-Branching Random Walk with Infinite Offspring*.
 -/
 
 open Filter MeasureTheory ProbabilityTheory
 open scoped ENNReal Topology BigOperators
 
-namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail
+namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation
 
 open ProbabilityTheory.RandomWalk
 open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
-open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable
 open ProbabilityTheory.RandomWalk.SmallDeviation.Entrance
 open ProbabilityTheory.BranchingRandomWalk.Spine
 
 
-private lemma tendsto_rightTailPositiveASpineScale_div_log
+private lemma tendsto_positiveASpineScale_div_log
     {N : ℕ → ℕ} (hN : Tendsto N atTop atTop) {v : ℝ} :
     Tendsto (fun n => (v / 2) * logarithmicSmallDeviationScale
-      (rightTailFirstStageCutoff N n) /
+      (positiveAFirstStageCutoff N n) /
         logarithmOfSampleSize N n) atTop (𝓝 (v / 2)) := by
-  have h := (tendsto_rightTailFirstStageCutoff_smallDeviationScale_div_log hN).const_mul
+  have h := (tendsto_positiveAFirstStageCutoff_smallDeviationScale_div_log hN).const_mul
     (v / 2)
   have heq : (fun n => (v / 2) * logarithmicSmallDeviationScale
-      (rightTailFirstStageCutoff N n) /
+      (positiveAFirstStageCutoff N n) /
         logarithmOfSampleSize N n) =ᶠ[atTop]
       fun n => (v / 2) * (logarithmicSmallDeviationScale
-        (rightTailFirstStageCutoff N n) /
+        (positiveAFirstStageCutoff N n) /
           logarithmOfSampleSize N n) := by
     filter_upwards [] with n
     ring
@@ -64,7 +82,7 @@ private lemma centeredMoment_integrable_square_of_sigma_pos
 
 /-- The block used in the stable bridge has quadratic order in `log N`.
 Only the convergence of truncated second moments is used here. -/
-private lemma eventually_rightTailPositiveAStableBlock_ge_log_sq
+private lemma eventually_positiveAStableBlock_ge_log_sq
     {N : ℕ → ℕ} (hN : Tendsto N atTop atTop)
     {ν : Measure ℝ} [IsProbabilityMeasure ν] {sigma v amplitude : ℝ}
     (hν : IsCenteredSecondMoment ν (sigma ^ 2)) (hsigma : 0 < sigma)
@@ -73,9 +91,9 @@ private lemma eventually_rightTailPositiveAStableBlock_ge_log_sq
       c * logarithmOfSampleSize N n ^ 2 ≤
         (stableBlockLength 2 ν (amplitude ^ 2)
           (fun k => (v / 2) * logarithmicSmallDeviationScale k)
-          (rightTailFirstStageCutoff N n) : ℝ) := by
+          (positiveAFirstStageCutoff N n) : ℝ) := by
   let L : ℕ → ℝ := logarithmOfSampleSize N
-  let ell : ℕ → ℕ := rightTailFirstStageCutoff N
+  let ell : ℕ → ℕ := positiveAFirstStageCutoff N
   let scale : ℕ → ℝ := fun k => (v / 2) * logarithmicSmallDeviationScale k
   let c : ℝ := amplitude ^ 2 * (v / 4) ^ 2 / (4 * sigma ^ 2)
   have hc : 0 < c := by
@@ -86,9 +104,9 @@ private lemma eventually_rightTailPositiveAStableBlock_ge_log_sq
       (tendsto_natCast_atTop_atTop.comp hN)
   have hscaleRatio : Tendsto (fun n => scale (ell n) / L n)
       atTop (𝓝 (v / 2)) := by
-    simpa [L, ell, scale] using tendsto_rightTailPositiveASpineScale_div_log hN
+    simpa [L, ell, scale] using tendsto_positiveASpineScale_div_log hN
   have hell : Tendsto ell atTop atTop := by
-    simpa [ell] using tendsto_rightTailFirstStageCutoff_atTop hN
+    simpa [ell] using tendsto_positiveAFirstStageCutoff_atTop hN
   have hscale : Tendsto (fun n => scale (ell n)) atTop atTop := by
     have hprod := hL.atTop_mul_pos (by linarith : 0 < v / 2) hscaleRatio
     have heq : (fun n => L n * (scale (ell n) / L n)) =ᶠ[atTop]
@@ -187,17 +205,17 @@ private lemma eventually_rightTailPositiveAStableBlock_ge_log_sq
     dsimp [ell, scale] at harg ⊢
     have hfloorReal : stableBlockArgument 2 ν (amplitude ^ 2)
         (fun k => (v / 2) * logarithmicSmallDeviationScale k)
-        (rightTailFirstStageCutoff N n) <
+        (positiveAFirstStageCutoff N n) <
         (stableBlockLength 2 ν (amplitude ^ 2)
           (fun k => (v / 2) * logarithmicSmallDeviationScale k)
-          (rightTailFirstStageCutoff N n) : ℝ) + 1 := by
+          (positiveAFirstStageCutoff N n) : ℝ) + 1 := by
       simpa [stableBlockLength] using Nat.lt_floor_add_one
         (stableBlockArgument 2 ν (amplitude ^ 2)
           (fun k => (v / 2) * logarithmicSmallDeviationScale k)
-          (rightTailFirstStageCutoff N n))
+          (positiveAFirstStageCutoff N n))
     have hargLower : 2 * c * L n ^ 2 ≤ stableBlockArgument 2 ν
         (amplitude ^ 2) (fun k => (v / 2) * logarithmicSmallDeviationScale k)
-        (rightTailFirstStageCutoff N n) := by
+        (positiveAFirstStageCutoff N n) := by
       simpa [ell, scale, Function.comp_apply, stableBlockArgument,
         stableSlowVariation_two] using harg
     have hthresholdSq : (2 / c + 2) ^ 2 ≤ L n ^ 2 := by
@@ -220,45 +238,45 @@ private lemma eventually_rightTailPositiveAStableBlock_ge_log_sq
     have hfloorLower : c * L n ^ 2 ≤
         (stableBlockLength 2 ν (amplitude ^ 2)
           (fun k => (v / 2) * logarithmicSmallDeviationScale k)
-          (rightTailFirstStageCutoff N n) : ℝ) := by
+          (positiveAFirstStageCutoff N n) : ℝ) := by
       linarith [hargLower, hfloorReal, htwice]
     simpa [stableBlockLength, stableBlockArgument, stableSlowVariation_two] using hfloorLower
   exact ⟨c, hc, by simpa [L, ell, scale, Function.comp_apply] using hfloor⟩
 
-private lemma tendsto_rightTailPositiveABridgeCount_div_log_zero
+private lemma tendsto_positiveABridgeCount_div_log_zero
     {N : ℕ → ℕ} (hN : Tendsto N atTop atTop)
     {ν : Measure ℝ} [IsProbabilityMeasure ν] {sigma v amplitude : ℝ}
     (hν : IsCenteredSecondMoment ν (sigma ^ 2)) (hsigma : 0 < sigma)
     (hv : 0 < v) (hamplitude : 0 < amplitude) :
     ∃ c : ℝ, 0 < c ∧ Tendsto (fun n =>
-      ((Asymptotics.balancedBlockCount
+      ((Combinatorics.Sequence.balancedBlockCount
         (ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.finiteVarianceBridgeLength
           (fun k => (v / 2) * logarithmicSmallDeviationScale k)
-          (rightTailFirstStageCutoff N n) -
+          (positiveAFirstStageCutoff N n) -
           stableBlockLength 2 ν (amplitude ^ 2)
             (fun k => (v / 2) * logarithmicSmallDeviationScale k)
-            (rightTailFirstStageCutoff N n))
+            (positiveAFirstStageCutoff N n))
         (stableBlockLength 2 ν (amplitude ^ 2)
           (fun k => (v / 2) * logarithmicSmallDeviationScale k)
-          (rightTailFirstStageCutoff N n)) : ℕ) : ℝ) /
+          (positiveAFirstStageCutoff N n)) : ℕ) : ℝ) /
         logarithmOfSampleSize N n) atTop (𝓝 0) := by
   obtain ⟨c, hc, hblock⟩ :=
-    eventually_rightTailPositiveAStableBlock_ge_log_sq
+    eventually_positiveAStableBlock_ge_log_sq
       hN hν hsigma hv hamplitude
   let L : ℕ → ℝ := logarithmOfSampleSize N
-  let ell : ℕ → ℕ := rightTailFirstStageCutoff N
+  let ell : ℕ → ℕ := positiveAFirstStageCutoff N
   let scale : ℕ → ℝ := fun k => (v / 2) * logarithmicSmallDeviationScale k
   let bridge : ℕ → ℕ := fun n =>
     ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.finiteVarianceBridgeLength
       scale (ell n)
   let block : ℕ → ℕ := fun n => stableBlockLength 2 ν (amplitude ^ 2) scale (ell n)
   let count : ℕ → ℕ := fun n =>
-    Asymptotics.balancedBlockCount (bridge n - block n) (block n)
+    Combinatorics.Sequence.balancedBlockCount (bridge n - block n) (block n)
   have hL : Tendsto L atTop atTop := by
     exact Real.tendsto_log_atTop.comp
       (tendsto_natCast_atTop_atTop.comp hN)
   have hLpos : ∀ᶠ n : ℕ in atTop, 0 < L n := hL.eventually_gt_atTop 0
-  have hellCube := tendsto_rightTailFirstStageCutoff_div_logCube hN
+  have hellCube := tendsto_positiveAFirstStageCutoff_div_logCube hN
   have hupper : ∀ᶠ n : ℕ in atTop,
       (count n : ℝ) / L n ≤ ((ell n : ℝ) / L n ^ 3) / c := by
     filter_upwards [hblock, hLpos] with n hblockN hLn
@@ -275,7 +293,7 @@ private lemma tendsto_rightTailPositiveABridgeCount_div_log_zero
         (ell n : ℝ) / (block n : ℝ) := by
       calc
         (count n : ℝ) ≤ ((bridge n - block n : ℕ) : ℝ) / (block n : ℝ) := by
-          dsimp [count, Asymptotics.balancedBlockCount]
+          dsimp [count, Combinatorics.Sequence.balancedBlockCount]
           exact Nat.cast_div_le
         _ ≤ (ell n : ℝ) / (block n : ℝ) := by
           exact div_le_div_of_nonneg_right (by exact_mod_cast hmainLe)
@@ -303,21 +321,21 @@ private lemma tendsto_rightTailPositiveABridgeCount_div_log_zero
   have hratio := squeeze_zero' hnonneg hupper hrhs
   exact ⟨c, hc, by simpa [count, bridge, block, scale, ell, L] using hratio⟩
 
-private lemma eventually_rightTailPositiveAEntranceLength_le_log_sq
+private lemma eventually_positiveAEntranceLength_le_log_sq
     {N : ℕ → ℕ} (hN : Tendsto N atTop atTop) {v : ℝ} (hv : 0 < v) :
     ∀ᶠ n : ℕ in atTop,
       (ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.finiteVarianceEntranceLength
         (fun k => (v / 2) * logarithmicSmallDeviationScale k)
-        (rightTailFirstStageCutoff N n) : ℝ) ≤
+        (positiveAFirstStageCutoff N n) : ℝ) ≤
         v ^ 2 * logarithmOfSampleSize N n ^ 2 := by
   let L : ℕ → ℝ := logarithmOfSampleSize N
-  let ell : ℕ → ℕ := rightTailFirstStageCutoff N
+  let ell : ℕ → ℕ := positiveAFirstStageCutoff N
   let scale : ℕ → ℝ := fun k => (v / 2) * logarithmicSmallDeviationScale k
   have hL : Tendsto L atTop atTop := by
     exact Real.tendsto_log_atTop.comp
       (tendsto_natCast_atTop_atTop.comp hN)
   have hratio : Tendsto (fun n => scale (ell n) / L n) atTop (𝓝 (v / 2)) := by
-    simpa [L, ell, scale] using tendsto_rightTailPositiveASpineScale_div_log hN
+    simpa [L, ell, scale] using tendsto_positiveASpineScale_div_log hN
   filter_upwards [hratio.eventually
       (Iio_mem_nhds (show v / 2 < v by linarith)),
     hratio.eventually (Ioi_mem_nhds (show v / 4 < v / 2 by linarith)),
@@ -354,7 +372,7 @@ private lemma eventually_rightTailPositiveAEntranceLength_le_log_sq
 spine corridor estimate is at least `N ^ (-epsilon)` for every positive
 epsilon, eventually. This turns the retained `exp(-O(sqrt(log N)))` bridge
 factor into the polynomial-scale input required by the MRCA/PZ estimate. -/
-lemma eventually_rightTailPositiveASpineCorridor_ge_exp_neg_log
+lemma eventually_positiveASpineCorridor_ge_exp_neg_log
     {N : ℕ → ℕ} (hN : Tendsto N atTop atTop)
     (μ : Measure (Combinatorics.Branching.Step ℕ ℝ)) [IsProbabilityMeasure μ]
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
@@ -366,29 +384,29 @@ lemma eventually_rightTailPositiveASpineCorridor_ge_exp_neg_log
     ∃ C : ℝ, C < 0 ∧ ∃ entranceMass : ℝ≥0∞, 0 < entranceMass ∧
       ∃ amplitude : ℝ, 0 < amplitude ∧ ∀ᶠ n : ℕ in atTop,
         ENNReal.ofReal (Real.exp (-epsilon * logarithmOfSampleSize N n)) ≤
-          rightTailPositiveASpineCorridorLowerBound ν b v C amplitude
-            entranceMass (rightTailFirstStageCutoff N n) ∧
-        rightTailPositiveASpineCorridorLowerBound ν b v C amplitude
-            entranceMass (rightTailFirstStageCutoff N n) ≤
+          positiveASpineCorridorLowerBound ν b v C amplitude
+            entranceMass (positiveAFirstStageCutoff N n) ∧
+        positiveASpineCorridorLowerBound ν b v C amplitude
+            entranceMass (positiveAFirstStageCutoff N n) ≤
           (tiltedIncrementFieldLaw realPotential μ)
             {increment : ℕ → ℝ |
-              RandomWalk.history (rightTailFirstStageCutoff N n) 0
+              RandomWalk.history (positiveAFirstStageCutoff N n) 0
                 increment ∈
-                affineCorridorThrough (rightTailFirstStageCutoff N n)
+                affineCorridorThrough (positiveAFirstStageCutoff N n)
                   (-b * logarithmOfSampleSize N n) 0
                   (b * logarithmOfSampleSize N n)
                   ((-b + v) * logarithmOfSampleSize N n)} := by
   obtain ⟨C, hC, entranceMass, hentranceMass, amplitude, hamplitude,
       hcorridor⟩ :=
-    eventually_rightTailPositiveA_spineCorridor_lowerBound_of_centeredSecondMoment
+    eventually_positiveA_spineCorridor_lowerBound_of_centeredSecondMoment
       hN μ ν hν hνMoment hsigma hb hv hvb
   obtain ⟨c, hc, hcount⟩ :=
-    tendsto_rightTailPositiveABridgeCount_div_log_zero
+    tendsto_positiveABridgeCount_div_log_zero
       hN hνMoment hsigma hv hamplitude
-  have hEntrance := eventually_rightTailPositiveAEntranceLength_le_log_sq
+  have hEntrance := eventually_positiveAEntranceLength_le_log_sq
     hN hv
   let L : ℕ → ℝ := logarithmOfSampleSize N
-  let ell : ℕ → ℕ := rightTailFirstStageCutoff N
+  let ell : ℕ → ℕ := positiveAFirstStageCutoff N
   let scale : ℕ → ℝ := fun k => (v / 2) * logarithmicSmallDeviationScale k
   let entranceLength : ℕ → ℕ := fun n =>
     ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.finiteVarianceEntranceLength
@@ -399,7 +417,7 @@ lemma eventually_rightTailPositiveASpineCorridor_ge_exp_neg_log
   let blockLength : ℕ → ℕ := fun n => stableBlockLength 2 ν
     (amplitude ^ 2) scale (ell n)
   let blockCount : ℕ → ℕ := fun n =>
-    Asymptotics.balancedBlockCount (bridgeLength n - blockLength n)
+    Combinatorics.Sequence.balancedBlockCount (bridgeLength n - blockLength n)
       (blockLength n)
   let ratio : ℝ := (b - v / 4) / (v / 2)
   let exponent : ℝ :=
@@ -552,8 +570,8 @@ lemma eventually_rightTailPositiveASpineCorridor_ge_exp_neg_log
     apply Real.exp_le_exp.mpr
     exact le_of_eq (by ring)
   have hpower : ENNReal.ofReal (Real.exp (-epsilon * L n)) ≤
-      rightTailPositiveASpineCorridorLowerBound ν b v C amplitude
-        entranceMass (rightTailFirstStageCutoff N n) := by
+      positiveASpineCorridorLowerBound ν b v C amplitude
+        entranceMass (positiveAFirstStageCutoff N n) := by
     calc
       ENNReal.ofReal (Real.exp (-epsilon * L n)) ≤
           ENNReal.ofReal (Real.exp (-epsilon / 2 * L n)) *
@@ -561,10 +579,10 @@ lemma eventually_rightTailPositiveASpineCorridor_ge_exp_neg_log
       _ ≤ ENNReal.ofReal (Real.exp exponent) ^ (blockCount n + 1) *
           (entranceMass / (entranceLength n : ℝ≥0∞)) :=
         mul_le_mul hbridge hentry (by positivity) (by positivity)
-      _ = rightTailPositiveASpineCorridorLowerBound ν b v C amplitude
-          entranceMass (rightTailFirstStageCutoff N n) := by
-        simp [rightTailPositiveASpineCorridorLowerBound, ell, scale,
+      _ = positiveASpineCorridorLowerBound ν b v C amplitude
+          entranceMass (positiveAFirstStageCutoff N n) := by
+        simp [positiveASpineCorridorLowerBound, ell, scale,
           entranceLength, bridgeLength, blockLength, blockCount, ratio, exponent]
   exact ⟨by simpa [L] using hpower, hprob⟩
 
-end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail
+end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation

@@ -14,6 +14,11 @@ public import Mathlib.MeasureTheory.Constructions.BorelSpace.Real
 
 Positive mass on a half-line is visible beyond a strict threshold for any
 measure on the real line.
+
+## Public declarations
+
+* `MeasureTheory.exists_positive_tail_threshold` states that if `μ((0,∞))>0`, then some
+  `w>0` satisfies `μ((w,∞))>0`.
 -/
 
 @[expose] public section

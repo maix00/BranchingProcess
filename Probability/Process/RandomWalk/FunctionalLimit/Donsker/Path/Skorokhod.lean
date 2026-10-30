@@ -20,11 +20,12 @@ The continuous-path Donsker theorem and the vanishing maximal jump transfer
 the limit to the canonical right-continuous step realization in Skorokhod
 `J₁` space.
 
-The public theorem in this file is:
+## Public declarations
 
 - `ProbabilityTheory.RandomWalk.tendstoInDistribution_normalizedStepCadlagPath_brownian`:
-  a centered unit-variance i.i.d. random walk, scaled by $1/\sqrt n$, has its
-  canonical step path converge in Skorokhod $J_1$ to standard Brownian motion.
+  if $\int x\,d\nu=0$, $\int x^2\,d\nu=1$, and $B$ is a measurable,
+  continuous pre-Brownian process, the normalized step paths converge in
+  Skorokhod $J_1$ to the image of $B$.
 
 This is the step-path form of Theorem 4.20 in I. Karatzas and S. E. Shreve,
 *Brownian Motion and Stochastic Calculus*, 2nd ed., Graduate Texts in

@@ -4,7 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Spine.Tube.SecondMoment.Basic
+module
+
+public import Probability.BranchingRandomWalk.Spine.Tube.SecondMoment.Basic
+
+public import Mathlib.MeasureTheory.MeasurableSpace.Defs
 
 /-!
 # Two-stage tube success from the branching field
@@ -40,10 +44,14 @@ least slot index. Its descendant field is independent of the root step. This
 gives an exact product formula for success in two consecutive tube windows.
 -/
 
+@[expose] public section
+
 open MeasureTheory
 open scoped ENNReal
 
 namespace ProbabilityTheory.BranchingRandomWalk.Spine
+
+open ProbabilityTheory.BranchingProcess (offspringFieldLaw offspringFieldLaw_coordinate offspringFieldLaw_independent offspringFieldLaw_mapMarks)
 
 open Combinatorics.Branching
 open Combinatorics.UlamHarris
@@ -173,9 +181,9 @@ theorem measure_twoStageTubeEvent_eq_mul
     (φ : Potential X) (I J : Set ℝ)
     (hI : MeasurableSet I) (hJ : MeasurableSet J)
     (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ] :
-    (stepFieldLaw μ) (twoStageTubeEvent φ I J) =
+    (offspringFieldLaw μ) (twoStageTubeEvent φ I J) =
       μ {ξ | hasPotentialChildIn φ I ξ} *
-        (stepFieldLaw μ) {ω | hasPotentialChildIn φ J (ω [])} := by
+        (offspringFieldLaw μ) {ω | hasPotentialChildIn φ J (ω [])} := by
   let first (i : ℕ) : Set (Step ℕ X) :=
     {ξ | firstPotentialChildIn φ I i ξ}
   let next : Set (StepField ℕ X) :=
@@ -206,7 +214,7 @@ theorem measure_twoStageTubeEvent_eq_mul
     intro i
     rfl
   have hpair (i : ℕ) :
-      (stepFieldLaw μ) (cell i) = μ (first i) * (stepFieldLaw μ) next := by
+      (offspringFieldLaw μ) (cell i) = μ (first i) * (offspringFieldLaw μ) next := by
     let pairMap : StepField ℕ X → Step ℕ X × StepField ℕ X :=
       fun ω => (ω ([] : TreeNode ℕ), subtreeStepField [i] ω)
     have hmap : Measurable pairMap :=
@@ -227,12 +235,12 @@ theorem measure_twoStageTubeEvent_eq_mul
       simp [pairMap, first, next]
     rw [hpre, ← Measure.map_apply hmap hrectangle]
     calc
-      (Measure.map pairMap (stepFieldLaw μ)) (first i ×ˢ next) =
-          (μ.prod (stepFieldLaw μ)) (first i ×ˢ next) := by
+      (Measure.map pairMap (offspringFieldLaw μ)) (first i ×ˢ next) =
+          (μ.prod (offspringFieldLaw μ)) (first i ×ˢ next) := by
         simpa [pairMap] using congrArg
           (fun ν : Measure (Step ℕ X × StepField ℕ X) => ν (first i ×ˢ next))
             (root_subtreeStepField_joint_law μ i)
-      _ = μ (first i) * (stepFieldLaw μ) next :=
+      _ = μ (first i) * (offspringFieldLaw μ) next :=
         Measure.prod_prod (first i) next
   have hfirst : μ (⋃ i, first i) = ∑' i, μ (first i) :=
     measure_iUnion
@@ -245,12 +253,12 @@ theorem measure_twoStageTubeEvent_eq_mul
   rw [hunion, measure_iUnion hcell_pair hcell_meas]
   simp_rw [hpair]
   calc
-    (∑' i, μ (first i) * (stepFieldLaw μ) next) =
-        (∑' i, μ (first i)) * (stepFieldLaw μ) next :=
+    (∑' i, μ (first i) * (offspringFieldLaw μ) next) =
+        (∑' i, μ (first i)) * (offspringFieldLaw μ) next :=
       ENNReal.tsum_mul_right
-    _ = μ (⋃ i, first i) * (stepFieldLaw μ) next := by rw [← hfirst]
+    _ = μ (⋃ i, first i) * (offspringFieldLaw μ) next := by rw [← hfirst]
     _ = μ {ξ | hasPotentialChildIn φ I ξ} *
-        (stepFieldLaw μ) {ω | hasPotentialChildIn φ J (ω [])} := by
+        (offspringFieldLaw μ) {ω | hasPotentialChildIn φ J (ω [])} := by
       rw [hfirst_union]
 
 /-- If both windows have positive tilted mass, then a two-generation path
@@ -264,20 +272,20 @@ theorem measure_twoStageTubeEvent_pos_of_tiltedWindows_pos
     (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
     (hIpositive : 0 < tiltedPotentialLaw φ (-1) μ I)
     (hJpositive : 0 < tiltedPotentialLaw φ (-1) μ J) :
-    0 < (stepFieldLaw μ) (twoStageTubeEvent φ I J) := by
+    0 < (offspringFieldLaw μ) (twoStageTubeEvent φ I J) := by
   have hfirst : 0 < μ {ξ | hasPotentialChildIn φ I ξ} :=
     measure_hasPotentialChildIn_pos_of_tiltedWindow_pos
       φ I aI hI hIlower μ hIpositive
   have hnextStep : 0 < μ {ξ | hasPotentialChildIn φ J ξ} :=
     measure_hasPotentialChildIn_pos_of_tiltedWindow_pos
       φ J aJ hJ hJlower μ hJpositive
-  have hrootLaw : (stepFieldLaw μ).map
+  have hrootLaw : (offspringFieldLaw μ).map
       (fun ω : StepField ℕ X => ω ([] : TreeNode ℕ)) = μ :=
-    stepFieldLaw_coordinate μ ([] : TreeNode ℕ)
+    offspringFieldLaw_coordinate μ ([] : TreeNode ℕ)
   have hstepEvent : MeasurableSet
       {ξ : Step ℕ X | hasPotentialChildIn φ J ξ} :=
     measurableSet_hasPotentialChildIn φ J hJ
-  have hnext : 0 < (stepFieldLaw μ)
+  have hnext : 0 < (offspringFieldLaw μ)
       {ω : StepField ℕ X | hasPotentialChildIn φ J (ω [])} := by
     rw [show {ω : StepField ℕ X | hasPotentialChildIn φ J (ω [])} =
         (fun ω : StepField ℕ X => ω ([] : TreeNode ℕ)) ⁻¹'
@@ -289,3 +297,5 @@ theorem measure_twoStageTubeEvent_pos_of_tiltedWindows_pos
   exact ENNReal.mul_pos (ne_of_gt hfirst) (ne_of_gt hnext)
 
 end ProbabilityTheory.BranchingRandomWalk.Spine
+
+end
