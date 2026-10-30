@@ -12,6 +12,10 @@ public import Mathlib.MeasureTheory.Integral.Bochner.Set
 import Mathlib.MeasureTheory.Integral.MeanInequalities
 
 /-!
+# Paley--Zygmund inequalities
+
+## Public declarations
+
 * `ProbabilityTheory.measure_ge_threshold_of_moments`: for a nonnegative
   square-integrable random variable `X` on a probability space, with mean `m`,
   second moment `s > 0`, and `0 ≤ t < m`,
@@ -24,13 +28,12 @@ import Mathlib.MeasureTheory.Integral.MeanInequalities
   `∫⁻ X = m` and `∫⁻ X² ≤ s < ∞` with `s > 0`, then
   `m² / s ≤ ℙ(X ≠ 0)`.
 
-# Paley--Zygmund inequalities
-
 These statements depend only on the first two moments of a nonnegative random
 variable on a probability space. They do not depend on a particular process
 or distribution. The first inequality is the random-variable form of Paley and
-Zygmund, [*On some series of functions, (3)*, Lemma 19, p. 192
-(1932)](https://doi.org/10.1017/S0305004100010860).
+Zygmund, [“On some series of functions, (3),” *Mathematical Proceedings of the
+Cambridge Philosophical Society* 28(2) (1932), 190–205, Lemma 19, p. 192]
+(https://doi.org/10.1017/S0305004100010860).
 -/
 
 @[expose] public section

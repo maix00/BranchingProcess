@@ -13,6 +13,8 @@ public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 /-!
 # Finite prefixes of ordered child slots
 
+## Public declarations
+
 The ordered child slots used by finite-`N` selection need not literally be
 `ℕ`. For a linear locally finite order with a least element and no greatest
 element, `firstSlots α N` is the `Finset.Iio` initial interval cut off at rank

@@ -6,13 +6,15 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.Brownian.Reflection.FirstPassage.FiniteStoppingTime
+public import Probability.Process.Brownian.PathLaw.ContinuousPathLaw
+public import Probability.Process.Path.Reflection.Basic
 public import Mathlib.Probability.Process.HittingTime
+import Probability.Process.Brownian.Reflection.FirstPassage.FiniteStoppingTime
 
 /-!
 # Reflection at a first grid passage time
 
-The public theorem in this file is:
+## Public declarations
 
 - `ProbabilityTheory.IsBrownianReal.measure_reflectAfter_gridFirstPassage_eq`:
   if $T$ is the first of finitely many ordered observation times at which

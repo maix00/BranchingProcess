@@ -12,6 +12,8 @@ public import Probability.Sequence.IID.Basic
 /-!
 # Descending ladder-height renewal function
 
+## Public declarations
+
 Let $(\xi_i)_{i\geq1}$ be i.i.d. with law $\nu$, set
 $S_0=0$, $S_n=\sum_{i=1}^n\xi_i$, and write $\mathbb P_\nu$ and
 $\mathbb E_\nu$ for the product-law probability and expectation. Define

@@ -7,7 +7,8 @@ Authors: WANG Yiyang
 module
 
 public import Mathlib.Topology.MetricSpace.Cauchy
-public import Topology.Cadlag.Skorokhod.EDistance.Logarithmic.Completion.AlignedLimit
+public import Topology.Cadlag.Skorokhod.EDistance.Logarithmic.Topology
+import all Topology.Cadlag.Skorokhod.EDistance.Logarithmic.Completion.Lemmas.AlignedLimit
 
 /-!
 # Completeness of the logarithmic Skorokhod metric
@@ -20,7 +21,10 @@ public import Topology.Cadlag.Skorokhod.EDistance.Logarithmic.Completion.Aligned
 
 Every Cauchy sequence has a summably aligned subsequence. Tail clock limits
 undo the alignment and give a Billingsley limit of that subsequence; the
-Cauchy property then gives convergence of the full sequence.
+Cauchy property then gives convergence of the full sequence. This formalizes
+Theorem 14.2 of Patrick Billingsley, *Convergence of Probability Measures*,
+1st ed., Wiley, 1968, Chapter 3, §14, pp. 115–116
+([text](https://ru.djvu.online/file/vaaIHv9IWlVeK)).
 -/
 
 @[expose] public section
@@ -37,8 +41,8 @@ theorem cauchySeq_tendsto_billingsleyPath
     (path : ℕ → BillingsleyPath E) (hpath : CauchySeq path) :
     ∃ limit : BillingsleyPath E, Tendsto path atTop (nhds limit) := by
   obtain ⟨index, clocks, error, alignedLimit, hindex, herror, hcost, haligned⟩ :=
-    cauchySeq_subsequence_has_summableLogAlignment path hpath
-  obtain ⟨limit, hsubsequence⟩ := summablyAligned_subsequence_tendsto_billingsley
+    Completion.Lemmas.cauchySeq_subsequence_has_summableLogAlignment path hpath
+  obtain ⟨limit, hsubsequence⟩ := Completion.Lemmas.summablyAligned_subsequence_tendsto_billingsley
     path index clocks error herror hcost alignedLimit haligned
   have hindexLower : ∀ n, n ≤ index n := by
     intro n

@@ -4,7 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Spine.Path.SecondMoment.Prefix
+module
+
+public import Probability.BranchingRandomWalk.Spine.Path.SecondMoment.Prefix
 
 /-!
 # Address expansion of an MRCA contribution
@@ -14,7 +16,25 @@ addresses at that generation.  The path test is sliced recursively by
 `prependHistory`, so the local depth-zero contribution retains the complete
 original path history.  Every birth-survival test along the prefix remains
 in the summand.
+
+## Public declarations
+
+- `pathGenerationPrefixTest` recursively restricts a terminal path test to
+  the descendant field below an address of length $m$.
+- `pathGenerationPrefixMRCAContribution` evaluates the depth-zero ordered
+  pair contribution in that descendant field with the sliced path test.
+- `pathGenerationSurvivingPrefixMRCAContribution` sets this contribution to
+  zero unless the entire ancestral prefix survives.
+- `pathGenerationSurvivingPrefixMRCAContribution_cons` gives its one-edge
+  recursion as a `survivingPotentialTest` of the descendant contribution.
+- `pathGenerationPrefixTest_apply_pathHistory` identifies the sliced test
+  with the original test on the concatenated address and continuation path:
+  $F_u(H_v)=F(H_{u\mathbin{++}v})$ when $|u|=m$ and $|v|=n+1$.
+- `pathGenerationMRCAContribution_eq_sum_prefix` expands the depth-$m$
+  ordered-pair contribution as the sum of surviving prefix contributions.
 -/
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal
@@ -251,3 +271,5 @@ theorem pathGenerationMRCAContribution_eq_sum_prefix
                   (pathGenerationSurvivingPrefixMRCAContribution φ (m + 1) n F x ω)
 
 end ProbabilityTheory.BranchingRandomWalk.Spine
+
+end

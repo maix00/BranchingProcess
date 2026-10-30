@@ -6,15 +6,25 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Distributions.Stable.LevyMeasure.Tail.Homogeneous
-import Mathlib.Analysis.SpecialFunctions.Integrability.Basic
-import Mathlib.MeasureTheory.Integral.Layercake
+public import Probability.Distributions.Stable.Basic
+public import Probability.Distributions.InfinitelyDivisible.LevyKhintchine.Defs
+public import Mathlib.MeasureTheory.Measure.CharacteristicFunction.Basic
+import Probability.Distributions.Stable.LevyMeasure.Tail.Homogeneous
+import MeasureTheory.Measure.Tails.Power
 
 /-!
 # Small-jump variation of stable Lévy measures
 
 The tail identities give the `α < 1` integrability threshold by the
 layer-cake formula.
+
+## Public declarations
+
+* `levyMeasure_smallJumpMoment_lt_top` states
+  `∫⁻ min(1, |x|) dν < ∞` for `α < 1`.
+* `levyMeasure_integral_small_abs_lt_top` gives finite first absolute moment
+  on `|x| ≤ 1`, and `levyMeasure_integrableOn_small` gives integrability of
+  `x` on that set.
 -/
 
 @[expose] public section
@@ -22,59 +32,6 @@ layer-cake formula.
 namespace ProbabilityTheory
 
 open MeasureTheory Set ENNReal
-
-private lemma integrable_rpow_neg_on_unit {α : ℝ} (hα : α < 1) :
-    IntegrableOn (fun t : ℝ => t ^ (-α)) (Ioo 0 1) := by
-  exact (intervalIntegral.integrableOn_Ioo_rpow_iff zero_lt_one).2 (by linarith)
-
-private lemma lintegral_rpow_neg_on_unit_lt_top {α : ℝ} (hα : α < 1) :
-    (∫⁻ t in Ioo (0 : ℝ) 1, ENNReal.ofReal (t ^ (-α)) ∂volume) < ⊤ := by
-  exact (integrable_rpow_neg_on_unit hα).lintegral_lt_top
-
-private lemma smallJumpMoment_eq_tailIntegral (ν : Measure ℝ) :
-    (∫⁻ x, ENNReal.ofReal (min 1 |x|) ∂ν) =
-      ∫⁻ t in Ioi (0 : ℝ), ν {x : ℝ | t < min 1 |x|} := by
-  apply lintegral_eq_lintegral_meas_lt
-  · filter_upwards [] with x
-    exact le_min (by norm_num) (abs_nonneg x)
-  · exact (by fun_prop : Measurable (fun x : ℝ => min 1 |x|)).aemeasurable
-
-/-- A power-law tail with index below one gives a finite truncated first moment. -/
-theorem finite_smallJumpMoment_of_tailBound (ν : Measure ℝ)
-    {α : ℝ} (hα : α < 1) (C : ENNReal) (hC : C < ⊤)
-    (htail : ∀ t : ℝ, 0 < t →
-      ν {x : ℝ | t < |x|} ≤ ENNReal.ofReal (t ^ (-α)) * C) :
-    (∫⁻ x, ENNReal.ofReal (min 1 |x|) ∂ν) < ⊤ := by
-  rw [smallJumpMoment_eq_tailIntegral]
-  have hbound : ∀ t ∈ Ioi (0 : ℝ),
-      ν {x : ℝ | t < min 1 |x|} ≤
-        (Iio (1 : ℝ)).indicator
-          (fun t => ENNReal.ofReal (t ^ (-α)) * C) t := by
-    intro t ht
-    by_cases ht1 : t < 1
-    · rw [Set.indicator_of_mem (show t ∈ Iio (1 : ℝ) from ht1)]
-      have hset : {x : ℝ | t < min 1 |x|} = {x : ℝ | t < |x|} := by
-        ext x
-        simp only [Set.mem_ofPred_eq, lt_min_iff]
-        exact and_iff_right ht1
-      rw [hset]
-      exact htail t ht
-    · rw [Set.indicator_of_notMem (show t ∉ Iio (1 : ℝ) from ht1)]
-      simp [lt_min_iff, ht1]
-  calc
-    (∫⁻ t in Ioi (0 : ℝ), ν {x : ℝ | t < min 1 |x|}) ≤
-        ∫⁻ t in Ioi (0 : ℝ),
-          (Iio (1 : ℝ)).indicator
-            (fun t => ENNReal.ofReal (t ^ (-α)) * C) t := by
-              apply lintegral_mono_ae
-              filter_upwards [ae_restrict_mem measurableSet_Ioi] with t ht
-              exact hbound t ht
-    _ = ∫⁻ t in Ioo (0 : ℝ) 1, ENNReal.ofReal (t ^ (-α)) * C := by
-      rw [lintegral_indicator measurableSet_Iio]
-      rw [Measure.restrict_restrict measurableSet_Iio, Iio_inter_Ioi]
-    _ < ⊤ := by
-      rw [lintegral_mul_const' _ _ hC.ne]
-      exact ENNReal.mul_lt_top (lintegral_rpow_neg_on_unit_lt_top hα) hC
 
 /-- The stable Lévy measure has finite truncated first absolute moment for
 `α < 1`. This is the measure-level finite-variation input for its jump sum. -/
@@ -99,7 +56,8 @@ theorem IsStrictlyAlphaStable.levyMeasure_smallJumpMoment_lt_top
     rw [abs_of_nonneg (by linarith)]
     linarith
   have hC : C < ⊤ := ENNReal.add_lt_top.mpr ⟨hminus, hplus⟩
-  apply finite_smallJumpMoment_of_tailBound T.levyMeasure hα C hC
+  apply MeasureTheory.lintegral_min_radius_abs_lt_top_of_power_tail_bound
+    T.levyMeasure hα one_pos C hC
   intro t ht
   rw [h.levyMeasure_abs_tail T hT ht]
   change ENNReal.ofReal ((1 / t) ^ α) * C ≤ ENNReal.ofReal (t ^ (-α)) * C

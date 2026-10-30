@@ -15,6 +15,13 @@ public import Topology.Cadlag.Skorokhod.Topology
 Evaluation need not be continuous at an interior time for the `J₁` topology.
 It is continuous at the terminal time because every admissible time change
 fixes that endpoint.
+
+## Public declarations
+
+- `Skorokhod.dist_apply_top_le` and `Skorokhod.dist_apply_bot_le`:
+  endpoint evaluations satisfy $d(f(0),g(0)),d(f(1),g(1))\le d_{J_1}(f,g)$.
+- `Skorokhod.continuous_apply_top` and `Skorokhod.continuous_apply_bot`:
+  evaluation at either endpoint is continuous for the $J_1$ topology.
 -/
 
 @[expose] public section

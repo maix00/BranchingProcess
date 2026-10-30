@@ -6,19 +6,20 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Meander.Identification
-public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Meander.FiniteVariance
-public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition.Event
-public import Probability.Process.Brownian.Meander.LastZeroSupport
+import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Meander.Identification
+import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Meander.FiniteVariance
+import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Survival.Conditioning
+import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition.Event
+import Probability.Process.Brownian.Meander.LastZeroSupport
 
-import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition.Lemmas.Meander.FromFirstWindow
+import all Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition.Lemmas.Meander.FromFirstWindow
 
-import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition.Lemmas.Meander.CorridorProbability
-
+import all Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition.Lemmas.Meander.CorridorProbability
+import Topology.Cadlag.Skorokhod.Path.Linear
 /-!
 # Conditional transition probability from Brownian meander
 
-The public lemma in this file is:
+## Internal proof declarations
 
 - `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.exists_eventually_transitionConditionalProbability_ge_of_unitVariance`:
   if $S$ is a centered unit-variance walk and $\Delta_n/\sqrt{n+1}\to1$,
@@ -40,7 +41,7 @@ Conditioned to Stay Positive*, Ann. Probab. 2(4) (1974), 608--619, DOI 10.1214/a
 Section 3, theorem (3.4), p. 616.
 -/
 
-@[expose] public section
+section
 
 namespace ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned
 
@@ -84,7 +85,7 @@ lemma exists_eventually_transitionConditionalProbability_ge_of_unitVariance
     rw [← law_centeredFirstWindowShift_eq_lastZeroMeanderPathLaw
       hB hcontinuous hmeasurable]
     exact (Measure.map_map Skorokhod.measurable_ofContinuousMap hfirst).symm
-  have hsupport : Skorokhod.straightPath (7 / 16 : ℝ) ∈
+  have hsupport : Skorokhod.linearPath (7 / 16 : ℝ) ∈
       (P.map (fun ω => Skorokhod.ofContinuousMap
         (restrictPathToUnitInterval
           (centeredFirstWindowShift
@@ -144,7 +145,7 @@ lemma exists_eventually_transitionConditionalProbability_ge_of_centeredSecondMom
     rw [IsBrownianReal.lastZeroMeanderPathLaw]
     exact (Measure.map_map Skorokhod.measurable_ofContinuousMap
       (hB.measurable_lastZeroMeanderPath hmeasurable)).symm
-  have hsupport : Skorokhod.straightPath ((7 / 16) / sigma) ∈
+  have hsupport : Skorokhod.linearPath ((7 / 16) / sigma) ∈
       (P.map (fun ω => Skorokhod.ofContinuousMap
         (hB.lastZeroMeanderPath hmeasurable ω))).support := by
     rw [hlaw]

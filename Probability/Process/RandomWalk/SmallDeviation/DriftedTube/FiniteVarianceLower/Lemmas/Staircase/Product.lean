@@ -6,21 +6,31 @@ Authors: WANG Yiyang
 
 module
 
-public import Mathlib.Basic.Real.Basic
-public import Mathlib.MeasureTheory.Measure.MeasureSpaceDef
-public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
-public import Probability.Distributions.Moments.Real
-public import Probability.Process.Filtration.ConditionalBlocks
-public import Probability.Process.RandomWalk.Path.Adapted.Filtration
-public import Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.Blocks.EventBridge
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.Binning
-import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Blocks.Assembly
-import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Binning.Parameters
-import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Rate.BinRate
+import Mathlib.Basic.Real.Basic
+import Mathlib.MeasureTheory.Measure.MeasureSpaceDef
+import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
+import Probability.Distributions.Moments.Real
+import Probability.Process.Filtration.ConditionalBlocks
+import Probability.Process.RandomWalk.Path.Adapted.Filtration
+import Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.Blocks.EventBridge
+import all Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.Binning
+import all Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Blocks.Assembly
+import all Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Binning.Parameters
+import all Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Rate.BinRate
 /-!
 # Finite staircase probability from the endpoint-window rate
 
-The module-visible supporting lemma in this file is:
+## Internal proof declarations
+
+For a finite staircase with entrance event $A$ and block events $B_j$, the lower estimate has the form
+
+$$
+\mathbb P(A)\prod_{j<q}\exp\!\left(-\frac{c\,\ell_j}{W^2}\right)
+\leq \mathbb P\!\left(A\cap\bigcap_{j<q}B_j\right),
+$$
+
+under the listed block-width, endpoint-window, and rate conditions.
+The supporting lemma in this file is:
 
 - `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.exists_uniform_staircaseProbability_ge_product`:
   for a fixed finite spatial-bin count, separate interior endpoint
@@ -36,7 +46,7 @@ terminal-margin, time-ratio, and global exponent comparisons for the
 varying temporal blocks.
 -/
 
-@[expose] public section
+section
 
 open MeasureTheory ProbabilityTheory
 

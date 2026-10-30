@@ -15,6 +15,13 @@ Finite inner corridors approximate every finite-width partition cell from
 inside. Cells with an infinite boundary trace admit inner widths tending to
 infinity, so their contribution to the rate tends to zero. This identifies
 the finite-partition lower rate with the `Hα` energy.
+
+## Public declarations
+
+- commonPartitionApproxWidth chooses increasing finite widths converging to
+  each finite cell width and diverging on cells of infinite width.
+- The finite-partition rate built from these widths converges to
+  ContinuousAdmissibleStepCorridor.energy.
 -/
 
 open Filter

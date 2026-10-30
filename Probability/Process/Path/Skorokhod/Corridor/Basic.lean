@@ -18,6 +18,19 @@ public section
 
 This file applies Portmanteau to uniformly interior corridor events in the
 Skorokhod `J₁` path space.
+
+## Public declarations
+
+- `MeasureTheory.TendstoInDistribution.measure_skorokhodCorridor_le_liminf`:
+  $\mathbb P(Z\in G)\le\liminf_i\mathbb P(X_i\in G)$ for an open path
+  corridor $G$.
+- `MeasureTheory.TendstoInDistribution.measure_skorokhodCorridorEndsIn_le_liminf`:
+  the same lower bound for a corridor with an open terminal constraint.
+- `MeasureTheory.TendstoInDistribution.limsup_measure_skorokhodCorridor_le`:
+  $\limsup_i\mathbb P(X_i\in F)\le\mathbb P(Z\in F)$ for a closed
+  path corridor $F$.
+- `MeasureTheory.TendstoInDistribution.limsup_measure_skorokhodCorridorEndsIn_le`:
+  the same upper bound for a corridor with a closed terminal constraint.
 -/
 
 open Filter MeasureTheory

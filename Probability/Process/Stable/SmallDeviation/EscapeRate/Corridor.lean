@@ -15,6 +15,17 @@ public import Probability.Process.Stable.SmallDeviation.ShiftedCorridor
 
 The centered and shifted corridor limits follow from the range escape rate and
 Mogulskii's stable-process comparison inequalities.
+## Public declarations
+
+For a stable Lévy process whose increment law has mass on both sides of zero,
+`exists_centeredCorridor_escape_rate` and
+`exists_shiftedCorridor_escape_rate` show that centered and translated
+corridors share the range escape-rate constant $C<0$:
+$a^\alpha\log\mathbb P(X([0,1])\subset I_a)\to C$.
+`tendsto_log_shiftedCorridor_div_log_range` gives the logarithmic comparison
+for the translated event. Positivity and squeeze calculations specific to
+these statements remain private.
+
 -/
 
 @[expose] public section

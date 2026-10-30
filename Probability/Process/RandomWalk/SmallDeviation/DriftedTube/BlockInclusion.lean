@@ -10,6 +10,8 @@ public import Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.Block
 /-!
 # Horizontal staircase blocks inside a tilted tube
 
+## Public declarations
+
 The public theorems in this file are:
 
 - `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.tubeBlockEvent_mem_driftedTube_at_time_of_extremeBounds`:

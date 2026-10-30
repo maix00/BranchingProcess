@@ -20,6 +20,23 @@ public import Mathlib.Order.Interval.Set.Basic
 ordered field. The interval endpoints are parameters, so the grid on `[0, 1]`
 is one specialization. Infinite lattices on an unbounded axis are a different
 object and are not identified with this finite interval grid.
+
+## Public declarations
+
+- `UniformGrid K` records endpoints $a\leq b$ and a positive block count
+  $n$. `UniformGrid.Index grid` is $\operatorname{Fin}(n+1)$, and
+  `UniformGrid.point grid j` is $a+\frac{j}{n}(b-a)$.
+- `UniformGrid.point_zero` and `UniformGrid.point_last` identify the two
+  endpoints; `UniformGrid.point_mem_Icc` places every grid point in $[a,b]$.
+- `UniformGrid.monotone_point` proves the grid map is monotone, and
+  `UniformGrid.strictMono_point` proves it is strictly monotone when $a<b$.
+- `UniformGrid.unit` constructs the grid on $\left[0,1\right]$;
+  `unit_left`, `unit_right`, and `unit_point` give its endpoint and coordinate
+  formulas.
+- `UniformGrid.IsRefinement coarse fine` means equal endpoints and
+  $n_{coarse}\mid n_{fine}$. `isRefinement_refl` proves reflexivity,
+  `refinementIndex` embeds coarse indices in the fine grid, and
+  `point_refinement` states that this embedding preserves grid points.
 -/
 
 @[expose] public section

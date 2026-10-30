@@ -19,6 +19,22 @@ import Mathlib.Tactic.FieldSimp
 /-!
 # Rescaled step paths
 
+## Public declarations
+
+- `ProbabilityTheory.RandomWalk.normalizedStepPath`: the normalized
+  right-continuous step path
+  \(X_n(t)=a_n^{-1}\sum_{k<\lfloor nt\rfloor}\xi_k\).
+- `ProbabilityTheory.RandomWalk.normalizedStepPath_zero` and
+  `ProbabilityTheory.RandomWalk.normalizedStepPath_one`:
+  \(X_n(0)=0\) and \(X_n(1)=a_n^{-1}\sum_{k<n}\xi_k\).
+- `ProbabilityTheory.RandomWalk.normalizedStepPath_measurable`:
+  evaluation at a fixed time is measurable in the increment sequence.
+- `ProbabilityTheory.RandomWalk.normalizedStepPath_grid`:
+  for \(k\le n\), \(X_n(k/n)=a_n^{-1}\sum_{j<k}\xi_j\).
+- `ProbabilityTheory.RandomWalk.normalizedStepPath_div_const_eq`:
+  dividing the increments by \(\sigma>0\) and scaling by \(\sqrt n\)
+  agrees with scaling the original increments by \(\sigma\sqrt n\).
+
 The rescaled right-continuous step path divides the first `⌊nt⌋` increments by
 a spatial scale. This construction is deterministic; probability laws and
 corridor events are developed separately.

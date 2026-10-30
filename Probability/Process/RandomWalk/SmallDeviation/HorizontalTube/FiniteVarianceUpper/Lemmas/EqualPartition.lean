@@ -6,12 +6,14 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.Horizontal.Basic
-public import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
-public import Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.FiniteVarianceUpper.Lemmas.Partition.Parameters
+import Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.Blocks.UpperBound
+import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
+import all Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.FiniteVarianceUpper.Lemmas.Partition.Parameters
 
 /-!
 # Equal-partition inputs for the horizontal-tube upper bound
+
+## Internal proof declarations
 
 Write
 \[
@@ -44,7 +46,7 @@ open Filter MeasureTheory ProbabilityTheory
 open ProbabilityTheory.RandomWalk
 open scoped ENNReal NNReal Topology
 
-@[expose] public section
+section
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube
 

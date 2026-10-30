@@ -12,7 +12,9 @@ public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.Return.Basi
 public import Probability.Process.Stable.SmallDeviation.Blocks.Upper.ArbitraryHorizon
 public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Cover
 public import Probability.Process.Path.Skorokhod.Corridor.Segment
-import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Stationarity
+import Algebra.Order.Monoid.Recurrence
+import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Gluing
+import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Probability.Stationarity
 import Mathlib.Order.CompleteLattice.Lemmas
 
 /-!
@@ -21,6 +23,14 @@ import Mathlib.Order.CompleteLattice.Lemmas
 Finite endpoint bins give the lower block estimate while preserving the
 left-open, right-closed endpoint convention. The same construction provides
 the finite-horizon return bound used in the small-deviation comparison.
+## Public declarations
+
+The seven endpoint bins $B_i(a,\varepsilon)$ cover the endpoint range of
+paths in the enlarged corridor. The two theorems
+`iInf_sevenBlockEndpointProbability_pow_le_corridor` and its horizon version
+state that the least block-bin probability, raised to the number of blocks,
+is a lower bound for the probability of remaining in the enlarged corridor.
+
 -/
 
 @[expose] public section
@@ -179,10 +189,11 @@ theorem IsStableLevyProcess.iInf_sevenBlockEndpointProbability_pow_le_corridor
     simp [rationalUniformPrefixCorridorReturnEvent_zero, hcore]
   have hprefix : q ^ blocks ≤ P (rationalUniformPrefixCorridorReturnEvent X
       innerLower innerUpper coreLower coreUpper hblocks blocks) := by
-    apply ProbabilityTheory.pow_le_measure_prefixCorridorReturn_of_steps
-      (P := P) (X := X) blocks hblocks innerLower innerUpper coreLower coreUpper q
-      hzero ?_
-    intro j
+    apply IsOrderedMonoid.pow_le_of_mul_le_succ
+      (fun m => P (rationalUniformPrefixCorridorReturnEvent X
+        innerLower innerUpper coreLower coreUpper hblocks m)) blocks q hzero
+    intro j hj
+    let j : Fin blocks := ⟨j, hj⟩
     apply h.measure_prefixCorridorReturn_succ_ge_mul_of_glue
       blocks hblocks j innerLower innerUpper coreLower coreUpper
       (blockEndpointBin d) V q

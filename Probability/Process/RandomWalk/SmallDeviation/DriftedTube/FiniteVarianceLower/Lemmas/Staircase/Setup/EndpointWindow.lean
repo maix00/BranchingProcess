@@ -6,11 +6,13 @@ Authors: WANG Yiyang
 
 module
 
-public import Mathlib.Basic.Real.Basic
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.BlockTube
+import Mathlib.Basic.Real.Basic
+import all Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.BlockTube
 
 /-!
 # Endpoint fractions in the Lemma 3.5 proof
+
+## Internal proof declarations
 
 The endpoint parameters used by the internal staircase proof are:
 
@@ -29,7 +31,7 @@ Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite
 Offspring*, Chapter 3, proof of Lemma 3.5.
 -/
 
-@[expose] public section
+section
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 

@@ -1,4 +1,4 @@
-import Probability.Distributions.Stable.Exponent.CharacteristicFunction
+import Probability.Distributions.Stable.CharacteristicFunction.Modulus
 
 open MeasureTheory ProbabilityTheory
 

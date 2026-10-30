@@ -11,6 +11,17 @@ public import Probability.Kernel.Step.Iteration
 /-!
 # Endpoint events for iterated partial steps
 
+## Public declarations
+
+- `endpointProbability` is the finite-product probability that $n$ partial
+  steps survive and end in a measurable target.
+- `endpointProbability_succ` gives its one-step integral recursion.
+- `iidSequenceLaw_apply_endsInPrefix` identifies the finite-product endpoint
+  probability with the corresponding event on the canonical IID sequence.
+- `pow_apply_ofPartialStep` identifies the $n$-step kernel mass of a target
+  with the endpoint probability; `pow_apply_ofPartialStep_eq_iidSequenceLaw`
+  gives the canonical IID prefix form.
+
 This extends the survival-only iteration API with evaluation on an arbitrary
 measurable endpoint set.  No finiteness or countability assumption is placed
 on either the state or noise space.
@@ -33,7 +44,7 @@ noncomputable def endpointProbability (ν : Measure ξ)
     {history | EndsIn step target n a history}
 
 omit [MeasurableSpace α] in
-theorem endsIn_piFinSuccAbove_symm_iff
+private theorem endsIn_piFinSuccAbove_symm_iff
     (step : α → ξ → Option α) (target : Set α) (n : ℕ) (a : α)
     (z : ξ) (tail : Fin n → ξ) :
     EndsIn step target (n + 1) a
@@ -104,10 +115,10 @@ theorem iidSequenceLaw_apply_endsInPrefix
       EndsInPrefix step target n a sequence} =
       Combinatorics.Sequence.blockCoordinates 0 n ⁻¹' {history |
         EndsIn step target n a history} by rfl]
-  rw [← Measure.map_apply (measurable_blockCoordinates 0 n)
-      (measurableSet_endsIn step hstep htarget n a),
-    iidSequenceLaw_map_blockCoordinates_zero]
-  rfl
+  simpa [endpointProbability] using
+    iidSequenceLaw_measure_blockCoordinates_preimage_eq_pi ν 0 n
+      {history | EndsIn step target n a history}
+      (measurableSet_endsIn step hstep htarget n a)
 
 /-- An iterated partial-step kernel evaluated on a measurable target equals
 the finite-product probability of surviving and ending in that target. -/

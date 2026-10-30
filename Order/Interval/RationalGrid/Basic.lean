@@ -18,6 +18,12 @@ import Order.Interval.RationalGrid.Arithmetic
 This module exposes the generic bridge from a finite set of rational
 coordinates to a real uniform grid.  Interval bounds and unit-interval
 specializations live in dedicated adapter modules.
+
+## Public declarations
+
+- `RationalGrid.exists_uniformGrid_of_finset` states that any finite set of
+  rational coordinates is represented exactly at points of some finite
+  uniform grid on $\mathbb R$.
 -/
 
 @[expose] public section

@@ -7,10 +7,17 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Distributions.Stable.Basic
-public import Probability.Distributions.Scaling
+import Probability.Distributions.Scaling
 
 /-!
-# Positive rescaling of stable laws
+# Nonzero rescaling of stable laws
+
+## Public declarations
+
+* `IsAlphaStable.map_mul`: if `μ` is α-stable, then the law of `rX` is
+  α-stable for every `r ≠ 0`, with the affine shift scaled by `r`.
+* `IsStrictlyAlphaStable.map_mul`: the same nonzero rescaling preserves strict
+  α-stability, with no added location shift. Reflection is the case `r = -1`.
 -/
 
 open MeasureTheory
@@ -20,11 +27,11 @@ open MeasureTheory
 namespace ProbabilityTheory
 
 set_option linter.style.haveILetI false in
-/-- A positive spatial rescaling preserves stability and multiplies its
+/-- A nonzero spatial rescaling preserves stability and multiplies its
 affine shift by the same factor. -/
 theorem IsAlphaStable.map_mul
     {α : ℝ} {μ : Measure ℝ} (h : IsAlphaStable α μ)
-    (r : ℝ) (hr : 0 < r) : IsAlphaStable α (μ.map fun x => r * x) := by
+    (r : ℝ) (hr : r ≠ 0) : IsAlphaStable α (μ.map fun x => r * x) := by
   let f : ℝ → ℝ := fun x => r * x
   let g : ℝ → ℝ := fun x => r⁻¹ * x
   have hf : Measurable f := by fun_prop
@@ -36,7 +43,8 @@ theorem IsAlphaStable.map_mul
     have hleft : μ = (μ.map f).map g := by
       have hcomp : g ∘ f = id := by
         funext x
-        simp [f, g, hr.ne']
+        change r⁻¹ * (r * x) = x
+        rw [← mul_assoc, inv_mul_cancel₀ hr, one_mul]
       rw [Measure.map_map hg hf, hcomp]
       simp
     have hright : (μ.map f).map g = Measure.dirac (g y) := by
@@ -66,11 +74,11 @@ theorem IsAlphaStable.map_mul
         ring
 
 set_option linter.style.haveILetI false in
-/-- Positive spatial scaling preserves strict stability, with the same
+/-- Nonzero spatial scaling preserves strict stability, with the same
 strict-stability convention and no added location shift. -/
 theorem IsStrictlyAlphaStable.map_mul
     {α : ℝ} {μ : Measure ℝ} (h : IsStrictlyAlphaStable α μ)
-    (r : ℝ) (hr : 0 < r) :
+    (r : ℝ) (hr : r ≠ 0) :
     IsStrictlyAlphaStable α (μ.map fun x => r * x) := by
   let f : ℝ → ℝ := fun x => r * x
   let g : ℝ → ℝ := fun x => r⁻¹ * x
@@ -83,7 +91,8 @@ theorem IsStrictlyAlphaStable.map_mul
     have hleft : μ = (μ.map f).map g := by
       have hcomp : g ∘ f = id := by
         funext x
-        simp [f, g, hr.ne']
+        change r⁻¹ * (r * x) = x
+        rw [← mul_assoc, inv_mul_cancel₀ hr, one_mul]
       rw [Measure.map_map hg hf, hcomp]
       simp
     have hright : (μ.map f).map g = Measure.dirac (g y) := by

@@ -4,10 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.Process.Stable.PathContinuity
+import Probability.Process.Levy.PathContinuity
 
 /-!
 # Fixed-time continuity of stable Lévy paths
 -/
 
-#print axioms ProbabilityTheory.IsStableLevyProcess.ae_leftLim_eq_eval
+#print axioms ProbabilityTheory.IsLevyProcess.ae_leftLim_eq_eval

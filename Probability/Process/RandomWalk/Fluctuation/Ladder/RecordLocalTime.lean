@@ -11,6 +11,8 @@ public import Probability.Process.RandomWalk.Path.Survival.Basic
 /-!
 # Strict record local time of a random walk
 
+## Public declarations
+
 Let $(\xi_i)_{i\geq1}$ be a sequence of increments and set
 $S_0=0$ and $S_n=\sum_{i=1}^n\xi_i$. The strict ascending record count is
 $\ell_n=\#\{1\leq j\leq n:S_j>\max_{0\leq i<j}S_i\}$. The public

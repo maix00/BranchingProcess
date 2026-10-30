@@ -6,21 +6,21 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Path.TerminalLeft
+public import Probability.Process.RandomWalk.Path.Skorokhod.TerminalLeft.Basic
 public import Probability.Process.Path.PathClass.StepCorridor.Probability.Rate.InnerOuter
 public import Probability.Process.Path.PathClass.StepCorridor.Probability.Rate.Relative
 public import Probability.Process.Path.PathClass.StepCorridor.Probability.Rate.FiniteUnionNullMeasurable
+public import Probability.Sequence.IID.Basic
+public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
+public import Mathlib.Probability.HasLaw
+public import Mathlib.Probability.Independence.Basic
 public import Mathlib.MeasureTheory.Measure.QuasiMeasurePreserving
 
 /-!
 # Mogul'skii rates under arbitrary i.i.d. realizations
 
-The public theorems in this file are:
+## Public declarations
 
-- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.measure_sourceFiniteCorridorUnionEvent_eq_of_iid`:
-  for i.i.d. coordinates with law $\nu$, the probability of a finite
-  terminal-left path corridor event equals its probability under
-  `iidSequenceLaw ν`.
 - `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.existsUnique_inner_outer_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_iid`:
   if finite corridor unions have rate $\kappa E(C)$ under the canonical
   law, an $M_3$ path class has a unique energy $H$ and both realized
@@ -29,10 +29,9 @@ The public theorems in this file are:
   the same conclusion holds for a relative $M_3$ class in the source
   terminal-left path domain.
 
-The exact target in class M need not be measurable. We transfer the
-probabilities only for its M₃ approximants, whose path events are
-null-measurable under the induced path law, and then apply the existing
-measure-theoretic inner/outer squeeze.
+The target in class M is handled through its M₃ approximants, whose path
+events are null-measurable under the induced path law. The existing
+measure-theoretic inner/outer squeeze then gives the two rates.
 
 The terminal-left path-class rate is A. A. Mogul'skii, Theorem 3, Section 4, p. 764,
 “Small deviations in the sample function space,” *Teoriya Veroyatnostei i ee
@@ -54,10 +53,10 @@ open Skorokhod.PathClass.StepCorridor
 open ProbabilityTheory.RandomWalk
 
 /-- A finite-union corridor event has the same probability under any i.i.d.
-realization and the canonical sequence law. The path corridor is
-null-measurable under the induced path law, which is the hypothesis needed
-for Measure.map_apply₀; no arbitrary-set pushforward formula is used. -/
-theorem measure_sourceFiniteCorridorUnionEvent_eq_of_iid
+realization and the canonical sequence law. The induced path law makes the
+corridor event null-measurable, enabling `Measure.map_apply₀` to transfer its
+probability between these laws. -/
+private lemma measure_sourceFiniteCorridorUnionEvent_eq_of_iid
     {Ω : Type*} [MeasurableSpace Ω]
     {P : Measure Ω} [IsProbabilityMeasure P]
     {ν : Measure ℝ} [IsProbabilityMeasure ν]
@@ -66,19 +65,19 @@ theorem measure_sourceFiniteCorridorUnionEvent_eq_of_iid
     (hmeasurable : ∀ k, Measurable (coordinate k))
     (hlaw : ∀ k, HasLaw (coordinate k) ν P)
     (scale : ℕ → ℝ) (n : ℕ) {α : ℝ} (C : FiniteCorridorUnion α) :
-    P {ω | sourceNormalizedStepCadlagPathIcc scale n
+    P {ω | terminalLeftNormalizedStepCadlagPathIcc scale n
         (fun k => coordinate k ω) ∈ C.toSet} =
       iidSequenceLaw ν {increment |
-        sourceNormalizedStepCadlagPathIcc scale n increment ∈ C.toSet} := by
+        terminalLeftNormalizedStepCadlagPathIcc scale n increment ∈ C.toSet} := by
   let pathMap : (ℕ → ℝ) → CadlagPath unitInterval ℝ :=
-    sourceNormalizedStepCadlagPathIcc scale n
+    terminalLeftNormalizedStepCadlagPathIcc scale n
   let pathLaw : Measure (CadlagPath unitInterval ℝ) :=
     (iidSequenceLaw ν).map pathMap
   let realizedPath : Ω → CadlagPath unitInterval ℝ := fun ω =>
     pathMap (fun k => coordinate k ω)
   have hrealizedLaw : HasLaw realizedPath pathLaw P := by
     simpa [realizedPath, pathLaw, pathMap] using
-      hasLaw_sourceNormalizedStepCadlagPathIcc_of_iid
+      hasLaw_terminalLeftNormalizedStepCadlagPathIcc_of_iid
         hindep hmeasurable hlaw scale n
   have hpathEvent : NullMeasurableSet C.toSet pathLaw := by
     dsimp [pathLaw]
@@ -93,7 +92,7 @@ theorem measure_sourceFiniteCorridorUnionEvent_eq_of_iid
     _ = iidSequenceLaw ν {increment | pathMap increment ∈ C.toSet} := by
       dsimp [pathLaw]
       exact Measure.map_apply₀
-        (measurable_sourceNormalizedStepCadlagPathIcc scale n).aemeasurable
+        (measurable_terminalLeftNormalizedStepCadlagPathIcc scale n).aemeasurable
         (by simpa [pathLaw, pathMap] using hpathEvent)
 
 /-- The inner and outer probabilities of any terminal-left path set in class M
@@ -114,10 +113,10 @@ theorem existsUnique_inner_outer_log_probability_ratio_of_hasVanishingEnergyGapA
     (hcanonicalFiniteUnionRate : ∀ C : FiniteCorridorUnion α,
       (∀ᶠ n : ℕ in atTop, 0 < (iidSequenceLaw ν
         {increment : ℕ → ℝ |
-          sourceNormalizedStepCadlagPathIcc scale n increment ∈ C.toSet}).toReal) ∧
+          terminalLeftNormalizedStepCadlagPathIcc scale n increment ∈ C.toSet}).toReal) ∧
       Tendsto (fun n : ℕ => Real.log (iidSequenceLaw ν
         {increment : ℕ → ℝ |
-          sourceNormalizedStepCadlagPathIcc scale n increment ∈ C.toSet}).toReal /
+          terminalLeftNormalizedStepCadlagPathIcc scale n increment ∈ C.toSet}).toReal /
           g n) atTop (𝓝 (κ * C.realEnergy)))
     {G : Set (CadlagPath unitInterval ℝ)} (hG : HasVanishingEnergyGapApproximation α G) :
     ∃! H : ℝ,
@@ -125,29 +124,29 @@ theorem existsUnique_inner_outer_log_probability_ratio_of_hasVanishingEnergyGapA
         H = hLimits.commonEnergy ∧
         (∀ᶠ n : ℕ in atTop,
           0 < ((P.innerMeasure {ω |
-            sourceNormalizedStepCadlagPathIcc scale n
+            terminalLeftNormalizedStepCadlagPathIcc scale n
               (fun k => coordinate k ω) ∈ G}).toReal)) ∧
         (∀ᶠ n : ℕ in atTop,
           0 < (P {ω |
-            sourceNormalizedStepCadlagPathIcc scale n
+            terminalLeftNormalizedStepCadlagPathIcc scale n
               (fun k => coordinate k ω) ∈ G}).toReal) ∧
         0 < H ∧ H ≤ FiniteCorridorUnion.realEnergy (A.inner 0) ∧
         Tendsto (fun n : ℕ => Real.log
           ((P.innerMeasure {ω |
-            sourceNormalizedStepCadlagPathIcc scale n
+            terminalLeftNormalizedStepCadlagPathIcc scale n
               (fun k => coordinate k ω) ∈ G}).toReal) / g n)
           atTop (𝓝 (κ * H)) ∧
         Tendsto (fun n : ℕ => Real.log ((P {ω |
-          sourceNormalizedStepCadlagPathIcc scale n
+          terminalLeftNormalizedStepCadlagPathIcc scale n
             (fun k => coordinate k ω) ∈ G}).toReal) / g n)
           atTop (𝓝 (κ * H)) := by
   let paths : ℕ → Ω → CadlagPath unitInterval ℝ := fun n ω =>
-    sourceNormalizedStepCadlagPathIcc scale n (fun k => coordinate k ω)
+    terminalLeftNormalizedStepCadlagPathIcc scale n (fun k => coordinate k ω)
   have hcoordinates : Measurable (fun ω k => coordinate k ω) :=
     measurable_pi_iff.mpr hmeasurable
   have hpathsMeasurable (n : ℕ) : Measurable (paths n) := by
     dsimp [paths]
-    exact (measurable_sourceNormalizedStepCadlagPathIcc scale n).comp hcoordinates
+    exact (measurable_terminalLeftNormalizedStepCadlagPathIcc scale n).comp hcoordinates
   have hFiniteUnionRate : ∀ C : FiniteCorridorUnion α,
       (∀ n : ℕ, NullMeasurableSet {ω | paths n ω ∈ C.toSet} P) ∧
       (∀ᶠ n : ℕ in atTop, 0 < (P {ω | paths n ω ∈ C.toSet}).toReal) ∧
@@ -157,10 +156,10 @@ theorem existsUnique_inner_outer_log_probability_ratio_of_hasVanishingEnergyGapA
     refine ⟨?_, ?_, ?_⟩
     · intro n
       let pathLaw : Measure (CadlagPath unitInterval ℝ) :=
-        (iidSequenceLaw ν).map (sourceNormalizedStepCadlagPathIcc scale n)
+        (iidSequenceLaw ν).map (terminalLeftNormalizedStepCadlagPathIcc scale n)
       have hpathLaw : HasLaw (paths n) pathLaw P := by
         simpa [paths, pathLaw] using
-          hasLaw_sourceNormalizedStepCadlagPathIcc_of_iid
+          hasLaw_terminalLeftNormalizedStepCadlagPathIcc_of_iid
             hindep hmeasurable hlaw scale n
       have hpathEvent : NullMeasurableSet C.toSet pathLaw := by
         dsimp [pathLaw]
@@ -180,7 +179,7 @@ theorem existsUnique_inner_outer_log_probability_ratio_of_hasVanishingEnergyGapA
             (P {ω | paths n ω ∈ C.toSet}).toReal / g n) =ᶠ[atTop]
           (fun n : ℕ => Real.log (iidSequenceLaw ν
             {increment : ℕ → ℝ |
-              sourceNormalizedStepCadlagPathIcc scale n increment ∈ C.toSet}).toReal /
+              terminalLeftNormalizedStepCadlagPathIcc scale n increment ∈ C.toSet}).toReal /
               g n) := by
         filter_upwards [] with n
         simp only [paths]
@@ -218,10 +217,10 @@ theorem existsUnique_inner_outer_log_probability_ratio_of_hasRelativeVanishingEn
     (hcanonicalFiniteUnionRate : ∀ C : FiniteCorridorUnion α,
       (∀ᶠ n : ℕ in atTop, 0 < (iidSequenceLaw ν
         {increment : ℕ → ℝ |
-          sourceNormalizedStepCadlagPathIcc scale n increment ∈ C.toSet}).toReal) ∧
+          terminalLeftNormalizedStepCadlagPathIcc scale n increment ∈ C.toSet}).toReal) ∧
       Tendsto (fun n : ℕ => Real.log (iidSequenceLaw ν
         {increment : ℕ → ℝ |
-          sourceNormalizedStepCadlagPathIcc scale n increment ∈ C.toSet}).toReal /
+          terminalLeftNormalizedStepCadlagPathIcc scale n increment ∈ C.toSet}).toReal /
           g n) atTop (𝓝 (κ * C.realEnergy)))
     {G : Set (CadlagPath unitInterval ℝ)}
     (hG : HasRelativeVanishingEnergyGapApproximation α
@@ -233,28 +232,28 @@ theorem existsUnique_inner_outer_log_probability_ratio_of_hasRelativeVanishingEn
           H = hLimits.commonEnergy ∧
           (∀ᶠ n : ℕ in atTop,
             0 < (P.innerMeasure {ω |
-              sourceNormalizedStepCadlagPathIcc scale n
+              terminalLeftNormalizedStepCadlagPathIcc scale n
                 (fun k => coordinate k ω) ∈ G}).toReal) ∧
           (∀ᶠ n : ℕ in atTop,
             0 < (P {ω |
-              sourceNormalizedStepCadlagPathIcc scale n
+              terminalLeftNormalizedStepCadlagPathIcc scale n
                 (fun k => coordinate k ω) ∈ G}).toReal) ∧
           Tendsto (fun n : ℕ => Real.log
             ((P.innerMeasure {ω |
-              sourceNormalizedStepCadlagPathIcc scale n
+              terminalLeftNormalizedStepCadlagPathIcc scale n
                 (fun k => coordinate k ω) ∈ G}).toReal) / g n)
             atTop (𝓝 (κ * H)) ∧
           Tendsto (fun n : ℕ => Real.log (P {ω |
-            sourceNormalizedStepCadlagPathIcc scale n
+            terminalLeftNormalizedStepCadlagPathIcc scale n
               (fun k => coordinate k ω) ∈ G}).toReal / g n)
             atTop (𝓝 (κ * H)) := by
   let paths : ℕ → Ω → CadlagPath unitInterval ℝ := fun n ω =>
-    sourceNormalizedStepCadlagPathIcc scale n (fun k => coordinate k ω)
+    terminalLeftNormalizedStepCadlagPathIcc scale n (fun k => coordinate k ω)
   have hcoordinates : Measurable (fun ω k => coordinate k ω) :=
     measurable_pi_iff.mpr hmeasurable
   have hpathsMeasurable (n : ℕ) : Measurable (paths n) := by
     dsimp [paths]
-    exact (measurable_sourceNormalizedStepCadlagPathIcc scale n).comp hcoordinates
+    exact (measurable_terminalLeftNormalizedStepCadlagPathIcc scale n).comp hcoordinates
   have hpaths : ∀ n ω, paths n ω ∈ Skorokhod.terminalLeftPathSpace := by
     intro n ω
     exact Skorokhod.terminalLeftPath_mem_space
@@ -268,10 +267,10 @@ theorem existsUnique_inner_outer_log_probability_ratio_of_hasRelativeVanishingEn
     refine ⟨?_, ?_, ?_⟩
     · intro n
       let pathLaw : Measure (CadlagPath unitInterval ℝ) :=
-        (iidSequenceLaw ν).map (sourceNormalizedStepCadlagPathIcc scale n)
+        (iidSequenceLaw ν).map (terminalLeftNormalizedStepCadlagPathIcc scale n)
       have hpathLaw : HasLaw (paths n) pathLaw P := by
         simpa [paths, pathLaw] using
-          hasLaw_sourceNormalizedStepCadlagPathIcc_of_iid
+          hasLaw_terminalLeftNormalizedStepCadlagPathIcc_of_iid
             hindep hmeasurable hlaw scale n
       have hpathEvent : NullMeasurableSet C.toSet pathLaw := by
         dsimp [pathLaw]
@@ -289,7 +288,7 @@ theorem existsUnique_inner_outer_log_probability_ratio_of_hasRelativeVanishingEn
           Real.log (P {ω | paths n ω ∈ C.toSet}).toReal / g n) =ᶠ[atTop]
           fun n : ℕ => Real.log (iidSequenceLaw ν
             {increment : ℕ → ℝ |
-              sourceNormalizedStepCadlagPathIcc scale n increment ∈ C.toSet}).toReal /
+              terminalLeftNormalizedStepCadlagPathIcc scale n increment ∈ C.toSet}).toReal /
             g n := by
         filter_upwards [] with n
         simpa [paths] using congrArg

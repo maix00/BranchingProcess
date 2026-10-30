@@ -4,6 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
+module
+
+public import Probability.Distributions.Stable.Basic
+public import Probability.Distributions.InfinitelyDivisible.LevyKhintchine.Defs
+public import Mathlib.MeasureTheory.Measure.CharacteristicFunction.Basic
 import Probability.Distributions.Stable.LevyMeasure.Tail.Homogeneous
 
 /-!
@@ -12,7 +17,15 @@ import Probability.Distributions.Stable.LevyMeasure.Tail.Homogeneous
 The power-law tail identities imply positive mass in every window on a side
 whose unit tail has positive mass. This does not require a density formula or
 an atomlessness theorem.
+
+## Public declarations
+
+* `levyMeasure_Ioo_pos_of_pos_tail` and
+  `levyMeasure_neg_Ioo_pos_of_neg_tail` state that positive mass in a unit
+  half-line tail gives positive mass to every bounded window on that side.
 -/
+
+@[expose] public section
 
 namespace ProbabilityTheory
 

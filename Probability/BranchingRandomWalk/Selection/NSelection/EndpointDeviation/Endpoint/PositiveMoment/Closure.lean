@@ -4,9 +4,31 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.Minimum.Lineage
+module
+
+public import Probability.BranchingRandomWalk.Assumptions.Moments
+public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law.Basic
+public import Probability.BranchingRandomWalk.Selection.NSelection.Admissible.Real
+public import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.Minimum.Address
+public import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.Minimum.Basic
+public import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Roots.Nonempty
+public import Probability.BranchingRandomWalk.Step.Ordering.Law
+import all Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.Minimum.Lemmas.Lineage
+import Combinatorics.BranchingWalk.Step.Ordering.Monotone
+import Probability.BranchingRandomWalk.Step.Ordering.Support
+import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
+
 /-!
 # Positive fourth moment of the selected endpoint
+
+## Public declarations
+
+- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.firstNSelectedEndpointMinimum_zero_eq`:
+  the selected endpoint minimum starts at zero, \(M_0=0\).
+- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.finiteRootStepFieldLaw_integrable_pow_four_max_firstNSelectedEndpointMinimum_pos`:
+  the positive part is fourth-integrable and
+  \(\mathbb E[(M_H^+)^4]\le H^4\mathbb E[(X^+)^4]\), where \(X\) is the
+  ordered leftmost displacement.
 
 The endpoint-minimizing address has a predictable fresh slot-zero increment.
 Its one-step comparison and the zero initial endpoint imply that the positive
@@ -20,11 +42,11 @@ open MeasureTheory
 
 set_option maxHeartbeats 1000000
 
-section
+@[expose] public section
 
 attribute [local instance] Classical.propDecidable Classical.decEq
 
-namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail
+namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation
 
 open Combinatorics.Branching
 open Combinatorics.UlamHarris
@@ -184,4 +206,4 @@ theorem finiteRootStepFieldLaw_integrable_pow_four_max_firstNSelectedEndpointMin
           ∫ ξ, (L.leftmostPositivePart ξ) ^ 4 ∂L.raw := by
         simpa [P, increment] using hsum.2
 
-end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail
+end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation

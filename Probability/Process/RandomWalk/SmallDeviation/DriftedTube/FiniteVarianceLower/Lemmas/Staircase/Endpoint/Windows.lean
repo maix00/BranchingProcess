@@ -6,15 +6,16 @@ Authors: WANG Yiyang
 
 module
 
-public import Mathlib.Basic.Real.Basic
-public import Mathlib.Order.Interval.Set.Defs
+import Mathlib.Basic.Real.Basic
+import Mathlib.Order.Interval.Set.Defs
 import Mathlib.Tactic.SetNotationForOrder
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.BlockTube
-public import Probability.Process.RandomWalk.Path.Block.Partition.TailMerged
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.EndpointWindow
-import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.BlockTube
+import all Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.BlockTube
+import Combinatorics.Sequence.TailMergedBlock
+import all Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.EndpointWindow
 /-!
 # Terminal windows of the horizontal staircase blocks
+
+## Internal proof declarations
 
 The endpoint equalities used across the Lemma 3.5 proof modules are:
 
@@ -32,7 +33,7 @@ These are the endpoint definitions and equalities in Wang Yiyang,
 Chapter 3, proof of Lemma 3.5.
 -/
 
-@[expose] public section
+section
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 

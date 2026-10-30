@@ -3,7 +3,7 @@ Copyright (c) 2026 WANG Yiyang.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
-import Probability.BranchingProcess.GaltonWatson.Growth
+import Probability.MeasureTheory.Moments.SecondMomentGrowth
 import Probability.MeasureTheory.Moments.PaleyZygmund
 import Mathlib.Probability.Distributions.Bernoulli
 import Mathlib.Topology.UnitInterval
@@ -125,10 +125,8 @@ example :
 example :
     ∫ b, boundedOffspring b ^ 2 ∂boundedOffspringMeasure ≤
       2 * ∫ b, boundedOffspring b ∂boundedOffspringMeasure := by
-  exact integral_sq_le_two_mul_integral boundedOffspringMeasure boundedOffspring
-    boundedOffspring_measurable (ae_of_all _ fun b => by
-      cases b <;> norm_num [boundedOffspring])
-    (ae_of_all _ fun b => by cases b <;> norm_num [boundedOffspring])
+  rw [boundedOffspring_sq_integral, boundedOffspring_integral]
+  norm_num
 
 example :
     (boundedOffspringMeasure.real {b | (3 / 4 : ℝ) ≤ boundedOffspring b}) ≥
@@ -226,7 +224,7 @@ example (field : Combinatorics.Branching.StepField (Fin 2) PUnit) (n : ℕ) :
   ProbabilityTheory.BranchingProcess.GaltonWatson.generationSize_succ_eq_sum_childSubtree
     field n
 
-#print axioms measure_generation_ge_floor_rpow_of_moment_recursion
+#print axioms measure_ge_floor_rpow_of_moment_recursion
 #print axioms generationSize_one_law
 #print axioms generationSecondMoment_succ_eq_offspringMoments
 

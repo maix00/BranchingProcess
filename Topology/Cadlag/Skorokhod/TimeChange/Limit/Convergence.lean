@@ -6,9 +6,9 @@ Authors: WANG Yiyang
 
 module
 
-public import Mathlib.Analysis.Normed.Group.Completeness
-public import Mathlib.Analysis.SpecificLimits.Basic
-public import Mathlib.Topology.Algebra.InfiniteSum.ENNReal
+import Mathlib.Analysis.Normed.Group.Completeness
+import Mathlib.Analysis.SpecificLimits.Basic
+import Mathlib.Topology.Algebra.InfiniteSum.ENNReal
 public import Topology.Cadlag.Skorokhod.TimeChange.Sequence
 
 /-!
@@ -21,8 +21,11 @@ public import Topology.Cadlag.Skorokhod.TimeChange.Sequence
   `error n`, the cumulative clocks converge uniformly to a continuous map.
 
 Summably small logarithmic distortions make the cumulative time changes
-uniformly Cauchy. This file constructs their continuous uniform limit; strict
-monotonicity of the limit is treated separately.
+uniformly Cauchy. This is the uniform-limit step in Patrick Billingsley,
+*Convergence of Probability Measures*, 1st ed., Wiley, 1968, Chapter 3,
+§14, Theorem 14.2, pp. 115–116
+([text](https://ru.djvu.online/file/vaaIHv9IWlVeK)); strict monotonicity of
+the limit is treated separately.
 -/
 
 @[expose] public section
@@ -68,7 +71,9 @@ private lemma cumulative_dist_le_exp_tail
       distortion_le_exp_sub_exp_neg_of_logDistortion_le suffix htail_nonneg hlog
 
 /-- Summably bounded local logarithmic distortions imply uniform convergence
-of the cumulative time changes as continuous maps on the unit interval. -/
+of the cumulative time changes as continuous maps on the unit interval. This
+formalizes the uniform-limit step of Billingsley's proof of Theorem 14.2 in
+*Convergence of Probability Measures*, 1st ed., Chapter 3, §14, pp. 115–116. -/
 theorem exists_uniform_limit_cumulative_of_summable_logDistortion
     (clocks : ℕ → TimeChange) (error : ℕ → ℝ≥0)
     (hstep : ∀ n, (clocks n).logDistortion ≤ error n)

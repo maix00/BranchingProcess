@@ -6,11 +6,33 @@ Authors: WANG Yiyang
 
 module
 
+public import Combinatorics.BranchingWalk.Population.Offspring
+
 public import Probability.BranchingRandomWalk.Population.Processes.StepSelection.RootIndexed
 public import Combinatorics.BranchingWalk.Population.Genealogy
 
 /-!
 # Causal branching populations
+
+## Public declarations
+
+- `ProbabilityTheory.BranchingRandomWalk.RootIndexed.CausalPopulation`:
+  a samplewise branching population \(P_n(\omega)\) whose particles have
+  generation depth \(n\), whose successors are children of retained parents,
+  and whose membership events are adapted to the generation domain flow.
+- `ProbabilityTheory.BranchingRandomWalk.RootIndexed.CausalPopulation.measurable_mem`,
+  `.depth`, and `.successor`: expose those adaptedness and genealogical
+  properties for each particle and generation.
+- `ProbabilityTheory.BranchingRandomWalk.RootIndexed.CausalPopulation.pullback`
+  and `.pullback_population`: transfer the population along a measurable map
+  that intertwines the pre-sampled step fields.
+- `ProbabilityTheory.BranchingRandomWalk.RootIndexed.CausalPopulation.FiniteSlices`:
+  states that every samplewise generation slice is finite.
+- `ProbabilityTheory.BranchingRandomWalk.RootIndexed.CausalPopulation.FiniteSlices.pullback`,
+  `.toFinset`, `.mem_toFinset`, and `.coe_toFinset`: preserve finite slices
+  under pullback and present a finite slice as a `Finset`.
+- `ProbabilityTheory.BranchingRandomWalk.RootIndexed.CausalPopulation.FiniteSlices.measurable_toFinset`:
+  the finite-set presentation of each slice is measurable.
 
 A causal population records the genealogically labelled particles
 retained at every generation.  Retention may use the whole available
@@ -72,7 +94,7 @@ theorem depth (P : CausalPopulation Ω Root α X ℱ stepField)
 theorem successor (P : CausalPopulation Ω Root α X ℱ stepField)
     (n : ℕ) (ω : Ω) :
     P (n + 1) ω ⊆
-      Combinatorics.Branching.Selection.Coupling.offspringAddressSet
+      Combinatorics.Branching.Population.offspringAddressSet
         (P n ω) (fun p => support (stepField ω p.1 p.2)) :=
   (P.toPopulation ω).successor n
 

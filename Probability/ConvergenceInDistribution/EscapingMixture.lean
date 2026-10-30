@@ -11,7 +11,7 @@ public import Probability.ConvergenceInDistribution.Portmanteau
 /-!
 # Weak convergence of mixtures whose indices escape
 
-The public theorem in this file is:
+## Public declarations
 
 - `MeasureTheory.ProbabilityMeasure.tendsto_finiteMixture_of_escape`:
   if $Q_k\Rightarrow Q$, each fixed weight $p_{n,k}\to0$, and

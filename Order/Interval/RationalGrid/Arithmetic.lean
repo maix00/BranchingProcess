@@ -22,6 +22,15 @@ import Mathlib.Tactic.Ring
 This module contains the denominator arithmetic used to place bounded finite
 rational families on a unit grid. It has no topology or interval-adapter
 dependencies.
+
+## Public declarations
+
+- `RationalGrid.Arithmetic.exists_unit_uniformGrid_of_finset` places every
+  finite family $I\subseteq\left[0,1\right]\cap\mathbb Q$ at grid points of
+  a uniform real grid with endpoints $0$ and $1$.
+- `RationalGrid.Arithmetic.exists_uniformGrid_of_finset_mem_Icc` places every
+  finite family $I\subseteq\left[left,right\right]\cap\mathbb Q$ on a
+  uniform real grid with the prescribed rational endpoints $left\leq right$.
 -/
 
 @[expose] public section

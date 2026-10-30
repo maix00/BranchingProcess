@@ -12,6 +12,8 @@ public import Mathlib.MeasureTheory.Constructions.BorelSpace.Order
 /-!
 # Reflection of a continuous path after a time
 
+## Public declarations
+
 The public definition and theorems in this file are:
 
 - `ProbabilityTheory.reflectAfter`: the path

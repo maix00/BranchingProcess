@@ -6,14 +6,16 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.Path.AboveStart.FirstWindow.Continuity
+public import Probability.Process.Path.AboveStart.FirstWindow.Time.Continuity
 public import Probability.Process.Brownian.AboveStart.FirstWindow.Basic
-public import Probability.Process.Brownian.AboveStart.InteriorReturn
-public import Probability.Process.Brownian.AboveStart.EndpointReturnZero
-public import Probability.Process.Brownian.AboveStart.RunningMinimum
+import all Probability.Process.Brownian.AboveStart.FirstWindow.Lemmas.InteriorReturn
+import all Probability.Process.Brownian.AboveStart.FirstWindow.Lemmas.EndpointReturn
+import all Probability.Process.Brownian.AboveStart.FirstWindow.Lemmas.CutoffBoundary
 
 /-!
 # Continuity of the first Brownian unit-window time
+
+## Public declarations
 
 The public theorem in this file is:
 

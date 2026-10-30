@@ -10,6 +10,7 @@ public import Probability.Process.Stable.Levy
 public import Probability.Process.Path.Skorokhod.RationalTime
 public import Probability.Process.Path.Skorokhod.Corridor.Segment
 public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Gluing
+public import Probability.Process.Path.Skorokhod.Corridor.RationalCoordinate
 import Probability.Process.Stable.SmallDeviation.Blocks.ReturnScale
 
 /-!
@@ -18,6 +19,8 @@ import Probability.Process.Stable.SmallDeviation.Blocks.ReturnScale
 At duration `a ^ α`, a corridor and endpoint window scaled by `a` have the
 same probability as the unscaled unit-time event. This is the scaling step
 in the entrance factor of the shifted-corridor comparison.
+
+## Public declarations
 
 The public declarations are:
 

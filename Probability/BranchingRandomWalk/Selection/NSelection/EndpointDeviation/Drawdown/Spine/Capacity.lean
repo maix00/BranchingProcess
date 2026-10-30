@@ -4,16 +4,20 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Population.Processes.Causal.Capacity.Spine
-import Probability.Process.RandomWalk.Path.Corridor.Horizontal.Core
-import Probability.Process.RandomWalk.SmallDeviation.Drawdown.Event
-import Probability.BranchingRandomWalk.Spine.Tube.Corridor.PairBound
+module
+
+public import Probability.BranchingRandomWalk.Population.Processes.Causal.Capacity.Spine
+public import Probability.Process.RandomWalk.Path.Corridor.Horizontal.Core
+public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.Event
+public import Probability.BranchingRandomWalk.Spine.Tube.Corridor.PairBound
 
 /-!
 # First-stage killed-population count bound
 
+## Public declarations
+
 The public declaration is
-`ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.measure_rightTailPositiveAFirstStageLowCount_le_of_affineCorridorDrawdown`.
+`ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.measure_positiveAFirstStageLowCount_le_of_affineCorridorDrawdown`.
 For a generation-$n$ affine corridor $G_n$ with positive tilted-walk
 probability, a drawdown bound $q_j$ on every prefix yields a second-moment
 bound for the number $N_{G_n}$ of roots whose paths stay in $G_n$. Write
@@ -31,10 +35,14 @@ positive-initial-mass estimate in Proposition 3.1, equation (4.15), of
 Elie Aïdékon and Yueyun Hu, *Average-weight percolation on the complete
 graph*, arXiv:2512.23266 (2025).
 -/
+
+@[expose] public section
 open Filter MeasureTheory
 open scoped ENNReal BigOperators Topology
 
-namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail
+namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation
+
+open ProbabilityTheory.BranchingProcess (offspringFieldLaw offspringFieldLaw_coordinate offspringFieldLaw_independent offspringFieldLaw_mapMarks)
 
 open Combinatorics.Branching
 open Combinatorics.UlamHarris
@@ -46,7 +54,7 @@ open ProbabilityTheory.RandomWalk
 derived from the actual distinct-pair count.  The pair estimate uses the
 finite cross-weight condition and the stated tilted-walk drawdown
 bounds; callers do not supply a second-moment bound for the path count. -/
-theorem measure_rightTailPositiveAFirstStageLowCount_le_of_affineCorridorDrawdown
+theorem measure_positiveAFirstStageLowCount_le_of_affineCorridorDrawdown
     (m horizon : ℕ) (hm : 0 < m) (initial lower drift width endpointUpper : ℝ)
     (hdrift : 0 ≤ drift)
     (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
@@ -74,7 +82,7 @@ theorem measure_rightTailPositiveAFirstStageLowCount_le_of_affineCorridorDrawdow
       ENNReal.ofReal (Real.exp (-(2 * initial))) *
         (ENNReal.ofReal (Real.exp (2 * endpointUpper)) *
           q (horizon - j.val - 1) ^ 2) *
-        (∫⁻ ξ, crossChildWeight realPotential ξ ∂μ) *
+        (∫⁻ ξ, crossPotentialWeight realPotential (-1) ξ ∂μ) *
         (ENNReal.ofReal
           (Real.exp (initial - (lower + drift * (j.val : ℝ)))) *
           (tiltedIncrementFieldLaw realPotential μ)
@@ -101,7 +109,7 @@ theorem measure_rightTailPositiveAFirstStageLowCount_le_of_affineCorridorDrawdow
     ENNReal.ofReal (Real.exp (-(2 * initial))) *
       (ENNReal.ofReal (Real.exp (2 * endpointUpper)) *
         q (horizon - j.val - 1) ^ 2) *
-      (∫⁻ ξ, crossChildWeight realPotential ξ ∂μ) *
+      (∫⁻ ξ, crossPotentialWeight realPotential (-1) ξ ∂μ) *
       (ENNReal.ofReal
         (Real.exp (initial - (lower + drift * (j.val : ℝ)))) *
         (tiltedIncrementFieldLaw realPotential μ)
@@ -125,14 +133,14 @@ theorem measure_rightTailPositiveAFirstStageLowCount_le_of_affineCorridorDrawdow
   have hpairBound :
       (∫⁻ ω, pathGenerationDistinctAddressPairCount realPotential horizon
         (corridor.indicator (fun _ => (1 : ℝ≥0∞))) initial ω
-        ∂stepFieldLaw μ) ≤ pairBound := by
+        ∂offspringFieldLaw μ) ≤ pairBound := by
     simpa [pairBound, corridor] using
       (Spine.lintegral_pathGenerationDistinctAddressPairCount_affineCorridor_le_of_drawdown
         realPotential μ hboundary horizon initial lower drift width endpointUpper
         hdrift q hdrawdown)
   have htilted : IsProbabilityMeasure (tiltedIncrementFieldLaw realPotential μ) :=
     tiltedIncrementFieldLaw_isProbability realPotential μ hboundary
-  letI : IsProbabilityMeasure (tiltedIncrementFieldLaw realPotential μ) := htilted
+  let : IsProbabilityMeasure (tiltedIncrementFieldLaw realPotential μ) := htilted
   have hpairBoundTop : pairBound ≠ ∞ := by
     dsimp [pairBound]
     apply ENNReal.sum_ne_top.2
@@ -150,7 +158,7 @@ theorem measure_rightTailPositiveAFirstStageLowCount_le_of_affineCorridorDrawdow
     have hsecond : ENNReal.ofReal (Real.exp (2 * endpointUpper)) ≠ ∞ :=
       ENNReal.ofReal_ne_top
     have hcrossIntegral :
-        (∫⁻ ξ, crossChildWeight realPotential ξ ∂μ) ≠ ∞ := hcross
+        (∫⁻ ξ, crossPotentialWeight realPotential (-1) ξ ∂μ) ≠ ∞ := hcross
     have hlast : ENNReal.ofReal
           (Real.exp (initial - (lower + drift * (j.val : ℝ)))) *
           (tiltedIncrementFieldLaw realPotential μ)
@@ -169,4 +177,6 @@ theorem measure_rightTailPositiveAFirstStageLowCount_le_of_affineCorridorDrawdow
       hcorridor hterminalLower hterminalUpper m hm pairBound hpairBound
       hpairBoundTop hspinePositive)
 
-end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail
+end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation
+
+end

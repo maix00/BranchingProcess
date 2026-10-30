@@ -16,6 +16,15 @@ public import Mathlib.Topology.Instances.ENNReal.Lemmas
 
 Spatial scaling is a deterministic operation on path space. Its continuity
 for the Skorokhod J1 topology is useful independently of probability laws.
+
+## Public declarations
+
+- `Skorokhod.scalePath`: the path $t\mapsto cf(t)$.
+- `Skorokhod.j1EDist_scalePath_le`: scaling is Lipschitz with factor
+  $\max(1,|c|)$ for the $J_1$ extended distance.
+- `Skorokhod.dist_scalePath_linearPath_lt`: gives the corresponding
+  continuity estimate when the target path is linear.
+- `Skorokhod.continuous_scalePath`: scaling by a fixed scalar is continuous.
 -/
 
 @[expose] public section

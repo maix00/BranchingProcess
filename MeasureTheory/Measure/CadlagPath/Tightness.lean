@@ -8,7 +8,7 @@ module
 
 public import Mathlib.MeasureTheory.Measure.Tight
 public import MeasureTheory.Measure.Tight.Sequence
-public import Topology.Cadlag.Skorokhod.Compactness.Billingsley
+import all Topology.Cadlag.Skorokhod.Compactness.CompactRange
 public import Topology.Cadlag.Skorokhod.Oscillation.Partition.Measurability
 public import Topology.Cadlag.Range
 public import Topology.Cadlag.Skorokhod.Path.Range
@@ -20,6 +20,19 @@ public import Topology.Cadlag.Skorokhod.Topology
 This file converts high-probability common compact range and oscillation
 partition events into tightness of a family of laws on the Skorokhod path
 space. It does not assume that the path space is Polish.
+
+## Public declarations
+
+- If a family of path laws has uniformly high probability of a common compact
+  range and of oscillation-partition sequences with mesh bounded below and
+  oscillation tolerance tending to zero, then the family is tight.
+- The same conclusion holds when these range and oscillation bounds are only
+  available eventually along the indexing family.
+- `exists_eventually_compactRange_bound_of_real_error`: if for every
+  $\varepsilon>0$ there is a compact $K\subseteq E$ with
+  $\mu_i(\{f:f([0,1])\not\subseteq K\})\leq\operatorname{ofReal}(\varepsilon)$
+  eventually, then for every $\eta>0$ there is such a compact $K$ with the
+  bound $\leq\eta$. This works for an arbitrary filter of path laws.
 -/
 
 @[expose] public section
@@ -28,6 +41,32 @@ open Filter MeasureTheory Set
 open scoped ENNReal
 
 namespace MeasureTheory
+
+/-- Convert compact-range probability bounds stated with positive real errors
+to bounds for any positive extended-real error. -/
+theorem exists_eventually_compactRange_bound_of_real_error
+    {I E : Type*} [MetricSpace E] {l : Filter I}
+    (μ : I → Measure (CadlagPath unitInterval E))
+    (hreal : ∀ ε : ℝ, 0 < ε →
+      ∃ range : Set E, IsCompact range ∧
+        ∀ᶠ i in l,
+          μ i (CadlagPath.rangeIn (T := unitInterval) range)ᶜ ≤ ENNReal.ofReal ε)
+    {η : ℝ≥0∞} (hη : 0 < η) :
+    ∃ range : Set E, IsCompact range ∧
+      ∀ᶠ i in l,
+        μ i (CadlagPath.rangeIn (T := unitInterval) range)ᶜ ≤ η := by
+  by_cases htop : η = ⊤
+  · obtain ⟨range, hrange, hbound⟩ := hreal 1 (by norm_num)
+    refine ⟨range, hrange, ?_⟩
+    filter_upwards [hbound] with i hi
+    calc
+      μ i (CadlagPath.rangeIn (T := unitInterval) range)ᶜ ≤ ENNReal.ofReal 1 := hi
+      _ ≤ η := by rw [htop]; exact le_top
+  · have hηreal : 0 < η.toReal := ENNReal.toReal_pos (ne_of_gt hη) htop
+    obtain ⟨range, hrange, hbound⟩ := hreal η.toReal hηreal
+    refine ⟨range, hrange, ?_⟩
+    filter_upwards [hbound] with i hi
+    rwa [ENNReal.ofReal_toReal htop] at hi
 
 /-- A common compact range and a high-probability sequence of oscillation
 partition events imply tightness of càdlàg path laws. The event hypothesis

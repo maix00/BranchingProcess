@@ -6,22 +6,27 @@ Authors: WANG Yiyang
 
 module
 
-public import Mathlib.Analysis.Complex.Exponential
-public import Mathlib.MeasureTheory.Measure.MeasureSpaceDef
-public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
-public import Probability.Process.Filtration.ConditionalBlocks
-public import Probability.Sequence.IID.Basic
-public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.Event
-public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.JumpPattern.Basic
-import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.JumpPattern.Geometry
-import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.JumpPattern.Probability
-import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.JumpPattern.Setup
+import Mathlib.Analysis.Complex.Exponential
+import Mathlib.Algebra.BigOperators.Group.Finset.Defs
+import Mathlib.MeasureTheory.Measure.MeasureSpaceDef
+import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
+import Probability.Process.Filtration.ConditionalBlocks
+import Probability.Sequence.IID.Basic
+import Probability.Process.RandomWalk.SmallDeviation.Drawdown.Event
+import all Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.JumpPattern.Basic
+import all Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.JumpPattern.Geometry
+import all Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.JumpPattern.Probability
 
 /-!
 # Finite union bound over jump patterns
 
+## Internal proof declarations
+
 The proof-specific declarations are:
 
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.drawdown_prod_jumpPatternBound_le_pow`:
+  if $|J|\le K$ and $0\le p\le1$, then
+  $\prod_{j<q}b_{J,j}\le p^{q-K}$, where $b_{J,j}=1$ on $J$ and $p$ off $J$.
 - `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.measureReal_noLargeDropEvent_le_sum_jumpPatternProducts_of_uniformBlockBound`:
   the no-large-drop event probability is bounded by the sum of fixed-pattern
   block products over admissible patterns, given a uniform block bound.
@@ -35,12 +40,45 @@ These steps follow Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk
 open Filter MeasureTheory Topology
 open scoped ENNReal
 
-@[expose] public section
+section
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown
 
 open ProbabilityTheory.RandomWalk
-open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
+
+private lemma drawdown_prod_jumpPatternBound_eq_pow {q : ℕ}
+    (pattern : Finset (Fin q)) (p : ℝ) :
+    (∏ j ∈ Finset.range q, drawdownJumpPatternBound pattern p j) =
+      p ^ (q - pattern.card) := by
+  classical
+  rw [← Fin.prod_univ_eq_prod_range
+    (fun n : ℕ => drawdownJumpPatternBound pattern p n) q]
+  have hterm (j : Fin q) :
+      drawdownJumpPatternBound pattern p j.val =
+        if j ∈ pattern then 1 else p := by
+    simp [drawdownJumpPatternBound]
+  simp_rw [hterm]
+  rw [Finset.prod_ite]
+  have hnonjump :
+      (Finset.univ.filter (fun j : Fin q => j ∉ pattern)).card =
+        q - pattern.card := by
+    rw [show Finset.univ.filter (fun j : Fin q => j ∉ pattern) =
+      Finset.univ \ pattern by ext j; simp]
+    rw [Finset.card_sdiff_of_subset pattern.subset_univ]
+    simp
+  simp [hnonjump]
+
+/-- A pattern with at most `K` jumps has at least `q-K` nonjump factors.
+This product estimate is used by the finite union bound for the drawdown
+upper-bound proof. -/
+private lemma drawdown_prod_jumpPatternBound_le_pow {q K : ℕ}
+    (pattern : Finset (Fin q)) (p : ℝ)
+    (hp0 : 0 ≤ p) (hp1 : p ≤ 1)
+    (hcard : pattern.card ≤ K) :
+    (∏ j ∈ Finset.range q, drawdownJumpPatternBound pattern p j) ≤
+      p ^ (q - K) := by
+  rw [drawdown_prod_jumpPatternBound_eq_pow]
+  exact pow_le_pow_of_le_one hp0 hp1 (by omega)
 
 lemma measureReal_noLargeDropEvent_le_sum_jumpPatternProducts_of_uniformBlockBound
     (ν : Measure ℝ) [IsProbabilityMeasure ν]

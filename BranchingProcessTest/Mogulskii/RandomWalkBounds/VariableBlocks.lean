@@ -1,8 +1,7 @@
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.Horizontal.Basic
+import Probability.Process.RandomWalk.Path.Block.Oscillation
 import Probability.Sequence.IID.Blocks.Consecutive
 open MeasureTheory ProbabilityTheory
 open ProbabilityTheory.RandomWalk
-open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 open scoped BigOperators
 
 /-- A source-style finite partition may have unequal segment lengths and a
@@ -11,7 +10,7 @@ product of its one-block probabilities. -/
 example (ν : Measure ℝ) [IsProbabilityMeasure ν] :
     iidSequenceLaw ν {increment : ℕ → ℝ | ∀ j : Fin 3,
       Combinatorics.Sequence.blockCoordinates
-        (AdditivePath.blockStart (fun k => k + 1) j.val) (j.val + 1) increment ∈
+        (Combinatorics.Sequence.blockStart (fun k => k + 1) j.val) (j.val + 1) increment ∈
           blockOscillationLTEvent (1 : ℝ) (j.val + 1)} =
       ∏ j : Fin 3, iidSequenceLaw ν {increment : ℕ → ℝ |
         Combinatorics.Sequence.blockCoordinates 0 (j.val + 1) increment ∈

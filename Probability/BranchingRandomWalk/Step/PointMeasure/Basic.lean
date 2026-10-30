@@ -9,9 +9,8 @@ module
 public import Combinatorics.BranchingWalk.Step.Measure.PointMeasure
 public import Combinatorics.BranchingWalk.Step.Measure.ExponentialWeight
 public import Combinatorics.BranchingWalk.Step.Measurability
-public import Probability.BranchingRandomWalk.Step.Law.OptionalField
 public import Probability.BranchingRandomWalk.Step.Presentation.Basic
-public import Probability.PointProcess.Tilted
+public import Probability.RandomMeasure.ExponentialTilt
 
 /-!
 # The branching point measure in slot coordinates
@@ -23,6 +22,37 @@ records what the child-slot reading of it says: the mass counts slots, so equal 
 multiplicity, and the mass is zero exactly for a step with no child. The statements are generic in the slot
 type and in the mark type; the exponential integral at the end is the boundary weight and needs real
 marks.
+
+## Public declarations
+
+- `ProbabilityTheory.BranchingRandomWalk.pointMeasureOf` and
+  `pointMeasureOf_measurable`: define the point-measure observation of a random
+  optional-step field and prove its measurability for countable slots.
+- `ProbabilityTheory.BranchingRandomWalk.branchingLawOf` and
+  `map_pointMeasureOf`: define its law and identify it with the
+  pushforward of the optional-step law.
+- `ProbabilityTheory.BranchingRandomWalk.branchingLawOf_isProbabilityMeasure`:
+  the point-measure law is a probability measure when the sample law is.
+- `ProbabilityTheory.BranchingRandomWalk.StepPresentation.pointMeasure` and
+  `StepPresentation.branchingLaw`: define the point-measure observation and
+  its law for a coordinate presentation.
+- `ProbabilityTheory.BranchingRandomWalk.StepPresentation.branchingLaw.isProbabilityMeasure`
+  and `StepPresentation.pointMeasure_measurable`: state probability and
+  measurability of those observations.
+- `ProbabilityTheory.BranchingRandomWalk.StepPresentation.indexedLaw_map_pointMeasure`:
+  the point-measure law is the pushforward of the indexed optional-step law.
+- `ProbabilityTheory.BranchingRandomWalk.stepPointMeasure_apply_children`:
+  for measurable $A$, the point measure of a step counts present slots in $A$
+  with multiplicity.
+- `ProbabilityTheory.BranchingRandomWalk.stepPointMeasure_eq_zero_iff`: the
+  point measure vanishes exactly when the step has empty support.
+- `ProbabilityTheory.BranchingRandomWalk.lintegral_stepPointMeasure_exp`:
+  integrating $e^{-x}$ against the point measure equals the total exponential
+  child weight for real marks.
+- `ProbabilityTheory.BranchingRandomWalk.lintegral_stepPointMeasure_potential`:
+  integrating a measurable potential test equals the sum of its slotwise
+  contributions over present children.
+
 -/
 
 open MeasureTheory
@@ -56,11 +86,11 @@ noncomputable def branchingLawOf
 
 /-- Taking the point-measure observation commutes with taking the law of a
 random optional-step field. -/
-theorem stepLaw_map_pointMeasureOf
+theorem map_pointMeasureOf
     {Ω ι X : Type*} [MeasurableSpace Ω] [MeasurableSpace X]
     [Countable ι] (S : Ω → Step ι X) (hS : Measurable S) (P : Measure Ω) :
-    (stepLaw S P).map stepPointMeasure = branchingLawOf S P := by
-  rw [stepLaw, branchingLawOf, Measure.map_map stepPointMeasure_measurable hS]
+    (P.map S).map stepPointMeasure = branchingLawOf S P := by
+  rw [branchingLawOf, Measure.map_map stepPointMeasure_measurable hS]
   rfl
 
 /-- The random point-measure law is a probability law when the source is. -/
@@ -104,7 +134,7 @@ theorem StepPresentation.indexedLaw_map_pointMeasure
     {Ω ι X : Type*} [MeasurableSpace Ω] [MeasurableSpace X]
     [Countable ι] (S : StepPresentation Ω ι X) (P : Measure Ω) :
     (S.indexedLaw P).map stepPointMeasure = S.branchingLaw P :=
-  stepLaw_map_pointMeasureOf S.toFun S.measurable_toFun P
+  map_pointMeasureOf S.toFun S.measurable_toFun P
 
 /-- Evaluation counts raw slots, so equal positions retain multiplicity. -/
 theorem stepPointMeasure_apply_children {ι X : Type*} [MeasurableSpace X]
@@ -178,7 +208,7 @@ theorem lintegral_stepPointMeasure_potential
     {ι X : Type*} [MeasurableSpace X]
     (φ : Potential X) (θ : ℝ) (ξ : Step ι X)
     {f : ℝ → ENNReal} (hf : Measurable f) :
-    (∫⁻ x, ProbabilityTheory.PointProcess.exponentialWeight φ θ x * f (φ x)
+    (∫⁻ x, ProbabilityTheory.RandomMeasure.exponentialWeight φ θ x * f (φ x)
         ∂stepPointMeasure ξ) =
       ∑' i : ι, realizedPotentialWeight φ θ ξ i *
         f (ξ.potentialValue' φ i) := by
@@ -196,8 +226,8 @@ theorem lintegral_stepPointMeasure_potential
       simp only [hi, Option.elim_some]
       rw [lintegral_dirac' x]
       · simp [realizedPotentialWeight, hsurvive, hvalue,
-          ProbabilityTheory.PointProcess.exponentialWeight]
-      · exact ((ProbabilityTheory.PointProcess.exponentialWeight_measurable
+          ProbabilityTheory.RandomMeasure.exponentialWeight]
+      · exact ((ProbabilityTheory.RandomMeasure.exponentialWeight_measurable
           φ.measurable_toFun θ).mul (hf.comp φ.measurable_toFun))
 
 end ProbabilityTheory.BranchingRandomWalk

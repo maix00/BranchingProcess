@@ -6,12 +6,18 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.Fluctuation.SparreAndersen.Composition.InclusionExclusion
+public import Algebra.BigOperators.AdditivePath.Basic
+public import Mathlib.MeasureTheory.Measure.Basic
+public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
 public import Probability.Process.RandomWalk.Path.Survival.Basic
 public import Probability.Sequence.IID.Basic
+import Probability.Process.RandomWalk.Fluctuation.SparreAndersen.Rotation.FiniteProduct
+import MeasureTheory.Function.FinPartialSum
 
 /-!
 # The cyclic rotation inequality for IID random walks
+
+## Public declarations
 
 The public theorem in this file is:
 
@@ -35,42 +41,6 @@ open scoped ENNReal
 
 namespace ProbabilityTheory.RandomWalk
 
-private lemma partialSum_prefix_eq_displacement
-    (n : ℕ) (increment : ℕ → ℝ) (t : Fin (n + 1)) :
-    Fin.partialSum (fun i : Fin n => increment i.val) t =
-      AdditivePath.displacement t.val increment := by
-  induction t using Fin.induction with
-  | zero => simp [AdditivePath.displacement]
-  | succ k ih =>
-      rw [Fin.partialSum_succ, ih]
-      simp [AdditivePath.displacement, Finset.sum_range_succ]
-
-private lemma measurable_finitePartialSum {n : ℕ}
-    (t : Fin (n + 1)) :
-    Measurable (fun z : Fin n → ℝ => Fin.partialSum z t) := by
-  induction t using Fin.induction with
-  | zero => simp
-  | succ k ih =>
-      rw [show (fun z : Fin n → ℝ => Fin.partialSum z k.succ) =
-        (fun z => Fin.partialSum z k.castSucc + z k) by
-          funext z
-          rw [Fin.partialSum_succ]]
-      exact ih.add (measurable_pi_apply k)
-
-private lemma finiteSurvivalEvent_eq_infinite
-    (n : ℕ) (increment : ℕ → ℝ) :
-    (∀ t : Fin (n + 1), 0 ≤ Fin.partialSum
-      (fun i : Fin n => increment i.val) t) ↔
-      SurvivesNonnegative n increment := by
-  constructor
-  · intro h k
-    simpa only [partialSum_prefix_eq_displacement, Fin.val_succ] using h k.succ
-  · intro h t
-    induction t using Fin.induction with
-    | zero => simp
-    | succ k ih =>
-        simpa only [partialSum_prefix_eq_displacement, Fin.val_succ] using h k
-
 /-- The endpoint probability is at most the number of rotations times the
 nonnegative-survival probability. Only the IID law is assumed. -/
 theorem measure_nonnegativeEndpoint_le_card_mul_survival
@@ -84,13 +54,10 @@ theorem measure_nonnegativeEndpoint_le_card_mul_survival
     measurableSet_Ici ν hn
   have hmeasEndpoint : MeasurableSet
       {z : Fin n → ℝ | 0 ≤ Fin.partialSum z (Fin.last n)} := by
-    exact measurableSet_Ici.preimage (measurable_finitePartialSum (Fin.last n))
+    exact measurableSet_Ici.preimage (Fin.measurable_partialSum (Fin.last n))
   have hmeasSurvival : MeasurableSet
       {z : Fin n → ℝ | ∀ t : Fin (n + 1), 0 ≤ Fin.partialSum z t} := by
-    rw [show {z : Fin n → ℝ | ∀ t : Fin (n + 1), 0 ≤ Fin.partialSum z t} =
-        ⋂ t : Fin (n + 1), {z | 0 ≤ Fin.partialSum z t} by ext z; simp]
-    exact MeasurableSet.iInter fun t =>
-      measurableSet_Ici.preimage (measurable_finitePartialSum t)
+    exact measurableSet_nonnegativePartialSum measurableSet_Ici
   have hprefix : Measurable (fun increment : ℕ → ℝ =>
       fun i : Fin n => increment i.val) :=
     measurable_pi_iff.mpr fun i => measurable_pi_apply i.val
@@ -108,13 +75,13 @@ theorem measure_nonnegativeEndpoint_le_card_mul_survival
         0 ≤ Fin.partialSum (fun i : Fin n => increment i.val) (Fin.last n)} =
       {increment | 0 ≤ AdditivePath.displacement n increment} := by
     ext increment
-    simp only [partialSum_prefix_eq_displacement, Fin.val_last]
+    simp only [AdditivePath.partialSum_eq_displacement, Fin.val_last]
   have hsurvival :
       {increment : ℕ → ℝ | ∀ t : Fin (n + 1),
         0 ≤ Fin.partialSum (fun i : Fin n => increment i.val) t} =
       {increment | SurvivesNonnegative n increment} := by
     ext increment
-    exact finiteSurvivalEvent_eq_infinite n increment
+    exact finitePartialSum_nonnegative_iff_survivesNonnegative n increment
   rw [hendpoint, hsurvival] at hfinite
   exact hfinite
 

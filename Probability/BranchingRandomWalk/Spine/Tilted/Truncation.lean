@@ -15,6 +15,19 @@ public import Combinatorics.BranchingWalk.Step.Ordering.SlotOrder
 The full child weight is a countable `ENNReal` sum.  For any abstract ordered
 slot type of order type `ℕ`, the first `n` slots give measurable finite
 truncations increasing to the full potential weight.
+
+## Public declarations
+
+- `truncatedPotentialWeight`: the sum of the exponential potential weights
+  over the first $n$ ordered slots of an abstract locally finite order.
+- `truncatedPotentialWeight_measurable`,
+  `truncatedPotentialWeight_mono`, `truncatedPotentialWeight_le_total`, and
+  `truncatedPotentialWeight_iSup`: measurability, monotonicity, domination by
+  the full weight, and convergence to that countable sum.
+- `truncatedChildWeight`, `truncatedChildWeight_measurable`,
+  `truncatedChildWeight_mono`, `truncatedChildWeight_le_total`, and
+  `truncatedChildWeight_iSup`: the corresponding first-$n$ child-slot
+  truncations for `Step ℕ ℝ`.
 -/
 
 @[expose] public section

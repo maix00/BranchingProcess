@@ -17,6 +17,13 @@ A branching random walk starts from `S : Ω → Step ι X`. Its point process is
 the deterministic Dirac sum of that step. This module is an adapter to the
 generic `ProbabilityTheory.PointProcess` interface; it never reconstructs or
 orders a step from a measure.
+
+## Public declarations
+
+- `ProbabilityTheory.BranchingRandomWalk.StepPresentation.toPointProcess`:
+  packages the point-measure observation of a random step as a point process
+  when its local finiteness on the selected family is supplied samplewise.
+
 -/
 
 @[expose] public section

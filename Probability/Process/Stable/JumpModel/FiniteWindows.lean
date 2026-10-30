@@ -4,15 +4,34 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.RandomMeasure.Poisson.CharacteristicFunction.FiniteWindows
-import Probability.RandomMeasure.Poisson.Integration.WindowIntegral
-import Probability.Distributions.Stable.LevyMeasure.Tail.EndpointLaw
+module
+
+public import Probability.RandomMeasure.Poisson.CharacteristicFunction.FiniteWindows
+public import Probability.RandomMeasure.Poisson.Integration.WindowIntegral
+public import Probability.Distributions.Stable.Basic
+public import Probability.Distributions.InfinitelyDivisible.LevyKhintchine.Defs
+import Probability.Process.Stable.JumpModel.EndpointLaw
+import Probability.Distributions.Stable.Exponent.Basic
+import Probability.Distributions.Stable.LevyMeasure.Cutoff.Drift
+import Probability.Distributions.Stable.LevyMeasure.Cutoff.Variation
 
 /-!
 # Finite-dimensional laws of the cutoff stable jump model
 
-For a finite family of pairwise disjoint time windows, the vector of Poisson
-jump integrals has the product of the corresponding stable increment laws.
+## Public declarations
+
+- `IsStrictlyAlphaStable.measure_map_poissonWindowIntegralVector_eq_pi`:
+  for pairwise disjoint measurable windows $S_i\subseteq[0,1]$, the vector of
+  cutoff Poisson jump integrals has law
+  \[
+    (\mathbb P_s\otimes\mathbb P_b)\circ
+      \operatorname{poissonWindowIntegralVector}(S)^{-1}
+      =\bigotimes_{i\in\iota}
+        (x\mapsto |S_i|^{\frac{1}{\alpha}}x)_*\mu.
+  \]
+  Here $|S_i|$ is Lebesgue measure on the unit interval; the small- and
+  large-jump Poisson point families have the corresponding cutoff Lévy
+  intensities.
 -/
 
 open MeasureTheory

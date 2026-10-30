@@ -12,6 +12,8 @@ public import MeasureTheory.Measure.Algebra.DiracSum
 /-!
 # Dirac sums of a cloud
 
+## Public declarations
+
 The Dirac sum of an indexed cloud at time `t` is the sum of the Dirac masses at the
 positions of the particles alive at that time:
 
@@ -44,13 +46,12 @@ The public API is:
 - `Cloud.mapOrderDual_diracSum` pushes the slice measure through the order
   dual; `Cloud.mapOrderDual_diracSum_Iic` identifies its lower half-line mass
   with the original upper half-line mass.
-- `tsum_indicator_eq_encard_of_countable` and
-  `Cloud.diracSum_apply_of_countable` identify countable indicator sums with
-  cardinality and evaluate arbitrary test sets. In particular,
+- `Cloud.diracSum_apply_of_countable` evaluates the sum on an arbitrary test
+  set when the particle index is countable. In particular,
   `Cloud.diracSum_Iic_eq_encard_of_countable` identifies the threshold mass
   with the cardinality of particles positioned in `Iic a`.
-- `Measure.map_dirac_of_measurable` maps a Dirac mass through any measurable
-  function without requiring measurable singleton sets.
+- Mathlib's `Measure.map_dirac'` handles the order-dual pushforward of each
+  atom under measurability of the map alone; no local wrapper is needed.
 -/
 
 open Classical MeasureTheory
@@ -86,18 +87,6 @@ theorem Cloud.diracSum_apply [MeasurableSpace X] (C : Cloud Time Root α X)
   rw [Measure.dirac_apply' _ hs]
   by_cases hp : C.position p.1.1 p.1.2 ∈ s <;> simp [hp]
 
-/-- A Dirac mass pushed forward along a measurable map is the Dirac mass at the
-image. Mathlib's `Measure.map_dirac` assumes measurable singletons on both sides;
-here only the measurability of the map is needed. -/
-theorem Measure.map_dirac_of_measurable {X Y : Type*} [MeasurableSpace X]
-    [MeasurableSpace Y] {f : X → Y} (hf : Measurable f) (x : X) :
-    Measure.map f (Measure.dirac x) = Measure.dirac (f x) := by
-  ext s hs
-  rw [Measure.map_apply hf hs, Measure.dirac_apply' _ (hf hs),
-    Measure.dirac_apply' _ hs, Set.indicator_apply, Set.indicator_apply,
-    Set.mem_preimage]
-  rfl
-
 /-- Reversing the positions of a cloud reverses its Dirac sums: the Dirac sum of the
 order-dual cloud is the image of the Dirac sum along `OrderDual.toDual`. -/
 theorem Cloud.mapOrderDual_diracSum [MeasurableSpace X] (C : Cloud Time Root α X) :
@@ -109,7 +98,7 @@ theorem Cloud.mapOrderDual_diracSum [MeasurableSpace X] (C : Cloud Time Root α 
       _ from hf.aemeasurable)]
   refine congr_arg Measure.sum (funext fun p => ?_)
   simp only [Cloud.mapOrderDual]
-  exact (Measure.map_dirac_of_measurable hf _).symm
+  exact (Measure.map_dirac' hf _).symm
 
 /-- The reversed reading of a slice at a threshold is the original slice at the
 opposite half-line. The half-line is assumed measurable here, a condition on the
@@ -130,7 +119,7 @@ set_option linter.style.haveILetI false in
 measurable structure on the index is needed: the counting measure of the index is
 taken with the discrete σ-algebra installed inside the proof, and mathlib's
 `Measure.count_apply` identifies it with the `encard`. -/
-theorem tsum_indicator_eq_encard_of_countable {ι : Type*} [Countable ι] (s : Set ι) :
+private lemma tsum_indicator_eq_encard_of_countable {ι : Type*} [Countable ι] (s : Set ι) :
     ∑' i : ι, (if i ∈ s then (1 : ℝ≥0∞) else 0) = (s.encard : ℝ≥0∞) := by
   classical
   letI : MeasurableSpace ι := ⊤

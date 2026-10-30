@@ -22,6 +22,29 @@ field.  The optional codomain records the legitimate zero-child case.
 This does not relabel descendant addresses.  Transporting whole descendant
 subtrees under the nodewise slot permutations is a separate tree-level
 construction.
+
+## Public declarations
+
+* `StepField.IsMeasurablyOrderable` requires every node's random step to admit
+  a measurable ordered realization with the same slot type and potential.
+* `StepField.firstDisplacement?` and
+  `StepField.firstDisplacementField?` select the optional least-slot mark at
+  one node and at all nodes. Their measurability results are
+  `StepField.firstDisplacement?_measurable` and
+  `StepField.firstDisplacementField?_measurable`.
+  `StepField.firstDisplacement?_eq_some_le` says that when a node has a child,
+  the selected mark is present and its potential is no larger than the
+  potential of any realized child.
+* `MeasurableStepOrdering.firstAtNode` reads that optional mark from a fixed
+  node. `firstAtNode_measurable_next` makes a depth-$d$ observation measurable
+  at generation $d+1$, and `firstAtNode_measurable_of_depth_lt` extends this
+  to every generation $n$ with `u.length < n`.
+  `firstAtSelectedNode_measurable` allows a generation-$n$ measurable choice
+  of a node, provided its depth is below $n$.
+* `MeasurableStepOrdering.firstFrontier` records the optional first marks at
+  depth $n$ and assigns `none` elsewhere;
+  `firstFrontier_measurable` proves this whole frontier is measurable at
+  generation $n+1$.
 -/
 
 @[expose] public section
@@ -29,6 +52,7 @@ construction.
 namespace ProbabilityTheory.BranchingRandomWalk
 
 open Combinatorics.UlamHarris
+open MeasureTheory
 
 /-- Every random step at a tree node admits a measurable ordered realization
 with common ordered slot type `κ`. -/

@@ -9,10 +9,20 @@ module
 public import Probability.MeasureTheory.FiniteProduct
 public import Probability.Process.Stable.SmallDeviation.PathClass.StepCorridor.Partition.Lower.Assembly
 
-import Probability.Process.Stable.SmallDeviation.PathClass.StepCorridor.Partition.Lower.Lemmas.CoreShrink
+import all Probability.Process.Stable.SmallDeviation.PathClass.StepCorridor.Partition.Lower.Lemmas.CoreShrink
+import all Probability.Process.Stable.SmallDeviation.PathClass.StepCorridor.Partition.Lower.Lemmas.Geometry
 
 /-!
 # Logarithmic lower rate for a fixed inner partition corridor
+
+## Public declarations
+
+- For fixed inner widths $w_i$ and contracted endpoint radii $r_i$, the
+  eventual lower rate is
+  $\sum_i C\ell_i/((w_i-2r_i)/2)^\alpha-\varepsilon
+    \le s^{-\alpha}\log\mathbb P(s^{-1}X\in G)$.
+- Contracting endpoint-core radii to zero gives convergence of the finite
+  inner-partition rate to its uncontracted value.
 
 The endpoint-return kernels have separate stable escape rates. This file
 adds those rates over a finite partition and transfers the sum to the whole

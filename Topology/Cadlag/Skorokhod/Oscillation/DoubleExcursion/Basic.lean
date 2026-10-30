@@ -14,7 +14,27 @@ public import Topology.Cadlag.Skorokhod.Oscillation.Partition.Measurability
 This module defines the pathwise double-excursion and endpoint controls used
 in the Skorokhod compactness criterion. It proves that an oscillation
 partition implies these controls; the converse construction lives in
-`Topology.Cadlag.Skorokhod.Oscillation.DoubleExcursion.Converse`.
+`Topology.Cadlag.Skorokhod.Oscillation.DoubleExcursion.Converse`. The
+double-excursion and endpoint controls are the pathwise moduli in Patrick
+Billingsley, *Convergence of Probability Measures*, 1st ed., Wiley, 1968,
+Chapter 3, §14, Theorem 14.4, p. 119
+([online copy](https://ru.djvu.online/file/vaaIHv9IWlVeK)). This module proves
+their implication from finite oscillation partitions directly.
+
+## Public declarations
+
+- `HasDoubleExcursionBound f δ ε` asserts that for `s < t < u < 1` with
+  `u - s < δ`, and `s ≤ x ≤ y ≤ t ≤ z ≤ w ≤ u`,
+  `min (dist (f x) (f y)) (dist (f z) (f w)) ≤ ε`.
+- `HasEndpointOscillationBound f δ ε` asserts that pairs of path values
+  within distance `δ` of 0, and pairs within distance `δ` of 1 (excluding 1),
+  have distance at most `ε`.
+- OscillationBoundedOnPartition.hasDoubleExcursionBound and
+  OscillationBoundedOnPartition.hasEndpointOscillationBound derive these
+  pathwise controls from a partition with a positive minimum cell length.
+- forall_mem_admitsOscillationPartition_hasBillingsleyControls gives common
+  double-excursion and endpoint controls for a family with uniform partition
+  margins.
 -/
 
 @[expose] public section

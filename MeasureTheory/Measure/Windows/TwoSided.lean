@@ -14,6 +14,12 @@ public import Mathlib.MeasureTheory.Constructions.BorelSpace.Real
 
 A real measure charging both open half-lines also charges a bounded positive
 window and its reflected negative window, with common inner and outer radii.
+
+## Public declarations
+
+* `MeasureTheory.Measure.exists_twoSidedWindow_around_pos μ v` states that if
+  `0 < μ (Ioi v)` and `0 < μ (Iio v)`, then there are `0 < r < R` with
+  positive measure on both `(v + r, v + R)` and `(v - R, v - r)`.
 -/
 
 @[expose] public section

@@ -18,6 +18,15 @@ Every càdlàg path on the compact unit interval admits a finite partition on
 whose half-open cells the oscillation is arbitrarily small.  The proof uses
 the one-sided local oscillation bounds and refines a finite interval cover at
 the finitely many selected centers.
+
+## Public declarations
+
+- IsCadlag.exists_oscillation_partition: for every ε > 0, a càdlàg path has
+  a finite partition with positive minimum cell length and within-cell
+  oscillation strictly below ε.
+- CadlagPath.exists_admits_oscillation_partition: every càdlàg path admits
+  such a partition with strict mesh and oscillation margins, as required by
+  the open path-set criterion.
 -/
 
 @[expose] public section

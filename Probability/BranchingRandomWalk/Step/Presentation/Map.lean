@@ -15,6 +15,24 @@ public import Probability.BranchingRandomWalk.Step.Presentation.Basic
 A measurable map of marks acts on a random `Step` by composing the random
 variable with the deterministic `Combinatorics.Branching.Step.map`. Forgetting
 marks is the constant-map instance used for the Galton--Watson genealogy.
+
+## Public declarations
+
+- `ProbabilityTheory.BranchingRandomWalk.StepPresentation.map` and
+  `StepPresentation.map_apply`: a measurable mark map $f$ acts pointwise and
+  agrees with applying `Combinatorics.Branching.Step.map f` to each sample.
+- `ProbabilityTheory.BranchingRandomWalk.StepPresentation.map_indexedLaw`:
+  mapping marks commutes with pushing the step presentation forward to its law.
+- `ProbabilityTheory.BranchingRandomWalk.StepPresentation.forgetMarks` and
+  `StepPresentation.survive_forgetMarks_iff`: forgetting marks retains exactly
+  the child-presence configuration.
+- `ProbabilityTheory.BranchingRandomWalk.StepPresentation.unmarkedLaw` and
+  `StepPresentation.unmarkedLaw.isProbabilityMeasure`: define the unmarked
+  reproduction law and its probability-measure instance.
+- `ProbabilityTheory.BranchingRandomWalk.StepPresentation.unmarkedLaw_eq_map`:
+  the unmarked law is the pushforward of the marked step law by the forgetful
+  map.
+
 -/
 
 @[expose] public section
@@ -47,7 +65,7 @@ theorem StepPresentation.map_indexedLaw
     [MeasurableSpace X] [MeasurableSpace Y]
     (S : StepPresentation Ω ι X) (P : Measure Ω) (f : X → Y) (hf : Measurable f) :
     (S.map f hf).indexedLaw P = (S.indexedLaw P).map (Combinatorics.Branching.Step.map f) := by
-  unfold StepPresentation.indexedLaw stepLaw
+  unfold StepPresentation.indexedLaw
   rw [Measure.map_map (Step.map_measurable hf) S.measurable_toFun]
   congr 1
   funext ω

@@ -6,13 +6,26 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Distributions.Stable.LevyMeasure.Scaling
+public import Probability.Distributions.Stable.Basic
+public import Probability.Distributions.InfinitelyDivisible.LevyKhintchine.Defs
+public import Mathlib.MeasureTheory.Measure.CharacteristicFunction.Basic
+import Probability.Distributions.Stable.LevyMeasure.Scaling
 
 /-!
 # Homogeneous tails of the stable Lévy measure
 
 The positive and negative tail identities retain their constants as the
 actual Lévy masses outside `[-1,1]`; no density classification is needed.
+
+## Public declarations
+
+* `levyMeasure_Ioi_inv` and `levyMeasure_Iio_neg_inv` scale the positive and
+  negative tails under reciprocal dilation by `a^α`.
+* `levyMeasure_Ioi` and `levyMeasure_Iio_neg` state
+  `ν((r,∞)) = (1/r)^α ν((1,∞))` and
+  `ν((-∞,-r)) = (1/r)^α ν((-∞,-1))`.
+* `levyMeasure_abs_tail` gives the two-sided tail as the sum of these two
+  scaled unit tails.
 -/
 
 @[expose] public section

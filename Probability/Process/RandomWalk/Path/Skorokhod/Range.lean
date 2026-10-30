@@ -17,6 +17,17 @@ The range condition itself belongs to the general càdlàg path layer. This
 adapter identifies a range exit for a normalized random-walk step path with
 an excursion among its finitely many partial sums, and transfers the event to
 the corresponding path law.
+
+## Public declarations
+
+* `normalizedStepCadlagPathIcc_mem_rangeIn_closedInterval_iff_partialSumBounds`
+  identifies path containment in `[-radius, radius]` with the bounds
+  `|(scale n)⁻¹ * S_k| ≤ radius` for every grid partial sum `S_k`.
+* `not_mem_rangeIn_closedInterval_subset_blockPrefixExceedance` turns an exit
+  from that interval into a prefix event with threshold `radius * scale n`.
+* `measure_normalizedStepPathLaw_rangeIn_closedInterval_compl_le_of_blockPrefixExceedance`
+  transfers an increment-law bound on that prefix event to the probability
+  that the normalized step-path law exits the interval.
 -/
 
 open MeasureTheory ProbabilityTheory Set
@@ -52,7 +63,12 @@ theorem normalizedStepCadlagPathIcc_mem_rangeIn_closedInterval_iff_partialSumBou
     exact abs_le.mpr hvalue
   · intro hpartial t
     let k := ⌊(n : ℝ) * (t : ℝ)⌋₊
-    have hk : k ≤ n := natFloor_mul_le_of_mem_unitInterval n t
+    have hk : k ≤ n := by
+      apply Nat.floor_le_of_le
+      calc
+        (n : ℝ) * (t : ℝ) ≤ (n : ℝ) * 1 :=
+          mul_le_mul_of_nonneg_left t.property.2 (Nat.cast_nonneg n)
+        _ = n := by ring
     let j : Fin (n + 1) := ⟨k, Nat.lt_succ_of_le hk⟩
     have hvalue := hpartial j
     rw [Set.mem_Icc]

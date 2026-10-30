@@ -11,6 +11,8 @@ public import Probability.Process.RandomWalk.Kernel.Killed.Return.Basic
 /-!
 # Endpoint laws of killed random walks
 
+## Public declarations
+
 For a probability measure $\nu$, measurable allowed set $A$, and initial
 point $x$, the public declarations are:
 

@@ -6,15 +6,16 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.FirstWindow.Limit
-public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition.Event
+import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.FirstWindow.Limit
+import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Survival.Conditioning
+import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition.Event
 
-import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition.Lemmas.Meander.CorridorProbability
-
+import all Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition.Lemmas.Meander.CorridorProbability
+import Topology.Cadlag.Skorokhod.Path.Linear
 /-!
 # Transition estimate from the centered first-window limit
 
-The public lemma in this file is:
+## Internal proof declarations
 
 - `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.exists_eventually_transitionConditionalProbability_ge_of_firstWindowSupport`:
   for centered unit-variance increments, if the Brownian first-window
@@ -31,7 +32,7 @@ Brownian-meander identification used in Wang Yiyang,
 Chapter 3, Lemma 3.5, and Appendix A.2, Lemma A.7.
 -/
 
-@[expose] public section
+section
 
 namespace ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned
 
@@ -49,7 +50,7 @@ lemma exists_eventually_transitionConditionalProbability_ge_of_firstWindowSuppor
     (hcontinuous : ∀ ω, Continuous (B · ω))
     (hmeasurable : ∀ t, Measurable (B t))
     {rho : ℝ} (hrho : 0 < rho) (hrhoSmall : rho < 1 / 48)
-    (hsupport : Skorokhod.straightPath (7 / 16 : ℝ) ∈
+    (hsupport : Skorokhod.linearPath (7 / 16 : ℝ) ∈
       (P.map (fun ω => Skorokhod.ofContinuousMap
         (restrictPathToUnitInterval
           (centeredFirstWindowShift

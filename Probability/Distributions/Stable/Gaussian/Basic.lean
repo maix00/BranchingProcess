@@ -8,15 +8,15 @@ module
 
 public import Probability.Distributions.Stable.Basic
 public import Mathlib.Probability.Distributions.Gaussian.Real
-public import Mathlib.Probability.Independence.Basic
-public import Mathlib.MeasureTheory.Function.L2Space
-public import Mathlib.MeasureTheory.Integral.Prod
-public import Mathlib.Probability.CentralLimitTheorem
-public import Mathlib.Probability.Moments.Variance
-public import MeasureTheory.Measure.CharacteristicFunction.Convolution
-public import Probability.Distributions.Stable.Exponent.CharacteristicFunction
-public import Probability.Distributions.Stable.Operations.Convolution
-public import Probability.Sequence.IID.CharacteristicFunction
+import Mathlib.Probability.Independence.Basic
+import Mathlib.MeasureTheory.Function.L2Space
+import Mathlib.MeasureTheory.Integral.Prod
+import Mathlib.Probability.CentralLimitTheorem
+import Mathlib.Probability.Moments.Variance
+import MeasureTheory.Measure.CharacteristicFunction.Convolution
+import Probability.Distributions.Stable.CharacteristicFunction.Modulus
+import Probability.Distributions.Stable.Operations.Convolution
+import Probability.Sequence.IID.CharacteristicFunction
 
 /-!
 # Gaussian laws as stable laws
@@ -25,6 +25,13 @@ The centered Gaussian law is strictly stable with exponent two.  This file
 connects mathlib's Gaussian distribution API to the abstract stable-law
 predicate.  Small-deviation normalizations are handled in the Mogulskii
 specialization layer.
+
+## Public declarations
+
+* `isStrictlyAlphaStable_gaussianReal_zero`: `gaussianReal 0 v` is strictly
+  `2`-stable whenever `v ≠ 0`.
+* `IsStrictlyAlphaStable.exists_gaussianReal_zero`: every strictly `2`-stable
+  probability law on `ℝ` is `gaussianReal 0 v` for some `v ≠ 0`.
 -/
 
 open Filter Topology MeasureTheory MeasureTheory.Measure ComplexConjugate
@@ -33,17 +40,6 @@ open scoped BigOperators NNReal
 @[expose] public section
 
 namespace ProbabilityTheory
-
-theorem alphaStableScale_two_sq (a b : ℝ) :
-    alphaStableScale 2 a b ^ 2 = a ^ 2 + b ^ 2 := by
-  rw [alphaStableScale, Real.rpow_two, Real.rpow_two]
-  rw [show (1 / (2 : ℝ)) = ((2 : ℕ) : ℝ)⁻¹ by norm_num]
-  exact Real.rpow_inv_natCast_pow (n := 2) (by positivity) (by norm_num)
-
-theorem alphaStableScale_two_nonneg (a b : ℝ) :
-    0 ≤ alphaStableScale 2 a b := by
-  rw [alphaStableScale, Real.rpow_two, Real.rpow_two]
-  exact Real.rpow_nonneg (by positivity) _
 
 /-- Every nondegenerate centered real Gaussian probability law is strictly
 `2`-stable. -/

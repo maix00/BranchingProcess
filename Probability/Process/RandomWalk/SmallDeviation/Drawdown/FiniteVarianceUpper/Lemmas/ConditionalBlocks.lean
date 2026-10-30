@@ -6,18 +6,18 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.Event
-public import Probability.Process.RandomWalk.Path.Adapted.Filtration
-public import Probability.Process.RandomWalk.Path.Block.Law.FiniteInterval
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Scale.BlockScale
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.RandomWalkBounds.Horizontal.Basic
-public import Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.FiniteVarianceUpper.Basic
-public import Mathlib.MeasureTheory.Function.ConditionalExpectation.Basic
+import Probability.Process.RandomWalk.SmallDeviation.Drawdown.Event
+import Probability.Process.RandomWalk.Path.Adapted.Filtration
+import Probability.Process.RandomWalk.Path.Block.Law.FiniteInterval
+import Probability.Process.RandomWalk.Path.Block.Partition.Basic
+import Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.Blocks.UpperBound
+import Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.FiniteVarianceUpper.Basic
+import Mathlib.MeasureTheory.Function.ConditionalExpectation.Basic
 import Probability.Independence.ConditionalIntegral
 import Probability.Sequence.IID.Blocks.StoppingTime
-public import Mathlib.Analysis.SpecialFunctions.Log.Basic
-public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.JumpPattern.DiscretizedMaximum
-public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.TubeEvent
+import Mathlib.Analysis.SpecialFunctions.Log.Basic
+import all Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.JumpPattern.DiscretizedMaximum
+import all Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.TubeEvent
 
 import MeasureTheory.Function.FinPartialSum
 import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
@@ -27,6 +27,8 @@ import Probability.Sequence.IID.Blocks.Consecutive
 
 /-!
 # Conditional block bounds for bounded drawdown
+
+## Internal proof declarations
 
 The proof-specific declarations in this module are:
 
@@ -63,12 +65,11 @@ in a Space of Trajectories,” *Theory of Probability and Its Applications*
 open Filter MeasureTheory Topology
 open scoped ENNReal
 
-@[expose] public section
+section
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown
 
 open ProbabilityTheory.RandomWalk
-open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 open ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube
 
 private lemma partialSum_eq_prefixSum {length : ℕ}
@@ -173,26 +174,6 @@ lemma drawdownPastDiscretizedMaximum_eq_runningMaximum
   simp only [drawdownPastDiscretizedMaximum, spatialBinLevel, spatialBinIndex]
   rw [partialSups_blockCoordinates_eq start increment]
 
-private lemma prefixSum_blockCoordinates_eq
-    (start : ℕ) (increment : ℕ → ℝ) :
-    (∑ i : Fin start,
-      Combinatorics.Sequence.blockCoordinates 0 start increment i) =
-      AdditivePath.displacement start increment := by
-  simp [Combinatorics.Sequence.blockCoordinates,
-    AdditivePath.displacement, Fin.sum_univ_eq_sum_range]
-
-private lemma tubeBlockPosition_eq
-    (start length : ℕ) (increment : ℕ → ℝ)
-    (k : Fin (length + 1)) :
-    (∑ i : Fin start,
-      Combinatorics.Sequence.blockCoordinates 0 start increment i) +
-      Fin.partialSum
-        (Combinatorics.Sequence.blockCoordinates start length increment) k =
-      AdditivePath.displacement (start + (k : ℕ)) increment := by
-  rw [prefixSum_blockCoordinates_eq, partialSum_blockCoordinates]
-  exact (AdditivePath.displacement_add_eq_add_blockSum
-    start (k : ℕ) increment).symm
-
 /-- Membership in a tube block event is the requirement that the original
 walk remain in the corresponding translated interval at every time from the
 block start through its end. -/
@@ -220,8 +201,8 @@ lemma drawdownTubeBlockEvent_iff_path_in_interval
     drawdownTubePairEvent]
   rw [hcenter]
   constructor <;> intro h k
-  · simpa only [tubeBlockPosition_eq] using h k
-  · simpa only [tubeBlockPosition_eq] using h k
+  · simpa only [blockCoordinates_prefix_add_partialSum_eq_displacement] using h k
+  · simpa only [blockCoordinates_prefix_add_partialSum_eq_displacement] using h k
 
 private def blockPrefixPair (start length : ℕ) :
     (Fin (start + length) → ℝ) →
@@ -454,7 +435,6 @@ private lemma iidSequenceLaw_condExp_drawdownTubePairEvent_le_of_finiteVariance
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     {variance : ℝ}
     (hν : ProbabilityTheory.IsCenteredSecondMoment ν variance)
-    (hsquare : Integrable (fun x : ℝ => x ^ 2) ν)
     (hvariance : 0 < variance)
     {v d : ℝ} (hv : 0 < v) (hd : 0 < d)
     (hcritical : d < (Real.pi ^ 2 / 2) * variance) :
@@ -478,7 +458,7 @@ private lemma iidSequenceLaw_condExp_drawdownTubePairEvent_le_of_finiteVariance
     exact hvariance
   obtain ⟨width₀, hwidth₀, hintervalBound⟩ :=
     iidSequenceLaw_intervalProbability_le_exp_of_finiteVariance
-      ν hν.1 hsquare hvariance' hv hd (by simpa [hν.2] using hcritical)
+      ν hν.1 hvariance' hv hd (by simpa [hν.2] using hcritical)
   refine ⟨width₀, hwidth₀, ?_⟩
   intro width hwidth length hlength start center hcenter
   apply iidSequenceLaw_condExp_drawdownTubePairEvent_le_of_intervalBound
@@ -495,7 +475,6 @@ lemma iidSequenceLaw_condExp_drawdownTubeBlockEvent_le_of_finiteVariance
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     {variance : ℝ}
     (hν : ProbabilityTheory.IsCenteredSecondMoment ν variance)
-    (hsquare : Integrable (fun x : ℝ => x ^ 2) ν)
     (hvariance : 0 < variance)
     {v d : ℝ} (hv : 0 < v) (hd : 0 < d)
     (hcritical : d < (Real.pi ^ 2 / 2) * variance) :
@@ -512,7 +491,7 @@ lemma iidSequenceLaw_condExp_drawdownTubeBlockEvent_le_of_finiteVariance
             Real.exp (width ^ v - d * ((length : ℝ) / width ^ 2)) := by
   obtain ⟨width₀, hwidth₀, hbound⟩ :=
     iidSequenceLaw_condExp_drawdownTubePairEvent_le_of_finiteVariance
-      ν hν hsquare hvariance hv hd hcritical
+      ν hν hvariance hv hd hcritical
   refine ⟨width₀, hwidth₀, ?_⟩
   intro width hwidth length hlength start center hcenter
   rw [ProbabilityTheory.sequencePrefixFiltration_eq_comap_blockCoordinates]

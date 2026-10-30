@@ -6,23 +6,40 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Scale.Core
-public import Probability.Distributions.Stable.Attraction.Norming.Inverse
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Scale.Basic
+public import Probability.Distributions.Stable.Attraction.Norming.Basic
+public import Probability.Distributions.Stable.Attraction.Norming.Asymptotics.Inverse
+public import Analysis.Asymptotics.RegularVariation.SlowScale
+import Probability.Distributions.Moments.Truncated.RegularVariation
 
 /-!
 # Vanishing stable small-deviation rates
 
-The public theorem is:
+## Public declarations
 
 - `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.tendsto_stableSmallDeviationRate_zero_of_slowVariation`:
   if $a_n$ is a stable norming, $x_n\to\infty$, $x_n/a_n\to0$,
   $0<\alpha\le2$, and $L^*$ is slowly varying, then
   $x_n^\alpha/(nL^*(x_n))\to0$.
+- `IsStableMogulskiiScale.tendsto_stableSmallDeviationRate_zero_of_slowVariation_limit`:
+  under the two-scale condition and $L^*(u)\to\ell>0$, the rate tends to zero for every $\alpha>0$.
+- `IsStableMogulskiiScale.tendsto_stableSmallDeviationRate_const_mul_div`:
+  for $c>0$, scaling the corridor by $c$ changes the asymptotic rate by the
+  factor $c^\alpha$.
 
 The two-scale hypothesis makes the small-deviation rate vanish throughout the
 stable range `0 < α ≤ 2`. The slowly varying factor need not converge to a
 finite limit: Potter bounds for the monotone truncated second moment are
-enough, including the index-two case.
+enough, including the index-two case. A positive finite limit gives a separate
+rate-vanishing result for every positive exponent. The Potter estimate is the
+monotone form of Theorem 1.5.6 in N. H. Bingham, C. M. Goldie, and J. L.
+Teugels, *Regular Variation*, Encyclopedia of Mathematics and its Applications
+27, Cambridge University Press (1987), DOI 10.1017/CBO9780511721434. The
+small-deviation rate considered here is the scale in Theorem 3, Section 4,
+p. 764 of A. A. Mogul'skii, “Small deviations in the sample function space,”
+*Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974), 755--765; English
+translation, “Small Deviations in a Space of Trajectories,” *Theory of
+Probability and Its Applications* 19(4) (1975), 726--736, DOI 10.1137/1119081.
 -/
 
 open Filter MeasureTheory
@@ -198,6 +215,114 @@ theorem tendsto_stableSmallDeviationRate_zero_of_slowVariation
     exact div_nonneg (Real.rpow_nonneg (le_of_lt hs) α)
       (mul_nonneg (Nat.cast_nonneg _) hslowPos.le)
   · exact hrateUpper
+
+namespace IsStableMogulskiiScale
+
+/-- For every positive exponent, the two-scale condition makes the
+small-deviation rate vanish when `L*` has a positive finite limit. This covers
+exponents above two as well, where the Potter-bound theorem does not apply. -/
+theorem tendsto_stableSmallDeviationRate_zero_of_slowVariation_limit
+    {α ell : ℝ} {ν : Measure ℝ} {normalization scale : ℕ → ℝ}
+    (hα : 0 < α) (hell : 0 < ell)
+    (hscale : IsStableMogulskiiScale α ν normalization scale)
+    (hslow : Tendsto (stableSlowVariation α ν) atTop (nhds ell)) :
+    Tendsto (stableSmallDeviationRate α ν scale) atTop (nhds 0) := by
+  have hnormL : Tendsto
+      (fun n => stableSlowVariation α ν (normalization n)) atTop (nhds ell) :=
+    hslow.comp hscale.stableNorming.2.1
+  have hscaleL : Tendsto
+      (fun n => stableSlowVariation α ν (scale n)) atTop (nhds ell) :=
+    hslow.comp hscale.scale_tendsto_atTop
+  have hratio := hscale.scale_div_normalization_tendsto_zero
+  have hratioPow : Tendsto (fun n => (scale n / normalization n) ^ α)
+      atTop (nhds 0) := hratio.rpow_const_nhds_zero hα
+  have hnormFactor : Tendsto
+      (fun n => normalization n ^ α /
+        stableSlowVariation α ν (normalization n) / (n : ℝ))
+      atTop (nhds 1) := hscale.stableNorming.2.2
+  have hslowRatio : Tendsto
+      (fun n => stableSlowVariation α ν (normalization n) /
+        stableSlowVariation α ν (scale n)) atTop (nhds 1) := by
+    have h := hnormL.div hscaleL hell.ne'
+    have hfun : (fun n => stableSlowVariation α ν (normalization n)) /
+        (fun n => stableSlowVariation α ν (scale n)) =
+          (fun n => stableSlowVariation α ν (normalization n) /
+            stableSlowVariation α ν (scale n)) := by
+      funext n
+      rfl
+    rw [hfun] at h
+    simpa [hell.ne'] using h
+  have hproduct : Tendsto
+      (fun n => (scale n / normalization n) ^ α *
+        (normalization n ^ α /
+          stableSlowVariation α ν (normalization n) / (n : ℝ)) *
+        (stableSlowVariation α ν (normalization n) /
+          stableSlowVariation α ν (scale n))) atTop (nhds 0) := by
+    simpa using (hratioPow.mul hnormFactor).mul hslowRatio
+  have hscalePos := hscale.eventually_scale_pos
+  have hnormPos := hscale.eventually_normalization_pos
+  have hnormLPos : ∀ᶠ n in atTop,
+      0 < stableSlowVariation α ν (normalization n) := by
+    filter_upwards [hnormL.eventually (Ioi_mem_nhds hell)] with n hn
+    exact hn
+  have hscaleLPos : ∀ᶠ n in atTop,
+      0 < stableSlowVariation α ν (scale n) := by
+    filter_upwards [hscaleL.eventually (Ioi_mem_nhds hell)] with n hn
+    exact hn
+  have heq : stableSmallDeviationRate α ν scale =ᶠ[atTop]
+      fun n => (scale n / normalization n) ^ α *
+        (normalization n ^ α /
+          stableSlowVariation α ν (normalization n) / (n : ℝ)) *
+        (stableSlowVariation α ν (normalization n) /
+          stableSlowVariation α ν (scale n)) := by
+    filter_upwards [eventually_gt_atTop (0 : ℕ), hscalePos, hnormPos,
+      hnormLPos, hscaleLPos] with n hn ha hb hLb hLa
+    rw [stableSmallDeviationRate]
+    rw [Real.div_rpow (le_of_lt ha) (le_of_lt hb) α]
+    have hnNe : (n : ℝ) ≠ 0 := by exact_mod_cast hn.ne'
+    have hbnNe : normalization n ≠ 0 := hb.ne'
+    have haPowNe : scale n ^ α ≠ 0 := (Real.rpow_pos_of_pos ha α).ne'
+    have hbPowNe : normalization n ^ α ≠ 0 := (Real.rpow_pos_of_pos hb α).ne'
+    field_simp [hnNe, hbnNe, hLb.ne', hLa.ne', haPowNe, hbPowNe]
+  exact hproduct.congr' heq.symm
+
+/-- Rescaling a small-deviation argument by a fixed positive constant changes
+the stable logarithmic rate by the corresponding regularly varying factor. -/
+theorem tendsto_stableSmallDeviationRate_const_mul_div
+    {α c : ℝ} {ν : Measure ℝ} {normalization scale : ℕ → ℝ}
+    (hscale : IsStableMogulskiiScale α ν normalization scale)
+    (hslow : Asymptotics.IsSlowlyVaryingAtTop (stableSlowVariation α ν))
+    (hc : 0 < c) :
+    Tendsto
+      (fun n => stableSmallDeviationRate α ν (fun k => c * scale k) n /
+        stableSmallDeviationRate α ν scale n)
+      atTop (nhds (c ^ α)) := by
+  let scaled : ℕ → ℝ := fun n => c * scale n
+  have hscaled : IsStableMogulskiiScale α ν normalization scaled := by
+    simpa [scaled] using hscale.const_mul hc
+  have hratio :=
+    ((stableScaleTime_isRegularlyVaryingAtTop hslow).ratio_tendsto hc).comp
+      hscale.scale_tendsto_atTop
+  have hnumL : ∀ᶠ n : ℕ in atTop,
+      0 < stableSlowVariation α ν (scaled n) :=
+    hscaled.scale_tendsto_atTop.eventually hslow.eventually_pos
+  have hdenL : ∀ᶠ n : ℕ in atTop,
+      0 < stableSlowVariation α ν (scale n) :=
+    hscale.scale_tendsto_atTop.eventually hslow.eventually_pos
+  have heq : (fun n => stableSmallDeviationRate α ν scaled n /
+      stableSmallDeviationRate α ν scale n) =ᶠ[atTop]
+      (fun n => stableScaleTime α ν (scaled n) /
+        stableScaleTime α ν (scale n)) := by
+    filter_upwards [eventually_gt_atTop (0 : ℕ), hnumL, hdenL]
+      with n hn hnum hden
+    have hnNe : (n : ℝ) ≠ 0 := by exact_mod_cast hn.ne'
+    rw [stableSmallDeviationRate, stableSmallDeviationRate,
+      stableScaleTime, stableScaleTime]
+    field_simp [hnNe, hnum.ne', hden.ne']
+  exact hratio.congr' heq.symm
+
+
+end IsStableMogulskiiScale
 
 end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 

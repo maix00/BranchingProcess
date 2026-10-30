@@ -11,6 +11,8 @@ public import Combinatorics.UlamHarris.Basic
 /-!
 # Deterministic Ulam--Harris trees
 
+## Public declarations
+
 `Tree α` is a deterministic rooted tree of addresses `TreeNode α`. Its carrier
 contains the root, is parent closed, and is closed under smaller sibling
 labels. The structure is not assumed to be finite, countable, or locally

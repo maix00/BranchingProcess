@@ -6,13 +6,14 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.Brownian.Reflection.FirstPassage.Principle
+public import Probability.Process.Brownian.PathLaw.ContinuousPathLaw
 public import Probability.Process.Path.FirstPassage.Descending
+import Probability.Process.Brownian.Reflection.FirstPassage.Principle
 
 /-!
 # One-dimensional law of descending Brownian hitting times
 
-The public theorems in this file are:
+## Public declarations
 
 - `ProbabilityTheory.IsBrownianReal.measure_descendingHittingTime_le`:
   for $x,t>0$, $\mathbb P(\tau_x\le t)=2\mathbb P(B_t<-x)$,

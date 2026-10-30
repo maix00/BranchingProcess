@@ -5,7 +5,11 @@ Authors: WANG Yiyang
 -/
 module
 
-public import Probability.BranchingProcess.GaltonWatson.Growth
+public import Probability.BranchingProcess.GaltonWatson.Moments.FirstMoment
+public import Probability.BranchingProcess.GaltonWatson.Moments.SecondMoment
+public import Probability.BranchingProcess.GaltonWatson.Moments.PaleyZygmund
+import Probability.MeasureTheory.Moments.SecondMomentGrowth
+import Analysis.SpecialFunctions.LogarithmicCeiling
 
 /-!
 # Fixed-horizon growth for bounded offspring
@@ -13,7 +17,22 @@ public import Probability.BranchingProcess.GaltonWatson.Growth
 Every finite-slot offspring law has a finite second factorial moment.  The
 generation recursions therefore give a positive Paley--Zygmund lower bound at
 the logarithmic horizon, without imposing a second-moment assumption on any
-larger offspring law from which the finite-slot law may have been selected.
+larger offspring law from which the finite-slot law may have been selected. The
+probability-space consequence of the geometric second-moment recursion is in
+`Probability.MeasureTheory.Moments.SecondMomentGrowth`; this module supplies
+the finite-slot Galton--Watson hypotheses and conclusion.
+
+## Public declarations
+
+- `ProbabilityTheory.BranchingProcess.GaltonWatson.generationSecondMomentReal_le_constant_mul_firstMoment_sq`:
+  for a supercritical finite-slot law with mean $\rho>1$ and second factorial
+  moment $\kappa$, $\mathbb E[Z_n^2]\leq
+  \left(1+\frac{\kappa}{\rho(\rho-1)}\right)(\mathbb E Z_n)^2$ for every $n$.
+- `ProbabilityTheory.BranchingProcess.GaltonWatson.measure_generation_ge_floor_rpow_of_supercritical_finite_slots`:
+  for $N\geq1$ and $a\in\mathbb R$, at
+  $h=\left\lceil\frac{a\log N+\log 2}{\log\rho}\right\rceil_+$,
+  $\mathbb P(Z_h\geq\lfloor N^a\rfloor_+)
+  \geq\left[4\left(1+\frac{\kappa}{\rho(\rho-1)}\right)\right]^{-1}$.
 -/
 
 @[expose] public section
@@ -73,7 +92,7 @@ private lemma generationSecondMoment_zero {ι : Type*}
     (μ : ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw
       ι PUnit.{1}) : generationSecondMoment μ 0 = 1 := by
   rw [generationSecondMoment]
-  simp [Combinatorics.Branching.RootIndexed.BranchingWalk.generationSize_zero]
+  simp [Combinatorics.Branching.BranchingWalk.generationSize_zero]
 
 /-- The actual Galton--Watson second moment is bounded by a fixed multiple
 of the square of its mean.  The coefficient only uses the finite offspring
@@ -263,9 +282,21 @@ theorem measure_generation_ge_floor_rpow_of_supercritical_finite_slots
       2 * (⌊(N : ℝ) ^ a⌋₊ : ℝ) ≤ ρ ^ h := by
     have hfloor : (⌊(N : ℝ) ^ a⌋₊ : ℝ) ≤ (N : ℝ) ^ a :=
       Nat.floor_le (Real.rpow_nonneg (by positivity : 0 ≤ (N : ℝ)) a)
-    have hpow := rho_pow_ceil_log_ge_two_mul_rpow ρ a N hρ hN
+    have hNpos : 0 < (N : ℝ) := by
+      exact_mod_cast (Nat.lt_of_lt_of_le Nat.zero_lt_one hN)
+    have htarget_pos : 0 < 2 * (N : ℝ) ^ a := by positivity
+    have hlog : Real.log (2 * (N : ℝ) ^ a) =
+        Real.log 2 + a * Real.log N := by
+      rw [Real.log_mul (by norm_num) (Real.rpow_pos_of_pos hNpos a).ne',
+        Real.log_rpow hNpos]
+    have hlogb : Real.logb ρ (2 * (N : ℝ) ^ a) =
+        (a * Real.log N + Real.log 2) / Real.log ρ := by
+      rw [Real.logb, hlog]
+      ring
+    have hlarge := Real.le_pow_natCeil_logb hρ htarget_pos
+    rw [hlogb] at hlarge
     dsimp [h]
-    exact (mul_le_mul_of_nonneg_left hfloor (by norm_num)).trans hpow
+    exact (mul_le_mul_of_nonneg_left hfloor (by norm_num)).trans hlarge
   have hhalf := measure_generationSizeReal_ge_half_mean_of_secondMoment_le
     μ h C (hmean_pos h) (hsecond_pos h) hCpos (hsecond_le h)
   have hsubset :

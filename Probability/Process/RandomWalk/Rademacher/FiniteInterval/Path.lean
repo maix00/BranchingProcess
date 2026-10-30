@@ -14,6 +14,8 @@ public import Probability.Process.RandomWalk.Rademacher.FiniteInterval.KilledKer
 /-!
 # Path interpretation of killed Rademacher transitions
 
+## Public declarations
+
 The public declarations in this module are:
 
 All names below are declarations in

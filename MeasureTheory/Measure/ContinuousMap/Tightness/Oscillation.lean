@@ -19,6 +19,13 @@ public section
 This file contains the measure-theoretic diagonal arguments that turn
 one-scale path oscillation estimates into multiscale bounds.  It is independent
 of any increment law or stochastic-process model.
+
+## Public declarations
+
+- For a finite path measure and ε,η>0, some δ>0 satisfies
+  μ({f : HasOscillationBound(δ,ε,f)ᶜ})<η.
+- Finite measures on continuous paths admit a multiscale sequence of
+  oscillation bounds outside a set of arbitrarily small measure.
 -/
 
 open Filter MeasureTheory Set

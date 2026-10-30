@@ -12,6 +12,18 @@ public import Probability.Process.RandomWalk.Path.Skorokhod.Core
 /-!
 # Corridor laws for càdlàg random-walk paths
 
+## Public declarations
+
+- `ProbabilityTheory.RandomWalk.normalizedStepPathLaw_apply_rangeInOpenInterval`:
+  the law of the normalized path in \((-a,1-a)\) equals the IID law of the
+  strict tube event with width \(a\,a_n\).
+- `ProbabilityTheory.RandomWalk.normalizedStepPathLaw_apply_centeredOpenInterval`:
+  a centered open corridor of width \(w\) has the strict tube event of width
+  \(w a_n\).
+- `ProbabilityTheory.RandomWalk.normalizedStepPathLaw_apply_rangeInClosedInterval`:
+  the closed-corridor path law equals the IID law of the corresponding weak
+  tube event.
+
 This file lifts the deterministic identification of a positive-margin
 Skorokhod corridor with a strict finite tube to the canonical IID path law.
 -/

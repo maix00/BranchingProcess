@@ -6,13 +6,28 @@ Authors: Codex
 
 module
 
-public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Bounds
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Bounds
 public import Probability.Distributions.CharacteristicFunction.CosineDefect
 public import Probability.Distributions.Moments.Truncated.Basic
 public import Probability.Distributions.Moments.Truncated.RegularVariation
 
 /-!
 # Cosine defects and truncated moments
+
+## Public declarations
+
+- `cosineDefectIntegral_lower_bound_truncatedSecondMoment` gives a quadratic
+  lower bound for the cosine defect in terms of the truncated second moment.
+- `cosineDefectIntegral_lower_bound_truncatedSecondMoment_scaled` sharpens
+  the bound on a fraction `δ` of the truncation interval, with coefficient
+  `1/2 - δ^2/24`.
+- `cosineDefectIntegral_upper_bound_truncatedSecondMoment_add_tail` bounds the
+  cosine defect by the truncated quadratic contribution and the tail mass.
+- `tendsto_normalizedCosineDefect_of_slowVariation_and_tail` identifies the
+  normalized defect limit under slow variation and a vanishing quadratic-tail
+  ratio.
+- `tendsto_normalizedCosineDefect_of_slowVariation` obtains that limit from
+  slow variation of the truncated second moment alone.
 
 This file records elementary comparisons between a cosine defect and a
 truncated second moment. The comparisons are deterministic measure-theoretic
@@ -29,7 +44,7 @@ namespace ProbabilityTheory
 /-- A local fourth-order lower bound for the cosine defect. It follows from
 Mathlib's cubic lower bound for sine and is useful when sharpening a quadratic
 truncation estimate near the origin. -/
-theorem one_sub_cos_lower_bound_quartic {z : ℝ} (hz : |z| ≤ 1) :
+private lemma one_sub_cos_lower_bound_quartic {z : ℝ} (hz : |z| ≤ 1) :
     z ^ 2 / 2 - z ^ 4 / 24 ≤ 1 - Real.cos z := by
   let w : ℝ := |z|
   let u : ℝ := w / 2

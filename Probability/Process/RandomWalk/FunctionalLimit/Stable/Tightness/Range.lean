@@ -9,6 +9,8 @@ module
 public import Probability.Process.RandomWalk.FunctionalLimit.Stable.Tightness.BlockTail
 public import Probability.Process.RandomWalk.Path.Skorokhod.Range
 public import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
+import MeasureTheory.Measure.CadlagPath.Tightness
+import all Probability.Process.RandomWalk.FunctionalLimit.Stable.Tightness.Lemmas.Parameters
 
 /-!
 # Compact range bounds for stable random walks
@@ -18,6 +20,33 @@ centering to compact-range control of the normalized path laws. The topology
 and compactness of state-space ranges are supplied by the general càdlàg and
 Skorokhod layers; only the random-walk scale and its stable asymptotics appear
 here.
+## Public declarations
+
+Let $\mu_n=\texttt{normalizedStepPathLaw}(\nu,\texttt{normalization},n)$. For a
+compact state-space set $K$, write $R_K=\{f:\operatorname{range}(f)\subseteq K\}$.
+
+- `eventually_measure_normalizedStepPathLaw_rangeExit_le_of_stableNorming`
+  proves, for $r,\theta>0$ and explicit regular-variation margins $c_T,c_M$,
+  \[
+   \mu_n\!\left(R_{[-\theta,\theta]}^c\right)
+   \le \operatorname{ENNReal.ofReal}\!\left(c_T+\frac{4c_M}{\theta^2}\right)
+  \]
+  eventually, where $\frac{2-\alpha}{\alpha}r^{-\alpha}<c_T$ and
+  $r^{2-\alpha}<c_M$.
+- `exists_eventually_compactRange_bound_of_stableNorming` proves that every
+  $\varepsilon>0$ admits compact $K\subseteq\mathbb R$ with
+  $\mu_n(R_K^c)\le\operatorname{ENNReal.ofReal}(\varepsilon)$ eventually.
+- `exists_eventually_compactRange_bound_of_index_lt_one`,
+  `exists_eventually_compactRange_bound_of_index_one`, and
+  `exists_eventually_compactRange_bound_of_index_gt_one` establish this same
+  conclusion for the uncentered, Mogulskii sine-centered, and integrable
+  centered stable regimes, respectively.
+- `exists_eventually_compactRange_bound_of_index_lt_one_ennreal`,
+  `exists_eventually_compactRange_bound_of_index_one_ennreal`, and
+  `exists_eventually_compactRange_bound_of_index_gt_one_ennreal` give the same
+  compact $K$ conclusion with arbitrary $0<\eta\le\infty$ and
+  $\mu_n(R_K^c)\le\eta$ eventually.
+
 -/
 
 open Filter MeasureTheory ProbabilityTheory
@@ -73,94 +102,6 @@ theorem eventually_measure_normalizedStepPathLaw_rangeExit_le_of_stableNorming
     ProbabilityTheory.RandomWalk.measure_normalizedStepPathLaw_rangeIn_closedInterval_compl_le_of_blockPrefixExceedance
       ν normalization n hthreshold hscaleN
       (ENNReal.ofReal (tailBound + 4 * momentBound / thresholdMultiplier ^ 2)) hblockN'
-
-/-- Parameter choice for a stable whole-horizon range bound. First the
-regular-variation tail is made small by increasing the truncation radius;
-then the excursion threshold is chosen large enough both for the centering
-bias and for the truncated-moment term. -/
-private lemma exists_stableRangeParameters
-    {α ε : ℝ} (hα₀ : 0 < α) (hα₂ : α < 2) (hε : 0 < ε)
-    (biasBound : ℝ → ℝ) :
-    ∃ radiusMultiplier thresholdMultiplier : ℝ,
-      0 < radiusMultiplier ∧ biasBound radiusMultiplier < thresholdMultiplier / 2 ∧
-      0 < thresholdMultiplier ∧
-        (((2 - α) / α) * radiusMultiplier ^ (-α) + ε / 4) +
-            4 * (radiusMultiplier ^ (2 - α) + 1) / thresholdMultiplier ^ 2 < ε := by
-  let tailCoefficient : ℝ := (2 - α) / α
-  have htailCoefficient : 0 < tailCoefficient := by
-    dsimp [tailCoefficient]
-    positivity
-  have htailTendsto : Tendsto (fun r : ℝ => tailCoefficient * r ^ (-α))
-    atTop (nhds 0) := by
-    have hpow := tendsto_rpow_neg_atTop hα₀
-    simpa using tendsto_const_nhds.mul hpow
-  have htailEventually : ∀ᶠ r : ℝ in atTop,
-      tailCoefficient * r ^ (-α) < ε / 4 :=
-    htailTendsto.eventually (Iio_mem_nhds (by positivity))
-  obtain ⟨lower, hlower⟩ := eventually_atTop.1 htailEventually
-  let radiusMultiplier : ℝ := max lower 1 + 1
-  have hradius : 0 < radiusMultiplier := by
-    dsimp [radiusMultiplier]
-    positivity
-  have htailSmall : tailCoefficient * radiusMultiplier ^ (-α) < ε / 4 := by
-    apply hlower radiusMultiplier
-    dsimp [radiusMultiplier]
-    calc
-      lower ≤ max lower 1 := le_max_left _ _
-      _ ≤ max lower 1 + 1 := by norm_num
-  let momentBound : ℝ := radiusMultiplier ^ (2 - α) + 1
-  have hmomentBound : 0 < momentBound := by
-    dsimp [momentBound]
-    positivity
-  let thresholdLower : ℝ := max
-    (2 * biasBound radiusMultiplier)
-    (max 1 (8 * momentBound / ε))
-  obtain ⟨m, hm⟩ := exists_nat_gt thresholdLower
-  let thresholdMultiplier : ℝ := m
-  have hthresholdLower : thresholdLower < thresholdMultiplier := by
-    exact_mod_cast hm
-  have hthresholdPositive : 0 < thresholdMultiplier := by
-    have honeLower : 1 ≤ thresholdLower := by
-      dsimp [thresholdLower]
-      exact le_trans (le_max_left 1 (8 * momentBound / ε)) (le_max_right _ _)
-    linarith
-  have hbiasSmall : biasBound radiusMultiplier < thresholdMultiplier / 2 := by
-    have hle : 2 * biasBound radiusMultiplier ≤ thresholdLower :=
-      le_max_left _ _
-    linarith
-  have hlarge : 8 * momentBound / ε < thresholdMultiplier := by
-    have hle : 8 * momentBound / ε ≤ thresholdLower := by
-      dsimp [thresholdLower]
-      exact le_trans (le_max_right _ _) (le_max_right _ _)
-    exact lt_of_le_of_lt hle hthresholdLower
-  have hlargeMul : 8 * momentBound < thresholdMultiplier * ε :=
-    (div_lt_iff₀ hε).mp hlarge
-  have honeLower : 1 ≤ thresholdLower := by
-    dsimp [thresholdLower]
-    exact le_trans (le_max_left 1 (8 * momentBound / ε)) (le_max_right _ _)
-  have hone : 1 ≤ thresholdMultiplier := le_trans honeLower hthresholdLower.le
-  have hthresholdSq : thresholdMultiplier ≤ thresholdMultiplier ^ 2 := by
-    nlinarith [sq_nonneg (thresholdMultiplier - 1)]
-  have hinv : (thresholdMultiplier ^ 2)⁻¹ ≤ thresholdMultiplier⁻¹ :=
-    (inv_le_inv₀ (sq_pos_of_pos hthresholdPositive) hthresholdPositive).2
-      hthresholdSq
-  have hmomentFrac :
-      4 * momentBound / thresholdMultiplier ^ 2 ≤
-        4 * momentBound / thresholdMultiplier := by
-    calc
-      4 * momentBound / thresholdMultiplier ^ 2 =
-          4 * momentBound * (thresholdMultiplier ^ 2)⁻¹ := by rw [div_eq_mul_inv]
-      _ ≤ 4 * momentBound * thresholdMultiplier⁻¹ :=
-        mul_le_mul_of_nonneg_left hinv (by positivity)
-      _ = 4 * momentBound / thresholdMultiplier := by rw [div_eq_mul_inv]
-  have hmomentSmall :
-      4 * momentBound / thresholdMultiplier < ε / 2 := by
-    rw [div_lt_iff₀ hthresholdPositive]
-    nlinarith [hlargeMul]
-  refine ⟨radiusMultiplier, thresholdMultiplier, hradius, hbiasSmall,
-    hthresholdPositive, ?_⟩
-  dsimp [tailCoefficient] at htailSmall
-  linarith
 
 /-- Any of the stable-domain source centering conditions can be used after
 providing its eventual truncation-bias limit bound. The arbitrary error
@@ -297,35 +238,6 @@ theorem exists_eventually_compactRange_bound_of_index_gt_one
       (by norm_num : 0 < (1 : ℝ)) (by simpa [biasBound] using hbiasSmall) hratio
   simpa [biasBound] using hbias
 
-private lemma exists_eventually_compactRange_bound_of_ennrealBudget
-    (normalization : ℕ → ℝ) (ν : Measure ℝ) [IsProbabilityMeasure ν]
-    (hreal : ∀ ε : ℝ, 0 < ε →
-      ∃ range : Set ℝ, IsCompact range ∧
-        ∀ᶠ n : ℕ in atTop,
-          (normalizedStepPathLaw ν normalization n)
-            (CadlagPath.rangeIn (T := unitInterval) range)ᶜ ≤ ENNReal.ofReal ε)
-    {η : ENNReal} (hη : 0 < η) :
-    ∃ range : Set ℝ, IsCompact range ∧
-      ∀ᶠ n : ℕ in atTop,
-        (normalizedStepPathLaw ν normalization n)
-          (CadlagPath.rangeIn (T := unitInterval) range)ᶜ ≤ η := by
-  by_cases htop : η = ⊤
-  · refine ⟨Set.Icc (-1 : ℝ) 1, isCompact_Icc, ?_⟩
-    filter_upwards with n
-    calc
-      (normalizedStepPathLaw ν normalization n)
-          (CadlagPath.rangeIn (T := unitInterval) (Set.Icc (-1 : ℝ) 1))ᶜ ≤ 1 := by
-        calc
-          _ ≤ normalizedStepPathLaw ν normalization n Set.univ :=
-            measure_mono (Set.subset_univ _)
-          _ = 1 := by simp
-      _ ≤ η := by rw [htop]; exact le_top
-  · have hε : 0 < η.toReal := ENNReal.toReal_pos (ne_of_gt hη) htop
-    obtain ⟨range, hrange, hbound⟩ := hreal η.toReal hε
-    refine ⟨range, hrange, ?_⟩
-    filter_upwards [hbound] with n hn
-    rwa [ENNReal.ofReal_toReal htop] at hn
-
 /-- Compact-range control below stable index one in the `ENNReal` error
 interface used by the general Skorokhod tightness criterion. -/
 theorem exists_eventually_compactRange_bound_of_index_lt_one_ennreal
@@ -339,7 +251,7 @@ theorem exists_eventually_compactRange_bound_of_index_lt_one_ennreal
       ∀ᶠ n : ℕ in atTop,
         (normalizedStepPathLaw ν normalization n)
           (CadlagPath.rangeIn (T := unitInterval) range)ᶜ ≤ η := by
-  apply exists_eventually_compactRange_bound_of_ennrealBudget normalization ν
+  apply MeasureTheory.exists_eventually_compactRange_bound_of_real_error
   · intro ε hε
     exact exists_eventually_compactRange_bound_of_index_lt_one
       hnorm hα₀ hα₁ htail hε
@@ -358,7 +270,7 @@ theorem exists_eventually_compactRange_bound_of_index_one_ennreal
       ∀ᶠ n : ℕ in atTop,
         (normalizedStepPathLaw ν normalization n)
           (CadlagPath.rangeIn (T := unitInterval) range)ᶜ ≤ η := by
-  apply exists_eventually_compactRange_bound_of_ennrealBudget normalization ν
+  apply MeasureTheory.exists_eventually_compactRange_bound_of_real_error
   · intro ε hε
     exact exists_eventually_compactRange_bound_of_index_one
       hnorm htail hcenter hε
@@ -379,7 +291,7 @@ theorem exists_eventually_compactRange_bound_of_index_gt_one_ennreal
       ∀ᶠ n : ℕ in atTop,
         (normalizedStepPathLaw ν normalization n)
           (CadlagPath.rangeIn (T := unitInterval) range)ᶜ ≤ η := by
-  apply exists_eventually_compactRange_bound_of_ennrealBudget normalization ν
+  apply MeasureTheory.exists_eventually_compactRange_bound_of_real_error
   · intro ε hε
     exact exists_eventually_compactRange_bound_of_index_gt_one
       hnorm hα₀ hα₁ hα₂ htail hint hcenter hε

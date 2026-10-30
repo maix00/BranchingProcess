@@ -6,12 +6,12 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.Path.FirstPassage.Basic
+public import Probability.Process.Path.FirstPassage.Measurability
 
 /-!
 # Descending level hitting times of a continuous path
 
-The public definitions and theorems in this file are:
+## Public declarations
 
 - `ProbabilityTheory.descendingHittingTime`:
   $\tau_x(f)=\inf\{t\ge0:f(t)\le-x\}$ for $x\ge0$.
@@ -55,7 +55,7 @@ theorem descendingHittingTime_mono (f : C(ℝ≥0, ℝ)) :
     have hts : sInf {u : ℝ≥0 | f u ≤ -(y : ℝ)} = t := by
       have heq : ((sInf {u : ℝ≥0 | f u ≤ -(y : ℝ)} : ℝ≥0) :
           WithTop ℝ≥0) = t := by
-        simpa [descendingHittingTime, firstPassageBelow, firstPassageLE,
+        simpa [descendingHittingTime, firstPassageBelow, firstPassageLE_eq_sInf,
           hex] using ht.symm
       exact WithTop.coe_injective heq
     have hpass : f t ≤ -(y : ℝ) := by

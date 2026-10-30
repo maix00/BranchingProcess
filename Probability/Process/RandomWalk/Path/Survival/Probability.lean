@@ -12,7 +12,7 @@ public import Probability.Sequence.IID.Basic
 /-!
 # Probabilities of finite nonnegative survival
 
-The public theorems in this file are:
+## Public declarations
 
 - `ProbabilityTheory.RandomWalk.survivalProbability_pos_of_positiveIncrement`:
   if $\nu((0,\infty))>0$, then

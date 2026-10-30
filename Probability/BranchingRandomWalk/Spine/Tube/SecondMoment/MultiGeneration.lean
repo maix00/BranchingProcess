@@ -4,9 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Spine.Tube.SecondMoment.OneGenerationTail
-import Probability.BranchingRandomWalk.Spine.Path.SecondMoment.Basic
-import Probability.BranchingRandomWalk.Spine.Tube.Corridor.IndependentRoot
+module
+
+public import Probability.BranchingRandomWalk.Spine.Path.ManyToOne.PathCount
+public import Probability.BranchingRandomWalk.Spine.Path.SecondMoment.Basic
+public import Probability.BranchingRandomWalk.Spine.Tube.Corridor.IndependentRoot
 
 /-!
 # Multi-generation pair decomposition for corridor path counts
@@ -32,10 +34,14 @@ remainder consists of ordered pairs of distinct successful paths, split at
 their most recent common ancestor.
 -/
 
+@[expose] public section
+
 open MeasureTheory
 open scoped ENNReal
 
 namespace ProbabilityTheory.BranchingRandomWalk.Spine
+
+open ProbabilityTheory.BranchingProcess (offspringFieldLaw offspringFieldLaw_coordinate offspringFieldLaw_independent offspringFieldLaw_mapMarks)
 
 open Combinatorics.Branching
 open Combinatorics.UlamHarris
@@ -58,7 +64,7 @@ theorem pathGenerationOffDiagonalPairs_ae_eq_distinctAddressPairCount
     (hterminalUpper : ∀ history ∈ corridor,
       history ⟨n, Nat.lt_succ_self n⟩ ≤ terminalUpper) :
     pathGenerationOffDiagonalPairs φ n
-        (corridor.indicator (fun _ => (1 : ℝ≥0∞))) initial =ᵐ[stepFieldLaw μ]
+        (corridor.indicator (fun _ => (1 : ℝ≥0∞))) initial =ᵐ[offspringFieldLaw μ]
       pathGenerationDistinctAddressPairCount φ n
         (corridor.indicator (fun _ => (1 : ℝ≥0∞))) initial := by
   let F : (Fin (n + 1) → ℝ) → ℝ≥0∞ :=
@@ -74,12 +80,12 @@ theorem pathGenerationOffDiagonalPairs_ae_eq_distinctAddressPairCount
   have hcountIntegral := lintegral_pathGeneration_le_exp_mul_spineProbability
     φ μ hboundary n initial terminalUpper corridor hcorridor hterminalUpper
   have hcountIntegral_ne_top :
-      (∫⁻ ω, pathGeneration φ n F initial ω ∂stepFieldLaw μ) ≠ ∞ := by
+      (∫⁻ ω, pathGeneration φ n F initial ω ∂offspringFieldLaw μ) ≠ ∞ := by
     apply ne_top_of_le_ne_top
       (ENNReal.mul_ne_top ENNReal.ofReal_ne_top
         (measure_ne_top (tiltedIncrementFieldLaw φ μ) _))
     simpa [F] using hcountIntegral
-  have hcount_ne_top : ∀ᵐ ω ∂stepFieldLaw μ,
+  have hcount_ne_top : ∀ᵐ ω ∂offspringFieldLaw μ,
       pathGeneration φ n F initial ω ≠ ∞ := by
     filter_upwards [ae_lt_top hcount hcountIntegral_ne_top] with ω hω
     exact hω.ne
@@ -107,9 +113,9 @@ theorem lintegral_pathGenerationOffDiagonalPairs_eq_distinctAddressPairCount
     (hterminalUpper : ∀ history ∈ corridor,
       history ⟨n, Nat.lt_succ_self n⟩ ≤ terminalUpper) :
     (∫⁻ ω, pathGenerationOffDiagonalPairs φ n
-      (corridor.indicator (fun _ => (1 : ℝ≥0∞))) initial ω ∂stepFieldLaw μ) =
+      (corridor.indicator (fun _ => (1 : ℝ≥0∞))) initial ω ∂offspringFieldLaw μ) =
       (∫⁻ ω, pathGenerationDistinctAddressPairCount φ n
-        (corridor.indicator (fun _ => (1 : ℝ≥0∞))) initial ω ∂stepFieldLaw μ) := by
+        (corridor.indicator (fun _ => (1 : ℝ≥0∞))) initial ω ∂offspringFieldLaw μ) := by
   exact lintegral_congr_ae
     (pathGenerationOffDiagonalPairs_ae_eq_distinctAddressPairCount
       φ μ hboundary n initial terminalUpper corridor hcorridor hterminalUpper)
@@ -135,7 +141,7 @@ theorem measure_finiteRootCorridorCount_le_quarter_spineLower_of_pairMoment
     (hpairBound : (∫⁻ ω,
       pathGenerationDistinctAddressPairCount φ n
         (corridor.indicator (fun _ => (1 : ℝ≥0∞))) initial ω
-      ∂stepFieldLaw μ) ≤ pairBound)
+      ∂offspringFieldLaw μ) ≤ pairBound)
     (hpairBound_top : pairBound ≠ ∞)
     (hspinePositive : 0 < (tiltedIncrementFieldLaw φ μ)
       {increment | RandomWalk.history n initial increment ∈ corridor}) :
@@ -169,7 +175,7 @@ theorem measure_finiteRootCorridorCount_le_quarter_spineLower_of_pairMoment
     intro history
     by_cases h : history ∈ corridor <;> simp [F, h]
   have hmeanUpper :
-      (∫⁻ ω, pathGeneration φ n F initial ω ∂stepFieldLaw μ) ≤ upperMean := by
+      (∫⁻ ω, pathGeneration φ n F initial ω ∂offspringFieldLaw μ) ≤ upperMean := by
     simpa [F, spineEvent, upperMean] using
       lintegral_pathGeneration_le_exp_mul_spineProbability
         φ μ hboundary n initial terminalUpper corridor hcorridor hterminalUpper
@@ -179,11 +185,11 @@ theorem measure_finiteRootCorridorCount_le_quarter_spineLower_of_pairMoment
   have hpairs := lintegral_pathGeneration_sq_eq_add_distinctAddressPairCount
     φ μ n F hF hF01 initial
   have hsecond :
-      (∫⁻ ω, (pathGeneration φ n F initial ω) ^ 2 ∂stepFieldLaw μ) ≤ second := by
+      (∫⁻ ω, (pathGeneration φ n F initial ω) ^ 2 ∂offspringFieldLaw μ) ≤ second := by
     calc
-      _ = (∫⁻ ω, pathGeneration φ n F initial ω ∂stepFieldLaw μ) +
+      _ = (∫⁻ ω, pathGeneration φ n F initial ω ∂offspringFieldLaw μ) +
           (∫⁻ ω, pathGenerationDistinctAddressPairCount φ n F initial ω
-            ∂stepFieldLaw μ) := hpairs
+            ∂offspringFieldLaw μ) := hpairs
       _ ≤ upperMean + pairBound := add_le_add hmeanUpper hpairBound
       _ = second := rfl
   have hupperMean_top : upperMean ≠ ∞ := by
@@ -205,3 +211,5 @@ theorem measure_finiteRootCorridorCount_le_quarter_spineLower_of_pairMoment
   simpa [spineEvent, F, upperMean, second] using hresult
 
 end ProbabilityTheory.BranchingRandomWalk.Spine
+
+end

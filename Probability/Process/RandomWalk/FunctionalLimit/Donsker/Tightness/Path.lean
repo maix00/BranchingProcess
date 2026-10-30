@@ -6,14 +6,20 @@ Authors: WANG Yiyang
 
 module
 
+public import Mathlib.MeasureTheory.Measure.Tight
 public import Mathlib.Topology.UnitInterval
-public import Algebra.BigOperators.AdditivePath.Block
 public import Probability.Distributions.Moments.Real
-public import Probability.Process.RandomWalk.Path.Corridor.Interpolation.Core
-public import Probability.Process.RandomWalk.Path.Interpolation.Path.Oscillation
+public import Probability.Process.RandomWalk.Path.Interpolation.Core
+public import Topology.ContinuousMap.Compactness
+import Algebra.BigOperators.AdditivePath.Block
+import Analysis.Asymptotics.Scale.Block.Proportional
+import MeasureTheory.Measure.ContinuousMap.Tightness.Criteria
 import Probability.Process.RandomWalk.Path.Block.Maximal.SecondMoment
-public import Probability.Process.RandomWalk.FunctionalLimit.Donsker.Tightness.Parameters
-public import MeasureTheory.Measure.ContinuousMap.Tightness.Criteria
+import Probability.Process.RandomWalk.Path.Corridor.Basic
+import Probability.Process.RandomWalk.Path.Corridor.Interpolation.Basic
+import Probability.Process.RandomWalk.Path.Interpolation.Path.Oscillation
+import Probability.Process.RandomWalk.Path.Representation.Scaling
+import all Probability.Process.RandomWalk.FunctionalLimit.Donsker.Tightness.Lemmas.Parameters
 
 /-!
 # Global bounds for normalized polygonal paths
@@ -22,19 +28,25 @@ The maximal inequality for the discrete partial sums controls the full
 polygonal interpolation, since a convex interval contains every segment as
 soon as it contains the grid vertices.
 
-The public theorems in this file are:
+## Public declarations
 
 - `ProbabilityTheory.RandomWalk.eventually_normalizedLinearPathLaw_oscillation`:
-  the normalized polygonal paths satisfy each prescribed one-scale
-  oscillation bound eventually.
+  for every $\epsilon>0$ and $\eta>0$, some $\delta>0$ satisfies
+  $\mathbb P(\omega_\delta(X_n)>\epsilon)<\eta$ eventually, where $X_n$
+  is the diffusively normalized polygonal path.
 - `ProbabilityTheory.RandomWalk.normalizedLinearPathLaw_compl_uniformBound_le`:
-  the probability of leaving $[-R,R]$ is at most $R^{-2}$.
-- `ProbabilityTheory.RandomWalk.exists_normalizedLinearPathLaw_uniformBound`:
-  the whole family of normalized path laws is uniformly bounded in probability.
+  for $R>0$ and $n>0$, $\mathbb P(\sup_{0\le t\le1}|X_n(t)|>R)\le R^{-2}$.
 - `ProbabilityTheory.RandomWalk.isTightMeasureSet_normalizedLinearPathLaw_of_eventually_oscillation`:
-  uniform boundedness and one-scale oscillation estimates imply tightness.
+  uniform boundedness in probability together with eventual one-scale
+  oscillation bounds implies tightness of the normalized path laws.
 - `ProbabilityTheory.RandomWalk.isTightMeasureSet_normalizedLinearPathLaw`:
-  centered unit-variance normalized polygonal path laws form a tight family.
+  if $\int x\,d\nu=0$ and $\int x^2\,d\nu=1$, then
+  $\{\operatorname{Law}(X_n):n\in\mathbb N\}$ is tight in
+  $C([0,1],\mathbb R)$. This supplies the tightness step in Theorem 4.20
+  (Chapter 2, Section 2.4.D, p. 70); the tightness criterion is in Section
+  2.4.B, pp. 61--64, of I. Karatzas and S. E. Shreve, *Brownian Motion and
+  Stochastic Calculus*, 2nd ed., Graduate Texts in Mathematics 113, Springer
+  (1991), DOI 10.1007/978-1-4612-0949-2.
 -/
 
 open Filter MeasureTheory ProbabilityTheory Set Topology
@@ -42,6 +54,8 @@ open Filter MeasureTheory ProbabilityTheory Set Topology
 @[expose] public section
 
 namespace ProbabilityTheory.RandomWalk
+
+open Asymptotics
 
 
 /-- The truncated fourth-moment estimate supplies every prescribed
@@ -162,7 +176,7 @@ theorem normalizedLinearPathLaw_compl_uniformBound_le
 /-- The normalized polygonal path laws are uniformly bounded in probability.
 The radius depends only on the requested error mass, not on the number of
 steps. -/
-theorem exists_normalizedLinearPathLaw_uniformBound
+private lemma exists_normalizedLinearPathLaw_uniformBound
     (nu : Measure ℝ) [IsProbabilityMeasure nu]
     (hnu : IsCenteredUnitSecondMoment nu)
     {eta : ENNReal} (heta : 0 < eta) :

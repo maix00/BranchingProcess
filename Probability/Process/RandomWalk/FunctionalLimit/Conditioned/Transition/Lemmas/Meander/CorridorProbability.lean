@@ -6,15 +6,17 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition.Event
-public import Mathlib.MeasureTheory.Function.ConvergenceInDistribution
-public import Mathlib.MeasureTheory.Measure.Support
-import Probability.Process.Brownian.Meander.Corridor
-import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Meander.Lemmas.CorridorProbability
+import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition.Event
+import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Survival.Conditioning
+import Mathlib.MeasureTheory.Function.ConvergenceInDistribution
+import Mathlib.MeasureTheory.Measure.Support
+import Topology.Cadlag.Skorokhod.Corridor.Upper
+import Probability.ConvergenceInDistribution.Portmanteau
+import Topology.Cadlag.Skorokhod.Path.Linear
 /-!
 # Positive probabilities for conditioned transition corridors
 
-The public results in this file are:
+## Internal proof declarations
 
 - `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.exists_eventually_normalizedTransitionCorridorProbability_ge`:
   for $D_{\sigma,s}=\{f:\forall t\in[0,1],\ 0\le f(t)\le
@@ -42,12 +44,91 @@ to Stay Positive*, Ann. Probab. 2(4) (1974), 608--619, DOI
 10.1214/aop/1176996607, Section 3, theorem (3.4), p. 616.
 -/
 
-@[expose] public section
+namespace BrownianMeander
+
+/-- The fixed strict path corridor used in Wang Yiyang, *Asymptotic Speed of
+the N-Branching Random Walk with Infinite Offspring* (master's thesis, Fudan
+University, 2026), Chapter 3, Lemma 3.5 and Appendix A.2, Lemma A.7. -/
+private def openCorridor (sigma rho : ℝ) : Set (CadlagPath unitInterval ℝ) :=
+  Skorokhod.rangeBelowEndsIn
+    ((5 / 6 - rho) / sigma)
+    ((5 / 12 + rho) / sigma)
+    ((11 / 24 - rho) / sigma)
+
+/-- The fixed transition corridor is open by the general Skorokhod corridor
+openness theorem. -/
+private lemma isOpen_openCorridor (sigma rho : ℝ) :
+    IsOpen (openCorridor sigma rho) := by
+  simpa [openCorridor] using
+    Skorokhod.isOpen_rangeBelowEndsIn
+      ((5 / 6 - rho) / sigma)
+      ((5 / 12 + rho) / sigma)
+      ((11 / 24 - rho) / sigma)
+
+end BrownianMeander
+
+section
 
 open Filter MeasureTheory ProbabilityTheory
 open scoped ENNReal NNReal Topology
 
 namespace ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned
+
+/-- The supported straight path lies in the fixed open corridor. -/
+private lemma BrownianMeander.linearPath_mem_openCorridor
+    {sigma rho : ℝ} (hsigma : 0 < sigma) (hrho : 0 < rho)
+    (hrhoSmall : rho < 1 / 48) :
+    Skorokhod.linearPath ((7 / 16) / sigma) ∈
+      BrownianMeander.openCorridor sigma rho := by
+  let y : ℝ := (7 / 16) / sigma
+  let upper : ℝ := (5 / 6 - rho) / sigma
+  have hypos : 0 ≤ y := (div_pos (by norm_num) hsigma).le
+  have hyupper : y < upper := by
+    dsimp [y, upper]
+    exact (div_lt_div_iff_of_pos_right hsigma).2 (by linarith)
+  have hleft : (5 / 12 + rho) / sigma < y := by
+    dsimp [y]
+    exact (div_lt_div_iff_of_pos_right hsigma).2 (by linarith)
+  have hright : y < (11 / 24 - rho) / sigma := by
+    dsimp [y]
+    exact (div_lt_div_iff_of_pos_right hsigma).2 (by linarith)
+  change Skorokhod.linearPath y ∈
+    Skorokhod.rangeBelowEndsIn upper
+      ((5 / 12 + rho) / sigma) ((11 / 24 - rho) / sigma)
+  constructor
+  · refine ⟨(upper - y) / 2, half_pos (sub_pos.mpr hyupper), fun t => ?_⟩
+    have ht : (t : ℝ) ≤ 1 := t.property.2
+    have hpath : y * (t : ℝ) ≤ y := by
+      nlinarith [mul_nonneg hypos (sub_nonneg.mpr ht)]
+    change y * (t : ℝ) ≤ upper - (upper - y) / 2
+    linarith
+  · simpa [Skorokhod.linearPath] using
+      (show y ∈ Set.Ioo ((5 / 12 + rho) / sigma)
+        ((11 / 24 - rho) / sigma) from ⟨hleft, hright⟩)
+
+/-- The open-set Portmanteau consequence of a supported Brownian-meander
+path. This corridor estimate is used only in the transition proof below. -/
+private lemma exists_eventually_meanderCorridorProbability_ge
+    {Ω Ωm : Type*} [MeasurableSpace Ω] [MeasurableSpace Ωm]
+    {P : ℕ → Measure Ω} [∀ n, IsProbabilityMeasure (P n)]
+    {Pm : Measure Ωm} [IsProbabilityMeasure Pm]
+    {X : ℕ → Ω → CadlagPath unitInterval ℝ}
+    {M : Ωm → CadlagPath unitInterval ℝ}
+    {sigma rho : ℝ} (hsigma : 0 < sigma)
+    (hrho : 0 < rho) (hrhoSmall : rho < 1 / 48)
+    (hlimit : TendstoInDistribution X atTop M P Pm)
+    (hsupport : Skorokhod.linearPath ((7 / 16) / sigma) ∈
+      (Pm.map M).support) :
+    ∃ q : ℝ≥0∞, 0 < q ∧ ∀ᶠ n : ℕ in atTop,
+      q ≤ (P n).map (X n) (BrownianMeander.openCorridor sigma rho) := by
+  have hpositive : 0 < (Pm.map M)
+      (BrownianMeander.openCorridor sigma rho) := by
+    exact (Measure.mem_support_iff_forall _).1 hsupport _
+      ((BrownianMeander.isOpen_openCorridor sigma rho).mem_nhds
+        (BrownianMeander.linearPath_mem_openCorridor
+          hsigma hrho hrhoSmall))
+  exact hlimit.exists_eventually_measure_map_ge_pos_of_isOpen
+    (BrownianMeander.isOpen_openCorridor sigma rho) hpositive
 
 /-- The fixed meander open set fits inside the normalized transition event
 when $\Delta/\sqrt N$ is within $\rho$ of one and the conditioned path is
@@ -109,7 +190,7 @@ lemma exists_eventually_normalizedTransitionCorridorProbability_ge
     {sigma rho : ℝ} (hsigma : 0 < sigma)
     (hrho : 0 < rho) (hrhoSmall : rho < 1 / 48)
     (hlimit : TendstoInDistribution X atTop M P Pm)
-    (hsupport : Skorokhod.straightPath ((7 / 16) / sigma) ∈
+    (hsupport : Skorokhod.linearPath ((7 / 16) / sigma) ∈
       (Pm.map M).support)
     {scale : ℕ → ℝ} (hscale : Tendsto scale atTop (𝓝 1))
     (hnonnegative : ∀ n, ∀ᵐ ω ∂P n, ∀ t, 0 ≤ X n ω t) :
@@ -156,7 +237,7 @@ lemma exists_eventually_interpolatedTransitionConditionalProbability_ge
       (fun n increment => normalizedLinearCadlagPathIcc
         (fun j => sigma * Real.sqrt j) (n + 1) increment)
       atTop M (fun n => survivalConditionedLaw ν (n + 1)) Pm)
-    (hsupport : Skorokhod.straightPath ((7 / 16) / sigma) ∈
+    (hsupport : Skorokhod.linearPath ((7 / 16) / sigma) ∈
       (Pm.map M).support)
     {width : ℕ → ℝ} (hwidth : ∀ n, 0 ≤ width n)
     (hratio : Tendsto (fun n => width n / Real.sqrt (n + 1))

@@ -7,8 +7,8 @@ Authors: WANG Yiyang
 module
 
 public import Probability.BranchingRandomWalk.Spine.Path.Decomposition.Branching
-public import Probability.BranchingRandomWalk.Spine.Path.Decomposition.IncrementSplit
 public import Probability.BranchingRandomWalk.Spine.RandomWalk.Basic
+import all Probability.Process.RandomWalk.Path.Measure
 
 /-!
 # Path-functional many-to-one identities
@@ -16,6 +16,18 @@ public import Probability.BranchingRandomWalk.Spine.RandomWalk.Basic
 The test function sees the complete ancestral position history at times
 `0, ..., n`.  The two identities correspond to the exponentially weighted
 and unweighted branching sums.
+
+## Public declarations
+
+- `weightedPathManyToOneCore` states
+  $\mathbb E[\widehat Z_n(F,x)]=\mathbb E_{\widehat\mu}[F(H_n)]$ for a
+  measurable path functional $F$ and the boundary-normalized tilted law.
+- `pathManyToOneCore` states
+  $\mathbb E[Z_n(F,x)]=\mathbb E_{\widehat\mu}
+  [e^{S_n}F(H_n)]$, where $S_n$ is the increment displacement.
+- `weightedPathManyToOne` and `pathManyToOne` give the same identities when
+  the offspring mark space and the real-valued position space are separate,
+  for every measurable displacement map.
 -/
 
 @[expose] public section
@@ -24,6 +36,8 @@ open MeasureTheory ProbabilityTheory
 open scoped ENNReal
 
 namespace ProbabilityTheory.BranchingRandomWalk.Spine
+
+open ProbabilityTheory.BranchingProcess (offspringFieldLaw offspringFieldLaw_coordinate offspringFieldLaw_independent offspringFieldLaw_mapMarks)
 
 open Combinatorics.Branching.Walk
 open ProbabilityTheory.RandomWalk
@@ -37,7 +51,7 @@ theorem weightedPathManyToOneCore
     (φ : Potential X) (μ : Measure (Combinatorics.Branching.Step ι X))
     [IsProbabilityMeasure μ] (hboundary : HasBoundaryNormalization φ μ) :
     ∀ (n : ℕ) {F : (Fin (n + 1) → ℝ) → ENNReal}, Measurable F → ∀ x : ℝ,
-      (∫⁻ ω, weightedPathGeneration φ n F x ω ∂stepFieldLaw μ) =
+      (∫⁻ ω, weightedPathGeneration φ n F x ω ∂offspringFieldLaw μ) =
         ∫⁻ increment, F (history n x increment)
           ∂tiltedIncrementFieldLaw φ μ := by
   intro n
@@ -86,13 +100,13 @@ theorem weightedPathManyToOneCore
         simpa [Function.comp_def] using h
       calc
         (∫⁻ ω, weightedPathGeneration φ (n + 1) F x ω
-            ∂stepFieldLaw μ) =
+            ∂offspringFieldLaw μ) =
             ∑' i : ι, ∫⁻ ω,
               realizedPotentialWeight φ (-1) (ω []) i *
                 weightedPathGeneration φ n
                   (fun tail => F (prependHistory x tail))
                   (x + (ω []).potentialValue' φ i)
-                  (subtreeStepField [i] ω) ∂stepFieldLaw μ := by
+                  (subtreeStepField [i] ω) ∂offspringFieldLaw μ := by
           simp_rw [weightedPathGeneration_succ]
           rw [lintegral_tsum]
           intro i
@@ -131,14 +145,14 @@ theorem weightedPathManyToOneCore
                 weightedPathGeneration φ n
                   (fun tail => F (prependHistory x tail))
                   (x + (ω []).potentialValue' φ i)
-                  (subtreeStepField [i] ω) ∂stepFieldLaw μ) =
-                ∫⁻ z, H z ∂(stepFieldLaw μ).map
+                  (subtreeStepField [i] ω) ∂offspringFieldLaw μ) =
+                ∫⁻ z, H z ∂(offspringFieldLaw μ).map
                   (fun ω => (ω ([] : TreeNode ι),
                     subtreeStepField [i] ω)) := by
               exact (lintegral_map hH hpair).symm
-            _ = ∫⁻ z, H z ∂μ.prod (stepFieldLaw μ) := by
+            _ = ∫⁻ z, H z ∂μ.prod (offspringFieldLaw μ) := by
               rw [root_subtreeStepField_joint_law μ i]
-            _ = ∫⁻ ξ, ∫⁻ η, H (ξ, η) ∂stepFieldLaw μ ∂μ := by
+            _ = ∫⁻ ξ, ∫⁻ η, H (ξ, η) ∂offspringFieldLaw μ ∂μ := by
               exact lintegral_prod H hH.aemeasurable
             _ = ∫⁻ ξ, realizedPotentialWeight φ (-1) ξ i *
                   G (ξ.potentialValue' φ i) ∂μ := by
@@ -147,7 +161,7 @@ theorem weightedPathManyToOneCore
               change (∫⁻ η, realizedPotentialWeight φ (-1) ξ i *
                   weightedPathGeneration φ n
                     (fun tail => F (prependHistory x tail))
-                    (x + ξ.potentialValue' φ i) η ∂stepFieldLaw μ) = _
+                    (x + ξ.potentialValue' φ i) η ∂offspringFieldLaw μ) = _
               rw [lintegral_const_mul _
                 (weightedPathGeneration_measurable φ n htailF
                   (x + ξ.potentialValue' φ i))]
@@ -162,7 +176,7 @@ theorem weightedPathManyToOneCore
         _ = ∫⁻ y, G y ∂ν := by
           exact (lintegral_tiltedPotentialLaw φ (-1) μ G hG).symm
         _ = ∫⁻ increment, F (history (n + 1) x increment) ∂P := by
-          exact (lintegral_history_succ ν n x hF).symm
+          exact (iid_lintegral_history_succ ν n x hF).symm
 
 /-- Unweighted path-functional many-to-one identity, with the reciprocal
 exponential weight determined by the terminal spine displacement. -/
@@ -172,7 +186,7 @@ theorem pathManyToOneCore
     [IsProbabilityMeasure μ] (hboundary : HasBoundaryNormalization φ μ)
     (n : ℕ) {F : (Fin (n + 1) → ℝ) → ENNReal} (hF : Measurable F)
     (x : ℝ) :
-    (∫⁻ ω, pathGeneration φ n F x ω ∂stepFieldLaw μ) =
+    (∫⁻ ω, pathGeneration φ n F x ω ∂offspringFieldLaw μ) =
       ∫⁻ increment,
         ENNReal.ofReal (Real.exp (AdditivePath.displacement n increment)) *
           F (history n x increment)
@@ -206,7 +220,7 @@ theorem weightedPathManyToOne
     (n : ℕ) {F : (Fin (n + 1) → ℝ) → ENNReal} (hF : Measurable F)
     (x : ℝ) :
     (∫⁻ ω, weightedPathGeneration (potential.comp d hd) n F x ω
-        ∂stepFieldLaw μ) =
+        ∂offspringFieldLaw μ) =
       ∫⁻ increment, F (history n x increment)
         ∂tiltedIncrementFieldLaw (potential.comp d hd) μ :=
   weightedPathManyToOneCore (potential.comp d hd) μ hboundary n hF x
@@ -224,7 +238,7 @@ theorem pathManyToOne
     (n : ℕ) {F : (Fin (n + 1) → ℝ) → ENNReal} (hF : Measurable F)
     (x : ℝ) :
     (∫⁻ ω, pathGeneration (potential.comp d hd) n F x ω
-        ∂stepFieldLaw μ) =
+        ∂offspringFieldLaw μ) =
       ∫⁻ increment,
         ENNReal.ofReal (Real.exp (AdditivePath.displacement n increment)) *
           F (history n x increment)

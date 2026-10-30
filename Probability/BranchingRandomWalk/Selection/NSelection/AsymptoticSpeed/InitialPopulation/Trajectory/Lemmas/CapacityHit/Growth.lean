@@ -4,15 +4,21 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
+module
+
+import Combinatorics.UlamHarris.Relation
+
 import Probability.BranchingProcess.Offspring.Count
 import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.Minimum.Address
 import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Roots.Nonempty
 import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.SelectedSubtrees.SelectedFamily
 import Probability.BranchingRandomWalk.Selection.NSelection.AsymptoticSpeed.InitialPopulation.Trajectory.Population
-import Probability.BranchingRandomWalk.Selection.NSelection.AsymptoticSpeed.InitialPopulation.Trajectory.Lemmas.CapacityHit.Mark
-
+import all Probability.BranchingRandomWalk.Selection.NSelection.AsymptoticSpeed.InitialPopulation.Trajectory.Lemmas.CapacityHit.Mark
 /-!
 # Cardinality growth of the selected population
+
+## Internal proof declarations
+
 
 The proof-chain results are:
 
@@ -37,7 +43,8 @@ namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Speed
 
 open Combinatorics.Branching
 open Combinatorics.UlamHarris
-open Combinatorics.Branching.Selection.NSelection
+open _root_.Combinatorics.Selection.NSelection
+open ProbabilityTheory.BranchingProcess (offspringFieldLaw)
 open ProbabilityTheory.BranchingProcess.Offspring
 
 attribute [local instance] Classical.propDecidable Classical.decEq
@@ -67,7 +74,7 @@ private noncomputable def smallInitialOneChildImage
       ∃ i : ℕ, survive (field p.1 p.2) i) :
     Finset (RootIndexed.TreeNode (Fin m) ℕ) :=
   parents.attach.image (fun p =>
-    Combinatorics.Branching.Selection.Coupling.childAddress p.1
+    Combinatorics.UlamHarris.RootIndexed.childAddress p.1
       (smallInitialOneChildSlot parents field hchildren p))
 
 private lemma smallInitialOneChildImage_injective
@@ -76,12 +83,12 @@ private lemma smallInitialOneChildImage_injective
     (hchildren : ∀ p ∈ parents,
       ∃ i : ℕ, survive (field p.1 p.2) i) :
     Function.Injective (fun p : {p // p ∈ parents} =>
-      Combinatorics.Branching.Selection.Coupling.childAddress p.1
+      Combinatorics.UlamHarris.RootIndexed.childAddress p.1
         (smallInitialOneChildSlot parents field hchildren p)) := by
   intro p q hpq
   have hpair : (p.1, smallInitialOneChildSlot parents field hchildren p) =
       (q.1, smallInitialOneChildSlot parents field hchildren q) :=
-    Combinatorics.Branching.Selection.Coupling.childAddress_joint_injective
+    Combinatorics.UlamHarris.RootIndexed.childAddress_joint_injective
       (by simpa using hpq)
   apply Subtype.ext
   exact congrArg Prod.fst hpair
@@ -104,10 +111,10 @@ private lemma smallInitialOneChildImage_subset
     (hchildren : ∀ p ∈ parents,
       ∃ i : ℕ, survive (field p.1 p.2) i) :
     ↑(smallInitialOneChildImage parents field hchildren) ⊆
-      RootIndexed.childrenAtGeneration n parents field := by
+      Combinatorics.Branching.Population.childrenAtGeneration n parents field := by
   intro q hq
   obtain ⟨p, hp, rfl⟩ := Finset.mem_image.mp hq
-  exact RootIndexed.childAddress_mem_childrenAtGeneration n parents field
+  exact Combinatorics.Branching.Population.childAddress_mem_childrenAtGeneration n parents field
     p.1 p.2 (hdepth p.1 p.2) (smallInitialOneChildSlot parents field
       hchildren p) (smallInitialOneChildSlot_survives parents field hchildren p)
 
@@ -118,7 +125,7 @@ lemma smallInitialFirstN_card_ge
     (selected : Finset (RootIndexed.TreeNode (Fin m) ℕ))
     [LinearOrder (RootIndexed.TreeNode (Fin m) ℕ)]
     (hfirst : IsFirstNBy N value
-      (RootIndexed.childrenAtGeneration n parents field) selected)
+      (Combinatorics.Branching.Population.childrenAtGeneration n parents field) selected)
     (hdepth : ∀ p ∈ parents, p.2.length = n)
     (hchildren : ∀ p ∈ parents,
       ∃ i : ℕ, survive (field p.1 p.2) i)
@@ -126,10 +133,10 @@ lemma smallInitialFirstN_card_ge
     parents.card ≤ selected.card := by
   let base := smallInitialOneChildImage parents field hchildren
   have hbaseSubset : (base : Set (RootIndexed.TreeNode (Fin m) ℕ)) ⊆
-      RootIndexed.childrenAtGeneration n parents field := by
+      Combinatorics.Branching.Population.childrenAtGeneration n parents field := by
     simpa [base] using smallInitialOneChildImage_subset n parents field
       hdepth hchildren
-  rcases (RootIndexed.childrenAtGeneration n parents field).finite_or_infinite with
+  rcases (Combinatorics.Branching.Population.childrenAtGeneration n parents field).finite_or_infinite with
     hfinite | hinfinite
   · have hbaseCard : base.card ≤ hfinite.toFinset.card :=
       Finset.card_le_card (fun q hq =>
@@ -151,7 +158,7 @@ lemma smallInitialFirstN_card_gt_of_split
     (selected : Finset (RootIndexed.TreeNode (Fin m) ℕ))
     [LinearOrder (RootIndexed.TreeNode (Fin m) ℕ)]
     (hfirst : IsFirstNBy N value
-      (RootIndexed.childrenAtGeneration n parents field) selected)
+      (Combinatorics.Branching.Population.childrenAtGeneration n parents field) selected)
     (hdepth : ∀ p ∈ parents, p.2.length = n)
     (hchildren : ∀ p ∈ parents,
       ∃ i : ℕ, survive (field p.1 p.2) i)
@@ -173,7 +180,7 @@ lemma smallInitialFirstN_card_gt_of_split
   let chosenAttached : {p // p ∈ parents} := ⟨chosen, hchosen⟩
   let chosenSlot := smallInitialOneChildSlot parents field hchildren' chosenAttached
   let extraSlot := if chosenSlot = i then j else i
-  let extra := Combinatorics.Branching.Selection.Coupling.childAddress
+  let extra := Combinatorics.UlamHarris.RootIndexed.childAddress
     chosen extraSlot
   have hextraSurvives : survive (field chosen.1 chosen.2) extraSlot := by
     by_cases hslot : chosenSlot = i
@@ -191,11 +198,11 @@ lemma smallInitialFirstN_card_gt_of_split
       intro heq
       exact hslot heq.symm
   have hbaseSubset : (base : Set (RootIndexed.TreeNode (Fin m) ℕ)) ⊆
-      RootIndexed.childrenAtGeneration n parents field := by
+      Combinatorics.Branching.Population.childrenAtGeneration n parents field := by
     simpa [base] using smallInitialOneChildImage_subset n parents field
       hdepth hchildren'
-  have hextraMem : extra ∈ RootIndexed.childrenAtGeneration n parents field := by
-    exact RootIndexed.childAddress_mem_childrenAtGeneration n parents field
+  have hextraMem : extra ∈ Combinatorics.Branching.Population.childrenAtGeneration n parents field := by
+    exact Combinatorics.Branching.Population.childAddress_mem_childrenAtGeneration n parents field
       chosen hchosen (hdepth chosen hchosen) extraSlot hextraSurvives
   have hextraNotBase : extra ∉ base := by
     intro hmem
@@ -203,7 +210,7 @@ lemma smallInitialFirstN_card_gt_of_split
     have hpair : (p.1,
         smallInitialOneChildSlot parents field hchildren' p) =
         (chosen, extraSlot) :=
-      Combinatorics.Branching.Selection.Coupling.childAddress_joint_injective
+      Combinatorics.UlamHarris.RootIndexed.childAddress_joint_injective
         (by simpa [extra, smallInitialOneChildImage] using heq)
     have hparent : p.1 = chosen := congrArg Prod.fst hpair
     have hslot : smallInitialOneChildSlot parents field hchildren' p =
@@ -215,7 +222,7 @@ lemma smallInitialFirstN_card_gt_of_split
     exact hextraNe (hslot.symm.trans hchosenSlot)
   let large := base ∪ {extra}
   have hlargeSubset : (large : Set (RootIndexed.TreeNode (Fin m) ℕ)) ⊆
-      RootIndexed.childrenAtGeneration n parents field := by
+      Combinatorics.Branching.Population.childrenAtGeneration n parents field := by
     intro q hq
     rcases Finset.mem_union.mp hq with hbase | hextra
     · exact hbaseSubset hbase
@@ -229,7 +236,7 @@ lemma smallInitialFirstN_card_gt_of_split
     dsimp [large]
     rw [Finset.card_union_of_disjoint hdisjoint,
       Finset.card_singleton, hbaseCard]
-  rcases (RootIndexed.childrenAtGeneration n parents field).finite_or_infinite with
+  rcases (Combinatorics.Branching.Population.childrenAtGeneration n parents field).finite_or_infinite with
     hfinite | hinfinite
   · have hlargeCardLe : large.card ≤ hfinite.toFinset.card :=
       Finset.card_le_card (fun q hq =>

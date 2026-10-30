@@ -4,7 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Population.Processes.Causal.Capacity.FirstMoment
+module
+
+public import Probability.BranchingRandomWalk.Population.Processes.Causal.Capacity.FirstMoment
+public import Probability.Process.RandomWalk.Path.Restart.FirstMoment
 
 /-!
 # Capacity bounds from spine first moments
@@ -23,6 +26,8 @@ import Probability.BranchingRandomWalk.Population.Processes.Causal.Capacity.Firs
 This file is the capacity-event bridge: generic causal-population Markov bounds
 are instantiated with the one-dimensional restarted-window first moments.
 -/
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal BigOperators
@@ -219,3 +224,5 @@ theorem measure_capacityEvent_compl_le_horizontalTubeBound
 
 end RootIndexed.CausalPopulation
 end ProbabilityTheory.BranchingRandomWalk
+
+end

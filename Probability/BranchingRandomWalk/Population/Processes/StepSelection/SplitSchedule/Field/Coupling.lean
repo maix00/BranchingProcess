@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Population.Processes.StepSelection.SplitSchedule.Trials.Iteration
+import Probability.BranchingRandomWalk.Population.Processes.StepSelection.SplitSchedule.Field.Iteration
 import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.SelectedSubtrees.Coupling
 import Probability.BranchingRandomWalk.Selection.Coupling.StepSelection
 
@@ -14,6 +14,14 @@ import Probability.BranchingRandomWalk.Selection.Coupling.StepSelection
 Finite populations in the iterated active/reserve field are embedded into
 the original pre-sampled field through the cumulative split-pool address map.
 Their absolute positions agree exactly.
+## Public declarations
+
+* `activePopulation` reads the active roots at restart stage `j`;
+  `coupledInjection` maps that population into the corresponding original
+  field population, while `originalPopulation` defines the target population.
+* `iteratedPopulation_injectivelyDominatesBy_original` proves that the active
+  population embeds injectively into the original population with matching
+  spatial values under the potential map.
 -/
 
 namespace ProbabilityTheory.BranchingRandomWalk
@@ -59,12 +67,12 @@ noncomputable def coupledInjection
         (β : RootIndexed.StepField (Fin N ⊕ Reserve) α Mark)
         (parents : Finset
           (RootIndexed.TreeNode (Fin N ⊕ Reserve) α)),
-      Combinatorics.Branching.Selection.NSelection.AdmitsFirstNBy N
+      Combinatorics.Selection.NSelection.AdmitsFirstNBy N
         (RootIndexed.observedPositionAtGeneration
           (iteratedPoolInitialPosition N R initial d trial duration target
             restartFallback reserve stem j (base ω))
           d φ (n + 1) β)
-        (RootIndexed.childrenAtGeneration n parents β))
+        (Combinatorics.Branching.Population.childrenAtGeneration n parents β))
     (hcard : ∀ n ω,
       (activePopulation N R trial duration target restartFallback reserve stem
         j n (base ω)).card ≤ N)
@@ -96,7 +104,7 @@ noncomputable def coupledInjection
         targetPopulation) () := by
   dsimp only
   simpa [activePopulation] using
-    (ProbabilityTheory.BranchingRandomWalk.Selection.Coupling.RootIndexed.coupledInjection_labelledPopulationOn
+    (ProbabilityTheory.BranchingRandomWalk.Selection.Coupling.RootIndexed.coupledInjection_labelledPopulation
       N R (activeRoots N) (activeRoots N) Finset.Subset.rfl
       (fun sample => iteratedPoolInitialPosition N R initial d trial duration
         target restartFallback reserve stem j (base sample))

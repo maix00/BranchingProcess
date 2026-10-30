@@ -6,12 +6,14 @@ Authors: WANG Yiyang
 
 module
 
-public import Mathlib.Basic.Real.Basic
-public import Mathlib.Algebra.Order.Floor.Semiring
-public import Mathlib.Analysis.SpecialFunctions.Pow.Real
+import Mathlib.Basic.Real.Basic
+import Mathlib.Algebra.Order.Floor.Semiring
+import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
 /-!
 # Parameters for the Lemma 3.2 partition proof
+
+## Internal proof declarations
 
 The definitions used by the internal equal-partition proof are:
 
@@ -29,7 +31,7 @@ The equal-partition parameters are the finite cover used in Wang Yiyang,
 Chapter 3, Lemma 3.2 and its following remark.
 -/
 
-@[expose] public section
+section
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube
 

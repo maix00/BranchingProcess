@@ -10,13 +10,16 @@ public import Probability.Distributions.Moments.Real
 public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.Event
 import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.BlockEvent
 public import Probability.Sequence.IID.Basic
-import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Basic
-import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceUpper.Lemmas.Blocks
+import Probability.Process.RandomWalk.Path.Block.Partition.Basic
+import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Theorems
+import all Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceUpper.Lemmas.Blocks
 import Probability.Process.Filtration.ConditionalBlocks
 import Analysis.Asymptotics.Scale.Power.IntermediateBlock
 
 /-!
 # Finite-variance upper bound for a tilted tube
+
+## Public declarations
 
 The public theorem in this file is:
 
@@ -47,28 +50,6 @@ namespace ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 open ProbabilityTheory.RandomWalk
 open ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown
 
-private lemma driftedTubeBlockPosition_eq
-    (start length : ℕ) (increment : ℕ → ℝ)
-    (k : Fin (length + 1)) :
-    (∑ i : Fin start,
-      Combinatorics.Sequence.blockCoordinates 0 start increment i) +
-      Fin.partialSum
-        (Combinatorics.Sequence.blockCoordinates start length increment) k =
-      AdditivePath.displacement (start + (k : ℕ)) increment := by
-  have hprefix :
-      (∑ i : Fin start,
-        Combinatorics.Sequence.blockCoordinates 0 start increment i) =
-        AdditivePath.displacement start increment := by
-    simp [Combinatorics.Sequence.blockCoordinates, AdditivePath.displacement,
-      Fin.sum_univ_eq_sum_range]
-  calc
-    _ = AdditivePath.displacement start increment +
-        AdditivePath.blockSum start (k : ℕ) increment := by
-      rw [hprefix, partialSum_blockCoordinates]
-    _ = AdditivePath.displacement (start + (k : ℕ)) increment :=
-      (AdditivePath.displacement_add_eq_add_blockSum start (k : ℕ)
-        increment).symm
-
 /-- The full small-drift upper estimate in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.4.
 The proof follows its equal-length block decomposition,
 conditional-expectation iteration, and final-remainder estimate. -/
@@ -76,7 +57,6 @@ theorem exists_driftedTubeProbability_le_exp_of_finiteVariance
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     {variance v drift d : ℝ}
     (hν : ProbabilityTheory.IsCenteredSecondMoment ν variance)
-    (hsquare : Integrable (fun x : ℝ => x ^ 2) ν)
     (hvariance : 0 < variance) (hv : 0 < v)
     (hdrift : 0 ≤ drift) (hd : 0 < d)
     (hcritical : d < (Real.pi ^ 2 / 2) * variance) :
@@ -101,7 +81,7 @@ theorem exists_driftedTubeProbability_le_exp_of_finiteVariance
       (eventually_ge_atTop d)
   obtain ⟨DeltaBlock₀, hDeltaBlock₀, hblockProbability⟩ :=
     exists_driftedTubeBlockProbability_le_exp_of_finiteVariance
-      ν hν hsquare hvariance hdrift heta hetaOne hd hcritical
+      ν hν hvariance hdrift heta hetaOne hd hcritical
   have hgood : ∀ᶠ Delta : ℝ in atTop,
       (1 ≤ (⌊Delta ^ (2 + eta)⌋₊ : ℝ) ∧
         Delta ^ (2 + eta) - Delta ^ (2 + eta / 2) ≤
@@ -252,8 +232,8 @@ theorem exists_driftedTubeProbability_le_exp_of_finiteVariance
           lower + drift *
             ((j * blockLength + (k : ℕ) : ℕ) : ℝ) / Delta ^ 2 + Delta
       intro k
-      have hposition := driftedTubeBlockPosition_eq
-        (j * blockLength) blockLength increment k
+      have hposition := blockCoordinates_prefix_add_partialSum_eq_displacement
+        (start := j * blockLength) (length := blockLength) increment k
       have hk : (k : ℕ) ≤ blockLength := Nat.le_of_lt_succ k.isLt
       have htime : j * blockLength + (k : ℕ) ≤ horizon := by
         calc

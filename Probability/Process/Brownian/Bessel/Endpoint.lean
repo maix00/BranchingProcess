@@ -12,17 +12,18 @@ public import Topology.Cadlag.Skorokhod.Path.Endpoint
 /-!
 # The endpoint of a three-dimensional Bessel path
 
-The public theorems in this file are:
+## Public declarations
 
-- `BrownianBessel3.ae_pos_endpoint`: for three independent Brownian
-  coordinates, the radial path satisfies $R_1>0$ almost surely.
-- `BrownianBessel3.ae_pos_endpoint_pathLaw`: the same conclusion under
-  the pushed-forward Bessel path law.
+- `ProbabilityTheory.BrownianBessel3.ae_pos_endpoint`: for three independent
+  Brownian coordinates, the radial endpoint $R_1$ is positive almost surely;
+  this uses only the one-time Gaussian law.
+- `ProbabilityTheory.BrownianBessel3.ae_pos_endpoint_pathLaw`: the same
+  conclusion under the pushed-forward Bessel path law.
 
-This is the endpoint fact used with the density in Jean-Pierre Imhof,
-*Density factorizations for Brownian motion, meander and the
-three-dimensional Bessel process, and applications*, Journal of Applied
-Probability 21 (1984), Theorem 1.
+This is the endpoint fact used with the density in J.-P. Imhof, “Density
+factorizations for Brownian motion, meander and the three-dimensional Bessel
+process, and applications,” *Journal of Applied Probability* 21(3) (1984),
+500–510, Theorem 1, DOI: 10.2307/3213612.
 -/
 
 @[expose] public section
@@ -30,7 +31,7 @@ Probability 21 (1984), Theorem 1.
 open MeasureTheory ProbabilityTheory
 open scoped NNReal
 
-namespace BrownianBessel3
+namespace ProbabilityTheory.BrownianBessel3
 
 /-- The first coordinate of a three-dimensional Brownian sample is
 nonzero at time one almost surely. -/
@@ -50,14 +51,13 @@ private lemma ae_first_coordinate_ne_zero
   change ∀ᵐ ω ∂P.prod (P.prod P), B 1 ω.1 ≠ 0
   exact (Measure.quasiMeasurePreserving_fst (μ := P) (ν := P.prod P)).ae hsingle
 
-/-- The radial endpoint of three independent Brownian coordinates is
-strictly positive almost surely. -/
+/-- The radius at time one of three independent Brownian coordinates is
+strictly positive almost surely. This uses only the one-time Gaussian law. -/
 theorem ae_pos_endpoint
     {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
     [IsProbabilityMeasure P] {B : ℝ≥0 → Ω → ℝ}
-    (hBrownian : IsBrownianReal B P)
-    (hcontinuous : ∀ ω, Continuous (B · ω)) :
-    ∀ᵐ ω ∂productLaw P, 0 < path B hcontinuous ω ⊤ := by
+    (hBrownian : IsBrownianReal B P) :
+    ∀ᵐ ω ∂productLaw P, 0 < radius B 1 ω := by
   filter_upwards [ae_first_coordinate_ne_zero hBrownian] with ω hfirst
   change 0 < Real.sqrt ((B 1 ω.1) ^ 2 +
     (B 1 ω.2.1) ^ 2 + (B 1 ω.2.2) ^ 2)
@@ -77,8 +77,11 @@ theorem ae_pos_endpoint_pathLaw
   apply (ae_map_iff (measurable_path hcontinuous hmeasurable).aemeasurable
     (isOpen_lt continuous_const
       Skorokhod.continuous_apply_top).measurableSet).2
-  exact ae_pos_endpoint hBrownian hcontinuous
+  filter_upwards [ae_pos_endpoint hBrownian] with ω hω
+  have htop : unitInterval.toNNReal ⊤ = 1 := unitInterval.toNNReal_one
+  rw [path, cadlagunitIntervalPath_apply, htop]
+  exact hω
 
-end BrownianBessel3
+end ProbabilityTheory.BrownianBessel3
 
 end

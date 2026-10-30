@@ -12,6 +12,8 @@ public import Probability.Process.Path.Scaling.UnitInterval
 /-!
 # Rescaling a unit-time continuous path
 
+## Public declarations
+
 The public definitions and theorems in this file are:
 
 - `ProbabilityTheory.unitTimeOfFiniteTime`: the map $t\mapsto t/s$
@@ -67,8 +69,8 @@ theorem continuous_unitTimeOfFiniteTime (s : ℝ≥0) (hs : 0 < s) :
 /-- Restrict a whole-time path to the real unit interval. -/
 noncomputable def restrictPathToUnitInterval (f : C(ℝ≥0, ℝ)) :
     C(unitInterval, ℝ) :=
-  ⟨fun t => f (UnitInterval.toNNReal t),
-    f.continuous.comp UnitInterval.continuous_toNNReal⟩
+  ⟨fun t => f (unitInterval.toNNReal t),
+    f.continuous.comp unitInterval.toNNReal_continuous⟩
 
 /-- Restriction to the real unit interval is continuous. -/
 theorem continuous_restrictPathToUnitInterval :
@@ -76,17 +78,17 @@ theorem continuous_restrictPathToUnitInterval :
   refine ContinuousMap.continuous_of_continuous_uncurry _ ?_
   exact continuous_eval.comp
     (continuous_fst.prodMk
-      (UnitInterval.continuous_toNNReal.comp continuous_snd))
+      (unitInterval.toNNReal_continuous.comp continuous_snd))
 
 noncomputable def unitIntervalTimeAsNNRealIcc
     (t : unitInterval) : Set.Icc (0 : ℝ≥0) 1 :=
-  ⟨UnitInterval.toNNReal t,
-    ⟨(UnitInterval.toNNReal t).property,
-      UnitInterval.toNNReal_le_one t⟩⟩
+  ⟨unitInterval.toNNReal t,
+    ⟨(unitInterval.toNNReal t).property,
+      by exact_mod_cast t.property.2⟩⟩
 
 theorem continuous_unitIntervalTimeAsNNRealIcc :
     Continuous unitIntervalTimeAsNNRealIcc :=
-  Continuous.subtype_mk UnitInterval.continuous_toNNReal _
+  Continuous.subtype_mk unitInterval.toNNReal_continuous _
 
 /-- Change the unit-time coordinate from nonnegative real time to real
 time without changing path values. -/

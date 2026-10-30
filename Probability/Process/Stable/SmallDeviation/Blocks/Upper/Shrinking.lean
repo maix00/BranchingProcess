@@ -7,6 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.Stable.SmallDeviation.Blocks.Upper.Strict
+public import Probability.Process.Corridor.Range
 public import Probability.Process.Path.Skorokhod.Corridor.Segment
 public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Cover
 import Topology.Order.UnitInterval.Rational
@@ -18,6 +19,15 @@ The finite-block tube upper bound already supplies a strictly subunit
 probability at one fixed width. A shrinking spatial corridor fits inside the
 corresponding scaled tube for each fixed block count, so its probability
 vanishes without an atomlessness assumption on the increment law.
+
+## Public declarations
+
+- `IsStableLevyProcess.tendsto_measure_scaledFullCorridor_zero` proves that
+  for fixed $l<u$, the probability of the corridor
+  $a l\le X_t-X_0\le a u$ for all $t\in[0,1]$ tends to zero as $a\downarrow0$.
+- The path-event inclusion uses the exact-width generic theorem
+  `fullSegmentCorridorEvent_subset_rationalHorizonTubeEvent_exact` from
+  `Probability.Process.Corridor.Range`.
 -/
 
 @[expose] public section
@@ -26,43 +36,6 @@ namespace ProbabilityTheory
 
 open MeasureTheory Filter
 open scoped NNReal Topology
-
-/-- A full-segment corridor controls the range of all rational coordinates.
-The extra width makes the range tube strict even if the corridor has only a
-closed bound at an individual coordinate. -/
-theorem fullSegmentCorridorEvent_subset_rationalHorizonTubeEvent
-    {Ω : Type*} (X : ℝ≥0 → Ω → ℝ)
-    (lower upper extra : ℝ) (hextra : 0 < extra) :
-    fullSegmentCorridorEvent X 0 1 lower upper ⊆
-      rationalHorizonTubeEvent X 1 (upper - lower + extra) := by
-  intro ω hω
-  have hcoord :
-      (fun q => X (RationalCoordinate.toNNReal q) ω - X 0 ω) ∈
-        rationalCoordinateCorridor lower upper := by
-    simp only [rationalCoordinateCorridor, Set.mem_iInter, Set.mem_ofPred_eq,
-      Set.mem_Ioo]
-    intro q
-    obtain ⟨margin, hmargin, hpath⟩ := hω
-    have hq := hpath (RationalCoordinate.toUnitInterval q)
-    change lower + margin ≤
-        X (0 + 1 * UnitInterval.toNNReal (RationalCoordinate.toUnitInterval q)) ω - X 0 ω ∧
-      X (0 + 1 * UnitInterval.toNNReal (RationalCoordinate.toUnitInterval q)) ω - X 0 ω ≤
-        upper - margin at hq
-    have htime : UnitInterval.toNNReal (RationalCoordinate.toUnitInterval q) =
-        RationalCoordinate.toNNReal q := rfl
-    rw [htime] at hq
-    simp only [zero_add, one_mul] at hq
-    exact ⟨by linarith, by linarith⟩
-  have htube := rationalCoordinateCorridor_subset_oscillationTube
-    lower upper extra hextra hcoord
-  have hraw := (Skorokhod.mem_rationalCoordinateOscillationTube_sub_const_iff
-    (upper - lower + extra) (X 0 ω)
-    (fun q => X (RationalCoordinate.toNNReal q) ω)).mp htube
-  change rationalHorizonProcess X 1 ω ∈
-    Skorokhod.rationalCoordinateOscillationTube (upper - lower + extra)
-  change (fun q => X (1 * RationalCoordinate.toNNReal q) ω) ∈
-    Skorokhod.rationalCoordinateOscillationTube (upper - lower + extra)
-  simpa using hraw
 
 /-- The probability of any fixed-shape full-path corridor vanishes under
 positive scaling towards zero as soon as the stable law charges the positive
@@ -118,15 +91,25 @@ theorem IsStableLevyProcess.tendsto_measure_scaledFullCorridor_zero
       fullSegmentCorridorEvent X 0 1 (a * lower) (a * upper) ⊆
         rationalHorizonTubeEvent X 1 (width / scale) := by
     intro ω hω
-    have hmem := fullSegmentCorridorEvent_subset_rationalHorizonTubeEvent
-      X (a * lower) (a * upper) a ha0 hω
+    have hmem := (fullSegmentCorridorEvent_subset_rationalHorizonTubeEvent_exact
+      X (a * lower) (a * upper)) hω
+    have hwidth' : a * upper - a * lower ≤ width / scale := by
+      calc
+        a * upper - a * lower = a * (upper - lower) := by ring
+        _ ≤ a * C := by
+          apply mul_le_mul_of_nonneg_left _ ha0.le
+          dsimp [C]
+          linarith [le_abs_self (upper - lower)]
+        _ ≤ width / scale := ha.le
     have hmono : Skorokhod.rationalCoordinateOscillationTube
-        (a * upper - a * lower + a) ⊆
+        (a * upper - a * lower) ⊆
         Skorokhod.rationalCoordinateOscillationTube (width / scale) := by
       rintro x ⟨margin, hmargin, hbound'⟩
       refine ⟨margin, hmargin, ?_⟩
       intro s t
       exact (hbound' s t).trans (sub_le_sub_right hwidth' _)
+    change rationalHorizonProcess X 1 ω ∈
+      Skorokhod.rationalCoordinateOscillationTube (a * upper - a * lower) at hmem
     exact hmono hmem
   calc
     P (fullSegmentCorridorEvent X 0 1 (a * lower) (a * upper)) ≤

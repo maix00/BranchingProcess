@@ -7,10 +7,16 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.Fluctuation.Ladder.Descending.LocalTime
-public import Probability.Distributions.Stable.Attraction.NormingRatios.PositiveTail
+public import Probability.Distributions.DomainOfAttraction.Basic
+public import Probability.Distributions.Stable.Basic
+public import Analysis.Asymptotics.RegularVariation.Basic
+
+import Probability.Distributions.Stable.Attraction.NormingRatios.Tauberian
 
 /-!
 # Stable-attraction tail of the first descending ladder time
+
+## Public declarations
 
 For an increment path $\xi$, write $S_j=\sum_{i=1}^j\xi_i$, and let
 $T^-_1=\inf\{j\geq1:S_j<\min_{0\leq i<j}S_i\}$, with $T^-_1=\infty$ if
@@ -139,8 +145,26 @@ theorem firstDescendingLadderTimeTailReal_regularVariation_of_stableAttraction
     (hα₀ : 0 < α) (hα₂ : α < 2) :
     Asymptotics.IsRegularlyVaryingAtTop
       (firstDescendingLadderTimeTailReal μ) (-α) := by
-  have hright := h.isRegularlyVarying_rightTail_of_nonneg
-    hlimit hα₀ hα₂ (firstDescendingLadderTimeLaw_Iio_zero μ)
+  have htwo := h.isRegularlyVarying_twoSidedTail hlimit hα₀ hα₂
+  have hae : ∀ᵐ y ∂firstDescendingLadderTimeLaw μ, 0 ≤ y := by
+    rw [ae_iff]
+    simpa only [not_le, Set.Iio] using firstDescendingLadderTimeLaw_Iio_zero μ
+  have heq : (fun x : ℝ =>
+      (firstDescendingLadderTimeLaw μ).real {y : ℝ | x < |y|}) =
+      (fun x => (firstDescendingLadderTimeLaw μ).real (Set.Ioi x)) := by
+    funext x
+    change ((firstDescendingLadderTimeLaw μ) {y : ℝ | x < |y|}).toReal =
+      ((firstDescendingLadderTimeLaw μ) (Set.Ioi x)).toReal
+    apply congrArg ENNReal.toReal
+    apply measure_congr
+    filter_upwards [hae] with y hy
+    simp only [Set.mem_Ioi, abs_of_nonneg hy]
+  have heqEventually :
+      (fun x : ℝ =>
+        (firstDescendingLadderTimeLaw μ).real {y : ℝ | x < |y|}) =ᶠ[atTop]
+      (fun x => (firstDescendingLadderTimeLaw μ).real (Set.Ioi x)) :=
+    Filter.Eventually.of_forall fun x => congrFun heq x
+  have hright := htwo.congr heqEventually
   apply hright.congr
   filter_upwards [eventually_ge_atTop (0 : ℝ)] with x hx
   exact (firstDescendingLadderTimeTailReal_eq_law_tail μ hfinite hx).symm

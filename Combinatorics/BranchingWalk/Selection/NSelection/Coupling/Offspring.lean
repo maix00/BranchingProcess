@@ -12,6 +12,8 @@ public import Combinatorics.BranchingWalk.Selection.Coupling.Offspring.Cloud
 /-!
 # Offspring propagation for the multi-root spatial coupling
 
+## Public declarations
+
 This file propagates parent domination to lower-tail domination of genuine child
 addresses.  Child slots remain arbitrary finite sets or sets; no enumeration
 of roots or offspring slots is assumed.
@@ -33,7 +35,7 @@ increment equality are assumed for every eligible target parent.
 namespace Combinatorics.Branching.Selection.Coupling
 
 open Combinatorics.UlamHarris
-open Selection.NSelection
+open _root_.Combinatorics.Selection.NSelection
 
 variable {Root α Mark Position Value : Type*}
 

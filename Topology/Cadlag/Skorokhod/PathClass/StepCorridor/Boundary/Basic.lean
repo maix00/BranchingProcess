@@ -17,6 +17,38 @@ values in the extended reals. Finite values and either infinite side are
 represented directly. Knots at both endpoints are allowed except at zero,
 where the right-hand level is the only boundary value. The totalized left and
 right traces record the available one-sided levels at every time.
+
+## Public declarations
+
+In namespace `Skorokhod.PathClass.StepCorridor`, `StepBoundary` is the
+structure of a finite knot set $K\subseteq[0,1]$ with $\bot\notin K$ and a
+level map $\operatorname{Fin}(|K|+1)\to\overline{\mathbb R}$. Its constructors
+`StepBoundary.constant` and `StepBoundary.singleJump` give constant boundaries
+and one-jump boundaries.
+
+In namespace `Skorokhod.PathClass.StepCorridor.StepBoundary`:
+
+- `levelIndex` counts knots $s\le t$; `leftLevelIndex` counts knots $s<t$
+  (using `levelIndex` at $t=\bot$). `eval` reads the indexed level,
+  `rightTrace` equals `eval`, and `leftTrace` reads the left level.
+- `levelIndex_bot`, `levelIndex_top`, `leftLevelIndex_bot`, and
+  `leftTrace_bot` give the endpoint indices and traces;
+  `rightTrace_eq_eval` and `rightTrace_top` identify the right trace with
+  evaluation and the terminal level.
+- `leftTrace_eq_rightTrace_of_not_mem` states that the two traces agree when
+  $t\notin K$. `eval_eq_leftTrace_of_between` gives
+  $b(s)=b_{-}(t)$ when $p<s<t$ and every knot below $t$ is at most $p$;
+  `eval_eq_rightTrace_of_between` gives $b(s)=b_{+}(t)$ when $t<s<q$ and
+  every knot above $t$ is at least $q$.
+- `leftTrace_top_of_not_mem` gives the terminal trace when $\top\notin K$;
+  `leftTrace_top` gives the preceding level when $\top\in K$.
+- `eval_empty` and `eval_constant` evaluate the empty and constant
+  constructions as $v$ at every time; `leftTrace_constant` and
+  `rightTrace_constant` give both traces as $v$.
+- `leftTrace_singleJump` and `rightTrace_singleJump` give the before and
+  after levels at the jump; `eval_singleJump_of_lt` and
+  `eval_singleJump_of_le` give the corresponding pre-jump and post-jump
+  values.
 -/
 
 open Filter Set
@@ -110,7 +142,7 @@ theorem leftTrace_bot (b : StepBoundary) :
     b.leftTrace ⊥ = b.eval ⊥ := by
   simp [leftTrace, eval]
 
-theorem leftLevelIndex_eq_levelIndex_of_not_mem (b : StepBoundary)
+private lemma leftLevelIndex_eq_levelIndex_of_not_mem (b : StepBoundary)
     {t : unitInterval} (ht : t ∉ b.knots) :
     b.leftLevelIndex t = b.levelIndex t := by
   by_cases hbot : t = ⊥
@@ -158,59 +190,6 @@ theorem eval_eq_leftTrace_of_between (b : StepBoundary) {p s t : unitInterval}
     exact ⟨hq, lt_of_le_of_lt hqs hst⟩
   · rintro ⟨hq, hqt⟩
     exact ⟨hq, le_of_lt (lt_of_le_of_lt (hp q hq hqt) hps)⟩
-
-/-- A finite knot set has a last knot strictly before any fixed positive time,
-with the left endpoint used when there are no such knots. -/
-theorem exists_left_gap_finset (knots : Finset unitInterval)
-    {t : unitInterval} (ht : ⊥ < t) :
-    ∃ p, p < t ∧ ∀ q ∈ knots, q < t → q ≤ p := by
-  classical
-  let prior := knots.filter fun q => q < t
-  let candidates := insert (⊥ : unitInterval) prior
-  have hne : candidates.Nonempty := ⟨⊥, Finset.mem_insert_self _ _⟩
-  let p := candidates.max' hne
-  have hpmem : p ∈ candidates := Finset.max'_mem _ _
-  have hpt : p < t := by
-    rcases Finset.mem_insert.mp hpmem with hp | hp
-    · simpa [hp] using ht
-    · have hp' : p ∈ prior := hp
-      have hp'' : p < t := (Finset.mem_filter.mp hp').2
-      exact hp''
-  refine ⟨p, hpt, ?_⟩
-  intro q hq hqt
-  have hqprior : q ∈ prior := Finset.mem_filter.mpr ⟨hq, hqt⟩
-  have hqcan : q ∈ candidates := Finset.mem_insert_of_mem hqprior
-  exact Finset.le_max' _ _ hqcan
-
-theorem exists_left_gap (b : StepBoundary) {t : unitInterval} (ht : ⊥ < t) :
-    ∃ p, p < t ∧ ∀ q ∈ b.knots, q < t → q ≤ p :=
-  exists_left_gap_finset b.knots ht
-
-/-- A finite knot set has a first knot strictly after a fixed time, with the
-right endpoint used when there are no later knots. -/
-theorem exists_right_gap_finset (knots : Finset unitInterval)
-    {t : unitInterval} (ht : t < ⊤) :
-    ∃ q, t < q ∧ ∀ r ∈ knots, t < r → q ≤ r := by
-  classical
-  let later := knots.filter fun r => t < r
-  let candidates := insert (⊤ : unitInterval) later
-  have hne : candidates.Nonempty := ⟨⊤, Finset.mem_insert_self _ _⟩
-  let q := candidates.min' hne
-  have hqmem : q ∈ candidates := Finset.min'_mem _ _
-  have htq : t < q := by
-    rcases Finset.mem_insert.mp hqmem with htop | hlater
-    · simpa [htop] using ht
-    · have hq' : q ∈ later := hlater
-      exact (Finset.mem_filter.mp hq').2
-  refine ⟨q, htq, ?_⟩
-  intro r hr htr
-  have hrlater : r ∈ later := Finset.mem_filter.mpr ⟨hr, htr⟩
-  have hrcandidate : r ∈ candidates := Finset.mem_insert_of_mem hrlater
-  exact Finset.min'_le _ _ hrcandidate
-
-theorem exists_right_gap (b : StepBoundary) {t : unitInterval} (ht : t < ⊤) :
-    ∃ q, t < q ∧ ∀ r ∈ b.knots, t < r → q ≤ r :=
-  exists_right_gap_finset b.knots ht
 
 /-- Between consecutive knots, a finite-step boundary already has its value
 at the left endpoint. -/

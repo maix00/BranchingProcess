@@ -4,16 +4,31 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Population.Candidates.FullRank.Selection
-import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law.Basic
-import Combinatorics.BranchingWalk.Step.Ordering.Monotone
+module
+
+public import Combinatorics.BranchingWalk.Step.Ordering.Monotone
+public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law.Basic
+public import Probability.BranchingRandomWalk.Population.Candidates.FullChildren
+public import Probability.BranchingRandomWalk.Population.Processes.Selected.Basic
+import all Probability.BranchingRandomWalk.Population.Candidates.Lemmas.FullSelection
 
 /-!
 # Full selection versus finite truncation
 
-On a fully ordered multi-root marked tree, exact equality of the finite
-first-`N`-slot selection with the global top-`N` selection from all countably
-many children, and the corresponding step of the adapted recursion.
+On a fully ordered multi-root marked tree, the finite first-`N`-slot
+selection equals the global top-`N` selection from all realized children,
+and the equality holds at each step of the adapted recursion.
+
+## Public declarations
+
+- `ProbabilityTheory.BranchingRandomWalk.selectedPopulation_fullSelection_step`
+  states, with $C_n$ the full child set of the generation-$n$ population and
+  $r\prec q$ the position/address order, that
+  $S_{n+1}=\{q\in C_n:\neg\exists t\subseteq C_n,\ |t|=N,
+  \forall r\in t,\ r\prec q\}$.
+- `ProbabilityTheory.BranchingRandomWalk.selectedPopulation_fullSelection_step_ae`
+  proves this identity for every $n$ almost surely when the one-step law is
+  supported on `orderedSteps`.
 -/
 
 open MeasureTheory

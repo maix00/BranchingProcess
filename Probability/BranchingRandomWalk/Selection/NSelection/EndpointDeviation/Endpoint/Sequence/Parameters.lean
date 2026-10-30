@@ -6,9 +6,14 @@ Authors: WANG Yiyang
 
 module
 
-public import Mathlib.Analysis.Real.Sqrt
+public import Mathlib.Basic.Real.Basic
 
-import Mathlib.Tactic
+import Mathlib.Analysis.Real.Sqrt
+import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.NormNum
+import Mathlib.Tactic.Positivity
+import Mathlib.Tactic.Ring
 
 /-!
 # Real parameters for the polynomial endpoint sublevel estimate
@@ -16,11 +21,18 @@ import Mathlib.Tactic
 These choices are the deterministic parameter step in the proof of (4.16).
 The target level is compared directly with the diffusive rate; the endpoint
 cutoff is chosen independently and can be made small for every real target.
+
+## Public declarations
+
+- `exists_endpoint_deviation_parameters`: if $t,C>0$ and
+  $\zeta<-a+Ct$, there are $b>1$, $0<d<C$, $0<c<1/2$, and $\epsilon>0$
+  such that $b+a+\zeta<b/c$, $\epsilon<b-1$, and
+  $\epsilon<dt/b^2-(a+\zeta)$.
 -/
 
 @[expose] public section
 
-namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail
+namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation
 
 /-- Choose the small endpoint ratio used to compare the target height with the
 positive endpoint window of the random-walk drawdown estimate. -/
@@ -157,6 +169,6 @@ theorem exists_endpoint_deviation_parameters
   exact ⟨b, d, c, epsilon, hb, hd, hdC, hc, hcHalf, hcEndpoint,
     hepsilon, hepsilonB, hepsilonMargin⟩
 
-end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail
+end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation
 
 end

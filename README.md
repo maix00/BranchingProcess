@@ -122,7 +122,7 @@ clients should still import the semantic owner module. For example:
 
 ```lean
 import Probability.BranchingRandomWalk.Walk.Basic
-import Probability.Process.RandomWalk.FunctionalLimit.Donsker.FiniteDimensional.CLT
+import Probability.Process.RandomWalk.FunctionalLimit.Normal.FiniteDimensional.CentralLimitTheorem
 import Probability.PointProcess.Basic
 ```
 

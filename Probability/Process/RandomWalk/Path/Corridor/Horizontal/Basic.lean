@@ -13,6 +13,30 @@ public import Probability.Process.RandomWalk.Path.Window.Basic
 
 This file contains the finite, deterministic tube predicate and its order
 properties.  Measurability and probabilities belong to the probability layer.
+
+## Public declarations
+
+`InHorizontalTube a w n ξ` means `-a w ≤ S_k(ξ) ≤ (1-a)w` for
+`1≤k≤n`; `InOpenHorizontalTube` uses strict inequalities.
+
+* `inHorizontalTube_iff_Icc` represents a translated interval `[b,b+w]`
+  containing zero by `a=-b/w`; `InHorizontalTube.mem_endpoint` gives
+  `S_n ∈ [-a w,(1-a)w]` when `n>0`.
+* `inClosedInterval_centered_iff_inHorizontalTube` identifies the lattice
+  interval `[1,2r+1]` started at `r+1` with the centered tube of width `2r`.
+  `InOpenHorizontalTube.closed` forgets strictness.
+* `InOpenHorizontalTube.staysIn_and_endpoint_centeredIcc` bounds every
+  partial sum and the endpoint by centered intervals of the corresponding
+  widths. `InOpenHorizontalTube.staysIn_and_endpoint_centeredIcc_from`
+  extends this to an initial point: if $x\in[-w_0/2,w_0/2]$, the increments
+  stay in the strict
+  centered tube of width $w$, and $w_0+w\le W,R$, then every position
+  $x+S_k$ lies in $[-W/2,W/2]$ and $x+S_n\in[-R/2,R/2]$ for $n>0$.
+* `inHorizontalTube_neg_iff` reflects increments and changes `a` to `1-a`.
+  `inHorizontalTube_div_iff` and `inOpenHorizontalTube_div_iff` divide both
+  increments and width by the same positive `σ` without changing the event.
+* `inHorizontalTube_mono_width` states event inclusion when `0≤a≤1` and
+  `w₁≤w₂`.
 -/
 
 @[expose] public section

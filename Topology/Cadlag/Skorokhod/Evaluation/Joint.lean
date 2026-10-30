@@ -6,8 +6,15 @@ Authors: WANG Yiyang
 
 module
 
-public import Mathlib.MeasureTheory.Function.Floor
-public import Topology.Cadlag.Skorokhod.Evaluation.Integral
+import Mathlib.MeasureTheory.Function.Floor
+import Mathlib.MeasureTheory.Constructions.BorelSpace.Metrizable
+public import Mathlib.MeasureTheory.Constructions.BorelSpace.Basic
+public import Mathlib.MeasureTheory.MeasurableSpace.Defs
+public import Mathlib.Topology.MetricSpace.Defs
+public import Mathlib.Topology.UnitInterval
+public import Topology.Cadlag.Basic
+public import Topology.Cadlag.Skorokhod.Topology
+import Topology.Cadlag.Skorokhod.Evaluation.Measurable
 
 /-!
 # Joint measurability of càdlàg evaluation
@@ -15,6 +22,11 @@ public import Topology.Cadlag.Skorokhod.Evaluation.Integral
 Evaluation of a càdlàg path at a variable time is Borel measurable on the
 product of Skorokhod path space and time.  The proof approximates time from
 the right by a finite grid and uses right continuity.
+
+## Public declarations
+
+- `measurable_joint_apply`: `(path, t) ↦ path t` is Borel measurable on
+  `D([0,1], E) × [0,1]` for every metrizable Borel state space `E`.
 -/
 
 @[expose] public section
@@ -25,6 +37,8 @@ open scoped Topology
 namespace Skorokhod
 
 noncomputable section
+
+variable {E : Type*} [MetricSpace E] [MeasurableSpace E] [BorelSpace E]
 
 private def rightGridPoint (n k : ℕ) : unitInterval :=
   ⟨((min k (n + 1) : ℕ) : ℝ) / (n + 1), by
@@ -169,10 +183,11 @@ private lemma rightGridTime_tendstoWithin (t : unitInterval) (ht : t ≠ ⊤) :
   intro n
   exact (rightGridTime_bounds n t ht).1
 
-private def gridEvaluation (n : ℕ) (p : CadlagPath unitInterval ℝ × unitInterval) : ℝ :=
+private def gridEvaluation (n : ℕ) (p : CadlagPath unitInterval E × unitInterval) : E :=
   p.1 (rightGridTime n p.2)
 
-private lemma measurable_gridEvaluation (n : ℕ) : Measurable (gridEvaluation n) := by
+private lemma measurable_gridEvaluation (n : ℕ) :
+    Measurable (gridEvaluation (E := E) n) := by
   let T := {t : unitInterval // t ∈ Set.range (rightGridTime n)}
   have hTcount : Countable T := by
     let f : ℕ → unitInterval := fun k => rightGridPoint n k
@@ -207,22 +222,23 @@ private lemma measurable_gridEvaluation (n : ℕ) : Measurable (gridEvaluation n
     have hcount : (insert ⊤ (Set.range f)).Countable :=
       Set.Countable.insert _ (Set.countable_range f)
     exact hcount.mono hrange |>.to_subtype
-  have hEval : Measurable (fun p : CadlagPath unitInterval ℝ × T => p.1 p.2.1) :=
-    measurable_from_prod_countable_left fun t => Skorokhod.measurable_apply t.1
-  have hmap : Measurable (fun p : CadlagPath unitInterval ℝ × unitInterval =>
+  have hEval : Measurable (fun p : CadlagPath unitInterval E × T => p.1 p.2.1) :=
+    measurable_from_prod_countable_left fun t =>
+      Skorokhod.measurable_apply (E := E) t.1
+  have hmap : Measurable (fun p : CadlagPath unitInterval E × unitInterval =>
       (p.1, (⟨rightGridTime n p.2, ⟨p.2, rfl⟩⟩ : T))) := by
     refine Measurable.prodMk measurable_fst ?_
     exact (measurable_rightGridTime n).comp measurable_snd |>.subtype_mk
-  change Measurable (fun p : CadlagPath unitInterval ℝ × unitInterval =>
+  change Measurable (fun p : CadlagPath unitInterval E × unitInterval =>
     p.1 (rightGridTime n p.2))
   exact hEval.comp hmap
 
 /-- Joint evaluation is Borel measurable for càdlàg paths in the Skorokhod
 `J₁` topology and a variable time. -/
 theorem measurable_joint_apply :
-    Measurable (fun p : CadlagPath unitInterval ℝ × unitInterval => p.1 p.2) := by
+    Measurable (fun p : CadlagPath unitInterval E × unitInterval => p.1 p.2) := by
   have hlim : Tendsto (fun n p => gridEvaluation n p) atTop
-      (𝓝 fun p : CadlagPath unitInterval ℝ × unitInterval => p.1 p.2) := by
+      (𝓝 fun p : CadlagPath unitInterval E × unitInterval => p.1 p.2) := by
     rw [tendsto_pi_nhds]
     rintro ⟨path, t⟩
     by_cases ht : t = ⊤

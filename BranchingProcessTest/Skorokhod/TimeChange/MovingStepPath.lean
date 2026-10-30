@@ -4,7 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Topology.Cadlag.Skorokhod.Compactness.Billingsley
+import Topology.Cadlag.Skorokhod.Compactness.CompactRange
+import Topology.Cadlag.Skorokhod.Maps.Range
 
 #print axioms Skorokhod.IsSeparatedPartitionPoints.strictMono
 #print axioms Skorokhod.isClosed_setOf_isSeparatedPartitionPoints

@@ -11,14 +11,12 @@ public import Probability.ConvergenceInDistribution.Approximation.AsymptoticEqui
 /-!
 # Convergence in distribution through finite approximations
 
-The public theorem in this file is:
+## Public declarations
 
 - `MeasureTheory.tendstoInDistribution_of_finite_approximations`:
-  if each fixed approximation converges in distribution, its limiting
-  laws converge to the target law, and the probabilities of disagreement
-  between the original and approximating variables have bounds tending
-  to zero as the approximation is refined, then the original variables
-  converge in distribution.
+  if $Y_{k,n}\Rightarrow W_k$ for each fixed $k$, $W_k\Rightarrow Z$, and
+  $\lim_{k\to\infty}\limsup_{n\to\infty}
+  \mu(X_n\ne Y_{k,n})=0$, then $X_n\Rightarrow Z$.
 
 The proof compares bounded Lipschitz observables using the coupling
 bound for their expectations. It is reusable for cutoff arguments in

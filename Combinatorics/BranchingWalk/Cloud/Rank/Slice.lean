@@ -7,11 +7,13 @@ Authors: WANG Yiyang
 module
 
 public import Combinatorics.BranchingWalk.Cloud.Basic
-public import Combinatorics.BranchingWalk.Step.Ordering.Rank
+public import Combinatorics.BranchingWalk.Step.Ordering.Sibling.Rank
 public import Mathlib.Data.Finset.Card
 
 /-!
 # Rank of a particle in one time slice
+
+## Public declarations
 
 A particle of the cloud is an initial root together with an address, so a rank
 counts particles below a fixed particle of `RootIndexed.TreeNode Root α`. The order on

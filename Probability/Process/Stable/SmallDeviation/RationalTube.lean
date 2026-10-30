@@ -20,6 +20,17 @@ coordinates; the pathwise identification is proved in
 measurable coordinate tube together with the generic finite-dimensional-law
 theorem to obtain the exact time-space scaling identity for stable-process
 coordinate-tube probabilities.
+## Public declarations
+
+- `stableRationalTubeSmallLogRate` is
+  $a^\alpha\log\mathbb P(X_{[0,1]}\text{ has range diameter}<2a)$;
+  `stableRationalTubeLongLogRate` is the logarithmic probability per unit
+  time of the width-two rational tube up to a variable horizon.
+- `rationalTube_timeSpaceScale` and its inverse identify the probabilities
+  under stable time-space scaling. The remaining limit theorem transfers a
+  long-horizon logarithmic rate to the small-width rate via
+  $T(a)=a^{-\alpha}\to\infty$.
+
 -/
 
 open Filter MeasureTheory

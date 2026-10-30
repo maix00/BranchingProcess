@@ -8,8 +8,12 @@ module
 
 public import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.SelectedSubtrees.SelectedFamily
 
+import MeasureTheory.Measure.Partition
+
 /-!
 # Stopped vectors of subtrees in a root-indexed field
+
+## Public declarations
 
 The public declaration in namespace `ProbabilityTheory.BranchingRandomWalk`
 is `RootIndexed.stopped_selectedSubtreeStepFieldVector_event_factorization_on_finite μ τ hτ roots hcount hfiber hdepth hinj A B hA hB`. For
@@ -173,15 +177,12 @@ theorem RootIndexed.stopped_selectedSubtreeStepFieldVector_event_factorization_o
           refine ⟨p, ?_⟩
           exact ⟨⟨⟨⟨hAω, hfiniteω⟩, rfl⟩, rfl⟩,
             by simpa [RootIndexed.selectedSubtreeStepFieldVector, p] using hBω⟩
-  have hCsum : (∑' p, P (C p)) = P A' := by
-    rw [← hCunion]
-    exact (measure_iUnion hCpair hCmeas).symm
   calc
     P (A' ∩ RootIndexed.selectedSubtreeStepFieldVector roots ⁻¹' B) =
         P (⋃ p, D p) := by rw [hDunion]
-    _ = ∑' p, P (D p) := measure_iUnion hDpair hDmeas
-    _ = ∑' p, P (C p) * Q B := tsum_congr hcell
-    _ = (∑' p, P (C p)) * Q B := ENNReal.tsum_mul_right
-    _ = P A' * Q B := by rw [hCsum]
+    _ = P (⋃ p, C p) * Q B :=
+      measure_iUnion_eq_mul_of_disjoint_factor P C D (Q B)
+        hCmeas hDmeas hCpair hDpair hcell
+    _ = P A' * Q B := by rw [hCunion]
 
 end ProbabilityTheory.BranchingRandomWalk

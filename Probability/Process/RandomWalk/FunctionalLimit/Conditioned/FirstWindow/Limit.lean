@@ -7,8 +7,9 @@ Authors: WANG Yiyang
 module
 
 public import Probability.ConvergenceInDistribution.Approximation.Finite
-import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.FirstWindow.Lemmas.Limit.FinitePathLimit
-import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.FirstWindow.Lemmas.Limit.FiniteTime
+public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Survival.Conditioning
+import all Probability.Process.RandomWalk.FunctionalLimit.Conditioned.FirstWindow.Lemmas.Limit.FinitePathLimit
+import all Probability.Process.RandomWalk.FunctionalLimit.Conditioned.FirstWindow.Lemmas.Limit.FiniteTime
 public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.FirstWindow.Selection
 public import Probability.Process.Brownian.AboveStart.FirstWindow.Shift.CenteredLimit
 public import Probability.Process.Path.Scaling.FiniteHorizon
@@ -17,7 +18,7 @@ public import Topology.Cadlag.Skorokhod.Maps.Continuous
 /-!
 # Functional limit after the first eligible window
 
-The public theorems in this file are:
+## Public declarations
 
 - `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.tendstoInDistribution_centeredFirstWindowShift`:
   $\Phi(X_n)\Rightarrow\Phi(W)$ on $[0,1]$, where

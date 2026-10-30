@@ -6,7 +6,9 @@ Authors: WANG Yiyang
 
 import Probability.BranchingRandomWalk.Restart.Success.GoodSplit
 import Probability.BranchingRandomWalk.Restart.RootedTrial.Reserve.Causal
+import Probability.BranchingRandomWalk.Restart.RootedTrial.Spine.ReservePath
 import Probability.BranchingRandomWalk.Spine.Generation
+import Probability.BranchingRandomWalk.Spine.GenerationBranching.Decomposition
 
 /-!
 # Positive-part bound for the causal reserve source
@@ -23,6 +25,17 @@ does not identify that causal source with the retrospectively restarted
 process,
 and it does not assert that the adaptively sampled marks have the iid
 `Xi₁` law.
+
+## Public declarations
+
+- `selectedReserveSpineEdgePotential`,
+  `selectedReserveSpinePath_potential_eq_sum_edges`, and
+  `selectedReserveSpinePath_positivePart_le_cutoff_add_firstChildSum`:
+  pathwise edge decomposition and positive-part bound for the reserve spine.
+- `selectedReserveSpineRestartSourceMinPosition`,
+  `selectedReserveSpineRestartSourceMinPosition_positivePart_le`: the live
+  spine belongs to the restart-source slice, whose minimum position satisfies
+  the cutoff-plus-positive-increments estimate.
 -/
 
 open MeasureTheory ProbabilityTheory
@@ -31,23 +44,14 @@ open scoped BigOperators
 namespace ProbabilityTheory.BranchingRandomWalk
 
 open Combinatorics.Branching Combinatorics.UlamHarris
+open Combinatorics.Branching.Step.FiniteSelection
+
+attribute [local instance] Classical.propDecidable Classical.decEq
 
 section PathwiseBound
 
 variable {Root α X : Type*} [LinearOrder α] [OrderBot α]
   [MeasurableSpace X]
-
-/-- Appending one slot adds the potential of the edge at the current address.
--/
-theorem spinePathPotential_append_singleton
-    (φ : Potential X) (ω : StepField α X) (p : TreeNode α) (i : α) :
-    Spine.pathPotential φ ω (p ++ [i]) =
-      Spine.pathPotential φ ω p +
-        (ω p).potentialValue' φ i := by
-  unfold Spine.pathPotential Combinatorics.Branching.displaceWith
-  rw [Combinatorics.Branching.displace_append]
-  simp [Combinatorics.Branching.displace,
-    Step.potentialValue', Step.potentialAt?, value']
 
 /-- The potential of the edge selected by the reserve-spine rule at time `n`.
 -/
@@ -56,49 +60,6 @@ noncomputable def selectedReserveSpineEdgePotential
     (n : ℕ) : RootIndexed.StepField Root α X → ℝ :=
   fun ω => (ω r (selectedReserveSpinePath S r n ω)).potentialValue' φ
     (reserveSpineSlot S (ω r (selectedReserveSpinePath S r n ω)))
-
-/-- At one reserve step, a split edge is cutoff-bounded; if there is no split,
-the chosen edge is the original first selected child. -/
-theorem reserveSpineSlot_potential_le_cutoff_add_firstChildPositive
-    (R : Step.FiniteSelection α X) (hR : R.IsBoundedBy 2)
-    (φ : Potential X) (M : ℝ) (hM : 0 ≤ M) (ξ : Step α X)
-    (hordered : ξ.IsOrderedBy φ) (hne : (R ξ).Nonempty) :
-    (ξ.potentialValue' φ
-      (reserveSpineSlot (reserveSelectionBelowPotential R φ M) ξ)) ≤
-        M + max 0 (ξ.potentialValue' φ (firstSelectedSlot R ξ)) := by
-  let S := reserveSelectionBelowPotential R φ M
-  have hfirstR : firstSelectedSlot R ξ ∈ R ξ :=
-    firstSelectedSlot_mem R ξ hne
-  have hfirstOnly : firstSelectedSlot R ξ ∈ firstOnlySelectedChild R ξ := by
-    rw [firstOnlySelectedChild, Step.FiniteSelection.mem_filter]
-    exact ⟨hfirstR, rfl⟩
-  have hfirstS : firstSelectedSlot R ξ ∈ S ξ := by
-    change firstSelectedSlot R ξ ∈ reserveSelectionBelowPotential R φ M ξ
-    rw [reserveSelectionBelowPotential]
-    exact Finset.mem_union.mpr (Or.inl hfirstOnly)
-  have hS_nonempty : (S ξ).Nonempty := ⟨firstSelectedSlot R ξ, hfirstS⟩
-  by_cases hsplit : 2 ≤ (S ξ).card
-  · have hsplit' : ξ ∈ splitBy S := hsplit
-    rw [reserveSpineSlot_eq_second_of_split S ξ hsplit]
-    obtain ⟨_, hsecond⟩ :=
-      reserveSelectionBelowPotential_split_edgePotentials_le_of_ordered
-        R hR φ M ξ hordered hsplit'
-    exact hsecond.trans (le_add_of_nonneg_right (le_max_left 0
-      (ξ.potentialValue' φ (firstSelectedSlot R ξ))))
-  · have hcard : (S ξ).card = 1 := by
-      have hpos : 0 < (S ξ).card := Finset.card_pos.mpr hS_nonempty
-      omega
-    rw [reserveSpineSlot_eq_first_of_singleton S ξ hcard]
-    have hfirstS_mem := firstSelectedSlot_mem S ξ hS_nonempty
-    have hfirstEq : firstSelectedSlot S ξ = firstSelectedSlot R ξ := by
-      by_contra hne'
-      have htwo : 1 < (S ξ).card :=
-        Finset.one_lt_card_iff.mpr
-          ⟨firstSelectedSlot S ξ, firstSelectedSlot R ξ,
-            hfirstS_mem, hfirstS, hne'⟩
-      omega
-    rw [hfirstEq]
-    exact le_trans (le_max_right _ _) (le_add_of_nonneg_left hM)
 
 /-- The path potential is the sum of the reserve-spine edge potentials.
 -/
@@ -114,7 +75,9 @@ theorem selectedReserveSpinePath_potential_eq_sum_edges
       rw [show selectedReserveSpinePath S r (n + 1) ω =
         selectedReserveSpinePath S r n ω ++
           [reserveSpineSlot S (ω r (selectedReserveSpinePath S r n ω))] by rfl]
-      rw [spinePathPotential_append_singleton]
+      rw [Spine.pathPotential_append]
+      simp only [Spine.pathPotential_singleton, subtreeStepField,
+        List.append_nil]
       rw [Finset.sum_range_succ]
       simpa [selectedReserveSpineEdgePotential] using congrArg
         (fun x : ℝ => x +
@@ -152,8 +115,9 @@ theorem selectedReserveSpinePath_positivePart_le_cutoff_add_firstChildSum
     apply Finset.sum_le_sum
     intro k hk
     have hk' : k < n := Finset.mem_range.mp hk
-    simpa [edge, rawPositive, selectedReserveSpineEdgePotential, S] using
-      reserveSpineSlot_potential_le_cutoff_add_firstChildPositive
+    simpa [edge, rawPositive, selectedReserveSpineEdgePotential, S,
+      firstSelectedSlotPositivePotential] using
+      potentialValue'_reserveSpineSlot_le_cutoff_add_firstSelectedSlotPositive
         R hR φ M hM (ω r (selectedReserveSpinePath S r k ω))
         (hordered k hk') (hnonempty k hk')
   have hright : (∑ k ∈ Finset.range n, (M + rawPositive k)) =
@@ -189,37 +153,6 @@ noncomputable def selectedReserveSpineRestartSourceMinPosition
   let values := (selectedReserveSpineRestartSourceSlice R growth hR cap duration
       r n ω).image (fun q => Spine.pathPotential φ (ω q.1) q.2)
   if h : values.Nonempty then values.min' h else 0
-
-theorem selectedReserveSpineRestartSourceSlice_contains_live_spine
-    (R growth : Step.FiniteSelection α X) (hR : Measurable R.select)
-    (cap duration : ℕ) (r : Root) (n : ℕ)
-    (ω : RootIndexed.StepField Root α X)
-    (halive : selectedReserveSpineAlive R r n ω) :
-    (r, selectedReserveSpinePath R r n ω) ∈
-      selectedReserveSpineRestartSourceSlice R growth hR cap duration r n ω := by
-  simp [selectedReserveSpineRestartSourceSlice, halive]
-
-theorem selectedReserveSpineRestartSourceMinPosition_le_live_spine
-    (R growth : Step.FiniteSelection α X) (hR : Measurable R.select)
-    (φ : Potential X) (cap duration : ℕ) (r : Root) (n : ℕ)
-    (ω : RootIndexed.StepField Root α X)
-    (halive : selectedReserveSpineAlive R r n ω) :
-    selectedReserveSpineRestartSourceMinPosition R growth hR φ cap duration
-      r n ω ≤ Spine.pathPotential φ (ω r)
-        (selectedReserveSpinePath R r n ω) := by
-  let values := (selectedReserveSpineRestartSourceSlice R growth hR cap duration
-      r n ω).image (fun q => Spine.pathPotential φ (ω q.1) q.2)
-  have hmem : Spine.pathPotential φ (ω r)
-      (selectedReserveSpinePath R r n ω) ∈ values := by
-    apply Finset.mem_image.mpr
-    refine ⟨(r, selectedReserveSpinePath R r n ω), ?_, rfl⟩
-    exact selectedReserveSpineRestartSourceSlice_contains_live_spine
-      R growth hR cap duration r n ω halive
-  have hne : values.Nonempty := ⟨_, hmem⟩
-  unfold selectedReserveSpineRestartSourceMinPosition
-  dsimp only
-  rw [dif_pos hne]
-  exact Finset.min'_le values _ hmem
 
 /-- The implemented causal source has the same positive-part estimate as its
 live reserve spine. This bound is pathwise; it makes no iid claim about the
@@ -268,8 +201,22 @@ theorem selectedReserveSpineRestartSourceMinPosition_positivePart_le
         have hlast := reserveSelectionBelowPotential_nonempty_of_selected_nonempty
           R φ M (ω r (selectedReserveSpinePath S r n ω)) hlastRaw
         exact ⟨hprev, hlast⟩
-  have hminimum := selectedReserveSpineRestartSourceMinPosition_le_live_spine
-    S growth hS φ cap duration r n ω halive
+  let values := (selectedReserveSpineRestartSourceSlice S growth hS cap duration
+      r n ω).image (fun q => Spine.pathPotential φ (ω q.1) q.2)
+  have hmem : Spine.pathPotential φ (ω r)
+      (selectedReserveSpinePath S r n ω) ∈ values := by
+    apply Finset.mem_image.mpr
+    refine ⟨(r, selectedReserveSpinePath S r n ω), ?_, rfl⟩
+    exact selectedReserveSpineRestartSourceSlice_contains_live_spine
+      S growth hS cap duration r n ω halive
+  have hvalues : values.Nonempty := ⟨_, hmem⟩
+  have hminimum : selectedReserveSpineRestartSourceMinPosition S growth hS φ
+      cap duration r n ω ≤ Spine.pathPotential φ (ω r)
+        (selectedReserveSpinePath S r n ω) := by
+    unfold selectedReserveSpineRestartSourceMinPosition
+    dsimp only
+    rw [dite_eq_left hvalues]
+    exact Finset.min'_le values _ hmem
   have hpath := selectedReserveSpinePath_positivePart_le_cutoff_add_firstChildSum
     R hRcap φ M hM r n ω (by simpa [S] using hordered)
     (by simpa [S] using hnonempty)

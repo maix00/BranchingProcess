@@ -12,6 +12,8 @@ public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Surviva
 /-!
 # Boolean and real forms of the conditioned Rademacher path law
 
+## Public declarations
+
 The public theorems in this file are:
 
 - `ProbabilityTheory.RandomWalk.measure_booleanSurvival_eq_realSurvival`:

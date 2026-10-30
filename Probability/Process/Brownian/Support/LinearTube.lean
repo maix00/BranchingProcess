@@ -8,12 +8,12 @@ module
 
 public import Probability.Process.Stable.Brownian.Basic
 public import Probability.Process.Stable.PathLaw.LinearTube
-public import Probability.Process.Path.Cadlag.MeasurableMap
+public import Probability.Process.Path.Representation.Cadlag
 
 /-!
 # Brownian linear-tube corollaries
 
-The public theorems in this file are:
+## Public declarations
 
 - `IsBrownianReal.measure_linearTube_pos`:
   $\mathbb P(\sup_{0\le t\le1}|B_t-st|<r)>0$ for $r>0$.
@@ -53,9 +53,9 @@ theorem IsBrownianReal.measure_pathLaw_linearBall_pos
     [IsProbabilityMeasure P] {B : ℝ≥0 → Ω → ℝ}
     (hB : IsBrownianReal B P) (slope radius : ℝ) (hradius : 0 < radius) :
     0 < Process.Path.Cadlag.pathLaw P
-      (fun t ω => B (UnitInterval.toNNReal t) ω)
+      (fun t ω => B (unitInterval.toNNReal t) ω)
       (fun t => hB.toIsPreBrownianReal.aemeasurable
-        (UnitInterval.toNNReal t))
+        (unitInterval.toNNReal t))
       (Metric.ball (Skorokhod.linearPath slope) radius) := by
   simpa only [Process.Path.Cadlag.pathLaw] using
     hB.isStableLevyProcess.measure_pathLaw_linearBall_pos slope radius hradius

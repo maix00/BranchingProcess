@@ -7,10 +7,12 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.Path.Block.Partition.Basic
-public import Probability.Process.RandomWalk.Path.Block.Scale
+public import Analysis.Asymptotics.Scale.Block.Proportional
 public import Probability.Process.RandomWalk.Path.Block.Law.Basic
-public import Probability.Process.RandomWalk.FunctionalLimit.Donsker.FiniteDimensional.CLT
-public import Probability.ConvergenceInDistribution.Independence
+public import Mathlib.Probability.Distributions.Gaussian.Real
+public import Mathlib.MeasureTheory.Function.ConvergenceInDistribution
+import Probability.Process.RandomWalk.FunctionalLimit.Normal.FiniteDimensional.CentralLimitTheorem
+import Probability.ConvergenceInDistribution.Independence
 public import Topology.Algebra.BigOperators.PartialSum
 
 /-!
@@ -21,7 +23,7 @@ limit theorem.  The block lengths are proportional to the full time horizon;
 they are therefore distinct from the subdiffusive blocks used in Mogulskii
 estimates.
 
-The public theorems in this file are:
+## Public declarations
 
 - `ProbabilityTheory.RandomWalk.tendstoInDistribution_proportionalPartialSum`:
   $S_{\lfloor tn\rfloor}/\sqrt n\Rightarrow\sqrt tZ$ for $t>0$.
@@ -41,6 +43,8 @@ open Filter MeasureTheory
 @[expose] public section
 
 namespace ProbabilityTheory.RandomWalk
+
+open Asymptotics
 
 
 /-- The endpoint of the first `floor (fraction * n)` increments, normalized

@@ -8,7 +8,7 @@ module
 
 public import Probability.BranchingRandomWalk.Spine.Tilted.Law
 public import Probability.BranchingRandomWalk.Step.PointMeasure.Basic
-public import Probability.PointProcess.Tilted
+public import Probability.RandomMeasure.ExponentialTilt
 
 /-!
 # Point-measure representation of the spine increment law
@@ -16,6 +16,17 @@ public import Probability.PointProcess.Tilted
 The abstract tilted law integrates against a random measure and has no atom
 enumeration parameter.  A countable-slot branching step maps to that law, and
 the resulting measure agrees with the slotwise construction.
+
+## Public declarations
+
+- `lintegral_pointMeasure_tiltedLaw`: expresses the integrated exponential
+  potential weight by integration against the offspring random measure.
+- `pointMeasure_tiltedLaw_eq_tiltedPotentialLaw`: the random-measure tilted
+  law agrees with the law obtained by summing over child slots.
+- `pointMeasure_hasNormalization` and
+  `pointMeasure_tiltedLaw_isProbability`: transfer boundary normalization to
+  the random-measure representation and show its tilted law is a probability
+  measure.
 -/
 
 open MeasureTheory
@@ -32,17 +43,17 @@ theorem lintegral_pointMeasure_tiltedLaw
     (φ : Potential X) (θ : ℝ)
     (μ : Measure (Combinatorics.Branching.Step ι X))
     {f : ℝ → ENNReal} (hf : Measurable f) :
-    (∫⁻ y, f y ∂PointProcess.tiltedLaw φ θ
+    (∫⁻ y, f y ∂RandomMeasure.tiltedLaw φ θ
         (μ.map stepPointMeasure)) =
       ∫⁻ ξ, ∑' i : ι, realizedPotentialWeight φ θ ξ i *
         f (ξ.potentialValue' φ i) ∂μ := by
-  rw [PointProcess.lintegral_tiltedLaw φ.measurable_toFun θ _ hf]
+  rw [RandomMeasure.lintegral_tiltedLaw φ.measurable_toFun θ _ hf]
   have hintegrand : Measurable (fun x : X =>
-      PointProcess.exponentialWeight φ θ x * f (φ x)) :=
-    (PointProcess.exponentialWeight_measurable φ.measurable_toFun θ).mul
+      RandomMeasure.exponentialWeight φ θ x * f (φ x)) :=
+    (RandomMeasure.exponentialWeight_measurable φ.measurable_toFun θ).mul
       (hf.comp φ.measurable_toFun)
   have hmeasureFunctional : Measurable (fun ν : Measure X =>
-      ∫⁻ x, PointProcess.exponentialWeight φ θ x * f (φ x) ∂ν) :=
+      ∫⁻ x, RandomMeasure.exponentialWeight φ θ x * f (φ x) ∂ν) :=
     Measure.measurable_lintegral hintegrand
   rw [lintegral_map hmeasureFunctional stepPointMeasure_measurable]
   apply lintegral_congr
@@ -53,13 +64,13 @@ theorem pointMeasure_tiltedLaw_eq_tiltedPotentialLaw
     {ι X : Type*} [Countable ι] [MeasurableSpace X]
     (φ : Potential X) (θ : ℝ)
     (μ : Measure (Combinatorics.Branching.Step ι X)) :
-    PointProcess.tiltedLaw φ θ (μ.map stepPointMeasure) =
+    RandomMeasure.tiltedLaw φ θ (μ.map stepPointMeasure) =
       tiltedPotentialLaw φ θ μ := by
   ext s hs
   rw [← lintegral_indicator_one hs, ← lintegral_indicator_one hs]
   calc
     (∫⁻ a, s.indicator 1 a
-        ∂PointProcess.tiltedLaw φ θ (μ.map stepPointMeasure)) =
+        ∂RandomMeasure.tiltedLaw φ θ (μ.map stepPointMeasure)) =
         ∫⁻ ξ, ∑' i : ι, realizedPotentialWeight φ θ ξ i *
           s.indicator 1 (ξ.potentialValue' φ i) ∂μ :=
       lintegral_pointMeasure_tiltedLaw φ θ μ
@@ -73,17 +84,17 @@ theorem pointMeasure_hasNormalization
     (φ : Potential X)
     (μ : Measure (Combinatorics.Branching.Step ι X))
     (hboundary : HasBoundaryNormalization φ μ) :
-    PointProcess.HasNormalization φ (-1) (μ.map stepPointMeasure) := by
-  unfold PointProcess.HasNormalization
+    RandomMeasure.HasNormalization φ (-1) (μ.map stepPointMeasure) := by
+  unfold RandomMeasure.HasNormalization
   have hintegrand : Measurable (fun x : X =>
-      PointProcess.exponentialWeight φ (-1) x) :=
-    PointProcess.exponentialWeight_measurable φ.measurable_toFun (-1)
+      RandomMeasure.exponentialWeight φ (-1) x) :=
+    RandomMeasure.exponentialWeight_measurable φ.measurable_toFun (-1)
   have hmeasureFunctional : Measurable (fun ν : Measure X =>
-      ∫⁻ x, PointProcess.exponentialWeight φ (-1) x ∂ν) :=
+      ∫⁻ x, RandomMeasure.exponentialWeight φ (-1) x ∂ν) :=
     Measure.measurable_lintegral hintegrand
   rw [lintegral_map hmeasureFunctional stepPointMeasure_measurable]
   simp_rw [show ∀ ξ : Combinatorics.Branching.Step ι X,
-      (∫⁻ x, PointProcess.exponentialWeight φ (-1) x
+      (∫⁻ x, RandomMeasure.exponentialWeight φ (-1) x
           ∂stepPointMeasure ξ) = totalPotentialWeight φ (-1) ξ by
     intro ξ
     simpa only [mul_one, totalPotentialWeight] using
@@ -97,8 +108,8 @@ theorem pointMeasure_tiltedLaw_isProbability
     (μ : Measure (Combinatorics.Branching.Step ι X))
     (hboundary : HasBoundaryNormalization φ μ) :
     IsProbabilityMeasure
-      (PointProcess.tiltedLaw φ (-1) (μ.map stepPointMeasure)) :=
-  PointProcess.tiltedLaw_isProbability φ.measurable_toFun (-1)
+      (RandomMeasure.tiltedLaw φ (-1) (μ.map stepPointMeasure)) :=
+  RandomMeasure.tiltedLaw_isProbability φ.measurable_toFun (-1)
     (μ.map stepPointMeasure) (pointMeasure_hasNormalization φ μ hboundary)
 
 end ProbabilityTheory.BranchingRandomWalk.Spine

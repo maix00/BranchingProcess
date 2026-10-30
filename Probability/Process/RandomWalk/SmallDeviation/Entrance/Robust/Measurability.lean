@@ -11,6 +11,8 @@ public import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.Even
 /-!
 # Prefix-filtration measurability of the robust entrance event
 
+## Public declarations
+
 For $S_j=\sum_{i=0}^{j-1}\xi_i$ and
 $h_j=cj/\Delta^2$, the public theorem
 `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.measurableSet_robustMovingTransitionEvent`

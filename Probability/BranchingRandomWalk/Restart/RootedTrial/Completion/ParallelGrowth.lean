@@ -4,7 +4,12 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Restart.RootedTrial.Reserve.Causal
+module
+
+public import Probability.BranchingRandomWalk.Restart.RootedTrial.Reserve.Causal
+public import Probability.BranchingRandomWalk.Restart.RootedTrial.Reserve.Candidates
+import Probability.BranchingRandomWalk.Restart.RootedTrial.Completion.CapStopped
+import Probability.BranchingRandomWalk.Restart.RootedTrial.Completion.RootIndexed.CapStopped
 /-!
 # Binary growth bounds for parallel reserve trials
 
@@ -13,50 +18,32 @@ observable.  With at most two selected children per particle, its age-`h`
 population is bounded by `2^h`, regardless of the cap used to stop the trial.
 Only the most recent `duration + 1` candidates can be active at once, giving a
 deterministic capacity bound for the causal reserve source.
+
+## Public declarations
+
+* `ProbabilityTheory.BranchingRandomWalk.selectedReserveSpineCandidatePopulation_card_le_binary`
+  bounds the active candidate population by $(d+1)2^d$ for duration $d$ when
+  the growth rule has at most two selected children per particle.
+* `ProbabilityTheory.BranchingRandomWalk.selectedReserveSpineAndCandidates_card_le_binary`
+  bounds the union of the live reserve spine and active candidates by
+  $1+(d+1)2^d$.
+* `ProbabilityTheory.BranchingRandomWalk.selectedReserveSpineRestartSource_card_le_binary`
+  gives the same $1+(d+1)2^d$ capacity bound for each finite slice of the full
+  causal restart source.
+
+The general $b^n$ growth bounds for cap-stopped populations belong to the
+modules defining those populations.
 -/
 
 open MeasureTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
 open Combinatorics.Branching Combinatorics.UlamHarris
 
 attribute [local instance] Classical.propDecidable Classical.decEq
-
-/-- A cap-stopped trial with binary reproduction has at most `2^n`
-individuals at age `n`.  Stopping can only reduce this elementary binary-tree
-bound. -/
-theorem capStoppedPopulation_card_le_two_pow {α X : Type*}
-    (R : Step.FiniteSelection α X) (cap : ℕ)
-    (hR : R.IsBoundedBy 2) (ω : Mark α (Step α X)) :
-    ∀ n, (capStoppedPopulation R cap n ω).card ≤ 2 ^ n := by
-  intro n
-  induction n with
-  | zero => simp [capStoppedPopulation]
-  | succ n ih =>
-      simp only [capStoppedPopulation_succ, capStoppedStep]
-      by_cases hcross : cap < (capStoppedPopulation R cap n ω).card
-      · simp [hcross]
-      · simp [hcross]
-        calc
-          (StepSelection.grow R (capStoppedPopulation R cap n ω)
-              (frontierMarks n ω)).card ≤
-              2 * (capStoppedPopulation R cap n ω).card :=
-            StepSelection.grow_card_le_mul R 2 hR _ _
-          _ ≤ 2 * 2 ^ n := Nat.mul_le_mul_left 2 ih
-          _ = 2 ^ (n + 1) := by rw [pow_succ]; ring
-
-/-- The rooted version of the binary trial bound. -/
-theorem rootedCapStoppedPopulation_card_le_two_pow
-    {Root α X : Type*} [MeasurableSpace X]
-    (R : Step.FiniteSelection α X) (cap : ℕ)
-    (hR : R.IsBoundedBy 2)
-    (ω : RootIndexed.StepField Root α X)
-    (root : RootIndexed.TreeNode Root α) (age : ℕ) :
-    (rootedCapStoppedPopulation R cap ω root age).card ≤ 2 ^ age := by
-  simp only [rootedCapStoppedPopulation, Finset.card_map]
-  exact capStoppedPopulation_card_le_two_pow R cap hR
-    (fun u => ω root.1 (root.2 ++ u)) age
 
 /-- At generation `n`, every active candidate has age at most `duration`.
 The total number of candidate particles is therefore bounded by the number
@@ -79,11 +66,11 @@ theorem selectedReserveSpineCandidatePopulation_card_le_binary
     fun _ k age field =>
       (selectedReserveSpineLineages R hR).capStoppedCandidate
         R growth (2 ^ duration) r PUnit.unit k age field
-  have hsum := Concurrent.Finite.population_card_le_sum
+  have hsum := ProbabilityTheory.Process.Stopping.Concurrent.Finite.population_card_le_sum
     (fun t field => selectedReserveSpineCandidateEnabled R r duration t field)
     start candidate n ω
   have hcomponent : ∀ i ∈ enabled,
-      (Concurrent.Finite.component start candidate i n ω).card ≤
+      (ProbabilityTheory.Process.Stopping.Concurrent.Finite.component start candidate i n ω).card ≤
         2 ^ duration := by
     intro i hi
     have hi' : i < n ∧ n ≤ i + 1 + duration := by
@@ -94,24 +81,24 @@ theorem selectedReserveSpineCandidatePopulation_card_le_binary
       exact ⟨hiEnabled.1, hiEnabled.2.2.2⟩
     have hstart : start i ω = ((i + 1 : ℕ) : WithTop ℕ) := rfl
     have hage : n - (i + 1) ≤ duration := by omega
-    rw [Concurrent.Finite.component_eq_of_start start candidate i ω
+    rw [ProbabilityTheory.Process.Stopping.Concurrent.Finite.component_eq_of_start start candidate i ω
       (by omega) hstart]
     change ((selectedReserveSpineLineages R hR).capStoppedCandidate
       R growth (2 ^ duration) r PUnit.unit (i + 1) (n - (i + 1)) ω).card ≤ _
     simpa only [RootIndexed.ReserveLineages.capStoppedCandidate] using
-      (rootedCapStoppedPopulation_card_le_two_pow growth (2 ^ duration) hgrowth ω
+      (rootedCapStoppedPopulation_card_le_pow growth (2 ^ duration) 2 hgrowth ω
         ((selectedReserveSpineLineages R hR).firstChildRootAt
           R r PUnit.unit (i + 1) ω) (n - (i + 1))).trans
         (Nat.pow_le_pow_right (by decide) hage)
   calc
     (selectedReserveSpineCandidatePopulation R growth hR (2 ^ duration)
         duration r n ω).card =
-        (Concurrent.Finite.population
+        (ProbabilityTheory.Process.Stopping.Concurrent.Finite.population
           (fun t field => selectedReserveSpineCandidateEnabled R r duration t field)
           start candidate n ω).card := by
       rfl
     _ ≤ ∑ i ∈ enabled,
-        (Concurrent.Finite.component start candidate i n ω).card := hsum
+        (ProbabilityTheory.Process.Stopping.Concurrent.Finite.component start candidate i n ω).card := hsum
     _ ≤ ∑ _i ∈ enabled, 2 ^ duration := by
       apply Finset.sum_le_sum
       intro i hi

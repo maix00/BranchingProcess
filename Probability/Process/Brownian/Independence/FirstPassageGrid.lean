@@ -6,6 +6,8 @@ Authors: WANG Yiyang
 
 module
 
+public import Probability.Process.Path.Transform.Continuous
+
 public import Probability.Process.Brownian.Independence.FiniteStoppingTime
 public import Probability.Process.Brownian.Independence.StoppedPast
 public import Probability.Process.Path.FirstPassage.GridApproximation
@@ -14,7 +16,7 @@ import MeasureTheory.Measure.Convergence.MapInvariance
 /-!
 # Brownian future at a first-passage observation grid
 
-The public theorem in this file is:
+## Public declarations
 
 - `ProbabilityTheory.IsBrownianReal.measure_shiftToZero_firstPassageGridCeiling_eq`:
   for a finite monotone observation grid, the Brownian future increment

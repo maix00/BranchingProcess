@@ -18,7 +18,7 @@ public section
 /-!
 # Joint convergence of independent random variables
 
-The public theorems in this file are:
+## Public declarations
 
 - `MeasureTheory.TendstoInDistribution.prodMk_of_indepFun`: if $X_i$ and
   $Y_i$ are independent for each $i$, and their laws converge to the laws of

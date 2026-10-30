@@ -27,6 +27,19 @@ function space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974),
 755--765; English translation, “Small Deviations in a Space of Trajectories,”
 *Theory of Probability and Its Applications* 19(4) (1975), 726--736, DOI
 10.1137/1119081.
+## Public declarations
+
+- `stableRangeLogRate` records $a^\alpha\log\mathbb P(\operatorname{diam}X([0,1])<2a)$.
+  Theorem `IsStableLevyProcess.exists_rationalRange_escape_rate` proves that
+  this rate has a finite negative limit as $a\downarrow0$.
+- The centered-corridor probability and logarithmic rate are defined
+  separately; `exists_centeredCorridor_exponential_lower_bound` supplies the
+  finite-window estimate used in the comparison.
+- `IsStableLevyProcess.exists_finite_endpointCorridorIoc_lowerBound` gives a
+  terminal-window lower bound, and
+  `IsStableLevyProcess.measure_rationalRangeProbability_le_pow_of_le` gives
+  the arbitrary-horizon range comparison.
+
 -/
 
 @[expose] public section

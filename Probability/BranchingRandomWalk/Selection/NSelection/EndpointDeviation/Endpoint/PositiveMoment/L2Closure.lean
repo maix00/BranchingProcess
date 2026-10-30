@@ -7,11 +7,26 @@ Authors: WANG Yiyang
 import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.PositiveMoment.Basic
 import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.PositiveMoment.Closure
 import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.Minimum.CountableRoots
+import MeasureTheory.Integral.MeasurePreserving
 /-!
 # Two-sided endpoint fourth moments on the common root forest
 
+## Public declarations
+
+- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.finiteRootStepFieldLaw_integrable_pow_four_firstNSelectedEndpointMinimum`:
+  combines the two endpoint sides to give
+  \(\mathbb E[M_H^4]\le H^4\mathbb E[(X^+)^4]+2048(1+\log^4m)\).
+- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.countableRootEndpointMinimum_memLp_four_and_integral_bound`:
+  transfers this bound and \(L^4\)-integrability to the common countable-root
+  field.
+- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.countableRootEndpointMinimum_sub_memLp_four_and_integral_bound`:
+  for every center \(c\),
+  \(\mathbb E[(M_H-c)^4]\le8(H^4\mathbb E[(X^+)^4]+2048(1+\log^4m)+c^4)\).
+- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.countableRootEndpointMinimum_div_sub_memLp_four_and_integral_bound`:
+  gives the corresponding centered estimate after division by a nonzero scale.
+
 The positive and negative endpoint parts have separate estimates under the
-the assumptions. This module combines them on the common countable-root
+same assumptions. This module combines them on the common countable-root
 environment, which is the probability space used for the varying-
 initial-population trajectory.
 -/
@@ -19,7 +34,7 @@ initial-population trajectory.
 open MeasureTheory
 open scoped ENNReal
 
-namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail
+namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation
 
 open Combinatorics.Branching
 open Combinatorics.UlamHarris
@@ -175,15 +190,17 @@ theorem countableRootEndpointMinimum_memLp_four_and_integral_bound
   have hmem : MemLp countableEndpoint (4 : ℝ≥0∞) P :=
     (integrable_norm_rpow_iff hmeas.aestronglyMeasurable
       (by norm_num) (by norm_num)).1 hnormInt'
-  have hintegral :=
-    countableRootEndpointMinimum_integral_map_eq L.sortedPotentialImage m N H
-      (fun x : ℝ => x ^ 4) (measurable_id.pow_const 4)
+  have hintegral := hpreserving.integral_comp_of_integrable
+    (f := fun field : FiniteRootStepField m ℕ ℝ => (endpoint field) ^ 4)
+    hfinite.1
   have hbound :
       (∫ field, (countableEndpoint field) ^ 4 ∂P) ≤
         (H : ℝ) ^ 4 *
           ∫ ξ, (L.leftmostPositivePart ξ) ^ 4 ∂L.raw +
             2048 * (1 + Real.log (m : ℝ) ^ 4) := by
-    rw [show countableEndpoint = countableRootEndpointMinimum m N H by rfl]
+    change (∫ field,
+      (endpoint (RootIndexed.StepField.first m field)) ^ 4
+        ∂RootIndexed.stepFieldLaw (Root := ℕ) L.sortedPotentialImage) ≤ _
     rw [hintegral]
     simpa [Q, endpoint] using hfinite.2
   exact ⟨by simpa [P, countableEndpoint] using hmem, hbound⟩
@@ -333,4 +350,4 @@ theorem countableRootEndpointMinimum_div_sub_memLp_four_and_integral_bound
         rw [one_div, inv_pow]]
       ring
 
-end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail
+end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation

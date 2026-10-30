@@ -19,6 +19,17 @@ This module assembles the one-dimensional domain-of-attraction block theorem
 over a finite partition. It keeps the time-block lengths, normalization
 ratios, and centering ratios explicit; regular-variation results can supply
 those ratios in later applications.
+## Public declarations
+
+- `partialSum_variableBlockSums` states that the sum of consecutive block
+  displacements equals the displacement at the final block endpoint.
+- `tendstoInDistribution_consecutiveBlockSums` proves joint convergence of
+  finitely many normalized i.i.d. block sums to independent affine images
+  $r_j Z_j+c_j$ of the one-dimensional domain-of-attraction limit.
+- `tendstoInDistribution_consecutiveBlockEndpoints` transfers that result to
+  the cumulative endpoint vector, whose $j$th coordinate is
+  $\sum_{i<j}(r_i Z_i+c_i)$.
+
 -/
 
 open Filter MeasureTheory
@@ -35,14 +46,14 @@ theorem partialSum_variableBlockSums {blocks : ℕ}
     (length : ℕ → ℕ) (increments : ℕ → ℝ) (j : Fin (blocks + 1)) :
     Fin.partialSum
         (fun k : Fin blocks =>
-          AdditivePath.blockSum (AdditivePath.blockStart length k.val)
+          AdditivePath.blockSum (Combinatorics.Sequence.blockStart length k.val)
             (length k.val) increments) j =
-      AdditivePath.displacement (AdditivePath.blockStart length j.val) increments := by
+      AdditivePath.displacement (Combinatorics.Sequence.blockStart length j.val) increments := by
   induction j using Fin.induction with
-  | zero => simp [AdditivePath.blockStart]
+  | zero => simp [Combinatorics.Sequence.blockStart]
   | succ j ih =>
     rw [Fin.partialSum_succ, ih]
-    simp only [Fin.val_castSucc, Fin.val_succ, AdditivePath.blockStart_succ]
+    simp only [Fin.val_castSucc, Fin.val_succ, Combinatorics.Sequence.blockStart_succ]
     rw [← AdditivePath.displacement_add_eq_add_blockSum]
 
 /-- A finite family of consecutive block sums converges jointly when each
@@ -66,14 +77,14 @@ theorem tendstoInDistribution_consecutiveBlockSums
         atTop (nhds (shift j))) :
     TendstoInDistribution
       (fun n (increments : ℕ → ℝ) (j : Fin blocks) =>
-        AdditivePath.blockSum (AdditivePath.blockStart (length n) j.val)
+        AdditivePath.blockSum (Combinatorics.Sequence.blockStart (length n) j.val)
           (length n j.val) increments / spatialScale n)
       atTop
       (fun z j => ratio j * z j + shift j)
       (fun _ => iidSequenceLaw ν)
       (Measure.pi fun _ : Fin blocks => limit) := by
   let X : ℕ → Fin blocks → (ℕ → ℝ) → ℝ := fun n j increments =>
-    AdditivePath.blockSum (AdditivePath.blockStart (length n) j.val)
+    AdditivePath.blockSum (Combinatorics.Sequence.blockStart (length n) j.val)
       (length n j.val) increments / spatialScale n
   let Z : Fin blocks → ℝ → ℝ := fun j z => ratio j * z + shift j
   have hcoordinate (j : Fin blocks) :
@@ -94,18 +105,18 @@ theorem tendstoInDistribution_consecutiveBlockSums
                 simpa only [Function.comp_def, f] using
                   (Measure.map_map hf (displacement_measurable (length n j.val))).symm
         _ = ((iidSequenceLaw ν).map
-            (AdditivePath.blockSum (AdditivePath.blockStart
+            (AdditivePath.blockSum (Combinatorics.Sequence.blockStart
               (length n) j.val) (length n j.val))).map f := by
               rw [← ProbabilityTheory.RandomWalk.iidSequenceLaw_map_blockSum]
         _ = (iidSequenceLaw ν).map (fun increments =>
-            AdditivePath.blockSum (AdditivePath.blockStart
+            AdditivePath.blockSum (Combinatorics.Sequence.blockStart
               (length n) j.val) (length n j.val) increments / spatialScale n) := by
                 simpa only [Function.comp_def, f] using
                   Measure.map_map hf (blockSum_measurable
-                    (AdditivePath.blockStart (length n) j.val)
+                    (Combinatorics.Sequence.blockStart (length n) j.val)
                     (length n j.val))
     · intro n
-      exact (blockSum_measurable (AdditivePath.blockStart (length n) j.val)
+      exact (blockSum_measurable (Combinatorics.Sequence.blockStart (length n) j.val)
         (length n j.val)).div_const _ |>.aemeasurable
   have hindep (n : ℕ) :
       iIndepFun (fun j (increments : ℕ → ℝ) => X n j increments)
@@ -138,7 +149,7 @@ theorem tendstoInDistribution_consecutiveBlockEndpoints
         atTop (nhds (shift j))) :
     TendstoInDistribution
       (fun n (increments : ℕ → ℝ) (j : Fin (blocks + 1)) =>
-        AdditivePath.displacement (AdditivePath.blockStart (length n) j.val)
+        AdditivePath.displacement (Combinatorics.Sequence.blockStart (length n) j.val)
           increments / spatialScale n)
       atTop
       (fun z j => Fin.partialSum
@@ -146,7 +157,7 @@ theorem tendstoInDistribution_consecutiveBlockEndpoints
       (fun _ => iidSequenceLaw ν)
       (Measure.pi fun _ : Fin blocks => limit) := by
   let X : ℕ → Fin blocks → (ℕ → ℝ) → ℝ := fun n j increments =>
-    AdditivePath.blockSum (AdditivePath.blockStart (length n) j.val)
+    AdditivePath.blockSum (Combinatorics.Sequence.blockStart (length n) j.val)
       (length n j.val) increments / spatialScale n
   let Z : Fin blocks → ℝ → ℝ := fun j z => ratio j * z + shift j
   have hblocks := tendstoInDistribution_consecutiveBlockSums h blocks length
@@ -162,44 +173,44 @@ theorem tendstoInDistribution_consecutiveBlockEndpoints
     change Fin.partialSum
         (fun k : Fin blocks => X n k increments) j =
       AdditivePath.displacement
-        (AdditivePath.blockStart (length n) j.val) increments / spatialScale n
+        (Combinatorics.Sequence.blockStart (length n) j.val) increments / spatialScale n
     have hscale : Fin.partialSum
         (fun k : Fin blocks =>
-          AdditivePath.blockSum (AdditivePath.blockStart (length n) k.val)
+          AdditivePath.blockSum (Combinatorics.Sequence.blockStart (length n) k.val)
             (length n k.val) increments / spatialScale n) j =
         Fin.partialSum
           (fun k : Fin blocks =>
-            AdditivePath.blockSum (AdditivePath.blockStart (length n) k.val)
+            AdditivePath.blockSum (Combinatorics.Sequence.blockStart (length n) k.val)
               (length n k.val) increments) j / spatialScale n := by
       calc
         Fin.partialSum (fun k : Fin blocks =>
-            AdditivePath.blockSum (AdditivePath.blockStart (length n) k.val)
+            AdditivePath.blockSum (Combinatorics.Sequence.blockStart (length n) k.val)
               (length n k.val) increments / spatialScale n) j =
             Fin.partialSum (fun k : Fin blocks =>
               (spatialScale n)⁻¹ * AdditivePath.blockSum
-                (AdditivePath.blockStart (length n) k.val) (length n k.val)
+                (Combinatorics.Sequence.blockStart (length n) k.val) (length n k.val)
                 increments) j := by
                   congr 1
                   funext k
                   simp [div_eq_mul_inv, mul_comm]
         _ = (spatialScale n)⁻¹ * Fin.partialSum (fun k : Fin blocks =>
-              AdditivePath.blockSum (AdditivePath.blockStart (length n) k.val)
+              AdditivePath.blockSum (Combinatorics.Sequence.blockStart (length n) k.val)
                 (length n k.val) increments) j := by
                   simpa [smul_eq_mul] using
                     (Fin.partialSum_smul (R := ℝ) (M := ℝ)
                       ((spatialScale n)⁻¹)
                       (fun k : Fin blocks =>
-                        AdditivePath.blockSum (AdditivePath.blockStart (length n) k.val)
+                        AdditivePath.blockSum (Combinatorics.Sequence.blockStart (length n) k.val)
                           (length n k.val) increments) j)
         _ = Fin.partialSum (fun k : Fin blocks =>
-              AdditivePath.blockSum (AdditivePath.blockStart (length n) k.val)
+              AdditivePath.blockSum (Combinatorics.Sequence.blockStart (length n) k.val)
                 (length n k.val) increments) j / spatialScale n := by
                   simp [div_eq_mul_inv, mul_comm]
     rw [hscale, partialSum_variableBlockSums]
   · intro n
     exact (Measurable.of_eval fun j : Fin (blocks + 1) =>
       (ProbabilityTheory.RandomWalk.displacement_measurable
-        (AdditivePath.blockStart (length n) j.val)).div_const (spatialScale n)).aemeasurable
+        (Combinatorics.Sequence.blockStart (length n) j.val)).div_const (spatialScale n)).aemeasurable
 
 end ProbabilityTheory.RandomWalk.FunctionalLimit.FiniteDimensional
 

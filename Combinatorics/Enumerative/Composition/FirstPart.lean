@@ -11,6 +11,8 @@ public import Mathlib.Combinatorics.Enumerative.Composition
 /-!
 # Decomposing a positive composition at its first part
 
+## Public declarations
+
 The public definitions and theorems in this file are:
 
 - `Composition.firstPartIndex`: for a composition of $n>0$, its first

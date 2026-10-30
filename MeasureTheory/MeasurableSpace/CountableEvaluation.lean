@@ -16,15 +16,41 @@ For a field `F : Ω → I → X` and a selector `s : Ω → I`, the evaluation
 measurable, each selector fiber is measurable, and the range of `s` is
 countable. The index type needs no measurable-space structure.
 
-The public declaration is:
+## Public declarations
 
-* `Measurable.eval_of_countable_range` states the preceding criterion:
-  `Measurable (fun ω => F ω (s ω))`, assuming
-  `(Set.range s).Countable`, and, for each `i ∈ Set.range s`, a measurable
-  fiber `{ω | s ω = i}` and a measurable coordinate `ω ↦ F ω i`.
+* `measurable_of_countable_range_of_fibers` proves that `s : Ω → I` is
+  measurable when its actual range is countable and each fiber
+  `{ω | s ω = i}` is measurable.
+* `Measurable.eval_of_countable_range` proves measurability of the field
+  evaluation `ω ↦ F ω (s ω)` when the selected coordinates and selector
+  fibers are measurable and the actual range of `s` is countable.
 -/
 
 @[expose] public section
+
+/-- A function with countable actual range is measurable when every fiber
+is measurable. -/
+theorem measurable_of_countable_range_of_fibers
+    {Ω I : Type*} [MeasurableSpace Ω] [MeasurableSpace I]
+    (chosen : Ω → I)
+    (hfiber : ∀ i, MeasurableSet {ω | chosen ω = i})
+    (hcount : (Set.range chosen).Countable) :
+    Measurable chosen := by
+  intro t ht
+  change MeasurableSet {ω | chosen ω ∈ t}
+  let R : Set I := Set.range chosen
+  let _ : Countable R := Set.countable_coe_iff.mpr hcount
+  have hpreimage : {ω | chosen ω ∈ t} =
+      ⋃ i : {i : R // i.1 ∈ t}, {ω | chosen ω = i.1.1} := by
+    ext ω
+    simp only [Set.mem_ofPred_eq, Set.mem_iUnion]
+    constructor
+    · intro h
+      exact ⟨⟨⟨chosen ω, Set.mem_range_self ω⟩, h⟩, rfl⟩
+    · rintro ⟨i, hi⟩
+      simpa [hi] using i.2
+  rw [hpreimage]
+  exact MeasurableSet.iUnion fun i => hfiber i.1.1
 
 /-- Evaluation of a measurable field at a selector with countable range is
 measurable when the selector fibers and the coordinates actually selected

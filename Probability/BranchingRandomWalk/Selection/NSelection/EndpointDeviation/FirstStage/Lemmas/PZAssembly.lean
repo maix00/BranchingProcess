@@ -4,32 +4,65 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.FirstStage.Lemmas.PZBudget
+module
+
+import Probability.BranchingRandomWalk.Assumptions.CrossWeight
+import all Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.FirstStage.Lemmas.PZBudget
 import Analysis.Asymptotics.Power.ENNRealRatio
-import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Drawdown.Spine.Cutoff
-import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Rate.LogScales
+import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.FirstStage.Cutoff
+import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.Sequence.LogarithmicScales
 
 /-!
-* `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.eventually_rightTailPositiveA_pzMean_toReal_ge_power_of_centeredSecondMoment`:
-  if `lowerMean` is the one-root corridor contribution and `upperMean +
-  pairBound` is the first two-moment denominator, then eventually
-  `N n ^ (-b - 2 * v - 3 * ε) ≤ (lowerMean ^ 2 / (upperMean + pairBound)).toReal`.
+# First-stage PZ assembly
 
-# First-stage PZ proof lemmas
+## Internal proof declarations
 
-This auxiliary module combines the finite-variance corridor estimate with
-the MRCA pair bound, using the constant drawdown bound.
+* `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.eventually_positiveA_pzMean_toReal_ge_power_of_centeredSecondMoment`:
+  let `L_n=log N_n`, `\ell_n=positiveAFirstStageCutoff(N,n)`, and
+  \[
+    G_n=\{x:\mathbb N\to\mathbb R:
+      \operatorname{history}(\ell_n,0,x)\in
+      \operatorname{affineCorridorThrough}(\ell_n,-bL_n,0,bL_n,(-b+v)L_n)\}.
+  \]
+  Define the MRCA pair contribution by
+  \[
+    R_n=e^{(-b+2v)L_n}
+      \left(\int \operatorname{crossPotentialWeight}
+        (\varphi,-1,\xi)\,d\mu(\xi)\right)
+      \sum_{j=0}^{\ell_n-1}
+        \mathbb P_{\nu}\!\left\{x:\mathbb N\to\mathbb R:
+          \operatorname{history}(j,0,x)\in
+          \operatorname{affineCorridorPrefix}(j,-bL_n,0,bL_n)\right\},
+  \]
+  and set
+  \[
+    u_n=e^{-bL_n}\mathbb P_{\nu}(G_n),\qquad
+    w_n=e^{(-b+v)L_n}\mathbb P_{\nu}(G_n),\qquad
+    p_n=\operatorname{toReal}\!\left(\frac{u_n^2}{w_n+R_n}\right),
+  \]
+  the module proves
+  \[
+    N_n^{-b-2v-3\varepsilon}\le p_n
+  \]
+  eventually, where `\mathbb P_{\nu}=iidSequenceLaw(\nu)`. The displayed
+  finite sum defining `R_n` is the `pairBound` in the theorem statement.
+
+
+This intermediate estimate combines the finite-variance corridor bound and
+the MRCA pair sum in the proof of Chapter 3, Lemma 3.5 of WANG Yiyang,
+*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*.
 -/
 
 open Filter MeasureTheory ProbabilityTheory
 open scoped ENNReal Topology BigOperators
 
-namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail
+namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation
 
 open ProbabilityTheory.RandomWalk
 open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 open ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown
 open ProbabilityTheory.BranchingRandomWalk.Spine
+open Combinatorics.Branching
 
 private lemma eventually_one_add_const_mul_log_cube_le_exp
     {N : ℕ → ℕ} (hN : Tendsto N atTop atTop) {C eta : ℝ}
@@ -93,7 +126,7 @@ private lemma eventually_one_add_const_mul_log_cube_le_exp
 `lowerMean ≳ N^(-b-epsilon)` and `upperMean + MRCA pairs ≲ N^(-b+2v+epsilon)`.
 The only random-walk input is the centered finite second moment; in
 the pair estimate the drawdown sequence is constantly one. -/
-lemma eventually_rightTailPositiveA_pzMean_toReal_ge_power_of_centeredSecondMoment
+lemma eventually_positiveA_pzMean_toReal_ge_power_of_centeredSecondMoment
     {N : ℕ → ℕ} (hN : Tendsto N atTop atTop)
     (μ : Measure (Combinatorics.Branching.Step ℕ ℝ)) [IsProbabilityMeasure μ]
     (hboundary : HasBoundaryNormalization realPotential μ)
@@ -106,7 +139,7 @@ lemma eventually_rightTailPositiveA_pzMean_toReal_ge_power_of_centeredSecondMome
     (hepsilon : 0 < epsilon) :
     ∀ᶠ n : ℕ in atTop,
       (N n : ℝ) ^ (-b - 2 * v - 3 * epsilon) ≤
-        (let ell := rightTailFirstStageCutoff N n
+        (let ell := positiveAFirstStageCutoff N n
          let logN := logarithmOfSampleSize N n
          let corridor := affineCorridorThrough ell (-b * logN) 0
            (b * logN) ((-b + v) * logN)
@@ -121,7 +154,7 @@ lemma eventually_rightTailPositiveA_pzMean_toReal_ge_power_of_centeredSecondMome
            ENNReal.ofReal (Real.exp 0) *
              (ENNReal.ofReal (Real.exp (2 * ((-b + v) * logN))) *
                q (ell - j.val - 1) ^ 2) *
-             (∫⁻ ξ, crossChildWeight realPotential ξ ∂μ) *
+             (∫⁻ ξ, crossPotentialWeight realPotential (-1) ξ ∂μ) *
              (ENNReal.ofReal (Real.exp (0 - (-b * logN))) *
                (tiltedIncrementFieldLaw realPotential μ)
                  {increment | RandomWalk.history j.val 0 increment ∈
@@ -129,7 +162,7 @@ lemma eventually_rightTailPositiveA_pzMean_toReal_ge_power_of_centeredSecondMome
          (lowerMean ^ 2 / (upperMean + pairBound)).toReal) := by
   classical
   let L : ℕ → ℝ := logarithmOfSampleSize N
-  let ell : ℕ → ℕ := rightTailFirstStageCutoff N
+  let ell : ℕ → ℕ := positiveAFirstStageCutoff N
   let corridor (n : ℕ) := affineCorridorThrough (ell n) (-b * L n) 0
     (b * L n) ((-b + v) * L n)
   let spineEvent (n : ℕ) : Set (ℕ → ℝ) :=
@@ -141,7 +174,7 @@ lemma eventually_rightTailPositiveA_pzMean_toReal_ge_power_of_centeredSecondMome
   let upperMean (n : ℕ) : ℝ≥0∞ :=
     ENNReal.ofReal (Real.exp ((-b + v) * L n)) * spineProb n
   let q : ℕ → ℝ≥0∞ := fun _ => 1
-  let crossMass : ℝ≥0∞ := ∫⁻ ξ, crossChildWeight realPotential ξ ∂μ
+  let crossMass : ℝ≥0∞ := ∫⁻ ξ, crossPotentialWeight realPotential (-1) ξ ∂μ
   let pairTerm (n : ℕ) (j : Fin (ell n)) : ℝ≥0∞ :=
     ENNReal.ofReal (Real.exp 0) *
       (ENNReal.ofReal (Real.exp (2 * ((-b + v) * L n))) *
@@ -156,13 +189,13 @@ lemma eventually_rightTailPositiveA_pzMean_toReal_ge_power_of_centeredSecondMome
     tiltedIncrementFieldLaw_isProbability realPotential μ hboundary
   obtain ⟨C, _hC, entranceMass, hentranceMass, amplitude, hamplitude,
       hcorridor⟩ :=
-    eventually_rightTailPositiveASpineCorridor_ge_exp_neg_log
+    eventually_positiveASpineCorridor_ge_exp_neg_log
       hN μ ν hν hνMoment hsigma hb hv hvb hepsilon
   have hcrossTop : crossMass ≠ ∞ := hcross
   have hcrossRealNonneg : 0 ≤ crossMass.toReal := ENNReal.toReal_nonneg
   have hcrossEq : crossMass = ENNReal.ofReal crossMass.toReal :=
     (ENNReal.ofReal_toReal hcrossTop).symm
-  have hlogCube := tendsto_rightTailFirstStageCutoff_div_logCube hN
+  have hlogCube := tendsto_positiveAFirstStageCutoff_div_logCube hN
   have hlogCubeLt : ∀ᶠ n : ℕ in atTop,
       (ell n : ℝ) / L n ^ 3 < 1 := by
     have h := hlogCube.eventually
@@ -188,7 +221,7 @@ lemma eventually_rightTailPositiveA_pzMean_toReal_ge_power_of_centeredSecondMome
   have hpathLower : ENNReal.ofReal (Real.exp (-epsilon * Lval)) ≤ p := by
     calc
       ENNReal.ofReal (Real.exp (-epsilon * Lval)) ≤
-          rightTailPositiveASpineCorridorLowerBound ν b v C amplitude
+          positiveASpineCorridorLowerBound ν b v C amplitude
             entranceMass (ell n) := by
         simpa [Lval, L] using hcorrPower
       _ ≤ (tiltedIncrementFieldLaw realPotential μ)
@@ -399,4 +432,4 @@ lemma eventually_rightTailPositiveA_pzMean_toReal_ge_power_of_centeredSecondMome
   simpa [pzMean, L, ell, corridor, spineEvent, spineProb, lowerMean,
     upperMean, q, pairBound, pairTerm] using hpzLower
 
-end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail
+end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation

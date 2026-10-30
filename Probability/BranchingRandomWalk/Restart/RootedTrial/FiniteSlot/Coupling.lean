@@ -6,9 +6,12 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.BranchingRandomWalk.Restart.RootedTrial.Spine.BoundedOffspring
+public import Probability.BranchingRandomWalk.Restart.RootedTrial.FiniteSlot.Offspring
 public import Probability.BranchingRandomWalk.Population.Processes.StepSelection.Basic
-import Probability.BranchingRandomWalk.Genealogy.Exploration.Selected.AbstractSubtreeVector
+public import Mathlib.Probability.ProductMeasure
+public import Mathlib.Probability.Independence.Basic
+public import Probability.BranchingProcess.Offspring.FieldLaw
+import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.SelectedSubtreeVector
 import Probability.Independence.ConditionalIntegral
 import all Probability.BranchingRandomWalk.Restart.RootedTrial.FiniteSlot.Lemmas.Coding
 
@@ -46,7 +49,8 @@ finite-slot offspring configurations at those addresses.
   the law of `Lₙ` with the product of `2ⁿ` copies of the selected offspring
   law.
 * `ProbabilityTheory.BranchingRandomWalk.finiteSlotActiveLabels_levelSteps_independent`
-  proves `Aₙ ⫫ Lₙ` under the step-field law.
+  proves that the active labels $A_n$ and level steps $L_n$ are independent
+  under the step-field law.
 * `ProbabilityTheory.BranchingRandomWalk.finiteSlotActiveLabels_condExp_succ_card`
   gives the conditional expectation of `|Aₙ₊₁|` given `Aₙ` as the integral of
   `Rₙ(Aₙ, ·)` against the product offspring law.
@@ -63,7 +67,10 @@ open scoped ENNReal
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
+open ProbabilityTheory.BranchingProcess (offspringFieldLaw offspringFieldLaw_coordinate offspringFieldLaw_independent offspringFieldLaw_mapMarks)
+
 open Combinatorics.Branching Combinatorics.UlamHarris
+open StepSelection
 
 /-- The active coded parents at generation `n`. -/
 noncomputable def finiteSlotActiveLabels
@@ -221,7 +228,7 @@ theorem finiteSlotActiveLabels_measurable
       true_and]
     let p := finiteSlotDecode S ω (List.ofFn u)
     have hlength : p.length = n := by
-      simp [p, finiteSlotLevelRoots, finiteSlotDecode_length]
+      simp [p, finiteSlotDecode_length]
     have hdecode : p = finiteSlotLevelRoots S ω n u := by
       rfl
     constructor
@@ -251,7 +258,7 @@ noncomputable def finiteSlotLevelSteps
     [OrderBot α] [NoMaxOrder α]
     (S : Step.FiniteSelection α X) (ω : Mark α (Step α X)) (n : ℕ) :
     (Fin n → Fin 2) → Step (Fin 2) PUnit.{1} :=
-  fun u => finiteOffspringStep S (ω (finiteSlotLevelRoots S ω n u))
+  fun u => S.binaryOffspringStep (ω (finiteSlotLevelRoots S ω n u))
 
 /-- Summing the coded offspring counts over active labels gives exactly the
 sum of selected offspring counts over the source population. -/
@@ -312,7 +319,8 @@ private theorem finiteSlotActiveLabels_sum_childCount_eq_population_sum
       exact hsurvive
     · simpa [finiteSlotLevelRoots, hvlist] using hdecode
   · intro u hu
-    simp [finiteSlotLevelSteps, finiteOffspringStep_childCount,
+    simp [finiteSlotLevelSteps,
+      Step.FiniteSelection.binaryOffspringStep_childCount,
       hcapacity (ω (finiteSlotLevelRoots S ω n u))]
 
 /-- Pathwise finite-generation transition for the coded reserve population.
@@ -373,7 +381,7 @@ theorem finiteSlotRowCountSum_eq_sum
     finiteSlotRowCountSum n (A, rows) =
       ∑ u ∈ A, ((rows u).childCount.toNat : ℝ) := by
   classical
-  simp [finiteSlotRowCountSum, Finset.sum_ite_mem_eq]
+  simp [finiteSlotRowCountSum]
 
 theorem finiteSlotLevelSteps_measurable
     {α X : Type*} [Countable α] [MeasurableSpace α]
@@ -386,7 +394,7 @@ theorem finiteSlotLevelSteps_measurable
     fun ω => finiteSlotLevelRoots S ω n
   let vector := selectedSubtreeStepFieldVector roots
   let observe : StepField α X → Step (Fin 2) PUnit.{1} :=
-    fun field => finiteOffspringStep S (field [])
+    fun field => S.binaryOffspringStep (field [])
   let observeVector :
       ((Fin n → Fin 2) → StepField α X) →
         ((Fin n → Fin 2) → Step (Fin 2) PUnit.{1}) :=
@@ -396,7 +404,7 @@ theorem finiteSlotLevelSteps_measurable
       (finiteSlotLevelRoots_measurable S hS n)
       (finiteSlotLevelRoots_range_countable S n)
   have hobserve : Measurable observe := by
-    exact (finiteOffspringStep_measurable S hS).comp
+    exact (Step.FiniteSelection.binaryOffspringStep_measurable S hS).comp
       (measurable_pi_apply ([] : TreeNode α))
   have hobserveVector : Measurable observeVector := by
     apply measurable_pi_iff.mpr
@@ -415,7 +423,7 @@ theorem finiteSlotLevelSteps_law
     [LinearOrder α] [LocallyFiniteOrder α] [OrderBot α] [NoMaxOrder α]
     (μ : Measure (Step α X)) [IsProbabilityMeasure μ]
     (S : Step.FiniteSelection α X) (hS : Measurable S.select) (n : ℕ) :
-    (stepFieldLaw μ).map (finiteSlotLevelSteps S · n) =
+    (offspringFieldLaw μ).map (finiteSlotLevelSteps S · n) =
       Measure.infinitePi (fun _ : (Fin n → Fin 2) =>
         (finiteOffspringLaw (⟨μ, inferInstance⟩ : ProbabilityMeasure _)
           S hS :
@@ -426,37 +434,37 @@ theorem finiteSlotLevelSteps_law
   let vector := selectedSubtreeStepFieldVector roots
   let ν : ProbabilityMeasure (Step α X) := ⟨μ, inferInstance⟩
   let observe : StepField α X → Step (Fin 2) PUnit.{1} :=
-    fun field => finiteOffspringStep S (field [])
+    fun field => S.binaryOffspringStep (field [])
   let observeVector :
       ((Fin n → Fin 2) → StepField α X) →
         ((Fin n → Fin 2) → Step (Fin 2) PUnit.{1}) :=
     fun fields u => observe (fields u)
   have hobserve : Measurable observe := by
-    exact (finiteOffspringStep_measurable S hS).comp
+    exact (Step.FiniteSelection.binaryOffspringStep_measurable S hS).comp
       (measurable_pi_apply ([] : TreeNode α))
-  have hmap : Measure.map observe (stepFieldLaw μ) =
+  have hmap : Measure.map observe (offspringFieldLaw μ) =
       (finiteOffspringLaw ν S hS :
         Measure (Step (Fin 2) PUnit.{1})) := by
     change Measure.map (fun field : StepField α X =>
-      finiteOffspringStep S (field ([] : TreeNode α))) (stepFieldLaw μ) = _
+      S.binaryOffspringStep (field ([] : TreeNode α))) (offspringFieldLaw μ) = _
     rw [show (fun field : StepField α X =>
-        finiteOffspringStep S (field ([] : TreeNode α))) =
-        (finiteOffspringStep S) ∘ (fun field : StepField α X =>
+        S.binaryOffspringStep (field ([] : TreeNode α))) =
+        (S.binaryOffspringStep) ∘ (fun field : StepField α X =>
           field ([] : TreeNode α)) by rfl]
-    rw [← Measure.map_map (finiteOffspringStep_measurable S hS)
+    rw [← Measure.map_map (Step.FiniteSelection.binaryOffspringStep_measurable S hS)
       (measurable_pi_apply ([] : TreeNode α))]
-    rw [stepFieldLaw_coordinate μ []]
+    rw [offspringFieldLaw_coordinate μ []]
     rfl
-  have hvector : (stepFieldLaw μ).map vector =
-      Measure.infinitePi (fun _ : (Fin n → Fin 2) => stepFieldLaw μ) := by
+  have hvector : (offspringFieldLaw μ).map vector =
+      Measure.infinitePi (fun _ : (Fin n → Fin 2) => offspringFieldLaw μ) := by
     exact finiteSlotLevelSubtreeVector_law μ S hS n
   have hmapVector :
-      (Measure.infinitePi (fun _ : (Fin n → Fin 2) => stepFieldLaw μ)).map
+      (Measure.infinitePi (fun _ : (Fin n → Fin 2) => offspringFieldLaw μ)).map
           observeVector =
         Measure.infinitePi (fun _ : (Fin n → Fin 2) =>
-          Measure.map observe (stepFieldLaw μ)) := by
+          Measure.map observe (offspringFieldLaw μ)) := by
     exact Measure.infinitePi_map_pi
-      (μ := fun _ : (Fin n → Fin 2) => stepFieldLaw μ)
+      (μ := fun _ : (Fin n → Fin 2) => offspringFieldLaw μ)
       (f := fun _ => observe) (hf := fun _ => hobserve)
   have hvectorMeasurable : Measurable vector :=
     selectedSubtreeStepFieldVector_measurable roots
@@ -473,13 +481,13 @@ theorem finiteSlotLevelSteps_law
     simp [finiteSlotLevelSteps, observe, observeVector, vector, roots,
       selectedSubtreeStepFieldVector, subtreeStepFieldVector, subtreeStepField]
   calc
-    (stepFieldLaw μ).map (finiteSlotLevelSteps S · n) =
-        (Measure.infinitePi (fun _ : (Fin n → Fin 2) => stepFieldLaw μ)).map
+    (offspringFieldLaw μ).map (finiteSlotLevelSteps S · n) =
+        (Measure.infinitePi (fun _ : (Fin n → Fin 2) => offspringFieldLaw μ)).map
           observeVector := by
       rw [hcompose, ← Measure.map_map hmapVectorMeasurable hvectorMeasurable,
         hvector]
     _ = Measure.infinitePi (fun _ : (Fin n → Fin 2) =>
-        Measure.map observe (stepFieldLaw μ)) := hmapVector
+        Measure.map observe (offspringFieldLaw μ)) := hmapVector
     _ = Measure.infinitePi (fun _ : (Fin n → Fin 2) =>
         (finiteOffspringLaw ν S hS : Measure (Step (Fin 2) PUnit.{1}))) := by
       apply Measure.eq_infinitePi
@@ -499,13 +507,13 @@ private theorem finiteSlotLevelSteps_independent
     (S : Step.FiniteSelection α X) (hS : Measurable S.select) (n : ℕ) :
     Indep (generationFiltration (M := Step α X) n)
       (MeasurableSpace.comap (finiteSlotLevelSteps S · n) inferInstance)
-      (stepFieldLaw μ) := by
+      (offspringFieldLaw μ) := by
   classical
   let roots : Mark α (Step α X) → (Fin n → Fin 2) → TreeNode α :=
     fun ω => finiteSlotLevelRoots S ω n
   let vector := selectedSubtreeStepFieldVector roots
   let observe : StepField α X → Step (Fin 2) PUnit.{1} :=
-    fun field => finiteOffspringStep S (field [])
+    fun field => S.binaryOffspringStep (field [])
   let observeVector :
       ((Fin n → Fin 2) → StepField α X) →
         ((Fin n → Fin 2) → Step (Fin 2) PUnit.{1}) :=
@@ -517,7 +525,7 @@ private theorem finiteSlotLevelSteps_independent
     (fun ω u => finiteSlotLevelRoots_depth S ω n u)
     (fun ω => finiteSlotLevelRoots_injective S ω n)
   have hobserve : Measurable observe := by
-    exact (finiteOffspringStep_measurable S hS).comp
+    exact (Step.FiniteSelection.binaryOffspringStep_measurable S hS).comp
       (measurable_pi_apply ([] : TreeNode α))
   have hobserveVector : Measurable observeVector := by
     apply measurable_pi_iff.mpr
@@ -539,7 +547,7 @@ theorem finiteSlotActiveLabels_levelSteps_independent
     (S : Step.FiniteSelection α X) (hS : Measurable S.select)
     (hcapacity : ∀ ξ, (S ξ).card ≤ 2) (n : ℕ) :
     IndepFun (finiteSlotActiveLabels S · n)
-      (finiteSlotLevelSteps S · n) (stepFieldLaw μ) := by
+      (finiteSlotLevelSteps S · n) (offspringFieldLaw μ) := by
   classical
   have hactive : Measurable[generationFiltration (M := Step α X) n]
       (finiteSlotActiveLabels S · n) :=
@@ -550,7 +558,7 @@ theorem finiteSlotActiveLabels_levelSteps_independent
   have hsmall : Indep
       (MeasurableSpace.comap (finiteSlotActiveLabels S · n) inferInstance)
       (MeasurableSpace.comap (finiteSlotLevelSteps S · n) inferInstance)
-      (stepFieldLaw μ) :=
+      (offspringFieldLaw μ) :=
     ProbabilityTheory.indep_of_indep_of_le_left hind hactive.comap_le
   rw [IndepFun_iff_Indep]
   exact hsmall
@@ -565,9 +573,9 @@ private theorem finiteSlotActiveLabels_levelSteps_jointLaw
     (μ : Measure (Step α X)) [IsProbabilityMeasure μ]
     (S : Step.FiniteSelection α X) (hS : Measurable S.select)
     (hcapacity : ∀ ξ, (S ξ).card ≤ 2) (n : ℕ) :
-    (stepFieldLaw μ).map (fun ω =>
+    (offspringFieldLaw μ).map (fun ω =>
       (finiteSlotActiveLabels S ω n, finiteSlotLevelSteps S ω n)) =
-      ((stepFieldLaw μ).map (finiteSlotActiveLabels S · n)).prod
+      ((offspringFieldLaw μ).map (finiteSlotActiveLabels S · n)).prod
         (Measure.infinitePi fun _ : (Fin n → Fin 2) =>
           (finiteOffspringLaw (⟨μ, inferInstance⟩ : ProbabilityMeasure _)
             S hS : Measure (Step (Fin 2) PUnit.{1}))) := by
@@ -592,8 +600,8 @@ theorem finiteSlotActiveLabels_condExp_succ_card
     (S : Step.FiniteSelection α X) (hS : Measurable S.select)
     (hcapacity : ∀ ξ, (S ξ).card ≤ 2) (n : ℕ) :
     condExp (MeasurableSpace.comap (finiteSlotActiveLabels S · n) inferInstance)
-      (stepFieldLaw μ)
-      (fun ω => ((finiteSlotActiveLabels S ω (n + 1)).card : ℝ)) =ᵐ[stepFieldLaw μ]
+      (offspringFieldLaw μ)
+      (fun ω => ((finiteSlotActiveLabels S ω (n + 1)).card : ℝ)) =ᵐ[offspringFieldLaw μ]
     fun ω => ∫ row, finiteSlotRowCountSum n
       (finiteSlotActiveLabels S ω n, row) ∂
         Measure.infinitePi (fun _ : (Fin n → Fin 2) =>
@@ -636,7 +644,7 @@ theorem finiteSlotActiveLabels_condExp_succ_card
           (2 : ℝ) ^ (n + 1) := by
       exact_mod_cast hcard
     simpa only [nextSize] using hreal
-  have hnextIntegrable : Integrable nextSize (stepFieldLaw μ) :=
+  have hnextIntegrable : Integrable nextSize (offspringFieldLaw μ) :=
     Integrable.of_bound hnext.aestronglyMeasurable (2 ^ (n + 1) : ℝ)
       (ae_of_all _ hnextBound)
   have hrowMeasurable : Measurable rowSum := by
@@ -651,7 +659,7 @@ theorem finiteSlotActiveLabels_condExp_succ_card
     simpa only [Nat.cast_sum] using
       congrArg (fun k : ℕ => (k : ℝ)) hsum.symm
   have hsampleIntegrable :
-      Integrable (fun ω => rowSum (active ω, rows ω)) (stepFieldLaw μ) := by
+      Integrable (fun ω => rowSum (active ω, rows ω)) (offspringFieldLaw μ) := by
     rw [hsample]
     exact hnextIntegrable
   letI : MeasurableSingletonClass (Option PUnit.{1}) := by
@@ -670,7 +678,7 @@ theorem finiteSlotActiveLabels_condExp_succ_card
   have hcond := hind.condExp_prod_ae_eq_integral_map
     hactive hrows hrowStrong hsampleIntegrable
   rw [hsample] at hcond
-  have hrowLaw : (stepFieldLaw μ).map rows =
+  have hrowLaw : (offspringFieldLaw μ).map rows =
       Measure.infinitePi (fun _ : (Fin n → Fin 2) =>
         (finiteOffspringLaw (⟨μ, inferInstance⟩ : ProbabilityMeasure _)
           S hS : Measure (Step (Fin 2) PUnit.{1}))) := by

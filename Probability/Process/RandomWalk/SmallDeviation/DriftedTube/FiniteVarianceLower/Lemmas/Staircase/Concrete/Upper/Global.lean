@@ -6,26 +6,28 @@ Authors: WANG Yiyang
 
 module
 
-public import Mathlib.MeasureTheory.Measure.MeasureSpaceDef
-public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
-public import Algebra.BigOperators.AdditivePath.Basic
-public import Probability.Distributions.Moments.Real
-public import Probability.Sequence.Filtration
-public import Probability.Sequence.IID.Basic
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.Binning
-public import Probability.Process.RandomWalk.Path.Block.Partition.TailMerged
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.BlockTube
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.EndpointWindow
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.EndpointWindow.Basic
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.EndpointWindow.Reflection
-public import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.Event
-import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Concrete.Upper.Entrance
-import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.GlobalConditions
+import Mathlib.MeasureTheory.Measure.MeasureSpaceDef
+import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
+import Algebra.BigOperators.AdditivePath.Basic
+import Probability.Distributions.Moments.Real
+import Probability.Sequence.Filtration
+import Probability.Sequence.IID.Basic
+import all Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.Binning
+import Combinatorics.Sequence.TailMergedBlock
+import all Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.BlockTube
+import all Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.EndpointWindow
+import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.EndpointWindow.Basic
+import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.EndpointWindow.Reflection
+import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.Event
+import all Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Concrete.Upper.Entrance
+import all Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.GlobalConditions
 
 /-!
 # Upper-endpoint bound from global staircase conditions
 
-The module-visible supporting lemma in this file is:
+## Internal proof declarations
+
+The supporting lemma in this file is:
 
 - `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.exists_concreteStaircaseUpperEndpointLowerBound_of_globalConditions`:
   global block-width, time, rate, and endpoint inequalities together
@@ -36,7 +38,7 @@ This is the common-threshold form of the symmetric construction in
 Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, proof of Lemma 3.5.
 -/
 
-@[expose] public section
+section
 
 open MeasureTheory ProbabilityTheory
 open ProbabilityTheory.RandomWalk.SmallDeviation.Entrance

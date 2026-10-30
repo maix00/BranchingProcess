@@ -17,6 +17,18 @@ The conditional slot kernel is integrated against the raw branching law by
 summing the pushforwards of its exponentially weighted slot measures.  Under
 the boundary normalization this measure has total mass one.  This is the
 one-step real increment law used by the many-to-one construction.
+
+## Public declarations
+
+- `tiltedPotentialLaw`: the unnormalized measure on real potential increments
+  obtained by integrating each surviving slot's exponential weight against
+  the branching-step law.
+- `tiltedPotentialLaw_apply`, `tiltedPotentialLaw_apply_univ`,
+  `lintegral_tiltedPotentialLaw`, and `survivingPotentialTest`: setwise,
+  total-mass, and nonnegative-integral formulas for that measure.
+- `lintegral_tiltedPotentialLaw_cancel` and
+  `tiltedPotentialLaw_isProbability`: boundary normalization cancels the
+  exponential weight and makes the tilted potential law a probability measure.
 -/
 
 open MeasureTheory

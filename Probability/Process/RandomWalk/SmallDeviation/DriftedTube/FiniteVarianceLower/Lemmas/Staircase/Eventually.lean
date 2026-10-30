@@ -6,19 +6,21 @@ Authors: WANG Yiyang
 
 module
 
-public import Mathlib.Algebra.Order.Floor.Semiring
-public import Mathlib.Order.Filter.Defs
-public import Mathlib.Order.Filter.AtTopBot.Defs
-public import Mathlib.Topology.Defs.Filter
-public import Mathlib.Topology.Instances.Real.Lemmas
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.Binning
-import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Endpoint.Limit
-import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Binning.Parameters
-import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Rate.Limit
+import Mathlib.Algebra.Order.Floor.Semiring
+import Mathlib.Order.Filter.Defs
+import Mathlib.Order.Filter.AtTopBot.Defs
+import Mathlib.Topology.Defs.Filter
+import Mathlib.Topology.Instances.Real.Lemmas
+import all Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.Binning
+import all Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Endpoint.Limit
+import all Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Binning.Parameters
+import all Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Rate.Limit
 /-!
 # A common threshold for every staircase block
 
-The module-visible supporting lemma in this file is:
+## Internal proof declarations
+
+The supporting lemma in this file is:
 
 - `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.eventually_staircaseGlobalConditions`:
   under $\Delta_n\to\infty$,
@@ -36,7 +38,7 @@ Chapter 3, proof of Lemma 3.5. The two endpoint intervals correspond to
 the ordinary and final block cases in that proof.
 -/
 
-@[expose] public section
+section
 
 open Filter
 open scoped Topology

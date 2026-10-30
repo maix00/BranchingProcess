@@ -68,8 +68,8 @@ jobs:
             Probability.Distributions.Stable.Attraction.NormingRatios.UniformDefect \
             Probability.Distributions.Stable.Attraction.NormingRatios.RegularVariation \
             Probability.Distributions.Stable.Attraction.Normal.TruncatedMoment \
-            Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.Endpoint.Upper \
-            Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.Endpoint.Return \
+            Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.Endpoint.Upper \
+            Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.Endpoint.Lemmas.Return \
             MeasureTheory.Measure.CadlagPath.PathClass.StepCorridor.Energy \
             Probability.Process.Path.PathClass.StepCorridor.Probability.Rate.FiniteUnion \
             Probability.Process.Path.PathClass.StepCorridor.Probability.Rate.Approximation \
@@ -112,8 +112,8 @@ jobs:
             "$RUNNER_TEMP/lean-tests/BranchingProcessTest/CharacteristicFunction/Tauberian.lean.log" \
             "$RUNNER_TEMP/lean-tests/BranchingProcessTest/DomainOfAttraction/InverseTauberian.lean.log" \
             "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Mogulskii/Rates/PathClassRate.lean.log" \
-            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Mogulskii/Stable/RandomWalkBounds/UpperEndpoint.lean.log" \
-            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Mogulskii/Stable/RandomWalkBounds/PathClassRegimes.lean.log" \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Mogulskii/Stable/Discrete/UpperEndpoint.lean.log" \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Mogulskii/Stable/Discrete/PathClassRegimes.lean.log" \
             >> "$RUNNER_TEMP/stable-small-deviation-axioms.txt"
           python3 scripts/check-lean-axioms.py \
             "$RUNNER_TEMP/stable-small-deviation-axioms.txt" --expected \

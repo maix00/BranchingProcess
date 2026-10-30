@@ -4,20 +4,22 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
+module
+
 import Probability.BranchingRandomWalk.Restart.RootedTrial.Coupling.ReserveSpine
 import Probability.BranchingRandomWalk.Restart.RootedTrial.Completion.Endpoint
-import Probability.BranchingRandomWalk.Restart.RootedTrial.Completion.Lemmas.EndpointHorizon.RootFamily
+import all Probability.BranchingRandomWalk.Restart.RootedTrial.Completion.Lemmas.EndpointHorizon.RootFamily
 import Probability.BranchingRandomWalk.Restart.RootedTrial.Reserve.Causal
-import Probability.BranchingRandomWalk.Selection.NSelection.AtStoppingTime
-import Probability.BranchingRandomWalk.Selection.NSelection.ByValue
-import Probability.BranchingRandomWalk.Selection.NSelection.AtRank
+import Probability.Process.Stopping.Selection.Ranked
+import MeasureTheory.Selection.NSelection.ByValue
+import MeasureTheory.Selection.NSelection.AtRank
 import Probability.BranchingRandomWalk.Coupling.Field.Ranked.Basic
 import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.StoppingSubtrees.Vector.Factorization
 
 /-!
 # Endpoint root properties: proof support
 
-## Supporting declarations
+## Internal proof declarations
 
 * `selectedReserveSpineRestartEndpoint_success_of_finite` identifies every finite endpoint
   with a successful fixed-index candidate and its completion generation.
@@ -33,14 +35,14 @@ import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.Stoppin
   surely at a finite endpoint.
 -/
 
-@[expose] public section
+section
 
 open MeasureTheory ProbabilityTheory
 open Combinatorics.Branching Combinatorics.UlamHarris
 open ProbabilityTheory.BranchingRandomWalk
 open ProbabilityTheory.BranchingRandomWalk.Coupling
 open ProbabilityTheory.BranchingRandomWalk.Selection.NSelection
-open Combinatorics.Branching.Selection.NSelection
+open _root_.Combinatorics.Selection.NSelection
 
 namespace ProbabilityTheory.BranchingRandomWalk.Completion.Lemmas.EndpointHorizon
 

@@ -4,14 +4,16 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Roots.Lemmas.EndpointBelow
+import Probability.BranchingRandomWalk.Selection.NSelection.Law.Causal.NestedRoots
 set_option linter.style.haveILetI false
 
 /-!
 # Endpoint sublevel probabilities for nested root sets
 
-The public declarations in
-`ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail` are:
+## Public declarations
+
+The declarations in
+`ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation` are:
 
 - `RootIndexed.selectedPopulationEndpointBelow`: the event that some particle
   in the generation-`n` first-`N` selected population from `roots` has position
@@ -33,11 +35,13 @@ pathwise comparison transfers to their endpoint probabilities.
 
 open MeasureTheory
 
-namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail
+namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation
 
 open Combinatorics.Branching
 open Combinatorics.UlamHarris
+open ProbabilityTheory.BranchingRandomWalk
 open ProbabilityTheory.BranchingRandomWalk.Coupling
+open ProbabilityTheory.BranchingRandomWalk.Selection.NSelection
 
 /-- There is a generation-`n` particle in first-`N` selection from `roots`
 whose position is at most `threshold`. -/
@@ -108,6 +112,71 @@ theorem measurableSet_RootIndexed_selectedPopulationEndpointBelow
     ext field
     simp only [Set.mem_ofPred_eq, Set.mem_inter_iff]]
   exact hmem.inter hbelow
+
+/-- Almost surely under the common two-copy field, every selected endpoint
+below a threshold from the smaller root set has a selected endpoint below the
+same threshold in the rank-installed process from the containing root set. -/
+private lemma RootIndexed.selectedPopulationNestedRoots_endpointBelow_ae
+    {Root α : Type*} [Countable α]
+    [MeasurableSpace (RootIndexed.TreeNode Root α)]
+    [Countable (RootIndexed.TreeNode Root α)]
+    [LinearOrder (RootIndexed.TreeNode Root α)]
+    (μ : Measure (Step α ℝ)) [IsProbabilityMeasure μ]
+    (hnorm : HasBoundaryNormalization realPotential μ)
+    (N : ℕ) (sourceRoots targetRoots : Finset Root)
+    (hroots : sourceRoots ⊆ targetRoots)
+    (initialPosition : Root → ℝ) (n : ℕ) (x : ℝ) :
+    ∀ᵐ field ∂RootIndexed.stepFieldLaw (Root := Root ⊕ Root) μ,
+      (∃ p : RootIndexed.TreeNode Root α,
+        p ∈ RootIndexed.selectedPopulationTotalized N sourceRoots
+          initialPosition id id n (RootIndexed.StepField.left field) ∧
+        RootIndexed.position initialPosition id (RootIndexed.StepField.left field)
+          p.1 p.2 ≤ x) →
+      (∃ q : RootIndexed.TreeNode Root α,
+        q ∈ RootIndexed.restartedRealPositionMatchedPopulation N targetRoots
+          initialPosition id
+          (fun k field => RootIndexed.selectedPopulationTotalized N sourceRoots
+            initialPosition id id k (RootIndexed.StepField.left field)) n field ∧
+        RootIndexed.position initialPosition id
+          (RootIndexed.restartedRealPositionMatchedField N targetRoots
+            initialPosition id
+            (fun k field => RootIndexed.selectedPopulationTotalized N sourceRoots
+              initialPosition id id k (RootIndexed.StepField.left field)) n field)
+          q.1 q.2 ≤ x) := by
+  have hcoupled := RootIndexed.selectedPopulationNestedRootsCoupledInjection_ae
+    μ hnorm N sourceRoots targetRoots hroots initialPosition n
+  filter_upwards [hcoupled] with field hcoupled
+  intro hbelow
+  rcases hbelow with ⟨p, hp, hpx⟩
+  rcases hcoupled with ⟨hmap⟩
+  let q := hmap p
+  have hq : q ∈ RootIndexed.restartedRealPositionMatchedPopulation N targetRoots
+      initialPosition id
+      (fun k field => RootIndexed.selectedPopulationTotalized N sourceRoots
+        initialPosition id id k (RootIndexed.StepField.left field)) n field := by
+    exact hmap.mapsTo (by simpa [Combinatorics.Branching.Selection.Coupling.populationCloud]
+      using hp)
+  have hposition :
+      RootIndexed.position initialPosition id
+          (RootIndexed.restartedRealPositionMatchedField N targetRoots
+            initialPosition id
+            (fun k field => RootIndexed.selectedPopulationTotalized N sourceRoots
+              initialPosition id id k (RootIndexed.StepField.left field)) n field)
+          q.1 q.2 ≤
+        RootIndexed.position initialPosition id (RootIndexed.StepField.left field)
+          p.1 p.2 := by
+    have hp' : p ∈
+        (Combinatorics.Branching.Selection.Coupling.populationCloud id
+          (RootIndexed.BranchingWalk.ofStepField initialPosition
+            (RootIndexed.StepField.left field))
+          (RootIndexed.selectedPopulationTotalized N sourceRoots
+            initialPosition id id n (RootIndexed.StepField.left field))).particles () := by
+      simpa [Combinatorics.Branching.Selection.Coupling.populationCloud] using hp
+    have hdom := hmap.dominates p hp'
+    simpa [Combinatorics.Branching.RootIndexed.BranchingWalk.ofStepField,
+      ProbabilityTheory.BranchingRandomWalk.RootIndexed.position,
+      ProbabilityTheory.BranchingRandomWalk.RootIndexed.displace] using hdom
+  exact ⟨q, hq, hposition.trans hpx⟩
 
 /-- Under boundary normalization, the endpoint-sublevel probability for a
 larger finite root set is at least that for a contained root set.  This is the
@@ -248,4 +317,4 @@ theorem RootIndexed.measure_selectedPopulationEndpointBelow_mono_roots
   rw [hsourceMarginal, htargetMarginal] at hmeasure
   simpa [μRoot] using hmeasure
 
-end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail
+end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation

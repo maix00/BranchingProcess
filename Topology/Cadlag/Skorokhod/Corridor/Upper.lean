@@ -11,19 +11,19 @@ public import Topology.Cadlag.Skorokhod.Corridor.Endpoint
 /-!
 # Open upper corridors in Skorokhod path space
 
-The public objects and theorems in this file are:
+## Public declarations
 
-- `Skorokhod.rangeBelow`: the paths satisfying
-  $\exists\varepsilon>0\;\forall t,\ f(t)\le b-\varepsilon$.
-- `Skorokhod.isOpen_rangeBelow`: this upper corridor is open in $J_1$.
-- `Skorokhod.rangeBelowEndsIn`: the same upper corridor with
-  $f(1)\in(a,c)$.
-- `Skorokhod.isOpen_rangeBelowEndsIn`: the combined event is open in $J_1$.
+- `Skorokhod.rangeBelow upper`: paths satisfying
+  `∃ δ > 0, ∀ t, path t ≤ upper - δ`.
+- `Skorokhod.isOpen_rangeBelow`: the upper corridor is open in `J₁`.
+- `Skorokhod.rangeBelowEndsIn`: the upper corridor with terminal value in
+  `(endpointLower, endpointUpper)`.
+- `Skorokhod.isOpen_rangeBelowEndsIn`: the combined event is open in `J₁`.
 
 The one-sided form allows paths starting at zero, as required for the
 Brownian meander corridor in Wang Yiyang, *Asymptotic Speed of the
 N-Branching Random Walk with Infinite Offspring* (master's thesis, Fudan
-University, 2026), Chapter 3, Lemma 3.5 and Appendix A.2.
+University, 2026), Chapter 3, Lemma 3.5 and Appendix A.2, Lemma A.7.
 -/
 
 @[expose] public section

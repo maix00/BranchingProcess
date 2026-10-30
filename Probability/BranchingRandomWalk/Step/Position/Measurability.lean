@@ -15,11 +15,30 @@ public import Probability.BranchingRandomWalk.Tree.Filtration
 # Measurability of realized nodes and displacements
 
 A realized node is observable at its own generation, and the displacement
-of a fixed or generation-measurably selected node is adapted. The step-field
-object and the displacements themselves live under `MeasureTheory/BranchingWalk/`;
-this file only contains the measurability results. Nothing here is specific to `ℝ`: the
+of a fixed or generation-measurably selected node is adapted. The deterministic
+step and path-displacement definitions belong to `Combinatorics/BranchingWalk`;
+this file proves their measurability with respect to the generation filtration
+of the pre-sampled branching field. Nothing here is specific to `ℝ`: the
 displacement only needs an additive commutative monoid whose addition is
 measurable, and the mark type is an arbitrary parameter `X`.
+
+## Public declarations
+
+- `ProbabilityTheory.BranchingRandomWalk.surviveAlong_measurableSet` and
+  `surviveAlong_root_measurableSet`: survival along a fixed address path is
+  measurable with respect to the generation domain once the path is revealed.
+- `ProbabilityTheory.BranchingRandomWalk.displace_measurable`: displacement
+  along a fixed path is measurable by the generation containing its endpoint,
+  for a measurable additive commutative monoid.
+- `ProbabilityTheory.BranchingRandomWalk.stepPositionAtGeneration`: defines
+  the generation-indexed position of an address, taking value zero before its
+  generation.
+- `ProbabilityTheory.BranchingRandomWalk.stepPositionAtGeneration_measurable`:
+  this fixed-address position is measurable at generation $n$.
+- `ProbabilityTheory.BranchingRandomWalk.selectedStepPosition_measurable`:
+  composing displacement with a measurable choice of an address at generation
+  $n$ gives a measurable position observation.
+
 -/
 
 open MeasureTheory

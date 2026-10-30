@@ -9,7 +9,16 @@ module
 public import Probability.Process.Stable.SmallDeviation.PathClass.StepCorridor.Partition.Lower.ApproximationRate
 public import MeasureTheory.Measure.CadlagPath.PathClass.StepCorridor.Partition.LowerEnergy
 
-/-! # Stable-process lower rate and exact corridor energy -/
+/-!
+# Stable-process lower rate and exact corridor energy
+
+## Public declarations
+
+- For a continuous admissible corridor with energy $H_\alpha(G)$, eventually
+  $C2^\alpha H_\alpha(G)-\varepsilon
+    \le s^{-\alpha}\log\mathbb P(s^{-1}X\in G)$,
+  together with eventual positivity of the corridor probability.
+-/
 
 open Filter MeasureTheory
 open scoped NNReal Topology

@@ -6,8 +6,8 @@ Authors: WANG Yiyang
 
 module
 
-public import Mathlib.Topology.Order.IntermediateValue
-public import Mathlib.Topology.Order.MonotoneContinuity
+import Mathlib.Topology.Order.IntermediateValue
+import Mathlib.Topology.Order.MonotoneContinuity
 public import Topology.Cadlag.Skorokhod.TimeChange.Limit.Convergence
 
 /-!
@@ -34,7 +34,11 @@ namespace Skorokhod
 namespace TimeChange
 
 /-- Summably small local logarithmic distortions yield a limiting Skorokhod
-time change, and the cumulative clocks converge to it uniformly. -/
+time change, and the cumulative clocks converge to it uniformly. This
+formalizes the time-change part of the completeness argument in Patrick
+Billingsley, *Convergence of Probability Measures*, 1st ed., Wiley, 1968,
+Chapter 3, §14, Theorem 14.2, pp. 115–116
+([text](https://ru.djvu.online/file/vaaIHv9IWlVeK)). -/
 theorem exists_timeChange_limit_of_summable_logDistortion
     (clocks : ℕ → TimeChange) (error : ℕ → ℝ≥0)
     (hstep : ∀ n, (clocks n).logDistortion ≤ error n)
@@ -144,7 +148,7 @@ theorem exists_timeChange_limit_of_summable_logDistortion
     exact ⟨x, hxy⟩
   let orderIso : unitInterval ≃o unitInterval :=
     OrderIso.ofSurjective (OrderEmbedding.ofStrictMono limitMap hstrict) hsurj
-  let limit : TimeChange := ⟨orderIso.toHomeomorph, orderIso.strictMono⟩
+  let limit : TimeChange := ⟨orderIso⟩
   refine ⟨limit, ?_⟩
   have hlimitMap : (limit : unitInterval → unitInterval) = limitMap := by
     funext t

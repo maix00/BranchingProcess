@@ -6,25 +6,27 @@ Authors: WANG Yiyang
 
 module
 
-public import Mathlib.Basic.Real.Basic
-public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
-public import Mathlib.MeasureTheory.Measure.MeasureSpaceDef
-public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
-public import Algebra.BigOperators.AdditivePath.Basic
-public import Probability.Distributions.Moments.Real
-public import Probability.Sequence.Filtration
-public import Probability.Sequence.IID.Basic
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.Binning
-public import Probability.Process.RandomWalk.Path.Block.Partition.TailMerged
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.BlockTube
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.EndpointWindow.Basic
-public import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.Event
-import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Concrete.Lower.Global
-import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Eventually
+import Mathlib.Basic.Real.Basic
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
+import Mathlib.MeasureTheory.Measure.MeasureSpaceDef
+import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
+import Algebra.BigOperators.AdditivePath.Basic
+import Probability.Distributions.Moments.Real
+import Probability.Sequence.Filtration
+import Probability.Sequence.IID.Basic
+import all Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.Binning
+import Combinatorics.Sequence.TailMergedBlock
+import all Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.BlockTube
+import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.EndpointWindow.Basic
+import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.Event
+import all Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Concrete.Lower.Global
+import all Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Eventually
 /-!
 # Asymptotic finite-staircase lower bound
 
-The module-visible supporting lemma in this file is:
+## Internal proof declarations
+
+The supporting lemma in this file is:
 
 - `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.eventually_concreteStaircaseLowerBound_of_robustEntrance`:
   along widths $\Delta_n\to\infty$ and arbitrary starting boundaries
@@ -40,7 +42,7 @@ Chapter 3, proof of Lemma 3.5. The entrance probability is the one
 established in Appendix A.2, Lemma A.7, by the Brownian-meander argument.
 -/
 
-@[expose] public section
+section
 
 open Filter MeasureTheory ProbabilityTheory
 open scoped Topology

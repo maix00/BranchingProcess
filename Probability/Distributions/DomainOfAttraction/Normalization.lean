@@ -12,11 +12,15 @@ public import Mathlib.MeasureTheory.Function.ConvergenceInMeasure
 /-!
 # Changing a domain-of-attraction normalization
 
-The public theorem is
-`ProbabilityTheory.IsInDomainOfAttractionAlong.changeNormalization`: if
-`scale n / scale' n → r` and both scales are eventually positive, attraction
-along `scale` to `limit` implies attraction along `scale'` to the pushforward
-of `limit` under `x ↦ r x`.
+## Public declarations
+
+* `ProbabilityTheory.IsInDomainOfAttractionAlong.changeNormalization` states that if
+  $a_n/a'_n\to r$ and both normalizations are eventually positive, attraction
+  along $a_n$ to $\mu$ implies attraction along $a'_n$ to the pushforward of
+  $\mu$ by $x\mapsto rx$.
+* `ProbabilityTheory.IsInDomainOfAttractionAlong.rescale` is the positive constant case: from
+  attraction along $a_n$, it gives attraction along $a_n/r$ to the law of
+  $rX$, for $r>0$. It is derived from `changeNormalization`.
 -/
 
 open Filter MeasureTheory
@@ -29,21 +33,15 @@ namespace ProbabilityTheory
 /-- A convergent deterministic sequence, regarded as constant random
 variables, converges in measure to its limit. -/
 private lemma tendstoInMeasure_const_of_tendsto_real
-    {ι Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} {l : Filter ι}
-    {f : ι → ℝ} {c : ℝ} (hf : Tendsto f l (nhds c)) :
-    TendstoInMeasure μ (fun i _ => f i) l (fun _ => c) := by
-  rw [tendstoInMeasure_iff_dist]
-  intro ε hε
-  have hzero : (fun i => μ {ω | ε ≤ dist (f i) c}) =ᶠ[l] fun _ => 0 := by
-    filter_upwards [hf.eventually (Metric.ball_mem_nhds c hε)] with i hi
-    have hdist : dist (f i) c < ε := by
-      simpa [Metric.mem_ball, dist_comm] using hi
-    have hset : {ω : Ω | ε ≤ dist (f i) c} = ∅ := by
-      ext ω
-      simp [not_le_of_gt hdist]
-    simp [hset]
-  exact tendsto_const_nhds.congr' hzero.symm
+    {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} [IsFiniteMeasure μ]
+    {f : ℕ → ℝ} {c : ℝ} (hf : Tendsto f atTop (nhds c)) :
+    TendstoInMeasure μ (fun n _ => f n) atTop (fun _ => c) := by
+  apply tendstoInMeasure_of_tendsto_ae
+    (fun _ => aestronglyMeasurable_const)
+  filter_upwards [] with ω
+  simpa using hf
 
+set_option linter.style.haveILetI false in
 /-- If two eventually positive normalization sequences have an asymptotic
 ratio, replacing the denominator in a domain-of-attraction limit changes the
 limiting law by the corresponding constant multiplier. This is the
@@ -86,6 +84,27 @@ theorem IsInDomainOfAttractionAlong.changeNormalization
     ring
   have hchanged' := hchanged.congr_limit aemeasurable_id hmap
   exact ⟨hscale', hchanged'⟩
+
+/-- Rescaling the normalization by `r⁻¹` rescales the limiting law by `r`.
+This is the constant-ratio case of `changeNormalization`. -/
+theorem IsInDomainOfAttractionAlong.rescale
+    {ν limit : Measure ℝ} [IsProbabilityMeasure ν] [IsProbabilityMeasure limit]
+    {scale center : ℕ → ℝ}
+    (h : IsInDomainOfAttractionAlong ν limit scale center)
+    (r : ℝ) (hr : 0 < r) :
+    IsInDomainOfAttractionAlong ν (limit.map fun x => r * x)
+      (fun n => r⁻¹ * scale n) center := by
+  have hscale' : ∀ᶠ n : ℕ in atTop, 0 < r⁻¹ * scale n := by
+    filter_upwards [h.eventually_scale_pos] with n hn
+    exact mul_pos (inv_pos.mpr hr) hn
+  have hratio : Tendsto (fun n => scale n / (r⁻¹ * scale n))
+      atTop (nhds r) := by
+    have heq : (fun n => scale n / (r⁻¹ * scale n)) =ᶠ[atTop]
+        fun _ => r := by
+      filter_upwards [h.eventually_scale_pos] with n hn
+      field_simp [hr.ne', hn.ne']
+    exact tendsto_const_nhds.congr' heq.symm
+  exact h.changeNormalization hscale' hratio
 
 end ProbabilityTheory
 

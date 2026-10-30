@@ -7,6 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.Path.Block.Corridor.Basic
+import Probability.Process.RandomWalk.Path.Block.Corridor.Geometry
 public import Mathlib.MeasureTheory.Constructions.BorelSpace.Basic
 
 /-!
@@ -14,6 +15,16 @@ public import Mathlib.MeasureTheory.Constructions.BorelSpace.Basic
 
 The deterministic endpoint-margin dichotomy is converted here into a measure
 inequality.  No independence or moment assumption is used at this layer.
+
+## Public declarations
+
+* `measure_startMargin_le_blockCorridor_add_largeDeviation` states that the
+  `incrementLaw {ω | lower + radius ≤ AdditivePath.displacement start ω ∧
+  AdditivePath.displacement start ω ≤ upper - radius}` is at most
+  `incrementLaw {ω | ∀ k ≤ length,
+  AdditivePath.displacement (start + k) ω ∈ Set.Icc lower upper}` plus
+  `incrementLaw {ω | ∃ k ∈ Finset.range (length + 1), radius ≤
+  |AdditivePath.blockSum start (k + 1) ω|}`.
 -/
 
 open MeasureTheory

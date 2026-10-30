@@ -10,7 +10,18 @@ public import MeasureTheory.Measure.CadlagPath.PathClass.StepCorridor.Partition.
 public import MeasureTheory.Measure.CadlagPath.PathClass.StepCorridor.Partition.LowerEnergy
 public import Probability.Process.Stable.SmallDeviation.PathClass.StepCorridor.Partition.Lower.Rate
 
-/-! # Stable-process lower rate for approximating partition widths -/
+/-!
+# Stable-process lower rate for approximating partition widths
+
+## Public declarations
+
+- For any positive target widths strictly below the finite boundary widths,
+  eventually
+  $\sum_i C\ell_i/(w_i/2)^\alpha-\varepsilon
+    \le s^{-\alpha}\log\mathbb P(s^{-1}X\in G)$.
+- Infinite-width cells permit arbitrarily large finite target widths in this
+  lower-rate estimate.
+-/
 
 open Filter MeasureTheory
 open scoped NNReal Topology

@@ -15,7 +15,9 @@ import MeasureTheory.MeasurableSpace.CountableEvaluation
 /-!
 # The generation filtration on a pre-sampled mark field
 
-The public declarations are:
+## Public declarations
+
+The declarations are:
 
 * `ProbabilityTheory.BranchingRandomWalk.instMeasurableSpaceTreeNode` gives
   `TreeNode α` the discrete measurable space.

@@ -4,10 +4,13 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Population.Processes.Causal.Capacity.Basic
-import Probability.BranchingRandomWalk.Population.Processes.Causal.Path.Bound
-import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law.FiniteExpectations
-import Probability.BranchingRandomWalk.Spine.Path.ManyToOne.Identity
+module
+
+public import Probability.BranchingRandomWalk.Population.Processes.Causal.Capacity.Basic
+public import Probability.BranchingRandomWalk.Population.Processes.Causal.Path.Bound
+public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law.FiniteExpectations
+public import Probability.BranchingRandomWalk.Spine.Path.ManyToOne.Identity
+public import Probability.Process.RandomWalk.Path.Restart.FirstMoment
 
 /-!
 # First moments of causal killed populations
@@ -23,6 +26,8 @@ import Probability.BranchingRandomWalk.Spine.Path.ManyToOne.Identity
 The pathwise bounds are integrated under the root-indexed field law and then
 reduced to one-dimensional spine expectations.
 -/
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal BigOperators
@@ -86,7 +91,7 @@ theorem lintegral_size_le_spine_restartedWindow
     _ = ∫⁻ tree : Combinatorics.Branching.StepField α Mark,
           pathGeneration (⟨d, hd⟩ : Potential Mark) n test
             (initialPosition r) tree
-          ∂ProbabilityTheory.BranchingRandomWalk.stepFieldLaw μ := by
+          ∂ProbabilityTheory.BranchingProcess.offspringFieldLaw μ := by
       exact RootIndexed.lintegral_root_observable μ r _
         (pathGeneration_measurable (⟨d, hd⟩ : Potential Mark) n htest
           (initialPosition r))
@@ -147,7 +152,7 @@ theorem lintegral_size_le_sum_spine_restartedWindow
         ∫⁻ tree : Combinatorics.Branching.StepField α Mark,
           pathGeneration (⟨d, hd⟩ : Potential Mark) n test
             (initialPosition r) tree
-          ∂ProbabilityTheory.BranchingRandomWalk.stepFieldLaw μ := by
+          ∂ProbabilityTheory.BranchingProcess.offspringFieldLaw μ := by
       exact RootIndexed.lintegral_finset_root_observables μ roots
         (fun r tree => pathGeneration (⟨d, hd⟩ : Potential Mark) n test
           (initialPosition r) tree)
@@ -164,3 +169,5 @@ theorem lintegral_size_le_sum_spine_restartedWindow
 
 end RootIndexed.CausalPopulation
 end ProbabilityTheory.BranchingRandomWalk
+
+end

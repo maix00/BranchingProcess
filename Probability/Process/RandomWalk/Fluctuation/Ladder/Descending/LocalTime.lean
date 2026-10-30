@@ -12,6 +12,8 @@ public import Probability.Process.RandomWalk.Path.Survival.Basic
 /-!
 # Descending records and nonnegative survival
 
+## Public declarations
+
 For an increment path $\xi$, write $S_j=\sum_{i=1}^j\xi_i$ and $S_0=0$.
 Set $\ell_n^-=\#\{1\leq j\leq n:S_j<\min_{0\leq i<j}S_i\}$,
 $T_k^-=\inf\{n:\ell_n^-\geq k\}$ (with $T_k^-=\infty$ if the set is

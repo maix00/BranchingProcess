@@ -26,6 +26,27 @@ sample function space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4)
 (1974), 755--765; English translation, “Small Deviations in a Space of
 Trajectories,” *Theory of Probability and Its Applications* 19(4) (1975),
 726--736, DOI 10.1137/1119081.
+
+## Public declarations
+
+* `FiniteCorridorUnion.realEnergy_antitone_of_subset_of_probabilityRate`
+  states that `A.toSet ⊆ B.toSet` and the component rates
+  `log P(A)/g → κ E(A)`, `log P(B)/g → κ E(B)` with `g → -∞` imply
+  `E(B) ≤ E(A)`.
+* `FiniteCorridorUnionApproximation.energyLimits_of_crossOrder` packages the
+  common limit of the inner and outer corridor energies from their cross-order
+  inequalities; `energyLimits_of_probabilityRate` derives those inequalities
+  from the finite-union probability rates.
+* `FiniteCorridorUnionEnergyLimits.commonEnergy_eq_of_approximation` shows
+  that the common energy does not depend on the chosen approximation.
+* `tendsto_log_probability_ratio_of_FiniteCorridorUnionApproximation` gives
+  `log P(paths ∈ G)/g → κ * commonEnergy` for an approximated measurable set.
+* `existsUnique_commonEnergy_of_hasVanishingEnergyGapApproximation` gives the
+  unique limiting energy for an approximation with vanishing energy gap.
+* `tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation` and
+  `tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_stepCorridorRates`
+  give the corresponding unique probability-rate limit, the latter from
+  individual admissible-corridor rates.
 -/
 
 open Filter MeasureTheory

@@ -6,16 +6,18 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.EndpointWindow.Reflection
-public import Probability.Process.Filtration.ConditionalBlocks
-public import Probability.Process.RandomWalk.Path.Block.Partition.TailMerged
-public import Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.Blocks.EventBridge
-import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Inclusion
+import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.EndpointWindow.Reflection
+import Probability.Process.Filtration.ConditionalBlocks
+import Combinatorics.Sequence.TailMergedBlock
+import Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.Blocks.EventBridge
+import all Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Inclusion
 
 /-!
 # Staircase inclusion for an upper terminal window
 
-The module-visible supporting lemma in this file is:
+## Internal proof declarations
+
+The supporting lemma in this file is:
 
 - `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.initialInterTubeBlocks_subset_driftedTubeUpperEndpointWindowEvent`:
   if each horizontal block is inside the tilted tube and the last
@@ -28,7 +30,7 @@ This is the symmetric terminal-window inclusion in Wang Yiyang,
 Chapter 3, proof of Lemma 3.5.
 -/
 
-@[expose] public section
+section
 
 open ProbabilityTheory
 open ProbabilityTheory.RandomWalk.SmallDeviation

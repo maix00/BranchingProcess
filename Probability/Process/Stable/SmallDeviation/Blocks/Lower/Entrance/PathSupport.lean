@@ -8,9 +8,20 @@ module
 
 public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.Entrance.FullCorridor
 public import Probability.Process.Path.Skorokhod.Corridor.Support
-
+public import Topology.Cadlag.Skorokhod.Path.Linear
 /-!
 # Support of the stable path law
+
+## Public declarations
+
+- IsStableLevyProcess.linearPath_zero_mem_segmentLaw_support:
+  for a measurable path map \(F\) that agrees almost surely with the centered
+  unit segment \(t\mapsto X_t-X_0\), positive mass on both increment
+  half-lines implies
+  \[
+    \operatorname{linearPath}(0)\in
+      \operatorname{supp}(P\circ F^{-1}).
+  \]
 
 Path-support consequences of positive complete-path corridor probabilities.
 The corridor estimates themselves live in `Lower.FullCorridor` and do not
@@ -26,7 +37,7 @@ open scoped NNReal
 
 /-- The complete centered-corridor estimates place the zero path in the
 support of a measurable càdlàg representative of the unit segment. -/
-theorem IsStableLevyProcess.straightPath_zero_mem_segmentLaw_support
+theorem IsStableLevyProcess.linearPath_zero_mem_segmentLaw_support
     {Ω : Type*} [MeasurableSpace Ω]
     {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
     {P : Measure Ω} [IsProbabilityMeasure P]
@@ -35,8 +46,8 @@ theorem IsStableLevyProcess.straightPath_zero_mem_segmentLaw_support
     (hpath : ∀ᵐ ω ∂P, ∀ t : unitInterval,
       F ω t = segmentIncrement X 0 1 ω t)
     (hpos : 0 < μ (Set.Ioi 0)) (hneg : 0 < μ (Set.Iio 0)) :
-    Skorokhod.straightPath 0 ∈ (P.map F).support := by
-  apply MeasureTheory.CadlagPath.straightPath_zero_mem_support_of_centeredCorridors_pos
+    Skorokhod.linearPath 0 ∈ (P.map F).support := by
+  apply MeasureTheory.CadlagPath.linearPath_zero_mem_support_of_centeredCorridors_pos
   intro δ hδ
   have hcorridor : 0 < P (fullSegmentCorridorEvent X 0 1 (-δ) δ) :=
     h.measure_fullSegmentCorridor_pos (-δ) δ (by linarith) hδ hpos hneg

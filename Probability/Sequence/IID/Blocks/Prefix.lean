@@ -10,13 +10,12 @@ public import Probability.Sequence.Block
 public import Probability.Sequence.Filtration
 public import Probability.Sequence.IID.Basic
 
-import Probability.Sequence.IID.Blocks.StoppingTime
 import Probability.Sequence.IID.Blocks.Consecutive
 
 /-!
 # Independent finite prefixes and following IID blocks
 
-The public theorem in this file is:
+## Public declarations
 
 - `ProbabilityTheory.iidSequenceLaw_measure_prefix_inter_block_eq_mul`:
   if $A$ is measurable from the first $m$ coordinates and $B$ is a
@@ -25,9 +24,10 @@ The public theorem in this file is:
   is the same block event at the origin.
 
 This is the deterministic-prefix specialization of independent IID
-coordinate blocks. It is used when factoring the last-sign-change
-events on page 484 of Erwin Bolthausen,
-*On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*, Ann. Probab. 4(3) (1976), 480--485, DOI 10.1214/aop/1176996098.
+coordinate blocks. It abstracts the independent-block factorization in the
+proof of equation (3.1) in Lemma 3.1, pp. 482--483, of Erwin Bolthausen,
+*On a Functional Central Limit Theorem for Random Walks Conditioned to Stay
+Positive*, Ann. Probab. 4(3) (1976), 480--485, DOI 10.1214/aop/1176996098.
 -/
 
 @[expose] public section
@@ -37,7 +37,11 @@ open MeasureTheory
 namespace ProbabilityTheory
 
 /-- An event determined by the first `start` IID coordinates factors
-from an event of the next `length` coordinates. -/
+from an event of the next `length` coordinates. This abstracts the
+independent-block factorization in the proof of equation (3.1) in Lemma 3.1,
+pp. 482--483, of Erwin Bolthausen, *On a Functional Central Limit Theorem for
+Random Walks Conditioned to Stay Positive*, Ann. Probab. 4(3) (1976),
+480--485, DOI 10.1214/aop/1176996098. -/
 theorem iidSequenceLaw_measure_prefix_inter_block_eq_mul
     {E : Type*} [MeasurableSpace E]
     (ν : Measure E) [IsProbabilityMeasure ν]

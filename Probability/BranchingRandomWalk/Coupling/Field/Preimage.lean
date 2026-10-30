@@ -4,7 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Field.Filtration
+module
+
+public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Field.Filtration
 
 /-!
 # Measurable particle matching
@@ -13,7 +15,22 @@ A coupling may match a random source particle to a random target particle.
 Reading the target step only requires countability of the labels that can
 actually occur.  Neither the ambient root type nor the child-slot type is
 assumed countable.
+
+## Public declarations
+
+* `valueAtPreimage` reads source data at the optional preimage of a target
+  label and uses fallback data when the preimage is absent.
+* `RootIndexed.reindexedSteps` transports steps along a sample-dependent
+  particle map; `RootIndexed.reindexedSteps_measurable` proves its
+  measurability from coordinate measurability and map-fibre assumptions.
+* `selectedParticle_fiber_measurable` and
+  `selectedParticle_range_countable` give fibre-measurability and
+  countable-range criteria for a selected particle.
+* `RootIndexed.matchedStep_measurable` proves measurability of the step read
+  at a matched target particle.
 -/
+
+@[expose] public section
 
 open MeasureTheory
 
@@ -29,72 +46,6 @@ def valueAtPreimage {Y : Type*}
     (source fallback : Ω → ι → Y)
     (preimage : Ω → ι → Option ι) (ω : Ω) (q : ι) : Y :=
   (preimage ω q).elim (fallback ω q) (source ω)
-
-/-- A value selected through an optional matched preimage is measurable when
-the optional selector has countable actual range and measurable fibres.
-The ambient label type may be uncountable. -/
-theorem valueAtPreimage_measurable
-    {Y : Type*} [MeasurableSpace Y]
-    (source fallback : Ω → ι → Y)
-    (preimage : Ω → ι → Option ι) (q : ι)
-    (hpreimageRange : (Set.range fun ω => preimage ω q).Countable)
-    (hpreimageFiber : ∀ o, MeasurableSet {ω | preimage ω q = o})
-    (hsource : ∀ p, Measurable fun ω => source ω p)
-    (hfallback : Measurable fun ω => fallback ω q) :
-    Measurable fun ω => valueAtPreimage source fallback preimage ω q := by
-  intro s hs
-  let S : Set (Option ι) := Set.range fun ω => preimage ω q
-  let _ : Countable S := Set.countable_coe_iff.mpr hpreimageRange
-  have hset : (fun ω => valueAtPreimage source fallback preimage ω q) ⁻¹' s =
-      ⋃ o : S, {ω | preimage ω q = o.1} ∩
-        match o.1 with
-        | none => (fun ω => fallback ω q) ⁻¹' s
-        | some p => (fun ω => source ω p) ⁻¹' s := by
-    ext ω
-    simp only [Set.mem_preimage, Set.mem_iUnion, Set.mem_inter_iff,
-      Set.mem_ofPred_eq]
-    constructor
-    · intro h
-      cases hoption : preimage ω q with
-      | none =>
-          refine ⟨⟨none, ⟨ω, hoption⟩⟩, rfl, ?_⟩
-          simpa [valueAtPreimage, hoption] using h
-      | some p =>
-          refine ⟨⟨some p, ⟨ω, hoption⟩⟩, rfl, ?_⟩
-          simpa [valueAtPreimage, hoption] using h
-    · rintro ⟨o, ho, h⟩
-      cases hoption : o.1 with
-      | none =>
-          have hpreimage : preimage ω q = none := ho.trans hoption
-          simpa [valueAtPreimage, hpreimage, hoption] using h
-      | some p =>
-          have hpreimage : preimage ω q = some p := ho.trans hoption
-          simpa [valueAtPreimage, hpreimage, hoption] using h
-  rw [hset]
-  apply MeasurableSet.iUnion
-  intro o
-  apply (hpreimageFiber o.1).inter
-  cases o.1 with
-  | none => exact hfallback hs
-  | some p => exact hsource p hs
-
-/-- Coordinatewise optional-preimage selection is measurable as a function
-family, without enumerating the ambient label type. -/
-theorem valueAtPreimage_measurable_pi
-    {Y : Type*} [MeasurableSpace Y]
-    (source fallback : Ω → ι → Y)
-    (preimage : Ω → ι → Option ι)
-    (hpreimageRange : ∀ q,
-      (Set.range fun ω => preimage ω q).Countable)
-    (hpreimageFiber : ∀ q o,
-      MeasurableSet {ω | preimage ω q = o})
-    (hsource : ∀ p, Measurable fun ω => source ω p)
-    (hfallback : ∀ q, Measurable fun ω => fallback ω q) :
-    Measurable fun ω q => valueAtPreimage source fallback preimage ω q := by
-  apply measurable_pi_iff.mpr
-  intro q
-  exact valueAtPreimage_measurable source fallback preimage q
-    (hpreimageRange q) (hpreimageFiber q) hsource (hfallback q)
 
 /-- Read, for every source particle label, the target step at the particle
 assigned by a sample-dependent matching.  This is a family of one-step

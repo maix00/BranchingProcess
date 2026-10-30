@@ -7,18 +7,27 @@ Authors: WANG Yiyang
 module
 
 public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Field.Measurability
+public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law.RootBatch
 public import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.SelectedSubtrees.SelectedFamily
-public import Probability.Independence.Finite
-public import Mathlib.Probability.Independence.InfinitePi
+public import Probability.Independence.FiniteFamily
 
 /-!
-# Generation batches sampled at selected roots
+# One-step batches sampled at selected roots
 
-A generation-measurably chosen injective family of particles at depth `n`
-exposes a fresh root-indexed field.  Reading the root step of each fresh
-subtree gives one independent offspring batch.  This file packages the
-generation-by-generation independence argument for an adaptive family of
-selected roots.
+A generation-measurably chosen injective finite family of particles at depth
+`n` exposes a fresh root-indexed field. Reading the root step of each fresh
+subtree gives one independent batch with the original one-step law. The root
+type, finite batch index, child-label type, and mark type remain arbitrary.
+## Public declarations
+
+* `selectedRootBatch` applies the root-step batch observation from
+  `Genealogy/RootIndexed/Law/RootBatch.lean` to subtrees selected from
+  generation `n`; `measurable_selectedRootBatch_at_succ` shows it is
+  observable at generation `n + 1` for arbitrary root and mark types.
+* `selectedRootBatch_independent_and_law` gives the selected offspring batch
+  the product law and its independence from generation-`n` observations;
+  `selectedRootBatch_iIndepFun` packages the batches across generations as an
+  independent family of random variables.
 -/
 
 open MeasureTheory ProbabilityTheory
@@ -32,90 +41,41 @@ open Combinatorics.Branching
 open ProbabilityTheory.BranchingRandomWalk
 open ProbabilityTheory.BranchingRandomWalk.RootIndexed
 
-/-- Read the step at the root of each tree in a finite root-indexed field. -/
-def rootStepBatch {N : ℕ} (field : RootIndexed.StepField (Fin N) ℕ ℝ) :
-    Fin N → Step ℕ ℝ :=
-  fun i => field i []
-
-theorem measurable_rootStepBatch {N : ℕ} :
-    Measurable (rootStepBatch (N := N)) := by
-  apply Measurable.of_eval
-  intro i
-  exact (measurable_pi_apply ([] : TreeNode ℕ)).comp
-    (measurable_pi_apply i)
-
-/-- The root steps of an i.i.d. root-indexed field have the usual batch law. -/
-theorem stepFieldLaw_map_rootStepBatch
-    {N : ℕ} (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ] :
-    (RootIndexed.stepFieldLaw (Root := Fin N) μ).map
-        (rootStepBatch (N := N)) = Measure.pi (fun _ : Fin N => μ) := by
-  let P := RootIndexed.stepFieldLaw (Root := Fin N) μ
-  let X : Fin N → RootIndexed.StepField (Fin N) ℕ ℝ → Step ℕ ℝ :=
-    fun i field => field i []
-  have hX : ∀ i, AEMeasurable (X i) P := by
-    intro i
-    exact ((measurable_pi_apply ([] : TreeNode ℕ)).comp
-      (measurable_pi_apply i)).aemeasurable
-  have hcoord : iIndepFun
-      (fun p : Fin N × TreeNode ℕ =>
-        fun field : RootIndexed.StepField (Fin N) ℕ ℝ => field p.1 p.2) P := by
-    unfold P RootIndexed.stepFieldLaw
-      _root_.ProbabilityTheory.BranchingRandomWalk.stepFieldLaw
-      _root_.ProbabilityTheory.BranchingProcess.offspringFieldLaw
-    simpa using (iIndepFun_uncurry_infinitePi'
-      (μ := fun (_ : Fin N) (_ : TreeNode ℕ) => μ)
-      (X := fun (_ : Fin N) (_ : TreeNode ℕ) => id)
-      (fun _ _ => measurable_id))
-  have hind : iIndepFun X P := by
-    have hinj : Function.Injective (fun i : Fin N => (i, ([] : TreeNode ℕ))) := by
-      intro i j hij
-      exact congrArg Prod.fst hij
-    simpa [X] using hcoord.precomp hinj
-  have hXi (i : Fin N) : HasLaw (X i) μ P := by
-    refine ⟨hX i, ?_⟩
-    exact RootIndexed.stepFieldLaw_coordinate_marginal
-      (Root := Fin N) (α := ℕ) μ i []
-  have hbatch : HasLaw (fun field i => X i field)
-      (Measure.pi (fun _ : Fin N => μ)) P :=
-    (iIndepFun_iff_hasLaw_pi_pi hXi).mp hind
-  change P.map (fun field i => field i []) =
-    Measure.pi (fun _ : Fin N => μ)
-  exact hbatch.map_eq
-
 /-- The batch read from a generation-measurably chosen family of roots. -/
-noncomputable def selectedRootBatch
-    {Root N : ℕ} (chosen : ℕ → RootIndexed.StepField (Fin Root) ℕ ℝ →
-      Fin N → Fin Root × TreeNode ℕ) (n : ℕ)
-    (field : RootIndexed.StepField (Fin Root) ℕ ℝ) : Fin N → Step ℕ ℝ :=
-  rootStepBatch (RootIndexed.selectedSubtreeStepFieldVector
+def selectedRootBatch
+    {Root κ α X : Type*}
+    (chosen : ℕ → RootIndexed.StepField Root α X →
+      κ → Root × TreeNode α) (n : ℕ)
+    (field : RootIndexed.StepField Root α X) : κ → Step α X :=
+  rootStepBatch (Root := κ) (α := α) (X := X)
+    (RootIndexed.selectedSubtreeStepFieldVector
     (chosen n) field)
 
+set_option linter.style.haveILetI false in
 /-- A selected root batch is measurable at the end of the generation whose
 roots it uses. -/
 theorem measurable_selectedRootBatch_at_succ
-    {Root N : ℕ}
-    [MeasurableSingletonClass (Fin Root × TreeNode ℕ)]
-    [Countable (Fin Root × TreeNode ℕ)]
-    (chosen : ℕ → RootIndexed.StepField (Fin Root) ℕ ℝ →
-      Fin N → Fin Root × TreeNode ℕ)
+    {Root κ α X : Type*} [MeasurableSpace X]
+    (chosen : ℕ → RootIndexed.StepField Root α X →
+      κ → Root × TreeNode α)
     (hcount : ∀ n, (Set.range (chosen n)).Countable)
     (hfiber : ∀ n roots, MeasurableSet[
-      RootIndexed.stepFiltration (Root := Fin Root) (α := ℕ) (X := ℝ) n]
+      RootIndexed.stepFiltration (Root := Root) (α := α) (X := X) n]
       {field | chosen n field = roots})
     (hdepth : ∀ n field i, (chosen n field i).2.length = n) :
     ∀ n, Measurable[
-      RootIndexed.stepFiltration (Root := Fin Root) (α := ℕ) (X := ℝ) (n + 1)]
+      RootIndexed.stepFiltration (Root := Root) (α := α) (X := X) (n + 1)]
       (selectedRootBatch chosen n) := by
   intro n
-  let F := RootIndexed.stepFiltration (Root := Fin Root) (α := ℕ) (X := ℝ)
-  letI : MeasurableSpace (RootIndexed.StepField (Fin Root) ℕ ℝ) := F (n + 1)
-  have hcoordinate (i : Fin N) : Measurable[F (n + 1)]
-      (fun field : RootIndexed.StepField (Fin Root) ℕ ℝ =>
+  let F := RootIndexed.stepFiltration (Root := Root) (α := α) (X := X)
+  letI : MeasurableSpace (RootIndexed.StepField Root α X) := F (n + 1)
+  have hcoordinate (i : κ) : Measurable[F (n + 1)]
+      (fun field : RootIndexed.StepField Root α X =>
         (selectedRootBatch chosen n field) i) := by
-    have hpreimage (t : Set (Step ℕ ℝ)) (ht : MeasurableSet t) :
+    have hpreimage (t : Set (Step α X)) (ht : MeasurableSet t) :
         MeasurableSet[F (n + 1)]
           {field | (selectedRootBatch chosen n field) i ∈ t} := by
-      let S : Set (Fin N → Fin Root × TreeNode ℕ) := Set.range (chosen n)
+      let S : Set (κ → Root × TreeNode α) := Set.range (chosen n)
       let _ : Countable S := Set.countable_coe_iff.mpr (hcount n)
       have hset : {field | (selectedRootBatch chosen n field) i ∈ t} =
           ⋃ roots : S, {field | chosen n field = roots.1} ∩
@@ -142,7 +102,7 @@ theorem measurable_selectedRootBatch_at_succ
           rw [← hfield]
           exact Nat.lt_succ_of_le (Nat.le_of_eq (hdepth n field i))
         exact (RootIndexed.step_measurable
-          (X := ℝ) (roots.1 i).1 (roots.1 i).2 hlen) ht
+          (X := X) (roots.1 i).1 (roots.1 i).2 hlen) ht
     exact hpreimage
   apply measurable_pi_iff.mpr
   exact hcoordinate
@@ -151,34 +111,32 @@ theorem measurable_selectedRootBatch_at_succ
 same-generation roots has the product law and is independent of the exposed
 past. -/
 theorem selectedRootBatch_independent_and_law
-    {Root N : ℕ}
-    [MeasurableSingletonClass (Fin Root × TreeNode ℕ)]
-    [MeasurableSingletonClass (Fin N → Fin Root × TreeNode ℕ)]
-    [Countable (Fin Root × TreeNode ℕ)]
-    (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
-    (chosen : ℕ → RootIndexed.StepField (Fin Root) ℕ ℝ →
-      Fin N → Fin Root × TreeNode ℕ)
+    {Root κ α X : Type*} [Fintype κ] [MeasurableSpace X]
+    (μ : Measure (Step α X)) [IsProbabilityMeasure μ]
+    (chosen : ℕ → RootIndexed.StepField Root α X →
+      κ → Root × TreeNode α)
     (hcount : ∀ n, (Set.range (chosen n)).Countable)
     (hfiber : ∀ n roots, MeasurableSet[
-      RootIndexed.stepFiltration (Root := Fin Root) (α := ℕ) (X := ℝ) n]
+      RootIndexed.stepFiltration (Root := Root) (α := α) (X := X) n]
       {field | chosen n field = roots})
     (hdepth : ∀ n field i, (chosen n field i).2.length = n)
     (hinj : ∀ n field, Function.Injective (chosen n field)) :
     ∀ n,
-      Indep (RootIndexed.stepFiltration (Root := Fin Root) (α := ℕ) (X := ℝ) n)
+      Indep (RootIndexed.stepFiltration (Root := Root) (α := α) (X := X) n)
         (MeasurableSpace.comap (selectedRootBatch chosen n) inferInstance)
-        (RootIndexed.stepFieldLaw (Root := Fin Root) μ) ∧
-      (RootIndexed.stepFieldLaw (Root := Fin Root) μ).map
-        (selectedRootBatch chosen n) = Measure.pi (fun _ : Fin N => μ) := by
+        (RootIndexed.stepFieldLaw (Root := Root) μ) ∧
+      (RootIndexed.stepFieldLaw (Root := Root) μ).map
+        (selectedRootBatch chosen n) = Measure.pi (fun _ : κ => μ) := by
   intro n
   let fresh := RootIndexed.selectedSubtreeStepFieldVector (chosen n)
-  let P := RootIndexed.stepFieldLaw (Root := Fin Root) μ
+  let P := RootIndexed.stepFieldLaw (Root := Root) μ
   have hfreshInd := RootIndexed.selectedSubtreeStepFieldVector_independent
     μ (chosen n) (hcount n) (hfiber n) (hdepth n) (hinj n)
   have hfreshMeas : Measurable fresh :=
     RootIndexed.selectedSubtreeStepFieldVector_measurable
       (chosen n) (hcount n) (hfiber n)
-  have heval : Measurable (rootStepBatch (N := N)) := measurable_rootStepBatch
+  have heval : Measurable
+      (rootStepBatch (Root := κ) (α := α) (X := X)) := measurable_rootStepBatch
   have hevalComap :
       MeasurableSpace.comap (selectedRootBatch chosen n) inferInstance ≤
         MeasurableSpace.comap fresh inferInstance := by
@@ -192,29 +150,27 @@ theorem selectedRootBatch_independent_and_law
   · rw [show selectedRootBatch chosen n = rootStepBatch ∘ fresh by rfl,
       ← Measure.map_map heval hfreshMeas, hlawFresh,
       stepFieldLaw_map_rootStepBatch μ]
+    simp [Measure.infinitePi_eq_pi]
 
 /-- Successive selected-root batches are jointly i.i.d.  Each batch is
 chosen from the already exposed generation; the next generation's subtree
 factorization makes it independent of all earlier batches. -/
 theorem selectedRootBatch_iIndepFun
-    {Root N : ℕ}
-    [MeasurableSingletonClass (Fin Root × TreeNode ℕ)]
-    [MeasurableSingletonClass (Fin N → Fin Root × TreeNode ℕ)]
-    [Countable (Fin Root × TreeNode ℕ)]
-    (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
-    (chosen : ℕ → RootIndexed.StepField (Fin Root) ℕ ℝ →
-      Fin N → Fin Root × TreeNode ℕ)
+    {Root κ α X : Type*} [Fintype κ] [MeasurableSpace X]
+    (μ : Measure (Step α X)) [IsProbabilityMeasure μ]
+    (chosen : ℕ → RootIndexed.StepField Root α X →
+      κ → Root × TreeNode α)
     (hcount : ∀ n, (Set.range (chosen n)).Countable)
     (hfiber : ∀ n roots, MeasurableSet[
-      RootIndexed.stepFiltration (Root := Fin Root) (α := ℕ) (X := ℝ) n]
+      RootIndexed.stepFiltration (Root := Root) (α := α) (X := X) n]
       {field | chosen n field = roots})
     (hdepth : ∀ n field i, (chosen n field i).2.length = n)
     (hinj : ∀ n field, Function.Injective (chosen n field)) :
     iIndepFun (selectedRootBatch chosen ·)
-      (RootIndexed.stepFieldLaw (Root := Fin Root) μ) := by
+      (RootIndexed.stepFieldLaw (Root := Root) μ) := by
   classical
-  let P := RootIndexed.stepFieldLaw (Root := Fin Root) μ
-  let F := RootIndexed.stepFiltration (Root := Fin Root) (α := ℕ) (X := ℝ)
+  let P := RootIndexed.stepFieldLaw (Root := Root) μ
+  let F := RootIndexed.stepFiltration (Root := Root) (α := α) (X := X)
   have hprefix : ∀ k,
       iIndepFun (fun i : Fin k => selectedRootBatch chosen i.1) P := by
     intro k
@@ -229,12 +185,12 @@ theorem selectedRootBatch_iIndepFun
           hbatch.mono (F.le (i.1 + 1)) le_rfl
         exact ⟨selectedRootBatch chosen i.1, hambient, ae_eq_refl _⟩
       · simpa using ih
-      · let past : RootIndexed.StepField (Fin Root) ℕ ℝ → Fin k → Fin N → Step ℕ ℝ :=
+      · let past : RootIndexed.StepField Root α X → Fin k → κ → Step α X :=
           fun field i => selectedRootBatch chosen i.1 field
         have hpast : Measurable[F k] past := by
           apply (@measurable_pi_iff
-            (RootIndexed.StepField (Fin Root) ℕ ℝ) (Fin k)
-            (fun _ => Fin N → Step ℕ ℝ) (F k)
+            (RootIndexed.StepField Root α X) (Fin k)
+            (fun _ => κ → Step α X) (F k)
             (fun _ => inferInstance) past).2
           intro i
           have hbatch := measurable_selectedRootBatch_at_succ

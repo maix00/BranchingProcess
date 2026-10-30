@@ -6,14 +6,37 @@ Authors: Codex
 module
 
 public import Analysis.Asymptotics.RegularVariation.Integral.Tail
-public import Mathlib.MeasureTheory.Integral.Layercake
-public import Probability.Distributions.Moments.Truncated.Basic
+public import Probability.Distributions.Moments.Truncated.Layercake
+
+import Probability.Distributions.Moments.TailIntegrability
+
+import Analysis.Asymptotics.RegularVariation.AtZero.Potter
+import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals
+import Probability.Distributions.Moments.Truncated.TailAsymptotics
+import Probability.Distributions.Moments.Truncated.RegularVariation
 
 /-!
 # Integrated tails of truncated second moments
 
 This module relates the generic integrated-tail transforms to layer-cake
 expressions for a probability law's truncated second moment.
+
+## Public declarations
+
+- `tendsto_radius_mul_discardedAbsFirstMoment_div_truncatedSecondMoment_zero`:
+  if $V(x)=\int_{|y|\le x}y^2\,d\nu$ is slowly varying and
+  $x^2\nu(|y|>x)/V(x)\to0$, then
+  $x\int_{|y|>x}|y|\,d\nu/V(x)\to0$.
+- `integral_indicator_abs_eq_radius_mul_tail_add_tailIntegral` expresses `∫_{|x|>r}|x| μ(dx)` as `r μ(|x|>r)+∫_r^∞ μ(|x|>t)dt`.
+- `firstTailIntegral_twoSidedTail_eq_half_truncatedSquareTailIntegral` identifies the first integrated two-sided tail with one half of the capped-square layer-cake integral.
+- `secondTailIntegral_twoSidedTail_eq_half_intervalIntegral_truncatedSquareTailIntegral` identifies the twice-integrated tail with one half of the accumulated capped-square integral.
+- `IsRegularlyVaryingAtTop.twoSidedTail_iff_integratedTruncatedSquareTail`:
+  for `0<α<2`, two-sided-tail regular variation of index `-α` is equivalent
+  to regular variation of the accumulated capped-square tail with index
+  `3-α`.
+- `truncatedSecondMomentFactor_isSlowlyVarying_of_integratedTruncatedSquareTail`:
+  regular variation of that accumulated tail implies slow variation of
+  `u^(α-2)Vμ(u)`.
 -/
 
 open Filter MeasureTheory Set
@@ -22,96 +45,6 @@ open scoped ENNReal Topology
 @[expose] public section
 
 namespace ProbabilityTheory
-
-/-- A finite first absolute moment makes the two-sided tail integrable over
-every upper ray. This is the layer-cake identity in `ℝ≥0∞`, followed by
-`integrable_toReal_of_lintegral_ne_top` from Mathlib. -/
-theorem integrableOn_twoSidedTail_of_integrable_abs
-    (μ : Measure ℝ) [IsFiniteMeasure μ]
-    (habsolute : Integrable (fun x : ℝ => |x|) μ) {radius : ℝ}
-    (hradius : 0 ≤ radius) :
-    IntegrableOn (fun t : ℝ => μ.real {x : ℝ | t < |x|}) (Ioi radius) volume := by
-  let tail : ℝ → ℝ≥0∞ := fun t => μ {x : ℝ | t < |x|}
-  have htailMeas : Measurable tail := by
-    apply Antitone.measurable
-    intro a b hab
-    exact measure_mono fun _ hx => lt_of_le_of_lt hab hx
-  have hlayer : (∫⁻ x, ENNReal.ofReal |x| ∂μ) = ∫⁻ t in Ioi (0 : ℝ), tail t :=
-    lintegral_eq_lintegral_meas_lt μ
-      (ae_of_all μ fun x => abs_nonneg x) continuous_abs.measurable.aemeasurable
-  have htailFinite : (∫⁻ t in Ioi (0 : ℝ), tail t) < ∞ := by
-    rw [← hlayer]
-    exact Integrable.lintegral_lt_top habsolute
-  have htailRealIntegrable : Integrable (fun t : ℝ => (tail t).toReal)
-      (volume.restrict (Ioi (0 : ℝ))) :=
-    integrable_toReal_of_lintegral_ne_top htailMeas.aemeasurable htailFinite.ne
-  have htailEq : (fun t : ℝ => (tail t).toReal) =
-      (fun t => μ.real {x : ℝ | t < |x|}) := by
-    funext t
-    rfl
-  rw [← htailEq]
-  change IntegrableOn (fun t : ℝ => (tail t).toReal) (Ioi (0 : ℝ)) volume at htailRealIntegrable
-  exact htailRealIntegrable.mono_set (Ioi_subset_Ioi hradius)
-
-/-- If the two-sided tail is integrable on the positive half-line, then the
-law has a finite first absolute moment. This is the converse layer-cake
-direction and does not require any regular-variation assumption. -/
-theorem integrable_id_of_integrableOn_twoSidedTail
-    (μ : Measure ℝ) [IsFiniteMeasure μ]
-    (htail : IntegrableOn (fun t : ℝ => μ.real {x : ℝ | t < |x|})
-      (Ioi (0 : ℝ)) volume) :
-    Integrable (id : ℝ → ℝ) μ := by
-  let tail : ℝ → ℝ := fun t => μ.real {x : ℝ | t < |x|}
-  have htailAntitone : Antitone tail := by
-    intro a b hab
-    apply measureReal_mono (μ := μ)
-    · intro x hx
-      exact lt_of_le_of_lt hab hx
-  have htailMeasurable : Measurable tail := htailAntitone.measurable
-  have htailNonneg (t : ℝ) : 0 ≤ tail t := measureReal_nonneg
-  have htailReal : Integrable tail (volume.restrict (Ioi (0 : ℝ))) := by
-    simpa [tail, IntegrableOn] using htail
-  have htailRealLIntegralNeTop :
-      (∫⁻ t, ENNReal.ofReal (tail t)
-        ∂(volume.restrict (Ioi (0 : ℝ)))) ≠ ∞ :=
-    (MeasureTheory.lintegral_ofReal_ne_top_iff_integrable
-      htailReal.aestronglyMeasurable
-      (Filter.Eventually.of_forall fun t => htailNonneg t)).2 htailReal
-  have htailRealLIntegralFinite :
-      (∫⁻ t in Ioi (0 : ℝ), ENNReal.ofReal (tail t) ∂volume) < ∞ := by
-    exact lt_top_iff_ne_top.mpr (by simpa using htailRealLIntegralNeTop)
-  let tailENN : ℝ → ℝ≥0∞ := fun t => μ {x : ℝ | t < |x|}
-  have htailENN_eq (t : ℝ) : tailENN t = ENNReal.ofReal (tail t) := by
-    dsimp [tailENN, tail]
-    rw [Measure.real]
-    exact (ENNReal.ofReal_toReal (measure_lt_top μ _).ne).symm
-  have htailENNFinite :
-      (∫⁻ t in Ioi (0 : ℝ), tailENN t ∂volume) < ∞ := by
-    calc
-      (∫⁻ t in Ioi (0 : ℝ), tailENN t ∂volume) =
-          ∫⁻ t in Ioi (0 : ℝ), ENNReal.ofReal (tail t) ∂volume := by
-            apply lintegral_congr_ae
-            exact Filter.Eventually.of_forall htailENN_eq
-      _ < ∞ := htailRealLIntegralFinite
-  have hlayercake :
-      (∫⁻ x, ENNReal.ofReal |x| ∂μ) =
-        ∫⁻ t in Ioi (0 : ℝ), tailENN t ∂volume :=
-    lintegral_eq_lintegral_meas_lt μ
-      (Filter.Eventually.of_forall fun x => abs_nonneg x)
-      continuous_abs.measurable.aemeasurable
-  have habsoluteLIntegralNeTop :
-      (∫⁻ x, ENNReal.ofReal |x| ∂μ) ≠ ∞ := by
-    rw [hlayercake]
-    exact htailENNFinite.ne
-  have habsolute : Integrable (fun x : ℝ => |x|) μ :=
-    (MeasureTheory.lintegral_ofReal_ne_top_iff_integrable
-      continuous_abs.measurable.aestronglyMeasurable
-      (Filter.Eventually.of_forall fun x => abs_nonneg x)).1
-      habsoluteLIntegralNeTop
-  have habsoluteNorm : Integrable (fun x : ℝ => ‖x‖) μ := by
-    simpa [Real.norm_eq_abs] using habsolute
-  exact (integrable_norm_iff (f := id) measurable_id.aestronglyMeasurable).1
-    habsoluteNorm
 
 /-- The first absolute moment beyond a threshold is the threshold times its
 tail probability plus the integrated tail. This is the layer-cake formula
@@ -462,6 +395,234 @@ theorem truncatedSecondMomentFactor_isSlowlyVarying_of_integratedTruncatedSquare
       filter_upwards [hfactorEq, hcTop.eventually hfactorEq] with u hEq hEqc
       rw [hEqc, hEq]
     exact (hprod.ratio_tendsto hc).congr' hfactorScaled.symm
+
+/-- The quadratic-tail ratio bound and Potter's estimate make the integrated
+tail beyond a large cutoff negligible compared with `V(x) / x`. The exponent
+`1/2` in Potter's envelope is chosen only to make the resulting power
+integrable. -/
+private lemma tendsto_tailIntegral_div_truncatedSecondMoment_mul_radius_zero
+    {ν : Measure ℝ} [IsProbabilityMeasure ν]
+    (habsolute : Integrable (fun x : ℝ => |x|) ν)
+    (hVslow : Asymptotics.IsSlowlyVaryingAtTop (truncatedSecondMoment ν))
+    (hFeller : Tendsto
+      (fun x : ℝ => x ^ 2 * ν.real {y : ℝ | x < |y|} /
+        truncatedSecondMoment ν x) atTop (nhds 0)) :
+    Tendsto (fun x : ℝ => x *
+      (∫ t in Ioi x, ν.real {y : ℝ | t < |y|}) /
+        truncatedSecondMoment ν x) atTop (nhds 0) := by
+  let V : ℝ → ℝ := truncatedSecondMoment ν
+  let tail : ℝ → ℝ := fun x => ν.real {y : ℝ | x < |y|}
+  let p : ℝ := 1 / 2
+  have hVreg : Asymptotics.IsRegularlyVaryingAtTop V 0 := by
+    simpa [V] using hVslow
+  have hVmono : Asymptotics.IsEventuallyMonotoneAtTop V := by
+    simpa [V] using truncatedSecondMoment_isEventuallyMonotone ν
+  obtain ⟨Rpotter, hRpotter, hpotter⟩ :=
+    hVreg.exists_potter_upper_bound hVmono (by norm_num : (0 : ℝ) ≤ 0)
+      (by norm_num : 0 < p)
+  obtain ⟨Rpositive, hRpositive⟩ := eventually_atTop.1 hVslow.1
+  have htailIntegrable : IntegrableOn tail (Ioi (0 : ℝ)) volume := by
+    simpa [tail] using integrableOn_twoSidedTail_of_integrable_abs ν habsolute
+      (by norm_num : (0 : ℝ) ≤ 0)
+  have htailAntitone : Antitone tail := by
+    intro a b hab
+    apply measureReal_mono (μ := ν)
+    · intro y hy
+      exact lt_of_le_of_lt hab hy
+  have htailMeasurable : Measurable tail := htailAntitone.measurable
+  have hfactor : (2 : ℝ) ^ p ≤ 2 := by
+    have hp : p ≤ 1 := by dsimp [p]; norm_num
+    simpa [p, Real.rpow_one] using
+      (Real.rpow_le_rpow_of_exponent_le (by norm_num : (1 : ℝ) ≤ 2) hp)
+  have hFellerEventually (ε : ℝ) (hε : 0 < ε) :
+      ∀ᶠ x : ℝ in atTop,
+        x ^ 2 * tail x / V x ≤ ε := by
+    filter_upwards [hFeller.eventually (Iio_mem_nhds hε)] with x hx
+    exact le_of_lt (by simpa [tail, V] using hx)
+  have hIntegralBound (ε : ℝ) (hε : 0 < ε) :
+      ∀ᶠ x : ℝ in atTop,
+        (∫ t in Ioi x, tail t) ≤ 4 * ε * V x / x := by
+    obtain ⟨RFeller, hRFeller⟩ := eventually_atTop.1 (hFellerEventually ε hε)
+    let R : ℝ := max 1 (max Rpotter (max Rpositive RFeller))
+    have hRpos : 0 < R := by dsimp [R]; positivity
+    have hRpotterLe : Rpotter ≤ R := by
+      dsimp [R]
+      exact le_trans (le_max_left _ _) (le_max_right _ _)
+    have hRpositiveLe : Rpositive ≤ R := by
+      dsimp [R]
+      exact le_trans (le_max_left _ _)
+        (le_trans (le_max_right _ _) (le_max_right _ _))
+    have hRFellerLe : RFeller ≤ R := by
+      dsimp [R]
+      exact le_trans (le_max_right _ _)
+        (le_trans (le_max_right _ _) (le_max_right _ _))
+    have hVpos : ∀ ⦃x : ℝ⦄, R ≤ x → 0 < V x := by
+      intro x hx
+      exact hRpositive x (le_trans hRpositiveLe hx)
+    have hFellerSmall : ∀ ⦃x : ℝ⦄, R ≤ x → x ^ 2 * tail x / V x ≤ ε := by
+      intro x hx
+      exact hRFeller x (le_trans hRFellerLe hx)
+    have hPotter : ∀ ⦃x y : ℝ⦄, R ≤ x → x ≤ y →
+        V y / V x ≤ 2 ^ p * (y / x) ^ p := by
+      intro x y hx hxy
+      simpa [p] using hpotter (le_trans hRpotterLe hx) hxy
+    have hbound (x t : ℝ) (hx : R ≤ x) (ht : x < t) :
+        tail t ≤ (2 * ε * V x / x ^ p) * t ^ (p - 2) := by
+      have hxpos : 0 < x := lt_of_lt_of_le hRpos hx
+      have htpos : 0 < t := lt_trans hxpos ht
+      have hxSq : 0 < x ^ 2 := sq_pos_of_pos hxpos
+      have htSq : 0 < t ^ 2 := sq_pos_of_pos htpos
+      have hVx : 0 < V x := hVpos hx
+      have hVt : 0 < V t := hVpos (le_trans hx ht.le)
+      have hratio := hPotter hx ht.le
+      have hratioNonneg : 0 ≤ (t / x) ^ p :=
+        Real.rpow_nonneg (div_nonneg htpos.le hxpos.le) p
+      have hratioBound : V t ≤ 2 * V x * (t / x) ^ p := by
+        have hratio' : V t ≤ V x * (2 ^ p * (t / x) ^ p) := by
+          simpa [mul_comm] using (div_le_iff₀ hVx).mp hratio
+        calc
+          V t ≤ V x * (2 ^ p * (t / x) ^ p) := hratio'
+          _ ≤ V x * (2 * (t / x) ^ p) :=
+            mul_le_mul_of_nonneg_left
+              (mul_le_mul_of_nonneg_right hfactor hratioNonneg) hVx.le
+          _ = 2 * V x * (t / x) ^ p := by ring
+      have hF := hFellerSmall (le_trans hx ht.le)
+      have hF' : t ^ 2 * tail t ≤ ε * V t :=
+        (div_le_iff₀ hVt).mp hF
+      have htail' : tail t ≤ ε * V t / t ^ 2 :=
+        (le_div_iff₀ htSq).2 (by simpa [mul_comm] using hF')
+      have htail'' : tail t ≤ ε * (2 * V x * (t / x) ^ p) / t ^ 2 :=
+        htail'.trans (div_le_div_of_nonneg_right
+          (mul_le_mul_of_nonneg_left hratioBound hε.le) htSq.le)
+      have hdivPow : (t / x) ^ p = t ^ p / x ^ p :=
+        Real.div_rpow htpos.le hxpos.le p
+      have hpowSub : t ^ p / t ^ (2 : ℕ) = t ^ (p - 2) := by
+        rw [← Real.rpow_natCast t 2]
+        exact (Real.rpow_sub htpos p 2).symm
+      have hxpow : 0 < x ^ p := Real.rpow_pos_of_pos hxpos p
+      have hteq : ε * (2 * V x * (t / x) ^ p) / t ^ 2 =
+          (2 * ε * V x / x ^ p) * t ^ (p - 2) := by
+        calc
+          _ = (2 * ε * V x / x ^ p) * (t ^ p / t ^ 2) := by
+            rw [hdivPow]
+            field_simp [ne_of_gt hxpow, ne_of_gt htSq]
+          _ = _ := by rw [hpowSub]
+      exact htail''.trans_eq hteq
+    filter_upwards [eventually_ge_atTop R] with x hx
+    have hxpos : 0 < x := lt_of_lt_of_le hRpos hx
+    have hVx : 0 < V x := hVpos hx
+    have hC : 0 ≤ 2 * ε * V x / x ^ p :=
+      div_nonneg (by positivity) (Real.rpow_pos_of_pos hxpos p).le
+    have htailX : IntegrableOn tail (Ioi x) volume :=
+      htailIntegrable.mono_set (Ioi_subset_Ioi hxpos.le)
+    have hpowInt : IntegrableOn (fun t : ℝ => t ^ (p - 2)) (Ioi x) volume :=
+      integrableOn_Ioi_rpow_of_lt (by dsimp [p]; norm_num) hxpos
+    have hmajorInt : IntegrableOn
+        (fun t : ℝ => (2 * ε * V x / x ^ p) * t ^ (p - 2)) (Ioi x) volume :=
+      hpowInt.const_mul _
+    have hmonoIntegral := setIntegral_mono_on htailX hmajorInt measurableSet_Ioi
+      (fun t ht => hbound x t hx ht)
+    calc
+      (∫ t in Ioi x, tail t) ≤
+          ∫ t in Ioi x, (2 * ε * V x / x ^ p) * t ^ (p - 2) := hmonoIntegral
+      _ = (2 * ε * V x / x ^ p) *
+          (∫ t in Ioi x, t ^ (p - 2)) := by rw [integral_const_mul]
+      _ = (2 * ε * V x / x ^ p) *
+          (-x ^ (p - 2 + 1) / (p - 2 + 1)) := by
+        rw [integral_Ioi_rpow_of_lt (by dsimp [p]; norm_num) hxpos]
+      _ = 4 * ε * V x / x := by
+        have hp : p = 1 / 2 := rfl
+        subst p
+        have hpow : x ^ (-(1 / 2 : ℝ)) * x ^ (-(1 / 2 : ℝ)) = x⁻¹ := by
+          rw [← Real.rpow_add hxpos]
+          rw [show (-(1 / 2 : ℝ)) + -(1 / 2 : ℝ) = -1 by ring,
+            Real.rpow_neg_one]
+        have hcoef : -x ^ (-(1 / 2 : ℝ)) / (-(1 / 2 : ℝ)) =
+            2 * x ^ (-(1 / 2 : ℝ)) := by
+          field_simp
+        rw [show (1 / 2 : ℝ) - 2 + 1 = -(1 / 2 : ℝ) by ring, hcoef]
+        rw [div_eq_mul_inv]
+        calc
+          (2 * ε * V x * (x ^ (1 / 2 : ℝ))⁻¹) *
+              (2 * x ^ (-(1 / 2 : ℝ))) =
+              4 * ε * V x * ((x ^ (1 / 2 : ℝ))⁻¹ *
+                (x ^ (1 / 2 : ℝ))⁻¹) := by
+            rw [Real.rpow_neg hxpos.le]
+            ring
+          _ = 4 * ε * V x *
+              (x ^ (-(1 / 2 : ℝ)) * x ^ (-(1 / 2 : ℝ))) := by
+                rw [← Real.rpow_neg hxpos.le]
+          _ = 4 * ε * V x * x⁻¹ := by rw [hpow]
+          _ = 4 * ε * V x / x := by rw [div_eq_mul_inv]
+  have hVpos : ∀ᶠ x : ℝ in atTop, 0 < V x := hVslow.1
+  have hVpositive : ∀ᶠ x : ℝ in atTop, V x ≠ 0 := hVpos.mono fun x hx => hx.ne'
+  have htailNonneg : ∀ x, 0 ≤ ∫ t in Ioi x, tail t := by
+    intro x
+    exact setIntegral_nonneg measurableSet_Ioi fun t _ => measureReal_nonneg
+  apply tendsto_order.2
+  constructor
+  · intro a ha
+    filter_upwards [eventually_gt_atTop (0 : ℝ), hVpos] with x hx hVx
+    have hnonneg : 0 ≤ x * (∫ t in Ioi x, tail t) / V x :=
+      div_nonneg (mul_nonneg hx.le (htailNonneg x)) hVx.le
+    linarith
+  · intro ε hε
+    let η : ℝ := ε / 8
+    have hη : 0 < η := by dsimp [η]; linarith
+    have hFsmall : ∀ᶠ x : ℝ in atTop,
+        x ^ 2 * tail x / V x < ε / 2 :=
+      hFeller.eventually (Iio_mem_nhds (by linarith))
+    have hIbound := hIntegralBound η hη
+    filter_upwards [eventually_gt_atTop (0 : ℝ), hVpos, hFsmall, hIbound]
+      with x hx hVx hFx hIx
+    have hterm : x * (∫ t in Ioi x, tail t) / V x ≤ 4 * η := by
+      apply (div_le_iff₀ hVx).2
+      calc
+        x * (∫ t in Ioi x, tail t) ≤
+            x * (4 * η * V x / x) :=
+          mul_le_mul_of_nonneg_left hIx hx.le
+        _ = 4 * η * V x := by field_simp [hx.ne']
+    have hdecomp :
+        x * (∫ t in Ioi x, tail t) / V x ≤ ε / 2 := by
+      dsimp [η] at hterm
+      linarith
+    exact hdecomp.trans_lt (by linarith)
+
+/-- In the Gaussian domain of attraction, the discarded absolute first moment
+is negligible relative to the cutoff and its truncated second moment. This
+combines the quadratic-tail ratio limit with the integrated-tail estimate
+above and the layer-cake identity. -/
+theorem tendsto_radius_mul_discardedAbsFirstMoment_div_truncatedSecondMoment_zero
+    {ν : Measure ℝ} [IsProbabilityMeasure ν]
+    (habsolute : Integrable (fun x : ℝ => |x|) ν)
+    (hVslow : Asymptotics.IsSlowlyVaryingAtTop (truncatedSecondMoment ν))
+    (hFeller : Tendsto
+      (fun x : ℝ => x ^ 2 * ν.real {y : ℝ | x < |y|} /
+        truncatedSecondMoment ν x) atTop (nhds 0)) :
+    Tendsto (fun x : ℝ => x *
+      (∫ y, {z : ℝ | x < |z|}.indicator (fun z => |z|) y ∂ν) /
+        truncatedSecondMoment ν x) atTop (nhds 0) := by
+  let tail : ℝ → ℝ := fun x => ν.real {y : ℝ | x < |y|}
+  let tailIntegral : ℝ → ℝ := fun x => ∫ t in Ioi x, tail t
+  have hintegral := tendsto_tailIntegral_div_truncatedSecondMoment_mul_radius_zero
+    habsolute hVslow hFeller
+  have hsum : Tendsto (fun x : ℝ =>
+      x ^ 2 * tail x / truncatedSecondMoment ν x +
+        x * tailIntegral x / truncatedSecondMoment ν x)
+      atTop (nhds (0 + 0)) := by
+    simpa [tail, tailIntegral] using hFeller.add hintegral
+  have heq : (fun x : ℝ => x *
+      (∫ y, {z : ℝ | x < |z|}.indicator (fun z => |z|) y ∂ν) /
+        truncatedSecondMoment ν x) =ᶠ[atTop]
+      fun x => x ^ 2 * tail x / truncatedSecondMoment ν x +
+        x * tailIntegral x / truncatedSecondMoment ν x := by
+    filter_upwards [eventually_gt_atTop (0 : ℝ), hVslow.1] with x hx hVx
+    have hlayer := integral_indicator_abs_eq_radius_mul_tail_add_tailIntegral
+      ν habsolute hx.le
+    dsimp [tail, tailIntegral]
+    rw [hlayer]
+    field_simp [ne_of_gt hVx]
+  simpa using hsum.congr' heq.symm
 
 end ProbabilityTheory
 

@@ -12,6 +12,18 @@ The particles' positions at the first capacity hit are measurable from the
 stopped past.  The descendant field rooted at those particles therefore
 factorizes from any event determined by the hit positions, with the ordinary
 exact-`N` field law.
+
+## Public declarations
+
+- `measurableSet_smallInitialPopulationHitInitialPosition_preimage` states
+  that an event determined by the hit-position vector belongs to the sigma
+  algebra at the capacity-hitting time.
+- `smallInitialPopulationHitInitialPosition_freshField_factorization` gives
+  the joint law of that vector and its selected descendant field: for
+  measurable $A\subseteq\mathbb R^N$ and measurable exact-$N$ field event $B$,
+  $\mathbb P_m(X_{\tau}\in A,\,\mathcal F_{\tau}\in B)=
+  \mathbb P_m(X_{\tau}\in A)\,\mathbb P_N(B)$ under the boundary,
+  nonempty-offspring, and supercriticality assumptions.
 -/
 
 open MeasureTheory ProbabilityTheory

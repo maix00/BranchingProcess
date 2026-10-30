@@ -12,6 +12,8 @@ public import Mathlib.Basic.ENNReal.Real
 /-!
 # Power rates for moment ratios
 
+## Public declarations
+
 * `Asymptotics.ennreal_rpow_div_toReal_ge_of_power_bounds`: if
   `N > 0`, `q ≥ 0`, `N ^ α ≤ x.toReal`, and `0 < y < ∞` with
   `y.toReal ≤ N ^ β`, then

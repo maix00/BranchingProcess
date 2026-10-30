@@ -21,6 +21,16 @@ that last increment has no constraint.
 
 The public declarations identify the IID probabilities of the strict full
 block and half-open prefix events with `partialSumRangeOscillationLTProbability`.
+
+## Public declarations
+
+* `iidSequenceLaw_blockOscillationLTEvent_eq_partialSumRangeProbability`
+  identifies the IID probability that every pair of partial sums through the
+  block endpoint differs by less than `width` with the corresponding
+  partial-sum range probability.
+* `iidSequenceLaw_blockOscillationPrefixLTEvent_eq_partialSumRangeProbability`
+  gives the corresponding identity for the half-open prefix; the final
+  increment is unrestricted, and the length is positive.
 -/
 
 open MeasureTheory

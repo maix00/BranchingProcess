@@ -6,16 +6,18 @@ Authors: WANG Yiyang
 
 module
 
-public import Mathlib.Basic.Real.Basic
-public import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.Event
-public import Probability.Process.RandomWalk.Path.Block.Partition.TailMerged
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.BlockTube
-import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.FirstWindow
+import Mathlib.Basic.Real.Basic
+import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.Event
+import Combinatorics.Sequence.TailMergedBlock
+import all Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.BlockTube
+import all Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.FirstWindow
 
 /-!
 # From the diffusive entrance to the first staircase block
 
-The module-visible supporting lemmas in this file are:
+## Internal proof declarations
+
+The supporting lemmas in this file are:
 
 - `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.robustEntrance_staysInTiltedTube`:
   a path in the robust entrance event stays in
@@ -29,7 +31,9 @@ Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring
 interval provided by Appendix A.2, Lemma A.7.
 -/
 
-@[expose] public section
+open Combinatorics.Sequence
+
+section
 
 open ProbabilityTheory.RandomWalk.SmallDeviation.Entrance
 

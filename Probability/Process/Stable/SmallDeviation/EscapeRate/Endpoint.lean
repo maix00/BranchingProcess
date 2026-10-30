@@ -15,6 +15,16 @@ import Probability.Process.Stable.SmallDeviation.Blocks.ReturnScale
 
 The endpoint comparison is built from the stable escape-rate limits and the
 source's exact left-open, right-closed terminal interval.
+## Public declarations
+
+The endpoint event uses the source's left-open, right-closed terminal window
+translated together with the corridor. Its logarithmic rate is
+$a^\alpha\log\mathbb P(E_a)$.
+`exists_shiftedEndpointCorridor_escape_rate` gives its finite negative rate;
+the ratio theorem compares this rate to the shifted-corridor rate, and the
+remaining theorems transfer a known range rate to the endpoint event and
+state the corresponding inverse-power limit.
+
 -/
 
 @[expose] public section

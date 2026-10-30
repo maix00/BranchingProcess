@@ -7,31 +7,47 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.Path.Representation.Cadlag
+public import Probability.Process.RandomWalk.Path.MaximalJump.Basic
 public import Mathlib.Topology.UnitInterval
 public import Topology.Cadlag.Skorokhod.Maps.Continuous
 
 /-!
 # Linear interpolation of random-walk paths
 
-This file is deterministic. It constructs the continuous polygonal path
-through the normalized partial sums. Probability laws are added separately.
+This deterministic module defines the polygonal interpolation of normalized partial sums. For
+increments $\xi_k$, scale $a_n$, and
+$w_{n,k}(t)=\min\{1,\max\{0,nt-k\}\}$, it sets
+$X_n(t)=a_n^{-1}\sum_{k<n}w_{n,k}(t)\xi_k$.
 
-The public theorem `ProbabilityTheory.RandomWalk.normalizedLinearPath_on_interval`
-states that for $k<n$ and $k\le nt\le k+1$,
-$X_n(t)=a_n^{-1}(S_k+(nt-k)\xi_k)$.
-The theorem `ProbabilityTheory.RandomWalk.normalizedLinearPath_nonneg_after_grid`
-states that a polygonal path remains nonnegative after a grid time
-if every later grid value is nonnegative.
-The theorem `ProbabilityTheory.RandomWalk.normalizedLinearPath_neg`
-states $X_n(-\xi)=-X_n(\xi)$.
-The theorem `ProbabilityTheory.RandomWalk.normalizedLinearPath_nonpos_after_grid`
-is the sign-reversed form of the nonnegative-tail result.
-The theorem `ProbabilityTheory.RandomWalk.normalizedLinearPath_before_zero`
-gives the affine value just before a grid point at which the path
-returns to zero.
-The theorem `ProbabilityTheory.RandomWalk.normalizedLinearPath_tail_after_zero`
-states that if $S_m=0$, then
-$X_n(m/n+(n-m)t/n)=a_n^{-1}\sum_{j<n-m}w_{n-m,j}(t)\xi_{m+j}$.
+## Public declarations
+
+- `linearIncrementWeight` defines $w_{n,k}(t)$. Its continuity, $0\le w\le1$, value at zero,
+  terminal value, mesh-point values, and floor-index values are stated by
+  `continuous_linearIncrementWeight`, `linearIncrementWeight_nonneg`,
+  `linearIncrementWeight_le_one`, `linearIncrementWeight_zero`,
+  `linearIncrementWeight_one_of_lt`, `linearIncrementWeight_grid_of_lt`,
+  `linearIncrementWeight_grid_of_le`, `linearIncrementWeight_eq_one_of_lt_floor`, and
+  `linearIncrementWeight_eq_zero_of_floor_lt`.
+- `normalizedLinearPath` defines $X_n$. Its continuity, sign reversal, value at zero and one,
+  mesh-point identity $X_n(k/n)=a_n^{-1}S_k$, and affine formula on each mesh interval are given
+  by `continuous_normalizedLinearPath`, `normalizedLinearPath_neg`, `normalizedLinearPath_zero`,
+  `normalizedLinearPath_one`, `normalizedLinearPath_grid`, and `normalizedLinearPath_on_interval`.
+- `normalizedLinearPath_before_zero` gives $X_n(t)=a_n^{-1}(1-(nt-k))S_k$ on a mesh interval
+  ending at a zero $S_{k+1}=0$.
+  `normalizedLinearPath_tail_after_zero` states that if $S_m=0$, then
+  $X_n(m/n+(n-m)t/n)=a_n^{-1}\sum_{j<n-m}w_{n-m,j}(t)\xi_{m+j}$.
+  `normalizedLinearPath_nonneg_after_grid` extends $S_j\ge0$ for `start ≤ j ≤ n` to $X_n(t)\ge0$
+  when `start ≤ nt`; `normalizedLinearPath_nonpos_after_grid` gives the sign-reversed statement.
+- `sum_linearIncrementWeight_eq_partialSum_add` writes $X_n(t)$'s unnormalized sum as the partial
+  sum through $\lfloor nt\rfloor$ plus the current weighted increment.
+  `abs_normalizedLinearPath_sub_normalizedStepPath_le` bounds the interpolation error by
+  $|a_n^{-1}||\xi_{\lfloor nt\rfloor}|$.
+- `normalizedLinearContinuousPathIcc` and `normalizedLinearCadlagPathIcc` bundle the same path in
+  continuous and càdlàg path spaces; their `_apply` theorems give evaluation formulas.
+  `j1EDist_normalizedStepPath_linear_le` bounds the Skorokhod $J_1$ distance to the step path by
+  $|a_n^{-1}|\max_{k\le n}|\xi_k|$.
+
+Probability laws are defined separately in `Core.lean`.
 -/
 
 open Set
@@ -496,21 +512,6 @@ theorem abs_normalizedLinearPath_sub_normalizedStepPath_le
     rw [hmeq]
     simp only [sub_self, abs_zero]
     positivity
-
-/-- Largest absolute increment among indices `0, ..., n`. -/
-def maxAbsUpTo (n : ℕ) (increment : ℕ → ℝ) : ℝ :=
-  (Finset.range (n + 1)).sup' (by simp) fun k ↦ |increment k|
-
-theorem abs_increment_le_maxAbsUpTo {n k : ℕ} (increment : ℕ → ℝ)
-    (hk : k ≤ n) :
-    |increment k| ≤ maxAbsUpTo n increment := by
-  exact Finset.le_sup' (fun i ↦ |increment i|)
-    (Finset.mem_range.mpr (Nat.lt_succ_iff.mpr hk))
-
-theorem maxAbsUpTo_nonneg (n : ℕ) (increment : ℕ → ℝ) :
-    0 ≤ maxAbsUpTo n increment := by
-  exact (abs_nonneg (increment 0)).trans
-    (abs_increment_le_maxAbsUpTo increment (Nat.zero_le n))
 
 /-- The normalized polygonal interpolation, restricted to `[0,1]` and
 bundled as a continuous path. -/

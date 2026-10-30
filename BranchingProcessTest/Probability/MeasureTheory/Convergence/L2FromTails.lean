@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.MeasureTheory.Convergence.L2FromTails
+import Probability.MeasureTheory.Convergence.SecondMoment.FromTails
 
 /-!
 # Axiom audit for second-moment convergence from two-sided tails

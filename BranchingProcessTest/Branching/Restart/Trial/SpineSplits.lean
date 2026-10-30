@@ -1,3 +1,5 @@
+module
+
 import Probability.BranchingRandomWalk.Restart.RootedTrial.Spine.Splits
 
 /-!

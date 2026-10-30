@@ -8,11 +8,11 @@ module
 public import Probability.BranchingRandomWalk.Selection.NSelection.AsymptoticSpeed.Limit.InfiniteOffspring.Repair
 public import Probability.BranchingRandomWalk.Selection.NSelection.AsymptoticSpeed.Limit.InfiniteOffspring.SubadditiveArray
 public import Probability.BranchingRandomWalk.Selection.NSelection.AsymptoticSpeed.Environment.Basic
-public import Probability.BranchingRandomWalk.Selection.NSelection.AsymptoticSpeed.Selection.Infinite
-import Probability.BranchingRandomWalk.Selection.NSelection.AsymptoticSpeed.Limit.InfiniteOffspring.Kingman.Lemmas.ArrayBounds
-import Probability.BranchingRandomWalk.Selection.NSelection.AsymptoticSpeed.Limit.InfiniteOffspring.Kingman.Lemmas.Subadditivity
-import Probability.BranchingRandomWalk.Selection.NSelection.AsymptoticSpeed.Limit.InfiniteOffspring.Kingman.Lemmas.Convergence
-public import Probability.Ergodic.Kingman.Core
+public import Probability.BranchingRandomWalk.Selection.NSelection.AsymptoticSpeed.Selection.InfiniteOffspring.Batch
+public import Probability.BranchingRandomWalk.Selection.NSelection.AsymptoticSpeed.Selection.InfiniteOffspring.SubadditiveArray
+import all Probability.BranchingRandomWalk.Selection.NSelection.AsymptoticSpeed.Limit.InfiniteOffspring.Kingman.Lemmas.ArrayStructure
+import all Probability.BranchingRandomWalk.Selection.NSelection.AsymptoticSpeed.Limit.InfiniteOffspring.Kingman.Lemmas.ArrayBounds
+public import Probability.Ergodic.Kingman.Theorem
 public import Mathlib.MeasureTheory.Function.UniformIntegrable
 public import Mathlib.MeasureTheory.Measure.MeasureSpaceDef
 public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
@@ -20,14 +20,37 @@ public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
 /-!
 # Kingman limits for the infinite-offspring selection array
 
-- `repairedInfiniteSelection_tendsto_constant`: under integrability and a
-  lower bound on normalized expectations, the repaired block array has an
-  almost-sure deterministic normalized limit.
+Write \(A_\omega(n)=A_\omega(0,n)\) for the repaired array at start time zero.
+
+## Public declarations
+
+- `repairedInfiniteSelection_tendsto_invariant_integrable`: an integrable,
+  shift-invariant random variable $G$ satisfies
+  $n^{-1}A_\omega(0,n)\to G(\omega)$ almost surely.
+- `repairedInfiniteSelection_tendsto_constant`: if each \(A_\omega(n)\) is
+  integrable and \(\inf_n (n+1)^{-1}\mathbb E[A_\omega(n+1)]>-\infty\),
+  then some \(c\in\mathbb R\) satisfies
+  \(n^{-1}A_\omega(n)\to c\) almost surely.
 - `repairedInfiniteSelection_tendsto_constant_L1_of_leftmostMoment`: under
   the boundary, nonempty-support, ordered-support, and leftmost first-moment
-  assumptions, the normalized array converges almost surely and in `L¹`.
-- `infiniteSelection_tendsto_constant`: transfers the repaired limit to the
-  original subadditive array on almost every valid environment.
+  assumptions, the same almost-sure limit holds and
+  \(\|n^{-1}A_\omega(n)-c\|_{L^1}\to0\).
+- `infiniteSelection_tendsto_constant`: on almost every environment whose
+  batches are valid, the original array also satisfies
+  \(n^{-1}A^{\mathrm{orig}}_\omega(n)\to c\) almost surely.
+
+## Mathematical references
+
+The model-specific subadditive-array limit is the argument in WANG Yiyang,
+*Asymptotic Speed of the \(N\)-Branching Random Walk with Infinite Offspring*,
+Master's thesis, Fudan University (2026), Section 3.4.2, Lemma 3.12. Its
+almost-sure limit uses J. F. C. Kingman, “The Ergodic Theory of Subadditive
+Stochastic Processes,” *Journal of the Royal Statistical Society: Series B*
+30(3) (1968), 499–510, Theorem 1, DOI
+10.1111/j.2517-6161.1968.tb00749.x. WANG Yiyang's Lemma 3.12 also cites T. M. Liggett's strengthened result, “An Improved Subadditive Ergodic Theorem,” *The Annals
+of Probability* 13(4) (1985), 1279–1285, Theorem 1, DOI
+10.1214/aop/1176992811; the \(L^1\) conclusion here is proved separately by
+uniform integrability and Vitali convergence.
 -/
 
 open MeasureTheory Filter
@@ -38,8 +61,37 @@ open scoped ENNReal Topology
 namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Speed
 
 open Combinatorics.Branching
-open Combinatorics.Branching.Selection.NSelection
+open _root_.Combinatorics.Selection.NSelection
 open ProbabilityTheory.BranchingRandomWalk.Selection.NSelection
+
+/-- Kingman's subadditive ergodic theorem gives an integrable, shift-invariant
+limit for the normalized repaired selection array. Under integrability of every
+array value and a uniform lower bound on normalized expectations, there is an
+integrable random variable $G$ with $G\circ\theta=G$ almost surely and
+$n^{-1}A_\omega(0,n)\to G(\omega)$ almost surely. -/
+theorem repairedInfiniteSelection_tendsto_invariant_integrable {N : ℕ}
+    (hN : 0 < N) (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
+    (hint : ∀ n, Integrable
+      (fun ω : GenerationEnvironment N =>
+        repairedInfiniteSelectionSubadditiveArray hN ω 0 n)
+      (generationEnvironmentLaw μ N))
+    (hbdd : BddBelow (Set.range fun n : ℕ =>
+      (∫ ω, repairedInfiniteSelectionSubadditiveArray hN ω 0 (n + 1)
+        ∂generationEnvironmentLaw μ N) / (n + 1))) :
+    ∃ G : GenerationEnvironment N → ℝ,
+      (G ∘ generationEnvironmentShift =ᵐ[generationEnvironmentLaw μ N] G) ∧
+      Integrable G (generationEnvironmentLaw μ N) ∧
+      ∀ᵐ ω ∂generationEnvironmentLaw μ N,
+      Tendsto
+        (fun n : ℕ => (n : ℝ)⁻¹ *
+          repairedInfiniteSelectionSubadditiveArray hN ω 0 n)
+        atTop (𝓝 (G ω)) := by
+  let ν := generationEnvironmentLaw μ N
+  have hν : IsProbabilityMeasure ν := generationEnvironmentLaw_isProbability μ N
+  letI := hν
+  exact ProbabilityTheory.tendsto_kingman
+    (generationEnvironmentLaw_shift_measurePreserving μ N)
+    (repairedInfiniteSelection_isSubadditiveCocycle hN) hint hbdd
 
 theorem repairedInfiniteSelection_tendsto_constant {N : ℕ}
     (hN : 0 < N) (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]

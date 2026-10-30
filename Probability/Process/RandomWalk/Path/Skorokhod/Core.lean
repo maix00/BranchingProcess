@@ -16,6 +16,14 @@ public import Probability.Sequence.IID.Basic
 This file places the deterministic normalized step path under the canonical
 i.i.d. increment law.  Its measurability uses the verified Skorokhod topology,
 not the product measurable structure on an ambient function space.
+
+## Public declarations
+
+* `normalizedStepPathLaw ν scale n` is the image of `iidSequenceLaw ν` under
+  `normalizedStepCadlagPathIcc scale n`; it is a probability measure when `ν`
+  is.
+* `hasLaw_normalizedStepCadlagPathIcc` states that the normalized step-path
+  map has law `normalizedStepPathLaw ν scale n` under `iidSequenceLaw ν`.
 -/
 
 open MeasureTheory ProbabilityTheory

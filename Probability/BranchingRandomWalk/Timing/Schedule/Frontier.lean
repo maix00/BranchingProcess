@@ -17,6 +17,13 @@ public import Probability.Process.Adapted.Recursion
 field. A population state that is updated from its previous value and the
 current frontier is adapted, including retained genealogical identities rather
 than only their count.
+## Public declarations
+
+- `frontier_causal_state_adapted` states that if
+  $state_{n+1}(\omega)=step(state_n(\omega),frontierMarks_n(\omega))$, the update `step` is
+  measurable, and the initial state is observable at generation zero, then `state n` is
+  measurable with respect to the generation domain flow at every $n$. The state may retain
+  genealogical identities as well as population counts.
 -/
 
 open MeasureTheory

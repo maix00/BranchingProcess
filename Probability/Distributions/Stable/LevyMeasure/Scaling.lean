@@ -6,8 +6,13 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Distributions.Stable.Exponent.Basic
+public import Probability.Distributions.Stable.Basic
+public import Probability.Distributions.InfinitelyDivisible.LevyKhintchine.Defs
+public import Mathlib.MeasureTheory.Measure.CharacteristicFunction.Basic
 public import Probability.Distributions.InfinitelyDivisible.LevyKhintchine.Scaling
+
+import Probability.Distributions.Stable.Exponent.Basic
+import Probability.Distributions.InfinitelyDivisible.LevyKhintchine.Uniqueness
 
 /-!
 # Scaling the Lévy measure of a strictly stable law
@@ -15,6 +20,17 @@ public import Probability.Distributions.InfinitelyDivisible.LevyKhintchine.Scali
 Uniqueness of the Lévy–Khintchine triple transfers exponent homogeneity to
 the Gaussian coefficient and the Lévy measure. The drift field already
 contains the precise truncation correction from the generic scaling theory.
+
+## Public declarations
+
+* `IsStrictlyAlphaStable.scale_triple_eq` identifies `T.scale a` with
+  `T.scaleIntensity (a^α)`.
+* `IsStrictlyAlphaStable.levyMeasure_map_mul` states
+  `Measure.map (a * ·) T.levyMeasure = a^α • T.levyMeasure`.
+* `IsStrictlyAlphaStable.gaussianVariance_scale` equates the quadratic and
+  `α`-power scalings of the Gaussian coefficient; for `α < 2`,
+  `IsStrictlyAlphaStable.gaussianVariance_eq_zero_of_lt_two` gives coefficient
+  zero.
 -/
 
 @[expose] public section

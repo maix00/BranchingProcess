@@ -6,15 +6,16 @@ Authors: WANG Yiyang
 
 module
 
-public import Analysis.Asymptotics.Scale.InverseScale
+public import Analysis.Asymptotics.Scale.Basic
 public import Mathlib.Analysis.SpecificLimits.Basic
 public import Mathlib.Topology.Instances.Nat
+import Analysis.Asymptotics.Sequence.SqrtRatio
 import Mathlib.Tactic
 
 /-!
 # Sampling along increasing time scales
 
-The public declarations in this module are deterministic scale tools:
+## Public declarations
 
 - For $t_k=\mathrm{time}(k)$, `Asymptotics.sampledTimeIntervalIndex` is the
   least $k(n)$ such that $n<t_{k(n)+1}$;
@@ -150,7 +151,11 @@ theorem sampledIntegerWidthScale_isSmallDeviationScale
       tendsto_const_nhds hwidthSqComp
       (Filter.Eventually.of_forall hscaleSqNonneg) hscaleSqUpper
   have hscaleRatio := Asymptotics.tendsto_div_sqrt_atTop_zero_of_tendsto_sq_div_atTop_zero
-    (fun n => Nat.cast_nonneg (width (sampledTimeIntervalIndex time htime n))) hscaleSq
+    (fun n => Nat.cast_nonneg (width (sampledTimeIntervalIndex time htime n)))
+    (by
+      filter_upwards [eventually_gt_atTop (0 : ℕ)] with n hn
+      exact_mod_cast hn)
+    hscaleSq
   exact Asymptotics.IsSmallDeviationScale.of_tendsto hscaleTop hscaleRatio
 
 noncomputable def sampledRealWidthScale
@@ -203,7 +208,11 @@ theorem sampledRealWidthScale_isSmallDeviationScale
       0 ≤ sampledRealWidthScale time width htime n :=
     (hwidthPos (sampledTimeIntervalIndex time htime n)).le
   have hscaleRatio := Asymptotics.tendsto_div_sqrt_atTop_zero_of_tendsto_sq_div_atTop_zero
-    hscaleNonneg hscaleSq
+    hscaleNonneg
+    (by
+      filter_upwards [eventually_gt_atTop (0 : ℕ)] with n hn
+      exact_mod_cast hn)
+    hscaleSq
   exact Asymptotics.IsSmallDeviationScale.of_tendsto hscaleTop hscaleRatio
 
 theorem tendsto_realWidthRate_of_sampledTime

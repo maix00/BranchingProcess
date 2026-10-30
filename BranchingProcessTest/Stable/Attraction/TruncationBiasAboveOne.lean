@@ -5,6 +5,7 @@ Authors: WANG Yiyang
 -/
 
 import Probability.Process.RandomWalk.FunctionalLimit.Stable.Tightness.BlockTail
+import Probability.Distributions.Moments.TailIntegrability
 
 open Filter MeasureTheory ProbabilityTheory
 open ProbabilityTheory.RandomWalk.FunctionalLimit.Stable

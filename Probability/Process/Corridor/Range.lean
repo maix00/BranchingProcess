@@ -7,8 +7,11 @@ Authors: WANG Yiyang
 module
 
 public import Order.Interval.RationalCoordinate.UnitInterval
+public import Mathlib.Probability.IdentDistrib
+public import Mathlib.Topology.Order.LeftRightLim
 public import Probability.Process.Path.Skorokhod.Corridor.Segment
 public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Cover
+public import Topology.Cadlag.Basic
 public import Topology.Cadlag.Skorokhod.SmallDeviation.RangeCover
 public import Mathlib.MeasureTheory.Measure.MeasureSpaceDef
 import Topology.Order.UnitInterval.Rational
@@ -19,14 +22,42 @@ import Topology.Order.UnitInterval.Rational
 The range event is expressed by rational coordinates on the original sample
 space. Almost-sure càdlàg paths identify it with complete-segment corridor
 events, so finite deterministic covers can be used without a path-space law.
+
+## Public declarations
+
+- `ProbabilityTheory.centeredCorridorProbability`,
+  `ProbabilityTheory.rationalRangeProbability`,
+  `ProbabilityTheory.expandedCenteredCorridorProbability`, and
+  `ProbabilityTheory.rangeCoverCorridorProbability`: probabilities on the
+  original sample space of the centered corridor, rational range, enlarged
+  centered corridor, and an individual corridor in a finite range cover.
+- `ProbabilityTheory.rationalRangeProbability_eq_of_rationalProcess_identDistrib`:
+  the law of the rational-coordinate process determines the rational range
+  probability.
+- `ProbabilityTheory.ae_rationalInteriorOscillationLe_implies_rationalCoordinateOscillationLe`:
+  an almost-sure càdlàg path with no jump at time one extends a closed
+  oscillation bound from rational times strictly before one to all rational
+  times in the unit interval.
+- `ProbabilityTheory.fullSegmentCorridorEvent_subset_rationalHorizonTubeEvent_exact`:
+  a corridor of width $u-l$ is contained in the rational range event of
+  width $u-l$.
+- `ProbabilityTheory.mem_rationalHorizonTubeEvent_imp_fullSegmentCorridorEvent`:
+  on a càdlàg sample path, rational range at width $a$ implies the full
+  centered corridor $[-a,a]$.
+- `ProbabilityTheory.rationalHorizonTubeEvent_subset_iUnion_scaledFullSegmentCorridors`:
+  for $a>0$ and $k>0$, the range event of width $2a$ is contained in the
+  union of $2k+1$ complete corridors with scale $a$.
+- `ProbabilityTheory.measure_rationalHorizonTube_le_sum_scaledFullSegmentCorridors`:
+  under almost-sure càdlàg paths, the range-event probability is at most the
+  sum of those $2k+1$ corridor probabilities.
 -/
 
 @[expose] public section
 
 namespace ProbabilityTheory
 
-open MeasureTheory
-open scoped NNReal ENNReal
+open Filter MeasureTheory
+open scoped NNReal ENNReal Topology
 
 /-- Probability of the centered full-segment corridor with half-width `a`.
 This path-event probability does not require any stable-process structure. -/
@@ -39,6 +70,118 @@ def centeredCorridorProbability {Ω : Type*} [MeasurableSpace Ω]
 def rationalRangeProbability {Ω : Type*} [MeasurableSpace Ω]
     (P : Measure Ω) (X : ℝ≥0 → Ω → ℝ) (a : ℝ) : ℝ≥0∞ :=
   P (rationalHorizonTubeEvent X 1 (2 * a))
+
+/-- The rational-coordinate process law determines the probability of its
+rational range-tube event. This applies to any real-valued processes, without
+increment, stationarity, or path-regularity assumptions. -/
+theorem rationalRangeProbability_eq_of_rationalProcess_identDistrib
+    {Ω Ω' : Type*} [MeasurableSpace Ω] [MeasurableSpace Ω']
+    {X : ℝ≥0 → Ω → ℝ} {Y : ℝ≥0 → Ω' → ℝ}
+    {P : Measure Ω} {Q : Measure Ω'}
+    (h : IdentDistrib
+      (fun ω (q : RationalCoordinate.UnitInterval) =>
+        X (RationalCoordinate.toNNReal q) ω)
+      (fun ω (q : RationalCoordinate.UnitInterval) =>
+        Y (RationalCoordinate.toNNReal q) ω) P Q)
+    (a : ℝ) :
+    rationalRangeProbability P X a = rationalRangeProbability Q Y a := by
+  have hprob := h.measure_mem_eq
+    (Skorokhod.measurableSet_rationalCoordinateOscillationTube (2 * a))
+  have hprob' : P (rationalHorizonTubeEvent X 1 (2 * a)) =
+      Q (rationalHorizonTubeEvent Y 1 (2 * a)) := by
+    change P ((fun ω q => X (1 * RationalCoordinate.toNNReal q) ω) ⁻¹'
+        Skorokhod.rationalCoordinateOscillationTube (2 * a)) =
+      Q ((fun ω q => Y (1 * RationalCoordinate.toNNReal q) ω) ⁻¹'
+        Skorokhod.rationalCoordinateOscillationTube (2 * a))
+    simpa only [one_mul] using hprob
+  simpa [rationalRangeProbability] using hprob'
+
+/-- On almost-surely càdlàg paths with no jump at time one, a closed
+oscillation bound on rational times strictly before one extends to all
+rational coordinates in the unit interval. -/
+theorem ae_rationalInteriorOscillationLe_implies_rationalCoordinateOscillationLe
+    {Ω : Type*} [MeasurableSpace Ω] {X : ℝ≥0 → Ω → ℝ}
+    {P : Measure Ω} [IsProbabilityMeasure P]
+    (hcadlag : ∀ᵐ ω ∂P, IsCadlag (fun s => X s ω))
+    (hnoJump : ∀ᵐ ω ∂P, (fun s => X s ω).leftLim 1 = X 1 ω)
+    (width : ℝ) :
+    ∀ᵐ ω ∂P,
+      (∀ s t : RationalCoordinate.UnitInterval, s < ⊤ → t < ⊤ →
+        |X (RationalCoordinate.toNNReal s) ω - X (RationalCoordinate.toNNReal t) ω| ≤ width) →
+      ∀ s t : RationalCoordinate.UnitInterval,
+        |X (RationalCoordinate.toNNReal s) ω - X (RationalCoordinate.toNNReal t) ω| ≤ width := by
+  filter_upwards [hcadlag, hnoJump] with ω hω hωjump
+  intro hinterior s t
+  have htoMono : Monotone RationalCoordinate.toUnitInterval := by
+    intro q r hqr
+    change ((q : ℚ) : ℝ) ≤ ((r : ℚ) : ℝ)
+    exact_mod_cast hqr
+  have hbotTop : (⊥ : unitInterval) < ⊤ := by
+    norm_num [unitInterval]
+  obtain ⟨u, _, hu, hulim⟩ :=
+    RationalCoordinate.denseRange_toUnitInterval.exists_seq_strictMono_tendsto_of_lt
+      htoMono hbotTop
+  have htimeLimit : Tendsto (fun n => RationalCoordinate.toNNReal (u n)) atTop
+      (𝓝 (1 : ℝ≥0)) := by
+    rw [← NNReal.tendsto_coe]
+    simpa [RationalCoordinate.toNNReal_coe, Function.comp_def] using
+      (continuous_subtype_val.tendsto ⊤).comp hulim
+  have htimeWithin : Tendsto (fun n => RationalCoordinate.toNNReal (u n)) atTop
+      (𝓝[<] (1 : ℝ≥0)) := by
+    rw [tendsto_nhdsWithin_iff]
+    refine ⟨htimeLimit, Filter.Eventually.of_forall fun n => ?_⟩
+    have hbelow := (hu n).2
+    have hbelowReal : ((u n : ℚ) : ℝ) < 1 := by
+      change RationalCoordinate.toUnitInterval (u n) < ⊤ at hbelow
+      exact hbelow
+    have hbelowTime : (RationalCoordinate.toNNReal (u n) : ℝ) < 1 := by
+      change ((u n : ℚ) : ℝ) < 1
+      exact hbelowReal
+    exact NNReal.coe_lt_coe.mp hbelowTime
+  have hpathLimit : Tendsto (fun n => X (RationalCoordinate.toNNReal (u n)) ω) atTop
+      (𝓝 (X 1 ω)) := by
+    rw [← hωjump]
+    exact (tendsto_leftLim_of_tendsto (hω.tendsto_nhdsLT 1)).comp htimeWithin
+  have htopBound (q : RationalCoordinate.UnitInterval) (hq : q < ⊤) :
+      |X (RationalCoordinate.toNNReal q) ω - X 1 ω| ≤ width := by
+    have hdiff : Tendsto (fun n => X (RationalCoordinate.toNNReal q) ω -
+        X (RationalCoordinate.toNNReal (u n)) ω) atTop
+        (𝓝 (X (RationalCoordinate.toNNReal q) ω - X 1 ω)) :=
+      tendsto_const_nhds.sub hpathLimit
+    have habs : Tendsto (fun n => |X (RationalCoordinate.toNNReal q) ω -
+        X (RationalCoordinate.toNNReal (u n)) ω|) atTop
+        (𝓝 |X (RationalCoordinate.toNNReal q) ω - X 1 ω|) :=
+      (continuous_abs.tendsto _).comp hdiff
+    have hbounded : ∀ᶠ n in atTop,
+        |X (RationalCoordinate.toNNReal q) ω - X (RationalCoordinate.toNNReal (u n)) ω| ∈
+          Set.Iic width :=
+      Filter.Eventually.of_forall fun n => hinterior q (u n) hq (by
+        change (u n : ℚ) < 1
+        have hbelow := (hu n).2
+        have hbelowReal : ((u n : ℚ) : ℝ) < 1 := by
+          change RationalCoordinate.toUnitInterval (u n) < ⊤ at hbelow
+          exact hbelow
+        exact_mod_cast hbelowReal)
+    exact isClosed_Iic.mem_of_tendsto habs hbounded
+  by_cases hs : s = ⊤
+  · subst s
+    by_cases ht : t = ⊤
+    · have hwidth0 : 0 ≤ width := by
+        have hbotTopQ : (⊥ : RationalCoordinate.UnitInterval) < ⊤ := by
+          change (0 : ℚ) < 1
+          norm_num
+        simpa using hinterior ⊥ ⊥ hbotTopQ hbotTopQ
+      simp [ht, hwidth0]
+    · have ht' : t < ⊤ := lt_of_le_of_ne le_top ht
+      have htopTime : RationalCoordinate.toNNReal ⊤ = 1 :=
+        RationalCoordinate.toNNReal_top
+      rw [htopTime]
+      simpa [abs_sub_comm] using htopBound t ht'
+  · by_cases ht : t = ⊤
+    · subst t
+      rw [RationalCoordinate.toNNReal_top]
+      exact htopBound s (lt_of_le_of_ne le_top hs)
+    · exact hinterior s t (lt_of_le_of_ne le_top hs) (lt_of_le_of_ne le_top ht)
 
 /-- Probability of the centered full-segment corridor enlarged by the factor
 `1 + ε`. -/
@@ -69,10 +212,10 @@ theorem fullSegmentCorridorEvent_subset_rationalHorizonTubeEvent_exact
     intro q
     have hq := hpath (RationalCoordinate.toUnitInterval q)
     change lower + margin ≤
-        X (0 + 1 * UnitInterval.toNNReal (RationalCoordinate.toUnitInterval q)) ω - X 0 ω ∧
-      X (0 + 1 * UnitInterval.toNNReal (RationalCoordinate.toUnitInterval q)) ω - X 0 ω ≤
+        X (0 + 1 * unitInterval.toNNReal (RationalCoordinate.toUnitInterval q)) ω - X 0 ω ∧
+      X (0 + 1 * unitInterval.toNNReal (RationalCoordinate.toUnitInterval q)) ω - X 0 ω ≤
         upper - margin at hq
-    have htime : UnitInterval.toNNReal (RationalCoordinate.toUnitInterval q) =
+    have htime : unitInterval.toNNReal (RationalCoordinate.toUnitInterval q) =
         RationalCoordinate.toNNReal q := rfl
     rw [htime] at hq
     simpa only [zero_add, one_mul] using hq
@@ -126,10 +269,10 @@ theorem mem_rationalHorizonTubeEvent_imp_fullSegmentCorridorEvent
       simp [RationalCoordinate.toNNReal_bot]
     rw [hzero, sub_zero, abs_le] at hq
     change -width + margin ≤
-        X (0 + 1 * UnitInterval.toNNReal (RationalCoordinate.toUnitInterval q)) ω - X 0 ω ∧
-      X (0 + 1 * UnitInterval.toNNReal (RationalCoordinate.toUnitInterval q)) ω - X 0 ω ≤
+        X (0 + 1 * unitInterval.toNNReal (RationalCoordinate.toUnitInterval q)) ω - X 0 ω ∧
+      X (0 + 1 * unitInterval.toNNReal (RationalCoordinate.toUnitInterval q)) ω - X 0 ω ≤
         width - margin
-    have htime : UnitInterval.toNNReal (RationalCoordinate.toUnitInterval q) =
+    have htime : unitInterval.toNNReal (RationalCoordinate.toUnitInterval q) =
         RationalCoordinate.toNNReal q := rfl
     rw [zero_add, one_mul, htime]
     exact ⟨by linarith [hq.1], hq.2⟩
@@ -178,7 +321,7 @@ theorem rationalHorizonTubeEvent_subset_iUnion_scaledFullSegmentCorridors
       funext q
       change a⁻¹ * segmentIncrement X 0 1 ω (RationalCoordinate.toUnitInterval q) = _
       simp only [segmentIncrement, zero_add, one_mul]
-      have htime : UnitInterval.toNNReal (RationalCoordinate.toUnitInterval q) =
+      have htime : unitInterval.toNNReal (RationalCoordinate.toUnitInterval q) =
           RationalCoordinate.toNNReal q := rfl
       rw [htime]
     rw [heq]
@@ -193,7 +336,7 @@ theorem rationalHorizonTubeEvent_subset_iUnion_scaledFullSegmentCorridors
       simpa [Skorokhod.rationalOscillationInOpenTube,
         Skorokhod.rationalCoordinateOscillationTube] using hrat
     refine ⟨?_, ?_⟩
-    · have hbot : UnitInterval.toNNReal (⊥ : unitInterval) = 0 := by
+    · have hbot : unitInterval.toNNReal (⊥ : unitInterval) = 0 := by
         apply NNReal.coe_injective
         rfl
       simp [normalized, path, Skorokhod.scalePath, segmentIncrement, hbot]

@@ -4,19 +4,48 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.Distributions.Stable.Operations.Sign
-import Probability.Distributions.Stable.LevyMeasure.Tail.EndpointLaw
-import Probability.Process.Levy.Jump.PoissonConfiguration.Entrance.Basic
+module
+
+public import Probability.Distributions.Stable.Basic
+public import Mathlib.Probability.CDF
+public import Probability.Distributions.InfinitelyDivisible.LevyKhintchine.Defs
+public import Mathlib.MeasureTheory.Constructions.UnitInterval
+public import Mathlib.MeasureTheory.Measure.CharacteristicFunction.Basic
+public import MeasureTheory.Measure.Levy.Cutoff
+public import Probability.RandomMeasure.Poisson.PointFamily.Basic
+import Probability.Distributions.Stable.Support.Sign
+import Probability.Distributions.Stable.LevyMeasure.Cutoff.Drift
+import Probability.Distributions.Stable.LevyMeasure.Cutoff.Variation
 import Probability.Distributions.Stable.LevyMeasure.Tail.Homogeneous
 import Probability.Distributions.Stable.LevyMeasure.Tail.Windows
 import Probability.Distributions.Stable.LevyMeasure.Tail.EntranceWindows
+import Probability.RandomMeasure.Poisson.CharacteristicFunction.LevyCutoff
+import Probability.RandomMeasure.Poisson.Intensity.LevyCutoff
 
 /-!
 # Signs of jumps in a two-sided stable law
 
 The sign condition on the one-step distribution forces the uncompensated
 Lévy measure to charge both open half-lines when the index is below one.
+
+## Public declarations
+
+* `IsStrictlyAlphaStable.twoSidedLevyMass_of_cdfAtZero` states that
+  `0 < cdf μ 0 < 1` implies positive Lévy mass on both open half-lines when
+  `0 < α < 1`.
+* `IsStrictlyAlphaStable.levyMeasure_Ioi_one_pos_of_Ioi_zero_pos` and
+  `.levyMeasure_Iio_neg_one_pos_of_Iio_zero_pos` transfer positive half-line
+  mass to positive unit-tail mass by homogeneity.
+* `IsStrictlyAlphaStable.twoSidedLevyUnitTails_of_cdfAtZero` and
+  `.twoSidedLevyWindows_of_cdfAtZero` give positive tails and bounded windows
+  on both sides from the CDF condition.
+* `IsStrictlyAlphaStable.exists_positiveWindow_cutoff_intensities_of_cdfAtZero`
+  and `.exists_negativeWindow_cutoff_intensities_of_cdfAtZero` choose cutoffs
+  with small-jump variation below `ρ` and positive finite intensity in the
+  requested window on the indicated side.
 -/
+
+@[expose] public section
 
 namespace ProbabilityTheory
 
@@ -24,7 +53,7 @@ open MeasureTheory
 
 attribute [local instance] Classical.propDecidable
 
-theorem IsStrictlyAlphaStable.twoSidedLevyMass_of_cdfAtZero_of_model
+private theorem IsStrictlyAlphaStable.twoSidedLevyMass_of_cdfAtZero_of_model
     {α : ℝ} {μ : Measure ℝ} (h : IsStrictlyAlphaStable α μ)
     (T : LevyKhintchineTriple) [SigmaFinite T.levyMeasure]
     (hT : ∀ ξ : ℝ, charFun μ ξ = Complex.exp (T.exponent ξ))
@@ -43,21 +72,28 @@ theorem IsStrictlyAlphaStable.twoSidedLevyMass_of_cdfAtZero_of_model
         (T.levyMeasure.restrict (largeJumpBand n))) Pb) :
     0 < T.levyMeasure (Set.Iio 0) ∧
       0 < T.levyMeasure (Set.Ioi 0) := by
+  let : IsProbabilityMeasure μ := h.isProbabilityMeasure
   have hμ := h.twoSidedMass_of_cdfAtZero hcdf
-  have hsfirst := h.integrable_unitTime_smallJumpMark T hT hα n
-  have hlaw := h.law_unitTime_split_poissonRandomMeasures T hT hα n hds hdb
+  have hsfirst := T.isLevyMeasure.integrable_unitTime_smallJumpMark n
+    (h.levyMeasure_smallJumpMoment_lt_top T hT hα)
+  have hsmall : Integrable smallJumpDisplacement T.levyMeasure :=
+    integrable_smallJumpDisplacement (h.levyMeasure_integrableOn_small T hT hα)
+  have hlaw := ProbabilityTheory.law_unitTime_split_poissonRandomMeasures
+    T.isLevyMeasure hsmall n hds hdb hsfirst
+    (T.isLevyMeasure.measure_largeJumpBand_lt_top n)
+    (h.charFun_eq_exp_integral_uncompensated T hT hα)
   constructor
   · by_contra hn
     have hνneg : T.levyMeasure (Set.Iio 0) = 0 :=
       nonpos_iff_eq_zero.mp (le_of_not_gt hn)
     have hzero := measure_Iio_zero_of_split_poisson_law_no_negative_intensity
-      n hds hdb hsfirst (T.levyMeasure_largeJumpBand_lt_top n) hlaw hνneg
+      n hds hdb hsfirst (T.isLevyMeasure.measure_largeJumpBand_lt_top n) hlaw hνneg
     exact hμ.1.ne' hzero
   · by_contra hn
     have hνpos : T.levyMeasure (Set.Ioi 0) = 0 :=
       nonpos_iff_eq_zero.mp (le_of_not_gt hn)
     have hzero := measure_Ioi_zero_of_split_poisson_law_no_positive_intensity
-      n hds hdb hsfirst (T.levyMeasure_largeJumpBand_lt_top n) hlaw hνpos
+      n hds hdb hsfirst (T.isLevyMeasure.measure_largeJumpBand_lt_top n) hlaw hνpos
     exact hμ.2.ne' hzero
 
 /-- The CDF condition implies genuine jumps of both signs; the canonical

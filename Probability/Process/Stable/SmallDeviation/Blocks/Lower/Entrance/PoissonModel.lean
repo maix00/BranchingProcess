@@ -4,20 +4,33 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Order.Interval.RationalCoordinate.UnitInterval
-import Topology.Order.UnitInterval.Rational
-import Probability.Process.Stable.JumpModel.IndependentIncrements
-import Probability.Process.Stable.SmallDeviation.Blocks.Lower.Entrance.FullCorridor
-import Probability.Process.Path.Skorokhod.Corridor.Segment
-import Probability.Process.Path.Skorokhod.RationalTime
+module
+
+public import Order.Interval.RationalCoordinate.UnitInterval
+public import Topology.Order.UnitInterval.Rational
+public import Probability.Process.Stable.JumpModel.IndependentIncrements
+public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.Entrance.FullCorridor
+public import Probability.Process.Path.Skorokhod.Corridor.Segment
+public import Probability.Process.Path.Skorokhod.RationalTime
 import Probability.Distributions.Stable.LevyMeasure.Tail.EntranceWindows
 import Probability.Distributions.Stable.LevyMeasure.SignOfJumps
-import Probability.Process.Levy.Jump.Intensity.Entrance.Canonical
+import Probability.Distributions.Stable.Levy.Khintchine
+import Probability.Distributions.Stable.LevyMeasure.Cutoff.Variation
+import Probability.RandomMeasure.Poisson.Intensity.LevyCutoff
+public import Probability.Process.Levy.Jump.Intensity.Entrance.Canonical
 
 /-!
 # Stable entrance from the finite-variation jump model
 
-Public theorem:
+## Public declarations
+
+For \(0<\alpha<1\), \(0<F_\mu(0)<1\), \(b,c\in(-1,1)\), and
+\(\varepsilon>0\), the unit-time entrance event satisfies
+\[
+  \mathbb P\!\left(\exists\eta>0,\ \forall t\in[0,1],\quad
+    c-1+\eta\le X_t-X_0\le c+1-\eta,\quad
+    X_1-X_0\in(c-b-\varepsilon,c-b+\varepsilon)\right)>0.
+\]
 
 - `ProbabilityTheory.IsStableLevyProcess.measure_fullEntrance_pos_indexLTOne`:
   if `0 < α < 1`, `0 < F_μ(0) < 1`, `-1 < b,c < 1`, and `ε > 0`, then the
@@ -174,7 +187,7 @@ private lemma IsStableLevyProcess.measure_fullEntrance_pos_of_cdfAtZero_of_poiss
       exists_poissonEntrancePath_model_of_finiteVariation T.levyMeasure
         (h.increments.strictlyStable.levyMeasure_smallJumpMoment_lt_top
           T hT hα).ne
-        (fun n => T.levyMeasure_largeJumpBand_lt_top n)
+        (fun n => T.isLevyMeasure.measure_largeJumpBand_lt_top n)
         hJ hJpos lower upper y ρ ε margin δ hρ hδ htwoρ
         hl0 hu0 hly huy hJwindow hJaway
     let : MeasurableSpace Ωs := mΩs
@@ -252,7 +265,6 @@ private lemma IsStableLevyProcess.measure_fullEntrance_pos_of_cdfAtZero_of_poiss
         centerRationalPath (fun q => modelR q ω) ∈
             Skorokhod.rationalCoordinateCorridorWithMargin (c - 1) (c + 1) ∧
           centerRationalPath (fun q => modelR q ω) ⊤ ∈ Set.Ioo (y - ε) (y + ε)
-      rw [Skorokhod.rationalCoordinateCorridorWithMargin_eq_real]
       constructor
       · refine ⟨margin - 2 * ρ, hγ, ?_⟩
         intro q

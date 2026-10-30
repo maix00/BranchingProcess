@@ -6,13 +6,22 @@ Authors: WANG Yiyang
 
 module
 
+public import Probability.Process.Path.Transform.Continuous
+
 public import Probability.Process.Path.Representation.Continuous
 public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
 
 /-!
 # Continuous paths on a finite time horizon
 
-The public definitions and theorems in this file are:
+## Public declarations
+
+For $0\le s\le t$, restriction composes as
+$((f|_{[0,t]})|_{[0,s]})=f|_{[0,s]}$, and extending a finite path constantly
+after its endpoint then restricting recovers the original path. The law of
+the restricted path is $P^s=P\circ(\operatorname{restrictPathTo}_s)^{-1}$.
+The declarations below also give continuous versions of these path maps and
+continuation by the increments of a fixed reference path.
 
 - `ProbabilityTheory.restrictPathTo`: the restriction
   $f|_{[0,s]}\in C([0,s],\mathbb R)$ of a continuous path on

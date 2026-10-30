@@ -35,6 +35,8 @@ invariant. Maps of complete step fields live in
 
 namespace Combinatorics.Branching
 
+open MeasureTheory
+
 /-- Map the mark of every present child, preserving absent slots. -/
 def Step.map {ι X Y : Type*} (f : X → Y) (ξ : Step ι X) : Step ι Y :=
   fun i => (ξ i).map f

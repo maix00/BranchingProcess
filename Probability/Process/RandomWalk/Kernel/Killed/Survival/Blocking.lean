@@ -13,6 +13,8 @@ public import Probability.Kernel.Survival.Blocking
 /-!
 # Blocking horizontal-tube probabilities
 
+## Public declarations
+
 For $0\le a\le1$, width $D\ge0$, and horizon $n$, the public theorems are:
 
 - `remainingMass_killedIncrementKernel_scaled_Icc_eq_horizontalTubeProbability`:

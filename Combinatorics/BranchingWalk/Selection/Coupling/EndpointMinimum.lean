@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Combinatorics.BranchingWalk.Selection.Coupling.PopulationCloud
-import Combinatorics.BranchingWalk.Cloud.Order.SliceDominatingMap
+module
+
+public import Combinatorics.BranchingWalk.Selection.Coupling.PopulationCloud
+public import Combinatorics.BranchingWalk.Cloud.Order.SliceDominatingMap
 
 /-!
 # Endpoint minima under spatial domination
@@ -17,17 +19,26 @@ The declarations below are in namespace
 
 - `populationCloud_inf'_le_of_sliceDominatingMap`:
   if `hmap` injectively maps every source particle to a target particle whose
-  observed value is no larger, and `source.Nonempty`, then the target minimum
-  is at most the source minimum.
+  observed value is no larger, and `source.Nonempty`, then
+  \[
+  \min_{q\in target}\phi(\mathrm{targetWalk.position}(d,q_1,q_2))
+  \le \min_{p\in source}\phi(\mathrm{sourceWalk.position}(d,p_1,p_2)).
+  \]
 - `populationCloud_source_ge_of_target_ge_of_sliceDominatingMap`:
-  under the same assumptions, `threshold ≤ target minimum` implies
-  `threshold ≤ source minimum`.
+  under the same assumptions, for each `threshold : Value`,
+  \[
+  threshold\le\min_{q\in target}\phi(\mathrm{targetWalk.position}(d,q_1,q_2))
+  \;\Longrightarrow\;
+  threshold\le\min_{p\in source}\phi(\mathrm{sourceWalk.position}(d,p_1,p_2)).
+  \]
 
 A particle injection that sends every source particle to a particle no higher
 in the target gives the corresponding order between the two finite endpoint
 minima.  This is the pathwise order step used when comparing selected
 populations through a coupling.
 -/
+
+@[expose] public section
 
 namespace Combinatorics.Branching.Selection.Coupling
 
@@ -107,3 +118,5 @@ theorem populationCloud_source_ge_of_target_ge_of_sliceDominatingMap
       source target hmap hsource)
 
 end Combinatorics.Branching.Selection.Coupling
+
+end

@@ -16,6 +16,13 @@ public import Topology.Algebra.BigOperators.PartialSum
 
 The finite partial-sum corridor is a deterministic block-path predicate.
 This file supplies its product-measurable event interface.
+
+## Public declarations
+
+* `measurableSet_inOpenPartialSumCorridor` proves measurability of the event
+  that every finite partial sum lies in an open interval.
+* `measurableSet_inOpenPartialSumCorridorEndsIn` adds an open terminal window
+  for the final partial sum and proves measurability of the resulting event.
 -/
 
 @[expose] public section

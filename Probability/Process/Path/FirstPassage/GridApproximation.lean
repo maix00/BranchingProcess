@@ -7,6 +7,8 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.Path.FirstPassage.Basic
+public import Probability.Process.Path.FirstPassage.Prefix
+public import Probability.Process.Path.FirstPassage.Measurability
 public import Probability.Process.Path.Reflection.Basic
 public import Probability.Process.TimeGrid.UnitInterval
 public import Probability.Process.TimeGrid.Ceiling
@@ -14,7 +16,7 @@ public import Probability.Process.TimeGrid.Ceiling
 /-!
 # Finite-grid approximation of continuous first passage
 
-The public definition and theorems in this file are:
+## Public declarations
 
 - `ProbabilityTheory.firstPassageGridCeiling`: for a continuous path $f$ and
   a finite ordered grid $(r_i)_{i=0}^N$, the least index with
@@ -158,7 +160,7 @@ theorem tendsto_unitIntervalGridCeiling_time_capped (a : ℝ) (f : C(ℝ≥0, �
   · obtain ⟨u, _, hu⟩ := (firstPassageBelow_le_iff f a 1).mp h
     let τ : ℝ≥0 := sInf {t : ℝ≥0 | f t ≤ a}
     have hτ : firstPassageBelow f a = τ := by
-      simp only [firstPassageBelow, firstPassageLE,
+      simp only [firstPassageBelow, firstPassageLE_eq_sInf,
         ite_eq_left (show ∃ t : ℝ≥0, f t ≤ a from ⟨u, hu⟩)]
       rfl
     have hτ1 : τ ≤ 1 := by

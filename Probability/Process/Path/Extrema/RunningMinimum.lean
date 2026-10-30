@@ -6,11 +6,15 @@ Authors: WANG Yiyang
 
 module
 
+public import Probability.Process.Path.Transform.Continuous
+
 public import Probability.Process.Path.Representation.Continuous
-public import Probability.Process.Path.FirstPassage.Basic
+public import Probability.Process.Path.FirstPassage.Measurability
 
 /-!
 # Running minimum of a continuous path
+
+## Public declarations
 
 The public definitions and theorems in this file are:
 
@@ -25,8 +29,6 @@ The public definitions and theorems in this file are:
   $t$, its running minimum at $t$ equals $a$.
 - `ProbabilityTheory.measurable_runningMinimum`:
   $f\mapsto m_f(t)$ is measurable on continuous path space.
-- `ProbabilityTheory.measurable_firstPassageBelow_pair`:
-  first passage is jointly measurable in the path and the level.
 - `ProbabilityTheory.runningMinimum_freezeAfter_eq`:
   for $t\le r$, freezing the path after $r$ preserves $m_f(t)$.
 - `ProbabilityTheory.runningMinimum_shiftToZero_eq_of_record`:
@@ -35,7 +37,7 @@ The public definitions and theorems in this file are:
 - `ProbabilityTheory.measurableSet_runningMinimum_lt_zero`:
   $\{f:m_f(t)<0\}$ is measurable on continuous path space.
 - `ProbabilityTheory.runningMinimum_eq_of_between`: if
-  $m_f(t+1)=m_f(t)$, then $m_f(t+u)=m_f(t)$ for $0\le u\le1$.
+  $m_f(t+d)=m_f(t)$, then $m_f(t+u)=m_f(t)$ for $0\le u\le d$.
 - `ProbabilityTheory.aboveRunningMinimum`: $D_f(t)=f(t)-m_f(t)$.
 - `ProbabilityTheory.aboveRunningMinimum_eq_zero_iff`:
   $D_f(t)=0$ exactly when $f(t)=m_f(t)$.
@@ -119,7 +121,7 @@ theorem runningMinimum_eq_of_firstPassageBelow_eq
     exact WithTop.coe_ne_top htop
   have hinf : (sInf {u : ℝ≥0 | f u ≤ a}) = t := by
     exact WithTop.coe_eq_coe.mp (by
-      simpa [firstPassageBelow, firstPassageLE, hhit] using hpass)
+      simpa [firstPassageBelow, firstPassageLE_eq_sInf, hhit] using hpass)
   have h0 : a < f 0 := by
     apply firstPassageBelow_no_earlier f a hhit
     rw [hinf]
@@ -151,27 +153,6 @@ theorem measurable_runningMinimum (t : ℝ≥0) :
   rw [show (fun f : C(ℝ≥0, ℝ) => runningMinimum f t) ⁻¹' Set.Iic a =
     {f | runningMinimum f t ≤ a} from rfl, hset]
   exact (measurable_firstPassageBelow a) measurableSet_Iic
-
-/-- First passage below a level is jointly measurable in the path and
-the level. -/
-theorem measurable_firstPassageBelow_pair :
-    Measurable (fun p : C(ℝ≥0, ℝ) × ℝ =>
-      firstPassageBelow p.1 p.2) := by
-  apply measurable_of_Iic
-  intro t
-  by_cases ht : t = ⊤
-  · subst t
-    simp
-  · obtain ⟨u, rfl⟩ := WithTop.ne_top_iff_exists.mp ht
-    have hset :
-        (fun p : C(ℝ≥0, ℝ) × ℝ => firstPassageBelow p.1 p.2) ⁻¹'
-          Set.Iic (u : WithTop ℝ≥0) =
-        {p | runningMinimum p.1 u ≤ p.2} := by
-      ext p
-      exact (runningMinimum_le_iff_firstPassageBelow_le p.1 u p.2).symm
-    rw [hset]
-    exact measurableSet_le
-      ((measurable_runningMinimum u).comp measurable_fst) measurable_snd
 
 /-- Freezing a path after `r` preserves its running minimum at times
 up to `r`. -/
@@ -221,16 +202,17 @@ theorem measurableSet_runningMinimum_lt_zero (t : ℝ≥0) :
     MeasurableSet {f : C(ℝ≥0, ℝ) | runningMinimum f t < 0} := by
   exact (measurable_runningMinimum t) measurableSet_Iio
 
-/-- A running minimum constant over a unit interval is constant at each
+/-- A running minimum constant over an interval is constant at every
 intermediate time. -/
-theorem runningMinimum_eq_of_between (f : C(ℝ≥0, ℝ)) {t : ℝ≥0}
-    (hflat : runningMinimum f (t + 1) = runningMinimum f t)
-    {u : ℝ≥0} (hu : u ≤ 1) :
+theorem runningMinimum_eq_of_between (f : C(ℝ≥0, ℝ))
+    {t duration : ℝ≥0}
+    (hflat : runningMinimum f (t + duration) = runningMinimum f t)
+    {u : ℝ≥0} (hu : u ≤ duration) :
     runningMinimum f (t + u) = runningMinimum f t := by
   apply le_antisymm
-  · exact runningMinimum_antitone f (le_add_of_nonneg_right u.property)
+  · exact runningMinimum_antitone f (le_add_of_nonneg_right bot_le)
   · rw [← hflat]
-    exact runningMinimum_antitone f (add_le_add_right hu t)
+    exact runningMinimum_antitone f (by simpa [add_comm] using add_le_add_left hu t)
 
 /-- The height of a continuous path above its running minimum. -/
 noncomputable def aboveRunningMinimum (f : C(ℝ≥0, ℝ)) (t : ℝ≥0) : ℝ :=

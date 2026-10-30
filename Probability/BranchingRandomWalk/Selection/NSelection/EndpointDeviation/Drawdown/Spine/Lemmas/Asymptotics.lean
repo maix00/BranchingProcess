@@ -4,19 +4,20 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
+module
+
 import Probability.BranchingRandomWalk.Population.Processes.Causal.Capacity.Spine
 import Probability.Process.RandomWalk.Path.Corridor.Horizontal.Core
 import Probability.Process.RandomWalk.Path.Restart.Basic
 import Probability.Process.RandomWalk.SmallDeviation.Drawdown.Event
-import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Basic
-import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Rate.LogScales
-import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Drawdown.Spine.Cutoff
-import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Drawdown.Spine.SecondStageTube
-import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Drawdown.Spine.Window
+import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Theorems
+import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.Sequence.LogarithmicScales
+import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.FirstStage.Cutoff
+import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Population.RestartedWindow
 import Probability.BranchingRandomWalk.Spine.Tube.Corridor.PairBound
+import Analysis.Asymptotics.Sequence.LogarithmicScale
 
-import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Drawdown.Spine.Lemmas.RandomWalkBounds
-
+import all Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Drawdown.Spine.Lemmas.RandomWalkBounds
 /-!
 # Scale limits and Aïdékon--Hu asymptotics
 
@@ -31,17 +32,17 @@ restarted tube data to the estimates needed by the next stage of the proof.
 Reusable path-event and measure inequalities remain in their semantic
 modules outside this directory.
 
-## Proof-chain statements
+## Internal proof declarations
 
-- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.eventually_rightTailPositiveASecondStageAHScale` proves that $\Delta=cD^{1/3}$ eventually satisfies the Aïdékon--Hu width threshold and $\Delta^{2+p}\leq D$ for $p<1$.
-- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.tendsto_rightTailPositiveASpan_atTop_of_cubicRatio`, `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.tendsto_rightTailPositiveASpan_cubicRatio_of_stageRatios`, `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.tendsto_rightTailPositiveASpan_atTop_of_stageCubicRatios`, `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.tendsto_rightTailPositiveASpan_atTop_of_logarithmicScales`, `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.tendsto_rightTailPositiveASpan_root_div_log`, `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.tendsto_rightTailPositiveA_log_add_one_div_log_of_cubic_scale`, and `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.tendsto_rightTailPositiveASpan_sublinearPower_div_log` establish divergence and logarithmic negligibility of the second-stage span.
-- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.tendsto_rightTailPositiveAAHExponent_div_log_of_logarithmicScales` gives the logarithmic rate of the Aïdékon--Hu exponent.
+- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.eventually_positiveASecondStageAHScale` proves that $\Delta=cD^{1/3}$ eventually satisfies the Aïdékon--Hu width threshold and $\Delta^{2+p}\leq D$ for $p<1$.
+- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.tendsto_positiveASpan_atTop_of_cubicRatio`, `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.tendsto_positiveASpan_cubicRatio_of_stageRatios`, `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.tendsto_positiveASpan_atTop_of_stageCubicRatios`, `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.tendsto_positiveASpan_atTop_of_logarithmicScales`, `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.tendsto_positiveASpan_root_div_log`, and `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.tendsto_positiveASpan_sublinearPower_div_log` establish divergence and the remaining logarithmic-scale asymptotics of the second-stage span.
+- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.tendsto_positiveAAHExponent_div_log_of_logarithmicScales` gives the logarithmic rate of the Aïdékon--Hu exponent.
 -/
 
 open Filter MeasureTheory
 open scoped ENNReal BigOperators Topology
 
-namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail
+namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation
 
 open Combinatorics.Branching
 open Combinatorics.UlamHarris
@@ -52,7 +53,7 @@ open ProbabilityTheory.RandomWalk
 /-- If the planned second-stage span diverges, its spatial width eventually
 passes the uniform Aïdékon--Hu scale threshold. For every `p < 1`, the full
 span is also eventually longer than `width^(2+p)`. -/
-lemma eventually_rightTailPositiveASecondStageAHScale
+lemma eventually_positiveASecondStageAHScale
     (D : ℕ → ℕ) (c p delta0 : ℝ)
     (hc : 0 < c) (hp1 : p < 1)
     (hD : Tendsto (fun n => (D n : ℝ)) atTop atTop) :
@@ -94,7 +95,7 @@ lemma eventually_rightTailPositiveASecondStageAHScale
     _ = (D n : ℝ) := hproduct
 
 /-- A positive cubic-scale limit forces the planned span itself to diverge. -/
-lemma tendsto_rightTailPositiveASpan_atTop_of_cubicRatio
+lemma tendsto_positiveASpan_atTop_of_cubicRatio
     {D : ℕ → ℕ} {L : ℕ → ℝ} {t : ℝ}
     (hL : Tendsto L atTop atTop)
     (hscale : Tendsto (fun n => (D n : ℝ) / L n ^ 3) atTop (𝓝 t))
@@ -112,7 +113,7 @@ lemma tendsto_rightTailPositiveASpan_atTop_of_cubicRatio
 
 /-- The cubic ratio of a two-stage span is the difference of the stage ratios,
 provided the natural-valued cutoffs are eventually ordered. -/
-lemma tendsto_rightTailPositiveASpan_cubicRatio_of_stageRatios
+lemma tendsto_positiveASpan_cubicRatio_of_stageRatios
     {ell ellN : ℕ → ℕ} {L : ℕ → ℝ} {t : ℝ}
     (hL : Tendsto L atTop atTop)
     (hEll : Tendsto (fun n => (ell n : ℝ) / L n ^ 3) atTop (𝓝 0))
@@ -131,7 +132,7 @@ lemma tendsto_rightTailPositiveASpan_cubicRatio_of_stageRatios
 
 /-- Cubic-scale limits for the two cutoffs imply divergence of their gap,
 which is the scale hypothesis needed by the uniform terminal tube estimate. -/
-lemma tendsto_rightTailPositiveASpan_atTop_of_stageCubicRatios
+lemma tendsto_positiveASpan_atTop_of_stageCubicRatios
     {ell ellN : ℕ → ℕ} {L : ℕ → ℝ} {t : ℝ}
     (hL : Tendsto L atTop atTop)
     (hEll : Tendsto (fun n => (ell n : ℝ) / L n ^ 3) atTop (𝓝 0))
@@ -139,31 +140,31 @@ lemma tendsto_rightTailPositiveASpan_atTop_of_stageCubicRatios
     (ht : 0 < t)
     (hellN : ∀ᶠ n : ℕ in atTop, ell n ≤ ellN n) :
     Tendsto (fun n => ((ellN n - ell n : ℕ) : ℝ)) atTop atTop := by
-  apply tendsto_rightTailPositiveASpan_atTop_of_cubicRatio hL ?_ ht
-  exact tendsto_rightTailPositiveASpan_cubicRatio_of_stageRatios
+  apply tendsto_positiveASpan_atTop_of_cubicRatio hL ?_ ht
+  exact tendsto_positiveASpan_cubicRatio_of_stageRatios
     hL hEll hEllN hellN
 
 /-- The choices `ell = floor((log N)^(5/2))` and
 `ellN = floor(t (log N)^3) + 1` have a diverging second-stage span. -/
-lemma tendsto_rightTailPositiveASpan_atTop_of_logarithmicScales
+lemma tendsto_positiveASpan_atTop_of_logarithmicScales
     {N : ℕ → ℕ} (hN : Tendsto N atTop atTop) {t : ℝ} (ht : 0 < t) :
     Tendsto (fun n =>
-      ((logarithmicHorizon N t n - rightTailFirstStageCutoff N n : ℕ) : ℝ))
+      ((logarithmicHorizon N t n - positiveAFirstStageCutoff N n : ℕ) : ℝ))
       atTop atTop := by
   let L : ℕ → ℝ := logarithmOfSampleSize N
   have hL : Tendsto L atTop atTop := by
     exact Real.tendsto_log_atTop.comp
       (tendsto_natCast_atTop_atTop.comp hN)
-  apply tendsto_rightTailPositiveASpan_atTop_of_stageCubicRatios hL
-    (by simpa [L] using tendsto_rightTailFirstStageCutoff_div_logCube hN)
+  apply tendsto_positiveASpan_atTop_of_stageCubicRatios hL
+    (by simpa [L] using tendsto_positiveAFirstStageCutoff_div_logCube hN)
     (by simpa [L] using logarithmicHorizon_div_logCube_tendsto hN ht)
     ht
-  exact (eventually_rightTailFirstStageCutoff_lt_horizon hN ht).mono
+  exact (eventually_positiveAFirstStageCutoff_lt_horizon hN ht).mono
     (fun _ h => Nat.le_of_lt h)
 
 /-- A positive cubic-scale span has its cube-root width at the corresponding
 linear logarithmic scale. -/
-lemma tendsto_rightTailPositiveASpan_root_div_log
+lemma tendsto_positiveASpan_root_div_log
     {D : ℕ → ℕ} {L : ℕ → ℝ} {t : ℝ}
     (hL : Tendsto L atTop atTop)
     (hscale : Tendsto (fun n => (D n : ℝ) / L n ^ 3)
@@ -183,57 +184,10 @@ lemma tendsto_rightTailPositiveASpan_root_div_log
     rw [Real.div_rpow (Nat.cast_nonneg (D n)) (by positivity) (3⁻¹ : ℝ), hden]
   exact hpow.congr' heq.symm
 
-/-- A sequence with cubic logarithmic size has only a subexponential
-logarithmic count: `log (u + 1) = o(log N)`. -/
-lemma tendsto_rightTailPositiveA_log_add_one_div_log_of_cubic_scale
-    {u L : ℕ → ℝ} {t : ℝ}
-    (hL : Tendsto L atTop atTop)
-    (hu : ∀ n, 0 ≤ u n)
-    (hscale : Tendsto (fun n => u n / L n ^ 3) atTop (𝓝 t))
-    (ht : 0 < t) :
-    Tendsto (fun n => Real.log (u n + 1) / L n) atTop (𝓝 0) := by
-  have hinv : Tendsto (fun n => (L n)⁻¹) atTop (𝓝 0) :=
-    hL.inv_tendsto_atTop
-  have hinvCube : Tendsto (fun n => (L n)⁻¹ ^ 3) atTop (𝓝 0) := by
-    simpa using hinv.pow 3
-  have hLpos : ∀ᶠ n : ℕ in atTop, 0 < L n := hL.eventually_gt_atTop 0
-  have hscaled : Tendsto (fun n => (u n + 1) / L n ^ 3)
-      atTop (𝓝 t) := by
-    have hsum := hscale.add hinvCube
-    have heq : (fun n => (u n + 1) / L n ^ 3) =ᶠ[atTop]
-        fun n => u n / L n ^ 3 + (L n)⁻¹ ^ 3 := by
-      filter_upwards [hLpos] with n hn
-      field_simp
-    simpa using hsum.congr' heq.symm
-  have hlogScaled : Tendsto
-      (fun n => Real.log ((u n + 1) / L n ^ 3)) atTop (𝓝 (Real.log t)) :=
-    (Real.continuousAt_log (ne_of_gt ht)).tendsto.comp hscaled
-  have hlogScaledDiv : Tendsto
-      (fun n => Real.log ((u n + 1) / L n ^ 3) / L n)
-      atTop (𝓝 0) := hlogScaled.div_atTop hL
-  have hlogLDiv : Tendsto (fun n => Real.log (L n) / L n)
-      atTop (𝓝 0) := by
-    have h := (Real.tendsto_pow_log_div_mul_add_atTop 1 0 1
-      (by norm_num : (1 : ℝ) ≠ 0)).comp hL
-    convert h using 1
-    ext n
-    simp [pow_one]
-  have hsum := hlogScaledDiv.add (hlogLDiv.const_mul 3)
-  have heq : (fun n => Real.log (u n + 1) / L n) =ᶠ[atTop]
-      fun n => Real.log ((u n + 1) / L n ^ 3) / L n +
-        3 * (Real.log (L n) / L n) := by
-    filter_upwards [hLpos] with n hn
-    have hu1 : 0 < u n + 1 := by linarith [hu n]
-    rw [Real.log_div (ne_of_gt hu1) (pow_ne_zero 3 (ne_of_gt hn)),
-      Real.log_pow]
-    field_simp
-    ring
-  simpa using hsum.congr' heq.symm
-
 /-- A sublinear power of the second-stage span is negligible compared with
 `log N`. This is the `p < 1` remainder in the exponent of the long-prefix
 Aïdékon--Hu terms. -/
-lemma tendsto_rightTailPositiveASpan_sublinearPower_div_log
+lemma tendsto_positiveASpan_sublinearPower_div_log
     {D : ℕ → ℕ} {L : ℕ → ℝ} {t p : ℝ}
     (hL : Tendsto L atTop atTop)
     (hscale : Tendsto (fun n => (D n : ℝ) / L n ^ 3)
@@ -292,32 +246,32 @@ lemma tendsto_rightTailPositiveASpan_sublinearPower_div_log
 /-- On the logarithmic scales, the exponent in the long-prefix
 capacity contribution has the limiting rate `-b + v + c t^(1/3)`. The
 additional `κ c^p L^(p/3)` term vanishes after division by `log N`. -/
-lemma tendsto_rightTailPositiveAAHExponent_div_log_of_logarithmicScales
+lemma tendsto_positiveAAHExponent_div_log_of_logarithmicScales
     {N : ℕ → ℕ} (hN : Tendsto N atTop atTop) {t b v c κ p : ℝ}
     (ht : 0 < t) (hp1 : p < 1) :
     Tendsto
       (fun n => ((-b + v) * logarithmOfSampleSize N n +
           c * (((logarithmicHorizon N t n -
-            rightTailFirstStageCutoff N n : ℕ) : ℝ) ^ (3⁻¹ : ℝ)) +
+            positiveAFirstStageCutoff N n : ℕ) : ℝ) ^ (3⁻¹ : ℝ)) +
           κ * c ^ p * (((logarithmicHorizon N t n -
-            rightTailFirstStageCutoff N n : ℕ) : ℝ) ^ (p / 3))) /
+            positiveAFirstStageCutoff N n : ℕ) : ℝ) ^ (p / 3))) /
           logarithmOfSampleSize N n)
       atTop (𝓝 (-b + v + c * (t ^ (3⁻¹ : ℝ)))) := by
   let L : ℕ → ℝ := logarithmOfSampleSize N
   let D : ℕ → ℕ := fun n =>
-    logarithmicHorizon N t n - rightTailFirstStageCutoff N n
+    logarithmicHorizon N t n - positiveAFirstStageCutoff N n
   have hL : Tendsto L atTop atTop := by
     exact Real.tendsto_log_atTop.comp
       (tendsto_natCast_atTop_atTop.comp hN)
   have hDscale : Tendsto (fun n => (D n : ℝ) / L n ^ 3)
       atTop (𝓝 t) := by
-    apply tendsto_rightTailPositiveASpan_cubicRatio_of_stageRatios hL
-    · simpa [L] using tendsto_rightTailFirstStageCutoff_div_logCube hN
+    apply tendsto_positiveASpan_cubicRatio_of_stageRatios hL
+    · simpa [L] using tendsto_positiveAFirstStageCutoff_div_logCube hN
     · simpa [L] using logarithmicHorizon_div_logCube_tendsto hN ht
-    · exact (eventually_rightTailFirstStageCutoff_lt_horizon hN ht).mono
+    · exact (eventually_positiveAFirstStageCutoff_lt_horizon hN ht).mono
         (fun _ h => Nat.le_of_lt h)
-  have hroot := tendsto_rightTailPositiveASpan_root_div_log hL hDscale ht
-  have hsmall := tendsto_rightTailPositiveASpan_sublinearPower_div_log
+  have hroot := tendsto_positiveASpan_root_div_log hL hDscale ht
+  have hsmall := tendsto_positiveASpan_sublinearPower_div_log
     hL hDscale ht hp1
   have hconstant : Tendsto (fun _ : ℕ => -b + v) atTop (𝓝 (-b + v)) :=
     tendsto_const_nhds
@@ -338,4 +292,4 @@ lemma tendsto_rightTailPositiveAAHExponent_div_log_of_logarithmicScales
     simpa using hsum
   simpa [L, D] using hlimit.congr' heq.symm
 
-end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail
+end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation

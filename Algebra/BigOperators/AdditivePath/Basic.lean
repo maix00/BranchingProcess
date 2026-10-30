@@ -14,22 +14,33 @@ public import Mathlib.Algebra.BigOperators.Fin
 An additive path records the positions obtained by accumulating an increment
 sequence. It carries no probability or branching structure.
 
-The public definitions and theorems are:
+## Public declarations
 
-- `AdditivePath.displacement`: $S_n=\sum_{j<n}\xi_j$.
-- `AdditivePath.fromIncrements`: $x+S_n$.
-- `AdditivePath.finitePrefix`: the finite vector $(x+S_j)_{0\le j\le n}$.
+For an infinite increment sequence $ξ : ℕ → E$ in an additive commutative
+monoid, write $D_n(ξ)=∑_{k<n}ξ_k$ and $X_n=x+D_n(ξ)$.
+
+- `AdditivePath.displacement` and `AdditivePath.fromIncrements` define $D_n(ξ)$
+  and $X_n$; `AdditivePath.finitePrefix` maps $i : Fin (n+1)$ to
+  $x+Fin.partialSum(increment,i)$ for a finite vector $increment : Fin n → E$.
+- `AdditivePath.partialSum_eq_displacement` identifies the finite partial
+  sum of a restricted increment sequence with its accumulated displacement.
 - `AdditivePath.fromIncrements_apply`, `AdditivePath.displacement_zero`,
   `AdditivePath.displacement_succ`, `AdditivePath.fromIncrements_zero`, and
-  `AdditivePath.fromIncrements_succ`: the defining prefix-sum identities.
-- `AdditivePath.displacement_add` and
-  `AdditivePath.displacement_natAdd_eq_sub`: $S_{m+n}-S_m$ is the sum of the
-  increments in the window from $m$ through $m+n$.
-- `AdditivePath.displacement_succ_eq_head_add_tail`: the first-step split.
-- `AdditivePath.displacement_neg`: termwise negation negates the sum.
-- `AdditivePath.finitePrefix_zero`, `AdditivePath.finitePrefix_succ`, and
-  `AdditivePath.finitePrefix_restrict_eq_fromIncrements`: finite-prefix
-  evaluation and consistency.
+  `AdditivePath.fromIncrements_succ` state
+  $X_n=x+D_n(ξ)$, $D_0(ξ)=0$, $D_{n+1}(ξ)=D_n(ξ)+ξ_n$, $X_0=x$, and
+  $X_{n+1}=X_n+ξ_n$.
+- `AdditivePath.displacement_add` gives
+  $D_{m+n}(ξ)=D_m(ξ)+D_n(k↦ξ_{m+k})$.
+  `AdditivePath.displacement_natAdd_eq_sub` gives
+  $D_{q-p}(k↦ξ_{p+k})=D_q(ξ)-D_p(ξ)$ when $p≤q$.
+- `AdditivePath.displacement_succ_eq_head_add_tail` gives
+  $D_{n+1}(ξ)=ξ_0+D_n(k↦ξ_{k+1})$.
+  `AdditivePath.displacement_neg` gives $D_n(k↦-ξ_k)=-D_n(ξ)$ in an
+  additive commutative group.
+- `AdditivePath.finitePrefix_zero` and `AdditivePath.finitePrefix_succ` give
+  the initial value and one-step recurrence of the finite path.
+  `AdditivePath.finitePrefix_restrict_eq_fromIncrements` identifies it with
+  the restriction of `AdditivePath.fromIncrements` to indices $0,…,n$.
 -/
 
 open scoped BigOperators
@@ -43,6 +54,18 @@ variable {E : Type*} [AddCommMonoid E]
 /-- The displacement accumulated from the first `n` increments. -/
 def displacement (n : ℕ) (increment : ℕ → E) : E :=
   ∑ k ∈ Finset.range n, increment k
+
+/-- The finite partial sum of the restriction of an increment sequence is
+the displacement accumulated through the same index. -/
+theorem partialSum_eq_displacement {n : ℕ}
+    (increment : ℕ → E) (t : Fin (n + 1)) :
+    Fin.partialSum (fun i : Fin n => increment i.val) t =
+      displacement t.val increment := by
+  induction t using Fin.induction with
+  | zero => simp [displacement]
+  | succ k ih =>
+      rw [Fin.partialSum_succ, ih]
+      simp [displacement, Finset.sum_range_succ]
 
 /-- The path with initial position `initial` and increment sequence
 `increment`. -/

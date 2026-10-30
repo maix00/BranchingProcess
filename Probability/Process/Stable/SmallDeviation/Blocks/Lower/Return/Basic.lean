@@ -8,15 +8,42 @@ module
 
 public import Order.Interval.RationalCoordinate.UnitInterval
 public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.Assembly.Concatenation
-public import Probability.Process.Corridor.CoreReturn
+public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Gluing
+public import Probability.Process.Path.Skorokhod.Corridor.RationalCoordinate
+import Algebra.Order.Monoid.Recurrence
+import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Feedback.Probability
+import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Probability.Independence
 import Probability.Process.Stable.FiniteDimensional
 
 /-!
 # Corridor blocks returning to an interior core
 
+## Public declarations
+
+Let \(E_j^{\mathrm{ret}}\) be rationalUniformPrefixCorridorReturnEvent with
+\(m=j\): the first \(j\) uniform blocks stay in the corridor and the value
+at the current block endpoint lies in the fixed interior core.
+
+- IsStableLevyProcess.measure_prefixCorridorReturn_succ_ge_mul: a finite
+  disjoint endpoint-bin cover and a lower bound \(c\) on every translated
+  block-return probability imply
+  \[
+    c\,\mathbb P(E_j^{\mathrm{ret}})
+      \le\mathbb P(E_{j+1}^{\mathrm{ret}}).
+  \]
+- IsStableLevyProcess.measure_prefixCorridorReturn_succ_ge_mul_of_glue:
+  the same recurrence holds for arbitrary measurable next-block events when
+  a deterministic gluing implication places each successful concatenation
+  in the next prefix event.
+- IsStableLevyProcess.pow_le_measure_prefixCorridorReturn_of_bins:
+  applying the recurrence over all blocks gives
+  \[
+    c^N\le\mathbb P(E_N^{\mathrm{ret}}).
+  \]
+
 The return condition keeps the observed endpoint away from the outer corridor
-boundary. It is the nondegenerate form of the block lower recurrence used in
-the original Mogulskii argument.
+boundary. The recurrence is the finite-block assembly step for stable
+range-tube lower bounds.
 -/
 
 @[expose] public section
@@ -247,10 +274,12 @@ theorem IsStableLevyProcess.pow_le_measure_prefixCorridorReturn_of_bins
           (coreLower - binLower j i) (coreUpper - binUpper j i))) :
     c ^ blocks ≤ P (rationalUniformPrefixCorridorReturnEvent X
       lower upper coreLower coreUpper hblocks blocks) := by
-  apply ProbabilityTheory.pow_le_measure_prefixCorridorReturn_of_steps
-    (P := P) (X := X) blocks hblocks lower upper coreLower coreUpper c
-    (by simp [rationalUniformPrefixCorridorReturnEvent_zero, hcore]) ?_
-  intro j
+  apply IsOrderedMonoid.pow_le_of_mul_le_succ
+    (fun m => P (rationalUniformPrefixCorridorReturnEvent X
+      lower upper coreLower coreUpper hblocks m)) blocks c
+    (by simp [rationalUniformPrefixCorridorReturnEvent_zero, hcore])
+  intro j hj
+  let j : Fin blocks := ⟨j, hj⟩
   exact h.measure_prefixCorridorReturn_succ_ge_mul blocks hblocks j
     lower upper coreLower coreUpper (I j) (binLower j) (binUpper j) c
     (hI j) (hdisj j) (hbin j) (hcover j) (hc j)

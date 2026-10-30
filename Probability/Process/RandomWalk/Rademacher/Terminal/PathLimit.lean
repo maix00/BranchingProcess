@@ -12,6 +12,8 @@ public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Meander
 /-!
 # Weak limit of the terminal path of a simple symmetric walk
 
+## Public declarations
+
 The public theorem in this file is:
 
 - `ProbabilityTheory.RandomWalk.tendstoInDistribution_rademacherTerminalAbsolutePath`:
@@ -136,7 +138,7 @@ theorem tendstoInDistribution_rademacherTerminalAbsolutePath_lastZero
           (hB.continuousPathMap hmeasurable ω) := by
     filter_upwards [hB.continuousPathMap_ae_eq hmeasurable] with ω heq
     ext t
-    exact (heq (UnitInterval.toNNReal t)).symm
+    exact (heq (unitInterval.toNNReal t)).symm
   have hLaw : P.map (fun ω => ContinuousMap.signStableMeanderTransform
         (continuousunitIntervalPath B hcontinuous ω)) =
       hB.lastZeroMeanderPathLaw hmeasurable := by

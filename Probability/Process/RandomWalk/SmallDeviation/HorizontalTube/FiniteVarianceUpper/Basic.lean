@@ -10,10 +10,12 @@ public import Algebra.BigOperators.AdditivePath.Basic
 public import Probability.Distributions.Moments.Real
 public import Probability.Process.RandomWalk.Path.Corridor.Horizontal.Core
 public import Probability.Sequence.IID.Basic
-import Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.FiniteVarianceUpper.Lemmas.Rate
+import all Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.FiniteVarianceUpper.Lemmas.Rate
 
 /-!
 # Finite-variance horizontal-tube upper bound
+
+## Public declarations
 
 For an increment sequence $\xi=(\xi_i)_{i\ge0}$, put
 $S_j=\sum_{i=0}^{j-1}\xi_i$. The centered-tube and translated-interval
@@ -44,7 +46,7 @@ Probability and Its Applications* 19(4) (1975), 726--736, DOI 10.1137/1119081.
   the translated-interval bound with $u=1$.
 
 The reusable uniform one-block-to-horizon estimate is in
-`HorizontalTube/BlockIteration.lean`. The proof-specific equal-partition and
+`HorizontalTube/Kernel/BlockIteration.lean`. The proof-specific equal-partition and
 rate-assembly steps are in
 `FiniteVarianceUpper/Lemmas/EqualPartition.lean` and
 `FiniteVarianceUpper/Lemmas/Rate.lean`.
@@ -70,7 +72,6 @@ function space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974),
 theorem horizontalTubeProbability_le_exp_of_finiteVariance_withRemainder
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (hcentered : ∫ x, x ∂ν = 0)
-    (hsquare : Integrable (fun x : ℝ => x ^ 2) ν)
     (hvariance : 0 < ∫ x : ℝ, x ^ 2 ∂ν)
     {u v d : ℝ} (hu : 0 < u) (hv : 0 < v) (hd : 0 < d)
     (hcritical : d < (Real.pi ^ 2 / 2) * (∫ x : ℝ, x ^ 2 ∂ν)) :
@@ -97,7 +98,7 @@ theorem horizontalTubeProbability_le_exp_of_finiteVariance_withRemainder
     dsimp [rate]
     linarith
   have hrateBand := eventually_uniform_partitionTube_rateBound ν hcentered
-    hsquare hvariance hu hv hd hm hratePos (by
+    hvariance hu hv hd hm hratePos (by
       simpa [critical] using hrateCritical)
   obtain ⟨K, hK⟩ := eventually_atTop.1 hrateBand
   have hinv : Tendsto (fun n : ℕ => 1 / (n : ℝ)) atTop (𝓝 0) :=
@@ -176,7 +177,6 @@ Probability and Its Applications* 19(4) (1975), 726--736, DOI 10.1137/1119081.
 theorem horizontalTubeProbability_le_exp_of_finiteVariance
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (hcentered : ∫ x, x ∂ν = 0)
-    (hsquare : Integrable (fun x : ℝ => x ^ 2) ν)
     (hvariance : 0 < ∫ x : ℝ, x ^ 2 ∂ν)
     {v d : ℝ} (hv : 0 < v) (hd : 0 < d)
     (hcritical : d < (Real.pi ^ 2 / 2) * (∫ x : ℝ, x ^ 2 ∂ν)) :
@@ -187,7 +187,7 @@ theorem horizontalTubeProbability_le_exp_of_finiteVariance
           ENNReal.ofReal (Real.exp (Δ ^ v - d * ((L : ℝ) / Δ ^ 2))) := by
   simpa using
     (horizontalTubeProbability_le_exp_of_finiteVariance_withRemainder
-      (u := 1) ν hcentered hsquare hvariance one_pos hv hd hcritical)
+      (u := 1) ν hcentered hvariance one_pos hv hd hcritical)
 
 /-- The translated-interval form of Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.2 and
 its following remark. The event identity transfers the centered-tube estimate;
@@ -201,7 +201,6 @@ sample function space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974),
 theorem iidSequenceLaw_intervalProbability_le_exp_of_finiteVariance_withRemainder
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (hcentered : ∫ x, x ∂ν = 0)
-    (hsquare : Integrable (fun x : ℝ => x ^ 2) ν)
     (hvariance : 0 < ∫ x : ℝ, x ^ 2 ∂ν)
     {u v d : ℝ} (hu : 0 < u) (hv : 0 < v) (hd : 0 < d)
     (hcritical : d < (Real.pi ^ 2 / 2) * (∫ x : ℝ, x ^ 2 ∂ν)) :
@@ -215,7 +214,7 @@ theorem iidSequenceLaw_intervalProbability_le_exp_of_finiteVariance_withRemainde
           ENNReal.ofReal (Real.exp (u * Δ ^ v - d * ((L : ℝ) / Δ ^ 2))) := by
   obtain ⟨Δ₀, hΔ₀, hbound⟩ :=
     horizontalTubeProbability_le_exp_of_finiteVariance_withRemainder
-      ν hcentered hsquare hvariance hu hv hd hcritical
+      ν hcentered hvariance hu hv hd hcritical
   refine ⟨Δ₀, hΔ₀, ?_⟩
   intro Δ hΔ r₀ hr₀ hupper L hL
   have hwidth : 0 < Δ := lt_of_lt_of_le hΔ₀ hΔ
@@ -251,7 +250,6 @@ Applications* 19(4) (1975), 726--736, DOI 10.1137/1119081. -/
 theorem iidSequenceLaw_intervalProbability_le_exp_of_finiteVariance
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (hcentered : ∫ x, x ∂ν = 0)
-    (hsquare : Integrable (fun x : ℝ => x ^ 2) ν)
     (hvariance : 0 < ∫ x : ℝ, x ^ 2 ∂ν)
     {v d : ℝ} (hv : 0 < v) (hd : 0 < d)
     (hcritical : d < (Real.pi ^ 2 / 2) * (∫ x : ℝ, x ^ 2 ∂ν)) :
@@ -265,7 +263,7 @@ theorem iidSequenceLaw_intervalProbability_le_exp_of_finiteVariance
           ENNReal.ofReal (Real.exp (Δ ^ v - d * ((L : ℝ) / Δ ^ 2))) := by
   simpa using
     (iidSequenceLaw_intervalProbability_le_exp_of_finiteVariance_withRemainder
-      (u := 1) ν hcentered hsquare hvariance one_pos hv hd hcritical)
+      (u := 1) ν hcentered hvariance one_pos hv hd hcritical)
 
 end ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube
 

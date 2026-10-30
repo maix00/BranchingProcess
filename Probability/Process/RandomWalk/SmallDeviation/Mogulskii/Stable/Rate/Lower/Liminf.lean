@@ -6,11 +6,29 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Rate.Lower.BlockProbability
+public import Analysis.Asymptotics.RegularVariation.Basic
+public import Mathlib.Analysis.SpecialFunctions.Log.Basic
+public import Mathlib.MeasureTheory.Measure.MeasureSpaceDef
+public import Mathlib.MeasureTheory.Measure.Tight
+public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
+public import Mathlib.Probability.CDF
+public import Probability.Distributions.DomainOfAttraction.Basic
+public import Probability.Distributions.Stable.Attraction.Norming.Basic
+public import Probability.Process.RandomWalk.Path.Corridor.Horizontal.Core
+public import Probability.Process.RandomWalk.Path.Skorokhod.Core
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Scale.Basic
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Scale.Rate
+public import Probability.Process.Stable.Levy
+public import Probability.Process.Stable.SmallDeviation.EscapeRate.PathLaw.Basic
+public import Topology.Cadlag.Basic
+import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.EscapeRateLowerBound
 public import Mathlib.Topology.Order.LiminfLimsup
+import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Scale.BlockCount
 
 /-!
 # Stable lower bounds for horizontal-tube logarithmic rates
+
+## Public declarations
 
 Let $(\xi_i)_{i\geq1}$ be i.i.d. with law $\nu$, put
 $S_j=\sum_{i=1}^j\xi_i$, and let $\mathbb P_\nu$ denote their product law.
@@ -29,12 +47,13 @@ conditions. The public declarations are:
 - `stableEscapeRate_liminf_lower`:
   $\frac{C}{(1/2)^\alpha}\leq\liminf_n a_n\log\mathbb P_\nu(T_n)$.
 
-These are the lower-rate conclusions in Theorem 3, Section 4 of A. A.
+These are the lower-rate conclusions in Theorem 1, equation (15) of A. A.
 Mogul'skii, “Small deviations in the sample function space,” *Teoriya
 Veroyatnostei i ee Primeneniya* 19(4) (1974), 755--765; English translation,
 “Small Deviations in a Space of Trajectories,” *Theory of Probability and Its
 Applications* 19(4) (1975), 726--736, DOI 10.1137/1119081. Their Lean proofs
-derive the liminf bounds from the sibling `BlockProbability` module.
+use the public discrete endpoint-return lower bound in
+`Stable/Discrete/EscapeRateLowerBound.lean`.
 -/
 
 @[expose] public section
@@ -44,7 +63,7 @@ open scoped ENNReal NNReal Topology
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable
 
-/-- The endpoint-return argument in Theorem 3, Section 4 of A. A.
+/-- The endpoint-return argument in Theorem 1, equation (15) of A. A.
 Mogul'skii, “Small deviations in the sample function space,” *Teoriya
 Veroyatnostei i ee Primeneniya* 19(4) (1974), 755--765; English translation,
 “Small Deviations in a Space of Trajectories,” *Theory of Probability and Its
@@ -80,7 +99,7 @@ theorem stableEscapeRate_subtube_liminf_lower
           (1 / 2) (scale n) n).toReal) := by
   let rate : ℝ := C / radius ^ α
   obtain ⟨c, hc, hprobLower⟩ :=
-    eventually_openHorizontalTubeProbability_ge_exp_of_stableEscapeRate
+    Discrete.eventually_openHorizontalTubeProbability_ge_exp_of_stableEscapeRate
       hscale hα hα₂ hslow hEscape hX hcdf hDOA htightBase
       hradius hepsilon hmargin hwidth hdelta
   let constant : ℝ := c ^ α

@@ -1,7 +1,8 @@
 import Probability.Process.Path.PathClass.StepCorridor.Probability.Rate.Approximation
-import Probability.Process.Path.PathClass.StepCorridor.Probability.Rate.StableConstantCorridor
+import Probability.Process.Stable.SmallDeviation.PathClass.StepCorridor.ConstantCorridorRate
 
 open ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability
+open ProbabilityTheory.Process.Stable.SmallDeviation.PathClass.StepCorridor
 
 #print axioms ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability.tendsto_log_finiteCorridorUnion_preimage_probability_ratio
 #print axioms ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability.tendsto_log_finiteCorridorUnion_preimage_probability_ratio_of_nullMeasurable
@@ -12,4 +13,4 @@ open ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability
 #print axioms ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability.existsUnique_commonEnergy_of_hasVanishingEnergyGapApproximation
 #print axioms ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability.tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation
 #print axioms ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability.tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_stepCorridorRates
-#print axioms ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability.exists_constantCorridor_rate
+#print axioms ProbabilityTheory.Process.Stable.SmallDeviation.PathClass.StepCorridor.exists_constantCorridor_rate

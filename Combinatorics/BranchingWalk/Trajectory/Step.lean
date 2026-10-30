@@ -17,18 +17,17 @@ public import Combinatorics.BranchingWalk.Trajectory.Basic
 For a map `d : Mark → Position`, an initial position, a marked step field,
 time coordinates, and a segment map:
 
-* `Combinatorics.Branching.Trajectory.RootIndexed.ofStepField` has vertex set
-  `(Cloud.ofBranchingWalk d {step := step, initial := initial} time).support.vertexSet`
-  and edge set
+* `Combinatorics.Branching.Trajectory.RootIndexed.ofStepField` has vertex
+  cloud `(Cloud.ofBranchingWalk d {step := step, initial := initial} time).support`
+  and edge-image set
   `{p | ∃ r u i, survive (step r u) i ∧ p ∈ segment
     (time u, initial r + displaceWith d (step r) [] u)
     (time (u ++ [i]), initial r + displaceWith d (step r) [] (u ++ [i]))}`.
   `Combinatorics.Branching.Trajectory.ofStepField` is its single-root case.
-* `Combinatorics.Branching.Trajectory.RootIndexed.ofStepField_vertices` and
-  `Combinatorics.Branching.Trajectory.ofStepField_vertices` give those vertex
-  sets, while `Combinatorics.Branching.Trajectory.RootIndexed.ofStepField_edges`
-  and `Combinatorics.Branching.Trajectory.ofStepField_edges` give the edge-set
-  descriptions.
+* `Combinatorics.Branching.Trajectory.RootIndexed.ofStepField_vertexCloud` and
+  `Combinatorics.Branching.Trajectory.ofStepField_vertexCloud` identify the
+  vertex clouds; the corresponding `ofStepField_edges` declarations identify
+  the edge-image sets.
 
 Child marks and accumulated positions remain separate; `d` interprets each
 edge mark as an additive position increment.
@@ -50,10 +49,8 @@ def ofStepField
     (time : TreeNode α → Time)
     (segment : (Time × Position) → (Time × Position) → Set (Time × Position)) :
     Trajectory Time Position where
-  vertices :=
-    (Cloud.ofBranchingWalk d
-      { step := step, initial := initial }
-      time).support.vertexSet
+  vertexCloud :=
+    (Cloud.ofBranchingWalk d { step := step, initial := initial } time).support
   edges :=
     {p | ∃ r u i,
       survive (step r u) i ∧
@@ -74,26 +71,24 @@ def ofStepField
   RootIndexed.ofStepField d
     (fun _ : Unit => initial) (fun _ : Unit => step) time segment
 
-@[simp] theorem RootIndexed.ofStepField_vertices
+@[simp] theorem RootIndexed.ofStepField_vertexCloud
     {Root α Mark Position Time : Type*} [AddCommMonoid Position]
     (d : Mark → Position) (initial : Root → Position)
     (step : Root → Branching.StepField α Mark)
     (time : TreeNode α → Time)
     (segment : (Time × Position) → (Time × Position) → Set (Time × Position)) :
-    (RootIndexed.ofStepField d initial step time segment).vertices =
-    (Cloud.ofBranchingWalk d
-        { step := step, initial := initial }
-        time).support.vertexSet := rfl
+    (RootIndexed.ofStepField d initial step time segment).vertexCloud =
+    (Cloud.ofBranchingWalk d { step := step, initial := initial } time).support := rfl
 
-@[simp] theorem ofStepField_vertices
+@[simp] theorem ofStepField_vertexCloud
     {α Mark Position Time : Type*} [AddCommMonoid Position]
     (d : Mark → Position) (initial : Position) (step : StepField α Mark)
     (time : TreeNode α → Time)
     (segment : (Time × Position) → (Time × Position) → Set (Time × Position)) :
-    (ofStepField d initial step time segment).vertices =
+    (ofStepField d initial step time segment).vertexCloud =
       (Cloud.ofBranchingWalk d
         { step := fun _ : Unit => step, initial := fun _ : Unit => initial }
-        time).support.vertexSet := by
+        time).support := by
   simp [ofStepField, RootIndexed.ofStepField]
 
 @[simp] theorem RootIndexed.ofStepField_edges

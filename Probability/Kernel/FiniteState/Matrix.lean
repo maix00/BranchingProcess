@@ -10,6 +10,7 @@ public import Mathlib.Basic.ENNReal.BigOperators
 public import Mathlib.Data.Matrix.Mul
 public import Mathlib.MeasureTheory.Measure.Dirac.Basic
 public import Mathlib.Probability.Kernel.Composition.Comp
+public import LinearAlgebra.Matrix.Substochastic
 public import Probability.Kernel.SubMarkov
 
 /-!
@@ -18,35 +19,43 @@ public import Probability.Kernel.SubMarkov
 This file connects nonnegative real matrices with mathlib's measure-valued
 `Kernel`.  The matrix is a representation; the probability-layer object
 remains `ProbabilityTheory.Kernel`.
+
+`Matrix.IsRowSubstochastic` is provided by the generic linear-algebra module
+`LinearAlgebra/Matrix/Substochastic.lean`.
+
+## Public declarations
+
+* `ProbabilityTheory.Kernel.ofRealMatrix M` is the kernel
+  `i ↦ ∑ j, ENNReal.ofReal (M i j) • Measure.dirac j` on a measurable finite
+  state space.
+* `ProbabilityTheory.Kernel.ofRealMatrix_apply_univ` states
+  `Kernel.ofRealMatrix M i univ = ∑ j, ENNReal.ofReal (M i j)`.
+* `ProbabilityTheory.Kernel.ofRealMatrix_apply` states
+  `Kernel.ofRealMatrix M i s =
+  ∑ j, ENNReal.ofReal (M i j) * (Set.indicator s 1 j)`.
+* `ProbabilityTheory.Kernel.ofRealMatrix_mul` states, for nonnegative
+  `left` and `right`,
+  `Kernel.ofRealMatrix (left * right) =
+  Kernel.ofRealMatrix right ∘ₖ Kernel.ofRealMatrix left`.
+* `ProbabilityTheory.Kernel.ofRealMatrix_one` states
+  `Kernel.ofRealMatrix (1 : Matrix ι ι ℝ) = 1`.
+* `ProbabilityTheory.Kernel.ofRealMatrix_pow` states, for a nonnegative
+  matrix `M`, `Kernel.ofRealMatrix (M ^ n) =
+  (Kernel.ofRealMatrix M) ^ n`.
+* `ProbabilityTheory.Kernel.pow_apply_univ_ofRealMatrix` states
+  `(Kernel.ofRealMatrix M ^ n) i univ =
+  ENNReal.ofReal (∑ j, (M ^ n) i j)` for a nonnegative `M`.
+* `ProbabilityTheory.Kernel.ofRealMatrix_pow_apply_finset` gives the same
+  row-mass formula with the sum restricted to a finite target set.
+* `ProbabilityTheory.Kernel.isSubMarkovKernel_ofRealMatrix` states that
+  `Matrix.IsRowSubstochastic M` implies
+  `IsSubMarkovKernel (Kernel.ofRealMatrix M)`.
 -/
 
 @[expose] public section
 
 open MeasureTheory Set
 open scoped BigOperators ENNReal
-
-namespace Matrix
-
-variable {ι : Type*} [Fintype ι]
-
-/-- A real matrix is row-substochastic when its entries are nonnegative and
-every row has mass at most one. -/
-def IsRowSubstochastic (matrix : Matrix ι ι ℝ) : Prop :=
-  (∀ i j, 0 ≤ matrix i j) ∧ ∀ i, (∑ j, matrix i j) ≤ 1
-
-namespace IsRowSubstochastic
-
-variable {matrix : Matrix ι ι ℝ}
-
-theorem nonneg (h : matrix.IsRowSubstochastic) (i j : ι) :
-    0 ≤ matrix i j := h.1 i j
-
-theorem rowSum_le_one (h : matrix.IsRowSubstochastic) (i : ι) :
-    (∑ j, matrix i j) ≤ 1 := h.2 i
-
-end IsRowSubstochastic
-
-end Matrix
 
 namespace ProbabilityTheory
 

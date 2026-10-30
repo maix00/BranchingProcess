@@ -15,6 +15,12 @@ public import Probability.Sequence.Block
 
 The finite sums and coordinate maps are defined algebraically. This module
 records their measurability on the increment-path sample space.
+
+## Public declarations
+
+`blockSum_measurable` states that for a measurable additive monoid $E$, the
+finite block sum $x\mapsto\sum_{j<\ell}x_{a+j}$ is measurable on the canonical
+increment-path space.
 -/
 
 open MeasureTheory

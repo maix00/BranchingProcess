@@ -13,6 +13,8 @@ public import Probability.Kernel.Step.Endpoint
 /-!
 # Path interpretation of finite spectral target masses
 
+## Public declarations
+
 The public declarations in this module are:
 
 All names below are declarations in

@@ -13,7 +13,7 @@ public import Topology.Cadlag.Skorokhod.Corridor.Endpoint
 /-!
 # Closed endpoint corridors for polygonal paths
 
-The public theorem in this file is:
+## Public declarations
 
 - `ProbabilityTheory.RandomWalk.normalizedLinearCadlagPathIcc_mem_rangeInClosedIntervalEndsIn_iff_grid`:
   for $a\le0\le b$ and $n>0$, the polygonal interpolation belongs to

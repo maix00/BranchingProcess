@@ -6,11 +6,14 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.Path.AboveStart.FirstWindow.Centered
+public import Probability.Process.Path.AboveStart.FirstWindow.Shift.Centered
 public import Probability.Process.Brownian.AboveStart.FirstWindow.Shift.Basic
+import all Probability.Process.Brownian.AboveStart.FirstWindow.Lemmas.CutoffBoundary
 
 /-!
 # Brownian continuity of centered first-window paths
+
+## Public declarations
 
 The public theorems in this file are:
 

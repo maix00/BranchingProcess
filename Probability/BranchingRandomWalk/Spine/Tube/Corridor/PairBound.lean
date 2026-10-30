@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Spine.Tube.MRCA.ActualContribution
-import Probability.BranchingRandomWalk.Spine.Tube.SecondMoment.MultiGeneration
+module
+
+public import Probability.BranchingRandomWalk.Spine.Tube.MRCA.ActualContribution
+public import Probability.BranchingRandomWalk.Spine.Tube.SecondMoment.MultiGeneration
 
 /-!
 # Pair bounds for affine corridor path counts
@@ -28,10 +30,14 @@ possible generations.  Each fixed-depth term retains the corridor condition
 at the birth generation and is measurable before the finite sum is integrated.
 -/
 
+@[expose] public section
+
 open MeasureTheory
 open scoped ENNReal
 
 namespace ProbabilityTheory.BranchingRandomWalk.Spine
+
+open ProbabilityTheory.BranchingProcess (offspringFieldLaw offspringFieldLaw_coordinate offspringFieldLaw_independent offspringFieldLaw_mapMarks)
 
 open Combinatorics.Branching
 open Combinatorics.UlamHarris
@@ -75,7 +81,7 @@ private lemma pathGenerationMRCAContribution_congr_prependHistory
   apply tsum_congr
   intro j
   by_cases hij : i ≠ j
-  · simp only [if_pos hij]
+  · simp only [ite_eq_left hij]
     rw [pathGenerationChildObservable_congr_prependHistory
         φ n F G x hFG i (ω []) (subtreeStepField [i] ω)]
     rw [pathGenerationChildObservable_congr_prependHistory
@@ -179,7 +185,7 @@ private lemma pathGenerationRootMRCAContribution_joint_measurable
   have hterm (i j : ℕ) : Measurable (fun p : ℝ × StepField ℕ X =>
       if i ≠ j then child i p * child j p else 0) := by
     by_cases hij : i ≠ j
-    · simp only [if_pos hij]
+    · simp only [ite_eq_left hij]
       exact (hchild i).mul (hchild j)
     · have hEq : i = j := by
         by_contra hne
@@ -323,7 +329,7 @@ theorem lintegral_pathGenerationDistinctAddressPairCount_affineCorridor_eq_sum_M
     (N : ℕ) (initial lower drift width endpointUpper : ℝ) :
     (∫⁻ ω, pathGenerationDistinctAddressPairCount φ N
       ((affineCorridorThrough N lower drift width endpointUpper).indicator
-        (fun _ => (1 : ℝ≥0∞))) initial ω ∂stepFieldLaw μ) =
+        (fun _ => (1 : ℝ≥0∞))) initial ω ∂offspringFieldLaw μ) =
       ∑ m : Fin N,
         affineTubeMRCAPairContribution φ μ m.val (N - m.val - 1)
           initial lower drift width endpointUpper := by
@@ -362,10 +368,10 @@ theorem lintegral_pathGenerationDistinctAddressPairCount_affineCorridor_eq_sum_M
   have hsumIntegral :
       (∫⁻ ω, ∑ m : Fin N,
         pathGenerationMRCAContribution φ m.val N F initial ω
-        ∂stepFieldLaw μ) =
+        ∂offspringFieldLaw μ) =
         ∑ m : Fin N, ∫⁻ ω,
           pathGenerationMRCAContribution φ m.val N F initial ω
-          ∂stepFieldLaw μ := by
+          ∂offspringFieldLaw μ := by
     simpa using
       (lintegral_finsetSum' Finset.univ
         (f := fun m ω =>
@@ -373,20 +379,20 @@ theorem lintegral_pathGenerationDistinctAddressPairCount_affineCorridor_eq_sum_M
         (fun m _ => (hmeas m).aemeasurable))
   have hterms :
       (∫⁻ ω, pathGenerationOffDiagonalPairs φ N F initial ω
-        ∂stepFieldLaw μ) =
+        ∂offspringFieldLaw μ) =
         ∑ m : Fin N,
           affineTubeMRCAPairContribution φ μ m.val (N - m.val - 1)
             initial lower drift width endpointUpper := by
     calc
       _ = ∫⁻ ω, ∑ m : Fin N,
             pathGenerationMRCAContribution φ m.val N F initial ω
-            ∂stepFieldLaw μ := by
+            ∂offspringFieldLaw μ := by
           apply lintegral_congr
           intro ω
           exact hdecomp ω
       _ = ∑ m : Fin N, ∫⁻ ω,
             pathGenerationMRCAContribution φ m.val N F initial ω
-            ∂stepFieldLaw μ := hsumIntegral
+            ∂offspringFieldLaw μ := hsumIntegral
       _ = ∑ m : Fin N,
             affineTubeMRCAPairContribution φ μ m.val
               (N - m.val - 1) initial lower drift width endpointUpper := by
@@ -402,7 +408,7 @@ theorem lintegral_pathGenerationDistinctAddressPairCount_affineCorridor_eq_sum_M
           simpa [F, corridor] using hactual
   calc
     _ = ∫⁻ ω, pathGenerationOffDiagonalPairs φ N F initial ω
-        ∂stepFieldLaw μ := hpairIntegral.symm
+        ∂offspringFieldLaw μ := hpairIntegral.symm
     _ = _ := hterms
 
 /-- The expected ordered distinct-pair count inside an affine corridor is
@@ -419,12 +425,12 @@ theorem lintegral_pathGenerationDistinctAddressPairCount_affineCorridor_le_of_dr
           n width (width + drift * (n : ℝ))) ≤ q n) :
     (∫⁻ ω, pathGenerationDistinctAddressPairCount φ N
       ((affineCorridorThrough N lower drift width endpointUpper).indicator
-        (fun _ => (1 : ℝ≥0∞))) initial ω ∂stepFieldLaw μ) ≤
+        (fun _ => (1 : ℝ≥0∞))) initial ω ∂offspringFieldLaw μ) ≤
       ∑ m : Fin N,
         ENNReal.ofReal (Real.exp (-(2 * initial))) *
           (ENNReal.ofReal (Real.exp (2 * endpointUpper)) *
             q (N - m.val - 1) ^ 2) *
-          (∫⁻ ξ, crossChildWeight φ ξ ∂μ) *
+          (∫⁻ ξ, crossPotentialWeight φ (-1) ξ ∂μ) *
           (ENNReal.ofReal
             (Real.exp (initial - (lower + drift * (m.val : ℝ)))) *
             (tiltedIncrementFieldLaw φ μ)
@@ -443,3 +449,5 @@ theorem lintegral_pathGenerationDistinctAddressPairCount_affineCorridor_le_of_dr
     _ ≤ _ := hdrawdownSum
 
 end ProbabilityTheory.BranchingRandomWalk.Spine
+
+end

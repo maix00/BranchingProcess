@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.MeasureTheory.Convergence.L2FromPolynomialTails
+import Probability.MeasureTheory.Convergence.SecondMoment.FromPolynomialTails
 
 /-!
 # Axiom audit for polynomial-tail second-moment convergence

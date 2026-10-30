@@ -9,11 +9,17 @@ module
 public import Order.Interval.RationalCoordinate.UnitInterval
 public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Prefix
 public import Topology.Cadlag.Skorokhod.Corridor.Dense
-public import Order.Bounds.Feedback
+import Order.Bounds.Feedback
 public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Cover
 
 /-!
 # Adaptive conditions on a finite uniform path partition
+
+## Public declarations
+
+Write `N = blocks` and let `f : ↑RationalCoordinate.UnitInterval → ℝ` be a
+path. The endpoint error used to choose a block condition is `f ⊤ - target`;
+the coordinate estimate below compares `f(q)` with the target line `v q`.
 
 * `ProbabilityTheory.feedbackPrefixNonnegative target` is the event
   `0 ≤ f ⊤ - target` on rational-coordinate paths.
@@ -325,7 +331,7 @@ theorem rationalFeedback_endpoint_bound
       · rw [hdiff]
         exact ⟨hpos.2.2.1.le, hpos.2.2.2.le⟩
   intro k hk
-  exact Real.feedback_endpoint_error_bound e blocks r R hR hr he0 hstep k hk
+  exact Order.Bounds.feedback_endpoint_error_bound e blocks r R hR hr he0 hstep k hk
 
 /-- Every rational-time coordinate of a successful feedback path lies in a
 fixed tube around the target line. -/
@@ -388,7 +394,7 @@ theorem rationalFeedback_coordinate_bound
     rw [← hjsR]
     ring
   rw [htime, ← hjs]
-  exact Real.feedback_within_block_bound
+  exact Order.Bounds.feedback_within_block_bound
     (f (rationalUniformBlockTime hblocks j ⊥))
     (f (rationalUniformBlockTime hblocks j s))
     (v * (j.val : ℝ) / (blocks : ℝ))

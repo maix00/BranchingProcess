@@ -9,10 +9,34 @@ module
 public import Order.Interval.RationalCoordinate.UnitInterval
 public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.Return.Basic
 public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Cover
-import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Stationarity
+public import Probability.Process.Path.Skorokhod.Corridor.RationalCoordinate
+import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Probability.Stationarity
 
 /-!
 # From returning blocks to a whole-path range tube
+
+Write \(T_X(w)=\mathbb P(\operatorname{rationalHorizonTubeEvent}(X,1,w))\);
+membership in this event means that some positive rational margin \(r\)
+satisfies \(|X_s-X_t|\le w-r\) for every rational \(s,t\in[0,1]\).
+
+## Public declarations
+
+- rationalUniformPrefixCorridorReturnEvent_subset_rationalHorizonTubeEvent:
+  a finite-block return event with corridor bounds \(a<b\) lies in the
+  whole-horizon range tube of width \(b-a+\varepsilon\), for every
+  \(\varepsilon>0\).
+- IsStableLevyProcess.pow_le_measure_rationalHorizonTube_of_return_bins:
+  if each translated return block has probability at least \(c\) under a
+  finite endpoint-bin partition, then
+  \[
+    c^{N}\le T_X(b-a+\varepsilon).
+  \]
+- IsStableLevyProcess.iInf_blockProbability_pow_le_rationalHorizonTube:
+  the same bound holds with \(c=\inf_i p_i\), where \(p_i\) are the finitely
+  many first-block return probabilities.
+- IsStableLevyProcess.iInf_blockProbability_pow_le_rationalHorizonTube_of_coreCover:
+  a cover of the return core interval by the endpoint bins supplies the
+  endpoint-coverage hypothesis for the preceding bound.
 
 Uniform rational blocks cover the complete rational unit interval. A
 blockwise spatial corridor therefore gives a whole-path range tube after

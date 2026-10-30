@@ -8,9 +8,12 @@ module
 
 public import Probability.Process.RandomWalk.Rademacher.Terminal.Law
 public import Probability.Process.RandomWalk.Path.Interpolation.Finite.Block
+import Mathlib.Logic.Function.Basic
 
 /-!
 # Absolute polygonal paths from finite Rademacher blocks
+
+## Public declarations
 
 The public definitions and theorems in this file are:
 
@@ -74,15 +77,17 @@ private lemma normalizedLinearContinuousPathFromBlock_neg
     normalizedLinearContinuousPathFromBlock scale length
         (fun j => -block j) =
       -normalizedLinearContinuousPathFromBlock scale length block := by
-  have hext : extendFiniteIncrementBlock length (fun j => -block j) =
-      fun k => -extendFiniteIncrementBlock length block k := by
+  have hext : Function.extend Fin.val (fun j => -block j) (fun _ => 0) =
+      fun k => -Function.extend Fin.val block (fun _ => 0) k := by
     funext k
-    by_cases hk : k < length <;> simp [extendFiniteIncrementBlock, hk]
+    simpa [Function.comp_def] using
+      (Function.apply_extend (g := block) (fun x : ℝ => -x) Fin.val
+        (fun _ => (0 : ℝ)) k).symm
   ext t
   change normalizedLinearPath scale length
-      (extendFiniteIncrementBlock length (fun j => -block j)) t =
+      (Function.extend Fin.val (fun j => -block j) (fun _ => 0)) t =
     -normalizedLinearPath scale length
-      (extendFiniteIncrementBlock length block) t
+      (Function.extend Fin.val block (fun _ => 0)) t
   rw [hext, normalizedLinearPath_neg]
 
 /-- Reflection changes the sign of the polygonal path and hence
@@ -116,14 +121,17 @@ theorem absoluteRademacherBlockPath_eq_linear_of_survives
         (fun j => rademacherOfBool (block j)) := by
   let realBlock : Fin length → ℝ := fun j => rademacherOfBool (block j)
   have hblock : Combinatorics.Sequence.blockCoordinates 0 length
-      (extendFiniteIncrementBlock length realBlock) = realBlock := by
+      (Function.extend Fin.val realBlock (fun _ => 0)) = realBlock := by
     funext j
-    simp [Combinatorics.Sequence.blockCoordinates,
-      extendFiniteIncrementBlock, j.isLt]
+    simp only [Combinatorics.Sequence.blockCoordinates, Nat.zero_add]
+    have hinj : Function.Injective (fun i : Fin length => i.val) :=
+      fun i k hik => Fin.ext hik
+    exact Function.Injective.extend_apply hinj realBlock
+      (fun _ => (0 : ℝ)) j
   have hsurviveReal : SurvivesNonnegative length
-      (extendFiniteIncrementBlock length realBlock) := by
+      (Function.extend Fin.val realBlock (fun _ => 0)) := by
     have h := (finiteSurvivesNonnegative_blockCoordinates_iff
-      length 0 (extendFiniteIncrementBlock length realBlock)).1
+      length 0 (Function.extend Fin.val realBlock (fun _ => 0))).1
     rw [hblock] at h
     simpa only [Nat.zero_add] using h hsurvive
   have hscale : 0 < Real.sqrt (length : ℝ) :=
@@ -133,10 +141,10 @@ theorem absoluteRademacherBlockPath_eq_linear_of_survives
   ext t
   change |normalizedLinearContinuousPathIcc
       (fun j => Real.sqrt j) length
-      (extendFiniteIncrementBlock length realBlock) t| =
+      (Function.extend Fin.val realBlock (fun _ => 0)) t| =
     normalizedLinearContinuousPathIcc
       (fun j => Real.sqrt j) length
-      (extendFiniteIncrementBlock length realBlock) t
+      (Function.extend Fin.val realBlock (fun _ => 0)) t
   exact abs_of_nonneg (hnonneg t)
 
 /-- Once the last-sign-change index is fixed, the terminal path is

@@ -5,13 +5,13 @@ Authors: Codex
 -/
 module
 
-public import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
+import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 
 /-!
 # Frequency averages for the cosine defect
 
-The public declarations are:
+## Public declarations
 
 - `cosineSquareFrequencyAverage z` is
   $\int_1^2(1-\cos(tz))^2\,dt$; `continuous_cosineSquareFrequencyAverage`

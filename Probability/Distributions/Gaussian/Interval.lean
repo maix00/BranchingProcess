@@ -15,6 +15,13 @@ public import Mathlib.Probability.CDF
 The nondegenerate real Gaussian law gives positive mass to every nonempty open
 interval.  This is a distribution-level fact and is independent of any random
 walk or small-deviation construction.
+
+## Public declarations
+
+- `gaussianReal_Ioo_pos` states that a Gaussian law with nonzero variance
+  assigns positive measure to every open interval $(a,b)$ with $a<b$.
+- `cdf_gaussianReal_zero_lt_one` states that for $v\ne0$, the centered
+  Gaussian CDF at zero satisfies $0<\operatorname{cdf}(N(0,v),0)<1$.
 -/
 
 @[expose] public section

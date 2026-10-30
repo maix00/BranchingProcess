@@ -6,12 +6,18 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.Brownian.Meander.LastZero
+public import Probability.Process.Brownian.PathLaw.ContinuousModification
+public import Probability.Process.Path.Scaling.FiniteHorizon
+public import Topology.ContinuousMap.LastZero
+public import Mathlib.Probability.BrownianMotion.Basic
+import Probability.Process.Brownian.Meander.LastZero
 
 /-!
 # The terminal-excursion path law
 
-The public objects and theorems in this file are:
+## Public declarations
+
+The objects and theorems in this file are:
 
 - `ProbabilityTheory.IsBrownianReal.lastZeroMeanderPath`:
   $\omega\mapsto\left(t\mapsto

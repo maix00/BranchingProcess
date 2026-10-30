@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.BranchingRandomWalk.Spine.EndpointRealization.Field
+public import Probability.BranchingRandomWalk.Spine.ManyToOne.ProductField
 public import Probability.BranchingRandomWalk.Walk.Basic
 
 /-!
@@ -15,6 +15,20 @@ public import Probability.BranchingRandomWalk.Walk.Basic
 The tilted increment product law defines an actual single-root random walk.
 Its canonical branching realization has child-slot type `PUnit`, so every
 generation contains exactly the unique address `Walk.lineNode n`.
+
+## Public declarations
+
+- `spineRandomWalk`: realizes the tilted increment process as the canonical
+  single-root branching random walk with a unique address at every generation.
+- `spineRandomWalk_isIncrementPathRealization`,
+  `spineRandomWalk_survivesForever`, `spineRandomWalk_independent`, and
+  `spineRandomWalk_incrementLaw_coordinate`: identify its position path and
+  survival, independence, and increment marginal properties.
+- `weightedEndpointManyToOne_randomWalk`,
+  `endpointManyToOne_randomWalk`, and
+  `exists_randomWalk_weightedEndpointManyToOne`: state the weighted and
+  unweighted endpoint many-to-one identities for this walk and the associated
+  existence interface.
 -/
 
 @[expose] public section

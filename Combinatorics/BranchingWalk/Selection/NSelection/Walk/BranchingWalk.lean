@@ -18,9 +18,25 @@ sub-walk with at most `N` children per node.
 
 This is the deterministic object. The random `N`-branching walk, a law on
 `NBranchingWalk`, and the random `N`-selection live in the probability layer.
+
+## Public declarations
+
+- `RootIndexed.IsNBranching N β` means
+  `∀ r u, (support (β.step r u)).Finite ∧ (support (β.step r u)).ncard ≤ N`.
+- `RootIndexed.NBranchingWalk N Root α Mark Position` is the subtype
+  `{β : RootIndexed.BranchingWalk Root α Mark Position // IsNBranching N β}`.
+- `RootIndexed.NSelection N Root α Mark Position` extends
+  `RootIndexed.WalkTransform` with the condition
+  `∀ β, IsNBranching N (select β)`.
+- `RootIndexed.NSelection.toNBranchingWalk S β` packages `S.select β` with
+  its `N`-branching proof.
+- `Branching.NBranchingWalk N α Mark Position` and
+  `Branching.NSelection N α Mark Position` specialize those constructions to
+  the unique root `PUnit`.
 -/
 
 @[expose] public section
+
 
 set_option linter.dupNamespace false
 

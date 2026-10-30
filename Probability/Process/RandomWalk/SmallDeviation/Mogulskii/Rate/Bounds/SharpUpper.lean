@@ -17,13 +17,21 @@ public import Mathlib.Topology.Order.LiminfLimsup
 public import Probability.Process.RandomWalk.Path.Corridor.Horizontal.Core
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Scale.Basic
 public import Probability.Sequence.IID.Basic
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Range.Blocks.Bound
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Range.Rate.SmallWidth
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Range.Rate.Lemmas.LogarithmicTransfer
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Range.Rate.Lemmas.FiniteCoverParameters
+import Probability.Process.Brownian.SmallDeviation.Range.UpperRate
+import all Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Rate.Bounds.Lemmas.SharpUpper.LogarithmicTransfer
+import all Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Rate.Bounds.Lemmas.SharpUpper.FiniteCoverParameters
 
 /-!
 # Sharp horizontal-tube upper rate
+
+This is the finite-variance horizontal-tube upper bound in A. A. Mogul'skii,
+Theorem 3, Section 4, p. 764, “Small deviations in the sample function
+space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974), 755--765;
+English translation, “Small Deviations in a Space of Trajectories,” *Theory
+of Probability and Its Applications* 19(4) (1975), 726--736, DOI
+10.1137/1119081.
+
+## Public declarations
 
 The public declaration
 `limsup_scaledLog_horizontalTubeProbability_le_sharp` states that for
@@ -37,9 +45,9 @@ and a lower-cobounded normalized logarithm,
   p_n=\texttt{horizontalTubeProbability}
     (\texttt{iidSequenceLaw}(\nu),1/2,s_n,n).
 \]
-Its proof uses the spectral fixed-cover block estimates in
-`Spectral/Range/`; this module keeps the complete sharp upper-rate statement
-with the other Mogulskii rate bounds. The block step uses the continuous-path Donsker theorem
+Its proof uses the Brownian fixed-cover range estimate in
+`Probability/Process/Brownian/SmallDeviation/Range/` and the block estimate
+under this module’s `Lemmas/SharpUpper/` proof chain. The block step uses the continuous-path Donsker theorem
 formalized as
 `ProbabilityTheory.RandomWalk.tendstoInDistribution_normalizedLinearContinuousPath_brownian`,
 corresponding to Theorem 4.20 in I. Karatzas and S. E. Shreve,

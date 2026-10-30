@@ -4,18 +4,19 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
+module
+
 import Probability.BranchingRandomWalk.Population.Processes.Causal.Capacity.Spine
 import Probability.Process.RandomWalk.Path.Corridor.Horizontal.Core
 import Probability.Process.RandomWalk.Path.Restart.Basic
 import Probability.Process.RandomWalk.SmallDeviation.Drawdown.Event
-import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Basic
-import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Rate.LogScales
-import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Drawdown.Spine.Cutoff
-import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Drawdown.Spine.Window
+import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Theorems
+import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.Sequence.LogarithmicScales
+import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.FirstStage.Cutoff
+import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Population.RestartedWindow
 import Probability.BranchingRandomWalk.Spine.Tube.Corridor.PairBound
 
-import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Drawdown.Spine.Lemmas.CapacityMarkov
-
+import all Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Drawdown.Spine.Lemmas.Capacity.MarkovDecomposition
 /-!
 # First-stage and restarted random-walk probability bounds
 
@@ -30,15 +31,15 @@ restarted tube data to the estimates needed by the next stage of the proof.
 Reusable path-event and measure inequalities remain in their semantic
 modules outside this directory.
 
-## Proof-chain statement
+## Internal proof declarations
 
-- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.iidSequenceLaw_rightTailPositiveASecondStageDrawdown_le_of_ah` bounds the second-stage drawdown probability by $\exp(-dD/\Delta^2)$ under the Aïdékon--Hu estimate.
+- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.iidSequenceLaw_positiveASecondStageDrawdown_le_of_ah` bounds the second-stage drawdown probability by $\exp(-dD/\Delta^2)$ under the Aïdékon--Hu estimate.
 -/
 
 open Filter MeasureTheory
 open scoped ENNReal BigOperators Topology
 
-namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail
+namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation
 
 open Combinatorics.Branching
 open Combinatorics.UlamHarris
@@ -51,15 +52,10 @@ by the uniform finite-variance Aïdékon--Hu drawdown estimate on every prefix
 whose length is at least a superdiffusive power of the planned tube width.
 The endpoint ceiling is reduced to the fixed ratio required by that estimate
 using the monotone drift envelope. -/
-lemma iidSequenceLaw_rightTailPositiveASecondStageDrawdown_le_of_ah
+lemma iidSequenceLaw_positiveASecondStageDrawdown_le_of_ah
     (ν : Measure ℝ) [IsProbabilityMeasure ν] {sigma : ℝ}
     (hν : ProbabilityTheory.IsCenteredSecondMoment ν (sigma ^ 2))
     (hsigma : 0 < sigma)
-    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
-    [IsProbabilityMeasure P] {B : NNReal → Ω → ℝ}
-    (hB : IsPreBrownianReal B P)
-    (hcontinuous : ∀ ω, Continuous (B · ω))
-    (hmeasurable : ∀ t, Measurable (B t))
     (κ c target blockTarget p : ℝ)
     (hκ : 0 ≤ κ) (hc : 0 < c)
     (htarget : 0 < target) (htargetBlock : target < blockTarget)
@@ -72,7 +68,7 @@ lemma iidSequenceLaw_rightTailPositiveASecondStageDrawdown_le_of_ah
           (ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.noLargeDropEndpointBelowEvent
             d
             (c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)))
-            (rightTailPositiveADrift ell ellN κ c d +
+            (positiveADrift ell ellN κ c d +
               c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)))) ≤
         ENNReal.ofReal (Real.exp
           (-target * sigma ^ 2 * (d : ℝ) /
@@ -97,14 +93,14 @@ lemma iidSequenceLaw_rightTailPositiveASecondStageDrawdown_le_of_ah
       have hspanReal : 0 < ((ellN - ell : ℕ) : ℝ) := by exact_mod_cast hspanNat
       exact Real.rpow_pos_of_pos hspanReal _
     exact mul_pos hc hspan
-  have hspan := rightTailPositiveADrift_le_span ell ellN d κ c hellN hκ hd
+  have hspan := positiveADrift_le_span ell ellN d κ c hellN hκ hd
   have hratioEq : c / endpointRatio = κ / c ^ 2 + c := by
     dsimp [endpointRatio]
     field_simp [hc.ne', hden.ne']
   have hendpoint :
-      rightTailPositiveADrift ell ellN κ c d + width ≤ width / endpointRatio := by
+      positiveADrift ell ellN κ c d + width ≤ width / endpointRatio := by
     calc
-      rightTailPositiveADrift ell ellN κ c d + width ≤
+      positiveADrift ell ellN κ c d + width ≤
           κ / c ^ 2 * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)) + width :=
         by simpa [add_comm] using add_le_add_right hspan width
       _ = (κ / c ^ 2 + c) *
@@ -121,4 +117,4 @@ lemma iidSequenceLaw_rightTailPositiveASecondStageDrawdown_le_of_ah
   intro increment hdrop
   exact ⟨hdrop.1, hdrop.2.trans hendpoint⟩
 
-end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail
+end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation

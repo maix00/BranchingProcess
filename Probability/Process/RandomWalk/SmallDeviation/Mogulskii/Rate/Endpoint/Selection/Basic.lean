@@ -6,8 +6,13 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Rate.Endpoint.Windows
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Rate.Endpoint.Selection.Lemmas.FixedParameters
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Scale.Basic
+public import Probability.Process.RandomWalk.Path.Corridor.Horizontal.Core
+public import Probability.Sequence.IID.Basic
+public import Probability.Distributions.Moments.Real
+public import Mathlib.Probability.BrownianMotion.Basic
+public import Mathlib.Topology.Order.LiminfLimsup
+import all Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Rate.Endpoint.Selection.Lemmas.FixedParameters
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Rate.Bounds.SharpUpper
 
 /-!
@@ -22,7 +27,7 @@ The fixed-parameter floor construction is kept in the proof-only module
 parameters that approach the Brownian constant and combines the resulting
 lower rate with the independent finite-cover upper rate.
 
-The public theorems in this file are:
+## Public declarations
 
 - `neg_half_pi_sq_le_liminf_scaledLog_horizontalTubeProbability_of_floorEndpointWindows`:
   $-\pi^2/2\le\liminf_n(x_n^2/n)\log\mathbb P(T_n)$ for centered

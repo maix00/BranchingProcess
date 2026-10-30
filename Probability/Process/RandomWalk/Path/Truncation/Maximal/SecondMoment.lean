@@ -9,12 +9,41 @@ module
 public import Probability.Distributions.Moments.Truncated.Basic
 public import Probability.Process.RandomWalk.Path.Truncation.Maximal.Basic
 
+import all Probability.Process.RandomWalk.Path.Truncation.Maximal.Lemmas.Truncation
+
 /-!
 # Second-moment maximal bounds for truncated walks
 
 Bounded centered truncations have finite second moments even when the original
 increment law has infinite variance.  This file turns that fact into a
 multiblock large-deviation estimate with an explicit discarded-tail term.
+
+## Public declarations
+
+* `integral_truncatedIncrement_sq_eq_truncatedSecondMoment` identifies the
+  second moment of the hard-truncated increment with the interval-truncated
+  second moment of the original law.
+* `truncatedCenteredSecondBound ν radius length threshold` is the explicit
+  bound `(length + 1) * truncatedSecondMoment ν radius / threshold²` in
+  `ENNReal`.
+* `maximal_ineq_sq_blockSum_centeredTruncated_bounded` gives the squared
+  maximal inequality
+  `ε * P(max_{k≤length} (blockSum start (k+1))² ≥ ε) ≤
+  (length+1) * truncatedSecondMoment ν radius` for centered truncated IID
+  increments.
+* `measure_exists_abs_blockSum_centeredTruncated_ge_le_second` bounds the
+  probability of a centered truncated block-sum exceedance by
+  `truncatedCenteredSecondBound ν radius length threshold`.
+* `measure_exists_block_exists_abs_centeredTruncated_ge_le_second` gives the
+  corresponding multiple-block bound with factor `blocks`.
+* `measure_exists_block_exists_abs_map_centeredTruncated_ge_le_second` gives
+  the same multiblock estimate for the law obtained by mapping the increments
+  through centered hard truncation.
+* `measure_exists_block_exists_abs_ge_le_of_truncation_second_bounded` adds
+  the discarded-tail cost and bounds the original-law probability by
+  `(blocks * length + 1) * ν(|x| > radius) + blocks * truncatedCenteredSecondBound`.
+* `measure_exists_block_exists_abs_ge_le_of_shiftedTruncation_second_bounded`
+  gives that estimate for increments shifted by a specified center.
 -/
 
 open MeasureTheory ProbabilityTheory

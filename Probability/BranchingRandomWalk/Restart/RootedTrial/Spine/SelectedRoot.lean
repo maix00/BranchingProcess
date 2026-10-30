@@ -7,6 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.BranchingRandomWalk.Restart.RootedTrial.Basic
+public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Field.Measurability
 
 /-!
 # Split trials from an observable selected root
@@ -14,6 +15,16 @@ public import Probability.BranchingRandomWalk.Restart.RootedTrial.Basic
 At a fixed generation, a root may be selected using the information already
 observed by that generation.  Splitting the event by the countable range of
 the selector reduces its descendant split time to the fixed-root theorem.
+
+## Public declarations
+
+`RootIndexed.selectedSubtree_splitCompletion_isStoppingTime` proves that if
+`chosen ω` is selected at the deterministic generation `start` and has depth
+`start`, then the ambient time
+`start + selectedPopulationSplitCompletion R (subtree chosen ω)` is a stopping
+time. `stoppedSubtree_splitCompletion_isStoppingTime` gives the same result
+when the start is a finite-valued stopping time. The `_withTop` variant allows
+the start time to equal `⊤`, assigning completion time `⊤` on that fiber.
 -/
 
 open MeasureTheory ProbabilityTheory

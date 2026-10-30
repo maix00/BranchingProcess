@@ -9,7 +9,7 @@ import Topology.Cadlag.Skorokhod.Compactness.Basic
 #print axioms Skorokhod.OscillationPartition.edist_stepPath_le
 #print axioms Skorokhod.OscillationPartition.continuous_stepPath
 #print axioms Skorokhod.OscillationPartition.isCompact_stepPath_image
-#print axioms Skorokhod.zeroPath
-#print axioms Skorokhod.j1EDist_eq_uniformEDist_zero
+#print axioms CadlagPath.const
+#print axioms Skorokhod.j1EDist_const_right_eq_uniformEDist
 #print axioms Skorokhod.isBounded_pathRange_of_isCompact
 #print axioms Skorokhod.exists_uniform_admitsOscillationPartition_of_isCompact

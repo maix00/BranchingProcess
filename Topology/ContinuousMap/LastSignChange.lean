@@ -9,11 +9,12 @@ module
 public import Topology.ContinuousMap.LastZero
 public import Mathlib.Topology.Order.IntermediateValue
 public import Mathlib.Topology.ContinuousMap.Algebra
+import Mathlib.MeasureTheory.Constructions.BorelSpace.Order
 
 /-!
 # Last sign change of a continuous path
 
-The public definitions and theorems in this file are:
+## Public declarations
 
 - `ContinuousMap.lastOppositeSign`: the supremum of times at which a
   path has sign opposite to its value at time one,
@@ -50,8 +51,6 @@ The public definitions and theorems in this file are:
 - `ContinuousMap.continuousAt_firstNoSignChangeStart_of_eq_lastZero`:
   $f\mapsto\tau'(f)$ is continuous at each path satisfying
   $\tau'(f)=g(f)$.
-- `ContinuousMap.continuousAt_lastZero_of_eq_zero`:
-  $f\mapsto g(f)$ is continuous at every path with $g(f)=0$.
 - `ContinuousMap.continuousAt_lastZeroMeanderTransform_of_lastZero_eq_zero`:
   the normalized terminal-excursion path is continuous at such a path.
 - `ContinuousMap.lastSignChangeMeanderTransform`:
@@ -60,6 +59,8 @@ The public definitions and theorems in this file are:
   when $\tau'<1$; it agrees with Bolthausen's transform when $f(1)\ne0$.
 - `ContinuousMap.signStableMeanderTransform`:
   the same formula using Bolthausen's original sign-stable start time.
+- `ContinuousMap.signStableMeanderTransform_eq_lastSignChangeMeanderTransform`:
+  the two transforms agree when the endpoint is nonzero.
 - `ContinuousMap.measurable_signStableMeanderTransform`:
   the original path transform is Borel measurable.
 - `ContinuousMap.measurable_lastSignChangeMeanderTransform`:
@@ -449,14 +450,14 @@ the endpoint case is assigned the zero path. -/
 noncomputable def lastSignChangeMeanderTransform
     (f : C(unitInterval, ℝ)) : C(unitInterval, ℝ) :=
   ⟨(fun t => if firstNoSignChangeStart f = ⊤ then 0 else
-      |f (tailAffineTime (firstNoSignChangeStart f) t)| /
+      |f (unitInterval.terminalSegmentParameter (firstNoSignChangeStart f) t)| /
         Real.sqrt (1 - (firstNoSignChangeStart f : ℝ))), by
     by_cases h : firstNoSignChangeStart f = ⊤
     · simp only [h, ↓reduceIte]
       exact continuous_const
     · simp only [h, ↓reduceIte]
       exact ((f.continuous.comp
-        (continuous_tailAffineTime (firstNoSignChangeStart f))).abs).div_const _⟩
+        (unitInterval.continuous_terminalSegmentParameter (firstNoSignChangeStart f))).abs).div_const _⟩
 
 /-- Bolthausen's original terminal-sign-stable transform. Its start
 time observes both possible weak signs, including paths ending at zero. It is
@@ -466,14 +467,14 @@ Ann. Probab. 4(3) (1976), 480--485, DOI 10.1214/aop/1176996098. -/
 noncomputable def signStableMeanderTransform
     (f : C(unitInterval, ℝ)) : C(unitInterval, ℝ) :=
   ⟨(fun t => if firstSignStableStart f = ⊤ then 0 else
-      |f (tailAffineTime (firstSignStableStart f) t)| /
+      |f (unitInterval.terminalSegmentParameter (firstSignStableStart f) t)| /
         Real.sqrt (1 - (firstSignStableStart f : ℝ))), by
     by_cases h : firstSignStableStart f = ⊤
     · simp only [h, ↓reduceIte]
       exact continuous_const
     · simp only [h, ↓reduceIte]
       exact ((f.continuous.comp
-        (continuous_tailAffineTime (firstSignStableStart f))).abs).div_const _⟩
+        (unitInterval.continuous_terminalSegmentParameter (firstSignStableStart f))).abs).div_const _⟩
 
 /-- The original and endpoint-sign transforms coincide at every
 path whose endpoint is nonzero. -/
@@ -492,12 +493,12 @@ theorem measurable_lastSignChangeMeanderTransform :
   intro t
   have htime : Measurable
       (fun f : C(unitInterval, ℝ) =>
-        tailAffineTime (firstNoSignChangeStart f) t) :=
-    (continuous_tailAffineTime_left t).measurable.comp
+        unitInterval.terminalSegmentParameter (firstNoSignChangeStart f) t) :=
+    (unitInterval.continuous_terminalSegmentParameter_left t).measurable.comp
       measurable_firstNoSignChangeStart
   have heval : Measurable
       (fun f : C(unitInterval, ℝ) =>
-        f (tailAffineTime (firstNoSignChangeStart f) t)) :=
+        f (unitInterval.terminalSegmentParameter (firstNoSignChangeStart f) t)) :=
     continuous_eval.measurable.comp (measurable_id.prodMk htime)
   have hdenom : Measurable
       (fun f : C(unitInterval, ℝ) =>
@@ -508,7 +509,7 @@ theorem measurable_lastSignChangeMeanderTransform :
           measurable_firstNoSignChangeStart))
   change Measurable (fun f : C(unitInterval, ℝ) =>
     if firstNoSignChangeStart f = ⊤ then 0 else
-      |f (tailAffineTime (firstNoSignChangeStart f) t)| /
+      |f (unitInterval.terminalSegmentParameter (firstNoSignChangeStart f) t)| /
         Real.sqrt (1 - (firstNoSignChangeStart f : ℝ)))
   have hset : MeasurableSet
       {f : C(unitInterval, ℝ) | firstNoSignChangeStart f = ⊤} :=
@@ -525,12 +526,12 @@ theorem measurable_signStableMeanderTransform :
   intro t
   have htime : Measurable
       (fun f : C(unitInterval, ℝ) =>
-        tailAffineTime (firstSignStableStart f) t) :=
-    (continuous_tailAffineTime_left t).measurable.comp
+        unitInterval.terminalSegmentParameter (firstSignStableStart f) t) :=
+    (unitInterval.continuous_terminalSegmentParameter_left t).measurable.comp
       measurable_firstSignStableStart
   have heval : Measurable
       (fun f : C(unitInterval, ℝ) =>
-        f (tailAffineTime (firstSignStableStart f) t)) :=
+        f (unitInterval.terminalSegmentParameter (firstSignStableStart f) t)) :=
     continuous_eval.measurable.comp (measurable_id.prodMk htime)
   have hdenom : Measurable
       (fun f : C(unitInterval, ℝ) =>
@@ -541,7 +542,7 @@ theorem measurable_signStableMeanderTransform :
           measurable_firstSignStableStart))
   change Measurable (fun f : C(unitInterval, ℝ) =>
     if firstSignStableStart f = ⊤ then 0 else
-      |f (tailAffineTime (firstSignStableStart f) t)| /
+      |f (unitInterval.terminalSegmentParameter (firstSignStableStart f) t)| /
         Real.sqrt (1 - (firstSignStableStart f : ℝ)))
   have hset : MeasurableSet
       {f : C(unitInterval, ℝ) | firstSignStableStart f = ⊤} :=
@@ -554,13 +555,13 @@ private abbrev nonterminalStart := {start : unitInterval // start < ⊤}
 private noncomputable def rescaledTailAt
     (f : C(unitInterval, ℝ)) (start : nonterminalStart) :
     C(unitInterval, ℝ) :=
-  ⟨fun t => |f (tailAffineTime start.1 t)| /
+  ⟨fun t => |f (unitInterval.terminalSegmentParameter start.1 t)| /
     Real.sqrt (1 - (start.1 : ℝ)),
-    ((f.continuous.comp (continuous_tailAffineTime start.1)).abs).div_const _⟩
+    ((f.continuous.comp (unitInterval.continuous_terminalSegmentParameter start.1)).abs).div_const _⟩
 
-private lemma continuous_tailAffineTime_pair :
+private lemma continuous_terminalSegmentParameter_pair :
     Continuous (fun p : unitInterval × unitInterval =>
-      tailAffineTime p.1 p.2) := by
+      unitInterval.terminalSegmentParameter p.1 p.2) := by
   apply Continuous.subtype_mk
   change Continuous (fun p : unitInterval × unitInterval =>
     (p.1 : ℝ) + (1 - (p.1 : ℝ)) * (p.2 : ℝ))
@@ -572,13 +573,13 @@ private lemma continuous_rescaledTailAt :
   apply ContinuousMap.continuous_of_continuous_uncurry
   have htime : Continuous (fun p :
       (C(unitInterval, ℝ) × nonterminalStart) × unitInterval =>
-      tailAffineTime p.1.2.1 p.2) :=
-    continuous_tailAffineTime_pair.comp
+      unitInterval.terminalSegmentParameter p.1.2.1 p.2) :=
+    continuous_terminalSegmentParameter_pair.comp
       ((continuous_subtype_val.comp
         (continuous_snd.comp continuous_fst)).prodMk continuous_snd)
   have heval : Continuous (fun p :
       (C(unitInterval, ℝ) × nonterminalStart) × unitInterval =>
-      p.1.1 (tailAffineTime p.1.2.1 p.2)) :=
+      p.1.1 (unitInterval.terminalSegmentParameter p.1.2.1 p.2)) :=
     continuous_eval.comp
       ((continuous_fst.comp continuous_fst).prodMk htime)
   have hdenom : Continuous (fun p :
@@ -590,25 +591,6 @@ private lemma continuous_rescaledTailAt :
     apply Real.sqrt_ne_zero'.mpr
     exact sub_pos.mpr (by exact_mod_cast p.1.2.2)
   exact heval.abs.div hdenom hdenom_ne
-
-/-- The last-zero time is continuous at a path whose only zero is at the
-initial time. This follows from the closed upper-level sets of `lastZero`. -/
-theorem continuousAt_lastZero_of_eq_zero
-    (f : C(unitInterval, ℝ)) (hzero : lastZero f = 0) :
-    ContinuousAt lastZero f := by
-  rw [ContinuousAt, tendsto_order]
-  constructor
-  · intro c hc
-    rw [hzero] at hc
-    exact (not_lt_of_ge bot_le hc).elim
-  · intro c hc
-    have hclosed : IsClosed {g : C(unitInterval, ℝ) |
-        c ≤ lastZero g} := isClosed_setOf_le_lastZero c
-    have hopen : IsOpen {g : C(unitInterval, ℝ) | lastZero g < c} := by
-      convert hclosed.isOpen_compl using 1
-      ext g
-      simp only [Set.mem_compl_iff, Set.mem_ofPred_eq, not_le]
-    exact hopen.mem_nhds (by simpa only [Set.mem_ofPred_eq, hzero] using hc)
 
 /-- The normalized terminal-excursion transform is continuous at a path
 whose last zero is its initial time. -/

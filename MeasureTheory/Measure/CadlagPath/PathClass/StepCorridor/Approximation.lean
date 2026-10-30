@@ -20,6 +20,13 @@ also the English translation, “Small Deviations in a Space of Trajectories,”
 approximation property and the common energy limit by their roles.
 Convergence and independence of the resulting limit are theorem obligations,
 not fields silently added to the approximation property.
+
+## Public declarations
+
+- FiniteCorridorUnionApproximation α G records inner and outer corridor
+  unions $A_n\subseteq G\subseteq B_n$ whose energy gap tends to zero.
+- FiniteCorridorUnionEnergyLimits proves that convergence of both energy
+  sequences forces the same limit, and names that value as the common energy.
 -/
 
 open Filter

@@ -15,7 +15,30 @@ public import Topology.Cadlag.Skorokhod.TimeChange.Basic
 
 The logarithmic distortion measures the largest multiplicative change in a
 secant slope. It is the time-change penalty used by the complete metric
-equivalent to the usual Skorokhod `J₁` metric.
+equivalent to the usual Skorokhod `J₁` metric. This is Billingsley's
+deviation `||λ||` in Patrick Billingsley, *Convergence of Probability
+Measures*, 1st ed., Wiley, 1968, Chapter 3, §14, equation (A4.16), p. 113
+([text](https://ru.djvu.online/file/vaaIHv9IWlVeK)); Theorems 14.1 and 14.2,
+pp. 115–116 establish equivalence with the usual metric and completeness.
+
+## Public declarations
+
+- `SecantPair` is a pair `s < t`; `secantSlope τ s t` is
+  `(τ t - τ s) / (t - s)`, `logSecantDistortion` is the absolute logarithm of
+  that slope, and `logDistortion τ` is its supremum over all secant pairs.
+- `secantSlope_pos` and `secantSlope_trans_eq` give positivity and the
+  multiplicative composition rule; `logSecantDistortion_trans_le` and
+  `logDistortion_trans_le` give the corresponding additive bounds.
+- `logSecantDistortion_nonneg`, `logSecantDistortion_refl`,
+  `logDistortion_refl`, and `logDistortion_le_iff` give nonnegativity, the
+  identity value, and the supremum characterization.
+- `logDistortion_le_of_secantSlope_mem_Icc` turns uniform slope bounds
+  `1-q ≤ secantSlope ≤ 1+q` into a finite logarithmic-distortion bound;
+  `logSecantDistortion_symm_pair` and `logDistortion_symm` give inversion
+  invariance.
+- `distortion_le_exp_sub_exp_neg_of_logDistortion_le` converts a bound
+  `logDistortion τ ≤ b` into the uniform time displacement bound
+  `distortion τ ≤ exp(b) - exp(-b)` for `b ≥ 0`.
 -/
 
 @[expose] public section
@@ -45,7 +68,7 @@ noncomputable def logDistortion (τ : TimeChange) : ℝ≥0∞ :=
 theorem secantSlope_pos (τ : TimeChange) {s t : unitInterval} (hst : s < t) :
     0 < τ.secantSlope s t := by
   apply div_pos
-  · have hτ : τ s < τ t := τ.strictMono_toHomeomorph hst
+  · have hτ : τ s < τ t := τ.toOrderIso.strictMono hst
     exact sub_pos.mpr hτ
   · exact sub_pos.mpr hst
 
@@ -54,7 +77,7 @@ theorem secantSlope_trans_eq (τ σ : TimeChange) {s t : unitInterval}
     (τ.trans σ).secantSlope s t =
       σ.secantSlope (τ s) (τ t) * τ.secantSlope s t := by
   have hstR : (s : ℝ) < (t : ℝ) := hst
-  have hτst : τ s < τ t := τ.strictMono_toHomeomorph hst
+  have hτst : τ s < τ t := τ.toOrderIso.strictMono hst
   have hτstR : (τ s : ℝ) < (τ t : ℝ) := hτst
   have hst_ne : (t : ℝ) - (s : ℝ) ≠ 0 := ne_of_gt (sub_pos.mpr hstR)
   have hτst_ne : (τ t : ℝ) - (τ s : ℝ) ≠ 0 :=
@@ -68,7 +91,7 @@ theorem logSecantDistortion_trans_le (τ σ : TimeChange) {s t : unitInterval}
       τ.logSecantDistortion s t + σ.logSecantDistortion (τ s) (τ t) := by
   have hτ : 0 < τ.secantSlope s t := secantSlope_pos τ hst
   have hστ : 0 < σ.secantSlope (τ s) (τ t) :=
-    secantSlope_pos σ (τ.strictMono_toHomeomorph hst)
+    secantSlope_pos σ (τ.toOrderIso.strictMono hst)
   rw [logSecantDistortion, secantSlope_trans_eq τ σ hst]
   rw [Real.log_mul (ne_of_gt hστ) (ne_of_gt hτ)]
   calc
@@ -139,9 +162,9 @@ theorem logSecantDistortion_symm_pair (τ : TimeChange) (s t : unitInterval)
   simp
 
 private def mapSecantPair (τ : TimeChange) : SecantPair ≃ SecantPair where
-  toFun p := ⟨(τ p.1.1, τ p.1.2), τ.strictMono_toHomeomorph p.2⟩
+  toFun p := ⟨(τ p.1.1, τ p.1.2), τ.toOrderIso.strictMono p.2⟩
   invFun p := ⟨(τ.symm p.1.1, τ.symm p.1.2),
-    τ.symm.strictMono_toHomeomorph p.2⟩
+    τ.symm.toOrderIso.strictMono p.2⟩
   left_inv p := by
     apply Subtype.ext
     simp
@@ -149,6 +172,8 @@ private def mapSecantPair (τ : TimeChange) : SecantPair ≃ SecantPair where
     apply Subtype.ext
     simp
 
+/-- The logarithmic distortion is invariant under inversion. This is
+Billingsley's identity (A4.19), Chapter 3, §14, p. 113. -/
 @[simp]
 theorem logDistortion_symm (τ : TimeChange) :
     τ.symm.logDistortion = τ.logDistortion := by
@@ -170,6 +195,8 @@ theorem logDistortion_symm (τ : TimeChange) :
           exact congrArg ENNReal.ofReal <|
             logSecantDistortion_symm_pair τ p.1.1 p.1.2 p.2
 
+/-- Logarithmic distortion is subadditive under composition. This is
+Billingsley's inequality (A4.20), Chapter 3, §14, p. 113. -/
 theorem logDistortion_trans_le (τ σ : TimeChange) :
     (τ.trans σ).logDistortion ≤ τ.logDistortion + σ.logDistortion := by
   refine iSup_le fun p : SecantPair => ?_
@@ -181,7 +208,7 @@ theorem logDistortion_trans_le (τ σ : TimeChange) :
       (σ.logSecantDistortion (τ p.1.1) (τ p.1.2)) ≤ σ.logDistortion := by
     exact le_iSup (fun q : SecantPair => ENNReal.ofReal
       (σ.logSecantDistortion q.1.1 q.1.2))
-        ⟨(τ p.1.1, τ p.1.2), τ.strictMono_toHomeomorph p.2⟩
+        ⟨(τ p.1.1, τ p.1.2), τ.toOrderIso.strictMono p.2⟩
   calc
     ENNReal.ofReal ((τ.trans σ).logSecantDistortion p.1.1 p.1.2) ≤
         ENNReal.ofReal (τ.logSecantDistortion p.1.1 p.1.2 +

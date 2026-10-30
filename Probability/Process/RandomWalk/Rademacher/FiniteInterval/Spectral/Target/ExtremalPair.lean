@@ -10,9 +10,12 @@ public import Probability.Process.RandomWalk.Rademacher.FiniteInterval.Spectral.
 public import Probability.Process.RandomWalk.Rademacher.FiniteInterval.Spectral.Survival.Bounds
 
 import Probability.Process.RandomWalk.Rademacher.FiniteInterval.Spectral.Target.Coefficient
+import Mathlib.Algebra.Order.Field.GeomSum
 
 /-!
 # The extremal spectral pair
+
+## Public declarations
 
 The public declarations in this module are:
 
@@ -530,8 +533,20 @@ theorem sum_two_mul_abs_intervalModeEigenvalue_pow_erase_extremal_le_div
   have hq₁ : q < 1 := intervalEigenvalue_lt_one (Nat.zero_lt_of_lt hcount)
   have hr₀ : 0 ≤ r := pow_nonneg hq₀ n
   have hr₁ : r < 1 := pow_lt_one₀ hq₀ hq₁ hn.ne'
-  have htail := Finset.sum_range_pow_succ_sub_first_le_sq_div_one_sub
-    hr₀ hr₁ interiorCount
+  have hgeom : (∑ i ∈ Finset.range interiorCount, r ^ (i + 1)) ≤
+      r / (1 - r) := by
+    have hsum : (∑ i ∈ Finset.range interiorCount, r ^ (i + 1)) =
+        ∑ i ∈ Finset.Ico 1 (interiorCount + 1), r ^ i := by
+      calc
+        _ = ∑ i ∈ Finset.Ico 0 interiorCount, r ^ (i + 1) := by
+          rw [Finset.range_eq_Ico]
+        _ = ∑ i ∈ Finset.Ico (0 + 1) (interiorCount + 1), r ^ i :=
+          Finset.sum_Ico_add' (fun i : ℕ => r ^ i) 0 interiorCount 1
+        _ = _ := by simp
+    have h := geom_sum_Ico_le_of_lt_one (m := 1)
+      (n := interiorCount + 1) (x := r) hr₀ hr₁
+    rw [hsum]
+    simpa only [pow_one] using h
   have heq : (∑ mode : Fin interiorCount, r ^ (mode.val + 1)) =
       ∑ i ∈ Finset.range interiorCount, r ^ (i + 1) := by
     simpa using (Fin.sum_univ_eq_sum_range
@@ -540,7 +555,13 @@ theorem sum_two_mul_abs_intervalModeEigenvalue_pow_erase_extremal_le_div
       (∑ mode : Fin interiorCount, r ^ (mode.val + 1)) - r ≤
         r ^ 2 / (1 - r) := by
     rw [heq]
-    exact htail
+    calc
+      (∑ i ∈ Finset.range interiorCount, r ^ (i + 1)) - r ≤
+          r / (1 - r) - r := sub_le_sub_right hgeom r
+      _ = r ^ 2 / (1 - r) := by
+        have hden : 1 - r ≠ 0 := ne_of_gt (sub_pos.mpr hr₁)
+        field_simp [hden]
+        ring
   refine (sum_two_mul_abs_intervalModeEigenvalue_pow_erase_extremal_le
     hcount n).trans ?_
   dsimp [r, q] at hfinite ⊢

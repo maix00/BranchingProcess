@@ -4,13 +4,30 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Selection.NSelection.AsymptoticSpeed.InitialPopulation.Field.JointMeasurability
+import Probability.BranchingRandomWalk.Population.Processes.Selected.ParameterizedRootIndexed
+import Probability.BranchingRandomWalk.Selection.NSelection.AsymptoticSpeed.Selection.PopulationBatch
 import Probability.BranchingRandomWalk.Selection.NSelection.AsymptoticSpeed.InitialPopulation.Trajectory.RunBridge
-import Probability.BranchingRandomWalk.Selection.NSelection.AsymptoticSpeed.Limit.ProductAlmostSure
 import Probability.BranchingRandomWalk.Selection.NSelection.AsymptoticSpeed.Limit.InfiniteOffspring.Repair
 import Probability.BranchingRandomWalk.Selection.NSelection.AsymptoticSpeed.Limit.InfiniteOffspring.Speed
+import Mathlib.MeasureTheory.Measure.Prod
+import Mathlib.MeasureTheory.MeasurableSpace.MeasurablyGenerated
 /-!
 # Speed transport for a random initial population
+
+## Public declarations
+
+- `selectedPopulationEndpointWithParameter_eq_rankZero`: when the selected
+  population has cardinality $N$, its minimum endpoint equals the position
+  of its rank-zero particle.
+- `selectedPopulationEndpointTrajectoryWithParameter`:
+  $n\mapsto$ the minimum endpoint at generation $n$ for a parameterized
+  initial-position vector and a pre-sampled root field.
+- `measurable_selectedPopulationEndpointTrajectoryWithParameter`: each fixed
+  generation endpoint is measurable in the initial vector and root field.
+- `ae_selectedPopulationEndpointTrajectoryWithParameter_prod_of_stepLaw`:
+  under boundary normalization, nonempty offspring, and the leftmost first
+  moment condition, there is a speed shared almost surely under the product
+  of any initial-position law and the canonical root-field law.
 
 This file connects the measurable endpoint of a selected population with the
 rank-zero trajectory used by the exact-capacity speed theorem.
@@ -22,6 +39,7 @@ open scoped Topology
 namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Speed
 
 open Combinatorics.Branching
+open _root_.Combinatorics.Selection.NSelection
 open Combinatorics.Branching.Selection.NSelection
 open Combinatorics.UlamHarris
 open ProbabilityTheory.BranchingRandomWalk
@@ -47,35 +65,35 @@ theorem selectedPopulationEndpointWithParameter_eq_rankZero
   have hroot := selectedPopulationRankRoot_mem_and_rank_of_card
     N n initial field ⟨0, hN⟩ (by simpa [population] using hcard)
   have hfilter := hroot.2
-  rw [Combinatorics.Branching.Selection.NSelection.rankBy_eq_card_filter] at hfilter
+  rw [Combinatorics.Selection.NSelection.rankBy_eq_card_filter] at hfilter
   have hminimum : ∀ q ∈ population, value root ≤ value q := by
     intro q hq
     by_contra hnot
     have hlt : value q < value root := lt_of_not_ge hnot
     have hmem : q ∈ (RootIndexed.selectedPopulationTotalized N Finset.univ
         initial id id n field).filter (fun r =>
-        Combinatorics.Branching.Selection.NSelection.valueKey
+        Combinatorics.Selection.NSelection.valueKey
             (RootIndexed.observedPositionAtGeneration initial id id n field) r <
-          Combinatorics.Branching.Selection.NSelection.valueKey
+          Combinatorics.Selection.NSelection.valueKey
             (RootIndexed.observedPositionAtGeneration initial id id n field)
             (selectedPopulationRankRoot N n initial field ⟨0, hN⟩)) :=
       Finset.mem_filter.mpr
         ⟨by simpa [population] using hq,
-          Combinatorics.Branching.Selection.NSelection.valueKey_lt_of_value_lt
+          Combinatorics.Selection.NSelection.valueKey_lt_of_value_lt
             (RootIndexed.observedPositionAtGeneration initial id id n field) hlt⟩
     have hpos : 0 < {r ∈ RootIndexed.selectedPopulationTotalized N Finset.univ
         initial id id n field |
-        Combinatorics.Branching.Selection.NSelection.valueKey
+        Combinatorics.Selection.NSelection.valueKey
             (RootIndexed.observedPositionAtGeneration initial id id n field) r <
-          Combinatorics.Branching.Selection.NSelection.valueKey
+          Combinatorics.Selection.NSelection.valueKey
             (RootIndexed.observedPositionAtGeneration initial id id n field)
             (selectedPopulationRankRoot N n initial field ⟨0, hN⟩)}.card := by
       exact Finset.card_pos.mpr ⟨q, hmem⟩
     have hfilterZero : ({r ∈ RootIndexed.selectedPopulationTotalized N Finset.univ
         initial id id n field |
-        Combinatorics.Branching.Selection.NSelection.valueKey
+        Combinatorics.Selection.NSelection.valueKey
             (RootIndexed.observedPositionAtGeneration initial id id n field) r <
-          Combinatorics.Branching.Selection.NSelection.valueKey
+          Combinatorics.Selection.NSelection.valueKey
             (RootIndexed.observedPositionAtGeneration initial id id n field)
             (selectedPopulationRankRoot N n initial field ⟨0, hN⟩)}).card = 0 := by
       simpa [Fin.val_mk] using hfilter
@@ -92,7 +110,7 @@ theorem selectedPopulationEndpointWithParameter_eq_rankZero
   have hendpoint : selectedPopulationEndpointWithParameter N n (initial, field) =
       population.inf' hpop value := by
     change (if h : population.Nonempty then population.inf' h value else 0) = _
-    rw [dif_pos hpop]
+    rw [dite_eq_left hpop]
   rw [hendpoint]
   rw [hinf]
   rfl
@@ -375,12 +393,25 @@ theorem ae_selectedPopulationEndpointTrajectoryWithParameter_prod_of_stepLaw
           (initial, field)) speed := by
     filter_upwards [] with initial
     exact hsections initial
-  have hjoint := ae_hasAsymptoticSpeed_prod_of_ae_sections
-    ρ fieldLaw
-    (fun initial field n =>
-      selectedPopulationEndpointTrajectoryWithParameter N (initial, field) n)
-    (fun n => measurable_selectedPopulationEndpointTrajectoryWithParameter
-      N n) speed hsectionsAE
+  have hjoint : ∀ᵐ p ∂ρ.prod fieldLaw,
+      HasAsymptoticSpeed (𝕜 := ℝ)
+        (selectedPopulationEndpointTrajectoryWithParameter N p) speed := by
+    have hscaled (n : ℕ) : Measurable (fun p :
+        (Fin N → ℝ) × RootIndexed.StepField (Fin N) ℕ ℝ =>
+        (n : ℝ)⁻¹ * selectedPopulationEndpointTrajectoryWithParameter N p n) :=
+      measurable_const.mul
+        (measurable_selectedPopulationEndpointTrajectoryWithParameter N n)
+    have hevent : MeasurableSet {p :
+        (Fin N → ℝ) × RootIndexed.StepField (Fin N) ℕ ℝ |
+        HasAsymptoticSpeed (𝕜 := ℝ)
+          (selectedPopulationEndpointTrajectoryWithParameter N p) speed} := by
+      change MeasurableSet {p : (Fin N → ℝ) × RootIndexed.StepField (Fin N) ℕ ℝ |
+        Tendsto (fun n : ℕ => (n : ℝ)⁻¹ *
+          selectedPopulationEndpointTrajectoryWithParameter N p n)
+          atTop (𝓝 speed)}
+      exact measurableSet_tendsto (𝓝 speed) hscaled
+    rw [Measure.ae_prod_iff_ae_ae hevent]
+    exact hsectionsAE
   refine ⟨speed, ?_⟩
   change ∀ᵐ p ∂ρ.prod
     (RootIndexed.stepFieldLaw (Root := Fin N) L.sortedPotentialImage),

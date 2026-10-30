@@ -6,17 +6,23 @@ Authors: WANG Yiyang
 
 module
 
-public import Order.Interval.RationalCoordinate.UnitInterval
 public import Probability.Process.Corridor.Range
-public import Probability.Process.Stable.FiniteDimensional
-public import Probability.Process.Path.Skorokhod.RationalTime
-public import Probability.Process.Stable.SmallDeviation.RationalTube
+public import Probability.Process.Stable.Levy
+import Order.Interval.RationalCoordinate.UnitInterval
+import Probability.Process.Stable.FiniteDimensional
 
 /-!
 # Law invariance of stable corridor events
 
-Rational range-tube probabilities depend only on the stable increment law.
-This process-level result does not require an escape-rate limit.
+## Public declarations
+
+- If two stable Lévy processes have the same index and increment law, their
+  rational range-tube probabilities agree at every width:
+  $P_X(\mathrm{tube}(a))=P_Y(\mathrm{tube}(a))$.
+
+The rational event-law transfer itself is stated in the generic corridor
+module. This result supplies the rational-time process law from the stable
+increment specification.
 -/
 
 @[expose] public section
@@ -50,16 +56,7 @@ theorem IsStableLevyProcess.rationalRangeProbability_eq_of_same_law
   have hlaw := hXclock.process_identDistrib_of_aemeasurable hYclock
     (AEMeasurable.of_eval fun q => hXclock.aemeasurable_eval q)
     (AEMeasurable.of_eval fun q => hYclock.aemeasurable_eval q)
-  have hprob := hlaw.measure_mem_eq
-    (Skorokhod.measurableSet_rationalCoordinateOscillationTube (2 * a))
-  have hprob' : P (rationalHorizonTubeEvent X 1 (2 * a)) =
-      Q (rationalHorizonTubeEvent Y 1 (2 * a)) := by
-    change P ((fun ω q => X (1 * RationalCoordinate.toNNReal q) ω) ⁻¹'
-        Skorokhod.rationalCoordinateOscillationTube (2 * a)) =
-      Q ((fun ω q => Y (1 * RationalCoordinate.toNNReal q) ω) ⁻¹'
-        Skorokhod.rationalCoordinateOscillationTube (2 * a))
-    simpa only [one_mul] using hprob
-  simpa [rationalRangeProbability] using hprob'
+  exact rationalRangeProbability_eq_of_rationalProcess_identDistrib hlaw a
 
 end ProbabilityTheory
 

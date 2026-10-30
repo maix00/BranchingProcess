@@ -12,6 +12,8 @@ public import Probability.Distributions.Rademacher
 /-!
 # Rademacher expectation of the transition operator
 
+## Public declarations
+
 For the Rademacher law $\nu=\frac12(\delta_{-1}+\delta_1)$, the public
 declarations identify the operator with its one-step expectation:
 

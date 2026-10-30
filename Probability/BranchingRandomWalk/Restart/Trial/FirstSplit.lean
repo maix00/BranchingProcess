@@ -17,6 +17,37 @@ The raw split index reads the next generation and need not be a stopping time.
 Its completion generation is observable.  At a finite first split, the
 previous generation contains exactly one parent, even when the selected
 offspring family is empty on other samples or has arbitrary finite size.
+
+## Public declarations
+
+* `selectedPopulationSplitDeclaration`, `selectedPopulationRawSplitTime`, and
+  `selectedPopulationSplitCompletion` define the first-split event and its raw
+  and observable times. In terms of
+  `Zₙ(ω) = (StepSelection.population R n ω).card`, the declaration is
+  `Dₙ = {ω | 2 ≤ Zₙ₊₁(ω)}`. Writing `τ` and `σ` for the raw and observable
+  times, `selectedPopulationSplitCompletion_eq_raw_add_one` states
+  `σ = τ + 1`; `selectedPopulationSplitCompletion_ne_zero`,
+  `selectedPopulationRawSplitTime_eq_of_completion_eq`, and
+  `selectedPopulationRawSplitTime_eq_top_of_completion_eq_top` give the
+  corresponding time relations. `selectedPopulationSplitCompletion_isStoppingTime`
+  proves observability, while
+  `selectedPopulationRawSplitTime_not_stopping_of_probability` shows that
+  `0 < ν(D₀) < 1` makes the raw look-ahead time fail the stopping-time test.
+* At a finite first split, `selectedPopulation_firstSplit_parent_card_eq_one`
+  gives `|Zₙ| = 1`, and
+  `selectedPopulation_firstSplit_has_sibling_pair` supplies two distinct
+  selected children of that unique parent.
+* `selectedChildrenAtFirstSplit` constructs the two child addresses at a
+  declared split. `selectedChildrenAtFirstSplit_measurable` proves they are
+  observable one generation later, and
+  `selectedChildrenAtFirstSplit_valid_at_first_split` places them in `Zₙ₊₁`,
+  proves they are distinct, and gives both depths as `n + 1`.
+* `selectedPopulationFirstSplitRoots` totalizes this pair over the first split
+  time. `selectedPopulationFirstSplitRoots_fiber_measurable` proves its fibers
+  measurable in the completion-time sigma algebra; when the completion time
+  equals `n`, `selectedPopulationFirstSplitRoots_depth` gives depth `n`, and
+  `selectedPopulationFirstSplitRoots_injective_of_finite` proves injectivity
+  whenever the completion time is finite.
 -/
 
 open MeasureTheory ProbabilityTheory
@@ -26,6 +57,7 @@ open MeasureTheory ProbabilityTheory
 namespace ProbabilityTheory.BranchingRandomWalk
 
 open Combinatorics.Branching Combinatorics.UlamHarris MeasureTheory
+open Combinatorics.Branching.Step.FiniteSelection
 
 variable {α X : Type*}
 
@@ -150,15 +182,6 @@ theorem selectedPopulationRawSplitTime_not_stopping_of_probability
   · rw [huniv] at hprob
     simp at hprob
 
-theorem selectedPopulation_nonempty_of_succ_nonempty
-    (R : Step.FiniteSelection α X) (ω : Mark α (Step α X)) (n : ℕ)
-    (hnext : (StepSelection.population R (n + 1) ω).Nonempty) :
-    (StepSelection.population R n ω).Nonempty := by
-  obtain ⟨q, hq⟩ := hnext
-  obtain ⟨p, hp, _, _⟩ :=
-    StepSelection.population_succ_selectedParent R ω n q hq
-  exact ⟨p, hp⟩
-
 /-- On a finite first split, the preceding generation has exactly one
 particle.  Extinction remains allowed on samples with no later split. -/
 theorem selectedPopulation_firstSplit_parent_card_eq_one
@@ -172,7 +195,7 @@ theorem selectedPopulation_firstSplit_parent_card_eq_one
   have hnext : (StepSelection.population R (n + 1) ω).Nonempty :=
     Finset.card_pos.mp (by omega)
   have hparent : (StepSelection.population R n ω).Nonempty :=
-    selectedPopulation_nonempty_of_succ_nonempty R ω n hnext
+    StepSelection.population_nonempty_of_succ_nonempty R ω n hnext
   have hcardLE : (StepSelection.population R n ω).card ≤ 1 := by
     by_cases hn : n = 0
     · subst n
@@ -228,63 +251,15 @@ theorem selectedPopulation_firstSplit_has_sibling_pair
   · simpa [hp₁eq] using hq₁eq
   · simpa [hp₂eq] using hq₂eq
 
-/-- The second slot in the finite selected family, after its first slot in
-the given slot order.  The bottom slot is used only when fewer than two
-selected slots exist. -/
-noncomputable def secondSelectedSlot {α X : Type*} [LinearOrder α]
-    [OrderBot α] (R : Step.FiniteSelection α X) (ξ : Step α X) : α :=
-  let first := firstSelectedSlot R ξ
-  if h : (R ξ).erase first |>.Nonempty then
-    (R ξ).erase first |>.min' h
-  else ⊥
-
-theorem secondSelectedSlot_mem_of_card
-    {α X : Type*} [LinearOrder α] [OrderBot α]
-    (R : Step.FiniteSelection α X) (ξ : Step α X)
-    (hcard : 2 ≤ (R ξ).card) :
-    secondSelectedSlot R ξ ∈ R ξ ∧
-      firstSelectedSlot R ξ ≠ secondSelectedSlot R ξ := by
-  classical
-  have hfirst : firstSelectedSlot R ξ ∈ R ξ :=
-    firstSelectedSlot_mem R ξ (Finset.card_pos.mp (by omega))
-  have herase : ((R ξ).erase (firstSelectedSlot R ξ)).Nonempty := by
-    apply Finset.card_pos.mp
-    rw [Finset.card_erase_of_mem hfirst]
-    omega
-  have hsecond : secondSelectedSlot R ξ ∈ (R ξ).erase (firstSelectedSlot R ξ) := by
-    have hvalue : secondSelectedSlot R ξ =
-        ((R ξ).erase (firstSelectedSlot R ξ)).min' herase := by
-      simp [secondSelectedSlot, herase]
-    rw [hvalue]
-    exact Finset.min'_mem _ _
-  exact ⟨(Finset.mem_erase.mp hsecond).2,
-    (Finset.mem_erase.mp hsecond).1.symm⟩
-
-theorem secondSelectedSlot_measurable {α X : Type*} [Countable α]
-    [MeasurableSpace α] [MeasurableSingletonClass α]
-    [LinearOrder α] [OrderBot α] [MeasurableSpace X]
-    (R : Step.FiniteSelection α X) (hR : Measurable R.select) :
-    Measurable (secondSelectedSlot R) := by
-  classical
-  let f : Finset α → α := fun s =>
-    let first := if h : s.Nonempty then s.min' h else ⊥
-    if h : s.erase first |>.Nonempty then s.erase first |>.min' h else ⊥
-  have hf : Measurable f := measurable_of_countable f
-  have heq : secondSelectedSlot R = f ∘ R.select := by
-    funext ξ
-    rfl
-  rw [heq]
-  exact hf.comp hR
-
 /-- Choose an arbitrary address from a finite population; it is a total
 selector, with the root address used on the empty population. -/
-noncomputable def finitePopulationRepresentative
+private noncomputable def finitePopulationRepresentative
     {α : Type*} (population : Finset (TreeNode α)) : TreeNode α := by
   classical
   exact if h : population.Nonempty then
     population.toList.head h.toList_ne_nil else []
 
-theorem finitePopulationRepresentative_mem
+private theorem finitePopulationRepresentative_mem
     {α : Type*} (population : Finset (TreeNode α))
     (hne : population.Nonempty) :
   finitePopulationRepresentative population ∈ population := by
@@ -300,7 +275,9 @@ noncomputable def selectedChildrenAtFirstSplit
     (R : Step.FiniteSelection α X) (n : ℕ)
     (ω : Mark α (Step α X)) : Fin 2 → TreeNode α := by
   classical
-  let parent := finitePopulationRepresentative (StepSelection.population R n ω)
+  let population := StepSelection.population R n ω
+  let parent := if h : population.Nonempty then
+      population.toList.head h.toList_ne_nil else []
   let ξ := ω parent
   exact fun i => if i.val = 0 then parent ++ [firstSelectedSlot R ξ]
     else parent ++ [secondSelectedSlot R ξ]
@@ -377,6 +354,10 @@ theorem selectedChildrenAtFirstSplit_valid_at_first_split
       (StepSelection.population R n ω)
       (by rw [hpop]; simp : (StepSelection.population R n ω).Nonempty)
     simpa [hpop] using hrep
+  have hparentInline :
+      (if h : (StepSelection.population R n ω).Nonempty then
+        (StepSelection.population R n ω).toList.head h.toList_ne_nil else []) = p := by
+    simpa [finitePopulationRepresentative] using hparent
   have hslots : 2 ≤ (R (ω p)).card := by
     have h := Finset.one_lt_card_iff.mpr ⟨i₁, i₂, hi₁, hi₂, hi12⟩
     omega
@@ -386,10 +367,10 @@ theorem selectedChildrenAtFirstSplit_valid_at_first_split
     firstSelectedSlot_mem R (ω p) (Finset.card_pos.mp (by omega))
   have hroot0 : selectedChildrenAtFirstSplit R n ω 0 =
       p ++ [firstSelectedSlot R (ω p)] := by
-    simp [selectedChildrenAtFirstSplit, hparent]
+    simp [selectedChildrenAtFirstSplit, hparentInline]
   have hroot1 : selectedChildrenAtFirstSplit R n ω 1 =
       p ++ [secondSelectedSlot R (ω p)] := by
-    norm_num [selectedChildrenAtFirstSplit, hparent]
+    norm_num [selectedChildrenAtFirstSplit, hparentInline]
   have hfrontier : frontierMarks n ω p = ω p := by
     simp [frontierMarks, hdepth]
   have hchild (i : α) (hi : i ∈ R (ω p)) :

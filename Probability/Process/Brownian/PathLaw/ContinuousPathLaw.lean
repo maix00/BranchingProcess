@@ -6,24 +6,27 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.ConvergenceInDistribution.ContinuousMap.FiniteDimensional
+import Probability.ConvergenceInDistribution.ContinuousMap.FiniteDimensional
 public import Probability.Process.Brownian.PathLaw.ContinuousModification
-public import Probability.Process.TimeGrid.Dense.NonnegativeRationals
-public import Mathlib.Data.Rat.Encodable
+import Topology.Order.NNReal.Rational
+import Mathlib.Data.Rat.Encodable
 public import Mathlib.Topology.ContinuousMap.SecondCountableSpace
 public import Mathlib.Topology.Metrizable.ContinuousMap
 
 /-!
 # Laws of continuous Brownian paths
 
-The public theorem in this file is:
+## Public declarations
 
+- `ProbabilityTheory.brownianPathScaling`: the path transformation
+  $f(t)\mapsto c^{-1/2}f(ct)$ for $c\ge 0$.
+- `ProbabilityTheory.measurable_brownianPathScaling`: this map is measurable.
 - `ProbabilityTheory.IsBrownianReal.measure_continuousPathMap_eq`:
-  continuous versions of Brownian processes have the same law on
-  $C([0,\infty),\mathbb R)$.
+  any two measurable continuous versions of the same Brownian process law
+  have equal image measures on $C([0,\infty),\mathbb R)$.
 - `ProbabilityTheory.IsBrownianReal.measure_continuousPathMap_scale_eq`:
-  the Brownian path law is invariant under $f(t)\mapsto c^{-1/2}f(ct)$
-  for $c>0$.
+  for $c>0$, pushing the continuous Brownian path law forward by
+  $f(t)\mapsto c^{-1/2}f(ct)$ leaves that law invariant.
 
 The proof identifies finite-dimensional distributions on nonnegative
 rational times, a countable dense subset. This path-law uniqueness is used
@@ -68,20 +71,20 @@ theorem IsBrownianReal.measure_continuousPathMap_eq
     P.map (hB.continuousPathMap hBmeasurable) =
       P.map (hC.continuousPathMap hCmeasurable) := by
   classical
-  haveI : IsProbabilityMeasure P :=
+  have : IsProbabilityMeasure P :=
     (hB.toIsPreBrownianReal.hasLaw ∅).isProbabilityMeasure
-  letI := continuousPath_standardBorel
+  let := continuousPath_standardBorel
   apply ContinuousMap.measure_eq_of_map_finiteEvaluation_eq_of_denseRange
-    nonnegativeRationalTime denseRange_nonnegativeRationalTime
+    (fun q : ℚ≥0 => (q : ℝ≥0)) NNRat.denseRange_cast_nnreal
   intro I
-  letI : Fintype I := Fintype.ofFinite I
+  let : Fintype I := Fintype.ofFinite I
   let time : ℚ≥0 ↪ ℝ≥0 :=
-    ⟨nonnegativeRationalTime, nonnegativeRationalTime_injective⟩
+    ⟨(fun q : ℚ≥0 => (q : ℝ≥0)), NNRat.cast_injective⟩
   let J := I.map time
   let e : I ≃ J := I.equivMap time
   let reindex : (J → ℝ) → (I → ℝ) := fun x i => x (e i)
   let eval : C(ℝ≥0, ℝ) → (I → ℝ) :=
-    ContinuousMap.finiteEvaluation (fun q : I => nonnegativeRationalTime q)
+    ContinuousMap.finiteEvaluation (fun q : I => (q : ℝ≥0))
   have hreindex : Measurable reindex := by
     rw [measurable_pi_iff]
     intro i
@@ -100,7 +103,7 @@ theorem IsBrownianReal.measure_continuousPathMap_eq
       with ω hω
     funext i
     change hB.continuousPathMap hBmeasurable ω
-        (nonnegativeRationalTime i) = B ((e i : J) : ℝ≥0) ω
+        ((i : ℝ≥0)) = B ((e i : J) : ℝ≥0) ω
     rw [hω]
     rfl
   have haeC : eval ∘ hC.continuousPathMap hCmeasurable =ᵐ[P]
@@ -109,7 +112,7 @@ theorem IsBrownianReal.measure_continuousPathMap_eq
       with ω hω
     funext i
     change hC.continuousPathMap hCmeasurable ω
-        (nonnegativeRationalTime i) = C ((e i : J) : ℝ≥0) ω
+        ((i : ℝ≥0)) = C ((e i : J) : ℝ≥0) ω
     rw [hω]
     rfl
   have hEvalB := hlawB.congr haeB
@@ -120,7 +123,7 @@ theorem IsBrownianReal.measure_continuousPathMap_eq
     rw [Measure.map_map]
     · exact hEvalB.map_eq
     · exact (ContinuousMap.continuous_finiteEvaluation
-        (fun q : I => nonnegativeRationalTime q)).measurable
+        (fun q : I => (q : ℝ≥0))).measurable
     · exact hB.measurable_continuousPathMap hBmeasurable
   have hmapC :
       (P.map (hC.continuousPathMap hCmeasurable)).map eval =
@@ -128,7 +131,7 @@ theorem IsBrownianReal.measure_continuousPathMap_eq
     rw [Measure.map_map]
     · exact hEvalC.map_eq
     · exact (ContinuousMap.continuous_finiteEvaluation
-        (fun q : I => nonnegativeRationalTime q)).measurable
+        (fun q : I => (q : ℝ≥0))).measurable
     · exact hC.measurable_continuousPathMap hCmeasurable
   simpa [eval] using hmapB.trans hmapC.symm
 

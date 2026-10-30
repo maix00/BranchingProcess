@@ -6,11 +6,19 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.Path.Interpolation.Finite.Grid
+public import Algebra.BigOperators.AdditivePath.Basic
+public import Mathlib.MeasureTheory.Function.ConvergenceInDistribution
+public import Mathlib.Probability.BrownianMotion.Basic
 public import Mathlib.Topology.UnitInterval
-public import Probability.Process.RandomWalk.FunctionalLimit.Donsker.Path.Brownian
-public import Probability.Process.RandomWalk.Path.Interpolation.Path.MaximalJump
-public import Probability.ConvergenceInDistribution.Approximation.AsymptoticEquivalence
+public import Probability.Process.Brownian.FiniteDimensional.UniformGrid
+public import Probability.Process.RandomWalk.Path.Interpolation.Basic
+public import Probability.Sequence.IID.Basic
+import Probability.ConvergenceInDistribution.Approximation.AsymptoticEquivalence
+import Probability.Process.RandomWalk.FunctionalLimit.Donsker.FiniteDimensional.Brownian
+import Probability.Process.RandomWalk.Path.Interpolation.Core
+import Probability.Process.RandomWalk.Path.Interpolation.Finite.Grid
+import Probability.Process.RandomWalk.Path.MaximalJump.FiniteVariance
+import Analysis.Asymptotics.Scale.Block.Proportional
 
 /-!
 # Uniform-grid limits for polygonal random-walk paths
@@ -20,14 +28,12 @@ interpolation at the corresponding fixed uniform grid.  The deterministic
 error is bounded by finitely many maximal jumps and hence vanishes in
 probability under a finite second moment.
 
-The public theorems in this file are:
+## Public declarations
 
-- `ProbabilityTheory.RandomWalk.proportionalBlockLength_one_div`:
-  for $m>0$, $\lfloor n/m\rfloor$ is the proportional block length
-  $\lfloor (1/m)n\rfloor$.
 - `ProbabilityTheory.RandomWalk.tendstoInDistribution_normalizedLinearPath_uniformGrid_brownian`:
-  polygonal random-walk values on a fixed equal partition converge jointly to
-  Brownian values on that partition.
+  for centered, unit-second-moment increments, polygonal random-walk values
+  on a fixed equal partition converge jointly to the corresponding Brownian
+  values.
 -/
 
 open Filter MeasureTheory ProbabilityTheory
@@ -36,10 +42,12 @@ open Filter MeasureTheory ProbabilityTheory
 
 namespace ProbabilityTheory.RandomWalk
 
+open Asymptotics
+
 
 /-- For a positive number of blocks, a block of proportion `1 / blocks`
 has exactly the quotient length `n / blocks`. -/
-theorem proportionalBlockLength_one_div
+private lemma proportionalBlockLength_one_div
     (blocks n : ℕ) :
     proportionalBlockLength (1 / (blocks : ℝ)) n = n / blocks := by
   unfold proportionalBlockLength

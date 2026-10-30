@@ -25,6 +25,27 @@ The set `ancestors β p` consists of the `q` with `IsDescendant β q p`, while
 `disjoint_ancestorsAt` proves distinct distance slices disjoint, and
 `mem_ancestors_iff_exists_mem_ancestorsAt` states
 `q ∈ ancestors β p ↔ ∃ k, q ∈ ancestorsAt β p k`.
+
+## Public declarations
+
+* `IsAncestor β p q` is defined by `IsDescendant β q p`.
+* `isAncestor_iff_isDescendant` states
+  `IsAncestor β p q ↔ IsDescendant β q p`.
+* `isAncestor_refl` and `isAncestor_trans` give reflexivity and transitivity
+  of `IsAncestor`.
+* `fst_eq_of_isAncestor` gives `q.1 = p.1` when `IsAncestor β p q`.
+* `generation_eq_generation_add_of_isAncestor` gives
+  `generation p.2 = generation q.2 + generationAfter q.2 p.2`.
+* `ancestors β p` is `{q | IsAncestor β p q}`; `ancestorsAt β p k` adds
+  `generationAfter q.2 p.2 = k`.
+* `mem_ancestors_iff` and `mem_ancestorsAt_iff` characterize membership in
+  these two sets.
+* `mem_ancestors_of_mem_ancestorsAt` and
+  `generationAfter_of_mem_ancestorsAt` project the defining conditions.
+* `disjoint_ancestorsAt` states that `ancestorsAt β p k` and
+  `ancestorsAt β p l` are disjoint when `k ≠ l`.
+* `mem_ancestors_iff_exists_mem_ancestorsAt` states
+  `q ∈ ancestors β p ↔ ∃ k, q ∈ ancestorsAt β p k`.
 -/
 
 @[expose] public section

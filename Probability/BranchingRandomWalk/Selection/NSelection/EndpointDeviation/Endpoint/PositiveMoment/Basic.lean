@@ -13,6 +13,16 @@ import Probability.MeasureTheory.Moments.ExponentialMoment
 /-!
 # Negative endpoint moments for finite-root N-selection
 
+## Public declarations
+
+- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.finiteRootStepFieldLaw_lintegral_exp_neg_firstNSelectedEndpointMinimum_le`:
+  under boundary normalization and nonempty offspring,
+  \(\mathbb E[e^{-M_H}]\le m\), where \(M_H\) is the minimum selected
+  endpoint among \(m\) roots at generation \(H\).
+- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.finiteRootStepFieldLaw_integrable_pow_four_max_neg_firstNSelectedEndpointMinimum`:
+  the negative part is fourth-integrable and
+  \(\mathbb E[((-M_H)^+)^4]\le2048(1+\log^4 m)\).
+
 The endpoint of the selected population is bounded below, in the exponential
 weight, by one term in the unrestricted generation sum of the root containing
 the minimizing particle.  The many-to-one identity then bounds its negative
@@ -23,7 +33,9 @@ negative-part fourth-moment input for the trajectory `L²` argument.
 open MeasureTheory
 open scoped ENNReal BigOperators
 
-namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail
+namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation
+
+open ProbabilityTheory.BranchingProcess (offspringFieldLaw offspringFieldLaw_coordinate offspringFieldLaw_independent offspringFieldLaw_mapMarks)
 
 open Combinatorics.Branching
 open Combinatorics.UlamHarris
@@ -113,7 +125,7 @@ theorem finiteRootStepFieldLaw_lintegral_exp_neg_firstNSelectedEndpointMinimum_l
         ∂finiteRootStepFieldLaw μ m) =
         ∑ r : Fin m, ∫⁻ ξ,
           Spine.weightedGenerationEndpoint realPotential H (fun _ => 1) 0 ξ
-          ∂stepFieldLaw μ := by
+          ∂offspringFieldLaw μ := by
     simpa [finiteRootStepFieldLaw, endpointWeight, Finset.sum_const,
       nsmul_eq_mul] using
       RootIndexed.lintegral_finset_root_observable
@@ -123,7 +135,7 @@ theorem finiteRootStepFieldLaw_lintegral_exp_neg_firstNSelectedEndpointMinimum_l
           (f := fun _ => (1 : ℝ≥0∞)) measurable_const 0)
   have hsingle :
       (∫⁻ ξ, Spine.weightedGenerationEndpoint realPotential H (fun _ => 1) 0 ξ
-        ∂stepFieldLaw μ) = 1 := by
+        ∂offspringFieldLaw μ) = 1 := by
     have hmany := Spine.weightedGenerationManyToOne
       (d := id) measurable_id realPotential μ hboundary
       (f := fun _ => (1 : ℝ≥0∞)) measurable_const H 0
@@ -173,4 +185,4 @@ theorem finiteRootStepFieldLaw_integrable_pow_four_max_neg_firstNSelectedEndpoin
     (finiteRootStepFieldLaw_lintegral_exp_neg_firstNSelectedEndpointMinimum_le
       m N H hm hN μ hboundary hnonempty)
 
-end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail
+end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation

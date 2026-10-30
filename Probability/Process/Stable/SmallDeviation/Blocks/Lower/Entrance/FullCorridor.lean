@@ -6,16 +6,18 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.Binning.TwoBins
+public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.Return.TwoBins
 public import Probability.Process.Path.Skorokhod.Corridor.Enlargement
-public import Probability.Distributions.Stable.Operations.Sign
+public import Probability.Distributions.Stable.Support.Sign
 
 /-!
 # Positive complete-path corridors for stable processes
 
 The finite two-bin return construction yields a positive range tube. A
 smaller range tube forces the centered complete path into any corridor that
-contains zero. The public declarations in this module are:
+contains zero.
+
+## Public declarations
 
 - `ProbabilityTheory.IsStableLevyProcess.measure_fullSegmentCorridor_pos`:
   if the increment law has positive mass on both half-lines, then
@@ -25,7 +27,12 @@ contains zero. The public declarations in this module are:
   the same conclusion follows from $0<F(0)<1$.
 - `ProbabilityTheory.IsStableLevyProcess.measure_fullSegmentCorridorReturn_pos_of_zero_mem`:
   the path event and a terminal interval containing zero have positive
-  joint probability.
+  joint probability; explicitly, for \(a<0<b\), \(c<0<d\), and positive
+  mass on both increment half-lines,
+  \[
+    \mathbb P\!\left(\exists\eta>0,\ \forall t\in[0,1],\quad
+      a+\eta\le X_t-X_0\le b-\eta,\quad X_1-X_0\in(c,d)\right)>0.
+  \]
 
 The positive short-block corridor probability is an input to the rational
 coordinate form of Lemma 2(c), equation (23), in A. A. Mogul'skii, “Small

@@ -15,6 +15,16 @@ public import Probability.Process.Path.Representation.Skorokhod
 This file packages the canonical coordinate process on `CadlagPath` and its
 stable clock-increment law. The finite-horizon path laws used by small
 deviation arguments are instances of this general interface.
+## Public declarations
+
+- `IsStableClockProcessLaw` specifies a path law $P$ whose coordinate
+  process starts at zero, has independent increments, and satisfies
+  $X_t-X_s\sim\mu_{c(t)-c(s)}$ for the given clock $c$.
+- Its projections expose strict stability, the almost-sure zero start,
+  independent increments, increment laws, and the induced process instance.
+  `law_of_pathMap_ae` transfers this interface across almost-surely equal
+  path maps.
+
 -/
 
 open MeasureTheory

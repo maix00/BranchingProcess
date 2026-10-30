@@ -7,14 +7,23 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.Path.Window.Basic
-public import Mathlib.MeasureTheory.Constructions.BorelSpace.Order
+public import Mathlib.MeasureTheory.Constructions.BorelSpace.Basic
+import Mathlib.MeasureTheory.Constructions.BorelSpace.Order
 
 /-!
 # Measurable windows for finite increment paths
+
+## Public declarations
+
+- `ProbabilityTheory.RandomWalk.measurableSet_inWindows`: if each coordinate window is measurable, then
+  `{path | ∀ k, path k ∈ window k}` is measurable.
+- `ProbabilityTheory.RandomWalk.measurableSet_inClosedInterval` and
+  `ProbabilityTheory.RandomWalk.measurableSet_finiteInClosedInterval`: the infinite increment-path event
+  and the finite-vector event that every partial sum from `initial` belongs
+  to $[lower, upper]$ are measurable.
 -/
 
 open MeasureTheory
-open scoped ENNReal
 
 @[expose] public section
 
@@ -55,27 +64,5 @@ theorem measurableSet_finiteInClosedInterval
     (measurable_const.add <| Finset.measurable_sum Finset.univ fun j _ =>
       measurable_pi_apply
         (⟨j, lt_of_lt_of_le j.isLt (Nat.le_of_lt_succ k.isLt)⟩ : Fin n))
-
-/-- Indicator of a finite path-window event. -/
-noncomputable def windowTest {E : Type*} {n : ℕ}
-    (window : Fin (n + 1) → Set E) :
-    (Fin (n + 1) → E) → ENNReal :=
-  {path | InWindows window path}.indicator fun _ => 1
-
-theorem windowTest_measurable {E : Type*} [MeasurableSpace E] {n : ℕ}
-    (window : Fin (n + 1) → Set E)
-    (hwindow : ∀ k, MeasurableSet (window k)) :
-    Measurable (windowTest window) :=
-  measurable_const.indicator (measurableSet_inWindows window hwindow)
-
-@[simp] theorem windowTest_eq_one_iff {E : Type*} {n : ℕ}
-    (window : Fin (n + 1) → Set E) (path : Fin (n + 1) → E) :
-    windowTest window path = 1 ↔ InWindows window path := by
-  simp [windowTest]
-
-@[simp] theorem windowTest_eq_zero_iff {E : Type*} {n : ℕ}
-    (window : Fin (n + 1) → Set E) (path : Fin (n + 1) → E) :
-    windowTest window path = 0 ↔ ¬InWindows window path := by
-  simp [windowTest]
 
 end ProbabilityTheory.RandomWalk

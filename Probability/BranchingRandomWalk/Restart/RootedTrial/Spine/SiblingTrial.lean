@@ -15,6 +15,15 @@ run a finite growth trial while the second selected child supplies a reserve
 subtree.  Their complete descendant fields have the product branching law,
 independently of the stopped domain past.  The split mark is allowed to have
 any finite selected offspring set of cardinality at least two.
+
+## Public declarations
+
+`RootIndexed.ReserveLineages.sigma_firstGrowth_secondReserve_factorization`
+factors the joint event of a measurable stopped past, a finite growth-trial
+success in the first-child subtree, and an arbitrary measurable event in the
+second-child reserve subtree. Its probability is the stopped-past probability
+times the two corresponding one-subtree probabilities, using independence of
+the two descendant fields under the product branching law.
 -/
 
 open MeasureTheory ProbabilityTheory
@@ -50,9 +59,9 @@ theorem RootIndexed.ReserveLineages.sigma_firstGrowth_secondReserve_factorizatio
         (((A ∩ {ω | σ ω ≠ ⊤}) ∩ trialEvent) ∩ reserveEvent) =
       RootIndexed.stepFieldLaw (Root := Root) μ
           (A ∩ {ω | σ ω ≠ ⊤}) *
-        ProbabilityTheory.BranchingRandomWalk.stepFieldLaw μ
+        ProbabilityTheory.BranchingProcess.offspringFieldLaw μ
           {ω | growthTrialSuccess growthSelection lower upper duration ω} *
-        ProbabilityTheory.BranchingRandomWalk.stepFieldLaw μ B := by
+        ProbabilityTheory.BranchingProcess.offspringFieldLaw μ B := by
   classical
   dsimp only
   let σ := lineages.sigma splitMark r i
@@ -84,28 +93,28 @@ theorem RootIndexed.ReserveLineages.sigma_firstGrowth_secondReserve_factorizatio
       (RootIndexed.stepFieldLaw (Root := Fin 2) μ) := by
     unfold RootIndexed.stepFieldLaw
     exact (iIndepFun_infinitePi
-      (P := fun _ : Fin 2 => ProbabilityTheory.BranchingRandomWalk.stepFieldLaw μ)
+      (P := fun _ : Fin 2 => ProbabilityTheory.BranchingProcess.offspringFieldLaw μ)
       (X := fun _ => id) (fun _ => measurable_id)).indepFun (by decide)
   have hpairProduct := hindep.measure_inter_preimage_eq_mul
     trialSet B htrial hB
   have htrialMarginal :
       RootIndexed.stepFieldLaw (Root := Fin 2) μ
           ((fun v : Fin 2 → TreeNode α → Step α X => v 0) ⁻¹' trialSet) =
-        ProbabilityTheory.BranchingRandomWalk.stepFieldLaw μ trialSet := by
+        ProbabilityTheory.BranchingProcess.offspringFieldLaw μ trialSet := by
     rw [← Measure.map_apply (measurable_pi_apply 0) htrial]
     exact congrArg (fun Q : Measure (TreeNode α → Step α X) => Q trialSet)
       (RootIndexed.stepFieldLaw_root_marginal μ 0)
   have hreserveMarginal :
       RootIndexed.stepFieldLaw (Root := Fin 2) μ
           ((fun v : Fin 2 → TreeNode α → Step α X => v 1) ⁻¹' B) =
-        ProbabilityTheory.BranchingRandomWalk.stepFieldLaw μ B := by
+        ProbabilityTheory.BranchingProcess.offspringFieldLaw μ B := by
     rw [← Measure.map_apply (measurable_pi_apply 1) hB]
     exact congrArg (fun Q : Measure (TreeNode α → Step α X) => Q B)
       (RootIndexed.stepFieldLaw_root_marginal μ 1)
   have hpairMeasure :
       RootIndexed.stepFieldLaw (Root := Fin 2) μ pairSet =
-        ProbabilityTheory.BranchingRandomWalk.stepFieldLaw μ trialSet *
-          ProbabilityTheory.BranchingRandomWalk.stepFieldLaw μ B := by
+        ProbabilityTheory.BranchingProcess.offspringFieldLaw μ trialSet *
+          ProbabilityTheory.BranchingProcess.offspringFieldLaw μ B := by
     calc
       RootIndexed.stepFieldLaw (Root := Fin 2) μ pairSet =
           RootIndexed.stepFieldLaw (Root := Fin 2) μ
@@ -115,8 +124,8 @@ theorem RootIndexed.ReserveLineages.sigma_firstGrowth_secondReserve_factorizatio
             ((fun v : Fin 2 → TreeNode α → Step α X => v 0) ⁻¹' trialSet) *
           RootIndexed.stepFieldLaw (Root := Fin 2) μ
             ((fun v : Fin 2 → TreeNode α → Step α X => v 1) ⁻¹' B) := hpairProduct
-      _ = ProbabilityTheory.BranchingRandomWalk.stepFieldLaw μ trialSet *
-          ProbabilityTheory.BranchingRandomWalk.stepFieldLaw μ B := by
+      _ = ProbabilityTheory.BranchingProcess.offspringFieldLaw μ trialSet *
+          ProbabilityTheory.BranchingProcess.offspringFieldLaw μ B := by
         rw [htrialMarginal, hreserveMarginal]
   have htrialRoot (ω : RootIndexed.StepField Root α X) :
       (RootIndexed.selectedSubtreeStepFieldVector roots ω) 0 =

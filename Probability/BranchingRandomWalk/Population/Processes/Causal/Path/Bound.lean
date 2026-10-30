@@ -4,11 +4,15 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Population.Processes.Causal.Path.Window
-import Probability.BranchingRandomWalk.Population.Processes.Causal.Capacity.Basic
-import Probability.BranchingRandomWalk.Population.Processes.Selected.RootIndexed
-import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law.FiniteExpectations
-import Probability.BranchingRandomWalk.Spine.Path.ManyToOne.Identity
+module
+
+public import Probability.BranchingRandomWalk.Population.Processes.Causal.Path.Window
+public import Probability.BranchingRandomWalk.Population.Processes.Causal.Capacity.Basic
+public import Probability.BranchingRandomWalk.Population.Processes.Selected.RootIndexed
+public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law.FiniteExpectations
+public import Probability.BranchingRandomWalk.Spine.Path.ManyToOne.Identity
+public import Probability.Process.RandomWalk.Path.Restart.FirstMoment
+import Probability.Process.Path.Restart.Basic
 
 /-!
 # Pathwise bounds for causal populations
@@ -26,6 +30,8 @@ finite-root version is obtained by partitioning particles by their initial
 root; no integration or spine law is used here.
 -/
 
+@[expose] public section
+
 open MeasureTheory
 open scoped ENNReal BigOperators
 
@@ -33,6 +39,7 @@ namespace ProbabilityTheory.BranchingRandomWalk
 
 open Combinatorics.Branching.Walk
 open ProbabilityTheory.RandomWalk
+open ProbabilityTheory.Process.Path
 namespace RootIndexed.CausalPopulation
 
 open Combinatorics.UlamHarris Combinatorics.Branching
@@ -230,3 +237,5 @@ theorem size_le_sum_pathGeneration_restartedWindow
 
 end RootIndexed.CausalPopulation
 end ProbabilityTheory.BranchingRandomWalk
+
+end

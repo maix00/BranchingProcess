@@ -6,27 +6,28 @@ Authors: WANG Yiyang
 
 module
 
-public import Mathlib.MeasureTheory.Measure.MeasureSpaceDef
-public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
-public import Algebra.BigOperators.AdditivePath.Basic
-public import Probability.Distributions.Moments.Real
-public import Probability.Sequence.Filtration
-public import Probability.Sequence.IID.Basic
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.EndpointWindow
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.Binning
-public import Probability.Process.RandomWalk.Path.Block.Partition.TailMerged
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.BlockTube
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.EndpointWindow.Basic
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.EndpointWindow.Reflection
-import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.FiniteUpper
-import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Endpoint.Windows
-import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Concrete.Lower.Entrance
-import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.BlockTube
+import Mathlib.MeasureTheory.Measure.MeasureSpaceDef
+import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
+import Algebra.BigOperators.AdditivePath.Basic
+import Probability.Distributions.Moments.Real
+import Probability.Sequence.Filtration
+import Probability.Sequence.IID.Basic
+import all Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.EndpointWindow
+import all Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.Binning
+import Combinatorics.Sequence.TailMergedBlock
+import all Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.BlockTube
+import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.EndpointWindow.Basic
+import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.EndpointWindow.Reflection
+import all Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.FiniteUpper
+import all Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Endpoint.Windows
+import all Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Concrete.Lower.Entrance
 
 /-!
 # Upper-endpoint bound for Wang Yiyang's Lemma 3.5 staircase schedule
 
-The module-visible supporting lemma in this file is:
+## Internal proof declarations
+
+The supporting lemma in this file is:
 
 - `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.exists_concreteStaircaseUpperEndpointLowerBound`:
   the same block schedule and interior windows as in the first part of
@@ -41,7 +42,9 @@ Chapter 3, proof of Lemma 3.5. The Markov multiplication is the same
 lower endpoint.
 -/
 
-@[expose] public section
+open Combinatorics.Sequence
+
+section
 
 open MeasureTheory ProbabilityTheory
 

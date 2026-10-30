@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Topology.Cadlag.Skorokhod.Topology
-public import Topology.Cadlag.Skorokhod.Path.Separation
+import Topology.Cadlag.Skorokhod.Path.Separation
 
 /-!
 # Evaluation maps in the Skorokhod topology
@@ -15,6 +15,14 @@ public import Topology.Cadlag.Skorokhod.Path.Separation
 Coordinate evaluation is continuous at every path that is continuous at the
 selected time. This is the continuity input for finite-dimensional
 identification of weak limits on càdlàg path space.
+
+## Public declarations
+
+- `continuousAt_apply_of_continuousAt`: if `f` is continuous at `t`, then
+  `g ↦ g t` is continuous at `f` for the `J₁` topology.
+- `continuousAt_evaluationFamily_of_continuousAt`: if each `time i` is a
+  continuity time of `path`, then `g ↦ (i ↦ g (time i))` is continuous at
+  `path` into the product of coordinates.
 -/
 
 @[expose] public section

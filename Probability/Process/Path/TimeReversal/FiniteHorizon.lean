@@ -11,6 +11,8 @@ public import Probability.Process.Path.Extrema.RunningMinimum
 /-!
 # Reversed increments on a finite time interval
 
+## Public declarations
+
 The public definitions and theorems in this file are:
 
 - `ProbabilityTheory.reverseIncrementsBefore`:

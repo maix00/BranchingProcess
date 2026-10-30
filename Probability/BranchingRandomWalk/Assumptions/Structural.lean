@@ -12,6 +12,17 @@ public import Mathlib.MeasureTheory.Function.L1Space.Integrable
 /-!
 # Structural assumptions on the child law
 
+## Public declarations
+
+- `ProbabilityTheory.BranchingRandomWalk.HasBoundaryNormalization`:
+  \(\mathbb E[\sum_i e^{-\Xi_i}]=1\).
+- `ProbabilityTheory.BranchingRandomWalk.HasBoundaryNormalization.ae_totalPotentialWeight_ne_top`:
+  this normalization implies \(\sum_i e^{-\Xi_i}<\infty\) almost surely.
+- `ProbabilityTheory.BranchingRandomWalk.HasBoundaryNormalization.integrable_totalPotentialWeight_toReal`:
+  the real-valued total weight is integrable.
+- `ProbabilityTheory.BranchingRandomWalk.HasBoundaryNormalization.integrable_negativePotentialValue`:
+  each zero-defaulted negative potential part \(( -\Xi_i)^+\) is integrable.
+
 These predicates express structural assumptions on a branching law. A
 raw law is never assumed to have ordered slots. Indexed children are read from
 the sorted pushforward supplied by `StepLaw.ordering`.

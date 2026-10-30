@@ -7,6 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.BranchingRandomWalk.Population.Processes.StepSelection.SplitSchedule.Trials.Completion
+public import Probability.Process.HittingTime.OrderedCandidates
 
 /-!
 # Population-size success on a split schedule
@@ -15,6 +16,20 @@ A trial succeeds when its started selected population has reached the target
 size at its fixed completion generation.  The test is adapted at every global
 generation.  At the actual completion time it agrees with the corresponding
 fixed-age population of the assigned pre-sampled root.
+## Public declarations
+
+* `successTest` tests whether a trial's selected population reaches the target
+  size at its completion. `successTest_measurable_of_countable` proves its
+  generation-wise measurability.
+* `component_eq_population_of_completion` identifies the concurrent trial
+  component at completion with its fixed-age root population.
+  `mem_successTest_at_completion_iff` and
+  `mem_successAtCompletion_iff_population` state the corresponding success
+  equivalences.
+* `firstPopulationSuccess_isStoppingTime` and its countable-slot variant
+  give the first successful population time; `mem_orderedPopulationDeclaration_iff`
+  characterizes the ordered declaration by completion-time success and prior
+  failures.
 -/
 
 open MeasureTheory
@@ -77,7 +92,8 @@ theorem component_eq_population_of_completion
   have hfinite : start ≠ ⊤ := by
     intro htop
     have : completion R root initial threshold duration i ω = ⊤ := by
-      simp [completion, start, htop]
+      simp [completion, start,
+        ProbabilityTheory.Process.Stopping.TrialSchedule.completion, htop]
     rw [this] at hcompletion
     exact WithTop.top_ne_coe hcompletion
   obtain ⟨k, hk⟩ := WithTop.ne_top_iff_exists.mp hfinite
@@ -93,7 +109,7 @@ theorem component_eq_population_of_completion
   have hkn : k ≤ n := by omega
   have hsub : n - k = duration := by omega
   unfold component
-  rw [ProbabilityTheory.BranchingRandomWalk.Concurrent.Finite.component_eq_of_start
+  rw [ProbabilityTheory.Process.Stopping.Concurrent.Finite.component_eq_of_start
     (fun _ : Unit => time R root initial threshold i)
     (fun _ : Unit => candidate R root i) () ω hkn]
   · simp [candidate, hsub]

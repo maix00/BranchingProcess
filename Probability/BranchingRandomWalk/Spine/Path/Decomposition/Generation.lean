@@ -13,6 +13,28 @@ public import Probability.BranchingRandomWalk.Spine.Path.Basic
 
 The sums range over all addresses and use the same realization event as the
 endpoint observables. Empty generations contribute zero.
+
+## Public declarations
+
+- `weightedPathGenerationTerm` and `pathGenerationTerm` are the weighted and
+  unweighted contributions of one address, restricted to surviving paths of
+  length $n$.
+- `weightedPathGenerationTerm_eq_reciprocal_mul_pathGenerationTerm` gives
+  $\widehat Z_{n,u}=e^{-V(u)}Z_{n,u}$ for each address contribution.
+- `weightedPathGeneration` and `pathGeneration` sum those terms over all
+  addresses.
+- `weightedPathGenerationTerm_measurable` and
+  `pathGenerationTerm_measurable` prove measurability of one-address terms
+  for measurable $F$; `weightedPathGeneration_measurable` and
+  `pathGeneration_measurable` prove it for the generation sums.
+- `weightedPathGeneration_joint_measurable` and
+  `pathGeneration_joint_measurable` give joint measurability in the initial
+  position and branching field.
+- `weightedPathGeneration_last` and `pathGeneration_last` identify the last
+  coordinate of each contributing history with the endpoint at generation
+  $n$.
+- `pathGeneration_eq_weightedPathGeneration` recovers the unweighted count
+  by multiplying each weighted term by its reciprocal endpoint factor.
 -/
 
 @[expose] public section

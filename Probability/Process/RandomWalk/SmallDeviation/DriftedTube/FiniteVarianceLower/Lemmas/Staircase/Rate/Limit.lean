@@ -6,12 +6,16 @@ Authors: WANG Yiyang
 
 module
 
-public import Analysis.Asymptotics.Scale.BlockScale
+import Mathlib.Analysis.SpecificLimits.Basic
+import Mathlib.Topology.Instances.Nat
+
 
 /-!
 # Rounded width under the staircase block scale
 
-The module-visible supporting lemma in this file is:
+## Internal proof declarations
+
+The supporting lemma in this file is:
 
 - `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.eventually_staircaseRateComparison_of_blockScale`:
   if $\ell_n/\Delta_n^3\to0$ and $d<d''\beta^2$, then
@@ -24,7 +28,7 @@ This is the rounded-width comparison in Wang Yiyang,
 Chapter 3, proof of Lemma 3.5.
 -/
 
-@[expose] public section
+section
 
 open Filter
 open scoped Topology
@@ -59,7 +63,7 @@ private lemma tendsto_floor_narrowedWidth_div_globalWidth
     Tendsto (fun n =>
       (⌊beta * (width n - loss n)⌋₊ : ℝ) / width n)
       atTop (𝓝 beta) := by
-  have hnarrowed : Tendsto (fun n => beta * (width n - loss n))
+  have hwidthMinusLoss : Tendsto (fun n => width n - loss n)
       atTop atTop := by
     have hhalf : ∀ᶠ n : ℕ in atTop,
         1 / 2 ≤ (width n - loss n) / width n :=
@@ -69,46 +73,36 @@ private lemma tendsto_floor_narrowedWidth_div_globalWidth
     apply Filter.tendsto_atTop.2
     intro b
     have hlarge := hwidth.eventually
-      (eventually_ge_atTop (max 0 (2 * b / beta)))
+      (eventually_ge_atTop (max 0 (2 * b)))
     filter_upwards [hhalf, hwidthPos, hlarge] with n hhalfN hwidthN hlargeN
-    have hidentity : beta * (width n - loss n) =
-        beta * width n * ((width n - loss n) / width n) := by
+    have hidentity : width n - loss n =
+        width n * ((width n - loss n) / width n) := by
       field_simp
     rw [hidentity]
-    have hscaled : 2 * b ≤ beta * width n := by
-      have hb := le_trans (le_max_right _ _) hlargeN
-      have hb' := (div_le_iff₀ hbeta).1 hb
-      nlinarith
-    have hmul := mul_le_mul_of_nonneg_left hhalfN
-      (mul_pos hbeta hwidthN).le
+    have hscaled : 2 * b ≤ width n :=
+      le_trans (le_max_right _ _) hlargeN
+    have hmul := mul_le_mul_of_nonneg_left hhalfN hwidthN.le
     nlinarith [hmul]
-  have hfloor : Tendsto (fun n =>
+  have hfloorScaled : Tendsto (fun n =>
       (⌊beta * (width n - loss n)⌋₊ : ℝ) /
-        (beta * (width n - loss n))) atTop (𝓝 1) :=
-    tendsto_nat_floor_div_atTop.comp hnarrowed
-  have hscaled : Tendsto (fun n =>
-      beta * ((width n - loss n) / width n)) atTop (𝓝 beta) := by
-    simpa using tendsto_const_nhds.mul hrelative
-  have hproduct := hfloor.mul hscaled
+        (width n - loss n)) atTop (𝓝 beta) :=
+    (tendsto_nat_floor_mul_div_atTop hbeta.le).comp hwidthMinusLoss
+  have hproduct := hfloorScaled.mul hrelative
   have hwidthPos : ∀ᶠ n : ℕ in atTop, 0 < width n :=
     hwidth.eventually (eventually_gt_atTop 0)
-  have hnarrowedPos : ∀ᶠ n : ℕ in atTop,
-      0 < beta * (width n - loss n) :=
-    hnarrowed.eventually (eventually_gt_atTop 0)
+  have hwidthMinusLossPos : ∀ᶠ n : ℕ in atTop,
+      0 < width n - loss n :=
+    hwidthMinusLoss.eventually (eventually_gt_atTop 0)
   have hproductEq :
       (fun n =>
         (⌊beta * (width n - loss n)⌋₊ : ℝ) /
-          (beta * (width n - loss n)) *
-            (beta * ((width n - loss n) / width n))) =ᶠ[atTop]
+          (width n - loss n) *
+            ((width n - loss n) / width n)) =ᶠ[atTop]
       (fun n =>
         (⌊beta * (width n - loss n)⌋₊ : ℝ) / width n) := by
-    filter_upwards [hwidthPos, hnarrowedPos] with n hwidthN hnarrowedN
-    have hdiff : width n - loss n ≠ 0 := by
-      intro hz
-      rw [hz, mul_zero] at hnarrowedN
-      exact (not_lt_of_ge le_rfl) hnarrowedN
-    field_simp [ne_of_gt hwidthN, hdiff, ne_of_gt hbeta]
-  simpa only [one_mul] using hproduct.congr' hproductEq
+    filter_upwards [hwidthPos, hwidthMinusLossPos] with n hwidthN hwidthMinusLossN
+    field_simp [ne_of_gt hwidthN, ne_of_gt hwidthMinusLossN]
+  simpa only [mul_one] using hproduct.congr' hproductEq
 
 /-- A strict rate margin survives rounding the narrowed width. -/
 private lemma eventually_rateComparison_of_floor_width

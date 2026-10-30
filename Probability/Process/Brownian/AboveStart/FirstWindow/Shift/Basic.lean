@@ -6,11 +6,14 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.Path.AboveStart.FirstWindow.Shift
+public import Probability.Process.Path.AboveStart.FirstWindow.Shift.Basic
 public import Probability.Process.Brownian.AboveStart.FirstWindow.Continuity
+import all Probability.Process.Brownian.AboveStart.FirstWindow.Lemmas.CutoffBoundary
 
 /-!
 # Almost-sure continuity of Brownian first-window shifts
+
+## Public declarations
 
 The public theorems in this file are:
 

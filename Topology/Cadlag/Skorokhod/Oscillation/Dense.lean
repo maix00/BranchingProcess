@@ -19,6 +19,21 @@ public import Mathlib.Topology.Order.IsLUB
 For càdlàg paths, a range bound can be checked on a dense set of times that
 contains the terminal endpoint.  The rational-coordinate tube is then a
 countable measurable description of the same open Skorokhod tube.
+
+## Public declarations
+
+- oscillationBounded_on_dense: if a càdlàg real path satisfies
+  |f s - f t| ≤ b on a dense set containing ⊤, then the bound holds for all
+  times.
+- rationalOscillationInOpenTube b gives the rational-time description of the
+  strict oscillation tube; it equals oscillationInOpenTube b and is Borel.
+- rationalCoordinateOscillationTube and rationalCoordinateOscillationLe give
+  the corresponding sets in the countable product of rational-time
+  coordinates. The interior-coordinate bound implies the full bound, which
+  is measurable and lies in every wider tube.
+- Subtracting a constant preserves the rational-coordinate tube; rational and
+  real margins define the same tube, and positive scaling rescales its width.
+  The rational-coordinate tube is measurable.
 -/
 
 @[expose] public section

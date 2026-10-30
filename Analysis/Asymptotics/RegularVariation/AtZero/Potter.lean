@@ -10,7 +10,7 @@ public import Analysis.Asymptotics.RegularVariation.AtZero.Basic
 /-!
 # Potter bounds at zero from compact-uniform ratios
 
-The public theorems are:
+## Public declarations
 
 - `exists_potter_bound_of_uniform_ratio`: under eventual positivity,
   uniform convergence of $\frac{f(ru)}{f(u)}$ to $r^\rho$ for $1\le r\le2$, and
@@ -28,6 +28,12 @@ The public theorems are:
 The dyadic argument here does not assume monotonicity. Its local input is
 uniform control of ratios on `[1, 2]`; this is stronger than pointwise regular
 variation and is supplied by the compact-uniform characteristic-defect limit.
+The resulting inequalities are local Potter bounds; compare Theorem 1.5.6
+in N. H. Bingham, C. M. Goldie, and J. L. Teugels, *Regular Variation*,
+Encyclopedia of Mathematics and its Applications 27 (Cambridge University
+Press, 1987), DOI `10.1017/CBO9780511721434`. The hypotheses and constants
+here are stated for the compact-uniform ratio input used in the characteristic
+function applications.
 -/
 
 open Filter Set

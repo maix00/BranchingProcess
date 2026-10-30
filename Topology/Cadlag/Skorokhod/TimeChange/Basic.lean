@@ -7,8 +7,10 @@ Authors: WANG Yiyang
 module
 
 public import Mathlib.Topology.ContinuousMap.Compact
+public import Mathlib.Order.Hom.Basic
 public import Topology.Cadlag.Basic
 public import Mathlib.Topology.UnitInterval
+import all Mathlib.Topology.Order.MonotoneContinuity
 
 /-!
 # Time changes for the Skorokhod topology
@@ -17,6 +19,33 @@ This file defines the increasing homeomorphisms of the compact time interval
 `[0, 1]` used in the Skorokhod `J₁` topology.  It only develops the time-change
 group and its action on càdlàg paths.  The Skorokhod topology and its Borel
 structure are intentionally left to later files.
+
+The admissible clocks are Billingsley's class of strictly increasing
+continuous maps of `[0,1]` onto itself; see Patrick Billingsley,
+*Convergence of Probability Measures*, 1st ed., Wiley, 1968, Chapter 3,
+§14, pp. 111–112
+([text](https://ru.djvu.online/file/vaaIHv9IWlVeK)). This module represents
+those maps as order isomorphisms of the unit interval.
+
+## Public declarations
+
+- `TimeChange` is an order isomorphism of `[0,1]`; `toHomeomorph` obtains its
+  topological homeomorphism from the order topology. `ofHomeomorph` converts
+  a strictly increasing homeomorphism into this representation, and
+  `ofHomeomorph_apply` records its action on points.
+- `ext`, `refl`, `refl_apply`, `trans`, `trans_apply`, and `symm` give
+  extensionality, the identity, composition, and inverse. The endpoint and
+  group laws are `apply_bot`, `apply_top`, `symm_apply_apply`,
+  `apply_symm_apply`, `symm_symm`, `trans_refl`, `refl_trans`, `trans_symm`,
+  `symm_trans`, and `trans_assoc`.
+- `toContinuousMap` and `toContinuousMap_apply` view a time change as a
+  continuous map. `distortion τ = sup_t dist (τ t) t`, and
+  `distortion_eq_iSup` gives this supremum formula. Its nonnegativity,
+  identity value, pointwise bound, inverse invariance, and composition bound
+  are `distortion_nonneg`, `distortion_refl`, `dist_apply_le_distortion`,
+  `distortion_symm`, and `distortion_trans_le`.
+- `act τ f` is the reparameterized path `t ↦ f (τ t)`; `act_apply`, `refl_act`,
+  and `trans_act` give its pointwise, identity, and composition laws.
 -/
 
 @[expose] public section
@@ -28,82 +57,62 @@ namespace Skorokhod
 /-- A time change for the Skorokhod `J₁` topology is a strictly increasing
 homeomorphism of `[0, 1]`. -/
 structure TimeChange where
-  toHomeomorph : unitInterval ≃ₜ unitInterval
-  strictMono_toHomeomorph : StrictMono toHomeomorph
+  toOrderIso : unitInterval ≃o unitInterval
 
 namespace TimeChange
 
+/-- Regard an order time change as a homeomorphism for the order topology. -/
+abbrev toHomeomorph (τ : TimeChange) : unitInterval ≃ₜ unitInterval :=
+  τ.toOrderIso.toHomeomorph
+
+/-- Convert a strictly increasing homeomorphism of the unit interval into an
+order isomorphism, hence a Skorokhod time change. -/
+noncomputable def ofHomeomorph (h : unitInterval ≃ₜ unitInterval)
+    (hstrict : StrictMono h) : TimeChange :=
+  ⟨OrderIso.ofSurjective (OrderEmbedding.ofStrictMono h hstrict) h.surjective⟩
+
+@[simp]
+theorem ofHomeomorph_apply (h : unitInterval ≃ₜ unitInterval)
+    (hstrict : StrictMono h) (t : unitInterval) :
+    (ofHomeomorph h hstrict).toOrderIso t = h t := rfl
+
 instance : CoeFun TimeChange (fun _ => unitInterval → unitInterval) :=
-  ⟨fun τ => τ.toHomeomorph⟩
+  ⟨fun τ => τ.toOrderIso⟩
 
 @[ext]
 theorem ext {τ σ : TimeChange} (h : ∀ t, τ t = σ t) : τ = σ := by
   cases τ with
-  | mk τ hτ =>
+  | mk τ =>
       cases σ with
-      | mk σ hσ =>
+      | mk σ =>
           congr
-          exact Homeomorph.ext h
+          apply OrderIso.ext
+          funext t
+          exact h t
 
 /-- The identity time change. -/
 def refl : TimeChange where
-  toHomeomorph := Homeomorph.refl unitInterval
-  strictMono_toHomeomorph := strictMono_id
+  toOrderIso := OrderIso.refl unitInterval
 
 @[simp]
 theorem refl_apply (t : unitInterval) : refl t = t := rfl
 
 @[simp]
-theorem apply_bot (τ : TimeChange) : τ ⊥ = ⊥ := by
-  obtain ⟨t, ht⟩ := τ.toHomeomorph.surjective ⊥
-  have htbot : t = ⊥ := by
-    by_contra h
-    have hlt : ⊥ < t := bot_lt_iff_ne_bot.2 h
-    have := τ.strictMono_toHomeomorph hlt
-    rw [ht] at this
-    exact (not_lt_of_ge bot_le this).elim
-  calc
-    τ ⊥ = τ t := congrArg τ htbot.symm
-    _ = ⊥ := ht
+theorem apply_bot (τ : TimeChange) : τ ⊥ = ⊥ := τ.toOrderIso.map_bot
 
 @[simp]
-theorem apply_top (τ : TimeChange) : τ ⊤ = ⊤ := by
-  obtain ⟨t, ht⟩ := τ.toHomeomorph.surjective ⊤
-  have httop : t = ⊤ := by
-    by_contra h
-    have hlt : t < ⊤ := lt_top_iff_ne_top.2 h
-    have := τ.strictMono_toHomeomorph hlt
-    rw [ht] at this
-    exact (not_lt_of_ge le_top this).elim
-  calc
-    τ ⊤ = τ t := congrArg τ httop.symm
-    _ = ⊤ := ht
+theorem apply_top (τ : TimeChange) : τ ⊤ = ⊤ := τ.toOrderIso.map_top
 
 /-- Composition of time changes. -/
 def trans (τ σ : TimeChange) : TimeChange where
-  toHomeomorph := τ.toHomeomorph.trans σ.toHomeomorph
-  strictMono_toHomeomorph := σ.strictMono_toHomeomorph.comp τ.strictMono_toHomeomorph
+  toOrderIso := τ.toOrderIso.trans σ.toOrderIso
 
 @[simp]
 theorem trans_apply (τ σ : TimeChange) (t : unitInterval) :
     τ.trans σ t = σ (τ t) := rfl
 
-theorem strictMono_symm_of_strictMono
-    {α β : Type*} [LinearOrder α] [LinearOrder β] (e : α ≃ β)
-    (he : StrictMono e) : StrictMono e.symm := by
-  intro a b hab
-  rcases lt_trichotomy (e.symm a) (e.symm b) with h | h | h
-  · exact h
-  · exfalso
-    exact (ne_of_lt hab) (e.symm.injective h)
-  · have hba : b < a := by simpa using he h
-    exact (not_lt_of_ge hab.le hba).elim
-
 /-- The inverse time change. -/
-def symm (τ : TimeChange) : TimeChange where
-  toHomeomorph := τ.toHomeomorph.symm
-  strictMono_toHomeomorph :=
-    strictMono_symm_of_strictMono τ.toHomeomorph.toEquiv τ.strictMono_toHomeomorph
+def symm (τ : TimeChange) : TimeChange := ⟨τ.toOrderIso.symm⟩
 
 @[simp]
 theorem symm_apply_apply (τ : TimeChange) (t : unitInterval) : τ.symm (τ t) = t :=
@@ -144,7 +153,7 @@ theorem trans_assoc (τ σ υ : TimeChange) : (τ.trans σ).trans υ = τ.trans 
 
 /-- A time change regarded as a continuous map. -/
 def toContinuousMap (τ : TimeChange) : C(unitInterval, unitInterval) :=
-  τ.toHomeomorph
+  τ.toOrderIso.toHomeomorph
 
 @[simp]
 theorem toContinuousMap_apply (τ : TimeChange) (t : unitInterval) :
@@ -164,7 +173,8 @@ theorem distortion_nonneg (τ : TimeChange) : 0 ≤ τ.distortion :=
 
 @[simp]
 theorem distortion_refl : refl.distortion = 0 := by
-  simp [distortion, toContinuousMap, refl]
+  rw [distortion_eq_iSup]
+  simp [refl_apply]
 
 theorem dist_apply_le_distortion (τ : TimeChange) (t : unitInterval) :
     dist (τ t) t ≤ τ.distortion := by
@@ -195,7 +205,7 @@ theorem distortion_trans_le (τ σ : TimeChange) :
 /-- Reparameterize a càdlàg path by a Skorokhod time change. -/
 noncomputable def act {E : Type*} [TopologicalSpace E] (τ : TimeChange)
     (f : CadlagPath unitInterval E) : CadlagPath unitInterval E :=
-  f.compMonotoneContinuous τ τ.strictMono_toHomeomorph.monotone
+  f.compMonotoneContinuous τ τ.toOrderIso.monotone
     τ.toHomeomorph.continuous
 
 @[simp]

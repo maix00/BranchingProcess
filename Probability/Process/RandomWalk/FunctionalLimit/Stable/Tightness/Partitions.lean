@@ -20,6 +20,30 @@ This module combines the stable block-tail excursion estimates with the
 general Skorokhod partition criterion. It constructs the multiscale event and
 its probability bounds; compact-range control and tightness are handled in
 the sibling `Tightness` module.
+## Public declarations
+
+For $\mu_n=\texttt{normalizedStepPathLaw}(\nu,\texttt{normalization},n)$, put
+\[
+ \mathcal O_{g,\omega}:=\bigcap_{m\in\mathbb N}
+ \left\{f:\;\exists\Pi,\;g_m<\operatorname{mesh}(\Pi),\;
+   \exists b<\omega_m,\;
+   \operatorname{OscillationBoundedOnPartition}(\Pi,f,b)\right\}.
+\]
+`exists_eventually_oscillationPartitions_bound_of_stableNorming` supplies
+sequences $g_m>0$ and $\omega_m>0$ with $\omega_m\to0$ such that
+\[
+ \exists N\;\forall n\ge N,\qquad \mu_n(\mathcal O_{g,\omega}^c)\le q
+ \quad (0<q<1).
+\]
+The same displayed conclusion is proved by
+`exists_eventually_oscillationPartitions_bound_of_index_lt_one` for
+$0<\alpha<1$ with the uncentered convention,
+`exists_eventually_oscillationPartitions_bound_of_index_one` for $\alpha=1$
+under `IsMogulskiiIndexOneCentered`, and
+`exists_eventually_oscillationPartitions_bound_of_index_gt_one` for
+$1<\alpha<2$ with integrable centered increments. Each index-specific result
+names the exact source-centering hypotheses in its Lean type.
+
 -/
 
 @[expose] public section

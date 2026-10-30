@@ -8,14 +8,21 @@ module
 
 public import Probability.Process.RandomWalk.Path.Interpolation.Basic
 public import Algebra.BigOperators.AdditivePath.Block
-public import Mathlib.Algebra.Order.Floor.Semifield
-public import Mathlib.Topology.UnitInterval
+import Mathlib.Algebra.Order.Floor.Semifield
+import all Probability.Process.RandomWalk.Path.Interpolation.Finite.Lemmas.Grid
 
 /-!
-# Uniform-grid interpolation bounds
+# Uniform-grid interpolation bound for random-walk paths
 
-Deterministic estimates comparing polygonal random-walk paths at fixed
-uniform-grid times with partial sums at equal integer block endpoints.
+## Public declarations
+
+- `abs_normalizedLinearPath_uniformGrid_sub_endpoint_le` compares the normalized polygonal path
+  at $j/m$ with the partial sum at index $j\lfloor n/m\rfloor$. For $0<m$, $0<n$, and $j\le m$,
+  the error is at most $(m+1)\max_{k\le n}|\xi_k|/\sqrt n$; the Lean statement also includes
+  $n=0$, when both paths are identically zero.
+
+The floor-index and partial-sum calculations in this estimate are proof steps specific to this
+bound and are collected in `Lemmas/Grid.lean`.
 -/
 
 open Set
@@ -23,73 +30,6 @@ open Set
 @[expose] public section
 
 namespace ProbabilityTheory.RandomWalk
-
-/-- The discrete index selected by polygonal interpolation at the uniform
-time `j / blocks`. -/
-theorem natFloor_mul_uniformGrid (n j blocks : ℕ) :
-    ⌊(n : ℝ) * ((j : ℝ) / blocks)⌋₊ = n * j / blocks := by
-  rw [show (n : ℝ) * ((j : ℝ) / blocks) = ((n * j : ℕ) : ℝ) / blocks by
-    push_cast
-    ring]
-  exact Nat.floor_div_eq_div _ _
-
-/-- The left endpoint obtained by dividing `n` into equal integer blocks is
-no later than the interpolation index at the matching uniform-grid time. -/
-theorem mul_div_le_natFloor_mul_uniformGrid
-    {n j blocks : ℕ} :
-    j * (n / blocks) ≤ ⌊(n : ℝ) * ((j : ℝ) / blocks)⌋₊ := by
-  rw [natFloor_mul_uniformGrid, Nat.mul_comm n j]
-  exact Nat.mul_div_le_mul_div_assoc j n blocks
-
-/-- The two integer indices used by uniform-grid interpolation differ by
-fewer than `blocks` steps. -/
-theorem natFloor_mul_uniformGrid_lt_mul_div_add
-    {n j blocks : ℕ} (hblocks : 0 < blocks) (hj : j ≤ blocks) :
-    ⌊(n : ℝ) * ((j : ℝ) / blocks)⌋₊ <
-      j * (n / blocks) + blocks := by
-  rw [natFloor_mul_uniformGrid]
-  have hdecomp :
-      n * j / blocks = (n / blocks) * j + (n % blocks) * j / blocks := by
-    conv_lhs =>
-      rw [← Nat.div_add_mod n blocks]
-    rw [add_mul]
-    conv_lhs =>
-      congr
-      · rw [show blocks * (n / blocks) * j =
-          blocks * ((n / blocks) * j) by simp [Nat.mul_assoc]]
-    exact Nat.mul_add_div hblocks ((n / blocks) * j) ((n % blocks) * j)
-  rw [hdecomp, Nat.mul_comm (n / blocks) j]
-  exact Nat.add_lt_add_left
-    ((Nat.div_lt_iff_lt_mul hblocks).2
-      (Nat.mul_lt_mul_of_lt_of_le (Nat.mod_lt n hblocks) hj hblocks)) _
-
-/-- A partial-sum difference over indices bounded by `n` is controlled by
-the number of intervening increments times their maximal absolute value. -/
-theorem abs_partialSum_sub_le_sub_mul_maxAbsUpTo
-    {left right n : ℕ} (hleft : left ≤ right) (hright : right ≤ n)
-    (increment : ℕ → ℝ) :
-    |AdditivePath.displacement right increment - AdditivePath.displacement left increment| ≤
-      ((right - left : ℕ) : ℝ) * maxAbsUpTo n increment := by
-  have hrightEq : right = left + (right - left) := by omega
-  conv_lhs =>
-    rw [hrightEq, AdditivePath.displacement_add_eq_add_blockSum, add_sub_cancel_left]
-  unfold AdditivePath.blockSum
-  calc
-    |∑ k ∈ Finset.Ico left (left + (right - left)), increment k| ≤
-        ∑ k ∈ Finset.Ico left (left + (right - left)), |increment k| :=
-      Finset.abs_sum_le_sum_abs _ _
-    _ ≤ ∑ _k ∈ Finset.Ico left (left + (right - left)),
-          maxAbsUpTo n increment := by
-      apply Finset.sum_le_sum
-      intro k hk
-      apply abs_increment_le_maxAbsUpTo increment
-      have hklt : k < right := by
-        rw [hrightEq]
-        exact (Finset.mem_Ico.mp hk).2
-      exact hklt.le.trans hright
-    _ = ((right - left : ℕ) : ℝ) * maxAbsUpTo n increment := by
-      simp only [Finset.sum_const, Nat.card_Ico,
-        Nat.add_sub_cancel_left, nsmul_eq_mul]
 
 /-- At a fixed uniform-grid time, polygonal interpolation is within
 `blocks + 1` maximal jumps of the corresponding equal-block endpoint. -/
@@ -126,8 +66,15 @@ theorem abs_normalizedLinearPath_uniformGrid_sub_endpoint_le
     omega
   have hlinear := abs_normalizedLinearPath_sub_normalizedStepPath_le
     (n := n) (fun n => Real.sqrt n) increment t
-  have hsum := abs_partialSum_sub_le_sub_mul_maxAbsUpTo
-    hleft hmiddle increment
+  have hsumNorm :=
+    AdditivePath.norm_displacement_sub_le_length_mul_of_forall_norm_le
+      (G := ℝ) (bound := maxAbsUpTo n increment) hleft fun k hk =>
+        abs_increment_le_maxAbsUpTo increment
+          ((Finset.mem_Ico.mp hk).2.le.trans hmiddle)
+  have hsum :
+      |AdditivePath.displacement middle increment - AdditivePath.displacement left increment| ≤
+        ((middle - left : ℕ) : ℝ) * maxAbsUpTo n increment := by
+    simpa only [Real.norm_eq_abs] using hsumNorm
   have hsqrt : 0 ≤ (Real.sqrt n)⁻¹ := inv_nonneg.2 (Real.sqrt_nonneg _)
   have hmax : 0 ≤ maxAbsUpTo n increment := maxAbsUpTo_nonneg n increment
   change |normalizedLinearPath (fun n => Real.sqrt n) n increment

@@ -6,13 +6,15 @@ Authors: WANG Yiyang
 
 module
 
-import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Blocks.Probability
-public import Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.Blocks.Geometry
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.Binning
+import all Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Blocks.Probability
+import Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.Blocks.EndpointWindowProduct
+import all Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.Binning
 /-!
 # Staircase block probability assembly
 
-The module-visible lemma in this file is:
+## Internal proof declarations
+
+The supporting lemma in this file is:
 
 - `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.measureReal_staircaseBlockIntersection_ge_prod_of_binBounds`:
   an entrance event into the first central window, containment of each
@@ -26,7 +28,7 @@ in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite O
 are the precise remaining rate input from Lemma 3.1(ii).
 -/
 
-@[expose] public section
+section
 
 open MeasureTheory ProbabilityTheory
 

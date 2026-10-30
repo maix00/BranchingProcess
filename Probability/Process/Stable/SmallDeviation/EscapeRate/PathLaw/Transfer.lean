@@ -24,6 +24,15 @@ import Topology.Order.UnitInterval.Rational
 The rational-coordinate description of a range tube lets a unit-interval
 stable path law inherit the process-level escape rate whenever it has the same
 stable increment specification as a stable Lévy process.
+## Public declarations
+
+The first theorem identifies the path-law probability of the open range tube
+with the rational-time range event for any stable-clock path law. The later
+results transfer the process-level escape rate to a unit-interval path law,
+compare endpoint-corridor probabilities with the corresponding process
+probabilities, and construct the path-space escape-rate specification from a
+stable Lévy-process witness.
+
 -/
 
 open Filter MeasureTheory
@@ -41,7 +50,7 @@ theorem IsStableClockProcessLaw.measure_stableProcessTube_eq_rationalRangeProbab
     {P : Measure (CadlagPath unitInterval ℝ)} [IsProbabilityMeasure P]
     {Ω : Type*} [MeasurableSpace Ω]
     {X : ℝ≥0 → Ω → ℝ} {Q : Measure Ω} [IsProbabilityMeasure Q]
-    (hP : IsStableClockProcessLaw α μ UnitInterval.clock P)
+    (hP : IsStableClockProcessLaw α μ unitInterval.clock P)
     (hX : IsStableLevyProcess α μ X Q) (a : ℝ) :
     P (stableProcessTube a) = rationalRangeProbability Q X a := by
   let pathCoordinates : CadlagPath unitInterval ℝ →
@@ -54,12 +63,12 @@ theorem IsStableClockProcessLaw.measure_stableProcessTube_eq_rationalRangeProbab
   have htoUnitIntervalBot : RationalCoordinate.toUnitInterval ⊥ = ⊥ := by
     apply Subtype.ext
     norm_num [RationalCoordinate.toUnitInterval]
-  have hPbase : HasStableClockIncrements α μ UnitInterval.clock
+  have hPbase : HasStableClockIncrements α μ unitInterval.clock
       cadlagPathProcess P := hP
   have hPgrid0 := hPbase.comp_time RationalCoordinate.toUnitInterval
     htoUnitIntervalMonotone htoUnitIntervalBot
   change HasStableClockIncrements α μ
-    (fun q => UnitInterval.clock (RationalCoordinate.toUnitInterval q))
+    (fun q => unitInterval.clock (RationalCoordinate.toUnitInterval q))
     (fun q f => f (RationalCoordinate.toUnitInterval q)) P at hPgrid0
   have hPgrid : HasStableClockIncrements α μ
       (fun q => (RationalCoordinate.toNNReal q : ℝ))
@@ -167,7 +176,7 @@ theorem IsStableClockProcessLaw.measure_corridorReturnEvent_eq
     {P : Measure (CadlagPath unitInterval ℝ)} [IsProbabilityMeasure P]
     {Ω : Type*} [MeasurableSpace Ω]
     {X : ℝ≥0 → Ω → ℝ} {Q : Measure Ω} [IsProbabilityMeasure Q]
-    (hP : IsStableClockProcessLaw α μ UnitInterval.clock P)
+    (hP : IsStableClockProcessLaw α μ unitInterval.clock P)
     (hX : IsStableLevyProcess α μ X Q)
     (lower upper coreLower coreUpper : ℝ) :
     P (Skorokhod.rangeInOpenIntervalEndsIn lower upper coreLower coreUpper) =
@@ -182,12 +191,12 @@ theorem IsStableClockProcessLaw.measure_corridorReturnEvent_eq
   have htoUnitIntervalBot : RationalCoordinate.toUnitInterval ⊥ = ⊥ := by
     apply Subtype.ext
     norm_num [RationalCoordinate.toUnitInterval]
-  have hPbase : HasStableClockIncrements α μ UnitInterval.clock
+  have hPbase : HasStableClockIncrements α μ unitInterval.clock
       cadlagPathProcess P := hP
   have hPgrid0 := hPbase.comp_time RationalCoordinate.toUnitInterval
     htoUnitIntervalMonotone htoUnitIntervalBot
   change HasStableClockIncrements α μ
-    (fun q => UnitInterval.clock (RationalCoordinate.toUnitInterval q))
+    (fun q => unitInterval.clock (RationalCoordinate.toUnitInterval q))
     (fun q f => f (RationalCoordinate.toUnitInterval q)) P at hPgrid0
   have hPgrid : HasStableClockIncrements α μ
       (fun q => (RationalCoordinate.toNNReal q : ℝ))
@@ -275,7 +284,7 @@ theorem IsStableClockProcessLaw.exists_finite_openEndpointCorridor_lowerBound
     {P : Measure (CadlagPath unitInterval ℝ)} [IsProbabilityMeasure P]
     {Ω ι : Type*} [MeasurableSpace Ω] [Fintype ι] [Nonempty ι]
     {X : ℝ≥0 → Ω → ℝ} {Q : Measure Ω} [IsProbabilityMeasure Q]
-    (hP : IsStableClockProcessLaw α μ UnitInterval.clock P)
+    (hP : IsStableClockProcessLaw α μ unitInterval.clock P)
     (hX : IsStableLevyProcess α μ X Q)
     (hcdf : 0 < cdf μ 0 ∧ cdf μ 0 < 1)
     (innerLower innerUpper outerLower outerUpper : ι → ℝ)
@@ -327,13 +336,14 @@ theorem IsStableClockProcessLaw.hasStableProcessEscapeRate_of_isStableLevyProces
     {P : Measure (CadlagPath unitInterval ℝ)} [IsProbabilityMeasure P]
     {Ω : Type*} [MeasurableSpace Ω]
     {X : ℝ≥0 → Ω → ℝ} {Q : Measure Ω} [IsProbabilityMeasure Q]
-    (hP : IsStableClockProcessLaw α μ UnitInterval.clock P)
+    (hP : IsStableClockProcessLaw α μ unitInterval.clock P)
     (hX : IsStableLevyProcess α μ X Q)
     (hcdf : 0 < cdf μ 0 ∧ cdf μ 0 < 1) :
     ∃ C, HasStableProcessEscapeRate α μ P C := by
   have hprob (a : ℝ) :=
     hP.measure_stableProcessTube_eq_rationalRangeProbability hX a
   obtain ⟨C, hC, hlim⟩ := hX.exists_rationalRange_escape_rate hcdf
+  have hα : 0 < α := hP.strictlyStable.1
   have hpos : ∀ᶠ a : ℝ in 𝓝[>] (0 : ℝ),
       0 < (P (stableProcessTube a)).toReal := by
     filter_upwards [self_mem_nhdsWithin] with a ha
@@ -342,7 +352,7 @@ theorem IsStableClockProcessLaw.hasStableProcessEscapeRate_of_isStableLevyProces
     rw [hprob]
     exact ENNReal.toReal_pos_iff.mpr
       ⟨hRa, measure_lt_top Q (rationalHorizonTubeEvent X 1 (2 * a))⟩
-  refine ⟨C, hP, hC, hpos, ?_⟩
+  refine ⟨C, hP, hα, hC, hpos, ?_⟩
   have hrate :
       (fun a => a ^ α * Real.log ((P (stableProcessTube a)).toReal)) =
         stableRangeLogRate Q X α := by

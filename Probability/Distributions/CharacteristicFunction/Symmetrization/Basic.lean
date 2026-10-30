@@ -11,6 +11,16 @@ public import Probability.Distributions.CharacteristicFunction.CosineDefect
 /-!
 # Symmetrization of probability laws
 
+## Public declarations
+
+- `symmetrizedMeasure μ` is the law of the difference of two independent
+  samples with law `μ`.
+- `charFun_symmetrizedMeasure` identifies its characteristic function with
+  $|\widehat\mu(t)|^2$; `charFun_symmetrizedMeasure_re` gives the real-part
+  identity.
+- `cosineDefectIntegral_symmetrizedMeasure` identifies its cosine defect with
+  $1-|\widehat\mu(t)|^2$.
+
 The law of the difference of two independent copies is a standard way to
 remove centering from characteristic-function arguments.
 -/

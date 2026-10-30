@@ -11,7 +11,7 @@ public import Probability.Process.Stable.SmallDeviation.Blocks.EntranceFactoriza
 public import Probability.Process.Stable.SmallDeviation.Blocks.EntranceScaling
 import Probability.Process.Stable.SmallDeviation.Blocks.ReturnScale
 public import Probability.Process.Stable.SmallDeviation.Blocks.Upper.Shrinking
-public import Probability.Distributions.Stable.Operations.Sign
+public import Probability.Distributions.Stable.Support.Sign
 public import Probability.Process.Path.Skorokhod.Corridor.Segment
 public import Analysis.Asymptotics.Sequence.NegativeRatio
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
@@ -39,6 +39,15 @@ also the English translation, “Small Deviations in a Space of Trajectories,”
 
 This is the light public entry point for shifted-corridor comparisons. It does
 not import the feedback, path-support, or Poisson entrance arguments.
+## Public declarations
+
+The event comparison concatenates a fixed positive-probability entrance with
+an independent corridor continuation. The public results give a multiplicative
+probability lower bound and, after taking logarithms, the small-width ratio
+bound $1-\delta\le \log p_{\mathrm{narrow}}(a)/\log p_{\mathrm{wide}}(a)$
+for all sufficiently small $a>0$. The CDF and one-sided-mass theorems provide
+standard hypotheses for the same conclusion.
+
 -/
 
 @[expose] public section

@@ -12,7 +12,7 @@ public import MeasureTheory.OuterMeasure.Finite.Cover
 /-!
 # Finite covers by reindexings of finite product measures
 
-The public theorem in this file is:
+## Public declarations
 
 - `MeasureTheory.measure_pi_event_le_card_smul_of_reindex_cover`: let
   `μ = Measure.pi ν` on `ι → E`, where each `ν i` is sigma-finite. If every

@@ -9,14 +9,23 @@ module
 public import Probability.Process.RandomWalk.Path.Interpolation.Oscillation.Basic
 public import Mathlib.Topology.UnitInterval
 public import Probability.Process.RandomWalk.Path.Interpolation.Core
-public import Probability.Process.RandomWalk.Path.Truncation.Oscillation
+public import Probability.Process.RandomWalk.Path.Truncation.Oscillation.Bound
 public import Topology.ContinuousMap.Compactness
+public import Analysis.Asymptotics.Scale.Block.Proportional
 
 /-!
 # Oscillation probabilities for polygonally interpolated walks
 
-This file lifts deterministic multiblock displacement control to the law of
-the normalized polygonal path.
+## Public declarations
+
+- `normalizedLinearPathLaw_compl_hasOscillationBound_le` bounds the probability that the
+  polygonal path has oscillation greater than $9r$ on time intervals of length
+  $(\ell-1)/n$ by the probability that some block displacement is at least the threshold $r a_n$.
+- `eventually_normalizedLinearPathLaw_compl_hasOscillationBound_lt` derives the corresponding
+  eventual probability bound from centered finite-variance increments and the explicit
+  fourth-moment block estimate.
+
+The deterministic interpolation bounds are stated in `Oscillation/Basic.lean`.
 -/
 
 open Filter MeasureTheory
@@ -24,6 +33,8 @@ open Filter MeasureTheory
 @[expose] public section
 
 namespace ProbabilityTheory.RandomWalk
+
+open Asymptotics
 
 
 /-- Failure of one polygonal-path oscillation bound is contained in the

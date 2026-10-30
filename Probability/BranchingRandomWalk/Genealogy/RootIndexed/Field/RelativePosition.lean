@@ -6,13 +6,14 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.Path.Restart.Windows
 public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Field.Measurability
 
 /-!
 # Positions relative to an ancestral generation
 
-The public declarations in
+## Public declarations
+
+The declarations in
 `ProbabilityTheory.BranchingRandomWalk.RootIndexed` are:
 
 - `relativePositionAtGeneration`: for a rooted label $p$,
@@ -40,7 +41,6 @@ open MeasureTheory
 namespace ProbabilityTheory.BranchingRandomWalk.RootIndexed
 
 open Combinatorics.UlamHarris Combinatorics.Branching
-open ProbabilityTheory.RandomWalk
 
 /-- Position of a generation-`n` label relative to its prefix at generation
 `anchor`.  Outside the intended depth constraints, `positionAtGeneration`

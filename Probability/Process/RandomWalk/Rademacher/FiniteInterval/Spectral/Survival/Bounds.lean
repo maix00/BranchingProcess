@@ -9,9 +9,13 @@ module
 public import Probability.Process.RandomWalk.Rademacher.FiniteInterval.Path
 public import Probability.Process.RandomWalk.Rademacher.FiniteInterval.Spectral.Modes
 public import Probability.Kernel.Survival.Basic
+import LinearAlgebra.Matrix.FiniteKernel.Eigenfunction
+import Algebra.Order.BigOperators.WeightedSum
 
 /-!
 # Uniform survival bounds for the killed symmetric walk
+
+## Public declarations
 
 The positive ground state gives bounds uniform in both the starting state and
 the elapsed time.  This is the finite-interval input required by the abstract

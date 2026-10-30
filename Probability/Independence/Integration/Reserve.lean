@@ -16,9 +16,16 @@ public import Mathlib.Probability.Independence.Integration
 This is the one-sided `L¹` estimate needed to turn a good-event endpoint
 bound into an expectation bound. On the exceptional event, the endpoint must
 be dominated by an integrable reserve observable independent of that event.
-The estimate is conditional on this independence and domination; a small
-exceptional-event probability by itself is not enough under only a first
-moment assumption.
+
+## Public declarations
+
+- `ProbabilityTheory.integral_le_of_eventwise_upper_bound_with_independent_reserve`:
+  if $X\le z$ on $A^c$, $X\le Y$ on $A$, and $Y$ is integrable and independent
+  of $\mathbf 1_A$, then
+  $\int X\,d\mu\le z(1-\mu(A))+\mu(A)\int Y\,d\mu$.
+- `ProbabilityTheory.integral_le_of_eventwise_upper_bound_with_independent_reserve_abs`:
+  under the same hypotheses,
+  $\int X\,d\mu\le z+\mu(A)(\int |Y|\,d\mu+|z|)$.
 -/
 
 open MeasureTheory ProbabilityTheory

@@ -13,6 +13,8 @@ public import Combinatorics.Sequence.Block
 /-!
 # Finite block events for linearly tilted tubes
 
+## Public declarations
+
 The public constructions in this module are:
 
 - `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.driftedTubePairEvent`:

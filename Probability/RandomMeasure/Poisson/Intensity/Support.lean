@@ -6,32 +6,30 @@ Authors: WANG Yiyang
 
 module
 
-public import Mathlib.MeasureTheory.Constructions.UnitInterval
-public import Probability.RandomMeasure.Poisson.Integration.Integrability
-import Probability.RandomMeasure.Poisson.Intensity.TimeMark
+public import Mathlib.MeasureTheory.Measure.Prod
+public import Probability.RandomMeasure.Poisson.RandomMeasure.Basic
+import Probability.RandomMeasure.Poisson.RandomMeasure.Evaluation
 
 /-!
 # Almost-sure support properties of a Poisson random measure
 
-The public theorems in this file are:
-
-- `ProbabilityTheory.IsPoissonPointFamily.ae_poissonRandomMeasure_apply_eq_zero`:
-  $m(A)=0$ implies $N_\omega(A)=0$ almost surely.
-- `ProbabilityTheory.IsPoissonPointFamily.ae_restrict_poissonRandomMeasure_eq_self`:
-  $m(A^c)=0$ implies $N_\omega|_A=N_\omega$ almost surely.
-- `ProbabilityTheory.IsPoissonPointFamily.ae_no_jump_at_time`:
-  product-time intensity has no point at a fixed time.
-- `ProbabilityTheory.IsPoissonPointFamily.ae_no_mark_at_value`:
-  $\nu(\{a\})=0$ implies no point has the fixed mark $a$.
-- `ProbabilityTheory.IsPoissonPointFamily.ae_integral_nonpos_of_no_positive_intensity`:
-  intensity supported on nonpositive marks gives a nonpositive integral.
-- `ProbabilityTheory.IsPoissonPointFamily.ae_integral_nonneg_of_no_negative_intensity`:
-  intensity supported on nonnegative marks gives a nonnegative integral.
-
 The fixed-mark assertion is the zero-intensity step for the Lévy
 decomposition of descending Brownian hitting times cited in Lemma 2.3,
-equation (2.2), of Erwin Bolthausen, *On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*, Ann. Probab.
-4(3) (1976), 480--485, DOI 10.1214/aop/1176996098.
+equation (2.2), of Erwin Bolthausen, *On a Functional Central Limit Theorem
+for Random Walks Conditioned to Stay Positive*, Ann. Probab. 4(3) (1976),
+480--485 ([DOI](https://doi.org/10.1214/aop/1176996098)).
+
+## Public declarations
+
+* `IsPoissonPointFamily.ae_poissonRandomMeasure_apply_eq_zero` and
+  `ae_restrict_poissonRandomMeasure_eq_self` transfer intensity-null sets and
+  intensity-full sets to almost-sure statements about the realized measure.
+* `IsPoissonPointFamily.ae_no_jump_at_time` excludes points on a zero-mass
+  time singleton for any product intensity; `ae_no_mark_at_value` gives the
+  corresponding result for a zero-mass mark singleton.
+* `IsPoissonPointFamily.ae_integral_nonpos_of_no_positive_intensity` and
+  `ae_integral_nonneg_of_no_negative_intensity` give the corresponding signs
+  of realized integrals from the support of the intensity measure.
 -/
 
 @[expose] public section
@@ -71,35 +69,37 @@ theorem IsPoissonPointFamily.ae_restrict_poissonRandomMeasure_eq_self
 
 /-- A product-intensity Poisson source has no point at a fixed time. -/
 theorem IsPoissonPointFamily.ae_no_jump_at_time
-    {Ω : Type} [MeasurableSpace Ω]
-    {K : ℕ → Ω → ℕ} {X : ℕ → ℕ → Ω → unitInterval × ℝ}
-    {ν : Measure ℝ} [SigmaFinite ν]
+    {Ω T E : Type} [MeasurableSpace Ω] [MeasurableSpace T] [MeasurableSpace E]
+    [MeasurableSingletonClass T]
+    {K : ℕ → Ω → ℕ} {X : ℕ → ℕ → Ω → T × E}
+    {τ : Measure T} [SigmaFinite τ] [Nonempty T]
+    {ν : Measure E} [SigmaFinite ν] [Nonempty E]
     {P : Measure Ω} [IsProbabilityMeasure P]
-    (hd : IsPoissonPointFamily K X
-      ((volume : Measure unitInterval).prod ν) P)
-    (t : unitInterval) :
+    (hd : IsPoissonPointFamily K X (τ.prod ν) P)
+    (t : T) (ht : τ {t} = 0) :
     ∀ᵐ ω ∂P,
       poissonRandomMeasure K X ω ({t} ×ˢ Set.univ) = 0 := by
   exact hd.ae_poissonRandomMeasure_apply_eq_zero
     (MeasurableSet.prod (measurableSet_singleton (x := t)) MeasurableSet.univ)
-    (unitTime_prod_singleton_time_zero ν t)
+    (by rw [Measure.prod_prod]; simp [ht])
 
 /-- A product-intensity Poisson source whose mark law has no atom at
 `a` almost surely has no point carrying that mark. -/
 theorem IsPoissonPointFamily.ae_no_mark_at_value
-    {Ω : Type} [MeasurableSpace Ω]
-    {K : ℕ → Ω → ℕ} {X : ℕ → ℕ → Ω → unitInterval × ℝ}
-    {ν : Measure ℝ} [SigmaFinite ν]
+    {Ω T E : Type} [MeasurableSpace Ω] [MeasurableSpace T] [MeasurableSpace E]
+    [MeasurableSingletonClass E]
+    {K : ℕ → Ω → ℕ} {X : ℕ → ℕ → Ω → T × E}
+    {τ : Measure T} [SigmaFinite τ] [Nonempty T]
+    {ν : Measure E} [SigmaFinite ν] [Nonempty E]
     {P : Measure Ω} [IsProbabilityMeasure P]
-    (hd : IsPoissonPointFamily K X
-      ((volume : Measure unitInterval).prod ν) P)
-    (a : ℝ) (hν : ν {a} = 0) :
+    (hd : IsPoissonPointFamily K X (τ.prod ν) P)
+    (a : E) (hν : ν {a} = 0) :
     ∀ᵐ ω ∂P,
       poissonRandomMeasure K X ω (Set.univ ×ˢ {a}) = 0 := by
   apply hd.ae_poissonRandomMeasure_apply_eq_zero
-    (MeasurableSet.prod MeasurableSet.univ (measurableSet_singleton a))
-  rw [unitTime_prod_markWindow]
-  exact hν
+    (MeasurableSet.prod MeasurableSet.univ (measurableSet_singleton (x := a)))
+  rw [Measure.prod_prod]
+  simp [hν]
 
 /-- If the intensity has no positive values of a real mark observable,
 the realized Poisson integral is nonpositive almost surely. -/

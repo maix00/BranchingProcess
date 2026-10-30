@@ -7,8 +7,9 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Distributions.Moments.Truncated.Basic
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Scale.BlockScale
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Scale.Core
+public import Analysis.Asymptotics.Scale.Block.Diffusive
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Scale.BlockLength
+import Probability.Distributions.Stable.Attraction.Norming.Basic
 
 /-!
 # Index-two stable block lengths
@@ -30,7 +31,7 @@ function space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974),
 *Theory of Probability and Its Applications* 19(4) (1975), 726--736,
 DOI 10.1137/1119081, Theorem 3, Section 4.
 
-The public declarations are:
+## Public declarations
 
 - `stableBlockLength_two`: the index-two block-length formula using the
   truncated second moment.
@@ -61,7 +62,7 @@ theorem stableBlockLength_two_of_truncatedSecondMoment_eq (ν : Measure ℝ)
     {constant c : ℝ} {scale : ℕ → ℝ} {n : ℕ}
     (hc : truncatedSecondMoment ν (scale n) = c) :
     stableBlockLength 2 ν constant scale n =
-      diffusiveBlockLength (constant / c) scale n := by
-  rw [stableBlockLength_two, hc, diffusiveBlockLength, div_mul_eq_mul_div]
+      Asymptotics.diffusiveBlockLength (constant / c) scale n := by
+  rw [stableBlockLength_two, hc, Asymptotics.diffusiveBlockLength, div_mul_eq_mul_div]
 
 end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii

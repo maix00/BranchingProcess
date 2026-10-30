@@ -15,6 +15,17 @@ public import Probability.Process.RandomWalk.Path.Adapted.Martingale
 The IID maximal bound is invariant under every deterministic shift of the
 increment coordinates.  This file states the resulting estimate directly in
 terms of `AdditivePath.blockSum`, the deterministic block operation.
+
+## Public declarations
+
+For centered IID increments with finite variance, the declaration proves
+\[
+  \varepsilon\,\mathbb P\!\left(
+    \max_{0\leq k\leq n}\left|\sum_{i=start}^{start+k}X_i\right|^2
+      \geq\varepsilon\right)
+  \leq \operatorname{ofReal}\!\left((n+1)\operatorname{Var}(X_0)\right),
+\]
+for every deterministic block start.
 -/
 
 open MeasureTheory ProbabilityTheory

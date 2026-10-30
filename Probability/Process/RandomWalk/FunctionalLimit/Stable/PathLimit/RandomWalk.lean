@@ -6,28 +6,40 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Distributions.Stable.Attraction.Norming.Centering
+public import Probability.Distributions.Stable.Attraction.Norming.Asymptotics.Centering
 public import Probability.Process.RandomWalk.FunctionalLimit.Stable.PathLaw.Convergence
 public import Probability.Process.RandomWalk.FunctionalLimit.Stable.Tightness.Result
 
 /-!
 # Stable random-walk functional limits
 
-The public theorems are:
+These results combine stable finite-grid convergence with the proved stable
+tightness criteria below, at, and above index one.
+## Public declarations
 
-- `ProbabilityTheory.RandomWalk.FunctionalLimit.Stable.tendsto_normalizedStepPathLaw_of_index_lt_one`:
-  the uncentered normalized step-path laws converge in `J₁` for stable index
-  `0 < α < 1`, given the scalar attraction, stable norming, and tail hypotheses.
-- `ProbabilityTheory.RandomWalk.FunctionalLimit.Stable.tendsto_normalizedStepPathLaw_of_index_one`:
-  the same path-law convergence at index one, under Mogul'skii's sine-centering
-  condition.
-- `ProbabilityTheory.RandomWalk.FunctionalLimit.Stable.tendsto_normalizedStepPathLaw_of_index_gt_one`:
-  the same path-law convergence for `1 < α < 2`, with the zero-centering
-  consequence and tail hypotheses established from scalar attraction.
+Let $S_m=\sum_{i=0}^{m-1}X_i$ for IID increments of law $\nu$,
+$a_n=\texttt{normalization}(n)$, and
+\[
+ Q_n=\operatorname{Law}_\nu\!\left(t\mapsto
+   \frac{S_{\lfloor nt\rfloor}}{a_n}\right),
+ \qquad P=\operatorname{Law}(X),
+\]
+where $X$ has the specified stable clock-process law. The following results
+prove convergence in distribution on the Skorokhod $J_1$ path space:
 
-The generic path-law theorem takes tightness and negligible block centers as
-inputs. These corollaries combine that result with the proved tightness
-criteria below, at, and above stable index one.
+- `tendsto_normalizedStepPathLaw_of_index_lt_one` proves
+  $Q_n\Longrightarrow_{J_1}P$ for $0<\alpha<1$, under zero-centered scalar
+  attraction, stable norming, and the two-sided regularly varying tail.
+- `tendsto_normalizedStepPathLaw_of_index_one` proves
+  $Q_n\Longrightarrow_{J_1}P$ for $\alpha=1$, under zero-centered scalar
+  attraction, stable norming, the two-sided tail condition, and Mogulskii's
+  sine-centering condition
+  $n\int_{\mathbb R}\sin(x/a_n)\,\nu(dx)\to0$.
+- `tendsto_normalizedStepPathLaw_of_index_gt_one` proves
+  $Q_n\Longrightarrow_{J_1}P$ for $1<\alpha<2$ from zero-centered scalar
+  attraction and stable norming; these assumptions yield the tail, integrable
+  increments, and zero mean required by the tightness theorem.
+
 -/
 
 @[expose] public section
@@ -46,7 +58,7 @@ The scalar domain-of-attraction hypothesis uses zero centering; the remaining
 tail and norming hypotheses supply the already established J1 tightness. -/
 theorem tendsto_normalizedStepPathLaw_of_index_lt_one
     (hDOA : IsInDomainOfAttractionAlong ν μ normalization (fun _ => 0))
-    (hP : IsStableClockProcessLaw α μ UnitInterval.clock P)
+    (hP : IsStableClockProcessLaw α μ unitInterval.clock P)
     (hnorm : IsStableNorming α ν normalization)
     (hα₀ : 0 < α) (hα₁ : α < 1)
     (htail : Asymptotics.IsRegularlyVaryingAtTop
@@ -69,7 +81,7 @@ source sine-centering convention. The scalar domain-of-attraction hypothesis
 uses zero centering, and the sine-centering condition supplies J1 tightness. -/
 theorem tendsto_normalizedStepPathLaw_of_index_one
     (hDOA : IsInDomainOfAttractionAlong ν μ normalization (fun _ => 0))
-    (hP : IsStableClockProcessLaw 1 μ UnitInterval.clock P)
+    (hP : IsStableClockProcessLaw 1 μ unitInterval.clock P)
     (hnorm : IsStableNorming 1 ν normalization)
     (htail : Asymptotics.IsRegularlyVaryingAtTop
       (fun u : ℝ => ν.real {x : ℝ | u < |x|}) (-1))
@@ -92,7 +104,7 @@ zero-centered scalar domain-of-attraction hypothesis forces zero mean; its
 tail regular variation supplies the first moment and the J1 tightness input. -/
 theorem tendsto_normalizedStepPathLaw_of_index_gt_one
     (hDOA : IsInDomainOfAttractionAlong ν μ normalization (fun _ => 0))
-    (hP : IsStableClockProcessLaw α μ UnitInterval.clock P)
+    (hP : IsStableClockProcessLaw α μ unitInterval.clock P)
     (hnorm : IsStableNorming α ν normalization)
     (hα₀ : 0 < α) (hα₁ : 1 < α) (hα₂ : α < 2) :
     Tendsto (fun n : ℕ =>

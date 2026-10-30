@@ -6,7 +6,6 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.BranchingRandomWalk.Law
 public import Probability.BranchingRandomWalk.Step.Position.Measurability
 
 /-!
@@ -14,6 +13,14 @@ public import Probability.BranchingRandomWalk.Step.Position.Measurability
 
 These results apply to arbitrary child-slot types. Singleton-slot random walks
 use them as a special case.
+
+## Public declarations
+
+- `measurable_step` proves measurability of the root step coordinate
+  $w\mapsto w.\mathrm{step}(\star)$.
+- `measurableSet_survivesAlong u` proves that
+  $\{w:\mathrm{surviveAlong}(w.\mathrm{step}(\star),[],u)\}$ is measurable
+  for every finite address $u$.
 -/
 
 open MeasureTheory

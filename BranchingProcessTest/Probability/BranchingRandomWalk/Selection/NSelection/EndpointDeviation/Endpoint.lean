@@ -8,10 +8,10 @@ many-to-one bounds.
 -/
 
 #print axioms
-  ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.measurableSet_firstNSelectedEndpointBelow
+  ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.measurableSet_firstNSelectedEndpointBelow
 
 #print axioms
-  ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.firstNSelectedEndpointBelow_subset_rawFirstNSelectedLargeDrop_union_noLargeDrop
+  ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.firstNSelectedEndpointBelow_subset_rawFirstNSelectedLargeDrop_union_noLargeDrop
 
 #print axioms
-  ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.measure_firstNSelectedEndpointBelow_le_of_drawdown
+  ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.measure_firstNSelectedEndpointBelow_le_of_drawdown

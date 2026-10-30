@@ -16,6 +16,56 @@ is the union of their jump times together with the time endpoints. The
 successor of a partition point is the least later point in this finite set.
 This gives the exact open time cells on which both boundary values are
 constant, including when either boundary has a jump at time one.
+
+## Public declarations
+
+The partition and trace interface is in namespace
+`Skorokhod.PathClass.StepCorridor.StepBoundary`:
+
+- `commonKnots`: $K(u,l)=\{\bot,\top\}\cup\operatorname{knots}(u)
+  \cup\operatorname{knots}(l)$; `bot_mem_commonKnots`,
+  `top_mem_commonKnots`, and `commonKnots_nonempty` give its endpoint and
+  nonemptiness properties.
+- `commonPartitionGrid`: the increasing enumeration of $K(u,l)$, extended
+  constantly at its last point. `monotone_commonPartitionGrid` proves
+  monotonicity, `commonPartitionGrid_strictSucc` proves
+  $G_k<G_{k+1}$ for $k<|K|-1$, `commonPartitionGrid_zero` and
+  `commonPartitionGrid_last` identify the endpoints, and
+  `commonPartitionGrid_eq_orderEmb` and `exists_fin_commonPartitionGrid_eq`
+  relate the grid to the finite sorted enumeration and show every knot occurs.
+- `commonPartitionCellTime`: affine interpolation
+  $C_k(q)=G_k+q(G_{k+1}-G_k)$. The declarations
+  `monotone_commonPartitionCellTime`, `coe_commonPartitionCellTime`,
+  `commonPartitionCellTime_left_le`, `commonPartitionCellTime_le_right`,
+  `commonPartitionCellTime_lt_right`, `commonPartitionCellTime_bot`,
+  `commonPartitionCellTime_top`, and `exists_commonPartitionCellTime_eq`
+  give its coordinate formula, monotonicity, endpoint bounds and values, and
+  surjectivity onto each closed partition interval.
+- `eval_eq_rightTrace_on_commonPartitionCell` states that a step boundary
+  whose knots lie in $K(u,l)$ is constant on each open grid cell, with value
+  equal to its right trace at the left knot;
+  `eval_eq_rightTrace_on_commonPartitionCell_of_le` extends this to the
+  half-open cell $[G_i,G_{i+1})$, including its left endpoint;
+  `leftTrace_eq_rightTrace_on_precedingCommonCell` identifies the incoming
+  trace at a right knot with the value on the preceding cell.
+- `mem_commonKnots_of_mem_upper` and `mem_commonKnots_of_mem_lower` include
+  each boundary's knots in $K(u,l)$.
+- `nextCommonKnot`: the least $q\in K(u,l)$ with $t<q$ when $t\ne\top$;
+  `nextCommonKnot_eq_commonPartitionGrid_succ` identifies this successor
+  with the next grid point.
+- `commonCell` is $(t,\operatorname{nextCommonKnot}(t))$ (empty at $t=\top$),
+  and `commonCellUnion` is their union over nonterminal knots.
+  `pairwiseDisjoint_commonCells` proves the cells are pairwise disjoint, and
+  `iUnion_commonCells_eq` identifies their union with
+  $(\bot,\top)\setminus K(u,l)$.
+- `upper_eval_eq_rightTrace_on_nextCell` and
+  `lower_eval_eq_rightTrace_on_nextCell` give the constant boundary value
+  throughout the open successor cell.
+
+In the enclosing namespace `Skorokhod.PathClass.StepCorridor`,
+`commonPartitionCellLeftKnotIndex` and `commonPartitionCellRightKnotIndex`
+send $i:\operatorname{Fin}(|K|-1)$ to the indices $i$ and $i+1$ in
+$\operatorname{Fin}(|K|)$, respectively.
 -/
 
 open Skorokhod.PathClass.StepCorridor
@@ -311,7 +361,7 @@ theorem exists_fin_commonPartitionGrid_eq
 
 /-- The next indexed grid point is the next entry of the increasing
 enumeration, when the current index is not terminal. -/
-theorem commonPartitionGrid_succ_eq_orderEmb (upper lower : StepBoundary)
+private lemma commonPartitionGrid_succ_eq_orderEmb (upper lower : StepBoundary)
     (k : ℕ) (hk : k < (commonKnots upper lower).card - 1) :
     commonPartitionGrid upper lower (k + 1) =
       (commonKnots upper lower).orderEmbOfFin rfl ⟨k + 1, by
@@ -325,7 +375,7 @@ theorem commonPartitionGrid_succ_eq_orderEmb (upper lower : StepBoundary)
 
 /-- Every common knot to the right of an indexed partition point is at or
 after its successor in the finite sorted enumeration. -/
-theorem commonPartitionGrid_succ_le_of_mem (upper lower : StepBoundary)
+private lemma commonPartitionGrid_succ_le_of_mem (upper lower : StepBoundary)
     (k : ℕ) (hk : k < (commonKnots upper lower).card - 1)
     {q : unitInterval} (hq : q ∈ commonKnots upper lower)
     (hleft : commonPartitionGrid upper lower k < q) :
@@ -397,6 +447,22 @@ theorem eval_eq_rightTrace_on_commonPartitionCell (b upper lower : StepBoundary)
   · rintro ⟨hr, hrl⟩
     exact ⟨hr, hrl.trans (le_of_lt hleft)⟩
 
+/-- On the half-open common partition cell `[Gᵢ, Gᵢ₊₁)`, a step boundary
+takes the right-trace value at its left knot, including at that knot. -/
+theorem eval_eq_rightTrace_on_commonPartitionCell_of_le
+    (b upper lower : StepBoundary)
+    (hknots : ∀ q ∈ b.knots, q ∈ commonKnots upper lower)
+    (i : Fin ((commonKnots upper lower).card - 1))
+    {q : unitInterval}
+    (hleft : commonPartitionGrid upper lower i.val ≤ q)
+    (hright : q < commonPartitionGrid upper lower (i.val + 1)) :
+    b.eval q = b.rightTrace (commonPartitionGrid upper lower i.val) := by
+  by_cases hq : q = commonPartitionGrid upper lower i.val
+  · subst q
+    exact (rightTrace_eq_eval b _).symm
+  · exact eval_eq_rightTrace_on_commonPartitionCell b upper lower hknots
+      i.val i.isLt (lt_of_le_of_ne hleft (Ne.symm hq)) hright
+
 /-- The level immediately to the left of a cell's right knot is the level
 used throughout the open cell. This identifies the incoming trace at a jump
 with the preceding cell's constant boundary value. -/
@@ -444,19 +510,19 @@ noncomputable def nextCommonKnot (upper lower : StepBoundary)
       refine ⟨⊤, Finset.mem_filter.mpr ⟨top_mem_commonKnots upper lower,
         lt_top_iff_ne_top.mpr htop⟩⟩)
 
-theorem nextCommonKnot_mem (upper lower : StepBoundary)
+private lemma nextCommonKnot_mem (upper lower : StepBoundary)
     (t : unitInterval) (htop : t ≠ ⊤) :
     nextCommonKnot upper lower t htop ∈ commonKnots upper lower := by
   exact (Finset.mem_filter.mp (Finset.min'_mem _ _)).1
 
-theorem lt_nextCommonKnot (upper lower : StepBoundary)
+private lemma lt_nextCommonKnot (upper lower : StepBoundary)
     (t : unitInterval) (htop : t ≠ ⊤) :
     t < nextCommonKnot upper lower t htop := by
   exact (Finset.mem_filter.mp (Finset.min'_mem _ _)).2
 
 /-- Every common partition point later than `t` lies at or after its
 successor. -/
-theorem nextCommonKnot_le_of_lt (upper lower : StepBoundary)
+private lemma nextCommonKnot_le_of_lt (upper lower : StepBoundary)
     (t q : unitInterval) (htop : t ≠ ⊤)
     (hq : q ∈ commonKnots upper lower) (htq : t < q) :
     nextCommonKnot upper lower t htop ≤ q := by
@@ -508,7 +574,7 @@ theorem nextCommonKnot_eq_commonPartitionGrid_succ
   exact le_antisymm hnextLe hrightLe
 
 /-- A nonterminal time has a last common partition point strictly before it. -/
-theorem exists_prev_commonKnot (upper lower : StepBoundary)
+private lemma exists_prev_commonKnot (upper lower : StepBoundary)
     {s : unitInterval} (hs : ⊥ < s) :
     ∃ p ∈ commonKnots upper lower, p < s ∧
       ∀ q ∈ commonKnots upper lower, q < s → q ≤ p := by
@@ -611,7 +677,7 @@ theorem iUnion_commonCells_eq (upper lower : StepBoundary) :
 
 /-- There is no common partition point strictly between a partition point and
 its successor. -/
-theorem no_commonKnot_between_next (upper lower : StepBoundary)
+private lemma no_commonKnot_between_next (upper lower : StepBoundary)
     (t q : unitInterval) (htop : t ≠ ⊤)
     (hq : q ∈ commonKnots upper lower) (htq : t < q)
     (hqn : q < nextCommonKnot upper lower t htop) : False := by
@@ -621,7 +687,7 @@ theorem no_commonKnot_between_next (upper lower : StepBoundary)
 open cell from a partition point to its successor. The value at the left
 endpoint is the right-continuous level, so jumps at that endpoint are
 assigned to the cell on its right. -/
-theorem eval_eq_rightTrace_on_nextCell (b upper lower : StepBoundary)
+private lemma eval_eq_rightTrace_on_nextCell (b upper lower : StepBoundary)
     (hknots : ∀ q ∈ b.knots, q ∈ commonKnots upper lower)
     (t s : unitInterval)
     (htop : t ≠ ⊤) (hts : t < s)

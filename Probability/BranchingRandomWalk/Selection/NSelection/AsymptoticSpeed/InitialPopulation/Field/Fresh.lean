@@ -15,12 +15,49 @@ import Probability.Process.HittingTime.Declarations
 The actual smaller-start selected population reaches capacity at a stopping
 generation. This file records that stopping time and prepares the selected
 population's descendant field for the existing stopped-subtree factorization.
+
+## Public declarations
+
+- `smallInitialPopulationAtCapacity m N n` is the event
+  $|\operatorname{smallInitialPopulation}(m,N,n)|=N$.
+  `smallInitialPopulationCapacityTime m N` is the first such generation,
+  with value $\top$ when the population never reaches capacity.
+  `measurableSet_smallInitialPopulationAtCapacity`,
+  `smallInitialPopulationCapacityTime_isStoppingTime`,
+  `smallInitialPopulationCapacityTime_eq_iff`, and
+  `smallInitialPopulationCapacityTime_ne_top_iff` give measurability,
+  stopping-time, and finite-hit characterizations.
+- `smallInitialPopulationRootsOfFinset`, `smallInitialPopulationRootsAt`, and
+  `smallInitialPopulationHitRoots` enumerate a selected population at a fixed
+  generation or at the capacity-hitting generation. Their membership,
+  hit-time, injectivity, and depth properties are stated by
+  `smallInitialPopulationRootsAt_mem`,
+  `smallInitialPopulationHitRoots_eq_at_time`,
+  `smallInitialPopulationHitRoots_mem_at_time`,
+  `smallInitialPopulationHitRoots_injective_at_time`, and
+  `smallInitialPopulationHitRoots_depth_at_time`.
+- `measurable_smallInitialPopulationRootsAt`,
+  `countable_range_smallInitialPopulationHitRoots`, and
+  `measurableSet_smallInitialPopulationHitRoots_fiber` give the measurable
+  enumeration, countable range, and measurable fibers needed by the stopped
+  descendant-field law.
+- `smallInitialPopulationHitRoots_factorization_on_finite` states that, on
+  the finite-hit event, the stopped past and selected fresh subtree field
+  factorize. `ae_smallInitialPopulationCapacityTime_ne_top` states that the
+  hit time is finite almost surely under the boundary, nonempty-offspring,
+  and supercriticality assumptions when $0<m\le N$.
+  `smallInitialPopulationHitRoots_freshField_law` then gives the exact-$N$
+  field law:
+  $\mathbb P_m(\operatorname{selectedSubtreeStepFieldVector}
+  (\operatorname{smallInitialPopulationHitRoots})\in B)=\mathbb P_N(B)$.
 -/
 
 open MeasureTheory ProbabilityTheory
 open scoped ENNReal
 
 namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Speed
+
+open ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation
 
 open Combinatorics.UlamHarris
 open Combinatorics.Branching
@@ -184,7 +221,7 @@ theorem smallInitialPopulationHitRoots_injective_at_time
     (smallInitialPopulationCapacityTime_eq_iff m N n field).1 htime |>.1
   have hcard : (smallInitialPopulation m N n field).card = N := hcapacity
   simp only [smallInitialPopulationRootsAt, smallInitialPopulationRootsOfFinset,
-    dif_pos hcard]
+    dite_eq_left hcard]
   exact (smallInitialPopulation m N n field).orderEmbOfFin hcard |>.injective
 
 theorem smallInitialPopulationHitRoots_depth_at_time
@@ -195,7 +232,7 @@ theorem smallInitialPopulationHitRoots_depth_at_time
     (i : Fin N) :
     (smallInitialPopulationHitRoots m N hm field i).2.length = n := by
   have hmem := smallInitialPopulationHitRoots_mem_at_time m N n hm field htime i
-  exact Tail.firstNSelectedPopulation_depth m N n field _ hmem
+  exact firstNSelectedPopulation_depth m N n field _ hmem
 
 theorem measurable_smallInitialPopulationRootsAt
     (m N n : ℕ) (hm : 0 < m)
@@ -248,7 +285,7 @@ theorem measurableSet_smallInitialPopulationHitRoots_fiber
         ⋃ n : ℕ, {field | τ field = (n : WithTop ℕ)} ∩
           {field | smallInitialPopulationRootsAt m N n hm field = roots} := by
     ext field
-    simp only [Set.mem_setOf_eq, Set.mem_union, Set.mem_inter_iff,
+    simp only [Set.mem_ofPred_eq, Set.mem_union, Set.mem_inter_iff,
       Set.mem_iUnion]
     cases htime : τ field with
     | top => simp [smallInitialPopulationHitRoots, τ, htime, default]

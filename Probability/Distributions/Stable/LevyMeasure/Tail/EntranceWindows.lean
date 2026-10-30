@@ -4,7 +4,14 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.Distributions.Stable.LevyMeasure.Cutoff.Basic
+module
+
+public import Probability.Distributions.Stable.Basic
+public import Probability.Distributions.InfinitelyDivisible.LevyKhintchine.Defs
+public import Mathlib.MeasureTheory.Constructions.UnitInterval
+public import Mathlib.MeasureTheory.Measure.CharacteristicFunction.Basic
+public import MeasureTheory.Measure.Levy.Cutoff
+import Probability.Distributions.Stable.LevyMeasure.Cutoff.Variation
 import Probability.Distributions.Stable.LevyMeasure.Tail.Windows
 import Probability.RandomMeasure.Poisson.Intensity.Entrance
 
@@ -14,7 +21,16 @@ import Probability.RandomMeasure.Poisson.Intensity.Entrance
 For `0 < α < 1`, either positive or negative Lévy tail mass supplies every
 bounded window on that side. The same deterministic cutoff controls the
 small-jump first moment and leaves that window in the finite-activity part.
+
+## Public declarations
+
+* `exists_positiveWindow_cutoff_intensities` and
+  `exists_negativeWindow_cutoff_intensities` choose a cutoff with small-jump
+  first moment below `ρ` and positive finite large-jump intensity in the
+  specified bounded window.
 -/
+
+@[expose] public section
 
 namespace ProbabilityTheory
 
@@ -40,7 +56,7 @@ theorem IsStrictlyAlphaStable.exists_positiveWindow_cutoff_intensities
   let : SigmaFinite T.levyMeasure := T.isLevyMeasure.sigmaFinite
   apply exists_unitTime_cutoff_intensities T.levyMeasure
     (h.levyMeasure_smallJumpMoment_lt_top T hT hαlt).ne
-    T.levyMeasure_largeJumpBand_lt_top measurableSet_Ioo
+    T.isLevyMeasure.measure_largeJumpBand_lt_top measurableSet_Ioo
     (h.levyMeasure_Ioo_pos_of_pos_tail T hT hαpos hr hrR htail)
     ρ δ hρ hδ
   intro x hx
@@ -68,7 +84,7 @@ theorem IsStrictlyAlphaStable.exists_negativeWindow_cutoff_intensities
   let : SigmaFinite T.levyMeasure := T.isLevyMeasure.sigmaFinite
   apply exists_unitTime_cutoff_intensities T.levyMeasure
     (h.levyMeasure_smallJumpMoment_lt_top T hT hαlt).ne
-    T.levyMeasure_largeJumpBand_lt_top measurableSet_Ioo
+    T.isLevyMeasure.measure_largeJumpBand_lt_top measurableSet_Ioo
     (h.levyMeasure_neg_Ioo_pos_of_neg_tail T hT hαpos hr hrR htail)
     ρ δ hρ hδ
   intro x hx

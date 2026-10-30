@@ -4,14 +4,28 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.RandomMeasure.Poisson.Integration.Integral
+module
+
+public import Probability.RandomMeasure.Poisson.Integration.Integral
 
 /-!
 # Finite vectors of Poisson window integrals
 
 This module builds a finite real vector by integrating the mark over each
 time window in each of two independent Poisson random measure models.
+
+## Public declarations
+
+* `poissonWindowIntegralVector` records, for each member of a finite index
+  type, the sum of two Poisson integrals over the corresponding unit-time
+  window.
+* `poissonWindowIntegralVector_aemeasurable` proves almost-everywhere
+  measurability when each coordinate integrand is almost surely integrable
+  under both source laws.
+
 -/
+
+@[expose] public section
 
 open MeasureTheory
 

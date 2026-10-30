@@ -17,6 +17,32 @@ public import Mathlib.Analysis.SpecialFunctions.Log.ENNRealLog
 
 The logarithm is `ENNReal.log : ENNReal → EReal`, so an impossible tube has
 log-probability `-∞`, as required by small-deviation asymptotics.
+
+## Public declarations
+
+* `measurableSet_inHorizontalTube` and
+  `measurableSet_inOpenHorizontalTube` give measurability of the finite weak
+  and strict tube events. `InOpenHorizontalTube.subset_partialSumRangeOscillationLTEvent`
+  places a strict tube path in the range event of width `w` when `0<a<1` and
+  `w>0`.
+* `horizontalTubeProbability μ a w n` and
+  `openHorizontalTubeProbability μ a w n` are the measures of the respective
+  tube events; `horizontalTubeLogProbability μ a w n` is the `ENNReal.log` of
+  the weak-tube probability.
+* `openHorizontalTubeProbability_le_partialSumRangeOscillationLTProbability`
+  gives the corresponding probability inequality under an IID increment law.
+* `horizontalTubeProbability_map_neg` states
+  `P_{ν∘(-id)^{-1}}(1-a,w,n)=P_ν(a,w,n)` without symmetry of `ν`.
+  `horizontalTubeProbability_map_div` states
+  `P_{ν∘(·/σ)^{-1}}(a,w/σ,n)=P_ν(a,w,n)` for `σ>0`.
+* `horizontalTubeProbability_mono_width` and
+  `horizontalTubeLogProbability_mono_width` are nondecreasing in `w` for
+  `0≤a≤1`; `horizontalTubeProbability_mono_horizon` is nonincreasing in `n`.
+
+`horizontalTubeLogProbability_mono_width` formalizes the width comparison in
+Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite
+Offspring* (master's thesis, Fudan University, 2026), Chapter 3, proof of
+Lemma 3.2.
 -/
 
 open MeasureTheory
@@ -174,8 +200,10 @@ theorem horizontalTubeProbability_mono_horizon
   exact hlong ⟨k, lt_of_lt_of_le k.isLt hshort⟩
 
 /-- Width monotonicity for the logarithmic tube probability, in the form used
-in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, proof of Lemma 3.2. The extended-real
-logarithm keeps the statement valid when a tube has probability zero. -/
+in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite
+Offspring* (master's thesis, Fudan University, 2026), Chapter 3, proof of
+Lemma 3.2. The extended-real logarithm keeps the statement valid when a tube
+has probability zero. -/
 theorem horizontalTubeLogProbability_mono_width
     (incrementLaw : Measure (ℕ → ℝ))
     {a width₁ width₂ : ℝ} {n : ℕ}

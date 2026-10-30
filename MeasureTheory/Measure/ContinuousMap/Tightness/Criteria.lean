@@ -7,6 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import MeasureTheory.Measure.ContinuousMap.Tightness.Oscillation
+public import MeasureTheory.Measure.Tight.Sequence
 public import Mathlib.MeasureTheory.Measure.Tight
 public import Mathlib.MeasureTheory.Constructions.BorelSpace.ContinuousMap
 public import Mathlib.Topology.ContinuousMap.SecondCountableSpace
@@ -20,6 +21,18 @@ public section
 This file turns deterministic Arzelà--Ascoli bounds into tightness of a
 family of measures on continuous path space.  The statements are independent
 of any increment law or stochastic-process model.
+
+## Public declarations
+
+- `isTightMeasureSet_of_equicontinuous_bounded` turns
+  `∀ ε > 0, ∃ S, equicontinuous(S) ∧ bounded(S) ∧ ∀ i, μ i (Sᶜ) ≤ ε`
+  into `IsTightMeasureSet (range μ)`.
+- `isTightMeasureSet_of_uniformModulus` and
+  `isTightMeasureSet_of_oscillationBounds` give the corresponding tightness
+  conclusions from a common modulus or a sequence of oscillation bounds.
+- `isTightMeasureSet_of_eventually_singleOscillationBound` and
+  `isTightMeasureSet_of_eventually_oscillationBounds` allow their respective
+  oscillation estimates to hold eventually in the index.
 -/
 
 open Filter MeasureTheory Set
@@ -162,25 +175,6 @@ theorem isTightMeasureSet_of_eventually_singleOscillationBound
     _ ≤ eta / 2 + eta / 2 := add_le_add (hosc i) (hbound i)
     _ = eta := ENNReal.add_halves eta
 
-/-- A finite family of finite measures on a Polish continuous-path space is
-tight.  This local form is used to absorb the finitely many indices preceding
-an asymptotic tightness estimate. -/
-private lemma isTightMeasureSet_of_finite
-    {T E : Type*} [PseudoMetricSpace T] [CompactSpace T]
-    [SecondCountableTopology T] [MetricSpace E] [CompleteSpace E]
-    [SecondCountableTopology E]
-    (S : Set (Measure C(T, E))) (hS : S.Finite)
-    (hfinite : ∀ μ ∈ S, IsFiniteMeasure μ) :
-    IsTightMeasureSet S := by
-  induction S, hS using Set.Finite.induction_on with
-  | empty =>
-      exact (isTightMeasureSet_singleton (μ := 0)).subset (by simp)
-  | @insert μ S hμ hS ih =>
-      rw [Set.forall_mem_insert] at hfinite
-      let _ : IsFiniteMeasure μ := hfinite.1
-      exact (isTightMeasureSet_singleton (μ := μ)).union
-        (ih hfinite.2)
-
 /-- Asymptotic multiscale criterion for tightness of continuous-path laws.
 The stochastic estimates need only hold eventually: the finitely many
 exceptional initial laws are tight individually and are absorbed into the
@@ -212,13 +206,10 @@ theorem isTightMeasureSet_of_eventually_oscillationBounds
     ContinuousMap.isCompact_closure_setOf_hasOscillationBounds
       δ ε hδ hε origin radius
   let initialLaws : Set (Measure C(T, E)) := μ '' Set.Iio N
-  have hinitialFinite : initialLaws.Finite :=
-    Set.Finite.image μ (Set.finite_Iio N)
   have hinitialTight : IsTightMeasureSet initialLaws :=
-    isTightMeasureSet_of_finite initialLaws hinitialFinite (by
-      intro ν hν
-      obtain ⟨i, -, rfl⟩ := hν
-      exact hfinite i)
+    isTightMeasureSet_image_Iio_of_singletons μ (fun i => by
+      let _ : IsFiniteMeasure (μ i) := hfinite i
+      exact isTightMeasureSet_singleton) N
   rw [isTightMeasureSet_iff_exists_isCompact_measure_compl_le]
     at hinitialTight
   obtain ⟨initialK, hinitialK, hinitialMass⟩ := hinitialTight η hη

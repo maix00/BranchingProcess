@@ -41,8 +41,9 @@ The following items are formalized and compile without axioms:
 - measurability of slot survival, path survival, displacement, and selected
   positions;
 - the ordered point-process enumeration and its many-root marginal laws;
-- the finite-population truncation estimate and the analytic implication from
-  eventual two-sided bounds to the speed limit;
+- the finite-population truncation estimate; the elementary squeeze from
+  eventual two-sided bounds uses Mathlib's order-topology criterion
+  `Filter.tendsto_order` directly;
 - the first-moment implication from the fourth-moment assumption.
 
 The following items are still proof obligations for Wang Yiyang,
@@ -58,14 +59,16 @@ Theorems 1.1–1.3:
   `Probability/BranchingRandomWalk/Spine/PointMeasure/Endpoint.lean`);
 - the branching property at the exploration/stopping-cell level;
 - the coupling lemma used for the `a = 0` trajectory argument;
-- the probabilistic eventual upper and lower bounds that feed
-  `speed_limit_of_eventual_bounds`;
+- the probabilistic eventual upper and lower bounds that feed the final speed
+  limit through Mathlib's order-topology convergence criterion;
 - the full statements of Theorems 1.1 and 1.2, and the one-sided L1
   Theorem 1.3.
 
-The analytic file proves only the final deterministic limit once the
-probabilistic bounds above are supplied. Its intermediate estimates do not
-change the assumption list in the main theorem statements.
+The final deterministic implication applies Mathlib's
+`Filter.tendsto_order` directly once the probabilistic bounds above are
+supplied. There is no separate project theorem restating that criterion. The
+intermediate estimates do not change the assumption list in the main theorem
+statements.
 
 
 ## Abstract marks and the real displacement potential

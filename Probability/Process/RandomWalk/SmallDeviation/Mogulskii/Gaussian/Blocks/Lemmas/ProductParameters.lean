@@ -6,25 +6,35 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Distributions.Gaussian.Interval
+import Probability.Distributions.Gaussian.Interval
 
 import Mathlib.Algebra.BigOperators.GroupWithZero.Finset
 import Mathlib.Algebra.Order.BigOperators.Group.Finset
 import Mathlib.Data.Finset.Max
-import Probability.Distributions.Gaussian.FiniteProduct
 
 /-!
 # Proof-specific Gaussian product parameters
 
-The proof-specific parameter lemmas in this file are:
+## Internal proof declarations
 
-- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Blocks.exists_constant_error_lowerBound_lt_gaussianProduct`:
-  for a fixed positive number of Gaussian blocks, choose $c,\delta,b>0$
-  so that $b+k(c/r^2+\delta)$ lies below the product of the $k$
-  symmetric Gaussian interval probabilities of radius $R/\sqrt c$.
 - `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Blocks.exists_error_lowerBound_gap_finset_gaussianProduct`:
-  a strict gap for each member of a nonempty finite reference family gives
-  common $\delta,b>0$ with $b+k(c/r^2+\delta)$ below every product.
+  for $c,r>0$, $k>0$, and a nonempty finite reference family, if
+  \[
+    \operatorname{ofReal}\!\left(\frac{kc}{r^2}\right)
+      < \prod_{j<k}\mathbb P\!\left(
+        Z\in\left(\frac{x_{y,j}-R}{\sqrt c},
+                   \frac{x_{y,j}+R}{\sqrt c}\right)\right)
+  \]
+  holds for every reference $y$, then one can choose $\delta>0$ and
+  $0<\underline p\leq1$ so that
+  \[
+    \underline p+\operatorname{ofReal}\!\left(
+      k\left(\frac{c}{r^2}+\delta\right)\right)
+      < \prod_{j<k}\mathbb P\!\left(
+        Z\in\left(\frac{x_{y,j}-R}{\sqrt c},
+                   \frac{x_{y,j}+R}{\sqrt c}\right)\right)
+  \]
+  for every reference $y$.
 
 These quantitative choices occur in the finite-partition lower-bound proof of
 Theorem 3, Section 4, p. 764 of the 1974 Russian original by A. A.
@@ -35,110 +45,12 @@ Applications* 19(4) (1975), 726–736, DOI 10.1137/1119081.
 Gaussian interval positivity itself belongs to the distribution layer.
 -/
 
-@[expose] public section
+section
 
 open MeasureTheory
 open scoped Topology
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.Blocks
-
-/-- There are explicit positive block and error parameters for which a
-positive numerical lower bound remains after paying the maximal-inequality
-error.  The comparison uses the Gaussian product at block constant one; a
-smaller constant only enlarges its symmetric intervals. -/
-lemma exists_constant_error_lowerBound_lt_gaussianProduct
-    {endpointMargin blockRadius : ℝ}
-    (hendpointMargin : 0 < endpointMargin)
-    (hblockRadius : 0 < blockRadius)
-    {blocks : ℕ} (hblocks : 0 < blocks) :
-    ∃ constant > 0, constant ≤ 1 ∧ ∃ error > 0,
-      ∃ lowerBound : ENNReal, 0 < lowerBound ∧
-        lowerBound + ENNReal.ofReal
-            (blocks * (constant / endpointMargin ^ 2 + error)) <
-          ∏ _j : Fin blocks,
-            gaussianReal 0 1
-              (Set.Ioo
-                (-blockRadius / Real.sqrt constant)
-                (blockRadius / Real.sqrt constant)) := by
-  let base : ENNReal := ∏ _j : Fin blocks,
-    gaussianReal 0 1 (Set.Ioo (-blockRadius) blockRadius)
-  have hbasePos : 0 < base := by
-    simpa [base] using
-      (prod_gaussian_Ioo_sub_add_pos (constant := (1 : ℝ))
-        zero_lt_one hblockRadius (blocks := blocks) (fun _ => 0))
-  have hbaseLeOne : base ≤ 1 := by
-    dsimp [base]
-    apply Finset.prod_le_one
-    intro j hj
-    simpa using
-      (measure_mono (by intro x hx; trivial) :
-        gaussianReal 0 1 (Set.Ioo (-blockRadius) blockRadius) ≤
-          gaussianReal 0 1 Set.univ)
-  have hbaseTop : base ≠ ⊤ :=
-    ne_of_lt (hbaseLeOne.trans_lt ENNReal.one_lt_top)
-  have hbaseRealPos : 0 < base.toReal :=
-    ENNReal.toReal_pos hbasePos.ne' hbaseTop
-  have hblocksReal : 0 < (blocks : ℝ) := by exact_mod_cast hblocks
-  have hmarginSq : 0 < endpointMargin ^ 2 := sq_pos_of_pos hendpointMargin
-  let constant : ℝ := min (1 / 2)
-    (base.toReal * endpointMargin ^ 2 / (16 * (blocks : ℝ)))
-  have hconstant : 0 < constant := by
-    dsimp [constant]
-    rw [lt_min_iff]
-    constructor
-    · norm_num
-    · exact div_pos (mul_pos hbaseRealPos hmarginSq) (by positivity)
-  have hconstantOne : constant ≤ 1 :=
-    (min_le_left _ _).trans (by norm_num)
-  have hconstantBound :
-      constant ≤ base.toReal * endpointMargin ^ 2 /
-        (16 * (blocks : ℝ)) := min_le_right _ _
-  let error := constant / endpointMargin ^ 2
-  have herror : 0 < error := div_pos hconstant hmarginSq
-  have htotal :
-      (blocks : ℝ) * (constant / endpointMargin ^ 2 + error) ≤
-        base.toReal / 8 := by
-    dsimp [error]
-    calc
-      (blocks : ℝ) *
-          (constant / endpointMargin ^ 2 +
-            constant / endpointMargin ^ 2) =
-          2 * (blocks : ℝ) * constant / endpointMargin ^ 2 := by ring
-      _ ≤ 2 * (blocks : ℝ) *
-          (base.toReal * endpointMargin ^ 2 /
-            (16 * (blocks : ℝ))) / endpointMargin ^ 2 := by
-        exact div_le_div_of_nonneg_right
-          (mul_le_mul_of_nonneg_left hconstantBound (by positivity))
-          hmarginSq.le
-      _ = base.toReal / 8 := by
-        field_simp [hblocksReal.ne', hmarginSq.ne']
-        ring
-  let lowerBound := ENNReal.ofReal (base.toReal / 2)
-  have hlowerBound : 0 < lowerBound := ENNReal.ofReal_pos.2 (by positivity)
-  have herrorBound :
-      ENNReal.ofReal
-          (blocks * (constant / endpointMargin ^ 2 + error)) ≤
-        ENNReal.ofReal (base.toReal / 8) :=
-    ENNReal.ofReal_le_ofReal htotal
-  have hgapBase : lowerBound + ENNReal.ofReal
-        (blocks * (constant / endpointMargin ^ 2 + error)) < base := by
-    calc
-      lowerBound + ENNReal.ofReal
-          (blocks * (constant / endpointMargin ^ 2 + error)) ≤
-          ENNReal.ofReal (base.toReal / 2) +
-            ENNReal.ofReal (base.toReal / 8) :=
-        by simpa [lowerBound, add_comm] using
-          add_le_add_left herrorBound (ENNReal.ofReal (base.toReal / 2))
-      _ = ENNReal.ofReal (base.toReal / 2 + base.toReal / 8) := by
-        rw [ENNReal.ofReal_add] <;> positivity
-      _ < ENNReal.ofReal base.toReal := by
-        exact (ENNReal.ofReal_lt_ofReal_iff hbaseRealPos).2 (by linarith)
-      _ = base := ENNReal.ofReal_toReal hbaseTop
-  refine ⟨constant, hconstant, hconstantOne, error, herror,
-    lowerBound, hlowerBound, ?_⟩
-  exact hgapBase.trans_le
-    (prod_gaussian_Ioo_one_le_of_constant_le_one
-      hconstant hconstantOne hblockRadius blocks)
 
 /-- If the principal maximal-inequality error is strictly below every member
 of a nonempty finite Gaussian-product family, then a positive additional

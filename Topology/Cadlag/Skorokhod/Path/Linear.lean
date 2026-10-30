@@ -7,11 +7,12 @@ Authors: WANG Yiyang
 module
 
 public import Topology.Cadlag.Skorokhod.Maps.Continuous
+public import Topology.ContinuousMap.LinearPath
 
 /-!
 # Linear paths in Skorokhod space
 
-The public definitions and theorems in this file are:
+## Public declarations
 
 - `Skorokhod.linearPath`: $t\mapsto st$.
 - `Skorokhod.dist_linearPath_le`:
@@ -35,19 +36,14 @@ namespace Skorokhod
 
 /-- The continuous linear path with the given slope. -/
 def linearPath (slope : ℝ) : CadlagPath unitInterval ℝ :=
-  ofContinuousMap
-    ⟨fun t => slope * (t : ℝ), continuous_const.mul continuous_subtype_val⟩
+  ofContinuousMap (ContinuousMap.linearPath slope)
 
 /-- The `J₁` distance between two linear paths is at most the difference of
 their slopes. The identity time change bounds it by the uniform distance. -/
 theorem dist_linearPath_le (slope₁ slope₂ : ℝ) :
     dist (linearPath slope₁) (linearPath slope₂) ≤ |slope₁ - slope₂| := by
-  let f : C(unitInterval, ℝ) :=
-    ⟨fun t => slope₁ * (t : ℝ),
-      continuous_const.mul continuous_subtype_val⟩
-  let g : C(unitInterval, ℝ) :=
-    ⟨fun t => slope₂ * (t : ℝ),
-      continuous_const.mul continuous_subtype_val⟩
+  let f : C(unitInterval, ℝ) := ContinuousMap.linearPath slope₁
+  let g : C(unitInterval, ℝ) := ContinuousMap.linearPath slope₂
   have hfun : edist f g ≤ ENNReal.ofReal |slope₁ - slope₂| := by
     rw [ContinuousMap.edist_eq_iSup]
     apply iSup_le

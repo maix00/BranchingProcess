@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Topology.Cadlag.Skorokhod.Oscillation.DoubleExcursion.Basic
-import Topology.Cadlag.Skorokhod.Oscillation.DoubleExcursion.JumpControl
+import all Topology.Cadlag.Skorokhod.Oscillation.DoubleExcursion.Lemmas.JumpControl
 import Topology.Cadlag.Skorokhod.Oscillation.Partition.Finite
 import Topology.Cadlag.Jump
 import Order.Interval.UniformGrid
@@ -15,9 +15,24 @@ import Order.Interval.UniformGrid
 /-!
 # Converse to the double-excursion criterion
 
-A càdlàg path satisfying uniform double-excursion and endpoint controls has
-an oscillation partition with a uniform mesh lower bound. The proof isolates
+For `0 < δ ≤ 1` and `ε > 0`, if a càdlàg path satisfies both
+`HasDoubleExcursionBound f δ ε` and `HasEndpointOscillationBound f δ ε`,
+then it admits a finite oscillation partition `P` with
+`δ / 16 ≤ P.mesh` and cell oscillation at most `5 * ε`. The proof isolates
 large jumps and filters a uniform grid around them.
+
+This is a metric-valued pathwise partition construction motivated by the
+real-valued double-excursion and endpoint criterion in Patrick Billingsley,
+*Convergence of Probability Measures*, 1st ed., Wiley, 1968, Chapter 3, §14,
+Theorem 14.4, p. 119
+([online copy](https://ru.djvu.online/file/vaaIHv9IWlVeK)). It does not assert
+the full compactness theorem.
+
+## Public declarations
+
+- `HasDoubleExcursionBound.exists_oscillation_partition`: the stated
+  double-excursion and endpoint bounds yield `P` with
+  `δ / 16 ≤ P.mesh` and `OscillationBoundedOnPartition P f (5 * ε)`.
 -/
 
 @[expose] public section

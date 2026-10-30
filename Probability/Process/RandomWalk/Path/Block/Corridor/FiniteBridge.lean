@@ -9,7 +9,7 @@ module
 public import Analysis.Asymptotics.Sequence.NegativeRatio
 public import Probability.ConvergenceInDistribution.Portmanteau
 public import Probability.Process.RandomWalk.FunctionalLimit.NormalizedStep.Block
-public import Probability.Process.RandomWalk.Path.Block.Corridor.Comparison
+public import Probability.Sequence.IID.Blocks.FiniteCover
 public import Probability.Sequence.IID.Basic
 
 /-!
@@ -32,6 +32,21 @@ argument as follows:
 
 Applications supply the path geometry and limiting bridge events; this module
 uses only the IID block law and weak convergence.
+
+## Public declarations
+
+* `FiniteBridgeGeometry ι F prefixLength bridgeLength U T` records measurable
+  prefix and bridge cells, a finite cover of `U`, and the implication that
+  joining each prefix cell to its bridge cell gives an event contained in `T`.
+* `eventually_uniform_bridge_lower_bound_of_open_path_limit` gives one
+  eventual positive lower bound for the bridge probabilities of a finite
+  family from open-set convergence in distribution.
+* `eventually_iidSequenceLaw_finite_bridge_comparison` gives the eventual
+  inequality `c * ℙν(U n) ≤ |F| * ℙν(T n)`.
+* `eventually_one_sub_le_log_ratio_of_finite_bridge_comparison` gives the
+  eventual logarithmic ratio bound
+  `1 - ε ≤ log(ℙν(U n)) / log(ℙν(T n))` under the stated vanishing and
+  positivity hypotheses.
 -/
 
 open Filter MeasureTheory ProbabilityTheory
@@ -134,7 +149,7 @@ theorem eventually_iidSequenceLaw_finite_bridge_comparison
       ENNReal.ofReal lowerBound * iidSequenceLaw ν (U n) ≤
         (F.card : ℝ≥0∞) * iidSequenceLaw ν (T n) := by
   filter_upwards [hbridge] with n hbridgeN
-  exact ProbabilityTheory.RandomWalk.iidSequenceLaw_measure_mul_le_card_mul_of_finite_block_cover
+  exact ProbabilityTheory.iidSequenceLaw_measure_mul_le_card_mul_of_finite_block_cover
     ν F (prefixLength n) (bridgeLength n) (U n) (T n)
     (fun i => geometry.prefixCell n i) (fun i => geometry.bridgeCell n i)
     (ENNReal.ofReal lowerBound)

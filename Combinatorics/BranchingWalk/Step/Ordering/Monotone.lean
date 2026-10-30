@@ -9,10 +9,12 @@ module
 public import Combinatorics.BranchingWalk.Step.Relation
 public import Combinatorics.BranchingWalk.Step.Basic
 public import Combinatorics.BranchingWalk.Step.Measurability
-public import Combinatorics.BranchingWalk.Step.Selection.SiblingClosed
+public import Combinatorics.BranchingWalk.Step.Ordering.Sibling.Closed
 
 /-!
 # Ordered branching steps
+
+## Public declarations
 
 `Ordered` is the slot-level property that a single branching step lists its
 survive children from the left, ordered by mark and without gaps: the survive

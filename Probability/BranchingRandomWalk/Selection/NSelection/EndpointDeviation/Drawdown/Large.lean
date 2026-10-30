@@ -4,12 +4,16 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Spine.FirstPassage
-import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Drawdown.Population
-import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.SelectedSubtrees.FixedFamily
-import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.SelectedSubtrees.Position
-import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law.Basic
-import Probability.BranchingRandomWalk.Population.Processes.Selected.RootIndexed
+module
+
+public import Probability.BranchingRandomWalk.Spine.FirstPassage
+public import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Drawdown.Population
+public import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.SelectedSubtrees.FixedFamily
+public import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.SelectedSubtrees.Position
+public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law.Basic
+public import Probability.BranchingRandomWalk.Population.Processes.Selected.RootIndexed
+public import Probability.BranchingRandomWalk.Spine.Path.Decomposition.Branching
+import all Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Drawdown.Lemmas.SelectedCount
 
 /-!
 # Large ancestral drawdowns for the first-`N` selected population
@@ -24,12 +28,37 @@ surviving addresses.
 The source estimate is equation (4.16) in the proof of Proposition 3.1 of
 Elie Aïdékon and Yueyun Hu, *Average-weight percolation on the complete graph*,
 arXiv:2512.23266 (2025).
+
+## Public declarations
+
+- `selectedFirstPassageBelowAtGeneration` is the first-`N` population event
+  at a fixed generation; `measurableSet_selectedFirstPassageBelowAtGeneration`
+  proves measurability, and
+  `measure_selectedFirstPassageBelowAtGeneration_le` bounds its probability.
+- `selectedFirstPassageBelowByHorizon` is the union over generations through
+  `H`; `measure_selectedFirstPassageBelowByHorizon_le` gives its probability
+  bound.
+- `rawFirstNSelectedLargeDrop` is the raw large-drop event and
+  `firstNSelectedLargeDrawdown` is its totalized version.
+  `rawFirstNSelectedLargeDrop_subset_firstNSelectedLargeDrawdown` and
+  `firstNSelectedLargeDrawdown_subset_selectedFirstPassageBelowByHorizon`
+  give the event inclusions; `measure_firstNSelectedLargeDrawdown_le` and
+  `measure_rawFirstNSelectedLargeDrop_le` give their probability bounds.
+
+The totalized first-`N` population and its cardinality and filtration
+properties are defined in `Drawdown/Population.lean`. The one-root event
+`hasFirstPassageBelow` and its many-to-one bound are defined in
+`Probability/BranchingRandomWalk/Spine/FirstPassage.lean`.
 -/
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal
 
-namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail
+namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation
+
+open ProbabilityTheory.BranchingProcess (offspringFieldLaw offspringFieldLaw_coordinate offspringFieldLaw_independent offspringFieldLaw_mapMarks)
 
 open Combinatorics.Branching
 open Combinatorics.UlamHarris
@@ -38,180 +67,6 @@ open ProbabilityTheory.BranchingRandomWalk.Spine
 private abbrev GenerationAddress (m j : ℕ) :=
   {p : RootIndexed.TreeNode (Fin m) ℕ // p.2.length = j}
 
-/-- The fixed generation-`j` root family used to apply the branching
-property before revealing the independent descendant fields. -/
-private def generationAddressRoots (m j : ℕ) :
-    GenerationAddress m j → Fin m × TreeNode ℕ :=
-  fun p => (p.1.1, p.1.2)
-
-/-- The totalized first-`N` population at generation `j` from `m` roots at
-zero.  It is defined for every sampled forest, including fields where the
-raw candidate population is not lower-finite. -/
-noncomputable def largeDrawdownPopulation (m N j : ℕ)
-    [LinearOrder (RootIndexed.TreeNode (Fin m) ℕ)]
-    (field : FiniteRootStepField m ℕ ℝ) :
-    Finset (RootIndexed.TreeNode (Fin m) ℕ) :=
-  RootIndexed.selectedPopulationTotalized N Finset.univ (fun _ => 0)
-    id id j field
-
-theorem largeDrawdownPopulation_card_le (m N j : ℕ)
-    [LinearOrder (RootIndexed.TreeNode (Fin m) ℕ)]
-    (hmN : m ≤ N)
-    (field : FiniteRootStepField m ℕ ℝ) :
-    (largeDrawdownPopulation m N j field).card ≤ N := by
-  classical
-  cases j with
-  | zero =>
-      simpa [largeDrawdownPopulation, RootIndexed.selectedPopulationTotalized,
-        RootIndexed.initialPopulation_card] using hmN
-  | succ j =>
-      let value := RootIndexed.observedPositionAtGeneration
-        (α := ℕ)
-        (fun _ : Fin m => (0 : ℝ)) (id : ℝ → ℝ) (id : ℝ → ℝ) (j + 1)
-      let candidates := fun ω : FiniteRootStepField m ℕ ℝ =>
-        RootIndexed.childrenAtGeneration j
-          (RootIndexed.selectedPopulationTotalized N Finset.univ
-            (fun _ : Fin m => (0 : ℝ)) id id j ω) ω
-      by_cases hgood : Combinatorics.Branching.Selection.NSelection.IsLowerFiniteBy
-          (value field) (candidates field)
-      · change (RootIndexed.selectedPopulationTotalized N Finset.univ
-          (fun _ : Fin m => (0 : ℝ)) id id (j + 1) field).card ≤ N
-        exact (RootIndexed.selectedPopulationTotalized_succ_spec
-          N Finset.univ (fun _ : Fin m => (0 : ℝ)) id id j field hgood).card_le
-      · change (Selection.NSelection.selectFirstNFromSetTotalized
-          N value candidates field).card ≤ N
-        rw [Selection.NSelection.selectFirstNFromSetTotalized_empty_of_not_lowerFinite
-          N value candidates field hgood]
-        simp
-
-/-- A first crossing below `-B` in a one-root tree within `horizon` steps.
-The `first` clause records that every earlier vertex on the same surviving
-lineage stays at or above the level. -/
-def hasFirstPassageBelow {ι : Type*} [MeasurableSpace ι]
-    [Countable ι] (horizon : ℕ) (B : ℝ) :
-    Set (StepField ι ℝ) :=
-  {ω | ∃ u : TreeNode ι, 0 < u.length ∧ u.length ≤ horizon ∧
-      surviveAlong ω [] u ∧
-      Spine.pathPotential realPotential ω u < -B ∧
-      ∀ i : ℕ, i < u.length →
-        -B ≤ Spine.pathPotential realPotential ω (u.take i)}
-
-theorem measurableSet_hasFirstPassageBelow
-    {ι : Type*} [MeasurableSpace ι] [Countable ι]
-    (horizon : ℕ) (B : ℝ) :
-    MeasurableSet (hasFirstPassageBelow (ι := ι) horizon B) := by
-  classical
-  rw [show hasFirstPassageBelow (ι := ι) horizon B =
-      ⋃ u : TreeNode ι,
-        {ω | 0 < u.length ∧ u.length ≤ horizon ∧ surviveAlong ω [] u ∧
-          Spine.pathPotential realPotential ω u < -B ∧
-          ∀ i : ℕ, i < u.length →
-            -B ≤ Spine.pathPotential realPotential ω (u.take i)} by
-    ext ω
-    simp [hasFirstPassageBelow]]
-  apply MeasurableSet.iUnion
-  intro u
-  have hsurvive : MeasurableSet {ω : StepField ι ℝ |
-      surviveAlong ω [] u} := Spine.measurableSet_surviveAlong [] u
-  have hend : MeasurableSet {ω : StepField ι ℝ |
-      Spine.pathPotential realPotential ω u < -B} :=
-    measurableSet_Iio.preimage (Spine.pathPotential_measurable realPotential [] u)
-  have hprefix : MeasurableSet {ω : StepField ι ℝ |
-      ∀ i : ℕ, i < u.length →
-        -B ≤ Spine.pathPotential realPotential ω (u.take i)} := by
-    rw [show {ω : StepField ι ℝ |
-        ∀ i : ℕ, i < u.length →
-          -B ≤ Spine.pathPotential realPotential ω (u.take i)} =
-      ⋂ i : ℕ, {ω | i < u.length →
-        -B ≤ Spine.pathPotential realPotential ω (u.take i)} by
-      ext ω
-      simp]
-    apply MeasurableSet.iInter
-    intro i
-    by_cases hi : i < u.length
-    · have hcoord : MeasurableSet {ω : StepField ι ℝ |
-          -B ≤ Spine.pathPotential realPotential ω (u.take i)} :=
-        measurableSet_Ici.preimage
-          (Spine.pathPotential_measurable realPotential [] (u.take i))
-      simpa [hi] using hcoord
-    · simp [hi]
-  have hlen : MeasurableSet {ω : StepField ι ℝ |
-      0 < u.length ∧ u.length ≤ horizon} := by
-    by_cases h : 0 < u.length ∧ u.length ≤ horizon <;> simp [h]
-  rw [show {ω : StepField ι ℝ |
-      0 < u.length ∧ u.length ≤ horizon ∧ surviveAlong ω [] u ∧
-        Spine.pathPotential realPotential ω u < -B ∧
-        ∀ i : ℕ, i < u.length →
-          -B ≤ Spine.pathPotential realPotential ω (u.take i)} =
-      {ω | 0 < u.length ∧ u.length ≤ horizon} ∩
-        {ω | surviveAlong ω [] u} ∩
-        {ω | Spine.pathPotential realPotential ω u < -B} ∩
-        {ω | ∀ i : ℕ, i < u.length →
-          -B ≤ Spine.pathPotential realPotential ω (u.take i)} by
-    ext ω
-    simp only [Set.mem_setOf_eq, Set.mem_inter_iff, and_assoc]]
-  exact ((hlen.inter hsurvive).inter hend).inter hprefix
-
-/-- A first-passage event is contained in the event that some generation
-through the horizon has an endpoint below `-B`. -/
-theorem hasFirstPassageBelow_subset_endpointHorizon
-    {ι : Type*} [MeasurableSpace ι] [Countable ι]
-    (horizon : ℕ) (B : ℝ) :
-    hasFirstPassageBelow (ι := ι) horizon B ⊆
-      hasEndpointBelowByHorizon realPotential horizon (-B) := by
-  rintro ω ⟨u, hpos, hlen, hsurvive, hbelow, _⟩
-  rw [hasEndpointBelowByHorizon]
-  refine Set.mem_iUnion.2 ⟨⟨u.length, Nat.lt_succ_of_le hlen⟩, ?_⟩
-  exact ⟨u, rfl, hsurvive, le_of_lt hbelow⟩
-
-/-- The one-root probability of a first passage is bounded by summing the
-one-generation many-to-one estimate over the available horizon. -/
-theorem measure_hasFirstPassageBelow_le
-    {ι : Type*} [MeasurableSpace ι] [Countable ι]
-    (μ : Measure (Step ι ℝ)) [IsProbabilityMeasure μ]
-    (hboundary : HasBoundaryNormalization realPotential μ)
-    (horizon : ℕ) (B : ℝ) :
-    (stepFieldLaw μ) (hasFirstPassageBelow (ι := ι) horizon B) ≤
-      (horizon + 1 : ℝ≥0∞) * ENNReal.ofReal (Real.exp (-B)) := by
-  calc
-    (stepFieldLaw μ) (hasFirstPassageBelow (ι := ι) horizon B) ≤
-        (stepFieldLaw μ)
-          (hasEndpointBelowByHorizon realPotential horizon (-B)) :=
-      measure_mono (hasFirstPassageBelow_subset_endpointHorizon horizon B)
-    _ ≤ ∑ n : Fin (horizon + 1), ENNReal.ofReal (Real.exp (-B)) :=
-      measure_hasEndpointBelowByHorizon_le_sum_exp realPotential μ hboundary
-        horizon (-B)
-    _ = (horizon + 1 : ℝ≥0∞) * ENNReal.ofReal (Real.exp (-B)) := by
-      simp [Finset.sum_const, Finset.card_fin, nsmul_eq_mul]
-
-/-- The random selected population is measurable in the domain filtration
-revealing precisely generations below `j`. -/
-theorem largeDrawdownPopulation_measurable (m N j : ℕ)
-    [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
-    [Countable (RootIndexed.TreeNode (Fin m) ℕ)]
-    [LinearOrder (RootIndexed.TreeNode (Fin m) ℕ)] :
-    Measurable (largeDrawdownPopulation m N j) := by
-  classical
-  have hflow : Measurable[RootIndexed.stepFiltration
-      (Root := Fin m) (α := ℕ) (X := ℝ) j]
-      (largeDrawdownPopulation m N j) := by
-    exact RootIndexed.selectedPopulationTotalized_adapted
-      N Finset.univ (fun _ => (0 : ℝ)) id measurable_id id measurable_id j
-  exact hflow.mono (RootIndexed.stepFiltration
-    (Root := Fin m) (α := ℕ) (X := ℝ) |>.le j) le_rfl
-
-/-- Domain-filtration measurability of the first-`N` population. -/
-theorem largeDrawdownPopulation_adapted (m N j : ℕ)
-    [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
-    [Countable (RootIndexed.TreeNode (Fin m) ℕ)]
-    [LinearOrder (RootIndexed.TreeNode (Fin m) ℕ)] :
-    Measurable[RootIndexed.stepFiltration
-      (Root := Fin m) (α := ℕ) (X := ℝ) j]
-      (largeDrawdownPopulation m N j) := by
-  classical
-  exact RootIndexed.selectedPopulationTotalized_adapted
-    N Finset.univ (fun _ => (0 : ℝ)) id measurable_id id measurable_id j
-
 /-- At generation `j`, a first passage below `-B` from one of the
 first-`N` selected particles during the remaining finite horizon.  Each
 event in the union is a root-fiber event intersected with an event depending
@@ -219,9 +74,10 @@ only on that root's fresh descendant tree. -/
 def selectedFirstPassageBelowAtGeneration (m N j H : ℕ) (B : ℝ)
     [LinearOrder (RootIndexed.TreeNode (Fin m) ℕ)] :
     Set (FiniteRootStepField m ℕ ℝ) :=
-  ⋃ p : GenerationAddress m j,
-    {field | p.1 ∈ largeDrawdownPopulation m N j field ∧
-      RootIndexed.subtreeStepFieldVector (generationAddressRoots m j) field p ∈
+  ⋃ p : {p : RootIndexed.TreeNode (Fin m) ℕ // p.2.length = j},
+    {field | p.1 ∈ firstNSelectedPopulation m N j field ∧
+      RootIndexed.subtreeStepFieldVector
+        (fun q => (q.1.1, q.1.2)) field p ∈
         hasFirstPassageBelow (ι := ℕ) (H - j) B}
 
 theorem measurableSet_selectedFirstPassageBelowAtGeneration
@@ -235,132 +91,37 @@ theorem measurableSet_selectedFirstPassageBelowAtGeneration
   intro p
   have hpop : Measurable[RootIndexed.stepFiltration
       (Root := Fin m) (α := ℕ) (X := ℝ) j]
-      (largeDrawdownPopulation m N j) :=
-    largeDrawdownPopulation_adapted m N j
+      (firstNSelectedPopulation m N j) :=
+    firstNSelectedPopulation_adapted m N j
   have hmem : MeasurableSet[RootIndexed.stepFiltration
       (Root := Fin m) (α := ℕ) (X := ℝ) j]
-      {field | p.1 ∈ largeDrawdownPopulation m N j field} :=
+      {field | p.1 ∈ firstNSelectedPopulation m N j field} :=
     hpop (measurableSet_mem_finset p.1)
   have hfirst : MeasurableSet
       (hasFirstPassageBelow (ι := ℕ) (H - j) B) :=
     measurableSet_hasFirstPassageBelow (H - j) B
   have hvector : Measurable
-      (RootIndexed.subtreeStepFieldVector (generationAddressRoots m j)) :=
+      (RootIndexed.subtreeStepFieldVector (fun q : GenerationAddress m j => (q.1.1, q.1.2))) :=
     RootIndexed.subtreeStepFieldVector_measurable
-      (X := ℝ) (generationAddressRoots m j)
+      (X := ℝ) (fun q : GenerationAddress m j => (q.1.1, q.1.2))
   have hhit : MeasurableSet
       {field : FiniteRootStepField m ℕ ℝ |
         RootIndexed.subtreeStepFieldVector
-            (generationAddressRoots m j) field p ∈
+            (fun q : GenerationAddress m j => (q.1.1, q.1.2)) field p ∈
           hasFirstPassageBelow (ι := ℕ) (H - j) B} :=
     hfirst.preimage ((measurable_pi_apply p).comp hvector)
   rw [show {field : FiniteRootStepField m ℕ ℝ |
-      p.1 ∈ largeDrawdownPopulation m N j field ∧
-        RootIndexed.subtreeStepFieldVector (generationAddressRoots m j)
+      p.1 ∈ firstNSelectedPopulation m N j field ∧
+        RootIndexed.subtreeStepFieldVector (fun q : GenerationAddress m j => (q.1.1, q.1.2))
           field p ∈ hasFirstPassageBelow (ι := ℕ) (H - j) B} =
-      {field | p.1 ∈ largeDrawdownPopulation m N j field} ∩
+      {field | p.1 ∈ firstNSelectedPopulation m N j field} ∩
         {field | RootIndexed.subtreeStepFieldVector
-          (generationAddressRoots m j) field p ∈
+          (fun q : GenerationAddress m j => (q.1.1, q.1.2)) field p ∈
             hasFirstPassageBelow (ι := ℕ) (H - j) B} by
     ext field
-    simp only [Set.mem_setOf_eq, Set.mem_inter_iff]]
+    simp only [Set.mem_ofPred_eq, Set.mem_inter_iff]]
   exact ((RootIndexed.stepFiltration
     (Root := Fin m) (α := ℕ) (X := ℝ) |>.le j) _ hmem).inter hhit
-
-/-- The sum of the probabilities that each fixed generation-`j` address is
-selected is at most `N`.  This is the random-finite-set decomposition: the
-countable sum of membership indicators is exactly the cardinality of the
-selected finset, pointwise. -/
-theorem tsum_generationAddress_selected_le
-    (m N j : ℕ) [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
-    [Countable (RootIndexed.TreeNode (Fin m) ℕ)]
-    [LinearOrder (RootIndexed.TreeNode (Fin m) ℕ)]
-    (hmN : m ≤ N) (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ] :
-    ∑' p : GenerationAddress m j,
-      (finiteRootStepFieldLaw μ m)
-        {field | p.1 ∈ largeDrawdownPopulation m N j field} ≤ N := by
-  classical
-  let P := finiteRootStepFieldLaw μ m
-  let A : GenerationAddress m j → Set (FiniteRootStepField m ℕ ℝ) :=
-    fun p => {field | p.1 ∈ largeDrawdownPopulation m N j field}
-  let g : GenerationAddress m j → FiniteRootStepField m ℕ ℝ → ℝ≥0∞ :=
-    fun p => (A p).indicator fun _ => 1
-  have hA (p : GenerationAddress m j) : MeasurableSet (A p) := by
-    have hpop := largeDrawdownPopulation_measurable m N j
-    simpa [A] using hpop (measurableSet_mem_finset p.1)
-  have hg (p : GenerationAddress m j) : Measurable (g p) :=
-    measurable_const.indicator (hA p)
-  have hsum (field : FiniteRootStepField m ℕ ℝ) :
-      ∑' p : GenerationAddress m j, g p field =
-        (largeDrawdownPopulation m N j field).card := by
-    let pop := largeDrawdownPopulation m N j field
-    let encode : {q : RootIndexed.TreeNode (Fin m) ℕ // q ∈ pop} ↪
-        GenerationAddress m j :=
-      ⟨fun q => ⟨q.1, RootIndexed.selectedPopulationTotalized_depth
-          N Finset.univ (fun _ => (0 : ℝ)) id id j field q.1 q.2⟩,
-        fun p q hpq => Subtype.ext
-          (congrArg (fun z : GenerationAddress m j => z.1) hpq)⟩
-    let selectedAddresses : Finset (GenerationAddress m j) :=
-      pop.attach.map encode
-    have hmem (p : GenerationAddress m j) :
-        p ∈ selectedAddresses ↔ p.1 ∈ pop := by
-      constructor
-      · intro hp
-        rcases Finset.mem_map.1 hp with ⟨q, hq, heq⟩
-        have hv : q.1 = p.1 := congrArg Subtype.val heq
-        rw [← hv]
-        exact q.2
-      · intro hp
-        refine Finset.mem_map.2 ⟨⟨p.1, hp⟩, Finset.mem_attach _ _, ?_⟩
-        apply Subtype.ext
-        rfl
-    have htsum : ∑' p : GenerationAddress m j, g p field =
-        ∑ p ∈ selectedAddresses, g p field := by
-      apply tsum_eq_sum
-      intro p hp
-      have hnot : p.1 ∉ pop := fun h => hp (hmem p |>.2 h)
-      have hnot' : p.1 ∉ largeDrawdownPopulation m N j field := by
-        simpa [pop] using hnot
-      simp [g, A, hnot']
-    calc
-      ∑' p : GenerationAddress m j, g p field =
-          ∑ p ∈ selectedAddresses, g p field := htsum
-      _ = selectedAddresses.card := by
-        calc
-          ∑ p ∈ selectedAddresses, g p field =
-              ∑ p ∈ selectedAddresses, (1 : ℝ≥0∞) := by
-            apply Finset.sum_congr rfl
-            intro p hp
-            have hp' : p.1 ∈ pop := (hmem p).1 hp
-            have hp'' : p.1 ∈ largeDrawdownPopulation m N j field := by
-              simpa [pop] using hp'
-            simp [g, A, hp'']
-          _ = selectedAddresses.card := by simp
-      _ = pop.card := by simp [selectedAddresses, encode]
-  have hsumA :
-      ∑' p : GenerationAddress m j, P (A p) =
-        ∫⁻ field, (largeDrawdownPopulation m N j field).card ∂P := by
-    calc
-      ∑' p, P (A p) = ∑' p, ∫⁻ field, g p field ∂P := by
-        apply tsum_congr
-        intro p
-        rw [lintegral_indicator_const (hA p)]
-        simp [g]
-      _ = ∫⁻ field, ∑' p, g p field ∂P := by
-        symm
-        exact lintegral_tsum (fun p => (hg p).aemeasurable)
-      _ = ∫⁻ field, (largeDrawdownPopulation m N j field).card ∂P :=
-        lintegral_congr hsum
-  calc
-    ∑' p : GenerationAddress m j, P (A p) =
-        ∫⁻ field, (largeDrawdownPopulation m N j field).card ∂P := hsumA
-    _ ≤ ∫⁻ _field, (N : ℝ≥0∞) ∂P := by
-      apply lintegral_mono
-      intro field
-      change ((largeDrawdownPopulation m N j field).card : ℝ≥0∞) ≤
-        (N : ℝ≥0∞)
-      exact_mod_cast largeDrawdownPopulation_card_le m N j hmN field
-    _ = N := by simp [P]
 
 /-- At a fixed generation, branch at each first-`N` selected address before
 revealing its descendants.  The sum of all possible selected roots is at
@@ -381,10 +142,10 @@ theorem measure_selectedFirstPassageBelowAtGeneration_le
   classical
   let P := finiteRootStepFieldLaw μ m
   let A : GenerationAddress m j → Set (FiniteRootStepField m ℕ ℝ) :=
-    fun p => {field | p.1 ∈ largeDrawdownPopulation m N j field}
+    fun p => {field | p.1 ∈ firstNSelectedPopulation m N j field}
   let E : GenerationAddress m j → Set (FiniteRootStepField m ℕ ℝ) :=
-    fun p => {field | p.1 ∈ largeDrawdownPopulation m N j field ∧
-      RootIndexed.subtreeStepFieldVector (generationAddressRoots m j)
+    fun p => {field | p.1 ∈ firstNSelectedPopulation m N j field ∧
+      RootIndexed.subtreeStepFieldVector (fun q : GenerationAddress m j => (q.1.1, q.1.2))
         field p ∈ hasFirstPassageBelow (ι := ℕ) (H - j) B}
   let roots (p : GenerationAddress m j) : Unit → Fin m × TreeNode ℕ :=
     fun _ => (p.1.1, p.1.2)
@@ -393,7 +154,7 @@ theorem measure_selectedFirstPassageBelowAtGeneration_le
   have hA (p : GenerationAddress m j) :
       MeasurableSet[RootIndexed.stepFiltration
         (Root := Fin m) (α := ℕ) (X := ℝ) j] (A p) := by
-    have hpop := largeDrawdownPopulation_adapted m N j
+    have hpop := firstNSelectedPopulation_adapted m N j
     simpa [A] using hpop (measurableSet_mem_finset p.1)
   have hfresh : MeasurableSet
       (hasFirstPassageBelow (ι := ℕ) (H - j) B) :=
@@ -402,7 +163,7 @@ theorem measure_selectedFirstPassageBelowAtGeneration_le
     exact hfresh.preimage (measurable_pi_apply ())
   have hfactor (p : GenerationAddress m j) :
       P (E p) = P (A p) *
-        (stepFieldLaw μ)
+        (offspringFieldLaw μ)
           (hasFirstPassageBelow (ι := ℕ) (H - j) B) := by
     have hlen : ∀ i : Unit, (roots p i).2.length = j := by
       intro i
@@ -415,7 +176,7 @@ theorem measure_selectedFirstPassageBelowAtGeneration_le
       μ (roots p) hlen hinj (A p) freshEvent (hA p) hfreshEvent
     have hBprob :
         (RootIndexed.stepFieldLaw (Root := Unit) μ) freshEvent =
-          (stepFieldLaw μ)
+          (offspringFieldLaw μ)
             (hasFirstPassageBelow (ι := ℕ) (H - j) B) := by
       change (RootIndexed.stepFieldLaw (Root := Unit) μ)
           ((fun η : RootIndexed.StepField Unit ℕ ℝ => η ()) ⁻¹'
@@ -426,7 +187,7 @@ theorem measure_selectedFirstPassageBelowAtGeneration_le
         E p = A p ∩
           RootIndexed.subtreeStepFieldVector (roots p) ⁻¹' freshEvent := by
       ext field
-      simp only [E, A, Set.mem_setOf_eq, Set.mem_inter_iff,
+      simp only [E, A, Set.mem_ofPred_eq, Set.mem_inter_iff,
         Set.mem_preimage]
       rfl
     change (RootIndexed.stepFieldLaw (Root := Fin m) μ) (E p) = _
@@ -435,7 +196,7 @@ theorem measure_selectedFirstPassageBelowAtGeneration_le
       ∑' p : GenerationAddress m j, P (A p) ≤ N := by
     exact tsum_generationAddress_selected_le m N j hmN μ
   have hsingle :
-      (stepFieldLaw μ)
+      (offspringFieldLaw μ)
         (hasFirstPassageBelow (ι := ℕ) (H - j) B) ≤
         ((H - j : ℝ≥0∞) + 1) * ENNReal.ofReal (Real.exp (-B)) :=
     by
@@ -447,18 +208,18 @@ theorem measure_selectedFirstPassageBelowAtGeneration_le
       change P (⋃ p : GenerationAddress m j, E p) ≤ _
       exact measure_iUnion_le E
     _ = (∑' p : GenerationAddress m j, P (A p)) *
-          (stepFieldLaw μ)
+          (offspringFieldLaw μ)
             (hasFirstPassageBelow (ι := ℕ) (H - j) B) := by
       calc
         ∑' p : GenerationAddress m j, P (E p) =
             ∑' p : GenerationAddress m j,
-              P (A p) * (stepFieldLaw μ)
+              P (A p) * (offspringFieldLaw μ)
                 (hasFirstPassageBelow (ι := ℕ) (H - j) B) := by
           apply tsum_congr
           intro p
           exact hfactor p
         _ = (∑' p : GenerationAddress m j, P (A p)) *
-              (stepFieldLaw μ)
+              (offspringFieldLaw μ)
                 (hasFirstPassageBelow (ι := ℕ) (H - j) B) :=
           ENNReal.tsum_mul_right
     _ ≤ (N : ℝ≥0∞) *
@@ -549,94 +310,6 @@ theorem measure_selectedFirstPassageBelowByHorizon_le
                     ENNReal.ofReal (Real.exp (-B)) := by rw [pow_two]
           exact mul_le_mul_right hinner _
 
-/-- Every prefix of a selected address is selected at its own generation.
-This is the ancestor-closure property needed to branch the first-`N`
-population at the start of a witnessed drawdown. -/
-theorem largeDrawdownPopulation_prefix_mem (m N n : ℕ)
-    [LinearOrder (RootIndexed.TreeNode (Fin m) ℕ)]
-    (field : FiniteRootStepField m ℕ ℝ)
-    (p : RootIndexed.TreeNode (Fin m) ℕ)
-    (hp : p ∈ largeDrawdownPopulation m N n field)
-    (j : ℕ) (hjn : j ≤ n) :
-    (p.1, p.2.take j) ∈ largeDrawdownPopulation m N j field := by
-  classical
-  induction n generalizing p j with
-  | zero =>
-      have hj : j = 0 := by omega
-      subst j
-      change p ∈ RootIndexed.initialPopulation (Finset.univ : Finset (Fin m)) at hp
-      change (p.1, p.2.take 0) ∈
-        RootIndexed.initialPopulation (Finset.univ : Finset (Fin m))
-      rw [RootIndexed.mem_initialPopulation_iff] at hp ⊢
-      obtain ⟨r, hr, hpEq⟩ := hp
-      subst p
-      simp
-  | succ n ih =>
-      by_cases htop : j = n + 1
-      · subst j
-        have hdepth : p.2.length = n + 1 := by
-          change p ∈ RootIndexed.selectedPopulationTotalized N Finset.univ
-            (fun _ : Fin m => (0 : ℝ)) id id (n + 1) field at hp
-          exact RootIndexed.selectedPopulationTotalized_depth N Finset.univ
-            (fun _ : Fin m => (0 : ℝ)) id id (n + 1) field p hp
-        have htake : p.2.take (n + 1) = p.2 :=
-          (List.take_eq_self_iff p.2).2 (by omega)
-        simpa [largeDrawdownPopulation, htake] using hp
-      · have hjn' : j ≤ n := by omega
-        have hchild :
-            p ∈ RootIndexed.childrenAtGeneration n
-              (largeDrawdownPopulation m N n field) field := by
-          change p ∈ RootIndexed.selectedPopulationTotalized N Finset.univ
-            (fun _ : Fin m => (0 : ℝ)) id id (n + 1) field at hp
-          exact RootIndexed.selectedPopulationTotalized_succ_subset
-            N Finset.univ (fun _ : Fin m => (0 : ℝ)) id id n field hp
-        obtain ⟨q, hq, hqdepth, i, hi, rfl⟩ :=
-          (RootIndexed.mem_childrenAtGeneration_iff n
-            (largeDrawdownPopulation m N n field) field p).mp hchild
-        have htake : (q.2 ++ [i]).take j = q.2.take j :=
-          List.take_append_of_le_length (by simpa [hqdepth] using hjn')
-        simpa [htake] using ih q hq j hjn'
-
-/-- The local potential in the subtree rooted at `q` is the absolute
-position difference `V(qv) - V(q)` in the original forest. -/
-theorem subtreePathPotential_eq_position_sub (m : ℕ)
-    (field : FiniteRootStepField m ℕ ℝ) (r : Fin m)
-    (q v : TreeNode ℕ) :
-    Spine.pathPotential realPotential
-        (RootIndexed.subtreeStepFieldVector
-          (fun _ : Unit => (r, q)) field ()) v =
-      RootIndexed.position (fun _ : Fin m => (0 : ℝ)) id field r (q ++ v) -
-        RootIndexed.position (fun _ : Fin m => (0 : ℝ)) id field r q := by
-  have hpos := RootIndexed.position_subtreeStepFieldVector
-    (initial := fun _ : Fin m => (0 : ℝ)) (d := id) field
-    (fun _ : Unit => (r, q)) () v
-  have hlocal :
-      RootIndexed.position
-          (RootIndexed.subtreeInitialPosition
-            (fun _ : Fin m => (0 : ℝ)) id field
-            (fun _ : Unit => (r, q))) id
-          (RootIndexed.subtreeStepFieldVector
-            (fun _ : Unit => (r, q)) field) () v =
-        RootIndexed.position (fun _ : Fin m => (0 : ℝ)) id field r (q ++ v) :=
-    hpos
-  have hform :
-      RootIndexed.position
-          (RootIndexed.subtreeInitialPosition
-            (fun _ : Fin m => (0 : ℝ)) id field
-            (fun _ : Unit => (r, q))) id
-          (RootIndexed.subtreeStepFieldVector
-            (fun _ : Unit => (r, q)) field) () v =
-        RootIndexed.position (fun _ : Fin m => (0 : ℝ)) id field r q +
-          Spine.pathPotential realPotential
-            (RootIndexed.subtreeStepFieldVector
-              (fun _ : Unit => (r, q)) field ()) v := by
-    simp [RootIndexed.position, RootIndexed.subtreeInitialPosition,
-      RootIndexed.displace, Spine.pathPotential,
-      RootIndexed.subtreeStepFieldVector,
-      Combinatorics.Branching.displaceWith, realPotential]
-  rw [hform] at hlocal
-  linarith
-
 private lemma take_append_drop_take_eq {α : Type*} (u : List α)
     (k j i : ℕ) (hjk : j ≤ k) (hik : i ≤ k - j) :
     (u.take k).take j ++ ((u.take k).drop j).take i = u.take (j + i) := by
@@ -657,7 +330,7 @@ def rawFirstNSelectedLargeDrop (m N H : ℕ) (B : ℝ)
     [LinearOrder (RootIndexed.TreeNode (Fin m) ℕ)] :
     Set (FiniteRootStepField m ℕ ℝ) :=
   {field | ∃ n : Fin (H + 1), ∃ p : RootIndexed.TreeNode (Fin m) ℕ,
-      p ∈ largeDrawdownPopulation m N n.val field ∧
+      p ∈ firstNSelectedPopulation m N n.val field ∧
       ∃ j : ℕ, j < n.val ∧
         RootIndexed.position (fun _ : Fin m => (0 : ℝ)) id field p.1
             (p.2.take j) -
@@ -666,12 +339,12 @@ def rawFirstNSelectedLargeDrop (m N H : ℕ) (B : ℝ)
 /-- A large drawdown along a first-`N` selected address, recorded at its
 first crossing.  The intermediate-prefix clause is the first-crossing
 normalization; the ancestor is recovered from the selected endpoint by
-`largeDrawdownPopulation_prefix_mem`. -/
+`firstNSelectedPopulation_prefix_mem`. -/
 def firstNSelectedLargeDrawdown (m N H : ℕ) (B : ℝ)
     [LinearOrder (RootIndexed.TreeNode (Fin m) ℕ)] :
     Set (FiniteRootStepField m ℕ ℝ) :=
   {field | ∃ n : Fin (H + 1), ∃ p : RootIndexed.TreeNode (Fin m) ℕ,
-      p ∈ largeDrawdownPopulation m N n.val field ∧
+      p ∈ firstNSelectedPopulation m N n.val field ∧
       ∃ j : ℕ, j < n.val ∧
         RootIndexed.position (fun _ : Fin m => (0 : ℝ)) id field p.1
             (p.2.take j) -
@@ -695,7 +368,7 @@ theorem rawFirstNSelectedLargeDrop_subset_firstNSelectedLargeDrawdown
   obtain ⟨n, p, hp, j, hjn, hdrop⟩ := hraw
   have hp' : p ∈ RootIndexed.selectedPopulationTotalized N Finset.univ
       (fun _ : Fin m => (0 : ℝ)) id id n.val field := by
-    simpa [largeDrawdownPopulation] using hp
+    simpa [firstNSelectedPopulation] using hp
   have hdepth : p.2.length = n.val :=
     RootIndexed.selectedPopulationTotalized_depth N Finset.univ
       (fun _ : Fin m => (0 : ℝ)) id id n.val field p hp'
@@ -719,8 +392,8 @@ theorem rawFirstNSelectedLargeDrop_subset_firstNSelectedLargeDrawdown
     exact hnotcross ⟨hji, by omega, hgt⟩
   have hklen : k ≤ p.2.length := by omega
   let endpoint : RootIndexed.TreeNode (Fin m) ℕ := (p.1, p.2.take k)
-  have hendpointMem : endpoint ∈ largeDrawdownPopulation m N k field := by
-    exact largeDrawdownPopulation_prefix_mem m N n.val field p hp k (by omega)
+  have hendpointMem : endpoint ∈ firstNSelectedPopulation m N k field := by
+    exact firstNSelectedPopulation_prefix_mem m N n.val field p hp k (by omega)
   have hendpointDepth : endpoint.2.length = k := by
     simp [endpoint, List.length_take, min_eq_left hklen]
   have hjk : j ≤ k := by omega
@@ -762,14 +435,14 @@ theorem firstNSelectedLargeDrawdown_subset_selectedFirstPassageBelowByHorizon
   have hnH : n.val ≤ H := by omega
   have hp' : p ∈ RootIndexed.selectedPopulationTotalized N Finset.univ
       (fun _ : Fin m => (0 : ℝ)) id id n.val field := by
-    simpa [largeDrawdownPopulation] using hp
+    simpa [firstNSelectedPopulation] using hp
   have hdepth : p.2.length = n.val :=
     RootIndexed.selectedPopulationTotalized_depth N Finset.univ
       (fun _ : Fin m => (0 : ℝ)) id id n.val field p hp'
   have hjdepth : j ≤ p.2.length := by omega
   have qmem :
-      (p.1, p.2.take j) ∈ largeDrawdownPopulation m N j field :=
-    largeDrawdownPopulation_prefix_mem m N n.val field p hp j (by omega)
+      (p.1, p.2.take j) ∈ firstNSelectedPopulation m N j field :=
+    firstNSelectedPopulation_prefix_mem m N n.val field p hp j (by omega)
   have hqdepth : (p.2.take j).length = j := by
     simp [List.length_take, min_eq_left hjdepth]
   let suffix : TreeNode ℕ := p.2.drop j
@@ -779,7 +452,7 @@ theorem firstNSelectedLargeDrawdown_subset_selectedFirstPassageBelowByHorizon
   have hlen : suffix.length ≤ H - j := by omega
   have hsurvive : surviveAlong (field p.1) [] p.2 := by
     apply firstNSelectedPopulation_surviveAlong m N n.val field p
-    simpa [largeDrawdownPopulation, firstNSelectedPopulation] using hp
+    simpa [firstNSelectedPopulation] using hp
   have hsplit :
       surviveAlong (field p.1) [] (p.2.take j ++ suffix) := by
     simpa [suffix, List.take_append_drop] using hsurvive
@@ -803,9 +476,9 @@ theorem firstNSelectedLargeDrawdown_subset_selectedFirstPassageBelowByHorizon
         RootIndexed.position (fun _ : Fin m => (0 : ℝ)) id field p.1 p.2 -
           RootIndexed.position (fun _ : Fin m => (0 : ℝ)) id field p.1
             (p.2.take j) := by
-    have h := subtreePathPotential_eq_position_sub m field p.1
-      (p.2.take j) suffix
-    simpa [suffix, List.take_append_drop] using h
+    have h := pathPotential_subtreeStepFieldVector_eq_position_sub
+      (φ := realPotential) field p.1 (p.2.take j) suffix
+    simpa [realPotential, suffix, List.take_append_drop] using h
   have hbelow :
       Spine.pathPotential realPotential
           (RootIndexed.subtreeStepFieldVector
@@ -831,16 +504,16 @@ theorem firstNSelectedLargeDrawdown_subset_selectedFirstPassageBelowByHorizon
                 (p.2.take j ++ suffix.take i) -
               RootIndexed.position (fun _ : Fin m => (0 : ℝ)) id field p.1
                 (p.2.take j) := by
-        have h := subtreePathPotential_eq_position_sub m field p.1
-          (p.2.take j) (suffix.take i)
-        simpa [suffix] using h
+        have h := pathPotential_subtreeStepFieldVector_eq_position_sub
+          (φ := realPotential) field p.1 (p.2.take j) (suffix.take i)
+        simpa [realPotential, suffix] using h
       rw [hlocalI]
       linarith
   let q : RootIndexed.TreeNode (Fin m) ℕ := (p.1, p.2.take j)
   let q' : GenerationAddress m j := ⟨q, hqdepth⟩
   have hvectorEq :
       RootIndexed.subtreeStepFieldVector
-          (generationAddressRoots m j) field q' =
+          (fun q : GenerationAddress m j => (q.1.1, q.1.2)) field q' =
         RootIndexed.subtreeStepFieldVector
           (fun _ : Unit => (p.1, p.2.take j)) field () := by
     funext w
@@ -848,7 +521,7 @@ theorem firstNSelectedLargeDrawdown_subset_selectedFirstPassageBelowByHorizon
   have hjH : j < H := by omega
   have hlocalEvent :
       RootIndexed.subtreeStepFieldVector
-          (generationAddressRoots m j) field q' ∈
+          (fun q : GenerationAddress m j => (q.1.1, q.1.2)) field q' ∈
         hasFirstPassageBelow (ι := ℕ) (H - j) B := by
     refine ⟨suffix, hpos, hlen, ?_, ?_, ?_⟩
     · rw [hvectorEq]
@@ -864,7 +537,7 @@ theorem firstNSelectedLargeDrawdown_subset_selectedFirstPassageBelowByHorizon
   refine Set.mem_iUnion.2 ⟨⟨j, hjH⟩, ?_⟩
   rw [selectedFirstPassageBelowAtGeneration]
   refine Set.mem_iUnion.2 ⟨q', ?_⟩
-  change q ∈ largeDrawdownPopulation m N j field ∧ _
+  change q ∈ firstNSelectedPopulation m N j field ∧ _
   exact ⟨by simpa [q] using qmem, hlocalEvent⟩
 
 /-- The first-`N` large-drawdown witness is bounded by the
@@ -923,4 +596,6 @@ theorem measure_rawFirstNSelectedLargeDrop_le
       measure_firstNSelectedLargeDrawdown_le
         m N H hmN B hB μ hboundary
 
-end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail
+end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation
+
+end

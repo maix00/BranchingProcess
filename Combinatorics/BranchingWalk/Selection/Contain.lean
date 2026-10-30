@@ -37,6 +37,9 @@ order is handled separately by the ordered-step API after any reindexing.
   `Combinatorics.Branching.RootIndexed.SelectContain.trans` give reflexivity
   and transitivity; `Combinatorics.Branching.RootIndexed.SelectContain.antisymm`
   proves equality from mutual containment.
+* `Combinatorics.Branching.RootIndexed.instPartialOrder` equips
+  `RootIndexed.BranchingWalk` with the `PartialOrder` whose relation is
+  `SelectContain`.
 * `Combinatorics.Branching.SelectContain` is the single-root specialization
   obtained by taking the root type to be `PUnit`.
 -/
@@ -106,6 +109,17 @@ theorem antisymm {β β' : RootIndexed.BranchingWalk Root α Mark Position}
     exact hi r
 
 end SelectContain
+
+instance instPartialOrder {Root α Mark Position : Type*} :
+    PartialOrder (RootIndexed.BranchingWalk Root α Mark Position) where
+  le := SelectContain
+  le_refl := SelectContain.refl
+  le_trans := by
+    intro a b c hab hbc
+    exact SelectContain.trans hab hbc
+  le_antisymm := by
+    intro a b hab hba
+    exact SelectContain.antisymm hab hba
 
 end RootIndexed
 

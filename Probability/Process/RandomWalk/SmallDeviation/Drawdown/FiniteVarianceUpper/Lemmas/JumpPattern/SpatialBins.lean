@@ -6,18 +6,19 @@ Authors: WANG Yiyang
 
 module
 
-public import Mathlib.Algebra.Order.Floor.Semifield
-public import Mathlib.Algebra.Order.Archimedean.Real.Basic
-public import Mathlib.Data.Fin.Basic
-public import Mathlib.Data.Fintype.Fin
-public import Mathlib.Order.Fin.Basic
-public import Mathlib.Order.PartialSups
-public import Probability.Process.RandomWalk.Path.Event.Oscillation
+import Mathlib.Algebra.Order.Floor.Semifield
+import Mathlib.Algebra.Order.Archimedean.Real.Basic
+import Mathlib.Data.Fin.Basic
+import Mathlib.Data.Fintype.Fin
+import Mathlib.Order.Fin.Basic
+import Mathlib.Order.PartialSups
 
 import Mathlib.Tactic.FieldSimp
 
 /-!
 # Spatial-bin lemmas for the Lemma 3.3 drawdown proof
+
+## Internal proof declarations
 
 For a path $S$, write $M_n=\max_{j\le n}S_j$,
 $k_n=\lfloor(U-M_n)/w\rfloor_{\mathbb N}$, and $b_n=U-wk_n$. The declarations
@@ -26,10 +27,10 @@ deterministic proof chain:
 
 - The running maximum is Mathlib's `partialSups path n`, which states $M_n=\sup_{i\le n}S_i$.
 - `spatialBinIndex` defines $k_n$, and `spatialBinLevel` defines $b_n$.
-- `partialSups_le_spatialBinLevel` and `spatialBinLevel_lt_partialSups_add_width` state $M_n\le b_n<M_n+w$.
-- `spatialBinIndex_antitone` and `spatialBinLevel_mono` state $s\le t\Rightarrow k_t\le k_s$ and $b_s\le b_t$; `spatialBinIndex_le_of_zero` states $S_0=0\Rightarrow k_n\le\lfloor U/w\rfloor_{\mathbb N}$.
-- `values_between_on_constantSpatialBin` confines each block value to $b_s-w-\delta<S_j\le b_s$ when the endpoint bins agree; `oscillationBounded_on_constantSpatialBin` gives oscillation at most $w+\delta$ on that block.
-- `spatialBinJumpSet` and `spatialBinGoodBlockSet` define the indices with unequal and equal consecutive bins. For a nonincreasing sequence in `Fin (K+1)`, `card_spatialBinJumpSet_le` gives $|J|\le K+1$; `card_spatialBinGoodBlockSet_add_jumpSet_card` gives $|G|+|J|=q$; `card_spatialBinGoodBlockSet_ge` gives $q\le|G|+K+1$.
+- The private bounds for `spatialBinLevel` give $M_n\le b_n<M_n+w$, and the private monotonicity result gives $s\le t\Rightarrow k_t\le k_s$.
+- `spatialBinIndex_le_of_zero` states $S_0=0\Rightarrow k_n\le\lfloor U/w\rfloor_{\mathbb N}$.
+- The private `values_between_on_constantSpatialBin` confines each block value to $b_s-w-\delta<S_j\le b_s$ when the endpoint bins agree.
+- `spatialBinJumpSet` defines indices with unequal consecutive bins; for a nonincreasing sequence in `Fin (K+1)`, `card_spatialBinJumpSet_le` gives $|J|\le K+1$.
 - `exists_spatialBinSequence_for_noLargeDrop` constructs a nonincreasing finite bin sequence $k_j$ with $k_j=\lfloor(U-M_{r+j\ell})/w\rfloor_{\mathbb N}$; each unchanged-bin block satisfies the interval bound above.
 
 These declarations support the discretized-maximum proof of Wang Yiyang,
@@ -38,7 +39,7 @@ Chapter 3, Lemma 3.3. They form internal deterministic proof steps and are not
 an independent interface.
 -/
 
-@[expose] public section
+section
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown
 
@@ -52,7 +53,7 @@ noncomputable def spatialBinIndex (upper width : ℝ) (path : ℕ → ℝ) (time
 noncomputable def spatialBinLevel (upper width : ℝ) (path : ℕ → ℝ) (time : ℕ) : ℝ :=
   upper - width * (spatialBinIndex upper width path time : ℝ)
 
-lemma partialSups_le_spatialBinLevel
+private lemma partialSups_le_spatialBinLevel
     (upper width : ℝ) (path : ℕ → ℝ) (time : ℕ)
     (hwidth : 0 < width) (hmax : partialSups path time ≤ upper) :
     partialSups path time ≤ spatialBinLevel upper width path time := by
@@ -67,7 +68,7 @@ lemma partialSups_le_spatialBinLevel
   rw [hcancel] at hmul
   linarith
 
-lemma spatialBinLevel_lt_partialSups_add_width
+private lemma spatialBinLevel_lt_partialSups_add_width
     (upper width : ℝ) (path : ℕ → ℝ) (time : ℕ)
     (hwidth : 0 < width) (hmax : partialSups path time ≤ upper) :
     spatialBinLevel upper width path time <
@@ -84,7 +85,7 @@ lemma spatialBinLevel_lt_partialSups_add_width
   rw [hcancel] at hmul
   nlinarith
 
-lemma spatialBinIndex_antitone
+private lemma spatialBinIndex_antitone
     (upper width : ℝ) (path : ℕ → ℝ) {s t : ℕ}
     (hwidth : 0 < width) (hst : s ≤ t) :
     spatialBinIndex upper width path t ≤ spatialBinIndex upper width path s := by
@@ -93,18 +94,6 @@ lemma spatialBinIndex_antitone
   apply Nat.floor_mono
   apply div_le_div_of_nonneg_right _ hwidth.le
   exact sub_le_sub_left (partialSups_monotone path hst) upper
-
-lemma spatialBinLevel_mono
-    (upper width : ℝ) (path : ℕ → ℝ) {s t : ℕ}
-    (hwidth : 0 < width) (hst : s ≤ t) :
-    spatialBinLevel upper width path s ≤ spatialBinLevel upper width path t := by
-  have hbin := spatialBinIndex_antitone upper width path hwidth hst
-  dsimp [spatialBinLevel]
-  have hbinCast :
-      (spatialBinIndex upper width path t : ℝ) ≤
-        (spatialBinIndex upper width path s : ℝ) := Nat.cast_le.mpr hbin
-  have hmul := mul_le_mul_of_nonneg_left hbinCast hwidth.le
-  linarith
 
 lemma spatialBinIndex_le_of_zero
     (upper width : ℝ) (path : ℕ → ℝ) (time : ℕ)
@@ -123,7 +112,7 @@ lemma spatialBinIndex_le_of_zero
 /-- On a block where the rounded running maximum is constant, a path with
 drawdown at most `delta` is trapped in an interval of width
 `width + delta`. -/
-lemma values_between_on_constantSpatialBin
+private lemma values_between_on_constantSpatialBin
     (path : ℕ → ℝ) (upper width delta : ℝ)
     (hwidth : 0 < width)
     {horizon start finish : ℕ} (hstart : start ≤ finish)
@@ -168,40 +157,6 @@ lemma values_between_on_constantSpatialBin
       path t ≤ partialSups path finish := hpathUpper
       _ ≤ spatialBinLevel upper width path finish := hfinishUpper
       _ = spatialBinLevel upper width path start := hbin.symm
-
-/-- A constant spatial bin also bounds the translation-invariant oscillation
-of the path segment. This is the deterministic event consumed by independent
-block estimates. -/
-lemma oscillationBounded_on_constantSpatialBin
-    (path : ℕ → ℝ) (upper width delta : ℝ)
-    {horizon start length : ℕ}
-    (hwidth : 0 < width)
-    (hnoDrop : ∀ i j : ℕ, i ≤ j → j ≤ horizon →
-      path i - path j ≤ delta)
-    (hupper : ∀ i ≤ horizon, path i ≤ upper)
-    (hfinish : start + length ≤ horizon)
-    (hbin : spatialBinLevel upper width path start =
-      spatialBinLevel upper width path (start + length)) :
-    OscillationBounded
-      (fun k : Fin (length + 1) => path (start + (k : ℕ)))
-      (width + delta) := by
-  intro i j
-  have hi := values_between_on_constantSpatialBin path upper width delta
-    hwidth (Nat.le_add_right start length) hnoDrop hupper hfinish hbin
-    (start + (i : ℕ)) (Nat.le_add_right start _)
-    (Nat.add_le_add_left (Nat.le_of_lt_succ i.isLt) _)
-  have hj := values_between_on_constantSpatialBin path upper width delta
-    hwidth (Nat.le_add_right start length) hnoDrop hupper hfinish hbin
-    (start + (j : ℕ)) (Nat.le_add_right start _)
-    (Nat.add_le_add_left (Nat.le_of_lt_succ j.isLt) _)
-  have hupperDiff : path (start + (i : ℕ)) - path (start + (j : ℕ)) ≤
-      width + delta := by
-    linarith [hi.2, hj.1]
-  have hupperDiff' : path (start + (j : ℕ)) - path (start + (i : ℕ)) ≤
-      width + delta := by
-    linarith [hj.2, hi.1]
-  rw [abs_le]
-  constructor <;> linarith
 
 /-- The times at which a binned running maximum changes. -/
 def spatialBinJumpSet {q K : ℕ} (bins : Fin (q + 1) → Fin (K + 1)) :
@@ -251,32 +206,6 @@ lemma card_spatialBinJumpSet_le
   have hcard : jumps.card ≤ (Finset.univ : Finset (Fin (K + 1))).card :=
     Finset.card_le_card_of_injOn target (by intro j hj; simp) hinj
   simpa [jumps] using hcard
-
-/-- The blocks whose endpoint bin is unchanged are exactly the complement
-of the jump set. -/
-def spatialBinGoodBlockSet {q K : ℕ}
-    (bins : Fin (q + 1) → Fin (K + 1)) : Finset (Fin q) :=
-  Finset.univ.filter fun j => bins j.castSucc = bins j.succ
-
-/-- Good blocks and jump blocks partition the finite block index set. -/
-lemma card_spatialBinGoodBlockSet_add_jumpSet_card
-    {q K : ℕ} (bins : Fin (q + 1) → Fin (K + 1)) :
-    (spatialBinGoodBlockSet bins).card + (spatialBinJumpSet bins).card = q := by
-  classical
-  rw [spatialBinGoodBlockSet, spatialBinJumpSet]
-  simpa using Finset.card_filter_add_card_filter_not
-    (s := (Finset.univ : Finset (Fin q)))
-    (fun j => bins j.castSucc = bins j.succ)
-
-/-- A nonincreasing path through `K+1` spatial bins has at least `q-K-1`
-unchanged-bin blocks. -/
-lemma card_spatialBinGoodBlockSet_ge
-    {q K : ℕ} (bins : Fin (q + 1) → Fin (K + 1))
-    (hmono : ∀ i j, i ≤ j → bins j ≤ bins i) :
-    q ≤ (spatialBinGoodBlockSet bins).card + (K + 1) := by
-  have hpartition := card_spatialBinGoodBlockSet_add_jumpSet_card bins
-  have hjumps := card_spatialBinJumpSet_le bins hmono
-  omega
 
 /-- A finite spatial-bin encoding of a no-large-drop path on a block
 partition.  The bin indices are nonincreasing, and on each block where the

@@ -20,7 +20,9 @@ uses `Fin.measurable_partialSum` from
 `MeasureTheory.Function.FinPartialSum` for coordinates of a finite partial-sum
 map.
 
-* `measurableSet_exists_block_exists_abs_blockSum_ge`: for
+## Public declarations
+
+`measurableSet_exists_block_exists_abs_blockSum_ge`: for
   $blocks,length\in\mathbb N$, $threshold\in\mathbb R$, and
   $x : \mathbb N \to \mathbb R$, the event
   $\{x\mid \exists j<blocks,\ \exists k\le length,\ threshold\le

@@ -7,12 +7,14 @@ Authors: WANG Yiyang
 module
 
 public import Combinatorics.BranchingWalk.Basic.Position.Basic
-public import Combinatorics.BranchingWalk.Cloud.Order.DynamicSelection
+public import Combinatorics.BranchingWalk.Cloud.Order.SliceDominatingMap
 public import Combinatorics.BranchingWalk.Selection.Coupling.PopulationCloud
-public import Combinatorics.BranchingWalk.Selection.NSelection.Mechanism.Matching
+public import Combinatorics.Selection.NSelection.Matching.ByRank
 
 /-!
 # Population clouds for the multi-root spatial coupling
+
+## Public declarations
 
 This file turns finite populations in root-indexed branching walks into
 constant-time clouds and chooses the canonical equal-rank injection.
@@ -29,7 +31,7 @@ which identifies that map pointwise with `matchByRankOrSelf`.
 namespace Combinatorics.Branching.Selection.Coupling
 
 open Combinatorics.UlamHarris
-open Selection.NSelection
+open _root_.Combinatorics.Selection.NSelection
 
 variable {Root α Mark Position Value : Type*}
 
@@ -77,9 +79,7 @@ noncomputable def canonicalInjection
         (target.filter fun q => targetValue q ≤ a).card := by
     intro a
     simpa [sourceValue, targetValue, populationCloud] using
-      Cloud.filter_card_le_of_injectivelyDominatesBy φ ()
-        source.finite_toSet target.finite_toSet
-        prior.injectivelyDominatesBy a
+      prior.card_filter_le source.finite_toSet target.finite_toSet a
   let matchParticle : RootIndexed.TreeNode Root α →
       RootIndexed.TreeNode Root α :=
     matchByRankOrSelf sourceValue targetValue source target hcard

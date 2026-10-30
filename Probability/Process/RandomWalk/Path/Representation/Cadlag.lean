@@ -14,6 +14,18 @@ public import Topology.Order.FloorCadlag
 /-!
 # Càdlàg random-walk paths
 
+## Public declarations
+
+- `ProbabilityTheory.RandomWalk.normalizedStepPath_isCadlag`:
+  the normalized step path is càdlàg on \(\mathbb R\).
+- `ProbabilityTheory.RandomWalk.normalizedStepCadlagPath` and
+  `ProbabilityTheory.RandomWalk.normalizedStepCadlagPath_apply`:
+  bundle that path in \(D(\mathbb R,\mathbb R)\) and identify its values
+  with the normalized partial sums.
+- `ProbabilityTheory.RandomWalk.normalizedStepCadlagPathIcc` and
+  `ProbabilityTheory.RandomWalk.normalizedStepCadlagPathIcc_apply`:
+  restrict and bundle the path on \([0,1]\), with the same pointwise formula.
+
 The normalized step path used in Mogulskii's theorem is a genuine càdlàg
 path.  The proof reuses mathlib's `IsCadlag` predicate; no competing path
 regularity structure is introduced.

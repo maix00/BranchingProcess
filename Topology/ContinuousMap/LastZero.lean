@@ -7,29 +7,34 @@ Authors: WANG Yiyang
 module
 
 public import Mathlib.Topology.UnitInterval
-public import Mathlib.Topology.Order.Monotone
+public import Topology.Order.UnitInterval.Time
+import Mathlib.Topology.Order.Monotone
 public import Mathlib.Analysis.Real.Sqrt
-public import Mathlib.Topology.Maps.Proper.Basic
-public import Mathlib.MeasureTheory.Constructions.BorelSpace.Order
+import Mathlib.Topology.Maps.Proper.Basic
+import Mathlib.MeasureTheory.Constructions.BorelSpace.Order
 public import Mathlib.MeasureTheory.Constructions.BorelSpace.ContinuousMap
 public import Mathlib.Topology.Metrizable.ContinuousMap
-public import Mathlib.Topology.Hom.ContinuousEval
-public import Mathlib.MeasureTheory.Group.Arithmetic
+import Mathlib.Topology.Hom.ContinuousEval
+import Mathlib.MeasureTheory.Group.Arithmetic
 
 /-!
 # The last zero of a continuous path
 
-The public definition and theorems in this file are:
+## Public declarations
 
 - `ContinuousMap.lastZero`: $g(f)=\sup\{t\in[0,1]:f(t)=0\}$.
+- `ContinuousMap.le_lastZero_of_apply_eq_zero`: every zero $t$ of $f$
+  satisfies $t\le g(f)$.
 - `ContinuousMap.lastZero_apply_eq_zero`: if $f(0)=0$, then $f(g(f))=0$.
 - `ContinuousMap.lastZero_lt_top_of_ne_zero`: if $f(0)=0$ and
   $f(1)\ne0$, then $g(f)<1$.
 - `ContinuousMap.measurable_lastZero`: $f\mapsto g(f)$ is Borel
   measurable on $C([0,1],\mathbb R)$.
 - `ContinuousMap.ne_zero_of_lastZero_lt`: if $g(f)<t\le1$, then $f(t)\ne0$.
-- `ContinuousMap.tailAffineTime`: $(a,t)\mapsto a+(1-a)t$ maps
-  $[0,1]^2$ to $[0,1]$.
+- `ContinuousMap.isClosed_setOf_le_lastZero`: for each $c\in[0,1]$,
+  $\{f:c\le g(f)\}$ is closed.
+- `ContinuousMap.continuousAt_lastZero_of_eq_zero`: the map $f\mapsto g(f)$
+  is continuous at paths with $g(f)=0$.
 - `ContinuousMap.lastZeroMeanderTransform`:
   $f\mapsto\left(t\mapsto(1-g(f))^{-1/2}
   |f(g(f)+(1-g(f))t)|\right)$ when $g(f)<1$, with the zero path
@@ -129,61 +134,38 @@ theorem measurable_lastZero :
   intro c
   exact (isClosed_setOf_le_lastZero c).measurableSet
 
-/-- Affine rescaling of the terminal interval `[start, 1]` to the
-unit interval. -/
-def tailAffineTime (start t : unitInterval) : unitInterval :=
-  ⟨(start : ℝ) + (1 - (start : ℝ)) * (t : ℝ), by
-    constructor
-    · have hs := start.property.1
-      have ht := t.property.1
-      have hsu := start.property.2
-      nlinarith
-    · have hs := start.property.1
-      have hsu := start.property.2
-      have ht := t.property.1
-      have htu := t.property.2
-      nlinarith⟩
-
-@[simp]
-theorem tailAffineTime_zero (start : unitInterval) :
-    tailAffineTime start 0 = start := by
-  apply Subtype.ext
-  simp [tailAffineTime]
-
-@[simp]
-theorem tailAffineTime_top (start : unitInterval) :
-    tailAffineTime start ⊤ = ⊤ := by
-  apply Subtype.ext
-  simp [tailAffineTime]
-
-theorem continuous_tailAffineTime (start : unitInterval) :
-    Continuous (tailAffineTime start) := by
-  have hreal : Continuous
-      (fun t : unitInterval => (start : ℝ) + (1 - (start : ℝ)) * (t : ℝ)) := by
-    fun_prop
-  exact hreal.subtype_mk _
-
-theorem continuous_tailAffineTime_left (t : unitInterval) :
-    Continuous (fun start : unitInterval => tailAffineTime start t) := by
-  have hreal : Continuous
-      (fun start : unitInterval =>
-        (start : ℝ) + (1 - (start : ℝ)) * (t : ℝ)) := by
-    fun_prop
-  exact hreal.subtype_mk _
+/-- The last-zero time is continuous at a path whose only zero is at the
+initial time. This follows from the closed upper-level sets of `lastZero`. -/
+theorem continuousAt_lastZero_of_eq_zero
+    (f : C(unitInterval, ℝ)) (hzero : lastZero f = 0) :
+    ContinuousAt lastZero f := by
+  rw [ContinuousAt, tendsto_order]
+  constructor
+  · intro c hc
+    rw [hzero] at hc
+    exact (not_lt_of_ge bot_le hc).elim
+  · intro c hc
+    have hclosed : IsClosed {g : C(unitInterval, ℝ) |
+        c ≤ lastZero g} := isClosed_setOf_le_lastZero c
+    have hopen : IsOpen {g : C(unitInterval, ℝ) | lastZero g < c} := by
+      convert hclosed.isOpen_compl using 1
+      ext g
+      simp only [Set.mem_compl_iff, Set.mem_ofPred_eq, not_le]
+    exact hopen.mem_nhds (by simpa only [Set.mem_ofPred_eq, hzero] using hc)
 
 /-- The terminal Brownian-meander path transform from Iglehart,
 Section 3, expressed for an arbitrary continuous path. -/
 noncomputable def lastZeroMeanderTransform
     (f : C(unitInterval, ℝ)) : C(unitInterval, ℝ) :=
   ⟨(fun t => if lastZero f = ⊤ then 0 else
-      |f (tailAffineTime (lastZero f) t)| /
+      |f (unitInterval.terminalSegmentParameter (lastZero f) t)| /
         Real.sqrt (1 - (lastZero f : ℝ))), by
     by_cases h : lastZero f = ⊤
     · simpa only [h, ↓reduceIte] using (continuous_const :
         Continuous (fun _ : unitInterval => (0 : ℝ)))
     · simpa only [h, ↓reduceIte, Function.comp_apply] using
         ((continuous_abs.comp (f.continuous.comp
-          (continuous_tailAffineTime (lastZero f)))).div_const
+          (unitInterval.continuous_terminalSegmentParameter (lastZero f)))).div_const
             (Real.sqrt (1 - (lastZero f : ℝ))))⟩
 
 /-- The last-zero transform starts at zero when the original path does. -/
@@ -212,16 +194,16 @@ theorem lastZeroMeanderTransform_pos_of_lastZero_lt_top
     0 < lastZeroMeanderTransform f t := by
   have hcutReal : (lastZero f : ℝ) < 1 := hcut
   have htReal : (0 : ℝ) < t := ht
-  have hafter : lastZero f < tailAffineTime (lastZero f) t := by
+  have hafter : lastZero f < unitInterval.terminalSegmentParameter (lastZero f) t := by
     change (lastZero f : ℝ) <
       (lastZero f : ℝ) + (1 - (lastZero f : ℝ)) * (t : ℝ)
     nlinarith
-  have hnonzero : f (tailAffineTime (lastZero f) t) ≠ 0 :=
+  have hnonzero : f (unitInterval.terminalSegmentParameter (lastZero f) t) ≠ 0 :=
     ne_zero_of_lastZero_lt f hafter
   have hdenom : 0 < Real.sqrt (1 - (lastZero f : ℝ)) :=
     Real.sqrt_pos.2 (by linarith)
   change 0 < if lastZero f = ⊤ then 0 else
-    |f (tailAffineTime (lastZero f) t)| /
+    |f (unitInterval.terminalSegmentParameter (lastZero f) t)| /
       Real.sqrt (1 - (lastZero f : ℝ))
   simpa [ne_of_lt hcut] using
     (div_pos (abs_pos.2 hnonzero) hdenom)
@@ -234,10 +216,10 @@ theorem measurable_lastZeroMeanderTransform :
   rw [ContinuousMap.measurable_iff_eval]
   intro t
   have htime : Measurable
-      (fun f : C(unitInterval, ℝ) => tailAffineTime (lastZero f) t) :=
-    (continuous_tailAffineTime_left t).measurable.comp measurable_lastZero
+      (fun f : C(unitInterval, ℝ) => unitInterval.terminalSegmentParameter (lastZero f) t) :=
+    (unitInterval.continuous_terminalSegmentParameter_left t).measurable.comp measurable_lastZero
   have heval : Measurable
-      (fun f : C(unitInterval, ℝ) => f (tailAffineTime (lastZero f) t)) :=
+      (fun f : C(unitInterval, ℝ) => f (unitInterval.terminalSegmentParameter (lastZero f) t)) :=
     continuous_eval.measurable.comp (measurable_id.prodMk htime)
   have hdenom : Measurable
       (fun f : C(unitInterval, ℝ) =>
@@ -247,7 +229,7 @@ theorem measurable_lastZeroMeanderTransform :
         (continuous_subtype_val.measurable.comp measurable_lastZero))
   change Measurable (fun f : C(unitInterval, ℝ) =>
     if lastZero f = ⊤ then 0 else
-      |f (tailAffineTime (lastZero f) t)| /
+      |f (unitInterval.terminalSegmentParameter (lastZero f) t)| /
         Real.sqrt (1 - (lastZero f : ℝ)))
   have hset : MeasurableSet
       {f : C(unitInterval, ℝ) | lastZero f = ⊤} :=

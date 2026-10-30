@@ -4,20 +4,41 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.FirstStage.Lemmas.PZAssembly
-import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Population.LowCount
-import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Drawdown.Spine.Cutoff
-import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Drawdown.Spine.Window
-import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Rate.LogScales
+module
+
+import all Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.FirstStage.Lemmas.PZAssembly
+public import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Population.LowCount
+public import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.FirstStage.Cutoff
+import all Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.FirstStage.Lemmas.CorridorLowerBound
+public import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Population.RestartedWindow
+public import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.Sequence.LogarithmicScales
+public import Probability.Distributions.Moments.Real
+public import Probability.BranchingRandomWalk.Assumptions.CrossWeight
+public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.Event
+public import Analysis.Asymptotics.Power.FloorProduct
 
 /-!
-* `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail.eventually_rightTailPositiveA_populationLowCount_le_exp_neg_power`:
-  under the finite-second-moment, boundary, and cross-weight hypotheses, the
-  probability that the first-stage killed population has at most
-  `m * pzMean / 4` particles is eventually at most `exp (-N^δ)` whenever
-  `δ < a - b - 2 * v - 3 * ε`.
-
 # First-stage population low-count power bound
+
+## Public declarations
+
+* `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.eventually_positiveA_populationLowCount_le_exp_neg_power`:
+  put `m_n=\lfloor N_n^a\rfloor`, let `K_n` be the first-stage killed
+  population size at cutoff `\ell_n=\operatorname{positiveAFirstStageCutoff}(N,n)`,
+  and let `p_n=\operatorname{toReal}(u_n^2/(w_n+R_n))` be the one-root PZ
+  quotient, with `u_n`, `w_n`, and `R_n` as in `FirstStage/Lemmas/PZAssembly.lean`.
+  Write `\mathbb P_{\mu,m_n}=finiteRootStepFieldLaw(\mu,m_n)`. Under
+  the finite-second-moment, boundary, and cross-weight hypotheses, if
+  `\delta<a-b-2v-3\varepsilon`, then
+  \[
+    \mathbb P_{\mu,m_n}\!\left(K_n\le\frac{m_np_n}{4}\right)
+      \le e^{-N_n^\delta}
+  \]
+  eventually.
+
+This is the first-stage probability estimate in the proof of Chapter 3,
+Lemma 3.5 of WANG Yiyang, *Asymptotic Speed of the N-Branching Random Walk
+with Infinite Offspring*.
 
 The quantitative one-root Paley--Zygmund estimate gives a polynomial lower
 bound for the expected number of successful roots. The existing population
@@ -25,23 +46,26 @@ embedding then turns its binomial lower-tail estimate into the first-stage
 failure term used in the two-stage argument.
 -/
 
+@[expose] public section
+
 open Filter MeasureTheory ProbabilityTheory
 open scoped ENNReal Topology
 
-namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail
+namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation
 
 open Combinatorics.Branching
 open Combinatorics.UlamHarris
 open ProbabilityTheory.BranchingRandomWalk
 open ProbabilityTheory.BranchingRandomWalk.Spine
 open ProbabilityTheory.RandomWalk
+open ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown
 
 /-- Under the finite second moment, boundary normalization, and
 finite cross-weight assumptions, the first-stage killed population has at
 least `N^δ` successful particles with an exponentially small failure
 probability. The exponent condition is only the parameter budget
 `δ < a - b - 2v - 3ε`; it is not an additional probabilistic hypothesis. -/
-theorem eventually_rightTailPositiveA_populationLowCount_le_exp_neg_power
+theorem eventually_positiveA_populationLowCount_le_exp_neg_power
     {N : ℕ → ℕ} (hN : Tendsto N atTop atTop)
     (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
     (hboundary : HasBoundaryNormalization realPotential μ)
@@ -56,7 +80,7 @@ theorem eventually_rightTailPositiveA_populationLowCount_le_exp_neg_power
     (ellN : ℕ → ℕ) :
     ∀ᶠ n : ℕ in atTop,
       let m := Nat.floor ((N n : ℝ) ^ a)
-      let ell := rightTailFirstStageCutoff N n
+      let ell := positiveAFirstStageCutoff N n
       let logN := logarithmOfSampleSize N n
       let corridor := affineCorridorThrough ell (-b * logN) 0
         (b * logN) ((-b + v) * logN)
@@ -71,7 +95,7 @@ theorem eventually_rightTailPositiveA_populationLowCount_le_exp_neg_power
         ENNReal.ofReal (Real.exp 0) *
           (ENNReal.ofReal (Real.exp (2 * ((-b + v) * logN))) *
             q (ell - j.val - 1) ^ 2) *
-          (∫⁻ ξ, crossChildWeight realPotential ξ ∂μ) *
+          (∫⁻ ξ, crossPotentialWeight realPotential (-1) ξ ∂μ) *
           (ENNReal.ofReal (Real.exp (0 - (-b * logN))) *
             (tiltedIncrementFieldLaw realPotential μ)
               {increment | RandomWalk.history j.val 0 increment ∈
@@ -79,17 +103,17 @@ theorem eventually_rightTailPositiveA_populationLowCount_le_exp_neg_power
       let pzMean := lowerMean ^ 2 / (upperMean + pairBound)
       let initial := RootIndexed.initialPopulation (α := ℕ)
         (Finset.univ : Finset (Fin m))
-      let window := rightTailPositiveARestartedWindow ell (ellN n)
+      let window := positiveARestartedWindow ell (ellN n)
         logN b v c κ
-      let upper := rightTailPositiveAWindowUpper ell (ellN n)
+      let upper := positiveAWindowUpper ell (ellN n)
         logN b v c κ
       let populationFinite :=
         RootIndexed.CausalPopulation.ofRestartedRealPositionSets_finiteSlices
           (fun _ : Fin m => 0) id measurable_id initial
           (by simp [initial, RootIndexed.mem_initialPopulation_iff])
-          ell window (measurableSet_rightTailPositiveARestartedWindow
+          ell window (measurableSet_positiveARestartedWindow
             ell (ellN n) logN b v c κ)
-          upper (rightTailPositiveARestartedWindow_subset_Iic_upper
+          upper (positiveARestartedWindow_subset_Iic_upper
             ell (ellN n) logN b v c κ)
       (finiteRootStepFieldLaw μ m)
         {field | ((populationFinite.toFinset ell field).card : ℝ) ≤
@@ -97,23 +121,23 @@ theorem eventually_rightTailPositiveA_populationLowCount_le_exp_neg_power
         ENNReal.ofReal (Real.exp (-((N n : ℝ) ^ delta))) := by
   classical
   let m : ℕ → ℕ := fun n => Nat.floor ((N n : ℝ) ^ a)
-  let ell : ℕ → ℕ := rightTailFirstStageCutoff N
+  let ell : ℕ → ℕ := positiveAFirstStageCutoff N
   let logN : ℕ → ℝ := logarithmOfSampleSize N
   let initial (n : ℕ) :=
     RootIndexed.initialPopulation (α := ℕ)
       (Finset.univ : Finset (Fin (m n)))
-  let window (n : ℕ) := rightTailPositiveARestartedWindow
+  let window (n : ℕ) := positiveARestartedWindow
     (ell n) (ellN n) (logN n) b v c κ
-  let upper (n : ℕ) := rightTailPositiveAWindowUpper
+  let upper (n : ℕ) := positiveAWindowUpper
     (ell n) (ellN n) (logN n) b v c κ
   let populationFinite (n : ℕ) :=
     RootIndexed.CausalPopulation.ofRestartedRealPositionSets_finiteSlices
       (fun _ : Fin (m n) => 0) id measurable_id (initial n)
       (by simp [initial, RootIndexed.mem_initialPopulation_iff])
       (ell n) (window n)
-      (measurableSet_rightTailPositiveARestartedWindow
+      (measurableSet_positiveARestartedWindow
         (ell n) (ellN n) (logN n) b v c κ)
-      (upper n) (rightTailPositiveARestartedWindow_subset_Iic_upper
+      (upper n) (positiveARestartedWindow_subset_Iic_upper
         (ell n) (ellN n) (logN n) b v c κ)
   let pzMean (n : ℕ) : ℝ≥0∞ :=
     let corridor := affineCorridorThrough (ell n) (-b * logN n) 0
@@ -129,22 +153,30 @@ theorem eventually_rightTailPositiveA_populationLowCount_le_exp_neg_power
       ENNReal.ofReal (Real.exp 0) *
         (ENNReal.ofReal (Real.exp (2 * ((-b + v) * logN n))) *
           q (ell n - j.val - 1) ^ 2) *
-        (∫⁻ ξ, crossChildWeight realPotential ξ ∂μ) *
+        (∫⁻ ξ, crossPotentialWeight realPotential (-1) ξ ∂μ) *
         (ENNReal.ofReal (Real.exp (0 - (-b * logN n))) *
           (tiltedIncrementFieldLaw realPotential μ)
             {increment | RandomWalk.history j.val 0 increment ∈
               affineCorridorPrefix j.val (-b * logN n) 0 (b * logN n)})
     lowerMean ^ 2 / (upperMean + pairBound)
-  have hPZ := eventually_rightTailPositiveA_pzMean_toReal_ge_power_of_centeredSecondMoment
+  have hPZ := eventually_positiveA_pzMean_toReal_ge_power_of_centeredSecondMoment
     hN μ hboundary hcross ν hν hνMoment hsigma hb hv hvb hepsilon
-  have hthreshold := eventually_floorPowerOfSampleSize_mul_ennreal_toReal_ge
-    (N := N) (a := a) (r := -b - 2 * v - 3 * epsilon) (δ := delta)
-    hN ha (by linarith [hbudget]) pzMean (by
+  have hNReal : Tendsto (fun n => (N n : ℝ)) atTop atTop :=
+    tendsto_natCast_atTop_atTop.comp hN
+  have hthresholdRaw := Asymptotics.eventually_floor_rpow_mul_ge
+    (x := fun n => (N n : ℝ)) (y := fun n => (pzMean n).toReal) hNReal
+    (a := a) (r := -b - 2 * v - 3 * epsilon) (δ := delta) (C := 4)
+    ha (by linarith [hbudget]) (by
       filter_upwards [hPZ] with n hn
       simpa [m, pzMean, logN, logarithmOfSampleSize] using hn)
-  obtain ⟨_C, _hC, _entranceMass, _hentranceMass, _amplitude, _hamplitude,
-      hinputs⟩ :=
-    eventually_rightTailPositiveA_firstStagePZInputs_of_centeredSecondMoment
+  have hthreshold : ∀ᶠ n : ℕ in atTop,
+      ((Nat.floor ((N n : ℝ) ^ a) : ℕ) : ℝ) * (pzMean n).toReal / 4 ≥
+        (N n : ℝ) ^ delta := by
+    filter_upwards [hthresholdRaw] with n hn
+    exact (le_div_iff₀ (by norm_num : (0 : ℝ) < 4)).2 (by
+      simpa [mul_comm] using hn)
+  have hpositive :=
+    eventually_positiveA_spineCorridor_pos_of_centeredSecondMoment
       hN μ ν hν hνMoment hsigma hb hv hvb
   have htilted : IsProbabilityMeasure (tiltedIncrementFieldLaw realPotential μ) :=
     tiltedIncrementFieldLaw_isProbability realPotential μ hboundary
@@ -156,7 +188,7 @@ theorem eventually_rightTailPositiveA_populationLowCount_le_exp_neg_power
     have hfloor : 1 ≤ Nat.floor ((N n : ℝ) ^ a) :=
       Nat.le_floor (show ((1 : ℕ) : ℝ) ≤ (N n : ℝ) ^ a by exact_mod_cast hn.le)
     exact lt_of_lt_of_le Nat.zero_lt_one hfloor
-  filter_upwards [hthreshold, hinputs, hmPos] with n hcount hinput hm
+  filter_upwards [hthreshold, hpositive, hmPos] with n hcount hpositive hm
   let q : ℕ → ℝ≥0∞ := fun _ => 1
   have hdrawdown (k : ℕ) :
       (tiltedIncrementFieldLaw realPotential μ)
@@ -170,13 +202,13 @@ theorem eventually_rightTailPositiveA_populationLowCount_le_exp_neg_power
         (tiltedIncrementFieldLaw realPotential μ) Set.univ :=
           measure_mono (Set.subset_univ _)
       _ = 1 := measure_univ
-  have hlow := measure_rightTailPositiveA_population_le_pzThreshold_le_exp_of_affineCorridorDrawdown
+  have hlow := measure_positiveA_population_le_pzThreshold_le_exp_of_affineCorridorDrawdown
     (m n) (ell n) (ellN n) hm (logN n) b v c κ μ hboundary hcross q
     (by intro k; simp [q]) hdrawdown
     (show 0 < (tiltedIncrementFieldLaw realPotential μ)
       {increment | RandomWalk.history (ell n) 0 increment ∈
         affineCorridorThrough (ell n) (-b * logN n) 0
-          (b * logN n) ((-b + v) * logN n)} from hinput.2.1)
+          (b * logN n) ((-b + v) * logN n)} from hpositive)
   have hexp : ENNReal.ofReal
       (Real.exp (-((m n : ℝ) * (pzMean n).toReal / 4))) ≤
         ENNReal.ofReal (Real.exp (-((N n : ℝ) ^ delta))) := by
@@ -192,4 +224,6 @@ theorem eventually_rightTailPositiveA_populationLowCount_le_exp_neg_power
           populationFinite, RandomWalk.history] using hlow
     _ ≤ ENNReal.ofReal (Real.exp (-((N n : ℝ) ^ delta))) := hexp
 
-end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail
+end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation
+
+end

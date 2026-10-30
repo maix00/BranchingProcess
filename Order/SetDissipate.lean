@@ -11,12 +11,13 @@ public import Mathlib.Order.SetDissipate
 /-!
 # Congruence for dissipated sets
 
-The public declaration in `Set` is:
+## Public declarations
 
-- `dissipate_congr`: if two sequences of sets agree at every index through
-  $n$, their dissipated sets at $n$ agree:
-  $s_m=t_m$ for all $m\le n\Rightarrow
-  \operatorname{dissipate}(s,n)=\operatorname{dissipate}(t,n)$.
+For any index type with $\leq$, if $s_y=t_y$ for every $y\leq x$, then
+$\operatorname{dissipate}(s,x)=\operatorname{dissipate}(t,x)$.
+
+- `dissipate_congr`: if two set-valued functions agree on the lower interval
+  $\{y:y\leq x\}$, their dissipated sets at $x$ agree.
 
 This is a finite-prefix congruence property of `Set.dissipate`; it is
 independent of measure and capacity theory.
@@ -26,11 +27,10 @@ independent of measure and capacity theory.
 
 namespace Set
 
-/-- Sequences of sets that agree through index `n` have the same dissipate
-at `n`. -/
-theorem dissipate_congr {β : Type*} {s t : ℕ → Set β} {n : ℕ}
-    (h_eq : ∀ m ≤ n, s m = t m) :
-    Set.dissipate s n = Set.dissipate t n := by
+/-- Set-valued functions that agree below `x` have the same dissipate at `x`. -/
+theorem dissipate_congr {α β : Type*} [LE α] {s t : α → Set β} {x : α}
+    (h_eq : ∀ y ≤ x, s y = t y) :
+    Set.dissipate s x = Set.dissipate t x := by
   simp only [Set.dissipate_def]
   congr with m x
   simp only [Set.mem_iInter]

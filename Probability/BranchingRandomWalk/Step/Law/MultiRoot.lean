@@ -6,7 +6,8 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.BranchingRandomWalk.Step.Ordering.Basic
+public import Probability.BranchingRandomWalk.Step.Presentation.Basic
+public import Combinatorics.BranchingWalk.Step.Ordering.Monotone
 public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law.Basic
 public import Probability.BranchingRandomWalk.Step.PointMeasure.Basic
 public import Probability.BranchingRandomWalk.Step.Ordering.Support
@@ -17,6 +18,20 @@ public import Probability.BranchingRandomWalk.Step.Ordering.Support
 The source is the random variable `S`. Its pushforward law is copied
 independently at every address and root. Point measures and ordered support are
 derived observations of those deterministic steps.
+
+## Public declarations
+
+- `ProbabilityTheory.BranchingRandomWalk.RootIndexed.step_pointMeasure_marginal`:
+  the point measure observed at any root and address has the point-measure law
+  of the original random step.
+- `ProbabilityTheory.BranchingRandomWalk.step_multiRoot_pointMeasure_marginal`:
+  the same marginal identity holds in a finite-root step field.
+- `ProbabilityTheory.BranchingRandomWalk.RootIndexed.step_all_first_child`:
+  if every sampled step has ordered, nonempty support, then almost surely the
+  first child slot is present at every root and address.
+- `ProbabilityTheory.BranchingRandomWalk.step_multiRoot_all_first_child`:
+  the same simultaneous first-child property holds for a finite-root field.
+
 -/
 
 @[expose] public section
@@ -67,10 +82,20 @@ theorem RootIndexed.step_all_first_child
     ∀ᵐ field ∂RootIndexed.stepFieldLaw (Root := Root) (S.indexedLaw P),
       ∀ r : Root, ∀ u : 𝕍, survive (field r u) 0 := by
   have horderedLaw : S.indexedLaw P orderedSteps = 1 := by
-    simpa using S.indexedLaw_ordered P
-      (orderedSteps_measurable (ι := ℕ)) hordered
+    rw [S.indexedLaw_apply P orderedSteps
+      (orderedSteps_measurable (ι := ℕ))]
+    have hpre : S ⁻¹' orderedSteps = Set.univ := by
+      ext ω
+      simp [hordered ω]
+    rw [hpre]
+    simp
   have hnonemptyLaw : S.indexedLaw P nonemptySupport = 1 := by
-    simpa using S.indexedLaw_nonempty P hnonempty
+    rw [S.indexedLaw_apply P nonemptySupport nonemptySupport_measurable]
+    have hpre : S ⁻¹' nonemptySupport = Set.univ := by
+      ext ω
+      simp [hnonempty ω]
+    rw [hpre]
+    simp
   filter_upwards
     [RootIndexed.stepFieldLaw_ae_all_of_measure_one
       (Root := Root) orderedSteps_measurable (S.indexedLaw P) horderedLaw,

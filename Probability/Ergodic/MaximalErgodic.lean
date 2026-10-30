@@ -11,6 +11,7 @@ public import Mathlib.Dynamics.Ergodic.MeasurePreserving
 public import Mathlib.MeasureTheory.Integral.Bochner.Set
 public import Mathlib.MeasureTheory.Order.Lattice
 public import Mathlib.MeasureTheory.Constructions.BorelSpace.Order
+import Mathlib.Dynamics.BirkhoffSum.QuasiMeasurePreserving
 
 /-!
 # The maximal ergodic inequality (Hopf/Garsia)
@@ -27,16 +28,27 @@ inequality `maxBirkhoff … x - maxBirkhoff … (T x) ≤ g x` on the set where 
 maximal function is positive, integrate it, pass to the limit `N → ∞`, and
 transfer back from `g` to `f`.
 
-## Main results
+## Public declarations
 
-* `ProbabilityTheory.maxBirkhoff`: Garsia's maximal function
-  `maxBirkhoff T g N x = max_{0 ≤ k ≤ N} birkhoffSum T g k x`.
-* `ProbabilityTheory.maxBirkhoff_le_add`: Garsia's pointwise inequality
-  `maxBirkhoff T g N x ≤ g x + maxBirkhoff T g N (T x)` on the set where the maximal
-  function is positive.
-* `ProbabilityTheory.setIntegral_maxBirkhoff_pos_nonneg`: Garsia's inequality at a fixed
-  level `N`.
-* `ProbabilityTheory.setIntegral_birkhoffSum_pos_nonneg`: the maximal ergodic inequality.
+For `g : X → ℝ`, write `S(n,x) = birkhoffSum T g n x` and
+`M(N,x) = maxBirkhoff T g N x = max_{0 ≤ k ≤ N} S(k,x)`. Also let
+`E_N = {x | M(N,x) > 0}` and `A = {x | ∃ n : ℕ, S(n+1,x) > 0}`.
+
+* `ProbabilityTheory.maxBirkhoff`: defines the finite orbit maximum `M_N(x)`.
+* `ProbabilityTheory.maxBirkhoff_nonneg` and `ProbabilityTheory.maxBirkhoff_succ`:
+  $0 ≤ M(N,x)$ and $M(N+1,x) = S(N+1,x) ∨ M(N,x)$.
+* `ProbabilityTheory.measurable_birkhoffSum` and
+  `ProbabilityTheory.measurable_maxBirkhoff`: measurability of `Sₙ` and `M_N` when `T` and
+  `g` are measurable.
+* `ProbabilityTheory.integrable_birkhoffSum` and
+  `ProbabilityTheory.integrable_maxBirkhoff`: integrability of `Sₙ` and `M_N` when `g` is
+  integrable and `T` preserves `μ`.
+* `ProbabilityTheory.maxBirkhoff_le_add`: on `{x : M_N(x) > 0}`,
+  $M(N,x) ≤ g(x) + M(N,T x)$.
+* `ProbabilityTheory.setIntegral_maxBirkhoff_pos_nonneg`: for measurable integrable `g`,
+  $0 ≤ ∫ x in E_N, g(x) ∂μ$.
+* `ProbabilityTheory.setIntegral_birkhoffSum_pos_nonneg`: for integrable `g` and
+  measure-preserving `T`, $0 ≤ ∫ x in A, g(x) ∂μ$.
 
 ## References
 
@@ -131,7 +143,7 @@ omit [MeasurableSpace X] in
 /-- A real constant can be pulled inside a nonempty `Finset.sup'`:
 `c + s.sup' H f = s.sup' H (fun b => c + f b)`. (Mathlib has no `Finset.sup'_add`,
 so we prove it directly by `le_antisymm`.) -/
-theorem add_sup'_eq {ι : Type*} (s : Finset ι) (H : s.Nonempty) (c : ℝ) (f : ι → ℝ) :
+private lemma add_sup'_eq {ι : Type*} (s : Finset ι) (H : s.Nonempty) (c : ℝ) (f : ι → ℝ) :
     c + s.sup' H f = s.sup' H (fun b => c + f b) := by
   apply le_antisymm
   · obtain ⟨b, hb, hbeq⟩ := Finset.exists_mem_eq_sup' H f
@@ -186,22 +198,6 @@ theorem maxBirkhoff_le_add (g : X → ℝ) (N : ℕ) (x : X)
   rw [Finset.mem_range] at hk₀mem ⊢
   omega
 
-/-- If `f =ᵐ[μ] g` and `T` is measure-preserving, then the Birkhoff sums agree a.e.:
-`birkhoffSum T f n =ᵐ[μ] birkhoffSum T g n`. Each summand `f ∘ T^[k] =ᵐ[μ] g ∘ T^[k]`
-because `T^[k]` is measure-preserving, and a finite a.e.-equal sum is a.e.-equal. -/
-theorem birkhoffSum_congr_ae (hT : MeasurePreserving T μ μ) {f g : X → ℝ}
-    (hfg : f =ᵐ[μ] g) (n : ℕ) :
-    (fun x => birkhoffSum T f n x) =ᵐ[μ] (fun x => birkhoffSum T g n x) := by
-  -- For each k, the composite with T^[k] is a.e. equal.
-  have hcomp : ∀ k : ℕ, (f ∘ T^[k]) =ᵐ[μ] (g ∘ T^[k]) := fun k =>
-    ((hT.iterate k).quasiMeasurePreserving).ae_eq_comp hfg
-  -- Collect over the (finitely many, hence countably many) indices.
-  have hall : ∀ᵐ x ∂μ, ∀ k : ℕ, (f ∘ T^[k]) x = (g ∘ T^[k]) x :=
-    (ae_all_iff).2 hcomp
-  filter_upwards [hall] with x hx
-  simp only [birkhoffSum]
-  exact Finset.sum_congr rfl (fun k _ => hx k)
-
 /-- **Garsia's inequality for a fixed level `N`.** For a measurable integrable `g`,
 the integral of `g` over the set `{x | 0 < maxBirkhoff T g N x}` is nonnegative.
 
@@ -251,7 +247,7 @@ theorem setIntegral_maxBirkhoff_pos_nonneg (hT : MeasurePreserving T μ μ) {g :
     have hzero : ∫ x in Eᶜ, maxBirkhoff T g N x ∂μ = 0 := by
       refine setIntegral_eq_zero_of_forall_eq_zero (fun x hx => ?_)
       have hxnotpos : ¬ 0 < maxBirkhoff T g N x := by
-        simp only [hE, Set.mem_compl_iff, Set.mem_setOf_eq] at hx; exact hx
+        simp only [hE, Set.mem_compl_iff, Set.mem_ofPred_eq] at hx; exact hx
       have hxnonneg : 0 ≤ maxBirkhoff T g N x := maxBirkhoff_nonneg g N x
       have hxle : maxBirkhoff T g N x ≤ 0 := not_lt.1 hxnotpos
       linarith
@@ -270,10 +266,10 @@ theorem setIntegral_maxBirkhoff_pos_nonneg (hT : MeasurePreserving T μ μ) {g :
 omit [MeasurableSpace X] in
 /-- The level sets `{x | 0 < maxBirkhoff T g N x}` are monotone in `N`, because
 `maxBirkhoff T g N` is monotone in `N` (the `sup'` is over a larger range). -/
-theorem monotone_setOf_maxBirkhoff_pos (g : X → ℝ) :
+private lemma monotone_setOf_maxBirkhoff_pos (g : X → ℝ) :
     Monotone (fun N => {x | 0 < maxBirkhoff T g N x}) := by
   intro N M hNM x hx
-  simp only [Set.mem_setOf_eq] at hx ⊢
+  simp only [Set.mem_ofPred_eq] at hx ⊢
   refine lt_of_lt_of_le hx ?_
   unfold maxBirkhoff
   exact Finset.sup'_mono _ (by
@@ -282,11 +278,11 @@ theorem monotone_setOf_maxBirkhoff_pos (g : X → ℝ) :
 omit [MeasurableSpace X] in
 /-- The union of the level sets `{x | 0 < maxBirkhoff T g N x}` over all `N` is exactly
 the target set `{x | ∃ n, 0 < birkhoffSum T g (n+1) x}`. -/
-theorem iUnion_setOf_maxBirkhoff_pos (g : X → ℝ) :
+private lemma iUnion_setOf_maxBirkhoff_pos (g : X → ℝ) :
     ⋃ N, {x | 0 < maxBirkhoff T g N x}
       = {x | ∃ n : ℕ, 0 < birkhoffSum T g (n + 1) x} := by
   ext x
-  simp only [Set.mem_iUnion, Set.mem_setOf_eq]
+  simp only [Set.mem_iUnion, Set.mem_ofPred_eq]
   constructor
   · rintro ⟨N, hN⟩
     -- 0 < maxBirkhoff means some birkhoffSum T g k x > 0 with k ≤ N, and k ≠ 0.
@@ -308,7 +304,7 @@ theorem iUnion_setOf_maxBirkhoff_pos (g : X → ℝ) :
 and measure-preserving `T`, the integral of `g` over the set where some forward Birkhoff
 partial sum is positive is nonnegative. The general (only a.e. measurable) case is
 obtained by passing to a measurable representative. -/
-theorem setIntegral_birkhoffSum_pos_nonneg_of_measurable (hT : MeasurePreserving T μ μ)
+private lemma setIntegral_birkhoffSum_pos_nonneg_of_measurable (hT : MeasurePreserving T μ μ)
     {g : X → ℝ} (hg : Integrable g μ) (hgm : Measurable g) :
     0 ≤ ∫ x in {x | ∃ n : ℕ, 0 < birkhoffSum T g (n + 1) x}, g x ∂μ := by
   have hmono : Monotone (fun N => {x | 0 < maxBirkhoff T g N x}) :=
@@ -349,13 +345,15 @@ theorem setIntegral_birkhoffSum_pos_nonneg
   set Sg : Set X := {x | ∃ n : ℕ, 0 < birkhoffSum T g (n + 1) x} with hSg
   -- The two target sets agree a.e. (Birkhoff sums of f and g agree a.e.).
   have hsets : Sf =ᵐ[μ] Sg := by
-    rw [Filter.eventuallyEq_set]
+    rw [Filter.eventuallyEqSet_iff]
     have hbk : ∀ᵐ x ∂μ, ∀ n : ℕ,
         birkhoffSum T f (n + 1) x = birkhoffSum T g (n + 1) x := by
       rw [ae_all_iff]
-      exact fun n => birkhoffSum_congr_ae hT hfg (n + 1)
+      exact fun n =>
+        MeasureTheory.Measure.QuasiMeasurePreserving.birkhoffSum_ae_eq_of_ae_eq
+          hT.quasiMeasurePreserving hfg (n + 1)
     filter_upwards [hbk] with x hx
-    simp only [hSf, hSg, Set.mem_setOf_eq]
+    simp only [hSf, hSg, Set.mem_ofPred_eq]
     constructor
     · rintro ⟨n, hn⟩; exact ⟨n, by rw [← hx n]; exact hn⟩
     · rintro ⟨n, hn⟩; exact ⟨n, by rw [hx n]; exact hn⟩

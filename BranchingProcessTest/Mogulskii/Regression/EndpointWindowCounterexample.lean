@@ -1,9 +1,9 @@
 import Probability.Process.RandomWalk.Rademacher.Basic
 import Probability.Process.RandomWalk.Path.Basic
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Range.Basic
+import Probability.Process.RandomWalk.Rademacher.FiniteInterval.Range.Basic
 
 open MeasureTheory ProbabilityTheory
-open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
+open ProbabilityTheory.RandomWalk.Rademacher.FiniteInterval
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.MogulskiiTest
 

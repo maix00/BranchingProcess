@@ -13,14 +13,18 @@ public import Probability.Process.RandomWalk.Path.Window.Core
 import Probability.Sequence.IID.Blocks.StoppingTime
 
 /-!
-# IID laws of finite interval path events
+# IID law of a finite interval path event
 
-The public theorem in this file is:
+This module transfers a closed-interval confinement bound for the infinite IID
+walk to the law of its first finite increment block.
 
-- `ProbabilityTheory.RandomWalk.iidSequenceLaw_map_blockCoordinates_finiteInterval_le`:
-  a bound for an IID random walk to stay in a closed interval transfers to the
-  law of its finite increment block, provided the initial position belongs to
-  that interval.
+## Public declarations
+
+* `iidSequenceLaw_map_blockCoordinates_finiteInterval_le` states that if
+  `0 ∈ [lower, upper]`, then the image law of the first `length` IID
+  increments assigns the finite closed-interval event probability at most
+  the probability that all positive-time walk positions through `length`
+  remain in `[lower, upper]`.
 -/
 
 open MeasureTheory

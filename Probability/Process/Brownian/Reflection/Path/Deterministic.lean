@@ -9,13 +9,13 @@ module
 public import Probability.Process.Path.Reflection.Basic
 public import Probability.Process.Brownian.PathLaw.ContinuousPathLaw
 public import Mathlib.Probability.BrownianMotion.Basic
-public import Mathlib.Probability.Distributions.Gaussian.IsGaussianProcess.Basic
-public import Mathlib.Probability.Distributions.Gaussian.HasGaussianLaw.Basic
+import Mathlib.Probability.Distributions.Gaussian.IsGaussianProcess.Basic
+import Mathlib.Probability.Distributions.Gaussian.HasGaussianLaw.Basic
 
 /-!
 # Reflection of Brownian motion at a fixed time
 
-The public theorem in this file is:
+## Public declarations
 
 - `ProbabilityTheory.IsBrownianReal.reflection_at_fixed_time`: if $B$ is a
   Brownian motion and $r\ge0$ is fixed, then

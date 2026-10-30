@@ -7,26 +7,21 @@ Authors: WANG Yiyang
 module
 
 public import Combinatorics.BranchingWalk.Step.Ordering.Monotone
+import all Combinatorics.BranchingWalk.Step.Ordering.Lemmas.FiniteRank
 
 /-!
 # The orderable form of a finitely supported step
 
+## Public declarations
+
 `Step.IsOrderable` is the property that an injective relabelling of the slots, covering every surviving
 slot, makes a step sibling closed and increasing: a normal form listing all children from the left by
 increasing displacement.
-This file owns that notion and everything about it — the base case of a step already in normal form, the
-increasing enumeration of the children that witnesses orderability, and the rank that builds that
-enumeration for a finitely supported step on `ℕ`.
-
-A step with finitely many children is relabelled by labelling each child by its rank: list the children by
-increasing mark, ties broken by the slot, and rename the `i`-th of them to `i`; every other slot is sent
-outside the children, into the segment the listing does not use. The listing is not built by sorting a
-list — the rank of a child, the number of children strictly below it in the (mark, slot) lexicographic
-order, is itself the label, so nothing here depends on a sorting API.
-
-The rank of a child is stated for an arbitrary slot type; only the enumeration itself, whose length is the
-number of children, is about `ℕ`. The slots outside the children receive an injection through the finite
-avoidance construction in this file.
+This file owns the orderability predicate, the chosen increasing normal form,
+and the theorem that finitely supported steps on $\mathbb N$ admit such a
+normal form. The finite mark-slot rank used in the construction is an internal
+proof component in `Step/Ordering/Lemmas/FiniteRank.lean`; the rank is not part
+of this module's public interface.
 
 The public declarations in `Combinatorics.Branching` are:
 
@@ -50,21 +45,6 @@ The public declarations in `Combinatorics.Branching` are:
   $i<n$, and whose marks are nondecreasing for indices below $n$.
   `Step.isOrderable_of_hasIncreasingEnumeration` converts such an
   enumeration to an orderability witness.
-- `Step.below ξ S j`: the slots $j'\in S$ whose mark is smaller than the
-  mark at $j$, or whose mark is equal and whose slot precedes $j$.
-  `Step.mem_below` characterizes membership, and
-  `Step.not_mem_below_self` gives $j\notin\xi.\operatorname{below}(S,j)$.
-- `Step.below_subset_of_below` and `Step.below_ssubset_of_below`: if $j$
-  precedes $j'$ in the mark-then-slot order, then
-  $\xi.\operatorname{below}(S,j)\subseteq
-  \xi.\operatorname{below}(S,j')$, strictly when $j\in S$.
-- `Step.rank ξ S j`: the cardinality of
-  $\xi.\operatorname{below}(S,j)$.
-  `Step.rank_injOn` makes this rank injective on $S$ when $S$ consists of
-  children; `Step.rank_lt_card` gives $\operatorname{rank}(j)<|S|$ for
-  $j\in S$; `Step.image_rank_eq_range` identifies the image with
-  $\{0,\ldots,|S|-1\}$; `Step.exists_some_le_of_rank_le` orders child marks
-  whenever their ranks are ordered.
 - `Step.hasIncreasingEnumeration_of_isFinitelySupported` and
   `Step.isOrderable_of_isFinitelySupported`: every finitely supported step
   on $\mathbb N$ has an increasing enumeration and is orderable.
@@ -98,7 +78,7 @@ private lemma exists_injective_notMem_of_finite
 
 section IsOrderable
 
-variable {ι X : Type*} [LT ι] [Preorder X]
+variable {ι X : Type*} [LT ι] [LE X]
 
 /-- A step is orderable when an injective relabeling covering every surviving
 slot makes it both sibling closed and increasing. Thus the surviving slots
@@ -187,7 +167,7 @@ family of children has no leftmost member, whatever the slot type. Finiteness of
 sufficient condition and not the definition — `Step.IsFinitelySupported` states it — and a step with
 infinitely many children is orderable as soon as those children can be listed from the left with
 nondecreasing marks. -/
-def IsOrderable (ι X : Type*) [LT ι] [Preorder X] : Prop :=
+def IsOrderable (ι X : Type*) [LT ι] [LE X] : Prop :=
   ∀ ξ : Step ι X, Step.IsOrderable ξ
 
 /-- A step has an increasing enumeration of its children when they can be listed in one go, without gaps
@@ -207,7 +187,7 @@ end IsOrderable
 
 section IsOrderableOfEnumeration
 
-variable {ι X : Type*} [Preorder ι] [Preorder X]
+variable {ι X : Type*} [Preorder ι] [LE X]
 
 /-- A step that has an increasing enumeration of its children is orderable, and the enumeration itself is the
 relabelling. Its surviving slots are exactly the initial segment below the length of the listing: a slot of
@@ -240,128 +220,6 @@ theorem Step.isOrderable_of_hasIncreasingEnumeration {ξ : Step ι X}
 
 end IsOrderableOfEnumeration
 
-variable {ι X : Type*} [LinearOrder ι] [LinearOrder X]
-
-/-- The children of a step on a finite set of slots that lie strictly below a given child, compared by
-mark first and then by slot: those whose mark is smaller, or equal with a smaller slot. -/
-noncomputable def Step.below (ξ : Step ι X) (S : Finset ι) (j : ι) : Finset ι := by
-  classical
-  exact S.filter fun j' => ∃ x y, ξ j' = some x ∧ ξ j = some y ∧ (x < y ∨ (x = y ∧ j' < j))
-
-theorem Step.mem_below {ξ : Step ι X} {S : Finset ι} {j j' : ι} :
-    j' ∈ ξ.below S j ↔
-      j' ∈ S ∧ ∃ x y, ξ j' = some x ∧ ξ j = some y ∧ (x < y ∨ (x = y ∧ j' < j)) := by
-  classical
-  exact Finset.mem_filter
-
-/-- A child is not strictly below itself. -/
-theorem Step.not_mem_below_self {ξ : Step ι X} {S : Finset ι} {j : ι} :
-    j ∉ ξ.below S j := by
-  classical
-  intro h
-  obtain ⟨-, x, y, hx, hy, hlt⟩ := Step.mem_below.mp h
-  have hxy : x = y := Option.some.inj (by rw [hx] at hy; exact hy)
-  rcases hlt with hlt' | ⟨heq, hjj⟩
-  · exact absurd hxy (ne_of_lt hlt')
-  · exact (lt_irrefl j) hjj
-
-/-- The children strictly below one child are a subset of those strictly below a child that comes later in
-the (mark, slot) order. -/
-theorem Step.below_subset_of_below {ξ : Step ι X} {S : Finset ι} {j j' : ι}
-    (hrel : ∃ x y, ξ j = some x ∧ ξ j' = some y ∧ (x < y ∨ (x = y ∧ j < j'))) :
-    ξ.below S j ⊆ ξ.below S j' := by
-  classical
-  obtain ⟨xm, ym, hjm, hj'm, hlt⟩ := hrel
-  intro a ha
-  obtain ⟨haS, xa, xb, hax, hjx, halt⟩ := Step.mem_below.mp ha
-  have hb : xb = xm := by
-    rw [hjx] at hjm
-    exact Option.some.inj hjm
-  refine Step.mem_below.mpr ⟨haS, ?_⟩
-  rcases halt with hlt' | ⟨heq, haj⟩
-  · refine ⟨xa, ym, hax, hj'm, Or.inl ?_⟩
-    rcases hlt with hlt'' | ⟨heq', -⟩
-    · exact (hb ▸ hlt').trans hlt''
-    · exact (hb.trans heq') ▸ hlt'
-  · refine ⟨xa, ym, hax, hj'm, ?_⟩
-    rcases hlt with hlt'' | ⟨heq', hjj'⟩
-    · exact Or.inl ((heq.trans hb).symm ▸ hlt'')
-    · exact Or.inr ⟨heq.trans (hb.trans heq'), haj.trans hjj'⟩
-
-/-- The inclusion above is strict: the child itself lies on the right of it. -/
-theorem Step.below_ssubset_of_below {ξ : Step ι X} {S : Finset ι} {j j' : ι} (hjS : j ∈ S)
-    (hrel : ∃ x y, ξ j = some x ∧ ξ j' = some y ∧ (x < y ∨ (x = y ∧ j < j'))) :
-    ξ.below S j ⊂ ξ.below S j' := by
-  classical
-  refine ⟨Step.below_subset_of_below hrel, fun hsub => ?_⟩
-  have hj' : j ∈ ξ.below S j' := Step.mem_below.mpr ⟨hjS, hrel⟩
-  exact Step.not_mem_below_self (hsub hj')
-
-/-- The rank of a slot among the children: the number of children strictly below it. -/
-noncomputable def Step.rank (ξ : Step ι X) (S : Finset ι) (j : ι) : ℕ :=
-  (ξ.below S j).card
-
-/-- The rank separates the children of a finite set of slots: two of them with the same rank are the same
-slot. The marks are comparable, so one of the two children is strictly below the other in the (mark, slot)
-order, which makes its set of children below it a strict subset of the other's. -/
-theorem Step.rank_injOn {ξ : Step ι X} {S : Finset ι} (hS : ↑S ⊆ support ξ) :
-    Set.InjOn (ξ.rank S) ↑S := by
-  classical
-  intro j hjS j' hj'S h
-  by_contra hne
-  obtain ⟨x, hx⟩ := hS hjS
-  obtain ⟨y, hy⟩ := hS hj'S
-  rcases lt_trichotomy x y with hlt | heq | hgt
-  · exact absurd h (ne_of_lt (Finset.card_lt_card
-      (Step.below_ssubset_of_below hjS ⟨x, y, hx, hy, Or.inl hlt⟩)))
-  · rcases lt_or_gt_of_ne hne with hjj | hjj
-    · exact absurd h (ne_of_lt (Finset.card_lt_card
-        (Step.below_ssubset_of_below hjS ⟨x, y, hx, hy, Or.inr ⟨heq, hjj⟩⟩)))
-    · exact absurd h.symm (ne_of_lt (Finset.card_lt_card
-        (Step.below_ssubset_of_below hj'S ⟨y, x, hy, hx, Or.inr ⟨heq.symm, hjj⟩⟩)))
-  · exact absurd h.symm (ne_of_lt (Finset.card_lt_card
-      (Step.below_ssubset_of_below hj'S ⟨y, x, hy, hx, Or.inl hgt⟩)))
-
-/-- The rank of a child is smaller than the number of children: the children below it all lie in the
-children with it removed. -/
-theorem Step.rank_lt_card {ξ : Step ι X} {S : Finset ι} {j : ι} (hjS : j ∈ S) :
-    ξ.rank S j < S.card := by
-  classical
-  have hsub : ξ.below S j ⊆ S.erase j := by
-    intro a ha
-    obtain ⟨haS, -⟩ := Step.mem_below.mp ha
-    refine Finset.mem_erase.mpr ⟨?_, haS⟩
-    intro haj
-    exact Step.not_mem_below_self (haj ▸ ha)
-  have hle : (ξ.below S j).card ≤ (S.erase j).card := Finset.card_le_card hsub
-  rw [Finset.card_erase_of_mem hjS] at hle
-  exact lt_of_le_of_lt hle (Nat.sub_one_lt (Finset.card_ne_zero.mpr ⟨j, hjS⟩))
-
-/-- On a finite set of children the rank takes exactly the values below the number of children, so every
-label below that number is the rank of one child. -/
-theorem Step.image_rank_eq_range {ξ : Step ι X} {S : Finset ι} (hS : ↑S ⊆ support ξ) :
-    S.image (ξ.rank S) = Finset.range S.card := by
-  classical
-  refine Finset.eq_of_subset_of_card_le ?_ ?_
-  · intro n hn
-    obtain ⟨j, hjS, rfl⟩ := Finset.mem_image.mp hn
-    exact Finset.mem_range.mpr (Step.rank_lt_card hjS)
-  · rw [Finset.card_image_of_injOn (Step.rank_injOn hS), Finset.card_range]
-
-/-- Children ordered by rank are ordered by mark: a child whose rank is no larger than another's cannot
-carry the larger mark, since the children below it would then be strictly fewer. -/
-theorem Step.exists_some_le_of_rank_le {ξ : Step ι X} {S : Finset ι} (hS : ↑S ⊆ support ξ)
-    {a b : ι} (ha : a ∈ S) (hb : b ∈ S) (h : ξ.rank S a ≤ ξ.rank S b) :
-    ∃ x y, ξ a = some x ∧ ξ b = some y ∧ x ≤ y := by
-  classical
-  obtain ⟨x, hx⟩ := hS ha
-  obtain ⟨y, hy⟩ := hS hb
-  rcases lt_trichotomy x y with hlt | heq | hgt
-  · exact ⟨x, y, hx, hy, le_of_lt hlt⟩
-  · exact ⟨x, y, hx, hy, le_of_eq heq⟩
-  · exact absurd h (not_le_of_gt (Finset.card_lt_card
-      (Step.below_ssubset_of_below hb ⟨y, x, hy, hx, Or.inl hgt⟩)))
-
 section Nat
 
 variable {X : Type*} [LinearOrder X]
@@ -386,10 +244,10 @@ theorem Step.hasIncreasingEnumeration_of_isFinitelySupported {ξ : Step ℕ X}
     exact hfin.coe_toFinset
   have hSsub : ↑S ⊆ support ξ := fun _ hx => hScoe ▸ hx
   obtain ⟨ψ, hψinj, hψnot⟩ := exists_injective_notMem_of_finite (S := S)
-  have hmem : ∀ i, i < S.card → ∃ j ∈ S, ξ.rank S j = i := by
+  have hmem : ∀ i, i < S.card → ∃ j ∈ S, Step.Ordering.Lemmas.rank ξ S j = i := by
     intro i hi
-    have him : i ∈ S.image (ξ.rank S) := by
-      rw [Step.image_rank_eq_range hSsub]
+    have him : i ∈ S.image (Step.Ordering.Lemmas.rank ξ S) := by
+      rw [Step.Ordering.Lemmas.image_rank_eq_range hSsub]
       exact Finset.mem_range.mpr hi
     obtain ⟨j, hjS, hji⟩ := Finset.mem_image.mp him
     exact ⟨j, hjS, hji⟩
@@ -404,7 +262,7 @@ theorem Step.hasIncreasingEnumeration_of_isFinitelySupported {ξ : Step ℕ X}
     intro i hi
     rw [hf_lt i hi]
     exact (hmem i hi).choose_spec.1
-  have hf_rank : ∀ i (hi : i < S.card), ξ.rank S (f i) = i := by
+  have hf_rank : ∀ i (hi : i < S.card), Step.Ordering.Lemmas.rank ξ S (f i) = i := by
     intro i hi
     rw [hf_lt i hi]
     exact (hmem i hi).choose_spec.2
@@ -416,7 +274,7 @@ theorem Step.hasIncreasingEnumeration_of_isFinitelySupported {ξ : Step ℕ X}
     intro i j hij
     by_cases hi : i < S.card
     · by_cases hj : j < S.card
-      · have hji : ξ.rank S (f i) = ξ.rank S (f j) := by rw [hij]
+      · have hji : Step.Ordering.Lemmas.rank ξ S (f i) = Step.Ordering.Lemmas.rank ξ S (f j) := by rw [hij]
         rw [hf_rank i hi, hf_rank j hj] at hji
         exact hji
       · exact absurd (hij ▸ hf_mem i hi) (hf_notmem j hj)
@@ -435,18 +293,18 @@ theorem Step.hasIncreasingEnumeration_of_isFinitelySupported {ξ : Step ℕ X}
         rw [hScoe]
         exact hj
       exact Finset.mem_coe.mp hjs
-    have hlt : ξ.rank S j < S.card := Step.rank_lt_card hjS
-    refine ⟨ξ.rank S j, hlt, ?_⟩
-    rw [hf_lt (ξ.rank S j) hlt]
-    exact Step.rank_injOn hSsub (hmem (ξ.rank S j) hlt).choose_spec.1 hjS
-      (hmem (ξ.rank S j) hlt).choose_spec.2
+    have hlt : Step.Ordering.Lemmas.rank ξ S j < S.card := Step.Ordering.Lemmas.rank_lt_card hjS
+    refine ⟨Step.Ordering.Lemmas.rank ξ S j, hlt, ?_⟩
+    rw [hf_lt (Step.Ordering.Lemmas.rank ξ S j) hlt]
+    exact Step.Ordering.Lemmas.rank_injOn hSsub (hmem (Step.Ordering.Lemmas.rank ξ S j) hlt).choose_spec.1 hjS
+      (hmem (Step.Ordering.Lemmas.rank ξ S j) hlt).choose_spec.2
   · intro i j hij hjn x y hx hy
     have hic : i < S.card := hij.trans hjn
-    have hrank : ξ.rank S (f i) ≤ ξ.rank S (f j) := by
+    have hrank : Step.Ordering.Lemmas.rank ξ S (f i) ≤ Step.Ordering.Lemmas.rank ξ S (f j) := by
       rw [hf_rank i hic, hf_rank j hjn]
       exact le_of_lt hij
     obtain ⟨x', y', hx', hy', hle⟩ :=
-      Step.exists_some_le_of_rank_le hSsub (hf_mem i hic) (hf_mem j hjn) hrank
+      Step.Ordering.Lemmas.exists_some_le_of_rank_le hSsub (hf_mem i hic) (hf_mem j hjn) hrank
     have hxx : x = x' := Option.some.inj (hx.symm.trans hx')
     have hyy : y = y' := Option.some.inj (hy.symm.trans hy')
     simpa [hxx, hyy] using hle

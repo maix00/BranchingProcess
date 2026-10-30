@@ -13,6 +13,17 @@ public import Probability.BranchingRandomWalk.Step.Presentation.Basic
 
 This file supplies generic constructors from coordinate random variables.  It
 does not impose a distribution on those coordinates.
+
+## Public declarations
+
+- `ProbabilityTheory.BranchingRandomWalk.StepPresentation.full`: constructs
+  an everywhere-present random step from measurable coordinates
+  $D_i:\Omega\to X$.
+- `ProbabilityTheory.BranchingRandomWalk.StepPresentation.full_present`,
+  `StepPresentation.full_displace`, and `StepPresentation.full_apply`: the
+  constructor has presence `true`, displacement $D_i$, and assembled value
+  $\operatorname{some}(D_i(\omega))$ at each slot.
+
 -/
 
 @[expose] public section

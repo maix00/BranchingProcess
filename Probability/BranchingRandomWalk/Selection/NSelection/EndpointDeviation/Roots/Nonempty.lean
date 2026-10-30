@@ -4,25 +4,48 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Selection.NSelection.Admissible.Real
-import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Drawdown.Population
-import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law.Basic
-import Combinatorics.BranchingWalk.Step.Basic
+module
+
+public import Combinatorics.UlamHarris.Relation
+
+public import Probability.BranchingRandomWalk.Selection.NSelection.Admissible.Real
+public import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Drawdown.Population
+public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law.Basic
+public import Combinatorics.BranchingWalk.Step.Basic
 /-!
 # Nonempty selected generations
+
+## Public declarations
+
+In the namespace
+`ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation`,
+`finiteRootStepFieldLaw_firstNSelectedPopulation_nonempty_ae` states that if
+`m > 0`, `N > 0`, the boundary is normalized, and a single step has nonempty
+offspring almost surely, then for almost every `m`-root field the totalized
+first-`N` selected population is nonempty at every generation:
+\[
+\forall^{\mathrm{a.e.}}\,\omega,\quad
+\forall n,\quad
+\operatorname{selectedPopulationTotalized}(N,\mathrm{Fin}(m),n,\omega)
+\ne\varnothing.
+\]
+Here `μ` is a probability law with boundary normalization and
+`μ nonemptySupport = 1`.
 
 Under the nonempty-offspring and boundary-normalization assumptions,
 the totalized first-`N` population is nonempty at every generation almost
 surely, provided the initial population and selection capacity are nonempty.
 -/
 
+@[expose] public section
+
 open MeasureTheory
 
-namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail
+namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation
 
 open Combinatorics.Branching
 open Combinatorics.UlamHarris
-open Combinatorics.Branching.Selection.NSelection
+open _root_.Combinatorics.Selection.NSelection
 
 theorem finiteRootStepFieldLaw_firstNSelectedPopulation_nonempty_ae
     (m N : ℕ) (hm : 0 < m) (hN : 0 < N)
@@ -55,20 +78,22 @@ theorem finiteRootStepFieldLaw_firstNSelectedPopulation_nonempty_ae
         intro p hp
         exact RootIndexed.selectedPopulationTotalized_depth N Finset.univ
           (fun _ => (0 : ℝ)) id id n field p hp
-      have hcandidates : (RootIndexed.childrenAtGeneration n parents field).Nonempty := by
+      have hcandidates : (Combinatorics.Branching.Population.childrenAtGeneration n parents field).Nonempty := by
         rcases ih with ⟨p, hp⟩
         obtain ⟨i, hi⟩ := hchildren p.1 p.2
         exact ⟨(p.1, p.2 ++ [i]),
-          RootIndexed.childAddress_mem_childrenAtGeneration n parents field
+          Combinatorics.Branching.Population.childAddress_mem_childrenAtGeneration n parents field
             p hp (hdepth p hp) i hi⟩
       have hselected : IsFirstNBy N
           (RootIndexed.observedPositionAtGeneration (fun _ : Fin m => (0 : ℝ))
             id id (n + 1) field)
-          (RootIndexed.childrenAtGeneration n parents field)
+          (Combinatorics.Branching.Population.childrenAtGeneration n parents field)
           (RootIndexed.selectedPopulationTotalized N
             (Finset.univ : Finset (Fin m)) (fun _ => (0 : ℝ)) id id
             (n + 1) field) := by
         simpa [parents] using hspec n
       exact hselected.nonempty_of_nonempty_candidates hN hcandidates
 
-end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail
+end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation
+
+end

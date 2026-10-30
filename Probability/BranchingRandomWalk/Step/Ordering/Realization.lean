@@ -8,7 +8,7 @@ module
 
 public import Probability.BranchingRandomWalk.Step.Presentation.Basic
 public import Probability.BranchingRandomWalk.Step.PointMeasure.Basic
-public import Combinatorics.BranchingWalk.Step.Ordering.Realization
+public import Combinatorics.BranchingWalk.Step.Ordering.MeasureInvariance
 public import Combinatorics.BranchingWalk.Step.Ordering.ByPotential
 
 /-!
@@ -40,6 +40,31 @@ satisfy `Tω([]) = []` and
 trees must be measurable. Neither this local structure (which supplies only
 child values and point measures) nor pointwise `Step.IsOrderable` supplies
 that measurable lineage selection.
+
+## Public declarations
+
+* `MeasurableStepOrdering` is a measurable map from raw steps to ordered
+  steps, with pointwise orderedness, coverage of every raw child, and equality
+  of the raw and ordered child point measures. `MeasurableStepOrdering.first?`
+  reads its least-slot displacement, and `first?_measurable` proves the
+  resulting `Option X`-valued map measurable.
+* `StepPresentation.IsMeasurablyOrderable` expresses the same realization
+  conditions for a random presented step. The existence and construction
+  interfaces are `MeasurableStepOrdering.random_isMeasurablyOrderable`,
+  `StepPresentation.isMeasurablyOrderable_of_isOrdered`, and
+  `StepPresentation.orderedRealization`.
+* `StepPresentation.orderedRealization_measurable`,
+  `orderedRealization_isOrderedBy`, `raw_child_mem_orderedRealization`, and
+  `orderedRealization_pointMeasure` give the measurable, ordered, covering,
+  and point-measure-preserving properties of the chosen realization.
+  `orderedRealization_pointMeasure_measurable` supplies measurability of its
+  point measure, and `orderedRealization_branchingLaw` identifies its
+  point-measure law with the original branching law.
+* `StepPresentation.leftmostDisplacement?` returns `some x` when the ordered
+  realization has a least-slot child and `none` when it is empty.
+  `leftmostDisplacement?_measurable` proves measurability, while
+  `leftmostDisplacement?_eq_some_le` states that the selected child's
+  potential is minimal among all realized children.
 -/
 
 open MeasureTheory

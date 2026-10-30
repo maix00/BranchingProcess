@@ -1,4 +1,4 @@
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Path.TerminalLeft
+import Probability.Process.RandomWalk.Path.Skorokhod.TerminalLeft.Basic
 
 open MeasureTheory ProbabilityTheory
 open ProbabilityTheory.RandomWalk
@@ -10,10 +10,10 @@ example {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} {ν : Measure ℝ}
     (hlaw : ∀ k, HasLaw (coordinate k) ν P)
     (scale : ℕ → ℝ) (n : ℕ) :
     HasLaw
-      (fun ω => sourceNormalizedStepCadlagPathIcc scale n
+      (fun ω => terminalLeftNormalizedStepCadlagPathIcc scale n
         (fun k => coordinate k ω))
-      ((iidSequenceLaw ν).map (sourceNormalizedStepCadlagPathIcc scale n)) P :=
-  hasLaw_sourceNormalizedStepCadlagPathIcc_of_iid
+      ((iidSequenceLaw ν).map (terminalLeftNormalizedStepCadlagPathIcc scale n)) P :=
+  hasLaw_terminalLeftNormalizedStepCadlagPathIcc_of_iid
     hindep hmeasurable hlaw scale n
 
 example {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} {ν : Measure ℝ}
@@ -23,12 +23,12 @@ example {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} {ν : Measure ℝ}
     (hlaw : ∀ k, HasLaw (coordinate k) ν P)
     (scale : ℕ → ℝ) (n : ℕ)
     {G : Set (CadlagPath unitInterval ℝ)} (hG : MeasurableSet G) :
-    P {ω | sourceNormalizedStepCadlagPathIcc scale n
+    P {ω | terminalLeftNormalizedStepCadlagPathIcc scale n
         (fun k => coordinate k ω) ∈ G} =
       iidSequenceLaw ν {increment |
-        sourceNormalizedStepCadlagPathIcc scale n increment ∈ G} :=
-  measure_sourceNormalizedStepCadlagPathIcc_preimage_eq_of_iid
+        terminalLeftNormalizedStepCadlagPathIcc scale n increment ∈ G} :=
+  measure_terminalLeftNormalizedStepCadlagPathIcc_preimage_eq_of_iid
     hindep hmeasurable hlaw scale n hG
 
-#print axioms ProbabilityTheory.RandomWalk.hasLaw_sourceNormalizedStepCadlagPathIcc_of_iid
-#print axioms ProbabilityTheory.RandomWalk.measure_sourceNormalizedStepCadlagPathIcc_preimage_eq_of_iid
+#print axioms ProbabilityTheory.RandomWalk.hasLaw_terminalLeftNormalizedStepCadlagPathIcc_of_iid
+#print axioms ProbabilityTheory.RandomWalk.measure_terminalLeftNormalizedStepCadlagPathIcc_preimage_eq_of_iid

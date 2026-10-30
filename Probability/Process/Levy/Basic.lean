@@ -15,11 +15,21 @@ public import Topology.Cadlag.Basic
 /-!
 # Lévy processes
 
-The public definition `IsLevyProcess X P` is the conjunction of: `X 0 = 0`
-almost surely, `HasIndepIncrements X P`, `HasStationaryIncrements X P`, and
-almost-sure càdlàg paths. Its four projection theorems expose these defining
-properties separately. Stable increment laws are a specialization in
-`Probability.Process.Stable`.
+## Public declarations
+
+- `ProbabilityTheory.IsLevyProcess`: a real-time process $X$ starts at zero
+  almost surely, has independent and stationary increments, and has càdlàg
+  paths almost surely.
+- `ProbabilityTheory.IsLevyProcess.ae_start_eq_zero`:
+  $X_0=0$ almost surely.
+- `ProbabilityTheory.IsLevyProcess.indepIncrements`:
+  $X$ has independent increments.
+- `ProbabilityTheory.IsLevyProcess.stationaryIncrements`:
+  increments over intervals of equal length have the same law.
+- `ProbabilityTheory.IsLevyProcess.ae_cadlag`:
+  sample paths of $X$ are càdlàg almost surely.
+
+Stable increment laws are specialized in `Probability.Process.Stable`.
 -/
 
 open MeasureTheory

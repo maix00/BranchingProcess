@@ -6,14 +6,25 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.ConvergenceInDistribution.EscapingMixture
-public import Probability.Process.RandomWalk.Rademacher.Terminal.Mixture
-public import Probability.Process.RandomWalk.Rademacher.Terminal.LengthLimit
-public import Probability.Process.RandomWalk.Rademacher.Terminal.PathLimit
-public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.FirstWindow.Limit
+public import Probability.ConvergenceInDistribution.Basic
+import Probability.ConvergenceInDistribution.EscapingMixture
+public import Probability.Distributions.Moments.Signs
+public import Probability.Process.Brownian.Meander.LastZeroLaw
+public import Probability.Process.Brownian.PathLaw.ContinuousModification
+public import Probability.Process.Path.AboveStart.FirstWindow.Shift.Centered
+public import Probability.Process.Path.Scaling.FiniteHorizon
+public import Probability.Process.RandomWalk.Path.Interpolation.Basic
+import Probability.Process.RandomWalk.Rademacher.Terminal.Mixture
+import Probability.Process.RandomWalk.Rademacher.Terminal.LengthLimit
+import Probability.Process.RandomWalk.Rademacher.Terminal.PathLimit
+public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Survival.Conditioning
+import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.FirstWindow.Limit
+public import Mathlib.Probability.BrownianMotion.Basic
 
 /-!
 # Identification of Bolthausen's conditioned limit with Brownian meander
+
+## Public declarations
 
 The public theorems in this file are:
 

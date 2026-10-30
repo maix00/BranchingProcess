@@ -8,9 +8,33 @@ module
 
 public import Probability.Process.RandomWalk.Path.Adapted.Martingale
 public import Probability.Independence.Moment.Fourth
+import Mathlib.Probability.Martingale.OptionalStopping
 
 /-!
 # Fourth moments of IID random-walk sums
+
+## Public declarations
+
+- `ProbabilityTheory.RandomWalk.submartingale_pow_four_partialSumProcess`:
+  centered independent \(L^4\) increments give the submartingale
+  \(S_n^4\).
+- `ProbabilityTheory.RandomWalk.maximal_ineq_pow_four_partialSumProcess`:
+  for \(S_m=\sum_{j=0}^{m-1}X_j\), Doob's inequality gives
+  \(\varepsilon\,\mathbb P(\max_{1\le m\le n+1}S_m^4\ge\varepsilon)
+  \le\mathbb E[S_{n+1}^4]\).
+- `ProbabilityTheory.RandomWalk.integral_partialSum_succ_pow_four_iidSequenceLaw`:
+  for centered IID increments,
+  \(\mathbb E[S_{n+1}^4]=\mathbb E[S_n^4]+6n(\mathbb E[X^2])^2+
+  \mathbb E[X^4]\).
+- `ProbabilityTheory.RandomWalk.integral_partialSum_pow_four_iidSequenceLaw`
+  gives the exact formula
+  \(\mathbb E[S_n^4]=n\mathbb E[X^4]+3n(n-1)(\mathbb E[X^2])^2\);
+  `integral_partialSum_pow_four_iidSequenceLaw_le` gives the bound
+  \(\mathbb E[S_n^4]\le n\mathbb E[X^4]+3n^2(\mathbb E[X^2])^2\).
+- `ProbabilityTheory.RandomWalk.maximal_ineq_pow_four_partialSumProcess_iidSequenceLaw`
+  substitutes this bound at time \(n+1\) into the maximal inequality, yielding
+  \(\varepsilon\,\mathbb P(\max_{1\le m\le n+1}S_m^4\ge\varepsilon)
+  \le(n+1)\mathbb E[X^4]+3n(n+1)(\mathbb E[X^2])^2\).
 -/
 
 open MeasureTheory ProbabilityTheory

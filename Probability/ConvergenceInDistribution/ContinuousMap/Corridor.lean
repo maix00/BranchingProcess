@@ -18,6 +18,15 @@ public section
 This file supplies the probability layer for deterministic continuous-path
 corridors.  In particular, functional convergence in distribution gives the
 Portmanteau lower bound for every open horizontal corridor.
+
+## Public declarations
+
+- `MeasureTheory.TendstoInDistribution.measure_horizontalCorridor_le_liminf`:
+  for $a<b$, $\mathbb P(\operatorname{range}Z\subset(a,b))\le
+  \liminf_i\mathbb P(\operatorname{range}X_i\subset(a,b))$.
+- `MeasureTheory.TendstoInDistribution.limsup_measure_horizontalCorridor_le`:
+  for nonempty $T$, $\limsup_i\mathbb P(\operatorname{range}X_i\subset[a,b])\le
+  \mathbb P(\operatorname{range}Z\subset[a,b])$.
 -/
 
 open Filter MeasureTheory Set

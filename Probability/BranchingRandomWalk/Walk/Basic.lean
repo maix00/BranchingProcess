@@ -16,6 +16,31 @@ public import Mathlib.MeasureTheory.Measure.Map
 /-!
 # Random walks as one-branch branching random walks
 
+## Public declarations
+
+- `ProbabilityTheory.BranchingRandomWalk.RandomWalk`: the singleton-slot
+  specialization of a branching walk; its step may have no child, allowing
+  extinction.
+- `ProbabilityTheory.BranchingRandomWalk.RandomWalk.law` and
+  `ProbabilityTheory.BranchingRandomWalk.RandomWalk.of`: define its law and
+  realize it as a branching walk.
+- `ProbabilityTheory.BranchingRandomWalk.RandomWalk.SurvivesForever` and
+  `ProbabilityTheory.BranchingRandomWalk.RandomWalk.survivesForever_iff_ae_survivesEveryGeneration`:
+  survival at all generations is the event that every generation is nonempty
+  almost surely.
+- `ProbabilityTheory.BranchingRandomWalk.RandomWalk.measurableSet_survivesForever`:
+  the survival event is measurable.
+- `ProbabilityTheory.BranchingRandomWalk.RandomWalk.ofIncrements` and
+  `ProbabilityTheory.BranchingRandomWalk.RandomWalk.process`: construct the
+  everywhere-present walk and its position process from an increment sequence.
+- `ProbabilityTheory.BranchingRandomWalk.RandomWalk.IsIncrementPathRealization`:
+  states that the process has the pathwise form
+  \(X_n=X_0+\sum_{j<n}\xi_j\).
+- `ProbabilityTheory.BranchingRandomWalk.RandomWalk.isIncrementPathRealization_ofIncrementLaw`,
+  `ProbabilityTheory.BranchingRandomWalk.RandomWalk.survivesForever_ofIncrementLaw`,
+  and `ProbabilityTheory.BranchingRandomWalk.RandomWalk.IsIncrementPathRealization.survivesForever`:
+  identify the increment-path realization and its survival consequences.
+
 A random walk is exactly the singleton child-slot specialization of a
 branching random walk. The unique possible child may be absent, so this basic
 notion also permits killing or extinction. Laws obtained from an increment

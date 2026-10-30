@@ -7,10 +7,12 @@ Authors: WANG Yiyang
 module
 
 public import Combinatorics.BranchingWalk.Basic.Sibling.Closed
-public import Combinatorics.BranchingWalk.Step.Selection.SiblingClosable
+public import Combinatorics.BranchingWalk.Step.Ordering.Sibling.Closable
 
 /-!
 # Relabelable sibling steps
+
+## Public declarations
 
 `StepField.IsSiblingClosable β` means
 `∀ u, Step.IsSiblingClosable (β u)`; `RootIndexed.BranchingWalk.IsSiblingClosable β`

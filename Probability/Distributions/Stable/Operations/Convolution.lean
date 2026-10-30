@@ -16,6 +16,23 @@ public import MeasureTheory.Measure.Convolution.Power
 The weighted-copy definition of strict stability directly identifies
 convolution of two scaled copies.  This is the measure-level starting point
 for the convolution semigroup and infinite divisibility.
+
+## Public declarations
+
+* `IsStrictlyAlphaStable.conv_scaled`:
+  `(μ.map (a ·)) ∗ (μ.map (b ·)) = μ.map (alphaStableScale α a b ·)` for `a,b > 0`.
+* `ProbabilityTheory.stableTimeLaw α μ t := μ.map (t ^ (1 / α) ·)`;
+  `IsStrictlyAlphaStable.stableTimeLaw_zero` and
+  `IsStrictlyAlphaStable.stableTimeLaw_one` identify its values at `0` and `1`
+  as `δ₀` and `μ`.
+* `IsStrictlyAlphaStable.stableTimeLaw_conv` and
+  `IsStrictlyAlphaStable.stableTimeLaw_conv_nonneg` give
+  `stableTimeLaw α μ s ∗ stableTimeLaw α μ t = stableTimeLaw α μ (s + t)`
+  for positive and nonnegative times, respectively.
+* `IsStrictlyAlphaStable.exists_convPower_root` gives a probability measure `ν`
+  with `μ = ν.convPower n` for each positive integer `n`;
+  `IsStrictlyAlphaStable.stableTimeLaw_nat` identifies integer-time laws with
+  convolution powers of `μ`.
 -/
 
 @[expose] public section

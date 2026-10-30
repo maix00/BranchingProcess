@@ -18,16 +18,19 @@ same probability spaces, admit a measurable error bound tending to zero in
 probability.  This formulation applies to nonlinear path spaces without
 requiring measurability of their distance as an extra global assumption.
 
-The public theorems are:
+## Public declarations
 
 - `MeasureTheory.tendstoInDistribution_of_error_tendstoInMeasure`:
-  transfer convergence along a vanishing metric error.
+  if $X_i\Rightarrow Z$, $d(Y_i,X_i)\le r_i$, and
+  $\mu_i(r_i\ge\varepsilon)\to0$ for every $\varepsilon>0$, then
+  $Y_i\Rightarrow Z$.
 - `MeasureTheory.tendstoInDistribution_of_negligible_disagreement`:
-  transfer convergence when the probability that two coupled random variables
-  differ tends to zero.
+  if $X_i\Rightarrow Z$ and $\mu_i(X_i\ne Y_i)\to0$, then
+  $Y_i\Rightarrow Z$.
 - `MeasureTheory.abs_integral_sub_le_oscillation_mul_disagreement`:
-  bound the difference of two expectations by the disagreement probability
-  times an oscillation bound for the observable.
+  if $\sup_{x,y}|F(x)-F(y)|\le M$, then
+  $|\mathbb E[F(X_i)]-\mathbb E[F(Y_i)]|
+  \le M\,\mu_i(X_i\ne Y_i)$.
 -/
 
 open Filter ProbabilityTheory

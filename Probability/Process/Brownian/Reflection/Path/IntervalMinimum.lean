@@ -6,13 +6,18 @@ Authors: WANG Yiyang
 
 module
 
+public import Probability.Process.Path.Transform.Continuous
+
 public import Probability.Process.Path.Extrema.IntervalMinimum
-public import Probability.Process.Brownian.Independence.PastFuturePaths
+public import Probability.Process.Brownian.PathLaw.ContinuousPathLaw
+import Probability.Process.Brownian.Independence.PastFuturePaths
+import Probability.Process.Brownian.Reflection.FirstPassage.Principle
+import Probability.Independence.NullSections
 
 /-!
 # Atomlessness of a Brownian interval minimum
 
-The public theorem in this file is:
+## Public declarations
 
 - `ProbabilityTheory.IsBrownianReal.measure_intervalMinimum_eq`:
   for $r<q$ and $a\in\mathbb R$,

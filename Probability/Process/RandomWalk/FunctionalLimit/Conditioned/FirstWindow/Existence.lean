@@ -7,20 +7,20 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.Path.Survival.Basic
-public import Probability.Process.RandomWalk.Path.Block.Law.Basic
-public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Survival.Conditioning
 public import Probability.Sequence.IID.Basic
-import Probability.Sequence.IID.Blocks.StoppingTime
+import Combinatorics.Sequence.Block
+import Probability.Process.RandomWalk.Path.Survival.Probability
+import Probability.Sequence.Block
 import Probability.Sequence.IID.Blocks.Consecutive
 
 /-!
 # Almost-sure existence of a first surviving window
 
-The public theorem in this module is:
+## Public declarations
 
 - `ProbabilityTheory.RandomWalk.FunctionalLimit.Conditioned.measure_exists_firstSurvivingWindow_eq_one`:
-  if $\nu((0,\infty))>0$, then an IID walk has a first surviving
-  length-$n$ window with probability one.
+  if $\nu((0,\infty))>0$, then
+  $\mathbb P_\nu(\exists j\ge0:\ S_{j+k}-S_j\ge0\text{ for }1\le k\le n)=1$.
 
 This is the finite-$T_n$ step before Lemma 3.1 in Erwin Bolthausen,
 *On a Functional Central Limit Theorem for Random Walks Conditioned to Stay

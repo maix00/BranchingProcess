@@ -8,6 +8,8 @@ module
 
 public import Probability.BranchingRandomWalk.Restart.Trial.Basic
 public import Probability.BranchingRandomWalk.Restart.Trial.FirstSplit
+public import Probability.BranchingRandomWalk.Restart.Trial.RootIndexed
+public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Field.Measurability
 
 /-!
 # Split trials started from a fixed genealogical root
@@ -17,6 +19,13 @@ tree.  This file transfers it to a fixed descendant subtree in the global
 generation filtration, with the absolute generation offset made explicit.
 This is the fixed-root step needed before treating a reserve root selected at
 a previous observable split.
+
+## Public declarations
+
+* `RootIndexed.fixedSubtree_splitCompletion_isStoppingTime` states that for a
+  fixed address of depth `start`, the global completion time of its first
+  selected-population split is the local completion time shifted by `start`,
+  and is a stopping time for the root-indexed generation domain filtration.
 -/
 
 open MeasureTheory ProbabilityTheory

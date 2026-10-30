@@ -11,7 +11,7 @@ public import Analysis.Asymptotics.RegularVariation.Basic
 /-!
 # Polynomial lower bounds for decreasing regularly varying functions
 
-The public theorem in this file is:
+## Public declarations
 
 - Asymptotics.IsRegularlyVaryingAtTop.exists_eventually_lower_power_of_inverse_monotone:
   if $f$ has index $-\rho$, $\rho\ge0$, and $1/f$ is eventually

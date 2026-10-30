@@ -4,69 +4,35 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Rate.Raw
+import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.Basic
+import Analysis.Asymptotics.Sequence.ExponentialSum
+import Analysis.Asymptotics.Sequence.LogarithmicScale
 /-!
-# Logarithmic-scale conversion for the selected-population endpoint sublevel
+# Polynomial bound for the selected-population endpoint sublevel
 
-This file converts the finite-horizon decomposition in `RawRate` into a
-polynomial bound under the logarithmic scales appearing in (4.16).
+For the generation-`H_n` endpoint event $E_n$, this file converts an eventual
+finite-horizon estimate of the form
+$\mathbb P(E_n)\le N_n(H_n+1)^2e^{-B_n}+m_ne^{z_n-qH_n/B_n^2}$
+into $\mathbb P(E_n)\le N_n^{-\epsilon}$ under the stated logarithmic-scale
+limits.
+
+## Public declarations
+
+- `eventually_finiteRootStepFieldLaw_firstNSelectedEndpointBelow_le_polynomial_of_finiteHorizonEstimate`:
+  applies the exponent conversion to the first-$N$ selected endpoint event
+  under a supplied finite-horizon estimate.
 -/
 
 open Filter MeasureTheory
 open scoped ENNReal Topology
 
-namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail
+namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation
 
 open Combinatorics.Branching
 open Combinatorics.UlamHarris
 open ProbabilityTheory.RandomWalk
 open ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown
 open ProbabilityTheory.BranchingRandomWalk.Spine
-
-private lemma tendsto_log_add_one_div_log_of_cubic_scale
-    {u L : ℕ → ℝ} {t : ℝ}
-    (hL : Tendsto L atTop atTop)
-    (hu : ∀ n, 0 ≤ u n)
-    (hscale : Tendsto (fun n => u n / L n ^ 3) atTop (𝓝 t))
-    (ht : 0 < t) :
-    Tendsto (fun n => Real.log (u n + 1) / L n) atTop (𝓝 0) := by
-  have hinv : Tendsto (fun n => (L n)⁻¹) atTop (𝓝 0) :=
-    hL.inv_tendsto_atTop
-  have hinvCube : Tendsto (fun n => (L n)⁻¹ ^ 3) atTop (𝓝 0) := by
-    simpa using hinv.pow 3
-  have hLpos : ∀ᶠ n : ℕ in atTop, 0 < L n := hL.eventually_gt_atTop 0
-  have hscaled : Tendsto (fun n => (u n + 1) / L n ^ 3)
-      atTop (𝓝 t) := by
-    have hsum := hscale.add hinvCube
-    have heq : (fun n => (u n + 1) / L n ^ 3) =ᶠ[atTop]
-        fun n => u n / L n ^ 3 + (L n)⁻¹ ^ 3 := by
-      filter_upwards [hLpos] with n hn
-      field_simp
-    simpa using hsum.congr' heq.symm
-  have hlogScaled : Tendsto
-      (fun n => Real.log ((u n + 1) / L n ^ 3)) atTop (𝓝 (Real.log t)) :=
-    (Real.continuousAt_log (ne_of_gt ht)).tendsto.comp hscaled
-  have hlogScaledDiv : Tendsto
-      (fun n => Real.log ((u n + 1) / L n ^ 3) / L n)
-      atTop (𝓝 0) := hlogScaled.div_atTop hL
-  have hlogLDiv : Tendsto (fun n => Real.log (L n) / L n)
-      atTop (𝓝 0) := by
-    have h := (Real.tendsto_pow_log_div_mul_add_atTop 1 0 1
-      (by norm_num : (1 : ℝ) ≠ 0)).comp hL
-    convert h using 1
-    ext n
-    simp [pow_one]
-  have hsum := hlogScaledDiv.add (hlogLDiv.const_mul 3)
-  have heq : (fun n => Real.log (u n + 1) / L n) =ᶠ[atTop]
-      fun n => Real.log ((u n + 1) / L n ^ 3) / L n +
-        3 * (Real.log (L n) / L n) := by
-    filter_upwards [hLpos] with n hn
-    have hu1 : 0 < u n + 1 := by linarith [hu n]
-    rw [Real.log_div (ne_of_gt hu1) (pow_ne_zero 3 (ne_of_gt hn)),
-      Real.log_pow]
-    field_simp
-    ring
-  simpa using hsum.congr' heq.symm
 
 private lemma tendsto_horizon_div_square_div_log
     {H B L : ℕ → ℝ} {t b : ℝ}
@@ -103,7 +69,7 @@ the large-drop scale is `b log N`, the horizon is `t log^3 N`, the endpoint
 threshold is `ζ log N`, and the selected population has size at most `N^a`.
 The effective drawdown rate is `q`; the strict inequality is precisely the
 remaining exponent margin in (4.16). -/
-theorem eventually_probability_le_polynomial_of_raw_endpoint_bound
+private lemma eventually_probability_le_polynomial_of_raw_endpoint_bound
     {P : ℕ → ℝ≥0∞} {m N H : ℕ → ℕ} {B threshold : ℕ → ℝ}
     {a b t zeta q : ℝ}
     (hN : Tendsto N atTop atTop)
@@ -138,10 +104,23 @@ theorem eventually_probability_le_polynomial_of_raw_endpoint_bound
   have hthresholdScale : Tendsto (fun n => threshold n / L n)
       atTop (𝓝 zeta) := by
     simpa [L] using hthreshold
+  have hUbound : ∀ᶠ n : ℕ in atTop,
+      U n ≤ (t + 1) * L n ^ (3 : ℝ) := by
+    have hratio := hUscale.eventually
+      (Iio_mem_nhds (by linarith : t < t + 1))
+    filter_upwards [hratio, hLpos] with n hratio hLn
+    calc
+      U n ≤ (t + 1) * L n ^ 3 :=
+        ((div_lt_iff₀ (pow_pos hLn 3)).mp hratio).le
+      _ = (t + 1) * L n ^ (3 : ℝ) := by
+        congr 1
+        exact (Real.rpow_natCast (L n) 3).symm
   have hlogH : Tendsto (fun n => Real.log (U n + 1) / L n)
-      atTop (𝓝 0) :=
-    tendsto_log_add_one_div_log_of_cubic_scale hL
-      (fun n => Nat.cast_nonneg (H n)) hUscale ht
+      atTop (𝓝 0) := by
+    exact Asymptotics.tendsto_log_add_one_div_scale_of_power_bound hL
+      (Filter.Eventually.of_forall (fun n => Nat.cast_nonneg (H n)))
+      (by linarith : 0 ≤ t + 1)
+      (by norm_num : (0 : ℝ) < 3) hUbound
   have hHB : Tendsto (fun n => (U n / B n ^ 2) / L n)
       atTop (𝓝 (t / b ^ 2)) :=
     tendsto_horizon_div_square_div_log hL hUscale hBscale (by linarith)
@@ -191,10 +170,31 @@ theorem eventually_probability_le_polynomial_of_raw_endpoint_bound
   have hrate2event : ∀ᶠ n : ℕ in atTop,
       (a * L n + threshold n - q * (U n / B n ^ 2)) / L n < -2 * epsilon :=
     hrate2.eventually (Iio_mem_nhds hrate2gap)
-  have hlogLarge : ∀ᶠ n : ℕ in atTop, Real.log 2 < epsilon * L n := by
-    have hmul : Tendsto (fun n => epsilon * L n) atTop atTop :=
-      hL.const_mul_atTop hepsilon
-    exact hmul.eventually_gt_atTop (Real.log 2)
+  have hrate1uniform : ∀ᶠ n : ℕ in atTop,
+      (L n + 2 * Real.log (U n + 1) - B n) / L n < -epsilon - epsilon := by
+    filter_upwards [hrate1event] with n hn
+    linarith
+  have hrate2uniform : ∀ᶠ n : ℕ in atTop,
+      (a * L n + threshold n - q * (U n / B n ^ 2)) / L n < -epsilon - epsilon := by
+    filter_upwards [hrate2event] with n hn
+    linarith
+  have hsumExp : ∀ᶠ n : ℕ in atTop,
+      Real.exp (L n + 2 * Real.log (U n + 1) - B n) +
+        Real.exp (a * L n + threshold n - q * (U n / B n ^ 2)) ≤
+          Real.exp (-epsilon * L n) := by
+    have hsum := Asymptotics.eventually_sum_exp_le_exp_mul_of_uniform_gap
+      (F := Finset.univ)
+      (g := L)
+      (e := fun (n : ℕ) (i : Fin 2) =>
+        if i.val = 0 then L n + 2 * Real.log (U n + 1) - B n
+        else a * L n + threshold n - q * (U n / B n ^ 2))
+      (-epsilon) epsilon hepsilon hL (by
+        intro i hi
+        fin_cases i
+        · simpa using hrate1uniform
+        · simpa using hrate2uniform)
+    filter_upwards [hsum] with n hn
+    simpa using hn
   have hpowN : ∀ᶠ n : ℕ in atTop,
       (N n : ℝ) = Real.exp (L n) := by
     filter_upwards [hLpos] with n hn
@@ -205,8 +205,8 @@ theorem eventually_probability_le_polynomial_of_raw_endpoint_bound
     have hnReal : 0 < (N n : ℝ) := by exact_mod_cast hnNat
     simp [L, Real.exp_log hnReal]
   refine ⟨epsilon, hepsilon, ?_⟩
-  filter_upwards [hraw, hm, hrate1event, hrate2event, hlogLarge, hLpos,
-      hpowN] with n hrawn hmn hrate1n hrate2n hlogLarg nLpos hpowNn
+  filter_upwards [hraw, hm, hsumExp, hLpos, hpowN]
+    with n hrawn hmn hsumExpx nLpos hpowNn
   have hNpos : 0 < (N n : ℝ) := by
     have hnNat : 0 < N n := by
       by_contra h
@@ -214,14 +214,6 @@ theorem eventually_probability_le_polynomial_of_raw_endpoint_bound
       simp [L, hz] at nLpos
     exact_mod_cast hnNat
   have hUplus : 0 < U n + 1 := by dsimp [U]; positivity
-  have hrate1real : L n + 2 * Real.log (U n + 1) - B n <
-      -2 * epsilon * L n := (div_lt_iff₀ nLpos).mp hrate1n
-  have hrate2real : a * L n + threshold n - q * (U n / B n ^ 2) <
-      -2 * epsilon * L n := (div_lt_iff₀ nLpos).mp hrate2n
-  have hexp1 : Real.exp (L n + 2 * Real.log (U n + 1) - B n) ≤
-      Real.exp (-2 * epsilon * L n) := Real.exp_le_exp.mpr hrate1real.le
-  have hexp2 : Real.exp (a * L n + threshold n - q * (U n / B n ^ 2)) ≤
-      Real.exp (-2 * epsilon * L n) := Real.exp_le_exp.mpr hrate2real.le
   have hNatSquareCast : ((H n : ℝ≥0∞) + 1) ^ 2 =
       ENNReal.ofReal (((H n : ℝ) + 1) ^ 2) := by
     rw [← ENNReal.ofReal_natCast, ← ENNReal.ofReal_one,
@@ -278,54 +270,36 @@ theorem eventually_probability_le_polynomial_of_raw_endpoint_bound
         (m n : ℝ≥0∞) *
           (ENNReal.ofReal (Real.exp (threshold n)) *
             ENNReal.ofReal (Real.exp (-q * (U n / B n ^ 2)))) ≤
-      ENNReal.ofReal (2 * Real.exp (-2 * epsilon * L n)) := by
+      ENNReal.ofReal (Real.exp (-epsilon * L n)) := by
     rw [hfirstEq]
     calc
-      _ ≤ ENNReal.ofReal (Real.exp (-2 * epsilon * L n)) +
-          ENNReal.ofReal (Real.exp (-2 * epsilon * L n)) := by
-        exact add_le_add
-          (ENNReal.ofReal_le_ofReal hexp1)
-          (le_trans hsecondUpper (ENNReal.ofReal_le_ofReal hexp2))
-      _ = ENNReal.ofReal (2 * Real.exp (-2 * epsilon * L n)) := by
+      _ ≤ ENNReal.ofReal
+            (Real.exp (L n + 2 * Real.log (U n + 1) - B n)) +
+          ENNReal.ofReal
+            (Real.exp (a * L n + threshold n - q * (U n / B n ^ 2))) := by
+        exact add_le_add le_rfl hsecondUpper
+      _ = ENNReal.ofReal
+          (Real.exp (L n + 2 * Real.log (U n + 1) - B n) +
+            Real.exp (a * L n + threshold n - q * (U n / B n ^ 2))) := by
         rw [← ENNReal.ofReal_add (Real.exp_nonneg _) (Real.exp_nonneg _)]
-        congr 1
-        ring
-  have hlarge : 2 ≤ Real.exp (epsilon * L n) := by
-    have hexp : Real.exp (Real.log 2) < Real.exp (epsilon * L n) :=
-      Real.exp_lt_exp.mpr hlogLarg
-    have htwo : Real.exp (Real.log 2) = (2 : ℝ) := by
-      rw [Real.exp_log (by norm_num : (0 : ℝ) < 2)]
-    rw [htwo] at hexp
-    exact hexp.le
-  have hsumToFinal : 2 * Real.exp (-2 * epsilon * L n) ≤
-      Real.exp (-epsilon * L n) := by
-    calc
-      2 * Real.exp (-2 * epsilon * L n) ≤
-          Real.exp (epsilon * L n) * Real.exp (-2 * epsilon * L n) :=
-        mul_le_mul_of_nonneg_right hlarge (Real.exp_nonneg _)
-      _ = Real.exp (-epsilon * L n) := by
-        rw [← Real.exp_add]
-        congr 1
-        ring
+      _ ≤ ENNReal.ofReal (Real.exp (-epsilon * L n)) :=
+        ENNReal.ofReal_le_ofReal hsumExpx
   calc
     P n ≤ (N n : ℝ≥0∞) *
           (((H n : ℝ≥0∞) + 1) ^ 2 * ENNReal.ofReal (Real.exp (-B n))) +
         (m n : ℝ≥0∞) *
           (ENNReal.ofReal (Real.exp (threshold n)) *
             ENNReal.ofReal (Real.exp (-q * (U n / B n ^ 2)))) := hrawn
-    _ ≤ ENNReal.ofReal (2 * Real.exp (-2 * epsilon * L n)) := hsumUpper
-    _ ≤ ENNReal.ofReal (Real.exp (-epsilon * L n)) :=
-      ENNReal.ofReal_le_ofReal hsumToFinal
+    _ ≤ ENNReal.ofReal (Real.exp (-epsilon * L n)) := hsumUpper
     _ = ENNReal.ofReal (Real.exp (-epsilon * Real.log (N n : ℝ))) := by
       rfl
 
 
-/-- A selected-population endpoint bound follows from the raw finite-horizon
-bound in `RawRate` and the logarithmic scale assumptions.  This is the short
-composition interface: the raw bound is supplied by
-`eventually_finiteRootStepFieldLaw_firstNSelectedEndpointBelow_le_of_rangeRate`.
--/
-theorem eventually_finiteRootStepFieldLaw_firstNSelectedEndpointBelow_le_polynomial_of_rawRate
+/-- A selected-population endpoint bound follows from a supplied
+finite-horizon estimate and the logarithmic scale assumptions.  The estimate
+has the two terms produced by the branching decomposition and a one-walk
+endpoint bound. -/
+theorem eventually_finiteRootStepFieldLaw_firstNSelectedEndpointBelow_le_polynomial_of_finiteHorizonEstimate
     (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
     {m N H : ℕ → ℕ} (horder : ∀ n,
       LinearOrder (RootIndexed.TreeNode (Fin (m n)) ℕ))
@@ -339,7 +313,7 @@ theorem eventually_finiteRootStepFieldLaw_firstNSelectedEndpointBelow_le_polynom
     (ht : 0 < t) (hb : 1 < b)
     (hm : ∀ᶠ n : ℕ in atTop, (m n : ℝ) ≤ (N n : ℝ) ^ a)
     (hmargin : a + zeta < q * t / b ^ 2)
-    (hraw : ∀ᶠ n : ℕ in atTop,
+    (hfinite : ∀ᶠ n : ℕ in atTop,
       (finiteRootStepFieldLaw μ (m n))
         (@firstNSelectedEndpointBelow (m n) (N n) (H n) (horder n)
           (threshold n)) ≤
@@ -357,17 +331,17 @@ theorem eventually_finiteRootStepFieldLaw_firstNSelectedEndpointBelow_le_polynom
     (finiteRootStepFieldLaw μ (m n))
       (@firstNSelectedEndpointBelow (m n) (N n) (H n) (horder n)
         (threshold n))
-  have hrawP : ∀ᶠ n : ℕ in atTop,
+  have hfiniteP : ∀ᶠ n : ℕ in atTop,
       P n ≤ (N n : ℝ≥0∞) *
           (((H n : ℝ≥0∞) + 1) ^ 2 * ENNReal.ofReal (Real.exp (-B n))) +
         (m n : ℝ≥0∞) *
           (ENNReal.ofReal (Real.exp (threshold n)) *
             ENNReal.ofReal (Real.exp (-q * ((H n : ℝ) / B n ^ 2)))) := by
-    simpa [P] using hraw
+    simpa [P] using hfinite
   have hpost := eventually_probability_le_polynomial_of_raw_endpoint_bound
     (P := P) (m := m) (N := N) (H := H) (B := B)
     (threshold := threshold) (a := a) (b := b) (t := t) (zeta := zeta)
-    (q := q) hN hH hB hthreshold ht hb hmargin hm hrawP
+    (q := q) hN hH hB hthreshold ht hb hmargin hm hfiniteP
   simpa [P] using hpost
 
-end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Tail
+end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation

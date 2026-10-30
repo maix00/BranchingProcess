@@ -19,6 +19,15 @@ This file connects the stable finite-grid limit to the generic tightness and
 finite-dimensional identification theorem for càdlàg path laws. Source-specific
 centering estimates are explicit inputs so that the three stable regimes can
 discharge them separately.
+## Public declarations
+
+- `tendsto_normalizedStepPathLaw_of_stableDomain_of_tight` combines tightness
+  of normalized step-path laws with stable finite-dimensional convergence to
+  obtain convergence in the Skorokhod $J_1$ topology to a specified stable
+  clock-process law.
+- `tendsto_normalizedStepPathLaw_of_zeroCenter_stableDomain_of_tight` is the
+  zero-centering specialization.
+
 -/
 
 open Filter MeasureTheory ProbabilityTheory
@@ -39,7 +48,7 @@ the generic functional-limit argument from the source-specific estimates in
 the centered stable regimes. -/
 theorem tendsto_normalizedStepPathLaw_of_stableDomain_of_tight
     (hDOA : IsInDomainOfAttractionAlong ν μ normalization center)
-    (hP : IsStableClockProcessLaw α μ UnitInterval.clock P)
+    (hP : IsStableClockProcessLaw α μ unitInterval.clock P)
     (htight : IsTightMeasureSet (Set.range
       (fun n => RandomWalk.normalizedStepPathLaw ν normalization n)))
     (hcenter : ∀ (blocks : ℕ) (grid : Fin (blocks + 1) → unitInterval),
@@ -71,7 +80,7 @@ theorem tendsto_normalizedStepPathLaw_of_stableDomain_of_tight
       (hgrid : StrictMono grid) (hstart : grid 0 = ⊥) :
       Tendsto (fun n => (pathLaw n).map (MeasureTheory.CadlagPath.denseEvaluation grid)) atTop
         (𝓝 (limitLaw.map (MeasureTheory.CadlagPath.denseEvaluation grid))) := by
-    have hincrements : HasStableClockIncrements α μ UnitInterval.clock
+    have hincrements : HasStableClockIncrements α μ unitInterval.clock
         cadlagPathProcess P := hP
     have hgridLimit := tendstoInDistribution_normalizedStepPath_finiteGrid_floor_of_stableDomain
       hDOA hincrements blocks grid hgrid hstart (hcenter blocks grid hgrid hstart)
@@ -103,7 +112,7 @@ theorem tendsto_normalizedStepPathLaw_of_stableDomain_of_tight
 block-centering estimate. -/
 theorem tendsto_normalizedStepPathLaw_of_zeroCenter_stableDomain_of_tight
     (hDOA : IsInDomainOfAttractionAlong ν μ normalization (fun _ => 0))
-    (hP : IsStableClockProcessLaw α μ UnitInterval.clock P)
+    (hP : IsStableClockProcessLaw α μ unitInterval.clock P)
     (htight : IsTightMeasureSet (Set.range
       (fun n => RandomWalk.normalizedStepPathLaw ν normalization n))) :
     Tendsto (fun n : ℕ =>

@@ -9,12 +9,15 @@ module
 public import Probability.Sequence.Block
 public import Probability.Sequence.Filtration
 public import Probability.Sequence.IID.Basic
-public import Mathlib.Probability.Independence.Basic
+import Mathlib.Probability.Independence.Basic
 public import Mathlib.Probability.Process.Stopping
 import Probability.Sequence.IID.Blocks.Consecutive
+import MeasureTheory.Measure.Partition
 
 /-!
 # Fresh IID blocks after stopping times
+
+## Public declarations
 
 For a canonical IID sequence, any measurable event of a finite block after a
 discrete stopping time has the same conditional probability on every finite
@@ -22,8 +25,6 @@ stopping-time cell. Summing the cells gives an exact bounded-stopping-time
 factorization. This layer is about IID sequences and does not assume that
 coordinates are increments of a random walk.
 Write $\mu=\texttt{iidSequenceLaw}\,\nu$ and $X_k(\omega)=\omega(k)$.
-
-The public declarations in this file are:
 
 - `ProbabilityTheory.iidBlockEventAfter`: the event
   $\bigcup_{k\in\mathbb N}\{\tau=k\}\cap
@@ -198,16 +199,6 @@ theorem iidSequenceLaw_measure_boundedStoppingTime_iidBlockEventAfter_eq_mul
       refine ⟨?_, i.val, hτi, heventI⟩
       rw [hτi]
       exact WithTop.coe_le_coe.mpr (Nat.le_of_lt_succ i.isLt)
-  have hcellMeasure :
-      μ {sequence | τ sequence ≤ timeBound} =
-        ∑ i : Fin (timeBound + 1), μ (cell i) := by
-    rw [hboundedCells, measure_iUnion hcellPairwise hcellMeasurable]
-    simp
-  have hpairMeasure :
-      μ ({sequence | τ sequence ≤ timeBound} ∩ iidBlockEventAfter τ event) =
-        ∑ i : Fin (timeBound + 1), μ (pairEvent i) := by
-    rw [hpairUnion, measure_iUnion hpairPairwise hpairMeasurable]
-    simp
   let futureProbability : ENNReal :=
     μ ((Combinatorics.Sequence.blockCoordinates 0 length) ⁻¹' event)
   have hfactor (i : Fin (timeBound + 1)) :
@@ -217,15 +208,13 @@ theorem iidSequenceLaw_measure_boundedStoppingTime_iidBlockEventAfter_eq_mul
         ν τ hτ i.val length event hevent
   calc
     μ ({sequence | τ sequence ≤ timeBound} ∩ iidBlockEventAfter τ event) =
-        ∑ i : Fin (timeBound + 1), μ (pairEvent i) := hpairMeasure
-    _ = ∑ i : Fin (timeBound + 1), μ (cell i) * futureProbability := by
-      apply Finset.sum_congr rfl
-      intro i hi
-      exact hfactor i
-    _ = (∑ i : Fin (timeBound + 1), μ (cell i)) * futureProbability := by
-      rw [Finset.sum_mul]
+        μ (⋃ i : Fin (timeBound + 1), pairEvent i) := by rw [hpairUnion]
+    _ = μ (⋃ i : Fin (timeBound + 1), cell i) * futureProbability :=
+      measure_iUnion_eq_mul_of_disjoint_factor μ cell pairEvent
+        futureProbability hcellMeasurable hpairMeasurable hcellPairwise
+        hpairPairwise hfactor
     _ = μ {sequence | τ sequence ≤ timeBound} * futureProbability := by
-      rw [← hcellMeasure]
+      rw [← hboundedCells]
     _ = _ := by rfl
 
 /-- The event of a measurable finite block excursion after any discrete

@@ -7,11 +7,13 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Rate.Lower.Liminf
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Rate.Lower.Positivity
+import all Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.Lemmas.EscapeRateTubeLower
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Rate.Upper
 
 /-!
 # Stable horizontal-tube rate limit
+
+## Public declarations
 
 Let $(\xi_i)_{i\geq1}$ be i.i.d. with law $\nu$, put
 $S_j=\sum_{i=1}^j\xi_i$, and let $\mathbb P_\nu$ denote their product law.
@@ -27,7 +29,7 @@ public declaration is:
 - `tendsto_stableSmallDeviationRate_mul_log_openHorizontalTubeProbability_of_escapeRate`:
   $a_n\log\mathbb P_\nu(T_n)\to\frac{C}{(1/2)^\alpha}$.
 
-This is the stable horizontal-tube limit in Theorem 3, Section 4 of
+This is the stable horizontal-tube limit in Theorem 1, equation (15) of
 A. A. Mogul'skii, “Small deviations in the sample function space,”
 *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974), 755--765; English
 translation, “Small Deviations in a Space of Trajectories,” *Theory of
@@ -43,7 +45,7 @@ namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable
 
 /-- The two rate bounds identify the stable centered horizontal-tube limit
 of A. A. Mogul'skii, *Small Deviations in a Space of Trajectories*,
-Theorem 3, Section 4 (DOI 10.1137/1119081). The only scale assumption on
+Theorem 1, equation (15) (DOI 10.1137/1119081). The only scale assumption on
 `L*` is slow variation. -/
 theorem tendsto_stableSmallDeviationRate_mul_log_openHorizontalTubeProbability_of_escapeRate
     {ν μ : Measure ℝ} [IsProbabilityMeasure ν] [IsProbabilityMeasure μ]
@@ -67,7 +69,7 @@ theorem tendsto_stableSmallDeviationRate_mul_log_openHorizontalTubeProbability_o
       Real.log (openHorizontalTubeProbability (iidSequenceLaw ν)
         (1 / 2) (scale n) n).toReal) atTop
       (𝓝 (C / ((1 / 2 : ℝ) ^ α))) := by
-  have hside := stableEscapeRate_eventually_positive_and_log_cobounded
+  have hside := Discrete.stableEscapeRate_eventually_positive_and_log_cobounded
     hscale hα hα₂ hslow hrate hEscape hX hcdf hDOA htightBase
   have hlower := stableEscapeRate_liminf_lower
     hscale hα hα₂ hslow hrate hEscape hX hcdf hDOA htightBase

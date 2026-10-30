@@ -6,12 +6,20 @@ Authors: Codex
 module
 
 public import Analysis.Asymptotics.RegularVariation.Basic
-public import Mathlib.Analysis.SpecialFunctions.Pow.Continuity
-public import Mathlib.Analysis.SpecificLimits.Basic
+import Mathlib.Analysis.SpecialFunctions.Pow.Continuity
+import Mathlib.Analysis.SpecificLimits.Basic
 public import Probability.Distributions.CharacteristicFunction.Symmetrization.Tail
 
 /-!
 # Regular variation of symmetrized and original tails
+
+## Public declarations
+
+- `twoSidedTail_div_symmetrized_tendsto_half` states that if the symmetrized
+  two-sided tail is regularly varying with index $-\alpha$, then the ratio of
+  the original tail to the symmetrized tail converges to $1/2$.
+- `twoSidedTail_isRegularlyVarying_of_symmetrized` transfers regular variation
+  of the difference tail to the original law's tail with the same index.
 
 For a probability law on the real line, the absolute tail of the difference
 of two iid variables is asymptotic to twice the absolute tail of one variable

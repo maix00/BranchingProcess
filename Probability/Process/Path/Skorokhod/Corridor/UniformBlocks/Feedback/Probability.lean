@@ -7,32 +7,25 @@ Authors: WANG Yiyang
 module
 
 public import Order.Interval.RationalCoordinate.UnitInterval
-public import Probability.Independence.Feedback
+import Probability.Independence.AdaptiveChoice
 public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Feedback.Basic
-public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Feedback.FullPath
+import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Feedback.FullPath
 public import Probability.Process.Path.Skorokhod.Corridor.Segment
 public import Mathlib.Probability.Independence.Process.HasIndepIncrements.Basic
 public import Probability.Process.StationaryIncrements.Basic
-import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Independence
-import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Stationarity
+import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Probability.Independence
+import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Probability.Stationarity
 
 /-!
 # Adaptive feedback on a finite uniform path partition
+
+## Public declarations
 
 The public theorems specialize the abstract adaptive-choice inequality to
 rational paths on uniform blocks. Independent increments make the next block
 independent of the stopped prefix; stationary increments give one common
 one-block lower bound. The process need not be stable.
 
-* `HasIndepIncrements.measure_feedbackNextBlock_ge_mul` proves
-  `q * P(prefix ∈ U) ≤ P((prefix ∈ U ∩ S ∧ next ∈ V₋) ∨
-  (prefix ∈ U ∩ Sᶜ ∧ next ∈ V₊))` from independent increments and
-  coordinate measurability.
-* `HasIndepIncrements.measure_rationalPrefixFiniteChoiceNextBlock_ge_mul`
-  proves the finite-choice version: a pairwise disjoint measurable family of
-  prefix cells selects measurable next-block events, each with probability
-  at least `c`, and the union of successful choices has probability at least
-  `c` times the probability of the union of prefix cells.
 * `HasIndepIncrements.pow_le_measure_feedbackPrefix` proves
   `q ^ blocks ≤ P(rationalUniformPrefixPath X blocks blocks hblocks ∈
   rationalFeedbackPrefixSet hblocks blocks target V₊ V₋)` when each of the two
@@ -61,7 +54,7 @@ namespace ProbabilityTheory
 open MeasureTheory
 open scoped NNReal
 
-theorem HasIndepIncrements.measure_feedbackNextBlock_ge_mul
+private theorem HasIndepIncrements.measure_feedbackNextBlock_ge_mul
     {Ω : Type*} [MeasurableSpace Ω]
     {X : ℝ≥0 → Ω → ℝ}
     {P : Measure Ω} [IsProbabilityMeasure P]
@@ -103,50 +96,6 @@ theorem HasIndepIncrements.measure_feedbackNextBlock_ge_mul
   exact measure_adaptiveChoice_ge_mul P past next
     (h.indepFun_rationalPrefix_nextBlock hXmeas blocks hblocks j)
     hpast hnext U S Vplus Vminus hU hS hVplus hVminus q hqplus hqminus
-
-/-- A finite disjoint family of admissible prefix cells can select the
-next-block event according to the cell containing the prefix. If each selected
-event has probability at least `c`, then the probability of a successful
-choice is at least `c` times the probability of the union of the prefix cells.
-The independent-increment hypothesis is the only process-law assumption. -/
-theorem HasIndepIncrements.measure_rationalPrefixFiniteChoiceNextBlock_ge_mul
-    {Ω ι : Type*} [MeasurableSpace Ω] [Fintype ι]
-    {X : ℝ≥0 → Ω → ℝ}
-    {P : Measure Ω} [IsProbabilityMeasure P]
-    (h : HasIndepIncrements X P)
-    (hXmeas : ∀ t : ℝ≥0, AEMeasurable (fun ω => X t ω) P)
-    (blocks : ℕ) (hblocks : 0 < blocks) (j : Fin blocks)
-    (U V : ι → Set (↑RationalCoordinate.UnitInterval → ℝ)) (c : ENNReal)
-    (hU : ∀ i, MeasurableSet (U i))
-    (hV : ∀ i, MeasurableSet (V i))
-    (hdisj : Pairwise (fun i k => Disjoint (U i) (U k)))
-    (hc : ∀ i, c ≤ P ((fun ω q =>
-      rationalUniformBlockProcessFromTime X hblocks j q ω) ⁻¹' V i)) :
-    c * P (⋃ i, rationalUniformPrefixPath X blocks j.val hblocks ⁻¹' U i) ≤
-      P (⋃ i, (rationalUniformPrefixPath X blocks j.val hblocks ⁻¹' U i) ∩
-        ((fun ω q => rationalUniformBlockProcessFromTime X hblocks j q ω) ⁻¹'
-          V i)) := by
-  let past := rationalUniformPrefixPath X blocks j.val hblocks
-  let next : Ω → ↑RationalCoordinate.UnitInterval → ℝ :=
-    fun ω q => rationalUniformBlockProcessFromTime X hblocks j q ω
-  have hindep : past ⟂ᵢ[P] next :=
-    h.indepFun_rationalPrefix_nextBlock hXmeas blocks hblocks j
-  have hpast : AEMeasurable past P := by
-    rw [aemeasurable_pi_iff]
-    intro q
-    change AEMeasurable (fun ω =>
-      X (min (RationalCoordinate.toNNReal q)
-        (rationalUniformBlockBoundary blocks j.val hblocks)) ω - X 0 ω) P
-    exact (hXmeas _).sub (hXmeas 0)
-  have hnext : AEMeasurable next P := by
-    rw [aemeasurable_pi_iff]
-    intro q
-    change AEMeasurable (fun ω =>
-      X (rationalUniformBlockAbsoluteTime hblocks j q) ω -
-        X (rationalUniformBlockAbsoluteTime hblocks j ⊥) ω) P
-    exact (hXmeas _).sub (hXmeas _)
-  exact measure_finiteAdaptiveChoice_ge_mul P past next hindep hpast hnext
-    U V c hU hV hdisj hc
 
 /-- The measurable sign rule chooses a negative correction when the endpoint
 is nonnegative and a positive correction otherwise. This gives the exact
@@ -402,7 +351,7 @@ theorem HasIndepIncrements.linearTube_probability_pos_of_feedbackBlocks
       {ω | (X (1 / ((n : ℝ≥0) + 1)) ω - X 0 ω) -
         v / ((n : ℝ) + 1) ∈ Set.Ioo (-R) (-r)})) :
     0 < P {ω | ∀ t : unitInterval,
-      |X (UnitInterval.toNNReal t) ω - X 0 ω - v * (t : ℝ)| < η} := by
+      |X (unitInterval.toNNReal t) ω - X 0 ω - v * (t : ℝ)| < η} := by
   let success : Set Ω :=
     rationalUniformPrefixPath X (n + 1) (n + 1) (Nat.succ_pos n) ⁻¹'
       rationalFeedbackPrefixSet (Nat.succ_pos n) (n + 1)
@@ -417,7 +366,7 @@ theorem HasIndepIncrements.linearTube_probability_pos_of_feedbackBlocks
         δ (v / ((n : ℝ) + 1)) r R hplus hminus
   have hcongr : success =ᵐ[P]
       {ω | ∀ t : unitInterval,
-        |X (UnitInterval.toNNReal t) ω - X 0 ω - v * (t : ℝ)| < η} ∩ success := by
+        |X (unitInterval.toNNReal t) ω - X 0 ω - v * (t : ℝ)| < η} ∩ success := by
     filter_upwards [hcadlag] with ω hω
     apply propext
     constructor

@@ -5,7 +5,7 @@ Authors: WANG Yiyang
 -/
 
 import Probability.BranchingRandomWalk.Restart.RootedTrial.FiniteSlot.Coupling
-import Probability.BranchingProcess.GaltonWatson.Growth
+import Probability.BranchingProcess.Offspring.FieldLaw
 
 /-!
 # Finite-slot population moments
@@ -13,6 +13,40 @@ import Probability.BranchingProcess.GaltonWatson.Growth
 The active labels in the reserve construction expose a finite-population
 branching recursion. This file computes its one-step moments from the iid
 finite-slot rows.
+
+## Public declarations
+
+* `finiteSlotPopulationSizeReal` is the real-valued population size `Zₙ`.
+  Its measurable, bounded, integrable, and square-integrable properties are
+  `finiteSlotPopulationSizeReal_measurable`,
+  `finiteSlotPopulationSizeReal_bound`,
+  `finiteSlotPopulationSizeReal_integrable`, and
+  `finiteSlotPopulationSizeReal_sq_integrable`.
+* `finiteSlotChildCountReal`, `finiteSlotOffspringMeanReal`, and
+  `finiteSlotOffspringSecondMomentReal` define the one-step count and its first
+  two moments. `finiteSlotChildCountReal_measurable`,
+  `finiteSlotChildCountReal_bound`, `finiteSlotChildCountReal_integrable`, and
+  `finiteSlotOffspringSecondMomentReal_integrable` prove their regularity and
+  integrability. `finiteSlotOffspringMeanReal_eq_expectedChildCount_toReal`
+  identifies the real mean with the real value of the offspring law's extended
+  expected child count.
+* `finiteSlotRowCountSum_integral` and
+  `finiteSlotRowCountSum_sq_integral` give the first two moments of the row
+  count sum. `finiteSlotActiveLabels_condExp_succ_card_eq_mean` gives
+  `E[Zₙ₊₁ | Aₙ] = m Zₙ`; `finiteSlotActiveLabels_condExp_succ_card_sq` gives the
+  second conditional moment as the second moment of the independent row sum.
+  `finiteSlotActiveLabels_condExp_succ_card_sq_eq_pair_sum` identifies the
+  diagonal terms with `q` and the off-diagonal terms with `m²`;
+  `finiteSlotActiveLabels_condExp_succ_card_sq_eq_card_formula` gives the
+  closed form `Zₙ q + Zₙ(Zₙ - 1)m²`.
+* `finiteSlotPopulationSizeReal_integral_succ_eq` and
+  `finiteSlotPopulationSizeReal_sq_integral_succ_eq` give the integrated
+  one-step recursions. Consequently,
+  `finiteSlotPopulationSizeReal_integral_eq_pow` and
+  `finiteSlotPopulationSizeReal_sq_integral_eq_recursion` state
+  `E[Zₙ] = mⁿ` and
+  `E[Zₙ₊₁²] = m² E[Zₙ²] + (q - m²)mⁿ`, where `m` and `q` are the offspring
+  mean and second moment.
 -/
 
 open MeasureTheory
@@ -22,7 +56,6 @@ namespace ProbabilityTheory.BranchingRandomWalk
 
 open Combinatorics.Branching Combinatorics.UlamHarris
 open ProbabilityTheory.BranchingProcess
-  ProbabilityTheory.BranchingProcess.GaltonWatson
 
 /-- The real-valued size of the active finite-slot population. -/
 noncomputable def finiteSlotPopulationSizeReal
@@ -62,7 +95,7 @@ theorem finiteSlotPopulationSizeReal_integrable
     (μ : Measure (Step α X)) [IsProbabilityMeasure μ]
     (S : Step.FiniteSelection α X) (hS : Measurable S.select)
     (hcapacity : ∀ ξ, (S ξ).card ≤ 2) (n : ℕ) :
-    Integrable (fun ω => finiteSlotPopulationSizeReal S ω n) (stepFieldLaw μ) := by
+    Integrable (fun ω => finiteSlotPopulationSizeReal S ω n) (offspringFieldLaw μ) := by
   have hmeas := finiteSlotPopulationSizeReal_measurable S hS hcapacity n
   have hbound : ∀ ω, ‖finiteSlotPopulationSizeReal S ω n‖ ≤ (2 : ℝ) ^ n := by
     intro ω
@@ -79,7 +112,7 @@ theorem finiteSlotPopulationSizeReal_sq_integrable
     (μ : Measure (Step α X)) [IsProbabilityMeasure μ]
     (S : Step.FiniteSelection α X) (hS : Measurable S.select)
     (hcapacity : ∀ ξ, (S ξ).card ≤ 2) (n : ℕ) :
-    Integrable (fun ω => finiteSlotPopulationSizeReal S ω n ^ 2) (stepFieldLaw μ) := by
+    Integrable (fun ω => finiteSlotPopulationSizeReal S ω n ^ 2) (offspringFieldLaw μ) := by
   have hmeas := (finiteSlotPopulationSizeReal_measurable S hS hcapacity n).pow_const 2
   have hbound : ∀ ω,
       ‖finiteSlotPopulationSizeReal S ω n ^ 2‖ ≤ ((2 : ℝ) ^ n) ^ 2 := by
@@ -121,6 +154,59 @@ theorem finiteSlotChildCountReal_bound (ξ : Step (Fin 2) PUnit.{1}) :
 noncomputable def finiteSlotOffspringMeanReal
     (ν : ProbabilityMeasure (Step (Fin 2) PUnit.{1})) : ℝ :=
   ∫ ξ, finiteSlotChildCountReal ξ ∂(ν : Measure _)
+
+/-- The real first moment of the binary-slot offspring law is the real part of
+its extended expected child count. -/
+theorem finiteSlotOffspringMeanReal_eq_expectedChildCount_toReal
+    (ν : ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw
+      (Fin 2) PUnit.{1}) :
+    finiteSlotOffspringMeanReal ν = ν.expectedChildCount.toReal := by
+  have hcount (ξ : Step (Fin 2) PUnit.{1}) : ξ.childCount ≤ (2 : ℕ∞) := by
+    rw [Step.childCount]
+    calc
+      (support ξ).encard ≤ ENat.card (Fin 2) := Set.encard_le_card
+      _ = (2 : ℕ∞) := by simp
+  have htop (ξ : Step (Fin 2) PUnit.{1}) : ξ.childCount ≠ ⊤ := by
+    intro h
+    have hle := hcount ξ
+    rw [h] at hle
+    norm_num at hle
+  have hcountReal (ξ : Step (Fin 2) PUnit.{1}) :
+      finiteSlotChildCountReal ξ = (ξ.childCount : ℝ≥0∞).toReal := by
+    have hnat : (ξ.childCount.toNat : ℕ∞) = ξ.childCount :=
+      ENat.natCast_toNat (htop ξ)
+    change (ξ.childCount.toNat : ℝ) = _
+    calc
+      (ξ.childCount.toNat : ℝ) =
+          (((ξ.childCount.toNat : ℕ∞) : ℝ≥0∞).toReal) := by simp
+      _ = (ξ.childCount : ℝ≥0∞).toReal := by rw [hnat]
+  have hchildMeas : Measurable
+      (fun ξ : Step (Fin 2) PUnit.{1} => (ξ.childCount : ℝ≥0∞)) := by
+    exact (by fun_prop : Measurable (fun n : ℕ∞ => (n : ℝ≥0∞))).comp
+      Step.childCount_measurable
+  have hfinite (ξ : Step (Fin 2) PUnit.{1}) :
+      (ξ.childCount : ℝ≥0∞) < ∞ := by
+    rw [← ENat.natCast_toNat (htop ξ)]
+    simp
+  have hlintegral :
+      ∫⁻ ξ : Step (Fin 2) PUnit.{1}, (ξ.childCount : ℝ≥0∞) ∂(ν : Measure _) =
+        ν.expectedChildCount := by
+    rw [ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw.expectedChildCount,
+      ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw.childCountLaw_toMeasure]
+    rw [lintegral_map (by fun_prop : Measurable (fun n : ℕ∞ => (n : ℝ≥0∞)))
+      Step.childCount_measurable]
+  calc
+    finiteSlotOffspringMeanReal ν =
+        ∫ ξ : Step (Fin 2) PUnit.{1}, (ξ.childCount : ℝ≥0∞).toReal
+          ∂(ν : Measure _) := by
+          rw [finiteSlotOffspringMeanReal]
+          apply integral_congr_ae
+          exact Filter.Eventually.of_forall hcountReal
+    _ = (∫⁻ ξ : Step (Fin 2) PUnit.{1}, (ξ.childCount : ℝ≥0∞)
+          ∂(ν : Measure _)).toReal := by
+      exact integral_toReal hchildMeas.aemeasurable
+        (Filter.Eventually.of_forall hfinite)
+    _ = ν.expectedChildCount.toReal := by rw [hlintegral]
 
 theorem finiteSlotChildCountReal_integrable
     (ν : ProbabilityMeasure (Step (Fin 2) PUnit.{1})) :
@@ -356,8 +442,8 @@ theorem finiteSlotActiveLabels_condExp_succ_card_eq_mean
     (S : Step.FiniteSelection α X) (hS : Measurable S.select)
     (hcapacity : ∀ ξ, (S ξ).card ≤ 2) (n : ℕ) :
     condExp (MeasurableSpace.comap (finiteSlotActiveLabels S · n) inferInstance)
-      (stepFieldLaw μ)
-      (fun ω => ((finiteSlotActiveLabels S ω (n + 1)).card : ℝ)) =ᵐ[stepFieldLaw μ]
+      (offspringFieldLaw μ)
+      (fun ω => ((finiteSlotActiveLabels S ω (n + 1)).card : ℝ)) =ᵐ[offspringFieldLaw μ]
     fun ω => (finiteSlotActiveLabels S ω n).card *
       finiteSlotOffspringMeanReal
         (finiteOffspringLaw (⟨μ, inferInstance⟩ : ProbabilityMeasure _) S hS) := by
@@ -368,7 +454,7 @@ theorem finiteSlotActiveLabels_condExp_succ_card_eq_mean
   filter_upwards [hcond] with ω hω
   calc
     condExp (MeasurableSpace.comap (finiteSlotActiveLabels S · n) inferInstance)
-        (stepFieldLaw μ)
+        (offspringFieldLaw μ)
         (fun ω => ((finiteSlotActiveLabels S ω (n + 1)).card : ℝ)) ω =
       ∫ row, finiteSlotRowCountSum n
         (finiteSlotActiveLabels S ω n, row) ∂
@@ -392,8 +478,8 @@ theorem finiteSlotActiveLabels_condExp_succ_card_sq
     (S : Step.FiniteSelection α X) (hS : Measurable S.select)
     (hcapacity : ∀ ξ, (S ξ).card ≤ 2) (n : ℕ) :
     condExp (MeasurableSpace.comap (finiteSlotActiveLabels S · n) inferInstance)
-      (stepFieldLaw μ)
-      (fun ω => ((finiteSlotActiveLabels S ω (n + 1)).card : ℝ) ^ 2) =ᵐ[stepFieldLaw μ]
+      (offspringFieldLaw μ)
+      (fun ω => ((finiteSlotActiveLabels S ω (n + 1)).card : ℝ) ^ 2) =ᵐ[offspringFieldLaw μ]
     fun ω => ∫ row, finiteSlotRowCountSum n
       (finiteSlotActiveLabels S ω n, row) ^ 2 ∂
         Measure.infinitePi (fun _ : (Fin n → Fin 2) =>
@@ -437,7 +523,7 @@ theorem finiteSlotActiveLabels_condExp_succ_card_sq
           (2 : ℝ) ^ (n + 1) := by
       exact_mod_cast hcard
     exact (sq_le_sq₀ (by positivity) (by positivity)).2 hreal
-  have hnextIntegrable : Integrable nextSizeSq (stepFieldLaw μ) :=
+  have hnextIntegrable : Integrable nextSizeSq (offspringFieldLaw μ) :=
     Integrable.of_bound hnext.aestronglyMeasurable
       ((2 ^ (n + 1) : ℝ) ^ 2) (ae_of_all _ hnextBound)
   have hrowMeasurable : Measurable (fun p =>
@@ -458,7 +544,7 @@ theorem finiteSlotActiveLabels_condExp_succ_card_sq
         (finiteSlotActiveLabels S ω n, finiteSlotLevelSteps S ω n) ^ 2 = _
     rw [hcount]
   have hsampleIntegrable :
-      Integrable (fun ω => rowSquare (active ω, rows ω)) (stepFieldLaw μ) := by
+      Integrable (fun ω => rowSquare (active ω, rows ω)) (offspringFieldLaw μ) := by
     rw [hsample]
     exact hnextIntegrable
   letI : MeasurableSingletonClass (Option PUnit.{1}) := by
@@ -477,7 +563,7 @@ theorem finiteSlotActiveLabels_condExp_succ_card_sq
   have hcond := hind.condExp_prod_ae_eq_integral_map
     hactive hrows hrowStrong hsampleIntegrable
   rw [hsample] at hcond
-  have hrowLaw : (stepFieldLaw μ).map rows =
+  have hrowLaw : (offspringFieldLaw μ).map rows =
       Measure.infinitePi (fun _ : (Fin n → Fin 2) =>
         (finiteOffspringLaw (⟨μ, inferInstance⟩ : ProbabilityMeasure _)
           S hS : Measure (Step (Fin 2) PUnit.{1}))) := by
@@ -495,8 +581,8 @@ theorem finiteSlotActiveLabels_condExp_succ_card_sq_eq_pair_sum
     (S : Step.FiniteSelection α X) (hS : Measurable S.select)
     (hcapacity : ∀ ξ, (S ξ).card ≤ 2) (n : ℕ) :
     condExp (MeasurableSpace.comap (finiteSlotActiveLabels S · n) inferInstance)
-      (stepFieldLaw μ)
-      (fun ω => ((finiteSlotActiveLabels S ω (n + 1)).card : ℝ) ^ 2) =ᵐ[stepFieldLaw μ]
+      (offspringFieldLaw μ)
+      (fun ω => ((finiteSlotActiveLabels S ω (n + 1)).card : ℝ) ^ 2) =ᵐ[offspringFieldLaw μ]
     fun ω => ∑ u ∈ finiteSlotActiveLabels S ω n,
       ∑ v ∈ finiteSlotActiveLabels S ω n,
         if u = v then
@@ -523,8 +609,8 @@ theorem finiteSlotActiveLabels_condExp_succ_card_sq_eq_card_formula
     (S : Step.FiniteSelection α X) (hS : Measurable S.select)
     (hcapacity : ∀ ξ, (S ξ).card ≤ 2) (n : ℕ) :
     condExp (MeasurableSpace.comap (finiteSlotActiveLabels S · n) inferInstance)
-      (stepFieldLaw μ)
-      (fun ω => finiteSlotPopulationSizeReal S ω (n + 1) ^ 2) =ᵐ[stepFieldLaw μ]
+      (offspringFieldLaw μ)
+      (fun ω => finiteSlotPopulationSizeReal S ω (n + 1) ^ 2) =ᵐ[offspringFieldLaw μ]
     fun ω => finiteSlotPopulationSizeReal S ω n *
         finiteSlotOffspringSecondMomentReal
           (finiteOffspringLaw (⟨μ, inferInstance⟩ : ProbabilityMeasure _) S hS) +
@@ -537,7 +623,7 @@ theorem finiteSlotActiveLabels_condExp_succ_card_sq_eq_card_formula
     [finiteSlotActiveLabels_condExp_succ_card_sq_eq_pair_sum μ S hS hcapacity n]
     with ω hω
   change condExp (MeasurableSpace.comap (finiteSlotActiveLabels S · n) inferInstance)
-      (stepFieldLaw μ)
+      (offspringFieldLaw μ)
       (fun ω => ((finiteSlotActiveLabels S ω (n + 1)).card : ℝ) ^ 2) ω =
     (finiteSlotActiveLabels S ω n).card *
         finiteSlotOffspringSecondMomentReal
@@ -562,10 +648,10 @@ theorem finiteSlotPopulationSizeReal_integral_succ_eq
     (μ : Measure (Step α X)) [IsProbabilityMeasure μ]
     (S : Step.FiniteSelection α X) (hS : Measurable S.select)
     (hcapacity : ∀ ξ, (S ξ).card ≤ 2) (n : ℕ) :
-    ∫ ω, finiteSlotPopulationSizeReal S ω (n + 1) ∂stepFieldLaw μ =
+    ∫ ω, finiteSlotPopulationSizeReal S ω (n + 1) ∂offspringFieldLaw μ =
       finiteSlotOffspringMeanReal
         (finiteOffspringLaw (⟨μ, inferInstance⟩ : ProbabilityMeasure _) S hS) *
-      ∫ ω, finiteSlotPopulationSizeReal S ω n ∂stepFieldLaw μ := by
+      ∫ ω, finiteSlotPopulationSizeReal S ω n ∂offspringFieldLaw μ := by
   classical
   have hactive : Measurable (finiteSlotActiveLabels S · n) :=
     (finiteSlotActiveLabels_measurable S hS hcapacity n).mono
@@ -577,22 +663,22 @@ theorem finiteSlotPopulationSizeReal_integral_succ_eq
   have hcond := finiteSlotActiveLabels_condExp_succ_card_eq_mean
     μ S hS hcapacity n
   calc
-    ∫ ω, finiteSlotPopulationSizeReal S ω (n + 1) ∂stepFieldLaw μ =
+    ∫ ω, finiteSlotPopulationSizeReal S ω (n + 1) ∂offspringFieldLaw μ =
         ∫ ω, condExp (MeasurableSpace.comap (finiteSlotActiveLabels S · n)
-          inferInstance) (stepFieldLaw μ)
-          (fun ω => finiteSlotPopulationSizeReal S ω (n + 1)) ω ∂stepFieldLaw μ := by
+          inferInstance) (offspringFieldLaw μ)
+          (fun ω => finiteSlotPopulationSizeReal S ω (n + 1)) ω ∂offspringFieldLaw μ := by
         symm
         exact integral_condExp hF
     _ = ∫ ω, finiteSlotPopulationSizeReal S ω n *
         finiteSlotOffspringMeanReal
           (finiteOffspringLaw (⟨μ, inferInstance⟩ : ProbabilityMeasure _) S hS)
-          ∂stepFieldLaw μ := by
+          ∂offspringFieldLaw μ := by
         apply integral_congr_ae
         filter_upwards [hcond] with ω hω
         simpa [finiteSlotPopulationSizeReal] using hω
     _ = finiteSlotOffspringMeanReal
         (finiteOffspringLaw (⟨μ, inferInstance⟩ : ProbabilityMeasure _) S hS) *
-          ∫ ω, finiteSlotPopulationSizeReal S ω n ∂stepFieldLaw μ := by
+          ∫ ω, finiteSlotPopulationSizeReal S ω n ∂offspringFieldLaw μ := by
         rw [integral_mul_const]
         ring
 
@@ -605,15 +691,15 @@ theorem finiteSlotPopulationSizeReal_sq_integral_succ_eq
     (μ : Measure (Step α X)) [IsProbabilityMeasure μ]
     (S : Step.FiniteSelection α X) (hS : Measurable S.select)
     (hcapacity : ∀ ξ, (S ξ).card ≤ 2) (n : ℕ) :
-    ∫ ω, finiteSlotPopulationSizeReal S ω (n + 1) ^ 2 ∂stepFieldLaw μ =
+    ∫ ω, finiteSlotPopulationSizeReal S ω (n + 1) ^ 2 ∂offspringFieldLaw μ =
       (finiteSlotOffspringMeanReal
         (finiteOffspringLaw (⟨μ, inferInstance⟩ : ProbabilityMeasure _) S hS) ^ 2) *
-          ∫ ω, finiteSlotPopulationSizeReal S ω n ^ 2 ∂stepFieldLaw μ +
+          ∫ ω, finiteSlotPopulationSizeReal S ω n ^ 2 ∂offspringFieldLaw μ +
         (finiteSlotOffspringSecondMomentReal
             (finiteOffspringLaw (⟨μ, inferInstance⟩ : ProbabilityMeasure _) S hS) -
           finiteSlotOffspringMeanReal
             (finiteOffspringLaw (⟨μ, inferInstance⟩ : ProbabilityMeasure _) S hS) ^ 2) *
-          ∫ ω, finiteSlotPopulationSizeReal S ω n ∂stepFieldLaw μ := by
+          ∫ ω, finiteSlotPopulationSizeReal S ω n ∂offspringFieldLaw μ := by
   classical
   let m := finiteSlotOffspringMeanReal
     (finiteOffspringLaw (⟨μ, inferInstance⟩ : ProbabilityMeasure _) S hS)
@@ -632,36 +718,91 @@ theorem finiteSlotPopulationSizeReal_sq_integral_succ_eq
   have hsquareInt := finiteSlotPopulationSizeReal_sq_integrable μ S hS hcapacity n
   have hdifferenceInt : Integrable
       (fun ω => finiteSlotPopulationSizeReal S ω n ^ 2 -
-        finiteSlotPopulationSizeReal S ω n) (stepFieldLaw μ) :=
+        finiteSlotPopulationSizeReal S ω n) (offspringFieldLaw μ) :=
     hsquareInt.sub hsizeInt
   calc
-    ∫ ω, finiteSlotPopulationSizeReal S ω (n + 1) ^ 2 ∂stepFieldLaw μ =
+    ∫ ω, finiteSlotPopulationSizeReal S ω (n + 1) ^ 2 ∂offspringFieldLaw μ =
         ∫ ω, condExp (MeasurableSpace.comap (finiteSlotActiveLabels S · n)
-          inferInstance) (stepFieldLaw μ)
-          (fun ω => finiteSlotPopulationSizeReal S ω (n + 1) ^ 2) ω ∂stepFieldLaw μ := by
+          inferInstance) (offspringFieldLaw μ)
+          (fun ω => finiteSlotPopulationSizeReal S ω (n + 1) ^ 2) ω ∂offspringFieldLaw μ := by
         symm
         exact integral_condExp hF
     _ = ∫ ω, finiteSlotPopulationSizeReal S ω n * q +
           finiteSlotPopulationSizeReal S ω n *
-            (finiteSlotPopulationSizeReal S ω n - 1) * m ^ 2 ∂stepFieldLaw μ := by
+            (finiteSlotPopulationSizeReal S ω n - 1) * m ^ 2 ∂offspringFieldLaw μ := by
         apply integral_congr_ae
         filter_upwards [hcond] with ω hω
         simpa [m, q] using hω
     _ = ∫ ω, q * finiteSlotPopulationSizeReal S ω n +
           m ^ 2 * (finiteSlotPopulationSizeReal S ω n ^ 2 -
-            finiteSlotPopulationSizeReal S ω n) ∂stepFieldLaw μ := by
+            finiteSlotPopulationSizeReal S ω n) ∂offspringFieldLaw μ := by
         apply integral_congr_ae
         filter_upwards [] with ω
         ring
-    _ = q * ∫ ω, finiteSlotPopulationSizeReal S ω n ∂stepFieldLaw μ +
-          m ^ 2 * (∫ ω, finiteSlotPopulationSizeReal S ω n ^ 2 ∂stepFieldLaw μ -
-            ∫ ω, finiteSlotPopulationSizeReal S ω n ∂stepFieldLaw μ) := by
+    _ = q * ∫ ω, finiteSlotPopulationSizeReal S ω n ∂offspringFieldLaw μ +
+          m ^ 2 * (∫ ω, finiteSlotPopulationSizeReal S ω n ^ 2 ∂offspringFieldLaw μ -
+            ∫ ω, finiteSlotPopulationSizeReal S ω n ∂offspringFieldLaw μ) := by
         rw [integral_add (hsizeInt.const_mul q) (hdifferenceInt.const_mul (m ^ 2)),
           integral_const_mul, integral_const_mul,
           integral_sub hsquareInt hsizeInt]
     _ = m ^ 2 *
-          ∫ ω, finiteSlotPopulationSizeReal S ω n ^ 2 ∂stepFieldLaw μ +
+          ∫ ω, finiteSlotPopulationSizeReal S ω n ^ 2 ∂offspringFieldLaw μ +
         (q - m ^ 2) *
-          ∫ ω, finiteSlotPopulationSizeReal S ω n ∂stepFieldLaw μ := by ring
+          ∫ ω, finiteSlotPopulationSizeReal S ω n ∂offspringFieldLaw μ := by ring
 
+
+/-- The mean of the actual bounded selected population is the corresponding
+power of its one-step finite-slot offspring mean. -/
+theorem finiteSlotPopulationSizeReal_integral_eq_pow
+    {α X : Type*} [Countable α] [MeasurableSpace α]
+    [MeasurableSingletonClass α] [MeasurableSpace X]
+    [LinearOrder α] [LocallyFiniteOrder α] [OrderBot α] [NoMaxOrder α]
+    (μ : Measure (Step α X)) [IsProbabilityMeasure μ]
+    (S : Step.FiniteSelection α X) (hS : Measurable S.select)
+    (hcapacity : ∀ ξ, (S ξ).card ≤ 2) :
+    ∀ n, ∫ ω, finiteSlotPopulationSizeReal S ω n ∂offspringFieldLaw μ =
+      finiteSlotOffspringMeanReal
+        (finiteOffspringLaw (⟨μ, inferInstance⟩ : ProbabilityMeasure _)
+          S hS) ^ n := by
+  let ρ := finiteSlotOffspringMeanReal
+    (finiteOffspringLaw (⟨μ, inferInstance⟩ : ProbabilityMeasure _) S hS)
+  have hzero : ∀ ω, finiteSlotPopulationSizeReal S ω 0 = 1 := by
+    intro ω
+    rw [finiteSlotPopulationSizeReal, finiteSlotActiveLabels_card_eq_population_card
+      S ω hcapacity 0]
+    simp [StepSelection.population_zero]
+  intro n
+  induction n with
+  | zero =>
+      simp [hzero]
+  | succ n ih =>
+      rw [finiteSlotPopulationSizeReal_integral_succ_eq
+        μ S hS hcapacity n, ih]
+      simp [pow_succ, mul_comm]
+
+/-- The second moment of the actual bounded selected population satisfies
+the Galton--Watson recursion, with the variance of the finite-slot row law.
+-/
+theorem finiteSlotPopulationSizeReal_sq_integral_eq_recursion
+    {α X : Type*} [Countable α] [MeasurableSpace α]
+    [MeasurableSingletonClass α] [MeasurableSpace X]
+    [LinearOrder α] [LocallyFiniteOrder α] [OrderBot α] [NoMaxOrder α]
+    (μ : Measure (Step α X)) [IsProbabilityMeasure μ]
+    (S : Step.FiniteSelection α X) (hS : Measurable S.select)
+    (hcapacity : ∀ ξ, (S ξ).card ≤ 2) :
+    let ν := finiteOffspringLaw (⟨μ, inferInstance⟩ : ProbabilityMeasure _)
+      S hS
+    let ρ := finiteSlotOffspringMeanReal ν
+    let v := finiteSlotOffspringSecondMomentReal ν - ρ ^ 2
+    ∀ n, ∫ ω, finiteSlotPopulationSizeReal S ω (n + 1) ^ 2 ∂offspringFieldLaw μ =
+      ρ ^ 2 * ∫ ω, finiteSlotPopulationSizeReal S ω n ^ 2 ∂offspringFieldLaw μ +
+        v * ρ ^ n := by
+  dsimp only
+  let ν := finiteOffspringLaw (⟨μ, inferInstance⟩ : ProbabilityMeasure _) S hS
+  let ρ := finiteSlotOffspringMeanReal ν
+  let v := finiteSlotOffspringSecondMomentReal ν - ρ ^ 2
+  have hmean := finiteSlotPopulationSizeReal_integral_eq_pow μ S hS hcapacity
+  intro n
+  rw [finiteSlotPopulationSizeReal_sq_integral_succ_eq μ S hS hcapacity n,
+    hmean n]
 end ProbabilityTheory.BranchingRandomWalk

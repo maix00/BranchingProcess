@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.RandomMeasure.Poisson.JumpPath.SmallVariation
+public import Probability.RandomMeasure.Poisson.Integration.SmallValue
 import Probability.RandomMeasure.Poisson.Realization.FiniteJump
 
 /-!
@@ -16,6 +16,15 @@ On a product probability space, a small-jump Poisson random measure and an
 independent large-jump Poisson random measure can realize a small residual
 variation and an exact one-jump configuration simultaneously. This avoids a
 separate independence assumption about restrictions of one random measure.
+
+## Public declarations
+
+* `exists_independent_poissonSmallVariation_oneJump_pos` constructs a product
+  model with positive probability of small-jump variation below $\rho$, one
+  point in $J$, and no points in disjoint $B$.
+* `exists_poissonSmallVariation_oneJump_model` packages that construction as
+  two independent Poisson point families with their respective intensities.
+
 -/
 
 @[expose] public section
@@ -48,7 +57,7 @@ theorem exists_independent_poissonSmallVariation_oneJump_pos
           ENNReal.ofReal ρ ∧
       poissonRandomMeasure Kb Xb ω.2 J = 1 ∧
       poissonRandomMeasure Kb Xb ω.2 B = 0} := by
-  obtain ⟨n, hsmall⟩ := exists_poissonSmallVariation_pos hds weight band
+  obtain ⟨n, hsmall⟩ := exists_poissonSmallIntegral_pos hds weight band
     hweight hband hfinite haway ρ hρ
   have hbig := measure_poissonRandomMeasure_one_and_zero_pos
     hdb hJ hB hfinJ hfinB hJpos hdisj

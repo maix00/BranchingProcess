@@ -13,7 +13,7 @@ public import Mathlib.MeasureTheory.Measure.FiniteMeasureProd
 /-!
 # Weak convergence with a deterministic parameter
 
-The public theorem in this file is:
+## Public declarations
 
 - `MeasureTheory.ProbabilityMeasure.tendsto_map_prod_dirac_of_tendsto`:
   if $\mu_i\to\mu$, $y_i\to y$, and $g:E\times E'\to F$ is continuous,

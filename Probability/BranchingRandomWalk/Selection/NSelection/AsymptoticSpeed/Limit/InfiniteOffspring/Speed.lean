@@ -8,24 +8,58 @@ module
 public import Probability.BranchingRandomWalk.Selection.NSelection.AsymptoticSpeed.Limit.InfiniteOffspring.Repair
 public import Probability.BranchingRandomWalk.Selection.NSelection.AsymptoticSpeed.Limit.InfiniteOffspring.SubadditiveArray
 public import Probability.BranchingRandomWalk.Selection.NSelection.AsymptoticSpeed.Limit.InfiniteOffspring.Kingman.Limit
+import all Probability.BranchingRandomWalk.Selection.NSelection.AsymptoticSpeed.Limit.InfiniteOffspring.Kingman.Lemmas.ArrayStructure
 public import Probability.BranchingRandomWalk.Selection.NSelection.AsymptoticSpeed.Environment.Basic
-public import Probability.BranchingRandomWalk.Selection.NSelection.AsymptoticSpeed.Selection.Infinite
-import Probability.BranchingRandomWalk.Selection.NSelection.AsymptoticSpeed.Limit.InfiniteOffspring.Kingman.Lemmas.ArrayBounds
-import Probability.BranchingRandomWalk.Selection.NSelection.AsymptoticSpeed.Limit.InfiniteOffspring.Kingman.Lemmas.Convergence
+public import Probability.BranchingRandomWalk.Selection.NSelection.AsymptoticSpeed.Selection.InfiniteOffspring.Batch
+public import Probability.BranchingRandomWalk.Selection.NSelection.AsymptoticSpeed.Selection.InfiniteOffspring.Run
+public import Probability.BranchingRandomWalk.Selection.NSelection.AsymptoticSpeed.Selection.InfiniteOffspring.SubadditiveArray
+import all Probability.BranchingRandomWalk.Selection.NSelection.AsymptoticSpeed.Limit.InfiniteOffspring.Kingman.Lemmas.ArrayBounds
 
 /-!
 # Leftmost speed for countable-offspring selection
 
-- `infiniteOffspringRun_leftmost_ae_hasAsymptoticSpeed`: if the repaired
-  subadditive array is integrable and its normalized expectations are bounded
-  below, then the rank-zero path has an almost-sure deterministic speed.
-- `infiniteOffspringRun_leftmost_ae_hasAsymptoticSpeed_of_stepLaw`: under the
-  boundary normalization, nonempty support, and leftmost first-moment
-  assumptions on a `StepLaw`, the ordered potential-projected process has an
-  almost-sure leftmost speed.
-- `infiniteOffspringRun_leftmost_ae_hasAsymptoticSpeed_and_L1_of_stepLaw`:
-  under the same `StepLaw` assumptions, the rank-zero path has that speed and
-  its normalized error converges to zero in `L¹`.
+Fix \(N\geq 1\), a probability law \(\mu\) on steps, and its generation law
+\(\nu=\texttt{generationEnvironmentLaw }\mu\ N\). Write
+\[
+ A_\omega(s,n)=-\left[\texttt{measurableRepairedInfiniteOffspringRun } n
+   (\mathbf 0,\omega_s)\right]_0,\qquad
+ X_n(\omega)=\left[\texttt{measurableRepairedInfiniteOffspringRun } n
+   (\mathbf 0,\omega)\right]_0,
+\]
+where \(\omega_s(t)=\omega(s+t)\).
+
+## Public declarations
+
+* `infiniteOffspringRun_leftmost_ae_hasAsymptoticSpeed`: if every
+  \(A_\omega(0,n)\) is integrable and
+  \(\inf_{n\geq 0}\frac{\mathbb E_\nu[A_\omega(0,n+1)]}{n+1}>-\infty\), then
+  some deterministic \(c\in\mathbb R\) satisfies
+  \(X_n/n\to -c\) almost surely along the rank-zero path.
+* `infiniteOffspringRun_leftmost_ae_hasAsymptoticSpeed_of_stepLaw`: the same
+  almost-sure speed conclusion follows from the boundary normalization,
+  nonempty offspring support, and leftmost first-moment assumptions on a
+  `StepLaw`; the integrability and lower bound above are derived internally.
+* `infiniteOffspringRun_leftmost_ae_hasAsymptoticSpeed_and_L1_of_stepLaw`:
+  under those `StepLaw` assumptions, the same speed holds and the normalized
+  position converges in \(L^1(\nu)\):
+  \(\|X_n/n+c\|_{L^1(\nu)}\to 0\).
+
+## Mathematical source and proof route
+
+The speed and \(L^1\) conclusion formalizes WANG Yiyang,
+*Asymptotic Speed of the \(N\)-Branching Random Walk with Infinite Offspring*,
+Master's thesis, Fudan University (2026), Section 3.4.2, Lemma 3.12. WANG Yiyang's Lemma 3.12 proof applies Liggett's improved subadditive ergodic theorem. Here the
+almost-sure limit is obtained from the repository's Kingman theorem, and the
+\(L^1\) conclusion is derived from uniform integrability of the normalized
+generation envelope. Thus the Lean proof follows the same subadditive-array
+argument and records the \(L^1\) step separately.
+
+The imported Kingman result is J. F. C. Kingman, “The Ergodic Theory of
+Subadditive Stochastic Processes,” *Journal of the Royal Statistical Society:
+Series B* 30(3) (1968), 499–510, Theorem 1, DOI
+10.1111/j.2517-6161.1968.tb00749.x. The strengthened result used in WANG Yiyang's Lemma 3.12 proof is T. M. Liggett, “An Improved Subadditive Ergodic Theorem,” *The
+Annals of Probability* 13(4) (1985), 1279–1285, Theorem 1, DOI
+10.1214/aop/1176992811.
 -/
 
 open MeasureTheory Filter
@@ -36,9 +70,12 @@ open scoped ENNReal Topology
 namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Speed
 
 open Combinatorics.Branching
-open Combinatorics.Branching.Selection.NSelection
+open _root_.Combinatorics.Selection.NSelection
 open ProbabilityTheory.BranchingRandomWalk.Selection.NSelection
 
+/-- Under integrability of the repaired array and a lower bound on its
+normalized expected values, the rank-zero position has an almost-sure
+deterministic speed. -/
 theorem infiniteOffspringRun_leftmost_ae_hasAsymptoticSpeed {N : ℕ}
     (hN : 0 < N) (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
     (hboundary : HasBoundaryNormalization realPotential μ)

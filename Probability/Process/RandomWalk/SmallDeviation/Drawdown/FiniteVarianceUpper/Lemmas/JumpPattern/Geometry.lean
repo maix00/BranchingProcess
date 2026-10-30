@@ -6,17 +6,30 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.Filtration.ConditionalBlocks
-public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.Event
-public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.JumpPattern.DiscretizedMaximum
-public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.JumpPattern.Basic
-public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.TubeEvent
-public import Probability.Process.RandomWalk.Path.Block.Oscillation
-import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.JumpPattern.Setup
-import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.ConditionalBlocks
+import Probability.Process.Filtration.ConditionalBlocks
+import Probability.Process.RandomWalk.SmallDeviation.Drawdown.Event
+import all Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.JumpPattern.DiscretizedMaximum
+import all Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.JumpPattern.Basic
+import all Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.TubeEvent
+import Probability.Process.RandomWalk.Path.Block.Oscillation
+import all Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.ConditionalBlocks
 
 /-!
 # Geometry of the rounded-maximum decomposition
+
+## Internal proof declarations
+
+For $q=H/\ell$, $K=\lfloor(r+\Delta)/w\rfloor+1$, and
+\[
+  C_J=\texttt{drawdownJumpPatternTubeIntersection}
+      (H\bmod\ell)\,\ell\,J\,(r+\Delta)\,w\,(w+\Delta),
+\]
+the pathwise decomposition proves
+\[
+  \{\xi:S_i-S_j\le\Delta\ (i\le j\le H),\ S_H\le r\}
+  \subseteq
+  \bigcup_{\substack{J\subseteq\mathrm{Fin}(q)\\|J|\le K}} C_J.
+\]
 
 The proof-specific declaration is:
 
@@ -30,12 +43,38 @@ These steps follow Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk
 open Filter MeasureTheory Topology
 open scoped ENNReal
 
-@[expose] public section
+section
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown
 
 open ProbabilityTheory.RandomWalk
-open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
+
+private def drawdownBlockStart (remainder blockLength j : ℕ) : ℕ :=
+  remainder + j * blockLength
+
+private noncomputable def drawdownDiscretizedMaximum
+    (upper width : ℝ) (path : ℕ → ℝ)
+    (remainder blockLength j : ℕ) : ℝ :=
+  spatialBinLevel upper width path
+    (drawdownBlockStart remainder blockLength j)
+
+private noncomputable def drawdownRunningMaximumBins {q : ℕ}
+    (upper width : ℝ) (starts : Fin (q + 1) → ℕ)
+    (hwidth : 0 < width) (increment : ℕ → ℝ) :
+    Fin (q + 1) → Fin (⌊upper / width⌋₊ + 1) := by
+  intro j
+  refine ⟨spatialBinIndex upper width
+      (AdditivePath.displacement · increment) (starts j), ?_⟩
+  exact Nat.lt_succ_of_le
+    (spatialBinIndex_le_of_zero upper width
+      (AdditivePath.displacement · increment) (starts j) hwidth
+      (AdditivePath.displacement_zero increment))
+
+private noncomputable def drawdownRunningMaximumJumpSet {q : ℕ}
+    (upper width : ℝ) (starts : Fin (q + 1) → ℕ)
+    (hwidth : 0 < width) (increment : ℕ → ℝ) : Finset (Fin q) :=
+  spatialBinJumpSet
+    (drawdownRunningMaximumBins upper width starts hwidth increment)
 
 private def drawdownBlockTubeCondition
     (upper width delta : ℝ) (path : ℕ → ℝ)
@@ -85,14 +124,6 @@ private lemma drawdownBlockTubeCondition_implies_tubeBlockEvent
   constructor
   · nlinarith [htube'.1]
   · exact htube'.2
-
-/-- A nonincreasing discretized running maximum has at most `K + 1` jump
-indices when its levels are encoded by `K + 1` possible grid indices. -/
-private lemma drawdown_card_maximumJumpSet_le {q K : ℕ}
-    (bins : Fin (q + 1) → Fin (K + 1))
-    (hmono : ∀ i j, i ≤ j → bins j ≤ bins i) :
-    (drawdownMaximumJumpSet bins).card ≤ K + 1 := by
-  exact card_spatialBinJumpSet_le bins hmono
 
 /-- On the event in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.3, the running maximum
 can be rounded to a nondecreasing sequence of finitely many levels. Every
@@ -208,20 +239,20 @@ private lemma drawdown_event_goodBlocks_satisfy_tubeCondition
     funext j
     apply Fin.ext
     simpa [drawdownRunningMaximumBins, starts] using hindex j
-  have hjumps : drawdownMaximumJumpSet bins =
+  have hjumps : spatialBinJumpSet bins =
       drawdownRunningMaximumJumpSet (q := blocks) (threshold + delta) width
         starts hwidth increment := by
-    simp [drawdownMaximumJumpSet, drawdownRunningMaximumJumpSet, hbins]
+    simp [drawdownRunningMaximumJumpSet, hbins]
   refine ⟨?_, ?_⟩
   · rw [← hjumps]
-    exact drawdown_card_maximumJumpSet_le bins hmono
+    exact card_spatialBinJumpSet_le bins hmono
   · intro j hj
-    have hj' : j ∉ drawdownMaximumJumpSet bins := by
+    have hj' : j ∉ spatialBinJumpSet bins := by
       simpa [hjumps] using hj
     have hsame : bins j.castSucc = bins j.succ := by
       by_contra hne
       apply hj'
-      simp [drawdownMaximumJumpSet, spatialBinJumpSet, hne]
+      simp [spatialBinJumpSet, hne]
     simpa [drawdownBlockTubeCondition] using htube j hsame
 
 /-- If the pattern is the actual jump set of the rounded running maximum,

@@ -12,6 +12,8 @@ public import Analysis.SpecialFunctions.Trigonometric.FiniteSum
 /-!
 # Coordinates in the Dirichlet sine basis
 
+## Public declarations
+
 This file contains the dot-product formulas and uniform coefficient bounds
 used by the killed-kernel spectral estimates.  Let $N$ be the number of
 interior sites, let $v_k$ be the $k$th discrete sine mode, and let
@@ -79,11 +81,11 @@ theorem intervalSineMode_selfDot (interiorCount : ℕ)
     intervalSineMode interiorCount mode ⬝ᵥ
         intervalSineMode interiorCount mode =
       ((interiorCount + 1 : ℕ) : ℝ) / 2 := by
-  have h := Real.sum_sin_sq_mul_pi_div_succ
-    interiorCount (mode.val + 1) (by omega) (by omega)
+  have h := Real.sum_sin_sq_mul_pi_div
+    (interiorCount + 1) (mode.val + 1) (by omega) (by omega)
   rw [← Fin.sum_univ_eq_sum_range] at h
-  simpa only [dotProduct, intervalSineMode, intervalModeFrequency,
-    Nat.add_sub_cancel, Nat.cast_add, Nat.cast_one, sq] using h
+  simpa [dotProduct, intervalSineMode, intervalModeFrequency,
+    Nat.cast_add, Nat.cast_one, sq] using h
 
 /-- Explicit orthogonal-coordinate formula for the (not yet normalized)
 Dirichlet sine basis. -/

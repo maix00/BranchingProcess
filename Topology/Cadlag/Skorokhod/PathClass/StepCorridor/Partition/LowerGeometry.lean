@@ -11,6 +11,8 @@ public import Topology.Cadlag.Skorokhod.PathClass.StepCorridor.Partition.LowerCo
 /-!
 # Finite lower-corridor geometry for step boundaries
 
+## Public declarations
+
 Let $t_i$ be the common partition knots,
 $a_i=L.rightTrace(t_i)$, and $b_i=U.rightTrace(t_i)$. Under
 `StartAdmissible U L` and `TraceSeparated U L`, the core data can be chosen

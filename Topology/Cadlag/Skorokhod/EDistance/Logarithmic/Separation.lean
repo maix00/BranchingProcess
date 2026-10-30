@@ -7,13 +7,21 @@ Authors: WANG Yiyang
 module
 
 public import Topology.Cadlag.Skorokhod.EDistance.Logarithmic.Basic
+import all Topology.Cadlag.Skorokhod.EDistance.Logarithmic.Lemmas.ModulusThreshold
 
 /-!
 # Separation for the logarithmic Skorokhod distance
 
+## Public declarations
+
+- `Skorokhod.billingsleyEDist_eq_zero` characterizes zero distance by path
+  equality: $d_B(f,g)=0\iff f=g$ for metric-valued càdlàg paths.
+- `Skorokhod.exists_timeChange_billingsleyCost_lt` extracts a time-change
+  witness from a strict bound on the infimum distance.
 The clock bound transfers small logarithmic distance to small usual `J₁`
 distance. Right continuity then identifies the paths, including at jump times
-by comparing at a slightly later time.
+by comparing at a slightly later time. The scalar threshold selection used by
+this proof and the path-space metric instance is kept under `Logarithmic/Lemmas/`.
 -/
 
 @[expose] public section
@@ -29,40 +37,9 @@ theorem exists_timeChange_billingsleyCost_lt {E : Type*} [EMetricSpace E]
     ∃ change : TimeChange, billingsleyCost f g change < ε := by
   simpa only [billingsleyEDist, iInf_lt_iff] using h
 
-/-- Choose a positive logarithmic cost threshold below a prescribed tolerance
-whose `J₁` conversion modulus is also below that tolerance. -/
-theorem exists_small_logarithmicJ1_bound {tolerance : ℝ}
-    (htolerance : 0 < tolerance) :
-    ∃ bound : ℝ, 0 < bound ∧ bound < tolerance ∧
-      logarithmicJ1Modulus bound < tolerance := by
-  have hnear :
-      {x : ℝ | logarithmicJ1Modulus x ∈ Metric.ball (0 : ℝ) tolerance} ∈
-        𝓝 (0 : ℝ) := by
-    have hcont : ∀ᶠ x : ℝ in 𝓝 (0 : ℝ),
-        logarithmicJ1Modulus x ∈ Metric.ball (0 : ℝ) tolerance := by
-      simpa [logarithmicJ1Modulus_zero] using
-        continuous_logarithmicJ1Modulus.continuousAt.eventually
-          (Metric.ball_mem_nhds (logarithmicJ1Modulus 0) htolerance)
-    filter_upwards [hcont] with x hx
-    exact hx
-  obtain ⟨radius, hradius, hball⟩ := Metric.mem_nhds_iff.mp hnear
-  let bound : ℝ := min (radius / 2) (tolerance / 2)
-  have hbound : 0 < bound := by
-    dsimp [bound]
-    exact lt_min (by positivity) (by positivity)
-  refine ⟨bound, hbound, ?_, ?_⟩
-  · dsimp [bound]
-    exact (min_le_right _ _).trans_lt (half_lt_self htolerance)
-  · have hbound_radius : bound ∈ Metric.ball (0 : ℝ) radius := by
-      rw [Metric.mem_ball, Real.dist_eq]
-      simp only [sub_zero, abs_of_pos hbound]
-      dsimp [bound]
-      exact (min_le_left _ _).trans_lt (half_lt_self hradius)
-    have hmod_ball := hball hbound_radius
-    change logarithmicJ1Modulus bound ∈ Metric.ball (0 : ℝ) tolerance at hmod_ball
-    rw [Metric.mem_ball, Real.dist_eq] at hmod_ball
-    exact (le_abs_self _).trans_lt (by simpa [sub_zero] using hmod_ball)
-
+/-- Zero Billingsley distance forces equality of metric-valued càdlàg paths.
+The proof transfers the distance bound to the ordinary `J₁` metric and uses
+right continuity to compare values at jump times. -/
 theorem billingsleyEDist_eq_zero_imp {E : Type*} [MetricSpace E]
     {f g : CadlagPath unitInterval E} (hzero : billingsleyEDist f g = 0) :
     f = g := by
@@ -71,7 +48,8 @@ theorem billingsleyEDist_eq_zero_imp {E : Type*} [MetricSpace E]
   apply eq_of_forall_dist_le
   intro ε hε
   by_cases ht : t = ⊤
-  · obtain ⟨bound, hbound, hboundε, _⟩ := exists_small_logarithmicJ1_bound hε
+  · obtain ⟨bound, hbound, hboundε, _⟩ :=
+      Separation.Lemmas.exists_small_logarithmicJ1_bound hε
     obtain ⟨change, hchange⟩ := exists_timeChange_billingsleyCost_lt
       (f := f) (g := g) (ε := ENNReal.ofReal bound) (by
         rw [hzero]
@@ -107,7 +85,7 @@ theorem billingsleyEDist_eq_zero_imp {E : Type*} [MetricSpace E]
       dsimp [tolerance]
       exact lt_min hthird (lt_min (sub_pos.2 hstReal) (sub_pos.2 hsMinReal))
     obtain ⟨bound, hbound, hboundTolerance, hmodTolerance⟩ :=
-      exists_small_logarithmicJ1_bound htolerance
+      Separation.Lemmas.exists_small_logarithmicJ1_bound htolerance
     have hchangeExists : billingsleyEDist f g < ENNReal.ofReal bound := by
       rw [hzero]
       exact ENNReal.ofReal_pos.2 hbound

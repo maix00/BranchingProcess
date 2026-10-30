@@ -6,27 +6,29 @@ Authors: WANG Yiyang
 
 module
 
-public import Mathlib.Basic.Real.Basic
-public import Mathlib.MeasureTheory.Measure.MeasureSpaceDef
-public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
-public import Algebra.BigOperators.AdditivePath.Basic
-public import Probability.Distributions.Moments.Real
-public import Probability.Sequence.Filtration
-public import Probability.Sequence.IID.Basic
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.Binning
-public import Probability.Process.RandomWalk.Path.Block.Partition.TailMerged
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.BlockTube
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.EndpointWindow
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.EndpointWindow.Basic
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.EndpointWindow.Reflection
-import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Concrete.Lower.Conditional
-import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Concrete.Upper.Conditional
-public import Analysis.Asymptotics.Sequence.SequentialEventually
+import Mathlib.Basic.Real.Basic
+import Mathlib.MeasureTheory.Measure.MeasureSpaceDef
+import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
+import Algebra.BigOperators.AdditivePath.Basic
+import Probability.Distributions.Moments.Real
+import Probability.Sequence.Filtration
+import Probability.Sequence.IID.Basic
+import all Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.Binning
+import Combinatorics.Sequence.TailMergedBlock
+import all Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.BlockTube
+import all Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.EndpointWindow
+import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.EndpointWindow.Basic
+import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.EndpointWindow.Reflection
+import all Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Concrete.Lower.Conditional
+import all Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Concrete.Upper.Conditional
+import Analysis.Asymptotics.Sequence.UniformThreshold
 
 /-!
 # Uniform tilted-tube bounds with fixed geometric margins
 
-The module-visible supporting lemma in this file is:
+## Internal proof declarations
+
+The supporting lemma in this file is:
 
 - `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.exists_uniform_concreteStaircase_bounds_of_powerBlock`: for fixed
   interior-window fractions, margins, and rate parameters, a single
@@ -38,7 +40,7 @@ This is the passage from the sequential estimates to the common threshold
 used in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, proof of Lemma 3.5.
 -/
 
-@[expose] public section
+section
 
 open Filter MeasureTheory ProbabilityTheory
 open scoped NNReal Topology

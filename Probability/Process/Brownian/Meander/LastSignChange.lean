@@ -7,14 +7,20 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.Brownian.Meander.LastZeroLaw
-public import Probability.Process.Brownian.Reflection.Path.IntervalMinimum
-public import Probability.Process.TimeGrid.Dense.NonnegativeRationals
+public import Probability.Process.Brownian.PathLaw.ContinuousModification
+public import Probability.Process.Path.Scaling.FiniteHorizon
+public import Mathlib.Probability.BrownianMotion.Basic
+public import Mathlib.Topology.UnitInterval
+public import Topology.ContinuousMap.LastZero
+import Probability.Process.Brownian.Meander.LastZero
+import Probability.Process.Brownian.Reflection.Path.IntervalMinimum
+import Topology.Order.NNReal.Rational
 public import Topology.ContinuousMap.LastSignChange
 
 /-!
 # The last sign change of a Brownian path
 
-The public theorem in this file is:
+## Public declarations
 
 - `ProbabilityTheory.IsBrownianReal.ae_lastSignChange_eq_lastZero`:
   for a Brownian path on $[0,1]$, Bolthausen's last-sign-change time
@@ -50,17 +56,17 @@ open scoped NNReal
 
 private lemma lastSignChange_eq_lastZero_of_intervalMinima
     (f : C(ℝ≥0, ℝ)) (hf0 : f 0 = 0) (hf1 : f 1 ≠ 0)
-    (hmin : ∀ q : ℚ≥0, nonnegativeRationalTime q < 1 →
-      intervalMinimum f (nonnegativeRationalTime q) 1 ≠ 0 ∧
-      intervalMinimum (-f) (nonnegativeRationalTime q) 1 ≠ 0) :
+    (hmin : ∀ q : ℚ≥0, (q : ℝ≥0) < 1 →
+      intervalMinimum f ((q : ℝ≥0)) 1 ≠ 0 ∧
+      intervalMinimum (-f) ((q : ℝ≥0)) 1 ≠ 0) :
     ContinuousMap.firstNoSignChangeStart (restrictPathToUnitInterval f) =
       ContinuousMap.lastZero (restrictPathToUnitInterval f) := by
   let u := restrictPathToUnitInterval f
   have hu0 : u 0 = 0 := by
-    have htime : UnitInterval.toNNReal (0 : unitInterval) = 0 := by
+    have htime : unitInterval.toNNReal (0 : unitInterval) = 0 := by
       apply NNReal.coe_injective
       rfl
-    change f (UnitInterval.toNNReal 0) = 0
+    change f (unitInterval.toNNReal 0) = 0
     rw [htime]
     exact hf0
   have hgzero : u (ContinuousMap.lastZero u) = 0 :=
@@ -73,29 +79,28 @@ private lemma lastSignChange_eq_lastZero_of_intervalMinima
   by_contra hnot
   have hlt : ContinuousMap.firstNoSignChangeStart u <
       ContinuousMap.lastZero u := lt_of_not_ge hnot
-  have hltNN : UnitInterval.toNNReal
+  have hltNN : unitInterval.toNNReal
       (ContinuousMap.firstNoSignChangeStart u) <
-        UnitInterval.toNNReal (ContinuousMap.lastZero u) := by
+        unitInterval.toNNReal (ContinuousMap.lastZero u) := by
     exact_mod_cast hlt
-  obtain ⟨q, hτq, hqg⟩ := exists_nonnegativeRationalTime_between hltNN
-  let r := nonnegativeRationalTime q
-  have hr1 : r < 1 := hqg.trans_le
-    (UnitInterval.toNNReal_le_one (ContinuousMap.lastZero u))
+  obtain ⟨q, hτq, hqg⟩ := NNRat.exists_between_nnreal hltNN
+  let r := (q : ℝ≥0)
+  have hlastBound : unitInterval.toNNReal (ContinuousMap.lastZero u) ≤ 1 := by
+    exact_mod_cast (ContinuousMap.lastZero u).property.2
+  have hr1 : r < 1 := hqg.trans_le hlastBound
   have hminq := hmin q hr1
-  have hzero : f (UnitInterval.toNNReal (ContinuousMap.lastZero u)) = 0 :=
+  have hzero : f (unitInterval.toNNReal (ContinuousMap.lastZero u)) = 0 :=
     hgzero
   have hminle : intervalMinimum f r 1 ≤ 0 := by
     rw [← hzero]
-    exact intervalMinimum_le f hqg.le
-      (UnitInterval.toNNReal_le_one (ContinuousMap.lastZero u))
+    exact intervalMinimum_le f hqg.le hlastBound
   have hnegminle : intervalMinimum (-f) r 1 ≤ 0 := by
     rw [← neg_zero, ← hzero]
-    exact intervalMinimum_le (-f) hqg.le
-      (UnitInterval.toNNReal_le_one (ContinuousMap.lastZero u))
+    exact intervalMinimum_le (-f) hqg.le hlastBound
   have hsign {t : ℝ≥0} (hrt : r ≤ t) (ht1 : t ≤ 1) :
       0 ≤ f t * f 1 := by
     let s : unitInterval := ⟨(t : ℝ), ⟨t.property, by exact_mod_cast ht1⟩⟩
-    have hsTime : UnitInterval.toNNReal s = t := by
+    have hsTime : unitInterval.toNNReal s = t := by
       apply NNReal.coe_injective
       rfl
     have hτs : ContinuousMap.firstNoSignChangeStart u < s := by
@@ -108,7 +113,8 @@ private lemma lastSignChange_eq_lastZero_of_intervalMinima
         exact le_sSup hneg
       exact (not_le_of_gt hτs) hsle
     have hnonneg : 0 ≤ u s * u ⊤ := le_of_not_gt hnotOpp
-    simpa [u, restrictPathToUnitInterval, hsTime] using hnonneg
+    have htop : unitInterval.toNNReal ⊤ = 1 := unitInterval.toNNReal_one
+    simpa [u, restrictPathToUnitInterval, hsTime, htop] using hnonneg
   rcases lt_or_gt_of_ne hf1 with hf1neg | hf1pos
   · obtain ⟨t, hrt, ht1, hvalue⟩ :=
       exists_intervalMinimum_eq (-f) hr1.le
@@ -145,10 +151,10 @@ theorem IsBrownianReal.ae_lastSignChange_eq_lastZero
   have hpath : Measurable pathB :=
     hB.measurable_continuousPathMap hmeasurable
   have hfixed (q : ℚ≥0) :
-      ∀ᵐ ω ∂P, nonnegativeRationalTime q < 1 →
-        intervalMinimum (pathB ω) (nonnegativeRationalTime q) 1 ≠ 0 ∧
-        intervalMinimum (-(pathB ω)) (nonnegativeRationalTime q) 1 ≠ 0 := by
-    let r := nonnegativeRationalTime q
+      ∀ᵐ ω ∂P, (q : ℝ≥0) < 1 →
+        intervalMinimum (pathB ω) ((q : ℝ≥0)) 1 ≠ 0 ∧
+        intervalMinimum (-(pathB ω)) ((q : ℝ≥0)) 1 ≠ 0 := by
+    let r := (q : ℝ≥0)
     by_cases hr1 : r < 1
     · have hset : MeasurableSet
           {f : C(ℝ≥0, ℝ) | intervalMinimum f r 1 = 0} :=
@@ -175,9 +181,9 @@ theorem IsBrownianReal.ae_lastSignChange_eq_lastZero
       exact fun _ => ⟨hω, hωNeg⟩
     · exact Filter.Eventually.of_forall fun _ h => (hr1 h).elim
   have hall : ∀ᵐ ω ∂P, ∀ q : ℚ≥0,
-      nonnegativeRationalTime q < 1 →
-        intervalMinimum (pathB ω) (nonnegativeRationalTime q) 1 ≠ 0 ∧
-        intervalMinimum (-(pathB ω)) (nonnegativeRationalTime q) 1 ≠ 0 :=
+      (q : ℝ≥0) < 1 →
+        intervalMinimum (pathB ω) ((q : ℝ≥0)) 1 ≠ 0 ∧
+        intervalMinimum (-(pathB ω)) ((q : ℝ≥0)) 1 ≠ 0 :=
     ae_all_iff.mpr hfixed
   have hend : ∀ᵐ ω ∂P, B 1 ω ≠ 0 := by
     exact (hB.hasLaw_eval 1).ae_iff

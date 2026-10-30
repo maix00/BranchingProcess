@@ -6,13 +6,17 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.Brownian.Independence.FirstPassage
-public import Probability.Process.Path.FirstPassage.DescendingRestart
+public import Probability.Process.Path.Transform.Continuous
+
+public import Probability.Process.Brownian.PathLaw.ContinuousPathLaw
+public import Probability.Process.Path.FirstPassage.Descending
+import Probability.Process.Brownian.Independence.FirstPassage
+import Probability.Process.Path.FirstPassage.DescendingRestart
 
 /-!
 # Increments of Brownian descending hitting times
 
-The public theorems in this file are:
+## Public declarations
 
 - `ProbabilityTheory.IsBrownianReal.indepFun_descendingHittingTime_increment`:
   for $x,y>0$, the increment $\tau_{x+y}-\tau_x$ is independent of

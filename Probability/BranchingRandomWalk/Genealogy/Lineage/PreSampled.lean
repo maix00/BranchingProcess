@@ -6,7 +6,6 @@ Authors: WANG Yiyang
 
 module
 
-public import Combinatorics.UlamHarris.Split
 public import Probability.BranchingRandomWalk.Timing.Splits.Declared
 public import Probability.Process.HittingTime.ObservableCandidates
 public import Probability.Process.Adapted.Recursion
@@ -14,10 +13,29 @@ public import Probability.Process.Adapted.Recursion
 /-!
 # Pre-sampled reserve lineages
 
+## Public declarations
+
 All potential reserve lineages are defined on one marked tree before any trial
 outcome is inspected.  Trial labels, child slots, and marks are independent
 type parameters.  Countability is requested only by the measurable random
 coordinate and countable-union arguments that use it.
+
+- `ReserveLineages Trial α M` packages a path `path i n ω`, an update map
+  `step i (address, mark)`, the depth identity `|path i n ω| = n`, and the
+  recursion that reads the mark at the current address.
+- `ReserveLineages.path_adapted_of_countable_range` and
+  `ReserveLineages.path_adapted` show that the path at time `n` is measurable
+  in the generation-`n` domain flow.
+- `ReserveLineages.sigma` is the first declaration time; its stopping-time
+  results are `sigma_isStoppingTime`,
+  `sigma_isStoppingTime_of_countable_range`, and `all_sigma_isStoppingTime`.
+- `first_success_isStoppingTime` and
+  `first_success_within_isStoppingTime` give stopping times for the first
+  successful trial, respectively over a countable trial type and a specified
+  countable subset.
+- `successfulWithin_measurable` and `failureWithin_measurable` show that the
+  corresponding success and failure events by generation `T` are measurable
+  at generation `T`.
 -/
 
 open MeasureTheory

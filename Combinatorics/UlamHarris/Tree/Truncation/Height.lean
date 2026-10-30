@@ -28,16 +28,26 @@ below it, which puts the supremum strictly below.
 
 ## Public declarations
 
-- `agreeLevels T T' = {n | T.truncate n = T'.truncate n}`; zero belongs to
-  this set and it is downward closed.
-- `heightCongr T T' = ⨆ n ∈ agreeLevels T T', (n : ℕ∞)` and
-  `coe_le_heightCongr_iff` characterizes its finite levels.
-- `heightCongr_self` and `heightCongr_eq_top_iff` state that equal trees have
-  height `⊤`, and height `⊤` characterizes equality.
-- `heightCongr_comm` and `heightCongr_ultra` give symmetry and the ultrametric
-  inequality `min (heightCongr T₁ T₂) (heightCongr T₂ T₃) ≤ heightCongr T₁ T₃`.
-- `ext_of_forall_truncate_eq` reconstructs a tree from all its finite-depth
-  truncations.
+* `Combinatorics.UlamHarris.Tree.agreeLevels T T' =
+  {n | T.truncate n = T'.truncate n}`;
+  `Combinatorics.UlamHarris.Tree.mem_agreeLevels_iff` characterizes membership,
+  `Combinatorics.UlamHarris.Tree.truncate_zero_eq` gives equality at level zero,
+  `Combinatorics.UlamHarris.Tree.zero_mem_agreeLevels` places `0` in this set,
+  and `Combinatorics.UlamHarris.Tree.agreeLevels_downward` states its downward
+  closure.
+* `Combinatorics.UlamHarris.Tree.heightCongr T T' =
+  ⨆ n ∈ agreeLevels T T', (n : ℕ∞)`;
+  `Combinatorics.UlamHarris.Tree.coe_le_heightCongr_iff` states
+  `(n : ℕ∞) ≤ heightCongr T T' ↔ n ∈ agreeLevels T T'`.
+* `Combinatorics.UlamHarris.Tree.heightCongr_comm`,
+  `Combinatorics.UlamHarris.Tree.heightCongr_self`, and
+  `Combinatorics.UlamHarris.Tree.heightCongr_eq_top_iff` state symmetry,
+  `heightCongr T T = ⊤`, and
+  `heightCongr T T' = ⊤ ↔ T = T'`.
+* `Combinatorics.UlamHarris.Tree.heightCongr_ultra` states
+  `min (heightCongr T₁ T₂) (heightCongr T₂ T₃) ≤ heightCongr T₁ T₃`;
+  `Combinatorics.UlamHarris.Tree.ext_of_forall_truncate_eq` states that
+  equality of all finite truncations implies equality of trees.
 -/
 
 @[expose] public section

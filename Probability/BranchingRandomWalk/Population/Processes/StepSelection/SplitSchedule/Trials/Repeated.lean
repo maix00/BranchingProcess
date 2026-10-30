@@ -23,6 +23,14 @@ roots with the active particles of the process started from
 `N₀ < N` particles. That process-level identification, and the corresponding
 random-time identification with the exact-`N` ranked environment, remain the
 bridge needed before applying the Kingman interface.
+## Public declarations
+
+* `firstSuccess_ne_top_ae_of_positive` proves that independent fixed-age
+  trials with positive one-trial success probability have a finite first
+  success almost surely.
+* `ae_exists_successful_root_of_positive` extracts a successful root almost
+  surely, and `roots_of_firstSuccess_ae_mem_successful_population` places the
+  selected root family inside that successful population almost surely.
 -/
 
 open MeasureTheory ProbabilityTheory
@@ -49,12 +57,12 @@ theorem firstSuccess_ne_top_ae_of_positive
     (root : ℕ → Root) (hroot : Function.Injective root)
     (duration target : ℕ) (μ : Measure (Step α X))
     [IsProbabilityMeasure μ]
-    (hpositive : 0 < ProbabilityTheory.BranchingRandomWalk.stepFieldLaw
+    (hpositive : 0 < ProbabilityTheory.BranchingProcess.offspringFieldLaw
       (α := α) μ (successSet R duration target)) :
     ∀ᵐ ω ∂RootIndexed.stepFieldLaw (Root := Root) μ,
       firstSuccess R root duration target ω ≠ ⊤ := by
   let ν := RootIndexed.stepFieldLaw (Root := Root) μ
-  let p := ProbabilityTheory.BranchingRandomWalk.stepFieldLaw
+  let p := ProbabilityTheory.BranchingProcess.offspringFieldLaw
     (α := α) μ (successSet R duration target)
   let bad : Set (RootIndexed.StepField Root α X) :=
     {ω | firstSuccess R root duration target ω = ⊤}
@@ -115,7 +123,7 @@ theorem ae_exists_successful_root_of_positive
     (root : ℕ → Root) (hroot : Function.Injective root)
     (duration target : ℕ) (μ : Measure (Step α X))
     [IsProbabilityMeasure μ]
-    (hpositive : 0 < ProbabilityTheory.BranchingRandomWalk.stepFieldLaw
+    (hpositive : 0 < ProbabilityTheory.BranchingProcess.offspringFieldLaw
       (α := α) μ (successSet R duration target)) :
     ∀ᵐ ω ∂RootIndexed.stepFieldLaw (Root := Root) μ,
       ∃ k, target ≤
@@ -138,7 +146,7 @@ theorem roots_of_firstSuccess_ae_mem_successful_population
     (duration target : ℕ) (fallback : Fin N → Root × TreeNode α)
     (hNtarget : N ≤ target) (μ : Measure (Step α X))
     [IsProbabilityMeasure μ]
-    (hpositive : 0 < ProbabilityTheory.BranchingRandomWalk.stepFieldLaw
+    (hpositive : 0 < ProbabilityTheory.BranchingProcess.offspringFieldLaw
       (α := α) μ (successSet R duration target)) :
     ∀ᵐ ω ∂RootIndexed.stepFieldLaw (Root := Root) μ,
       ∃ k : ℕ, firstSuccess R root duration target ω = k ∧

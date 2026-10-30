@@ -7,16 +7,25 @@ Authors: WANG Yiyang
 module
 
 public import Mathlib.Topology.UnitInterval
-public import Probability.Process.RandomWalk.Path.Interpolation.Path.MaximalJump
+public import Probability.Process.RandomWalk.Path.Interpolation.Core
+public import Probability.Process.RandomWalk.Path.MaximalJump.FiniteVariance
 public import Probability.Process.RandomWalk.Path.Skorokhod.Core
 public import Probability.ConvergenceInDistribution.Approximation.AsymptoticEquivalence
 
 /-!
 # Distributional transfer between random-walk path realizations
 
-At diffusive scale and under a finite second moment, convergence in
-distribution of the polygonal interpolation implies the same convergence for
-the right-continuous step realization in Skorokhod space.
+## Public declarations
+
+- `tendstoInDistribution_normalizedLinearCadlagPath_of_continuous` maps convergence in
+  distribution of the polygonal paths in $C([0,1],\mathbb R)$ to convergence of their images in
+  the càdlàg Skorokhod space under the canonical continuous inclusion.
+- `tendstoInDistribution_normalizedStepPath_of_linear` transfers convergence in distribution
+  from the càdlàg polygonal paths to the right-continuous step paths when the increment law has a
+  finite second moment.
+- `tendstoInDistribution_normalizedStepPath_of_continuousLinear` gives the resulting standard
+  Donsker formulation directly from convergence of polygonal paths in $C([0,1],\mathbb R)$ and a
+  finite second moment.
 -/
 
 open Filter MeasureTheory ProbabilityTheory

@@ -7,21 +7,52 @@ Authors: WANG Yiyang
 module
 
 public import Analysis.Asymptotics.RegularVariation.Integral.Basic
-public import Probability.Distributions.Stable.Attraction.Norming.Tail
+public import Probability.Distributions.Stable.Attraction.Norming.Asymptotics.Tail
 public import Probability.Distributions.Moments.Truncated.TailIntegral
 public import Probability.Process.RandomWalk.Path.Truncation.Moment
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Bounds
 
 /-!
-# Truncation bias below the stable index one
+# Stable-domain truncation bias and centering
 
 For `0 < α < 1`, the uncentered stable-domain convention is compatible with
 hard truncation: its mean is bounded by a capped first moment, whose tail
 integral is controlled by Karamata's theorem. The index-one centering
 convention is intentionally left as a separate input.
+## Public declarations
+
+- `truncationBiasConstant α r` is
+  $r\frac{2-\alpha}{\alpha}\frac{r^{-\alpha}}{1-\alpha}$, the limit of
+  $\frac{n}{a_n}\int \min(|x|,r a_n)\,\nu(dx)$ for $0<\alpha<1$.
+- `discardedTailBiasConstant α r` is
+  $\frac{2-\alpha}{\alpha-1}r^{1-\alpha}$, the limit of
+  $\frac{n}{a_n}\int_{|x|>r a_n}|x|\,\nu(dx)$ for $1<\alpha<2$.
+- `IsMogulskiiIndexOneCentered ν B` means
+  $n\int \sin(x/B_n)\,\nu(dx)\to0$. Under this condition and stable
+  index $1$, eventually
+  $\frac{n|m_\nu(rB_n)|}{B_n}\le C_1(r)$, where
+  `indexOneTruncationBiasConstant r` is $C_1(r)=r^2/6+r^{-1}+1$. The
+  theorem `IsMogulskiiIndexOneCentered.of_reindexedNorming` transfers the
+  condition when $m_n/n\to d^{-1}$ with $d>0$ and the source norming is
+  eventually $B_{m_n}$.
+
+- `IsStableNorming.eventually_nat_mul_abs_truncatedIncrementMean_div_le_of_index_one`
+  gives the preceding index-one bound. For each of the three regimes,
+  `eventually_truncatedIncrementBias_le_of_stableNorming_of_index_one`,
+  `eventually_truncatedIncrementBias_le_of_stableNorming_of_index_gt_one`,
+  and `eventually_truncatedIncrementBias_le_of_stableNorming_of_index_lt_one`
+  convert its normalized limit into
+  $\frac{\ell_n|m_\nu(r a_n)|}{a_n}\le\theta/2$ when
+  $\ell_n/n\le\delta$ eventually and the corresponding bias margin is
+  $\delta C<\theta/2$.
+- `IsStableNorming.tendsto_nat_mul_discardedAbsFirstMoment_div_normalization_of_regularlyVaryingTail`
+  and `IsStableNorming.tendsto_nat_mul_cappedAbsFirstMoment_div_normalization_of_regularlyVaryingTail`
+  state the two limits above for the discarded tail and capped first moment.
+
 -/
 
 open Filter MeasureTheory Set
+open scoped Topology
 
 @[expose] public section
 
@@ -49,6 +80,77 @@ def IsMogulskiiIndexOneCentered (ν : Measure ℝ) (normalization : ℕ → ℝ)
   Tendsto (fun n : ℕ => (n : ℝ) *
     (∫ x, Real.sin (x / normalization n) ∂ν)) atTop (nhds 0)
 
+/-- Reindexing the normalization preserves the index-one sine-centering
+condition. -/
+theorem IsMogulskiiIndexOneCentered.of_reindexedNorming
+    {ν : Measure ℝ} {normalization sourceNormalization : ℕ → ℝ}
+    {d : ℝ} (hd : 0 < d)
+    (m : ℕ → ℕ)
+    (hmratio : Tendsto (fun n => (m n : ℝ) / (n : ℝ)) atTop (nhds d⁻¹))
+    (hmPos : ∀ n, 0 < m n)
+    (heq : sourceNormalization =ᶠ[atTop] fun n => normalization (m n))
+    (hcenter : IsMogulskiiIndexOneCentered ν normalization) :
+    IsMogulskiiIndexOneCentered ν sourceNormalization := by
+  have hmPosEvent : ∀ᶠ n : ℕ in atTop, 0 < m n :=
+    Eventually.of_forall hmPos
+  have hsin : Tendsto (fun n : ℕ => (m n : ℝ) *
+      (∫ x, Real.sin (x / normalization (m n)) ∂ν)) atTop (nhds 0) := by
+    have hmTendsto : Tendsto m atTop atTop := by
+      have hhalf : d⁻¹ / 2 < d⁻¹ := by
+        have hinv : 0 < d⁻¹ := inv_pos.mpr hd
+        linarith
+      have hbound : ∀ᶠ n : ℕ in atTop, (n : ℝ) / (2 * d) ≤ (m n : ℝ) := by
+        filter_upwards [hmratio.eventually (Ioi_mem_nhds hhalf),
+          eventually_gt_atTop (0 : ℕ)] with n hn hn0
+        have hnR : 0 < (n : ℝ) := by exact_mod_cast hn0
+        have hmul : d⁻¹ / 2 * (n : ℝ) < (m n : ℝ) :=
+          (lt_div_iff₀ hnR).mp hn
+        have hcoef : d⁻¹ / 2 * (n : ℝ) = (n : ℝ) / (2 * d) := by
+          field_simp [hd.ne']
+        rw [← hcoef]
+        exact hmul.le
+      have hlinear : Tendsto (fun n : ℕ => (n : ℝ) / (2 * d)) atTop atTop := by
+        simpa only [div_eq_mul_inv, mul_comm] using
+          (tendsto_natCast_atTop_atTop.const_mul_atTop (by positivity :
+            0 < (2 * d)⁻¹))
+      have hreal : Tendsto (fun n => (m n : ℝ)) atTop atTop :=
+        tendsto_atTop_mono' atTop hbound hlinear
+      refine tendsto_atTop.2 ?_
+      intro k
+      filter_upwards [hreal.eventually (eventually_gt_atTop (k : ℝ))] with n hn
+      exact_mod_cast hn.le
+    simpa only [Function.comp_def] using hcenter.comp
+      hmTendsto
+  have hnm : Tendsto (fun n : ℕ => (n : ℝ) / (m n : ℝ)) atTop (nhds d) := by
+    have hinv := hmratio.inv₀ (by positivity : d⁻¹ ≠ 0)
+    have heq' : (fun n => ((m n : ℝ) / (n : ℝ))⁻¹) =ᶠ[atTop]
+        fun n => (n : ℝ) / (m n : ℝ) := by
+      filter_upwards [hmPosEvent, eventually_gt_atTop (0 : ℕ)] with n hm hn
+      have hmR : (m n : ℝ) ≠ 0 := by exact_mod_cast (Nat.ne_of_gt hm)
+      have hnR : (n : ℝ) ≠ 0 := by exact_mod_cast hn.ne'
+      field_simp
+    have h := hinv.congr' heq'
+    have hconst : (d⁻¹)⁻¹ = d := inv_inv d
+    simpa [hconst] using h
+  have hprod := hnm.mul hsin
+  have heventualEq : (fun n : ℕ =>
+      (n : ℝ) * (∫ x, Real.sin (x / normalization (m n)) ∂ν)) =ᶠ[atTop]
+      fun n : ℕ => (n : ℝ) / (m n : ℝ) *
+        ((m n : ℝ) * (∫ x, Real.sin (x / normalization (m n)) ∂ν)) := by
+    filter_upwards [hmPosEvent, eventually_gt_atTop (0 : ℕ)] with n hm hn
+    have hmR : (m n : ℝ) ≠ 0 := by exact_mod_cast (Nat.ne_of_gt hm)
+    have hnR : (n : ℝ) ≠ 0 := by exact_mod_cast hn.ne'
+    field_simp
+  have hresult := hprod.congr' heventualEq.symm
+  have heqSource : (fun n : ℕ => (n : ℝ) *
+      (∫ x, Real.sin (x / normalization (m n)) ∂ν)) =ᶠ[atTop]
+      fun n : ℕ => (n : ℝ) * (∫ x, Real.sin (x / sourceNormalization n) ∂ν) := by
+    filter_upwards [heq] with n hn
+    rw [hn]
+  change Tendsto (fun n : ℕ => (n : ℝ) *
+    (∫ x, Real.sin (x / sourceNormalization n) ∂ν)) atTop (nhds 0)
+  simpa only [Function.comp_def, mul_zero] using hresult.congr' heqSource
+
 /-- The cutoff-dependent constant controlling the hard-truncation bias at
 stable index one under Mogulskii's sine-centering convention. -/
 noncomputable def indexOneTruncationBiasConstant (radiusMultiplier : ℝ) : ℝ :=
@@ -58,7 +160,7 @@ noncomputable def indexOneTruncationBiasConstant (radiusMultiplier : ℝ) : ℝ 
 scale.  On the truncation interval, Mathlib's cubic bound
 `Real.abs_sub_sin_le` is controlled by the truncated second moment; outside
 that interval, `|sin| ≤ 1` is controlled by the tail probability. -/
-theorem abs_truncatedIncrementMean_div_le_sineIntegral_add_truncatedMoment_tail
+private theorem abs_truncatedIncrementMean_div_le_sineIntegral_add_truncatedMoment_tail
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     {radius scale : ℝ} (hradius : 0 < radius) (hscale : 0 < scale) :
     |truncatedIncrementMean ν (radius * scale)| / scale ≤

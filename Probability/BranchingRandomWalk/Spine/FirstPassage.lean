@@ -9,7 +9,7 @@ module
 public import Probability.BranchingRandomWalk.Spine.ManyToOne.GenerationManyToOne
 public import Probability.BranchingRandomWalk.Spine.Path.ManyToOne.Identity
 public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law.Basic
-public import Probability.BranchingRandomWalk.Step.Law.Field
+public import Probability.BranchingProcess.Offspring.FieldLaw
 public import Probability.Process.RandomWalk.Path.Event.Drawdown
 public import Mathlib.MeasureTheory.Integral.Lebesgue.Basic
 
@@ -24,6 +24,26 @@ endpoint sublevel estimate for the selected population.
 The estimate is only one ingredient of (4.16): passing from a randomly
 selected generation to its descendant subtrees and proving the no-large-drop
 small-deviation bound are separate steps.
+
+## Public declarations
+
+`hasNoLargeDropEndpointBelow φ n δ b` is the event that some surviving
+generation-`n` vertex has no drop larger than `δ` along its path and ends at or
+below `b`. Its measurable spine counterpart is
+`spineNoLargeDropEndpointBelowEvent n δ b`. Under boundary normalization,
+`measure_hasNoLargeDropEndpointBelow_le_exp_mul_spineProbability` bounds its
+branching-walk probability by `exp(b)` times the tilted-spine probability.
+
+`hasEndpointBelow φ n b` is the event that some generation-`n` vertex survives
+and has potential displacement at most `b`; it is measurable and satisfies
+`measure_hasEndpointBelow_le_exp`, with upper bound `exp(b)`. The finite-horizon
+union `hasEndpointBelowByHorizon φ H b` is measurable and its probability is
+bounded by `∑ n : Fin (H + 1), exp(b)` through
+`measure_hasEndpointBelowByHorizon_le_sum_exp`. For real-valued steps,
+`hasFirstPassageBelow H B` records a surviving lineage that first crosses
+strictly below `-B` by time `H`; its event is measurable, lies inside the
+finite-horizon endpoint event, and has probability at most
+`(H + 1) exp(-B)` under boundary normalization.
 -/
 
 @[expose] public section
@@ -32,6 +52,8 @@ open MeasureTheory
 open scoped ENNReal
 
 namespace ProbabilityTheory.BranchingRandomWalk.Spine
+
+open ProbabilityTheory.BranchingProcess (offspringFieldLaw offspringFieldLaw_coordinate offspringFieldLaw_independent offspringFieldLaw_mapMarks)
 
 open Combinatorics.Branching
 open Combinatorics.UlamHarris
@@ -91,7 +113,7 @@ theorem measurableSet_hasNoLargeDropEndpointBelow
         {ω | historyNoLargeDropAndEndpointBelow delta threshold
           (Spine.pathHistory φ n 0 ω u)} by
     ext ω
-    simp only [Set.mem_setOf_eq, Set.mem_inter_iff, and_assoc]]
+    simp only [Set.mem_ofPred_eq, Set.mem_inter_iff, and_assoc]]
   exact (hlength.inter hsurvive).inter hpath
 
 /-- The corresponding path event on the spine increment space. -/
@@ -118,7 +140,7 @@ theorem measure_hasNoLargeDropEndpointBelow_le_exp_mul_spineProbability
     (μ : Measure (Step ι X)) [IsProbabilityMeasure μ]
     (hboundary : HasBoundaryNormalization φ μ)
     (n : ℕ) (delta threshold : ℝ) :
-    (stepFieldLaw μ) (hasNoLargeDropEndpointBelow (ι := ι) (X := X)
+    (offspringFieldLaw μ) (hasNoLargeDropEndpointBelow (ι := ι) (X := X)
         φ n delta threshold) ≤
       ENNReal.ofReal (Real.exp threshold) *
         (tiltedIncrementFieldLaw φ μ)
@@ -172,14 +194,14 @@ theorem measure_hasNoLargeDropEndpointBelow_le_exp_mul_spineProbability
     funext k
     simp [ProbabilityTheory.RandomWalk.history_eq_fromIncrements]
   calc
-    (stepFieldLaw μ) (hasNoLargeDropEndpointBelow (ι := ι) (X := X)
+    (offspringFieldLaw μ) (hasNoLargeDropEndpointBelow (ι := ι) (X := X)
         φ n delta threshold) =
         ∫⁻ ω, (hasNoLargeDropEndpointBelow (ι := ι) (X := X)
           φ n delta threshold).indicator
-          (fun _ => (1 : ℝ≥0∞)) ω ∂stepFieldLaw μ := by
+          (fun _ => (1 : ℝ≥0∞)) ω ∂offspringFieldLaw μ := by
             rw [lintegral_indicator_const hmeasure]
             simp
-    _ ≤ ∫⁻ ω, Spine.pathGeneration φ n f 0 ω ∂stepFieldLaw μ :=
+    _ ≤ ∫⁻ ω, Spine.pathGeneration φ n f 0 ω ∂offspringFieldLaw μ :=
       lintegral_mono hpathCount
     _ = ∫⁻ increment,
           ENNReal.ofReal (Real.exp (AdditivePath.displacement n increment)) *
@@ -292,7 +314,7 @@ theorem measurableSet_hasEndpointBelow
       {ω | u.length = n} ∩ {ω | surviveAlong ω [] u} ∩
         {ω | Spine.pathPotential φ ω u ≤ threshold} by
     ext ω
-    simp only [Set.mem_setOf_eq, Set.mem_inter_iff, and_assoc]]
+    simp only [Set.mem_ofPred_eq, Set.mem_inter_iff, and_assoc]]
   exact (hlength.inter hsurvive).inter hposition
 
 /-- At a fixed generation, the probability that any descendant has crossed
@@ -305,7 +327,7 @@ theorem measure_hasEndpointBelow_le_exp
     (μ : Measure (Step ι X)) [IsProbabilityMeasure μ]
     (hboundary : HasBoundaryNormalization φ μ)
     (n : ℕ) (threshold : ℝ) :
-    (stepFieldLaw μ) (hasEndpointBelow (ι := ι) (X := X) φ n threshold) ≤
+    (offspringFieldLaw μ) (hasEndpointBelow (ι := ι) (X := X) φ n threshold) ≤
       ENNReal.ofReal (Real.exp threshold) := by
   let f : ℝ → ℝ≥0∞ := endpointBelowTest threshold
   have hf : Measurable f := endpointBelowTest_measurable threshold
@@ -344,14 +366,14 @@ theorem measure_hasEndpointBelow_le_exp
           ENNReal.le_tsum (f := fun p => Spine.generationTerm φ n f 0 p ω) u
     · simp [Set.indicator, hω]
   calc
-    (stepFieldLaw μ) (hasEndpointBelow φ n threshold) =
+    (offspringFieldLaw μ) (hasEndpointBelow φ n threshold) =
         ∫⁻ ω, (hasEndpointBelow φ n threshold).indicator
-          (fun _ => (1 : ℝ≥0∞)) ω ∂stepFieldLaw μ := by
+          (fun _ => (1 : ℝ≥0∞)) ω ∂offspringFieldLaw μ := by
             rw [lintegral_indicator_const
               (measurableSet_hasEndpointBelow (ι := ι) (X := X)
                 φ n threshold)]
             simp
-    _ ≤ ∫⁻ ω, Spine.generationEndpoint φ n f 0 ω ∂stepFieldLaw μ :=
+    _ ≤ ∫⁻ ω, Spine.generationEndpoint φ n f 0 ω ∂offspringFieldLaw μ :=
       lintegral_mono hpathCount
     _ = ∫⁻ increment,
           ENNReal.ofReal (Real.exp
@@ -398,20 +420,120 @@ theorem measure_hasEndpointBelowByHorizon_le_sum_exp
     (μ : Measure (Step ι X)) [IsProbabilityMeasure μ]
     (hboundary : HasBoundaryNormalization φ μ)
     (horizon : ℕ) (threshold : ℝ) :
-    (stepFieldLaw μ) (hasEndpointBelowByHorizon (ι := ι) (X := X)
+    (offspringFieldLaw μ) (hasEndpointBelowByHorizon (ι := ι) (X := X)
       φ horizon threshold) ≤
       ∑ n : Fin (horizon + 1), ENNReal.ofReal (Real.exp threshold) := by
   rw [hasEndpointBelowByHorizon]
   calc
-    (stepFieldLaw μ) (⋃ n : Fin (horizon + 1),
+    (offspringFieldLaw μ) (⋃ n : Fin (horizon + 1),
         hasEndpointBelow φ n threshold) ≤
         ∑ n : Fin (horizon + 1),
-          (stepFieldLaw μ) (hasEndpointBelow φ n threshold) :=
-      measure_iUnion_fintype_le (stepFieldLaw μ) _
+          (offspringFieldLaw μ) (hasEndpointBelow φ n threshold) :=
+      measure_iUnion_fintype_le (offspringFieldLaw μ) _
     _ ≤ ∑ n : Fin (horizon + 1), ENNReal.ofReal (Real.exp threshold) := by
       apply Finset.sum_le_sum
       intro n hn
       exact measure_hasEndpointBelow_le_exp φ μ hboundary n threshold
+
+/-- A first crossing below `-B` in a one-root tree within `horizon` steps.
+The prefix clause records that every earlier vertex on the same surviving
+lineage stays at or above the level. -/
+def hasFirstPassageBelow {ι : Type*} [MeasurableSpace ι] [Countable ι]
+    (horizon : ℕ) (B : ℝ) : Set (StepField ι ℝ) :=
+  {ω | ∃ u : TreeNode ι, 0 < u.length ∧ u.length ≤ horizon ∧
+      surviveAlong ω [] u ∧
+      Spine.pathPotential realPotential ω u < -B ∧
+      ∀ i : ℕ, i < u.length →
+        -B ≤ Spine.pathPotential realPotential ω (u.take i)}
+
+/-- The first-passage event is measurable on the one-root step-field space. -/
+theorem measurableSet_hasFirstPassageBelow
+    {ι : Type*} [MeasurableSpace ι] [Countable ι]
+    (horizon : ℕ) (B : ℝ) :
+    MeasurableSet (hasFirstPassageBelow (ι := ι) horizon B) := by
+  classical
+  rw [show hasFirstPassageBelow (ι := ι) horizon B =
+      ⋃ u : TreeNode ι,
+        {ω | 0 < u.length ∧ u.length ≤ horizon ∧ surviveAlong ω [] u ∧
+          Spine.pathPotential realPotential ω u < -B ∧
+          ∀ i : ℕ, i < u.length →
+            -B ≤ Spine.pathPotential realPotential ω (u.take i)} by
+    ext ω
+    simp [hasFirstPassageBelow]]
+  apply MeasurableSet.iUnion
+  intro u
+  have hsurvive : MeasurableSet {ω : StepField ι ℝ |
+      surviveAlong ω [] u} := Spine.measurableSet_surviveAlong [] u
+  have hend : MeasurableSet {ω : StepField ι ℝ |
+      Spine.pathPotential realPotential ω u < -B} :=
+    measurableSet_Iio.preimage (Spine.pathPotential_measurable realPotential [] u)
+  have hprefix : MeasurableSet {ω : StepField ι ℝ |
+      ∀ i : ℕ, i < u.length →
+        -B ≤ Spine.pathPotential realPotential ω (u.take i)} := by
+    rw [show {ω : StepField ι ℝ |
+        ∀ i : ℕ, i < u.length →
+          -B ≤ Spine.pathPotential realPotential ω (u.take i)} =
+      ⋂ i : ℕ, {ω | i < u.length →
+        -B ≤ Spine.pathPotential realPotential ω (u.take i)} by
+      ext ω
+      simp]
+    apply MeasurableSet.iInter
+    intro i
+    by_cases hi : i < u.length
+    · have hcoord : MeasurableSet {ω : StepField ι ℝ |
+          -B ≤ Spine.pathPotential realPotential ω (u.take i)} :=
+        measurableSet_Ici.preimage
+          (Spine.pathPotential_measurable realPotential [] (u.take i))
+      simpa [hi] using hcoord
+    · simp [hi]
+  have hlen : MeasurableSet {ω : StepField ι ℝ |
+      0 < u.length ∧ u.length ≤ horizon} := by
+    by_cases h : 0 < u.length ∧ u.length ≤ horizon <;> simp [h]
+  rw [show {ω : StepField ι ℝ |
+      0 < u.length ∧ u.length ≤ horizon ∧ surviveAlong ω [] u ∧
+        Spine.pathPotential realPotential ω u < -B ∧
+        ∀ i : ℕ, i < u.length →
+          -B ≤ Spine.pathPotential realPotential ω (u.take i)} =
+      {ω | 0 < u.length ∧ u.length ≤ horizon} ∩
+        {ω | surviveAlong ω [] u} ∩
+        {ω | Spine.pathPotential realPotential ω u < -B} ∩
+        {ω | ∀ i : ℕ, i < u.length →
+          -B ≤ Spine.pathPotential realPotential ω (u.take i)} by
+    ext ω
+    simp only [Set.mem_ofPred_eq, Set.mem_inter_iff, and_assoc]]
+  exact ((hlen.inter hsurvive).inter hend).inter hprefix
+
+/-- A first-passage event is contained in the event that some generation
+through the horizon has an endpoint below `-B`. -/
+theorem hasFirstPassageBelow_subset_endpointHorizon
+    {ι : Type*} [MeasurableSpace ι] [Countable ι]
+    (horizon : ℕ) (B : ℝ) :
+    hasFirstPassageBelow (ι := ι) horizon B ⊆
+      hasEndpointBelowByHorizon realPotential horizon (-B) := by
+  rintro ω ⟨u, hpos, hlen, hsurvive, hbelow, _⟩
+  rw [hasEndpointBelowByHorizon]
+  refine Set.mem_iUnion.2 ⟨⟨u.length, Nat.lt_succ_of_le hlen⟩, ?_⟩
+  exact ⟨u, rfl, hsurvive, le_of_lt hbelow⟩
+
+/-- The one-root probability of a first passage is bounded by summing the
+one-generation many-to-one estimate over the available horizon. -/
+theorem measure_hasFirstPassageBelow_le
+    {ι : Type*} [MeasurableSpace ι] [Countable ι]
+    (μ : Measure (Step ι ℝ)) [IsProbabilityMeasure μ]
+    (hboundary : HasBoundaryNormalization realPotential μ)
+    (horizon : ℕ) (B : ℝ) :
+    (offspringFieldLaw μ) (hasFirstPassageBelow (ι := ι) horizon B) ≤
+      (horizon + 1 : ℝ≥0∞) * ENNReal.ofReal (Real.exp (-B)) := by
+  calc
+    (offspringFieldLaw μ) (hasFirstPassageBelow (ι := ι) horizon B) ≤
+        (offspringFieldLaw μ)
+          (hasEndpointBelowByHorizon realPotential horizon (-B)) :=
+      measure_mono (hasFirstPassageBelow_subset_endpointHorizon horizon B)
+    _ ≤ ∑ n : Fin (horizon + 1), ENNReal.ofReal (Real.exp (-B)) :=
+      measure_hasEndpointBelowByHorizon_le_sum_exp realPotential μ hboundary
+        horizon (-B)
+    _ = (horizon + 1 : ℝ≥0∞) * ENNReal.ofReal (Real.exp (-B)) := by
+      simp [Finset.sum_const, Finset.card_fin, nsmul_eq_mul]
 
 end ProbabilityTheory.BranchingRandomWalk.Spine
 

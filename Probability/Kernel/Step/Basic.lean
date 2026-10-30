@@ -14,6 +14,20 @@ public import Mathlib.Probability.Kernel.Composition.MapComap
 /-!
 # Kernels realized by random steps
 
+## Public declarations
+
+- `ofStep` constructs the transition kernel from a noise law and measurable
+  map; `ofStep.instIsMarkovKernel` makes it Markov when the noise law is a
+  probability measure. For measurable $A$, `ofStep_apply` states
+  $K(x,A)=\nu\{z:\mathrm{step}(x,z)\in A\}$, and
+  `ofStep_apply_eq_map` identifies $K(x,\cdot)$ with the pushforward of
+  $\nu$ by the fixed-state step.
+- `ofPartialStep` discards the mass mapped to `none`;
+  `ofPartialStep.instIsSubMarkovKernel` gives its sub-Markov property,
+  `ofPartialStep_apply` evaluates its mass on a measurable target, and
+  `lintegral_ofPartialStep` expresses its integral as
+  $\int (\mathrm{step}(x,z)\text{ eliminated with value }0)\,\nu(dz)$.
+
 The API takes the noise law and the measurable step function directly.  No
 separate realization structure is introduced.  An option-valued step loses
 the mass mapped to `none`, and therefore defines a sub-Markov kernel.

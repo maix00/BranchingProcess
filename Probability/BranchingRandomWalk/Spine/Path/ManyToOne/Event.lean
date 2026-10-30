@@ -4,8 +4,13 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Spine.Path.ManyToOne.Identity
-import Probability.BranchingRandomWalk.Spine.RandomWalk.Basic
+module
+
+public import Probability.BranchingRandomWalk.Spine.Path.ManyToOne.Identity
+public import Probability.BranchingRandomWalk.Spine.RandomWalk.Basic
+
+public import Mathlib.Basic.Countable.Defs
+public import Mathlib.MeasureTheory.MeasurableSpace.Defs
 
 /-!
 # One-root path events and the spine walk
@@ -13,12 +18,27 @@ import Probability.BranchingRandomWalk.Spine.RandomWalk.Basic
 This file records the many-to-one estimate for an arbitrary measurable
 finite-history corridor. It is the first-moment input used when bounding the
 number of particles in a killed branching random walk.
+
+## Public declarations
+
+- `hasPathHistoryIn` is the event that some surviving generation-$n$ address
+  has its complete ancestral history in the specified set.
+- `measurableSet_hasPathHistoryIn` proves this event measurable when the
+  history set is measurable and the address type is countable.
+- `measure_hasPathHistoryIn_le_exp_mul_spineProbability` bounds its
+  probability by $e^{b-x}$ times the tilted-spine probability of the same
+  history event, assuming every history in the event has terminal value at
+  most $b$.
 -/
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal
 
 namespace ProbabilityTheory.BranchingRandomWalk.Spine
+
+open ProbabilityTheory.BranchingProcess (offspringFieldLaw offspringFieldLaw_coordinate offspringFieldLaw_independent offspringFieldLaw_mapMarks)
 
 open Combinatorics.Branching
 open Combinatorics.UlamHarris
@@ -74,7 +94,7 @@ theorem measure_hasPathHistoryIn_le_exp_mul_spineProbability
       (hcorridor : MeasurableSet corridor)
     (hterminal : ∀ history ∈ corridor,
       history ⟨n, Nat.lt_succ_self n⟩ ≤ terminalUpper) :
-    (stepFieldLaw μ) (hasPathHistoryIn (ι := ι) φ n initial corridor) ≤
+    (offspringFieldLaw μ) (hasPathHistoryIn (ι := ι) φ n initial corridor) ≤
       ENNReal.ofReal (Real.exp (terminalUpper - initial)) *
         (tiltedIncrementFieldLaw φ μ)
           {increment | ProbabilityTheory.RandomWalk.history n initial increment ∈
@@ -125,13 +145,13 @@ theorem measure_hasPathHistoryIn_le_exp_mul_spineProbability
       AdditivePath.fromIncrements_apply] at h
     linarith
   calc
-    (stepFieldLaw μ)
+    (offspringFieldLaw μ)
         (hasPathHistoryIn (ι := ι) φ n initial corridor) =
       ∫⁻ ω, (hasPathHistoryIn (ι := ι) φ n initial corridor).indicator
-        (fun _ => (1 : ℝ≥0∞)) ω ∂stepFieldLaw μ := by
+        (fun _ => (1 : ℝ≥0∞)) ω ∂offspringFieldLaw μ := by
           rw [lintegral_indicator_const hset]
           simp
-    _ ≤ ∫⁻ ω, Spine.pathGeneration φ n F initial ω ∂stepFieldLaw μ :=
+    _ ≤ ∫⁻ ω, Spine.pathGeneration φ n F initial ω ∂offspringFieldLaw μ :=
       lintegral_mono hpathCount
     _ = ∫⁻ increment,
           ENNReal.ofReal (Real.exp (AdditivePath.displacement n increment)) *
@@ -184,3 +204,5 @@ theorem measure_hasPathHistoryIn_le_exp_mul_spineProbability
       simp
 
 end ProbabilityTheory.BranchingRandomWalk.Spine
+
+end

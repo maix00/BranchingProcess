@@ -7,6 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.BranchingRandomWalk.Spine.PointMeasure.Basic
+public import Probability.RandomMeasure.ExponentialTilt
 public import Probability.BranchingProcess.Offspring.Count
 public import Probability.Distributions.Moments.Real
 public import Mathlib.MeasureTheory.Integral.Bochner.Basic
@@ -21,6 +22,20 @@ probability measure. If its second moment vanished, it would be concentrated
 at zero. The cancellation identity for the tilted law would then identify the
 expected offspring count with the boundary weight, contradicting
 supercriticality.
+
+## Public declarations
+
+`expectedPointMass_eq_one_of_zero_tiltedSecondMoment` shows that boundary
+normalization together with
+`∫⁻ y, ENNReal.ofReal (y ^ 2) ∂ tiltedLaw = 0` forces the expected total point
+mass to equal `1`. Its offspring specialization
+`expectedChildCount_eq_one_of_zero_spineSecondMoment` identifies the expected
+child count with `1` under the boundary normalization. Consequently,
+`spine_lintegral_secondMoment_pos_of_normalized_supercritical` proves that the
+tilted spine law has strictly positive extended second moment whenever the
+offspring law is supercritical. Given a centered finite second moment,
+`spine_secondMoment_pos_of_normalized_supercritical` transfers this to strict
+positivity of its real variance parameter.
 -/
 
 open MeasureTheory
@@ -32,7 +47,7 @@ namespace ProbabilityTheory.BranchingRandomWalk.Spine
 
 open ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw
 open ProbabilityTheory.BranchingRandomWalk.Spine
-open ProbabilityTheory.PointProcess
+open ProbabilityTheory.RandomMeasure
 open Combinatorics.Branching
 
 /-- If a point-process law has boundary normalization and its tilted law has
@@ -41,17 +56,17 @@ theorem expectedPointMass_eq_one_of_zero_tiltedSecondMoment
     {E : Type*} [MeasurableSpace E]
     {potential : E → ℝ} (hpotential : Measurable potential)
     (law : Measure (Measure E))
-    (hnormalized : PointProcess.HasNormalization potential (-1) law)
+    (hnormalized : RandomMeasure.HasNormalization potential (-1) law)
     (hsecond : ∫⁻ y, ENNReal.ofReal (y ^ 2) ∂
-      PointProcess.tiltedLaw potential (-1) law = 0) :
+      RandomMeasure.tiltedLaw potential (-1) law = 0) :
     ∫⁻ ν, ν Set.univ ∂law = 1 := by
-  let Q := PointProcess.tiltedLaw potential (-1) law
+  let Q := RandomMeasure.tiltedLaw potential (-1) law
   have hQae : ∀ᵐ y ∂Q, y = 0 := by
     exact ProbabilityTheory.ae_eq_zero_of_lintegral_sq_eq_zero
       (by simpa [Q] using hsecond)
   have hQprob : IsProbabilityMeasure Q := by
     dsimp [Q]
-    exact PointProcess.tiltedLaw_isProbability hpotential (-1) law hnormalized
+    exact RandomMeasure.tiltedLaw_isProbability hpotential (-1) law hnormalized
   have hexp : ∫⁻ y, ENNReal.ofReal (Real.exp y) ∂Q = 1 := by
     calc
       (∫⁻ y, ENNReal.ofReal (Real.exp y) ∂Q) =
@@ -60,7 +75,7 @@ theorem expectedPointMass_eq_one_of_zero_tiltedSecondMoment
             filter_upwards [hQae] with y hy
             simp [hy]
       _ = 1 := by rw [lintegral_one, hQprob.measure_univ]
-  have hcancel := PointProcess.lintegral_tiltedLaw_cancel
+  have hcancel := RandomMeasure.lintegral_tiltedLaw_cancel
     hpotential (-1) law (f := fun _ : ℝ => (1 : ℝ≥0∞)) measurable_const
   have hmass :
       (∫⁻ ν, ∫⁻ x, (1 : ℝ≥0∞) ∂ν ∂law) = 1 := by
@@ -90,21 +105,21 @@ theorem expectedChildCount_eq_one_of_zero_spineSecondMoment
     μ.expectedChildCount = 1 := by
   have hpointNormalized := pointMeasure_hasNormalization realPotential
     (μ : Measure (Step ι ℝ)) hnormalized
-  have hpointNormalized' : PointProcess.HasNormalization realPotential (-1)
+  have hpointNormalized' : RandomMeasure.HasNormalization realPotential (-1)
       (μ.pointMeasureLaw : Measure (Measure ℝ)) := by
     rw [ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw.pointMeasureLaw_toMeasure]
     exact hpointNormalized
   have hlaw := pointMeasure_tiltedLaw_eq_tiltedPotentialLaw realPotential (-1)
     (μ : Measure (Step ι ℝ))
   have hlaw' :
-      PointProcess.tiltedLaw realPotential (-1)
+      RandomMeasure.tiltedLaw realPotential (-1)
           (μ.pointMeasureLaw : Measure (Measure ℝ)) =
         tiltedPotentialLaw realPotential (-1) (μ : Measure (Step ι ℝ)) := by
     rw [ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw.pointMeasureLaw_toMeasure]
     exact hlaw
   have hsecondPoint :
       ∫⁻ y, ENNReal.ofReal (y ^ 2) ∂
-        PointProcess.tiltedLaw realPotential (-1)
+        RandomMeasure.tiltedLaw realPotential (-1)
           (μ.pointMeasureLaw : Measure (Measure ℝ)) = 0 := by
     rw [hlaw']
     exact hsecond

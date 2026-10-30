@@ -7,13 +7,13 @@ module
 
 public import Analysis.Fourier.CosineTauberian.Kernel
 public import Analysis.Fourier.CosineTauberian.Inversion
-public import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals
-public import Mathlib.MeasureTheory.Integral.Prod
+import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals
+import Mathlib.MeasureTheory.Integral.Prod
 
 /-!
 # Mellin positivity for the cosine Tauberian kernel
 
-The public declarations are:
+## Public declarations
 
 - `cosineTauberianMellinWeight α y` is
   $(1-\cos y)y^{-1-\alpha}$;

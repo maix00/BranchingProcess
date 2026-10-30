@@ -15,6 +15,16 @@ public import Probability.Process.RandomWalk.Path.Interpolation.Core
 This file lifts the deterministic grid/corridor equivalence to the canonical
 IID path law.  It introduces no second probability notion for tubes: the
 right-hand side is simply the measure of the strict finite tube event.
+
+## Public declarations
+
+For an IID increment law `ν`, positive scale `scale n`, and `n>0`,
+`normalizedLinearPathLaw_apply_rangeInOpenInterval` identifies the mass of the
+continuous polygonal path in `(-a,1-a)` with the IID probability of the strict
+width-`scale n` tube. The corresponding
+`normalizedLinearPathLaw_apply_rangeInClosedInterval` identifies the mass of
+the closed corridor `[-a,1-a]` with the weak tube probability. The open result
+assumes `0<a<1`; the closed result assumes `0≤a≤1`.
 -/
 
 open MeasureTheory

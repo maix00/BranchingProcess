@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.BranchingRandomWalk.Population.Processes.StepSelection.Concurrent
+public import Probability.BranchingRandomWalk.Population.Processes.StepSelection.Concurrent.Basic
 public import Probability.Process.HittingTime.Declarations
 
 /-!
@@ -20,6 +20,21 @@ cardinality threshold.  Every time is defined independently of trial success.
 Countability of child slots is localized to observing the cardinality of the
 finite Ulam--Harris population.  The underlying root family and all fixed
 coordinate measurability results remain unrestricted.
+## Public declarations
+
+* `candidate` and `component` represent each trial's age-indexed population
+  and place it on the global generation clock; `candidate_adapted` and
+  `component_adapted` give their observation times.
+* `time` recursively starts trial `i + 1` at the first generation after
+  `time i` where trial `i`'s population reaches the threshold.
+  `time_zero`, `time_succ`, `time_isStoppingTime`, and
+  `time_isStoppingTime_of_countable` state its recursion and stopping-time
+  properties; `time_le_succ` and `time_mono` give its order properties.
+* `concurrentComponent_adapted` and `concurrentPopulation_adapted` establish
+  adaptation for individual and finite unions of scheduled components.
+  Their countable-slot specializations are
+  `concurrentComponent_adapted_of_countable` and
+  `concurrentPopulation_adapted_of_countable`.
 -/
 
 open MeasureTheory
@@ -49,7 +64,7 @@ noncomputable def component
     (R : Step.FiniteSelection α X) (root : ℕ → Root)
     (i n : ℕ) (ω : RootIndexed.StepField Root α X) :
     Finset (TreeNode α) :=
-  ProbabilityTheory.BranchingRandomWalk.Concurrent.Finite.component
+  ProbabilityTheory.Process.Stopping.Concurrent.Finite.component
     (fun _ : Unit => start) (fun _ : Unit => candidate R root i)
     () n ω
 
@@ -80,7 +95,7 @@ theorem component_adapted
       (Root := Root) (α := α) (X := X) n]
       (component start R root i n) := by
   intro n
-  exact ProbabilityTheory.BranchingRandomWalk.Concurrent.Finite.component_adapted
+  exact ProbabilityTheory.Process.Stopping.Concurrent.Finite.component_adapted
     (RootIndexed.stepFiltration (Root := Root) (α := α) (X := X))
     (fun _ : Unit => start) (fun _ => hstart)
     (fun _ : Unit => candidate R root i)

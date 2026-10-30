@@ -6,10 +6,11 @@ Authors: WANG Yiyang
 
 module
 
-public import Mathlib.Topology.Order.Compact
+import Mathlib.Topology.Order.Compact
 public import Mathlib.Topology.UnitInterval
-public import Mathlib.Algebra.Order.Floor.Semiring
+import Mathlib.Algebra.Order.Floor.Semiring
 public import Topology.ContinuousMap.Corridor
+public import Topology.MetricSpace.Oscillation
 
 /-!
 # Finite corridor covers of continuous paths with bounded oscillation
@@ -19,6 +20,25 @@ minimum to a compact interval of possible locations.  A fixed finite grid of
 those locations gives a cover by slightly wider open corridors.  The number
 of corridors depends on the relative mesh, not on any discrete approximation
 of the path.
+
+## Public declarations
+
+- `Metric.OscillationBounded f w` means
+  $\operatorname{dist}(f(s),f(t))\le w$ for every $s,t\in[0,1]$.
+- `oscillationCoverLower` and `oscillationCoverUpper` define the
+  $j$th interval in the finite minimum-location cover, with endpoints
+  $-w+\frac{jw}{N}-\frac{w}{N}$ and
+  $-w+\frac{jw}{N}+w+2\frac{w}{N}$.
+- `rangeOscillationLe_subset_finiteCorridorCover` states that a path starting
+  at zero with oscillation at most $w>0$ belongs to one of these $N$ open
+  corridors whenever $N>0$.
+- `oscillationCoverUpper_sub_lower` gives corridor width $w+3w/N$;
+  `oscillationCoverLower_lt_upper`, `oscillationCoverLower_lt_zero`, and
+  `zero_lt_oscillationCoverUpper` show that each corridor is nonempty and
+  contains zero when $w>0$ and $N>0$.
+- `rangeOscillationSet` and `startsAtZeroSet` define the corresponding path
+  sets; `isClosed_rangeOscillationSet` and `isClosed_startsAtZeroSet` show
+  that both are closed in continuous path space.
 -/
 
 @[expose] public section
@@ -28,10 +48,6 @@ noncomputable section
 open Set
 
 namespace ContinuousMap
-
-/-- A continuous path has oscillation at most `width`. -/
-def rangeOscillationLe (width : ℝ) (path : C(unitInterval, ℝ)) : Prop :=
-  ∀ s t, |path s - path t| ≤ width
 
 /-- The lower endpoint of the `j`th corridor in the finite minimum-location
 cover.  Its mesh is `width / count`. -/
@@ -49,7 +65,7 @@ to one of `count` open corridors.  Every corridor has width
 theorem rangeOscillationLe_subset_finiteCorridorCover
     (width : ℝ) (count : ℕ) (hwidth : 0 < width) (hcount : 0 < count) :
     {path : C(unitInterval, ℝ) |
-      path 0 = 0 ∧ rangeOscillationLe width path} ⊆
+      path 0 = 0 ∧ Metric.OscillationBounded path width} ⊆
       ⋃ j : Fin count,
         rangeInOpenInterval (oscillationCoverLower width count j)
           (oscillationCoverUpper width count j) := by
@@ -64,7 +80,8 @@ theorem rangeOscillationLe_subset_finiteCorridorCover
     have := hmin (Set.mem_univ (0 : unitInterval))
     simpa [m, hzero] using this
   have hminus : -width ≤ m := by
-    have h := hosc 0 tmin
+    have h : |path 0 - path tmin| ≤ width := by
+      simpa [Metric.OscillationBounded, Real.dist_eq] using hosc 0 tmin
     rw [hzero] at h
     have := (abs_le.mp h).2
     dsimp [m]
@@ -134,7 +151,8 @@ theorem rangeOscillationLe_subset_finiteCorridorCover
   have hpath_lower (t : unitInterval) : m ≤ path t := by
     exact hmin (Set.mem_univ t)
   have hpath_upper (t : unitInterval) : path t ≤ m + width := by
-    have h := hosc tmin t
+    have h : |path tmin - path t| ≤ width := by
+      simpa [Metric.OscillationBounded, Real.dist_eq] using hosc tmin t
     dsimp [m] at h ⊢
     linarith [(abs_le.mp h).1]
   have hcover :

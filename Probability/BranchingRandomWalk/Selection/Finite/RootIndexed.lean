@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.BranchingRandomWalk.Selection.Finite.ByValue
+public import MeasureTheory.Selection.Finite.ByValue
 public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Field.Measurability
 
 /-!
@@ -15,9 +15,19 @@ public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Field.Measur
 This module adapts measurable position processes on pre-sampled forests to
 causal random finite selections. Deterministic selected-population maps stay
 in the `NSelection` subtree.
+
+## Public declarations
+
+- On a pre-sampled root-indexed forest, measurable particle positions induce
+  causal leftmost and rightmost capacity-$N$ selectors for the generation
+  domain flow.
+- The constructions provide the candidate-subset, cardinality, and
+  generation-measurability properties required by the finite selection
+  interface.
 -/
 
 open MeasureTheory Combinatorics.UlamHarris
+open MeasureTheory.Selection
 
 @[expose] public section
 
@@ -72,7 +82,7 @@ noncomputable def leftmostBy
     (n : ℕ) (ω : RootIndexed.StepField Root α Mark)
     (s : Finset (RootIndexed.TreeNode Root α)) :
     (leftmostBy N initial d hd φ hφ).select n ω s =
-      Combinatorics.Branching.Selection.NSelection.selectFirstNBy N
+      Combinatorics.Selection.NSelection.selectFirstNBy N
         (observedPositionAtGeneration initial d φ n ω) s :=
   rfl
 
@@ -114,7 +124,7 @@ noncomputable def rightmostBy
     (n : ℕ) (ω : RootIndexed.StepField Root α Mark)
     (s : Finset (RootIndexed.TreeNode Root α)) :
     (rightmostBy N initial d hd φ hφ).select n ω s =
-      Combinatorics.Branching.Selection.NSelection.selectFirstNBy N
+      Combinatorics.Selection.NSelection.selectFirstNBy N
         (fun p => OrderDual.toDual
           (observedPositionAtGeneration initial d φ n ω p)) s :=
   rfl

@@ -6,25 +6,27 @@ Authors: WANG Yiyang
 
 module
 
-public import Mathlib.MeasureTheory.Measure.MeasureSpaceDef
-public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
-public import Algebra.BigOperators.AdditivePath.Basic
-public import Probability.Distributions.Moments.Real
-public import Probability.Sequence.Filtration
-public import Probability.Sequence.IID.Basic
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.Binning
-public import Probability.Process.RandomWalk.Path.Block.Partition.TailMerged
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.BlockTube
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.EndpointWindow.Basic
-public import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.Event
-import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Concrete.Lower.Asymptotic
-import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Concrete.EntranceBudget
-public import Analysis.Asymptotics.Scale.Power.IntermediateBlock
+import Mathlib.MeasureTheory.Measure.MeasureSpaceDef
+import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
+import Algebra.BigOperators.AdditivePath.Basic
+import Probability.Distributions.Moments.Real
+import Probability.Sequence.Filtration
+import Probability.Sequence.IID.Basic
+import all Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.Binning
+import Combinatorics.Sequence.TailMergedBlock
+import all Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.BlockTube
+import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.EndpointWindow.Basic
+import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.Event
+import all Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Concrete.Lower.Asymptotic
+import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.FiniteVariance
+import Analysis.Asymptotics.Scale.Power.IntermediateBlock
 
 /-!
 # Tilted-tube lower bound from the reflected survival asymptotics
 
-The module-visible supporting lemma in this file is:
+## Internal proof declarations
+
+The supporting lemma in this file is:
 
 - `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.eventually_concreteStaircaseLowerBound_of_powerBlock`: the same bound
   with $\ell_n=\lfloor\Delta_n^{2+\eta}\rfloor$ and
@@ -41,7 +43,7 @@ walk: Will the drunken sailor hit the sober man?*, Appendix A,
 immediately after (A.3) (arXiv:cond-mat/9905252).
 -/
 
-@[expose] public section
+section
 
 open Filter MeasureTheory ProbabilityTheory
 open scoped NNReal Topology
@@ -102,7 +104,7 @@ private lemma eventually_concreteStaircaseLowerBound_of_centeredFiniteVariance
           (driftedTubeEndpointWindowEvent (horizon n) (width n)
             drift (base n) endpointFraction) := by
   have hbudget :=
-    exists_eventually_robustTransitionProbability_ge_exp_of_centeredFiniteVariance
+    eventually_robustTransitionProbability_ge_exp_of_centeredFiniteVariance
       ν hν hsigma
       hwidth hdrift hdelta hepsilon
   have hentrance : ∀ᶠ n : ℕ in atTop,
@@ -170,7 +172,8 @@ lemma eventually_concreteStaircaseLowerBound_of_powerBlock
   let blockLength : ℕ → ℕ :=
     Asymptotics.floorBlockLength (fun n => width n ^ (2 + eta))
   have hscale := Asymptotics.intermediate_power_block_ratios
-    hwidth heta hetaOne
+    hwidth (p := 2) (q := 2 + eta) (r := 3)
+      (by norm_num) (by linarith) (by linarith)
   change Tendsto (fun n => width n ^ 2 / (blockLength n : ℝ))
       atTop (𝓝 0) ∧
     Tendsto (fun n => (blockLength n : ℝ) / width n ^ 3)
@@ -178,15 +181,29 @@ lemma eventually_concreteStaircaseLowerBound_of_powerBlock
     ∀ᶠ n : ℕ in atTop, 0 < blockLength n at hscale
   obtain ⟨hquadratic, hcubic, hlength⟩ := hscale
   have hfit := Asymptotics.eventually_intermediate_block_fits
-    hwidth heta hetaEpsilon
+    hwidth (p := 2) (q := 2 + eta) (r := 2 + epsilon)
+      (by norm_num) (by linarith) (by linarith)
   have hremaining : ∀ᶠ n : ℕ in atTop,
       Nat.floor (width n ^ 2) + 2 * blockLength n ≤ horizon n := by
     filter_upwards [hfit, hhorizon] with n hnfit hnHorizon
-    exact hnfit.trans hnHorizon
+    have hnfit' : Nat.floor (width n ^ 2) + 2 * blockLength n ≤
+        Asymptotics.floorBlockLength (fun n => width n ^ (2 + epsilon)) n := by
+      simpa [blockLength, Asymptotics.floorBlockLength, Real.rpow_two]
+        using hnfit
+    exact hnfit'.trans hnHorizon
+  have hquadraticNat : Tendsto (fun n => width n ^ 2 / (blockLength n : ℝ))
+      atTop (𝓝 0) := by
+    simpa only [Real.rpow_two] using hquadratic
+  have hcubicNat : Tendsto (fun n => (blockLength n : ℝ) / width n ^ 3)
+      atTop (𝓝 0) := by
+    apply hcubic.congr'
+    filter_upwards with n
+    exact congrArg (fun x : ℝ => (blockLength n : ℝ) / x)
+      (Real.rpow_natCast (width n) 3)
   exact eventually_concreteStaircaseLowerBound_of_centeredFiniteVariance
     hν hsigma m hm huInterior huvInterior hvInterior
     huFinal huvFinal hvFinal hrateMogulskii hwidth hlength
-    hremaining hhorizon hquadratic hcubic hmargin hdrift hstart
+    hremaining hhorizon hquadraticNat hcubicNat hmargin hdrift hstart
     hendpoint hblockRate hepsilon hdelta hrate
     hinteriorLower hinteriorUpper hfinalLower hfinalUpper
 

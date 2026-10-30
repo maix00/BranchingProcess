@@ -7,10 +7,12 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.Rademacher.FiniteInterval.Spectral.Expansion
-public import Analysis.SpecificLimits.Geometric
+import Mathlib.Algebra.Order.Field.GeomSum
 
 /-!
 # Geometric upper bounds for killed-kernel row mass
+
+## Public declarations
 
 This file combines the finite spectral expansion with the mode-depth estimate
 to obtain the width-uniform geometric row-mass bound used by corridor proofs.
@@ -73,8 +75,23 @@ theorem intervalKernel_pow_rowSum_le_four_mul_div_one_sub
         · exact hangleLeHalf.trans (by linarith [Real.pi_pos]))
       hanglePos
     simpa [q] using hanti
-  have hgeom := Finset.sum_range_pow_succ_le_div_one_sub
-    (pow_nonneg hq₀ n) (pow_lt_one₀ hq₀ hq₁ hn.ne') interiorCount
+  have hgeom : (∑ i ∈ Finset.range interiorCount,
+      (q ^ n) ^ (i + 1)) ≤ q ^ n / (1 - q ^ n) := by
+    have hsum : (∑ i ∈ Finset.range interiorCount,
+        (q ^ n) ^ (i + 1)) =
+        ∑ i ∈ Finset.Ico 1 (interiorCount + 1), (q ^ n) ^ i := by
+      calc
+        _ = ∑ i ∈ Finset.Ico 0 interiorCount, (q ^ n) ^ (i + 1) := by
+          rw [Finset.range_eq_Ico]
+        _ = ∑ i ∈ Finset.Ico (0 + 1) (interiorCount + 1),
+              (q ^ n) ^ i :=
+          Finset.sum_Ico_add' (fun i : ℕ => (q ^ n) ^ i) 0 interiorCount 1
+        _ = _ := by simp
+    have h := geom_sum_Ico_le_of_lt_one (m := 1)
+      (n := interiorCount + 1) (x := q ^ n) (pow_nonneg hq₀ n)
+      (pow_lt_one₀ hq₀ hq₁ hn.ne')
+    rw [hsum]
+    simpa only [pow_one] using h
   calc
     (∑ finish, (intervalKernel interiorCount ^ n) start finish) ≤
         4 * ∑ mode : Fin interiorCount, (q ^ n) ^ (mode.val + 1) := by

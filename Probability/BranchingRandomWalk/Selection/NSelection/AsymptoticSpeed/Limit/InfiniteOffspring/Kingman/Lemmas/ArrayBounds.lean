@@ -5,48 +5,63 @@ Authors: WANG Yiyang
 -/
 
 module
-public import Probability.BranchingRandomWalk.Selection.NSelection.AsymptoticSpeed.Limit.InfiniteOffspring.Repair
-public import Probability.BranchingRandomWalk.Selection.NSelection.AsymptoticSpeed.Limit.InfiniteOffspring.SubadditiveArray
-public import Probability.BranchingRandomWalk.Selection.NSelection.AsymptoticSpeed.Environment.Basic
-public import Probability.BranchingRandomWalk.Selection.NSelection.AsymptoticSpeed.Selection.Infinite
-public import Mathlib.MeasureTheory.Function.UniformIntegrable
-public import Mathlib.MeasureTheory.Order.Group.Lattice
-public import Mathlib.MeasureTheory.Measure.MeasureSpaceDef
-public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
+import Probability.BranchingRandomWalk.Selection.NSelection.AsymptoticSpeed.Limit.InfiniteOffspring.Repair
+import Probability.BranchingRandomWalk.Selection.NSelection.AsymptoticSpeed.Limit.InfiniteOffspring.SubadditiveArray
+import Probability.BranchingRandomWalk.Selection.NSelection.AsymptoticSpeed.Environment.Basic
+import Probability.BranchingRandomWalk.Selection.NSelection.AsymptoticSpeed.Selection.InfiniteOffspring.Run
+import Probability.BranchingRandomWalk.Selection.NSelection.AsymptoticSpeed.Selection.InfiniteOffspring.SubadditiveArray
+import Mathlib.MeasureTheory.Function.UniformIntegrable
+import Mathlib.MeasureTheory.Order.Group.Lattice
+import Mathlib.MeasureTheory.Measure.MeasureSpaceDef
+import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
 
 /-!
 # Estimates for the repaired selection array
 
-These statements are proof steps in the Kingman speed argument for the
-repaired infinite-offspring selection array.
+Let \(B_N=\operatorname{Fin}(N)\to\operatorname{Step}(\mathbb N,\mathbb R)\)
+be the generation-batch space and \(\Omega_N=\mathbb N\to B_N\) the
+generation-environment space. Set
+\(M_N(b)=\max_{i\in\operatorname{Fin}(N)}|\operatorname{value}'(b_i)(0)|\),
+\(R\omega(t)=\operatorname{repairGenerationBatch}(\omega(t))\), and let
+\(A_\omega(s,n)\) be the repaired subadditive array. These are proof steps in
+the Kingman speed argument for this array.
 
-- `repairedGenerationBatchSeq` and `repairedGenerationBatchSeq_good`:
-  the generation sequence after repair and its validity at every time.
+## Internal proof declarations
+
+- `repairedGenerationBatchSeq` and `repairedGenerationBatchSeq_good` state
+  \(\operatorname{repairedGenerationBatchSeq}(\omega)(t)=R\omega(t)\) and
+  \(\forall t,\;R\omega(t)\text{ is good}\).
 - `measurable_infiniteOffspringBatchSlotZeroNorm` and
-  `measurable_repairedInfiniteSelectionSubadditiveArray`: measurability of
-  the generation envelope and repaired block array.
-- `integrable_repairedInfiniteOffspringBatchSlotZeroNorm_at`: integrability
-  of the repaired generation envelope under the environment law.
-- `repairedInfiniteSelectionSubadditiveArray_eq_deterministic`: identifies
-  the measurable repaired block array with the deterministic subadditive array.
-- `repairedInfiniteSelectionSubadditiveArray_ae_abs_le_envelope`: almost
-  surely, the absolute block value is bounded by the sum of the generation
-  envelopes.
-- `repairedInfiniteSelectionSubadditiveArray_integrable_of_leftmostMoment`:
-  the block array is integrable under the leftmost first-moment assumption.
-- `repairedInfiniteSelection_normalizedIntegral_bddBelow_of_leftmostMoment`:
-  the normalized expected block values are bounded below.
+  `measurable_repairedInfiniteSelectionSubadditiveArray` prove
+  \(M_N:B_N\to\mathbb R\) and
+  \(\omega\mapsto A_\omega(s,n)\) measurable.
+- `integrable_repairedInfiniteOffspringBatchSlotZeroNorm_at` proves
+  \(M_N(R\omega(t))\in L^1\) under the generation-environment law, assuming
+  boundary normalization, nonempty offspring support, and
+  \(|\operatorname{value}'(\xi)(0)|\in L^1(\mu)\).
+- `repairedInfiniteSelectionSubadditiveArray_eq_deterministic` identifies
+  \(A_\omega(s,n)\) with the deterministic subadditive array evaluated on
+  the repaired sequence \(R\omega\).
+- `repairedInfiniteSelectionSubadditiveArray_ae_abs_le_envelope` proves
+  \( |A_\omega(0,n)|\le\sum_{t<n}M_N(R\omega(t))\) almost surely.
+- `repairedInfiniteSelectionSubadditiveArray_integrable_of_leftmostMoment`
+  proves \(A_\omega(0,n)\in L^1\) under the leftmost first-moment assumption.
+- `repairedInfiniteSelection_normalizedIntegral_bddBelow_of_leftmostMoment`
+  proves
+  \(\inf_{n\ge0}\frac{\mathbb E[A_\omega(0,n+1)]}{n+1}>-\infty\)
+  under the same moment, boundary, ordered-support, and nonempty-support
+  assumptions.
 -/
 
 open MeasureTheory Filter
 open scoped ENNReal Topology
 
-@[expose] public section
+section
 
 namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Speed
 
 open Combinatorics.Branching
-open Combinatorics.Branching.Selection.NSelection
+open _root_.Combinatorics.Selection.NSelection
 open ProbabilityTheory.BranchingRandomWalk.Selection.NSelection
 
 /-- The finite-generation envelope is measurable in the offspring batch. -/
@@ -71,7 +86,7 @@ lemma measurable_infiniteOffspringBatchSlotZeroNorm {N : ℕ} (hN : 0 < N) :
 
 /-- An integrable leftmost-child displacement gives an integrable envelope
 for a finite generation batch. -/
-private theorem integrable_infiniteOffspringBatchSlotZeroNorm {N : ℕ}
+private lemma integrable_infiniteOffspringBatchSlotZeroNorm {N : ℕ}
     (hN : 0 < N) (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
     (hslot : Integrable (fun ξ : Step ℕ ℝ => |value' ξ 0|) μ) :
     Integrable (infiniteOffspringBatchSlotZeroNorm hN)
@@ -106,7 +121,7 @@ private theorem integrable_infiniteOffspringBatchSlotZeroNorm {N : ℕ}
 /-- Repairing invalid rows does not change the one-generation envelope
 almost surely under the branching assumptions, so the repaired envelope
 inherits the one-step moment bound. -/
-private theorem integrable_repairedInfiniteOffspringBatchSlotZeroNorm {N : ℕ}
+private lemma integrable_repairedInfiniteOffspringBatchSlotZeroNorm {N : ℕ}
     (hN : 0 < N) (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
     (hboundary : HasBoundaryNormalization realPotential μ)
     (hnonempty : μ nonemptySupport = 1)

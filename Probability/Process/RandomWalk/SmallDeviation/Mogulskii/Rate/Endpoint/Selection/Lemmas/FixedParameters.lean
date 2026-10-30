@@ -6,8 +6,10 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Rate.Endpoint.Windows
-public import Analysis.Asymptotics.Scale.BlockScale
+import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Rate.Endpoint.Windows
+import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Scale.Basic
+import Analysis.Asymptotics.Scale.Block.Diffusive
+import Analysis.Asymptotics.Scale.Block.Length
 
 /-!
 # Fixed-parameter endpoint-window lower bound
@@ -18,7 +20,7 @@ $T_n=\{\xi:-x_n/2\le S_j\le x_n/2\;(1\le j\le n)\}$.
 
 This proof-support module chooses explicit natural-number floor parameters for
 the fixed spectral endpoint-window estimate. Its sole cross-module result is
-`one_div_constant_mul_log_toReal_le_liminf_scaledLog_horizontalTubeProbability_of_floorEndpointWindows`:
+`ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.one_div_constant_mul_log_toReal_le_liminf_scaledLog_horizontalTubeProbability_of_floorEndpointWindows`:
 for a probability law $\nu$ on $\mathbb R$ with mean $0$ and second moment
 $1$, a scale $x_n$ satisfying $x_n\to\infty$ and $x_n/\sqrt n\to0$, and a
 pre-Brownian process with continuous sample paths and measurable evaluations,
@@ -33,6 +35,9 @@ $(1/c)\log A\le\liminf_{n\to\infty}(x_n^2/n)\log\mathbb P(T_n)$, the
 probabilities $\mathbb P(T_n)$ are eventually positive, and the scaled
 logarithms are bounded below. Here $S_j=\sum_{i=0}^{j-1}\xi_i$ and
 $T_n=\{\xi:-x_n/2\le S_j\le x_n/2\text{ for }1\le j\le n\}$, as above.
+
+## Internal proof declarations
+
 The floor parameters and their convergence calculations are local to this
 proof and remain private. This is an internal step toward the horizontal-tube
 constant in
@@ -48,7 +53,7 @@ Trajectories,” *Theory of Probability and Its Applications* 19(4) (1975),
 open Filter MeasureTheory ProbabilityTheory Topology
 open Asymptotics
 
-@[expose] public section
+section
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
@@ -96,7 +101,7 @@ private lemma tendsto_eight_alphaTwoLatticeScale_div {scale : ℕ → ℝ}
       (fun n => (q * scale n / 8) / scale n) atTop (nhds (q / 8)) := by
     have heq : (fun n => (q * scale n / 8) / scale n) =ᶠ[atTop]
         fun _ => q / 8 := by
-      filter_upwards [IsMogulskiiScale.eventually_pos hscale] with n hn
+      filter_upwards [Asymptotics.IsSmallDeviationScale.eventually_pos hscale] with n hn
       field_simp [hn.ne']
     exact tendsto_const_nhds.congr' heq.symm
   have hrounded := Asymptotics.tendsto_floorBlockLength_add_nat_div_of_argument_ratio
@@ -264,7 +269,7 @@ lemma one_div_constant_mul_log_toReal_le_liminf_scaledLog_horizontalTubeProbabil
       Filter.IsBoundedUnder (· ≥ ·) atTop (fun n => scale n ^ 2 / (n : ℝ) *
         Real.log (horizontalTubeProbability (iidSequenceLaw ν)
           (1 / 2) (scale n) n).toReal)) := by
-  let blockLength : ℕ → ℕ := diffusiveBlockLength constant scale
+  let blockLength : ℕ → ℕ := Asymptotics.diffusiveBlockLength constant scale
   let time : ℕ → ℕ := fun n => max 1 (blockLength n)
   let latticeScale : ℕ → ℕ := alphaTwoLatticeScale q scale
   let spacing : ℕ → ℕ := alphaTwoEndpointSpacing p q scale
@@ -285,11 +290,11 @@ lemma one_div_constant_mul_log_toReal_le_liminf_scaledLog_horizontalTubeProbabil
   have hroot : 0 < Real.sqrt (constant / q ^ 2) := Real.sqrt_pos.2 hc
   have hblockLengthTop : Tendsto blockLength atTop atTop := by
     simpa [blockLength] using
-      _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.tendsto_diffusiveBlockLength_atTop
+      _root_.Asymptotics.IsSmallDeviationScale.tendsto_diffusiveBlockLength_atTop
         hscale hconstant
   have hblockLengthPos : ∀ᶠ n in atTop, 0 < blockLength n := by
     simpa [blockLength] using
-      _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.eventually_diffusiveBlockLength_pos
+      _root_.Asymptotics.IsSmallDeviationScale.eventually_diffusiveBlockLength_pos
         hscale hconstant
   have htimePos : ∀ n, 0 < time n := by
     intro n
@@ -308,7 +313,7 @@ lemma one_div_constant_mul_log_toReal_le_liminf_scaledLog_horizontalTubeProbabil
       (fun n => ((n / blockLength n + 1 : ℕ) : ℝ) *
         scale n ^ 2 / (n : ℝ)) atTop (nhds (1 / constant)) := by
     simpa [blockLength] using
-      _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.tendsto_succ_completeBlockCount_mul_sq_div
+      _root_.Asymptotics.IsSmallDeviationScale.tendsto_succ_completeBlockCount_mul_sq_div
         hscale hconstant
 
   have hlatticePos : ∀ n, 0 < latticeScale n := by
@@ -355,7 +360,7 @@ lemma one_div_constant_mul_log_toReal_le_liminf_scaledLog_horizontalTubeProbabil
   have htimeScaleRatio : Tendsto (fun n => (time n : ℝ) / scale n ^ 2)
       atTop (nhds constant) := by
     have hbase :=
-      _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.tendsto_diffusiveBlockLength_div_sq
+      _root_.Asymptotics.IsSmallDeviationScale.tendsto_diffusiveBlockLength_div_sq
         hscale hconstant
     apply hbase.congr'
     filter_upwards [htimeEq] with n hn
@@ -369,7 +374,7 @@ lemma one_div_constant_mul_log_toReal_le_liminf_scaledLog_horizontalTubeProbabil
       atTop (nhds (constant / q ^ 2)) := by
     have heq : (fun n => (time n : ℝ) / width n ^ 2) =ᶠ[atTop]
         fun n => ((time n : ℝ) / scale n ^ 2) / ((width n / scale n) ^ 2) := by
-      filter_upwards [IsMogulskiiScale.eventually_pos hscale] with n hn
+      filter_upwards [Asymptotics.IsSmallDeviationScale.eventually_pos hscale] with n hn
       have hwidthPosN : 0 < widthNat n := by
         dsimp [widthNat, latticeScale, alphaTwoLatticeScale,
           Asymptotics.floorBlockLength]
@@ -602,7 +607,7 @@ lemma one_div_constant_mul_log_toReal_le_liminf_scaledLog_horizontalTubeProbabil
     exact hbound.trans hlow.le
 
   have hblockSqrt :=
-    _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.tendsto_sqrt_diffusiveBlockLength_div
+    _root_.Asymptotics.IsSmallDeviationScale.tendsto_sqrt_diffusiveBlockLength_div
       hscale hconstant
   have hblockSqrtLocal : Tendsto
       (fun n => Real.sqrt (blockLength n : ℝ) / scale n)
@@ -661,13 +666,13 @@ lemma one_div_constant_mul_log_toReal_le_liminf_scaledLog_horizontalTubeProbabil
         3 * ((spacing n : ℝ) / Real.sqrt (time n : ℝ)) + applicationWindow) *
           Real.sqrt (blockLength n : ℝ) ≤ scale n := by
     filter_upwards [houterEventually,
-      IsMogulskiiScale.eventually_pos hscale] with n hout hscalePos
+      Asymptotics.IsSmallDeviationScale.eventually_pos hscale] with n hout hscalePos
     have hdiv := (div_lt_iff₀ hscalePos).mp hout
     linarith
 
   have hrate :=
     one_div_constant_mul_log_toReal_le_liminf_scaledLog_horizontalTubeProbability_of_spectralEndpointWindows
-      ν hν hscale hB hcontinuous hmeasurable hconstant
+      ν hν hscale hB hcontinuous hmeasurable
       blockLength time latticeScale spacing windowRadius
       hblockLengthPos hcountLimit htimePos htimeTop htimeEq hlatticePos
       hwindowLower hfitSpectral hwidthTop hratio hproportion hp hsmallLimit

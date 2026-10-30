@@ -13,6 +13,8 @@ public import Probability.Process.RandomWalk.Path.Interpolation.Basic
 /-!
 # The final one-sided segment of a Rademacher walk
 
+## Public declarations
+
 The public theorems in this file are:
 
 - `ProbabilityTheory.RandomWalk.rademacher_displacement_int`:

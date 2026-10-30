@@ -11,10 +11,13 @@ public import Probability.Process.RandomWalk.Path.Survival.Basic
 /-!
 # The final one-sided segment of a finite random walk
 
-The public definitions and theorems in this file are:
+## Public declarations
 
 - `ProbabilityTheory.RandomWalk.SignStableFrom`:
   $S_j\ge0$ for every $k\le j\le n$, or $S_j\le0$ for every such $j$.
+- `ProbabilityTheory.RandomWalk.signStableFrom_self` proves
+  `SignStableFrom n n ξ`, since the terminal value $S_n$ is either
+  nonnegative or nonpositive.
 - `ProbabilityTheory.RandomWalk.lastSignChangeIndex`:
   $\mu_n=\min\{k\le n:\operatorname{SignStableFrom}(n,k)\}$.
 - `ProbabilityTheory.RandomWalk.lastSignChangeIndex_le`:
@@ -48,6 +51,8 @@ The public definitions and theorems in this file are:
   the random time $\mu_n$ is measurable.
 - `ProbabilityTheory.RandomWalk.terminalSignStableLength`:
   $\nu_n=n-\mu_n$.
+- `ProbabilityTheory.RandomWalk.lastSignChangeIndex_eq_zero_iff` gives
+  $\mu_n=0\iff\operatorname{SignStableFrom}(n,0)$.
 
 These are the discrete last-sign-change time $\mu_n$ and terminal
 length $\nu_n$ used in the final paragraph of Erwin Bolthausen,

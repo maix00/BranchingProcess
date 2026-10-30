@@ -6,17 +6,18 @@ Authors: WANG Yiyang
 
 module
 
-public import Analysis.Asymptotics.Scale.BlockScale
+public import Analysis.Asymptotics.Scale.Block.Length
 public import Probability.Distributions.Moments.Real
 public import Probability.Process.RandomWalk.FunctionalLimit.Conditioned.Transition.Event
 public import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.Event
 public import Probability.Sequence.IID.Basic
-import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.Lemmas.MiddleProbability
-import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.Lemmas.ThreeRegions
-import Probability.Process.RandomWalk.SmallDeviation.Entrance.Edge.PrefixSelection
-import Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.Lemmas.Edge.PrefixGeometry
+import all Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.Lemmas.MiddleProbability
+import all Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.Lemmas.ThreeRegions
+import all Probability.Process.RandomWalk.SmallDeviation.Entrance.Robust.Lemmas.Edge.PrefixSetup
 /-!
 # Power lower bound for the robust entrance event
+
+## Public declarations
 
 The public theorem in this file is:
 
@@ -28,8 +29,9 @@ The public theorem in this file is:
   bound $C a_n^{-1-\alpha}$ uniformly for starting points in $[0,a_n]$.
 
 This is the final minimum-of-three-intervals step in Wang Yiyang,
-*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
-Appendix A.2, Lemma A.7, used in the proof of Chapter 3, Lemma 3.5. `FunctionalLimit/Conditioned/Transition/DiffusiveLower.lean`
+*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*
+(master's thesis, Fudan University, 2026), Appendix A.2, Lemma A.7, used in
+the proof of Chapter 3, Lemma 3.5. `FunctionalLimit/Conditioned/Transition/DiffusiveLower.lean`
 supplies the inverse-square transition bound from the conditioned
 Brownian-meander limit and the cyclic-rotation survival inequality.
 -/

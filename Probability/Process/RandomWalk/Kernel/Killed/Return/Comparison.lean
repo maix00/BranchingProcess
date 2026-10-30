@@ -11,6 +11,8 @@ public import Probability.Process.RandomWalk.Kernel.Killed.Return.Basic
 /-!
 # Comparison of killed return kernels
 
+## Public declarations
+
 For a real random walk, the public theorems transfer return-block mass from
 shrunken intervals to a finite net and then to every starting point:
 

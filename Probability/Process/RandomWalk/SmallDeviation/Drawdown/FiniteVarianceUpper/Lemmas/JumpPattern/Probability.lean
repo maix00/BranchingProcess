@@ -6,19 +6,20 @@ Authors: WANG Yiyang
 
 module
 
-public import Mathlib.MeasureTheory.Measure.MeasureSpaceDef
-public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
-public import Mathlib.MeasureTheory.Function.ConditionalExpectation.Basic
-public import Mathlib.Analysis.Complex.Exponential
-public import Probability.Process.Filtration.ConditionalBlocks
-public import Probability.Sequence.IID.Basic
-public import Probability.Process.RandomWalk.Path.Adapted.Filtration
-public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.JumpPattern.Basic
-import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.JumpPattern.Setup
-import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.ConditionalBlocks
+import Mathlib.MeasureTheory.Measure.MeasureSpaceDef
+import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
+import Mathlib.MeasureTheory.Function.ConditionalExpectation.Basic
+import Mathlib.Analysis.Complex.Exponential
+import Probability.Process.Filtration.ConditionalBlocks
+import Probability.Sequence.IID.Basic
+import Probability.Process.RandomWalk.Path.Adapted.Filtration
+import all Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.JumpPattern.Basic
+import all Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Lemmas.ConditionalBlocks
 
 /-!
 # Conditional probability of a fixed jump pattern
+
+## Internal proof declarations
 
 The proof-specific declarations are:
 
@@ -34,12 +35,11 @@ Lemma 3.3, using its Lemma 3.2.
 open Filter MeasureTheory Topology
 open scoped ENNReal
 
-@[expose] public section
+section
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown
 
 open ProbabilityTheory.RandomWalk
-open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
 lemma measureReal_drawdownJumpPatternTubeIntersection_le_prod_of_uniformBlockBound
     (ν : Measure ℝ) [IsProbabilityMeasure ν]

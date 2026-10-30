@@ -12,6 +12,8 @@ public import Algebra.Order.BigOperators.AdditivePath
 /-!
 # Entrance lower bounds for killed random walks
 
+## Public declarations
+
 The public theorems give lower bounds for a killed transition to a target:
 
 - `pow_measure_le_killedIncrementKernel_pow_apply_of_forall_mem`: if every

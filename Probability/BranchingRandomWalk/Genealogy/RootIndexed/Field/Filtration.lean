@@ -15,7 +15,9 @@ import MeasureTheory.MeasurableSpace.CountableEvaluation
 /-!
 # Generation filtrations on root-indexed step fields
 
-The public declarations are:
+## Public declarations
+
+The declarations are:
 
 * `ProbabilityTheory.BranchingRandomWalk.RootIndexed.stepCoordinateSpace p`
   is the comap of evaluation at root/address `p`;

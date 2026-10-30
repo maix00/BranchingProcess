@@ -6,14 +6,24 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.BranchingRandomWalk.Genealogy.Exploration.Selected.AbstractSubtree
+public import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.AddressFiltration
 
 /-!
-# Coordinates inspected by an exploration
+# Independence of inspected coordinates
 
-An exploration domain is bounded by the branching-step coordinates actually
-inspected. Coordinates over disjoint address sets are independent, and a
-descendant address set disjoint from the inspected coordinates stays fresh.
+## Public declarations
+
+`stepsOnSpace s = ⨆ u ∈ s, stepCoordinateSpace u` is defined with the
+abstract branching-step coordinate spaces. This file proves its order and
+independence properties.
+
+- `stepsOnSpace_mono` states `s ⊆ t → stepsOnSpace s ≤ stepsOnSpace t`, and
+  `stepsOnSpace_le` bounds every such space by the ambient product
+  measurable space.
+- `stepsOnSpace_independent` states that `Disjoint s t` implies
+  `Indep (stepsOnSpace s) (stepsOnSpace t) (offspringFieldLaw μ)`.
+  `stepsOnSpace_descendant_independent` applies this when the inspected
+  addresses are disjoint from every descendant of a fixed root.
 -/
 
 open MeasureTheory ProbabilityTheory
@@ -22,13 +32,10 @@ open MeasureTheory ProbabilityTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
+open ProbabilityTheory.BranchingProcess (offspringFieldLaw offspringFieldLaw_coordinate offspringFieldLaw_independent offspringFieldLaw_mapMarks)
+
 open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 
-
-@[instance_reducible] def stepsOnSpace
-    {α X : Type*} [MeasurableSpace X] (s : Set (TreeNode α)) :
-    MeasurableSpace (TreeNode α → Step α X) :=
-  ⨆ u ∈ s, stepCoordinateSpace u
 
 theorem stepsOnSpace_mono
     {α X : Type*} [MeasurableSpace X] {s t : Set (TreeNode α)} (hst : s ⊆ t) :
@@ -54,7 +61,7 @@ theorem stepsOnSpace_independent
     (μ : Measure (Step α X)) [IsProbabilityMeasure μ]
     (s t : Set (TreeNode α)) (hdisj : Disjoint s t) :
     Indep (stepsOnSpace s) (stepsOnSpace t)
-      (stepFieldLaw μ) := by
+      (offspringFieldLaw μ) := by
   have hle : ∀ u : TreeNode α, stepCoordinateSpace (X := X) u ≤
       (inferInstance : MeasurableSpace (TreeNode α → Step α X)) :=
     fun u => (measurable_pi_apply u).comap_le
@@ -67,7 +74,7 @@ theorem stepsOnSpace_descendant_independent
     (explored : Set (TreeNode α)) (root : TreeNode α)
     (hfresh : Disjoint explored (branchingDescendantAddresses root)) :
     Indep (stepsOnSpace explored)
-      (stepDescendantSpace root) (stepFieldLaw μ) := by
+      (stepDescendantSpace root) (offspringFieldLaw μ) := by
   rw [stepDescendantSpace_eq_iSup]
   exact stepsOnSpace_independent μ explored
     (branchingDescendantAddresses root) hfresh

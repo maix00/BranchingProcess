@@ -12,6 +12,8 @@ public import Mathlib.Algebra.Order.Floor.Semiring
 /-!
 # Expanding uniform observation grids
 
+## Public declarations
+
 The public declarations in this file are:
 
 - `ProbabilityTheory.expandingGridCount`:

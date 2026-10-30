@@ -6,6 +6,8 @@ Authors: WANG Yiyang
 
 module
 
+public import Probability.Process.Path.Transform.Continuous
+
 public import Probability.Process.Brownian.Independence.FirstPassageGrid
 public import Probability.Process.Path.FirstPassage.GridApproximation
 public import Probability.Process.Brownian.Reflection.Path.UnboundedBelow
@@ -16,7 +18,7 @@ import Probability.ConvergenceInDistribution.Independence
 /-!
 # Brownian future path at first passage
 
-The public theorem in this file is:
+## Public declarations
 
 - `ProbabilityTheory.IsBrownianReal.measure_shiftToZero_firstPassageBelow_eq`:
   for each real level $a$, the path

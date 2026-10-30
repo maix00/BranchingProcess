@@ -20,6 +20,18 @@ public import Mathlib.MeasureTheory.Constructions.BorelSpace.Real
 # Stable corridor comparison core
 
 Finite-scale entrance inequalities and their logarithmic consequences. These results consume an entrance probability as data and do not select a way to prove it.
+## Public declarations
+
+The core theorem concatenates a fixed entrance event and a rescaled narrow
+corridor, giving a product lower bound for the wider corridor. Taking
+logarithms yields
+$\log p_{\rm narrow}(a)\le\log p_{\rm wide}(a)-\log p_{\rm entrance}$.
+The asymptotic corollaries show that the shifted corridor probability tends
+to zero and, when its logarithm tends to $-\infty$,
+$1-\delta\le\log p_{\rm narrow}(a)/\log p_{\rm wide}(a)$ eventually.
+The entrance probability is an explicit input here; index-specific support
+and feedback arguments live in sibling modules.
+
 -/
 
 @[expose] public section

@@ -6,13 +6,23 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.RealWidthLower
-import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Binning.Parameters
-public import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.Binning
+import Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.EndpointWindow.RealWidthLower
+import all Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Binning.Parameters
+import all Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.Lemmas.Staircase.Setup.Binning
 /-!
 # Uniform exponential bound for narrowed staircase bins
 
-The module-visible supporting lemma in this file is:
+## Internal proof declarations
+
+For every bin $l<m$, the fixed narrowed tube has the common exponential lower bound
+
+$$
+\operatorname{ofReal}\!\left(\exp\!\left(-\frac{d n}{W^2}\right)\right)
+\leq \operatorname{horizontalTubeEndpointWindowProbability}(H_l,n),
+$$
+
+once the integer width and block length exceed the shared thresholds.
+The supporting lemma in this file is:
 
 - `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.exists_uniform_staircaseBinProbability_ge_exp`:
   after choosing finitely many narrowed tubes, fixed interior terminal
@@ -25,7 +35,7 @@ This is the fixed-spatial-bin application of Wang Yiyang,
 Chapter 3, Lemma 3.1(ii), inside the proof of Lemma 3.5.
 -/
 
-@[expose] public section
+section
 
 open MeasureTheory ProbabilityTheory
 
@@ -82,8 +92,24 @@ lemma exists_uniform_staircaseBinProbability_ge_exp
     (staircaseBinEndpointUpperFraction m v₂)
     margin hwidth hmargin hwidth₀' hwidthMargin
     hmarginLower hmarginUpper horizon hratio
-  exact realWidthTubeProbability_ge_exp_globalScale
-    hfloor hglobalWidth hscale hsource
+  have hrate : d / (⌊width⌋₊ : ℝ) ^ 2 ≤
+      target / globalWidth ^ 2 := by
+    apply (div_le_div_iff₀ (sq_pos_of_pos hfloor)
+      (sq_pos_of_pos hglobalWidth)).2
+    nlinarith [hscale]
+  have hmul := mul_le_mul_of_nonneg_right hrate
+    (Nat.cast_nonneg horizon : 0 ≤ (horizon : ℝ))
+  have hexponent :
+      -target * (horizon : ℝ) / globalWidth ^ 2 ≤
+      -d * (horizon : ℝ) / (⌊width⌋₊ : ℝ) ^ 2 := by
+    calc
+      -target * (horizon : ℝ) / globalWidth ^ 2 =
+          -(target / globalWidth ^ 2 * (horizon : ℝ)) := by ring
+      _ ≤ -(d / (⌊width⌋₊ : ℝ) ^ 2 * (horizon : ℝ)) :=
+        neg_le_neg hmul
+      _ = -d * (horizon : ℝ) / (⌊width⌋₊ : ℝ) ^ 2 := by ring
+  exact (ENNReal.ofReal_le_ofReal (Real.exp_le_exp.mpr hexponent)).trans
+    hsource
 
 end ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 

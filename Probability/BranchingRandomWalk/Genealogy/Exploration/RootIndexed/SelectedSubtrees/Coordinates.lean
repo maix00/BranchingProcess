@@ -6,6 +6,7 @@ Authors: WANG Yiyang
 
 import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.SelectedSubtrees.Iteration
 import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.SelectedSubtrees.Position
+import Combinatorics.UlamHarris.Generation
 
 /-!
 # Original coordinates of iterated selected subtrees
@@ -13,6 +14,22 @@ import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.Selecte
 Every finite adaptive subtree replacement is accompanied by a cumulative
 root/address map back into the original field.  Both the step coordinates and
 absolute positions are preserved exactly.
+## Public declarations
+
+* `RootIndexed.iteratedSelectedRoots` and `RootIndexed.iteratedSelectedAddress`
+  recursively record the original root and path corresponding to a root or
+  particle after finitely many adaptive subtree replacements.
+  `iteratedSelectedRoots_zero` gives the initial address, and
+  `iteratedSelectedSubtreeStepField_apply` and
+  `iteratedSelectedSubtreeStepField_eq_at_address` identify every iterated
+  field coordinate with its original coordinate.
+* `map_iteratedSelectedSubtreeStepField` transfers any deterministic
+  functional of a step through this coordinate identification.
+* `iteratedSelectedInitialPosition` records the absolute starting positions;
+  `position_iteratedSelectedSubtreeStepField` and
+  `position_iteratedSelectedAddress` prove exact position preservation.
+* `iteratedSelectedAddress_injective` proves that same-generation injective
+  choices at every stage give an injective cumulative address map.
 -/
 
 namespace ProbabilityTheory.BranchingRandomWalk
@@ -90,19 +107,6 @@ theorem RootIndexed.iteratedSelectedSubtreeStepField_eq_at_address
   RootIndexed.iteratedSelectedSubtreeStepField_apply
     chosen j step p.1 p.2
 
-theorem RootIndexed.survive_iteratedSelectedSubtreeStepField_iff
-    {Root α X : Type*}
-    (chosen : ℕ → RootIndexed.StepField Root α X →
-      Root → Root × TreeNode α)
-    (j : ℕ) (step : RootIndexed.StepField Root α X)
-    (p : RootIndexed.TreeNode Root α) (i : α) :
-    survive
-        (RootIndexed.iteratedSelectedSubtreeStepField chosen j step p.1 p.2) i ↔
-      survive (step
-        (RootIndexed.iteratedSelectedAddress chosen j step p).1
-        (RootIndexed.iteratedSelectedAddress chosen j step p).2) i := by
-  rw [RootIndexed.iteratedSelectedSubtreeStepField_eq_at_address]
-
 /-- Applying any deterministic functional to a step gives the same result at
 an iterated particle and its embedded original address. -/
 theorem RootIndexed.map_iteratedSelectedSubtreeStepField
@@ -115,23 +119,6 @@ theorem RootIndexed.map_iteratedSelectedSubtreeStepField
     F (RootIndexed.iteratedSelectedSubtreeStepField chosen j step p.1 p.2) =
       F (step (RootIndexed.iteratedSelectedAddress chosen j step p).1
         (RootIndexed.iteratedSelectedAddress chosen j step p).2) := by
-  rw [RootIndexed.iteratedSelectedSubtreeStepField_eq_at_address]
-
-/-- Mapped child increments agree at an iterated particle and its embedded
-original address. -/
-theorem RootIndexed.value_iteratedSelectedSubtreeStepField
-    {Root α Mark Position : Type*} [Zero Position]
-    (d : Mark → Position)
-    (chosen : ℕ → RootIndexed.StepField Root α Mark →
-      Root → Root × TreeNode α)
-    (j : ℕ) (step : RootIndexed.StepField Root α Mark)
-    (p : RootIndexed.TreeNode Root α) (i : α) :
-    value'
-        ((RootIndexed.iteratedSelectedSubtreeStepField
-          chosen j step p.1 p.2).map d) i =
-      value' ((step
-        (RootIndexed.iteratedSelectedAddress chosen j step p).1
-        (RootIndexed.iteratedSelectedAddress chosen j step p).2).map d) i := by
   rw [RootIndexed.iteratedSelectedSubtreeStepField_eq_at_address]
 
 /-- Absolute initial positions of the iterated roots, expressed directly in
@@ -220,7 +207,7 @@ theorem RootIndexed.iteratedSelectedAddress_injective
       let roots := chosen j current
       have hstage : Function.Injective (fun p : RootIndexed.TreeNode Root α =>
           ((roots p.1).1, (roots p.1).2 ++ p.2)) :=
-        RootIndexed.branchingAddresses_injective roots
+        Combinatorics.UlamHarris.RootIndexed.appendAddresses_injective roots
           (hdepth j current) (hinj j current)
       intro p q h
       apply hstage

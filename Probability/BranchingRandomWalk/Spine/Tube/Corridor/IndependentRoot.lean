@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Spine.Tube.SecondMoment.OneGenerationTail
-import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law.IndependentEventCount
+module
+
+public import Probability.BranchingRandomWalk.Spine.Path.ManyToOne.PathCount
+public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law.IndependentEventCount
 
 /-!
 # Independent-root lower bounds for tube populations
@@ -41,6 +43,8 @@ open scoped ENNReal
 
 namespace ProbabilityTheory.BranchingRandomWalk.Spine
 
+open ProbabilityTheory.BranchingProcess (offspringFieldLaw offspringFieldLaw_coordinate offspringFieldLaw_independent offspringFieldLaw_mapMarks)
+
 open Combinatorics.Branching
 open Combinatorics.UlamHarris
 open ProbabilityTheory.BranchingRandomWalk
@@ -61,10 +65,10 @@ theorem measure_finiteRootCorridorCount_le_quarter_pzMean
     (mean second : ℝ≥0∞)
     (hmean : (∫⁻ ω, Spine.pathGeneration φ n
       (corridor.indicator (fun _ => (1 : ℝ≥0∞))) initial ω
-      ∂stepFieldLaw μ) = mean)
+      ∂offspringFieldLaw μ) = mean)
     (hsecond : (∫⁻ ω, (Spine.pathGeneration φ n
       (corridor.indicator (fun _ => (1 : ℝ≥0∞))) initial ω) ^ 2
-      ∂stepFieldLaw μ) ≤ second)
+      ∂offspringFieldLaw μ) ≤ second)
     (hsecond_pos : 0 < second) (hsecond_top : second ≠ ∞) :
     let pzMean := mean ^ 2 / second
     (finiteRootStepFieldLaw μ m)
@@ -80,22 +84,22 @@ theorem measure_finiteRootCorridorCount_le_quarter_pzMean
   let pzMean : ℝ≥0∞ := mean ^ 2 / second
   have hevent : MeasurableSet event :=
     measurableSet_hasPathHistoryIn φ n initial corridor hcorridor
-  have hpz : pzMean ≤ (stepFieldLaw μ) event := by
+  have hpz : pzMean ≤ (offspringFieldLaw μ) event := by
     dsimp [pzMean, event]
     exact measure_hasPathHistoryIn_ge_of_pathGeneration_moments
       φ μ n initial corridor hcorridor mean second hmean hsecond
       hsecond_pos hsecond_top
-  have hevent_le_one : (stepFieldLaw μ) event ≤ 1 := by
+  have hevent_le_one : (offspringFieldLaw μ) event ≤ 1 := by
     calc
-      (stepFieldLaw μ) event ≤ (stepFieldLaw μ) Set.univ :=
+      (offspringFieldLaw μ) event ≤ (offspringFieldLaw μ) Set.univ :=
         measure_mono (Set.subset_univ event)
       _ = 1 := measure_univ
   have hpz_le_one : pzMean ≤ 1 := hpz.trans hevent_le_one
   have hpz_top : pzMean ≠ ∞ := ne_of_lt (hpz_le_one.trans_lt ENNReal.one_lt_top)
-  have hpz_real_le_event : pzMean.toReal ≤ ((stepFieldLaw μ) event).toReal :=
-    ENNReal.toReal_mono (measure_ne_top (stepFieldLaw μ) event) hpz
+  have hpz_real_le_event : pzMean.toReal ≤ ((offspringFieldLaw μ) event).toReal :=
+    ENNReal.toReal_mono (measure_ne_top (offspringFieldLaw μ) event) hpz
   have hthreshold : (m : ℝ) * pzMean.toReal / 4 ≤
-      (m : ℝ) * ((stepFieldLaw μ) event).toReal / 4 := by
+      (m : ℝ) * ((offspringFieldLaw μ) event).toReal / 4 := by
     have hmReal : 0 ≤ (m : ℝ) := Nat.cast_nonneg _
     nlinarith [mul_le_mul_of_nonneg_left hpz_real_le_event hmReal]
   have hcount :=
@@ -106,16 +110,16 @@ theorem measure_finiteRootCorridorCount_le_quarter_pzMean
           (m : ℝ) * pzMean.toReal / 4} ⊆
       {field : FiniteRootStepField m ℕ X |
         (∑ r : Fin m, event.indicator (fun _ => (1 : ℝ)) (field r)) ≤
-          (m : ℝ) * ((stepFieldLaw μ) event).toReal / 4} := by
+          (m : ℝ) * ((offspringFieldLaw μ) event).toReal / 4} := by
     intro field hfield
     exact hfield.trans hthreshold
   have hcount' :
       (finiteRootStepFieldLaw μ m)
           {field : FiniteRootStepField m ℕ X |
             (∑ r : Fin m, event.indicator (fun _ => (1 : ℝ)) (field r)) ≤
-              (m : ℝ) * ((stepFieldLaw μ) event).toReal / 4} ≤
+              (m : ℝ) * ((offspringFieldLaw μ) event).toReal / 4} ≤
         ENNReal.ofReal (Real.exp
-          (-((m : ℝ) * ((stepFieldLaw μ) event).toReal / 4))) := by
+          (-((m : ℝ) * ((offspringFieldLaw μ) event).toReal / 4))) := by
     simpa only [event] using hcount
   calc
     (finiteRootStepFieldLaw μ m)
@@ -125,10 +129,10 @@ theorem measure_finiteRootCorridorCount_le_quarter_pzMean
       (finiteRootStepFieldLaw μ m)
         {field : FiniteRootStepField m ℕ X |
           (∑ r : Fin m, event.indicator (fun _ => (1 : ℝ)) (field r)) ≤
-            (m : ℝ) * ((stepFieldLaw μ) event).toReal / 4} :=
+            (m : ℝ) * ((offspringFieldLaw μ) event).toReal / 4} :=
       measure_mono hsubset
     _ ≤ ENNReal.ofReal (Real.exp
-          (-((m : ℝ) * ((stepFieldLaw μ) event).toReal / 4))) := hcount'
+          (-((m : ℝ) * ((offspringFieldLaw μ) event).toReal / 4))) := hcount'
     _ ≤ ENNReal.ofReal (Real.exp (-((m : ℝ) * pzMean.toReal / 4))) := by
       apply ENNReal.ofReal_le_ofReal
       apply Real.exp_le_exp.mpr
@@ -153,7 +157,7 @@ theorem lintegral_pathGeneration_ge_exp_mul_spineProbability
           {increment | RandomWalk.history n initial increment ∈ corridor} ≤
       ∫⁻ ω, Spine.pathGeneration φ n
         (corridor.indicator (fun _ => (1 : ℝ≥0∞))) initial ω
-        ∂stepFieldLaw μ := by
+        ∂offspringFieldLaw μ := by
   let spineEvent : Set (ℕ → ℝ) :=
     {increment | RandomWalk.history n initial increment ∈ corridor}
   let F : (Fin (n + 1) → ℝ) → ℝ≥0∞ :=
@@ -221,7 +225,7 @@ theorem lintegral_pathGeneration_ge_exp_mul_spineProbability
         rw [hleft, hright]
         simp
     _ = ∫⁻ ω, Spine.pathGeneration φ n F initial ω
-        ∂stepFieldLaw μ :=
+        ∂offspringFieldLaw μ :=
       (Spine.pathManyToOneCore φ μ hboundary n hF initial).symm
 
 /-- Independent initial roots inherit the long-corridor lower tail directly
@@ -240,7 +244,7 @@ theorem measure_finiteRootCorridorCount_le_quarter_spineLowerPZ
     (m : ℕ) (hm : 0 < m) (second : ℝ≥0∞)
     (hsecond : (∫⁻ ω, (Spine.pathGeneration φ n
       (corridor.indicator (fun _ => (1 : ℝ≥0∞))) initial ω) ^ 2
-      ∂stepFieldLaw μ) ≤ second)
+      ∂offspringFieldLaw μ) ≤ second)
     (hsecond_pos : 0 < second) (hsecond_top : second ≠ ∞) :
     let spineEvent :=
       {increment | RandomWalk.history n initial increment ∈ corridor}
@@ -260,30 +264,30 @@ theorem measure_finiteRootCorridorCount_le_quarter_spineLowerPZ
   let F : (Fin (n + 1) → ℝ) → ℝ≥0∞ :=
     corridor.indicator (fun _ => (1 : ℝ≥0∞))
   let mean : ℝ≥0∞ :=
-    ∫⁻ ω, Spine.pathGeneration φ n F initial ω ∂stepFieldLaw μ
+    ∫⁻ ω, Spine.pathGeneration φ n F initial ω ∂offspringFieldLaw μ
   let lowerMean : ℝ≥0∞ :=
     ENNReal.ofReal (Real.exp (lower - initial)) *
       (tiltedIncrementFieldLaw φ μ) spineEvent
   let actualPZ : ℝ≥0∞ := mean ^ 2 / second
   let pzMean : ℝ≥0∞ := lowerMean ^ 2 / second
   have hmean : (∫⁻ ω, Spine.pathGeneration φ n F initial ω
-      ∂stepFieldLaw μ) = mean := rfl
+      ∂offspringFieldLaw μ) = mean := rfl
   have hmeanLower : lowerMean ≤ mean := by
     exact lintegral_pathGeneration_ge_exp_mul_spineProbability
       φ μ hboundary n initial lower corridor hcorridor hterminalLower
   have hsuccess : actualPZ ≤
-      (stepFieldLaw μ) (hasPathHistoryIn (ι := ℕ) φ n initial corridor) := by
+      (offspringFieldLaw μ) (hasPathHistoryIn (ι := ℕ) φ n initial corridor) := by
     dsimp [actualPZ, mean, F]
     exact measure_hasPathHistoryIn_ge_of_pathGeneration_moments
       φ μ n initial corridor hcorridor
       (∫⁻ ω, Spine.pathGeneration φ n
         (corridor.indicator (fun _ => (1 : ℝ≥0∞))) initial ω
-        ∂stepFieldLaw μ) second rfl hsecond hsecond_pos hsecond_top
+        ∂offspringFieldLaw μ) second rfl hsecond hsecond_pos hsecond_top
   have hprob_le_one :
-      (stepFieldLaw μ) (hasPathHistoryIn (ι := ℕ) φ n initial corridor) ≤ 1 := by
+      (offspringFieldLaw μ) (hasPathHistoryIn (ι := ℕ) φ n initial corridor) ≤ 1 := by
     calc
-      (stepFieldLaw μ) (hasPathHistoryIn (ι := ℕ) φ n initial corridor) ≤
-          (stepFieldLaw μ) Set.univ := measure_mono (Set.subset_univ _)
+      (offspringFieldLaw μ) (hasPathHistoryIn (ι := ℕ) φ n initial corridor) ≤
+          (offspringFieldLaw μ) Set.univ := measure_mono (Set.subset_univ _)
       _ = 1 := measure_univ
   have hactualPZ_le_one : actualPZ ≤ 1 := hsuccess.trans hprob_le_one
   have hactualPZ_top : actualPZ ≠ ∞ :=
@@ -359,7 +363,7 @@ theorem measure_finiteRootCorridor_allRootsAvoid_le_exp_of_spineLowerPZ
     (m : ℕ) (hm : 0 < m) (second : ℝ≥0∞)
     (hsecond : (∫⁻ ω, (Spine.pathGeneration φ n
       (corridor.indicator (fun _ => (1 : ℝ≥0∞))) initial ω) ^ 2
-      ∂stepFieldLaw μ) ≤ second)
+      ∂offspringFieldLaw μ) ≤ second)
     (hsecond_pos : 0 < second) (hsecond_top : second ≠ ∞) :
     let spineEvent :=
       {increment | RandomWalk.history n initial increment ∈ corridor}

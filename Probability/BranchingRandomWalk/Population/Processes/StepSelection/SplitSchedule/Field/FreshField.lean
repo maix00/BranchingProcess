@@ -14,6 +14,13 @@ The roots selected from the first successful fixed-age trial determine a
 new finite root-indexed step field.  Its complete product law and its
 independence from the generation domain flow follow from the abstract
 selected-subtree theorem.
+## Public declarations
+
+* `freshField` restricts the original pre-sampled field to roots selected by
+  the first successful fixed-age trial.
+* `freshField_law` gives this field the original product law, and
+  `freshField_independent` proves its independence from the filtration of the
+  first `duration` generations.
 -/
 
 open MeasureTheory ProbabilityTheory

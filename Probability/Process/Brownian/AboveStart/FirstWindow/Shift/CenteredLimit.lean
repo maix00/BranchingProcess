@@ -7,12 +7,14 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.Brownian.AboveStart.FirstWindow.Basic
-public import Probability.Process.Path.AboveStart.FirstWindow.Centered
-public import Probability.Process.Path.AboveStart.FirstWindow.FiniteHorizon
+public import Probability.Process.Path.AboveStart.FirstWindow.Shift.Centered
+public import Probability.Process.Path.AboveStart.FirstWindow.Shift.FiniteHorizon
 public import Probability.ConvergenceInDistribution.Basic
 
 /-!
 # Removing a finite cutoff from Brownian first-window shifts
+
+## Public declarations
 
 The public theorem in this file is:
 

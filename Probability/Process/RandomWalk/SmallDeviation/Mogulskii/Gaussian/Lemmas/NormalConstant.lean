@@ -6,34 +6,54 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.RandomWalkBounds.PathClass.Regimes
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Rate.Endpoint.Selection.Basic
-public import Probability.Distributions.Rademacher
-public import Probability.Process.Path.PathClass.StepCorridor.Probability.StableRate
-public import MeasureTheory.Measure.CadlagPath.PathClass.StepCorridor.Energy
+import Mathlib.Basic.Real.Basic
+import Mathlib.MeasureTheory.Measure.MeasureSpaceDef
+import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
+import Mathlib.Probability.CDF
+import Mathlib.Probability.Distributions.Gaussian.Real
+import Analysis.Asymptotics.RegularVariation.Basic
+import Topology.Cadlag.Basic
+import Probability.Distributions.Rademacher
+import Probability.Process.Stable.Levy
+import Probability.Process.Stable.SmallDeviation.EscapeRate.PathLaw.Basic
+import Probability.Process.Path.PathClass.StepCorridor.Probability.Rate.FiniteUnionNullMeasurable
+import Probability.Process.RandomWalk.Path.Corridor.Horizontal.Core
+import Probability.Process.RandomWalk.Path.Skorokhod.Core
+import Probability.Sequence.IID.Basic
+import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Scale.Basic
+import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.PathClass.Regimes
+import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.Partition.Limit
+import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Rate.Endpoint.Selection.Basic
+import Probability.Process.Path.PathClass.StepCorridor.Probability.StableRate
+import MeasureTheory.Measure.CadlagPath.PathClass.StepCorridor.Energy
 
 /-!
 # The Gaussian escape constant in the normal-domain path-class theorem
 
-The source path-class theorem gives the exponent-two rate in terms of the
-Brownian escape constant. This module calibrates that constant against the
-sharp horizontal-tube asymptotic, using a constant corridor as a member of
-class `M`.
+The exponent-two path-class rate and its Brownian escape constant are part of
+Theorem 3, Section 4, p. 764 of A. A. Mogul'skii, “Small deviations in the
+sample function space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974),
+755–765; English translation, “Small Deviations in a Space of Trajectories,”
+*Theory of Probability and Its Applications* 19(4) (1975), 726–736, DOI
+10.1137/1119081. This module calibrates that constant against the sharp
+horizontal-tube asymptotic, using a constant corridor as a member of class
+`M`.
 
-The proof-chain lemma used by `Gaussian/EscapeConstant.lean` is
-`ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.tendsto_stableRate_openHorizontalTube_eq_escapeRate`:
-under the stable-scale, slow-variation, Gaussian escape-rate,
-domain-of-attraction, and path-tightness assumptions in its statement, the
-strict centered unit-width tube has eventually positive probability. For
-$S_j=\sum_{i<j}\xi_i$ with i.i.d. Rademacher increments and spatial scale
-$x_n$, it gives
-\[
-  \lambda_n\log\mathbb P\!\left(-\frac{x_n}{2}<S_j<\frac{x_n}{2},\
-    1\le j\le n\right)\longrightarrow 4C,
-\]
-where $\lambda_n$ is the exponent-two stable small-deviation rate and $C$ is
-the Gaussian escape constant. The constant corridor and path-event
-identifications used in the proof are private to this module.
+## Internal proof declarations
+
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian.tendsto_stableRate_openHorizontalTube_eq_escapeRate`:
+  under the stable-scale, slow-variation, Gaussian escape-rate,
+  domain-of-attraction, and path-tightness assumptions in its statement, the
+  strict centered unit-width tube has eventually positive probability. For
+  $S_j=\sum_{i<j}\xi_i$ with i.i.d. Rademacher increments and spatial scale
+  $x_n$, it gives
+  \[
+    \lambda_n\log\mathbb P\!\left(-\frac{x_n}{2}<S_j<\frac{x_n}{2},\
+      1\le j\le n\right)\longrightarrow 4C,
+  \]
+  where $\lambda_n$ is the exponent-two stable small-deviation rate and $C$ is
+  the Gaussian escape constant. The constant corridor and path-event
+  identifications used in the proof are private to this module.
 -/
 
 open Filter MeasureTheory ProbabilityTheory
@@ -43,7 +63,7 @@ open Skorokhod.PathClass.StepCorridor
 open ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability
 open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete
 
-@[expose] public section
+section
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian
 
@@ -200,8 +220,13 @@ private lemma normalizedStepCadlagPathIcc_mem_centeredUnitCorridorFiniteUnion_if
       simpa [j, RandomWalk.normalizedStepCadlagPathIcc_apply,
         RandomWalk.normalizedStepPath] using h
 
-/-- The discrete finite-partition theorem specializes on the centered
-unit-width corridor to the strict horizontal-tube probability. -/
+/-- The discrete finite-partition rate specializes on the centered unit-width
+corridor to the strict horizontal-tube probability. This constant calibration
+is used in the proof of Theorem 3, Section 4, p. 764 of A. A. Mogul'skii,
+“Small deviations in the sample function space,” *Teoriya Veroyatnostei i ee
+Primeneniya* 19(4) (1974), 755–765; English translation, “Small Deviations in
+a Space of Trajectories,” *Theory of Probability and Its Applications* 19(4)
+(1975), 726–736, DOI 10.1137/1119081. -/
 lemma tendsto_stableRate_openHorizontalTube_eq_escapeRate
     {normalization scale : ℕ → ℝ}
     (hscale : IsStableMogulskiiScale 2 rademacherMeasure normalization scale)

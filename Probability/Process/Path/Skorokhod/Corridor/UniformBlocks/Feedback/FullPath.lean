@@ -8,11 +8,13 @@ module
 
 public import Order.Interval.RationalCoordinate.UnitInterval
 public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Feedback.Basic
-public import Probability.Process.Path.Skorokhod.Corridor.Segment
+import Probability.Process.Path.Skorokhod.Corridor.Segment
 import Topology.Order.UnitInterval.Rational
 
 /-!
 # Complete-path bound from successful feedback blocks
+
+## Public declarations
 
 * `ProbabilityTheory.rationalFeedback_fullPath_bound` shows that a successful
   finite feedback-block path with càdlàg sample path satisfies
@@ -44,7 +46,7 @@ theorem rationalFeedback_fullPath_bound
         (feedbackCorrectionSet δ (v / (blocks : ℝ)) r R)
         (feedbackCorrectionSet δ (v / (blocks : ℝ)) (-R) (-r))) :
     ∀ t : unitInterval,
-      |X (UnitInterval.toNNReal t) ω - X 0 ω - v * (t : ℝ)| < η := by
+      |X (unitInterval.toNNReal t) ω - X 0 ω - v * (t : ℝ)| < η := by
   let f : ↑RationalCoordinate.UnitInterval → ℝ :=
     fun q => X (RationalCoordinate.toNNReal q) ω - X 0 ω
   have hf0 : f ⊥ = 0 := by simp [f, RationalCoordinate.toNNReal_bot]
@@ -55,20 +57,20 @@ theorem rationalFeedback_fullPath_bound
     (mem_rationalFeedbackPrefixSet_prefix_iff X hblocks blocks ω
       _ _ _).mp hsuccess
   let Z : unitInterval → ℝ := fun t =>
-    X (UnitInterval.toNNReal t) ω - X 0 ω - v * (t : ℝ)
+    X (unitInterval.toNNReal t) ω - X 0 ω - v * (t : ℝ)
   have hZ : IsCadlag Z := by
     have hsegment := isCadlag_segmentIncrement X 0 1 ω hcadlag
     have hlinear : Continuous (fun t : unitInterval => v * (t : ℝ)) :=
       continuous_const.mul continuous_subtype_val
     convert hsegment.sub hlinear.isCadlag using 1
     funext t
-    change X (UnitInterval.toNNReal t) ω - X 0 ω - v * (t : ℝ) =
-      X (0 + 1 * UnitInterval.toNNReal t) ω - X 0 ω - v * (t : ℝ)
+    change X (unitInterval.toNNReal t) ω - X 0 ω - v * (t : ℝ) =
+      X (0 + 1 * unitInterval.toNNReal t) ω - X 0 ω - v * (t : ℝ)
     simp only [zero_add, one_mul]
   have hrat (q : ↑RationalCoordinate.UnitInterval) :
       |Z (RationalCoordinate.toUnitInterval q)| ≤
         R + δ + |v / (blocks : ℝ)| := by
-    simpa [Z, f, RationalCoordinate.toNNReal, UnitInterval.toNNReal,
+    simpa [Z, f, RationalCoordinate.toNNReal, unitInterval.toNNReal,
       RationalCoordinate.toUnitInterval] using
         rationalFeedback_coordinate_bound hblocks f hf0 v δ r R
           hr hR hsuccess' q

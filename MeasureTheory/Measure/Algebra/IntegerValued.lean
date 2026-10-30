@@ -14,6 +14,14 @@ public import Mathlib.MeasureTheory.Measure.Count
 A measure is integer-valued when every measurable set has mass in
 `ℕ ∪ {∞}`. This property concerns the measure itself and does not assert
 that it admits an enumerable Dirac representation.
+
+## Public declarations
+
+* `MeasureTheory.Measure.IsIntegerValued μ` means `μ(s)=∞` or `μ(s)=n` for some
+  `n : ℕ`, for every measurable `s`.
+* `MeasureTheory.Measure.isIntegerValued_zero` and
+  `MeasureTheory.Measure.isIntegerValued_count` state
+  that the zero measure and counting measure satisfy this property.
 -/
 
 @[expose] public section

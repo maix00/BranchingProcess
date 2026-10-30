@@ -6,11 +6,20 @@ Authors: WANG Yiyang
 
 module
 
-public import Order.Interval.RationalCoordinate.UnitInterval
+public import Mathlib.MeasureTheory.Function.ConvergenceInDistribution
+public import Mathlib.Probability.BrownianMotion.Basic
 public import Mathlib.Topology.UnitInterval
-public import Probability.Process.RandomWalk.FunctionalLimit.Donsker.FiniteDimensional.Rational
-public import Probability.Process.RandomWalk.FunctionalLimit.Donsker.Tightness.Path
-public import Probability.ConvergenceInDistribution.ContinuousMap.FiniteDimensional
+public import Probability.Process.Path.Scaling.UnitInterval
+public import Probability.Process.RandomWalk.Path.Interpolation.Basic
+public import Probability.Sequence.IID.Basic
+import Order.Interval.RationalCoordinate.UnitInterval
+import Probability.ConvergenceInDistribution.ContinuousMap.FiniteDimensional
+import Probability.Process.RandomWalk.FunctionalLimit.Donsker.FiniteDimensional.Rational
+import Probability.Process.RandomWalk.FunctionalLimit.Donsker.Tightness.Path
+import Probability.Process.RandomWalk.Path.Interpolation.Core
+import Mathlib.Topology.ContinuousMap.SecondCountableSpace
+import Mathlib.Topology.MetricSpace.Polish
+import Mathlib.Topology.UniformSpace.CompactConvergence
 import Topology.Order.UnitInterval.Rational
 
 /-!
@@ -19,12 +28,12 @@ import Topology.Order.UnitInterval.Rational
 Tightness of the polygonal path laws and convergence on the dense family of
 rational unit-interval times yield convergence in continuous-path space.
 
-The public theorem in this file is:
+## Public declarations
 
 - `ProbabilityTheory.RandomWalk.tendstoInDistribution_normalizedLinearContinuousPath_brownian`:
-  centered unit-variance i.i.d. increments, polygonally interpolated and
-  scaled by $1/\sqrt n$, converge in law to any continuous Brownian
-  finite-dimensional realization.
+  if $\int x\,d\nu=0$, $\int x^2\,d\nu=1$, and $B$ is a measurable,
+  continuous pre-Brownian process, the normalized polygonal paths converge
+  in law in $C([0,1],\mathbb R)$ to $B$.
 
 This is Donsker's invariance principle, stated as Theorem 4.20 in I. Karatzas
 and S. E. Shreve, *Brownian Motion and Stochastic Calculus*, 2nd ed.,

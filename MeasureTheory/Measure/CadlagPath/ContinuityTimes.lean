@@ -19,6 +19,26 @@ public import Topology.Cadlag.Skorokhod.Evaluation.Basic
 This file is intended to show that a probability law on real-valued càdlàg
 paths gives full mass to paths continuous at almost every deterministic time.
 The proof uses Fubini on the graph of the pathwise discontinuity relation.
+
+## Public declarations
+
+* `MeasureTheory.CadlagPath.rationalSideSeparation` is the Borel relation of
+  pairs `(path, t)` for
+  which rational times on opposite sides of `t`, arbitrarily close to `t`,
+  have path values separated by a fixed positive amount.
+* `MeasureTheory.CadlagPath.measurableSet_rationalSideSeparation` proves that
+  this relation is Borel.
+* `MeasureTheory.CadlagPath.rationalSideSeparation_iff_not_continuousAt`
+  identifies this relation at
+  each interior time with failure of continuity:
+  `(path, t) ∈ rationalSideSeparation ↔ ¬ ContinuousAt path t`.
+* `MeasureTheory.CadlagPath.ae_ae_continuousAt_of_cadlag` states that for
+  every finite Borel measure
+  `μ` on real càdlàg path space,
+  `∀ᵐ t ∂volume, ∀ᵐ path ∂μ, ContinuousAt path t`.
+* `MeasureTheory.CadlagPath.dense_ae_continuityTimes_of_cadlag` proves that
+  the set of times `t` for which `μ`-almost every path is continuous at `t`
+  is dense in the unit interval.
 -/
 
 @[expose] public section
@@ -34,14 +54,14 @@ arbitrarily close rational times on opposite sides still have separated
 values. The relation uses only fixed-time path evaluations, so it is Borel. -/
 def rationalSideSeparation :
     Set (CadlagPath unitInterval ℝ × unitInterval) :=
-  {z | ∃ n : ℕ, ∀ k : ℕ, ∃ q r : RationalUnitIntervalTime,
-    (rationalTimeToUnitInterval q : unitInterval) < z.2 ∧
-    z.2 < rationalTimeToUnitInterval r ∧
-    dist (rationalTimeToUnitInterval q) z.2 < 1 / ((k + 1 : ℕ) : ℝ) ∧
-    dist z.2 (rationalTimeToUnitInterval r) < 1 / ((k + 1 : ℕ) : ℝ) ∧
+  {z | ∃ n : ℕ, ∀ k : ℕ, ∃ q r : RationalCoordinate.UnitInterval,
+    (RationalCoordinate.toUnitInterval q : unitInterval) < z.2 ∧
+    z.2 < RationalCoordinate.toUnitInterval r ∧
+    dist (RationalCoordinate.toUnitInterval q) z.2 < 1 / ((k + 1 : ℕ) : ℝ) ∧
+    dist z.2 (RationalCoordinate.toUnitInterval r) < 1 / ((k + 1 : ℕ) : ℝ) ∧
     1 / ((n + 1 : ℕ) : ℝ) <
-      dist (z.1 (rationalTimeToUnitInterval q))
-        (z.1 (rationalTimeToUnitInterval r))}
+      dist (z.1 (RationalCoordinate.toUnitInterval q))
+        (z.1 (RationalCoordinate.toUnitInterval r))}
 
 theorem measurableSet_rationalSideSeparation :
     MeasurableSet rationalSideSeparation := by
@@ -49,39 +69,39 @@ theorem measurableSet_rationalSideSeparation :
   simp only [Set.ofPred_exists, Set.ofPred_forall]
   refine MeasurableSet.iUnion fun n : ℕ =>
     MeasurableSet.iInter fun k : ℕ =>
-      MeasurableSet.iUnion fun q : RationalUnitIntervalTime =>
-        MeasurableSet.iUnion fun r : RationalUnitIntervalTime => ?_
+      MeasurableSet.iUnion fun q : RationalCoordinate.UnitInterval =>
+        MeasurableSet.iUnion fun r : RationalCoordinate.UnitInterval => ?_
   have hq : Measurable fun z : CadlagPath unitInterval ℝ × unitInterval =>
-      z.1 (rationalTimeToUnitInterval q) :=
+      z.1 (RationalCoordinate.toUnitInterval q) :=
     (measurable_apply _).comp measurable_fst
   have hr : Measurable fun z : CadlagPath unitInterval ℝ × unitInterval =>
-      z.1 (rationalTimeToUnitInterval r) :=
+      z.1 (RationalCoordinate.toUnitInterval r) :=
     (measurable_apply _).comp measurable_fst
   have hdist : Measurable fun z : CadlagPath unitInterval ℝ × unitInterval =>
-      dist (z.1 (rationalTimeToUnitInterval q))
-        (z.1 (rationalTimeToUnitInterval r)) := hq.dist hr
+      dist (z.1 (RationalCoordinate.toUnitInterval q))
+        (z.1 (RationalCoordinate.toUnitInterval r)) := hq.dist hr
   have ht : Measurable fun z : CadlagPath unitInterval ℝ × unitInterval =>
       (z.2 : ℝ) := measurable_subtype_coe.comp measurable_snd
   have hqt : MeasurableSet {z : CadlagPath unitInterval ℝ × unitInterval |
-      rationalTimeToUnitInterval q < z.2} := by
+      RationalCoordinate.toUnitInterval q < z.2} := by
     exact (isOpen_Ioi.measurableSet.preimage ht)
   have htr : MeasurableSet {z : CadlagPath unitInterval ℝ × unitInterval |
-      z.2 < rationalTimeToUnitInterval r} := by
+      z.2 < RationalCoordinate.toUnitInterval r} := by
     exact (isOpen_Iio.measurableSet.preimage ht)
   have hqnear : MeasurableSet {z : CadlagPath unitInterval ℝ × unitInterval |
-      dist (rationalTimeToUnitInterval q) z.2 <
+      dist (RationalCoordinate.toUnitInterval q) z.2 <
         1 / ((k + 1 : ℕ) : ℝ)} := by
     exact (isOpen_Iio.measurableSet.preimage
       ((measurable_const.dist ht)))
   have hrnear : MeasurableSet {z : CadlagPath unitInterval ℝ × unitInterval |
-      dist z.2 (rationalTimeToUnitInterval r) <
+      dist z.2 (RationalCoordinate.toUnitInterval r) <
         1 / ((k + 1 : ℕ) : ℝ)} := by
     exact (isOpen_Iio.measurableSet.preimage
       (ht.dist measurable_const))
   have hsep : MeasurableSet {z : CadlagPath unitInterval ℝ × unitInterval |
       1 / ((n + 1 : ℕ) : ℝ) <
-        dist (z.1 (rationalTimeToUnitInterval q))
-          (z.1 (rationalTimeToUnitInterval r))} := by
+        dist (z.1 (RationalCoordinate.toUnitInterval q))
+          (z.1 (RationalCoordinate.toUnitInterval r))} := by
     exact (isOpen_Ioi.measurableSet.preimage hdist)
   simpa only [Set.ofPred_and] using hqt.inter (htr.inter (hqnear.inter (hrnear.inter hsep)))
 
@@ -96,23 +116,23 @@ private lemma rationalSideSeparation_not_continuous
     Metric.continuousAt_iff.mp hcont (ε / 3) (by positivity)
   obtain ⟨k, hk⟩ := exists_nat_one_div_lt hδ
   obtain ⟨q, r, hqt, htr, hqclose, hrclose, hfar⟩ := hn k
-  have hqδ : dist (rationalTimeToUnitInterval q) t < δ := by
+  have hqδ : dist (RationalCoordinate.toUnitInterval q) t < δ := by
     exact lt_trans hqclose (by simpa [ε] using hk)
-  have hrδ : dist (rationalTimeToUnitInterval r) t < δ := by
-    have hrclose' : dist (rationalTimeToUnitInterval r) t <
+  have hrδ : dist (RationalCoordinate.toUnitInterval r) t < δ := by
+    have hrclose' : dist (RationalCoordinate.toUnitInterval r) t <
         1 / ((k + 1 : ℕ) : ℝ) := by
       simpa [dist_comm] using hrclose
     exact lt_trans hrclose' (by simpa [ε] using hk)
   have hqval := hcontrol hqδ
   have hrval := hcontrol hrδ
   have hbound : dist
-      (path (rationalTimeToUnitInterval q))
-      (path (rationalTimeToUnitInterval r)) < ε := by
+      (path (RationalCoordinate.toUnitInterval q))
+      (path (RationalCoordinate.toUnitInterval r)) < ε := by
     calc
-      dist (path (rationalTimeToUnitInterval q))
-          (path (rationalTimeToUnitInterval r)) ≤
-        dist (path (rationalTimeToUnitInterval q)) (path t) +
-          dist (path t) (path (rationalTimeToUnitInterval r)) := dist_triangle _ _ _
+      dist (path (RationalCoordinate.toUnitInterval q))
+          (path (RationalCoordinate.toUnitInterval r)) ≤
+        dist (path (RationalCoordinate.toUnitInterval q)) (path t) +
+          dist (path t) (path (RationalCoordinate.toUnitInterval r)) := dist_triangle _ _ _
       _ < ε / 3 + ε / 3 := add_lt_add hqval (by simpa [dist_comm] using hrval)
       _ < ε := by linarith
   exact (lt_irrefl ε) (lt_trans (by simpa [ε] using hfar) hbound)
@@ -134,11 +154,11 @@ private lemma leftLim_ne_of_not_continuousAt
 
 private lemma exists_rationalSideSequences {t : unitInterval}
     (ht0 : (⊥ : unitInterval) < t) (ht1 : t < ⊤) :
-    ∃ q r : ℕ → RationalUnitIntervalTime,
-      (∀ n, rationalTimeToUnitInterval (q n) < t) ∧
-      (∀ n, t < rationalTimeToUnitInterval (r n)) ∧
-      Tendsto (fun n => rationalTimeToUnitInterval (q n)) atTop (𝓝[<] t) ∧
-      Tendsto (fun n => rationalTimeToUnitInterval (r n)) atTop (𝓝[>] t) := by
+    ∃ q r : ℕ → RationalCoordinate.UnitInterval,
+      (∀ n, RationalCoordinate.toUnitInterval (q n) < t) ∧
+      (∀ n, t < RationalCoordinate.toUnitInterval (r n)) ∧
+      Tendsto (fun n => RationalCoordinate.toUnitInterval (q n)) atTop (𝓝[<] t) ∧
+      Tendsto (fun n => RationalCoordinate.toUnitInterval (r n)) atTop (𝓝[>] t) := by
   have ht0' : (0 : ℝ) < (t : ℝ) := by exact_mod_cast ht0
   have ht1' : (t : ℝ) < 1 := by exact_mod_cast ht1
   obtain ⟨u, huMono, huLt, huTendsto⟩ :=
@@ -146,21 +166,21 @@ private lemma exists_rationalSideSequences {t : unitInterval}
   have huPositive : ∀ᶠ n : ℕ in atTop, (0 : ℝ) < (u n : ℝ) :=
     huTendsto.eventually (Ioi_mem_nhds ht0')
   obtain ⟨Nu, hNu⟩ := eventually_atTop.1 huPositive
-  let q : ℕ → RationalUnitIntervalTime := fun n =>
+  let q : ℕ → RationalCoordinate.UnitInterval := fun n =>
     ⟨u (Nu + n), ⟨by
-        exact le_of_lt (hNu (Nu + n) (by omega)), by
+        exact_mod_cast (hNu (Nu + n) (by omega)).le, by
         exact_mod_cast (huLt (Nu + n)).le.trans ht1'.le⟩⟩
   have huShift : Tendsto (fun n : ℕ => Nu + n) atTop atTop :=
     tendsto_atTop_mono (fun n => Nat.le_add_left n Nu) tendsto_id
   have hqReal : Tendsto (fun n : ℕ => (u (Nu + n) : ℝ)) atTop (𝓝 (t : ℝ)) :=
     huTendsto.comp huShift
-  have hqTime : Tendsto (fun n => rationalTimeToUnitInterval (q n)) atTop (𝓝 t) := by
+  have hqTime : Tendsto (fun n => RationalCoordinate.toUnitInterval (q n)) atTop (𝓝 t) := by
     apply tendsto_subtype_rng.2
-    simpa [q, rationalTimeToUnitInterval] using hqReal
-  have hqStrict (n : ℕ) : rationalTimeToUnitInterval (q n) < t := by
+    simpa [q, RationalCoordinate.toUnitInterval] using hqReal
+  have hqStrict (n : ℕ) : RationalCoordinate.toUnitInterval (q n) < t := by
     change (u (Nu + n) : ℝ) < (t : ℝ)
     exact huLt (Nu + n)
-  have hqWithin : Tendsto (fun n => rationalTimeToUnitInterval (q n)) atTop (𝓝[<] t) :=
+  have hqWithin : Tendsto (fun n => RationalCoordinate.toUnitInterval (q n)) atTop (𝓝[<] t) :=
     tendsto_nhdsWithin_iff.2 ⟨hqTime, Eventually.of_forall hqStrict⟩
 
   obtain ⟨v, hvAnti, htLt, hvTendsto⟩ :=
@@ -168,7 +188,7 @@ private lemma exists_rationalSideSequences {t : unitInterval}
   have hvBelowOne : ∀ᶠ n : ℕ in atTop, (v n : ℝ) < 1 :=
     hvTendsto.eventually (Iio_mem_nhds ht1')
   obtain ⟨Nv, hNv⟩ := eventually_atTop.1 hvBelowOne
-  let r : ℕ → RationalUnitIntervalTime := fun n =>
+  let r : ℕ → RationalCoordinate.UnitInterval := fun n =>
     ⟨v (Nv + n), ⟨by
         exact_mod_cast ht0'.le.trans (htLt (Nv + n)).le, by
         exact_mod_cast (hNv (Nv + n) (by omega)).le⟩⟩
@@ -176,13 +196,13 @@ private lemma exists_rationalSideSequences {t : unitInterval}
     tendsto_atTop_mono (fun n => Nat.le_add_left n Nv) tendsto_id
   have hrReal : Tendsto (fun n : ℕ => (v (Nv + n) : ℝ)) atTop (𝓝 (t : ℝ)) :=
     hvTendsto.comp hvShift
-  have hrTime : Tendsto (fun n => rationalTimeToUnitInterval (r n)) atTop (𝓝 t) := by
+  have hrTime : Tendsto (fun n => RationalCoordinate.toUnitInterval (r n)) atTop (𝓝 t) := by
     apply tendsto_subtype_rng.2
-    simpa [r, rationalTimeToUnitInterval] using hrReal
-  have hrStrict (n : ℕ) : t < rationalTimeToUnitInterval (r n) := by
+    simpa [r, RationalCoordinate.toUnitInterval] using hrReal
+  have hrStrict (n : ℕ) : t < RationalCoordinate.toUnitInterval (r n) := by
     change (t : ℝ) < (v (Nv + n) : ℝ)
     exact htLt (Nv + n)
-  have hrWithin : Tendsto (fun n => rationalTimeToUnitInterval (r n)) atTop (𝓝[>] t) :=
+  have hrWithin : Tendsto (fun n => RationalCoordinate.toUnitInterval (r n)) atTop (𝓝[>] t) :=
     tendsto_nhdsWithin_iff.2 ⟨hrTime, Eventually.of_forall hrStrict⟩
   exact ⟨q, r, hqStrict, hrStrict, hqWithin, hrWithin⟩
 
@@ -198,12 +218,12 @@ private lemma rationalSideSeparation_of_not_continuous
       (𝓝 leftValue) := by
     exact tendsto_leftLim_of_tendsto (path.isCadlag_toFun.tendsto_nhdsLT t)
   have hleftSeq : Tendsto (fun n : ℕ =>
-      path (rationalTimeToUnitInterval (q n))) atTop (𝓝 leftValue) :=
+      path (RationalCoordinate.toUnitInterval (q n))) atTop (𝓝 leftValue) :=
     hleftT.comp hqWithin
   have hrightT : Tendsto (fun s : unitInterval => path s) (𝓝[>] t)
       (𝓝 (path t)) := path.isCadlag_toFun.isRightContinuous t |>.tendsto
   have hrightSeq : Tendsto (fun n : ℕ =>
-      path (rationalTimeToUnitInterval (r n))) atTop (𝓝 (path t)) :=
+      path (RationalCoordinate.toUnitInterval (r n))) atTop (𝓝 (path t)) :=
     hrightT.comp hrWithin
   have hjump : 0 < dist leftValue (path t) :=
     dist_pos.mpr (leftLim_ne_of_not_continuousAt hbad)
@@ -213,24 +233,24 @@ private lemma rationalSideSeparation_of_not_continuous
     simpa [ε] using hn
   let η : ℝ := dist leftValue (path t) / 4
   have hη : 0 < η := by positivity
-  have hqTime : Tendsto (fun m => rationalTimeToUnitInterval (q m)) atTop (𝓝 t) :=
+  have hqTime : Tendsto (fun m => RationalCoordinate.toUnitInterval (q m)) atTop (𝓝 t) :=
     (tendsto_nhdsWithin_iff.mp hqWithin).1
-  have hrTime : Tendsto (fun m => rationalTimeToUnitInterval (r m)) atTop (𝓝 t) :=
+  have hrTime : Tendsto (fun m => RationalCoordinate.toUnitInterval (r m)) atTop (𝓝 t) :=
     (tendsto_nhdsWithin_iff.mp hrWithin).1
   refine ⟨n, fun k => ?_⟩
   have hwidth : 0 < (1 / ((k + 1 : ℕ) : ℝ)) := by positivity
   have hqEvent : ∀ᶠ m : ℕ in atTop,
-      dist (rationalTimeToUnitInterval (q m)) t <
+      dist (RationalCoordinate.toUnitInterval (q m)) t <
           1 / ((k + 1 : ℕ) : ℝ) ∧
-        dist (path (rationalTimeToUnitInterval (q m))) leftValue < η := by
+        dist (path (RationalCoordinate.toUnitInterval (q m))) leftValue < η := by
     filter_upwards
       [hqTime.eventually (Metric.ball_mem_nhds t hwidth),
         hleftSeq.eventually (Metric.ball_mem_nhds leftValue hη)] with m htime hvalue
     exact ⟨Metric.mem_ball.mp htime, Metric.mem_ball.mp hvalue⟩
   have hrEvent : ∀ᶠ m : ℕ in atTop,
-      dist (rationalTimeToUnitInterval (r m)) t <
+      dist (RationalCoordinate.toUnitInterval (r m)) t <
           1 / ((k + 1 : ℕ) : ℝ) ∧
-        dist (path (rationalTimeToUnitInterval (r m))) (path t) < η := by
+        dist (path (RationalCoordinate.toUnitInterval (r m))) (path t) < η := by
     filter_upwards
       [hrTime.eventually (Metric.ball_mem_nhds t hwidth),
         hrightSeq.eventually (Metric.ball_mem_nhds (path t) hη)] with m htime hvalue
@@ -240,32 +260,32 @@ private lemma rationalSideSeparation_of_not_continuous
   have hq := hmq mq le_rfl
   have hr := hmr mr le_rfl
   have hfar : ε < dist
-      (path (rationalTimeToUnitInterval (q mq)))
-      (path (rationalTimeToUnitInterval (r mr))) := by
+      (path (RationalCoordinate.toUnitInterval (q mq)))
+      (path (RationalCoordinate.toUnitInterval (r mr))) := by
     have htri : dist leftValue (path t) ≤
-        dist leftValue (path (rationalTimeToUnitInterval (q mq))) +
-          dist (path (rationalTimeToUnitInterval (q mq)))
-              (path (rationalTimeToUnitInterval (r mr))) +
-            dist (path (rationalTimeToUnitInterval (r mr))) (path t) := by
+        dist leftValue (path (RationalCoordinate.toUnitInterval (q mq))) +
+          dist (path (RationalCoordinate.toUnitInterval (q mq)))
+              (path (RationalCoordinate.toUnitInterval (r mr))) +
+            dist (path (RationalCoordinate.toUnitInterval (r mr))) (path t) := by
       calc
         dist leftValue (path t) ≤
-            dist leftValue (path (rationalTimeToUnitInterval (q mq))) +
-              dist (path (rationalTimeToUnitInterval (q mq))) (path t) :=
+            dist leftValue (path (RationalCoordinate.toUnitInterval (q mq))) +
+              dist (path (RationalCoordinate.toUnitInterval (q mq))) (path t) :=
           dist_triangle _ _ _
-        _ ≤ dist leftValue (path (rationalTimeToUnitInterval (q mq))) +
-              (dist (path (rationalTimeToUnitInterval (q mq)))
-                  (path (rationalTimeToUnitInterval (r mr))) +
-                dist (path (rationalTimeToUnitInterval (r mr))) (path t)) := by
+        _ ≤ dist leftValue (path (RationalCoordinate.toUnitInterval (q mq))) +
+              (dist (path (RationalCoordinate.toUnitInterval (q mq)))
+                  (path (RationalCoordinate.toUnitInterval (r mr))) +
+                dist (path (RationalCoordinate.toUnitInterval (r mr))) (path t)) := by
           exact add_le_add_right
-            (dist_triangle (path (rationalTimeToUnitInterval (q mq)))
-              (path (rationalTimeToUnitInterval (r mr))) (path t))
-            (dist leftValue (path (rationalTimeToUnitInterval (q mq))))
-        _ = dist leftValue (path (rationalTimeToUnitInterval (q mq))) +
-              dist (path (rationalTimeToUnitInterval (q mq)))
-                (path (rationalTimeToUnitInterval (r mr))) +
-              dist (path (rationalTimeToUnitInterval (r mr))) (path t) := by ring
+            (dist_triangle (path (RationalCoordinate.toUnitInterval (q mq)))
+              (path (RationalCoordinate.toUnitInterval (r mr))) (path t))
+            (dist leftValue (path (RationalCoordinate.toUnitInterval (q mq))))
+        _ = dist leftValue (path (RationalCoordinate.toUnitInterval (q mq))) +
+              dist (path (RationalCoordinate.toUnitInterval (q mq)))
+                (path (RationalCoordinate.toUnitInterval (r mr))) +
+              dist (path (RationalCoordinate.toUnitInterval (r mr))) (path t) := by ring
     have hqη : dist leftValue
-        (path (rationalTimeToUnitInterval (q mq))) < η := by
+        (path (RationalCoordinate.toUnitInterval (q mq))) < η := by
       simpa [dist_comm] using hq.2
     dsimp [η] at hqη hr
     linarith [htri, hqη, hr.2, hε]

@@ -4,61 +4,45 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Spine.Tube.MRCA.Expansion
+module
+
+public import Probability.Process.RandomWalk.Path.Corridor.Affine
+public import Probability.BranchingRandomWalk.Spine.Tube.MRCA.Expansion
+public import Probability.BranchingRandomWalk.Spine.Tube.MRCA.PositiveDepth
 
 /-!
 # Actual MRCA contributions in affine corridors
 
 ## Public declarations
 
-* `ProbabilityTheory.BranchingRandomWalk.Spine.measurableSet_affineCorridorThrough`
-  establishes measurability of the affine corridor with a terminal upper bound.
-* `ProbabilityTheory.BranchingRandomWalk.Spine.affineCorridorThrough_succ_eq_endpointCutoff`
-  identifies the corridor through time `n + 1` with
-  `affineCorridorHistoryEndpointCutoff n lower drift width endpointUpper`.
-* `ProbabilityTheory.BranchingRandomWalk.Spine.lintegral_pathGenerationMRCAContribution_affineCorridor_eq`
-  identifies the expected actual MRCA contribution at generation `m` with
-  `affineTubeMRCAPairContribution φ μ m n initial lower drift width endpointUpper`.
-
-This file connects the recursive path-pair count at a positive MRCA depth to
-the conditional continuation-pair observable used in affine-tube estimates.
-The ancestral prefix keeps its corridor indicator and survival condition.
+Let \(A_{m+n+1}(a,v,\Delta,U)\) be the affine corridor through time
+\(m+n+1\), and let \(P_{\mathrm{off}}=\texttt{offspringFieldLaw }\mu\).
+The theorem `lintegral_pathGenerationMRCAContribution_affineCorridor_eq`
+identifies the expected actual path-pair contribution at MRCA generation \(m\)
+with the depth-indexed continuation observable:
+\[
+  \int \operatorname{MRCAContribution}_{m,n+1}
+      (\mathbf 1_{A_{m+n+1}},x,\omega)\,dP_{\mathrm{off}}(\omega)
+    =\texttt{affineTubeMRCAPairContribution }\varphi\,\mu\,m\,n\,
+      x\,a\,v\,\Delta\,U.
+\]
+The ancestral prefix retains its corridor indicator and survival condition;
+the continuation begins at the endpoint of that prefix.
 -/
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal
 
 namespace ProbabilityTheory.BranchingRandomWalk.Spine
 
+open ProbabilityTheory.BranchingProcess (offspringFieldLaw offspringFieldLaw_coordinate offspringFieldLaw_independent offspringFieldLaw_mapMarks)
+
 open Combinatorics.Branching
 open Combinatorics.UlamHarris
 open ProbabilityTheory.BranchingRandomWalk
 open ProbabilityTheory.RandomWalk
-
-theorem measurableSet_affineCorridorThrough
-    (horizon : ℕ) (lower drift width endpointUpper : ℝ) :
-    MeasurableSet (affineCorridorThrough horizon lower drift width endpointUpper) := by
-  rw [show affineCorridorThrough horizon lower drift width endpointUpper =
-      (⋂ k : Fin (horizon + 1),
-        {history | lower + drift * (k.val : ℝ) ≤ history k ∧
-          history k ≤ lower + drift * (k.val : ℝ) + width}) ∩
-        {history | history ⟨horizon, Nat.lt_succ_self horizon⟩ ≤ endpointUpper} by
-        ext history
-        simp [affineCorridorThrough]]
-  exact (MeasurableSet.iInter fun k =>
-    (measurableSet_le measurable_const (measurable_pi_apply k)).inter
-      (measurableSet_le (measurable_pi_apply k) measurable_const)).inter
-    (measurableSet_le
-      (measurable_pi_apply (⟨horizon, Nat.lt_succ_self horizon⟩ : Fin (horizon + 1)))
-      measurable_const)
-
-theorem affineCorridorThrough_succ_eq_endpointCutoff
-    (n : ℕ) (lower drift width endpointUpper : ℝ) :
-    affineCorridorThrough (n + 1) lower drift width endpointUpper =
-      affineCorridorHistoryEndpointCutoff n lower drift width endpointUpper := by
-  ext history
-  simp [affineCorridorThrough, affineCorridorHistoryEndpointCutoff,
-    affineCorridorHistory]
 
 private lemma pathGenerationMRCAContribution_zeroTest
     {X : Type*} [MeasurableSpace X]
@@ -97,7 +81,7 @@ private lemma pathGenerationMRCAContribution_congr_prependHistory
   apply tsum_congr
   intro j
   by_cases hij : i ≠ j
-  · simp only [if_pos hij]
+  · simp only [ite_eq_left hij]
     rw [pathGenerationChildObservable_congr_prependHistory
         φ n F G x hFG i (ω []) (subtreeStepField [i] ω)]
     rw [pathGenerationChildObservable_congr_prependHistory
@@ -205,7 +189,7 @@ theorem lintegral_pathGenerationMRCAContribution_affineCorridor_eq
     (m n : ℕ) (initial lower drift width endpointUpper : ℝ) :
     (∫⁻ ω, pathGenerationMRCAContribution φ m ((n + 1) + m)
       ((affineCorridorThrough (n + 1 + m) lower drift width endpointUpper).indicator
-        (fun _ => (1 : ℝ≥0∞))) initial ω ∂stepFieldLaw μ) =
+        (fun _ => (1 : ℝ≥0∞))) initial ω ∂offspringFieldLaw μ) =
       affineTubeMRCAPairContribution φ μ m n initial lower drift width endpointUpper := by
   classical
   let prefixCorridor := affineCorridorPrefix m lower drift width
@@ -245,7 +229,7 @@ theorem lintegral_pathGenerationMRCAContribution_affineCorridor_eq
     simp [A, pathGenerationTerm, hu]
   have hposition (u : TreeNode ℕ) : Measurable (position u) := by
     by_cases hu : u.length = m
-    · simp only [position, if_pos hu]
+    · simp only [position, ite_eq_left hu]
       change Measurable ((fun _ : StepField ℕ X => initial) +
         fun ω => pathPotential φ ω u)
       exact measurable_const.add (pathPotential_measurable φ [] u)
@@ -255,7 +239,7 @@ theorem lintegral_pathGenerationMRCAContribution_affineCorridor_eq
     letI : MeasurableSpace (StepField ℕ X) :=
       generationFiltration (M := Step ℕ X) m
     by_cases hu : u.length = m
-    · simp only [position, if_pos hu]
+    · simp only [position, ite_eq_left hu]
       change Measurable[generationFiltration (M := Step ℕ X) m]
         ((fun _ : StepField ℕ X => initial) +
           fun ω => displaceWith φ ω [] u)
@@ -326,7 +310,7 @@ theorem lintegral_pathGenerationMRCAContribution_affineCorridor_eq
             apply tsum_congr
             intro u
             have hu : u.val.length = m := by simpa [s] using u.property
-            simp only [prefixContribution, dif_pos hu]
+            simp only [prefixContribution, dite_eq_left hu]
       _ = ∑' u : TreeNode ℕ,
           s.indicator prefixContribution u :=
             tsum_subtype s prefixContribution
@@ -340,12 +324,12 @@ theorem lintegral_pathGenerationMRCAContribution_affineCorridor_eq
   calc
     _ = ∫⁻ ω, ∑' u : TreeNode ℕ, A u ω *
           pathGenerationMRCAContribution φ 0 (n + 1) continuationTest
-            (position u ω) (subtreeStepField u ω) ∂stepFieldLaw μ := by
+            (position u ω) (subtreeStepField u ω) ∂offspringFieldLaw μ := by
           apply lintegral_congr
           exact hpoint
     _ = ∫⁻ ω, ∑' u : TreeNode ℕ, A u ω *
           pathGenerationChildMeanOffDiagonal φ μ n continuationTest
-            (position u ω) (ω u) ∂stepFieldLaw μ := by
+            (position u ω) (ω u) ∂offspringFieldLaw μ := by
           exact lintegral_generationPrefixRootMRCAContribution_eq_childMeanOffDiagonal
             φ μ m n continuationTest hcontinuation A position
             hAgen hA hpositionGen hposition hAsupport
@@ -362,3 +346,5 @@ theorem lintegral_pathGenerationMRCAContribution_affineCorridor_eq
           · simp [A, position, pathGenerationTerm, hu]
 
 end ProbabilityTheory.BranchingRandomWalk.Spine
+
+end

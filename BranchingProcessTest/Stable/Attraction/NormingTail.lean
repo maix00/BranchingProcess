@@ -4,8 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.Distributions.Stable.Attraction.Norming.Tail
-import Probability.Distributions.Stable.Attraction.Norming.UniformTail
+import Probability.Distributions.Stable.Attraction.Norming.Asymptotics.Tail
+import Probability.Distributions.Stable.Attraction.Norming.Asymptotics.UniformTail
 import Probability.Distributions.Stable.Attraction.NormingRatios.Tauberian
 
 /-!
