@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.IID
-import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.SelectedSubtrees.SelectedFamily
+module
+
+public import Probability.BranchingRandomWalk.IID
+public import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.SelectedSubtrees.SelectedFamily
 
 /-!
 # Branching property of the canonical i.i.d. law
@@ -15,6 +17,17 @@ chosen families of same-generation roots.  When a chosen family is an actual
 population, the same theorem gives the joint law of its fresh descendant
 fields.  The statement is about the canonical i.i.d. law, not arbitrary
 probability laws on the walk space.
+
+## Public declarations
+
+- `iid_selectedSubtreeStepFieldVector_law` states that for a countable-range,
+  generation-measurable, injective family of generation-$n$ roots, the law
+  of the selected descendant step-field vector under `iid μ initial` equals
+  the original root-indexed product law:
+  $\bigl((\mathsf{iid}(\mu,x):\mathrm{Measure}(\mathrm{BranchingWalk}))
+  .\mathrm{map}(w\mapsto
+  \mathrm{selectedSubtreeStepFieldVector}(chosen,w.\mathrm{step}))\bigr)
+  =\mathrm{offspringFieldLaw}_{\kappa}(\mu)$.
 -/
 
 open MeasureTheory
@@ -22,6 +35,8 @@ open MeasureTheory
 @[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk
+
+open ProbabilityTheory.BranchingProcess (offspringFieldLaw offspringFieldLaw_coordinate offspringFieldLaw_independent offspringFieldLaw_mapMarks)
 
 open Combinatorics.UlamHarris Combinatorics.Branching
 

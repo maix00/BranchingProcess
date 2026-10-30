@@ -6,15 +6,28 @@ Authors: WANG Yiyang
 
 module
 
+public import Combinatorics.BranchingWalk.Population.Offspring
+
 public import Combinatorics.BranchingWalk.Selection.NSelection.Coupling.Offspring
-public import Combinatorics.BranchingWalk.Selection.NSelection.Hall
+public import Combinatorics.Selection.NSelection.Matching.Hall
 
 /-!
 # One-generation first-N coupling
 
+## Public declarations
+
 This file performs the capacity selection step after parent and offspring
 domination have been established.  It provides both a data-valued injection
 and the final injective-domination theorem used by the pathwise iteration.
+
+The public API includes `nextGenerationInjection_of_isFirstNBy`, which
+constructs an injection from retained source children into selected target
+children with non-increasing observed position, and
+`nextGeneration_injectivelyDominatesBy_of_isFirstNBy`, which packages those
+properties as injective cloud domination. The theorem
+`nextGeneration_injectivelyDominatesBy` specializes the target to the dynamic
+leftmost `N` children and proves the same domination from parent domination,
+slot inclusion, shared increments, and translation monotonicity.
 -/
 
 @[expose] public section
@@ -22,7 +35,7 @@ and the final injective-domination theorem used by the pathwise iteration.
 namespace Combinatorics.Branching.Selection.Coupling
 
 open Combinatorics.UlamHarris
-open Selection.NSelection
+open _root_.Combinatorics.Selection.NSelection
 
 variable {Root α Mark Position Value : Type*}
 
@@ -39,11 +52,11 @@ theorem nextGeneration_injectivelyDominatesBy_of_isFirstNBy
     (retainedChildren selectedTarget :
       Finset (RootIndexed.TreeNode Root α))
     (hretained : ↑retainedChildren ⊆
-      offspringAddressSet (↑sourceParents) sourceSlots)
+      Combinatorics.Branching.Population.offspringAddressSet (↑sourceParents) sourceSlots)
     (hcard : retainedChildren.card ≤ N)
     (hselected : IsFirstNBy N
       (fun q => φ (targetWalk.position d q.1 q.2))
-      (offspringAddressSet (↑targetParents) targetSlots) selectedTarget)
+      (Combinatorics.Branching.Population.offspringAddressSet (↑targetParents) targetSlots) selectedTarget)
     (parents : Cloud.SliceDominatingMap φ
       (populationCloud d sourceWalk sourceParents)
       (populationCloud d targetWalk targetParents) ())
@@ -64,21 +77,21 @@ theorem nextGeneration_injectivelyDominatesBy_of_isFirstNBy
   have sourcePair_spec (child : RootIndexed.TreeNode Root α)
       (hchild : child ∈ retainedChildren) :
       sourcePair child hchild ∈
-          offspringPairSet (↑sourceParents) sourceSlots ∧
-        childAddress (sourcePair child hchild).1
+          Combinatorics.Branching.Population.offspringPairSet (↑sourceParents) sourceSlots ∧
+        RootIndexed.childAddress (sourcePair child hchild).1
           (sourcePair child hchild).2 = child :=
     Classical.choose_spec (hretained hchild)
   let embedChild (child : RootIndexed.TreeNode Root α)
       (hchild : child ∈ retainedChildren) :
       RootIndexed.TreeNode Root α :=
-    childAddress (parents (sourcePair child hchild).1)
+    RootIndexed.childAddress (parents (sourcePair child hchild).1)
       (sourcePair child hchild).2
   have hembedMem : ∀ child hchild,
       embedChild child hchild ∈
-        offspringAddressSet (↑targetParents) targetSlots := by
+        Combinatorics.Branching.Population.offspringAddressSet (↑targetParents) targetSlots := by
     intro child hchild
     have hpair := (sourcePair_spec child hchild).1
-    exact mem_offspringAddressSet.mpr
+    exact Combinatorics.Branching.Population.mem_offspringAddressSet.mpr
       ⟨parents (sourcePair child hchild).1,
         (by simpa using parents.mapsTo (by simpa using hpair.1)),
         (sourcePair child hchild).2,
@@ -86,16 +99,16 @@ theorem nextGeneration_injectivelyDominatesBy_of_isFirstNBy
   have hembedInj : ∀ child hchild child' hchild',
       embedChild child hchild = embedChild child' hchild' → child = child' := by
     intro child hchild child' hchild' heq
-    change childAddress (parents (sourcePair child hchild).1)
+    change RootIndexed.childAddress (parents (sourcePair child hchild).1)
         (sourcePair child hchild).2 =
-      childAddress (parents (sourcePair child' hchild').1)
+      RootIndexed.childAddress (parents (sourcePair child' hchild').1)
         (sourcePair child' hchild').2 at heq
     have hpairs :
         (parents (sourcePair child hchild).1,
             (sourcePair child hchild).2) =
           (parents (sourcePair child' hchild').1,
             (sourcePair child' hchild').2) := by
-      apply childAddress_joint_injective
+      apply RootIndexed.childAddress_joint_injective
       exact heq
     obtain ⟨hmatchedParents, hslotsEq⟩ := Prod.ext_iff.mp hpairs
     have hpair : sourcePair child hchild = sourcePair child' hchild' := by
@@ -133,7 +146,7 @@ theorem nextGeneration_injectivelyDominatesBy_of_isFirstNBy
     exists_injective_le_of_dependent_embedding_of_isFirstNBy N
       (fun p => φ (sourceWalk.position d p.1 p.2))
       (fun q => φ (targetWalk.position d q.1 q.2))
-      retainedChildren (offspringAddressSet (↑targetParents) targetSlots)
+      retainedChildren (Combinatorics.Branching.Population.offspringAddressSet (↑targetParents) targetSlots)
       selectedTarget hselected hcard embedChild hembedMem hembedInj hembedLeft
   let matchParticle : RootIndexed.TreeNode Root α → RootIndexed.TreeNode Root α :=
     fun p => if hp : p ∈ retainedChildren then f p hp else p
@@ -163,11 +176,11 @@ noncomputable def nextGenerationInjection_of_isFirstNBy
     (retainedChildren selectedTarget :
       Finset (RootIndexed.TreeNode Root α))
     (hretained : ↑retainedChildren ⊆
-      offspringAddressSet (↑sourceParents) sourceSlots)
+      Combinatorics.Branching.Population.offspringAddressSet (↑sourceParents) sourceSlots)
     (hcard : retainedChildren.card ≤ N)
     (hselected : IsFirstNBy N
       (fun q => φ (targetWalk.position d q.1 q.2))
-      (offspringAddressSet (↑targetParents) targetSlots) selectedTarget)
+      (Combinatorics.Branching.Population.offspringAddressSet (↑targetParents) targetSlots) selectedTarget)
     (parents : Cloud.SliceDominatingMap φ
       (populationCloud d sourceWalk sourceParents)
       (populationCloud d targetWalk targetParents) ())
@@ -205,8 +218,8 @@ noncomputable def nextGenerationInjection_of_isFirstNBy
         (selectedTarget.filter fun q => targetValue q ≤ a).card := by
     intro a
     simpa [sourceValue, targetValue, populationCloud] using
-      Cloud.filter_card_le_of_injectivelyDominatesBy φ ()
-        retainedChildren.finite_toSet selectedTarget.finite_toSet hdom a
+      prior.card_filter_le retainedChildren.finite_toSet
+        selectedTarget.finite_toSet a
   let matchParticle : RootIndexed.TreeNode Root α →
       RootIndexed.TreeNode Root α :=
     matchByRankOrSelf sourceValue targetValue retainedChildren selectedTarget

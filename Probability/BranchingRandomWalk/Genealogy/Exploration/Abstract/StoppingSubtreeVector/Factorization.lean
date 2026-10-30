@@ -4,20 +4,78 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.StoppingSubtreeVector.Cell
+module
+
+public import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.AddressFiltration
+public import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.JointSubtrees
+public import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.SelectedSubtreeVector
+import MeasureTheory.Measure.Partition
 
 /-!
 # Factorization of stopped subtree-vector events
 
-A measurable vector of distinct nodes at the finite stopping generation has
-fresh descendant step fields, independent of the stopped past with product law.
+## Public declarations
+
+The public declaration in namespace `ProbabilityTheory.BranchingRandomWalk` is
+`stopped_selectedSubtreeStepFieldVector_event_factorization_on_finite μ τ hτ
+roots hcount hfiber hdepth hinj A B hA hB`. For $A\in\mathcal F_\tau$ and
+measurable $B$, it states
+\[
+  \nu\bigl((A\cap\{\tau<\infty\})\cap\Phi^{-1}(B)\bigr)
+  =\nu(A\cap\{\tau<\infty\})\,\nu^{\otimes\kappa}(B),
+\]
+where $\nu=\operatorname{offspringFieldLaw}(\mu)$ and
+$\Phi(\omega)(i,v)=\omega(\operatorname{roots}(\omega)(i)\mathbin{++}v)$.
+The assumptions require a stopping time, countable range and stopped-measurable
+fibres for `roots`, depth equal to $\tau$ on each finite-time cell, and
+injectivity of `roots` whenever $\tau<\infty$.
 -/
 
 open MeasureTheory ProbabilityTheory
 
+@[expose] public section
+
 namespace ProbabilityTheory.BranchingRandomWalk
 
+open ProbabilityTheory.BranchingProcess (offspringFieldLaw offspringFieldLaw_coordinate offspringFieldLaw_independent offspringFieldLaw_mapMarks)
+
 open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
+
+private def abstractStoppedVectorCell {κ α X : Type*}
+    (τ : (TreeNode α → Step α X) → WithTop ℕ)
+    (roots : (TreeNode α → Step α X) → κ → TreeNode α)
+    (A : Set (TreeNode α → Step α X))
+    (p : ℕ × (κ → TreeNode α)) :
+    Set (TreeNode α → Step α X) :=
+  A ∩ {ω | τ ω = p.1} ∩ {ω | roots ω = p.2}
+
+private lemma abstractStoppedVectorCell_measurable
+    {κ α X : Type*} [MeasurableSpace X]
+    (τ : (TreeNode α → Step α X) → WithTop ℕ)
+    (hτ : IsStoppingTime
+      (generationFiltration (M := Step α X)) τ)
+    (roots : (TreeNode α → Step α X) → κ → TreeNode α)
+    (A : Set (TreeNode α → Step α X))
+    (hA : MeasurableSet[hτ.measurableSpace] A)
+    (p : ℕ × (κ → TreeNode α))
+    (hrootSet : MeasurableSet[hτ.measurableSpace]
+      {ω | roots ω = p.2}) :
+    MeasurableSet[generationFiltration (M := Step α X) p.1]
+      (abstractStoppedVectorCell τ roots A p) := by
+  have hAeq := (hτ.measurableSet_inter_eq_iff A p.1).1
+    (hA.inter (hτ.measurable
+      (measurableSet_singleton (p.1 : WithTop ℕ))))
+  have hrootEq := (hτ.measurableSet_inter_eq_iff
+    {ω | roots ω = p.2} p.1).1
+      (hrootSet.inter (hτ.measurable
+        (measurableSet_singleton (p.1 : WithTop ℕ))))
+  have heq : abstractStoppedVectorCell τ roots A p =
+      (A ∩ {ω | τ ω = p.1}) ∩
+        ({ω | roots ω = p.2} ∩ {ω | τ ω = p.1}) := by
+    ext ω
+    simp [abstractStoppedVectorCell, and_left_comm, and_assoc, and_comm]
+  rw [heq]
+  exact hAeq.inter hrootEq
 
 
 /-- Branching factorization on the event that a stopping generation is
@@ -40,13 +98,13 @@ theorem stopped_selectedSubtreeStepFieldVector_event_factorization_on_finite
     (B : Set (κ → TreeNode α → Step α X))
     (hA : MeasurableSet[hτ.measurableSpace] A)
     (hB : MeasurableSet B) :
-    stepFieldLaw μ
+    offspringFieldLaw μ
         ((A ∩ {ω | τ ω ≠ ⊤}) ∩
           selectedSubtreeStepFieldVector roots ⁻¹' B) =
-      stepFieldLaw μ (A ∩ {ω | τ ω ≠ ⊤}) *
-        (Measure.infinitePi (fun _ : κ => stepFieldLaw μ)) B := by
-  let P := stepFieldLaw μ
-  let Q := Measure.infinitePi (fun _ : κ => stepFieldLaw μ)
+      offspringFieldLaw μ (A ∩ {ω | τ ω ≠ ⊤}) *
+        (Measure.infinitePi (fun _ : κ => offspringFieldLaw μ)) B := by
+  let P := offspringFieldLaw μ
+  let Q := Measure.infinitePi (fun _ : κ => offspringFieldLaw μ)
   let A' := A ∩ {ω | τ ω ≠ ⊤}
   have hfinite : MeasurableSet[hτ.measurableSpace]
       {ω | τ ω ≠ ⊤} := by
@@ -60,17 +118,18 @@ theorem stopped_selectedSubtreeStepFieldVector_event_factorization_on_finite
     abstractStoppedVectorCell τ roots A' (p.1, p.2.1)
   let D := fun p : ℕ × S =>
     C p ∩ subtreeStepFieldVector p.2.1 ⁻¹' B
+  have hCmeasAt (p : ℕ × S) : MeasurableSet[
+      generationFiltration (M := Step α X) p.1] (C p) :=
+    abstractStoppedVectorCell_measurable τ hτ roots A' hA'
+      (p.1, p.2.1) (hfiber p.2.1)
   have hCmeas (p : ℕ × S) : MeasurableSet (C p) :=
-    (generationFiltration (M := Step α X) |>.le p.1) _
-      (abstractStoppedVectorCell_measurable τ hτ roots A' hA'
-        (p.1, p.2.1) (hfiber p.2.1))
+    (generationFiltration (M := Step α X) |>.le p.1) _ (hCmeasAt p)
   have hDmeas (p : ℕ × S) : MeasurableSet (D p) :=
     (hCmeas p).inter ((subtreeStepFieldVector_measurable p.2.1) hB)
   have hcell (p : ℕ × S) : P (D p) = P (C p) * Q B := by
     by_cases hvalid : (∀ i, (p.2.1 i).length = p.1) ∧
         Function.Injective p.2.1
-    · have hcellGen := abstractStoppedVectorCell_measurable
-        τ hτ roots A' hA' (p.1, p.2.1) (hfiber p.2.1)
+    · have hcellGen := hCmeasAt p
       exact fixed_subtreeStepFieldVector_event_factorization μ p.2.1
         hvalid.1 hvalid.2 (C p) B hcellGen hB
     · have hempty : C p = ∅ := by
@@ -126,15 +185,14 @@ theorem stopped_selectedSubtreeStepFieldVector_event_factorization_on_finite
           exact Set.mem_iUnion.mpr
             ⟨(n, ⟨roots ω, Set.mem_range_self ω⟩),
               ⟨⟨⟨⟨hAω, hfiniteω⟩, htime⟩, rfl⟩, hBω⟩⟩
-  have hCsum : (∑' p, P (C p)) = P A' := by
-    rw [← hCunion]
-    exact (measure_iUnion hCpair hCmeas).symm
   calc
     P (A' ∩ selectedSubtreeStepFieldVector roots ⁻¹' B) =
         P (⋃ p, D p) := by rw [hDunion]
-    _ = ∑' p, P (D p) := measure_iUnion hDpair hDmeas
-    _ = ∑' p, P (C p) * Q B := tsum_congr hcell
-    _ = (∑' p, P (C p)) * Q B := ENNReal.tsum_mul_right
-    _ = P A' * Q B := by rw [hCsum]
+    _ = P (⋃ p, C p) * Q B :=
+      measure_iUnion_eq_mul_of_disjoint_factor P C D (Q B)
+        hCmeas hDmeas hCpair hDpair hcell
+    _ = P A' * Q B := by rw [hCunion]
 
 end ProbabilityTheory.BranchingRandomWalk
+
+end

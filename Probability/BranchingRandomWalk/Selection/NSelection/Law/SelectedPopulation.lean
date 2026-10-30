@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Coupling.Field.Ranked.Law
-import Probability.BranchingRandomWalk.Coupling.Field.Ranked.Measurability.Observables
+module
+
+public import Probability.BranchingRandomWalk.Coupling.Field.Ranked.Law
+public import Probability.BranchingRandomWalk.Coupling.Field.Ranked.Measurability.Observables
 
 /-!
 # Product law with a concrete selected target population
@@ -16,16 +18,28 @@ far.  Abstract matching remains independent of countability.  Countability is
 used here only for the concrete enumerable particle labels, which makes the
 finite-population range countable and supplies the existing measurable
 selection theorem.
+
+
+## Public declarations
+
+* `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.RootIndexed.rankInstalledField_totalizedSelectedPopulation_measurable_law`:
+  for every stage `n`, the rank-installed field is measurable and its image
+  law under the product field measure equals the original one,
+  `μ.map Vₙ = offspringFieldLaw μ`.
 -/
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection
 
+open ProbabilityTheory.BranchingProcess (offspringFieldLaw offspringFieldLaw_coordinate offspringFieldLaw_independent offspringFieldLaw_mapMarks)
+
 open ProbabilityTheory.BranchingRandomWalk.Coupling
 
 open Combinatorics.UlamHarris Combinatorics.Branching
-open Combinatorics.Branching.Selection.NSelection
+open _root_.Combinatorics.Selection.NSelection
 
 /-- Recursive equal-rank installation into the totalized selected target is
 measurable and preserves the product step-field law. Source-population

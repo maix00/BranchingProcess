@@ -8,13 +8,29 @@ module
 
 public import Mathlib.Topology.Order.MonotoneContinuity
 public import Topology.Cadlag.Skorokhod.TimeChange.FinitePartition.Monotone
-public import Topology.Cadlag.Skorokhod.TimeChange
+public import Topology.Cadlag.Skorokhod.TimeChange.Basic
 
 /-!
 # Time changes matching finite partitions
 
 An increasing piecewise-affine time change maps one strictly ordered finite
 partition of `[0, 1]` onto another partition with the same number of cells.
+
+## Public declarations
+
+For matching strictly increasing endpoint-anchored partitions $s,t$ of
+$[0,1]$, with $n>0$:
+
+- `homeomorph` defines the increasing homeomorphism matching their knots, and
+  `ofMatchingPartitions` packages it as a Skorokhod `TimeChange`.
+- `ofMatchingPartitions_distortion_le` gives
+  $\operatorname{distortion}(\tau)\le\varepsilon$ when corresponding knots
+  are within $\varepsilon$.
+- `act_ofMatchingPartitions_stepPath` states that reparameterizing the source
+  step path by the time change from target knots to source knots gives the
+  target step path.
+- `j1EDist_stepPath_le_ofMatchingPartitions` bounds the $J_1$ distance of
+  equal-valued step paths by the largest knot displacement.
 -/
 
 @[expose] public section
@@ -69,11 +85,11 @@ noncomputable def ofMatchingPartitions {n : ℕ} (hn : 0 < n)
     (hsourceStrict : StrictMono source)
     (htargetFirst : target ⟨0, by omega⟩ = ⊥)
     (htargetLast : target ⟨n, by omega⟩ = ⊤)
-    (htargetStrict : StrictMono target) : TimeChange where
-  toHomeomorph := homeomorph hn source target hsourceFirst hsourceLast hsourceStrict
-    htargetFirst htargetLast htargetStrict
-  strictMono_toHomeomorph := map_strictMono hn source target hsourceFirst hsourceLast
-    hsourceStrict htargetStrict
+    (htargetStrict : StrictMono target) : TimeChange :=
+  TimeChange.ofHomeomorph
+    (homeomorph hn source target hsourceFirst hsourceLast hsourceStrict
+      htargetFirst htargetLast htargetStrict)
+    (map_strictMono hn source target hsourceFirst hsourceLast hsourceStrict htargetStrict)
 
 /-- The time change matching two finite partitions moves each time by at most
 the largest displacement bound assumed for their partition points. -/
@@ -152,12 +168,13 @@ theorem act_ofMatchingPartitions_stepPath {E : Type*} [TopologicalSpace E]
   · have hchangeTop : change t ≠ ⊤ := by
       intro htop
       have hlt : change t < change ⊤ :=
-        change.strictMono_toHomeomorph (lt_top_iff_ne_top.mpr ht)
+        change.toOrderIso.strictMono (lt_top_iff_ne_top.mpr ht)
       rw [TimeChange.apply_top] at hlt
       simp [htop] at hlt
     have hmapTop : map hn target source htargetFirst htargetLast htargetStrict
         hsourceStrict t ≠ ⊤ := by
-      simpa [change, ofMatchingPartitions, homeomorph] using hchangeTop
+      simpa [change, ofMatchingPartitions, TimeChange.ofHomeomorph, homeomorph]
+        using hchangeTop
     have hindex := map_index hn target source htargetFirst htargetLast htargetStrict
       hsourceFirst hsourceLast hsourceStrict t
     have hindex' : OscillationPartition.finitePointIndex hn source hsourceFirst

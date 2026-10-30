@@ -4,16 +4,31 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.RandomMeasure.Poisson.Intensity.Entrance
-import Probability.Process.Levy.Jump.PoissonConfiguration.Entrance.FixedCutoff
+module
+
+public import Probability.RandomMeasure.Poisson.Intensity.Entrance
+public import Probability.RandomMeasure.Poisson.JumpPath.Entrance.FixedCutoff
+import Probability.RandomMeasure.Poisson.Intensity.TimeMark
 
 /-!
 # Canonical entrance model for a split Lévy intensity
+
+## Public declarations
+
+- `ProbabilityTheory.exists_poissonEntrancePath_model_of_markIntensity`:
+  for a fixed cutoff, a finite large-jump intensity, positive target-window
+  mass, and small-jump first moment below \(\rho\) give a canonical complete
+  small-plus-large Poisson path with positive entrance probability.
+- `ProbabilityTheory.exists_poissonEntrancePath_model_of_finiteVariation`:
+  a finite \(\int (1\wedge |x|)\,\nu(dx)\) condition selects such a cutoff
+  and supplies the same positive-probability path event.
 
 The target mark window and its complement partition all large jumps. Thus
 the positive corridor event below concerns the complete small-plus-large
 Poisson jump path at a fixed cutoff, rather than a selected subpath.
 -/
+
+@[expose] public section
 
 namespace ProbabilityTheory
 
@@ -84,11 +99,23 @@ theorem exists_poissonEntrancePath_model_of_markIntensity
     apply Set.disjoint_left.mpr
     intro z hzJ hzB
     exact hzB.2.2 hzJ.2
+  have hmarkPartition :
+      Jmark ∪ (largeJumpBand n \ Jmark) = largeJumpBand n := by
+    ext x
+    constructor
+    · rintro (hx | ⟨hx, _⟩)
+      · exact hJsub hx
+      · exact hx
+    · intro hx
+      by_cases hj : x ∈ Jmark
+      · exact Or.inl hj
+      · exact Or.inr ⟨hx, hj⟩
   have hJwindow' : ∀ z ∈ J, |z.2 - target| < ρ := by
     intro z hz
     exact hJwindow z.2 hz.2
-  have hH : J ∪ B = (Set.univ : Set unitInterval) ×ˢ largeJumpBand n :=
-    unitTime_target_union_remainder hJsub
+  have hH : J ∪ B = (Set.univ : Set unitInterval) ×ˢ largeJumpBand n := by
+    dsimp [J, B]
+    rw [← Set.prod_union, hmarkPartition]
   obtain ⟨Ωs, Ωb, mΩs, mΩb, Ps, Pb, Ks, Xs, Kb, Xb,
       hPs, hPb, hds, hdb, hpos⟩ :=
     exists_poissonEntrancePath_model_of_smallMoment

@@ -17,15 +17,29 @@ configuration may have no children at all. When marks are spatial
 displacements, this is the direct branching-random-walk representation.
 
 The file carries the primitive type, its measurable structure, the presence
-predicate, the support of a step, and the zero-defaulted slot reading.  A slot is read
-directly as `ξ i`; the zero-defaulted reading `value' ξ i` is separate because
-it needs a `Zero X` instance and is not part of the type of a step.  The
-    relation layer is in `Step/Relation.lean`; presence closure and optional
-relabeling are in `Step/SiblingClosed.lean` and `Step/SiblingClosable.lean`.
-The ordered layer is in `Step/Monotone.lean`, and the slot vocabulary in
+predicate, the support of a step, and the zero-defaulted slot reading. A slot
+is read directly as `ξ i`; the zero-defaulted reading `value' ξ i` is separate
+because it needs a `Zero X` instance. The relation layer is in
+`Step/Relation.lean`; presence closure and optional relabeling are in
+`Step/Ordering/Sibling/Closed.lean` and
+`Step/Ordering/Sibling/Closable.lean`. The ordered layer is in
+`Step/Ordering/Monotone.lean`, and the slot vocabulary is in
 `Step/Measurability.lean`. Path displacements are in
-`Basic/Displace.lean` and `Basic/DisplacementMap.lean`; realized and marked
-tree conversions are in `BranchingWalk/MarkedTree/`.
+`Basic/Position/Displace.lean` and `Basic/Position/DisplacementMap.lean`;
+realized and marked tree conversions are in `BranchingWalk/MarkedTree/`.
+
+## Public declarations
+
+- `Step ι X := ι → Option X`; `ξ i = some x` records a child with mark `x`.
+- `value' ξ i = (ξ i).getD 0`; `value'_eq_getD`, `value'_none`, and
+  `value'_some` give its coordinate formulas.
+- `Step ι X` uses Mathlib's product measurable-space instance;
+  `value'_measurable` proves measurability of `ξ ↦ value' ξ i`.
+- `survive ξ i ↔ ξ i ≠ none`, by `survive_iff_ne_none`, and
+  `survive_measurableSet` proves `{ξ | survive ξ i}` measurable.
+- `support ξ = {i | survive ξ i}`; `Step.IsFinitelySupported ξ` means this
+  set is finite, and `support_finite_of_fintype` proves this when `ι` is
+  finite.
 -/
 
 @[expose] public section
@@ -61,9 +75,6 @@ theorem value'_some {ι X : Type*} [Zero X]
     (ξ : Step ι X) (i : ι) (x : X) (h : ξ i = some x) :
     value' ξ i = x := by
   simp [value', h]
-
-instance stepMeasurableSpace {ι X : Type*} [MeasurableSpace X] :
-    MeasurableSpace (Step ι X) := MeasurableSpace.pi
 
 theorem value'_measurable
     {ι X : Type*} [MeasurableSpace X] [Zero X] (i : ι) :

@@ -15,6 +15,22 @@ public import Probability.Process.Levy.Basic
 The identity clock on nonnegative real time makes the stable increment laws
 stationary. This file contains the Lévy specialization and its connection to
 the general `IsLevyProcess` interface.
+
+## Public declarations
+
+- `ProbabilityTheory.IsStableLevyProcess α μ X P` is the identity-clock
+  specialization of `IsStableClockProcess` on nonnegative real time.
+- `ProbabilityTheory.IsStableLevyProcess.spatialScale` preserves the process
+  class under `X ↦ c X` and `μ ↦ μ.map (c ·)` for `c > 0`.
+- `ProbabilityTheory.IsStableLevyProcess.timeSpaceScale` proves that
+  `t ↦ r^(-1/α) X(r t)` is a stable Lévy process for `r > 0`.
+- `ProbabilityTheory.IsStableLevyProcess.timeSpaceScale_increments_identDistrib`
+  identifies the finite increment-vector laws before and after this scaling.
+- `ProbabilityTheory.IsStableLevyProcess.increments` and
+  `ProbabilityTheory.IsStableLevyProcess.ae_cadlag` project the increment
+  specification and almost-sure càdlàg property.
+- `ProbabilityTheory.IsStableLevyProcess.toIsLevyProcess` gives the underlying
+  `IsLevyProcess X P` structure.
 -/
 
 open MeasureTheory

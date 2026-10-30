@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Measurability
+public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Field.Measurability
 public import Probability.BranchingRandomWalk.Population.Candidates.Prefix
 
 /-!
@@ -18,6 +18,24 @@ condition, later slots cannot enter the global leftmost `N`; that reduction
 still needs a proof. The survive file establishes the finite candidate set
 and its causal measurability. The mark type is a parameter: candidate
 generation only reads slot presence.
+
+## Public declarations
+
+- `ProbabilityTheory.BranchingRandomWalk.multiRootCandidates N s ω` is the
+  union, over $p\in s$ and slots $j<N$, of the surviving singleton child
+  candidates. `ProbabilityTheory.BranchingRandomWalk.multiRootCandidatesAtGeneration` first filters $s$ to
+  generation $n$.
+- `ProbabilityTheory.BranchingRandomWalk.oneChildCandidate_measurable`, `ProbabilityTheory.BranchingRandomWalk.multiRootCandidates_fixed_measurable`,
+  and `ProbabilityTheory.BranchingRandomWalk.multiRootCandidatesAtGeneration_fixed_measurable` prove domain-flow
+  measurability of the one-parent, fixed-parent-set, and generation-filtered
+  updates, respectively.
+- `ProbabilityTheory.BranchingRandomWalk.oneChildCandidate_first_mem` characterizes whether the first child slot is
+  present; `ProbabilityTheory.BranchingRandomWalk.multiRootCandidates_first_mem` shows a surviving first slot of a
+  retained parent belongs to the finite candidate set when $N>0$.
+- `ProbabilityTheory.BranchingRandomWalk.multiRootCandidates_depth` and
+  `ProbabilityTheory.BranchingRandomWalk.multiRootCandidatesAtGeneration_depth` show that all resulting addresses
+  are at generation $n+1$.
+
 -/
 
 open MeasureTheory
@@ -104,7 +122,7 @@ theorem multiRootCandidatesAtGeneration_fixed_measurable {m : ℕ} [MeasurableSp
 
 theorem oneChildCandidate_first_mem {m : ℕ}
     (ω : FiniteRootStepField m ℕ X) (p : RootAddress m ℕ) :
-    childAddress p 0 ∈ oneChildCandidate ω p 0 ↔
+    RootIndexed.childAddress p 0 ∈ oneChildCandidate ω p 0 ↔
       survive (ω p.1 p.2) 0 := by
   classical
   by_cases h : survive (ω p.1 p.2) 0 <;>
@@ -114,7 +132,7 @@ theorem multiRootCandidates_first_mem {m N : ℕ}
     (hN : 0 < N) (s : Finset (RootAddress m ℕ))
     (ω : FiniteRootStepField m ℕ X) (p : RootAddress m ℕ) (hp : p ∈ s)
     (hfirst : survive (ω p.1 p.2) 0) :
-    childAddress p 0 ∈ multiRootCandidates N s ω := by
+    RootIndexed.childAddress p 0 ∈ multiRootCandidates N s ω := by
   classical
   unfold multiRootCandidates
   apply Finset.mem_biUnion.mpr

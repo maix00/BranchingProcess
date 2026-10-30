@@ -5,12 +5,25 @@ Authors: Codex
 -/
 module
 
-public import Analysis.Asymptotics.RegularVariation.AtZero.Potter
+public import Analysis.Asymptotics.RegularVariation.AtZero.Basic
+import Analysis.Asymptotics.RegularVariation.AtZero.Potter
 public import Analysis.Fourier.CosineTauberian.Kernel
-public import Mathlib.MeasureTheory.Integral.DominatedConvergence
+import Mathlib.MeasureTheory.Integral.DominatedConvergence
 
 /-!
 # Regular variation under the cosine Tauberian kernel
+
+## Public declarations
+
+The public theorem is `tendsto_integral_ratio_mul_cosineTauberianKernel`.
+If $f$ is measurable, regularly varying at zero with index $\rho$, has
+uniform ratio convergence on multipliers $[1,2]$, and satisfies
+$0<\delta<\rho$, $\rho+\delta<2$, and $0\le f\le M$, then
+\[
+  \int_0^\infty \frac{f(su)}{f(u)}K(s)\,ds
+  \longrightarrow \int_0^\infty s^\rho K(s)\,ds
+  \qquad (u\downarrow0).
+\]
 
 This module combines the nonmonotone Potter envelope with Mathlib's dominated
 convergence theorem. It isolates the analytic integral limit from probability
@@ -31,7 +44,7 @@ nonmonotone Potter bound; the eventual bound on `f` controls multipliers that
 move beyond the local Potter range. -/
 theorem tendsto_integral_ratio_mul_cosineTauberianKernel
     {f : ℝ → ℝ} {ρ δ M : ℝ}
-    (hcont : Continuous f)
+    (hmeas : Measurable f)
     (hreg : Asymptotics.IsRegularlyVaryingAtZero f ρ)
     (huniform : TendstoUniformlyOn
       (fun u r => f (r * u) / f u) (fun r => r ^ ρ)
@@ -88,8 +101,7 @@ theorem tendsto_integral_ratio_mul_cosineTauberianKernel
       continuous_cosineTauberianKernel.measurable
     have hF : Measurable (F u) := by
       dsimp [F]
-      exact ((hcont.comp (continuous_id.mul continuous_const)).measurable
-        |>.div_const (f u)).mul hK
+      exact ((hmeas.comp (measurable_id.mul measurable_const)).div_const (f u)).mul hK
     exact hF.aestronglyMeasurable
   have hsmall : Set.Iio U ∈ 𝓝[>] (0 : ℝ) :=
     mem_nhdsWithin_of_mem_nhds (Iio_mem_nhds hU)

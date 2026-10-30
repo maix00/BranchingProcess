@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import MeasureTheory.Measure.ContinuousMap.Oscillation
+public import MeasureTheory.Measure.ContinuousMap.RangeOscillation
 public import Probability.ConvergenceInDistribution.Portmanteau
 public import Topology.ContinuousMap.Oscillation
 
@@ -15,6 +15,14 @@ public import Topology.ContinuousMap.Oscillation
 
 The finite cover is a deterministic path-space estimate. This file supplies
 its Portmanteau consequence for convergent continuous-path laws.
+
+## Public declarations
+
+- `ProbabilityTheory.ContinuousMap.TendstoInDistribution.measure_rangeOscillationSet_le_sum_liminf_finiteCorridorCover`:
+  if $Z(0)=0$ almost surely, then for $w>0$ and $m>0$,
+  $\mathbb P(\operatorname{osc}(Z)\le w)\le
+  \sum_{j<m}\liminf_n\mathbb P(X_n([0,1])\subset(a_{j,w,m},b_{j,w,m}))$,
+  where $(a_{j,w,m},b_{j,w,m})$ are the finite-cover corridor endpoints.
 -/
 
 @[expose] public section

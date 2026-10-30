@@ -12,8 +12,15 @@ public import Probability.Process.Levy.Basic
 /-!
 # Brownian motion as a Lévy process
 
-Brownian motion is an instance of the general Lévy-process interface.  The
-stable specialization is developed separately in `Probability.Process.Stable`.
+## Public declarations
+
+- `ProbabilityTheory.IsBrownianReal.isLevyProcess`: every real Brownian
+  motion $B$ under a probability measure $P$ satisfies
+  $\mathrm{IsLevyProcess}(B,P)$.
+
+This is the adapter from Mathlib's Brownian-motion interface to the local
+Lévy-process interface; stable-process specializations are developed in
+`Probability.Process.Stable`.
 -/
 
 open MeasureTheory

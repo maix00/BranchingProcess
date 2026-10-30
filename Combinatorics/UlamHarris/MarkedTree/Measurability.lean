@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Combinatorics.UlamHarris.MarkedTree.Basic
-public import Combinatorics.UlamHarris.Tree.MeasurableSpace
+public import Combinatorics.UlamHarris.Tree.Topology.MeasurableSpace
 public import Combinatorics.BranchingWalk.Step.Basic
 public import Mathlib.MeasureTheory.MeasurableSpace.Constructions
 public import Mathlib.MeasureTheory.MeasurableSpace.Instances
@@ -20,6 +20,25 @@ The measurable space on `MarkedTree α X` is induced by the pair
 the marks through the coordinate σ-algebra of `TreeNode α → Option X`, where
 `Option X` carries the disjoint-union σ-algebra. Thus both the realized
 carrier and every mark are measurable coordinates.
+
+## Public declarations
+
+- `instMeasurableSpaceMarkedTree` defines the marked-tree σ-algebra as the
+  comap along `M ↦ (M.tree, M.mark?)`.
+- `measurable_tree_mark?` proves measurability of that pair-valued map;
+  `measurable_tree` and `measurable_mark? u` give its tree and fixed-address
+  mark coordinates. `measurableSet_tree_carrier u` proves that
+  `{M | u ∈ M.tree.carrier}` is measurable.
+- `RootIndexed.MarkedTree.measurableSpace_eq_iSup` identifies the family
+  σ-algebra with `⨆ r, comap (fun M => M r) inferInstance`.
+- `RootIndexed.MarkedTree.measurable_apply r`, `measurable_tree r`,
+  `measurable_mark? r u`, and `measurableSet_tree_carrier r u` give
+  measurability of the coordinate, its realized tree, a fixed mark, and
+  fixed-address carrier membership.
+- `RootIndexed.MarkedTree.measurable_iff_forall f` states that `f` into the
+  family is measurable iff every root-coordinate map is measurable.
+  `measurable_iff_forall_tree_mark? f` gives the equivalent criterion using
+  the pair of tree and mark coordinates at each root.
 -/
 
 @[expose] public section

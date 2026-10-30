@@ -8,9 +8,21 @@ module
 
 public import Topology.Cadlag.Skorokhod.EDistance.Logarithmic.Separation
 public import Topology.Cadlag.Skorokhod.Topology
+import all Topology.Cadlag.Skorokhod.EDistance.Logarithmic.Lemmas.ModulusThreshold
 
 /-!
 # The logarithmic metric on càdlàg paths
+
+## Public declarations
+
+- `Skorokhod.BillingsleyPath E` equips the carrier of càdlàg paths with
+  Billingsley's logarithmic path distance.
+- `Skorokhod.instMetricSpaceBillingsleyPath` supplies its metric structure
+  for metric state spaces, using $d_B(f,g)=0\iff f=g$.
+- `Skorokhod.uniformContinuous_toCadlagPath` states that the identity from
+  Billingsley's logarithmic metric to the ordinary `J₁` metric is uniformly
+  continuous. Together with `billingsleyPathHomeomorph`, this yields equality
+  of the two topologies.
 
 This file bundles càdlàg paths with Billingsley's logarithmic metric and proves
 that forgetting this metric structure is uniformly continuous into the usual
@@ -71,7 +83,7 @@ theorem uniformContinuous_toCadlagPath {E : Type*} [MetricSpace E] :
   rw [Metric.uniformContinuous_iff]
   intro ε hε
   obtain ⟨bound, hbound, hboundε, hmodε⟩ :=
-    exists_small_logarithmicJ1_bound hε
+    Separation.Lemmas.exists_small_logarithmicJ1_bound hε
   refine ⟨bound, hbound, ?_⟩
   intro f g hfg
   have hd0 : billingsleyEDist f.toCadlagPath g.toCadlagPath <

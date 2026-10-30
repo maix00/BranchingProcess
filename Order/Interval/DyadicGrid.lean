@@ -15,6 +15,15 @@ This file specializes `UniformGrid` to grids with `2 ^ k` blocks on an
 arbitrary interval in an ordered field. The interval endpoints are parameters;
 unit-interval coordinates and their density are handled by a topology adapter.
 Unbounded dyadic coordinates use Mathlib's `Dyadic` type.
+
+## Public declarations
+
+- `DyadicGrid.blocks k` is $2^k$, and
+  `DyadicGrid.grid left right hleft k` is the level-$k$ uniform grid on
+  $[left,right]$.
+- `DyadicGrid.isRefinement_succ` shows each level refines its successor;
+  `DyadicGrid.lift` embeds its indices into the next level, and
+  `DyadicGrid.point_lift` states that this embedding preserves the grid point.
 -/
 
 @[expose] public section

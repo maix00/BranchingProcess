@@ -13,9 +13,21 @@ public import Mathlib.Topology.UnitInterval
 /-!
 # Oscillation bounds for polygonal walk paths
 
-This file contains deterministic bridges from equal-block displacement
-bounds to local bounds for the discrete grid underlying polygonal
-interpolation.
+## Public declarations
+
+- `natFloor_mul_sub_le_of_dist_lt` bounds the difference of the mesh indices at ordered times
+  $s\le t$ by $\ell$ when $d(s,t)<(\ell-1)/n$.
+- `abs_partialSum_natFloor_mul_sub_le_three_mul` and
+  `abs_normalizedStepPath_sub_le_three_mul_div` turn equal-block displacement bounds of radius
+  $r$ into respective partial-sum and normalized step-path bounds $3r$ and $3r/a_n$.
+- `abs_normalizedLinearPath_sub_normalizedStepPath_le_three_mul_div` bounds the pointwise gap
+  between polygonal and step paths by $3r/a_n$ under the same block condition.
+- `abs_normalizedLinearPath_sub_le_nine_mul_div` gives the polygonal modulus bound $9r/a_n$
+  when $d(s,t)<(\ell-1)/n$.
+- `dist_normalizedLinearContinuousPathIcc_le_of_not_exists_block` turns the absence of a block
+  displacement larger than $r a_n$ into a continuous-path oscillation bound of $9r$.
+
+These are deterministic path estimates; probability bounds using them are in `Path/Oscillation.lean`.
 -/
 
 open Set

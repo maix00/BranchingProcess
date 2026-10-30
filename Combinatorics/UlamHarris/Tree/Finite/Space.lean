@@ -7,8 +7,8 @@ Authors: WANG Yiyang
 module
 
 public import Combinatorics.UlamHarris.Tree.Finite.Basic
-public import Combinatorics.UlamHarris.Tree.Metric
-public import Combinatorics.UlamHarris.Tree.MeasurableSpace
+public import Combinatorics.UlamHarris.Tree.Topology.Metric
+public import Combinatorics.UlamHarris.Tree.Topology.MeasurableSpace
 
 /-!
 # The space of finite trees
@@ -24,6 +24,22 @@ This file equips `FiniteTree α` with:
 As for all trees, the metric and its topology are named structures rather than
 global instances, so the default topology stays the subspace of the pointwise
 topology.
+
+## Public declarations
+
+- `Tree.Finite.topology α` and `Tree.Finite.measurableSpace α` are the
+  subspace topology and measurable space on `FiniteTree α`;
+  `topology_eq_inst` and `measurableSpace_eq_inst` identify them with the
+  registered instances.
+- `Tree.Finite.metricSpace α` and `Tree.Finite.metricTopology α` restrict the
+  tree metric without replacing the default topology.
+  `metricTopology_eq_induced` and `metricTopology_le_topology` state their
+  relation to the ambient tree topologies.
+- `borel_topology_eq_measurableSpace` identifies the default Borel space with
+  the cylinder σ-algebra for countable labels;
+  `measurableSpace_le_borel_metricTopology` gives one inclusion for the metric
+  topology, and `borel_metricTopology_eq_measurableSpace_of_countable_balls`
+  gives equality when the ambient truncation-ball family is countable.
 -/
 
 open MeasureTheory

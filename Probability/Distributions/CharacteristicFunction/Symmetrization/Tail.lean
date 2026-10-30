@@ -5,12 +5,25 @@ Authors: Codex
 -/
 module
 
-public import Probability.Distributions.CharacteristicFunction.Symmetrization
-public import Mathlib.MeasureTheory.Measure.Interval
+public import Probability.Distributions.CharacteristicFunction.Symmetrization.Basic
+import Mathlib.MeasureTheory.Measure.Interval
 public import Mathlib.MeasureTheory.Measure.Prod
 
 /-!
 # Two-sided tails under symmetrization
+
+## Public declarations
+
+- `twoSidedTail μ x` and `absBallMass μ x` are the strict two-sided tail and
+  closed symmetric-interval mass.
+- `symmetrizedMeasure_eq_map_sub_prod` represents the difference law as the
+  image of `μ.prod μ` under subtraction.
+- `measureReal_abs_le_add_twoSidedTail`, `absBallMass_eq_one_sub_twoSidedTail`,
+  and `twoSidedTail_tendsto_zero` give the probability-mass decomposition and
+  tail limit.
+- `twoSidedTail_symmetrized_lower_bound` and
+  `twoSidedTail_symmetrized_upper_bound` compare the difference tail to the
+  original tail at nearby scales.
 
 This file records elementary probability bounds relating the tail of a law to
 the tail of the difference of two independent variables with that law. These

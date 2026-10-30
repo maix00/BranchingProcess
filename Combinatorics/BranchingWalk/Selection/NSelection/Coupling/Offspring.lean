@@ -12,9 +12,22 @@ public import Combinatorics.BranchingWalk.Selection.Coupling.Offspring.Cloud
 /-!
 # Offspring propagation for the multi-root spatial coupling
 
+## Public declarations
+
 This file propagates parent domination to lower-tail domination of genuine child
 addresses.  Child slots remain arbitrary finite sets or sets; no enumeration
 of roots or offspring slots is assumed.
+
+The public API is `offspringAddresses_filter_card_le_of_injection`: a spatially
+dominating injection of parents, inclusion of each source parent's child slots
+in its matched target parent's slots, and equality of shared increments imply
+`((offspringAddresses sourceParents sourceSlots).filter
+(fun q => φ (sourceWalk.position d q.1 q.2) ≤ a)).card ≤
+((offspringAddresses targetParents targetSlots).filter
+(fun q => φ (targetWalk.position d q.1 q.2) ≤ a)).card` for every `a`.
+`offspringAddresses_filter_card_le_of_parent_matching` gives the same bound
+from the corresponding injective-domination relation when slot inclusion and
+increment equality are assumed for every eligible target parent.
 -/
 
 @[expose] public section
@@ -22,7 +35,7 @@ of roots or offspring slots is assumed.
 namespace Combinatorics.Branching.Selection.Coupling
 
 open Combinatorics.UlamHarris
-open Selection.NSelection
+open _root_.Combinatorics.Selection.NSelection
 
 variable {Root α Mark Position Value : Type*}
 

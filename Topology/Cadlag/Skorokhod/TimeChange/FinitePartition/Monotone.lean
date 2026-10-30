@@ -13,6 +13,21 @@ public import Topology.Cadlag.Skorokhod.TimeChange.FinitePartition.Basic
 
 Prove strict monotonicity, inverse identities, and the action on partition
 points.
+
+## Public declarations
+
+For $n>0$ and finite knot sequences in $[0,1]$; each result uses the endpoint
+and strictness hypotheses in its statement:
+
+- `map_comp_swapped` states that swapping source and target gives the inverse
+  piecewise-affine map when both sequences are endpoint-anchored and strictly
+  increasing.
+- `map_strictMono` states that the map is strictly increasing when the source
+  is endpoint-anchored and strictly increasing and the target is strictly
+  increasing.
+- `map_apply_cellStart` sends each source cell's left endpoint to the
+  corresponding target endpoint when the source is endpoint-anchored and
+  strictly increasing and the target is strictly increasing.
 -/
 
 @[expose] public section

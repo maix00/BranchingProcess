@@ -8,6 +8,7 @@ module
 
 public import Topology.Cadlag.Skorokhod.PathClass.StepCorridor.Basic
 public import Topology.Cadlag.Skorokhod.PathClass.StepCorridor.Boundary.Partition
+import Mathlib.Topology.MetricSpace.Pseudo.Defs
 
 /-!
 # Increasing endpoint cores for an `M₂` step corridor
@@ -16,6 +17,41 @@ Trace separation supplies a common interior value at every knot. Choosing
 small, strictly increasing core radii then makes each return window wider
 than the preceding entrance core. This is the deterministic geometry needed
 to concatenate endpoint-constrained segment events across boundary jumps.
+
+## Public declarations
+
+- `commonPartitionCellLength` and `commonPartitionCellLength_pos` give the
+  positive duration of every cell in the common partition.
+- `commonPartitionCoreCenter` and `commonPartitionCoreCenter_mem` select an
+  interior center at each knot and place it in the common boundary strip.
+- `commonPartitionCoreMargin`, `commonPartitionCoreMargin_pos`, and
+  `commonPartitionCoreMargin_mem` define and locate the available interior
+  margin around each selected center.
+- `commonPartitionCoreRadiusStep` and `commonPartitionCoreRadiusStep_pos`
+  give a positive radius increment compatible with all margins;
+  `commonPartitionCoreRadius`, `commonPartitionCoreRadius_zero`,
+  `commonPartitionCoreRadius_nonneg`, and `commonPartitionCoreRadius_mem`
+  give the resulting increasing core radii and their containment.
+- `commonPartitionCoreRadiusStepSmall` and
+  `commonPartitionCoreRadiusStepSmall_pos` shrink the increment to a chosen
+  bound $\eta>0$; `commonPartitionCoreRadiusSmall`,
+  `commonPartitionCoreRadiusSmall_nonneg`,
+  `commonPartitionCoreRadiusSmall_le`,
+  `commonPartitionCoreRadiusSmall_lt_margin`, and
+  `commonPartitionCoreRadiusSmall_mem` state the corresponding radius bounds
+  and endpoint containment.
+- `exists_commonPartitionEndpointCores_small` constructs strictly increasing
+  cores of radii below any prescribed $\eta>0$;
+  `exists_commonPartitionEndpointCores` constructs increasing cores without
+  a prescribed upper bound.
+- `add_mem_corridor_of_core_and_increment` shows that a point in a core plus
+  an increment in the contracted interval remains strictly inside the
+  original corridor.
+- `add_mem_nextCore_of_endpointBand` shows that an increment in a band of
+  radius smaller than the increase in core radius sends every point of the
+  old core strictly into the next core.
+- `exists_endpointBand_in_contractedCorridor` constructs such a positive
+  endpoint band inside the corridor contracted by the old core.
 -/
 
 open Skorokhod.PathClass.StepCorridor
@@ -93,18 +129,43 @@ noncomputable def commonPartitionCoreMargin
     (upper lower : StepBoundary)
     (hstart : StartAdmissible upper lower)
     (hsep : TraceSeparated upper lower)
-    (i : Fin (StepBoundary.commonKnots upper lower).card) : ℝ :=
-  Classical.choose (exists_pos_uniformMargin_selValues
-    (commonPartitionCoreCenter_mem upper lower hstart hsep i))
+    (i : Fin (StepBoundary.commonKnots upper lower).card) : ℝ := by
+  let x := commonPartitionCoreCenter upper lower hsep i
+  have hx : x ∈ selValues upper lower
+      (StepBoundary.commonPartitionGrid upper lower i.val) :=
+    commonPartitionCoreCenter_mem upper lower hstart hsep i
+  have hopen : IsOpen (selValues upper lower
+      (StepBoundary.commonPartitionGrid upper lower i.val)) := by
+    change IsOpen ((fun x : ℝ => (x : EReal)) ⁻¹'
+      Set.Ioo (max (lower.leftTrace _) (lower.rightTrace _))
+        (min (upper.leftTrace _) (upper.rightTrace _)))
+    exact isOpen_Ioo.preimage continuous_coe_real_ereal
+  let hball : ∃ r : ℝ, 0 < r ∧ Metric.ball x r ⊆
+      selValues upper lower (StepBoundary.commonPartitionGrid upper lower i.val) :=
+    Metric.mem_nhds_iff.mp (hopen.mem_nhds hx)
+  exact Classical.choose hball / 2
 
 theorem commonPartitionCoreMargin_pos
     (upper lower : StepBoundary)
     (hstart : StartAdmissible upper lower)
     (hsep : TraceSeparated upper lower)
     (i : Fin (StepBoundary.commonKnots upper lower).card) :
-    0 < commonPartitionCoreMargin upper lower hstart hsep i :=
-  (Classical.choose_spec (exists_pos_uniformMargin_selValues
-    (commonPartitionCoreCenter_mem upper lower hstart hsep i))).1
+    0 < commonPartitionCoreMargin upper lower hstart hsep i := by
+  let x := commonPartitionCoreCenter upper lower hsep i
+  have hx : x ∈ selValues upper lower
+      (StepBoundary.commonPartitionGrid upper lower i.val) :=
+    commonPartitionCoreCenter_mem upper lower hstart hsep i
+  have hopen : IsOpen (selValues upper lower
+      (StepBoundary.commonPartitionGrid upper lower i.val)) := by
+    change IsOpen ((fun x : ℝ => (x : EReal)) ⁻¹'
+      Set.Ioo (max (lower.leftTrace _) (lower.rightTrace _))
+        (min (upper.leftTrace _) (upper.rightTrace _)))
+    exact isOpen_Ioo.preimage continuous_coe_real_ereal
+  let hball : ∃ r : ℝ, 0 < r ∧ Metric.ball x r ⊆
+      selValues upper lower (StepBoundary.commonPartitionGrid upper lower i.val) :=
+    Metric.mem_nhds_iff.mp (hopen.mem_nhds hx)
+  change 0 < Classical.choose hball / 2
+  exact half_pos (Classical.choose_spec hball).1
 
 theorem commonPartitionCoreMargin_mem
     (upper lower : StepBoundary)
@@ -114,9 +175,26 @@ theorem commonPartitionCoreMargin_mem
     (y : ℝ)
     (hy : |y - commonPartitionCoreCenter upper lower hsep i| ≤
       commonPartitionCoreMargin upper lower hstart hsep i) :
-    y ∈ selValues upper lower (StepBoundary.commonPartitionGrid upper lower i.val) :=
-  (Classical.choose_spec (exists_pos_uniformMargin_selValues
-    (commonPartitionCoreCenter_mem upper lower hstart hsep i))).2 y hy
+    y ∈ selValues upper lower (StepBoundary.commonPartitionGrid upper lower i.val) := by
+  let x := commonPartitionCoreCenter upper lower hsep i
+  have hx : x ∈ selValues upper lower
+      (StepBoundary.commonPartitionGrid upper lower i.val) :=
+    commonPartitionCoreCenter_mem upper lower hstart hsep i
+  have hopen : IsOpen (selValues upper lower
+      (StepBoundary.commonPartitionGrid upper lower i.val)) := by
+    change IsOpen ((fun x : ℝ => (x : EReal)) ⁻¹'
+      Set.Ioo (max (lower.leftTrace _) (lower.rightTrace _))
+        (min (upper.leftTrace _) (upper.rightTrace _)))
+    exact isOpen_Ioo.preimage continuous_coe_real_ereal
+  let hball : ∃ r : ℝ, 0 < r ∧ Metric.ball x r ⊆
+      selValues upper lower (StepBoundary.commonPartitionGrid upper lower i.val) :=
+    Metric.mem_nhds_iff.mp (hopen.mem_nhds hx)
+  change y ∈ selValues upper lower _
+  change |y - x| ≤ Classical.choose hball / 2 at hy
+  have hdist : dist y x < Classical.choose hball := by
+    rw [Real.dist_eq]
+    exact lt_of_le_of_lt hy (by linarith [(Classical.choose_spec hball).1])
+  exact (Classical.choose_spec hball).2 hdist
 
 /-- A common positive increase in endpoint-core radius, chosen below every
 trace-strip margin and divided by the number of knots. -/
@@ -173,7 +251,7 @@ theorem commonPartitionCoreRadius_zero
         omega)⟩ = 0 := by
   simp [commonPartitionCoreRadius]
 
-private theorem commonPartitionCoreRadius_lt_margin
+private lemma commonPartitionCoreRadius_lt_margin
     (upper lower : StepBoundary)
     (hstart : StartAdmissible upper lower)
     (hsep : TraceSeparated upper lower)

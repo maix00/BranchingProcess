@@ -1,4 +1,4 @@
-import Probability.Distributions.Stable.Attraction.Norming.Compatibility
+import Probability.Distributions.Stable.Attraction.Norming.Rescaling.Compatibility
 
 /-! Public API checks for the inverse Tauberian chain from stable attraction
 to tails and truncated second moments. Intermediate positivity, Potter

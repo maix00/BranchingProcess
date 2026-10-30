@@ -14,9 +14,17 @@ public import MeasureTheory.Measure.CadlagPath.ContinuityTimes
 # Dense-coordinate identification for càdlàg path laws
 
 For càdlàg paths, evaluations on any dense, ordered family containing the
-right endpoint determine the path and its finite measure. This is the
-path-space uniqueness interface used when the useful continuity times depend
-on a weak cluster law.
+right endpoint determine finite measures from their finite-dimensional
+evaluation laws. The measurable embedding of the dense-coordinate map is
+defined with the Borel structure in
+`MeasureTheory.MeasurableSpace.CadlagPath.Basic`; this module proves the
+resulting finite-measure uniqueness statement used when useful continuity
+times depend on a weak cluster law.
+
+## Public declarations
+
+- Finite measures whose finite-dimensional evaluation laws agree on such
+  dense grids are equal.
 -/
 
 @[expose] public section
@@ -26,61 +34,6 @@ open Skorokhod
 open scoped Topology
 
 namespace MeasureTheory.CadlagPath
-
-/-- Evaluate a càdlàg path on a chosen family of times. -/
-def denseEvaluation {Index : Type*} (time : Index → unitInterval) :
-    CadlagPath unitInterval ℝ → Index → ℝ :=
-  fun path i => path (time i)
-
-theorem measurable_denseEvaluation {Index : Type*} [MeasurableSpace Index]
-    (time : Index → unitInterval) :
-    Measurable (denseEvaluation time : CadlagPath unitInterval ℝ → Index → ℝ) := by
-  rw [measurable_pi_iff]
-  intro i
-  exact measurable_apply (time i)
-
-private theorem denseEvaluation_injective {Index : Type*} [LinearOrder Index]
-    (time : Index → unitInterval) (htime : DenseRange time)
-    (htimeMono : Monotone time) (htop : (⊤ : unitInterval) ∈ Set.range time) :
-    Function.Injective (denseEvaluation time :
-      CadlagPath unitInterval ℝ → Index → ℝ) := by
-  intro f g hfg
-  apply CadlagPath.ext (T := unitInterval) (E := ℝ)
-  intro t
-  by_cases ht : t = ⊤
-  · subst t
-    obtain ⟨i, hi⟩ := htop
-    have heq := congrFun hfg i
-    simpa [denseEvaluation, hi] using heq
-  · have httop : t < ⊤ := (lt_top_iff_ne_top).2 ht
-    obtain ⟨u, huanti, humem, hutend⟩ :=
-      htime.exists_seq_strictAnti_tendsto_of_lt htimeMono httop
-    have htimeTendsto : Tendsto (fun n => time (u n)) atTop (𝓝 t) := by
-      simpa only [Function.comp_def] using hutend
-    have htimeWithin : Tendsto (fun n => time (u n)) atTop (𝓝[Set.Ioi t] t) :=
-      tendsto_nhdsWithin_iff.2 ⟨htimeTendsto,
-        Filter.Eventually.of_forall fun n => (humem n).1⟩
-    have hseq : ∀ n, f (time (u n)) = g (time (u n)) := by
-      intro n
-      exact congrFun hfg (u n)
-    have hlimF : Tendsto (fun n => f (time (u n))) atTop (𝓝 (f t)) :=
-      (f.isCadlag_toFun.isRightContinuous t).tendsto.comp htimeWithin
-    have hlimG : Tendsto (fun n => g (time (u n))) atTop (𝓝 (g t)) :=
-      (g.isCadlag_toFun.isRightContinuous t).tendsto.comp htimeWithin
-    have hlimG' : Tendsto (fun n => f (time (u n))) atTop (𝓝 (g t)) := by
-      simpa only [hseq] using hlimG
-    exact tendsto_nhds_unique hlimF hlimG'
-
-/-- Evaluations on a dense ordered time family containing the right endpoint
-form a measurable embedding of real càdlàg path space. -/
-theorem measurableEmbedding_denseEvaluation {Index : Type*} [Countable Index]
-    [LinearOrder Index] [MeasurableSpace Index] (time : Index → unitInterval)
-    (htime : DenseRange time) (htimeMono : Monotone time)
-    (htop : (⊤ : unitInterval) ∈ Set.range time) :
-    MeasurableEmbedding (denseEvaluation time :
-      CadlagPath unitInterval ℝ → Index → ℝ) := by
-  apply (measurable_denseEvaluation time).measurableEmbedding
-  exact denseEvaluation_injective time htime htimeMono htop
 
 /-- A finite family of times is read off from its strictly increasing grid
 after prepending time zero. -/

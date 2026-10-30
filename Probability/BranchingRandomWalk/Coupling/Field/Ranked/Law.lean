@@ -4,23 +4,44 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Coupling.Field.Ranked.Measurability.Field
+module
+
+public import Probability.BranchingRandomWalk.Coupling.Field.Ranked.Measurability.Field
+import all Probability.BranchingRandomWalk.Coupling.Field.Ranked.Lemmas.RecursiveStep
+import all Probability.BranchingRandomWalk.Coupling.Field.Ranked.Measurability.Lemmas.Past
 
 /-!
 # Product law of the recursive matched field
 
 Source and fallback are the two copies of one root-indexed product field.
 Predictable coordinate selection preserves the product law at every finite stage.
+For every `n`, the main conclusion is
+
+\[
+  (\mathrm{stepFieldLaw}_{Root\oplus Root}\,\mu).map(F_n)
+  = \mathrm{stepFieldLaw}_{Root}\,\mu.
+\]
+
+## Public declarations
+
+* `RootIndexed.rankInstalledField_law` proves fixed-stage product-law
+  preservation for a predictable rank-installed field.
+* `RootIndexed.rankInstalledField_measurable_of_supports` derives the
+  recursive measurability hypotheses from measurable, countably ranged
+  source and target populations.
+* `RootIndexed.rankInstalledField_law_of_supports` gives the product-law
+  conclusion directly from those population-support hypotheses.
 -/
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk.Coupling
 
-open ProbabilityTheory.BranchingRandomWalk.Selection.NSelection
 
 open Combinatorics.UlamHarris Combinatorics.Branching
-open Combinatorics.Branching.Selection.NSelection
+open _root_.Combinatorics.Selection.NSelection
 
 
 /-- Every finite stage of predictable equal-rank installation has the same

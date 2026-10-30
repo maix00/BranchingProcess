@@ -17,6 +17,15 @@ The address length is a height on the underlying undirected graph of a tree:
 adjacent nodes have different lengths, and every node has at most one parent
 (`TreeNode.IsChild.parent_unique`). The shared height criterion
 `SimpleGraph.isAcyclic_of_height` then gives acyclicity.
+
+## Public declarations
+
+- `childGraph_adj_length_ne` gives `u.length ≠ v.length` for adjacent vertices,
+  and `isChild_of_childGraph_adj_of_length_lt` identifies the shorter endpoint
+  as the parent.
+- `Tree.childGraph_isAcyclic T` and
+  `RootIndexed.Tree.forestGraph_isAcyclic T` state acyclicity of the single-tree
+  graph and the disjoint-union graph, respectively.
 -/
 
 @[expose] public section

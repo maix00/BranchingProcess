@@ -11,9 +11,20 @@ public import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.Exp
 /-!
 # Exploration domains and fresh subtrees
 
+## Public declarations
+
 An exploration domain is a monotone inspected set together with a filtration
 bounded by the coordinates on it. Descendant subtrees rooted in fresh addresses
 are independent of it.
+
+- `BranchingExplorationDomains α X` packages inspected sets `D_j` and domain
+  sigma-algebras `𝓖_j` satisfying `𝓖_j ≤ stepsOnSpace(D_j)` and
+  `D_j ⊆ D_{j+1}`.
+- `BranchingExplorationDomains.fresh_descendant_independent` states that
+  disjointness of `D_j` from the descendants of `u` implies independence of
+  `𝓖_j` and the descendant-coordinate sigma-algebra.
+- `BranchingExplorationDomains.fresh_subtree_independent` gives the same
+  conclusion for the random subtree field `ω ↦ (v ↦ ω (u ++ v))`.
 -/
 
 open MeasureTheory ProbabilityTheory
@@ -21,6 +32,8 @@ open MeasureTheory ProbabilityTheory
 @[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk
+
+open ProbabilityTheory.BranchingProcess (offspringFieldLaw offspringFieldLaw_coordinate offspringFieldLaw_independent offspringFieldLaw_mapMarks)
 
 open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 
@@ -39,7 +52,7 @@ theorem BranchingExplorationDomains.fresh_descendant_independent
     (hfresh : Disjoint (H.inspected j)
       (branchingDescendantAddresses root)) :
     Indep (H.domain j) (stepDescendantSpace root)
-      (stepFieldLaw μ) := by
+      (offspringFieldLaw μ) := by
   apply indep_of_indep_of_le_left
     (stepsOnSpace_descendant_independent μ
       (H.inspected j) root hfresh)
@@ -53,7 +66,7 @@ theorem BranchingExplorationDomains.fresh_subtree_independent
       (branchingDescendantAddresses root)) :
     Indep (H.domain j)
       (MeasurableSpace.comap (subtreeStepField root) inferInstance)
-      (stepFieldLaw μ) :=
+      (offspringFieldLaw μ) :=
   indep_of_indep_of_le_right
     (H.fresh_descendant_independent μ j root hfresh)
     (subtreeStepField_descendant_measurable root).comap_le

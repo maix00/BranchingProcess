@@ -18,6 +18,15 @@ Every càdlàg path on the compact unit interval admits a finite partition on
 whose half-open cells the oscillation is arbitrarily small.  The proof uses
 the one-sided local oscillation bounds and refines a finite interval cover at
 the finitely many selected centers.
+
+## Public declarations
+
+- IsCadlag.exists_oscillation_partition: for every ε > 0, a càdlàg path has
+  a finite partition with positive minimum cell length and within-cell
+  oscillation strictly below ε.
+- CadlagPath.exists_admits_oscillation_partition: every càdlàg path admits
+  such a partition with strict mesh and oscillation margins, as required by
+  the open path-set criterion.
 -/
 
 @[expose] public section
@@ -33,7 +42,7 @@ private noncomputable def chosenLeftOscillationRadius
     (hepsilon : 0 < epsilon) (t : unitInterval) : ℝ :=
   Classical.choose (hf.exists_left_oscillation_radius t hepsilon)
 
-private theorem chosenLeftOscillationRadius_pos
+private lemma chosenLeftOscillationRadius_pos
     {E : Type*} [PseudoMetricSpace E] {f : unitInterval → E}
     (hf : IsCadlag f) {epsilon : ℝ}
     (hepsilon : 0 < epsilon) (t : unitInterval) :
@@ -41,7 +50,7 @@ private theorem chosenLeftOscillationRadius_pos
   exact (Classical.choose_spec
     (hf.exists_left_oscillation_radius t hepsilon)).1
 
-private theorem chosenLeftOscillationRadius_spec
+private lemma chosenLeftOscillationRadius_spec
     {E : Type*} [PseudoMetricSpace E] {f : unitInterval → E}
     (hf : IsCadlag f) {epsilon : ℝ}
     (hepsilon : 0 < epsilon) (t s u : unitInterval)
@@ -60,7 +69,7 @@ private noncomputable def chosenRightOscillationRadius
     (hepsilon : 0 < epsilon) (t : unitInterval) : ℝ :=
   Classical.choose (hf.exists_right_oscillation_radius t hepsilon)
 
-private theorem chosenRightOscillationRadius_pos
+private lemma chosenRightOscillationRadius_pos
     {E : Type*} [PseudoMetricSpace E] {f : unitInterval → E}
     (hf : IsCadlag f) {epsilon : ℝ}
     (hepsilon : 0 < epsilon) (t : unitInterval) :
@@ -68,7 +77,7 @@ private theorem chosenRightOscillationRadius_pos
   exact (Classical.choose_spec
     (hf.exists_right_oscillation_radius t hepsilon)).1
 
-private theorem chosenRightOscillationRadius_spec
+private lemma chosenRightOscillationRadius_spec
     {E : Type*} [PseudoMetricSpace E] {f : unitInterval → E}
     (hf : IsCadlag f) {epsilon : ℝ}
     (hepsilon : 0 < epsilon) (t s u : unitInterval)
@@ -88,7 +97,7 @@ private noncomputable def localOscillationRadius
   min (chosenLeftOscillationRadius hf epsilon hepsilon t)
     (chosenRightOscillationRadius hf epsilon hepsilon t)
 
-private theorem localOscillationRadius_pos
+private lemma localOscillationRadius_pos
     {E : Type*} [PseudoMetricSpace E] {f : unitInterval → E}
     (hf : IsCadlag f) {epsilon : ℝ}
     (hepsilon : 0 < epsilon) (t : unitInterval) :

@@ -1,4 +1,4 @@
-import Probability.Distributions.Stable.Gaussian
+import Probability.Distributions.Stable.Gaussian.Basic
 
 open MeasureTheory ProbabilityTheory
 open scoped NNReal

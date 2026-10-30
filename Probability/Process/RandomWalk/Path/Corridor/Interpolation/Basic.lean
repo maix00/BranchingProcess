@@ -18,6 +18,23 @@ public import Topology.ContinuousMap.Corridor
 For a horizontal interval, the polygonal interpolation stays in the interval
 exactly when all its grid vertices do.  This is deterministic and belongs to
 the path layer rather than the probability layer.
+
+## Public declarations
+
+* `normalizedLinearPath_eq_lineMap` expresses the interpolated path between
+  grid points as the affine segment between its adjacent normalized partial
+  sums.
+* `normalizedLinearContinuousPathIcc_range_subset_iff` states that a
+  polygonal path has range in a convex set containing zero exactly when every
+  positive grid vertex belongs to that set.
+* `normalizedLinearContinuousPathIcc_mem_rangeInClosedInterval_iff` and
+  `normalizedLinearContinuousPathIcc_mem_rangeInOpenInterval_iff` identify
+  closed and open interval membership with the corresponding finite
+  grid-corridor conditions.
+* `normalizedLinearContinuousPathIcc_mem_horizontalCorridor_iff` and
+  `normalizedLinearContinuousPathIcc_mem_closedHorizontalCorridor_iff`
+  specialize these equivalences to the strict and weak horizontal-tube events
+  after scaling the boundaries by `scale n`.
 -/
 
 open Set

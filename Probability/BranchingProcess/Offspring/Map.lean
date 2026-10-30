@@ -14,6 +14,15 @@ public import Probability.BranchingProcess.Offspring.Law
 A measurable transformation of child marks acts slotwise on a configuration
 law. Compatibility with the independently sampled configuration field is
 proved in `Offspring/FieldLaw.lean`.
+
+## Public declarations
+
+- `ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw.mapMarks`:
+  for a measurable map $f : M\to M'$, the transformed configuration law is
+  the pushforward of the original law by the slotwise map,
+  $\mu.mapMarks(f)=\mu.map(\operatorname{Step.map}(f))$.
+- `ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw.mapMarks_toMeasure`:
+  the underlying measure of `mapMarks` is that same pushforward measure.
 -/
 
 @[expose] public section

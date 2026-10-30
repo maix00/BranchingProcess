@@ -6,8 +6,14 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Distributions.Stable.Attraction.Normal.TruncatedMoment
+public import Probability.Distributions.DomainOfAttraction.Basic
+public import Probability.Distributions.Stable.Gaussian.Basic
 public import Probability.Process.RandomWalk.Path.Truncation.Normalized
+
+import Probability.Distributions.Moments.Truncated.TailIntegral
+import Probability.Distributions.Stable.Attraction.Normal.Centering
+import Probability.Distributions.Stable.Attraction.Normal.QuadraticTail
+import Probability.Distributions.Stable.Attraction.Normal.Norming
 
 /-!
 # Truncated local block bounds in the normal domain of attraction
@@ -15,6 +21,22 @@ public import Probability.Process.RandomWalk.Path.Truncation.Normalized
 The Gaussian-domain tail and variance profiles feed the generic random-walk
 hard-truncation estimate. The deterministic bias is kept as a separate input
 until it is derived from the source centering assumptions.
+## Public declarations
+
+Let $a_n$ be the Gaussian-domain norming sequence, $r>0$ a truncation
+multiplier, and $m_\nu(x)$ the truncated increment mean.
+
+- `tendsto_nat_mul_abs_truncatedIncrementMean_div_scale_zero_of_gaussian`
+  states $n|m_\nu(ra_n)|/a_n\to0$.
+- `eventually_truncatedIncrementBias_le_of_gaussian` bounds the accumulated
+  truncated centering error by $\ell_n|m_\nu(ra_n)|/a_n\le\theta/2$
+  whenever $\ell_n/n$ is eventually at most $\delta$.
+- `eventually_measure_blockPrefixExceedance_le_of_gaussian` gives, for the
+  finite-prefix exceedance event $E_{n,\ell_n,\lambda a_n}$,
+  $\mathbb P(E_{n,\ell_n,\lambda a_n})\le
+  \delta\bigl(\varepsilon+4(1+\varepsilon)/\lambda^2\bigr)$
+  eventually when $\ell_n/n\le\delta$.
+
 -/
 
 open Filter MeasureTheory ProbabilityTheory

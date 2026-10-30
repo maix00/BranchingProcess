@@ -4,37 +4,44 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.StoppingSubtreeVector.Factorization
+module
+
+public import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.StoppingSubtreeVector.Factorization
+public import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.SelectedSubtreeVector
 
 /-!
 # Law and independence of the stopped subtree vector
 
-The stopped subtree vector is measurable, its law is the product of independent
-copies of the original field, and it is independent of the stopping-time
-σ-algebra.
+## Public declarations
+
+In namespace `ProbabilityTheory.BranchingRandomWalk`, the public declarations
+are:
+
+- `stopped_selectedSubtreeStepFieldVector_law μ τ hτ hfinite roots hroots hcount hfiber hdepth hinj`
+  states that, for an everywhere-finite stopping generation and a stopped-
+  measurable, countably ranged, depth-matched, injective root family,
+  \[
+    \nu.\operatorname{map}(\Phi)
+      =\operatorname{Measure.infinitePi}
+        (i:\kappa\mapsto\nu),\qquad
+    \nu=\operatorname{offspringFieldLaw}(\mu),
+  \]
+  where $\Phi$ is the selected subtree-vector map.
+- `stopped_selectedSubtreeStepFieldVector_independent μ τ hτ hfinite roots hroots hcount hfiber hdepth hinj`
+  states independence of the stopping-time $\sigma$-algebra and the selected
+  subtree-vector field under the original step-field law.
 -/
 
 open MeasureTheory ProbabilityTheory
 
+@[expose] public section
+
 namespace ProbabilityTheory.BranchingRandomWalk
+
+open ProbabilityTheory.BranchingProcess (offspringFieldLaw offspringFieldLaw_coordinate offspringFieldLaw_independent offspringFieldLaw_mapMarks)
 
 open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 
-
-theorem selectedSubtreeStepFieldVector_measurable_of_measurable
-    {κ α X : Type*} [MeasurableSpace X]
-    (roots : (TreeNode α → Step α X) → κ → TreeNode α)
-    (hroots : Measurable roots)
-    (hcount : (Set.range roots).Countable) :
-    Measurable (selectedSubtreeStepFieldVector roots) := by
-  apply measurable_pi_iff.mpr
-  intro i
-  have hcoord : (Set.range (fun ω => roots ω i)).Countable := by
-    apply (hcount.image (fun r => r i)).mono
-    rintro _ ⟨ω, rfl⟩
-    exact ⟨roots ω, Set.mem_range_self ω, rfl⟩
-  exact selectedSubtreeStepField_measurable_of_countable_range
-    (fun ω => roots ω i) ((measurable_pi_apply i).comp hroots) hcoord
 
 theorem stopped_selectedSubtreeStepFieldVector_law
     {κ α X : Type*} [MeasurableSpace X]
@@ -51,9 +58,9 @@ theorem stopped_selectedSubtreeStepFieldVector_law
     (hdepth : ∀ ω (n : ℕ), τ ω = (n : WithTop ℕ) →
       ∀ i, (roots ω i).length = n)
     (hinj : ∀ ω, Function.Injective (roots ω)) :
-    (stepFieldLaw μ).map
+    (offspringFieldLaw μ).map
         (selectedSubtreeStepFieldVector roots) =
-      Measure.infinitePi (fun _ : κ => stepFieldLaw μ) := by
+      Measure.infinitePi (fun _ : κ => offspringFieldLaw μ) := by
   have hrootsFull : Measurable roots :=
     hroots.mono hτ.measurableSpace_le le_rfl
   ext B hB
@@ -84,21 +91,21 @@ theorem stopped_selectedSubtreeStepFieldVector_independent
     Indep hτ.measurableSpace
       (MeasurableSpace.comap
         (selectedSubtreeStepFieldVector roots) inferInstance)
-      (stepFieldLaw μ) := by
+      (offspringFieldLaw μ) := by
   have hrootsFull : Measurable roots :=
     hroots.mono hτ.measurableSpace_le le_rfl
   have hselected :=
     selectedSubtreeStepFieldVector_measurable_of_measurable roots hrootsFull
       hcount
-  apply (indep_iff_forall_indepSet (stepFieldLaw μ)).2
+  apply (indep_iff_forall_indepSet (offspringFieldLaw μ)).2
   intro A T hA hT
   obtain ⟨B, hB, rfl⟩ := hT
   apply (indepSet_iff_measure_inter_eq_mul
     (hτ.measurableSpace_le _ hA) (hselected hB)
-    (stepFieldLaw μ)).2
-  have hlaw : stepFieldLaw μ
+    (offspringFieldLaw μ)).2
+  have hlaw : offspringFieldLaw μ
       (selectedSubtreeStepFieldVector roots ⁻¹' B) =
-      (Measure.infinitePi (fun _ : κ => stepFieldLaw μ)) B := by
+      (Measure.infinitePi (fun _ : κ => offspringFieldLaw μ)) B := by
     rw [← Measure.map_apply hselected hB,
       stopped_selectedSubtreeStepFieldVector_law μ τ hτ hfinite roots
         hroots hcount hfiber hdepth hinj]
@@ -108,3 +115,5 @@ theorem stopped_selectedSubtreeStepFieldVector_independent
   simpa [hfinite] using hfactor
 
 end ProbabilityTheory.BranchingRandomWalk
+
+end

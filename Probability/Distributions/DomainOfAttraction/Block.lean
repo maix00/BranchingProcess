@@ -17,6 +17,17 @@ This module transfers convergence of normalized i.i.d. sums to a varying
 block length and spatial scale.  The centering sequence remains explicit:
 applications to uncentered small-deviation events must separately establish
 that its contribution vanishes at the spatial scale being used.
+
+## Public declarations
+
+- `ProbabilityTheory.IsInDomainOfAttractionAlong.tendstoInDistribution_partialSum_div`:
+  if $m_n\to\infty$, $a_{m_n}/s_n\to r$, $b_{m_n}/s_n\to c$, and $s_n\ne0$
+  eventually, then for i.i.d. $X_k\sim\nu$ and $Z\sim\mu$,
+  \[
+    \frac{1}{s_n}\sum_{k<m_n}X_k\ \Rightarrow\ rZ+c,
+  \]
+  assuming $\nu$ is in the domain of attraction of $\mu$ with norming $a_n$
+  and centering $b_n$.
 -/
 
 open Filter MeasureTheory
@@ -34,6 +45,15 @@ attraction without silently discarding a drift.
 The block lengths must tend to infinity.  The scale and centering ratios are
 stated directly; applications derive them from the appropriate norming and
 regular-variation hypotheses.
+
+## Public declarations
+
+* `ProbabilityTheory.IsInDomainOfAttractionAlong.tendstoInDistribution_partialSum_div` states
+  that if $m_n\to\infty$, $a_{m_n}/s_n\to r$, $b_{m_n}/s_n\to c$, and
+  $s_n\ne0$ eventually, then
+  $s_n^{-1}\sum_{k<m_n}X_k$ converges in distribution to $rZ+c$, where
+  $Z\sim\mu$ is the specified limit. The theorem keeps the centering ratio
+  explicit and imposes no normalization beyond the attraction data.
 -/
 theorem IsInDomainOfAttractionAlong.tendstoInDistribution_partialSum_div
     {ν limit : Measure ℝ} [IsProbabilityMeasure ν] [IsProbabilityMeasure limit]

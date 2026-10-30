@@ -4,16 +4,36 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Population.Processes.Causal
-import Combinatorics.BranchingWalk.Population.Genealogy
+module
+
+public import Probability.BranchingRandomWalk.Population.Processes.Causal.Basic
+public import Combinatorics.BranchingWalk.Population.Genealogy
+public import Combinatorics.UlamHarris.Relation
 
 /-!
 # Samplewise genealogy of causal populations
+
+## Public declarations
+
+- `ProbabilityTheory.BranchingRandomWalk.RootIndexed.CausalPopulation.initial_mem_and_surviveAlong`:
+  every particle in generation \(n\) descends along a surviving address path
+  from a particle in generation zero.
+- `ProbabilityTheory.BranchingRandomWalk.RootIndexed.CausalPopulation.initial_mem_of_mem`
+  and `.surviveAlong_of_mem`: the initial-particle and surviving-address
+  conclusions separately.
+- `ProbabilityTheory.BranchingRandomWalk.RootIndexed.CausalPopulation.parent_mem_of_mem_succ`:
+  membership in generation \(n+1\) implies that the parent lies in generation
+  \(n\).
+- `ProbabilityTheory.BranchingRandomWalk.RootIndexed.CausalPopulation.prefix_mem_of_mem`:
+  every address prefix of a retained particle is retained at its corresponding
+  generation.
 
 The genealogical theorems are proved in the deterministic combinatorial
 layer.  This file only evaluates an adapted random population at a sample and
 reexports the resulting consequences.
 -/
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
@@ -46,7 +66,8 @@ theorem surviveAlong_of_mem
 theorem parent_mem_of_mem_succ
     (P : RootIndexed.CausalPopulation Ω Root α X ℱ stepField)
     {n : ℕ} {ω : Ω} {q : RootIndexed.TreeNode Root α}
-    (hq : q ∈ P (n + 1) ω) : parent q ∈ P n ω :=
+    (hq : q ∈ P (n + 1) ω) :
+    Combinatorics.UlamHarris.RootIndexed.parent q ∈ P n ω :=
   (P.toPopulation ω).parent_mem_of_mem_succ hq
 
 theorem prefix_mem_of_mem

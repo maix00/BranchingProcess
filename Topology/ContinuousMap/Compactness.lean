@@ -6,13 +6,13 @@ Authors: WANG Yiyang
 
 module
 
-public import Mathlib.Topology.UniformSpace.Ascoli
+import Mathlib.Topology.UniformSpace.Ascoli
 public import Mathlib.Topology.UniformSpace.CompactConvergence
-public import Mathlib.Topology.UniformSpace.CompleteSeparated
+import Mathlib.Topology.UniformSpace.CompleteSeparated
 public import Mathlib.Topology.MetricSpace.Basic
 public import Mathlib.Topology.MetricSpace.Equicontinuity
 public import Mathlib.Topology.MetricSpace.ProperSpace
-public import Mathlib.Topology.Defs.Induced
+import Mathlib.Topology.Defs.Induced
 
 /-!
 # Compact families of continuous paths
@@ -20,6 +20,29 @@ public import Mathlib.Topology.Defs.Induced
 This file records the Arzelà--Ascoli consequence used for tightness of
 continuous stochastic-process laws.  It is deterministic and independent of
 any probability model.
+
+## Public declarations
+
+- `HasOscillationBound` means
+  $d(s,t)<δ\Rightarrow d(f(s),f(t))\le ε$; `HasUniformModulus` means
+  $d(f(s),f(t))\le w(d(s,t))$ for every $s,t$.
+- `equicontinuous_setOf_hasUniformModulus` states that a family with one
+  common modulus $w$ is equicontinuous when $w(r)\to0$ as $r\to0$.
+- `isCompact_closure_of_equicontinuous_of_bounded` gives compact closure for
+  an equicontinuous family in a proper metric target when all values are
+  uniformly bounded from one anchor point.
+- `isCompact_closure_setOf_hasUniformModulus` gives the corresponding
+  compactness criterion from a common modulus, a bound at one anchor time,
+  and a uniform bound on the modulus over distances to that anchor.
+- `HasOscillationBounds` requires the one-scale bound at every
+  $m\in\mathbb N$ with parameters $δ_m,ε_m$.
+- `isClosed_setOf_hasOscillationBound` and
+  `isClosed_setOf_hasOscillationBounds` show that the corresponding one-scale
+  and multiscale path sets are closed.
+- `equicontinuous_setOf_hasOscillationBounds` states that $δ_m>0$ and
+  $ε_m\to0$ imply equicontinuity of the multiscale family.
+- `isCompact_closure_setOf_hasOscillationBounds` gives compact closure when
+  those scale conditions hold and the paths are uniformly bounded.
 -/
 
 @[expose] public section

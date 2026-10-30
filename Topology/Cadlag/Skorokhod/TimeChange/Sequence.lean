@@ -14,6 +14,24 @@ public import Mathlib.Topology.Algebra.InfiniteSum.ENNReal
 
 Finite compositions of increasing time changes and their logarithmic
 distortion bounds.
+
+## Public declarations
+
+- `cumulative clock n` composes the first `n` time changes, and
+  `segment clock start length` composes a finite consecutive block.
+- `cumulative_zero`, `cumulative_succ`, and
+  `cumulative_add_eq_trans_segment` state
+  $C_0=\operatorname{refl}$,
+  $C_{n+1}=C_n.\operatorname{trans}(\phi_n)$, and
+  $C_{m+n}=C_m.\operatorname{trans}(\operatorname{segment}(\phi,m,n))$,
+  where $C_n=\operatorname{cumulative}(\phi,n)$.
+- `logDistortion_cumulative_le_sum` and
+  `logDistortion_segment_le_sum` give
+  $\operatorname{logDistortion}(C_n)\le\sum_{i<n}
+  \operatorname{logDistortion}(\phi_i)$ and the corresponding inequality for
+  each finite segment. `logDistortion_cumulative_le_tsum` and
+  `logDistortion_segment_le_tsum` bound them by the corresponding infinite
+  sums.
 -/
 
 @[expose] public section

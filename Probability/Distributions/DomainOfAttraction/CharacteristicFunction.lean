@@ -14,8 +14,21 @@ public import Mathlib.MeasureTheory.Measure.LevyConvergence
 # Characteristic functions in a domain of attraction
 
 The characteristic function of a normalized i.i.d. sum is expressed using
-the one-step characteristic function, scale, and centering.  This module is
+the one-step characteristic function, scale, and centering. This module is
 independent of any particular limiting distribution.
+
+## Public declarations
+
+* `ProbabilityTheory.charFun_map_normalizedIidSum` gives the one-step characteristic-function
+  formula
+  $\widehat{\mathcal L(a_n^{-1}(S_n-b_n))}(t)=
+  \widehat\nu(t/a_n)^n\exp(-itb_n/a_n)$.
+* `ProbabilityTheory.IsInDomainOfAttractionAlong.tendsto_charFun_normalizedIidSum` transfers
+  convergence in distribution to convergence of that explicit complex
+  expression toward $\widehat\mu(t)$.
+  `ProbabilityTheory.IsInDomainOfAttractionAlong.tendsto_norm_charFun_oneStep_pow` takes
+  absolute values and removes the deterministic centering phase, yielding
+  $|\widehat\nu(t/a_n)|^n\to|\widehat\mu(t)|$.
 -/
 
 open Filter MeasureTheory
@@ -53,7 +66,7 @@ theorem charFun_map_normalizedIidSum
   rw [hmap, charFun_map_add_const]
   rw [charFun_map_mul_comp hsumMeas r t, hsumChar]
 
-/-- Convergence in distribution in a stable domain of attraction forces the
+/-- Convergence in distribution in a scalar domain of attraction forces the
 corresponding explicit characteristic-function expression to converge. -/
 theorem IsInDomainOfAttractionAlong.tendsto_charFun_normalizedIidSum
     {ν limit : Measure ℝ} [IsProbabilityMeasure ν] [IsProbabilityMeasure limit]

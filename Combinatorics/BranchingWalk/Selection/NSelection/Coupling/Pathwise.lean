@@ -6,10 +6,14 @@ Authors: WANG Yiyang
 
 module
 
+public import Combinatorics.BranchingWalk.Population.Offspring
+
 public import Combinatorics.BranchingWalk.Selection.NSelection.Coupling.Step
 
 /-!
 # Pathwise iteration of the multi-root selection coupling
+
+## Public declarations
 
 Random branching walks and their selected populations are functions of an
 ambient sample `ω`.  The deterministic one-generation theorem can therefore
@@ -19,6 +23,18 @@ countability assumption on either the root labels or the child slots.
 Measurability of a concrete population process is a separate obligation: it
 is supplied by the causal-selection interfaces.  The spatial comparison
 below is a pathwise statement and consequently needs no measurable structure.
+
+The public API gives pointwise one-step and all-generation forms of
+`InjectivelyDominatesBy`: `nextGeneration_injectivelyDominatesBy_of_isFirstNBy`
+and `injectivelyDominatesBy_all_generations_of_isFirstNBy` assume an arbitrary
+first-`N` certificate for each sample; `nextGeneration_injectivelyDominatesBy`
+and `injectivelyDominatesBy_all_generations` use dynamic leftmost selection.
+The all-generation conclusion has the form
+`∀ n ω, sourcePopulation n ω.InjectivelyDominatesBy φ (targetPopulation n ω) ()`.
+`generationInjection_of_isFirstNBy` and
+`generationInjection_of_isFirstNBy_injectivelyDominatesBy` construct the
+corresponding maps for every generation and sample, with membership,
+injectivity, and non-increasing observed-position properties.
 -/
 
 @[expose] public section
@@ -27,9 +43,10 @@ namespace Combinatorics.Branching.Selection.Coupling.Pathwise
 
 open Combinatorics.UlamHarris
 open Combinatorics.Branching
+open _root_.Combinatorics.Selection
 open Combinatorics.Branching.Selection
 open Combinatorics.Branching.Selection.Coupling
-open Combinatorics.Branching.Selection.NSelection
+open _root_.Combinatorics.Selection.NSelection
 
 variable {Ω Root α Mark Position Value : Type*}
 
@@ -46,11 +63,11 @@ theorem nextGeneration_injectivelyDominatesBy_of_isFirstNBy
     (retainedChildren selectedTarget :
       Ω → Finset (RootIndexed.TreeNode Root α))
     (hretained : ∀ ω, ↑(retainedChildren ω) ⊆
-      offspringAddressSet (↑(sourceParents ω)) (sourceSlots ω))
+      Combinatorics.Branching.Population.offspringAddressSet (↑(sourceParents ω)) (sourceSlots ω))
     (hcard : ∀ ω, (retainedChildren ω).card ≤ N)
     (hselected : ∀ ω, IsFirstNBy N
       (fun q => φ ((targetWalk ω).position d q.1 q.2))
-      (offspringAddressSet (↑(targetParents ω)) (targetSlots ω))
+      (Combinatorics.Branching.Population.offspringAddressSet (↑(targetParents ω)) (targetSlots ω))
       (selectedTarget ω))
     (parents : ∀ ω, Cloud.SliceDominatingMap φ
       (populationCloud d (sourceWalk ω) (sourceParents ω))
@@ -92,11 +109,11 @@ theorem injectivelyDominatesBy_all_generations_of_isFirstNBy
       (populationCloud d (sourceWalk ω) (sourcePopulation 0 ω)).InjectivelyDominatesBy φ
         (populationCloud d (targetWalk ω) (targetPopulation 0 ω)) ())
     (hsourceSubset : ∀ n ω, ↑(sourcePopulation (n + 1) ω) ⊆
-      offspringAddressSet (↑(sourcePopulation n ω)) (sourceSlots n ω))
+      Combinatorics.Branching.Population.offspringAddressSet (↑(sourcePopulation n ω)) (sourceSlots n ω))
     (hsourceCard : ∀ n ω, (sourcePopulation (n + 1) ω).card ≤ N)
     (htarget : ∀ n ω, IsFirstNBy N
       (fun q => φ ((targetWalk ω).position d q.1 q.2))
-      (offspringAddressSet (↑(targetPopulation n ω)) (targetSlots n ω))
+      (Combinatorics.Branching.Population.offspringAddressSet (↑(targetPopulation n ω)) (targetSlots n ω))
       (targetPopulation (n + 1) ω))
     (hslots : ∀ n ω (parents : Cloud.SliceDominatingMap φ
         (populationCloud d (sourceWalk ω) (sourcePopulation n ω))
@@ -150,11 +167,11 @@ noncomputable def generationInjection_of_isFirstNBy
       (populationCloud d (sourceWalk ω) (sourcePopulation 0 ω))
       (populationCloud d (targetWalk ω) (targetPopulation 0 ω)) ())
     (hsourceSubset : ∀ n ω, ↑(sourcePopulation (n + 1) ω) ⊆
-      offspringAddressSet (↑(sourcePopulation n ω)) (sourceSlots n ω))
+      Combinatorics.Branching.Population.offspringAddressSet (↑(sourcePopulation n ω)) (sourceSlots n ω))
     (hsourceCard : ∀ n ω, (sourcePopulation (n + 1) ω).card ≤ N)
     (htarget : ∀ n ω, IsFirstNBy N
       (fun q => φ ((targetWalk ω).position d q.1 q.2))
-      (offspringAddressSet (↑(targetPopulation n ω)) (targetSlots n ω))
+      (Combinatorics.Branching.Population.offspringAddressSet (↑(targetPopulation n ω)) (targetSlots n ω))
       (targetPopulation (n + 1) ω))
     (hslots : ∀ n ω (parents : Cloud.SliceDominatingMap φ
         (populationCloud d (sourceWalk ω) (sourcePopulation n ω))
@@ -202,11 +219,11 @@ theorem generationInjection_of_isFirstNBy_injectivelyDominatesBy
       (populationCloud d (sourceWalk ω) (sourcePopulation 0 ω))
       (populationCloud d (targetWalk ω) (targetPopulation 0 ω)) ())
     (hsourceSubset : ∀ n ω, ↑(sourcePopulation (n + 1) ω) ⊆
-      offspringAddressSet (↑(sourcePopulation n ω)) (sourceSlots n ω))
+      Combinatorics.Branching.Population.offspringAddressSet (↑(sourcePopulation n ω)) (sourceSlots n ω))
     (hsourceCard : ∀ n ω, (sourcePopulation (n + 1) ω).card ≤ N)
     (htarget : ∀ n ω, IsFirstNBy N
       (fun q => φ ((targetWalk ω).position d q.1 q.2))
-      (offspringAddressSet (↑(targetPopulation n ω)) (targetSlots n ω))
+      (Combinatorics.Branching.Population.offspringAddressSet (↑(targetPopulation n ω)) (targetSlots n ω))
       (targetPopulation (n + 1) ω))
     (hslots : ∀ n ω (parents : Cloud.SliceDominatingMap φ
         (populationCloud d (sourceWalk ω) (sourcePopulation n ω))

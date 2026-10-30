@@ -11,11 +11,28 @@ public import Mathlib.Topology.Order.Cadlag
 /-!
 # The type of càdlàg paths
 
-Mathlib provides the predicate `IsCadlag`.  This file packages paths
-satisfying that predicate into a type on which the Skorokhod topology can be
-constructed.  No topology or measurable space is assigned here: in
-particular, the product topology on the ambient function type is not silently
-used in place of the Skorokhod topology.
+## Public declarations
+
+- `IsCadlag.comp_monotone_continuous`: precomposition by a continuous
+  monotone time change preserves `IsCadlag`.
+- `IsCadlag.updateTop`: changing only the value at a top endpoint preserves
+  `IsCadlag`.
+- `CadlagPath`: the subtype of functions `T → E` satisfying `IsCadlag`.
+- `CadlagPath.const value` and `CadlagPath.const_apply`: the constant path
+  $t\mapsto value$ and its evaluation formula.
+- `CadlagPath.ext` and `CadlagPath.coe_mk`: extensionality and the coercion
+  equation for constructed paths.
+- `CadlagPath.isCadlag_restrictRange`: a path taking values in a closed set
+  remains càdlàg when viewed as a path into that subtype.
+- `CadlagPath.restrictRange` and `CadlagPath.forgetRange`: move between paths
+  valued in a closed subtype and paths in the ambient state space.
+- `CadlagPath.forgetRange_apply`, `CadlagPath.compMonotoneContinuous`, and
+  `CadlagPath.compMonotoneContinuous_apply`: pointwise formulas for forgetting
+  the subtype and changing the path clock.
+
+Mathlib provides the predicate `IsCadlag`; this module supplies the path type
+needed to build path-space interfaces. It assigns no topology or measurable
+space to the function type.
 -/
 
 @[expose] public section
@@ -111,6 +128,13 @@ variable {T E : Type*} [PartialOrder T] [TopologicalSpace T]
 
 instance : CoeFun (CadlagPath T E) fun _ => T → E := ⟨toFun⟩
 
+/-- The constant càdlàg path with value `value`. -/
+def const (value : E) : CadlagPath T E :=
+  ⟨fun _ => value, IsCadlag.const⟩
+
+@[simp]
+theorem const_apply (value : E) (t : T) : const value t = value := rfl
+
 @[ext] theorem ext {f g : CadlagPath T E} (h : ∀ t, f t = g t) : f = g := by
   cases f
   cases g
@@ -168,38 +192,3 @@ def compMonotoneContinuous
     f.compMonotoneContinuous ψ hψ hψc s = f (ψ s) := rfl
 
 end CadlagPath
-
-/-- Right continuity at zero gives a uniform spatial bound on a sufficiently
-short initial time interval. -/
-theorem IsCadlag.exists_initial_interval_subset_Ioo
-    {f : ℝ≥0 → ℝ} (hf : IsCadlag f) {lower upper : ℝ}
-    (hlower : lower < f 0) (hupper : f 0 < upper) :
-    ∃ δ : ℝ≥0, 0 < δ ∧ ∀ t : ℝ≥0, t ≤ δ → f t ∈ Set.Ioo lower upper := by
-  have hcont : ContinuousAt f 0 := by
-    have h := hf.isRightContinuous 0
-    rw [continuousWithinAt_Ioi_iff_Ici] at h
-    simpa [continuousWithinAt_univ] using h
-  have hnear : {t : ℝ≥0 | f t ∈ Set.Ioo lower upper} ∈ 𝓝 (0 : ℝ≥0) :=
-    hcont.eventually (isOpen_Ioo.mem_nhds ⟨hlower, hupper⟩)
-  obtain ⟨r, hr, hball⟩ := Metric.mem_nhds_iff.mp hnear
-  let δ : ℝ≥0 := ⟨r / 2, by positivity⟩
-  refine ⟨δ, by exact_mod_cast half_pos hr, ?_⟩
-  intro t ht
-  apply hball
-  rw [Metric.mem_ball, NNReal.dist_eq]
-  have ht' : (t : ℝ) ≤ r / 2 := by exact_mod_cast ht
-  simpa [abs_of_nonneg t.property] using (show (t : ℝ) < r by linarith)
-
-/-- Along any sequence of horizons converging to zero, a càdlàg path is
-eventually confined to every open spatial interval containing its start. -/
-theorem IsCadlag.eventually_initial_interval_subset_Ioo
-    {f : ℝ≥0 → ℝ} (hf : IsCadlag f)
-    {horizon : ℕ → ℝ≥0} (hhorizon : Filter.Tendsto horizon Filter.atTop (𝓝 0))
-    {lower upper : ℝ} (hlower : lower < f 0) (hupper : f 0 < upper) :
-    ∀ᶠ n in Filter.atTop, ∀ t : ℝ≥0, t ≤ horizon n →
-      f t ∈ Set.Ioo lower upper := by
-  obtain ⟨δ, hδ, hpath⟩ := hf.exists_initial_interval_subset_Ioo hlower hupper
-  have hnear : Set.Iio δ ∈ 𝓝 (0 : ℝ≥0) :=
-    isOpen_Iio.mem_nhds hδ
-  filter_upwards [hhorizon.eventually hnear] with n hn t ht
-  exact hpath t (le_of_lt (lt_of_le_of_lt ht hn))

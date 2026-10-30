@@ -18,6 +18,16 @@ public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
 Mathlib defines convolution of measures but currently has no natural-number
 convolution power.  This definition is public measure-theoretic infrastructure;
 it does not assign an unconditional monoid structure to all measures.
+
+## Public declarations
+
+- `convPower μ n` is the iterated convolution defined by
+  $\mu^{*0}=\delta_0$ and $\mu^{*(n+1)}=\mu*\mu^{*n}$.
+- `convPower_zero` and `convPower_succ` expose the two recursion equations;
+  `isProbabilityMeasure_convPower` and the `SFinite` instance preserve those
+  measure properties under iteration.
+- `convPower_rotate` gives $\mu^{*n}*\mu=\mu*\mu^{*n}$ whenever $\mu$ is
+  s-finite.
 -/
 
 @[expose] public section

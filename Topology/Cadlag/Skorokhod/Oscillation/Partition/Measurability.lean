@@ -12,6 +12,17 @@ public import Topology.Cadlag.Skorokhod.Oscillation.Partition.Pullback
 # Measurability of oscillation-partition path sets
 
 The existence of a finite partition with strict minimum-gap and within-cell-oscillation margins is open in the Skorokhod `J₁` topology, hence Borel measurable.
+
+## Public declarations
+
+- admitsOscillationPartition E δ ε is the set of paths with a partition whose
+  cell lengths exceed δ and whose within-cell oscillations are below ε.
+- isOpen_admitsOscillationPartition and
+  measurableSet_admitsOscillationPartition prove that this path set is open
+  and Borel measurable.
+- admitsOscillationPartitionSequence imposes the partition bounds at every
+  scale in a sequence; measurableSet_admitsOscillationPartitionSequence
+  proves the resulting set is Borel.
 -/
 
 @[expose] public section

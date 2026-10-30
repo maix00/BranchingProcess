@@ -6,9 +6,9 @@ Authors: WANG Yiyang
 
 module
 
-public import MeasureTheory.MeasurableSpace.CadlagPath
+public import MeasureTheory.MeasurableSpace.CadlagPath.Basic
 public import Order.Interval.RationalCoordinate.UnitInterval
-public import Topology.Cadlag.TerminalLeft
+public import Topology.Cadlag.Skorokhod.Path.TerminalLeft
 public import Topology.Order.UnitInterval.Rational
 
 /-!
@@ -17,6 +17,11 @@ public import Topology.Order.UnitInterval.Rational
 The left-limit functional and the path transformation that replaces the
 terminal value by that left limit are Borel measurable for the Skorokhod
 `J₁` path-space structure.
+
+## Public declarations
+
+- The functional $f\mapsto f(1-)$ and the terminal modification that takes
+  value $f(t)$ at each $t<1$ and $f(1-)$ at $t=1$ are Borel measurable.
 -/
 
 @[expose] public section
@@ -64,36 +69,36 @@ is the measurable left-limit functional. -/
 theorem measurable_terminalLeftPath :
     Measurable (terminalLeftPath :
       CadlagPath unitInterval ℝ → CadlagPath unitInterval ℝ) := by
-  let evaluation := Skorokhod.rationalEvaluation
+  let evaluation := MeasureTheory.CadlagPath.denseEvaluation RationalCoordinate.toUnitInterval
   have hevaluation : MeasurableEmbedding
       (evaluation : CadlagPath unitInterval ℝ →
-        Skorokhod.RationalUnitIntervalTime → ℝ) :=
+        RationalCoordinate.UnitInterval → ℝ) :=
     Skorokhod.measurableEmbedding_rationalEvaluation
   have hleft : Measurable (fun path : CadlagPath unitInterval ℝ =>
       Function.leftLim (fun s : unitInterval => path s) ⊤) :=
     measurable_terminalLeftValue
   have hcoordinates : Measurable
       (evaluation ∘ terminalLeftPath : CadlagPath unitInterval ℝ →
-        Skorokhod.RationalUnitIntervalTime → ℝ) := by
+        RationalCoordinate.UnitInterval → ℝ) := by
     rw [measurable_pi_iff]
     intro q
     change Measurable (fun path : CadlagPath unitInterval ℝ =>
-      terminalLeftPath path (Skorokhod.rationalTimeToUnitInterval q))
-    by_cases hq : Skorokhod.rationalTimeToUnitInterval q = ⊤
+      terminalLeftPath path (RationalCoordinate.toUnitInterval q))
+    by_cases hq : RationalCoordinate.toUnitInterval q = ⊤
     · have heq : (fun path : CadlagPath unitInterval ℝ =>
-          terminalLeftPath path (Skorokhod.rationalTimeToUnitInterval q)) = fun path =>
+          terminalLeftPath path (RationalCoordinate.toUnitInterval q)) = fun path =>
           Function.leftLim (fun s : unitInterval => path s) ⊤ := by
         funext path
         simp [terminalLeftPath, hq]
       rw [heq]
       exact hleft
     · have heq : (fun path : CadlagPath unitInterval ℝ =>
-          terminalLeftPath path (Skorokhod.rationalTimeToUnitInterval q)) =
-            fun path => path (Skorokhod.rationalTimeToUnitInterval q) := by
+          terminalLeftPath path (RationalCoordinate.toUnitInterval q)) =
+            fun path => path (RationalCoordinate.toUnitInterval q) := by
         funext path
         simp [terminalLeftPath, hq]
       rw [heq]
-      exact Skorokhod.measurable_apply (Skorokhod.rationalTimeToUnitInterval q)
+      exact Skorokhod.measurable_apply (RationalCoordinate.toUnitInterval q)
   exact hevaluation.measurable_comp_iff.mp hcoordinates
 
 end MeasureTheory.CadlagPath

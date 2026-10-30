@@ -14,6 +14,26 @@ public import Topology.Cadlag.Skorokhod.Oscillation.Partition.Finite
 
 Construct the map that sends each source cell to the corresponding target
 cell and preserves partition indices.
+
+## Public declarations
+
+For $n>0$ and finite knot sequences $s,t:\operatorname{Fin}(n+1)\to[0,1]$:
+
+- `ofPoints` converts an endpoint-anchored, strictly increasing sequence $s$
+  into the càdlàg path API's `OscillationPartition`.
+- `interpolationValue` defines the piecewise-affine real-valued interpolation
+  for an endpoint-anchored, strictly increasing source sequence $s$ and an
+  arbitrary target sequence $t$.
+- `interpolationValue_bounds` places that value in the corresponding target
+  cell when $t$ is strictly increasing.
+- `map` gives the same interpolation as a map $[0,1]\to[0,1]$ when both
+  sequences are endpoint-anchored and strictly increasing.
+- `coe_map` identifies the real coercion of `map` with `interpolationValue`;
+  `map_index` gives $\operatorname{index}_t(\operatorname{map}(x))=
+  \operatorname{index}_s(x)$ for endpoint-anchored strictly increasing
+  partitions.
+- `interpolationValue_eq_affine` gives the affine formula on each source
+  cell.
 -/
 
 @[expose] public section

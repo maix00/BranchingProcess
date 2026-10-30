@@ -4,8 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.Process.Levy.Jump.PoissonConfiguration.Increment
-import Probability.RandomMeasure.Poisson.Support
+module
+
+public import Probability.Process.Levy.Jump.PoissonConfiguration.Increment
+public import Probability.RandomMeasure.Poisson.Intensity.Support
+import Probability.RandomMeasure.Poisson.Intensity.TimeMark
 
 /-!
 # Almost-sure path identities for cutoff Poisson configurations
@@ -13,7 +16,18 @@ import Probability.RandomMeasure.Poisson.Support
 For a Poisson source whose intensity is carried by a mark band, restricting
 the realized random measure to that band changes nothing almost surely. This
 identifies the canonical whole-mark path with its explicit cutoff version.
+
+## Public declarations
+
+For each fixed observation time `t`,
+`ae_poissonEntrancePath_canonical_eq_cutoff` identifies almost surely the
+path using all small jumps and the large-jump band with the path explicitly
+restricted to both cutoff bands. The theorem
+`IsPoissonPointFamily.ae_poissonEntrancePath_canonical_start_eq_zero` states
+that the canonical path at time `⊥` is almost surely `0`.
 -/
+
+@[expose] public section
 
 namespace ProbabilityTheory
 
@@ -82,8 +96,9 @@ theorem IsPoissonPointFamily.ae_poissonEntrancePath_canonical_start_eq_zero
     ∀ᵐ ω ∂(Ps.prod Pb),
       poissonEntrancePath Ks Xs Kb Xb Set.univ
         (Set.univ ×ˢ largeJumpBand n) ⊥ ω = 0 := by
-  have hs0 := hds.ae_no_jump_at_time ⊥
-  have hb0 := hdb.ae_no_jump_at_time ⊥
+  have ht0 : (volume : Measure unitInterval) {⊥} = 0 := by simp
+  have hs0 := hds.ae_no_jump_at_time ⊥ ht0
+  have hb0 := hdb.ae_no_jump_at_time ⊥ ht0
   have hs0' : ∀ᵐ ω ∂(Ps.prod Pb),
       poissonRandomMeasure Ks Xs ω.1 ({⊥} ×ˢ Set.univ) = 0 := by
     exact ae_of_ae_map (μ := Ps.prod Pb) measurable_fst.aemeasurable (by simpa using hs0)

@@ -6,9 +6,9 @@ Authors: WANG Yiyang
 
 module
 
-public import Topology.Cadlag.Skorokhod.Oscillation
+public import Topology.Cadlag.Skorokhod.Oscillation.Basic
 public import Topology.Cadlag.Skorokhod.Corridor.Endpoint
-public import Topology.Cadlag.Skorokhod.Scaling
+public import Topology.Cadlag.Skorokhod.Path.Scaling
 public import Mathlib.MeasureTheory.Constructions.BorelSpace.Real
 
 /-!
@@ -17,6 +17,23 @@ public import Mathlib.MeasureTheory.Constructions.BorelSpace.Real
 These deterministic operations describe spatial scaling, a range tube, a
 spatial corridor, an observation at one time, and agreement on a time
 interval. They do not depend on a process law.
+
+## Public declarations
+
+- `rangeTubeStartingAtZero a` is the zero-start event with path-range diameter
+  strictly less than `2a`; positive spatial scaling transports width `a` to
+  `a / c`.
+- `corridorStartingAtZero lower upper` is the zero-start strict corridor.
+  `scaleSet c G` is the image of a path set under spatial scaling.
+- `endpointWindow t lower upper G` imposes `lower < f t ≤ upper` on `G`;
+  `segmentExtension s t G` consists of paths agreeing with a member of `G`
+  throughout `[s,t]`.
+- The membership characterizations `mem_scaleSet_iff`,
+  `mem_endpointWindow_iff`, and `mem_segmentExtension_iff`, the endpoint-event
+  inclusion `rangeInOpenIntervalEndsIn_subset_endpointWindow`, and the Borel
+  measurability results specify these path-set operations.
+- `centeredCorridor_subset_rangeTube` embeds the centered corridor
+  `(-a,a)` into the zero-start range tube of half-width `a`.
 -/
 
 @[expose] public section
@@ -68,8 +85,7 @@ def scaleSet (scale : ℝ) (G : Set (CadlagPath unitInterval ℝ)) :
     Set (CadlagPath unitInterval ℝ) :=
   scalePath scale '' G
 
-/-- Restrict a path set by `lower < f(time) ≤ upper`, the endpoint
-condition `Y_lower^upper(time) G` in the source. -/
+/-- Restrict a path set by `lower < f(time) ≤ upper`. -/
 def endpointWindow (time : unitInterval) (lower upper : ℝ)
     (G : Set (CadlagPath unitInterval ℝ)) :
     Set (CadlagPath unitInterval ℝ) :=
@@ -98,8 +114,8 @@ theorem mem_endpointWindow_iff {time : unitInterval} {lower upper : ℝ}
     f ∈ endpointWindow time lower upper G ↔
       f ∈ G ∧ lower < f time ∧ f time ≤ upper := Iff.rfl
 
-/-- The strict endpoint event used for open-set support arguments is a
-subset of the source's left-open, right-closed endpoint event. -/
+/-- An endpoint value in the open interval `(endpointLower, endpointUpper)`
+also lies in the half-open interval `(endpointLower, endpointUpper]`. -/
 theorem rangeInOpenIntervalEndsIn_subset_endpointWindow
     (lower upper endpointLower endpointUpper : ℝ) :
     rangeInOpenIntervalEndsIn lower upper endpointLower endpointUpper ⊆
@@ -132,7 +148,7 @@ theorem measurableSet_corridorStartingAtZero (lower upper : ℝ) :
     (measurableSet_rangeInOpenInterval lower upper)
 
 /-- The centered corridor is contained in the range tube of the same
-half-width. This is the event inclusion used on the left of Lemma 2(b). -/
+half-width. -/
 theorem centeredCorridor_subset_rangeTube (halfWidth : ℝ) :
     corridorStartingAtZero (-halfWidth) halfWidth ⊆
       rangeTubeStartingAtZero halfWidth := by
@@ -147,6 +163,8 @@ theorem centeredCorridor_subset_rangeTube (halfWidth : ℝ) :
     constructor <;> linarith
   have habs : |f s - f t| ≤ 2 * halfWidth - 2 * margin :=
     abs_le.mpr hsub
+  have hdist : dist (f s) (f t) ≤ 2 * halfWidth - 2 * margin := by
+    simpa [Real.dist_eq] using habs
   linarith
 
 end Skorokhod

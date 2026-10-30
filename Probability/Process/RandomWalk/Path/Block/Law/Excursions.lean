@@ -6,7 +6,9 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.Path.Block.Law.Coordinates
+public import Probability.Process.RandomWalk.Path.Block.Basic
+public import Probability.Sequence.IID.Blocks.Consecutive
+import Probability.Sequence.IID.Blocks.StoppingTime
 public import Mathlib.MeasureTheory.Constructions.BorelSpace.Order
 
 /-!
@@ -15,6 +17,38 @@ public import Mathlib.MeasureTheory.Constructions.BorelSpace.Order
 The prefix event for a block of length `m` observes sums of its first
 `1, ..., m` increments. Consecutive blocks use disjoint coordinates, including
 their common path endpoint only as a time, not as a shared increment.
+
+## Public declarations
+
+* `blockPrefixSum coordinates k` is the partial sum of the first `k.val + 1`
+  coordinates.
+* `blockPrefixExceedance start length threshold` and
+  `blockPrefixExceedanceOnCoordinates length threshold` define the event that
+  some nonempty prefix sum has absolute value at least `threshold`, on an
+  infinite increment path and on a finite block vector respectively.
+* `measurable_blockPrefixSum` and
+  `measurableSet_blockPrefixExceedanceOnCoordinates` give measurability;
+  `blockPrefixSum_blockCoordinates` and
+  `blockPrefixExceedance_eq_preimage_blockCoordinates` identify the finite
+  coordinate and infinite path representations.
+* `blockPrefixExceedance_of_displacementDifference` converts a displacement
+  difference of size at least `threshold > 0` over at most `length` steps into
+  membership in `blockPrefixExceedance start length threshold`.
+* `measure_inter_adjacentBlockPrefixExceedance_eq_mul` and
+  `measure_inter_adjacentBlockPrefixExceedance_eq_mul_of_lengths` factor
+  adjacent-block event probabilities;
+  `blockPrefixExceedance_translate_eq` gives shift invariance under IID law.
+* `measure_inter_adjacentBlockPrefixExceedance_le_mul_of_bounds`,
+  `measure_inter_adjacentBlockPrefixExceedance_le_mul_of_bounds_of_lengths`,
+  `measure_inter_adjacentBlockPrefixExceedance_le_sq_of_bound` give the
+  corresponding product and square upper bounds.
+* `measure_iUnion_adjacentBlockPrefixExceedance_le_of_commonBound`,
+  `measure_iUnion_adjacentBlockPrefixExceedance_le_of_bounds`,
+  `eventually_measure_iUnion_adjacentBlockPrefixExceedance_le_of_eventually_bounds`,
+  and
+  `eventually_measure_inter_adjacentBlockPrefixExceedance_le_sq_of_oneBlockBound`
+  give union bounds and their eventual forms for finite families of adjacent
+  blocks.
 -/
 
 open MeasureTheory
@@ -84,6 +118,37 @@ theorem blockPrefixExceedance_eq_preimage_blockCoordinates
     blockPrefixExceedance, Set.mem_ofPred_eq]
   constructor <;> rintro ⟨k, hk⟩ <;> exact ⟨k, by
     simpa [blockPrefixSum_blockCoordinates] using hk⟩
+
+/-- A displacement difference of size at least `threshold` over at most
+`length` steps witnesses a prefix exceedance in the corresponding block. -/
+theorem blockPrefixExceedance_of_displacementDifference
+    (path : ℕ → ℝ) {start finish length : ℕ} {threshold : ℝ}
+    (hpositive : 0 < threshold) (hstart : start ≤ finish)
+    (hlength : finish - start ≤ length)
+    (hlarge : threshold ≤ |AdditivePath.displacement finish path -
+      AdditivePath.displacement start path|) :
+    path ∈ blockPrefixExceedance start length threshold := by
+  have hne : start < finish := by
+    by_contra h
+    have heq : finish = start := by omega
+    subst finish
+    simp at hlarge
+    linarith
+  let k : Fin length := ⟨finish - start - 1, by omega⟩
+  refine ⟨k, ?_⟩
+  rw [show k.val + 1 = finish - start by dsimp [k]; omega,
+    AdditivePath.blockSum_eq_displacement_natAdd]
+  have hsplit := AdditivePath.displacement_add start (finish - start) path
+  have hfinish : start + (finish - start) = finish := by omega
+  rw [hfinish] at hsplit
+  have hdiff : AdditivePath.displacement finish path -
+      AdditivePath.displacement start path =
+        AdditivePath.displacement (finish - start)
+          (fun m => path (start + m)) := by
+    rw [hsplit]
+    ring
+  rw [← hdiff]
+  exact hlarge
 
 /-- Excursions in two consecutive coordinate blocks are independent under the
 canonical IID path law. Each event uses exactly `length` increments, so the
