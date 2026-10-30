@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.Path.Cadlag
+public import Probability.Process.RandomWalk.Path.Representation.Cadlag
 public import Mathlib.Topology.UnitInterval
 public import Topology.Cadlag.Skorokhod.Topology
 
@@ -16,6 +16,13 @@ public import Topology.Cadlag.Skorokhod.Topology
 For a fixed number of steps, the normalized step path depends continuously on
 the increment path equipped with the product topology.  The proof controls
 the Skorokhod distance by the `L¹` difference of the finite increment prefix.
+
+## Public declarations
+
+* `continuous_normalizedStepCadlagPathIcc` proves continuity of the
+  normalized step-path map into the Skorokhod `J₁` path space.
+* `measurable_normalizedStepCadlagPathIcc` gives its measurable-map
+  consequence.
 -/
 
 open Filter Set
@@ -26,28 +33,24 @@ open scoped BigOperators ENNReal Topology
 namespace ProbabilityTheory.RandomWalk
 
 /-- `L¹` distance between the first `n` coordinates of two real paths. -/
-def prefixL1Distance (n : ℕ) (x y : ℕ → ℝ) : ℝ :=
+private def prefixL1Distance (n : ℕ) (x y : ℕ → ℝ) : ℝ :=
   ∑ k ∈ Finset.range n, |x k - y k|
 
-theorem prefixL1Distance_nonneg (n : ℕ) (x y : ℕ → ℝ) :
-    0 ≤ prefixL1Distance n x y := by
-  exact Finset.sum_nonneg fun _ _ ↦ abs_nonneg _
-
-theorem prefixL1Distance_comm (n : ℕ) (x y : ℕ → ℝ) :
+private theorem prefixL1Distance_comm (n : ℕ) (x y : ℕ → ℝ) :
     prefixL1Distance n x y = prefixL1Distance n y x := by
   simp only [prefixL1Distance, abs_sub_comm]
 
 @[simp]
-theorem prefixL1Distance_self (n : ℕ) (x : ℕ → ℝ) :
+private theorem prefixL1Distance_self (n : ℕ) (x : ℕ → ℝ) :
     prefixL1Distance n x x = 0 := by
   simp [prefixL1Distance]
 
-theorem continuous_prefixL1Distance_right (n : ℕ) (x : ℕ → ℝ) :
+private theorem continuous_prefixL1Distance_right (n : ℕ) (x : ℕ → ℝ) :
     Continuous (fun y : ℕ → ℝ ↦ prefixL1Distance n x y) := by
   unfold prefixL1Distance
   fun_prop
 
-theorem abs_partialSum_sub_le_prefixL1Distance {m n : ℕ} (hmn : m ≤ n)
+private theorem abs_partialSum_sub_le_prefixL1Distance {m n : ℕ} (hmn : m ≤ n)
     (x y : ℕ → ℝ) :
     |AdditivePath.displacement m x - AdditivePath.displacement m y| ≤ prefixL1Distance n x y := by
   calc
@@ -61,7 +64,7 @@ theorem abs_partialSum_sub_le_prefixL1Distance {m n : ℕ} (hmn : m ≤ n)
         (fun _ _ _ ↦ abs_nonneg _)
     _ = prefixL1Distance n x y := rfl
 
-theorem natFloor_mul_le_of_mem_unitInterval (n : ℕ)
+private theorem natFloor_mul_le_of_mem_unitInterval (n : ℕ)
     (t : unitInterval) : ⌊(n : ℝ) * (t : ℝ)⌋₊ ≤ n := by
   apply Nat.floor_le_of_le
   calc
@@ -69,7 +72,7 @@ theorem natFloor_mul_le_of_mem_unitInterval (n : ℕ)
       mul_le_mul_of_nonneg_left t.property.2 (Nat.cast_nonneg n)
     _ = n := by ring
 
-theorem dist_normalizedStepPath_le_prefixL1Distance
+private theorem dist_normalizedStepPath_le_prefixL1Distance
     (scale : ℕ → ℝ) (n : ℕ) (x y : ℕ → ℝ)
     (t : unitInterval) :
     dist (normalizedStepCadlagPathIcc scale n x t)
@@ -84,7 +87,7 @@ theorem dist_normalizedStepPath_le_prefixL1Distance
       (natFloor_mul_le_of_mem_unitInterval n t) x y)
     (abs_nonneg _)
 
-theorem j1EDist_normalizedStepCadlagPathIcc_le
+private theorem j1EDist_normalizedStepCadlagPathIcc_le
     (scale : ℕ → ℝ) (n : ℕ) (x y : ℕ → ℝ) :
     Skorokhod.j1EDist (normalizedStepCadlagPathIcc scale n x)
         (normalizedStepCadlagPathIcc scale n y) ≤

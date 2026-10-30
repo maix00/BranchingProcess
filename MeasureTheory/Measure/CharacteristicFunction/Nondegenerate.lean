@@ -7,14 +7,21 @@ Authors: WANG Yiyang
 module
 
 public import Mathlib.MeasureTheory.Measure.CharacteristicFunction.Basic
-public import Mathlib.MeasureTheory.Group.Convolution
-public import Mathlib.MeasureTheory.Measure.Typeclasses.ZeroOne
+public import Mathlib.MeasureTheory.Measure.ProbabilityMeasure
+
+import Mathlib.MeasureTheory.Group.Convolution
+import Mathlib.MeasureTheory.Measure.Typeclasses.ZeroOne
 
 /-!
 # Characteristic functions and point masses
 
 This file records a criterion, independent of any distribution family, for a
 probability measure on the real line to be a point mass.
+
+## Public declarations
+
+- `exists_dirac_of_norm_charFun_eq_one`: if $|\widehat\mu(t)|=1$ for every
+  $t\in\mathbb R$, then $\mu=\delta_x$ for some $x\in\mathbb R$.
 -/
 
 @[expose] public section

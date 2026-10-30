@@ -6,8 +6,9 @@ Authors: WANG Yiyang
 
 module
 
-public import Mathlib.Topology.Order.IsLUB
+public import Mathlib.Data.Finset.Range
 public import Mathlib.Algebra.Order.Archimedean.Real.Basic
+import Mathlib.Order.ConditionallyCompleteLattice.Basic
 import Mathlib.Tactic.Linarith
 
 /-!
@@ -16,6 +17,15 @@ import Mathlib.Tactic.Linarith
 This file contains the order-theoretic part of a finite range cover. It uses
 only a distinguished zero value and a uniform bound on pairwise differences;
 the index type carries no topology or probability structure.
+
+## Public declarations
+
+- `UnitRangeTube root f` means $f(root)=0$ and there is $\eta>0$ such that
+  $|f(s)-f(t)|\leq2-\eta$ for all indices $s,t$.
+- `UniformCorridor f lower upper` means there is $\eta>0$ such that
+  $lower+\eta\leq f(t)\leq upper-\eta$ for every index $t$.
+- `unitRangeTube_exists_corridor` places every such function in one of the
+  $2k+1$ corridors centered at $j/k-1$ with half-width $1+2/k$.
 -/
 
 @[expose] public section

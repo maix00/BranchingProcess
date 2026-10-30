@@ -12,9 +12,19 @@ public import Combinatorics.UlamHarris.MarkedTree.Measurability
 # The single-root case of root-indexed marked trees
 
 `RootIndexed.MarkedTree Root α X` is an indexed family of
-`UlamHarris.MarkedTree α X`.  When `Root` has one element this family is
+`UlamHarris.MarkedTree α X`. Under `[LT α]` and `[Unique Root]`, this family is
 identified with the single marked tree.  The multi-root definition itself is
 in `MarkedTree/Basic.lean`; this file only records the specialization.
+
+## Public declarations
+
+- `equivOfUnique` identifies `RootIndexed.MarkedTree Root α X` with
+  `UlamHarris.MarkedTree α X` when `Root` is a singleton.
+- `equivOfUnique_apply M = M default` and
+  `equivOfUnique_symm_apply M = fun _ => M` give its pointwise formulas.
+- `measurableSpace_eq_comap` (under `[MeasurableSpace X]`) states that the
+  measurable space on the root-indexed family is the comap of the single-tree
+  measurable space along `equivOfUnique`.
 -/
 
 open MeasureTheory

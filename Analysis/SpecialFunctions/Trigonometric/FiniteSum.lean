@@ -18,6 +18,11 @@ open scoped BigOperators
 
 This file records finite trigonometric sum identities that do not depend on
 probability or spectral terminology.
+
+## Public declarations
+
+* `Real.sum_sin_sq_mul_pi_div`: for natural numbers $0<k<L$,
+  $\sum_{j=1}^{L-1}\sin^2(\pi k j/L)=L/2$.
 -/
 
 namespace Real
@@ -85,16 +90,5 @@ theorem sum_sin_sq_mul_pi_div (L k : ℕ) (hkpos : 0 < k) (hklt : k < L) :
   rw [← Finset.sum_div, hcosSum']
   rw [Nat.cast_sub (Nat.one_le_iff_ne_zero.2 (Nat.ne_of_gt (hkpos.trans hklt)))]
   ring
-
-/-- Successor-width form of `Real.sum_sin_sq_mul_pi_div`, indexed directly
-by the number of interior grid points. -/
-theorem sum_sin_sq_mul_pi_div_succ (interiorCount k : ℕ)
-    (hkpos : 0 < k) (hklt : k < interiorCount + 1) :
-    (∑ j ∈ Finset.range interiorCount,
-      sin (Real.pi * (k : ℝ) / ((interiorCount + 1 : ℕ) : ℝ) *
-        ((j + 1 : ℕ) : ℝ)) ^ 2) =
-      ((interiorCount + 1 : ℕ) : ℝ) / 2 := by
-  simpa only [Nat.add_sub_cancel] using
-    sum_sin_sq_mul_pi_div (interiorCount + 1) k hkpos hklt
 
 end Real

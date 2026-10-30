@@ -7,7 +7,7 @@ module
 
 public import Probability.Distributions.Stable.Attraction.NormingRatios.Index
 public import Probability.Distributions.Stable.Attraction.NormingRatios.UniformDefect
-public import Analysis.Asymptotics.RegularVariation.AtZero
+public import Analysis.Asymptotics.RegularVariation.AtZero.Basic
 
 /-!
 # Continuous-frequency regular variation from norming ratios
@@ -15,6 +15,20 @@ public import Analysis.Asymptotics.RegularVariation.AtZero
 Compact-uniform characteristic-function defects and a first-crossing scale
 index transfer the discrete norming asymptotics to all sufficiently small
 frequencies. The first-crossing construction does not assume monotonicity.
+
+## Public declarations
+
+Write $\varphi_\nu$ for the characteristic function of the increment law.
+* `IsInDomainOfAttractionAlong.tendsto_normDefect_ratio_nhdsGT_zero`:
+  $(1-|\varphi_\nu(st)|^2)/(1-|\varphi_\nu(t)|^2)\to s^\alpha$
+  as $t\downarrow0$, for each $s>0$.
+* `IsInDomainOfAttractionAlong.tendstoUniformlyOn_normDefect_ratio_nhdsGT_zero`:
+  the same ratio converges uniformly for $s\in[1,2]$.
+* `IsInDomainOfAttractionAlong.eventually_pos_normDefect_nhdsGT_zero`:
+  $1-|\varphi_\nu(t)|^2>0$ for all sufficiently small $t>0$.
+* `IsInDomainOfAttractionAlong.isRegularlyVarying_normDefect_atZero`:
+  $t\mapsto1-|\varphi_\nu(t)|^2$ is regularly varying at zero with index
+  $\alpha$.
 -/
 
 open Filter MeasureTheory
@@ -27,7 +41,7 @@ namespace ProbabilityTheory
 private noncomputable def squaredModulusDefect (ν : Measure ℝ) (u : ℝ) : ℝ :=
   1 - ‖charFun ν u‖ ^ 2
 
-private theorem exists_scale_crossing {scale : ℕ → ℝ}
+private lemma exists_scale_crossing {scale : ℕ → ℝ}
     (hscale : Tendsto scale atTop atTop) (N : ℕ) (x : ℝ) :
     ∃ n, N ≤ n ∧ x ≤ scale n := by
   have hN : ∀ᶠ n : ℕ in atTop, N ≤ n :=
@@ -40,13 +54,13 @@ private noncomputable def firstScaleCrossing (scale : ℕ → ℝ)
     (hscale : Tendsto scale atTop atTop) (N : ℕ) (x : ℝ) : ℕ :=
   Nat.find (exists_scale_crossing hscale N x)
 
-private theorem firstScaleCrossing_spec {scale : ℕ → ℝ}
+private lemma firstScaleCrossing_spec {scale : ℕ → ℝ}
     (hscale : Tendsto scale atTop atTop) (N : ℕ) (x : ℝ) :
     N ≤ firstScaleCrossing scale hscale N x ∧
       x ≤ scale (firstScaleCrossing scale hscale N x) :=
   Nat.find_spec (exists_scale_crossing hscale N x)
 
-private theorem firstScaleCrossing_tendsto {scale : ℕ → ℝ}
+private lemma firstScaleCrossing_tendsto {scale : ℕ → ℝ}
     (hscale : Tendsto scale atTop atTop) (N : ℕ) :
     Tendsto (firstScaleCrossing scale hscale N) atTop atTop := by
   apply tendsto_atTop.2
@@ -72,7 +86,7 @@ private theorem firstScaleCrossing_tendsto {scale : ℕ → ℝ}
     dsimp [M] at hx
     linarith
 
-private theorem tendstoUniformlyOn_eval_of_tendsto
+private lemma tendstoUniformlyOn_eval_of_tendsto
     {f : ℕ → ℝ → ℝ} {g : ℝ → ℝ} {K : Set ℝ}
     {idx : ℝ → ℕ} {time : ℝ → ℝ} {l : ℝ}
     (hU : TendstoUniformlyOn f g atTop K)
@@ -101,7 +115,7 @@ private theorem tendstoUniformlyOn_eval_of_tendsto
       · simpa [dist_comm] using hi
     _ = ε := by ring
 
-private theorem firstCrossing_scale_ratio_tendsto {scale : ℕ → ℝ}
+private lemma firstCrossing_scale_ratio_tendsto {scale : ℕ → ℝ}
     (hscale : Tendsto scale atTop atTop)
     (hpos : ∀ᶠ n : ℕ in atTop, 0 < scale n)
     (hsucc : Tendsto (fun n : ℕ => scale (n + 1) / scale n) atTop (nhds 1))
@@ -170,7 +184,7 @@ private theorem firstCrossing_scale_ratio_tendsto {scale : ℕ → ℝ}
     hbounds.mono fun x hx => hx.2
   exact tendsto_of_tendsto_of_tendsto_of_le_of_le' hlower hupper hlow hupp
 
-private theorem defectRatio_close_of_close
+private lemma defectRatio_close_of_close
     {A B a b q ε c Q η : ℝ}
     (hc : 0 < c) (hb : c < b) (hq : 0 ≤ q) (hqQ : q ≤ Q)
     (hQ : 0 < Q) (hA : |A - a| < η) (hB : |B - b| < η)

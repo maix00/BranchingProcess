@@ -6,10 +6,18 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.RandomMeasure.Poisson.PointFamily
+public import Probability.RandomMeasure.Poisson.PointFamily.PieceSum
+public import Probability.RandomMeasure.Poisson.PointFamily.Thinning
 
 /-!
 # Characteristic function of a compound Poisson piece
+
+## Public declarations
+
+- `ProbabilityTheory.IsPoissonPointFamily.charFun_pieceSum`: for a Poisson point family with
+  intensity `m`, the characteristic function of the sum of `f` over the
+  `k`th canonical finite-intensity piece is
+  `exp (m (prmPiece m k) * (∫ exp (i ξ f) d(prmPieceLaw m k) - 1))`.
 
 This is the Fourier form of the point-family probability-generating formula.
 -/

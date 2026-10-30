@@ -15,6 +15,12 @@ public import Probability.Sequence.Block
 
 The finite sums and coordinate maps are defined algebraically. This module
 records their measurability on the increment-path sample space.
+
+## Public declarations
+
+`blockSum_measurable` states that for a measurable additive monoid $E$, the
+finite block sum $x\mapsto\sum_{j<\ell}x_{a+j}$ is measurable on the canonical
+increment-path space.
 -/
 
 open MeasureTheory
@@ -22,22 +28,6 @@ open MeasureTheory
 @[expose] public section
 
 namespace ProbabilityTheory.RandomWalk
-
-theorem paddedBlockCoordinates_measurable {E : Type*}
-    [MeasurableSpace E] (start length : ℕ) (default : E) :
-    Measurable (fun increment : ℕ → E =>
-      Combinatorics.Sequence.paddedBlockCoordinates start length default increment) := by
-  rw [measurable_pi_iff]
-  intro k
-  by_cases hk : k < length
-  · change Measurable (fun increment : ℕ → E =>
-      if k < length then increment (start + k) else default)
-    simp only [ite_eq_left hk]
-    exact measurable_pi_apply (start + k)
-  · change Measurable (fun increment : ℕ → E =>
-      if k < length then increment (start + k) else default)
-    simp only [ite_eq_right hk]
-    exact measurable_const
 
 theorem blockSum_measurable {E : Type*} [MeasurableSpace E]
     [AddCommMonoid E] [MeasurableAdd₂ E] (start length : ℕ) :

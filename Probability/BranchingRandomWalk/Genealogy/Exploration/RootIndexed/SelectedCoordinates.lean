@@ -4,17 +4,49 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.DomainFlow.Space
+module
+
+public import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.AddressFiltration.PastFuture
+import MeasureTheory.Measure.Partition
 
 /-!
-# Predictably selected coordinate fields
+# Coordinate fields selected using past information
+
+## Public declarations
+
+In namespace `ProbabilityTheory.BranchingRandomWalk`, the public declarations
+are:
+
+- `RootIndexed.selectedCoordinateField chosen field` is the random pullback
+  $\Phi(\omega)(r,u)=\omega(f_\omega(r,u))$.
+- `RootIndexed.StepField.reindexCoordinates_future_measurable f hfuture`
+  proves that a fixed map with every image coordinate at depth at least `n`
+  is measurable in the future sigma-algebra; the theorem
+  `RootIndexed.StepField.reindexCoordinates_independent μ f hfuture` makes
+  that field independent of the past filtration.
+- `RootIndexed.selectedCoordinateField_measurable chosen hcount hfiber`
+  proves measurability when the random coordinate map has countable range and
+  each fibre is measurable in the past filtration.
+- `RootIndexed.selectedCoordinate_measurable chosen hcount hfiber hnk p hdepth`
+  proves measurability of the selected coordinate in the later filtration
+  when its selected depth is below `k`.
+- `RootIndexed.selectedCoordinateField_event_factorization μ chosen hcount hfiber hfuture hinj A B hA hB`
+  states
+  $\nu_R(A\cap\Phi^{-1}(B))=\nu_R(A)\nu_{NewRoot}(B)$, provided the chosen
+  maps are injective and take every output coordinate into the future.
+- `RootIndexed.selectedCoordinateField_law μ chosen hcount hfiber hfuture hinj`
+  states that the pushforward of the root-indexed product law by `Φ` is the
+  product law on `NewRoot`; `RootIndexed.selectedCoordinateField_independent`
+  states independence of `Φ` from the past used to choose it.
 
 An injective coordinate relabelling whose values lie in the future of a
-generation may be chosen measurably from the past.  The resulting complete
-field has the product law and is independent of that past.  This extends the
+generation may be chosen measurably from the past. The resulting complete
+field has the product law and is independent of that past. This extends the
 selected-subtree theorem to coordinate maps which may mix several fresh
 subtrees inside one output field.
 -/
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 
@@ -61,7 +93,7 @@ theorem RootIndexed.StepField.reindexCoordinates_future_measurable
     RootIndexed.stepFutureSpace n]
       (fun field : RootIndexed.StepField Root α X => field p.1 p.2))
 
-/-- A fixed injective future-coordinate field is independent of the past. -/
+/-- A fixed future-coordinate field is independent of the past. -/
 theorem RootIndexed.StepField.reindexCoordinates_independent
     {Root NewRoot α X : Type*} [MeasurableSpace X]
     (μ : Measure (Step α X)) [IsProbabilityMeasure μ] {n : ℕ}
@@ -108,9 +140,10 @@ theorem RootIndexed.selectedCoordinateField_measurable
     (Root := Root) (α := α) (X := X) |>.le n) _ (hfiber f.1)).inter
       (RootIndexed.StepField.measurable_reindexCoordinates f.1 hB)
 
-/-- One coordinate selected by a predictable, countably ranged coordinate
-map is measurable in any later domain flow that already contains the selected
-coordinate.  No countability assumption is imposed on either index type. -/
+/-- One coordinate selected by a countably ranged coordinate map whose fibers
+are measurable with respect to the past filtration is measurable in any later
+filtration that already contains the selected coordinate. No countability
+assumption is imposed on either index type. -/
 theorem RootIndexed.selectedCoordinate_measurable
     {Root NewRoot α X : Type*} [MeasurableSpace X] {n k : ℕ}
     (chosen : RootIndexed.StepField Root α X →
@@ -151,8 +184,8 @@ theorem RootIndexed.selectedCoordinate_measurable
   exact RootIndexed.selectedStep_measurable selected hselectedFiber hdepth
     hselectedCount
 
-/-- Event factorization for a predictably selected injective coordinate
-field. -/
+/-- Event factorization for an injective coordinate field selected using the
+past filtration. -/
 theorem RootIndexed.selectedCoordinateField_event_factorization
     {Root NewRoot α X : Type*} [MeasurableSpace X]
     (μ : Measure (Step α X)) [IsProbabilityMeasure μ] {n : ℕ}
@@ -213,9 +246,6 @@ theorem RootIndexed.selectedCoordinateField_event_factorization
     · rintro ⟨hAfield, hBfield⟩
       exact ⟨⟨chosen field, Set.mem_range_self field⟩,
         ⟨⟨hAfield, rfl⟩, hBfield⟩⟩
-  have hCsum : (∑' f, P (C f)) = P A := by
-    rw [← hCunion]
-    exact (measure_iUnion hCpair hCmeas).symm
   have hcell (f : S) : P (D f) = P (C f) * Q B := by
     obtain ⟨field, hfield⟩ := f.2
     have hfuture' : ∀ p, n ≤ (f.1 p).2.length := by
@@ -236,12 +266,13 @@ theorem RootIndexed.selectedCoordinateField_event_factorization
   calc
     P (A ∩ RootIndexed.selectedCoordinateField chosen ⁻¹' B) =
         P (⋃ f, D f) := by rw [hDunion]
-    _ = ∑' f, P (D f) := measure_iUnion hDpair hDmeas
-    _ = ∑' f, P (C f) * Q B := tsum_congr hcell
-    _ = (∑' f, P (C f)) * Q B := ENNReal.tsum_mul_right
-    _ = P A * Q B := by rw [hCsum]
+    _ = P (⋃ f, C f) * Q B :=
+      measure_iUnion_eq_mul_of_disjoint_factor P C D (Q B)
+        hCmeas hDmeas hCpair hDpair hcell
+    _ = P A * Q B := by rw [hCunion]
 
-/-- The predictably selected coordinate field has the complete product law. -/
+/-- A coordinate field selected using the past filtration has the complete
+product law. -/
 theorem RootIndexed.selectedCoordinateField_law
     {Root NewRoot α X : Type*} [MeasurableSpace X]
     (μ : Measure (Step α X)) [IsProbabilityMeasure μ] {n : ℕ}

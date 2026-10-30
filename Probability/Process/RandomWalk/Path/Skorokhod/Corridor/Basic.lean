@@ -9,10 +9,28 @@ module
 public import Probability.Process.RandomWalk.Path.Corridor.Interpolation.Basic
 public import Probability.Process.RandomWalk.Path.Skorokhod.Basic
 public import Mathlib.Topology.UnitInterval
-public import Topology.Cadlag.Skorokhod.Corridor
+public import Topology.Cadlag.Skorokhod.Corridor.Basic
 
 /-!
 # Corridor membership of càdlàg walk paths
+
+## Public declarations
+
+- `ProbabilityTheory.RandomWalk.exists_normalizedLinearContinuousPathIcc_eq_normalizedStepCadlagPathIcc`:
+  every value of the step path agrees with a value of the polygonal path at a
+  grid time.
+- `ProbabilityTheory.RandomWalk.exists_normalizedStepCadlagPathIcc_eq_scaledDisplacement`:
+  each path value equals \(a_n^{-1}S_k\) for some \(k\le n\).
+- `ProbabilityTheory.RandomWalk.normalizedStepCadlagPathIcc_mem_rangeInOpenInterval_iff_grid`:
+  positive-margin open-corridor membership is equivalent to the strict grid
+  inequalities.
+- `ProbabilityTheory.RandomWalk.normalizedStepCadlagPathIcc_mem_centeredOpenInterval_iff`:
+  centered open-corridor membership is equivalent to the strict horizontal
+  tube event.
+- `ProbabilityTheory.RandomWalk.normalizedStepCadlagPathIcc_mem_rangeInOpenInterval_iff`:
+  the shifted unit-width open corridor is equivalent to its strict grid tube.
+- `ProbabilityTheory.RandomWalk.normalizedStepCadlagPathIcc_mem_rangeInClosedInterval_iff`:
+  closed-corridor membership is equivalent to the weak grid inequalities.
 
 The positive-uniform-margin corridor in Skorokhod path space is identified
 with the strict finite-grid tube event for a normalized random-walk path.
@@ -31,7 +49,12 @@ theorem exists_normalizedLinearContinuousPathIcc_eq_normalizedStepCadlagPathIcc
       normalizedLinearContinuousPathIcc scale n increment s =
         normalizedStepCadlagPathIcc scale n increment t := by
   let k := ⌊(n : ℝ) * (t : ℝ)⌋₊
-  have hkn : k ≤ n := natFloor_mul_le_of_mem_unitInterval n t
+  have hkn : k ≤ n := by
+    apply Nat.floor_le_of_le
+    calc
+      (n : ℝ) * (t : ℝ) ≤ (n : ℝ) * 1 :=
+        mul_le_mul_of_nonneg_left t.property.2 (Nat.cast_nonneg n)
+      _ = n := by ring
   let s : unitInterval :=
     ⟨(k : ℝ) / n, by
       constructor
@@ -54,7 +77,11 @@ theorem exists_normalizedStepCadlagPathIcc_eq_scaledDisplacement
   let k : ℕ := ⌊(n : ℝ) * (t : ℝ)⌋₊
   have hk : k ≤ n := by
     dsimp [k]
-    exact natFloor_mul_le_of_mem_unitInterval n t
+    apply Nat.floor_le_of_le
+    calc
+      (n : ℝ) * (t : ℝ) ≤ (n : ℝ) * 1 :=
+        mul_le_mul_of_nonneg_left t.property.2 (Nat.cast_nonneg n)
+      _ = n := by ring
   refine ⟨⟨k, Nat.lt_succ_of_le hk⟩, ?_⟩
   simp [normalizedStepCadlagPathIcc_apply, normalizedStepPath, k]
 

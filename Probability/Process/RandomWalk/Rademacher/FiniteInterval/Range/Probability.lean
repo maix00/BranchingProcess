@@ -1,0 +1,208 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
+module
+
+public import Probability.Process.RandomWalk.Rademacher.FiniteInterval.Range.Basic
+public import Probability.Process.RandomWalk.Rademacher.FiniteInterval.Spectral.Survival.Bounds
+import Order.Bounds.FiniteRangeTranslation
+
+/-!
+# Rademacher range probabilities from interval survival
+
+## Public declarations
+
+A finite-time path whose oscillation is at most an integer width fits in one
+of finitely many translates of an interval.  The killed-kernel estimate then
+turns that cover into an explicit finite-time upper bound.  At diffusive
+width the resulting prefactor grows with the approximation length, so this
+estimate alone does not transfer a sharp upper bound through Donsker's
+theorem; the sharp route uses a fixed finite cover of Brownian corridor
+locations and the full-spectrum geometric estimate instead.
+Put $K_{w+1}=\texttt{intervalRademacherKernel}(w+1)$.  The public
+declarations are:
+
+* `shiftedRademacherIntervalEvent` defines survival in a width-$w$ interval
+  translated by a candidate integer minimum.
+  `rademacherOscillation_subset_intervalCover` places every path satisfying
+  $|S_i-S_j|\le w$ for all $i,j\le n$ in one of these $w+1$ events.
+* `iidRademacher_oscillation_le_intervalSurvival_sum` gives
+  \[
+    \mathbb P\{|S_i-S_j|\le w\ (i,j\le n)\}
+    \le \sum_{q=0}^{w}
+        \texttt{Kernel.remainingMass}(K_{w+1},n,q).
+  \]
+* `iidRademacher_oscillation_le_uniform_spectral_bound` gives, for $w>0$,
+  \[
+    \mathbb P\{|S_i-S_j|\le w\ (i,j\le n)\}
+    \le (w+1)\frac{\cos^n(\pi/(w+2))}{\sin(\pi/(w+2))}.
+  \]
+-/
+
+open MeasureTheory Set
+open scoped BigOperators ENNReal
+
+open ProbabilityTheory.RandomWalk.Rademacher.FiniteInterval
+
+private theorem exists_shift_of_rademacherOscillation
+    (n width : ℕ) (branch : ℕ → Bool)
+    (hosc : RademacherOscillationBounded n width branch) :
+    ∃ shift : Fin (width + 1), ∀ k : Fin (n + 1),
+      ((shift : Fin (width + 1)).val : ℝ) +
+        rademacherPartialSum (k : ℕ) branch ∈
+          Set.Icc (0 : ℝ) (width : ℝ) := by
+  let position : Fin (n + 1) → ℤ := fun k =>
+    ∑ i ∈ Finset.range (k : ℕ), rademacherIntIncrement (branch i)
+  have hoscInteger : ∀ i j, |position i - position j| ≤ (width : ℤ) := by
+    intro i j
+    have h := hosc i j
+    rw [rademacherPartialSum_eq_intCast,
+      rademacherPartialSum_eq_intCast] at h
+    exact_mod_cast h
+  let zero : Fin (n + 1) := ⟨0, by omega⟩
+  have huniv : (Finset.univ : Finset (Fin (n + 1))).Nonempty :=
+    ⟨zero, Finset.mem_univ _⟩
+  obtain ⟨translate, htranslate⟩ :=
+    Order.Bounds.exists_translate_into_Icc_of_pairwise_dist_le
+      Finset.univ huniv position (width : ℤ) (by
+        intro i _ j _
+        exact hoscInteger i j)
+  have hpositionZero : position zero = 0 := by
+    simp [position, zero]
+  have htranslateBounds : translate ∈ Set.Icc (0 : ℤ) (width : ℤ) := by
+    simpa [hpositionZero] using htranslate zero (Finset.mem_univ _)
+  have htranslateNonneg : 0 ≤ translate := htranslateBounds.1
+  have htranslateLe : translate ≤ (width : ℤ) := htranslateBounds.2
+  have htoNat : ((Int.toNat translate : ℕ) : ℤ) = translate :=
+    Int.toNat_of_nonneg htranslateNonneg
+  have htoNatLe : Int.toNat translate ≤ width := by
+    have hcast : ((Int.toNat translate : ℕ) : ℤ) ≤ (width : ℤ) := by
+      rw [htoNat]
+      exact htranslateLe
+    exact_mod_cast hcast
+  let shift : Fin (width + 1) :=
+    ⟨Int.toNat translate, Nat.lt_succ_of_le htoNatLe⟩
+  have hshift : (shift.val : ℤ) = translate := by
+    simp [shift, htoNat]
+  refine ⟨shift, ?_⟩
+  intro k
+  have hk := htranslate k (Finset.mem_univ _)
+  have hk' : (shift.val : ℤ) + position k ∈
+      Set.Icc (0 : ℤ) (width : ℤ) := by
+    rw [hshift]
+    exact hk
+  have hkReal : ((shift.val : ℝ) + rademacherPartialSum (k : ℕ) branch) ∈
+      Set.Icc (0 : ℝ) (width : ℝ) := by
+    have hposition : (position k : ℝ) = rademacherPartialSum (k : ℕ) branch := by
+      simpa [position] using
+        (rademacherPartialSum_eq_intCast (k : ℕ) branch).symm
+    rw [← hposition]
+    simp only [Set.mem_Icc] at hk' ⊢
+    exact ⟨by exact_mod_cast hk'.1, by exact_mod_cast hk'.2⟩
+  simpa using hkReal
+
+@[expose] public section
+
+namespace ProbabilityTheory.RandomWalk.Rademacher.FiniteInterval
+
+/-- The event that the Rademacher path, after translation to an interior
+lattice site, stays in a finite interval. -/
+def shiftedRademacherIntervalEvent (width n : ℕ)
+    (shift : Fin (width + 1)) : Set (ℕ → Bool) :=
+  {branch | rademacherStaysInInterval (width + 1) n (intervalSite shift) branch}
+
+/-- Every path with oscillation at most `width` belongs to one of the
+translated killed-interval survival events. -/
+theorem rademacherOscillation_subset_intervalCover
+    (n width : ℕ) :
+    {branch | RademacherOscillationBounded n width branch} ⊆
+      ⋃ shift ∈ Finset.univ, shiftedRademacherIntervalEvent width n shift := by
+  intro branch hosc
+  obtain ⟨shift, hshift⟩ :=
+    exists_shift_of_rademacherOscillation n width branch hosc
+  have hclosed : InClosedInterval (1 : ℝ) ((width + 1 : ℕ) : ℝ) n
+      (intervalSite shift)
+      (rademacherIncrementPath branch) := by
+    simp only [InClosedInterval, InWindows, history_eq_fromIncrements,
+      AdditivePath.fromIncrements]
+    intro k
+    have hk := hshift k
+    change (shift.val : ℝ) +
+        AdditivePath.displacement (k : ℕ) (rademacherIncrementPath branch) ∈
+      Set.Icc 0 (width : ℝ) at hk
+    have hsite : intervalSite shift = (shift.val : ℝ) + 1 := by
+      simp [intervalSite]
+    rw [hsite]
+    have hupper : ((width + 1 : ℕ) : ℝ) = (width : ℝ) + 1 := by
+      norm_cast
+    rw [hupper]
+    simp only [Set.mem_Icc] at hk ⊢
+    constructor <;> linarith
+  have hstay :=
+    (rademacherStaysInInterval_iff_inClosedInterval n shift branch).mpr hclosed
+  simp only [Set.mem_iUnion, Finset.mem_univ]
+  exact ⟨shift, trivial, hstay⟩
+
+/-- The oscillation probability is bounded by the sum of the killed-interval
+survival probabilities over all possible integer minima. -/
+theorem iidRademacher_oscillation_le_intervalSurvival_sum
+    (n width : ℕ) :
+    iidSequenceLaw fairBoolMeasure
+        {branch | RademacherOscillationBounded n width branch} ≤
+      ∑ shift ∈ Finset.univ,
+        Kernel.remainingMass (intervalRademacherKernel (width + 1)) n shift := by
+  calc
+    iidSequenceLaw fairBoolMeasure
+        {branch | RademacherOscillationBounded n width branch} ≤
+      iidSequenceLaw fairBoolMeasure
+        (⋃ shift ∈ Finset.univ,
+          shiftedRademacherIntervalEvent width n shift) :=
+      measure_mono (rademacherOscillation_subset_intervalCover n width)
+    _ ≤ ∑ shift ∈ Finset.univ,
+          iidSequenceLaw fairBoolMeasure
+            (shiftedRademacherIntervalEvent width n shift) :=
+      measure_biUnion_finset_le _ _
+    _ = ∑ shift ∈ Finset.univ,
+          Kernel.remainingMass (intervalRademacherKernel (width + 1)) n shift := by
+      apply Finset.sum_congr rfl
+      intro shift _hshift
+      rw [show shiftedRademacherIntervalEvent width n shift =
+          {branch | rademacherStaysInInterval (width + 1) n
+            (intervalSite shift) branch} by rfl,
+        ← intervalRademacherKernel_pow_apply_univ_eq_pathSurvival]
+      rfl
+
+/-- Uniform finite-time spectral form of the lattice-minimum cover.  This is a
+valid discrete inequality, but its width-dependent prefactor is too large to
+yield the sharp Brownian range estimate at diffusive width. -/
+theorem iidRademacher_oscillation_le_uniform_spectral_bound
+    (n width : ℕ) (hwidth : 0 < width) :
+    iidSequenceLaw fairBoolMeasure
+        {branch | RademacherOscillationBounded n width branch} ≤
+      (↑(width + 1) : ENNReal) * ENNReal.ofReal
+        (Real.cos (Real.pi / (width + 2 : ℕ)) ^ n /
+          Real.sin (Real.pi / (width + 2 : ℕ))) := by
+  calc
+    iidSequenceLaw fairBoolMeasure
+        {branch | RademacherOscillationBounded n width branch} ≤
+      ∑ shift ∈ Finset.univ,
+        Kernel.remainingMass (intervalRademacherKernel (width + 1)) n shift :=
+      iidRademacher_oscillation_le_intervalSurvival_sum n width
+    _ ≤ ∑ shift ∈ Finset.univ,
+        ENNReal.ofReal
+          (Real.cos (Real.pi / (width + 2 : ℕ)) ^ n /
+            Real.sin (Real.pi / (width + 2 : ℕ))) := by
+      apply Finset.sum_le_sum
+      intro shift _hshift
+      have hcount : 1 < width + 1 := by omega
+      exact (intervalRademacherKernel_remainingMass_uniform_bounds
+        hcount n shift).2
+    _ = (↑(width + 1) : ENNReal) * ENNReal.ofReal
+        (Real.cos (Real.pi / (width + 2 : ℕ)) ^ n /
+          Real.sin (Real.pi / (width + 2 : ℕ))) := by
+      simp
+
+end ProbabilityTheory.RandomWalk.Rademacher.FiniteInterval

@@ -1,0 +1,188 @@
+/-
+Copyright (c) 2026 LeanLevy Contributors. All rights reserved.
+Released under MIT license; see docs/third_party/LeanLevy/LICENSE.
+Modified for this project from slink/LeanLevy at revision
+7e73fd9b23ad52956ec2756a815889a783131ce4; see
+docs/third_party/LeanLevy/provenance.md.
+Authors: LeanLevy Contributors
+-/
+module
+
+public import Mathlib.MeasureTheory.Integral.Lebesgue.Basic
+public import Mathlib.MeasureTheory.Integral.Bochner.Basic
+public import Mathlib.MeasureTheory.Measure.Basic
+public import Mathlib.MeasureTheory.Measure.Module
+import Mathlib.MeasureTheory.Integral.Lebesgue.Markov
+import Mathlib.MeasureTheory.Measure.CompleteLattice
+import Mathlib.MeasureTheory.Measure.Continuity
+import Mathlib.MeasureTheory.Measure.Filter
+import Mathlib.MeasureTheory.Measure.Interval
+import Mathlib.MeasureTheory.Measure.OuterMeasure
+import Mathlib.MeasureTheory.Measure.Sum
+import Mathlib.Topology.Order.Basic
+
+/-!
+# Levy Measures
+
+A **Levy measure** on `ℝ` is a Borel measure `ν` satisfying two conditions:
+
+1. `ν {0} = 0` — no mass at the origin.
+2. `∫⁻ x, min(1, x²) dν < ∞` — the integral of `min(1, x²)` is finite.
+
+These conditions arise naturally in the Levy-Khintchine representation of infinitely
+divisible distributions: the Levy measure captures the jump structure of the process,
+while the vanishing at zero and the integrability condition ensure that the
+characteristic exponent is well-defined.
+
+## Public declarations
+
+- `IsLevyMeasure ν` means
+  $\nu(\{0\})=0$ and
+  $\int^-\operatorname{ofReal}(\min(1,x^2))\,d\nu(x)<\infty$; the theorem
+  `isLevyMeasure_iff` exposes this characterization.
+- `zero_singleton`, `lintegral_min_one_sq_lt_top`, and
+  `integrable_min_one_sq` expose the two defining properties in measure and
+  integral form.
+- `measure_setOf_abs_ge_lt_top` and `isFiniteMeasure_restrict_abs_ge` give
+  $\nu(\{|x|\ge\varepsilon\})<\infty$ for every $\varepsilon>0$; in
+  particular, `measure_compl_Ioo_lt_top` gives finite mass outside $(-1,1)$.
+- `sigmaFinite` proves every Lévy measure is σ-finite, while `smul` and
+  `of_isFiniteMeasure` give closure under finite scaling and finite measures
+  with zero mass at $0$; `isLevyMeasure_zero` handles the zero measure.
+-/
+
+@[expose] public section
+
+open ENNReal Set
+open scoped NNReal ENNReal
+
+namespace MeasureTheory
+
+/-- A measure `ν` on `ℝ` is a **Levy measure** if it assigns zero mass to the origin and
+the integral of `min(1, x²)` with respect to `ν` is finite. -/
+def IsLevyMeasure (ν : Measure ℝ) : Prop :=
+  ν {0} = 0 ∧ ∫⁻ x, ENNReal.ofReal (min 1 (x ^ 2)) ∂ν < ⊤
+
+namespace IsLevyMeasure
+
+variable {ν : Measure ℝ}
+
+/-- A measure is a Levy measure iff it vanishes at the origin and the integral of
+`min(1, x²)` is finite. -/
+@[simp]
+theorem isLevyMeasure_iff :
+    IsLevyMeasure ν ↔ ν {0} = 0 ∧ ∫⁻ x, ENNReal.ofReal (min 1 (x ^ 2)) ∂ν < ⊤ :=
+  Iff.rfl
+
+/-- A Levy measure assigns zero mass to the origin. -/
+theorem zero_singleton (hν : IsLevyMeasure ν) : ν {0} = 0 :=
+  hν.1
+
+/-- The integral of `min(1, x²)` with respect to a Levy measure is finite. -/
+theorem lintegral_min_one_sq_lt_top (hν : IsLevyMeasure ν) :
+    ∫⁻ x, ENNReal.ofReal (min 1 (x ^ 2)) ∂ν < ⊤ :=
+  hν.2
+
+/-- Against a Lévy measure, `x ↦ min 1 x²` is Bochner integrable. -/
+theorem integrable_min_one_sq (hν : IsLevyMeasure ν) :
+    Integrable (fun x : ℝ => min 1 (x ^ 2)) ν := by
+  refine ⟨(continuous_const.min (continuous_pow 2)).aestronglyMeasurable, ?_⟩
+  rw [hasFiniteIntegral_iff_enorm]
+  have henorm : ∀ x : ℝ, ‖min 1 (x ^ 2)‖ₑ = ENNReal.ofReal (min 1 (x ^ 2)) := fun x =>
+    Real.enorm_eq_ofReal (le_min zero_le_one (sq_nonneg x))
+  simp_rw [henorm]
+  exact hν.lintegral_min_one_sq_lt_top
+
+/-- A Lévy measure has finite mass on `{x | ε ≤ |x|}` for any `ε > 0`. -/
+theorem measure_setOf_abs_ge_lt_top (hν : IsLevyMeasure ν) {ε : ℝ} (hε : 0 < ε) :
+    ν {x | ε ≤ |x|} < ⊤ := by
+  set c := ENNReal.ofReal (min 1 (ε ^ 2))
+  set f := fun x : ℝ => ENNReal.ofReal (min 1 (x ^ 2))
+  -- c is positive since ε > 0
+  have hε2 : 0 < min 1 (ε ^ 2) := lt_min one_pos (sq_pos_of_pos hε)
+  have hc_pos : 0 < c := ENNReal.ofReal_pos.mpr hε2
+  -- The integrand is measurable
+  have hf_meas : Measurable f := by
+    apply ENNReal.measurable_ofReal.comp
+    exact measurable_const.min (measurable_id'.pow_const 2)
+  -- {x | ε ≤ |x|} ⊆ {x | c ≤ f x}
+  have hSub : {x : ℝ | ε ≤ |x|} ⊆ {x : ℝ | c ≤ f x} := by
+    intro x hx
+    simp only [mem_ofPred_eq] at hx ⊢
+    apply ENNReal.ofReal_le_ofReal
+    exact min_le_min le_rfl ((sq_abs x).symm ▸ pow_le_pow_left₀ hε.le hx 2)
+  -- Markov: c * ν {x | c ≤ f x} ≤ ∫⁻ f dν
+  have hMarkov := mul_meas_ge_le_lintegral hf_meas c (μ := ν)
+  -- c * ν(S) ≤ ∫⁻ f dν < ⊤
+  have hle : c * ν {x | ε ≤ |x|} ≤ ∫⁻ x, f x ∂ν :=
+    le_trans (mul_le_mul_right (measure_mono hSub) c) hMarkov
+  exact lt_top_of_mul_ne_top_right (ne_top_of_le_ne_top hν.2.ne hle) hc_pos.ne'
+
+/-- A Lévy measure restricted to the complement of `(-ε, ε)` is finite whenever `ε > 0`. -/
+theorem isFiniteMeasure_restrict_abs_ge (hν : IsLevyMeasure ν) {ε : ℝ} (hε : 0 < ε) :
+    IsFiniteMeasure (ν.restrict {x | ε ≤ |x|}) :=
+  isFiniteMeasure_restrict.mpr (hν.measure_setOf_abs_ge_lt_top hε).ne
+
+/-- A Lévy measure has finite mass outside `Ioo (-1) 1`. -/
+theorem measure_compl_Ioo_lt_top (hν : IsLevyMeasure ν) :
+    ν (Ioo (-1) 1)ᶜ < ⊤ := by
+  apply (measure_mono _).trans_lt (measure_setOf_abs_ge_lt_top hν one_pos)
+  intro x hx
+  simp only [mem_compl_iff, mem_Ioo, not_and_or, not_lt, mem_ofPred_eq] at hx ⊢
+  cases hx with
+  | inl h => exact le_trans (by linarith) (neg_le_abs x)
+  | inr h => exact le_trans h (le_abs_self x)
+
+/-- Every Lévy measure is σ-finite. -/
+theorem sigmaFinite (hν : IsLevyMeasure ν) : SigmaFinite ν := by
+  constructor
+  exact ⟨{
+    set := fun n => {x : ℝ | (1 : ℝ) / (↑(n + 1) : ℝ) ≤ |x|} ∪ {0}
+    set_mem := fun _ => trivial
+    finite := fun n => by
+      calc ν ({x : ℝ | 1 / (↑(n + 1) : ℝ) ≤ |x|} ∪ {0})
+          ≤ ν {x : ℝ | 1 / (↑(n + 1) : ℝ) ≤ |x|} + ν {0} := measure_union_le _ _
+        _ = ν {x : ℝ | 1 / (↑(n + 1) : ℝ) ≤ |x|} + 0 := by rw [hν.zero_singleton]
+        _ = ν {x : ℝ | 1 / (↑(n + 1) : ℝ) ≤ |x|} := add_zero _
+        _ < ⊤ := hν.measure_setOf_abs_ge_lt_top (by positivity)
+    spanning := by
+      ext x
+      simp only [mem_iUnion, mem_union, mem_ofPred_eq, mem_singleton_iff, mem_univ, iff_true]
+      by_cases hx : x = 0
+      · exact ⟨0, Or.inr hx⟩
+      · have habs : 0 < |x| := abs_pos.mpr hx
+        obtain ⟨n, hn⟩ := exists_nat_gt (1 / |x|)
+        refine ⟨n, Or.inl ?_⟩
+        rw [div_le_iff₀ (Nat.cast_pos.mpr (Nat.succ_pos n))]
+        have h1 : 1 / |x| < ↑n := hn
+        rw [div_lt_iff₀ habs] at h1
+        have h2 : (↑n : ℝ) ≤ ↑(n + 1) := by exact_mod_cast Nat.le_succ n
+        nlinarith
+  }⟩
+
+/-- A finite measure that assigns no mass to the origin is a Levy measure: the integrability
+condition `∫⁻ min(1, x²) dν < ∞` follows from `min(1, x²) ≤ 1` and `ν univ < ∞`. -/
+theorem of_isFiniteMeasure {ν : Measure ℝ} [IsFiniteMeasure ν]
+    (hν_zero : ν {0} = 0) : IsLevyMeasure ν := by
+  refine ⟨hν_zero, ?_⟩
+  calc ∫⁻ x, ENNReal.ofReal (min 1 (x ^ 2)) ∂ν
+      ≤ ∫⁻ _, 1 ∂ν := lintegral_mono (fun x => by
+        rw [show (1 : ℝ≥0∞) = ENNReal.ofReal 1 by simp]
+        exact ENNReal.ofReal_le_ofReal (min_le_left _ _))
+    _ = ν Set.univ := lintegral_one
+    _ < ⊤ := (‹IsFiniteMeasure ν›).measure_univ_lt_top
+
+/-- A finite scalar multiple of a Lévy measure is a Lévy measure. -/
+theorem smul (hν : IsLevyMeasure ν) {c : ℝ≥0∞} (hc : c ≠ ⊤) : IsLevyMeasure (c • ν) := by
+  refine ⟨?_, ?_⟩
+  · rw [Measure.smul_apply, hν.zero_singleton, smul_zero]
+  · rw [lintegral_smul_measure]
+    exact ENNReal.mul_lt_top hc.lt_top hν.lintegral_min_one_sq_lt_top
+
+end IsLevyMeasure
+
+/-- The zero measure is a Levy measure. -/
+theorem isLevyMeasure_zero : IsLevyMeasure (0 : Measure ℝ) :=
+  ⟨by simp, by simp⟩
+
+end MeasureTheory

@@ -12,6 +12,21 @@ public import Topology.Cadlag.Skorokhod.Topology
 # Basic oscillation partitions
 
 Finite partitions record half-open time cells, their assignment map, and a lower bound on cell lengths. This module proves the cell-assignment laws and constructs càdlàg step approximations controlled by within-cell oscillation.
+
+## Public declarations
+
+- OscillationPartition is a strictly increasing finite partition of [0,1]
+  with endpoints 0,1 and a positive lower bound mesh on cell lengths; its
+  index assigns knots to the cell beginning there and assigns 1 to the last
+  cell.
+- index_eq_of_cell and index_monotone characterize the cell assignment, while
+  size_mul_mesh_le_one bounds the number of cells by the mesh.
+- stepPath constructs a càdlàg step path. OscillationBoundedOnPartition P f b
+  bounds the oscillation of f on each cell of P by b.
+- stepApproximation samples at each cell's left endpoint;
+  dist_stepApproximation_le, uniformEDist_stepApproximation_le, and
+  j1EDist_stepApproximation_le bound pointwise, uniform, and J₁ errors by the
+  cellwise oscillation bound.
 -/
 
 @[expose] public section

@@ -4,17 +4,42 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Population.Processes.Causal
-import Probability.BranchingRandomWalk.Population.Candidates.RootIndexed
+module
+
+public import Combinatorics.BranchingWalk.Population.Offspring
+
+public import Probability.BranchingRandomWalk.Population.Processes.Causal.Basic
+public import Combinatorics.BranchingWalk.Population.Candidates.Generation
+public import Probability.BranchingRandomWalk.Population.Candidates.RootIndexed.Measurability
 
 /-!
 # Causal populations selected by an observable predicate
+
+## Public declarations
+
+- `ProbabilityTheory.BranchingRandomWalk.RootIndexed.CausalPopulation.selectedBy`:
+  recursively retain exactly those children satisfying a generation-dependent
+  predicate, assuming each retained child set is finite.
+- `ProbabilityTheory.BranchingRandomWalk.RootIndexed.CausalPopulation.selectedBy_zero`,
+  `.mem_selectedBy_succ`, and `.keep_of_mem_selectedBy_succ`: identify the
+  initial slice, one-step membership rule, and predicate condition.
+- `ProbabilityTheory.BranchingRandomWalk.RootIndexed.CausalPopulation.selectedBy_adapted`:
+  observable keep decisions produce an adapted finite-set process.
+- `ProbabilityTheory.BranchingRandomWalk.RootIndexed.CausalPopulation.ofPredicate`:
+  constructs the causal branching population selected by such a predicate.
+- `ProbabilityTheory.BranchingRandomWalk.RootIndexed.CausalPopulation.ofPredicate_finiteSlices`:
+  proves each constructed generation slice finite.
+- `ProbabilityTheory.BranchingRandomWalk.RootIndexed.CausalPopulation.ofPositionSets`:
+  specializes the construction to generation-dependent measurable position
+  sets \(W_n\), retaining a child exactly when its position belongs to \(W_n\).
 
 This file constructs a killed branching population by retaining precisely the
 genuine children that satisfy a generation-dependent observable predicate.
 The predicate may inspect the entire generation domain, so it can express
 absolute barriers, ancestral tube conditions, and scheduled terminal cuts.
 -/
+
+@[expose] public section
 
 open MeasureTheory
 
@@ -36,7 +61,7 @@ noncomputable def selectedBy
     (hfinite : ∀ (n : ℕ)
         (parents : Finset (RootIndexed.TreeNode Root α))
         (field : RootIndexed.StepField Root α X),
-      {q | q ∈ RootIndexed.childrenAtGeneration n parents field ∧
+      {q | q ∈ Combinatorics.Branching.Population.childrenAtGeneration n parents field ∧
         keep (n + 1) field q}.Finite) :
     ℕ → RootIndexed.StepField Root α X →
       Finset (RootIndexed.TreeNode Root α)
@@ -52,7 +77,7 @@ noncomputable def selectedBy
     (hfinite : ∀ (n : ℕ)
         (parents : Finset (RootIndexed.TreeNode Root α))
         (field : RootIndexed.StepField Root α X),
-      {q | q ∈ RootIndexed.childrenAtGeneration n parents field ∧
+      {q | q ∈ Combinatorics.Branching.Population.childrenAtGeneration n parents field ∧
         keep (n + 1) field q}.Finite)
     (field : RootIndexed.StepField Root α X) :
     selectedBy initial keep hfinite 0 field = initial :=
@@ -64,12 +89,12 @@ noncomputable def selectedBy
     (keep : ℕ → RootIndexed.StepField Root α X →
       RootIndexed.TreeNode Root α → Prop)
     (hfinite : ∀ n parents field,
-      {q | q ∈ RootIndexed.childrenAtGeneration n parents field ∧
+      {q | q ∈ Combinatorics.Branching.Population.childrenAtGeneration n parents field ∧
         keep (n + 1) field q}.Finite)
     (n : ℕ) (field : RootIndexed.StepField Root α X)
     (q : RootIndexed.TreeNode Root α) :
     q ∈ selectedBy initial keep hfinite (n + 1) field ↔
-      q ∈ RootIndexed.childrenAtGeneration n
+      q ∈ Combinatorics.Branching.Population.childrenAtGeneration n
         (selectedBy initial keep hfinite n field) field ∧
       keep (n + 1) field q := by
   exact Set.Finite.mem_toFinset _
@@ -80,7 +105,7 @@ theorem keep_of_mem_selectedBy_succ
     (keep : ℕ → RootIndexed.StepField Root α X →
       RootIndexed.TreeNode Root α → Prop)
     (hfinite : ∀ n parents field,
-      {q | q ∈ RootIndexed.childrenAtGeneration n parents field ∧
+      {q | q ∈ Combinatorics.Branching.Population.childrenAtGeneration n parents field ∧
         keep (n + 1) field q}.Finite)
     {n : ℕ} {field : RootIndexed.StepField Root α X}
     {q : RootIndexed.TreeNode Root α}
@@ -96,7 +121,7 @@ theorem selectedBy_adapted
     (keep : ℕ → RootIndexed.StepField Root α X →
       RootIndexed.TreeNode Root α → Prop)
     (hfinite : ∀ n parents field,
-      {q | q ∈ RootIndexed.childrenAtGeneration n parents field ∧
+      {q | q ∈ Combinatorics.Branching.Population.childrenAtGeneration n parents field ∧
         keep (n + 1) field q}.Finite)
     (hkeep : ∀ n q, Measurable[RootIndexed.stepFiltration
       (Root := Root) (α := α) (X := X) n]
@@ -127,7 +152,7 @@ noncomputable def ofPredicate
     (keep : ℕ → RootIndexed.StepField Root α X →
       RootIndexed.TreeNode Root α → Prop)
     (hfinite : ∀ n parents field,
-      {q | q ∈ RootIndexed.childrenAtGeneration n parents field ∧
+      {q | q ∈ Combinatorics.Branching.Population.childrenAtGeneration n parents field ∧
         keep (n + 1) field q}.Finite)
     (hkeep : ∀ n q, Measurable[RootIndexed.stepFiltration
       (Root := Root) (α := α) (X := X) n]
@@ -143,7 +168,7 @@ noncomputable def ofPredicate
         cases n with
         | zero => exact hinitialDepth p hp
         | succ n =>
-            exact RootIndexed.childrenAtGeneration_depth n _ field p
+            exact Combinatorics.Branching.Population.childrenAtGeneration_depth n _ field p
               ((mem_selectedBy_succ initial keep hfinite n field p).mp hp).1
       successor := by
         intro n q hq
@@ -155,14 +180,14 @@ noncomputable def ofPredicate
           cases n with
           | zero => exact hinitialDepth p hp
           | succ n =>
-              exact RootIndexed.childrenAtGeneration_depth n _ field p
+              exact Combinatorics.Branching.Population.childrenAtGeneration_depth n _ field p
                 ((mem_selectedBy_succ initial keep hfinite n field p).mp hp).1
-        rw [RootIndexed.childrenAtGeneration_eq_offspringAddressSet n
+        rw [Combinatorics.Branching.Population.childrenAtGeneration_eq_offspringAddressSet n
           (selectedBy initial keep hfinite n field) field hdepth] at hchild
         obtain ⟨parent, hparent, i, hi, rfl⟩ :=
-          Combinatorics.Branching.Selection.Coupling.mem_offspringAddressSet.mp
+          Combinatorics.Branching.Population.mem_offspringAddressSet.mp
             hchild
-        apply Combinatorics.Branching.Selection.Coupling.mem_offspringAddressSet.mpr
+        apply Combinatorics.Branching.Population.mem_offspringAddressSet.mpr
         exact ⟨parent, hparent, i, hi, rfl⟩ }
   adapted p n := (measurable_finset_mem p).comp
     (selectedBy_adapted initial keep hfinite hkeep n)
@@ -177,7 +202,7 @@ theorem ofPredicate_finiteSlices
     (keep : ℕ → RootIndexed.StepField Root α X →
       RootIndexed.TreeNode Root α → Prop)
     (hfinite : ∀ n parents field,
-      {q | q ∈ RootIndexed.childrenAtGeneration n parents field ∧
+      {q | q ∈ Combinatorics.Branching.Population.childrenAtGeneration n parents field ∧
         keep (n + 1) field q}.Finite)
     (hkeep : ∀ n q, Measurable[RootIndexed.stepFiltration
       (Root := Root) (α := α) (X := X) n]
@@ -203,7 +228,7 @@ noncomputable def ofPositionSets
     (hfinite : ∀ (n : ℕ)
         (parents : Finset (RootIndexed.TreeNode Root α))
         (field : RootIndexed.StepField Root α Mark),
-      {q | q ∈ RootIndexed.childrenAtGeneration n parents field ∧
+      {q | q ∈ Combinatorics.Branching.Population.childrenAtGeneration n parents field ∧
         RootIndexed.positionAtGeneration initialPosition d (n + 1)
           q.1 q.2 field ∈ window (n + 1)}.Finite) :
     RootIndexed.CausalPopulation

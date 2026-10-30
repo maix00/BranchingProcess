@@ -3,7 +3,8 @@ Copyright (c) 2026 WANG Yiyang.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
-import Probability.BranchingProcess.GaltonWatson.BranchingProperty
+import Probability.BranchingProcess.GaltonWatson.Generation
+import Probability.BranchingProcess.Offspring.FieldLaw
 import Probability.BranchingProcess.Offspring.PointMeasure
 import Probability.BranchingRandomWalk.Genealogy.GaltonWatson
 import Combinatorics.BranchingWalk.StepField
@@ -65,8 +66,10 @@ example : ProbabilityMeasure (Combinatorics.Branching.Process Unit) :=
 example (μ : ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw Unit PUnit.{1}) :
     iIndepFun
       (fun u (field : Combinatorics.Branching.StepField Unit PUnit.{1}) => field u)
-      (μ.fieldLaw : Measure (Combinatorics.Branching.StepField Unit PUnit.{1})) :=
-  ProbabilityTheory.BranchingProcess.GaltonWatson.field_independent μ
+      (μ.fieldLaw : Measure (Combinatorics.Branching.StepField Unit PUnit.{1})) := by
+  rw [ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw.fieldLaw_toMeasure]
+  exact ProbabilityTheory.BranchingProcess.offspringFieldLaw_independent
+    (μ : Measure (Combinatorics.Branching.Step Unit PUnit.{1}))
 
 example (μ : ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw Unit PUnit.{1}) :
     ((ProbabilityTheory.BranchingProcess.GaltonWatson.law μ :
@@ -77,16 +80,16 @@ example (μ : ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw Unit 
   ProbabilityTheory.BranchingProcess.GaltonWatson.law_stepField μ
 
 example (β : Combinatorics.Branching.Process Unit) : β.generationSize 0 = 1 :=
-  Combinatorics.Branching.RootIndexed.BranchingWalk.generationSize_zero β
+  Combinatorics.Branching.BranchingWalk.generationSize_zero β
 
 example : emptyProcess.generationSize 1 = 0 := by
-  rw [Combinatorics.Branching.RootIndexed.BranchingWalk.generationSize_one_eq_childCount]
+  rw [Combinatorics.Branching.BranchingWalk.generationSize_one_eq_childCount]
   simp [emptyProcess, emptyField, emptyConfiguration,
     Combinatorics.Branching.Step.childCount,
     Combinatorics.Branching.support, Combinatorics.Branching.survive]
 
 example : fullProcess.generationSize 1 = ⊤ := by
-  rw [Combinatorics.Branching.RootIndexed.BranchingWalk.generationSize_one_eq_childCount]
+  rw [Combinatorics.Branching.BranchingWalk.generationSize_one_eq_childCount]
   simp [fullProcess, fullField, Combinatorics.Branching.Step.childCount,
     Combinatorics.Branching.support, Combinatorics.Branching.survive]
 
@@ -178,7 +181,7 @@ example {ι Mark : Type*} [MeasurableSpace Mark]
   Combinatorics.Branching.stepPointMeasure_univ ξ
 
 #print axioms
-  Combinatorics.Branching.RootIndexed.BranchingWalk.generationSize_one_eq_childCount
+  Combinatorics.Branching.BranchingWalk.generationSize_one_eq_childCount
 
 #print axioms
   ProbabilityTheory.BranchingProcess.GaltonWatson.generationSize_one_law

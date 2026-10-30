@@ -4,26 +4,51 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Coupling.Field.Ranked.Measurability.Past
+module
+
+public import Mathlib.MeasureTheory.MeasurableSpace.Defs
+public import Combinatorics.UlamHarris.Basic
+public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Field.Basic
+public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Field.Filtration
+public import Probability.BranchingRandomWalk.Coupling.Field.Ranked.Basic
+public import Probability.BranchingRandomWalk.Coupling.Field.Ranked.Core
+import all Probability.BranchingRandomWalk.Coupling.Field.Ranked.Measurability.Lemmas.Past
 
 /-!
-# Filtration measurability of the recursive matched field
+# Generation-domain measurability of the recursive matched field
 
 The stagewise matched field is measurable for its generation domain flow.
+
+## Public declarations
+
+Writing `F_n` for the installed field and `𝒟_n` for the generation domain flow,
+both declarations assert
+
+\[
+  \operatorname{Measurable}_{𝒟_n}(F_n).
+\]
+The first derives this statement from coordinate-map hypotheses at each
+`k < n`; the second assembles it for every generation.
+
+* `RootIndexed.rankInstalledField_domainFlow_measurable_of_lt` derives the
+  stage-`n` map from hypotheses for each earlier generation `k < n`.
+* `RootIndexed.rankInstalledField_domainFlow_measurable` assembles the
+  stagewise domain-flow measurability statement for every `n`.
 -/
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk.Coupling
 
-open ProbabilityTheory.BranchingRandomWalk.Selection.NSelection
 
 open Combinatorics.UlamHarris Combinatorics.Branching
-open Combinatorics.Branching.Selection.NSelection
+open _root_.Combinatorics.Selection.NSelection
 
 /-- The stage-`n` matched field is causal using only coordinate-map
 predictability at stages below `n`. -/
-theorem RootIndexed.rankInstalledField_filtration_measurable_of_lt
+theorem RootIndexed.rankInstalledField_domainFlow_measurable_of_lt
     {Root α X Value : Type*} [MeasurableSpace X]
     [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder Value]
     (sourceValue : ℕ → RootIndexed.StepField (Root ⊕ Root) α X →
@@ -63,7 +88,7 @@ theorem RootIndexed.rankInstalledField_filtration_measurable_of_lt
 
 /-- Each recursive stage is a causal endomorphism of the corresponding
 generation domain. -/
-theorem RootIndexed.rankInstalledField_filtration_measurable
+theorem RootIndexed.rankInstalledField_domainFlow_measurable
     {Root α X Value : Type*} [MeasurableSpace X]
     [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder Value]
     (sourceValue : ℕ → RootIndexed.StepField (Root ⊕ Root) α X →

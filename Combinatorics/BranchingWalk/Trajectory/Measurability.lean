@@ -13,8 +13,16 @@ public import Mathlib.MeasureTheory.MeasurableSpace.Constructions
 /-!
 # Measurability of space-time trajectories
 
-The σ-algebra on `Trajectory Time X` is induced by the pair of vertex and edge
-images.  The projection back to the vertex cloud is measurable.
+## Public declarations
+
+* `Combinatorics.Branching.Trajectory.instMeasurableSpace` equips
+  `Trajectory Time X` with the σ-algebra induced by the pair of vertex and
+  edge sets.
+* `Combinatorics.Branching.Trajectory.measurable_vertexCloud` and
+  `Combinatorics.Branching.Trajectory.measurable_edges` prove measurability of
+  the two coordinate maps.
+* `Combinatorics.Branching.Trajectory.measurable_vertexSet` proves that the
+  space-time vertex set is measurable as a function of the trajectory.
 -/
 
 @[expose] public section
@@ -30,32 +38,19 @@ variable {Time X : Type*}
 /-- The coordinate σ-algebra on trajectories. -/
 instance instMeasurableSpace : MeasurableSpace (Trajectory Time X) :=
   MeasurableSpace.comap
-    (fun T : Trajectory Time X => (T.vertices, T.edges)) inferInstance
+    (fun T : Trajectory Time X => (T.vertexCloud, T.edges)) inferInstance
 
-theorem measurable_vertices :
-    Measurable (fun T : Trajectory Time X => T.vertices) :=
+theorem measurable_vertexCloud :
+    Measurable (fun T : Trajectory Time X => T.vertexCloud) :=
   measurable_fst.comp (Measurable.of_comap_le le_rfl)
 
 theorem measurable_edges :
     Measurable (fun T : Trajectory Time X => T.edges) :=
   measurable_snd.comp (Measurable.of_comap_le le_rfl)
 
-theorem measurable_toCloud :
-    Measurable (fun T : Trajectory Time X => T.toCloud) := by
-  have hpoints : Measurable
-      (fun T : Trajectory Time X => (T.toCloud).points) := by
-    rw [measurable_pi_iff]
-    intro t
-    have hslice : Measurable
-        (fun S : Set (Time × X) => {x : X | (t, x) ∈ S}) := by
-      rw [measurable_set_iff]
-      intro x
-      change Measurable (fun S : Set (Time × X) => (t, x) ∈ S)
-      exact measurableSet_setOfPred.mp (measurableSet_mem (t, x))
-    exact hslice.comp measurable_vertices
-  exact (measurable_iff_comap_le).2 (by
-    rw [CloudSet.instMeasurableSpace, MeasurableSpace.comap_comp]
-    exact hpoints.comap_le)
+theorem measurable_vertexSet :
+    Measurable (fun T : Trajectory Time X => T.vertexCloud.vertexSet) :=
+  CloudSet.measurable_vertexSet.comp measurable_vertexCloud
 
 end Trajectory
 

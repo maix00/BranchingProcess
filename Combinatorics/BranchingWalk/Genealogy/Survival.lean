@@ -17,6 +17,43 @@ has a surviving descendant at depth `n` when some realized address has length
 `n`. Permanent survival means one infinite slot sequence has every finite
 prefix realized. Without finite branching, merely having descendants at every
 depth is weaker.
+
+## Public declarations
+
+* `Combinatorics.Branching.RootIndexed.BranchingWalk.SurvivesToGeneration`:
+  $\exists u:\operatorname{TreeNode}(\alpha),\ |u|=n\ \land\
+  \operatorname{surviveAlong}(\operatorname{step}(\operatorname{walk},r),[],u)$.
+* `Combinatorics.Branching.RootIndexed.BranchingWalk.HasArbitrarilyDeepDescendant`:
+  $\forall n,\ \operatorname{SurvivesToGeneration}(\operatorname{walk},r,n)$.
+* `Combinatorics.Branching.RootIndexed.BranchingWalk.lineagePrefix` gives the
+  length-`n` prefix of an infinite sequence of child slots.
+* `Combinatorics.Branching.RootIndexed.BranchingWalk.HasInfiniteLineage`:
+  $\exists \ell:\mathbb N\to\alpha,\ \forall n,\
+  \operatorname{surviveAlong}(\operatorname{step}(\operatorname{walk},r),[],
+  \operatorname{lineagePrefix}(\ell,n))$.
+* `Combinatorics.Branching.RootIndexed.BranchingWalk.SurvivesForever` names
+  existence of one infinite surviving lineage.
+* `Combinatorics.Branching.RootIndexed.BranchingWalk.HasInfiniteLineage.hasArbitrarilyDeepDescendant`:
+  an infinite surviving lineage gives a surviving address at every depth.
+* `Combinatorics.Branching.RootIndexed.BranchingWalk.hasArbitrarilyDeepDescendant_iff_hasInfiniteLineage`:
+  if every surviving prefix $u$ below the specified root has finitely many
+  surviving children, then descendants at every depth are equivalent to an
+  infinite surviving lineage. This specializes Mathlib's inverse-system form
+  of Kőnig's infinity lemma,
+  `Mathlib.Order.KonigLemma.exists_seq_forall_proj_of_forall_finite`, by Peter
+  Nelson at the pinned revision
+  [380f2aafb622cb2c1c93dac545b6389083c68c51](https://github.com/leanprover-community/mathlib4/blob/380f2aafb622cb2c1c93dac545b6389083c68c51/Mathlib/Order/KonigLemma.lean).
+* `Combinatorics.Branching.RootIndexed.BranchingWalk.hasInfiniteLineage_iff_forall_survivesToGeneration`:
+  for finite $\alpha$, $\operatorname{HasInfiniteLineage}(\operatorname{walk},\star)$
+  is equivalent to $\forall n,\operatorname{SurvivesToGeneration}(\operatorname{walk},\star,n)$.
+* `Combinatorics.Branching.BranchingWalk.SurvivesForever` specializes permanent
+  survival to a single-root branching walk.
+* `Combinatorics.Branching.Walk.survivesForever_iff_survivesEveryGeneration`:
+  $\operatorname{SurvivesForever}(\operatorname{walk})\ \leftrightarrow\
+  \forall n,\operatorname{surviveAlong}(\operatorname{step}(\operatorname{walk},\star),[],\operatorname{lineNode}(n))$.
+* `Combinatorics.Branching.Walk.ofIncrements_survivesForever` states that every
+  increment path defines a walk satisfying
+  $\operatorname{SurvivesForever}(\operatorname{ofIncrements}(x,\xi))$.
 -/
 
 @[expose] public section
@@ -76,12 +113,21 @@ theorem HasInfiniteLineage.hasArbitrarilyDeepDescendant
     | succ n ih => simp [lineagePrefix, ih]
   exact ⟨lineagePrefix lineage n, hlen, hlineage n⟩
 
-/-- In a finitely branching walk, unbounded tree height yields one infinite
-surviving lineage (König's lemma). -/
+/-- In a walk whose surviving prefixes have finitely many children, descendants
+at every depth yield one infinite surviving lineage.
+
+This is an instance of Peter Nelson's inverse-system form of Kőnig's infinity
+lemma, `Mathlib.Order.KonigLemma.exists_seq_forall_proj_of_forall_finite`:
+the levels are the surviving addresses of each length, the projections take
+finite prefixes, and each projection fiber consists of the finitely many
+possible one-step extensions. See the
+[pinned Mathlib source](https://github.com/leanprover-community/mathlib4/blob/380f2aafb622cb2c1c93dac545b6389083c68c51/Mathlib/Order/KonigLemma.lean).
+-/
 theorem hasArbitrarilyDeepDescendant_iff_hasInfiniteLineage
     {Root α Mark Position : Type*}
     (walk : RootIndexed.BranchingWalk Root α Mark Position) (root : Root)
-    (hfinite : ∀ r u, {i : α | survive (walk.step r u) i}.Finite) :
+    (hfinite : ∀ u, surviveAlong (walk.step root) [] u →
+      {i : α | survive (walk.step root u) i}.Finite) :
     walk.HasArbitrarilyDeepDescendant root ↔ walk.HasInfiniteLineage root := by
   classical
   constructor
@@ -125,7 +171,7 @@ theorem hasArbitrarilyDeepDescendant_iff_hasInfiniteLineage
         {v : Level (i + 1) | project (Nat.le_add_right i 1) v = u}.Finite := by
       intro i u
       let children : Set α := {j | survive (step u.1) j}
-      have hchildren : children.Finite := hfinite root u.1
+      have hchildren : children.Finite := hfinite u.1 u.2.2
       apply Set.Finite.of_injOn
         (f := fun v : Level (i + 1) => v.1[i]'(by rw [v.2.1]; omega))
         (s := {v : Level (i + 1) | project (Nat.le_add_right i 1) v = u})

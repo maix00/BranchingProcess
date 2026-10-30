@@ -9,15 +9,27 @@ module
 public import Mathlib.Probability.IdentDistrib
 public import Mathlib.Probability.Independence.Process.HasIndepIncrements.Basic
 public import Mathlib.Topology.Algebra.Group.Defs
+public import Probability.Process.StationaryIncrements.Basic
 public import Topology.Cadlag.Basic
 
 /-!
 # Lévy processes
 
-The process-level interfaces use Mathlib's convention `Time → Ω → State`.
-This file defines real-time Lévy processes with an abstract topological
-additive-group state space. Stable increment laws are a specialization in
-`Probability.Process.Stable`.
+## Public declarations
+
+- `ProbabilityTheory.IsLevyProcess`: a real-time process $X$ starts at zero
+  almost surely, has independent and stationary increments, and has càdlàg
+  paths almost surely.
+- `ProbabilityTheory.IsLevyProcess.ae_start_eq_zero`:
+  $X_0=0$ almost surely.
+- `ProbabilityTheory.IsLevyProcess.indepIncrements`:
+  $X$ has independent increments.
+- `ProbabilityTheory.IsLevyProcess.stationaryIncrements`:
+  increments over intervals of equal length have the same law.
+- `ProbabilityTheory.IsLevyProcess.ae_cadlag`:
+  sample paths of $X$ are càdlàg almost surely.
+
+Stable increment laws are specialized in `Probability.Process.Stable`.
 -/
 
 open MeasureTheory
@@ -28,14 +40,6 @@ open scoped NNReal
 namespace ProbabilityTheory
 
 variable {Ω : Type*} [MeasurableSpace Ω]
-
-/-- A real-time process has stationary increments when every increment over
-an interval of length `t` has the same law as its increment over `[0,t]`. -/
-def HasStationaryIncrements {E : Type*} [MeasurableSpace E] [Sub E]
-    (X : ℝ≥0 → Ω → E) (P : Measure Ω) : Prop :=
-  ∀ s t : ℝ≥0,
-    IdentDistrib (fun ω => X (s + t) ω - X s ω)
-      (fun ω => X t ω - X 0 ω) P P
 
 /-- A real-time Lévy process with values in a topological additive group:
 it starts at zero, has stationary independent increments, and has almost

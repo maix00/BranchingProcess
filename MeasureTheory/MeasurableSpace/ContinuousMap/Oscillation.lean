@@ -12,6 +12,13 @@ public import Topology.ContinuousMap.Oscillation
 /-!
 # Measurability of continuous-path oscillation sets
 
+## Public declarations
+
+* `ContinuousMap.measurableSet_rangeOscillationSet`: the set of paths with
+  range diameter at most `width` is measurable.
+* `ContinuousMap.measurableSet_startsAtZeroSet`: the paths whose value at
+  time zero is zero form a measurable set.
+
 -/
 
 @[expose] public section

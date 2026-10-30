@@ -15,6 +15,15 @@ public import Probability.Process.RandomWalk.Path.Basic
 A history of length `n` records positions at times `0, ..., n`. The generic
 increment-path history is `history`; this file relates it to paths
 inside a branching realization.
+
+## Public declarations
+
+- `pathHistory`: the real positions at times $0,\ldots,n$ along a branching
+  address, including its initial position.
+- `pathHistory_last`, `pathHistory_measurable`,
+  `pathHistory_joint_measurable`, and `pathHistory_cons`: identify the endpoint,
+  prove measurability in the field and initial position, and give the
+  one-step recursive decomposition.
 -/
 
 open MeasureTheory

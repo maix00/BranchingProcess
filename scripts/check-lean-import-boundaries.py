@@ -15,7 +15,7 @@ ENTRY_MODULES = (
     "Probability.Process.Stable.SmallDeviation.BlockBounds",
     "Probability.Process.Stable.SmallDeviation.Blocks.Upper.ArbitraryHorizon",
     "Probability.Process.Stable.SmallDeviation.EndpointComparison",
-    "Probability.Process.Stable.SmallDeviation.EscapeRate",
+    "Probability.Process.Stable.SmallDeviation.EscapeRate.Basic",
     "Probability.Process.Stable.SmallDeviation.EscapeRate.Corridor",
     "Probability.Process.Stable.SmallDeviation.EscapeRate.Endpoint",
     "Probability.Process.Stable.SmallDeviation.EscapeRate.Law",
@@ -24,8 +24,8 @@ FORBIDDEN_PREFIXES = (
     "Probability.Process.Stable.JumpModel",
     "Probability.Process.Stable.SmallDeviation.Blocks.ShiftComparison",
     "Probability.Process.Stable.SmallDeviation.Blocks.Lower.Feedback",
-    "Probability.Process.Stable.SmallDeviation.Blocks.Lower.PathSupport",
-    "Probability.Process.Path.Skorokhod.Corridor.Support",
+    "Probability.Process.Stable.SmallDeviation.Blocks.Lower.Entrance.PathSupport",
+    "Probability.Process.Path.Representation.Skorokhod.Corridor.Support",
 )
 FEEDBACK_MODULE_STEM = (
     "Probability.Process.Stable.SmallDeviation.Blocks.Lower.Feedback"
@@ -50,27 +50,53 @@ GENERAL_LAYER_BOUNDARIES = {
         "Probability.BranchingProcess",
         "Probability.BranchingRandomWalk",
     ),
-    "Probability.Sequence.IID.StoppingTime": (
+    "Probability.Sequence.IID.Blocks.StoppingTime": (
         "Algebra.BigOperators.AdditivePath",
         "Probability.Process.RandomWalk",
         "Probability.BranchingProcess",
         "Probability.BranchingRandomWalk",
     ),
-    "Probability.Sequence.IID.Filtration": (
+    "Probability.Sequence.IndependentPrefix": (
         "Probability.Process.RandomWalk",
         "Probability.BranchingProcess",
         "Probability.BranchingRandomWalk",
     ),
-    "Analysis.Asymptotics.Scale": (
+    "Probability.Sequence.IID.Blocks.Prefix": (
+        "Algebra.BigOperators.AdditivePath",
+        "Algebra.Order.BigOperators.AdditivePath",
+        "Probability.Process.RandomWalk",
+        "Probability.BranchingProcess",
+        "Probability.BranchingRandomWalk",
+    ),
+    "Probability.Sequence.IID.Blocks.Consecutive": (
+        "Algebra.BigOperators.AdditivePath",
+        "Algebra.Order.BigOperators.AdditivePath",
+        "Probability.Process.RandomWalk",
+        "Probability.BranchingProcess",
+        "Probability.BranchingRandomWalk",
+    ),
+    "Analysis.Asymptotics.Scale.Basic": (
         "Probability",
     ),
-    "Analysis.Asymptotics.InverseScale": (
+    "Analysis.Asymptotics.Scale.Inverse.Basic": (
         "Probability",
     ),
-    "Analysis.Asymptotics.BlockScale": (
+    "Analysis.Asymptotics.Scale.Inverse.LevelMultiplicity": (
         "Probability",
     ),
-    "MeasureTheory.Measure.LevyMeasure": (
+    "Analysis.Asymptotics.Scale.Inverse.Superquadratic": (
+        "Probability",
+    ),
+    "Analysis.Asymptotics.Scale.Block.Length": (
+        "Probability",
+    ),
+    "Analysis.Asymptotics.Scale.Block.Partition": (
+        "Probability",
+    ),
+    "Analysis.Asymptotics.Scale.Block.Count": (
+        "Probability",
+    ),
+    "MeasureTheory.Measure.Levy.Basic": (
         "Probability",
     ),
     "MeasureTheory.Measure.CharacteristicFunction.Convolution": (
@@ -79,7 +105,7 @@ GENERAL_LAYER_BOUNDARIES = {
     "MeasureTheory.Measure.CharacteristicFunction.PositiveDefinite": (
         "Probability",
     ),
-    "Topology.Cadlag.Skorokhod.PathClass.StepCorridor.Boundary": (
+    "Topology.Cadlag.Skorokhod.PathClass.StepCorridor.Boundary.Basic": (
         "Probability.Process.RandomWalk",
         "Probability.BranchingRandomWalk",
         "Probability.Process.Stable",
@@ -117,7 +143,7 @@ GENERAL_LAYER_BOUNDARIES = {
     "Topology.Order.UnitInterval.Rational": (
         "Probability",
     ),
-    "Topology.Cadlag.TerminalLeft": (
+    "Topology.Cadlag.Skorokhod.Path.TerminalLeft": (
         "Probability",
     ),
     "MeasureTheory.MeasurableSpace.CadlagPath.TerminalLeft": (
@@ -147,7 +173,7 @@ GENERAL_LAYER_BOUNDARIES = {
     "MeasureTheory.MeasurableSpace.ContinuousMap.Oscillation": (
         "Probability",
     ),
-    "MeasureTheory.Measure.ContinuousMap.Oscillation": (
+    "MeasureTheory.Measure.ContinuousMap.RangeOscillation": (
         "Probability",
     ),
     "Probability.ConvergenceInDistribution.ContinuousMap.Corridor": (
@@ -162,7 +188,7 @@ GENERAL_LAYER_BOUNDARIES = {
     "MeasureTheory.Measure.ContinuousMap.Tightness.Criteria": (
         "Probability",
     ),
-    "MeasureTheory.Measure.Recurrence.BlockBounds": (
+    "Algebra.Order.Monoid.Recurrence": (
         "Probability",
     ),
     "Probability.ConvergenceInDistribution.ContinuousMap.FiniteDimensional": (
@@ -227,26 +253,26 @@ GENERAL_LAYER_BOUNDARIES = {
         "Probability.BranchingRandomWalk",
         "Combinatorics.BranchingWalk",
     ),
-    "Probability.Distributions.Poisson.Basic": (
+    "Probability.Distributions.Poisson.Moments": (
         "Probability.RandomMeasure",
         "Probability.Process",
         "Probability.BranchingProcess",
         "Probability.BranchingRandomWalk",
         "Combinatorics.BranchingWalk",
     ),
-    "Probability.RandomMeasure.Poisson.PointFamily": (
+    "Probability.RandomMeasure.Poisson.PointFamily.Basic": (
         "Probability.Process.Levy",
         "Probability.Process.Stable",
         "Probability.BranchingProcess",
         "Probability.BranchingRandomWalk",
     ),
-    "Probability.RandomMeasure.Poisson.Basic": (
+    "Probability.RandomMeasure.Poisson.RandomMeasure.Basic": (
         "Probability.Process.Levy",
         "Probability.Process.Stable",
         "Probability.BranchingProcess",
         "Probability.BranchingRandomWalk",
     ),
-    "Probability.RandomMeasure.Poisson.Integral": (
+    "Probability.RandomMeasure.Poisson.Integration.Integral": (
         "Probability.Process.Levy",
         "Probability.Process.Stable",
         "Probability.BranchingProcess",
@@ -295,7 +321,7 @@ ADDITIVE_PATH_FORBIDDEN_PREFIXES = (
 )
 LEAN_IMPORT_PARSER = Path(__file__).resolve().with_name("parse_lean_imports.lean")
 MODULE_SYSTEM_REQUIRED_MODULES = (
-    "Probability.Process.Stable.SmallDeviation.EscapeRate",
+    "Probability.Process.Stable.SmallDeviation.EscapeRate.Basic",
     "Probability.Process.Stable.SmallDeviation.EscapeRate.PathLaw.Basic",
     "Probability.Process.Stable.SmallDeviation.EscapeRate.PathLaw.Transfer",
 )

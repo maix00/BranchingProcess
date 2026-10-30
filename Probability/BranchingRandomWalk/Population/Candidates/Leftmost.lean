@@ -17,6 +17,25 @@ proves the rank and selected set are measurable when the finite candidate set
 is fixed, together with the cardinality and nonemptiness bounds. The
 random-candidate composition is a separate step. Only the linear order and the
 additive structure of the position type are used, so it is a parameter.
+
+## Public declarations
+
+- `ProbabilityTheory.BranchingRandomWalk.earlierCandidates` is
+  $\{p\in s:p\prec q\}$, where $p\prec q$ is the position/address order
+  from `Candidates/Ordering.lean`.
+- `ProbabilityTheory.BranchingRandomWalk.finiteLeftmost` selects those
+  $q\in s$ with $|\{p\in s:p\prec q\}|<N$;
+  `ProbabilityTheory.BranchingRandomWalk.finiteLeftmostAtGeneration` first restricts $s$ to addresses of generation
+  $n$ and then applies this selector.
+- `ProbabilityTheory.BranchingRandomWalk.earlierCandidates_measurable`, `ProbabilityTheory.BranchingRandomWalk.finiteLeftmost_measurable`, and
+  `ProbabilityTheory.BranchingRandomWalk.finiteLeftmostAtGeneration_fixed_measurable` give the corresponding
+  domain-flow measurability for a fixed finite candidate set of the stated
+  generation.
+- `ProbabilityTheory.BranchingRandomWalk.finiteLeftmost_subset`, `ProbabilityTheory.BranchingRandomWalk.finiteLeftmost_card_le`, and
+  `ProbabilityTheory.BranchingRandomWalk.finiteLeftmost_nonempty` state, respectively, that the selection lies in
+  $s$, has cardinality at most $N$, and is nonempty when $N>0$ and $s$ is
+  nonempty.
+
 -/
 
 open MeasureTheory

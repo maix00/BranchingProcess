@@ -6,14 +6,23 @@ Authors: WANG Yiyang
 
 module
 
-public import Topology.Cadlag.Skorokhod.TimeChange.FinitePartition.SecantSlope
+public import Topology.Cadlag.Skorokhod.TimeChange.FinitePartition.Homeomorph
 public import Topology.Cadlag.Skorokhod.TimeChange.LogDistortion
+import all Topology.Cadlag.Skorokhod.TimeChange.FinitePartition.Lemmas.SecantSlope
 
 /-!
 # Logarithmic distortion of finite-partition clocks
 
 Piecewise-affine clocks matching two close finite partitions have small
 logarithmic distortion.
+
+## Public declarations
+
+- `ofMatchingPartitions_logDistortion_le`: if corresponding knots are within
+  $\delta$, every target cell has length at least $m>0$, and
+  $0\le\delta<m/8$, then the matching clock satisfies
+  $\operatorname{logDistortion}(\tau)\le\operatorname{ENNReal.ofReal}(\max\{
+  \log(1+4\delta/m),-\log(1-4\delta/m)\})$.
 -/
 
 @[expose] public section

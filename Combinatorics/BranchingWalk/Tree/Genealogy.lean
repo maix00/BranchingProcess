@@ -8,15 +8,30 @@ module
 
 public import Combinatorics.Branching.Tree.Basic
 public import Combinatorics.Branching.Basic
-public import Combinatorics.BranchingWalk.Basic.SiblingClosed
+public import Combinatorics.BranchingWalk.Basic.Sibling.Closed
 public import Combinatorics.Branching.Map
 
 /-!
 # Branching trees and branching walks
 
+## Public declarations
+
 A branching tree embeds into a branching walk with unit marks. Conversely,
 the genealogy of a sibling-closed branching walk is a branching tree. This is
 the deterministic seam between pure and spatial branching.
+
+The public API is:
+
+- `Tree.stepField T` records a child at slot `i` exactly when `u ++ [i]` is
+  in the carrier of `T`; `Tree.survive_stepField_iff` states this equivalence.
+- `Tree.surviveAlong_stepField_iff` identifies survival along an address
+  from the root with membership of that address in `T`.
+- `Tree.toBranching T` represents `T` as a one-root branching process whose
+  marks are `PUnit.unit`.
+- `RootIndexed.BranchingWalk.genealogicalTree` constructs a tree from the
+  surviving addresses of one root, assuming the step field is sibling-closed.
+- `Tree.genealogicalTree_toBranching` proves that a tree is recovered from
+  the genealogical tree of its associated branching process.
 -/
 
 @[expose] public section
@@ -53,7 +68,7 @@ noncomputable def Tree.toBranching (T : Tree α) :
 
 def RootIndexed.BranchingWalk.genealogicalTree
     {Root : Type*} (β : RootIndexed.BranchingWalk Root α Mark Position) (r : Root)
-    (hclosed : IsSiblingClosed (β.step r)) : Tree α where
+    (hclosed : StepField.IsSiblingClosed (β.step r)) : Tree α where
   carrier := {u | surviveAlong (β.step r) [] u}
   root_mem := by
     change surviveAlong (β.step r) [] []
@@ -69,10 +84,10 @@ def RootIndexed.BranchingWalk.genealogicalTree
     exact ⟨hj.1, Step.IsSiblingClosed.survive_of_lt (hclosed u) hij hj.2⟩
 
 theorem Tree.genealogicalTree_toBranching (T : Tree α) :
-    ∃ hclosed : IsSiblingClosed
+    ∃ hclosed : StepField.IsSiblingClosed
         (T.toBranching.step PUnit.unit.{1}),
       T.toBranching.genealogicalTree PUnit.unit.{1} hclosed = T := by
-  let hclosed : IsSiblingClosed (T.toBranching.step PUnit.unit.{1}) := by
+  let hclosed : StepField.IsSiblingClosed (T.toBranching.step PUnit.unit.{1}) := by
     intro u i j hij hi
     by_contra hj
     have hjSurvive : survive (T.stepField u) j :=

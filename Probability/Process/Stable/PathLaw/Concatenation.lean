@@ -9,7 +9,7 @@ module
 public import Mathlib.Probability.Independence.InfinitePi
 public import Mathlib.Data.Finset.Sort
 public import Probability.Process.Stable.PathLaw.UnitInterval
-public import Probability.Process.RandomWalk.FunctionalLimit.Stable.PathFiniteDimensionalSource
+public import Probability.Process.RandomWalk.FunctionalLimit.Stable.PathLaw.WalkGrid
 public import Topology.Cadlag.Concatenation
 
 /-!
@@ -19,6 +19,39 @@ This file constructs the canonical probability space of iid unit-interval
 path blocks and the càdlàg process obtained by concatenating them. It also
 records the unit-interval consistency interface needed for the converse
 direction from a unit-time path law.
+
+The public constructions are `ProbabilityTheory.iidUnitPathBlockLaw`, the
+countable product of copies of a unit-interval path law, and
+`ProbabilityTheory.iidUnitPathBlockProcess`, their concatenation on
+nonnegative time. The instance
+`ProbabilityTheory.iidUnitPathBlockLaw_isProbabilityMeasure` makes the
+product law a probability measure when each block law is one. The public
+results are:
+
+- `ProbabilityTheory.iidUnitPathBlockProcess_ae_cadlag`:
+  the concatenated process is almost surely càdlàg.
+- `ProbabilityTheory.measurable_iidUnitPathBlockProcess_eval`:
+  each fixed-time evaluation is measurable.
+- `ProbabilityTheory.iidUnitPathBlockProcess_ae_start_eq_zero` and
+  `ProbabilityTheory.iidUnitPathBlockLaw_ae_blocks_start_eq_zero`:
+  a stable-clock block law starting at zero gives a concatenated process and
+  blocks starting at zero almost surely.
+- `ProbabilityTheory.iidUnitPathBlockProcess_unitIntervalPathLaw_eq`:
+  the first unit-interval segment has the prescribed block law.
+- `ProbabilityTheory.iidUnitPathBlockProcess_integer_increments_hasLaw_pi`:
+  increments over integer time intervals have the corresponding product law.
+- `ProbabilityTheory.isStableClockProcessLaw_of_unitInterval_positionGridLaws`:
+  consistent stable position-grid laws determine a full stable-clock process
+  law.
+## Public declarations
+
+The public construction takes the countable product of a unit-interval path
+law and concatenates its independent blocks on $[0,\infty)$. It proves the
+result is almost surely càdlàg, identifies each unit block with the input law,
+and gives the product law of increments over integer intervals. The final
+construction theorem recovers a full stable-clock path law from consistent
+unit-interval position-grid laws; grid-factorization details remain private.
+
 -/
 
 @[expose] public section
@@ -60,7 +93,7 @@ theorem measurable_iidUnitPathBlockProcess_eval
     Measurable (fun ω : ℕ → CadlagPath unitInterval ℝ =>
       iidUnitPathBlockProcess ω t) := by
   let n := Nat.floor (t : ℝ)
-  let u := Topology.unitBlockParameter n t
+  let u := unitInterval.blockParameter n t
   have hblock (i : ℕ) (v : unitInterval) :
       Measurable (fun ω : ℕ → CadlagPath unitInterval ℝ => ω i v) := by
     exact (Skorokhod.measurable_apply v).comp (measurable_pi_apply i)
@@ -74,7 +107,7 @@ theorem measurable_iidUnitPathBlockProcess_eval
 theorem iidUnitPathBlockProcess_ae_start_eq_zero
     {α : ℝ} {μ : Measure ℝ} {P : Measure (CadlagPath unitInterval ℝ)}
     [IsProbabilityMeasure P]
-    (hP : IsStableClockProcessLaw α μ UnitInterval.clock P) :
+    (hP : IsStableClockProcessLaw α μ unitInterval.clock P) :
     ∀ᵐ ω ∂iidUnitPathBlockLaw P,
       iidUnitPathBlockProcess ω 0 = 0 := by
   have hblocks : ∀ᵐ ω ∂iidUnitPathBlockLaw P, ∀ n : ℕ, ω n ⊥ = 0 := by
@@ -94,16 +127,16 @@ theorem iidUnitPathBlockProcess_ae_start_eq_zero
   rw [hfloor]
   simp only [Topology.unitBlockEndpointSum, Finset.range_zero,
     Finset.sum_empty, zero_add]
-  have hu : Topology.unitBlockParameter 0 (0 : ℝ≥0) = ⊥ := by
+  have hu : unitInterval.blockParameter 0 (0 : ℝ≥0) = ⊥ := by
     apply Subtype.ext
-    simp [Topology.unitBlockParameter]
+    simp [unitInterval.blockParameter]
   rw [hu]
   apply hω 0
 
 theorem iidUnitPathBlockLaw_ae_blocks_start_eq_zero
     {α : ℝ} {μ : Measure ℝ} {P : Measure (CadlagPath unitInterval ℝ)}
     [IsProbabilityMeasure P]
-    (hP : IsStableClockProcessLaw α μ UnitInterval.clock P) :
+    (hP : IsStableClockProcessLaw α μ unitInterval.clock P) :
     ∀ᵐ ω ∂iidUnitPathBlockLaw P, ∀ n : ℕ, ω n ⊥ = 0 := by
   rw [ae_all_iff]
   intro n
@@ -118,22 +151,22 @@ theorem iidUnitPathBlockLaw_ae_blocks_start_eq_zero
 theorem iidUnitPathBlockProcess_unitIntervalPathLaw_eq
     {α : ℝ} {μ : Measure ℝ} {P : Measure (CadlagPath unitInterval ℝ)}
     [IsProbabilityMeasure P]
-    (hP : IsStableClockProcessLaw α μ UnitInterval.clock P) :
+    (hP : IsStableClockProcessLaw α μ unitInterval.clock P) :
     Process.Path.Cadlag.pathLaw (iidUnitPathBlockLaw P)
-      (fun t ω => iidUnitPathBlockProcess ω (UnitInterval.toNNReal t))
+      (fun t ω => iidUnitPathBlockProcess ω (unitInterval.toNNReal t))
       (fun t => (measurable_iidUnitPathBlockProcess_eval P
-        (UnitInterval.toNNReal t)).aemeasurable) = P := by
+        (unitInterval.toNNReal t)).aemeasurable) = P := by
   let Q := iidUnitPathBlockLaw P
   let X : unitInterval → (ℕ → CadlagPath unitInterval ℝ) → ℝ :=
-    fun t ω => iidUnitPathBlockProcess ω (UnitInterval.toNNReal t)
+    fun t ω => iidUnitPathBlockProcess ω (unitInterval.toNNReal t)
   have hXmeas : ∀ t, AEMeasurable (X t) Q := by
     intro t
     exact (measurable_iidUnitPathBlockProcess_eval P
-      (UnitInterval.toNNReal t)).aemeasurable
+      (unitInterval.toNNReal t)).aemeasurable
   have hcadlag : ∀ᵐ ω ∂Q, IsCadlag (fun t : unitInterval => X t ω) := by
     filter_upwards [iidUnitPathBlockProcess_ae_cadlag P] with ω hω
     exact hω.comp_monotone_continuous (fun _ _ h => h)
-      UnitInterval.continuous_toNNReal
+      unitInterval.toNNReal_continuous
   have hmapEq : Process.Path.Cadlag.pathMap X =ᵐ[Q]
       fun ω => ω 0 := by
     filter_upwards [iidUnitPathBlockLaw_ae_blocks_start_eq_zero hP, hcadlag]
@@ -152,7 +185,7 @@ theorem iidUnitPathBlockProcess_unitIntervalPathLaw_eq
         (fun q : RationalCoordinate.UnitInterval =>
           X (RationalCoordinate.toUnitInterval q) ω) = p
       rw [hcoords]
-      exact Process.Path.Cadlag.rationalEvaluationEmbedding.injective.extend_apply
+      exact Skorokhod.measurableEmbedding_rationalEvaluation.injective.extend_apply
         _ _ _
     have hpfirst : p = ω 0 := by
       apply CadlagPath.ext
@@ -167,7 +200,7 @@ theorem iidUnitPathBlockProcess_unitIntervalPathLaw_eq
     hPath.map_eq
   simpa [Q, X] using hPathLaw
 
-private theorem iidUnitPathBlockProcess_nat_eval
+private lemma iidUnitPathBlockProcess_nat_eval
     (ω : ℕ → CadlagPath unitInterval ℝ)
     (hstarts : ∀ n, ω n ⊥ = 0) (n : ℕ) :
     iidUnitPathBlockProcess ω n = ∑ i ∈ Finset.range n, ω i ⊤ := by
@@ -177,9 +210,9 @@ private theorem iidUnitPathBlockProcess_nat_eval
     change Nat.floor (n : ℝ) = n
     exact Nat.floor_natCast n
   rw [hfloor]
-  have hparam : Topology.unitBlockParameter n (n : ℝ≥0) = ⊥ := by
+  have hparam : unitInterval.blockParameter n (n : ℝ≥0) = ⊥ := by
     apply Subtype.ext
-    simp [Topology.unitBlockParameter]
+    simp [unitInterval.blockParameter]
   rw [hparam]
   simp [Topology.unitBlockEndpointSum, hstarts n]
 
@@ -188,7 +221,7 @@ vector on every finite integer-time grid. -/
 theorem iidUnitPathBlockProcess_integer_increments_hasLaw_pi
     {α : ℝ} {μ : Measure ℝ} {P : Measure (CadlagPath unitInterval ℝ)}
     [IsProbabilityMeasure P]
-    (hP : IsStableClockProcessLaw α μ UnitInterval.clock P)
+    (hP : IsStableClockProcessLaw α μ unitInterval.clock P)
     (n : ℕ) :
     HasLaw
       (fun ω (i : Fin n) =>
@@ -199,7 +232,7 @@ theorem iidUnitPathBlockProcess_integer_increments_hasLaw_pi
   let endpoint : CadlagPath unitInterval ℝ → ℝ := fun f => f ⊤ - f ⊥
   have hendpointLaw : HasLaw endpoint μ P := by
     have h := hP.increment_hasLaw (⊥ : unitInterval) ⊤ bot_le
-    simpa [endpoint, UnitInterval.clock] using h
+    simpa [endpoint, unitInterval.clock] using h
   have hendpointMeas : Measurable endpoint := by
     exact (Skorokhod.measurable_apply ⊤).sub (Skorokhod.measurable_apply ⊥)
   have hendpointIndep :
@@ -256,7 +289,7 @@ image is a strictly increasing mesh, and the original mesh factors through
 the monotone surjection assigning each point its rank in that image. This is
 an exact finite construction; in particular, it preserves a repeated final
 endpoint without a left-limit argument. -/
-private theorem exists_strict_grid_rank_factorization {n : ℕ}
+private lemma exists_strict_grid_rank_factorization {n : ℕ}
     (grid : Fin (n + 1) → unitInterval) (hgrid : Monotone grid)
     (hstart : grid 0 = ⊥) :
     ∃ (m : ℕ) (strictGrid : Fin (m + 1) → unitInterval)
@@ -317,7 +350,7 @@ private theorem exists_strict_grid_rank_factorization {n : ℕ}
 /-- Adjacent indices in the compressed mesh are either the same rank or
 successive ranks. Surjectivity is essential: a gap would be an omitted mesh
 point that nevertheless occurs in the original grid. -/
-private theorem rank_succ_val_le_add_one {n m : ℕ}
+private lemma rank_succ_val_le_add_one {n m : ℕ}
     (rank : Fin (n + 1) → Fin (m + 1)) (hrankMono : Monotone rank)
     (hrankSurj : Function.Surjective rank) (i : Fin n) :
     (rank i.succ).val ≤ (rank i.castSucc).val + 1 := by
@@ -353,18 +386,18 @@ private def unitGridDifference {n : ℕ} :
     (Fin (n + 1) → ℝ) → (Fin n → ℝ) :=
   fun x i => x i.succ - x i.castSucc
 
-private theorem measurable_unitGridDifference {n : ℕ} :
+private lemma measurable_unitGridDifference {n : ℕ} :
     Measurable (@unitGridDifference n) := by
   apply measurable_pi_iff.mpr
   intro i
   exact (measurable_pi_apply i.succ).sub (measurable_pi_apply i.castSucc)
 
-private theorem unitGridDifference_partialSum {n : ℕ} :
+private lemma unitGridDifference_partialSum {n : ℕ} :
     (unitGridDifference ∘ (Fin.partialSum : (Fin n → ℝ) → Fin (n + 1) → ℝ)) = id := by
   funext x i
   simp [unitGridDifference, Fin.partialSum_succ]
 
-private theorem unitGrid_increments_hasLaw_of_positionLaw
+private lemma unitGrid_increments_hasLaw_of_positionLaw
     {α : ℝ} {μ : Measure ℝ} {P : Measure (CadlagPath unitInterval ℝ)}
     [hμ : IsProbabilityMeasure μ] [hP : IsProbabilityMeasure P] (n : ℕ)
     (grid : Fin (n + 1) → unitInterval) (hgrid : Monotone grid)
@@ -410,7 +443,7 @@ theorem isStableClockProcessLaw_of_unitInterval_positionGridLaws
         ((stableTimeLawProductProbability (μ := μ) α grid :
           ProbabilityMeasure (Fin n → ℝ)) : Measure (Fin n → ℝ)).map
             (Fin.partialSum : (Fin n → ℝ) → Fin (n + 1) → ℝ)) :
-    IsStableClockProcessLaw α μ UnitInterval.clock P := by
+    IsStableClockProcessLaw α μ unitInterval.clock P := by
   refine ⟨hStable, ?_, ?_, hstart, ?_, ?_⟩
   · intro s t hst
     exact_mod_cast hst

@@ -12,8 +12,20 @@ public import Mathlib.MeasureTheory.Function.L2Space
 /-!
 # Fourth moments of independent centered sums
 
-The identities here are independent of any random-walk representation.  They
-supply the elementary fourth-moment recurrence used by truncation arguments.
+The identities hold for general independent random variables.
+
+## Public declarations
+
+- `ProbabilityTheory.memLp_four_iff_integrable_pow_four`: for an
+  a.e.-strongly-measurable real random variable,
+  $X\in L^4(\mu)$ iff $\int X^4\,d\mu<\infty$.
+- `ProbabilityTheory.IndepFun.integral_add_pow_four`: for independent real
+  $X,Y\in L^4(\mu)$, expands $\int(X+Y)^4\,d\mu$ into the five terms
+  $\int X^4$, $4(\int X^3)(\int Y)$, $6(\int X^2)(\int Y^2)$,
+  $4(\int X)(\int Y^3)$, and $\int Y^4$.
+- `ProbabilityTheory.IndepFun.integral_add_pow_four_of_centered`: if in
+  addition $\int X\,d\mu=\int Y\,d\mu=0$, the expansion reduces to
+  $\int(X+Y)^4\,d\mu=\int X^4\,d\mu+6(\int X^2\,d\mu)(\int Y^2\,d\mu)+\int Y^4\,d\mu$.
 -/
 
 open MeasureTheory
@@ -41,13 +53,13 @@ theorem memLp_four_iff_integrable_pow_four {X : Ω → ℝ}
     rw [show X ω ^ 4 = (X ω ^ 2) ^ 2 by ring,
       show |X ω| ^ 4 = (|X ω| ^ 2) ^ 2 by ring, sq_abs]
 
-private theorem integrable_pow_two_of_memLp_four
+private lemma integrable_pow_two_of_memLp_four
     [IsFiniteMeasure μ] {X : Ω → ℝ} (hX : MemLp X 4 μ) :
     Integrable (fun ω => X ω ^ 2) μ := by
   have hX2 : MemLp X 2 μ := hX.mono_exponent (by norm_num)
   simpa [Real.norm_eq_abs, sq_abs] using hX2.integrable_norm_pow (by norm_num)
 
-private theorem integrable_pow_three_of_memLp_four
+private lemma integrable_pow_three_of_memLp_four
     [IsFiniteMeasure μ] {X : Ω → ℝ} (hX : MemLp X 4 μ) :
     Integrable (fun ω => X ω ^ 3) μ := by
   have hX3 : MemLp X 3 μ := hX.mono_exponent (by norm_num)
@@ -55,7 +67,7 @@ private theorem integrable_pow_three_of_memLp_four
     (hX.aestronglyMeasurable.pow 3)
     (ae_of_all μ fun ω => by simp [Real.norm_eq_abs])
 
-private theorem integrable_pow_four_of_memLp_four
+private lemma integrable_pow_four_of_memLp_four
     {X : Ω → ℝ} (hX : MemLp X 4 μ) :
     Integrable (fun ω => X ω ^ 4) μ := by
   have h := hX.integrable_norm_pow (by norm_num)

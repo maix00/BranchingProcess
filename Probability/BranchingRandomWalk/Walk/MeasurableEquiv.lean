@@ -12,6 +12,13 @@ public import Mathlib.MeasureTheory.MeasurableSpace.Embedding
 /-!
 # Measurable singleton-walk representation
 
+## Public declarations
+
+- `ProbabilityTheory.BranchingRandomWalk.Walk.measurableEquivInitialOptionalIncrements`:
+  the space of singleton-slot walks is measurably equivalent to
+  \(\mathrm{Position}\times(\mathbb N\to\mathrm{Option}(\mathrm{Mark}))\),
+  retaining absent increments after extinction.
+
 The deterministic equivalence between a singleton branching walk and its
 initial position with optional increments is measurable in both directions.
 The option-valued coordinates retain edges absent after extinction.

@@ -1,0 +1,90 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
+module
+
+public import Probability.RandomMeasure.Poisson.RandomMeasure.Basic
+import Probability.RandomMeasure.Poisson.Integration.Campbell
+import Probability.RandomMeasure.Poisson.Integration.Integral
+import Probability.RandomMeasure.Poisson.RandomMeasure.Evaluation
+public import Probability.RandomMeasure.Poisson.Integrability.FiniteActivity
+
+/-!
+# Almost-sure integrability under Poisson random measures
+
+Finite intensity makes every measurable real observable integrable against
+the realized measure almost surely; finite first moments give the same
+conclusion for σ-finite intensities.
+
+## Public declarations
+
+* `IsPoissonPointFamily.ae_lintegral_poissonRandomMeasure_lt_top` transfers
+  $\int g\,dm<\infty$ for measurable $g\geq0$ to almost-sure finiteness of
+  the realized Poisson integral.
+* `IsPoissonPointFamily.ae_lintegral_restrict_poissonRandomMeasure_lt_top`
+  gives the same conclusion on a measurable restriction.
+* `IsPoissonPointFamily.ae_integrable_poissonRandomMeasure` transfers
+  $\int |f|\,dm<\infty$ to almost-sure Bochner integrability against the
+  realized point measure.
+
+-/
+
+@[expose] public section
+
+namespace ProbabilityTheory
+
+open MeasureTheory
+
+theorem IsPoissonPointFamily.ae_lintegral_poissonRandomMeasure_lt_top
+    {Ω E : Type} [MeasurableSpace Ω] [MeasurableSpace E]
+    {K : ℕ → Ω → ℕ} {X : ℕ → ℕ → Ω → E}
+    {m : Measure E} [SigmaFinite m] [Nonempty E]
+    {P : Measure Ω} [IsProbabilityMeasure P]
+    (hd : IsPoissonPointFamily K X m P)
+    {g : E → ENNReal} (hg : Measurable g)
+    (hfinite : (∫⁻ x, g x ∂m) < ⊤) :
+    ∀ᵐ ω ∂P, (∫⁻ x, g x ∂(poissonRandomMeasure K X ω)) < ⊤ := by
+  have hm : Measurable fun ω =>
+      ∫⁻ x, g x ∂(poissonRandomMeasure K X ω) :=
+    measurable_lintegral_poissonRandomMeasure
+      hd.measurable_count hd.measurable_point hg
+  apply ae_lt_top hm
+  rw [lintegral_lintegral_poissonRandomMeasure hd hg]
+  exact hfinite.ne
+
+theorem IsPoissonPointFamily.ae_lintegral_restrict_poissonRandomMeasure_lt_top
+    {Ω E : Type} [MeasurableSpace Ω] [MeasurableSpace E]
+    {K : ℕ → Ω → ℕ} {X : ℕ → ℕ → Ω → E}
+    {m : Measure E} [SigmaFinite m] [Nonempty E]
+    {P : Measure Ω} [IsProbabilityMeasure P]
+    (hd : IsPoissonPointFamily K X m P)
+    {A : Set E} (hA : MeasurableSet A)
+    {g : E → ENNReal} (hg : Measurable g)
+    (hfinite : (∫⁻ x in A, g x ∂m) < ⊤) :
+    ∀ᵐ ω ∂P, (∫⁻ x in A, g x ∂(poissonRandomMeasure K X ω)) < ⊤ := by
+  have h := hd.ae_lintegral_poissonRandomMeasure_lt_top
+    (hg.indicator hA) (by simpa only [lintegral_indicator hA] using hfinite)
+  simpa only [lintegral_indicator hA] using h
+
+/-- A finite intensity first moment makes the realized (uncompensated)
+Poisson integral Bochner integrable almost surely. -/
+theorem IsPoissonPointFamily.ae_integrable_poissonRandomMeasure
+    {Ω E : Type} [MeasurableSpace Ω] [MeasurableSpace E]
+    {K : ℕ → Ω → ℕ} {X : ℕ → ℕ → Ω → E}
+    {m : Measure E} [SigmaFinite m] [Nonempty E]
+    {P : Measure Ω} [IsProbabilityMeasure P]
+    (hd : IsPoissonPointFamily K X m P)
+    {f : E → ℝ} (hf : Measurable f)
+    (hfinite : (∫⁻ x, ENNReal.ofReal |f x| ∂m) < ⊤) :
+    ∀ᵐ ω ∂P, Integrable f (poissonRandomMeasure K X ω) := by
+  have hfin := hd.ae_lintegral_poissonRandomMeasure_lt_top
+    (g := fun x => ENNReal.ofReal |f x|) (by fun_prop) hfinite
+  filter_upwards [hfin] with ω hω
+  refine ⟨hf.aestronglyMeasurable, ?_⟩
+  rw [hasFiniteIntegral_iff_enorm]
+  simpa only [Real.enorm_eq_ofReal_abs] using hω
+
+end ProbabilityTheory

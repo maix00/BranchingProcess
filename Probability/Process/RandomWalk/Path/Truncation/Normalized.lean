@@ -16,6 +16,15 @@ This module converts the finite-cutoff maximal inequality into a bound at a
 chosen spatial scale. The tail, truncated-second-moment, and truncation-bias
 inputs stay explicit, so stable-domain applications can supply their own
 asymptotics without assuming a global second moment.
+
+## Public declarations
+
+* `measure_blockPrefixExceedance_le_of_normalizedTruncationBounds` bounds a
+  one-block exceedance by the normalized discarded-tail and centered
+  truncated-second-moment costs, under an explicit truncation-bias margin.
+* `eventually_measure_blockPrefixExceedance_le_of_normalizedTruncationProfiles`
+  gives the eventual form when the normalized tail and variance profiles
+  converge and the bias margin eventually holds.
 -/
 
 open Filter MeasureTheory ProbabilityTheory

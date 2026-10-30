@@ -6,16 +6,19 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Sequence.IID
+public import Probability.Sequence.IID.Basic
 public import Mathlib.Probability.HasLaw
 
 /-!
 # Laws of independent sequences
 
-An independent measurable family with a common one-coordinate law has the
-canonical i.i.d. sequence law. This connects arbitrary realizations of an
-i.i.d. sequence to `iidSequenceLaw` without introducing another product-law
-construction.
+## Public declarations
+
+- `ProbabilityTheory.iIndepFun.hasLaw_iidSequenceLaw`: if each $X_n$ has law
+  $\nu$ and $(X_n)_{n\in\mathbb N}$ is independent and measurable, then the
+  sequence map $\omega\mapsto(X_n(\omega))_{n\in\mathbb N}$ has law
+  $\nu^{\mathbb N}=\texttt{iidSequenceLaw}\,\nu$.
+The proof applies Mathlib's `iIndepFun.map_fun_eq_infinitePi_map` and `HasLaw.map_eq`; this module records their common-law specialization for the repository's canonical IID sequence law.
 -/
 
 @[expose] public section

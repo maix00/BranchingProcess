@@ -6,9 +6,9 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.BranchingRandomWalk.Population.Candidates.Adapted
+public import Probability.BranchingRandomWalk.Population.Candidates.MultiRoot
 public import Combinatorics.BranchingWalk.Step.Basic
-public import Combinatorics.BranchingWalk.Step.Monotone
+public import Combinatorics.BranchingWalk.Step.Ordering.Monotone
 public import Mathlib.Data.Prod.Lex
 
 /-!
@@ -21,6 +21,24 @@ siblings are ordered correctly, and that a comparison between two candidates
 is measurable. The leftmost selection built on this order is in
 `Candidates/Leftmost.lean`. Only a linear ordered additive commutative monoid
 is used, so the position type is a parameter rather than `ℝ`.
+
+## Public declarations
+
+- `ProbabilityTheory.BranchingRandomWalk.labelledPosition` evaluates the
+  position of an addressed particle, and `ProbabilityTheory.BranchingRandomWalk.labelledPosition_child` gives the
+  additive position formula after appending a child slot.
+- `ProbabilityTheory.BranchingRandomWalk.addressTieKey` encodes parent, slot,
+  and full address; `ProbabilityTheory.BranchingRandomWalk.childAddress_tieKey_lt` orders siblings by slot.
+- `ProbabilityTheory.BranchingRandomWalk.candidateKey` is the lexicographic pair of position and tie key, while
+  `ProbabilityTheory.BranchingRandomWalk.candidateEarlier` is its strict order. The theorem
+  `ProbabilityTheory.BranchingRandomWalk.candidateEarlier_iff_key_lt` identifies these two relations, and
+  `ProbabilityTheory.BranchingRandomWalk.candidateKey_injective` shows distinct addresses have distinct keys.
+- `ProbabilityTheory.BranchingRandomWalk.labelledPosition_measurable` and `ProbabilityTheory.BranchingRandomWalk.candidateEarlier_measurableSet` prove
+  measurability of positions and pairwise candidate comparisons.
+- `ProbabilityTheory.BranchingRandomWalk.candidateEarlier_ordered_siblings` states that under the ordered-step
+  condition, every earlier realized sibling precedes a later realized
+  sibling, including when their positions tie.
+
 -/
 
 open MeasureTheory
@@ -57,9 +75,9 @@ def addressTieKey {m : ℕ} (p : RootAddress m ℕ) :
 
 theorem childAddress_tieKey_lt {m : ℕ}
     (p : RootAddress m ℕ) {i j : ℕ} (hij : i < j) :
-    addressTieKey (childAddress p i) <
-      addressTieKey (childAddress p j) := by
-  simp [addressTieKey, childAddress, Prod.Lex.lt_iff, hij]
+    addressTieKey (RootIndexed.childAddress p i) <
+      addressTieKey (RootIndexed.childAddress p j) := by
+  simp [addressTieKey, RootIndexed.childAddress, Prod.Lex.lt_iff, hij]
 
 /-- Strict rank order: position first, then the structured tie key. -/
 def candidateEarlier {m : ℕ} [AddCommMonoid X] [LinearOrder X]
@@ -94,7 +112,7 @@ theorem candidateKey_injective {m : ℕ} [AddCommMonoid X] [LinearOrder X]
 theorem labelledPosition_child {m : ℕ} [AddCommMonoid X]
     (x : Fin m → X) (ω : FiniteRootStepField m ℕ X)
     (p : RootAddress m ℕ) (j : ℕ) :
-    labelledPosition x ω (childAddress p j) =
+    labelledPosition x ω (RootIndexed.childAddress p j) =
       labelledPosition x ω p +
         value' (ω p.1 p.2) j := by
   change RootIndexed.position x id ω p.1 (p.2 ++ [j]) =
@@ -109,12 +127,13 @@ theorem candidateEarlier_ordered_siblings {m : ℕ}
     (hξ : ω p.1 p.2 ∈ orderedSteps)
     (hij : i < j)
     (hj : survive (ω p.1 p.2) j) :
-    candidateEarlier x ω (childAddress p i) (childAddress p j) := by
+    candidateEarlier x ω (RootIndexed.childAddress p i)
+      (RootIndexed.childAddress p j) := by
   have hi := Step.IsSiblingClosed.survive_of_lt hξ.1 hij hj
   have hdisp := value'_mono_of_survive
     (ω p.1 p.2) hξ.2 (Nat.le_of_lt hij) hi hj
-  have hpos : labelledPosition x ω (childAddress p i) ≤
-      labelledPosition x ω (childAddress p j) := by
+  have hpos : labelledPosition x ω (RootIndexed.childAddress p i) ≤
+      labelledPosition x ω (RootIndexed.childAddress p j) := by
     simp only [labelledPosition_child]
     simpa [add_comm] using
       (add_le_add_left hdisp (labelledPosition x ω p))

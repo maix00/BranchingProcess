@@ -6,19 +6,37 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.Path.Cadlag.MeasurableMap
+public import Probability.Process.Path.Representation.Cadlag
 public import Probability.Process.Stable.FiniteDimensional
 public import Probability.Process.Stable.Levy
-public import Probability.Process.Stable.PathLaw
-public import Topology.Cadlag.Skorokhod.Scaling
+public import Probability.Process.Stable.PathLaw.Basic
+public import Topology.Cadlag.Skorokhod.Path.Scaling
 
 /-!
 # Unit-interval path law of a stable Lévy process
+
+The public declarations are:
+
+- `ProbabilityTheory.IsStableLevyProcess.unitIntervalPathLaw`: the canonical
+  law of the process path on $[0,1]$ in càdlàg Skorokhod space.
+- `ProbabilityTheory.IsStableLevyProcess.isStableClockProcessLaw_unitIntervalPathLaw`:
+  this canonical path law has the corresponding stable clock-process law.
+- `ProbabilityTheory.IsStableClockProcessLaw.spatialScale`: scaling paths by
+  $q>0$ pushes the increment law forward by $x\mapsto qx$.
 
 An actual stable Lévy process on nonnegative time induces its canonical
 càdlàg path law on `[0,1]`. This adapter constructs that law from the process
 itself, so applications need not separately provide a compatible finite-
 horizon path-law witness.
+## Public declarations
+
+- `IsStableLevyProcess.unitIntervalPathLaw` is the law of the stable Lévy
+  process restricted to $[0,1]$ as a càdlàg Skorokhod path.
+- `isStableClockProcessLaw_unitIntervalPathLaw` proves that this law has the
+  stable clock-increment property with $c(t)=t$.
+- `IsStableClockProcessLaw.spatialScale` identifies the pushforward of path
+  scaling $f\mapsto qf$ with the corresponding increment law scaled by $q>0$.
+
 -/
 
 @[expose] public section
@@ -37,8 +55,8 @@ noncomputable def IsStableLevyProcess.unitIntervalPathLaw
     {X : ℝ≥0 → Ω → ℝ} (hX : IsStableLevyProcess α μ X Q) :
     ProbabilityMeasure (CadlagPath unitInterval ℝ) :=
   ⟨Process.Path.Cadlag.pathLaw Q
-      (fun t ω => X (UnitInterval.toNNReal t) ω)
-      (fun t => hX.increments.aemeasurable_eval (UnitInterval.toNNReal t)),
+      (fun t ω => X (unitInterval.toNNReal t) ω)
+      (fun t => hX.increments.aemeasurable_eval (unitInterval.toNNReal t)),
     inferInstance⟩
 
 /-- The restriction of a stable Lévy process to `[0,1]`, represented in
@@ -47,31 +65,31 @@ corresponding stable clock-process law. -/
 theorem IsStableLevyProcess.isStableClockProcessLaw_unitIntervalPathLaw
     {α : ℝ} {μ : Measure ℝ} {Q : Measure Ω} [IsProbabilityMeasure Q]
     {X : ℝ≥0 → Ω → ℝ} (hX : IsStableLevyProcess α μ X Q) :
-    IsStableClockProcessLaw α μ UnitInterval.clock hX.unitIntervalPathLaw := by
+    IsStableClockProcessLaw α μ unitInterval.clock hX.unitIntervalPathLaw := by
   let pathProcess : unitInterval → Ω → ℝ :=
-    fun t ω => X (UnitInterval.toNNReal t) ω
+    fun t ω => X (unitInterval.toNNReal t) ω
   let coordinates : ∀ t, AEMeasurable (pathProcess t) Q := by
     intro t
-    exact hX.increments.aemeasurable_eval (UnitInterval.toNNReal t)
+    exact hX.increments.aemeasurable_eval (unitInterval.toNNReal t)
   let pathLaw : Measure (CadlagPath unitInterval ℝ) := hX.unitIntervalPathLaw
-  have htime : Monotone UnitInterval.toNNReal := fun _ _ h => h
-  have htimeBot : UnitInterval.toNNReal ⊥ = 0 := by
+  have htime : Monotone unitInterval.toNNReal := fun _ _ h => h
+  have htimeBot : unitInterval.toNNReal ⊥ = 0 := by
     apply NNReal.coe_injective
     rfl
   have hincrements := hX.increments.comp_time
-    UnitInterval.toNNReal htime htimeBot
+    unitInterval.toNNReal htime htimeBot
   have hclockEq :
       (fun t : unitInterval =>
-        ((UnitInterval.toNNReal t : ℝ≥0) : ℝ)) = UnitInterval.clock := by
+        ((unitInterval.toNNReal t : ℝ≥0) : ℝ)) = unitInterval.clock := by
     funext t
     rfl
-  have hincrements' : HasStableClockIncrements α μ UnitInterval.clock
+  have hincrements' : HasStableClockIncrements α μ unitInterval.clock
       pathProcess Q := by
     simpa only [pathProcess, hclockEq] using hincrements
   have hcadlag : ∀ᵐ ω ∂Q,
       IsCadlag (fun t : unitInterval => pathProcess t ω) := by
     filter_upwards [hX.ae_cadlag] with ω hω
-    exact hω.comp_monotone_continuous htime UnitInterval.continuous_toNNReal
+    exact hω.comp_monotone_continuous htime unitInterval.toNNReal_continuous
   have hpath := Process.Path.Cadlag.hasLaw_pathMap pathProcess coordinates
   have hpathEval : ∀ t,
       (fun ω => Process.Path.Cadlag.pathMap pathProcess ω t) =ᵐ[Q]
@@ -88,11 +106,11 @@ law forward by the same factor. -/
 theorem IsStableClockProcessLaw.spatialScale
     {α : ℝ} {μ : Measure ℝ} {P : Measure (CadlagPath unitInterval ℝ)}
     [IsProbabilityMeasure P]
-    (h : IsStableClockProcessLaw α μ UnitInterval.clock P)
+    (h : IsStableClockProcessLaw α μ unitInterval.clock P)
     (q : ℝ) (hq : 0 < q) :
-    IsStableClockProcessLaw α (μ.map fun x => q * x) UnitInterval.clock
+    IsStableClockProcessLaw α (μ.map fun x => q * x) unitInterval.clock
       (P.map (Skorokhod.scalePath q)) := by
-  change HasStableClockIncrements α μ UnitInterval.clock cadlagPathProcess P at h
+  change HasStableClockIncrements α μ unitInterval.clock cadlagPathProcess P at h
   let X : unitInterval → CadlagPath unitInterval ℝ → ℝ := fun t f => q * f t
   let Q : Measure (CadlagPath unitInterval ℝ) :=
     P.map (Skorokhod.scalePath q)
@@ -104,7 +122,7 @@ theorem IsStableClockProcessLaw.spatialScale
   letI : IsProbabilityMeasure Q :=
     (Measure.isProbabilityMeasure_map_iff hcontScale.aemeasurable).2 inferInstance
   have hscaled : HasStableClockIncrements α (μ.map fun x => q * x)
-      UnitInterval.clock X P := by
+      unitInterval.clock X P := by
     simpa [X, cadlagPathProcess] using h.map_spaceScale_measure q hq
   have hpathMapEq (f : CadlagPath unitInterval ℝ) :
       Process.Path.Cadlag.pathMap X f = Skorokhod.scalePath q f := by
@@ -126,7 +144,7 @@ theorem IsStableClockProcessLaw.spatialScale
         (fun r : RationalCoordinate.UnitInterval =>
           X (RationalCoordinate.toUnitInterval r) f) = p
       rw [hcoords]
-      exact Process.Path.Cadlag.rationalEvaluationEmbedding.injective.extend_apply
+      exact Skorokhod.measurableEmbedding_rationalEvaluation.injective.extend_apply
         _ _ _
     rw [hmap]
     rfl

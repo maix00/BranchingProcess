@@ -12,6 +12,34 @@ public import Topology.Cadlag.Skorokhod.TimeChange.FinitePartition.Homeomorph
 /-!
 # Compact families of step paths with moving partitions
 
+## Public declarations
+
+- `Skorokhod.OscillationPartition.uniformEDist_stepPath_le`: on a fixed
+  partition, `uniformEDist (stepPath v) (stepPath w) ≤ edist v w`.
+- `Skorokhod.IsSeparatedPartitionPoints gap points`: the knot vector has fixed
+  endpoints, is nondecreasing, and each adjacent gap is at least `gap`.
+- `Skorokhod.IsSeparatedPartitionPoints.strictMono`: if `gap > 0`, separated
+  partition points are strictly increasing.
+- `Skorokhod.isClosed_setOf_isSeparatedPartitionPoints`: the separated-knot
+  parameter set is closed in the finite product of unit intervals.
+- `Skorokhod.isCompact_setOf_isSeparatedPartitionPoints`: that parameter set
+  is compact.
+- `Skorokhod.j1EDist_stepPath_le_ofMatchingPartitions_value`: if corresponding
+  knots differ by at most `ε`, then the `J₁` distance of the step paths is at
+  most `max (ENNReal.ofReal ε) (edist value₁ value₂)`.
+- `Skorokhod.StepPathParameters gap range p`: the knot vector is separated by
+  `gap`, and every step value lies in `range`.
+- `Skorokhod.isCompact_setOf_stepPathParameters`: the parameter subtype is
+  compact when `range` is compact.
+- `Skorokhod.stepPathOfParameters`: constructs the càdlàg step path from a
+  parameter pair with separated knots and values in `range`.
+- `Skorokhod.j1EDist_stepPathOfParameters_le`: the moving-partition step-path
+  map is nonexpansive for the product extended distance and `J₁` distance.
+- `Skorokhod.continuous_stepPathOfParameters`: the moving-partition step-path
+  map is continuous.
+- `Skorokhod.isCompact_stepPathOfParameters_image`: for fixed positive cell
+  count, gap, and compact value range, the step-path image is compact.
+
 Finite step paths depend continuously in `J₁` on their partition points and
 cell values when the partition gaps have a uniform positive lower bound.
 -/

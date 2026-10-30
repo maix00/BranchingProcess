@@ -1,0 +1,312 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
+module
+
+import Mathlib.Algebra.Order.Floor.Semifield
+import Mathlib.Algebra.Order.Archimedean.Real.Basic
+import Mathlib.Data.Fin.Basic
+import Mathlib.Data.Fintype.Fin
+import Mathlib.Order.Fin.Basic
+import Mathlib.Order.PartialSups
+
+import Mathlib.Tactic.FieldSimp
+
+/-!
+# Spatial-bin lemmas for the Lemma 3.3 drawdown proof
+
+## Internal proof declarations
+
+For a path $S$, write $M_n=\max_{j\le n}S_j$,
+$k_n=\lfloor(U-M_n)/w\rfloor_{\mathbb N}$, and $b_n=U-wk_n$. The declarations
+in `ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown` form the internal
+deterministic proof chain:
+
+- The running maximum is Mathlib's `partialSups path n`, which states $M_n=\sup_{i\le n}S_i$.
+- `spatialBinIndex` defines $k_n$, and `spatialBinLevel` defines $b_n$.
+- The private bounds for `spatialBinLevel` give $M_n\le b_n<M_n+w$, and the private monotonicity result gives $s\le t\Rightarrow k_t\le k_s$.
+- `spatialBinIndex_le_of_zero` states $S_0=0\Rightarrow k_n\le\lfloor U/w\rfloor_{\mathbb N}$.
+- The private `values_between_on_constantSpatialBin` confines each block value to $b_s-w-\delta<S_j\le b_s$ when the endpoint bins agree.
+- `spatialBinJumpSet` defines indices with unequal consecutive bins; for a nonincreasing sequence in `Fin (K+1)`, `card_spatialBinJumpSet_le` gives $|J|\le K+1$.
+- `exists_spatialBinSequence_for_noLargeDrop` constructs a nonincreasing finite bin sequence $k_j$ with $k_j=\lfloor(U-M_{r+j\ell})/w\rfloor_{\mathbb N}$; each unchanged-bin block satisfies the interval bound above.
+
+These declarations support the discretized-maximum proof of Wang Yiyang,
+*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
+Chapter 3, Lemma 3.3. They form internal deterministic proof steps and are not
+an independent interface.
+-/
+
+section
+
+namespace ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown
+
+/-- The spatial bin containing the running maximum when spatial bins have
+width `width`. The bin is indexed downward from the deterministic ceiling
+`upper`. -/
+noncomputable def spatialBinIndex (upper width : ℝ) (path : ℕ → ℝ) (time : ℕ) : ℕ :=
+  ⌊(upper - partialSups path time) / width⌋₊
+
+/-- The upper endpoint of the spatial bin containing the running maximum. -/
+noncomputable def spatialBinLevel (upper width : ℝ) (path : ℕ → ℝ) (time : ℕ) : ℝ :=
+  upper - width * (spatialBinIndex upper width path time : ℝ)
+
+private lemma partialSups_le_spatialBinLevel
+    (upper width : ℝ) (path : ℕ → ℝ) (time : ℕ)
+    (hwidth : 0 < width) (hmax : partialSups path time ≤ upper) :
+    partialSups path time ≤ spatialBinLevel upper width path time := by
+  have hquot : 0 ≤ (upper - partialSups path time) / width :=
+    div_nonneg (sub_nonneg.mpr hmax) hwidth.le
+  have hfloor := Nat.floor_le hquot
+  have hmul := mul_le_mul_of_nonneg_left hfloor hwidth.le
+  have hcancel : width * ((upper - partialSups path time) / width) =
+      upper - partialSups path time := by
+    field_simp [hwidth.ne']
+  dsimp [spatialBinLevel, spatialBinIndex]
+  rw [hcancel] at hmul
+  linarith
+
+private lemma spatialBinLevel_lt_partialSups_add_width
+    (upper width : ℝ) (path : ℕ → ℝ) (time : ℕ)
+    (hwidth : 0 < width) (hmax : partialSups path time ≤ upper) :
+    spatialBinLevel upper width path time <
+      partialSups path time + width := by
+  have hquot : 0 ≤ (upper - partialSups path time) / width :=
+    div_nonneg (sub_nonneg.mpr hmax) hwidth.le
+  have hfloor := Nat.lt_floor_add_one
+    ((upper - partialSups path time) / width)
+  have hmul := mul_lt_mul_of_pos_left hfloor hwidth
+  have hcancel : width * ((upper - partialSups path time) / width) =
+      upper - partialSups path time := by
+    field_simp [hwidth.ne']
+  dsimp [spatialBinLevel, spatialBinIndex]
+  rw [hcancel] at hmul
+  nlinarith
+
+private lemma spatialBinIndex_antitone
+    (upper width : ℝ) (path : ℕ → ℝ) {s t : ℕ}
+    (hwidth : 0 < width) (hst : s ≤ t) :
+    spatialBinIndex upper width path t ≤ spatialBinIndex upper width path s := by
+  change ⌊(upper - partialSups path t) / width⌋₊ ≤
+    ⌊(upper - partialSups path s) / width⌋₊
+  apply Nat.floor_mono
+  apply div_le_div_of_nonneg_right _ hwidth.le
+  exact sub_le_sub_left (partialSups_monotone path hst) upper
+
+lemma spatialBinIndex_le_of_zero
+    (upper width : ℝ) (path : ℕ → ℝ) (time : ℕ)
+    (hwidth : 0 < width) (hzero : path 0 = 0) :
+    spatialBinIndex upper width path time ≤ ⌊upper / width⌋₊ := by
+  have hmaxNonneg : 0 ≤ partialSups path time := by
+    calc
+      0 = path 0 := hzero.symm
+      _ ≤ partialSups path time := le_partialSups_of_le path (Nat.zero_le _)
+  have hquot :
+      (upper - partialSups path time) / width ≤ upper / width := by
+    apply div_le_div_of_nonneg_right _ hwidth.le
+    exact sub_le_self upper hmaxNonneg
+  exact Nat.floor_mono hquot
+
+/-- On a block where the rounded running maximum is constant, a path with
+drawdown at most `delta` is trapped in an interval of width
+`width + delta`. -/
+private lemma values_between_on_constantSpatialBin
+    (path : ℕ → ℝ) (upper width delta : ℝ)
+    (hwidth : 0 < width)
+    {horizon start finish : ℕ} (hstart : start ≤ finish)
+    (hnoDrop : ∀ i j : ℕ, i ≤ j → j ≤ horizon →
+      path i - path j ≤ delta)
+    (hupper : ∀ i ≤ horizon, path i ≤ upper)
+    (hfinish : finish ≤ horizon)
+    (hbin : spatialBinLevel upper width path start =
+      spatialBinLevel upper width path finish) :
+    ∀ t, start ≤ t → t ≤ finish →
+      spatialBinLevel upper width path start - width - delta < path t ∧
+        path t ≤ spatialBinLevel upper width path start := by
+  have hmaxStart : partialSups path start ≤ upper :=
+    partialSups_le path start upper (fun i hi => hupper i (by omega))
+  have hmaxFinish : partialSups path finish ≤ upper :=
+    partialSups_le path finish upper (fun i hi => hupper i (by omega))
+  have hroundedLower := spatialBinLevel_lt_partialSups_add_width
+    upper width path start hwidth hmaxStart
+  intro t hst htt
+  have hmaxMono : partialSups path start ≤ partialSups path t :=
+    partialSups_monotone path hst
+  have hmaxPath : partialSups path t ≤ path t + delta := by
+    apply partialSups_le path t (path t + delta)
+    intro i hit
+    have h := hnoDrop i t hit (htt.trans hfinish)
+    linarith
+  have hpathUpper : path t ≤ partialSups path finish :=
+    le_partialSups_of_le path htt
+  have hfinishUpper := partialSups_le_spatialBinLevel
+    upper width path finish hwidth hmaxFinish
+  constructor
+  · have hlowerStart :
+        spatialBinLevel upper width path start - width <
+          partialSups path start := by
+      linarith
+    calc
+      spatialBinLevel upper width path start - width - delta <
+          partialSups path start - delta := by linarith
+      _ ≤ partialSups path t - delta := sub_le_sub_right hmaxMono _
+      _ ≤ path t := by linarith
+  · calc
+      path t ≤ partialSups path finish := hpathUpper
+      _ ≤ spatialBinLevel upper width path finish := hfinishUpper
+      _ = spatialBinLevel upper width path start := hbin.symm
+
+/-- The times at which a binned running maximum changes. -/
+def spatialBinJumpSet {q K : ℕ} (bins : Fin (q + 1) → Fin (K + 1)) :
+    Finset (Fin q) :=
+  Finset.univ.filter fun j => bins j.castSucc ≠ bins j.succ
+
+/-- A nonincreasing sequence with `K+1` possible bin values can jump at most
+`K+1` times. The bound controls the exceptional indices in the running-
+maximum decomposition. -/
+lemma card_spatialBinJumpSet_le
+    {q K : ℕ} (bins : Fin (q + 1) → Fin (K + 1))
+    (hmono : ∀ i j, i ≤ j → bins j ≤ bins i) :
+    (spatialBinJumpSet bins).card ≤ K + 1 := by
+  classical
+  let jumps := spatialBinJumpSet bins
+  let target : Fin q → Fin (K + 1) := fun j => bins j.succ
+  have hinj : Set.InjOn target (jumps : Set (Fin q)) := by
+    intro i hi j hj heq
+    by_contra hne
+    rcases lt_or_gt_of_ne hne with hlt | hgt
+    · have htime : i.succ ≤ j.castSucc := by
+        apply Fin.le_iff_val_le_val.mpr
+        simp only [Fin.val_succ, Fin.val_castSucc]
+        omega
+      have hmono' := hmono i.succ j.castSucc htime
+      have hjump : bins j.succ < bins j.castSucc := by
+        have hle := hmono j.castSucc j.succ (Fin.castSucc_le_succ j)
+        have hne : bins j.castSucc ≠ bins j.succ := by
+          simpa [jumps, spatialBinJumpSet] using hj
+        exact lt_of_le_of_ne hle hne.symm
+      change bins i.succ = bins j.succ at heq
+      rw [heq] at hmono'
+      exact (not_le_of_gt hjump) hmono'
+    · have htime : j.succ ≤ i.castSucc := by
+        apply Fin.le_iff_val_le_val.mpr
+        simp only [Fin.val_succ, Fin.val_castSucc]
+        omega
+      have hmono' := hmono j.succ i.castSucc htime
+      have hjump : bins i.succ < bins i.castSucc := by
+        have hle := hmono i.castSucc i.succ (Fin.castSucc_le_succ i)
+        have hne : bins i.castSucc ≠ bins i.succ := by
+          simpa [jumps, spatialBinJumpSet] using hi
+        exact lt_of_le_of_ne hle hne.symm
+      change bins i.succ = bins j.succ at heq
+      rw [← heq] at hmono'
+      exact (not_le_of_gt hjump) hmono'
+  have hcard : jumps.card ≤ (Finset.univ : Finset (Fin (K + 1))).card :=
+    Finset.card_le_card_of_injOn target (by intro j hj; simp) hinj
+  simpa [jumps] using hcard
+
+/-- A finite spatial-bin encoding of a no-large-drop path on a block
+partition.  The bin indices are nonincreasing, and on each block where the
+bin is unchanged the path stays in a deterministic interval of width
+`delta + width`.  The finite range follows from the path starting at zero
+and the deterministic upper bound. -/
+lemma exists_spatialBinSequence_for_noLargeDrop
+    (path : ℕ → ℝ) (upper width delta : ℝ)
+    {horizon remainder blocks blockLength : ℕ}
+    (hzero : path 0 = 0)
+    (hwidth : 0 < width)
+    (hnoDrop : ∀ i j : ℕ, i ≤ j → j ≤ horizon →
+      path i - path j ≤ delta)
+    (hupper : ∀ i ≤ horizon, path i ≤ upper)
+    (hblocks : remainder + blocks * blockLength ≤ horizon) :
+    ∃ bins : Fin (blocks + 1) → Fin (⌊upper / width⌋₊ + 1),
+      (∀ i j, i ≤ j → bins j ≤ bins i) ∧
+      (∀ j, (bins j : ℕ) = spatialBinIndex upper width path
+        (remainder + j.val * blockLength)) ∧
+      (∀ j : Fin blocks,
+        bins j.castSucc = bins j.succ →
+        ∀ k ≤ blockLength,
+          spatialBinLevel upper width path
+              (remainder + j.val * blockLength) - width - delta <
+            path (remainder + j.val * blockLength + k) ∧
+          path (remainder + j.val * blockLength + k) ≤
+            spatialBinLevel upper width path
+              (remainder + j.val * blockLength)) := by
+  let binIndex : Fin (blocks + 1) → ℕ := fun j =>
+    spatialBinIndex upper width path (remainder + j.val * blockLength)
+  have hbinBound (j : Fin (blocks + 1)) : binIndex j ≤ ⌊upper / width⌋₊ := by
+    apply spatialBinIndex_le_of_zero upper width path _ hwidth hzero
+  let bins : Fin (blocks + 1) → Fin (⌊upper / width⌋₊ + 1) := fun j =>
+    ⟨binIndex j, Nat.lt_succ_of_le (hbinBound j)⟩
+  refine ⟨bins, ?_, ?_, ?_⟩
+  · intro i j hij
+    apply Fin.le_iff_val_le_val.mpr
+    dsimp [bins, binIndex]
+    exact spatialBinIndex_antitone upper width path hwidth
+      (Nat.add_le_add_left
+        (Nat.mul_le_mul_right blockLength
+          (Fin.le_iff_val_le_val.mp hij)) remainder)
+  · intro j
+    rfl
+  · intro j hsame k hk
+    have hstart : remainder + j.val * blockLength ≤
+        remainder + (j.val + 1) * blockLength := by
+      exact Nat.add_le_add_left
+        (Nat.mul_le_mul_right blockLength (Nat.le_succ _)) _
+    have hfinish : remainder + (j.val + 1) * blockLength ≤ horizon := by
+      have hj : j.val + 1 ≤ blocks := Nat.succ_le_of_lt j.isLt
+      have hmul := Nat.mul_le_mul_right blockLength hj
+      exact (Nat.add_le_add_left hmul remainder).trans hblocks
+    have hbinIndex : spatialBinIndex upper width path
+          (remainder + j.val * blockLength) =
+        spatialBinIndex upper width path
+          (remainder + (j.val + 1) * blockLength) := by
+      have hval := congrArg Fin.val hsame
+      simpa [bins, binIndex, Fin.val_castSucc, Fin.val_succ] using hval
+    have hlevel : spatialBinLevel upper width path
+          (remainder + j.val * blockLength) =
+        spatialBinLevel upper width path
+          (remainder + (j.val + 1) * blockLength) := by
+      simp [spatialBinLevel, hbinIndex]
+    have htimeEq : remainder + j.val * blockLength + blockLength =
+        remainder + (j.val + 1) * blockLength := by
+      calc
+        remainder + j.val * blockLength + blockLength =
+            remainder + (j.val * blockLength + blockLength) := by omega
+        _ = remainder + (j.val + 1) * blockLength := by
+          rw [Nat.add_mul, one_mul]
+    have hlevel' : spatialBinLevel upper width path
+          (remainder + j.val * blockLength) =
+        spatialBinLevel upper width path
+          (remainder + j.val * blockLength + blockLength) := by
+      rw [htimeEq]
+      exact hlevel
+    have hblockend :
+        remainder + j.val * blockLength + blockLength ≤ horizon := by
+      rw [htimeEq]
+      exact hfinish
+    have hstart' : remainder + j.val * blockLength ≤
+        remainder + j.val * blockLength + blockLength := Nat.le_add_right _ _
+    have hbetween := values_between_on_constantSpatialBin path upper width delta
+      hwidth hstart' hnoDrop hupper hblockend hlevel'
+    have htimeStart :
+        remainder + j.val * blockLength ≤
+          remainder + j.val * blockLength + k := Nat.le_add_right _ _
+    have htimeEnd :
+        remainder + j.val * blockLength + k ≤
+            remainder + (j.val + 1) * blockLength := by
+      calc
+        remainder + j.val * blockLength + k ≤
+            remainder + j.val * blockLength + blockLength :=
+          Nat.add_le_add_left hk _
+        _ = remainder + (j.val + 1) * blockLength := htimeEq
+    rw [← htimeEq] at htimeEnd
+    have hbound := hbetween
+      (remainder + j.val * blockLength + k) htimeStart htimeEnd
+    simpa [hlevel] using hbound
+
+end ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown
+
+end

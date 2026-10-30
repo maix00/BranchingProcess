@@ -8,12 +8,19 @@ module
 
 public import Mathlib.MeasureTheory.Measure.Support
 public import Topology.Cadlag.Skorokhod.Corridor.Endpoint
-
+public import Topology.Cadlag.Skorokhod.Path.Linear
 /-!
 # Support tests for càdlàg path laws
 
 These statements concern arbitrary measures on Skorokhod path space; they do
 not require a process realization or a particular path law.
+
+## Public declarations
+
+- If every centered uniform corridor has positive mass, the zero path belongs
+  to the support of the path law.
+- If a straight path is in the support, every open corridor containing it and
+  its endpoint has positive mass.
 -/
 
 @[expose] public section
@@ -25,11 +32,11 @@ namespace MeasureTheory.CadlagPath
 
 /-- Positive mass in every centered uniform corridor puts the zero path in
 the support of a càdlàg path law. -/
-theorem straightPath_zero_mem_support_of_centeredCorridors_pos
+theorem linearPath_zero_mem_support_of_centeredCorridors_pos
     (Q : Measure (CadlagPath unitInterval ℝ))
     (hpos : ∀ δ : ℝ, 0 < δ →
       0 < Q (Skorokhod.rangeInOpenInterval (-δ) δ)) :
-    Skorokhod.straightPath 0 ∈ Q.support := by
+    Skorokhod.linearPath 0 ∈ Q.support := by
   rw [Measure.mem_support_iff_forall]
   intro U hU
   obtain ⟨r, hr, hball⟩ := Metric.mem_nhds_iff.mp hU
@@ -37,7 +44,7 @@ theorem straightPath_zero_mem_support_of_centeredCorridors_pos
     intro f hf
     apply hball
     rw [Metric.mem_ball]
-    have huniform : Skorokhod.uniformEDist f (Skorokhod.straightPath 0) ≤
+    have huniform : Skorokhod.uniformEDist f (Skorokhod.linearPath 0) ≤
         ENNReal.ofReal (r / 2) := by
       apply iSup_le
       intro t
@@ -45,18 +52,18 @@ theorem straightPath_zero_mem_support_of_centeredCorridors_pos
       have ht := hpath t
       rw [edist_dist]
       have hbound : |f t| ≤ r / 2 := by
-        have hvalue : Skorokhod.straightPath 0 t = 0 := by
-          simp [Skorokhod.straightPath]
+        have hvalue : Skorokhod.linearPath 0 t = 0 := by
+          simp [Skorokhod.linearPath]
         simp only [hvalue] at *
         rw [abs_le]
         constructor <;> linarith
-      simpa [Skorokhod.straightPath, Real.dist_eq] using
+      simpa [Skorokhod.linearPath, Real.dist_eq] using
         ENNReal.ofReal_le_ofReal hbound
     have hj1 := (Skorokhod.j1EDist_le_uniformEDist f
-      (Skorokhod.straightPath 0)).trans huniform
+      (Skorokhod.linearPath 0)).trans huniform
     have hlt : ENNReal.ofReal (r / 2) < ENNReal.ofReal r := by
       exact ENNReal.ofReal_lt_ofReal_iff hr |>.2 (by linarith)
-    have hed : edist f (Skorokhod.straightPath 0) < ENNReal.ofReal r := by
+    have hed : edist f (Skorokhod.linearPath 0) < ENNReal.ofReal r := by
       rw [Skorokhod.edist_cadlagPath_eq_j1EDist]
       exact hj1.trans_lt hlt
     rw [edist_dist, ENNReal.ofReal_lt_ofReal_iff hr] at hed
@@ -66,16 +73,16 @@ theorem straightPath_zero_mem_support_of_centeredCorridors_pos
 
 /-- A straight path in the support of a càdlàg path law gives positive mass
 to every open corridor containing that path and its endpoint. -/
-theorem measure_skorokhodCorridorEndsIn_pos_of_straightPath_mem_support
+theorem measure_skorokhodCorridorEndsIn_pos_of_linearPath_mem_support
     (Q : Measure (CadlagPath unitInterval ℝ))
     {lower upper endpointLower endpointUpper y : ℝ}
     (hzero : lower < 0 ∧ 0 < upper)
     (hy : lower < y ∧ y < upper)
     (hend : endpointLower < y ∧ y < endpointUpper)
-    (hsupport : Skorokhod.straightPath y ∈ Q.support) :
+    (hsupport : Skorokhod.linearPath y ∈ Q.support) :
     0 < Q (Skorokhod.rangeInOpenIntervalEndsIn
       lower upper endpointLower endpointUpper) := by
-  have hmem := Skorokhod.straightPath_mem_rangeInOpenIntervalEndsIn
+  have hmem := Skorokhod.linearPath_mem_rangeInOpenIntervalEndsIn
     hzero hy hend
   exact (Measure.mem_support_iff_forall _).mp hsupport _
     ((Skorokhod.isOpen_rangeInOpenIntervalEndsIn

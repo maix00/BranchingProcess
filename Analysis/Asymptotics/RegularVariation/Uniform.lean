@@ -6,12 +6,23 @@ Authors: WANG Yiyang
 
 module
 
-public import Analysis.Asymptotics.RegularVariation
+public import Analysis.Asymptotics.RegularVariation.Basic
 public import Mathlib.Analysis.SpecialFunctions.Pow.Continuity
 public import Mathlib.Topology.MetricSpace.Pseudo.Lemmas
 
 /-!
 # Compact-uniform ratios for monotone regularly varying functions
+
+## Public declarations
+
+* `Asymptotics.IsRegularlyVaryingAtTop.tendstoUniformlyOn_ratio_of_eventuallyMonotone`: if `f` is eventually
+  nondecreasing and regularly varying with index `ρ`, then
+  `f (c * x) / f x → c ^ ρ` uniformly for `c` in every compact interval
+  `[a,b]` with `0 < a ≤ b`. This is the monotone specialization of the
+  Uniform Convergence Theorem, Theorem 1.2.1 in N. H. Bingham, C. M. Goldie,
+  and J. L. Teugels, *Regular Variation*, Encyclopedia of Mathematics and its
+  Applications 27, Cambridge University Press (1987), DOI
+  `10.1017/CBO9780511721434`.
 
 Pointwise ratio limits alone do not imply uniform convergence on compact
 multiplier sets. This file proves the compact-uniform conclusion under the
@@ -28,7 +39,11 @@ namespace Asymptotics.IsRegularlyVaryingAtTop
 /-- For an eventually nondecreasing regularly varying function, the ratio
 `f (c * x) / f x` converges uniformly in `c` on every compact interval of
 positive multipliers. Eventual monotonicity is the regularity hypothesis that
-upgrades the pointwise ratio limits to a uniform limit. -/
+upgrades the pointwise ratio limits to a uniform limit. This is the monotone
+specialization of Theorem 1.2.1 (Uniform Convergence Theorem) in N. H.
+Bingham, C. M. Goldie, and J. L. Teugels, *Regular Variation*, Encyclopedia
+of Mathematics and its Applications 27, Cambridge University Press (1987),
+DOI 10.1017/CBO9780511721434. -/
 theorem tendstoUniformlyOn_ratio_of_eventuallyMonotone
     {f : ℝ → ℝ} {ρ a b : ℝ}
     (hreg : IsRegularlyVaryingAtTop f ρ)

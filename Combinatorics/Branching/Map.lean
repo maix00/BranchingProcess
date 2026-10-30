@@ -11,6 +11,13 @@ public import Combinatorics.BranchingWalk.Basic.Map
 /-!
 # Mapping a branching walk to its genealogy
 
+## Public declarations
+
+* `Combinatorics.Branching.RootIndexed.BranchingWalk.toBranching β` forgets
+  the spatial marks while retaining the offspring slots and root indexing.
+  `Combinatorics.Branching.RootIndexed.BranchingWalk.surviveAlong_toBranching_iff`
+  states that `surviveAlong` is unchanged by this projection.
+
 Forgetting spatial marks turns a branching walk into the corresponding
 unit-marked branching process. This is a projection from the spatial model to
 its genealogy.

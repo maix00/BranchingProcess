@@ -20,6 +20,18 @@ deterministic Ulam--Harris tree is a mathlib `SimpleGraph.IsTree`.
 This is the check that the projection really produces a tree: the address space
 `Tree α` is only a carrier with axioms, and `Tree.childGraph` maps it onto
 mathlib's notion of a tree on an arbitrary vertex type.
+
+## Public declarations
+
+- `Tree.childGraph_isTree T` identifies the undirected parent--child graph of
+  one address tree as a Mathlib `SimpleGraph.IsTree`.
+- For `[Unique Root]`, `forestGraph_isTree T` identifies the disjoint-union
+  graph with a tree, and `uniqueForestGraphIso T` gives its graph isomorphism
+  with `Tree.childGraph (T default)`.
+- `childGraph_isAcyclic_iff_forestGraph`,
+  `childGraph_connected_iff_forestGraph`, and
+  `childGraph_isTree_iff_forestGraph` transfer these graph properties across
+  that isomorphism.
 -/
 
 @[expose] public section

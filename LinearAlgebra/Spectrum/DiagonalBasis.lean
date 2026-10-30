@@ -14,9 +14,15 @@ public section
 /-!
 # Powers of an operator in an eigenvector basis
 
-This file gives the finite expansion of an iterate of a linear endomorphism
-when a basis consists of eigenvectors.  It is independent of probability and
-of any particular matrix realization.
+## Public declarations
+
+* For a finite basis `b` over a commutative ring,
+  `Module.End.pow_apply_eq_sum_repr_smul` states that if `b i` is an
+  eigenvector of `f` with eigenvalue `eigenvalue i` for every `i`, then
+  `(f ^ n) x = ∑ i, (b.repr x i * eigenvalue i ^ n) • b i`.
+
+This finite expansion is independent of probability and of any particular
+matrix realization.
 -/
 
 open scoped BigOperators

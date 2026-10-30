@@ -12,6 +12,12 @@ public import Mathlib.Topology.Order.Cadlag
 /-!
 # Uniform limits of càdlàg functions
 
+## Public declarations
+
+- `IsCadlag.tendstoUniformly`: if `E` is a complete pseudo-metric space and
+  `F n → f` uniformly pointwise, with each `F n` càdlàg, then `f` is
+  càdlàg.
+
 Uniform limits of càdlàg functions remain càdlàg when the state space is
 complete. The proof treats right continuity directly and obtains left limits
 as limits of the uniformly Cauchy sequence of the approximants' left limits.
@@ -22,11 +28,11 @@ as limits of the uniformly Cauchy sequence of the approximants' left limits.
 open Filter Set
 open scoped Topology
 
-variable {X E : Type*} [Preorder X] [TopologicalSpace X] [MetricSpace E]
+variable {X E : Type*} [Preorder X] [TopologicalSpace X] [PseudoMetricSpace E]
   [CompleteSpace E]
 
-/-- A pointwise-uniform limit of càdlàg functions into a complete metric space
-is càdlàg. -/
+/-- A uniform limit of càdlàg functions into a complete pseudo-metric space is
+càdlàg. -/
 theorem IsCadlag.tendstoUniformly {F : ℕ → X → E} {f : X → E}
     (hF : ∀ n, IsCadlag (F n))
     (huniform : ∀ ε > 0, ∃ N, ∀ n ≥ N, ∀ x, dist (F n x) (f x) < ε) :

@@ -12,6 +12,12 @@ public import Mathlib.Topology.Algebra.Monoid
 /-!
 # Continuity of finite partial sums
 
+## Public declarations
+
+- `Fin.continuous_partialSum`: for a topological additive monoid with
+  continuous addition, the finite partial-sum map
+  \(x\mapsto(j\mapsto\sum_{i<j}x_i)\) is continuous.
+
 The finite partial-sum map is continuous when addition in its codomain is
 continuous. This is useful whenever a finite vector of increments is sent to
 its vector of cumulative positions.

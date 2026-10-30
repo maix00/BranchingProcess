@@ -6,16 +6,31 @@ Authors: WANG Yiyang
 
 module
 
-public import Combinatorics.BranchingWalk.Selection.Coupling.Offspring.Address
+public import Combinatorics.BranchingWalk.Population.Offspring
 public import Combinatorics.BranchingWalk.StepField
 public import Combinatorics.BranchingWalk.Step.Basic
 
 /-!
 # Populations in a branching field
 
+## Public declarations
+
 A population is indexed by the natural-number generations of one fixed
 branching field.  It contains no probability space, filtration, measurability,
 position, order, or selection mechanism.
+
+The public API is:
+
+- `Population stepField` is a sequence of sets of root-indexed tree nodes;
+  its `depth` field says every node in generation `n` has address length `n`,
+  and `successor` says generation `n + 1` is contained in the children of
+  generation `n` allowed by `stepField`.
+- The coercion to `ℕ → Set (RootIndexed.TreeNode Root α)` lets `P n` denote
+  generation `n`.
+- `Population.FiniteSlices P` asserts that each generation is finite.
+  `FiniteSlices.toFinset` represents one such generation as a `Finset`, and
+  `mem_toFinset` and `coe_toFinset` identify its membership and set value with
+  the original generation.
 -/
 
 @[expose] public section
@@ -31,7 +46,7 @@ structure Population {Root α X : Type*}
   depth : ∀ n p, p ∈ particles n → p.2.length = n
   successor : ∀ n,
     particles (n + 1) ⊆
-      Selection.Coupling.offspringAddressSet (particles n)
+      Population.offspringAddressSet (particles n)
         (fun p => support (stepField p.1 p.2))
 
 namespace Population

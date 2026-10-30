@@ -16,6 +16,24 @@ The set of real continuous paths whose whole range lies in an open interval
 is an open ball for the uniform metric.  This deterministic fact is the
 path-space interface needed by functional limit theorems and Portmanteau
 arguments; it has no random-walk-specific content.
+
+## Public declarations
+
+For continuous paths on a compact topological time space $T$:
+
+- `rangeInOpenInterval` and `rangeInClosedInterval` define the path sets
+  whose values all lie in the indicated interval;
+  `mem_rangeInOpenInterval_iff` and `mem_rangeInClosedInterval_iff` give the
+  pointwise membership criteria.
+- `rangeInOpenInterval_eq_ball` identifies the open corridor with the
+  uniform-metric ball centered at the constant path $(a+b)/2$ with radius
+  $(b-a)/2$ when $a<b$; `isOpen_rangeInOpenInterval` gives openness.
+- `rangeInClosedInterval_eq_closedBall` identifies the closed corridor with
+  the corresponding closed ball when $T$ is nonempty;
+  `isClosed_rangeInClosedInterval` gives closedness.
+- `measurableSet_rangeInOpenInterval` and
+  `measurableSet_rangeInClosedInterval` give measurability under the Borel
+  measurable-space assumptions on continuous path space.
 -/
 
 @[expose] public section

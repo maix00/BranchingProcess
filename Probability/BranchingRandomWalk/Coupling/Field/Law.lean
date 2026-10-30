@@ -4,7 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law
+module
+
+public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law.Basic
 
 /-!
 # Product law for fixed coordinate matching
@@ -17,7 +19,22 @@ source coordinate is used at most once.
 
 This is the deterministic cell used in the law of an adaptively matched
 field.  It makes no countability assumption on roots or offspring slots.
+
+## Public declarations
+
+* `RootIndexed.StepField.pasteCoordinate` reads a target coordinate from the
+  source summand when its guarded preimage exists and otherwise from the
+  fallback summand.
+* `RootIndexed.StepField.paste` applies that coordinate rule to the complete
+  root-indexed field.
+* `RootIndexed.StepField.pasteCoordinate_injective` proves injectivity of
+  the two-copy coordinate map when each source coordinate is used at most
+  once.
+* `RootIndexed.stepFieldLaw_paste` states that this fixed injective paste
+  preserves the root-indexed product law.
 -/
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 

@@ -20,7 +20,17 @@ separately.
 
 This whole-walk transform is distinct from the one-generation candidate rule
 in `Selection/Basic.lean`. Capacity-bounded transforms are defined alongside
-bounded branching walks in `Selection/NSelection/BranchingWalk.lean`.
+bounded branching walks in `Selection/NSelection/Walk/BranchingWalk.lean`.
+
+## Public declarations
+
+* `Combinatorics.Branching.RootIndexed.WalkTransform Root α Mark Position`
+  is a map on root-indexed branching walks whose output satisfies
+  `SelectContain (M β) β` for every input `β`.
+* `Combinatorics.Branching.RootIndexed.WalkTransform.ext` gives extensionality
+  from pointwise equality of selected walks.
+* `Combinatorics.Branching.WalkTransform α Mark Position` is the single-root
+  specialization using `PUnit` as the root type.
 -/
 
 @[expose] public section
@@ -50,14 +60,6 @@ instance (Root α Mark Position : Type*) [LT α] :
 namespace RootIndexed.WalkTransform
 
 variable {Root α Mark Position : Type*} [LT α]
-
-theorem surviveAlong_parent_of_descendant
-    (M : RootIndexed.WalkTransform Root α Mark Position)
-    (β : RootIndexed.BranchingWalk Root α Mark Position)
-    (r : Root) (u v : TreeNode α)
-    (h : surviveAlong ((M β).step r) [] (u ++ v)) :
-    surviveAlong ((M β).step r) [] u :=
-  surviveAlong_prefix ((M β).step r) u v h
 
 @[ext] theorem ext
     {M M' : RootIndexed.WalkTransform Root α Mark Position}
