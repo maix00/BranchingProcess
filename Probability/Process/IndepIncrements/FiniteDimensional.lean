@@ -29,6 +29,14 @@ additive commutative group `E` with measurable addition:
   laws and common zero values at an arbitrary anchor `t₀` imply
   $(X_{t_i})_i \stackrel{d}{=} (Y_{t_i})_i$ on a finite monotone grid starting
   at `t₀`.
+* `HasIndepIncrements.hasLaw_finiteDimensional_of_incrementLaws`: for a
+  zero-start process with measurable, independent increments, the law of its
+  position vector satisfies
+  \[
+    \operatorname{Law}((X_{t_j})_{j=0}^n)
+      = (\operatorname{partialSum})_\#
+        \bigotimes_{j=0}^{n-1}\operatorname{Law}(X_{t_{j+1}}-X_{t_j}).
+  \]
 * `HasIndepIncrements.translatedProcess_finiteDimensional_identDistrib`:
   stationary independent increments on an ordered additive time monoid imply
   $(X_{s+t_i}-X_s)_i \stackrel{d}{=} (X_{s'+t_i}-X_{s'})_i`.
@@ -120,6 +128,57 @@ theorem HasIndepIncrements.finiteDimensional_identDistrib
     hpositions.aemeasurable_snd.congr hYeq'
   exact (IdentDistrib.of_ae_eq hXposMeas hXeq).trans
     (hpositions.trans (IdentDistrib.of_ae_eq hYposMeas hYeq).symm)
+
+/-- The position vector of a zero-start process with measurable, independent
+increments has the law obtained by taking independent coordinates with the
+successive increment laws and applying finite partial sums. -/
+theorem HasIndepIncrements.hasLaw_finiteDimensional_of_incrementLaws
+    {Time : Type*} [Preorder Time]
+    {Ω : Type*} [MeasurableSpace Ω]
+    {P : Measure Ω} [IsProbabilityMeasure P]
+    {X : Time → Ω → ℝ}
+    (h : HasIndepIncrements X P)
+    {start : Time} (hstart : ∀ᵐ ω ∂P, X start ω = 0)
+    (n : ℕ) (grid : Fin (n + 1) → Time)
+    (hgrid : Monotone grid) (hgridStart : grid 0 = start)
+    (hincrement_aemeasurable : ∀ i : Fin n,
+      AEMeasurable
+        (fun ω => X (grid i.succ) ω - X (grid i.castSucc) ω) P) :
+    HasLaw (fun ω j => X (grid j) ω)
+      (((Measure.pi fun i : Fin n => P.map
+        (fun ω => X (grid i.succ) ω - X (grid i.castSucc) ω)).map
+          Fin.partialSum)) P := by
+  let increment : Fin n → Ω → ℝ := fun i ω =>
+    X (grid i.succ) ω - X (grid i.castSucc) ω
+  have hincrement : iIndepFun increment P := by
+    simpa [increment] using h n grid hgrid
+  have hincrement_measurable (i : Fin n) : AEMeasurable (increment i) P :=
+    by simpa [increment] using hincrement_aemeasurable i
+  have hincrement_law (i : Fin n) :
+      HasLaw (increment i) (P.map (increment i)) P :=
+    hasLaw_map (hincrement_measurable i)
+  have hvector : HasLaw (fun ω i => increment i ω)
+      (Measure.pi fun i : Fin n => P.map (increment i)) P :=
+    (iIndepFun_iff_hasLaw_pi_pi hincrement_law).mp hincrement
+  let partialSum : (Fin n → ℝ) → Fin (n + 1) → ℝ := Fin.partialSum
+  have hpartial_meas : Measurable partialSum := by
+    rw [measurable_pi_iff]
+    intro j
+    exact Fin.measurable_partialSum j
+  have hpartial_law : HasLaw partialSum
+      (((Measure.pi fun i : Fin n => P.map (increment i)).map partialSum))
+      (Measure.pi fun i : Fin n => P.map (increment i)) :=
+    hasLaw_map hpartial_meas.aemeasurable
+  have hpartial := hpartial_law.comp hvector
+  have hpositions : (partialSum ∘ (fun ω i => increment i ω)) =ᵐ[P]
+      fun ω j => X (grid j) ω := by
+    filter_upwards [hstart] with ω hω
+    funext j
+    have htel := Fin.partialSum_differences
+      (fun k : Fin (n + 1) => X (grid k) ω) j
+    have hbase : X (grid 0) ω = 0 := by simpa [hgridStart] using hω
+    simpa [partialSum, increment, hbase] using htel
+  exact hpartial.congr hpositions.symm
 
 /-- For a process over an ordered additive time space with stationary
 independent increments, the finite-dimensional laws of increments after any

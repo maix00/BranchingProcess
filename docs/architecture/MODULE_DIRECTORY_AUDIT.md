@@ -27692,3 +27692,20 @@ ledger records these updated inventories. The affected Lean modules built
 successfully with the pinned toolchain; these edits changed module
 documentation only. The same pass corrected one unquoted comma in the CSV
 ledger; parsing now returns all 1,634 rows with no overflow fields.
+
+
+## Lévy path-law convergence from increment limits (2026-10-31)
+
+Added `Probability/Process/Levy/PathLaw/Convergence.lean`. For a tight family
+of unit-interval Lévy path laws, convergence of every rescaled interval
+increment to the corresponding increment of a target Lévy process now implies
+weak convergence of the path laws on `CadlagPath unitInterval ℝ`. The proof
+assembles the finite-grid position limits from independent increments and then
+uses the generic tightness-plus-finite-grid identification theorem. The
+companion theorem
+`HasIndepIncrements.hasLaw_finiteDimensional_of_incrementLaws` records the
+finite-grid law as the partial-sum pushforward of the product of increment
+laws, assuming measurable increments. These are reusable probability-process
+interfaces; scalar domain-of-attraction estimates and tightness proofs stay
+with the source-process modules. The focused build passed (3,224 Lake jobs).
+The production-module ledger now contains 1,635 reviewed entries.
