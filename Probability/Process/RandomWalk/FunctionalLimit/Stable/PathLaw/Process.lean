@@ -20,10 +20,23 @@ grids, which are the input to the generic stable clock-process constructor.
 ## Public declarations
 
 - `exists_stableClockProcessLaw_of_tightSource` constructs a stable clock
-  process law as a subsequential path-law limit of tight normalized random
-  walks, identifying its finite-dimensional laws on monotone time grids.
-- `exists_stableLevyProcess_of_tightSource` gives the corresponding stable
-  Lévy-process realization.
+  process law. Suppose \(\nu\) is in the domain of attraction of the
+  strictly \(\alpha\)-stable law \(\mu\) under normalization \(a_n\) and
+  zero centering, and
+  the path laws
+  \[
+    P_n=(Z_n)_\#\operatorname{iidSequenceLaw}(\nu),\qquad
+    Z_n=\operatorname{normalizedStepCadlagPathIcc}(a_n,n),
+  \]
+  are tight. Then there exist a probability law \(P\) on
+  \(D([0,1],\mathbb R)\) and a strictly increasing sequence \((n_k)\) such
+  that \(P_{n_k}\Rightarrow P\) and \(P\) is a stable clock-process law
+  with parameters \((\alpha,\mu)\) and clock \(t\mapsto t\).
+- `exists_stableLevyProcess_of_tightSource` states that under the same
+  hypotheses there exist a probability law \(Q\) on
+  \(\mathbb N\to D([0,1],\mathbb R)\) and a process
+  \(X:\mathbb R_{\ge0}\times(\mathbb N\to D([0,1],\mathbb R))\to\mathbb R\)
+  which is a stable Lévy process with parameters \((\alpha,\mu)\).
 
 -/
 

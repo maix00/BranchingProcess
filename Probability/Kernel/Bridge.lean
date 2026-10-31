@@ -15,11 +15,16 @@ public import Mathlib.Probability.Kernel.Composition.MapComap
 
 ## Public declarations
 
-- `bridgeKernel` restricts the initial state to a measurable source set and
-  the endpoint to a measurable target set for a fixed power of a kernel.
-- `bridgeKernel_apply` identifies its value on a measurable target subset
-  with the ambient transition mass of its subtype image;
-  `bridgeKernel_apply_univ` specializes this identity to the full target.
+- `bridgeKernel K A B n` is the kernel from the source subtype \(A\) to
+  the measurable target subtype \(B\), obtained from \(K^n\).
+- `bridgeKernel_apply` states that for \(x\in A\) and measurable
+  \(C\subseteq B\),
+  \[
+    (bridgeKernel\ K\ A\ B\ n)(x,C)
+      =K^n(x,\operatorname{Subtype.val}''C).
+  \]
+  `bridgeKernel_apply_univ` specializes this to
+  \((bridgeKernel\ K\ A\ B\ n)(x,B)=K^n(x,B)\).
 
 The construction applies to every kernel and finite time horizon. It packages
 Mathlib's kernel powers and measurable subtype embeddings as a transition

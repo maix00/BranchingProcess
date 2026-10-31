@@ -18,8 +18,16 @@ import all Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.Blocks.L
 The public theorem in this file is:
 
 - `ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube.measureReal_tubeBlockIntersection_ge_prod_of_endpointWindows`:
-  the endpoint-window containments and one-block probability estimates
-  yield the product lower bound with the entrance-event factor.
+  write \(\mathbb P_\nu(E)=((\operatorname{iidSequenceLaw}(\nu)).real E)\),
+  let \(I\) be the initial event, and let \(T_j\) be the horizontal tube
+  event on block \(j\). Under the displayed endpoint-window and one-block
+  bounds, for every finite block count \(q\),
+  \[
+    \mathbb P_\nu(I)\prod_{j=0}^{q-1}b_j\le
+    \mathbb P_\nu\!\left(I\cap\bigcap_{j=0}^{q-1}T_j\right).
+  \]
+  Here \(b_j\) is the lower bound for the endpoint-window transition
+  probability on block \(j\).
 
 The statement allows arbitrary finite block schedules, tube parameters,
 initial events, and admissible sets. It gives a complete horizontal-tube

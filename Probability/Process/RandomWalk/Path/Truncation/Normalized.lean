@@ -21,10 +21,32 @@ asymptotics without assuming a global second moment.
 
 * `measure_blockPrefixExceedance_le_of_normalizedTruncationBounds` bounds a
   one-block exceedance by the normalized discarded-tail and centered
-  truncated-second-moment costs, under an explicit truncation-bias margin.
+  truncated-second-moment costs. For an increment sequence \(\omega\), let
+  \(S_k(\omega)=\sum_{i<k}\omega_i\); write
+  \(\mathbb P_\nu=\operatorname{iidSequenceLaw}(\nu)\),
+  \(M_2(\nu,r)=\operatorname{truncatedSecondMoment}(\nu,r)\), and
+  \(m_r=\operatorname{truncatedIncrementMean}(\nu,r)\). If
+  \(n,s,\ell,\lambda>0\), \(\delta,T,V\ge0\),
+  \(\ell/n\le\delta\), \(n\nu(|x|>Rs)\le T\),
+  \(nM_2(\nu,Rs)/s^2\le V\), and
+  \(\ell|m_{Rs}|/s\le\lambda/2\), then
+  \[
+    \mathbb P_\nu\!\left(\exists k\in[1,\ell],\ |S_k|\ge\lambda s\right)
+      \le \operatorname{ofReal}\!\left(\delta
+        \left(T+\frac{4V}{\lambda^2}\right)\right).
+  \]
 * `eventually_measure_blockPrefixExceedance_le_of_normalizedTruncationProfiles`
-  gives the eventual form when the normalized tail and variance profiles
-  converge and the bias margin eventually holds.
+  gives the eventual bound
+  \[
+    \mathbb P_\nu\!\left(\exists k\in[1,\ell_n],\ |S_k|\ge\lambda s_n\right)
+      \le \operatorname{ofReal}\!\left(\delta
+        \left(\varepsilon+\frac{4(1+\varepsilon)}{\lambda^2}\right)\right)
+  \]
+  eventually in \(n\), when the normalized tail profile tends to \(0\),
+  the normalized truncated-second-moment profile tends to \(1\), and the
+  bias margin holds eventually.
+
+Here \(R\) is the radius multiplier in the truncation hypotheses.
 -/
 
 open Filter MeasureTheory ProbabilityTheory

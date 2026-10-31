@@ -19,8 +19,21 @@ bound. All moment and tail terms are computed under the same shifted law.
 ## Public declarations
 
 * `measure_inter_adjacentBlockPrefixExceedance_le_sq_of_truncation_second_bounded`
-  bounds the intersection of two adjacent block exceedances by the square of
-  the corresponding one-block hard-truncation bound.
+  let \(\nu_c=(x\mapsto x-c)_\#\nu\),
+  \(m_r=\operatorname{truncatedIncrementMean}(\nu_c,r)\), and
+  \(S_{a,k}(\omega)=\sum_{i=a}^{a+k-1}\omega_i\). Define
+  \(A_0=\{\omega:\exists k\in[1,\ell],\ \theta\le|S_{0,k}(\omega)|\}\)
+  and
+  \(A_1=\{\omega:\exists k\in[1,\ell],\ \theta\le|S_{\ell,k}(\omega)|\}\).
+  Under \(\ell|m_r|<\theta\),
+  \[
+    (\operatorname{iidSequenceLaw}(\nu_c))(A_0\cap A_1)
+      \le\left(\ell\,\nu\{|x-c|>r\}
+        +\operatorname{ofReal}\!\left(
+          \frac{\ell\int_{[-r,r]}y^2\,\nu_c(dy)}
+               {(\theta-\ell|m_r|)^2}\right)\right)^2,
+  \]
+  where the inequality is in \(\mathbb R_{\ge0}\cup\{\infty\}\).
 -/
 
 open MeasureTheory ProbabilityTheory

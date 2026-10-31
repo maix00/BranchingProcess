@@ -18,8 +18,10 @@ is needed.
 
 ## Public declarations
 
-* `Measurable.finset_filter` proves the coordinatewise measurable filtering
-  rule stated above.
+* `Measurable.finset_filter` states that if \(F:\Omega\to\operatorname{Finset}(\alpha)\)
+  is measurable and each section \(\omega\mapsto keep(\omega,a)\) is
+  measurable, then \(\omega\mapsto\{a\in F(\omega):keep(\omega,a)\}\)
+  is measurable.
 -/
 
 @[expose] public section
