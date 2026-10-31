@@ -27781,3 +27781,21 @@ This reusable process-level marginal theorem connects the Lévy-process
 interface to the repository's infinitely divisible measure API. The focused
 target `lake build Probability.Process.Levy.MarginalLaws` passes. The
 production module count is now 1,637.
+
+## Repository-wide module and reference audit (2026-10-31)
+
+The production source tree contains 1,637 Lean modules, exactly matching the
+module paths in `MODULE_AUDIT_LEDGER.csv`. Every module header has a declaration
+inventory identifying its public interface or its internal proof declarations.
+The 12 directories with at least seven direct modules contain only complete
+public interfaces; none has a proof-only module flattened beside those
+interfaces. The structure scan found zero same-level Lean file/directory
+basename collisions, zero module names repeating their parent directory, and
+zero directories containing both `Lemmas.lean` and `Lemmas/`.
+
+The project-source reference scan found no generic “the paper”, “this paper”,
+“the thesis”, or “this thesis” placeholders. Private declaration names also
+have no `paper`, `thesis`, or `lemma33` remnants. Thesis references in the
+scanned Lean files identify WANG Yiyang's *Asymptotic Speed of the N-Branching
+Random Walk with Infinite Offspring*, its Fudan University Master's thesis
+status and year, and the cited chapter/lemma where applicable.
