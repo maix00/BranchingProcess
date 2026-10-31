@@ -27472,3 +27472,17 @@ increment measures from probability measures in the restarted-window formulas,
 spells out the corridor parameters in the one-jump entrance statement, and
 defines the IID product law used by the interpolation limit. The production
 source inventory and ledger remain at 1,631 modules.
+
+## Import-boundary test module-path reconciliation (2026-10-31)
+
+The import-boundary test suite still named the pre-reorganization modules
+`Probability.Distributions.Stable.Exponent.CharacteristicFunction`,
+`Probability.RandomMeasure.Poisson.PointFamily`, and
+`Probability.RandomMeasure.Poisson.Basic`. Updated the checks to the current
+modules: stable-law definitions, their characteristic-function modulus,
+stable-domain-of-attraction characteristic functions,
+`Poisson.PointFamily.Basic`, and `Poisson.RandomMeasure.Basic`. The stable
+exponent module is intentionally excluded from the Lévy-independent boundary
+check because its public API is proved from the Lévy–Khintchine
+representation. The complete import-boundary checker and all 31 Python tests
+pass with the reconciled module paths.

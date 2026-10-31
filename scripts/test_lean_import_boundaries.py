@@ -350,17 +350,23 @@ class ImportBoundaryCheckTests(unittest.TestCase):
             )
         self.assertTrue(any("GaltonWatson" in issue for issue in issues))
 
-    def test_stable_characteristic_function_layers_avoid_levy_and_branching(self):
+    def test_stable_distribution_characteristic_function_layers_avoid_levy_and_branching(
+        self,
+    ):
         boundaries = {
-            "Probability.Distributions.Stable.Exponent.CharacteristicFunction": (
-                "Probability.Distributions.Stable.Exponent.Basic",
+            "Probability.Distributions.Stable.Basic": (
+                "Probability.Distributions.Stable.Levy.Khintchine",
+                "Probability.Process.Stable.JumpModel",
+                "Probability.BranchingRandomWalk",
+                "Combinatorics.BranchingWalk",
+            ),
+            "Probability.Distributions.Stable.CharacteristicFunction.Modulus": (
                 "Probability.Distributions.Stable.Levy.Khintchine",
                 "Probability.Process.Stable.JumpModel",
                 "Probability.BranchingRandomWalk",
                 "Combinatorics.BranchingWalk",
             ),
             "Probability.Distributions.Stable.Attraction.CharacteristicFunction": (
-                "Probability.Distributions.Stable.Exponent.Basic",
                 "Probability.Distributions.Stable.Levy.Khintchine",
                 "Probability.Process.Stable.JumpModel",
                 "Probability.BranchingRandomWalk",
@@ -416,8 +422,8 @@ class ImportBoundaryCheckTests(unittest.TestCase):
     def test_poisson_general_layers_are_covered(self):
         for module in (
             "Probability.Distributions.Poisson.Moments",
-            "Probability.RandomMeasure.Poisson.PointFamily",
-            "Probability.RandomMeasure.Poisson.Basic",
+            "Probability.RandomMeasure.Poisson.PointFamily.Basic",
+            "Probability.RandomMeasure.Poisson.RandomMeasure.Basic",
             "Probability.RandomMeasure.Poisson.Integration.Integral",
         ):
             with self.subTest(module=module):
