@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.Brownian.PathLaw.Skorokhod
-import Probability.Process.Stable.Brownian.Basic
+public import Probability.Process.Stable.Brownian.Basic
 public import Probability.Process.Stable.PathLaw.Basic
 public import Probability.Process.Path.Representation.Cadlag
 public import Probability.Process.Stable.PathLaw.UnitInterval
@@ -93,10 +93,8 @@ theorem IsBrownianReal.isStableClockProcessLaw_cadlagunitIntervalProcessPathLaw
     {P : Measure Ω} [IsProbabilityMeasure P] {B : ℝ≥0 → Ω → ℝ}
     (hB : IsBrownianReal B P) :
     IsStableClockProcessLaw 2 (gaussianReal 0 (1 : ℝ≥0)) unitInterval.clock
-      (Process.Path.Cadlag.pathLaw P
-        (fun t ω => B (unitInterval.toNNReal t) ω)
-          (fun t => hB.toIsPreBrownianReal.aemeasurable
-            (unitInterval.toNNReal t))) := by
+      (hB.isStableLevyProcess.unitIntervalPathLaw :
+        Measure (CadlagPath unitInterval ℝ)) := by
   exact hB.isStableLevyProcess.isStableClockProcessLaw_unitIntervalPathLaw
 
 end ProbabilityTheory
