@@ -13,14 +13,24 @@ public import Combinatorics.UlamHarris.Basic
 
 ## Public declarations
 
+For $\beta:\operatorname{TreeNode}(\alpha)\to\operatorname{Step}(\alpha,X)$:
+
 * `Combinatorics.Branching.StepField α X` is the function type
-  `TreeNode α → Step α X`.
-* `Combinatorics.Branching.StepField.map f β` maps each child mark by `f`;
-  `map_apply`, `map_id`, and `map_map` give its pointwise form, identity law,
-  and composition law. `map_measurable` proves measurability when `f` is
-  measurable.
-* `Combinatorics.Branching.StepField.forgetMarks β` maps every mark to
-  `PUnit.unit` while preserving the child slots.
+  $\operatorname{TreeNode}(\alpha)\to\operatorname{Step}(\alpha,X)$.
+* `Combinatorics.Branching.StepField.map` maps every mark by $f:X\to Y$.
+  `Combinatorics.Branching.StepField.map_apply` gives
+  $(\beta.\operatorname{map}(f))(u)=(\beta(u)).\operatorname{map}(f)$.
+* `Combinatorics.Branching.StepField.map_id` and
+  `Combinatorics.Branching.StepField.map_map` give
+  $\beta.\operatorname{map}(\mathrm{id})=\beta$ and
+  $(\beta.\operatorname{map}(f)).\operatorname{map}(g)
+    =\beta.\operatorname{map}(g\circ f)$.
+  `Combinatorics.Branching.StepField.map_measurable` states that
+  $\operatorname{StepField.map}(f)$ is measurable when $f$ is measurable.
+* `Combinatorics.Branching.StepField.forgetMarks` replaces each mark with
+  $\mathrm{PUnit.unit}$ and preserves its optional child slots:
+  $(\operatorname{forgetMarks}(\beta))(u)
+    =(\beta(u)).\operatorname{map}(\lambda\_,\mathrm{PUnit.unit})$.
 
 A step field assigns one complete optional child-slot configuration to every
 potential address. This module contains its type and pointwise mark maps, below
