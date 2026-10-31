@@ -77,8 +77,11 @@ its source statement and missing proof interfaces are recorded in
   the continuous-boundary specialization is imported from its semantic module.
 * **Theorem 4, Section 5:** for a homogeneous process with stationary
   independent increments and right-continuous paths, whose one-time law is in
-  the strictly stable domain of attraction with $0 < \alpha\le2$ and
-  $0<F_\alpha(0)<1$, the rescaled path
+  the strictly stable domain of attraction with $0 < \alpha<2$ and
+  $0<F_\alpha(0)<1$, subject to the source centering conditions
+  $\mathbb E[\xi(t)]=0$ whenever the expectation exists and, for $\alpha=1$,
+  $\int_{\mathbb R}\sin(z/B(n))\,\operatorname{Law}(\xi(1))(dz)\to0$,
+  the rescaled path
   $t\mapsto\xi(nt)/x(n)$ has the rate for $G\in\mathfrak M$
   $\log\mathbb P(\xi(n\cdot)/x(n)\in G)\sim
   C H_\alpha(G)n x(n)^{-\alpha}L^*(x(n))$

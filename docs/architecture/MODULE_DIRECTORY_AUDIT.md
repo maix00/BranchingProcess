@@ -27886,3 +27886,20 @@ The production source-to-ledger rescan after this addition contains 1,639
 modules on each side, with an exact path match. The same-level file/directory
 basename scan remains clear, including the new `Levy/DomainOfAttraction/`
 directory; the new file header lists its public declaration and source formula.
+
+## Mogul'skii Theorem 4 source-statement and reference correction (2026-11-01)
+
+Rechecked Section 5 against the downloaded scan of A. A. Mogul'skii's 1974
+Russian original. Theorem 4 requires a strictly stable index $0<\alpha<2$,
+the condition $0<F_\alpha(0)<1$, and the article's mean-zero and index-one
+centering assumptions. Corrected the theorem-entry documentation and the
+Theorem 4 proof-route note to state those hypotheses explicitly. The proof
+route now records only the source's process-convergence input (38), scale
+comparison (39)--(44), and reuse of Theorem 1's geometric proof.
+
+The source-reference pass also reconciled the English translation's issue
+number to the SIAM DOI publisher record, *Theory of Probability and Its
+Applications* 19(4) (1975), and corrected the Jacod--Shiryaev Springer DOI
+link to eBook DOI 10.1007/978-3-662-05265-5. The source formula and these
+Lean documentation changes are checked by the focused Mogul'skii theorem-entry
+build.
