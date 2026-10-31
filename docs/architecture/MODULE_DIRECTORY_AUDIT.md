@@ -27813,3 +27813,28 @@ instead of repeating the zero-start law transfer. The focused build of
 `Probability.Process.StationaryIncrements.Basic`,
 `Probability.Process.Levy.MarginalLaws`, and
 `Probability.Process.Levy.PathLaw.Convergence` passes (3,314 Lake jobs).
+
+## Convolution law for stationary independent increments (2026-10-31)
+
+Added `Probability/Process/StationaryIncrements/Convolution.lean` with the
+generic theorem `HasStationaryIncrements.map_add_eq_conv_of_indepIncrements`:
+for a process with zero start, stationary increments, and independent
+increments,
+\[
+  \operatorname{Law}(X_{s+t})=\operatorname{Law}(X_s)*\operatorname{Law}(X_t).
+\]
+It is stated for measurable additive-group-valued processes and ordered
+additive time monoids, with only the order bounds needed to apply the
+independent-increment property. This puts the convolution-semigroup identity
+at the process layer, without assuming càdlàg paths or specializing to Lévy
+processes. The module builds with the pinned toolchain.
+
+## Structural and ledger rescan (2026-10-31)
+
+After adding the generic stationary-increment convolution module, the
+production Lean tree contains 1,638 modules, exactly matching
+`MODULE_AUDIT_LEDGER.csv`. The repeated structural scan finds zero same-level
+file/directory basename collisions, parent-directory basename repeats,
+`Lemmas.lean`/`Lemmas/` collisions, and modules without declaration
+inventories. The project-source citation/name scan finds zero generic
+paper/thesis placeholders and zero disallowed private-name remnants.
