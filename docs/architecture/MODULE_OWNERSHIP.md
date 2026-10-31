@@ -247,6 +247,21 @@ selection whose candidates are child slots of a branching step. Mathlib's
 generic finite-set ordering is under `Data/Finset`, whereas graph-walk
 construction is under `Combinatorics/SimpleGraph/Walk`; this follows the same
 split between general finite-candidate operations and a model-specific walk.
+The closest Mathlib selection precedents checked are `Finset.rado_selection`
+in `Combinatorics/Compactness`, which combines choices indexed by finite sets
+into a global choice compatible with larger finite sets, and Hall's theorem
+in `Combinatorics/Hall`, which selects
+distinct representatives from finite candidate sets. They have different
+statements from a selector of capacity \(N\), but confirm that finite-candidate
+selection and matching belong to the combinatorial layer. The project
+interface remains distinct because it specifies
+\(M:\mathcal P(\iota)\to\operatorname{Finset}(\iota)\),
+\(M(S)\subseteq S\), and
+\(|M(S)|=\min(N,|S|)\) for finite \(S\), with \(|M(S)|=N\) for infinite
+\(S\). The comparison was checked against the pinned Mathlib revision
+`380f2aafb622cb2c1c93dac545b6389083c68c51` and its
+[official API documentation](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Combinatorics/Compactness.html)
+and [Hall API documentation](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Combinatorics/Hall/Basic.html).
 
 Thus measurable hypotheses do not make `NSelection` a `MeasurableSpace`
 object: `MeasureTheory/Selection/NSelection` contains measurable theorems about
