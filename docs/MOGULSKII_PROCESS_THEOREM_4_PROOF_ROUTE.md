@@ -29,6 +29,14 @@ where `C < 0` is the constant from Theorem 1. In the proof, Theorem 4 is
 reduced to the stable-process tube estimate of Lemma 1 and then to the same
 geometric proof used for Theorem 1.
 
+The article's pinned tube is
+\[
+I_c^b = \{f\in D(0,1): f(0)=0,\ \inf_{0\le t\le1} f(t)>c,\
+                         \sup_{0\le t\le1} f(t)<b\}.
+\]
+Thus `a⁻¹ I¹₋₁` is the set of paths starting at zero and staying strictly
+between `-a⁻¹` and `a⁻¹`; the terminal value in `D(0,1)` is the left limit.
+
 ## Existing Lean interfaces
 
 - `Probability/Process/Levy/Basic.lean` defines `IsLevyProcess` and proves
