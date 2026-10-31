@@ -27536,11 +27536,14 @@ Added `Probability/Process/Levy/FiniteDimensional.lean` for the reusable
 coordinate-measurability consequence of zero start and stationary increment
 laws. Added `Probability/Process/Levy/PathLaw/UnitInterval.lean` for the
 canonical law of $t\mapsto X_{Tt}$ on $\mathrm{CadlagPath}([0,1],\mathbb R)$
-and the joint-law identity for every finite evaluation vector. The latter
-uses the existing rational-coordinate càdlàg path realization, Skorokhod
-evaluation measurability, and the a.s. càdlàg property. One-use time-change
-regularity remains local to the finite-evaluation proof; the public interface
-contains only the path-law constructor and its finite-dimensional law.
+and the joint-law identity for every finite evaluation vector. The module also
+identifies the unit-interval law of the time-changed process $t\mapsto X_{Tt}$
+with the horizon-$T$ law. The path-law construction uses the existing
+rational-coordinate càdlàg path realization, Skorokhod evaluation
+measurability, and the a.s. càdlàg property. One-use time-change regularity
+remains local to the finite-evaluation proof; the public interface contains
+only complete path laws and their reusable finite-dimensional and time-change
+identities.
 
 Both modules build with the pinned toolchain. Their semantic placement and
 public declarations are recorded in `MODULE_OWNERSHIP.md` and this per-module
@@ -27627,14 +27630,15 @@ increments, zero start, and càdlàg regularity against the project process
 definition. These reusable closure properties do not assert convergence of
 the changed marginal laws. Both touched Lévy modules built successfully.
 
-`Probability/Process/Levy/PathLaw/UnitInterval.lean` now proves that spatial
+`Probability/Process/Levy/PathLaw/UnitInterval.lean` proves that spatial
 scaling of a Lévy process pushes its complete unit-interval path law forward
-by the matching pointwise map on càdlàg paths. This combines the process
-closure theorem with the generic `Process.Path.Cadlag.pathLaw_smul` identity;
-the statement is a reusable law-level interface, while the map-specific
-measurability and time-change details remain inside its proof. The module
-builds successfully. The interface supports normalization of path laws, but
-does not prove a process-level stable functional limit or its tightness.
+by the matching pointwise map on càdlàg paths. It also identifies the law of
+the time-rescaled process $t\mapsto X_{Tt}$ on $[0,1]$ with the horizon-$T$
+path law. These statements combine the process closure theorems with the
+generic `Process.Path.Cadlag.pathLaw_smul` identity and the explicit
+time-change definition. The module builds successfully. The interface
+supports normalization of path laws, but does not prove a process-level stable
+functional limit or its tightness.
 
 ## Stable-domain Brownian path-class adapter (2026-10-31)
 
