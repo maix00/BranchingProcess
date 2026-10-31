@@ -27990,3 +27990,30 @@ The new path-law module and promoted path-map identity are recorded in the
 ledger; the focused path-law build passes. The Mogul'skii proof route now has
 the path-law/process-event identity needed for equation (42); equation (38)'s
 functional convergence and the resulting Portmanteau comparison remain open.
+
+## Stable unit-interval path-law self-similarity (2026-11-01)
+
+Added `Probability/Process/Stable/PathLaw/SelfSimilarity.lean`. Its public
+path-law uniqueness theorem states that two probability measures on
+`CadlagPath unitInterval ℝ` with the same strictly stable increment law and
+clock coincide. It compares their processes on the countable dense rational
+time coordinates, then applies
+`MeasureTheory.CadlagPath.measure_eq_of_map_finiteDenseEvaluation_eq` to
+identify the path measures. The companion theorem gives the stable
+time-space self-similarity
+\[
+  \mathcal L\bigl((r^{-1/\alpha}X_{rt})_{0\le t\le1}\bigr)
+    =\mathcal L\bigl((X_t)_{0\le t\le1}\bigr),\qquad r>0.
+\]
+The interface belongs beside stable path laws: it uses the stable increment
+specification to identify the laws, while the general dense-coordinate
+uniqueness argument remains with the càdlàg path measure owner. The result
+supports stable-process rescaling in the small-deviation proofs and leaves the
+continuous-time domain-of-attraction convergence in Mogul'skii's equation
+(38) as a separate obligation.
+
+The new module builds with the pinned Lean toolchain. The production source
+tree and `MODULE_AUDIT_LEDGER.csv` now contain 1,642 modules with exact path
+agreement; the directory scan still has no same-level file/directory stem
+collisions, parent-directory stem repeats, paired `Lemmas.lean`/`Lemmas/`
+entries, or `Source/` directory.
