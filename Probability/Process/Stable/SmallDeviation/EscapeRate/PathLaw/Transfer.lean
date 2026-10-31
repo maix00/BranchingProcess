@@ -15,6 +15,7 @@ public import Mathlib.Probability.CDF
 
 import Probability.Process.Stable.FiniteDimensional
 public import Probability.Process.Stable.SmallDeviation.EscapeRate.Basic
+public import Probability.Process.Stable.SmallDeviation.EscapeRate.Corridor
 import Probability.Process.Path.Skorokhod.RationalTime
 import Topology.Order.UnitInterval.Rational
 
@@ -31,7 +32,18 @@ with the rational-time range event for any stable-clock path law. The later
 results transfer the process-level escape rate to a unit-interval path law,
 compare endpoint-corridor probabilities with the corresponding process
 probabilities, and construct the path-space escape-rate specification from a
-stable Lévy-process witness.
+stable Lévy-process witness. They also transfer the centered-corridor escape
+rate from the process law to the associated càdlàg path law.
+
+- `IsStableClockProcessLaw.measure_stableProcessCenteredCorridor_eq`:
+  \(P(\{f:f(0)=0,\exists\eta>0,\forall t\in[0,1],
+  -a+\eta\le f(t)\le a-\eta\})\) equals the process probability of the
+  same uniform corridor for \(X(t)-X(0)\).
+- `IsStableClockProcessLaw.exists_centeredCorridorEscapeRate_of_isStableLevyProcess`:
+  transfers the common constant \(C<0\) from the process limit
+  \(a^\alpha\log\mathbb P(\exists\eta>0,\forall t\in[0,1],
+  -a+\eta\le X(t)-X(0)\le a-\eta)\to C\) to the stable-clock path
+  law.
 
 The tube-probability identity is
 \[
@@ -291,6 +303,107 @@ theorem IsStableClockProcessLaw.measure_corridorReturnEvent_eq
         rationalCorridor) := hcoordinateEq
     _ = Q (fullSegmentCorridorReturnEvent X 0 1 lower upper coreLower coreUpper) := by
       simpa only [rationalCorridor, zero_add, one_mul] using hprocess
+
+/-- The centered path-space corridor has the same probability as the
+corresponding complete-segment corridor of a stable Lévy process with the
+same increment law. The path law starts at zero almost surely, and the
+terminal condition in the transfer theorem follows from the uniform corridor
+margin. -/
+theorem IsStableClockProcessLaw.measure_stableProcessCenteredCorridor_eq
+    {α : ℝ} {μ : Measure ℝ}
+    {P : Measure (CadlagPath unitInterval ℝ)} [IsProbabilityMeasure P]
+    {Ω : Type*} [MeasurableSpace Ω]
+    {X : ℝ≥0 → Ω → ℝ} {Q : Measure Ω} [IsProbabilityMeasure Q]
+    (hP : IsStableClockProcessLaw α μ unitInterval.clock P)
+    (hX : IsStableLevyProcess α μ X Q) (a : ℝ) :
+    P (stableProcessCenteredCorridor a) =
+      centeredCorridorProbability Q X a := by
+  have hstart := hP.ae_start_eq_zero
+  have hpathSet :
+      stableProcessCenteredCorridor a =ᵐ[P]
+        Skorokhod.rangeInOpenInterval (-a) a := by
+    filter_upwards [hstart] with f hf
+    simp [stableProcessCenteredCorridor, Skorokhod.corridorStartingAtZero, hf]
+  have hpathMeasure :
+      P (stableProcessCenteredCorridor a) =
+        P (Skorokhod.rangeInOpenInterval (-a) a) :=
+    measure_congr hpathSet
+  have hterminal :
+      Skorokhod.rangeInOpenInterval (-a) a =
+        Skorokhod.rangeInOpenIntervalEndsIn (-a) a (-a) a := by
+    ext f
+    rw [Skorokhod.mem_rangeInOpenIntervalEndsIn_iff]
+    constructor
+    · intro hf
+      refine ⟨hf, ?_⟩
+      obtain ⟨margin, hmargin, hpath⟩ := hf
+      have htop := hpath ⊤
+      constructor <;> linarith
+    · exact fun hf => hf.1
+  have hprocessEvent :
+      fullSegmentCorridorReturnEvent X 0 1 (-a) a (-a) a =
+        fullSegmentCorridorEvent X 0 1 (-a) a := by
+    ext ω
+    simp only [fullSegmentCorridorReturnEvent, segmentCorridorEndpointEvent,
+      Set.mem_inter_iff, Set.mem_ofPred_eq, Set.mem_Ioo]
+    constructor
+    · exact fun h => h.1
+    · intro h
+      rcases h with ⟨margin, hmargin, hpath⟩
+      refine ⟨⟨margin, hmargin, hpath⟩, ?_⟩
+      have htop := hpath ⊤
+      constructor <;> linarith
+  calc
+    P (stableProcessCenteredCorridor a) =
+        P (Skorokhod.rangeInOpenInterval (-a) a) := hpathMeasure
+    _ = P (Skorokhod.rangeInOpenIntervalEndsIn (-a) a (-a) a) := by
+      rw [hterminal]
+    _ = Q (fullSegmentCorridorReturnEvent X 0 1 (-a) a (-a) a) :=
+      hP.measure_corridorReturnEvent_eq hX (-a) a (-a) a
+    _ = Q (fullSegmentCorridorEvent X 0 1 (-a) a) := by
+      rw [hprocessEvent]
+
+/-- Lemma 1(II) of A. A. Mogul'skii, “Small Deviations in a Space of
+Trajectories,” as a path-law consequence of the centered and range-tube
+comparison. A stable-clock path law and a stable Lévy-process realization
+with the same increment law have the same centered-corridor escape constant. -/
+theorem IsStableClockProcessLaw.exists_centeredCorridorEscapeRate_of_isStableLevyProcess
+    {α : ℝ} {μ : Measure ℝ}
+    {P : Measure (CadlagPath unitInterval ℝ)} [IsProbabilityMeasure P]
+    {Ω : Type*} [MeasurableSpace Ω]
+    {X : ℝ≥0 → Ω → ℝ} {Q : Measure Ω} [IsProbabilityMeasure Q]
+    (hP : IsStableClockProcessLaw α μ unitInterval.clock P)
+    (hX : IsStableLevyProcess α μ X Q)
+    (hcdf : 0 < cdf μ 0 ∧ cdf μ 0 < 1) :
+    ∃ C : ℝ, C < 0 ∧ HasStableCenteredCorridorEscapeRate α μ P C := by
+  obtain ⟨C, hC, _, hcenter⟩ := hX.exists_centeredCorridor_escape_rate hcdf
+  have hpositive : ∀ᶠ a : ℝ in 𝓝[>] (0 : ℝ),
+      0 < (P (stableProcessCenteredCorridor a)).toReal := by
+    filter_upwards [self_mem_nhdsWithin] with a ha
+    rw [hP.measure_stableProcessCenteredCorridor_eq hX a]
+    have ⟨hnegative, hpositive⟩ :=
+      hX.increments.strictlyStable.twoSidedMass_of_cdfAtZero hcdf
+    have hcorridor : 0 < centeredCorridorProbability Q X a := by
+      dsimp [centeredCorridorProbability]
+      have ha' : 0 < a := by simpa using ha
+      exact hX.measure_fullSegmentCorridor_pos (-a) a (neg_neg_of_pos ha') ha'
+        hpositive hnegative
+    exact ENNReal.toReal_pos_iff.mpr
+      ⟨hcorridor, measure_lt_top Q _⟩
+  have hrate : Tendsto
+      (fun a : ℝ => a ^ α *
+        Real.log ((P (stableProcessCenteredCorridor a)).toReal))
+      (𝓝[>] (0 : ℝ)) (𝓝 C) := by
+    have heq : (fun a : ℝ => a ^ α *
+        Real.log ((P (stableProcessCenteredCorridor a)).toReal)) =
+        fun a => stableCenteredLogRate Q X α a := by
+      funext a
+      simp [stableCenteredLogRate,
+        hP.measure_stableProcessCenteredCorridor_eq hX a]
+    rw [heq]
+    exact hcenter
+  refine ⟨C, hC, hP, ?_⟩
+  exact ⟨hP.strictlyStable.1, hC, hpositive, hrate⟩
 
 /-- Transfer a common positive lower bound on finitely many strict-stable
 endpoint windows to the corresponding open endpoint events under a càdlàg
