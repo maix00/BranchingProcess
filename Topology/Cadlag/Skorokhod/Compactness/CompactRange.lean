@@ -18,15 +18,24 @@ import all Topology.Cadlag.Skorokhod.Maps.Range
 ## Public declarations
 
 - `Skorokhod.exists_isCompact_superset_of_uniform_admitsOscillationPartition`:
-  if some compact `C` satisfies `∀ f ∈ K, ∀ t, f t ∈ C` and
-  `∀ ε > 0, ∃ δ > 0, ∀ f ∈ K, ∃ partition` with mesh above `δ` and
-  oscillation below `ε`, then `∃ K'`, `IsCompact K' ∧ K ⊆ K'`.
+  for a metric state space $E$ and a path family $K$ in
+  `CadlagPath unitInterval E`, assume $\exists C\subseteq E$ compact with
+  $f(t)\in C$ for all $f\in K$ and $t$. For every $\varepsilon>0$, assume
+  there is $\delta>0$ such that each $f\in K$ admits a partition $P$ and a
+  bound $b<\varepsilon$ satisfying $\delta<\operatorname{mesh}(P)$ and
+  `OscillationBoundedOnPartition P f b`. Then
+  $\exists K',\operatorname{IsCompact}(K')\land K\subseteq K'$.
+
+Here `OscillationBoundedOnPartition P f b` means
+$\forall s,t\ne1, P.index(s)=P.index(t)\implies
+\operatorname{dist}(f(s),f(t))\le b$.
 
 Uniform oscillation partitions and containment in a common compact state
-space imply relative compactness in the Skorokhod `J₁` topology. The proof
-uses Billingsley's complete path metric and therefore does not assume that
-the ambient state space is complete.
+space imply relative compactness in the Skorokhod $J_1$ topology. The proof
+uses Billingsley's complete path metric and states the compact-range form of
+his compactness criterion.
 -/
+
 
 @[expose] public section
 
