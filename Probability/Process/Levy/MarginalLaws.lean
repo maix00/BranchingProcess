@@ -69,16 +69,9 @@ theorem isInfinitelyDivisible_timeMarginal
       (h.aemeasurable_eval (grid k))
   have hincrement_law (k : ℕ) :
       IdentDistrib (increment k) (fun ω => X duration ω) P P := by
-    have hstationary := h.stationaryIncrements (grid k) duration
-    have hstationary' : IdentDistrib (increment k)
-        (fun ω => X duration ω - X 0 ω) P P := by
-      simpa [increment, hgrid_step k] using hstationary
-    have hzero : (fun ω => X duration ω - X 0 ω) =ᵐ[P]
-        fun ω => X duration ω := by
-      filter_upwards [h.ae_start_eq_zero] with ω hω
-      simp [hω]
-    exact hstationary'.trans
-      (IdentDistrib.of_ae_eq hstationary'.aemeasurable_snd hzero)
+    simpa [increment, hgrid_step k] using
+      h.stationaryIncrements.identDistrib_increment_of_ae_start
+        h.ae_start_eq_zero (grid k) duration
 
   have hν_probability : IsProbabilityMeasure ν := by
     apply (Measure.isProbabilityMeasure_map_iff (h.aemeasurable_eval duration)).2

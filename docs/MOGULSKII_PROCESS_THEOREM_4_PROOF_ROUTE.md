@@ -43,6 +43,15 @@ between `-a⁻¹` and `a⁻¹`; the terminal value in `D(0,1)` is the left limit
   closure under continuous measurable additive state maps and continuous
   additive time changes. Thus `t ↦ ξ(nt) / B(n)` has the required process
   structure once the source process has been packaged as an `IsLevyProcess`.
+- `Probability/Process/StationaryIncrements/Basic.lean` proves that a
+  zero-start process with stationary increments satisfies
+  `Law(X(s+t) - X(s)) = Law(X(t))` for every `s,t ≥ 0`. The same layer now
+  supplies the increment-to-marginal identity used by path-law convergence.
+- `Probability/Process/Levy/MarginalLaws.lean` proves that every fixed-time
+  marginal of a real-valued Lévy process is infinitely divisible: for every
+  `n ≥ 1`, `Law(X(t))` is the `n`-fold convolution of the common law of `n`
+  equal-length stationary increments. This places the process marginals in
+  the measure-level framework used by the Lévy--Khintchine semigroup API.
 - `Probability/Process/Levy/PathLaw/UnitInterval.lean` constructs the law of
   `t ↦ X(Tt)` on `CadlagPath unitInterval ℝ`, identifies every finite
   evaluation law, identifies the unit-interval law of `t ↦ X(Tt)` with the

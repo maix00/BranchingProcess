@@ -201,34 +201,16 @@ theorem tendsto_unitIntervalPathLaw_of_tight_of_time_marginal_convergence
         (fun ω => X i (horizon i * duration) ω) (P i) (P i) := by
     have htime : horizon i * s' + horizon i * duration = horizon i * t' := by
       rw [← mul_add, hsum]
-    have hstationary := (hX i).stationaryIncrements
-      (horizon i * s') (horizon i * duration)
-    have hstationary' : IdentDistrib
-        (fun ω => X i (horizon i * t') ω - X i (horizon i * s') ω)
-        (fun ω => X i (horizon i * duration) ω - X i 0 ω) (P i) (P i) := by
-      simpa only [htime] using hstationary
-    have hzeroEq : (fun ω => X i (horizon i * duration) ω) =ᵐ[P i]
-        fun ω => X i (horizon i * duration) ω - X i 0 ω := by
-      filter_upwards [(hX i).ae_start_eq_zero] with ω hω
-      simp [hω]
-    have hzero := IdentDistrib.of_ae_eq
-      ((hX i).aemeasurable_eval (horizon i * duration)) hzeroEq
-    exact hstationary'.trans hzero.symm
+    simpa only [htime] using
+      (hX i).stationaryIncrements.identDistrib_increment_of_ae_start
+        (hX i).ae_start_eq_zero (horizon i * s')
+        (horizon i * duration)
   have htargetIdent : IdentDistrib
       (fun ω => Y duration ω)
       (fun ω => Y t' ω - Y s' ω) P₀ P₀ := by
-    have hstationary := hY.stationaryIncrements s' duration
-    have hstationary' : IdentDistrib
-        (fun ω => Y t' ω - Y s' ω)
-        (fun ω => Y duration ω - Y 0 ω) P₀ P₀ := by
-      simpa only [hsum] using hstationary
-    have hzeroEq : (fun ω => Y duration ω) =ᵐ[P₀]
-        fun ω => Y duration ω - Y 0 ω := by
-      filter_upwards [hY.ae_start_eq_zero] with ω hω
-      simp [hω]
-    have hzero := IdentDistrib.of_ae_eq
-      (hY.aemeasurable_eval duration) hzeroEq
-    exact hzero.trans hstationary'.symm
+    simpa only [hsum] using
+      (hY.stationaryIncrements.identDistrib_increment_of_ae_start
+        hY.ae_start_eq_zero s' duration).symm
   have hincrementRealized : TendstoInDistribution
       (fun i ω => X i (horizon i * t') ω - X i (horizon i * s') ω) l
       (fun ω => Y t' ω - Y s' ω) P P₀ := by

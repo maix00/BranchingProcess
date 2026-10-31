@@ -27799,3 +27799,17 @@ have no `paper`, `thesis`, or `lemma33` remnants. Thesis references in the
 scanned Lean files identify WANG Yiyang's *Asymptotic Speed of the N-Branching
 Random Walk with Infinite Offspring*, its Fudan University Master's thesis
 status and year, and the cited chapter/lemma where applicable.
+
+## Zero-start stationary-increment law transfer (2026-10-31)
+
+Added `HasStationaryIncrements.identDistrib_increment_of_ae_start` to
+`Probability/Process/StationaryIncrements/Basic.lean`. From
+$X_{s+t}-X_s\stackrel{d}=X_t-X_0$ and $X_0=0$ almost surely, it derives
+$X_{s+t}-X_s\stackrel{d}=X_t$. The result requires only an additive time
+monoid and a state space with subtraction and `SubNegZeroMonoid`, so it is
+owned by the generic stationary-increment module. Lévy marginal infinite
+divisibility and time-marginal path-law convergence now use this theorem
+instead of repeating the zero-start law transfer. The focused build of
+`Probability.Process.StationaryIncrements.Basic`,
+`Probability.Process.Levy.MarginalLaws`, and
+`Probability.Process.Levy.PathLaw.Convergence` passes (3,314 Lake jobs).
