@@ -15,17 +15,20 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Deriv
 ## Public declarations
 
 * `Asymptotics.IsRegularlyVaryingAtTop.of_monotone_intervalIntegral`: if
-  `F x = ∫₀ˣ g(t) dt` is regularly varying with index `ρ > 0` and `g` is
-  locally integrable, eventually positive, and monotone in either direction,
-  then `g` is regularly varying with index `ρ - 1`. This is the monotone
+  $\rho>0$ and $F(x)=\int_0^x g(t)\,dt$ satisfies
+  $\frac{F(cx)}{F(x)}\to c^\rho$ for every $c>0$, and $g$ is locally
+  integrable, eventually positive, and monotone in either direction, then
+  $\frac{g(cx)}{g(x)}\to c^{\rho-1}$ for every $c>0$ as $x\to\infty$.
+  This is the monotone
   density theorem, Theorem 1.7.2 in N. H. Bingham, C. M. Goldie, and J. L.
   Teugels, *Regular Variation*, Encyclopedia of Mathematics and its
   Applications 27, Cambridge University Press (1987), DOI
   `10.1017/CBO9780511721434`.
 
-If a positive antitone function has a regularly varying primitive with positive
-index, then the density is regularly varying with index one less. This is the
-monotone-density step used when recovering a tail from an integrated tail.
+If an eventually positive function is monotone in either direction and its
+primitive is regularly varying with positive index, then its density has
+regular-variation index one less. This is the monotone-density step used when
+recovering a tail from an integrated tail.
 -/
 
 open Filter MeasureTheory
