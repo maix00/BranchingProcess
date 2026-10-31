@@ -92,13 +92,22 @@ between `-a⁻¹` and `a⁻¹`; the terminal value in `D(0,1)` is the left limit
   Section 5.
 - `Probability/Process/Stable/PathLaw/UnitInterval.lean` and the stable
   process escape-rate modules provide the limiting stable path law and its
-  tube-rate input.
+  range-tube rate input. `Probability/Process/Stable/SmallDeviation/EscapeRate/PathLaw/Transfer.lean`
+  transfers Mogul'skii's Lemma 1(II) centered-corridor rate to that path law:
+  the probability of `stableProcessCenteredCorridor(a)` has the same
+  logarithmic rate as the process event `I^a_{-a}`.
 - `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Stable/Scale/SlowMultiplier.lean`
   now formalizes the rounded regular-variation ratio in equation (43): for
   a slowly increasing multiplier $a_n$ compatible with the smaller path scale,
   $\lfloor B^*(a_nx_n)\rfloor/(a_n^\alpha B^*(x_n))\to1$. This proves the
   floor step from regular variation and $B^*(a_nx_n)\to\infty$; it does not
   supply the preceding fixed-tube probability comparison.
+- `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Lemmas/Theorem4/Scale/EscapeRate.lean`
+  combines that rounded ratio with the centered stable path-law escape rate to prove
+  $B^*(x_n)\lfloor B^*(a_nx_n)\rfloor^{-1}
+  \log\mathbb P_P(a_n^{-1}I_{-1}^{1})\to C$, the stable-path contribution
+  to equation (44). The comparison between the original process tube and
+  this stable corridor remains a separate step.
 - The deterministic corridor comparisons and the finite-partition extension
   for Theorem 1 are already formalized under
   `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Rate/`.
@@ -121,12 +130,15 @@ translation, pp. 733--734) proceeds through equations (38)--(44):
    `B(⌊B*(a x(n))⌋)/(a x(n)) → 1`, yielding the fixed-scale stable tube
    comparison.
 3. **Slowly increase `a`, equations (42)--(44).** Choose `a(n) → ∞` slowly
-   enough that the preceding eventual comparisons remain valid. Apply
-   Lemma 1 to the stable-process tube at width `a(n)⁻¹`; the rounded
+   enough that the preceding eventual comparisons remain valid. Lemma 1(I)
+   gives the range-tube rate, and Lemma 1(II) transfers the same constant to
+   the centered corridor `I^1₋₁` used in equation (44). The rounded
    regular-variation factor in equation (43) is supplied by
-   `exists_tendsto_slowStableScaleTime_floor_scaleTime_ratio`. The full
-   probability comparison in equations (42) and (44) remains to be assembled
-   with this scale identity to obtain the exponent
+   `exists_tendsto_slowStableScaleTime_floor_scaleTime_ratio`, and the proof-support
+   lemma `exists_tendsto_slowMultiplier_centeredCorridorLogRatio_of_escapeRate`
+   combines these limits for the stable path contribution to equation (44). The full
+   probability comparison in equation (42) remains to be assembled with
+   these scale identities to obtain the exponent
    `n x(n)⁻α L*(x(n))` and the constant `C`.
 4. **Extend from the tube to `G ∈ 𝔐`.** The article finishes by reusing the
    proof of Theorem 1. The finite partition, inner and outer tube comparisons,

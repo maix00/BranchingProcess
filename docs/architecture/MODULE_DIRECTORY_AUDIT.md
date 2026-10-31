@@ -27905,26 +27905,53 @@ link to eBook DOI 10.1007/978-3-662-05265-5. The source formula and these
 Lean documentation changes are checked by the focused Mogul'skii theorem-entry
 build.
 
-## Current repository-wide audit status (2026-11-01)
+## Repository-wide audit status before the equation (44) module (2026-11-01)
 
-Recomputed the inventory against the current production Lean tree. It contains
+At this audit checkpoint, the production Lean tree contained
 1,639 modules, with an exact path match to all 1,639 rows in
-`MODULE_AUDIT_LEDGER.csv`; each row records `structural_scan=pass`,
-`semantic_review=reviewed`, and `lake_build=pass`. The current structural scan
+`MODULE_AUDIT_LEDGER.csv`; each row recorded `structural_scan=pass`,
+`semantic_review=reviewed`, and `lake_build=pass`. That structural scan
 found zero same-level file/directory stem collisions, parent-directory stem
 repeats, `Lemmas.lean`/`Lemmas/` pairs, directories with more than eight direct
 modules, generic paper/thesis citation placeholders, or disallowed private
 declaration names. The current production tree also has no directory named
 `Source/`.
 
-This closes the current repository-wide module placement, inventory, and
-header/reference-placeholder audit. It describes the current tree; any new or
+At that checkpoint, the repository-wide module placement, inventory, and
+header/reference-placeholder audit was complete. Any subsequently added or
 moved module must be added to the ledger and reviewed under the rules in
 `CONTRIBUTING.md`. The ledger's `lake_build` column records the reviewed build
-status for each module, while the latest commit hook separately completed its
+status for each module, while the commit hook separately completed its
 4,683-check package build.
 
 The audit completion is distinct from completion of the thesis formalization.
 Open theorem applications remain tracked in `FORMALIZATION_CHECKLIST.md`, and
 Mogul'skii's continuous-time Theorem 4 still requires the process-level limit
 and scaling argument recorded in `docs/MOGULSKII_PROCESS_THEOREM_4_PROOF_ROUTE.md`.
+
+## Mogul'skii Theorem 4 centered-corridor contribution (2026-11-01)
+
+Rechecked equation (44) against the Russian original: its stable-process event
+is the centered corridor $I^1_{-1}$. Lemma 1(I) starts from the range-diameter
+tube $J_a$, while Lemma 1(II) transfers its escape constant to centered
+corridors. Added the path-space event `stableProcessCenteredCorridor`, its
+escape-rate specification, and the transfer from a stable Lévy-process
+realization to the corresponding stable-clock path law in
+`Probability/Process/Stable/SmallDeviation/EscapeRate/PathLaw/`. This makes
+the event distinction explicit in Lean.
+
+Added the proof-support module
+`Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Lemmas/Theorem4/Scale/EscapeRate.lean`
+to combine that centered-corridor rate with the rounded regular-variation
+ratio from equation (43), proving the stable path-probability contribution in
+equation (44). The module is under `Lemmas/Theorem4/` because this combination
+serves that proof chain and is not an independent stable-scale API. The
+comparison with the original process tube in equation (42) and the process-level
+convergence in equation (38) remain open. The two
+affected Lean modules built successfully with `lake build` (3,317 jobs).
+
+The source inventory and `MODULE_AUDIT_LEDGER.csv` each contain 1,640
+production modules with exact path agreement. The added module is recorded as
+structurally scanned, semantically reviewed, and built. A fresh directory scan
+found no file/directory stem collision, `Lemmas.lean`/`Lemmas/` pair, directory
+with more than eight direct Lean modules, or `Source/` directory.

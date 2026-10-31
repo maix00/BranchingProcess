@@ -29,7 +29,10 @@ The set `J_a` in Lemma 1(I) consists of paths starting at zero whose range
 has diameter less than `2 * a`. This is translation invariant in space: the
 range need not lie in `(-a, a)`. We encode the strict diameter bound with a
 positive uniform margin below `2 * a`; that is an open event in the Skorokhod
-`J₁` topology.
+`J₁` topology. The centered corridor `I^a_{-a}` from Lemma 1(II) is a
+separate path event. Its escape-rate specification is recorded separately;
+the process-level comparison of these rates is in
+`Probability.Process.Stable.SmallDeviation.EscapeRate.Corridor`.
 ## Public declarations
 
 - `stableProcessRangeTube a` is the open path event with range diameter
@@ -40,6 +43,9 @@ positive uniform margin below `2 * a`; that is an open event in the Skorokhod
   the limit $a^\alpha\log\mathbb P_P(\texttt{stableProcessTube}(a))\to C$.
   Its API gives positivity, negativity of $C$, spatial scaling, and the
   equivalent large-scale logarithmic limit.
+- `stableProcessCenteredCorridor a` is the zero-start open corridor
+  $(-a,a)$, and `HasStableCenteredCorridorEscapeRate α μ P C` records its
+  logarithmic rate on a stable-clock path law.
 
 -/
 
@@ -60,10 +66,24 @@ starting value. -/
 def stableProcessTube (a : ℝ) : Set (CadlagPath unitInterval ℝ) :=
   Skorokhod.rangeTubeStartingAtZero a
 
+/-- The zero-start open corridor `I^a_{-a}` from Lemma 1(II). -/
+def stableProcessCenteredCorridor (a : ℝ) : Set (CadlagPath unitInterval ℝ) :=
+  Skorokhod.corridorStartingAtZero (-a) a
+
 /-- Initial evaluation is continuous in `J₁`, and the range condition is the open Skorokhod corridor. -/
 theorem measurableSet_stableProcessTube (a : ℝ) :
     MeasurableSet (stableProcessTube a) := by
   exact Skorokhod.measurableSet_rangeTubeStartingAtZero a
+
+/-- The centered corridor event is measurable in Skorokhod path space. -/
+theorem measurableSet_stableProcessCenteredCorridor (a : ℝ) :
+    MeasurableSet (stableProcessCenteredCorridor a) := by
+  rw [stableProcessCenteredCorridor, Skorokhod.corridorStartingAtZero]
+  have hstart : MeasurableSet
+      {f : CadlagPath unitInterval ℝ | f ⊥ = (0 : ℝ)} :=
+    (measurableSet_singleton (0 : ℝ)).preimage
+      (Skorokhod.measurable_apply ⊥)
+  exact hstart.inter (Skorokhod.measurableSet_rangeInOpenInterval (-a) a)
 
 /-- For a process law started at zero almost surely, adding the explicit
 starting-value condition to the range-diameter event defined above does not
@@ -85,6 +105,64 @@ def HasStableProcessEscapeRate (α : ℝ) (μ : Measure ℝ)
     (P : Measure (CadlagPath unitInterval ℝ)) (C : ℝ) [IsProbabilityMeasure P] : Prop :=
   IsStableClockProcessLaw α μ unitInterval.clock P ∧
     HasPowerLawSmallDeviationRate α C fun a => (P (stableProcessTube a)).toReal
+
+/-- A stable-clock path law has centered-corridor escape rate `C` when
+\(a^\alpha\log P(I^a_{-a})\to C\) as \(a\downarrow0\). This records the
+centered event separately from the translation-invariant range event of
+`HasStableProcessEscapeRate`. -/
+def HasStableCenteredCorridorEscapeRate (α : ℝ) (μ : Measure ℝ)
+    (P : Measure (CadlagPath unitInterval ℝ)) (C : ℝ) [IsProbabilityMeasure P] : Prop :=
+  IsStableClockProcessLaw α μ unitInterval.clock P ∧
+    HasPowerLawSmallDeviationRate α C fun a =>
+      (P (stableProcessCenteredCorridor a)).toReal
+
+namespace HasStableCenteredCorridorEscapeRate
+
+variable {α : ℝ} {μ : Measure ℝ}
+  {P : Measure (CadlagPath unitInterval ℝ)} {C : ℝ}
+variable [IsProbabilityMeasure P]
+
+/-- The defining centered-corridor escape-rate limit. -/
+theorem tendsto (h : HasStableCenteredCorridorEscapeRate α μ P C) :
+    Tendsto (fun a => a ^ α *
+      Real.log ((P (stableProcessCenteredCorridor a)).toReal))
+      (𝓝[>] (0 : ℝ)) (𝓝 C) := h.2.tendsto
+
+/-- Rescaling the centered-corridor radius by a diverging spatial factor
+converts its small-radius escape rate into a logarithmic rate in that factor.
+For fixed `r > 0`, `c⁻ᵅ log P(I^{r/c}_{-r/c}) → C / r^α` as `c → ∞`. -/
+theorem tendsto_inv_rpow_mul_log
+    (h : HasStableCenteredCorridorEscapeRate α μ P C) {r : ℝ} (hr : 0 < r) :
+    Tendsto (fun c : ℝ => c⁻¹ ^ α *
+      Real.log ((P (stableProcessCenteredCorridor (r / c))).toReal))
+      atTop (𝓝 (C / r ^ α)) := by
+  have hzero : Tendsto (fun c : ℝ => r / c) atTop (𝓝 0) := by
+    simpa [div_eq_mul_inv] using
+      (tendsto_const_nhds.mul tendsto_inv_atTop_zero :
+        Tendsto (fun c : ℝ => r * c⁻¹) atTop (𝓝 (r * 0)))
+  have hpos : ∀ᶠ c : ℝ in atTop, 0 < r / c := by
+    filter_upwards [eventually_gt_atTop (0 : ℝ)] with c hc
+    exact div_pos hr hc
+  have hwithin : Tendsto (fun c : ℝ => r / c) atTop
+      (nhdsWithin 0 (Set.Ioi 0)) :=
+    tendsto_nhdsWithin_iff.mpr ⟨hzero, hpos⟩
+  have hcomp := h.tendsto.comp hwithin
+  have hquot : Tendsto (fun c : ℝ =>
+      ((r / c) ^ α *
+        Real.log ((P (stableProcessCenteredCorridor (r / c))).toReal)) /
+          r ^ α) atTop (𝓝 (C / r ^ α)) := by
+    simpa using hcomp.div_const (r ^ α)
+  apply hquot.congr'
+  filter_upwards [eventually_gt_atTop (0 : ℝ)] with c hc
+  have hrc : (r / c) ^ α = r ^ α / c ^ α :=
+    Real.div_rpow hr.le hc.le α
+  have hcInv : (c⁻¹) ^ α = (c ^ α)⁻¹ := Real.inv_rpow hc.le α
+  rw [hrc, hcInv]
+  have hrpow : r ^ α ≠ 0 := (Real.rpow_pos_of_pos hr α).ne'
+  have hcpow : c ^ α ≠ 0 := (Real.rpow_pos_of_pos hc α).ne'
+  field_simp
+
+end HasStableCenteredCorridorEscapeRate
 
 namespace HasStableProcessEscapeRate
 
