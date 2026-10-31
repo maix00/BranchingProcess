@@ -21,9 +21,10 @@ import Probability.ConvergenceInDistribution.Basic
 ## Public declarations
 
 - `ProbabilityTheory.RandomWalk.tendstoInDistribution_proportionalBlockEndpoints_brownian`:
-  for centered, unit-second-moment increments, normalized random-walk
-  positions on a fixed equal partition converge jointly to the corresponding
-  values of any pre-Brownian process.
+  for centered increments with \(\mathbb E X_1^2=1\), the normalized
+  endpoints \((S_{j\lfloor rn\rfloor}/\sqrt n)_{j=0}^m\) converge jointly
+  in distribution to \((B_{jr})_{j=0}^m\) for each \(r>0\) and finite
+  block count \(m\).
 -/
 
 open Filter MeasureTheory ProbabilityTheory

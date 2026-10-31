@@ -17,10 +17,13 @@ not require a process realization or a particular path law.
 
 ## Public declarations
 
-- If every centered uniform corridor has positive mass, the zero path belongs
-  to the support of the path law.
-- If a straight path is in the support, every open corridor containing it and
-  its endpoint has positive mass.
+- `linearPath_zero_mem_support_of_centeredCorridors_pos` states that
+  \(\forall\delta>0,\ Q(\operatorname{rangeInOpenInterval}(-\delta,\delta))>0\)
+  implies \(\operatorname{linearPath}(0)\in\operatorname{support}(Q)\).
+- `measure_skorokhodCorridorEndsIn_pos_of_linearPath_mem_support` states that
+  if \(\operatorname{linearPath}(y)\in\operatorname{support}(Q)\),
+  \(a<0<b\), \(a<y<b\), and \(c<y<d\), then
+  \(Q(\operatorname{rangeInOpenIntervalEndsIn}(a,b,c,d))>0\).
 -/
 
 @[expose] public section

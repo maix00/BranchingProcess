@@ -14,11 +14,23 @@ public import Probability.Process.IndepIncrements.FiniteDimensional
 
 ## Public declarations
 
-- Stable-clock processes with the same clock and one-step increment law have
-  identical position-vector laws on every finite monotone grid and every
-  finite subset of a linearly ordered time axis.
-- Under stable time-space rescaling, their finite position laws transform by
-  the corresponding scaled time grid.
+- `HasStableClockIncrements.finiteDimensional_identDistrib` states that
+  matching stable increment specifications imply
+  \(\operatorname{Law}((X_{t_j})_{j=1}^n)=
+  \operatorname{Law}((Y_{t_j})_{j=1}^n)\) on each finite monotone grid.
+- `HasStableClockIncrements.finiteRestriction_identDistrib` gives the same
+  equality for \((X_t)_{t\in I}\) and \((Y_t)_{t\in I}\) on every finite
+  \(I\) in a linearly ordered time type.
+- `HasStableClockIncrements.aemeasurable_eval` states that every coordinate
+  \(\omega\mapsto X_t(\omega)\) is almost-everywhere measurable.
+- `HasStableClockIncrements.process_identDistrib_of_aemeasurable` and
+  `HasStableClockIncrements.process_identDistrib` give equality in law of
+  the whole time-indexed processes, under joint almost-everywhere
+  measurability or countable time, respectively.
+- `IsStableLevyProcess.timeSpaceScale_positions_identDistrib` states the
+  finite-grid self-similarity identity
+  \(\operatorname{Law}((X_{t_j})_j)=
+  \operatorname{Law}((r^{-1/\alpha}X_{rt_j})_j)\).
 
 The finite-dimensional arguments are proved generically from independent
 increments in `Probability.Process.IndepIncrements.FiniteDimensional`. This

@@ -19,12 +19,13 @@ import all Probability.Process.RandomWalk.SmallDeviation.Entrance.Lemmas.Rotatio
 ## Public declarations
 
 - `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.finiteMovingEntranceEvent`:
-  the normalized finite path stays in the moving corridor and ends in its
-  central third.
+  for \(z_j=scale^{-1}\sum_{i<j}x_i\), the event
+  \(\{x:\forall j\le n,\ -u+dj\le z_j\le1-u+dj,\quad
+  \frac13-u+dn\le z_n\le\frac23-u+dn\}\).
 - `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.mem_finiteMovingEntranceEvent_iff`:
-  membership is equivalent to the explicit scaled partial-sum inequalities.
+  states exactly the displayed partial-sum membership equivalence.
 - `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.measurableSet_finiteMovingEntranceEvent`:
-  the public entrance event is measurable in the finite product sigma algebra.
+  states that this event belongs to the finite product \(\sigma\)-algebra.
 
 These events are used in Wang Yiyang, *Asymptotic Speed of the N-Branching
 Random Walk with Infinite Offspring* (master's thesis, Fudan University,

@@ -23,8 +23,15 @@ times depend on a weak cluster law.
 
 ## Public declarations
 
-- Finite measures whose finite-dimensional evaluation laws agree on such
-  dense grids are equal.
+- `measure_map_finiteEvaluation_eq_of_gridEvaluation_eq` states that if
+  \(\mu\) and \(\nu\) agree after evaluation on every finite strictly
+  increasing grid beginning at \(0\) with nodes in \(\{0\}\cup\operatorname{range}(time)\),
+  then \(\mu\circ\operatorname{eval}_I^{-1}=
+  \nu\circ\operatorname{eval}_I^{-1}\) for every finite \(I\).
+- `measure_eq_of_map_finiteDenseEvaluation_eq` states that for finite path
+  measures and countable dense monotone `time` containing \(1\),
+  \((\forall I\text{ finite},\;\mu\circ\operatorname{eval}_I^{-1}=
+  \nu\circ\operatorname{eval}_I^{-1})\Rightarrow\mu=\nu\).
 -/
 
 @[expose] public section
