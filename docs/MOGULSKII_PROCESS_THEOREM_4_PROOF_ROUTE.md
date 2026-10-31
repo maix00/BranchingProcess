@@ -54,8 +54,11 @@ between `-a⁻¹` and `a⁻¹`; the terminal value in `D(0,1)` is the left limit
   increment law imply weak convergence of the path laws. It uses
   `Probability.Process.IndepIncrements.Convergence` to assemble the finite-grid
   position limits and the generic tightness-plus-finite-grid theorem to
-  identify the path-space limit. This completes the path-level assembly once
-  tightness and increment convergence have been supplied.
+  identify the path-space limit. Its Lévy-process corollary derives the
+  increment limits from convergence of every rescaled one-time marginal, using
+  stationary increments and the zero-start property. This completes the
+  path-level assembly once tightness and the rescaled marginal limits have
+  been supplied.
 - `Probability/Process/Levy/PathContinuity.lean` proves
   `IsLevyProcess.ae_leftLim_eq_eval`: a càdlàg Lévy process has no jump at
   any fixed positive time, almost surely. At time `1`, this identifies the
@@ -136,14 +139,16 @@ the process in Theorem 4 has been given a càdlàg version.
    process under the article's hypotheses, or state exactly which standard
    càdlàg modification theorem is being formalized. Preserve the original
    assumptions and centering, especially at `α = 1`.
-2. **Obtain tightness and increment convergence from the scalar domain of
-   attraction input.** The reusable path-level conclusion is now formalized
-   in `Probability.Process.Levy.PathLaw.Convergence`: it applies after tightness
-   and convergence of all interval increment laws are established. For the
-   article's hypotheses, formalize the cited Jacod--Shiryaev criterion or prove
-   the required increment convergence directly from the scalar limit and the
-   norming relations; identify the limit as the stable unit-interval path law
-   and restrict from `[0,∞)` to `[0,1]`.
+2. **Obtain tightness and rescaled marginal convergence from the scalar domain
+   of attraction input.** The reusable path-level conclusion is formalized in
+   `Probability.Process.Levy.PathLaw.Convergence`: one result takes convergence
+   of all interval-increment laws, and its Lévy-process corollary takes
+   convergence of every rescaled one-time marginal and derives the increment
+   limits from stationarity and zero start. For the article's hypotheses,
+   formalize the cited Jacod--Shiryaev criterion or prove the required
+   marginal limits directly from the scalar limit and norming relations;
+   establish tightness, identify the limit as the stable unit-interval path
+   law, and restrict from `[0,∞)` to `[0,1]`.
 3. **Formalize equations (38)--(44) exactly.** First establish the fixed-tube
    transfer, with the event-boundary condition needed for weak convergence.
    Then formalize the arbitrary `y(n)` comparison, the choice

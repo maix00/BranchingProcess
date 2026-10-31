@@ -27709,3 +27709,23 @@ laws, assuming measurable increments. These are reusable probability-process
 interfaces; scalar domain-of-attraction estimates and tightness proofs stay
 with the source-process modules. The focused build passed (3,224 Lake jobs).
 The production-module ledger now contains 1,635 reviewed entries.
+
+## Lévy path-law convergence from time marginals (2026-10-31)
+
+Extended `Probability/Process/Levy/PathLaw/Convergence.lean` with
+`IsLevyProcess.tendsto_unitIntervalPathLaw_of_tight_of_time_marginal_convergence`.
+For a tight family of rescaled unit-interval Lévy path laws, convergence of
+each one-time marginal to the corresponding target marginal now supplies the
+increment convergence needed by the existing path-law theorem. For
+`0 ≤ s ≤ t ≤ 1`, the proof writes `d = t - s`, applies stationary increments
+to identify the source increment law with the marginal at time `d`, and uses
+the zero-start property to identify the target increment law with its time-`d`
+marginal. The finite-grid assembly and tightness argument remain shared with
+the increment-based result.
+
+This is a reusable Lévy-process path-limit criterion, not a formalization of
+the stronger Jacod--Shiryaev one-positive-time-marginal criterion. Mogul'skii
+Theorem 4 still requires the domain-of-attraction argument that supplies the
+rescaled marginal limits and path-law tightness. The focused target
+`lake build Probability.Process.Levy.PathLaw.Convergence` passes with the
+pinned toolchain. The production module count remains 1,635.
