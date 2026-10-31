@@ -26,10 +26,15 @@ public import Probability.Process.Levy.PathLaw.UnitInterval
   \(\operatorname{Law}(t\mapsto X_i(T_i t))\Rightarrow
   \operatorname{Law}(t\mapsto Y_t)\) in Skorokhod path space. Finite-grid
   position convergence follows from independent increments.
+- `ProbabilityTheory.IsLevyProcess.tendsto_unitIntervalPathLaw_of_tight_of_time_marginal_convergence`:
+  the same path-law convergence follows when every rescaled one-time marginal
+  \(\operatorname{Law}(X_i(T_i t))\) converges to \(\operatorname{Law}(Y_t)\);
+  stationarity and zero start identify each interval-increment law with its
+  marginal at the interval length.
 
-The theorem isolates the path-space step needed for process-level limit
-arguments. Its increment-law hypothesis is supplied by a separate
-domain-of-attraction or Lévy-process convergence theorem.
+These theorems isolate the path-space step needed for process-level limit
+arguments. Their increment-law and tightness hypotheses are supplied by a
+separate domain-of-attraction or Lévy-process convergence theorem.
 -/
 
 open Filter MeasureTheory ProbabilityTheory
@@ -114,7 +119,7 @@ theorem tendsto_unitIntervalPathLaw_of_tight_of_increment_convergence
           targetPath (grid j.castSucc) ω)) := by
       exact (Measure.isProbabilityMeasure_map_iff
         (htargetIncrementMeas (grid j.castSucc) (grid j.succ))).2 inferInstance
-    haveI : ∀ j : Fin n, IsProbabilityMeasure
+    have : ∀ j : Fin n, IsProbabilityMeasure
         (P₀.map (fun ω => targetPath (grid j.succ) ω -
           targetPath (grid j.castSucc) ω)) := hlimitProbability
     have hinc (j : Fin n) : TendstoInDistribution
@@ -163,6 +168,97 @@ theorem tendsto_unitIntervalPathLaw_of_tight_of_increment_convergence
   exact CadlagPath.ProbabilityMeasure.tendsto_of_tight_of_finiteGridEvaluation
     (fun i => hX i |>.unitIntervalPathLaw (horizon i))
     (hY.unitIntervalPathLaw 1) htight hfinite
+
+/-- Tightness and convergence of every rescaled one-time marginal imply weak
+convergence of the corresponding unit-interval path laws for Lévy processes.
+Stationary increments and the zero-start property identify the law of an
+increment over `[s,t]` with the marginal law at time `t - s`; the preceding
+increment criterion then gives the path-space limit. -/
+theorem tendsto_unitIntervalPathLaw_of_tight_of_time_marginal_convergence
+    (hX : ∀ i, IsLevyProcess (X i) (P i))
+    (hY : IsLevyProcess Y P₀)
+    (horizon : ι → ℝ≥0)
+    (htight : IsTightMeasureSet
+      {((hX i).unitIntervalPathLaw (horizon i) : Measure
+        (CadlagPath unitInterval ℝ)) | i})
+    (hmarginal : ∀ t : ℝ≥0,
+      TendstoInDistribution
+        (fun i ω => X i (horizon i * t) ω) l
+        (fun ω => Y t ω) P P₀) :
+    Tendsto (fun i => hX i |>.unitIntervalPathLaw (horizon i)) l
+      (nhds (hY.unitIntervalPathLaw 1)) := by
+  apply tendsto_unitIntervalPathLaw_of_tight_of_increment_convergence
+    hX hY horizon htight
+  intro s t hst
+  let s' : ℝ≥0 := unitInterval.toNNReal s
+  let t' : ℝ≥0 := unitInterval.toNNReal t
+  let duration : ℝ≥0 := t' - s'
+  have hst' : s' ≤ t' := hst
+  have hsum : s' + duration = t' := add_tsub_cancel_of_le hst'
+  have hsourceIdent (i : ι) :
+      IdentDistrib
+        (fun ω => X i (horizon i * t') ω - X i (horizon i * s') ω)
+        (fun ω => X i (horizon i * duration) ω) (P i) (P i) := by
+    have htime : horizon i * s' + horizon i * duration = horizon i * t' := by
+      rw [← mul_add, hsum]
+    have hstationary := (hX i).stationaryIncrements
+      (horizon i * s') (horizon i * duration)
+    have hstationary' : IdentDistrib
+        (fun ω => X i (horizon i * t') ω - X i (horizon i * s') ω)
+        (fun ω => X i (horizon i * duration) ω - X i 0 ω) (P i) (P i) := by
+      simpa only [htime] using hstationary
+    have hzeroEq : (fun ω => X i (horizon i * duration) ω) =ᵐ[P i]
+        fun ω => X i (horizon i * duration) ω - X i 0 ω := by
+      filter_upwards [(hX i).ae_start_eq_zero] with ω hω
+      simp [hω]
+    have hzero := IdentDistrib.of_ae_eq
+      ((hX i).aemeasurable_eval (horizon i * duration)) hzeroEq
+    exact hstationary'.trans hzero.symm
+  have htargetIdent : IdentDistrib
+      (fun ω => Y duration ω)
+      (fun ω => Y t' ω - Y s' ω) P₀ P₀ := by
+    have hstationary := hY.stationaryIncrements s' duration
+    have hstationary' : IdentDistrib
+        (fun ω => Y t' ω - Y s' ω)
+        (fun ω => Y duration ω - Y 0 ω) P₀ P₀ := by
+      simpa only [hsum] using hstationary
+    have hzeroEq : (fun ω => Y duration ω) =ᵐ[P₀]
+        fun ω => Y duration ω - Y 0 ω := by
+      filter_upwards [hY.ae_start_eq_zero] with ω hω
+      simp [hω]
+    have hzero := IdentDistrib.of_ae_eq
+      (hY.aemeasurable_eval duration) hzeroEq
+    exact hzero.trans hstationary'.symm
+  have hincrementRealized : TendstoInDistribution
+      (fun i ω => X i (horizon i * t') ω - X i (horizon i * s') ω) l
+      (fun ω => Y t' ω - Y s' ω) P P₀ := by
+    have hfromMarginal : TendstoInDistribution
+        (fun i ω => X i (horizon i * duration) ω) l
+        (fun ω => Y duration ω) P P₀ := hmarginal duration
+    have hsourceEq : ∀ᶠ i in l,
+        (P i).map (fun ω => X i (horizon i * duration) ω) =
+        (P i).map (fun ω => X i (horizon i * t') ω -
+          X i (horizon i * s') ω) :=
+      Eventually.of_forall fun i => (hsourceIdent i).map_eq.symm
+    have hsourceMeas (i : ι) : AEMeasurable
+        (fun ω => X i (horizon i * t') ω - X i (horizon i * s') ω) (P i) :=
+      (hX i).aemeasurable_eval _ |>.sub ((hX i).aemeasurable_eval _)
+    have hincrement' := hfromMarginal.congr_map_eventually hsourceEq hsourceMeas
+    have htargetMeas : AEMeasurable
+        (fun ω => Y t' ω - Y s' ω) P₀ :=
+      (hY.aemeasurable_eval _).sub (hY.aemeasurable_eval _)
+    exact hincrement'.congr_limit htargetMeas htargetIdent.map_eq
+  have htargetMeas : AEMeasurable
+      (fun ω => Y t' ω - Y s' ω) P₀ :=
+    (hY.aemeasurable_eval _).sub (hY.aemeasurable_eval _)
+  let incrementLaw : Measure ℝ := P₀.map (fun ω => Y t' ω - Y s' ω)
+  have : IsProbabilityMeasure incrementLaw :=
+    (Measure.isProbabilityMeasure_map_iff htargetMeas).2 inferInstance
+  have htargetMap : P₀.map (fun ω => Y t' ω - Y s' ω) =
+      incrementLaw.map id := by
+    simp [incrementLaw]
+  exact hincrementRealized.congr_limit (Omega'' := ℝ) (μ'' := incrementLaw)
+    (Z' := id) (aemeasurable_id : AEMeasurable id incrementLaw) htargetMap
 
 end ProbabilityTheory.IsLevyProcess
 
