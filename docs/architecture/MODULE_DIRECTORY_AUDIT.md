@@ -27575,3 +27575,11 @@ partial-sum map reconstructs the positions. Mogul'skii's continuous-time
 application still needs the scalar increment limits and full-path tightness
 recorded in the process-level proof route. The module builds successfully.
 The production module inventory and audit ledger now contain 1,634 modules.
+
+## Import-boundary standalone test dependency correction (2026-10-31)
+
+The preflight build exposed that `BranchingProcessTest/Algebra/WeightedSum.lean`
+used real-number notation and ordered-ring instances without importing their
+owner. The test now imports `Mathlib.Data.Real.Basic` explicitly before the
+weighted-sum API. This keeps the production module's dependency boundary
+minimal; the correction is covered by the next preflight run.
