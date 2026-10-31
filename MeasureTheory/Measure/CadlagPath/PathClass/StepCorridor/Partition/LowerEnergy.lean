@@ -18,10 +18,23 @@ the finite-partition lower rate with the `Hα` energy.
 
 ## Public declarations
 
-- commonPartitionApproxWidth chooses increasing finite widths converging to
-  each finite cell width and diverging on cells of infinite width.
-- The finite-partition rate built from these widths converges to
-  ContinuousAdmissibleStepCorridor.energy.
+- `commonPartitionApproxWidth upper lower n i` is \(n+1\) when the cell has
+  an infinite trace width, and otherwise equals its trace width times
+  \(1-\frac{1}{n+2}\).
+- `rightTrace_lt_of_traceSeparated` states
+  \(\operatorname{TraceSeparated}(upper,lower)\Rightarrow
+  lower.rightTrace(t)<upper.rightTrace(t)\).
+- Under trace separation, `commonPartitionApproxWidth_pos` gives
+  \(0<w_{n,i}\), and `commonPartitionApproxWidth_lt_traceWidth` gives
+  \(w_{n,i}<upper.rightTrace(t_i).toReal-lower.rightTrace(t_i).toReal\)
+  whenever the cell has finite trace width.
+- `ContinuousAdmissibleStepCorridor.tendsto_commonPartitionApproxRate` states
+  \[
+    \sum_i\frac{C\,\ell_i}{(w_{n,i}/2)^\alpha}
+      \longrightarrow C\,2^\alpha\,(c.energy\ \alpha).toReal,
+  \]
+  where \(\ell_i=\operatorname{commonPartitionCellLength}(upper,lower,i)\)
+  and \(w_{n,i}=\operatorname{commonPartitionApproxWidth}(upper,lower,n,i)\).
 -/
 
 open Filter

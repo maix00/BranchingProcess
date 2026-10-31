@@ -22,7 +22,12 @@ import all Probability.Process.RandomWalk.SmallDeviation.Range.Lemmas.BlockCorri
 The public theorems in this file are:
 
 - `ProbabilityTheory.RandomWalk.SmallDeviation.Range.eventually_iidSequenceLaw_blockOscillationProbability_le_exp_of_centeredUnitVariance`:
-  the source-path rate gives the finite-variance exponential block bound.
+  for centered unit-variance increments, a small-deviation scale \(a_n\),
+  \(2<q\), and \(0<c<\frac{\pi^2}{2q^2}\), eventually
+  \[
+    \mathbb P_\nu\{\operatorname{osc}(S_0,\ldots,S_{n-1})\le a_n\}
+      \le \exp\!\left(-c\frac{n}{a_n^2}\right).
+  \]
 
 The block-oscillation rate follows Theorem 3, Section 4, p. 764 of the 1974
 Russian original by A. A. Mogul'skii, “Small deviations in the sample function

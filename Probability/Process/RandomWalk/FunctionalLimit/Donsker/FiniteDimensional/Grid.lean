@@ -31,9 +31,9 @@ probability under a finite second moment.
 ## Public declarations
 
 - `ProbabilityTheory.RandomWalk.tendstoInDistribution_normalizedLinearPath_uniformGrid_brownian`:
-  for centered, unit-second-moment increments, polygonal random-walk values
-  on a fixed equal partition converge jointly to the corresponding Brownian
-  values.
+  for centered increments with \(\mathbb E X_1^2=1\), the normalized
+  polygonal path values on the fixed grid \((j/m)_{j=0}^m\) converge jointly
+  in distribution to \((B_{j/m})_{j=0}^m\).
 -/
 
 open Filter MeasureTheory ProbabilityTheory
