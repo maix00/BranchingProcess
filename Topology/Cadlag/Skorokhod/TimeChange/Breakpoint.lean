@@ -12,8 +12,16 @@ public import Topology.Cadlag.Skorokhod.TimeChange.Basic
 # Piecewise-affine time changes
 
 `linearBreakpoint target source` is the increasing piecewise-affine homeomorphism
-of `[0,1]` that sends `source` to `target` and fixes the two endpoints. Its
-uniform distortion is bounded by the displacement of the breakpoint.
+of $[0,1]$ that sends `source` to `target` and fixes the two endpoints. For
+$0<x,y<1$, its real-valued map is
+\[
+  \beta_{y,x}(u)=
+  \begin{cases}
+    \frac{y}{x}u,&u\le x,\\
+    y+\frac{1-y}{1-x}(u-x),&x\le u.
+  \end{cases}
+\]
+Its uniform distortion is at most $|y-x|$.
 
 ## Public declarations
 

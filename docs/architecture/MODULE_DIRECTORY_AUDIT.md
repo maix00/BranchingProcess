@@ -28082,3 +28082,31 @@ The module header now lists every public declaration and its mathematical
 conclusion, in line with the Lean contribution rules. The rewritten transfer
 module builds with the pinned toolchain, and the finite-time entrance module
 continues to compile against the same stable path-law interfaces.
+
+## Deterministic path and regular-variation header formulas (2026-11-01)
+
+Reviewed the public declaration inventories in `Topology/Order/FloorCadlag.lean`,
+`Topology/Cadlag/Concatenation.lean`,
+`Topology/Cadlag/Skorokhod/TimeChange/Breakpoint.lean`, and
+`Analysis/Asymptotics/RegularVariation/MonotoneDensity.lean`. Their headers now
+state the floor-map domains, finite block-sum and increment identities, the
+piecewise-affine breakpoint formula and distortion bound, and the
+regular-variation index transfer for an integrated monotone density. The
+Monotone Density header now matches the theorem's `Monotone g ∨ Antitone g`
+hypothesis. No declarations or proofs changed.
+
+The production source inventory matches all 1,642 ledger paths. A fresh
+structure scan finds no same-level file/directory basename collision,
+repeated sibling module filename, parent-directory basename repeat, directory
+with more than eight direct Lean modules, `Lemmas.lean`/`Lemmas/` pair, or
+`Source/` directory. All ledger rows record reviewed semantics and passing
+structural and Lake-build status. The remaining header review checks each
+stated formula against its declaration type; the heuristic formula-marker
+scan is used only to select candidates for that manual review.
+
+
+## Oscillation-partition interface formulas (2026-11-01)
+
+Checked the public module headers in `Topology/Cadlag/Skorokhod/Oscillation/Partition/{Basic,Finite,Existence,Measurability}.lean` and `Topology/Cadlag/Skorokhod/Compactness/MovingPartition.lean` against their structure fields, event definitions, and theorem types. The headers now spell out the half-open cells and separate terminal value, the cellwise oscillation predicate and approximation error, the finite-point index and minimum gap, the strict mesh event and its countable intersection, and the compact moving-partition parameter family. The endpoint convention is explicit: the cell index handles nonterminal times, while time $1$ belongs to the final cell and the step approximation retains $f(1)$. No declarations or proofs changed.
+
+The five focused modules build with the pinned toolchain. The source inventory remains in exact path agreement with the module ledger; the repository-wide structural scan still reports zero basename collisions, repeated sibling module names, overfull direct-module directories, paired `Lemmas.lean`/`Lemmas/`, and `Source/` directories. Header formula review continues against declaration types.

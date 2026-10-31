@@ -14,22 +14,26 @@ public import Topology.Order.UnitInterval.Time
 
 ## Public declarations
 
-- `Topology.unitBlockEndpointSum`: the sum of the terminal values of blocks
-  with indices less than `n`, for paths in an additive commutative monoid.
-- `Topology.concatenateUnitPaths`: the endpoint sum through `floor t` plus
-  the current block evaluated at its clamped parameter, for a state space with
-  continuous addition.
-- `Topology.concatenateUnitPaths_eq_first`: on the first unit interval, the
-  concatenation equals block zero when block one starts at zero.
+- `Topology.unitBlockEndpointSum`: for unit paths $f_i$, the accumulated
+  endpoint is $\sum_{i=0}^{n-1} f_i(1)$ in an additive commutative monoid.
+- `Topology.concatenateUnitPaths`: for $t\ge0$, the concatenated path is
+  $C_f(t)=\sum_{i=0}^{\lfloor t\rfloor}f_i(\theta_i(t))$, where
+  $\theta_i(t)$ is the clamped parameter in the $i$th unit block; continuous
+  addition makes $C_f$ càdlàg.
+- `Topology.concatenateUnitPaths_eq_first`: if $f_1(0)=0$, then
+  $C_f(t)=f_0(t)$ for $t\in[0,1]$.
 - `Topology.isCadlag_concatenateUnitPaths`: concatenating càdlàg unit paths
   gives a càdlàg path on nonnegative time.
 - `Topology.concatenateUnitPaths_eq_finite_sum`: the concatenation is the
   finite sum of its block values up to the current block, without a condition
   on block starting values.
-- `Topology.concatenateUnitPaths_eq_sum_range_of_floor_lt`: padding this sum
-  by later blocks is valid when every block starts at zero.
-- `Topology.concatenateUnitPaths_increment_eq_sum`: an increment of the
-  concatenated path is the finite sum of the block increments.
+- `Topology.concatenateUnitPaths_eq_sum_range_of_floor_lt`: if every block
+  starts at zero and $\lfloor t\rfloor<N$, then
+  $C_f(t)=\sum_{i=0}^{N-1}f_i(\theta_i(t))$.
+- `Topology.concatenateUnitPaths_increment_eq_sum`: if each block starts at
+  zero, then for $0\le s\le t$,
+  $C_f(t)-C_f(s)=\sum_{i=0}^{\lfloor t\rfloor}
+  \bigl(f_i(\theta_i(t))-f_i(\theta_i(s))\bigr)$.
 
 This file gives a deterministic path construction useful for extending
 unit-time process segments to nonnegative time. The state space is any

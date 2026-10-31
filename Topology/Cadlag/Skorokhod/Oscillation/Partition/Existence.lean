@@ -14,19 +14,23 @@ public import Mathlib.Data.Finset.Sort
 /-!
 # Finite small-oscillation partitions for càdlàg paths
 
-Every càdlàg path on the compact unit interval admits a finite partition on
-whose half-open cells the oscillation is arbitrarily small.  The proof uses
-the one-sided local oscillation bounds and refines a finite interval cover at
-the finitely many selected centers.
+Every càdlàg path $f$ on the compact unit interval has, for each
+$\varepsilon>0$, a finite partition $P$ and a bound $b<\varepsilon$ such
+that $d(f(s),f(t))\le b$ whenever $s,t\ne1$ belong to the same cell. The
+proof uses the one-sided local oscillation bounds and refines a finite
+interval cover at the finitely selected centers.
 
 ## Public declarations
 
-- IsCadlag.exists_oscillation_partition: for every ε > 0, a càdlàg path has
-  a finite partition with positive minimum cell length and within-cell
-  oscillation strictly below ε.
-- CadlagPath.exists_admits_oscillation_partition: every càdlàg path admits
-  such a partition with strict mesh and oscillation margins, as required by
-  the open path-set criterion.
+- `IsCadlag.exists_oscillation_partition`: for each $\varepsilon>0$, there
+  are $P$ and $b<\varepsilon$ with
+  $d(f(s),f(t))\le b$ for points in the same nonterminal cell.
+- `CadlagPath.exists_admits_oscillation_partition`: for each
+  $\varepsilon>0$, there is $\delta>0$ such that the path belongs to
+  $A(\delta,\varepsilon)$, the open event of paths admitting a partition
+  with mesh greater than $\delta$ and within-cell oscillation less than
+  $\varepsilon$.
+
 -/
 
 @[expose] public section

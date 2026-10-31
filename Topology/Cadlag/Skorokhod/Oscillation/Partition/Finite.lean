@@ -13,22 +13,23 @@ import Mathlib.Data.Finset.Sort
 /-!
 # Partitions from finite ordered time points
 
-Turn a finite strictly increasing sequence of times with the correct
-endpoints into the indexed half-open partition used by Skorokhod oscillation
-arguments. The cell index is the greatest left endpoint not exceeding the
-time, with the terminal point assigned to the last cell.
+Given knots $0=t_0<\cdots<t_n=1$, for $t<1$ the cell index is
+$i=\max\{j<n:t_j\le t\}$; the terminal point $1$ is assigned to cell $n-1$.
 
 ## Public declarations
 
-- `finitePointIndex` assigns each time to the cell whose left endpoint is the
-  greatest partition point not exceeding it; the lower, upper, and knot
-  theorems characterize that assignment.
-- `finitePointGaps` and `finitePointMesh` give the consecutive cell lengths
-  and their minimum, which is positive for a strictly increasing partition.
+- `finitePointIndex` assigns $t<1$ to the cell
+  $i=\max\{j<n:t_j\le t\}$; the lower, upper, and knot theorems characterize
+  this assignment.
+- `finitePointGaps` is
+  $\{\operatorname{dist}(t_i,t_{i+1}):0\le i<n\}$, and
+  `finitePointMesh` is its minimum. The minimum is positive for strictly
+  increasing knots.
 - `ofFinitePoints` constructs an `OscillationPartition` from strictly
-  increasing finite points with endpoints `0` and `1`;
+  increasing knots with endpoints $0$ and $1$;
   `exists_ofFinset` constructs such a partition from a finite set containing
   both endpoints and preserves exactly that set of knots.
+
 -/
 
 @[expose] public section

@@ -18,10 +18,10 @@ order-topology layer.
 
 ## Public declarations
 
-* `IsCadlag.floor_int`: the real-to-integer floor map is càdlàg,
-  `IsCadlag (fun x : ℝ => ⌊x⌋)`.
-* `IsCadlag.floor_nat`: the real-to-natural floor map is càdlàg,
-  `IsCadlag (fun x : ℝ => ⌊x⌋₊)`.
+* `IsCadlag.floor_int`: the integer-valued floor map
+  $x\mapsto\lfloor x\rfloor$ from $\mathbb R$ to $\mathbb Z$ is càdlàg.
+* `IsCadlag.floor_nat`: the natural-valued floor map
+  $x\mapsto\lfloor x\rfloor_+$ from $\mathbb R$ to $\mathbb N$ is càdlàg.
 -/
 
 @[expose] public section

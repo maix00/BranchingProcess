@@ -13,24 +13,29 @@ public import Topology.Cadlag.Skorokhod.Compactness.StepPath
 /-!
 # Compact families of step paths with moving partitions
 
+For a compact set $K$ in the state space, a gap $\delta>0$, and a cell
+bound $M$, the parameter tuples satisfy
+$0=t_0<\cdots<t_m=1$, $1\le m\le M$,
+$t_{i+1}-t_i\ge\delta$, and $x_i\in K$ for $0\le i\le m$. Their associated
+step paths form a compact subset of `CadlagPath unitInterval E`. A partition
+approximation belongs to this family when its mesh exceeds $\delta$, its
+values lie in $K$, and its cell count is at most $M$.
+
 ## Public declarations
 
-- `Skorokhod.OscillationPartition.stepApproximation_eq_ofPoints_stepPath`:
-  identifies the step approximation of an oscillation partition with the
-  step path determined by its ordered knots and sampled values.
-- `Skorokhod.compactRangeMovingPartitionStepPathFamily`: the set of step paths
-  with at most a prescribed number of cells, a uniform positive knot gap, and
-  values in a given range.
-- `Skorokhod.isCompact_compactRangeMovingPartitionStepPathFamily`: this family
-  is compact when the value range is compact.
-- `Skorokhod.OscillationPartition.stepApproximation_mem_compactRangeMovingPartitionStepPathFamily`:
-  places a path's partition approximation in that family when its values lie
-  in the range and its cell count is bounded.
+- `OscillationPartition.stepApproximation_eq_ofPoints_stepPath` identifies
+  the approximation with the step path made from its ordered knots and
+  sampled values.
+- `compactRangeMovingPartitionStepPathFamily` defines the family described
+  above; `isCompact_compactRangeMovingPartitionStepPathFamily` proves its
+  compactness when $K$ is compact.
+- `OscillationPartition.stepApproximation_mem_compactRangeMovingPartitionStepPathFamily`
+  places a partition approximation in the family when its mesh, range, and
+  cell-count hypotheses hold.
 
-These interfaces are reusable for compactness and approximation arguments on
-Skorokhod path space. The compact family is used by both total-boundedness and
-compact-range criteria; the approximation identity also supports path-space
-separability.
+These interfaces support compactness, total-boundedness, and separability
+arguments on Skorokhod path space.
+
 -/
 
 open Set
