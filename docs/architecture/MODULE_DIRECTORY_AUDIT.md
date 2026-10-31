@@ -27331,3 +27331,68 @@ supports the placement of the generic operation in `Combinatorics`; the
 branching-specific selection remains at its model layer. The official API
 references are [Rado selection](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Combinatorics/Compactness.html)
 and [Hall's theorem](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Combinatorics/Hall/Basic.html).
+
+## Lemma 3.5 proof-route comparison (2026-10-31)
+
+Compared the assembled Lean proof with Wang Yiyang, *Asymptotic Speed of the
+N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.5 and its
+Appendix A.2 entrance estimate. The public Lean statement in
+`DriftedTube/FiniteVarianceLower/EndpointBounds.lean` has the source assumptions
+$v>0$, $d'>\pi^2\sigma^2/2$, $c\ge0$, $\varepsilon>0$,
+$r_0\le0\le r_0+\Delta$, and
+$L\ge\lfloor\Delta^{2+\varepsilon}\rfloor$, and states both endpoint windows
+from the lemma.
+
+The source proof's stages map to these Lean interfaces:
+
+1. The event through $t_1=\lfloor\Delta^2\rfloor$ and its
+   $[2\Delta/5,3\Delta/5]$ terminal window are
+   `robustMovingTransitionEvent` and its Appendix A.2 estimate in
+   `Entrance/Robust/FiniteVariance.lean`.
+2. The nominal blocks and merged final block are
+   `Combinatorics/Sequence/TailMergedBlock.lean`; `Setup/BlockTube.lean`
+   gives $H_k=[r_{t_{k+1}},s_{t_k}]$ and
+   $\Delta(k)=\Delta-c|I_k|/\Delta^2$; `Setup/EndpointWindow.lean` gives
+   the ordinary and terminal endpoint fractions.
+3. `Binning/Geometry.lean` covers each central entrance window by one of the
+   finitely many narrowed tubes. `Rate/BinRate.lean` applies the
+   Mogul'skii-based endpoint-window estimate, with strict endpoint margins
+   and a shared threshold for the finite bin family.
+4. `Blocks/Probability.lean` transfers each bin bound to every point in the
+   central entrance window; `Blocks/Assembly.lean` performs the conditional
+   block multiplication. `FiniteLower.lean` adds the event inclusion and the
+   entrance cost to obtain the claimed exponent.
+5. The upper endpoint uses the symmetric staircase and the reflection API in
+   `EndpointWindow/Reflection.lean`, matching the source's symmetric
+   construction.
+
+The uniform-threshold step is mathematically the same contradiction step as
+the thesis proof, but Lean packages it differently. The source explicitly
+chooses failing block and bin indices, splits ordinary and terminal blocks,
+and passes to a subsequence. Lean derives bounds uniform over all block
+indices from `eventually_staircaseGlobalConditions`, and bounds uniform over
+all endpoint windows containing a fixed strict interior interval from
+`HorizontalTube/EndpointWindow/RealWidthLower.lean`; the finite bin thresholds
+are combined by a finite supremum. `Concrete/Uniform.lean` then applies
+`Asymptotics.eventually_uniform_atTop_of_forall_tendsto_nat` to turn the
+sequencewise estimates into one threshold. Its contradiction proof selects
+counterexamples above every threshold. This replaces the source's explicit
+index-subsequence bookkeeping with a stronger uniform endpoint interface;
+the event, rate, scale, and block-product arguments remain the same. No
+LaTeX source was changed during this comparison. The structural audit and
+full pull-request checks are separate completion gates.
+
+## Production module structure and citation scan (2026-10-31)
+
+Recomputed the source inventory from the current worktree, excluding vendored
+code, tests, Lake packages, and helper scripts. The 1,631 production Lean
+modules match the 1,631 ledger rows; all rows currently say
+`structural_scan=pass`, `semantic_review=reviewed`, and `lake_build=pass`.
+The structural scan found zero same-level `Foo.lean`/`Foo/` stem conflicts,
+zero parent-file/child-directory repeated stems, zero directories with more
+than eight direct Lean files, and zero directories containing both
+`Lemmas.lean` and `Lemmas/`. A production-source scan found zero placeholder
+citations using “the paper” or “the thesis” and zero private theorem or lemma
+identifiers containing `paper`, `thesis`, or numbered `lemma` labels.
+`git diff --check` passes for the current documentation edits. The latest
+GitHub PR checks remain pending, so merge readiness is still unverified.
