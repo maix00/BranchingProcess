@@ -27420,8 +27420,10 @@ A second pass found 93 additional rows whose notes used a catch-all family
 description, a generic “see the module header” placeholder, or an extracted
 type variable in place of the interface. Their notes now give the public or
 internal declarations summarized by each source header and retain the existing
-family-review section as the placement and dependency record. These rows keep
-their previous review records and build statuses.
+family-review section as the placement and dependency record. For 64 of these
+rows, the ledger label now matches the exact section heading for the existing
+random-walk small-deviation or step-selection family review. These rows retain
+their previous build statuses.
 
 The reconciliation therefore replaces unsupported shorthand with source-level
 evidence on 481 rows in total: the 388 checkpoint-recovered rows and the 93
