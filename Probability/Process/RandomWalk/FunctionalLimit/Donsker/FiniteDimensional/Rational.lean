@@ -29,11 +29,18 @@ marginals on a fixed countable dense time family.
 ## Public declarations
 
 - `ProbabilityTheory.RandomWalk.tendstoInDistribution_normalizedLinearPath_rationalFinite_brownian`:
-  polygonal paths converge jointly at any fixed finite family of rational
-  times to the corresponding Brownian values.
+  for \(n\ge1\), let \(w_{n,k}(t)=\min\{1,\max\{0,nt-k\}\}\) and
+  \[
+    X_n(t)=\frac{1}{\sqrt n}\sum_{k=0}^{n-1}w_{n,k}(t)\xi_k.
+  \]
+  For centered i.i.d. increments with \(\mathbb E[\xi_0^2]=1\) and every finite
+  \(I\subseteq\mathbb Q\cap[0,1]\),
+  \[
+    (X_n(t))_{t\in I}\ \Rightarrow\ (B_t)_{t\in I}.
+  \]
 - `ProbabilityTheory.RandomWalk.tendstoInDistribution_normalizedLinearPath_rationalFinite_continuousPath`:
-  the same finite-dimensional convergence, with the Brownian limit represented
-  by a continuous path-valued random variable.
+  gives the same convergence, with the limit vector obtained by evaluating
+  the continuous Brownian path at the times in \(I\).
 -/
 
 open Filter MeasureTheory ProbabilityTheory
