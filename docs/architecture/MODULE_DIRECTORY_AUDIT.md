@@ -27892,10 +27892,11 @@ directory; the new file header lists its public declaration and source formula.
 Rechecked Section 5 against the downloaded scan of A. A. Mogul'skii's 1974
 Russian original. Theorem 4 requires a strictly stable index $0<\alpha<2$,
 the condition $0<F_\alpha(0)<1$, and the article's mean-zero and index-one
-centering assumptions. Corrected the theorem-entry documentation and the
-Theorem 4 proof-route note to state those hypotheses explicitly. The proof
-route now records only the source's process-convergence input (38), scale
-comparison (39)--(44), and reuse of Theorem 1's geometric proof.
+centering assumptions, and the norming relation $B^*(B(n))/n\to1$.
+Corrected the theorem-entry documentation and the Theorem 4 proof-route note
+to state those hypotheses explicitly. The proof route now records only the
+source's process-convergence input (38), scale comparison (39)--(44), and
+reuse of Theorem 1's geometric proof.
 
 The source-reference pass also reconciled the English translation's issue
 number to the SIAM DOI publisher record, *Theory of Probability and Its

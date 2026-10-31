@@ -46,8 +46,8 @@ and its text layer; original numbering is retained.
   article's source assumptions include `E ξ(t) = 0` whenever the expectation
   exists and, at `α = 1`,
   `∫ sin(z/B(n)) Law(ξ(1))(dz) → 0`. Under `0 < F_α(0) < 1`, the rescaled
-  full path `t ↦ ξ(nt)/x(n)` has the same rate as Theorem 1 when `x(n) → ∞`
-  and `x(n)/B(n) → 0`:
+  full path `t ↦ ξ(nt)/x(n)` has the same rate as Theorem 1 when the norming
+  satisfies (4), `x(n) → ∞`, and `x(n)/B(n) → 0`:
   `ln P(ξ(n·)/x(n) ∈ G) ~ C H_α(G) n x(n)^{-α} L*(x(n))`.
   This full-process statement is not yet formalized. The process-level
   convergence input in (38) and the scaling comparison in (39)--(44) remain

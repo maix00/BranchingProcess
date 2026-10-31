@@ -81,7 +81,7 @@ its source statement and missing proof interfaces are recorded in
   $0<F_\alpha(0)<1$, subject to the source centering conditions
   $\mathbb E[\xi(t)]=0$ whenever the expectation exists and, for $\alpha=1$,
   $\int_{\mathbb R}\sin(z/B(n))\,\operatorname{Law}(\xi(1))(dz)\to0$,
-  the rescaled path
+  with $B^*(B(n))/n\to1$ and $B^*(u)=u^\alpha/L^*(u)$, the rescaled path
   $t\mapsto\xi(nt)/x(n)$ has the rate for $G\in\mathfrak M$
   $\log\mathbb P(\xi(n\cdot)/x(n)\in G)\sim
   C H_\alpha(G)n x(n)^{-\alpha}L^*(x(n))$
