@@ -28103,3 +28103,10 @@ with more than eight direct Lean modules, `Lemmas.lean`/`Lemmas/` pair, or
 structural and Lake-build status. The remaining header review checks each
 stated formula against its declaration type; the heuristic formula-marker
 scan is used only to select candidates for that manual review.
+
+
+## Oscillation-partition interface formulas (2026-11-01)
+
+Checked the public module headers in `Topology/Cadlag/Skorokhod/Oscillation/Partition/{Basic,Finite,Existence,Measurability}.lean` and `Topology/Cadlag/Skorokhod/Compactness/MovingPartition.lean` against their structure fields, event definitions, and theorem types. The headers now spell out the half-open cells and separate terminal value, the cellwise oscillation predicate and approximation error, the finite-point index and minimum gap, the strict mesh event and its countable intersection, and the compact moving-partition parameter family. The endpoint convention is explicit: the cell index handles nonterminal times, while time $1$ belongs to the final cell and the step approximation retains $f(1)$. No declarations or proofs changed.
+
+The five focused modules build with the pinned toolchain. The source inventory remains in exact path agreement with the module ledger; the repository-wide structural scan still reports zero basename collisions, repeated sibling module names, overfull direct-module directories, paired `Lemmas.lean`/`Lemmas/`, and `Source/` directories. Header formula review continues against declaration types.
