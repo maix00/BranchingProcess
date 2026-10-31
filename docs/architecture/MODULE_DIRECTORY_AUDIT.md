@@ -27486,3 +27486,19 @@ exponent module is intentionally excluded from the Lévy-independent boundary
 check because its public API is proved from the Lévy–Khintchine
 representation. The complete import-boundary checker and all 31 Python tests
 pass with the reconciled module paths.
+
+## Live documentation path audit (2026-10-31)
+
+Checked explicit Lean source paths in the ownership map, migration plan, and
+formalization checklist against the production tree. Corrected the live
+Kingman theorem reference from the former `Probability/Ergodic/Kingman/Core.lean`
+path to `Probability/Ergodic/Kingman/Theorem.lean`, and updated the assumption
+README's abstract exponential-tilt path from the old point-process module to
+`Probability/RandomMeasure/ExponentialTilt.lean`. The checklist's mention of
+the removed `EndpointDeviation/PolynomialEndpointSublevel.lean` is retained
+because that sentence explicitly records a deleted proof route; other
+unqualified paths are relative to their owning package headings. The broader
+scan covered 98 explicit Lean module paths across the 17 maintained Lean
+Markdown files; all project paths resolve. The remaining
+`MeasureTheory/Measure/Dirac.lean` example in `CONTRIBUTING.md` is an external
+Mathlib documentation link, not a project module.

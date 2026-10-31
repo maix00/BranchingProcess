@@ -55,7 +55,7 @@ Theorems 1.1–1.3:
   identifying the spine law with the centered point-process offspring model
   (the abstract tilt and
   forward/backward endpoint identities are already formalized in
-  `Probability/PointProcess/Tilted.lean` and
+  `Probability/RandomMeasure/ExponentialTilt.lean` and
   `Probability/BranchingRandomWalk/Spine/PointMeasure/Endpoint.lean`);
 - the branching property at the exploration/stopping-cell level;
 - the coupling lemma used for the `a = 0` trajectory argument;
