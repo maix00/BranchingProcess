@@ -45,8 +45,9 @@ between `-a⁻¹` and `a⁻¹`; the terminal value in `D(0,1)` is the left limit
   structure once the source process has been packaged as an `IsLevyProcess`.
 - `Probability/Process/Levy/PathLaw/UnitInterval.lean` constructs the law of
   `t ↦ X(Tt)` on `CadlagPath unitInterval ℝ`, identifies every finite
-  evaluation law, and proves that spatial scaling by `q` pushes this law
-  forward by `f ↦ qf`. This is the path-law interface needed for the
+  evaluation law, identifies the unit-interval law of `t ↦ X(Tt)` with the
+  horizon-`T` law, and proves that spatial scaling by `q` pushes this law
+  forward by `f ↦ qf`. These are the path-law interfaces needed for the
   normalized process in equation (38).
 - `Probability/Process/Levy/PathContinuity.lean` proves
   `IsLevyProcess.ae_leftLim_eq_eval`: a càdlàg Lévy process has no jump at

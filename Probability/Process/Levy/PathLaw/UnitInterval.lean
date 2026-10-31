@@ -27,6 +27,9 @@ public import Topology.Order.UnitInterval.Time
 - `ProbabilityTheory.IsLevyProcess.unitIntervalPathLaw_smul` identifies the
   law of $t\mapsto qX_{Tt}$ as the pushforward of the law of $t\mapsto X_{Tt}$
   by the path map $f\mapsto qf$.
+- `ProbabilityTheory.IsLevyProcess.unitIntervalPathLaw_comp_time_mul` identifies
+  the unit-interval path law of $t\mapsto X_{Tt}$ with the horizon-$T$ path
+  law of $X$.
 
 The construction is the real-valued Lévy-process specialization of the
 canonical rational-coordinate realization in
@@ -107,6 +110,19 @@ theorem unitIntervalPathLaw_finite_eval_hasLaw
         evaluate) P := by
     simpa only [Function.comp_def, evaluate] using hevaluationLaw.comp hpath
   simpa [process] using hprocessLaw.congr heval.symm
+
+/-- Viewing the time-rescaled process `t ↦ X (horizon * t)` on the unit
+interval gives the same path law as viewing `X` up to time `horizon`. -/
+theorem unitIntervalPathLaw_comp_time_mul
+    (h : IsLevyProcess X P) (horizon : ℝ≥0) :
+    ((h.comp_time (AddMonoidHom.mulLeft horizon)
+      (by
+        change Continuous (fun t : ℝ≥0 => horizon * t)
+        exact continuous_const.mul continuous_id)).unitIntervalPathLaw 1) =
+        h.unitIntervalPathLaw horizon := by
+  apply Subtype.ext
+  simp [unitIntervalPathLaw, Process.Path.Cadlag.pathLaw,
+    Process.Path.Cadlag.pathMap, AddMonoidHom.mulLeft]
 
 /-- Spatially scaling a Lévy process scales its complete unit-interval path
 law by the corresponding deterministic map on càdlàg paths. -/
