@@ -38,8 +38,9 @@ remain those recorded in `Probability/Process/RandomWalk/SmallDeviation/Mogulski
 - `Probability/Process/Levy/FiniteDimensional.lean` derives coordinate
   measurability from the zero start and stationary increment laws.
 - `Probability/Process/Levy/PathLaw/UnitInterval.lean` constructs the law of
-  the entire path $t\mapsto X_{Tt}$ on the unit interval and proves that each
-  coordinate under this path law has the corresponding process marginal.
+  the entire path $t\mapsto X_{Tt}$ on the unit interval and proves that
+  every finite vector of evaluations under this path law has the corresponding
+  joint process distribution.
   This supplies the canonical full-path-law construction for a process that
   already satisfies `IsLevyProcess`; it does not prove the stable functional
   limit from Mogul'skii's weaker source assumptions.

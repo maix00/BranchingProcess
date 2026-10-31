@@ -12,8 +12,6 @@ public import Probability.Process.Levy.FiniteDimensional
 public import Probability.Process.Path.Representation.Cadlag
 public import Topology.Order.UnitInterval.Time
 
-import Probability.Process.IndepIncrements.FiniteDimensional
-
 /-!
 # Unit-interval path laws of Lévy processes
 
@@ -24,10 +22,8 @@ import Probability.Process.IndepIncrements.FiniteDimensional
   \[t\longmapsto X_{Tt},\qquad 0\le t\le1.\]
   It is constructed from the process coordinates and the almost-surely
   càdlàg path realization.
-- `ProbabilityTheory.IsLevyProcess.unitIntervalPathLaw_ae_cadlag h T` proves
-  that this time-restricted process is almost surely càdlàg.
-- `ProbabilityTheory.IsLevyProcess.unitIntervalPathLaw_eval_hasLaw h T t`
-  proves that evaluation at `t` under this path law has the law of `X_(Tt)`.
+- `ProbabilityTheory.IsLevyProcess.unitIntervalPathLaw_finite_eval_hasLaw`
+  proves the joint-law identity for every finite family of evaluation times.
 
 The construction is the real-valued Lévy-process specialization of the
 canonical rational-coordinate realization in
@@ -56,51 +52,57 @@ noncomputable def unitIntervalPathLaw
       (fun _ => h.aemeasurable_eval _),
     inferInstance⟩
 
-/-- Restricting an almost-surely càdlàg Lévy path to `[0,horizon]` and
-reparameterizing time preserves the càdlàg property. -/
-theorem unitIntervalPathLaw_ae_cadlag
-    (h : IsLevyProcess X P) (horizon : ℝ≥0) :
-    ∀ᵐ ω ∂P,
-      IsCadlag (fun t : unitInterval =>
-        X (horizon * unitInterval.toNNReal t) ω) := by
-  let timeChange : unitInterval → ℝ≥0 :=
-    fun t => horizon * unitInterval.toNNReal t
-  have htimeMonotone : Monotone timeChange := by
-    intro s t hst
-    exact mul_le_mul_of_nonneg_left hst horizon.2
-  have htimeContinuous : Continuous timeChange := by
-    exact continuous_const.mul unitInterval.toNNReal_continuous
-  filter_upwards [h.ae_cadlag] with ω hω
-  exact hω.comp_monotone_continuous htimeMonotone htimeContinuous
-
-/-- Evaluation at `t` under the canonical path law has the distribution of
-the original process at time `horizon * t`. -/
-theorem unitIntervalPathLaw_eval_hasLaw
-    (h : IsLevyProcess X P) (horizon : ℝ≥0) (t : unitInterval) :
-    HasLaw (fun ω => X (horizon * unitInterval.toNNReal t) ω)
+/-- Every finite vector of evaluations under the canonical path law has the
+joint distribution of the corresponding process coordinates. -/
+theorem unitIntervalPathLaw_finite_eval_hasLaw
+    (h : IsLevyProcess X P) (horizon : ℝ≥0) (n : ℕ)
+    (times : Fin n → unitInterval) :
+    HasLaw (fun ω i => X (horizon * unitInterval.toNNReal (times i)) ω)
       ((h.unitIntervalPathLaw horizon : Measure (CadlagPath unitInterval ℝ)).map
-        (fun f => f t)) P := by
+        (fun f i => f (times i))) P := by
   let process : unitInterval → Ω → ℝ :=
-    fun s ω => X (horizon * unitInterval.toNNReal s) ω
-  have hprocessMeasurable : ∀ s, AEMeasurable (process s) P := by
-    intro s
-    exact h.aemeasurable_eval _
+    fun t ω => X (horizon * unitInterval.toNNReal t) ω
+  let evaluate : CadlagPath unitInterval ℝ → Fin n → ℝ :=
+    fun f i => f (times i)
+  have hevaluate : Measurable evaluate := by
+    apply Measurable.of_eval
+    intro i
+    exact Skorokhod.measurable_apply (times i)
   have hpath : HasLaw (Process.Path.Cadlag.pathMap process)
       (h.unitIntervalPathLaw horizon : Measure (CadlagPath unitInterval ℝ)) P := by
-    exact Process.Path.Cadlag.hasLaw_pathMap process hprocessMeasurable
-  have heval : (fun ω => Process.Path.Cadlag.pathMap process ω t) =ᵐ[P]
-      fun ω => process t ω :=
+    apply Process.Path.Cadlag.hasLaw_pathMap
+    intro t
+    exact h.aemeasurable_eval _
+  have hcadlag : ∀ᵐ ω ∂P, IsCadlag (fun t : unitInterval => process t ω) := by
+    let timeChange : unitInterval → ℝ≥0 :=
+      fun t => horizon * unitInterval.toNNReal t
+    have htimeMonotone : Monotone timeChange := by
+      intro s t hst
+      exact mul_le_mul_of_nonneg_left hst horizon.2
+    have htimeContinuous : Continuous timeChange := by
+      exact continuous_const.mul unitInterval.toNNReal_continuous
+    filter_upwards [h.ae_cadlag] with ω hω
+    exact hω.comp_monotone_continuous htimeMonotone htimeContinuous
+  have heach (i : Fin n) :
+      (fun ω => Process.Path.Cadlag.pathMap process ω (times i)) =ᵐ[P]
+        fun ω => process (times i) ω :=
     Process.Path.Cadlag.pathMap_ae_eval_eq process
-      (h.unitIntervalPathLaw_ae_cadlag horizon) t
-  have hevaluationLaw : HasLaw (fun f : CadlagPath unitInterval ℝ => f t)
+      hcadlag (times i)
+  have heval : (fun ω i => Process.Path.Cadlag.pathMap process ω (times i)) =ᵐ[P]
+      fun ω i => process (times i) ω := by
+    filter_upwards [ae_all_iff.mpr heach] with ω hω
+    funext i
+    exact hω i
+  have hevaluationLaw : HasLaw evaluate
       ((h.unitIntervalPathLaw horizon : Measure (CadlagPath unitInterval ℝ)).map
-        (fun f => f t))
+        evaluate)
       (h.unitIntervalPathLaw horizon : Measure (CadlagPath unitInterval ℝ)) :=
-    hasLaw_map (Skorokhod.measurable_apply t).aemeasurable
-  have hprocessLaw : HasLaw (fun ω => Process.Path.Cadlag.pathMap process ω t)
+    hasLaw_map hevaluate.aemeasurable
+  have hprocessLaw : HasLaw
+      (fun ω i => Process.Path.Cadlag.pathMap process ω (times i))
       ((h.unitIntervalPathLaw horizon : Measure (CadlagPath unitInterval ℝ)).map
-        (fun f => f t)) P := by
-    simpa only [Function.comp_def] using hevaluationLaw.comp hpath
+        evaluate) P := by
+    simpa only [Function.comp_def, evaluate] using hevaluationLaw.comp hpath
   simpa [process] using hprocessLaw.congr heval.symm
 
 end ProbabilityTheory.IsLevyProcess
