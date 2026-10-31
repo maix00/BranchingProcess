@@ -27729,3 +27729,41 @@ Theorem 4 still requires the domain-of-attraction argument that supplies the
 rescaled marginal limits and path-law tightness. The focused target
 `lake build Probability.Process.Levy.PathLaw.Convergence` passes with the
 pinned toolchain. The production module count remains 1,635.
+
+## Fixed-time convergence for convolution semigroups (2026-10-31)
+
+Added `Probability/Distributions/InfinitelyDivisible/LevyKhintchine/Semigroup/Convergence.lean` with the public declaration
+`ProbabilityTheory.ConvolutionSemigroup.tendsto_measure_of_tendsto_exponent`.
+For a sequence of convolution semigroups with exponents $\psi_n$ and a limit
+semigroup with exponent $\psi$, the hypothesis
+$\psi_n(\xi)\to\psi(\xi)$ for every $\xi\in\mathbb R$ yields
+$\mu_{n,t}\Rightarrow\mu_t$ for each fixed $t>0$, because
+$\widehat\mu_{n,t}(\xi)=\exp(t\psi_n(\xi))$. The proof applies the pinned
+Mathlib API `ProbabilityMeasure.tendsto_iff_tendsto_charFun` to this explicit
+characteristic-function identity.
+
+The result belongs beside the convolution-semigroup exponent because that is
+the object assumed and concluded on; its only extra analytic input is
+Mathlib's Lévy continuity theorem. It does not recover convergence of the
+exponents from convergence of the time-one laws, and therefore does not fill
+the one-marginal Jacod--Shiryaev step in Mogul'skii Theorem 4. The focused
+target `lake build Probability.Distributions.InfinitelyDivisible.LevyKhintchine.Semigroup.Convergence`
+passes with the pinned toolchain. The production module count is now 1,636.
+
+## Convolution law of a finite IID sum (2026-10-31)
+
+Extended `Probability/Sequence/IID/Law.lean` with the public result
+`ProbabilityTheory.iidSequenceLaw_map_sum_range_eq_convPower`. For a real
+probability measure $\nu$ and $n\in\mathbb N$, it proves
+\[
+  \operatorname{Measure.map}\!\left(\texttt{iidSequenceLaw}\,\nu,
+    \omega\mapsto\sum_{k<n}\omega_k\right)=\nu^{*n}.
+\]
+The proof combines the existing IID characteristic-function product formula
+with Mathlib's uniqueness theorem `Measure.ext_of_charFun` and the convolution
+identity `Measure.charFun_convPower`. The local copy of this argument in
+`Probability/Distributions/Stable/Gaussian/Basic.lean` now calls the generic
+result, providing a direct production client for its placement in the IID
+sequence-law module. Both `Probability.Sequence.IID.Law` and
+`Probability.Distributions.Stable.Gaussian.Basic` pass the focused Lake build
+(3,336 jobs). The production module count remains 1,636.

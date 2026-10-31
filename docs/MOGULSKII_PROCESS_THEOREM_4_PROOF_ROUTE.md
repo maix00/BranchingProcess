@@ -59,6 +59,13 @@ between `-a⁻¹` and `a⁻¹`; the terminal value in `D(0,1)` is the left limit
   stationary increments and the zero-start property. This completes the
   path-level assembly once tightness and the rescaled marginal limits have
   been supplied.
+- `Probability/Distributions/InfinitelyDivisible/LevyKhintchine/Semigroup/Convergence.lean`
+  proves that pointwise convergence of the exponents of a sequence of
+  convolution semigroups implies weak convergence of each fixed positive-time
+  member, using `ProbabilityMeasure.tendsto_iff_tendsto_charFun`. This gives a
+  reusable route from exponent limits to the marginal inputs above; obtaining
+  those exponent limits from Theorem 4's scalar domain-of-attraction
+  assumption remains a separate obligation.
 - `Probability/Process/Levy/PathContinuity.lean` proves
   `IsLevyProcess.ae_leftLim_eq_eval`: a càdlàg Lévy process has no jump at
   any fixed positive time, almost surely. At time `1`, this identifies the
@@ -144,11 +151,14 @@ the process in Theorem 4 has been given a càdlàg version.
    `Probability.Process.Levy.PathLaw.Convergence`: one result takes convergence
    of all interval-increment laws, and its Lévy-process corollary takes
    convergence of every rescaled one-time marginal and derives the increment
-   limits from stationarity and zero start. For the article's hypotheses,
-   formalize the cited Jacod--Shiryaev criterion or prove the required
-   marginal limits directly from the scalar limit and norming relations;
-   establish tightness, identify the limit as the stable unit-interval path
-   law, and restrict from `[0,∞)` to `[0,1]`.
+   limits from stationarity and zero start. The semigroup result in
+   `Probability.Distributions.InfinitelyDivisible.LevyKhintchine.Semigroup.Convergence`
+   turns pointwise exponent convergence into fixed-time marginal convergence.
+   For the article's hypotheses, the remaining step is to derive those
+   exponent limits from the scalar limit and norming relations, or formalize
+   the cited Jacod--Shiryaev criterion directly; also establish tightness,
+   identify the limit as the stable unit-interval path law, and restrict from
+   `[0,∞)` to `[0,1]`.
 3. **Formalize equations (38)--(44) exactly.** First establish the fixed-tube
    transfer, with the event-boundary condition needed for weak convergence.
    Then formalize the arbitrary `y(n)` comparison, the choice
