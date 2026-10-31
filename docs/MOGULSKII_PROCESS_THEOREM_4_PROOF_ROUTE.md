@@ -35,6 +35,15 @@ remain those recorded in `Probability/Process/RandomWalk/SmallDeviation/Mogulski
 
 - `Probability/Process/Levy/Basic.lean` defines `IsLevyProcess`, stationary
   increments, independent increments, and almost-sure càdlàg paths.
+- `Probability/Process/Levy/FiniteDimensional.lean` derives coordinate
+  measurability from the zero start and stationary increment laws.
+- `Probability/Process/Levy/PathLaw/UnitInterval.lean` constructs the law of
+  the entire path $t\mapsto X_{Tt}$ on the unit interval and proves that
+  every finite vector of evaluations under this path law has the corresponding
+  joint process distribution.
+  This supplies the canonical full-path-law construction for a process that
+  already satisfies `IsLevyProcess`; it does not prove the stable functional
+  limit from Mogul'skii's weaker source assumptions.
 - `Probability/Process/IndepIncrements/FiniteDimensional.lean` derives finite
   dimensional laws from independent increments, and
   `Probability/Process/IndepIncrements/FiniteObservations/DisjointPaths.lean`
@@ -116,9 +125,11 @@ exponential scale after `n` blocks.
 1. **Package the process input.** From stationary increments, define the
    common unit-time increment law `ν`; derive measurability of every
    increment and the exact finite-grid product law from
-   `HasIndepIncrements`. Build the time-restricted path law using the
-   existing càdlàg path-map API, then apply the terminal-left map to match
-   `D₀`.
+   `HasIndepIncrements`. For an `IsLevyProcess`, coordinate measurability
+   and the canonical law on `CadlagPath unitInterval ℝ` for
+   $t\mapsto X_{Tt}$ are now available. The source-specific remaining work is
+   to derive the process hypotheses from Mogul'skii's assumptions, identify
+   `ν`, and apply the terminal-left map to match `D₀`.
 2. **Formalize the continuous-time stable functional limit.** Let `T → ∞`
    and let `b(T)` be the stable norming. Prove finite-dimensional convergence
    from the increment laws. Prove full `J₁` tightness from direct
@@ -172,10 +183,11 @@ or verified in Lean.
 
 ## Status
 
-Theorem 4 is **not implemented**. Existing independent-increment,
-càdlàg-path, stable-process escape, and random-walk stable-domain APIs cover
-parts of the dependency chain, but the full-process functional limit and its
-full-path one-block squeeze are not present. The next proof package should
-implement and verify those two interfaces before adding a theorem wrapper;
-Mogul'skii's Theorem 4 should not be introduced with an unproved path
-convergence or a skeleton-probability shortcut.
+Theorem 4 is **not implemented**. The canonical full-path law for an
+already-càdlàg Lévy process is now available, alongside the independent-
+increment, path-regularity, stable-process escape, and random-walk stable-
+domain APIs. The full-process functional limit and its full-path one-block
+squeeze remain open, as does deriving the required càdlàg process package
+from the article's stated assumptions. These interfaces must be proved before
+adding a theorem wrapper; an unproved path convergence or a skeleton-
+probability shortcut does not establish Theorem 4.
