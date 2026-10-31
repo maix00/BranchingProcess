@@ -14,18 +14,41 @@ import Mathlib.Combinatorics.Enumerative.Composition
 
 ## Internal proof declarations
 
-- `compositionSelectedStart_strictMono` and
-  `compositionSelectedStarts_card` show that composition boundaries translated
-  by a terminal-gap offset form an ordered set of the expected cardinality.
-- `compositionSelectedStarts_orderEmbOfFin` and
-  `compositionSelectedStarts_first_val` identify its ordered enumeration and
-  initial offset.
-- `cyclicGapLength_compositionSelectedStarts`,
-  `cyclicGapComposition_compositionSelectedStarts`,
-  `cyclicFirstStart_lt_lastGap`, and `cyclicGapComposition_sizeUpTo` recover
-  the composition gaps from those starts.
-- `exists_compositionSelectedStarts_cyclicGapComposition` proves the inverse
-  construction needed for the cyclic-gap/composition equivalence.
+For a composition $c$ of $n>0$ and an offset $a$ in its last part, write
+$\Phi(c,a)=\operatorname{compositionSelectedStarts}(c,a)$ and
+$c_j=c.\mathrm{blocksFun}(j)$ and
+$\sigma_j=a.\mathrm{val}+c.\mathrm{sizeUpTo}(j.\mathrm{val})$ for
+$j\in\mathrm{Fin}(c.\mathrm{length})$.
+For a nonempty $u\subseteq\mathrm{Fin}(n)$ with witness $hu$, write
+$g(k)=\operatorname{cyclicGapLengthAt}(u,hu,k)$ and
+$c_u=\operatorname{cyclicGapComposition}(u,hu)$.
+
+- `Combinatorics.Sequence.compositionSelectedStart_strictMono` states
+  $i<j\Rightarrow\sigma_i<\sigma_j$.
+  `Combinatorics.Sequence.compositionSelectedStarts_card` gives
+  $|\Phi(c,a)|=c.\mathrm{length}$.
+- `Combinatorics.Sequence.compositionSelectedStarts_orderEmbOfFin` identifies
+  the increasing enumeration of $\Phi(c,a)$ with $j\mapsto\sigma_j$;
+  `Combinatorics.Sequence.compositionSelectedStarts_first_val` gives
+  $(\min\Phi(c,a)).\mathrm{val}=a.\mathrm{val}$.
+- `Combinatorics.Sequence.cyclicGapLength_compositionSelectedStarts` gives
+  $\operatorname{cyclicGapLength}(\Phi(c,a),j)=c.\mathrm{blocksFun}(j)$,
+  with the index transported along the cardinality equality above.
+  `Combinatorics.Sequence.cyclicGapComposition_compositionSelectedStarts`
+  gives
+  $\operatorname{cyclicGapComposition}(\Phi(c,a))=c$.
+- `Combinatorics.Sequence.cyclicFirstStart_lt_lastGap` states that the least
+  selected start is strictly smaller than the final cyclic gap:
+  $(\min u).\mathrm{val}<g(|u|-1)$. This is the offset range that supplies
+  the multiplicity in Bauer--Godrèche--Luck, Appendix A, equation (A.6), in
+  the derivation of equation (A.7).
+  `Combinatorics.Sequence.cyclicGapComposition_sizeUpTo` identifies the
+  composition prefix sum with the cumulative cyclic-gap length:
+  $c_u.\mathrm{sizeUpTo}(j)=\operatorname{blockStart}(g,j)$ for $j\le|u|$.
+- `Combinatorics.Sequence.exists_compositionSelectedStarts_cyclicGapComposition`
+  states that every nonempty $u\subseteq\mathrm{Fin}(n)$ is recovered from
+  the cyclic-gap composition and the offset $(\min u).\mathrm{val}$:
+  $\Phi(c_u,(\min u).\mathrm{val})=u$.
 
 The helper definitions and inverse identities in this file prove the
 composition-and-offset equivalence in `Combinatorics.Sequence.CyclicGap.Reindex`.

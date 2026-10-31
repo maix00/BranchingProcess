@@ -14,21 +14,23 @@ public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 
 ## Public declarations
 
-The public declarations in `Combinatorics.Sequence` are:
+For a sequence $f:\mathbb N\to E$, start $s$, length $\ell$, and default $d$:
 
-- `blockCoordinates`: the block $k\mapsto f(s+k)$, for $k<\ell$.
-- `paddedBlockCoordinates`: the sequence equal to $f(s+k)$ when $k<\ell$
-  and to a chosen default otherwise.
-- `paddedBlockCoordinates_of_lt` and `paddedBlockCoordinates_of_not_lt`:
-  $\operatorname{paddedBlock}(s,\ell,d,f)(k)=f(s+k)$ for $k<\ell$, and
-  equals $d$ when $\ell\le k$.
-- `blockStart`: the starting index $b_j=\sum_{i<j}\ell_i$ of the $j$-th
-  consecutive block in a variable-length partition.
-- `blockStart_zero` and `blockStart_succ`:
-  $b_0=0$ and $b_{j+1}=b_j+\ell_j$.
-- `blockStart_const` and `blockStart_mono`:
-  $b_j=j\ell$ for constant block length $\ell$, and $i\le j$ implies
-  $b_i\le b_j$ for arbitrary nonnegative block lengths.
+- `Combinatorics.Sequence.blockCoordinates` is the finite block
+  $k\mapsto f(s+k)$ for $k\in\mathrm{Fin}(\ell)$.
+- `Combinatorics.Sequence.paddedBlockCoordinates` is the sequence
+  $k\mapsto f(s+k)$ for $k<\ell$ and $k\mapsto d$ for $\ell\le k$.
+  `Combinatorics.Sequence.paddedBlockCoordinates_of_lt` and
+  `Combinatorics.Sequence.paddedBlockCoordinates_of_not_lt` state these two
+  pointwise equations.
+- For lengths $\lambda_i$, `Combinatorics.Sequence.blockStart` defines
+  $b_j=\sum_{i<j}\lambda_i$.
+  `Combinatorics.Sequence.blockStart_zero` and
+  `Combinatorics.Sequence.blockStart_succ` give $b_0=0$ and
+  $b_{j+1}=b_j+\lambda_j$.
+  `Combinatorics.Sequence.blockStart_const` gives $b_j=j\ell$ when
+  $\lambda_i=\ell$, and `Combinatorics.Sequence.blockStart_mono` gives
+  $b_i\le b_j$ whenever $i\le j$.
 
 Extract a finite consecutive block from an arbitrary sequence. This operation
 is independent of any algebraic, probabilistic, or process structure on the

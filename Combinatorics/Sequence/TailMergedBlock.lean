@@ -12,40 +12,52 @@ import Mathlib.Tactic
 /-!
 # Tail-merged finite sequence blocks
 
-For an interval from `start` to `horizon` and a nominal block length
-`blockLength`, this module defines the schedule
+For `start`, `horizon`, and `blockLength` in $\mathbb N$, write
+$S=\text{start}$, $H=\text{horizon}$, and $B=\text{blockLength}$. Set
+$q=(H-S)/B$ by natural-number division; if $B>0$, then
+$q=\left\lfloor\frac{H-S}{B}\right\rfloor$. This module defines, for
+$j\in\mathbb N$, the schedule
 \[
-q=\left\lfloor\frac{\text{horizon}-\text{start}}{\text{blockLength}}\right\rfloor,
-\qquad
 t_j=\begin{cases}
-\text{start}+j\,\text{blockLength},&j<q,\\
-\text{horizon},&q\le j.
+S+jB,&j<q,\\
+H,&q\le j.
 \end{cases}
 \]
-The resulting final block absorbs the remainder, so when `q > 0` its length
-is `blockLength + (horizon - start) % blockLength`. The construction depends
-only on natural-number interval data, independently of the sequence values or
-any probability estimate. Mathlib supplies the quotient/remainder arithmetic;
-this module packages it as a finite block schedule with a prescribed endpoint.
+When $S\le H$ and $q>0$, the final block absorbs the remainder, so its length
+is $B+(H-S)\bmod B$. The construction uses only natural-number interval data.
+Mathlib supplies the quotient/remainder arithmetic.
 
 ## Public declarations
 
-* `tailMergedBlockCount start horizon blockLength` is
-  `(horizon - start) / blockLength`.
-* `tailMergedBlockStart start horizon blockLength j` is
-  `start + j * blockLength` before the final block and `horizon` thereafter;
-  `tailMergedBlockLength ... j` is the difference of consecutive starts.
-* `tailMergedBlockStart_zero`, `tailMergedBlockStart_count`,
-  `tailMergedBlockStart_le_horizon`, `tailMergedBlockStart_mono_succ`, and
-  `tailMergedBlockStart_next_eq_add_length` give the initial/final boundary,
-  horizon bound, monotonicity, and adjacent-boundary identity.
-* `tailMergedBlockLength_interior` gives nominal length for each nonfinal
-  block; `tailMergedBlockLength_last` identifies the final length as the
-  nominal length plus the remainder.
-* `tailMergedBlockLength_last_bounds` and `tailMergedBlockLength_bounds`
-  bound the final or every block length by `[blockLength, 2 * blockLength)`.
-* `tailMergedBlockCount_pos_of_start_add_blockLength_le` proves the count is
-  positive whenever one full nominal block fits in the interval.
+With this notation, the boundary $t_j$ and length $\lambda_j$ defined above
+have the following public interface:
+
+* `Combinatorics.Sequence.tailMergedBlockCount S H B` defines $q$;
+  `Combinatorics.Sequence.tailMergedBlockStart S H B j` defines $t_j$;
+  `Combinatorics.Sequence.tailMergedBlockLength S H B j` defines
+  $\lambda_j=t_{j+1}-t_j$.
+* `Combinatorics.Sequence.tailMergedBlockStart_zero` states $t_0=S$ if
+  $q>0$, and `Combinatorics.Sequence.tailMergedBlockStart_count` states
+  $t_q=H$. Assuming $S\le H$,
+  `Combinatorics.Sequence.tailMergedBlockStart_le_horizon` gives
+  $t_j\le H$ for $j\le q$,
+  `Combinatorics.Sequence.tailMergedBlockStart_mono_succ` gives
+  $t_j\le t_{j+1}$, and
+  `Combinatorics.Sequence.tailMergedBlockStart_next_eq_add_length` gives
+  $t_{j+1}=t_j+\lambda_j$.
+* `Combinatorics.Sequence.tailMergedBlockLength_interior` states
+  $\lambda_j=B$ when $j+1<q$.
+  If $S\le H$ and $q>0$,
+  `Combinatorics.Sequence.tailMergedBlockLength_last` states
+  $\lambda_{q-1}=B+(H-S)\bmod B$.
+  If also $B>0$,
+  `Combinatorics.Sequence.tailMergedBlockLength_last_bounds` gives
+  $B\le\lambda_{q-1}<2B$.
+* Assuming $B>0$ and $S+B\le H$,
+  `Combinatorics.Sequence.tailMergedBlockCount_pos_of_start_add_blockLength_le`
+  gives $q>0$. Assuming $S\le H$, $B>0$, and $j<q$,
+  `Combinatorics.Sequence.tailMergedBlockLength_bounds` gives
+  $B\le\lambda_j<2B$.
 -/
 
 @[expose] public section

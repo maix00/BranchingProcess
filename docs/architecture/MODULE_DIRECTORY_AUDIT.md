@@ -342,6 +342,14 @@ duplicating the `InitialPopulation` or `Rademacher` directory names. The scan
 also caught and fixed `Analysis/Asymptotics/Scale/Scale.lean`, now
 `Scale/Basic.lean`.
 
+The 2026-11-01 scan of the current production and test trees finds 1,642
+production modules and 137 test modules. It confirms zero same-stem
+file/directory pairs, repeated sibling Lean filenames, child filenames that
+repeat their parent directory, `Source/` directories, empty source
+directories, directories with more than eight direct Lean files, or parallel
+`Lemmas.lean` and `Lemmas/` entries. It excludes `.lake/`, vendored
+dependencies, scripts, and documentation directories.
+
 The 2026-10-21 scan of the current Lean subtree commit `d30b8dd5` counts
 1,482 production modules and 138 test modules. Across the 639 project source
 directories, it finds no same-stem file/directory pairs, repeated sibling
@@ -469,6 +477,16 @@ updated after those modules moved into `IID/Blocks/`; the stable mapping
 overview now points to the split regular-variation integral modules and the
 norming module that owns `stableScaleTime_isRegularlyVaryingAtTop`.
 
+The 2026-11-01 sequence-interface follow-up refined the exact public
+declaration names and mathematical statements in
+`Combinatorics/Sequence/{BalancedPartition,Block,TailMergedBlock}.lean` and
+`Combinatorics/Sequence/CyclicGap/{Basic,Reindex}.lean`, and the internal proof
+inventory in `CyclicGap/Lemmas/Composition.lean`. It also checked the existing
+Riesz leader statement and its Karlsson citation in
+`Combinatorics/Sequence/Leader.lean`. The seven-module sequence batch builds
+with the pinned toolchain. The statement-by-statement declaration-header
+audit still has modules open for review.
+
 ## Citation audit
 
 The production Lean source scan found no generic `the paper` or `the thesis`
@@ -555,6 +573,10 @@ inclusion; its former bare “Lemma 2.3” mention did not identify a source res
 used by that helper. The finite-variance estimate that supplies the drawdown
 bound retains its explicit Wang thesis Chapter 3, Lemma 3.3 and Aïdékon--Hu
 Lemma 2.3 references in its owning module.
+
+The stable path-law transfer declaration that specializes Mogul'skii's Lemma
+1(II) now gives the Russian original and English translation metadata, the
+exact lemma number, and DOI 10.1137/1119081 in its theorem docstring.
 
 The IID sequence audit groups stopping-time and prefix-factorization results in
 `Probability/Sequence/IID/Blocks/`. Conditional expectation for independent
