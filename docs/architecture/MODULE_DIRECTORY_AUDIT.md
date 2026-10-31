@@ -27858,3 +27858,31 @@ interval sequence instead of repeating the local pathwise-to-distribution
 argument; the zero-start hypothesis identifies the initial marginal with
 $\delta_0$. The generic coordinate-measurability module and the Lévy
 path-continuity module build with the pinned toolchain.
+
+## Integer-time domain-of-attraction transfer for Lévy processes (2026-10-31)
+
+Strengthened `Probability/Process/Levy/MarginalLaws.lean` with the explicit
+equal-partition identity
+\[
+  \operatorname{Law}(X_t)
+    = \operatorname{Law}(X_{t/n})^{*n},
+\]
+and the integer-time representation as the law of the first $n$ canonical
+i.i.d. increments with common law $\operatorname{Law}(X_1)$. The existing
+infinite-divisibility result now follows from the explicit convolution
+identity. Added
+`Probability/Process/Levy/DomainOfAttraction/IntegerTime.lean`, which transfers
+the scalar domain-of-attraction limit of $X_1$ to
+\[
+  a_n^{-1}(X_n-b_n)\Rightarrow\mu.
+\]
+The proof first identifies the integer-time marginal with the canonical i.i.d.
+sum law, then applies the same normalization as the scalar domain-of-attraction
+definition. This is the exact integer-time marginal input for the functional
+limit step in the audited Mogul'skii Theorem 4 route. The new module builds
+with the pinned toolchain.
+
+The production source-to-ledger rescan after this addition contains 1,639
+modules on each side, with an exact path match. The same-level file/directory
+basename scan remains clear, including the new `Levy/DomainOfAttraction/`
+directory; the new file header lists its public declaration and source formula.

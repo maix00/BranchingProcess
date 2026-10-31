@@ -52,6 +52,12 @@ between `-a⁻¹` and `a⁻¹`; the terminal value in `D(0,1)` is the left limit
   `n ≥ 1`, `Law(X(t))` is the `n`-fold convolution of the common law of `n`
   equal-length stationary increments. This places the process marginals in
   the measure-level framework used by the Lévy--Khintchine semigroup API.
+- `Probability/Process/Levy/DomainOfAttraction/IntegerTime.lean` transfers a
+  scalar domain-of-attraction limit of the time-one marginal to the process at
+  integer times. If `ν = Law(X(1))` and the normalized i.i.d. sums of law `ν`
+  converge to `μ`, then the same centered and normalized `X(n)` converges to
+  `μ`. The underlying exact equality between `Law(X(n))` and the canonical
+  i.i.d. sum law is in `Levy/MarginalLaws.lean`.
 - `Probability/Process/Levy/PathLaw/UnitInterval.lean` constructs the law of
   `t ↦ X(Tt)` on `CadlagPath unitInterval ℝ`, identifies every finite
   evaluation law, identifies the unit-interval law of `t ↦ X(Tt)` with the
@@ -155,19 +161,21 @@ the process in Theorem 4 has been given a càdlàg version.
    process under the article's hypotheses, or state exactly which standard
    càdlàg modification theorem is being formalized. Preserve the original
    assumptions and centering, especially at `α = 1`.
-2. **Obtain tightness and rescaled marginal convergence from the scalar domain
-   of attraction input.** The reusable path-level conclusion is formalized in
+2. **Obtain process-level convergence from the scalar domain of attraction
+   input.** The integer-time marginal transfer is now formalized in
+   `Levy/DomainOfAttraction/IntegerTime.lean`. The reusable path-level
+   conclusion is formalized in
    `Probability.Process.Levy.PathLaw.Convergence`: one result takes convergence
    of all interval-increment laws, and its Lévy-process corollary takes
    convergence of every rescaled one-time marginal and derives the increment
    limits from stationarity and zero start. The semigroup result in
    `Probability.Distributions.InfinitelyDivisible.LevyKhintchine.Semigroup.Convergence`
    turns pointwise exponent convergence into fixed-time marginal convergence.
-   For the article's hypotheses, the remaining step is to derive those
-   exponent limits from the scalar limit and norming relations, or formalize
-   the cited Jacod--Shiryaev criterion directly; also establish tightness,
-   identify the limit as the stable unit-interval path law, and restrict from
-   `[0,∞)` to `[0,1]`.
+   The remaining step is the functional convergence used in equation (38):
+   derive the rescaled-time marginal limits and tightness from the integer-time
+   domain-of-attraction limit, or formalize the cited Jacod--Shiryaev criterion
+   directly. Then identify the limit as the stable unit-interval path law and
+   restrict from `[0,∞)` to `[0,1]`.
 3. **Formalize equations (38)--(44) exactly.** First establish the fixed-tube
    transfer, with the event-boundary condition needed for weak convergence.
    Then formalize the arbitrary `y(n)` comparison, the choice
@@ -182,10 +190,12 @@ the process in Theorem 4 has been given a càdlàg version.
 
 ## Status
 
-Theorem 4 is **not implemented**. The unit-interval path law, its
+Theorem 4 is **not implemented**. The exact integer-time marginal/i.i.d.-sum
+identity and the transfer of a scalar domain-of-attraction limit to
+normalized integer-time marginals are formalized. The unit-interval path law, its
 finite-evaluation identity, its spatial-scaling pushforward, and the generic
 tightness-plus-increment-convergence path-law theorem are available. The next
-substantive step is deriving those convergence inputs from Theorem 4's scalar
-domain-of-attraction assumptions, followed by Mogul'skii's scaling comparison
+substantive step is functional convergence in equation (38) from Theorem 4's
+scalar domain-of-attraction input, followed by Mogul'skii's scaling comparison
 in equations (39)--(44). The previous proposed nonstable block-squeeze route
 has been removed because it does not follow the article's proof.

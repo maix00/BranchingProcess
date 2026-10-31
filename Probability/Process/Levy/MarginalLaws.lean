@@ -8,6 +8,7 @@ module
 
 public import Probability.Process.Levy.FiniteDimensional
 public import Probability.Distributions.InfinitelyDivisible.Basic
+public import Probability.Sequence.IID.Law
 public import Mathlib.Probability.Independence.CharacteristicFunction
 public import MeasureTheory.Measure.CharacteristicFunction.Convolution
 
@@ -21,6 +22,13 @@ public import MeasureTheory.Measure.CharacteristicFunction.Convolution
   for every $t\ge0$ and $n\ge1$, there is a probability measure $\nu_{t,n}$
   such that $\operatorname{Law}(X_t)=\nu_{t,n}^{*n}$. The proof takes the
   common law of the $n$ stationary increments on an equal time partition.
+- `ProbabilityTheory.IsLevyProcess.map_eval_eq_convPower_div` proves
+  $\operatorname{Law}(X_t)=\operatorname{Law}(X_{t/n})^{*n}$ for every
+  $t\ge0$ and positive integer $n$.
+- `ProbabilityTheory.IsLevyProcess.map_eval_nat_eq_iidSum` identifies the
+  marginal at integer time $n$ with the law of the sum of the first $n$
+  coordinates under the canonical i.i.d. sequence with law
+  $\operatorname{Law}(X_1)$.
 -/
 
 open MeasureTheory ProbabilityTheory
@@ -34,14 +42,12 @@ variable {Ω : Type*} [MeasurableSpace Ω]
   {P : Measure Ω} [IsProbabilityMeasure P]
   {X : ℝ≥0 → Ω → ℝ}
 
-/-- Every fixed-time marginal of a real-valued Lévy process is infinitely
-divisible. For each positive integer `n`, the common law of the `n` stationary
-increments on an equal partition of `[0,t]` is an `n`th convolution root of
-the law at time `t`. -/
-theorem isInfinitelyDivisible_timeMarginal
-    (h : IsLevyProcess X P) (t : ℝ≥0) :
-    IsInfinitelyDivisible (P.map fun ω => X t ω) := by
-  intro n hn
+/-- The marginal at time `t` is the `n`-fold convolution power of the common
+law of the stationary increments on the equal partition of `[0,t]`. -/
+theorem map_eval_eq_convPower_div
+    (h : IsLevyProcess X P) (t : ℝ≥0) (n : ℕ) (hn : 0 < n) :
+    P.map (fun ω => X t ω) =
+      (P.map (fun ω => X (t / (n : ℝ≥0)) ω)).convPower n := by
   let duration : ℝ≥0 := t / (n : ℝ≥0)
   let grid : ℕ → ℝ≥0 := fun k => (k : ℝ≥0) * duration
   let increment : ℕ → Ω → ℝ := fun k ω =>
@@ -87,7 +93,6 @@ theorem isInfinitelyDivisible_timeMarginal
         simpa only using (Finset.sum_range_sub (fun k => X (grid k) ω) n)
       _ = X t ω := by rw [hgrid_last, hgrid_zero, hω]; simp
 
-  refine ⟨ν, hν_probability, ?_⟩
   apply Measure.ext_of_charFun
   ext ξ
   rw [Measure.charFun_convPower]
@@ -112,6 +117,44 @@ theorem isInfinitelyDivisible_timeMarginal
         exact congrArg (fun μ : Measure ℝ => charFun μ ξ)
           (hincrement_law k).map_eq
   simpa using hchar_sum
+
+/-- The marginal at integer time `n` is the law of the sum of the first `n`
+coordinates under the canonical i.i.d. sequence whose common law is the
+time-one marginal. -/
+theorem map_eval_nat_eq_iidSum
+    (h : IsLevyProcess X P) (n : ℕ) (hn : 0 < n) :
+    P.map (fun ω => X (n : ℝ≥0) ω) =
+      (iidSequenceLaw (P.map fun ω => X 1 ω)).map
+        (fun sequence : ℕ → ℝ => ∑ k ∈ Finset.range n, sequence k) := by
+  have hν_probability : IsProbabilityMeasure (P.map fun ω => X 1 ω) := by
+    apply (Measure.isProbabilityMeasure_map_iff (h.aemeasurable_eval 1)).2
+    infer_instance
+  have hnR : (n : ℝ≥0) ≠ 0 := by
+    exact_mod_cast (Nat.ne_of_gt hn)
+  calc
+    P.map (fun ω => X (n : ℝ≥0) ω) =
+        (P.map (fun ω => X ((n : ℝ≥0) / (n : ℝ≥0)) ω)).convPower n :=
+      h.map_eval_eq_convPower_div (n : ℝ≥0) n hn
+    _ = (P.map (fun ω => X 1 ω)).convPower n := by
+      rw [div_self hnR]
+    _ = (iidSequenceLaw (P.map fun ω => X 1 ω)).map
+        (fun sequence : ℕ → ℝ => ∑ k ∈ Finset.range n, sequence k) := by
+      exact (@iidSequenceLaw_map_sum_range_eq_convPower
+        (P.map fun ω => X 1 ω) hν_probability n).symm
+
+/-- Every fixed-time marginal of a real-valued Lévy process is infinitely
+divisible. The explicit convolution-root formula gives the required root for
+each positive integer. -/
+theorem isInfinitelyDivisible_timeMarginal
+    (h : IsLevyProcess X P) (t : ℝ≥0) :
+    IsInfinitelyDivisible (P.map fun ω => X t ω) := by
+  intro n hn
+  let ν : Measure ℝ := P.map fun ω => X (t / (n : ℝ≥0)) ω
+  have hν_probability : IsProbabilityMeasure ν := by
+    apply (Measure.isProbabilityMeasure_map_iff
+      (h.aemeasurable_eval (t / (n : ℝ≥0)))).2
+    infer_instance
+  exact ⟨ν, hν_probability, h.map_eval_eq_convPower_div t n hn⟩
 
 end ProbabilityTheory.IsLevyProcess
 
