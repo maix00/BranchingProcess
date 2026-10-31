@@ -27583,3 +27583,24 @@ used real-number notation and ordered-ring instances without importing their
 owner. The test now imports `Mathlib.Data.Real.Basic` explicitly before the
 weighted-sum API. This keeps the production module's dependency boundary
 minimal; the correction is covered by the next preflight run.
+
+## Repository-wide flat-module and path-name audit (2026-10-31)
+
+A production-tree scan excluding `.lake`, `Vendor`, test trees, and Lean helper
+scripts found 1,634 source modules, matching the 1,634-module production
+ledger. It found no same-level Lean-file/directory stem collisions and no
+source file whose name redundantly repeats its immediate parent directory.
+Repeated leaf names such as `Basic`, `Law`, and `Endpoint` occur under distinct
+semantic module paths; their full import paths disambiguate them, following
+the namespace-local naming pattern also used by Mathlib. No compatibility
+aliases were added.
+
+`Probability/Process/Path/FirstPassage` is the only production directory with
+eight direct Lean modules. Each module provides a complete public interface:
+first-passage definitions and deterministic properties, measurability,
+prefix dependence, restart and reflection identities, descending hitting
+times, and finite-grid approximation. The APIs are semantically cohesive and
+none is a private proof chain, so they remain directly visible at this level.
+No `Lemmas` directory has six or more direct modules in this scan. The
+helper `scripts/parse_lean_imports.lean` is excluded from the production-module
+count because it is a repository script rather than a library module.
