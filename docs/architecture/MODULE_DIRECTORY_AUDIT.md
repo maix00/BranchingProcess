@@ -27559,3 +27559,19 @@ one-use conversion details remain in the client proofs. The Brownian-process
 adapter now states its conclusion using this same canonical stable path law,
 and its full target build succeeds. The per-module ledger records the reuse
 and build status.
+
+## Independent-increment finite-grid convergence (2026-10-31)
+
+Added `Probability/Process/IndepIncrements/Convergence.lean` for the reusable
+finite-grid assembly theorem: if every consecutive increment law converges and
+each source process has independent increments and a zero value at the grid
+anchor, then the position vector converges to partial sums of independent
+coordinates with the limiting marginal laws. The declaration is generic in
+the time preorder, source probability spaces, and finite monotone grid; it has
+no stable-law, Lévy-path, or small-deviation assumptions. The independent
+product convergence is supplied by the existing
+`Probability.ConvergenceInDistribution.Independence` interface, while the
+partial-sum map reconstructs the positions. Mogul'skii's continuous-time
+application still needs the scalar increment limits and full-path tightness
+recorded in the process-level proof route. The module builds successfully.
+The production module inventory and audit ledger now contain 1,634 modules.

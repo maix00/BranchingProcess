@@ -44,6 +44,13 @@ remain those recorded in `Probability/Process/RandomWalk/SmallDeviation/Mogulski
   This supplies the canonical full-path-law construction for a process that
   already satisfies `IsLevyProcess`; it does not prove the stable functional
   limit from Mogul'skii's weaker source assumptions.
+- `Probability/Process/IndepIncrements/Convergence.lean` proves the generic
+  finite-grid assembly step: convergence of each consecutive increment law,
+  together with independent increments and a zero value at the grid anchor,
+  gives convergence of the position vector to partial sums of independent
+  limiting increments. The Mogul'skii application still needs to derive the
+  real-time scalar increment limits from the article's one-time
+  domain-of-attraction hypothesis.
 - `Probability/Process/IndepIncrements/FiniteDimensional.lean` derives finite
   dimensional laws from independent increments, and
   `Probability/Process/IndepIncrements/FiniteObservations/DisjointPaths.lean`
@@ -74,15 +81,17 @@ remain those recorded in `Probability/Process/RandomWalk/SmallDeviation/Mogulski
 
 The current APIs do not compose to Theorem 4. The missing pieces are:
 
-1. **A process-level stable functional limit.** There is no theorem deriving
-   weak convergence in `J₁` of the full path laws
-   `Law(t ↦ ξ(T t) / b(T))` to the stable Lévy path law from the scalar
-   stable-domain assumption and `IsLevyProcess`. The current stable path-limit
-   theorems take an i.i.d. increment law and prove convergence of its
-   piecewise-constant random-walk paths. That does not identify the law of
-   `ξ(T·)`: fluctuations and jumps inside unit-time intervals are omitted.
-   The finite-dimensional part can use stationary independent increments and
-   the scalar domain-of-attraction result. The missing analytic input is
+1. **A process-level stable functional limit.** The generic assembly from
+   finite increment-law convergence to position-vector convergence is now
+   available as
+   `ProbabilityTheory.HasIndepIncrements.tendstoInDistribution_positions_of_increment_convergence`.
+   The source-specific limits of real-time increments and weak convergence in
+   `J₁` of the full path laws `Law(t ↦ ξ(T t) / b(T))` to the stable Lévy path
+   law still need to be derived from the scalar stable-domain assumption and
+   `IsLevyProcess`. The current stable path-limit theorems take an i.i.d.
+   increment law and prove convergence of its piecewise-constant random-walk
+   paths. That does not identify the law of `ξ(T·)`: fluctuations and jumps
+   inside unit-time intervals are omitted. The missing analytic input is
    `J₁` tightness for the full rescaled Lévy paths, including control of
    within-interval oscillations.
 2. **A scalar-to-process norming bridge.** The source hypothesis is stated
@@ -127,7 +136,9 @@ exponential scale after `n` blocks.
    increment and the exact finite-grid product law from
    `HasIndepIncrements`. For an `IsLevyProcess`, coordinate measurability
    and the canonical law on `CadlagPath unitInterval ℝ` for
-   $t\mapsto X_{Tt}$ are now available. The source-specific remaining work is
+   $t\mapsto X_{Tt}$ are now available. The generic finite-grid convergence
+   theorem assembles convergent scalar increment laws into process
+   position-vector convergence. The source-specific remaining work is
    to derive the process hypotheses from Mogul'skii's assumptions, identify
    `ν`, and apply the terminal-left map to match `D₀`.
 2. **Formalize the continuous-time stable functional limit.** Let `T → ∞`
