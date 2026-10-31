@@ -27408,3 +27408,18 @@ This reconciles the ledger with reviews already documented above; it does not
 change Lean declarations or claim a new build. The current production source
 tree and ledger both contain 1,631 modules, and all rows retain their existing
 structural, semantic-review, and Lake-build statuses.
+
+## CI module-target reconciliation (2026-10-31)
+
+The pull-request workflow still named two module paths removed by the semantic
+reorganization: `Analysis.Fourier.Bochner` and
+`Probability.Distributions.Stable.Attraction.Normal.TruncatedMoment`. The
+current entries are `Analysis.Fourier.Bochner.Theorem` and
+`Probability.Distributions.Stable.Attraction.Normal.QuadraticTail`. The
+standalone entry module now owns Bochner's theorem, and the Gaussian
+normal-domain Feller-tail results are grouped in `QuadraticTail.lean`. Updated
+the workflow target list accordingly. A source-path check confirms that all
+49 explicit `lake build` targets in the workflow resolve to current Lean
+modules. The remote package-build step passed on the prior workflow run; its
+post-build target check failed on these stale paths, so the updated workflow
+must run before the pull request is merge-ready.

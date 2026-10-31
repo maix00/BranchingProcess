@@ -47,7 +47,7 @@ jobs:
             Analysis.Asymptotics.RegularVariation.AtZero.Potter \
             Analysis.Fourier.PositiveDefinite \
             MeasureTheory.Measure.CharacteristicFunction.PositiveDefinite \
-            Analysis.Fourier.Bochner \
+            Analysis.Fourier.Bochner.Theorem \
             Analysis.Fourier.CosineTauberian.Kernel \
             Analysis.Fourier.CosineTauberian.Inversion \
             Analysis.Fourier.CosineTauberian.Mellin \
@@ -67,7 +67,7 @@ jobs:
             Probability.Distributions.Stable.Attraction.NormingRatios.Index \
             Probability.Distributions.Stable.Attraction.NormingRatios.UniformDefect \
             Probability.Distributions.Stable.Attraction.NormingRatios.RegularVariation \
-            Probability.Distributions.Stable.Attraction.Normal.TruncatedMoment \
+            Probability.Distributions.Stable.Attraction.Normal.QuadraticTail \
             Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.Endpoint.Upper \
             Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.Endpoint.Lemmas.Return \
             MeasureTheory.Measure.CadlagPath.PathClass.StepCorridor.Energy \
