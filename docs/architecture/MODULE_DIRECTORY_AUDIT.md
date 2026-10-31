@@ -27604,3 +27604,35 @@ none is a private proof chain, so they remain directly visible at this level.
 No `Lemmas` directory has six or more direct modules in this scan. The
 helper `scripts/parse_lean_imports.lean` is excluded from the production-module
 count because it is a repository script rather than a library module.
+
+## Continuous state maps on càdlàg paths and Lévy processes (2026-10-31)
+
+`Topology/Cadlag/Basic.lean` now bundles Mathlib's `IsCadlag.continuous_comp`
+operation as `CadlagPath.mapContinuous`: for a continuous `φ : E → F`, it
+constructs the path `t ↦ φ (path t)`. This belongs beside the project path
+structure because it is a general path operation, independent of probability
+laws and Skorokhod-specific metrics. The existing `forgetRange` operation now
+uses this interface, and `Topology/Cadlag/Skorokhod/Path/Scaling.lean` uses it
+for spatial scaling. The targeted build of both modules passed. No separate
+proof-only lemma file is warranted for this reusable constructor.
+
+`Probability/Process/Levy/Basic.lean` exposes two matching process-level
+closure theorems. If `φ : E →+ F` is measurable and continuous, then
+`t ↦ φ (X t)` retains zero start, independent and stationary increments, and
+almost-sure càdlàg paths. If `τ : ℝ≥0 →+ ℝ≥0` is continuous, the time-changed
+process `t ↦ X (τ t)` has the same properties. The independent-increment
+proofs reuse Mathlib's `HasIndepIncrements.map'` and the repository's generic
+monotone `HasIndepIncrements.comp_time`; the remaining parts check stationary
+increments, zero start, and càdlàg regularity against the project process
+definition. These reusable closure properties do not assert convergence of
+the changed marginal laws. Both touched Lévy modules built successfully.
+
+## Stable-domain Brownian path-class adapter (2026-10-31)
+
+`Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Stable/Discrete/PathClass/Regimes.lean`
+specializes the discrete path-class rate to a Mathlib Brownian process. Its
+conclusion presents the path law as a `Measure`, while the reusable Lévy path
+law is bundled as a `ProbabilityMeasure`; the adapter proof now explicitly
+reduces that subtype coercion and the identity time factor `1 * t`. The
+theorem statement and rate argument are unchanged. The corrected module built
+successfully (3,938 Lake jobs).

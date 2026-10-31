@@ -37,6 +37,16 @@ remain those recorded in `Probability/Process/RandomWalk/SmallDeviation/Mogulski
   increments, independent increments, and almost-sure càdlàg paths.
 - `Probability/Process/Levy/FiniteDimensional.lean` derives coordinate
   measurability from the zero start and stationary increment laws.
+- `Probability/Process/Levy/Basic.lean` also proves that a continuous,
+  measurable additive homomorphism of the state space sends a Lévy process to
+  a Lévy process. This supplies the structural step for spatially normalized
+  process coordinates; the scalar domain-of-attraction limit and path-space
+  tightness remain separate inputs.
+- The same module proves that a continuous additive homomorphism
+  $\tau:\mathbb R_{\ge0}\to\mathbb R_{\ge0}$ gives another Lévy process
+  $t\mapsto X_{\tau(t)}$. Together, these closure results formalize the
+  process-structure part of continuous time-space rescaling, while the
+  source-specific weak-convergence argument remains open.
 - `Probability/Process/Levy/PathLaw/UnitInterval.lean` constructs the law of
   the entire path $t\mapsto X_{Tt}$ on the unit interval and proves that
   every finite vector of evaluations under this path law has the corresponding
