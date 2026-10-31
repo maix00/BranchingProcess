@@ -12,8 +12,8 @@ public import Probability.MeasureTheory.Asymptotics.SmallDeviation
 /-!
 # Finite-variance source rates
 
-Let $G$ be a path class relative to the source's terminal-left path space,
-and let $x_n$ be a small-deviation width.
+Let $G$ be a path class in the terminal-left path space of the random-walk
+interpolation, and let $x_n$ be a small-deviation width.
 
 ## Public declarations
 

@@ -229,8 +229,8 @@ theorem tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_r
       hscale' hα₀ hα₁ hX' hcdf' hDOA' hG hGmeas
   exact ⟨q, hq, C, hEscape, hNull, H, hH, hUnique⟩
 
-/-- Terminal-left stable-domain theorem at index one under the source's
-additional sine-centering condition. -/
+/-- Terminal-left stable-domain theorem at index one under the sine-centering
+condition in Theorem 1, equation (15), of A. A. Mogul'skii. -/
 theorem tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_source_index_one
     {ν μ : Measure ℝ} [IsProbabilityMeasure ν] [IsProbabilityMeasure μ]
     {normalization scale : ℕ → ℝ}

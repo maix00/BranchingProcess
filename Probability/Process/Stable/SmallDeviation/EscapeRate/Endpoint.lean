@@ -14,10 +14,10 @@ import Probability.Process.Stable.SmallDeviation.Blocks.ReturnScale
 /-! # Endpoint-constrained escape rates
 
 The endpoint comparison is built from the stable escape-rate limits and the
-source's exact left-open, right-closed terminal interval.
+left-open, right-closed terminal interval specified below.
 ## Public declarations
 
-The endpoint event uses the source's left-open, right-closed terminal window
+The endpoint event uses the specified left-open, right-closed terminal window
 translated together with the corridor. Its logarithmic rate is
 $a^\alpha\log\mathbb P(E_a)$.
 `exists_shiftedEndpointCorridor_escape_rate` gives its finite negative rate;
@@ -34,8 +34,8 @@ namespace ProbabilityTheory
 open Filter MeasureTheory
 open scoped ENNReal NNReal Topology
 
-/-- Probability of a translated corridor with the source's left-open,
-right-closed terminal window. The terminal interval is translated by the
+/-- Probability of a translated corridor with a left-open, right-closed
+terminal window. The terminal interval is translated by the
 same amount as the corridor. -/
 def shiftedEndpointCorridorProbability
     {Ω : Type*} [MeasurableSpace Ω]
@@ -608,7 +608,7 @@ private lemma eventually_shiftedEndpointProbability_pos_of_fixed_window
 
 /-- The terminal-window corridor has the same finite negative escape rate as
 the range tube, centered corridor, and translated corridor. The event keeps
-the source's exact left-open, right-closed endpoint convention. -/
+the left-open, right-closed endpoint convention in its definition. -/
 theorem IsStableLevyProcess.exists_shiftedEndpointCorridor_escape_rate
     {Ω : Type*} [MeasurableSpace Ω]
     {α d c b : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}

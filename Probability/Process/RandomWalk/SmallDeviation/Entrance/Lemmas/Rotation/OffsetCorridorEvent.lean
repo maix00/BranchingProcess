@@ -15,10 +15,19 @@ import all Probability.Process.RandomWalk.SmallDeviation.Entrance.Lemmas.Rotatio
 
 ## Internal proof declarations
 
-The drift-removed event, its equivalence with the public moving entrance
-event, and the resulting measurability fact are package-private steps in the
-cyclic-rotation proof. The public event and its measurability statement remain
-in `Entrance/NormalDomainEvent.lean`.
+`finiteDriftRemovedOffsetCorridorEvent scale drift u` is the event
+\[
+  \{x:\mathrm{Fin}(n)\to\mathbb R\mid
+    \operatorname{offsetCorridorPath}(u,
+      \operatorname{removeLinearDrift}(drift,
+        \operatorname{finiteNormalizedStepKnots}(scale,x)))\}.
+\]
+`finiteDriftRemovedOffsetCorridorEvent_iff_finiteMovingEntranceEvent`
+identifies it with the public moving entrance event, and
+`measurableSet_finiteDriftRemovedOffsetCorridorEvent` proves its
+measurability. These declarations support only the cyclic-rotation proof; the
+public event and its measurability statement remain in
+`Entrance/NormalDomainEvent.lean`.
 -/
 
 section

@@ -15,9 +15,12 @@ import Mathlib.Topology.Order.Compact
 
 ## Internal proof declarations
 
-A closed real interval admits a finite family of reference points in a
-smaller concentric corridor such that every point of the original interval is
-within the corridor margin of one reference point.
+`exists_finset_Icc_cover_inside` states that, if $m>0$ and
+$\ell+m\le u-m$, there is a finite set $F\subseteq[\ell+m,u-m]$ such that
+\[
+  \forall x\in[\ell,u],\quad \exists y\in F,\quad |x-y|\le m.
+\]
+The construction is used only by the finite-partition lower-rate proof.
 -/
 
 open Metric Set

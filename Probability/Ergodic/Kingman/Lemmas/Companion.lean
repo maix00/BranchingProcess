@@ -39,6 +39,13 @@ These declarations are imported only by the neighboring Kingman proof modules:
   `cdiv g n x ≤ g 1 x/(n+1) + g n (T x)/(n+1)`;
   `aemeasurable_ereal_liminf` and `aemeasurable_ereal_limsup` give a.e. measurability
   of the corresponding envelopes.
+* `liminf_ecdiv_comp_ae` and `limsup_ecdiv_comp_ae` prove the a.e. invariance
+  \[
+    (x\mapsto\liminf_n\operatorname{ecdiv}(g,n,x))\circ T
+      =^{\mu}_{\mathrm{ae}}(x\mapsto\liminf_n\operatorname{ecdiv}(g,n,x)),
+  \]
+  and the corresponding identity with `limsup`, under the non-positive
+  companion-cocycle hypotheses.
 
 ## References
 

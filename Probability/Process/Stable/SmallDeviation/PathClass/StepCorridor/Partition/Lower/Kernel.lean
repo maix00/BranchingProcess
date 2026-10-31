@@ -13,7 +13,7 @@ public import Probability.Process.Stable.SmallDeviation.EscapeRate.Endpoint
 /-!
 # Stable endpoint-return kernels on partition cells
 
-This module transfers the source's left-open, right-closed endpoint-return
+This module transfers the defined left-open, right-closed endpoint-return
 events from a normalized nonuniform cell to a reference stable Lévy process.
 The resulting kernel has the same escape rate as a centered range tube.
 

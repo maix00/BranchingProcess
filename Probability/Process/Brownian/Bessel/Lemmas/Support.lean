@@ -15,8 +15,19 @@ import Topology.Cadlag.Skorokhod.Path.Linear
 
 ## Internal proof declarations
 
-The coordinate error estimate and its path-space transfer form the
-single-client proof chain for `BrownianBessel3.linearPath_mem_support`.
+`radius_error_le_coordinate_errors` proves
+\[
+  \left|\sqrt{x^2+y^2+z^2}-|a|\right|
+  \le |x-a|+|y|+|z|.
+\]
+`radial_path_close` transfers three coordinate-path bounds of radius $\delta$
+to the radial path: if each coordinate path is within $\delta$ of its
+corresponding linear path and $5\delta(1+|a|)<r$, then
+\[
+  d_{J_1}(\operatorname{path}(B,\omega),\operatorname{linearPath}(a))<r.
+\]
+Together these declarations form the single-client proof chain for
+`BrownianBessel3.linearPath_mem_support`.
 -/
 
 section

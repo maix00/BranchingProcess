@@ -103,7 +103,8 @@ theorem iidSequenceLaw_partitionCellCoreReturnBlocks_ge_of_subset
 /-- The product of the local endpoint-core probabilities is a lower bound
 for the full floor-partitioned strict corridor probability. Each factor is
 the one-cell event under the original IID increment law; the bridge event
-uses the source's incoming-core contraction and outgoing endpoint band. -/
+uses the incoming core contracted as in its definition and its outgoing
+endpoint band. -/
 theorem iidSequenceLaw_normalizedStepCorridor_ge_prod_partitionCellCoreReturnProbability
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     {n : ℕ} {scale : ℕ → ℝ} (hscale : 0 < scale n)

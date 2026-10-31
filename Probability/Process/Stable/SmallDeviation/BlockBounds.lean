@@ -43,8 +43,9 @@ open scoped NNReal
 /-- The integer shift represented by one of seven endpoint windows. -/
 def blockEndpointShift (i : Fin 7) : ℝ := 3 - (i.val : ℝ)
 
-/-- A full rational block path confined to `(-a,a)` and ending in the
-source's left-open, right-closed window. -/
+/-- A full rational block path confined to `(-a,a)` and ending in
+`Set.Ioc ((blockEndpointShift i - 1) * ε * a)
+((blockEndpointShift i + 1) * ε * a)`. -/
 def rationalBlockEndpointEvent (a ε : ℝ) (i : Fin 7) :
     Set (↑RationalCoordinate.UnitInterval → ℝ) :=
   Skorokhod.rationalCoordinateCorridorIocReturnWithMargin

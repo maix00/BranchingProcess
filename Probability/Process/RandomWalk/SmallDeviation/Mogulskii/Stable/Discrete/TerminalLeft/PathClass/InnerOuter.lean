@@ -294,8 +294,8 @@ theorem existsUnique_inner_outer_log_probability_ratio_of_hasVanishingEnergyGapA
   exact existsUnique_inner_outer_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_sourceStableInputs
     hscale hα₀ (by linarith) hslow hX hcdf hDOA htightBase hG
 
-/-- Terminal-left inner/outer theorem at index one, under the source's
-additional sine-centering condition. -/
+/-- Terminal-left inner/outer theorem at index one, under the sine-centering
+condition in Theorem 1, equation (15), of A. A. Mogul'skii. -/
 theorem existsUnique_inner_outer_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_source_index_one
     {ν μ : Measure ℝ} [IsProbabilityMeasure ν] [IsProbabilityMeasure μ]
     {normalization scale : ℕ → ℝ}

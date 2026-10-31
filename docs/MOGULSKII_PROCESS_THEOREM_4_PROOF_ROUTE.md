@@ -52,7 +52,8 @@ between `-a⁻¹` and `a⁻¹`; the terminal value in `D(0,1)` is the left limit
 - `Probability/Process/Levy/PathContinuity.lean` proves
   `IsLevyProcess.ae_leftLim_eq_eval`: a càdlàg Lévy process has no jump at
   any fixed positive time, almost surely. At time `1`, this identifies the
-  value-at-1 path law with the paper's terminal-left convention.
+  value-at-1 path law with Mogul'skii's terminal-left convention in Theorem 4,
+  Section 5.
 - `Probability/Process/Stable/PathLaw/UnitInterval.lean` and the stable
   process escape-rate modules provide the limiting stable path law and its
   tube-rate input.
@@ -87,7 +88,8 @@ translation, pp. 733--734) proceeds through equations (38)--(44):
 
 Accordingly, a separate nonstable block-concatenation or one-block squeeze is
 not part of this proof route. Equation (38) is the process-level convergence
-input; the rest is the source's scaling comparison and reuse of Theorem 1.
+input; the rest is the scaling comparison in equations (39)--(44) and the
+reuse of Theorem 1.
 
 ## Process-convergence input and literature
 
@@ -110,17 +112,18 @@ Theorems,” *Probability Theory and Related Fields* 181 (2021), 865--973.
 See the [Springer record for Jacod--Shiryaev](https://link.springer.com/book/10.1007/978-3-662-02514-7)
 and [Theorem B.8 in Broutin--Duquesne--Wang](https://perso.lpsm.paris/~tduquesne/Documents/Broutin_Duquesne_Wang_Limits_Mult_graphs_PTRF_2021.pdf).
 
-For Theorem 4, apply this criterion to `Zⁿ(t) = ξ(nt)/B(n)`: the process
-closure results give the Lévy hypotheses, and the source's scalar convergence
-at time `1` gives `Zⁿ(1) ⇒ Fα`. The resulting process limit is identified with
-the strictly stable Lévy process by its increment laws. Restriction from
+For Mogul'skii's Theorem 4, apply this criterion to
+`Zⁿ(t) = ξ(nt)/B(n)`: the process closure results give the Lévy hypotheses,
+and the theorem's scalar convergence at time `1` gives `Zⁿ(1) ⇒ Fα`. The
+resulting process limit is identified with the strictly stable Lévy process
+by its increment laws. Restriction from
 `[0,∞)` to `[0,1]` requires the usual continuity-at-the-terminal-time
 argument; the fixed-time no-jump result above supplies that condition once
-the source's right-continuous process has been given a càdlàg version.
+the process in Theorem 4 has been given a càdlàg version.
 
 ## Remaining formalization work, in source order
 
-1. **Package the source process.** The article assumes almost-sure right
+1. **Package the process.** Mogul'skii's Theorem 4 assumes almost-sure right
    continuity. The current `IsLevyProcess` requires càdlàg paths. Prove the
    left-limit existence needed for a right-continuous independent-increment
    process under the article's hypotheses, or state exactly which standard
@@ -142,7 +145,7 @@ the source's right-continuous process has been given a càdlàg version.
 4. **Reuse Theorem 1's geometric proof.** Apply the existing finite-partition
    and inner/outer corridor argument to extend the tube estimate to every
    `G ∈ 𝔐` and recover `Hα(G)`. Keep this proof structurally aligned with the
-   source's statement that Theorem 4 repeats the proof of Theorem 1.
+   statement in Section 5 that Theorem 4 repeats the proof of Theorem 1.
 
 ## Status
 
@@ -150,6 +153,6 @@ Theorem 4 is **not implemented**. The unit-interval path law for a Lévy
 process, its finite-evaluation identity, and its spatial-scaling pushforward
 are available. The next substantive theorem is the Lévy-process
 one-marginal-to-process convergence criterion used at equation (38), followed
-by the source's exact scaling comparison (39)--(44). The previous proposed
+by Mogul'skii's scaling comparison in equations (39)--(44). The previous proposed
 nonstable block-squeeze route has been removed because it does not follow the
 article's proof.

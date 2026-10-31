@@ -18,12 +18,23 @@ import Probability.BranchingRandomWalk.Spine.RandomWalk.IncrementProcess
 
 
 This proof-support module provides the two cross-module estimates needed by
-`MRCA/ChildPairBound.lean`. First, if every shifted spine corridor event has
-probability at most $q$ on the specified first-step window, then a child's
-continuation mean is at most
-$e^{u-x}q$ times its realized exponential weight. Second, if each child mean
-is at most $K$ times that weight, the ordered off-diagonal sum is at most
-$K^2$ times the cross-child exponential weight.
+`MRCA/ChildPairBound.lean`. First,
+`lintegral_pathGenerationChildObservable_le_firstWindowProbability_mul_weight`
+states that if every shifted spine corridor event has probability at most
+$q$ on the first-step window, then the child's continuation mean satisfies
+\[
+  \int^-_\eta
+  \operatorname{pathGenerationChildObservable}(\varphi,n,F,x,i,\xi,\eta)\,
+  d(\operatorname{offspringFieldLaw}(\mu))(\eta)
+  \le e^{u-x}q\,\operatorname{realizedPotentialWeight}(\xi,i).
+\]
+Second,
+`ennreal_tsum_offDiagonal_mul_le_crossPotentialWeight_of_childMomentBound`
+states that if each child mean is at most $K$ times its realized weight, then
+\[
+  \sum_{i\ne j}m_i m_j
+  \le K^2\,\operatorname{crossPotentialWeight}(\xi).
+\]
 
 These steps support the root-split estimate in Wang Yiyang, *Asymptotic Speed
 of the N-Branching Random Walk with Infinite Offspring* (master's thesis,

@@ -13,13 +13,16 @@ import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 
 ## Internal proof declarations
 
-The two identities are
+`prod_exp_blockLengths` and
+`exp_totalCost_le_mul_entrance_blockCost` are the two estimates:
 
 $$
-\prod_{j<q}e^{-d\ell_j/W^2}
-=e^{-d(s_q-s_0)/W^2},
+\prod_{j<q}\exp\!\left(-\frac{d\ell_j}{W^2}\right)
+=\exp\!\left(-\frac{d(s_q-s_0)}{W^2}\right),
 \qquad
- e^{-R n/W^2}\leq e^{-(R-r)n/W^2}e^{-r(n-s)/W^2}
+ \exp\!\left(-\frac{R n}{W^2}\right)
+ \leq \exp\!\left(-\frac{(R-r)n}{W^2}\right)
+       \exp\!\left(-\frac{r(n-s)}{W^2}\right)
 \quad(s\leq n,\ r\geq0).
 $$
 

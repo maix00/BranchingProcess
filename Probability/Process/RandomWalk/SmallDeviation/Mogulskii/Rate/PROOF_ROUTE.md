@@ -90,7 +90,7 @@ For a fixed small-deviation scale `x(n)`, write
    `B*(A(n) * x(n)) / (A(n)^α * B*(x(n))) → 1`. Thus the number of complete
    blocks is asymptotic to `n / B*(A(n) * x(n))`; multiplying the one-block
    logarithmic rate yields `C * Hα(G) * ρ(n)` after finite-partition assembly.
-3. Prove and apply every discrete Lemma 3 comparison, with the source's exact
+3. Prove and apply every discrete Lemma 3 comparison, with Mogul'skii's exact
    event conventions: (30) compares shifted unit-width corridors with a
    slightly wider translated corridor; (31) squeezes a range event `J₁`
    between centered corridors; (32) bounds a confined path by independent
@@ -174,7 +174,7 @@ For a fixed small-deviation scale `x(n)`, write
    boundary trace strips. The core radii start at zero, increase strictly,
    and can all be made smaller than any prescribed positive tolerance.
    Each cell gets finite inner bounds even when an original trace is infinite.
-   The endpoint-return event has the source's `Ioc` terminal convention; its
+   The endpoint-return event uses the specified `Ioc` terminal window; its
    deterministic concatenation handles the right-continuous jump value only
    in the cell on its right. Independent cell events factor exactly, and the
    zero-start condition is intersected only on its almost-sure set. Hence a
@@ -299,8 +299,9 @@ calculation.
    probability theorems state their null-measurability premise explicitly.
 2. Lemma 2 estimates (21)--(25) are proved in the public stable-process
    entries `Probability/Process/Stable/SmallDeviation/{ShiftedCorridor,
-   RangeComparison,BlockBounds,EndpointComparison}.lean`. The statements preserve the source's
-   strict and half-open event conventions.
+   RangeComparison,BlockBounds,EndpointComparison}.lean`. The statements
+   preserve the strict and half-open event conventions in Mogul'skii's
+   Lemma 2, estimates (21)--(25).
 3. Lemma 1 (18)--(20) is proved in
    `Probability/Process/Stable/SmallDeviation/EscapeRate/Basic.lean` and its
    `Probability/Process/Stable/SmallDeviation/EscapeRate/{Corridor,Endpoint,Law}.lean`
@@ -370,8 +371,8 @@ constant-width random-walk tube is now proved from both sides in
 the block endpoint-return estimate, logarithmic liminf consequences, eventual
 positivity, and the final rate limit as separate mathematical interfaces. The upper proof uses
 closed-set Portmanteau and shrinking outer corridors; the lower proof uses
-the source's seven endpoint-return bands, open-set Portmanteau, and the
-source block count. Both now require slow variation of `L*` but no upper
+   the seven endpoint-return bands, open-set Portmanteau, and the number of
+   complete blocks. Both now require slow variation of `L*` but no upper
 bound on its values along the shrinking scale. The lower route also supplies
 the eventual positivity and lower coboundedness needed by the upper real-log
 argument. The range-event estimate has now also been carried through the
@@ -452,9 +453,9 @@ The constant is for total width `aₙ`: Brownian survival in an interval of
 width `w` has principal exponent `-π²/(2 w²)`. For the interval `(-r,r)`,
 whose width is `2r`, this is `-π²/(8r²)`.
 
-## Source proof dependency check
+## Mogul'skii proof dependency check
 
-The source's dependency order is:
+Mogul'skii's theorem dependency order is:
 
 1. Lemma 1 establishes the stable-process small-deviation rate and its
    translated/endpoint comparisons; Lemma 2 proves the finite-shift
@@ -641,8 +642,8 @@ positivity, and endpoint decay. This equation-(34) result is currently a
 separate proof-support chain: it is not in the import closure of
 `Mogulskii/Theorems.lean` or of the finite-partition path-class assembly
 described below. The main formal theorem therefore does not yet derive its
-rate through this source comparison; keep the two proof routes distinguished
-until that connection is established from the paper's argument.
+rate through this comparison; keep the two proof routes distinguished until
+that connection is established from Mogul'skii's equation (34) argument.
 - For a finite-partition `M₂` corridor, `Lemmas/Partition/Endpoint.lean`
   defines the contracted local event with an open outgoing core band and proves
   measurability and the incoming/outgoing core implications.
