@@ -27645,3 +27645,27 @@ law is bundled as a `ProbabilityMeasure`; the adapter proof now explicitly
 reduces that subtype coercion and the identity time factor `1 * t`. The
 theorem statement and rate argument are unchanged. The corrected module built
 successfully (3,938 Lake jobs).
+
+
+## Mogul'skii Theorem 4 proof-route correction (2026-10-31)
+
+Checked the Russian original of A. A. Mogul'skii, *Small Deviations in the
+Sample Function Space*, Section 5, pp. 761--765, against the process-level
+formalization route. Theorem 4 explicitly reuses the proof of Theorem 1 after
+the fixed-tube transfer and scale comparison in equations (38)--(44). The
+argument uses the functional convergence theorem cited in the introduction,
+the asymptotic inverse $B^*$, a slowly increasing auxiliary sequence, and
+Lemma 1's stable-process tube rate. It does not introduce a separate
+nonstable block-concatenation or one-block squeeze. The earlier proposed
+block-squeeze route was removed from
+`MOGULSKII_PROCESS_THEOREM_4_PROOF_ROUTE.md`.
+
+The exact process-convergence input cited by the article's general framework
+can be organized using Jacod and Shiryaev, *Limit Theorems for Stochastic
+Processes*, 2nd ed. (2003), Chapter VII, Section 3.a, Corollary 3.6, p. 415:
+weak convergence of one positive-time marginal for zero-start real Lévy
+processes is equivalent to weak convergence of their process laws. The
+current Lean layer supplies the required state/time rescaling and unit-interval
+path law, but this convergence theorem, the $D(0,1)$ terminal convention, and
+the exact comparisons (39)--(44) remain to be formalized. No LaTeX source was
+changed.
