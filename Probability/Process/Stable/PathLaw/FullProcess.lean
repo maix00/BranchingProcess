@@ -423,7 +423,9 @@ theorem iidUnitPathBlockProcess_isStableLevyProcess_unitIntervalPathLaw_eq
     (iidUnitPathBlockProcess_isStableLevyProcess hP).unitIntervalPathLaw =
       ⟨P, inferInstance⟩ := by
   apply Subtype.ext
-  exact ProbabilityTheory.iidUnitPathBlockProcess_unitIntervalPathLaw_eq hP
+  simpa [IsStableLevyProcess.unitIntervalPathLaw,
+    IsLevyProcess.unitIntervalPathLaw, Process.Path.Cadlag.pathLaw] using
+    ProbabilityTheory.iidUnitPathBlockProcess_unitIntervalPathLaw_eq hP
 
 end ProbabilityTheory
 
