@@ -73,6 +73,13 @@ between `-a⁻¹` and `a⁻¹`; the terminal value in `D(0,1)` is the left limit
   complete-segment corridor probability. This proves the path-representation
   part needed when equation (38) is applied to the tube events; the weak
   convergence and boundary comparison remain separate obligations.
+- `Probability/Process/Stable/PathLaw/SelfSimilarity.lean` identifies stable
+  unit-interval path laws from their rational-coordinate laws and proves the
+  stable time-space identity
+  \(\mathcal L((r^{-1/\alpha}X_{rt})_{0\le t\le1})=
+  \mathcal L((X_t)_{0\le t\le1})\). This supplies the stable-process scaling
+  at the path-law level; it does not establish equation (38)'s convergence of
+  the rescaled source processes.
 - `Probability/Process/Levy/PathLaw/Convergence.lean` proves that tightness of
   a family of unit-interval Lévy path laws and convergence of every interval
   increment law imply weak convergence of the path laws. It uses
