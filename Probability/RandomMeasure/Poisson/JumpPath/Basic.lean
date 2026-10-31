@@ -17,15 +17,26 @@ The large-jump path is a time-indexed integral against the part of a Poisson
 random measure in a prescribed mark region. On the event that the region
 contains exactly one point, the entire path is a single step function.
 
+For $\mu_\omega=\operatorname{poissonRandomMeasure}(K,X,\omega)$, the path
+and its single-point reduction are
+$$
+J_A(\omega,t)=\int_A \mathbf 1_{\{s\le t\}}x\,\mu_\omega(d(s,x)),
+\qquad
+J_{J\cup B}(\omega,t)=\mathbf 1_{\{s_p\le t\}}x_p\quad(t\in\mathrm{Time}),
+$$
+where the second identity holds when $\mu_\omega(J)=1$ and
+$\mu_\omega(B)=0$, with $p$ the unique source slot in $J$ and
+$(s_p,x_p)=X_p(\omega)$.
+
 ## Public declarations
 
 `poissonJumpPath K X A ω t` is the integral over marks in `A` whose time is at
-most `t`, for any preorder of times equipped with a measurable space. If the
-realized Poisson random measure assigns mass `1` to a measurable set `J` and
-mass `0` to a measurable set `B`,
+most `t`, for a preordered time type with a measurable space and measurable
+singletons. If the realized Poisson random measure assigns mass `1` to a
+measurable set `J` and mass `0` to a measurable set `B`,
 `poissonJumpPath_eq_singleJump_of_one_zero` produces an observed point in `J`
 and identifies the path integrated over `J ∪ B`, simultaneously for every
-`t`, with the single step contributed by that point.
+`t`; the theorem assumes that the time type is nonempty.
 -/
 
 @[expose] public section

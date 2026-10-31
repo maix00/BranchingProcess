@@ -20,6 +20,23 @@ For supported small- and large-jump sources, the entrance path at the final
 time equals the sum of the two realized mark integrals. The almost-sure
 version follows when each source intensity is carried by its selected region.
 
+For $\omega=(\omega_s,\omega_b)$, set
+$\mu_s=\operatorname{poissonRandomMeasure}(K_s,X_s,\omega_s)$ and
+$\mu_b=\operatorname{poissonRandomMeasure}(K_b,X_b,\omega_b)$. For selected
+regions $A$ and $H$, define the entrance path $E_\omega$ by
+$$
+E_\omega(t)=\int_{A\cap\{z:z_1\le t\}}z_2\,\mu_s(dz)
+  +\int_{H\cap\{z:z_1\le t\}}z_2\,\mu_b(dz).
+$$
+If $\mu_s\!\restriction_A=\mu_s$ and
+$\mu_b\!\restriction_H=\mu_b$, then
+$$
+E_\omega(\top)=\int z_2\,\mu_s(dz)+\int z_2\,\mu_b(dz).
+$$
+If the intensity measures assign zero mass to $A^c$ and $H^c$, respectively,
+then this endpoint identity holds almost surely under the product law of the
+two independent source families.
+
 ## Public declarations
 
 - `ProbabilityTheory.poissonEntrancePath_top_eq_integral` gives the endpoint
