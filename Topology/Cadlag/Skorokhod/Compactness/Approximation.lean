@@ -11,28 +11,50 @@ public import Topology.Cadlag.Skorokhod.Compactness.StepPath
 import Topology.Cadlag.Skorokhod.Compactness.MovingPartition
 
 /-!
-# Step approximations and total boundedness in `J₁`
+# Step approximations and total boundedness in $J_1$
+
+Write `OscillationBoundedOnPartition P f b` for the condition
+$\forall s,t\ne1, P.index(s)=P.index(t)\implies
+\operatorname{dist}(f(s),f(t))\le b$.
 
 ## Public declarations
 
-- `Skorokhod.totallyBounded_of_uniform_admitsOscillationPartition`: if all
-  paths in `K` take values in a common compact set and for every `ε > 0` admit
-  a common partition gap `δ > 0` with oscillation below `ε`, then
-  `TotallyBounded K` in `J₁`.
+The declarations are in namespace `Skorokhod`.
+
+- `Skorokhod.totallyBounded_of_uniform_admitsOscillationPartition`: if there
+  is a compact $C$ such that $\forall f\in K,\forall t, f(t)\in C$, and
+  $\forall\varepsilon>0,\exists\delta>0,\forall f\in K,\exists P,b$ with
+  $\delta<\operatorname{mesh}(P)$, $b<\varepsilon$, and
+  `OscillationBoundedOnPartition P f b`, then $K$ is totally bounded.
 - `Skorokhod.isCompact_iff_isComplete_rangeBounded_uniformAdmitsOscillationPartition`:
-  `IsCompact K ↔ IsComplete K ∧ (∃ R ≥ 0, ∀ f ∈ K, ∀ t, |f t| ≤ R) ∧`
-  `∀ ε > 0, ∃ δ > 0, ∀ f ∈ K, f` admits a `δ`-gap partition with oscillation
-  below `ε`.
-- `Skorokhod.isCompact_closure_iff_isComplete_closure_rangeBounded_uniformAdmitsOscillationPartition`:
-  `IsCompact (closure K) ↔ IsComplete (closure K) ∧ (∃ R ≥ 0, ∀ f ∈ K,
-  ∀ t, |f t| ≤ R) ∧ ∀ ε > 0, ∃ δ > 0, ∀ f ∈ K, f` admits a `δ`-gap
-  partition with oscillation below `ε`.
+  for real-valued paths,
+  $\operatorname{IsCompact}(K)\Longleftrightarrow
+  \operatorname{IsComplete}(K)\land
+  (\exists R\ge0,\forall f\in K,\forall t,|f(t)|\le R)\land
+  (\forall\varepsilon>0,\exists\delta>0,\forall f\in K,\exists P,b,
+  \delta<\operatorname{mesh}(P)\land b<\varepsilon\land
+  \operatorname{OscillationBoundedOnPartition}(P,f,b))$.
+- `isCompact_closure_iff_isComplete_closure_rangeBounded_uniformAdmitsOscillationPartition`:
+  $\operatorname{IsCompact}(\overline K)\Longleftrightarrow
+  \operatorname{IsComplete}(\overline K)\land
+  (\exists R\ge0,\forall f\in K,\forall t,|f(t)|\le R)\land
+  (\forall\varepsilon>0,\exists\delta>0,\forall f\in K,\exists P,b,
+  \delta<\operatorname{mesh}(P)\land b<\varepsilon\land
+  \operatorname{OscillationBoundedOnPartition}(P,f,b))$.
+
+The partition criterion is the finite-partition form of the compactness
+criterion in Patrick Billingsley, *Convergence of Probability Measures*,
+1st ed., Wiley, 1968, Chapter 3, §14, Theorem 14.3, p. 116
+([scan](https://ru.djvu.online/file/vaaIHv9IWlVeK)). Billingsley's modulus
+$w'_f(\delta)$ is expressed here through a partition whose mesh exceeds
+$\delta$ and whose within-cell oscillation is below the tolerance.
 
 Uniform oscillation partitions approximate paths by step paths. When the
-number of cells and value range are uniformly bounded, these approximants lie
-in a compact family. This proves a deterministic total-boundedness criterion
-without assuming completeness of the path metric.
+number of cells and value range are uniformly controlled, these approximants
+lie in a compact family. The completeness hypothesis is stated for the
+relevant path family in its induced $J_1$ metric.
 -/
+
 
 @[expose] public section
 
@@ -115,8 +137,12 @@ theorem totallyBounded_of_uniform_admitsOscillationPartition
 uniform range boundedness, and uniform small-oscillation partitions with a
 positive common gap at each tolerance.
 
-Completeness is stated for the family as a subspace. This theorem does not
-assume that the ambient `J₁` metric is complete. -/
+Completeness is a property of the path family in its inherited `J₁` metric.
+This is the compact-family form of the finite-partition criterion in Patrick
+Billingsley, *Convergence of Probability Measures*, 1st ed., Wiley, 1968,
+Chapter 3, §14, Theorem 14.3, p. 116
+([scan](https://ru.djvu.online/file/vaaIHv9IWlVeK)); the partition condition
+expresses his modulus $w'_f(\delta)$ through a common positive cell gap. -/
 theorem isCompact_iff_isComplete_rangeBounded_uniformAdmitsOscillationPartition
     {K : Set (CadlagPath unitInterval ℝ)} :
     IsCompact K ↔
@@ -153,7 +179,12 @@ theorem isCompact_iff_isComplete_rangeBounded_uniformAdmitsOscillationPartition
 
 /-- Relative compactness of an arbitrary path family is characterized by
 completeness of its closure, uniformly bounded ranges, and uniform
-small-oscillation partitions with positive common gaps. -/
+small-oscillation partitions with positive common gaps. This is the closure
+form of the finite-partition criterion in Patrick Billingsley,
+*Convergence of Probability Measures*, 1st ed., Wiley, 1968, Chapter 3, §14,
+Theorem 14.3, p. 116
+([scan](https://ru.djvu.online/file/vaaIHv9IWlVeK)); the partition condition
+expresses his modulus $w'_f(\delta)$ through a common positive cell gap. -/
 theorem isCompact_closure_iff_isComplete_closure_rangeBounded_uniformAdmitsOscillationPartition
     {K : Set (CadlagPath unitInterval ℝ)} :
     IsCompact (closure K) ↔
