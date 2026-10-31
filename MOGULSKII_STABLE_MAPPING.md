@@ -43,11 +43,15 @@ and its text layer; original numbering is retained.
 * **Теорема 4 (section 5).** For a homogeneous process `ξ(t)` with stationary
   independent increments and right-continuous paths, whose unit-time increment
   law is in the strictly stable domain of attraction with `0 < α < 2`, the
-  rescaled full path `t ↦ ξ(nt)/x(n)` has the same rate as Theorem 1 when
-  `x(n) → ∞` and `x(n)/B(n) → 0`:
+  article's source assumptions include `E ξ(t) = 0` whenever the expectation
+  exists and, at `α = 1`,
+  `∫ sin(z/B(n)) Law(ξ(1))(dz) → 0`. Under `0 < F_α(0) < 1`, the rescaled
+  full path `t ↦ ξ(nt)/x(n)` has the same rate as Theorem 1 when `x(n) → ∞`
+  and `x(n)/B(n) → 0`:
   `ln P(ξ(n·)/x(n) ∈ G) ~ C H_α(G) n x(n)^{-α} L*(x(n))`.
-  This full-process statement is not yet formalized. Its process-level
-  functional limit and full-path block squeeze remain open; see
+  This full-process statement is not yet formalized. The process-level
+  convergence input in (38) and the scaling comparison in (39)--(44) remain
+  open; the source then reuses Theorem 1's geometric proof. See
   `docs/MOGULSKII_PROCESS_THEOREM_4_PROOF_ROUTE.md`.
 
 Mogul'skii's path space `D(0,1)` consists of paths right-continuous before `1`
@@ -165,7 +169,7 @@ again after replacing `C₀` by its rescaled value.
 | Теорема 1: discrete random-walk path-class rate | `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Stable/Discrete/PathClass/Rate.lean`, `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Stable/Discrete/FromIncrementLaw/Stable/Domain.lean`, `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Stable/Discrete/FromIncrementLaw/Normal/Domain.lean` | The stable-domain path-class rate is assembled from the finite-partition estimate and inner/outer approximation. Raw increment-law wrappers cover `0 < α < 2` and the index-two normal domain under their stated approximation and measurability hypotheses. |
 | Теорема 2: single stable block | `Probability/Process/Stable/SmallDeviation/PathClass/StepCorridor/Rate.lean` | The stable-process M₂, M₃, and M rates are assembled. For an arbitrary `IsM` set, the event need not be measurable; inner and outer probabilities have matching rates. The ordinary probability API keeps its explicit null-measurability premise. |
 | Теорема 3: finite-variance Gaussian constant | `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Stable/Discrete/FromIncrementLaw/Normal/FiniteVariance.lean`, `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Stable/Discrete/TerminalLeft/Partition/Limit.lean` | The centered unit-variance path-class rate and the terminal-left finite-partition rate are formalized. The raw normal-domain route also covers infinite-variance attraction, which is broader than the original finite-variance theorem. |
-| Теорема 4, §5: full continuous-time source process | Not yet implemented; see `docs/MOGULSKII_PROCESS_THEOREM_4_PROOF_ROUTE.md` | The stable-process rate covers the limiting stable process, and the random-walk rate covers its discrete skeleton. The source theorem concerns the original full path `t ↦ ξ(nt)/x(n)`; process-level `J₁` convergence and a full-path block squeeze are still missing. |
+| Теорема 4, §5: full continuous-time source process | Not yet implemented; see `docs/MOGULSKII_PROCESS_THEOREM_4_PROOF_ROUTE.md` | The stable-process rate covers the limiting stable process, and the random-walk rate covers its discrete skeleton. The source theorem concerns the original full path `t ↦ ξ(nt)/x(n)`; functional convergence in equation (38) and the scaling comparison in equations (39)--(44) remain to be formalized, after which the proof reuses Theorem 1's geometric argument. |
 | §3: partition, product bound, `(1−δ)`-shrink | `Probability/Process/RandomWalk/Path/Block/Partition/`, `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Stable/Scale/BlockCount.lean`, `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Stable/Discrete/Partition/Lower/Lemmas/`, `Analysis/Asymptotics/Sequence/SlowDiagonal.lean` | The stable-scale block-count limits are available at the scale owner. Independent cell products, endpoint-core gluing, and its extra-bridge count remain under the lower partition proof support; the stable scale diagonal is in `Stable/Scale/Basic.lean`. |
 | the two `ε`-approximations of a corridor | `Probability/Process/RandomWalk/Path/Corridor/Basic.lean` and `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Rate/Energy.lean` | present (`InOpenCorridorOn.of_shrunk`, `.relax`, `corridorEnergy_add_sub`, `corridorEnergy_sub_add`) |
 | Later `α = 2` input | `Probability/Distributions/Stable/Attraction/Normal/`, `Probability/Process/RandomWalk/FunctionalLimit/Normal/`, `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Gaussian/`, `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Stable/Discrete/FromIncrementLaw/` | Infinite-variance truncated-moment asymptotics, quadratic norming, the normal-domain FCLT, and raw-source `α = 2` path-class and continuous-boundary rate adapters are implemented. The integrated `BranchingProcessTest/Mogulskii/Rates/IncrementLawRates.lean` target builds, and its named declarations pass the reviewed axiom allowlist. The separate explicit Gaussian constant adapter still takes `hB : IsBrownianReal B Q`; it is not the raw-source route. This is broader in its attraction input than Mogul'skii's Theorem 3, which assumes finite variance one. |

@@ -4,19 +4,23 @@
 
 This note follows Section 5 of A. A. Mogul'skii, *Small Deviations in the
 Sample Function Space* (Russian original, *Theory of Probability and Its
-Applications* 19:4 (1974), 755--765; English translation, 19:1 (1975),
+Applications* 19:4 (1974), 755--765; English translation, 19:4 (1975),
 726--736, [DOI 10.1137/1119081](https://doi.org/10.1137/1119081)). Theorem 4
 assumes a homogeneous process `ξ(t)`, `t ≥ 0`, with independent increments,
 almost-surely right-continuous paths, and the stable domain-of-attraction
 condition
 
 ```text
-P(ξ(n) < x B(n)) → Fα(x),       0 < α ≤ 2,
+P(ξ(n) < x B(n)) → Fα(x),       0 < α < 2,
+0 < Fα(0) < 1,
 B*(B(n)) / n → 1,
 ```
 
-with the centering convention in the article. Here `B*(u) = u^α / L*(u)` and
-`L*(u) = u^(α-2) ∫_{[-u,u]} z² ν(dz)` for the unit-time marginal `ν`. For
+Write `ν = Law(ξ(1))`; homogeneity and independent increments identify the law
+of `ξ(n)` with the sum of `n` independent variables of law `ν`. The article
+assumes `E[ξ(t)] = 0` whenever this expectation exists and, at `α = 1`, also
+assumes `∫_ℝ sin(z / B(n)) ν(dz) → 0`. Here `B*(u) = u^α / L*(u)` and
+`L*(u) = u^(α-2) ∫_{[-u,u]} z² ν(dz)`. For
 `x(n) → ∞` with `x(n) / B(n) → 0`, the process path is
 `s_n(t) = ξ(nt) / x(n)`, with the terminal value taken as the left limit. The
 conclusion for every `G ∈ 𝔐` is
@@ -141,7 +145,7 @@ equivalent to weak convergence of the process laws on `D([0,∞), ℝ)`. The
 statement is reproduced as Theorem B.8 in Broutin, Duquesne, and Wang,
 “Limits of Multiplicative Inhomogeneous Random Graphs and Lévy Trees: Limit
 Theorems,” *Probability Theory and Related Fields* 181 (2021), 865--973.
-See the [Springer record for Jacod--Shiryaev](https://link.springer.com/book/10.1007/978-3-662-02514-7)
+See the [Springer record for Jacod--Shiryaev](https://link.springer.com/book/10.1007/978-3-662-05265-5)
 and [Theorem B.8 in Broutin--Duquesne--Wang](https://perso.lpsm.paris/~tduquesne/Documents/Broutin_Duquesne_Wang_Limits_Mult_graphs_PTRF_2021.pdf).
 
 For Mogul'skii's Theorem 4, apply this criterion to
