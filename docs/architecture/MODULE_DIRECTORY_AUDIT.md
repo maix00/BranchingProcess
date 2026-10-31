@@ -27839,19 +27839,22 @@ file/directory basename collisions, parent-directory basename repeats,
 inventories. The project-source citation/name scan finds zero generic
 paper/thesis placeholders and zero disallowed private-name remnants.
 
-## Lévy-process continuity at the initial time (2026-10-31)
+## Right continuity in distribution for Lévy marginals (2026-10-31)
 
 Generalized `IsLevyProcess.aemeasurable_eval` in
 `Probability/Process/Levy/FiniteDimensional.lean` from real-valued processes to
 processes valued in a topological additive group. Added
-`IsLevyProcess.tendstoInDistribution_eval_nhdsGT_zero` to
-`Probability/Process/Levy/PathContinuity.lean`, which states
+`IsLevyProcess.tendstoInDistribution_eval_nhdsGT` to
+`Probability/Process/Levy/PathContinuity.lean`, which states for every
+$s\ge0$
 \[
-  \operatorname{Law}(X_t)\Rightarrow\delta_0\qquad(t\downarrow0).
+  \operatorname{Law}(X_t)\Rightarrow\operatorname{Law}(X_s)
+  \qquad(t\downarrow s).
 \]
-The proof uses almost-sure right continuity at zero, the almost-sure zero
-start, and Mathlib's almost-sure convergence criterion for convergence in
-distribution. The fixed-time no-jump proof now composes this law convergence
-with its shrinking interval sequence instead of repeating the local
-pathwise-to-distribution argument. The generic coordinate-measurability
-module and the Lévy path-continuity module build with the pinned toolchain.
+The proof uses almost-sure right continuity of the sample paths and Mathlib's
+almost-sure convergence criterion for convergence in distribution. The
+fixed-time no-jump proof composes this law convergence with its shrinking
+interval sequence instead of repeating the local pathwise-to-distribution
+argument; the zero-start hypothesis identifies the initial marginal with
+$\delta_0$. The generic coordinate-measurability module and the Lévy
+path-continuity module build with the pinned toolchain.

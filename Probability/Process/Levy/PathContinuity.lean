@@ -19,9 +19,9 @@ import Probability.Process.Levy.FiniteDimensional
 
 ## Public declarations
 
-- `ProbabilityTheory.IsLevyProcess.tendstoInDistribution_eval_nhdsGT_zero`:
-  for a zero-start Lévy process, the law of $X_t$ converges to $\delta_0$ as
-  $t\downarrow0$.
+- `ProbabilityTheory.IsLevyProcess.tendstoInDistribution_eval_nhdsGT`:
+  for every $s\ge0$, the law of $X_t$ converges to the law of $X_s$ as
+  $t\downarrow s$.
 - `ProbabilityTheory.IsLevyProcess.ae_leftLim_eq_eval`: for each fixed
   $t>0$, an almost surely càdlàg process with stationary increments satisfies
   \[
@@ -50,21 +50,19 @@ variable {Ω E : Type*} [MeasurableSpace Ω]
 
 omit [TopologicalSpace.PseudoMetrizableSpace E] [MeasurableSingletonClass E]
   [HasOuterApproxClosed E] in
-/-- For a Lévy process, the law of `X t` converges to the point mass at zero as
-`t` decreases to zero.
-The proof applies almost-sure right continuity at the initial time to the
-coordinates and then passes from almost-sure convergence to convergence in
-distribution. -/
-theorem IsLevyProcess.tendstoInDistribution_eval_nhdsGT_zero
-    (h : IsLevyProcess X P) :
-    TendstoInDistribution (fun t ω => X t ω) (𝓝[>] (0 : ℝ≥0))
-      (fun _ : Ω => (0 : E)) (fun _ : ℝ≥0 => P) P := by
+/-- For every `s`, the law of `X t` converges to the law of `X s` as `t`
+decreases to `s`. Almost-sure right continuity gives pointwise convergence of
+the process coordinates, which implies convergence in distribution. -/
+theorem IsLevyProcess.tendstoInDistribution_eval_nhdsGT
+    (h : IsLevyProcess X P) (s : ℝ≥0) :
+    TendstoInDistribution (fun t ω => X t ω) (𝓝[>] s)
+      (fun ω => X s ω) (fun _ : ℝ≥0 => P) P := by
   have hae_tendsto : ∀ᵐ ω ∂P,
-      Tendsto (fun t : ℝ≥0 => X t ω) (𝓝[>] (0 : ℝ≥0)) (𝓝 (0 : E)) := by
-    filter_upwards [h.ae_cadlag, h.ae_start_eq_zero] with ω hω hω₀
-    simpa [hω₀] using (hω.isRightContinuous (0 : ℝ≥0)).tendsto
+      Tendsto (fun t : ℝ≥0 => X t ω) (𝓝[>] s) (𝓝 (X s ω)) := by
+    filter_upwards [h.ae_cadlag] with ω hω
+    exact (hω.isRightContinuous s).tendsto
   exact tendstoInDistribution_of_ae_tendsto
-    (fun t => h.aemeasurable_eval t) aemeasurable_const hae_tendsto
+    (fun t => h.aemeasurable_eval t) (h.aemeasurable_eval s) hae_tendsto
 
 /-- At each fixed positive time, almost every càdlàg Lévy path is continuous
 from the left. Stationarity identifies the left increments with increments
@@ -106,9 +104,9 @@ theorem IsLevyProcess.ae_leftLim_eq_eval
       ⟨hgap, Filter.Eventually.of_forall hgap_pos⟩
 
   have heval_gap : TendstoInDistribution (fun n ω => X (gap n) ω) atTop
-      (fun _ : Ω => (0 : E)) (fun _ : ℕ => P) P := by
-    refine ⟨fun n => h.aemeasurable_eval (gap n), aemeasurable_const, ?_⟩
-    exact h.tendstoInDistribution_eval_nhdsGT_zero.tendsto.comp hgap_right
+      (fun ω => X 0 ω) (fun _ : ℕ => P) P := by
+    refine ⟨fun n => h.aemeasurable_eval (gap n), h.aemeasurable_eval 0, ?_⟩
+    exact (h.tendstoInDistribution_eval_nhdsGT 0).tendsto.comp hgap_right
   have h_eval_small (n : ℕ) : (fun ω => X (gap n) ω) =ᵐ[P]
       smallIncrement n := by
     filter_upwards [h.ae_start_eq_zero] with ω hω
@@ -116,7 +114,7 @@ theorem IsLevyProcess.ae_leftLim_eq_eval
   have hsmall_dist : TendstoInDistribution smallIncrement atTop
       (fun _ : Ω => (0 : E)) (fun _ : ℕ => P) P := by
     exact heval_gap.congr h_eval_small
-      (Filter.Eventually.of_forall fun _ => rfl)
+      h.ae_start_eq_zero
 
   have htime_add (n : ℕ) : times n + gap n = t := by
     dsimp [gap]
