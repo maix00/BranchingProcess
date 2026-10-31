@@ -20,16 +20,17 @@ $b$ of balanced block lengths satisfies $|b|=q$,
 $\sum_{i<q}b_i=N$, exactly $r$ entries equal $s+1$, and every other
 entry equals $s$.
 
-- `Combinatorics.Sequence.balancedBlockCount`: the quotient of a finite
-  horizon by a reference block length.
-- `Combinatorics.Sequence.balancedBlockShortLength`: the shorter of the two
-  adjacent lengths used to distribute the quotient remainder.
-- `Combinatorics.Sequence.balancedBlockLengths`: the list of block lengths;
-  when the quotient is positive, its length is the quotient, its sum is the
-  full horizon, and each entry is either the short length or one greater.
-- `Combinatorics.Sequence.balancedBlockLengths_length`,
-  `balancedBlockLengths_sum`, and `mem_balancedBlockLengths`: the exact
-  finite-partition properties above.
+- `Combinatorics.Sequence.balancedBlockCount N m` defines $q=\lfloor N/m\rfloor$.
+- `Combinatorics.Sequence.balancedBlockShortLength N m` defines
+  $s=m+\lfloor(N\bmod m)/q\rfloor$.
+- `Combinatorics.Sequence.balancedBlockLengths N m` is the concatenation of
+  $q-r$ copies of $s$ and $r$ copies of $s+1$, where
+  $r=(N\bmod m)\bmod q$.
+- Given $q>0$, `Combinatorics.Sequence.balancedBlockLengths_length` and
+  `Combinatorics.Sequence.balancedBlockLengths_sum` state
+  $|b|=q$ and $\sum_{i<q}b_i=N$. For each entry,
+  `Combinatorics.Sequence.mem_balancedBlockLengths` gives $b_i=s$ or
+  $b_i=s+1$.
 
 The quotient/remainder construction is independent of probability and
 asymptotic assumptions. Its limiting scale results belong to

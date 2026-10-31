@@ -15,14 +15,27 @@ import all Combinatorics.Sequence.CyclicGap.Lemmas.Composition
 
 ## Public declarations
 
-- `Combinatorics.Sequence.compositionSelectedStartsMap` sends a composition
-  marked by an offset in its final part to its set of cyclic starts;
-  `compositionSelectedStartsMap_bijective` proves this correspondence is
-  bijective, and `cyclicGapCompositionEquiv` packages it as an equivalence.
-- `Combinatorics.Sequence.sum_cyclicGap_products_eq_composition_sum` rewrites
-  a product weight over cyclic gaps as a composition sum. It holds for weights
-  in any commutative semiring $R$ and contributes the final-part length as the
-  number of offsets into that gap.
+For $n>0$, let $\mathcal U_n$ be the nonempty subsets of $\mathrm{Fin}(n)$.
+For a composition $c$ of $n$, put $m_c=c.\mathrm{length}$ and
+$c_j=c.\mathrm{blocksFun}(j)$ for $j\in\mathrm{Fin}(m_c)$.
+
+* `Combinatorics.Sequence.compositionSelectedStartsMap` sends a composition
+  and an offset $a<c_{m_c-1}$ to the cyclic start set
+  $\{a+\sum_{i<j.\mathrm{val}}c_i:j\in\mathrm{Fin}(m_c)\}\in\mathcal U_n$.
+  `Combinatorics.Sequence.compositionSelectedStartsMap_bijective` proves this
+  map bijective, and
+  `Combinatorics.Sequence.cyclicGapCompositionEquiv` packages the bijection
+  as an equivalence.
+* For a commutative semiring $R$ and $g,w:\mathbb N\to R$,
+  `Combinatorics.Sequence.sum_cyclicGap_products_eq_composition_sum` states
+  \[
+    \sum_{u\in\mathcal U_n}g(|u|)
+      \prod_{j\in\mathrm{Fin}(|u|)}
+        w(\operatorname{cyclicGapLength}(u,j))
+    =\sum_{c\in\operatorname{Composition}(n)}
+      c_{m_c-1}\,g(m_c)\prod_{j\in\mathrm{Fin}(m_c)}w(c_j).
+  \]
+  The factor $c_{m_c-1}$ counts the offsets in the last part.
 
 Mathlib provides positive `Composition n`, its boundary-set representation,
 and their equivalence. This module supplies the cyclic subset/marked-gap
