@@ -10,6 +10,8 @@ public import Order.Interval.RationalCoordinate.UnitInterval
 public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.Entrance.ShortTime
 public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.Entrance.FullCorridor
 public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Probability.Bounds
+public import Probability.Process.Levy.PathLaw.Corridor
+public import Probability.Process.Stable.PathLaw.SelfSimilarity
 public import Probability.Process.Stable.SmallDeviation.Blocks.EntranceScaling
 import Probability.Process.Stable.SmallDeviation.Blocks.ReturnScale
 public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Gluing
@@ -232,52 +234,31 @@ private lemma measure_fullSegmentCorridorReturn_timeSpaceScale_eq
   let Y : ℝ≥0 → Ω → ℝ := fun t ω =>
     (horizon : ℝ) ^ (-(1 / α)) * X (horizon * t) ω
   have hY : IsStableLevyProcess α μ Y P := h.timeSpaceScale horizon hhorizon
-  let C := Skorokhod.rationalCoordinateCorridorReturnWithMargin
-    lower upper coreLower coreUpper
-  let fX : Ω → ↑RationalCoordinate.UnitInterval → ℝ :=
-    fun ω q => X (RationalCoordinate.toNNReal q) ω - X 0 ω
-  let fY : Ω → ↑RationalCoordinate.UnitInterval → ℝ :=
-    fun ω q => Y (RationalCoordinate.toNNReal q) ω - Y 0 ω
-  have hC : MeasurableSet C := by
-    exact Skorokhod.measurableSet_rationalCoordinateCorridorReturnWithMargin
-      lower upper coreLower coreUpper
-  have hrat : P (fY ⁻¹' C) = P (fX ⁻¹' C) := by
-    have hlaw := h.centeredRationalRestriction_identDistrib horizon hhorizon
-    have hprob := hlaw.measure_mem_eq hC
-    let g : Ω → ↑RationalCoordinate.UnitInterval → ℝ := fun ω q =>
-      (horizon : ℝ) ^ (-(1 / α)) *
-        (X (horizon * RationalCoordinate.toNNReal q) ω - X 0 ω)
-    have hg : g = fY := by
-      funext ω q
-      simp [g, fY, Y]
-      ring
-    change P (fX ⁻¹' C) = P (g ⁻¹' C) at hprob
-    rw [hg] at hprob
-    exact hprob.symm
-  have hfullX : fullSegmentCorridorReturnEvent X 0 1
-      lower upper coreLower coreUpper =ᵐ[P] fX ⁻¹' C := by
-    filter_upwards [h.ae_cadlag] with ω hω
-    apply propext
-    change (ω ∈ fullSegmentCorridorReturnEvent X 0 1
-      lower upper coreLower coreUpper) ↔ fX ω ∈ C
-    simpa [fX] using
-      (mem_fullSegmentCorridorReturnEvent_iff_rational X 0 1
-        lower upper coreLower coreUpper ω hω)
-  have hfullY : fullSegmentCorridorReturnEvent Y 0 1
-      lower upper coreLower coreUpper =ᵐ[P] fY ⁻¹' C := by
-    filter_upwards [hY.ae_cadlag] with ω hω
-    apply propext
-    change (ω ∈ fullSegmentCorridorReturnEvent Y 0 1
-      lower upper coreLower coreUpper) ↔ fY ω ∈ C
-    simpa [fY] using
-      (mem_fullSegmentCorridorReturnEvent_iff_rational Y 0 1
-        lower upper coreLower coreUpper ω hω)
+  let pathEvent : Set (CadlagPath unitInterval ℝ) :=
+    Skorokhod.corridorStartingAtZero lower upper ∩
+      {f : CadlagPath unitInterval ℝ | f ⊤ ∈ Set.Ioo coreLower coreUpper}
+  have hpathLaw :
+      ((hY.toIsLevyProcess.unitIntervalPathLaw 1 :
+        ProbabilityMeasure (CadlagPath unitInterval ℝ)) :
+          Measure (CadlagPath unitInterval ℝ)) =
+      ((h.toIsLevyProcess.unitIntervalPathLaw 1 :
+        ProbabilityMeasure (CadlagPath unitInterval ℝ)) :
+          Measure (CadlagPath unitInterval ℝ)) := by
+    simpa [Y] using h.unitIntervalPathLaw_timeSpaceScale horizon hhorizon
   calc
     P (fullSegmentCorridorReturnEvent Y 0 1
-        lower upper coreLower coreUpper) = P (fY ⁻¹' C) := measure_congr hfullY
-    _ = P (fX ⁻¹' C) := hrat
+        lower upper coreLower coreUpper) =
+      ((hY.toIsLevyProcess.unitIntervalPathLaw 1 :
+        Measure (CadlagPath unitInterval ℝ)) pathEvent) :=
+      (hY.toIsLevyProcess.unitIntervalPathLaw_measure_corridorReturnEvent
+        1 lower upper coreLower coreUpper).symm
+    _ = (h.toIsLevyProcess.unitIntervalPathLaw 1 :
+        Measure (CadlagPath unitInterval ℝ)) pathEvent := by
+      rw [hpathLaw]
     _ = P (fullSegmentCorridorReturnEvent X 0 1
-        lower upper coreLower coreUpper) := (measure_congr hfullX).symm
+        lower upper coreLower coreUpper) :=
+      h.toIsLevyProcess.unitIntervalPathLaw_measure_corridorReturnEvent
+        1 lower upper coreLower coreUpper
 
 private lemma exists_bounded_unit_endpoint_block
     {Ω : Type*} [MeasurableSpace Ω]

@@ -28017,3 +28017,27 @@ tree and `MODULE_AUDIT_LEDGER.csv` now contain 1,642 modules with exact path
 agreement; the directory scan still has no same-level file/directory stem
 collisions, parent-directory stem repeats, paired `Lemmas.lean`/`Lemmas/`
 entries, or `Source/` directory.
+
+## Endpoint-window path-law bridge and stable rescaling reuse (2026-11-01)
+
+Extended `Probability/Process/Levy/PathLaw/Corridor.lean` with the endpoint
+window identity
+\[
+  \mathcal L((X_{Tt})_{t\in[0,1]})
+    \bigl(\{f:f(0)=0,\ \exists\eta>0,\ \forall t\in[0,1],\
+      l+\eta\le f(t)\le u-\eta,\ f(1)\in(c,d)\}\bigr)
+  =\mathbb P\{\exists\eta>0,\ \forall t\in[0,1],\
+      l+\eta\le X_{Tt}-X_0\le u-\eta,\ X_T-X_0\in(c,d)\}.
+\]
+The proof uses the same almost-sure càdlàg path realization as the corridor
+identity and checks both the full range condition and the terminal evaluation.
+It stays in the generic Lévy path-law module because it needs only zero start,
+coordinate measurability, and càdlàg paths.
+
+Replaced the private rational-coordinate comparison in
+`Probability/Process/Stable/SmallDeviation/Blocks/Lower/Entrance/FiniteTime.lean`
+with this path-law event bridge and
+`IsStableLevyProcess.unitIntervalPathLaw_timeSpaceScale`. The new proof follows
+the same path-space law identity used elsewhere and removes the duplicate
+finite-coordinate event-transfer argument. The focused corridor and
+finite-time entrance modules build successfully. No LaTeX source was changed.

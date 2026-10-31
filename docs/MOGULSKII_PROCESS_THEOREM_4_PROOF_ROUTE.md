@@ -70,9 +70,10 @@ between `-a⁻¹` and `a⁻¹`; the terminal value in `D(0,1)` is the left limit
   normalized process in equation (38).
 - `Probability/Process/Levy/PathLaw/Corridor.lean` identifies the path-law
   probability of a zero-start open corridor with the original process's
-  complete-segment corridor probability. This proves the path-representation
-  part needed when equation (38) is applied to the tube events; the weak
-  convergence and boundary comparison remain separate obligations.
+  complete-segment corridor probability, and also handles a corridor with an
+  open terminal window. These are path-representation identities needed when
+  equation (38) is applied to tube events; the weak convergence and boundary
+  comparison remain separate obligations.
 - `Probability/Process/Stable/PathLaw/SelfSimilarity.lean` identifies stable
   unit-interval path laws from their rational-coordinate laws and proves the
   stable time-space identity
