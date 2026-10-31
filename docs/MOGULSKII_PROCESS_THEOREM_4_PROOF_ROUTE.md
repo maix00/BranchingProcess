@@ -93,6 +93,12 @@ between `-a⁻¹` and `a⁻¹`; the terminal value in `D(0,1)` is the left limit
 - `Probability/Process/Stable/PathLaw/UnitInterval.lean` and the stable
   process escape-rate modules provide the limiting stable path law and its
   tube-rate input.
+- `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Stable/Scale/SlowMultiplier.lean`
+  now formalizes the rounded regular-variation ratio in equation (43): for
+  a slowly increasing multiplier $a_n$ compatible with the smaller path scale,
+  $\lfloor B^*(a_nx_n)\rfloor/(a_n^\alpha B^*(x_n))\to1$. This proves the
+  floor step from regular variation and $B^*(a_nx_n)\to\infty$; it does not
+  supply the preceding fixed-tube probability comparison.
 - The deterministic corridor comparisons and the finite-partition extension
   for Theorem 1 are already formalized under
   `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Rate/`.
@@ -116,8 +122,12 @@ translation, pp. 733--734) proceeds through equations (38)--(44):
    comparison.
 3. **Slowly increase `a`, equations (42)--(44).** Choose `a(n) → ∞` slowly
    enough that the preceding eventual comparisons remain valid. Apply
-   Lemma 1 to the stable-process tube at width `a(n)⁻¹`; regular variation of
-   `B*` then gives the exponent `n x(n)⁻α L*(x(n))` and the constant `C`.
+   Lemma 1 to the stable-process tube at width `a(n)⁻¹`; the rounded
+   regular-variation factor in equation (43) is supplied by
+   `exists_tendsto_slowStableScaleTime_floor_scaleTime_ratio`. The full
+   probability comparison in equations (42) and (44) remains to be assembled
+   with this scale identity to obtain the exponent
+   `n x(n)⁻α L*(x(n))` and the constant `C`.
 4. **Extend from the tube to `G ∈ 𝔐`.** The article finishes by reusing the
    proof of Theorem 1. The finite partition, inner and outer tube comparisons,
    and the functional `Hα` are the same deterministic argument as there.
