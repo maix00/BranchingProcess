@@ -48,19 +48,28 @@ import Topology.Order.UnitInterval.Rational
 - `ProbabilityTheory.IsStableClockProcessLaw.measure_corridorReturnEvent_eq`:
   stable path-law uniqueness and the Lévy path-law corridor bridge give
   \[
-    P(\operatorname{rangeInOpenIntervalEndsIn}(l,u,c,d))
-      =Q(\operatorname{fullSegmentCorridorReturnEvent}(X,0,1,l,u,c,d)).
+    P\{f:\exists\eta>0,\ \forall t\in[0,1],\
+      l+\eta\le f(t)\le u-\eta,\ f(1)\in(c,d)\}
+    =Q\{\omega:\exists\eta>0,\ \forall t\in[0,1],\
+      l+\eta\le X_t(\omega)-X_0(\omega)\le u-\eta,\
+      X_1(\omega)-X_0(\omega)\in(c,d)\}.
   \]
 - `ProbabilityTheory.IsStableClockProcessLaw.measure_stableProcessCenteredCorridor_eq`:
-  the zero-start centered path corridor has the same probability as the
-  centered process corridor,
-  \(P(I^a_{-a})=\mathbb P_Q\{\exists\eta>0,\forall t\in[0,1],
-  -a+\eta\le X_t-X_0\le a-\eta\}\), with rate parameter
-  \(a\downarrow0\).
+  for the path set
+  \(I^a_{-a}=\{f:f(0)=0,\exists\eta>0,\forall t\in[0,1],
+  -a+\eta\le f(t)\le a-\eta\}\),
+  \[
+    P(I^a_{-a})=
+    Q\{\omega:\exists\eta>0,\ \forall t\in[0,1],\
+      -a+\eta\le X_t(\omega)-X_0(\omega)\le a-\eta\}.
+  \]
 - `ProbabilityTheory.IsStableClockProcessLaw.exists_centeredCorridorEscapeRate_of_isStableLevyProcess`:
   when \(0<F_\alpha(0)<1\), the centered rate transfers with a negative
-  constant, \(C<0\) and
-  \(a^\alpha\log((P(I^a_{-a})).toReal)\to C\).
+  constant, \(C<0\), and
+  \[
+    a^\alpha\log((P(I^a_{-a})).toReal)
+      \longrightarrow C\qquad(a\downarrow0).
+  \]
 - `ProbabilityTheory.IsStableClockProcessLaw.exists_finite_openEndpointCorridor_lowerBound`:
   for the finite family of strictly nested endpoint intervals in its
   hypotheses, there are \(0<\beta<1/2\) and \(q>0\) such that
@@ -306,7 +315,12 @@ theorem IsStableClockProcessLaw.measure_stableProcessCenteredCorridor_eq
 /-- Lemma 1(II) of A. A. Mogul'skii, “Small Deviations in a Space of
 Trajectories,” as a path-law consequence of the centered and range-tube
 comparison. A stable-clock path law and a stable Lévy-process realization
-with the same increment law have the same centered-corridor escape constant. -/
+with the same increment law have the same centered-corridor escape constant.
+The source is A. A. Mogul'skii, “Small deviations in the sample function
+space,” Lemma 1(II), *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974),
+755--765; see also the English translation, “Small Deviations in a Space of
+Trajectories,” *Theory of Probability and Its Applications* 19(4) (1975),
+726--736, DOI 10.1137/1119081. -/
 theorem IsStableClockProcessLaw.exists_centeredCorridorEscapeRate_of_isStableLevyProcess
     {α : ℝ} {μ : Measure ℝ}
     {P : Measure (CadlagPath unitInterval ℝ)} [IsProbabilityMeasure P]

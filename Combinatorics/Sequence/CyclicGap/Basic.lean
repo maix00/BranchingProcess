@@ -16,19 +16,58 @@ public import Mathlib.Combinatorics.Enumerative.Composition
 
 ## Public declarations
 
-- `Combinatorics.Sequence.cyclicGapLengthAt` and
-  `Combinatorics.Sequence.cyclicGapLength` give the consecutive lengths
-  between the selected positions of a nonempty set $u\subseteq\mathrm{Fin}(n)$,
-  including the wrap-around gap; their total length is $n$.
-- `Combinatorics.Sequence.cyclicGapCoordinates` extracts each rotated block
-  from a finite vector, and `partialSum_cyclicGapCoordinates` identifies its
-  partial sums with the corresponding cyclic path segment.
+Fix a nonempty $u\in\mathrm{Finset}(\mathrm{Fin}(n))$ with witness $hu$; put
+$m=|u|$ and let $(s_j)_{j\in\mathrm{Fin}(m)}$ be the increasing enumeration
+of $u$. Set
+$g(k)=\operatorname{cyclicGapLengthAt}(u,hu,k)$ for $k\in\mathbb N$,
+$\ell_j=\operatorname{cyclicGapLength}(u,hu,j)=g(j.\mathrm{val})$, and
+$b_j=\operatorname{blockStart}(g,j)$. Here $hu$ is the proof that $u$ is
+nonempty; the last gap wraps from the largest selected position to the least,
+and $g(k)=0$ for $k\ge m$.
+
+- `Combinatorics.Sequence.cyclicGapLengthAt` defines $g$, and
+  `Combinatorics.Sequence.cyclicGapLength` defines $\ell_j$.
+  `Combinatorics.Sequence.cyclicGapLength_pos` states $0<\ell_j$.
+- `Combinatorics.Sequence.blockStart_cyclicGapLength_eq` identifies the start
+  of block $j$ relative to the least selected position:
+  \[
+    b_{j.\mathrm{val}}=s_j.\mathrm{val}-s_0.\mathrm{val}.
+  \]
+  `Combinatorics.Sequence.blockStart_cyclicGapLength_card` gives $b_m=n$,
+  and `Combinatorics.Sequence.blockStart_add_cyclicGapLength_le` gives
+  $b_{j.\mathrm{val}}+\ell_j\le n$.
+- `Combinatorics.Sequence.finCycle_block_eq` identifies whole-vector and
+  block-local cyclic reindexing. For $q<n$, let $[q]_n$ denote the element
+  $\langle q,h_q\rangle\in\mathrm{Fin}(n)$ supplied by that bound. Then for
+  $i\in\mathrm{Fin}(\ell_j)$,
+  \[
+    \operatorname{finCycle}(s_0,[b_{j.\mathrm{val}}+i.\mathrm{val}]_n)
+      =\operatorname{finCycle}(s_j,[i.\mathrm{val}]_n).
+  \]
+- For an additive commutative group $G$ and $x:\mathrm{Fin}(n)\to G$,
+  `Combinatorics.Sequence.cyclicGapCoordinates` extracts the rotated block
+  from $x:\mathrm{Fin}(n)\to G$; its $i$-th coordinate is
+  $x(\operatorname{finCycle}(s_0,[b_{j.\mathrm{val}}+i.\mathrm{val}]_n))$.
+  `Combinatorics.Sequence.partialSum_cyclicGapCoordinates` states that its
+  partial sum at $t\le\ell_j$ equals
+  $\operatorname{cyclicPartialSum}(\operatorname{partialSum}(x),s_j,[t]_{n+1})$,
+  where $[t]_{n+1}\in\mathrm{Fin}(n+1)$ is the knot index with value $t$.
 - `Combinatorics.Sequence.cyclicGapComposition` packages the ordered positive
-  gap lengths as a composition of $n$; its length is $|u|$ and its parts are
-  exactly the cyclic gap lengths.
-- `Combinatorics.Sequence.compositionSelectedStart` and
-  `Combinatorics.Sequence.compositionSelectedStarts` map an offset in the
-  final part of a composition to the corresponding cyclic set of starts.
+  gap lengths as a composition of $n$ whose blocks are
+  $(\ell_j)_{j\in\mathrm{Fin}(m)}$.
+  `Combinatorics.Sequence.cyclicGapComposition_length` states that its length
+  is $m$, and `Combinatorics.Sequence.cyclicGapComposition_blocksFun` gives
+  its $j$-th part as $\ell_j$.
+- For a composition $c$ of $n>0$, an offset $a$ in its last part, and
+  $j\in\mathrm{Fin}(c.\mathrm{length})$,
+  `Combinatorics.Sequence.compositionSelectedStart` is the element
+  $a.\mathrm{val}+c.\mathrm{sizeUpTo}(j.\mathrm{val})$ of $\mathrm{Fin}(n)$.
+  `Combinatorics.Sequence.compositionSelectedStarts` is the finite set of
+  these elements as $j$ varies,
+  $\{a.\mathrm{val}+c.\mathrm{sizeUpTo}(j.\mathrm{val}):
+    j\in\mathrm{Fin}(c.\mathrm{length})\}$, and
+  `Combinatorics.Sequence.compositionSelectedStarts_nonempty` proves that
+  this set is nonempty.
 
 The finite composition API is Mathlib's
 `Mathlib.Combinatorics.Enumerative.Composition`. These cyclic gap operations
