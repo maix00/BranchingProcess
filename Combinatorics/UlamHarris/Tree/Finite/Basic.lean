@@ -21,13 +21,13 @@ Its topology, measurable structure, and metric are in `Tree/Finite/Space.lean`.
 
 ## Public declarations
 
-- `Tree.IsFinite T` means `T.carrier.Finite`, and `Tree.FiniteTree α` is the
-  subtype of trees satisfying this predicate.
-- `Tree.isFinite_iff` unfolds the predicate, while
-  `Tree.IsFinite.isLocallyFinite` proves every finite-carrier tree is locally
-  finite.
-- `Tree.toLocallyFinite α T` is the inclusion into the locally finite subtype;
-  `Tree.toLocallyFinite_injective` proves it injective.
+- `Tree.IsFinite T` is `\(T.carrier.Finite\)`, and
+  `Tree.FiniteTree α := \{T : Tree\ α \mid T.carrier.Finite\}`.
+  `Tree.isFinite_iff` states this equivalence, and
+  `Tree.IsFinite.isLocallyFinite` proves `\(T.IsFinite\to T.IsLocallyFinite\)`.
+- `Tree.toLocallyFinite α` is the subtype inclusion and
+  `Tree.toLocallyFinite_injective` states
+  `\(\operatorname{Injective}(Tree.toLocallyFinite\ \alpha)\)`.
 -/
 
 @[expose] public section

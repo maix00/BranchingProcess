@@ -20,7 +20,12 @@ construction on one branching step.
 ## Public declarations
 
 - `Combinatorics.Branching.Step.FiniteSelection.reserveSpineSlot R ξ` is the
-  reserve slot defined by the cardinality cases above.
+  reserve slot, given by
+  `\[\operatorname{reserveSpineSlot}(R,\xi)=\begin{cases}
+    \operatorname{secondSelectedSlot}(R,\xi),&2\le |R(\xi)|,\\
+    \operatorname{firstSelectedSlot}(R,\xi),&0<|R(\xi)|<2,\\
+    \bot,&|R(\xi)|=0.
+  \end{cases}\]`.
 - `Combinatorics.Branching.Step.FiniteSelection.reserveSpineSlot_mem_of_selected_nonempty`
   proves that the reserve slot belongs to every nonempty selected family.
 - `Combinatorics.Branching.Step.FiniteSelection.reserveSpineSlot_eq_second_of_split`
@@ -32,9 +37,10 @@ construction on one branching step.
 - `Combinatorics.Branching.Step.FiniteSelection.reserveSpineSlot_eq_bot_of_selected_empty`
   gives its value on the empty family.
 - `Combinatorics.Branching.Step.FiniteSelection.potentialValue'_reserveSpineSlot_le_cutoff_add_firstSelectedSlotPositive`
-  bounds the potential of the retained reserve slot by the cutoff plus the
-  positive potential of the original first selected slot after truncation by
-  `reserveSelectionBelowPotential`.
+  gives, after truncation by `reserveSelectionBelowPotential`,
+  `\(\xi.potentialValue'(\varphi,
+  reserveSpineSlot(reserveSelectionBelowPotential(R,\varphi,M),\xi))
+  \le M+firstSelectedSlotPositivePotential(R,\varphi,\xi)\)`.
 -/
 
 @[expose] public section

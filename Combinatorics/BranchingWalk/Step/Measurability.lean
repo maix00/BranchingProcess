@@ -27,18 +27,25 @@ hypothesis discharged by the real line with `measurableSet_Iic` and
 
 ## Public declarations
 
-- `nonemptySupport ξ` means that some slot survives, and
-  `nonemptySupport_measurable` proves measurability for countable slot types.
-- `nontrivialSupport ξ` means that two distinct slots survive, and
-  `nontrivialSupport_measurable` proves its measurability.
-- `keepRel R i M` is the event that slot `i` contains some mark `x` with
-  `R x M`; `keepRel_measurable` reduces its measurability to that of the
-  threshold section `{x | R x M}`.
-- `keepAt i M` specializes to a mark at most `M`, with measurability theorem
-  `keepAt_measurable`.
-- `keepAbove i M` selects marks at least `M`; `keepAbove_measurable` proves
-  its measurability, and `mem_keepAbove_iff_orderDual` identifies it with
-  `keepAt` after reversing the mark order.
+- `nonemptySupport` and `nontrivialSupport` satisfy
+  `\(\xi\in nonemptySupport\iff\exists i,\operatorname{survive}(\xi,i)\)`
+  and
+  `\(\xi\in nontrivialSupport\iff\exists i\ne j,
+  \operatorname{survive}(\xi,i)\land\operatorname{survive}(\xi,j)\)`.
+  Their measurability results for countable slots are
+  `nonemptySupport_measurable` and `nontrivialSupport_measurable`.
+- `keepRel R i M` satisfies
+  `\(\xi\in keepRel(R,i,M)\iff
+  \exists x,\xi(i)=\operatorname{some}(x)\land R(x,M)\)`;
+  `keepRel_measurable` assumes the section `{x | R x M}` measurable.
+- `keepAt i M` and `keepAbove i M` satisfy
+  `\(\xi\in keepAt(i,M)\iff\exists x,\xi(i)=\operatorname{some}(x)
+  \land x\le M\)` and
+  `\(\xi\in keepAbove(i,M)\iff\exists x,\xi(i)=\operatorname{some}(x)
+  \land M\le x\)`. Their measurability results are
+  `keepAt_measurable` and `keepAbove_measurable`, and
+  `mem_keepAbove_iff_orderDual` identifies the upper event with the lower
+  event on `OrderDual X`.
 -/
 
 @[expose] public section

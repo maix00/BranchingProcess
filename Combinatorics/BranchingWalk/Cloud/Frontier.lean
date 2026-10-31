@@ -14,78 +14,47 @@ public import Mathlib.Order.Bounds.Basic
 
 ## Public declarations
 
-The declarations prefixed with `CloudSet.` are in namespace
-`Combinatorics.Branching.CloudSet`; the scalar-observation specializations
-prefixed with `Cloud.` are in namespace `Combinatorics.Branching.Cloud`.
+The `CloudSet.` declarations are in namespace `Combinatorics.Branching.CloudSet`;
+the scalar-observation specializations prefixed with `Cloud.` are in
+`Combinatorics.Branching.Cloud`.
 
-- `CloudSet.lowerFrontier`, `CloudSet.upperFrontier`,
-  `CloudSet.mem_lowerFrontier_iff`, `CloudSet.lowerFrontier_subset_points`,
-  `CloudSet.mem_upperFrontier_iff`, and
-  `CloudSet.upperFrontier_subset_points`: the least and greatest points in a
-  slice, characterized by `IsLeast` and `IsGreatest` and contained in that
-  slice.
-- `CloudSet.mem_upperFrontier_iff_orderDual` identifies the upper frontier
-  with the lower frontier after reversing the order.
-- `CloudSet.unattainedLowerExample`,
-  `CloudSet.unattainedLowerExample_points_nonempty`, and
-  `CloudSet.unattainedLowerExample_lowerFrontier_empty` give a nonempty real
-  slice with no attained lower frontier.
-- `CloudSet.potentialValues`, `CloudSet.lowerPotentialFrontier`, and
-  `CloudSet.upperPotentialFrontier` give the image of a slice under a real
-  potential and its extremal points. `CloudSet.mem_lowerPotentialFrontier_iff`
-  and `CloudSet.mem_upperPotentialFrontier_iff` characterize them by
-  `IsLeast` and `IsGreatest` in `potentialValues`.
-- `CloudSet.HasLowerPotentialPoint`, `CloudSet.lowerPotentialPoint`,
-  `CloudSet.lowerPotentialPoint_mem_frontier`, and
-  `CloudSet.isLeast_lowerPotentialPoint`: when the lower potential frontier
-  is nonempty, choose a point in it that is least among observed values.
+- `CloudSet.lowerFrontier C t` and `CloudSet.upperFrontier C t` are the sets
+  `\(\{x \mid \operatorname{IsLeast}(C.points\ t,x)\}\)` and
+  `\(\{x \mid \operatorname{IsGreatest}(C.points\ t,x)\}\)`. Their
+  characterizations are `CloudSet.mem_lowerFrontier_iff` and
+  `CloudSet.mem_upperFrontier_iff`; `CloudSet.lowerFrontier_subset_points`
+  and `CloudSet.upperFrontier_subset_points` prove both sets are subsets of
+  `C.points t`.
+- `CloudSet.mem_upperFrontier_iff_orderDual` states
+  `\(x \in C.upperFrontier\ t \iff
+  \operatorname{toDual}(x) \in (C.mapOrderDual).lowerFrontier\ t\)`.
+  `CloudSet.unattainedLowerExample`,
+  `CloudSet.unattainedLowerExample_points_nonempty` and
+  `CloudSet.unattainedLowerExample_lowerFrontier_empty` exhibit a nonempty
+  real slice whose lower frontier is empty.
+- `CloudSet.potentialValues C potential t` is
+  `\(\operatorname{potential} '' C.points\ t\)`. The lower and upper
+  potential frontiers consist of its least and greatest values, respectively;
+  `CloudSet.mem_lowerPotentialFrontier_iff` and
+  `CloudSet.mem_upperPotentialFrontier_iff` state the corresponding
+  `IsLeast` and `IsGreatest` equivalences.
+- `CloudSet.HasLowerPotentialPoint C potential t` means the lower potential
+  frontier is nonempty. `CloudSet.lowerPotentialPoint` chooses such a value;
+  under the attainment hypothesis,
+  `CloudSet.lowerPotentialPoint_mem_frontier` and
+  `CloudSet.isLeast_lowerPotentialPoint` give
+  `\(x \in C.lowerPotentialFrontier\ potential\ t\)` and
+  `\(\operatorname{IsLeast}(C.potentialValues\ potential\ t,x)\)` for the
+  chosen point `x`.
 - `CloudSet.lowerPotentialFrontier_id` and
-  `CloudSet.upperPotentialFrontier_id`: the identity potential recovers the
-  ordinary frontiers.
-- `Cloud.lowerPotentialFrontier`, `Cloud.upperPotentialFrontier`,
-  `Cloud.potentialValues`, `Cloud.HasLowerPotentialPoint`, and
-  `Cloud.lowerPotentialPoint` delegate these operations to `C.support`.
-- `Cloud.lowerPotentialPoint_mem_frontier` and
-  `Cloud.isLeast_lowerPotentialPoint` give the selected point's properties;
-  `Cloud.lowerPotentialFrontier_id` and `Cloud.upperPotentialFrontier_id`
-  recover the support frontiers for the identity potential.
-
-`lowerFrontier C t` and `upperFrontier C t` are the sets of least and
-greatest positions in the time slice `C.points t`. They record all extremal
-points when the order has ties. A frontier is empty when its slice has no
-attained extremum; `unattainedLowerExample` gives a nonempty slice with empty
-lower frontier. The two definitions are order-dual to one another.
-
-The public API is:
-
-- `lowerFrontier C t` and `upperFrontier C t` are the least and greatest
-  elements of the slice as sets; their membership theorems characterize
-  these sets by `IsLeast` and `IsGreatest`, and the subset theorems place each
-  frontier inside the original slice.
-- `mem_upperFrontier_iff_orderDual` identifies the upper frontier with the
-  lower frontier after reversing the order. `unattainedLowerExample` proves
-  that an infinite nonempty slice can have no least point.
-- `Cloud.lowerPotentialFrontier`, `upperPotentialFrontier`, and
-  `potentialValues` apply a real-valued potential to a particle cloud.
-  `HasLowerPotentialPoint` states attainment; `lowerPotentialPoint` chooses
-  an attained lower point and the accompanying theorems show it belongs to
-  the frontier and is least among the potential values.
-
-The exact frontier laws are `CloudSet.mem_lowerFrontier_iff`,
-`CloudSet.lowerFrontier_subset_points`, `CloudSet.mem_upperFrontier_iff`,
-`CloudSet.upperFrontier_subset_points`, and
-`CloudSet.mem_upperFrontier_iff_orderDual`. In particular, both frontiers are
-subsets of `C.points t`, and upper-frontier membership is equivalent to
-lower-frontier membership after applying `OrderDual.toDual`. The example laws
-`CloudSet.unattainedLowerExample_points_nonempty` and
-`CloudSet.unattainedLowerExample_lowerFrontier_empty` give a nonempty slice
-with no least point.
-
-For a scalar observation, `Cloud.lowerPotentialPoint_mem_frontier` and
-`Cloud.isLeast_lowerPotentialPoint` state that an attained selector lies in
-`C.lowerPotentialFrontier potential t` and is least in
-`C.potentialValues potential t`. The identity cases are
-`Cloud.lowerPotentialFrontier_id` and `Cloud.upperPotentialFrontier_id`.
+  `CloudSet.upperPotentialFrontier_id` identify the potential frontiers for
+  `id` with the ordinary frontiers. `Cloud.lowerPotentialFrontier`,
+  `Cloud.upperPotentialFrontier`, `Cloud.potentialValues`,
+  `Cloud.HasLowerPotentialPoint`, and `Cloud.lowerPotentialPoint` transfer
+  these definitions from `C.support`; `Cloud.lowerPotentialPoint_mem_frontier`,
+  `Cloud.isLeast_lowerPotentialPoint`, `Cloud.lowerPotentialFrontier_id`, and
+  `Cloud.upperPotentialFrontier_id` state their corresponding properties for
+  a particle cloud.
 -/
 
 @[expose] public section

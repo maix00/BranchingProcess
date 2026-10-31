@@ -33,11 +33,14 @@ DOI 10.1137/1119081, Theorem 3, Section 4.
 
 ## Public declarations
 
-- `stableBlockLength_two`: the index-two block-length formula using the
-  truncated second moment.
+- `stableBlockLength_two` states
+  \(L_{2,\nu,c,s}(n)=\left\lfloor
+  c s_n^2/V_\nu(s_n)\right\rfloor_+\), where
+  \(V_\nu(x)=\int_{|y|\le x}y^2\,d\nu(y)\).
 - `stableBlockLength_two_of_truncatedSecondMoment_eq`: equality with the
-  diffusive block length when the truncated second moment has a specified
-  value.
+  diffusive block length
+  \(L_{2,\nu,c,s}(n)=\left\lfloor(c/v)s_n^2\right\rfloor_+\) whenever
+  \(V_\nu(s_n)=v\).
 -/
 
 @[expose] public section
