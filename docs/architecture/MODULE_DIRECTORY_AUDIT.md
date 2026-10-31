@@ -27400,14 +27400,40 @@ GitHub PR checks remain pending, so merge readiness is still unverified.
 
 ## Reconciliation of checkpoint-derived ledger records (2026-10-31)
 
-The 163 production rows restored from the full-audit checkpoint now point to
-their specific dated family reviews instead of retaining the generic recovery
-message. Each ledger note identifies the public interface from that module's
-header, and each `review_record` names the corresponding section in this audit.
-This reconciles the ledger with reviews already documented above; it does not
-change Lean declarations or claim a new build. The current production source
-tree and ledger both contain 1,631 modules, and all rows retain their existing
-structural, semantic-review, and Lake-build statuses.
+An earlier pass replaced generic notes on 163 checkpoint-derived rows with
+family-review references. A later CSV recovery rewrote a larger set of rows
+with generic recovery notes, so that pass did not leave the current ledger
+fully traceable. The current reconciliation covers those 388 rows: 351 public
+modules, 36 internal proof modules, and one internal proof module whose header
+previously lacked an itemized declaration list. Each row now names its source
+module heading and records the corresponding public or internal declaration
+summary from that module's Lean docstring. The missing internal declaration
+list is now present in `InfiniteOffspring/Array/Lemmas/Subadditivity.lean`.
+
+This operation restores row-level interface evidence and points to the source
+for each recorded declaration. It preserves the prior structural, semantic,
+and Lake-build status fields; it does not claim that the theorem proofs were
+re-reviewed or rebuilt in this reconciliation. The source inventory and
+ledger both contain 1,631 modules.
+
+A second pass found 93 additional rows whose notes used a catch-all family
+description, a generic “see the module header” placeholder, or an extracted
+type variable in place of the interface. Their notes now give the public or
+internal declarations summarized by each source header and retain the existing
+family-review section as the placement and dependency record. These rows keep
+their previous review records and build statuses.
+
+The reconciliation therefore replaces unsupported shorthand with source-level
+evidence on 481 rows in total: the 388 checkpoint-recovered rows and the 93
+generic or malformed interface notes. All other review narratives and status
+fields are preserved.
+
+The complete source-header scan also found 12 proof modules whose declaration
+inventory used inconsistent headings or lacked a separate heading. Their
+inventories now use `## Internal proof declarations`; the monotone-grid helper
+module now lists its coordinate insertion, deletion, product-measure, and
+zero-start declarations with their defining identities. `CONTRIBUTING.md`
+records this rule for subsequent proof-only modules.
 
 ## CI module-target reconciliation (2026-10-31)
 

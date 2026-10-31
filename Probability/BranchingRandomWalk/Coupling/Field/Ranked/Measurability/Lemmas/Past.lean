@@ -15,7 +15,7 @@ These two intermediate results establish measurability of the constructed past
 in the generation domain flow. They are used only by the recursive field
 measurability and product-law arguments.
 
-## Internal declarations
+## Internal proof declarations
 
 * `RootIndexed.rankInstalledField_past_measurable` states that
   `fun field => (rankInstalledField ... n field).past n` is measurable for

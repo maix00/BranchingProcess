@@ -26,7 +26,7 @@ With `F_n` denoting `rankInstalledField` and `B_n` denoting
       \operatorname{selectedCoordinates}(B_n,\omega)\bigr).
 \]
 
-## Internal declaration
+## Internal proof declarations
 
 - `RootIndexed.rankInstalledField_succ_eq_glue` is the displayed one-step
   identity, used by the past-measurability and product-law proofs.

@@ -19,7 +19,7 @@ The normal-domain truncated-tail and variance profiles give a uniform
 whole-horizon range bound for the normalized step paths. No finite-variance
 assumption is used. This estimate is the compact-range input to
 `Normal.Tightness.Basic`.
-## Internal proof declaration
+## Internal proof declarations
 
 - `exists_eventually_compactRange_bound_of_gaussian`: for every $\epsilon>0$,
   there is a compact $K\subseteq\mathbb R$ such that eventually the normalized

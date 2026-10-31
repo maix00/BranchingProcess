@@ -26,7 +26,7 @@ Veroyatnostei i ee Primeneniya* 19(4) (1974), 755--765; English translation,
 “Small Deviations in a Space of Trajectories,” *Theory of Probability and Its
 Applications* 19(4) (1975), 726--736, DOI 10.1137/1119081.
 
-## Internal declarations
+## Internal proof declarations
 
 - `knotIndex_mono`, `knotIndex_zero`, `knotIndex_last`, and
   `knotIndex_eq_floor_of_lt_last` give the basic order and endpoint formulas

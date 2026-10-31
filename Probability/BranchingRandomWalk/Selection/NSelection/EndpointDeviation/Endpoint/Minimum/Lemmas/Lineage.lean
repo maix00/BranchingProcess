@@ -24,7 +24,7 @@ surely under the nonempty-offspring assumption. The first-`N` property bounds
 the next selected endpoint minimum by that child's endpoint; summing the
 predictable positive increments gives the fourth-moment estimate.
 
-## Intermediate declarations
+## Internal proof declarations
 
 These specialized declarations form one proof chain for the endpoint
 fourth-moment bound and are kept under `Minimum/Lemmas/`.

@@ -18,7 +18,7 @@ The generic measurable-fiber selector is in
 `MeasureTheory.Measure.LevelSet`. This file specializes it to radial boundary
 spheres of a Lévy measure for the Lévy–Khintchine representation proof chain.
 
-## Declarations used by the proof chain
+## Internal proof declarations
 
 - `exists_atomFree_radius` gives $r\in(a,b]$ with
   $\nu(\{x:|x|=r\})=0$ whenever $0\le a<b$.

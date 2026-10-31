@@ -26,7 +26,7 @@ For the block choice `B_n`, prior field `g`, and fallback field `f`, it states
 provided `g` agrees with the fallback field on coordinates of depth at least
 `n`.
 
-## Internal declaration
+## Internal proof declarations
 
 - `RootIndexed.glue_rankBlockChoice_eq_updateGeneration` is the displayed
   one-step gluing identity.

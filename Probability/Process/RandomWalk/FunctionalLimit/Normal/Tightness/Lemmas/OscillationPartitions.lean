@@ -20,7 +20,7 @@ oscillation-partition construction. Together with compact-range control this
 is the path-tightness input for the exponent-two functional limit. This
 specialization is used only by `Tightness/Basic` and is grouped here with its
 proof-specific local oscillation bounds.
-## Internal proof declaration
+## Internal proof declarations
 
 - `exists_eventually_oscillationPartitions_bound_of_gaussian`: for every
   $0<\eta<1$, there are positive gap and oscillation-tolerance sequences

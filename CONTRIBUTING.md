@@ -58,6 +58,13 @@ relational; include the essential assumptions in the description. For a
 definition, say what object it defines. Keep private proof helpers out of this
 list. Update it whenever a public declaration is added, removed, or renamed.
 
+An implementation module under `Lemmas/` should instead label its local
+proof-support inventory `## Internal proof declarations`. Give the exact
+declaration names and state their defining identity or mathematical role, with
+a formula for quantitative or relational statements. This section documents
+the proof chain; it does not make those declarations part of the reusable
+public API. Keep single-file tactical helpers private and out of the inventory.
+
 When a declaration formalizes or specializes an external result, cite the work
 by author and title, identify the exact theorem/lemma/proposition (and section
 or page when useful), and give its bibliography key or stable identifier (DOI,

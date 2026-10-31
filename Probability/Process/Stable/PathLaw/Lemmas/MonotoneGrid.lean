@@ -23,6 +23,42 @@ and the zero-start argument support
 `ProbabilityTheory.stableGridPositionLaws_of_strictGridPositionLaws`; the
 finite tuple operations are built from Mathlib's `Fin.insertNth` and
 `MeasurableEquiv.piFinSuccAbove` APIs.
+
+## Internal proof declarations
+
+The declarations below are in
+`ProbabilityTheory.StablePathLaw.MonotoneGrid.Lemmas`.
+
+- `insertZeroCoordinate`, `measurable_insertZeroCoordinate`,
+  `contractNth_insertZeroCoordinate`, and `partialSum_insertZeroCoordinate`
+  define insertion of a zero increment, prove measurability and recovery by
+  `Fin.contractNth`, and give
+  `Fin.partialSum (insertZeroCoordinate i x) =
+  insertRepeatedPosition i (Fin.partialSum x)`.
+- `insertRepeatedPosition`, `removeRepeatedPosition`,
+  `measurable_insertRepeatedPosition`, and
+  `measurable_removeRepeatedPosition` define measurable insertion and deletion
+  of an adjacent repeated coordinate. The identity
+  `removeRepeatedPosition_insertRepeatedPosition` states that
+  `removeRepeatedPosition i (insertRepeatedPosition i x) = x` always holds;
+  `insertRepeatedPosition_removeRepeatedPosition_of_diagonal` gives the
+  reverse identity when the adjacent coordinates agree.
+  `map_removeRepeatedPosition_insertRepeatedPosition` and
+  `map_insertRepeatedPosition_removeRepeatedPosition_of_ae_diagonal` give the
+  associated pushforward identities, including the reverse identity under an
+  almost-everywhere diagonal hypothesis.
+- `deleteRepeatedPointGrid`, `deleteRepeatedPointGrid_monotone`,
+  `deleteRepeatedPointGrid_start`,
+  `deleteRepeatedPointGrid_increment_interval`, and
+  `denseEvaluation_insertRepeatedPoint` delete one repeated grid point while
+  preserving the initial point and monotonicity, and identify the resulting
+  path evaluations and increment intervals.
+- `measure_pi_insertZeroCoordinate` states that replacing the inserted factor
+  by `Measure.dirac 0` and matching all other factors under `Fin.succAbove`
+  gives
+  `Measure.pi ν = (Measure.pi μ).map (insertZeroCoordinate i)`.
+- `ae_start_eq_zero_of_strictGridPositionLaws` states that the strict-grid
+  position-law identities imply $f(0)=0$ almost surely.
 -/
 
 section

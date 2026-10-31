@@ -15,6 +15,17 @@ This module contains proof support for
 inequality and deterministic-shift identity are the intermediate statements
 used to prove the public subadditive-array properties. Keep reusable
 branching-walk and random-walk results in their semantic modules instead.
+
+## Internal proof declarations
+
+- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Speed.infiniteSelectionBlockMinimum_subadditive`
+  states that, for a good offspring sequence, the leftmost endpoint satisfies
+  $M(s,a+b)\ge M(s,a)+M(s+a,b)$, where $M(s,\ell)$ is
+  `infiniteSelectionBlockMinimum` on the block starting at generation $s$.
+- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Speed.infiniteSelectionBlockMinimum_shift_covariant`
+  states that shifting the offspring sequence by $h$ and starting at $s$
+  gives the same endpoint as the original sequence on the block starting at
+  $h+s$.
 -/
 
 namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Speed

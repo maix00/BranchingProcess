@@ -24,6 +24,8 @@ This module contains the one-use pathwise induction used by the public
 restarted-coupling conclusions. Its declarations are imported by
 `Restarted/Coupling.lean` and do not form a separate result interface.
 
+## Internal proof declarations
+
 - `RootIndexed.restartedRealPositionSourceSlice_zero` proves that the initial
   slice equals the initial finite population.
 - `RootIndexed.restartedRealPositionMatchedPopulation_stage_stable` identifies

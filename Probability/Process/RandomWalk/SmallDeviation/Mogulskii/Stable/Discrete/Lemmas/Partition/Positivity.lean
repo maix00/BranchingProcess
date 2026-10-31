@@ -34,7 +34,7 @@ Write $Y_n^\xi=\operatorname{normalizedStepCadlagPathIcc}(s,n,\xi)$,
 $P_n=\mathbb P_\nu\{\xi:Y_n^\xi\in\operatorname{corridorSet}(U,L)\}$,
 and let $\rho_n$ be the stable small-deviation rate.
 
-## Internal proof declaration
+## Internal proof declarations
 
 - `eventually_iidSequenceLaw_normalizedStepCorridor_pos`: under the stable
   domain-of-attraction, process escape-rate, path tightness, start-admissibility,

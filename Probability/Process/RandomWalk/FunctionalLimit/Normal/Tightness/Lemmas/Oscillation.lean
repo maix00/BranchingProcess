@@ -19,7 +19,7 @@ hard-truncation profiles. This module supplies distribution-specific local
 probability bounds, while path compactness remains in the general functional
 limit layer. These one-use bounds serve only the Gaussian-domain
 oscillation-partition argument in `Tightness/Lemmas/OscillationPartitions`.
-## Declarations used by the tightness proof
+## Internal proof declarations
 
 For $\varepsilon>0$, this module sets
 $C_\varepsilon=1+4(1+1)/(\varepsilon/2)^2$ and transfers Gaussian-domain
