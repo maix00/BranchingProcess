@@ -78,10 +78,10 @@ structure FiniteBridgeGeometry
           (bridgeLength n) increment ∈ bridgeCell n i} ⊆ T n
 
 /-- An open bridge family of positive limiting mass supplies one common
-eventual lower bound for all cells in a finite family.  The last hypothesis
-identifies each source's finite-block event with the corresponding event of
-the normalized block path; it is where an application proves its concrete
-corridor geometry. -/
+eventual lower bound for all cells in a finite family. The last hypothesis
+identifies each finite increment-block event with the corresponding event of
+the normalized block path; an application proves its concrete corridor
+geometry there. -/
 theorem eventually_uniform_bridge_lower_bound_of_open_path_limit
     {ν : Measure ℝ} [IsProbabilityMeasure ν]
     {ι : Type*} (F : Finset ι) (bridgeLength : ℕ → ℕ)

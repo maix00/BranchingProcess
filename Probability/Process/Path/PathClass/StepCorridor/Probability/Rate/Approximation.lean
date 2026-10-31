@@ -13,8 +13,8 @@ import Mathlib.Topology.Order.Basic
 /-!
 # Approximation energies and the process theorem
 
-The `M₃` rate implies that energy is antitone under set inclusion.  The
-source's inner/outer approximation condition then forces both energy
+The `M₃` rate implies that energy is antitone under set inclusion. The
+class's inner/outer approximation condition then forces both energy
 sequences to converge to the same value.  Finally, fixed inner and outer
 approximants squeeze the probability rate of any measurable set in class `M`.
 The component `M₂` rate remains an explicit input through the `M₃` rate
@@ -371,8 +371,8 @@ theorem tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation
     have hEq := hUnique.unique hH.1 ⟨A, hLimits, rfl⟩
     rw [← hEq]
 
-/-- Theorem 2 for class `M`, with the probabilistic input stated at the
-source's single-corridor `M₂` level. Finite unions are handled here by the
+/-- Theorem 2 for class `M`, with the probabilistic input stated as the
+single-corridor `M₂` rate. Finite unions are handled here by the
 null-measurable `M₃` rate lemma, and the approximation squeeze gives the rate
 for `G`. The exact `M₂` corridor null-measurability and rate remain explicit
 hypotheses. -/

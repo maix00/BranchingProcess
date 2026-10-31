@@ -17,13 +17,40 @@ import Mathlib.Topology.Sequences
 
 ## Internal proof declarations
 
-This module contains the rational-grid events and compactness arguments used
-only to prove Borel measurability of the first-window times. The key identity
-expresses $\{T^s\le u\}$ as a countable rational-grid event when $u+1\le s$.
-These details formalize the proof of Lemma 2.1 in Erwin Bolthausen, *On a
+`ApproxNonnegativeWindowStart n r f` is the finite-grid condition
+\[
+  f(r)\le f\!\left(r+\frac{i+1}{n+1}\right)+\frac{1}{n+1}
+  \quad(0\le i<n),
+\]
+and `measurableSet_approxNonnegativeWindowStart` proves its path event is
+Borel. `HasApproxWindowBefore n u f` requires a rational $r$ with
+\[
+  r\le u+\frac{1}{n+1}
+  \quad\text{and}\quad
+  \operatorname{ApproxNonnegativeWindowStart}(n,r,f);
+\]
+`measurableSet_hasApproxWindowBefore` proves this event is Borel, and
+`hasApproxWindowBefore_of_nonnegativeWindowStart` obtains it from a true
+nonnegative window start $t\le u$.
+
+`HasApproxFirstWindowBefore u f` means
+$\forall n,\operatorname{HasApproxWindowBefore}(n,u,f)$, with its Borel
+measurability proved by `measurableSet_hasApproxFirstWindowBefore`.
+`hasApproxFirstWindowBefore_of_firstWindow_le` proves the forward implication
+from $T^s(f)\le u$, while
+`firstNonnegativeWindowStartUpTo_le_iff_hasApproxFirstWindowBefore` proves
+\[
+  T^s(f)\le u
+  \quad\Longleftrightarrow\quad
+  \operatorname{HasApproxFirstWindowBefore}(u,f),
+  \qquad u+1\le s.
+\]
+Finally, `measurableSet_firstNonnegativeWindowStartUpTo_le` proves that the
+finite-horizon lower level set is Borel. These declarations give the rational
+approximation and measurability steps in Lemma 2.1 of Erwin Bolthausen, *On a
 Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*,
-Ann. Probab. 4(3) (1976), 480--485, DOI 10.1214/aop/1176996098. They are not part
-of the reusable first-window-time interface.
+Ann. Probab. 4(3) (1976), 480--485, DOI 10.1214/aop/1176996098. They are not
+part of the reusable first-window-time interface.
 -/
 
 section

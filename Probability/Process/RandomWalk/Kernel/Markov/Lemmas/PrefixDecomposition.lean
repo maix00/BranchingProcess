@@ -14,17 +14,23 @@ import Probability.Process.RandomWalk.Path.Adapted.Filtration
 
 ## Internal proof declarations
 
-For increments $\xi_0,\xi_1,\ldots$ and initial state $x_0$, these lemmas
-identify the position recovered from the first $m$ coordinates and split a
-later position into its prefix and the following block:
+For increments $\xi_0,\xi_1,\ldots$ and initial state $x_0$,
+`positionFromPrefix` defines the position recovered from the first $m$
+coordinates:
 \[
-  X_m=x_0+\sum_{j=0}^{m-1}\xi_j,
-  \qquad
-  X_n=X_m+\sum_{j=m}^{n-1}\xi_j\quad(m\le n).
+  \operatorname{positionFromPrefix}(x_0,\xi_0,\ldots,\xi_{m-1})
+  =x_0+\sum_{j=0}^{m-1}\xi_j.
 \]
-The finite-coordinate measurability statement and these identities support
-only `ProbabilityTheory.RandomWalk.iidSequenceLaw_isMarkovChain` in the
-sibling `Basic.lean` module.
+`positionFromPrefix_measurable` proves its finite-coordinate measurability,
+and `positionFromPrefix_blockCoordinates_zero` identifies it with
+`positionProcess`. The block decomposition
+`positionProcess_eq_prefix_add_blockSum` proves
+\[
+  X_n=X_m+\sum_{j=m}^{n-1}\xi_j\qquad(m\le n).
+\]
+These declarations support only
+`ProbabilityTheory.RandomWalk.iidSequenceLaw_isMarkovChain` in the sibling
+`Basic.lean` module.
 -/
 
 open MeasureTheory

@@ -45,6 +45,10 @@ The parent `FiniteSlot/Coupling.lean` uses the following internal interfaces:
 - `finiteSlotLevelRoots S ω n u := finiteSlotDecode S ω (List.ofFn u)` is
   measurable from the generation-$n$ field, has countable range, has
   measurable fibers, has depth $n$, and is injective in $u$.
+  These properties are stated by `finiteSlotLevelRoots_measurable`,
+  `finiteSlotLevelRoots_range_countable`,
+  `finiteSlotLevelRoots_fiber_measurable`, `finiteSlotLevelRoots_depth`, and
+  `finiteSlotLevelRoots_injective`, respectively.
 - `finiteSlotLevelSubtreeVector_law` identifies the joint law of the source
   subtrees rooted at all binary addresses of length $n$ with the product law
   `Measure.infinitePi (fun _ : (Fin n → Fin 2) => offspringFieldLaw μ)`.

@@ -34,7 +34,7 @@ public import Probability.Process.Stable.SmallDeviation.EscapeRate.Corridor
   \(a^\alpha\log\mathbb P(f(0)=0,\;a\ell<f(t)<au\ \forall t)
   \to ((u-\ell)/2)^{-\alpha}C\) as \(a\downarrow0\).
 
-The source's pointwise-strict corridor need not be open in `J₁`: a càdlàg
+The pointwise-strict corridor event need not be open in `J₁`: a càdlàg
 path can approach a boundary through a left limit without attaining it.  For
 constant finite boundaries, its stable small-width rate can nevertheless be
 obtained by squeezing the exact event between narrower and wider uniformly
@@ -51,7 +51,7 @@ open scoped ENNReal NNReal Topology
 namespace ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability
 
 /-- The exact pointwise-strict corridor between finite constant boundaries,
-with the source's pinned-zero starting condition. -/
+with the pinned-zero starting condition. -/
 def constantCorridorEvent (lower upper : ℝ) : Set (CadlagPath unitInterval ℝ) :=
   {f | f ⊥ = 0 ∧ ∀ t, lower < f t ∧ f t < upper}
 

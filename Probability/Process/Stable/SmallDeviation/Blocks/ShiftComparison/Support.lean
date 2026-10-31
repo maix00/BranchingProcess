@@ -50,9 +50,10 @@ theorem measure_unitEntrance_pos_of_linearPath_mem_support
   · constructor <;> linarith
   · exact hsupport
 
-/-- The open entrance event used in the proof is contained in the source's
-left-open, right-closed `Y` event. Thus path support also gives positivity
-for the exact source event, without identifying the two events. -/
+/-- The open entrance event is contained in the left-open, right-closed
+endpoint-window event `endpointWindow ⊤ (c-b-ε) (c-b+ε)` intersected with the
+open range corridor. Thus path support gives positivity for this exact event
+without identifying the two events. -/
 theorem measure_unitEntrance_source_pos_of_linearPath_mem_support
     (Q : Measure (CadlagPath unitInterval ℝ))
     (b c ε : ℝ) (hb : -1 < b ∧ b < 1) (hc : -1 < c ∧ c < 1)

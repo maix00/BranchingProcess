@@ -269,9 +269,9 @@ theorem sum_relativeCommonPartitionTubeRate_eq
 
 /-- The logarithmic rate of a positively rescaled step corridor is eventually
 bounded above by the sum of the stable cell escape rates, provided the
-corridor probability is eventually positive. The remaining step for the
-source's process theorem is the endpoint-core lower bound, which supplies
-this positivity and the matching lower rate. -/
+corridor probability is eventually positive. Completing the stable-process
+theorem requires the endpoint-core lower bound, which supplies this positivity
+and the matching lower rate. -/
 theorem HasStableProcessEscapeRate.eventually_scalePath_corridor_logRate_le
     {α C : ℝ} {μ : Measure ℝ}
     {P : Measure (CadlagPath unitInterval ℝ)} [IsProbabilityMeasure P]

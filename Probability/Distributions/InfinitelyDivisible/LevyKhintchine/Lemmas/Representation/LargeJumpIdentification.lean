@@ -28,10 +28,27 @@ import Mathlib.MeasureTheory.Integral.IntegrableOn
 
 ## Internal proof declarations
 
-Smooth cutoff functions approximate the indicator of `{x | r ≤ |x|}`. The resulting
-`scaled_largeJumpSet_charFun_tendsto` identifies the limit of
-`t⁻¹ ∫_{r≤|x|} exp(iξx) dμ_t` with the corresponding integral against the extracted Lévy
-measure. The band and small-ball second-moment estimates control the truncation boundaries.
+Smooth cutoff functions approximate the indicator of $\{x:r\le|x|\}$. The
+resulting `scaled_largeJumpSet_charFun_tendsto` identifies the limit of
+\[
+  t^{-1}\int_{r\le|x|}e^{i\xi x}\,d\mu_t(x)
+\]
+with the corresponding integral against the extracted Lévy measure. The
+internal declarations used in the truncation argument are:
+
+- `scaled_largeJumpSet_integral_tendsto` proves convergence of
+  $t_k^{-1}\int_{|x|\ge\rho}g(x)\,d\mu_{t_k}$ to
+  $\int_{|x|\ge\rho}g(x)\,d\nu$ for bounded continuous $g$ when
+  $\nu\{|x|=\rho\}=0$.
+- `scaled_band_integral_tendsto` proves the corresponding convergence on
+  $\{x:\delta\le|x|<\rho\}$ when both boundary spheres have zero $\nu$-mass.
+- `sq_integrableOn_ball_levy` proves
+  $x\mapsto x^2\in L^1(\{|x|<r\},\nu)$ for every Lévy measure $\nu$.
+- `remainder_integrableOn_ball_levy` proves local integrability of the cubic
+  Taylor remainder on $\{|x|<r\}$ for $r\le1$.
+- `smallBall_second_moment_nu_le` proves
+  $\int_{|x|<r}x^2\,d\nu\le\sigma_{\mathrm{sq},r}$ from convergence of the
+  scaled small-ball second moments and the jump-integral convergence.
 -/
 
 section

@@ -26,8 +26,8 @@ Writing $S_j=\sum_{k<j}\xi_k$, these events are
  E_n=\left\{\xi:|S_j|<(1+\varepsilon)s\ (1\leq j\leq n),\quad
              \frac{S_n}{s}\in(c,b]\right\},
 \]
-where $s=\texttt{scale}$. The second event uses the source's endpoint
-convention $\mathrm{Set.Ioc}(c,b)=(c,b]$.
+where $s=\texttt{scale}$. The endpoint convention in equation (34) of
+Theorem 3, Section 4, is $\mathrm{Set.Ioc}(c,b)=(c,b]$.
 
 These events are used in equation (34), Theorem 3, Section 4 of A. A.
 Mogul'skii, “Small deviations in the sample function space,” *Teoriya

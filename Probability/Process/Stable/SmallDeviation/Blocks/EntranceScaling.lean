@@ -313,8 +313,8 @@ theorem IsStableLevyProcess.measure_fullSegmentCorridorIocReturn_scale
   simpa [scale] using hs.symm
 
 /-- At time `a ^ α`, the complete-path corridor probability with the
-source's left-open, right-closed endpoint convention equals its unit-time
-unscaled value. -/
+left-open, right-closed endpoint convention in the event definition equals
+its unit-time unscaled value. -/
 theorem IsStableLevyProcess.shortEntrance_fullSegmentCorridorIocReturn_probability
     {Ω : Type*} [MeasurableSpace Ω]
     {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}

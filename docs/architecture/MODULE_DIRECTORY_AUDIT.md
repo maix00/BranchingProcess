@@ -27673,3 +27673,22 @@ current Lean layer supplies the required state/time rescaling and unit-interval
 path law, but this convergence theorem, the $D(0,1)$ terminal convention, and
 the exact comparisons (39)--(44) remain to be formalized. No LaTeX source was
 changed.
+
+## Internal proof-declaration inventories (2026-10-31)
+
+A text-level inventory of proof-support module headers found 25
+module-visible declaration names missing from their exact-name lists, across
+11 modules. Their headers now state the mathematical definitions and key
+identities or estimates alongside the declaration names. The corrections
+cover the finite-rank ordering proof, Bessel path support, interval-cover
+construction, staircase exponential costs, Lévy--Khintchine truncation,
+Kingman companion envelopes, finite-prefix position decomposition,
+drift-removed entrance events, Bolthausen's rational-grid approximation,
+finite-slot address coding, and the cross-child continuation bounds.
+
+The follow-up text scan checked 504 declaration candidates across 186
+proof-support modules and found each name in its module header. The per-module
+ledger records these updated inventories. The affected Lean modules built
+successfully with the pinned toolchain; these edits changed module
+documentation only. The same pass corrected one unquoted comma in the CSV
+ledger; parsing now returns all 1,634 rows with no overflow fields.

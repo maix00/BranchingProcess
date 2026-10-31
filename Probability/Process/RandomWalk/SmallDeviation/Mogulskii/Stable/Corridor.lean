@@ -167,8 +167,8 @@ theorem limsup_iidSequenceLaw_blockOscillationLT_le_stableProcessTube
   change atTop.limsup finiteBlockProbability ≤ _
   exact hlimsup.trans hstable'
 
-/-- The source's independent-block inequality and the fixed-parameter stable
-path limit give an eventual exponential upper bound for an open horizontal
+/-- The independent-block inequality and the fixed-parameter stable path
+limit give an eventual exponential upper bound for an open horizontal
 tube. The one-block base may be any strict upper bound on the slightly wider
 stable range-tube probability. -/
 theorem eventually_openHorizontalTubeProbability_le_pow_of_blockPathLimit

@@ -206,10 +206,9 @@ theorem tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_i
     ⟨C, hEscape, hResult⟩
   exact ⟨C, hEscape, hResult⟩
 
-/-- Stable-domain Mogul'skii theorem at index one under the source's
-additional sine-centering condition. This is a domain-of-attraction
-consequence of Theorem 1, equation (15), of A. A. Mogul'skii, “Small
-deviations in the sample function space,” *Teoriya Veroyatnostei i ee
+/-- Stable-domain Mogul'skii theorem at index one under the sine-centering
+condition (15). It follows from Theorem 1, equation (15), of A. A. Mogul'skii,
+“Small deviations in the sample function space,” *Teoriya Veroyatnostei i ee
 Primeneniya* 19(4) (1974), 755--765; English translation, “Small Deviations
 in a Space of Trajectories,” *Theory of Probability and Its Applications*
 19(4) (1975), 726--736, DOI 10.1137/1119081. -/

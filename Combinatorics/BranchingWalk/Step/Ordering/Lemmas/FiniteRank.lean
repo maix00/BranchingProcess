@@ -22,6 +22,8 @@ This module contains proof support for
   pair at `j`; `rank ξ S j = (below ξ S j).card`.
 - `mem_below`, `below_subset_of_below`, and `below_ssubset_of_below` describe
   membership and the strict growth of predecessor sets.
+- `not_mem_below_self` states that a child is not a strict predecessor of
+  itself.
 - `rank_injOn`, `rank_lt_card`, and `image_rank_eq_range` show that on finite
   support the rank maps children bijectively to `Finset.range S.card`.
 - `exists_some_le_of_rank_le` shows that rank order implies mark order.

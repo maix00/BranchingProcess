@@ -95,7 +95,7 @@ lemma sourceBridgeEntrance_pos_of_cdf
         (-1 - x) (1 - x) (y - x - radius) (y - x + radius))) :
     0 < Q (fullSegmentCorridorReturnEvent X 0 1
       (-1 - x) (1 - x) (y - x - radius) (y - x + radius)) := by
-  -- The source's fixed unit-time entrance estimate. The `α < 1` case is
+  -- The fixed unit-time entrance estimate. The `α < 1` case is
   -- currently an explicit input because its Poisson construction lives in a
   -- legacy-import-only module.
   by_cases hα : 1 < α
