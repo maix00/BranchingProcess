@@ -27904,3 +27904,27 @@ Applications* 19(4) (1975), and corrected the Jacod--Shiryaev Springer DOI
 link to eBook DOI 10.1007/978-3-662-05265-5. The source formula and these
 Lean documentation changes are checked by the focused Mogul'skii theorem-entry
 build.
+
+## Current repository-wide audit status (2026-11-01)
+
+Recomputed the inventory against the current production Lean tree. It contains
+1,639 modules, with an exact path match to all 1,639 rows in
+`MODULE_AUDIT_LEDGER.csv`; each row records `structural_scan=pass`,
+`semantic_review=reviewed`, and `lake_build=pass`. The current structural scan
+found zero same-level file/directory stem collisions, parent-directory stem
+repeats, `Lemmas.lean`/`Lemmas/` pairs, directories with more than eight direct
+modules, generic paper/thesis citation placeholders, or disallowed private
+declaration names. The current production tree also has no directory named
+`Source/`.
+
+This closes the current repository-wide module placement, inventory, and
+header/reference-placeholder audit. It describes the current tree; any new or
+moved module must be added to the ledger and reviewed under the rules in
+`CONTRIBUTING.md`. The ledger's `lake_build` column records the reviewed build
+status for each module, while the latest commit hook separately completed its
+4,683-check package build.
+
+The audit completion is distinct from completion of the thesis formalization.
+Open theorem applications remain tracked in `FORMALIZATION_CHECKLIST.md`, and
+Mogul'skii's continuous-time Theorem 4 still requires the process-level limit
+and scaling argument recorded in `docs/MOGULSKII_PROCESS_THEOREM_4_PROOF_ROUTE.md`.
