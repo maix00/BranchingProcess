@@ -24,6 +24,9 @@ public import Topology.Order.UnitInterval.Time
   càdlàg path realization.
 - `ProbabilityTheory.IsLevyProcess.unitIntervalPathLaw_finite_eval_hasLaw`
   proves the joint-law identity for every finite family of evaluation times.
+- `ProbabilityTheory.IsLevyProcess.unitIntervalPathLaw_smul` identifies the
+  law of $t\mapsto qX_{Tt}$ as the pushforward of the law of $t\mapsto X_{Tt}$
+  by the path map $f\mapsto qf$.
 
 The construction is the real-valued Lévy-process specialization of the
 canonical rational-coordinate realization in
@@ -104,6 +107,35 @@ theorem unitIntervalPathLaw_finite_eval_hasLaw
         evaluate) P := by
     simpa only [Function.comp_def, evaluate] using hevaluationLaw.comp hpath
   simpa [process] using hprocessLaw.congr heval.symm
+
+/-- Spatially scaling a Lévy process scales its complete unit-interval path
+law by the corresponding deterministic map on càdlàg paths. -/
+theorem unitIntervalPathLaw_smul
+    (h : IsLevyProcess X P) (horizon : ℝ≥0) (q : ℝ) :
+    (((h.map (AddMonoidHom.mulLeft q)
+        (by change Measurable (fun x : ℝ => q * x); fun_prop)
+        (by change Continuous (fun x : ℝ => q * x); fun_prop)).unitIntervalPathLaw
+        horizon : ProbabilityMeasure (CadlagPath unitInterval ℝ)) :
+      Measure (CadlagPath unitInterval ℝ)) =
+      ((h.unitIntervalPathLaw horizon : Measure (CadlagPath unitInterval ℝ)).map
+        (Skorokhod.scalePath q)) := by
+  let process : unitInterval → Ω → ℝ :=
+    fun t ω => X (horizon * unitInterval.toNNReal t) ω
+  have hcoordinates (t : unitInterval) : AEMeasurable (process t) P := by
+    exact h.aemeasurable_eval _
+  have htimeMonotone :
+      Monotone (fun t : unitInterval => horizon * unitInterval.toNNReal t) := by
+    intro s t hst
+    exact mul_le_mul_of_nonneg_left hst horizon.2
+  have htimeContinuous :
+      Continuous (fun t : unitInterval => horizon * unitInterval.toNNReal t) := by
+    exact continuous_const.mul unitInterval.toNNReal_continuous
+  have hcadlag : ∀ᵐ ω ∂P, IsCadlag (fun t : unitInterval => process t ω) := by
+    filter_upwards [h.ae_cadlag] with ω hω
+    exact hω.comp_monotone_continuous htimeMonotone htimeContinuous
+  simpa [process, IsLevyProcess.unitIntervalPathLaw,
+    MeasureTheory.ProbabilityMeasure.coe_mk] using
+      Process.Path.Cadlag.pathLaw_smul process hcoordinates hcadlag q
 
 end ProbabilityTheory.IsLevyProcess
 
