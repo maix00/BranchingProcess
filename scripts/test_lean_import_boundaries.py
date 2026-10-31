@@ -53,7 +53,7 @@ class ImportBoundaryCheckTests(unittest.TestCase):
 
     def test_subtree_rule_and_import_parser(self):
         self.assertIsNotNone(imports.forbidden_import_reason(
-            "Probability.Process.Path.Representation.Skorokhod.Corridor.Support.Dense"
+            "Probability.Process.Path.Skorokhod.Corridor.Support.Dense"
         ))
         self.assertEqual(
             imports.imported_modules(

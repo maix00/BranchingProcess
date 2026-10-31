@@ -27422,4 +27422,8 @@ the workflow target list accordingly. A source-path check confirms that all
 49 explicit `lake build` targets in the workflow resolve to current Lean
 modules. The remote package-build step passed on the prior workflow run; its
 post-build target check failed on these stale paths, so the updated workflow
-must run before the pull request is merge-ready.
+must run before the pull request is merge-ready. The import-boundary checker
+and its test fixture also retained the former
+`Probability.Process.Path.Representation.Skorokhod.Corridor.Support` prefix;
+both now guard the current `Probability.Process.Path.Skorokhod.Corridor.Support`
+module family.

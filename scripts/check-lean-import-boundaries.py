@@ -25,7 +25,7 @@ FORBIDDEN_PREFIXES = (
     "Probability.Process.Stable.SmallDeviation.Blocks.ShiftComparison",
     "Probability.Process.Stable.SmallDeviation.Blocks.Lower.Feedback",
     "Probability.Process.Stable.SmallDeviation.Blocks.Lower.Entrance.PathSupport",
-    "Probability.Process.Path.Representation.Skorokhod.Corridor.Support",
+    "Probability.Process.Path.Skorokhod.Corridor.Support",
 )
 FEEDBACK_MODULE_STEM = (
     "Probability.Process.Stable.SmallDeviation.Blocks.Lower.Feedback"
