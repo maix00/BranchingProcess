@@ -27517,3 +27517,15 @@ generation many-to-one identities, càdlàg-section measurability, and
 oscillation-partition pullback estimates. Checked each formula against its
 Lean declaration type. These are documentation-only changes; the source
 inventory and ownership ledger remain at 1,631 modules.
+
+## Bibliographic wording follow-up (2026-10-31)
+
+Reviewed production headers and theorem docstrings that introduced
+bibliographic references with the generic phrase “the source.” Reworded these
+attributions to identify the cited mathematical object: Mogul'skii's classes
+$M_1$, $M_2$, and $M_3$ in Section 1; Mogul'skii's Lemma 1(I), equations
+(18)--(20), and Theorems 1 and 3 with their sections and pages; Bauer,
+Godrèche, and Luck's equation (A.6); and Sato's Theorem 8.1. Complete
+publication details and stable identifiers remain alongside the statements.
+Other uses of `source` refer to mathematical objects such as a source path,
+source population, or source increment law. No declarations or proofs changed.

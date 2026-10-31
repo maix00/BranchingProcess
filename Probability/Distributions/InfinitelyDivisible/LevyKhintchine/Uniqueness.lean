@@ -21,15 +21,16 @@ import Mathlib.Analysis.Complex.CoveringMap
 # Uniqueness of the Lévy–Khintchine triple: the smeared canonical measure
 
 This file begins Part B of the Lévy–Khintchine programme: the triple `(b, σ², ν)` is
-determined by the characteristic exponent. The route follows Sato (Theorem 8.1): the
+determined by the characteristic exponent. The proof forms the
 *smeared exponent*
 `g(ξ) := ψ(ξ) − ½ ∫_{[-1,1]} ψ(ξ + u) du`
 is the characteristic function of a **finite** measure `ρ` on `ℝ`, from which `σ²` is read
 off as an atom and `ν` by untilting on `{0}ᶜ`.
 
-This argument follows Sato's uniqueness route: smearing the exponent gives the characteristic
-function of a finite measure; the Gaussian variance is read from its atom at zero, and the Lévy
-measure is recovered by removing the density `1 - Real.sinc x`. The source is Ken-iti Sato,
+Smearing the exponent gives the characteristic function of a finite measure;
+the Gaussian variance is read from its atom at zero, and the Lévy measure is
+recovered by removing the density `1 - Real.sinc x`. The corresponding result
+is Ken-iti Sato,
 *Lévy Processes and Infinitely Divisible Distributions*, Cambridge Studies in Advanced
 Mathematics 68, Cambridge University Press, 1999, Theorem 8.1 (ISBN 978-0-521-55302-5).
 

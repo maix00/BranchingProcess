@@ -14,15 +14,13 @@ import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Scale.Rate
 
 /-! # Endpoint-corridor decay for the equation-(34) proof
 
-This is the terminal endpoint estimate used by the public logarithmic
-comparison in the Bridge terminal-left decay module. It proves that the
-widened endpoint-corridor probability tends to zero from strict stable
-attraction, slow variation, and the two-scale condition. The source is
-A. A. Mogul'skii, “Small deviations in the sample function space,”
-*Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974), 755–765; English
-translation, “Small Deviations in a Space of Trajectories,” *Theory of
-Probability and Its Applications* 19(4) (1975), 726–736, DOI
-10.1137/1119081, Theorem 3, Section 4.
+The widened endpoint-corridor probability tends to zero under strict stable
+attraction, slow variation, and the two-scale condition. This is the terminal
+endpoint step used in A. A. Mogul'skii, Theorem 3, Section 4, p. 764, “Small
+deviations in the sample function space,” *Teoriya Veroyatnostei i ee
+Primeneniya* 19(4) (1974), 755–765; English translation, “Small Deviations
+in a Space of Trajectories,” *Theory of Probability and Its Applications*
+19(4) (1975), 726–736, DOI 10.1137/1119081.
 
 ## Internal proof declarations
 

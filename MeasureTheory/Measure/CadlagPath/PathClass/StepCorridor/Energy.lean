@@ -14,7 +14,8 @@ public import MeasureTheory.MeasurableSpace.CadlagPath.PathClass.StepCorridor.Bo
 # Corridor energy and finite unions
 
 This file defines an integrated reciprocal-power cost for extended-real step
-corridors and its minimum over a finite union. The source is A. A. Mogul'skii,
+corridors and its minimum over a finite union, corresponding to the $H_\alpha$
+cost and the classes $M_2$ and $M_3$ in Section 1 of A. A. Mogul'skii,
 “Small deviations in the sample function space,” *Teoriya Veroyatnostei i ee
 Primeneniya* 19(4) (1974), 755–765; English translation, “Small Deviations in
 a Space of Trajectories,” *Theory of Probability and Its Applications* 19(4)

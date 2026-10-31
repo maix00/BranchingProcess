@@ -27,15 +27,12 @@ Write $a_n$ for the corridor scale and $b_n$ for the stable normalization.
   rules for this two-scale condition.
 
 This two-scale condition is the deterministic scale assumption in A. A.
-Mogul'skii, *Small Deviations in a Space of Trajectories*, Theorem 3,
-Section 4. Stable attraction and the one-block corridor estimate remain
-separate hypotheses.
-
-The source is A. A. Mogul'skii, “Small deviations in the sample function
-space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974), 755--765;
-English translation, “Small Deviations in a Space of Trajectories,” *Theory
-of Probability and Its Applications* 19(4) (1975), 726--736, DOI
-10.1137/1119081.
+Mogul'skii, Theorem 3, Section 4, of “Small deviations in the sample
+function space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974),
+755--765; English translation, “Small Deviations in a Space of
+Trajectories,” *Theory of Probability and Its Applications* 19(4) (1975),
+726--736, DOI 10.1137/1119081. Stable attraction and the one-block corridor
+estimate remain separate hypotheses.
 -/
 
 @[expose] public section

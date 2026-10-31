@@ -20,7 +20,7 @@ The terminal-left path records the partial sums through `n - 1`. This file trans
 the exact terminal-left normalized `M₂` corridor rates to the general `M` class using
 the shared finite-union and approximation theorems.
 
-The source rate is A. A. Mogul'skii, Theorem 1, equation (15),
+The path-class rate formalizes A. A. Mogul'skii's Theorem 1, equation (15),
 “Small deviations in the sample function space,” *Teoriya Veroyatnostei i ee
 Primeneniya* 19(4) (1974), 755--765; English translation, “Small Deviations
 in a Space of Trajectories,” *Theory of Probability and Its Applications*

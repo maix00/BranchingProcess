@@ -20,8 +20,8 @@ approximants squeeze the probability rate of any measurable set in class `M`.
 The component `M₂` rate remains an explicit input through the `M₃` rate
 hypothesis.
 
-For the corridor rate supplied to this abstract squeeze, the source result is
-A. A. Mogul'skii, Theorem 3, Section 4, p. 764, “Small deviations in the
+For the corridor rate supplied to this abstract squeeze, the cited result is
+A. A. Mogul'skii's Theorem 3, Section 4, p. 764, “Small deviations in the
 sample function space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4)
 (1974), 755--765; English translation, “Small Deviations in a Space of
 Trajectories,” *Theory of Probability and Its Applications* 19(4) (1975),

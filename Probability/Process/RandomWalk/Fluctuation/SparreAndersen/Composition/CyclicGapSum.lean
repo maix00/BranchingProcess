@@ -38,10 +38,11 @@ the calculation for a one-dimensional random walk. Measurability of
 subtraction is not needed because each rotated event is the preimage of
 ordinary survival under a coordinate permutation.
 
-The source is M. Bauer, C. Godrèche, and J.-M. Luck, “Statistics of
-persistent events in the binomial random walk: Will the drunken sailor hit
-the sober man?”, Appendix A, equations (A.3)--(A.6), *Journal of Statistical
-Physics* 96 (1999), 963--1019, DOI 10.1023/A:1004636216365,
+This formalizes equation (A.6) of M. Bauer, C. Godrèche, and J.-M. Luck,
+“Statistics of persistent events in the binomial random walk: Will the
+drunken sailor hit the sober man?”, Appendix A, equations (A.3)--(A.6),
+*Journal of Statistical Physics* 96 (1999), 963--1019,
+DOI 10.1023/A:1004636216365,
 arXiv:cond-mat/9905252. The extension from real increments to ordered
 measurable additive groups follows from the hypotheses used in the finite
 partial-sum and cyclic-gap arguments.

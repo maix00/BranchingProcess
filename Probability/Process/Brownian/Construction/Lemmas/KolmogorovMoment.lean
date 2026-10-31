@@ -26,8 +26,8 @@ import Mathlib.Probability.Process.Kolmogorov
   $\mathbb E|Y_t-Y_s|^4\le M|t-s|^2$ for one finite constant $M$.
 
 This one-use fourth-moment specialization supplies the Kolmogorov input for
-`Construction/PreBrownianModification.lean`. The more general BrownianMotion
-source theorem is cited below; its module currently requires upstream
+`Construction/PreBrownianModification.lean`. The more general theorem of
+Degenne et al. is cited below; its module currently requires upstream
 compatibility repairs against the pinned Mathlib revision.
 
 This is the $n=2$ case of the moment step in Rémy Degenne et al.,

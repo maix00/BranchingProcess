@@ -147,7 +147,7 @@ estimate is in
 killed-kernel and return-kernel interfaces remain in
 `Probability/Process/RandomWalk/Kernel/Killed/`.
 
-In the source notation, $F$ is the law of one increment and
+In Mogul'skii's notation, $F$ is the law of one increment and
 $L^*(u)=u^{\alpha-2}\int_{-u}^{u}x^2\,F(dx)$; the norming is chosen so that
 $B^*(B(n))\sim n$, where $B^*(u)=u^\alpha/L^*(u)$. For a finite step
 corridor with upper and lower boundaries $L_1$ and $L_2$,

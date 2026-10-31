@@ -17,7 +17,8 @@ import Mathlib.Topology.Semicontinuity.Michael
 
 This file defines strict corridors between finite right-continuous step
 boundaries and the subclass that contains a continuous path. These are
-deterministic subsets of path space. The source is A. A. Mogul'skii,
+deterministic subsets of path space, corresponding to the classes $M_1$ and
+$M_2$ in Section 1 of A. A. Mogul'skii,
 “Small deviations in the sample function space,” *Teoriya Veroyatnostei i ee
 Primeneniya* 19(4) (1974), 755–765; English translation, “Small Deviations in
 a Space of Trajectories,” *Theory of Probability and Its Applications* 19(4)

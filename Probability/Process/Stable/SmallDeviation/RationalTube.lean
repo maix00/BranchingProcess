@@ -175,7 +175,7 @@ theorem IsStableLevyProcess.rationalTube_timeSpaceScale_inv
   simp only [mul_div_cancel_right₀ _ hs] at hscale
   exact hscale.symm
 
-/-- The source's stable scaling identity, specialized to a small tube of
+/-- The stable scaling identity, specialized to a small tube of
 half-width `a`: its probability on unit time equals that of the unit tube on
 the long horizon `a ^ (-α)`. This is the exact scaling step used before the
 escape-rate limit in Mogul'skii's stable-process argument. -/
@@ -234,14 +234,13 @@ theorem IsStableLevyProcess.rationalTube_smallLogRate_eq_longLogRate
   simp only [div_eq_mul_inv]
   ring
 
-/-- Once the long-time escape rate has been established, the stable scaling
-change of variables transfers it to the small-width limit in Mogul'skii's
-Lemma 1(I), equations (18)--(20). The source is A. A. Mogul'skii, “Small
-deviations in the sample function space,” *Teoriya Veroyatnostei i ee
-Primeneniya* 19(4) (1974), 755–765; English translation, “Small Deviations in
-a Space of Trajectories,” *Theory of Probability and Its Applications* 19(4)
-(1975), 726–736, DOI 10.1137/1119081. This theorem performs the exact
-reparameterization. -/
+/-- Once the long-time escape rate has been established, the scaling step in
+A. A. Mogul'skii's Lemma 1(I), equations (18)--(20), transfers it to the
+small-width limit. The result is in “Small deviations in the sample function
+space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974), 755–765;
+English translation, “Small Deviations in a Space of Trajectories,” *Theory
+of Probability and Its Applications* 19(4) (1975), 726–736, DOI
+10.1137/1119081. This theorem performs the exact reparameterization. -/
 theorem IsStableLevyProcess.tendsto_smallLogRate_of_tendsto_longLogRate
     {α C : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
     {P : Measure Ω} [IsProbabilityMeasure P]

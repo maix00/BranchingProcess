@@ -27,8 +27,9 @@ import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Rate.Partition.Fi
 - `exists_lowerRate_horizontalTubeProbability_of_threePointReferences`: assemble the three-point return cover into a strict-interior horizontal-tube logarithmic lower rate.
 
 
-These declarations form a one-use proof stage for StrictInterior.lean.
-The cited source is A. A. Mogul'skii, “Small deviations in the sample function
+These declarations form a one-use proof stage for `StrictInterior.lean` in
+the strict horizontal-tube lower-rate argument of A. A. Mogul'skii,
+Theorem 3, Section 4, p. 764, “Small deviations in the sample function
 space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974), 755--765;
 English translation, “Small Deviations in a Space of Trajectories,” *Theory
 of Probability and Its Applications* 19(4) (1975), 726--736, DOI

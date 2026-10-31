@@ -29,7 +29,13 @@ $[u,v]\subset(0,1)$ eventually.
 - `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.centeredFiniteVariance_endpointWindowProbabilityRate_realWidth`: for real widths $D\to\infty$ and integer horizons $L(D)\to\infty$ with $D^2/L(D)\to0$, $\frac{D^2}{L(D)}\log q_\nu(a,D,L(D),v_1(D),v_2(D))\to-\frac{\pi^2}{2}\sigma^2$.
 - `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.centeredFiniteVariance_endpointWindowProbabilityRate`: for integer widths $\Delta\to\infty$ and a superquadratic integer horizon $L(\Delta)$, $\frac{\Delta^2}{L(\Delta)}\log q_\nu(a,\Delta,L(\Delta),v_1(\Delta),v_2(\Delta))\to-\frac{\pi^2}{2}\sigma^2$.
 
-These results formalize Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.1(ii). The terminal-left path rate is A. A. Mogul'skii, Theorem 3, Section 4, p. 764, in “Small deviations in the sample function space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974), 755–765; English translation, “Small Deviations in a Space of Trajectories,” *Theory of Probability and Its Applications* 19(4) (1975), 726–736, DOI 10.1137/1119081.
+These results formalize Wang Yiyang, *Asymptotic Speed of the N-Branching
+Random Walk with Infinite Offspring*, Chapter 3, Lemma 3.1(ii). Their
+terminal-left rate input is A. A. Mogul'skii's Theorem 3, Section 4, p. 764,
+in “Small deviations in the sample function space,” *Teoriya Veroyatnostei i
+ee Primeneniya* 19(4) (1974), 755–765; English translation, “Small Deviations
+in a Space of Trajectories,” *Theory of Probability and Its Applications*
+19(4) (1975), 726–736, DOI 10.1137/1119081.
 -/
 
 open Filter MeasureTheory ProbabilityTheory
@@ -208,9 +214,9 @@ theorem centeredFiniteVariance_endpointWindowProbabilityRate_along
 For positive real widths $D_k\to\infty$, time scales $t_k$ with
 $D_k^2/t_k\to0$, and a terminal window eventually containing a fixed
 $[u,v]\subset(0,1)$, the endpoint-window logarithmic rate is
-$-\pi^2\sigma^2/2$. The proof uses the same terminal-jump source
-corridor and upper horizontal-tube squeeze as the integer-width form.
-The source rate is A. A. Mogul'skii, Theorem 3, Section 4, p. 764, in “Small
+$-\pi^2\sigma^2/2$. The proof uses the same terminal-jump corridor event and
+upper horizontal-tube squeeze as the integer-width form. Its terminal-left
+rate input is A. A. Mogul'skii's Theorem 3, Section 4, p. 764, in “Small
 deviations in the sample function space,” *Teoriya Veroyatnostei i ee
 Primeneniya* 19(4) (1974), 755–765; English translation, “Small Deviations in
 a Space of Trajectories,” *Theory of Probability and Its Applications* 19(4)
