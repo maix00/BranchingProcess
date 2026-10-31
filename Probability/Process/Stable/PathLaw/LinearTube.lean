@@ -445,8 +445,15 @@ theorem IsStableClockProcessLaw.measure_linearPathBall_pos
   have hpos := hB.measure_pathLaw_linearBall_pos slope radius hradius
   have hLawEq :=
     iidUnitPathBlockProcess_isStableLevyProcess_unitIntervalPathLaw_eq hP
-  change 0 < (hB.unitIntervalPathLaw : Measure (CadlagPath unitInterval ℝ))
-    (Metric.ball (Skorokhod.linearPath slope) radius) at hpos
+  have hPathLawEq :
+      Process.Path.Cadlag.pathLaw (iidUnitPathBlockLaw P)
+        (fun t ω => iidUnitPathBlockProcess ω (unitInterval.toNNReal t))
+        (fun t => (measurable_iidUnitPathBlockProcess_eval P
+          (unitInterval.toNNReal t)).aemeasurable) =
+      (hB.unitIntervalPathLaw : Measure (CadlagPath unitInterval ℝ)) := by
+    simp [IsStableLevyProcess.unitIntervalPathLaw,
+      IsLevyProcess.unitIntervalPathLaw, Process.Path.Cadlag.pathLaw]
+  rw [hPathLawEq] at hpos
   rw [hLawEq] at hpos
   exact hpos
 

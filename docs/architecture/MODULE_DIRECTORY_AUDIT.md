@@ -27545,3 +27545,15 @@ contains only the path-law constructor and its finite-dimensional law.
 Both modules build with the pinned toolchain. Their semantic placement and
 public declarations are recorded in `MODULE_OWNERSHIP.md` and this per-module
 ledger. The production source inventory and ledger now contain 1,633 modules.
+
+## Stable-process reuse of the general Lévy path law (2026-10-31)
+
+The stable unit-interval constructor now specializes
+`IsLevyProcess.unitIntervalPathLaw` at horizon $1$, removing its duplicate
+rational-coordinate path-law construction. The stable path-law characterization
+continues to compile from the same càdlàg path map. The full-process
+restriction theorem and the Gaussian linear-path support client were updated
+to use the generalized constructor and both build successfully. The stable
+adapter remains public because it expresses the stable-process interface;
+one-use conversion details remain in the client proofs. The per-module ledger
+records the reuse and build status.

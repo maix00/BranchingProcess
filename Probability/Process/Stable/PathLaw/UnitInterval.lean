@@ -7,6 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.Path.Representation.Cadlag
+public import Probability.Process.Levy.PathLaw.UnitInterval
 public import Probability.Process.Stable.FiniteDimensional
 public import Probability.Process.Stable.Levy
 public import Probability.Process.Stable.PathLaw.Basic
@@ -26,8 +27,8 @@ The public declarations are:
 
 An actual stable Lévy process on nonnegative time induces its canonical
 càdlàg path law on `[0,1]`. This adapter constructs that law from the process
-itself, so applications need not separately provide a compatible finite-
-horizon path-law witness.
+itself by specializing `IsLevyProcess.unitIntervalPathLaw` at horizon $1$,
+so the stable and general Lévy interfaces use the same path realization.
 ## Public declarations
 
 - `IsStableLevyProcess.unitIntervalPathLaw` is the law of the stable Lévy
@@ -54,10 +55,7 @@ noncomputable def IsStableLevyProcess.unitIntervalPathLaw
     {α : ℝ} {μ : Measure ℝ} {Q : Measure Ω} [IsProbabilityMeasure Q]
     {X : ℝ≥0 → Ω → ℝ} (hX : IsStableLevyProcess α μ X Q) :
     ProbabilityMeasure (CadlagPath unitInterval ℝ) :=
-  ⟨Process.Path.Cadlag.pathLaw Q
-      (fun t ω => X (unitInterval.toNNReal t) ω)
-      (fun t => hX.increments.aemeasurable_eval (unitInterval.toNNReal t)),
-    inferInstance⟩
+  (hX.toIsLevyProcess).unitIntervalPathLaw 1
 
 /-- The restriction of a stable Lévy process to `[0,1]`, represented in
 Skorokhod space by the canonical rational-coordinate path map, has the
@@ -98,7 +96,8 @@ theorem IsStableLevyProcess.isStableClockProcessLaw_unitIntervalPathLaw
     exact Process.Path.Cadlag.pathMap_ae_eval_eq pathProcess hcadlag t
   have hstable := hincrements'.law_of_pathMap_ae hpath
     (fun t => Skorokhod.measurable_apply t) hpathEval
-  simpa [pathLaw, IsStableLevyProcess.unitIntervalPathLaw, pathProcess] using hstable
+  simpa [pathLaw, IsStableLevyProcess.unitIntervalPathLaw,
+    IsLevyProcess.unitIntervalPathLaw, pathProcess] using hstable
 
 set_option linter.style.haveILetI false in
 /-- Spatially scaling a stable unit-interval path law pushes its increment
