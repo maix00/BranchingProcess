@@ -27767,3 +27767,17 @@ result, providing a direct production client for its placement in the IID
 sequence-law module. Both `Probability.Sequence.IID.Law` and
 `Probability.Distributions.Stable.Gaussian.Basic` pass the focused Lake build
 (3,336 jobs). The production module count remains 1,636.
+
+## Infinite divisibility of Lévy-process marginals (2026-10-31)
+
+Added `Probability/Process/Levy/MarginalLaws.lean` with the public theorem
+`IsLevyProcess.isInfinitelyDivisible_timeMarginal`. For a real-valued Lévy
+process $X$, each fixed-time law $\operatorname{Law}(X_t)$ is infinitely
+divisible: for every $n\ge1$, the common law of the $n$ stationary increments
+on an equal partition of $[0,t]$ is an $n$th convolution root. The proof uses
+the process's independent increments, stationary increment distributions,
+the zero start, and the finite IID-sum characteristic-function identity.
+This reusable process-level marginal theorem connects the Lévy-process
+interface to the repository's infinitely divisible measure API. The focused
+target `lake build Probability.Process.Levy.MarginalLaws` passes. The
+production module count is now 1,637.
