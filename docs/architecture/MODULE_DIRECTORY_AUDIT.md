@@ -27304,3 +27304,30 @@ that occur in its signatures, rather than inheriting them through an internal
 proof module. The full `lake -Kjobs=2 build` completed successfully after these
 visibility changes (5,745 Lake jobs); existing style-linter warnings remain,
 with no build errors.
+
+## Selection semantic-layer review (2026-10-31)
+
+Rechecked whether the generic capacity selector belongs under
+`Combinatorics/Selection` or `Combinatorics/BranchingWalk`. The pinned
+`Combinatorics.Selection.NSelection` takes an arbitrary candidate set and
+returns a finite subset of cardinality `min N |S|` for finite `S`, and `N`
+for infinite `S`; its type has no branching-step, offspring, or genealogy
+parameter. In contrast, `Combinatorics.Branching.Step.FiniteSelection` takes
+an actual branching step and selects from its surviving child-slot support.
+The former stays in the generic combinatorial layer; the latter and
+generation-wise selection stay under `BranchingWalk`.
+
+The Mathlib comparison used two nearby but nonidentical interfaces at pinned
+revision `380f2aafb622cb2c1c93dac545b6389083c68c51`:
+`Finset.rado_selection` in
+[`Combinatorics/Compactness.lean`](https://github.com/leanprover-community/mathlib4/blob/380f2aafb622cb2c1c93dac545b6389083c68c51/Mathlib/Combinatorics/Compactness.lean#L67)
+combines choices indexed by finite sets into a global choice compatible with
+larger finite sets, and Hall's
+theorem in
+[`Combinatorics/Hall/Basic.lean`](https://github.com/leanprover-community/mathlib4/blob/380f2aafb622cb2c1c93dac545b6389083c68c51/Mathlib/Combinatorics/Hall/Basic.lean#L34)
+selects distinct representatives from finite candidate families. Neither
+states a capacity-`N` selector on arbitrary candidate sets. Their ownership
+supports the placement of the generic operation in `Combinatorics`; the
+branching-specific selection remains at its model layer. The official API
+references are [Rado selection](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Combinatorics/Compactness.html)
+and [Hall's theorem](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Combinatorics/Hall/Basic.html).
