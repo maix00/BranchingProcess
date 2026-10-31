@@ -27396,3 +27396,15 @@ citations using “the paper” or “the thesis” and zero private theorem or 
 identifiers containing `paper`, `thesis`, or numbered `lemma` labels.
 `git diff --check` passes for the current documentation edits. The latest
 GitHub PR checks remain pending, so merge readiness is still unverified.
+
+
+## Reconciliation of checkpoint-derived ledger records (2026-10-31)
+
+The 163 production rows restored from the full-audit checkpoint now point to
+their specific dated family reviews instead of retaining the generic recovery
+message. Each ledger note identifies the public interface from that module's
+header, and each `review_record` names the corresponding section in this audit.
+This reconciles the ledger with reviews already documented above; it does not
+change Lean declarations or claim a new build. The current production source
+tree and ledger both contain 1,631 modules, and all rows retain their existing
+structural, semantic-review, and Lake-build statuses.
