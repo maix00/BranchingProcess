@@ -27627,6 +27627,15 @@ increments, zero start, and càdlàg regularity against the project process
 definition. These reusable closure properties do not assert convergence of
 the changed marginal laws. Both touched Lévy modules built successfully.
 
+`Probability/Process/Levy/PathLaw/UnitInterval.lean` now proves that spatial
+scaling of a Lévy process pushes its complete unit-interval path law forward
+by the matching pointwise map on càdlàg paths. This combines the process
+closure theorem with the generic `Process.Path.Cadlag.pathLaw_smul` identity;
+the statement is a reusable law-level interface, while the map-specific
+measurability and time-change details remain inside its proof. The module
+builds successfully. The interface supports normalization of path laws, but
+does not prove a process-level stable functional limit or its tightness.
+
 ## Stable-domain Brownian path-class adapter (2026-10-31)
 
 `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Stable/Discrete/PathClass/Regimes.lean`

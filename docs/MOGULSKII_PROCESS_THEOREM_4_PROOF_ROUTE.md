@@ -50,10 +50,12 @@ remain those recorded in `Probability/Process/RandomWalk/SmallDeviation/Mogulski
 - `Probability/Process/Levy/PathLaw/UnitInterval.lean` constructs the law of
   the entire path $t\mapsto X_{Tt}$ on the unit interval and proves that
   every finite vector of evaluations under this path law has the corresponding
-  joint process distribution.
-  This supplies the canonical full-path-law construction for a process that
-  already satisfies `IsLevyProcess`; it does not prove the stable functional
-  limit from Mogul'skii's weaker source assumptions.
+  joint process distribution. It also proves that spatial scaling by $q$
+  pushes this path law forward by $f\mapsto qf$, using the generic càdlàg
+  path-law scaling identity. This supplies the exact path-law transformation
+  needed to express normalized Lévy paths for processes satisfying
+  `IsLevyProcess`; the source-specific stable functional limit and its
+  tightness estimates remain open.
 - `Probability/Process/IndepIncrements/Convergence.lean` proves the generic
   finite-grid assembly step: convergence of each consecutive increment law,
   together with independent increments and a zero value at the grid anchor,
