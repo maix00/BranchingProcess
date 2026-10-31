@@ -18,6 +18,19 @@ complete-path event used in small-deviation arguments. The jump-sum
 decomposition remains an explicit hypothesis; no stable-process
 representation is asserted here.
 
+Under the hypotheses of the one-jump theorems, the base probability measure
+$P$ satisfies
+\[
+P\!\left(\operatorname{fullSegmentCorridorReturnEvent}
+(X,0,1,c-1,c+1,c-b-\varepsilon,c-b+\varepsilon)\right)>0.
+\]
+The almost-sure version has the same conclusion when the pathwise bounds hold
+almost surely. For zero target displacement, the no-jump theorem gives
+\[
+P\!\left(\operatorname{fullSegmentCorridorReturnEvent}
+(X,0,1,c-1,c+1,-\varepsilon,\varepsilon)\right)>0.
+\]
+
 ## Public declarations
 
 - `ProbabilityTheory.measure_fullSegmentCorridorReturn_pos_of_oneJumpDecomposition`:

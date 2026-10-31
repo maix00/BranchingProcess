@@ -17,6 +17,12 @@ import Analysis.Fourier.CosineTauberian.Mellin
 
 ## Public declarations
 
+For an attraction normalization $a_n$ with stable time constant $d>0$, this
+result gives an index sequence $m_n$ and a source normalization $a'_n$ such
+that $m_n/n\to d^{-1}$, $a'_n=a_{m_n}$ eventually, and
+$a_n/a'_n\to d^{1/\alpha}$. The limiting law is rescaled by
+$x\mapsto d^{1/\alpha}x$, and the centering sequence is preserved.
+
 - `ProbabilityTheory.IsInDomainOfAttractionAlong.exists_source_stable_norming`:
   from attraction along an arbitrary normalization, obtain a reindexed
   normalization with unit stable time constant and the corresponding rescaled

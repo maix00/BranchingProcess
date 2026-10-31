@@ -16,6 +16,19 @@ public import Probability.Distributions.Moments.Truncated.RegularVariation
 
 ## Public declarations
 
+For $x>0$, let $C_\mu(t)=\int(1-\cos(ty))\,\mu(dy)$ and
+$V_\mu(x)=\int_{|y|\le x}y^2\,\mu(dy)$. The comparison bounds are
+\[
+\frac{2}{\pi^2}\frac{V_\mu(x)}{x^2}
+\le C_\mu(x^{-1})
+\le \frac{V_\mu(x)}{2x^2}+2\mu(|y|>x),
+\]
+and, for $0<\delta\le1$,
+$(\frac12-\frac{\delta^2}{24})V_\mu(\delta x)/x^2\le
+C_\mu(x^{-1})$. If $V_\mu$ is slowly varying and
+$x^2\mu(|y|>x)/V_\mu(x)\to0$, then
+$2x^2C_\mu(x^{-1})/V_\mu(x)\to1$.
+
 - `cosineDefectIntegral_lower_bound_truncatedSecondMoment` gives a quadratic
   lower bound for the cosine defect in terms of the truncated second moment.
 - `cosineDefectIntegral_lower_bound_truncatedSecondMoment_scaled` sharpens

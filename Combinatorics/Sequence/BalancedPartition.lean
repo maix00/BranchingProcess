@@ -13,6 +13,13 @@ public import Mathlib.Algebra.BigOperators.Group.List.Basic
 
 ## Public declarations
 
+When $m>0$ and $q=\lfloor N/m\rfloor>0$, put
+$s=m+\lfloor (N\bmod m)/q\rfloor$ and
+$r=(N\bmod m)\bmod q$. Writing its entries as $(b_i)_{i<q}$, the list
+$b$ of balanced block lengths satisfies $|b|=q$,
+$\sum_{i<q}b_i=N$, exactly $r$ entries equal $s+1$, and every other
+entry equals $s$.
+
 - `Combinatorics.Sequence.balancedBlockCount`: the quotient of a finite
   horizon by a reference block length.
 - `Combinatorics.Sequence.balancedBlockShortLength`: the shorter of the two

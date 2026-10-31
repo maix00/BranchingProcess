@@ -16,6 +16,15 @@ import Analysis.Asymptotics.Scale.Block.Length
 
 ## Public declarations
 
+For horizons $N_n$ and reference lengths $m_n$, write
+$q_n=\lfloor N_n/m_n\rfloor$ and
+$s_n=\operatorname{balancedBlockShortLength}(N_n,m_n)$. If
+$m_n\to\infty$ and $q_n\to\infty$, then
+$s_n/m_n\to1$ and $(s_n+1)/m_n\to1$. If also
+$N_n/n\to d>0$, $m_n/n\to0$, and $m_n/c_n\to c$ with $c_n>0$
+eventually, then $q_n,s_n,s_n+1\to\infty$ and
+$s_n/c_n,(s_n+1)/c_n\to c$.
+
 - `Asymptotics.tendsto_balancedBlockShortLength_div_referenceLength` and
   `Asymptotics.tendsto_balancedBlockLongLength_div_referenceLength`: if the
   reference length and the number of reference blocks diverge, each of the

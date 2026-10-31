@@ -27455,3 +27455,20 @@ and its test fixture also retained the former
 `Probability.Process.Path.Representation.Skorokhod.Corridor.Support` prefix;
 both now guard the current `Probability.Process.Path.Skorokhod.Corridor.Support`
 module family.
+
+## Public-header formula follow-up (2026-10-31)
+
+Rechecked public module headers for quantitative and relational statements
+that were summarized only in prose. Added explicit formulas to 16 headers for
+balanced-partition identities and scales; branching-walk position, genealogy,
+and offspring-address relations; Brownian support and zero-probability
+statements; stable reflection and norming; restarted-window identities and
+moment bounds; random-walk interpolation convergence; finite-bin tube bounds;
+one-jump corridor positivity; and cosine-defect estimates. The changes clarify
+the existing declarations and assumptions; no Lean declaration or proof was
+altered. A final formula review also makes the positive reference-length
+condition explicit in the balanced-partition formula, distinguishes general
+increment measures from probability measures in the restarted-window formulas,
+spells out the corridor parameters in the one-jump entrance statement, and
+defines the IID product law used by the interpolation limit. The production
+source inventory and ledger remain at 1,631 modules.

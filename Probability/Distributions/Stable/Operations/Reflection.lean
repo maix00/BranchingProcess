@@ -14,6 +14,10 @@ import Probability.Distributions.Stable.Operations.Scaling
 
 ## Public declarations
 
+If $\mu$ is $\alpha$-stable, then its reflected law
+$\mu\circ(-\mathrm{id})^{-1}$ is $\alpha$-stable; the same statement holds
+for strict $\alpha$-stability.
+
 * `IsAlphaStable.map_neg`: reflection preserves α-stability.
 * `IsStrictlyAlphaStable.map_neg`: reflection preserves strict α-stability.
 

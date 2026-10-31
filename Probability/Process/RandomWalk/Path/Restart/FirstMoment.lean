@@ -22,6 +22,17 @@ coordinate with the coordinate selected by a deterministic anchor schedule.
 
 ## Public declarations
 
+Writing $D_n(\xi)=\sum_{k<n}\xi_k$ and
+$R_{c,W,n,x}=\{\xi:\operatorname{InRestartedWindows}
+(c,W,\operatorname{history}(n,x,\xi))\}$, the moment is
+$M_{\nu,c,W,n}(x)=\int^- \mathbf 1_{R_{c,W,n,x}}(\xi)
+e^{D_n(\xi)}\,\nu(d\xi)$ and the event measure is
+$\Pi_{\nu,c,W,n}(x)=\nu(R_{c,W,n,x})$. If each time-$k$ window is contained in
+$(-\infty,u_k]$, then
+$M_{\nu,c,W,n}(x)\le e^{u_n}\Pi_{\nu,c,W,n}(x)$ when $n\le c$, and
+$M_{\nu,c,W,n}(x)\le e^{u_c+u_n}\Pi_{\nu,c,W,n}(x)$ when $c<n$. The integral
+is the extended nonnegative integral.
+
 - `ProbabilityTheory.RandomWalk.restartedWindowTest` and
   `restartedWindowTest_measurable`: define the real-valued finite-history
   event indicator and establish its measurability.
@@ -98,7 +109,7 @@ noncomputable def restartedWindowFirstMoment
         (history n initial increment) ∂incrementLaw
 
 /-- The exponential first moment in restarted windows is bounded by the
-ordinary window probability times the deterministic maximal endpoint weight.
+ordinary window measure times the deterministic maximal endpoint weight.
 This is the bridge from Mogulskii probability estimates to the first-moment
 interface used by the killed branching population. -/
 theorem restartedWindowFirstMoment_le

@@ -24,6 +24,16 @@ theorem, endpoint coverage and all bin bounds are discharged here. A narrow
 return core makes both translated block corridors contain the zero starting
 point.
 
+Let $E_-$ and $E_+$ be the two return-bin events in the first theorem, for
+endpoints in the negative and nonnegative halves of the core, and put
+$p_\pm=\mathbb P(E_\pm)$. The finite partition gives
+$\min\{p_-,p_+\}^{\mathrm{blocks}}\le
+\mathbb P(\operatorname{rationalHorizonTubeEvent}
+(X,1,\mathrm{upper}-\mathrm{lower}+\mathrm{extra}))$. If both increment
+signs have positive mass and the core lies strictly inside a positive-width
+tube, then the unit-time tube probability is positive; the same holds at each
+positive finite horizon.
+
 ## Public declarations
 
 - `ProbabilityTheory.IsStableLevyProcess.min_two_blockProbabilities_pow_le_rationalHorizonTube`

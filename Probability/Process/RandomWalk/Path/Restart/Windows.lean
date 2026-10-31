@@ -19,6 +19,14 @@ probability layer.
 
 ## Public declarations
 
+For every increment sequence $\xi$ and initial position $x$,
+$\operatorname{InRestartedWindows}(c,W,\operatorname{history}(n,x,\xi))\iff
+\operatorname{InRestartedWindows}(c,W,\operatorname{history}(n,0,\xi))$.
+For a constant interval window and $n\le c$, this event is
+$\operatorname{InClosedInterval}(a,b,n,0,\xi)$; through time $c+m$ it is
+equivalent to the intersection of that event at time $c$ and the same event
+of length $m$ for the shifted increments $k\mapsto\xi_{c+k}$.
+
 * `ProbabilityTheory.RandomWalk.inRestartedWindows_history_iff` shows the
   event is independent of the absolute initial position.
 * `ProbabilityTheory.RandomWalk.inRestartedWindows_Icc_of_le_iff` identifies

@@ -17,8 +17,14 @@ public import Combinatorics.BranchingWalk.Basic.Survival.SurviveAlong
 
 ## Public declarations
 
-The results apply to arbitrary set-valued populations; finite populations
-inherit them by forgetting their representation.
+For a set-valued population $P=(P_n)_{n\ge0}$, finite populations inherit
+the same statements by forgetting their representation.
+
+If $p=(r,u)\in P_n$, then $(r,[])\in P_0$ and
+$\operatorname{surviveAlong}(\operatorname{stepField}(r),[],u)$. If
+$q\in P_{n+1}$, then $\operatorname{parent}(q)\in P_n$; more generally,
+for each $j\le n$, writing $u_{\le j}:=\operatorname{take}(j,u)$, one has
+$(r,u_{\le j})\in P_j$.
 
 The public API is:
 

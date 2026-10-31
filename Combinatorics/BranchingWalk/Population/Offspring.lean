@@ -15,7 +15,10 @@ public import Combinatorics.UlamHarris.Relation
 ## Public declarations
 
 For a set `parents` of root-indexed addresses and a slot set `slots p` assigned
-to each parent:
+to each parent, the eligible pair set and child-address set are
+$\{(p,i)\mid p\in\mathrm{parents},\ i\in\mathrm{slots}(p)\}$ and
+$\{\operatorname{childAddress}(p,i)\mid p\in\mathrm{parents},\
+i\in\mathrm{slots}(p)\}$:
 
 * `Combinatorics.Branching.Population.offspringPairSet parents slots` is the
   set of eligible parent-slot pairs, with membership characterized by

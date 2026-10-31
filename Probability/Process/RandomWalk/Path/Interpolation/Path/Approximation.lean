@@ -17,6 +17,19 @@ between the right-continuous step path and the polygonal interpolation.
 
 ## Public declarations
 
+For IID real increments with finite second moment and every $\varepsilon>0$,
+\[
+\mathbb P_\nu\!\left(
+  \operatorname{edist}_{J_1}(S_n(\xi),\widehat S_n(\xi))\ge\varepsilon
+\right)\longrightarrow0,
+\]
+where $S_n(\xi)=\operatorname{normalizedStepCadlagPathIcc}
+(\sqrt{\cdot},n,\xi)$ and $\widehat S_n(\xi)=
+\operatorname{normalizedLinearCadlagPathIcc}(\sqrt{\cdot},n,\xi)$;
+$\mathbb P_\nu=(\bigotimes_{k\in\mathbb N}\nu)$ is the product law of the
+IID increments. The corresponding statement holds for the real-valued
+Skorokhod distance.
+
 * `ProbabilityTheory.RandomWalk.tendsto_measureReal_edist_normalizedStepPath_linear_zero`
   proves convergence in probability of the extended Skorokhod distance to zero.
 * `ProbabilityTheory.RandomWalk.tendsto_measureReal_dist_normalizedStepPath_linear_zero`

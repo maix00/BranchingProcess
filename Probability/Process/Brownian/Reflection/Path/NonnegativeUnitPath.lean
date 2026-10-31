@@ -16,6 +16,9 @@ import Topology.ContinuousMap.Range
 
 ## Public declarations
 
+For Brownian motion started at zero,
+$\mathbb P(\forall t\in[0,1],\ B_t\ge0)=0$.
+
 - `ProbabilityTheory.IsBrownianReal.measure_nonnegativeUnitPath_eq_zero`:
   a Brownian path started at zero belongs to this set with probability zero.
 

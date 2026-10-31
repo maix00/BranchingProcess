@@ -14,11 +14,13 @@ public import Combinatorics.BranchingWalk.StepField
 
 ## Public declarations
 
-The position of an address in a walk is the initial position of its root plus
-the displacement along the address, so it is read off the walk's own data:
-`RootIndexed.BranchingWalk.position β r u`. The displacement itself is the
-address-carrying recursion of `Basic/Position/Displace.lean`, which carries the current
-address instead of reconstructing it from a list index.
+For a root-indexed walk $\beta$, root $r$, address $u$, and mark map $d$, the
+position is
+$\operatorname{position}_d(\beta,r,u)=\beta.\operatorname{initial}(r)+
+\operatorname{displaceWith}(d,\beta.\operatorname{step}(r),[],u)$.
+The displacement uses the address-carrying recursion in
+`Basic/Position/Displace.lean`, which carries the current address instead of
+reconstructing it from a list index.
 
 The public API is:
 

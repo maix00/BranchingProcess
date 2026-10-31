@@ -20,6 +20,11 @@ public import Topology.Cadlag.Skorokhod.Path.Linear
 
 ## Public declarations
 
+Writing $\mathcal M_B$ for the law of the normalized Brownian terminal
+excursion and $\ell_a(t)=at$, every $a>0$ satisfies
+$\ell_a\in\operatorname{supp}(\mathcal M_B)$; its image in Skorokhod space
+belongs to the support of the pushed-forward law.
+
 - `ProbabilityTheory.IsBrownianReal.linearPath_mem_lastZeroMeanderPathLaw_support`:
   every positive linear path belongs to the support of Iglehart's
   Brownian terminal-excursion law.
