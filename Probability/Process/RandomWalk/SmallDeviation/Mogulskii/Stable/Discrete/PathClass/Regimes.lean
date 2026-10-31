@@ -397,8 +397,11 @@ theorem tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_i
               RandomWalk.normalizedStepCadlagPathIcc scale n increment ∈ G}).toReal) /
                 stableRateNormalization 2 ν scale n)
           atTop (𝓝 (C * 2 ^ (2 : ℝ) * H)) := by
-  exact tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_index_two
-    hscale hB.isStableLevyProcess hDOA hG hGmeas
+  simpa only [IsStableLevyProcess.unitIntervalPathLaw,
+    IsLevyProcess.unitIntervalPathLaw, one_mul,
+    MeasureTheory.ProbabilityMeasure.coe_mk] using
+      tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_index_two
+        hscale hB.isStableLevyProcess hDOA hG hGmeas
 
 end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete
 

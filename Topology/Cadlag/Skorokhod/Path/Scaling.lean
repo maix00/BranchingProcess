@@ -37,7 +37,7 @@ namespace Skorokhod
 /-- Pointwise scalar multiplication of a real-valued càdlàg path. -/
 def scalePath (scale : ℝ) (f : CadlagPath unitInterval ℝ) :
     CadlagPath unitInterval ℝ :=
-  ⟨fun t => scale * f t, f.isCadlag_toFun.const_smul scale⟩
+  f.mapContinuous (fun x => scale * x) (by fun_prop)
 
 @[simp]
 theorem scalePath_apply (scale : ℝ) (f : CadlagPath unitInterval ℝ)

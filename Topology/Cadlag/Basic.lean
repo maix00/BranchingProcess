@@ -22,6 +22,8 @@ public import Mathlib.Topology.Order.Cadlag
   $t\mapsto value$ and its evaluation formula.
 - `CadlagPath.ext` and `CadlagPath.coe_mk`: extensionality and the coercion
   equation for constructed paths.
+- `CadlagPath.mapContinuous` and `CadlagPath.mapContinuous_apply`: composing
+  a càdlàg path with a continuous state-space map and its pointwise formula.
 - `CadlagPath.isCadlag_restrictRange`: a path taking values in a closed set
   remains càdlàg when viewed as a path into that subtype.
 - `CadlagPath.restrictRange` and `CadlagPath.forgetRange`: move between paths
@@ -145,6 +147,17 @@ theorem const_apply (value : E) (t : T) : const value t = value := rfl
 @[simp] theorem coe_mk (f : T → E) (hf : IsCadlag f) :
     ⇑(CadlagPath.mk f hf) = f := rfl
 
+/-- Postcompose a càdlàg path with a continuous map of state spaces. -/
+def mapContinuous {F : Type*} [TopologicalSpace F]
+    (path : CadlagPath T E) (φ : E → F) (hφ : Continuous φ) :
+    CadlagPath T F :=
+  ⟨φ ∘ path, path.isCadlag_toFun.continuous_comp hφ⟩
+
+@[simp]
+theorem mapContinuous_apply {F : Type*} [TopologicalSpace F]
+    (path : CadlagPath T E) (φ : E → F) (hφ : Continuous φ) (t : T) :
+    path.mapContinuous φ hφ t = φ (path t) := rfl
+
 /-- Restrict a càdlàg path to a closed range, viewed as a subtype. -/
 theorem isCadlag_restrictRange {f : T → E} (hf : IsCadlag f)
     (range : Set E) (hrange : ∀ t, f t ∈ range) (hrangeClosed : IsClosed range) :
@@ -172,8 +185,7 @@ def restrictRange (path : CadlagPath T E) (range : Set E)
 
 /-- Forget that a càdlàg path takes values in a subtype. -/
 def forgetRange {range : Set E} (path : CadlagPath T range) : CadlagPath T E :=
-  ⟨fun t => (path t).1,
-    path.isCadlag_toFun.continuous_comp continuous_subtype_val⟩
+  path.mapContinuous Subtype.val continuous_subtype_val
 
 @[simp] theorem forgetRange_apply {range : Set E}
     (path : CadlagPath T range) (t : T) : path.forgetRange t = (path t).1 := rfl
