@@ -27529,3 +27529,19 @@ Godrèche, and Luck's equation (A.6); and Sato's Theorem 8.1. Complete
 publication details and stable identifiers remain alongside the statements.
 Other uses of `source` refer to mathematical objects such as a source path,
 source population, or source increment law. No declarations or proofs changed.
+
+## Lévy-process finite-horizon path law (2026-10-31)
+
+Added `Probability/Process/Levy/FiniteDimensional.lean` for the reusable
+coordinate-measurability consequence of zero start and stationary increment
+laws. Added `Probability/Process/Levy/PathLaw/UnitInterval.lean` for the
+canonical law of $t\mapsto X_{Tt}$ on $\mathrm{CadlagPath}([0,1],\mathbb R)$
+and the joint-law identity for every finite evaluation vector. The latter
+uses the existing rational-coordinate càdlàg path realization, Skorokhod
+evaluation measurability, and the a.s. càdlàg property. One-use time-change
+regularity remains local to the finite-evaluation proof; the public interface
+contains only the path-law constructor and its finite-dimensional law.
+
+Both modules build with the pinned toolchain. Their semantic placement and
+public declarations are recorded in `MODULE_OWNERSHIP.md` and this per-module
+ledger. The production source inventory and ledger now contain 1,633 modules.
