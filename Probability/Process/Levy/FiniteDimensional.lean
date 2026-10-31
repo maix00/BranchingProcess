@@ -15,7 +15,7 @@ public import Probability.Process.IndepIncrements.FiniteDimensional
 ## Public declarations
 
 - `ProbabilityTheory.IsLevyProcess.aemeasurable_eval` proves that every
-  coordinate map of a real-valued Lévy process is almost-everywhere
+  coordinate map of a group-valued Lévy process is almost-everywhere
   measurable. Stationarity makes each increment measurable from its law,
   and the zero initial value then gives measurability of the coordinates.
 
@@ -33,9 +33,11 @@ namespace ProbabilityTheory.IsLevyProcess
 
 variable {Ω : Type*} [MeasurableSpace Ω]
 variable {P : Measure Ω} [IsProbabilityMeasure P]
-variable {X : ℝ≥0 → Ω → ℝ}
+variable {E : Type*} [AddGroup E] [MeasurableSpace E] [TopologicalSpace E]
+  [IsTopologicalAddGroup E] [BorelSpace E]
+variable {X : ℝ≥0 → Ω → E}
 
-/-- Every coordinate of a real-valued Lévy process is almost-everywhere
+/-- Every coordinate of a group-valued Lévy process is almost-everywhere
 measurable. Stationary increments give measurable increments through their
 identical distributions, and the starting value is zero almost surely. -/
 theorem aemeasurable_eval (h : IsLevyProcess X P) (t : ℝ≥0) :
