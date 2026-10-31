@@ -23,6 +23,24 @@ subtree induction.
   pre-sampled field with the corresponding spine-walk expectations.
 - `weightedGenerationOneManyToOne` and `generationOneManyToOne`: their
   one-generation forms, used as the base step for subtree induction.
+
+For a measurable observable \(f:\mathbb R\to[0,\infty]\), generation
+\(n\), and initial position \(x\), the weighted identity is
+\[
+  \int^-_\omega \operatorname{weightedGenerationEndpoint}
+  (V\!\circ d,n,f,x,\omega)\,d\operatorname{offspringFieldLaw}(\mu)
+  =\int^-_z f(x+S_n(z))\,
+  d\operatorname{tiltedIncrementFieldLaw}(V\!\circ d,\mu),
+\]
+and the unweighted identity is
+\[
+  \int^-_\omega \operatorname{generationEndpoint}
+  (V\!\circ d,n,f,x,\omega)\,d\operatorname{offspringFieldLaw}(\mu)
+  =\int^-_z \operatorname{ofReal}(e^{S_n(z)})f(x+S_n(z))\,
+  d\operatorname{tiltedIncrementFieldLaw}(V\!\circ d,\mu),
+\]
+where \(V\) is the potential and
+\(S_n=\operatorname{AdditivePath.displacement}(n,\cdot)\).
 -/
 
 @[expose] public section

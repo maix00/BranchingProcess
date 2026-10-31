@@ -27502,3 +27502,18 @@ scan covered 98 explicit Lean module paths across the 17 maintained Lean
 Markdown files; all project paths resolve. The remaining
 `MeasureTheory/Measure/Dirac.lean` example in `CONTRIBUTING.md` is an external
 Mathlib documentation link, not a project module.
+
+## Public-header formula follow-up (2026-10-31)
+
+Reviewed the remaining 19 public module headers whose declaration summaries
+contained no displayed or inline formula. Added statements matching the
+declared interfaces: deterministic tree specialization, path-measure range
+cover and corridor-weight bounds, oscillation selection, finite-step boundary
+indices and corridor violation events, branching and offspring law types,
+weighted normalized-step limits, stable block increment laws and escape-rate
+transfer, the stable partition-cell return event, stable domain-of-attraction
+predicates, coupling slice domination, causal-population finiteness premises,
+generation many-to-one identities, càdlàg-section measurability, and
+oscillation-partition pullback estimates. Checked each formula against its
+Lean declaration type. These are documentation-only changes; the source
+inventory and ownership ledger remain at 1,631 modules.

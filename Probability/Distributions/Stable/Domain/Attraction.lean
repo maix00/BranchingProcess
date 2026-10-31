@@ -26,6 +26,19 @@ stable-limit combinations and keeps their established import path.
 * The projection theorems `.stable`, `.domain`, and `.attraction` recover the
   two components; `.isInAlphaStableDomainOfAttraction` forgets the chosen
   sequences while retaining the domain-of-attraction property.
+  The definitions are the conjunctions
+  \[
+  \operatorname{IsInAlphaStableDomainOfAttraction}(\alpha,\nu,\lambda)
+  \iff \operatorname{IsAlphaStable}(\alpha,\lambda)
+       \land \operatorname{IsInDomainOfAttraction}(\nu,\lambda),
+  \]
+  \[
+  \operatorname{IsInAlphaStableDomainOfAttractionAlong}
+  (\alpha,\nu,\lambda,a,b)
+  \iff \operatorname{IsAlphaStable}(\alpha,\lambda)
+       \land \operatorname{IsInDomainOfAttractionAlong}
+       (\nu,\lambda,a,b).
+  \]
 -/
 
 open MeasureTheory

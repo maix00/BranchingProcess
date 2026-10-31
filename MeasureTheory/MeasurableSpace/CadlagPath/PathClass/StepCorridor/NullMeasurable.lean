@@ -21,6 +21,12 @@ null-measurable under every finite path law.
 
 - Under every finite Borel path law P, the path-time violation projection
   and the exact pointwise-strict M₂ corridor event are P-null-measurable.
+  For \(V_c=\{f:\exists t,\,(t,f)\in c.\mathrm{violationAt}\}\), both
+  sets satisfy
+  \[
+  \operatorname{NullMeasurableSet}_{P}(V_c),\qquad
+  \operatorname{NullMeasurableSet}_{P}(c.\mathrm{toSet}).
+  \]
 -/
 
 open Skorokhod.PathClass.StepCorridor

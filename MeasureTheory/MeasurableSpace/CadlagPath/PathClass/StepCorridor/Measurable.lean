@@ -26,6 +26,17 @@ capacitability result.
 
 - For a continuous admissible corridor, the path-time violation relation is
   Borel, and its projection gives the exact complement of the strict corridor.
+  Writing \(\ell_c(t)=c.\mathrm{lower.eval}(t)\) and
+  \(u_c(t)=c.\mathrm{upper.eval}(t)\), the relation and projection are
+  \[
+  V_c=\{(t,f):(f(t):\overline{\mathbb R})\le \ell_c(t)
+       \ \lor\ u_c(t)\le(f(t):\overline{\mathbb R})\},
+  \qquad \operatorname{MeasurableSet}(V_c),
+  \]
+  \[
+  (c.\mathrm{toSet})^{\mathsf c}
+  =\{f:f(\bot)\ne0\}\cup\{f:\exists t,\,(t,f)\in V_c\}.
+  \]
 -/
 
 open Skorokhod.PathClass.StepCorridor

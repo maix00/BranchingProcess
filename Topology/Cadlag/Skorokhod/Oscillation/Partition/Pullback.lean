@@ -21,6 +21,17 @@ A Skorokhod time change transports partition cells. Time distortion weakens the 
   than half the original mesh and the reparameterized path is uniformly
   within spatial error e, the pulled-back mesh decreases by at most twice the
   time error and the cellwise oscillation bound increases by at most 2e.
+  If \(\sup_t d(\tau(t),t)\le e\), \(2e<\operatorname{mesh}(P)\),
+  and \(\sup_t d((\tau\cdot f)(t),g(t))\le s\), then
+  \[
+  \operatorname{mesh}(P\mathbin{.pullback}\tau e)
+  =\operatorname{mesh}(P)-2e,
+  \qquad
+  \operatorname{OscillationBoundedOnPartition}(P,f,B)
+  \Longrightarrow
+  \operatorname{OscillationBoundedOnPartition}
+  (P\mathbin{.pullback}\tau e,g,B+2s).
+  \]
 -/
 
 @[expose] public section

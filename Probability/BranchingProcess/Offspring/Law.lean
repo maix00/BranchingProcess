@@ -23,6 +23,12 @@ slot labels.
   the probability-measure type
   `ProbabilityMeasure (Combinatorics.Branching.Step ι Mark)` for one offspring
   configuration with slot type `ι` and child-mark type `Mark`.
+  Thus
+  \[
+  \operatorname{OffspringConfigurationLaw}(\iota,M)
+  \coloneqq \operatorname{ProbabilityMeasure}
+  (\operatorname{Branching.Step}(\iota,M)).
+  \]
 -/
 
 @[expose] public section

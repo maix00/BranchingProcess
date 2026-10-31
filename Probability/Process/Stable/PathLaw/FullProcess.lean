@@ -25,6 +25,14 @@ finite increment vector has the corresponding product law. The final theorem
 identifies the canonical unit-interval path-law restriction with the given
 block law. Measurability of individual block coordinates remains private.
 
+For \(0\le t_0\le\cdots\le t_n\), the finite increment vector has law
+\[
+  \mathcal L\bigl((X_{t_{i+1}}-X_{t_i})_{i<n}\bigr)
+  =\bigotimes_{i<n}\operatorname{stableTimeLaw}
+       (\alpha,\mu,t_{i+1}-t_i),
+  \qquad \mathcal L(X|_{[0,1]})=P.
+\]
+
 -/
 
 @[expose] public section

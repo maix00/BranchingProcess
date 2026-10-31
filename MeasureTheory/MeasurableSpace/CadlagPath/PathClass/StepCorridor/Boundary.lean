@@ -20,6 +20,13 @@ measurable, keeping measure-theoretic facts out of the topological definition.
 
 - The level index, left level index, boundary evaluation, and left trace of a
   finite-step corridor boundary are measurable functions of time.
+  For its knot set \(K_b\) and levels \((v_i)\), these maps are
+  \[
+  i_b(t)=\#\{s\in K_b:s\le t\},\qquad
+  i_b^-(t)=\begin{cases}i_b(t),&t=\bot,\\
+  \#\{s\in K_b:s<t\},&t\ne\bot,\end{cases}
+  \qquad b(t)=v_{i_b(t)},\quad b_-(t)=v_{i_b^-(t)}.
+  \]
 -/
 
 open MeasureTheory Set

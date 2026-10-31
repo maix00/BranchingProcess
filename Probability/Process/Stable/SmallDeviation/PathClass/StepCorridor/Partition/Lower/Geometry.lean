@@ -22,6 +22,24 @@ cell event appearing in the finite-partition probability lower bound.
 * `commonPartitionCellCoreReturnEvent` defines the event for one partition
   cell from the scaled inner corridor and the endpoint return window described
   above.
+  For boundaries `upper`, `lower`, and cell \(i\), put
+  \[
+  i_0=\operatorname{commonPartitionCellLeftKnotIndex}(\mathrm{upper},\mathrm{lower},i),
+  \quad i_1=\operatorname{commonPartitionCellRightKnotIndex}
+  (\mathrm{upper},\mathrm{lower},i),
+  \quad s_i=\operatorname{commonPartitionCellSpatialScale}
+  (\alpha,\mathrm{upper},\mathrm{lower},i),
+  \quad b=\frac{r_{i_1}-r_{i_0}}{2},
+  \]
+  where \(c_j=\operatorname{center}(j)\), \(r_j=\operatorname{radius}(j)\),
+  \(\ell_i=\operatorname{innerLower}(i)\), \(u_i=\operatorname{innerUpper}(i)\),
+  and \(a=\operatorname{scale}\). The complete defining equation is
+  \[
+  E_i=\operatorname{scaledNormalizedCellIocReturnEvent}_{\alpha}
+  (\mathrm{upper},\mathrm{lower},i,a/s_i,
+  \ell_i+r_{i_0}-c_{i_0},u_i-r_{i_0}-c_{i_0},
+  c_{i_1}-c_{i_0}-b,c_{i_1}-c_{i_0}+b).
+  \]
 -/
 
 @[expose] public section

@@ -33,6 +33,24 @@ compare endpoint-corridor probabilities with the corresponding process
 probabilities, and construct the path-space escape-rate specification from a
 stable Lévy-process witness.
 
+The tube-probability identity is
+\[
+  P(\operatorname{stableProcessTube}(a))
+  =\operatorname{rationalRangeProbability}(Q,X,a).
+\]
+Together with the path-law escape-rate hypothesis, it yields
+\[
+  a^\alpha\log\!\left((P(\operatorname{stableProcessTube}(a))).toReal\right)
+  \longrightarrow C\quad(a\downarrow0).
+\]
+For a finite set \(F\) and positive radii \(r_i\),
+\[
+  c^{-\alpha}\sum_{i\in F}\log\!\left(
+  (P(\operatorname{stableProcessTube}(r_i/c))).toReal\right)
+  \longrightarrow \sum_{i\in F}\frac{C}{r_i^\alpha}
+  \quad(c\to\infty).
+\]
+
 -/
 
 open Filter MeasureTheory

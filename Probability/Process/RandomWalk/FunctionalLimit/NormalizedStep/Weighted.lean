@@ -24,6 +24,24 @@ for core-to-core estimates.
 - The corridor-weight theorems apply Portmanteau to continuous path weights
   supported by open tube and terminal-window events; the corridor-potential
   theorem gives the corresponding full-path weight estimate.
+  For a continuous nonnegative path functional \(g\), the Portmanteau bound is
+  \[
+  \int^-_f \operatorname{ofReal}(g(f))\,
+  d(\operatorname{map}(P,X))
+  \le\liminf_{n\to\infty}
+  \int^-_f \operatorname{ofReal}(g(f))\,
+  d(\operatorname{normalizedStepPathLaw}(\nu,\operatorname{scale},n)).
+  \]
+  For \(0<w\), its centered-corridor specialization is
+  \[
+  \int^- \operatorname{ofReal}\!\left(
+  \operatorname{corridorEndsInWeight}(-w/2,w/2,a_0,a_1,f)\right)
+  \,d(\operatorname{normalizedStepPathLaw}(\nu,\operatorname{scale},n))
+  \le \operatorname{iidSequenceLaw}(\nu)\!\left\{x:
+  \operatorname{InOpenHorizontalTube}(1/2,w a_n,n,x)\land
+  \frac{\operatorname{displacement}(n,x)}{a_n}\in(a_0,a_1)\right\},
+  \]
+  where \(a_n=\operatorname{scale}(n)\).
 
 -/
 

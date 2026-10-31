@@ -26,6 +26,21 @@ public import Probability.Process.Path.Restart.Basic
 This file converts directional finiteness of offspring levels into finite
 relative-position slices.  It does not specialize the construction to real
 weights.
+
+The first construction assumes that for every \(n\), step field \(F\),
+parent address \((r,u)\) with \(|u|=n\), and bound \(a\),
+\[
+  \left\{i:\operatorname{survive}(F(r,u),i)\land
+  \operatorname{relativePositionAtGeneration}\!\left(
+  \operatorname{initialPosition},d,\operatorname{restartAnchor}(\operatorname{cutoff},n+1),n+1,
+  (r,u\mathbin{++}[i]),F\right)\le a\right\}\text{ is finite},
+\]
+and builds the restarted causal population in the window. The second obtains
+this finiteness from the mapped-step lower level sets
+\[
+  \left\{i:\operatorname{survive}((F(r,u)).\operatorname{map}(d),i)
+       \land \operatorname{value}'((F(r,u)).\operatorname{map}(d),i)\le a\right\}.
+\]
 -/
 
 @[expose] public section

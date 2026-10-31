@@ -24,6 +24,11 @@ the evaluation map on a path space is measurable.
 * `IsCadlag.measurable`: for a compact linearly ordered metric domain with its
   order topology and measurable open sets, and a Borel measurable metric
   codomain, `IsCadlag f` implies `Measurable f`.
+  In symbols, under these hypotheses,
+  \[
+  \operatorname{IsCadlag}(f)\Longrightarrow
+  \operatorname{Measurable}(f:T\to E).
+  \]
 -/
 
 @[expose] public section
