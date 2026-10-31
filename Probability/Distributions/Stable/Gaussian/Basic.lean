@@ -16,7 +16,7 @@ import Mathlib.Probability.Moments.Variance
 import MeasureTheory.Measure.CharacteristicFunction.Convolution
 import Probability.Distributions.Stable.CharacteristicFunction.Modulus
 import Probability.Distributions.Stable.Operations.Convolution
-import Probability.Sequence.IID.CharacteristicFunction
+import Probability.Sequence.IID.Law
 
 /-!
 # Gaussian laws as stable laws
@@ -281,10 +281,8 @@ theorem IsStrictlyAlphaStable.exists_gaussianReal_zero
       (iidSequenceLaw_independent μ) (fun i => (hXid i).trans (hXid 0).symm)
     simpa [Z, X, P, hXmean, hXvariance] using hCLT'
   have hsumLaw (n : ℕ) : P.map
-      (fun sequence : ℕ → ℝ => ∑ k ∈ Finset.range n, sequence k) = μ.convPower n := by
-    apply Measure.ext_of_charFun
-    ext t
-    rw [iidSequenceLaw_charFun_sum, Measure.charFun_convPower]
+      (fun sequence : ℕ → ℝ => ∑ k ∈ Finset.range n, sequence k) = μ.convPower n :=
+    iidSequenceLaw_map_sum_range_eq_convPower (ν := μ) n
   have hsumNormalized (n : ℕ) (hn : 0 < n) : P.map (Z n) = μ := by
     have hscale : (Real.sqrt (n : ℝ))⁻¹ * (n : ℝ) ^ (1 / (2 : ℝ)) = 1 := by
       rw [← Real.sqrt_eq_rpow]

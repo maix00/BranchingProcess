@@ -27749,3 +27749,21 @@ exponents from convergence of the time-one laws, and therefore does not fill
 the one-marginal Jacod--Shiryaev step in Mogul'skii Theorem 4. The focused
 target `lake build Probability.Distributions.InfinitelyDivisible.LevyKhintchine.Semigroup.Convergence`
 passes with the pinned toolchain. The production module count is now 1,636.
+
+## Convolution law of a finite IID sum (2026-10-31)
+
+Extended `Probability/Sequence/IID/Law.lean` with the public result
+`ProbabilityTheory.iidSequenceLaw_map_sum_range_eq_convPower`. For a real
+probability measure $\nu$ and $n\in\mathbb N$, it proves
+\[
+  \operatorname{Measure.map}\!\left(\texttt{iidSequenceLaw}\,\nu,
+    \omega\mapsto\sum_{k<n}\omega_k\right)=\nu^{*n}.
+\]
+The proof combines the existing IID characteristic-function product formula
+with Mathlib's uniqueness theorem `Measure.ext_of_charFun` and the convolution
+identity `Measure.charFun_convPower`. The local copy of this argument in
+`Probability/Distributions/Stable/Gaussian/Basic.lean` now calls the generic
+result, providing a direct production client for its placement in the IID
+sequence-law module. Both `Probability.Sequence.IID.Law` and
+`Probability.Distributions.Stable.Gaussian.Basic` pass the focused Lake build
+(3,336 jobs). The production module count remains 1,636.

@@ -7,10 +7,13 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Sequence.IID.Basic
+public import MeasureTheory.Measure.Convolution.Power
 public import Mathlib.Probability.HasLaw
+import MeasureTheory.Measure.CharacteristicFunction.Convolution
+import Probability.Sequence.IID.CharacteristicFunction
 
 /-!
-# Laws of independent sequences
+# Laws of independent sequences and their finite sums
 
 ## Public declarations
 
@@ -18,7 +21,17 @@ public import Mathlib.Probability.HasLaw
   $\nu$ and $(X_n)_{n\in\mathbb N}$ is independent and measurable, then the
   sequence map $\omega\mapsto(X_n(\omega))_{n\in\mathbb N}$ has law
   $\nu^{\mathbb N}=\texttt{iidSequenceLaw}\,\nu$.
-The proof applies Mathlib's `iIndepFun.map_fun_eq_infinitePi_map` and `HasLaw.map_eq`; this module records their common-law specialization for the repository's canonical IID sequence law.
+- `ProbabilityTheory.iidSequenceLaw_map_sum_range_eq_convPower`: for a real
+  probability measure $\nu$ and $n\in\mathbb N$, the sum of the first $n$
+  canonical coordinates has law $\nu^{*n}$:
+  \[
+    \operatorname{Law}\!\left(\sum_{k<n}X_k\right)
+      =\nu^{*n},\qquad (X_k)_{k\ge0}\sim\texttt{iidSequenceLaw}\,\nu.
+  \]
+The sequence-law proof applies Mathlib's `iIndepFun.map_fun_eq_infinitePi_map`
+and `HasLaw.map_eq`; the finite-sum identity combines the characteristic
+function formula for IID sums with Mathlib's uniqueness theorem for
+characteristic functions.
 -/
 
 @[expose] public section
@@ -44,6 +57,17 @@ theorem iIndepFun.hasLaw_iidSequenceLaw
   congr 1
   funext n
   exact (hlaw n).map_eq
+
+/-- The sum of the first `n` coordinates of the canonical i.i.d. sequence
+has the `n`-fold convolution power of its common law. -/
+theorem iidSequenceLaw_map_sum_range_eq_convPower
+    {ν : Measure ℝ} [IsProbabilityMeasure ν] (n : ℕ) :
+    (iidSequenceLaw ν).map
+      (fun sequence : ℕ → ℝ => ∑ k ∈ Finset.range n, sequence k) =
+        MeasureTheory.Measure.convPower ν n := by
+  apply Measure.ext_of_charFun
+  ext t
+  rw [iidSequenceLaw_charFun_sum, Measure.charFun_convPower]
 
 end ProbabilityTheory
 
