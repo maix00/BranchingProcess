@@ -28041,3 +28041,22 @@ with this path-law event bridge and
 the same path-space law identity used elsewhere and removes the duplicate
 finite-coordinate event-transfer argument. The focused corridor and
 finite-time entrance modules build successfully. No LaTeX source was changed.
+
+## Stable endpoint-corridor transfer through path-law uniqueness (2026-11-01)
+
+Refactored
+`Probability/Process/Stable/SmallDeviation/EscapeRate/PathLaw/Transfer.lean`:
+`IsStableClockProcessLaw.measure_corridorReturnEvent_eq` now identifies the
+given stable clock path measure with the realizing Lévy process's canonical
+unit-interval law through
+`IsStableClockProcessLaw.unitInterval_measure_eq`, then applies the generic
+`IsLevyProcess.unitIntervalPathLaw_measure_corridorReturnEvent`. The stable
+process hypotheses provide the common increment specification; the event
+transfer itself requires only the generic Lévy interface. The previous local
+comparison of rational-coordinate event preimages is removed, with the public
+statement and its clients unchanged.
+
+The module header now lists every public declaration and its mathematical
+conclusion, in line with the Lean contribution rules. The rewritten transfer
+module builds with the pinned toolchain, and the finite-time entrance module
+continues to compile against the same stable path-law interfaces.
