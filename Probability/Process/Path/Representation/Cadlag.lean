@@ -25,6 +25,9 @@ The public objects and theorems in this file are:
   realization of $X$ and its pushforward law $P\circ X^{-1}$.
 - `pathMap_ae_eval_eq`: for an almost-surely càdlàg process,
   $\operatorname{pathMap}(X)(t)=X_t$ almost surely.
+- `pathMap_eq_of_cadlag`: at each sample with a càdlàg trajectory, the
+  rational-coordinate realization is exactly the bundled path
+  $t\mapsto X_t$.
 - `pathMap_eq_cadlagunitIntervalPath` and
   `pathLaw_eq_cadlagunitIntervalPathLaw`: for an everywhere-continuous
   process, the rational realization and continuous-path realization agree.
@@ -154,7 +157,9 @@ theorem hasLaw_pathMap (X : unitInterval → Ω → ℝ) {P : Measure Ω}
   map_eq := rfl
 
 omit [MeasurableSpace Ω] in
-private lemma pathMap_eq_of_cadlag (X : unitInterval → Ω → ℝ) (ω : Ω)
+/-- At a sample with a càdlàg trajectory, the rational-coordinate extension
+is exactly the bundled path given by that trajectory. -/
+theorem pathMap_eq_of_cadlag (X : unitInterval → Ω → ℝ) (ω : Ω)
     (hω : IsCadlag (fun t => X t ω)) :
     pathMap X ω = ⟨fun t => X t ω, hω⟩ := by
   let p : CadlagPath unitInterval ℝ := ⟨fun t => X t ω, hω⟩

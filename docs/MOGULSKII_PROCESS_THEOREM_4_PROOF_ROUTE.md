@@ -68,6 +68,11 @@ between `-a⁻¹` and `a⁻¹`; the terminal value in `D(0,1)` is the left limit
   horizon-`T` law, and proves that spatial scaling by `q` pushes this law
   forward by `f ↦ qf`. These are the path-law interfaces needed for the
   normalized process in equation (38).
+- `Probability/Process/Levy/PathLaw/Corridor.lean` identifies the path-law
+  probability of a zero-start open corridor with the original process's
+  complete-segment corridor probability. This proves the path-representation
+  part needed when equation (38) is applied to the tube events; the weak
+  convergence and boundary comparison remain separate obligations.
 - `Probability/Process/Levy/PathLaw/Convergence.lean` proves that tightness of
   a family of unit-interval Lévy path laws and convergence of every interval
   increment law imply weak convergence of the path laws. It uses
@@ -202,8 +207,11 @@ the process in Theorem 4 has been given a càdlàg version.
    domain-of-attraction limit, or formalize the cited Jacod--Shiryaev criterion
    directly. Then identify the limit as the stable unit-interval path law and
    restrict from `[0,∞)` to `[0,1]`.
-3. **Formalize equations (38)--(44) exactly.** First establish the fixed-tube
-   transfer, with the event-boundary condition needed for weak convergence.
+3. **Formalize equations (38)--(44) exactly.** The unit-interval path-law
+   module now identifies the centered corridor event with the corresponding
+   process event. The remaining fixed-tube comparison uses the process limit
+   in equation (38) together with the boundary condition or the open/closed
+   tube squeeze required by Portmanteau.
    Then formalize the arbitrary `y(n)` comparison, the choice
    `y(n) = ⌊B*(a x(n))⌋`, the asymptotic-inverse estimate, the slowly
    increasing diagonal `a(n)`, and the regular-variation calculation in
@@ -222,6 +230,8 @@ normalized integer-time marginals are formalized. The unit-interval path law, it
 finite-evaluation identity, its spatial-scaling pushforward, and the generic
 tightness-plus-increment-convergence path-law theorem are available. The next
 substantive step is functional convergence in equation (38) from Theorem 4's
-scalar domain-of-attraction input, followed by Mogul'skii's scaling comparison
-in equations (39)--(44). The previous proposed nonstable block-squeeze route
-has been removed because it does not follow the article's proof.
+scalar domain-of-attraction input, followed by the fixed-tube probability
+comparison and Mogul'skii's scale calculations in equations (39)--(44). The
+path-law/process-event identity needed by the tube comparison is formalized.
+The previous proposed nonstable block-squeeze route has been removed because
+it does not follow the article's proof.

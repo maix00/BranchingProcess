@@ -27945,9 +27945,11 @@ Added the proof-support module
 to combine that centered-corridor rate with the rounded regular-variation
 ratio from equation (43), proving the stable path-probability contribution in
 equation (44). The module is under `Lemmas/Theorem4/` because this combination
-serves that proof chain and is not an independent stable-scale API. The
-comparison with the original process tube in equation (42) and the process-level
-convergence in equation (38) remain open. The two
+serves that proof chain and is not an independent stable-scale API. At this
+checkpoint, the path-law/process-event identity and process-level convergence
+in equation (38) were still open; the identity is formalized in the following
+audit entry, while equation (38) and the resulting probability comparison
+remain open. The two
 affected Lean modules built successfully with `lake build` (3,317 jobs).
 
 The source inventory and `MODULE_AUDIT_LEDGER.csv` each contain 1,640
@@ -27955,3 +27957,36 @@ production modules with exact path agreement. The added module is recorded as
 structurally scanned, semantically reviewed, and built. A fresh directory scan
 found no file/directory stem collision, `Lemmas.lean`/`Lemmas/` pair, directory
 with more than eight direct Lean modules, or `Source/` directory.
+
+## Lévy path-law corridor event identity (2026-11-01)
+
+Promoted `Process.Path.Cadlag.pathMap_eq_of_cadlag` from a file-private proof
+step to the path-representation interface: for every sample with a càdlàg
+trajectory, the canonical rational-coordinate extension equals the bundled
+path pointwise. The identity depends only on the repository's `CadlagPath`
+representation and dense rational evaluation, with no Lévy or probability
+assumptions.
+
+Added `Probability/Process/Levy/PathLaw/Corridor.lean`. For an `IsLevyProcess`
+started at zero, its unit-interval path-law mass on
+`Skorokhod.corridorStartingAtZero lower upper` equals the mass of
+`fullSegmentCorridorEvent X 0 horizon lower upper`. This is the complete-path
+event bridge used by the continuous-time tube comparison in Mogul'skii's
+Theorem 4. It combines the generic càdlàg path realization with the
+process-level corridor event and adds no stable-law assumption.
+
+The abstraction check used pinned Mathlib revision
+`380f2aafb622cb2c1c93dac545b6389083c68c51`. Mathlib's
+`ProbabilityTheory.HasLaw.measure_eq` supplies the generic pushforward-event
+identity, and `IsCadlag.isBounded_image_of_isCompact` supplies compact-time
+boundedness; neither constructs the repository's rational-coordinate path
+map or identifies its complete corridor event. The official Mathlib API
+search found no matching path-map declaration, so the pointwise realization
+identity remains at `Process/Path/Representation`, and the Lévy specialization
+belongs beside the unit-interval path law.
+
+The production tree now contains 1,641 modules, matching 1,641 ledger rows.
+The new path-law module and promoted path-map identity are recorded in the
+ledger; the focused path-law build passes. The Mogul'skii proof route now has
+the path-law/process-event identity needed for equation (42); equation (38)'s
+functional convergence and the resulting Portmanteau comparison remain open.
