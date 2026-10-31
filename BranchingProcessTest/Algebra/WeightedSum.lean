@@ -1,3 +1,4 @@
+import Mathlib.Data.Real.Basic
 import Algebra.Order.BigOperators.WeightedSum
 
 open scoped BigOperators
