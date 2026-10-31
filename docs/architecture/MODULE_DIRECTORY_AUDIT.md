@@ -27555,5 +27555,7 @@ continues to compile from the same càdlàg path map. The full-process
 restriction theorem and the Gaussian linear-path support client were updated
 to use the generalized constructor and both build successfully. The stable
 adapter remains public because it expresses the stable-process interface;
-one-use conversion details remain in the client proofs. The per-module ledger
-records the reuse and build status.
+one-use conversion details remain in the client proofs. The Brownian-process
+adapter now states its conclusion using this same canonical stable path law,
+and its full target build succeeds. The per-module ledger records the reuse
+and build status.
