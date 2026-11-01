@@ -25,6 +25,16 @@ so far.
 
 ## Public declarations
 
+Write `F_n` for the recursively installed field at stage `n` and `P_n` for
+its selected population. Installing the next generation preserves `P_n` and
+leaves all positions through depth `n` unchanged:
+
+\[\begin{aligned}
+P_n(F_{n+1})&=P_n(F_n),\\
+|q|\le n\quad&\Longrightarrow\quad
+\operatorname{position}_{F_{n+1}}(q)=\operatorname{position}_{F_n}(q).
+\end{aligned}\]
+
 * `RootIndexed.initialPopulationSliceDominatingMap_of_subset` constructs an
   identity particle map from the initial cloud on `sourceRoots` into that on
   `targetRoots` whenever `sourceRoots ⊆ targetRoots`; both clouds may use

@@ -24,6 +24,21 @@ fibres.  Roots, family indices, and offspring slots remain arbitrary.
 
 ## Public declarations
 
+The right-copy past contains exactly the coordinates of depth below `n`. Let
+`P` be the two-copy product law, let `A(F)` be a measurable past with the same
+law as the right-copy past, and let `B(F)` be the fields rooted at a
+countable-range predictable injective choice of generation-`n` coordinates.
+Gluing them gives the one-copy product law:
+
+\[
+\operatorname{rightPast}_n(F)(r,u)=F(\operatorname{inr}(r),u)\quad(|u|<n),
+\qquad
+P\circ A^{-1}=P\circ\operatorname{rightPast}_n^{-1}
+\Longrightarrow
+(F\mapsto\operatorname{glue}_n(A(F),B(F)))_{\#}P
+=\operatorname{stepFieldLaw}_{R}^{\mu}.
+\]
+
 * `RootIndexed.StepField.rightPast` restricts the right copy to coordinates
   of address depth less than `n`; `rightPast_measurable` proves its
   measurability in the joint generation-`n` domain flow.

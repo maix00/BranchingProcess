@@ -23,6 +23,22 @@ gluing identity is internal proof support under `Lemmas/Glue.lean`.
 
 ## Public declarations
 
+The block map applies the equal-rank choice at the root and leaves every
+strict descendant in the fallback copy; it is injective and does not map a
+coordinate to a depth below `n`:
+
+\[
+\operatorname{rankBlockChoice}_n(F)((r,u),v)=
+\begin{cases}
+\operatorname{rankChoice}_n(F)((r,u)),&v=[],\\
+(\operatorname{inr}(r),u\mathbin{++}i::w),&v=i::w,
+\end{cases}
+\qquad
+\operatorname{Injective}(\operatorname{rankBlockChoice}_n(F)),
+\quad |u|=n\Longrightarrow
+\left|\operatorname{rankBlockChoice}_n(F)((r,u),v).2\right|\ge n.
+\]
+
 * `RootIndexed.rankBlockChoice` maps the root coordinate of each generation
   block by equal rank and keeps strict descendants in the target copy.
 * `RootIndexed.rankBlockChoice_range_countable` transfers countability of the
