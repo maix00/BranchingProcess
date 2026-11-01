@@ -51,6 +51,20 @@ domain, and the clamped coordinate for a decomposition into unit-time blocks.
   `∑_{n=0}^{floor t} (blockParameter n t : ℝ) = t` and
   `∑_{n=0}^{floor t} ((blockParameter n t : ℝ) - (blockParameter n s : ℝ))
   = t - s` when `s ≤ t`.
+
+The affine and clamped coordinates, together with their finite-sum identity,
+are
+\[
+  \tau_a(u):=a+(1-a)u,\qquad
+  \theta_n(t):=\max\{0,\min\{1,t-n\}\},
+\]
+\[
+  \sum_{n=0}^{\lfloor t\rfloor}\theta_n(t)=t,
+  \qquad
+  \sum_{n=0}^{\lfloor t\rfloor}
+    \bigl(\theta_n(t)-\theta_n(s)\bigr)=t-s\quad(0\le s\le t),
+  \qquad s,t\in\mathbb R_{\ge0}.
+\]
 -/
 
 @[expose] public section

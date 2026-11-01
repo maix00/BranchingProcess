@@ -27,6 +27,16 @@ semantics.
   `Tendsto (upper n) l (𝓝 (upperLimit n))`, and convergence of both
   `lowerLimit` and `upperLimit` along `atTop` to `L`; the conclusion is
   `Tendsto f l (𝓝 L)`.
+
+The order-topological squeeze statement is
+\[
+  \left(\forall n,\ \ell_n\le_l f\le_l u_n\right),\quad
+  \ell_n\xrightarrow[l]{}a_n,\quad
+  u_n\xrightarrow[l]{}b_n,\quad
+  a_n,b_n\xrightarrow[n\to\infty]{}L
+  \quad\Longrightarrow\quad f\xrightarrow[l]{}L,
+\]
+where `\ell_n ≤_l f` and `f ≤_l u_n` mean eventual pointwise order along `l`.
 -/
 
 @[expose] public section

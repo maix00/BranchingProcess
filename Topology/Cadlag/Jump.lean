@@ -26,6 +26,14 @@ A càdlàg function on a compact linearly ordered pseudometric space with its
 order topology and a bottom element has only finitely many noninitial jumps
 larger than any fixed positive threshold. The proof uses local one-sided
 oscillation bounds and a finite subcover.
+
+For every `ε > 0`, the large-jump set and the full discontinuity set satisfy
+\[
+  \{t\ne\bot:\operatorname{dist}(f(t^-),f(t))>\varepsilon\}
+    \text{ is finite},
+  \qquad
+  \operatorname{Disc}(f)\text{ is countable}.
+\]
 -/
 
 @[expose] public section

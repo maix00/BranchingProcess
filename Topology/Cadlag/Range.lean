@@ -22,6 +22,12 @@ import Mathlib.Topology.Order.IsLUB
 The path-set definition does not depend on a topology on the space of paths.
 The dense-time result is a pathwise extension fact for `IsCadlag` functions;
 it uses right continuity and closedness of the target set.
+The extension statement is
+\[
+  D\text{ dense},\quad \top\in D,\quad S\text{ closed},\quad
+  f(D)\subseteq S,\quad f\text{ càdlàg}
+  \quad\Longrightarrow\quad f(T)\subseteq S.
+\]
 -/
 
 @[expose] public section
