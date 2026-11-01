@@ -16,6 +16,19 @@ public import Combinatorics.Selection.NSelection.Matching.ByRank
 
 ## Public declarations
 
+An injective spatially dominating map between finite population clouds implies
+the corresponding cardinality inequality. Matching equal dynamic ranks gives
+a canonical witness:
+
+\[
+\iota:C\hookrightarrow D,\quad
+\phi(\operatorname{position}_D(\iota(p)))
+ \le\phi(\operatorname{position}_C(p))
+\Longrightarrow |C|\le|D|,
+\qquad
+\iota_{\mathrm{rank}}(p)=\operatorname{matchByRankOrSelf}(p).
+\]
+
 This file turns finite populations in root-indexed branching walks into
 constant-time clouds and chooses the canonical equal-rank injection.
 

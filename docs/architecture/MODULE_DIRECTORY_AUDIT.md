@@ -28810,4 +28810,24 @@ Probability/BranchingRandomWalk/Genealogy/RootIndexed/Field/Selection.lean.
 The formulas state finite dynamic matching, rankwise comparison after
 first-\(N\) restriction, and generation-filtration measurability of
 position-ranked selection. All three modules build successfully in a 3,275-job
-Lake build. The remaining public-header candidates are being audited next.
+Lake build. The remaining public-header candidates were then audited.
+
+## Public-header formula pass completion (2026-11-02)
+
+Added mathematical statements to the remaining 36 headers that contain a
+Public declarations section but had no formulas. The modules cover the
+abstract and finite selection interfaces, first-\(N\) tail comparisons and
+totalization, deterministic branching-walk populations and frontiers,
+offspring and cloud couplings, measurable rank selection, causal product-law
+couplings, and endpoint/drawdown estimates. All 36 focused modules build
+successfully in a 4,905-job Lake build; no declarations or proofs changed.
+
+The whole-tree scan covers 1,642 Lean modules. Its 39 remaining headers
+without mathematical notation are all in Lemmas directories and have no
+Public declarations section, so this pass leaves their internal proof
+statements documented by their local code and enclosing module descriptions.
+The scan confirms zero public-declaration headers without mathematical
+notation, balanced inline/display math delimiters in all such headers, and
+zero control characters. Also repaired the missing closing inline-math
+delimiter in
+Probability/Process/Path/Skorokhod/Corridor/RationalCoordinate.lean.

@@ -20,6 +20,15 @@ time-homogeneous rule applied separately to each branching step.
 
 ## Public declarations
 
+For every stage \(n\), recursive rank installation from a measurable causal
+finite-selection source gives a measurable field with the original product
+step-field law:
+
+\[
+\operatorname{Measurable}(V_n),\qquad
+\mu\circ V_n^{-1}=\operatorname{offspringFieldLaw}(\mu).
+\]
+
 * `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.RootIndexed.rankInstalledField_causalSelection_law`:
   for a measurable causal finite-selection mechanism, the recursively
   rank-installed field is measurable at every stage and preserves the

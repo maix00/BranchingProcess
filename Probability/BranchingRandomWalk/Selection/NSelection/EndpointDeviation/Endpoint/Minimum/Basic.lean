@@ -19,6 +19,22 @@ minimum.
 
 ## Public declarations
 
+Let \(P_H(\omega)\) be the selected population at generation \(H\), and
+\(X_H(\omega,p)\) its endpoint position. The totalized minimum and its
+endpoint-below event satisfy
+\[
+M_H(\omega)=
+\begin{cases}
+\min_{p\in P_H(\omega)}X_H(\omega,p),&P_H(\omega)\ne\varnothing,\\
+0,&P_H(\omega)=\varnothing,
+\end{cases}
+\qquad
+M_H(\omega)\le x
+\iff
+\omega\in E_{H,x}\ \lor\
+(P_H(\omega)=\varnothing\land 0\le x).
+\]
+
 The declarations in
 `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation` are:
 

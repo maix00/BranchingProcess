@@ -14,6 +14,17 @@ public import Combinatorics.BranchingWalk.Selection.Coupling.Offspring.Cloud
 
 ## Public declarations
 
+For a parent \(p\) and surviving child slot \(i\), the observed child value is
+the observation of the updated position. Under a finite parent injection,
+matched slots and increments preserve the lower-tail count comparison:
+
+\[
+\psi_C(p,i)=\phi\!\left(x_C(p)+\xi_C(p,i)\right),\qquad
+\bigl|\{(p,i)\in P_C:\psi_C(p,i)\le a\}\bigr|
+\le
+\bigl|\{(q,i)\in P_D:\psi_D(q,i)\le a\}\bigr|.
+\]
+
 The declarations are in namespace
 `Combinatorics.Branching.Selection.Coupling`.
 

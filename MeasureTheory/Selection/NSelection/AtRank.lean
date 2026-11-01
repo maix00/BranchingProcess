@@ -14,6 +14,18 @@ public import Combinatorics.Selection.NSelection.Mechanism.Finite.AtRank
 
 ## Public declarations
 
+For a measurable finite candidate set \(A(\omega)\) and lexicographic key
+\(K_\omega\), the rank of \(p\) is the number of candidates with smaller key.
+The rank map and each fibre of the particle-at-rank selector are measurable:
+
+\[
+\operatorname{rankBy}(K_\omega,A(\omega),p)
+=\bigl|\{q\in A(\omega):K_\omega(q)<K_\omega(p)\}\bigr|,
+\qquad
+\{\omega:\operatorname{particleAtRankBy}(\omega,k)=\operatorname{some}(p)\}
+\in\mathcal F.
+\]
+
 - `Combinatorics.Selection.NSelection.measurableSet_mem_candidates`:
   if the candidate-set fibres are measurable and its actual range is
   countable, then `{ω | p ∈ candidates ω}` is measurable.

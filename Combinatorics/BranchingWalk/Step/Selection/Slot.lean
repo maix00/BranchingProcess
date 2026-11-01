@@ -20,6 +20,16 @@ as `0` or `1` are present.
 
 ## Public declarations
 
+When the slot order is locally finite and has a least element, the first
+\(N\) surviving slots form an admissible selection. Its first two selected
+slots satisfy
+\[
+i_1=\min R,\qquad
+i_2=\min(R\setminus\{i_1\}),\qquad
+i_1<i_2\ \text{ if } |R|\ge2,\qquad
+|\operatorname{selectFirstNBySlotOrder}(N)|\le N.
+\]
+
 - `Combinatorics.Branching.Step.FiniteSelection.firstSelectedSlot` returns
   the least selected child, with `⊥` on an empty selection;
   `.firstSelectedSlot_mem` gives membership for nonempty selections.

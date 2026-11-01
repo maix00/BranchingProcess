@@ -29,6 +29,17 @@ reversing the order exchanges the two frontier speeds.
 
 The public API is:
 
+\[
+\operatorname{Speed}(p,c)
+\iff
+\lim_{n\to\infty}(n:\mathbb K)^{-1}\mathbin{\cdot}p_n=c,\qquad
+\operatorname{Speed}(p,c)
+\iff
+\lim_{n\to\infty}(n+k:\mathbb K)^{-1}\mathbin{\cdot}p_{n+k}=c.
+\]
+Under order duality, lower-frontier speed is transported to the upper-frontier
+speed of the reversed walk.
+
 - `HasAsymptoticSpeed p c` means
   `Tendsto (fun n => (n : 𝕜)⁻¹ • p n) atTop (𝓝 c)`.
 - `hasAsymptoticSpeed_unique` proves that a sequence has at most one speed;

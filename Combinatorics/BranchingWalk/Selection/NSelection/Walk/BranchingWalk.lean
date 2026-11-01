@@ -21,6 +21,18 @@ This is the deterministic object. The random `N`-branching walk, a law on
 
 ## Public declarations
 
+An \(N\)-branching walk has finite offspring support of cardinality at most
+\(N\), and an \(N\)-selection is a walk transform whose output has this
+property:
+
+\[
+\operatorname{IsNBranching}(N,\beta)
+\iff
+\forall r,u,\quad
+\operatorname{support}(\beta.\operatorname{step}(r,u))
+\text{ is finite and has cardinality at most }N.
+\]
+
 - `RootIndexed.IsNBranching N β` means
   `∀ r u, (support (β.step r u)).Finite ∧ (support (β.step r u)).ncard ≤ N`.
 - `RootIndexed.NBranchingWalk N Root α Mark Position` is the subtype

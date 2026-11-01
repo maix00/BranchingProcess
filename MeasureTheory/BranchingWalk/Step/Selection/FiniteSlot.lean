@@ -18,6 +18,14 @@ this result records the measurable-space property of that construction.
 
 ## Public declarations
 
+For a measurable finite slot selector \(R\), the binary-offspring encoding
+preserves measurability:
+
+\[
+\operatorname{Measurable}\!\left(
+\xi\mapsto\operatorname{binaryOffspringStep}_{R}(\xi)\right).
+\]
+
 - `Combinatorics.Branching.Step.FiniteSelection.binaryOffspringStep_measurable`:
   if `R` is a measurable finite selection from branching steps, with countable
   measurable slots carrying a linear order and bottom element, then its

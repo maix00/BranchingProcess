@@ -21,6 +21,19 @@ ancestral positions, and all information exposed by the current generation.
 
 ## Public declarations
 
+For a finite causal source, recursive equal-rank installation preserves the
+product field law and gives a slice-dominating injection on every sample whose
+source slice has size at most \(N\):
+
+\[
+\mu\circ V_n^{-1}=\operatorname{offspringFieldLaw}(\mu),\qquad
+|P_n(\omega)|\le N
+\Longrightarrow
+\exists\,\iota_n^\omega:P_n(\omega)\hookrightarrow Q_n(V_n(\omega)),
+\quad
+\phi(X_Q(\iota_n^\omega(p)))\le\phi(X_P(p)).
+\]
+
 * `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.RootIndexed.rankInstalledField_causalPopulation_measurable_law`:
   for every stage `n`, the target field installed from a finite causal source
   is measurable and has the original product-field law,

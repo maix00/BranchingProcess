@@ -15,6 +15,16 @@ import Mathlib.MeasureTheory.MeasurableSpace.Constructions
 
 ## Public declarations
 
+For a measurable finite selection \(R(\xi)\), the least selected slot and
+the least selected slot after removing the first are measurable random
+variables:
+
+\[
+\operatorname{Measurable}(\xi\mapsto\operatorname{firstSelectedSlot}(R)(\xi)),
+\qquad
+\operatorname{Measurable}(\xi\mapsto\operatorname{secondSelectedSlot}(R)(\xi)).
+\]
+
 - `Combinatorics.Branching.Step.FiniteSelection.firstSelectedSlot_measurable`
   states that a measurable finite step selection has a measurable least
   selected slot.

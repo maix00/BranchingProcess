@@ -14,6 +14,19 @@ public import Combinatorics.BranchingWalk.Selection.Coupling.Offspring.Cloud
 
 ## Public declarations
 
+If a spatially dominating injection matches every source parent to a target
+parent, source child slots are contained in the matched target slots, and
+shared increments agree, then every lower-tail count of source child
+addresses is bounded by the corresponding target count:
+
+\[
+\left|\left\{q\in\operatorname{offspringAddresses}(P_C,I_C):
+  \phi(x_C(q))\le a\right\}\right|
+\le
+\left|\left\{q\in\operatorname{offspringAddresses}(P_D,I_D):
+  \phi(x_D(q))\le a\right\}\right|.
+\]
+
 This file propagates parent domination to lower-tail domination of genuine child
 addresses.  Child slots remain arbitrary finite sets or sets; no enumeration
 of roots or offspring slots is assumed.

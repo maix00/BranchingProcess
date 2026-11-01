@@ -21,6 +21,15 @@ is applied.
 
 ## Public declarations
 
+For a measurable finite step-selection rule, recursive equal-rank
+installation yields a measurable target field with the original product
+step-field law:
+
+\[
+\operatorname{Measurable}(V_n),\qquad
+\mu\circ V_n^{-1}=\operatorname{offspringFieldLaw}(\mu).
+\]
+
 * `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.RootIndexed.rankInstalledField_stepSelection_law`:
   for a measurable finite step-selection rule, recursive equal-rank
   installation gives a measurable target field with the original product

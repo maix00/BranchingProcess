@@ -15,6 +15,18 @@ public import Combinatorics.BranchingWalk.Selection.NSelection.Coupling.Step
 
 ## Public declarations
 
+Under the one-generation first-\(N\) coupling hypotheses at every sample and
+generation, spatial domination propagates from the initial populations to all
+later populations:
+
+\[
+\forall n,\omega,\quad
+\exists\,\iota_{n,\omega}:P^C_n(\omega)\hookrightarrow P^D_n(\omega),\quad
+\forall p\in P^C_n(\omega),\
+\phi\!\left(X^D_n(\omega,\iota_{n,\omega}(p))\right)
+\le \phi\!\left(X^C_n(\omega,p)\right).
+\]
+
 Random branching walks and their selected populations are functions of an
 ambient sample `ω`.  The deterministic one-generation theorem can therefore
 be iterated pointwise.  This file records that iteration without imposing a

@@ -20,12 +20,12 @@ produces one injective matching into the selected target population.
 ## Public declarations
 
 If the cloud \(C\) injectively dominates \(D\) at time \(t\), then every
-retained source set \(R_t\subseteq C_t\) of size at most \(N\) injectively dominates the
-target's first \(N\) particles ordered by observed position, with particle
-labels breaking ties:
+retained source set \(R_t\subseteq C_t\) of size at most \(N\) injectively
+dominates the target's first \(N\) particles ordered by observed position,
+with particle labels breaking ties:
 
 \[R_t\subseteq C_t,\quad |R_t|\le N,\quad
-  C\succeq_{\mathrm{inj},\phi}D
+  C\succeq_{\mathrm{inj},\phi}D\text{ at time }t
   \Longrightarrow
   C_R\succeq_{\mathrm{inj},\phi}D^{[N]}_{\phi,t}.\]
 

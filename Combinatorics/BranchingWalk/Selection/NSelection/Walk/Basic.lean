@@ -14,6 +14,16 @@ public import Combinatorics.BranchingWalk.Cloud.Basic
 
 ## Public declarations
 
+The population recursion and its uniform capacity bound are
+\[
+P_0=I,\qquad
+P_{n+1}=M.\operatorname{select}
+  \left(\bigcup_{x\in P_n}\operatorname{children}(x)\right),\qquad
+|P_n|\le N\quad(n\in\mathbb N).
+\]
+The associated cloud has slice \(C_n=\uparrow P_n\); order duality sends each
+population to its image under \(\operatorname{OrderDual.toDual}\).
+
 `Combinatorics.Branching.Selection.NSelection.Walk` is a deterministic walk
 with `initial.card ≤ N` and finite offspring sets. The remaining declarations
 are in namespace `Combinatorics.Branching.Selection.NSelection.Walk`.

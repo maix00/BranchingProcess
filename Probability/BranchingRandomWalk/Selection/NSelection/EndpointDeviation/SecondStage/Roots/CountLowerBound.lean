@@ -20,6 +20,17 @@ public import Analysis.Asymptotics.Power.FloorProduct
 
 ## Public declarations
 
+Under the first-stage budget \(\delta<a-b-2v-3\varepsilon\), if
+\(K_n=\lfloor N_n^\delta\rfloor\), the probability that the killed slice has
+fewer than \(K_n\) roots is eventually exponentially small:
+
+\[
+\forall^\infty n,\qquad
+\mathbb P\!\left(
+  |P_{\ell_n}|<\lfloor N_n^\delta\rfloor\right)
+\le \exp(-N_n^\delta).
+\]
+
 * `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.positiveAKilledEnoughRootEvent`:
   the event that the first-stage killed population at its cutoff contains at
   least `K` particles.

@@ -19,6 +19,18 @@ import Mathlib.MeasureTheory.MeasurableSpace.NCard
 
 ## Public declarations
 
+If the finite candidate-set fibres and the pairwise observed-value
+comparisons are measurable, dynamic selection by value and then label is a
+measurable finite-set-valued map:
+
+\[
+\operatorname{Measurable}\!\left(
+\omega\mapsto
+\operatorname{selectFirstNBy}(N,v_\omega,A(\omega))\right),
+\qquad
+K_\omega(q)=(v_\omega(q),q).
+\]
+
 - `Combinatorics.Selection.NSelection.measurable_selectFirstNBy_fixed`:
   for fixed finite candidates, measurable pairwise key comparisons imply that
   `ω ↦ selectFirstNBy N (value ω) s` is measurable.

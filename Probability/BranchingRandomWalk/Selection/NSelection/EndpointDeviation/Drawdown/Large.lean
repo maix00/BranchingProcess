@@ -31,6 +31,16 @@ arXiv:2512.23266 (2025).
 
 ## Public declarations
 
+For \(m\le N\), \(B>0\), and the boundary-normalized offspring law, the
+large-drawdown event through horizon \(H\) is contained in the first-passage
+event and satisfies
+\[
+\mathbb P(\text{raw large drop by }H)
+\le \mathbb P(\text{large drawdown by }H)
+\le \mathbb P(\text{selected first passage by }H)
+\le N(H+1)^2e^{-B}.
+\]
+
 - `selectedFirstPassageBelowAtGeneration` is the first-`N` population event
   at a fixed generation; `measurableSet_selectedFirstPassageBelowAtGeneration`
   proves measurability, and

@@ -13,6 +13,22 @@ public import Combinatorics.Selection.NSelection.Mechanism.Finite.Leftmost
 
 ## Public declarations
 
+If \(R\subseteq S\), \(|R|\le N\), source threshold counts are bounded by
+candidate threshold counts, and the candidate order refines its position
+order, then the selected candidates retain those lower-tail bounds. For
+\(N>0\), each source particle also has a selected candidate weakly to its
+left:
+
+\[
+\forall a,\quad
+\bigl|\{p\in R:f(p)\le a\}\bigr|
+\le
+\bigl|\{q\in\operatorname{selectFirstN}(N,Q):g(q)\le a\}\bigr|,
+\qquad
+p\in S\Longrightarrow
+\exists q\in\operatorname{selectFirstN}(N,Q),\ g(q)\le f(p).
+\]
+
 The source and candidate populations may use different label types.  The
 source positions are compared by value thresholds, while the candidate labels
 are selected by their own linear order.  A monotonicity hypothesis connects

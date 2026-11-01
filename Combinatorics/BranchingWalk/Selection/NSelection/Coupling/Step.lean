@@ -16,6 +16,17 @@ public import Combinatorics.Selection.NSelection.Matching.Hall
 
 ## Public declarations
 
+After one branching step, retained source children admit an injection into
+selected target children that does not increase observed position. In
+particular, the resulting finite clouds are injectively dominated:
+
+\[
+\exists\,\iota:\operatorname{children}_C^{\mathrm{ret}}
+  \hookrightarrow \operatorname{children}_D^{[N]},\quad
+\phi(x_D(\iota(p)))\le\phi(x_C(p)),\qquad
+C^+ \succeq_{\mathrm{inj},\phi} D^+.
+\]
+
 This file performs the capacity selection step after parent and offspring
 domination have been established.  It provides both a data-valued injection
 and the final injective-domination theorem used by the pathwise iteration.

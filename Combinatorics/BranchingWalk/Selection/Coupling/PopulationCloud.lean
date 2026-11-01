@@ -18,6 +18,16 @@ to choose that population.
 
 ## Public declarations
 
+A finite population determines a constant-time cloud whose slice and
+positions are exactly the original population and branching-walk positions:
+
+\[
+\operatorname{particles}(\operatorname{populationCloud}(d,\beta,P),())
+  =\uparrow P,\qquad
+\operatorname{position}(\operatorname{populationCloud}(d,\beta,P),r,u)
+  =\beta.\operatorname{position}(d,r,u).
+\]
+
 - `populationCloud d β population` is the constant-time cloud whose particle
   slice is `↑population` and whose position map is `β.position d`.
 - `populationCloud_particles` states
