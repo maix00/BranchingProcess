@@ -28948,7 +28948,36 @@ A delimiter-aware scan of the full production headers found three unmatched
 inline-math delimiters in the public summaries for ordered candidate events,
 finite-dimensional independent-increment laws, and the finite-filtration
 look-ahead examples. Those three headers now close their formulas correctly.
-The rescan reports balanced inline and display delimiters across all 1,642
-module inventories. The 42 changed Lean modules build successfully with the
+The rescan reports balanced inline and display delimiters across all 1,643
+module inventories, including the endpoint tail bridge added below. The 42
+Lean modules changed in the preceding documentation pass build successfully with the
 pinned toolchain in 5,058 Lake jobs; no theorem statements or proof terms
 changed in this documentation pass.
+
+## Finite-variance endpoint tail bridge (2026-11-02)
+
+`Probability/BranchingRandomWalk/Selection/NSelection/EndpointDeviation/Endpoint/Sequence/FiniteVariance.lean`
+now connects the centered finite-variance random-walk drawdown estimate to the
+first-`N` branching endpoint decomposition. Given
+$H_n/\log^3N_n\to t$, $z_n/\log N_n\to\zeta$, $m_n\le N_n^a$, and
+$\zeta<-a+\frac{\pi^2}{2}\sigma^2t$, it chooses one width
+$\Delta_n=b\log N_n$ with $b>1$. The endpoint-gap parameter lemma supplies a
+rate $d<\frac{\pi^2}{2}\sigma^2$ and a positive endpoint ratio $c$ so that
+$z_n\le\Delta_n/c$ eventually and
+$a+\zeta<dt/b^2$. Since $H_n/\Delta_n^{5/2}\to\infty$, the uniform
+finite-variance drawdown theorem applies. The first term of the branching
+decomposition decays at rate $b-1$ on the logarithmic scale; its spine term
+decays at rate $dt/b^2-a-\zeta$. The existing finite-horizon exponent
+conversion then gives an eventual polynomial tail.
+
+The public result stays with the first-`N` endpoint application because its
+event and decomposition are specific to selected branching populations. The
+one-walk estimate remains owned by
+`Probability/Process/RandomWalk/SmallDeviation/Drawdown/FiniteVarianceUpper/`.
+This closes the finite-root logarithmic endpoint-tail interface recorded under
+T11-L in `FORMALIZATION_CHECKLIST.md`. A second theorem transfers this tail
+through the law-preserving restriction from one countable-root field to its
+first $m_n$ roots, using the nonempty-population endpoint/minimum equivalence.
+The flat Theorem 1.1 adapter and the common countable-root two-sided $L^2$
+assembly remain separate open packages.
+The new module and its imports compile in 4,733 Lake jobs.
