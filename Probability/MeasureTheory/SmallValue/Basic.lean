@@ -12,6 +12,16 @@ public import Mathlib.MeasureTheory.Measure.ProbabilityMeasure
 /-!
 # A nonnegative random variable is small with positive probability
 
+Let `P` be a probability measure and `V : Ω → ENNReal` measurable. If its
+nonnegative integral is strictly below `ρ`, then the event that `V` is below
+`ρ` has positive probability:
+
+\[
+\int^- V\,dP<\rho
+\quad\Longrightarrow\quad
+P\{\omega:V(\omega)<\rho\}>0.
+\]
+
 ## Public declarations
 
 - `ProbabilityTheory.measure_pos_of_lintegral_lt`: if \(V\ge0\) is

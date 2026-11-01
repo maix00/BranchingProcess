@@ -15,6 +15,16 @@ import Mathlib.Tactic
 /-!
 # Moment bounds from exponential moments
 
+Write `X_- = max(-X,0)` for the negative part of `X`. If `μ` is a
+probability measure, `X` is measurable, `B ≥ 1`, and the exponential moment
+of `-X` is at most `B`, then
+
+\[
+\int e^{-X} \, d\mu\leq B
+\quad\Longrightarrow\quad
+\int X_-^4\,d\mu\leq 2048\bigl(1+(\log B)^4\bigr)<\infty.
+\]
+
 ## Public declarations
 
 - `ProbabilityTheory.integrable_pow_four_max_neg_of_lintegral_exp_neg_le`:
