@@ -25,6 +25,19 @@ public import Mathlib.MeasureTheory.Measure.Prod
   `twoSidedTail_symmetrized_upper_bound` compare the difference tail to the
   original tail at nearby scales.
 
+For a probability measure `μ`, write
+`T_μ(x) = μ.real {z : ℝ | x < |z|}` and
+`B_μ(x) = μ.real {z : ℝ | |z| ≤ x}`. The mass decomposition and the
+symmetrization bounds are
+\[
+  B_\mu(x)+T_\mu(x)=1,
+  \qquad
+  2T_\mu((1+\varepsilon)x)B_\mu(\varepsilon x)
+  \le T_{\operatorname{sym}(\mu)}(x)
+  \le 2T_\mu((1-\varepsilon)x)+T_\mu(\varepsilon x)^2,
+\]
+where the inequalities hold for `x > 0` and `0 < ε < 1`.
+
 This file records elementary probability bounds relating the tail of a law to
 the tail of the difference of two independent variables with that law. These
 bounds are the measure-theoretic input for transferring regular variation

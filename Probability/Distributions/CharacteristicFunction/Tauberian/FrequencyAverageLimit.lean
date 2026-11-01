@@ -21,6 +21,21 @@ import Mathlib.MeasureTheory.Integral.DominatedConvergence
 - `tendsto_symmetrizedClosedAbsTail_div_normDefect_atTop` gives this result
   for the symmetrized law, using the squared-modulus characteristic defect.
 
+Writing `D_μ(u) = ∫ (1 - cos(uy)) μ(dy)`, the regular-variation hypothesis is
+the compact-uniform ratio limit
+\[
+  \frac{D_\mu(tu)}{D_\mu(u)}\longrightarrow t^2
+  \quad(u\downarrow0),\qquad\text{uniformly for }t\in[1,2],
+\]
+with `D_μ(u) > 0` for all sufficiently small positive `u`. It implies
+\[
+  \frac{\mu\{|y|\ge x\}}{D_\mu(x^{-1})}\longrightarrow0
+  \quad(x\to\infty).
+\]
+For a probability law `ν`, the corresponding source-facing statement uses
+`D_ν(u) = 1 - ‖charFun ν u‖²` in the ratio and denominator, and the numerator
+is the closed two-sided tail of `symmetrizedMeasure ν`.
+
 Compact-uniform regular variation of index two makes the leading terms in a
 frequency-averaged cosine defect cancel. This module provides the deterministic
 averaging limit used to turn the coercive tail estimate into a little-o tail
