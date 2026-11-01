@@ -17,6 +17,15 @@ public import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.Add
 abstract branching-step coordinate spaces. This file proves its order and
 independence properties.
 
+With `\mathscr F(S)` denoting `stepsOnSpace S` and `\nu_\mu` the product law
+of the pre-sampled steps, the structural and independence statements are
+
+\[\begin{aligned}
+S\subseteq T&\Longrightarrow\mathscr F(S)\le\mathscr F(T),\\
+S\cap T=\varnothing&\Longrightarrow
+\operatorname{Indep}(\mathscr F(S),\mathscr F(T),\nu_\mu).
+\end{aligned}\]
+
 - `stepsOnSpace_mono` states `s ⊆ t → stepsOnSpace s ≤ stepsOnSpace t`, and
   `stepsOnSpace_le` bounds every such space by the ambient product
   measurable space.

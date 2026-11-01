@@ -25,6 +25,18 @@ step fields therefore have the joint law of independent copies of the full
 pre-sampled branching-step field. Neither the family index nor the child-slot
 type is restricted to a finite or countable type in this product-law theorem.
 
+If the roots `r_i` are distinct and all have generation `n`, let
+`\Phi(\omega)(i)(v)=\omega(r_i\mathbin{+\!+}v)` and let `\nu` be the
+pre-sampled step-field law. Their joint subtree law and its independence from
+the generation-`n` past are
+
+\[\begin{aligned}
+\Phi_{\#}\nu&=\nu^{\otimes\kappa},\\
+\nu\bigl(A\cap\Phi^{-1}(B)\bigr)
+&=\nu(A)\,\nu^{\otimes\kappa}(B),
+\quad A\in\mathscr F_n^-,\ B\text{ measurable}.
+\end{aligned}\]
+
 - `subtreeStepFieldVector roots ω` is the family
   `i ↦ (v ↦ ω (roots i ++ v))`; `subtreeStepFieldVector_measurable` proves
   measurability.
