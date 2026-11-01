@@ -22,6 +22,20 @@ import Probability.Distributions.Moments.Truncated.RegularVariation
 /-!
 # Integrability and centering in the Gaussian domain of attraction
 
+Every Gaussian-domain normalization has an integrable increment and is
+sublinear:
+
+\[
+\int_{\mathbb R}|x|\,ν(dx)<\infty,\qquad
+\frac{a_n}{n}\longrightarrow0.
+\]
+
+For attraction with zero centering, the increment mean is zero:
+
+\[
+\int_{\mathbb R}x\,ν(dx)=0.
+\]
+
 ## Public declarations
 
 - `IsInDomainOfAttractionAlong.integrable_id_of_gaussian` proves

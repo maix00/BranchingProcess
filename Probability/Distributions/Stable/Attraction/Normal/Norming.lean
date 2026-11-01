@@ -24,6 +24,25 @@ import Probability.Distributions.Stable.Attraction.Norming.SpecialCases.IndexTwo
 /-!
 # Quadratic norming in the Gaussian domain of attraction
 
+Let `D(u)=1-|\widehatν(u)|²`,
+`C_ν(u)=∫_{ℝ}(1-\cos(uy))ν(dy)`, and
+`L^*(x)=∫_{|y|≤x}y²ν(dy)`. The characteristic and truncated-moment scales
+satisfy
+
+\[
+\frac{2x^2C_ν(x^{-1})}{L^*(x)}\longrightarrow1,
+\qquad
+\frac{L^*(x)}{x^2D(x^{-1})}\longrightarrow1.
+\]
+
+Along a Gaussian attraction norming `a_n`, for every `c>0`,
+
+\[
+\frac{nL^*(ca_n)}{a_n^2}\longrightarrow1,
+\qquad
+n\,ν\{|x|>ca_n\}\longrightarrow0.
+\]
+
 ## Public declarations
 
 - `IsInDomainOfAttractionAlong.tendsto_normalizedCosineDefect_of_gaussian`:

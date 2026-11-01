@@ -16,6 +16,16 @@ public import Probability.Distributions.Stable.CharacteristicFunction.Modulus
 The general domain-of-attraction characteristic-function formulas are
 specialized to a stable limit here.
 
+If the limiting characteristic-function modulus is
+`|φ(t)|=\exp(-c|t|^α)`, the one-step modulus and squared-modulus defect obey
+
+\[
+n\bigl[-\log|\widehatν(a_n^{-1}t)|\bigr]\longrightarrow c|t|^α,
+\qquad
+n\bigl[1-|\widehatν(a_n^{-1}t)|^2\bigr]
+\longrightarrow 2c|t|^α.
+\]
+
 ## Public declarations
 
 - If the limiting stable characteristic function has modulus
