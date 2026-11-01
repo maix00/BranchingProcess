@@ -13,6 +13,14 @@ public import Probability.Distributions.Stable.Attraction.Norming.Basic
 /-!
 # The stable truncated second moment for Gaussian laws
 
+For the centered Gaussian law with variance parameter `v`, the exponent-two
+stable factor converges to that variance:
+
+\[
+L^*_{\mathcal N(0,v)}(u)\longrightarrow v
+\qquad(u\longrightarrow\infty).
+\]
+
 ## Public declarations
 
 - `ProbabilityTheory.tendsto_stableSlowVariation_two_gaussianReal_zero`:

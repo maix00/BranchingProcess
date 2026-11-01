@@ -28280,3 +28280,15 @@ normalization to the unit-time-scale convention. Each formula matches the
 definitions or theorem hypotheses and conclusions; the five focused modules
 build successfully in a 3,374-job Lake build. No declarations or proofs
 changed.
+
+## Stable norming endpoint formulas (2026-11-01)
+
+Added formulas to the public headers in
+`Probability/Distributions/Stable/Attraction/Norming/Asymptotics/Centering.lean`,
+`Norming/Rescaling/Mogulskii.lean`, and
+`Norming/SpecialCases/{Gaussian,IndexTwo}.lean`. The headers now state the
+sublinear normalization limits, the reindexing and limiting-law rescaling,
+the Gaussian variance limit for the exponent-two truncated moment, and the
+canonical finite-variance norming with its asymptotic ratios. The four focused
+modules build successfully in a 3,391-job Lake build; no declarations or
+proofs changed.

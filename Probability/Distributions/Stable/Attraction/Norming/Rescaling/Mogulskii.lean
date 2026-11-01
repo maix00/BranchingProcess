@@ -15,6 +15,18 @@ import Analysis.Fourier.CosineTauberian.Mellin
 /-!
 # Mogulskii-compatible stable norming
 
+If `a_n` is an attraction normalization and `d>0` is its stable time
+constant, the reindexing result gives `m_n` and `a'_n` with
+
+\[
+\frac{m_n}{n}\longrightarrow d^{-1},\qquad
+a'_n=a_{m_n}\text{ eventually},\qquad
+\frac{a_n}{a'_n}\longrightarrow d^{1/α}.
+\]
+
+The limiting law is pushed forward by multiplication by `d^{1/α}`, and the
+centering sequence is unchanged.
+
 ## Public declarations
 
 For an attraction normalization $a_n$ with stable time constant $d>0$, this
