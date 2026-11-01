@@ -28207,6 +28207,18 @@ reciprocal-weight endpoint identities. Each display was compared with the
 corresponding public theorem or definition. The four focused modules build
 successfully in a 3,184-job Lake build; no declarations or proofs changed.
 
+## Spine path-count and first-passage formulas (2026-11-01)
+
+Added theorem-level formulas to `Spine/FirstPassage.lean`, `Spine/Generation.lean`,
+`Spine/GenerationBranching/Measurability.lean`,
+`Spine/Path/ManyToOne/PathCount.lean`, and `Spine/Variance.lean`. The headers
+now specify first-passage and spine-transfer bounds, both actual generation
+sums, their joint measurability interface, the path-count support and
+Paley--Zygmund bounds, and strict positivity of the tilted spine second
+moment. These displays are being checked against their theorem hypotheses;
+the five focused modules build successfully in a 3,792-job Lake build. No
+declarations or proofs changed.
+
 ## Skorokhod path and time-change formulas (2026-11-01)
 
 Reviewed and completed the mathematical formulas in the public module

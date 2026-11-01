@@ -38,6 +38,25 @@ f (x + (ω []).potentialValue' φ i)`, while `generationEndpoint` is the
 corresponding sum of surviving slot tests. Integrating these identities under
 `offspringFieldLaw μ` gives `weightedBranchingEndpointOperator φ μ f x` and
 `branchingEndpointOperator φ μ f x`, respectively.
+
+For an address `u`, write `S_u(ω) = pathPotential φ ω u` and
+`I_{n,u}(ω) = 1` when `u.length = n` and `u` survives, with value zero
+otherwise.  The generation observables are
+
+\[
+\operatorname{weightedGenerationEndpoint}(\varphi,n,f,x,\omega)
+=\sum'_{u:\operatorname{TreeNode}(\iota)}
+  I_{n,u}(\omega)\operatorname{ENNReal.ofReal}(e^{-S_u(\omega)})
+  f(x+S_u(\omega)).
+\]
+
+Removing the exponential weight gives the unweighted observable:
+
+\[
+\operatorname{generationEndpoint}(\varphi,n,f,x,\omega)
+=\sum'_{u:\operatorname{TreeNode}(\iota)}
+  I_{n,u}(\omega)f(x+S_u(\omega)).
+\]
 -/
 
 open MeasureTheory
