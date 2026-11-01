@@ -29,6 +29,15 @@ population nonemptiness argument are specific to that proof.
   depth, and generation-filtration measurability properties.
 * `selectedPopulationNoSplitPrefix_measurable` proves measurability of the
   no-split prefix event.
+
+Writing $Z_j$ for the selected population at generation $j$, the event and
+its representative satisfy
+\[
+ E_n=\{\omega:\ |Z_j(\omega)|<2\text{ for }1\le j\le n\},
+ \qquad |p_n(\omega)|=n\quad\text{for every }\omega,
+\]
+and $p_n$ is measurable in the generation-$n$ domain flow.
+
 -/
 
 open MeasureTheory ProbabilityTheory

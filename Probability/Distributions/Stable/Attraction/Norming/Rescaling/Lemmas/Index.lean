@@ -18,6 +18,13 @@ import Analysis.Asymptotics.Scale.Block.Length
 * `stableNormingIndex_ratio` and `stableNormingIndex_tendsto_atTop` provide
   the asymptotic ratio and divergence used by the source stable-norming
   lemma.
+
+For each $d>0$, the rounded linear index satisfies
+\[
+  \frac{\operatorname{stableNormingIndex}(d,n)}{n}\longrightarrow d^{-1},
+  \qquad \operatorname{stableNormingIndex}(d,n)\longrightarrow\infty
+       \quad(n\to\infty).
+\]
 -/
 
 open Filter

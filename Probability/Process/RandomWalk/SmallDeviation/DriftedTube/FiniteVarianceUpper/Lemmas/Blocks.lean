@@ -40,6 +40,15 @@ proof and are kept under `FiniteVarianceUpper/Lemmas/`.
 - `ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.iidSequenceLaw_condExp_driftedTubeBlockEvent_le_of_blockBound`:
   the
   conditional probability bound used in the block iteration.
+
+For $0<\eta<1$, $\sigma^2>0$, $v\ge0$, and
+$0<d<\pi^2\sigma^2/2$, uniformly over $-\Delta\le\ell\le0$ and all
+sufficiently large $\Delta$,
+\[
+  \mathbb P_\nu\!\left(\operatorname{driftedTubeEvent}
+       (\lfloor\Delta^{2+\eta}\rfloor,\Delta,v,\ell)\right)
+  \le \exp\!\left(-d\frac{\lfloor\Delta^{2+\eta}\rfloor}{\Delta^2}\right).
+\]
 -/
 
 open Filter MeasureTheory

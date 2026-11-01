@@ -31,6 +31,17 @@ Patrick Billingsley, *Convergence of Probability Measures*, 1st ed., Wiley,
 - `HasDoubleExcursionBound.oscillation_le_of_jumpBound`: if all jumps in a
   short interval are bounded by `2 * epsilon`, its path oscillation is at most
   `5 * epsilon` under the double-excursion condition.
+
+The quantitative jump-control conclusions are
+\[
+ |\Delta x(t)|>2\varepsilon\Longrightarrow
+       \delta\le t\le1-\delta,
+ \qquad |\Delta x(s)|,|\Delta x(t)|>2\varepsilon
+       \Longrightarrow |s-t|\ge\delta,
+\]
+and, on an interval of length below $\delta$ with every jump at most
+$2\varepsilon$, the path oscillation is at most $5\varepsilon$.
+
 -/
 
 section

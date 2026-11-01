@@ -39,6 +39,17 @@ for that estimate; the module keeps them out of the subject-level interface.
   `tendsto_corridorGeometricFactor` prove their diffusive limits.
 - `liminf_normalizedRademacherPath_openCorridor_le` bounds a fixed open
   corridor probability by its limiting Brownian spectral correction.
+
+For a finite open-corridor cover $(U_j)_{j<m}$ of the Brownian range event
+$A_w$, the transfer and spectral limits are
+\[
+  \mathbb P(B\in A_w)\le\sum_{j<m}\liminf_{n\to\infty}
+       \mathbb P(S^{(n)}\in U_j),
+  \qquad
+  \cos(\pi/L_n)^n\longrightarrow \exp\!\left(-\frac{\pi^2}{2w^2}\right),
+\]
+where $L_n$ is the rounded lattice width associated with $w$.
+
 -/
 
 open Filter MeasureTheory ProbabilityTheory

@@ -32,6 +32,16 @@ The argument follows Lemma 3.4 and Proposition 3.5 in Anders Karlsson, “A Proo
 Ergodic Theorem,” Chapter 12 of *Groups, Graphs and Random Walks*, London Mathematical Society
 Lecture Note Series 436, Cambridge University Press (2017), pp. 343–354, DOI
 10.1017/9781316576571.014.
+
+On a measurable invariant set $B$, the two normalized integral estimates are
+\[
+ \limsup_{n\to\infty}\frac1{n+1}\int_B g(n+1)\,d\mu\le0,
+ \qquad
+ \limsup_{n\to\infty}\frac1{n+1}\int_B a(n+1)\,d\mu
+       \le\beta\,\mu(B),
+\]
+under the respective pointwise negative-level hypotheses stated above.
+
 -/
 
 open MeasureTheory Filter Topology

@@ -31,6 +31,14 @@ bounds used to extract a finite limit of the tilted scaled measures.
   bound as `t → 0⁺`.
 * `tiltedScaledMeasure_largeJumpSet_le` gives a uniform tail bound outside a
   sufficiently large radius.
+
+For the tilted scaled measure $\widetilde\mu_t$, its defining integral and
+the resulting bounds are
+\[
+ \int f(x)\,d\widetilde\mu_t(x)
+   =\frac1t\int f(x)\min(1,x^2)\,d\mu_t(x),
+ \qquad \sup_{0<t<t_0}\widetilde\mu_t(\mathbb R)<\infty.
+\]
 -/
 
 section

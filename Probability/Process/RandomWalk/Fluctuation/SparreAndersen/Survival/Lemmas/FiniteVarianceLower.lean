@@ -32,6 +32,16 @@ import Probability.Sequence.IID.Basic
 
 These declarations support only
 `Probability.Process.RandomWalk.Fluctuation.SparreAndersen.Survival.FiniteVarianceLower`.
+
+Writing $F(n)=\mathbb P(S_j\ge0,\ 1\le j\le n)$ and
+$Q(n)=\mathbb P(S_n\ge0)$, the endpoint recurrence and its lower-bound
+consequence are
+\[
+  nF(n)=\sum_{k=0}^{n-1}F(k)Q(n-k),
+  \qquad
+  \beta\sum_{k=0}^{n-N}F(k)\le nF(n)
+  \quad\text{if }Q(j)\ge\beta\text{ for }j\ge N.
+\]
 -/
 
 open MeasureTheory

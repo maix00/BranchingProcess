@@ -30,6 +30,13 @@ This module contains proof support for
 
 The declarations live in `Step.Ordering.Lemmas` and are imported internally
 with `import all` by the finite-support normal-form proof.
+
+For finite support $S$, the rank counts preceding mark-slot pairs and
+enumerates the support:
+\[
+  \operatorname{rank}_{\xi,S}(j)=\#\{j'\in S:(\xi(j'),j')<(\xi(j),j)\},
+  \qquad \operatorname{range}(\operatorname{rank}_{\xi,S})=\{0,\ldots,|S|-1\}.
+\]
 -/
 
 section

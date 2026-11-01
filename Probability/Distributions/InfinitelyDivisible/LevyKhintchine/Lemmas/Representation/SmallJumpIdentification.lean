@@ -29,6 +29,15 @@ import Mathlib.MeasureTheory.Integral.IntegrableOn
 `scaled_smallBall_compensated_tendsto` identifies the limit of the compensated characteristic
 exponent on `{x | |x| < r}` with its quadratic term. Cubic Taylor remainder and truncation
 estimates provide this step for the final exponent assembly.
+
+If $t_k^{-1}\int_{|x|<r}x^2\,d\mu_{t_k}\to\sigma_r^2$, the compensated
+small-jump exponent converges to the quadratic term plus the integrated
+Taylor remainder:
+\[
+ \frac1{t_k}\int_{|x|<r}(e^{i\xi x}-1-i\xi x)\,d\mu_{t_k}(x)
+ \longrightarrow -\frac{\sigma_r^2\xi^2}{2}
+   +\int_{|x|<r}\left(e^{i\xi x}-1-i\xi x+\frac{(\xi x)^2}{2}\right)d\nu(x).
+\]
 -/
 
 section

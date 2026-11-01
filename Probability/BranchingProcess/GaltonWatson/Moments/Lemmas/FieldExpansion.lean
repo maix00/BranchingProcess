@@ -38,6 +38,17 @@ the independent offspring field: root-slot indicators, descendant-field
 changes of variables, single-slot and slot-pair integrals, and finite-sum
 rearrangements. It is kept under `Moments/Lemmas/` because these calculations
 serve the moment recurrences and have no independent process interface.
+
+With $Z_n$ the generation size and $I_i$ the indicator that slot $i$ is
+occupied, the field expansion and its pair integral are
+\[
+ Z_{n+1}=\sum_i I_i Z_n^{(i)},\qquad
+ \mathbb E[Z_{n+1}^2]
+   =\sum_{i,j}\mathbb E[I_iI_j]
+       \begin{cases}\mathbb E[Z_n^2],&i=j,\\
+                    (\mathbb E[Z_n])^2,&i\ne j.
+       \end{cases}
+\]
 -/
 
 open MeasureTheory

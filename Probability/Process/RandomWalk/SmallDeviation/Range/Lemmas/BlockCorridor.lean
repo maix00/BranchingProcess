@@ -34,6 +34,16 @@ variance probability bounds in the parent `Range` modules.
   in an enlarged centered source corridor.
 - `blockOscillationEvent_subset_sourceRangeTube` embeds it in the source-path
   range tube used by the finite-cover rate.
+
+For the block-oscillation event $\mathcal O_{N,w}$, the deterministic
+pathwise inclusions used here are
+\[
+  \mathcal O_{N,w}\subseteq
+  \mathcal C_{N,w}^{\mathrm{enlarged}}\cap\mathcal R_{N,w},
+\]
+where $\mathcal C_{N,w}^{\mathrm{enlarged}}$ and $\mathcal R_{N,w}$ denote
+the enlarged source corridor and source-path range-tube events.
+
 -/
 
 open Filter MeasureTheory ProbabilityTheory

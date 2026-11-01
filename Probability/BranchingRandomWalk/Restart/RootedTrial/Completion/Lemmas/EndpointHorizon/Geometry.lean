@@ -33,6 +33,16 @@ import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.Stoppin
   family with the target when the target has at least `lower` particles;
   `selectedReserveSpineRestartEndpointFreshRoots_eq_target_ae` gives that identity almost
   surely at a finite endpoint.
+
+At a finite endpoint, the source population and fresh roots satisfy
+\[
+  |\mathrm{source}|\ge N,\qquad
+  \operatorname{depth}(r_i)=n,\qquad
+  i\ne j\Longrightarrow r_i\ne r_j,
+\]
+and the fallback root family agrees with the target root family almost
+surely on that endpoint event.
+
 -/
 
 section

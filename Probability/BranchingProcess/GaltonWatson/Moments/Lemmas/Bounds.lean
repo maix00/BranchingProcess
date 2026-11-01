@@ -31,6 +31,14 @@ import Mathlib.MeasureTheory.Function.L2Space
 These internal estimates establish deterministic population bounds, moment
 finiteness, measurability, and integrability for the finite-slot model. They
 are specific to the proofs of the public moment identities.
+
+For a finite slot type $\iota$, every generation and its first two moments
+are finite, with the pointwise population bound
+\[
+  Z_n\le |\iota|^n,
+  \qquad \mathbb E[Z_n]<\infty,
+  \qquad \mathbb E[Z_n^2]<\infty.
+\]
 -/
 
 open MeasureTheory

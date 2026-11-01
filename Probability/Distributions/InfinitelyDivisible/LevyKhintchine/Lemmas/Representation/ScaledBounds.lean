@@ -23,6 +23,13 @@ import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
 * `scaled_mass_bound_real_with_max` and `scaled_largeJumpSet_mass_le_of_large_radius` choose a
   tail radius from continuity of the exponent. These are proof inputs to canonical-measure
   extraction, rather than separate probability APIs.
+
+For each $\varepsilon>0$, the scaled mass outside $[-\varepsilon,\varepsilon]$
+is uniformly bounded for small $t$:
+\[
+  \sup_{0<t<t_0(\varepsilon)}\frac1t
+       \mu_t\{x:\varepsilon\le|x|\}<\infty.
+\]
 -/
 
 section

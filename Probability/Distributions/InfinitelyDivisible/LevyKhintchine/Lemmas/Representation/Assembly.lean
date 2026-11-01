@@ -36,6 +36,17 @@ import Mathlib.MeasureTheory.Integral.IntegrableOn
   Gaussian variance, and jump integrals converge simultaneously.
 * `psi_eq_levyKhintchine_formula` combines the large-jump and small-jump limits into
   `ψ(ξ) = ibξ - σ²ξ²/2 + ∫ levyCompensatedIntegrand(ξ,x) dν(x)`.
+
+For the selected radius $r\in(1/2,1]$, the exponent identity assembled
+along the subsequence is
+\[
+ \psi(\xi)=i\xi\!\left(b_r+\int_{r\le|x|<1}x\,d\nu(x)\right)
+ -\frac{\xi^2}{2}\!\left(\sigma_r^2-\int_{|x|<r}x^2\,d\nu(x)\right)
+ +\int f(\xi,x)\,d\nu(x),
+\]
+where $f(\xi,x)=e^{ix\xi}-1-ix\xi\,\mathbf1_{\{|x|<1\}}$ is the
+compensated Lévy integrand.
+
 -/
 
 section

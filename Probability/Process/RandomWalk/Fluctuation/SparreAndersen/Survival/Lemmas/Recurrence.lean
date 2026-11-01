@@ -34,6 +34,13 @@ import Combinatorics.Enumerative.Composition.FirstPart
 
 These declarations support only
 `Probability.Process.RandomWalk.Fluctuation.SparreAndersen.Survival.Recurrence`.
+
+If $C_n$ is the signed composition coefficient, $F(n)$ the survival
+probability, and $Q(n)$ the nonnegative-endpoint probability, then
+\[
+  Q(n)=C_n,
+  \qquad C_n=nF(n)-\sum_{r=0}^{n-2}F(r+1)C_{n-r-1}.
+\]
 -/
 
 open MeasureTheory

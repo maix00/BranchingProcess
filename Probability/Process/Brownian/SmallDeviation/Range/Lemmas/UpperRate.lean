@@ -29,6 +29,11 @@ finite-cover logarithmic rate in the parent `UpperRate.lean` module.
   closed-corridor lower bound.
 - `tendsto_corridorExponential_nhdsGT_zero` composes the inverse-square
   divergence with Mathlib's exponential limit.
+
+The finite-cover term vanishes at small width according to
+\[
+  \lim_{w\downarrow0}\exp\!\left(-\frac{\pi^2}{2(cw)^2}\right)=0.
+\]
 -/
 
 open Filter MeasureTheory ProbabilityTheory

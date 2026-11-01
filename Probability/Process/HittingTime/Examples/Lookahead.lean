@@ -15,7 +15,7 @@ public import Mathlib.Probability.Process.Stopping
 
 - `lookaheadFiltration` has $\mathcal F_0=\bot$ and
   $\mathcal F_n=\top$ for $n>0$; `lookaheadRawTime` is $0$ on `true` and
-  $\top$ on `false`, and `lookaheadCompletionTime=\tau+1$.
+  $\top$ on `false`; `lookaheadCompletionTime` is $\tau+1$.
 - `lookahead_time_not_stopping` gives a raw time that observes the next
   generation and violates $\{\tau\leq n\}\in\mathcal F_n$.
 - `lookahead_completion_isStoppingTime` shows that a one-step completion is

@@ -37,6 +37,14 @@ Birkhoff-average defect.
   on the normalized integrals.
 * `int_limsup_div_integrable_aux` proves integrability of
   `x ↦ limsupₙ g(n+1,x)/(n+1)` from the same hypotheses.
+
+The principal envelope estimate is the almost-everywhere bound
+\[
+  \limsup_{n\to\infty}\frac{g(n+1,x)}{n+1}
+       \le \mathbb E[g(1,\cdot)\mid\mathcal I_T](x),
+\]
+where $\mathcal I_T$ is the invariant sigma-algebra of $T$.
+
 -/
 
 open MeasureTheory Filter Topology

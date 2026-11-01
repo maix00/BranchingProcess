@@ -39,7 +39,7 @@ additive commutative group `E` with measurable addition:
   \]
 * `HasIndepIncrements.translatedProcess_finiteDimensional_identDistrib`:
   stationary independent increments on an ordered additive time monoid imply
-  $(X_{s+t_i}-X_s)_i \stackrel{d}{=} (X_{s'+t_i}-X_{s'})_i`.
+  $(X_{s+t_i}-X_s)_i \stackrel{d}{=} (X_{s'+t_i}-X_{s'})_i$.
 * `HasIndepIncrements.finiteRestriction_identDistrib`: matching increment
   laws and zero starts imply equal laws of finite time restrictions.
 * `HasIndepIncrements.aemeasurable_eval`: a zero start and measurable

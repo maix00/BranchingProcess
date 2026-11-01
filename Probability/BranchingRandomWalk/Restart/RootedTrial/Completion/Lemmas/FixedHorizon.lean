@@ -37,6 +37,16 @@ They are internal proof steps, not independent probability interfaces.
   finite-horizon measurability.
 * `selectedReserveSpineRestartEndpointFixedHorizonPopulation_law_on_finite`
   specializes the pushforward identity to the selected population.
+
+For the finite-endpoint event $E$, the stopped endpoint positions and fresh
+field have the product-law identity
+\[
+ (\mathbb P_{\mathrm{field}}|_E)\circ(\mathrm{positions},\mathrm{fresh})^{-1}
+   =\bigl((\mathbb P_{\mathrm{field}}|_E)\circ\mathrm{positions}^{-1}\bigr)
+       \otimes\mathbb P_{\mathrm{fresh\ field}}.
+\]
+The fixed-horizon observable law follows by pushing this identity forward.
+
 -/
 
 open MeasureTheory ProbabilityTheory

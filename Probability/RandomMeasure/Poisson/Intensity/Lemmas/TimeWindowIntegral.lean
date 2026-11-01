@@ -23,6 +23,13 @@ This unit-interval specialization is used by the Poisson characteristic-function
 proofs. Mathlib supplies its product-restriction and Fubini steps through
 `Measure.prod_restrict`, `integral_prod`, and `setIntegral_const`; the result
 remains an internal helper in the Poisson intensity proof-support hierarchy.
+
+For measurable $S\subseteq[0,1]$ and integrable $f$ depending only on the
+mark coordinate,
+\[
+ \int_{S\times\mathbb R} f(x)\,d(\mathrm{Leb}_{[0,1]}\otimes\nu)(t,x)
+    =\mathrm{Leb}_{[0,1]}(S)\int_{\mathbb R}f(x)\,d\nu(x).
+\]
 -/
 
 section

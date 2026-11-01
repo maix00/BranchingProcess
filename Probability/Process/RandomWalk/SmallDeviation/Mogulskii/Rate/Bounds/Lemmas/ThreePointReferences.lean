@@ -34,6 +34,19 @@ space,” *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974), 755--765;
 English translation, “Small Deviations in a Space of Trajectories,” *Theory
 of Probability and Its Applications* 19(4) (1975), 726--736, DOI
 10.1137/1119081.
+
+Under the centered unit-second-moment and tube-margin assumptions, the
+three-reference construction gives an extended-real probability bound
+$L\in\mathbb{R}_{\ge0}^{\infty}$ with $0<L\le1$. Put
+$\ell=\operatorname{toReal}(L)\in(0,1]$. Write
+$s_n=\mathrm{scale}(n)$, $m=\mathrm{blocks}$, and
+$c_0=\mathrm{constant}$. Then
+\[
+  \frac{1}{m c_0}\log\ell\le\liminf_{n\to\infty}\frac{s_n^2}{n}
+     \log\left(\operatorname{horizontalTubeProbability}_{\operatorname{iidSequenceLaw}(\nu)}
+       (a,s_n,n).\operatorname{toReal}\right),
+\]
+
 -/
 
 section
