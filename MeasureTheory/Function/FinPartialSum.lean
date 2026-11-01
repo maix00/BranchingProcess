@@ -19,6 +19,15 @@ state space.
 
 ## Public declarations
 
+At a fixed `t : Fin (n + 1)`, the partial sum is the sum of the first `t.val`
+increments, and its dependence on the finite increment vector is measurable:
+
+\[
+\operatorname{partialSum}(x,t)=\sum_{j<t.\operatorname{val}}x(j),
+\qquad
+x\mapsto\operatorname{partialSum}(x,t)\text{ is measurable}.
+\]
+
 * `Fin.measurable_partialSum`: for `time : Fin (length + 1)`, the map
   `increments ↦ Fin.partialSum increments time` from `Fin length → E` to `E`
   is measurable.

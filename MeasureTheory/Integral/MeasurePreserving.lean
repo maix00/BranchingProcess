@@ -13,6 +13,16 @@ public import Mathlib.MeasureTheory.Integral.Bochner.Set
 
 ## Public declarations
 
+Measure-preserving change of variables gives the integral identity, including
+its restriction to an invariant measurable set:
+
+\[\begin{aligned}
+\int_\alpha f(\phi(x))\,d\mu(x)
+&=\int_\beta f(y)\,d\nu(y),\\
+\phi^{-1}(A)=A\quad&\Longrightarrow\quad
+\int_A f(\phi(x))\,d\mu(x)=\int_A f(x)\,d\mu(x).
+\end{aligned}\]
+
 * `MeasureTheory.MeasurePreserving.integral_comp_of_integrable`: if `φ` sends
   `μ` to `ν`, then `∫ x, f (φ x) ∂μ = ∫ y, f y ∂ν` for an integrable
   function with values in a real normed space.

@@ -20,6 +20,16 @@ projections. Generic compact-system constructions are owned by
 
 ## Public declarations
 
+The product `σδ`-paving consists of countable intersections of countable
+unions of generating rectangles:
+
+\[
+s\in\operatorname{prodSigmaDelta}(p,q)
+\iff \exists A,K,\quad
+s=\bigcap_{n\in\mathbb N}\bigcup_{m\in\mathbb N}
+A_{nm}\times K_{nm},\quad A_{nm}\in p,\ K_{nm}\in q.
+\]
+
 - `mem_supClosure_set_iff` and `mem_infClosure_set_iff`: membership in a
   finite-union or finite-intersection closure is equivalent to being a
   nonempty finite union or intersection of members of the original family.

@@ -17,6 +17,14 @@ import Mathlib.Order.SetDissipate
 
 ## Public declarations
 
+For an antitone sequence of finite product unions in the stated compact
+system, projection commutes with countable intersection:
+
+\[
+\{\operatorname{fst}(x)\mid x\in\bigcap_{n\in\mathbb N}B_n\}
+=\bigcap_{n\in\mathbb N}\{\operatorname{fst}(x)\mid x\in B_n\}.
+\]
+
 - `Paving.fst_iInter_of_supClosure_image2_prod_of_antitone`: assume `∅ ∈ q`,
   `q` is a compact system, `B : ℕ → Set (𝓧 × 𝓚)` is antitone, and
   `B n ∈ supClosure (Set.image2 (· ×ˢ ·) p q)` for every `n`. Then
