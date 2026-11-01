@@ -20,6 +20,22 @@ therefore compares it with first-N selection from a containing root set.
 
 ## Public declarations
 
+If the source root set is contained in the target root set, then under
+boundary normalization the first-\(N\) populations admit a
+slice-dominating injection almost surely at every generation:
+
+\[
+R_{\mathrm{source}}\subseteq R_{\mathrm{target}}
+\Longrightarrow
+\forall n,\quad
+\mathbb P\!\left(
+  \exists\,\iota_n:P_n^{\mathrm{source}}
+    \hookrightarrow P_n^{\mathrm{target}},\
+  \phi(X_n^{\mathrm{target}}(\iota_n(p)))
+    \le\phi(X_n^{\mathrm{source}}(p))\ \forall p
+\right)=1.
+\]
+
 * `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.RootIndexed.selectedPopulationNestedRootsCoupledInjection_ae`:
   if `sourceRoots ⊆ targetRoots`, then almost surely each source first-`N`
   slice admits a slice-dominating injection into the rank-installed target

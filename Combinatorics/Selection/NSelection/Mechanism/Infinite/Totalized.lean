@@ -13,6 +13,19 @@ public import Combinatorics.Selection.NSelection.Mechanism.Infinite.Basic
 
 ## Public declarations
 
+For candidate set \(A(\omega)\), observed key
+\(K_\omega(q)=(v(\omega,q),q)\), and lower-finiteness of \(K_\omega\) on
+\(A(\omega)\), totalization returns a first-\(N\) segment; outside that
+domain it returns the empty set. Membership is characterized by:
+
+\[
+q\in\operatorname{selectFirstNFromSetTotalized}(N,v,A,\omega)
+\iff
+\operatorname{LowerFinite}(K_\omega,A(\omega))
+\ \land\ q\in A(\omega)
+\ \land\ \bigl|\{r\in A(\omega):K_\omega(r)<K_\omega(q)\}\bigr|<N.
+\]
+
 - `Combinatorics.Selection.NSelection.selectFirstNFromSetTotalized`:
   the canonical first-`N` finite set on the lower-finite domain, and `∅`
   outside that domain.

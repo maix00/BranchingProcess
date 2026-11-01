@@ -22,6 +22,14 @@ selection theorem.
 
 ## Public declarations
 
+At every finite stage \(n\), recursive equal-rank installation is measurable
+and preserves the product step-field law:
+
+\[
+\operatorname{Measurable}(V_n),\qquad
+\mu\circ V_n^{-1}=\operatorname{offspringFieldLaw}(\mu).
+\]
+
 * `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.RootIndexed.rankInstalledField_totalizedSelectedPopulation_measurable_law`:
   for every stage `n`, the rank-installed field is measurable and its image
   law under the product field measure equals the original one,

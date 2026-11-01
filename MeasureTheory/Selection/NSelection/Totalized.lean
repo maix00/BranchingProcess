@@ -15,6 +15,16 @@ public import Mathlib.MeasureTheory.MeasurableSpace.NCard
 
 ## Public declarations
 
+For countable labels, measurable candidate fibres, and measurable pairwise
+key comparisons, the totalized first-\(N\) selector is a measurable map into
+finite sets:
+
+\[
+\operatorname{Measurable}\!\left(
+\omega\mapsto
+\operatorname{selectFirstNFromSetTotalized}(N,v,A,\omega)\right).
+\]
+
 - `Combinatorics.Selection.NSelection.measurable_selectFirstNFromSetTotalized`:
   when labels are countable, the candidate set is measurable, and all
   pairwise key comparisons are measurable, the totalized first-`N` selector

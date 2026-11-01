@@ -19,6 +19,18 @@ are measurable.
 
 ## Public declarations
 
+For \(K_\omega(q)=(v_\omega(q),q)\), write
+\(L_\omega(p)=\{q\in A(\omega):K_\omega(q)\le K_\omega(p)\}\). Under the
+measurability assumptions on candidates and key comparisons, lower sections
+and the domain on which every such section is finite are measurable:
+
+\[
+\omega\mapsto L_\omega(p)\text{ is measurable},
+\qquad
+\{\omega:\forall p\in A(\omega),\ L_\omega(p)\text{ is finite}\}
+\in\mathcal F.
+\]
+
 The theorems `measurable_lowerSection` and
 `measurableSet_lowerFiniteDomain` prove measurability of the sublevel sets
 and lower-finite domain defined in

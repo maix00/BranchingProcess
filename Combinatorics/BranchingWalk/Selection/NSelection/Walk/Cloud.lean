@@ -13,6 +13,17 @@ public import Combinatorics.BranchingWalk.Selection.NSelection.Walk.Basic
 
 ## Public declarations
 
+The cloud of an order-reversed walk is the order-dual image of every original
+generation population:
+
+\[
+(V.\operatorname{mapOrderDual}).\operatorname{cloud.points}(n)
+  =\operatorname{OrderDual.toDual}''V.\operatorname{population}(n),
+\qquad
+(V.\operatorname{mapOrderDual}).\operatorname{cloud}
+  =V.\operatorname{cloud.mapOrderDual}.
+\]
+
 The declarations are in namespace
 `Combinatorics.Branching.Selection.NSelection.Walk`.
 

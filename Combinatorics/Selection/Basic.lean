@@ -15,6 +15,25 @@ public import Mathlib.Data.Set.Finite.Basic
 
 ## Public declarations
 
+For every set-valued mechanism \(M\), selection stays inside the candidate
+population. The finite interface satisfies the corresponding inclusion; its
+least- and greatest-preserving properties and its restriction from \(M\) are
+captured by:
+
+\[
+\begin{aligned}
+M.\operatorname{select}(A)&\subseteq A,\\
+\operatorname{PreservesLeast}(M_{\mathrm{fin}})
+  \land\operatorname{IsLeast}(\uparrow F,x)
+  &\Longrightarrow x\in M_{\mathrm{fin}}.\operatorname{select}(F),\\
+\operatorname{PreservesGreatest}(M_{\mathrm{fin}})
+  \land\operatorname{IsGreatest}(\uparrow F,x)
+  &\Longrightarrow x\in M_{\mathrm{fin}}.\operatorname{select}(F),\\
+\uparrow(M_{\mathrm{fin}}.\operatorname{select}(F))
+  &=M.\operatorname{select}(\uparrow F).
+\end{aligned}
+\]
+
 - `Combinatorics.Selection.Mechanism`: a map `Set ι → Set ι` with
   `M.select s ⊆ s` for every candidate set `s`.
 - `Combinatorics.Selection.Mechanism.ext`:

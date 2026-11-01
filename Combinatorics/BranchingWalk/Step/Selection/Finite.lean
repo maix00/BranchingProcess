@@ -18,6 +18,15 @@ those belong to particular selection operations.
 
 ## Public declarations
 
+A finite step selector chooses only surviving child slots; its capacity and
+first-\(N\) specialization satisfy
+\[
+R(\xi)\subseteq\operatorname{support}(\xi),\qquad
+|R(\xi)|\le N,\qquad
+\operatorname{IsFirstNBy}\bigl(N,\operatorname{value}_\xi,
+  \operatorname{support}(\xi),R(\xi)\bigr).
+\]
+
 - `Combinatorics.Branching.Step.FiniteSelection α X` assigns a finite set
   `R ξ` with `↑(R ξ) ⊆ support ξ`; its `select` field returns that set.
 - `Combinatorics.Branching.Step.FiniteSelection.mem_support` states

@@ -24,6 +24,14 @@ bounded branching walks in `Selection/NSelection/Walk/BranchingWalk.lean`.
 
 ## Public declarations
 
+Each transform returns a branching walk contained in its input under the
+prefix-based survival order:
+
+\[
+\forall \beta,\qquad
+\operatorname{SelectContain}\bigl(T(\beta),\beta\bigr).
+\]
+
 * `Combinatorics.Branching.RootIndexed.WalkTransform Root α Mark Position`
   is a map on root-indexed branching walks whose output satisfies
   `SelectContain (M β) β` for every input `β`.

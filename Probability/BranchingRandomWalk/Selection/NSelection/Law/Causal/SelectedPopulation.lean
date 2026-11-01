@@ -18,6 +18,15 @@ rank-installed couplings.
 
 ## Public declarations
 
+The totalized first-\(N\) process is a finite causal source, and every
+positive-generation slice obeys the capacity bound:
+
+\[
+\forall n,\omega,\quad
+P_{n+1}(\omega)\text{ is finite},\qquad
+|P_{n+1}(\omega)|\le N.
+\]
+
 * `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.RootIndexed.selectedPopulationTotalizedSource`:
   views the totalized first-`N` population on the left coordinate of a
   two-copy pre-sampled field as a causal population.

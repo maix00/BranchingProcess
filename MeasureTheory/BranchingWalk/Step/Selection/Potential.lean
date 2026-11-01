@@ -20,6 +20,23 @@ potential and slot selectors.
 
 ## Public declarations
 
+If the branching step and its finite selector are measurable, then the
+potential-cutoff, first-child, and reserve selectors are measurable; the
+positive potential of the least selected slot is measurable as well:
+
+\[
+\begin{aligned}
+\operatorname{Measurable}\bigl((R.\operatorname{belowPotential}(\varphi,a))
+  .\operatorname{select}\bigr),\\
+\operatorname{Measurable}\bigl((\operatorname{firstOnlySelectedChild}(R))
+  .\operatorname{select}\bigr),\qquad
+\operatorname{Measurable}\bigl((\operatorname{reserveSelectionBelowPotential}
+  (R,\varphi,M)).\operatorname{select}\bigr),\\
+\operatorname{Measurable}\bigl(
+  \operatorname{firstSelectedSlotPositivePotential}(R,\varphi)\bigr).
+\end{aligned}
+\]
+
 - `Combinatorics.Branching.Step.FiniteSelection.belowPotential_measurable`
   proves measurability after removing selected children above a potential
   cutoff.

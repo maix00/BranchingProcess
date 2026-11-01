@@ -15,6 +15,14 @@ public import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDevia
 
 ## Public declarations
 
+Write \(P\) for the restarted killed population. Every generation slice is
+finite for each restarted field:
+
+\[
+\forall n,\omega,\qquad
+P_n(\omega)\text{ is finite}.
+\]
+
 `positiveAKilledPopulation m ell ellN logN b v c kappa` is the causal
 population on `RestartedField m` with initial roots `Fin m`, cutoff `ell`,
 and the restarted corridor window determined by `ellN`, `logN`, `b`, `v`,

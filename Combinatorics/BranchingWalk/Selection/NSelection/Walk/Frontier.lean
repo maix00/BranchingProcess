@@ -15,6 +15,24 @@ public import Order.OrderDual.SetExtrema
 
 ## Public declarations
 
+For generation \(n\), the lower and upper frontiers are the least and greatest
+population positions. A scalar potential has an attained minimum on every
+nonempty generation, and reversing the position order exchanges the two
+frontiers:
+
+\[
+\begin{aligned}
+\operatorname{Lower}_n
+  &=\{x\in P_n:\forall y\in P_n,\ x\le y\},\\
+\operatorname{Upper}_n
+  &=\{x\in P_n:\forall y\in P_n,\ y\le x\},\\
+\min_{x\in P_n}\varphi(x)
+  &\le \varphi(y)\quad(y\in P_n,\ P_n\ne\varnothing),\\
+\operatorname{Lower}(V^{\mathrm{op}},n)
+  &=\operatorname{OrderDual.toDual}''\operatorname{Upper}(V,n).
+\end{aligned}
+\]
+
 The declarations below are in namespace
 `Combinatorics.Branching.Selection.NSelection.Walk`.
 

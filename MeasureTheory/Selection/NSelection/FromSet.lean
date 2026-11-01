@@ -14,6 +14,20 @@ public import Mathlib.MeasureTheory.MeasurableSpace.NCard
 
 ## Public declarations
 
+When \(A(\omega)\) is a measurable, possibly infinite candidate set and its
+first-\(N\) segment exists at every sample, that segment is a measurable
+finite-set-valued map:
+
+\[
+\left(\forall\omega,\quad
+  \operatorname{IsFirstNBy}(N,v_\omega,A(\omega),S(\omega))\right)
+\ \land\ \operatorname{Measurable}(S)
+\Longrightarrow
+\operatorname{Measurable}\!\left(
+\omega\mapsto\operatorname{selectFirstNFromSet}
+  (N,v_\omega,A(\omega))\right).
+\]
+
 - `Combinatorics.Selection.NSelection.MeasurableFirstNBy`:
   a measurable map `Ω → Finset ι` whose value at each `ω` satisfies the
   intrinsic first-`N` predicate for `value ω` and `candidates ω`.
