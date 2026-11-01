@@ -28150,3 +28150,14 @@ This is a definitional identification; the probability law and escape-rate
 claims are unchanged. The three Poisson modules build in a 4,127-job focused
 Lake build, and both path-law consumers build in a 4,104-job focused build.
 The updated subtree is pending its next standalone preflight run.
+
+## Poisson Lévy-cutoff characteristic formulas (2026-11-01)
+
+Added an explicit definition of the windowed small-plus-large jump sum and
+its characteristic function and law to
+`Probability/RandomMeasure/Poisson/CharacteristicFunction/LevyCutoff.lean`.
+The same interface records the unit-time specialization and the support
+consequences when the Lévy measure has no positive or no negative marks. The
+header formulas match the displayed integrands and product laws in the four
+public characteristic-function and law declarations. The module builds with
+the pinned toolchain; no declarations or proofs changed.
