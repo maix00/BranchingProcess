@@ -22,6 +22,16 @@ a previous observable split.
 
 ## Public declarations
 
+For a fixed root-address pair \((r,u)\) with \(|u|=s\), its first-split
+completion in the global generation domain is the local completion shifted by
+\(s\):
+
+\[\sigma_{r,u}(\omega)
+  =s+\sigma_R\bigl(v\mapsto\omega_r(u\mathbin{+\!\!+}v)\bigr).\]
+
+This completion is a stopping time for the root-indexed generation domain
+flow.
+
 * `RootIndexed.fixedSubtree_splitCompletion_isStoppingTime` states that for a
   fixed address of depth `start`, the global completion time of its first
   selected-population split is the local completion time shifted by `start`,

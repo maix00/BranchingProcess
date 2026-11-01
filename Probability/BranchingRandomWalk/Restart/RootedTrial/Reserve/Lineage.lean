@@ -19,6 +19,14 @@ stopping time in the original generation filtration.
 
 ## Public declarations
 
+At the observable split completion \(s\), the first two selected sibling
+roots are distinct and both have address depth \(s\); each sibling's next
+split completion is a stopping time in the original generation domain:
+
+\[|\rho_1|=|\rho_2|=s,\qquad \rho_1\ne\rho_2,\qquad
+  \sigma_{\rho_1}^{\mathrm{split}},\ \sigma_{\rho_2}^{\mathrm{split}}
+  \text{ are stopping times}.\]
+
 - `RootIndexed.ReserveLineages.firstChildRootAt_sigma_fiber_measurable` and
   `RootIndexed.ReserveLineages.sigma_firstChildSubtree_splitCompletion_isStoppingTime`:
   the first sibling root selected at a sigma completion is measurable in the

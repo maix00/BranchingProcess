@@ -17,6 +17,16 @@ recursions into fixed-horizon probability bounds.
 
 ## Public declarations
 
+For \(\rho>1\), exponent \(a>0\), and the moment constant
+\(K(\rho,v)\), the logarithmic horizon
+
+\[T_N=\left\lceil\frac{a\log N+\log 2}{\log\rho}\right\rceil_+\]
+
+has the uniform lower bound
+
+\[\mathbb P\!\left(Z_{T_N}\ge\lfloor N^a\rfloor\right)
+  \ge\frac{1}{4K(\rho,v)}.\]
+
 * `finiteSlotOffspringMeanReal_gt_one_of_nonempty_and_split` converts the
   supercriticality of the encoded offspring law into the real-valued mean
   hypothesis used by the population moment recursion, under almost-sure

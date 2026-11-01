@@ -28,6 +28,13 @@ and it does not assert that the adaptively sampled marks have the iid
 
 ## Public declarations
 
+For a live reserve spine with nonempty ordered offspring through generation
+\(n\), the pathwise positive-part estimate is
+
+\[\max\{0,S_n\}
+  \le Mn+\sum_{k=0}^{n-1}
+    \max\{0,\,\phi(\text{first selected edge at }k)\}.\]
+
 - `selectedReserveSpineEdgePotential`,
   `selectedReserveSpinePath_potential_eq_sum_edges`, and
   `selectedReserveSpinePath_positivePart_le_cutoff_add_firstChildSum`:

@@ -19,6 +19,13 @@ factorization is the direct `L¹` replacement for a Cauchy--Schwarz bound.
 
 ## Public declarations
 
+Let \(F(\omega)\) be a fresh reserve field and let \(A\) be the event that
+every candidate in a countable family fails by generation \(T\). For an
+integrable subtree observable \(g\), independence gives
+
+\[\int |g(F(\omega))|\,\mathbf 1_A(\omega)\,d\nu(\omega)
+  =\left(\int |g(F(\omega))|\,d\nu(\omega)\right)\nu(A).\]
+
 - `RootIndexed.integral_reserve_abs_on_candidateFailure`,
   `RootIndexed.integral_reserve_abs_on_boundedCandidateFailure`,
   `RootIndexed.integral_reserve_abs_on_boundedCandidateFailure_le`,

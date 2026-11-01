@@ -20,6 +20,14 @@ frontier subtrees remain independent of that filtration.
 
 ## Public declarations
 
+For a reserve subtree selected from pre-sampled lineages, the continuation
+moment factors over failure of all observable candidate tests:
+
+\[\int |g(F(\omega))|\,\mathbf 1_{\{\text{all candidates fail by }T\}}
+  \,d\nu(\omega)
+  =\left(\int |g(F(\omega))|\,d\nu(\omega)\right)
+    \mathbb P(\text{all candidates fail by }T).\]
+
 - `RootIndexed.ReserveLineages.integral_selectedSubtree_abs_on_candidateFailure`
   and
   `RootIndexed.ReserveLineages.integral_selectedSubtree_abs_on_candidateFailure_le`:

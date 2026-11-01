@@ -22,6 +22,29 @@ identities.
 
 ## Public declarations
 
+Suppose \(C\) rankwise dominates \(D\), each retained slice \(R_t\) is a
+subset of \(C_t\) with at most \(N\) particles, and the observed values
+\(\phi(\operatorname{position}_C(p))\) and
+\(\phi(\operatorname{position}_D(q))\) are nondecreasing in their respective
+address orders. Write \(D_t^{[N]}\) for the first \(N\) addresses of \(D_t\)
+in its address order, and \(C_R\) for \(C\) restricted to \(R_t\). Then
+the retained cloud rankwise dominates this selected target cloud:
+
+\[C\succeq_{\mathrm{rank},\phi}D,\quad R_t\subseteq C_t,\quad |R_t|\le N,
+\quad \phi(\operatorname{position}_C(p))\le
+\phi(\operatorname{position}_C(p'))\ (p<p'\in C_t),\quad
+\phi(\operatorname{position}_D(q))\le
+\phi(\operatorname{position}_D(q'))\ (q<q'\in D_t)
+\Longrightarrow C_R\succeq_{\mathrm{rank},\phi}D^{[N]}.\]
+
+In addition, if \(N>0\), every source particle has a selected target
+particle with no larger observed value:
+
+\[N>0,\quad p\in C_t
+\Longrightarrow\exists q\in D_t^{[N]},\quad
+  \phi(\operatorname{position}_D(q))
+  \le\phi(\operatorname{position}_C(p)).\]
+
 - `Cloud.rankwiseDominatesBy_leftmost_of_subset` proves
   `(C.withFinsetParticles retained).RankwiseDominatesBy φ
   (D.withFinsetParticles right) t`, where

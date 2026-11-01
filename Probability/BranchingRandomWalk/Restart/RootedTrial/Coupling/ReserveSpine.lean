@@ -21,6 +21,17 @@ public import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.
 
 ## Public declarations
 
+Almost surely, a finite first-success completion at generation \(n\) has a
+candidate index \(k\) with \(n=k+1+d\). The rank-installed population has
+size at least the trial lower bound and matches every particle of the
+successful cap-stopped candidate at a weakly smaller position:
+
+\[C(\omega)=n\Longrightarrow
+  \exists k,\ n=k+1+d,\quad
+  \mathrm{lower}\le|P_n^{\mathrm{rank}}|,\quad
+  \forall q\in C_k,\ \exists p\in P_n^{\mathrm{rank}},\;
+    x(p)\le x(q).\]
+
 * `selectedReserveSpineRestartSourceOnLeft` pulls the causal reserve source back along the
   left coordinate of a two-root pre-sampled field.
 * `selectedReserveSpineRestartSourceOnLeft_finiteSlices` and

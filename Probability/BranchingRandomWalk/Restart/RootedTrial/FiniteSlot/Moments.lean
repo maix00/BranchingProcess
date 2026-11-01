@@ -16,6 +16,16 @@ finite-slot rows.
 
 ## Public declarations
 
+Let \(Z_n\) be the active population size, and let \(m\) and \(q\) be the
+first and second moments of one finite-slot offspring count. The conditional
+and integrated recursions are
+
+\[\begin{aligned}
+\mathbb E[Z_{n+1}\mid A_n]&=mZ_n,\\
+\mathbb E[Z_{n+1}^2\mid A_n]&=qZ_n+m^2Z_n(Z_n-1),\\
+\mathbb E[Z_n]&=m^n.
+\end{aligned}\]
+
 * `finiteSlotPopulationSizeReal` is the real-valued population size `Zₙ`.
   Its measurable, bounded, integrable, and square-integrable properties are
   `finiteSlotPopulationSizeReal_measurable`,

@@ -18,6 +18,13 @@ the selector reduces its descendant split time to the fixed-root theorem.
 
 ## Public declarations
 
+If a root of depth \(s\) is chosen using the generation-\(s\) domain flow,
+the first-split completion below that root, shifted by \(s\), is a stopping
+time:
+
+\[T(\omega)=s+\sigma_R\bigl(v\mapsto
+  \omega_{r(\omega)}(u(\omega)\mathbin{+\!\!+}v)\bigr).\]
+
 `RootIndexed.selectedSubtree_splitCompletion_isStoppingTime` proves that if
 `chosen ω` is selected at the deterministic generation `start` and has depth
 `start`, then the ambient time

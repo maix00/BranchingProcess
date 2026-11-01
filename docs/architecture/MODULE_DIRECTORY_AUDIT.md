@@ -28783,3 +28783,31 @@ probability, lower-finite child ordering, and split-schedule pool and success
 laws. All 30 focused modules build successfully in a 3,423-job Lake build;
 no declarations or proofs changed. The formula-header audit now has 58
 remaining modules, 21 with public-declaration sections.
+
+
+## Restart-spine, finite-slot, and finite-activity formulas (2026-11-02)
+
+Added mathematical statements to the public headers of
+`Probability/BranchingRandomWalk/Restart/{Failure/Estimate,Reserve/Basic,Reserve/Lineage}.lean`,
+`RootedTrial/{Basic,Completion/FiniteSplit,Coupling/ReserveSpine,Coupling/SampledMark,FiniteSlot/Growth,FiniteSlot/Moments,Reserve/GrowthSuccess,Reserve/Lineage,Reserve/Recursive,Reward/Expectation,Reward/PositivePart,Spine/SelectedRoot,Spine/SiblingTrial,Spine/Splits}.lean`,
+and `Probability/RandomMeasure/Poisson/Integrability/FiniteActivity.lean`.
+They state failure-event first-moment factorization, finite-slot moment and
+growth bounds, sibling-field product laws, stopping-time and split-count
+identities, restart-spine position comparisons, and finite-activity Poisson
+integrability. All 18 focused modules build successfully in a 3,587-job Lake
+build; no declarations or proofs changed. The formula-header audit now has 40
+remaining modules, three with public-declaration sections.
+
+## Whole-tree header scan, including selection APIs (2026-11-02)
+
+The scan now includes the Selection subtrees as well as the rest of the Lean
+source tree. It found 75 headers without mathematical notation among 1,642
+modules; 36 of those headers document public declarations. Added mathematical
+statements to
+Combinatorics/BranchingWalk/Cloud/Order/DynamicSelection.lean,
+Combinatorics/BranchingWalk/Cloud/Order/Selection.lean, and
+Probability/BranchingRandomWalk/Genealogy/RootIndexed/Field/Selection.lean.
+The formulas state finite dynamic matching, rankwise comparison after
+first-\(N\) restriction, and generation-filtration measurability of
+position-ranked selection. All three modules build successfully in a 3,275-job
+Lake build. The remaining public-header candidates are being audited next.

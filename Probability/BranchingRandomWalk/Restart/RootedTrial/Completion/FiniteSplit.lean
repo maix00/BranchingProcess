@@ -22,6 +22,15 @@ finite completion almost surely. Writing `τ_R` for this completion, if
 
 ## Public declarations
 
+If the selected offspring is nonempty almost surely and a split has positive
+one-step probability, the observable first-split completion is finite almost
+surely:
+
+\[\mu\{\xi:(R(\xi)).\operatorname{Nonempty}\}=1,\qquad
+  \mu\{\xi:2\le|R(\xi)|\}>0
+  \Longrightarrow
+  \mathbb P_{\mathrm{field}}(\tau_R<\infty)=1.\]
+
 * `ProbabilityTheory.BranchingRandomWalk.selectedPopulationSplitCompletion_ae_finite_of_nonempty_and_split_pos`
   gives the stated finite-completion conclusion for a measurable finite
   selection under the nonemptiness and positive-split hypotheses.
