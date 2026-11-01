@@ -54,6 +54,11 @@ The public declarations are:
   `Combinatorics.UlamHarris.RootIndexed.MarkedTree.partialMark_apply`, and
   `Combinatorics.UlamHarris.RootIndexed.MarkedTree.mark?_apply` give the
   coordinate equations; `rootMark M r = (M r).rootMark` by definition.
+
+For a realized address `u`, the `Option`-valued mark satisfies
+`\(T.mark?(u)=some(T.mark\ u\ h_u)\)` when
+`\(u\in T.tree.carrier\)`, while `\(T.mark?(u)=none\)` off the carrier.
+The partial-function view has domain `\(Dom(T.partialMark)=T.tree.carrier\)`.
 -/
 
 @[expose] public section

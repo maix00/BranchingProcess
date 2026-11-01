@@ -20,6 +20,12 @@ public import Mathlib.Data.List.Basic
   `Combinatorics.UlamHarris.Mark α M` is the function type
   `TreeNode α → M`.
 
+In formulas, these types are
+`\(TreeNode\ \alpha = List\ \alpha\)`,
+`\(RootIndexed.TreeNode\ Root\ \alpha = Root \times TreeNode\ \alpha\)`,
+`\(\mathbb V = TreeNode\ \mathbb N\)`, and
+`\(Mark\ \alpha\ M = TreeNode\ \alpha \to M\)`.
+
 `TreeNode α` is the abstract address type `List α` of a rooted tree whose
 child labels live in `α`; it is not tied to `ℕ`. `𝕍 = TreeNode ℕ` is the
 Ulam--Harris node set in standard notation.

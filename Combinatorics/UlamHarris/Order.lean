@@ -23,6 +23,9 @@ public import Mathlib.Data.Prod.Lex
 A root-indexed address is ordered first by its root label and then by its
 Ulam--Harris word. This is the canonical label order used to break ties when
 positions agree.
+
+Thus the order compares pairs by
+`\((r,u)<(s,v)\iff r<s\lor(r=s\land u<_{lex}v)\)`.
 -/
 
 @[expose] public section

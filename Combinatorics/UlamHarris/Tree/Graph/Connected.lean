@@ -34,6 +34,11 @@ transitivity the graph is connected.
   states `(forestGraph T).Preconnected ↔ Subsingleton Root`;
   `Combinatorics.UlamHarris.RootIndexed.Tree.forestGraph_connected T` gives
   `(forestGraph T).Connected` when `Root` is nonempty and a subsingleton.
+
+For a single tree, every realized vertex is connected to the root:
+`\(Reachable_{childGraph(T)}([],b)\)` for `\(b\in T.carrier\)`, hence
+`\(Connected(childGraph(T))\)`. The forest graph is preconnected exactly
+when `\(Root\)` is a subsingleton.
 -/
 
 @[expose] public section

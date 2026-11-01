@@ -37,6 +37,12 @@ default topology remains the subspace topology of the pointwise topology.
   countable labels. `measurableSpace_le_borel_metricTopology` gives the metric
   inclusion, and `borel_metricTopology_eq_measurableSpace_of_countable_balls`
   gives equality when the ambient truncation balls are countable.
+
+The default topology and measurable space are induced from `Tree α` along
+the subtype map `\(val:LocallyFiniteTree(\alpha)\to Tree(\alpha)\)`;
+the restricted metric topology is coarser than the default topology, and
+for countable labels its Borel structure agrees with the cylinder σ-algebra
+when the truncation balls form a countable family.
 -/
 
 open MeasureTheory

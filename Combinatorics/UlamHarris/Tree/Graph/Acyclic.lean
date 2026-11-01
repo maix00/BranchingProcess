@@ -26,6 +26,12 @@ adjacent nodes have different lengths, and every node has at most one parent
 - `Tree.childGraph_isAcyclic T` and
   `RootIndexed.Tree.forestGraph_isAcyclic T` state acyclicity of the single-tree
   graph and the disjoint-union graph, respectively.
+
+For every adjacent pair, the address lengths differ:
+`\((childGraph\ T).Adj\ u\ v\Rightarrow |u|<|v|\lor|v|<|u|\)`. The shorter
+endpoint is the parent, and this height function proves
+`\(IsAcyclic(childGraph\ T)\)` as well as acyclicity of the root-indexed
+forest graph.
 -/
 
 @[expose] public section

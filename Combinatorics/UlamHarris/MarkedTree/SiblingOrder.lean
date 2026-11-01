@@ -26,6 +26,10 @@ marked tree as a step field lists the children of `u` in slot order, and
 - `MarkedTree.siblingMonotone M` states that for every realized pair of
   siblings at slots `i < j`, the earlier mark is at most the later mark:
   `M.mark (u ++ [i]) hi ≤ M.mark (u ++ [j]) hj`.
+
+Its condition is
+`\(u++[i],u++[j]\in T.carrier\land i<j\Rightarrow
+T.mark(u++[i])\le T.mark(u++[j])\)`.
 -/
 
 @[expose] public section

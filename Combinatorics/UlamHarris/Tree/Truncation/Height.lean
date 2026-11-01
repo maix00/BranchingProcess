@@ -48,6 +48,11 @@ below it, which puts the supremum strictly below.
   `min (heightCongr T₁ T₂) (heightCongr T₂ T₃) ≤ heightCongr T₁ T₃`;
   `Combinatorics.UlamHarris.Tree.ext_of_forall_truncate_eq` states that
   equality of all finite truncations implies equality of trees.
+
+The height is the supremum of agreement levels,
+`\(heightCongr(T,T')=\sup\{n\in\mathbb N\mid T.truncate\ n=T'.truncate\ n\}\)`
+in `\(\mathbb N_\infty\)`, and its threshold law is
+`\((n:ℕ_\infty)\le heightCongr(T,T')\iff T.truncate\ n=T'.truncate\ n\)`.
 -/
 
 @[expose] public section

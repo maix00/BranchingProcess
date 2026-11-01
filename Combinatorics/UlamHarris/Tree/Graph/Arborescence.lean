@@ -24,6 +24,10 @@ the statement that addresses record their unique path from the root.
   target are equal.
 - `childQuiver_arborescence T` equips the child quiver with root `[]` and a
   unique directed path from `[]` to every address in `T.carrier`.
+
+The child quiver is thin and has a unique directed path from the root to
+every realized address; in particular,
+`\(\forall v\in T.carrier,\ \exists!\ p:Path([],v)\)`.
 -/
 
 @[expose] public section

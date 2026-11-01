@@ -41,6 +41,12 @@ public import Combinatorics.UlamHarris.Tree.Defs
   that appending arbitrary suffixes to an injectively indexed family of
   equal-depth root-address pairs gives an injective address map.
 
+The length formulas are
+`\(generation\ (r,u)=|u|\)` and, whenever `v=u++t`,
+`\(generationAfter\ (r,u)\ (r,v)=|t|\)`. In particular,
+`\(generationAfter\ (r,u)\ (r,u++[i])=1\)`, and the generation
+distance adds along nested suffixes.
+
 `RootIndexed.generation p` is the length of the address of the particle `p`, the level it sits at:
 the notion only looks at a `TreeNode`, so it is indexed by whatever the address is paired with, and
 that pairing is what makes the `Root × TreeNode` case of the cloud available. `RootIndexed.generationAfter p q`

@@ -48,6 +48,10 @@ The public declarations are:
   `Combinatorics.UlamHarris.RootIndexed.MarkedTree.forgetMark_equivOfUnique`
   identifies the family projection with the single-tree projection through
   the unique-root equivalences.
+
+The projections satisfy `\(forgetMark(M)=M.tree\)` and
+`\(forgetMark(M)(r)=(M(r)).tree\)`. Consequently, for every map `f` on
+roots, `\(forgetMark(M\circ f)=forgetMark(M)\circ f\)`.
 -/
 
 @[expose] public section

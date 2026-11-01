@@ -25,6 +25,12 @@ in `MarkedTree/Basic.lean`; this file only records the specialization.
 - `measurableSpace_eq_comap` (under `[MeasurableSpace X]`) states that the
   measurable space on the root-indexed family is the comap of the single-tree
   measurable space along `equivOfUnique`.
+
+The equivalence is given by
+`\(equivOfUnique(M)=M(default)\)` and
+`\(equivOfUnique^{-1}(T)(r)=T\)`. Its measurable-space identity is
+`\(MeasurableSpace(RootIndexed.MarkedTree)=
+MeasurableSpace(MarkedTree).comap(equivOfUnique)\)`.
 -/
 
 open MeasureTheory

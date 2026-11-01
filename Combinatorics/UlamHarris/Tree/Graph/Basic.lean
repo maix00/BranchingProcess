@@ -61,6 +61,11 @@ structure is already carried faithfully by a digraph.
   `Combinatorics.UlamHarris.RootIndexed.Tree.forestGraph_reachable_root_eq`
   state that a walk or reachable pair in `forestGraph T` has equal root
   coordinates.
+
+The defining adjacency formulas are
+`\(childDigraph(T).Adj(a,b)\iff IsChild(a.1,b.1)\)` and
+`\(childGraph(T).Adj(a,b)\iff IsChild(a.1,b.1)\lor IsChild(b.1,a.1)\)`.
+In the root-indexed graph, adjacency also requires equal root coordinates.
 -/
 
 @[expose] public section

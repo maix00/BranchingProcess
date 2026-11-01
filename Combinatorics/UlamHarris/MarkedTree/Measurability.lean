@@ -39,6 +39,13 @@ carrier and every mark are measurable coordinates.
   family is measurable iff every root-coordinate map is measurable.
   `measurable_iff_forall_tree_mark? f` gives the equivalent criterion using
   the pair of tree and mark coordinates at each root.
+
+The coordinate formulas include `\(M\mapsto M.tree\)` and
+`\(M\mapsto M.mark?(u)\)` for each fixed address `u`; in the indexed case
+these become `\(M\mapsto M(r).tree\)` and `\(M\mapsto M(r).mark?(u)\)`.
+Thus the family σ-algebra is generated coordinatewise:
+`\(\mathcal M_{RootIndexed.MarkedTree}=
+\bigvee_r (M\mapsto M(r))^{-1}(\mathcal M_{MarkedTree})\)`.
 -/
 
 @[expose] public section
