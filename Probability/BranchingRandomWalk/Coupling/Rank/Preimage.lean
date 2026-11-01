@@ -20,6 +20,23 @@ rank inverse and its optional value lookup.
 
 ## Public declarations
 
+Rank-matched data is read from the source at the guarded equal-rank preimage,
+with fallback data used when that preimage is absent; canonical matches
+recover the source value:
+
+\[\begin{aligned}
+\operatorname{valueAtMatchedRank}(\omega,q)
+&=\begin{cases}
+S(\omega,p),&\operatorname{preimageByRank}(\omega,q)=\operatorname{some}(p),\\
+F(\omega,q),&\operatorname{preimageByRank}(\omega,q)=\operatorname{none},
+\end{cases}\\
+p\in\operatorname{source}(\omega),\quad
+|\operatorname{source}(\omega)|\le|\operatorname{target}(\omega)|
+&\Longrightarrow
+\operatorname{valueAtMatchedRank}(\omega,\operatorname{matchByRankOrSelf}(p))
+=S(\omega,p).
+\end{aligned}\]
+
 * `preimageByRank_function_range_countable` states that the actual range of
   `(ω, q) ↦ preimageByRank (sourceValue ω) (targetValue ω) (source ω)
   (target ω) q` is countable when both random finite supports have countable

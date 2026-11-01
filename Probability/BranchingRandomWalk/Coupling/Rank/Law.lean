@@ -22,6 +22,17 @@ later by partitioning over their actual range.
 
 ## Public declarations
 
+For fixed finite source and target populations, equal-rank installation is a
+paste along the guarded rank preimage and preserves the product law:
+
+\[\begin{aligned}
+\operatorname{rankInstalledStepField}
+&=\operatorname{paste}(\operatorname{preimageByRank}),\\
+\operatorname{rankInstalledStepField}_{\#}
+\operatorname{stepFieldLaw}_{R\oplus R}^{\mu}
+&=\operatorname{stepFieldLaw}_{R}^{\mu}.
+\end{aligned}\]
+
 - `ProbabilityTheory.BranchingRandomWalk.Coupling.RootIndexed.rankInstalledStepField_eq_paste`:
   identifies fixed equal-rank installation with
   `StepField.paste (preimageByRank sourceValue targetValue source target)`.

@@ -18,6 +18,17 @@ assumed countable.
 
 ## Public declarations
 
+At a target coordinate, `valueAtPreimage` reads the matched source value
+when a preimage is present and otherwise reads the fallback value:
+
+\[
+\operatorname{valueAtPreimage}(S,F,p)(\omega,q)
+=\begin{cases}
+S(\omega,r),&p(\omega,q)=\operatorname{some}(r),\\
+F(\omega,q),&p(\omega,q)=\operatorname{none}.
+\end{cases}
+\]
+
 * `valueAtPreimage` reads source data at the optional preimage of a target
   label and uses fallback data when the preimage is absent.
 * `RootIndexed.reindexedSteps` transports steps along a sample-dependent

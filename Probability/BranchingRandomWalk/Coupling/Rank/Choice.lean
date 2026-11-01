@@ -19,6 +19,18 @@ source root for each target generation address.
 
 ## Public declarations
 
+The rank choice uses the source coordinate of the same rank when one exists,
+and the corresponding fallback coordinate otherwise; it is injective and
+preserves generation depth:
+
+\[
+\operatorname{rankChoice}_n(q)
+=\operatorname{pasteCoordinate}(\operatorname{rankPreimage}_n,q),
+\qquad
+\operatorname{Injective}(\operatorname{rankChoice}_n),\quad
+(\operatorname{rankChoice}_n(q)).2.\operatorname{length}=n.
+\]
+
 * `RootIndexed.rankPreimage` assigns to every target tree node its guarded
   source node of the same dynamic rank, when such a node exists.
 * `RootIndexed.rankPreimage_range_countable` proves countability of the
