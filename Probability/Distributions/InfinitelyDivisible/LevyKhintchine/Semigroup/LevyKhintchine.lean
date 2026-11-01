@@ -27,6 +27,16 @@ measure `ν` such that
 
 The cutoff and subsequence estimates used to prove this result are grouped under
 `Lemmas/Representation/`.
+
+Every convolution-semigroup exponent has a Lévy–Khintchine representation
+with a Lévy measure:
+
+\[
+\psi(\xi)=ib\xi-\frac{\sigma^2\xi^2}{2}
++\int\left(e^{ix\xi}-1-ix\xi\mathbf 1_{\{|x|<1\}}\right)\,d\nu(x),
+\qquad \nu(\{0\})=0,\quad
+\int^-\min(1,x^2)\,d\nu(x)<\infty.
+\]
 -/
 
 @[expose] public section

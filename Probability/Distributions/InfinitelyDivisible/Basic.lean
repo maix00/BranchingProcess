@@ -25,6 +25,16 @@ Natural convolution powers are provided by
 `MeasureTheory.Measure.Convolution.Power`, and characteristic-function
 identities for them are provided by
 `MeasureTheory.Measure.CharacteristicFunction.Convolution`.
+
+For each integer `n≥1`, infinite divisibility provides an `n`th convolution
+root:
+
+\[
+\mu\in\mathcal P(E)\text{ infinitely divisible}
+\Longleftrightarrow
+\forall n\ge1,\ \exists\nu_n\in\mathcal P(E),\quad
+\mu=\nu_n^{*n}.
+\]
 -/
 
 @[expose] public section

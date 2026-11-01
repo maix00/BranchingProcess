@@ -28666,3 +28666,18 @@ four focused modules build successfully in a 3,036-job Lake build; no
 declarations or proofs changed. The same formula-header review now has 138
 remaining modules out of 1,642 modules when Selection-owned paths are omitted
 from this pass (101 candidates have public-declaration sections).
+
+
+## Infinitely-divisible and Lévy–Khintchine formulas (2026-11-02)
+
+Added mathematical statements to the public headers of
+`Probability/Distributions/InfinitelyDivisible/{Basic,CharacteristicFunction/Basic}.lean`
+and `InfinitelyDivisible/LevyKhintchine/{Defs,Representation,Scaling,FiniteVariation,Uniqueness,Semigroup/LevyKhintchine}.lean`.
+They state convolution-root divisibility, normalized characteristic-function
+logarithms, the Lévy triple and exponent, the law-level representation and
+converse, scaling identities, the finite-variation drift correction, smeared
+measure uniqueness, and semigroup exponent decomposition. All eight focused
+modules build successfully in a 3,439-job Lake build; no declarations or
+proofs changed. The same formula-header review now has 130 remaining modules
+out of 1,642 modules when Selection-owned paths are omitted from this pass
+(93 candidates have public-declaration sections).

@@ -36,6 +36,17 @@ where `(b, σ², ν)` is the Lévy-Khintchine triple.
 The representation theorem is stated and proved in
 `Probability.Distributions.InfinitelyDivisible.LevyKhintchine.Representation`;
 uniqueness work is in `Probability.Distributions.InfinitelyDivisible.LevyKhintchine.Uniqueness`.
+
+For a triple `T=(b,\sigma^2,\nu)`, the Lévy-measure conditions and exponent
+are
+
+\[\begin{aligned}
+\nu(\{0\})&=0,
+&\qquad\int^-\min(1,x^2)\,d\nu(x)&<\infty,\\
+\psi_T(\xi)
+&= ib\xi-\frac{\sigma^2\xi^2}{2}
+  +\int\left(e^{ix\xi}-1-ix\xi\mathbf 1_{\{|x|<1\}}\right)\,d\nu(x).
+\end{aligned}\]
 -/
 
 @[expose] public section
