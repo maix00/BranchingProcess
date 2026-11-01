@@ -32,6 +32,11 @@ unnormalized block-start margins and corridor events.
 * `partitionStartMargins_subset_corridors_union_largeDeviation` states that
   simultaneous margins imply all block corridors unless some block contains
   a relative displacement of size at least `radius`.
+
+If each normalized block-sum error is at most `\(r\)`, then at partition
+endpoint `k` the cumulative error is at most `\(kr\)`. In particular,
+`\(S_{kL}/c\in(l_k+r,u_k-r)\)` and `\(c>0\) imply the unnormalized
+margin `\(c l_k+cr\le S_{kL}\le c u_k-cr\)`.
 -/
 
 @[expose] public section

@@ -33,6 +33,12 @@ argument as follows:
 Applications supply the path geometry and limiting bridge events; this module
 uses only the IID block law and weak convergence.
 
+The geometric estimate is
+`\(c\,\mathbb P_\nu(U_n)\le |F|\,\mathbb P_\nu(T_n)\)`;
+if the target probability tends to zero, it yields
+`\(1-\varepsilon\le\log\mathbb P_\nu(U_n)/
+\log\mathbb P_\nu(T_n)\)` eventually.
+
 ## Public declarations
 
 * `FiniteBridgeGeometry ι F prefixLength bridgeLength U T` records measurable

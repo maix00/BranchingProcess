@@ -28,6 +28,12 @@ inequalities. No independence or moment assumptions are imposed here.
   with a common event; the error remains the sum of the block exceptions.
 * `measure_normalizedEndpoints_inter_le_corridors_inter_add_sum_largeDeviation`
   gives the normalized, scaled version of the common-event estimate.
+
+If `\(M_j\)` is the event that block start `j` has the prescribed margin,
+`\(C\)` is the event that every block stays in its corridor, and `\(E_j\)`
+is the event of a large displacement in block `j`, the bound is
+`\(\mathbb P(\bigcap_{j<N}M_j)\le\mathbb P(C)+
+\sum_{j<N}\mathbb P(E_j)\)`.
 -/
 
 open MeasureTheory

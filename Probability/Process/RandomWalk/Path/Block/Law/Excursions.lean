@@ -49,6 +49,11 @@ their common path endpoint only as a time, not as a shared increment.
   `eventually_measure_inter_adjacentBlockPrefixExceedance_le_sq_of_oneBlockBound`
   give union bounds and their eventual forms for finite families of adjacent
   blocks.
+
+For increments `\(x_0,\ldots,x_{L-1}\)`, the prefix sum through coordinate
+`\(k\)` is `\(S_{k+1}=\sum_{i=0}^{k}x_i\)`. The excursion event is
+`\(\{x\mid\exists k<L,\ |S_{k+1}|\ge r\}\)`; for a block starting at
+`\(s\)`, replace `\(S_{k+1}\)` by `\(\sum_{i=0}^{k}x_{s+i}\)`.
 -/
 
 open MeasureTheory

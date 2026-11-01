@@ -31,6 +31,12 @@ use the normalized step path at times `(k+1)/n`, for each `k : Fin n`.
 * `inClosedCorridor_const_iff_grid` identifies the full-time event for a
   constant-boundary step path with its positive-grid event, assuming
   `lower ≤ 0 ≤ upper` and `n>0`.
+
+The pathwise definitions are
+`\(InOpenCorridorOn(T,f,g,x)\iff\forall t\in T,\ f(t)<x(t)<g(t)\)`
+and `\(InClosedCorridorOn(T,f,g,x)\iff\forall t\in T,
+f(t)\le x(t)\le g(t)\)`. Grid versions check the inequalities at
+`\(t_k=(k+1)/n\)`.
 -/
 
 open MeasureTheory Set

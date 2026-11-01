@@ -19,6 +19,13 @@ For positive block count and block length, the public theorem
 return-kernel mass after `blocks * length` steps with the IID probability that
 all points in every block stay in the outer interval and the final endpoint
 lies in the return interval.
+
+Writing `\(S_n=\sum_{i<n}\xi_i\)`, the identity is
+`\(K_{[a,b],[c,d]}^{NL}(x,\Omega)=
+\mathbb P_{iid}\{\forall j<N,\forall k\le L,\ x+S_{jL+k}\in[a,b],\
+x+S_{NL}\in[c,d]\}\)`,
+for `\(N=blocks\)` and `\(L=length\)` with positive values and
+`\(x\in[a,b]\cap[c,d]\)`.
 -/
 
 open MeasureTheory Set

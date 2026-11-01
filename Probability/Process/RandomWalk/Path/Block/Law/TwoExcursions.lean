@@ -31,6 +31,11 @@ excursion. This is the probabilistic core of the IID local-oscillation bound.
 * `measure_twoOrderedPrefixExcursions_le_sq_of_blockBound` bounds the
   probability of two ordered increments of size at least `2 * threshold` by
   the square of the one-block prefix-exceedance bound at `threshold`.
+
+The event is
+`\(\{x\mid\exists i\le j\le k\le l\le L,\
+|S_j-S_i|\ge r\land|S_l-S_k|\ge r\}\)`;
+the probability bound applies with `\(r=2\,threshold\)`.
 -/
 
 open MeasureTheory

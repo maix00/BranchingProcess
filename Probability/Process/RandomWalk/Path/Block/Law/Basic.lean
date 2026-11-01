@@ -35,6 +35,10 @@ length.
 * `indepFun_consecutiveBlockSums_next` and
   `iIndepFun_consecutiveBlockSums` give the two corresponding equal-length
   specializations.
+
+For IID increments `\((\xi_k)_{k\ge0}\)`, each translated block sum
+`\(\sum_{k=start}^{start+L-1}\xi_k\)` has the law of `\(S_L\)`, and sums
+over disjoint consecutive blocks are mutually independent.
 -/
 
 open MeasureTheory

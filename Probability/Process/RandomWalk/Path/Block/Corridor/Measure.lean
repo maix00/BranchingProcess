@@ -23,6 +23,11 @@ This file supplies its product-measurable event interface.
   that every finite partial sum lies in an open interval.
 * `measurableSet_inOpenPartialSumCorridorEndsIn` adds an open terminal window
   for the final partial sum and proves measurability of the resulting event.
+
+The events are `\(\{x\in\mathbb R^L\mid\forall k\le L,
+a<S_k(x)<b\}\)` and
+`\(\{x\mid\forall k\le L,\ a<S_k(x)<b,\ c<S_L(x)<d\}\)`;
+both are measurable in the product σ-algebra on the increments.
 -/
 
 @[expose] public section
