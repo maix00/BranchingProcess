@@ -26,6 +26,23 @@ Measurability of this observation under a random step lives in
 
 ## Public declarations
 
+The step point measure is the sum of the atoms of its present slots. Its
+evaluation counts marked slots with multiplicity, and its total mass is the
+extended child count:
+
+\[
+\operatorname{stepPointMeasure}(\xi)
+=\operatorname{Measure.sum}_{i\in I}\operatorname{stepAtomMeasure}(\xi,i),
+\qquad
+\operatorname{stepPointMeasure}(\xi)(A)
+=\sum_{i\in I}\mathbf{1}_{\{\exists x,\ \xi(i)=\operatorname{some}(x)\land x\in A\}},
+\]
+\[
+\operatorname{stepPointMeasure}(\xi)(X)
+=\operatorname{childCount}(\xi)
+=\operatorname{encard}(\operatorname{support}(\xi)).
+\]
+
 - `stepAtomMeasure ξ i` is the Dirac measure at the mark in slot `i`, or
   zero when that slot is absent; `stepPointMeasure ξ` is the sum of these
   measures over all slots.

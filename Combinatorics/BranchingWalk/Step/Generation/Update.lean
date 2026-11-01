@@ -18,6 +18,20 @@ below are deterministic and therefore belong below the probability layer.
 
 ## Public declarations
 
+Updating generation `n` replaces exactly the step coordinates at depth `n`;
+displacements ending by depth `n` and the corresponding positions remain fixed:
+
+\[
+\operatorname{updateGeneration}(n,R,F)(u)
+=\begin{cases}R(u),&|u|=n,\\F(u),&|u|\ne n,\end{cases}
+\]
+\[
+|v|+|p|\le n
+\quad\Longrightarrow\quad
+\operatorname{displaceWith}(d,\operatorname{updateGeneration}(n,R,F),v,p)
+=\operatorname{displaceWith}(d,F,v,p).
+\]
+
 - `StepField.updateGeneration n replacement fallback u` is
   `if u.length = n then replacement u else fallback u`;
   `StepField.updateGeneration_eq`, `StepField.updateGeneration_ne`, and

@@ -19,6 +19,15 @@ slot-order condition and its measurable event.
 
 ## Public declarations
 
+Ordering through a potential is the usual increasing-step condition after
+mapping each present mark through that potential:
+
+\[
+\operatorname{IsOrderedBy}(\phi,\xi)
+\Longleftrightarrow
+\xi.\operatorname{map}(\phi)\in\operatorname{orderedSteps}.
+\]
+
 - `Step.IsOrderedBy φ ξ` means `ξ.map φ ∈ orderedSteps`.
 - `orderedBySteps φ = {ξ | ξ.IsOrderedBy φ}`; `mem_orderedBySteps_iff`
   gives this membership equivalence.

@@ -18,6 +18,17 @@ represent the original branching configuration.
 
 ## Public declarations
 
+A step is sibling-closable when an injective reindexing makes it
+sibling-closed and still covers every originally present slot:
+
+\[
+\exists f:I\hookrightarrow I,\quad
+\operatorname{IsSiblingClosed}(i\mapsto\xi(f(i)))
+\quad\land\quad
+\forall j,\ \xi(j)\ne\mathrm{none}
+\Longrightarrow\exists i,\ f(i)=j.
+\]
+
 - `Combinatorics.Branching.Step.IsSiblingClosable ξ` means there is an
   injective `f : ι → ι` such that
   `Combinatorics.Branching.Step.IsSiblingClosed (fun i => ξ (f i))` and

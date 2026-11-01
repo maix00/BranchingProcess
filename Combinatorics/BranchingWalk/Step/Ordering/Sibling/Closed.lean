@@ -18,6 +18,16 @@ support-preserving relabeling condition lives in
 
 ## Public declarations
 
+The present slots form an initial segment of the slot order: whenever a later
+slot is present, every earlier slot is present as well:
+
+\[
+\operatorname{IsSiblingClosed}(\xi)
+\Longleftrightarrow
+\forall i<j,\quad
+\xi(j)\ne\mathrm{none}\Longrightarrow\xi(i)\ne\mathrm{none}.
+\]
+
 - `Combinatorics.Branching.Step.IsSiblingClosed ξ` means
   `∀ i j, i < j → ξ i = none → ξ j = none`.
 - `Combinatorics.Branching.Step.IsSiblingClosed.survive_of_lt` derives
