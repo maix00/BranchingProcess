@@ -29,6 +29,12 @@ The helper theorem is:
 - `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.tendsto_sourceEndpointCorridor_toReal_zero_of_strictStableDomain_slowVariation`:
   under strict stable attraction, the two-scale condition, and a slowly
   varying stable factor, P_ν(Eₙ) → 0 for the widened endpoint corridor Eₙ.
+
+Under the stated stable-attraction, slow-variation, and two-scale
+hypotheses, the widened terminal corridor event satisfies
+\[
+  \mathbb P_\nu(E_n)\longrightarrow0.
+\]
 -/
 
 open Filter MeasureTheory

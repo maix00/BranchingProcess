@@ -31,6 +31,15 @@ cell events into the global corridor event.
 * `inter_commonPartitionCellCoreReturnEvent_subset_corridorSet` combines all
   cell events, together with the pinned-zero start, into the global scaled
   corridor event.
+
+The cell constructions give the local-to-global event inclusion
+\[
+ \bigcap_{j<m} E_j\cap\{X(0)=0\}
+   \subseteq \{X\text{ lies in the scaled global corridor}},
+\]
+with each $E_j$ supplying the full-cell corridor bounds and the endpoint
+return on cell $j$.
+
 -/
 
 open MeasureTheory

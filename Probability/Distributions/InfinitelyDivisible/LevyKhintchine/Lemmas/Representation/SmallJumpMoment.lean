@@ -25,6 +25,12 @@ import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
   `t⁻¹ ∫_{|x|<1} x² dμ_t ≤ C` for all sufficiently small `t > 0`.
 * `scaled_second_moment_bounded_along_seq` transfers this estimate to any positive sequence
   `tₙ → 0`. `integrableOn_sq_smallJumpSet` supplies the finite-measure integrability step.
+
+For some $C>0$ and all sufficiently small $t>0$, the scaled small-jump
+second moments satisfy
+\[
+  \frac1t\int_{|x|<1}x^2\,d\mu_t(x)\le C.
+\]
 -/
 
 section

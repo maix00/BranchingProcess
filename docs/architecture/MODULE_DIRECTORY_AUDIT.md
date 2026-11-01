@@ -28831,3 +28831,124 @@ notation, balanced inline/display math delimiters in all such headers, and
 zero control characters. Also repaired the missing closing inline-math
 delimiter in
 Probability/Process/Path/Skorokhod/Corridor/RationalCoordinate.lean.
+
+## Internal proof-header formula pass completion (2026-11-02)
+
+Added mathematical formulas to the 39 proof-support inventories under
+`Lemmas/` that state quantitative or relational conclusions. The formulas
+cover finite ranks, Brownian endpoint and range bounds, random-walk survival
+and block estimates, Lévy--Khintchine extraction, Kingman envelope bounds,
+rooted restart factorization, Galton--Watson moments, Poisson product
+integration, and càdlàg jump control. The modules were checked against their
+Lean declarations and all 39 built successfully in a 5,057-job Lake build;
+no definitions or proofs changed.
+
+The resulting whole-tree audit covers 1,642 production Lean modules. Every
+module with a `Public declarations` or `Internal proof declarations` inventory
+now has mathematical notation where its statements are quantitative or
+relational. The scan found zero same-level file/directory stem collisions,
+zero file stems repeating their parent directory, zero `Lemmas.lean` plus
+`Lemmas/` pairs, zero directories with multiple direct `Lemmas` entries, zero
+directories with more than eight direct Lean modules, zero `Source/`
+directories, zero public or internal declaration inventories without formula
+notation, zero prohibited `the paper`/`the thesis` citation placeholders in
+first-party Lean headers, and zero private theorem names based on source labels
+such as `lemma33`.
+
+## Repeated proof-support imports and abstraction review (2026-11-02)
+
+The import graph was rescanned over the 1,642 production modules, excluding
+vendored dependencies, tests, and utility scripts. The source paths match all
+1,642 rows in `MODULE_AUDIT_LEDGER.csv`; every row records a passing structural
+scan, semantic review, and Lake build. Of the 216 modules under `Lemmas/`, 123
+have at least one direct client outside a `Lemmas/` directory, giving 150 such
+import edges. None is re-exported with `public import`. These imports make a
+proof step available to its clients; they do not, by themselves, establish a
+general mathematical interface.
+
+The repeated-import modules outside the Selection subtree were checked for an
+existing more general interface before considering any move:
+
+* `MeasureTheory/Analytic/Paving/Lemmas/FiniteUnion.lean` only converts the
+  existing project-level `mem_supClosure_set_iff` representation to a
+  Nat-indexed finite family for the projection argument. The base theorem is
+  already at the Paving semantic layer, so the enumeration wrapper remains
+  internal.
+* `Probability/RandomMeasure/Poisson/Intensity/Lemmas/TimeWindowIntegral.lean`
+  is a unit-time-window and mark-only specialization of product restriction
+  and Fubini. The pinned Mathlib revision already supplies
+  `Measure.prod_restrict` and `integral_prod`; the official documentation
+  describes these general product-measure and integral interfaces in
+  [`MeasureTheory.Measure.Prod`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/MeasureTheory/Measure/Prod.html)
+  and [`MeasureTheory.Integral.Prod`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/MeasureTheory/Integral/Prod.html).
+  The specialization stays in Poisson proof support.
+* `Probability/Distributions/InfinitelyDivisible/LevyKhintchine/Semigroup/CanonicalMeasure/Lemmas/Bounds.lean`
+  uses Mathlib's generic
+  `integral_withDensity_eq_integral_toReal_smul` for its weighted-integral
+  identity. The remaining mass and tail bounds depend on the canonical
+  convolution-semigroup estimates, so the package-specific chain remains
+  internal. The exact theorem is present in the pinned revision's
+  `Mathlib/MeasureTheory/Integral/Bochner/ContinuousLinearMap.lean` and is
+  documented at
+  [`MeasureTheory.Integral.Bochner.ContinuousLinearMap`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/MeasureTheory/Integral/Bochner/ContinuousLinearMap.html).
+* `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Stable/Discrete/Lemmas/Partition/BalancedCoreCount.lean`
+  reduces the reserved-terminal-block quotient to the existing generic
+  `Analysis/Asymptotics/Scale/Block/Count.lean` limit. Its added assertion is
+  the stable-scale specialization for this endpoint-core partition, so the
+  generic quotient limit remains public and the bridge step remains internal.
+* The rooted-trial endpoint modules `Completion/Lemmas/EndpointHorizon/{RootFamily,Geometry,FreshField}.lean`
+  instantiate the public
+  `RootIndexed.stopped_selectedSubtreeStepFieldVector_event_factorization_on_finite`
+  theorem from `Genealogy/Exploration/RootIndexed/StoppingSubtrees/Vector/Factorization.lean`.
+  Their selected roots, finite-success event, fallback, and measurability
+  depend on the rooted-trial construction; the general stopped-subtree law
+  stays at the genealogy layer. The formula headers now describe the
+  rank-by-rank target/source fallback and the restricted-measure product
+  identity directly.
+* The finite path encoding in
+  `Probability/Process/RandomWalk/SmallDeviation/Entrance/Lemmas/Rotation/FinitePath.lean`
+  is specific to the normalized step-path and linear-reference-ball event.
+  The separate finite IID cyclic-rotation inequality is already public in
+  `Fluctuation/SparreAndersen/Rotation/Probability.lean`; the encoding does
+  not add another rotation theorem.
+
+The other repeated imports remain grouped with their proof families: the
+finite-slot population and offspring-field expansions in
+`BranchingProcess/GaltonWatson/Moments/Lemmas/{Bounds,FieldExpansion}.lean`;
+Bolthausen's first-window Brownian zero-contact and cutoff-boundary facts in
+`Process/Brownian/AboveStart/FirstWindow/Lemmas/{CutoffBoundary,InteriorReturn}.lean`;
+rank-installed-field past measurability and endpoint fresh-root geometry in
+`BranchingRandomWalk/Coupling/Field/Ranked/Measurability/Lemmas/Past.lean` and
+`BranchingRandomWalk/Restart/RootedTrial/Completion/Lemmas/EndpointHorizon/`;
+Kingman array/envelope estimates in `Ergodic/Kingman/Lemmas/FatouEnvelope.lean`;
+the centered-truncation block decomposition in
+`Process/RandomWalk/Path/Truncation/Maximal/Lemmas/Truncation.lean`; and the
+seven-window index choice in
+`Process/RandomWalk/SmallDeviation/HorizontalTube/EndpointWindow/Lemmas/IndexSelection.lean`.
+The remaining repeated small-deviation helpers are the terminal-left product
+bound, stable range-probability estimate, range block-corridor inclusions,
+stable feedback scaling, and stable-process partition-cell geometry. Each is
+attached to its stated path convention, event, scale, or article proof stage;
+the existing generic block-count, path-partition, return-kernel, and stable
+scale interfaces already carry the reusable parts. The two logarithmic
+Skorokhod threshold clients use the continuity argument for that one metric's
+modulus, while the underlying continuity and neighborhood primitives remain
+the general topology API.
+
+No repeated import in this review yielded a new public abstraction after
+checking its mathematical inputs and available repository/Mathlib interfaces.
+The network comparison used Mathlib's official documentation, and the
+implementation check used the pinned Mathlib git revision
+`380f2aafb622cb2c1c93dac545b6389083c68c51`. Selection-specific ownership
+records remain in the earlier semantic reviews; this pass did not reopen them.
+
+## Inline-math delimiter cleanup (2026-11-02)
+
+A delimiter-aware scan of the full production headers found three unmatched
+inline-math delimiters in the public summaries for ordered candidate events,
+finite-dimensional independent-increment laws, and the finite-filtration
+look-ahead examples. Those three headers now close their formulas correctly.
+The rescan reports balanced inline and display delimiters across all 1,642
+module inventories. The 42 changed Lean modules build successfully with the
+pinned toolchain in 5,058 Lake jobs; no theorem statements or proof terms
+changed in this documentation pass.

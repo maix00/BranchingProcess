@@ -27,6 +27,19 @@ cutoff, bias, and fourth-moment limits are local proof steps.
   truncated multiblock error:
   `blocks * ENNReal.ofReal ((8 * (fraction * cutoff ^ 2 * ∫ x, x ^ 2 ∂ν) +
   3 * fraction ^ 2 * (∫ x, x ^ 2 ∂ν) ^ 2) / threshold ^ 4)`.
+
+The bias vanishes, and the limiting multiblock error is
+\[
+ \frac{(\operatorname{proportionalBlockLength}(\theta,n)+1)
+       |m_{c\sqrt n}|}{\sqrt n}\longrightarrow0,
+ \qquad
+ \lim_{n\to\infty}\mathcal E_n
+  =B\,\operatorname{ENNReal.ofReal}\!\left(
+   \frac{8\theta c^2 M_2+3\theta^2M_2^2}{u^4}\right),
+\]
+where $M_2=\int x^2\,d\nu(x)$, $B$ is the block count, $c$ the cutoff
+factor, $u$ the threshold, and $\theta$ the block fraction.
+
 -/
 
 

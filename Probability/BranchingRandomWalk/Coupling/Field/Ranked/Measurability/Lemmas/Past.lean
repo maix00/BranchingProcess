@@ -22,6 +22,13 @@ measurability and product-law arguments.
   the generation-`n` domain flow.
 * `RootIndexed.rankInstalledField_past_measurable_of_lt` gives the same
   conclusion at a finite stage from assumptions for all earlier generations.
+
+The constructed past is adapted to the generation domain flow:
+\[
+  \forall n,\qquad
+  \bigl(\omega\mapsto(\operatorname{rankInstalledField}(n,\omega)).past(n)\bigr)
+       \text{ is }\mathcal F_n\text{-measurable}.
+\]
 -/
 
 section

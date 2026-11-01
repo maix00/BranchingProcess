@@ -20,6 +20,16 @@ prove the public restarted-interval probability identity.
 * `ProbabilityTheory.RandomWalk.Restart.Lemmas.iidSequenceLaw_closedInterval_prefix_shift_mul`
   transfers independence of two finite coordinate blocks to closed-interval
   path events on the prefix and shifted tail.
+
+For the event $I_m$ that the first $m$ increments stay in the closed
+interval, the prefix and shifted-tail events factor as
+\[
+  \mathbb P\bigl(I_m\cap\theta^{-m}I_n\bigr)
+     =\mathbb P(I_m)\,\mathbb P(I_n),
+\]
+where $\theta^{-m}I_n$ imposes the same interval condition on increments
+after the first $m$ steps.
+
 -/
 
 open MeasureTheory

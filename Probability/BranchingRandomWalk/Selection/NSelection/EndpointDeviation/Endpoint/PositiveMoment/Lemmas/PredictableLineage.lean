@@ -29,6 +29,13 @@ import MeasureTheory.Integral.Moments.FiniteSum
 The module contains the fourth-moment transport from the ordered step law and
 its finite-sum assembly. These declarations are proof support for the
 endpoint-minimum argument in `Minimum/Lemmas/Lineage.lean`.
+
+For a generation-predictable lineage with positive slot-zero increments
+$X_k^+$, the fourth-moment assembly gives
+\[
+  \mathbb E\!\left[\left(\sum_{k<n}X_k^+\right)^4\right]
+       \le n^4\,\mathbb E[(X_0^+)^4].
+\]
 -/
 
 open MeasureTheory

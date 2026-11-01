@@ -35,6 +35,13 @@ squeeze, the `EReal` gap argument, and the assembly of the non-positive companio
   Press (2017), pp. 343–354, DOI 10.1017/9781316576571.014. The stopping-time and block-subsequence
   arguments follow that proof; its leader and maximal estimates are Lemma 3.2 and Lemma 3.4 there.
 
+
+For almost every $x$, the block-subsequence argument identifies the two
+extended-real envelopes:
+\[
+  \liminf_{n\to\infty}\operatorname{ecdiv}(g,n,x)
+   =\limsup_{n\to\infty}\operatorname{ecdiv}(g,n,x).
+\]
 -/
 
 open MeasureTheory Filter Topology

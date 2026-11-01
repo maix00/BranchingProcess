@@ -27,6 +27,15 @@ import Mathlib.Analysis.SpecialFunctions.Trigonometric.Bounds
 * `drift_term` transfers that real limit to the linear characteristic-exponent term.
 * `charFun_sub_one_div_decomp` splits the scaled characteristic function into drift, compensated
   small-jump, and large-jump contributions.
+
+The drift extraction and exponent decomposition take the form
+\[
+  \frac1{t_k}\int_{|x|<r}x\,d\mu_{t_k}(x)\longrightarrow b,
+  \qquad
+  \frac{\widehat\mu_t(\xi)-1}{t}
+       =\text{drift term}+\text{compensated small-jump term}
+          +\text{large-jump term}.
+\]
 -/
 
 section

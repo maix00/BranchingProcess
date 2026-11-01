@@ -39,6 +39,13 @@ Section 4, p. 764, “Small deviations in the sample function space,”
 *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974), 755--765; English
 translation, “Small Deviations in a Space of Trajectories,” *Theory of
 Probability and Its Applications* 19(4) (1975), 726--736, DOI 10.1137/1119081.
+
+For diffusive block length $m_n=\lfloor c s_n^2\rfloor$, the endpoint
+converges as $S_{m_n}/s_n\Rightarrow N(0,c)$. Thus, if
+$\mathbb P\{N(0,c)\in[-(u-\ell),u-\ell]\}<q$, then eventually every
+starting point $x\in[\ell s_n,u s_n]$ has killed-block remaining mass at
+most $q$.
+
 -/
 
 section

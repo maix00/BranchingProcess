@@ -30,6 +30,13 @@ inclusions are in `Spine/Lemmas/Tube/Event.lean`.
 ## Internal proof declarations
 
 - `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.iidSequenceLaw_restartedWindowProbability_le_secondStageDrawdown` bounds each post-cutoff restarted-window probability by the corresponding finite-prefix drawdown probability.
+
+For each post-cutoff time $k$, the restarted-window event is bounded by the
+corresponding shifted drawdown event:
+\[
+ \mathbb P(\text{restarted window at }k)
+   \le \mathbb P(\text{drawdown endpoint event over }k-\ell).
+\]
 -/
 
 open Filter MeasureTheory

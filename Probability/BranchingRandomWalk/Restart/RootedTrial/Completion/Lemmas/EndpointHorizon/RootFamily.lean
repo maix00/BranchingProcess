@@ -29,6 +29,21 @@ import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.Stoppin
   roots as a fallback, tagged in disjoint root summands.
 * `selectedReserveSpineRestartEndpointFreshRoots_measurable` proves measurability of this
   finite random root family.
+
+For $i\in\mathrm{Fin}(\mathrm{lower})$, let $T_i$ be the target rank node and
+$S_i$ the source rank node. The mixed root $R_i$ uses the target rank unless
+$T_i$ is the default node $(r,\varnothing)$, in which case it uses the source
+rank. The resulting vector is measurable with respect to the stopped domain
+flow:
+\[
+ R_i=\begin{cases}
+ (\operatorname{inl}(r),S_i.2),&T_i=(r,\varnothing),\\
+ (\operatorname{inr}(r),T_i.2),&T_i\ne(r,\varnothing).
+ \end{cases}
+\]
+Here $T_i$ and $S_i$ are the $i$th values of
+`selectedReserveSpineRestartEndpointRankVector` and
+`selectedReserveSpineRestartSourceEndpointRankVector`, respectively.
 -/
 
 section

@@ -23,7 +23,7 @@ declared success by `n`.  This is the causal version of the usual
 - `earlierCandidateSucceededBy` is the union of those events over candidates $j$ with
   `before j i`; both events have filtration-measurability theorems.
 - `orderedCandidateDeclarationWithin` records a successful candidate completion at $n$ when no
-  preceding candidate has succeeded by $n`; its measurability theorem is
+  preceding candidate has succeeded by $n$; its measurability theorem is
   `orderedCandidateDeclarationWithin_measurable`.
 - `firstOrderedCandidateCompletionWithin_isStoppingTime` makes the first such declaration a
   stopping time for a countable candidate family.

@@ -25,6 +25,18 @@ increment or a large centered-truncated block sum.
   states the set inclusion from the original block-exceedance event into the
   union of a discarded-increment event and a centered-truncated block event,
   with accumulated bias `(length + 1) * |truncatedIncrementMean ν radius|`.
+
+For block sums $S_{j,k}$ over the first $k+1$ increments of block $j$,
+the pathwise decomposition is
+\[
+ \{\exists j<B,\ k\le N:\ u\le|S_{j,k}|\}
+ \subseteq \{\exists i\le BN:\ r<|\xi_i|\}
+  \cup\{\exists j<B,\ k\le N:
+      u-(N+1)|m_r|\le|S^{\mathrm{trunc}}_{j,k}|\},
+\]
+where $S^{\mathrm{trunc}}_{j,k}$ uses centered truncation at radius $r$ and
+$m_r$ is the truncated-increment mean.
+
 -/
 
 

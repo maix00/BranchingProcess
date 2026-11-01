@@ -31,6 +31,17 @@ Positive*, Lemma 3.1, pp. 482--483, DOI 10.1214/aop/1176996098. The
 countable-additivity step uses the almost-sure first-window existence
 argument related to Vladislav Vysotsky, *Positivity of integrated random
 walks*, Section 3.1, equation (17), DOI 10.1214/12-AIHP487.
+
+Let $F_r$ be the event that the first surviving window starts at $r$, and
+let $N_r$ be the event that the prefix before $r$ contains no surviving
+window. For a measurable block event $A$, the disjoint-start identity is
+\[
+  \mathbb P\!\left(\bigcup_{r\ge0}
+        (F_r\cap\theta^{-r}A)\right)
+   =\left(\sum_{r\ge0}\mathbb P(N_r)\right)
+      \mathbb P\bigl(A\cap\{S_j\ge0,\ 1\le j\le N\}\bigr).
+\]
+
 -/
 
 section

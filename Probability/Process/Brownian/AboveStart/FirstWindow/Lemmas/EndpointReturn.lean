@@ -36,6 +36,12 @@ DOI 10.1214/aop/1176996098. Bolthausen cites the Lévy decomposition of
 descending hitting times to exclude a fixed excursion length. This proof
 conditions at a rational time inside the excursion and uses the atomless
 first-passage law.
+
+If $T$ is the first nonnegative-window start, the endpoint-return event is
+null:
+\[
+  \mathbb P\{T<\infty,\ B_{T+1}=B_T\}=0.
+\]
 -/
 
 section

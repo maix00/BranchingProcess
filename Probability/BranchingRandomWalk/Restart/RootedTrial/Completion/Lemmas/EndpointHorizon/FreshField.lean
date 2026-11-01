@@ -24,6 +24,20 @@ import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.Stoppin
   descendant field below mixed endpoint roots from the stopped domain information.
 * `selectedReserveSpineRestartEndpointTargetFreshField_factorization_on_finite` gives the
   same factorization with the actual rank-installed target roots on the finite-endpoint event.
+
+For every stopped-domain measurable event $A$ and measurable set $B$ of
+descendant-field vectors, the finite-endpoint restriction factors as
+\[
+ \operatorname{stepFieldLaw}_{\mu}^{\mathrm{Root}\oplus\mathrm{Root}}
+   \bigl(A\cap\{\omega:\tau(\omega)\ne\top\}\cap
+      \{\omega:F_R(\omega)\in B\}\bigr)
+ =\operatorname{stepFieldLaw}_{\mu}^{\mathrm{Root}\oplus\mathrm{Root}}
+   \bigl(A\cap\{\omega:\tau(\omega)\ne\top\}\bigr)\,
+   \operatorname{stepFieldLaw}_{\mu}^{\mathrm{Fin}(\mathrm{lower})}(B),
+\]
+where $\tau$ is the first-success completion time, $R(\omega)$ is the
+selected mixed root family, and
+$F_R(\omega):=\operatorname{selectedSubtreeStepFieldVector}(R,\omega)$.
 -/
 
 section

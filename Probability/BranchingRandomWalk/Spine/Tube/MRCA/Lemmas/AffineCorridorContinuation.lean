@@ -19,6 +19,17 @@ import Probability.BranchingProcess.Offspring.FieldLaw
 specializes the reusable prefix-continuation estimate to the affine corridor
 and its drawdown bound. It is used to prove the positive-depth pair estimate
 in `MRCA/PositiveDepth.lean`.
+
+If the tilted continuation probability is at most $q$, the pair-integral
+term in the declaration is bounded by
+\[
+ \mathcal I_{m,n}\le e^{-2a}e^{2U}q^2
+   \left(\int^{\!*}\mathrm{crossPotentialWeight}_{\phi}(-1,\xi)\,d\mu(\xi)\right)
+   e^{a-(\ell+dm)}
+   \mathbb P_{\widetilde\nu}(\mathrm{prefix\ corridor}),
+\]
+where $a$ is the initial position, $U$ the terminal upper bound, $d$ the
+drift, and $\ell$ the lower corridor level.
 -/
 
 open MeasureTheory
