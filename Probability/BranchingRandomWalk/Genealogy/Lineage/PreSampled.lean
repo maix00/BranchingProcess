@@ -20,6 +20,19 @@ outcome is inspected.  Trial labels, child slots, and marks are independent
 type parameters.  Countability is requested only by the measurable random
 coordinate and countable-union arguments that use it.
 
+Writing `p_{i,n}` for the path of trial `i`, its depth and one-step update are
+
+\[
+|p_{i,n}(\omega)|=n,
+\qquad
+p_{i,n+1}(\omega)
+=\operatorname{step}_i\bigl(p_{i,n}(\omega),\omega(p_{i,n}(\omega))\bigr).
+\]
+
+Under the stated countability hypotheses, `p_{i,n}` is measurable in the
+generation-`n` domain flow, and for a measurable split set the first declared
+split time is a stopping time.
+
 - `ReserveLineages Trial α M` packages a path `path i n ω`, an update map
   `step i (address, mark)`, the depth identity `|path i n ω| = n`, and the
   recursion that reads the mark at the current address.

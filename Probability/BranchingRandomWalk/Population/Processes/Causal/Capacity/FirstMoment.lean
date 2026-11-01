@@ -25,6 +25,20 @@ public import Probability.Process.RandomWalk.Path.Restart.FirstMoment
 
 The pathwise bounds are integrated under the root-indexed field law and then
 reduced to one-dimensional spine expectations.
+
+Write `\Psi_{c,W}` for `restartedWindowTest`, `H_n(x,\xi)` for the increment
+history starting at `x`, and `S_n(\xi)` for its displacement. For the killed
+population `P` from one root `r`, and `P_R` from a finite root set `R`, the
+first-moment bounds are
+
+\[\begin{aligned}
+\int^-\operatorname{size}(P,n,\omega)\,d\nu_{\mathrm{field}}(\omega)
+&\le\int^- e^{S_n(\xi)}\Psi_{c,W}\bigl(H_n(x_r,\xi)\bigr)
+  \,d\nu_{\mathrm{tilt}}(\xi),\\
+\int^-\operatorname{size}(P_R,n,\omega)\,d\nu_{\mathrm{field}}(\omega)
+&\le\sum_{r\in R}\int^- e^{S_n(\xi)}
+  \Psi_{c,W}\bigl(H_n(x_r,\xi)\bigr)\,d\nu_{\mathrm{tilt}}(\xi).
+\end{aligned}\]
 -/
 
 @[expose] public section

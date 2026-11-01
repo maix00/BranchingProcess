@@ -25,6 +25,23 @@ public import Probability.Process.RandomWalk.Path.Restart.FirstMoment
 
 This file is the capacity-event bridge: generic causal-population Markov bounds
 are instantiated with the one-dimensional restarted-window first moments.
+
+For the restarted-window killed population from a finite root set `R`, the
+capacity estimate and its uniform-first-moment specialization are
+
+\[\begin{aligned}
+\nu_{\mathrm{field}}(\operatorname{Cap}_{N,T}^{\complement})
+&\le\sum_{k=0}^{T}\frac{1}{N+1}
+  \sum_{r\in R}\int^-
+    e^{S_k(\xi)}\Psi_{c,W}\bigl(H_k(x_r,\xi)\bigr)
+    \,d\nu_{\mathrm{tilt}}(\xi),\\
+\left(\forall k,\ r\in R,\ x_r\in I\Rightarrow
+  \int^- e^{S_k(\xi)}\Psi_{c,W}\bigl(H_k(x_r,\xi)\bigr)
+  \,d\nu_{\mathrm{tilt}}(\xi)\le b_k\right)
+&\Longrightarrow\quad
+\nu_{\mathrm{field}}(\operatorname{Cap}_{N,T}^{\complement})
+\le |R|\,\frac{\sum_{k=0}^{T}b_k}{N+1}.
+\end{aligned}\]
 -/
 
 @[expose] public section
