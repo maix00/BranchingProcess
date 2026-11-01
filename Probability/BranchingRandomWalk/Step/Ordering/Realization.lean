@@ -41,6 +41,18 @@ trees must be measurable. Neither this local structure (which supplies only
 child values and point measures) nor pointwise `Step.IsOrderable` supplies
 that measurable lineage selection.
 
+For the measurable step ordering \(O\) and its ordered realization,
+
+\[\begin{aligned}
+O&:\operatorname{Step}(\iota,X)\to\operatorname{Step}(\kappa,X),\\
+\xi(j)=\operatorname{some}(y)&\Longrightarrow
+  \exists i,\ O(\xi)(i)=\operatorname{some}(y),\\
+\operatorname{stepPointMeasure}(O(\xi))
+  &=\operatorname{stepPointMeasure}(\xi).
+\end{aligned}\]
+
+The map \(O\) is measurable and \(O(\xi)\) is ordered by \(\phi\).
+
 ## Public declarations
 
 * `MeasurableStepOrdering` is a measurable map from raw steps to ordered

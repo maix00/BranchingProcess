@@ -18,6 +18,12 @@ A raw child law is pushed through its deterministic measurable ordering.
 Every address of the resulting pre-sampled field is then ordered by the law's
 real potential simultaneously almost surely.
 
+Under an ordered one-step law with nonempty support, almost every sampled
+field has the least slot present at every address:
+
+\[\mathbb P_{\mathrm{field}}\!\left(\forall u\in\mathbb V,\;
+  \operatorname{survive}(\omega(u),0)\right)=1.\]
+
 ## Public declarations
 
 * `offspringFieldLaw_all_orderedBy` states that under the ordered offspring law,

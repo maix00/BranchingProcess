@@ -18,6 +18,16 @@ The first ordered success is a stopping time and its generation event has the
 usual current-success/earlier-failure form.
 ## Public declarations
 
+Among an ordered candidate set \(I\), generation \(n\) is the first
+successful completion exactly when the current trial completes successfully
+at \(n\) and every earlier candidate fails:
+
+\[\omega\in D_n\Longleftrightarrow
+  \exists i\in I,\ C_i=n\ \wedge\ E_i\ \wedge\
+  \forall j\in I,\ j<i\Longrightarrow E_j^{\mathsf c},\]
+
+where \(C_i\) is its completion time and \(E_i\) its success event.
+
 * `completion` is the global time at which a trial's fixed-duration run ends.
   `completion_isStoppingTime` and its countable-slot variant prove it is a
   stopping time, and `completion_mono` proves completion times are ordered.

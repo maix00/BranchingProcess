@@ -14,6 +14,16 @@ public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Field.Measur
 
 ## Public declarations
 
+Let \(C_{n+1}\) be the child set of the finite parent set and let
+\(x(q)\) be the observed real position at generation \(n+1\). Under finite
+negative exponential weight at every parent, each lower section in the
+position-address lexicographic order is finite:
+
+\[q\in C_{n+1}\Longrightarrow
+  \left\{q'\in C_{n+1}:
+    \operatorname{toLex}(x(q'),q')\le_{\mathrm{lex}}
+    \operatorname{toLex}(x(q),q)\right\}\text{ is finite}.\]
+
 - `ProbabilityTheory.BranchingRandomWalk.RootIndexed.childrenAtGeneration_isLowerFiniteBy_real`
   states that finite negative exponential offspring weight at every parent
   makes the generation-truncated real-position order on the next generation's

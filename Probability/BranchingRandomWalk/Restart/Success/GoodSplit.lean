@@ -29,6 +29,15 @@ almost-sure nonempty-offspring assumption.
 
 ## Public declarations
 
+If the offspring law is supercritical and a measurable selector retains at
+least two children whenever available, some integer cutoff \(M\) gives a positive
+probability bounded split:
+
+\[\exists M\in\mathbb N,\qquad
+  \operatorname{sorted}(L)\!\left\{\xi:\ 2\le|R(\xi)|\ \wedge\
+    \xi.\operatorname{potentialValue}'_{\phi}
+      (\operatorname{secondSelectedSlot}(R,\xi))\le M\right\}>0.\]
+
 - `exists_positive_selectedSplit` states that, if
   `1 < E[childCount]` and the selector retains two children on every
   configuration with at least two, then

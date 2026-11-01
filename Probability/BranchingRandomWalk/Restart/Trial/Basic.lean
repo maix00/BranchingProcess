@@ -19,6 +19,14 @@ recursively selected population. Ordered selected-slot operations belong to
 
 ## Public declarations
 
+Writing \(P_j(\omega)=\operatorname{population}(R,j,\omega)\), a finite
+growth trial succeeds when its endpoint population is in the prescribed
+window and every earlier positive-age population remains nonempty and below
+the upper threshold:
+
+\[\ell\le |P_T(\omega)|\le u,\qquad
+  0<|P_j(\omega)|<u\quad(1\le j<T).\]
+
 * `splitBy R = {ξ | 2 ≤ (R ξ).card}` records binary split marks, with
   `splitBy_measurable` proving measurability.
 * `growthTrialSuccess R lower upper duration ω` states that the endpoint

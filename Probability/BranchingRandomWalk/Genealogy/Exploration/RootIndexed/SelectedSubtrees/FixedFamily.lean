@@ -19,6 +19,16 @@ The initial-root type `Root`, the selected-family index `κ`, and the child-slot
 arbitrary. Product measures and fixed-coordinate measurability do not require any of them to be
 finite or countable.
 
+For an injective family of root-address pairs of common address length,
+rebasing the field to those descendant subtrees preserves its product law:
+
+\[\begin{aligned}
+\omega^{\mathbf r}_i(v)&=\omega_{r_i}(u_i\mathbin{+\!\!+}v),\\
+\operatorname{Law}(\omega^{\mathbf r})
+  &=\operatorname{stepFieldLaw}(\mu),\\
+\omega^{\mathbf r}&\perp\mathcal F_n.
+\end{aligned}\]
+
 ## Public declarations
 
 * `RootIndexed.subtreeStepFieldVector` rebases a fixed family of root-address

@@ -29,6 +29,15 @@ candidate outcomes.
 
 ## Public declarations
 
+If the bounded split event \(B\) has probability \(p>0\), the expected
+leftmost positive displacement accumulated on trials through the first
+success, with only failed-trial displacements counted, is bounded by the
+one-step first moment divided by \(p\):
+
+\[\mathbb E\!\left[\sum_{n\ge0}Y(X_n)^+
+  \mathbf 1_{\{X_0,\ldots,X_n\notin B\}}\right]
+  \le\frac{\mathbb E_L[Y^+]}{p}.\]
+
 - `ProbabilityTheory.BranchingRandomWalk.iidGeometricFailureLeftmostPositiveDisplacement_le`:
   for iid
   steps and a success event `B` of probability `p > 0`, the expected total

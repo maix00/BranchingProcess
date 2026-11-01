@@ -20,6 +20,16 @@ offspring family is empty on other samples or has arbitrary finite size.
 
 ## Public declarations
 
+Let \(P_n(\omega)=\operatorname{population}(R,n,\omega)\) and
+\(Z_n(\omega)=|P_n(\omega)|\). The raw declaration and observable completion
+satisfy
+
+\[D_n=\{\omega:2\le Z_{n+1}(\omega)\},\qquad
+  \tau=\inf\{n:D_n\},\qquad\sigma=\tau+1.\]
+
+On a finite first split at \(\tau=n\), \(|P_n|=1\), and the unique parent
+has two distinct selected children in \(P_{n+1}\).
+
 * `selectedPopulationSplitDeclaration`, `selectedPopulationRawSplitTime`, and
   `selectedPopulationSplitCompletion` define the first-split event and its raw
   and observable times. In terms of

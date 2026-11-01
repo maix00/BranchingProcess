@@ -18,6 +18,13 @@ The process observed from a possibly killed singleton-slot walk is an
 increment-path encoding, with the law of the corresponding directly summed
 position path.
 
+For any increment-path law \(\mu\), observing the increment-encoded walk
+has the same full path law as summing the increments directly:
+
+\[\operatorname{map}(\operatorname{processPath}(d),
+  \operatorname{map}(\operatorname{Walk.ofIncrements}(x_0),\mu))
+  =\operatorname{map}(\operatorname{positionPath}(d,x_0),\mu).\]
+
 ## Public declarations
 
 - `processPath` observes the possibly killed walk at every discrete time;

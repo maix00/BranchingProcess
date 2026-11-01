@@ -19,6 +19,18 @@ The source is the random variable `S`. Its pushforward law is copied
 independently at every address and root. Point measures and ordered support are
 derived observations of those deterministic steps.
 
+For a root-indexed field \(\omega\), every point-measure coordinate has the
+one-step branching law, and ordered nonempty support gives a simultaneous
+first-child property:
+
+\[\begin{aligned}
+\operatorname{map}(\omega\mapsto\operatorname{stepPointMeasure}(\omega(r,u)),
+  \operatorname{stepFieldLaw}(S.\operatorname{indexedLaw}(P)))
+  &=S.\operatorname{branchingLaw}(P),\\
+\mathbb P_{\mathrm{field}}\!\left(\forall r,u,\;
+  \operatorname{survive}(\omega(r,u),0)\right)&=1.
+\end{aligned}\]
+
 ## Public declarations
 
 - `ProbabilityTheory.BranchingRandomWalk.RootIndexed.step_pointMeasure_marginal`:

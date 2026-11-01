@@ -25,6 +25,17 @@ random-time identification with the exact-`N` ranked environment, remain the
 bridge needed before applying the Kingman interface.
 ## Public declarations
 
+If independent injectively assigned fixed-age trials have one-trial success
+probability \(p>0\), then the first successful index is finite almost surely.
+Writing \(\rho_i=\operatorname{roots}_N(i)\), when the target is at least
+\(N\), each selected root has the first successful trial's label and its
+address belongs to that root's population:
+
+\[p>0\Longrightarrow\mathbb P(K<\infty)=1,\qquad
+  N\le\mathrm{target}\le|P_K|\Longrightarrow
+  \forall i<N,\ \rho_i=(\operatorname{root}(K),u_i),\quad
+  u_i\in\operatorname{population}(R,d,\omega(\operatorname{root}(K))).\]
+
 * `firstSuccess_ne_top_ae_of_positive` proves that independent fixed-age
   trials with positive one-trial success probability have a finite first
   success almost surely.

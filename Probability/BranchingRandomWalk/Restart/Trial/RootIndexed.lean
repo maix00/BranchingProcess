@@ -20,6 +20,12 @@ completion generations.
 
 ## Public declarations
 
+For a split completion generation \(s>0\), the first selected child of the
+trial root at \(r\) is chosen from the path at generation \(s-1\); a trial
+of length \(\ell\ge1\) then completes at
+
+\[\sigma+(\ell-1)=\tau+\ell.\]
+
 * `RootIndexed.ReserveLineages.firstChildRootAt` selects the first child after
   a split. Its root, depth, selected-slot, and fiber-measurability results are
   `RootIndexed.ReserveLineages.firstChildRootAt_root`,

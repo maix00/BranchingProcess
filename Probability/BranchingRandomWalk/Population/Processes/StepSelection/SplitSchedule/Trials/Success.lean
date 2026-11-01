@@ -18,6 +18,14 @@ generation.  At the actual completion time it agrees with the corresponding
 fixed-age population of the assigned pre-sampled root.
 ## Public declarations
 
+At the completion time \(C_i=n\), the concurrent success test agrees with
+the size test on the fixed-age population of the assigned root:
+
+\[\omega\in\operatorname{successTest}_i(n)
+  \Longleftrightarrow
+  \mathrm{target}\le
+    |\operatorname{population}(R,\mathrm{duration},\omega(\mathrm{root}(i)))|.\]
+
 * `successTest` tests whether a trial's selected population reaches the target
   size at its completion. `successTest_measurable_of_countable` proves its
   generation-wise measurability.
