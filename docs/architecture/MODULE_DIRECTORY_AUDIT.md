@@ -28196,6 +28196,17 @@ integral forms, including the reciprocal exponential factor. The displayed
 identities were checked against their theorem types and operator definitions;
 the focused five-module build succeeds. No declarations or proofs changed.
 
+## Tilted spine law formulas (2026-11-01)
+
+Added formula-level interfaces to
+`Probability/BranchingRandomWalk/Spine/Tilted/{Law,Slot}.lean` and
+`Spine/RandomWalk/{IncrementProcess,Basic}.lean`. The headers now specify the
+slot-summed tilted measure, normalized slot PMF and potential pushforward,
+countable iid increment product, canonical walk law, and the weighted and
+reciprocal-weight endpoint identities. Each display was compared with the
+corresponding public theorem or definition. The four focused modules build
+successfully in a 3,184-job Lake build; no declarations or proofs changed.
+
 ## Skorokhod path and time-change formulas (2026-11-01)
 
 Reviewed and completed the mathematical formulas in the public module
