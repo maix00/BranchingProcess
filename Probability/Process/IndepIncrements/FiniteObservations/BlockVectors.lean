@@ -28,6 +28,21 @@ import Probability.Process.IndepIncrements.Disjoint
   `(i ∈ [a,b) ↦ X (t (i+1))-X (t a)) ⟂ᵢ[P]
   (i ∈ [b,c) ↦ X (t (i+1))-X (t b))`, assuming a.e.-measurability of the
   grid coordinates.
+
+For a finite increment vector `v` indexed by `S`, let
+`B_S(i)=\sum_{j\in S,\ j\le i}v_j`. Disjoint increment blocks give
+independent partial-sum paths and, for consecutive intervals, independent
+positions measured from each interval's left endpoint:
+
+\[\begin{aligned}
+B_S(i)&=\sum_{j\in S,\ j\le i}v_j,\\
+[a,b)\cap[b,c)&=\varnothing
+&\Longrightarrow\quad
+  \bigl(X_{t(i+1)}-X_{t(a)}\bigr)_{i\in[a,b)}
+  \text{ and }
+  \bigl(X_{t(i+1)}-X_{t(b)}\bigr)_{i\in[b,c)}
+  \text{ are independent under }P.
+\end{aligned}\]
 -/
 
 @[expose] public section

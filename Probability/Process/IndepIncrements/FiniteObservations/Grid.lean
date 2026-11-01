@@ -22,6 +22,15 @@ public import Mathlib.Data.Finset.Sort
   independent increments,
   `iIndepFun (i ↦ (ω ↦ X (finiteTimeGrid s hs i.succ) ω -
   X (finiteTimeGrid s hs i.castSucc) ω)) P`.
+
+If `s` is a nonempty finite set of ordered observation times, its canonical
+enumeration `t_i` is monotone, and the successive increments are mutually
+independent:
+
+\[
+\operatorname{iIndep}_P
+  \left(\bigl(X_{t_{i+1}}-X_{t_i}\bigr)_{0\le i<|s|-1}\right).
+\]
 -/
 
 @[expose] public section

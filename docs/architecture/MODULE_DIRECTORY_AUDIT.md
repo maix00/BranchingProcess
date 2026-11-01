@@ -28638,3 +28638,17 @@ modules build successfully in a 3,267-job Lake build; no declarations or proofs
 changed. The same formula-header review now has 147 remaining modules out of
 1,642 modules when Selection-owned paths are omitted from this pass (110
 candidates have public-declaration sections).
+
+
+## Independent-increment block formulas (2026-11-02)
+
+Added mathematical statements to the public headers of
+`Probability/Process/IndepIncrements/Disjoint.lean` and
+`IndepIncrements/FiniteObservations/{Grid,BlockVectors,BlockPaths,DisjointPaths}.lean`.
+They state independence of separated increments, the finite-grid increment
+family, partial-sum and position vectors on adjacent blocks, and independence
+of finite-dimensional and path-valued observations. All five focused modules
+build successfully in a 2,724-job Lake build; no declarations or proofs
+changed. The same formula-header review now has 142 remaining modules out of
+1,642 modules when Selection-owned paths are omitted from this pass (105
+candidates have public-declaration sections).

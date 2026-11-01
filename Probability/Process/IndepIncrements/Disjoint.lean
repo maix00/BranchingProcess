@@ -19,6 +19,17 @@ public import Mathlib.Probability.Independence.Process.HasIndepIncrements.Basic
   a.e.-measurable process coordinates, measurable subtraction, and disjoint
   finite index sets `S,T`, the vectors
   `i ↦ X (t (i+1)) - X (t i)` on `S` and `T` are independent.
+
+For ordered times `a≤b≤c≤d`, and more generally for disjoint finite sets of
+indices in a monotone grid, the independent-increment conclusions are
+
+\[\begin{aligned}
+\operatorname{IndepFun}_P(X_b-X_a,X_d-X_c),\\
+S\cap T=\varnothing&\Longrightarrow
+  \operatorname{IndepFun}_P
+    \left((X_{t(i+1)}-X_{t(i)})_{i\in S},
+          (X_{t(i+1)}-X_{t(i)})_{i\in T}\right).
+\end{aligned}\]
 -/
 
 @[expose] public section

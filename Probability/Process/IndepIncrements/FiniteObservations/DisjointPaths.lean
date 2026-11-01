@@ -29,6 +29,16 @@ import Probability.Independence.FiniteFamily
   `t i ≤ τ i q ≤ t (i+1)` with `τ i q₀ = t i`, the translated paths on the
   first `n` adjacent intervals satisfy
   `iIndepFun (i ↦ (q ↦ X (τ i q)-X (t i))) P`.
+
+The path-valued version states independence of the displacement paths on
+adjacent intervals; the finite-dimensional version allows repeated query
+times and the common endpoint:
+
+\[\begin{aligned}
+\Phi_{[a,b]}(\omega)(s)&=X_s(\omega)-X_a(\omega),\\
+\Phi_{[b,c]}(\omega)(t)&=X_t(\omega)-X_b(\omega),\\
+\operatorname{IndepFun}_P(\Phi_{[a,b]},\Phi_{[b,c]}).
+\end{aligned}\]
 -/
 
 @[expose] public section
