@@ -15,6 +15,14 @@ public import Mathlib.Data.Finset.Card
 
 ## Public declarations
 
+The slice rank of a particle is the extended cardinality of its strict
+predecessor set in the chosen index order:
+
+\[
+\operatorname{sliceRank}(C,t,q)
+=\operatorname{encard}\{p:p\in\operatorname{particles}_C(t)\text{ and }p<q\}.
+\]
+
 A particle of the cloud is an initial root together with an address, so a rank
 counts particles below a fixed particle of `RootIndexed.TreeNode Root α`. The order on
 that type is not yet fixed by the cloud (the walk's selection compares

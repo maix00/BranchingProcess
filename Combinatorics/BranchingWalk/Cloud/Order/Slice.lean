@@ -38,6 +38,24 @@ evaluation states the required measurability of its half-line explicitly.
 
 ## Public declarations
 
+At a fixed time, rankwise domination matches each particle with a particle
+of the same index rank at a position no greater than its own; on finite
+slices this implies the lower-tail counting inequality:
+
+\[
+\forall k,q,\quad
+q\in C_t\land\operatorname{rank}_C(q)=k
+\Longrightarrow
+\exists q'\in D_t,\quad
+\operatorname{rank}_D(q')=k\land x_D(q')\le x_C(q),
+\]
+\[
+|C_t|,|D_t|<\infty
+\quad\Longrightarrow\quad
+\#\{q\in C_t:x_C(q)\le a\}
+\le\#\{q\in D_t:x_D(q)\le a\}.
+\]
+
 - `Measure.LowerTailDominates μ ν` means `μ (Iic a) ≤ ν (Iic a)` for every
   threshold `a`; the generic measure relation and its order laws are owned by
   `MeasureTheory/Measure/LowerTail.lean`.

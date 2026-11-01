@@ -28486,3 +28486,15 @@ positions, and the multiplicity-preserving Dirac sum. All seven focused
 modules build successfully in a 1,908-job Lake build; no declarations or
 proofs changed. The same header scan now has 219 remaining modules for manual
 formula review out of 1,642 production modules.
+
+## Cloud order and step-ordering formulas (2026-11-01)
+
+Added statement-level formulas to the headers of
+`Combinatorics/BranchingWalk/Cloud/{Order/{Domination,Slice},Rank/Slice.lean}`
+and `Step/{Ordering/ByPotential,Measure/PointMeasure,Generation/Update,Ordering/Sibling/{Closable,Closed}}.lean`.
+They state lower- and upper-tail cloud domination, rankwise particle matching,
+the slice-rank definition, potential-induced step ordering, the step point
+measure and its total mass, generation-update invariance, and sibling closure
+conditions. All eight focused modules build successfully in a 1,917-job Lake
+build; no declarations or proofs changed. The same header scan now has 211
+remaining modules for manual formula review out of 1,642 production modules.

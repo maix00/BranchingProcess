@@ -26,6 +26,27 @@ cloud arguments and expresses their upper-tail comparison directly.
 
 ## Public declarations
 
+Cloud domination compares the lower tails of the slice measures at every time;
+reading positions in the order dual gives the corresponding upper-tail
+comparison without exchanging the clouds, whenever the half-lines used in the
+order-dual measure evaluation are measurable:
+
+\[
+C.\operatorname{Dominates}D
+\Longleftrightarrow
+\forall t,a,\quad
+\operatorname{diracSum}(C,t)(\operatorname{Iic}(a))
+\le\operatorname{diracSum}(D,t)(\operatorname{Iic}(a)),
+\]
+\[
+(C.\operatorname{mapOrderDual}).\operatorname{Dominates}
+(D.\operatorname{mapOrderDual})
+\Longleftrightarrow
+\forall t,a,\quad
+\operatorname{diracSum}(C,t)(\operatorname{Ici}(a))
+\le\operatorname{diracSum}(D,t)(\operatorname{Ici}(a)).
+\]
+
 - `Cloud.Dominates C D` means that at every time `t` and threshold `a`, the
   Dirac sum of `C`'s particle positions on `Iic a` is at most that of `D`.
   `Cloud.DominatesBy φ C D` applies this order after observing positions
