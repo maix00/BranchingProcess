@@ -28339,3 +28339,13 @@ increment identities, canonical/cutoff path agreement, stable time-space
 scaling, Poisson jump-sum laws on time windows, and position laws on monotone
 grids. All seven focused modules build successfully in a 3,685-job Lake build;
 no declarations or proofs changed.
+
+## Process transformation formulas (2026-11-01)
+
+Added the conditional Jensen inequalities, the pathwise time-change increment
+identity, and the fixed-time agreement and pathwise continuity statements to
+the public headers in `Probability/Process/Martingale/Convex.lean`,
+`IndepIncrements/TimeChange.lean`, and
+`Brownian/Construction/PreBrownianModification.lean`. The three focused
+modules build successfully in a 3,334-job Lake build; no declarations or
+proofs changed.

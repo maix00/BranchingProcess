@@ -14,6 +14,19 @@ import Mathlib.Probability.Distributions.Gaussian.IsGaussianProcess.Basic
 /-!
 # Continuous modification of a pre-Brownian process
 
+For every pre-Brownian process `B` with law `P`, the construction selects a
+process `Y` whose coordinates are measurable, which agrees with `B` almost
+surely at each fixed time, and whose every sample path is continuous:
+
+\[
+\forall t\geq0,\quad Y_t=B_t\quad P\text{-almost surely},
+\qquad
+\forall\omega,\quad t\mapsto Y_t(\omega)\text{ is continuous}.
+\]
+
+The selected version preserves the finite-dimensional Brownian laws, so it
+is a Brownian process in Mathlib's sense.
+
 ## Public declarations
 
 - `IsPreBrownianReal.exists_continuous_modification_fourthMoment`: a pre-Brownian
