@@ -35,11 +35,16 @@ remains in the deterministic walk layer.
 * `maximal_ineq_sq_partialSumProcess` bounds
   `ε · ℙ(max_{k≤n} S_{k+1}² ≥ ε)` by `𝔼[S_{n+1}²]`;
   `maximal_ineq_sq_partialSumProcess_iidSequenceLaw` substitutes
-  `(n+1) · Var(ν)` for that second moment.
+  `(n+1) · Var(id,ν)` for that second moment.
 * `integral_sq_partialSumProcess` identifies the terminal second moment with
   `∑_{k=0}^{n} Var(increment_k)` for independent centered increments;
   `integral_sq_partialSumProcess_iidSequenceLaw` gives
   `𝔼[S_{n+1}²] = (n+1) · Var(id,ν)`.
+
+With `\(S_n=\sum_{k=0}^{n}\xi_k\)` and centered independent increments,
+`\((S_n)_{n\ge0}\)` is a martingale and `\((S_n^2)_{n\ge0}\)` is a
+submartingale. In the IID case,
+`\(\mathbb E[S_n^2]=(n+1)\operatorname{Var}(id,\nu)\)`.
 -/
 
 open MeasureTheory ProbabilityTheory

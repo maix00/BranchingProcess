@@ -38,6 +38,12 @@ endpoints from consecutive block sums.
   equal-length block sums with `AdditivePath.displacement (j * length) increment`.
 * `inClosedInterval_mul_iff_forall_block` identifies confinement through
   `blocks * length` with confinement on every overlapping block interval.
+
+For a block starting at `\(s\)` with length `\(L\)`, its `\(j\)`th
+partial sum is `\(\sum_{i<j}\xi_{s+i}\)`. Across `\(N\)` blocks,
+`\(S_{NL}=\sum_{j<N}(S_{(j+1)L}-S_{jL})\)`; if every block displacement
+is at most `\(r\)`, positions at times at most one block apart differ by
+at most `\(3r\)`.
 -/
 
 open scoped BigOperators

@@ -25,6 +25,12 @@ inequality.  No independence or moment assumption is used at this layer.
   AdditivePath.displacement (start + k) ω ∈ Set.Icc lower upper}` plus
   `incrementLaw {ω | ∃ k ∈ Finset.range (length + 1), radius ≤
   |AdditivePath.blockSum start (k + 1) ω|}`.
+
+In event notation, the estimate is
+`\(\mathbb P(a+r\le S_s\le b-r)\le
+\mathbb P(\forall k\le L,\ S_{s+k}\in[a,b])+
+\mathbb P(\exists k\le L,\ |S_{s+k+1}-S_s|\ge r)\)`,
+the measure form of the pathwise endpoint-margin dichotomy.
 -/
 
 open MeasureTheory

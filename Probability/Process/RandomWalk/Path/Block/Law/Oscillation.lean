@@ -31,6 +31,11 @@ block and half-open prefix events with `partialSumRangeOscillationLTProbability`
 * `iidSequenceLaw_blockOscillationPrefixLTEvent_eq_partialSumRangeProbability`
   gives the corresponding identity for the half-open prefix; the final
   increment is unrestricted, and the length is positive.
+
+For partial sums `\(S_0=0,S_1,\ldots,S_L\)`, the full-block event is
+`\(\{x\mid\forall i,j\le L,\ |S_i-S_j|<w\}\)` and its probability equals
+`\(\mathbb P(\max_{k\le L}S_k-\min_{k\le L}S_k<w)\)`. The prefix form
+stops before `\(S_L\)`, leaving the last increment unrestricted.
 -/
 
 open MeasureTheory

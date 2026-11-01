@@ -34,6 +34,12 @@ window.
 * `measure_firstPrefixExceedance_and_postCrossingBlockPrefixExceedance_eq_mul`
   factors the event of an initial threshold crossing followed by a fresh
   excursion into the product of the two block probabilities.
+
+The stopping time is
+`\(\tau_r=\inf\{n\in\mathbb N\mid r\le|S_n|\}\)`, with `\(\tau_r=\infty\)`
+when the set is empty. For `\(r>0\)`,
+`\(\tau_r\le L\iff\exists k\le L,\ |S_k|\ge r\)`; a finite IID block
+following a bounded stopping-time cell factors from that cell's probability.
 -/
 
 open MeasureTheory

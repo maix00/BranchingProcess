@@ -33,6 +33,11 @@ later block sum under the canonical IID law.
 - `RandomWalk.displacement_natAdd_measurable_prefix`: a block sum on
   `[start,start+length)` is measurable with respect to the increment prefix
   through `horizon` when `start + length ≤ horizon`.
+
+For `\(S_n=\sum_{k<n}\xi_k\)`, the position `\(x+S_n\)` is adapted to
+`\(\mathcal F_n=\sigma(\xi_0,\ldots,\xi_{n-1})\)`. Under the canonical
+IID law, the prefix `\((\xi_k)_{k<start}\)` is independent of the later
+block sum `\(\sum_{start\le k<start+length}\xi_k\)`.
 -/
 
 open MeasureTheory

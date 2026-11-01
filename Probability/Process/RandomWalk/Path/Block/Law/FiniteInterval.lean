@@ -25,6 +25,11 @@ walk to the law of its first finite increment block.
   increments assigns the finite closed-interval event probability at most
   the probability that all positive-time walk positions through `length`
   remain in `[lower, upper]`.
+
+If `\(0\in[a,b]\)`, the finite-block image probability of
+`\(S_k(x)\in[a,b]\)` for `\(0\le k\le L\)` is at most
+`\(\mathbb P(S_k\in[a,b]\text{ for }1\le k\le L)\)` under the infinite
+IID walk law.
 -/
 
 open MeasureTheory

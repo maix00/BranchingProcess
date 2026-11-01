@@ -27,6 +27,10 @@ form. Deterministic estimates used to assemble block corridor bounds are in
 * `InOpenPartialSumCorridorEndsIn lower upper endLower endUpper block` is the
   conjunction of the corridor predicate and
   `Fin.partialSum block (Fin.last length) ∈ Set.Ioo endLower endUpper`.
+
+For `\(S_k=\sum_{i<k}x_i\)`, the corridor event is
+`\(\{x\in\mathbb R^L\mid\forall k\le L,\ a<S_k<b\}\)`; its endpoint
+version additionally requires `\(c<S_L<d\)`.
 -/
 
 @[expose] public section

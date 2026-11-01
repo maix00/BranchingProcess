@@ -34,6 +34,12 @@ from the already observed increment prefix.
 * `measure_blockPrefixExceedanceAfter_le` bounds the probability of an
   excursion after `τ` by the probability of the same excursion in an initial
   deterministic block.
+
+The event is
+`\(\bigcup_{n\ge0}\{\tau=n\}\cap
+\{\exists k<L,\ |S_{n+k+1}-S_n|\ge r\}\)`;
+its IID probability is at most that of the same `\(L\)`-step excursion
+starting at time zero.
 -/
 
 open MeasureTheory

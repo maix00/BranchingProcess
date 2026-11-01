@@ -39,6 +39,13 @@ log-probability `-∞`, as required by small-deviation asymptotics.
   `horizontalTubeLogProbability_mono_width` are nondecreasing in `w` for
   `0≤a≤1`; `horizontalTubeProbability_mono_horizon` is nonincreasing in `n`.
 
+The weak tube probability is
+`\(\mathbb P_\nu\{-aw\le S_{k+1}\le(1-a)w\text{ for }k<n\}\)`.
+Reflection and scaling give
+`\(P_{\nu\circ(-id)^{-1}}(1-a,w,n)=P_\nu(a,w,n)\)` and
+`\(P_{\nu\circ(\cdot/\sigma)^{-1}}(a,w/\sigma,n)=P_\nu(a,w,n)\)`
+for `\(\sigma>0\)`.
+
 `horizontalTubeLogProbability_mono_width` formalizes the width comparison in
 Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite
 Offspring* (master's thesis, Fudan University, 2026), Chapter 3, proof of
