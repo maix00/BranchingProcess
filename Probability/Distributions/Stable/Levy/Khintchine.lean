@@ -18,6 +18,16 @@ import Probability.Distributions.InfinitelyDivisible.LevyKhintchine.Uniqueness
 This file applies the measure-level Lévy–Khintchine theorem to strictly stable
 laws.
 
+Strict stability first yields infinite divisibility.  Writing
+`\widehat\mu(\xi)=charFun μ ξ`, there is a unique Lévy–Khintchine triple `T`
+whose exponent represents the characteristic function:
+
+\[
+\exists!\,T\quad
+\forall\xi\in\mathbb R,\qquad
+\widehat\mu(\xi)=\exp(T.\operatorname{exponent}(\xi)).
+\]
+
 ## Public declarations
 
 * `IsStrictlyAlphaStable.isInfinitelyDivisible`: every strictly stable law is

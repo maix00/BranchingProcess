@@ -23,6 +23,27 @@ at zero. The cancellation identity for the tilted law would then identify the
 expected offspring count with the boundary weight, contradicting
 supercriticality.
 
+Let `\widetilde μ = tiltedPotentialLaw realPotential (-1) (μ :
+Measure (Step ι ℝ))`.  Boundary normalization and supercriticality imply
+
+\[
+0<\int^- \operatorname{ENNReal.ofReal}(y^2)\,
+  \partial\widetilde\mu.
+\]
+
+The mechanism is that a zero second moment forces the expected number of
+children to be one:
+
+\[
+\int^- \operatorname{ENNReal.ofReal}(y^2)\,
+  \partial\widetilde\mu=0
+\quad\Longrightarrow\quad
+\mu.\operatorname{expectedChildCount}=1.
+\]
+
+Thus, when `\widetilde μ` has a centered finite second moment `σ²`, its real
+second-moment parameter is strictly positive as well.
+
 ## Public declarations
 
 `expectedPointMass_eq_one_of_zero_tiltedSecondMoment` shows that boundary

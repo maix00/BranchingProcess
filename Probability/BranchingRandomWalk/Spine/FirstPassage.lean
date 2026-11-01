@@ -21,9 +21,30 @@ crosses a lower level.  The proof is the raw many-to-one identity followed by
 the pointwise exponential weight bound.  It does not assume a polynomial
 endpoint sublevel estimate for the selected population.
 
-The estimate is only one ingredient of (4.16): passing from a randomly
-selected generation to its descendant subtrees and proving the no-large-drop
-small-deviation bound are separate steps.
+The estimate supplies one input to the lower-tail bound for the selected
+population; controlling descendant subtrees after the selected generation and
+bounding the spine no-large-drop event are separate steps.
+
+The no-large-drop endpoint event transfers directly to the spine law:
+
+\[
+(\operatorname{offspringFieldLaw}\,\mu)
+  (\operatorname{hasNoLargeDropEndpointBelow}(\varphi,n,\delta,b))
+\le \operatorname{ENNReal.ofReal}(e^b)
+  (\operatorname{tiltedIncrementFieldLaw}(\varphi,\mu))
+  (\operatorname{spineNoLargeDropEndpointBelowEvent}(n,\delta,b)).
+\]
+
+For a real-valued potential, a first passage below `-B` by horizon `H` is
+contained in the union of the endpoint events, giving
+
+\[
+(\operatorname{offspringFieldLaw}\,\mu)
+  (\operatorname{hasFirstPassageBelow}(H,B))
+\le \sum_{n\in\operatorname{Fin}(H+1)}
+  \operatorname{ENNReal.ofReal}(e^{-B})
+=(H+1)\operatorname{ENNReal.ofReal}(e^{-B}).
+\]
 
 ## Public declarations
 

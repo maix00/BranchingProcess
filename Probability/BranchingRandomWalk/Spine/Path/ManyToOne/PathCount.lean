@@ -29,6 +29,32 @@ specialization is used in the long-corridor argument of Wang Yiyang,
 *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*
 (master's thesis, Fudan University, 2026), Chapter 4, Lemma 4.5.
 
+For a measurable path set `A`, let `N_A` be the number of surviving
+generation-`n` addresses whose history belongs to `A`, and let `H_A` be the
+event that at least one such address exists.  Then
+
+\[
+N_A(\omega)\ne0\quad\Longleftrightarrow\quad \omega\in H_A.
+\]
+
+If `m = ∫⁻ N_A d(offspringFieldLaw μ)` and
+`∫⁻ N_A² d(offspringFieldLaw μ) ≤ s` for `0 < s < ∞`, the Paley--Zygmund
+step yields
+
+\[
+\frac{m^2}{s}\le (\operatorname{offspringFieldLaw}\,\mu)(H_A).
+\]
+
+When every history in `A` ends at most at `b`, the many-to-one first-moment
+estimate reads
+
+\[
+\int^- N_A\,d(\operatorname{offspringFieldLaw}\,\mu)
+\le \operatorname{ENNReal.ofReal}(e^{b-x})
+  (\operatorname{tiltedIncrementFieldLaw}\,\varphi\,\mu)
+  \{z:\operatorname{ProbabilityTheory.RandomWalk.history}(n,x,z)\in A\}.
+\]
+
 ## Public declarations
 
 * `ProbabilityTheory.BranchingRandomWalk.Spine.pathGeneration_ne_zero_iff_hasPathHistoryIn`

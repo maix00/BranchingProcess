@@ -23,6 +23,21 @@ The modulus of the characteristic function is determined directly from the
 weighted-sum definition of stability.  The argument does not choose a
 Lévy–Khintchine representation or a phase parametrization.
 
+Taking moduli in the affine stability identity removes its translation phase:
+write `\widehat\mu(t)=charFun μ t`; then for `a,b>0` and `t∈ℝ`,
+
+\[
+|\widehat\mu(at)|\,|\widehat\mu(bt)|
+=|\widehat\mu(\kappa_\alpha(a,b)t)|.
+\]
+
+Continuity and the scaling identity then give a constant `c>0` such that
+
+\[
+|\widehat\mu(t)|=\exp(-c|t|^\alpha)
+\qquad(t\in\mathbb R).
+\]
+
 ## Public declarations
 
 * `IsAlphaStable.norm_charFun_weightedSum`:

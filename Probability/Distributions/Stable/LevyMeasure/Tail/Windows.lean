@@ -18,6 +18,19 @@ The power-law tail identities imply positive mass in every window on a side
 whose unit tail has positive mass. This does not require a density formula or
 an atomlessness theorem.
 
+For `ν = T.levyMeasure`, positive unit-tail mass gives every bounded window
+on that side positive mass: if `0<r<R`, then
+
+\[
+\nu((1,\infty))>0\ \Longrightarrow\ \nu((r,R))>0.
+\]
+
+The negative-tail version is
+
+\[
+\nu(( -\infty,-1))>0\ \Longrightarrow\ \nu((-R,-r))>0.
+\]
+
 ## Public declarations
 
 * `levyMeasure_Ioo_pos_of_pos_tail` and

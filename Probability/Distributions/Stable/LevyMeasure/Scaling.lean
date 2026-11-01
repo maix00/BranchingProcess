@@ -21,6 +21,24 @@ Uniqueness of the Lévy–Khintchine triple transfers exponent homogeneity to
 the Gaussian coefficient and the Lévy measure. The drift field already
 contains the precise truncation correction from the generic scaling theory.
 
+Writing `ν = T.levyMeasure`, strict `α`-stability gives the measure identity
+
+\[
+\nu\circ(x\mapsto ax)^{-1}
+=\operatorname{ENNReal.ofReal}(a^\alpha)\,\nu
+\qquad(a>0).
+\]
+
+The Gaussian coefficient `G = T.gaussianVariance` obeys both spatial scaling
+laws,
+
+\[
+\operatorname{toNNReal}(a^2)G
+=\operatorname{toNNReal}(a^\alpha)G.
+\]
+
+When `α<2`, these distinct powers force `G=0`.
+
 ## Public declarations
 
 * `IsStrictlyAlphaStable.scale_triple_eq` identifies `T.scale a` with

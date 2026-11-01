@@ -15,6 +15,21 @@ public import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.Add
 Joint endpoint observables and the recursive branching operators are separated
 from the pathwise generation decomposition.
 
+For a potential `φ`, generation `n`, and measurable
+`f : ℝ → [0,∞]`, the joint maps in `x ∈ ℝ` and
+`ω : StepField ι X`
+
+\[
+(x,\omega)\mapsto
+  \operatorname{weightedGenerationEndpoint}(\varphi,n,f,x,\omega),
+\qquad
+(x,\omega)\mapsto
+  \operatorname{generationEndpoint}(\varphi,n,f,x,\omega)
+\]
+
+are measurable.  The same argument gives measurability in `x` for each
+weighted or unweighted branching endpoint operator and all its iterates.
+
 ## Public declarations
 
 - `weightedGenerationEndpoint_joint_measurable` and

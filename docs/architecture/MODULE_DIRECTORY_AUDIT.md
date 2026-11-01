@@ -28207,6 +28207,39 @@ reciprocal-weight endpoint identities. Each display was compared with the
 corresponding public theorem or definition. The four focused modules build
 successfully in a 3,184-job Lake build; no declarations or proofs changed.
 
+## Spine path-count and first-passage formulas (2026-11-01)
+
+Added theorem-level formulas to `Spine/FirstPassage.lean`, `Spine/Generation.lean`,
+`Spine/GenerationBranching/Measurability.lean`,
+`Spine/Path/ManyToOne/PathCount.lean`, and `Spine/Variance.lean`. The headers
+now specify first-passage and spine-transfer bounds, both actual generation
+sums, their joint measurability interface, the path-count support and
+Paley--Zygmund bounds, and strict positivity of the tilted spine second
+moment. These displays were checked against their theorem hypotheses. The five
+focused modules build successfully in a 3,792-job Lake build; no declarations
+or proofs changed.
+
+## Stable-law formulas (2026-11-01)
+
+Added mathematical formulas to `Probability/Distributions/Stable/Basic.lean`,
+`CharacteristicFunction/Modulus.lean`, `Levy/Khintchine.lean`,
+`Exponent/Basic.lean`, and `Gaussian/Basic.lean`. They state the measure-level
+stability identity, characteristic-function modulus and power form, the
+unique Lévy–Khintchine exponent representation, exponent homogeneity, and the
+index-two Gaussian characterization. The formulas were checked against the
+public definitions and theorem statements. The five focused modules build
+successfully in a 3,518-job Lake build; no declarations or proofs changed.
+
+## Stable Lévy-measure formulas (2026-11-01)
+
+Added formulas to `Stable/LevyMeasure/Scaling.lean`,
+`Stable/LevyMeasure/Tail/{Homogeneous,Windows}.lean`, and
+`Stable/LevyMeasure/SignOfJumps.lean`. The headers now state measure
+homogeneity, the Gaussian coefficient's two scaling laws, positive and
+negative power tails, positive mass in bounded windows, and the two-sided jump
+conclusion from the CDF condition. The four modules build successfully in a
+3,558-job Lake build; no declarations or proofs changed.
+
 ## Skorokhod path and time-change formulas (2026-11-01)
 
 Reviewed and completed the mathematical formulas in the public module

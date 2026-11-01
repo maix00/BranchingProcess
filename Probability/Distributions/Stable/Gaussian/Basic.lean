@@ -26,6 +26,19 @@ connects mathlib's Gaussian distribution API to the abstract stable-law
 predicate.  Small-deviation normalizations are handled in the Mogulskii
 specialization layer.
 
+At index two, `\kappa_2(a,b)^2=a^2+b^2`.  A centered Gaussian law therefore
+satisfies the strict stability identity
+
+\[
+=(\mathcal N(0,v)\otimes\mathcal N(0,v))\circ
+  ((x,y)\mapsto ax+by)^{-1}
+=\mathcal N(0,(a^2+b^2)v),
+\qquad a,b>0.
+\]
+
+Conversely, every nondegenerate strictly `2`-stable probability measure on
+`ℝ` is `gaussianReal 0 v` for some `v>0`.
+
 ## Public declarations
 
 * `isStrictlyAlphaStable_gaussianReal_zero`: `gaussianReal 0 v` is strictly
