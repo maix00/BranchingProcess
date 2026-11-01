@@ -38,8 +38,9 @@ The declarations in namespace
   states that if $N_n\to\infty$, the tilted increment law is centered with
   variance $\sigma^2>0$, $0<a<1$, $t>0$, and
   $-a+\frac{\pi^2}{2}\sigma^2t<\zeta$, then there are admissible corridor
-  parameters and $\varepsilon>0$ for which the failure probability is at
-  most $\exp(-\varepsilon\log N_n)$ eventually.
+  parameters with $a-b-2v>0$ and $\varepsilon>0$ for which the failure
+  probability is at most $\exp(-\varepsilon\log N_n)$ eventually. The
+  positive margin supplies the first-stage polynomial root-count budget.
 
 The endpoint-gap conclusion formalizes the positive-initial-mass estimate in
 Proposition 3.1, equation (4.15), of Elie Aïdékon and Yueyun Hu,
@@ -243,6 +244,7 @@ theorem exists_positiveAKilledCapacityFailure_le_polynomial_of_endpointGap
       0 < b ∧ b < a ∧ 0 < v ∧ v < b ∧ v ≤ c ∧ 0 < c ∧
       c < (t ^ (3⁻¹ : ℝ))⁻¹ ∧
       c * t ^ (3⁻¹ : ℝ) + (a - b) + v < 1 ∧
+      0 < a - b - 2 * v ∧
       0 < epsilon ∧ ∀ᶠ n : ℕ in atTop,
         positiveAKilledCapacityFailureProbability
           (Nat.floor ((N n : ℝ) ^ a))
@@ -261,7 +263,8 @@ theorem exists_positiveAKilledCapacityFailure_le_polynomial_of_endpointGap
         congr 1
       _ = t := by
         rw [show (3⁻¹ : ℝ) * 3 = 1 by norm_num, Real.rpow_one]
-  obtain ⟨b, v, c, hb, hba, hv, hvb, hvc, hc, hcr, hmargin, _hendpoint⟩ :=
+  obtain ⟨b, v, c, hb, hba, hv, hvb, hvc, hc, hcr, hmargin, _hendpoint,
+      hrootExponentBudget⟩ :=
     exists_positiveAParameters a t r (sigma ^ 2) zeta
       ha ht hr hrcube (sq_nonneg sigma) hgap
   let target : ℝ := 3 * Real.pi ^ 2 / 8
@@ -291,7 +294,8 @@ theorem exists_positiveAKilledCapacityFailure_le_polynomial_of_endpointGap
       (target := target) (blockTarget := blockTarget) (p := 1 / 4)
       ha ha1 ht hb.le (by linarith [hvb]) hc hvc hκ hκrate
       htarget htargetBlock hblockTarget hp hpHalf hmargin'
-  refine ⟨b, v, c, epsilon, hb, hba, hv, hvb, hvc, hc, ?_, ?_, hepsilon, hcapacity⟩
+  refine ⟨b, v, c, epsilon, hb, hba, hv, hvb, hvc, hc, ?_, ?_,
+    hrootExponentBudget, hepsilon, hcapacity⟩
   · simpa [r] using hcr
   · simpa [r] using hmargin
 

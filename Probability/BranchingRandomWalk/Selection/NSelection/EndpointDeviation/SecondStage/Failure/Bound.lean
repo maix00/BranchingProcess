@@ -108,8 +108,10 @@ theorem eventually_measure_positiveAKilledTerminalEmpty_le
       (fun _ : ℕ => P n) (fun _ : ℕ => hP n) (fun _ => ell n) 0
   have havoid :=
     eventually_measure_secondStageEnoughRoots_allAvoid_le
-      (hKm := hKm) P hP (D := D) (generation := ell) hD μ
-      hboundary hcross hν hsigma hκ hc hv hκv hterminal hentranceWidth hK
+      (m := m) (K := fun _ => K) (hKm := fun _ => hKm)
+      P hP (D := D) (generation := ell) hD μ
+      hboundary hcross hν hsigma hκ hc hv hκv hterminal hentranceWidth
+      (Filter.Eventually.of_forall fun _ => hK)
   obtain ⟨_entryQ, _hentryQ, _C, _hC, _bridgeQ, _hbridgeQ, _amplitude,
       _hamplitude, havoid⟩ := havoid
   filter_upwards [havoid] with n havoidN
