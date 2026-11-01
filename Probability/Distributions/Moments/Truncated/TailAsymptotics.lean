@@ -28,6 +28,19 @@ into asymptotics of the truncated second moment.
   `u^(α-2) Vμ(u) → αB/(2-α)`.
 - If `u ↦ μ(|x|>u)` is regularly varying with index `-α`, `0<α<2`, then
   `Vμ(u)/(u² μ(|x|>u)) → α/(2-α)`.
+
+For `0<\alpha<2`, the two-sided tail asymptotics determine the truncated
+second-moment asymptotics, and regular variation gives the universal ratio
+
+\[\begin{aligned}
+u^\alpha\mu\{|x|>u\}&\longrightarrow B
+&\Longrightarrow\quad
+u^{\alpha-2}V_\mu(u)&\longrightarrow\frac{\alpha B}{2-\alpha},\\
+\mu\{|x|>u\}&\in RV_{-\alpha}
+&\Longrightarrow\quad
+\frac{V_\mu(u)}{u^2\mu\{|x|>u\}}
+&\longrightarrow\frac{\alpha}{2-\alpha}.
+\end{aligned}\]
 -/
 
 open Filter MeasureTheory Set

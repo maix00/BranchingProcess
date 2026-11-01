@@ -36,6 +36,20 @@ real-valued filter lemmas for vanishing perturbations are in `Order.Filter.Limin
 * `ProbabilityTheory.tendsto_kingman_ergodic`: when `μ` is a probability measure and `T` is
   ergodic, there is a constant `c` such that `g n x / n → c` almost everywhere.
 
+Under the measure-preserving and integrability hypotheses in the declarations,
+the normalized cocycle converges almost everywhere to an invariant integrable
+function, which is constant almost everywhere in the ergodic case:
+
+\[\begin{aligned}
+\frac{g_{n+1}(x)}{n+1}&\longrightarrow G(x)
+  &&\text{for }\mu\text{-almost every }x,\\
+G\circ T&=G\quad\mu\text{-almost everywhere},\\
+T\text{ ergodic}&\Longrightarrow
+  \exists c\in\mathbb R,\quad
+  \frac{g_n(x)}n\longrightarrow c
+  &&\text{for }\mu\text{-almost every }x.
+\end{aligned}\]
+
 ## References
 
 * J. F. C. Kingman, *The ergodic theory of subadditive stochastic processes*,

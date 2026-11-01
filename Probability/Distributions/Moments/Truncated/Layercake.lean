@@ -27,6 +27,15 @@ integrated-tail asymptotics.
 - The capped-moment layer-cake identities give exact integral formulas for
   `truncatedSquareTailIntegral` and `truncatedSecondMoment`.
 - `truncatedSquareTailIntegral μ u = ∫₀^{u²} μ(x²>t) dt` for `u≥0`.
+
+For a probability measure `\mu` and `u\ge0`, capping and layer-cake give
+
+\[\begin{aligned}
+\int_{\mathbb R}\min(|x|,u)^2\,d\mu(x)
+&=V_\mu(u)+u^2\mu\{|x|>u\},\\
+\int_0^{u^2}\mu\{x^2>t\}\,dt
+&=V_\mu(u)+u^2\mu\{|x|>u\}.
+\end{aligned}\]
 -/
 
 open Filter MeasureTheory Set

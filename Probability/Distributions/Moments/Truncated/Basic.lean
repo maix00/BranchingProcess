@@ -24,6 +24,17 @@ monotonicity and convergence below use nonnegative cutoffs.
 - If `x ↦ x²` is `μ`-integrable, then
   `truncatedSecondMoment μ u → ∫ x² μ(dx)` as `u → ∞`; the same limit holds
   along integer cutoffs.
+
+Writing `V_\mu(u)` for the truncated second moment, its definition and
+monotone convergence properties are
+
+\[\begin{aligned}
+V_\mu(u)&=\int_{[-u,u]}x^2\,d\mu(x),\\
+0\le u\le v&\Longrightarrow V_\mu(u)\le V_\mu(v),\\
+x\mapsto x^2\in L^1(\mu)
+&\Longrightarrow\lim_{u\to\infty}V_\mu(u)
+  =\int_{\mathbb R}x^2\,d\mu(x).
+\end{aligned}\]
 -/
 
 open Filter MeasureTheory Set

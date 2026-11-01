@@ -28,6 +28,13 @@ geometry and bridge events.
   a finite cover of a source event by prefix cells, each with an independent
   bridge event of mass at least `c` whose concatenation lies in a target event,
   implies `c * ℙν(U) ≤ |F| * ℙν(T)`.
+
+Under these finite-cover, bridge-mass, and concatenation hypotheses, the
+source and target probabilities satisfy
+
+\[
+c\,\mathbb P_\nu(U)\le |F|\,\mathbb P_\nu(T).
+\]
 -/
 
 @[expose] public section

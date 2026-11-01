@@ -34,6 +34,19 @@ the truncated moment for Potter-bound applications.
   `Vμ(x)=∫_{|y|≤x}y² μ(dy)`.
 - `truncatedSecondMoment_isEventuallyMonotone`: for every locally finite
   measure, the truncated second moment is eventually monotone at infinity.
+
+For an eventually positive truncated second moment, slow variation is
+equivalent to negligibility of the quadratic tail; slow variation also gives
+the corresponding fixed-scale limit:
+
+\[\begin{aligned}
+V_\mu\in RV_0
+&\Longleftrightarrow
+  \frac{u^2\mu\{|x|>u\}}{V_\mu(u)}\longrightarrow0,\\
+V_\mu\in RV_0,\ c>0
+&\Longrightarrow
+  \frac{u^2\mu\{|x|>cu\}}{V_\mu(u)}\longrightarrow0.
+\end{aligned}\]
 -/
 
 open Filter MeasureTheory

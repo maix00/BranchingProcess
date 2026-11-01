@@ -33,6 +33,17 @@ for the convolution semigroup and infinite divisibility.
   with `μ = ν.convPower n` for each positive integer `n`;
   `IsStrictlyAlphaStable.stableTimeLaw_nat` identifies integer-time laws with
   convolution powers of `μ`.
+
+For a strictly `α`-stable law, scaling and convolution are described by
+
+\[\begin{aligned}
+(x\mapsto ax)_\#\mu * (x\mapsto bx)_\#\mu
+&=(x\mapsto \operatorname{alphaStableScale}(\alpha,a,b)x)_\#\mu,
+\qquad a,b>0,\\
+\mu_t&:=(x\mapsto t^{1/\alpha}x)_\#\mu,\\
+\mu_s*\mu_t&=\mu_{s+t},\qquad s,t\ge0,\\
+\mu_n&=\mu^{*n},\qquad n\in\mathbb N.
+\end{aligned}\]
 -/
 
 @[expose] public section

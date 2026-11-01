@@ -27,6 +27,18 @@ public import Probability.Kernel.Survival.Return.VariableBlocks
 The general bridge kernel is defined in `Probability/Kernel/Bridge.lean`.
 This module specializes it to a finite sequence of returns through one
 measurable core followed by a transition to a possibly different terminal set.
+
+If every return block has mass at least `p` on `core`, and the last bridge
+has mass at least `q` on `target`, then for every `x : core`,
+
+\[
+p^{\mathrm{lengths.length}}q
+\le \operatorname{returnKernelSequenceExit}(K,core,lengths,target,exitLength)(x,\mathrm{univ})
+\le (K^{\mathrm{returnKernelSequenceLength}(lengths)+exitLength})(x,target),
+\]
+
+where the upper bound assumes that `K` is sub-Markov. The right-hand side is
+the unrestricted transition mass over the total number of steps.
 -/
 
 public section

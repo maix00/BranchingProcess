@@ -28,6 +28,22 @@ small-jump first moment and leaves that window in the finite-activity part.
   `exists_negativeWindow_cutoff_intensities` choose a cutoff with small-jump
   first moment below `ρ` and positive finite large-jump intensity in the
   specified bounded window.
+
+For `0<\alpha<1`, a finite-variation cutoff can make the small-jump first
+moment small while retaining positive finite intensity in either prescribed
+window. For `\nu=T.levyMeasure`, put
+`\Lambda_n=\operatorname{Leb}_{[0,1]}\otimes(\nu|_{\mathrm{largeJumpBand}(n)})`
+for the unit-time intensity restricted to the large-jump band at cutoff `n`.
+The conclusions are
+
+\[\begin{aligned}
+\exists n,\quad
+\int_{[0,1]\times\mathrm{smallJumpBand}(n)}|z|\,d(du\otimes\nu)
+&<\rho\quad\wedge\quad0<\Lambda_n([0,1]\times(r,R))<\infty,\\
+\exists n,\quad
+\int_{[0,1]\times\mathrm{smallJumpBand}(n)}|z|\,d(du\otimes\nu)
+&<\rho\quad\wedge\quad0<\Lambda_n([0,1]\times(-R,-r))<\infty.
+\end{aligned}\]
 -/
 
 @[expose] public section

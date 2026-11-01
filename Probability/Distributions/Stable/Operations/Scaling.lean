@@ -18,6 +18,18 @@ import Probability.Distributions.Scaling
   α-stable for every `r ≠ 0`, with the affine shift scaled by `r`.
 * `IsStrictlyAlphaStable.map_mul`: the same nonzero rescaling preserves strict
   α-stability, with no added location shift. Reflection is the case `r = -1`.
+
+For every `r\ne0`, pushforward under multiplication by `r` preserves both
+stability classes; for the affine class the location parameter is multiplied
+by `r`:
+
+\[
+\mu\text{ is }\alpha\text{-stable}
+\Longrightarrow (x\mapsto rx)_\#\mu\text{ is }\alpha\text{-stable},
+\qquad
+\mu\text{ is strictly }\alpha\text{-stable}
+\Longrightarrow (x\mapsto rx)_\#\mu\text{ is strictly }\alpha\text{-stable}.
+\]
 -/
 
 open MeasureTheory

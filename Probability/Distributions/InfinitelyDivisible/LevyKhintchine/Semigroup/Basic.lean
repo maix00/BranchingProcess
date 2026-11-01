@@ -42,6 +42,16 @@ import Mathlib.Topology.Homotopy.Lifting
 
 These interfaces support the representation theorem in `Representation.lean`; its Lévy-measure
 extraction estimates are grouped under `Lemmas/Representation/`.
+
+Writing `\mu_t` for the measure at time `t` and `\psi` for the continuous
+exponent, the characteristic-function semigroup and its infinitesimal limit are
+
+\[\begin{aligned}
+\widehat\mu_t(\xi)&=\exp\!\bigl(t\psi(\xi)\bigr),\qquad t>0,\\
+\widehat\mu_s(\xi)\widehat\mu_t(\xi)
+&=\exp\!\bigl((s+t)\psi(\xi)\bigr),\qquad s,t>0,\\
+\lim_{t\downarrow0}\frac{\widehat\mu_t(\xi)-1}{t}&=\psi(\xi).
+\end{aligned}\]
 -/
 
 @[expose] public section

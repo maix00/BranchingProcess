@@ -28681,3 +28681,44 @@ modules build successfully in a 3,439-job Lake build; no declarations or
 proofs changed. The same formula-header review now has 130 remaining modules
 out of 1,642 modules when Selection-owned paths are omitted from this pass
 (93 candidates have public-declaration sections).
+
+
+## Moment and truncated-tail formulas (2026-11-02)
+
+Added formulas to `Probability/Distributions/Moments/TailIntegrability.lean`
+and `Moments/Truncated/{Basic,Layercake,RegularVariation,TailAsymptotics}.lean`.
+They state the layer-cake criterion for first absolute integrability, the
+truncated-second-moment definition and limit, capped-moment identities, the
+slow-variation tail criterion, and the power-tail asymptotic constant. All five
+focused modules build successfully in a 2,837-job Lake build; no declarations
+or proofs changed. The same formula-header review now has 125 remaining
+modules out of 1,642 when Selection-owned directories are excluded from this
+pass (88 candidates have public-declaration sections).
+
+
+## Kernel, characteristic-function, and stable-law formulas (2026-11-02)
+
+Added formulas to `Probability/Kernel/{FiniteState/Matrix,Survival/Return/Bridge,Step/FiniteBranches/Survival}.lean`,
+`Probability/Distributions/CharacteristicFunction/Zero.lean`,
+`Distributions/InfinitelyDivisible/LevyKhintchine/Semigroup/Basic.lean`,
+and `Distributions/Stable/Operations/{Convolution,Scaling}.lean`. They state
+matrix-kernel action and composition, finite-branch survival recursion and
+kernel mass, return-bridge lower and upper bounds, the characteristic-function
+midpoint estimate, the convolution-semigroup exponent law, and stability under
+scaling. All seven focused modules build successfully in a 3,439-job Lake
+build; no declarations or proofs changed. The same review now has 118 remaining
+modules out of 1,642 (81 have public-declaration sections), excluding the
+separately scoped Selection directories.
+
+
+## Subadditive ergodic, IID-cover, and stable-window formulas (2026-11-02)
+
+Added mathematical statements to `Probability/Ergodic/Kingman/{Basic,Fekete,Theorem,Derriennic}.lean`,
+`Probability/Sequence/IID/Blocks/FiniteCover.lean`, and
+`Probability/Distributions/Stable/LevyMeasure/Tail/EntranceWindows.lean`.
+They give the cocycle and block inequalities, the integral Fekete limit,
+Kingman's almost-everywhere limits, Derriennic's normalized integral bounds,
+the finite-cover probability comparison, and the positive/negative stable
+jump-window cutoff conclusions. All six focused modules build successfully in
+a 3,556-job Lake build; no declarations or proofs changed. The same review now
+has 112 remaining modules out of 1,642 (75 with public-declaration sections).
