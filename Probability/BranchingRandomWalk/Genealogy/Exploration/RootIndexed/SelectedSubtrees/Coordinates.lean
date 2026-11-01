@@ -16,6 +16,15 @@ root/address map back into the original field.  Both the step coordinates and
 absolute positions are preserved exactly.
 ## Public declarations
 
+Writing \(\rho_j(i)=(r_j(i),u_j(i))\) for the cumulative original root and
+address after \(j\) replacements, the field and position coordinates obey
+
+\[\begin{aligned}
+\omega^{(j)}_i(v)&=\omega_{r_j(i)}(u_j(i)\mathbin{+\!\!+}v),\\
+\operatorname{position}^{(j)}_i(v)
+  &=\operatorname{position}_{r_j(i)}(u_j(i)\mathbin{+\!\!+}v).
+\end{aligned}\]
+
 * `RootIndexed.iteratedSelectedRoots` and `RootIndexed.iteratedSelectedAddress`
   recursively record the original root and path corresponding to a root or
   particle after finitely many adaptive subtree replacements.

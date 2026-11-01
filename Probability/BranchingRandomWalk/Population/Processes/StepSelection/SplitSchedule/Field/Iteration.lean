@@ -15,6 +15,14 @@ construction can be applied repeatedly.  Every finite number of restart
 stages preserves the complete root-indexed product law.
 ## Public declarations
 
+At every finite restart stage \(j\), the iterated root-indexed field keeps
+the complete product law, and its positions agree with the corresponding
+original-field positions under the cumulative root-address map \(\Phi_j\):
+
+\[\operatorname{Law}(\operatorname{iteratedPoolField}_j)
+  =\operatorname{stepFieldLaw}(\mu),\qquad
+  \operatorname{position}_j(p)=\operatorname{position}_0(\Phi_j(p)).\]
+
 * `iteratedPoolField` recursively builds the field after each restart;
   `iteratedPoolRoots` and `iteratedPoolAddress` track the new root labels and
   cumulative addresses. `iteratedPoolField_zero`,

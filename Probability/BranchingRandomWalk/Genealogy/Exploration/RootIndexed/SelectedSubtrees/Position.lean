@@ -18,6 +18,15 @@ The position space and edge-mark space remain separate.  Giving every
 selected subtree its absolute position at the selected root makes all local
 positions agree exactly with the corresponding positions in the original
 root-indexed field.
+
+Writing the root-address pair selected at index \(i\) as \((r_i,u_i)\),
+rebasing the subtree and its initial position gives, for each descendant
+address \(v\), the exact identity
+
+\[\operatorname{position}_{\operatorname{subtree}}(i,v)
+  =\operatorname{position}_{\operatorname{original}}
+    (r_i,\,u_i\mathbin{+\!\!+}v).\]
+
 ## Public declarations
 
 * `RootIndexed.subtreeInitialPosition` assigns each selected root its absolute

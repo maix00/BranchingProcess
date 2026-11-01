@@ -16,6 +16,14 @@ The deterministic update is coordinatewise.  Consequently an update of one
 address depth is measurable whenever its replacement and fallback fields are
 measurable; no countability assumption on roots or child slots is involved.
 
+At a root \(r\) and address \(u\), the generation-\(n\) update is
+
+\[\operatorname{updateGeneration}(n,R,F)(r,u)=
+  \begin{cases}R(r,u),&|u|=n,\\F(r,u),&|u|\ne n.\end{cases}\]
+
+Thus coordinatewise measurable replacement and fallback fields yield a
+measurable updated field.
+
 ## Public declarations
 
 - `ProbabilityTheory.BranchingRandomWalk.RootIndexed.StepField.updateGeneration_measurable`:

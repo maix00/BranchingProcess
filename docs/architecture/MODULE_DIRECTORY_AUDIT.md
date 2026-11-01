@@ -28763,3 +28763,23 @@ nine focused modules build successfully in a 3,177-job Lake build; no
 declarations or proofs changed. The formula-header audit now has 88 remaining
 modules, 51 with public-declaration sections, excluding Selection-owned paths
 from this pass.
+
+
+## Root-indexed field, restart, and split-schedule formulas (2026-11-02)
+
+Added mathematical statements to the public headers of
+`Probability/BranchingRandomWalk/Step/{Field/FiniteWeight,Field/Update,Law/MultiRoot,Ordering/Realization,Ordering/Support,PointMeasure/Process}.lean`,
+`BranchingRandomWalk/Walk/Path/Law.lean`,
+`BranchingRandomWalk/Genealogy/Exploration/Abstract/Exploration/{Domains,SelectedSubtree}.lean`,
+`Genealogy/Exploration/RootIndexed/SelectedSubtrees/{FixedFamily,Iteration,Position,Coordinates,Coupling,GenerationBatch,SelectedFamily}.lean`,
+`BranchingRandomWalk/Restart/Trial/{Basic,FirstSplit,RootIndexed,GeometricFirstMoment}.lean`,
+`Restart/Success/GoodSplit.lean`,
+`BranchingRandomWalk/Population/Candidates/RootIndexed/RealPosition.lean`,
+`Population/Processes/StepSelection/SplitSchedule/Field/{Coupling,FreshField,FreshPool,Iteration,Law}.lean`,
+and `SplitSchedule/Trials/{Completion,Repeated,Success}.lean`.
+They state the one-step field and path laws, fresh-subtree independence and
+position identities, finite restart-trial conditions, bounded split
+probability, lower-finite child ordering, and split-schedule pool and success
+laws. All 30 focused modules build successfully in a 3,423-job Lake build;
+no declarations or proofs changed. The formula-header audit now has 58
+remaining modules, 21 with public-declaration sections.

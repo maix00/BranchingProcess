@@ -16,6 +16,11 @@ Boundary normalization first gives one-step almost-sure finiteness.  For
 countable root and address labels, the same property holds simultaneously at
 every coordinate of the root-indexed product field.
 
+For the root-indexed field law, the simultaneous conclusion is
+
+\[\mathbb P\!\left(\forall r\in\mathrm{Root},\ \forall u\in\mathbb V,\;
+  \operatorname{totalPotentialWeight}_{\phi,-1}(\omega(r,u))\ne\infty\right)=1.\]
+
 ## Public declarations
 
 - `ProbabilityTheory.BranchingRandomWalk.RootIndexed.stepFieldLaw_all_finitePotentialWeight`:

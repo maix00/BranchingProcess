@@ -20,6 +20,15 @@ subtree gives one independent batch with the original one-step law. The root
 type, finite batch index, child-label type, and mark type remain arbitrary.
 ## Public declarations
 
+Let \(\rho_{n,i}=(r_{n,i},u_{n,i})\) be an injective family of roots at
+depth \(n\). The batch of steps at these roots has the product one-step law
+and is independent of the generation-\(n\) domain flow:
+
+\[\bigl(\omega(r_{n,i},u_{n,i})\bigr)_{i\in\kappa}
+  \sim\mu^{\otimes\kappa},\qquad
+  \bigl(\omega(r_{n,i},u_{n,i})\bigr)_{i\in\kappa}
+  \perp\mathcal F_n.\]
+
 * `selectedRootBatch` applies the root-step batch observation from
   `Genealogy/RootIndexed/Law/RootBatch.lean` to subtrees selected from
   generation `n`; `measurable_selectedRootBatch_at_succ` shows it is

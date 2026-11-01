@@ -16,6 +16,15 @@ the original pre-sampled field through the cumulative split-pool address map.
 Their absolute positions agree exactly.
 ## Public declarations
 
+For every finite active population, the causal coupling embeds it into the
+corresponding original-field population and preserves the potential values:
+
+\[\operatorname{Cloud}_{\phi}(\operatorname{activePopulation}_j)
+  \succeq_{\mathrm{inj},\phi}
+  \operatorname{Cloud}_{\phi}(\operatorname{originalPopulation}_j),\qquad
+  \operatorname{position}_{\mathrm{source}}(p)
+   =\operatorname{position}_{\mathrm{target}}(\Phi_j(p)).\]
+
 * `activePopulation` reads the active roots at restart stage `j`;
   `coupledInjection` maps that population into the corresponding original
   field population, while `originalPopulation` defines the target population.

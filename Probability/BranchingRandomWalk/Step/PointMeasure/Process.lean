@@ -18,6 +18,13 @@ the deterministic Dirac sum of that step. This module is an adapter to the
 generic `ProbabilityTheory.PointProcess` interface; it never reconstructs or
 orders a step from a measure.
 
+The process associated with a random step presentation \(S\) is its point
+measure observation, with local finiteness on the selected family supplied
+samplewise:
+
+\[\Xi_\omega=\operatorname{stepPointMeasure}(S(\omega)),\qquad
+  \operatorname{IsFiniteOnFamily}(\Xi_\omega,\mathcal A).\]
+
 ## Public declarations
 
 - `ProbabilityTheory.BranchingRandomWalk.StepPresentation.toPointProcess`:

@@ -16,6 +16,14 @@ This produces a complete product field whose root type can be reused at the
 next restart stage.
 ## Public declarations
 
+Appending an injectively labelled reserve family disjoint from the active
+roots gives an injective pool map and a full product field:
+
+\[\operatorname{poolRoots}:\mathrm{Fin}(N)\oplus\mathrm{Reserve}
+  \hookrightarrow\mathrm{Root}\times\mathbb V,\qquad
+  \operatorname{Law}(\operatorname{poolField})
+  =\operatorname{stepFieldLaw}_{\mathrm{Fin}(N)\oplus\mathrm{Reserve}}(\mu).\]
+
 * `activeRoots` and `extendRoots` form the active/reserve root index and its
   injective inclusion; `mem_activeRoots`, `card_activeRoots`,
   `extendRoots_left_injective`, and `extendRoots_injective` describe them.

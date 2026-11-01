@@ -11,6 +11,15 @@ import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.Selecte
 
 Finite iteration of generation-measurable fresh-subtree replacement preserves
 the complete root-indexed product law.
+For the generation-measurable injective families \(\operatorname{chosen}_j\),
+finite fresh replacement is defined by
+
+\[T_0=\operatorname{id},\qquad
+  T_{j+1}=\operatorname{selectedSubtreeStepFieldVector}
+    (\operatorname{chosen}_j)\circ T_j,\qquad
+  (\operatorname{stepFieldLaw}(\mu)).\operatorname{map}(T_j)
+    =\operatorname{stepFieldLaw}(\mu).\]
+
 ## Public declarations
 
 * `RootIndexed.iteratedSelectedSubtreeStepField` recursively replaces a

@@ -18,6 +18,14 @@ has the full product law, and is independent of the information used to
 choose its roots.
 ## Public declarations
 
+For a generation-\(n\)-measurable injective root family
+\(\rho_i(\omega)=(r_i(\omega),u_i(\omega))\) of common depth \(n\), the
+recentered field is
+
+\[\omega'_i(v)=\omega_{r_i(\omega)}(u_i(\omega)\mathbin{+\!\!+}v),\qquad
+  \operatorname{Law}(\omega')=\operatorname{stepFieldLaw}(\mu),\qquad
+  \omega'\perp\mathcal F_n.\]
+
 * `RootIndexed.selectedSubtreeStepFieldVector` rebases a random field at a
   field-measurable family of roots.
 * `selectedSubtreeStepFieldVector_measurable` proves measurability when the

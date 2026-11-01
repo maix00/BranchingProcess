@@ -11,6 +11,15 @@ public import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.Exp
 /-!
 # Exploration domains and fresh subtrees
 
+Writing \(D_j\) for the inspected coordinates and \(\mathcal G_j\) for their
+domain flow, the assumptions and fresh-subtree conclusion are
+
+\[D_j\subseteq D_{j+1},\qquad
+  \mathcal G_j\le\sigma(\omega_u:u\in D_j),\qquad
+  D_j\cap\{u\mathbin{+\!\!+}v:v\in\mathbb V\}=\varnothing
+  \Longrightarrow
+  \mathcal G_j\perp\sigma(\omega_{u\mathbin{+\!\!+}v}:v\in\mathbb V).\]
+
 ## Public declarations
 
 An exploration domain is a monotone inspected set together with a filtration

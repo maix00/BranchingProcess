@@ -13,6 +13,15 @@ import MeasureTheory.Measure.Partition
 /-!
 # A fresh subtree selected from an exploration domain
 
+For a domain-measurable choice \(U\) with countable range and a fresh
+descendant subtree, the event factorization is
+
+\[\mathbb P\!\left(A\cap\left\{\omega:\;
+  \bigl(v\mapsto\omega(U(\omega)\mathbin{+\!\!+}v)\bigr)\in B\right\}\right)
+  =\mathbb P(A)\,\mathbb P(B),\]
+
+for every \(A\in\mathcal G_j\) and every measurable subtree event \(B\).
+
 ## Public declarations
 
 A root chosen measurably from the exploration domain, with countable range,

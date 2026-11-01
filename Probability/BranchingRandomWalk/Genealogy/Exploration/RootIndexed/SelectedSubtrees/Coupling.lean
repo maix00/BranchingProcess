@@ -16,6 +16,18 @@ have exactly equal positions, hence the iterated cloud injectively dominates
 its embedded original copy for every ordered observation.
 ## Public declarations
 
+For an injective cumulative address map \(\Phi_j\), a finite population
+\(A\) in the iterated field maps to its original-address image, with the
+same positions and an injective spatial comparison:
+
+\[\begin{aligned}
+\operatorname{position}_{\mathrm{iterated}}(p)
+  &=\operatorname{position}_{\mathrm{original}}(\Phi_j(p))\quad(p\in A),\\
+\operatorname{Cloud}_{\phi}(\operatorname{field}_j,A)
+  &\succeq_{\mathrm{inj}}\operatorname{Cloud}_{\phi}
+    (\operatorname{field}_0,\Phi_j(A)).
+\end{aligned}\]
+
 * `RootIndexed.iteratedSelectedPopulation` maps a finite particle population
   to its original addresses; `mem_iteratedSelectedPopulation` characterizes
   membership in this image.

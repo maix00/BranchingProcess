@@ -20,6 +20,13 @@ Countability is used only to observe the cardinality of a finite population.
 Neither the root type nor the family of trials is required to be countable.
 ## Public declarations
 
+For injectively assigned roots, the fixed-age success events are independent
+and have a common probability \(p\); hence the first \(k\) trials all fail
+with probability
+
+\[\mathbb P(E_i)=p,\qquad
+  \mathbb P\!\left(\bigcap_{i<k}E_i^{\mathsf c}\right)=(1-p)^k.\]
+
 * `successSet` is the one-root fixed-age population-size event, and
   `successEvent` is its pullback to a root-indexed field. Their membership and
   measurability interfaces are `successEvent_eq_preimage`,

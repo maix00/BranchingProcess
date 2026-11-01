@@ -16,6 +16,13 @@ independence from the generation domain flow follow from the abstract
 selected-subtree theorem.
 ## Public declarations
 
+The roots from the first successful trial define a fresh field with the full
+product law, independent of the first \(d\) generations:
+
+\[\operatorname{Law}(\operatorname{freshField})
+  =\operatorname{stepFieldLaw}_{\mathrm{Fin}(N)}(\mu),\qquad
+  \operatorname{freshField}\perp\mathcal F_d.\]
+
 * `freshField` restricts the original pre-sampled field to roots selected by
   the first successful fixed-age trial.
 * `freshField_law` gives this field the original product law, and
