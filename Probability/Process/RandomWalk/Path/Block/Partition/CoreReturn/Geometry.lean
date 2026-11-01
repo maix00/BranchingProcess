@@ -22,6 +22,11 @@ import all Probability.Process.RandomWalk.Path.Block.Partition.CoreReturn.Endpoi
 
 The result applies to arbitrary finite `StepBoundary` partitions and positive
 spatial scales; it has no increment-law or moment assumptions.
+
+In particular, under the stated core and block conditions,
+\(X_n(0)=0\) and, for every \(t\in[0,1]\),
+\(L(t)<X_n(t)<U(t)\), where \(L(t)\) and \(U(t)\) are the lower and
+upper boundary evaluations; hence \(X_n\in\operatorname{corridorSet}(U,L)\).
 -/
 
 @[expose] public section

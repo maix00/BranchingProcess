@@ -26,6 +26,11 @@ assumptions.
 
 The local path-value identity gives the scaled partial sum at each knot's
 floor index.
+
+Writing \(\tau_j\) for the common partition grid, \(X_n\) for the
+normalized step path, \(c_j=\mathrm{center}(j)\), and
+\(r_j=\mathrm{radius}(j)\), the conclusion is
+\(X_n(\tau_j)\in[c_j-r_j,c_j+r_j]\) at every knot \(j\).
 -/
 
 open MeasureTheory

@@ -24,6 +24,10 @@ not the product measurable structure on an ambient function space.
   is.
 * `hasLaw_normalizedStepCadlagPathIcc` states that the normalized step-path
   map has law `normalizedStepPathLaw ν scale n` under `iidSequenceLaw ν`.
+
+In measure notation, \(\mathcal L_\nu(X_n)=
+\mathrm{map}(X_n,\mathrm{iidSequenceLaw}(\nu))\), where
+\(X_n(\xi)(t)=c_n^{-1}S_{\lfloor nt\rfloor}(\xi)\).
 -/
 
 open MeasureTheory ProbabilityTheory

@@ -44,6 +44,11 @@ multiblock large-deviation estimate with an explicit discarded-tail term.
   `(blocks * length + 1) * ν(|x| > radius) + blocks * truncatedCenteredSecondBound`.
 * `measure_exists_block_exists_abs_ge_le_of_shiftedTruncation_second_bounded`
   gives that estimate for increments shifted by a specified center.
+
+For \(T_R(x)=x\mathbf1_{\{|x|\le R\}}\) and centered truncated partial
+sums \(\widetilde S_j\), the maximal estimate is
+\(\varepsilon\,\mathbb P(\max_{1\le j\le L+1}|\widetilde S_j|^2
+\ge\varepsilon)\le(L+1)\int T_R^2\,d\nu\).
 -/
 
 open MeasureTheory ProbabilityTheory

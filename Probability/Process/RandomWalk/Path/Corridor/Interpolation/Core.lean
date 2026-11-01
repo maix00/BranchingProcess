@@ -25,6 +25,13 @@ width-`scale n` tube. The corresponding
 `normalizedLinearPathLaw_apply_rangeInClosedInterval` identifies the mass of
 the closed corridor `[-a,1-a]` with the weak tube probability. The open result
 assumes `0<a<1`; the closed result assumes `0≤a≤1`.
+
+Thus, with \(Y_n\) the normalized polygonal path and \(S_k\) the partial
+sums of IID increments with law \(\nu\), the two identities read
+\(\mathbb P\{Y_n([0,1])\subset(-a,1-a)\}
+=\mathbb P_{\mathrm{iid}(\nu)}\{-a c_n<S_k<(1-a)c_n,\ 1\le k\le n\}\),
+and the closed-interval identity replaces both strict inequalities by weak
+ones.
 -/
 
 open MeasureTheory

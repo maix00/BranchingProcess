@@ -67,6 +67,12 @@ the increment law.
   bound
   `∫ S_n⁴ d(iid law) ≤ 8n(radius² * ∫ truncated² dν + bias⁴) +
   3n²(∫ truncated² dν)²` for the centered truncated partial sum `S_n`.
+
+Writing \(T_R(x)=x\mathbf1_{\{|x|\le R\}}\) and
+\(\mu_R=\int T_R\,d\nu\), the centered variable
+\(\widehat T_R=T_R-\mu_R\) has mean zero, and for \(R\ge0\),
+\(\int \widehat T_R^4\,d\nu\le
+8\bigl(R^2\int T_R^2\,d\nu+\mu_R^4\bigr)\).
 -/
 
 open MeasureTheory ProbabilityTheory

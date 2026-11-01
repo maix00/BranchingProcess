@@ -18,6 +18,13 @@ public import Probability.Sequence.IID.Basic
   for positive `scale`, the probability of the correspondingly widened open
   tube and normalized endpoint window equals the probability of the unscaled
   endpoint-window event under the coordinatewise scaled increment law.
+
+For \(c_n=\mathrm{scale}(n)>0\), scaling each increment by \(c_n^{-1}\)
+identifies the event with bounds \(-r c_n<S_k<r c_n\) and
+\(S_L/c_n\in I_i\) under \(\nu\) with the endpoint-window event under the
+scaled law \(\nu\circ(x\mapsto x/c_n)^{-1}\), where
+\(I_i=(i\,\mathrm{spacing}-\mathrm{windowRadius},
+i\,\mathrm{spacing}+\mathrm{windowRadius})\).
 -/
 
 open MeasureTheory ProbabilityTheory Set

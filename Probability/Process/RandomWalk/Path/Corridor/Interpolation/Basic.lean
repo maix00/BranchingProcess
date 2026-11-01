@@ -35,6 +35,12 @@ the path layer rather than the probability layer.
   `normalizedLinearContinuousPathIcc_mem_closedHorizontalCorridor_iff`
   specialize these equivalences to the strict and weak horizontal-tube events
   after scaling the boundaries by `scale n`.
+
+If \(Y_n\) is the polygonal interpolation of
+\(c_n^{-1}S_k\), where \(c_n=\mathrm{scale}(n)\),
+then for a convex set \(C\subseteq\mathbb R\) containing zero,
+\(\operatorname{range}(Y_n)\subseteq C\) iff
+\(c_n^{-1}S_k\in C\) for every \(1\le k\le n\).
 -/
 
 open Set

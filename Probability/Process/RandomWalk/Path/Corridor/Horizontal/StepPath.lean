@@ -24,6 +24,11 @@ normalized step path and transfers measurability through that equivalence.
   closed corridor event when `0≤a≤1`, `w>0`, and `n>0`.
 * `measurableSet_inClosedCorridor_const_normalizedStepPath` proves that this
   full-time event is measurable as a set of increment sequences.
+
+For \(S_k=\sum_{i<k}\xi_i\), \(n>0\), \(w>0\), and \(0\le a\le1\),
+the event equivalence is
+\(\{ -aw\le S_k\le(1-a)w:1\le k\le n\}
+=\{\forall t\in[0,1],\ -a\le w^{-1}S_{\lfloor nt\rfloor}\le1-a\}\).
 -/
 
 open MeasureTheory Set

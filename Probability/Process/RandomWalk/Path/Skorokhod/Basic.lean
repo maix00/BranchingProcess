@@ -23,6 +23,10 @@ the Skorokhod distance by the `L¹` difference of the finite increment prefix.
   normalized step-path map into the Skorokhod `J₁` path space.
 * `measurable_normalizedStepCadlagPathIcc` gives its measurable-map
   consequence.
+
+For fixed \(n\) and scale \(c_n\), this map sends an increment sequence
+\(\xi\) to the càdlàg path \(t\mapsto c_n^{-1}S_{\lfloor nt\rfloor}(\xi)\);
+the theorem proves continuity of this map for the \(J_1\) topology.
 -/
 
 open Filter Set

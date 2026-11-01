@@ -30,6 +30,10 @@ finite-second-moment invariance arguments and records its pointwise bounds.
   every real radius.
 * `truncatedIncrement_pow_four_le` gives
   `(truncatedIncrement radius x)⁴ ≤ radius² * x²` for nonnegative radius.
+
+The hard truncation is \(T_R(x)=x\mathbf 1_{\{|x|\le R\}}\); for \(R\ge0\),
+\(|T_R(x)|\le R\), \(|T_R(x)|\le|x|\), and
+\(T_R(x)^4\le R^2x^2\).
 -/
 
 @[expose] public section

@@ -25,6 +25,9 @@ path law and of every finite family of such laws.
   `IsTightMeasureSet {normalizedStepPathLaw ν scale n}`.
 * `isTightMeasureSet_normalizedStepPathLaw_image_of_finite` states that for
   finite `I`, `IsTightMeasureSet (normalizedStepPathLaw ν scale '' I)`.
+
+Equivalently, every singleton \(\{\mathcal L(X_n)\}\) is tight, and every
+finite family \(\{\mathcal L(X_n):n\in I\}\) is tight.
 -/
 
 @[expose] public section
