@@ -17,6 +17,23 @@ sums of two independent copies.  It does not choose a density or a
 characteristic-function parametrization, and keeps the stability predicates at
 the probability-measure level without introducing a random-variable wrapper.
 
+For `0 < α ≤ 2`, the scale and maps are
+
+\[
+\kappa_\alpha(a,b)=(a^\alpha+b^\alpha)^{1/\alpha},\qquad
+S_{a,b}(x,y)=ax+by,\qquad A_{r,c}(x)=rx+c.
+\]
+
+An `α`-stable probability measure `μ` satisfies, for each `a,b>0`,
+
+\[
+(\mu\otimes\mu)\circ S_{a,b}^{-1}
+=\mu\circ A_{\kappa_\alpha(a,b),c}^{-1}
+\quad\text{for some }c\in\mathbb R.
+\]
+
+Strict stability uses the same scaling with `c=0`.
+
 ## Public declarations
 
 * `alphaStableScale α a b = (a^α + b^α)^(1/α)`,

@@ -25,6 +25,28 @@ identifying the Lévy measure of a strictly stable law.
 
 Write `ψ = T.exponent` for a Lévy--Khintchine triple `T` representing `μ`.
 
+The exponent equations proved here include the additive scaling relation
+
+\[
+\psi(a\xi)+\psi(b\xi)=\psi(\kappa_\alpha(a,b)\xi)
+\qquad(a,b>0),
+\]
+
+and its homogeneous form
+
+\[
+\psi(a\xi)=a^\alpha\psi(\xi)
+\qquad(a>0),
+\]
+
+where the real scalar on the right acts on the complex-valued exponent.  In
+the time parameter, the same result is
+
+\[
+\psi(t^{1/\alpha}\xi)=t\psi(\xi)
+\qquad(t\ge0).
+\]
+
 * `IsStrictlyAlphaStable.exponent_nat`:
   `ψ((n : ℝ)^(1/α) ξ) = (n : ℂ) ψ(ξ)` for every natural `n`.
 * `IsStrictlyAlphaStable.exponent_scaled_add`:
