@@ -28381,3 +28381,15 @@ coercivity bound, state the capped-cubic and inverse-cosine representations
 of the second tail integral, and record the compact-uniform index-two
 condition and resulting tail little-o limit. The four focused modules build
 successfully in a 3,219-job Lake build; no declarations or proofs changed.
+
+## Order and regular-variation interface formulas (2026-11-01)
+
+Added the mathematical interfaces to the public headers of
+`Order/DominatingMap.lean`, `Order/Filter/{SlowDiagonal,LiminfLimsup}.lean`,
+and `Analysis/Asymptotics/{Power/{TailIntegral,ENNRealRatio},RegularVariation/{Basic,Uniform}}.lean`.
+The displays state the order-dominating injection and cardinality bound, the
+slow-diagonal selection principle, stability of limsup and liminf under a
+vanishing difference, the power-tail integral limit, the extended-real power
+ratio inequality, regular-variation closure rules, Potter's bound, and the
+compact-uniform ratio theorem. All seven focused modules build successfully
+in a 2,838-job Lake build; no declarations or proofs changed.

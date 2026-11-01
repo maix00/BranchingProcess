@@ -27,6 +27,17 @@ countability, time, or branching assumption is built into this definition.
 - `Order.DominatingMap.card_filter_le` bounds the number of source points
   below a value by the number of target points below that value whenever both
   domains are finite.
+
+Concretely, `f : DominatingMap S T φ ψ` packages
+\[
+  f(S)\subseteq T,\qquad \operatorname{InjOn}(f,S),\qquad
+  \psi(f(a))\le\phi(a)\quad(a\in S).
+\]
+For finite `S` and `T`, the induced cardinality comparison is
+\[
+  \#\{a\in S:\phi(a)\le r\}
+    \le \#\{b\in T:\psi(b)\le r\}\quad(r\in\mathrm{Value}).
+\]
 -/
 
 @[expose] public section

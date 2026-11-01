@@ -23,6 +23,15 @@ depend on asymptotic growth theory.
   `∀ k, ∀ᶠ n : ℕ in atTop, P k n`, then there is a monotone
   `d : ℕ → ℕ` with `Tendsto d atTop atTop` and
   `∀ᶠ n : ℕ in atTop, P (d n) n`.
+
+In threshold form, the selection principle is
+\[
+  \bigl(\forall k\in\mathbb N,\ \exists N_k\in\mathbb N,\ \forall n\ge N_k,\ P(k,n)\bigr)
+  \Longrightarrow
+  \exists d:\mathbb N\to\mathbb N,\quad
+  d\text{ monotone},\quad d(n)\to\infty,\quad
+  \exists N\in\mathbb N,\ \forall n\ge N,\ P(d(n),n).
+\]
 -/
 
 @[expose] public section

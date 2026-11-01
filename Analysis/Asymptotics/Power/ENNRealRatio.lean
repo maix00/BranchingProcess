@@ -19,6 +19,15 @@ public import Mathlib.Basic.ENNReal.Real
   `y.toReal ≤ N ^ β`, then
   `N ^ (q * α - β) ≤ (x ^ q / y).toReal`.
 
+The full comparison is
+\[
+  0<N,\quad 0\le q,\quad 0<y<\infty,\quad
+  N^\alpha\le \operatorname{toReal}(x),\quad
+  \operatorname{toReal}(y)\le N^\beta
+  \quad\Longrightarrow\quad
+  N^{q\alpha-\beta}\le \operatorname{toReal}(x^q/y).
+\]
+
 This statement combines lower and upper power bounds for extended
 nonnegative quantities. It is independent of a particular random variable
 or branching model.
