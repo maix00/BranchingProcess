@@ -15,6 +15,24 @@ public import Combinatorics.BranchingWalk.StepField
 Pointwise maps of deterministic step fields live in
 `Combinatorics/BranchingWalk/StepField.lean`.
 
+Changing marks leaves the initial positions fixed, while changing initial
+positions leaves each step field fixed:
+
+\[
+(\beta.\operatorname{mapMarks}(f)).\operatorname{step}(r)
+=(\beta.\operatorname{step}(r)).\operatorname{map}(f),
+\qquad
+(\beta.\operatorname{mapMarks}(f)).\operatorname{initial}
+=\beta.\operatorname{initial},
+\]
+\[
+(\beta.\operatorname{mapInitial}(g)).\operatorname{step}
+=\beta.\operatorname{step},
+\qquad
+(\beta.\operatorname{mapInitial}(g)).\operatorname{initial}(r)
+=g(\beta.\operatorname{initial}(r)).
+\]
+
 ## Public declarations
 
 * `Combinatorics.Branching.RootIndexed.BranchingWalk.mapMarks` applies a mark

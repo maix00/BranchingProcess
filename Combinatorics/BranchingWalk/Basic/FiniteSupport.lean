@@ -13,6 +13,16 @@ public import Combinatorics.BranchingWalk.StepField
 /-!
 # Finite support of branching-walk fields
 
+Finite support means that only finitely many child slots are present at each
+address, for every root:
+
+\[
+\forall u,\quad\operatorname{support}(\beta(u))\text{ is finite},
+\qquad
+\forall r\ \forall u,\quad
+\operatorname{support}((\beta.\operatorname{step}(r))(u))\text{ is finite}.
+\]
+
 ## Public declarations
 
 - `StepField.IsFinitelySupported β` means every local step has finite support:

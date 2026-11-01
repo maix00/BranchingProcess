@@ -11,6 +11,19 @@ public import Combinatorics.BranchingWalk.Basic.Map
 /-!
 # Mapping a branching walk to its genealogy
 
+Forgetting marks applies the optional-map induced by the constant map to the
+singleton mark, so child presence and survival along every finite address are
+preserved:
+
+\[
+\operatorname{toBranching}(\beta).\operatorname{step}(r)
+=\operatorname{forgetMarks}(\beta.\operatorname{step}(r)),
+\qquad
+\operatorname{surviveAlong}(\operatorname{toBranching}(\beta).\operatorname{step}(r),v,p)
+\Longleftrightarrow
+\operatorname{surviveAlong}(\beta.\operatorname{step}(r),v,p).
+\]
+
 ## Public declarations
 
 * `Combinatorics.Branching.RootIndexed.BranchingWalk.toBranching β` forgets

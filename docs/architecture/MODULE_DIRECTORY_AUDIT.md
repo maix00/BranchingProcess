@@ -28434,6 +28434,21 @@ tail equivalence. All eight focused modules build successfully in a 3,195-job
 Lake build; no declarations or proofs changed. The same header scan now has 243
 remaining modules for manual formula review out of 1,642 production modules.
 
+## Branching structures and genealogy formulas (2026-11-01)
+
+Added mathematical interfaces to the headers of
+`Combinatorics/Branching/{Basic,Map}.lean`,
+`Combinatorics/Sequence/Leader.lean`,
+`Combinatorics/BranchingWalk/Tree/Genealogy.lean`,
+`BranchingWalk/Walk/{Basic,Equiv}.lean`, and
+`BranchingWalk/Basic/{Map,FiniteSupport}.lean`. These formulas state the
+unmarked specialization, invariance of survival under mark erasure, the
+finite leader inequality, the tree-survival correspondence, the walk
+increment representation, and the field-map and finite-support interfaces.
+All eight focused modules build successfully in a 1,787-job Lake build; no
+declarations or proofs changed. The same header scan now has 231 remaining
+modules for manual formula review out of 1,642 production modules.
+
 ## Algebraic and spectral formula headers (2026-11-01)
 
 Added explicit statements to the headers of

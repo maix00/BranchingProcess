@@ -10,6 +10,23 @@ public import Combinatorics.BranchingWalk.Basic.BranchingWalk
 /-!
 # Branching as the unmarked branching-walk specialization
 
+The unmarked process is the branching-walk model with singleton root marks,
+child marks, and positions. Packaging a singleton-mark step field preserves
+that field at the unique root:
+
+\[
+\operatorname{RootIndexed.Process}(Root,\alpha)
+=\operatorname{BranchingWalk}(Root,\alpha,\mathrm{PUnit},\mathrm{PUnit}),
+\qquad
+\operatorname{Process}(\alpha)
+=\operatorname{RootIndexed.Process}(\mathrm{PUnit},\alpha),
+\]
+\[
+(\operatorname{branchingOfStepField}(\beta)).\operatorname{step}(*)=\beta,
+\qquad
+(\operatorname{branchingOfStepField}(\beta)).\operatorname{initial}(*)=*.
+\]
+
 ## Public declarations
 
 * `Combinatorics.Branching.RootIndexed.Process Root α` and
