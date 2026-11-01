@@ -28266,3 +28266,17 @@ literature pointers now identify Wang Yiyang's Chapter 4 Lemmas 4.3 and 4.5
 (including equation (4.6)) and Mogul'skii's Theorem 3, Section 4, p. 764,
 with full bibliographic details. The eight focused modules build successfully
 in a 3,869-job Lake build; no declarations or proofs changed.
+
+## Stable norming and tail formulas (2026-11-01)
+
+Added display formulas to the public headers in
+`Probability/Distributions/Stable/Attraction/Norming/Basic.lean`,
+`Asymptotics/{Tail,UniformTail,Inverse}.lean`, and
+`Rescaling/Compatibility.lean`. The module documentation now gives the
+truncated-moment factor, stable norming relation, small-deviation rate,
+fixed-scale and compact-uniform tail limits, the inverse time scale, the
+rounded-block normalization limit, and the constants relating an attraction
+normalization to the unit-time-scale convention. Each formula matches the
+definitions or theorem hypotheses and conclusions; the five focused modules
+build successfully in a 3,374-job Lake build. No declarations or proofs
+changed.
