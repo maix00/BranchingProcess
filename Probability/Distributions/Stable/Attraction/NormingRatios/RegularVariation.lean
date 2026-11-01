@@ -16,6 +16,17 @@ Compact-uniform characteristic-function defects and a first-crossing scale
 index transfer the discrete norming asymptotics to all sufficiently small
 frequencies. The first-crossing construction does not assume monotonicity.
 
+For `ψ_ν(t)=1-|φ_ν(t)|²`, attraction to an `α`-stable law gives, for each
+`s>0`,
+
+\[
+\frac{ψ_ν(st)}{ψ_ν(t)}\longrightarrow s^α
+\qquad(t\downarrow0),
+\]
+
+with convergence uniform in `s∈[1,2]`; in particular `ψ_ν` is regularly
+varying at zero with index `α`.
+
 ## Public declarations
 
 Write $\varphi_\nu$ for the characteristic function of the increment law.

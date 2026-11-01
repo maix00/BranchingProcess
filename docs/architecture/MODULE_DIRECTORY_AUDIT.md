@@ -28292,3 +28292,14 @@ the Gaussian variance limit for the exponent-two truncated moment, and the
 canonical finite-variance norming with its asymptotic ratios. The four focused
 modules build successfully in a 3,391-job Lake build; no declarations or
 proofs changed.
+
+## Stable attraction norming-ratio formulas (2026-11-01)
+
+Added formulas to `Probability/Distributions/Stable/Attraction/NormingRatios/`
+module headers. `Index.lean` states subsequence and consecutive norming ratios;
+`RegularVariation.lean` gives the fixed and compact-uniform characteristic
+defect ratios; `UniformDefect.lean` records the compact-uniform stable power
+limit; and `Tauberian.lean` states the symmetrized and original tail constants
+and the normalized truncated-second-moment limit. The four focused modules
+build successfully in a 3,368-job Lake build. No declarations or proofs
+changed.
