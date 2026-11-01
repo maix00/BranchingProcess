@@ -16,6 +16,18 @@ import Mathlib.MeasureTheory.Constructions.BorelSpace.Metrizable
 This module represents realized Poisson integrals by sums over the canonical pieces and proves
 measurability of the nonnegative and real-valued integral maps.
 
+For $N_\omega=\operatorname{poissonRandomMeasure}(K,X,\omega)$, measurable
+$g:E\to[0,\infty]$ and measurable integrable $f:E\to\mathbb R$ satisfy
+$$
+\int^- g(x)\,N_\omega(dx)
+  =\sum_{k=0}^\infty\sum_{n<K_k(\omega)}g(X_{k,n}(\omega)),
+\qquad
+\int f(x)\,N_\omega(dx)
+  =\sum_{k=0}^\infty\sum_{n<K_k(\omega)}f(X_{k,n}(\omega)).
+$$
+The real-valued identity uses integrability with respect to $N_\omega$; its
+series is grouped by the canonical countable intensity partition.
+
 ## Public declarations
 
 - `lintegral_poissonRandomMeasure` expresses the nonnegative integral as the sum over realized points.

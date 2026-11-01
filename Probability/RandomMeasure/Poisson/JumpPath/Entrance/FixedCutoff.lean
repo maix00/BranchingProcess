@@ -15,6 +15,25 @@ import Probability.RandomMeasure.Poisson.Realization.FiniteJump
 /-!
 # Entrance after a fixed Lévy-intensity cutoff
 
+For fixed small- and large-jump intensities $m_s,m_b$, assume
+$\int |z_2|\,m_s(dz)<\rho$, $m_b(J),m_b(B)<\infty$,
+$m_b(J)>0$, $J\cap B=\varnothing$, and
+$|z_2-\mathrm{target}|<\rho$ on $J$. If $\rho>0$ and $2\rho<\varepsilon$,
+with the stated corridor-margin conditions, the theorem constructs
+independent Poisson sources. Under their product law, their entrance path $E$
+satisfies
+$$
+\mathbb P\!\left\{
+  \forall t\in[0,1],\quad
+  \mathrm{lower}+\mathrm{margin}-2\rho\le E(t)
+    \le\mathrm{upper}-\mathrm{margin}+2\rho,
+  \quad
+  \mathrm{target}-\varepsilon<E(1)<\mathrm{target}+\varepsilon
+\right\}>0.
+$$
+Here $E(t)$ is the entrance path with small-jump region $[0,1]\times\mathbb R$
+and large-jump region $J\cup B$.
+
 ## Public declarations
 
 - `ProbabilityTheory.exists_poissonEntrancePath_model_of_smallMoment`: for

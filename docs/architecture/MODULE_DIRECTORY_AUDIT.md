@@ -28161,3 +28161,15 @@ consequences when the Lévy measure has no positive or no negative marks. The
 header formulas match the displayed integrands and product laws in the four
 public characteristic-function and law declarations. The module builds with
 the pinned toolchain; no declarations or proofs changed.
+
+## Poisson entrance and integral identities (2026-11-01)
+
+Added explicit formulas for the fixed-cutoff positive-probability entrance
+corridor in `Probability/RandomMeasure/Poisson/JumpPath/Entrance/FixedCutoff.lean`,
+the cumulative-path and half-open-window increment identities in
+`Probability/RandomMeasure/Poisson/JumpPath/Entrance/Increment.lean`, and the
+source-slot series for nonnegative and real-valued Poisson integrals in
+`Probability/RandomMeasure/Poisson/Integration/Integral.lean`. Each formula
+was checked against its declaration's support, integrability, endpoint, and
+cutoff hypotheses. The three modules build successfully in a 3,242-job
+focused Lake build; no declarations or proofs changed.

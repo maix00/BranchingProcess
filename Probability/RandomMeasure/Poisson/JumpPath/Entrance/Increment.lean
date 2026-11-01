@@ -16,6 +16,19 @@ For supported sources with integrable marks, the difference between two path
 values is the sum of the realized jump integrals over the intervening
 half-open time window.
 
+If $N_s,N_b$ are the realized source measures and $E$ is the entrance path,
+then support of the selected regions gives
+$$
+E(t)=\int_{\{z:z_1\le t\}}z_2\,N_s(dz)
+  +\int_{\{z:z_1\le t\}}z_2\,N_b(dz).
+$$
+When both mark functions $z\mapsto z_2$ are integrable and $s\le t$, its
+increment is
+$$
+E(t)-E(s)=\int_{\{z:s<z_1\le t\}}z_2\,N_s(dz)
+  +\int_{\{z:s<z_1\le t\}}z_2\,N_b(dz).
+$$
+
 ## Public declarations
 
 - `ProbabilityTheory.poissonEntrancePath_eq_fullJumpPath` identifies a
