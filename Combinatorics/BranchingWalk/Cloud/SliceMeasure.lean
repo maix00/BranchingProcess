@@ -19,6 +19,19 @@ positions of the particles alive at that time:
 
 `Cloud.diracSum C t = Measure.sum fun p : (C.particles t) => δ_{position p}`.
 
+Each indexed particle contributes one atom, so coincident positions retain
+multiplicity; evaluation on a measurable set counts those particle indices:
+
+\[
+\operatorname{diracSum}(C,t)
+=\operatorname{Measure.sum}_{p\in C.\operatorname{particles}(t)}
+\delta_{C.\operatorname{position}(p)},
+\qquad
+\operatorname{diracSum}(C,t)(A)
+=\sum_{p\in C.\operatorname{particles}(t)}
+\mathbf{1}_{A}(C.\operatorname{position}(p)).
+\]
+
 The sum is taken over the particles themselves (`Measure.sum`, the supremum of the
 finite partial sums), so it needs no measurable structure on the particle index, and
 the definition is the Dirac sum `∑ᵢ δ_{xᵢ}`: one

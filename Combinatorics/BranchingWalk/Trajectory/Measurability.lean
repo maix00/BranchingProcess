@@ -15,6 +15,21 @@ public import Mathlib.MeasureTheory.MeasurableSpace.Constructions
 
 ## Public declarations
 
+The trajectory σ-algebra is induced by its two coordinates, and both
+coordinate maps are measurable:
+
+\[
+\mathcal{M}_{\operatorname{Trajectory}(Time,X)}
+=\operatorname{comap}\!\left(T\mapsto(T.\operatorname{vertexCloud},T.\operatorname{edges}),
+\mathcal{M}_{\operatorname{CloudSet}(Time,X)}\times
+\mathcal{M}_{\operatorname{Set}(Time\times X)}\right).
+\]
+\[
+T\mapsto T.\operatorname{vertexCloud}\text{ is measurable},
+\qquad
+T\mapsto T.\operatorname{edges}\text{ is measurable}.
+\]
+
 * `Combinatorics.Branching.Trajectory.instMeasurableSpace` equips
   `Trajectory Time X` with the σ-algebra induced by the pair of vertex and
   edge sets.

@@ -74,6 +74,23 @@ space-time vertex set, `CloudSet.ext` gives extensionality by time slices,
 `CloudSet.support_mapPosition` states
 `(C.mapPosition φ).support = C.support.map φ`, and
 `CloudSet.mem_mapOrderDual_points` preserves membership under order reversal.
+
+The indexed cloud retains particle identity, while its support takes the
+geometric image at each time. For a branching walk, the time slice and
+position are:
+
+\[
+\operatorname{particles}_t
+=\{(r,u):\operatorname{time}(u)=t\text{ and }
+\operatorname{surviveAlong}(\beta.\operatorname{step}(r),[],u)\},
+\]
+\[
+\operatorname{support}(C).\operatorname{points}(t)
+=\{\operatorname{position}(r,u):(r,u)\in\operatorname{particles}_t\},
+\qquad
+\operatorname{position}(r,u)
+=\beta.\operatorname{initial}(r)+\operatorname{displaceWith}(d,\beta.\operatorname{step}(r),[],u).
+\]
 -/
 
 @[expose] public section

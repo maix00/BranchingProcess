@@ -17,6 +17,16 @@ images; segment identity is not part of this structure.
 
 ## Public declarations
 
+A trajectory stores its vertex cloud and edge-image set separately; its
+space-time carrier is their union:
+
+\[
+T=(T.\operatorname{vertexCloud},T.\operatorname{edges}),
+\qquad
+\operatorname{carrier}(T)
+=T.\operatorname{vertexCloud}.\operatorname{vertexSet}\cup T.\operatorname{edges}.
+\]
+
 * `Combinatorics.Branching.Trajectory Time X` stores a vertex cloud
   `CloudSet Time X` and an edge-image set in `Time × X`; the projections are
   `Trajectory.vertexCloud` and `Trajectory.edges`.

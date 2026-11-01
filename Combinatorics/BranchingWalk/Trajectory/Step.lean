@@ -31,6 +31,26 @@ time coordinates, and a segment map:
 
 Child marks and accumulated positions remain separate; `d` interprets each
 edge mark as an additive position increment.
+
+The root-indexed construction uses the cloud's geometric support for vertices
+and records each present child edge through its chosen segment map:
+
+\[
+\operatorname{vertexCloud}(T)
+=\operatorname{support}(\operatorname{Cloud.ofBranchingWalk}(d,\beta,\operatorname{time})),
+\]
+\[
+\begin{aligned}
+\operatorname{edges}(T)=\{p:\ &\exists r,u,i,\
+\operatorname{survive}(\operatorname{step}(r,u),i),\\
+&p\in\operatorname{segment}\bigl(
+(\operatorname{time}(u),\operatorname{initial}(r)+
+\operatorname{displaceWith}(d,\operatorname{step}(r),[],u)),\\
+&\qquad(\operatorname{time}(u\mathbin{++}[i]),\operatorname{initial}(r)+
+\operatorname{displaceWith}(d,\operatorname{step}(r),[],u\mathbin{++}[i]))\bigr)\}.
+\end{aligned}
+\]
+
 -/
 
 @[expose] public section
