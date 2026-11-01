@@ -33,7 +33,7 @@ modules outside this directory.
 
 ## Internal proof declarations
 
-- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.exists_positiveAParameters` chooses $b,v,c$ satisfying the strict threshold and width inequalities required by the positive-parameter construction.
+- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.exists_positiveAParameters` chooses $b,v,c$ satisfying the strict threshold and width inequalities required by the positive-parameter construction, together with the positive first-stage exponent margin $a-b-2v>0$.
 - `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.positiveADrift_le_span`, `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.positiveAWindowUpper_at_cutoff`, `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.positiveAFirstStageUpper_le_zero`, `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.positiveAWindowUpper_le_generationDrift_add_width`, and `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.positiveADrift_eq_ahExponent` bound the schedule $d_j=(\kappa/c^2)D^{-2/3}j$ and the exponential endpoint weights by their terminal or generation-scale envelopes.
 - `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.positiveAWindowWeightedAH_le` and `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.positiveADrift_le_shortPrefix_power` compare the weighted long-prefix and short-prefix terms with the Aïdékon--Hu exponent.
 - `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.positiveA_canceledAH_sum_le` bounds the resulting sum by $(\ell+1)+D\exp((-b+v)\log N+cD^{1/3}+\kappa c^pD^{p/3})$.
@@ -53,7 +53,8 @@ open ProbabilityTheory.RandomWalk
 /-- The parameter inequalities in the positive-`a` construction are feasible
 whenever the target threshold is strictly above the limiting trajectory.
 Here `r` is the positive cube root of `t`; keeping `r^3 = t` explicit makes
-the algebraic choice of `c` transparent. -/
+the algebraic choice of `c` transparent. The choice also leaves the positive
+margin $a-b-2v>0$ needed for the first-stage root-count estimate. -/
 lemma exists_positiveAParameters
     (a t r sigmaSq zeta : ℝ)
     (ha : 0 < a) (ht : 0 < t) (hr : 0 < r) (hrcube : r ^ 3 = t)
@@ -63,10 +64,11 @@ lemma exists_positiveAParameters
       0 < b ∧ b < a ∧ 0 < v ∧ v < b ∧ v ≤ c ∧ 0 < c ∧ c < r⁻¹ ∧
       c * r + (a - b) + v < 1 ∧
       -b + Real.pi ^ 2 / 2 * sigmaSq * (c⁻¹ ^ 2 * r) +
-        2 * v * (1 + r) < zeta := by
+        2 * v * (1 + r) < zeta ∧
+      0 < a - b - 2 * v := by
   let C : ℝ := Real.pi ^ 2 / 2 * sigmaSq
   let gap : ℝ := zeta - (-a + C * t)
-  let K : ℝ := 1 / 3 + 8 * C * t + 2 / 3 * (1 + r)
+  let K : ℝ := 1 / 2 + 8 * C * t + 1 / 4 * (1 + r)
   let δ₀ : ℝ := min (min (1 / 2) a) (gap / (2 * K))
   let δ : ℝ := min δ₀ (1 / (4 * r))
   have hC : 0 ≤ C := by
@@ -110,8 +112,8 @@ lemma exists_positiveAParameters
       C * (t / (1 - δ) ^ 2) = (C * t) * (1 / (1 - δ) ^ 2) := by ring
       _ ≤ (C * t) * (1 + 8 * δ) :=
         mul_le_mul_of_nonneg_left hratio (mul_nonneg hC ht.le)
-  let b : ℝ := a - δ / 3
-  let v : ℝ := δ / 3
+  let b : ℝ := a - δ / 2
+  let v : ℝ := δ / 8
   let c : ℝ := (1 - δ) / r
   have hcInv : c⁻¹ = r / (1 - δ) := by
     dsimp [c]
@@ -127,23 +129,24 @@ lemma exists_positiveAParameters
       δ * K ≤ (gap / (2 * K)) * K :=
         mul_le_mul_of_nonneg_right hδGap hK.le
       _ = gap / 2 := by field_simp [hK.ne']
-  refine ⟨b, v, c, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  refine ⟨b, v, c, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · dsimp [b]
-    nlinarith [ha, hδA]
+    nlinarith [ha, hδA, hδ]
   · dsimp [b]
     linarith
   · dsimp [v]
     positivity
   · dsimp [b, v]
-    nlinarith [ha, hδA]
+    nlinarith [ha, hδA, hδ]
   · dsimp [v, c]
     have hδr : δ * r ≤ 1 / 4 := by
       have hδr4 : δ * (4 * r) ≤ 1 :=
         (le_div_iff₀ (by positivity : 0 < 4 * r)).mp hδSmall
       nlinarith [hδr4]
-    have hvrt : (δ / 3) * r ≤ 1 / 12 := by nlinarith [hδr]
+    have hvrt : (δ / 8) * r ≤ 1 / 32 := by nlinarith [hδr]
+    have hcr : 1 / 2 ≤ 1 - δ := by linarith [hδHalf]
     apply (le_div_iff₀ hr).2
-    nlinarith [hvrt, hδHalf]
+    nlinarith [hvrt, hcr]
   · dsimp [c]
     exact div_pos (by linarith) hr
   · dsimp [c]
@@ -155,21 +158,24 @@ lemma exists_positiveAParameters
     linarith
   · dsimp [b, v]
     rw [hcScale]
-    change -(a - δ / 3) + C * (t / (1 - δ) ^ 2) +
-      2 * (δ / 3) * (1 + r) < zeta
-    have hmain : -(a - δ / 3) + C * (t / (1 - δ) ^ 2) +
-        2 * (δ / 3) * (1 + r) ≤ -a + C * t + δ * K := by
+    change -(a - δ / 2) + C * (t / (1 - δ) ^ 2) +
+      2 * (δ / 8) * (1 + r) < zeta
+    have hmain' : -(a - δ / 2) + C * (t / (1 - δ) ^ 2) +
+        2 * (δ / 8) * (1 + r) ≤ -a + C * t + δ * K := by
       dsimp [K]
       nlinarith [hratioTerm]
     have hgapEq : -a + C * t + gap = zeta := by
       dsimp [gap]
       ring
     calc
-      -(a - δ / 3) + C * (t / (1 - δ) ^ 2) +
-          2 * (δ / 3) * (1 + r) ≤ -a + C * t + δ * K := hmain
+      -(a - δ / 2) + C * (t / (1 - δ) ^ 2) +
+          2 * (δ / 8) * (1 + r) ≤ -a + C * t + δ * K := hmain'
       _ ≤ -a + C * t + gap / 2 := by linarith [hδK]
       _ < -a + C * t + gap := by linarith [hgapPos]
       _ = zeta := hgapEq
+  · dsimp [b, v]
+    ring_nf
+    linarith [hδ]
 
 /-- The drift at any time in the second tube is bounded by its terminal
 diffusive scale. -/

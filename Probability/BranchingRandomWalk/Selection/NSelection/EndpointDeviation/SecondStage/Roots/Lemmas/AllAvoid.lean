@@ -28,22 +28,25 @@ import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Se
 In the namespace
 `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation`,
 `eventually_measure_secondStageEnoughRoots_allAvoid_le` is a
-proof-chain lemma. Given a finite killed population with at least `K`
-measurably selected roots, it specializes the predictable independent-subtree
-estimate to the event `secondStageEnoughRoots`. Under its boundary,
-cross-weight, centered second-moment, and parameter hypotheses, there are
+proof-chain lemma. Given a finite killed population with at least `K n`
+measurably selected roots at horizon `n`, it specializes the predictable
+independent-subtree estimate to the event `secondStageEnoughRoots`. Under its
+boundary, cross-weight, centered second-moment, and parameter hypotheses, there are
 positive entrance and bridge constants and a negative escape-rate constant
 such that eventually
 \[
-\mathbb P(A_n\cap\{\text{all }K\text{ selected descendant paths fail}\})
+\mathbb P(A_n\cap\{\text{all }K_n\text{ selected descendant paths fail}\})
 \le \mathbb P(A_n)
-   \exp\!\left(-\frac{K}{4}\,
+   \exp\!\left(-\frac{K_n}{4}\,
      \operatorname{toReal}(\operatorname{PZMean}(D_n,\kappa,c,v))\right),
 \]
-where \(A_n\) is the event that the killed slice contains at least `K` roots.
+where \(A_n\) is the event that the killed slice contains at least `K_n` roots.
 The hypotheses include `D n → ∞`, boundary normalization, finite cross
 weight, a centered tilted increment law with variance `sigma ^ 2 > 0`,
-`K ≤ m` and `K > 0`, and the stated inequalities on `kappa`, `c`, and `v`.
+`K n ≤ m` for every `n` and `K n > 0` eventually, and the stated inequalities
+on `kappa`, `c`, and `v`. This is the selected-root part of Wang Yiyang,
+*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
+Chapter 3, Lemma 3.5 (master's thesis, Fudan University, 2026).
 The general predictable-root estimate and this selected-population
 specialization are grouped in this single proof-support module.
 -/
@@ -65,7 +68,7 @@ open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 independent fresh-forest estimate on every measurable event of the past. This
 is the general estimate used by the selected-population specialization below. -/
 private lemma eventually_measure_predictableSecondStageRoots_allAvoid_le
-    {Root : Type*} {m : ℕ}
+    {Root : Type*} (m : ℕ → ℕ)
     [MeasurableSpace (RootIndexed.TreeNode Root ℕ)]
     [Countable (RootIndexed.TreeNode Root ℕ)]
     {D generation : ℕ → ℕ}
@@ -80,9 +83,11 @@ private lemma eventually_measure_predictableSecondStageRoots_allAvoid_le
     (hκv : κ / c ^ 2 < v)
     (hterminal : κ / c ^ 2 ≤ 2 * v / 5)
     (hentranceWidth : (5 * (κ / c ^ 2) + v) / 2 ≤ c)
-    (hm : 0 < m)
-    (chosen : ℕ → RootIndexed.StepField Root ℕ ℝ →
-      Fin m → Root × TreeNode ℕ)
+    (hm : ∀ᶠ n : ℕ in atTop, 0 < m n)
+    (hTree : ∀ n, MeasurableSpace (RootIndexed.TreeNode (Fin (m n)) ℕ))
+    (hCountable : ∀ n, Countable (RootIndexed.TreeNode (Fin (m n)) ℕ))
+    (chosen : ∀ n, RootIndexed.StepField Root ℕ ℝ →
+      Fin (m n) → Root × TreeNode ℕ)
     (hcount : ∀ n, (Set.range (chosen n)).Countable)
     (hfiber : ∀ n roots, MeasurableSet[
       RootIndexed.stepFiltration (Root := Root) (α := ℕ) (X := ℝ)
@@ -103,21 +108,24 @@ private lemma eventually_measure_predictableSecondStageRoots_allAvoid_le
             (RootIndexed.stepFieldLaw (Root := Root) μ)
               (A n ∩
                 RootIndexed.selectedSubtreeStepFieldVector (chosen n) ⁻¹'
-                  positiveASecondStageFailureEvent m (D n) κ c v) ≤
+                  positiveASecondStageFailureEvent (m n) (D n) κ c v) ≤
               (RootIndexed.stepFieldLaw (Root := Root) μ) (A n) *
-                ENNReal.ofReal (Real.exp (-((m : ℝ) * pzMean.toReal / 4))) := by
+                ENNReal.ofReal (Real.exp (-((m n : ℝ) * pzMean.toReal / 4))) := by
   have havoid :=
     eventually_measure_positiveASecondStage_allRootsAvoid_le_of_centeredSecondMoment
       (D := D) hD μ hboundary hcross hν hsigma hκ hc hv hκv hterminal
-      hentranceWidth m hm
+      hentranceWidth m hm hTree hCountable
   obtain ⟨entryQ, hentryQ, C, hC, bridgeQ, hbridgeQ, amplitude,
       hamplitude, havoid⟩ := havoid
   refine ⟨entryQ, hentryQ, C, hC, bridgeQ, hbridgeQ, amplitude,
     hamplitude, ?_⟩
   filter_upwards [havoid] with n havoidN
+  let mCurrent := m n
+  letI : MeasurableSpace (RootIndexed.TreeNode (Fin mCurrent) ℕ) := hTree n
+  letI : Countable (RootIndexed.TreeNode (Fin mCurrent) ℕ) := hCountable n
   let corridor := positiveASecondStageCorridor (D n) κ c v
   let success := hasPathHistoryIn (ι := ℕ) realPotential (D n) 0 corridor
-  let failure := positiveASecondStageFailureEvent m (D n) κ c v
+  let failure := positiveASecondStageFailureEvent mCurrent (D n) κ c v
   have hcorridor : MeasurableSet corridor := by
     dsimp [corridor, positiveASecondStageCorridor]
     exact measurableSet_affineCorridorThrough (D n) 0
@@ -128,8 +136,8 @@ private lemma eventually_measure_predictableSecondStageRoots_allAvoid_le
   have hsuccess : MeasurableSet success :=
     measurableSet_hasPathHistoryIn realPotential (D n) 0 corridor hcorridor
   have hfailure : MeasurableSet failure := by
-    rw [show failure = ⋂ r : Fin m,
-        (fun field : FiniteRootStepField m ℕ ℝ => field r) ⁻¹' successᶜ by
+    rw [show failure = ⋂ r : Fin mCurrent,
+        (fun field : FiniteRootStepField mCurrent ℕ ℝ => field r) ⁻¹' successᶜ by
       ext field
       simp [failure, positiveASecondStageFailureEvent,
         success, corridor, positiveASecondStageCorridor]]
@@ -141,8 +149,8 @@ private lemma eventually_measure_predictableSecondStageRoots_allAvoid_le
       (A n) failure (hA n) hfailure
   let pzMean := positiveASecondStagePZMean μ (D n) κ c v
   have hfailureBound :
-      (finiteRootStepFieldLaw μ m) failure ≤
-        ENNReal.ofReal (Real.exp (-((m : ℝ) * pzMean.toReal / 4))) := by
+      (finiteRootStepFieldLaw μ mCurrent) failure ≤
+        ENNReal.ofReal (Real.exp (-((mCurrent : ℝ) * pzMean.toReal / 4))) := by
     simpa [failure, pzMean, positiveASecondStageFailureEvent,
       positiveASecondStagePZMean,
       positiveASecondStageCorridor, success, corridor,
@@ -151,17 +159,18 @@ private lemma eventually_measure_predictableSecondStageRoots_allAvoid_le
   calc
     (RootIndexed.stepFieldLaw (Root := Root) μ)
         (A n ∩ RootIndexed.selectedSubtreeStepFieldVector (chosen n) ⁻¹'
-          positiveASecondStageFailureEvent m (D n) κ c v) =
+          positiveASecondStageFailureEvent mCurrent (D n) κ c v) =
         (RootIndexed.stepFieldLaw (Root := Root) μ) (A n) *
-          (finiteRootStepFieldLaw μ m) failure := by
+          (finiteRootStepFieldLaw μ mCurrent) failure := by
             simpa [failure] using hfactor
     _ ≤ (RootIndexed.stepFieldLaw (Root := Root) μ) (A n) *
-        ENNReal.ofReal (Real.exp (-((m : ℝ) * pzMean.toReal / 4))) := by
+        ENNReal.ofReal (Real.exp (-((mCurrent : ℝ) * pzMean.toReal / 4))) := by
           gcongr
 
 lemma eventually_measure_secondStageEnoughRoots_allAvoid_le
-    {m K : ℕ} [treeOrder : LinearOrder (RootIndexed.TreeNode (Fin m) ℕ)]
-    (hKm : K ≤ m)
+    {m : ℕ} {K : ℕ → ℕ}
+    [treeOrder : LinearOrder (RootIndexed.TreeNode (Fin m) ℕ)]
+    (hKm : ∀ n, K n ≤ m)
     (P : ℕ → RestartedPopulation m) (hP : ∀ n, (P n).FiniteSlices)
     {D generation : ℕ → ℕ}
     (hD : Tendsto (fun n => (D n : ℝ)) atTop atTop)
@@ -175,7 +184,7 @@ lemma eventually_measure_secondStageEnoughRoots_allAvoid_le
     (hκv : κ / c ^ 2 < v)
     (hterminal : κ / c ^ 2 ≤ 2 * v / 5)
     (hentranceWidth : (5 * (κ / c ^ 2) + v) / 2 ≤ c)
-    (hK : 0 < K)
+    (hK : ∀ᶠ n : ℕ in atTop, 0 < K n)
     [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
     [Countable (RootIndexed.TreeNode (Fin m) ℕ)]
     [MeasurableSingletonClass (RootIndexed.TreeNode (Fin m) ℕ)] :
@@ -184,29 +193,31 @@ lemma eventually_measure_secondStageEnoughRoots_allAvoid_le
         ∃ amplitude : ℝ, 0 < amplitude ∧
           ∀ᶠ n : ℕ in atTop,
             let pzMean := positiveASecondStagePZMean μ (D n) κ c v
-            let A := secondStageEnoughRoots (K := K) P hP generation n
+            let A := secondStageEnoughRoots (K := K n) P hP generation n
             (RootIndexed.stepFieldLaw (Root := Fin m) μ)
               (A ∩
                 RootIndexed.selectedSubtreeStepFieldVector
-                    (secondStageRoots hKm P hP generation n) ⁻¹'
-                  positiveASecondStageFailureEvent K (D n) κ c v) ≤
+                    (secondStageRoots (hKm n) P hP generation n) ⁻¹'
+                  positiveASecondStageFailureEvent (K n) (D n) κ c v) ≤
               (RootIndexed.stepFieldLaw (Root := Fin m) μ) A *
-                ENNReal.ofReal (Real.exp (-((K : ℝ) * pzMean.toReal / 4))) := by
-  let chosen := secondStageRoots hKm P hP generation
+                ENNReal.ofReal (Real.exp (-((K n : ℝ) * pzMean.toReal / 4))) := by
+  let chosen : ∀ n, RestartedField m → Fin (K n) →
+      RootIndexed.TreeNode (Fin m) ℕ :=
+    fun n => secondStageRoots (hKm n) P hP generation n
   let A : ℕ → Set (RestartedField m) :=
-    fun n => secondStageEnoughRoots (K := K) P hP generation n
+    fun n => secondStageEnoughRoots (K := K n) P hP generation n
   have hcount : ∀ n, (Set.range (chosen n)).Countable :=
-    secondStageRoots_countable hKm P hP generation
+    fun n => secondStageRoots_countable (hKm n) P hP generation n
   have hfiber : ∀ n roots, MeasurableSet[
       RootIndexed.stepFiltration (Root := Fin m) (α := ℕ) (X := ℝ)
         (generation n)]
       {field | chosen n field = roots} := by
     intro n roots
-    exact measurableSet_secondStageRoots_eq hKm P hP generation n roots
+    exact measurableSet_secondStageRoots_eq (hKm n) P hP generation n roots
   have hdepth : ∀ n field i, (chosen n field i).2.length = generation n :=
-    secondStageRoots_depth hKm P hP generation
+    fun n field i => secondStageRoots_depth (hKm n) P hP generation n field i
   have hinj : ∀ n field, Function.Injective (chosen n field) :=
-    secondStageRoots_injective hKm P hP generation
+    fun n field => secondStageRoots_injective (hKm n) P hP generation n field
   have hA : ∀ n, MeasurableSet[
       RootIndexed.stepFiltration (Root := Fin m) (α := ℕ) (X := ℝ)
         (generation n)] (A n) := by
@@ -217,6 +228,7 @@ lemma eventually_measure_secondStageEnoughRoots_allAvoid_le
     eventually_measure_predictableSecondStageRoots_allAvoid_le
       (Root := Fin m) (m := K) (D := D) (generation := generation)
       hD μ hboundary hcross hν hsigma hκ hc hv hκv hterminal hentranceWidth hK
+      (fun _ => inferInstance) (fun _ => inferInstance)
       chosen hcount hfiber hdepth hinj A hA
   refine ⟨entryQ, hentryQ, C, hC, bridgeQ, hbridgeQ, amplitude,
     hamplitude, ?_⟩

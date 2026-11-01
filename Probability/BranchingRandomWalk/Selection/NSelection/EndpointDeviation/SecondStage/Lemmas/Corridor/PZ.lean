@@ -17,16 +17,19 @@ import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Se
 
 The proof-chain lemma used in `SecondStage/Roots/Lemmas/AllAvoid.lean`,
 `eventually_measure_positiveASecondStage_allRootsAvoid_le_of_centeredSecondMoment`,
-combines the spine lower bound and the MRCA pair estimate. For all sufficiently
-large horizons, it gives
+combines the spine lower bound and the MRCA pair estimate. The number of
+independent roots may vary with the horizon: for every eventually positive
+sequence $m_n$, for all sufficiently large horizons it gives
 \[
-  \mathbb P(\text{each of the $m$ roots fails})
+  \mathbb P(\text{each of the $m_n$ roots fails})
   \le
-  \exp\!\left(-\frac{m}{4}
+  \exp\!\left(-\frac{m_n}{4}
     \left(\frac{M_-^2}{M_+ + Q}\right)_{\!\mathrm{toReal}}\right),
 \]
-where $M_-$ and $M_+$ are the lower and upper first-moment bounds and $Q$ is
-the summed MRCA pair bound in the theorem statement.
+with $m=m_n$, where $M_-$ and $M_+$ are the lower and upper first-moment
+bounds and $Q$ is the summed MRCA pair bound in the theorem statement. The
+spine and MRCA estimates supply a common horizon threshold independent of
+the sequence $m_n$.
 -/
 
 open Filter MeasureTheory ProbabilityTheory
@@ -94,9 +97,9 @@ lemma eventually_measure_positiveASecondStage_allRootsAvoid_le_of_centeredSecond
     (hκv : κ / c ^ 2 < v)
     (hterminal : κ / c ^ 2 ≤ 2 * v / 5)
     (hentranceWidth : (5 * (κ / c ^ 2) + v) / 2 ≤ c)
-    (m : ℕ) (hm : 0 < m)
-    [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
-    [Countable (RootIndexed.TreeNode (Fin m) ℕ)] :
+    (m : ℕ → ℕ) (hm : ∀ᶠ n : ℕ in atTop, 0 < m n)
+    (hTree : ∀ n, MeasurableSpace (RootIndexed.TreeNode (Fin (m n)) ℕ))
+    (hCountable : ∀ n, Countable (RootIndexed.TreeNode (Fin (m n)) ℕ)) :
     ∃ entryQ : ℝ≥0∞, 0 < entryQ ∧
       ∃ C : ℝ, C < 0 ∧ ∃ bridgeQ : ℝ≥0∞, 0 < bridgeQ ∧
         ∃ amplitude : ℝ, 0 < amplitude ∧
@@ -122,11 +125,11 @@ lemma eventually_measure_positiveASecondStage_allRootsAvoid_le_of_centeredSecond
                     {increment | RandomWalk.history j.val 0 increment ∈
                       affineCorridorPrefix j.val 0 drift width})
             let pzMean := lowerMean ^ 2 / (upperMean + pairBound)
-            (finiteRootStepFieldLaw μ m)
-              {field : FiniteRootStepField m ℕ ℝ |
-                ∀ r : Fin m,
+            (finiteRootStepFieldLaw μ (m n))
+              {field : FiniteRootStepField (m n) ℕ ℝ |
+                ∀ r : Fin (m n),
                   field r ∉ hasPathHistoryIn (ι := ℕ) realPotential (D n) 0 corridor} ≤
-              ENNReal.ofReal (Real.exp (-((m : ℝ) * pzMean.toReal / 4))) := by
+              ENNReal.ofReal (Real.exp (-((m n : ℝ) * pzMean.toReal / 4))) := by
   let ν : Measure ℝ := tiltedPotentialLaw realPotential (-1) μ
   have : IsProbabilityMeasure ν :=
     tiltedPotentialLaw_isProbability realPotential μ hboundary
@@ -141,7 +144,10 @@ lemma eventually_measure_positiveASecondStage_allRootsAvoid_le_of_centeredSecond
   have : IsProbabilityMeasure (tiltedIncrementFieldLaw realPotential μ) :=
     tiltedIncrementFieldLaw_isProbability realPotential μ hboundary
   refine ⟨entryQ, hentryQ, C, hC, bridgeQ, hbridgeQ, amplitude, hamplitude, ?_⟩
-  filter_upwards [hspineLower] with n hspineLowerN
+  filter_upwards [hspineLower, hm] with n hspineLowerN hmN
+  let mCurrent := m n
+  letI : MeasurableSpace (RootIndexed.TreeNode (Fin mCurrent) ℕ) := hTree n
+  letI : Countable (RootIndexed.TreeNode (Fin mCurrent) ℕ) := hCountable n
   let drift := positiveASecondStageSlope κ c (D n)
   let width := positiveASecondStageWidth c (D n)
   let terminalExtra := v * ((D n : ℝ) ^ ((1 : ℝ) / 3))
@@ -192,24 +198,24 @@ lemma eventually_measure_positiveASecondStage_allRootsAvoid_le_of_centeredSecond
     · exact Real.rpow_nonneg (by positivity) _
   have hlowCount :=
     measure_positiveAFirstStageLowCount_le_of_affineCorridorDrawdown
-      m (D n) hm 0 0 drift width endpointUpper hdrift
+      mCurrent (D n) hmN 0 0 drift width endpointUpper hdrift
       μ hboundary hcross (fun _ => (1 : ℝ≥0∞)) (by simp)
       (by intro k; simpa using hdrawdown k) hspine
   have havoidSubset :
-      {field : FiniteRootStepField m ℕ ℝ |
-        ∀ r : Fin m,
+      {field : FiniteRootStepField mCurrent ℕ ℝ |
+        ∀ r : Fin mCurrent,
           field r ∉ hasPathHistoryIn (ι := ℕ) realPotential (D n) 0 corridor} ⊆
-      {field : FiniteRootStepField m ℕ ℝ |
-        (∑ r : Fin m,
+      {field : FiniteRootStepField mCurrent ℕ ℝ |
+        (∑ r : Fin mCurrent,
           (hasPathHistoryIn (ι := ℕ) realPotential (D n) 0 corridor).indicator
             (fun _ => (1 : ℝ)) (field r)) ≤
-            (m : ℝ) * pzMean.toReal / 4} := by
+            (mCurrent : ℝ) * pzMean.toReal / 4} := by
     intro field hall
-    change (∑ r : Fin m,
+    change (∑ r : Fin mCurrent,
       (hasPathHistoryIn (ι := ℕ) realPotential (D n) 0 corridor).indicator
-        (fun _ => (1 : ℝ)) (field r)) ≤ (m : ℝ) * pzMean.toReal / 4
+        (fun _ => (1 : ℝ)) (field r)) ≤ (mCurrent : ℝ) * pzMean.toReal / 4
     have hzero :
-        (∑ r : Fin m,
+        (∑ r : Fin mCurrent,
           (hasPathHistoryIn (ι := ℕ) realPotential (D n) 0 corridor).indicator
             (fun _ => (1 : ℝ)) (field r)) = 0 := by
       apply Finset.sum_eq_zero
@@ -218,26 +224,26 @@ lemma eventually_measure_positiveASecondStage_allRootsAvoid_le_of_centeredSecond
     rw [hzero]
     positivity
   have hlowCount' :
-      (finiteRootStepFieldLaw μ m)
-        {field : FiniteRootStepField m ℕ ℝ |
-          (∑ r : Fin m,
+      (finiteRootStepFieldLaw μ mCurrent)
+        {field : FiniteRootStepField mCurrent ℕ ℝ |
+          (∑ r : Fin mCurrent,
             (hasPathHistoryIn (ι := ℕ) realPotential (D n) 0 corridor).indicator
               (fun _ => (1 : ℝ)) (field r)) ≤
-              (m : ℝ) * pzMean.toReal / 4} ≤
-        ENNReal.ofReal (Real.exp (-((m : ℝ) * pzMean.toReal / 4))) := by
+              (mCurrent : ℝ) * pzMean.toReal / 4} ≤
+        ENNReal.ofReal (Real.exp (-((mCurrent : ℝ) * pzMean.toReal / 4))) := by
     simpa [corridor, spineEvent, lowerMean, upperMean, pairBound, pzMean,
       drift, width, endpointUpper] using hlowCount
   calc
-    (finiteRootStepFieldLaw μ m)
-      {field : FiniteRootStepField m ℕ ℝ |
-        ∀ r : Fin m,
+    (finiteRootStepFieldLaw μ mCurrent)
+      {field : FiniteRootStepField mCurrent ℕ ℝ |
+        ∀ r : Fin mCurrent,
           field r ∉ hasPathHistoryIn (ι := ℕ) realPotential (D n) 0 corridor} ≤
-      (finiteRootStepFieldLaw μ m)
-        {field : FiniteRootStepField m ℕ ℝ |
-          (∑ r : Fin m,
+      (finiteRootStepFieldLaw μ mCurrent)
+        {field : FiniteRootStepField mCurrent ℕ ℝ |
+          (∑ r : Fin mCurrent,
             (hasPathHistoryIn (ι := ℕ) realPotential (D n) 0 corridor).indicator
               (fun _ => (1 : ℝ)) (field r)) ≤
-              (m : ℝ) * pzMean.toReal / 4} := measure_mono havoidSubset
-    _ ≤ ENNReal.ofReal (Real.exp (-((m : ℝ) * pzMean.toReal / 4))) := hlowCount'
+              (mCurrent : ℝ) * pzMean.toReal / 4} := measure_mono havoidSubset
+    _ ≤ ENNReal.ofReal (Real.exp (-((mCurrent : ℝ) * pzMean.toReal / 4))) := hlowCount'
 
 end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation
