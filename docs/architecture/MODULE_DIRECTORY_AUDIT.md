@@ -28747,3 +28747,19 @@ terms of its `M₂` energy, and independence of normalized partition-cell paths
 under coordinatewise scaling. All three focused modules build successfully in
 a 3,450-job Lake build; no declarations or proofs changed. The audit now has
 97 remaining modules, 60 with public-declaration sections.
+
+
+## Branching-walk population and schedule formulas (2026-11-02)
+
+Added mathematical statements to the public headers of
+`Probability/BranchingRandomWalk/Population/Candidates/Ordering.lean` and
+`Population/Processes/StepSelection/{Basic,RootIndexed,SelectedPath}.lean`,
+`Processes/StepSelection/Concurrent/{Basic,Scheduled}.lean`, and
+`Processes/StepSelection/SplitSchedule/Definition/{Basic,Geometric,Roots}.lean`.
+They state candidate position/tie ordering, finite-step selected-population
+recursion and its path characterization, root-labelled and scheduled
+populations, first-success probabilities, and canonical root selection. All
+nine focused modules build successfully in a 3,177-job Lake build; no
+declarations or proofs changed. The formula-header audit now has 88 remaining
+modules, 51 with public-declaration sections, excluding Selection-owned paths
+from this pass.

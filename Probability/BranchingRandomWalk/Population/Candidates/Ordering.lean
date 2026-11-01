@@ -39,6 +39,19 @@ is used, so the position type is a parameter rather than `ℝ`.
   condition, every earlier realized sibling precedes a later realized
   sibling, including when their positions tie.
 
+For fixed increments and field, the position/address key orders candidates
+first by position and then by an address tie key. Appending a child adds its
+mark to the parent position:
+
+\[\begin{aligned}
+\operatorname{labelledPosition}(\operatorname{childAddress}(p,j))
+&=\operatorname{labelledPosition}(p)+\operatorname{value}'(\omega(p),j),\\
+\operatorname{candidateKey}(p)
+&=(\operatorname{labelledPosition}(p),\operatorname{addressTieKey}(p)),\\
+\operatorname{candidateEarlier}(p,q)&\Longleftrightarrow
+  \operatorname{candidateKey}(p)<_{\mathrm{lex}}\operatorname{candidateKey}(q).
+\end{aligned}\]
+
 -/
 
 open MeasureTheory

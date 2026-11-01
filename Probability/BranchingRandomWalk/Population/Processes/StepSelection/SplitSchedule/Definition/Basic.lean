@@ -35,6 +35,19 @@ coordinate measurability results remain unrestricted.
   Their countable-slot specializations are
   `concurrentComponent_adapted_of_countable` and
   `concurrentPopulation_adapted_of_countable`.
+
+The split schedule starts from `initial`; each following trial starts at the
+first generation when the preceding trial has reached the population
+threshold:
+
+\[\begin{aligned}
+T_0&=T_{\mathrm{initial}},\\
+T_{i+1}&=\inf\{n\in\mathbb N:T_i\le n\ \wedge\
+  m\le|\operatorname{component}(i,n)|\}.
+\end{aligned}\]
+
+Each `T_i` is a stopping time under the hypotheses of the public adaptation
+theorem.
 -/
 
 open MeasureTheory

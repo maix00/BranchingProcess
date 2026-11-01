@@ -27,6 +27,20 @@ used off the success event, so the selector remains total.
   `roots_range_countable` proves countability of its range, and
   `roots_mem_population_of_firstSuccess_eq` places the selected addresses in
   the successful generation.
+
+When a finite population has at least `N` addresses, its ordered first `N`
+addresses provide the root family; on the first-success event these roots are
+distinct and belong to the successful generation:
+
+\[\begin{aligned}
+N\le|P|&\Longrightarrow
+  \operatorname{rootFamily}_N(r,P)(i)
+  =(r,\operatorname{orderEmbOfCardLe}(P,N,i)),\\
+K=k,\quad N\le|P_k|&\Longrightarrow
+  \operatorname{roots}_N(i)
+  =(\operatorname{root}(k),\operatorname{orderEmbOfCardLe}(P_k,N,i)),\\
+i\ne j&\Longrightarrow\operatorname{roots}_N(i)\ne\operatorname{roots}_N(j).
+\end{aligned}\]
 -/
 
 @[expose] public section
