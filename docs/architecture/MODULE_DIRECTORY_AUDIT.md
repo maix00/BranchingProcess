@@ -28312,5 +28312,8 @@ Added display formulas to the public headers in
 They now state the stable characteristic-defect limits, Gaussian quadratic
 defect cancellation and normalized iid-sum limit, integrability and centering
 conclusions, tail little-o estimates, and quadratic norming asymptotics. The
-six focused modules build successfully in a 3,401-job Lake build. No
-declarations or proofs changed.
+six focused modules build successfully in a 3,401-job Lake build. Exact
+theorem-type review further separated the zero-centering hypothesis for the
+mean conclusion and removed an unnecessary centering qualification from the
+original-law closed-tail bound; the two corrected headers build in a
+3,376-job focused Lake build. No declarations or proofs changed.
