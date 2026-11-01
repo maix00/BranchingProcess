@@ -28797,3 +28797,17 @@ identities, restart-spine position comparisons, and finite-activity Poisson
 integrability. All 18 focused modules build successfully in a 3,587-job Lake
 build; no declarations or proofs changed. The formula-header audit now has 40
 remaining modules, three with public-declaration sections.
+
+## Whole-tree header scan, including selection APIs (2026-11-02)
+
+The scan now includes the Selection subtrees as well as the rest of the Lean
+source tree. It found 75 headers without mathematical notation among 1,642
+modules; 36 of those headers document public declarations. Added mathematical
+statements to
+Combinatorics/BranchingWalk/Cloud/Order/DynamicSelection.lean,
+Combinatorics/BranchingWalk/Cloud/Order/Selection.lean, and
+Probability/BranchingRandomWalk/Genealogy/RootIndexed/Field/Selection.lean.
+The formulas state finite dynamic matching, rankwise comparison after
+first-\(N\) restriction, and generation-filtration measurability of
+position-ranked selection. All three modules build successfully in a 3,275-job
+Lake build. The remaining public-header candidates are being audited next.

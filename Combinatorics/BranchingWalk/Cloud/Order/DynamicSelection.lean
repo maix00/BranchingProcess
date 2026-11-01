@@ -19,6 +19,22 @@ produces one injective matching into the selected target population.
 
 ## Public declarations
 
+If the cloud \(C\) injectively dominates \(D\) at time \(t\), then every
+retained source set \(R_t\subseteq C_t\) of size at most \(N\) injectively dominates the
+target's first \(N\) particles ordered by observed position, with particle
+labels breaking ties:
+
+\[R_t\subseteq C_t,\quad |R_t|\le N,\quad
+  C\succeq_{\mathrm{inj},\phi}D
+  \Longrightarrow
+  C_R\succeq_{\mathrm{inj},\phi}D^{[N]}_{\phi,t}.\]
+
+Here \(C_R\) is \(C\) restricted to \(R_t\), and
+\(D^{[N]}_{\phi,t}:=\operatorname{selectFirstNBy}
+(N,q\mapsto\phi(\operatorname{position}_D(q)),D_t)\).
+The relation \(\succeq_{\mathrm{inj},\phi}\) denotes injective domination
+after observing positions through \(\phi\).
+
 - `Cloud.injectivelyDominatesBy_selectFirstNBy_of_subset` says that a retained
   source set `R ⊆ C.particles t` with `card(R) ≤ N` is injectively dominated by
   the target set selected by `selectFirstNBy N`, whenever `C` injectively
