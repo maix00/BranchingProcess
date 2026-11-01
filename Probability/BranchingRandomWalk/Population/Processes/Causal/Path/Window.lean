@@ -30,6 +30,21 @@ public import Mathlib.MeasureTheory.MeasurableSpace.Defs
 
 This file connects the genealogical killed-process representation to the
 finite-history events consumed by path-functional many-to-one identities.
+
+For a path history `H_n` and restart anchor `a_c(k)`, the path event and its
+relation to the killed population are
+
+\[\begin{aligned}
+\operatorname{InRestartedWindows}(c,W,H_n)
+&\Longleftrightarrow
+  \forall k\le n,\ H_n(k)-H_n(a_c(k))\in W_k,\\
+q\in P_n(\omega)
+&\Longrightarrow
+  \operatorname{InRestartedWindows}
+    \bigl(c,W,\operatorname{pathHistory}(q,\omega)\bigr),\\
+\operatorname{pathHistory}(q,\omega)(k)
+&=\operatorname{positionAtGeneration}(q_{\le k},\omega).
+\end{aligned}\]
 -/
 
 @[expose] public section

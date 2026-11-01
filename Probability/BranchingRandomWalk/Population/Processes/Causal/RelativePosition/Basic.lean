@@ -28,6 +28,17 @@ public import Probability.Process.Path.Restart.Basic
 This file defines the general set-valued killed populations obtained from
 ancestral relative-position windows.  Finiteness and real-valued weights are
 separate layers.
+
+For a label `q` at generation `n` and an anchor `a≤n`, the relative position
+is its position minus that of its length-`a` prefix. The restarted construction
+uses the anchor
+
+\[\begin{aligned}
+\operatorname{relPos}_{a,n}(q,\omega)
+&=\operatorname{positionAtGeneration}(q,\omega)
+ -\operatorname{positionAtGeneration}(q_{\le a},\omega),\\
+a_c(n)&=\begin{cases}0,&n\le c,\\c,&c<n.\end{cases}
+\end{aligned}\]
 -/
 
 @[expose] public section
