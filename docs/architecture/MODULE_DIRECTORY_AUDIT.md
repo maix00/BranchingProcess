@@ -28566,3 +28566,16 @@ preservation for fixed rank installation. All six focused modules build
 successfully in a 3,165-job Lake build; no declarations or proofs changed. The
 same formula-header review now has 170 remaining modules out of 1,642
 production modules.
+
+## Recursive coupling formulas (2026-11-02)
+
+Added mathematical statements to the public headers of
+`Probability/BranchingRandomWalk/Coupling/Field/{Adaptive,Position}.lean`,
+`Field/Ranked/{Basic,Measurability/Observables}.lean`, and
+`Coupling/Rank/Block/Basic.lean`. They record the right-copy past and
+predictable gluing law, preservation of the selected population and shallow
+positions across recursive stages, the fresh block coordinate map, and the
+measurable population and position observables. All five focused modules build
+successfully in a 3,322-job Lake build; no declarations or proofs changed. The
+same formula-header review now has 165 remaining modules out of 1,642
+production modules.

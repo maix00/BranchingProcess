@@ -20,7 +20,16 @@ For `F_n = rankInstalledField n`, define the selected population
 `P_n(ω) = selectedPopulationTotalized N roots initial d φ n (F_n ω)` and the
 observed position `X_n(ω,p) = observedPositionAtGeneration initial d φ n
 (F_n ω) p`. The declarations prove that `P_n` and `X_n(·,p)` are measurable
-for the generation-`n` domain flow.
+for the generation-`n` domain flow. Thus
+
+\[\begin{aligned}
+P_n(\omega)&=\operatorname{selectedPopulationTotalized}(
+N,\mathrm{roots},\mathrm{initial},d,\phi,n,F_n(\omega)),\\
+P_n&\text{ is measurable for the generation-}n\text{ domain flow},\\
+X_n(\omega,p)&=\operatorname{observedPositionAtGeneration}(
+\mathrm{initial},d,\phi,n,F_n(\omega))(p),\\
+\omega&\mapsto X_n(\omega,p)\text{ is measurable for that domain flow}.
+\end{aligned}\]
 
 * `RootIndexed.selectedPopulationTotalized_rankInstalledField_measurable_of_lt`
   proves the selected-population assertion from hypotheses on the strictly

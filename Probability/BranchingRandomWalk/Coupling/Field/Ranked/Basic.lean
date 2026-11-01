@@ -18,6 +18,19 @@ and product-law layers.
 
 ## Public declarations
 
+The two copies are coordinate restrictions, and the fresh block choice at
+stage `n` uses ranks evaluated on the preceding installed field `F_n`:
+
+\[\begin{aligned}
+\operatorname{left}(F)(r,u)&=F(\operatorname{inl}(r),u),\\
+\operatorname{right}(F)(r,u)&=F(\operatorname{inr}(r),u),\\
+\operatorname{rankInstalledBlockChoice}_n(F)
+&=\operatorname{rankBlockChoice}_n
+  (\operatorname{sourceValue}_n(F),
+   \operatorname{targetValue}_n(F,F_n),
+   \operatorname{source}_n(F),\operatorname{target}_n(F,F_n)).
+\end{aligned}\]
+
 * `RootIndexed.StepField.left` and `RootIndexed.StepField.right` are the
   projections `f(inl r, u)` and `f(inr r, u)` from a two-copy field.
 * `RootIndexed.rankInstalledBlockChoice` forms the generation-`n` coordinate
