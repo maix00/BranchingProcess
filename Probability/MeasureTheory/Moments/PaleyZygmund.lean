@@ -14,6 +14,21 @@ import Mathlib.MeasureTheory.Integral.MeanInequalities
 /-!
 # Paley--Zygmund inequalities
 
+For a nonnegative square-integrable random variable `X`, write
+`m=∫ X dμ` and `s=∫ X² dμ`. If `s>0` and `0≤t<m`, then
+
+\[
+\mu\{X\geq t\}\geq\frac{(m-t)^2}{s}.
+\]
+
+In particular, if `2t≤m` and `s≤C m²` for `C>0`, the same event has
+probability at least `1/(4C)`. For a measurable `ENNReal`-valued `X`, set
+`m=∫⁻ X dμ`. If `s>0` and `∫⁻ X² dμ≤s<∞`, the third declaration gives
+
+\[
+\frac{m^2}{s}\leq\mu\{X\neq0\}.
+\]
+
 ## Public declarations
 
 * `ProbabilityTheory.measure_ge_threshold_of_moments`: for a nonnegative

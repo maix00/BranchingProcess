@@ -28349,3 +28349,13 @@ the public headers in `Probability/Process/Martingale/Convex.lean`,
 `Brownian/Construction/PreBrownianModification.lean`. The three focused
 modules build successfully in a 3,334-job Lake build; no declarations or
 proofs changed.
+
+## General moment and small-value bounds (2026-11-01)
+
+Added the fourth-moment bound from an exponential moment, the threshold and
+nonzero-event Paley--Zygmund inequalities, and the positive-probability
+small-value conclusion to the headers in
+`Probability/MeasureTheory/Moments/{ExponentialMoment,PaleyZygmund}.lean` and
+`Probability/MeasureTheory/SmallValue/Basic.lean`. The three focused modules
+build successfully in a 3,555-job Lake build; no declarations or proofs
+changed.
