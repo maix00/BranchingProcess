@@ -17,6 +17,29 @@ import Probability.Distributions.Stable.LevyMeasure.Scaling
 The positive and negative tail identities retain their constants as the
 actual Lévy masses outside `[-1,1]`; no density classification is needed.
 
+Let `ν = T.levyMeasure`.  For every `r>0`, homogeneity yields the positive
+tail
+
+\[
+\nu((r,\infty))
+=\operatorname{ENNReal.ofReal}((1/r)^\alpha)\nu((1,\infty)).
+\]
+
+The negative tail satisfies
+
+\[
+\nu(( -\infty,-r))
+=\operatorname{ENNReal.ofReal}((1/r)^\alpha)\nu(( -\infty,-1)).
+\]
+
+Adding these disjoint tails gives the two-sided absolute tail
+
+\[
+\nu(\{x:|x|>r\})
+=\operatorname{ENNReal.ofReal}((1/r)^\alpha)
+  \bigl(\nu(( -\infty,-1))+\nu((1,\infty))\bigr).
+\]
+
 ## Public declarations
 
 * `levyMeasure_Ioi_inv` and `levyMeasure_Iio_neg_inv` scale the positive and

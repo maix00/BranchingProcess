@@ -28230,6 +28230,16 @@ index-two Gaussian characterization. The formulas were checked against the
 public definitions and theorem statements. The five focused modules build
 successfully in a 3,518-job Lake build; no declarations or proofs changed.
 
+## Stable Lévy-measure formulas (2026-11-01)
+
+Added formulas to `Stable/LevyMeasure/Scaling.lean`,
+`Stable/LevyMeasure/Tail/{Homogeneous,Windows}.lean`, and
+`Stable/LevyMeasure/SignOfJumps.lean`. The headers now state measure
+homogeneity, the Gaussian coefficient's two scaling laws, positive and
+negative power tails, positive mass in bounded windows, and the two-sided jump
+conclusion from the CDF condition. The four modules build successfully in a
+3,558-job Lake build; no declarations or proofs changed.
+
 ## Skorokhod path and time-change formulas (2026-11-01)
 
 Reviewed and completed the mathematical formulas in the public module

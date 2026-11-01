@@ -28,6 +28,25 @@ import Probability.RandomMeasure.Poisson.Intensity.LevyCutoff
 The sign condition on the one-step distribution forces the uncompensated
 Lévy measure to charge both open half-lines when the index is below one.
 
+Write `ν = T.levyMeasure`.  For `0<α<1`, a CDF value strictly between zero
+and one gives both jump signs positive mass:
+
+\[
+0<\operatorname{cdf}(\mu,0)<1
+\quad\Longrightarrow\quad
+\nu(( -\infty,0))>0\ \land\ \nu((0,\infty))>0.
+\]
+
+The homogeneous tail formulas then give positive mass in every pair of
+bounded windows.  In particular, for `0<r<R`,
+
+\[
+\nu((-R,-r))>0\ \land\ \nu((r,R))>0.
+\]
+
+These window bounds provide positive finite jump intensities when choosing
+cutoffs whose small-jump first-moment integral is below a prescribed `ρ>0`.
+
 ## Public declarations
 
 * `IsStrictlyAlphaStable.twoSidedLevyMass_of_cdfAtZero` states that
