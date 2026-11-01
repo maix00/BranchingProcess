@@ -28609,3 +28609,18 @@ focused modules build successfully in a 3,134-job Lake build; no declarations
 or proofs changed. The same formula-header review now has 156 remaining modules
 out of 1,642 modules when Selection-owned paths are omitted from this pass
 (119 candidates have public-declaration sections).
+
+
+## Lineage and causal-capacity formulas (2026-11-02)
+
+Added mathematical statements to the public headers of
+`Probability/BranchingRandomWalk/Genealogy/Lineage/PreSampled.lean`,
+`Genealogy/RootIndexed/Lineage.lean`, and
+`Population/Processes/Causal/Capacity/{Basic,FirstMoment,Spine}.lean`. The
+formulas record the reserve-lineage recursion and declaration-time shift,
+finite-horizon capacity event and Markov estimate, spine first-moment bounds,
+and their finite-root capacity consequence. All five focused modules build
+successfully in a 3,272-job Lake build; no declarations or proofs changed. The
+same formula-header review now has 151 remaining modules out of 1,642 modules
+when Selection-owned paths are omitted from this pass (114 candidates have
+public-declaration sections).

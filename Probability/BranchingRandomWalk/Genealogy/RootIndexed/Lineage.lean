@@ -18,6 +18,19 @@ The root, trial, child-slot, and mark types are independent parameters.  Each
 root/trial pair carries a pre-sampled causal lineage in the common product
 field.
 
+Writing `p_{r,i,n}` for that path, its defining recursion and declaration-time
+shift are
+
+\[
+|p_{r,i,n}(\omega)|=n,
+\qquad
+p_{r,i,n+1}(\omega)
+=\operatorname{step}_{r,i}\bigl(p_{r,i,n}(\omega),
+  \omega(r,p_{r,i,n}(\omega))\bigr),
+\qquad
+\sigma_{r,i}(\omega)=\tau_{r,i}(\omega)+1.
+\]
+
 - `RootIndexed.ReserveLineages` assigns to each root and trial a causal path
   in the common root-indexed step field; `path_adapted` and
   `path_adapted_of_countable_range` give its generation measurability.

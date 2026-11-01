@@ -34,6 +34,19 @@ The capacity event is defined for an arbitrary causal population.  A
 finite union bound and Markov's inequality reduce its failure probability to
 first moments of the generation sizes.  No independence, offspring order, or
 second moment is used.
+
+For a causal population `P`, its extended size and finite-horizon capacity
+event satisfy
+
+\[\begin{aligned}
+\operatorname{size}_n(\omega)
+&=\bigl(P_n(\omega)\bigr)_{\mathrm{encard}}^{\mathrm{toENNReal}},\\
+\operatorname{Cap}_{N,T}
+&=\{\omega:\forall k\le T,\ |P_k(\omega)|_{\mathrm{encard}}\le N\},\\
+\mu(\operatorname{Cap}_{N,T}^{\complement})
+&\le\sum_{k=0}^{T}
+  \frac{\int^-\operatorname{size}_k(\omega)\,d\mu(\omega)}{N+1}.
+\end{aligned}\]
 -/
 
 open MeasureTheory
