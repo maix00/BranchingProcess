@@ -29001,3 +29001,22 @@ used in the proof, documented in
 [`Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Analysis/SpecialFunctions/Pow/Asymptotics.html).
 The changed module passes `lake env lean` and the targeted Lake build; its
 existing natural-index theorem remains available under the same declaration.
+
+## Endpoint fourth-moment growth at logarithmic scale (2026-11-02)
+
+Added `Selection/NSelection/EndpointDeviation/Endpoint/PositiveMoment/Sequence.lean`
+as the positive-moment sequence interface. If $H_n/\log^3 N_n$ converges to a
+finite real limit,
+$m_n>0$ eventually, and $\log m_n\le a\log N_n$, it proves that for each
+fixed $c\in\mathbb R$ there is $C\ge0$ such that
+\[
+  \int\left(\frac{M_n}{\log N_n}-c\right)^4
+  \le C\left(1+\log^8 N_n\right)
+\]
+eventually on the common countable-root environment. The proof is the direct
+normalization of the fixed-horizon fourth-moment estimate in `L2Closure.lean`;
+it supplies the moment-growth hypothesis for the arbitrary-scale
+`FromPolynomialTails.lean` criterion. The module is a complete endpoint
+sequence result and remains at the `PositiveMoment` subject level, alongside
+the fixed-horizon interfaces in `Basic.lean`, `Closure.lean`, and
+`L2Closure.lean`. Its focused Lean check and target Lake build pass.
