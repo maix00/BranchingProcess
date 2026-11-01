@@ -39,6 +39,11 @@ walk or realized population is introduced.
 `RootIndexed.childAddress` is its structural one-step extension. The
 parent/child operations are defined for arbitrary address-label types and do
 not assume a branching law or a population.
+
+The one-step relation is `\(IsChild(u,v)\iff\exists i,\ v=u++[i]\)`.
+For indexed addresses,
+`\(parent(r,u++[i])=(r,u)\)` and
+`\(childAddress((r,u),i)=(r,u++[i])\)`.
 -/
 
 @[expose] public section

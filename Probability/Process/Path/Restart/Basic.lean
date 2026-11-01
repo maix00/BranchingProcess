@@ -26,6 +26,10 @@ public import Mathlib.Data.Fin.Basic
 
 The schedule and finite-path predicate use only discrete time and subtraction;
 they do not impose a probability law or a real-valued state space.
+
+The schedule is `\(r_c(k)=0\)` for `\(k\le c\)` and
+`\(r_c(k)=c\)` for `\(c<k\)`. A path is in the restarted windows exactly
+when `\(x_k-x_{r_c(k)}\in W_k\)` for every `\(k\le n\)`.
 -/
 
 @[expose] public section

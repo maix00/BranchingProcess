@@ -29,7 +29,13 @@ endpoints.
 boundary `m` and normalized by subtracting `X 0`. Its endpoint identity is
 `rationalUniformPrefixPath_top`; for `k < m`,
 `rationalUniformPrefixPath_blockIncrement_eq` identifies its `k`th block
-increment with the translated process block. -/
+increment with the translated process block.
+
+For `\(N=blocks\)`, the boundary is `\(\tau_k=\min(k,N)/N\)`, and the
+stopped path is `\(X^{[m]}(q)=X(\min(q,\tau_m))-X(0)\)`. For `\(k<m\)`,
+its translated increment on block `k` is
+`\(X(\tau_k+q/N)-X(\tau_k)\)`.
+-/
 
 @[expose] public section
 

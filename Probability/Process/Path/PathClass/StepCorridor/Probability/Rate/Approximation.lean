@@ -47,6 +47,11 @@ Trajectories,” *Theory of Probability and Its Applications* 19(4) (1975),
   `tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_stepCorridorRates`
   give the corresponding unique probability-rate limit, the latter from
   individual admissible-corridor rates.
+
+The energy comparison and probability limit are
+`\(A\subseteq B\Rightarrow E(B)\le E(A)\)` and
+`\(\log P(paths_n\in G)/g_n\to\kappa H\)`, respectively, where the
+approximation supplies `\(H=\lim E(A.inner(n))=\lim E(A.outer(n))\)`.
 -/
 
 open Filter MeasureTheory

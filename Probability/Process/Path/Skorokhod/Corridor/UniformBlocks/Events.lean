@@ -32,6 +32,11 @@ and its process event; `measurableSet_rationalUniformPrefixBlockSet`,
 and stopped-path descriptions, and the initial and recursive identities.
 `rationalUniformBlockTubeEvent_zero_eq_horizon` identifies the first-block
 event with the corresponding process event on the interval of length `1/N`.
+
+For `\(N=blocks\)` and `\(\tau_j(q)=(j+q)/N\)`, one block event is
+`\(\{\omega\mid(q\mapsto X(\tau_j(q))-X(\tau_j(0)))\in Tube(width)\}\)`.
+The prefix event imposes the common path condition on every `\(j<N\)` with
+`\(j<m\)`.
 -/
 
 @[expose] public section

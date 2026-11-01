@@ -32,6 +32,11 @@ The public declarations are:
 * `Combinatorics.UlamHarris.RootIndexed.Tree Root α`: the family type
   `Root → Tree α`; each coordinate carries the root, parent-closure, and
   sibling-closure properties of `Combinatorics.UlamHarris.Tree`.
+
+Writing `C=T.carrier`, its defining conditions are
+`\([]\in C\)`, `\(u++v\in C\Rightarrow u\in C\)`, and
+`\(u++[j]\in C\land i<j\Rightarrow u++[i]\in C\)`. A root-indexed tree
+satisfies these conditions coordinatewise.
 -/
 
 @[expose] public section

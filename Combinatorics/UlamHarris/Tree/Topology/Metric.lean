@@ -63,6 +63,11 @@ instance is needed to use it.
   `borel_uniformTopology_eq_borel_metricTopology` transfer the corresponding
   Borel structures; `borel_metricTopology_eq_cylinder_of_countable_basis`
   gives the cylinder equality from a countable measurable basis.
+
+The distance is `\(treeDist(T,T')=((1+heightCongr(T,T'):ℝ≥0∞)^{-1}).toReal\)`;
+its truncation-ball formula is
+`\(truncationBall(T,n+1)=\{S\mid treeDist(S,T)<(1+n)^{-1}\}\)`. For
+root-indexed trees, `\(treeDist(T,T')=\sup_r treeDist(T(r),T'(r))\)`.
 -/
 
 @[expose] public section

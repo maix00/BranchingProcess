@@ -45,6 +45,12 @@ one-block lower bound. The process need not be stable.
 * `HasIndepIncrements.linearTube_probability_pos_of_feedbackBlocks` proves
   `P(∀ t ∈ [0,1], |X t - X 0 - v t| < η) > 0` from the two positive
   correction probabilities.
+
+If both correction events have probability at least `\(q>0\)`, the
+adaptive prefix has probability at least `\(q^N\)`. Positive probabilities
+for both full short-block correction events therefore imply
+`\(P(\{\omega\mid\forall t\in[0,1],\
+|X_t(\omega)-X_0(\omega)-vt|<\eta\})>0\)`.
 -/
 
 @[expose] public section

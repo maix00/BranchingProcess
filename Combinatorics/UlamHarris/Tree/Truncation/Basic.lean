@@ -26,6 +26,11 @@ the Borel structure on trees; the topology is in `Tree/Topology/Basic.lean`.
 - `Tree.truncationBall T n` is `{S | S.truncate n = T.truncate n}`;
   `mem_truncationBall` gives membership, and `truncationBall_disjoint` proves
   balls at the same depth with distinct centers are disjoint.
+
+Membership in a truncation is characterized by
+`\(u\in(T.truncate\ n).carrier\iff |u|\le n\land u\in T.carrier\)`;
+truncating twice gives
+`\((T.truncate\ n).truncate\ m=T.truncate(\min(n,m))\)`.
 -/
 
 @[expose] public section

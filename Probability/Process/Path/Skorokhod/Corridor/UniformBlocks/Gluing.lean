@@ -41,6 +41,12 @@ concatenation. The geometric implications
 endpoint is in `[binLower, binUpper]` and the next translated block stays in
 `(lower - binLower, upper - binUpper)`, then the concatenated path stays in
 `(lower, upper)` throughout that block.
+
+The one-block implication is
+`\(x_0\in[b_-,b_+]\land\forall q,\ a-b_-<y(q)<b-b_+\Rightarrow
+a<x_0+y(q)<b\)`,
+where `\(y\)` is the translated block increment and `\((a,b)\)` is the
+target spatial corridor.
 -/
 
 @[expose] public section

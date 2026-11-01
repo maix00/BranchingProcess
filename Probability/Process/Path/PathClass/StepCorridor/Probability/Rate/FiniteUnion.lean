@@ -24,6 +24,11 @@ assume or conceal the still separate `M₂` probability estimate.
   `log P(Cᵢ) / g → κ E(Cᵢ)`, then the finite union satisfies
   `log P(⋃ᵢ Cᵢ) / g → κ * minᵢ E(Cᵢ)` under the displayed positivity and rate
   assumptions.
+
+Precisely, the component limits
+`\(\log\mathbb P(C_i)/g\to\kappa E(C_i)\)` give
+`\(\log\mathbb P(\bigcup_i C_i)/g\to
+\kappa\min_i E(C_i)\)` for the finite union.
 -/
 
 open Filter MeasureTheory

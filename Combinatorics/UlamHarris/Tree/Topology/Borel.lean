@@ -71,6 +71,12 @@ graph seen by other files.
   `borel_productTruncationTopology_eq_cylinder_of_countable_basis` and
   `borel_uniformTopology_eq_cylinder_of_countable_basis` theorems give
   equality when the corresponding topology has a countable measurable basis.
+
+For countable labels, the principal identity is
+`\(\mathcal B(treePointwiseTopology)=instMeasurableSpaceTree\)`. The
+truncation topology always satisfies
+`\(instMeasurableSpaceTree\le\mathcal B(treeTruncationTopology)\)`;
+countability of its truncation-ball basis gives equality.
 -/
 
 @[expose] public section

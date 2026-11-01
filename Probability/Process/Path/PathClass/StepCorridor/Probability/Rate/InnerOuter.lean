@@ -29,6 +29,11 @@ approximation.
 * `exists_inner_outer_log_probability_ratio_of_hasVanishingEnergyGapApproximation`
   obtains such an approximation and matching inner- and outer-measure rates
   from the vanishing-energy-gap hypothesis.
+
+The common-rate conclusion is
+`\(\log(P.innerMeasure(G).toReal)/g\to\kappa H\)` and
+`\(\log(P(G).toReal)/g\to\kappa H\)`,
+with `\(0<H\le E(A.inner(0))\)`.
 -/
 
 open Filter MeasureTheory

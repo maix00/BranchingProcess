@@ -30,6 +30,12 @@ partition. Each cell is parametrized by rational unit-interval coordinates.
 Independent increments make the resulting translated cell paths mutually
 independent. The cell immediately before a knot includes its left endpoint;
 the value at the right endpoint is kept as a coordinate for return events.
+
+For the common refinement with grid `\(0=t_0<t_1<\cdots<t_m=1\)`,
+the translated cell paths
+`\((X_{t_{i-1}+(t_i-t_{i-1})q}-X_{t_{i-1}})_{q\in Q_1^\circ}\)`,
+`\(1\le i\le m\)`, are mutually independent; `\(Q_1^\circ=\mathbb Q
+\cap[0,1)\)` excludes each cell's right endpoint.
 -/
 
 open Skorokhod.PathClass.StepCorridor

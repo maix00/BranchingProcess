@@ -52,6 +52,12 @@ The measurability results are `measurable_rationalTubeBlockIncrement`,
 `rationalCoordinateOscillationTube_subset_iInter_uniformBlockEvents` states
 that a path with oscillation less than `width` has each block increment path
 in the same oscillation tube.
+
+For `\(N=blocks\)`, the block time and process increment are
+`\(\tau_j(q)=(j+q)/N\)` and
+`\(X^{(j)}(q)=X(\tau_j(q))-X(\tau_j(0))\)`. Each block has elapsed time
+`\(q/N\)`, and `\(X\in Tube(\delta)\)` implies
+`\(X^{(j)}\in Tube(\delta)\)` for every `\(j<N\)`.
 -/
 
 open MeasureTheory
