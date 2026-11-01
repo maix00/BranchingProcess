@@ -15,6 +15,14 @@ import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 /-!
 # First-order asymptotics of the complex exponential
 
+For every `z : ℂ`, the real-parameter difference quotient converges to `z`:
+
+\[
+\lim_{\substack{t\to 0\\t\ne 0}}
+\frac{e^{tz}-1}{t}=z,
+\qquad t\in\mathbb{R},\ z\in\mathbb{C}.
+\]
+
 ## Public declarations
 
 `Complex.tendsto_exp_mul_real_div` gives the slope limit of the exponential along

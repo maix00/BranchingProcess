@@ -17,6 +17,19 @@ import Order.Filter.SlowDiagonal
 This module strengthens the order-theoretic slow diagonal selector with a
 real-valued error constraint. It does not depend on regular variation.
 
+If each fixed parameter eventually satisfies `P` and `rₙ → 0` through
+eventually nonnegative values, the selector can grow while making its product
+with `rₙ` vanish:
+
+\[
+\left(\forall k\ \exists N_k\ \forall n\ge N_k,\ P(k,n)\right),\quad
+r_n\longrightarrow 0,\quad
+\exists N_r\ \forall n\ge N_r,\ r_n\ge 0
+\ \Longrightarrow\ \exists\,d:\mathbb{N}\to\mathbb{N},\quad
+d\text{ monotone},\quad d_n\longrightarrow\infty,\quad
+\exists N\ \forall n\ge N,\ P(d_n,n),\quad d_n r_n\longrightarrow 0.
+\]
+
 Its public result is
 `Asymptotics.exists_tendsto_slowDiagonal_mul_tendsto_zero`: if every fixed
 parameter eventually satisfies `P k n`, and `r n → 0` with `r` eventually

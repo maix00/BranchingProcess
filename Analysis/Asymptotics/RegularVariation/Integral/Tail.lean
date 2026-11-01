@@ -13,6 +13,34 @@ public import Mathlib.MeasureTheory.Integral.IntervalIntegral.IntegrationByParts
 /-!
 # Regular variation of integrated monotone tails
 
+For a nonnegative antitone regularly varying tail `H` of index `-α`, the
+first and second integrated tails have indices `2-α` and `3-α`, with the
+following asymptotic ratios. Under the boundedness and interval-integrability
+hypotheses stated below, the last equivalence also gives the converse:
+
+\[
+\begin{gathered}
+\operatorname{firstTailIntegral}(H,x)
+:=\int_0^{\max\{x,0\}}tH(t)\,dt,
+\qquad
+\operatorname{secondTailIntegral}(H,x)
+:=\int_0^x\operatorname{firstTailIntegral}(H,t)\,dt,\\[2pt]
+\frac{\operatorname{firstTailIntegral}(H,x)}{x^2H(x)}
+\longrightarrow\frac{1}{2-\alpha},
+\qquad
+\frac{\operatorname{secondTailIntegral}(H,x)}{x^3H(x)}\longrightarrow
+\frac{1}{(2-\alpha)(3-\alpha)},
+\qquad x\to\infty,\quad 0<\alpha<2,\\[2pt]
+\left[\begin{gathered}
+H\text{ antitone},\quad 0\le H(x)\le 1\ (x\ge0),\\
+t\mapsto tH(t)\text{ is interval-integrable}
+\end{gathered}\right]
+\Longrightarrow\quad
+H\in RV_{-\alpha}\quad\Longleftrightarrow\quad
+\operatorname{secondTailIntegral}(H,\cdot)\in RV_{3-\alpha}.
+\end{gathered}
+\]
+
 ## Public declarations
 
 * `firstTailIntegral H x = ∫₀^{max(x,0)} t H(t) dt` and

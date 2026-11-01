@@ -15,6 +15,23 @@ public import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals
 /-!
 # Integral asymptotics for regularly varying tails
 
+These are the monotone forms of Karamata's integral theorem. For a
+nonnegative regularly varying function with index `ρ`, and for an
+antitone tail with index `-β` bounded above by one on the nonnegative
+half-line, the normalized integrals converge as follows:
+
+\[
+\begin{aligned}
+g\text{ nondecreasing},\ \rho>-1:
+&\quad \frac{\int_0^U g(t)\,dt}{U g(U)}\longrightarrow\frac{1}{\rho+1},\\
+g\text{ nonincreasing},\ 0\le\beta<1:
+&\quad \frac{\int_0^U g(t)\,dt}{U g(U)}\longrightarrow\frac{1}{1-\beta},\\
+g\text{ nonincreasing},\ \beta>1:
+&\quad \frac{\int_U^\infty g(t)\,dt}{U g(U)}\longrightarrow\frac{1}{\beta-1},
+\end{aligned}
+\qquad U\to\infty.
+\]
+
 ## Public declarations
 
 * `Asymptotics.IsRegularlyVaryingAtTop.tendsto_intervalIntegral_div_mul_of_monotone`: for nonnegative monotone
