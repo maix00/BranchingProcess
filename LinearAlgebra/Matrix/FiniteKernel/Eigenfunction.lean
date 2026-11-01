@@ -14,6 +14,23 @@ public section
 /-!
 # Finite kernel powers and bounded eigenfunctions
 
+For a finite matrix `K`, a right eigenvector identity propagates to every
+matrix power; when `K` has nonnegative entries and the eigenfunction is
+bounded between `lower` and `upper`, it bounds each powered row sum:
+
+\[
+K w=\lambda w
+\quad\Longrightarrow\quad
+\sum_j (K^n)_{ij}w_j=\lambda^n w_i,
+\]
+\[
+0\le K_{ij},\quad \mathrm{lower}\le w_j\le\mathrm{upper}
+\quad\Longrightarrow\quad
+\mathrm{lower}\sum_j(K^n)_{ij}
+\le\lambda^n w_i
+\le\mathrm{upper}\sum_j(K^n)_{ij}.
+\]
+
 ## Public declarations
 
 * For a finite index type and a commutative semiring `R`,

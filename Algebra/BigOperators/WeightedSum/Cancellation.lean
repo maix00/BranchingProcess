@@ -19,6 +19,18 @@ unnormalized sum can be recovered from its normalized weighted average. These
 identities use only finite sums and field operations; probability and
 size-biased measure applications belong in their own modules.
 
+Writing `Z=\sum_{i\in s}w_i\ne0`, the normalized weights sum to one, and
+they recover both the weighted sum and, when all `w_i` are nonzero, the
+unweighted sum:
+
+\[
+\sum_{i\in s}\frac{w_i}{Z}=1,\qquad
+\sum_{i\in s}w_i g_i
+=Z\sum_{i\in s}\frac{w_i}{Z}g_i,\qquad
+\sum_{i\in s}g_i
+=Z\sum_{i\in s}\frac{w_i}{Z}\frac{g_i}{w_i}.
+\]
+
 ## Public declarations
 
 For `Z = ∑ i ∈ s, w i ≠ 0`, `normalized_weight_sum_eq_one` states
