@@ -14,6 +14,16 @@ import Mathlib.Data.Nat.Find
 /-!
 # Leaders in finite sequences of partial sums
 
+An index is a leader if a later partial sum, no later than the horizon, is
+strictly smaller; the sum of the increments at all leaders is nonpositive:
+
+\[
+\operatorname{leaderIndices}(S,n)
+=\{u<n:\exists j,\ u<j\le n\text{ and }S_j<S_u\},
+\qquad
+\sum_{u\in\operatorname{leaderIndices}(S,n)}(S_{u+1}-S_u)\le0.
+\]
+
 ## Public declarations
 
 * `Combinatorics.Sequence.leaderIndices`: the indices `u < n` for which some later partial sum

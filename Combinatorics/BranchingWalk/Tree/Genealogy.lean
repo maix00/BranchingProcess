@@ -20,6 +20,21 @@ A branching tree embeds into a branching walk with unit marks. Conversely,
 the genealogy of a sibling-closed branching walk is a branching tree. This is
 the deterministic seam between pure and spatial branching.
 
+The step field of a tree records exactly its one-slot extensions, and its
+surviving addresses recover the tree:
+
+\[
+\operatorname{survive}(\operatorname{stepField}(T,u),i)
+\Longleftrightarrow u\mathbin{++}[i]\in T,
+\qquad
+\operatorname{surviveAlong}(T.\operatorname{stepField},[],u)
+\Longleftrightarrow u\in T.
+\]
+For a sibling-closed step field, the associated genealogical tree has carrier
+\[
+\{u:\operatorname{surviveAlong}(\beta.\operatorname{step}(r),[],u)\}.
+\]
+
 The public API is:
 
 - `Tree.stepField T` records a child at slot `i` exactly when `u ++ [i]` is

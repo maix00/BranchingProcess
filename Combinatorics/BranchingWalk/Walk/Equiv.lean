@@ -12,6 +12,16 @@ public import Mathlib.Logic.Equiv.Basic
 /-!
 # Singleton walks as optional increment sequences
 
+Every singleton-slot walk is determined by its initial position and the
+optional mark on each generation edge:
+
+\[
+\operatorname{Walk}(Mark,Position)
+\simeq Position\times(\mathbb{N}\to\operatorname{Option}(Mark)),
+\qquad
+\operatorname{TreeNode}(\mathrm{PUnit})\simeq\mathbb{N}.
+\]
+
 ## Public declarations
 
 * `Combinatorics.Branching.Walk.nodeEquivNat` identifies `TreeNode PUnit` with

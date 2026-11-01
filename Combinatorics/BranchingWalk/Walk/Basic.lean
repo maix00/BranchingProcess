@@ -52,6 +52,17 @@ public import Combinatorics.BranchingWalk.Basic.Position.Basic
 A singleton-slot branching walk is represented by its initial position and
 optional increment sequence; the corresponding equivalence is in
 `Walk/Equiv.lean`.
+
+For an everywhere-present increment sequence, the position at generation `n`
+is the initial position plus the first `n` mapped increments. An optional
+sequence records the edge value, including absence, at each generation:
+
+\[
+\operatorname{position}(\operatorname{ofIncrements}(x,\xi),d,\mathrm{PUnit.unit},\operatorname{lineNode}(n))
+=x+\sum_{k=0}^{n-1}d(\xi_k),
+\qquad
+\operatorname{increments}(\operatorname{ofOptionalIncrements}(x,\eta))=\eta.
+\]
 -/
 
 @[expose] public section
