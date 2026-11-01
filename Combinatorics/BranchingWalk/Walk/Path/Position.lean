@@ -15,6 +15,20 @@ public import Algebra.BigOperators.AdditivePath.Block
 
 ## Public declarations
 
+For `d : Mark → Position`, `x₀ : Position`, and `ξ : ℕ → Mark`, set
+`β = ofIncrements x₀ ξ`. The position along its unique lineage is the
+additive path from `x₀`; its block increment gives the corresponding
+two-time identity:
+
+\[\begin{aligned}
+\operatorname{position}(\operatorname{ofIncrements}(x_0,\xi),d,\mathrm{unit},\operatorname{lineNode}(n))
+&=x_0+\operatorname{displacement}(n,d\circ\xi)
+=x_0+\sum_{j=0}^{n-1}d(\xi(j)),\\
+\operatorname{position}(\operatorname{ofIncrements}(x_0,\xi),d,\mathrm{unit},\operatorname{lineNode}(m+n))
+&=\operatorname{position}(\operatorname{ofIncrements}(x_0,\xi),d,\mathrm{unit},\operatorname{lineNode}(m))
++\operatorname{blockSum}(m,n,d\circ\xi).
+\end{aligned}\]
+
 For `d : Mark → Position`, `initial : Position`, and
 `increment : ℕ → Mark`, the declarations in
 `Combinatorics.Branching.Walk` give the path correspondence:

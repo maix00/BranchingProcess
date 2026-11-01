@@ -14,6 +14,14 @@ public import Combinatorics.BranchingWalk.Step.Ordering.Sibling.Closed
 
 ## Public declarations
 
+Sibling-closedness is inherited pointwise from the existing order on each
+step's slot type:
+
+\[
+\operatorname{IsSiblingClosed}(\beta)
+\iff \forall u,\ \operatorname{Step.IsSiblingClosed}(\beta(u)).
+\]
+
 `StepField.IsSiblingClosed β` means that every local step is sibling-closed in
 its existing slot order: `∀ u, Step.IsSiblingClosed (β u)`. This is the direct
 property, distinct from `StepField.IsSiblingClosable`, which says that an

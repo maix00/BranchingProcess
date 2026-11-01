@@ -28,6 +28,16 @@ The set `ancestors β p` consists of the `q` with `IsDescendant β q p`, while
 
 ## Public declarations
 
+Ancestorhood reverses the descendant relation; the generation identity is
+
+\[
+\operatorname{IsAncestor}_\beta(p,q)
+\iff \operatorname{IsDescendant}_\beta(q,p),
+\qquad
+\operatorname{generation}(p.2)
+=\operatorname{generation}(q.2)+\operatorname{generationAfter}(q.2,p.2).
+\]
+
 * `IsAncestor β p q` is defined by `IsDescendant β q p`.
 * `isAncestor_iff_isDescendant` states
   `IsAncestor β p q ↔ IsDescendant β q p`.

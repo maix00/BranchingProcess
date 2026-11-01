@@ -28498,3 +28498,17 @@ measure and its total mass, generation-update invariance, and sibling closure
 conditions. All eight focused modules build successfully in a 1,917-job Lake
 build; no declarations or proofs changed. The same header scan now has 211
 remaining modules for manual formula review out of 1,642 production modules.
+
+## Branching genealogy and path formulas (2026-11-01)
+
+Added explicit mathematical interfaces to the public headers of
+`Combinatorics/BranchingWalk/Basic/Genealogy/{Descendant,Ancestor,GenerationSize}.lean`,
+`Basic/Position/{Displace,DisplacementMap}.lean`, `Basic/Ordering/Orderable.lean`,
+`Basic/Sibling/{Closable,Closed,ParentSibling}.lean`, `Basic/Survival/Basic.lean`,
+and `Walk/Path/Position.lean`. The formulas state the descendant and ancestor
+relations, generation-size recursion, displacement and mapped-potential
+identities, pointwise orderability and sibling closure, surviving-generation
+membership, and additive-path position formulas. All eleven focused modules
+build successfully in a 1,815-job Lake build; no declarations or proofs
+changed. The same formula-header review now has 201 remaining modules out of
+1,642 production modules.

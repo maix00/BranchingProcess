@@ -14,6 +14,14 @@ public import Combinatorics.UlamHarris.Generation
 
 ## Public declarations
 
+For `p = (r,u)` and `q = (s,v)`, the defining relation is
+
+\[
+\operatorname{IsDescendant}_\beta((r,u),(s,v))
+\iff \exists t,\ s=r\land v=u\mathbin{++}t\land
+\operatorname{surviveAlong}(\beta.\operatorname{step}(r),u,t).
+\]
+
 For particles `p = (r,u)` and `q = (s,v)`, `IsDescendant β p q` is the
 relation `∃ t, q = (r, u ++ t) ∧ surviveAlong (β.step r) u t`.
 `isDescendant_refl` and `isDescendant_trans` prove reflexivity and
