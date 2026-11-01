@@ -22,6 +22,21 @@ field.  It makes no countability assumption on roots or offspring slots.
 
 ## Public declarations
 
+The fixed paste reads a matched source coordinate and uses the target's
+fallback coordinate when no match exists; injective matching preserves the
+root-indexed product law:
+
+\[\begin{aligned}
+\operatorname{paste}(p,F)(q)
+&=\begin{cases}
+F(\operatorname{inl}(r),u),&p(q)=\operatorname{some}(r,u),\\
+F(\operatorname{inr}(q.1),q.2),&p(q)=\operatorname{none},
+\end{cases}\\
+\operatorname{paste}(p)_{\#}\,
+\operatorname{stepFieldLaw}_{R\oplus R}^{\mu}
+&=\operatorname{stepFieldLaw}_{R}^{\mu}.
+\end{aligned}\]
+
 * `RootIndexed.StepField.pasteCoordinate` reads a target coordinate from the
   source summand when its guarded preimage exists and otherwise from the
   fallback summand.

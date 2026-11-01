@@ -28553,3 +28553,16 @@ Arzelà–Ascoli tightness criterion, and the finite-cover outer-measure bound.
 All five focused modules build successfully in a 2,767-job Lake build; no
 declarations or proofs changed. The same formula-header review now has 176
 remaining modules out of 1,642 production modules.
+
+## Random-field coupling formulas (2026-11-02)
+
+Added explicit statements to the public headers of
+`Probability/BranchingRandomWalk/Coupling/Field/{Preimage,Law}.lean` and
+`Coupling/Rank/{Choice,Field,Preimage,Law}.lean`. The formulas state the
+matched-source/fallback coordinate rule, preservation of the product field
+law under injective pasting, generation-preserving injective rank choices,
+recovery of source steps and values at equal-rank matches, and product-law
+preservation for fixed rank installation. All six focused modules build
+successfully in a 3,165-job Lake build; no declarations or proofs changed. The
+same formula-header review now has 170 remaining modules out of 1,642
+production modules.

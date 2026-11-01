@@ -17,6 +17,18 @@ measurability under finite-support hypotheses.
 
 ## Public declarations
 
+Installing source steps by equal dynamic rank recovers the source step at
+each canonical match:
+
+\[
+p\in\operatorname{source}(\omega),\quad
+|\operatorname{source}(\omega)|\le|\operatorname{target}(\omega)|
+\Longrightarrow
+\operatorname{rankInstalledStepField}(\omega)
+  (\operatorname{matchByRankOrSelf}(p))
+=\operatorname{sourceStep}(\omega,p).
+\]
+
 * `RootIndexed.rankInstalledStepField` installs each source step at the
   target node of equal dynamic rank and leaves unmatched target steps at
   their fallback values.
