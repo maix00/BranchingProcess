@@ -22,6 +22,16 @@ process.
 
 ## Public declarations
 
+For a cutoff \(M\), the expected positive part of the reserve-spine
+potential after \(n\) generations is bounded by the cutoff contribution and
+the one-step first moment:
+
+\[\mathbb E\!\left[\max\{0,\,S_n\}\right]
+  \le Mn+n\,\mathbb E_\mu[Y^+],\]
+
+where \(S_n\) is the spine potential and \(Y\) is the positive part of the
+first-selected-slot potential.
+
 - `integral_selectedReserveSpinePath_positivePart_le`: integrates the
   pathwise reserve-spine estimate to obtain a linear first-moment bound from
   the one-step selected-slot observable.

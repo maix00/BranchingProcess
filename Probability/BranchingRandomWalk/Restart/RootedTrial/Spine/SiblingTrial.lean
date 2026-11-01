@@ -18,6 +18,11 @@ any finite selected offspring set of cardinality at least two.
 
 ## Public declarations
 
+For a stopped-past event \(A\), a first-sibling growth event \(G\), and a
+second-sibling reserve event \(R\), the branching property gives
+
+\[\mathbb P(A\cap G\cap R)=\mathbb P(A)\,\mathbb P(G)\,\mathbb P(R).\]
+
 `RootIndexed.ReserveLineages.sigma_firstGrowth_secondReserve_factorization`
 factors the joint event of a measurable stopped past, a finite growth-trial
 success in the first-child subtree, and an arbitrary measurable event in the

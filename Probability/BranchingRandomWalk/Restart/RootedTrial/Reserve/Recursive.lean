@@ -25,6 +25,14 @@ population with an adapted killed process.
 
 ## Public declarations
 
+On finite first-split completion, the two sibling descendant fields \(U_1\)
+and \(U_2\) have the product branching law. If one growth trial succeeds
+with probability \(p\), the recursively defined all-failure events \(A_k\)
+satisfy
+
+\[\operatorname{Law}(U_1,U_2)=\nu\otimes\nu,\qquad
+  \mathbb P(A_{k+1})=(1-p)\mathbb P(A_k)=(1-p)^{k+1}.\]
+
 - `selectedPopulationFirstSplitSubtrees`,
   `selectedPopulationFirstSplitSubtrees_measurable`, and
   `selectedPopulationFirstSplitSubtrees_map_eq_product`: define the two

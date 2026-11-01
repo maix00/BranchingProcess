@@ -23,6 +23,22 @@ observable success event for each enabled reserve candidate.
 
 ## Public declarations
 
+For \(N\ge1\) and exponent \(a\), define the logarithmic horizon
+
+\[d_N=\left\lceil\frac{a\log N+\log 2}{\log\rho}\right\rceil_+.\]
+
+Under the nonempty supercritical offspring hypotheses, a finite reserve
+cutoff \(M\) gives, uniformly in \(N\),
+
+\[\mathbb P_{\mathrm{offspringFieldLaw}(L.\mathrm{sorted})}
+  \!\left\{\omega:\
+    \operatorname{growthTrialSuccess}
+      (S,\lfloor N^a\rfloor_+,2^{d_N},d_N,\omega)\right\}
+  \ge\frac{1}{4K(\rho,v)},\]
+
+where \(S\) is the cutoff reserve selector and \(K\) is the normalized
+second-moment constant.
+
 * `exists_reserveGrowthTrialSuccess_probability_lower_bound` states that under
   nonempty supercritical offspring assumptions there is a finite reserve cutoff
   `M` such that, for every `N ≥ 1`, the probability of a trial reaching

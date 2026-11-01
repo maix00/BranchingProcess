@@ -23,6 +23,14 @@ gains the probability of the failure event exactly.
 
 ## Public declarations
 
+For a reserve subtree selected from an exploration domain and an event
+\(E\) measurable in that domain, the absolute first moment factors as
+
+\[\int |g(F(\omega))|\,\mathbf 1_E(\omega)\,d\nu(\omega)
+  =\left(\int |g(F(\omega))|\,d\nu(\omega)\right)\nu(E),\]
+
+where \(F(\omega)\) is the selected fresh subtree field.
+
 - `BranchingExplorationDomains.selected_fresh_subtree_observable_independent`:
   a measurable observable of a selected fresh subtree is independent of the
   explored domain.

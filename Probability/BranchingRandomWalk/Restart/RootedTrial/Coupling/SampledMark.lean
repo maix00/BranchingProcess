@@ -21,6 +21,12 @@ addresses are chosen adaptively from earlier marks.
 
 ## Public declarations
 
+Let \(X_n\) be the step sampled at the reserve-spine address of depth \(n\).
+Predictable sampling preserves the one-step law and independence:
+
+\[\operatorname{Law}(X_n)=\mu,\qquad
+  (X_n)_{n\ge0}\text{ is an independent family}.\]
+
 - `selectedReserveSpineFutureRoots`,
   `selectedReserveSpineFutureRoots_countable`,
   `selectedReserveSpineFutureRoots_fiber_measurable`,

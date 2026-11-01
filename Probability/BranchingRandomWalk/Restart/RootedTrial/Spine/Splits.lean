@@ -18,6 +18,14 @@ split count, and every ordinal split-completion time, is adapted/stopping.
 
 ## Public declarations
 
+The number of splits observed through generation \(n\) is the sum of the
+live-spine split indicators, and the \(i\)-th split completion is the first
+generation when this count reaches \(i\):
+
+\[N_n=\sum_{k=0}^{n-1}
+  \mathbf 1_{\{\mathrm{alive}(k)\wedge\mathrm{split}(k)\}},\qquad
+  \tau_i=\inf\{n:N_n\ge i\}.\]
+
 `selectedReserveSpineSplitCount`, `selectedReserveSpineSplitCount_eq_sum_indicators`,
 and `selectedReserveSpineSplitCount_measurable` define the number of live
 splits observed before generation `n`, identify it with the finite sum of the

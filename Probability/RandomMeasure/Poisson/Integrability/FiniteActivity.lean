@@ -19,6 +19,15 @@ that realized measure, even when its intensity first moment is infinite.
 
 ## Public declarations
 
+If the intensity \(\lambda\) has finite total mass, then the realized
+Poisson point measure \(\Xi\) is finite almost surely, and every measurable
+real function is integrable against \(\Xi\) almost surely:
+
+\[\lambda(X)<\infty\Longrightarrow
+  \mathbb P(\Xi(X)<\infty)=1,\qquad
+  \forall f\text{ measurable},\ \mathbb P\!\left(
+    \int|f|\,d\Xi<\infty\right)=1.\]
+
 * `integrable_poissonRandomMeasure_of_finite_count` shows that a measurable
   real function is integrable against each realized point measure whose total
   mass is finite.
