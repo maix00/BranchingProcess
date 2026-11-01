@@ -33,6 +33,20 @@ A finite partial step chooses one of finitely many weighted branches.
 A branch returning `none` is killed.  This file identifies the total mass of
 the iterated sub-Markov kernel with the recursively accumulated weight of all
 surviving branch histories.
+
+Writing `W_n(a)` for the surviving weight and `w` for the branch weights,
+the recursive and history-sum descriptions agree with the kernel mass:
+
+\[\begin{aligned}
+W_0(a)&=1,\\
+W_{n+1}(a)&=\sum_{k\in\xi}w(k)
+  \begin{cases}W_n(b)&\mathrm{next}(a,k)=\mathrm{some}(b),\\
+  0&\mathrm{next}(a,k)=\mathrm{none},\end{cases}\\
+W_n(a)&=\sum_{h:\operatorname{Fin}(n)\to\xi}
+  \left(\prod_{k:\operatorname{Fin}(n)}w(h(k))\right)
+  \mathbf 1_{\{\mathrm{runPartialSteps}(\mathrm{next},n,a,h)\ne\mathrm{none}\}},\\
+\bigl(\operatorname{ofFinitePartialStep}(w,\mathrm{next})^n\bigr)(a,\mathrm{univ})&=W_n(a).
+\end{aligned}\]
 -/
 
 @[expose] public section

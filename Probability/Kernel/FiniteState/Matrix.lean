@@ -50,6 +50,16 @@ remains `ProbabilityTheory.Kernel`.
 * `ProbabilityTheory.Kernel.isSubMarkovKernel_ofRealMatrix` states that
   `Matrix.IsRowSubstochastic M` implies
   `IsSubMarkovKernel (Kernel.ofRealMatrix M)`.
+
+For a finite state space `\iota`, write `K_M` for `Kernel.ofRealMatrix M`.
+Its action, composition law, and iterates are
+
+\[\begin{aligned}
+K_M(i,A)&=\sum_{j\in\iota}\operatorname{ofReal}(M_{ij})\,\mathbf 1_A(j),\\
+M,N\ge0&\Longrightarrow K_{MN}=K_N\circ_K K_M,\\
+M\ge0&\Longrightarrow (K_M)^n=K_{M^n},\\
+M\text{ row-substochastic}&\Longrightarrow K_M\text{ is sub-Markov}.
+\end{aligned}\]
 -/
 
 @[expose] public section

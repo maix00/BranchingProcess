@@ -28694,3 +28694,18 @@ focused modules build successfully in a 2,837-job Lake build; no declarations
 or proofs changed. The same formula-header review now has 125 remaining
 modules out of 1,642 when Selection-owned directories are excluded from this
 pass (88 candidates have public-declaration sections).
+
+
+## Kernel, characteristic-function, and stable-law formulas (2026-11-02)
+
+Added formulas to `Probability/Kernel/{FiniteState/Matrix,Survival/Return/Bridge,Step/FiniteBranches/Survival}.lean`,
+`Probability/Distributions/CharacteristicFunction/Zero.lean`,
+`Distributions/InfinitelyDivisible/LevyKhintchine/Semigroup/Basic.lean`,
+and `Distributions/Stable/Operations/{Convolution,Scaling}.lean`. They state
+matrix-kernel action and composition, finite-branch survival recursion and
+kernel mass, return-bridge lower and upper bounds, the characteristic-function
+midpoint estimate, the convolution-semigroup exponent law, and stability under
+scaling. All seven focused modules build successfully in a 3,439-job Lake
+build; no declarations or proofs changed. The same review now has 118 remaining
+modules out of 1,642 (81 have public-declaration sections), excluding the
+separately scoped Selection directories.

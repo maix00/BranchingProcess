@@ -26,6 +26,14 @@ import Mathlib.Analysis.Matrix.Order
 
 The estimate follows from positive definiteness of characteristic functions and applies to
 all probability measures on real inner product spaces.
+
+With `\widehat\mu(\xi)=\operatorname{charFun}(\mu,\xi)`, the midpoint estimate is
+
+\[
+\widehat\mu(\xi_0)=0
+\quad\Longrightarrow\quad
+\left|\widehat\mu\!\left(\frac{\xi_0}{2}\right)\right|\le\frac34.
+\]
 -/
 
 @[expose] public section
