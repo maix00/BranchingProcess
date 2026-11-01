@@ -19,6 +19,26 @@ For a strictly stable law with `α < 1`, the small-jump first moment exists.
 The canonical Lévy–Khintchine drift equals this moment, so the drift in the
 uncompensated finite-variation representation vanishes.
 
+For the canonical Lévy--Khintchine triple `T`, the adjusted drift
+`T.drift - T.smallJumpMean` vanishes below index one:
+
+\[
+T.\mathrm{uncompensatedDrift}
+=T.\mathrm{drift}-T.\mathrm{smallJumpMean}=0.
+\]
+
+The exponent and characteristic function are then given by the uncompensated
+jump integral:
+
+\[
+\begin{aligned}
+T.\mathrm{exponent}(\xi)
+&=\int_{\mathbb R}(e^{i\xi x}-1)\,T.\mathrm{levyMeasure}(dx),\\
+\operatorname{charFun}_\mu(\xi)
+&=\exp\!\left(\int_{\mathbb R}(e^{i\xi x}-1)\,T.\mathrm{levyMeasure}(dx)\right).
+\end{aligned}
+\]
+
 ## Public declarations
 
 * `IsStrictlyAlphaStable.uncompensatedDrift_eq_zero` proves the adjusted

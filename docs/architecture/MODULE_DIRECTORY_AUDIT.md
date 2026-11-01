@@ -28359,3 +28359,13 @@ small-value conclusion to the headers in
 `Probability/MeasureTheory/SmallValue/Basic.lean`. The three focused modules
 build successfully in a 3,555-job Lake build; no declarations or proofs
 changed.
+
+## Stable support and finite-variation formulas (2026-11-01)
+
+Added the CDF-at-zero sign-mass implications, index-one exponential and
+half-line support conclusions, strict mass loss on bounded intervals, the
+small-jump moment bounds, and the uncompensated drift and exponent identities
+to the headers in `Probability/Distributions/Stable/Support/{Sign,IndexOne,BoundedSupport}.lean`
+and `LevyMeasure/Cutoff/{Variation,Drift}.lean`. The five focused modules
+build successfully in a 3,459-job Lake build; no declarations or proofs
+changed.

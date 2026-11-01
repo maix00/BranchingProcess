@@ -19,6 +19,18 @@ A bounded nondegenerate law has finite variance. The strict stability identity
 then forces the scaling exponent to be two. Consequently, a strictly stable
 law of index below two assigns positive mass outside every bounded interval.
 
+For a nondegenerate strictly `α`-stable law with `α<2`, every centered
+bounded interval has mass strictly below one. The same strict mass loss holds
+after positive power scaling:
+
+\[
+\begin{aligned}
+\mu([-r,r])&<1 &&(r\in\mathbb R),\\
+\bigl(\mu\circ(x\mapsto c^{1/\alpha}x)^{-1}\bigr)([-1,1])
+&<1 &&(c>0).
+\end{aligned}
+\]
+
 ## Public declarations
 
 * `measure_Icc_lt_one_of_lt_two` and

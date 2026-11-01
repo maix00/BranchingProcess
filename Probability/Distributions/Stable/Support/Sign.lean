@@ -18,6 +18,19 @@ distribution function at zero. Strict stability alone makes this condition
 imply positive mass on each open half-line; no atomlessness hypothesis is
 needed.
 
+Here `F_μ(0)=μ((−∞,0])` is Mathlib's right-continuous cumulative
+distribution function. Strict stability gives both sign masses, and strict
+left mass conversely gives the CDF condition:
+
+\[
+\begin{aligned}
+0<F_\mu(0)<1
+&\Longrightarrow \mu(({-\infty},0))>0\ \text{and}\ \mu((0,\infty))>0,\\
+0<\mu(({-\infty},0))<1
+&\Longrightarrow 0<F_\mu(0)<1.
+\end{aligned}
+\]
+
 ## Public declarations
 
 * `IsStrictlyAlphaStable.twoSidedMass_of_cdfAtZero`: `0 < F(0) < 1` implies
