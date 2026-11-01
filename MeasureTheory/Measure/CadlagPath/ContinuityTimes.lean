@@ -22,6 +22,16 @@ The proof uses Fubini on the graph of the pathwise discontinuity relation.
 
 ## Public declarations
 
+For a finite Borel law on real càdlàg paths, almost every deterministic time
+is a continuity time for almost every path, and these times are dense:
+
+\[\begin{aligned}
+&\text{for Lebesgue-a.e. }t\in[0,1],\quad
+\text{for }\mu\text{-a.e. }f,\ \operatorname{ContinuousAt}(f,t),\\
+&\{t\in[0,1]:\text{for }\mu\text{-a.e. }f,\ \operatorname{ContinuousAt}(f,t)\}
+\text{ is dense in }[0,1].
+\end{aligned}\]
+
 * `MeasureTheory.CadlagPath.rationalSideSeparation` is the Borel relation of
   pairs `(path, t)` for
   which rational times on opposite sides of `t`, arbitrarily close to `t`,

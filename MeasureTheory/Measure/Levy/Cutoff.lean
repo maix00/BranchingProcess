@@ -31,6 +31,16 @@ Theorem 8.1, differs only at the unit boundary and adjusts the drift parameter.
 
 ## Public declarations
 
+The unit truncation keeps jumps of size below one and vanishes outside that
+range; finite small-jump variation makes this correction integrable:
+
+\[
+h(x)=x\,\mathbf 1_{\{|x|<1\}},
+\qquad
+\int_{\{|x|\le1\}}|x|\,d\nu(x)<\infty
+\Longrightarrow \int |h(x)|\,d\nu(x)<\infty.
+\]
+
 * `smallJumpDisplacement x` is `x` when `|x| < 1` and `0` otherwise;
   `integrable_smallJumpDisplacement` proves its integrability from
   `IntegrableOn id {x | |x| ≤ 1} ν`.

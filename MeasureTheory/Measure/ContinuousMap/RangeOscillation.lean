@@ -15,6 +15,17 @@ public import Topology.ContinuousMap.Oscillation
 
 ## Public declarations
 
+For a path law concentrated on paths starting at zero, the range-oscillation
+event is covered by the finite family of open corridors:
+
+\[
+\mu(\operatorname{rangeOscillationSet}(w))
+\le\sum_{j\in\operatorname{Fin}(m)}\mu\Bigl(
+\operatorname{rangeInOpenInterval}
+(\operatorname{oscillationCoverLower}(w,m,j),
+\operatorname{oscillationCoverUpper}(w,m,j))\Bigr).
+\]
+
 - `MeasureTheory.ContinuousMap.measure_rangeOscillationSet_le_finiteCorridorCover`
   states that if `μ`-almost every path starts at zero, then the measure of the
   range-oscillation event is at most the sum of the measures of its finite

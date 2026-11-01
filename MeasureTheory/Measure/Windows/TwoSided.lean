@@ -17,6 +17,16 @@ window and its reflected negative window, with common inner and outer radii.
 
 ## Public declarations
 
+Positive mass on both sides of `v` yields positive mass on bounded windows
+with common inner and outer radii:
+
+\[
+\mu((v,\infty))>0\land\mu((-infty,v))>0
+\Longrightarrow
+\exists\,0<r<R,\quad
+\mu((v+r,v+R))>0\land\mu((v-R,v-r))>0.
+\]
+
 * `MeasureTheory.Measure.exists_twoSidedWindow_around_pos μ v` states that if
   `0 < μ (Ioi v)` and `0 < μ (Iio v)`, then there are `0 < r < R` with
   positive measure on both `(v + r, v + R)` and `(v - R, v - r)`.

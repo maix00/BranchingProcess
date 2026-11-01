@@ -17,6 +17,13 @@ measure on the real line.
 
 ## Public declarations
 
+Positive mass on `(0,∞)` is already present beyond some positive threshold:
+
+\[
+\mu((0,\infty))>0
+\Longrightarrow \exists w>0,\quad \mu((w,\infty))>0.
+\]
+
 * `MeasureTheory.exists_positive_tail_threshold` states that if `μ((0,∞))>0`, then some
   `w>0` satisfies `μ((w,∞))>0`.
 -/

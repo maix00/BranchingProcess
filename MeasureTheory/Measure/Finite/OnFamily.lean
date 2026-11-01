@@ -34,6 +34,17 @@ not this finiteness condition.
 
 ## Public declarations
 
+Finiteness on a family means finite mass on each of its members; the compact
+family specialization is Mathlib's locally finite-on-compacts property:
+
+\[
+\operatorname{IsFiniteOnFamily}(\nu,\mathcal A)
+\iff \forall A\in\mathcal A,\quad \nu(A)<\infty,
+\qquad
+\operatorname{IsFiniteOnFamily}(\nu,\operatorname{compactFamily}(E))
+\iff \operatorname{IsFiniteMeasureOnCompacts}(\nu).
+\]
+
 * `MeasureTheory.IsFiniteOnFamily ν 𝒜` means
   `∀ s ∈ 𝒜, ν s ≠ ∞`; `IsFiniteOnFamily.mono` restricts this property along
   `𝒜 ⊆ ℬ`, and `IsFiniteOnFamily.of_finiteMeasure` proves it for a finite
