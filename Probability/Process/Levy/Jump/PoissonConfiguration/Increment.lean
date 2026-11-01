@@ -19,6 +19,21 @@ For the small- and large-jump cutoff sources, pathwise integrability gives an
 almost-sure representation of every path increment by Poisson integrals over
 the intervening half-open time window.
 
+For fixed sources and cutoff `n`, write `X_n(t,ω)` for
+`poissonEntrancePath Ks Xs Kb Xb (Set.univ ×ˢ smallJumpBand n)
+(Set.univ ×ˢ largeJumpBand n) t ω`, and write
+`N_s(ω_s) = poissonRandomMeasure Ks Xs ω_s` and
+`N_b(ω_b) = poissonRandomMeasure Kb Xb ω_b`. A point `(r,x)` records its
+time and jump size. For `s≤t`, the increment is the sum of the two window
+integrals:
+
+\[
+X_n(t,\omega)-X_n(s,\omega)
+=\int \mathbf 1_{\{s<r\le t\}}x\,N_s(\omega_1)(d(r,x))
++\int \mathbf 1_{\{s<r\le t\}}x\,N_b(\omega_2)(d(r,x))
+\quad (P_s\otimes P_b)\text{-almost surely}.
+\]
+
 ## Public declarations
 
 - `ProbabilityTheory.ae_poissonEntrancePath_cutoff_sub_eq_timeWindow` states

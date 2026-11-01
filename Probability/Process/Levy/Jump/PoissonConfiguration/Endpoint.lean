@@ -19,6 +19,21 @@ At the final observation time, the path defined through the small- and
 large-jump cutoff bands agrees almost surely with the sum of the two full
 realized Poisson integrals.
 
+For fixed sources `Ks`, `Xs`, `Kb`, `Xb` and cutoff `n`, write
+`X_n(t,ω)` for
+`poissonEntrancePath Ks Xs Kb Xb (Set.univ ×ˢ smallJumpBand n)
+(Set.univ ×ˢ largeJumpBand n) t ω`.
+Write `N_s(ω_s) = poissonRandomMeasure Ks Xs ω_s` and
+`N_b(ω_b) = poissonRandomMeasure Kb Xb ω_b`; a point `z = (r,x)` records
+its time `r` and jump size `x`. For each fixed cutoff, the endpoint identity is
+
+\[
+X_n(\top,\omega)
+=\int x\,N_s(\omega_1)(d(r,x))
++\int x\,N_b(\omega_2)(d(r,x))
+\quad (P_s\otimes P_b)\text{-almost surely}.
+\]
+
 ## Public declarations
 
 - `ProbabilityTheory.ae_poissonEntrancePath_cutoff_top_eq_integral` states

@@ -16,6 +16,24 @@ import all Probability.Process.Stable.PathLaw.Lemmas.MonotoneGrid
 /-!
 # Stable position laws on monotone time grids
 
+Fix a monotone grid `t : Fin (n+1) → unitInterval` with `t 0=0` and a
+strictly `α`-stable law `μ`. Define the evaluation vector by
+`ev_t(f) = (f (t i))_{i=0}^n`. Let `Π_{α,μ,t}` be the product, over
+`i : Fin n`, of the stable increment laws
+`μ.map (x ↦ (t_{i+1}-t_i)^(1/α) x)`. The partial-sum map sends an increment
+vector `x : Fin n → ℝ` to the position vector whose `j`th coordinate is
+`\sum_{i<j} x_i`. The theorem states that the process position vector has
+this pushforward law and that the initial position is zero almost surely:
+
+\[
+P.map(ev_t)=\Pi_{α,μ,t}.map(\operatorname{Fin.partialSum}),
+\qquad
+P\{f:f(0)=0\}=1.
+\]
+
+Here `denseEvaluation t` is `ev_t`, and the `j`th coordinate of
+`Fin.partialSum x` is `\sum_{i<j}x_i`, with the empty sum equal to zero.
+
 `ProbabilityTheory.stableGridPositionLaws_of_strictGridPositionLaws` extends
 the finite-dimensional stable position law from strictly increasing grids to
 all monotone grids. More precisely, if the process law has the stable increment
@@ -34,7 +52,7 @@ coordinate and product-measure calculations in
   strict-grid stable increment laws imply both the almost-sure zero-start
   property and the position-vector law on every monotone grid. For each
   monotone `t` with `t 0 = ⊥`,
-  `P.map (denseEvaluation t) =
+  `P.map (ev_t) =
     (stableTimeLawProductProbability α t).map Fin.partialSum`.
 -/
 
