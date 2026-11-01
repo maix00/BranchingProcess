@@ -32,6 +32,17 @@ neither the definition nor its adaptation theorem enumerates the roots.
   `labelledPopulationOn_succ_subset`, `labelledPopulationOn_depth`, and
   `labelledPopulationOn_adapted` give the corresponding membership,
   generation, address, depth, and measurability properties.
+
+For each root `r`, let `P_n(r)` be its selected generation. These populations
+obey the same finite-step recursion, and the labelled population records the
+root coordinate together with each address:
+
+\[\begin{aligned}
+P_0(r)&=\{[]\},\\
+P_{n+1}(r)&=\operatorname{grow}\bigl(R,P_n(r),
+  \operatorname{frontierMarks}(n,\omega(r))\bigr),\\
+\mathcal P_n&=\{(r,u):r\in\mathcal R,\ u\in P_n(r)\}.
+\end{aligned}\]
 -/
 
 open MeasureTheory

@@ -30,6 +30,15 @@ completion times are handled separately by `Completion` and `Success`.
   `measure_failures_before` gives `(1 - p)^k`.
 * `mem_orderedPopulationDeclaration_univ_iff` identifies the global-clock
   declaration with completion of the first successful fixed-age trial.
+
+If the root assignment is injective, the trial outcomes are independent with
+success probability `p`, the one-root probability of reaching the target.
+For the zero-based first-success index `K`,
+
+\[\begin{aligned}
+\mathbb P(K=k)&=p(1-p)^k,\\
+\mathbb P(\text{the first }k\text{ trials fail})&=(1-p)^k.
+\end{aligned}\]
 -/
 
 open MeasureTheory ProbabilityTheory

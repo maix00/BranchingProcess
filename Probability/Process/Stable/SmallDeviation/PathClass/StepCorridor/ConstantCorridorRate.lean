@@ -30,6 +30,20 @@ by the process theorem.
   positivity and
   `log P(scaledConstantCorridorEvent a lower upper) / (-a⁻ᵅ) →
   κ * energy α (constantBounds lower upper)`.
+
+For each fixed constant corridor with `lower<0<upper`, the event has positive
+probability for all sufficiently small `a`, and its logarithmic rate is its
+`M₂` energy times a positive constant:
+
+\[\begin{aligned}
+\exists\kappa>0,\qquad
+\lim_{a\downarrow0}
+\frac{\log\mathbb P(E_a)}{-a^{-\alpha}}
+&=\kappa\,\mathcal E_\alpha(\mathrm{constantBounds}(lower,upper)),\\
+\mathbb P(E_a)&>0\quad\text{for all sufficiently small }a>0,
+\end{aligned}\]
+
+where `E_a=scaledConstantCorridorEvent(a,lower,upper)`.
 -/
 
 open Filter MeasureTheory

@@ -42,6 +42,18 @@ nor positions are specialized to real numbers.
   `population_adapted` give the corresponding measurability statements, with
   `population_adapted` placing generation `n` in the generation domain
   filtration.
+
+Writing `C_\omega(u)` for the selected children and `P_n` for generation `n`,
+the finite-step recursion and width bound are
+
+\[\begin{aligned}
+C_\omega(u)&=\{u\mathbin{+\!\!+}[i]:i\in R(\omega(u))\},\\
+\operatorname{grow}(R,A,\omega)&=\bigcup_{u\in A}C_\omega(u),\\
+P_0&=\{[]\},\qquad
+P_{n+1}=\operatorname{grow}(R,P_n,\operatorname{frontierMarks}(n,\omega)),\\
+|R(\omega(u))|\le N\text{ for all }u
+&\Longrightarrow |P_n|\le N^n.
+\end{aligned}\]
 -/
 
 open MeasureTheory

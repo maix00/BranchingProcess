@@ -22,6 +22,15 @@ import Mathlib.Probability.Independence.CharacteristicFunction
 
 The proof multiplies the independent single-piece characteristic functions
 across a finite prefix of the canonical σ-finite partition.
+
+Write `S_n(\omega)=\sum_{k=0}^{n}\operatorname{pieceSum}(K,X,f,k,\omega)` for
+the sum over the first `n+1` partition pieces. Its characteristic function is
+
+\[
+\operatorname{charFun}\bigl(P.\mathrm{map}(S_n),\xi\bigr)
+=\exp\!\left(\sum_{k=0}^{n}\int_{\operatorname{prmPiece}(m,k)}
+  \bigl(e^{i\xi f(x)}-1\bigr)\,m(dx)\right).
+\]
 -/
 
 @[expose] public section

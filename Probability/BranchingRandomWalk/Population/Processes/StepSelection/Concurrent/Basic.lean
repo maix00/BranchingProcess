@@ -26,6 +26,18 @@ require the ambient root type to be countable.
 * `component` embeds a candidate at its observable start time, and
   `population` unions the finitely enabled components. Their adaptation
   statements are `component_adapted` and `population_adapted`.
+
+For each trial `i`, its age-`a` candidates retain the assigned root label and
+are observable at global generation `start(i)+a`. The global population is
+the union of enabled components and is observable at its generation:
+
+\[\begin{aligned}
+C_{i,a}&=\{(\operatorname{root}(i),u):u\in P_a(\operatorname{root}(i))\},\\
+C_{i,a}&\in\mathcal F_{\operatorname{start}(i)+a},\\
+\mathcal P_n&=\bigcup_{i\in\operatorname{enabled}(n)}
+  \operatorname{component}(i,n),\\
+\mathcal P_n&\in\mathcal F_n.
+\end{aligned}\]
 -/
 
 open MeasureTheory

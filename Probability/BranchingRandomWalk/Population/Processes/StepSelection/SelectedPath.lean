@@ -22,6 +22,20 @@ public import Probability.BranchingRandomWalk.Population.Processes.StepSelection
 - `mem_population_iff_length_selectedAlong` characterizes generation
   membership: `u ∈ population R n ω` if and only if `u.length = n` and every
   child slot along `u` is selected.
+
+Let `P_n=population(R,n,\omega)`. The path predicate checks each child slot
+at its parent, and generation membership is exactly the address length
+together with selection along the whole address:
+
+\[\begin{aligned}
+\operatorname{selectedAlong}(v,[])&=\mathrm{True},\\
+\operatorname{selectedAlong}(v,i::p)
+&\Longleftrightarrow
+  i\in R(\omega(v))\ \wedge\ 
+  \operatorname{selectedAlong}(v\mathbin{+\!\!+}[i],p),\\
+u\in P_n&\Longleftrightarrow
+  |u|=n\ \wedge\ \operatorname{selectedAlong}([],u).
+\end{aligned}\]
 -/
 
 @[expose] public section

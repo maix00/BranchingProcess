@@ -21,6 +21,16 @@ additional positive scale preserves this independence.
 * `IsStableClockProcessLaw.iIndepFun_scaledNormalizedCommonPartitionCellPaths`
   states that the family `q ↦ scale i * normalizedCommonPartitionCellPath i q`
   is mutually independent under the stable clock path law.
+
+For every finite partition and every coordinatewise spatial scale, the
+normalized paths on its disjoint cells remain mutually independent:
+
+\[
+\left(q\longmapsto
+  \operatorname{scale}(i)\,
+  \operatorname{normalizedCommonPartitionCellPath}(i,q)\right)_{i\in I}
+\quad\text{are mutually independent under }P.
+\]
 -/
 
 open MeasureTheory

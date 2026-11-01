@@ -24,6 +24,17 @@ measure integration used by marked Poisson random measures.
   `unitTime_prod_restrict_carrier` give full-time mass, restricted-window
   mass, and support statements.
 
+Writing `\lambda_{[0,1]}` for Lebesgue measure on the unit interval, adjoining
+the time coordinate preserves mark-only integrals and masses:
+
+\[\begin{aligned}
+\int_{[0,1]\times\mathbb R}f(x)\,d(\lambda_{[0,1]}\otimes\nu)(t,x)
+&=\int_{\mathbb R}f(x)\,d\nu(x),\\
+(\lambda_{[0,1]}\otimes\nu)([0,1]\times A)&=\nu(A),\\
+(\lambda_{[0,1]}\otimes(\nu|_J))([0,1]\times A)&=\nu(A)
+  \quad(A\subseteq J,\ A,J\text{ measurable}).
+\end{aligned}\]
+
 -/
 
 @[expose] public section
