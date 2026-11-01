@@ -28539,3 +28539,17 @@ measure formulas, and almost-everywhere continuity times for càdlàg path
 laws. All ten focused modules build successfully in a 2,768-job Lake build;
 no declarations or proofs changed. The same formula-header review now has 181
 remaining modules out of 1,642 production modules.
+
+## Path-space measurability and tightness formulas (2026-11-02)
+
+Added mathematical interfaces to the public headers of
+`MeasureTheory/MeasurableSpace/{CadlagPath/Basic,ContinuousMap/Oscillation}.lean`,
+`MeasureTheory/Measure/CadlagPath/PathClass/StepCorridor/Partition/LowerApproximation.lean`,
+`MeasureTheory/Measure/ContinuousMap/Tightness/Criteria.lean`, and
+`MeasureTheory/OuterMeasure/Finite/Cover.lean`. They describe the rational
+coordinate representation of the Skorokhod Borel structure, measurable
+continuous-path constraints, inner corridor width approximation, the
+Arzelà–Ascoli tightness criterion, and the finite-cover outer-measure bound.
+All five focused modules build successfully in a 2,767-job Lake build; no
+declarations or proofs changed. The same formula-header review now has 176
+remaining modules out of 1,642 production modules.

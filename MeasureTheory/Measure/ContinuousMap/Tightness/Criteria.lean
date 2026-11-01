@@ -24,6 +24,18 @@ of any increment law or stochastic-process model.
 
 ## Public declarations
 
+If, outside arbitrarily small measure, every path belongs to a common
+equicontinuous family with a uniform pointwise bound, then the measure family
+is tight:
+
+\[
+\forall\varepsilon>0,\ \exists S,\quad
+S\text{ equicontinuous and uniformly bounded},\quad
+\forall i,\ \mu_i(S^{\complement})\le\varepsilon
+\Longrightarrow
+\{\mu_i:i\in I\}\text{ is tight}.
+\]
+
 - `isTightMeasureSet_of_equicontinuous_bounded` turns
   `∀ ε > 0, ∃ S, equicontinuous(S) ∧ bounded(S) ∧ ∀ i, μ i (Sᶜ) ≤ ε`
   into `IsTightMeasureSet (range μ)`.

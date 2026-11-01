@@ -24,6 +24,18 @@ canonical rational family generates the Borel structure of the Skorokhod
 
 ## Public declarations
 
+Evaluations on a countable dense ordered family containing the terminal time
+form a measurable embedding; the rational coordinates generate the Borel
+structure of the Skorokhod path space:
+
+\[
+f\longmapsto(f(t_i))_{i\in I},
+\qquad
+\mathcal B(D([0,1],\mathbb R))
+=\operatorname{comap}\!\left(f\mapsto(f(q))_{q\in\mathbb Q\cap[0,1]},
+\mathcal B(\mathbb R^{\mathbb Q\cap[0,1]})\right).
+\]
+
 - `MeasureTheory.CadlagPath.denseEvaluation time` maps `f` to
   `i ↦ f (time i)`; when `time` is countable, monotone, dense, and contains
   `1`, this map is a measurable embedding.
