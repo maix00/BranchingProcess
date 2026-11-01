@@ -30,6 +30,26 @@ for Random Walks Conditioned to Stay Positive*, Ann. Probab. 4(3) (1976),
 * `IsPoissonPointFamily.ae_integral_nonpos_of_no_positive_intensity` and
   `ae_integral_nonneg_of_no_negative_intensity` give the corresponding signs
   of realized integrals from the support of the intensity measure.
+
+For product intensity `\tau\otimes\nu` on time space `\mathsf T` and mark
+space `\mathsf E`, write `\mathcal N_\omega` for the realized Poisson measure.
+Intensity-null sets and product-intensity null singletons are absent almost
+surely, and an intensity supported on one side forces the same sign for
+realized integrals:
+
+\[\begin{aligned}
+m(A)=0&\Longrightarrow\mathcal N_\omega(A)=0\quad\text{almost surely},\\
+m(A^c)=0&\Longrightarrow\mathcal N_\omega|_A=\mathcal N_\omega
+  \quad\text{almost surely},\\
+\tau\{t\}=0&\Longrightarrow\mathcal N_\omega(\{t\}\times\mathsf E)=0
+  \quad\text{almost surely},\\
+\nu\{a\}=0&\Longrightarrow\mathcal N_\omega(\mathsf T\times\{a\})=0
+  \quad\text{almost surely},\\
+m\{x:f(x)>0\}=0&\Longrightarrow
+  \int f\,d\mathcal N_\omega\le0\quad\text{almost surely},\\
+m\{x:f(x)<0\}=0&\Longrightarrow
+  0\le\int f\,d\mathcal N_\omega\quad\text{almost surely}.
+\end{aligned}\]
 -/
 
 @[expose] public section

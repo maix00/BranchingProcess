@@ -28722,3 +28722,28 @@ the finite-cover probability comparison, and the positive/negative stable
 jump-window cutoff conclusions. All six focused modules build successfully in
 a 3,556-job Lake build; no declarations or proofs changed. The same review now
 has 112 remaining modules out of 1,642 (75 with public-declaration sections).
+
+
+## Poisson random-measure and characteristic-function formulas (2026-11-02)
+
+Added formulas to `Probability/RandomMeasure/Poisson/RandomMeasure/{Basic,Independence}.lean`,
+`Intensity/{TimeMark,LevyCutoff,Support}.lean`, `Integration/WindowIntegral.lean`,
+and `CharacteristicFunction/{Integral,Piece,PartitionedSum,Independent,FiniteWindows,TimeWindow}.lean`.
+They state point-count evaluation and measurability, disjoint-region independence,
+unit-time product integration and cutoff integrability, support consequences,
+window-integral vectors, and the scalar and finite-dimensional Poisson
+characteristic exponents. The focused builds completed successfully in 3,224
+and 3,247 Lake jobs; no declarations or proofs changed. The audit now has 100
+remaining modules, 63 with public-declaration sections.
+
+
+## Stable small-deviation formulas (2026-11-02)
+
+Added formulas to `Probability/Process/Stable/SmallDeviation/Blocks/EntranceScaling.lean`,
+`PathClass/StepCorridor/ConstantCorridorRate.lean`, and
+`PathClass/StepCorridor/Partition/Independence.lean`. They state stable
+space-time corridor scaling, the fixed constant-corridor logarithmic rate in
+terms of its `M₂` energy, and independence of normalized partition-cell paths
+under coordinatewise scaling. All three focused modules build successfully in
+a 3,450-job Lake build; no declarations or proofs changed. The audit now has
+97 remaining modules, 60 with public-declaration sections.

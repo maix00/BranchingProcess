@@ -41,6 +41,22 @@ The public declarations are:
   corresponding identities for a left-open, right-closed endpoint window.
 * `IsStableLevyProcess.shortEntrance_fullSegmentCorridorIocReturn_probability`:
   the complete-path left-open, right-closed version at time `a ^ α`.
+
+For a stable process of index `\alpha`, changing the horizon from `T` to
+unit time multiplies every corridor endpoint by `T^{-1/\alpha}`. In
+particular, the short-entrance choice `T=a^\alpha` cancels spatial scaling
+by `a`:
+
+\[\begin{aligned}
+\mathbb P(E_T(\ell,u;c,d))
+&=\mathbb P\!\left(E_1(T^{-1/\alpha}\ell,T^{-1/\alpha}u;
+  T^{-1/\alpha}c,T^{-1/\alpha}d)\right),\\
+\mathbb P(E_{a^\alpha}(a\ell,au;ac,ad))
+&=\mathbb P(E_1(\ell,u;c,d)),\qquad a>0.
+\end{aligned}\]
+
+Here `E_T` denotes the complete-path corridor-return event on the time
+segment `[0,T]`.
 -/
 
 @[expose] public section

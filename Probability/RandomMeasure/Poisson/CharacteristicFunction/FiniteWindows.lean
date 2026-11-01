@@ -40,6 +40,22 @@ import all Probability.RandomMeasure.Poisson.Intensity.Lemmas.TimeWindowIntegral
 
 These formulas provide the scalar and finite-dimensional characteristic
 function inputs for jump-process laws.
+
+Let `N_s` and `N_b` be independent Poisson random measures with intensities
+`\lambda_{[0,1]}\otimes(\nu|_{\mathrm{smallJumpBand}(n)})` and
+`\lambda_{[0,1]}\otimes(\nu|_{\mathrm{largeJumpBand}(n)})`, and put
+`I_i=\int_{S_i\times\mathbb R}x\,(N_s+N_b)(dt,dx)`. For pairwise-disjoint
+measurable windows `S_i` and weights `u_i`, the joint characteristic exponent
+of this finite vector is
+
+\[
+\mathbb E_{P_s\otimes P_b}\exp\!\left(i\sum_{i\in I}u_i I_i\right)
+=\exp\!\left(\sum_{i\in I}|S_i|
+  \int_{\mathbb R}(e^{iu_i x}-1)\,\nu(dx)\right),
+\]
+
+with the corresponding cutoff identities obtained by splitting the Lévy
+measure into its small- and large-jump parts.
 -/
 
 @[expose] public section

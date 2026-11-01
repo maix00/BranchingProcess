@@ -20,6 +20,21 @@ integrability of the jump-size coordinate under unit-time product intensity.
 * `IsLevyMeasure.integrable_unitTime_smallJumpMark` proves integrability of
   the mark coordinate on each restricted reciprocal small-jump band whenever
   the truncated first absolute moment is finite.
+
+Writing `\nu` for the Lévy measure and `\lambda_{[0,1]}` for unit-time
+Lebesgue measure, if the truncated first absolute moment is finite, the mark
+coordinate is integrable on every small-jump band. There the absolute mark
+agrees with its truncation:
+
+\[\begin{aligned}
+\int_{[0,1]\times\mathrm{smallJumpBand}(n)}|x|\,d(\lambda_{[0,1]}\otimes\nu)(t,x)
+&=\int_{\mathrm{smallJumpBand}(n)}|x|\,d\nu(x)\\
+&=\int_{\mathrm{smallJumpBand}(n)}\min(1,|x|)\,d\nu(x)\\
+&\le\int_{\mathbb R}\min(1,|x|)\,d\nu(x)<\infty.
+\end{aligned}\]
+
+Thus the mark-coordinate map `(t,x) ↦ x` is integrable under
+`\lambda_{[0,1]}\otimes(\nu|_{\mathrm{smallJumpBand}(n)})`.
 -/
 
 @[expose] public section

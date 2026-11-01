@@ -23,6 +23,19 @@ time window in each of two independent Poisson random measure models.
   measurability when each coordinate integrand is almost surely integrable
   under both source laws.
 
+Write `N_s^{\omega_s}` and `N_b^{\omega_b}` for the two realized Poisson
+measures. For each index `i`, the vector coordinate is the sum of their marked
+integrals over its time window; under the stated integrability hypotheses,
+the resulting finite vector is almost-everywhere measurable:
+
+\[\begin{aligned}
+Z_i(\omega_s,\omega_b)
+&=\int \mathbf1_{S_i}(t)x\,N_s^{\omega_s}(dt,dx)
+ +\int \mathbf1_{S_i}(t)x\,N_b^{\omega_b}(dt,dx),\\
+(\omega_s,\omega_b)&\longmapsto (Z_i(\omega_s,\omega_b))_{i\in\iota}
+  \quad\text{is almost-everywhere measurable}.
+\end{aligned}\]
+
 -/
 
 @[expose] public section

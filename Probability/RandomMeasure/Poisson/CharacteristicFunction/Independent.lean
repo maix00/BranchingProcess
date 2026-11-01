@@ -23,6 +23,17 @@ import Mathlib.MeasureTheory.Integral.Prod
 
 The proof factors the product-space integral into the two characteristic
 integrals.
+
+For independent Poisson random measures `\mathcal N_s,\mathcal N_b` and
+the integrands `f_s,f_b`, the characteristic exponential of the sum has
+the sum of their intensity exponents:
+
+\[
+\mathbb E_{P_s\otimes P_b}\exp\!\left(i\xi\left(
+  \int_E f_s\,d\mathcal N_s+\int_E f_b\,d\mathcal N_b\right)\right)
+=\exp\!\left(\int_E(e^{i\xi f_s(x)}-1)\,m_s(dx)
+             +\int_E(e^{i\xi f_b(x)}-1)\,m_b(dx)\right).
+\]
 -/
 
 @[expose] public section

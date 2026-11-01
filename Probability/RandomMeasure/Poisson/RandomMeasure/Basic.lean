@@ -30,6 +30,19 @@ If each count and point coordinate is measurable, then both
 - `poissonRandomMeasure_apply` identifies its value on a measurable set with the total thinned count.
 - `measurable_poissonRandomMeasure_apply` and `measurable_poissonRandomMeasure` give the evaluation
   and measure-valued measurability statements.
+
+For measurable `A`, the realized measure counts the points whose marks lie in
+`A`; measurable point and count coordinates make both evaluation and the
+measure-valued map measurable:
+
+\[\begin{aligned}
+\mathcal N_\omega(A)
+&=\sum_{k\ge0}\sum_{n<K(k,\omega)}\mathbf1_A(X(k,n,\omega))\\
+&=\sum_{k\ge0}
+  \bigl(\operatorname{thinnedCount}(K,X,A,k,\omega):\overline{\mathbb R}_{\ge0}\bigr),\\
+\omega&\longmapsto\mathcal N_\omega(A),\qquad
+\omega\longmapsto\mathcal N_\omega\quad\text{are measurable}.
+\end{aligned}\]
 -/
 
 @[expose] public section

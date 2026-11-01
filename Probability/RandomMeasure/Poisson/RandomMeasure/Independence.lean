@@ -34,6 +34,19 @@ For a finite family `A : ι → Set E` of pairwise-disjoint measurable sets with
   measurable sets.
 - `iIndepFun_poissonRandomMeasure_apply` proves mutual independence for a finite pairwise-disjoint
   family of finite-mass measurable sets.
+
+Write `\mathcal N_\omega(A)=\operatorname{poissonRandomMeasure}(K,X,\omega)(A)`.
+For pairwise-disjoint measurable sets of finite intensity, these realized
+Poisson counts are mutually independent; in particular, two disjoint regions
+give independent counts:
+
+\[\begin{aligned}
+\bigl(\omega\mapsto\mathcal N_\omega(A_i)\bigr)_{i\in I}
+&\text{ are mutually independent under }\mu,\\
+A\cap B=\varnothing&\Longrightarrow
+  \bigl(\omega\mapsto\mathcal N_\omega(A)\bigr)
+  \ \perp\!\!\!\perp_\mu\ \bigl(\omega\mapsto\mathcal N_\omega(B)\bigr).
+\end{aligned}\]
 -/
 
 @[expose] public section

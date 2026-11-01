@@ -31,6 +31,16 @@ import Probability.RandomMeasure.Poisson.CharacteristicFunction.PartitionedSum
 
 The intensity integrand `exp (i ξ f) - 1` and almost-sure integrability of
 the realized integral are stated as separate hypotheses in the general form.
+
+Write `\mathcal N_\omega` for the realized Poisson measure. Under those
+hypotheses, its characteristic exponential is the exponential of the
+integrated intensity exponent:
+
+\[
+\mathbb E_P\exp\!\left(i\xi\int_E f(x)\,\mathcal N_\omega(dx)\right)
+=\exp\!\left(\int_E
+  \bigl(e^{i\xi f(x)}-1\bigr)\,m(dx)\right).
+\]
 -/
 
 @[expose] public section

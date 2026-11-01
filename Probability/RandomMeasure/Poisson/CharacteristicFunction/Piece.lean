@@ -20,6 +20,18 @@ public import Probability.RandomMeasure.Poisson.PointFamily.Thinning
   `exp (m (prmPiece m k) * (∫ exp (i ξ f) d(prmPieceLaw m k) - 1))`.
 
 This is the Fourier form of the point-family probability-generating formula.
+
+Writing `B_k=\operatorname{prmPiece}(m,k)` and
+`\rho_k=\operatorname{prmPieceLaw}(m,k)`, the sum of marks in one
+finite-intensity piece has characteristic function
+
+\[
+\operatorname{charFun}\bigl(P\circ\operatorname{pieceSum}_k^{-1},\xi\bigr)
+=\exp\!\left((m(B_k))_{\mathbb R}
+  \left(\int_E e^{i\xi f(x)}\,\rho_k(dx)-1\right)\right),
+\]
+
+where `(m(B_k))_{\mathbb R}` is the real-valued mass of the piece.
 -/
 
 @[expose] public section
