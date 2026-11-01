@@ -33,6 +33,17 @@ import Combinatorics.UlamHarris.Relation
 This file specializes the finite relative-position construction to negative
 exponential offspring weights and proves the finite-slice and window-membership
 interfaces used by the path and coupling layers.
+
+For the total restarted real-valued construction `P`, every retained particle
+and each of its positive-time prefixes satisfy their corresponding window
+constraint; when the child-label type is countable, every slice is finite:
+
+\[\begin{aligned}
+q\in P_n(\omega),\ 0<k\le n
+&\Longrightarrow
+  \operatorname{relPos}_{a_c(k),k}(q_{\le k},\omega)\in W_k,\\
+\forall n,\omega&\qquad P_n(\omega)\text{ is finite}.
+\end{aligned}\]
 -/
 
 @[expose] public section

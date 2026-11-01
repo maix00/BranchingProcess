@@ -28624,3 +28624,17 @@ successfully in a 3,272-job Lake build; no declarations or proofs changed. The
 same formula-header review now has 151 remaining modules out of 1,642 modules
 when Selection-owned paths are omitted from this pass (114 candidates have
 public-declaration sections).
+
+
+## Causal path-window and relative-position formulas (2026-11-02)
+
+Added mathematical statements to the public headers of
+`Probability/BranchingRandomWalk/Population/Processes/Causal/Path/{Bound,Window}.lean`
+and `Causal/RelativePosition/{Basic,Real}.lean`. They state the path-generation
+upper bounds, the restarted-window path event and its relation to retained
+particles, the relative-position and restart-anchor formulas, and finite-slice
+window membership for the total real-valued construction. All four focused
+modules build successfully in a 3,267-job Lake build; no declarations or proofs
+changed. The same formula-header review now has 147 remaining modules out of
+1,642 modules when Selection-owned paths are omitted from this pass (110
+candidates have public-declaration sections).

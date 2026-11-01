@@ -28,6 +28,18 @@ import Probability.Process.Path.Restart.Basic
 Every retained particle contributes to an unrestricted ancestral path sum.  The
 finite-root version is obtained by partitioning particles by their initial
 root; no integration or spine law is used here.
+
+Writing `P^{(r)}` for the restarted killed population from root `r`, and
+`P^{(R)}` for the one from the finite root set `R`, the pointwise bounds are
+
+\[\begin{aligned}
+\operatorname{size}(P^{(r)},n,\omega)
+&\le \operatorname{pathGeneration}
+  \bigl(\phi,n,\operatorname{restartedWindowTest}(c,W),x_r,\omega_r\bigr),\\
+\operatorname{size}(P^{(R)},n,\omega)
+&\le\sum_{r\in R}\operatorname{pathGeneration}
+  \bigl(\phi,n,\operatorname{restartedWindowTest}(c,W),x_r,\omega_r\bigr).
+\end{aligned}\]
 -/
 
 @[expose] public section
