@@ -28579,3 +28579,33 @@ measurable population and position observables. All five focused modules build
 successfully in a 3,322-job Lake build; no declarations or proofs changed. The
 same formula-header review now has 165 remaining modules out of 1,642
 production modules.
+
+
+## Root-indexed genealogy field formulas (2026-11-02)
+
+Added mathematical statements to the public headers of
+`Probability/BranchingRandomWalk/Genealogy/GaltonWatson.lean`,
+`Genealogy/RootIndexed/Field/{Basic,Filtration}.lean`, and
+`Genealogy/RootIndexed/Law/{FiniteRestriction,IndependentEventCount,RootBatch}.lean`.
+They describe root and coordinate reindexing, the generation domain flow,
+finite-root restrictions of the countable product field, independent event
+counts and avoidance probability, the root-step batch law, and the relation
+between marked-walk and Galton–Watson laws. All six focused modules build
+successfully in a 3,198-job Lake build; no declarations or proofs changed. The
+same formula-header review now has 159 remaining modules out of 1,642 modules
+when Selection-owned paths are omitted from this pass (122 candidates have
+public-declaration sections).
+
+
+## Abstract genealogy filtration and subtree-law formulas (2026-11-02)
+
+Added mathematical interfaces to the public headers of
+`Probability/BranchingRandomWalk/Genealogy/Exploration/Abstract/AddressFiltration.lean`,
+`Exploration/Abstract/Exploration/Space.lean`, and
+`Exploration/Abstract/JointSubtrees.lean`. The formulas record the address-coordinate
+domain spaces, the independence of disjoint coordinate families, and the joint
+product law and past-independence of same-generation subtree fields. All three
+focused modules build successfully in a 3,134-job Lake build; no declarations
+or proofs changed. The same formula-header review now has 156 remaining modules
+out of 1,642 modules when Selection-owned paths are omitted from this pass
+(119 candidates have public-declaration sections).

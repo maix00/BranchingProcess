@@ -21,6 +21,16 @@ In namespace `ProbabilityTheory.BranchingRandomWalk.RootIndexed`, let
 
 ## Public declarations
 
+For `N_E(F)=\sum_{r\in\operatorname{Fin}(m)}\mathbf 1_E(F(r))`, the
+quarter-mean lower-tail bound and the exact avoidance probability are
+
+\[\begin{aligned}
+\nu_m\!\left(N_E\le\frac{m\,\operatorname{toReal}(\nu_1(E))}4\right)
+&\le\exp\!\left(-\frac{m\,\operatorname{toReal}(\nu_1(E))}4\right),\\
+\nu_m\!\left(\forall r,\ F(r)\notin E\right)
+&=\bigl(\nu_1(E^{\complement})\bigr)^m.
+\end{aligned}\]
+
 * `measure_finiteRootEventCount_le_quarter_mean μ E hE m hm` gives
   `νₘ {field | N_E(field) ≤ m * (ν₁ E).toReal / 4} ≤
   ENNReal.ofReal (exp (-m * (ν₁ E).toReal / 4))` for measurable `E` and

@@ -19,6 +19,22 @@ import Probability.Process.Filtration.GeneratedByCoordinates
 These statements use only the countable product realization of an abstract
 `Step`.  They do not depend on a point process enumeration.
 
+For an inspected address set `S`, write `\mathscr F(S)` for the supremum of
+the coordinate measurable spaces. The generation past, generation future, and
+descendants of `u` are described by
+
+\[\begin{aligned}
+\mathscr F(S)
+&=\bigvee_{u\in S}\sigma\bigl(\omega\mapsto\omega(u)\bigr),\\
+\mathscr F_n^-&=\mathscr F\bigl(\{u:|u|<n\}\bigr),
+&\qquad
+\mathscr F_n^+=\mathscr F\bigl(\{u:n\le |u|\}\bigr),\\
+\operatorname{Desc}(u)&=\{u\mathbin{+\!+}v:v\in\mathrm{TreeNode}\},
+&\qquad
+\mathscr F(\operatorname{Desc}(u))
+=\bigvee_v\sigma\bigl(\omega\mapsto\omega(u\mathbin{+\!+}v)\bigr).
+\end{aligned}\]
+
 - `branchingDescendantAddresses u = {v | ∃ w, v = u ++ w}` is the set of
   descendants of address `u`.
 - `stepsOnSpace S = ⨆ u ∈ S, stepCoordinateSpace u` is the information on an

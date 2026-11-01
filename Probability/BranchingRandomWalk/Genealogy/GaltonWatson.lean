@@ -16,6 +16,19 @@ public import Probability.BranchingRandomWalk.IID
 
 ## Public declarations
 
+Forgetting all spatial marks maps the i.i.d. marked-walk law to the
+Galton–Watson law of the projected offspring distribution; with unit marks,
+the i.i.d. realization already has the Galton–Watson law:
+
+\[\begin{aligned}
+\operatorname{iid}(\mu,\mathrm{unit})
+&=\operatorname{GaltonWatsonLaw}(\mu),\\
+(\operatorname{mapMarks}(\mathrm{constant\ unit}))_{\#}
+\operatorname{iid}(\mu,\mathrm{unit})
+&=\operatorname{GaltonWatsonLaw}
+  (\operatorname{mapMarks}(\mu,\mathrm{constant\ unit})).
+\end{aligned}\]
+
 This is the marked-walk adapter only. The tree-valued law and generation
 observations are defined in `Probability.BranchingProcess.GaltonWatson` from
 an offspring configuration law. That law retains the complete independently
