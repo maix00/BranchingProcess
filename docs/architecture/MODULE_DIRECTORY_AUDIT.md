@@ -28328,3 +28328,14 @@ identities and almost-everywhere order transfer, invariance from monotonicity,
 sub-Markov and Markov row-mass conditions, and the stable clock-process
 interface. The six focused modules build successfully in a 3,043-job Lake
 build; no declarations or proofs changed.
+
+## Lévy path and stable jump-law formulas (2026-11-01)
+
+Added mathematical formulas to the headers in
+`Probability/Process/Levy/{FiniteDimensional,Jump/PoissonConfiguration/{Endpoint,Increment,Path}}.lean`
+and `Probability/Process/Stable/{Levy,JumpModel/EndpointLaw,PathLaw/MonotoneGrid}.lean`.
+They specify coordinate measurability, cutoff endpoint and half-open-window
+increment identities, canonical/cutoff path agreement, stable time-space
+scaling, Poisson jump-sum laws on time windows, and position laws on monotone
+grids. All seven focused modules build successfully in a 3,685-job Lake build;
+no declarations or proofs changed.

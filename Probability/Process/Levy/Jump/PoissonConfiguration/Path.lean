@@ -17,6 +17,22 @@ For a Poisson source whose intensity is carried by a mark band, restricting
 the realized random measure to that band changes nothing almost surely. This
 identifies the canonical whole-mark path with its explicit cutoff version.
 
+For fixed sources and cutoff `n`, write
+`X_{can}(t,ω) = poissonEntrancePath Ks Xs Kb Xb Set.univ
+(Set.univ ×ˢ largeJumpBand n) t ω` for the path using all small jumps, and
+`X_n(t,ω) = poissonEntrancePath Ks Xs Kb Xb
+(Set.univ ×ˢ smallJumpBand n) (Set.univ ×ˢ largeJumpBand n) t ω`
+for the path restricted to both cutoff bands. At every fixed time `t`, they
+agree almost surely, and the canonical path starts at zero (`⊥` is zero in
+`unitInterval`):
+
+\[
+X_{can}(t,\omega)=X_n(t,\omega),
+\qquad
+X_{can}(0,\omega)=0
+\quad (P_s\otimes P_b)\text{-almost surely}.
+\]
+
 ## Public declarations
 
 For each fixed observation time `t`,

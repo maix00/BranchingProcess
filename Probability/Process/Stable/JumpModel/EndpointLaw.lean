@@ -25,6 +25,24 @@ For an index below one, every fixed small/large jump cutoff yields the
 given strictly stable law at unit time. The proof uses the uncompensated
 characteristic exponent and imposes no moment on the large jumps.
 
+Let `Ω_s` and `Ω_b` carry independent probability measures `P_s` and `P_b`,
+and let the cutoff point families be `Ks`, `Xs` and `Kb`, `Xb`. Set
+`J_n(ω) = ∫ x N_s(ω.1)(d(r,x)) + ∫ x N_b(ω.2)(d(r,x))`, where
+`N_s(ω_s) = poissonRandomMeasure Ks Xs ω_s` and
+`N_b(ω_b) = poissonRandomMeasure Kb Xb ω_b`. For a measurable
+`S ⊆ unitInterval`, let `J_n(S,ω)` be the same sum with each integrand `x`
+replaced by `if r ∈ S then x else 0`. Write `λ_S(x)=|S|^{1/α}x`, where
+`|S|` is the Lebesgue measure of `S`. For `0<α<1`, the pushforward laws
+under the product probability measure of the two Poisson sources satisfy
+
+\[
+(P_s\otimes P_b).map(J_n)=μ,
+\qquad
+(P_s\otimes P_b).map(J_n(S))=μ.map(λ_S).
+\]
+
+The endpoint of the cutoff entrance path has the same law `μ` as `J_n`.
+
 ## Public declarations
 
 * `IsStrictlyAlphaStable.law_unitTime_split_poissonRandomMeasures` identifies

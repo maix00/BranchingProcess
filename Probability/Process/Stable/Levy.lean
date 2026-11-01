@@ -16,6 +16,21 @@ The identity clock on nonnegative real time makes the stable increment laws
 stationary. This file contains the Lévy specialization and its connection to
 the general `IsLevyProcess` interface.
 
+The stable Lévy class is the stable clock-process class for the identity
+clock `t↦t`. For `r>0`, its canonical time-space scaling is
+
+\[
+Y_t=r^{-1/α}X_{rt}.
+\]
+
+Under `P`, for every finite monotone grid `t_0≤⋯≤t_n`, the consecutive
+increment vectors of `X` and `Y` have the same law:
+
+\[
+(X_{t_{i+1}}-X_{t_i})_{i<n}
+\overset{d}= (Y_{t_{i+1}}-Y_{t_i})_{i<n}.
+\]
+
 ## Public declarations
 
 - `ProbabilityTheory.IsStableLevyProcess α μ X P` is the identity-clock

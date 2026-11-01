@@ -12,6 +12,13 @@ public import Probability.Process.IndepIncrements.FiniteDimensional
 /-!
 # Finite-dimensional measurability of Lévy processes
 
+For every nonnegative time `t`, the coordinate of a group-valued Lévy process
+is almost-everywhere measurable under its path measure `P`:
+
+\[
+\operatorname{AEMeasurable}(\omega\mapsto X_t(\omega),P).
+\]
+
 ## Public declarations
 
 - `ProbabilityTheory.IsLevyProcess.aemeasurable_eval` proves that every
