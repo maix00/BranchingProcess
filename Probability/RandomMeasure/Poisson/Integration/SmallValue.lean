@@ -17,6 +17,20 @@ import Probability.MeasureTheory.SmallValue.Basic
 Campbell's identity and a finite first moment give a deterministic cutoff
 whose realized Poisson integral is small with positive probability.
 
+For a Poisson point family with intensity $m$, let
+$N_\omega=\operatorname{poissonRandomMeasure}(K,X,\omega)$ and
+$A_n=\operatorname{band}(n)$, where $w$ and each $A_n$ are measurable. If
+$$
+\int^- w(x)\,m(dx)<\infty,\qquad
+m\text{-a.e. }x,\quad \exists n_0\ \forall n\ge n_0,\ x\notin A_n,
+$$
+then, for every $\rho>0$, some $n$ satisfies
+$$
+P\!\left\{\omega:
+  \int_{A_n}^- w(x)\,N_\omega(dx)<\operatorname{ofReal}(\rho)
+\right\}>0.
+$$
+
 ## Public declarations
 
 * `exists_poissonSmallIntegral_pos` shows that if

@@ -17,6 +17,21 @@ A finite truncated first moment and a positive mark window away from zero
 produce one cutoff satisfying all quantitative intensity conditions needed
 for the independent small/large Poisson model.
 
+Assume $\int \min(1,|x|)\,\nu(dx)<\infty$ and
+$\nu(\mathrm{largeJumpBand}(n))<\infty$ for every $n$. For a measurable
+$J$ with $\nu(J)>0$ and $|x|\ge\delta$ for $x\in J$, where
+$\delta,\rho>0$, let $dt$ be Lebesgue measure on $[0,1]$. Then some $n$
+satisfies
+$$
+\int_{[0,1]\times\mathrm{smallJumpBand}(n)} |x|\,dt\,\nu(dx)<\rho,
+\qquad
+0<\bigl(dt\otimes(\nu\!\restriction_{\mathrm{largeJumpBand}(n)})\bigr)
+  ([0,1]\times J),
+\qquad
+\bigl(dt\otimes(\nu\!\restriction_{\mathrm{largeJumpBand}(n)})\bigr)
+  ([0,1]\times\mathrm{largeJumpBand}(n))<\infty.
+$$
+
 ## Public declarations
 
 * `ProbabilityTheory.exists_unitTime_cutoff_intensities` chooses one cutoff
