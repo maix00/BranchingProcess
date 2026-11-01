@@ -17,6 +17,32 @@ import Probability.RandomMeasure.Poisson.Integration.Integrability
 /-!
 # Characteristic intensity across time and jump cutoffs
 
+Let $N_s(\omega_s)$ and $N_b(\omega_b)$ be the realized small- and
+large-jump measures from independent point families with cutoff intensities
+$dt\otimes(\nu\restriction_{\mathrm{smallJumpBand}(n)})$ and
+$dt\otimes(\nu\restriction_{\mathrm{largeJumpBand}(n)})$. For a measurable
+window $S\subseteq[0,1]$, define
+$$
+Z_S(\omega_s,\omega_b)=
+  \int \mathbf 1_{\{z_1\in S\}}z_2\,N_s(\omega_s)(dz)
+  +\int \mathbf 1_{\{z_1\in S\}}z_2\,N_b(\omega_b)(dz).
+$$
+Under the integrability hypotheses in the declarations, the split sum has
+the characteristic function and law
+$$
+\mathbb E_{P_s\otimes P_b}\!\left[e^{i\xi Z_S}\right]
+  =\exp\!\left(\operatorname{Leb}(S)
+    \int_{\mathbb R}(e^{i\xi x}-1)\,\nu(dx)\right),
+$$
+and, whenever a probability measure $\mu$ has this characteristic function
+for every $\xi\in\mathbb R$,
+$$
+(P_s\otimes P_b)\circ Z_S^{-1}=\mu.
+$$
+For $S=[0,1]$ this is the unit-time endpoint law. If the endpoint law is
+identified and $\nu((0,\infty))=0$, then $\mu((0,\infty))=0$; if
+$\nu((-\infty,0))=0$, then $\mu((-\infty,0))=0$.
+
 ## Public declarations
 
 - `ProbabilityTheory.integral_exp_unitTime_split_poissonRandomMeasures`: the characteristic
