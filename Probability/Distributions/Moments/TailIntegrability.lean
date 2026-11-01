@@ -28,6 +28,18 @@ Goldie, and Teugels, *Regular Variation*, Theorem 1.5.11(ii).
   integrable two-sided tail on `(0,∞)` implies `Integrable id μ`.
 - `integrable_id_of_twoSidedTail_regularlyVarying`: for a finite measure, a regularly varying
   two-sided tail of index `-α` with `α>1` implies `Integrable id μ`.
+
+The layer-cake identity and the regularly varying tail criterion are
+
+\[\begin{aligned}
+\int_0^\infty \mu\{|x|>t\}\,dt
+&=\int_{\mathbb R}|x|\,d\mu(x),\\
+\mu\text{ finite},\quad
+  \bigl(t\mapsto\mu\{|x|>t\}\bigr)\in L^1(0,\infty)
+&\Longrightarrow\int_{\mathbb R}|x|\,d\mu(x)<\infty,\\
+\mu\{|x|>t\}\in RV_{-\alpha},\quad\alpha>1
+&\Longrightarrow\int_{\mathbb R}|x|\,d\mu(x)<\infty.
+\end{aligned}\]
 -/
 
 open Filter MeasureTheory Set

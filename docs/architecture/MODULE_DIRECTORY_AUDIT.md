@@ -28681,3 +28681,16 @@ modules build successfully in a 3,439-job Lake build; no declarations or
 proofs changed. The same formula-header review now has 130 remaining modules
 out of 1,642 modules when Selection-owned paths are omitted from this pass
 (93 candidates have public-declaration sections).
+
+
+## Moment and truncated-tail formulas (2026-11-02)
+
+Added formulas to `Probability/Distributions/Moments/TailIntegrability.lean`
+and `Moments/Truncated/{Basic,Layercake,RegularVariation,TailAsymptotics}.lean`.
+They state the layer-cake criterion for first absolute integrability, the
+truncated-second-moment definition and limit, capped-moment identities, the
+slow-variation tail criterion, and the power-tail asymptotic constant. All five
+focused modules build successfully in a 2,837-job Lake build; no declarations
+or proofs changed. The same formula-header review now has 125 remaining
+modules out of 1,642 when Selection-owned directories are excluded from this
+pass (88 candidates have public-declaration sections).
