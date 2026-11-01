@@ -18,6 +18,21 @@ This file converts the stable time scale into a spatial normalization along
 rounded block lengths. It uses regular variation of the truncated second
 moment and does not assume monotonicity of the stable time scale itself.
 
+With `V_ν(u)=∫_{|x|≤u}x²ν(dx)` and `κ_ν(u)=u^α/L^*_ν(u)`, slow variation of
+`L^*_ν` yields
+
+\[
+κ_ν\in RV_α,\qquad V_ν\in RV_{2-α},\qquad
+κ_ν(u)=\frac{u^2}{V_ν(u)}\quad(u>0,\ V_ν(u)>0).
+\]
+
+If `B` is a stable norming, `a_n→∞`, `c>0`, and `0<α≤2`, the rounded block
+length `m_n=⌊cκ_ν(a_n)⌋` satisfies
+
+\[
+\frac{B_{m_n}}{a_n}\longrightarrow c^{1/α}.
+\]
+
 ## Public declarations
 
 - Slow variation of `L*ν` implies `κν ∈ RV_α` and `Vν ∈ RV_(2-α)`, where `Vν(u) = ∫_{|x| ≤ u} x² ν(dx)`.

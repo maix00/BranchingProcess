@@ -19,6 +19,26 @@ second moment is slowly varying; the definition alone does not assert that
 property. The limiting stable law and the functional limit theorem remain
 separate data.
 
+Writing `V_ν(u) = ∫_{|x| ≤ u} x² ν(dx)`, the slowly varying factor is
+
+\[
+L^*_ν(u)=u^{α-2}V_ν(u).
+\]
+
+A stable normalization `B` satisfies
+
+\[
+B_n>0\ (n>0),\qquad B_n\longrightarrow\infty,\qquad
+\frac{B_n^α}{nL^*_ν(B_n)}\longrightarrow 1.
+\]
+
+The corresponding small-deviation rate and spatial-scale time are
+
+\[
+r_n=\frac{a_n^α}{nL^*_ν(a_n)},\qquad
+κ_ν(u)=\frac{u^α}{L^*_ν(u)}.
+\]
+
 ## Public declarations
 
 - `stableSlowVariation α ν u = u^(α - 2) ∫_{|x| ≤ u} x² ν(dx)` is the

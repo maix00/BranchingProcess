@@ -16,6 +16,13 @@ The fixed-multiple tail asymptotic is uniform when the multiplier ranges in a
 compact interval bounded away from zero. This is the uniform input needed when
 truncation thresholds vary inside a local block estimate.
 
+For `0<a≤b`, the compact-uniform conclusion means that for every `ε>0` there
+is an index after which, simultaneously for every `c∈[a,b]`,
+
+\[
+\left|n\,ν\{|x|>cB_n\}-\frac{2-α}{α}c^{-α}\right|<ε.
+\]
+
 ## Public declarations
 
 If `Bₙ` is an `α`-stable norming and the two-sided tail has index `-α`, then for every compact interval `[a,b]` with `0 < a ≤ b`, `n ν(|x| > c Bₙ) → ((2-α)/α)c^(-α)` uniformly over `c ∈ [a,b]`.

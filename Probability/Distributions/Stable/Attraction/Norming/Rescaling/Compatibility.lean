@@ -22,6 +22,21 @@ This file connects the one-step characteristic-function defect and truncated
 second-moment asymptotics to the normalization sequence used in a stable
 domain-of-attraction limit.
 
+For `J(α)` the cosine Tauberian moment and `c>0` the coefficient in the
+characteristic-function defect, define
+
+\[
+d(α,c)=\frac{(2-α)J(α)}{c},\qquad
+q(α,c)=d(α,c)^{-1/α}.
+\]
+
+The rescaled normalization `B_n=q(α,c)a_n` then has unit stable time scale:
+
+\[
+\frac{κ_ν(a_n)}{n}\longrightarrow d(α,c),\qquad
+\frac{κ_ν(B_n)}{n}\longrightarrow1.
+\]
+
 ## Public declarations
 
 - The constants are `d(α,c) = (2-α) J(α)/c` and `q(α,c) = d(α,c)^(-1/α)`, where `J(α)` is the cosine Tauberian moment.

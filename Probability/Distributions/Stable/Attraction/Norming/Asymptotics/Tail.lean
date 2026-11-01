@@ -19,6 +19,22 @@ Regular variation of the two-sided tail and the stable norming relation give
 explicit tail and truncated-second-moment limits at the norming scale.  These
 are the distributional inputs for stable-domain local block estimates.
 
+Let `T_ν(u)=ν({x : u<|x|})` and `V_ν(u)=∫_{|x|≤u}x²ν(dx)`. If the tail is
+regularly varying with index `-α`, `0<α<2`, and `B` is a stable norming, then
+for every fixed `c>0`,
+
+\[
+nT_ν(cB_n)\longrightarrow\frac{2-α}{α}c^{-α},\qquad
+\frac{nV_ν(cB_n)}{B_n^2}\longrightarrow c^{2-α}.
+\]
+
+The same tail hypotheses give the truncated-moment factor limit
+
+\[
+L^*_ν(u)=u^{α-2}V_ν(u)\longrightarrow\frac{αC}{2-α}
+\quad\text{if}\quad u^αT_ν(u)\longrightarrow C>0.
+\]
+
 ## Public declarations
 
 - For a stable norming `Bₙ` and a regularly varying two-sided tail of index `-α`, `n ν(|x| > Bₙ) → (2-α)/α`.
