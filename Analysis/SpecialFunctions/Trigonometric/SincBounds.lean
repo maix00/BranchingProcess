@@ -18,6 +18,17 @@ public section
 This file records analytic estimates for `Real.sinc` used to compare its defect
 `1 - Real.sinc x` with the standard truncation weight `min 1 (x ^ 2)`.
 
+The symmetric exponential average represents `sinc`, and its defect is
+comparable to the quadratic truncation weight:
+
+\[
+\operatorname{sinc}(x)=\frac{1}{2}\int_{-1}^{1}e^{iux}\,du,
+\qquad
+\frac{2}{3\pi^2}\min\{1,x^2\}
+\le 1-\operatorname{sinc}(x)
+\le 2\min\{1,x^2\}.
+\]
+
 ## Public declarations
 
 * `Real.intervalIntegral_exp_I_symm`:

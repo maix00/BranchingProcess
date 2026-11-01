@@ -28418,3 +28418,18 @@ inverse limits, the bounded-level-multiplicity asymptotics, the quotient and
 remainder bounds for complete blocks, and rounded-length/horizon limits. The
 five focused modules build successfully in a 1,723-job Lake build; no
 declarations or proofs changed.
+
+## Topology and analysis formula headers (2026-11-01)
+
+Added explicit mathematical statements to the public headers of
+`Topology/Compactness/CompactSystem/Operations.lean`,
+`Analysis/SpecialFunctions/{Trigonometric/SincBounds,Complex/Exponential}.lean`,
+`Analysis/Fourier/ConditionallyPositiveDefinite/{Basic,Schoenberg}.lean`,
+`Analysis/Asymptotics/Sequence/SlowDiagonal.lean`, and
+`Analysis/Asymptotics/RegularVariation/Integral/{Basic,Tail}.lean`. The
+statements show the compact-system closures, sinc defect bounds, exponential
+slope limit, conditional-positive-definite quadratic form and Schoenberg
+conclusion, slow-diagonal selector, Karamata integral limits, and integrated
+tail equivalence. All eight focused modules build successfully in a 3,195-job
+Lake build; no declarations or proofs changed. The same header scan now has 243
+remaining modules for manual formula review out of 1,642 production modules.

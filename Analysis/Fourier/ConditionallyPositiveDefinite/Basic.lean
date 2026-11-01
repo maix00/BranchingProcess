@@ -12,6 +12,18 @@ public import Analysis.Fourier.PositiveDefinite
 
 ## Public declarations
 
+For a finite family of points `xᵢ` in an additive group and complex weights
+`cᵢ` with zero sum, conditional positive definiteness requires the quadratic
+form below to be real and nonnegative:
+
+\[
+\sum_i c_i=0
+\quad\Longrightarrow\quad
+\operatorname{Im}\!\left(\sum_{i,j}\overline{c_i}c_j\,\psi(x_i-x_j)\right)=0,
+\qquad
+\operatorname{Re}\!\left(\sum_{i,j}\overline{c_i}c_j\,\psi(x_i-x_j)\right)\ge 0.
+\]
+
 * `IsConditionallyPositiveDefinite`: for `ψ : G → ℂ`, every finite quadratic form
   `Q = ∑ i, ∑ j, conj (c i) * c j * ψ (x i - x j)` is real and nonnegative
   whenever `∑ i, c i = 0`.

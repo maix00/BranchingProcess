@@ -21,6 +21,21 @@ operations. The abstract closure, product, and transport results are useful inde
 of analytic-set or capacity arguments; standard interval instances use the
 general topology API.
 
+For compact systems `p` on `α` and `q` on `β`, their product family is compact;
+countable intersections and finite unions preserve compactness:
+
+\[
+\begin{aligned}
+\operatorname{IsCompactSystem}(p)\land\operatorname{IsCompactSystem}(q)
+&\Longrightarrow
+\operatorname{IsCompactSystem}\{A\times B:A\in p,\ B\in q\},\\
+\operatorname{IsCompactSystem}(p)
+&\Longrightarrow
+\operatorname{IsCompactSystem}(\operatorname{countableInfClosure}(p))\land
+\operatorname{IsCompactSystem}(\operatorname{supClosure}(p)).
+\end{aligned}
+\]
+
 ## Public declarations
 
 * `IsCompactSystem.image2_prod` sends compact systems

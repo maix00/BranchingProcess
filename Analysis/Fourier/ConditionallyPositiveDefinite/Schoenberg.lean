@@ -14,6 +14,19 @@ import Mathlib.Analysis.Matrix.Order
 
 ## Public declarations
 
+If `ψ` is conditionally positive definite and Hermitian, exponentiation gives
+a positive-definite function for every nonnegative parameter:
+
+\[
+\begin{gathered}
+\psi(-x)=\overline{\psi(x)}\quad(x\in G),\\
+\sum_i c_i=0\Longrightarrow
+\sum_{i,j}\overline{c_i}c_j\,\psi(x_i-x_j)\ge 0
+\quad\text{for every finite }(x_i)\subseteq G\text{ and }(c_i)\subseteq\mathbb{C},\\
+\forall t\ge 0,\quad x\longmapsto e^{t\psi(x)}\text{ is positive definite}.
+\end{gathered}
+\]
+
 * `IsConditionallyPositiveDefinite.schoenberg_exp`: on any additive group `G`, if
   `ψ : G → ℂ` is conditionally positive definite and Hermitian, then
   `x ↦ exp (t * ψ x)` is positive definite for every `t ≥ 0`.
