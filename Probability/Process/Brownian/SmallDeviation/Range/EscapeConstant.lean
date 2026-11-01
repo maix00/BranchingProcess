@@ -57,7 +57,14 @@ theorem exists_brownian_pathLaw_escapeRate_eq_neg_pi_sq_div_eight
           (unitInterval.toNNReal t))) C ∧
       C = -(Real.pi ^ 2) / 8 ∧
       C * 2 ^ (2 : ℝ) = -(Real.pi ^ 2) / 2 := by
-  have hP := hB.isStableClockProcessLaw_cadlagunitIntervalProcessPathLaw
+  have hP : IsStableClockProcessLaw 2 (gaussianReal 0 1) unitInterval.clock
+      (Process.Path.Cadlag.pathLaw Q
+        (fun t ω => B (unitInterval.toNNReal t) ω)
+        (fun t => hB.toIsPreBrownianReal.aemeasurable
+          (unitInterval.toNNReal t))) := by
+    simpa [IsStableLevyProcess.unitIntervalPathLaw,
+      IsLevyProcess.unitIntervalPathLaw, Process.Path.Cadlag.pathLaw] using
+      hB.isStableClockProcessLaw_cadlagunitIntervalProcessPathLaw
   have hX := hB.isStableLevyProcess
   have hcdf : 0 < cdf (gaussianReal 0 1) 0 ∧
       cdf (gaussianReal 0 1) 0 < 1 :=

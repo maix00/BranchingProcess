@@ -17,6 +17,22 @@ independent large-jump Poisson random measure can realize a small residual
 variation and an exact one-jump configuration simultaneously. This avoids a
 separate independence assumption about restrictions of one random measure.
 
+Under the finite-integral and eventual-exclusion hypotheses on the small
+source, and the finite, disjoint measurable large-region hypotheses on $J,B$
+with $m_b(J)>0$, let $w$ be the measurable weight and set
+$A_n=\operatorname{band}(n)$ for the measurable small-source sets. Write
+$N_s(\omega_s)=\operatorname{poissonRandomMeasure}(K_s,X_s,\omega_s)$ and
+$N_b(\omega_b)=\operatorname{poissonRandomMeasure}(K_b,X_b,\omega_b)$. Then,
+for every $\rho>0$, some $n$ satisfies
+$$
+(P_s\otimes P_b)\!\left\{(\omega_s,\omega_b):
+  \int_{A_n}^- w(x)\,N_s(\omega_s)(dx)<\operatorname{ofReal}(\rho),\quad
+  N_b(\omega_b)(J)=1,\quad N_b(\omega_b)(B)=0
+\right\}>0,
+$$
+and the model-existence theorem constructs such families from their
+intensity measures.
+
 ## Public declarations
 
 * `exists_independent_poissonSmallVariation_oneJump_pos` constructs a product

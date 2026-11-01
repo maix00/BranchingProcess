@@ -28130,3 +28130,23 @@ endpoint header defines the entrance path from the two selected mark regions
 and records its unrestricted endpoint identity under the support conditions.
 The three modules build successfully with the pinned Lean toolchain; no Lean
 declarations or proofs changed.
+
+## Poisson cutoff formulas and path-law type alignment (2026-11-01)
+
+Added the quantified small-integral event to
+`Probability/RandomMeasure/Poisson/Integration/SmallValue.lean`, the joint
+small-source and one-jump event to
+`Probability/RandomMeasure/Poisson/Realization/Independent.lean`, and the three
+cutoff intensity conditions to `Probability/RandomMeasure/Poisson/Intensity/Entrance.lean`.
+The displayed conditions match the measurable-set, finite-intensity,
+positive-window, and eventual-exclusion hypotheses in the declarations.
+
+The standalone preflight build exposed two path-law type mismatches in
+`Probability/Process/RandomWalk/FunctionalLimit/Normal/PathLimit/Basic.lean`
+and `Probability/Process/Brownian/SmallDeviation/Range/EscapeConstant.lean`.
+Both consumers now unfold the canonical unit-interval path law to the
+rational-coordinate process path law required by their theorem statements.
+This is a definitional identification; the probability law and escape-rate
+claims are unchanged. The three Poisson modules build in a 4,127-job focused
+Lake build, and both path-law consumers build in a 4,104-job focused build.
+The updated subtree is pending its next standalone preflight run.
