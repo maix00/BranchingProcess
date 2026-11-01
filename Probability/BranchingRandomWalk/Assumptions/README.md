@@ -36,39 +36,29 @@ union exhausts `α`.
 
 ## Formalization boundary
 
-The following items are formalized and compile without axioms:
+The current status of Wang Yiyang, *Asymptotic Speed of the N-Branching
+Random Walk with Infinite Offspring* (master's thesis, Fudan University,
+2026), Theorems 1.1–1.3 is maintained in
+[`FORMALIZATION_CHECKLIST.md`](../../../FORMALIZATION_CHECKLIST.md). That checklist
+is the source of truth for theorem-level completion and remaining proof
+obligations; this file records the meaning and ownership of the assumptions.
 
-- measurability of slot survival, path survival, displacement, and selected
-  positions;
-- the ordered point-process enumeration and its many-root marginal laws;
-- the finite-population truncation estimate; the elementary squeeze from
-  eventual two-sided bounds uses Mathlib's order-topology criterion
-  `Filter.tendsto_order` directly;
-- the first-moment implication from the fourth-moment assumption.
+In particular, the finite-variance endpoint sublevel estimate and its
+law-preserving transfer to the common countable-root field are formalized
+under explicit scale, moment, and exponent-gap hypotheses in
+`Probability/BranchingRandomWalk/Selection/NSelection/EndpointDeviation/Endpoint/Sequence/FiniteVariance.lean`.
+The endpoint moment bounds and the generic polynomial-tail criterion for
+`L²` convergence are also available. The remaining work is in assembling
+these interfaces into the full flat theorem statements, proving the
+positive-start and zero-start endpoint bounds required by Theorem 1.1, and
+completing the exact-finite-`N` speed application for Theorem 1.2. The
+checklist records the precise status of each dependency.
 
-The following items are still proof obligations for Wang Yiyang,
-*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*,
-Theorems 1.1–1.3:
-
-- the Mogul'skii small-deviation estimate for the centered spine walk;
-- the many-to-one identity needed for Wang Yiyang's Theorem 1.1 after
-  identifying the spine law with the centered point-process offspring model
-  (the abstract tilt and
-  forward/backward endpoint identities are already formalized in
-  `Probability/RandomMeasure/ExponentialTilt.lean` and
-  `Probability/BranchingRandomWalk/Spine/PointMeasure/Endpoint.lean`);
-- the branching property at the exploration/stopping-cell level;
-- the coupling lemma used for the `a = 0` trajectory argument;
-- the probabilistic eventual upper and lower bounds that feed the final speed
-  limit through Mathlib's order-topology convergence criterion;
-- the full statements of Theorems 1.1 and 1.2, and the one-sided L1
-  Theorem 1.3.
-
-The final deterministic implication applies Mathlib's
-`Filter.tendsto_order` directly once the probabilistic bounds above are
-supplied. There is no separate project theorem restating that criterion. The
-intermediate estimates do not change the assumption list in the main theorem
-statements.
+The main theorem interfaces continue to expose their assumptions separately;
+these intermediate estimates do not replace them with a bundled assumption
+structure. Deterministic convergence conclusions use Mathlib's
+`Filter.tendsto_order` directly rather than a project wrapper that restates
+that criterion.
 
 
 ## Abstract marks and the real displacement potential
