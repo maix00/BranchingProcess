@@ -23,6 +23,23 @@ bound therefore shows that the stable time scale divided by space tends to
 infinity. Along a stable norming, this implies that the spatial normalization
 is sublinear in the number of steps.
 
+For `1<α≤2` with slowly varying `L^*_ν`, and for a stable norming `B`, the
+two scale conclusions are
+
+\[
+\frac{κ_ν(u)}{u}\longrightarrow\infty,
+\qquad
+\frac{B_n}{n}\longrightarrow0,
+\quad\text{where }κ_ν(u)=\frac{u^α}{L^*_ν(u)}.
+\]
+
+For an uncentered scalar attraction with `1<α<2`, the increment law is
+integrable and has zero mean:
+
+\[
+\int_{\mathbb R}x\,ν(dx)=0.
+\]
+
 ## Public declarations
 
 - If `1 < α ≤ 2` and `L*ν` is slowly varying, then

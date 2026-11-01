@@ -12,6 +12,20 @@ public import Probability.Distributions.Stable.Attraction.Norming.Basic
 /-!
 # Stable norming at index two
 
+Let `M₂=∫x²ν(dx)` be positive and finite. The canonical norming and its
+asymptotic forms are
+
+\[
+B_n=\sqrt{nM_2},\qquad
+\frac{B_n}{\sqrt n}\longrightarrow\sqrt{M_2},\qquad
+\frac{B_n^2}{n}\longrightarrow M_2,
+\qquad
+\frac{nV_ν(B_n)}{B_n^2}\longrightarrow1,
+\]
+
+where `V_ν(u)=∫_{|x|≤u}x²ν(dx)`; the module also constructs `B` as an
+index-two stable norming.
+
 ## Public declarations
 
 * `isStableNorming_two_of_posSecondMoment` constructs the canonical
