@@ -18,6 +18,16 @@ index two. The frequency-averaged Tauberian estimate therefore gives a
 little-o tail bound for the symmetrized increment law, without a moment
 assumption.
 
+Let `D(u)=1-|\widehatν(u)|²`, and let `ν_s` be the law of the difference of
+two independent samples with law `ν`. For `ν_s`, and for `ν` when the
+centering hypotheses hold, the tail conclusions are
+
+\[
+\frac{ν_s\{|y|\ge x\}}{D(x^{-1})}\longrightarrow0,
+\qquad
+\frac{ν\{|y|\ge x\}}{D(x^{-1})}\longrightarrow0.
+\]
+
 ## Public declarations
 
 - `IsInDomainOfAttractionAlong.tendsto_symmetrizedClosedAbsTail_div_normDefect_atTop_of_gaussian`:

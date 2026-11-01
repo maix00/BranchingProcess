@@ -21,6 +21,24 @@ public import Probability.Sequence.IID.Basic
 /-!
 # The finite-variance normal domain of attraction
 
+For attraction to the standard Gaussian, let
+`D(u)=1-|\widehatν(u)|²`. The public limits include
+
+\[
+nD(t/a_n)\longrightarrow t^2\quad(t>0),\qquad
+n\bigl(4D(t/a_n)-D(2t/a_n)\bigr)\longrightarrow0.
+\]
+
+For centered `ν` with positive second moment
+`M_2=∫x²ν(dx)`, let `X_1,X_2,…` be iid with law `ν` and set
+`S_n=∑_{j=1}^n X_j`. The Gaussian normalization gives
+
+\[
+a_n=\sqrt{nM_2},\qquad
+\mathcal L\!\left(\frac{S_n}{\sqrt{nM_2}}\right)
+\Longrightarrow\mathcal N(0,1).
+\]
+
 ## Public declarations
 
 - `IsInDomainOfAttractionAlong.gaussian_defect_data`: attraction to the

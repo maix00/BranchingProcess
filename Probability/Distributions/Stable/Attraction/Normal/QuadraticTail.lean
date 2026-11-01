@@ -19,6 +19,13 @@ import Probability.Distributions.Stable.Attraction.Normal.CharacteristicTail
 /-!
 # Quadratic tails in the Gaussian domain of attraction
 
+Set `L^*(x)=∫_{|y|≤x}y²ν(dy)`. Gaussian attraction gives a negligible
+quadratic tail, and the function `L^*` is slowly varying:
+
+\[
+\frac{x^2ν\{|y|>x\}}{L^*(x)}\longrightarrow0.
+\]
+
 ## Public declarations
 
 - `IsInDomainOfAttractionAlong.tendsto_secondTailRatio_of_gaussian` proves
