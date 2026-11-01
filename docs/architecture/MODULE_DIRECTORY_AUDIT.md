@@ -28317,3 +28317,14 @@ theorem-type review further separated the zero-centering hypothesis for the
 mean conclusion and removed an unnecessary centering qualification from the
 original-law closed-tail bound; the two corrected headers build in a
 3,376-job focused Lake build. No declarations or proofs changed.
+
+## Coupling, kernel, ergodic, and clock-process formulas (2026-11-01)
+
+Added mathematical displays to the public headers of `Probability/Coupling/`
+(`Basic.lean`, `Order.lean`), `Probability/Ergodic/Invariant.lean`,
+`Probability/Kernel/{Markov,SubMarkov}.lean`, and
+`Probability/Process/Stable/Process.lean`. They state the coupling marginal
+identities and almost-everywhere order transfer, invariance from monotonicity,
+sub-Markov and Markov row-mass conditions, and the stable clock-process
+interface. The six focused modules build successfully in a 3,043-job Lake
+build; no declarations or proofs changed.

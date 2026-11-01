@@ -14,6 +14,21 @@ public import Mathlib.MeasureTheory.Measure.Prod
 A coupling is a joint measure with prescribed first and second marginals.  The
 definition is independent of any order, branching structure, or pathwise map.
 
+For a measure `κ` on `X×Y`, being a coupling of `μ` and `ν` means
+
+\[
+(\operatorname{map}\,\mathrm{Prod.fst})\,κ=μ,
+\qquad
+(\operatorname{map}\,\mathrm{Prod.snd})\,κ=ν.
+\]
+
+For a relation `R : X → Y → Prop`, it holds almost everywhere under the
+joint measure:
+
+\[
+R(p.1,p.2)\quad\text{for }κ.\mathrm{joint}\text{-almost every }p.
+\]
+
 ## Public declarations
 
 * `ProbabilityTheory.Coupling μ ν` consists of a measure `κ` on `X × Y` such
