@@ -14,6 +14,15 @@ public import Mathlib.Probability.Independence.InfinitePi
 
 ## Public declarations
 
+Reading the empty-address step from every root of an i.i.d. root-indexed
+field gives the product batch law:
+
+\[
+\left(\operatorname{stepFieldLaw}_{R}^{\mu}\right)
+\circ\left(\operatorname{rootStepBatch}\right)^{-1}
+=\operatorname{Measure.infinitePi}(\lambda\_ : R,\mu).
+\]
+
 - `RootIndexed.rootStepBatch` maps a root-indexed field
   `Root → TreeNode α → Step α X` to its root-step family
   `Root → Step α X`, by evaluating each tree at the empty address.

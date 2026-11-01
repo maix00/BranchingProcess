@@ -13,6 +13,15 @@ public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law.Basic
 
 ## Public declarations
 
+Restricting the countable-root product field to its first `m` roots preserves
+the product law:
+
+\[
+\left(\operatorname{stepFieldLaw}_{\mathbb N}^{\mu}\right)
+\circ\left(\operatorname{first}_m\right)^{-1}
+=\operatorname{finiteRootStepFieldLaw}^{\mu}(m).
+\]
+
 The declarations in `ProbabilityTheory.BranchingRandomWalk` state:
 
 - `RootIndexed.StepField.measurable_first`: restricting a field indexed by

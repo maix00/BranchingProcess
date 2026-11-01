@@ -13,6 +13,16 @@ public import Combinatorics.BranchingWalk.Basic.BranchingWalk
 
 ## Public declarations
 
+Root relabeling and coordinate reindexing pull back the indicated
+coordinates:
+
+\[
+(S.\operatorname{reindex}(f))(r,u)=S(f(r),u),
+\qquad
+(S.\operatorname{reindexCoordinates}(g))(r,u)
+=S\bigl(g(r,u).1,g(r,u).2\bigr).
+\]
+
 An arbitrary type `Root` indexes the initial ancestors. Each label owns its own
 step field over the Ulam--Harris addresses, and reindexing along a map
 `f : NewRoot → Root` relabels the roots. The `Fin m` and `ℕ` specializations
