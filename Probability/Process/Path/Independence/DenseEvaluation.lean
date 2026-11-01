@@ -25,6 +25,11 @@ continuous path space. It supplies the path-level independence needed
 for the rational-interval step in Lemma 2.3 of Erwin Bolthausen,
 *On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*, Ann. Probab. 4(3) (1976), 480--485,
 DOI 10.1214/aop/1176996098.
+
+For dense sequences `\(s:I\to S\)` and `\(t:J\to T\)`, the implication is
+`\((ContinuousMap.finiteEvaluation(s)\circ F)\perp_P
+(ContinuousMap.finiteEvaluation(t)\circ G)\Rightarrow F\perp_P G\)`,
+where `\(F:Ω\to C(S,\mathbb R)\)` and `\(G:Ω\to C(T,\mathbb R)\)`.
 -/
 
 @[expose] public section

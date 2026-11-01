@@ -41,9 +41,9 @@ the corresponding `Tree/` modules; this file records only the specialization.
 
 Under a unique root, `\(equivOfUnique(T)(default)=T\)` and
 `\(equivOfUnique^{-1}(T)(r)=T\)`. The distance and truncation-ball
-identities are `\(treeDist(T,T')=Tree.treeDist(T(default),T'(default))\)`
-and `\(equivOfUnique^{-1}{}'\ Tree.truncationBall(equivOfUnique(T),n)=
-uniformBall(T,n)\)`.
+identities are `\(treeDist\ T\ T' = Tree.treeDist\ (T\ default)\ (T'\ default)\)`
+and `\(equivOfUnique ⁻¹' Tree.truncationBall (equivOfUnique T) n =
+uniformBall T n\)`.
 -/
 
 open MeasureTheory

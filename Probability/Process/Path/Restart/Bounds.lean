@@ -20,6 +20,11 @@ public import Probability.Process.Path.Restart.Basic
   `path k - path (restartAnchor cutoff k) ≤ upper k` for each `k`, then
   `path n - path 0 ≤ upper n` through the cutoff and
   `path n - path 0 ≤ upper cutoff + upper n` afterwards.
+
+In one formula, the endpoint estimate is
+`\(x_n-x_0\le u_n\)` when `\(n\le c\), and
+`\(x_n-x_0\le u_c+u_n\)` when `\(c<n\), assuming
+`\(x_k-x_{r_c(k)}\le u_k\)` for each `k`.
 -/
 
 @[expose] public section

@@ -40,6 +40,13 @@ measurability and independence consequences.
   `ProbabilityTheory.nullMeasurableSet_fullSegmentCorridorIocReturnEvent`:
   both terminal-window events are null-measurable under the same coordinate
   measurability and path-regularity hypotheses.
+
+The segment increment is
+`\(\Delta X_{s,\ell}(t)=X_{s+\ell t}-X_s\)`. The full corridor event is
+`\(\{\omega\mid\exists\eta>0,\ \forall t\in[0,1],\
+a+\eta\le\Delta X_{s,\ell}(t,\omega)\le b-\eta\}\)`;
+the return versions additionally impose
+`\(\Delta X_{s,\ell}(1)\in(c,d)\)` or `\((c,d]\)`.
 -/
 
 @[expose] public section

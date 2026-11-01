@@ -22,6 +22,10 @@ stochastic process.
   if a straight path with endpoint in the interior of a terminal corridor
   belongs to the support of the path law, then the corresponding complete
   segment return-corridor event has positive probability.
+
+Under the displayed strict-interior assumptions, the implication is
+`\(linearPath(y)\in supp(P.map\ F)\Rightarrow
+P(fullSegmentCorridorReturnEvent(X,0,1,a,b,c,d))>0\)`.
 -/
 
 @[expose] public section

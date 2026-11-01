@@ -20,6 +20,11 @@ public import Mathlib.MeasureTheory.Group.Arithmetic
   the event
   `{x : Fin (n + 1) → E | ∀ k, x k - x (restartAnchor cutoff k) ∈ window k}`
   is measurable in the finite-coordinate product space.
+
+This event is
+`\(\{x\in E^{n+1}\mid\forall k\le n,\ x_k-x_{r_c(k)}\in W_k\}\)`;
+the theorem gives its measurability when subtraction and every `\(W_k\)`
+are measurable.
 -/
 
 @[expose] public section

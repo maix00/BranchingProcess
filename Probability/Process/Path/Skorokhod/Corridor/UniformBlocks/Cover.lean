@@ -29,6 +29,11 @@ The deterministic comparison
 `rationalCoordinateCorridor_subset_oscillationTube` states that if
 `lower < x(q) < upper` for every rational unit time and `extra > 0`, then
 `x` belongs to the oscillation tube of width `upper - lower + extra`.
+
+The coverage formula is `\(\forall q\in Q_1,\ \exists j<N,\ r\in Q_1,
+q=(j+r)/N\)`. It yields
+`\(\{x\mid\forall q\in Q_1,\ a<x(q)<b\}\subset
+OscillationTube(b-a+\varepsilon)\)` for `\(\varepsilon>0\)`.
 -/
 
 @[expose] public section

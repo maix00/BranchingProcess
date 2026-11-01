@@ -33,6 +33,11 @@ representatives.
   component events and their component rates.
 * `tendsto_log_finiteCorridorUnion_preimage_probability_ratio_of_aemeasurable_paths`
   supplies that result for almost-everywhere measurable path maps.
+
+The component rates `\(\log(P(C_i).toReal)/g\to\kappa E(C_i)\)` imply
+`\(\log(P(\bigcup_i C_i).toReal)/g\to\kappa\min_i E(C_i)\)`;
+null-measurability is sufficient for pulling the component events back to
+the sample space.
 -/
 
 open Filter MeasureTheory

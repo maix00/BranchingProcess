@@ -53,6 +53,11 @@ the coordinate estimate below compares `f(q)` with the target line `v q`.
 
 The event is defined directly on a complete rational-coordinate path. Its
 conditions on each block depend on the endpoint of the preceding prefix.
+
+At the block boundary `\(t_k=k/N\)`, successful feedback gives
+`\(|f(t_k)-vk/N|\le R\)`; at each rational `\(q\in[0,1]\)` it gives
+`\(|f(q)-vq|\le R+\delta+|v/N|\)`. The correction choice is determined by
+the sign of `\(f(t_{k-1})-v t_{k-1}\)`.
 -/
 
 @[expose] public section

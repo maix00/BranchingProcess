@@ -36,6 +36,12 @@ instances are supplied by the Stable small-deviation adapters.
   `q ^ blocks ≤ P(⋂ j, (fun ω s => rationalUniformBlockProcessFromTime
   X hblocks j s ω) ⁻¹' V)` from stationary independent increments and
   one-block probability at least `q`.
+
+For `\(N=blocks\)`, the global tube estimate is
+`\(\mathbb P(X\in Tube(\delta))\le
+\mathbb P(X^{(0)}\in Tube(\delta))^N\)`. Under stationary independent
+increments, a common block-event bound `\(q\)` gives
+`\(q^N\le\mathbb P(\bigcap_{j<N}\{X^{(j)}\in V\})\)`.
 -/
 
 open MeasureTheory

@@ -35,6 +35,11 @@ sample path lies in the domain.
 * `existsUnique_inner_outer_log_probability_ratio_of_hasRelativeVanishingEnergyGapApproximation`
   obtains the unique common rate and matching inner- and outer-measure limits
   for a relative approximation with vanishing energy gap.
+
+For an approximation relative to the path domain, the limits are
+`\(\log(P.innerMeasure(G_n).toReal)/g_n\to\kappa H\)` and
+`\(\log(P(G_n).toReal)/g_n\to\kappa H\)`,
+with `\(0<H\le E(A.inner(0))\)`.
 -/
 
 open Filter MeasureTheory

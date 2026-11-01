@@ -30,6 +30,11 @@ public import Topology.Cadlag.Skorokhod.Corridor.Dense
   the exact positive-scaling law for the path corridor and endpoint window.
 - `ProbabilityTheory.rationalCoordinateCorridorReturn_mono` proves monotonicity
   under inclusion of both spatial intervals.
+
+Writing `\(Q_1=\mathbb Q\cap[0,1]\)`, the corridor and return sets are
+`\(\{x:Q_1\to\mathbb R\mid\forall q\in Q_1,\ a<x(q)<b\}\)` and
+`\(\{x\mid\forall q\in Q_1,\ a<x(q)<b\}\cap
+\{x\mid c<x(1)<d\}`.
 -/
 
 @[expose] public section

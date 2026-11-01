@@ -29,6 +29,15 @@ null-measurable.
 * `tendsto_log_probability_ratio_of_finiteCorridorUnionRates_continuousBoundary`
   gives the ordinary probability limit with the same integral when the target
   preimages are null-measurable.
+
+For `\(G_n=\{\omega: paths_n(\omega)\in C_{lower,upper}\}\)` and
+`\(g_n\to-\infty\)`, the rates are
+`\(\log(P.innerMeasure(G_n).toReal)/g_n\to\kappa\int_0^1
+continuousBoundaryDensity(\alpha,lower,upper)(t)\,dt\)` and
+`\(\log(P(G_n).toReal)/g_n\to\kappa\int_0^1
+continuousBoundaryDensity(\alpha,lower,upper)(t)\,dt\)`.
+Null-measurability identifies the ordinary probability with the inner and
+outer measures.
 -/
 
 open Filter MeasureTheory ProbabilityTheory

@@ -21,6 +21,10 @@ import Topology.Order.UnitInterval.Rational
   `∀ t, |X t - X 0 - v t| < η` on the full unit interval, assuming
   `2 (R + δ + |v / blocks|) < η`.
 
+The estimate is
+`\(2(R+\delta+|v/N|)<\eta\Rightarrow
+\forall t\in[0,1],\ |X_t-X_0-vt|<\eta\)`.
+
 The finite block event is first controlled at rational times. Càdlàg
 regularity then transfers a closed bound to the complete unit interval.
 -/
