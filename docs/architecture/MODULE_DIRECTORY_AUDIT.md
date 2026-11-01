@@ -28512,3 +28512,18 @@ membership, and additive-path position formulas. All eleven focused modules
 build successfully in a 1,815-job Lake build; no declarations or proofs
 changed. The same formula-header review now has 201 remaining modules out of
 1,642 production modules.
+
+## Measure-theoretic interface formulas (2026-11-01)
+
+Added mathematical statements to the public headers of
+`MeasureTheory/MeasurableSpace/{CountableEvaluation,Option}.lean`,
+`Function/FinPartialSum.lean`, `Measure/{LowerTail,LevelSet,Tight/Sequence}.lean`,
+`Integral/{MeasurePreserving,Lebesgue/RestrictLimit}.lean`, and
+`Analytic/Paving/{Basic,Projection}.lean`. The formulas record evaluation at
+a measurable selector, the option measurable structure, finite partial sums,
+lower-tail order, null fibers over uncountable level sets, change of variables,
+product-paving representations and projection, vanishing restricted
+integrals, and a uniform compact-tail criterion for tightness. All ten focused
+modules build successfully in a 2,744-job Lake build; no declarations or proofs
+changed. The same formula-header review now has 191 remaining modules out of
+1,642 production modules.

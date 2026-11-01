@@ -12,6 +12,14 @@ public import Mathlib.MeasureTheory.Measure.Typeclasses.SFinite
 
 ## Public declarations
 
+For an s-finite measure and measurable `g` with measurable singletons, every
+uncountable set of levels contains a null fiber:
+
+\[
+S\subseteq\beta,\quad S\text{ uncountable}
+\Longrightarrow \exists y\in S,\quad \mu\bigl(\{x:g(x)=y\}\bigr)=0.
+\]
+
 * `MeasureTheory.exists_measure_zero_fiber_of_not_countable`: if `g : α → β` is measurable,
   `μ` is an s-finite measure, and `S ⊆ β` is uncountable, then some `y ∈ S` has a
   null fiber `{x | g x = y}`. The codomain only needs measurable singletons.

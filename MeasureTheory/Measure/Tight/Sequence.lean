@@ -19,6 +19,17 @@ space are needed when tightness of individual measures is supplied directly.
 
 ## Public declarations
 
+Individual tightness together with one compact tail bound uniform over all
+sufficiently late indices implies tightness of the full sequence range:
+
+\[
+\left[\forall n,\ \{\mu_n\}\text{ is tight}\right]
+\land
+\left[\forall\varepsilon>0,\ \exists N,K\text{ compact},\
+\forall n\ge N,\ \mu_n(K^{\complement})\le\varepsilon\right]
+\Longrightarrow \{\mu_n:n\in\mathbb N\}\text{ is tight}.
+\]
+
 * `MeasureTheory.isTightMeasureSet_image_Iio_of_singletons` states
   `(∀ n, IsTightMeasureSet {μ n}) → IsTightMeasureSet (μ '' Iio N)`.
 * `MeasureTheory.isTightMeasureSet_range_of_eventually_uniform_compact_mass_bound`

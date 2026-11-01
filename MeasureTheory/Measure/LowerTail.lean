@@ -14,6 +14,13 @@ public import Mathlib.Order.Interval.Set.Basic
 
 ## Public declarations
 
+Lower-tail domination compares the measures of every principal lower set:
+
+\[
+\operatorname{LowerTailDominates}(\mu,\nu)
+\iff \forall a,\quad \mu(\operatorname{Iic}(a))\le\nu(\operatorname{Iic}(a)).
+\]
+
 - `Measure.LowerTailDominates μ ν` means
   `∀ a, μ (Set.Iic a) ≤ ν (Set.Iic a)` on a measurable preorder. It compares
   measures on every principal lower set and requires no finiteness or

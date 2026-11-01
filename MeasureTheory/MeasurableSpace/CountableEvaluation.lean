@@ -18,6 +18,13 @@ countable. The index type needs no measurable-space structure.
 
 ## Public declarations
 
+Under the coordinate, fiber, and countable-range hypotheses, evaluation at a
+measurable selector is measurable:
+
+\[
+\operatorname{Measurable}\!\left(\omega\mapsto F(\omega,s(\omega))\right).
+\]
+
 * `measurable_of_countable_range_of_fibers` proves that `s : Ω → I` is
   measurable when its actual range is countable and each fiber
   `{ω | s ω = i}` is measurable.

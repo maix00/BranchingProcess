@@ -17,6 +17,14 @@ eventual exclusion from the sets.
 
 ## Public declarations
 
+If the total integral is finite and almost every point eventually leaves the
+measurable sets, the restricted integrals tend to zero:
+
+\[
+\operatorname{lintegral}_{\operatorname{band}(n)}
+\operatorname{weight}\,d\nu\longrightarrow 0.
+\]
+
 * `tendsto_lintegral_restrict_of_eventually_not_mem`: if `weight` is
   measurable, each `band n` is measurable, `∫⁻ x, weight x ∂ν < ∞`, and
   almost every `x` eventually lies outside `band n`, then

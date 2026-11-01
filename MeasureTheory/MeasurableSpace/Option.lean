@@ -16,6 +16,17 @@ random maps: `some x` is an ordinary value and `none` is a cemetery value.
 
 ## Public declarations
 
+The measurable structure on options is induced by `some`; measurable maps
+remain measurable after mapping through `Option.map`:
+
+\[
+\mathcal M_{\operatorname{Option}(X)}
+=\operatorname{map}(\operatorname{some})\,\mathcal M_X,
+\qquad
+f\text{ measurable}\Longrightarrow
+\bigl(o\mapsto\operatorname{map}(f,o)\bigr)\text{ measurable}.
+\]
+
 * `MeasureTheory.optionMeasurableSpace X` is the measurable space induced by
   `some : X → Option X`.
 * `MeasureTheory.measurableSet_option_none` and
