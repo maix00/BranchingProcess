@@ -34,6 +34,18 @@ This file composes the path-count Paley--Zygmund estimate with the independent
 root Chernoff bound.  The caller supplies the one-root first and second moment
 estimates; the result counts initial roots whose descendant field contains a
 path through the prescribed corridor.
+
+If a one-root corridor count \(X\) satisfies
+\(\mathbb E X=\mu_1\) and \(\mathbb E X^2\le\mu_2\), with
+\(0<\mu_2<\infty\), then for \(m\) independent roots, with \(Z_m\) the
+number of roots producing a corridor path,
+\[
+ \mathbb P\!\left(Z_m\le\frac{m\mu_1^2}{4\mu_2}\right)
+ \le \exp\!\left(-\frac{m\mu_1^2}{4\mu_2}\right).
+\]
+If every corridor endpoint is at least \(L\), then
+\(\mathbb E X\ge e^{L-x}\mathbb P_{\mathrm{sp}}(E)\), where \(x\) is the
+initial position and \(E\) is the corresponding tilted-spine corridor event.
 -/
 
 open MeasureTheory

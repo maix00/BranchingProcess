@@ -43,6 +43,30 @@ second moment of the exponentially weighted number of children in a bounded
 position window.  The diagonal terms are controlled by the lower endpoint of
 the window.  This is the one-generation estimate used to start a two-stage
 branching tube argument.
+
+For a step \(\xi\), put
+\(w_{\varphi,i}(\xi)=\operatorname{realizedPotentialWeight}
+(\varphi,-1,\xi,i)\) and
+\(V_{\varphi,i}(\xi)=\xi.\operatorname{potentialValue}'(\varphi,i)\).
+Write \(\widetilde\mu_\varphi=\operatorname{tiltedPotentialLaw}
+(\varphi,-1,\mu)\). Its weighted offspring mass in a measurable window \(I\) is
+\[
+ M_I(\xi)=\sum_i w_{\varphi,i}(\xi)\,
+   \mathbf 1_I(V_{\varphi,i}(\xi)).
+\]
+With \(C_\varphi(\xi)=\operatorname{crossPotentialWeight}
+(\varphi,-1,\xi)\), it satisfies
+\[
+ \int^- M_I\,d\mu=\widetilde\mu_\varphi(I),\qquad
+ M_I(\xi)^2\le e^{-a}M_I(\xi)+C_\varphi(\xi)
+ \quad\text{if }I\subseteq[a,\infty),
+\]
+and consequently
+\[
+ \widetilde\mu_\varphi(I)
+ \le \mu\{M_I\ne0\}^{1/2}
+ \left(e^{-a}\widetilde\mu_\varphi(I)+\int^- C_\varphi\,d\mu\right)^{1/2}.
+\]
 -/
 
 @[expose] public section

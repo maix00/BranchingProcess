@@ -32,6 +32,20 @@ square.  This file iterates that recursion to all generations.  For a
 zero-one path test, the diagonal is exactly the first moment, and the
 remainder consists of ordered pairs of distinct successful paths, split at
 their most recent common ancestor.
+
+For a measurable corridor event \(E_n\), the recursive off-diagonal
+remainder equals the direct ordered distinct-address pair count almost
+everywhere and has the same integral. If its expected pair count is at most
+\(B<\infty\), the endpoint lies in \([L,U]\), and the initial position is
+\(x\), with
+\(p=\mathbb P_{\mathrm{sp}}(E_n)>0\), set
+\[
+ \lambda=e^{L-x}p,\qquad
+ \nu=e^{U-x}p+B,\qquad
+ \rho=\frac{\lambda^2}{\nu}.
+\]
+For \(m\) independent roots, the probability that at most \(m\rho/4\) of
+them produce a corridor path is at most \(e^{-m\rho/4}\).
 -/
 
 @[expose] public section

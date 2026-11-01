@@ -42,6 +42,19 @@ public import Mathlib.MeasureTheory.MeasurableSpace.Defs
 The first child whose increment enters a prescribed window is chosen by its
 least slot index. Its descendant field is independent of the root step. This
 gives an exact product formula for success in two consecutive tube windows.
+
+Write \(P_{\mathrm{off}}=\operatorname{offspringFieldLaw}(\mu)\). For
+measurable windows \(I,J\), put
+\(E_I=\{\xi:\exists i,\ \operatorname{survive}(\xi,i),\
+V_{\varphi,i}(\xi)\in I\}\) and
+\(E_J=\{\omega:\exists j,\ \operatorname{survive}(\omega(\varnothing),j),\
+V_{\varphi,j}(\omega(\varnothing))\in J\}\), where
+\(V_{\varphi,i}(\xi)=\xi.\operatorname{potentialValue}'(\varphi,i)\).
+Then
+\[
+ \mathbb P_{\mathrm{off}}(\operatorname{twoStageTubeEvent}(\varphi,I,J))
+ =\mu(E_I)\,\mathbb P_{\mathrm{off}}(E_J).
+\]
 -/
 
 @[expose] public section

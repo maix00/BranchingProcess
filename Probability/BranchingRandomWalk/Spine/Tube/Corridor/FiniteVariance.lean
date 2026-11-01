@@ -35,6 +35,33 @@ public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Sca
 
 The entrance and stable endpoint bridge probability is rewritten as the
 affine corridor event used by the branching random walk path count.
+
+The endpoint window is the lower-window form of Wang Yiyang,
+*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*
+(master's thesis, Fudan University, 2026), Chapter 4, Lemma 4.3. Its path-rate
+constant follows the finite-variance case of A. A. Mogul'skii, Theorem 3,
+Section 4, p. 764, “Small deviations in the sample function space,”
+*Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974), 755–765; English
+translation, “Small Deviations in a Space of Trajectories,” *Theory of
+Probability and Its Applications* 19(4) (1975), 726–736,
+DOI 10.1137/1119081.
+
+Write \(\nu=\operatorname{tiltedPotentialLaw}(\varphi,-1,\mu)\) and
+\(P_{\mathrm{tilt}}=\operatorname{tiltedIncrementFieldLaw}(\varphi,\mu)\).
+For \(G_n=\{z:\operatorname{history}_n(0,z)\in
+\operatorname{affineCorridorThrough}(n,-rL_n,0,rL_n,(-r+1)L_n)\}\),
+the event conversion identifies the fixed-window entrance event with \(G_n\).
+Given the centered second moment \(\sigma^2>0\), a Mogulskii scale \(L_n\),
+and \(r>1\), there are \(C<0,\ q>0,\ A>0\) and \(n_0\) such that, for
+\(n\ge n_0\), putting
+\(B_n=\operatorname{stableBlockLength}(2,\nu,A^2,L_n,n)\) and
+\(R_n=\operatorname{balancedBlockCount}
+(\operatorname{finiteVarianceBridgeLength}(L_n,n)-B_n,B_n)+1\), one has
+\[
+ \exp\!\left(\left(\frac{C}{(r/2-13/60)^2}-1\right)A^2R_n\right)
+ \frac{q}{\operatorname{finiteVarianceEntranceLength}(L_n,n)}
+\le P_{\mathrm{tilt}}(G_n).
+\]
 -/
 
 @[expose] public section

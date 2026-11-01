@@ -28,6 +28,35 @@ public import Probability.BranchingRandomWalk.Spine.Tube.SecondMoment.MultiGener
 This file sums the actual affine-corridor MRCA contributions over their
 possible generations.  Each fixed-depth term retains the corridor condition
 at the birth generation and is measurable before the finite sum is integrated.
+
+The pair decomposition and drawdown estimate formalize the second-moment
+bound in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with
+Infinite Offspring* (master's thesis, Fudan University, 2026), Chapter 4,
+Lemma 4.5, equation (4.6).
+
+Write \(P_{\mathrm{off}}=\operatorname{offspringFieldLaw}(\mu)\) and
+\(P_{\mathrm{sp}}=\operatorname{tiltedIncrementFieldLaw}(\varphi,\mu)\).
+Let \(X_N^{\ne}\) be the ordered distinct-address pair count in the affine
+corridor, \(C_{m,n}\) its actual contribution from pairs whose most recent
+common ancestor is at generation \(m\) with \(n+1\) generations remaining,
+\(C_{m,n}=\operatorname{affineTubeMRCAPairContribution}
+(\varphi,\mu,m,n,x,a,v,\Delta,U)\),
+\(C_\varphi(\xi)=\operatorname{crossPotentialWeight}(\varphi,-1,\xi)\),
+\(M_\varphi=\int^- C_\varphi\,d\mu\), and
+\(E_m=\{z:\operatorname{history}_m(x,z)\in
+\operatorname{affineCorridorPrefix}(m,a,v,\Delta)\}\). If \(v\ge0\) and
+the drawdown probabilities are bounded by \(q_n\), then
+\[
+\begin{aligned}
+ \int^- X_N^{\ne}\,dP_{\mathrm{off}}
+ &=\sum_{m=0}^{N-1} C_{m,N-m-1}\\
+ &\le\sum_{m=0}^{N-1}e^{-2x}e^{2U}q_{N-m-1}^{\,2}
+ M_\varphi e^{x-a-vm}\,
+ P_{\mathrm{sp}}(E_m).
+\end{aligned}
+\]
+Here \(x\), \(a\), and \(U\) are the initial position, corridor lower
+intercept, and terminal upper bound.
 -/
 
 @[expose] public section

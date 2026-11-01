@@ -28187,3 +28187,16 @@ notation. The tail-composition formula follows the repository convention
 prefix. Every displayed statement was checked against its Lean definition or
 theorem type. The 27 focused modules build successfully in a 2,744-job Lake
 build; no declarations or proofs changed.
+
+## Branching-spine tube moment formulas (2026-11-01)
+
+Added formulas to the public headers in
+Probability/BranchingRandomWalk/Spine/Tube/Corridor/{Drawdown,FiniteVariance,IndependentRoot,PairBound,SecondMoment}.lean
+and Probability/BranchingRandomWalk/Spine/Tube/SecondMoment/{Basic,MultiGeneration,TwoStage}.lean.
+They record the drawdown-event transfer, finite-variance affine-corridor
+lower bound, independent-root count estimate, MRCA pair sum, second-moment
+identity, one-step tilted-window bound, and two-stage product law. The
+literature pointers now identify Wang Yiyang's Chapter 4 Lemmas 4.3 and 4.5
+(including equation (4.6)) and Mogul'skii's Theorem 3, Section 4, p. 764,
+with full bibliographic details. The eight focused modules build successfully
+in a 3,869-job Lake build; no declarations or proofs changed.
