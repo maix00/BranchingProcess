@@ -15,6 +15,15 @@ import Mathlib.MeasureTheory.Function.StronglyMeasurable.Basic
 /-!
 # Order-monotone observables of measure-preserving maps
 
+If `T` preserves a finite measure `μ` and `F≤F∘T` almost everywhere, then
+the two observables agree almost everywhere:
+
+\[
+F\le F\circ T\quad\mu\text{-a.e.}
+\qquad\Longrightarrow\qquad
+F\circ T=F\quad\mu\text{-a.e.}
+\]
+
 ## Public declarations
 
 * `ProbabilityTheory.ae_eq_comp_of_le_comp`: if `T` preserves a finite measure, `F : X → ℝ`

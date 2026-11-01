@@ -30,6 +30,17 @@ public import Mathlib.Probability.Kernel.Composition.MapComap
 A sub-Markov kernel has total mass at most one at every source point.  The
 missing mass is interpreted as killing.  Markov kernels are the mass-one
 special case.
+
+For every source state `x`, with `Ω` denoting the target space, the
+row-mass condition and its target-set consequence are
+
+\[
+K(x,\Omega)\le1,
+\qquad
+K(x,A)\le1\quad(A\text{ measurable});
+\]
+
+the Markov-kernel case is characterized by `K(x,Ω)=1` for every `x`.
 -/
 
 @[expose] public section

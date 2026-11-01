@@ -16,6 +16,14 @@ An almost-sure order between coupled observables compares the probabilities of
 all measurable upper sets. This formulation applies to any measurable ordered
 codomain and specializes to upper-tail comparison on `ℝ`.
 
+For measurable maps `f : X → α` and `g : Y → α`, a coupling `κ` of `μ` and
+`ν`, and a measurable upper set `S`, the condition `g(p.2)≤f(p.1)` almost
+surely implies
+
+\[
+ν(g^{-1}(S))\le μ(f^{-1}(S)).
+\]
+
 ## Public declarations
 
 * `ProbabilityTheory.Coupling.measure_preimage_le_of_ae_le`: if
