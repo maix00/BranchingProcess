@@ -28369,3 +28369,15 @@ to the headers in `Probability/Distributions/Stable/Support/{Sign,IndexOne,Bound
 and `LevyMeasure/Cutoff/{Variation,Drift}.lean`. The five focused modules
 build successfully in a 3,459-job Lake build; no declarations or proofs
 changed.
+
+## Characteristic-function tail and Tauberian formulas (2026-11-01)
+
+Added displayed statements to the public headers of
+`Probability/Distributions/CharacteristicFunction/Symmetrization/Tail.lean`
+and `Tauberian/{FrequencyAverage,FrequencyAverageLimit,SecondTail}.lean`.
+They define the two-sided tail and closed-ball mass used in the symmetrization
+inequalities, give the frequency-averaged cosine-defect identity and tail
+coercivity bound, state the capped-cubic and inverse-cosine representations
+of the second tail integral, and record the compact-uniform index-two
+condition and resulting tail little-o limit. The four focused modules build
+successfully in a 3,219-job Lake build; no declarations or proofs changed.

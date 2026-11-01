@@ -25,6 +25,25 @@ import Mathlib.MeasureTheory.Integral.Prod
   the corresponding bound for the law of the difference of two independent
   samples, expressed through the squared-modulus characteristic defect.
 
+Set
+\[
+  D_\mu(u)=\int (1-\cos(uy))\,\mu(dy),
+  \qquad
+  Q(z)=\int_1^2(1-\cos(tz))^2\,dt.
+\]
+The exact averaging identity and the uniform tail coercivity take the forms
+\[
+  \int_1^2\!\left(4D_\mu(t/x)-D_\mu(2t/x)\right)dt
+    =2\int Q(y/x)\,\mu(dy),
+  \qquad
+  2c_\mu\,\mu\{|y|\ge x\}
+    \le \int_1^2\!\left(4D_\mu(t/x)-D_\mu(2t/x)\right)dt
+    \quad(x>0),
+\]
+for some `c_μ > 0`. Applying this to the difference law replaces
+`D_μ(u)` by `1 - ‖charFun ν u‖²` and the tail by that of
+`symmetrizedMeasure ν`.
+
 The averaged squared cosine kernel detects the tail of the measure whose
 cosine defect is being averaged. For an increment law's squared-modulus
 characteristic defect, that measure is its symmetrization (the law of the
