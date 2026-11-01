@@ -28393,3 +28393,17 @@ vanishing difference, the power-tail integral limit, the extended-real power
 ratio inequality, regular-variation closure rules, Potter's bound, and the
 compact-uniform ratio theorem. All seven focused modules build successfully
 in a 2,838-job Lake build; no declarations or proofs changed.
+
+## Càdlàg and order-topology formulas (2026-11-01)
+
+Added explicit mathematical statements to the public headers of
+`Topology/Cadlag/{Jump,UniformLimit,Oscillation,Range}.lean`,
+`Topology/MetricSpace/{Oscillation,Cutoff}.lean`, `Topology/Order/Limit.lean`,
+and `Topology/Order/UnitInterval/Time.lean`. They describe the finiteness of
+large jumps and countability of discontinuities, preservation of càdlàg
+regularity under uniform limits, local one-sided oscillation, extension of
+closed range constraints from dense times, the range-diameter formulation
+of oscillation, the continuous open-set cutoff, the order-topological squeeze
+principle, and affine/clamped unit-interval time coordinates with their block
+sum identities. All eight focused modules build successfully in a 1,742-job
+Lake build; no declarations or proofs changed.

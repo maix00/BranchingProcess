@@ -21,6 +21,14 @@ public import Mathlib.Topology.Order.Cadlag
 Uniform limits of càdlàg functions remain càdlàg when the state space is
 complete. The proof treats right continuity directly and obtains left limits
 as limits of the uniformly Cauchy sequence of the approximants' left limits.
+In formula form,
+\[
+  E\text{ complete},\quad
+  \forall n,\ \operatorname{IsCadlag}(F_n),\quad
+  \forall\varepsilon>0\ \exists N\ \forall n\ge N\ \forall x,\
+    d(F_n(x),f(x))<\varepsilon
+  \quad\Longrightarrow\quad \operatorname{IsCadlag}(f).
+\]
 -/
 
 @[expose] public section

@@ -21,6 +21,12 @@ public import Mathlib.Topology.MetricSpace.Bounded
 
 The function-level predicate is the direct pointwise form of a range-diameter
 bound. Mathlib's `Metric.ediam` supplies the corresponding set-level API.
+For a nonnegative bound `C`, the two formulations agree:
+\[
+  \bigl(\forall s,t,\ d(f(s),f(t))\le C\bigr)
+  \quad\Longleftrightarrow\quad
+  \operatorname{ediam}(f(\iota))\le\operatorname{ofReal}(C).
+\]
 -/
 
 @[expose] public section

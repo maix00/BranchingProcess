@@ -23,6 +23,14 @@ public import Mathlib.Topology.MetricSpace.HausdorffDistance
 
 The definition uses Mathlib's continuous distance-to-a-set function; the
 openness hypothesis identifies the positive set with `s` itself.
+Its defining and range properties are
+\[
+  \chi_s(x)=\min\{1,\operatorname{infDist}(x,s^c)\},\qquad
+  0\le\chi_s(x)\le1,
+  \qquad
+  s\text{ open},\ s^c\ne\varnothing
+  \Longrightarrow (\chi_s(x)>0\iff x\in s).
+\]
 -/
 
 @[expose] public section

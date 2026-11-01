@@ -24,6 +24,15 @@ public import Mathlib.Topology.MetricSpace.Pseudo.Lemmas
 Right continuity and the existence of left limits give separate local
 oscillation bounds on the two sides of every time. These are the local inputs
 for finite oscillation partitions.
+Precisely, for every `t` and `ε > 0`, there are positive radii on each side
+such that
+\[
+  s,u<t,\ d_T(s,t),d_T(u,t)<\delta_-
+    \Longrightarrow d_E(f(s),f(u))\le\varepsilon,
+  \qquad
+  t\le s,u,\ d_T(s,t),d_T(u,t)<\delta_+
+    \Longrightarrow d_E(f(s),f(u))\le\varepsilon.
+\]
 -/
 
 @[expose] public section
