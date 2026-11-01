@@ -11,6 +11,18 @@ public import Mathlib.Probability.Independence.Process.HasIndepIncrements.Basic
 /-!
 # Time changes of processes with independent increments
 
+If `φ : Time' → Time` is monotone and `Y_t(ω)=X_{φ(t)}(ω)`, then every
+finite increasing observation grid for `Y` is mapped to an increasing grid
+for `X`. Thus the consecutive increments are exactly the increments of `X`
+on the image grid:
+
+\[
+Y_{t_{i+1}}-Y_{t_i}
+=X_{\varphi(t_{i+1})}-X_{\varphi(t_i)}.
+\]
+
+Their independence is inherited from `X`.
+
 ## Public declarations
 
 * `HasIndepIncrements.comp_time`: for a monotone deterministic map

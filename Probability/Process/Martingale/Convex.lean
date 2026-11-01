@@ -16,6 +16,26 @@ Conditional Jensen's inequality turns a martingale into a submartingale after
 applying a convex function. The same argument gives norm and monotone-convex
 specializations for martingales and submartingales.
 
+Assume the transformed process is integrable, as in the theorem hypotheses.
+For a martingale `X`, the martingale identity and conditional Jensen give the
+first line below. For a submartingale `Y`, monotonicity followed by conditional
+Jensen gives the second line:
+
+\[
+\begin{aligned}
+\varphi(X_i)
+&=\varphi\!\left(\mathbb E[X_j\mid\mathcal F_i]\right)
+\leq \mathbb E[\varphi(X_j)\mid\mathcal F_i],\\
+\varphi(Y_i)
+&\leq \varphi\!\left(\mathbb E[Y_j\mid\mathcal F_i]\right)
+\leq \mathbb E[\varphi(Y_j)\mid\mathcal F_i],
+\qquad i\leq j.
+\]
+
+These relations hold almost surely. Here `φ : E → ℝ` is convex and
+continuous, and in the second line it is also monotone. The norm theorem is
+the first line with `φ(x)=‖x‖`.
+
 ## Public declarations
 
 * `Martingale.submartingale_convex_comp`: if `X` is a martingale and `φ` is
