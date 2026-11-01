@@ -25,6 +25,17 @@ public import Mathlib.Topology.Instances.EReal.Lemmas
 * `ProbabilityTheory.Kingman.cdiv_le_birkhoffAverage`: `cdiv g n x` is bounded above by
   `birkhoffAverage ℝ T (g 1) (n+1) x`.
 * `ProbabilityTheory.Kingman.ecdiv`: the coercion of `cdiv g n x` to `EReal`.
+
+For a subadditive cocycle, the defining inequality iterates over consecutive
+blocks and over singleton blocks as follows:
+
+\[\begin{aligned}
+g_{m+n}(x)&\le g_m(x)+g_n(T^m x),\\
+g_{n+1}(x)&\le\sum_{j=0}^{n}g_1(T^j x),\\
+g_{\sum_{i=0}^{k}\ell_i}(x)
+&\le\sum_{i=0}^{k}
+  g_{\ell_i}\!\left(T^{\sum_{j=0}^{i-1}\ell_j}x\right).
+\end{aligned}\]
 -/
 
 @[expose] public section

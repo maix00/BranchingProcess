@@ -21,6 +21,18 @@ import MeasureTheory.Integral.MeasurePreserving
   `n ↦ (∫ g (n+1) dμ)/(n+1)`, that normalized integral sequence converges to a real limit.
 
 These statements use Mathlib's `Subadditive.lim` for the Fekete limit.
+
+If `T` preserves `\mu` and each `g_n` is integrable, then the integrals form
+a subadditive sequence; a lower bound on their normalized values gives the
+Fekete limit:
+
+\[\begin{aligned}
+a_n&:=\int_X g_n(x)\,d\mu(x),\\
+a_{m+n}&\le a_m+a_n,\\
+\inf_{n\ge0}\frac{a_{n+1}}{n+1}>-\infty
+&\Longrightarrow\exists\gamma\in\mathbb R,\quad
+  \lim_{n\to\infty}\frac{a_{n+1}}{n+1}=\gamma.
+\end{aligned}\]
 -/
 
 @[expose] public section

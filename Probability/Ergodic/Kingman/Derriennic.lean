@@ -25,6 +25,19 @@ These are Karlsson's presentation of Derriennic's Lemma 3.4 and Proposition 3.5 
 London Mathematical Society Lecture Note Series 436, Cambridge University Press (2017), pp. 343–354,
 DOI 10.1017/9781316576571.014. The long leader-sum and integral proof chain is in the adjacent
 `Lemmas/` directory.
+
+For an invariant measurable set `B`, the two level hypotheses control the
+normalized integrals over `B` by
+
+\[\begin{aligned}
+\mu\text{-a.e. }x\in B,\ \exists k,\ g_{k+1}(x)<0
+&\Longrightarrow\limsup_{n\to\infty}\uparrow\!\left(
+  \frac{1}{n+1}\int_B g_{n+1}\,d\mu\right)\le0,\\
+\mu\text{-a.e. }x\in B,\ \exists k,\ a_{k+1}(x)<(k+1)\beta
+&\Longrightarrow\limsup_{n\to\infty}\uparrow\!\left(
+  \frac{1}{n+1}\int_B a_{n+1}\,d\mu
+  \right)\le\uparrow\!\left(\beta\,\operatorname{toReal}(\mu(B))\right).
+\end{aligned}\]
 -/
 
 @[expose] public section

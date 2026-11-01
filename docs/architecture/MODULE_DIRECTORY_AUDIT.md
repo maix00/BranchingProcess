@@ -28709,3 +28709,16 @@ scaling. All seven focused modules build successfully in a 3,439-job Lake
 build; no declarations or proofs changed. The same review now has 118 remaining
 modules out of 1,642 (81 have public-declaration sections), excluding the
 separately scoped Selection directories.
+
+
+## Subadditive ergodic, IID-cover, and stable-window formulas (2026-11-02)
+
+Added mathematical statements to `Probability/Ergodic/Kingman/{Basic,Fekete,Theorem,Derriennic}.lean`,
+`Probability/Sequence/IID/Blocks/FiniteCover.lean`, and
+`Probability/Distributions/Stable/LevyMeasure/Tail/EntranceWindows.lean`.
+They give the cocycle and block inequalities, the integral Fekete limit,
+Kingman's almost-everywhere limits, Derriennic's normalized integral bounds,
+the finite-cover probability comparison, and the positive/negative stable
+jump-window cutoff conclusions. All six focused modules build successfully in
+a 3,556-job Lake build; no declarations or proofs changed. The same review now
+has 112 remaining modules out of 1,642 (75 with public-declaration sections).
