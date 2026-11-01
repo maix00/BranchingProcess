@@ -19,6 +19,14 @@ Characteristic functions of symmetrized sums remove deterministic centering.
 This module develops the ratio consequences of attraction without assuming
 monotonicity of the norming sequence.
 
+If `m_n/n→r>0`, an `α`-stable attraction norming `a_n` satisfies
+
+\[
+\frac{a_{m_n}}{a_n}\longrightarrow r^{1/α},\qquad
+\frac{a_{n+1}}{a_n}\longrightarrow1,\qquad
+a_n\longrightarrow\infty.
+\]
+
 ## Public declarations
 
 * `IsInDomainOfAttractionAlong.tendsto_norming_ratio`: if

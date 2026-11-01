@@ -17,6 +17,14 @@ convergence of their characteristic functions. Positivity of the stable limit
 then permits logarithms, and a uniform exponential remainder gives the
 compact-uniform squared-modulus defect.
 
+For every compact frequency set `K`, there is a constant `c>0` such that for
+each `ε>0`, all sufficiently large `n` satisfy
+
+\[
+\left|n\bigl(1-|φ_ν(a_n^{-1}t)|^2\bigr)-2c|t|^α\right|<ε
+\qquad(t\in K).
+\]
+
 ## Public declarations
 
 * `IsInDomainOfAttractionAlong.exists_tendstoUniformlyOn_normDefect`: for

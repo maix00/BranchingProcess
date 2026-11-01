@@ -25,6 +25,25 @@ The squared-modulus defect of an increment characteristic function is the
 cosine defect of the symmetrized increment law. This bridge keeps the law
 whose tail enters the inverse Tauberian theorem explicit.
 
+Write `ν_s` for the symmetrized increment law, `D_s(u)` for its cosine defect,
+`φ_ν` for the increment characteristic function, and
+`V_ν(x)=∫_{|y|≤x}y²ν(dy)`. For `0<α<2`, with `J_α` the cosine Tauberian
+moment, the tail and truncated-moment limits are
+
+\[
+\frac{\barν_s(x)}{D_s(x^{-1})}\longrightarrow\frac1{αJ_α},\qquad
+\frac{\barν(x)}{1-|φ_ν(x^{-1})|^2}\longrightarrow\frac1{2αJ_α},
+\]
+
+and
+
+\[
+\frac{V_ν(x)}{x^2\bigl(1-|φ_ν(x^{-1})|^2\bigr)}
+\longrightarrow\frac1{2(2-α)J_α}.
+\]
+
+Here `\barν_s(x)=ν_s\{|y|>x\}` and `\barν(x)=ν\{|y|>x\}`.
+
 ## Public declarations
 
 Write $\nu_s$ for the symmetrized increment law,
