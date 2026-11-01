@@ -32,6 +32,18 @@ Public declarations: `floorBlockLength`, `tendsto_floorBlockLength_atTop`,
 `tendsto_nat_div_atTop_of_positive_horizonRatio_of_zero_blockRatio`,
 `eventually_block_le_horizon_of_positive_density`, and
 `tendsto_nat_sub_div_nat_of_horizon_and_vanishingBlock`.
+
+Writing `r_n=\lfloor a_n\rfloor`, the rounding and horizon consequences are
+\[
+  a_n\to\infty\quad\Longrightarrow\quad\frac{r_n}{a_n}\to1,
+  \qquad
+  a_n\to\infty,\ \frac{H_n}{a_n}\to\infty
+    \quad\Longrightarrow\quad\frac{H_n}{r_n}\to\infty,
+\]
+and, when `H_n/n → d > 0` and `r_n/n → 0`,
+\[
+  \frac{H_n-r_n}{n}\longrightarrow d.
+\]
 -/
 
 public section

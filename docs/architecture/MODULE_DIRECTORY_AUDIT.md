@@ -28407,3 +28407,14 @@ of oscillation, the continuous open-set cutoff, the order-topological squeeze
 principle, and affine/clamped unit-interval time coordinates with their block
 sum identities. All eight focused modules build successfully in a 1,742-job
 Lake build; no declarations or proofs changed.
+
+## Discrete scale and block formulas (2026-11-01)
+
+Added statement-level formulas to the headers in
+`Analysis/Asymptotics/Scale/Inverse/{Basic,Superquadratic,LevelMultiplicity}.lean`
+and `Scale/Block/{Count,Length}.lean`. They specify the generalized-inverse
+threshold and width sandwich, the superquadratic condition and diffusive
+inverse limits, the bounded-level-multiplicity asymptotics, the quotient and
+remainder bounds for complete blocks, and rounded-length/horizon limits. The
+five focused modules build successfully in a 1,723-job Lake build; no
+declarations or proofs changed.
