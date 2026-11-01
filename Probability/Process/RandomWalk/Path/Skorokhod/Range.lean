@@ -28,6 +28,10 @@ the corresponding path law.
 * `measure_normalizedStepPathLaw_rangeIn_closedInterval_compl_le_of_blockPrefixExceedance`
   transfers an increment-law bound on that prefix event to the probability
   that the normalized step-path law exits the interval.
+
+Writing \(X_n(t)=c_n^{-1}S_{\lfloor nt\rfloor}\), the deterministic identity
+is \(X_n([0,1])\subseteq[-r,r]\) iff
+\(|c_n^{-1}S_k|\le r\) for every \(0\le k\le n\).
 -/
 
 open MeasureTheory ProbabilityTheory Set

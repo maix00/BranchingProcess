@@ -24,6 +24,11 @@ ordinary horizontal-tube probability has been introduced.
 * `ProbabilityTheory.RandomWalk.restartedWindowProbability_horizontal_eq`
   gives the corresponding formula at every observation time, using one tube
   probability before the cutoff and the prefix-tail product afterwards.
+
+Writing \(R_m(n)\) for the restarted probability and \(Q_j\) for the
+zero-start tube probability, the formulas are
+\(R_m(m+r)=Q_mQ_r\) and
+\(R_m(n)=Q_n\) for \(n\le m\), while \(R_m(n)=Q_mQ_{n-m}\) for \(m<n\).
 -/
 
 @[expose] public section

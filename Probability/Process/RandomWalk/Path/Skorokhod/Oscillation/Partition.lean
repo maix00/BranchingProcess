@@ -32,6 +32,10 @@ partition mesh for a fixed finite prefix of step counts.
 * `exists_pos_uniform_admitsOscillationPartition_normalizedStepPath_prefix`
   gives one positive mesh working simultaneously for every step count below
   a fixed finite horizon.
+
+The grid is \(t_j=j/n\), \(0\le j\le n\), with mesh \(1/n\). For
+\(j<n\), the step path is constant on \([t_j,t_{j+1})\), and hence has zero
+oscillation on every cell of this partition.
 -/
 
 open Skorokhod

@@ -28,6 +28,11 @@ by the block probability estimates.
   contains every path violating endpoint oscillation control in the union of
   the first and last block-prefix exceedance events, each with threshold
   `ε * scale n / 2`.
+
+The scale conversion used in these inclusions is
+\(d(X_n(s),X_n(t))>\varepsilon\Rightarrow
+|S_{\lfloor nt\rfloor}-S_{\lfloor ns\rfloor}|>
+\varepsilon c_n\), where \(c_n=\mathrm{scale}(n)>0\).
 -/
 
 open Skorokhod

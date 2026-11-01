@@ -29,6 +29,12 @@ This is the path-level passage from Bolthausen's finite-block
 Lemma 3.1 to the polygonal paths in Theorem 3.2 of
 Erwin Bolthausen, *On a Functional Central Limit Theorem for Random Walks Conditioned to Stay Positive*, Ann. Probab. 4(3) (1976),
 480--485, DOI 10.1214/aop/1176996098.
+
+For block coordinates \(x_0,\ldots,x_{n-1}\), with \(c_n=\mathrm{scale}(n)\),
+the map is the polygonal path through
+\(0,c_n^{-1}x_0,c_n^{-1}(x_0+x_1),\ldots,
+c_n^{-1}(x_0+\cdots+x_{n-1})\); extracting a block from a sequence and then
+interpolating agrees with interpolating the shifted sequence.
 -/
 
 @[expose] public section

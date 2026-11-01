@@ -27,6 +27,12 @@ computed by the internal scaling lemmas.
   eventually the IID probability of a block partial sum of size at least
   `threshold * sqrt n` among the first `blocks` proportional blocks is less
   than `bound`.
+
+Writing \(L_n=\mathrm{proportionalBlockLength}(\mathrm{fraction},n)\),
+under this moment budget, for all sufficiently large \(n\),
+\(\mathbb P_\nu\{\exists j<\mathrm{blocks},\exists k\le L_n,
+|S_{jL_n+k+1}-S_{jL_n}|\ge\mathrm{threshold}\sqrt n\}
+<\mathrm{bound}\).
 -/
 
 open Filter MeasureTheory ProbabilityTheory Topology

@@ -36,6 +36,12 @@ therefore remain in the random-walk path layer.
 * `tendsto_length_mul_abs_truncatedIncrementMean_div_threshold_zero` gives
   `((length n + 1) * |truncatedIncrementMean ν (radius n)|) /
   threshold n → 0` under the displayed finite-ratio hypothesis.
+
+For centered finite-variance increments and \(R_n\to\infty\), the discarded
+second moment vanishes,
+\(\int_{|x|>R_n}x^2\,d\nu\to0\), and the truncation bias satisfies
+\(R_n|\mu_{R_n}|\to0\). If \(N_n/R_n^2\) has a finite limit, then
+\(N_n\nu(|x|\ge R_n)\to0\).
 -/
 
 open Filter MeasureTheory ProbabilityTheory
