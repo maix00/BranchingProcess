@@ -28174,6 +28174,39 @@ was checked against its declaration's support, integrability, endpoint, and
 cutoff hypotheses. The three modules build successfully in a 3,242-job
 focused Lake build; no declarations or proofs changed.
 
+## Random-measure spine formulas (2026-11-01)
+
+Completed the public module-header formulas in
+`Probability/BranchingRandomWalk/Spine/PointMeasure/{Basic,Endpoint,RandomWalk}.lean`.
+The headers now give the slot-to-random-measure tilted-law integral identity,
+the weighted and reciprocal-weight endpoint operators and their iterates,
+and the two endpoint formulas under the iid tilted increment product law. Each
+formula was checked against its Lean declaration and the definitions of the
+exponential weight, endpoint operators, and additive displacement. No
+declarations or proofs changed.
+
+## Spine many-to-one formulas (2026-11-01)
+
+Completed the formula summaries in
+`Probability/BranchingRandomWalk/Spine/PointMeasure/{Basic,Endpoint,RandomWalk}.lean`
+and `Spine/ManyToOne/{EndpointManyToOne,ProductField}.lean`. The headers now
+state the slot-to-measure tilted integral, the endpoint-operator conversion,
+the iterated weighted and unweighted recursions, and their iid partial-sum
+integral forms, including the reciprocal exponential factor. The displayed
+identities were checked against their theorem types and operator definitions;
+the focused five-module build succeeds. No declarations or proofs changed.
+
+## Tilted spine law formulas (2026-11-01)
+
+Added formula-level interfaces to
+`Probability/BranchingRandomWalk/Spine/Tilted/{Law,Slot}.lean` and
+`Spine/RandomWalk/{IncrementProcess,Basic}.lean`. The headers now specify the
+slot-summed tilted measure, normalized slot PMF and potential pushforward,
+countable iid increment product, canonical walk law, and the weighted and
+reciprocal-weight endpoint identities. Each display was compared with the
+corresponding public theorem or definition. The four focused modules build
+successfully in a 3,184-job Lake build; no declarations or proofs changed.
+
 ## Skorokhod path and time-change formulas (2026-11-01)
 
 Reviewed and completed the mathematical formulas in the public module
@@ -28187,3 +28220,16 @@ notation. The tail-composition formula follows the repository convention
 prefix. Every displayed statement was checked against its Lean definition or
 theorem type. The 27 focused modules build successfully in a 2,744-job Lake
 build; no declarations or proofs changed.
+
+## Branching-spine tube moment formulas (2026-11-01)
+
+Added formulas to the public headers in
+Probability/BranchingRandomWalk/Spine/Tube/Corridor/{Drawdown,FiniteVariance,IndependentRoot,PairBound,SecondMoment}.lean
+and Probability/BranchingRandomWalk/Spine/Tube/SecondMoment/{Basic,MultiGeneration,TwoStage}.lean.
+They record the drawdown-event transfer, finite-variance affine-corridor
+lower bound, independent-root count estimate, MRCA pair sum, second-moment
+identity, one-step tilted-window bound, and two-stage product law. The
+literature pointers now identify Wang Yiyang's Chapter 4 Lemmas 4.3 and 4.5
+(including equation (4.6)) and Mogul'skii's Theorem 3, Section 4, p. 764,
+with full bibliographic details. The eight focused modules build successfully
+in a 3,869-job Lake build; no declarations or proofs changed.

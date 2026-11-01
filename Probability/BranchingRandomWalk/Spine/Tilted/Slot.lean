@@ -22,6 +22,34 @@ on the surviving slots whenever their total weight is finite and nonzero.  The
 potential of the selected mark gives the corresponding real spine increment.
 No ordering of the raw branching law is used here.
 
+Put `w_{φ,θ}(ξ,i) = realizedPotentialWeight φ θ ξ i` and
+`W_{φ,θ}(ξ) = totalPotentialWeight φ θ ξ`.  If `0 < W_{φ,θ}(ξ) < ∞`, the
+conditional slot law is normalized by
+
+\[
+p_{\xi,\varphi,\theta}(i)
+=\frac{w_{\varphi,\theta}(\xi,i)}{W_{\varphi,\theta}(\xi)},
+\qquad \sum'_{i:\iota}p_{\xi,\varphi,\theta}(i)=1.
+\]
+
+Consequently, for `g : ι → [0,∞]`,
+
+\[
+\sum'_{i:\iota}p_{\xi,\varphi,\theta}(i)g(i)
+=\frac{1}{W_{\varphi,\theta}(\xi)}
+  \sum'_{i:\iota}w_{\varphi,\theta}(\xi,i)g(i).
+\]
+
+Pushing this law through the potential gives the conditional increment law:
+for measurable `A ⊆ ℝ`, its mass is
+
+\[
+(\operatorname{tiltedPotentialPMF}(\varphi,\theta,\xi)).\operatorname{toMeasure}(A)
+=\sum'_{i:\iota}\mathbf 1_A(V_\varphi(\xi,i))
+  p_{\xi,\varphi,\theta}(i),
+\qquad V_\varphi(\xi,i)=\xi.\operatorname{potentialValue}'(\varphi,i).
+\]
+
 ## Public declarations
 
 - `tiltedSlotPMF`, `tiltedSlotPMF_apply`, `tiltedSlotPMF_sum`, and

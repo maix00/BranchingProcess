@@ -18,6 +18,22 @@ probability measure.  Its countable product is the canonical spine increment
 process.  This file records the coordinate laws, independence, and measurable
 partial-sum positions used in the path form of the many-to-one formula.
 
+With `\widetilde μ_φ = tiltedPotentialLaw φ (-1) μ`, the increment field law
+is the countable product
+
+\[
+P_{\varphi,\mu}
+=\operatorname{Measure.infinitePi}(k\mapsto\widetilde μ_\varphi),
+\qquad
+P_{\varphi,\mu}\circ\operatorname{eval}_n^{-1}
+=\widetilde μ_\varphi.
+\]
+
+Under boundary normalization, the coordinate maps `ω ↦ ω n` are independent
+under `P_{φ,μ}`.  Thus its finite partial sums
+`S_n(ω)=∑_{k<n}ω_k` use precisely the increment law in the endpoint
+recursion.
+
 ## Public declarations
 
 - `tiltedIncrementFieldLaw`: the countable product law of independent

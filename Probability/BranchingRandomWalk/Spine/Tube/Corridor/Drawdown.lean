@@ -31,6 +31,19 @@ ProbabilityTheory.RandomWalk.affineCorridorHistory_continuation_mem_noLargeDropE
 
 The tilted increment law is specific to the branching spine, so this
 probability transfer belongs to the branching-random-walk layer.
+
+Writing \(S_j(z)\) for the displacement of the first \(j\) increments, the
+input event is
+\(\{z:\forall i\le j\le n,\ S_i(z)-S_j(z)\le\Delta,\quad
+S_n(z)\le\Delta+vn\}\).
+For \(v\ge0\), an upper bound \(q\) for its tilted probability is also an
+upper bound for the tilted probability that
+\(\operatorname{prependHistory}(x,\operatorname{history}_n(x+y,z))\)
+lies in the affine corridor with terminal cutoff.
+
+This transfer supplies the corridor estimate used in Wang Yiyang,
+*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*
+(master's thesis, Fudan University, 2026), Chapter 4, Lemma 4.5.
 -/
 
 @[expose] public section

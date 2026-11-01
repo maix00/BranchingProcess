@@ -21,6 +21,21 @@ public import Probability.BranchingRandomWalk.Spine.Tube.Corridor.PairBound
 The second moment of a zero-one corridor count is its first moment plus the
 sum of the expected ordered path pairs, grouped by the generation of their
 most recent common ancestor.
+
+This is the second-moment decomposition used in Wang Yiyang,
+*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*
+(master's thesis, Fudan University, 2026), Chapter 4, Lemma 4.5,
+equation (4.6).
+
+Writing \(P_{\mathrm{off}}=\operatorname{offspringFieldLaw}(\mu)\),
+\(X_N\) for the number of generation-\(N\) paths in the affine corridor, and
+\(C_{m,n}\) for the ordered pair contribution with common ancestor generation
+\(m\) and \(n+1\) generations remaining, the identity is
+\[
+ \int^- X_N^2\,dP_{\mathrm{off}}
+ =\int^- X_N\,dP_{\mathrm{off}}
+   +\sum_{m=0}^{N-1}C_{m,N-m-1}.
+\]
 -/
 
 open MeasureTheory

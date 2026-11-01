@@ -17,6 +17,20 @@ The abstract tilted law integrates against a random measure and has no atom
 enumeration parameter.  A countable-slot branching step maps to that law, and
 the resulting measure agrees with the slotwise construction.
 
+For a step law `μ` and measurable `f : ℝ → [0,∞]`, put
+`R_{φ,θ,μ} = RandomMeasure.tiltedLaw φ θ (μ.map stepPointMeasure)`.
+Its defining integral identity is
+
+\[
+\int^- f(y)\,dR_{\varphi,\theta,\mu}(y)
+=\int^- \sum'_{i:\iota} w_{\varphi,\theta}(\xi,i)
+  f(V_\varphi(\xi,i))\,d\mu(\xi),
+\]
+
+where `w_{φ,θ}(ξ,i) = realizedPotentialWeight φ θ ξ i` and
+`V_φ(ξ,i) = ξ.potentialValue' φ i`.  Boundary normalization at `θ=-1`
+makes the random-measure tilted law a probability measure.
+
 ## Public declarations
 
 - `lintegral_pointMeasure_tiltedLaw`: expresses the integrated exponential

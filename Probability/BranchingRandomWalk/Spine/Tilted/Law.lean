@@ -18,6 +18,32 @@ summing the pushforwards of its exponentially weighted slot measures.  Under
 the boundary normalization this measure has total mass one.  This is the
 one-step real increment law used by the many-to-one construction.
 
+Write `w_{φ,θ}(ξ,i) = realizedPotentialWeight φ θ ξ i`,
+`V_φ(ξ,i) = ξ.potentialValue' φ i`, and
+`\widetilde μ_{φ,θ} = tiltedPotentialLaw φ θ μ`.  For measurable
+`f : ℝ → [0,∞]`, its integral is
+
+\[
+\int^- f(y)\,\partial\widetilde\mu_{\varphi,\theta}(y)
+=\int^-_{\xi}\sum'_{i:\iota}
+  w_{\varphi,\theta}(\xi,i)f(V_\varphi(\xi,i))\,\partial\mu(\xi).
+\]
+
+On a measurable set `A`, the same measure is the sum of the weighted slot
+pushforwards,
+
+\[
+\widetilde\mu_{\varphi,\theta}(A)
+=\sum'_{i:\iota}\int^-_{\xi}
+  \mathbf 1_A(V_\varphi(\xi,i))w_{\varphi,\theta}(\xi,i)\,
+  \partial\mu(\xi).
+\]
+
+Its total mass is the expected total slot weight.  Thus the boundary
+normalization \(\int^- W_{\varphi,-1}(\xi)\,\partial\mu(\xi)=1\), where
+`W_{φ,θ}(ξ) = totalPotentialWeight φ θ ξ`, makes
+`\widetilde μ_{φ,-1}` a probability measure.
+
 ## Public declarations
 
 - `tiltedPotentialLaw`: the unnormalized measure on real potential increments

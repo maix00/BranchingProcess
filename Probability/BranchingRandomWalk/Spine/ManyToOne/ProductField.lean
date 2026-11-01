@@ -16,6 +16,32 @@ public import Probability.Process.RandomWalk.Kernel.Endpoint
 The endpoint recursions for a tilted branching field are obtained by combining
 the independent-increment realization with the field's product law.
 
+For `φ : Potential X`, a boundary-normalized step law `μ`, and measurable
+`f : ℝ → [0,∞]`, the finite partial sum of the iid tilted increment field
+realizes the endpoint iterate:
+
+\[
+\int^-_{\omega} f(x+S_n(\omega))\,
+  \partial\operatorname{tiltedIncrementFieldLaw}(\varphi,\mu)
+=\operatorname{endpointIterate}
+  (\operatorname{tiltedPotentialLaw}(\varphi,-1,\mu),n,f)(x),
+\]
+
+where `S_n(ω) = AdditivePath.displacement n ω`.  The unweighted iterate has
+the reciprocal exponential factor:
+
+\[
+\int^-_{\omega}\operatorname{ENNReal.ofReal}(e^{S_n(\omega)})
+  f(x+S_n(\omega))\,
+  \partial\operatorname{tiltedIncrementFieldLaw}(\varphi,\mu)
+=\operatorname{exponentialEndpointIterate}
+  (\operatorname{tiltedPotentialLaw}(\varphi,-1,\mu),n,f)(x).
+\]
+
+Composing these identities with the endpoint recursions identifies the
+weighted and unweighted branching iterates with the same two increment
+integrals.
+
 ## Public declarations
 
 - `partialSum_indepFun_next`: the partial sum at time `n` is independent of

@@ -16,6 +16,32 @@ The tilted increment product law defines an actual single-root random walk.
 Its canonical branching realization has child-slot type `PUnit`, so every
 generation contains exactly the unique address `Walk.lineNode n`.
 
+Assume boundary normalization for `φ` and `μ`.  For measurable
+`f : ℝ → [0,∞]`, write
+`P_{φ,μ} = tiltedIncrementFieldLaw φ μ` and
+`S_n(ω) = AdditivePath.displacement n ω`.  The constructed walk has law
+
+\[
+\operatorname{law}(\operatorname{spineRandomWalk}(\varphi,\mu))
+=P_{\varphi,\mu}\circ\operatorname{Walk.ofIncrements}(0)^{-1}.
+\]
+
+Its weighted endpoint identity is
+
+\[
+\operatorname{weightedBranchingEndpointIterate}
+  (\varphi,\mu,n,f)(x)
+=\int^-_{\omega}f(x+S_n(\omega))\,\partial P_{\varphi,\mu}.
+\]
+
+The unweighted identity includes the reciprocal exponential factor:
+
+\[
+\operatorname{branchingEndpointIterate}(\varphi,\mu,n,f)(x)
+=\int^-_{\omega}\operatorname{ENNReal.ofReal}(e^{S_n(\omega)})
+  f(x+S_n(\omega))\,\partial P_{\varphi,\mu}.
+\]
+
 ## Public declarations
 
 - `spineRandomWalk`: realizes the tilted increment process as the canonical
