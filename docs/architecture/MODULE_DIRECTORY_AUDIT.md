@@ -28173,3 +28173,17 @@ source-slot series for nonnegative and real-valued Poisson integrals in
 was checked against its declaration's support, integrability, endpoint, and
 cutoff hypotheses. The three modules build successfully in a 3,242-job
 focused Lake build; no declarations or proofs changed.
+
+## Skorokhod path and time-change formulas (2026-11-01)
+
+Reviewed and completed the mathematical formulas in the public module
+headers for the Skorokhod compactness, corridor, logarithmic path metric,
+evaluation, path maps, oscillation, small-deviation, and time-change modules.
+These headers now state path-set margins, endpoint windows, a finite corridor
+cover, double-excursion and partition bounds, evaluation and integral maps,
+time-change distortion, and cumulative-limit conclusions in mathematical
+notation. The tail-composition formula follows the repository convention
+τ.trans σ (t) = σ (τ (t)), so the tail map is applied after the finite
+prefix. Every displayed statement was checked against its Lean definition or
+theorem type. The 27 focused modules build successfully in a 2,744-job Lake
+build; no declarations or proofs changed.

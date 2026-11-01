@@ -29,6 +29,11 @@ This alignment step follows the subsequence construction in Theorem 14.2 of
 Patrick Billingsley, *Convergence of Probability Measures*, 1st ed., Wiley,
 1968, Chapter 3, §14, equations (A4.27)–(A4.31), pp. 115–116
 ([text](https://ru.djvu.online/file/vaaIHv9IWlVeK)).
+
+Writing \(A_n=\operatorname{alignedPath}(f,\lambda,n)\), the hypotheses
+\(\sup_t d(A_{n+1}(t),A_n(t))\le e_n\) and
+\(\sum_n e_n<\infty\) imply that \((A_n)\) converges uniformly to a
+càdlàg path.
 -/
 
 @[expose] public section

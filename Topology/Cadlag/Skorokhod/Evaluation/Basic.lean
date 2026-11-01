@@ -23,6 +23,11 @@ identification of weak limits on càdlàg path space.
 - `continuousAt_evaluationFamily_of_continuousAt`: if each `time i` is a
   continuity time of `path`, then `g ↦ (i ↦ g (time i))` is continuous at
   `path` into the product of coordinates.
+
+At a continuity time \(t\) of \(f\), evaluation obeys
+\(g\to f\text{ in }J_1\implies g(t)\to f(t)\).
+For a finite family of continuity times \((t_i)_{i\in I}\), the same
+convergence holds coordinatewise for \((g(t_i))_{i\in I}\).
 -/
 
 @[expose] public section

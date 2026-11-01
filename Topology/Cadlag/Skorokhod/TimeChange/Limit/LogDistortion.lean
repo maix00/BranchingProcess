@@ -21,6 +21,10 @@ Uniform limits of time changes preserve any common bound on their logarithmic
 secant distortion.  The proof passes each secant slope to the limit, then uses
 continuity of the logarithm and absolute value and closedness of the bounded
 interval.
+
+If \(\tau_n\to\tau\) uniformly and
+\(\operatorname{logDistortion}(\tau_n)\le b\) for every \(n\), then
+\(\operatorname{logDistortion}(\tau)\le b\).
 -/
 
 @[expose] public section

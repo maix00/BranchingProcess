@@ -47,6 +47,12 @@ public import Topology.MetricSpace.Cutoff
 An open corridor and a terminal interval determine a continuous, bounded
 path weight that vanishes outside the event. This gives a continuous-test
 function interface for Portmanteau arguments with endpoint weights.
+
+For \(\mathcal O_{a,b}=\operatorname{rangeInOpenInterval}(a,b)\), the
+cutoff is \(\phi_{a,b}(f)=\min\{1,\operatorname{infDist}
+(f,\mathcal O_{a,b}^{c})\}\). The endpoint cutoff is the same clipped
+distance from \(f(1)\) to \((c,d)^c\), and the joint weight is their product.
+Each cutoff lies in \([0,1]\) and is positive exactly on its open event.
 -/
 
 @[expose] public section

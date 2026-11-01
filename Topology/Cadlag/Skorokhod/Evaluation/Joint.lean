@@ -27,6 +27,9 @@ the right by a finite grid and uses right continuity.
 
 - `measurable_joint_apply`: `(path, t) ↦ path t` is Borel measurable on
   `D([0,1], E) × [0,1]` for every metrizable Borel state space `E`.
+
+The evaluation map \(e:D([0,1],E)\times[0,1]\to E\),
+\(e(f,t)=f(t)\), is Borel measurable.
 -/
 
 @[expose] public section

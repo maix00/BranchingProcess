@@ -46,6 +46,11 @@ those maps as order isomorphisms of the unit interval.
   `distortion_symm`, and `distortion_trans_le`.
 - `act τ f` is the reparameterized path `t ↦ f (τ t)`; `act_apply`, `refl_act`,
   and `trans_act` give its pointwise, identity, and composition laws.
+
+A time change \(\tau\) is an increasing homeomorphism of \([0,1]\) with
+\(\tau(0)=0\) and \(\tau(1)=1\). Its displacement and action are
+\(\operatorname{distortion}(\tau)=\sup_t|\tau(t)-t|\) and
+\((\tau\cdot f)(t)=f(\tau(t))\).
 -/
 
 @[expose] public section

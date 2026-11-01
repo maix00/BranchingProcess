@@ -23,6 +23,12 @@ the finite grid is only a cover of its possible location.
   `j ∈ Finset.range (2k+1)`, each with half-width `1 + 2/k`.
 - `scaledRangeTube_subset_iUnion_scaledCorridors` transports this finite
   cover through any spatial scaling map.
+
+For every positive integer \(k\), the unit zero-start range tube is covered
+by the \(2k+1\) uniformly interior corridors
+\(\{f:f(0)=0,\ \exists\delta>0,\ \forall t,\
+j/k-2-2/k+\delta\le f(t)\le j/k+2/k-\delta\}\),
+with \(0\le j<2k+1\). Spatial scaling carries this inclusion to any scale.
 -/
 
 @[expose] public section

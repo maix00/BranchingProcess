@@ -22,6 +22,10 @@ import all Topology.Cadlag.Skorokhod.EDistance.Basic
 
 The state-space subset `A` need not be closed: forgetting the subtype
 preserves the path's càdlàg property and the `J₁` distance.
+
+For subtype-valued paths, forgetting the range preserves distance exactly:
+\(\operatorname{j1EDist}(f.\mathrm{forgetRange},g.\mathrm{forgetRange})
+=\operatorname{j1EDist}(f,g)\).
 -/
 
 @[expose] public section

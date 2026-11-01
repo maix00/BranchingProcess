@@ -25,6 +25,11 @@ identity time change bounds the `J₁` distance by the uniform distance.
 - `continuous_ofContinuousMap` and `measurable_ofContinuousMap`: the
   embedding `C([0,1], E) → D([0,1], E)` is continuous and, for a second
   countable state space, Borel measurable.
+
+The embedding satisfies
+\(\operatorname{j1EDist}(\operatorname{ofContinuousMap}(f),
+\operatorname{ofContinuousMap}(g))\le\operatorname{uniformEDist}(f,g)\),
+so \(C([0,1],E)\to D([0,1],E)\) is continuous.
 -/
 
 @[expose] public section

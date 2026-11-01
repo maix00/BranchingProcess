@@ -28,6 +28,12 @@ which makes its openness visible in the definition.
   range; this set is closed and lies in every strictly wider oscillation tube.
 - A path with range in a closed interval of length less than b belongs to
   oscillationInOpenTube b.
+
+The weak oscillation bound is
+\(\forall s,t,\ d(f(s),f(t))\le b\); the open tube is
+\(\{f:\exists\delta>0,\ \forall s,t,\ d(f(s),f(t))\le b-\delta\}\).
+For real paths, positive scaling by \(c\) pulls width \(b\) back to
+\(b/c\) when \(c>0\).
 -/
 
 open scoped ENNReal

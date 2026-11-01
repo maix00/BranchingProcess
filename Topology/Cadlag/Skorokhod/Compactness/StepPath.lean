@@ -42,6 +42,13 @@ public import Topology.Cadlag.Skorokhod.TimeChange.FinitePartition.Homeomorph
 
 Finite step paths depend continuously in `J₁` on their partition points and
 cell values when the partition gaps have a uniform positive lower bound.
+
+The separated-knot condition is
+\(t_0=0,\ t_n=1,\ t_i\le t_{i+1},\ \delta\le|t_{i+1}-t_i|\)
+for \(0\le i<n\). For corresponding value vectors and knots within
+\(\varepsilon\), the constructed paths satisfy
+\(\operatorname{j1EDist}(f,g)\le
+\max\{\operatorname{ofReal}(\varepsilon),\operatorname{edist}(v,w)\}\).
 -/
 
 @[expose] public section

@@ -41,6 +41,12 @@ This finite-dimensional compactness result is one ingredient for a general
 Skorokhod compactness criterion; it does not state that criterion. This
 module also proves the necessary range-boundedness condition for compact path
 families.
+
+For a fixed partition \(p\), the step-path map satisfies
+\(\operatorname{edist}(\operatorname{stepPath}_p(v),
+\operatorname{stepPath}_p(w))\le\operatorname{edist}(v,w)\).
+Thus compact \(K\subseteq E\) gives a compact image of \(K^{p.size+1}\),
+and compact path families have uniformly bounded ranges.
 -/
 
 @[expose] public section

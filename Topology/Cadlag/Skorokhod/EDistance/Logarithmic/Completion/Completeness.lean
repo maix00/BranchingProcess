@@ -25,6 +25,11 @@ Cauchy property then gives convergence of the full sequence. This formalizes
 Theorem 14.2 of Patrick Billingsley, *Convergence of Probability Measures*,
 1st ed., Wiley, 1968, Chapter 3, §14, pp. 115–116
 ([text](https://ru.djvu.online/file/vaaIHv9IWlVeK)).
+
+For a complete metric state space \(E\), the conclusion is completeness
+of Billingsley's logarithmic path metric:
+\(d_B(f_n,f_m)\to0\text{ uniformly in }n,m\to\infty
+\implies\exists f\in D([0,1],E),\ d_B(f_n,f)\to0\).
 -/
 
 @[expose] public section
