@@ -17,6 +17,17 @@ public import Combinatorics.BranchingWalk.Step.Potential
 
 ## Public declarations
 
+An additive potential commutes with path displacement after mapping the edge
+marks:
+
+\[
+\phi(\operatorname{displace}(\beta,v,p))
+=\operatorname{displaceWith}(\phi,\beta,v,p),
+\qquad
+\phi(\operatorname{displaceWith}(d,\beta,v,p))
+=\operatorname{displaceWith}(\phi\circ d,\beta,v,p).
+\]
+
 A step field carries marks in `X`. A map `d : X → Y` interprets each present
 mark as an increment in an additive monoid `Y`. Thus `X` itself need
 not have any algebraic structure. The existing same-space displacement is the

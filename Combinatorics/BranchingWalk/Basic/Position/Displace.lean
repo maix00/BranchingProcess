@@ -14,6 +14,19 @@ public import Mathlib.Algebra.BigOperators.Fin
 
 ## Public declarations
 
+The path displacement is accumulated edge by edge, and the partial form
+records whether every edge is present:
+
+\[
+\operatorname{displace}(\beta,v,[])=0,\qquad
+\operatorname{displace}(\beta,v,i::p)
+=\operatorname{value}'(\beta(v),i)+\operatorname{displace}(\beta,v++[i],p),
+\qquad
+\operatorname{displace?}(\beta,v,p)=\operatorname{some}(x)
+\iff \operatorname{surviveAlong}(\beta,v,p)\land
+\operatorname{displace}(\beta,v,p)=x.
+\]
+
 `displace β v p` is the displacement from the address `v` to the address
 `v ++ p`: it sums the zero-defaulted marks of the slots of `p`, reading each
 slot at the address it is met at. The current address is carried along

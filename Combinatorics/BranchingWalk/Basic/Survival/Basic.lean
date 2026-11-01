@@ -13,6 +13,15 @@ public import Combinatorics.BranchingWalk.Basic.Genealogy.Descendant
 
 ## Public declarations
 
+The generation-indexed particle set records both survival along the address
+and its generation:
+
+\[
+(r,u)\in\operatorname{survivingParticlesAt}(\beta,k)
+\iff \operatorname{surviveAlong}(\beta.\operatorname{step}(r),[],u)
+\land \operatorname{generation}(u)=k.
+\]
+
 The particles realized by present parent-child links in a branching walk and
 their generation-indexed slices. Here “surviving” means realized in the
 genealogy; it does not mean that a particle has descendants at arbitrarily

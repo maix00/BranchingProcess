@@ -15,6 +15,16 @@ import Mathlib.Data.Set.Finite.List
 
 ## Public declarations
 
+For a single-root walk, writing `Zₙ = generationSize β n`, the initial
+values and pathwise recursion are
+
+\[
+Z_0=1,\qquad Z_1=\operatorname{childCount}(\beta.\operatorname{step}(\mathrm{unit},[])),
+\qquad
+Z_{n+1}=\sum_{p:\{q\mid q\in\operatorname{survivingParticlesAt}(\beta,n)\}}
+\operatorname{childCount}(\beta.\operatorname{step}(\mathrm{unit},p.1.2)).
+\]
+
 For a branching walk `β`, `generationSize β n` is the extended cardinality
 `(survivingParticlesAt β n).encard`. When the initial-root and child-slot
 types are finite, each generation is finite and `generationSize β n ≠ ⊤`; for a single-root walk,

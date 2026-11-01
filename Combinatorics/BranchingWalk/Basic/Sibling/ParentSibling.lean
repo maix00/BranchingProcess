@@ -14,6 +14,18 @@ public import Combinatorics.BranchingWalk.Basic.Genealogy.Ancestor
 
 ## Public declarations
 
+The parent relation is one surviving edge, and siblinghood means having a
+common parent:
+
+\[
+\operatorname{IsParent}_\beta((r,u),(s,v))
+\iff \exists i,\ s=r\land v=u++[i]\land
+\operatorname{survive}(\beta.\operatorname{step}(r)(u),i),
+\qquad
+\operatorname{IsSibling}_\beta(p,q)
+\iff \exists a,\ \operatorname{IsParent}_\beta(a,p)\land\operatorname{IsParent}_\beta(a,q).
+\]
+
 For a particle `p = (r,u)`, `RootIndexed.parent p = (r,u.dropLast)`; this
 total structural function keeps a root at itself and is defined in
 `Combinatorics.UlamHarris.Relation`. `IsParent β p q` means

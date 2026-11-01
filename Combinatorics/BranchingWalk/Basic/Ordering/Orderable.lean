@@ -15,6 +15,17 @@ public import Combinatorics.BranchingWalk.Step.Ordering.Orderable
 
 ## Public declarations
 
+Orderability lifts pointwise from steps to a field and then to a
+root-indexed walk:
+
+\[
+\operatorname{IsOrderable}(\beta)
+\iff \forall u,\ \operatorname{Step.IsOrderable}(\beta(u)),
+\qquad
+\operatorname{IsOrderable}(\beta_{\mathrm{walk}})
+\iff \forall r,u,\ \operatorname{Step.IsOrderable}(\beta_{\mathrm{walk}}.\operatorname{step}(r)(u)).
+\]
+
 `Step.IsOrderable` is the step-level notion, and a finitely supported step on `ℕ` has it by
 `Step.isOrderable_of_isFinitelySupported`. The classes here lift it: a step field is orderable when all of
 its steps are, and a root-indexed walk when all of its step fields are.

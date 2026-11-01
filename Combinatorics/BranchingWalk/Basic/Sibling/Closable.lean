@@ -14,6 +14,17 @@ public import Combinatorics.BranchingWalk.Step.Ordering.Sibling.Closable
 
 ## Public declarations
 
+A field is sibling-closable exactly when every step admits an injective
+relabeling that makes its surviving slots an initial segment:
+
+\[
+\operatorname{IsSiblingClosable}(\beta)
+\iff \forall u,\ \exists \phi_u,\ \operatorname{Injective}(\phi_u)
+\land \operatorname{IsSiblingClosed}(i\mapsto\beta(u)(\phi_u(i)))
+\land \forall j,\ \operatorname{survive}(\beta(u),j)\to
+\exists i,\ \phi_u(i)=j.
+\]
+
 `StepField.IsSiblingClosable β` means
 `∀ u, Step.IsSiblingClosable (β u)`; `RootIndexed.BranchingWalk.IsSiblingClosable β`
 means that this holds for every root's step field. The public existence
