@@ -29020,3 +29020,25 @@ it supplies the moment-growth hypothesis for the arbitrary-scale
 sequence result and remains at the `PositiveMoment` subject level, alongside
 the fixed-horizon interfaces in `Basic.lean`, `Closure.lean`, and
 `L2Closure.lean`. Its focused Lean check and target Lake build pass.
+
+## Current-tree verification (2026-11-02)
+
+The source tree contains 1,782 Lean files outside `.lake/` and `Vendor/`: 1,644
+production modules, 137 `BranchingProcessTest` modules, and the Lake
+configuration. The production paths match all 1,644 rows in
+`MODULE_AUDIT_LEDGER.csv`; every row records a passing structural scan,
+semantic review, and Lake build. A fresh path scan across all 1,782 files found
+zero direct-module directories with more than eight files, same-level
+file/directory stem collisions, parent-prefixed file stems, paired or multiple
+`Lemmas` entries, `Proof/` or `Source/` directories, and public imports from
+`Lemmas/` modules. This includes the test tree, which is not part of the
+production-module ledger.
+
+The terminal-extinction estimate in
+`Probability/BranchingRandomWalk/Selection/NSelection/EndpointDeviation/SecondStage/Failure/Bound.lean`
+now accepts a sequence of selected-root thresholds `K n`, assuming
+`K n ≤ m` pointwise and eventual positivity, while retaining a fixed ambient
+root count `m`. Its focused dependency build completed successfully in 4,877
+Lake jobs. The remaining positive-`a` endpoint task requires this estimate to
+work with a varying ambient root count `m n` before it can be combined with
+the existing low-root and capacity-failure bounds.
