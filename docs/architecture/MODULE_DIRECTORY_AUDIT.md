@@ -28981,3 +28981,23 @@ first $m_n$ roots, using the nonempty-population endpoint/minimum equivalence.
 The flat Theorem 1.1 adapter and the common countable-root two-sided $L^2$
 assembly remain separate open packages.
 The new module and its imports compile in 4,733 Lake jobs.
+
+## Polynomial-tail second moments at a general scale (2026-11-02)
+
+Generalized
+`Probability/MeasureTheory/Convergence/SecondMoment/FromPolynomialTails.lean`
+from the natural scale $n$ to any real scale $r_n\to\infty$. The public
+`tendsto_integral_sq_of_polynomial_tails_log_fourth_moment_of_scale` states
+that fourth-moment growth bounded by $C(1+(\log r_n)^q)$ and two-sided tails
+bounded, for each fixed threshold, by $C_\varepsilon r_n^{-p_\varepsilon}$
+imply $\int X_n^2\,d\mu\to0$. Its centered companion gives
+$\|X_n-c\|_{L^2(\mu)}\to0$. The former natural-index theorem is now its
+specialization at $r_n=n$, preserving existing callers.
+
+This abstraction belongs to the measure-convergence layer: it has no
+branching-walk assumptions and covers arbitrary sequences of sample sizes.
+The pinned Mathlib API supplies the logarithm-versus-power `IsLittleO` estimate
+used in the proof, documented in
+[`Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Analysis/SpecialFunctions/Pow/Asymptotics.html).
+The changed module passes `lake env lean` and the targeted Lake build; its
+existing natural-index theorem remains available under the same declaration.
