@@ -11,6 +11,16 @@ public import Mathlib.Algebra.Order.Monoid.Defs
 /-!
 # Multiplicative lower recurrences
 
+An initial lower bound and a one-step multiplicative recurrence give a power
+lower bound at every finite horizon:
+
+\[
+1\le u_0,\qquad
+cu_n\le u_{n+1}\quad(0\le n<N)
+\quad\Longrightarrow\quad
+c^N\le u_N.
+\]
+
 ## Public declarations
 
 - `IsOrderedMonoid.pow_le_of_mul_le_succ` states that if `1 ≤ u 0` and

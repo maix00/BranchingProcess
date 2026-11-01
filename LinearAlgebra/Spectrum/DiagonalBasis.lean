@@ -14,6 +14,16 @@ public section
 /-!
 # Powers of an operator in an eigenvector basis
 
+If each vector of a finite basis is an eigenvector of `f` with eigenvalue
+`\lambda_i`, its powers act by the corresponding coefficient expansion:
+
+\[
+f(b_i)=\lambda_i b_i\quad\text{for every }i
+\quad\Longrightarrow\quad
+(f^n)x=\sum_i\bigl(b_i^*(x)\lambda_i^n\bigr)b_i,
+\]
+where `bᵢ*` is the coordinate functional of the basis.
+
 ## Public declarations
 
 * For a finite basis `b` over a commutative ring,
