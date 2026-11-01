@@ -19,6 +19,32 @@ measurable mark space.  One branching transition is expressed by integration
 against the sampled measure, so neither the mark space nor an auxiliary set
 of child slots is assumed countable.
 
+For measurable `φ : E → ℝ`, measurable `f : ℝ → [0,∞]`, and a law `Q` on
+random measures, the weighted one-step operator satisfies the following
+identity, where
+`w_{φ,θ}(z) = RandomMeasure.exponentialWeight φ θ z`:
+
+\[
+\int^-_{\nu}\!\int^-_{z}
+  w_{\varphi,\theta}(z)f(x+\varphi(z))\,d\nu(z)\,dQ(\nu)
+=\operatorname{endpointOperator}
+  (\operatorname{RandomMeasure.tiltedLaw}(\varphi,\theta,Q))f(x).
+\]
+
+The unweighted branching operator has the reciprocal-weight representation
+
+\[
+\int^-_{\nu}\!\int^-_{z}
+  f(x+\varphi(z))\,d\nu(z)\,dQ(\nu)
+=\operatorname{exponentialEndpointOperator}
+  (\operatorname{RandomMeasure.tiltedLaw}(\varphi,-1,Q))f(x).
+\]
+
+When the relevant tilted law has total mass one, iteration gives the
+corresponding endpoint identities at every generation: the weighted iterate
+is `endpointIterate` under the `θ`-tilted law, while the unweighted iterate is
+`exponentialEndpointIterate` under the `-1`-tilted law.
+
 ## Public declarations
 
 - `pointMeasureWeightedEndpointOperator` and `pointMeasureEndpointOperator`:

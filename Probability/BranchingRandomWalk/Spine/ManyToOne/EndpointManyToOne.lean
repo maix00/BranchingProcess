@@ -20,6 +20,26 @@ law.  The one-generation identities imply equality of their iterates.
 The later tree theorem identifies the recursive branching transition with the
 actual generation of the pre-sampled branching field.
 
+For measurable `d : Mark → Position`, measurable
+`potential : Position → ℝ`, and measurable `f : ℝ → [0,∞]`, let
+`φ = potential.comp d hd` be the observed potential and assume its boundary
+normalization under the step law `μ`.  The weighted endpoint recursion gives,
+for every generation `n`,
+
+\[
+\operatorname{weightedBranchingEndpointIterate}(\varphi,\mu,n,f)
+=\operatorname{endpointIterate}
+  (\operatorname{tiltedPotentialLaw}(\varphi,-1,\mu),n,f).
+\]
+
+The corresponding unweighted recursion is
+
+\[
+\operatorname{branchingEndpointIterate}(\varphi,\mu,n,f)
+=\operatorname{exponentialEndpointIterate}
+  (\operatorname{tiltedPotentialLaw}(\varphi,-1,\mu),n,f).
+\]
+
 ## Public declarations
 
 - `weightedBranchingEndpointOperator` and `branchingEndpointOperator`:

@@ -20,6 +20,28 @@ Boundary normalization turns the enumeration-free tilted law into a
 probability law.  Its countable product supplies the independent increments
 of the spine random walk used by the many-to-one formula.
 
+Assume the boundary normalization at `-1`, and abbreviate
+`φ = potential`, `Q = law`, and
+`ν = RandomMeasure.tiltedLaw potential (-1) law`.  Let
+`P_ν = Measure.infinitePi (fun _ => ν)`.  For
+`S_n(ω) = ∑_{j<n} ω_j`, the public endpoint identities are
+
+\[
+\begin{aligned}
+\operatorname{pointMeasureWeightedEndpointIterate}
+  (\varphi,-1,Q,n,f)(x)
+  &=\int^-_{\omega} f(x+S_n(\omega))\,dP_\nu(\omega),\\
+\operatorname{pointMeasureEndpointIterate}
+  (\varphi,Q,n,f)(x)
+  &=\int^-_{\omega}\operatorname{ENNReal.ofReal}(e^{S_n(\omega)})
+       f(x+S_n(\omega))\,dP_\nu(\omega).
+\end{aligned}
+\]
+
+Thus the same normalized increment law gives the spine path and both
+many-to-one formulas; the unweighted formula carries the terminal factor
+`e^{S_n}`.
+
 ## Public declarations
 
 - `pointMeasureIncrementLaw`, `pointMeasureIncrementLaw_eq_iidSequenceLaw`,

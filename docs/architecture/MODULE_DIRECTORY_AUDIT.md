@@ -28174,6 +28174,28 @@ was checked against its declaration's support, integrability, endpoint, and
 cutoff hypotheses. The three modules build successfully in a 3,242-job
 focused Lake build; no declarations or proofs changed.
 
+## Random-measure spine formulas (2026-11-01)
+
+Completed the public module-header formulas in
+`Probability/BranchingRandomWalk/Spine/PointMeasure/{Basic,Endpoint,RandomWalk}.lean`.
+The headers now give the slot-to-random-measure tilted-law integral identity,
+the weighted and reciprocal-weight endpoint operators and their iterates,
+and the two endpoint formulas under the iid tilted increment product law. Each
+formula was checked against its Lean declaration and the definitions of the
+exponential weight, endpoint operators, and additive displacement. No
+declarations or proofs changed.
+
+## Spine many-to-one formulas (2026-11-01)
+
+Completed the formula summaries in
+`Probability/BranchingRandomWalk/Spine/PointMeasure/{Basic,Endpoint,RandomWalk}.lean`
+and `Spine/ManyToOne/{EndpointManyToOne,ProductField}.lean`. The headers now
+state the slot-to-measure tilted integral, the endpoint-operator conversion,
+the iterated weighted and unweighted recursions, and their iid partial-sum
+integral forms, including the reciprocal exponential factor. The displayed
+identities were checked against their theorem types and operator definitions;
+the focused five-module build succeeds. No declarations or proofs changed.
+
 ## Skorokhod path and time-change formulas (2026-11-01)
 
 Reviewed and completed the mathematical formulas in the public module
