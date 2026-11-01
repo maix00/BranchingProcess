@@ -28115,3 +28115,18 @@ The five focused modules build with the pinned toolchain. The source inventory r
 ## Compact-range path criterion header review (2026-11-01)
 
 Refined the public theorem formulas in `Topology/Cadlag/Skorokhod/Compactness/Approximation.lean` and `CompactRange.lean`. They now state the complete subspace-completeness, range, tolerance, common-gap, and pathwise partition quantifiers for total boundedness, compactness, and relative compactness. Both headers give the cellwise predicate as the same-index distance bound. The criterion is identified as the finite-partition form of Patrick Billingsley, *Convergence of Probability Measures*, 1st ed., Wiley, 1968, Chapter 3, §14, Theorem 14.3, p. 116; both compactness theorem docstrings give this exact reference. No declarations or proofs changed.
+
+## Poisson source-slot and entrance-path formulas (2026-11-01)
+
+Added mathematical interfaces to the module headers for
+`Probability/RandomMeasure/Poisson/RandomMeasure/SourceSlots.lean`,
+`Probability/RandomMeasure/Poisson/JumpPath/Basic.lean`, and
+`Probability/RandomMeasure/Poisson/JumpPath/Entrance/Endpoint.lean`. The
+source-slot header states the realized count as the extended cardinality of
+the slots, characterizes zero and one counts, and gives the restriction and
+integral reductions to the unique mark. The jump-path header gives both the
+time-truncated mark integral and its one-point step-function form. The
+endpoint header defines the entrance path from the two selected mark regions
+and records its unrestricted endpoint identity under the support conditions.
+The three modules build successfully with the pinned Lean toolchain; no Lean
+declarations or proofs changed.

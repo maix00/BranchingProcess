@@ -14,6 +14,32 @@ public import Probability.RandomMeasure.Poisson.RandomMeasure.Basic
 The count of a region is the cardinality of the set of *source slots* in that
 region. Working with source slots keeps repeated marks distinct.
 
+For a realized measure
+$\mu_\omega=\operatorname{poissonRandomMeasure}(K,X,\omega)$, write
+$$
+\Xi_\omega(A)=\{(k,n)\in\mathbb N^2:n<K_k(\omega),\ X_{k,n}(\omega)\in A\}.
+$$
+For a slot $p=(k,n)$, write $X_p(\omega)=X_{k,n}(\omega)$.
+For measurable regions $A$, the source-slot count and its zero- and one-point
+cases satisfy
+$$
+\mu_\omega(A)=\operatorname{encard}(\Xi_\omega(A)),\qquad
+\mu_\omega(A)=1\iff\exists!p\in\Xi_\omega(A),\qquad
+\mu_\omega(A)=0\iff\Xi_\omega(A)=\varnothing.
+$$
+If $\Xi_\omega(A)=\{p\}$ and $C\subseteq A$ is measurable, then
+$\mu_\omega(C)=1$ when $X_p(\omega)\in C$ and $\mu_\omega(C)=0$
+otherwise. If $\mu_\omega(J)=1$ and $\mu_\omega(B)=0$, the restriction
+and integral identities are
+$$
+\mu_\omega\!\restriction_{J\cup B}=\delta_{X_p(\omega)},\qquad
+\int_{J\cup B}^- f\,d\mu_\omega=f(X_p(\omega)),\qquad
+\int_{J\cup B} f\,d\mu_\omega=f(X_p(\omega))
+$$
+for an $[0,\infty]$-valued lintegrand and a complete normed real vector-valued
+Bochner integrand, respectively. In both integral identities $p$ is the
+unique source slot in $J$.
+
 ## Public declarations
 
 * `poissonSlots` records the source indices contributing points to a set, and
