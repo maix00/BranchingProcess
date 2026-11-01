@@ -53,6 +53,20 @@ Mathematics 68, Cambridge University Press, 1999, Theorem 8.1 (ISBN 978-0-521-55
   equality of Lévy triples.
 * `isInfinitelyDivisible_iff_exists_levyKhintchineTriple` characterizes infinite divisibility by
   `charFun μ ξ = exp (ψ_T ξ)`; `existsUnique_levyKhintchineTriple` adds uniqueness of `T`.
+
+For a Lévy triple `T=(b,\sigma^2,\nu)`, smearing its exponent gives a finite
+measure whose atom at zero determines the Gaussian variance and whose
+off-origin part determines the Lévy measure:
+
+\[\begin{aligned}
+d\rho_T(x)&=\frac{\sigma^2}{6}\,d\delta_0(x)
+  +(1-\operatorname{sinc}x)\,d\nu(x),\\
+\rho_T(\{0\})&=\frac{\sigma^2}{6},\\
+\psi_T(\xi)-\frac12\int_{-1}^{1}\psi_T(\xi+u)\,du
+&=\widehat{\rho_T}(\xi),\\
+\widehat\mu=e^{\psi_T},\quad \mu\text{ infinitely divisible}
+&\Longrightarrow\text{ the representing triple }T\text{ is unique}.
+\end{aligned}\]
 -/
 
 @[expose] public section

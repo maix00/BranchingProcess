@@ -26,6 +26,16 @@ The result applies to arbitrary index types `J` and `K`; only the queried time
 set is finite. Mathlib's `HasIndepIncrements.indepFun_sub_sub` gives the
 single-increment case, while this theorem gives independence of the resulting
 finite-time observation vectors.
+
+For query families indexed by arbitrary `J` and `K`, with
+`a≤left(j)≤b≤right(k)≤c`, the observed displacements from the shared endpoint
+are independent:
+
+\[
+\operatorname{IndepFun}_P
+  \left((X_{left(j)}-X_a)_{j\in J},
+        (X_{right(k)}-X_b)_{k\in K}\right).
+\]
 -/
 
 @[expose] public section

@@ -56,6 +56,18 @@ chosen from generation-`n` information, and `causal_lineage_adapted` for an
 unconditionally pre-defined lineage that extends one generation at a time.
 The adapted-state corollary `frontier_causal_state_adapted` is proved in
 `Probability/BranchingRandomWalk/Timing/Schedule/Frontier.lean`, since it needs the restart lemmas.
+
+The generation-`n` domain contains exactly the marks at addresses of depth
+below `n`; the frontier observation reads marks at depth `n` and is measurable
+at generation `n+1`:
+
+\[\begin{aligned}
+\mathcal F_n
+&=\bigvee_{|u|<n}\sigma\bigl(\omega\mapsto\omega(u)\bigr),\\
+\mathcal F_0&=\{\varnothing,\Omega\},\\
+\operatorname{frontierMarks}_n(\omega)(u)
+&=\begin{cases}\omega(u),&|u|=n,\\ \operatorname{default},&|u|\ne n.\end{cases}
+\end{aligned}\]
 -/
 
 open MeasureTheory

@@ -33,6 +33,18 @@ import Probability.Distributions.CharacteristicFunction.Zero
   with `ψ(0)=0` and `charFun μ ξ = exp(ψ ξ)` for every `ξ`.
 * `IsInfinitelyDivisible.hermitian_log`: every such logarithm satisfies
   `ψ(-ξ)=conj(ψ ξ)`.
+
+For an infinitely divisible probability law `\mu` on `\mathbb R`, its
+characteristic function has no zeros and admits a normalized continuous
+logarithm:
+
+\[
+\forall\xi,\quad\widehat\mu(\xi)\ne0,\qquad
+\exists\psi\in C(\mathbb R,\mathbb C),\quad
+\psi(0)=0,\quad\forall\xi,\quad
+\widehat\mu(\xi)=e^{\psi(\xi)},\quad
+\psi(-\xi)=\overline{\psi(\xi)}.
+\]
 -/
 
 @[expose] public section

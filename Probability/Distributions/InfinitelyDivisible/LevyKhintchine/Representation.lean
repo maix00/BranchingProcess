@@ -39,6 +39,19 @@ The Schoenberg correspondence used by the converse is described by A. S. Holevo,
 International Congress of Mathematicians* (Berkeley, 1986), vol. 2, pp. 1011–1020,
 Introduction, opening paragraph. The proceedings scan is available at
 <https://sites.math.rutgers.edu/~zeilberg/akherim/icm1986.pdf>.
+
+The law-level representation and its converse give
+
+\[\begin{aligned}
+\mu\text{ infinitely divisible}
+&\Longrightarrow\exists (b,\sigma^2,\nu),\quad
+  \widehat\mu(\xi)
+  =\exp\!\left(ib\xi-\frac{\sigma^2\xi^2}{2}
+  +\int\left(e^{ix\xi}-1-ix\xi\mathbf 1_{\{|x|<1\}}\right)d\nu(x)\right),\\
+T=(b,\sigma^2,\nu)
+&\Longrightarrow\exists\mu\text{ infinitely divisible},\quad
+  \widehat\mu(\xi)=\exp(\psi_T(\xi)).
+\end{aligned}\]
 -/
 
 @[expose] public section

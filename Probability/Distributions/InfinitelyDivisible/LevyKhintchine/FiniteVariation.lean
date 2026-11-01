@@ -31,6 +31,16 @@ removed from the canonical drift.
 * `IsLevyMeasure.integrable_uncompensatedIntegrand` and
   `IsLevyMeasure.integral_uncompensatedIntegrand` give integrability and the
   corresponding integral identity under `Integrable h ν`.
+
+Let `h(x)=x\mathbf 1_{\{|x|<1\}}` be the small-jump displacement. Under its
+integrability, removing the compensation term changes the drift and jump
+integrand according to
+
+\[\begin{aligned}
+b_{\mathrm{uncomp}}&=b-\int h(x)\,d\nu(x),\\
+e^{ix\xi}-1
+&=\left(e^{ix\xi}-1-ix\xi\mathbf 1_{\{|x|<1\}}\right)+i\xi h(x).
+\end{aligned}\]
 -/
 
 @[expose] public section

@@ -34,6 +34,13 @@ to the drift. This file records the pointwise identity and its integrability.
   `LevyKhintchineTriple.scale_exponent` proves its exponent is `ψ_T(aξ)`.
 * `LevyKhintchineTriple.scaleIntensity T c hc` scales all triple components by `c ≥ 0`, with
   `scaleIntensity_exponent` giving exponent `c ψ_T`.
+
+Spatial dilation and intensity scaling act on the exponent by
+
+\[\begin{aligned}
+\psi_{T^{(a)}}(\xi)&=\psi_T(a\xi),\qquad a\ne0,\\
+\psi_{cT}(\xi)&=c\,\psi_T(\xi),\qquad c\ge0.
+\end{aligned}\]
 -/
 
 @[expose] public section

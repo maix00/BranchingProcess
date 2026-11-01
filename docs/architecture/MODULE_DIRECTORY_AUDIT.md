@@ -28638,3 +28638,46 @@ modules build successfully in a 3,267-job Lake build; no declarations or proofs
 changed. The same formula-header review now has 147 remaining modules out of
 1,642 modules when Selection-owned paths are omitted from this pass (110
 candidates have public-declaration sections).
+
+
+## Independent-increment block formulas (2026-11-02)
+
+Added mathematical statements to the public headers of
+`Probability/Process/IndepIncrements/Disjoint.lean` and
+`IndepIncrements/FiniteObservations/{Grid,BlockVectors,BlockPaths,DisjointPaths}.lean`.
+They state independence of separated increments, the finite-grid increment
+family, partial-sum and position vectors on adjacent blocks, and independence
+of finite-dimensional and path-valued observations. All five focused modules
+build successfully in a 2,724-job Lake build; no declarations or proofs
+changed. The same formula-header review now has 142 remaining modules out of
+1,642 modules when Selection-owned paths are omitted from this pass (105
+candidates have public-declaration sections).
+
+
+## Filtration, conditional-block, and strong-Markov formulas (2026-11-02)
+
+Added mathematical statements to the public headers of
+`Probability/Process/Filtration/{ConditionalBlocks,GeneratedByCoordinates}.lean`,
+`Probability/Process/Markov/Stopping/Basic.lean`, and
+`Probability/BranchingRandomWalk/Tree/Filtration.lean`. They state the
+conditional block product bounds, coordinate-generated domain, strong Markov
+conditional transition identity, and generation/frontier observations. All
+four focused modules build successfully in a 3,036-job Lake build; no
+declarations or proofs changed. The same formula-header review now has 138
+remaining modules out of 1,642 modules when Selection-owned paths are omitted
+from this pass (101 candidates have public-declaration sections).
+
+
+## Infinitely-divisible and Lévy–Khintchine formulas (2026-11-02)
+
+Added mathematical statements to the public headers of
+`Probability/Distributions/InfinitelyDivisible/{Basic,CharacteristicFunction/Basic}.lean`
+and `InfinitelyDivisible/LevyKhintchine/{Defs,Representation,Scaling,FiniteVariation,Uniqueness,Semigroup/LevyKhintchine}.lean`.
+They state convolution-root divisibility, normalized characteristic-function
+logarithms, the Lévy triple and exponent, the law-level representation and
+converse, scaling identities, the finite-variation drift correction, smeared
+measure uniqueness, and semigroup exponent decomposition. All eight focused
+modules build successfully in a 3,439-job Lake build; no declarations or
+proofs changed. The same formula-header review now has 130 remaining modules
+out of 1,642 modules when Selection-owned paths are omitted from this pass
+(93 candidates have public-declaration sections).
