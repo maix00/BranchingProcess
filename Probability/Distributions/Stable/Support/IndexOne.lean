@@ -21,6 +21,17 @@ independent samples has the law of twice one sample. If a nonzero exponential
 of the sample is square integrable, its first and second moments therefore
 have zero variance. This forces degeneracy, contradicting strict stability.
 
+For a nondegenerate strictly `1`-stable law `μ`, no nonconstant exponential
+is square-integrable. Moreover, every open half-line has positive mass:
+
+\[
+\begin{aligned}
+s\neq0&\Longrightarrow (x\mapsto e^{sx})\notin L^2(\mu),\\
+v\in\mathbb R&\Longrightarrow
+\mu(({-\infty},v))>0\ \text{and}\ \mu((v,\infty))>0.
+\end{aligned}
+\]
+
 ## Public declarations
 
 * `IsStrictlyAlphaStable.not_memLp_exp_mul_indexOne`: for every `s ≠ 0`,

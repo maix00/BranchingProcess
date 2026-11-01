@@ -18,6 +18,17 @@ import MeasureTheory.Measure.Tails.Power
 The tail identities give the `α < 1` integrability threshold by the
 layer-cake formula.
 
+If `ν` is the Lévy measure of a strictly `α`-stable law and `α<1`, the
+truncated first moment and the first absolute moment of the small jumps are
+finite:
+
+\[
+\begin{aligned}
+\int_{\mathbb R}\min(1,|x|)\,\nu(dx)&<\infty,\\
+\int_{|x|\leq1}|x|\,\nu(dx)&<\infty.
+\end{aligned}
+\]
+
 ## Public declarations
 
 * `levyMeasure_smallJumpMoment_lt_top` states
