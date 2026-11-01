@@ -14,6 +14,16 @@ public import MeasureTheory.OuterMeasure.Finite.Cover
 
 ## Public declarations
 
+If a finite family of measure-preserving coordinate reindexings has preimages
+of `safe` covering `event`, product measure is bounded by the family size:
+
+\[
+\operatorname{event}\subseteq\bigcup_{\kappa\in K}e_\kappa^{-1}(\operatorname{safe})
+\Longrightarrow
+\operatorname{Measure.pi}(\nu)(\operatorname{event})
+\le |K|\,\operatorname{Measure.pi}(\nu)(\operatorname{safe}).
+\]
+
 - `MeasureTheory.measure_pi_event_le_card_smul_of_reindex_cover`: let
   `μ = Measure.pi ν` on `ι → E`, where each `ν i` is sigma-finite. If every
   coordinate equivalence in a finite family preserves the coordinate measures

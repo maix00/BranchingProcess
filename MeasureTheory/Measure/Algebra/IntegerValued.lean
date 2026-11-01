@@ -17,6 +17,15 @@ that it admits an enumerable Dirac representation.
 
 ## Public declarations
 
+Integer-valuedness means every measurable set has a natural-number mass or
+infinite mass:
+
+\[
+\operatorname{IsIntegerValued}(\mu)
+\iff \forall A\text{ measurable},\quad
+\mu(A)=\infty\ \lor\ \exists n\in\mathbb N,\ \mu(A)=n.
+\]
+
 * `MeasureTheory.Measure.IsIntegerValued μ` means `μ(s)=∞` or `μ(s)=n` for some
   `n : ℕ`, for every measurable `s`.
 * `MeasureTheory.Measure.isIntegerValued_zero` and

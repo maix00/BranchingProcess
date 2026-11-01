@@ -28,6 +28,15 @@ inequality `N(A) ≤ e^{λA} W` is the required integrand estimate.
 
 ## Public declarations
 
+An integrable random bound controls finiteness of a random measure on each
+set in the family:
+
+\[
+\nu_\omega(A)\le C(A)W(\omega),\quad
+\int^- W\,dP<\infty,\quad C(A)<\infty
+\Longrightarrow \nu_\omega(A)<\infty\quad\text{for }P\text{-almost every }\omega.
+\]
+
 * `MeasureTheory.ae_finiteOnFamily_of_dominated` states that if `W` is
   a.e.-measurable with `∫⁻ W dP < ∞`, `C s < ∞` for each `s ∈ 𝒜`, and
   `ν ω s ≤ C s * W ω` a.e. for every `s ∈ 𝒜`, then

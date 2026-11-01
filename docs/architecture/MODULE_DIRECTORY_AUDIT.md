@@ -28527,3 +28527,15 @@ integrals, and a uniform compact-tail criterion for tightness. All ten focused
 modules build successfully in a 2,744-job Lake build; no declarations or proofs
 changed. The same formula-header review now has 191 remaining modules out of
 1,642 production modules.
+
+## Measure bounds and path-law formulas (2026-11-02)
+
+Added explicit statements to the public headers of
+`MeasureTheory/Measure/{Levy/Cutoff,ContinuousMap/RangeOscillation,Finite/{Domination,OnFamily},Pi/FiniteReindexCover,Windows/TwoSided,Tails/Positive,Algebra/{IntegerValued,DiracSum},CadlagPath/ContinuityTimes}.lean`.
+They state the Lévy truncation integrability condition, finite corridor bounds,
+dominated finiteness on set families, product-measure reindexing bounds,
+two-sided windows and positive-tail thresholds, integer-valued and Dirac-sum
+measure formulas, and almost-everywhere continuity times for càdlàg path
+laws. All ten focused modules build successfully in a 2,768-job Lake build;
+no declarations or proofs changed. The same formula-header review now has 181
+remaining modules out of 1,642 production modules.

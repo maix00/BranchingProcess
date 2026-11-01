@@ -23,6 +23,15 @@ while repeated present points retain their multiplicity.
 
 ## Public declarations
 
+The option-valued Dirac sum counts present atoms in each measurable set,
+retaining repeated values with their multiplicities:
+
+\[
+\operatorname{iOptionDiracSum}(f)(A)
+=\sum_{i\in\iota}^{\prime}
+\mathbf 1_{\{\exists x,\ f(i)=\operatorname{some}(x)\land x\in A\}}.
+\]
+
 * `MeasureTheory.Measure.iOptionDiracSum f = ∑ i, (f i).elim 0 dirac` defines
   the measure of an option-valued family; `measurable_option_dirac` states that the
   one-slot map `Option X → Measure X` is measurable.
