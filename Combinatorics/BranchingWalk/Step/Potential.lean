@@ -18,6 +18,24 @@ displacements, and exponential weights.
 
 ## Public declarations
 
+A measurable potential projects present marks to real values while retaining
+absence in the optional form; its zero-defaulted form and path sum are:
+
+\[
+\operatorname{potentialAt?}(\phi,\xi,i)
+=\operatorname{Option.map}(\phi,\xi(i)),
+\qquad
+\operatorname{potentialValue'}(\phi,\xi,i)
+=\operatorname{potentialAt?}(\phi,\xi,i).\operatorname{getD}(0),
+\]
+\[
+\operatorname{pathPotential}(\phi,[x_1,\ldots,x_n])
+=\sum_{k=1}^{n}\phi(x_k),
+\qquad
+\phi\!\left(\sum_{k=1}^{n}x_k\right)
+=\sum_{k=1}^{n}\phi(x_k)\quad\text{if }\phi\text{ is additive}.
+\]
+
 - `Potential X` packages a measurable function `X → ℝ` and coerces to that
   function; `Potential.comp` pulls it back along a measurable map, with
   `Potential.comp_apply` giving
