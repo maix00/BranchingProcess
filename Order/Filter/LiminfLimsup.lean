@@ -23,6 +23,16 @@ tends to zero have the same limsup and liminf. The proofs use Mathlib's
   `limsup u l = limsup v l`.
 * `Filter.liminf_eq_of_sub_tendsto_zero`: under the same assumptions,
   `liminf u l = liminf v l`.
+
+For functions `u,v : ι → α` bounded above and below along a nontrivial filter
+`l`, the conclusions are
+\[
+  u-v\xrightarrow[l]{}0
+  \quad\Longrightarrow\quad
+  \limsup_l u=\limsup_l v,
+  \qquad
+  \liminf_l u=\liminf_l v.
+\]
 -/
 
 public section

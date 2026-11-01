@@ -35,6 +35,26 @@ public import Mathlib.Order.Filter.AtTopBot.Field
 * `Asymptotics.isRegularlyVaryingAtTop_rpow_div_of_slowlyVarying`: if `L` is slowly
   varying, then `x ^ α / L x` has regular-variation index `α`.
 
+The defining ratio limit, closure rules, and monotone Potter bound are
+\[
+  f\in\mathrm{RV}_\rho
+  \iff f(x)>0\text{ eventually and }
+    \frac{f(cx)}{f(x)}\longrightarrow c^\rho\quad(c>0),
+\]
+\[
+  f\in\mathrm{RV}_\rho,\ g\in\mathrm{RV}_\sigma
+  \Longrightarrow fg\in\mathrm{RV}_{\rho+\sigma},\qquad
+  f^{-1}\in\mathrm{RV}_{-\rho},\qquad
+  (x\mapsto f(x^p))\in\mathrm{RV}_{p\rho}\quad(p>0),
+\]
+and, when `f` is eventually nondecreasing and `ρ ≥ 0`,
+\[
+  \forall\varepsilon>0\ \exists R>0\ \forall R\le x\le y,\qquad
+  \frac{f(y)}{f(x)}\le
+     2^{\rho+\varepsilon}\left(\frac{y}{x}\right)^{\rho+\varepsilon}.
+\]
+Slow variation is the case `ρ = 0`.
+
 This file provides the ratio-limit interface for regularly varying real
 functions, together with product, reciprocal, and monotone Potter upper-bound
 results.  It is independent of probability.  The Potter theorem states its

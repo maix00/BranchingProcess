@@ -23,6 +23,16 @@ import Analysis.Asymptotics.RegularVariation.Integral.Basic
   *Regular Variation*, Encyclopedia of Mathematics and its Applications 27,
   Cambridge University Press (1987), DOI `10.1017/CBO9780511721434`.
 
+The conclusion is the power-tail integral asymptotic
+\[
+  t^\beta g(t)\longrightarrow C,
+  \quad \beta<1
+  \quad\Longrightarrow\quad
+  U^{\beta-1}\int_0^U g(t)\,dt
+    \longrightarrow\frac{C}{1-\beta},
+\]
+under the stated positivity, antitonicity, and boundedness assumptions.
+
 This file proves the integral form of Karamata's theorem for a nonnegative,
 antitone function bounded by one. The assumptions are stated directly in terms
 of a power-tail limit, without introducing a separate regular-variation

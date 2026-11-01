@@ -24,6 +24,14 @@ public import Mathlib.Topology.MetricSpace.Pseudo.Lemmas
   Applications 27, Cambridge University Press (1987), DOI
   `10.1017/CBO9780511721434`.
 
+For `f` regularly varying with index `ρ` and eventually nondecreasing, the
+uniform convergence statement is
+\[
+  \frac{f(cx)}{f(x)}\longrightarrow c^\rho
+  \quad(x\to\infty),
+  \qquad\text{uniformly for }c\in[a,b],\quad 0<a\le b.
+\]
+
 Pointwise ratio limits alone do not imply uniform convergence on compact
 multiplier sets. This file proves the compact-uniform conclusion under the
 additional, explicit assumption that the function is eventually monotone.
