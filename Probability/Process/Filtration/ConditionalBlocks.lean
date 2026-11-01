@@ -32,6 +32,19 @@ public import Mathlib.MeasureTheory.Integral.Bochner.Set
   and
   `ProbabilityTheory.measureReal_initialInterConditionalBlockIntersection_ge_mul_prod_prefix`:
   if `A ∈ 𝓕₀`, then `P(A) · ∏_{j < n} pⱼ ≤ P(A ∩ Bₙ)`.
+
+Let `B_n=⋂_{j<n}E_j`. Conditional indicator bounds on each preceding block
+event give the product estimates
+
+\[\begin{aligned}
+p_j\le\mathbb E[\mathbf 1_{E_j}\mid\mathcal F_j]\le q_j
+  \quad&\text{almost everywhere on }B_j\\
+&\Longrightarrow\quad
+  \prod_{j<n}p_j\le\mathbb P(B_n)\le\prod_{j<n}q_j,\\
+\mathbb E[\mathbf 1_{E_j}\mid\mathcal F_j]\le p
+  \quad&\text{almost everywhere on }B_j\\
+&\Longrightarrow\quad\mathbb P(B_n)\le p^n.
+\end{aligned}\]
 -/
 
 open MeasureTheory

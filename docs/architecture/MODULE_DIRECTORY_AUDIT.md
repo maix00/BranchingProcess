@@ -28652,3 +28652,17 @@ build successfully in a 2,724-job Lake build; no declarations or proofs
 changed. The same formula-header review now has 142 remaining modules out of
 1,642 modules when Selection-owned paths are omitted from this pass (105
 candidates have public-declaration sections).
+
+
+## Filtration, conditional-block, and strong-Markov formulas (2026-11-02)
+
+Added mathematical statements to the public headers of
+`Probability/Process/Filtration/{ConditionalBlocks,GeneratedByCoordinates}.lean`,
+`Probability/Process/Markov/Stopping/Basic.lean`, and
+`Probability/BranchingRandomWalk/Tree/Filtration.lean`. They state the
+conditional block product bounds, coordinate-generated domain, strong Markov
+conditional transition identity, and generation/frontier observations. All
+four focused modules build successfully in a 3,036-job Lake build; no
+declarations or proofs changed. The same formula-header review now has 138
+remaining modules out of 1,642 modules when Selection-owned paths are omitted
+from this pass (101 candidates have public-declaration sections).

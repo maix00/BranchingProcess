@@ -36,6 +36,19 @@ The stopping-time σ-algebra is mathlib's
 ordinary time-valued stopping times, embedded into `WithTop Time`; no second
 stopping-time structure is introduced.  Discrete homogeneous chains are a
 specialization of the general two-time transition-kernel formulation.
+
+For every finite stopping time `τ`, duration `d`, and measurable state set
+`A`, the conditional law at the advanced time is the transition law from the
+stopped state:
+
+\[
+\mathbb E\!\left[
+  \mathbf 1_{\{X_{\operatorname{advance}(\tau,d)}\in A\}}
+  \,\middle|\,\mathcal F_\tau\right](\omega)
+=K_{\tau(\omega),\operatorname{advance}(\tau(\omega),d)}
+  \bigl(X_{\tau(\omega)}(\omega),A\bigr).\operatorname{toReal}
+\quad\text{almost surely}.
+\]
 -/
 
 open MeasureTheory

@@ -36,6 +36,19 @@ MeasurableSpace.comap (X_i) m_{E_i}`.
 
 The construction allows an arbitrary preorder of times and arbitrary
 dependent measurable observation spaces.
+
+At time `t`, the generated domain is the supremum of the coordinate domains
+whose grades have arrived; it is the least filtration making each coordinate
+measurable when revealed:
+
+\[
+\mathcal F_t
+=\bigvee_{i:\,\operatorname{grade}(i)\le t}
+  \sigma\bigl(\omega\mapsto X_i(\omega)\bigr),
+\qquad
+\operatorname{grade}(i)\le t
+\Longrightarrow X_i\text{ is }\mathcal F_t\text{-measurable}.
+\]
 -/
 
 @[expose] public section
