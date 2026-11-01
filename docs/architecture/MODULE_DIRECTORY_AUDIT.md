@@ -28473,3 +28473,16 @@ path-potential sums. All five focused modules build successfully in a
 1,769-job Lake build; no declarations or proofs changed. The same header scan
 now has 226 remaining modules for manual formula review out of 1,642
 production modules.
+
+## Population, trajectory, and cloud formulas (2026-11-01)
+
+Added explicit interfaces to the public headers of
+`Combinatorics/BranchingWalk/Population/Basic.lean`,
+`Trajectory/{Basic,Step,Measurability}.lean`, and
+`Cloud/{Basic,Measurability,SliceMeasure}.lean`. They describe generation
+successors, the vertex/edge trajectory image, the trajectory coordinate
+σ-algebra, indexed cloud slices and their geometric support, accumulated
+positions, and the multiplicity-preserving Dirac sum. All seven focused
+modules build successfully in a 1,908-job Lake build; no declarations or
+proofs changed. The same header scan now has 219 remaining modules for manual
+formula review out of 1,642 production modules.

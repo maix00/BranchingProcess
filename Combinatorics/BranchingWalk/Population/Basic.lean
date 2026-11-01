@@ -15,6 +15,16 @@ public import Combinatorics.BranchingWalk.Step.Basic
 
 ## Public declarations
 
+A population follows the generation index, stays in the corresponding depth,
+and each next slice lies among the present children of the current slice:
+
+\[
+P_n\subseteq\{p:|p.2|=n\},
+\qquad
+P_{n+1}\subseteq
+\{(r,u\mathbin{++}[i]):(r,u)\in P_n,\ i\in\operatorname{support}(\operatorname{stepField}(r,u))\}.
+\]
+
 A population is indexed by the natural-number generations of one fixed
 branching field.  It contains no probability space, filtration, measurability,
 position, order, or selection mechanism.
